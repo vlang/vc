@@ -92,10 +92,9 @@ typedef struct Option Option;
 typedef struct StringBuilder StringBuilder;
 typedef struct os__FILE os__FILE;
 typedef struct os__File os__File;
+typedef struct os__FileInfo os__FileInfo;
 typedef Option Option_string;
 typedef array array_ustring;
-typedef struct os__Reader os__Reader;
-typedef struct os__FileInfo os__FileInfo;
 typedef struct time__Time time__Time;
 typedef struct CGen CGen;
 typedef struct Fn Fn;
@@ -172,17 +171,14 @@ struct os__FILE {};
 struct os__File {
   os__FILE *cfile;
 };
-struct os__Reader {
-  os__FILE *fp;
-};
 struct os__FileInfo {
   string name;
   int size;
 };
 struct time__Time {
   int year;
-  int day;
   int month;
+  int day;
   int hour;
   int minute;
   int second;
@@ -512,13 +508,10 @@ void os__todo_remove();
 array_string os__init_os_args(int argc, byteptr *_argv);
 array_string os__parse_windows_cmd_line(byte *cmd);
 Option_string os__read_file(string path);
-string os__File_read_rune(os__File f);
 int os__file_size(string path);
 void os__mv(string old, string new);
-int os__file_last_mod_unix(string path);
 array_string os__read_lines(string path);
-array_ustring os__read_file_into_ulines(string path);
-void os__append_to_file(string file, string s);
+array_ustring os__read_ulines(string path);
 os__File os__open(string path);
 os__File os__open_file(string file);
 os__File os__create(string path);
@@ -528,21 +521,22 @@ os__File os__create_file_a(string file);
 os__File os__open_file_a(string file);
 os__File os__create_file2(string file, string mode);
 void os__File_append(os__File f, string s);
-void os__File_write(os__File f, void *data, int size);
-void os__File_write_at(os__File f, void *data, int size, int pos);
+void os__File_write_bytes(os__File f, void *data, int size);
+void os__File_write_bytes_at(os__File f, void *data, int size, int pos);
 void os__File_appendln(os__File f, string s);
 void os__File_close(os__File f);
 void os__close_file(os__FILE *fp);
-int os__system2(string cmd);
+int os__system(string cmd);
 os__FILE *os__popen(string path);
-string os__system(string cmd);
-array_string os__system_into_lines(string s);
+string os__exec(string cmd);
 string os__getenv(string key);
 bool os__file_exists(string path);
 bool os__dir_exists(string path);
 void os__mkdir(string path);
 void os__rm(string path);
 void os__print_c_errno();
+string os__ext(string path);
+string os__path_sans_ext(string path);
 string os__basedir(string path);
 string os__filename(string path);
 string os__get_line();
@@ -782,7 +776,6 @@ bool Token_is_decl(Token t);
 bool Token_is_assign(Token t);
 bool array_Token_contains(array_Token t, Token val);
 array_string os__args;
-#define os__BUF_SIZE 5000
 string time__Months;
 string time__Days;
 #define main__MaxLocalVars 50
@@ -3512,17 +3505,6 @@ Option_string os__read_file(string path) {
 
   return opt_ok(&res);
 }
-string os__File_read_rune(os__File f) {
-
-  if (!f.cfile)
-    return tos("", 0);
-
-  byte *c = v_malloc(1);
-
-  fread(c, 1, 1, f.cfile);
-
-  return tos(c, 1);
-}
 int os__file_size(string path) {
 
   struct stat s;
@@ -3549,16 +3531,6 @@ int os__file_size(string path) {
 void os__mv(string old, string new) {
 
   rename(string_cstr(old), string_cstr(new));
-}
-int os__file_last_mod_unix(string path) {
-
-  struct stat attr;
-
-  stat(path.str, &attr);
-
-  return attr.st_mtime;
-
-  return 0;
 }
 array_string os__read_lines(string path) {
 
@@ -3593,39 +3565,29 @@ array_string os__read_lines(string path) {
 #endif
     ;
 
-    _PUSH(&res, (tos_clone(buf)), tmp17, string);
+    _PUSH(&res, (tos_clone(buf)), tmp16, string);
   };
 
   fclose(fp);
 
   return res;
 }
-array_ustring os__read_file_into_ulines(string path) {
+array_ustring os__read_ulines(string path) {
 
   array_string lines = os__read_lines(path);
 
   array_ustring ulines =
       new_array_from_c_array(0, 0, sizeof(ustring), (ustring[]){});
 
-  array_string tmp20 = lines;
+  array_string tmp19 = lines;
   ;
-  for (int tmp21 = 0; tmp21 < tmp20.len; tmp21++) {
-    string myline = ((string *)tmp20.data)[tmp21];
+  for (int tmp20 = 0; tmp20 < tmp19.len; tmp20++) {
+    string myline = ((string *)tmp19.data)[tmp20];
 
-    _PUSH(&ulines, (string_ustring(myline)), tmp22, ustring);
+    _PUSH(&ulines, (string_ustring(myline)), tmp21, ustring);
   };
 
   return ulines;
-}
-void os__append_to_file(string file, string s) {
-
-  FILE *fp = fopen(file.str, "a");
-
-  fputs(s.str, fp);
-
-  fputs("\n", fp);
-
-  fclose(fp);
 }
 os__File os__open(string path) { return os__open_file(path); }
 os__File os__open_file(string file) {
@@ -3665,11 +3627,11 @@ void os__File_append(os__File f, string s) {
 
   fputs(string_cstr(ss), f.cfile);
 }
-void os__File_write(os__File f, void *data, int size) {
+void os__File_write_bytes(os__File f, void *data, int size) {
 
   fwrite(data, 1, size, f.cfile);
 }
-void os__File_write_at(os__File f, void *data, int size, int pos) {
+void os__File_write_bytes_at(os__File f, void *data, int size, int pos) {
 
   fseek(f.cfile, pos, SEEK_SET);
 
@@ -3695,11 +3657,9 @@ void os__close_file(os__FILE *fp) {
 
     fclose(fp);
 }
-int os__system2(string cmd) {
+int os__system(string cmd) {
 
-  string cstr = string_clone(cmd);
-
-  int ret = (/*casttt*/ (int)(/*77*/ system(string_cstr(cstr))));
+  void *ret = system(string_cstr(cmd));
 
   if (ret == -1) {
     /*if*/
@@ -3726,70 +3686,30 @@ os__FILE *os__popen(string path) {
 #endif
   ;
 }
-string os__system(string cmd) {
+string os__exec(string cmd) {
 
-  string res = tos2("");
+  cmd = _STR("%.*s 2>&1", cmd.len, cmd.str);
 
-  string ss = _STR("%.*s 2>&1", cmd.len, cmd.str);
-
-  int _ = 0;
-
-  os__FILE *f = os__popen(ss);
+  os__FILE *f = os__popen(cmd);
 
   if (isnil(f)) {
     /*if*/
 
     println(_STR("popen %.*s failed", cmd.len, cmd.str));
+
+    return tos2("");
   };
 
-  int max = 1000;
+  byte buf[1000] = {} /* arkek init*/;
 
-  char buf[max];
+  string res = tos2("");
 
-  while (fgets(buf, max, f) != NULL) {
+  while (fgets(buf, 1000, f) != 0) {
 
     res = string_add(res, tos(buf, strlen(buf)));
-  }
+  };
 
   return string_trim_space(res);
-}
-array_string os__system_into_lines(string s) {
-
-  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
-
-  string cmd = _STR("%.*s 2>&1", s.len, s.str);
-
-  int max = 5000;
-
-#ifdef _WIN32
-
-  FILE *f = _popen(cmd.str, "r");
-
-  ;
-
-#else
-
-  FILE *f = popen(cmd.str, "r");
-
-#endif
-  ;
-
-  char *buf = malloc(sizeof(char) * max);
-
-  while (fgets(buf, max, f) != NULL)
-
-  {
-
-    string val = tos2("");
-
-    buf[strlen(buf) - 1] = '\0'; // eat the newline fgets() stores
-
-    val = tos_clone(buf);
-
-    _PUSH(&res, (val), tmp37, string);
-  }
-
-  return res;
 }
 string os__getenv(string key) {
 
@@ -3866,9 +3786,30 @@ void os__rm(string path) {
 #endif
   ;
 }
-void os__print_c_errno() {
+void os__print_c_errno() { ; }
+string os__ext(string path) {
 
-  printf("errno=%d err='%s'\n", errno, strerror(errno));
+  int pos = string_last_index(path, tos2("."));
+
+  if (pos == -1) {
+    /*if*/
+
+    return tos2("");
+  };
+
+  return string_right(path, pos);
+}
+string os__path_sans_ext(string path) {
+
+  int pos = string_last_index(path, tos2("."));
+
+  if (pos == -1) {
+    /*if*/
+
+    return path;
+  };
+
+  return string_left(path, pos);
 }
 string os__basedir(string path) {
 
@@ -4049,8 +3990,8 @@ time__Time time__now() {
   struct tm *now = localtime(&t);
 
   time__Time res = (time__Time){.year = 0,
-                                .day = 0,
                                 .month = 0,
+                                .day = 0,
                                 .hour = 0,
                                 .minute = 0,
                                 .second = 0,
@@ -4091,8 +4032,8 @@ time__Time time__unix(string u) {
   struct tm *now = localtime(&t);
 
   time__Time res = (time__Time){.year = 0,
-                                .day = 0,
                                 .month = 0,
+                                .day = 0,
                                 .hour = 0,
                                 .minute = 0,
                                 .second = 0,
@@ -4131,8 +4072,8 @@ time__Time time__unixn(int uni) {
   struct tm *now = localtime(&t);
 
   time__Time res = (time__Time){.year = 0,
-                                .day = 0,
                                 .month = 0,
+                                .day = 0,
                                 .hour = 0,
                                 .minute = 0,
                                 .second = 0,
@@ -4307,8 +4248,8 @@ time__Time time__new_time(time__Time t) {
   return (time__Time){
       .uni = time__Time_calc_unix(&/* ? */ t),
       .year = t.year,
-      .day = t.day,
       .month = t.month,
+      .day = t.day,
       .hour = t.hour,
       .minute = t.minute,
       .second = t.second,
@@ -6787,12 +6728,19 @@ void V_compile(V *c) {
                      ? (c->out_name)
                      : (string_add(tos2("./"), c->out_name));
 
-    int ret = os__system2(cmd);
+    if (os__args.len > 3) {
+      /*if*/
+
+      cmd = string_add(string_add(cmd, tos2(" ")),
+                       array_string_join(array_right(os__args, 3), tos2(" ")));
+    };
+
+    int ret = os__system(cmd);
 
     if (ret != 0) {
       /*if*/
 
-      string s = os__system(cmd);
+      string s = os__exec(cmd);
 
       println(s);
 
@@ -6931,7 +6879,7 @@ void V_cc(V *c) {
     println(_STR("\n==========\n%.*s\n=========\n", cmd.len, cmd.str));
   };
 
-  string res = os__system(cmd);
+  string res = os__exec(cmd);
 
   if (string_contains(res, tos2("error: "))) {
     /*if*/
@@ -6951,7 +6899,7 @@ void V_cc(V *c) {
     println(_STR("linux obj_file=%.*s out_name=%.*s", obj_file.len,
                  obj_file.str, c->out_name.len, c->out_name.str));
 
-    string ress = os__system(string_add(
+    string ress = os__exec(string_add(
         string_add(
             string_add(
                 string_add(
@@ -7266,6 +7214,12 @@ V *new_v(array_string args) {
 
   string dir = *(string *)array_last(args);
 
+  if (array_string_contains(args, tos2("run"))) {
+    /*if*/
+
+    dir = (*(string *)array__get(args, 2));
+  };
+
   if (args.len < 2) {
     /*if*/
 
@@ -7400,12 +7354,12 @@ V *new_v(array_string args) {
     if (os__file_exists(vroot_path)) {
       /*if*/
 
-      Option_string tmp109 = os__read_file(vroot_path);
-      if (!tmp109.ok) {
+      Option_string tmp111 = os__read_file(vroot_path);
+      if (!tmp111.ok) {
 
         break;
       }
-      string vroot = *(string *)tmp109.data;
+      string vroot = *(string *)tmp111.data;
       ;
 
       vroot = string_trim_space(vroot);
@@ -7444,7 +7398,7 @@ V *new_v(array_string args) {
 
       os__mv(tos2("v"), tos2("v.bin"));
 
-      os__system(tos2("git clone https://github.com/vlang/v"));
+      os__exec(tos2("git clone https://github.com/vlang/v"));
 
       if (!os__dir_exists(tos2("v"))) {
         /*if*/
@@ -7471,10 +7425,10 @@ V *new_v(array_string args) {
   if (!string_contains(out_name, tos2("builtin.o"))) {
     /*if*/
 
-    array_string tmp113 = builtins;
+    array_string tmp115 = builtins;
     ;
-    for (int tmp114 = 0; tmp114 < tmp113.len; tmp114++) {
-      string builtin = ((string *)tmp113.data)[tmp114];
+    for (int tmp116 = 0; tmp116 < tmp115.len; tmp116++) {
+      string builtin = ((string *)tmp115.data)[tmp116];
 
       string f = _STR("%.*s/builtin/%.*s", lang_dir.len, lang_dir.str,
                       builtin.len, builtin.str);
@@ -7486,7 +7440,7 @@ V *new_v(array_string args) {
                  main__TmpPath.str, builtin.len, builtin.str);
       };
 
-      _PUSH(&files, (f), tmp116, string);
+      _PUSH(&files, (f), tmp118, string);
     };
   };
 
@@ -7553,7 +7507,7 @@ array_string run_repl() {
       string void_line =
           string_substr(line, string_index(line, tos2("(")) + 1, line.len - 1);
 
-      _PUSH(&lines, (void_line), tmp122, string);
+      _PUSH(&lines, (void_line), tmp124, string);
 
       string source_code = string_add(
           string_add(
@@ -7570,14 +7524,14 @@ array_string run_repl() {
 
       V_compile(v);
 
-      string s = os__system(string_add(main__TmpPath, tos2("/vrepl")));
+      string s = os__exec(string_add(main__TmpPath, tos2("/vrepl")));
 
       println(s);
 
     } else {
       /*else if*/
 
-      _PUSH(&lines, (line), tmp126, string);
+      _PUSH(&lines, (line), tmp128, string);
     };
   };
 
@@ -8566,21 +8520,24 @@ void Parser_error(Parser *p, string s) {
       string_contains(cur_path, tos2("v/compiler"))) {
     /*if*/
 
-    println(tos2("\n===================="));
+    println(tos2("\n========================="));
 
-    println(string_add(
-        tos2("It looks like you are building V. It is being frequently updated "
-             "every day."),
-        tos2(" If you didn\'t modify the compiler\'s code, most likely there "
-             "was a change that lead to this error. ")));
+    println(tos2("It looks like you are building V. It is being frequently "
+                 "updated every day."));
 
-    println(tos2("Try to run `git pull`, that will most likely fix it."));
+    println(tos2("If you didn\'t modify the compiler\'s code, most likely "
+                 "there was a change that "));
 
-    println(string_add(tos2("If `git pull` doesn\'t help, re-install V from "
-                            "source or download a precompiled"),
-                       tos2(" binary from https://vlang.io")));
+    println(tos2("lead to this error."));
 
-    println(tos2("====================\n"));
+    println(tos2("\nTry to run `git pull && make clean && make`, that will "
+                 "most likely fix it."));
+
+    println(string_add(tos2("\nIf this doesn\'t help, re-install V from source "
+                            "or download a precompiled"),
+                       tos2(" binary from\nhttps://vlang.io.")));
+
+    println(tos2("=========================\n"));
   };
 
   Scanner_error(&/* ? */ *p->scanner,
@@ -12774,12 +12731,7 @@ Scanner *new_scanner(string file_path) {
 }
 ScanRes scan_res(Token tok, string lit) { return (ScanRes){tok, lit}; }
 bool is_white(byte c) { return byte_is_white(c); }
-bool is_nl(byte c) {
-
-  int i = (/*casttt*/ (int)(/*77*/ c));
-
-  return i == 12 || i == 10;
-}
+bool is_nl(byte c) { return c == '\r' || c == '\n'; }
 string Scanner_ident_name(Scanner *s) {
 
   int start = s->pos;
@@ -13872,6 +13824,8 @@ Table *new_table(bool obfuscate) {
   Table_register_const(t, tos2("stdout"), tos2("int"), tos2("main"), 0);
 
   Table_register_const(t, tos2("stderr"), tos2("int"), tos2("main"), 0);
+
+  Table_register_const(t, tos2("errno"), tos2("int"), tos2("main"), 0);
 
   Table_register_type_with_parent(t, tos2("map_string"), tos2("map"));
 
@@ -15085,7 +15039,7 @@ void init_consts() {
   os__args = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
   time__Months = tos2("JanFebMarAprMayJunJulAugSepOctNovDec");
   time__Days = tos2("MonTueWedThuFriSatSun");
-  main__Version = tos2("0.1.3");
+  main__Version = tos2("0.1.4");
   main__SupportedPlatforms = new_array_from_c_array(
       3, 3, sizeof(string),
       (string[]){tos2("windows"), tos2("mac"), tos2("linux")});
