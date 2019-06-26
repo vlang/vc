@@ -3786,7 +3786,7 @@ void os__rm(string path) {
 #endif
   ;
 }
-void os__print_c_errno() { ; }
+void os__print_c_errno() {}
 string os__ext(string path) {
 
   int pos = string_last_index(path, tos2("."));
