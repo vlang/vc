@@ -223,7 +223,7 @@ struct Fn {
   string name;
   bool is_c;
   string receiver_typ;
-  bool is_private;
+  bool is_public;
   bool is_method;
   bool returns_error;
   bool is_decl;
@@ -508,6 +508,7 @@ void StringBuilder_writeln(StringBuilder *b, string s);
 string StringBuilder_str(StringBuilder b);
 void StringBuilder_cut(StringBuilder b, int n);
 void v_StringBuilder_free(StringBuilder *b);
+void os__todo_remove();
 array_string os__init_os_args(int argc, byteptr *_argv);
 array_string os__parse_windows_cmd_line(byte *cmd);
 Option_string os__read_file(string path);
@@ -537,7 +538,6 @@ os__FILE *os__popen(string path);
 string os__system(string cmd);
 array_string os__system_into_lines(string s);
 string os__getenv(string key);
-void os__exit(int code);
 bool os__file_exists(string path);
 bool os__dir_exists(string path);
 void os__mkdir(string path);
@@ -586,6 +586,7 @@ f64 time__ticks();
 void time__sleep(int seconds);
 void time__usleep(int seconds);
 void time__sleep_ms(int seconds);
+void rand__seed();
 int rand__next(int max);
 CGen *new_cgen(string out_name_c);
 void CGen_genln(CGen *g, string s);
@@ -613,7 +614,7 @@ void Fn_mark_var_used(Fn *f, Var v);
 bool Fn_known_var(Fn *f, string name);
 void Fn_register_var(Fn *f, Var v);
 bool Parser_is_sig(Parser *p);
-Fn *new_fn(string pkg);
+Fn *new_fn(string pkg, bool is_public);
 void Parser_fn_decl(Parser *p);
 void Parser_async_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
                           string receiver_type);
@@ -3454,6 +3455,7 @@ void StringBuilder_writeln(StringBuilder *b, string s) {
 string StringBuilder_str(StringBuilder b) { return tos(b.buf.data, b.len); }
 void StringBuilder_cut(StringBuilder b, int n) { b.len = b.len - n; }
 void v_StringBuilder_free(StringBuilder *b) { free(b->buf.data); }
+void os__todo_remove() {}
 array_string os__init_os_args(int argc, byteptr *_argv) {
 
   array_string args =
@@ -3801,7 +3803,6 @@ string os__getenv(string key) {
 
   return tos2(s);
 }
-void os__exit(int code) { exit(code); }
 bool os__file_exists(string path) {
 
   bool res = 0;
@@ -4428,30 +4429,30 @@ int rand__next(int max) {
 CGen *new_cgen(string out_name_c) {
 
   CGen *gen = ALLOC_INIT(
-      CGen, {.out_path = _STR("%.*s/%.*s", main__TmpPath.len, main__TmpPath.str,
-                              out_name_c.len, out_name_c.str),
-             .out = os__create_file(_STR("%.*s/%.*s", main__TmpPath.len,
-                                         main__TmpPath.str, out_name_c.len,
-                                         out_name_c.str)),
-             .typedefs = new_array(0, 1, sizeof(string)),
-             .type_aliases = new_array(0, 1, sizeof(string)),
-             .includes = new_array(0, 1, sizeof(string)),
-             .types = new_array(0, 1, sizeof(string)),
-             .thread_args = new_array(0, 1, sizeof(string)),
-             .thread_fns = new_array(0, 1, sizeof(string)),
-             .consts = new_array(0, 1, sizeof(string)),
-             .fns = new_array(0, 1, sizeof(string)),
-             .so_fns = new_array(0, 1, sizeof(string)),
-             .consts_init = new_array(0, 1, sizeof(string)),
-             .lines = new_array(0, 1, sizeof(string)),
-             .is_user = 0,
-             .nogen = 0,
-             .tmp_line = tos("", 0),
-             .cur_line = tos("", 0),
-             .prev_line = tos("", 0),
-             .is_tmp = 0,
-             .fn_main = tos("", 0),
-             .stash = tos("", 0)});
+      CGen,
+      {.out_path = _STR("%.*s/%.*s", main__TmpPath.len, main__TmpPath.str,
+                        out_name_c.len, out_name_c.str),
+       .out = os__create(_STR("%.*s/%.*s", main__TmpPath.len, main__TmpPath.str,
+                              out_name_c.len, out_name_c.str)),
+       .typedefs = new_array(0, 1, sizeof(string)),
+       .type_aliases = new_array(0, 1, sizeof(string)),
+       .includes = new_array(0, 1, sizeof(string)),
+       .types = new_array(0, 1, sizeof(string)),
+       .thread_args = new_array(0, 1, sizeof(string)),
+       .thread_fns = new_array(0, 1, sizeof(string)),
+       .consts = new_array(0, 1, sizeof(string)),
+       .fns = new_array(0, 1, sizeof(string)),
+       .so_fns = new_array(0, 1, sizeof(string)),
+       .consts_init = new_array(0, 1, sizeof(string)),
+       .lines = new_array(0, 1, sizeof(string)),
+       .is_user = 0,
+       .nogen = 0,
+       .tmp_line = tos("", 0),
+       .cur_line = tos("", 0),
+       .prev_line = tos("", 0),
+       .is_tmp = 0,
+       .fn_main = tos("", 0),
+       .stash = tos("", 0)});
 
   return gen;
 }
@@ -4870,7 +4871,7 @@ bool Parser_is_sig(Parser *p) {
   return (/*lpar*/ p->build_mode == DEFAULT_MODE || p->build_mode == BUILD) &&
          (/*lpar*/ string_contains(p->file_path, main__TmpPath));
 }
-Fn *new_fn(string pkg) {
+Fn *new_fn(string pkg, bool is_public) {
   Var tmp19 = (Var){.typ = tos("", 0),
                     .name = tos("", 0),
                     .is_arg = 0,
@@ -4891,6 +4892,7 @@ Fn *new_fn(string pkg) {
   Fn *f = ALLOC_INIT(
       Fn, {.pkg = pkg,
            .local_vars = array_repeat(&tmp19, main__MaxLocalVars, sizeof(Var)),
+           .is_public = is_public,
            .var_idx = 0,
            .args = new_array(0, 1, sizeof(Var)),
            .is_interface = 0,
@@ -4899,7 +4901,6 @@ Fn *new_fn(string pkg) {
            .name = tos("", 0),
            .is_c = 0,
            .receiver_typ = tos("", 0),
-           .is_private = 0,
            .is_method = 0,
            .returns_error = 0,
            .is_decl = 0,
@@ -4923,7 +4924,7 @@ void Parser_fn_decl(Parser *p) {
 
   Parser_next(p);
 
-  Fn *f = new_fn(p->pkg);
+  Fn *f = new_fn(p->pkg, is_pub);
 
   string receiver_typ = tos2("");
 
@@ -5553,6 +5554,13 @@ void Parser_async_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
 }
 void Parser_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
                     string receiver_type) {
+
+  if (!f.is_public && !f.is_c && string_ne(f.pkg, p->pkg) &&
+      string_ne(f.pkg, tos2("builtin"))) {
+    /*if*/
+
+    Parser_error(p, _STR("function `%.*s` is private", f.name.len, f.name.str));
+  };
 
   p->calling_c = f.is_c;
 
@@ -6189,7 +6197,7 @@ void Parser_gen_json_for_type(Parser *p, Type typ) {
                    .scope_level = 0,
                    .is_c = 0,
                    .receiver_typ = tos("", 0),
-                   .is_private = 0,
+                   .is_public = 0,
                    .is_method = 0,
                    .returns_error = 0,
                    .is_decl = 0,
@@ -6232,7 +6240,7 @@ void Parser_gen_json_for_type(Parser *p, Type typ) {
                    .scope_level = 0,
                    .is_c = 0,
                    .receiver_typ = tos("", 0),
-                   .is_private = 0,
+                   .is_public = 0,
                    .is_method = 0,
                    .returns_error = 0,
                    .is_decl = 0,
@@ -6970,7 +6978,7 @@ void V_cc(V *c) {
     if (string_contains(ress, tos2("error:"))) {
       /*if*/
 
-      os__exit(1);
+      v_exit(1);
     };
 
     println(_STR("linux cross compilation done. resulting binary: \"%.*s\"",
@@ -8287,7 +8295,7 @@ void Parser_struct_decl(Parser *p) {
                           .scope_level = 0,
                           .typ = tos("", 0),
                           .is_c = 0,
-                          .is_private = 0,
+                          .is_public = 0,
                           .returns_error = 0,
                           .is_decl = 0,
                           .defer = tos("", 0)});
@@ -8309,13 +8317,6 @@ void Parser_struct_decl(Parser *p) {
     };
 
     AccessMod access_mod = (is_pub) ? (PUBLIC) : (PRIVATE);
-
-    if (string_eq(typ->name, tos2("Userf"))) {
-      /*if*/
-
-      println(_STR("%.*s %d mut=%d", field_name.len, field_name.str, access_mod,
-                   is_mut));
-    };
 
     Parser_fgen(p, tos2(" "));
 
@@ -8539,11 +8540,11 @@ void Parser_error(Parser *p, string s) {
   if (0) {
     /*if*/
 
-    os__File file_types = os__create_file(
-        _STR("%.*s/types", main__TmpPath.len, main__TmpPath.str));
+    os__File file_types =
+        os__create(_STR("%.*s/types", main__TmpPath.len, main__TmpPath.str));
 
-    os__File file_vars = os__create_file(
-        _STR("%.*s/vars", main__TmpPath.len, main__TmpPath.str));
+    os__File file_vars =
+        os__create(_STR("%.*s/vars", main__TmpPath.len, main__TmpPath.str));
 
     os__File_close(file_types);
 
@@ -8570,7 +8571,8 @@ void Parser_error(Parser *p, string s) {
     println(string_add(
         tos2("It looks like you are building V. It is being frequently updated "
              "every day."),
-        tos2(" Most likely there was a change that lead to this error. ")));
+        tos2(" If you didn\'t modify the compiler\'s code, most likely there "
+             "was a change that lead to this error. ")));
 
     println(tos2("Try to run `git pull`, that will most likely fix it."));
 
@@ -8615,7 +8617,7 @@ string Parser_get_type(Parser *p) {
                 .typ = tos("", 0),
                 .is_c = 0,
                 .receiver_typ = tos("", 0),
-                .is_private = 0,
+                .is_public = 0,
                 .is_method = 0,
                 .returns_error = 0,
                 .is_decl = 0,
@@ -9661,7 +9663,7 @@ string Parser_name_expr(Parser *p) {
                 .scope_level = 0,
                 .typ = tos("", 0),
                 .receiver_typ = tos("", 0),
-                .is_private = 0,
+                .is_public = 0,
                 .is_method = 0,
                 .returns_error = 0,
                 .is_decl = 0,
@@ -14009,7 +14011,7 @@ Fn Table_find_fn(Table *t, string name) {
               .name = tos("", 0),
               .is_c = 0,
               .receiver_typ = tos("", 0),
-              .is_private = 0,
+              .is_public = 0,
               .is_method = 0,
               .returns_error = 0,
               .is_decl = 0,
@@ -14271,7 +14273,7 @@ Fn Type_find_method(Type *t, string name) {
               .name = tos("", 0),
               .is_c = 0,
               .receiver_typ = tos("", 0),
-              .is_private = 0,
+              .is_public = 0,
               .is_method = 0,
               .returns_error = 0,
               .is_decl = 0,
@@ -15059,7 +15061,7 @@ string Token_str(Token t) {
 bool Token_is_decl(Token t) {
 
   return t == ENUM || t == INTERFACE || t == FUNC || t == STRUCT || t == TIP ||
-         t == CONST || t == IMPORT_CONST || t == AT || t == EOF;
+         t == CONST || t == IMPORT_CONST || t == AT || t == PUB || t == EOF;
 }
 bool Token_is_assign(Token t) { return _IN(Token, t, main__AssignTokens); }
 bool array_Token_contains(array_Token t, Token val) {
@@ -15098,7 +15100,7 @@ void init_consts() {
                                   .name = tos("", 0),
                                   .is_c = 0,
                                   .receiver_typ = tos("", 0),
-                                  .is_private = 0,
+                                  .is_public = 0,
                                   .is_method = 0,
                                   .returns_error = 0,
                                   .is_decl = 0,
