@@ -874,147 +874,145 @@ array_string main__FLOAT_TYPES;
 
 #define HASH 23
 
-#define AT 24
+#define DOLLAR 24
 
-#define DOLLAR 25
+#define LEFT_SHIFT 25
 
-#define LEFT_SHIFT 26
+#define RIGHT_SHIFT 26
 
-#define RIGHT_SHIFT 27
+#define ASSIGN 27
 
-#define ASSIGN 28
+#define DECL_ASSIGN 28
 
-#define DECL_ASSIGN 29
+#define PLUS_ASSIGN 29
 
-#define PLUS_ASSIGN 30
+#define MINUS_ASSIGN 30
 
-#define MINUS_ASSIGN 31
+#define DIV_ASSIGN 31
 
-#define DIV_ASSIGN 32
+#define MULT_ASSIGN 32
 
-#define MULT_ASSIGN 33
+#define XOR_ASSIGN 33
 
-#define XOR_ASSIGN 34
+#define MOD_ASSIGN 34
 
-#define MOD_ASSIGN 35
+#define OR_ASSIGN 35
 
-#define OR_ASSIGN 36
+#define AND_ASSIGN 36
 
-#define AND_ASSIGN 37
+#define RIGHT_SHIFT_ASSIGN 37
 
-#define RIGHT_SHIFT_ASSIGN 38
+#define LEFT_SHIFT_ASSIGN 38
 
-#define LEFT_SHIFT_ASSIGN 39
+#define LCBR 39
 
-#define LCBR 40
+#define RCBR 40
 
-#define RCBR 41
+#define LPAR 41
 
-#define LPAR 42
+#define RPAR 42
 
-#define RPAR 43
+#define LSBR 43
 
-#define LSBR 44
+#define RSBR 44
 
-#define RSBR 45
+#define EQ 45
 
-#define EQ 46
+#define NE 46
 
-#define NE 47
+#define GT 47
 
-#define GT 48
+#define LT 48
 
-#define LT 49
+#define GE 49
 
-#define GE 50
+#define LE 50
 
-#define LE 51
+#define LINE_COM 51
 
-#define LINE_COM 52
+#define MLINE_COM 52
 
-#define MLINE_COM 53
+#define NL 53
 
-#define NL 54
+#define DOT 54
 
-#define DOT 55
+#define DOTDOT 55
 
-#define DOTDOT 56
+#define keyword_beg 56
 
-#define keyword_beg 57
+#define PACKAGE 57
 
-#define PACKAGE 58
+#define STRUCT 58
 
-#define STRUCT 59
+#define IF 59
 
-#define IF 60
+#define ELSE 60
 
-#define ELSE 61
+#define RETURN 61
 
-#define RETURN 62
+#define GO 62
 
-#define GO 63
+#define CONST 63
 
-#define CONST 64
+#define IMPORT_CONST 64
 
-#define IMPORT_CONST 65
+#define MUT 65
 
-#define MUT 66
+#define TIP 66
 
-#define TIP 67
+#define ENUM 67
 
-#define ENUM 68
+#define FOR 68
 
-#define FOR 69
+#define SWITCH 69
 
-#define SWITCH 70
+#define MATCH 70
 
-#define MATCH 71
+#define CASE 71
 
-#define CASE 72
+#define FUNC 72
 
-#define FUNC 73
+#define TRUE 73
 
-#define TRUE 74
+#define FALSE 74
 
-#define FALSE 75
+#define CONTINUE 75
 
-#define CONTINUE 76
+#define BREAK 76
 
-#define BREAK 77
+#define EMBED 77
 
-#define EMBED 78
+#define IMPORT 78
 
-#define IMPORT 79
+#define TYPEOF 79
 
-#define TYPEOF 80
+#define DEFAULT 80
 
-#define DEFAULT 81
+#define ENDIF 81
 
-#define ENDIF 82
+#define ASSERT 82
 
-#define ASSERT 83
+#define SIZEOF 83
 
-#define SIZEOF 84
+#define IN 84
 
-#define IN 85
+#define ATOMIC 85
 
-#define ATOMIC 86
+#define INTERFACE 86
 
-#define INTERFACE 87
+#define OR_ELSE 87
 
-#define OR_ELSE 88
+#define GLOBAL 88
 
-#define GLOBAL 89
+#define UNION 89
 
-#define UNION 90
+#define PUB 90
 
-#define PUB 91
+#define GOTO 91
 
-#define GOTO 92
+#define STATIC 92
 
-#define STATIC 93
-
-#define keyword_end 94
+#define keyword_end 93
 
 array_string main__TOKENSTR;
 map_int main__KEYWORDS;
@@ -13213,21 +13211,6 @@ ScanRes Scanner_scan(Scanner *s) {
 
     return scan_res(HASH, string_trim_space(hash));
 
-  } else if ((c == '@')) { /* case */
-
-    int start = s->pos + 1;
-
-    while (string_at(s->text, s->pos) != '\n') {
-
-      s->pos++;
-    };
-
-    s->line_nr++;
-
-    string at = string_substr(s->text, start, s->pos);
-
-    return scan_res(AT, string_trim_space(at));
-
   } else if ((c == '>')) { /* case */
 
     if (string_at(s->text, s->pos + 1) == '=') {
@@ -14762,245 +14745,242 @@ array_string build_token_str() {
   string tmp25 = tos2("&");
 
   array_set(&/*q*/ s, AMP, &tmp25);
-  string tmp26 = tos2("@");
+  string tmp26 = tos2("++");
 
-  array_set(&/*q*/ s, AT, &tmp26);
-  string tmp27 = tos2("++");
+  array_set(&/*q*/ s, INC, &tmp26);
+  string tmp27 = tos2("--");
 
-  array_set(&/*q*/ s, INC, &tmp27);
-  string tmp28 = tos2("--");
+  array_set(&/*q*/ s, DEC, &tmp27);
+  string tmp28 = tos2("&&");
 
-  array_set(&/*q*/ s, DEC, &tmp28);
-  string tmp29 = tos2("&&");
+  array_set(&/*q*/ s, AND, &tmp28);
+  string tmp29 = tos2("||");
 
-  array_set(&/*q*/ s, AND, &tmp29);
-  string tmp30 = tos2("||");
+  array_set(&/*q*/ s, OR, &tmp29);
+  string tmp30 = tos2("!");
 
-  array_set(&/*q*/ s, OR, &tmp30);
-  string tmp31 = tos2("!");
+  array_set(&/*q*/ s, NOT, &tmp30);
+  string tmp31 = tos2(".");
 
-  array_set(&/*q*/ s, NOT, &tmp31);
-  string tmp32 = tos2(".");
+  array_set(&/*q*/ s, DOT, &tmp31);
+  string tmp32 = tos2("..");
 
-  array_set(&/*q*/ s, DOT, &tmp32);
-  string tmp33 = tos2("..");
+  array_set(&/*q*/ s, DOTDOT, &tmp32);
+  string tmp33 = tos2(",");
 
-  array_set(&/*q*/ s, DOTDOT, &tmp33);
-  string tmp34 = tos2(",");
+  array_set(&/*q*/ s, COMMA, &tmp33);
+  string tmp34 = tos2(";");
 
-  array_set(&/*q*/ s, COMMA, &tmp34);
-  string tmp35 = tos2(";");
+  array_set(&/*q*/ s, SEMICOLON, &tmp34);
+  string tmp35 = tos2(":");
 
-  array_set(&/*q*/ s, SEMICOLON, &tmp35);
-  string tmp36 = tos2(":");
+  array_set(&/*q*/ s, COLON, &tmp35);
+  string tmp36 = tos2("=");
 
-  array_set(&/*q*/ s, COLON, &tmp36);
-  string tmp37 = tos2("=");
+  array_set(&/*q*/ s, ASSIGN, &tmp36);
+  string tmp37 = tos2(":=");
 
-  array_set(&/*q*/ s, ASSIGN, &tmp37);
-  string tmp38 = tos2(":=");
+  array_set(&/*q*/ s, DECL_ASSIGN, &tmp37);
+  string tmp38 = tos2("+=");
 
-  array_set(&/*q*/ s, DECL_ASSIGN, &tmp38);
-  string tmp39 = tos2("+=");
+  array_set(&/*q*/ s, PLUS_ASSIGN, &tmp38);
+  string tmp39 = tos2("-=");
 
-  array_set(&/*q*/ s, PLUS_ASSIGN, &tmp39);
-  string tmp40 = tos2("-=");
+  array_set(&/*q*/ s, MINUS_ASSIGN, &tmp39);
+  string tmp40 = tos2("*=");
 
-  array_set(&/*q*/ s, MINUS_ASSIGN, &tmp40);
-  string tmp41 = tos2("*=");
+  array_set(&/*q*/ s, MULT_ASSIGN, &tmp40);
+  string tmp41 = tos2("/=");
 
-  array_set(&/*q*/ s, MULT_ASSIGN, &tmp41);
-  string tmp42 = tos2("/=");
+  array_set(&/*q*/ s, DIV_ASSIGN, &tmp41);
+  string tmp42 = tos2("^=");
 
-  array_set(&/*q*/ s, DIV_ASSIGN, &tmp42);
-  string tmp43 = tos2("^=");
+  array_set(&/*q*/ s, XOR_ASSIGN, &tmp42);
+  string tmp43 = tos2("%=");
 
-  array_set(&/*q*/ s, XOR_ASSIGN, &tmp43);
-  string tmp44 = tos2("%=");
+  array_set(&/*q*/ s, MOD_ASSIGN, &tmp43);
+  string tmp44 = tos2("|=");
 
-  array_set(&/*q*/ s, MOD_ASSIGN, &tmp44);
-  string tmp45 = tos2("|=");
+  array_set(&/*q*/ s, OR_ASSIGN, &tmp44);
+  string tmp45 = tos2("&=");
 
-  array_set(&/*q*/ s, OR_ASSIGN, &tmp45);
-  string tmp46 = tos2("&=");
+  array_set(&/*q*/ s, AND_ASSIGN, &tmp45);
+  string tmp46 = tos2(">>=");
 
-  array_set(&/*q*/ s, AND_ASSIGN, &tmp46);
-  string tmp47 = tos2(">>=");
+  array_set(&/*q*/ s, RIGHT_SHIFT_ASSIGN, &tmp46);
+  string tmp47 = tos2("<<=");
 
-  array_set(&/*q*/ s, RIGHT_SHIFT_ASSIGN, &tmp47);
-  string tmp48 = tos2("<<=");
+  array_set(&/*q*/ s, LEFT_SHIFT_ASSIGN, &tmp47);
+  string tmp48 = tos2("{");
 
-  array_set(&/*q*/ s, LEFT_SHIFT_ASSIGN, &tmp48);
-  string tmp49 = tos2("{");
+  array_set(&/*q*/ s, LCBR, &tmp48);
+  string tmp49 = tos2("}");
 
-  array_set(&/*q*/ s, LCBR, &tmp49);
-  string tmp50 = tos2("}");
+  array_set(&/*q*/ s, RCBR, &tmp49);
+  string tmp50 = tos2("(");
 
-  array_set(&/*q*/ s, RCBR, &tmp50);
-  string tmp51 = tos2("(");
+  array_set(&/*q*/ s, LPAR, &tmp50);
+  string tmp51 = tos2(")");
 
-  array_set(&/*q*/ s, LPAR, &tmp51);
-  string tmp52 = tos2(")");
+  array_set(&/*q*/ s, RPAR, &tmp51);
+  string tmp52 = tos2("[");
 
-  array_set(&/*q*/ s, RPAR, &tmp52);
-  string tmp53 = tos2("[");
+  array_set(&/*q*/ s, LSBR, &tmp52);
+  string tmp53 = tos2("]");
 
-  array_set(&/*q*/ s, LSBR, &tmp53);
-  string tmp54 = tos2("]");
+  array_set(&/*q*/ s, RSBR, &tmp53);
+  string tmp54 = tos2("==");
 
-  array_set(&/*q*/ s, RSBR, &tmp54);
-  string tmp55 = tos2("==");
+  array_set(&/*q*/ s, EQ, &tmp54);
+  string tmp55 = tos2("!=");
 
-  array_set(&/*q*/ s, EQ, &tmp55);
-  string tmp56 = tos2("!=");
+  array_set(&/*q*/ s, NE, &tmp55);
+  string tmp56 = tos2(">");
 
-  array_set(&/*q*/ s, NE, &tmp56);
-  string tmp57 = tos2(">");
+  array_set(&/*q*/ s, GT, &tmp56);
+  string tmp57 = tos2("<");
 
-  array_set(&/*q*/ s, GT, &tmp57);
-  string tmp58 = tos2("<");
+  array_set(&/*q*/ s, LT, &tmp57);
+  string tmp58 = tos2(">=");
 
-  array_set(&/*q*/ s, LT, &tmp58);
-  string tmp59 = tos2(">=");
+  array_set(&/*q*/ s, GE, &tmp58);
+  string tmp59 = tos2("<=");
 
-  array_set(&/*q*/ s, GE, &tmp59);
-  string tmp60 = tos2("<=");
+  array_set(&/*q*/ s, LE, &tmp59);
+  string tmp60 = tos2("?");
 
-  array_set(&/*q*/ s, LE, &tmp60);
-  string tmp61 = tos2("?");
+  array_set(&/*q*/ s, QUESTION, &tmp60);
+  string tmp61 = tos2("<<");
 
-  array_set(&/*q*/ s, QUESTION, &tmp61);
-  string tmp62 = tos2("<<");
+  array_set(&/*q*/ s, LEFT_SHIFT, &tmp61);
+  string tmp62 = tos2(">>");
 
-  array_set(&/*q*/ s, LEFT_SHIFT, &tmp62);
-  string tmp63 = tos2(">>");
+  array_set(&/*q*/ s, RIGHT_SHIFT, &tmp62);
+  string tmp63 = tos2("//");
 
-  array_set(&/*q*/ s, RIGHT_SHIFT, &tmp63);
-  string tmp64 = tos2("//");
+  array_set(&/*q*/ s, LINE_COM, &tmp63);
+  string tmp64 = tos2("NLL");
 
-  array_set(&/*q*/ s, LINE_COM, &tmp64);
-  string tmp65 = tos2("NLL");
+  array_set(&/*q*/ s, NL, &tmp64);
+  string tmp65 = tos2("$");
 
-  array_set(&/*q*/ s, NL, &tmp65);
-  string tmp66 = tos2("$");
+  array_set(&/*q*/ s, DOLLAR, &tmp65);
+  string tmp66 = tos2("assert");
 
-  array_set(&/*q*/ s, DOLLAR, &tmp66);
-  string tmp67 = tos2("assert");
+  array_set(&/*q*/ s, ASSERT, &tmp66);
+  string tmp67 = tos2("struct");
 
-  array_set(&/*q*/ s, ASSERT, &tmp67);
-  string tmp68 = tos2("struct");
+  array_set(&/*q*/ s, STRUCT, &tmp67);
+  string tmp68 = tos2("if");
 
-  array_set(&/*q*/ s, STRUCT, &tmp68);
-  string tmp69 = tos2("if");
+  array_set(&/*q*/ s, IF, &tmp68);
+  string tmp69 = tos2("else");
 
-  array_set(&/*q*/ s, IF, &tmp69);
-  string tmp70 = tos2("else");
+  array_set(&/*q*/ s, ELSE, &tmp69);
+  string tmp70 = tos2("return");
 
-  array_set(&/*q*/ s, ELSE, &tmp70);
-  string tmp71 = tos2("return");
+  array_set(&/*q*/ s, RETURN, &tmp70);
+  string tmp71 = tos2("module");
 
-  array_set(&/*q*/ s, RETURN, &tmp71);
-  string tmp72 = tos2("module");
+  array_set(&/*q*/ s, PACKAGE, &tmp71);
+  string tmp72 = tos2("sizeof");
 
-  array_set(&/*q*/ s, PACKAGE, &tmp72);
-  string tmp73 = tos2("sizeof");
+  array_set(&/*q*/ s, SIZEOF, &tmp72);
+  string tmp73 = tos2("go");
 
-  array_set(&/*q*/ s, SIZEOF, &tmp73);
-  string tmp74 = tos2("go");
+  array_set(&/*q*/ s, GO, &tmp73);
+  string tmp74 = tos2("goto");
 
-  array_set(&/*q*/ s, GO, &tmp74);
-  string tmp75 = tos2("goto");
+  array_set(&/*q*/ s, GOTO, &tmp74);
+  string tmp75 = tos2("const");
 
-  array_set(&/*q*/ s, GOTO, &tmp75);
-  string tmp76 = tos2("const");
+  array_set(&/*q*/ s, CONST, &tmp75);
+  string tmp76 = tos2("mut");
 
-  array_set(&/*q*/ s, CONST, &tmp76);
-  string tmp77 = tos2("mut");
+  array_set(&/*q*/ s, MUT, &tmp76);
+  string tmp77 = tos2("type");
 
-  array_set(&/*q*/ s, MUT, &tmp77);
-  string tmp78 = tos2("type");
+  array_set(&/*q*/ s, TIP, &tmp77);
+  string tmp78 = tos2("for");
 
-  array_set(&/*q*/ s, TIP, &tmp78);
-  string tmp79 = tos2("for");
+  array_set(&/*q*/ s, FOR, &tmp78);
+  string tmp79 = tos2("switch");
 
-  array_set(&/*q*/ s, FOR, &tmp79);
-  string tmp80 = tos2("switch");
+  array_set(&/*q*/ s, SWITCH, &tmp79);
+  string tmp80 = tos2("match");
 
-  array_set(&/*q*/ s, SWITCH, &tmp80);
-  string tmp81 = tos2("match");
+  array_set(&/*q*/ s, MATCH, &tmp80);
+  string tmp81 = tos2("case");
 
-  array_set(&/*q*/ s, MATCH, &tmp81);
-  string tmp82 = tos2("case");
+  array_set(&/*q*/ s, CASE, &tmp81);
+  string tmp82 = tos2("fn");
 
-  array_set(&/*q*/ s, CASE, &tmp82);
-  string tmp83 = tos2("fn");
+  array_set(&/*q*/ s, FUNC, &tmp82);
+  string tmp83 = tos2("true");
 
-  array_set(&/*q*/ s, FUNC, &tmp83);
-  string tmp84 = tos2("true");
+  array_set(&/*q*/ s, TRUE, &tmp83);
+  string tmp84 = tos2("false");
 
-  array_set(&/*q*/ s, TRUE, &tmp84);
-  string tmp85 = tos2("false");
+  array_set(&/*q*/ s, FALSE, &tmp84);
+  string tmp85 = tos2("continue");
 
-  array_set(&/*q*/ s, FALSE, &tmp85);
-  string tmp86 = tos2("continue");
+  array_set(&/*q*/ s, CONTINUE, &tmp85);
+  string tmp86 = tos2("break");
 
-  array_set(&/*q*/ s, CONTINUE, &tmp86);
-  string tmp87 = tos2("break");
+  array_set(&/*q*/ s, BREAK, &tmp86);
+  string tmp87 = tos2("import");
 
-  array_set(&/*q*/ s, BREAK, &tmp87);
-  string tmp88 = tos2("import");
+  array_set(&/*q*/ s, IMPORT, &tmp87);
+  string tmp88 = tos2("embed");
 
-  array_set(&/*q*/ s, IMPORT, &tmp88);
-  string tmp89 = tos2("embed");
+  array_set(&/*q*/ s, EMBED, &tmp88);
+  string tmp89 = tos2("typeof");
 
-  array_set(&/*q*/ s, EMBED, &tmp89);
-  string tmp90 = tos2("typeof");
+  array_set(&/*q*/ s, TYPEOF, &tmp89);
+  string tmp90 = tos2("default");
 
-  array_set(&/*q*/ s, TYPEOF, &tmp90);
-  string tmp91 = tos2("default");
+  array_set(&/*q*/ s, DEFAULT, &tmp90);
+  string tmp91 = tos2("endif");
 
-  array_set(&/*q*/ s, DEFAULT, &tmp91);
-  string tmp92 = tos2("endif");
+  array_set(&/*q*/ s, ENDIF, &tmp91);
+  string tmp92 = tos2("enum");
 
-  array_set(&/*q*/ s, ENDIF, &tmp92);
-  string tmp93 = tos2("enum");
+  array_set(&/*q*/ s, ENUM, &tmp92);
+  string tmp93 = tos2("interface");
 
-  array_set(&/*q*/ s, ENUM, &tmp93);
-  string tmp94 = tos2("interface");
+  array_set(&/*q*/ s, INTERFACE, &tmp93);
+  string tmp94 = tos2("pub");
 
-  array_set(&/*q*/ s, INTERFACE, &tmp94);
-  string tmp95 = tos2("pub");
+  array_set(&/*q*/ s, PUB, &tmp94);
+  string tmp95 = tos2("import_const");
 
-  array_set(&/*q*/ s, PUB, &tmp95);
-  string tmp96 = tos2("import_const");
+  array_set(&/*q*/ s, IMPORT_CONST, &tmp95);
+  string tmp96 = tos2("in");
 
-  array_set(&/*q*/ s, IMPORT_CONST, &tmp96);
-  string tmp97 = tos2("in");
+  array_set(&/*q*/ s, IN, &tmp96);
+  string tmp97 = tos2("atomic");
 
-  array_set(&/*q*/ s, IN, &tmp97);
-  string tmp98 = tos2("atomic");
+  array_set(&/*q*/ s, ATOMIC, &tmp97);
+  string tmp98 = tos2("or");
 
-  array_set(&/*q*/ s, ATOMIC, &tmp98);
-  string tmp99 = tos2("or");
+  array_set(&/*q*/ s, OR_ELSE, &tmp98);
+  string tmp99 = tos2("__global");
 
-  array_set(&/*q*/ s, OR_ELSE, &tmp99);
-  string tmp100 = tos2("__global");
+  array_set(&/*q*/ s, GLOBAL, &tmp99);
+  string tmp100 = tos2("union");
 
-  array_set(&/*q*/ s, GLOBAL, &tmp100);
-  string tmp101 = tos2("union");
+  array_set(&/*q*/ s, UNION, &tmp100);
+  string tmp101 = tos2("static");
 
-  array_set(&/*q*/ s, UNION, &tmp101);
-  string tmp102 = tos2("static");
-
-  array_set(&/*q*/ s, STATIC, &tmp102);
+  array_set(&/*q*/ s, STATIC, &tmp101);
 
   return s;
 }
 Token key_to_token(string key) {
-  int tmp103 = 0;
-  bool tmp104 = map_get(main__KEYWORDS, key, &tmp103);
+  int tmp102 = 0;
+  bool tmp103 = map_get(main__KEYWORDS, key, &tmp102);
 
-  Token a = (/*casttt*/ (Token)(/*77*/ tmp103));
+  Token a = (/*casttt*/ (Token)(/*77*/ tmp102));
 
   return a;
 }
@@ -15015,15 +14995,15 @@ string Token_str(Token t) {
 bool Token_is_decl(Token t) {
 
   return t == ENUM || t == INTERFACE || t == FUNC || t == STRUCT || t == TIP ||
-         t == CONST || t == IMPORT_CONST || t == AT || t == PUB || t == EOF;
+         t == CONST || t == IMPORT_CONST || t == PUB || t == EOF;
 }
 bool Token_is_assign(Token t) { return _IN(Token, t, main__AssignTokens); }
 bool array_Token_contains(array_Token t, Token val) {
 
-  array_Token tmp108 = t;
+  array_Token tmp107 = t;
   ;
-  for (int tmp109 = 0; tmp109 < tmp108.len; tmp109++) {
-    Token tt = ((Token *)tmp108.data)[tmp109];
+  for (int tmp108 = 0; tmp108 < tmp107.len; tmp108++) {
+    Token tt = ((Token *)tmp107.data)[tmp108];
 
     if (tt == val) {
       /*if*/
