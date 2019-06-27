@@ -95,7 +95,10 @@ typedef struct os__File os__File;
 typedef struct os__FileInfo os__FileInfo;
 typedef Option Option_string;
 typedef array array_ustring;
+typedef struct time__Info time__Info;
 typedef struct time__Time time__Time;
+typedef Option Option_time__Time;
+typedef Option Option_time__Time;
 typedef struct CGen CGen;
 typedef struct Fn Fn;
 typedef array array_Var;
@@ -122,6 +125,8 @@ typedef int Token;
 
 typedef array array_Token;
 typedef Option Option_string;
+typedef Option Option_time__Time;
+typedef Option Option_time__Time;
 typedef int BuildMode;
 
 typedef int Os;
@@ -175,14 +180,20 @@ struct os__FileInfo {
   string name;
   int size;
 };
-struct time__Time {
+struct time__Info {
   int year;
   int month;
   int day;
   int hour;
   int minute;
   int second;
-  int uni;
+  int yday;
+  int wday;
+};
+struct time__Time {
+  i64 sec;
+  i32 nsec;
+  i64 mono;
 };
 struct CGen {
   os__File out;
@@ -388,7 +399,6 @@ string array_string_str(array_string a);
 void v_free(void *a);
 string tos_clone(byte *s);
 string tos2(byte *s);
-string tos_no_len(byte *s);
 string string_clone(string a);
 byte *string_cstr(string s);
 string string_replace(string s, string rep, string with);
@@ -505,7 +515,6 @@ void StringBuilder_writeln(StringBuilder *b, string s);
 string StringBuilder_str(StringBuilder b);
 void StringBuilder_cut(StringBuilder b, int n);
 void v_StringBuilder_free(StringBuilder *b);
-void os__todo_remove();
 array_string os__init_os_args(int argc, byteptr *_argv);
 array_string os__parse_windows_cmd_line(byte *cmd);
 Option_string os__read_file(string path);
@@ -552,36 +561,30 @@ void os__chdir(string path);
 string os__getwd();
 array_string os__ls(string path);
 void os__print_backtrace();
-void time__remove_me_when_c_bug_is_fixed();
+time__Time time__Time_plus(time__Time a, time__Time b);
+time__Time time__Time_minus(time__Time a, time__Time b);
+f64 time__Time_days(time__Time t);
+f64 time__Time_hours(time__Time t);
+f64 time__Time_minutes(time__Time t);
+f64 time__Time_seconds(time__Time t);
+f64 time__Time_milliseconds(time__Time t);
+f64 time__Time_microseconds(time__Time t);
+f64 time__Time_nanoseconds(time__Time t);
+string time__Time_str(time__Time t);
 time__Time time__now();
-time__Time time__random();
-time__Time time__unix(string u);
-time__Time time__convert_ctime(struct tm t);
-time__Time time__unixn(int uni);
-string time__Time_format_ss(time__Time t);
-string time__Time_format(time__Time t);
-string time__Time_smonth(time__Time t);
-string time__Time_hhmm(time__Time t);
-string time__Time_hhmm_tmp(time__Time t);
-string time__Time_hhmm12(time__Time t);
-string time__Time_hhmmss(time__Time t);
-string time__Time_ymmdd(time__Time t);
-string time__Time_md(time__Time t);
-string time__Time_clean(time__Time t);
-string time__Time_clean12(time__Time t);
-time__Time time__parse(string s);
-time__Time time__new_time(time__Time t);
-int time__Time_calc_unix(time__Time *t);
-time__Time time__Time_add_seconds(time__Time t, int seconds);
-int time__since(time__Time t);
-string time__Time_relative(time__Time t);
-int time__day_of_week(int y, int m, int d);
-int time__Time_day_of_week(time__Time t);
-string time__Time_weekday_str(time__Time t);
-f64 time__ticks();
-void time__sleep(int seconds);
-void time__usleep(int seconds);
-void time__sleep_ms(int seconds);
+void time__sleep(time__Time t);
+time__Info time__Time_local(time__Time t);
+time__Info time__Time_utc(time__Time t);
+string time__Time_format(time__Time t, string fmt);
+Option_time__Time time__parse(string s);
+Option_time__Time time__make(time__Info i);
+time__Time time__days(int n);
+time__Time time__hours(int n);
+time__Time time__minutes(int n);
+time__Time time__seconds(int n);
+time__Time time__milliseconds(int n);
+time__Time time__microseconds(int n);
+time__Time time__nanoseconds(int n);
 void rand__seed();
 int rand__next(int max);
 CGen *new_cgen(string out_name_c);
@@ -781,8 +784,6 @@ bool Token_is_decl(Token t);
 bool Token_is_assign(Token t);
 bool array_Token_contains(array_Token t, Token val);
 array_string os__args;
-string time__Months;
-string time__Days;
 #define main__MaxLocalVars 50
 string main__Version;
 #define DEFAULT_MODE 0
@@ -1326,7 +1327,6 @@ string tos2(byte *s) {
 
   return res;
 }
-string tos_no_len(byte *s) { return tos2(s); }
 string string_clone(string a) {
 
   string b = (string){.len = a.len, .str = v_malloc(a.len + 1)};
@@ -1586,7 +1586,7 @@ array_string string_split_single(string s, byte delim) {
 
   array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
 
-  if ((/*casttt*/ (int)(/*77*/ delim)) == 0) {
+  if (((int)(delim)) == 0) {
     /*if*/
 
     _PUSH(&res, (s), tmp40, string);
@@ -1645,7 +1645,7 @@ array_string string_split_into_lines(string s) {
 
     bool last = i == s.len - 1;
 
-    if ((/*casttt*/ (int)(/*77*/ s.str[i] /*rbyte 0*/)) == 10 || last) {
+    if (((int)(s.str[i] /*rbyte 0*/)) == 10 || last) {
       /*if*/
 
       if (last) {
@@ -2325,7 +2325,7 @@ string string_limit(string s, int max) {
 }
 bool byte_is_white(byte c) {
 
-  int i = (/*casttt*/ (int)(/*77*/ c));
+  int i = ((int)(c));
 
   return i == 10 || i == 32 || i == 9 || i == 13 || c == '\r';
 }
@@ -2350,12 +2350,11 @@ string repeat_char(byte c, int n) {
 }
 int string_hash(string s) {
 
-  int hash = (/*casttt*/ (int)(/*77*/ 0));
+  int hash = ((int)(0));
 
   for (int i = 0; i < s.len; i++) {
 
-    hash = hash * (/*casttt*/ (int)(/*77*/ 31)) +
-           (/*casttt*/ (int)(/*77*/ s.str[/*ptr*/ i] /*rbyte 0*/));
+    hash = hash * ((int)(31)) + ((int)(s.str[/*ptr*/ i] /*rbyte 0*/));
   };
 
   return hash;
@@ -2439,7 +2438,7 @@ byte *v_malloc(int n) {
 
 #ifdef DEBUG_ALLOC
 
-  i64 total = (/*casttt*/ (i64)(/*77*/ 0));
+  i64 total = ((i64)(0));
 
   total_m += n;
 
@@ -2572,7 +2571,7 @@ string int_str(int nn) {
 
     int d = n % 10;
 
-    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + (/*casttt*/ (int)(/*77*/ '0'));
+    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + ((int)('0'));
 
     len++;
 
@@ -2593,7 +2592,7 @@ string u8_str(u8 nn) {
 
   u8 n = nn;
 
-  if (n == (/*casttt*/ (u8)(/*77*/ 0))) {
+  if (n == ((u8)(0))) {
     /*if*/
 
     return tos2("0");
@@ -2607,7 +2606,7 @@ string u8_str(u8 nn) {
 
   bool is_neg = 0;
 
-  if (n < (/*casttt*/ (u8)(/*77*/ 0))) {
+  if (n < ((u8)(0))) {
     /*if*/
 
     n = -n;
@@ -2615,15 +2614,15 @@ string u8_str(u8 nn) {
     is_neg = 1;
   };
 
-  while (n > (/*casttt*/ (u8)(/*77*/ 0))) {
+  while (n > ((u8)(0))) {
 
-    u8 d = n % (/*casttt*/ (u8)(/*77*/ 10));
+    u8 d = n % ((u8)(10));
 
-    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + (/*casttt*/ (u8)(/*77*/ '0'));
+    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + ((u8)('0'));
 
     len++;
 
-    n = n / (/*casttt*/ (u8)(/*77*/ 10));
+    n = n / ((u8)(10));
   };
 
   if (is_neg) {
@@ -2640,7 +2639,7 @@ string i64_str(i64 nn) {
 
   i64 n = nn;
 
-  if (n == (/*casttt*/ (i64)(/*77*/ 0))) {
+  if (n == ((i64)(0))) {
     /*if*/
 
     return tos2("0");
@@ -2654,7 +2653,7 @@ string i64_str(i64 nn) {
 
   bool is_neg = 0;
 
-  if (n < (/*casttt*/ (i64)(/*77*/ 0))) {
+  if (n < ((i64)(0))) {
     /*if*/
 
     n = -n;
@@ -2662,15 +2661,15 @@ string i64_str(i64 nn) {
     is_neg = 1;
   };
 
-  while (n > (/*casttt*/ (i64)(/*77*/ 0))) {
+  while (n > ((i64)(0))) {
 
-    int d = (/*casttt*/ (int)(/*77*/ n % (/*casttt*/ (i64)(/*77*/ 10))));
+    int d = ((int)(n % ((i64)(10))));
 
-    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + (/*casttt*/ (int)(/*77*/ '0'));
+    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + ((int)('0'));
 
     len++;
 
-    n = n / (/*casttt*/ (i64)(/*77*/ 10));
+    n = n / ((i64)(10));
   };
 
   if (is_neg) {
@@ -3225,21 +3224,20 @@ int string_utf32_code(string _rune) {
   if (_rune.len == 1) {
     /*if*/
 
-    return (/*casttt*/ (int)(/*77*/ _rune.str[0] /*rbyte 0*/));
+    return ((int)(_rune.str[0] /*rbyte 0*/));
   };
 
-  byte b = (/*casttt*/ (byte)(
-      /*77*/ (/*casttt*/ (int)(/*77*/ _rune.str[0] /*rbyte 0*/))));
+  byte b = ((byte)(((int)(_rune.str[0] /*rbyte 0*/))));
 
   b <<= _rune.len;
 
-  int res = (/*casttt*/ (int)(/*77*/ b));
+  int res = ((int)(b));
 
   int shift = 6 - _rune.len;
 
   for (int i = 1; i < _rune.len; i++) {
 
-    int c = (/*casttt*/ (int)(/*77*/ _rune.str[i] /*rbyte 0*/));
+    int c = ((int)(_rune.str[i] /*rbyte 0*/));
 
     res <<= shift;
 
@@ -3500,7 +3498,7 @@ array_string os__init_os_args(int argc, byteptr *_argv) {
 }
 array_string os__parse_windows_cmd_line(byte *cmd) {
 
-  string s = tos2(cmd);
+  string s = (tos2(cmd));
 
   return string_split(s, tos2(" "));
 }
@@ -3744,7 +3742,7 @@ string os__exec(string cmd) {
 }
 string os__getenv(string key) {
 
-  void *s = getenv(string_cstr(key));
+  byte *s = getenv(string_cstr(key));
 
   if (isnil(s)) {
     /*if*/
@@ -3752,7 +3750,7 @@ string os__getenv(string key) {
     return tos2("");
   };
 
-  return tos2(s);
+  return (tos2(s));
 }
 bool os__file_exists(string path) {
 
@@ -3857,9 +3855,9 @@ string os__basedir(string path) {
 string os__filename(string path) { return string_all_after(path, tos2("/")); }
 string os__get_line() {
 
-  int max = 256;
+  u64 max = ((u64)(256));
 
-  byte *buf = v_malloc(max);
+  byte *buf = v_malloc(((int)(max)));
 
   int nr_chars = getline(&/*vvar*/ buf, &/*vvar*/ max, stdin);
 
@@ -4025,377 +4023,313 @@ array_string os__ls(string path) {
   return res;
 }
 void os__print_backtrace() {}
-void time__remove_me_when_c_bug_is_fixed() {}
+time__Time time__Time_plus(time__Time a, time__Time b) {
+
+  i64 sec = a.sec + b.sec;
+
+  i32 nsec = a.nsec + b.nsec;
+
+  return (time__Time){
+      .sec = sec + ((i64)(nsec)) / ((i64)(1000000000)),
+      .nsec = nsec % ((i32)(1000000000)),
+  };
+}
+time__Time time__Time_minus(time__Time a, time__Time b) {
+
+  i64 sec = a.sec - b.sec - ((i64)(1));
+
+  i32 nsec = a.nsec - b.nsec + ((i32)(1000000000));
+
+  time__Time t = (time__Time){
+      .sec = sec + ((i64)(nsec)) / ((i64)(1000000000)),
+      .nsec = nsec % ((i32)(1000000000)),
+  };
+
+  if (a.mono <= ((i64)(0)) || b.mono <= ((i64)(0))) {
+    /*if*/
+
+    return t;
+  };
+
+  i64 mono = a.mono - b.mono;
+
+  if (mono > ((i64)(0)) && t.sec >= ((i64)(0)) && t.nsec >= ((i32)(0))) {
+    /*if*/
+
+    return t;
+  };
+
+  if (mono < ((i64)(0)) && t.sec <= ((i64)(0)) && t.nsec <= ((i32)(0))) {
+    /*if*/
+
+    return t;
+  };
+
+  if (mono == ((i64)(0))) {
+    /*if*/
+
+    return (time__Time){};
+  };
+
+  return (time__Time){
+      .sec = mono / ((i64)(1000000000)),
+      .nsec = ((i32)(mono % ((i64)(1000000000)))),
+  };
+}
+f64 time__Time_days(time__Time t) { return ((f64)(t.sec)) / 86400.0; }
+f64 time__Time_hours(time__Time t) { return ((f64)(t.sec)) / 3600.0; }
+f64 time__Time_minutes(time__Time t) { return ((f64)(t.sec)) / 60.0; }
+f64 time__Time_seconds(time__Time t) {
+
+  return ((f64)(t.sec)) + ((f64)(t.nsec)) / 1000000000.0;
+}
+f64 time__Time_milliseconds(time__Time t) {
+
+  return 1000.0 * ((f64)(t.sec)) + ((f64)(t.nsec)) / 1000000.0;
+}
+f64 time__Time_microseconds(time__Time t) {
+
+  return 1000000.0 * ((f64)(t.sec)) + ((f64)(t.nsec)) / 1000.0;
+}
+f64 time__Time_nanoseconds(time__Time t) {
+
+  return 1000000000.0 * ((f64)(t.sec)) + ((f64)(t.nsec));
+}
+string time__Time_str(time__Time t) {
+
+  if (t.sec == ((i64)(0))) {
+    /*if*/
+
+    if (t.nsec == ((i32)(0))) {
+      /*if*/
+
+      return tos2("0s");
+    };
+
+    if (t.nsec < ((i32)(1000)) && t.nsec > ((i32)(-1000))) {
+      /*if*/
+
+      return _STR("%dns", t.nsec);
+    };
+
+    if (t.nsec < ((i32)(1000000)) && t.nsec > ((i32)(-1000000))) {
+      /*if*/
+
+      return _STR("%.1fµs", ((f64)(t.nsec)) / 1000.0);
+    };
+
+    if (t.nsec < ((i32)(1000000000)) && t.nsec > ((i32)(-1000000000))) {
+      /*if*/
+
+      return _STR("%.1fms", ((f64)(t.nsec)) / 1000000.0);
+    };
+  };
+
+  if (t.sec < ((i64)(60)) && t.sec > ((i64)(-60))) {
+    /*if*/
+
+    return _STR("%.1fs", ((f64)(t.sec)) + ((f64)(t.nsec)) / 1000000000.0);
+  };
+
+  if (t.sec < ((i64)(3600)) && t.sec > ((i64)(-3600))) {
+    /*if*/
+
+    return _STR("%.1fm", ((f64)(t.sec)) / 60.0);
+  };
+
+  if (t.sec < ((i64)(86400)) && t.sec > ((i64)(-86400))) {
+    /*if*/
+
+    return _STR("%.1fh", ((f64)(t.sec)) / 3600.0);
+  };
+
+  if (t.sec < ((i64)(864000)) && t.sec > ((i64)(-864000))) {
+    /*if*/
+
+    return _STR("%.1fd", ((f64)(t.sec)) / 86400.0);
+  };
+
+  return _STR("%.0fd", ((f64)(t.sec)) / 86400.0);
+}
 time__Time time__now() {
 
   time_t t = time(0);
 
-  struct tm *now = localtime(&t);
+  time__Time res = (time__Time){};
 
-  time__Time res = (time__Time){.year = 0,
-                                .month = 0,
-                                .day = 0,
-                                .hour = 0,
-                                .minute = 0,
-                                .second = 0,
-                                .uni = 0};
-
-  res.year = now->tm_year + 1900;
-
-  res.month = now->tm_mon + 1;
-
-  res.day = now->tm_mday;
-
-  res.hour = now->tm_hour;
-
-  res.minute = now->tm_min;
-
-  res.second = now->tm_sec;
-
-  res.uni = (int)t;
+  res.sec = t;
 
   return res;
 }
-time__Time time__random() {
+void time__sleep(time__Time t) {
 
-  return (time__Time){.year = rand__next(2) + 201,
-                      .month = rand__next(12) + 1,
-                      .day = rand__next(30) + 1,
-                      .hour = rand__next(24),
-                      .minute = rand__next(60),
-                      .second = rand__next(60),
-                      .uni = 0};
+  if (t.sec > ((i64)(0))) {
+    /*if*/
+
+    sleep(t.sec);
+  };
+
+  if (t.nsec > ((i32)(0))) {
+    /*if*/
+
+    usleep((/*lpar*/ t.nsec + ((i32)(999))) / ((i32)(1000)));
+  };
 }
-time__Time time__unix(string u) {
+time__Info time__Time_local(time__Time t) {
 
-  int uni = atoi(u.str);
+  time__Info info = (time__Info){.year = 0,
+                                 .month = 0,
+                                 .day = 0,
+                                 .hour = 0,
+                                 .minute = 0,
+                                 .second = 0,
+                                 .yday = 0,
+                                 .wday = 0};
 
-  time_t t = (time_t)uni;
+  struct tm *tm = localtime(&t.sec);
 
-  struct tm *now = localtime(&t);
+  info.year = tm->tm_year + 1900;
 
-  time__Time res = (time__Time){.year = 0,
-                                .month = 0,
-                                .day = 0,
-                                .hour = 0,
-                                .minute = 0,
-                                .second = 0,
-                                .uni = 0};
+  info.month = tm->tm_mon + 1;
 
-  res.year = now->tm_year + 1900;
+  info.day = tm->tm_mday;
 
-  res.month = now->tm_mon + 1;
+  info.hour = tm->tm_hour;
 
-  res.day = now->tm_mday;
+  info.minute = tm->tm_min;
 
-  res.hour = now->tm_hour;
+  info.second = tm->tm_sec;
 
-  res.minute = now->tm_min;
+  info.yday = tm->tm_yday;
 
-  res.second = now->tm_sec;
+  info.wday = tm->tm_wday;
 
-  res.uni = uni;
+  return info;
+}
+time__Info time__Time_utc(time__Time t) {
+
+  time__Info info = (time__Info){.year = 0,
+                                 .month = 0,
+                                 .day = 0,
+                                 .hour = 0,
+                                 .minute = 0,
+                                 .second = 0,
+                                 .yday = 0,
+                                 .wday = 0};
+
+  struct tm *tm = gmtime(&t.sec);
+
+  info.year = tm->tm_year + 1900;
+
+  info.month = tm->tm_mon + 1;
+
+  info.day = tm->tm_mday;
+
+  info.hour = tm->tm_hour;
+
+  info.minute = tm->tm_min;
+
+  info.second = tm->tm_sec;
+
+  info.yday = tm->tm_yday;
+
+  info.wday = tm->tm_wday;
+
+  return info;
+}
+string time__Time_format(time__Time t, string fmt) {
+
+  string res = tos2("");
+
+  byte *cfmt = string_cstr(fmt);
+
+  char buf[1024];
+
+  struct tm *tm = localtime(&t.sec);
+
+  strftime(buf, 1024, cfmt, tm);
+
+  res = tos2(buf);
 
   return res;
 }
-time__Time time__convert_ctime(struct tm t) {
+Option_time__Time time__parse(string s) { return opt_ok(&(time__Time){}); }
+Option_time__Time time__make(time__Info i) {
 
-  return (time__Time){.year = t.tm_year + 1900,
-                      .month = t.tm_mon + 1,
-                      .day = t.tm_mday,
-                      .hour = t.tm_hour,
-                      .minute = t.tm_min,
-                      .second = t.tm_sec,
-                      .uni = 0};
-}
-time__Time time__unixn(int uni) {
+  time__Time t = (time__Time){};
 
-  time_t t = (time_t)uni;
+  struct tm tm;
 
-  struct tm *now = localtime(&t);
+  tm.tm_year = i.year - 1900;
 
-  time__Time res = (time__Time){.year = 0,
-                                .month = 0,
-                                .day = 0,
-                                .hour = 0,
-                                .minute = 0,
-                                .second = 0,
-                                .uni = 0};
+  tm.tm_mon = i.month - 1;
 
-  res.year = now->tm_year + 1900;
+  tm.tm_mday = i.day;
 
-  res.month = now->tm_mon + 1;
+  tm.tm_hour = i.hour;
 
-  res.day = now->tm_mday;
+  tm.tm_min = i.minute;
 
-  res.hour = now->tm_hour;
+  tm.tm_sec = i.second;
 
-  res.minute = now->tm_min;
+  tm.tm_yday = i.yday;
 
-  res.second = now->tm_sec;
+  tm.tm_wday = i.wday;
 
-  res.uni = uni;
+  tm.tm_isdst = 0;
 
-  return res;
-}
-string time__Time_format_ss(time__Time t) {
+  t.sec = mktime(&tm);
 
-  return _STR("%d-%02d-%02d %02d:%02d:%02d", t.year, t.month, t.day, t.hour,
-              t.minute, t.second);
-}
-string time__Time_format(time__Time t) {
-
-  return _STR("%d-%02d-%02d %02d:%02d", t.year, t.month, t.day, t.hour,
-              t.minute);
-}
-string time__Time_smonth(time__Time t) {
-
-  int i = t.month - 1;
-
-  return string_substr(time__Months, i * 3, (/*lpar*/ i + 1) * 3);
-}
-string time__Time_hhmm(time__Time t) {
-
-  return _STR("%02d:%02d", t.hour, t.minute);
-}
-string time__Time_hhmm_tmp(time__Time t) {
-
-  return _STR("%02d:%02d", t.hour, t.minute);
-}
-string time__Time_hhmm12(time__Time t) {
-
-  string am = tos2("am");
-
-  int hour = t.hour;
-
-  if (t.hour > 11) {
+  if (t.sec < ((i64)(0))) {
     /*if*/
 
-    am = tos2("pm");
+    return v_error(tos2("time.make: invalid time infomation"));
   };
 
-  if (t.hour > 12) {
-    /*if*/
-
-    hour = hour - 12;
-  };
-
-  if (t.hour == 0) {
-    /*if*/
-
-    hour = 12;
-  };
-
-  return _STR("%d:%02d %.*s", hour, t.minute, am.len, am.str);
+  return opt_ok(&t);
 }
-string time__Time_hhmmss(time__Time t) {
-
-  return _STR("%02d:%02d:%02d", t.hour, t.minute, t.second);
-}
-string time__Time_ymmdd(time__Time t) {
-
-  return _STR("%d-%02d-%02d", t.year, t.month, t.day);
-}
-string time__Time_md(time__Time t) {
-
-  string s = _STR("%.*s %d", time__Time_smonth(t).len, time__Time_smonth(t).str,
-                  t.day);
-
-  return s;
-}
-string time__Time_clean(time__Time t) {
-
-  time__Time nowe = time__now();
-
-  if (t.month == nowe.month && t.year == nowe.year && t.day == nowe.day) {
-    /*if*/
-
-    return time__Time_hhmm(t);
-  };
-
-  if (t.year == nowe.year) {
-    /*if*/
-
-    return _STR("%.*s %d %.*s", time__Time_smonth(t).len,
-                time__Time_smonth(t).str, t.day, time__Time_hhmm(t).len,
-                time__Time_hhmm(t).str);
-  };
-
-  return time__Time_format(t);
-}
-string time__Time_clean12(time__Time t) {
-
-  time__Time nowe = time__now();
-
-  if (t.month == nowe.month && t.year == nowe.year && t.day == nowe.day) {
-    /*if*/
-
-    return time__Time_hhmm12(t);
-  };
-
-  if (t.year == nowe.year) {
-    /*if*/
-
-    return _STR("%.*s %d %.*s", time__Time_smonth(t).len,
-                time__Time_smonth(t).str, t.day, time__Time_hhmm12(t).len,
-                time__Time_hhmm12(t).str);
-  };
-
-  return time__Time_format(t);
-}
-time__Time time__parse(string s) {
-
-  int pos = string_index(s, tos2(" "));
-
-  if (pos <= 0) {
-    /*if*/
-
-    println(tos2("bad time format"));
-
-    return time__now();
-  };
-
-  string symd = string_left(s, pos);
-
-  array_string ymd = string_split(symd, tos2("-"));
-
-  if (ymd.len != 3) {
-    /*if*/
-
-    println(tos2("bad time format"));
-
-    return time__now();
-  };
-
-  string shms = string_right(s, pos);
-
-  array_string hms = string_split(shms, tos2(":"));
-
-  string hour = (*(string *)array__get(hms, 0));
-
-  string minute = (*(string *)array__get(hms, 1));
-
-  string second = (*(string *)array__get(hms, 2));
-
-  return time__new_time(
-      (time__Time){.year = string_int((*(string *)array__get(ymd, 0))),
-                   .month = string_int((*(string *)array__get(ymd, 1))),
-                   .day = string_int((*(string *)array__get(ymd, 2))),
-                   .hour = string_int(hour),
-                   .minute = string_int(minute),
-                   .second = string_int(second),
-                   .uni = 0});
-}
-time__Time time__new_time(time__Time t) {
+time__Time time__days(int n) {
 
   return (time__Time){
-      .uni = time__Time_calc_unix(&/* ? */ t),
-      .year = t.year,
-      .month = t.month,
-      .day = t.day,
-      .hour = t.hour,
-      .minute = t.minute,
-      .second = t.second,
+      .sec = 86400 * n,
   };
 }
-int time__Time_calc_unix(time__Time *t) {
+time__Time time__hours(int n) {
 
-  struct tm lDate;
-
-  lDate.tm_sec = t->second;
-
-  lDate.tm_min = t->minute;
-
-  lDate.tm_hour = t->hour;
-
-  lDate.tm_mday = t->day;
-
-  lDate.tm_mon = t->month - 1;
-
-  lDate.tm_year = t->year - 1900;
-
-  time_t kek = mktime(&lDate);
-
-  return (int)kek;
-
-  return 0;
-}
-time__Time time__Time_add_seconds(time__Time t, int seconds) {
-
-  return time__unixn(t.uni + seconds);
-}
-int time__since(time__Time t) { return 0; }
-string time__Time_relative(time__Time t) {
-
-  time__Time now = time__now();
-
-  int secs = now.uni - t.uni;
-
-  if (secs <= 30) {
-    /*if*/
-
-    return tos2("now");
+  return (time__Time){
+      .sec = 3600 * n,
   };
-
-  if (secs < 60) {
-    /*if*/
-
-    return tos2("1m");
-  };
-
-  if (secs < 3600) {
-    /*if*/
-
-    return _STR("%dm", secs / 60);
-  };
-
-  if (secs < 3600 * 24) {
-    /*if*/
-
-    return _STR("%dh", secs / 3600);
-  };
-
-  if (secs < 3600 * 24 * 5) {
-    /*if*/
-
-    return _STR("%dd", secs / 3600 / 24);
-  };
-
-  if (secs > 3600 * 24 * 10000) {
-    /*if*/
-
-    return tos2("");
-  };
-
-  return time__Time_md(t);
 }
-int time__day_of_week(int y, int m, int d) {
+time__Time time__minutes(int n) {
 
-  return (d += m < 3 ? y-- : y - 2,
-          23 * m / 9 + d + 4 + y / 4 - y / 100 + y / 400) %
-         7;
-
-  return 0;
+  return (time__Time){
+      .sec = 60 * n,
+  };
 }
-int time__Time_day_of_week(time__Time t) {
+time__Time time__seconds(int n) {
 
-  return time__day_of_week(t.year, t.month, t.day);
+  return (time__Time){
+      .sec = n,
+  };
 }
-string time__Time_weekday_str(time__Time t) {
+time__Time time__milliseconds(int n) {
 
-  int i = time__Time_day_of_week(t) - 1;
-
-  return string_substr(time__Days, i * 3, (/*lpar*/ i + 1) * 3);
+  return (time__Time){
+      .nsec = 1000000 * n,
+  };
 }
-f64 time__ticks() {
+time__Time time__microseconds(int n) {
 
-  v_panic(tos2("not implemented"));
-
-  return (/*casttt*/ (f64)(/*77*/ 0));
+  return (time__Time){
+      .nsec = 1000 * n,
+  };
 }
-void time__sleep(int seconds) { sleep(seconds); }
-void time__usleep(int seconds) { usleep(seconds); }
-void time__sleep_ms(int seconds) { usleep(seconds * 1000); }
+time__Time time__nanoseconds(int n) {
+
+  return (time__Time){
+      .nsec = n,
+  };
+}
 void rand__seed() {
 
   time_t t;
@@ -5002,8 +4936,6 @@ void Parser_fn_decl(Parser *p) {
     /*if*/
 
     f->name = Token_str(p->tok);
-
-    println(_STR("!!! %.*s", f->name.len, f->name.str));
 
     Parser_next(p);
 
@@ -8520,7 +8452,7 @@ string Parser_strtok(Parser *p) {
   if (string_eq(res, tos2(""))) {
     /*if*/
 
-    int n = (/*casttt*/ (int)(/*77*/ p->tok));
+    int n = ((int)(p->tok));
 
     return int_str(n);
   };
@@ -9634,7 +9566,7 @@ string Parser_name_expr(Parser *p) {
         name = string_add(name, tos2("*"));
       };
 
-      Parser_gen(p, tos2("(/*casttt*/"));
+      Parser_gen(p, tos2("("));
 
       string typ = Parser_cast(p, name);
 
@@ -11615,17 +11547,9 @@ string Parser_struct_init(Parser *p, bool is_c_struct_init) {
 }
 string Parser_cast(Parser *p, string typ) {
 
-  if (string_contains(p->file_path, tos2("test"))) {
-    /*if*/
-
-    println(_STR("CAST TYP=%.*s tok=", typ.len, typ.str));
-
-    Parser_print_tok(&/* ? */ *p);
-  };
-
-  Parser_gen(p, _STR("(%.*s)(", typ.len, typ.str));
-
   Parser_next(p);
+
+  int pos = CGen_add_placeholder(p->cgen);
 
   if (p->tok == RPAR) {
     /*if*/
@@ -11637,20 +11561,32 @@ string Parser_cast(Parser *p, string typ) {
 
   Parser_check(p, LPAR);
 
-  Parser_gen(p, tos2("/*77*/"));
-
   string expr_typ = Parser_bool_expression(p);
 
   Parser_check(p, RPAR);
 
-  Parser_gen(p, tos2(")"));
-
-  if (string_eq(typ, tos2("string")) && string_eq(expr_typ, tos2("int"))) {
+  if (string_eq(typ, tos2("string")) &&
+      (/*lpar*/ string_eq(expr_typ, tos2("byte*")) ||
+       string_eq(expr_typ, tos2("byteptr")))) {
     /*if*/
 
-    Parser_error(p, _STR("cannot convert `%.*s` to `%.*s`", expr_typ.len,
-                         expr_typ.str, typ.len, typ.str));
+    CGen_set_placeholder(p->cgen, pos, tos2("tos2("));
+
+  } else if (string_eq(typ, tos2("string")) &&
+             string_eq(expr_typ, tos2("int"))) {
+    /*if*/
+
+    Parser_error(
+        p, _STR("cannot cast `%.*s` to `%.*s`, use `str()` method instead",
+                expr_typ.len, expr_typ.str, typ.len, typ.str));
+
+  } else {
+    /*else if*/
+
+    CGen_set_placeholder(p->cgen, pos, _STR("(%.*s)(", typ.len, typ.str));
   };
+
+  Parser_gen(p, tos2(")"));
 
   return typ;
 }
@@ -11871,7 +11807,7 @@ void Parser_chash(Parser *p) {
 
     Parser_log(&/* ? */ *p, _STR("adding flag \"%.*s\"", flag.len, flag.str));
 
-    _PUSH(&p->table->flags, (flag), tmp262, string);
+    _PUSH(&p->table->flags, (flag), tmp263, string);
 
     return;
   };
@@ -11882,7 +11818,7 @@ void Parser_chash(Parser *p) {
     if (Parser_first_run(&/* ? */ *p) && !is_sig) {
       /*if*/
 
-      _PUSH(&p->cgen->includes, (_STR("#%.*s", hash.len, hash.str)), tmp263,
+      _PUSH(&p->cgen->includes, (_STR("#%.*s", hash.len, hash.str)), tmp264,
             string);
 
       return;
@@ -11894,7 +11830,7 @@ void Parser_chash(Parser *p) {
     if (Parser_first_run(&/* ? */ *p)) {
       /*if*/
 
-      _PUSH(&p->cgen->typedefs, (_STR("%.*s", hash.len, hash.str)), tmp264,
+      _PUSH(&p->cgen->typedefs, (_STR("%.*s", hash.len, hash.str)), tmp265,
             string);
     };
 
@@ -11939,7 +11875,7 @@ void Parser_chash(Parser *p) {
     if (string_contains(hash, tos2("define"))) {
       /*if*/
 
-      _PUSH(&p->cgen->includes, (_STR("#%.*s", hash.len, hash.str)), tmp268,
+      _PUSH(&p->cgen->includes, (_STR("#%.*s", hash.len, hash.str)), tmp269,
             string);
 
     } else {
@@ -12666,10 +12602,10 @@ string Parser_js_decode(Parser *p) {
 
     Type *T = Table_find_type(&/* ? */ *p->table, typ);
 
-    array_Var tmp312 = T->fields;
+    array_Var tmp313 = T->fields;
     ;
-    for (int tmp313 = 0; tmp313 < tmp312.len; tmp313++) {
-      Var field = ((Var *)tmp312.data)[tmp313];
+    for (int tmp314 = 0; tmp314 < tmp313.len; tmp314++) {
+      Var field = ((Var *)tmp313.data)[tmp314];
 
       string def_val = type_default(field.typ);
 
@@ -12697,7 +12633,7 @@ string Parser_js_decode(Parser *p) {
     string opt_type = _STR("Option_%.*s", typ.len, typ.str);
 
     _PUSH(&p->cgen->typedefs,
-          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp316,
+          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp317,
           string);
 
     Table_register_type(p->table, opt_type);
@@ -12750,10 +12686,10 @@ bool is_compile_time_const(string s) {
     return 1;
   };
 
-  string tmp320 = s;
+  string tmp321 = s;
   ;
-  for (int tmp321 = 0; tmp321 < tmp320.len; tmp321++) {
-    byte c = ((byte *)tmp320.str)[tmp321];
+  for (int tmp322 = 0; tmp322 < tmp321.len; tmp322++) {
+    byte c = ((byte *)tmp321.str)[tmp322];
 
     if (!(/*lpar*/ (/*lpar*/ c >= '0' && c <= '9') || c == '.')) {
       /*if*/
@@ -14854,11 +14790,10 @@ map_int build_keys() {
 
   map_int res = new_map(1, sizeof(int));
 
-  for (int t = (/*casttt*/ (int)(/*77*/ keyword_beg)) + 1;
-       t < (/*casttt*/ (int)(/*77*/ keyword_end)); t++) {
+  for (int t = ((int)(keyword_beg)) + 1; t < ((int)(keyword_end)); t++) {
 
     string key = (*(string *)array__get(main__TOKENSTR, t));
-    int tmp6 = (/*casttt*/ (int)(/*77*/ t));
+    int tmp6 = ((int)(t));
 
     map__set(&res, key, &tmp6);
   };
@@ -15155,17 +15090,14 @@ Token key_to_token(string key) {
   int tmp102 = 0;
   bool tmp103 = map_get(main__KEYWORDS, key, &tmp102);
 
-  Token a = (/*casttt*/ (Token)(/*77*/ tmp102));
+  Token a = ((Token)(tmp102));
 
   return a;
 }
-bool is_key(string key) {
-
-  return (/*casttt*/ (int)(/*77*/ key_to_token(key))) > 0;
-}
+bool is_key(string key) { return ((int)(key_to_token(key))) > 0; }
 string Token_str(Token t) {
 
-  return (*(string *)array__get(main__TOKENSTR, (/*casttt*/ (int)(/*77*/ t))));
+  return (*(string *)array__get(main__TOKENSTR, ((int)(t))));
 }
 bool Token_is_decl(Token t) {
 
@@ -15192,9 +15124,7 @@ bool array_Token_contains(array_Token t, Token val) {
 void init_consts() {
   g_str_buf = malloc(1000);
   os__args = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
-  time__Months = tos2("JanFebMarAprMayJunJulAugSepOctNovDec");
-  time__Days = tos2("MonTueWedThuFriSatSun");
-  main__Version = tos2("0.1.4");
+  main__Version = tos2("0.1.5");
   main__SupportedPlatforms = new_array_from_c_array(
       3, 3, sizeof(string),
       (string[]){tos2("windows"), tos2("mac"), tos2("linux")});
