@@ -7195,7 +7195,8 @@ void Parser_parse(Parser *p) {
 
   p->can_chash =
       string_eq(p->pkg, tos2("gg")) || string_eq(p->pkg, tos2("glm")) ||
-      string_eq(p->pkg, tos2("gl")) || string_eq(p->pkg, tos2("glfw"));
+      string_eq(p->pkg, tos2("gl")) || string_eq(p->pkg, tos2("http")) ||
+      string_eq(p->pkg, tos2("glfw"));
 
   Table_register_package(p->table, p->pkg);
 
