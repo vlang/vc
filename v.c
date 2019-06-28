@@ -547,6 +547,7 @@ string os__home_dir();
 void os__write_file(string path, string text);
 void os__clear();
 void os__on_segfault(void *f);
+string os__getexepath();
 void os__log(string s);
 bool os__is_dir(string path);
 void os__chdir(string path);
@@ -611,6 +612,7 @@ void Fn_clear_vars(Fn *f);
 bool Parser_is_sig(Parser *p);
 Fn *new_fn(string pkg, bool is_public);
 void Parser_fn_decl(Parser *p);
+void Parser_check_unused_variables(Parser *p);
 void Parser_async_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
                           string receiver_type);
 void Parser_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
@@ -726,6 +728,7 @@ bool is_name_char(byte c);
 int Scanner_get_opening_bracket(Scanner *s);
 void Scanner_create_type_string(Scanner *s, Type T, string name);
 void Parser_create_type_string(Parser *p, Type T, string name);
+bool is_mutable_type(string typ);
 string Type_str(Type t);
 string Fn_str(Fn f);
 bool is_number_type(string typ);
@@ -782,6 +785,7 @@ bool array_Token_contains(array_Token t, Token val);
 array_int g_ustring_runes; // global
 i64 total_m = 0;           // global
 array_string os__args;
+#define os__MAX_PATH 4096
 string time__Months;
 string time__Days;
 #define main__MaxLocalVars 50
@@ -3312,9 +3316,30 @@ string os__getenv(string key) {
 }
 int os__setenv(string name, string value, bool overwrite) {
 
+#ifdef _WIN32
+
+  ;
+
+#else
+
   return setenv(string_cstr(name), string_cstr(value), overwrite);
+
+#endif
+  ;
 }
-int os__unsetenv(string name) { return unsetenv(string_cstr(name)); }
+int os__unsetenv(string name) {
+
+#ifdef _WIN32
+
+  ;
+
+#else
+
+  return unsetenv(string_cstr(name));
+
+#endif
+  ;
+}
 bool os__file_exists(string path) {
 
 #ifdef _WIN32
@@ -3410,6 +3435,14 @@ string os__basedir(string path) {
 string os__filename(string path) { return string_all_after(path, tos2("/")); }
 string os__get_line() {
 
+#ifdef _WIN32
+
+  v_panic(tos2("get_line() not implemented on Windows yet, sorry!"));
+
+  ;
+
+#else
+
   u64 max = ((u64)(256));
 
   byte *buf = v_malloc(((int)(max)));
@@ -3429,8 +3462,19 @@ string os__get_line() {
   };
 
   return tos(buf, nr_chars);
+
+#endif
+  ;
 }
 string os__get_raw_line() {
+
+#ifdef _WIN32
+
+  v_panic(tos2("get_raw_line() not implemented on Windows yet, sorry!"));
+
+  ;
+
+#else
 
   u64 max = ((u64)(256));
 
@@ -3445,6 +3489,9 @@ string os__get_raw_line() {
   };
 
   return tos(buf, nr_chars);
+
+#endif
+  ;
 }
 string os__user_os() {
 
@@ -3526,6 +3573,39 @@ void os__on_segfault(void *f) {
   sa.sa_flags = SA_SIGINFO;
 
   sigaction(SIGSEGV, &/*vvar*/ sa, 0);
+
+#endif
+  ;
+}
+string os__getexepath() {
+
+  byte result[4096] = {} /* arkek init*/;
+
+#ifdef __linux__
+
+  int count = ((int)(readlink("/proc/self/exe", result, os__MAX_PATH)));
+
+  if ((/*lpar*/ count < 0)) {
+    /*if*/
+
+    v_panic(tos2("error reading /proc/self/exe to get exe path"));
+  };
+
+  return tos(result, count);
+
+#endif
+  ;
+
+#ifdef _WIN32
+
+  return tos(result, *GetModuleFileName(0, result, os__MAX_PATH));
+
+#endif
+  ;
+
+#ifdef __APPLE__
+
+  return tos2("");
 
 #endif
   ;
@@ -4890,7 +4970,17 @@ void Parser_fn_decl(Parser *p) {
     return;
   };
 
-  array_Var tmp50 = f->local_vars;
+  Parser_check_unused_variables(p);
+
+  p->cur_fn = main__EmptyFn;
+
+  Parser_fgenln(p, tos2("\n"));
+
+  Parser_genln(p, tos2("}"));
+}
+void Parser_check_unused_variables(Parser *p) {
+
+  array_Var tmp50 = p->cur_fn->local_vars;
   ;
   for (int tmp51 = 0; tmp51 < tmp50.len; tmp51++) {
     Var var = ((Var *)tmp50.data)[tmp51];
@@ -4915,12 +5005,6 @@ void Parser_fn_decl(Parser *p) {
       /*if*/
     };
   };
-
-  p->cur_fn = main__EmptyFn;
-
-  Parser_fgenln(p, tos2("\n"));
-
-  Parser_genln(p, tos2("}"));
 }
 void Parser_async_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
                           string receiver_type) {
@@ -7064,6 +7148,15 @@ V *new_v(array_string args) {
 }
 array_string run_repl() {
 
+#ifdef _WIN32
+
+  println(tos2("REPL does not work on Windows yet, sorry!"));
+
+  v_exit(1);
+
+#endif
+  ;
+
   println(_STR("V %.*s", main__Version.len, main__Version.str));
 
   println(tos2("Use Ctrl-D to exit"));
@@ -7374,6 +7467,14 @@ void Parser_parse(Parser *p) {
     } else if ((p->tok == EOF)) { /* case */
 
       Parser_log(&/* ? */ *p, tos2("end of parse()"));
+
+      if (p->is_script && !p->is_test) {
+        /*if*/
+
+        p->cur_fn = main__MainFn;
+
+        Parser_check_unused_variables(p);
+      };
 
       if (1 && !Parser_first_run(&/* ? */ *p) &&
           Parser_fileis(&/* ? */ *p, tos2("test"))) {
@@ -9100,6 +9201,8 @@ string Parser_name_expr(Parser *p) {
 
   if (v.name.len != 0) {
     /*if*/
+
+    deref = deref || (/*lpar*/ v.is_arg && v.is_mut && is_mutable_type(v.typ));
 
     if (ptr) {
       /*if*/
@@ -13389,6 +13492,42 @@ void Parser_create_type_string(Parser *p, Type T, string name) {
 
   Scanner_create_type_string(p->scanner, T, name);
 }
+bool is_mutable_type(string typ) {
+
+  if (string_eq(typ, tos2("bool*"))) {
+    /*if*/
+
+    return 1;
+  };
+
+  if (string_eq(typ, tos2("int*")) || string_eq(typ, tos2("rune*")) ||
+      string_eq(typ, tos2("i8*")) || string_eq(typ, tos2("i16*")) ||
+      string_eq(typ, tos2("i32*")) || string_eq(typ, tos2("i64*"))) {
+    /*if*/
+
+    return 1;
+  };
+
+  if (string_eq(typ, tos2("byte*")) || string_eq(typ, tos2("u8*")) ||
+      string_eq(typ, tos2("u16*")) || string_eq(typ, tos2("u32*")) ||
+      string_eq(typ, tos2("u64*"))) {
+    /*if*/
+
+    return 1;
+  };
+
+  if (string_eq(typ, tos2("f32*")) || string_eq(typ, tos2("f64*"))) {
+    /*if*/
+
+    return 1;
+  };
+
+  if (string_eq(typ, tos2("string*"))) {
+    /*if*/
+
+    return 1;
+  };
+}
 string Type_str(Type t) {
 
   string s = _STR("type \"%.*s\" {", t.name.len, t.name.str);
@@ -14732,7 +14871,7 @@ void init_consts() {
       "<file>         Place output into <file>.\n  -obf              Obfuscate "
       "the resulting binary.\n  run               Build and execute a V "
       "program.\n                    You can add arguments after file "
-      "name.\nFiles:\n  <file>_test.v     Test file.\n");
+      "name.\n\nFiles:\n  <file>_test.v     Test file.\n");
   main__EmptyFn = ALLOC_INIT(Fn, {.pkg = tos("", 0),
                                   .local_vars = new_array(0, 1, sizeof(Var)),
                                   .var_idx = 0,
