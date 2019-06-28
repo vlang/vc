@@ -8775,24 +8775,15 @@ void Parser_var_decl(Parser *p) {
 
   string name = Parser_check_name(p);
 
-  Parser_fgen(p, tos2(" := "));
-
   if (!p->builtin_pkg && Fn_known_var(&/* ? */ *p->cur_fn, name)) {
     /*if*/
 
     Var v = Fn_find_var(&/* ? */ *p->cur_fn, name);
 
     Parser_error(p, _STR("redefinition of `%.*s`", name.len, name.str));
-
-    if (p->is_play && Parser_first_run(&/* ? */ *p) && !p->builtin_pkg) {
-      /*if*/
-
-      Parser_error(
-          p, _STR("variable `%.*s` is already declared.", name.len, name.str));
-    };
   };
 
-  Parser_next(p);
+  Parser_check_space(p, DECL_ASSIGN);
 
   int pos = CGen_add_placeholder(p->cgen);
 
