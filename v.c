@@ -807,6 +807,7 @@ string main__TmpPath;
 
 string main__HelpText;
 Fn *main__EmptyFn;
+Fn *main__MainFn;
 #define main__SINGLE_QUOTE '\''
 #define main__QUOTE '"'
 #define PRIVATE 0
@@ -4326,9 +4327,9 @@ void Fn_register_var(Fn *f, Var v) {
     Var tmp18 = new_var;
 
     array_set(&/*q*/ f->local_vars, f->var_idx, &tmp18);
-
-    f->var_idx++;
   };
+
+  f->var_idx++;
 }
 bool Parser_is_sig(Parser *p) {
 
@@ -6198,8 +6199,6 @@ void V_compile(V *c) {
       if (c->is_script) {
         /*if*/
 
-        println(tos2("Generating main()..."));
-
         CGen_genln(cgen, _STR("int main() { %.*s; return 0; }",
                               cgen->fn_main.len, cgen->fn_main.str));
 
@@ -6254,10 +6253,10 @@ void V_compile(V *c) {
 
   CGen_save(cgen);
 
-  V_log(&/* ? */ *c, tos2("flags="));
-
   if (c->is_verbose) {
     /*if*/
+
+    V_log(&/* ? */ *c, tos2("flags="));
 
     println(array_string_str(c->table->flags));
   };
@@ -6270,8 +6269,8 @@ void V_compile(V *c) {
     if (1 || c->is_verbose) {
       /*if*/
 
-      println(_STR("============running %.*s==============================",
-                   c->out_name.len, c->out_name.str));
+      println(_STR("============ running %.*s ============", c->out_name.len,
+                   c->out_name.str));
     };
 
     string cmd = (string_starts_with(c->out_name, tos2("/")))
@@ -7060,12 +7059,7 @@ array_string run_repl() {
       _PUSH(&lines, (void_line), tmp126, string);
 
       string source_code = string_add(
-          string_add(
-              string_add(string_add(tos2("fn main(){"),
-                                    array_string_join(lines, tos2("\n"))),
-                         tos2("\n")),
-              line),
-          tos2("}"));
+          string_add(array_string_join(lines, tos2("\n")), tos2("\n")), line);
 
       os__write_file(file, source_code);
 
@@ -7327,7 +7321,7 @@ void Parser_parse(Parser *p) {
         g = string_add(g, CGen_end_tmp(p->cgen));
       };
 
-      g = string_add(g, (/*lpar*/ tos2("; // global")));
+      g = string_add(g, tos2("; // global"));
 
       _PUSH(&p->cgen->consts, (g), tmp7, string);
 
@@ -7353,15 +7347,29 @@ void Parser_parse(Parser *p) {
       if (p->is_script && !p->is_test) {
         /*if*/
 
-        if (p->cur_fn->scope_level == 0) {
+        if (Parser_first_run(&/* ? */ *p)) {
           /*if*/
+
+          if (string_eq(p->cur_fn->name, tos2(""))) {
+            /*if*/
+
+            p->cur_fn = main__MainFn;
+          };
+
+          return;
         };
 
-        Parser_print_tok(&/* ? */ *p);
+        if (string_eq(p->cur_fn->name, tos2(""))) {
+          /*if*/
+
+          p->cur_fn = main__MainFn;
+        };
 
         int start = p->cgen->lines.len;
 
         Parser_statement(p, 1);
+
+        Parser_genln(p, tos2(""));
 
         int end = p->cgen->lines.len;
 
@@ -8083,8 +8091,9 @@ void Parser_error(Parser *p, string s) {
 
   string cur_path = os__getwd();
 
-  if (string_contains(p->file_path, tos2("v/compiler")) ||
-      string_contains(cur_path, tos2("v/compiler"))) {
+  if (!p->is_repl &&
+      (/*lpar*/ string_contains(p->file_path, tos2("v/compiler")) ||
+       string_contains(cur_path, tos2("v/compiler")))) {
     /*if*/
 
     println(tos2("\n========================="));
@@ -8097,12 +8106,9 @@ void Parser_error(Parser *p, string s) {
 
     println(tos2("lead to this error."));
 
-    println(tos2("\nTry to run `git pull && make clean && make`, that will "
-                 "most likely fix it."));
+    println(tos2("\nRun `git pull && make`, that will most likely fix it."));
 
-    println(string_add(tos2("\nIf this doesn\'t help, re-install V from source "
-                            "or download a precompiled"),
-                       tos2(" binary from\nhttps://vlang.io.")));
+    println(tos2("\nIf this doesn\'t help, please create a GitHub issue."));
 
     println(tos2("=========================\n"));
   };
@@ -9238,10 +9244,6 @@ string Parser_name_expr(Parser *p) {
 
   if (string_eq(f.name, tos2(""))) {
     /*if*/
-
-    println(p->cur_fn->name);
-
-    println(int_str(p->cur_fn->args.len));
 
     if (!Parser_first_run(&/* ? */ *p)) {
       /*if*/
@@ -13673,18 +13675,18 @@ void Table_register_type(Table *t, string typ) {
     };
   };
 
-  Type datyp = (Type){.name = typ,
-                      .pkg = tos("", 0),
-                      .fields = new_array(0, 1, sizeof(Var)),
-                      .methods = new_array(0, 1, sizeof(Fn)),
-                      .parent = tos("", 0),
-                      .gen_types = new_array(0, 1, sizeof(string)),
-                      .is_c = 0,
-                      .is_interface = 0,
-                      .is_enum = 0,
-                      .is_placeholder = 0};
-
-  _PUSH(&t->types, (datyp), tmp25, Type);
+  _PUSH(&t->types,
+        ((Type){.name = typ,
+                .pkg = tos("", 0),
+                .fields = new_array(0, 1, sizeof(Var)),
+                .methods = new_array(0, 1, sizeof(Fn)),
+                .parent = tos("", 0),
+                .gen_types = new_array(0, 1, sizeof(string)),
+                .is_c = 0,
+                .is_interface = 0,
+                .is_enum = 0,
+                .is_placeholder = 0}),
+        tmp24, Type);
 }
 void Parser_register_type_with_parent(Parser *p, string strtyp, string parent) {
 
@@ -13709,10 +13711,10 @@ void Table_register_type_with_parent(Table *t, string typ, string parent) {
     return;
   };
 
-  array_Type tmp27 = t->types;
+  array_Type tmp26 = t->types;
   ;
-  for (int tmp28 = 0; tmp28 < tmp27.len; tmp28++) {
-    Type typ2 = ((Type *)tmp27.data)[tmp28];
+  for (int tmp27 = 0; tmp27 < tmp26.len; tmp27++) {
+    Type typ2 = ((Type *)tmp26.data)[tmp27];
 
     if (string_eq(typ2.name, typ)) {
       /*if*/
@@ -13732,7 +13734,7 @@ void Table_register_type_with_parent(Table *t, string typ, string parent) {
                       .is_enum = 0,
                       .is_placeholder = 0};
 
-  _PUSH(&t->types, (datyp), tmp30, Type);
+  _PUSH(&t->types, (datyp), tmp29, Type);
 }
 void Table_register_type2(Table *t, Type typ) {
 
@@ -13742,10 +13744,10 @@ void Table_register_type2(Table *t, Type typ) {
     return;
   };
 
-  array_Type tmp31 = t->types;
+  array_Type tmp30 = t->types;
   ;
-  for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
-    Type typ2 = ((Type *)tmp31.data)[tmp32];
+  for (int tmp31 = 0; tmp31 < tmp30.len; tmp31++) {
+    Type typ2 = ((Type *)tmp30.data)[tmp31];
 
     if (string_eq(typ2.name, typ.name)) {
       /*if*/
@@ -13754,7 +13756,7 @@ void Table_register_type2(Table *t, Type typ) {
     };
   };
 
-  _PUSH(&t->types, (typ), tmp33, Type);
+  _PUSH(&t->types, (typ), tmp32, Type);
 }
 void Type_add_field(Type *t, string name, string typ, bool is_mut, string attr,
                     AccessMod access_mod) {
@@ -13777,7 +13779,7 @@ void Type_add_field(Type *t, string name, string typ, bool is_mut, string attr,
                 .is_used = 0,
                 .scope_level = 0};
 
-  _PUSH(&t->fields, (v), tmp35, Var);
+  _PUSH(&t->fields, (v), tmp34, Var);
 }
 bool Type_has_field(Type *t, string name) {
 
@@ -13787,10 +13789,10 @@ bool Type_has_field(Type *t, string name) {
 }
 Var Type_find_field(Type *t, string name) {
 
-  array_Var tmp37 = t->fields;
+  array_Var tmp36 = t->fields;
   ;
-  for (int tmp38 = 0; tmp38 < tmp37.len; tmp38++) {
-    Var field = ((Var *)tmp37.data)[tmp38];
+  for (int tmp37 = 0; tmp37 < tmp36.len; tmp37++) {
+    Var field = ((Var *)tmp36.data)[tmp37];
 
     if (string_eq(field.name, name)) {
       /*if*/
@@ -13836,7 +13838,7 @@ Var Table_find_field(Table *table, Type *typ, string name) {
 
   return field;
 }
-void Type_add_method(Type *t, Fn f) { _PUSH(&t->methods, (f), tmp42, Fn); }
+void Type_add_method(Type *t, Fn f) { _PUSH(&t->methods, (f), tmp41, Fn); }
 bool Type_has_method(Type *t, string name) {
 
   Fn method = Type_find_method(&/* ? */ *t, name);
@@ -13865,10 +13867,10 @@ Fn Table_find_method(Table *table, Type *typ, string name) {
 }
 Fn Type_find_method(Type *t, string name) {
 
-  array_Fn tmp47 = t->methods;
+  array_Fn tmp46 = t->methods;
   ;
-  for (int tmp48 = 0; tmp48 < tmp47.len; tmp48++) {
-    Fn method = ((Fn *)tmp47.data)[tmp48];
+  for (int tmp47 = 0; tmp47 < tmp46.len; tmp47++) {
+    Fn method = ((Fn *)tmp46.data)[tmp47];
 
     if (string_eq(method.name, name)) {
       /*if*/
@@ -13901,7 +13903,7 @@ void Type_add_gen_type(Type *t, string type_name) {
     return;
   };
 
-  _PUSH(&t->gen_types, (type_name), tmp49, string);
+  _PUSH(&t->gen_types, (type_name), tmp48, string);
 }
 Type *Parser_find_type(Parser *p, string name) {
 
@@ -13924,10 +13926,10 @@ Type *Table_find_type(Table *t, string name) {
     name = string_left(name, name.len - 1);
   };
 
-  array_Type tmp51 = t->types;
+  array_Type tmp50 = t->types;
   ;
-  for (int i = 0; i < tmp51.len; i++) {
-    Type typ = ((Type *)tmp51.data)[i];
+  for (int i = 0; i < tmp50.len; i++) {
+    Type typ = ((Type *)tmp50.data)[i];
 
     if (string_eq(typ.name, name)) {
       /*if*/
@@ -14122,10 +14124,10 @@ bool Parser_satisfies_interface(Parser *p, string interface_name, string _typ,
 
   Type *typ = Table_find_type(&/* ? */ *p->table, _typ);
 
-  array_Fn tmp56 = int_typ->methods;
+  array_Fn tmp55 = int_typ->methods;
   ;
-  for (int tmp57 = 0; tmp57 < tmp56.len; tmp57++) {
-    Fn method = ((Fn *)tmp56.data)[tmp57];
+  for (int tmp56 = 0; tmp56 < tmp55.len; tmp56++) {
+    Fn method = ((Fn *)tmp55.data)[tmp56];
 
     if (!Type_has_method(&/* ? */ *typ, method.name)) {
       /*if*/
@@ -14189,10 +14191,10 @@ string type_default(string typ) {
 }
 bool Table_is_interface(Table *t, string name) {
 
-  array_Type tmp58 = t->types;
+  array_Type tmp57 = t->types;
   ;
-  for (int tmp59 = 0; tmp59 < tmp58.len; tmp59++) {
-    Type typ = ((Type *)tmp58.data)[tmp59];
+  for (int tmp58 = 0; tmp58 < tmp57.len; tmp58++) {
+    Type typ = ((Type *)tmp57.data)[tmp58];
 
     if (typ.is_interface && string_eq(typ.name, name)) {
       /*if*/
@@ -14205,10 +14207,10 @@ bool Table_is_interface(Table *t, string name) {
 }
 bool Table_main_exists(Table *t) {
 
-  array_Fn tmp60 = t->fns;
+  array_Fn tmp59 = t->fns;
   ;
-  for (int tmp61 = 0; tmp61 < tmp60.len; tmp61++) {
-    Fn f = ((Fn *)tmp60.data)[tmp61];
+  for (int tmp60 = 0; tmp60 < tmp59.len; tmp60++) {
+    Fn f = ((Fn *)tmp59.data)[tmp60];
 
     if (string_eq(f.name, tos2("main"))) {
       /*if*/
@@ -14221,10 +14223,10 @@ bool Table_main_exists(Table *t) {
 }
 Var Table_find_const(Table *t, string name) {
 
-  array_Var tmp62 = t->consts;
+  array_Var tmp61 = t->consts;
   ;
-  for (int tmp63 = 0; tmp63 < tmp62.len; tmp63++) {
-    Var c = ((Var *)tmp62.data)[tmp63];
+  for (int tmp62 = 0; tmp62 < tmp61.len; tmp62++) {
+    Var c = ((Var *)tmp61.data)[tmp62];
 
     if (string_eq(c.name, name)) {
       /*if*/
@@ -14288,18 +14290,18 @@ string Table_cgen_name(Table *table, Fn *f) {
       !string_ends_with(name, tos2("_str")) &&
       !string_contains(name, tos2("contains"))) {
     /*if*/
-    int tmp65 = 0;
-    bool tmp66 = map_get(table->obf_ids, name, &tmp65);
+    int tmp64 = 0;
+    bool tmp65 = map_get(table->obf_ids, name, &tmp64);
 
-    int idx = tmp65;
+    int idx = tmp64;
 
     if (idx == 0) {
       /*if*/
 
       table->fn_cnt++;
-      int tmp68 = table->fn_cnt;
+      int tmp67 = table->fn_cnt;
 
-      map__set(&table->obf_ids, name, &tmp68);
+      map__set(&table->obf_ids, name, &tmp67);
 
       idx = table->fn_cnt;
     };
@@ -14692,7 +14694,7 @@ void init_consts() {
   os__args = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
   time__Months = tos2("JanFebMarAprMayJunJulAugSepOctNovDec");
   time__Days = tos2("MonTueWedThuFriSatSun");
-  main__Version = tos2("0.1.7");
+  main__Version = tos2("0.1.8");
   main__SupportedPlatforms = new_array_from_c_array(
       3, 3, sizeof(string),
       (string[]){tos2("windows"), tos2("mac"), tos2("linux")});
@@ -14721,6 +14723,21 @@ void init_consts() {
                                   .returns_error = 0,
                                   .is_decl = 0,
                                   .defer = tos("", 0)});
+  main__MainFn = ALLOC_INIT(Fn, {.name = tos2("main"),
+                                 .pkg = tos("", 0),
+                                 .local_vars = new_array(0, 1, sizeof(Var)),
+                                 .var_idx = 0,
+                                 .args = new_array(0, 1, sizeof(Var)),
+                                 .is_interface = 0,
+                                 .scope_level = 0,
+                                 .typ = tos("", 0),
+                                 .is_c = 0,
+                                 .receiver_typ = tos("", 0),
+                                 .is_public = 0,
+                                 .is_method = 0,
+                                 .returns_error = 0,
+                                 .is_decl = 0,
+                                 .defer = tos("", 0)});
   main__CReserved = new_array_from_c_array(
       10, 10, sizeof(string),
       (string[]){tos2("exit"), tos2("unix"), tos2("print"), tos2("error"),
