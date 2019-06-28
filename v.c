@@ -541,6 +541,7 @@ string os__path_sans_ext(string path);
 string os__basedir(string path);
 string os__filename(string path);
 string os__get_line();
+string os__get_raw_line();
 string os__user_os();
 string os__home_dir();
 void os__write_file(string path, string text);
@@ -577,8 +578,8 @@ int time__Time_day_of_week(time__Time t);
 string time__Time_weekday_str(time__Time t);
 f64 time__ticks();
 void time__sleep(int seconds);
-void time__usleep(int seconds);
-void time__sleep_ms(int seconds);
+void time__usleep(int n);
+void time__sleep_ms(int n);
 void rand__seed();
 int rand__next(int max);
 CGen *new_cgen(string out_name_c);
@@ -606,6 +607,7 @@ void Fn_close_scope(Fn *f);
 void Fn_mark_var_used(Fn *f, Var v);
 bool Fn_known_var(Fn *f, string name);
 void Fn_register_var(Fn *f, Var v);
+void Fn_clear_vars(Fn *f);
 bool Parser_is_sig(Parser *p);
 Fn *new_fn(string pkg, bool is_public);
 void Parser_fn_decl(Parser *p);
@@ -687,7 +689,6 @@ int Parser_get_tmp_counter(Parser *p);
 string os_name_to_ifdef(string name);
 void Parser_comp_time(Parser *p);
 void Parser_chash(Parser *p);
-bool is_c_pre(string hash);
 string Parser_if_st(Parser *p, bool is_expr);
 void Parser_for_st(Parser *p);
 void Parser_switch_statement(Parser *p);
@@ -1352,7 +1353,7 @@ string string_replace(string s, string rep, string with) {
   if (s.len == 0 || rep.len == 0) {
     /*if*/
 
-    return tos2("");
+    return s;
   };
 
   if (!string_contains(s, rep)) {
@@ -2406,27 +2407,6 @@ byte *v_malloc(int n) {
     v_panic(tos2("malloc(<0)"));
   };
 
-#ifdef VPLAY
-
-  if (n > 10000) {
-    /*if*/
-
-    v_panic(
-        tos2("allocating more than 10 KB is not allowed in the playground"));
-  };
-
-#endif
-
-#ifdef DEBUG_ALLOC
-
-  total_m = total_m + n;
-
-  println(_STR("\n\n\nmalloc(%d) total=%lld", n, total_m));
-
-  print_backtrace();
-
-#endif
-
   byte *ptr = malloc(n);
 
   if (isnil(ptr)) {
@@ -2650,21 +2630,21 @@ string int_hex(int n) {
 
   string s = int_str(n);
 
-  byte *hex = v_malloc(s.len + 2);
+  byte *hex = v_malloc(s.len + 3);
 
   sprintf(hex, "0x%x", n);
 
-  return tos(hex, s.len + 2);
+  return tos(hex, s.len + 3);
 }
 string i64_hex(i64 n) {
 
   string s = i64_str(n);
 
-  byte *hex = v_malloc(s.len + 2);
+  byte *hex = v_malloc(s.len + 3);
 
   sprintf(hex, "0x%x", n);
 
-  return tos(hex, s.len + 2);
+  return tos(hex, s.len + 3);
 }
 bool array_byte_contains(array_byte a, byte val) {
 
@@ -3450,6 +3430,22 @@ string os__get_line() {
 
   return tos(buf, nr_chars);
 }
+string os__get_raw_line() {
+
+  u64 max = ((u64)(256));
+
+  byte *buf = v_malloc(((int)(max)));
+
+  int nr_chars = getline(&/*vvar*/ buf, &/*vvar*/ max, stdin);
+
+  if (nr_chars == 0) {
+    /*if*/
+
+    return tos2("");
+  };
+
+  return tos(buf, nr_chars);
+}
 string os__user_os() {
 
 #ifdef __linux__
@@ -3882,13 +3878,48 @@ string time__Time_weekday_str(time__Time t) {
 }
 f64 time__ticks() {
 
+#ifdef _WIN32
+
+  return GetTickCount();
+
+#endif
+  ;
+
   v_panic(tos2("not implemented"));
 
   return ((f64)(0));
 }
-void time__sleep(int seconds) { sleep(seconds); }
-void time__usleep(int seconds) { usleep(seconds); }
-void time__sleep_ms(int seconds) { usleep(seconds * 1000); }
+void time__sleep(int seconds) {
+
+#ifdef _WIN32
+
+  _sleep(seconds * 1000);
+
+  ;
+
+#else
+
+  sleep(seconds);
+
+#endif
+  ;
+}
+void time__usleep(int n) { usleep(n); }
+void time__sleep_ms(int n) {
+
+#ifdef _WIN32
+
+  Sleep(n);
+
+  ;
+
+#else
+
+  usleep(n * 1000);
+
+#endif
+  ;
+}
 void rand__seed() { srand(time__now().uni); }
 int rand__next(int max) { return rand() % max; }
 CGen *new_cgen(string out_name_c) {
@@ -4330,6 +4361,12 @@ void Fn_register_var(Fn *f, Var v) {
   };
 
   f->var_idx++;
+}
+void Fn_clear_vars(Fn *f) {
+
+  f->var_idx = 0;
+
+  f->local_vars = new_array_from_c_array(0, 0, sizeof(Var), (Var[]){});
 }
 bool Parser_is_sig(Parser *p) {
 
@@ -7042,7 +7079,16 @@ array_string run_repl() {
   while (1) {
     v_print(tos2(">>> "));
 
-    string line = string_trim_space(os__get_line());
+    string line = os__get_raw_line();
+
+    if (string_eq(string_trim_space(line), tos2("")) &&
+        string_ends_with(line, tos2("\n"))) {
+      /*if*/
+
+      continue;
+    };
+
+    line = string_trim_space(line);
 
     if (string_eq(line, tos2(""))) {
       /*if*/
@@ -7363,6 +7409,12 @@ void Parser_parse(Parser *p) {
           /*if*/
 
           p->cur_fn = main__MainFn;
+
+          if (p->is_repl) {
+            /*if*/
+
+            Fn_clear_vars(p->cur_fn);
+          };
         };
 
         int start = p->cgen->lines.len;
@@ -10479,7 +10531,8 @@ string Parser_typ_to_fmt(Parser *p, string typ) {
 
     return tos2("%lld");
 
-  } else if (string_eq(typ, tos2("byte*"))) { /* case */
+  } else if (string_eq(typ, tos2("byte*")) ||
+             string_eq(typ, tos2("byteptr"))) { /* case */
 
     return tos2("%s");
 
@@ -10488,6 +10541,12 @@ string Parser_typ_to_fmt(Parser *p, string typ) {
     Parser_error(p, tos2("cannot interpolate this value"));
 
   } else { // default:
+
+    if (string_ends_with(typ, tos2("*"))) {
+      /*if*/
+
+      return tos2("%p");
+    };
 
     Parser_error(p,
                  _STR("unhandled sprintf format \"%.*s\" ", typ.len, typ.str));
@@ -11390,42 +11449,11 @@ void Parser_chash(Parser *p) {
       Parser_genln(p, _STR("#include %.*s", file.len, file.str));
     };
 
-  } else if (is_c_pre(hash)) {
+  } else if (string_contains(hash, tos2("define"))) {
     /*if*/
 
-    if (string_starts_with(hash, tos2("ifdef"))) {
-      /*if*/
-
-      string os = string_trim_space(string_right(hash, 6));
-
-      if (string_eq(os, tos2("linux")) && p->os != LINUX) {
-        /*if*/
-
-        while (p->tok != EOF) {
-
-          if (p->tok == HASH && string_contains(p->lit, tos2("else")) ||
-              string_contains(p->lit, tos2("endif"))) {
-            /*if*/
-
-            break;
-          };
-
-          Parser_next(p);
-        };
-      };
-    };
-
-    if (string_contains(hash, tos2("define"))) {
-      /*if*/
-
-      _PUSH(&p->cgen->includes, (_STR("#%.*s", hash.len, hash.str)), tmp270,
-            string);
-
-    } else {
-      /*else if*/
-
-      Parser_genln(p, _STR("#%.*s", hash.len, hash.str));
-    };
+    _PUSH(&p->cgen->includes, (_STR("#%.*s", hash.len, hash.str)), tmp269,
+          string);
 
   } else {
     /*else if*/
@@ -11437,22 +11465,8 @@ void Parser_chash(Parser *p) {
           p, tos2("bad token `#` (embedding C code is no longer supported)"));
     };
 
-    if (string_eq(p->cur_fn->name, tos2(""))) {
-      /*if*/
-    };
-
     Parser_genln(p, hash);
   };
-}
-bool is_c_pre(string hash) {
-
-  return string_contains(hash, tos2("ifdef")) ||
-         string_contains(hash, tos2("define")) ||
-         string_contains(hash, tos2("endif")) ||
-         string_contains(hash, tos2("elif")) ||
-         string_contains(hash, tos2("ifndef")) ||
-         (/*lpar*/ string_contains(hash, tos2("else")) &&
-          !string_contains(hash, tos2("{")));
 }
 string Parser_if_st(Parser *p, bool is_expr) {
 
@@ -12152,10 +12166,10 @@ string Parser_js_decode(Parser *p) {
 
     Type *T = Table_find_type(&/* ? */ *p->table, typ);
 
-    array_Var tmp314 = T->fields;
+    array_Var tmp313 = T->fields;
     ;
-    for (int tmp315 = 0; tmp315 < tmp314.len; tmp315++) {
-      Var field = ((Var *)tmp314.data)[tmp315];
+    for (int tmp314 = 0; tmp314 < tmp313.len; tmp314++) {
+      Var field = ((Var *)tmp313.data)[tmp314];
 
       string def_val = type_default(field.typ);
 
@@ -12183,7 +12197,7 @@ string Parser_js_decode(Parser *p) {
     string opt_type = _STR("Option_%.*s", typ.len, typ.str);
 
     _PUSH(&p->cgen->typedefs,
-          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp318,
+          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp317,
           string);
 
     Table_register_type(p->table, opt_type);
@@ -12236,10 +12250,10 @@ bool is_compile_time_const(string s) {
     return 1;
   };
 
-  string tmp322 = s;
+  string tmp321 = s;
   ;
-  for (int tmp323 = 0; tmp323 < tmp322.len; tmp323++) {
-    byte c = ((byte *)tmp322.str)[tmp323];
+  for (int tmp322 = 0; tmp322 < tmp321.len; tmp322++) {
+    byte c = ((byte *)tmp321.str)[tmp322];
 
     if (!(/*lpar*/ (/*lpar*/ c >= '0' && c <= '9') || c == '.')) {
       /*if*/
@@ -12320,6 +12334,12 @@ string Scanner_ident_name(Scanner *s) {
   while (1) {
     s->pos++;
 
+    if (s->pos >= s->text.len) {
+      /*if*/
+
+      break;
+    };
+
     byte c = string_at(s->text, s->pos);
 
     if (!is_name_char(c) && !byte_is_digit(c)) {
@@ -12339,7 +12359,7 @@ string Scanner_ident_number(Scanner *s) {
 
   int start = s->pos;
 
-  bool is_hex = string_at(s->text, s->pos) == '0' &&
+  bool is_hex = s->pos + 1 < s->text.len && string_at(s->text, s->pos) == '0' &&
                 string_at(s->text, s->pos + 1) == 'x';
 
   bool is_oct = !is_hex && string_at(s->text, s->pos) == '0';
@@ -12348,6 +12368,12 @@ string Scanner_ident_number(Scanner *s) {
 
   while (1) {
     s->pos++;
+
+    if (s->pos >= s->text.len) {
+      /*if*/
+
+      break;
+    };
 
     byte c = string_at(s->text, s->pos);
 
@@ -12360,7 +12386,7 @@ string Scanner_ident_number(Scanner *s) {
     bool is_good_hex =
         is_hex && (/*lpar*/ c == 'x' || (/*lpar*/ c >= 'a' && c <= 'f'));
 
-    if (!is_hex && c == 'e') {
+    if (!is_hex && c == 'e' && s->pos + 1 < s->text.len) {
       /*if*/
 
       byte next = string_at(s->text, s->pos + 1);
@@ -12380,7 +12406,8 @@ string Scanner_ident_number(Scanner *s) {
       break;
     };
 
-    if (c == '.' && string_at(s->text, s->pos + 1) == '.') {
+    if (c == '.' && s->pos + 1 < s->text.len &&
+        string_at(s->text, s->pos + 1) == '.') {
       /*if*/
 
       break;
@@ -12513,7 +12540,8 @@ ScanRes Scanner_scan(Scanner *s) {
 
     string name = Scanner_ident_name(s);
 
-    byte next_char = string_at(s->text, s->pos + 1);
+    byte next_char =
+        (s->pos + 1 < s->text.len) ? (string_at(s->text, s->pos + 1)) : ('\0');
 
     if (is_key(name)) {
       /*if*/
@@ -12524,7 +12552,7 @@ ScanRes Scanner_scan(Scanner *s) {
     if (s->inside_string) {
       /*if*/
 
-      if (string_at(s->text, s->pos + 1) == main__SINGLE_QUOTE) {
+      if (next_char == main__SINGLE_QUOTE) {
         /*if*/
 
         s->pos++;
@@ -12541,6 +12569,12 @@ ScanRes Scanner_scan(Scanner *s) {
       s->dollar_end = 1;
 
       s->dollar_start = 0;
+    };
+
+    if (s->pos == 0 && next_char == ' ') {
+      /*if*/
+
+      s->pos++;
     };
 
     return scan_res(NAME, name);
@@ -12714,7 +12748,7 @@ ScanRes Scanner_scan(Scanner *s) {
       return scan_res(AND_ASSIGN, tos2(""));
     };
 
-    if (string_at(s->text, s->pos + 1) == '&') {
+    if (nextc == '&') {
       /*if*/
 
       s->pos++;
@@ -12726,7 +12760,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
   } else if ((c == '|')) { /* case */
 
-    if (string_at(s->text, s->pos + 1) == '|') {
+    if (nextc == '|') {
       /*if*/
 
       s->pos++;
@@ -12766,7 +12800,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
   } else if ((c == '.')) { /* case */
 
-    if (string_at(s->text, s->pos + 1) == '.') {
+    if (nextc == '.') {
       /*if*/
 
       s->pos++;
@@ -12780,7 +12814,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
     int start = s->pos + 1;
 
-    while (string_at(s->text, s->pos) != '\n') {
+    while (s->pos < s->text.len && string_at(s->text, s->pos) != '\n') {
 
       s->pos++;
     };
@@ -12799,17 +12833,17 @@ ScanRes Scanner_scan(Scanner *s) {
 
   } else if ((c == '>')) { /* case */
 
-    if (string_at(s->text, s->pos + 1) == '=') {
+    if (nextc == '=') {
       /*if*/
 
       s->pos++;
 
       return scan_res(GE, tos2(""));
 
-    } else if (string_at(s->text, s->pos + 1) == '>') {
+    } else if (nextc == '>') {
       /*if*/
 
-      if (string_at(s->text, s->pos + 2) == '=') {
+      if (s->pos + 2 < s->text.len && string_at(s->text, s->pos + 2) == '=') {
         /*if*/
 
         s->pos = s->pos + 2;
@@ -12831,17 +12865,17 @@ ScanRes Scanner_scan(Scanner *s) {
 
   } else if ((c == '<')) { /* case */
 
-    if (string_at(s->text, s->pos + 1) == '=') {
+    if (nextc == '=') {
       /*if*/
 
       s->pos++;
 
       return scan_res(LE, tos2(""));
 
-    } else if (string_at(s->text, s->pos + 1) == '<') {
+    } else if (nextc == '<') {
       /*if*/
 
-      if (string_at(s->text, s->pos + 2) == '=') {
+      if (s->pos + 2 < s->text.len && string_at(s->text, s->pos + 2) == '=') {
         /*if*/
 
         s->pos = s->pos + 2;
@@ -12863,7 +12897,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
   } else if ((c == '=')) { /* case */
 
-    if (string_at(s->text, s->pos + 1) == '=') {
+    if (nextc == '=') {
       /*if*/
 
       s->pos++;
@@ -12878,7 +12912,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
   } else if ((c == ':')) { /* case */
 
-    if (string_at(s->text, s->pos + 1) == '=') {
+    if (nextc == '=') {
       /*if*/
 
       s->pos++;
@@ -12897,7 +12931,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
   } else if ((c == '!')) { /* case */
 
-    if (string_at(s->text, s->pos + 1) == '=') {
+    if (nextc == '=') {
       /*if*/
 
       s->pos++;
@@ -12926,12 +12960,12 @@ ScanRes Scanner_scan(Scanner *s) {
       return scan_res(DIV_ASSIGN, tos2(""));
     };
 
-    if (string_at(s->text, s->pos + 1) == '/') {
+    if (nextc == '/') {
       /*if*/
 
       int start = s->pos + 1;
 
-      while (string_at(s->text, s->pos) != '\n') {
+      while (s->pos < s->text.len && string_at(s->text, s->pos) != '\n') {
 
         s->pos++;
       };
@@ -12959,7 +12993,7 @@ ScanRes Scanner_scan(Scanner *s) {
       return scan_res(LINE_COM, s->line_comment);
     };
 
-    if (string_at(s->text, s->pos + 1) == '*') {
+    if (nextc == '*') {
       /*if*/
 
       int start = s->pos;
@@ -13324,10 +13358,10 @@ void Scanner_create_type_string(Scanner *s, Type T, string name) {
 
   int end = s->pos;
 
-  array_Var tmp171 = T.fields;
+  array_Var tmp145 = T.fields;
   ;
-  for (int i = 0; i < tmp171.len; i++) {
-    Var field = ((Var *)tmp171.data)[i];
+  for (int i = 0; i < tmp145.len; i++) {
+    Var field = ((Var *)tmp145.data)[i];
 
     if (i != 0) {
       /*if*/
