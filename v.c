@@ -7063,8 +7063,8 @@ V *new_v(array_string args) {
     } else {
       /*else if*/
 
-      println(tos2(
-          "V repo not found. Go to https://vlang.io to download V.zip or"));
+      println(
+          tos2("V repo not found. Go to https://vlang.io to download V.zip "));
 
       println(tos2("or install V from source."));
 
