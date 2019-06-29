@@ -3077,9 +3077,20 @@ Option_string os__read_file(string path) {
 
   string res = tos2("");
 
+  string mode = tos2("r");
+
+  777;
+
+#ifdef _WIN32
+
+  mode = tos2("rb");
+
+#endif
+  ;
+
   byte *cpath = string_cstr(path);
 
-  void *fp = fopen(cpath, "r");
+  void *fp = fopen(cpath, string_cstr(mode));
 
   if (isnil(fp)) {
     /*if*/
@@ -3151,7 +3162,7 @@ array_string os__read_lines(string path) {
 #endif
     ;
 
-    _PUSH(&res, (tos_clone(buf)), tmp16, string);
+    _PUSH(&res, (tos_clone(buf)), tmp17, string);
   };
 
   fclose(fp);
@@ -3165,12 +3176,12 @@ array_ustring os__read_ulines(string path) {
   array_ustring ulines =
       new_array_from_c_array(0, 0, sizeof(ustring), (ustring[]){});
 
-  array_string tmp19 = lines;
+  array_string tmp20 = lines;
   ;
-  for (int tmp20 = 0; tmp20 < tmp19.len; tmp20++) {
-    string myline = ((string *)tmp19.data)[tmp20];
+  for (int tmp21 = 0; tmp21 < tmp20.len; tmp21++) {
+    string myline = ((string *)tmp20.data)[tmp21];
 
-    _PUSH(&ulines, (string_ustring(myline)), tmp21, ustring);
+    _PUSH(&ulines, (string_ustring(myline)), tmp22, ustring);
   };
 
   return ulines;
@@ -3544,9 +3555,9 @@ void os__write_file(string path, string text) {
 }
 void os__clear() {
 
-  ;
+  printf("\x1b[2J");
 
-  ;
+  printf("\x1b[H");
 }
 void os__on_segfault(void *f) {
 
@@ -6540,9 +6551,16 @@ void V_cc(V *c) {
   string args = array_string_join(a, tos2(" "));
 
   string cmd = (os__file_exists(fast_clang))
-                   ? (_STR("%.*s -I. %.*s", fast_clang.len, fast_clang.str,
+                   ? (_STR("%.*s %.*s", fast_clang.len, fast_clang.str,
                            args.len, args.str))
-                   : (_STR("cc -I. %.*s", args.len, args.str));
+                   : (_STR("cc %.*s", args.len, args.str));
+
+#ifdef _WIN32
+
+  cmd = _STR("gcc %.*s", args.len, args.str);
+
+#endif
+  ;
 
   if (c->show_c_cmd || c->is_verbose) {
     /*if*/
@@ -10563,7 +10581,18 @@ string format_str(string str) {
 
   str = string_replace(str, tos2("\""), tos2("\\\""));
 
+#ifdef _WIN32
+
+  str = string_replace(str, tos2("\r\n"), tos2("\\n"));
+
+  ;
+
+#else
+
   str = string_replace(str, tos2("\n"), tos2("\\n"));
+
+#endif
+  ;
 
   return str;
 }
@@ -13124,6 +13153,17 @@ ScanRes Scanner_scan(Scanner *s) {
 
     return scan_res(DIV, tos2(""));
   };
+
+#ifdef _WIN32
+
+  if (c == '\0') {
+    /*if*/
+
+    return scan_res(EOF, tos2(""));
+  };
+
+#endif
+  ;
 
   println(_STR("(char code=%d) pos=%d len=%d", c, s->pos, s->text.len));
 
