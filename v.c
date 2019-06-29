@@ -7051,9 +7051,7 @@ V *new_v(array_string args) {
 
     println(tos2("Looks like you are running V for the first time."));
 
-    string cur_dir = os__getwd();
-
-    lang_dir = string_all_before_last(cur_dir, tos2("/"));
+    lang_dir = os__getwd();
 
     if (os__dir_exists(_STR("%.*s/vlib/builtin", lang_dir.len, lang_dir.str))) {
       /*if*/
@@ -7065,25 +7063,10 @@ V *new_v(array_string args) {
     } else {
       /*else if*/
 
-      println(tos2("V repo not found. Cloning..."));
+      println(tos2(
+          "V repo not found. Go to https://vlang.io to download V.zip or"));
 
-      v_exit(1);
-
-      os__mv(tos2("v"), tos2("v.bin"));
-
-      os__exec(tos2("git clone https://github.com/vlang/v"));
-
-      if (!os__dir_exists(tos2("v"))) {
-        /*if*/
-
-        println(tos2("failed to clone github.com/vlang/v"));
-
-        v_exit(1);
-      };
-
-      os__mv(tos2("v.bin"), tos2("v/compiler/v"));
-
-      println(tos2("Re-launch V from v/compiler"));
+      println(tos2("or install V from source."));
 
       v_exit(1);
     };
@@ -7098,10 +7081,10 @@ V *new_v(array_string args) {
   if (!string_contains(out_name, tos2("builtin.o"))) {
     /*if*/
 
-    array_string tmp117 = builtins;
+    array_string tmp116 = builtins;
     ;
-    for (int tmp118 = 0; tmp118 < tmp117.len; tmp118++) {
-      string builtin = ((string *)tmp117.data)[tmp118];
+    for (int tmp117 = 0; tmp117 < tmp116.len; tmp117++) {
+      string builtin = ((string *)tmp116.data)[tmp117];
 
       string f = _STR("%.*s/vlib/builtin/%.*s", lang_dir.len, lang_dir.str,
                       builtin.len, builtin.str);
@@ -7113,7 +7096,7 @@ V *new_v(array_string args) {
                  main__TmpPath.str, builtin.len, builtin.str);
       };
 
-      _PUSH(&files, (f), tmp120, string);
+      _PUSH(&files, (f), tmp119, string);
     };
   };
 
@@ -7198,7 +7181,7 @@ array_string run_repl() {
       string void_line =
           string_substr(line, string_index(line, tos2("(")) + 1, line.len - 1);
 
-      _PUSH(&lines, (void_line), tmp126, string);
+      _PUSH(&lines, (void_line), tmp125, string);
 
       string source_code = string_add(
           string_add(array_string_join(lines, tos2("\n")), tos2("\n")), line);
@@ -7217,7 +7200,7 @@ array_string run_repl() {
     } else {
       /*else if*/
 
-      _PUSH(&lines, (line), tmp130, string);
+      _PUSH(&lines, (line), tmp129, string);
     };
   };
 
