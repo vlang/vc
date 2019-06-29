@@ -6410,6 +6410,13 @@ void V_compile(V *c) {
                      ? (c->out_name)
                      : (string_add(tos2("./"), c->out_name));
 
+#ifdef _WIN32
+
+    cmd = c->out_name;
+
+#endif
+    ;
+
     if (os__args.len > 3) {
       /*if*/
 
@@ -6426,7 +6433,10 @@ void V_compile(V *c) {
 
       println(s);
 
-      println(tos2("ret not 0, exiting"));
+      println(
+          tos2("failed to run the compiled program, this should never happen"));
+
+      println(tos2("please submit a GitHub issue"));
 
       v_exit(1);
     };
@@ -7163,7 +7173,7 @@ array_string run_repl() {
 
   println(_STR("V %.*s", main__Version.len, main__Version.str));
 
-  println(tos2("Use Ctrl-D to exit"));
+  println(tos2("Use Ctrl-D or `exit` to exit"));
 
   println(tos2("For now you have to use println() to print values, this will "
                "be fixed soon\n"));
@@ -7187,7 +7197,7 @@ array_string run_repl() {
 
     line = string_trim_space(line);
 
-    if (string_eq(line, tos2(""))) {
+    if (string_eq(line, tos2("")) || string_eq(line, tos2("exit"))) {
       /*if*/
 
       break;
