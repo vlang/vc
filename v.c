@@ -728,7 +728,6 @@ bool is_name_char(byte c);
 int Scanner_get_opening_bracket(Scanner *s);
 void Scanner_create_type_string(Scanner *s, Type T, string name);
 void Parser_create_type_string(Parser *p, Type T, string name);
-bool is_mutable_type(string typ);
 string Type_str(Type t);
 string Fn_str(Fn f);
 bool is_number_type(string typ);
@@ -3598,7 +3597,9 @@ string os__getexepath() {
 
 #ifdef _WIN32
 
-  return tos(result, *GetModuleFileName(0, result, os__MAX_PATH));
+  int ret = ((int)(GetModuleFileName(0, result, os__MAX_PATH)));
+
+  return tos(result, ret);
 
 #endif
   ;
@@ -9202,8 +9203,6 @@ string Parser_name_expr(Parser *p) {
   if (v.name.len != 0) {
     /*if*/
 
-    deref = deref || (/*lpar*/ v.is_arg && v.is_mut && is_mutable_type(v.typ));
-
     if (ptr) {
       /*if*/
 
@@ -13491,42 +13490,6 @@ void Scanner_create_type_string(Scanner *s, Type T, string name) {
 void Parser_create_type_string(Parser *p, Type T, string name) {
 
   Scanner_create_type_string(p->scanner, T, name);
-}
-bool is_mutable_type(string typ) {
-
-  if (string_eq(typ, tos2("bool*"))) {
-    /*if*/
-
-    return 1;
-  };
-
-  if (string_eq(typ, tos2("int*")) || string_eq(typ, tos2("rune*")) ||
-      string_eq(typ, tos2("i8*")) || string_eq(typ, tos2("i16*")) ||
-      string_eq(typ, tos2("i32*")) || string_eq(typ, tos2("i64*"))) {
-    /*if*/
-
-    return 1;
-  };
-
-  if (string_eq(typ, tos2("byte*")) || string_eq(typ, tos2("u8*")) ||
-      string_eq(typ, tos2("u16*")) || string_eq(typ, tos2("u32*")) ||
-      string_eq(typ, tos2("u64*"))) {
-    /*if*/
-
-    return 1;
-  };
-
-  if (string_eq(typ, tos2("f32*")) || string_eq(typ, tos2("f64*"))) {
-    /*if*/
-
-    return 1;
-  };
-
-  if (string_eq(typ, tos2("string*"))) {
-    /*if*/
-
-    return 1;
-  };
 }
 string Type_str(Type t) {
 
