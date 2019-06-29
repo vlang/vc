@@ -6788,7 +6788,7 @@ void V_add_user_v_files(V *c) {
       string pkg = (*(string *)array__get(c->table->imports, i));
 
       array_string vfiles = V_v_files_from_dir(
-          &/* ? */ *c, _STR("%.*s/%.*s", c->lang_dir.len, c->lang_dir.str,
+          &/* ? */ *c, _STR("%.*s/vlib/%.*s", c->lang_dir.len, c->lang_dir.str,
                             pkg.len, pkg.str));
 
       array_string tmp81 = vfiles;
@@ -6816,8 +6816,8 @@ void V_add_user_v_files(V *c) {
   for (int tmp85 = 0; tmp85 < tmp84.len; tmp85++) {
     string pkg = ((string *)tmp84.data)[tmp85];
 
-    string module_path =
-        _STR("%.*s/%.*s", c->lang_dir.len, c->lang_dir.str, pkg.len, pkg.str);
+    string module_path = _STR("%.*s/vlib/%.*s", c->lang_dir.len,
+                              c->lang_dir.str, pkg.len, pkg.str);
 
     if (c->build_mode == DEFAULT_MODE || c->build_mode == BUILD) {
       /*if*/
@@ -7036,7 +7036,7 @@ V *new_v(array_string args) {
       vroot = string_trim_space(vroot);
 
       if (os__dir_exists(vroot) &&
-          os__dir_exists(string_add(vroot, tos2("/builtin")))) {
+          os__dir_exists(string_add(vroot, tos2("/vlib/builtin")))) {
         /*if*/
 
         lang_dir = vroot;
@@ -7055,7 +7055,7 @@ V *new_v(array_string args) {
 
     lang_dir = string_all_before_last(cur_dir, tos2("/"));
 
-    if (os__dir_exists(_STR("%.*s/builtin", lang_dir.len, lang_dir.str))) {
+    if (os__dir_exists(_STR("%.*s/vlib/builtin", lang_dir.len, lang_dir.str))) {
       /*if*/
 
       println(_STR("Setting VROOT to \"%.*s\".", lang_dir.len, lang_dir.str));
@@ -7066,6 +7066,8 @@ V *new_v(array_string args) {
       /*else if*/
 
       println(tos2("V repo not found. Cloning..."));
+
+      v_exit(1);
 
       os__mv(tos2("v"), tos2("v.bin"));
 
@@ -7101,7 +7103,7 @@ V *new_v(array_string args) {
     for (int tmp118 = 0; tmp118 < tmp117.len; tmp118++) {
       string builtin = ((string *)tmp117.data)[tmp118];
 
-      string f = _STR("%.*s/builtin/%.*s", lang_dir.len, lang_dir.str,
+      string f = _STR("%.*s/vlib/builtin/%.*s", lang_dir.len, lang_dir.str,
                       builtin.len, builtin.str);
 
       if (build_mode == DEFAULT_MODE || build_mode == BUILD) {
