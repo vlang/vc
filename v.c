@@ -14806,7 +14806,7 @@ void init_consts() {
   os__args = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
   time__Months = tos2("JanFebMarAprMayJunJulAugSepOctNovDec");
   time__Days = tos2("MonTueWedThuFriSatSun");
-  main__Version = tos2("0.1.8");
+  main__Version = tos2("0.1.9");
   main__SupportedPlatforms = new_array_from_c_array(
       3, 3, sizeof(string),
       (string[]){tos2("windows"), tos2("mac"), tos2("linux")});
