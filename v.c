@@ -3598,7 +3598,7 @@ string os__getexepath() {
 
 #ifdef _WIN32
 
-  return tos(result, *GetModuleFileName(0, result, os__MAX_PATH));
+  return tos(result, GetModuleFileName(0, result, os__MAX_PATH));
 
 #endif
   ;
