@@ -829,11 +829,11 @@ string time__Months;
 string time__Days;
 #define main__MaxLocalVars 50
 string main__Version;
-#define DEFAULT_MODE 0
+#define default_mode 0
 
-#define EMBED_VLIB 1
+#define embed_vlib 1
 
-#define BUILD 2
+#define build 2
 
 array_string main__SupportedPlatforms;
 string main__TmpPath;
@@ -2677,9 +2677,9 @@ string int_hex(int n) {
 
   byte *hex = v_malloc(s.len + 3);
 
-  sprintf(hex, "0x%x", n);
+  int count = ((int)(sprintf(hex, "0x%x", n)));
 
-  return tos(hex, s.len + 3);
+  return tos(hex, count);
 }
 string i64_hex(i64 n) {
 
@@ -2693,10 +2693,10 @@ string i64_hex(i64 n) {
 }
 bool array_byte_contains(array_byte a, byte val) {
 
-  array_byte tmp27 = a;
+  array_byte tmp28 = a;
   ;
-  for (int tmp28 = 0; tmp28 < tmp27.len; tmp28++) {
-    byte aa = ((byte *)tmp27.data)[tmp28];
+  for (int tmp29 = 0; tmp29 < tmp28.len; tmp29++) {
+    byte aa = ((byte *)tmp28.data)[tmp29];
 
     if (aa == val) {
       /*if*/
@@ -4544,8 +4544,8 @@ void Fn_clear_vars(Fn *f) {
 }
 bool Parser_is_sig(Parser *p) {
 
-  return (/*lpar*/ p->pref->build_mode == DEFAULT_MODE ||
-          p->pref->build_mode == BUILD) &&
+  return (/*lpar*/ p->pref->build_mode == default_mode ||
+          p->pref->build_mode == build) &&
          (/*lpar*/ string_contains(p->file_path, main__TmpPath));
 }
 Fn *new_fn(string pkg, bool is_public) {
@@ -4959,7 +4959,7 @@ void Parser_fn_decl(Parser *p) {
       /*if*/
 
       if (string_eq(f->name, tos2("darwin__nsstring")) &&
-          p->pref->build_mode == DEFAULT_MODE) {
+          p->pref->build_mode == default_mode) {
         /*if*/
 
         return;
@@ -6281,24 +6281,24 @@ void V_compile(V *v) {
   bool imports_json = array_string_contains(v->table->imports, tos2("json"));
 
   if (v->os == MAC &&
-      (/*lpar*/ (/*lpar*/ v->pref->build_mode == EMBED_VLIB &&
+      (/*lpar*/ (/*lpar*/ v->pref->build_mode == embed_vlib &&
                  array_string_contains(v->table->imports, tos2("ui"))) ||
-       (/*lpar*/ v->pref->build_mode == BUILD &&
+       (/*lpar*/ v->pref->build_mode == build &&
         string_contains(v->dir, tos2("/ui"))))) {
     /*if*/
 
     CGen_genln(cgen, tos2("id defaultFont = 0; // main.v"));
   };
 
-  if (imports_json && v->pref->build_mode == EMBED_VLIB ||
-      (/*lpar*/ v->pref->build_mode == BUILD &&
+  if (imports_json && v->pref->build_mode == embed_vlib ||
+      (/*lpar*/ v->pref->build_mode == build &&
        string_contains(v->out_name, tos2("json.o")))) {
     /*if*/
 
     CGen_genln(cgen, tos2("#include \"cJSON.c\" "));
   };
 
-  if (v->pref->build_mode == DEFAULT_MODE) {
+  if (v->pref->build_mode == default_mode) {
     /*if*/
 
     if (imports_json) {
@@ -6308,8 +6308,8 @@ void V_compile(V *v) {
     };
   };
 
-  if (v->pref->build_mode == EMBED_VLIB ||
-      v->pref->build_mode == DEFAULT_MODE) {
+  if (v->pref->build_mode == embed_vlib ||
+      v->pref->build_mode == default_mode) {
     /*if*/
 
     CGen_genln(cgen, tos2("int g_test_ok = 1; "));
@@ -6384,8 +6384,8 @@ void V_compile(V *v) {
   array_set(&/* ? */ cgen->lines, defs_pos,
             &/*11 EXP:"void*" GOT:"string" */ dd);
 
-  if (v->pref->build_mode == DEFAULT_MODE ||
-      v->pref->build_mode == EMBED_VLIB) {
+  if (v->pref->build_mode == default_mode ||
+      v->pref->build_mode == embed_vlib) {
     /*if*/
 
     CGen_genln(cgen, _STR("void init_consts() { g_str_buf=malloc(1000); %.*s }",
@@ -6411,7 +6411,7 @@ void V_compile(V *v) {
             "tos2(g_str_buf);\n}\n\n"));
   };
 
-  if (v->pref->build_mode != BUILD) {
+  if (v->pref->build_mode != build) {
     /*if*/
 
     if (!Table_main_exists(&/* ? */ *v->table) && !v->pref->is_test) {
@@ -6563,7 +6563,7 @@ void V_cc_windows_cross(V *c) {
 
   string libs = tos2("");
 
-  if (c->pref->build_mode == DEFAULT_MODE) {
+  if (c->pref->build_mode == default_mode) {
     /*if*/
 
     libs = _STR("%.*s/vlib/builtin.o", main__TmpPath.len, main__TmpPath.str);
@@ -6647,7 +6647,7 @@ void V_cc_windows_cross(V *c) {
     v_exit(1);
   };
 
-  if (c->pref->build_mode != BUILD) {
+  if (c->pref->build_mode != build) {
     /*if*/
 
     string link_cmd = string_add(
@@ -6715,15 +6715,15 @@ void V_cc(V *v) {
 
   string libs = tos2("");
 
-  if (v->pref->build_mode == BUILD) {
+  if (v->pref->build_mode == build) {
     /*if*/
 
     _PUSH(&a, (tos2("-c")), tmp47, string);
 
-  } else if (v->pref->build_mode == EMBED_VLIB) {
+  } else if (v->pref->build_mode == embed_vlib) {
     /*if*/
 
-  } else if (v->pref->build_mode == DEFAULT_MODE) {
+  } else if (v->pref->build_mode == default_mode) {
     /*if*/
 
     libs = _STR("%.*s/vlib/builtin.o", main__TmpPath.len, main__TmpPath.str);
@@ -6798,7 +6798,7 @@ void V_cc(V *v) {
     _PUSH(&a, (tos2("-x objective-c")), tmp58, string);
   };
 
-  if (v->os == LINUX && v->pref->build_mode != BUILD) {
+  if (v->os == LINUX && v->pref->build_mode != build) {
     /*if*/
 
     _PUSH(&a, (tos2("-lm -ldl -lpthread")), tmp59, string);
@@ -6831,7 +6831,7 @@ void V_cc(V *v) {
     v_panic(tos2("clang error"));
   };
 
-  if (v->os == LINUX && !linux_host && v->pref->build_mode != BUILD) {
+  if (v->os == LINUX && !linux_host && v->pref->build_mode != build) {
     /*if*/
 
     v->out_name = string_replace(v->out_name, tos2(".o"), tos2(""));
@@ -7029,7 +7029,7 @@ void V_add_user_v_files(V *v) {
     Parser_parse(&/* ? */ p);
   };
 
-  if (v->pref->build_mode == DEFAULT_MODE) {
+  if (v->pref->build_mode == default_mode) {
     /*if*/
 
     for (int i = 0; i < v->table->imports.len; i++) {
@@ -7090,7 +7090,7 @@ void V_add_user_v_files(V *v) {
     string module_path = _STR("%.*s/vlib/%.*s", v->lang_dir.len,
                               v->lang_dir.str, pkg.len, pkg.str);
 
-    if (v->pref->build_mode == DEFAULT_MODE || v->pref->build_mode == BUILD) {
+    if (v->pref->build_mode == default_mode || v->pref->build_mode == build) {
       /*if*/
 
       module_path = _STR("%.*s/vlib/%.*s", main__TmpPath.len, main__TmpPath.str,
@@ -7174,12 +7174,12 @@ V *new_v(array_string args) {
 
   string out_name = get_arg(joined_args, tos2("o"), tos2("a.out"));
 
-  BuildMode build_mode = DEFAULT_MODE;
+  BuildMode build_mode = default_mode;
 
   if (array_string_contains(args, tos2("-lib"))) {
     /*if*/
 
-    build_mode = BUILD;
+    build_mode = build;
 
     string base = string_all_after(dir, tos2("/"));
 
@@ -7204,7 +7204,7 @@ V *new_v(array_string args) {
   } else if (!array_string_contains(args, tos2("-embed_vlib"))) {
     /*if*/
 
-    build_mode = EMBED_VLIB;
+    build_mode = embed_vlib;
   };
 
   bool is_test = string_ends_with(dir, tos2("_test.v"));
@@ -7360,7 +7360,7 @@ V *new_v(array_string args) {
       string f = _STR("%.*s/vlib/builtin/%.*s", lang_dir.len, lang_dir.str,
                       builtin.len, builtin.str);
 
-      if (build_mode == DEFAULT_MODE || build_mode == BUILD) {
+      if (build_mode == default_mode || build_mode == build) {
         /*if*/
 
         f = _STR("%.*s/vlib/builtin/%.*sh", main__TmpPath.len,
@@ -11853,7 +11853,7 @@ void Parser_chash(Parser *p) {
 
     string file = string_right(hash, pos);
 
-    if (p->pref->build_mode != DEFAULT_MODE) {
+    if (p->pref->build_mode != default_mode) {
       /*if*/
 
       Parser_genln(p, _STR("#include %.*s", file.len, file.str));
