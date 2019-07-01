@@ -6935,7 +6935,7 @@ array_string V_v_files_from_dir(V *v, string dir) {
     if (string_ends_with(file, tos2("_mac.v")) && v->os != MAC) {
       /*if*/
 
-      string lin_file = string_replace(file, tos2("_mav.v"), tos2("_lin.v"));
+      string lin_file = string_replace(file, tos2("_mac.v"), tos2("_lin.v"));
 
       if (os__file_exists(_STR("%.*s/%.*s", dir.len, dir.str, lin_file.len,
                                lin_file.str))) {
