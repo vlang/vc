@@ -473,6 +473,7 @@ string bool_str(bool b);
 string int_hex(int n);
 string i64_hex(i64 n);
 bool array_byte_contains(array_byte a, byte val);
+string rune_str(rune c);
 string byte_str(byte c);
 int utf8_char_len(byte b);
 string utf32_to_str(u32 code);
@@ -2706,6 +2707,23 @@ bool array_byte_contains(array_byte a, byte val) {
   };
 
   return 0;
+}
+string rune_str(rune c) {
+
+  int fst_byte = ((int)(c)) >> 8 * 3 & 0xff;
+
+  int len = utf8_char_len(fst_byte);
+
+  string str = (string){.len = len, .str = v_malloc(len + 1)};
+
+  for (int i = 0; i < len; i++) {
+
+    str.str[/*ptr*/ i] /*rbyte 1*/ = ((int)(c)) >> 8 * (/*lpar*/ 3 - i) & 0xff;
+  };
+
+  str.str[len] /*rbyte 1*/ = '\0';
+
+  return str;
 }
 string byte_str(byte c) {
 
