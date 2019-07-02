@@ -15,8 +15,16 @@
 #endif
 
 #ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <io.h> // _waccess
+#include <direct.h> // _wgetcwd
 //#include <WinSock2.h>
+// Convert a wide Unicode string to an UTF8 string
+char* utf8_encode(wchar_t* wstr);
+// Convert an UTF8 string to a wide Unicode String
+wchar_t* utf8_decode(char* str);
+#define _Atomic volatile // volatile is atomic in MSVC
 #endif
 
 //================================== TYPEDEFS ================================*/
@@ -78,12 +86,14 @@ void reload_so();
 void init_consts();
 int g_test_ok = 1;
 /*================================== FNS =================================*/
+#ifndef _WIN32
 #include <dirent.h>
+#include <unistd.h>
+#endif
 #include <errno.h>
 #include <signal.h>
 #include <sys/stat.h>
 #include <time.h>
-#include <unistd.h>
 typedef struct array array;
 typedef array array_int;
 typedef array array_string;
@@ -140,7 +150,7 @@ typedef int Pass;
 typedef int AccessMod;
 typedef int Token;
 struct array {
-  void *data;
+  byte *data;
   int len;
   int cap;
   int element_size;
@@ -173,8 +183,10 @@ struct Option {
   string error;
   bool ok;
 };
-struct os__FILE {};
-struct os__File {
+#ifndef _MSC_VER
+struct /*kind*/ os__FILE {};
+#endif
+struct /*kind*/ os__File {
   os__FILE *cfile;
 };
 struct os__FileInfo {
@@ -707,6 +719,9 @@ string Parser_encode_array(Parser *p, string typ);
 string modules_path();
 void V_compile(V *v);
 void V_cc_windows_cross(V *c);
+#ifdef _WIN32
+void V_cc_windows_msvc(V* c);
+#endif
 void V_cc(V *v);
 array_string V_v_files_from_dir(V *v, string dir);
 void V_add_user_v_files(V *v);
@@ -1326,7 +1341,9 @@ string string_replace(string s, string rep, string with) {
   if (s.len == 0 || rep.len == 0) {
     return s;
   };
-  array_int idxs = new_array_from_c_array(0, 0, sizeof(int), (int[]){});
+
+  array_int idxs = new_array_from_c_array(0, 0, sizeof(int), (int[]){ 0 });
+
   {}
 
   string rem = s;
@@ -1421,7 +1438,9 @@ string string_add(string s, string a) {
   return res;
 }
 array_string string_split(string s, string delim) {
-  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+
+  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
+
   if (delim.len == 0) {
     _PUSH(&res, (s), tmp31, string);
     return res;
@@ -1457,7 +1476,9 @@ array_string string_split(string s, string delim) {
   return res;
 }
 array_string string_split_single(string s, byte delim) {
-  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+
+  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
+
   if (((int)(delim)) == 0) {
     _PUSH(&res, (s), tmp40, string);
     return res;
@@ -1482,7 +1503,9 @@ array_string string_split_single(string s, byte delim) {
   return res;
 }
 array_string string_split_into_lines(string s) {
-  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+
+  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
+
   if (s.len == 0) {
     return res;
   };
@@ -1913,7 +1936,7 @@ int string_hash(string s) {
 }
 array_byte string_bytes(string s) {
   if (s.len == 0) {
-    return new_array_from_c_array(0, 0, sizeof(byte), (byte[]){});
+    return new_array_from_c_array(0, 0, sizeof(byte), (byte[]){ 0 });
   };
   byte tmp127 = ((byte)(0));
   array_byte buf = array_repeat(&tmp127, s.len, sizeof(byte));
@@ -1942,7 +1965,13 @@ void println(string s) {
   if (isnil(s.str)) {
     v_panic(tos2("println(NIL)"));
   };
+
+#ifdef _WIN32
+  wchar_t* wstr = utf8_decode(string_cstr(s));
+  _putws(wstr);
+#else
   printf("%.*s\n", s.len, s.str);
+#endif
 }
 void eprintln(string s) {
   if (isnil(s.str)) {
@@ -2322,7 +2351,7 @@ void v_map_print(map m) {
 void v_map_free(map m) {}
 string map_string_str(map_string m) {
   if (m.size == 0) {
-    return tos2("{}");
+    return tos2("{ 0 }");
   };
   string s = tos2("{\n");
   s = string_add(s, tos2("}"));
@@ -2343,7 +2372,8 @@ Option v_error(string s) { return (Option){.error = s, .ok = 0}; }
 void os__todo_remove() {}
 array_string os__init_os_args(int argc, byteptr *argv) {
   array_string args =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
+
   for (int i = 0; i < argc; i++) {
     _PUSH(&args, ((tos2(argv[/*ptr*/ i] /*rbyteptr 0*/))), tmp3, string);
   };
@@ -2369,7 +2399,7 @@ Option_string os__read_file(string path) {
   fclose(fp);
   str[/*ptr*/ fsize] /*rbyte 1*/ = 0;
   res = tos(str, fsize);
-  string tmp11 = (string)(res);
+  string tmp11 = res;
   return opt_ok(&tmp11, sizeof(string));
 }
 int os__file_size(string path) {
@@ -2383,8 +2413,10 @@ void os__mv(string old, string new) {
   rename(string_cstr(old), string_cstr(new));
 }
 array_string os__read_lines(string path) {
-  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
-  byte buf[1000] = {};
+
+  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
+  byte buf[1000] = { 0 };
+
   byte *cpath = string_cstr(path);
   void *fp = fopen(cpath, "rb");
   if (isnil(fp)) {
@@ -2408,7 +2440,8 @@ array_string os__read_lines(string path) {
 array_ustring os__read_ulines(string path) {
   array_string lines = os__read_lines(path);
   array_ustring ulines =
-      new_array_from_c_array(0, 0, sizeof(ustring), (ustring[]){});
+  new_array_from_c_array(0, 0, sizeof(ustring), (ustring[]){ 0 });
+
   array_string tmp21 = lines;
   ;
   for (int tmp22 = 0; tmp22 < tmp21.len; tmp22++) {
@@ -2423,7 +2456,7 @@ Option_os__File os__open(string path) {
   if (isnil(file.cfile)) {
     return v_error(_STR("failed to open file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp26 = (os__File)(file);
+  os__File tmp26 = file;
   return opt_ok(&tmp26, sizeof(os__File));
 }
 Option_os__File os__create(string path) {
@@ -2432,7 +2465,7 @@ Option_os__File os__create(string path) {
   if (isnil(file.cfile)) {
     return v_error(_STR("failed to create file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp29 = (os__File)(file);
+  os__File tmp29 = file;
   return opt_ok(&tmp29, sizeof(os__File));
 }
 Option_os__File os__open_append(string path) {
@@ -2441,7 +2474,7 @@ Option_os__File os__open_append(string path) {
   if (isnil(file.cfile)) {
     return v_error(_STR("failed to create file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp32 = (os__File)(file);
+  os__File tmp32 = file;
   return opt_ok(&tmp32, sizeof(os__File));
 }
 void os__File_write(os__File f, string s) {
@@ -2488,7 +2521,9 @@ string os__exec(string cmd) {
     printf("popen %.*s failed\n", cmd.len, cmd.str);
     return tos2("");
   };
-  byte buf[1000] = {};
+
+  byte buf[1000] = { 0 };
+
   string res = tos2("");
   while (fgets(buf, 1000, f) != 0) {
     res = string_add(res, tos(buf, strlen(buf)));
@@ -2532,10 +2567,14 @@ int os__unsetenv(string name) {
 bool os__file_exists(string path) {
 #ifdef _WIN32
 
-  return _access(path.str, 0) != -1;
-#endif
+  char* str = string_cstr(path);
+  wchar_t* wstr = utf8_decode(str);
+  return _waccess(wstr, 0) != -1;
+
+#else
   ;
   return access(path.str, 0) != -1;
+#endif
 }
 bool os__dir_exists(string path) {
 #ifdef _WIN32
@@ -2564,7 +2603,9 @@ void os__mkdir(string path) {
 #ifdef _WIN32
 
   path = string_replace(path, tos2("/"), tos2("\\"));
-  CreateDirectory(string_cstr(path), 0);
+
+  CreateDirectory(utf8_decode(string_cstr(path)), 0);
+
   ;
 #else
 
@@ -2682,12 +2723,12 @@ string os__user_os() {
   return tos2("unknown");
 }
 Option_string os__hostname() {
-  byte hname[256] = {};
+  byte hname[256] = { 0 };
   void *res = gethostname(&/*vvar*/ hname, 256);
   if (res != 0) {
     return v_error(tos2("os: hostname cannot get host name of PC."));
   };
-  string tmp61 = (string)(tos_clone(hname));
+  string tmp61 = tos_clone(hname);
   return opt_ok(&tmp61, sizeof(string));
 }
 string os__home_dir() {
@@ -2743,8 +2784,9 @@ void os__on_segfault(void *f) {
   ;
 }
 string os__executable() {
-  byte *result = v_malloc(os__MAX_PATH);
 #ifdef __linux__
+
+  byte *result = v_malloc(os__MAX_PATH);
 
   int count = ((int)(readlink("/proc/self/exe", result, os__MAX_PATH)));
   if (count < 0) {
@@ -2755,8 +2797,10 @@ string os__executable() {
   ;
 #ifdef _WIN32
 
+  wchar_t result[os__MAX_PATH] = { 0 };
+
   int ret = ((int)(GetModuleFileName(0, result, os__MAX_PATH)));
-  return tos(result, ret);
+  return tos(utf8_encode(result), ret);
 #endif
   ;
 #ifdef __APPLE__
@@ -2806,8 +2850,10 @@ string os__executable() {
 bool os__is_dir(string path) {
 #ifdef _WIN32
 
-  int val = ((int)(GetFileAttributes(string_cstr(path))));
+  int val = ((int)(GetFileAttributes(utf8_decode(string_cstr(path)))));
+
   return val & FILE_ATTRIBUTE_DIRECTORY > 0;
+
   ;
 #else
   struct /*c struct init*/
@@ -2824,7 +2870,8 @@ bool os__is_dir(string path) {
 void os__chdir(string path) {
 #ifdef _WIN32
 
-  _chdir(string_cstr(path));
+  _wchdir(utf8_decode(string_cstr(path)));
+
   ;
 #else
 
@@ -2833,35 +2880,41 @@ void os__chdir(string path) {
   ;
 }
 string os__getwd() {
-  byte *buf = v_malloc(512);
 #ifdef _WIN32
+  
+  wchar_t* buf = malloc(os__MAX_PATH * sizeof(wchar_t));
 
-  if (_getcwd(buf, 512) == 0) {
+  if (_wgetcwd(buf, 512) == 0) {
+    /*if*/
+
     return tos2("");
   };
-  ;
+
+  return tos2(utf8_encode(buf));
+
 #else
+
+  byte* buf = v_malloc(512);
 
   if (getcwd(buf, 512) == 0) {
     return tos2("");
   };
+  return (tos2(buf));
+
 #endif
   ;
-  return (tos2(buf));
 }
 array_string os__ls(string path) {
+
+  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
+
 #ifdef _WIN32
 
-  os__win32finddata find_file_data = (os__win32finddata){.dwFileAttributes = 0,
-                                                         .nFileSizeHigh = 0,
-                                                         .nFileSizeLow = 0,
-                                                         .dwReserved0 = 0,
-                                                         .dwReserved1 = 0,
-                                                         .dwFileType = 0,
-                                                         .dwCreatorType = 0,
-                                                         .wFinderFlags = 0};
+  os__win32finddata find_file_data = (os__win32finddata){ 0 };
+
   array_string dir_files =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
+
   if (!os__dir_exists(path)) {
     printf("ls() couldnt open dir \"%.*s\" (does not exist).\n", path.len,
            path.str);
@@ -2869,16 +2922,19 @@ array_string os__ls(string path) {
   };
   string path_files = _STR("%.*s\\*", path.len, path.str);
   void *h_find_files =
-      FindFirstFile(string_cstr(path_files), &/*vvar*/ find_file_data);
+      FindFirstFile(utf8_decode(string_cstr(path_files)), &/*vvar*/ find_file_data);
+
   string first_filename =
-      tos(&/*vvar*/ find_file_data.cFileName, strlen(find_file_data.cFileName));
+	  tos2(/*vvar*/ utf8_encode(find_file_data.cFileName));
+
   if (string_ne(first_filename, tos2(".")) &&
       string_ne(first_filename, tos2(".."))) {
     _PUSH(&dir_files, (first_filename), tmp86, string);
   };
   while (FindNextFile(h_find_files, &/*vvar*/ find_file_data)) {
-    string filename = tos(&/*vvar*/ find_file_data.cFileName,
-                          strlen(find_file_data.cFileName));
+
+    string filename = tos2(utf8_encode(find_file_data.cFileName));
+
     if (string_ne(filename, tos2(".")) && string_ne(filename, tos2(".."))) {
       _PUSH(&dir_files, (string_clone(filename)), tmp88, string);
     };
@@ -2888,7 +2944,7 @@ array_string os__ls(string path) {
   ;
 #else
 
-  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
   void *dir = opendir(string_cstr(path));
   if (isnil(dir)) {
     printf("ls() couldnt open dir \"%.*s\"\n", path.len, path.str);
@@ -2910,8 +2966,11 @@ array_string os__ls(string path) {
     };
   };
   closedir(dir);
-  return res;
+
 #endif
+
+  return res;
+
   ;
 }
 void os__signal(int signum, void *handler) { signal(signum, handler); }
@@ -3155,18 +3214,22 @@ i64 time__ticks() {
 #ifdef _WIN32
 
   return GetTickCount();
-#endif
+
+#else
   ;
   struct /*c struct init*/
 
       timeval ts = (struct timeval){.tv_sec = 0, .tv_usec = 0};
   gettimeofday(&/*vvar*/ ts, 0);
+
   return ts.tv_sec * 1000 + (ts.tv_usec / 1000);
+#endif
 }
 void time__sleep(int seconds) {
 #ifdef _WIN32
 
-  _sleep(seconds * 1000);
+  Sleep(seconds * 1000);
+
   ;
 #else
 
@@ -3231,7 +3294,9 @@ array_int math__digits(int n, int base) {
     sign = -1;
     n = -n;
   };
-  array_int res = new_array_from_c_array(0, 0, sizeof(int), (int[]){});
+
+  array_int res = new_array_from_c_array(0, 0, sizeof(int), (int[]){ 0 });
+
   while (n != 0) {
     _PUSH(&res, ((n % base) * sign), tmp3, int);
     n /= base;
@@ -3499,7 +3564,9 @@ void CGen_register_thread_fn(CGen *g, string wrapper_name, string wrapper_text,
   _PUSH(&g->thread_args, (wrapper_text), tmp16, string);
 }
 string V_prof_counters(V *c) {
-  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+
+  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
+
   array_Type tmp18 = c->table->types;
   ;
   for (int tmp19 = 0; tmp19 < tmp18.len; tmp19++) {
@@ -3519,7 +3586,9 @@ string V_prof_counters(V *c) {
   return array_string_join(res, tos2(";\n"));
 }
 string Parser_print_prof_counters(Parser *p) {
-  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+
+  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
+
   array_Type tmp24 = p->table->types;
   ;
   for (int tmp25 = 0; tmp25 < tmp24.len; tmp25++) {
@@ -3675,7 +3744,8 @@ void Fn_register_var(Fn *f, Var v) {
 }
 void Fn_clear_vars(Fn *f) {
   f->var_idx = 0;
-  f->local_vars = new_array_from_c_array(0, 0, sizeof(Var), (Var[]){});
+
+  f->local_vars = new_array_from_c_array(0, 0, sizeof(Var), (Var[]){ 0 });
 }
 bool Parser_is_sig(Parser *p) {
   return (p->pref->build_mode == main__BuildMode_default_mode ||
@@ -4899,7 +4969,7 @@ void V_compile(V *v) {
       array_string keys_tmp17 = map_keys(&tmp17);
       for (int l = 0; l < keys_tmp17.len; l++) {
         string key = ((string *)keys_tmp17.data)[l];
-        Fn f = {};
+        Fn f = { 0 };
         map_get(tmp17, key, &f);
         if (string_starts_with(f.name, tos2("test_"))) {
           CGen_genln(cgen, _STR("%.*s();", f.name.len, f.name.str));
@@ -5066,8 +5136,130 @@ void V_cc_windows_cross(V *c) {
   };
   println(tos2("Done!"));
 }
+
+void V_cc_windows_msvc(V* c) {
+
+	if (!string_ends_with(c->out_name, tos2(".exe"))) {
+		/*if*/
+
+		c->out_name = string_add(c->out_name, tos2(".exe"));
+	};
+
+	string args = _STR("-D_UNICODE -DUNICODE -o e%.*s", c->out_name.len, c->out_name.str);
+
+	array_string tmp28 = c->table->flags;
+	;
+	for (int tmp29 = 0; tmp29 < tmp28.len; tmp29++) {
+		string flag = ((string*)tmp28.data)[tmp29];
+
+		if (!string_starts_with(flag, tos2("-l"))) {
+			/*if*/
+
+			args = string_add(args, flag);
+
+			args = string_add(args, tos2(" "));
+		};
+	};
+
+	string libs = tos2("");
+
+	if (c->pref->build_mode == main__BuildMode_default_mode) {
+		/*if*/
+
+		libs = _STR("%.*s/vlib/builtin.o", main__TmpPath.len, main__TmpPath.str);
+
+		if (!os__file_exists(libs)) {
+			/*if*/
+
+			println(tos2("`builtin.o` not found"));
+
+			v_exit(1);
+		};
+
+		array_string tmp31 = c->table->imports;
+		;
+		for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
+			string imp = ((string*)tmp31.data)[tmp32];
+
+			libs = string_add(libs, _STR(" %.*s/vlib/%.*s.o", main__TmpPath.len,
+				main__TmpPath.str, imp.len, imp.str));
+		};
+	};
+
+	args = string_add(args, _STR(" %.*s ", c->out_name_c.len, c->out_name_c.str));
+
+	array_string tmp33 = c->table->flags;
+	;
+	for (int tmp34 = 0; tmp34 < tmp33.len; tmp34++) {
+		string flag = ((string*)tmp33.data)[tmp34];
+
+		if (string_starts_with(flag, tos2("-l"))) {
+			/*if*/
+
+			args = string_add(args, flag);
+
+			args = string_add(args, tos2(" "));
+		};
+	};
+
+	println(tos2("Compiling with Microsoft C compiler..."));
+	
+	string obj_name = c->out_name;
+
+	obj_name = string_replace(obj_name, tos2(".exe"), tos2(""));
+
+	obj_name = string_replace(obj_name, tos2(".o.o"), tos2(".obj"));
+
+	string cmd = _STR(
+		"cl -c -Fo%.*s %.*s/%.*s",
+		obj_name.len, obj_name.str, main__TmpPath.len,
+		main__TmpPath.str, c->out_name_c.len, c->out_name_c.str);
+
+	if (c->pref->show_c_cmd || 1) {
+		/*if*/
+
+		println(cmd);
+	};
+
+	if (os__system(cmd) != 0) {
+		/*if*/
+
+		println(tos2("Compilation for Windows failed. Make sure you have "
+			"Microsoft Build Tools installed."));
+
+		v_exit(1);
+	};
+
+	if (c->pref->build_mode != main__BuildMode_build) {
+		/*if*/
+
+		string link_cmd = _STR("link %.*s", obj_name.len, obj_name.str);
+
+		if (c->pref->show_c_cmd || 1) {
+			/*if*/
+
+			println(link_cmd);
+		};
+
+		if (os__system(link_cmd) != 0) {
+			/*if*/
+
+			println(tos2("Compilation for Windows failed. Make sure you have "
+				"lld linker installed."));
+
+			v_exit(1);
+		};
+	};
+
+	println(tos2("Done!"));
+}
+
 void V_cc(V *v) {
   if (v->os == main__OS_windows) {
+	V_cc_windows_msvc(v);
+
+	return;
+
 #ifndef _WIN32
 
     V_cc_windows_cross(&/* ? */ *v);
@@ -5208,7 +5400,9 @@ void V_cc(V *v) {
   };
 }
 array_string V_v_files_from_dir(V *v, string dir) {
-  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+
+  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
+
   if (!os__file_exists(dir)) {
     v_panic(_STR("%.*s doesn\'t exist", dir.len, dir.str));
   } else if (!os__dir_exists(dir)) {
@@ -5251,7 +5445,8 @@ void V_add_user_v_files(V *v) {
   string dir = v->dir;
   V_log(&/* ? */ *v, _STR("add_v_files(%.*s)", dir.len, dir.str));
   array_string user_files =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
+
   bool is_test_with_imports = string_ends_with(dir, tos2("_test.v")) &&
                               (string_contains(dir, tos2("/volt")) ||
                                string_contains(dir, tos2("/c2volt")));
@@ -5500,7 +5695,8 @@ V *new_v(array_string args) {
   string out_name_c =
       string_add(string_all_after(out_name, tos2("/")), tos2(".c"));
   array_string files =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
+
   if (!string_contains(out_name, tos2("builtin.o"))) {
     array_string tmp136 = builtins;
     ;
@@ -5581,7 +5777,8 @@ array_string run_repl() {
   */
 
   array_string lines =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
+
   while (1) {
     v_print(tos2(">>> "));
     string line = os__get_raw_line();
@@ -5659,7 +5856,7 @@ array_string run_repl() {
 }
 array_string env_vflags_and_os_args() {
   array_string args =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
   string vflags = os__getenv(tos2("VFLAGS"));
   if (string_ne(tos2(""), vflags)) {
     _PUSH(&args, ((*(string *)array__get(os__args, 0))), tmp173, string);
@@ -6133,7 +6330,8 @@ void Parser_struct_decl(Parser *p) {
   bool is_pub = 0;
   bool is_mut = 0;
   array_string names =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
+
   while (p->tok != main__Token_rcbr) {
     if (p->tok == main__Token_key_pub) {
       if (is_pub) {
@@ -6180,7 +6378,10 @@ void Parser_struct_decl(Parser *p) {
     bool is_atomic = p->tok == main__Token_key_atomic;
     if (is_atomic) {
       Parser_next(p);
+
+#ifndef _WIN32
       Parser_gen_type(p, tos2("_Atomic "));
+#endif
     };
     if (!is_c) {
       Parser_gen_type(
@@ -6222,7 +6423,8 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
   Parser_check(p, main__Token_lcbr);
   int val = 0;
   array_string fields =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
+
   while (p->tok == main__Token_name) {
     string field = Parser_check_name(p);
     _PUSH(&fields, (field), tmp64, string);
@@ -7676,7 +7878,8 @@ string Parser_assoc(Parser *p) {
   Parser_check(p, main__Token_pipe);
   Parser_gen(p, _STR("(%.*s){", var.typ.len, var.typ.str));
   array_string fields =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
+
   while (p->tok != main__Token_rcbr) {
     string field = Parser_check_name(p);
     _PUSH(&fields, (field), tmp216, string);
@@ -7882,7 +8085,9 @@ string Parser_array_init(Parser *p) {
           string name = Parser_check_name(p);
           if (Table_known_type(&/* ? */ *p->table, name)) {
             p->cgen->cur_line = tos2("");
-            Parser_gen(p, tos2("{}"));
+
+            Parser_gen(p, tos2("{ 0 }"));
+
             return _STR("[%.*s]%.*s", lit.len, lit.str, name.len, name.str);
           } else {
             Parser_error(p, _STR("bad type `%.*s`", name.len, name.str));
@@ -7934,7 +8139,9 @@ string Parser_array_init(Parser *p) {
   bool is_fixed_size = p->tok == main__Token_not;
   if (is_fixed_size) {
     Parser_next(p);
-    Parser_gen(p, tos2(" }"));
+
+    Parser_gen(p, tos2("0 }"));
+
     if (!Parser_first_run(&/* ? */ *p)) {
       if (p->inside_const) {
         CGen_set_placeholder(p->cgen, new_arr_ph, tos2("{ "));
@@ -7949,7 +8156,9 @@ string Parser_array_init(Parser *p) {
   if (no_alloc) {
     new_arr = string_add(new_arr, tos2("_no_alloc"));
   };
-  Parser_gen(p, tos2(" })"));
+
+  Parser_gen(p, tos2(lit.len > 0 ? " })" : "0 })"));
+
   if (!Parser_first_run(&/* ? */ *p)) {
     CGen_set_placeholder(p->cgen, new_arr_ph,
                          _STR("%.*s(%d, %d, sizeof(%.*s), (%.*s[]) { ",
@@ -8012,7 +8221,10 @@ string Parser_struct_init(Parser *p, bool is_c_struct_init) {
     Parser_gen(p, _STR("ALLOC_INIT(%.*s, {", no_star.len, no_star.str));
   };
   array_string inited_fields =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
+
+  bool was_initialized = false;
+
   Token peek = Parser_peek(p);
   if (peek == main__Token_colon || p->tok == main__Token_rcbr) {
     Type *t = Table_find_type(&/* ? */ *p->table, typ);
@@ -8053,7 +8265,10 @@ string Parser_struct_init(Parser *p, bool is_c_struct_init) {
                              typ.len, typ.str, field.name.len, field.name.str));
       };
       string def_val = type_default(field_typ);
-      if (string_ne(def_val, tos2("")) && string_ne(def_val, tos2("{}"))) {
+
+      if (string_ne(def_val, tos2("")) && string_ne(def_val, tos2("{ 0 }"))) {
+        /*if*/
+		  was_initialized = true;
         Parser_gen(p, _STR(".%.*s = %.*s", field.name.len, field.name.str,
                            def_val.len, def_val.str));
         if (i != t->fields.len - 1) {
@@ -8083,6 +8298,8 @@ string Parser_struct_init(Parser *p, bool is_c_struct_init) {
               p, _STR("too few values in `%.*s` literal (%d instead of %d)",
                       typ.len, typ.str, i + 1, T->fields.len));
         };
+		was_initialized = true;
+
         Parser_gen(p, tos2(","));
         Parser_next(p);
       };
@@ -8096,7 +8313,9 @@ string Parser_struct_init(Parser *p, bool is_c_struct_init) {
                         typ.len, typ.str, T->fields.len));
     };
   };
-  Parser_gen(p, tos2("}"));
+  
+  Parser_gen(p, tos2(inited_fields.len > 0 || was_initialized ? "}" : "0 }"));
+
   if (ptr) {
     Parser_gen(p, tos2(")"));
   };
@@ -9400,7 +9619,7 @@ string Scanner_ident_char(Scanner *s) {
     };
     bool double_slash = string_at(s->text, s->pos - 1) == slash &&
                         string_at(s->text, s->pos - 2) == slash;
-    if (string_at(s->text, s->pos) == '\`' &&
+    if (string_at(s->text, s->pos) == '`' &&
         (string_at(s->text, s->pos - 1) != slash || double_slash)) {
       if (double_slash) {
         len++;
@@ -9478,7 +9697,8 @@ int Scanner_get_opening_bracket(Scanner *s) {
     };
     if (string_at(s->text, pos) == '\'' &&
         string_at(s->text, pos - 1) != '\\' &&
-        string_at(s->text, pos - 1) != '\`') {
+        string_at(s->text, pos - 1) != '`') {
+
       inside_string = !inside_string;
     };
     if (parentheses == 0) {
@@ -9676,7 +9896,7 @@ bool Table_known_type(Table *table, string typ) {
   return 0;
 }
 Fn Table_find_fn(Table *t, string name) {
-  Fn tmp15 = {};
+  Fn tmp15 = { 0 };
   bool tmp16 = map_get(t->fns, name, &tmp15);
   Fn f = tmp15;
   if (!isnil(f.name.str)) {
@@ -10109,7 +10329,7 @@ bool Table_main_exists(Table *t) {
   array_string keys_tmp55 = map_keys(&tmp55);
   for (int l = 0; l < keys_tmp55.len; l++) {
     string _ = ((string *)keys_tmp55.data)[l];
-    Fn f = {};
+    Fn f = { 0 };
     map_get(tmp55, _, &f);
     if (string_eq(f.name, tos2("main"))) {
       return 1;
@@ -10566,7 +10786,7 @@ void init_consts() {
   os__ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
   os__DISABLE_NEWLINE_AUTO_RETURN = 0x0008;
   os__ENABLE_LVB_GRID_WORLDWIDE = 0x0010;
-  os__args = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  os__args = new_array_from_c_array(0, 0, sizeof(string), (string[]){ 0 });
   os__PathSeparator = tos2("/");
   time__MonthDays = new_array_from_c_array(
       12, 12, sizeof(int),
@@ -10686,3 +10906,32 @@ string _STR_TMP(const char *fmt, ...) {
   return tos2(g_str_buf);
 }
 
+#ifdef _WIN32
+// Convert a wide Unicode string to an UTF8 string
+char *utf8_encode(wchar_t *wstr)
+{
+	int wstr_len = (int)wcslen(wstr);
+	int num_chars = WideCharToMultiByte(CP_UTF8, 0, wstr, wstr_len, NULL, 0, NULL, NULL);
+	char * strTo = (char *)malloc((num_chars + 1) * sizeof(char));
+	if (strTo)
+	{
+		WideCharToMultiByte(CP_UTF8, 0, wstr, wstr_len, strTo, num_chars, NULL, NULL);
+		strTo[num_chars] = '\0';
+	}
+	return strTo;
+}
+
+// Convert an UTF8 string to a wide Unicode String
+wchar_t *utf8_decode(char *str)
+{
+	int str_len = (int)strlen(str);
+	int num_chars = MultiByteToWideChar(CP_UTF8, 0, str, str_len, NULL, 0);
+	wchar_t* wstrTo = (wchar_t*)malloc((num_chars + 1) * sizeof(wchar_t));
+	if (wstrTo)
+	{
+		MultiByteToWideChar(CP_UTF8, 0, str, str_len, wstrTo, num_chars);
+		wstrTo[num_chars] = L'\0';
+	}
+	return wstrTo;
+}
+#endif
