@@ -2389,7 +2389,7 @@ void print_backtrace() {
 }
 void v_panic(string s) {
 
-  println(_STR("V panic: %.*s", s.len, s.str));
+  printf("V panic: %.*s\n", s.len, s.str);
 
   print_backtrace();
 
@@ -3397,7 +3397,7 @@ string os__exec(string cmd) {
   if (isnil(f)) {
     /*if*/
 
-    println(_STR("popen %.*s failed", cmd.len, cmd.str));
+    printf("popen %.*s failed\n", cmd.len, cmd.str);
 
     return tos2("");
   };
@@ -3468,7 +3468,7 @@ bool os__dir_exists(string path) {
 
   int attr = ((int)(GetFileAttributes(string_cstr(path))));
 
-  println(_STR("ATTR =%d", attr));
+  printf("ATTR =%d\n", attr);
 
   return attr == os__FILE_ATTRIBUTE_DIRECTORY;
 
@@ -3826,7 +3826,7 @@ array_string os__ls(string path) {
   if (isnil(dir)) {
     /*if*/
 
-    println(_STR("ls() couldnt open dir \"%.*s\"", path.len, path.str));
+    printf("ls() couldnt open dir \"%.*s\"\n", path.len, path.str);
 
     os__print_c_errno();
 
@@ -4213,7 +4213,7 @@ CGen *new_cgen(string out_name_c) {
   Option_os__File tmp2 = os__create(path);
   if (!tmp2.ok) {
 
-    println(_STR("failed to create %.*s", path.len, path.str));
+    printf("failed to create %.*s\n", path.len, path.str);
 
     return ALLOC_INIT(CGen, {.out_path = tos("", 0),
                              .typedefs = new_array(0, 1, sizeof(string)),
@@ -4329,8 +4329,8 @@ void CGen_start_tmp(CGen *g) {
 
     println(g->tmp_line);
 
-    println(_STR("start_tmp() already started. cur_line=\"%.*s\"",
-                 g->cur_line.len, g->cur_line.str));
+    printf("start_tmp() already started. cur_line=\"%.*s\"\n", g->cur_line.len,
+           g->cur_line.str);
 
     v_exit(1);
   };
@@ -4750,9 +4750,9 @@ void Parser_fn_decl(Parser *p) {
         string_ne(T->pkg, p->pkg)) {
       /*if*/
 
-      println(_STR("T.pkg=%.*s", T->pkg.len, T->pkg.str));
+      printf("T.pkg=%.*s\n", T->pkg.len, T->pkg.str);
 
-      println(_STR("pkg=%.*s", p->pkg.len, p->pkg.str));
+      printf("pkg=%.*s\n", p->pkg.len, p->pkg.str);
 
       Parser_error(p, _STR("cannot define new methods on non-local type `%.*s`",
                            receiver_typ.len, receiver_typ.str));
@@ -5383,9 +5383,8 @@ void Parser_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
     if (receiver.is_mut && !p->expr_var.is_mut) {
       /*if*/
 
-      println(_STR("%.*s  recv=%.*s recv_mut=%d", method_call.len,
-                   method_call.str, receiver.name.len, receiver.name.str,
-                   receiver.is_mut));
+      printf("%.*s  recv=%.*s recv_mut=%d\n", method_call.len, method_call.str,
+             receiver.name.len, receiver.name.str, receiver.is_mut);
 
       Parser_error(p, _STR("`%.*s` is immutable", p->expr_var.name.len,
                            p->expr_var.name.str));
@@ -5647,7 +5646,7 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
       break;
     };
 
-    int amp_ph = CGen_add_placeholder(p->cgen);
+    int ph = CGen_add_placeholder(p->cgen);
 
     if (p->tok == RPAR) {
       /*if*/
@@ -5691,20 +5690,28 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
       Type *T = Table_find_type(&/* ? */ *p->table, typ);
 
-      if (string_eq(typ, tos2("u8"))) {
+      string fmt = Parser_typ_to_fmt(p, typ);
+
+      if (string_ne(fmt, tos2(""))) {
         /*if*/
 
-        CGen_set_placeholder(p->cgen, amp_ph, tos2("u8_str("));
+        p->cgen->cur_line = string_replace(
+            p->cgen->cur_line, tos2("println ("),
+            string_add(string_add(tos2("/*opt*/printf (\""), fmt),
+                       tos2("\", ")));
 
-      } else if (string_eq(T->parent, tos2("int"))) {
+        continue;
+      };
+
+      if (string_eq(T->parent, tos2("int"))) {
         /*if*/
 
-        CGen_set_placeholder(p->cgen, amp_ph, tos2("int_str("));
+        CGen_set_placeholder(p->cgen, ph, tos2("int_str("));
 
       } else if (string_ends_with(typ, tos2("*"))) {
         /*if*/
 
-        CGen_set_placeholder(p->cgen, amp_ph, tos2("ptr_str("));
+        CGen_set_placeholder(p->cgen, ph, tos2("ptr_str("));
 
       } else {
         /*else if*/
@@ -5749,8 +5756,7 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
                    typ.len, typ.str));
         };
 
-        CGen_set_placeholder(p->cgen, amp_ph,
-                             _STR("%.*s_str(", typ.len, typ.str));
+        CGen_set_placeholder(p->cgen, ph, _STR("%.*s_str(", typ.len, typ.str));
       };
 
       Parser_gen(p, tos2(")"));
@@ -5784,7 +5790,7 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
           !string_contains(expected, tos2("*"))) {
         /*if*/
 
-        CGen_set_placeholder(p->cgen, amp_ph, tos2("*"));
+        CGen_set_placeholder(p->cgen, ph, tos2("*"));
       };
 
       if (!string_contains(got, tos2("*")) &&
@@ -5800,7 +5806,7 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
               string_eq(got, tos2("string")))) {
           /*if*/
 
-          CGen_set_placeholder(p->cgen, amp_ph,
+          CGen_set_placeholder(p->cgen, ph,
                                _STR("& /*11 EXP:\"%.*s\" GOT:\"%.*s\" */",
                                     expected.len, expected.str, got.len,
                                     got.str));
@@ -5814,15 +5820,15 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
       if (!string_contains(got, tos2("*"))) {
         /*if*/
 
-        CGen_set_placeholder(p->cgen, amp_ph, tos2("&"));
+        CGen_set_placeholder(p->cgen, ph, tos2("&"));
       };
 
       Type *interface_type = Table_find_type(&/* ? */ *p->table, arg.typ);
 
-      array_Fn tmp98 = interface_type->methods;
+      array_Fn tmp99 = interface_type->methods;
       ;
-      for (int tmp99 = 0; tmp99 < tmp98.len; tmp99++) {
-        Fn method = ((Fn *)tmp98.data)[tmp99];
+      for (int tmp100 = 0; tmp100 < tmp99.len; tmp100++) {
+        Fn method = ((Fn *)tmp99.data)[tmp100];
 
         Parser_gen(p, _STR(", %.*s_%.*s ", typ.len, typ.str, method.name.len,
                            method.name.str));
@@ -5917,10 +5923,10 @@ string Fn_typ_str(Fn f) {
 
   strings__Builder_write(&/* ? */ sb, tos2("fn ("));
 
-  array_Var tmp109 = f.args;
+  array_Var tmp110 = f.args;
   ;
-  for (int i = 0; i < tmp109.len; i++) {
-    Var arg = ((Var *)tmp109.data)[i];
+  for (int i = 0; i < tmp110.len; i++) {
+    Var arg = ((Var *)tmp110.data)[i];
 
     strings__Builder_write(&/* ? */ sb, arg.typ);
 
@@ -5945,10 +5951,10 @@ string Fn_str_args(Fn *f, Table *table) {
 
   string s = tos2("");
 
-  array_Var tmp111 = f->args;
+  array_Var tmp112 = f->args;
   ;
-  for (int i = 0; i < tmp111.len; i++) {
-    Var arg = ((Var *)tmp111.data)[i];
+  for (int i = 0; i < tmp112.len; i++) {
+    Var arg = ((Var *)tmp112.data)[i];
 
     if (Table_is_interface(&/* ? */ *table, arg.typ)) {
       /*if*/
@@ -5957,10 +5963,10 @@ string Fn_str_args(Fn *f, Table *table) {
 
       Type *interface_type = Table_find_type(&/* ? */ *table, arg.typ);
 
-      array_Fn tmp113 = interface_type->methods;
+      array_Fn tmp114 = interface_type->methods;
       ;
-      for (int tmp114 = 0; tmp114 < tmp113.len; tmp114++) {
-        Fn method = ((Fn *)tmp113.data)[tmp114];
+      for (int tmp115 = 0; tmp115 < tmp114.len; tmp115++) {
+        Fn method = ((Fn *)tmp114.data)[tmp115];
 
         s = string_add(s, _STR(", %.*s (*%.*s_%.*s)(void*) ", method.typ.len,
                                method.typ.str, arg.typ.len, arg.typ.str,
@@ -6242,7 +6248,7 @@ int main(int argc, char **argv) {
       _IN(string, tos2("version"), args)) {
     /*if*/
 
-    println(_STR("V %.*s", main__Version.len, main__Version.str));
+    printf("V %.*s\n", main__Version.len, main__Version.str);
 
     return 0;
   };
@@ -6278,7 +6284,7 @@ int main(int argc, char **argv) {
     if (!os__file_exists(file)) {
       /*if*/
 
-      println(_STR("\"%.*s\" does not exist", file.len, file.str));
+      printf("\"%.*s\" does not exist\n", file.len, file.str);
 
       v_exit(1);
     };
@@ -6610,8 +6616,8 @@ void V_compile(V *v) {
     if (1 || v->pref->is_verbose) {
       /*if*/
 
-      println(_STR("============ running %.*s ============", v->out_name.len,
-                   v->out_name.str));
+      printf("============ running %.*s ============\n", v->out_name.len,
+             v->out_name.str);
     };
 
     string cmd = (string_starts_with(v->out_name, tos2("/")))
@@ -6727,9 +6733,9 @@ void V_cc_windows_cross(V *c) {
     string winroot_url = tos2(
         "https://github.com/vlang/v/releases/download/v0.1.10/winroot.zip");
 
-    println(_STR("\"%.*s\" not found. Download it from %.*s and save in %.*s",
-                 winroot.len, winroot.str, winroot_url.len, winroot_url.str,
-                 main__TmpPath.len, main__TmpPath.str));
+    printf("\"%.*s\" not found. Download it from %.*s and save in %.*s\n",
+           winroot.len, winroot.str, winroot_url.len, winroot_url.str,
+           main__TmpPath.len, main__TmpPath.str);
 
     v_exit(1);
   };
@@ -6933,7 +6939,7 @@ void V_cc(V *v) {
   if (v->pref->show_c_cmd || v->pref->is_verbose) {
     /*if*/
 
-    println(_STR("\n==========\n%.*s\n=========\n", cmd.len, cmd.str));
+    printf("\n==========\n%.*s\n=========\n\n", cmd.len, cmd.str);
   };
 
   string res = os__exec(cmd);
@@ -6954,8 +6960,8 @@ void V_cc(V *v) {
 
     string obj_file = string_add(v->out_name, tos2(".o"));
 
-    println(_STR("linux obj_file=%.*s out_name=%.*s", obj_file.len,
-                 obj_file.str, v->out_name.len, v->out_name.str));
+    printf("linux obj_file=%.*s out_name=%.*s\n", obj_file.len, obj_file.str,
+           v->out_name.len, v->out_name.str);
 
     string ress = os__exec(string_add(
         string_add(
@@ -6987,8 +6993,8 @@ void V_cc(V *v) {
       v_exit(1);
     };
 
-    println(_STR("linux cross compilation done. resulting binary: \"%.*s\"",
-                 v->out_name.len, v->out_name.str));
+    printf("linux cross compilation done. resulting binary: \"%.*s\"\n",
+           v->out_name.len, v->out_name.str);
   };
 
   if (!v->pref->is_debug && string_ne(v->out_name_c, tos2("v.c")) &&
@@ -7016,7 +7022,7 @@ array_string V_v_files_from_dir(V *v, string dir) {
   if (v->pref->is_verbose) {
     /*if*/
 
-    println(_STR("v_files_from_dir (\"%.*s\")", dir.len, dir.str));
+    printf("v_files_from_dir (\"%.*s\")\n", dir.len, dir.str);
   };
 
   array_string_sort(&/* ? */ files);
@@ -7324,7 +7330,7 @@ V *new_v(array_string args) {
 
     string base = string_all_after(dir, tos2("/"));
 
-    println(_STR("Building module %.*s...", base.len, base.str));
+    printf("Building module %.*s...\n", base.len, base.str);
 
     out_name = string_add(base, tos2(".o"));
 
@@ -7341,7 +7347,7 @@ V *new_v(array_string args) {
   if (is_script && !os__file_exists(dir)) {
     /*if*/
 
-    println(_STR("`%.*s` does not exist", dir.len, dir.str));
+    printf("`%.*s` does not exist\n", dir.len, dir.str);
 
     v_exit(1);
   };
@@ -7453,7 +7459,7 @@ V *new_v(array_string args) {
     if (os__dir_exists(_STR("%.*s/vlib/builtin", lang_dir.len, lang_dir.str))) {
       /*if*/
 
-      println(_STR("Setting VROOT to \"%.*s\".", lang_dir.len, lang_dir.str));
+      printf("Setting VROOT to \"%.*s\".\n", lang_dir.len, lang_dir.str);
 
       os__write_file(string_add(main__TmpPath, tos2("/VROOT")), lang_dir);
 
@@ -7537,7 +7543,7 @@ V *new_v(array_string args) {
 }
 array_string run_repl() {
 
-  println(_STR("V %.*s", main__Version.len, main__Version.str));
+  printf("V %.*s\n", main__Version.len, main__Version.str);
 
   println(tos2("Use Ctrl-D or `exit` to exit"));
 
@@ -8370,8 +8376,8 @@ void Parser_struct_decl(Parser *p) {
                           .is_decl = 0,
                           .defer = tos("", 0)});
 
-      println(_STR("is interface. field=%.*s run=%d", field_name.len,
-                   field_name.str, p->run));
+      printf("is interface. field=%.*s run=%d\n", field_name.len,
+             field_name.str, p->run);
 
       Parser_fn_args(p, interface_method);
 
@@ -8584,8 +8590,8 @@ void Parser_check(Parser *p, Token expected) {
 
     Parser_next(p);
 
-    println(_STR("next token = `%.*s`", Parser_strtok(&/* ? */ *p).len,
-                 Parser_strtok(&/* ? */ *p).str));
+    printf("next token = `%.*s`\n", Parser_strtok(&/* ? */ *p).len,
+           Parser_strtok(&/* ? */ *p).str);
 
     print_backtrace();
 
@@ -8620,8 +8626,8 @@ void Parser_error(Parser *p, string s) {
   if (!p->pref->is_repl) {
     /*if*/
 
-    println(_STR("pass=%d fn=`%.*s`", p->run, p->cur_fn->name.len,
-                 p->cur_fn->name.str));
+    printf("pass=%d fn=`%.*s`\n", p->run, p->cur_fn->name.len,
+           p->cur_fn->name.str);
   };
 
   CGen_save(p->cgen);
@@ -8671,7 +8677,7 @@ string Parser_get_type(Parser *p) {
     if (debug) {
       /*if*/
 
-      println(_STR("\nget_type() GOT FN TYP line=%d", p->scanner->line_nr));
+      printf("\nget_type() GOT FN TYP line=%d\n", p->scanner->line_nr);
     };
 
     Fn f = (Fn){.name = tos2("_"),
@@ -8962,7 +8968,7 @@ void Parser_print_tok(Parser *p) {
   if (p->tok == STRING) {
     /*if*/
 
-    println(_STR("\"%.*s\"", p->lit.len, p->lit.str));
+    printf("\"%.*s\"\n", p->lit.len, p->lit.str);
 
     return;
   };
@@ -8984,8 +8990,8 @@ string Parser_statements(Parser *p) {
   if (Parser_fileis(&/* ? */ *p, tos2("if_expr"))) {
     /*if*/
 
-    println(_STR("statements() ret=%.*s line=%d", typ.len, typ.str,
-                 p->scanner->line_nr));
+    printf("statements() ret=%.*s line=%d\n", typ.len, typ.str,
+           p->scanner->line_nr);
   };
 
   return typ;
@@ -9376,7 +9382,7 @@ void Parser_var_decl(Parser *p) {
     if (!p->returns && p->prev_tok2 != CONTINUE && p->prev_tok2 != BREAK) {
       /*if*/
 
-      println(int_str(p->prev_tok2));
+      /*opt*/ printf("%d", p->prev_tok2);
 
       Parser_error(p, tos2("`or` statement must return/continue/break"));
     };
@@ -9651,8 +9657,8 @@ string Parser_name_expr(Parser *p) {
           !string_ends_with(typ, tos2("ptr"))) {
         /*if*/
 
-        println(_STR("name=\"%.*s\", t=%.*s", name.len, name.str, v.typ.len,
-                     v.typ.str));
+        printf("name=\"%.*s\", t=%.*s\n", name.len, name.str, v.typ.len,
+               v.typ.str);
 
         Parser_error(p, _STR("dereferencing requires a pointer, but got `%.*s`",
                              typ.len, typ.str));
@@ -10042,7 +10048,7 @@ string Parser_dot(Parser *p, string str_typ, int method_ph) {
       println(field.name);
     };
 
-    println(_STR("str_typ==\"%.*s\"", str_typ.len, str_typ.str));
+    printf("str_typ==\"%.*s\"\n", str_typ.len, str_typ.str);
 
     Parser_error(p, _STR("type `%.*s`  has no field or method `%.*s`",
                          typ->name.len, typ->name.str, field_name.len,
@@ -10231,7 +10237,7 @@ string Parser_index_expr(Parser *p, string typ, int fn_ph) {
         if (Parser_fileis(&/* ? */ *p, tos2("int_test"))) {
           /*if*/
 
-          println(_STR("\nRRRR0 %.*s", typ.len, typ.str));
+          printf("\nRRRR0 %.*s\n", typ.len, typ.str);
         };
 
         typ = string_right(typ, 6);
@@ -10239,7 +10245,7 @@ string Parser_index_expr(Parser *p, string typ, int fn_ph) {
         if (Parser_fileis(&/* ? */ *p, tos2("int_test"))) {
           /*if*/
 
-          println(_STR("RRRR %.*s", typ.len, typ.str));
+          printf("RRRR %.*s\n", typ.len, typ.str);
         };
       };
 
@@ -10428,7 +10434,7 @@ string Parser_expression(Parser *p) {
   if (string_contains(p->scanner->file_path, tos2("test_test"))) {
     /*if*/
 
-    println(_STR("epxression() pass=%d tok=", p->run));
+    printf("epxression() pass=%d tok=\n", p->run);
 
     Parser_print_tok(&/* ? */ *p);
   };
@@ -10642,7 +10648,7 @@ string Parser_term(Parser *p) {
   if (Parser_fileis(&/* ? */ *p, tos2("fn_test"))) {
     /*if*/
 
-    println(_STR("\nterm() %d", line_nr));
+    printf("\nterm() %d\n", line_nr);
   };
 
   string typ = Parser_unary(p);
@@ -10650,7 +10656,7 @@ string Parser_term(Parser *p) {
   if (Parser_fileis(&/* ? */ *p, tos2("fn_test"))) {
     /*if*/
 
-    println(_STR("2: %d", line_nr));
+    printf("2: %d\n", line_nr);
   };
 
   if (p->tok == MUL && line_nr != p->scanner->line_nr) {
@@ -10902,10 +10908,10 @@ string Parser_factor(Parser *p) {
 
     Token next = Parser_peek(p);
 
-    println(_STR("PREV=%.*s", Token_str(p->prev_tok).len,
-                 Token_str(p->prev_tok).str));
+    printf("PREV=%.*s\n", Token_str(p->prev_tok).len,
+           Token_str(p->prev_tok).str);
 
-    println(_STR("NEXT=%.*s", Token_str(next).len, Token_str(next).str));
+    printf("NEXT=%.*s\n", Token_str(next).len, Token_str(next).str);
 
     Parser_error(p, _STR("unexpected token: `%.*s`", Token_str(p->tok).len,
                          Token_str(p->tok).str));
@@ -11074,9 +11080,6 @@ string Parser_typ_to_fmt(Parser *p, string typ) {
 
       return tos2("%p");
     };
-
-    Parser_error(p,
-                 _STR("unhandled sprintf format \"%.*s\" ", typ.len, typ.str));
   };
 
   return tos2("");
@@ -11176,7 +11179,16 @@ void Parser_string_expr(Parser *p) {
     } else {
       /*else if*/
 
-      format = string_add(format, Parser_typ_to_fmt(p, typ));
+      string f = Parser_typ_to_fmt(p, typ);
+
+      if (string_eq(f, tos2(""))) {
+        /*if*/
+
+        Parser_error(
+            p, _STR("unhandled sprintf format \"%.*s\" ", typ.len, typ.str));
+      };
+
+      format = string_add(format, f);
     };
   };
 
@@ -11188,12 +11200,13 @@ void Parser_string_expr(Parser *p) {
 
   string cur_line = string_trim_space(p->cgen->cur_line);
 
-  if (string_contains(cur_line, tos2("println(")) && p->tok != PLUS &&
-      !p->pref->is_prod && !string_contains(cur_line, tos2("string_add"))) {
+  if (string_contains(cur_line, tos2("println (")) && p->tok != PLUS &&
+      !string_contains(cur_line, tos2("string_add")) &&
+      !string_contains(cur_line, tos2("eprintln"))) {
     /*if*/
 
     p->cgen->cur_line =
-        string_replace(cur_line, tos2("println("), tos2("printf("));
+        string_replace(cur_line, tos2("println ("), tos2("printf("));
 
     Parser_gen(p,
                _STR("%.*s\\n%.*s", format.len, format.str, args.len, args.str));
@@ -11442,7 +11455,7 @@ void Parser_register_array(Parser *p, string typ) {
   if (string_contains(typ, tos2("*"))) {
     /*if*/
 
-    println(_STR("bad arr %.*s", typ.len, typ.str));
+    printf("bad arr %.*s\n", typ.len, typ.str);
 
     return;
   };
@@ -11453,7 +11466,7 @@ void Parser_register_array(Parser *p, string typ) {
     Parser_register_type_with_parent(p, typ, tos2("array"));
 
     _PUSH(&p->cgen->typedefs, (_STR("typedef array %.*s;", typ.len, typ.str)),
-          tmp239, string);
+          tmp240, string);
   };
 }
 void Parser_register_map(Parser *p, string typ) {
@@ -11461,7 +11474,7 @@ void Parser_register_map(Parser *p, string typ) {
   if (string_contains(typ, tos2("*"))) {
     /*if*/
 
-    println(_STR("bad map %.*s", typ.len, typ.str));
+    printf("bad map %.*s\n", typ.len, typ.str);
 
     return;
   };
@@ -11472,7 +11485,7 @@ void Parser_register_map(Parser *p, string typ) {
     Parser_register_type_with_parent(p, typ, tos2("map"));
 
     _PUSH(&p->cgen->typedefs, (_STR("typedef map %.*s;", typ.len, typ.str)),
-          tmp240, string);
+          tmp241, string);
   };
 }
 string Parser_struct_init(Parser *p, bool is_c_struct_init) {
@@ -11487,12 +11500,12 @@ string Parser_struct_init(Parser *p, bool is_c_struct_init) {
 
   if (string_eq(typ, tos2("tm"))) {
     /*if*/
-    string tmp243 = tos2("");
-
-    array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 1, &tmp243);
     string tmp244 = tos2("");
 
-    array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 2, &tmp244);
+    array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 1, &tmp244);
+    string tmp245 = tos2("");
+
+    array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 2, &tmp245);
   };
 
   Parser_check(p, LCBR);
@@ -11556,7 +11569,7 @@ string Parser_struct_init(Parser *p, bool is_c_struct_init) {
 
       Var f = Type_find_field(&/* ? */ *t, field);
 
-      _PUSH(&inited_fields, (field), tmp251, string);
+      _PUSH(&inited_fields, (field), tmp252, string);
 
       Parser_gen(p, _STR(".%.*s = ", field.len, field.str));
 
@@ -11587,10 +11600,10 @@ string Parser_struct_init(Parser *p, bool is_c_struct_init) {
       Parser_gen(p, tos2(","));
     };
 
-    array_Var tmp252 = t->fields;
+    array_Var tmp253 = t->fields;
     ;
-    for (int i = 0; i < tmp252.len; i++) {
-      Var field = ((Var *)tmp252.data)[i];
+    for (int i = 0; i < tmp253.len; i++) {
+      Var field = ((Var *)tmp253.data)[i];
 
       if (array_string_contains(inited_fields, field.name)) {
         /*if*/
@@ -11635,10 +11648,10 @@ string Parser_struct_init(Parser *p, bool is_c_struct_init) {
       T = Table_find_type(&/* ? */ *p->table, T->parent);
     };
 
-    array_Var tmp256 = T->fields;
+    array_Var tmp257 = T->fields;
     ;
-    for (int i = 0; i < tmp256.len; i++) {
-      Var ffield = ((Var *)tmp256.data)[i];
+    for (int i = 0; i < tmp257.len; i++) {
+      Var ffield = ((Var *)tmp257.data)[i];
 
       string expr_typ = Parser_bool_expression(p);
 
@@ -11963,7 +11976,7 @@ void Parser_chash(Parser *p) {
 
     Parser_log(&/* ? */ *p, _STR("adding flag \"%.*s\"", flag.len, flag.str));
 
-    _PUSH(&p->table->flags, (flag), tmp270, string);
+    _PUSH(&p->table->flags, (flag), tmp271, string);
 
     return;
   };
@@ -11974,7 +11987,7 @@ void Parser_chash(Parser *p) {
     if (Parser_first_run(&/* ? */ *p) && !is_sig) {
       /*if*/
 
-      _PUSH(&p->cgen->includes, (_STR("#%.*s", hash.len, hash.str)), tmp271,
+      _PUSH(&p->cgen->includes, (_STR("#%.*s", hash.len, hash.str)), tmp272,
             string);
 
       return;
@@ -11986,7 +11999,7 @@ void Parser_chash(Parser *p) {
     if (Parser_first_run(&/* ? */ *p)) {
       /*if*/
 
-      _PUSH(&p->cgen->typedefs, (_STR("%.*s", hash.len, hash.str)), tmp272,
+      _PUSH(&p->cgen->typedefs, (_STR("%.*s", hash.len, hash.str)), tmp273,
             string);
     };
 
@@ -12006,7 +12019,7 @@ void Parser_chash(Parser *p) {
   } else if (string_contains(hash, tos2("define"))) {
     /*if*/
 
-    _PUSH(&p->cgen->includes, (_STR("#%.*s", hash.len, hash.str)), tmp275,
+    _PUSH(&p->cgen->includes, (_STR("#%.*s", hash.len, hash.str)), tmp276,
           string);
 
   } else {
@@ -12075,7 +12088,7 @@ string Parser_if_st(Parser *p, bool is_expr) {
 
     typ = Parser_factor(p);
 
-    println(_STR("QWEWQE typ=%.*s", typ.len, typ.str));
+    printf("QWEWQE typ=%.*s\n", typ.len, typ.str);
 
     Parser_next(p);
 
@@ -12135,8 +12148,8 @@ string Parser_if_st(Parser *p, bool is_expr) {
   if (Parser_fileis(&/* ? */ *p, tos2("test_test"))) {
     /*if*/
 
-    println(_STR("if ret typ=\"%.*s\" line=%d", typ.len, typ.str,
-                 p->scanner->line_nr));
+    printf("if ret typ=\"%.*s\" line=%d\n", typ.len, typ.str,
+           p->scanner->line_nr);
   };
 
   return typ;
@@ -12728,10 +12741,10 @@ string Parser_js_decode(Parser *p) {
 
     Type *T = Table_find_type(&/* ? */ *p->table, typ);
 
-    array_Var tmp319 = T->fields;
+    array_Var tmp320 = T->fields;
     ;
-    for (int tmp320 = 0; tmp320 < tmp319.len; tmp320++) {
-      Var field = ((Var *)tmp319.data)[tmp320];
+    for (int tmp321 = 0; tmp321 < tmp320.len; tmp321++) {
+      Var field = ((Var *)tmp320.data)[tmp321];
 
       string def_val = type_default(field.typ);
 
@@ -12759,7 +12772,7 @@ string Parser_js_decode(Parser *p) {
     string opt_type = _STR("Option_%.*s", typ.len, typ.str);
 
     _PUSH(&p->cgen->typedefs,
-          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp323,
+          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp324,
           string);
 
     Table_register_type(p->table, opt_type);
@@ -12812,10 +12825,10 @@ bool is_compile_time_const(string s) {
     return 1;
   };
 
-  string tmp327 = s;
+  string tmp328 = s;
   ;
-  for (int tmp328 = 0; tmp328 < tmp327.len; tmp328++) {
-    byte c = ((byte *)tmp327.str)[tmp328];
+  for (int tmp329 = 0; tmp329 < tmp328.len; tmp329++) {
+    byte c = ((byte *)tmp328.str)[tmp329];
 
     if (!(/*lpar*/ (/*lpar*/ c >= '0' && c <= '9') || c == '.')) {
       /*if*/
@@ -13633,7 +13646,7 @@ ScanRes Scanner_scan(Scanner *s) {
 #endif
   ;
 
-  println(_STR("(char code=%d) pos=%d len=%d", c, s->pos, s->text.len));
+  printf("(char code=%d) pos=%d len=%d\n", c, s->pos, s->text.len);
 
   string msg =
       _STR("invalid character `%.*s`", byte_str(c).len, byte_str(c).str);
@@ -13652,7 +13665,7 @@ void Scanner_error(Scanner *s, string msg) {
 
   string file = string_all_after(s->file_path, tos2("/"));
 
-  println(_STR("panic: %.*s:%d", file.len, file.str, s->line_nr + 1));
+  printf("panic: %.*s:%d\n", file.len, file.str, s->line_nr + 1);
 
   println(msg);
 
@@ -13665,8 +13678,8 @@ string Scanner_ident_string(Scanner *s) {
   if (debug) {
     /*if*/
 
-    println(_STR("identStr() %.*s line=%d pos=%d", s->file_path.len,
-                 s->file_path.str, s->line_nr, s->pos));
+    printf("identStr() %.*s line=%d pos=%d\n", s->file_path.len,
+           s->file_path.str, s->line_nr, s->pos);
   };
 
   int start = s->pos;
@@ -13874,7 +13887,7 @@ void Scanner_debug_tokens(Scanner *s) {
 
   string fname = string_all_after(s->file_path, tos2("/"));
 
-  println(_STR("\n===DEBUG TOKENS %.*s ============", fname.len, fname.str));
+  printf("\n===DEBUG TOKENS %.*s ============\n", fname.len, fname.str);
 
   s->debug = 1;
 
@@ -13890,7 +13903,7 @@ void Scanner_debug_tokens(Scanner *s) {
     if (string_ne(lit, tos2(""))) {
       /*if*/
 
-      println(_STR(" `%.*s`", lit.len, lit.str));
+      printf(" `%.*s`\n", lit.len, lit.str);
 
     } else {
       /*else if*/
@@ -14907,7 +14920,7 @@ string Table_cgen_name(Table *table, Fn *f) {
 
     name = _STR("f_%d", idx);
 
-    println(_STR("%.*s ==> %.*s", old.len, old.str, name.len, name.str));
+    printf("%.*s ==> %.*s\n", old.len, old.str, name.len, name.str);
   };
 
   return name;
