@@ -5698,66 +5698,62 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
         p->cgen->cur_line = string_replace(
             p->cgen->cur_line, tos2("println ("),
             string_add(string_add(tos2("/*opt*/printf (\""), fmt),
-                       tos2("\", ")));
+                       tos2("\\n\", ")));
 
         continue;
       };
 
-      if (string_eq(T->parent, tos2("int"))) {
-        /*if*/
-
-        CGen_set_placeholder(p->cgen, ph, tos2("int_str("));
-
-      } else if (string_ends_with(typ, tos2("*"))) {
+      if (string_ends_with(typ, tos2("*"))) {
         /*if*/
 
         CGen_set_placeholder(p->cgen, ph, tos2("ptr_str("));
 
-      } else {
-        /*else if*/
+        Parser_gen(p, tos2(")"));
 
-        if (!Type_has_method(&/* ? */ *T, tos2("str"))) {
+        continue;
+      };
+
+      if (!Type_has_method(&/* ? */ *T, tos2("str"))) {
+        /*if*/
+
+        if (T->fields.len > 0) {
           /*if*/
 
-          if (T->fields.len > 0) {
-            /*if*/
+          int index = p->cgen->cur_line.len - 1;
 
-            int index = p->cgen->cur_line.len - 1;
+          while (index > 0 && string_at(p->cgen->cur_line, index) != ' ') {
 
-            while (index > 0 && string_at(p->cgen->cur_line, index) != ' ') {
-
-              index--;
-            };
-
-            string name = string_right(p->cgen->cur_line, index + 1);
-
-            if (string_eq(name, tos2("}"))) {
-              /*if*/
-
-              Parser_error(p, _STR("`%.*s` needs to have method `str() string` "
-                                   "to be printable",
-                                   typ.len, typ.str));
-            };
-
-            p->cgen->cur_line = string_left(p->cgen->cur_line, index);
-
-            Parser_create_type_string(p, *T, name);
-
-            string_replace(p->cgen->cur_line, typ, tos2(""));
-
-            Parser_next(p);
-
-            return Parser_fn_call_args(p, f);
+            index--;
           };
 
-          Parser_error(
-              p,
-              _STR("`%.*s` needs to have method `str() string` to be printable",
-                   typ.len, typ.str));
+          string name = string_right(p->cgen->cur_line, index + 1);
+
+          if (string_eq(name, tos2("}"))) {
+            /*if*/
+
+            Parser_error(p, _STR("`%.*s` needs to have method `str() string` "
+                                 "to be printable",
+                                 typ.len, typ.str));
+          };
+
+          p->cgen->cur_line = string_left(p->cgen->cur_line, index);
+
+          Parser_create_type_string(p, *T, name);
+
+          string_replace(p->cgen->cur_line, typ, tos2(""));
+
+          Parser_next(p);
+
+          return Parser_fn_call_args(p, f);
         };
 
-        CGen_set_placeholder(p->cgen, ph, _STR("%.*s_str(", typ.len, typ.str));
+        Parser_error(
+            p,
+            _STR("`%.*s` needs to have method `str() string` to be printable",
+                 typ.len, typ.str));
       };
+
+      CGen_set_placeholder(p->cgen, ph, _STR("%.*s_str(", typ.len, typ.str));
 
       Parser_gen(p, tos2(")"));
 
@@ -9382,7 +9378,7 @@ void Parser_var_decl(Parser *p) {
     if (!p->returns && p->prev_tok2 != CONTINUE && p->prev_tok2 != BREAK) {
       /*if*/
 
-      /*opt*/ printf("%d", p->prev_tok2);
+      /*opt*/ printf("%d\n", p->prev_tok2);
 
       Parser_error(p, tos2("`or` statement must return/continue/break"));
     };
@@ -11017,7 +11013,7 @@ string Parser_typ_to_fmt(Parser *p, string typ) {
 
   Type *t = Table_find_type(&/* ? */ *p->table, typ);
 
-  if (string_eq(t->parent, tos2("int"))) {
+  if (t->is_enum) {
     /*if*/
 
     return tos2("%d");
@@ -11031,27 +11027,12 @@ string Parser_typ_to_fmt(Parser *p, string typ) {
 
     return tos2("%.*s");
 
-  } else if (string_eq(typ, tos2("byte"))) { /* case */
-
-    return tos2("%d");
-
-  } else if (string_eq(typ, tos2("int"))) { /* case */
-
-    return tos2("%d");
-
-  } else if (string_eq(typ, tos2("char"))) { /* case */
-
-    return tos2("%d");
-
-  } else if (string_eq(typ, tos2("byte"))) { /* case */
-
-    return tos2("%d");
-
-  } else if (string_eq(typ, tos2("bool"))) { /* case */
-
-    return tos2("%d");
-
-  } else if (string_eq(typ, tos2("u32"))) { /* case */
+  } else if (string_eq(typ, tos2("byte")) || string_eq(typ, tos2("int")) ||
+             string_eq(typ, tos2("char")) || string_eq(typ, tos2("byte")) ||
+             string_eq(typ, tos2("bool")) || string_eq(typ, tos2("u32")) ||
+             string_eq(typ, tos2("i32")) || string_eq(typ, tos2("i16")) ||
+             string_eq(typ, tos2("u16")) || string_eq(typ, tos2("i8")) ||
+             string_eq(typ, tos2("u8"))) { /* case */
 
     return tos2("%d");
 
@@ -11060,7 +11041,8 @@ string Parser_typ_to_fmt(Parser *p, string typ) {
 
     return tos2("%f");
 
-  } else if (string_eq(typ, tos2("i64"))) { /* case */
+  } else if (string_eq(typ, tos2("i64")) ||
+             string_eq(typ, tos2("u64"))) { /* case */
 
     return tos2("%lld");
 
