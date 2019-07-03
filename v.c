@@ -87,7 +87,7 @@ typedef struct map map;
 typedef array array_Entry;
 typedef struct Entry Entry;
 typedef struct Option Option;
-typedef struct StringBuilder StringBuilder;
+typedef struct strings__Builder strings__Builder;
 typedef struct os__FILE os__FILE;
 typedef struct os__File os__File;
 typedef struct os__FileInfo os__FileInfo;
@@ -167,7 +167,7 @@ struct /*kind*/ Option {
   string error;
   bool ok;
 };
-struct /*kind*/ StringBuilder {
+struct /*kind*/ strings__Builder {
   array_byte buf;
   int len;
 };
@@ -259,6 +259,7 @@ struct /*kind*/ Preferences {
   bool show_c_cmd;
   bool sanitize;
   bool is_debug;
+  bool no_auto_free;
 };
 struct /*kind*/ Var {
   string typ;
@@ -326,7 +327,7 @@ struct /*kind*/ Scanner {
   string line_comment;
   bool started;
   bool is_fmt;
-  StringBuilder fmt_out;
+  strings__Builder fmt_out;
   int fmt_indent;
   bool fmt_line_empty;
 };
@@ -363,6 +364,7 @@ string _STR(const char *, ...);
 string _STR_TMP(const char *, ...);
 
 array new_array(int mylen, int cap, int elm_size);
+array _make(int len, int cap, int elm_size);
 array new_array_from_c_array(int len, int cap, int elm_size, void *c_array);
 array new_array_from_c_array_no_alloc(int len, int cap, int elm_size,
                                       void *c_array);
@@ -450,7 +452,6 @@ string array_string_join_lines(array_string s);
 string string_reverse(string s);
 string string_limit(string s, int max);
 bool byte_is_white(byte c);
-string repeat_char(byte c, int n);
 int string_hash(string s);
 void v_exit(int code);
 bool isnil(void *v);
@@ -495,12 +496,13 @@ void v_map_free(map m);
 string map_string_str(map_string m);
 Option opt_ok(void *data, int size);
 Option v_error(string s);
-StringBuilder new_string_builder(int initial_size);
-void StringBuilder_write(StringBuilder *b, string s);
-void StringBuilder_writeln(StringBuilder *b, string s);
-string StringBuilder_str(StringBuilder b);
-void StringBuilder_cut(StringBuilder b, int n);
-void v_StringBuilder_free(StringBuilder *b);
+strings__Builder strings__new_builder(int initial_size);
+void strings__Builder_write(strings__Builder *b, string s);
+void strings__Builder_writeln(strings__Builder *b, string s);
+string strings__Builder_str(strings__Builder b);
+void strings__Builder_cut(strings__Builder b, int n);
+void strings__Builder_free(strings__Builder *b);
+string strings__repeat(byte c, int n);
 void os__todo_remove();
 array_string os__init_os_args(int argc, byteptr *argv);
 array_string os__parse_windows_cmd_line(byte *cmd);
@@ -1071,6 +1073,10 @@ array new_array(int mylen, int cap, int elm_size) {
                       .data = v_malloc(cap * elm_size)};
 
   return arr;
+}
+array _make(int len, int cap, int elm_size) {
+
+  return new_array(len, cap, elm_size);
 }
 array new_array_from_c_array(int len, int cap, int elm_size, void *c_array) {
 
@@ -2352,25 +2358,6 @@ bool byte_is_white(byte c) {
 
   return i == 10 || i == 32 || i == 9 || i == 13 || c == '\r';
 }
-string repeat_char(byte c, int n) {
-
-  if (n <= 0) {
-    /*if*/
-
-    return tos2("");
-  };
-
-  byte *arr = v_malloc(n + 1);
-
-  for (int i = 0; i < n; i++) {
-
-    arr[/*ptr*/ i] /*rbyte 1*/ = c;
-  };
-
-  arr[/*ptr*/ n] /*rbyte 1*/ = '\0';
-
-  return tos(arr, n);
-}
 int string_hash(string s) {
 
   int hash = ((int)(0));
@@ -3086,18 +3073,18 @@ Option opt_ok(void *data, int size) {
   return res;
 }
 Option v_error(string s) { return (Option){.error = s, .ok = 0}; }
-StringBuilder new_string_builder(int initial_size) {
+strings__Builder strings__new_builder(int initial_size) {
 
-  return (StringBuilder){.buf = new_array(0, initial_size, sizeof(byte)),
-                         .len = 0};
+  return (strings__Builder){.buf = _make(0, initial_size, sizeof(byte)),
+                            .len = 0};
 }
-void StringBuilder_write(StringBuilder *b, string s) {
+void strings__Builder_write(strings__Builder *b, string s) {
 
   array__push_many(&/* ? */ b->buf, s.str, s.len);
 
   b->len += s.len;
 }
-void StringBuilder_writeln(StringBuilder *b, string s) {
+void strings__Builder_writeln(strings__Builder *b, string s) {
 
   array__push_many(&/* ? */ b->buf, s.str, s.len);
 
@@ -3105,9 +3092,31 @@ void StringBuilder_writeln(StringBuilder *b, string s) {
 
   b->len += s.len + 1;
 }
-string StringBuilder_str(StringBuilder b) { return tos(b.buf.data, b.len); }
-void StringBuilder_cut(StringBuilder b, int n) { b.len -= n; }
-void v_StringBuilder_free(StringBuilder *b) { free(b->buf.data); }
+string strings__Builder_str(strings__Builder b) {
+
+  return tos(b.buf.data, b.len);
+}
+void strings__Builder_cut(strings__Builder b, int n) { b.len -= n; }
+void strings__Builder_free(strings__Builder *b) { free(b->buf.data); }
+string strings__repeat(byte c, int n) {
+
+  if (n <= 0) {
+    /*if*/
+
+    return tos2("");
+  };
+
+  byte *arr = v_malloc(n + 1);
+
+  for (int i = 0; i < n; i++) {
+
+    arr[/*ptr*/ i] /*rbyte 1*/ = c;
+  };
+
+  arr[/*ptr*/ n] /*rbyte 1*/ = '\0';
+
+  return tos(arr, n);
+}
 void os__todo_remove() {}
 array_string os__init_os_args(int argc, byteptr *argv) {
 
@@ -5904,33 +5913,33 @@ bool contains_capital(string s) {
 }
 string Fn_typ_str(Fn f) {
 
-  StringBuilder sb = new_string_builder(50);
+  strings__Builder sb = strings__new_builder(50);
 
-  StringBuilder_write(&/* ? */ sb, tos2("fn ("));
+  strings__Builder_write(&/* ? */ sb, tos2("fn ("));
 
   array_Var tmp109 = f.args;
   ;
   for (int i = 0; i < tmp109.len; i++) {
     Var arg = ((Var *)tmp109.data)[i];
 
-    StringBuilder_write(&/* ? */ sb, arg.typ);
+    strings__Builder_write(&/* ? */ sb, arg.typ);
 
     if (i < f.args.len - 1) {
       /*if*/
 
-      StringBuilder_write(&/* ? */ sb, tos2(","));
+      strings__Builder_write(&/* ? */ sb, tos2(","));
     };
   };
 
-  StringBuilder_write(&/* ? */ sb, tos2(")"));
+  strings__Builder_write(&/* ? */ sb, tos2(")"));
 
   if (string_ne(f.typ, tos2("void"))) {
     /*if*/
 
-    StringBuilder_write(&/* ? */ sb, _STR(" %.*s", f.typ.len, f.typ.str));
+    strings__Builder_write(&/* ? */ sb, _STR(" %.*s", f.typ.len, f.typ.str));
   };
 
-  return StringBuilder_str(sb);
+  return strings__Builder_str(sb);
 }
 string Fn_str_args(Fn *f, Table *table) {
 
@@ -6455,34 +6464,36 @@ void V_compile(V *v) {
 
   V_log(&/* ? */ *v, tos2("Done parsing."));
 
-  StringBuilder d = new_string_builder(10000);
+  strings__Builder d = strings__new_builder(10000);
 
-  StringBuilder_writeln(&/* ? */ d, array_string_join_lines(cgen->includes));
+  strings__Builder_writeln(&/* ? */ d, array_string_join_lines(cgen->includes));
 
-  StringBuilder_writeln(&/* ? */ d, array_string_join_lines(cgen->typedefs));
+  strings__Builder_writeln(&/* ? */ d, array_string_join_lines(cgen->typedefs));
 
-  StringBuilder_writeln(&/* ? */ d, array_string_join_lines(cgen->types));
+  strings__Builder_writeln(&/* ? */ d, array_string_join_lines(cgen->types));
 
-  StringBuilder_writeln(&/* ? */ d, tos2("\nstring _STR(const char*, ...);\n"));
+  strings__Builder_writeln(&/* ? */ d,
+                           tos2("\nstring _STR(const char*, ...);\n"));
 
-  StringBuilder_writeln(&/* ? */ d,
-                        tos2("\nstring _STR_TMP(const char*, ...);\n"));
+  strings__Builder_writeln(&/* ? */ d,
+                           tos2("\nstring _STR_TMP(const char*, ...);\n"));
 
-  StringBuilder_writeln(&/* ? */ d, array_string_join_lines(cgen->fns));
+  strings__Builder_writeln(&/* ? */ d, array_string_join_lines(cgen->fns));
 
-  StringBuilder_writeln(&/* ? */ d, array_string_join_lines(cgen->consts));
+  strings__Builder_writeln(&/* ? */ d, array_string_join_lines(cgen->consts));
 
-  StringBuilder_writeln(&/* ? */ d, array_string_join_lines(cgen->thread_args));
+  strings__Builder_writeln(&/* ? */ d,
+                           array_string_join_lines(cgen->thread_args));
 
   if (v->pref->is_prof) {
     /*if*/
 
-    StringBuilder_writeln(&/* ? */ d, tos2("; // Prof counters:"));
+    strings__Builder_writeln(&/* ? */ d, tos2("; // Prof counters:"));
 
-    StringBuilder_writeln(&/* ? */ d, V_prof_counters(v));
+    strings__Builder_writeln(&/* ? */ d, V_prof_counters(v));
   };
 
-  string dd = StringBuilder_str(d);
+  string dd = strings__Builder_str(d);
 
   array_set(&/* ? */ cgen->lines, defs_pos,
             &/*11 EXP:"void*" GOT:"string" */ dd);
@@ -7392,7 +7403,7 @@ V *new_v(array_string args) {
     };
   };
 
-  array_string builtins = new_array_from_c_array(8, 8, sizeof(string),
+  array_string builtins = new_array_from_c_array(7, 7, sizeof(string),
                                                  (string[]){
                                                      tos2("array.v"),
                                                      tos2("string.v"),
@@ -7401,7 +7412,6 @@ V *new_v(array_string args) {
                                                      tos2("utf8.v"),
                                                      tos2("map.v"),
                                                      tos2("option.v"),
-                                                     tos2("string_builder.v"),
                                                  });
 
   string lang_dir = tos2("");
@@ -7508,7 +7518,8 @@ V *new_v(array_string args) {
        .translated = array_string_contains(args, tos2("translated")),
        .is_run = array_string_contains(args, tos2("run")),
        .is_repl = array_string_contains(args, tos2("-repl")),
-       .build_mode = build_mode});
+       .build_mode = build_mode,
+       .no_auto_free = 0});
 
   return ALLOC_INIT(V, {
                            .os = _os,
@@ -7852,7 +7863,7 @@ void Parser_parse(Parser *p) {
         os__File out = *(os__File *)tmp8.data;
         ;
 
-        os__File_writeln(out, StringBuilder_str(p->scanner->fmt_out));
+        os__File_writeln(out, strings__Builder_str(p->scanner->fmt_out));
 
         os__File_close(out);
       };
@@ -8884,7 +8895,7 @@ string Parser_get_type(Parser *p) {
   if (mul) {
     /*if*/
 
-    typ = string_add(typ, repeat_char('*', nr_muls));
+    typ = string_add(typ, strings__repeat('*', nr_muls));
   };
 
   if (is_arr2) {
@@ -11470,7 +11481,7 @@ string Parser_struct_init(Parser *p, bool is_c_struct_init) {
 
   string typ = Parser_get_type(p);
 
-  StringBuilder_cut(p->scanner->fmt_out, typ.len);
+  strings__Builder_cut(p->scanner->fmt_out, typ.len);
 
   bool ptr = string_contains(typ, tos2("*"));
 
@@ -12827,10 +12838,10 @@ void Scanner_fgen(Scanner *scanner, string s) {
   if (scanner->fmt_line_empty) {
     /*if*/
 
-    s = string_add(repeat_char('\t', scanner->fmt_indent), s);
+    s = string_add(strings__repeat('\t', scanner->fmt_indent), s);
   };
 
-  StringBuilder_write(&/* ? */ scanner->fmt_out, s);
+  strings__Builder_write(&/* ? */ scanner->fmt_out, s);
 
   scanner->fmt_line_empty = 0;
 }
@@ -12839,10 +12850,10 @@ void Scanner_fgenln(Scanner *scanner, string s) {
   if (scanner->fmt_line_empty) {
     /*if*/
 
-    s = string_add(repeat_char('\t', scanner->fmt_indent), s);
+    s = string_add(strings__repeat('\t', scanner->fmt_indent), s);
   };
 
-  StringBuilder_writeln(&/* ? */ scanner->fmt_out, s);
+  strings__Builder_writeln(&/* ? */ scanner->fmt_out, s);
 
   scanner->fmt_line_empty = 1;
 }
@@ -12882,7 +12893,7 @@ Scanner *new_scanner(string file_path) {
 
   Scanner *scanner = ALLOC_INIT(Scanner, {.file_path = file_path,
                                           .text = text,
-                                          .fmt_out = new_string_builder(1000),
+                                          .fmt_out = strings__new_builder(1000),
                                           .pos = 0,
                                           .line_nr = 0,
                                           .inside_string = 0,
