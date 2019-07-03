@@ -6154,7 +6154,7 @@ void Parser_gen_json_for_type(Parser *p, Type typ) {
   };
 
   _PUSH(&p->cgen->fns,
-        (_STR("%.*s return opt_ok(res, sizeof(res)); \n}", dec.len, dec.str)),
+        (_STR("%.*s return opt_ok(res, sizeof(*res)); \n}", dec.len, dec.str)),
         tmp17, string);
 
   _PUSH(&p->cgen->fns,
