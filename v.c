@@ -97,6 +97,8 @@ typedef array array_ustring;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
+typedef struct os__filetime os__filetime;
+typedef struct os__win32finddata os__win32finddata;
 typedef struct time__Time time__Time;
 typedef struct CGen CGen;
 typedef struct Fn Fn;
@@ -178,6 +180,25 @@ struct /*kind*/ os__File {
 struct /*kind*/ os__FileInfo {
   string name;
   int size;
+};
+struct /*kind*/ os__filetime {
+  u32 dwLowDateTime;
+  u32 dwHighDateTime;
+};
+struct /*kind*/ os__win32finddata {
+  u32 dwFileAttributes;
+  os__filetime ftCreationTime;
+  os__filetime ftLastAccessTime;
+  os__filetime ftLastWriteTime;
+  u32 nFileSizeHigh;
+  u32 nFileSizeLow;
+  u32 dwReserved0;
+  u32 dwReserved1;
+  u16 cFileName[260];
+  u16 cAlternateFileName[14];
+  u32 dwFileType;
+  u32 dwCreatorType;
+  u16 wFinderFlags;
 };
 struct /*kind*/ time__Time {
   int year;
@@ -642,6 +663,7 @@ void Parser_parse(Parser *p);
 void Parser_import_statement(Parser *p);
 void Parser_const_decl(Parser *p);
 void Parser_type_decl(Parser *p);
+Fn *Parser_interface_method(Parser *p, string field_name, string receiver);
 void Parser_struct_decl(Parser *p);
 void Parser_enum_decl(Parser *p, string _enum_name);
 string Parser_check_name(Parser *p);
@@ -713,6 +735,7 @@ bool is_white(byte c);
 bool is_nl(byte c);
 string Scanner_ident_name(Scanner *s);
 string Scanner_ident_number(Scanner *s);
+bool Scanner_has_gone_over_line_end(Scanner s);
 void Scanner_skip_whitespace(Scanner *s);
 string Scanner_get_var_name(Scanner *s, int pos);
 void Scanner_cao_change(Scanner *s, string operator);
@@ -831,6 +854,7 @@ array_string os__args;
 #define os__MAX_PATH 4096
 #define os__FILE_ATTRIBUTE_DIRECTORY 16
 int os__STD_INPUT_HANDLE;
+int os__INVALID_HANDLE_VALUE;
 string time__Months;
 string time__Days;
 #define main__MaxLocalVars 50
@@ -3468,8 +3492,6 @@ bool os__dir_exists(string path) {
 
   int attr = ((int)(GetFileAttributes(string_cstr(path))));
 
-  printf("ATTR =%d\n", attr);
-
   return attr == os__FILE_ATTRIBUTE_DIRECTORY;
 
   ;
@@ -3813,7 +3835,48 @@ array_string os__ls(string path) {
 
 #ifdef _WIN32
 
-  return new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  os__win32finddata find_file_data = (os__win32finddata){};
+
+  array_string dir_files =
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+
+  if (!os__dir_exists(path)) {
+    /*if*/
+
+    printf("ls() couldnt open dir \"%.*s\" (does not exist).\n", path.len,
+           path.str);
+  };
+
+  string path_files = _STR("%.*s\\*", path.len, path.str);
+
+  void *h_find_files =
+      FindFirstFile(string_cstr(path_files), &/*vvar*/ find_file_data);
+
+  string first_filename =
+      tos(&/*vvar*/ find_file_data.cFileName, strlen(find_file_data.cFileName));
+
+  if (string_ne(first_filename, tos2(".")) &&
+      string_ne(first_filename, tos2(".."))) {
+    /*if*/
+
+    _PUSH(&dir_files, (first_filename), tmp73, string);
+  };
+
+  while (FindNextFile(h_find_files, &/*vvar*/ find_file_data)) {
+
+    string filename = tos(&/*vvar*/ find_file_data.cFileName,
+                          strlen(find_file_data.cFileName));
+
+    if (string_ne(filename, tos2(".")) && string_ne(filename, tos2(".."))) {
+      /*if*/
+
+      _PUSH(&dir_files, (string_clone(filename)), tmp75, string);
+    };
+  };
+
+  FindClose(h_find_files);
+
+  return dir_files;
 
   ;
 
@@ -3851,7 +3914,7 @@ array_string os__ls(string path) {
         string_ne(name, tos2(""))) {
       /*if*/
 
-      _PUSH(&res, (name), tmp72, string);
+      _PUSH(&res, (name), tmp80, string);
     };
   };
 
@@ -8133,6 +8196,46 @@ void Parser_type_decl(Parser *p) {
 
   Table_register_type_with_parent(p->table, name, parent);
 }
+Fn *Parser_interface_method(Parser *p, string field_name, string receiver) {
+
+  Fn *method = ALLOC_INIT(Fn, {.name = field_name,
+                               .is_interface = 1,
+                               .is_method = 1,
+                               .receiver_typ = receiver,
+                               .pkg = tos("", 0),
+                               .local_vars = new_array(0, 1, sizeof(Var)),
+                               .var_idx = 0,
+                               .args = new_array(0, 1, sizeof(Var)),
+                               .scope_level = 0,
+                               .typ = tos("", 0),
+                               .is_c = 0,
+                               .is_public = 0,
+                               .returns_error = 0,
+                               .is_decl = 0,
+                               .defer = tos("", 0)});
+
+  Parser_log(&/* ? */ *p, _STR("is interface. field=%.*s run=%d",
+                               field_name.len, field_name.str, p->run));
+
+  Parser_fn_args(p, method);
+
+  if (Scanner_has_gone_over_line_end(*p->scanner)) {
+    /*if*/
+
+    method->typ = tos2("void");
+
+  } else {
+    /*else if*/
+
+    method->typ = Parser_get_type(p);
+
+    Parser_fspace(p);
+
+    Parser_fgenln(p, tos2(""));
+  };
+
+  return method;
+}
 void Parser_struct_decl(Parser *p) {
 
   string objc_parent = tos2("");
@@ -8350,40 +8453,12 @@ void Parser_struct_decl(Parser *p) {
           p, _STR("duplicate field `%.*s`", field_name.len, field_name.str));
     };
 
-    _PUSH(&names, (field_name), tmp49, string);
+    _PUSH(&names, (field_name), tmp50, string);
 
     if (is_interface) {
       /*if*/
 
-      Fn *interface_method =
-          ALLOC_INIT(Fn, {.name = field_name,
-                          .is_interface = 1,
-                          .is_method = 1,
-                          .receiver_typ = name,
-                          .pkg = tos("", 0),
-                          .local_vars = new_array(0, 1, sizeof(Var)),
-                          .var_idx = 0,
-                          .args = new_array(0, 1, sizeof(Var)),
-                          .scope_level = 0,
-                          .typ = tos("", 0),
-                          .is_c = 0,
-                          .is_public = 0,
-                          .returns_error = 0,
-                          .is_decl = 0,
-                          .defer = tos("", 0)});
-
-      printf("is interface. field=%.*s run=%d\n", field_name.len,
-             field_name.str, p->run);
-
-      Parser_fn_args(p, interface_method);
-
-      Parser_fspace(p);
-
-      interface_method->typ = Parser_get_type(p);
-
-      Type_add_method(typ, *interface_method);
-
-      Parser_fgenln(p, tos2(""));
+      Type_add_method(typ, *Parser_interface_method(p, field_name, name));
 
       continue;
     };
@@ -13006,6 +13081,28 @@ string Scanner_ident_number(Scanner *s) {
 
   return number;
 }
+bool Scanner_has_gone_over_line_end(Scanner s) {
+
+  int i = s.pos - 1;
+
+  while (i >= 0 && !is_white(string_at(s.text, i))) {
+
+    i--;
+  };
+
+  while (i >= 0 && is_white(string_at(s.text, i))) {
+
+    if (is_nl(string_at(s.text, i))) {
+      /*if*/
+
+      return 1;
+    };
+
+    i--;
+  };
+
+  return 0;
+}
 void Scanner_skip_whitespace(Scanner *s) {
 
   while (s->pos < s->text.len && is_white(string_at(s->text, s->pos))) {
@@ -13956,10 +14053,10 @@ void Scanner_create_type_string(Scanner *s, Type T, string name) {
 
   int end = s->pos;
 
-  array_Var tmp151 = T.fields;
+  array_Var tmp158 = T.fields;
   ;
-  for (int i = 0; i < tmp151.len; i++) {
-    Var field = ((Var *)tmp151.data)[i];
+  for (int i = 0; i < tmp158.len; i++) {
+    Var field = ((Var *)tmp158.data)[i];
 
     if (i != 0) {
       /*if*/
@@ -15307,9 +15404,10 @@ void init_consts() {
   os__FILE_INVALID_FILE_ID = (/*lpar*/ -1);
   os__args = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
   os__STD_INPUT_HANDLE = -10;
+  os__INVALID_HANDLE_VALUE = -1;
   time__Months = tos2("JanFebMarAprMayJunJulAugSepOctNovDec");
   time__Days = tos2("MonTueWedThuFriSatSun");
-  main__Version = tos2("0.1.11");
+  main__Version = tos2("0.1.12");
   main__SupportedPlatforms = new_array_from_c_array(
       3, 3, sizeof(string),
       (string[]){tos2("windows"), tos2("mac"), tos2("linux")});
