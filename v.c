@@ -701,8 +701,8 @@ string Parser_unary(Parser *p);
 string Parser_factor(Parser *p);
 string Parser_assoc(Parser *p);
 void Parser_char_expr(Parser *p);
-string format_str(string str);
 string Parser_typ_to_fmt(Parser *p, string typ);
+string format_str(string str);
 void Parser_string_expr(Parser *p);
 string Parser_map_init(Parser *p);
 string Parser_array_init(Parser *p);
@@ -853,11 +853,27 @@ int os__FILE_INVALID_FILE_ID;
 #define os__O_EXCL 32
 #define os__O_SYNC 64
 #define os__O_TRUNC 128
+int os__INVALID_HANDLE_VALUE;
+int os__STD_INPUT_HANDLE;
+int os__STD_OUTPUT_HANDLE;
+int os__STD_ERROR_HANDLE;
+int os__ENABLE_ECHO_INPUT;
+int os__ENABLE_EXTENDED_FLAGS;
+int os__ENABLE_INSERT_MODE;
+int os__ENABLE_LINE_INPUT;
+int os__ENABLE_MOUSE_INPUT;
+int os__ENABLE_PROCESSED_INPUT;
+int os__ENABLE_QUICK_EDIT_MODE;
+int os__ENABLE_WINDOW_INPUT;
+int os__ENABLE_VIRTUAL_TERMINAL_INPUT;
+int os__ENABLE_PROCESSED_OUTPUT;
+int os__ENABLE_WRAP_AT_EOL_OUTPUT;
+int os__ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+int os__DISABLE_NEWLINE_AUTO_RETURN;
+int os__ENABLE_LVB_GRID_WORLDWIDE;
 array_string os__args;
 #define os__MAX_PATH 4096
 #define os__FILE_ATTRIBUTE_DIRECTORY 16
-int os__STD_INPUT_HANDLE;
-int os__INVALID_HANDLE_VALUE;
 string time__Months;
 string time__Days;
 #define main__MaxLocalVars 50
@@ -3543,7 +3559,13 @@ string os__get_raw_line() {
 
   byte *buf = v_malloc(max);
 
-  voidptr h_input = ((voidptr)(GetStdHandle(os__STD_INPUT_HANDLE)));
+  void *h_input = GetStdHandle(os__STD_INPUT_HANDLE);
+
+  if (h_input == os__INVALID_HANDLE_VALUE) {
+    /*if*/
+
+    v_panic(tos2("get_raw_line() error getting input handle."));
+  };
 
   int nr_chars = 0;
 
@@ -8646,7 +8668,7 @@ void Parser_error(Parser *p, string s) {
     /*if*/
   };
 
-  if (!p->pref->is_verbose) {
+  if (p->pref->is_verbose) {
     /*if*/
 
     printf("pass=%d fn=`%.*s`\n", p->run, p->cur_fn->name.len,
@@ -11032,25 +11054,6 @@ void Parser_char_expr(Parser *p) {
 
   Parser_next(p);
 }
-string format_str(string str) {
-
-  str = string_replace(str, tos2("\""), tos2("\\\""));
-
-#ifdef _WIN32
-
-  str = string_replace(str, tos2("\r\n"), tos2("\\n"));
-
-  ;
-
-#else
-
-  str = string_replace(str, tos2("\n"), tos2("\\n"));
-
-#endif
-  ;
-
-  return str;
-}
 string Parser_typ_to_fmt(Parser *p, string typ) {
 
   Type *t = Table_find_type(&/* ? */ *p->table, typ);
@@ -11107,6 +11110,21 @@ string Parser_typ_to_fmt(Parser *p, string typ) {
   };
 
   return tos2("");
+}
+string format_str(string str) {
+
+  str = string_replace(str, tos2("\""), tos2("\\\""));
+
+#ifdef _WIN32
+
+  str = string_replace(str, tos2("\r\n"), tos2("\\n"));
+
+#endif
+  ;
+
+  str = string_replace(str, tos2("\n"), tos2("\\n"));
+
+  return str;
 }
 void Parser_string_expr(Parser *p) {
 
@@ -15375,9 +15393,25 @@ void init_consts() {
   os__FILE_TYPE_PIPE = 0x3;
   os__FILE_TYPE_UNKNOWN = 0x0;
   os__FILE_INVALID_FILE_ID = (/*lpar*/ -1);
-  os__args = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
-  os__STD_INPUT_HANDLE = -10;
   os__INVALID_HANDLE_VALUE = -1;
+  os__STD_INPUT_HANDLE = -10;
+  os__STD_OUTPUT_HANDLE = -11;
+  os__STD_ERROR_HANDLE = -12;
+  os__ENABLE_ECHO_INPUT = 0x0004;
+  os__ENABLE_EXTENDED_FLAGS = 0x0080;
+  os__ENABLE_INSERT_MODE = 0x0020;
+  os__ENABLE_LINE_INPUT = 0x0002;
+  os__ENABLE_MOUSE_INPUT = 0x0010;
+  os__ENABLE_PROCESSED_INPUT = 0x0001;
+  os__ENABLE_QUICK_EDIT_MODE = 0x0040;
+  os__ENABLE_WINDOW_INPUT = 0x0008;
+  os__ENABLE_VIRTUAL_TERMINAL_INPUT = 0x0200;
+  os__ENABLE_PROCESSED_OUTPUT = 0x0001;
+  os__ENABLE_WRAP_AT_EOL_OUTPUT = 0x0002;
+  os__ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
+  os__DISABLE_NEWLINE_AUTO_RETURN = 0x0008;
+  os__ENABLE_LVB_GRID_WORLDWIDE = 0x0010;
+  os__args = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
   time__Months = tos2("JanFebMarAprMayJunJulAugSepOctNovDec");
   time__Days = tos2("MonTueWedThuFriSatSun");
   main__Version = tos2("0.1.12");
