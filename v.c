@@ -105,7 +105,6 @@ typedef Option Option_os__File;
 typedef struct os__filetime os__filetime;
 typedef struct os__win32finddata os__win32finddata;
 typedef struct time__Time time__Time;
-typedef struct math__Complex math__Complex;
 typedef struct math__Fraction math__Fraction;
 typedef struct CGen CGen;
 typedef struct Fn Fn;
@@ -215,10 +214,6 @@ struct /*kind*/ time__Time {
   int minute;
   int second;
   int uni;
-};
-struct /*kind*/ math__Complex {
-  f64 re;
-  f64 im;
 };
 struct /*kind*/ math__Fraction {
   i64 n;
@@ -618,31 +613,6 @@ void time__sleep_ms(int n);
 bool time__is_leap_year(int year);
 void rand__seed();
 int rand__next(int max);
-math__Complex math__complex(f64 re, f64 im);
-string math__Complex_str(math__Complex c);
-f64 math__Complex_abs(math__Complex c);
-f64 math__Complex_mod(math__Complex c);
-f64 math__Complex_angle(math__Complex c);
-math__Complex math__Complex_plus(math__Complex c1, math__Complex c2);
-math__Complex math__Complex_minus(math__Complex c1, math__Complex c2);
-math__Complex math__Complex_add(math__Complex c1, math__Complex c2);
-math__Complex math__Complex_subtract(math__Complex c1, math__Complex c2);
-math__Complex math__Complex_multiply(math__Complex c1, math__Complex c2);
-math__Complex math__Complex_divide(math__Complex c1, math__Complex c2);
-math__Complex math__Complex_conjugate(math__Complex c);
-math__Complex math__Complex_addinv(math__Complex c);
-math__Complex math__Complex_mulinv(math__Complex c);
-math__Complex math__Complex_pow(math__Complex c, f64 n);
-math__Complex math__Complex_root(math__Complex c, f64 n);
-math__Complex math__Complex_exp(math__Complex c);
-math__Complex math__Complex_ln(math__Complex c);
-math__Complex math__Complex_sin(math__Complex c);
-math__Complex math__Complex_cos(math__Complex c);
-math__Complex math__Complex_tan(math__Complex c);
-math__Complex math__Complex_sinh(math__Complex c);
-math__Complex math__Complex_cosh(math__Complex c);
-math__Complex math__Complex_tanh(math__Complex c);
-bool math__Complex_equals(math__Complex c1, math__Complex c2);
 math__Fraction math__fraction(i64 n, i64 d);
 string math__Fraction_str(math__Fraction f);
 math__Fraction math__Fraction_plus(math__Fraction f1, math__Fraction f2);
@@ -4399,120 +4369,6 @@ bool time__is_leap_year(int year) {
 }
 void rand__seed() { srand(time__now().uni); }
 int rand__next(int max) { return rand() % max; }
-math__Complex math__complex(f64 re, f64 im) { return (math__Complex){re, im}; }
-string math__Complex_str(math__Complex c) {
-
-  string out = _STR("%f", c.re);
-
-  out = string_add(out, (c.im >= 0) ? (_STR("+%f", c.im)) : (_STR("%f", c.im)));
-
-  out = string_add(out, tos2("i"));
-
-  return out;
-}
-f64 math__Complex_abs(math__Complex c) { return hypot(c.re, c.im); }
-f64 math__Complex_mod(math__Complex c) { return math__Complex_abs(c); }
-f64 math__Complex_angle(math__Complex c) { return math__atan2(c.im, c.re); }
-math__Complex math__Complex_plus(math__Complex c1, math__Complex c2) {
-
-  return (math__Complex){c1.re + c2.re, c1.im + c2.im};
-}
-math__Complex math__Complex_minus(math__Complex c1, math__Complex c2) {
-
-  return (math__Complex){c1.re - c2.re, c1.im - c2.im};
-}
-math__Complex math__Complex_add(math__Complex c1, math__Complex c2) {
-
-  return math__Complex_plus(c1, c2);
-}
-math__Complex math__Complex_subtract(math__Complex c1, math__Complex c2) {
-
-  return math__Complex_minus(c1, c2);
-}
-math__Complex math__Complex_multiply(math__Complex c1, math__Complex c2) {
-
-  return (math__Complex){(/*lpar*/ c1.re * c2.re) +
-                             (/*lpar*/ (/*lpar*/ c1.im * c2.im) * -1),
-                         (/*lpar*/ c1.re * c2.im) + (/*lpar*/ c1.im * c2.re)};
-}
-math__Complex math__Complex_divide(math__Complex c1, math__Complex c2) {
-
-  f64 denom = (/*lpar*/ c2.re * c2.re) + (/*lpar*/ c2.im * c2.im);
-
-  return (math__Complex){
-      (/*lpar*/ (/*lpar*/ c1.re * c2.re) +
-       (/*lpar*/ (/*lpar*/ c1.im * -c2.im) * -1)) /
-          denom,
-      (/*lpar*/ (/*lpar*/ c1.re * -c2.im) + (/*lpar*/ c1.im * c2.re)) / denom};
-}
-math__Complex math__Complex_conjugate(math__Complex c) {
-
-  return (math__Complex){c.re, -c.im};
-}
-math__Complex math__Complex_addinv(math__Complex c) {
-
-  return (math__Complex){-c.re, -c.im};
-}
-math__Complex math__Complex_mulinv(math__Complex c) {
-
-  return (math__Complex){c.re / (/*lpar*/ c.re * c.re + c.im * c.im),
-                         -c.im / (/*lpar*/ c.re * c.re + c.im * c.im)};
-}
-math__Complex math__Complex_pow(math__Complex c, f64 n) {
-
-  f64 r = math__pow(math__Complex_abs(c), n);
-
-  f64 angle = math__Complex_angle(c);
-
-  return (math__Complex){r * math__cos(n * angle), r * math__sin(n * angle)};
-}
-math__Complex math__Complex_root(math__Complex c, f64 n) {
-
-  return math__Complex_pow(c, 1.0 / n);
-}
-math__Complex math__Complex_exp(math__Complex c) {
-
-  f64 a = math__exp(c.re);
-
-  return (math__Complex){a * math__cos(c.im), a * math__sin(c.im)};
-}
-math__Complex math__Complex_ln(math__Complex c) {
-
-  return (math__Complex){math__log(math__Complex_abs(c)),
-                         math__Complex_angle(c)};
-}
-math__Complex math__Complex_sin(math__Complex c) {
-
-  return (math__Complex){math__sin(c.re) * math__cosh(c.im),
-                         math__cos(c.re) * math__sinh(c.im)};
-}
-math__Complex math__Complex_cos(math__Complex c) {
-
-  return (math__Complex){math__cos(c.re) * math__cosh(c.im),
-                         -(/*lpar*/ math__sin(c.re) * math__sinh(c.im))};
-}
-math__Complex math__Complex_tan(math__Complex c) {
-
-  return math__Complex_divide(math__Complex_sin(c), math__Complex_cos(c));
-}
-math__Complex math__Complex_sinh(math__Complex c) {
-
-  return (math__Complex){math__cos(c.im) * math__sinh(c.re),
-                         math__sin(c.im) * math__cosh(c.re)};
-}
-math__Complex math__Complex_cosh(math__Complex c) {
-
-  return (math__Complex){math__cos(c.im) * math__cosh(c.re),
-                         math__sin(c.im) * math__sinh(c.re)};
-}
-math__Complex math__Complex_tanh(math__Complex c) {
-
-  return math__Complex_divide(math__Complex_sinh(c), math__Complex_cosh(c));
-}
-bool math__Complex_equals(math__Complex c1, math__Complex c2) {
-
-  return (/*lpar*/ c1.re == c2.re) && (/*lpar*/ c1.im == c2.im);
-}
 math__Fraction math__fraction(i64 n, i64 d) {
 
   if (d != 0) {
