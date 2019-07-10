@@ -7365,7 +7365,9 @@ void V_cc(V *v) {
     _PUSH(&a, (tos2("-x objective-c")), tmp62, string);
   };
 
-  if (v->os == main__OS_linux && v->pref->build_mode != main__BuildMode_build) {
+  if ((/*lpar*/ v->os == main__OS_linux ||
+       string_eq(os__user_os(), tos2("linux"))) &&
+      v->pref->build_mode != main__BuildMode_build) {
     /*if*/
 
     _PUSH(&a, (tos2("-lm -ldl -lpthread")), tmp63, string);
