@@ -105,6 +105,8 @@ typedef Option Option_os__File;
 typedef struct os__filetime os__filetime;
 typedef struct os__win32finddata os__win32finddata;
 typedef struct time__Time time__Time;
+typedef struct math__Complex math__Complex;
+typedef struct math__Fraction math__Fraction;
 typedef struct CGen CGen;
 typedef struct Fn Fn;
 typedef array array_Var;
@@ -213,6 +215,14 @@ struct /*kind*/ time__Time {
   int minute;
   int second;
   int uni;
+};
+struct /*kind*/ math__Complex {
+  f64 re;
+  f64 im;
+};
+struct /*kind*/ math__Fraction {
+  i64 n;
+  i64 d;
 };
 struct /*kind*/ CGen {
   os__File out;
@@ -421,6 +431,7 @@ string string_clone(string a);
 byte *string_cstr(string s);
 string string_replace(string s, string rep, string with);
 int string_int(string s);
+i64 string_i64(string s);
 f32 string_f32(string s);
 bool string_eq(string s, string a);
 bool string_ne(string s, string a);
@@ -607,6 +618,77 @@ void time__sleep_ms(int n);
 bool time__is_leap_year(int year);
 void rand__seed();
 int rand__next(int max);
+math__Complex math__complex(f64 re, f64 im);
+string math__Complex_str(math__Complex c);
+f64 math__Complex_abs(math__Complex c);
+f64 math__Complex_mod(math__Complex c);
+f64 math__Complex_angle(math__Complex c);
+math__Complex math__Complex_plus(math__Complex c1, math__Complex c2);
+math__Complex math__Complex_minus(math__Complex c1, math__Complex c2);
+math__Complex math__Complex_add(math__Complex c1, math__Complex c2);
+math__Complex math__Complex_subtract(math__Complex c1, math__Complex c2);
+math__Complex math__Complex_multiply(math__Complex c1, math__Complex c2);
+math__Complex math__Complex_divide(math__Complex c1, math__Complex c2);
+math__Complex math__Complex_conjugate(math__Complex c);
+math__Complex math__Complex_addinv(math__Complex c);
+math__Complex math__Complex_mulinv(math__Complex c);
+math__Complex math__Complex_pow(math__Complex c, f64 n);
+math__Complex math__Complex_root(math__Complex c, f64 n);
+math__Complex math__Complex_exp(math__Complex c);
+math__Complex math__Complex_ln(math__Complex c);
+math__Complex math__Complex_sin(math__Complex c);
+math__Complex math__Complex_cos(math__Complex c);
+math__Complex math__Complex_tan(math__Complex c);
+math__Complex math__Complex_sinh(math__Complex c);
+math__Complex math__Complex_cosh(math__Complex c);
+math__Complex math__Complex_tanh(math__Complex c);
+bool math__Complex_equals(math__Complex c1, math__Complex c2);
+math__Fraction math__fraction(i64 n, i64 d);
+string math__Fraction_str(math__Fraction f);
+math__Fraction math__Fraction_plus(math__Fraction f1, math__Fraction f2);
+math__Fraction math__Fraction_minus(math__Fraction f1, math__Fraction f2);
+math__Fraction math__Fraction_add(math__Fraction f1, math__Fraction f2);
+math__Fraction math__Fraction_subtract(math__Fraction f1, math__Fraction f2);
+math__Fraction math__Fraction_multiply(math__Fraction f1, math__Fraction f2);
+math__Fraction math__Fraction_divide(math__Fraction f1, math__Fraction f2);
+math__Fraction math__Fraction_reciprocal(math__Fraction f1);
+i64 math__Fraction_gcd(math__Fraction f1);
+math__Fraction math__Fraction_reduce(math__Fraction f1);
+f64 math__Fraction_f64(math__Fraction f1);
+bool math__Fraction_equals(math__Fraction f1, math__Fraction f2);
+f64 math__abs(f64 a);
+f64 math__acos(f64 a);
+f64 math__asin(f64 a);
+f64 math__atan(f64 a);
+f64 math__atan2(f64 a, f64 b);
+f64 math__cbrt(f64 a);
+f64 math__ceil(f64 a);
+f64 math__cos(f64 a);
+f64 math__cosh(f64 a);
+f64 math__exp(f64 a);
+array_int math__digits(int n, int base);
+f64 math__exp2(f64 a);
+f64 math__floor(f64 a);
+f64 math__fmod(f64 a, f64 b);
+i64 math__gcd(i64 a, i64 b);
+i64 math__lcm(i64 a, i64 b);
+f64 math__log(f64 a);
+f64 math__log2(f64 a);
+f64 math__log10(f64 a);
+f64 math__log_n(f64 a, f64 b);
+f64 math__max(f64 a, f64 b);
+f64 math__min(f64 a, f64 b);
+f64 math__pow(f64 a, f64 b);
+f64 math__radians(f64 degrees);
+f64 math__degrees(f64 radians);
+f64 math__round(f64 f);
+f64 math__sin(f64 a);
+f64 math__sinh(f64 a);
+f64 math__sqrt(f64 a);
+f64 math__tan(f64 a);
+f64 math__tanh(f64 a);
+f64 math__trunc(f64 a);
+i64 math__factorial(int a);
 CGen *new_cgen(string out_name_c);
 void CGen_genln(CGen *g, string s);
 void CGen_gen(CGen *g, string s);
@@ -705,7 +787,7 @@ string Parser_unary(Parser *p);
 string Parser_factor(Parser *p);
 string Parser_assoc(Parser *p);
 void Parser_char_expr(Parser *p);
-string Parser_typ_to_fmt(Parser *p, string typ);
+string Parser_typ_to_fmt(Parser *p, string typ, int level);
 string format_str(string str);
 void Parser_string_expr(Parser *p);
 string Parser_map_init(Parser *p);
@@ -803,6 +885,7 @@ bool Table_main_exists(Table *t);
 Var Table_find_const(Table *t, string name);
 string Table_cgen_name(Table *table, Fn *f);
 string Table_cgen_name_type_pair(Table *table, string name, string typ);
+bool is_valid_int_const(string val, string typ);
 map_int build_keys();
 array_string build_token_str();
 Token key_to_token(string key);
@@ -882,6 +965,39 @@ array_string os__args;
 #define os__FILE_ATTRIBUTE_DIRECTORY 16
 string time__Months;
 string time__Days;
+#define math__E 2.71828182845904523536028747135266249775724709369995957496696763
+#define math__Pi                                                               \
+  3.14159265358979323846264338327950288419716939937510582097494459
+#define math__Phi                                                              \
+  1.61803398874989484820458683436563811772030917980576286213544862
+#define math__Tau                                                              \
+  6.28318530717958647692528676655900576839433879875021164194988918
+#define math__Sqrt2                                                            \
+  1.41421356237309504880168872420969807856967187537694807317667974
+#define math__SqrtE                                                            \
+  1.64872127070012814684865078781416357165377610071014801157507931
+#define math__SqrtPi                                                           \
+  1.77245385090551602729816748334114518279754945612238712821380779
+#define math__SqrtTau                                                          \
+  2.50662827463100050241576528481104525300698674060993831662992357
+#define math__SqrtPhi                                                          \
+  1.27201964951406896425242246173749149171560804184009624861664038
+#define math__Ln2                                                              \
+  0.693147180559945309417232121458176568075500134360255254120680009
+f32 math__Log2E;
+#define math__Ln10                                                             \
+  2.30258509299404568401799145468436420760110148862877297603332790
+f32 math__Log10E;
+int math__MaxI8;
+int math__MinI8;
+int math__MaxI16;
+int math__MinI16;
+int math__MaxI32;
+int math__MinI32;
+int math__MaxU8;
+int math__MaxU16;
+int math__MaxU32;
+int math__MaxU64;
 #define main__MaxLocalVars 50
 string main__Version;
 #define main__BuildMode_default_mode 0
@@ -1528,6 +1644,7 @@ string string_replace(string s, string rep, string with) {
   return tos(b, new_len);
 }
 int string_int(string s) { return atoi(s.str); }
+i64 string_i64(string s) { return atoll(s.str); }
 f32 string_f32(string s) { return atof(s.str); }
 bool string_eq(string s, string a) {
 
@@ -4282,6 +4399,347 @@ bool time__is_leap_year(int year) {
 }
 void rand__seed() { srand(time__now().uni); }
 int rand__next(int max) { return rand() % max; }
+math__Complex math__complex(f64 re, f64 im) { return (math__Complex){re, im}; }
+string math__Complex_str(math__Complex c) {
+
+  string out = _STR("%f", c.re);
+
+  out = string_add(out, (c.im >= 0) ? (_STR("+%f", c.im)) : (_STR("%f", c.im)));
+
+  out = string_add(out, tos2("i"));
+
+  return out;
+}
+f64 math__Complex_abs(math__Complex c) { return hypot(c.re, c.im); }
+f64 math__Complex_mod(math__Complex c) { return math__Complex_abs(c); }
+f64 math__Complex_angle(math__Complex c) { return math__atan2(c.im, c.re); }
+math__Complex math__Complex_plus(math__Complex c1, math__Complex c2) {
+
+  return (math__Complex){c1.re + c2.re, c1.im + c2.im};
+}
+math__Complex math__Complex_minus(math__Complex c1, math__Complex c2) {
+
+  return (math__Complex){c1.re - c2.re, c1.im - c2.im};
+}
+math__Complex math__Complex_add(math__Complex c1, math__Complex c2) {
+
+  return math__Complex_plus(c1, c2);
+}
+math__Complex math__Complex_subtract(math__Complex c1, math__Complex c2) {
+
+  return math__Complex_minus(c1, c2);
+}
+math__Complex math__Complex_multiply(math__Complex c1, math__Complex c2) {
+
+  return (math__Complex){(/*lpar*/ c1.re * c2.re) +
+                             (/*lpar*/ (/*lpar*/ c1.im * c2.im) * -1),
+                         (/*lpar*/ c1.re * c2.im) + (/*lpar*/ c1.im * c2.re)};
+}
+math__Complex math__Complex_divide(math__Complex c1, math__Complex c2) {
+
+  f64 denom = (/*lpar*/ c2.re * c2.re) + (/*lpar*/ c2.im * c2.im);
+
+  return (math__Complex){
+      (/*lpar*/ (/*lpar*/ c1.re * c2.re) +
+       (/*lpar*/ (/*lpar*/ c1.im * -c2.im) * -1)) /
+          denom,
+      (/*lpar*/ (/*lpar*/ c1.re * -c2.im) + (/*lpar*/ c1.im * c2.re)) / denom};
+}
+math__Complex math__Complex_conjugate(math__Complex c) {
+
+  return (math__Complex){c.re, -c.im};
+}
+math__Complex math__Complex_addinv(math__Complex c) {
+
+  return (math__Complex){-c.re, -c.im};
+}
+math__Complex math__Complex_mulinv(math__Complex c) {
+
+  return (math__Complex){c.re / (/*lpar*/ c.re * c.re + c.im * c.im),
+                         -c.im / (/*lpar*/ c.re * c.re + c.im * c.im)};
+}
+math__Complex math__Complex_pow(math__Complex c, f64 n) {
+
+  f64 r = math__pow(math__Complex_abs(c), n);
+
+  f64 angle = math__Complex_angle(c);
+
+  return (math__Complex){r * math__cos(n * angle), r * math__sin(n * angle)};
+}
+math__Complex math__Complex_root(math__Complex c, f64 n) {
+
+  return math__Complex_pow(c, 1.0 / n);
+}
+math__Complex math__Complex_exp(math__Complex c) {
+
+  f64 a = math__exp(c.re);
+
+  return (math__Complex){a * math__cos(c.im), a * math__sin(c.im)};
+}
+math__Complex math__Complex_ln(math__Complex c) {
+
+  return (math__Complex){math__log(math__Complex_abs(c)),
+                         math__Complex_angle(c)};
+}
+math__Complex math__Complex_sin(math__Complex c) {
+
+  return (math__Complex){math__sin(c.re) * math__cosh(c.im),
+                         math__cos(c.re) * math__sinh(c.im)};
+}
+math__Complex math__Complex_cos(math__Complex c) {
+
+  return (math__Complex){math__cos(c.re) * math__cosh(c.im),
+                         -(/*lpar*/ math__sin(c.re) * math__sinh(c.im))};
+}
+math__Complex math__Complex_tan(math__Complex c) {
+
+  return math__Complex_divide(math__Complex_sin(c), math__Complex_cos(c));
+}
+math__Complex math__Complex_sinh(math__Complex c) {
+
+  return (math__Complex){math__cos(c.im) * math__sinh(c.re),
+                         math__sin(c.im) * math__cosh(c.re)};
+}
+math__Complex math__Complex_cosh(math__Complex c) {
+
+  return (math__Complex){math__cos(c.im) * math__cosh(c.re),
+                         math__sin(c.im) * math__sinh(c.re)};
+}
+math__Complex math__Complex_tanh(math__Complex c) {
+
+  return math__Complex_divide(math__Complex_sinh(c), math__Complex_cosh(c));
+}
+bool math__Complex_equals(math__Complex c1, math__Complex c2) {
+
+  return (/*lpar*/ c1.re == c2.re) && (/*lpar*/ c1.im == c2.im);
+}
+math__Fraction math__fraction(i64 n, i64 d) {
+
+  if (d != 0) {
+    /*if*/
+
+    return (math__Fraction){n, d};
+
+  } else {
+    /*else if*/
+
+    v_panic(tos2("Denominator cannot be zero"));
+  };
+}
+string math__Fraction_str(math__Fraction f) {
+
+  return _STR("%lld/%lld", f.n, f.d);
+}
+math__Fraction math__Fraction_plus(math__Fraction f1, math__Fraction f2) {
+
+  if (f1.d == f2.d) {
+    /*if*/
+
+    return (math__Fraction){f1.n + f2.n, f1.d};
+
+  } else {
+    /*else if*/
+
+    return (math__Fraction){(/*lpar*/ f1.n * f2.d) + (/*lpar*/ f2.n * f1.d),
+                            f1.d * f2.d};
+  };
+}
+math__Fraction math__Fraction_minus(math__Fraction f1, math__Fraction f2) {
+
+  if (f1.d == f2.d) {
+    /*if*/
+
+    return (math__Fraction){f1.n - f2.n, f1.d};
+
+  } else {
+    /*else if*/
+
+    return (math__Fraction){(/*lpar*/ f1.n * f2.d) - (/*lpar*/ f2.n * f1.d),
+                            f1.d * f2.d};
+  };
+}
+math__Fraction math__Fraction_add(math__Fraction f1, math__Fraction f2) {
+
+  return math__Fraction_plus(f1, f2);
+}
+math__Fraction math__Fraction_subtract(math__Fraction f1, math__Fraction f2) {
+
+  return math__Fraction_minus(f1, f2);
+}
+math__Fraction math__Fraction_multiply(math__Fraction f1, math__Fraction f2) {
+
+  return (math__Fraction){f1.n * f2.n, f1.d * f2.d};
+}
+math__Fraction math__Fraction_divide(math__Fraction f1, math__Fraction f2) {
+
+  return (math__Fraction){f1.n * f2.d, f1.d * f2.n};
+}
+math__Fraction math__Fraction_reciprocal(math__Fraction f1) {
+
+  return (math__Fraction){f1.d, f1.n};
+}
+i64 math__Fraction_gcd(math__Fraction f1) { return math__gcd(f1.n, f1.d); }
+math__Fraction math__Fraction_reduce(math__Fraction f1) {
+
+  i64 cf = math__gcd(f1.n, f1.d);
+
+  return (math__Fraction){f1.n / cf, f1.d / cf};
+}
+f64 math__Fraction_f64(math__Fraction f1) {
+
+  return ((f64)(f1.n)) / ((f64)(f1.d));
+}
+bool math__Fraction_equals(math__Fraction f1, math__Fraction f2) {
+
+  math__Fraction r1 = math__Fraction_reduce(f1);
+
+  math__Fraction r2 = math__Fraction_reduce(f2);
+
+  return (/*lpar*/ r1.n == r2.n) && (/*lpar*/ r1.d == r2.d);
+}
+f64 math__abs(f64 a) {
+
+  if (a < 0) {
+    /*if*/
+
+    return -a;
+  };
+
+  return a;
+}
+f64 math__acos(f64 a) { return acos(a); }
+f64 math__asin(f64 a) { return asin(a); }
+f64 math__atan(f64 a) { return atan(a); }
+f64 math__atan2(f64 a, f64 b) { return atan2(a, b); }
+f64 math__cbrt(f64 a) { return cbrt(a); }
+f64 math__ceil(f64 a) { return ceil(a); }
+f64 math__cos(f64 a) { return cos(a); }
+f64 math__cosh(f64 a) { return cosh(a); }
+f64 math__exp(f64 a) { return exp(a); }
+array_int math__digits(int n, int base) {
+
+  int sign = 1;
+
+  if (n < 0) {
+    /*if*/
+
+    sign = -1;
+
+    n = -n;
+  };
+
+  array_int res = new_array_from_c_array(0, 0, sizeof(int), (int[]){});
+
+  while (n != 0) {
+
+    _PUSH(&res, ((/*lpar*/ n % base) * sign), tmp3, int);
+
+    n /= base;
+  };
+
+  return res;
+}
+f64 math__exp2(f64 a) { return exp2(a); }
+f64 math__floor(f64 a) { return floor(a); }
+f64 math__fmod(f64 a, f64 b) { return fmod(a, b); }
+i64 math__gcd(i64 a, i64 b) {
+
+  if (a < 0) {
+    /*if*/
+
+    a = -a;
+  };
+
+  if (b < 0) {
+    /*if*/
+
+    b = -b;
+  };
+
+  while (b != 0) {
+
+    a %= b;
+
+    if (a == 0) {
+      /*if*/
+
+      return b;
+    };
+
+    b %= a;
+  };
+
+  return a;
+}
+i64 math__lcm(i64 a, i64 b) {
+
+  if (a == 0) {
+    /*if*/
+
+    return a;
+  };
+
+  i64 res = a * (/*lpar*/ b / math__gcd(b, a));
+
+  if (res < 0) {
+    /*if*/
+
+    return -res;
+  };
+
+  return res;
+}
+f64 math__log(f64 a) { return log(a); }
+f64 math__log2(f64 a) { return log(a) / log(2); }
+f64 math__log10(f64 a) { return log10(a); }
+f64 math__log_n(f64 a, f64 b) { return log(a) / log(b); }
+f64 math__max(f64 a, f64 b) {
+
+  if (a > b) {
+    /*if*/
+
+    return a;
+  };
+
+  return b;
+}
+f64 math__min(f64 a, f64 b) {
+
+  if (a < b) {
+    /*if*/
+
+    return a;
+  };
+
+  return b;
+}
+f64 math__pow(f64 a, f64 b) { return pow(a, b); }
+f64 math__radians(f64 degrees) { return degrees * (/*lpar*/ math__Pi / 180.0); }
+f64 math__degrees(f64 radians) { return radians * (/*lpar*/ 180.0 / math__Pi); }
+f64 math__round(f64 f) { return round(f); }
+f64 math__sin(f64 a) { return sin(a); }
+f64 math__sinh(f64 a) { return sinh(a); }
+f64 math__sqrt(f64 a) { return sqrt(a); }
+f64 math__tan(f64 a) { return tan(a); }
+f64 math__tanh(f64 a) { return tanh(a); }
+f64 math__trunc(f64 a) { return trunc(a); }
+i64 math__factorial(int a) {
+
+  if (a < 0) {
+    /*if*/
+
+    v_panic(tos2("factorial: Cannot find factorial of negative number"));
+  };
+
+  int prod = 1;
+
+  for (int i = 0; i < a; i++) {
+
+    prod *= (/*lpar*/ i + 1);
+  };
+
+  return prod;
+}
 CGen *new_cgen(string out_name_c) {
 
   string path = _STR("%.*s/%.*s", main__TmpPath.len, main__TmpPath.str,
@@ -4843,7 +5301,7 @@ void Parser_fn_decl(Parser *p) {
 
       printf("T.mod=%.*s\n", T->mod.len, T->mod.str);
 
-      printf("pkg=%.*s\n", p->mod.len, p->mod.str);
+      printf("p.mod=%.*s\n", p->mod.len, p->mod.str);
 
       Parser_error(p, _STR("cannot define new methods on non-local type `%.*s`",
                            receiver_typ.len, receiver_typ.str));
@@ -5009,7 +5467,7 @@ void Parser_fn_decl(Parser *p) {
 
   bool is_fn_header = !is_c && !is_sig &&
                       (/*lpar*/ p->pref->translated || p->pref->is_test) &&
-                      p->tok != main__Token_lcbr;
+                      (/*lpar*/ p->tok != main__Token_lcbr);
 
   if (is_fn_header) {
     /*if*/
@@ -5484,7 +5942,7 @@ void Parser_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
       printf("%.*s  recv=%.*s recv_mut=%d\n", method_call.len, method_call.str,
              receiver.name.len, receiver.name.str, receiver.is_mut);
 
-      Parser_error(p, _STR("`%.*s` is imkey_mut", p->expr_var.name.len,
+      Parser_error(p, _STR("`%.*s` is immutable", p->expr_var.name.len,
                            p->expr_var.name.str));
     };
 
@@ -5790,7 +6248,7 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
       Type *T = Table_find_type(&/* ? */ *p->table, typ);
 
-      string fmt = Parser_typ_to_fmt(p, typ);
+      string fmt = Parser_typ_to_fmt(p, typ, 0);
 
       if (string_ne(fmt, tos2(""))) {
         /*if*/
@@ -5816,6 +6274,10 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
       if (!Type_has_method(&/* ? */ *T, tos2("str"))) {
         /*if*/
 
+        string error_msg = (/*lpar*/ _STR(
+            "`%.*s` needs to have method `str() string` to be printable",
+            typ.len, typ.str));
+
         if (T->fields.len > 0) {
           /*if*/
 
@@ -5831,9 +6293,7 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
           if (string_eq(name, tos2("}"))) {
             /*if*/
 
-            Parser_error(p, _STR("`%.*s` needs to have method `str() string` "
-                                 "to be printable",
-                                 typ.len, typ.str));
+            Parser_error(p, error_msg);
           };
 
           p->cgen->cur_line = string_left(p->cgen->cur_line, index);
@@ -5847,10 +6307,7 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
           return Parser_fn_call_args(p, f);
         };
 
-        Parser_error(
-            p,
-            _STR("`%.*s` needs to have method `str() string` to be printable",
-                 typ.len, typ.str));
+        Parser_error(p, error_msg);
       };
 
       CGen_set_placeholder(p->cgen, ph, _STR("%.*s_str(", typ.len, typ.str));
@@ -5921,10 +6378,10 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
       Type *interface_type = Table_find_type(&/* ? */ *p->table, arg.typ);
 
-      array_Fn tmp101 = interface_type->methods;
+      array_Fn tmp102 = interface_type->methods;
       ;
-      for (int tmp102 = 0; tmp102 < tmp101.len; tmp102++) {
-        Fn method = ((Fn *)tmp101.data)[tmp102];
+      for (int tmp103 = 0; tmp103 < tmp102.len; tmp103++) {
+        Fn method = ((Fn *)tmp102.data)[tmp103];
 
         Parser_gen(p, _STR(", %.*s_%.*s ", typ.len, typ.str, method.name.len,
                            method.name.str));
@@ -6017,10 +6474,10 @@ string Fn_typ_str(Fn f) {
 
   strings__Builder_write(&/* ? */ sb, tos2("fn ("));
 
-  array_Var tmp112 = f.args;
+  array_Var tmp113 = f.args;
   ;
-  for (int i = 0; i < tmp112.len; i++) {
-    Var arg = ((Var *)tmp112.data)[i];
+  for (int i = 0; i < tmp113.len; i++) {
+    Var arg = ((Var *)tmp113.data)[i];
 
     strings__Builder_write(&/* ? */ sb, arg.typ);
 
@@ -6045,10 +6502,10 @@ string Fn_str_args(Fn *f, Table *table) {
 
   string s = tos2("");
 
-  array_Var tmp114 = f->args;
+  array_Var tmp115 = f->args;
   ;
-  for (int i = 0; i < tmp114.len; i++) {
-    Var arg = ((Var *)tmp114.data)[i];
+  for (int i = 0; i < tmp115.len; i++) {
+    Var arg = ((Var *)tmp115.data)[i];
 
     if (Table_is_interface(&/* ? */ *table, arg.typ)) {
       /*if*/
@@ -6057,10 +6514,10 @@ string Fn_str_args(Fn *f, Table *table) {
 
       Type *interface_type = Table_find_type(&/* ? */ *table, arg.typ);
 
-      array_Fn tmp116 = interface_type->methods;
+      array_Fn tmp117 = interface_type->methods;
       ;
-      for (int tmp117 = 0; tmp117 < tmp116.len; tmp117++) {
-        Fn method = ((Fn *)tmp116.data)[tmp117];
+      for (int tmp118 = 0; tmp118 < tmp117.len; tmp118++) {
+        Fn method = ((Fn *)tmp117.data)[tmp118];
 
         s = string_add(s, _STR(", %.*s (*%.*s_%.*s)(void*) ", method.typ.len,
                                method.typ.str, arg.typ.len, arg.typ.str,
@@ -8383,7 +8840,7 @@ void Parser_type_decl(Parser *p) {
               _struct.len, _struct.str, nt_pair.len, nt_pair.str, name.len,
               name.str, parent.len, parent.str));
 
-  Table_register_type_with_parent(p->table, name, parent);
+  Parser_register_type_with_parent(p, name, parent);
 }
 Fn *Parser_interface_method(Parser *p, string field_name, string receiver) {
 
@@ -9496,7 +9953,7 @@ void Parser_assign_statement(Parser *p, Var v, int ph, bool is_map) {
   if (!v.is_mut && !v.is_arg && !p->pref->translated && !v.is_global) {
     /*if*/
 
-    Parser_error(p, _STR("`%.*s` is imkey_mut", v.name.len, v.name.str));
+    Parser_error(p, _STR("`%.*s` is immutable", v.name.len, v.name.str));
   };
 
   bool is_str = string_eq(v.typ, tos2("string"));
@@ -10234,7 +10691,7 @@ string Parser_var_expr(Parser *p, Var v) {
     if (!v.is_mut && !v.is_arg && !p->pref->translated) {
       /*if*/
 
-      Parser_error(p, _STR("`%.*s` is imkey_mut", v.name.len, v.name.str));
+      Parser_error(p, _STR("`%.*s` is immutable", v.name.len, v.name.str));
     };
 
     if (string_ne(typ, tos2("int"))) {
@@ -10373,7 +10830,7 @@ string Parser_dot(Parser *p, string str_typ, int method_ph) {
         !is_vi) {
       /*if*/
 
-      Parser_error(p, _STR("cannot modify imkey_mut field `%.*s` (type `%.*s`)",
+      Parser_error(p, _STR("cannot modify immutable field `%.*s` (type `%.*s`)",
                            field_name.len, field_name.str, typ->name.len,
                            typ->name.str));
     };
@@ -10401,7 +10858,7 @@ string Parser_dot(Parser *p, string str_typ, int method_ph) {
 
         Parser_error(
             p,
-            _STR("cannot modify public imkey_mut field `%.*s` (type `%.*s`)",
+            _STR("cannot modify public immutable field `%.*s` (type `%.*s`)",
                  field_name.len, field_name.str, typ->name.len, typ->name.str));
       };
     };
@@ -10616,7 +11073,7 @@ string Parser_index_expr(Parser *p, string typ, int fn_ph) {
     if (is_indexer && is_str && !p->builtin_pkg) {
       /*if*/
 
-      Parser_error(p, tos2("strings are imkey_mut"));
+      Parser_error(p, tos2("strings are immutable"));
     };
 
     int assign_pos = p->cgen->cur_line.len;
@@ -10763,7 +11220,7 @@ string Parser_expression(Parser *p) {
       if (!p->expr_var.is_mut && !p->pref->translated) {
         /*if*/
 
-        Parser_error(p, _STR("`%.*s` is imkey_mut (can\'t <<)",
+        Parser_error(p, _STR("`%.*s` is immutable (can\'t <<)",
                              p->expr_var.name.len, p->expr_var.name.str));
       };
 
@@ -11064,6 +11521,15 @@ string Parser_factor(Parser *p) {
       typ = tos2("f32");
     };
 
+    if (string_ne(p->expected_type, tos2("")) &&
+        !is_valid_int_const(p->lit, p->expected_type)) {
+      /*if*/
+
+      Parser_error(p, _STR("constant `%.*s` overflows `%.*s`", p->lit.len,
+                           p->lit.str, p->expected_type.len,
+                           p->expected_type.str));
+    };
+
     Parser_gen(p, p->lit);
 
     Parser_fgen(p, p->lit);
@@ -11311,7 +11777,7 @@ void Parser_char_expr(Parser *p) {
 
   Parser_next(p);
 }
-string Parser_typ_to_fmt(Parser *p, string typ) {
+string Parser_typ_to_fmt(Parser *p, string typ, int level) {
 
   Type *t = Table_find_type(&/* ? */ *p->table, typ);
 
@@ -11364,6 +11830,12 @@ string Parser_typ_to_fmt(Parser *p, string typ) {
 
       return tos2("%p");
     };
+  };
+
+  if (string_ne(t->parent, tos2("")) && level == 0) {
+    /*if*/
+
+    return Parser_typ_to_fmt(p, t->parent, level + 1);
   };
 
   return tos2("");
@@ -11479,7 +11951,7 @@ void Parser_string_expr(Parser *p) {
     } else {
       /*else if*/
 
-      string f = Parser_typ_to_fmt(p, typ);
+      string f = Parser_typ_to_fmt(p, typ, 0);
 
       if (string_eq(f, tos2(""))) {
         /*if*/
@@ -11518,7 +11990,7 @@ void Parser_string_expr(Parser *p) {
   if (p->tok == main__Token_not) {
     /*if*/
 
-    Parser_next(p);
+    Parser_check(p, main__Token_not);
 
     Parser_gen(p, _STR("_STR_TMP(%.*s%.*s)", format.len, format.str, args.len,
                        args.str));
@@ -12028,7 +12500,11 @@ string Parser_cast(Parser *p, string typ) {
 
   Parser_check(p, main__Token_lpar);
 
+  p->expected_type = typ;
+
   string expr_typ = Parser_bool_expression(p);
+
+  p->expected_type = tos2("");
 
   Parser_check(p, main__Token_rpar);
 
@@ -14695,18 +15171,18 @@ void Table_register_type_with_parent(Table *t, string typ, string parent) {
     };
   };
 
-  Type datyp = (Type){.name = typ,
-                      .parent = parent,
-                      .mod = tos("", 0),
-                      .fields = new_array(0, 1, sizeof(Var)),
-                      .methods = new_array(0, 1, sizeof(Fn)),
-                      .is_c = 0,
-                      .is_interface = 0,
-                      .is_enum = 0,
-                      .enum_vals = new_array(0, 1, sizeof(string)),
-                      .is_placeholder = 0};
-
-  _PUSH(&t->types, (datyp), tmp27, Type);
+  _PUSH(&t->types,
+        ((Type){.name = typ,
+                .parent = parent,
+                .mod = tos("", 0),
+                .fields = new_array(0, 1, sizeof(Var)),
+                .methods = new_array(0, 1, sizeof(Fn)),
+                .is_c = 0,
+                .is_interface = 0,
+                .is_enum = 0,
+                .enum_vals = new_array(0, 1, sizeof(string)),
+                .is_placeholder = 0}),
+        tmp26, Type);
 }
 void Table_register_type2(Table *t, Type typ) {
 
@@ -14716,10 +15192,10 @@ void Table_register_type2(Table *t, Type typ) {
     return;
   };
 
-  array_Type tmp28 = t->types;
+  array_Type tmp27 = t->types;
   ;
-  for (int tmp29 = 0; tmp29 < tmp28.len; tmp29++) {
-    Type typ2 = ((Type *)tmp28.data)[tmp29];
+  for (int tmp28 = 0; tmp28 < tmp27.len; tmp28++) {
+    Type typ2 = ((Type *)tmp27.data)[tmp28];
 
     if (string_eq(typ2.name, typ.name)) {
       /*if*/
@@ -14728,7 +15204,7 @@ void Table_register_type2(Table *t, Type typ) {
     };
   };
 
-  _PUSH(&t->types, (typ), tmp30, Type);
+  _PUSH(&t->types, (typ), tmp29, Type);
 }
 void Type_add_field(Type *t, string name, string typ, bool is_mut, string attr,
                     AccessMod access_mod) {
@@ -14751,7 +15227,7 @@ void Type_add_field(Type *t, string name, string typ, bool is_mut, string attr,
                 .is_used = 0,
                 .scope_level = 0};
 
-  _PUSH(&t->fields, (v), tmp32, Var);
+  _PUSH(&t->fields, (v), tmp31, Var);
 }
 bool Type_has_field(Type *t, string name) {
 
@@ -14765,10 +15241,10 @@ bool Type_has_enum_val(Type *t, string name) {
 }
 Var Type_find_field(Type *t, string name) {
 
-  array_Var tmp34 = t->fields;
+  array_Var tmp33 = t->fields;
   ;
-  for (int tmp35 = 0; tmp35 < tmp34.len; tmp35++) {
-    Var field = ((Var *)tmp34.data)[tmp35];
+  for (int tmp34 = 0; tmp34 < tmp33.len; tmp34++) {
+    Var field = ((Var *)tmp33.data)[tmp34];
 
     if (string_eq(field.name, name)) {
       /*if*/
@@ -14814,7 +15290,7 @@ Var Table_find_field(Table *table, Type *typ, string name) {
 
   return field;
 }
-void Type_add_method(Type *t, Fn f) { _PUSH(&t->methods, (f), tmp39, Fn); }
+void Type_add_method(Type *t, Fn f) { _PUSH(&t->methods, (f), tmp38, Fn); }
 bool Type_has_method(Type *t, string name) {
 
   Fn method = Type_find_method(&/* ? */ *t, name);
@@ -14843,10 +15319,10 @@ Fn Table_find_method(Table *table, Type *typ, string name) {
 }
 Fn Type_find_method(Type *t, string name) {
 
-  array_Fn tmp44 = t->methods;
+  array_Fn tmp43 = t->methods;
   ;
-  for (int tmp45 = 0; tmp45 < tmp44.len; tmp45++) {
-    Fn method = ((Fn *)tmp44.data)[tmp45];
+  for (int tmp44 = 0; tmp44 < tmp43.len; tmp44++) {
+    Fn method = ((Fn *)tmp43.data)[tmp44];
 
     if (string_eq(method.name, name)) {
       /*if*/
@@ -14892,10 +15368,10 @@ Type *Table_find_type(Table *t, string name) {
     name = string_left(name, name.len - 1);
   };
 
-  array_Type tmp47 = t->types;
+  array_Type tmp46 = t->types;
   ;
-  for (int i = 0; i < tmp47.len; i++) {
-    Type typ = ((Type *)tmp47.data)[i];
+  for (int i = 0; i < tmp46.len; i++) {
+    Type typ = ((Type *)tmp46.data)[i];
 
     if (string_eq(typ.name, name)) {
       /*if*/
@@ -15096,10 +15572,10 @@ bool Parser_satisfies_interface(Parser *p, string interface_name, string _typ,
 
   Type *typ = Table_find_type(&/* ? */ *p->table, _typ);
 
-  array_Fn tmp52 = int_typ->methods;
+  array_Fn tmp51 = int_typ->methods;
   ;
-  for (int tmp53 = 0; tmp53 < tmp52.len; tmp53++) {
-    Fn method = ((Fn *)tmp52.data)[tmp53];
+  for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
+    Fn method = ((Fn *)tmp51.data)[tmp52];
 
     if (!Type_has_method(&/* ? */ *typ, method.name)) {
       /*if*/
@@ -15165,10 +15641,10 @@ string type_default(string typ) {
 }
 bool Table_is_interface(Table *t, string name) {
 
-  array_Type tmp54 = t->types;
+  array_Type tmp53 = t->types;
   ;
-  for (int tmp55 = 0; tmp55 < tmp54.len; tmp55++) {
-    Type typ = ((Type *)tmp54.data)[tmp55];
+  for (int tmp54 = 0; tmp54 < tmp53.len; tmp54++) {
+    Type typ = ((Type *)tmp53.data)[tmp54];
 
     if (typ.is_interface && string_eq(typ.name, name)) {
       /*if*/
@@ -15181,14 +15657,14 @@ bool Table_is_interface(Table *t, string name) {
 }
 bool Table_main_exists(Table *t) {
 
-  array_Entry tmp56 = t->fns.entries;
+  array_Entry tmp55 = t->fns.entries;
   ;
-  for (int tmp57 = 0; tmp57 < tmp56.len; tmp57++) {
-    Entry entry = ((Entry *)tmp56.data)[tmp57];
-    Fn tmp58 = {};
-    bool tmp59 = map_get(t->fns, entry.key, &tmp58);
+  for (int tmp56 = 0; tmp56 < tmp55.len; tmp56++) {
+    Entry entry = ((Entry *)tmp55.data)[tmp56];
+    Fn tmp57 = {};
+    bool tmp58 = map_get(t->fns, entry.key, &tmp57);
 
-    Fn f = tmp58;
+    Fn f = tmp57;
 
     if (string_eq(f.name, tos2("main"))) {
       /*if*/
@@ -15201,10 +15677,10 @@ bool Table_main_exists(Table *t) {
 }
 Var Table_find_const(Table *t, string name) {
 
-  array_Var tmp61 = t->consts;
+  array_Var tmp60 = t->consts;
   ;
-  for (int tmp62 = 0; tmp62 < tmp61.len; tmp62++) {
-    Var c = ((Var *)tmp61.data)[tmp62];
+  for (int tmp61 = 0; tmp61 < tmp60.len; tmp61++) {
+    Var c = ((Var *)tmp60.data)[tmp61];
 
     if (string_eq(c.name, name)) {
       /*if*/
@@ -15268,18 +15744,18 @@ string Table_cgen_name(Table *table, Fn *f) {
       !string_ends_with(name, tos2("_str")) &&
       !string_contains(name, tos2("contains"))) {
     /*if*/
-    int tmp64 = 0;
-    bool tmp65 = map_get(table->obf_ids, name, &tmp64);
+    int tmp63 = 0;
+    bool tmp64 = map_get(table->obf_ids, name, &tmp63);
 
-    int idx = tmp64;
+    int idx = tmp63;
 
     if (idx == 0) {
       /*if*/
 
       table->fn_cnt++;
-      int tmp67 = table->fn_cnt;
+      int tmp66 = table->fn_cnt;
 
-      map__set(&table->obf_ids, name, &tmp67);
+      map__set(&table->obf_ids, name, &tmp66);
 
       idx = table->fn_cnt;
     };
@@ -15331,6 +15807,38 @@ string Table_cgen_name_type_pair(Table *table, string name, string typ) {
   };
 
   return _STR("%.*s %.*s", typ.len, typ.str, name.len, name.str);
+}
+bool is_valid_int_const(string val, string typ) {
+
+  int x = string_int(val);
+
+  if (string_eq(typ, tos2("byte")) || string_eq(typ, tos2("u8"))) { /* case */
+
+    return 0 <= x && x <= math__MaxU8;
+
+  } else if (string_eq(typ, tos2("u16"))) { /* case */
+
+    return 0 <= x && x <= math__MaxU16;
+
+  } else if (string_eq(typ, tos2("u32"))) { /* case */
+
+    return 0 <= x && x <= math__MaxU32;
+
+  } else if (string_eq(typ, tos2("i8"))) { /* case */
+
+    return math__MinI8 <= x && x <= math__MaxI8;
+
+  } else if (string_eq(typ, tos2("i16"))) { /* case */
+
+    return math__MinI16 <= x && x <= math__MaxI16;
+
+  } else if (string_eq(typ, tos2("int")) ||
+             string_eq(typ, tos2("i32"))) { /* case */
+
+    return math__MinI32 <= x && x <= math__MaxI32;
+  };
+
+  return 1;
 }
 map_int build_keys() {
 
@@ -15707,6 +16215,18 @@ void init_consts() {
   os__args = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
   time__Months = tos2("JanFebMarAprMayJunJulAugSepOctNovDec");
   time__Days = tos2("MonTueWedThuFriSatSun");
+  math__Log2E = 1.0 / math__Ln2;
+  math__Log10E = 1.0 / math__Ln10;
+  math__MaxI8 = (/*lpar*/ 1 << 7) - 1;
+  math__MinI8 = -1 << 7;
+  math__MaxI16 = (/*lpar*/ 1 << 15) - 1;
+  math__MinI16 = -1 << 15;
+  math__MaxI32 = (/*lpar*/ 1 << 31) - 1;
+  math__MinI32 = -1 << 31;
+  math__MaxU8 = (/*lpar*/ 1 << 8) - 1;
+  math__MaxU16 = (/*lpar*/ 1 << 16) - 1;
+  math__MaxU32 = (/*lpar*/ 1 << 32) - 1;
+  math__MaxU64 = (/*lpar*/ 1 << 64) - 1;
   main__Version = tos2("0.1.13");
   main__SupportedPlatforms = new_array_from_c_array(
       3, 3, sizeof(string),
