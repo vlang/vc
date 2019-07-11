@@ -3784,9 +3784,9 @@ void os__write_file(string path, string text) {
 }
 void os__clear() {
 
-  ;
+  printf("\x1b[2J");
 
-  ;
+  printf("\x1b[H");
 }
 void os__on_segfault(void *f) {
 
@@ -5323,7 +5323,7 @@ void Parser_fn_decl(Parser *p) {
 
   bool is_fn_header = !is_c && !is_sig &&
                       (/*lpar*/ p->pref->translated || p->pref->is_test) &&
-                      (/*lpar*/ p->tok != main__Token_lcbr);
+                      p->tok != main__Token_lcbr;
 
   if (is_fn_header) {
     /*if*/
@@ -5766,15 +5766,6 @@ void Parser_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
 
   p->calling_c = f.is_c;
 
-  bool is_print = p->pref->is_prod && !p->pref->is_test && !p->builtin_pkg &&
-                  f.is_c && string_eq(f.name, tos2("printf"));
-
-  if (!p->cgen->nogen) {
-    /*if*/
-
-    p->cgen->nogen = is_print;
-  };
-
   string cgen_name =
       Table_cgen_name(p->table, &/*11 EXP:"Fn*" .key_goT:"Fn" */ f);
 
@@ -5837,12 +5828,6 @@ void Parser_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
   Parser_gen(p, tos2(")"));
 
   p->calling_c = 0;
-
-  if (is_print) {
-    /*if*/
-
-    p->cgen->nogen = 0;
-  };
 }
 void Parser_fn_args(Parser *p, Fn *f) {
 
@@ -5868,7 +5853,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
                         .is_used = 0,
                         .scope_level = 0};
 
-    _PUSH(&f->args, (int_arg), tmp72, Var);
+    _PUSH(&f->args, (int_arg), tmp71, Var);
   };
 
   bool types_only = p->tok == main__Token_mul ||
@@ -5900,7 +5885,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
                     .is_used = 0,
                     .scope_level = 0};
 
-      _PUSH(&f->args, (v), tmp76, Var);
+      _PUSH(&f->args, (v), tmp75, Var);
 
       if (p->tok == main__Token_comma) {
         /*if*/
@@ -5921,7 +5906,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
 
       Parser_fspace(p);
 
-      _PUSH(&names, (Parser_check_name(p)), tmp78, string);
+      _PUSH(&names, (Parser_check_name(p)), tmp77, string);
     };
 
     Parser_fspace(p);
@@ -5936,10 +5921,10 @@ void Parser_fn_args(Parser *p, Fn *f) {
 
     string typ2 = Parser_get_type(p);
 
-    array_string tmp81 = names;
+    array_string tmp80 = names;
     ;
-    for (int tmp82 = 0; tmp82 < tmp81.len; tmp82++) {
-      string name = ((string *)tmp81.data)[tmp82];
+    for (int tmp81 = 0; tmp81 < tmp80.len; tmp81++) {
+      string name = ((string *)tmp80.data)[tmp81];
 
       if (!Parser_first_run(&/* ? */ *p) &&
           !Table_known_type(&/* ? */ *p->table, typ2)) {
@@ -5973,7 +5958,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
 
       Fn_register_var(f, v);
 
-      _PUSH(&f->args, (v), tmp84, Var);
+      _PUSH(&f->args, (v), tmp83, Var);
     };
 
     if (p->tok == main__Token_comma) {
@@ -6002,7 +5987,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
                    .is_global = 0,
                    .is_used = 0,
                    .scope_level = 0}),
-            tmp85, Var);
+            tmp84, Var);
 
       Parser_next(p);
     };
@@ -6035,10 +6020,10 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
     return f;
   };
 
-  array_Var tmp86 = f->args;
+  array_Var tmp85 = f->args;
   ;
-  for (int i = 0; i < tmp86.len; i++) {
-    Var arg = ((Var *)tmp86.data)[i];
+  for (int i = 0; i < tmp85.len; i++) {
+    Var arg = ((Var *)tmp85.data)[i];
 
     if (i == 0 && f->is_method) {
       /*if*/
@@ -6234,10 +6219,10 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
       Type *interface_type = Table_find_type(&/* ? */ *p->table, arg.typ);
 
-      array_Fn tmp102 = interface_type->methods;
+      array_Fn tmp101 = interface_type->methods;
       ;
-      for (int tmp103 = 0; tmp103 < tmp102.len; tmp103++) {
-        Fn method = ((Fn *)tmp102.data)[tmp103];
+      for (int tmp102 = 0; tmp102 < tmp101.len; tmp102++) {
+        Fn method = ((Fn *)tmp101.data)[tmp102];
 
         Parser_gen(p, _STR(", %.*s_%.*s ", typ.len, typ.str, method.name.len,
                            method.name.str));
@@ -6330,10 +6315,10 @@ string Fn_typ_str(Fn f) {
 
   strings__Builder_write(&/* ? */ sb, tos2("fn ("));
 
-  array_Var tmp113 = f.args;
+  array_Var tmp112 = f.args;
   ;
-  for (int i = 0; i < tmp113.len; i++) {
-    Var arg = ((Var *)tmp113.data)[i];
+  for (int i = 0; i < tmp112.len; i++) {
+    Var arg = ((Var *)tmp112.data)[i];
 
     strings__Builder_write(&/* ? */ sb, arg.typ);
 
@@ -6358,10 +6343,10 @@ string Fn_str_args(Fn *f, Table *table) {
 
   string s = tos2("");
 
-  array_Var tmp115 = f->args;
+  array_Var tmp114 = f->args;
   ;
-  for (int i = 0; i < tmp115.len; i++) {
-    Var arg = ((Var *)tmp115.data)[i];
+  for (int i = 0; i < tmp114.len; i++) {
+    Var arg = ((Var *)tmp114.data)[i];
 
     if (Table_is_interface(&/* ? */ *table, arg.typ)) {
       /*if*/
@@ -6370,10 +6355,10 @@ string Fn_str_args(Fn *f, Table *table) {
 
       Type *interface_type = Table_find_type(&/* ? */ *table, arg.typ);
 
-      array_Fn tmp117 = interface_type->methods;
+      array_Fn tmp116 = interface_type->methods;
       ;
-      for (int tmp118 = 0; tmp118 < tmp117.len; tmp118++) {
-        Fn method = ((Fn *)tmp117.data)[tmp118];
+      for (int tmp117 = 0; tmp117 < tmp116.len; tmp117++) {
+        Fn method = ((Fn *)tmp116.data)[tmp117];
 
         s = string_add(s, _STR(", %.*s (*%.*s_%.*s)(void*) ", method.typ.len,
                                method.typ.str, arg.typ.len, arg.typ.str,
@@ -6820,8 +6805,6 @@ void V_compile(V *v) {
       (/*lpar*/ v->pref->build_mode == main__BuildMode_build &&
        string_contains(v->out_name, tos2("json.o")))) {
     /*if*/
-
-    CGen_genln(cgen, tos2("#include \"cJSON.c\" "));
   };
 
   if (v->pref->build_mode == main__BuildMode_default_mode) {
@@ -7255,8 +7238,8 @@ void V_cc(V *v) {
   V_log(&/* ? */ *v, _STR("cc() isprod=%d outname=%.*s", v->pref->is_prod,
                           v->out_name.len, v->out_name.str));
 
-  array_string a = new_array_from_c_array(
-      2, 2, sizeof(string), (string[]){tos2("-w"), tos2("-march=native")});
+  array_string a =
+      new_array_from_c_array(1, 1, sizeof(string), (string[]){tos2("-w")});
 
   string flags = array_string_join(v->table->flags, tos2(" "));
 
@@ -15677,10 +15660,6 @@ bool is_valid_int_const(string val, string typ) {
   } else if (string_eq(typ, tos2("u16"))) { /* case */
 
     return 0 <= x && x <= math__MaxU16;
-
-  } else if (string_eq(typ, tos2("u32"))) { /* case */
-
-    return 0 <= x && x <= math__MaxU32;
 
   } else if (string_eq(typ, tos2("i8"))) { /* case */
 
