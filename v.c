@@ -665,6 +665,7 @@ void Parser_gen_type(Parser *p, string s);
 void Parser_gen_typedef(Parser *p, string s);
 void Parser_gen_type_alias(Parser *p, string s);
 void CGen_add_to_main(CGen *g, string s);
+void build_thirdparty_obj_file(string flag);
 Var Fn_find_var(Fn *f, string name);
 void Fn_open_scope(Fn *f);
 void Fn_close_scope(Fn *f);
@@ -2762,7 +2763,7 @@ array_string os__ls(string path) {
 #else
 
   array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
-  void *dir = opendir(path.str);
+  void *dir = opendir(string_cstr(path));
   if (isnil(dir)) {
     printf("ls() couldnt open dir \"%.*s\"\n", path.len, path.str);
     os__print_c_errno();
@@ -3138,7 +3139,7 @@ i64 math__lcm(i64 a, i64 b) {
   return res;
 }
 f64 math__log(f64 a) { return log(a); }
-f64 math__log2(f64 a) { return log(a) / log(2); }
+f64 math__log2(f64 a) { return log2(a); }
 f64 math__log10(f64 a) { return log10(a); }
 f64 math__log_n(f64 a, f64 b) { return log(a) / log(b); }
 f64 math__max(f64 a, f64 b) {
@@ -3404,6 +3405,33 @@ void Parser_gen_type_alias(Parser *p, string s) {
 void CGen_add_to_main(CGen *g, string s) {
   println(tos2("add to main"));
   g->fn_main = string_add(g->fn_main, s);
+}
+void build_thirdparty_obj_file(string flag) {
+  string obj_path = string_all_after(flag, tos2(" "));
+  if (os__file_exists(obj_path)) {
+    return;
+  };
+  printf("%.*s not found, building it...\n", obj_path.len, obj_path.str);
+  string parent =
+      string_trim_space(string_all_before_last(obj_path, tos2("/")));
+  array_string files = os__ls(parent);
+  string cfiles = tos2("");
+  array_string tmp37 = files;
+  ;
+  for (int tmp38 = 0; tmp38 < tmp37.len; tmp38++) {
+    string file = ((string *)tmp37.data)[tmp38];
+    if (string_ends_with(file, tos2(".c"))) {
+      cfiles = string_add(
+          cfiles, string_add(string_add(string_add(parent, tos2("/")), file),
+                             tos2(" ")));
+    };
+  };
+  string cc = (string_eq(os__user_os(), tos2("windows"))) ? (tos2("gcc"))
+                                                          : (tos2("cc"));
+  string res =
+      os__exec(_STR("%.*s -c -o %.*s %.*s", cc.len, cc.str, obj_path.len,
+                    obj_path.str, cfiles.len, cfiles.str));
+  println(res);
 }
 Var Fn_find_var(Fn *f, string name) {
   int tmp1 = 0;
@@ -7919,23 +7947,27 @@ void Parser_chash(Parser *p) {
       int pos = string_index(flag, tos2(" "));
       flag = string_right(flag, pos);
     };
+    bool has_vroot = string_contains(flag, tos2("@VROOT"));
     flag = string_replace(string_trim_space(flag), tos2("@VROOT"), p->vroot);
     if (array_string_contains(p->table->flags, flag)) {
       return;
     };
     Parser_log(&/* ? */ *p, _STR("adding flag \"%.*s\"", flag.len, flag.str));
-    _PUSH(&p->table->flags, (flag), tmp278, string);
+    if (has_vroot && string_contains(flag, tos2(".o"))) {
+      build_thirdparty_obj_file(flag);
+    };
+    _PUSH(&p->table->flags, (flag), tmp279, string);
     return;
   };
   if (string_starts_with(hash, tos2("include"))) {
     if (Parser_first_run(&/* ? */ *p) && !is_sig) {
-      _PUSH(&p->cgen->includes, (_STR("#%.*s", hash.len, hash.str)), tmp279,
+      _PUSH(&p->cgen->includes, (_STR("#%.*s", hash.len, hash.str)), tmp280,
             string);
       return;
     };
   } else if (string_starts_with(hash, tos2("typedef"))) {
     if (Parser_first_run(&/* ? */ *p)) {
-      _PUSH(&p->cgen->typedefs, (_STR("%.*s", hash.len, hash.str)), tmp280,
+      _PUSH(&p->cgen->typedefs, (_STR("%.*s", hash.len, hash.str)), tmp281,
             string);
     };
   } else if (string_contains(hash, tos2("embed"))) {
@@ -7945,7 +7977,7 @@ void Parser_chash(Parser *p) {
       Parser_genln(p, _STR("#include %.*s", file.len, file.str));
     };
   } else if (string_contains(hash, tos2("define"))) {
-    _PUSH(&p->cgen->includes, (_STR("#%.*s", hash.len, hash.str)), tmp283,
+    _PUSH(&p->cgen->includes, (_STR("#%.*s", hash.len, hash.str)), tmp284,
           string);
   } else {
     if (!p->can_chash) {
@@ -8348,10 +8380,10 @@ string Parser_js_decode(Parser *p) {
     string cjson_tmp = Parser_get_tmp(p);
     string decl = _STR("%.*s %.*s; ", typ.len, typ.str, tmp.len, tmp.str);
     Type *T = Table_find_type(&/* ? */ *p->table, typ);
-    array_Var tmp327 = T->fields;
+    array_Var tmp328 = T->fields;
     ;
-    for (int tmp328 = 0; tmp328 < tmp327.len; tmp328++) {
-      Var field = ((Var *)tmp327.data)[tmp328];
+    for (int tmp329 = 0; tmp329 < tmp328.len; tmp329++) {
+      Var field = ((Var *)tmp328.data)[tmp329];
       string def_val = type_default(field.typ);
       if (string_ne(def_val, tos2(""))) {
         decl = string_add(decl, _STR("%.*s . %.*s = %.*s;\n", tmp.len, tmp.str,
@@ -8369,7 +8401,7 @@ string Parser_js_decode(Parser *p) {
                        tmp.str, cjson_tmp.len, cjson_tmp.str));
     string opt_type = _STR("Option_%.*s", typ.len, typ.str);
     _PUSH(&p->cgen->typedefs,
-          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp331,
+          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp332,
           string);
     Table_register_type(p->table, opt_type);
     return opt_type;
@@ -8397,10 +8429,10 @@ bool is_compile_time_const(string s) {
   if (string_contains(s, tos2("\'"))) {
     return 1;
   };
-  string tmp335 = s;
+  string tmp336 = s;
   ;
-  for (int tmp336 = 0; tmp336 < tmp335.len; tmp336++) {
-    byte c = ((byte *)tmp335.str)[tmp336];
+  for (int tmp337 = 0; tmp337 < tmp336.len; tmp337++) {
+    byte c = ((byte *)tmp336.str)[tmp337];
     if (!((c >= '0' && c <= '9') || c == '.')) {
       return 0;
     };
