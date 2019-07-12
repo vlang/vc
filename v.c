@@ -4701,7 +4701,7 @@ void V_compile(V *v) {
   if (v->pref->build_mode != main__BuildMode_build) {
     if (!Table_main_exists(&/* ? */ *v->table) && !v->pref->is_test) {
       if (v->pref->is_script) {
-        CGen_genln(cgen, _STR("int main() { %.*s; return 0; }",
+        CGen_genln(cgen, _STR("int main() { init_consts(); %.*s; return 0; }",
                               cgen->fn_main.len, cgen->fn_main.str));
       } else {
         println(
@@ -10110,7 +10110,7 @@ void init_consts() {
   math__MaxU16 = (1 << 16) - 1;
   math__MaxU32 = (1 << 32) - 1;
   math__MaxU64 = (1 << 64) - 1;
-  main__Version = tos2("0.1.13");
+  main__Version = tos2("0.1.14");
   main__SupportedPlatforms = new_array_from_c_array(
       3, 3, sizeof(string),
       (string[]){tos2("windows"), tos2("mac"), tos2("linux")});
