@@ -1004,6 +1004,9 @@ string main__TmpPath;
 #define main__OS_linux 1
 #define main__OS_windows 2
 #define main__OS_freebsd 3
+#define main__OS_openbsd 4
+#define main__OS_netbsd 5
+#define main__OS_dragonfly 6
 #define main__Pass_imports 0
 #define main__Pass_decl 1
 #define main__Pass_main 2
@@ -7042,9 +7045,10 @@ void V_cc(V *v) {
     _PUSH(&a, (tos2("-x objective-c")), tmp60, string);
   };
 
-  if ((v->os == main__OS_linux || string_eq(os__user_os(), tos2("linux")) ||
-       v->os == main__OS_freebsd) &&
-      v->pref->build_mode != main__BuildMode_build) {
+  if (v->pref->build_mode != main__BuildMode_build &&
+      (v->os == main__OS_linux || v->os == main__OS_freebsd ||
+       v->os == main__OS_openbsd || v->os == main__OS_netbsd ||
+       v->os == main__OS_dragonfly)) {
 
     _PUSH(&a, (tos2("-lm -ldl -lpthread")), tmp61, string);
   };
@@ -7489,6 +7493,27 @@ V *new_v(array_string args) {
 #endif
     ;
 
+#ifdef __OpenBSD__
+
+    _os = main__OS_openbsd;
+
+#endif
+    ;
+
+#ifdef __NetBSD__
+
+    _os = main__OS_netbsd;
+
+#endif
+    ;
+
+#ifdef __DragonFly__
+
+    _os = main__OS_dragonfly;
+
+#endif
+    ;
+
   } else {
 
     if (string_eq(target_os, tos2("linux"))) { /* case */
@@ -7506,6 +7531,18 @@ V *new_v(array_string args) {
     } else if (string_eq(target_os, tos2("freebsd"))) { /* case */
 
       _os = main__OS_freebsd;
+
+    } else if (string_eq(target_os, tos2("openbsd"))) { /* case */
+
+      _os = main__OS_openbsd;
+
+    } else if (string_eq(target_os, tos2("netbsd"))) { /* case */
+
+      _os = main__OS_netbsd;
+
+    } else if (string_eq(target_os, tos2("dragonfly"))) { /* case */
+
+      _os = main__OS_dragonfly;
     };
   };
 
@@ -11718,6 +11755,18 @@ string os_name_to_ifdef(string name) {
   } else if (string_eq(name, tos2("freebsd"))) { /* case */
 
     return tos2("__FreeBSD__");
+
+  } else if (string_eq(name, tos2("openbsd"))) { /* case */
+
+    return tos2("__OpenBSD__");
+
+  } else if (string_eq(name, tos2("netbsd"))) { /* case */
+
+    return tos2("__NetBSD__");
+
+  } else if (string_eq(name, tos2("dragonfly"))) { /* case */
+
+    return tos2("__DragonFly__");
   };
 
   v_panic(_STR("bad os ifdef name \"%.*s\"", name.len, name.str));
@@ -15312,8 +15361,9 @@ void init_consts() {
   math__MaxU64 = (1 << 64) - 1;
   main__Version = tos2("0.1.14");
   main__SupportedPlatforms = new_array_from_c_array(
-      4, 4, sizeof(string),
-      (string[]){tos2("windows"), tos2("mac"), tos2("linux"), tos2("freebsd")});
+      7, 7, sizeof(string),
+      (string[]){tos2("windows"), tos2("mac"), tos2("linux"), tos2("freebsd"),
+                 tos2("openbsd"), tos2("netbsd"), tos2("dragonfly")});
   main__TmpPath = vtmp_path();
   main__HelpText = tos2(
       "\nUsage: v [options] [file | directory]\n\nOptions:\n  -                "
