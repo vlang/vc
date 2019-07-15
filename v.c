@@ -7050,7 +7050,7 @@ void V_cc(V *v) {
        v->os == main__OS_openbsd || v->os == main__OS_netbsd ||
        v->os == main__OS_dragonfly)) {
 
-    _PUSH(&a, (tos2("-lm -ldl -lpthread")), tmp61, string);
+    _PUSH(&a, (tos2("-lm -lpthread")), tmp61, string);
   };
 
   string args = array_string_join(a, tos2(" "));
