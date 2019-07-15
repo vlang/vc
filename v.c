@@ -414,7 +414,6 @@ void array__push_many(array *arr, void *val, int size);
 string array_int_str(array_int a);
 void v_array_int_free(array_int a);
 string array_string_str(array_string a);
-void v_free(void *a);
 string array_byte_hex(array_byte b);
 string tos(byte *s, int len);
 string tos_clone(byte *s);
@@ -494,6 +493,7 @@ void eprintln(string s);
 void v_print(string s);
 byte *v_malloc(int n);
 byte *v_calloc(int n);
+void v_free(void *ptr);
 int _strlen(byte *s);
 void *memdup(void *src, int sz);
 string double_str(double d);
@@ -1347,7 +1347,6 @@ string array_string_str(array_string a) {
 
   return res;
 }
-void v_free(void *a) { free(a); }
 string array_byte_hex(array_byte b) {
 
   byte *hex = v_malloc(b.len * 2 + 1);
@@ -2454,6 +2453,7 @@ byte *v_calloc(int n) {
 
   return calloc(n, 1);
 }
+void v_free(void *ptr) { free(ptr); }
 int _strlen(byte *s) { return strlen(s); }
 void *memdup(void *src, int sz) {
 
@@ -6308,10 +6308,6 @@ int main(int argc, char **argv) {
   init_consts();
   os__args = os__init_os_args(argc, argv);
 
-  string q = os__executable();
-
-  println(q);
-
   array_string args = os__args;
 
   if (_IN(string, tos2("-v"), args) || _IN(string, tos2("--version"), args) ||
@@ -6403,10 +6399,10 @@ void V_compile(V *v) {
     println(array_string_str(v->files));
   };
 
-  array_string tmp8 = v->files;
+  array_string tmp7 = v->files;
   ;
-  for (int tmp9 = 0; tmp9 < tmp8.len; tmp9++) {
-    string file = ((string *)tmp8.data)[tmp9];
+  for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
+    string file = ((string *)tmp7.data)[tmp8];
 
     Parser p = V_new_parser(v, file, main__Pass_decl);
 
@@ -6504,10 +6500,10 @@ void V_compile(V *v) {
 
   int defs_pos = cgen->lines.len - 1;
 
-  array_string tmp13 = v->files;
+  array_string tmp12 = v->files;
   ;
-  for (int tmp14 = 0; tmp14 < tmp13.len; tmp14++) {
-    string file = ((string *)tmp13.data)[tmp14];
+  for (int tmp13 = 0; tmp13 < tmp12.len; tmp13++) {
+    string file = ((string *)tmp12.data)[tmp13];
 
     Parser p = V_new_parser(v, file, main__Pass_main);
 
@@ -6599,12 +6595,12 @@ void V_compile(V *v) {
 
       CGen_genln(cgen, tos2("int main() { init_consts();"));
 
-      map_Fn tmp18 = v->table->fns;
-      array_string keys_tmp18 = map_keys(&tmp18);
-      for (int l = 0; l < keys_tmp18.len; l++) {
-        string key = ((string *)keys_tmp18.data)[l];
+      map_Fn tmp17 = v->table->fns;
+      array_string keys_tmp17 = map_keys(&tmp17);
+      for (int l = 0; l < keys_tmp17.len; l++) {
+        string key = ((string *)keys_tmp17.data)[l];
         Fn f = {};
-        map_get(tmp18, key, &f);
+        map_get(tmp17, key, &f);
 
         if (string_starts_with(f.name, tos2("test_"))) {
 
@@ -6635,10 +6631,10 @@ void V_compile(V *v) {
                    "\n	live_lib = dlopen(cpath, RTLD_LAZY);\n	if (!live_lib) "
                    "{puts(\"open failed\"); exit(1); return 0;} \n"));
 
-    array_string tmp22 = cgen->so_fns;
+    array_string tmp21 = cgen->so_fns;
     ;
-    for (int tmp23 = 0; tmp23 < tmp22.len; tmp23++) {
-      string so_fn = ((string *)tmp22.data)[tmp23];
+    for (int tmp22 = 0; tmp22 < tmp21.len; tmp22++) {
+      string so_fn = ((string *)tmp21.data)[tmp22];
 
       CGen_genln(cgen, _STR("%.*s = dlsym(live_lib, \"%.*s\");  ", so_fn.len,
                             so_fn.str, so_fn.len, so_fn.str));
@@ -6727,10 +6723,10 @@ void V_cc_windows_cross(V *c) {
 
   string args = _STR("-o %.*s -w -L. ", c->out_name.len, c->out_name.str);
 
-  array_string tmp28 = c->table->flags;
+  array_string tmp27 = c->table->flags;
   ;
-  for (int tmp29 = 0; tmp29 < tmp28.len; tmp29++) {
-    string flag = ((string *)tmp28.data)[tmp29];
+  for (int tmp28 = 0; tmp28 < tmp27.len; tmp28++) {
+    string flag = ((string *)tmp27.data)[tmp28];
 
     if (!string_starts_with(flag, tos2("-l"))) {
 
@@ -6754,10 +6750,10 @@ void V_cc_windows_cross(V *c) {
       v_exit(1);
     };
 
-    array_string tmp31 = c->table->imports;
+    array_string tmp30 = c->table->imports;
     ;
-    for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
-      string imp = ((string *)tmp31.data)[tmp32];
+    for (int tmp31 = 0; tmp31 < tmp30.len; tmp31++) {
+      string imp = ((string *)tmp30.data)[tmp31];
 
       libs = string_add(libs, _STR(" \"%.*s/vlib/%.*s.o\"", main__TmpPath.len,
                                    main__TmpPath.str, imp.len, imp.str));
@@ -6766,10 +6762,10 @@ void V_cc_windows_cross(V *c) {
 
   args = string_add(args, _STR(" %.*s ", c->out_name_c.len, c->out_name_c.str));
 
-  array_string tmp33 = c->table->flags;
+  array_string tmp32 = c->table->flags;
   ;
-  for (int tmp34 = 0; tmp34 < tmp33.len; tmp34++) {
-    string flag = ((string *)tmp33.data)[tmp34];
+  for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
+    string flag = ((string *)tmp32.data)[tmp33];
 
     if (string_starts_with(flag, tos2("-l"))) {
 
@@ -6874,30 +6870,30 @@ void V_cc(V *v) {
 
   if (v->pref->is_so) {
 
-    _PUSH(&a, (tos2("-shared -fPIC ")), tmp44, string);
+    _PUSH(&a, (tos2("-shared -fPIC ")), tmp43, string);
 
     v->out_name = string_add(v->out_name, tos2(".so"));
   };
 
   if (v->pref->is_prod) {
 
-    _PUSH(&a, (tos2("-O2")), tmp45, string);
+    _PUSH(&a, (tos2("-O2")), tmp44, string);
 
   } else {
 
-    _PUSH(&a, (tos2("-g")), tmp46, string);
+    _PUSH(&a, (tos2("-g")), tmp45, string);
   };
 
   if (v->pref->is_live || v->pref->is_so) {
 
     if ((v->os == main__OS_linux || string_eq(os__user_os(), tos2("linux")))) {
 
-      _PUSH(&a, (tos2("-rdynamic")), tmp47, string);
+      _PUSH(&a, (tos2("-rdynamic")), tmp46, string);
     };
 
     if ((v->os == main__OS_mac || string_eq(os__user_os(), tos2("mac")))) {
 
-      _PUSH(&a, (tos2("-flat_namespace")), tmp48, string);
+      _PUSH(&a, (tos2("-flat_namespace")), tmp47, string);
     };
   };
 
@@ -6905,7 +6901,7 @@ void V_cc(V *v) {
 
   if (v->pref->build_mode == main__BuildMode_build) {
 
-    _PUSH(&a, (tos2("-c")), tmp50, string);
+    _PUSH(&a, (tos2("-c")), tmp49, string);
 
   } else if (v->pref->build_mode == main__BuildMode_embed_vlib) {
 
@@ -6921,10 +6917,10 @@ void V_cc(V *v) {
       v_exit(1);
     };
 
-    array_string tmp51 = v->table->imports;
+    array_string tmp50 = v->table->imports;
     ;
-    for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
-      string imp = ((string *)tmp51.data)[tmp52];
+    for (int tmp51 = 0; tmp51 < tmp50.len; tmp51++) {
+      string imp = ((string *)tmp50.data)[tmp51];
 
       if (string_eq(imp, tos2("webview"))) {
 
@@ -6938,7 +6934,7 @@ void V_cc(V *v) {
 
   if (v->pref->sanitize) {
 
-    _PUSH(&a, (tos2("-fsanitize=leak")), tmp53, string);
+    _PUSH(&a, (tos2("-fsanitize=leak")), tmp52, string);
   };
 
   string sysroot = tos2("/Users/alex/tmp/lld/linuxroot/");
@@ -6948,7 +6944,7 @@ void V_cc(V *v) {
     _PUSH(&a,
           (_STR("-c --sysroot=%.*s -target x86_64-linux-gnu", sysroot.len,
                 sysroot.str)),
-          tmp55, string);
+          tmp54, string);
 
     if (!string_ends_with(v->out_name, tos2(".o"))) {
 
@@ -6956,25 +6952,25 @@ void V_cc(V *v) {
     };
   };
 
-  _PUSH(&a, (_STR("-o %.*s", v->out_name.len, v->out_name.str)), tmp56, string);
+  _PUSH(&a, (_STR("-o %.*s", v->out_name.len, v->out_name.str)), tmp55, string);
 
   _PUSH(&a,
         (_STR("\"%.*s/%.*s\"", main__TmpPath.len, main__TmpPath.str,
               v->out_name_c.len, v->out_name_c.str)),
-        tmp57, string);
+        tmp56, string);
 
   if (v->os == main__OS_mac) {
 
-    _PUSH(&a, (tos2("-mmacosx-version-min=10.7")), tmp58, string);
+    _PUSH(&a, (tos2("-mmacosx-version-min=10.7")), tmp57, string);
   };
 
-  _PUSH(&a, (flags), tmp59, string);
+  _PUSH(&a, (flags), tmp58, string);
 
-  _PUSH(&a, (libs), tmp60, string);
+  _PUSH(&a, (libs), tmp59, string);
 
   if (v->os == main__OS_mac) {
 
-    _PUSH(&a, (tos2("-x objective-c")), tmp61, string);
+    _PUSH(&a, (tos2("-x objective-c")), tmp60, string);
   };
 
   if (v->pref->build_mode != main__BuildMode_build &&
@@ -6982,11 +6978,11 @@ void V_cc(V *v) {
        v->os == main__OS_openbsd || v->os == main__OS_netbsd ||
        v->os == main__OS_dragonfly)) {
 
-    _PUSH(&a, (tos2("-lm -lpthread ")), tmp62, string);
+    _PUSH(&a, (tos2("-lm -lpthread ")), tmp61, string);
 
     if (v->os == main__OS_linux) {
 
-      _PUSH(&a, (tos2(" -ldl ")), tmp63, string);
+      _PUSH(&a, (tos2(" -ldl ")), tmp62, string);
     };
   };
 
@@ -7084,10 +7080,10 @@ array_string V_v_files_from_dir(V *v, string dir) {
 
   array_string_sort(&/* ? */ files);
 
-  array_string tmp71 = files;
+  array_string tmp70 = files;
   ;
-  for (int tmp72 = 0; tmp72 < tmp71.len; tmp72++) {
-    string file = ((string *)tmp71.data)[tmp72];
+  for (int tmp71 = 0; tmp71 < tmp70.len; tmp71++) {
+    string file = ((string *)tmp70.data)[tmp71];
 
     if (!string_ends_with(file, tos2(".v")) &&
         !string_ends_with(file, tos2(".vh"))) {
@@ -7121,7 +7117,7 @@ array_string V_v_files_from_dir(V *v, string dir) {
     };
 
     _PUSH(&res, (_STR("%.*s/%.*s", dir.len, dir.str, file.len, file.str)),
-          tmp73, string);
+          tmp72, string);
   };
 
   return res;
@@ -7141,7 +7137,7 @@ void V_add_user_v_files(V *v) {
 
   if (is_test_with_imports) {
 
-    _PUSH(&user_files, (dir), tmp77, string);
+    _PUSH(&user_files, (dir), tmp76, string);
 
     int pos = string_last_index(dir, tos2("/"));
 
@@ -7150,7 +7146,7 @@ void V_add_user_v_files(V *v) {
 
   if (string_ends_with(dir, tos2(".v"))) {
 
-    _PUSH(&user_files, (dir), tmp79, string);
+    _PUSH(&user_files, (dir), tmp78, string);
 
     dir = string_all_before(dir, tos2("/"));
 
@@ -7158,12 +7154,12 @@ void V_add_user_v_files(V *v) {
 
     array_string files = V_v_files_from_dir(&/* ? */ *v, dir);
 
-    array_string tmp81 = files;
+    array_string tmp80 = files;
     ;
-    for (int tmp82 = 0; tmp82 < tmp81.len; tmp82++) {
-      string file = ((string *)tmp81.data)[tmp82];
+    for (int tmp81 = 0; tmp81 < tmp80.len; tmp81++) {
+      string file = ((string *)tmp80.data)[tmp81];
 
-      _PUSH(&user_files, (file), tmp83, string);
+      _PUSH(&user_files, (file), tmp82, string);
     };
   };
 
@@ -7181,10 +7177,10 @@ void V_add_user_v_files(V *v) {
     println(array_string_str(user_files));
   };
 
-  array_string tmp84 = user_files;
+  array_string tmp83 = user_files;
   ;
-  for (int tmp85 = 0; tmp85 < tmp84.len; tmp85++) {
-    string file = ((string *)tmp84.data)[tmp85];
+  for (int tmp84 = 0; tmp84 < tmp83.len; tmp84++) {
+    string file = ((string *)tmp83.data)[tmp84];
 
     Parser p = V_new_parser(v, file, main__Pass_imports);
 
@@ -7202,10 +7198,10 @@ void V_add_user_v_files(V *v) {
           &/* ? */ *v, _STR("%.*s/vlib/%.*s", main__TmpPath.len,
                             main__TmpPath.str, pkg.len, pkg.str));
 
-      array_string tmp92 = vfiles;
+      array_string tmp91 = vfiles;
       ;
-      for (int tmp93 = 0; tmp93 < tmp92.len; tmp93++) {
-        string file = ((string *)tmp92.data)[tmp93];
+      for (int tmp92 = 0; tmp92 < tmp91.len; tmp92++) {
+        string file = ((string *)tmp91.data)[tmp92];
 
         Parser p = V_new_parser(v, file, main__Pass_imports);
 
@@ -7233,10 +7229,10 @@ void V_add_user_v_files(V *v) {
 
       array_string vfiles = V_v_files_from_dir(&/* ? */ *v, import_path);
 
-      array_string tmp102 = vfiles;
+      array_string tmp101 = vfiles;
       ;
-      for (int tmp103 = 0; tmp103 < tmp102.len; tmp103++) {
-        string file = ((string *)tmp102.data)[tmp103];
+      for (int tmp102 = 0; tmp102 < tmp101.len; tmp102++) {
+        string file = ((string *)tmp101.data)[tmp102];
 
         Parser p = V_new_parser(v, file, main__Pass_imports);
 
@@ -7252,10 +7248,10 @@ void V_add_user_v_files(V *v) {
     println(array_string_str(v->table->imports));
   };
 
-  array_string tmp105 = v->table->imports;
+  array_string tmp104 = v->table->imports;
   ;
-  for (int tmp106 = 0; tmp106 < tmp105.len; tmp106++) {
-    string _pkg = ((string *)tmp105.data)[tmp106];
+  for (int tmp105 = 0; tmp105 < tmp104.len; tmp105++) {
+    string _pkg = ((string *)tmp104.data)[tmp105];
 
     string pkg = V_module_path(&/* ? */ *v, _pkg);
 
@@ -7279,21 +7275,21 @@ void V_add_user_v_files(V *v) {
 
     array_string vfiles = V_v_files_from_dir(&/* ? */ *v, module_path);
 
-    array_string tmp111 = vfiles;
+    array_string tmp110 = vfiles;
     ;
-    for (int tmp112 = 0; tmp112 < tmp111.len; tmp112++) {
-      string vfile = ((string *)tmp111.data)[tmp112];
+    for (int tmp111 = 0; tmp111 < tmp110.len; tmp111++) {
+      string vfile = ((string *)tmp110.data)[tmp111];
 
-      _PUSH(&v->files, (vfile), tmp113, string);
+      _PUSH(&v->files, (vfile), tmp112, string);
     };
   };
 
-  array_string tmp114 = user_files;
+  array_string tmp113 = user_files;
   ;
-  for (int tmp115 = 0; tmp115 < tmp114.len; tmp115++) {
-    string file = ((string *)tmp114.data)[tmp115];
+  for (int tmp114 = 0; tmp114 < tmp113.len; tmp114++) {
+    string file = ((string *)tmp113.data)[tmp114];
 
-    _PUSH(&v->files, (file), tmp116, string);
+    _PUSH(&v->files, (file), tmp115, string);
   };
 }
 string get_arg(string joined_args, string arg, string def) {
@@ -7494,56 +7490,20 @@ V *new_v(array_string args) {
                                                      tos2("option.v"),
                                                  });
 
-  string lang_dir = tos2("");
+  string vroot = string_all_before_last(os__executable(), tos2("/"));
 
-  while (1) {
+  printf("VROOT=%.*s\n", vroot.len, vroot.str);
 
-    string vroot_path = string_add(main__TmpPath, tos2("/VROOT"));
+  if (os__dir_exists(vroot) &&
+      os__dir_exists(string_add(vroot, tos2("/vlib/builtin")))) {
 
-    if (os__file_exists(vroot_path)) {
+  } else {
 
-      Option_string tmp136 = os__read_file(vroot_path);
-      if (!tmp136.ok) {
-        string err = tmp136.error;
+    println(tos2("vlib not found. It should be next to V executable. "));
 
-        break;
-      }
-      string vroot = *(string *)tmp136.data;
-      ;
+    println(tos2("Go to https://vlang.io to install V."));
 
-      vroot = string_trim_space(vroot);
-
-      if (os__dir_exists(vroot) &&
-          os__dir_exists(string_add(vroot, tos2("/vlib/builtin")))) {
-
-        lang_dir = vroot;
-      };
-    };
-
-    break;
-  };
-
-  if (string_eq(lang_dir, tos2(""))) {
-
-    println(tos2("Looks like you are running V for the first time."));
-
-    lang_dir = os__getwd();
-
-    if (os__dir_exists(_STR("%.*s/vlib/builtin", lang_dir.len, lang_dir.str))) {
-
-      printf("Setting VROOT to \"%.*s\".\n", lang_dir.len, lang_dir.str);
-
-      os__write_file(string_add(main__TmpPath, tos2("/VROOT")), lang_dir);
-
-    } else {
-
-      println(
-          tos2("V repo not found. Go to https://vlang.io to download V.zip "));
-
-      println(tos2("or install V from source."));
-
-      v_exit(1);
-    };
+    v_exit(1);
   };
 
   string out_name_c =
@@ -7554,19 +7514,19 @@ V *new_v(array_string args) {
 
   if (!string_contains(out_name, tos2("builtin.o"))) {
 
-    array_string tmp139 = builtins;
+    array_string tmp136 = builtins;
     ;
-    for (int tmp140 = 0; tmp140 < tmp139.len; tmp140++) {
-      string builtin = ((string *)tmp139.data)[tmp140];
+    for (int tmp137 = 0; tmp137 < tmp136.len; tmp137++) {
+      string builtin = ((string *)tmp136.data)[tmp137];
 
-      string f = _STR("%.*s/vlib/builtin/%.*s", lang_dir.len, lang_dir.str,
+      string f = _STR("%.*s/vlib/builtin/%.*s", vroot.len, vroot.str,
                       builtin.len, builtin.str);
 
       if (build_mode == main__BuildMode_default_mode ||
           build_mode == main__BuildMode_build) {
       };
 
-      _PUSH(&files, (f), tmp142, string);
+      _PUSH(&files, (f), tmp139, string);
     };
   };
 
@@ -7604,12 +7564,12 @@ V *new_v(array_string args) {
                            .out_name = out_name,
                            .files = files,
                            .dir = dir,
-                           .lang_dir = lang_dir,
+                           .lang_dir = vroot,
                            .table = new_table(obfuscate),
                            .out_name = out_name,
                            .out_name_c = out_name_c,
                            .cgen = new_cgen(out_name_c),
-                           .vroot = lang_dir,
+                           .vroot = vroot,
                            .pref = pref,
                        });
 }
@@ -7717,12 +7677,12 @@ array_string run_repl() {
 
         } else {
 
-          _PUSH(&lines, (line), tmp166, string);
+          _PUSH(&lines, (line), tmp163, string);
         };
 
       } else {
 
-        _PUSH(&lines, (line), tmp167, string);
+        _PUSH(&lines, (line), tmp164, string);
 
         array_string vals = string_split(s, tos2("\n"));
 
