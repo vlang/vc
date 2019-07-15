@@ -15289,7 +15289,7 @@ void init_consts() {
   math__MaxU16 = (1 << 16) - 1;
   math__MaxU32 = (1 << 32) - 1;
   math__MaxU64 = (1 << 64) - 1;
-  main__Version = tos2("0.1.14");
+  main__Version = tos2("0.1.15");
   main__SupportedPlatforms = new_array_from_c_array(
       7, 7, sizeof(string),
       (string[]){tos2("windows"), tos2("mac"), tos2("linux"), tos2("freebsd"),
