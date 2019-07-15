@@ -557,6 +557,7 @@ void os__mkdir(string path);
 void os__rm(string path);
 void os__print_c_errno();
 string os__ext(string path);
+string os__dir(string path);
 string os__path_sans_ext(string path);
 string os__basedir(string path);
 string os__filename(string path);
@@ -940,6 +941,7 @@ int os__ENABLE_LVB_GRID_WORLDWIDE;
 array_string os__args;
 #define os__MAX_PATH 4096
 #define os__FILE_ATTRIBUTE_DIRECTORY 16
+string os__PathSeparator;
 array_int time__MonthDays;
 string time__Months;
 string time__Days;
@@ -3409,6 +3411,17 @@ string os__ext(string path) {
 
   return string_right(path, pos);
 }
+string os__dir(string path) {
+
+  int pos = string_last_index(path, os__PathSeparator);
+
+  if (pos == -1) {
+
+    return tos2(".");
+  };
+
+  return string_left(path, pos);
+}
 string os__path_sans_ext(string path) {
 
   int pos = string_last_index(path, tos2("."));
@@ -3552,13 +3565,13 @@ string os__home_dir() {
 }
 void os__write_file(string path, string text) {
 
-  Option_os__File tmp58 = os__create(path);
-  if (!tmp58.ok) {
-    string err = tmp58.error;
+  Option_os__File tmp59 = os__create(path);
+  if (!tmp59.ok) {
+    string err = tmp59.error;
 
     return;
   }
-  os__File f = *(os__File *)tmp58.data;
+  os__File f = *(os__File *)tmp59.data;
   ;
 
   os__File_write(f, text);
@@ -3748,7 +3761,7 @@ array_string os__ls(string path) {
   if (string_ne(first_filename, tos2(".")) &&
       string_ne(first_filename, tos2(".."))) {
 
-    _PUSH(&dir_files, (first_filename), tmp75, string);
+    _PUSH(&dir_files, (first_filename), tmp76, string);
   };
 
   while (FindNextFile(h_find_files, &/*vvar*/ find_file_data)) {
@@ -3758,7 +3771,7 @@ array_string os__ls(string path) {
 
     if (string_ne(filename, tos2(".")) && string_ne(filename, tos2(".."))) {
 
-      _PUSH(&dir_files, (string_clone(filename)), tmp77, string);
+      _PUSH(&dir_files, (string_clone(filename)), tmp78, string);
     };
   };
 
@@ -3800,7 +3813,7 @@ array_string os__ls(string path) {
     if (string_ne(name, tos2(".")) && string_ne(name, tos2("..")) &&
         string_ne(name, tos2(""))) {
 
-      _PUSH(&res, (name), tmp82, string);
+      _PUSH(&res, (name), tmp83, string);
     };
   };
 
@@ -7490,7 +7503,7 @@ V *new_v(array_string args) {
                                                      tos2("option.v"),
                                                  });
 
-  string vroot = string_all_before_last(os__executable(), tos2("/"));
+  string vroot = os__dir(os__executable());
 
   printf("VROOT=%.*s\n", vroot.len, vroot.str);
 
@@ -15272,6 +15285,7 @@ void init_consts() {
   os__DISABLE_NEWLINE_AUTO_RETURN = 0x0008;
   os__ENABLE_LVB_GRID_WORLDWIDE = 0x0010;
   os__args = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  os__PathSeparator = tos2("/");
   time__MonthDays = new_array_from_c_array(
       12, 12, sizeof(int),
       (int[]){31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31});
