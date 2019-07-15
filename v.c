@@ -7050,7 +7050,12 @@ void V_cc(V *v) {
        v->os == main__OS_openbsd || v->os == main__OS_netbsd ||
        v->os == main__OS_dragonfly)) {
 
-    _PUSH(&a, (tos2("-lm -lpthread")), tmp61, string);
+    _PUSH(&a, (tos2("-lm -lpthread ")), tmp61, string);
+
+    if (v->os == main__OS_linux) {
+
+      _PUSH(&a, (tos2(" -ldl ")), tmp62, string);
+    };
   };
 
   string args = array_string_join(a, tos2(" "));
@@ -7147,10 +7152,10 @@ array_string V_v_files_from_dir(V *v, string dir) {
 
   array_string_sort(&/* ? */ files);
 
-  array_string tmp69 = files;
+  array_string tmp70 = files;
   ;
-  for (int tmp70 = 0; tmp70 < tmp69.len; tmp70++) {
-    string file = ((string *)tmp69.data)[tmp70];
+  for (int tmp71 = 0; tmp71 < tmp70.len; tmp71++) {
+    string file = ((string *)tmp70.data)[tmp71];
 
     if (!string_ends_with(file, tos2(".v")) &&
         !string_ends_with(file, tos2(".vh"))) {
@@ -7184,7 +7189,7 @@ array_string V_v_files_from_dir(V *v, string dir) {
     };
 
     _PUSH(&res, (_STR("%.*s/%.*s", dir.len, dir.str, file.len, file.str)),
-          tmp71, string);
+          tmp72, string);
   };
 
   return res;
@@ -7204,7 +7209,7 @@ void V_add_user_v_files(V *v) {
 
   if (is_test_with_imports) {
 
-    _PUSH(&user_files, (dir), tmp75, string);
+    _PUSH(&user_files, (dir), tmp76, string);
 
     int pos = string_last_index(dir, tos2("/"));
 
@@ -7213,7 +7218,7 @@ void V_add_user_v_files(V *v) {
 
   if (string_ends_with(dir, tos2(".v"))) {
 
-    _PUSH(&user_files, (dir), tmp77, string);
+    _PUSH(&user_files, (dir), tmp78, string);
 
     dir = string_all_before(dir, tos2("/"));
 
@@ -7221,12 +7226,12 @@ void V_add_user_v_files(V *v) {
 
     array_string files = V_v_files_from_dir(&/* ? */ *v, dir);
 
-    array_string tmp79 = files;
+    array_string tmp80 = files;
     ;
-    for (int tmp80 = 0; tmp80 < tmp79.len; tmp80++) {
-      string file = ((string *)tmp79.data)[tmp80];
+    for (int tmp81 = 0; tmp81 < tmp80.len; tmp81++) {
+      string file = ((string *)tmp80.data)[tmp81];
 
-      _PUSH(&user_files, (file), tmp81, string);
+      _PUSH(&user_files, (file), tmp82, string);
     };
   };
 
@@ -7244,10 +7249,10 @@ void V_add_user_v_files(V *v) {
     println(array_string_str(user_files));
   };
 
-  array_string tmp82 = user_files;
+  array_string tmp83 = user_files;
   ;
-  for (int tmp83 = 0; tmp83 < tmp82.len; tmp83++) {
-    string file = ((string *)tmp82.data)[tmp83];
+  for (int tmp84 = 0; tmp84 < tmp83.len; tmp84++) {
+    string file = ((string *)tmp83.data)[tmp84];
 
     Parser p = V_new_parser(v, file, main__Pass_imports);
 
@@ -7265,10 +7270,10 @@ void V_add_user_v_files(V *v) {
           &/* ? */ *v, _STR("%.*s/vlib/%.*s", main__TmpPath.len,
                             main__TmpPath.str, pkg.len, pkg.str));
 
-      array_string tmp90 = vfiles;
+      array_string tmp91 = vfiles;
       ;
-      for (int tmp91 = 0; tmp91 < tmp90.len; tmp91++) {
-        string file = ((string *)tmp90.data)[tmp91];
+      for (int tmp92 = 0; tmp92 < tmp91.len; tmp92++) {
+        string file = ((string *)tmp91.data)[tmp92];
 
         Parser p = V_new_parser(v, file, main__Pass_imports);
 
@@ -7296,10 +7301,10 @@ void V_add_user_v_files(V *v) {
 
       array_string vfiles = V_v_files_from_dir(&/* ? */ *v, import_path);
 
-      array_string tmp100 = vfiles;
+      array_string tmp101 = vfiles;
       ;
-      for (int tmp101 = 0; tmp101 < tmp100.len; tmp101++) {
-        string file = ((string *)tmp100.data)[tmp101];
+      for (int tmp102 = 0; tmp102 < tmp101.len; tmp102++) {
+        string file = ((string *)tmp101.data)[tmp102];
 
         Parser p = V_new_parser(v, file, main__Pass_imports);
 
@@ -7315,10 +7320,10 @@ void V_add_user_v_files(V *v) {
     println(array_string_str(v->table->imports));
   };
 
-  array_string tmp103 = v->table->imports;
+  array_string tmp104 = v->table->imports;
   ;
-  for (int tmp104 = 0; tmp104 < tmp103.len; tmp104++) {
-    string _pkg = ((string *)tmp103.data)[tmp104];
+  for (int tmp105 = 0; tmp105 < tmp104.len; tmp105++) {
+    string _pkg = ((string *)tmp104.data)[tmp105];
 
     string pkg = V_module_path(&/* ? */ *v, _pkg);
 
@@ -7342,21 +7347,21 @@ void V_add_user_v_files(V *v) {
 
     array_string vfiles = V_v_files_from_dir(&/* ? */ *v, module_path);
 
-    array_string tmp109 = vfiles;
+    array_string tmp110 = vfiles;
     ;
-    for (int tmp110 = 0; tmp110 < tmp109.len; tmp110++) {
-      string vfile = ((string *)tmp109.data)[tmp110];
+    for (int tmp111 = 0; tmp111 < tmp110.len; tmp111++) {
+      string vfile = ((string *)tmp110.data)[tmp111];
 
-      _PUSH(&v->files, (vfile), tmp111, string);
+      _PUSH(&v->files, (vfile), tmp112, string);
     };
   };
 
-  array_string tmp112 = user_files;
+  array_string tmp113 = user_files;
   ;
-  for (int tmp113 = 0; tmp113 < tmp112.len; tmp113++) {
-    string file = ((string *)tmp112.data)[tmp113];
+  for (int tmp114 = 0; tmp114 < tmp113.len; tmp114++) {
+    string file = ((string *)tmp113.data)[tmp114];
 
-    _PUSH(&v->files, (file), tmp114, string);
+    _PUSH(&v->files, (file), tmp115, string);
   };
 }
 string get_arg(string joined_args, string arg, string def) {
@@ -7565,13 +7570,13 @@ V *new_v(array_string args) {
 
     if (os__file_exists(vroot_path)) {
 
-      Option_string tmp134 = os__read_file(vroot_path);
-      if (!tmp134.ok) {
-        string err = tmp134.error;
+      Option_string tmp135 = os__read_file(vroot_path);
+      if (!tmp135.ok) {
+        string err = tmp135.error;
 
         break;
       }
-      string vroot = *(string *)tmp134.data;
+      string vroot = *(string *)tmp135.data;
       ;
 
       vroot = string_trim_space(vroot);
@@ -7617,10 +7622,10 @@ V *new_v(array_string args) {
 
   if (!string_contains(out_name, tos2("builtin.o"))) {
 
-    array_string tmp137 = builtins;
+    array_string tmp138 = builtins;
     ;
-    for (int tmp138 = 0; tmp138 < tmp137.len; tmp138++) {
-      string builtin = ((string *)tmp137.data)[tmp138];
+    for (int tmp139 = 0; tmp139 < tmp138.len; tmp139++) {
+      string builtin = ((string *)tmp138.data)[tmp139];
 
       string f = _STR("%.*s/vlib/builtin/%.*s", lang_dir.len, lang_dir.str,
                       builtin.len, builtin.str);
@@ -7629,7 +7634,7 @@ V *new_v(array_string args) {
           build_mode == main__BuildMode_build) {
       };
 
-      _PUSH(&files, (f), tmp140, string);
+      _PUSH(&files, (f), tmp141, string);
     };
   };
 
@@ -7780,12 +7785,12 @@ array_string run_repl() {
 
         } else {
 
-          _PUSH(&lines, (line), tmp164, string);
+          _PUSH(&lines, (line), tmp165, string);
         };
 
       } else {
 
-        _PUSH(&lines, (line), tmp165, string);
+        _PUSH(&lines, (line), tmp166, string);
 
         array_string vals = string_split(s, tos2("\n"));
 
