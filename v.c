@@ -105,7 +105,6 @@ typedef struct os__win32finddata os__win32finddata;
 typedef struct strings__Builder strings__Builder;
 typedef struct time__Time time__Time;
 typedef Option Option_int;
-typedef struct math__Fraction math__Fraction;
 typedef struct CGen CGen;
 typedef struct Fn Fn;
 typedef array array_Var;
@@ -211,10 +210,6 @@ struct time__Time {
   int second;
   int uni;
 };
-struct math__Fraction {
-  i64 n;
-  i64 d;
-};
 struct CGen {
   os__File out;
   string out_path;
@@ -254,7 +249,7 @@ struct Fn {
   bool is_method;
   bool returns_error;
   bool is_decl;
-  string defer;
+  string defer_text;
 };
 struct V {
   OS os;
@@ -621,19 +616,6 @@ bool time__is_leap_year(int year);
 Option_int time__days_in_month(int month, int year);
 void rand__seed(int s);
 int rand__next(int max);
-math__Fraction math__fraction(i64 n, i64 d);
-string math__Fraction_str(math__Fraction f);
-math__Fraction math__Fraction_plus(math__Fraction f1, math__Fraction f2);
-math__Fraction math__Fraction_minus(math__Fraction f1, math__Fraction f2);
-math__Fraction math__Fraction_add(math__Fraction f1, math__Fraction f2);
-math__Fraction math__Fraction_subtract(math__Fraction f1, math__Fraction f2);
-math__Fraction math__Fraction_multiply(math__Fraction f1, math__Fraction f2);
-math__Fraction math__Fraction_divide(math__Fraction f1, math__Fraction f2);
-math__Fraction math__Fraction_reciprocal(math__Fraction f1);
-i64 math__Fraction_gcd(math__Fraction f1);
-math__Fraction math__Fraction_reduce(math__Fraction f1);
-f64 math__Fraction_f64(math__Fraction f1);
-bool math__Fraction_equals(math__Fraction f1, math__Fraction f2);
 f64 math__abs(f64 a);
 f64 math__acos(f64 a);
 f64 math__asin(f64 a);
@@ -797,6 +779,7 @@ string Parser_js_decode(Parser *p);
 bool is_compile_time_const(string s);
 bool Parser_building_v(Parser *p);
 void Parser_attribute(Parser *p);
+void Parser_defer_st(Parser *p);
 void Scanner_fgen(Scanner *scanner, string s);
 void Scanner_fgenln(Scanner *scanner, string s);
 void Parser_fgen(Parser *p, string s);
@@ -1088,34 +1071,35 @@ array_string main__FLOAT_TYPES;
 #define main__Token_key_const 62
 #define main__Token_key_continue 63
 #define main__Token_key_default 64
-#define main__Token_key_else 65
-#define main__Token_key_embed 66
-#define main__Token_key_enum 67
-#define main__Token_key_false 68
-#define main__Token_key_for 69
-#define main__Token_func 70
-#define main__Token_key_global 71
-#define main__Token_key_go 72
-#define main__Token_key_goto 73
-#define main__Token_key_if 74
-#define main__Token_key_import 75
-#define main__Token_key_import_const 76
-#define main__Token_key_in 77
-#define main__Token_key_interface 78
-#define main__Token_MATCH 79
-#define main__Token_key_module 80
-#define main__Token_key_mut 81
-#define main__Token_key_return 82
-#define main__Token_key_sizeof 83
-#define main__Token_key_struct 84
-#define main__Token_key_switch 85
-#define main__Token_key_true 86
-#define main__Token_typ 87
-#define main__Token_key_orelse 88
-#define main__Token_key_union 89
-#define main__Token_key_pub 90
-#define main__Token_key_static 91
-#define main__Token_keyword_end 92
+#define main__Token_key_defer 65
+#define main__Token_key_else 66
+#define main__Token_key_embed 67
+#define main__Token_key_enum 68
+#define main__Token_key_false 69
+#define main__Token_key_for 70
+#define main__Token_func 71
+#define main__Token_key_global 72
+#define main__Token_key_go 73
+#define main__Token_key_goto 74
+#define main__Token_key_if 75
+#define main__Token_key_import 76
+#define main__Token_key_import_const 77
+#define main__Token_key_in 78
+#define main__Token_key_interface 79
+#define main__Token_MATCH 80
+#define main__Token_key_module 81
+#define main__Token_key_mut 82
+#define main__Token_key_return 83
+#define main__Token_key_sizeof 84
+#define main__Token_key_struct 85
+#define main__Token_key_switch 86
+#define main__Token_key_true 87
+#define main__Token_typ 88
+#define main__Token_key_orelse 89
+#define main__Token_key_union 90
+#define main__Token_key_pub 91
+#define main__Token_key_static 92
+#define main__Token_keyword_end 93
 #define main__NrTokens 140
 array_string main__TokenStr;
 map_int main__KEYWORDS;
@@ -4236,82 +4220,6 @@ Option_int time__days_in_month(int month, int year) {
 }
 void rand__seed(int s) { srand(s); }
 int rand__next(int max) { return rand() % max; }
-math__Fraction math__fraction(i64 n, i64 d) {
-
-  if (d != 0) {
-
-    return (math__Fraction){n, d};
-
-  } else {
-
-    v_panic(tos2("Denominator cannot be zero"));
-  };
-}
-string math__Fraction_str(math__Fraction f) {
-
-  return _STR("%lld/%lld", f.n, f.d);
-}
-math__Fraction math__Fraction_plus(math__Fraction f1, math__Fraction f2) {
-
-  if (f1.d == f2.d) {
-
-    return (math__Fraction){f1.n + f2.n, f1.d};
-
-  } else {
-
-    return (math__Fraction){(f1.n * f2.d) + (f2.n * f1.d), f1.d * f2.d};
-  };
-}
-math__Fraction math__Fraction_minus(math__Fraction f1, math__Fraction f2) {
-
-  if (f1.d == f2.d) {
-
-    return (math__Fraction){f1.n - f2.n, f1.d};
-
-  } else {
-
-    return (math__Fraction){(f1.n * f2.d) - (f2.n * f1.d), f1.d * f2.d};
-  };
-}
-math__Fraction math__Fraction_add(math__Fraction f1, math__Fraction f2) {
-
-  return math__Fraction_plus(f1, f2);
-}
-math__Fraction math__Fraction_subtract(math__Fraction f1, math__Fraction f2) {
-
-  return math__Fraction_minus(f1, f2);
-}
-math__Fraction math__Fraction_multiply(math__Fraction f1, math__Fraction f2) {
-
-  return (math__Fraction){f1.n * f2.n, f1.d * f2.d};
-}
-math__Fraction math__Fraction_divide(math__Fraction f1, math__Fraction f2) {
-
-  return (math__Fraction){f1.n * f2.d, f1.d * f2.n};
-}
-math__Fraction math__Fraction_reciprocal(math__Fraction f1) {
-
-  return (math__Fraction){f1.d, f1.n};
-}
-i64 math__Fraction_gcd(math__Fraction f1) { return math__gcd(f1.n, f1.d); }
-math__Fraction math__Fraction_reduce(math__Fraction f1) {
-
-  i64 cf = math__Fraction_gcd(f1);
-
-  return (math__Fraction){f1.n / cf, f1.d / cf};
-}
-f64 math__Fraction_f64(math__Fraction f1) {
-
-  return ((f64)(f1.n)) / ((f64)(f1.d));
-}
-bool math__Fraction_equals(math__Fraction f1, math__Fraction f2) {
-
-  math__Fraction r1 = math__Fraction_reduce(f1);
-
-  math__Fraction r2 = math__Fraction_reduce(f2);
-
-  return (r1.n == r2.n) && (r1.d == r2.d);
-}
 f64 math__abs(f64 a) {
 
   if (a < 0) {
@@ -4957,13 +4865,21 @@ Fn *new_fn(string pkg, bool is_public) {
            .is_method = 0,
            .returns_error = 0,
            .is_decl = 0,
-           .defer = tos("", 0)});
+           .defer_text = tos("", 0)});
 
   return f;
 }
 void Parser_fn_decl(Parser *p) {
 
   Parser_fgen(p, tos2("fn "));
+
+  /*
+  {
+
+  Parser_fgenln( p , tos2("\n") ) ;
+
+  }
+  */
 
   bool is_pub = p->tok == main__Token_key_pub;
 
@@ -5308,14 +5224,17 @@ void Parser_fn_decl(Parser *p) {
 
       if (string_eq(f->name, tos2("darwin__nsstring")) &&
           p->pref->build_mode == main__BuildMode_default_mode) {
+        {
+
+          Parser_fgenln(p, tos2("\n"));
+        }
 
         return;
       };
 
       _PUSH(&p->cgen->fns, (string_add(fn_decl, tos2(";"))), tmp48, string);
     };
-
-    Parser_fgenln(p, tos2("\n"));
+    { Parser_fgenln(p, tos2("\n")); }
 
     return;
   };
@@ -5357,8 +5276,10 @@ void Parser_fn_decl(Parser *p) {
   };
 
   if (is_c || is_sig || is_fn_header) {
+    {
 
-    Parser_fgenln(p, tos2("\n"));
+      Parser_fgenln(p, tos2("\n"));
+    }
 
     return;
   };
@@ -5371,8 +5292,8 @@ void Parser_fn_decl(Parser *p) {
 
     string cgen_name = Table_cgen_name(p->table, f);
 
-    f->defer = _STR("  %.*s_time += time__ticks() - _PROF_START;",
-                    cgen_name.len, cgen_name.str);
+    f->defer_text = _STR("  %.*s_time += time__ticks() - _PROF_START;",
+                         cgen_name.len, cgen_name.str);
   };
 
   Parser_statements_no_curly_end(p);
@@ -5382,7 +5303,7 @@ void Parser_fn_decl(Parser *p) {
     Parser_genln(p, Parser_print_prof_counters(p));
   };
 
-  Parser_genln(p, f->defer);
+  Parser_genln(p, f->defer_text);
 
   if (string_ne(typ, tos2("void")) && !p->returns &&
       string_ne(f->name, tos2("main")) && string_ne(f->name, tos2("WinMain"))) {
@@ -5400,8 +5321,7 @@ void Parser_fn_decl(Parser *p) {
   if (string_ne(p->mod, tos2("main"))) {
 
     Parser_genln(p, tos2("}"));
-
-    Parser_fgenln(p, tos2("\n"));
+    { Parser_fgenln(p, tos2("\n")); }
 
     return;
   };
@@ -5410,9 +5330,9 @@ void Parser_fn_decl(Parser *p) {
 
   p->cur_fn = main__EmptyFn;
 
-  Parser_fgenln(p, tos2("\n"));
-
   Parser_genln(p, tos2("}"));
+
+  { Parser_fgenln(p, tos2("\n")); }
 }
 void Parser_check_unused_variables(Parser *p) {
 
@@ -6174,7 +6094,7 @@ void Parser_gen_json_for_type(Parser *p, Type typ) {
                    .is_method = 0,
                    .returns_error = 0,
                    .is_decl = 0,
-                   .defer = tos("", 0)};
+                   .defer_text = tos("", 0)};
 
   if (Table_known_fn(&/* ? */ *p->table, dec_fn.name)) {
 
@@ -6216,7 +6136,7 @@ void Parser_gen_json_for_type(Parser *p, Type typ) {
                    .is_method = 0,
                    .returns_error = 0,
                    .is_decl = 0,
-                   .defer = tos("", 0)};
+                   .defer_text = tos("", 0)};
 
   Var enc_arg = (Var){.typ = t,
                       .name = tos("", 0),
@@ -8365,7 +8285,7 @@ Fn *Parser_interface_method(Parser *p, string field_name, string receiver) {
                                .is_public = 0,
                                .returns_error = 0,
                                .is_decl = 0,
-                               .defer = tos("", 0)});
+                               .defer_text = tos("", 0)});
 
   Parser_log(&/* ? */ *p, _STR("is interface. field=%.*s run=%d",
                                field_name.len, field_name.str, p->run));
@@ -8873,7 +8793,7 @@ string Parser_get_type(Parser *p) {
                 .is_method = 0,
                 .returns_error = 0,
                 .is_decl = 0,
-                .defer = tos("", 0)};
+                .defer_text = tos("", 0)};
 
     Parser_next(p);
 
@@ -9257,6 +9177,12 @@ string Parser_statement(Parser *p, bool add_semi) {
 
     return tos2("");
 
+  } else if ((tok == main__Token_key_defer)) { /* case */
+
+    Parser_defer_st(p);
+
+    return tos2("");
+
   } else if ((tok == main__Token_hash)) { /* case */
 
     Parser_chash(p);
@@ -9290,7 +9216,7 @@ string Parser_statement(Parser *p, bool add_semi) {
 
   } else if ((tok == main__Token_lcbr)) { /* case */
 
-    Parser_next(p);
+    Parser_check(p, main__Token_lcbr);
 
     Parser_genln(p, tos2("{"));
 
@@ -9898,7 +9824,7 @@ string Parser_name_expr(Parser *p) {
                 .is_method = 0,
                 .returns_error = 0,
                 .is_decl = 0,
-                .defer = tos("", 0)};
+                .defer_text = tos("", 0)};
 
     Parser_fn_call(p, f, 0, tos2(""), tos2(""));
 
@@ -12538,7 +12464,7 @@ void Parser_assert_statement(Parser *p) {
 }
 void Parser_return_st(Parser *p) {
 
-  CGen_insert_before(p->cgen, p->cur_fn->defer);
+  CGen_insert_before(p->cgen, p->cur_fn->defer_text);
 
   Parser_check(p, main__Token_key_return);
 
@@ -12810,6 +12736,25 @@ void Parser_attribute(Parser *p) {
   };
 
   Parser_error(p, tos2("bad attribute usage"));
+}
+void Parser_defer_st(Parser *p) {
+
+  Parser_check(p, main__Token_key_defer);
+
+  Parser_genln(p, tos2("/*"));
+
+  int pos = p->cgen->lines.len;
+
+  Parser_check(p, main__Token_lcbr);
+
+  Parser_genln(p, tos2("{"));
+
+  Parser_statements(p);
+
+  p->cur_fn->defer_text =
+      array_string_join(array_right(p->cgen->lines, pos), tos2("\n"));
+
+  Parser_genln(p, tos2("*/"));
 }
 void Scanner_fgen(Scanner *scanner, string s) {
 
@@ -14150,7 +14095,7 @@ Fn Table_find_fn(Table *t, string name) {
               .is_method = 0,
               .returns_error = 0,
               .is_decl = 0,
-              .defer = tos("", 0)};
+              .defer_text = tos("", 0)};
 }
 bool Table_known_fn(Table *t, string name) {
 
@@ -14396,7 +14341,7 @@ Fn Type_find_method(Type *t, string name) {
               .is_method = 0,
               .returns_error = 0,
               .is_decl = 0,
-              .defer = tos("", 0)};
+              .defer_text = tos("", 0)};
 }
 Type *Parser_find_type(Parser *p, string name) {
 
@@ -15264,14 +15209,17 @@ array_string build_token_str() {
   string tmp99 = tos2("as");
 
   array_set(&/*q*/ s, main__Token_key_as, &tmp99);
+  string tmp100 = tos2("defer");
+
+  array_set(&/*q*/ s, main__Token_key_defer, &tmp100);
 
   return s;
 }
 Token key_to_token(string key) {
-  int tmp100 = 0;
-  bool tmp101 = map_get(main__KEYWORDS, key, &tmp100);
+  int tmp101 = 0;
+  bool tmp102 = map_get(main__KEYWORDS, key, &tmp101);
 
-  Token a = ((Token)(tmp100));
+  Token a = ((Token)(tmp101));
 
   return a;
 }
@@ -15291,10 +15239,10 @@ bool Token_is_decl(Token t) {
 bool Token_is_assign(Token t) { return _IN(Token, t, main__AssignTokens); }
 bool array_Token_contains(array_Token t, Token val) {
 
-  array_Token tmp105 = t;
+  array_Token tmp106 = t;
   ;
-  for (int tmp106 = 0; tmp106 < tmp105.len; tmp106++) {
-    Token tt = ((Token *)tmp105.data)[tmp106];
+  for (int tmp107 = 0; tmp107 < tmp106.len; tmp107++) {
+    Token tt = ((Token *)tmp106.data)[tmp107];
 
     if (tt == val) {
 
@@ -15393,7 +15341,7 @@ void init_consts() {
                                   .is_method = 0,
                                   .returns_error = 0,
                                   .is_decl = 0,
-                                  .defer = tos("", 0)});
+                                  .defer_text = tos("", 0)});
   main__MainFn = ALLOC_INIT(Fn, {.name = tos2("main"),
                                  .pkg = tos("", 0),
                                  .local_vars = new_array(0, 1, sizeof(Var)),
@@ -15408,7 +15356,7 @@ void init_consts() {
                                  .is_method = 0,
                                  .returns_error = 0,
                                  .is_decl = 0,
-                                 .defer = tos("", 0)});
+                                 .defer_text = tos("", 0)});
   main__CReserved = new_array_from_c_array(
       10, 10, sizeof(string),
       (string[]){tos2("exit"), tos2("unix"), tos2("print"), tos2("error"),
