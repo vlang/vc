@@ -563,6 +563,7 @@ string os__filename(string path);
 string os__get_line();
 string os__get_raw_line();
 string os__user_os();
+string os__hostname();
 string os__home_dir();
 void os__write_file(string path, string text);
 void os__clear();
@@ -699,7 +700,7 @@ string Parser_decode_array(Parser *p, string typ);
 string js_enc_name(string typ);
 string js_dec_name(string typ);
 string Parser_encode_array(Parser *p, string typ);
-string vtmp_path();
+string modules_path();
 void V_compile(V *v);
 void V_cc_windows_cross(V *c);
 void V_cc(V *v);
@@ -939,7 +940,6 @@ int os__DISABLE_NEWLINE_AUTO_RETURN;
 int os__ENABLE_LVB_GRID_WORLDWIDE;
 array_string os__args;
 #define os__MAX_PATH 4096
-#define os__FILE_ATTRIBUTE_DIRECTORY 16
 string os__PathSeparator;
 array_int time__MonthDays;
 string time__Months;
@@ -983,7 +983,7 @@ string main__Version;
 #define main__BuildMode_embed_vlib 1
 #define main__BuildMode_build 2
 array_string main__SupportedPlatforms;
-string main__TmpPath;
+string main__ModPath;
 #define main__OS_mac 0
 #define main__OS_linux 1
 #define main__OS_windows 2
@@ -2499,6 +2499,11 @@ string os__getenv(string key) {
 int os__setenv(string name, string value, bool overwrite) {
 #ifdef _WIN32
 
+  string format = _STR("%.*s=%.*s", name.len, name.str, value.len, value.str);
+  if (overwrite) {
+    return _putenv(string_cstr(format));
+  };
+  return -1;
   ;
 #else
 
@@ -2509,6 +2514,8 @@ int os__setenv(string name, string value, bool overwrite) {
 int os__unsetenv(string name) {
 #ifdef _WIN32
 
+  string format = _STR("%.*s=", name.len, name.str);
+  return _putenv(string_cstr(format));
   ;
 #else
 
@@ -2527,7 +2534,14 @@ bool os__file_exists(string path) {
 bool os__dir_exists(string path) {
 #ifdef _WIN32
 
-  return os__file_exists(path);
+  int attr = ((int)(GetFileAttributes(string_cstr(path))));
+  if (attr == INVALID_FILE_ATTRIBUTES) {
+    return 0;
+  };
+  if ((attr & FILE_ATTRIBUTE_DIRECTORY) != 0) {
+    return 1;
+  };
+  return 0;
   ;
 #else
 
@@ -2661,6 +2675,12 @@ string os__user_os() {
   ;
   return tos2("unknown");
 }
+string os__hostname() {
+  byte hname[1024] = {};
+  hname[1023] /*rbyte 1*/ = '\0';
+  gethostname(&/*vvar*/ hname, 1023);
+  return tos_clone(hname);
+}
 string os__home_dir() {
   string home = os__getenv(tos2("HOME"));
 #ifdef _WIN32
@@ -2680,12 +2700,12 @@ string os__home_dir() {
   return home;
 }
 void os__write_file(string path, string text) {
-  Option_os__File tmp58 = os__create(path);
-  if (!tmp58.ok) {
-    string err = tmp58.error;
+  Option_os__File tmp62 = os__create(path);
+  if (!tmp62.ok) {
+    string err = tmp62.error;
     return;
   }
-  os__File f = *(os__File *)tmp58.data;
+  os__File f = *(os__File *)tmp62.data;
   ;
   os__File_write(f, text);
   os__File_close(f);
@@ -2778,7 +2798,7 @@ bool os__is_dir(string path) {
 #ifdef _WIN32
 
   int val = ((int)(GetFileAttributes(string_cstr(path))));
-  return val & os__FILE_ATTRIBUTE_DIRECTORY > 0;
+  return val & FILE_ATTRIBUTE_DIRECTORY > 0;
   ;
 #else
   struct /*c struct init*/
@@ -2845,13 +2865,13 @@ array_string os__ls(string path) {
       tos(&/*vvar*/ find_file_data.cFileName, strlen(find_file_data.cFileName));
   if (string_ne(first_filename, tos2(".")) &&
       string_ne(first_filename, tos2(".."))) {
-    _PUSH(&dir_files, (first_filename), tmp80, string);
+    _PUSH(&dir_files, (first_filename), tmp84, string);
   };
   while (FindNextFile(h_find_files, &/*vvar*/ find_file_data)) {
     string filename = tos(&/*vvar*/ find_file_data.cFileName,
                           strlen(find_file_data.cFileName));
     if (string_ne(filename, tos2(".")) && string_ne(filename, tos2(".."))) {
-      _PUSH(&dir_files, (string_clone(filename)), tmp82, string);
+      _PUSH(&dir_files, (string_clone(filename)), tmp86, string);
     };
   };
   FindClose(h_find_files);
@@ -2877,7 +2897,7 @@ array_string os__ls(string path) {
     string name = tos_clone(ent->d_name);
     if (string_ne(name, tos2(".")) && string_ne(name, tos2("..")) &&
         string_ne(name, tos2(""))) {
-      _PUSH(&res, (name), tmp87, string);
+      _PUSH(&res, (name), tmp91, string);
     };
   };
   closedir(dir);
@@ -3619,7 +3639,7 @@ void Fn_clear_vars(Fn *f) {
 bool Parser_is_sig(Parser *p) {
   return (p->pref->build_mode == main__BuildMode_default_mode ||
           p->pref->build_mode == main__BuildMode_build) &&
-         (string_contains(p->file_path, main__TmpPath));
+         (string_contains(p->file_path, main__ModPath));
 }
 Fn *new_fn(string pkg, bool is_public) {
   Var tmp19 = (Var){.typ = tos("", 0),
@@ -4630,7 +4650,9 @@ string Parser_encode_array(Parser *p, string typ) {
       "cJSON_AddItemToArray(o, %.*s(  ((%.*s*)val.data)[i]  ));\n} \n",
       fn_name.len, fn_name.str, typ.len, typ.str);
 }
-string vtmp_path() { return string_add(os__home_dir(), tos2("/.vlang/")); }
+string modules_path() {
+  return string_add(os__home_dir(), tos2("/.vmodules/"));
+}
 int main(int argc, char **argv) {
   init_consts();
   os__args = os__init_os_args(argc, argv);
@@ -4649,9 +4671,6 @@ int main(int argc, char **argv) {
     println(tos2("Translating C to V will be available in V 0.3"));
     return 0;
   };
-  if (!os__file_exists(main__TmpPath)) {
-    os__mkdir(main__TmpPath);
-  };
   if (_IN(string, tos2("fmt"), args)) {
     string file = *(string *)array_last(args);
     if (!os__file_exists(file)) {
@@ -4664,6 +4683,11 @@ int main(int argc, char **argv) {
     };
     println(tos2("vfmt is temporarily disabled"));
     return 0;
+  };
+  if (_IN(string, tos2("get"), args)) {
+    if (!os__file_exists(main__ModPath)) {
+      os__mkdir(main__ModPath);
+    };
   };
   if (args.len < 2 ||
       (args.len == 2 &&
@@ -4932,7 +4956,7 @@ void V_cc_windows_cross(V *c) {
   string libs = tos2("");
   if (c->pref->build_mode == main__BuildMode_default_mode) {
     libs =
-        _STR("\"%.*s/vlib/builtin.o\"", main__TmpPath.len, main__TmpPath.str);
+        _STR("\"%.*s/vlib/builtin.o\"", main__ModPath.len, main__ModPath.str);
     if (!os__file_exists(libs)) {
       println(tos2("`builtin.o` not found"));
       v_exit(1);
@@ -4941,8 +4965,8 @@ void V_cc_windows_cross(V *c) {
     ;
     for (int tmp31 = 0; tmp31 < tmp30.len; tmp31++) {
       string imp = ((string *)tmp30.data)[tmp31];
-      libs = string_add(libs, _STR(" \"%.*s/vlib/%.*s.o\"", main__TmpPath.len,
-                                   main__TmpPath.str, imp.len, imp.str));
+      libs = string_add(libs, _STR(" \"%.*s/vlib/%.*s.o\"", main__ModPath.len,
+                                   main__ModPath.str, imp.len, imp.str));
     };
   };
   args = string_add(args, _STR(" %.*s ", c->out_name_c.len, c->out_name_c.str));
@@ -4956,13 +4980,13 @@ void V_cc_windows_cross(V *c) {
     };
   };
   println(tos2("Cross compiling for Windows..."));
-  string winroot = _STR("%.*s/winroot", main__TmpPath.len, main__TmpPath.str);
+  string winroot = _STR("%.*s/winroot", main__ModPath.len, main__ModPath.str);
   if (!os__dir_exists(winroot)) {
     string winroot_url = tos2(
         "https://github.com/vlang/v/releases/download/v0.1.10/winroot.zip");
     printf("\"%.*s\" not found. Download it from %.*s and save in %.*s\n",
            winroot.len, winroot.str, winroot_url.len, winroot_url.str,
-           main__TmpPath.len, main__TmpPath.str);
+           main__ModPath.len, main__ModPath.str);
     v_exit(1);
   };
   string obj_name = c->out_name;
@@ -4971,8 +4995,8 @@ void V_cc_windows_cross(V *c) {
   string include = _STR("-I %.*s/include ", winroot.len, winroot.str);
   string cmd = _STR(
       "clang -o %.*s -w %.*s -m32 -c -target x86_64-win32 %.*s/%.*s",
-      obj_name.len, obj_name.str, include.len, include.str, main__TmpPath.len,
-      main__TmpPath.str, c->out_name_c.len, c->out_name_c.str);
+      obj_name.len, obj_name.str, include.len, include.str, main__ModPath.len,
+      main__ModPath.str, c->out_name_c.len, c->out_name_c.str);
   if (c->pref->show_c_cmd) {
     println(cmd);
   };
@@ -5039,7 +5063,7 @@ void V_cc(V *v) {
   } else if (v->pref->build_mode == main__BuildMode_embed_vlib) {
   } else if (v->pref->build_mode == main__BuildMode_default_mode) {
     libs =
-        _STR("\"%.*s/vlib/builtin.o\"", main__TmpPath.len, main__TmpPath.str);
+        _STR("\"%.*s/vlib/builtin.o\"", main__ModPath.len, main__ModPath.str);
     if (!os__file_exists(libs)) {
       println(tos2("`builtin.o` not found"));
       v_exit(1);
@@ -5051,8 +5075,8 @@ void V_cc(V *v) {
       if (string_eq(imp, tos2("webview"))) {
         continue;
       };
-      libs = string_add(libs, _STR(" \"%.*s/vlib/%.*s.o\"", main__TmpPath.len,
-                                   main__TmpPath.str, imp.len, imp.str));
+      libs = string_add(libs, _STR(" \"%.*s/vlib/%.*s.o\"", main__ModPath.len,
+                                   main__ModPath.str, imp.len, imp.str));
     };
   };
   if (v->pref->sanitize) {
@@ -5227,8 +5251,8 @@ void V_add_user_v_files(V *v) {
       string pkg = V_module_path(&/* ? */ *v,
                                  (*(string *)array__get(v->table->imports, i)));
       array_string vfiles = V_v_files_from_dir(
-          &/* ? */ *v, _STR("%.*s/vlib/%.*s", main__TmpPath.len,
-                            main__TmpPath.str, pkg.len, pkg.str));
+          &/* ? */ *v, _STR("%.*s/vlib/%.*s", main__ModPath.len,
+                            main__ModPath.str, pkg.len, pkg.str));
       array_string tmp91 = vfiles;
       ;
       for (int tmp92 = 0; tmp92 < tmp91.len; tmp92++) {
@@ -5272,7 +5296,7 @@ void V_add_user_v_files(V *v) {
         _STR("%.*s/%.*s", idir.len, idir.str, pkg.len, pkg.str);
     if (v->pref->build_mode == main__BuildMode_default_mode ||
         v->pref->build_mode == main__BuildMode_build) {
-      module_path = _STR("%.*s/vlib/%.*s", main__TmpPath.len, main__TmpPath.str,
+      module_path = _STR("%.*s/vlib/%.*s", main__ModPath.len, main__ModPath.str,
                          pkg.len, pkg.str);
     };
     if ((!os__file_exists(module_path))) {
@@ -5491,8 +5515,15 @@ V *new_v(array_string args) {
 array_string run_repl() {
   printf("V %.*s\n", main__Version.len, main__Version.str);
   println(tos2("Use Ctrl-C or `exit` to exit"));
-  string file = string_add(main__TmpPath, tos2("/vrepl.v"));
-  string temp_file = string_add(main__TmpPath, tos2("/vrepl_temp.v"));
+  string file = tos2(".vrepl.v");
+  string temp_file = tos2(".vrepl_temp.v");
+  /*
+  {
+  os__rm ( file ) ;
+  os__rm ( temp_file ) ;
+  }
+  */
+
   array_string lines =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){});
   while (1) {
@@ -5510,8 +5541,7 @@ array_string run_repl() {
       string source_code = string_add(
           string_add(array_string_join(lines, tos2("\n")), tos2("\n")), line);
       os__write_file(file, source_code);
-      string s = os__exec(string_add(string_add(tos2("v run "), main__TmpPath),
-                                     tos2("/vrepl.v -repl")));
+      string s = os__exec(_STR("v run %.*s -repl", file.len, file.str));
       array_string vals = string_split(s, tos2("\n"));
       if (string_contains(s, tos2("panic: "))) {
         if (!string_contains(s, tos2("declared and not used"))) {
@@ -5540,8 +5570,8 @@ array_string run_repl() {
           string_add(array_string_join(lines, tos2("\n")), tos2("\n")),
           temp_line);
       os__write_file(temp_file, temp_source_code);
-      string s = os__exec(string_add(string_add(tos2("v run "), main__TmpPath),
-                                     tos2("/vrepl_temp.v -repl")));
+      string s =
+          os__exec(_STR("v run %.*s -repl", temp_file.len, temp_file.str));
       if (string_contains(s, tos2("panic: "))) {
         if (!string_contains(s, tos2("declared and not used"))) {
           array_string vals = string_split(s, tos2("\n"));
@@ -5560,7 +5590,16 @@ array_string run_repl() {
       };
     };
   };
+  {
+    os__rm(file);
+    os__rm(temp_file);
+  }
+
   return lines;
+  {
+    os__rm(file);
+    os__rm(temp_file);
+  }
 }
 Parser V_new_parser(V *c, string path, Pass run) {
   V_log(&/* ? */ *c, _STR("new_parser(\"%.*s\")", path.len, path.str));
@@ -10448,7 +10487,7 @@ void init_consts() {
       7, 7, sizeof(string),
       (string[]){tos2("windows"), tos2("mac"), tos2("linux"), tos2("freebsd"),
                  tos2("openbsd"), tos2("netbsd"), tos2("dragonfly")});
-  main__TmpPath = vtmp_path();
+  main__ModPath = modules_path();
   main__HelpText = tos2(
       "\nUsage: v [options] [file | directory]\n\nOptions:\n  -                "
       " Read from stdin (Default; Interactive mode if in a tty)\n  -h, help    "
