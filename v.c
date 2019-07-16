@@ -3413,7 +3413,20 @@ string os__ext(string path) {
 }
 string os__dir(string path) {
 
-  int pos = string_last_index(path, os__PathSeparator);
+  int pos = -1;
+
+#ifdef _WIN32
+
+  pos = string_last_index(path, tos2("\\"));
+
+  ;
+
+#else
+
+  pos = string_last_index(path, os__PathSeparator);
+
+#endif
+  ;
 
   if (pos == -1) {
 
