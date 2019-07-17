@@ -101,7 +101,6 @@ typedef array array_ustring;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
-typedef Option Option_string;
 typedef struct os__filetime os__filetime;
 typedef struct os__win32finddata os__win32finddata;
 typedef struct strings__Builder strings__Builder;
@@ -132,7 +131,6 @@ typedef Option Option_string;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
-typedef Option Option_string;
 typedef Option Option_int;
 typedef int BuildMode;
 typedef int OS;
@@ -342,6 +340,7 @@ struct Parser {
   bool is_c_struct_init;
   bool can_chash;
   string attr;
+  bool v_script;
 };
 struct Scanner {
   string file_path;
@@ -566,7 +565,6 @@ string os__filename(string path);
 string os__get_line();
 string os__get_raw_line();
 string os__user_os();
-Option_string os__hostname();
 string os__home_dir();
 void os__write_file(string path, string text);
 void os__clear();
@@ -2681,15 +2679,6 @@ string os__user_os() {
   ;
   return tos2("unknown");
 }
-Option_string os__hostname() {
-  byte hname[256] = {};
-  void *res = gethostname(&/*vvar*/ hname, 256);
-  if (res != 0) {
-    return v_error(tos2("os: hostname cannot get host name of PC."));
-  };
-  string tmp61 = (string)(tos_clone(hname));
-  return opt_ok(&tmp61, sizeof(string));
-}
 string os__home_dir() {
   string home = os__getenv(tos2("HOME"));
 #ifdef _WIN32
@@ -2709,12 +2698,12 @@ string os__home_dir() {
   return home;
 }
 void os__write_file(string path, string text) {
-  Option_os__File tmp64 = os__create(path);
-  if (!tmp64.ok) {
-    string err = tmp64.error;
+  Option_os__File tmp61 = os__create(path);
+  if (!tmp61.ok) {
+    string err = tmp61.error;
     return;
   }
-  os__File f = *(os__File *)tmp64.data;
+  os__File f = *(os__File *)tmp61.data;
   ;
   os__File_write(f, text);
   os__File_close(f);
@@ -2874,13 +2863,13 @@ array_string os__ls(string path) {
       tos(&/*vvar*/ find_file_data.cFileName, strlen(find_file_data.cFileName));
   if (string_ne(first_filename, tos2(".")) &&
       string_ne(first_filename, tos2(".."))) {
-    _PUSH(&dir_files, (first_filename), tmp86, string);
+    _PUSH(&dir_files, (first_filename), tmp83, string);
   };
   while (FindNextFile(h_find_files, &/*vvar*/ find_file_data)) {
     string filename = tos(&/*vvar*/ find_file_data.cFileName,
                           strlen(find_file_data.cFileName));
     if (string_ne(filename, tos2(".")) && string_ne(filename, tos2(".."))) {
-      _PUSH(&dir_files, (string_clone(filename)), tmp88, string);
+      _PUSH(&dir_files, (string_clone(filename)), tmp85, string);
     };
   };
   FindClose(h_find_files);
@@ -2906,7 +2895,7 @@ array_string os__ls(string path) {
     string name = tos_clone(ent->d_name);
     if (string_ne(name, tos2(".")) && string_ne(name, tos2("..")) &&
         string_ne(name, tos2(""))) {
-      _PUSH(&res, (name), tmp93, string);
+      _PUSH(&res, (name), tmp90, string);
     };
   };
   closedir(dir);
@@ -5706,7 +5695,8 @@ Parser V_new_parser(V *c, string path, Pass run) {
                .returns = 0,
                .is_c_struct_init = 0,
                .can_chash = 0,
-               .attr = tos("", 0)};
+               .attr = tos("", 0),
+               .v_script = 0};
   Parser_next(&/* ? */ p);
   return p;
 }
@@ -7043,18 +7033,25 @@ string Parser_name_expr(Parser *p) {
   Fn f = Table_find_fn(&/* ? */ *p->table, name);
   if (string_eq(f.name, tos2(""))) {
     if (!Parser_first_run(&/* ? */ *p)) {
-      if (Table_known_pkg(&/* ? */ *p->table, orig_name) ||
-          FileImportTable_known_alias(&/* ? */ *p->import_table, orig_name)) {
-        name = string_replace(string_replace(name, tos2("__"), tos2(".")),
-                              tos2("_dot_"), tos2("."));
-        Parser_error(p, _STR("undefined: `%.*s`", name.len, name.str));
-      } else {
-        Parser_error(p,
-                     _STR("undefined: `%.*s`", orig_name.len, orig_name.str));
+      if (p->v_script) {
+        name = string_replace(name, tos2("main__"), tos2("os__"));
+        f = Table_find_fn(&/* ? */ *p->table, name);
       };
+      if (string_eq(f.name, tos2(""))) {
+        if (Table_known_pkg(&/* ? */ *p->table, orig_name) ||
+            FileImportTable_known_alias(&/* ? */ *p->import_table, orig_name)) {
+          name = string_replace(string_replace(name, tos2("__"), tos2(".")),
+                                tos2("_dot_"), tos2("."));
+          Parser_error(p, _STR("undefined: `%.*s`", name.len, name.str));
+        } else {
+          Parser_error(p,
+                       _STR("undefined: `%.*s`", orig_name.len, orig_name.str));
+        };
+      };
+    } else {
+      Parser_next(p);
+      return tos2("void");
     };
-    Parser_next(p);
-    return tos2("void");
   };
   if (Parser_peek(p) != main__Token_lpar) {
     Parser_gen(p, Table_cgen_name(p->table, &/*11 EXP:"Fn*" GOT:"Fn" */ f));
@@ -8280,6 +8277,8 @@ void Parser_chash(Parser *p) {
   } else if (string_contains(hash, tos2("define"))) {
     _PUSH(&p->cgen->includes, (_STR("#%.*s", hash.len, hash.str)), tmp287,
           string);
+  } else if (string_eq(hash, tos2("v"))) {
+    println(tos2("v script"));
   } else {
     if (!p->can_chash) {
       Parser_error(
@@ -8575,8 +8574,13 @@ void Parser_switch_statement(Parser *p) {
          p->tok == main__Token_key_else) {
     if (p->tok == main__Token_key_default || p->tok == main__Token_key_else) {
       Parser_genln(p, tos2("else  { // default:"));
-      Parser_check(p, main__Token_key_default);
-      Parser_check(p, main__Token_colon);
+      if (p->tok == main__Token_key_default) {
+        Parser_check(p, main__Token_key_default);
+        Parser_check(p, main__Token_colon);
+      } else {
+        Parser_check(p, main__Token_key_else);
+        Parser_check(p, main__Token_arrow);
+      };
       Parser_statements(p);
       break;
     };
