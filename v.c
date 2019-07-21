@@ -1212,8 +1212,12 @@ array array_slice(array s, int start, int _end) {
   if (start > end) {
     v_panic(_STR("invalid slice index: %d > %d", start, end));
   };
-  if (end >= s.len) {
-    end = s.len;
+  if (end > s.len) {
+    v_panic(_STR("runtime error: slice bounds out of range (%d >= %d)", end,
+                 s.len));
+  };
+  if (start < 0) {
+    v_panic(_STR("runtime error: slice bounds out of range (%d < 0)", start));
   };
   int l = end - start;
   array res = (array){.element_size = s.element_size,
@@ -3418,8 +3422,7 @@ string os__executable() {
 bool os__is_dir(string path) {
 #ifdef _WIN32
 
-  int val = ((int)(GetFileAttributes(string_to_wide(path))));
-  return (val & FILE_ATTRIBUTE_DIRECTORY) > 0;
+  return os__dir_exists(path);
   ;
 #else
 
@@ -3489,12 +3492,12 @@ array_string os__ls(string path) {
   string first_filename = string_from_wide(((u16 *)(find_file_data.cFileName)));
   if (string_ne(first_filename, tos2(".")) &&
       string_ne(first_filename, tos2(".."))) {
-    _PUSH(&dir_files, (first_filename), tmp99, string);
+    _PUSH(&dir_files, (first_filename), tmp98, string);
   };
   while (FindNextFile(h_find_files, &/*vvar*/ find_file_data)) {
     string filename = string_from_wide(((u16 *)(find_file_data.cFileName)));
     if (string_ne(filename, tos2(".")) && string_ne(filename, tos2(".."))) {
-      _PUSH(&dir_files, (string_clone(filename)), tmp101, string);
+      _PUSH(&dir_files, (string_clone(filename)), tmp100, string);
     };
   };
   FindClose(h_find_files);
@@ -3520,7 +3523,7 @@ array_string os__ls(string path) {
     string name = tos_clone(ent->d_name);
     if (string_ne(name, tos2(".")) && string_ne(name, tos2("..")) &&
         string_ne(name, tos2(""))) {
-      _PUSH(&res, (name), tmp106, string);
+      _PUSH(&res, (name), tmp105, string);
     };
   };
   closedir(dir);
