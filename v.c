@@ -11217,7 +11217,7 @@ void init_consts() {
       (int[]){31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31});
   time__Months = tos2("JanFebMarAprMayJunJulAugSepOctNovDec");
   time__Days = tos2("MonTueWedThuFriSatSun");
-  main__Version = tos2("0.1.15");
+  main__Version = tos2("0.1.16");
   main__SupportedPlatforms = new_array_from_c_array(
       8, 8, sizeof(string),
       (string[]){tos2("windows"), tos2("mac"), tos2("linux"), tos2("freebsd"),
