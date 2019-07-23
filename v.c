@@ -93,7 +93,6 @@ int g_test_ok = 1;
 #include <dirent.h>
 #include <errno.h>
 #include <math.h>
-#include <microsoft_craziness.h>
 #include <signal.h>
 #include <sys/stat.h>
 #include <time.h>
@@ -132,8 +131,6 @@ typedef struct ModDepGraph ModDepGraph;
 typedef array array_ModDepGraphNode;
 typedef struct DepSet DepSet;
 typedef array array_FileImportTable;
-typedef struct MsvcResult MsvcResult;
-typedef struct FindResult FindResult;
 typedef struct Var Var;
 typedef struct Parser Parser;
 typedef struct Scanner Scanner;
@@ -317,26 +314,6 @@ struct ModDepGraph {
 };
 struct DepSet {
   array_string items;
-};
-struct MsvcResult {
-  int sdk_ver;
-  string windows_sdk_root_path;
-  string exe_path;
-  string um_lib_path;
-  string ucrt_lib_path;
-  string vs_lib_path;
-  string um_include_path;
-  string ucrt_include_path;
-  string vs_include_path;
-  string shared_include_path;
-};
-struct FindResult {
-  int sdk_ver;
-  byte *windows_sdk_root;
-  byte *windows_sdk_um_library_path;
-  byte *windows_sdk_ucrt_library_path;
-  byte *vs_exe_path;
-  byte *vs_library_path;
 };
 struct Var {
   string typ;
@@ -532,6 +509,8 @@ string ustring_at(ustring u, int idx);
 void v_ustring_free(ustring u);
 int abs(int a);
 bool byte_is_digit(byte c);
+bool byte_is_hex_digit(byte c);
+bool byte_is_oct_digit(byte c);
 bool byte_is_letter(byte c);
 void v_string_free(string s);
 string string_all_before(string s, string dot);
@@ -791,7 +770,6 @@ ModDepGraph *ModDepGraph_resolve(ModDepGraph *graph);
 array_string ModDepGraph_imports(ModDepGraph *graph);
 void ModDepGraph_last_node(ModDepGraph *graph);
 void ModDepGraph_display(ModDepGraph *graph);
-MsvcResult *find_msvc();
 void cc_msvc(V *v);
 void build_thirdparty_obj_file_with_msvc(string flag);
 Parser V_new_parser(V *c, string path, Pass run);
@@ -870,26 +848,28 @@ void Scanner_fgenln(Scanner *scanner, string s);
 void Parser_fgen(Parser *p, string s);
 void Parser_fspace(Parser *p);
 void Parser_fgenln(Parser *p, string s);
+Token Parser_peek(Parser *p);
+void Parser_create_type_string(Parser *p, Type T, string name);
 Scanner *new_scanner(string file_path);
 ScanRes scan_res(Token tok, string lit);
-bool is_white(byte c);
-bool is_nl(byte c);
 string Scanner_ident_name(Scanner *s);
+string Scanner_ident_hex_number(Scanner *s);
+string Scanner_ident_oct_number(Scanner *s);
+string Scanner_ident_dec_number(Scanner *s);
 string Scanner_ident_number(Scanner *s);
 bool Scanner_has_gone_over_line_end(Scanner s);
 void Scanner_skip_whitespace(Scanner *s);
-string Scanner_get_var_name(Scanner *s, int pos);
 ScanRes Scanner_scan(Scanner *s);
 void Scanner_error(Scanner *s, string msg);
 string Scanner_ident_string(Scanner *s);
 string Scanner_ident_char(Scanner *s);
-Token Parser_peek(Parser *p);
 Token Scanner_peek(Scanner *s);
+bool Scanner_expect(Scanner *s, string want, int start_pos);
 void Scanner_debug_tokens(Scanner *s);
 bool is_name_char(byte c);
+bool is_nl(byte c);
 int Scanner_get_opening_bracket(Scanner *s);
 void Scanner_create_type_string(Scanner *s, Type T, string name);
-void Parser_create_type_string(Parser *p, Type T, string name);
 string Type_str(Type t);
 string Fn_str(Fn f);
 bool is_number_type(string typ);
@@ -1083,7 +1063,6 @@ string main__HelpText;
 Fn *main__EmptyFn;
 Fn *main__MainFn;
 #define main__MaxModuleDepth 4
-#define main__SingleQuote '\''
 #define main__AccessMod_private 0
 #define main__AccessMod_private_mut 1
 #define main__AccessMod_public 2
@@ -1094,7 +1073,7 @@ array_string main__NUMBER_TYPES;
 array_string main__FLOAT_TYPES;
 #define main__Token_eof 0
 #define main__Token_name 1
-#define main__Token_integer 2
+#define main__Token_number 2
 #define main__Token_str 3
 #define main__Token_str_inter 4
 #define main__Token_chartoken 5
@@ -1903,6 +1882,10 @@ int abs(int a) {
   return -a;
 }
 bool byte_is_digit(byte c) { return c >= '0' && c <= '9'; }
+bool byte_is_hex_digit(byte c) {
+  return byte_is_digit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+}
+bool byte_is_oct_digit(byte c) { return c >= '0' && c <= '7'; }
 bool byte_is_letter(byte c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
@@ -5531,10 +5514,14 @@ void V_cc(V *v) {
 #endif
     ;
   };
+#ifdef _WIN32
+
   if (v->os == main__OS_msvc) {
     cc_msvc(v);
     return;
   };
+#endif
+  ;
   bool linux_host = string_eq(os__user_os(), tos2("linux"));
   V_log(&/* ? */ *v, _STR("cc() isprod=%d outname=%.*s", v->pref->is_prod,
                           v->out_name.len, v->out_name.str));
@@ -6341,230 +6328,8 @@ void ModDepGraph_display(ModDepGraph *graph) {
     };
   };
 }
-MsvcResult *find_msvc() {
-#ifdef _WIN32
-
-  FindResult *r = find_visual_studio_and_windows_sdk();
-  string windows_sdk_root =
-      tos_clone(wide_string_to_narrow_temp(r->windows_sdk_root));
-  string ucrt_lib_folder =
-      tos_clone(wide_string_to_narrow_temp(r->windows_sdk_ucrt_library_path));
-  string um_lib_folder =
-      tos_clone(wide_string_to_narrow_temp(r->windows_sdk_um_library_path));
-  string vs_lib_folder =
-      tos_clone(wide_string_to_narrow_temp(r->vs_library_path));
-  string exe_folder = tos_clone(wide_string_to_narrow_temp(r->vs_exe_path));
-  string ucrt_include_folder =
-      string_replace(ucrt_lib_folder, tos2("Lib"), tos2("Include"));
-  string vs_include_folder =
-      string_replace(vs_lib_folder, tos2("lib"), tos2("include"));
-  if (string_ends_with(ucrt_include_folder, tos2("\\x64"))) {
-    ucrt_include_folder =
-        string_left(ucrt_include_folder, ucrt_include_folder.len - 4);
-  };
-  if (string_ends_with(vs_include_folder, tos2("\\x64"))) {
-    vs_include_folder =
-        string_left(vs_include_folder, vs_include_folder.len - 4);
-  };
-  string um_include_folder =
-      string_replace(ucrt_include_folder, tos2("ucrt"), tos2("um"));
-  string shared_include_folder =
-      string_replace(ucrt_include_folder, tos2("ucrt"), tos2("shared"));
-  return ALLOC_INIT(MsvcResult, {.sdk_ver = r->sdk_ver,
-                                 .windows_sdk_root_path = windows_sdk_root,
-                                 .exe_path = exe_folder,
-                                 .um_lib_path = um_lib_folder,
-                                 .ucrt_lib_path = ucrt_lib_folder,
-                                 .vs_lib_path = vs_lib_folder,
-                                 .um_include_path = um_include_folder,
-                                 .ucrt_include_path = ucrt_include_folder,
-                                 .vs_include_path = vs_include_folder,
-                                 .shared_include_path = shared_include_folder});
-  ;
-#else
-
-  v_panic(tos2("Cannot find msvc on this platform"));
-#endif
-  ;
-}
-void cc_msvc(V *v) {
-  MsvcResult *r = find_msvc();
-  array_string a = new_array_from_c_array(
-      2, 2, sizeof(string), (string[]){tos2("-w"), tos2("/volatile:ms")});
-  if (v->pref->is_prod) {
-    _PUSH(&a, (tos2("/O2")), tmp13, string);
-    _PUSH(&a, (tos2("/MD")), tmp14, string);
-  } else {
-    _PUSH(&a, (tos2("/Z7")), tmp15, string);
-    _PUSH(&a, (tos2("/MDd")), tmp16, string);
-  };
-  if (v->pref->is_so) {
-    if (!string_ends_with(v->out_name, tos2(".dll"))) {
-      v->out_name = string_add(v->out_name, tos2(".dll"));
-    };
-    _PUSH(&a, (tos2("/LD")), tmp17, string);
-  } else if (!string_ends_with(v->out_name, tos2(".exe"))) {
-    v->out_name = string_add(v->out_name, tos2(".exe"));
-  };
-  string libs = tos2("");
-  if (v->pref->build_mode == main__BuildMode_build) {
-  } else if (v->pref->build_mode == main__BuildMode_embed_vlib) {
-  } else if (v->pref->build_mode == main__BuildMode_default_mode) {
-    libs =
-        _STR("\"%.*s/vlib/builtin.obj\"", main__ModPath.len, main__ModPath.str);
-    if (!os__file_exists(libs)) {
-      println(tos2("`builtin.obj` not found"));
-      v_exit(1);
-    };
-    array_string tmp19 = v->table->imports;
-    ;
-    for (int tmp20 = 0; tmp20 < tmp19.len; tmp20++) {
-      string imp = ((string *)tmp19.data)[tmp20];
-      if (string_eq(imp, tos2("webview"))) {
-        continue;
-      };
-      libs = string_add(libs, _STR(" \"%.*s/vlib/%.*s.obj\"", main__ModPath.len,
-                                   main__ModPath.str, imp.len, imp.str));
-    };
-  };
-  if (v->pref->sanitize) {
-    println(tos2("Sanitize not supported on msvc."));
-  };
-  _PUSH(&a, (_STR("\".%.*s\"", v->out_name_c.len, v->out_name_c.str)), tmp21,
-        string);
-  array_string other_flags =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
-  {}
-
-  array_string real_libs =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
-  {}
-
-  array_string lib_paths =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
-  {}
-
-  array_string tmp25 = v->table->flags;
-  ;
-  for (int tmp26 = 0; tmp26 < tmp25.len; tmp26++) {
-    string f = ((string *)tmp25.data)[tmp26];
-    if (string_starts_with(f, tos2("-l"))) {
-      string lib_base = string_trim_space(string_right(f, 2));
-      string lib_lib = string_add(lib_base, tos2(".lib"));
-      _PUSH(&real_libs, (lib_lib), tmp29, string);
-    } else if (string_starts_with(f, tos2("-L"))) {
-      _PUSH(&lib_paths, (string_trim_space(string_right(f, 2))), tmp30, string);
-    } else if (string_ends_with(f, tos2(".o"))) {
-      _PUSH(&other_flags, (string_add(f, tos2("bj"))), tmp31, string);
-    } else {
-      _PUSH(&other_flags, (f), tmp32, string);
-    };
-  };
-  array_string default_libs = new_array_from_c_array(14, 14, sizeof(string),
-                                                     (string[]){
-                                                         tos2("kernel32.lib"),
-                                                         tos2("user32.lib"),
-                                                         tos2("gdi32.lib"),
-                                                         tos2("winspool.lib"),
-                                                         tos2("comdlg32.lib"),
-                                                         tos2("advapi32.lib"),
-                                                         tos2("shell32.lib"),
-                                                         tos2("ole32.lib"),
-                                                         tos2("oleaut32.lib"),
-                                                         tos2("uuid.lib"),
-                                                         tos2("odbc32.lib"),
-                                                         tos2("odbccp32.lib"),
-                                                         tos2("vcruntime.lib"),
-                                                         tos2("kernel32.lib"),
-                                                     });
-  array_string tmp34 = default_libs;
-  ;
-  for (int tmp35 = 0; tmp35 < tmp34.len; tmp35++) {
-    string l = ((string *)tmp34.data)[tmp35];
-    _PUSH(&real_libs, (l), tmp36, string);
-  };
-  _PUSH(&a,
-        (_STR("-I \"%.*s\" -I \"%.*s\" -I \"%.*s\" -I \"%.*s\"",
-              r->ucrt_include_path.len, r->ucrt_include_path.str,
-              r->vs_include_path.len, r->vs_include_path.str,
-              r->um_include_path.len, r->um_include_path.str,
-              r->shared_include_path.len, r->shared_include_path.str)),
-        tmp37, string);
-  _PUSH_MANY(&a, (other_flags), tmp38, array_string);
-  _PUSH(&a, (array_string_join(real_libs, tos2(" "))), tmp39, string);
-  _PUSH(&a, (tos2("/link")), tmp40, string);
-  _PUSH(&a, (tos2("/NOLOGO")), tmp41, string);
-  _PUSH(&a, (_STR("/OUT:%.*s", v->out_name.len, v->out_name.str)), tmp42,
-        string);
-  _PUSH(&a,
-        (_STR("/LIBPATH:\"%.*s\"", r->ucrt_lib_path.len, r->ucrt_lib_path.str)),
-        tmp43, string);
-  _PUSH(&a, (_STR("/LIBPATH:\"%.*s\"", r->um_lib_path.len, r->um_lib_path.str)),
-        tmp44, string);
-  _PUSH(&a, (_STR("/LIBPATH:\"%.*s\"", r->vs_lib_path.len, r->vs_lib_path.str)),
-        tmp45, string);
-  _PUSH(&a, (tos2("/INCREMENTAL:NO")), tmp46, string);
-  array_string tmp47 = lib_paths;
-  ;
-  for (int tmp48 = 0; tmp48 < tmp47.len; tmp48++) {
-    string l = ((string *)tmp47.data)[tmp48];
-    _PUSH(&a, (_STR("/LIBPATH:\"%.*s\"", l.len, l.str)), tmp49, string);
-  };
-  if (!v->pref->is_prod) {
-    _PUSH(&a, (tos2("/DEBUG:FULL")), tmp50, string);
-  };
-  string args = array_string_join(a, tos2(" "));
-  string escaped_path = r->exe_path;
-  string cmd = _STR("\"\"%.*s\\cl.exe\" %.*s\"", escaped_path.len,
-                    escaped_path.str, args.len, args.str);
-  string res = os__exec(cmd);
-  if (string_contains(res, tos2("error"))) {
-    println(res);
-    v_panic(tos2("msvc error"));
-  };
-  if (!v->pref->is_debug && string_ne(v->out_name_c, tos2("v.c")) &&
-      string_ne(v->out_name_c, tos2("v_macos.c"))) {
-    os__rm(_STR(".%.*s", v->out_name_c.len, v->out_name_c.str));
-  };
-}
-void build_thirdparty_obj_file_with_msvc(string flag) {
-  MsvcResult *msvc = find_msvc();
-  string obj_path = string_all_after(flag, tos2(" "));
-  if (string_ends_with(obj_path, tos2(".o"))) {
-    obj_path = string_add(obj_path, tos2("bj"));
-  };
-  if (os__file_exists(obj_path)) {
-    return;
-  };
-  printf("%.*s not found, building it (with msvc)...\n", obj_path.len,
-         obj_path.str);
-  string parent =
-      string_trim_space(string_all_before_last(obj_path, tos2("/")));
-  array_string files = os__ls(parent);
-  string cfiles = tos2("");
-  array_string tmp60 = files;
-  ;
-  for (int tmp61 = 0; tmp61 < tmp60.len; tmp61++) {
-    string file = ((string *)tmp60.data)[tmp61];
-    if (string_ends_with(file, tos2(".c"))) {
-      cfiles = string_add(
-          cfiles, string_add(string_add(string_add(parent, tos2("/")), file),
-                             tos2(" ")));
-    };
-  };
-  string include_string =
-      _STR("-I \"%.*s\" -I \"%.*s\" -I \"%.*s\" -I \"%.*s\"",
-           msvc->ucrt_include_path.len, msvc->ucrt_include_path.str,
-           msvc->vs_include_path.len, msvc->vs_include_path.str,
-           msvc->um_include_path.len, msvc->um_include_path.str,
-           msvc->shared_include_path.len, msvc->shared_include_path.str);
-  printf("%.*s\n", cfiles.len, cfiles.str);
-  string res = os__exec(_STR(
-      "\"\"%.*s\\cl.exe\" /volatile:ms /Z7 %.*s /c %.*s /Fo\"%.*s\"\"",
-      msvc->exe_path.len, msvc->exe_path.str, include_string.len,
-      include_string.str, cfiles.len, cfiles.str, obj_path.len, obj_path.str));
-  println(res);
-}
+void cc_msvc(V *v) {}
+void build_thirdparty_obj_file_with_msvc(string flag) {}
 Parser V_new_parser(V *c, string path, Pass run) {
   V_log(&/* ? */ *c, _STR("new_parser(\"%.*s\")", path.len, path.str));
   c->cgen->run = run;
@@ -7302,7 +7067,7 @@ string Parser_get_type(Parser *p) {
   };
   if (p->tok == main__Token_lsbr) {
     Parser_check(p, main__Token_lsbr);
-    if (p->tok == main__Token_integer) {
+    if (p->tok == main__Token_number) {
       typ = _STR("[%.*s]", p->lit.len, p->lit.str);
       Parser_next(p);
     } else {
@@ -7311,9 +7076,9 @@ string Parser_get_type(Parser *p) {
     Parser_check(p, main__Token_rsbr);
     if (p->tok == main__Token_lsbr) {
       Parser_next(p);
-      if (p->tok == main__Token_integer) {
+      if (p->tok == main__Token_number) {
         typ = string_add(typ, _STR("[%.*s]", p->lit.len, p->lit.str));
-        Parser_check(p, main__Token_integer);
+        Parser_check(p, main__Token_number);
       } else {
         is_arr2 = 1;
       };
@@ -8467,7 +8232,7 @@ string Parser_term(Parser *p) {
     Parser_gen(p, Token_str(tok));
     Parser_fgen(p,
                 string_add(string_add(tos2(" "), Token_str(tok)), tos2(" ")));
-    if (is_div && p->tok == main__Token_integer &&
+    if (is_div && p->tok == main__Token_number &&
         string_eq(p->lit, tos2("0"))) {
       Parser_error(p, tos2("division by zero"));
     };
@@ -8501,7 +8266,7 @@ string Parser_unary(Parser *p) {
 string Parser_factor(Parser *p) {
   string typ = tos2("");
   Token tok = p->tok;
-  if ((tok == main__Token_integer)) { /* case */
+  if ((tok == main__Token_number)) { /* case */
 
     typ = tos2("int");
     if ((string_contains(p->lit, tos2(".")) ||
@@ -8838,7 +8603,7 @@ string Parser_map_init(Parser *p) {
 string Parser_array_init(Parser *p) {
   p->is_alloc = 1;
   Parser_check(p, main__Token_lsbr);
-  bool is_integer = p->tok == main__Token_integer;
+  bool is_integer = p->tok == main__Token_number;
   string lit = p->lit;
   string typ = tos2("");
   int new_arr_ph = CGen_add_placeholder(p->cgen);
@@ -9716,7 +9481,7 @@ void Parser_return_st(Parser *p) {
       Parser_check_types(p, expr_type, p->cur_fn->typ);
     };
   } else {
-    if (0 && p->tok == main__Token_name || p->tok == main__Token_integer) {
+    if (0 && p->tok == main__Token_name || p->tok == main__Token_number) {
       Parser_error(p, _STR("function `%.*s` does not return a value",
                            p->cur_fn->name.len, p->cur_fn->name.str));
     };
@@ -9878,6 +9643,17 @@ void Scanner_fgenln(Scanner *scanner, string s) {
 void Parser_fgen(Parser *p, string s) { Scanner_fgen(p->scanner, s); }
 void Parser_fspace(Parser *p) { Parser_fgen(p, tos2(" ")); }
 void Parser_fgenln(Parser *p, string s) { Scanner_fgenln(p->scanner, s); }
+Token Parser_peek(Parser *p) {
+  while (1) {
+    Token tok = Scanner_peek(p->scanner);
+    if (tok != main__Token_nl) {
+      return tok;
+    };
+  };
+}
+void Parser_create_type_string(Parser *p, Type T, string name) {
+  Scanner_create_type_string(p->scanner, T, name);
+}
 Scanner *new_scanner(string file_path) {
   if (!os__file_exists(file_path)) {
     v_panic(_STR("\"%.*s\" doesn\'t exist", file_path.len, file_path.str));
@@ -9935,8 +9711,6 @@ Scanner *new_scanner(string file_path) {
   return scanner;
 }
 ScanRes scan_res(Token tok, string lit) { return (ScanRes){tok, lit}; }
-bool is_white(byte c) { return byte_is_white(c); }
-bool is_nl(byte c) { return c == '\r' || c == '\n'; }
 string Scanner_ident_name(Scanner *s) {
   int start = s->pos;
   while (1) {
@@ -9953,51 +9727,101 @@ string Scanner_ident_name(Scanner *s) {
   s->pos--;
   return name;
 }
-string Scanner_ident_number(Scanner *s) {
-  int start = s->pos;
-  bool is_hex = s->pos + 1 < s->text.len && string_at(s->text, s->pos) == '0' &&
-                string_at(s->text, s->pos + 1) == 'x';
-  bool is_oct = !is_hex && string_at(s->text, s->pos) == '0';
-  bool is_float = 0;
+string Scanner_ident_hex_number(Scanner *s) {
+  int start_pos = s->pos;
+  s->pos += 2;
   while (1) {
-    s->pos++;
     if (s->pos >= s->text.len) {
       break;
     };
     byte c = string_at(s->text, s->pos);
-    if (c == '.') {
-      is_float = 1;
-    };
-    bool is_good_hex = is_hex && (c == 'x' || (c >= 'a' && c <= 'f') ||
-                                  (c >= 'A' && c <= 'F'));
-    if (!is_hex && c == 'e' && s->pos + 1 < s->text.len) {
-      byte next = string_at(s->text, s->pos + 1);
-      if (next == '+' || next == '-' || byte_is_digit(next)) {
-        s->pos++;
-        continue;
-      };
-    };
-    if (!byte_is_digit(c) && c != '.' && !is_good_hex) {
+    if (!byte_is_hex_digit(c)) {
       break;
     };
-    if (c == '.' && s->pos + 1 < s->text.len &&
-        string_at(s->text, s->pos + 1) == '.') {
-      break;
-    };
-    if (is_oct && c >= '8' && !is_float) {
-      Scanner_error(&/* ? */ *s, tos2("malformed octal constant"));
-    };
+    s->pos++;
   };
-  string number = string_substr(s->text, start, s->pos);
+  string number = string_substr(s->text, start_pos, s->pos);
   s->pos--;
   return number;
 }
+string Scanner_ident_oct_number(Scanner *s) {
+  int start_pos = s->pos;
+  while (1) {
+    if (s->pos >= s->text.len) {
+      break;
+    };
+    byte c = string_at(s->text, s->pos);
+    if (byte_is_digit(c)) {
+      if (!byte_is_oct_digit(c)) {
+        Scanner_error(&/* ? */ *s, tos2("malformed octal constant"));
+      };
+    } else {
+      break;
+    };
+    s->pos++;
+  };
+  string number = string_substr(s->text, start_pos, s->pos);
+  s->pos--;
+  return number;
+}
+string Scanner_ident_dec_number(Scanner *s) {
+  int start_pos = s->pos;
+  while (byte_is_digit(string_at(s->text, s->pos))) {
+    s->pos++;
+  };
+  if (Scanner_expect(s, tos2(".."), s->pos)) {
+    string number = string_substr(s->text, start_pos, s->pos);
+    s->pos--;
+    return number;
+  };
+  if (string_at(s->text, s->pos) == '.') {
+    s->pos++;
+    while (byte_is_digit(string_at(s->text, s->pos))) {
+      s->pos++;
+    };
+  };
+  bool has_exponential_part = 0;
+  if (Scanner_expect(s, tos2("e+"), s->pos) ||
+      Scanner_expect(s, tos2("e-"), s->pos)) {
+    int exp_start_pos = s->pos += 2;
+    while (byte_is_digit(string_at(s->text, s->pos))) {
+      s->pos++;
+    };
+    if (exp_start_pos == s->pos) {
+      Scanner_error(&/* ? */ *s, tos2("exponent has no digits"));
+    };
+    has_exponential_part = 1;
+  };
+  if (string_at(s->text, s->pos) == '.') {
+    if (has_exponential_part) {
+      Scanner_error(&/* ? */ *s, tos2("exponential part should be integer"));
+    } else {
+      Scanner_error(&/* ? */ *s, tos2("too many decimal points in number"));
+    };
+  };
+  string number = string_substr(s->text, start_pos, s->pos);
+  s->pos--;
+  return number;
+}
+string Scanner_ident_number(Scanner *s) {
+  if (Scanner_expect(s, tos2("0x"), s->pos)) {
+    return Scanner_ident_hex_number(s);
+  };
+  if (Scanner_expect(s, tos2("0."), s->pos) ||
+      Scanner_expect(s, tos2("0e"), s->pos)) {
+    return Scanner_ident_dec_number(s);
+  };
+  if (string_at(s->text, s->pos) == '0') {
+    return Scanner_ident_oct_number(s);
+  };
+  return Scanner_ident_dec_number(s);
+}
 bool Scanner_has_gone_over_line_end(Scanner s) {
   int i = s.pos - 1;
-  while (i >= 0 && !is_white(string_at(s.text, i))) {
+  while (i >= 0 && !byte_is_white(string_at(s.text, i))) {
     i--;
   };
-  while (i >= 0 && is_white(string_at(s.text, i))) {
+  while (i >= 0 && byte_is_white(string_at(s.text, i))) {
     if (is_nl(string_at(s.text, i))) {
       return 1;
     };
@@ -10006,24 +9830,13 @@ bool Scanner_has_gone_over_line_end(Scanner s) {
   return 0;
 }
 void Scanner_skip_whitespace(Scanner *s) {
-  while (s->pos < s->text.len && is_white(string_at(s->text, s->pos))) {
-    if (is_nl(string_at(s->text, s->pos))) {
-      if (!(string_at(s->text, s->pos) == '\n' && s->pos > 0 &&
-            string_at(s->text, s->pos - 1) == '\r')) {
-        s->line_nr++;
-      };
+  while (s->pos < s->text.len && byte_is_white(string_at(s->text, s->pos))) {
+    if (is_nl(string_at(s->text, s->pos)) &&
+        !Scanner_expect(s, tos2("\r\n"), s->pos - 1)) {
+      s->line_nr++;
     };
     s->pos++;
   };
-}
-string Scanner_get_var_name(Scanner *s, int pos) {
-  int pos_start = pos;
-  for (; pos_start >= 0 && string_at(s->text, pos_start) != '\n' &&
-         string_at(s->text, pos_start) != ';';
-       pos_start--) {
-  };
-  pos_start++;
-  return string_substr(s->text, pos_start, pos);
 }
 ScanRes Scanner_scan(Scanner *s) {
   if (string_ne(s->line_comment, tos2(""))) {
@@ -10039,7 +9852,7 @@ ScanRes Scanner_scan(Scanner *s) {
     Scanner_skip_whitespace(s);
   };
   if (s->dollar_end) {
-    if (string_at(s->text, s->pos) == main__SingleQuote) {
+    if (string_at(s->text, s->pos) == '\'') {
       s->dollar_end = 0;
       return scan_res(main__Token_str, tos2(""));
     };
@@ -10063,7 +9876,7 @@ ScanRes Scanner_scan(Scanner *s) {
       return scan_res(key_to_token(name), tos2(""));
     };
     if (s->inside_string) {
-      if (next_char == main__SingleQuote) {
+      if (next_char == '\'') {
         s->pos++;
         s->dollar_start = 0;
         s->inside_string = 0;
@@ -10079,7 +9892,7 @@ ScanRes Scanner_scan(Scanner *s) {
     return scan_res(main__Token_name, name);
   } else if (byte_is_digit(c) || c == '.' && byte_is_digit(nextc)) {
     string num = Scanner_ident_number(s);
-    return scan_res(main__Token_integer, num);
+    return scan_res(main__Token_number, num);
   };
   if ((c == '+')) { /* case */
 
@@ -10125,7 +9938,7 @@ ScanRes Scanner_scan(Scanner *s) {
   } else if ((c == '?')) { /* case */
 
     return scan_res(main__Token_question, tos2(""));
-  } else if ((c == main__SingleQuote)) { /* case */
+  } else if ((c == '\'')) { /* case */
 
     return scan_res(main__Token_str, Scanner_ident_string(s));
   } else if ((c == '\`')) { /* case */
@@ -10156,7 +9969,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
     if (s->inside_string) {
       s->pos++;
-      if (string_at(s->text, s->pos) == main__SingleQuote) {
+      if (string_at(s->text, s->pos) == '\'') {
         s->inside_string = 0;
         return scan_res(main__Token_str, tos2(""));
       };
@@ -10309,13 +10122,11 @@ ScanRes Scanner_scan(Scanner *s) {
           s->line_nr++;
           continue;
         };
-        if (string_at(s->text, s->pos) == '/' &&
-            string_at(s->text, s->pos + 1) == '*') {
+        if (Scanner_expect(s, tos2("/*"), s->pos)) {
           nest_count++;
           continue;
         };
-        if (string_at(s->text, s->pos) == '*' &&
-            string_at(s->text, s->pos + 1) == '/') {
+        if (Scanner_expect(s, tos2("*/"), s->pos)) {
           nest_count--;
         };
       };
@@ -10334,7 +10145,6 @@ ScanRes Scanner_scan(Scanner *s) {
   };
 #endif
   ;
-  printf("(char code=%d) pos=%d len=%d\n", c, s->pos, s->text.len);
   string msg =
       _STR("invalid character `%.*s`", byte_str(c).len, byte_str(c).str);
   if (c == '"') {
@@ -10350,11 +10160,6 @@ void Scanner_error(Scanner *s, string msg) {
   v_exit(1);
 }
 string Scanner_ident_string(Scanner *s) {
-  bool debug = string_contains(s->file_path, tos2("test_test"));
-  if (debug) {
-    printf("identStr() %.*s line=%d pos=%d\n", s->file_path.len,
-           s->file_path.str, s->line_nr, s->pos);
-  };
   int start = s->pos;
   s->inside_string = 0;
   byte slash = '\\';
@@ -10364,11 +10169,8 @@ string Scanner_ident_string(Scanner *s) {
       break;
     };
     byte c = string_at(s->text, s->pos);
-    if (debug) {
-      println(byte_str(c));
-    };
     byte prevc = string_at(s->text, s->pos - 1);
-    if (c == main__SingleQuote &&
+    if (c == '\'' &&
         (prevc != slash ||
          (prevc == slash && string_at(s->text, s->pos - 2) == slash))) {
       break;
@@ -10379,9 +10181,7 @@ string Scanner_ident_string(Scanner *s) {
     if (c == '0' && s->pos > 2 && string_at(s->text, s->pos - 1) == '\\') {
       Scanner_error(&/* ? */ *s, tos2("0 character in a string literal"));
     };
-    if (c == '0' && s->pos > 5 && string_at(s->text, s->pos - 1) == '0' &&
-        string_at(s->text, s->pos - 2) == 'x' &&
-        string_at(s->text, s->pos - 3) == '\\') {
+    if (c == '0' && s->pos > 5 && Scanner_expect(s, tos2("\\x0"), s->pos - 3)) {
       Scanner_error(&/* ? */ *s, tos2("0 character in a string literal"));
     };
     if (c == '{' && prevc == '$') {
@@ -10397,7 +10197,7 @@ string Scanner_ident_string(Scanner *s) {
     };
   };
   string lit = tos2("");
-  if (string_at(s->text, start) == main__SingleQuote) {
+  if (string_at(s->text, start) == '\'') {
     start++;
   };
   int end = s->pos;
@@ -10422,8 +10222,7 @@ string Scanner_ident_char(Scanner *s) {
     if (string_at(s->text, s->pos) != slash) {
       len++;
     };
-    bool double_slash = string_at(s->text, s->pos - 1) == slash &&
-                        string_at(s->text, s->pos - 2) == slash;
+    bool double_slash = Scanner_expect(s, tos2("\\\\"), s->pos - 2);
     if (string_at(s->text, s->pos) == '\`' &&
         (string_at(s->text, s->pos - 1) != slash || double_slash)) {
       if (double_slash) {
@@ -10444,14 +10243,6 @@ string Scanner_ident_char(Scanner *s) {
   };
   return c;
 }
-Token Parser_peek(Parser *p) {
-  while (1) {
-    Token tok = Scanner_peek(p->scanner);
-    if (tok != main__Token_nl) {
-      return tok;
-    };
-  };
-}
 Token Scanner_peek(Scanner *s) {
   int pos = s->pos;
   int line = s->line_nr;
@@ -10467,11 +10258,29 @@ Token Scanner_peek(Scanner *s) {
   s->dollar_end = dollar_end;
   return tok;
 }
+bool Scanner_expect(Scanner *s, string want, int start_pos) {
+  int end_pos = start_pos + want.len;
+  if (start_pos < 0 || start_pos >= s->text.len) {
+    return 0;
+  };
+  if (end_pos < 0 || end_pos > s->text.len) {
+    return 0;
+  };
+  int tmp119 = start_pos;
+  ;
+  for (int tmp120 = tmp119; tmp120 < end_pos; tmp120++) {
+    int pos = tmp120;
+    if (string_at(s->text, pos) != string_at(want, pos - start_pos)) {
+      return 0;
+    };
+  };
+  return 1;
+}
 void Scanner_debug_tokens(Scanner *s) {
   s->pos = 0;
+  s->debug = 1;
   string fname = string_all_after(s->file_path, tos2("/"));
   printf("\n===DEBUG TOKENS %.*s===\n", fname.len, fname.str);
-  s->debug = 1;
   while (1) {
     ScanRes res = Scanner_scan(s);
     Token tok = res.tok;
@@ -10489,6 +10298,7 @@ void Scanner_debug_tokens(Scanner *s) {
   };
 }
 bool is_name_char(byte c) { return byte_is_letter(c) || c == '_'; }
+bool is_nl(byte c) { return c == '\r' || c == '\n'; }
 int Scanner_get_opening_bracket(Scanner *s) {
   int pos = s->pos;
   int parentheses = 0;
@@ -10518,10 +10328,10 @@ void Scanner_create_type_string(Scanner *s, Type T, string name) {
   string newtext = tos2("\'{ ");
   int start = Scanner_get_opening_bracket(s) + 1;
   int end = s->pos;
-  array_Var tmp164 = T.fields;
+  array_Var tmp149 = T.fields;
   ;
-  for (int i = 0; i < tmp164.len; i++) {
-    Var field = ((Var *)tmp164.data)[i];
+  for (int i = 0; i < tmp149.len; i++) {
+    Var field = ((Var *)tmp149.data)[i];
     if (i != 0) {
       newtext = string_add(newtext, tos2(", "));
     };
@@ -10536,9 +10346,6 @@ void Scanner_create_type_string(Scanner *s, Type T, string name) {
   s->pos = start - 2;
   s->line_nr = line;
   s->inside_string = inside_string;
-}
-void Parser_create_type_string(Parser *p, Type T, string name) {
-  Scanner_create_type_string(p->scanner, T, name);
 }
 string Type_str(Type t) {
   string s = _STR("type \"%.*s\" {", t.name.len, t.name.str);
@@ -11348,8 +11155,8 @@ array_string build_token_str() {
   array_set(&/*q*/ s, main__Token_eof, &tmp11);
   string tmp12 = tos2(".name");
   array_set(&/*q*/ s, main__Token_name, &tmp12);
-  string tmp13 = tos2(".integer");
-  array_set(&/*q*/ s, main__Token_integer, &tmp13);
+  string tmp13 = tos2(".number");
+  array_set(&/*q*/ s, main__Token_number, &tmp13);
   string tmp14 = tos2("STR");
   array_set(&/*q*/ s, main__Token_str, &tmp14);
   string tmp15 = tos2(".chartoken");
