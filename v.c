@@ -5,6 +5,12 @@
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
 #include <stdlib.h>
 
+#define STRUCT_DEFAULT_VALUE                                                   \
+  {}
+#define EMPTY_STRUCT_DECLARATION
+#define EMPTY_STRUCT_INIT
+#define OPTION_CAST(x) (x)
+
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <direct.h> // _wgetcwd
@@ -16,6 +22,16 @@
 #ifdef _MSC_VER
 // On MSVC these are the same (as long as /volatile:ms is passed)
 #define _Atomic volatile
+
+// MSVC can't parse some things properly
+#undef STRUCT_DEFAULT_VALUE
+#define STRUCT_DEFAULT_VALUE                                                   \
+  { 0 }
+#undef EMPTY_STRUCT_DECLARATION
+#define EMPTY_STRUCT_DECLARATION void *____dummy_variable;
+#undef EMPTY_STRUCT_INIT
+#define EMPTY_STRUCT_INIT 0
+#define OPTION_CAST(x)
 #endif
 
 void pthread_mutex_lock(HANDLE *m) { WaitForSingleObject(*m, INFINITE); }
@@ -1198,7 +1214,7 @@ array array_repeat(void *val, int nr_repeats, int elm_size) {
                       .element_size = elm_size,
                       .data = v_malloc(nr_repeats * elm_size)};
   for (int i = 0; i < nr_repeats; i++) {
-    memcpy(arr.data + i * elm_size, val, elm_size);
+    memcpy((byte *)arr.data + i * elm_size, val, elm_size);
   };
   return arr;
 }
@@ -1212,13 +1228,14 @@ void array_insert(array *a, int i, void *val) {
   };
   array__push(a, val);
   int size = a->element_size;
-  memmove(a->data + (i + 1) * size, a->data + i * size, (a->len - i) * size);
+  memmove((byte *)a->data + (i + 1) * size, (byte *)a->data + i * size,
+          (a->len - i) * size);
   array_set(a, i, val);
 }
 void array_prepend(array *a, void *val) { array_insert(a, 0, val); }
 void array_delete(array *a, int idx) {
   int size = a->element_size;
-  memmove(a->data + idx * size, a->data + (idx + 1) * size,
+  memmove((byte *)a->data + idx * size, (byte *)a->data + (idx + 1) * size,
           (a->len - idx) * size);
   a->len--;
   a->cap--;
@@ -1227,19 +1244,19 @@ void *array__get(array a, int i) {
   if (i < 0 || i >= a.len) {
     v_panic(_STR("array index out of range: %d/%d", i, a.len));
   };
-  return a.data + i * a.element_size;
+  return (byte *)a.data + i * a.element_size;
 }
 void *array_first(array a) {
   if (a.len == 0) {
     v_panic(tos2("array.first: empty array"));
   };
-  return a.data + 0;
+  return (byte *)a.data + 0;
 }
 void *array_last(array a) {
   if (a.len == 0) {
     v_panic(tos2("array.last: empty array"));
   };
-  return a.data + (a.len - 1) * a.element_size;
+  return (byte *)a.data + (a.len - 1) * a.element_size;
 }
 array array_left(array s, int n) {
   if (n >= s.len) {
@@ -1267,7 +1284,7 @@ array array_slice(array s, int start, int _end) {
   };
   int l = end - start;
   array res = (array){.element_size = s.element_size,
-                      .data = s.data + start * s.element_size,
+                      .data = (byte *)s.data + start * s.element_size,
                       .len = l,
                       .cap = l};
   return res;
@@ -1276,7 +1293,7 @@ void array_set(array *a, int idx, void *val) {
   if (idx < 0 || idx >= a->len) {
     v_panic(_STR("array index out of range: %d / %d", idx, a->len));
   };
-  memcpy(a->data + a->element_size * idx, val, a->element_size);
+  memcpy((byte *)a->data + a->element_size * idx, val, a->element_size);
 }
 void array__push(array *arr, void *val) {
   if (arr->len >= arr->cap - 1) {
@@ -1288,7 +1305,8 @@ void array__push(array *arr, void *val) {
     };
     arr->cap = cap;
   };
-  memcpy(arr->data + arr->element_size * arr->len, val, arr->element_size);
+  memcpy((byte *)arr->data + arr->element_size * arr->len, val,
+         arr->element_size);
   arr->len++;
 }
 void array__push_many(array *arr, void *val, int size) {
@@ -1301,7 +1319,7 @@ void array__push_many(array *arr, void *val, int size) {
     };
     arr->cap = cap;
   };
-  memcpy(arr->data + arr->element_size * arr->len, val,
+  memcpy((byte *)arr->data + arr->element_size * arr->len, val,
          arr->element_size * size);
   arr->len += size;
 }
@@ -1311,7 +1329,7 @@ array array_reverse(array a) {
                       .element_size = a.element_size,
                       .data = v_malloc(a.cap * a.element_size)};
   for (int i = 0; i < a.len; i++) {
-    memcpy(arr.data + i * arr.element_size,
+    memcpy((byte *)arr.data + i * arr.element_size,
            &/*vvar*/ (*(void **)array__get(a, a.len - 1 - i)),
            arr.element_size);
   };
@@ -1395,7 +1413,8 @@ string string_replace(string s, string rep, string with) {
   if (s.len == 0 || rep.len == 0) {
     return s;
   };
-  array_int idxs = new_array_from_c_array(0, 0, sizeof(int), (int[]){});
+  array_int idxs =
+      new_array_from_c_array(0, 0, sizeof(int), (int[]){EMPTY_STRUCT_INIT});
   {}
 
   string rem = s;
@@ -1494,7 +1513,8 @@ string string_add(string s, string a) {
   return res;
 }
 array_string string_split(string s, string delim) {
-  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string res = new_array_from_c_array(0, 0, sizeof(string),
+                                            (string[]){EMPTY_STRUCT_INIT});
   if (delim.len == 0) {
     _PUSH(&res, (s), tmp30, string);
     return res;
@@ -1530,7 +1550,8 @@ array_string string_split(string s, string delim) {
   return res;
 }
 array_string string_split_single(string s, byte delim) {
-  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string res = new_array_from_c_array(0, 0, sizeof(string),
+                                            (string[]){EMPTY_STRUCT_INIT});
   if (((int)(delim)) == 0) {
     _PUSH(&res, (s), tmp39, string);
     return res;
@@ -1555,7 +1576,8 @@ array_string string_split_single(string s, byte delim) {
   return res;
 }
 array_string string_split_into_lines(string s) {
-  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string res = new_array_from_c_array(0, 0, sizeof(string),
+                                            (string[]){EMPTY_STRUCT_INIT});
   if (s.len == 0) {
     return res;
   };
@@ -1987,7 +2009,8 @@ int string_hash(string s) {
 }
 array_byte string_bytes(string s) {
   if (s.len == 0) {
-    return new_array_from_c_array(0, 0, sizeof(byte), (byte[]){});
+    return new_array_from_c_array(0, 0, sizeof(byte),
+                                  (byte[]){EMPTY_STRUCT_INIT});
   };
   byte tmp125 = ((byte)(0));
   array_byte buf = array_repeat(&tmp125, s.len, sizeof(byte));
@@ -2001,7 +2024,7 @@ void print_backtrace() {
   return;
 #ifdef __APPLE__
 
-  voidptr buffer[100] = {};
+  voidptr buffer[100] = STRUCT_DEFAULT_VALUE;
   void *nr_ptrs = backtrace(buffer, 100);
   backtrace_symbols_fd(buffer, nr_ptrs, 1);
 #endif
@@ -2488,8 +2511,8 @@ Option opt_ok(void *data, int size) {
 Option v_error(string s) { return (Option){.error = s, .ok = 0}; }
 void os__todo_remove() {}
 array_string os__init_os_args(int argc, byteptr *argv) {
-  array_string args =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string args = new_array_from_c_array(0, 0, sizeof(string),
+                                             (string[]){EMPTY_STRUCT_INIT});
 #ifdef _WIN32
 
   voidptr *args_list = ((voidptr *)(0));
@@ -2519,7 +2542,7 @@ Option_string os__read_file(string path) {
   string mode = tos2("rb");
   struct /*c struct init*/
 
-      FILE *fp = ALLOC_INIT(FILE, {});
+      FILE *fp = ALLOC_INIT(FILE, {EMPTY_STRUCT_INIT});
 #ifdef _WIN32
 
   fp = _wfopen(string_to_wide(path), string_to_wide(mode));
@@ -2540,7 +2563,7 @@ Option_string os__read_file(string path) {
   fread(str, fsize, 1, fp);
   fclose(fp);
   str[/*ptr*/ fsize] /*rbyte 1*/ = 0;
-  string tmp14 = (string)((tos(str, fsize)));
+  string tmp14 = OPTION_CAST(string)((tos(str, fsize)));
   return opt_ok(&tmp14, sizeof(string));
 }
 int os__file_size(string path) {
@@ -2570,12 +2593,13 @@ void os__mv(string old, string new) {
   ;
 }
 array_string os__read_lines(string path) {
-  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
-  byte buf[1000] = {};
+  array_string res = new_array_from_c_array(0, 0, sizeof(string),
+                                            (string[]){EMPTY_STRUCT_INIT});
+  byte buf[1000] = STRUCT_DEFAULT_VALUE;
   string mode = tos2("rb");
   struct /*c struct init*/
 
-      FILE *fp = ALLOC_INIT(FILE, {});
+      FILE *fp = ALLOC_INIT(FILE, {EMPTY_STRUCT_INIT});
 #ifdef _WIN32
 
   fp = _wfopen(string_to_wide(path), string_to_wide(mode));
@@ -2606,8 +2630,8 @@ array_string os__read_lines(string path) {
 }
 array_ustring os__read_ulines(string path) {
   array_string lines = os__read_lines(path);
-  array_ustring ulines =
-      new_array_from_c_array(0, 0, sizeof(ustring), (ustring[]){});
+  array_ustring ulines = new_array_from_c_array(0, 0, sizeof(ustring),
+                                                (ustring[]){EMPTY_STRUCT_INIT});
   array_string tmp25 = lines;
   ;
   for (int tmp26 = 0; tmp26 < tmp25.len; tmp26++) {
@@ -2633,7 +2657,7 @@ Option_os__File os__open(string path) {
   if (isnil(file.cfile)) {
     return v_error(_STR("failed to open file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp32 = (os__File)(file);
+  os__File tmp32 = OPTION_CAST(os__File)(file);
   return opt_ok(&tmp32, sizeof(os__File));
 }
 Option_os__File os__create(string path) {
@@ -2653,7 +2677,7 @@ Option_os__File os__create(string path) {
   if (isnil(file.cfile)) {
     return v_error(_STR("failed to create file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp37 = (os__File)(file);
+  os__File tmp37 = OPTION_CAST(os__File)(file);
   return opt_ok(&tmp37, sizeof(os__File));
 }
 Option_os__File os__open_append(string path) {
@@ -2674,13 +2698,10 @@ Option_os__File os__open_append(string path) {
     return v_error(
         _STR("failed to create(append) file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp42 = (os__File)(file);
+  os__File tmp42 = OPTION_CAST(os__File)(file);
   return opt_ok(&tmp42, sizeof(os__File));
 }
-void os__File_write(os__File f, string s) {
-  string ss = string_clone(s);
-  fputs(ss.str, f.cfile);
-}
+void os__File_write(os__File f, string s) { fputs(s.str, f.cfile); }
 void os__File_write_bytes(os__File f, void *data, int size) {
   fwrite(data, 1, size, f.cfile);
 }
@@ -2732,7 +2753,7 @@ string os__exec(string cmd) {
     printf("popen %.*s failed\n", cmd.len, cmd.str);
     return tos2("");
   };
-  byte buf[1000] = {};
+  byte buf[1000] = STRUCT_DEFAULT_VALUE;
   string res = tos2("");
   while (fgets(buf, 1000, f) != 0) {
     res = string_add(res, tos(buf, strlen(buf)));
@@ -2934,15 +2955,15 @@ string os__get_raw_line() {
 }
 array_string os__get_lines() {
   string line = tos2("");
-  array_string inputstr =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string inputstr = new_array_from_c_array(0, 0, sizeof(string),
+                                                 (string[]){EMPTY_STRUCT_INIT});
   while (1) {
     line = os__get_line();
     if ((line.len <= 0)) {
       break;
     };
     line = string_trim_space(line);
-    _PUSH(&inputstr, (line), tmp74, string);
+    _PUSH(&inputstr, (line), tmp73, string);
   };
   return inputstr;
 }
@@ -3021,12 +3042,12 @@ string os__home_dir() {
   return home;
 }
 void os__write_file(string path, string text) {
-  Option_os__File tmp79 = os__create(path);
-  if (!tmp79.ok) {
-    string err = tmp79.error;
+  Option_os__File tmp78 = os__create(path);
+  if (!tmp78.ok) {
+    string err = tmp78.error;
     return;
   }
-  os__File f = *(os__File *)tmp79.data;
+  os__File f = *(os__File *)tmp78.data;
   ;
   os__File_write(f, text);
   os__File_close(f);
@@ -3182,8 +3203,8 @@ array_string os__ls(string path) {
                                                          .dwFileType = 0,
                                                          .dwCreatorType = 0,
                                                          .wFinderFlags = 0};
-  array_string dir_files =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string dir_files = new_array_from_c_array(
+      0, 0, sizeof(string), (string[]){EMPTY_STRUCT_INIT});
   if (!os__dir_exists(path)) {
     printf("ls() couldnt open dir \"%.*s\" (does not exist).\n", path.len,
            path.str);
@@ -3195,12 +3216,12 @@ array_string os__ls(string path) {
   string first_filename = string_from_wide(((u16 *)(find_file_data.cFileName)));
   if (string_ne(first_filename, tos2(".")) &&
       string_ne(first_filename, tos2(".."))) {
-    _PUSH(&dir_files, (first_filename), tmp108, string);
+    _PUSH(&dir_files, (first_filename), tmp107, string);
   };
   while (FindNextFile(h_find_files, &/*vvar*/ find_file_data)) {
     string filename = string_from_wide(((u16 *)(find_file_data.cFileName)));
     if (string_ne(filename, tos2(".")) && string_ne(filename, tos2(".."))) {
-      _PUSH(&dir_files, (string_clone(filename)), tmp110, string);
+      _PUSH(&dir_files, (string_clone(filename)), tmp109, string);
     };
   };
   FindClose(h_find_files);
@@ -3208,7 +3229,8 @@ array_string os__ls(string path) {
   ;
 #else
 
-  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string res = new_array_from_c_array(0, 0, sizeof(string),
+                                            (string[]){EMPTY_STRUCT_INIT});
   void *dir = opendir(path.str);
   if (isnil(dir)) {
     printf("ls() couldnt open dir \"%.*s\"\n", path.len, path.str);
@@ -3226,7 +3248,7 @@ array_string os__ls(string path) {
     string name = tos_clone(ent->d_name);
     if (string_ne(name, tos2(".")) && string_ne(name, tos2("..")) &&
         string_ne(name, tos2(""))) {
-      _PUSH(&res, (name), tmp115, string);
+      _PUSH(&res, (name), tmp114, string);
     };
   };
   closedir(dir);
@@ -3290,7 +3312,8 @@ array_int math__digits(int n, int base) {
     sign = -1;
     n = -n;
   };
-  array_int res = new_array_from_c_array(0, 0, sizeof(int), (int[]){});
+  array_int res =
+      new_array_from_c_array(0, 0, sizeof(int), (int[]){EMPTY_STRUCT_INIT});
   while (n != 0) {
     _PUSH(&res, ((n % base) * sign), tmp3, int);
     n /= base;
@@ -3668,7 +3691,7 @@ Option_int time__days_in_month(int month, int year) {
   };
   int extra = (month == 2 && time__is_leap_year(year)) ? (1) : (0);
   int res = (*(int *)array__get(time__MonthDays, month - 1)) + extra;
-  int tmp39 = (int)(res);
+  int tmp39 = OPTION_CAST(int)(res);
   return opt_ok(&tmp39, sizeof(int));
 }
 CGen *new_cgen(string out_name_c) {
@@ -3843,7 +3866,8 @@ void CGen_register_thread_fn(CGen *g, string wrapper_name, string wrapper_text,
   _PUSH(&g->thread_args, (wrapper_text), tmp20, string);
 }
 string V_prof_counters(V *c) {
-  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string res = new_array_from_c_array(0, 0, sizeof(string),
+                                            (string[]){EMPTY_STRUCT_INIT});
   array_Type tmp22 = c->table->types;
   ;
   for (int tmp23 = 0; tmp23 < tmp22.len; tmp23++) {
@@ -3863,7 +3887,8 @@ string V_prof_counters(V *c) {
   return array_string_join(res, tos2(";\n"));
 }
 string Parser_print_prof_counters(Parser *p) {
-  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string res = new_array_from_c_array(0, 0, sizeof(string),
+                                            (string[]){EMPTY_STRUCT_INIT});
   array_Type tmp28 = p->table->types;
   ;
   for (int tmp29 = 0; tmp29 < tmp28.len; tmp29++) {
@@ -4010,7 +4035,8 @@ void Fn_register_var(Fn *f, Var v) {
 }
 void Fn_clear_vars(Fn *f) {
   f->var_idx = 0;
-  f->local_vars = new_array_from_c_array(0, 0, sizeof(Var), (Var[]){});
+  f->local_vars =
+      new_array_from_c_array(0, 0, sizeof(Var), (Var[]){EMPTY_STRUCT_INIT});
 }
 bool Parser_is_sig(Parser *p) {
   return (p->pref->build_mode == main__BuildMode_default_mode ||
@@ -5731,7 +5757,8 @@ void V_cc(V *v) {
   };
 }
 array_string V_v_files_from_dir(V *v, string dir) {
-  array_string res = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string res = new_array_from_c_array(0, 0, sizeof(string),
+                                            (string[]){EMPTY_STRUCT_INIT});
   if (!os__file_exists(dir)) {
     v_panic(_STR("%.*s doesn\'t exist", dir.len, dir.str));
   } else if (!os__dir_exists(dir)) {
@@ -5775,8 +5802,8 @@ array_string V_v_files_from_dir(V *v, string dir) {
 void V_add_user_v_files(V *v) {
   string dir = v->dir;
   V_log(&/* ? */ *v, _STR("add_v_files(%.*s)", dir.len, dir.str));
-  array_string user_files =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string user_files = new_array_from_c_array(
+      0, 0, sizeof(string), (string[]){EMPTY_STRUCT_INIT});
   bool is_test_with_imports = string_ends_with(dir, tos2("_test.v")) &&
                               (string_contains(dir, tos2("/volt")) ||
                                string_contains(dir, tos2("/c2volt")));
@@ -5806,7 +5833,7 @@ void V_add_user_v_files(V *v) {
     println(array_string_str(user_files));
   };
   array_FileImportTable file_imports = new_array_from_c_array(
-      0, 0, sizeof(FileImportTable), (FileImportTable[]){});
+      0, 0, sizeof(FileImportTable), (FileImportTable[]){EMPTY_STRUCT_INIT});
   array_string tmp94 = user_files;
   ;
   for (int tmp95 = 0; tmp95 < tmp94.len; tmp95++) {
@@ -6043,8 +6070,8 @@ V *new_v(array_string args) {
   };
   string out_name_c =
       string_add(string_all_after(out_name, tos2("/")), tos2(".c"));
-  array_string files =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string files = new_array_from_c_array(0, 0, sizeof(string),
+                                              (string[]){EMPTY_STRUCT_INIT});
   if (!string_contains(out_name, tos2("builtin.o"))) {
     array_string tmp152 = builtins;
     ;
@@ -6122,8 +6149,8 @@ array_string run_repl() {
   }
   */
 
-  array_string lines =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string lines = new_array_from_c_array(0, 0, sizeof(string),
+                                              (string[]){EMPTY_STRUCT_INIT});
   string vexe = (*(string *)array__get(os__args, 0));
   while (1) {
     v_print(tos2(">>> "));
@@ -6203,8 +6230,8 @@ array_string run_repl() {
   }
 }
 array_string env_vflags_and_os_args() {
-  array_string args =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string args = new_array_from_c_array(0, 0, sizeof(string),
+                                             (string[]){EMPTY_STRUCT_INIT});
   string vflags = os__getenv(tos2("VFLAGS"));
   if (string_ne(tos2(""), vflags)) {
     _PUSH(&args, ((*(string *)array__get(os__args, 0))), tmp195, string);
@@ -6244,8 +6271,8 @@ void ModDepGraph_from_import_tables(ModDepGraph *graph,
   ;
   for (int tmp7 = 0; tmp7 < tmp6.len; tmp7++) {
     FileImportTable fit = ((FileImportTable *)tmp6.data)[tmp7];
-    array_string deps =
-        new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+    array_string deps = new_array_from_c_array(0, 0, sizeof(string),
+                                               (string[]){EMPTY_STRUCT_INIT});
     map_string tmp9 = fit.imports;
     array_string keys_tmp9 = map_keys(&tmp9);
     for (int l = 0; l < keys_tmp9.len; l++) {
@@ -6305,13 +6332,13 @@ ModDepGraph *ModDepGraph_resolve(ModDepGraph *graph) {
         string name = ((string *)keys_tmp24.data)[l];
         DepSet _ = {0};
         map_get(tmp24, name, &_);
-        ModDepGraphNode tmp25 = {};
+        ModDepGraphNode tmp25 = {0};
         bool tmp26 = map_get(node_names, name, &tmp25);
         ModDepGraphNode node = tmp25;
         if (string_eq(name, (*(string *)array__get(ndk, node_deps.size - 1)))) {
-          DepSet tmp30 = {};
+          DepSet tmp30 = {0};
           bool tmp31 = map_get(node_deps, name, &tmp30);
-          DepSet tmp32 = {};
+          DepSet tmp32 = {0};
           bool tmp33 = map_get(node_deps, name, &tmp32);
           node.last_cycle =
               (*(string *)array__get(tmp30.items, tmp32.items.len - 1));
@@ -6327,7 +6354,7 @@ ModDepGraph *ModDepGraph_resolve(ModDepGraph *graph) {
       ;
       for (int tmp39 = 0; tmp39 < tmp38.len; tmp39++) {
         string name = ((string *)tmp38.data)[tmp39];
-        ModDepGraphNode tmp41 = {};
+        ModDepGraphNode tmp41 = {0};
         bool tmp42 = map_get(node_names, name, &tmp41);
         _PUSH(&resolved->nodes, (tmp41), tmp40, ModDepGraphNode);
       };
@@ -6358,8 +6385,8 @@ ModDepGraph *ModDepGraph_resolve(ModDepGraph *graph) {
   return resolved;
 }
 array_string ModDepGraph_imports(ModDepGraph *graph) {
-  array_string mods =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string mods = new_array_from_c_array(0, 0, sizeof(string),
+                                             (string[]){EMPTY_STRUCT_INIT});
   array_ModDepGraphNode tmp48 = graph->nodes;
   ;
   for (int tmp49 = 0; tmp49 < tmp48.len; tmp49++) {
@@ -6858,8 +6885,8 @@ void Parser_struct_decl(Parser *p) {
   Parser_check(p, main__Token_lcbr);
   bool is_pub = 0;
   bool is_mut = 0;
-  array_string names =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string names = new_array_from_c_array(0, 0, sizeof(string),
+                                              (string[]){EMPTY_STRUCT_INIT});
   bool did_gen_something = 0;
   while (p->tok != main__Token_rcbr) {
     if (p->tok == main__Token_key_pub) {
@@ -6954,8 +6981,8 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
   };
   Parser_check(p, main__Token_lcbr);
   int val = 0;
-  array_string fields =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string fields = new_array_from_c_array(0, 0, sizeof(string),
+                                               (string[]){EMPTY_STRUCT_INIT});
   while (p->tok == main__Token_name) {
     string field = Parser_check_name(p);
     _PUSH(&fields, (field), tmp63, string);
@@ -7062,8 +7089,10 @@ void Parser_error(Parser *p, string s) {
     println(tos2("=========================\n"));
   };
   Scanner_error(&/* ? */ *p->scanner,
-                string_replace(string_replace(s, tos2("array_"), tos2("[]")),
-                               tos2("__"), tos2(".")));
+                string_replace(string_replace(string_replace(s, tos2("array_"),
+                                                             tos2("[]")),
+                                              tos2("__"), tos2(".")),
+                               tos2("Option_"), tos2("?")));
 }
 bool Parser_first_run(Parser *p) { return p->run == main__Pass_decl; }
 string Parser_get_type(Parser *p) {
@@ -8449,8 +8478,8 @@ string Parser_assoc(Parser *p) {
   Var var = Fn_find_var(&/* ? */ *p->cur_fn, name);
   Parser_check(p, main__Token_pipe);
   Parser_gen(p, _STR("(%.*s){", var.typ.len, var.typ.str));
-  array_string fields =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string fields = new_array_from_c_array(0, 0, sizeof(string),
+                                               (string[]){EMPTY_STRUCT_INIT});
   while (p->tok != main__Token_rcbr) {
     string field = Parser_check_name(p);
     _PUSH(&fields, (field), tmp223, string);
@@ -8806,8 +8835,8 @@ string Parser_struct_init(Parser *p, bool is_c_struct_init) {
     Parser_gen(p, _STR("ALLOC_INIT(%.*s, {", no_star.len, no_star.str));
   };
   bool did_gen_something = 0;
-  array_string inited_fields =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  array_string inited_fields = new_array_from_c_array(
+      0, 0, sizeof(string), (string[]){EMPTY_STRUCT_INIT});
   Token peek = Parser_peek(p);
   if (peek == main__Token_colon || p->tok == main__Token_rcbr) {
     Type *t = Table_find_type(&/* ? */ *p->table, typ);
@@ -10562,7 +10591,7 @@ bool Table_known_type(Table *table, string typ) {
   return 0;
 }
 Fn Table_find_fn(Table *t, string name) {
-  Fn tmp15 = {};
+  Fn tmp15 = {0};
   bool tmp16 = map_get(t->fns, name, &tmp15);
   Fn f = tmp15;
   if (!isnil(f.name.str)) {
@@ -11459,7 +11488,8 @@ void init_consts() {
   os__ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
   os__DISABLE_NEWLINE_AUTO_RETURN = 0x0008;
   os__ENABLE_LVB_GRID_WORLDWIDE = 0x0010;
-  os__args = new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  os__args = new_array_from_c_array(0, 0, sizeof(string),
+                                    (string[]){EMPTY_STRUCT_INIT});
   os__PathSeparator = tos2("/");
   math__Log2E = 1.0 / math__Ln2;
   math__Log10E = 1.0 / math__Ln10;
