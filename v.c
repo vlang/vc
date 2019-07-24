@@ -7,6 +7,10 @@
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
+#include <direct.h> // _wgetcwd
+#include <fcntl.h>  // _O_U8TEXT
+#include <io.h>     // _waccess
+#include <shellapi.h>
 #include <windows.h>
 //#include <WinSock2.h>
 #ifdef _MSC_VER
@@ -598,6 +602,8 @@ string os__basedir(string path);
 string os__filename(string path);
 string os__get_line();
 string os__get_raw_line();
+array_string os__get_lines();
+string os__get_lines_joined();
 string os__user_os();
 string os__home_dir();
 void os__write_file(string path, string text);
@@ -613,6 +619,7 @@ int os__fork();
 int os__wait();
 int os__file_last_mod_unix(string path);
 void os__log(string s);
+void os__flush_stdout();
 void os__print_backtrace();
 string os__get_error_msg(int code);
 f64 math__abs(f64 a);
@@ -865,6 +872,7 @@ string Type_str(Type t);
 string Fn_str(Fn f);
 bool is_number_type(string typ);
 bool is_float_type(string typ);
+bool is_primitive_type(string typ);
 Table *new_table(bool obfuscate);
 string Table_var_cgen_name(Table *t, string name);
 void Table_register_package(Table *t, string pkg);
@@ -1828,6 +1836,9 @@ ustring string_ustring(string s) {
   return res;
 }
 ustring string_ustring_tmp(string s) {
+  if (g_ustring_runes.len == 0) {
+    g_ustring_runes = new_array(0, 128, sizeof(int));
+  };
   ustring res =
       (ustring){.s = s, .runes = new_array(0, 1, sizeof(int)), .len = 0};
   res.runes = g_ustring_runes;
@@ -2479,9 +2490,25 @@ void os__todo_remove() {}
 array_string os__init_os_args(int argc, byteptr *argv) {
   array_string args =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){});
-  for (int i = 0; i < argc; i++) {
-    _PUSH(&args, ((tos2(argv[/*ptr*/ i] /*rbyteptr 0*/))), tmp3, string);
+#ifdef _WIN32
+
+  voidptr *args_list = ((voidptr *)(0));
+  int args_count = 0;
+  args_list = CommandLineToArgvW(GetCommandLine(), &/*vvar*/ args_count);
+  for (int i = 0; i < args_count; i++) {
+    _PUSH(&args,
+          (string_from_wide(((u16 *)(args_list[/*ptr*/ i] /*rvoidptr 1*/)))),
+          tmp5, string);
   };
+  LocalFree(args_list);
+  ;
+#else
+
+  for (int i = 0; i < argc; i++) {
+    _PUSH(&args, ((tos2(argv[/*ptr*/ i] /*rbyteptr 0*/))), tmp7, string);
+  };
+#endif
+  ;
   return args;
 }
 array_string os__parse_windows_cmd_line(byte *cmd) {
@@ -2513,8 +2540,8 @@ Option_string os__read_file(string path) {
   fread(str, fsize, 1, fp);
   fclose(fp);
   str[/*ptr*/ fsize] /*rbyte 1*/ = 0;
-  string tmp10 = (string)((tos(str, fsize)));
-  return opt_ok(&tmp10, sizeof(string));
+  string tmp14 = (string)((tos(str, fsize)));
+  return opt_ok(&tmp14, sizeof(string));
 }
 int os__file_size(string path) {
   struct /*c struct init*/
@@ -2572,7 +2599,7 @@ array_string os__read_lines(string path) {
     };
 #endif
     ;
-    _PUSH(&res, (tos_clone(buf)), tmp18, string);
+    _PUSH(&res, (tos_clone(buf)), tmp22, string);
   };
   fclose(fp);
   return res;
@@ -2581,11 +2608,11 @@ array_ustring os__read_ulines(string path) {
   array_string lines = os__read_lines(path);
   array_ustring ulines =
       new_array_from_c_array(0, 0, sizeof(ustring), (ustring[]){});
-  array_string tmp21 = lines;
+  array_string tmp25 = lines;
   ;
-  for (int tmp22 = 0; tmp22 < tmp21.len; tmp22++) {
-    string myline = ((string *)tmp21.data)[tmp22];
-    _PUSH(&ulines, (string_ustring(myline)), tmp23, ustring);
+  for (int tmp26 = 0; tmp26 < tmp25.len; tmp26++) {
+    string myline = ((string *)tmp25.data)[tmp26];
+    _PUSH(&ulines, (string_ustring(myline)), tmp27, ustring);
   };
   return ulines;
 }
@@ -2606,8 +2633,8 @@ Option_os__File os__open(string path) {
   if (isnil(file.cfile)) {
     return v_error(_STR("failed to open file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp28 = (os__File)(file);
-  return opt_ok(&tmp28, sizeof(os__File));
+  os__File tmp32 = (os__File)(file);
+  return opt_ok(&tmp32, sizeof(os__File));
 }
 Option_os__File os__create(string path) {
   os__File file = (os__File){.cfile = 0};
@@ -2626,8 +2653,8 @@ Option_os__File os__create(string path) {
   if (isnil(file.cfile)) {
     return v_error(_STR("failed to create file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp33 = (os__File)(file);
-  return opt_ok(&tmp33, sizeof(os__File));
+  os__File tmp37 = (os__File)(file);
+  return opt_ok(&tmp37, sizeof(os__File));
 }
 Option_os__File os__open_append(string path) {
   os__File file = (os__File){.cfile = 0};
@@ -2647,8 +2674,8 @@ Option_os__File os__open_append(string path) {
     return v_error(
         _STR("failed to create(append) file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp38 = (os__File)(file);
-  return opt_ok(&tmp38, sizeof(os__File));
+  os__File tmp42 = (os__File)(file);
+  return opt_ok(&tmp42, sizeof(os__File));
 }
 void os__File_write(os__File f, string s) {
   string ss = string_clone(s);
@@ -2881,7 +2908,7 @@ string os__get_raw_line() {
 #ifdef _WIN32
 
   int max = 512;
-  u16 *buf = ((u16 *)(v_malloc(max)));
+  u16 *buf = ((u16 *)(v_malloc(max * 2)));
   void *h_input = GetStdHandle(os__STD_INPUT_HANDLE);
   if (h_input == os__INVALID_HANDLE_VALUE) {
     v_panic(tos2("get_raw_line() error getting input handle."));
@@ -2904,6 +2931,33 @@ string os__get_raw_line() {
   return (tos(buf, nr_chars));
 #endif
   ;
+}
+array_string os__get_lines() {
+  string line = tos2("");
+  array_string inputstr =
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){});
+  while (1) {
+    line = os__get_line();
+    if ((line.len <= 0)) {
+      break;
+    };
+    line = string_trim_space(line);
+    _PUSH(&inputstr, (line), tmp74, string);
+  };
+  return inputstr;
+}
+string os__get_lines_joined() {
+  string line = tos2("");
+  string inputstr = tos2("");
+  while (1) {
+    line = os__get_line();
+    if ((line.len <= 0)) {
+      break;
+    };
+    line = string_trim_space(line);
+    inputstr = string_add(inputstr, line);
+  };
+  return inputstr;
 }
 string os__user_os() {
 #ifdef __linux__
@@ -2941,6 +2995,11 @@ string os__user_os() {
   return tos2("dragonfly");
 #endif
   ;
+#ifdef _MSC_VER
+
+  return tos2("windows");
+#endif
+  ;
   return tos2("unknown");
 }
 string os__home_dir() {
@@ -2962,12 +3021,12 @@ string os__home_dir() {
   return home;
 }
 void os__write_file(string path, string text) {
-  Option_os__File tmp70 = os__create(path);
-  if (!tmp70.ok) {
-    string err = tmp70.error;
+  Option_os__File tmp79 = os__create(path);
+  if (!tmp79.ok) {
+    string err = tmp79.error;
     return;
   }
-  os__File f = *(os__File *)tmp70.data;
+  os__File f = *(os__File *)tmp79.data;
   ;
   os__File_write(f, text);
   os__File_close(f);
@@ -3009,8 +3068,9 @@ string os__executable() {
   ;
 #ifdef _WIN32
 
-  u16 *result = ((u16 *)(v_malloc(512)));
-  int len = ((int)(GetModuleFileName(0, result, os__MAX_PATH)));
+  int max = 512;
+  u16 *result = ((u16 *)(v_malloc(max * 2)));
+  int len = ((int)(GetModuleFileName(0, result, max)));
   return string_from_wide2(result, len);
 #endif
   ;
@@ -3095,7 +3155,7 @@ string os__getwd() {
 #ifdef _WIN32
 
   int max = 512;
-  u16 *buf = ((u16 *)(v_malloc(max)));
+  u16 *buf = ((u16 *)(v_malloc(max * 2)));
   if (_wgetcwd(buf, max) == 0) {
     return tos2("");
   };
@@ -3135,12 +3195,12 @@ array_string os__ls(string path) {
   string first_filename = string_from_wide(((u16 *)(find_file_data.cFileName)));
   if (string_ne(first_filename, tos2(".")) &&
       string_ne(first_filename, tos2(".."))) {
-    _PUSH(&dir_files, (first_filename), tmp98, string);
+    _PUSH(&dir_files, (first_filename), tmp108, string);
   };
   while (FindNextFile(h_find_files, &/*vvar*/ find_file_data)) {
     string filename = string_from_wide(((u16 *)(find_file_data.cFileName)));
     if (string_ne(filename, tos2(".")) && string_ne(filename, tos2(".."))) {
-      _PUSH(&dir_files, (string_clone(filename)), tmp100, string);
+      _PUSH(&dir_files, (string_clone(filename)), tmp110, string);
     };
   };
   FindClose(h_find_files);
@@ -3166,7 +3226,7 @@ array_string os__ls(string path) {
     string name = tos_clone(ent->d_name);
     if (string_ne(name, tos2(".")) && string_ne(name, tos2("..")) &&
         string_ne(name, tos2(""))) {
-      _PUSH(&res, (name), tmp105, string);
+      _PUSH(&res, (name), tmp115, string);
     };
   };
   closedir(dir);
@@ -3199,6 +3259,7 @@ int os__file_last_mod_unix(string path) {
   return attr.st_mtime;
 }
 void os__log(string s) {}
+void os__flush_stdout() { fflush(stdout); }
 void os__print_backtrace() {}
 string os__get_error_msg(int code) {
   void *_ptr_text = strerror(code);
@@ -4390,8 +4451,8 @@ void Parser_async_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
     };
     did_gen_something = 1;
   };
-  if (p->os == main__OS_msvc && !did_gen_something) {
-    arg_struct = string_add(arg_struct, tos2("void *____dummy_variable;"));
+  if (!did_gen_something) {
+    arg_struct = string_add(arg_struct, tos2("EMPTY_STRUCT_DECLARATION"));
   };
   arg_struct = string_add(
       arg_struct, _STR("} %.*s ;", arg_struct_name.len, arg_struct_name.str));
@@ -4543,20 +4604,26 @@ void Parser_fn_args(Parser *p, Fn *f) {
     if (is_mut) {
       Parser_next(p);
     };
-    string typ2 = Parser_get_type(p);
+    string typ = Parser_get_type(p);
+    if (is_mut && is_primitive_type(typ)) {
+      Parser_error(p, string_add(tos2("mutable arguments are only allowed for "
+                                      "arrays, maps, and structs."),
+                                 tos2("\nreturn values instead: `foo(n mut "
+                                      "int)` => `foo(n int) int`")));
+    };
     array_string tmp80 = names;
     ;
     for (int tmp81 = 0; tmp81 < tmp80.len; tmp81++) {
       string name = ((string *)tmp80.data)[tmp81];
       if (!Parser_first_run(&/* ? */ *p) &&
-          !Table_known_type(&/* ? */ *p->table, typ2)) {
-        Parser_error(p, _STR("fn_args: unknown type %.*s", typ2.len, typ2.str));
+          !Table_known_type(&/* ? */ *p->table, typ)) {
+        Parser_error(p, _STR("fn_args: unknown type %.*s", typ.len, typ.str));
       };
       if (is_mut) {
-        typ2 = string_add(typ2, tos2("*"));
+        typ = string_add(typ, tos2("*"));
       };
       Var v = (Var){.name = name,
-                    .typ = typ2,
+                    .typ = typ,
                     .is_arg = 1,
                     .is_mut = is_mut,
                     .ptr = is_mut,
@@ -5092,12 +5159,19 @@ void V_compile(V *v) {
           "   \n#include <stdio.h>  // TODO remove all these includes, define "
           "all function signatures and types manually \n#include "
           "<stdlib.h>\n#include <signal.h>\n#include <stdarg.h> // for va_list "
-          "\n#include <inttypes.h>  // int64_t etc \n\n\n#ifdef "
+          "\n#include <inttypes.h>  // int64_t etc \n\n#define "
+          "STRUCT_DEFAULT_VALUE {}\n#define EMPTY_STRUCT_DECLARATION\n#define "
+          "EMPTY_STRUCT_INIT\n#define OPTION_CAST(x) (x)\n\n#ifdef "
           "_WIN32\n#define WIN32_LEAN_AND_MEAN\n#include <windows.h>\n#include "
-          "<io.h> // _waccess\n#include <fcntl.h> // _O_U8TEXT\n#include "
-          "<direct.h> // _wgetcwd\n//#include <WinSock2.h>\n#ifdef "
-          "_MSC_VER\n// On MSVC these are the same (as long as /volatile:ms is "
-          "passed)\n#define _Atomic volatile\n#endif\n\nvoid "
+          "<shellapi.h>\n#include <io.h> // _waccess\n#include <fcntl.h> // "
+          "_O_U8TEXT\n#include <direct.h> // _wgetcwd\n//#include "
+          "<WinSock2.h>\n#ifdef _MSC_VER\n// On MSVC these are the same (as "
+          "long as /volatile:ms is passed)\n#define _Atomic volatile\n\n// "
+          "MSVC can\'t parse some things properly\n#undef "
+          "STRUCT_DEFAULT_VALUE\n#define STRUCT_DEFAULT_VALUE {0}\n#undef "
+          "EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_DECLARATION void "
+          "*____dummy_variable;\n#undef EMPTY_STRUCT_INIT\n#define "
+          "EMPTY_STRUCT_INIT 0\n#define OPTION_CAST(x)\n#endif\n\nvoid "
           "pthread_mutex_lock(HANDLE *m) {\n	WaitForSingleObject(*m, "
           "INFINITE);\n}\n\nvoid pthread_mutex_unlock(HANDLE *m) {\n	"
           "ReleaseMutex(*m);\n}\n#else\n#include <pthread.h> \n#endif "
@@ -6856,8 +6930,8 @@ void Parser_struct_decl(Parser *p) {
   };
   Parser_check(p, main__Token_rcbr);
   if (!is_c) {
-    if (p->os == main__OS_msvc && !did_gen_something) {
-      Parser_gen_type(p, tos2("void *____dummy_variable; };"));
+    if (!did_gen_something) {
+      Parser_gen_type(p, tos2("EMPTY_STRUCT_DECLARATION };"));
       Parser_fgenln(p, tos2(""));
     } else {
       Parser_gen_type(p, tos2("}; "));
@@ -6913,10 +6987,6 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
   Parser_fgenln(p, tos2("\n"));
 }
 string Parser_check_name(Parser *p) {
-  if (p->tok == main__Token_key_type) {
-    Parser_check(p, main__Token_key_type);
-    return tos2("type");
-  };
   string name = p->lit;
   Parser_check(p, main__Token_name);
   return name;
@@ -7827,9 +7897,6 @@ bool Parser_fileis(Parser *p, string s) {
 string Parser_dot(Parser *p, string str_typ, int method_ph) {
   Parser_check(p, main__Token_dot);
   string field_name = p->lit;
-  if (p->tok == main__Token_key_type) {
-    field_name = tos2("type");
-  };
   Parser_fgen(p, field_name);
   Parser_log(&/* ? */ *p, _STR("dot() field_name=%.*s typ=%.*s", field_name.len,
                                field_name.str, str_typ.len, str_typ.str));
@@ -8044,7 +8111,7 @@ string Parser_index_expr(Parser *p, string typ, int fn_ph) {
     if (is_map) {
       Parser_gen(p, _STR("%.*s", tmp.len, tmp.str));
       string def = type_default(typ);
-      if (p->os == main__OS_msvc && string_eq(def, tos2("{}"))) {
+      if (string_eq(def, tos2("STRUCT_DEFAULT_VALUE"))) {
         def = tos2("{0}");
       };
       CGen_insert_before(
@@ -8056,8 +8123,13 @@ string Parser_index_expr(Parser *p, string typ, int fn_ph) {
       if (p->pref->translated && !p->builtin_pkg) {
         Parser_gen(p, _STR("%.*s ]", index_expr.len, index_expr.str));
       } else {
-        Parser_gen(p, _STR("( *(%.*s*) array__get(%.*s) )", typ.len, typ.str,
-                           index_expr.len, index_expr.str));
+        if (is_ptr) {
+          Parser_gen(p, _STR("( *(%.*s*) array__get(* %.*s) )", typ.len,
+                             typ.str, index_expr.len, index_expr.str));
+        } else {
+          Parser_gen(p, _STR("( *(%.*s*) array__get(%.*s) )", typ.len, typ.str,
+                             index_expr.len, index_expr.str));
+        };
       };
     } else if (is_str && !p->builtin_pkg) {
       Parser_gen(p, _STR("string_at(%.*s)", index_expr.len, index_expr.str));
@@ -8158,7 +8230,7 @@ string Parser_expression(Parser *p) {
       CGen_set_placeholder(p->cgen, ph, tos2("string_add("));
       Parser_gen(p, tos2(","));
     } else if (is_num) {
-      if (p->os == main__OS_msvc && string_eq(typ, tos2("void*"))) {
+      if (string_eq(typ, tos2("void*"))) {
         CGen_set_placeholder(p->cgen, ph, tos2("(byte*)"));
       };
       Parser_gen(p, Token_str(tok_op));
@@ -8199,13 +8271,7 @@ string Parser_expression(Parser *p) {
 }
 string Parser_term(Parser *p) {
   int line_nr = p->scanner->line_nr;
-  if (Parser_fileis(&/* ? */ *p, tos2("fn_test"))) {
-    printf("\nterm() %d\n", line_nr);
-  };
   string typ = Parser_unary(p);
-  if (Parser_fileis(&/* ? */ *p, tos2("fn_test"))) {
-    printf("2: %d\n", line_nr);
-  };
   if (p->tok == main__Token_mul && line_nr != p->scanner->line_nr) {
     return typ;
   };
@@ -8602,11 +8668,7 @@ string Parser_array_init(Parser *p) {
           string name = Parser_check_name(p);
           if (Table_known_type(&/* ? */ *p->table, name)) {
             CGen_resetln(p->cgen, tos2(""));
-            if (p->os == main__OS_msvc) {
-              Parser_gen(p, tos2("{0}"));
-            } else {
-              Parser_gen(p, tos2("{}"));
-            };
+            Parser_gen(p, tos2("STRUCT_DEFAULT_VALUE"));
             return _STR("[%.*s]%.*s", lit.len, lit.str, name.len, name.str);
           } else {
             Parser_error(p, _STR("bad type `%.*s`", name.len, name.str));
@@ -8675,11 +8737,12 @@ string Parser_array_init(Parser *p) {
   };
   Parser_gen(p, tos2(" })"));
   if (!Parser_first_run(&/* ? */ *p)) {
-    if (p->os == main__OS_msvc && i == 0) {
-      CGen_set_placeholder(p->cgen, new_arr_ph,
-                           _STR("%.*s(%d, %d, sizeof(%.*s), (%.*s[]) {0 ",
-                                new_arr.len, new_arr.str, i, i, typ.len,
-                                typ.str, typ.len, typ.str));
+    if (i == 0) {
+      CGen_set_placeholder(
+          p->cgen, new_arr_ph,
+          _STR("%.*s(%d, %d, sizeof(%.*s), (%.*s[]) {EMPTY_STRUCT_INIT ",
+               new_arr.len, new_arr.str, i, i, typ.len, typ.str, typ.len,
+               typ.str));
     } else {
       CGen_set_placeholder(p->cgen, new_arr_ph,
                            _STR("%.*s(%d, %d, sizeof(%.*s), (%.*s[]) { ",
@@ -8786,7 +8849,8 @@ string Parser_struct_init(Parser *p, bool is_c_struct_init) {
                              typ.len, typ.str, field.name.len, field.name.str));
       };
       string def_val = type_default(field_typ);
-      if (string_ne(def_val, tos2("")) && string_ne(def_val, tos2("{}"))) {
+      if (string_ne(def_val, tos2("")) &&
+          string_ne(def_val, tos2("STRUCT_DEFAULT_VALUE"))) {
         Parser_gen(p, _STR(".%.*s = %.*s", field.name.len, field.name.str,
                            def_val.len, def_val.str));
         if (i != t->fields.len - 1) {
@@ -8831,8 +8895,8 @@ string Parser_struct_init(Parser *p, bool is_c_struct_init) {
     };
     did_gen_something = 1;
   };
-  if (p->os == main__OS_msvc && !did_gen_something) {
-    Parser_gen(p, tos2("0"));
+  if (!did_gen_something) {
+    Parser_gen(p, tos2("EMPTY_STRUCT_INIT"));
   };
   Parser_gen(p, tos2("}"));
   if (ptr) {
@@ -9236,7 +9300,7 @@ void Parser_for_st(Parser *p) {
       Parser_genln(p, _STR("  string %.*s = ((string*)keys_%.*s .data)[l];",
                            i.len, i.str, tmp.len, tmp.str));
       string def = type_default(typ);
-      if (string_eq(def, tos2("{}"))) {
+      if (string_eq(def, tos2("STRUCT_DEFAULT_VALUE"))) {
         def = tos2("{0}");
       };
       Parser_genln(p, _STR("%.*s %.*s = %.*s; map_get(%.*s, %.*s, & %.*s);",
@@ -9428,19 +9492,14 @@ void Parser_return_st(Parser *p) {
           string_starts_with(p->cur_fn->typ, tos2("Option_"))) {
         string tmp = Parser_get_tmp(p);
         string ret = string_right(p->cgen->cur_line, ph);
-        if (p->os != main__OS_msvc) {
-          p->cgen->cur_line = _STR(
-              "%.*s %.*s = (%.*s)(%.*s);", expr_type.len, expr_type.str,
-              tmp.len, tmp.str, expr_type.len, expr_type.str, ret.len, ret.str);
-          CGen_resetln(p->cgen,
-                       _STR("%.*s %.*s = (%.*s)(%.*s);", expr_type.len,
-                            expr_type.str, tmp.len, tmp.str, expr_type.len,
-                            expr_type.str, ret.len, ret.str));
-        } else {
-          CGen_resetln(p->cgen,
-                       _STR("%.*s %.*s = (%.*s);", expr_type.len, expr_type.str,
-                            tmp.len, tmp.str, ret.len, ret.str));
-        };
+        p->cgen->cur_line =
+            _STR("%.*s %.*s = OPTION_CAST(%.*s)(%.*s);", expr_type.len,
+                 expr_type.str, tmp.len, tmp.str, expr_type.len, expr_type.str,
+                 ret.len, ret.str);
+        CGen_resetln(p->cgen,
+                     _STR("%.*s %.*s = OPTION_CAST(%.*s)(%.*s);", expr_type.len,
+                          expr_type.str, tmp.len, tmp.str, expr_type.len,
+                          expr_type.str, ret.len, ret.str));
         Parser_gen(p, _STR("return opt_ok(&%.*s, sizeof(%.*s))", tmp.len,
                            tmp.str, expr_type.len, expr_type.str));
       } else {
@@ -10382,6 +10441,9 @@ bool is_number_type(string typ) {
 bool is_float_type(string typ) {
   return array_string_contains(main__FLOAT_TYPES, typ);
 }
+bool is_primitive_type(string typ) {
+  return is_number_type(typ) || string_eq(typ, tos2("string"));
+}
 Table *new_table(bool obfuscate) {
   Table *t = ALLOC_INIT(Table, {
                                    .obf_ids = new_map(1, sizeof(int)),
@@ -10869,7 +10931,7 @@ string type_default(string typ) {
     return tos2("0");
   };
   if (string_contains(typ, tos2("__"))) {
-    return tos2("{}");
+    return tos2("STRUCT_DEFAULT_VALUE");
   };
   if (string_eq(typ, tos2("bool"))) { /* case */
 
@@ -10923,7 +10985,7 @@ string type_default(string typ) {
 
     return tos2("0");
   };
-  return tos2("{}");
+  return tos2("STRUCT_DEFAULT_VALUE");
 }
 bool Table_is_interface(Table *t, string name) {
   array_Type tmp53 = t->types;
