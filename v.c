@@ -13,11 +13,11 @@
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <shellapi.h>
 #include <direct.h> // _wgetcwd
 #include <fcntl.h>  // _O_U8TEXT
 #include <io.h>     // _waccess
+#include <shellapi.h>
+#include <windows.h>
 //#include <WinSock2.h>
 #ifdef _MSC_VER
 // On MSVC these are the same (as long as /volatile:ms is passed)
@@ -31,6 +31,7 @@
 #define EMPTY_STRUCT_DECLARATION void *____dummy_variable;
 #undef EMPTY_STRUCT_INIT
 #define EMPTY_STRUCT_INIT 0
+#undef OPTION_CAST
 #define OPTION_CAST(x)
 #endif
 
@@ -2330,7 +2331,7 @@ bool byte_is_letter(byte c) {
 
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
-void v_string_free(string s) { free(s.str); }
+void v_string_free(string s) { v_free(s.str); }
 string string_all_before(string s, string dot) {
 
   int pos = string_index(s, dot);
@@ -7193,52 +7194,52 @@ void V_compile(V *v) {
 
   CGen_genln(
       cgen,
-      tos2(
-          "   \n#include <stdio.h>  // TODO remove all these includes, define "
-          "all function signatures and types manually \n#include "
-          "<stdlib.h>\n#include <signal.h>\n#include <stdarg.h> // for va_list "
-          "\n#include <inttypes.h>  // int64_t etc \n\n#define "
-          "STRUCT_DEFAULT_VALUE {}\n#define EMPTY_STRUCT_DECLARATION\n#define "
-          "EMPTY_STRUCT_INIT\n#define OPTION_CAST(x) (x)\n\n#ifdef "
-          "_WIN32\n#define WIN32_LEAN_AND_MEAN\n#include <windows.h>\n#include "
-          "<shellapi.h>\n#include <io.h> // _waccess\n#include <fcntl.h> // "
-          "_O_U8TEXT\n#include <direct.h> // _wgetcwd\n//#include "
-          "<WinSock2.h>\n#ifdef _MSC_VER\n// On MSVC these are the same (as "
-          "long as /volatile:ms is passed)\n#define _Atomic volatile\n\n// "
-          "MSVC can\'t parse some things properly\n#undef "
-          "STRUCT_DEFAULT_VALUE\n#define STRUCT_DEFAULT_VALUE {0}\n#undef "
-          "EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_DECLARATION void "
-          "*____dummy_variable;\n#undef EMPTY_STRUCT_INIT\n#define "
-          "EMPTY_STRUCT_INIT 0\n#define OPTION_CAST(x)\n#endif\n\nvoid "
-          "pthread_mutex_lock(HANDLE *m) {\n	WaitForSingleObject(*m, "
-          "INFINITE);\n}\n\nvoid pthread_mutex_unlock(HANDLE *m) {\n	"
-          "ReleaseMutex(*m);\n}\n#else\n#include <pthread.h> \n#endif "
-          "\n\n//================================== TYPEDEFS "
-          "================================*/ \n\ntypedef unsigned char "
-          "byte;\ntypedef unsigned int uint;\ntypedef int64_t i64;\ntypedef "
-          "int32_t i32;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef "
-          "uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint16_t "
-          "u16;\ntypedef uint8_t u8;\ntypedef uint32_t rune;\ntypedef float "
-          "f32;\ntypedef double f64; \ntypedef unsigned char* "
-          "byteptr;\ntypedef int* intptr;\ntypedef void* voidptr;\ntypedef "
-          "struct array array;\ntypedef struct map map;\ntypedef array "
-          "array_string; \ntypedef array array_int; \ntypedef array "
-          "array_byte; \ntypedef array array_uint; \ntypedef array "
-          "array_float; \ntypedef array array_f32; \ntypedef array array_f64; "
-          "\ntypedef map map_int; \ntypedef map map_string; \n#ifndef "
-          "bool\n	typedef int bool;\n	#define true 1\n	"
-          "#define false 0\n#endif\n\n//============================== HELPER "
-          "C MACROS =============================*/ \n\n#define _PUSH(arr, "
-          "val, tmp, tmp_typ) {tmp_typ tmp = (val); array__push(arr, "
-          "&tmp);}\n#define _PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = "
-          "(val); array__push_many(arr, tmp.data, tmp.len);}\n#define _IN(typ, "
-          "val, arr) array_##typ##_contains(arr, val) \n#define _IN_MAP(val, "
-          "m) map__exists(m, val) \n#define ALLOC_INIT(type, ...) (type "
-          "*)memdup((type[]){ __VA_ARGS__ }, sizeof(type)) "
-          "\n\n//================================== GLOBALS "
-          "=================================*/   \n//int V_ZERO = 0; \nbyteptr "
-          "g_str_buf; \nint load_so(byteptr);\nvoid reload_so();\nvoid "
-          "init_consts();"));
+      tos2("   \n#include <stdio.h>  // TODO remove all these includes, define "
+           "all function signatures and types manually \n#include "
+           "<stdlib.h>\n#include <signal.h>\n#include <stdarg.h> // for "
+           "va_list \n#include <inttypes.h>  // int64_t etc \n\n#define "
+           "STRUCT_DEFAULT_VALUE {}\n#define EMPTY_STRUCT_DECLARATION\n#define "
+           "EMPTY_STRUCT_INIT\n#define OPTION_CAST(x) (x)\n\n#ifdef "
+           "_WIN32\n#define WIN32_LEAN_AND_MEAN\n#include "
+           "<windows.h>\n#include <shellapi.h>\n#include <io.h> // "
+           "_waccess\n#include <fcntl.h> // _O_U8TEXT\n#include <direct.h> // "
+           "_wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n// On MSVC "
+           "these are the same (as long as /volatile:ms is passed)\n#define "
+           "_Atomic volatile\n\n// MSVC can\'t parse some things "
+           "properly\n#undef STRUCT_DEFAULT_VALUE\n#define "
+           "STRUCT_DEFAULT_VALUE {0}\n#undef EMPTY_STRUCT_DECLARATION\n#define "
+           "EMPTY_STRUCT_DECLARATION void *____dummy_variable;\n#undef "
+           "EMPTY_STRUCT_INIT\n#define EMPTY_STRUCT_INIT 0\n#undef "
+           "OPTION_CAST\n#define OPTION_CAST(x)\n#endif\n\nvoid "
+           "pthread_mutex_lock(HANDLE *m) {\n	WaitForSingleObject(*m, "
+           "INFINITE);\n}\n\nvoid pthread_mutex_unlock(HANDLE *m) {\n	"
+           "ReleaseMutex(*m);\n}\n#else\n#include <pthread.h> \n#endif "
+           "\n\n//================================== TYPEDEFS "
+           "================================*/ \n\ntypedef unsigned char "
+           "byte;\ntypedef unsigned int uint;\ntypedef int64_t i64;\ntypedef "
+           "int32_t i32;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef "
+           "uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint16_t "
+           "u16;\ntypedef uint8_t u8;\ntypedef uint32_t rune;\ntypedef float "
+           "f32;\ntypedef double f64; \ntypedef unsigned char* "
+           "byteptr;\ntypedef int* intptr;\ntypedef void* voidptr;\ntypedef "
+           "struct array array;\ntypedef struct map map;\ntypedef array "
+           "array_string; \ntypedef array array_int; \ntypedef array "
+           "array_byte; \ntypedef array array_uint; \ntypedef array "
+           "array_float; \ntypedef array array_f32; \ntypedef array array_f64; "
+           "\ntypedef map map_int; \ntypedef map map_string; \n#ifndef "
+           "bool\n	typedef int bool;\n	#define true 1\n	"
+           "#define false 0\n#endif\n\n//============================== HELPER "
+           "C MACROS =============================*/ \n\n#define _PUSH(arr, "
+           "val, tmp, tmp_typ) {tmp_typ tmp = (val); array__push(arr, "
+           "&tmp);}\n#define _PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = "
+           "(val); array__push_many(arr, tmp.data, tmp.len);}\n#define "
+           "_IN(typ, val, arr) array_##typ##_contains(arr, val) \n#define "
+           "_IN_MAP(val, m) map__exists(m, val) \n#define ALLOC_INIT(type, "
+           "...) (type *)memdup((type[]){ __VA_ARGS__ }, sizeof(type)) "
+           "\n\n//================================== GLOBALS "
+           "=================================*/   \n//int V_ZERO = 0; "
+           "\nbyteptr g_str_buf; \nint load_so(byteptr);\nvoid "
+           "reload_so();\nvoid init_consts();"));
 
   if (v->os != main__OS_windows && v->os != main__OS_msvc) {
 
@@ -10425,6 +10426,11 @@ void Parser_close_scope(Parser *p) {
         Parser_genln(p, _STR("v_array_free(%.*s); // close_scope free",
                              v.name.len, v.name.str));
 
+      } else if (string_eq(v.typ, tos2("string"))) {
+
+        Parser_genln(p, _STR("v_string_free(%.*s); // close_scope free",
+                             v.name.len, v.name.str));
+
       } else {
 
         Parser_genln(
@@ -12442,6 +12448,8 @@ void Parser_string_expr(Parser *p) {
 
     return;
   };
+
+  p->is_alloc = 1;
 
   string args = tos2("\"");
 
@@ -14920,6 +14928,17 @@ ScanRes Scanner_scan(Scanner *s) {
     };
 
     s->line_nr++;
+
+    if (nextc == '!') {
+
+      s->line_comment =
+          string_trim_space(string_substr(s->text, start + 1, s->pos));
+
+      Scanner_fgenln(s, _STR("// shebang line \"%.*s\"", s->line_comment.len,
+                             s->line_comment.str));
+
+      return Scanner_scan(s);
+    };
 
     string hash = string_substr(s->text, start, s->pos);
 
