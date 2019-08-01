@@ -14,11 +14,11 @@
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <shellapi.h>
 #include <direct.h> // _wgetcwd
 #include <fcntl.h>  // _O_U8TEXT
 #include <io.h>     // _waccess
-#include <shellapi.h>
-#include <windows.h>
 //#include <WinSock2.h>
 #ifdef _MSC_VER
 // On MSVC these are the same (as long as /volatile:ms is passed)
