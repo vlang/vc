@@ -4781,7 +4781,7 @@ void os__todo_remove() {}
 /* returns 0 */ void os__log(string s) {}
 /* returns 0 */ void os__flush_stdout() { fflush(stdout); }
 /* returns 0 */ void os__print_backtrace() {}
-/* returns 0 */ /* returns 0 */ string os__get_error_msg(int code) {
+/* returns 0 */ string os__get_error_msg(int code) {
 
   void *_ptr_text = strerror(code);
 
@@ -10205,17 +10205,20 @@ void os__todo_remove() {}
 }
 /* returns 0 */ void test_v() {
 
+  string vexe = (*(string *)array__get(os__args, 0));
+
   array_string test_files =
       os__walk_ext(tos2((byte *)"."), tos2((byte *)"_test.v"));
 
-  array_string tmp196 = test_files;
+  array_string tmp199 = test_files;
   ;
-  for (int tmp197 = 0; tmp197 < tmp196.len; tmp197++) {
-    string file = ((string *)tmp196.data)[tmp197];
+  for (int tmp200 = 0; tmp200 < tmp199.len; tmp200++) {
+    string file = ((string *)tmp199.data)[tmp200];
 
     v_print(string_add(file, tos2((byte *)" ")));
 
-    if (os__system(_STR("v %.*s", file.len, file.str)) != 0) {
+    if (os__system(_STR("%.*s %.*s", vexe.len, vexe.str, file.len, file.str)) !=
+        0) {
 
       println(tos2((byte *)"failed"));
 
@@ -10232,14 +10235,15 @@ void os__todo_remove() {}
   array_string examples =
       os__walk_ext(tos2((byte *)"examples"), tos2((byte *)".v"));
 
-  array_string tmp199 = examples;
+  array_string tmp202 = examples;
   ;
-  for (int tmp200 = 0; tmp200 < tmp199.len; tmp200++) {
-    string file = ((string *)tmp199.data)[tmp200];
+  for (int tmp203 = 0; tmp203 < tmp202.len; tmp203++) {
+    string file = ((string *)tmp202.data)[tmp203];
 
     v_print(string_add(file, tos2((byte *)" ")));
 
-    if (os__system(_STR("v %.*s", file.len, file.str)) != 0) {
+    if (os__system(_STR("%.*s %.*s", vexe.len, vexe.str, file.len, file.str)) !=
+        0) {
 
       println(tos2((byte *)"failed"));
 
@@ -19884,8 +19888,8 @@ void init_consts() {
   os__ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
   os__DISABLE_NEWLINE_AUTO_RETURN = 0x0008;
   os__ENABLE_LVB_GRID_WORLDWIDE = 0x0010;
-  os__args = new_array_from_c_array(0, 0, sizeof(string),
-                                    (string[]){EMPTY_STRUCT_INIT});
+  os__args = /* returns 0 */ new_array_from_c_array(
+      0, 0, sizeof(string), (string[]){EMPTY_STRUCT_INIT});
   os__PathSeparator = tos2((byte *)"/");
   math__Log2E = 1.0 / math__Ln2;
   math__Log10E = 1.0 / math__Ln10;
