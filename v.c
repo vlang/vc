@@ -135,9 +135,8 @@ typedef array array_ustring;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
-typedef Option Option_string;
-typedef struct os__filetime os__filetime;
-typedef struct os__win32finddata os__win32finddata;
+typedef struct os__Result os__Result;
+typedef Option Option_os__Result;
 typedef struct time__Time time__Time;
 typedef Option Option_int;
 typedef struct CGen CGen;
@@ -180,7 +179,7 @@ typedef Option Option_string;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
-typedef Option Option_string;
+typedef Option Option_os__Result;
 typedef Option Option_int;
 typedef int BuildMode;
 typedef int OS;
@@ -236,24 +235,9 @@ struct os__FileInfo {
   string name;
   int size;
 };
-struct os__filetime {
-  u32 dwLowDateTime;
-  u32 dwHighDateTime;
-};
-struct os__win32finddata {
-  u32 dwFileAttributes;
-  os__filetime ftCreationTime;
-  os__filetime ftLastAccessTime;
-  os__filetime ftLastWriteTime;
-  u32 nFileSizeHigh;
-  u32 nFileSizeLow;
-  u32 dwReserved0;
-  u32 dwReserved1;
-  u16 cFileName[260];
-  u16 cAlternateFileName[14];
-  u32 dwFileType;
-  u32 dwCreatorType;
-  u16 wFinderFlags;
+struct os__Result {
+  int exit_code;
+  string output;
 };
 struct time__Time {
   int year;
@@ -690,16 +674,14 @@ void os__File_write_bytes_at(os__File f, void *data, int size, int pos);
 void os__File_writeln(os__File f, string s);
 void os__File_flush(os__File f);
 void os__File_close(os__File f);
-int os__system(string cmd);
 FILE *os__popen(string path);
 int os__pclose(FILE *f);
-Option_string os__exec(string _cmd);
+Option_os__Result os__exec(string cmd);
+int os__system(string cmd);
 string os__getenv(string key);
 int os__setenv(string name, string value, bool overwrite);
 int os__unsetenv(string name);
 bool os__file_exists(string _path);
-bool os__dir_exists(string path);
-void os__mkdir(string path);
 void os__rm(string path);
 void os__rmdir(string path);
 void os__print_c_errno();
@@ -731,6 +713,8 @@ void os__flush_stdout();
 void os__print_backtrace();
 string os__get_error_msg(int code);
 array_string os__ls(string path);
+bool os__dir_exists(string path);
+void os__mkdir(string path);
 f64 math__abs(f64 a);
 f64 math__acos(f64 a);
 f64 math__asin(f64 a);
@@ -1056,6 +1040,20 @@ void Parser_fgenln(Parser *p, string s);
 Token Parser_peek(Parser *p);
 void Parser_fmt_inc(Parser *p);
 void Parser_fmt_dec(Parser *p);
+
+string array_int_str(array_int a) {
+  strings__Builder sb = strings__new_builder(a.len * 3);
+  strings__Builder_write(&sb, tos2("["));
+  for (int i = 0; i < a.len; i++) {
+    strings__Builder_write(&sb, int_str(((int *)a.data)[i]));
+
+    if (i < a.len - 1) {
+      strings__Builder_write(&sb, tos2(", "));
+    }
+  }
+  strings__Builder_write(&sb, tos2("]"));
+  return strings__Builder_str(sb);
+}
 array_int g_ustring_runes; // global
 i64 total_m = 0;           // global
 #define builtin__CP_UTF8 65001
@@ -2325,14 +2323,19 @@ new_array_from_c_array_no_alloc(int len, int cap, int elm_size, void *c_array) {
 }
 /* returns 0 */ string string_trim_right(string s, string cutset) {
 
-  int pos = string_last_index(s, cutset);
-
-  if (pos == -1) {
+  if (s.len == 0) {
 
     return s;
   };
 
-  return string_left(s, pos);
+  int pos = s.len - 1;
+
+  while (s.str[pos] /*rbyte 0*/ == cutset.str[0] /*rbyte 0*/) {
+
+    pos--;
+  };
+
+  return string_left(s, pos + 1);
 }
 /* returns 0 */ int compare_strings(string *a, string *b) {
 
@@ -2435,6 +2438,12 @@ new_array_from_c_array_no_alloc(int len, int cap, int elm_size, void *c_array) {
   return res;
 }
 /* returns 0 */ string ustring_substr(ustring u, int _start, int _end) {
+
+  printf("\nusring substr(%d, %d)\n", _start, _end);
+
+  println(u.s);
+
+  println(array_int_str(u.runes));
 
   int start = (*(int *)array__get(u.runes, _start));
 
@@ -3973,28 +3982,6 @@ void os__todo_remove() {}
 }
 /* returns 0 */ void os__File_flush(os__File f) { fflush(f.cfile); }
 /* returns 0 */ void os__File_close(os__File f) { fclose(f.cfile); }
-/* returns 0 */ int os__system(string cmd) {
-
-  int ret = ((int)(0));
-
-#ifdef _WIN32
-
-  ret = _wsystem(string_to_wide(cmd));
-
-  /* returns 0 */ #else
-
-      ret = system(cmd.str);
-
-#endif
-  /* returns 0 */;
-
-  if (ret == -1) {
-
-    os__print_c_errno();
-  };
-
-  return ret;
-}
 /* returns 0 */ FILE *os__popen(string path) {
 
 #ifdef _WIN32
@@ -4027,15 +4014,15 @@ void os__todo_remove() {}
 #endif
   /* returns 1 */;
 }
-/* returns 0 */ Option_string os__exec(string _cmd) {
+/* returns 0 */ Option_os__Result os__exec(string cmd) {
 
-  string cmd = _STR("%.*s 2>&1", _cmd.len, _cmd.str);
+  string pcmd = _STR("%.*s 2>&1", cmd.len, cmd.str);
 
-  FILE *f = os__popen(cmd);
+  FILE *f = os__popen(pcmd);
 
   if (isnil(f)) {
 
-    return v_error(_STR("popen %.*s failed", cmd.len, cmd.str));
+    return v_error(_STR("exec(\"%.*s\") failed", cmd.len, cmd.str));
   };
 
   byte buf[1000] = STRUCT_DEFAULT_VALUE;
@@ -4049,15 +4036,33 @@ void os__todo_remove() {}
 
   res = string_trim_space(res);
 
-  int status_code = os__pclose(f) / 256;
+  int exit_code = os__pclose(f) / 256;
 
-  if (status_code != 0) {
+  os__Result tmp52 = OPTION_CAST(os__Result)(
+      (os__Result){.output = res, .exit_code = exit_code});
+  return opt_ok(&tmp52, sizeof(os__Result));
+}
+/* returns 0 */ int os__system(string cmd) {
 
-    return v_error(res);
+  int ret = ((int)(0));
+
+#ifdef _WIN32
+
+  ret = _wsystem(string_to_wide(cmd));
+
+  /* returns 0 */ #else
+
+      ret = system(cmd.str);
+
+#endif
+  /* returns 0 */;
+
+  if (ret == -1) {
+
+    os__print_c_errno();
   };
 
-  string tmp53 = OPTION_CAST(string)(res);
-  return opt_ok(&tmp53, sizeof(string));
+  return ret;
 }
 /* returns 0 */ string os__getenv(string key) {
 
@@ -4136,62 +4141,6 @@ void os__todo_remove() {}
 #endif
   /* returns 1 */;
 }
-/* returns 0 */ bool os__dir_exists(string path) {
-
-#ifdef _WIN32
-
-  string _path = string_replace(path, tos2((byte *)"/"), tos2((byte *)"\\"));
-
-  int attr = ((int)(GetFileAttributes(string_to_wide(_path))));
-
-  if (attr == INVALID_FILE_ATTRIBUTES) {
-
-    return 0;
-  };
-
-  if ((attr & FILE_ATTRIBUTE_DIRECTORY) != 0) {
-
-    return 1;
-  };
-
-  return 0;
-
-  /* returns 0 */ #else
-
-      void *dir = opendir(path.str);
-
-  bool res = !isnil(dir);
-
-  if (res) {
-
-    closedir(dir);
-  };
-
-  return res;
-
-#endif
-  /* returns 1 */;
-}
-/* returns 0 */ void os__mkdir(string path) {
-
-#ifdef _WIN32
-
-  string _path = string_replace(path, tos2((byte *)"/"), tos2((byte *)"\\"));
-
-  if (string_last_index(_path, tos2((byte *)"\\")) != -1) {
-
-    os__mkdir(string_all_before_last(_path, tos2((byte *)"\\")));
-  };
-
-  CreateDirectory(string_to_wide(_path), 0);
-
-  /* returns 0 */ #else
-
-      mkdir(path.str, 511);
-
-#endif
-  /* returns 0 */;
-}
 /* returns 0 */ void os__rm(string path) {
 
 #ifdef _WIN32
@@ -4237,18 +4186,7 @@ void os__todo_remove() {}
     return os__getwd();
   };
 
-  int pos = -1;
-
-#ifdef _WIN32
-
-  pos = string_last_index(path, tos2((byte *)"\\"));
-
-  /* returns 0 */ #else
-
-      pos = string_last_index(path, os__PathSeparator);
-
-#endif
-  /* returns 0 */;
+  int pos = string_last_index(path, os__PathSeparator);
 
   if (pos == -1) {
 
@@ -4360,7 +4298,7 @@ void os__todo_remove() {}
 
     line = string_trim_space(line);
 
-    _PUSH(&inputstr, (line), tmp78, string);
+    _PUSH(&inputstr, (line), tmp73, string);
   };
 
   return inputstr;
@@ -4479,13 +4417,13 @@ void os__todo_remove() {}
 }
 /* returns 0 */ void os__write_file(string path, string text) {
 
-  Option_os__File tmp83 = os__create(path);
-  if (!tmp83.ok) {
-    string err = tmp83.error;
+  Option_os__File tmp78 = os__create(path);
+  if (!tmp78.ok) {
+    string err = tmp78.error;
 
     return;
   }
-  os__File f = *(os__File *)tmp83.data;
+  os__File f = *(os__File *)tmp78.data;
   ;
 
   os__File_write(f, text);
@@ -4714,10 +4652,10 @@ void os__todo_remove() {}
   array_string res = new_array_from_c_array(0, 0, sizeof(string),
                                             (string[]){EMPTY_STRUCT_INIT});
 
-  array_string tmp109 = files;
+  array_string tmp104 = files;
   ;
-  for (int i = 0; i < tmp109.len; i++) {
-    string file = ((string *)tmp109.data)[i];
+  for (int i = 0; i < tmp104.len; i++) {
+    string file = ((string *)tmp104.data)[i];
 
     if (string_starts_with(file, tos2((byte *)"."))) {
 
@@ -4728,11 +4666,11 @@ void os__todo_remove() {}
 
     if (os__is_dir(p)) {
 
-      _PUSH_MANY(&res, (os__walk_ext(p, ext)), tmp111, array_string);
+      _PUSH_MANY(&res, (os__walk_ext(p, ext)), tmp106, array_string);
 
     } else if (string_ends_with(file, ext)) {
 
-      _PUSH(&res, (p), tmp112, string);
+      _PUSH(&res, (p), tmp107, string);
     };
   };
 
@@ -4835,6 +4773,20 @@ void os__todo_remove() {}
 
   return res;
 }
+/* returns 0 */ bool os__dir_exists(string path) {
+
+  void *dir = opendir(path.str);
+
+  bool res = !isnil(dir);
+
+  if (res) {
+
+    closedir(dir);
+  };
+
+  return res;
+}
+/* returns 0 */ void os__mkdir(string path) { mkdir(path.str, 511); }
 /* returns 0 */ f64 math__abs(f64 a) {
 
   if (a < 0) {
@@ -5900,7 +5852,7 @@ void os__todo_remove() {}
                   ? (tos2((byte *)"gcc"))
                   : (tos2((byte *)"cc"));
 
-  Option_string tmp46 =
+  Option_os__Result tmp46 =
       os__exec(_STR("%.*s -fPIC -c -o %.*s %.*s", cc.len, cc.str, obj_path.len,
                     obj_path.str, cfiles.len, cfiles.str));
   if (!tmp46.ok) {
@@ -5908,10 +5860,10 @@ void os__todo_remove() {}
 
     v_panic(err);
   }
-  string res = *(string *)tmp46.data;
+  os__Result res = *(os__Result *)tmp46.data;
   ;
 
-  println(res);
+  println(res.output);
 }
 /* returns 0 */ string os_name_to_ifdef(string name) {
 
@@ -6862,7 +6814,9 @@ void os__todo_remove() {}
       (p->os == main__OS_msvc && string_eq(p->attr, tos2((byte *)"live")) &&
        p->pref->is_so)
           ? (tos2((byte *)"__declspec(dllexport) "))
-          : (tos2((byte *)""));
+          : ((string_eq(p->attr, tos2((byte *)"inline")))
+                 ? (tos2((byte *)"static inline "))
+                 : (tos2((byte *)"")));
 
   if (!p->is_vweb) {
 
@@ -7105,7 +7059,7 @@ void os__todo_remove() {}
 
         string so_name = string_add(file_base, tos2((byte *)".so"));
 
-        Parser_genln(p, _STR(" \nload_so(\"%.*s\"); \npthread_t "
+        Parser_genln(p, _STR("\nload_so(\"%.*s\");\npthread_t "
                              "_thread_so;\npthread_create(&_thread_so , NULL, "
                              "&reload_so, NULL); ",
                              so_name.len, so_name.str));
@@ -8202,19 +8156,18 @@ void os__todo_remove() {}
 
   dec = string_add(
       dec,
-      _STR(
-          "\n//%.*s %.*s(cJSON* root) {  \nOption %.*s(cJSON* root, %.*s* res) "
-          "{  \n//  %.*s res; \n  if (!root) {\n    const char *error_ptr = "
-          "cJSON_GetErrorPtr();\n    if (error_ptr != NULL)	{\n      "
-          "fprintf(stderr, \"Error in decode() for %.*s error_ptr=: "
-          "%%%%s\\n\", error_ptr);\n//      printf(\"\\nbad js=%%%%s\\n\", "
-          "js.str); \n      return v_error(tos2(error_ptr));\n    }\n  }\n",
-          t.len, t.str, dec_fn.name.len, dec_fn.name.str, dec_fn.name.len,
-          dec_fn.name.str, t.len, t.str, t.len, t.str, t.len, t.str));
+      _STR("\n//%.*s %.*s(cJSON* root) {\nOption %.*s(cJSON* root, %.*s* res) "
+           "{\n//  %.*s res;\n  if (!root) {\n    const char *error_ptr = "
+           "cJSON_GetErrorPtr();\n    if (error_ptr != NULL)	{\n      "
+           "fprintf(stderr, \"Error in decode() for %.*s error_ptr=: "
+           "%%%%s\\n\", error_ptr);\n//      printf(\"\\nbad js=%%%%s\\n\", "
+           "js.str);\n      return v_error(tos2(error_ptr));\n    }\n  }\n",
+           t.len, t.str, dec_fn.name.len, dec_fn.name.str, dec_fn.name.len,
+           dec_fn.name.str, t.len, t.str, t.len, t.str, t.len, t.str));
 
   enc =
-      string_add(enc, _STR("\ncJSON* %.*s(%.*s val) {  \ncJSON *o = "
-                           "cJSON_CreateObject();\nstring res = tos2(\"\"); \n",
+      string_add(enc, _STR("\ncJSON* %.*s(%.*s val) {\ncJSON *o = "
+                           "cJSON_CreateObject();\nstring res = tos2(\"\");\n",
                            enc_fn.name.len, enc_fn.name.str, t.len, t.str));
 
   if (string_starts_with(t, tos2((byte *)"array_"))) {
@@ -8236,8 +8189,6 @@ void os__todo_remove() {}
 
     Type *field_type = Table_find_type(&/* ? */ *p->table, field.typ);
 
-    Parser_gen_json_for_type(p, *field_type);
-
     string name = field.name;
 
     string _typ =
@@ -8245,24 +8196,36 @@ void os__todo_remove() {}
 
     string enc_name = js_enc_name(_typ);
 
-    string dec_name = js_dec_name(_typ);
-
-    if (is_js_prim(_typ)) {
+    if (string_eq(field.attr, tos2((byte *)"raw"))) {
 
       dec = string_add(
-          dec, _STR(" /*prim*/ res->%.*s = %.*s(js_get(root, \"%.*s\"))",
-                    name.len, name.str, dec_name.len, dec_name.str,
-                    field.name.len, field.name.str));
+          dec, _STR(" /*prim*/ res->%.*s = "
+                    "tos2(cJSON_PrintUnformatted(js_get(root, \"%.*s\")));\n",
+                    name.len, name.str, field.name.len, field.name.str));
 
     } else {
 
-      dec = string_add(
-          dec, _STR(" /*!!*/ %.*s(js_get(root, \"%.*s\"), & (res->%.*s))",
-                    dec_name.len, dec_name.str, field.name.len, field.name.str,
-                    name.len, name.str));
-    };
+      Parser_gen_json_for_type(p, *field_type);
 
-    dec = string_add(dec, tos2((byte *)";\n"));
+      string dec_name = js_dec_name(_typ);
+
+      if (is_js_prim(_typ)) {
+
+        dec = string_add(
+            dec, _STR(" /*prim*/ res->%.*s = %.*s(js_get(root, \"%.*s\"))",
+                      name.len, name.str, dec_name.len, dec_name.str,
+                      field.name.len, field.name.str));
+
+      } else {
+
+        dec = string_add(
+            dec, _STR(" /*!!*/ %.*s(js_get(root, \"%.*s\"), & (res->%.*s))",
+                      dec_name.len, dec_name.str, field.name.len,
+                      field.name.str, name.len, name.str));
+      };
+
+      dec = string_add(dec, tos2((byte *)";\n"));
+    };
 
     enc = string_add(
         enc, _STR("  cJSON_AddItemToObject(o,  \"%.*s\", %.*s(val.%.*s)); \n",
@@ -8315,7 +8278,7 @@ void os__todo_remove() {}
   };
 
   return _STR("\n*res = new_array(0, 0, sizeof(%.*s));\nconst cJSON *jsval = "
-              "NULL;\ncJSON_ArrayForEach(jsval, root)\n{\n%.*s \n  "
+              "NULL;\ncJSON_ArrayForEach(jsval, root)\n{\n%.*s\n  "
               "array__push(res, &val);\n}\n",
               typ.len, typ.str, s.len, s.str);
 }
@@ -8340,7 +8303,7 @@ void os__todo_remove() {}
 
   return _STR(
       "\no = cJSON_CreateArray();\nfor (int i = 0; i < val.len; i++){\n  "
-      "cJSON_AddItemToArray(o, %.*s(  ((%.*s*)val.data)[i]  ));\n} \n",
+      "cJSON_AddItemToArray(o, %.*s(  ((%.*s*)val.data)[i]  ));\n}\n",
       fn_name.len, fn_name.str, typ.len, typ.str);
 }
 /* returns 0 */ string modules_path() {
@@ -8422,18 +8385,18 @@ void os__todo_remove() {}
 
       os__chdir(string_add(vroot, tos2((byte *)"/tools")));
 
-      Option_string tmp6 = os__exec(_STR("%.*s -o %.*s vget.v", vexec.len,
-                                         vexec.str, vget.len, vget.str));
+      Option_os__Result tmp6 = os__exec(_STR("%.*s -o %.*s vget.v", vexec.len,
+                                             vexec.str, vget.len, vget.str));
       if (!tmp6.ok) {
         string err = tmp6.error;
 
         v_panic(err);
       }
-      string _ = *(string *)tmp6.data;
+      os__Result _ = *(os__Result *)tmp6.data;
       ;
     };
 
-    Option_string tmp7 =
+    Option_os__Result tmp7 =
         os__exec(string_add(_STR("%.*s ", vget.len, vget.str),
                             array_string_join(names, tos2((byte *)" "))));
     if (!tmp7.ok) {
@@ -8441,7 +8404,7 @@ void os__todo_remove() {}
 
       v_panic(err);
     }
-    string _ = *(string *)tmp7.data;
+    os__Result _ = *(os__Result *)tmp7.data;
     ;
 
     return 0;
@@ -8559,60 +8522,60 @@ void os__todo_remove() {}
 
   CGen_genln(
       cgen,
-      tos2((
-          byte
-              *)"   \n#include <stdio.h>  // TODO remove all these includes, "
-                "define all function signatures and types manually \n#include "
-                "<stdlib.h>\n#include <signal.h>\n#include <stdarg.h> // for "
-                "va_list \n#include <inttypes.h>  // int64_t etc \n#include "
-                "<string.h> // memcpy \n\n#define STRUCT_DEFAULT_VALUE "
-                "{}\n#define EMPTY_STRUCT_DECLARATION\n#define "
-                "EMPTY_STRUCT_INIT\n#define OPTION_CAST(x) (x)\n\n#ifdef "
-                "_WIN32\n#define WIN32_LEAN_AND_MEAN\n#include "
-                "<windows.h>\n\n// must be included after <windows.h> "
-                "\n#include <shellapi.h>\n\n#include <io.h> // "
-                "_waccess\n#include <fcntl.h> // _O_U8TEXT\n#include "
-                "<direct.h> // _wgetcwd\n//#include <WinSock2.h>\n#ifdef "
-                "_MSC_VER\n// On MSVC these are the same (as long as "
-                "/volatile:ms is passed)\n#define _Atomic volatile\n\n// MSVC "
-                "can\'t parse some things properly\n#undef "
-                "STRUCT_DEFAULT_VALUE\n#define STRUCT_DEFAULT_VALUE "
-                "{0}\n#undef EMPTY_STRUCT_DECLARATION\n#define "
-                "EMPTY_STRUCT_DECLARATION void *____dummy_variable;\n#undef "
-                "EMPTY_STRUCT_INIT\n#define EMPTY_STRUCT_INIT 0\n#undef "
-                "OPTION_CAST\n#define OPTION_CAST(x)\n#endif\n\nvoid "
-                "pthread_mutex_lock(HANDLE *m) {\n	"
-                "WaitForSingleObject(*m, INFINITE);\n}\n\nvoid "
-                "pthread_mutex_unlock(HANDLE *m) {\n	"
-                "ReleaseMutex(*m);\n}\n#else\n#include <pthread.h> \n#endif "
-                "\n\n//================================== TYPEDEFS "
-                "================================*/ \n\ntypedef unsigned char "
-                "byte;\ntypedef unsigned int uint;\ntypedef int64_t "
-                "i64;\ntypedef int32_t i32;\ntypedef int16_t i16;\ntypedef "
-                "int8_t i8;\ntypedef uint64_t u64;\ntypedef uint32_t "
-                "u32;\ntypedef uint16_t u16;\ntypedef uint8_t u8;\ntypedef "
-                "uint32_t rune;\ntypedef float f32;\ntypedef double f64; "
-                "\ntypedef unsigned char* byteptr;\ntypedef int* "
-                "intptr;\ntypedef void* voidptr;\ntypedef struct array "
-                "array;\ntypedef struct map map;\ntypedef array array_string; "
-                "\ntypedef array array_int; \ntypedef array array_byte; "
-                "\ntypedef array array_uint; \ntypedef array array_float; "
-                "\ntypedef array array_f32; \ntypedef array array_f64; "
-                "\ntypedef map map_int; \ntypedef map map_string; \n#ifndef "
-                "bool\n	typedef int bool;\n	#define true 1\n	"
-                "#define false 0\n#endif\n\n//============================== "
-                "HELPER C MACROS =============================*/ \n\n#define "
-                "_PUSH(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); "
-                "array__push(arr, &tmp);}\n#define _PUSH_MANY(arr, val, tmp, "
-                "tmp_typ) {tmp_typ tmp = (val); array__push_many(arr, "
-                "tmp.data, tmp.len);}\n#define _IN(typ, val, arr) "
-                "array_##typ##_contains(arr, val) \n#define _IN_MAP(val, m) "
-                "map__exists(m, val) \n#define ALLOC_INIT(type, ...) (type "
-                "*)memdup((type[]){ __VA_ARGS__ }, sizeof(type)) "
-                "\n\n//================================== GLOBALS "
-                "=================================*/   \n//int V_ZERO = 0; "
-                "\nbyteptr g_str_buf; \nint load_so(byteptr);\nvoid "
-                "reload_so();\nvoid init_consts();"));
+      tos2(
+          (byte *)"\n#include <stdio.h>  // TODO remove all these includes, "
+                  "define all function signatures and types manually\n#include "
+                  "<stdlib.h>\n#include <signal.h>\n#include <stdarg.h> // for "
+                  "va_list\n#include <inttypes.h>  // int64_t etc\n#include "
+                  "<string.h> // memcpy\n\n#define STRUCT_DEFAULT_VALUE "
+                  "{}\n#define EMPTY_STRUCT_DECLARATION\n#define "
+                  "EMPTY_STRUCT_INIT\n#define OPTION_CAST(x) (x)\n\n#ifdef "
+                  "_WIN32\n#define WIN32_LEAN_AND_MEAN\n#include "
+                  "<windows.h>\n\n// must be included after "
+                  "<windows.h>\n#include <shellapi.h>\n\n#include <io.h> // "
+                  "_waccess\n#include <fcntl.h> // _O_U8TEXT\n#include "
+                  "<direct.h> // _wgetcwd\n//#include <WinSock2.h>\n#ifdef "
+                  "_MSC_VER\n// On MSVC these are the same (as long as "
+                  "/volatile:ms is passed)\n#define _Atomic volatile\n\n// "
+                  "MSVC can\'t parse some things properly\n#undef "
+                  "STRUCT_DEFAULT_VALUE\n#define STRUCT_DEFAULT_VALUE "
+                  "{0}\n#undef EMPTY_STRUCT_DECLARATION\n#define "
+                  "EMPTY_STRUCT_DECLARATION void *____dummy_variable;\n#undef "
+                  "EMPTY_STRUCT_INIT\n#define EMPTY_STRUCT_INIT 0\n#undef "
+                  "OPTION_CAST\n#define OPTION_CAST(x)\n#endif\n\nvoid "
+                  "pthread_mutex_lock(HANDLE *m) {\n	"
+                  "WaitForSingleObject(*m, INFINITE);\n}\n\nvoid "
+                  "pthread_mutex_unlock(HANDLE *m) {\n	"
+                  "ReleaseMutex(*m);\n}\n#else\n#include "
+                  "<pthread.h>\n#endif\n\n//================================== "
+                  "TYPEDEFS ================================*/\n\ntypedef "
+                  "unsigned char byte;\ntypedef unsigned int uint;\ntypedef "
+                  "int64_t i64;\ntypedef int32_t i32;\ntypedef int16_t "
+                  "i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef "
+                  "uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t "
+                  "u8;\ntypedef uint32_t rune;\ntypedef float f32;\ntypedef "
+                  "double f64;\ntypedef unsigned char* byteptr;\ntypedef int* "
+                  "intptr;\ntypedef void* voidptr;\ntypedef struct array "
+                  "array;\ntypedef struct map map;\ntypedef array "
+                  "array_string;\ntypedef array array_int;\ntypedef array "
+                  "array_byte;\ntypedef array array_uint;\ntypedef array "
+                  "array_float;\ntypedef array array_f32;\ntypedef array "
+                  "array_f64;\ntypedef map map_int;\ntypedef map "
+                  "map_string;\n#ifndef bool\n	typedef int bool;\n	"
+                  "#define true 1\n	#define false "
+                  "0\n#endif\n\n//============================== HELPER C "
+                  "MACROS =============================*/\n\n#define "
+                  "_PUSH(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); "
+                  "array__push(arr, &tmp);}\n#define _PUSH_MANY(arr, val, tmp, "
+                  "tmp_typ) {tmp_typ tmp = (val); array__push_many(arr, "
+                  "tmp.data, tmp.len);}\n#define _IN(typ, val, arr) "
+                  "array_##typ##_contains(arr, val)\n#define _IN_MAP(val, m) "
+                  "map__exists(m, val)\n#define ALLOC_INIT(type, ...) (type "
+                  "*)memdup((type[]){ __VA_ARGS__ }, "
+                  "sizeof(type))\n\n//================================== "
+                  "GLOBALS =================================*/\n//int V_ZERO = "
+                  "0;\nbyteptr g_str_buf;\nint load_so(byteptr);\nvoid "
+                  "reload_so();\nvoid init_consts();"));
 
   if (v->os != main__OS_windows && v->os != main__OS_msvc) {
 
@@ -8674,7 +8637,7 @@ void os__todo_remove() {}
 
       CGen_genln(
           cgen,
-          tos2((byte *)" \n#define js_get(object, key) "
+          tos2((byte *)"\n#define js_get(object, key) "
                        "cJSON_GetObjectItemCaseSensitive((object), (key))\n"));
     };
   };
@@ -8758,11 +8721,11 @@ void os__todo_remove() {}
 
     CGen_genln(
         cgen,
-        _STR("void init_consts() { \n#ifdef _WIN32\n _setmode(_fileno(stdout), "
+        _STR("void init_consts() {\n#ifdef _WIN32\n _setmode(_fileno(stdout), "
              "_O_U8TEXT);\nSetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), "
-             "ENABLE_PROCESSED_OUTPUT | 0x0004); \n// "
+             "ENABLE_PROCESSED_OUTPUT | 0x0004);\n// "
              "ENABLE_VIRTUAL_TERMINAL_PROCESSING\n#endif\n "
-             "g_str_buf=malloc(1000);\n%.*s \n}",
+             "g_str_buf=malloc(1000);\n%.*s\n}",
              consts_init_body.len, consts_init_body.str));
 
     CGen_genln(
@@ -8770,19 +8733,20 @@ void os__todo_remove() {}
         tos2(
             (byte *)"\nstring _STR(const char *fmt, ...) {\n	va_list "
                     "argptr;\n	va_start(argptr, fmt);\n	size_t len = "
-                    "vsnprintf(0, 0, fmt, argptr) + 1;  \n	"
-                    "va_end(argptr);\n	byte* buf = malloc(len);  \n	"
+                    "vsnprintf(0, 0, fmt, argptr) + 1;\n	"
+                    "va_end(argptr);\n	byte* buf = malloc(len);\n	"
                     "va_start(argptr, fmt);\n	vsprintf(buf, fmt, "
-                    "argptr);\n	va_end(argptr);\n#ifdef DEBUG_ALLOC \n	"
-                    "puts(\"_STR:\"); \n	puts(buf); \n#endif \n	return "
+                    "argptr);\n	va_end(argptr);\n#ifdef DEBUG_ALLOC\n	"
+                    "puts(\"_STR:\");\n	puts(buf);\n#endif\n	return "
                     "tos2(buf);\n}\n\nstring _STR_TMP(const char *fmt, ...) "
                     "{\n	va_list argptr;\n	va_start(argptr, "
-                    "fmt);\n	size_t len = vsnprintf(0, 0, fmt, argptr) + 1; "
-                    " \n	va_end(argptr);\n	va_start(argptr, "
+                    "fmt);\n	size_t len = vsnprintf(0, 0, fmt, argptr) + "
+                    "1;\n	va_end(argptr);\n	va_start(argptr, "
                     "fmt);\n	vsprintf(g_str_buf, fmt, argptr);\n	"
-                    "va_end(argptr);\n#ifdef DEBUG_ALLOC \n	"
-                    "//puts(\"_STR_TMP:\"); \n	//puts(g_str_buf); \n#endif "
-                    "\n	return tos2(g_str_buf);\n}\n\n"));
+                    "va_end(argptr);\n#ifdef DEBUG_ALLOC\n	"
+                    "//puts(\"_STR_TMP:\");\n	"
+                    "//puts(g_str_buf);\n#endif\n	return "
+                    "tos2(g_str_buf);\n}\n\n"));
   };
 
   if (v->pref->build_mode != main__BuildMode_build) {
@@ -8872,14 +8836,15 @@ void os__todo_remove() {}
 
       CGen_genln(
           cgen,
-          tos2((byte *)"\n#include <dlfcn.h>\nvoid* live_lib=0;\nint "
-                       "load_so(byteptr path) {\n	char "
-                       "cpath[1024];\n	sprintf(cpath,\"./%s\", "
-                       "path);\n	//printf(\"load_so %s\\n\", cpath); "
-                       "\n	if (live_lib) dlclose(live_lib);\n	"
-                       "live_lib = dlopen(cpath, RTLD_LAZY);\n	if (!live_lib) "
-                       "{\n		puts(\"open failed\"); \n	"
-                       "	exit(1); \n		return 0;\n	}\n"));
+          tos2(
+              (byte *)"\n#include <dlfcn.h>\nvoid* live_lib=0;\nint "
+                      "load_so(byteptr path) {\n	char "
+                      "cpath[1024];\n	sprintf(cpath,\"./%s\", "
+                      "path);\n	//printf(\"load_so %s\\n\", cpath);\n	if "
+                      "(live_lib) dlclose(live_lib);\n	live_lib = "
+                      "dlopen(cpath, RTLD_LAZY);\n	if (!live_lib) "
+                      "{\n		puts(\"open failed\");\n	"
+                      "	exit(1);\n		return 0;\n	}\n"));
 
       array_string tmp35 = cgen->so_fns;
       ;
@@ -8916,7 +8881,7 @@ void os__todo_remove() {}
 
     CGen_genln(
         cgen,
-        _STR("return 1; \n}\n\nint _live_reloads = 0;\nvoid reload_so() "
+        _STR("return 1;\n}\n\nint _live_reloads = 0;\nvoid reload_so() "
              "{\n	char new_so_base[1024];\n	char "
              "new_so_name[1024];\n	char compile_cmd[1024];\n	int "
              "last = os__file_last_mod_unix(tos2(\"%.*s\"));\n	while (1) "
@@ -8940,11 +8905,10 @@ void os__todo_remove() {}
              "os__system(tos2(compile_cmd));\n\n			if( "
              "!os__file_exists(tos2(new_so_name)) ) {\n			"
              "	fprintf(stderr, \"Errors while compiling %.*s\\n\");\n	"
-             "			continue;        \n			}\n    "
-             "  \n			lfnmutex_print(\"reload_so "
-             "locking...\");\n			"
-             "pthread_mutex_lock(&live_fn_mutex);\n			"
-             "lfnmutex_print(\"reload_so locked\");\n        \n		"
+             "			continue;\n			}\n\n	"
+             "		lfnmutex_print(\"reload_so locking...\");\n	"
+             "		pthread_mutex_lock(&live_fn_mutex);\n		"
+             "	lfnmutex_print(\"reload_so locked\");\n\n		"
              "	live_lib = 0; // hack: force skipping dlclose/1, the code may "
              "be still used...\n			"
              "load_so(new_so_name);\n			#ifndef "
@@ -8953,12 +8917,12 @@ void os__todo_remove() {}
              "it will still be mapped in memory.\n			"
              "#else\n			_unlink(new_so_name);\n		"
              "	#endif\n			//if(0 == rename(new_so_name, "
-             "\"%.*s\")){\n			//	load_so(\"%.*s\"); "
-             "\n			//}\n\n			"
-             "lfnmutex_print(\"reload_so unlocking...\");  \n		"
-             "	pthread_mutex_unlock(&live_fn_mutex);  \n		"
-             "	lfnmutex_print(\"reload_so unlocked\");\n\n		"
-             "}\n		time__sleep_ms(100); \n	}\n}\n",
+             "\"%.*s\")){\n			//	"
+             "load_so(\"%.*s\");\n			//}\n\n		"
+             "	lfnmutex_print(\"reload_so unlocking...\");\n		"
+             "	pthread_mutex_unlock(&live_fn_mutex);\n			"
+             "lfnmutex_print(\"reload_so unlocked\");\n\n		"
+             "}\n		time__sleep_ms(100);\n	}\n}\n",
              file.len, file.str, file.len, file.str, file_base.len,
              file_base.str, vexe.len, vexe.str, msvc.len, msvc.str, file.len,
              file.str, file.len, file.str, so_name.len, so_name.str,
@@ -9299,39 +9263,44 @@ void os__todo_remove() {}
     v_panic(_STR("\'%.*s\' is a directory", v->out_name.len, v->out_name.str));
   };
 
-  _PUSH(&a, (_STR("\".%.*s\"", v->out_name_c.len, v->out_name_c.str)), tmp73,
+  if (v->os == main__OS_mac) {
+
+    _PUSH(&a, (tos2((byte *)"-x objective-c")), tmp73, string);
+  };
+
+  _PUSH(&a, (_STR("\".%.*s\"", v->out_name_c.len, v->out_name_c.str)), tmp74,
         string);
 
   if (v->os == main__OS_mac) {
 
-    _PUSH(&a, (tos2((byte *)"-mmacosx-version-min=10.7")), tmp74, string);
+    _PUSH(&a, (tos2((byte *)"-x none")), tmp75, string);
   };
-
-  _PUSH(&a, (flags), tmp75, string);
-
-  _PUSH(&a, (libs), tmp76, string);
 
   if (v->os == main__OS_mac) {
 
-    _PUSH(&a, (tos2((byte *)"-x objective-c")), tmp77, string);
+    _PUSH(&a, (tos2((byte *)"-mmacosx-version-min=10.7")), tmp76, string);
   };
+
+  _PUSH(&a, (flags), tmp77, string);
+
+  _PUSH(&a, (libs), tmp78, string);
 
   if (v->pref->build_mode != main__BuildMode_build &&
       (v->os == main__OS_linux || v->os == main__OS_freebsd ||
        v->os == main__OS_openbsd || v->os == main__OS_netbsd ||
        v->os == main__OS_dragonfly)) {
 
-    _PUSH(&a, (tos2((byte *)"-lm -lpthread ")), tmp78, string);
+    _PUSH(&a, (tos2((byte *)"-lm -lpthread ")), tmp79, string);
 
     if (v->os == main__OS_linux) {
 
-      _PUSH(&a, (tos2((byte *)" -ldl ")), tmp79, string);
+      _PUSH(&a, (tos2((byte *)" -ldl ")), tmp80, string);
     };
   };
 
   if (v->os == main__OS_windows) {
 
-    _PUSH(&a, (tos2((byte *)"-DUNICODE -D_UNICODE")), tmp80, string);
+    _PUSH(&a, (tos2((byte *)"-DUNICODE -D_UNICODE")), tmp81, string);
   };
 
   string args = array_string_join(a, tos2((byte *)" "));
@@ -9361,19 +9330,44 @@ void os__todo_remove() {}
 
   i64 ticks = time__ticks();
 
-  Option_string tmp84 = os__exec(cmd);
-  if (!tmp84.ok) {
-    string err = tmp84.error;
+  Option_os__Result tmp85 = os__exec(cmd);
+  if (!tmp85.ok) {
+    string err = tmp85.error;
+
+    v_panic(err);
+  }
+  os__Result res = *(os__Result *)tmp85.data;
+  ;
+
+  if (res.exit_code != 0) {
+
+    if (res.exit_code == 127) {
+
+      v_panic(string_add(
+          string_add(
+              string_add(
+                  string_add(
+                      string_add(tos2((byte *)"C compiler error, while "
+                                              "attempting to run: \n"),
+                                 tos2((byte *)"--------------------------------"
+                                              "---------------------------\n")),
+                      _STR("%.*s\n", cmd.len, cmd.str)),
+                  tos2((byte *)"-----------------------------------------------"
+                               "------------\n")),
+              tos2((byte *)"Probably your C compiler is missing. \n")),
+          tos2((byte *)"Please reinstall it, or make it available in your "
+                       "PATH.")));
+    };
 
     if (v->pref->is_debug) {
 
-      println(err);
+      println(res.output);
 
     } else {
 
-      v_print(string_limit(err, 200));
+      v_print(string_limit(res.output, 200));
 
-      if (err.len > 200) {
+      if (res.output.len > 200) {
 
         println(tos2((
             byte
@@ -9385,9 +9379,7 @@ void os__todo_remove() {}
         tos2((byte *)"C error. This should never happen. "),
         tos2((byte *)"Please create a GitHub issue: "
                      "https://github.com/vlang/v/issues/new/choose")));
-  }
-  string _ = *(string *)tmp84.data;
-  ;
+  };
 
   i64 diff = time__ticks() - ticks;
 
@@ -9409,7 +9401,7 @@ void os__todo_remove() {}
     printf("linux obj_file=%.*s out_name=%.*s\n", obj_file.len, obj_file.str,
            v->out_name.len, v->out_name.str);
 
-    Option_string tmp87 = os__exec(string_add(
+    Option_os__Result tmp88 = os__exec(string_add(
         string_add(
             string_add(
                 string_add(
@@ -9430,15 +9422,15 @@ void os__todo_remove() {}
                 obj_file),
             tos2((byte *)" /usr/lib/x86_64-linux-gnu/libc.so ")),
         tos2((byte *)"/usr/lib/x86_64-linux-gnu/crtn.o")));
-    if (!tmp87.ok) {
-      string err = tmp87.error;
+    if (!tmp88.ok) {
+      string err = tmp88.error;
 
       v_panic(err);
     }
-    string ress = *(string *)tmp87.data;
+    os__Result ress = *(os__Result *)tmp88.data;
     ;
 
-    println(ress);
+    println(ress.output);
 
     printf("linux cross compilation done. resulting binary: \"%.*s\"\n",
            v->out_name.len, v->out_name.str);
@@ -9473,10 +9465,10 @@ void os__todo_remove() {}
 
   array_string_sort(&/* ? */ files);
 
-  array_string tmp90 = files;
+  array_string tmp91 = files;
   ;
-  for (int tmp91 = 0; tmp91 < tmp90.len; tmp91++) {
-    string file = ((string *)tmp90.data)[tmp91];
+  for (int tmp92 = 0; tmp92 < tmp91.len; tmp92++) {
+    string file = ((string *)tmp91.data)[tmp92];
 
     if (!string_ends_with(file, tos2((byte *)".v")) &&
         !string_ends_with(file, tos2((byte *)".vh"))) {
@@ -9514,7 +9506,7 @@ void os__todo_remove() {}
     };
 
     _PUSH(&res, (_STR("%.*s/%.*s", dir.len, dir.str, file.len, file.str)),
-          tmp92, string);
+          tmp93, string);
   };
 
   return res;
@@ -9534,7 +9526,7 @@ void os__todo_remove() {}
 
   if (is_test_with_imports) {
 
-    _PUSH(&user_files, (dir), tmp96, string);
+    _PUSH(&user_files, (dir), tmp97, string);
 
     int pos = string_last_index(dir, tos2((byte *)"/"));
 
@@ -9543,7 +9535,7 @@ void os__todo_remove() {}
 
   if (string_ends_with(dir, tos2((byte *)".v"))) {
 
-    _PUSH(&user_files, (dir), tmp98, string);
+    _PUSH(&user_files, (dir), tmp99, string);
 
     dir = string_all_before(dir, tos2((byte *)"/"));
 
@@ -9551,12 +9543,12 @@ void os__todo_remove() {}
 
     array_string files = V_v_files_from_dir(&/* ? */ *v, dir);
 
-    array_string tmp100 = files;
+    array_string tmp101 = files;
     ;
-    for (int tmp101 = 0; tmp101 < tmp100.len; tmp101++) {
-      string file = ((string *)tmp100.data)[tmp101];
+    for (int tmp102 = 0; tmp102 < tmp101.len; tmp102++) {
+      string file = ((string *)tmp101.data)[tmp102];
 
-      _PUSH(&user_files, (file), tmp102, string);
+      _PUSH(&user_files, (file), tmp103, string);
     };
   };
 
@@ -9574,20 +9566,20 @@ void os__todo_remove() {}
     println(array_string_str(user_files));
   };
 
-  array_string tmp103 = v->files;
+  array_string tmp104 = v->files;
   ;
-  for (int tmp104 = 0; tmp104 < tmp103.len; tmp104++) {
-    string file = ((string *)tmp103.data)[tmp104];
+  for (int tmp105 = 0; tmp105 < tmp104.len; tmp105++) {
+    string file = ((string *)tmp104.data)[tmp105];
 
     Parser p = V_new_parser(v, file, main__Pass_imports);
 
     Parser_parse(&/* ? */ p);
   };
 
-  array_string tmp106 = user_files;
+  array_string tmp107 = user_files;
   ;
-  for (int tmp107 = 0; tmp107 < tmp106.len; tmp107++) {
-    string file = ((string *)tmp106.data)[tmp107];
+  for (int tmp108 = 0; tmp108 < tmp107.len; tmp108++) {
+    string file = ((string *)tmp107.data)[tmp108];
 
     Parser p = V_new_parser(v, file, main__Pass_imports);
 
@@ -9608,10 +9600,10 @@ void os__todo_remove() {}
                    mod.len, mod.str, import_path.len, import_path.str));
     };
 
-    array_string tmp115 = vfiles;
+    array_string tmp116 = vfiles;
     ;
-    for (int tmp116 = 0; tmp116 < tmp115.len; tmp116++) {
-      string file = ((string *)tmp115.data)[tmp116];
+    for (int tmp117 = 0; tmp117 < tmp116.len; tmp117++) {
+      string file = ((string *)tmp116.data)[tmp117];
 
       Parser p = V_new_parser(v, file, main__Pass_imports);
 
@@ -9639,10 +9631,10 @@ void os__todo_remove() {}
     v_panic(tos2((byte *)"Import cycle detected."));
   };
 
-  array_string tmp120 = ModDepGraph_imports(&/* ? */ *deps_resolved);
+  array_string tmp121 = ModDepGraph_imports(&/* ? */ *deps_resolved);
   ;
-  for (int tmp121 = 0; tmp121 < tmp120.len; tmp121++) {
-    string mod = ((string *)tmp120.data)[tmp121];
+  for (int tmp122 = 0; tmp122 < tmp121.len; tmp122++) {
+    string mod = ((string *)tmp121.data)[tmp122];
 
     if (string_eq(mod, v->mod)) {
 
@@ -9653,26 +9645,26 @@ void os__todo_remove() {}
 
     array_string vfiles = V_v_files_from_dir(&/* ? */ *v, mod_path);
 
-    array_string tmp124 = vfiles;
+    array_string tmp125 = vfiles;
     ;
-    for (int tmp125 = 0; tmp125 < tmp124.len; tmp125++) {
-      string file = ((string *)tmp124.data)[tmp125];
+    for (int tmp126 = 0; tmp126 < tmp125.len; tmp126++) {
+      string file = ((string *)tmp125.data)[tmp126];
 
       if (!_IN(string, file, v->files)) {
 
-        _PUSH(&v->files, (file), tmp126, string);
+        _PUSH(&v->files, (file), tmp127, string);
       };
     };
   };
 
-  array_FileImportTable tmp127 = v->table->file_imports;
+  array_FileImportTable tmp128 = v->table->file_imports;
   ;
-  for (int tmp128 = 0; tmp128 < tmp127.len; tmp128++) {
-    FileImportTable fit = ((FileImportTable *)tmp127.data)[tmp128];
+  for (int tmp129 = 0; tmp129 < tmp128.len; tmp129++) {
+    FileImportTable fit = ((FileImportTable *)tmp128.data)[tmp129];
 
     if (!_IN(string, fit.file_path, v->files)) {
 
-      _PUSH(&v->files, (fit.file_path), tmp129, string);
+      _PUSH(&v->files, (fit.file_path), tmp130, string);
     };
   };
 }
@@ -9909,10 +9901,10 @@ void os__todo_remove() {}
 
   if (!string_contains(out_name, tos2((byte *)"builtin.o"))) {
 
-    array_string tmp150 = builtins;
+    array_string tmp151 = builtins;
     ;
-    for (int tmp151 = 0; tmp151 < tmp150.len; tmp151++) {
-      string builtin = ((string *)tmp150.data)[tmp151];
+    for (int tmp152 = 0; tmp152 < tmp151.len; tmp152++) {
+      string builtin = ((string *)tmp151.data)[tmp152];
 
       string f = _STR("%.*s/vlib/builtin/%.*s", vroot.len, vroot.str,
                       builtin.len, builtin.str);
@@ -9921,16 +9913,16 @@ void os__todo_remove() {}
           build_mode == main__BuildMode_build) {
       };
 
-      _PUSH(&files, (f), tmp153, string);
+      _PUSH(&files, (f), tmp154, string);
     };
   };
 
   string cflags = tos2((byte *)"");
 
-  array_string tmp155 = args;
+  array_string tmp156 = args;
   ;
-  for (int ci = 0; ci < tmp155.len; ci++) {
-    string cv = ((string *)tmp155.data)[ci];
+  for (int ci = 0; ci < tmp156.len; ci++) {
+    string cv = ((string *)tmp156.data)[ci];
 
     if (string_eq(cv, tos2((byte *)"-cflags"))) {
 
@@ -10039,17 +10031,17 @@ void os__todo_remove() {}
 
       os__write_file(file, source_code);
 
-      Option_string tmp168 = os__exec(
+      Option_os__Result tmp169 = os__exec(
           _STR("%.*s run %.*s -repl", vexe.len, vexe.str, file.len, file.str));
-      if (!tmp168.ok) {
-        string err = tmp168.error;
+      if (!tmp169.ok) {
+        string err = tmp169.error;
 
         v_panic(err);
       }
-      string s = *(string *)tmp168.data;
+      os__Result s = *(os__Result *)tmp169.data;
       ;
 
-      array_string vals = string_split(s, tos2((byte *)"\n"));
+      array_string vals = string_split(s.output, tos2((byte *)"\n"));
 
       for (int i = 0; i < vals.len; i++) {
 
@@ -10079,20 +10071,20 @@ void os__todo_remove() {}
 
       os__write_file(temp_file, temp_source_code);
 
-      Option_string tmp176 =
+      Option_os__Result tmp177 =
           os__exec(_STR("%.*s run %.*s -repl", vexe.len, vexe.str,
                         temp_file.len, temp_file.str));
-      if (!tmp176.ok) {
-        string err = tmp176.error;
+      if (!tmp177.ok) {
+        string err = tmp177.error;
 
         v_panic(err);
       }
-      string s = *(string *)tmp176.data;
+      os__Result s = *(os__Result *)tmp177.data;
       ;
 
-      _PUSH(&lines, (line), tmp177, string);
+      _PUSH(&lines, (line), tmp178, string);
 
-      array_string vals = string_split(s, tos2((byte *)"\n"));
+      array_string vals = string_split(s.output, tos2((byte *)"\n"));
 
       for (int i = 0; i < vals.len; i++) {
 
@@ -10101,7 +10093,7 @@ void os__todo_remove() {}
     };
   };
 
-  array_string tmp182 = lines;
+  array_string tmp183 = lines;
   {
 
     os__rm(file);
@@ -10112,7 +10104,7 @@ void os__todo_remove() {}
 
     os__rm(string_left(temp_file, temp_file.len - 2));
   }
-  return tmp182;
+  return tmp183;
   ;
 
   {
@@ -10135,19 +10127,19 @@ void os__todo_remove() {}
 
   if (string_ne(tos2((byte *)""), vflags)) {
 
-    _PUSH(&args, ((*(string *)array__get(os__args, 0))), tmp185, string);
+    _PUSH(&args, ((*(string *)array__get(os__args, 0))), tmp186, string);
 
-    _PUSH_MANY(&args, (string_split(vflags, tos2((byte *)" "))), tmp188,
+    _PUSH_MANY(&args, (string_split(vflags, tos2((byte *)" "))), tmp189,
                array_string);
 
     if (os__args.len > 1) {
 
-      _PUSH_MANY(&args, (array_right(os__args, 1)), tmp189, array_string);
+      _PUSH_MANY(&args, (array_right(os__args, 1)), tmp190, array_string);
     };
 
   } else {
 
-    _PUSH_MANY(&args, (os__args), tmp190, array_string);
+    _PUSH_MANY(&args, (os__args), tmp191, array_string);
   };
 
   return args;
@@ -10158,47 +10150,48 @@ void os__todo_remove() {}
 
   string vroot = os__dir(os__executable());
 
-  Option_string tmp192 = os__exec(_STR(
+  Option_os__Result tmp193 = os__exec(_STR(
       "git -C \"%.*s\" pull --rebase origin master", vroot.len, vroot.str));
-  if (!tmp192.ok) {
-    string err = tmp192.error;
+  if (!tmp193.ok) {
+    string err = tmp193.error;
 
     v_panic(err);
   }
-  string s = *(string *)tmp192.data;
+  os__Result s = *(os__Result *)tmp193.data;
   ;
 
-  println(s);
+  println(s.output);
 
 #ifdef _WIN32
 
   os__mv(_STR("%.*s/v.exe", vroot.len, vroot.str),
          _STR("%.*s/v_old.exe", vroot.len, vroot.str));
 
-  Option_string tmp193 = os__exec(_STR("%.*s/make.bat", vroot.len, vroot.str));
-  if (!tmp193.ok) {
-    string err = tmp193.error;
-
-    v_panic(err);
-  }
-  string s2 = *(string *)tmp193.data;
-  ;
-
-  println(s2);
-
-  /* returns 0 */ #else
-
-      Option_string tmp194 =
-          os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
+  Option_os__Result tmp194 =
+      os__exec(_STR("%.*s/make.bat", vroot.len, vroot.str));
   if (!tmp194.ok) {
     string err = tmp194.error;
 
     v_panic(err);
   }
-  string s2 = *(string *)tmp194.data;
+  os__Result s2 = *(os__Result *)tmp194.data;
   ;
 
-  println(s2);
+  println(s2.output);
+
+  /* returns 0 */ #else
+
+      Option_os__Result tmp195 =
+          os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
+  if (!tmp195.ok) {
+    string err = tmp195.error;
+
+    v_panic(err);
+  }
+  os__Result s2 = *(os__Result *)tmp195.data;
+  ;
+
+  println(s2.output);
 
 #endif
   /* returns 0 */;
@@ -10210,10 +10203,10 @@ void os__todo_remove() {}
   array_string test_files =
       os__walk_ext(tos2((byte *)"."), tos2((byte *)"_test.v"));
 
-  array_string tmp199 = test_files;
+  array_string tmp200 = test_files;
   ;
-  for (int tmp200 = 0; tmp200 < tmp199.len; tmp200++) {
-    string file = ((string *)tmp199.data)[tmp200];
+  for (int tmp201 = 0; tmp201 < tmp200.len; tmp201++) {
+    string file = ((string *)tmp200.data)[tmp201];
 
     v_print(string_add(file, tos2((byte *)" ")));
 
@@ -10235,10 +10228,10 @@ void os__todo_remove() {}
   array_string examples =
       os__walk_ext(tos2((byte *)"examples"), tos2((byte *)".v"));
 
-  array_string tmp202 = examples;
+  array_string tmp203 = examples;
   ;
-  for (int tmp203 = 0; tmp203 < tmp202.len; tmp203++) {
-    string file = ((string *)tmp202.data)[tmp203];
+  for (int tmp204 = 0; tmp204 < tmp203.len; tmp204++) {
+    string file = ((string *)tmp203.data)[tmp204];
 
     v_print(string_add(file, tos2((byte *)" ")));
 
@@ -10660,7 +10653,7 @@ ModDepGraph_from_import_tables(ModDepGraph *graph,
 #endif
   /* returns 0 */;
 
-  Option_string tmp26 = os__exec(tos2(
+  Option_os__Result tmp26 = os__exec(tos2(
       (byte *)"\"\"%ProgramFiles(x86)%\\Microsoft Visual "
               "Studio\\Installer\\vswhere.exe\" -latest -products * -requires "
               "Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property "
@@ -10670,12 +10663,12 @@ ModDepGraph_from_import_tables(ModDepGraph *graph,
 
     return v_error(err);
   }
-  string res = *(string *)tmp26.data;
+  os__Result res = *(os__Result *)tmp26.data;
   ;
 
   Option_string tmp27 = os__read_file(
       _STR("%.*s\\VC\\Auxiliary\\Build\\Microsoft.VCToolsVersion.default.txt",
-           res.len, res.str));
+           res.output.len, res.output.str));
   if (!tmp27.ok) {
     string err = tmp27.error;
 
@@ -10690,17 +10683,17 @@ ModDepGraph_from_import_tables(ModDepGraph *graph,
                  ? (string_left(version, version.len - 2))
                  : (version);
 
-  string lib_path = _STR("%.*s\\VC\\Tools\\MSVC\\%.*s\\lib\\x64", res.len,
-                         res.str, v.len, v.str);
+  string lib_path = _STR("%.*s\\VC\\Tools\\MSVC\\%.*s\\lib\\x64",
+                         res.output.len, res.output.str, v.len, v.str);
 
-  string include_path = _STR("%.*s\\VC\\Tools\\MSVC\\%.*s\\include", res.len,
-                             res.str, v.len, v.str);
+  string include_path = _STR("%.*s\\VC\\Tools\\MSVC\\%.*s\\include",
+                             res.output.len, res.output.str, v.len, v.str);
 
   if (os__file_exists(
           _STR("%.*s\\vcruntime.lib", lib_path.len, lib_path.str))) {
 
-    string p = _STR("%.*s\\VC\\Tools\\MSVC\\%.*s\\bin\\Hostx64\\x64", res.len,
-                    res.str, v.len, v.str);
+    string p = _STR("%.*s\\VC\\Tools\\MSVC\\%.*s\\bin\\Hostx64\\x64",
+                    res.output.len, res.output.str, v.len, v.str);
 
     VsInstallation tmp32 = OPTION_CAST(VsInstallation)((VsInstallation){
         .exe_path = p, .lib_path = lib_path, .include_path = include_path});
@@ -10958,7 +10951,7 @@ ModDepGraph_from_import_tables(ModDepGraph *graph,
   string cmd = _STR("\"\"%.*s\\cl.exe\" %.*s\"", escaped_path.len,
                     escaped_path.str, args.len, args.str);
 
-  Option_string tmp76 = os__exec(cmd);
+  Option_os__Result tmp76 = os__exec(cmd);
   if (!tmp76.ok) {
     string err = tmp76.error;
 
@@ -10966,7 +10959,7 @@ ModDepGraph_from_import_tables(ModDepGraph *graph,
 
     v_panic(tos2((byte *)"msvc error"));
   }
-  string _ = *(string *)tmp76.data;
+  os__Result _ = *(os__Result *)tmp76.data;
   ;
 
   if (!v->pref->is_debug && string_ne(v->out_name_c, tos2((byte *)"v.c")) &&
@@ -11035,7 +11028,7 @@ ModDepGraph_from_import_tables(ModDepGraph *graph,
 
   printf("%.*s\n", cfiles.len, cfiles.str);
 
-  Option_string tmp85 = os__exec(_STR(
+  Option_os__Result tmp85 = os__exec(_STR(
       "\"\"%.*s\\cl.exe\" /volatile:ms /Z7 %.*s /c %.*s /Fo\"%.*s\" /D_UNICODE "
       "/DUNICODE\"",
       msvc.exe_path.len, msvc.exe_path.str, include_string.len,
@@ -11045,10 +11038,10 @@ ModDepGraph_from_import_tables(ModDepGraph *graph,
 
     v_panic(err);
   }
-  string res = *(string *)tmp85.data;
+  os__Result res = *(os__Result *)tmp85.data;
   ;
 
-  println(res);
+  println(res.output);
 }
 /* returns 0 */ Parser V_new_parser(V *v, string path, Pass pass) {
 
@@ -11931,6 +11924,14 @@ ModDepGraph_from_import_tables(ModDepGraph *graph,
       Parser_check(p, main__Token_rsbr);
     };
 
+    if (string_eq(attr, tos2((byte *)"raw")) &&
+        string_ne(field_type, tos2((byte *)"string"))) {
+
+      Parser_error(p, _STR("struct field with attribute \"raw\" should be of "
+                           "type \"string\" but got \"%.*s\"",
+                           field_type.len, field_type.str));
+    };
+
     did_gen_something = 1;
 
     Type_add_field(typ, field_name, field_type, is_mut, attr, access_mod);
@@ -12778,7 +12779,7 @@ ModDepGraph_from_import_tables(ModDepGraph *graph,
           string_eq((*(Var *)array__get(p->cur_fn->args, 0)).name, v.name)) {
 
         printf("make the receiver `%.*s` mutable:\nfn (%.*s mut %.*s) %.*s "
-               "(...) { \n\n",
+               "(...) {\n\n",
                v.name.len, v.name.str, v.name.len, v.name.str, v.typ.len,
                v.typ.str, p->cur_fn->name.len, p->cur_fn->name.str);
       };
@@ -13731,7 +13732,7 @@ ModDepGraph_from_import_tables(ModDepGraph *graph,
                       field_name.len, field_name.str, typ->name.len,
                       typ->name.str),
                  _STR("declare the field with `mut:`\n\nstruct %.*s {\n  "
-                      "mut:\n	%.*s %.*s \n} \n",
+                      "mut:\n	%.*s %.*s\n}\n",
                       typ->name.len, typ->name.str, field_name.len,
                       field_name.str, field.typ.len, field.typ.str)));
     };
@@ -14553,12 +14554,15 @@ ModDepGraph_from_import_tables(ModDepGraph *graph,
 
   } else { // default:
 
-    Token next = Parser_peek(p);
+    if (p->pref->is_verbose || p->pref->is_debug) {
 
-    printf("PREV=%.*s\n", Token_str(p->prev_tok).len,
-           Token_str(p->prev_tok).str);
+      Token next = Parser_peek(p);
 
-    printf(".neXT=%.*s\n", Token_str(next).len, Token_str(next).str);
+      printf("prev=%.*s\n", Token_str(p->prev_tok).len,
+             Token_str(p->prev_tok).str);
+
+      printf("next=%.*s\n", Token_str(next).len, Token_str(next).str);
+    };
 
     Parser_error(p, _STR("unexpected token: `%.*s`", Token_str(p->tok).len,
                          Token_str(p->tok).str));
@@ -16068,10 +16072,10 @@ ModDepGraph_from_import_tables(ModDepGraph *graph,
       string_replace(p->file_path, tos2((byte *)"\\"), tos2((byte *)"\\\\"));
 
   Parser_genln(
-      p, _STR(";\n \nif (!%.*s) {\n  println(tos2(\"\\x1B[31mFAILED: %.*s() in "
-              "%.*s:%d\\x1B[0m\"));\ng_test_ok = 0 ; \n	// TODO\n	// "
-              "Maybe print all vars in a test function if it fails? \n} \nelse "
-              "{ \n  //puts(\"\\x1B[32mPASSED: %.*s()\\x1B[0m\");\n}",
+      p, _STR(";\n\nif (!%.*s) {\n  println(tos2(\"\\x1B[31mFAILED: %.*s() in "
+              "%.*s:%d\\x1B[0m\"));\ng_test_ok = 0 ;\n	// TODO\n	// "
+              "Maybe print all vars in a test function if it fails?\n}\nelse "
+              "{\n  //puts(\"\\x1B[32mPASSED: %.*s()\\x1B[0m\");\n}",
               tmp.len, tmp.str, p->cur_fn->name.len, p->cur_fn->name.str,
               filename.len, filename.str, p->scanner->line_nr,
               p->cur_fn->name.len, p->cur_fn->name.str));
@@ -19949,11 +19953,11 @@ void init_consts() {
             "file.\n  -prod             Build an optimized executable.\n  -o "
             "<file>         Place output into <file>.\n  -obf              "
             "Obfuscate the resulting binary.\n  -show_c_cmd       Print the "
-            "full C compilation command and how much time it took. \n  -debug  "
-            "          Leave a C file for debugging in .program.c. \n  -live   "
-            "          Enable hot code reloading (required by functions marked "
-            "with [live]). \n  fmt               Run vfmt to format the source "
-            "code. \n  up                Update V. \n  run               Build "
+            "full C compilation command and how much time it took.\n  -debug   "
+            "         Leave a C file for debugging in .program.c.\n  -live     "
+            "        Enable hot code reloading (required by functions marked "
+            "with [live]).\n  fmt               Run vfmt to format the source "
+            "code.\n  up                Update V.\n  run               Build "
             "and execute a V program. You can add arguments after the file "
             "name.\n\n\nFiles:\n  <file>_test.v     Test file.\n");
   main__HKEY_LOCAL_MACHINE = ((RegKey)(0x80000002));
