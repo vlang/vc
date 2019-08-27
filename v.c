@@ -5860,7 +5860,7 @@ void V_cc(V *v) {
     _PUSH(&a, (tos2((byte *)"-g")), tmp6, string);
   };
 
-  if (v->os != main__OS_msvc) {
+  if (v->os != main__OS_msvc && v->os != main__OS_freebsd) {
 
     _PUSH(&a, (tos2((byte *)"-Werror=implicit-function-declaration")), tmp7,
           string);
