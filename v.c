@@ -174,11 +174,11 @@ typedef struct VsInstallation VsInstallation;
 typedef Option Option_VsInstallation;
 typedef Option Option_MsvcResult;
 typedef struct ParsedFlag ParsedFlag;
-typedef struct Var Var;
 typedef struct Parser Parser;
 typedef struct Repl Repl;
 typedef struct Scanner Scanner;
 typedef struct ScanRes ScanRes;
+typedef struct Var Var;
 typedef struct Table Table;
 typedef array array_Type;
 typedef map map_Fn;
@@ -269,7 +269,6 @@ struct CGen {
   array_string typedefs;
   array_string type_aliases;
   array_string includes;
-  array_string types;
   array_string thread_args;
   array_string thread_fns;
   array_string consts;
@@ -381,26 +380,6 @@ struct ParsedFlag {
   string f;
   string arg;
 };
-struct Var {
-  string typ;
-  string name;
-  bool is_arg;
-  bool is_const;
-  array_Var args;
-  string attr;
-  bool is_mut;
-  bool is_alloc;
-  bool ptr;
-  bool ref;
-  string parent_fn;
-  string mod;
-  int line_nr;
-  AccessMod access_mod;
-  bool is_global;
-  bool is_used;
-  bool is_changed;
-  int scope_level;
-};
 struct Parser {
   string file_path;
   string file_name;
@@ -481,6 +460,26 @@ struct Scanner {
 struct ScanRes {
   Token tok;
   string lit;
+};
+struct Var {
+  string typ;
+  string name;
+  bool is_arg;
+  bool is_const;
+  array_Var args;
+  string attr;
+  bool is_mut;
+  bool is_alloc;
+  bool ptr;
+  bool ref;
+  string parent_fn;
+  string mod;
+  int line_nr;
+  AccessMod access_mod;
+  bool is_global;
+  bool is_used;
+  bool is_changed;
+  int scope_level;
 };
 struct Table {
   array_Type types;
@@ -906,13 +905,13 @@ void CGen_register_thread_fn(CGen *g, string wrapper_name, string wrapper_text,
                              string struct_text);
 string V_prof_counters(V *c);
 string Parser_print_prof_counters(Parser *p);
-void Parser_gen_type(Parser *p, string s);
 void Parser_gen_typedef(Parser *p, string s);
 void Parser_gen_type_alias(Parser *p, string s);
 void CGen_add_to_main(CGen *g, string s);
 void build_thirdparty_obj_file(string flag);
 string os_name_to_ifdef(string name);
 string platform_postfix_to_ifdefguard(string name);
+string V_c_type_definitions(V *v);
 void Parser_comp_time(Parser *p);
 void Parser_chash(Parser *p);
 void Parser_comptime_method_call(Parser *p, Type typ);
@@ -1141,6 +1140,7 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
 bool FileImportTable_known_alias(FileImportTable *fit, string alias);
 bool FileImportTable_is_aliased(FileImportTable *fit, string mod);
 string FileImportTable_resolve_alias(FileImportTable *fit, string alias);
+bool Type_contains_field_type(Type *t, string typ);
 map_int build_keys();
 array_string build_token_str();
 Token key_to_token(string key);
@@ -1311,13 +1311,14 @@ string main__and_or_error;
 #define main__AccessMod_public 2
 #define main__AccessMod_public_mut 3
 #define main__AccessMod_public_mut_mut 4
-#define main__TypeCategory_struct_ 0
-#define main__TypeCategory_func 1
-#define main__TypeCategory_interface_ 2
-#define main__TypeCategory_enum_ 3
-#define main__TypeCategory_union_ 4
-#define main__TypeCategory_c_struct 5
-#define main__TypeCategory_c_typedef 6
+#define main__TypeCategory_builtin 0
+#define main__TypeCategory_struct_ 1
+#define main__TypeCategory_func 2
+#define main__TypeCategory_interface_ 3
+#define main__TypeCategory_enum_ 4
+#define main__TypeCategory_union_ 5
+#define main__TypeCategory_c_struct 6
+#define main__TypeCategory_c_typedef 7
 array_string main__CReserved;
 array_string main__number_types;
 array_string main__float_types;
@@ -2788,11 +2789,11 @@ void print_backtrace_skipping_top_frames(int skipframes) {
 
 #ifdef __APPLE__
 
-  voidptr buffer[100] = {0};
+  byteptr buffer[100] = {0};
 
   void *nr_ptrs = backtrace(buffer, 100);
 
-  backtrace_symbols_fd(&/*vvar*/ buffer[skipframes] /*rvoidptr 0*/,
+  backtrace_symbols_fd(&/*vvar*/ buffer[skipframes] /*rbyteptr 0*/,
                        (byte *)nr_ptrs - skipframes, 1);
 
   return;
@@ -2802,14 +2803,24 @@ void print_backtrace_skipping_top_frames(int skipframes) {
 
 #ifdef __linux__
 
-  voidptr buffer[100] = {0};
+  if (backtrace_symbols_fd != 0) {
 
-  void *nr_ptrs = backtrace(buffer, 100);
+    byteptr buffer[100] = {0};
 
-  backtrace_symbols_fd(&/*vvar*/ buffer[skipframes] /*rvoidptr 0*/,
-                       (byte *)nr_ptrs - skipframes, 1);
+    void *nr_ptrs = backtrace(buffer, 100);
 
-  return;
+    backtrace_symbols_fd(&/*vvar*/ buffer[skipframes] /*rbyteptr 0*/,
+                         (byte *)nr_ptrs - skipframes, 1);
+
+    return;
+
+  } else {
+
+    printf("backtrace_symbols_fd is missing, so printing backtraces is not "
+           "available.\n");
+
+    printf("Some libc implementations like musl simply do not provide it.\n");
+  };
 
 #endif
   ;
@@ -5900,7 +5911,7 @@ void V_cc(V *v) {
     _PUSH(&a, (tos2((byte *)"-g")), tmp6, string);
   };
 
-  if (v->pref->is_debug) {
+  if (v->pref->is_debug && string_ne(os__user_os(), tos2((byte *)"windows"))) {
 
     _PUSH(&a, (tos2((byte *)" -rdynamic ")), tmp7, string);
   };
@@ -6339,7 +6350,6 @@ CGen *new_cgen(string out_name_c) {
                 .typedefs = new_array(0, 1, sizeof(string)),
                 .type_aliases = new_array(0, 1, sizeof(string)),
                 .includes = new_array(0, 1, sizeof(string)),
-                .types = new_array(0, 1, sizeof(string)),
                 .thread_args = new_array(0, 1, sizeof(string)),
                 .thread_fns = new_array(0, 1, sizeof(string)),
                 .consts = new_array(0, 1, sizeof(string)),
@@ -6371,7 +6381,6 @@ CGen *new_cgen(string out_name_c) {
                              .typedefs = new_array(0, 1, sizeof(string)),
                              .type_aliases = new_array(0, 1, sizeof(string)),
                              .includes = new_array(0, 1, sizeof(string)),
-                             .types = new_array(0, 1, sizeof(string)),
                              .thread_args = new_array(0, 1, sizeof(string)),
                              .thread_fns = new_array(0, 1, sizeof(string)),
                              .consts = new_array(0, 1, sizeof(string)),
@@ -6636,15 +6645,6 @@ string Parser_print_prof_counters(Parser *p) {
 
   return array_string_join(res, tos2((byte *)";\n"));
 }
-void Parser_gen_type(Parser *p, string s) {
-
-  if (!Parser_first_pass(&/* ? */ *p)) {
-
-    return;
-  };
-
-  _PUSH(&p->cgen->types, (s), tmp36, string);
-}
 void Parser_gen_typedef(Parser *p, string s) {
 
   if (!Parser_first_pass(&/* ? */ *p)) {
@@ -6652,7 +6652,7 @@ void Parser_gen_typedef(Parser *p, string s) {
     return;
   };
 
-  _PUSH(&p->cgen->typedefs, (s), tmp37, string);
+  _PUSH(&p->cgen->typedefs, (s), tmp36, string);
 }
 void Parser_gen_type_alias(Parser *p, string s) {
 
@@ -6661,7 +6661,7 @@ void Parser_gen_type_alias(Parser *p, string s) {
     return;
   };
 
-  _PUSH(&p->cgen->type_aliases, (s), tmp38, string);
+  _PUSH(&p->cgen->type_aliases, (s), tmp37, string);
 }
 void CGen_add_to_main(CGen *g, string s) {
 
@@ -6685,10 +6685,10 @@ void build_thirdparty_obj_file(string flag) {
 
   string cfiles = tos2((byte *)"");
 
-  array_string tmp43 = files;
+  array_string tmp42 = files;
   ;
-  for (int tmp44 = 0; tmp44 < tmp43.len; tmp44++) {
-    string file = ((string *)tmp43.data)[tmp44];
+  for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
+    string file = ((string *)tmp42.data)[tmp43];
 
     if (string_ends_with(file, tos2((byte *)".c"))) {
 
@@ -6703,16 +6703,16 @@ void build_thirdparty_obj_file(string flag) {
 
   string cc_thirdparty_options = find_c_compiler_thirdparty_options();
 
-  Option_os__Result tmp47 =
+  Option_os__Result tmp46 =
       os__exec(_STR("%.*s %.*s -c -o %.*s %.*s", cc.len, cc.str,
                     cc_thirdparty_options.len, cc_thirdparty_options.str,
                     obj_path.len, obj_path.str, cfiles.len, cfiles.str));
-  if (!tmp47.ok) {
-    string err = tmp47.error;
+  if (!tmp46.ok) {
+    string err = tmp46.error;
 
     v_panic(err);
   }
-  os__Result res = *(os__Result *)tmp47.data;
+  os__Result res = *(os__Result *)tmp46.data;
   ;
 
   println(res.output);
@@ -6778,6 +6778,76 @@ string platform_postfix_to_ifdefguard(string name) {
   };
 
   v_panic(_STR("bad platform_postfix \"%.*s\"", name.len, name.str));
+}
+string V_c_type_definitions(V *v) {
+
+  array_Type types = v->table->types;
+
+  int tmp48 = 0;
+  ;
+  for (int tmp49 = tmp48; tmp49 < types.len; tmp49++) {
+    int i = tmp49;
+
+    int tmp50 = 0;
+    ;
+    for (int tmp51 = tmp50; tmp51 < i; tmp51++) {
+      int j = tmp51;
+
+      Type t = (*(Type *)array__get(types, i));
+
+      if (Type_contains_field_type(&/* ? */ (*(Type *)array__get(types, j)),
+                                   t.name)) {
+
+        Type tmp59 = (*(Type *)array__get(types, j));
+
+        array_set(&/*q*/ types, i, &tmp59);
+
+        Type tmp60 = t;
+
+        array_set(&/*q*/ types, j, &tmp60);
+
+        continue;
+      };
+    };
+  };
+
+  strings__Builder sb = strings__new_builder(10);
+
+  array_Type tmp62 = v->table->types;
+  ;
+  for (int tmp63 = 0; tmp63 < tmp62.len; tmp63++) {
+    Type t = ((Type *)tmp62.data)[tmp63];
+
+    if (t.cat != main__TypeCategory_union_ &&
+        t.cat != main__TypeCategory_struct_) {
+
+      continue;
+    };
+
+    string kind = (t.cat == main__TypeCategory_union_)
+                      ? (tos2((byte *)"union"))
+                      : (tos2((byte *)"struct"));
+
+    strings__Builder_writeln(
+        &/* ? */ sb,
+        _STR("%.*s %.*s {", kind.len, kind.str, t.name.len, t.name.str));
+
+    array_Var tmp65 = t.fields;
+    ;
+    for (int tmp66 = 0; tmp66 < tmp65.len; tmp66++) {
+      Var field = ((Var *)tmp65.data)[tmp66];
+
+      strings__Builder_writeln(
+          &/* ? */ sb,
+          string_add(Table_cgen_name_type_pair(&/* ? */ *v->table, field.name,
+                                               field.typ),
+                     tos2((byte *)";")));
+    };
+
+    strings__Builder_writeln(&/* ? */ sb, tos2((byte *)"};\n"));
+  };
+
+  return strings__Builder_str(sb);
 }
 void Parser_comp_time(Parser *p) {
 
@@ -9598,11 +9668,6 @@ void V_compile(V *v) {
     CGen_genln(cgen, tos2((byte *)"id defaultFont = 0; // main.v"));
   };
 
-  if ((imports_json && v->pref->build_mode == main__BuildMode_embed_vlib) ||
-      (v->pref->build_mode == main__BuildMode_build &&
-       string_contains(v->out_name, tos2((byte *)"json.o")))) {
-  };
-
   if (v->pref->build_mode == main__BuildMode_default_mode) {
 
     if (imports_json) {
@@ -9658,7 +9723,7 @@ void V_compile(V *v) {
 
   strings__Builder_writeln(&/* ? */ d, array_string_join_lines(cgen->typedefs));
 
-  strings__Builder_writeln(&/* ? */ d, array_string_join_lines(cgen->types));
+  strings__Builder_writeln(&/* ? */ d, V_c_type_definitions(v));
 
   strings__Builder_writeln(&/* ? */ d,
                            tos2((byte *)"\nstring _STR(const char*, ...);\n"));
@@ -12085,11 +12150,6 @@ TypeCategory key_to_type_cat(Token tok) {
 }
 void Parser_struct_decl(Parser *p) {
 
-  bool is_objc = string_starts_with(p->attr, tos2((byte *)"interface"));
-
-  string objc_parent =
-      (is_objc) ? (string_right(p->attr, 10)) : (tos2((byte *)""));
-
   bool is_interface = p->tok == main__Token_key_interface;
 
   bool is_union = p->tok == main__Token_key_union;
@@ -12148,24 +12208,13 @@ void Parser_struct_decl(Parser *p) {
     Parser_error(p, _STR("`%.*s` redeclared", name.len, name.str));
   };
 
-  if (is_objc) {
+  if (!is_c) {
 
-    Parser_gen_type(p, _STR("@interface %.*s : %.*s { @public", name.len,
-                            name.str, objc_parent.len, objc_parent.str));
+    string kind =
+        (is_union) ? (tos2((byte *)"union")) : (tos2((byte *)"struct"));
 
-  } else {
-
-    if (!is_c) {
-
-      string kind =
-          (is_union) ? (tos2((byte *)"union")) : (tos2((byte *)"struct"));
-
-      Parser_gen_typedef(p, _STR("typedef %.*s %.*s %.*s;", kind.len, kind.str,
-                                 name.len, name.str, name.len, name.str));
-
-      Parser_gen_type(
-          p, _STR("%.*s %.*s {", kind.len, kind.str, name.len, name.str));
-    };
+    Parser_gen_typedef(p, _STR("typedef %.*s %.*s %.*s;", kind.len, kind.str,
+                               name.len, name.str, name.len, name.str));
   };
 
   Type *typ = Table_find_type(&/* ? */ *p->table, name);
@@ -12288,7 +12337,7 @@ void Parser_struct_decl(Parser *p) {
                                    "letters, use snake_case instead"));
     };
 
-    _PUSH(&names, (field_name), tmp56, string);
+    _PUSH(&names, (field_name), tmp54, string);
 
     if (is_interface) {
 
@@ -12309,16 +12358,6 @@ void Parser_struct_decl(Parser *p) {
     if (is_atomic) {
 
       Parser_next(p);
-
-      Parser_gen_type(p, tos2((byte *)"_Atomic "));
-    };
-
-    if (!is_c) {
-
-      Parser_gen_type(
-          p, string_add(Table_cgen_name_type_pair(&/* ? */ *p->table,
-                                                  field_name, field_type),
-                        tos2((byte *)";")));
     };
 
     string attr = tos2((byte *)"");
@@ -12362,25 +12401,6 @@ void Parser_struct_decl(Parser *p) {
 
   Parser_check(p, main__Token_rcbr);
 
-  if (!is_c) {
-
-    if (!did_gen_something) {
-
-      Parser_gen_type(p, tos2((byte *)"EMPTY_STRUCT_DECLARATION };"));
-
-      Parser_fgenln(p, tos2((byte *)""));
-
-    } else {
-
-      Parser_gen_type(p, tos2((byte *)"}; "));
-    };
-  };
-
-  if (is_objc) {
-
-    Parser_gen_type(p, tos2((byte *)"@end"));
-  };
-
   Parser_fgenln(p, tos2((byte *)"\n"));
 }
 void Parser_enum_decl(Parser *p, string _enum_name) {
@@ -12396,7 +12416,7 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
       !Parser_first_pass(&/* ? */ *p)) {
 
     _PUSH(&p->cgen->typedefs,
-          (_STR("typedef int %.*s;", enum_name.len, enum_name.str)), tmp62,
+          (_STR("typedef int %.*s;", enum_name.len, enum_name.str)), tmp60,
           string);
   };
 
@@ -12411,7 +12431,7 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
 
     string field = Parser_check_name(p);
 
-    _PUSH(&fields, (field), tmp66, string);
+    _PUSH(&fields, (field), tmp64, string);
 
     Parser_fgenln(p, tos2((byte *)""));
 
@@ -12421,7 +12441,7 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
     if (p->pass == main__Pass_main) {
 
       _PUSH(&p->cgen->consts,
-            (_STR("#define %.*s %d", name.len, name.str, val)), tmp68, string);
+            (_STR("#define %.*s %d", name.len, name.str, val)), tmp66, string);
     };
 
     if (p->tok == main__Token_comma) {
@@ -13000,7 +13020,7 @@ void Parser_genln(Parser *p, string s) { CGen_genln(p->cgen, s); }
 void Parser_gen(Parser *p, string s) { CGen_gen(p->cgen, s); }
 void Parser_vh_genln(Parser *p, string s) {
 
-  _PUSH(&p->vh_lines, (s), tmp98, string);
+  _PUSH(&p->vh_lines, (s), tmp96, string);
 }
 string Parser_statement(Parser *p, bool add_semi) {
 
@@ -13535,9 +13555,9 @@ string Parser_bterm(Parser *p) {
 
       string sql_param = CGen_cut(p->cgen);
 
-      _PUSH(&p->sql_params, (sql_param), tmp134, string);
+      _PUSH(&p->sql_params, (sql_param), tmp132, string);
 
-      _PUSH(&p->sql_types, (typ), tmp135, string);
+      _PUSH(&p->sql_types, (typ), tmp133, string);
 
     } else {
 
@@ -15053,7 +15073,7 @@ string Parser_assoc(Parser *p) {
 
     string field = Parser_check_name(p);
 
-    _PUSH(&fields, (field), tmp234, string);
+    _PUSH(&fields, (field), tmp232, string);
 
     Parser_gen(p, _STR(".%.*s = ", field.len, field.str));
 
@@ -15071,10 +15091,10 @@ string Parser_assoc(Parser *p) {
 
   Type *T = Table_find_type(&/* ? */ *p->table, var.typ);
 
-  array_Var tmp236 = T->fields;
+  array_Var tmp234 = T->fields;
   ;
-  for (int tmp237 = 0; tmp237 < tmp236.len; tmp237++) {
-    Var ffield = ((Var *)tmp236.data)[tmp237];
+  for (int tmp235 = 0; tmp235 < tmp234.len; tmp235++) {
+    Var ffield = ((Var *)tmp234.data)[tmp235];
 
     string f = ffield.name;
 
@@ -15640,9 +15660,9 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
 
   if (string_eq(typ, tos2((byte *)"tm"))) {
 
-    string tmp283 = tos2((byte *)"");
+    string tmp281 = tos2((byte *)"");
 
-    array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 1, &tmp283);
+    array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 1, &tmp281);
   };
 
   Parser_check(p, main__Token_lcbr);
@@ -15715,7 +15735,7 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
 
       Var f = Type_find_field(&/* ? */ *t, field);
 
-      _PUSH(&inited_fields, (field), tmp290, string);
+      _PUSH(&inited_fields, (field), tmp288, string);
 
       Parser_gen(p, _STR(".%.*s = ", field.len, field.str));
 
@@ -15745,10 +15765,10 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
       Parser_gen(p, tos2((byte *)","));
     };
 
-    array_Var tmp291 = t->fields;
+    array_Var tmp289 = t->fields;
     ;
-    for (int i = 0; i < tmp291.len; i++) {
-      Var field = ((Var *)tmp291.data)[i];
+    for (int i = 0; i < tmp289.len; i++) {
+      Var field = ((Var *)tmp289.data)[i];
 
       if (array_string_contains(inited_fields, field.name)) {
 
@@ -15770,7 +15790,7 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
                            field.name.str, string_right(field_typ, 4).len,
                            string_right(field_typ, 4).str));
 
-        _PUSH(&inited_fields, (field.name), tmp293, string);
+        _PUSH(&inited_fields, (field.name), tmp291, string);
 
         if (i != t->fields.len - 1) {
 
@@ -15808,10 +15828,10 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
       T = Table_find_type(&/* ? */ *p->table, T->parent);
     };
 
-    array_Var tmp296 = T->fields;
+    array_Var tmp294 = T->fields;
     ;
-    for (int i = 0; i < tmp296.len; i++) {
-      Var ffield = ((Var *)tmp296.data)[i];
+    for (int i = 0; i < tmp294.len; i++) {
+      Var ffield = ((Var *)tmp294.data)[i];
 
       string expr_typ = Parser_bool_expression(p);
 
@@ -16601,9 +16621,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
             Parser_check(p, main__Token_rcbr);
           };
 
-          string tmp348 = res_typ;
+          string tmp346 = res_typ;
           { Parser_check(p, main__Token_rcbr); }
-          return tmp348;
+          return tmp346;
           ;
 
         } else {
@@ -16612,9 +16632,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
           p->returns = all_cases_return && p->returns;
 
-          string tmp349 = tos2((byte *)"");
+          string tmp347 = tos2((byte *)"");
           { Parser_check(p, main__Token_rcbr); }
-          return tmp349;
+          return tmp347;
           ;
         };
       };
@@ -16639,9 +16659,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         Parser_gen(p, strings__repeat(')', i + 1));
 
-        string tmp351 = res_typ;
+        string tmp349 = res_typ;
         { Parser_check(p, main__Token_rcbr); }
-        return tmp351;
+        return tmp349;
         ;
 
       } else {
@@ -16652,9 +16672,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         p->returns = all_cases_return && p->returns;
 
-        string tmp352 = tos2((byte *)"");
+        string tmp350 = tos2((byte *)"");
         { Parser_check(p, main__Token_rcbr); }
-        return tmp352;
+        return tmp350;
         ;
       };
     };
@@ -16758,9 +16778,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
   p->returns = 0;
 
-  string tmp354 = tos2((byte *)"");
+  string tmp352 = tos2((byte *)"");
   { Parser_check(p, main__Token_rcbr); }
-  return tmp354;
+  return tmp352;
   ;
 
   { Parser_check(p, main__Token_rcbr); }
@@ -16854,10 +16874,10 @@ void Parser_return_st(Parser *p) {
 
         string total_text = tos2((byte *)"");
 
-        array_string tmp365 = p->cur_fn->defer_text;
+        array_string tmp363 = p->cur_fn->defer_text;
         ;
-        for (int tmp366 = 0; tmp366 < tmp365.len; tmp366++) {
-          string text = ((string *)tmp365.data)[tmp366];
+        for (int tmp364 = 0; tmp364 < tmp363.len; tmp364++) {
+          string text = ((string *)tmp363.data)[tmp364];
 
           if (string_ne(text, tos2((byte *)""))) {
 
@@ -17021,10 +17041,10 @@ string Parser_js_decode(Parser *p) {
 
     Type *T = Table_find_type(&/* ? */ *p->table, typ);
 
-    array_Var tmp380 = T->fields;
+    array_Var tmp378 = T->fields;
     ;
-    for (int tmp381 = 0; tmp381 < tmp380.len; tmp381++) {
-      Var field = ((Var *)tmp380.data)[tmp381];
+    for (int tmp379 = 0; tmp379 < tmp378.len; tmp379++) {
+      Var field = ((Var *)tmp378.data)[tmp379];
 
       string def_val = type_default(field.typ);
 
@@ -17052,7 +17072,7 @@ string Parser_js_decode(Parser *p) {
     string opt_type = _STR("Option_%.*s", typ.len, typ.str);
 
     _PUSH(&p->cgen->typedefs,
-          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp384,
+          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp382,
           string);
 
     Table_register_type(p->table, opt_type);
@@ -20436,6 +20456,21 @@ string FileImportTable_resolve_alias(FileImportTable *fit, string alias) {
 
   return tmp103;
 }
+bool Type_contains_field_type(Type *t, string typ) {
+
+  array_Var tmp105 = t->fields;
+  ;
+  for (int tmp106 = 0; tmp106 < tmp105.len; tmp106++) {
+    Var field = ((Var *)tmp105.data)[tmp106];
+
+    if (string_eq(field.typ, typ)) {
+
+      return 1;
+    };
+  };
+
+  return 0;
+}
 map_int build_keys() {
 
   map_int res = new_map(1, sizeof(int));
@@ -21026,22 +21061,23 @@ void init_consts() {
              "__APPLE__\n#include <libproc.h> // proc_pidpath\n#include "
              "<execinfo.h> // backtrace and "
              "backtrace_symbols_fd\n#endif\n\n#ifdef __linux__\n#include "
-             "<execinfo.h> // backtrace and "
-             "backtrace_symbols_fd\n#endif\n\n#ifdef __linux__\n#include "
-             "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
-             "nix\n#endif\n\n\n#define EMPTY_STRUCT_DECLARATION\n#define "
-             "OPTION_CAST(x) (x)\n\n#ifdef _WIN32\n#define "
-             "WIN32_LEAN_AND_MEAN\n#include <windows.h>\n\n// must be included "
-             "after <windows.h>\n#include <shellapi.h>\n\n#include <io.h> // "
-             "_waccess\n#include <fcntl.h> // _O_U8TEXT\n#include <direct.h> "
-             "// _wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n// On "
-             "MSVC these are the same (as long as /volatile:ms is "
-             "passed)\n#define _Atomic volatile\n\n// MSVC cannot parse some "
-             "things properly\n#undef EMPTY_STRUCT_DECLARATION\n#define "
-             "EMPTY_STRUCT_DECLARATION void *____dummy_variable;\n#undef "
-             "OPTION_CAST\n#define OPTION_CAST(x)\n#endif\n\nvoid "
-             "pthread_mutex_lock(HANDLE *m) {\n	WaitForSingleObject(*m, "
-             "INFINITE);\n}\n\nvoid pthread_mutex_unlock(HANDLE *m) {\n	"
+             "<execinfo.h> // backtrace and backtrace_symbols_fd\n#pragma weak "
+             "backtrace\n#pragma weak backtrace_symbols_fd\n#endif\n\n#ifdef "
+             "__linux__\n#include <sys/types.h>\n#include <sys/wait.h> // "
+             "os__wait uses wait on nix\n#endif\n\n\n#define "
+             "EMPTY_STRUCT_DECLARATION\n#define OPTION_CAST(x) (x)\n\n#ifdef "
+             "_WIN32\n#define WIN32_LEAN_AND_MEAN\n#include <windows.h>\n\n// "
+             "must be included after <windows.h>\n#include "
+             "<shellapi.h>\n\n#include <io.h> // _waccess\n#include <fcntl.h> "
+             "// _O_U8TEXT\n#include <direct.h> // _wgetcwd\n//#include "
+             "<WinSock2.h>\n#ifdef _MSC_VER\n// On MSVC these are the same (as "
+             "long as /volatile:ms is passed)\n#define _Atomic volatile\n\n// "
+             "MSVC cannot parse some things properly\n#undef "
+             "EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_DECLARATION void "
+             "*____dummy_variable;\n#undef OPTION_CAST\n#define "
+             "OPTION_CAST(x)\n#endif\n\nvoid pthread_mutex_lock(HANDLE *m) "
+             "{\n	WaitForSingleObject(*m, INFINITE);\n}\n\nvoid "
+             "pthread_mutex_unlock(HANDLE *m) {\n	"
              "ReleaseMutex(*m);\n}\n#else\n#include "
              "<pthread.h>\n#endif\n\n//================================== "
              "TYPEDEFS ================================*/\n\ntypedef unsigned "
