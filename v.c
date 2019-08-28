@@ -6225,9 +6225,17 @@ void V_cc_windows_cross(V *c) {
     string winroot_url = tos2((byte *)"https://github.com/vlang/v/releases/"
                                       "download/v0.1.10/winroot.zip");
 
-    printf("\"%.*s\" not found. Download it from %.*s and save in %.*s\n",
-           winroot.len, winroot.str, winroot_url.len, winroot_url.str,
-           main__ModPath.len, main__ModPath.str);
+    printf("\"%.*s\" not found.\n", winroot.len, winroot.str);
+
+    printf("Download it from %.*s and save it in %.*s\n", winroot_url.len,
+           winroot_url.str, main__ModPath.len, main__ModPath.str);
+
+    println(tos2((byte *)"Unzip it afterwards.\n"));
+
+    println(string_add(
+        tos2((
+            byte *)"winroot.zip contains all library and header files needed "),
+        tos2((byte *)"to cross-compile for Windows.")));
 
     v_exit(1);
   };
