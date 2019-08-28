@@ -19,6 +19,8 @@
 
 #ifdef __linux__
 #include <execinfo.h> // backtrace and backtrace_symbols_fd
+#pragma weak backtrace
+#pragma weak backtrace_symbols_fd
 #endif
 
 #ifdef __linux__
@@ -213,20 +215,24 @@ struct array {
   int cap;
   int element_size;
 };
+
 struct string {
   byte *str;
   int len;
 };
+
 struct ustring {
   string s;
   array_int runes;
   int len;
 };
+
 struct map {
   int element_size;
   Node *root;
   int size;
 };
+
 struct Node {
   Node *left;
   Node *right;
@@ -234,26 +240,32 @@ struct Node {
   string key;
   void *val;
 };
+
 struct Option {
   byte data[255];
   string error;
   bool ok;
 };
+
 struct strings__Builder {
   array_byte buf;
   int len;
 };
+
 struct os__File {
   FILE *cfile;
 };
+
 struct os__FileInfo {
   string name;
   int size;
 };
+
 struct os__Result {
   int exit_code;
   string output;
 };
+
 struct time__Time {
   int year;
   int month;
@@ -263,6 +275,39 @@ struct time__Time {
   int second;
   int uni;
 };
+
+struct Fn {
+  string name;
+  string mod;
+  array_Var local_vars;
+  int var_idx;
+  array_Var args;
+  bool is_interface;
+  int scope_level;
+  string typ;
+  bool is_c;
+  string receiver_typ;
+  bool is_public;
+  bool is_method;
+  bool returns_error;
+  bool is_decl;
+  array_string defer_text;
+};
+
+struct V {
+  OS os;
+  string out_name_c;
+  array_string files;
+  string dir;
+  Table *table;
+  CGen *cgen;
+  Preferences *pref;
+  string lang_dir;
+  string out_name;
+  string vroot;
+  string mod;
+};
+
 struct CGen {
   os__File out;
   string out_path;
@@ -290,36 +335,7 @@ struct CGen {
   bool line_directives;
   int cut_pos;
 };
-struct Fn {
-  string name;
-  string mod;
-  array_Var local_vars;
-  int var_idx;
-  array_Var args;
-  bool is_interface;
-  int scope_level;
-  string typ;
-  bool is_c;
-  string receiver_typ;
-  bool is_public;
-  bool is_method;
-  bool returns_error;
-  bool is_decl;
-  array_string defer_text;
-};
-struct V {
-  OS os;
-  string out_name_c;
-  array_string files;
-  string dir;
-  Table *table;
-  CGen *cgen;
-  Preferences *pref;
-  string lang_dir;
-  string out_name;
-  string vroot;
-  string mod;
-};
+
 struct Preferences {
   BuildMode build_mode;
   bool nofmt;
@@ -342,18 +358,22 @@ struct Preferences {
   string cflags;
   string ccompiler;
 };
+
 struct ModDepGraphNode {
   string name;
   array_string deps;
   string last_cycle;
 };
+
 struct ModDepGraph {
   bool acyclic;
   array_ModDepGraphNode nodes;
 };
+
 struct DepSet {
   array_string items;
 };
+
 struct MsvcResult {
   string exe_path;
   string um_lib_path;
@@ -364,6 +384,7 @@ struct MsvcResult {
   string vs_include_path;
   string shared_include_path;
 };
+
 struct WindowsKit {
   string um_lib_path;
   string ucrt_lib_path;
@@ -371,15 +392,78 @@ struct WindowsKit {
   string ucrt_include_path;
   string shared_include_path;
 };
+
 struct VsInstallation {
   string include_path;
   string lib_path;
   string exe_path;
 };
+
 struct ParsedFlag {
   string f;
   string arg;
 };
+
+struct Repl {
+  int indent;
+  bool in_func;
+  array_string lines;
+  array_string temp_lines;
+  array_string functions_name;
+  array_string functions;
+};
+
+struct ScanRes {
+  Token tok;
+  string lit;
+};
+
+struct Var {
+  string typ;
+  string name;
+  bool is_arg;
+  bool is_const;
+  array_Var args;
+  string attr;
+  bool is_mut;
+  bool is_alloc;
+  bool ptr;
+  bool ref;
+  string parent_fn;
+  string mod;
+  int line_nr;
+  AccessMod access_mod;
+  bool is_global;
+  bool is_used;
+  bool is_changed;
+  int scope_level;
+};
+
+struct Table {
+  array_Type types;
+  array_Var consts;
+  map_Fn fns;
+  array_GenTable generic_fns;
+  map_int obf_ids;
+  array_string modules;
+  array_string imports;
+  array_FileImportTable file_imports;
+  array_string flags;
+  int fn_cnt;
+  bool obfuscate;
+};
+
+struct GenTable {
+  string fn_name;
+  array_string types;
+};
+
+struct FileImportTable {
+  string module_name;
+  string file_path;
+  map_string imports;
+};
+
 struct Parser {
   string file_path;
   string file_name;
@@ -433,14 +517,22 @@ struct Parser {
   array_string sql_params;
   array_string sql_types;
 };
-struct Repl {
-  int indent;
-  bool in_func;
-  array_string lines;
-  array_string temp_lines;
-  array_string functions_name;
-  array_string functions;
+
+struct Type {
+  string mod;
+  string name;
+  TypeCategory cat;
+  array_Var fields;
+  array_Fn methods;
+  string parent;
+  Fn func;
+  bool is_c;
+  array_string enum_vals;
+  array_string gen_types;
+  bool is_placeholder;
+  bool gen_str;
 };
+
 struct Scanner {
   string file_path;
   string text;
@@ -456,66 +548,6 @@ struct Scanner {
   int fmt_indent;
   bool fmt_line_empty;
   Token prev_tok;
-};
-struct ScanRes {
-  Token tok;
-  string lit;
-};
-struct Var {
-  string typ;
-  string name;
-  bool is_arg;
-  bool is_const;
-  array_Var args;
-  string attr;
-  bool is_mut;
-  bool is_alloc;
-  bool ptr;
-  bool ref;
-  string parent_fn;
-  string mod;
-  int line_nr;
-  AccessMod access_mod;
-  bool is_global;
-  bool is_used;
-  bool is_changed;
-  int scope_level;
-};
-struct Table {
-  array_Type types;
-  array_Var consts;
-  map_Fn fns;
-  array_GenTable generic_fns;
-  map_int obf_ids;
-  array_string modules;
-  array_string imports;
-  array_FileImportTable file_imports;
-  array_string flags;
-  int fn_cnt;
-  bool obfuscate;
-};
-struct GenTable {
-  string fn_name;
-  array_string types;
-};
-struct FileImportTable {
-  string module_name;
-  string file_path;
-  map_string imports;
-};
-struct Type {
-  string mod;
-  string name;
-  TypeCategory cat;
-  array_Var fields;
-  array_Fn methods;
-  string parent;
-  Fn func;
-  bool is_c;
-  array_string enum_vals;
-  array_string gen_types;
-  bool is_placeholder;
-  bool gen_str;
 };
 
 string _STR(const char *, ...);
