@@ -1,4 +1,4 @@
-#define _WIN32 1
+
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -10,6 +10,8 @@
 #ifndef _WIN32
 #include <ctype.h>
 #include <locale.h> // tolower
+#include <sys/time.h>
+#include <unistd.h> // sleep
 #endif
 
 #ifdef __APPLE__
@@ -130,9 +132,7 @@ int g_test_ok = 1;
 #include <winsock2.h>
 #endif
 #include <math.h>
-#include <sys/time.h>
 #include <time.h>
-#include <unistd.h> // sleep
 typedef struct array array;
 typedef array array_string;
 typedef array array_byte;
@@ -694,7 +694,7 @@ void _panic_debug(int line_no, string file, string mod, string fn_name,
 void v_panic(string s);
 void println(string s);
 void eprintln(string s);
-void v_print(string s);
+void print(string s);
 byte *v_malloc(int n);
 byte *v_calloc(int n);
 void v_free(void *ptr);
@@ -738,7 +738,7 @@ void mapnode_delete(mapnode *n, string key, int element_size);
 void map_delete(map *m, string key);
 bool map_exists(map m, string key);
 bool map__exists(map m, string key);
-void v_map_print(map m);
+void map_print(map m);
 void v_map_free(map m);
 string map_string_str(map_string m);
 Option opt_ok(void *data, int size);
@@ -2972,7 +2972,7 @@ void eprintln(string s) {
 #endif
   ;
 }
-void v_print(string s) {
+void print(string s) {
 
 #ifdef _WIN32
 
@@ -3754,7 +3754,7 @@ bool map__exists(map m, string key) {
 
   return !isnil(m.root) && mapnode_find2(&/* ? */ *m.root, key, m.element_size);
 }
-void v_map_print(map m) {
+void map_print(map m) {
 
   println(tos2((byte *)"<<<<<<<<"));
 
@@ -5427,11 +5427,11 @@ string term__format_rgb(int r, int g, int b, string msg, string open,
 }
 void term__set_cursor_position(int x, int y) {
 
-  v_print(string_add(_STR("\x1b[%d;%d", y, x), tos2((byte *)"H")));
+  print(string_add(_STR("\x1b[%d;%d", y, x), tos2((byte *)"H")));
 }
 void term__move(int n, string direction) {
 
-  v_print(_STR("\x1b[%d%.*s", n, direction.len, direction.str));
+  print(_STR("\x1b[%d%.*s", n, direction.len, direction.str));
 }
 void term__cursor_up(int n) { term__move(n, tos2((byte *)"A")); }
 void term__cursor_down(int n) { term__move(n, tos2((byte *)"B")); }
@@ -5439,7 +5439,7 @@ void term__cursor_forward(int n) { term__move(n, tos2((byte *)"C")); }
 void term__cursor_back(int n) { term__move(n, tos2((byte *)"D")); }
 void term__erase_display(string t) {
 
-  v_print(string_add(string_add(tos2((byte *)"\x1b["), t), tos2((byte *)"J")));
+  print(string_add(string_add(tos2((byte *)"\x1b["), t), tos2((byte *)"J")));
 }
 void term__erase_toend() { term__erase_display(tos2((byte *)"0")); }
 void term__erase_tobeg() { term__erase_display(tos2((byte *)"1")); }
@@ -5447,16 +5447,13 @@ void term__erase_clear() { term__erase_display(tos2((byte *)"2")); }
 void term__erase_del_clear() { term__erase_display(tos2((byte *)"3")); }
 void term__erase_line(string t) {
 
-  v_print(string_add(string_add(tos2((byte *)"\x1b["), t), tos2((byte *)"K")));
+  print(string_add(string_add(tos2((byte *)"\x1b["), t), tos2((byte *)"K")));
 }
 void term__erase_line_toend() { term__erase_line(tos2((byte *)"0")); }
 void term__erase_line_tobeg() { term__erase_line(tos2((byte *)"1")); }
 void term__erase_line_clear() { term__erase_line(tos2((byte *)"2")); }
-void term__show_cursor() { v_print(tos2((byte *)"\x1b[?25h")); }
-void term__hide_cursor() { v_print(tos2((byte *)"\x1b[?25l")); }
-#ifndef _WIN32
-
-#endif
+void term__show_cursor() { print(tos2((byte *)"\x1b[?25h")); }
+void term__hide_cursor() { print(tos2((byte *)"\x1b[?25l")); }
 void time__remove_me_when_c_bug_is_fixed() {}
 time__Time time__now() {
 
@@ -6207,13 +6204,6 @@ void V_cc(V *v) {
   string cmd = _STR("%.*s %.*s", v->pref->ccompiler.len, v->pref->ccompiler.str,
                     args.len, args.str);
 
-  if (string_ends_with(v->out_name, tos2((byte *)".c"))) {
-
-    os__mv(v->out_name_c, v->out_name);
-
-    v_exit(0);
-  };
-
   if (v->pref->show_c_cmd || v->pref->is_verbose) {
 
     println(tos2((byte *)"\n=========="));
@@ -6263,7 +6253,7 @@ void V_cc(V *v) {
       string partial_output = string_trim_right(string_limit(res.output, 200),
                                                 tos2((byte *)"\r\n"));
 
-      v_print(partial_output);
+      print(partial_output);
 
       if (res.output.len > partial_output.len) {
 
@@ -8904,7 +8894,9 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
     string typ = Parser_bool_expression(p);
 
-    if (i == 0 && string_eq(f->name, tos2((byte *)"println")) &&
+    if (i == 0 &&
+        (string_eq(f->name, tos2((byte *)"println")) ||
+         string_eq(f->name, tos2((byte *)"print"))) &&
         string_ne(typ, tos2((byte *)"string")) &&
         string_ne(typ, tos2((byte *)"void"))) {
 
@@ -8919,7 +8911,7 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
         CGen_resetln(
             p->cgen,
             string_replace(
-                p->cgen->cur_line, tos2((byte *)"println ("),
+                p->cgen->cur_line, string_add(f->name, tos2((byte *)" (")),
                 string_add(string_add(tos2((byte *)"/*opt*/printf (\""), fmt),
                            tos2((byte *)"\\n\", "))));
 
@@ -8960,7 +8952,7 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
           int index = p->cgen->cur_line.len - 1;
 
-          while (index > 0 && string_at(p->cgen->cur_line, index) != ' ') {
+          while (index > 0 && string_at(p->cgen->cur_line, index - 1) != '(') {
 
             index--;
           };
@@ -10826,7 +10818,7 @@ void test_v() {
     string tmpcfilepath = string_replace(file, tos2((byte *)"_test.v"),
                                          tos2((byte *)"_test.tmp.c"));
 
-    v_print(string_add(relative_file, tos2((byte *)" ")));
+    print(string_add(relative_file, tos2((byte *)" ")));
 
     Option_os__Result tmp126 =
         os__exec(_STR("%.*s %.*s -debug %.*s", vexe.len, vexe.str,
@@ -10871,7 +10863,7 @@ void test_v() {
     string tmpcfilepath =
         string_replace(file, tos2((byte *)".v"), tos2((byte *)".tmp.c"));
 
-    v_print(string_add(relative_file, tos2((byte *)" ")));
+    print(string_add(relative_file, tos2((byte *)" ")));
 
     Option_os__Result tmp132 =
         os__exec(_STR("%.*s %.*s -debug %.*s", vexe.len, vexe.str,
@@ -11439,9 +11431,10 @@ void V_cc_msvc(V *v) {
   string out_name_obj = string_add(v->out_name_c, tos2((byte *)".obj"));
 
   array_string a = new_array_from_c_array(
-      5, 5, sizeof(string),
-      (string[]){tos2((byte *)"-w"), tos2((byte *)"/volatile:ms"),
-                 tos2((byte *)"/D_UNICODE"), tos2((byte *)"/DUNICODE"),
+      6, 6, sizeof(string),
+      (string[]){tos2((byte *)"-w"), tos2((byte *)"/we4013"),
+                 tos2((byte *)"/volatile:ms"), tos2((byte *)"/D_UNICODE"),
+                 tos2((byte *)"/DUNICODE"),
                  _STR("/Fo%.*s", out_name_obj.len, out_name_obj.str)});
 
   if (v->pref->is_prod) {
@@ -18019,11 +18012,11 @@ array_string run_repl() {
 
     if (r.indent == 0) {
 
-      v_print(tos2((byte *)">>> "));
+      print(tos2((byte *)">>> "));
 
     } else {
 
-      v_print(tos2((byte *)"... "));
+      print(tos2((byte *)"... "));
     };
 
     string line = os__get_raw_line();
@@ -19360,7 +19353,7 @@ void Scanner_debug_tokens(Scanner *s) {
 
     string lit = res.lit;
 
-    v_print(Token_str(tok));
+    print(Token_str(tok));
 
     if (string_ne(lit, tos2((byte *)""))) {
 
@@ -21438,9 +21431,10 @@ void init_consts() {
              "<stdlib.h>\n#include <signal.h>\n#include <stdarg.h> // for "
              "va_list\n#include <inttypes.h>  // int64_t etc\n#include "
              "<string.h> // memcpy\n\n#ifndef _WIN32\n#include "
-             "<ctype.h>\n#include <locale.h> // tolower\n#endif\n\n#ifdef "
-             "__APPLE__\n#include <libproc.h> // proc_pidpath\n#include "
-             "<execinfo.h> // backtrace and "
+             "<ctype.h>\n#include <locale.h> // tolower\n#include "
+             "<sys/time.h>\n#include <unistd.h> // sleep	"
+             "\n#endif\n\n#ifdef __APPLE__\n#include <libproc.h> // "
+             "proc_pidpath\n#include <execinfo.h> // backtrace and "
              "backtrace_symbols_fd\n#endif\n\n#ifdef __linux__\n#include "
              "<execinfo.h> // backtrace and backtrace_symbols_fd\n#pragma weak "
              "backtrace\n#pragma weak backtrace_symbols_fd\n#endif\n\n#ifdef "
@@ -21553,29 +21547,29 @@ void init_consts() {
       tos2((byte *)"use `()` to make the boolean expression clear\n"),
       tos2((byte *)"for example: `(a && b) || c` instead of `a && b || c`"));
   main__CReserved = new_array_from_c_array(
-      42, 42, sizeof(string),
+      41, 41, sizeof(string),
       (string[]){
           tos2((byte *)"exit"),     tos2((byte *)"unix"),
-          tos2((byte *)"print"),    tos2((byte *)"error"),
-          tos2((byte *)"malloc"),   tos2((byte *)"calloc"),
-          tos2((byte *)"free"),     tos2((byte *)"panic"),
-          tos2((byte *)"auto"),     tos2((byte *)"break"),
-          tos2((byte *)"case"),     tos2((byte *)"char"),
-          tos2((byte *)"const"),    tos2((byte *)"continue"),
-          tos2((byte *)"default"),  tos2((byte *)"do"),
-          tos2((byte *)"double"),   tos2((byte *)"else"),
-          tos2((byte *)"enum"),     tos2((byte *)"extern"),
-          tos2((byte *)"float"),    tos2((byte *)"for"),
-          tos2((byte *)"goto"),     tos2((byte *)"if"),
-          tos2((byte *)"inline"),   tos2((byte *)"int"),
-          tos2((byte *)"long"),     tos2((byte *)"register"),
-          tos2((byte *)"restrict"), tos2((byte *)"return"),
-          tos2((byte *)"short"),    tos2((byte *)"signed"),
-          tos2((byte *)"sizeof"),   tos2((byte *)"static"),
-          tos2((byte *)"struct"),   tos2((byte *)"switch"),
-          tos2((byte *)"typedef"),  tos2((byte *)"union"),
-          tos2((byte *)"unsigned"), tos2((byte *)"void"),
-          tos2((byte *)"volatile"), tos2((byte *)"while"),
+          tos2((byte *)"error"),    tos2((byte *)"malloc"),
+          tos2((byte *)"calloc"),   tos2((byte *)"free"),
+          tos2((byte *)"panic"),    tos2((byte *)"auto"),
+          tos2((byte *)"break"),    tos2((byte *)"case"),
+          tos2((byte *)"char"),     tos2((byte *)"const"),
+          tos2((byte *)"continue"), tos2((byte *)"default"),
+          tos2((byte *)"do"),       tos2((byte *)"double"),
+          tos2((byte *)"else"),     tos2((byte *)"enum"),
+          tos2((byte *)"extern"),   tos2((byte *)"float"),
+          tos2((byte *)"for"),      tos2((byte *)"goto"),
+          tos2((byte *)"if"),       tos2((byte *)"inline"),
+          tos2((byte *)"int"),      tos2((byte *)"long"),
+          tos2((byte *)"register"), tos2((byte *)"restrict"),
+          tos2((byte *)"return"),   tos2((byte *)"short"),
+          tos2((byte *)"signed"),   tos2((byte *)"sizeof"),
+          tos2((byte *)"static"),   tos2((byte *)"struct"),
+          tos2((byte *)"switch"),   tos2((byte *)"typedef"),
+          tos2((byte *)"union"),    tos2((byte *)"unsigned"),
+          tos2((byte *)"void"),     tos2((byte *)"volatile"),
+          tos2((byte *)"while"),
       });
   main__number_types = new_array_from_c_array(
       13, 13, sizeof(string),
