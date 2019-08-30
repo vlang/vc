@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "dae4c4b"
+#define V_COMMIT_HASH "4f0f99e"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -392,17 +392,17 @@ struct V {
 struct CGen {
   os__File out;
   string out_path;
+  array_string thread_fns;
+  bool is_user;
+  array_string lines;
   array_string typedefs;
   array_string type_aliases;
   array_string includes;
   array_string thread_args;
-  array_string thread_fns;
   array_string consts;
   array_string fns;
   array_string so_fns;
   array_string consts_init;
-  bool is_user;
-  array_string lines;
   Pass pass;
   bool nogen;
   string tmp_line;
@@ -458,6 +458,8 @@ struct Parser {
   string mod;
   bool inside_const;
   Var expr_var;
+  bool has_immutable_field;
+  Var first_immutable_field;
   string assigned_type;
   string expected_type;
   int tmp_cnt;
@@ -6397,17 +6399,17 @@ CGen *new_cgen(string out_name_c) {
 
     return (CGen *)memdup(
         &(CGen){.out_path = tos((byte *)"", 0),
+                .thread_fns = new_array(0, 1, sizeof(string)),
+                .is_user = 0,
+                .lines = new_array(0, 1, sizeof(string)),
                 .typedefs = new_array(0, 1, sizeof(string)),
                 .type_aliases = new_array(0, 1, sizeof(string)),
                 .includes = new_array(0, 1, sizeof(string)),
                 .thread_args = new_array(0, 1, sizeof(string)),
-                .thread_fns = new_array(0, 1, sizeof(string)),
                 .consts = new_array(0, 1, sizeof(string)),
                 .fns = new_array(0, 1, sizeof(string)),
                 .so_fns = new_array(0, 1, sizeof(string)),
                 .consts_init = new_array(0, 1, sizeof(string)),
-                .is_user = 0,
-                .lines = new_array(0, 1, sizeof(string)),
                 .nogen = 0,
                 .tmp_line = tos((byte *)"", 0),
                 .cur_line = tos((byte *)"", 0),
@@ -6428,16 +6430,16 @@ CGen *new_cgen(string out_name_c) {
       (CGen *)memdup(&(CGen){.out_path = path,
                              .out = out,
                              .lines = _make(0, 1000, sizeof(string)),
+                             .thread_fns = new_array(0, 1, sizeof(string)),
+                             .is_user = 0,
                              .typedefs = new_array(0, 1, sizeof(string)),
                              .type_aliases = new_array(0, 1, sizeof(string)),
                              .includes = new_array(0, 1, sizeof(string)),
                              .thread_args = new_array(0, 1, sizeof(string)),
-                             .thread_fns = new_array(0, 1, sizeof(string)),
                              .consts = new_array(0, 1, sizeof(string)),
                              .fns = new_array(0, 1, sizeof(string)),
                              .so_fns = new_array(0, 1, sizeof(string)),
                              .consts_init = new_array(0, 1, sizeof(string)),
-                             .is_user = 0,
                              .nogen = 0,
                              .tmp_line = tos((byte *)"", 0),
                              .cur_line = tos((byte *)"", 0),
@@ -11706,6 +11708,7 @@ Parser V_new_parser(V *v, string path) {
       .lit = tos((byte *)"", 0),
       .mod = tos((byte *)"", 0),
       .inside_const = 0,
+      .has_immutable_field = 0,
       .assigned_type = tos((byte *)"", 0),
       .expected_type = tos((byte *)"", 0),
       .tmp_cnt = 0,
@@ -13759,6 +13762,8 @@ string Parser_bterm(Parser *p) {
 }
 string Parser_name_expr(Parser *p) {
 
+  p->has_immutable_field = 0;
+
   int ph = CGen_add_placeholder(p->cgen);
 
   bool ptr = p->tok == main__Token_amp;
@@ -14304,25 +14309,35 @@ string Parser_dot(Parser *p, string str_typ, int method_ph) {
 
     Var field = Table_find_field(&/* ? */ *p->table, typ, struct_field);
 
+    if (!field.is_mut && !p->has_immutable_field) {
+
+      p->has_immutable_field = 1;
+
+      p->first_immutable_field = field;
+    };
+
     Token next = Parser_peek(p);
 
     bool modifying = Token_is_assign(next) || next == main__Token_inc ||
-                     next == main__Token_dec;
+                     next == main__Token_dec ||
+                     (string_starts_with(field.typ, tos2((byte *)"array_")) &&
+                      next == main__Token_left_shift);
 
     bool is_vi = Parser_fileis(&/* ? */ *p, tos2((byte *)"vid"));
 
-    if (!p->builtin_mod && !p->pref->translated && modifying && !field.is_mut &&
-        !is_vi) {
+    if (!p->builtin_mod && !p->pref->translated && modifying && !is_vi &&
+        p->has_immutable_field) {
+
+      Var f = p->first_immutable_field;
 
       Parser_error(
           p, string_add(
                  _STR("cannot modify immutable field `%.*s` (type `%.*s`)\n",
-                      struct_field.len, struct_field.str, typ->name.len,
-                      typ->name.str),
+                      f.name.len, f.name.str, f.parent_fn.len, f.parent_fn.str),
                  _STR("declare the field with `mut:`\n\nstruct %.*s {\n  "
                       "mut:\n	%.*s %.*s\n}\n",
-                      typ->name.len, typ->name.str, struct_field.len,
-                      struct_field.str, field.typ.len, field.typ.str)));
+                      f.parent_fn.len, f.parent_fn.str, f.name.len, f.name.str,
+                      f.typ.len, f.typ.str)));
     };
 
     if (!p->builtin_mod && string_ne(p->mod, typ->mod)) {
@@ -14335,18 +14350,6 @@ string Parser_dot(Parser *p, string str_typ, int method_ph) {
                    _STR("cannot refer to unexported field `%.*s` (type `%.*s`)",
                         struct_field.len, struct_field.str, typ->name.len,
                         typ->name.str));
-    };
-
-    if (field.access_mod == main__AccessMod_public && !p->builtin_mod &&
-        string_ne(p->mod, typ->mod)) {
-
-      if (!field.is_mut && !p->pref->translated && modifying) {
-
-        Parser_error(
-            p, _STR("cannot modify public immutable field `%.*s` (type `%.*s`)",
-                    struct_field.len, struct_field.str, typ->name.len,
-                    typ->name.str));
-      };
     };
 
     Parser_gen(p, string_add(dot, struct_field));
@@ -15238,7 +15241,7 @@ string Parser_assoc(Parser *p) {
 
     string field = Parser_check_name(p);
 
-    _PUSH(&fields, (field), tmp233, string);
+    _PUSH(&fields, (field), tmp234, string);
 
     Parser_gen(p, _STR(".%.*s = ", field.len, field.str));
 
@@ -15256,10 +15259,10 @@ string Parser_assoc(Parser *p) {
 
   Type *T = Table_find_type(&/* ? */ *p->table, var.typ);
 
-  array_Var tmp235 = T->fields;
+  array_Var tmp236 = T->fields;
   ;
-  for (int tmp236 = 0; tmp236 < tmp235.len; tmp236++) {
-    Var ffield = ((Var *)tmp235.data)[tmp236];
+  for (int tmp237 = 0; tmp237 < tmp236.len; tmp237++) {
+    Var ffield = ((Var *)tmp236.data)[tmp237];
 
     string f = ffield.name;
 
@@ -15823,9 +15826,9 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
 
   if (string_eq(typ, tos2((byte *)"tm"))) {
 
-    string tmp282 = tos2((byte *)"");
+    string tmp283 = tos2((byte *)"");
 
-    array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 1, &tmp282);
+    array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 1, &tmp283);
   };
 
   Parser_check(p, main__Token_lcbr);
@@ -15900,7 +15903,7 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
 
       Var f = Type_find_field(&/* ? */ *t, field);
 
-      _PUSH(&inited_fields, (field), tmp289, string);
+      _PUSH(&inited_fields, (field), tmp290, string);
 
       Parser_gen(p, _STR(".%.*s = ", field.len, field.str));
 
@@ -15930,10 +15933,10 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
       Parser_gen(p, tos2((byte *)","));
     };
 
-    array_Var tmp290 = t->fields;
+    array_Var tmp291 = t->fields;
     ;
-    for (int i = 0; i < tmp290.len; i++) {
-      Var field = ((Var *)tmp290.data)[i];
+    for (int i = 0; i < tmp291.len; i++) {
+      Var field = ((Var *)tmp291.data)[i];
 
       if (array_string_contains(inited_fields, field.name)) {
 
@@ -15955,7 +15958,7 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
                            field.name.str, string_right(field_typ, 4).len,
                            string_right(field_typ, 4).str));
 
-        _PUSH(&inited_fields, (field.name), tmp292, string);
+        _PUSH(&inited_fields, (field.name), tmp293, string);
 
         if (i != t->fields.len - 1) {
 
@@ -15993,10 +15996,10 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
       T = Table_find_type(&/* ? */ *p->table, T->parent);
     };
 
-    array_Var tmp295 = T->fields;
+    array_Var tmp296 = T->fields;
     ;
-    for (int i = 0; i < tmp295.len; i++) {
-      Var ffield = ((Var *)tmp295.data)[i];
+    for (int i = 0; i < tmp296.len; i++) {
+      Var ffield = ((Var *)tmp296.data)[i];
 
       string expr_typ = Parser_bool_expression(p);
 
@@ -16821,9 +16824,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
             Parser_check(p, main__Token_rcbr);
           };
 
-          string tmp348 = res_typ;
+          string tmp349 = res_typ;
           { Parser_check(p, main__Token_rcbr); }
-          return tmp348;
+          return tmp349;
           ;
 
         } else {
@@ -16832,9 +16835,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
           p->returns = all_cases_return && p->returns;
 
-          string tmp349 = tos2((byte *)"");
+          string tmp350 = tos2((byte *)"");
           { Parser_check(p, main__Token_rcbr); }
-          return tmp349;
+          return tmp350;
           ;
         };
       };
@@ -16859,9 +16862,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         Parser_gen(p, strings__repeat(')', i + 1));
 
-        string tmp351 = res_typ;
+        string tmp352 = res_typ;
         { Parser_check(p, main__Token_rcbr); }
-        return tmp351;
+        return tmp352;
         ;
 
       } else {
@@ -16872,9 +16875,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         p->returns = all_cases_return && p->returns;
 
-        string tmp352 = tos2((byte *)"");
+        string tmp353 = tos2((byte *)"");
         { Parser_check(p, main__Token_rcbr); }
-        return tmp352;
+        return tmp353;
         ;
       };
     };
@@ -16978,9 +16981,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
   p->returns = 0;
 
-  string tmp354 = tos2((byte *)"");
+  string tmp355 = tos2((byte *)"");
   { Parser_check(p, main__Token_rcbr); }
-  return tmp354;
+  return tmp355;
   ;
 
   { Parser_check(p, main__Token_rcbr); }
@@ -17074,10 +17077,10 @@ void Parser_return_st(Parser *p) {
 
         string total_text = tos2((byte *)"");
 
-        array_string tmp365 = p->cur_fn->defer_text;
+        array_string tmp366 = p->cur_fn->defer_text;
         ;
-        for (int tmp366 = 0; tmp366 < tmp365.len; tmp366++) {
-          string text = ((string *)tmp365.data)[tmp366];
+        for (int tmp367 = 0; tmp367 < tmp366.len; tmp367++) {
+          string text = ((string *)tmp366.data)[tmp367];
 
           if (string_ne(text, tos2((byte *)""))) {
 
@@ -17241,10 +17244,10 @@ string Parser_js_decode(Parser *p) {
 
     Type *T = Table_find_type(&/* ? */ *p->table, typ);
 
-    array_Var tmp380 = T->fields;
+    array_Var tmp381 = T->fields;
     ;
-    for (int tmp381 = 0; tmp381 < tmp380.len; tmp381++) {
-      Var field = ((Var *)tmp380.data)[tmp381];
+    for (int tmp382 = 0; tmp382 < tmp381.len; tmp382++) {
+      Var field = ((Var *)tmp381.data)[tmp382];
 
       string def_val = type_default(field.typ);
 
@@ -17272,7 +17275,7 @@ string Parser_js_decode(Parser *p) {
     string opt_type = _STR("Option_%.*s", typ.len, typ.str);
 
     _PUSH(&p->cgen->typedefs,
-          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp384,
+          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp385,
           string);
 
     Table_register_type(p->table, opt_type);
@@ -19803,6 +19806,7 @@ void Type_add_field(Type *t, string name, string typ, bool is_mut, string attr,
                 .typ = typ,
                 .is_mut = is_mut,
                 .attr = attr,
+                .parent_fn = t->name,
                 .access_mod = access_mod,
                 .is_arg = 0,
                 .is_const = 0,
@@ -19810,7 +19814,6 @@ void Type_add_field(Type *t, string name, string typ, bool is_mut, string attr,
                 .is_alloc = 0,
                 .ptr = 0,
                 .ref = 0,
-                .parent_fn = tos((byte *)"", 0),
                 .mod = tos((byte *)"", 0),
                 .line_nr = 0,
                 .is_global = 0,
