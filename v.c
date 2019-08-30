@@ -1,4 +1,4 @@
-
+#define V_COMMIT_HASH "e3389e8"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -8438,7 +8438,7 @@ void Parser_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
 
     if (!p->expr_var.is_changed) {
 
-      Fn_mark_var_changed(&/* ? */ *p->cur_fn, p->expr_var);
+      Fn_mark_var_changed(p->cur_fn, p->expr_var);
     };
 
     if (receiver.ref || (receiver.is_mut &&
@@ -8765,7 +8765,7 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
       if (!v.is_changed) {
 
-        Fn_mark_var_changed(&/* ? */ *p->cur_fn, v);
+        Fn_mark_var_changed(p->cur_fn, v);
       };
     };
 
@@ -13378,7 +13378,7 @@ void Parser_assign_statement(Parser *p, Var v, int ph, bool is_map) {
 
   if (!v.is_changed) {
 
-    Fn_mark_var_changed(&/* ? */ *p->cur_fn, v);
+    Fn_mark_var_changed(p->cur_fn, v);
   };
 
   bool is_str = string_eq(v.typ, tos2((byte *)"string"));
@@ -13455,7 +13455,7 @@ void Parser_assign_statement(Parser *p, Var v, int ph, bool is_map) {
 
   if (!v.is_used) {
 
-    Fn_mark_var_used(&/* ? */ *p->cur_fn, v);
+    Fn_mark_var_used(p->cur_fn, v);
   };
 }
 void Parser_var_decl(Parser *p) {
@@ -13485,7 +13485,7 @@ void Parser_var_decl(Parser *p) {
 
   p->var_decl_name = name;
 
-  if (!p->builtin_mod && Fn_known_var(&/* ? */ *p->cur_fn, name)) {
+  if (!p->builtin_mod && Fn_known_var(p->cur_fn, name)) {
 
     Var v = Fn_find_var(&/* ? */ *p->cur_fn, name);
 
@@ -13826,7 +13826,7 @@ string Parser_name_expr(Parser *p) {
 
   if (((string_eq(name, p->mod) && Table_known_mod(&/* ? */ *p->table, name)) ||
        FileImportTable_known_alias(&/* ? */ *p->import_table, name)) &&
-      !Fn_known_var(&/* ? */ *p->cur_fn, name) && !is_c) {
+      !Fn_known_var(p->cur_fn, name) && !is_c) {
 
     string mod = name;
 
@@ -13849,7 +13849,7 @@ string Parser_name_expr(Parser *p) {
     name = prepend_mod(mod, name);
 
   } else if (!Table_known_type(&/* ? */ *p->table, name) &&
-             !Fn_known_var(&/* ? */ *p->cur_fn, name) &&
+             !Fn_known_var(p->cur_fn, name) &&
              !Table_known_fn(&/* ? */ *p->table, name) &&
              !Table_known_const(&/* ? */ *p->table, name) && !is_c) {
 
@@ -14122,7 +14122,7 @@ string Parser_var_expr(Parser *p, Var v) {
   Parser_log(&/* ? */ *p, _STR("\nvar_expr() v.name=\"%.*s\" v.typ=\"%.*s\"",
                                v.name.len, v.name.str, v.typ.len, v.typ.str));
 
-  Fn_mark_var_used(&/* ? */ *p->cur_fn, v);
+  Fn_mark_var_used(p->cur_fn, v);
 
   int fn_ph = CGen_add_placeholder(p->cgen);
 
@@ -14189,7 +14189,7 @@ string Parser_var_expr(Parser *p, Var v) {
 
     if (!v.is_changed) {
 
-      Fn_mark_var_changed(&/* ? */ *p->cur_fn, v);
+      Fn_mark_var_changed(p->cur_fn, v);
     };
 
     if (string_ne(typ, tos2((byte *)"int"))) {
@@ -14537,6 +14537,8 @@ string Parser_index_expr(Parser *p, string typ_, int fn_ph) {
 
       Parser_gen(p, _STR("]/*r%.*s %d*/", typ.len, typ.str, v.is_mut));
     };
+
+    p->expr_var = v;
   };
 
   if ((p->tok == main__Token_assign && !p->is_sql) ||
@@ -14732,7 +14734,7 @@ string Parser_expression(Parser *p) {
 
       if (!p->expr_var.is_changed) {
 
-        Fn_mark_var_changed(&/* ? */ *p->cur_fn, p->expr_var);
+        Fn_mark_var_changed(p->cur_fn, p->expr_var);
       };
 
       string expr_type = Parser_expression(p);
@@ -15218,7 +15220,7 @@ string Parser_assoc(Parser *p) {
 
   string name = Parser_check_name(p);
 
-  if (!Fn_known_var(&/* ? */ *p->cur_fn, name)) {
+  if (!Fn_known_var(p->cur_fn, name)) {
 
     Parser_error(p, _STR("unknown variable `%.*s`", name.len, name.str));
   };
@@ -17153,7 +17155,7 @@ void Parser_go_statement(Parser *p) {
 
     Var v = Fn_find_var(&/* ? */ *p->cur_fn, var_name);
 
-    Fn_mark_var_used(&/* ? */ *p->cur_fn, v);
+    Fn_mark_var_used(p->cur_fn, v);
 
     Parser_next(p);
 
