@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "04a200d"
+#define V_COMMIT_HASH "29b4114"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -115,7 +115,6 @@ typedef int bool;
 //sizeof(type))
 
 //================================== GLOBALS =================================*/
-// int V_ZERO = 0;
 byteptr g_str_buf;
 int load_so(byteptr);
 void reload_so();
@@ -2172,9 +2171,7 @@ int string_index(string s, string p) {
     return -1;
   };
 
-  int tmp53 = 0;
-
-  array_int prefix = array_repeat(&tmp53, p.len, sizeof(int));
+  array_int prefix = array_repeat(&(int[]){0}, p.len, sizeof(int));
 
   int j = 0;
 
@@ -2190,9 +2187,9 @@ int string_index(string s, string p) {
       j++;
     };
 
-    int tmp59 = j;
+    int tmp58 = j;
 
-    array_set(&/*q*/ prefix, i, &tmp59);
+    array_set(&/*q*/ prefix, i, &tmp58);
   };
 
   j = 0;
@@ -2223,10 +2220,10 @@ int string_index(string s, string p) {
 }
 int string_index_any(string s, string chars) {
 
-  string tmp63 = chars;
+  string tmp62 = chars;
   ;
-  for (int tmp64 = 0; tmp64 < tmp63.len; tmp64++) {
-    byte c = ((byte *)tmp63.str)[tmp64];
+  for (int tmp63 = 0; tmp63 < tmp62.len; tmp63++) {
+    byte c = ((byte *)tmp62.str)[tmp63];
 
     int index = string_index(s, byte_str(c));
 
@@ -2403,12 +2400,12 @@ string string_title(string s) {
   array_string tit =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-  array_string tmp85 = words;
+  array_string tmp84 = words;
   ;
-  for (int tmp86 = 0; tmp86 < tmp85.len; tmp86++) {
-    string word = ((string *)tmp85.data)[tmp86];
+  for (int tmp85 = 0; tmp85 < tmp84.len; tmp85++) {
+    string word = ((string *)tmp84.data)[tmp85];
 
-    _PUSH(&tit, (string_capitalize(word)), tmp87, string);
+    _PUSH(&tit, (string_capitalize(word)), tmp86, string);
   };
 
   string title = array_string_join(tit, tos2((byte *)" "));
@@ -2437,10 +2434,10 @@ string string_find_between(string s, string start, string end) {
 }
 bool array_string_contains(array_string ar, string val) {
 
-  array_string tmp92 = ar;
+  array_string tmp91 = ar;
   ;
-  for (int tmp93 = 0; tmp93 < tmp92.len; tmp93++) {
-    string s = ((string *)tmp92.data)[tmp93];
+  for (int tmp92 = 0; tmp92 < tmp91.len; tmp92++) {
+    string s = ((string *)tmp91.data)[tmp92];
 
     if (string_eq(s, val)) {
 
@@ -2452,10 +2449,10 @@ bool array_string_contains(array_string ar, string val) {
 }
 bool array_int_contains(array_int ar, int val) {
 
-  array_int tmp94 = ar;
+  array_int tmp93 = ar;
   ;
-  for (int i = 0; i < tmp94.len; i++) {
-    int s = ((int *)tmp94.data)[i];
+  for (int i = 0; i < tmp93.len; i++) {
+    int s = ((int *)tmp93.data)[i];
 
     if (s == val) {
 
@@ -2632,7 +2629,7 @@ ustring string_ustring(string s) {
 
     int char_len = utf8_char_len(s.str[/*ptr*/ i] /*rbyte 0*/);
 
-    _PUSH(&res.runes, (i), tmp111, int);
+    _PUSH(&res.runes, (i), tmp110, int);
 
     i += char_len - 1;
 
@@ -2661,9 +2658,9 @@ ustring string_ustring_tmp(string s) {
 
     int char_len = utf8_char_len(s.str[/*ptr*/ i] /*rbyte 0*/);
 
-    int tmp116 = i;
+    int tmp115 = i;
 
-    array_set(&/*q*/ res.runes, j, &tmp116);
+    array_set(&/*q*/ res.runes, j, &tmp115);
 
     j++;
 
@@ -2755,10 +2752,10 @@ string array_string_join(array_string a, string del) {
 
   int len = 0;
 
-  array_string tmp127 = a;
+  array_string tmp126 = a;
   ;
-  for (int i = 0; i < tmp127.len; i++) {
-    string val = ((string *)tmp127.data)[i];
+  for (int i = 0; i < tmp126.len; i++) {
+    string val = ((string *)tmp126.data)[i];
 
     len += val.len + del.len;
   };
@@ -2773,10 +2770,10 @@ string array_string_join(array_string a, string del) {
 
   int idx = 0;
 
-  array_string tmp130 = a;
+  array_string tmp129 = a;
   ;
-  for (int i = 0; i < tmp130.len; i++) {
-    string val = ((string *)tmp130.data)[i];
+  for (int i = 0; i < tmp129.len; i++) {
+    string val = ((string *)tmp129.data)[i];
 
     for (int j = 0; j < val.len; j++) {
 
@@ -2840,10 +2837,10 @@ int string_hash(string s) {
 
   if (h == 0 && s.len > 0) {
 
-    string tmp139 = s;
+    string tmp138 = s;
     ;
-    for (int tmp140 = 0; tmp140 < tmp139.len; tmp140++) {
-      byte c = ((byte *)tmp139.str)[tmp140];
+    for (int tmp139 = 0; tmp139 < tmp138.len; tmp139++) {
+      byte c = ((byte *)tmp138.str)[tmp139];
 
       h = h * 31 + ((int)(c));
     };
@@ -2858,9 +2855,7 @@ array_byte string_bytes(string s) {
     return new_array_from_c_array(0, 0, sizeof(byte), (byte[]){0});
   };
 
-  byte tmp141 = ((byte)(0));
-
-  array_byte buf = array_repeat(&tmp141, s.len, sizeof(byte));
+  array_byte buf = array_repeat(&(byte[]){((byte)(0))}, s.len, sizeof(byte));
 
   memcpy(buf.data, s.str, s.len);
 
@@ -3302,15 +3297,13 @@ string byte_str(byte c) {
 bool byte_is_capital(byte c) { return c >= 'A' && c <= 'Z'; }
 array_byte array_byte_clone(array_byte b) {
 
-  byte tmp45 = ((byte)(0));
-
-  array_byte res = array_repeat(&tmp45, b.len, sizeof(byte));
+  array_byte res = array_repeat(&(byte[]){((byte)(0))}, b.len, sizeof(byte));
 
   for (int i = 0; i < b.len; i++) {
 
-    byte tmp50 = (*(byte *)array__get(b, i));
+    byte tmp49 = (*(byte *)array__get(b, i));
 
-    array_set(&/*q*/ res, i, &tmp50);
+    array_set(&/*q*/ res, i, &tmp49);
   };
 
   return res;
@@ -3690,9 +3683,8 @@ int preorder_keys(mapnode *node, array_string *keys, int key_i) {
 }
 array_string map_keys(map *m) {
 
-  string tmp9 = tos2((byte *)"");
-
-  array_string keys = array_repeat(&tmp9, m->size, sizeof(string));
+  array_string keys =
+      array_repeat(&(string[]){tos2((byte *)"")}, m->size, sizeof(string));
 
   if (isnil(m->root)) {
 
@@ -3778,12 +3770,12 @@ string map_string_str(map_string m) {
 
   strings__Builder_writeln(&/* ? */ sb, tos2((byte *)"{"));
 
-  map_string tmp12 = m;
-  array_string keys_tmp12 = map_keys(&tmp12);
-  for (int l = 0; l < keys_tmp12.len; l++) {
-    string key = ((string *)keys_tmp12.data)[l];
+  map_string tmp11 = m;
+  array_string keys_tmp11 = map_keys(&tmp11);
+  for (int l = 0; l < keys_tmp11.len; l++) {
+    string key = ((string *)keys_tmp11.data)[l];
     string val = {0};
-    map_get(tmp12, key, &val);
+    map_get(tmp11, key, &val);
 
     strings__Builder_writeln(
         &/* ? */ sb,
@@ -7674,27 +7666,27 @@ bool Parser_is_sig(Parser *p) {
 }
 Fn *new_fn(string mod, bool is_public) {
 
-  Var tmp18 = (Var){.typ = tos((byte *)"", 0),
-                    .name = tos((byte *)"", 0),
-                    .is_arg = 0,
-                    .is_const = 0,
-                    .args = new_array(0, 1, sizeof(Var)),
-                    .attr = tos((byte *)"", 0),
-                    .is_mut = 0,
-                    .is_alloc = 0,
-                    .ptr = 0,
-                    .ref = 0,
-                    .parent_fn = tos((byte *)"", 0),
-                    .mod = tos((byte *)"", 0),
-                    .line_nr = 0,
-                    .is_global = 0,
-                    .is_used = 0,
-                    .is_changed = 0,
-                    .scope_level = 0};
-
   return (Fn *)memdup(
       &(Fn){.mod = mod,
-            .local_vars = array_repeat(&tmp18, main__MaxLocalVars, sizeof(Var)),
+            .local_vars = array_repeat(
+                &(Var[]){(Var){.typ = tos((byte *)"", 0),
+                               .name = tos((byte *)"", 0),
+                               .is_arg = 0,
+                               .is_const = 0,
+                               .args = new_array(0, 1, sizeof(Var)),
+                               .attr = tos((byte *)"", 0),
+                               .is_mut = 0,
+                               .is_alloc = 0,
+                               .ptr = 0,
+                               .ref = 0,
+                               .parent_fn = tos((byte *)"", 0),
+                               .mod = tos((byte *)"", 0),
+                               .line_nr = 0,
+                               .is_global = 0,
+                               .is_used = 0,
+                               .is_changed = 0,
+                               .scope_level = 0}},
+                main__MaxLocalVars, sizeof(Var)),
             .is_public = is_public,
             .name = tos((byte *)"", 0),
             .var_idx = 0,
@@ -7818,7 +7810,7 @@ void Parser_fn_decl(Parser *p) {
                          .is_changed = 0,
                          .scope_level = 0};
 
-    _PUSH(&f->args, (receiver), tmp29, Var);
+    _PUSH(&f->args, (receiver), tmp28, Var);
 
     Fn_register_var(f, receiver);
   };
@@ -7952,7 +7944,7 @@ void Parser_fn_decl(Parser *p) {
   if (string_starts_with(typ, tos2((byte *)"Option_"))) {
 
     _PUSH(&p->cgen->typedefs, (_STR("typedef Option %.*s;", typ.len, typ.str)),
-          tmp38, string);
+          tmp37, string);
   };
 
   f->typ = typ;
@@ -8009,10 +8001,10 @@ void Parser_fn_decl(Parser *p) {
 
       string cur_lit = p->lit;
 
-      array_string tmp47 = gen_types;
+      array_string tmp46 = gen_types;
       ;
-      for (int tmp48 = 0; tmp48 < tmp47.len; tmp48++) {
-        string gen_type = ((string *)tmp47.data)[tmp48];
+      for (int tmp47 = 0; tmp47 < tmp46.len; tmp47++) {
+        string gen_type = ((string *)tmp46.data)[tmp47];
 
         Parser_genln(p,
                      _STR("%.*s%.*s %.*s_%.*s(%.*s) {", dll_export_linkage.len,
@@ -8155,7 +8147,7 @@ void Parser_fn_decl(Parser *p) {
     if (is_live && Parser_first_pass(&/* ? */ *p) &&
         string_eq(p->mod, tos2((byte *)"main"))) {
 
-      _PUSH(&p->cgen->so_fns, (fn_name_cgen), tmp61, string);
+      _PUSH(&p->cgen->so_fns, (fn_name_cgen), tmp60, string);
 
       fn_name_cgen = _STR("(* %.*s )", fn_name_cgen.len, fn_name_cgen.str);
     };
@@ -8180,7 +8172,7 @@ void Parser_fn_decl(Parser *p) {
         return;
       };
 
-      _PUSH(&p->cgen->fns, (string_add(fn_decl, tos2((byte *)";"))), tmp63,
+      _PUSH(&p->cgen->fns, (string_add(fn_decl, tos2((byte *)";"))), tmp62,
             string);
     };
 
@@ -8261,10 +8253,10 @@ void Parser_fn_decl(Parser *p) {
 
     string cgen_name = Table_cgen_name(p->table, f);
 
-    string tmp68 = _STR("  %.*s_time += time__ticks() - _PROF_START;",
+    string tmp67 = _STR("  %.*s_time += time__ticks() - _PROF_START;",
                         cgen_name.len, cgen_name.str);
 
-    array_set(&/*q*/ f->defer_text, f->scope_level, &tmp68);
+    array_set(&/*q*/ f->defer_text, f->scope_level, &tmp67);
   };
 
   if (is_generic) {
@@ -8328,10 +8320,10 @@ void Parser_fn_decl(Parser *p) {
 }
 void Parser_check_unused_variables(Parser *p) {
 
-  array_Var tmp71 = p->cur_fn->local_vars;
+  array_Var tmp70 = p->cur_fn->local_vars;
   ;
-  for (int tmp72 = 0; tmp72 < tmp71.len; tmp72++) {
-    Var var = ((Var *)tmp71.data)[tmp72];
+  for (int tmp71 = 0; tmp71 < tmp70.len; tmp71++) {
+    Var var = ((Var *)tmp70.data)[tmp71];
 
     if (string_eq(var.name, tos2((byte *)""))) {
 
@@ -8394,10 +8386,10 @@ void Parser_async_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
 
   bool did_gen_something = 0;
 
-  array_Var tmp80 = f.args;
+  array_Var tmp79 = f.args;
   ;
-  for (int i = 0; i < tmp80.len; i++) {
-    Var arg = ((Var *)tmp80.data)[i];
+  for (int i = 0; i < tmp79.len; i++) {
+    Var arg = ((Var *)tmp79.data)[i];
 
     arg_struct =
         string_add(arg_struct, _STR("%.*s %.*s ;", arg.typ.len, arg.typ.str,
@@ -8628,7 +8620,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
                         .is_changed = 0,
                         .scope_level = 0};
 
-    _PUSH(&f->args, (int_arg), tmp92, Var);
+    _PUSH(&f->args, (int_arg), tmp91, Var);
   };
 
   bool types_only = p->tok == main__Token_mul ||
@@ -8660,7 +8652,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
                     .is_changed = 0,
                     .scope_level = 0};
 
-      _PUSH(&f->args, (v), tmp96, Var);
+      _PUSH(&f->args, (v), tmp95, Var);
 
       if (p->tok == main__Token_comma) {
 
@@ -8680,7 +8672,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
 
       Parser_fspace(p);
 
-      _PUSH(&names, (Parser_check_name(p)), tmp98, string);
+      _PUSH(&names, (Parser_check_name(p)), tmp97, string);
     };
 
     Parser_fspace(p);
@@ -8703,10 +8695,10 @@ void Parser_fn_args(Parser *p, Fn *f) {
                                            "mut int)` => `foo(n int) int`")));
     };
 
-    array_string tmp101 = names;
+    array_string tmp100 = names;
     ;
-    for (int tmp102 = 0; tmp102 < tmp101.len; tmp102++) {
-      string name = ((string *)tmp101.data)[tmp102];
+    for (int tmp101 = 0; tmp101 < tmp100.len; tmp101++) {
+      string name = ((string *)tmp100.data)[tmp101];
 
       if (!Parser_first_pass(&/* ? */ *p) &&
           !Table_known_type(&/* ? */ *p->table, typ)) {
@@ -8739,7 +8731,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
 
       Fn_register_var(f, v);
 
-      _PUSH(&f->args, (v), tmp104, Var);
+      _PUSH(&f->args, (v), tmp103, Var);
     };
 
     if (p->tok == main__Token_comma) {
@@ -8767,7 +8759,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
                    .is_used = 0,
                    .is_changed = 0,
                    .scope_level = 0}),
-            tmp105, Var);
+            tmp104, Var);
 
       Parser_next(p);
     };
@@ -8820,10 +8812,10 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
                             fn_name.str)));
   };
 
-  array_Var tmp109 = f->args;
+  array_Var tmp108 = f->args;
   ;
-  for (int i = 0; i < tmp109.len; i++) {
-    Var arg = ((Var *)tmp109.data)[i];
+  for (int i = 0; i < tmp108.len; i++) {
+    Var arg = ((Var *)tmp108.data)[i];
 
     if (i == 0 && f->is_method) {
 
@@ -9060,10 +9052,10 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
       Type *interface_type = Table_find_type(&/* ? */ *p->table, arg.typ);
 
-      array_Fn tmp128 = interface_type->methods;
+      array_Fn tmp127 = interface_type->methods;
       ;
-      for (int tmp129 = 0; tmp129 < tmp128.len; tmp129++) {
-        Fn method = ((Fn *)tmp128.data)[tmp129];
+      for (int tmp128 = 0; tmp128 < tmp127.len; tmp128++) {
+        Fn method = ((Fn *)tmp127.data)[tmp128];
 
         Parser_gen(p, _STR(", %.*s_%.*s ", typ.len, typ.str, method.name.len,
                            method.name.str));
@@ -9135,10 +9127,10 @@ string Fn_typ_str(Fn f) {
 
   strings__Builder_write(&/* ? */ sb, tos2((byte *)"fn ("));
 
-  array_Var tmp135 = f.args;
+  array_Var tmp134 = f.args;
   ;
-  for (int i = 0; i < tmp135.len; i++) {
-    Var arg = ((Var *)tmp135.data)[i];
+  for (int i = 0; i < tmp134.len; i++) {
+    Var arg = ((Var *)tmp134.data)[i];
 
     strings__Builder_write(&/* ? */ sb, arg.typ);
 
@@ -9161,10 +9153,10 @@ string Fn_str_args(Fn *f, Table *table) {
 
   string s = tos2((byte *)"");
 
-  array_Var tmp137 = f->args;
+  array_Var tmp136 = f->args;
   ;
-  for (int i = 0; i < tmp137.len; i++) {
-    Var arg = ((Var *)tmp137.data)[i];
+  for (int i = 0; i < tmp136.len; i++) {
+    Var arg = ((Var *)tmp136.data)[i];
 
     if (Table_is_interface(&/* ? */ *table, arg.typ)) {
 
@@ -9172,10 +9164,10 @@ string Fn_str_args(Fn *f, Table *table) {
 
       Type *interface_type = Table_find_type(&/* ? */ *table, arg.typ);
 
-      array_Fn tmp139 = interface_type->methods;
+      array_Fn tmp138 = interface_type->methods;
       ;
-      for (int tmp140 = 0; tmp140 < tmp139.len; tmp140++) {
-        Fn method = ((Fn *)tmp139.data)[tmp140];
+      for (int tmp139 = 0; tmp139 < tmp138.len; tmp139++) {
+        Fn method = ((Fn *)tmp138.data)[tmp139];
 
         s = string_add(s, _STR(", %.*s (*%.*s_%.*s)(void*", method.typ.len,
                                method.typ.str, arg.typ.len, arg.typ.str,
@@ -9183,10 +9175,10 @@ string Fn_str_args(Fn *f, Table *table) {
 
         if (method.args.len > 1) {
 
-          array_Var tmp141 = array_right(method.args, 1);
+          array_Var tmp140 = array_right(method.args, 1);
           ;
-          for (int tmp142 = 0; tmp142 < tmp141.len; tmp142++) {
-            Var a = ((Var *)tmp141.data)[tmp142];
+          for (int tmp141 = 0; tmp141 < tmp140.len; tmp141++) {
+            Var a = ((Var *)tmp140.data)[tmp141];
 
             s = string_add(s, _STR(", %.*s", a.typ.len, a.typ.str));
           };
@@ -15845,19 +15837,8 @@ string Parser_array_init(Parser *p) {
 
       CGen_resetln(p->cgen, string_left(p->cgen->cur_line, pos));
 
-      if (0 && string_eq(string_trim_space(val), tos2((byte *)"0"))) {
-
-        Parser_gen(p, tos2((byte *)"array_repeat( & V_ZERO, "));
-
-      } else {
-
-        string tmp = Parser_get_tmp(p);
-
-        CGen_insert_before(p->cgen, _STR("%.*s %.*s = %.*s;", typ.len, typ.str,
-                                         tmp.len, tmp.str, val.len, val.str));
-
-        Parser_gen(p, _STR("array_repeat(&%.*s, ", tmp.len, tmp.str));
-      };
+      Parser_gen(p, _STR("array_repeat(& (%.*s[]){ %.*s }, ", typ.len, typ.str,
+                         val.len, val.str));
 
       Parser_check_types(p, Parser_bool_expression(p), tos2((byte *)"int"));
 
@@ -15971,9 +15952,9 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
 
   if (string_eq(typ, tos2((byte *)"tm"))) {
 
-    string tmp283 = tos2((byte *)"");
+    string tmp282 = tos2((byte *)"");
 
-    array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 1, &tmp283);
+    array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 1, &tmp282);
   };
 
   Parser_check(p, main__Token_lcbr);
@@ -16048,7 +16029,7 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
 
       Var f = Type_find_field(&/* ? */ *t, field);
 
-      _PUSH(&inited_fields, (field), tmp290, string);
+      _PUSH(&inited_fields, (field), tmp289, string);
 
       Parser_gen(p, _STR(".%.*s = ", field.len, field.str));
 
@@ -16078,10 +16059,10 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
       Parser_gen(p, tos2((byte *)","));
     };
 
-    array_Var tmp291 = t->fields;
+    array_Var tmp290 = t->fields;
     ;
-    for (int i = 0; i < tmp291.len; i++) {
-      Var field = ((Var *)tmp291.data)[i];
+    for (int i = 0; i < tmp290.len; i++) {
+      Var field = ((Var *)tmp290.data)[i];
 
       if (array_string_contains(inited_fields, field.name)) {
 
@@ -16103,7 +16084,7 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
                            field.name.str, string_right(field_typ, 4).len,
                            string_right(field_typ, 4).str));
 
-        _PUSH(&inited_fields, (field.name), tmp293, string);
+        _PUSH(&inited_fields, (field.name), tmp292, string);
 
         if (i != t->fields.len - 1) {
 
@@ -16141,10 +16122,10 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
       T = Table_find_type(&/* ? */ *p->table, T->parent);
     };
 
-    array_Var tmp296 = T->fields;
+    array_Var tmp295 = T->fields;
     ;
-    for (int i = 0; i < tmp296.len; i++) {
-      Var ffield = ((Var *)tmp296.data)[i];
+    for (int i = 0; i < tmp295.len; i++) {
+      Var ffield = ((Var *)tmp295.data)[i];
 
       string expr_typ = Parser_bool_expression(p);
 
@@ -16969,9 +16950,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
             Parser_check(p, main__Token_rcbr);
           };
 
-          string tmp349 = res_typ;
+          string tmp348 = res_typ;
           { Parser_check(p, main__Token_rcbr); }
-          return tmp349;
+          return tmp348;
           ;
 
         } else {
@@ -16980,9 +16961,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
           p->returns = all_cases_return && p->returns;
 
-          string tmp350 = tos2((byte *)"");
+          string tmp349 = tos2((byte *)"");
           { Parser_check(p, main__Token_rcbr); }
-          return tmp350;
+          return tmp349;
           ;
         };
       };
@@ -17007,9 +16988,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         Parser_gen(p, strings__repeat(')', i + 1));
 
-        string tmp352 = res_typ;
+        string tmp351 = res_typ;
         { Parser_check(p, main__Token_rcbr); }
-        return tmp352;
+        return tmp351;
         ;
 
       } else {
@@ -17020,9 +17001,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         p->returns = all_cases_return && p->returns;
 
-        string tmp353 = tos2((byte *)"");
+        string tmp352 = tos2((byte *)"");
         { Parser_check(p, main__Token_rcbr); }
-        return tmp353;
+        return tmp352;
         ;
       };
     };
@@ -17126,9 +17107,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
   p->returns = 0;
 
-  string tmp355 = tos2((byte *)"");
+  string tmp354 = tos2((byte *)"");
   { Parser_check(p, main__Token_rcbr); }
-  return tmp355;
+  return tmp354;
   ;
 
   { Parser_check(p, main__Token_rcbr); }
@@ -17222,10 +17203,10 @@ void Parser_return_st(Parser *p) {
 
         string total_text = tos2((byte *)"");
 
-        array_string tmp366 = p->cur_fn->defer_text;
+        array_string tmp365 = p->cur_fn->defer_text;
         ;
-        for (int tmp367 = 0; tmp367 < tmp366.len; tmp367++) {
-          string text = ((string *)tmp366.data)[tmp367];
+        for (int tmp366 = 0; tmp366 < tmp365.len; tmp366++) {
+          string text = ((string *)tmp365.data)[tmp366];
 
           if (string_ne(text, tos2((byte *)""))) {
 
@@ -17389,10 +17370,10 @@ string Parser_js_decode(Parser *p) {
 
     Type *T = Table_find_type(&/* ? */ *p->table, typ);
 
-    array_Var tmp381 = T->fields;
+    array_Var tmp380 = T->fields;
     ;
-    for (int tmp382 = 0; tmp382 < tmp381.len; tmp382++) {
-      Var field = ((Var *)tmp381.data)[tmp382];
+    for (int tmp381 = 0; tmp381 < tmp380.len; tmp381++) {
+      Var field = ((Var *)tmp380.data)[tmp381];
 
       string def_val = type_default(field.typ);
 
@@ -17420,7 +17401,7 @@ string Parser_js_decode(Parser *p) {
     string opt_type = _STR("Option_%.*s", typ.len, typ.str);
 
     _PUSH(&p->cgen->typedefs,
-          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp385,
+          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp384,
           string);
 
     Table_register_type(p->table, opt_type);
@@ -20883,394 +20864,393 @@ map_int build_keys() {
 }
 array_string build_token_str() {
 
-  string tmp7 = tos2((byte *)"");
+  array_string s = array_repeat(&(string[]){tos2((byte *)"")}, main__NrTokens,
+                                sizeof(string));
 
-  array_string s = array_repeat(&tmp7, main__NrTokens, sizeof(string));
+  string tmp8 = tos2((byte *)"");
+
+  array_set(&/*q*/ s, main__Token_keyword_beg, &tmp8);
 
   string tmp9 = tos2((byte *)"");
 
-  array_set(&/*q*/ s, main__Token_keyword_beg, &tmp9);
+  array_set(&/*q*/ s, main__Token_keyword_end, &tmp9);
 
-  string tmp10 = tos2((byte *)"");
+  string tmp10 = tos2((byte *)"eof");
 
-  array_set(&/*q*/ s, main__Token_keyword_end, &tmp10);
+  array_set(&/*q*/ s, main__Token_eof, &tmp10);
 
-  string tmp11 = tos2((byte *)"eof");
+  string tmp11 = tos2((byte *)"name");
 
-  array_set(&/*q*/ s, main__Token_eof, &tmp11);
+  array_set(&/*q*/ s, main__Token_name, &tmp11);
 
-  string tmp12 = tos2((byte *)"name");
+  string tmp12 = tos2((byte *)"number");
 
-  array_set(&/*q*/ s, main__Token_name, &tmp12);
+  array_set(&/*q*/ s, main__Token_number, &tmp12);
 
-  string tmp13 = tos2((byte *)"number");
+  string tmp13 = tos2((byte *)"STR");
 
-  array_set(&/*q*/ s, main__Token_number, &tmp13);
+  array_set(&/*q*/ s, main__Token_str, &tmp13);
 
-  string tmp14 = tos2((byte *)"STR");
+  string tmp14 = tos2((byte *)"char");
 
-  array_set(&/*q*/ s, main__Token_str, &tmp14);
+  array_set(&/*q*/ s, main__Token_chartoken, &tmp14);
 
-  string tmp15 = tos2((byte *)"char");
+  string tmp15 = tos2((byte *)"+");
 
-  array_set(&/*q*/ s, main__Token_chartoken, &tmp15);
+  array_set(&/*q*/ s, main__Token_plus, &tmp15);
 
-  string tmp16 = tos2((byte *)"+");
+  string tmp16 = tos2((byte *)"-");
 
-  array_set(&/*q*/ s, main__Token_plus, &tmp16);
+  array_set(&/*q*/ s, main__Token_minus, &tmp16);
 
-  string tmp17 = tos2((byte *)"-");
+  string tmp17 = tos2((byte *)"*");
 
-  array_set(&/*q*/ s, main__Token_minus, &tmp17);
+  array_set(&/*q*/ s, main__Token_mul, &tmp17);
 
-  string tmp18 = tos2((byte *)"*");
+  string tmp18 = tos2((byte *)"/");
 
-  array_set(&/*q*/ s, main__Token_mul, &tmp18);
+  array_set(&/*q*/ s, main__Token_div, &tmp18);
 
-  string tmp19 = tos2((byte *)"/");
+  string tmp19 = tos2((byte *)"%");
 
-  array_set(&/*q*/ s, main__Token_div, &tmp19);
+  array_set(&/*q*/ s, main__Token_mod, &tmp19);
 
-  string tmp20 = tos2((byte *)"%");
+  string tmp20 = tos2((byte *)"^");
 
-  array_set(&/*q*/ s, main__Token_mod, &tmp20);
+  array_set(&/*q*/ s, main__Token_xor, &tmp20);
 
-  string tmp21 = tos2((byte *)"^");
+  string tmp21 = tos2((byte *)"~");
 
-  array_set(&/*q*/ s, main__Token_xor, &tmp21);
+  array_set(&/*q*/ s, main__Token_bit_not, &tmp21);
 
-  string tmp22 = tos2((byte *)"~");
+  string tmp22 = tos2((byte *)"|");
 
-  array_set(&/*q*/ s, main__Token_bit_not, &tmp22);
+  array_set(&/*q*/ s, main__Token_pipe, &tmp22);
 
-  string tmp23 = tos2((byte *)"|");
+  string tmp23 = tos2((byte *)"#");
 
-  array_set(&/*q*/ s, main__Token_pipe, &tmp23);
+  array_set(&/*q*/ s, main__Token_hash, &tmp23);
 
-  string tmp24 = tos2((byte *)"#");
+  string tmp24 = tos2((byte *)"&");
 
-  array_set(&/*q*/ s, main__Token_hash, &tmp24);
+  array_set(&/*q*/ s, main__Token_amp, &tmp24);
 
-  string tmp25 = tos2((byte *)"&");
+  string tmp25 = tos2((byte *)"++");
 
-  array_set(&/*q*/ s, main__Token_amp, &tmp25);
+  array_set(&/*q*/ s, main__Token_inc, &tmp25);
 
-  string tmp26 = tos2((byte *)"++");
+  string tmp26 = tos2((byte *)"--");
 
-  array_set(&/*q*/ s, main__Token_inc, &tmp26);
+  array_set(&/*q*/ s, main__Token_dec, &tmp26);
 
-  string tmp27 = tos2((byte *)"--");
+  string tmp27 = tos2((byte *)"&&");
 
-  array_set(&/*q*/ s, main__Token_dec, &tmp27);
+  array_set(&/*q*/ s, main__Token_and, &tmp27);
 
-  string tmp28 = tos2((byte *)"&&");
+  string tmp28 = tos2((byte *)"||");
 
-  array_set(&/*q*/ s, main__Token_and, &tmp28);
+  array_set(&/*q*/ s, main__Token_logical_or, &tmp28);
 
-  string tmp29 = tos2((byte *)"||");
+  string tmp29 = tos2((byte *)"!");
 
-  array_set(&/*q*/ s, main__Token_logical_or, &tmp29);
+  array_set(&/*q*/ s, main__Token_not, &tmp29);
 
-  string tmp30 = tos2((byte *)"!");
+  string tmp30 = tos2((byte *)".");
 
-  array_set(&/*q*/ s, main__Token_not, &tmp30);
+  array_set(&/*q*/ s, main__Token_dot, &tmp30);
 
-  string tmp31 = tos2((byte *)".");
+  string tmp31 = tos2((byte *)"..");
 
-  array_set(&/*q*/ s, main__Token_dot, &tmp31);
+  array_set(&/*q*/ s, main__Token_dotdot, &tmp31);
 
-  string tmp32 = tos2((byte *)"..");
+  string tmp32 = tos2((byte *)",");
 
-  array_set(&/*q*/ s, main__Token_dotdot, &tmp32);
+  array_set(&/*q*/ s, main__Token_comma, &tmp32);
 
-  string tmp33 = tos2((byte *)",");
+  string tmp33 = tos2((byte *)";");
 
-  array_set(&/*q*/ s, main__Token_comma, &tmp33);
+  array_set(&/*q*/ s, main__Token_semicolon, &tmp33);
 
-  string tmp34 = tos2((byte *)";");
+  string tmp34 = tos2((byte *)":");
 
-  array_set(&/*q*/ s, main__Token_semicolon, &tmp34);
+  array_set(&/*q*/ s, main__Token_colon, &tmp34);
 
-  string tmp35 = tos2((byte *)":");
+  string tmp35 = tos2((byte *)"=>");
 
-  array_set(&/*q*/ s, main__Token_colon, &tmp35);
+  array_set(&/*q*/ s, main__Token_arrow, &tmp35);
 
-  string tmp36 = tos2((byte *)"=>");
+  string tmp36 = tos2((byte *)"=");
 
-  array_set(&/*q*/ s, main__Token_arrow, &tmp36);
+  array_set(&/*q*/ s, main__Token_assign, &tmp36);
 
-  string tmp37 = tos2((byte *)"=");
+  string tmp37 = tos2((byte *)":=");
 
-  array_set(&/*q*/ s, main__Token_assign, &tmp37);
+  array_set(&/*q*/ s, main__Token_decl_assign, &tmp37);
 
-  string tmp38 = tos2((byte *)":=");
+  string tmp38 = tos2((byte *)"+=");
 
-  array_set(&/*q*/ s, main__Token_decl_assign, &tmp38);
+  array_set(&/*q*/ s, main__Token_plus_assign, &tmp38);
 
-  string tmp39 = tos2((byte *)"+=");
+  string tmp39 = tos2((byte *)"-=");
 
-  array_set(&/*q*/ s, main__Token_plus_assign, &tmp39);
+  array_set(&/*q*/ s, main__Token_minus_assign, &tmp39);
 
-  string tmp40 = tos2((byte *)"-=");
+  string tmp40 = tos2((byte *)"*=");
 
-  array_set(&/*q*/ s, main__Token_minus_assign, &tmp40);
+  array_set(&/*q*/ s, main__Token_mult_assign, &tmp40);
 
-  string tmp41 = tos2((byte *)"*=");
+  string tmp41 = tos2((byte *)"/=");
 
-  array_set(&/*q*/ s, main__Token_mult_assign, &tmp41);
+  array_set(&/*q*/ s, main__Token_div_assign, &tmp41);
 
-  string tmp42 = tos2((byte *)"/=");
+  string tmp42 = tos2((byte *)"^=");
 
-  array_set(&/*q*/ s, main__Token_div_assign, &tmp42);
+  array_set(&/*q*/ s, main__Token_xor_assign, &tmp42);
 
-  string tmp43 = tos2((byte *)"^=");
+  string tmp43 = tos2((byte *)"%=");
 
-  array_set(&/*q*/ s, main__Token_xor_assign, &tmp43);
+  array_set(&/*q*/ s, main__Token_mod_assign, &tmp43);
 
-  string tmp44 = tos2((byte *)"%=");
+  string tmp44 = tos2((byte *)"|=");
 
-  array_set(&/*q*/ s, main__Token_mod_assign, &tmp44);
+  array_set(&/*q*/ s, main__Token_or_assign, &tmp44);
 
-  string tmp45 = tos2((byte *)"|=");
+  string tmp45 = tos2((byte *)"&=");
 
-  array_set(&/*q*/ s, main__Token_or_assign, &tmp45);
+  array_set(&/*q*/ s, main__Token_and_assign, &tmp45);
 
-  string tmp46 = tos2((byte *)"&=");
+  string tmp46 = tos2((byte *)">>=");
 
-  array_set(&/*q*/ s, main__Token_and_assign, &tmp46);
+  array_set(&/*q*/ s, main__Token_righ_shift_assign, &tmp46);
 
-  string tmp47 = tos2((byte *)">>=");
+  string tmp47 = tos2((byte *)"<<=");
 
-  array_set(&/*q*/ s, main__Token_righ_shift_assign, &tmp47);
+  array_set(&/*q*/ s, main__Token_left_shift_assign, &tmp47);
 
-  string tmp48 = tos2((byte *)"<<=");
+  string tmp48 = tos2((byte *)"{");
 
-  array_set(&/*q*/ s, main__Token_left_shift_assign, &tmp48);
+  array_set(&/*q*/ s, main__Token_lcbr, &tmp48);
 
-  string tmp49 = tos2((byte *)"{");
+  string tmp49 = tos2((byte *)"}");
 
-  array_set(&/*q*/ s, main__Token_lcbr, &tmp49);
+  array_set(&/*q*/ s, main__Token_rcbr, &tmp49);
 
-  string tmp50 = tos2((byte *)"}");
+  string tmp50 = tos2((byte *)"(");
 
-  array_set(&/*q*/ s, main__Token_rcbr, &tmp50);
+  array_set(&/*q*/ s, main__Token_lpar, &tmp50);
 
-  string tmp51 = tos2((byte *)"(");
+  string tmp51 = tos2((byte *)")");
 
-  array_set(&/*q*/ s, main__Token_lpar, &tmp51);
+  array_set(&/*q*/ s, main__Token_rpar, &tmp51);
 
-  string tmp52 = tos2((byte *)")");
+  string tmp52 = tos2((byte *)"[");
 
-  array_set(&/*q*/ s, main__Token_rpar, &tmp52);
+  array_set(&/*q*/ s, main__Token_lsbr, &tmp52);
 
-  string tmp53 = tos2((byte *)"[");
+  string tmp53 = tos2((byte *)"]");
 
-  array_set(&/*q*/ s, main__Token_lsbr, &tmp53);
+  array_set(&/*q*/ s, main__Token_rsbr, &tmp53);
 
-  string tmp54 = tos2((byte *)"]");
+  string tmp54 = tos2((byte *)"==");
 
-  array_set(&/*q*/ s, main__Token_rsbr, &tmp54);
+  array_set(&/*q*/ s, main__Token_eq, &tmp54);
 
-  string tmp55 = tos2((byte *)"==");
+  string tmp55 = tos2((byte *)"!=");
 
-  array_set(&/*q*/ s, main__Token_eq, &tmp55);
+  array_set(&/*q*/ s, main__Token_ne, &tmp55);
 
-  string tmp56 = tos2((byte *)"!=");
+  string tmp56 = tos2((byte *)">");
 
-  array_set(&/*q*/ s, main__Token_ne, &tmp56);
+  array_set(&/*q*/ s, main__Token_gt, &tmp56);
 
-  string tmp57 = tos2((byte *)">");
+  string tmp57 = tos2((byte *)"<");
 
-  array_set(&/*q*/ s, main__Token_gt, &tmp57);
+  array_set(&/*q*/ s, main__Token_lt, &tmp57);
 
-  string tmp58 = tos2((byte *)"<");
+  string tmp58 = tos2((byte *)">=");
 
-  array_set(&/*q*/ s, main__Token_lt, &tmp58);
+  array_set(&/*q*/ s, main__Token_ge, &tmp58);
 
-  string tmp59 = tos2((byte *)">=");
+  string tmp59 = tos2((byte *)"<=");
 
-  array_set(&/*q*/ s, main__Token_ge, &tmp59);
+  array_set(&/*q*/ s, main__Token_le, &tmp59);
 
-  string tmp60 = tos2((byte *)"<=");
+  string tmp60 = tos2((byte *)"?");
 
-  array_set(&/*q*/ s, main__Token_le, &tmp60);
+  array_set(&/*q*/ s, main__Token_question, &tmp60);
 
-  string tmp61 = tos2((byte *)"?");
+  string tmp61 = tos2((byte *)"<<");
 
-  array_set(&/*q*/ s, main__Token_question, &tmp61);
+  array_set(&/*q*/ s, main__Token_left_shift, &tmp61);
 
-  string tmp62 = tos2((byte *)"<<");
+  string tmp62 = tos2((byte *)">>");
 
-  array_set(&/*q*/ s, main__Token_left_shift, &tmp62);
+  array_set(&/*q*/ s, main__Token_righ_shift, &tmp62);
 
-  string tmp63 = tos2((byte *)">>");
+  string tmp63 = tos2((byte *)"NLL");
 
-  array_set(&/*q*/ s, main__Token_righ_shift, &tmp63);
+  array_set(&/*q*/ s, main__Token_nl, &tmp63);
 
-  string tmp64 = tos2((byte *)"NLL");
+  string tmp64 = tos2((byte *)"$");
 
-  array_set(&/*q*/ s, main__Token_nl, &tmp64);
+  array_set(&/*q*/ s, main__Token_dollar, &tmp64);
 
-  string tmp65 = tos2((byte *)"$");
+  string tmp65 = tos2((byte *)"assert");
 
-  array_set(&/*q*/ s, main__Token_dollar, &tmp65);
+  array_set(&/*q*/ s, main__Token_key_assert, &tmp65);
 
-  string tmp66 = tos2((byte *)"assert");
+  string tmp66 = tos2((byte *)"struct");
 
-  array_set(&/*q*/ s, main__Token_key_assert, &tmp66);
+  array_set(&/*q*/ s, main__Token_key_struct, &tmp66);
 
-  string tmp67 = tos2((byte *)"struct");
+  string tmp67 = tos2((byte *)"if");
 
-  array_set(&/*q*/ s, main__Token_key_struct, &tmp67);
+  array_set(&/*q*/ s, main__Token_key_if, &tmp67);
 
-  string tmp68 = tos2((byte *)"if");
+  string tmp68 = tos2((byte *)"else");
 
-  array_set(&/*q*/ s, main__Token_key_if, &tmp68);
+  array_set(&/*q*/ s, main__Token_key_else, &tmp68);
 
-  string tmp69 = tos2((byte *)"else");
+  string tmp69 = tos2((byte *)"return");
 
-  array_set(&/*q*/ s, main__Token_key_else, &tmp69);
+  array_set(&/*q*/ s, main__Token_key_return, &tmp69);
 
-  string tmp70 = tos2((byte *)"return");
+  string tmp70 = tos2((byte *)"module");
 
-  array_set(&/*q*/ s, main__Token_key_return, &tmp70);
+  array_set(&/*q*/ s, main__Token_key_module, &tmp70);
 
-  string tmp71 = tos2((byte *)"module");
+  string tmp71 = tos2((byte *)"sizeof");
 
-  array_set(&/*q*/ s, main__Token_key_module, &tmp71);
+  array_set(&/*q*/ s, main__Token_key_sizeof, &tmp71);
 
-  string tmp72 = tos2((byte *)"sizeof");
+  string tmp72 = tos2((byte *)"go");
 
-  array_set(&/*q*/ s, main__Token_key_sizeof, &tmp72);
+  array_set(&/*q*/ s, main__Token_key_go, &tmp72);
 
-  string tmp73 = tos2((byte *)"go");
+  string tmp73 = tos2((byte *)"goto");
 
-  array_set(&/*q*/ s, main__Token_key_go, &tmp73);
+  array_set(&/*q*/ s, main__Token_key_goto, &tmp73);
 
-  string tmp74 = tos2((byte *)"goto");
+  string tmp74 = tos2((byte *)"const");
 
-  array_set(&/*q*/ s, main__Token_key_goto, &tmp74);
+  array_set(&/*q*/ s, main__Token_key_const, &tmp74);
 
-  string tmp75 = tos2((byte *)"const");
+  string tmp75 = tos2((byte *)"mut");
 
-  array_set(&/*q*/ s, main__Token_key_const, &tmp75);
+  array_set(&/*q*/ s, main__Token_key_mut, &tmp75);
 
-  string tmp76 = tos2((byte *)"mut");
+  string tmp76 = tos2((byte *)"type");
 
-  array_set(&/*q*/ s, main__Token_key_mut, &tmp76);
+  array_set(&/*q*/ s, main__Token_key_type, &tmp76);
 
-  string tmp77 = tos2((byte *)"type");
+  string tmp77 = tos2((byte *)"for");
 
-  array_set(&/*q*/ s, main__Token_key_type, &tmp77);
+  array_set(&/*q*/ s, main__Token_key_for, &tmp77);
 
-  string tmp78 = tos2((byte *)"for");
+  string tmp78 = tos2((byte *)"switch");
 
-  array_set(&/*q*/ s, main__Token_key_for, &tmp78);
+  array_set(&/*q*/ s, main__Token_key_switch, &tmp78);
 
-  string tmp79 = tos2((byte *)"switch");
+  string tmp79 = tos2((byte *)"case");
 
-  array_set(&/*q*/ s, main__Token_key_switch, &tmp79);
+  array_set(&/*q*/ s, main__Token_key_case, &tmp79);
 
-  string tmp80 = tos2((byte *)"case");
+  string tmp80 = tos2((byte *)"fn");
 
-  array_set(&/*q*/ s, main__Token_key_case, &tmp80);
+  array_set(&/*q*/ s, main__Token_func, &tmp80);
 
-  string tmp81 = tos2((byte *)"fn");
+  string tmp81 = tos2((byte *)"true");
 
-  array_set(&/*q*/ s, main__Token_func, &tmp81);
+  array_set(&/*q*/ s, main__Token_key_true, &tmp81);
 
-  string tmp82 = tos2((byte *)"true");
+  string tmp82 = tos2((byte *)"false");
 
-  array_set(&/*q*/ s, main__Token_key_true, &tmp82);
+  array_set(&/*q*/ s, main__Token_key_false, &tmp82);
 
-  string tmp83 = tos2((byte *)"false");
+  string tmp83 = tos2((byte *)"continue");
 
-  array_set(&/*q*/ s, main__Token_key_false, &tmp83);
+  array_set(&/*q*/ s, main__Token_key_continue, &tmp83);
 
-  string tmp84 = tos2((byte *)"continue");
+  string tmp84 = tos2((byte *)"break");
 
-  array_set(&/*q*/ s, main__Token_key_continue, &tmp84);
+  array_set(&/*q*/ s, main__Token_key_break, &tmp84);
 
-  string tmp85 = tos2((byte *)"break");
+  string tmp85 = tos2((byte *)"import");
 
-  array_set(&/*q*/ s, main__Token_key_break, &tmp85);
+  array_set(&/*q*/ s, main__Token_key_import, &tmp85);
 
-  string tmp86 = tos2((byte *)"import");
+  string tmp86 = tos2((byte *)"embed");
 
-  array_set(&/*q*/ s, main__Token_key_import, &tmp86);
+  array_set(&/*q*/ s, main__Token_key_embed, &tmp86);
 
-  string tmp87 = tos2((byte *)"embed");
+  string tmp87 = tos2((byte *)"default");
 
-  array_set(&/*q*/ s, main__Token_key_embed, &tmp87);
+  array_set(&/*q*/ s, main__Token_key_default, &tmp87);
 
-  string tmp88 = tos2((byte *)"default");
+  string tmp88 = tos2((byte *)"enum");
 
-  array_set(&/*q*/ s, main__Token_key_default, &tmp88);
+  array_set(&/*q*/ s, main__Token_key_enum, &tmp88);
 
-  string tmp89 = tos2((byte *)"enum");
+  string tmp89 = tos2((byte *)"interface");
 
-  array_set(&/*q*/ s, main__Token_key_enum, &tmp89);
+  array_set(&/*q*/ s, main__Token_key_interface, &tmp89);
 
-  string tmp90 = tos2((byte *)"interface");
+  string tmp90 = tos2((byte *)"pub");
 
-  array_set(&/*q*/ s, main__Token_key_interface, &tmp90);
+  array_set(&/*q*/ s, main__Token_key_pub, &tmp90);
 
-  string tmp91 = tos2((byte *)"pub");
+  string tmp91 = tos2((byte *)"import_const");
 
-  array_set(&/*q*/ s, main__Token_key_pub, &tmp91);
+  array_set(&/*q*/ s, main__Token_key_import_const, &tmp91);
 
-  string tmp92 = tos2((byte *)"import_const");
+  string tmp92 = tos2((byte *)"in");
 
-  array_set(&/*q*/ s, main__Token_key_import_const, &tmp92);
+  array_set(&/*q*/ s, main__Token_key_in, &tmp92);
 
-  string tmp93 = tos2((byte *)"in");
+  string tmp93 = tos2((byte *)"atomic");
 
-  array_set(&/*q*/ s, main__Token_key_in, &tmp93);
+  array_set(&/*q*/ s, main__Token_key_atomic, &tmp93);
 
-  string tmp94 = tos2((byte *)"atomic");
+  string tmp94 = tos2((byte *)"or");
 
-  array_set(&/*q*/ s, main__Token_key_atomic, &tmp94);
+  array_set(&/*q*/ s, main__Token_key_orelse, &tmp94);
 
-  string tmp95 = tos2((byte *)"or");
+  string tmp95 = tos2((byte *)"__global");
 
-  array_set(&/*q*/ s, main__Token_key_orelse, &tmp95);
+  array_set(&/*q*/ s, main__Token_key_global, &tmp95);
 
-  string tmp96 = tos2((byte *)"__global");
+  string tmp96 = tos2((byte *)"union");
 
-  array_set(&/*q*/ s, main__Token_key_global, &tmp96);
+  array_set(&/*q*/ s, main__Token_key_union, &tmp96);
 
-  string tmp97 = tos2((byte *)"union");
+  string tmp97 = tos2((byte *)"static");
 
-  array_set(&/*q*/ s, main__Token_key_union, &tmp97);
+  array_set(&/*q*/ s, main__Token_key_static, &tmp97);
 
-  string tmp98 = tos2((byte *)"static");
+  string tmp98 = tos2((byte *)"as");
 
-  array_set(&/*q*/ s, main__Token_key_static, &tmp98);
+  array_set(&/*q*/ s, main__Token_key_as, &tmp98);
 
-  string tmp99 = tos2((byte *)"as");
+  string tmp99 = tos2((byte *)"defer");
 
-  array_set(&/*q*/ s, main__Token_key_as, &tmp99);
+  array_set(&/*q*/ s, main__Token_key_defer, &tmp99);
 
-  string tmp100 = tos2((byte *)"defer");
+  string tmp100 = tos2((byte *)"match");
 
-  array_set(&/*q*/ s, main__Token_key_defer, &tmp100);
+  array_set(&/*q*/ s, main__Token_key_match, &tmp100);
 
-  string tmp101 = tos2((byte *)"match");
+  string tmp101 = tos2((byte *)"select");
 
-  array_set(&/*q*/ s, main__Token_key_match, &tmp101);
-
-  string tmp102 = tos2((byte *)"select");
-
-  array_set(&/*q*/ s, main__Token_key_select, &tmp102);
+  array_set(&/*q*/ s, main__Token_key_select, &tmp101);
 
   return s;
 }
 Token key_to_token(string key) {
 
-  int tmp103 = 0;
-  bool tmp104 = map_get(main__KEYWORDS, key, &tmp103);
+  int tmp102 = 0;
+  bool tmp103 = map_get(main__KEYWORDS, key, &tmp102);
 
-  Token a = ((Token)(tmp103));
+  Token a = ((Token)(tmp102));
 
   return a;
 }
@@ -21290,10 +21270,10 @@ bool Token_is_decl(Token t) {
 bool Token_is_assign(Token t) { return _IN(Token, t, main__AssignTokens); }
 bool array_Token_contains(array_Token t, Token val) {
 
-  array_Token tmp108 = t;
+  array_Token tmp107 = t;
   ;
-  for (int tmp109 = 0; tmp109 < tmp108.len; tmp109++) {
-    Token tt = ((Token *)tmp108.data)[tmp109];
+  for (int tmp108 = 0; tmp108 < tmp107.len; tmp108++) {
+    Token tt = ((Token *)tmp107.data)[tmp108];
 
     if (tt == val) {
 
@@ -21507,9 +21487,8 @@ void init_consts() {
              "m) map__exists(m, val)\n//#define ALLOC_INIT(type, ...) (type "
              "*)memdup((type[]){ __VA_ARGS__ }, "
              "sizeof(type))\n\n//================================== GLOBALS "
-             "=================================*/\n//int V_ZERO = 0;\nbyteptr "
-             "g_str_buf;\nint load_so(byteptr);\nvoid reload_so();\nvoid "
-             "init_consts();\n\n");
+             "=================================*/\nbyteptr g_str_buf;\nint "
+             "load_so(byteptr);\nvoid reload_so();\nvoid init_consts();\n\n");
   main__Version = tos2((byte *)"0.1.18");
   main__SupportedPlatforms = new_array_from_c_array(
       8, 8, sizeof(string),
