@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "b6ecbd8"
+#define V_COMMIT_HASH "0a4a1ca"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -2187,9 +2187,7 @@ int string_index(string s, string p) {
       j++;
     };
 
-    int tmp58 = j;
-
-    array_set(&/*q*/ prefix, i, &tmp58);
+    array_set(&/*q*/ prefix, i, &(int[]){j});
   };
 
   j = 0;
@@ -2220,10 +2218,10 @@ int string_index(string s, string p) {
 }
 int string_index_any(string s, string chars) {
 
-  string tmp62 = chars;
+  string tmp61 = chars;
   ;
-  for (int tmp63 = 0; tmp63 < tmp62.len; tmp63++) {
-    byte c = ((byte *)tmp62.str)[tmp63];
+  for (int tmp62 = 0; tmp62 < tmp61.len; tmp62++) {
+    byte c = ((byte *)tmp61.str)[tmp62];
 
     int index = string_index(s, byte_str(c));
 
@@ -2400,12 +2398,12 @@ string string_title(string s) {
   array_string tit =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-  array_string tmp84 = words;
+  array_string tmp83 = words;
   ;
-  for (int tmp85 = 0; tmp85 < tmp84.len; tmp85++) {
-    string word = ((string *)tmp84.data)[tmp85];
+  for (int tmp84 = 0; tmp84 < tmp83.len; tmp84++) {
+    string word = ((string *)tmp83.data)[tmp84];
 
-    _PUSH(&tit, (string_capitalize(word)), tmp86, string);
+    _PUSH(&tit, (string_capitalize(word)), tmp85, string);
   };
 
   string title = array_string_join(tit, tos2((byte *)" "));
@@ -2434,10 +2432,10 @@ string string_find_between(string s, string start, string end) {
 }
 bool array_string_contains(array_string ar, string val) {
 
-  array_string tmp91 = ar;
+  array_string tmp90 = ar;
   ;
-  for (int tmp92 = 0; tmp92 < tmp91.len; tmp92++) {
-    string s = ((string *)tmp91.data)[tmp92];
+  for (int tmp91 = 0; tmp91 < tmp90.len; tmp91++) {
+    string s = ((string *)tmp90.data)[tmp91];
 
     if (string_eq(s, val)) {
 
@@ -2449,10 +2447,10 @@ bool array_string_contains(array_string ar, string val) {
 }
 bool array_int_contains(array_int ar, int val) {
 
-  array_int tmp93 = ar;
+  array_int tmp92 = ar;
   ;
-  for (int i = 0; i < tmp93.len; i++) {
-    int s = ((int *)tmp93.data)[i];
+  for (int i = 0; i < tmp92.len; i++) {
+    int s = ((int *)tmp92.data)[i];
 
     if (s == val) {
 
@@ -2629,7 +2627,7 @@ ustring string_ustring(string s) {
 
     int char_len = utf8_char_len(s.str[/*ptr*/ i] /*rbyte 0*/);
 
-    _PUSH(&res.runes, (i), tmp110, int);
+    _PUSH(&res.runes, (i), tmp109, int);
 
     i += char_len - 1;
 
@@ -2658,9 +2656,7 @@ ustring string_ustring_tmp(string s) {
 
     int char_len = utf8_char_len(s.str[/*ptr*/ i] /*rbyte 0*/);
 
-    int tmp115 = i;
-
-    array_set(&/*q*/ res.runes, j, &tmp115);
+    array_set(&/*q*/ res.runes, j, &(int[]){i});
 
     j++;
 
@@ -2752,10 +2748,10 @@ string array_string_join(array_string a, string del) {
 
   int len = 0;
 
-  array_string tmp126 = a;
+  array_string tmp124 = a;
   ;
-  for (int i = 0; i < tmp126.len; i++) {
-    string val = ((string *)tmp126.data)[i];
+  for (int i = 0; i < tmp124.len; i++) {
+    string val = ((string *)tmp124.data)[i];
 
     len += val.len + del.len;
   };
@@ -2770,10 +2766,10 @@ string array_string_join(array_string a, string del) {
 
   int idx = 0;
 
-  array_string tmp129 = a;
+  array_string tmp127 = a;
   ;
-  for (int i = 0; i < tmp129.len; i++) {
-    string val = ((string *)tmp129.data)[i];
+  for (int i = 0; i < tmp127.len; i++) {
+    string val = ((string *)tmp127.data)[i];
 
     for (int j = 0; j < val.len; j++) {
 
@@ -2837,10 +2833,10 @@ int string_hash(string s) {
 
   if (h == 0 && s.len > 0) {
 
-    string tmp138 = s;
+    string tmp136 = s;
     ;
-    for (int tmp139 = 0; tmp139 < tmp138.len; tmp139++) {
-      byte c = ((byte *)tmp138.str)[tmp139];
+    for (int tmp137 = 0; tmp137 < tmp136.len; tmp137++) {
+      byte c = ((byte *)tmp136.str)[tmp137];
 
       h = h * 31 + ((int)(c));
     };
@@ -3301,9 +3297,7 @@ array_byte array_byte_clone(array_byte b) {
 
   for (int i = 0; i < b.len; i++) {
 
-    byte tmp49 = (*(byte *)array__get(b, i));
-
-    array_set(&/*q*/ res, i, &tmp49);
+    array_set(&/*q*/ res, i, &(byte[]){(*(byte *)array__get(b, i))});
   };
 
   return res;
@@ -3662,9 +3656,7 @@ int preorder_keys(mapnode *node, array_string *keys, int key_i) {
 
     array_string a = *keys;
 
-    string tmp8 = node->key;
-
-    array_set(&/*q*/ a, i, &tmp8);
+    array_set(&/*q*/ a, i, &(string[]){node->key});
 
     i++;
   };
@@ -3770,12 +3762,12 @@ string map_string_str(map_string m) {
 
   strings__Builder_writeln(&/* ? */ sb, tos2((byte *)"{"));
 
-  map_string tmp11 = m;
-  array_string keys_tmp11 = map_keys(&tmp11);
-  for (int l = 0; l < keys_tmp11.len; l++) {
-    string key = ((string *)keys_tmp11.data)[l];
+  map_string tmp10 = m;
+  array_string keys_tmp10 = map_keys(&tmp10);
+  for (int l = 0; l < keys_tmp10.len; l++) {
+    string key = ((string *)keys_tmp10.data)[l];
     string val = {0};
-    map_get(tmp11, key, &val);
+    map_get(tmp10, key, &val);
 
     strings__Builder_writeln(
         &/* ? */ sb,
@@ -6738,17 +6730,17 @@ void CGen_insert_before(CGen *g, string val) {
 
   string prev = (*(string *)array__get(g->lines, g->lines.len - 1));
 
-  string tmp18 = _STR("%.*s \n %.*s \n", prev.len, prev.str, val.len, val.str);
-
-  array_set(&/*q*/ g->lines, g->lines.len - 1, &tmp18);
+  array_set(&/*q*/ g->lines, g->lines.len - 1,
+            &(string[]){
+                _STR("%.*s \n %.*s \n", prev.len, prev.str, val.len, val.str)});
 }
 void CGen_register_thread_fn(CGen *g, string wrapper_name, string wrapper_text,
                              string struct_text) {
 
-  array_string tmp19 = g->thread_args;
+  array_string tmp18 = g->thread_args;
   ;
-  for (int tmp20 = 0; tmp20 < tmp19.len; tmp20++) {
-    string arg = ((string *)tmp19.data)[tmp20];
+  for (int tmp19 = 0; tmp19 < tmp18.len; tmp19++) {
+    string arg = ((string *)tmp18.data)[tmp19];
 
     if (string_contains(arg, wrapper_name)) {
 
@@ -6756,31 +6748,31 @@ void CGen_register_thread_fn(CGen *g, string wrapper_name, string wrapper_text,
     };
   };
 
-  _PUSH(&g->thread_args, (struct_text), tmp21, string);
+  _PUSH(&g->thread_args, (struct_text), tmp20, string);
 
-  _PUSH(&g->thread_args, (wrapper_text), tmp22, string);
+  _PUSH(&g->thread_args, (wrapper_text), tmp21, string);
 }
 string V_prof_counters(V *c) {
 
   array_string res =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-  array_Type tmp24 = c->table->types;
+  array_Type tmp23 = c->table->types;
   ;
-  for (int tmp25 = 0; tmp25 < tmp24.len; tmp25++) {
-    Type typ = ((Type *)tmp24.data)[tmp25];
+  for (int tmp24 = 0; tmp24 < tmp23.len; tmp24++) {
+    Type typ = ((Type *)tmp23.data)[tmp24];
 
-    array_Fn tmp26 = typ.methods;
+    array_Fn tmp25 = typ.methods;
     ;
-    for (int tmp27 = 0; tmp27 < tmp26.len; tmp27++) {
-      Fn f = ((Fn *)tmp26.data)[tmp27];
+    for (int tmp26 = 0; tmp26 < tmp25.len; tmp26++) {
+      Fn f = ((Fn *)tmp25.data)[tmp26];
 
       _PUSH(
           &res,
           (_STR("double %.*s_time;",
                 Table_cgen_name(c->table, &/*112 EXP:"Fn*" GOT:"Fn" */ f).len,
                 Table_cgen_name(c->table, &/*112 EXP:"Fn*" GOT:"Fn" */ f).str)),
-          tmp28, string);
+          tmp27, string);
     };
   };
 
@@ -6791,15 +6783,15 @@ string Parser_print_prof_counters(Parser *p) {
   array_string res =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-  array_Type tmp30 = p->table->types;
+  array_Type tmp29 = p->table->types;
   ;
-  for (int tmp31 = 0; tmp31 < tmp30.len; tmp31++) {
-    Type typ = ((Type *)tmp30.data)[tmp31];
+  for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
+    Type typ = ((Type *)tmp29.data)[tmp30];
 
-    array_Fn tmp32 = typ.methods;
+    array_Fn tmp31 = typ.methods;
     ;
-    for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
-      Fn f = ((Fn *)tmp32.data)[tmp33];
+    for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
+      Fn f = ((Fn *)tmp31.data)[tmp32];
 
       string counter =
           _STR("%.*s_time",
@@ -6812,7 +6804,7 @@ string Parser_print_prof_counters(Parser *p) {
                   Table_cgen_name(p->table, &/*112 EXP:"Fn*" GOT:"Fn" */ f).len,
                   Table_cgen_name(p->table, &/*112 EXP:"Fn*" GOT:"Fn" */ f).str,
                   counter.len, counter.str)),
-            tmp35, string);
+            tmp34, string);
     };
   };
 
@@ -6825,7 +6817,7 @@ void Parser_gen_typedef(Parser *p, string s) {
     return;
   };
 
-  _PUSH(&p->cgen->typedefs, (s), tmp36, string);
+  _PUSH(&p->cgen->typedefs, (s), tmp35, string);
 }
 void Parser_gen_type_alias(Parser *p, string s) {
 
@@ -6834,7 +6826,7 @@ void Parser_gen_type_alias(Parser *p, string s) {
     return;
   };
 
-  _PUSH(&p->cgen->type_aliases, (s), tmp37, string);
+  _PUSH(&p->cgen->type_aliases, (s), tmp36, string);
 }
 void CGen_add_to_main(CGen *g, string s) {
 
@@ -6858,10 +6850,10 @@ void build_thirdparty_obj_file(string flag) {
 
   string cfiles = tos2((byte *)"");
 
-  array_string tmp42 = files;
+  array_string tmp41 = files;
   ;
-  for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
-    string file = ((string *)tmp42.data)[tmp43];
+  for (int tmp42 = 0; tmp42 < tmp41.len; tmp42++) {
+    string file = ((string *)tmp41.data)[tmp42];
 
     if (string_ends_with(file, tos2((byte *)".c"))) {
 
@@ -6876,18 +6868,18 @@ void build_thirdparty_obj_file(string flag) {
 
   string cc_thirdparty_options = find_c_compiler_thirdparty_options();
 
-  Option_os__Result tmp46 =
+  Option_os__Result tmp45 =
       os__exec(_STR("%.*s %.*s -c -o %.*s %.*s", cc.len, cc.str,
                     cc_thirdparty_options.len, cc_thirdparty_options.str,
                     obj_path.len, obj_path.str, cfiles.len, cfiles.str));
-  if (!tmp46.ok) {
-    string err = tmp46.error;
+  if (!tmp45.ok) {
+    string err = tmp45.error;
 
     cerror(err);
 
     return;
   }
-  os__Result res = *(os__Result *)tmp46.data;
+  os__Result res = *(os__Result *)tmp45.data;
   ;
 
   println(res.output);
@@ -6965,24 +6957,24 @@ string V_c_type_definitions(V *v) {
   array_Type top_types =
       new_array_from_c_array(0, 0, sizeof(Type), (Type[]){0});
 
-  array_Type tmp49 = v->table->types;
+  array_Type tmp48 = v->table->types;
   ;
-  for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
-    Type t = ((Type *)tmp49.data)[tmp50];
+  for (int tmp49 = 0; tmp49 < tmp48.len; tmp49++) {
+    Type t = ((Type *)tmp48.data)[tmp49];
 
     if (!byte_is_capital(string_at(t.name, 0))) {
 
-      _PUSH(&top_types, (t), tmp53, Type);
+      _PUSH(&top_types, (t), tmp52, Type);
 
       continue;
     };
 
     bool only_builtin_fields = 1;
 
-    array_Var tmp55 = t.fields;
+    array_Var tmp54 = t.fields;
     ;
-    for (int tmp56 = 0; tmp56 < tmp55.len; tmp56++) {
-      Var field = ((Var *)tmp55.data)[tmp56];
+    for (int tmp55 = 0; tmp55 < tmp54.len; tmp55++) {
+      Var field = ((Var *)tmp54.data)[tmp55];
 
       if (byte_is_capital(string_at(field.typ, 0))) {
 
@@ -6994,12 +6986,12 @@ string V_c_type_definitions(V *v) {
 
     if (only_builtin_fields) {
 
-      _PUSH(&top_types, (t), tmp59, Type);
+      _PUSH(&top_types, (t), tmp58, Type);
 
       continue;
     };
 
-    _PUSH(&types, (t), tmp60, Type);
+    _PUSH(&types, (t), tmp59, Type);
   };
 
   sort_structs(&/*111*/ (array[]){types}[0]);
@@ -7012,10 +7004,10 @@ string types_to_c(array_Type types, Table *table) {
 
   strings__Builder sb = strings__new_builder(10);
 
-  array_Type tmp62 = types;
+  array_Type tmp61 = types;
   ;
-  for (int tmp63 = 0; tmp63 < tmp62.len; tmp63++) {
-    Type t = ((Type *)tmp62.data)[tmp63];
+  for (int tmp62 = 0; tmp62 < tmp61.len; tmp62++) {
+    Type t = ((Type *)tmp61.data)[tmp62];
 
     if (t.cat != main__TypeCategory_union_ &&
         t.cat != main__TypeCategory_struct_) {
@@ -7031,10 +7023,10 @@ string types_to_c(array_Type types, Table *table) {
         &/* ? */ sb,
         _STR("%.*s %.*s {", kind.len, kind.str, t.name.len, t.name.str));
 
-    array_Var tmp65 = t.fields;
+    array_Var tmp64 = t.fields;
     ;
-    for (int tmp66 = 0; tmp66 < tmp65.len; tmp66++) {
-      Var field = ((Var *)tmp65.data)[tmp66];
+    for (int tmp65 = 0; tmp65 < tmp64.len; tmp65++) {
+      Var field = ((Var *)tmp64.data)[tmp65];
 
       strings__Builder_writeln(
           &/* ? */ sb, string_add(Table_cgen_name_type_pair(
@@ -7053,10 +7045,10 @@ void sort_structs(array_Type *types) {
 
   for (int i = 0; i < types->len; i++) {
 
-    int tmp69 = 0;
+    int tmp68 = 0;
     ;
-    for (int tmp70 = tmp69; tmp70 < i; tmp70++) {
-      int j = tmp70;
+    for (int tmp69 = tmp68; tmp69 < i; tmp69++) {
+      int j = tmp69;
 
       Type t = (*(Type *)array__get(*types, i));
 
@@ -7645,9 +7637,7 @@ void Fn_register_var(Fn *f, Var v) {
 
   } else {
 
-    Var tmp17 = new_var;
-
-    array_set(&/*q*/ f->local_vars, f->var_idx, &tmp17);
+    array_set(&/*q*/ f->local_vars, f->var_idx, &(Var[]){new_var});
   };
 
   f->var_idx++;
@@ -7810,7 +7800,7 @@ void Parser_fn_decl(Parser *p) {
                          .is_changed = 0,
                          .scope_level = 0};
 
-    _PUSH(&f->args, (receiver), tmp28, Var);
+    _PUSH(&f->args, (receiver), tmp27, Var);
 
     Fn_register_var(f, receiver);
   };
@@ -7944,7 +7934,7 @@ void Parser_fn_decl(Parser *p) {
   if (string_starts_with(typ, tos2((byte *)"Option_"))) {
 
     _PUSH(&p->cgen->typedefs, (_STR("typedef Option %.*s;", typ.len, typ.str)),
-          tmp37, string);
+          tmp36, string);
   };
 
   f->typ = typ;
@@ -8001,10 +7991,10 @@ void Parser_fn_decl(Parser *p) {
 
       string cur_lit = p->lit;
 
-      array_string tmp46 = gen_types;
+      array_string tmp45 = gen_types;
       ;
-      for (int tmp47 = 0; tmp47 < tmp46.len; tmp47++) {
-        string gen_type = ((string *)tmp46.data)[tmp47];
+      for (int tmp46 = 0; tmp46 < tmp45.len; tmp46++) {
+        string gen_type = ((string *)tmp45.data)[tmp46];
 
         Parser_genln(p,
                      _STR("%.*s%.*s %.*s_%.*s(%.*s) {", dll_export_linkage.len,
@@ -8147,7 +8137,7 @@ void Parser_fn_decl(Parser *p) {
     if (is_live && Parser_first_pass(&/* ? */ *p) &&
         string_eq(p->mod, tos2((byte *)"main"))) {
 
-      _PUSH(&p->cgen->so_fns, (fn_name_cgen), tmp60, string);
+      _PUSH(&p->cgen->so_fns, (fn_name_cgen), tmp59, string);
 
       fn_name_cgen = _STR("(* %.*s )", fn_name_cgen.len, fn_name_cgen.str);
     };
@@ -8172,7 +8162,7 @@ void Parser_fn_decl(Parser *p) {
         return;
       };
 
-      _PUSH(&p->cgen->fns, (string_add(fn_decl, tos2((byte *)";"))), tmp62,
+      _PUSH(&p->cgen->fns, (string_add(fn_decl, tos2((byte *)";"))), tmp61,
             string);
     };
 
@@ -8253,10 +8243,9 @@ void Parser_fn_decl(Parser *p) {
 
     string cgen_name = Table_cgen_name(p->table, f);
 
-    string tmp67 = _STR("  %.*s_time += time__ticks() - _PROF_START;",
-                        cgen_name.len, cgen_name.str);
-
-    array_set(&/*q*/ f->defer_text, f->scope_level, &tmp67);
+    array_set(&/*q*/ f->defer_text, f->scope_level,
+              &(string[]){_STR("  %.*s_time += time__ticks() - _PROF_START;",
+                               cgen_name.len, cgen_name.str)});
   };
 
   if (is_generic) {
@@ -8320,10 +8309,10 @@ void Parser_fn_decl(Parser *p) {
 }
 void Parser_check_unused_variables(Parser *p) {
 
-  array_Var tmp70 = p->cur_fn->local_vars;
+  array_Var tmp68 = p->cur_fn->local_vars;
   ;
-  for (int tmp71 = 0; tmp71 < tmp70.len; tmp71++) {
-    Var var = ((Var *)tmp70.data)[tmp71];
+  for (int tmp69 = 0; tmp69 < tmp68.len; tmp69++) {
+    Var var = ((Var *)tmp68.data)[tmp69];
 
     if (string_eq(var.name, tos2((byte *)""))) {
 
@@ -8386,10 +8375,10 @@ void Parser_async_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
 
   bool did_gen_something = 0;
 
-  array_Var tmp79 = f.args;
+  array_Var tmp77 = f.args;
   ;
-  for (int i = 0; i < tmp79.len; i++) {
-    Var arg = ((Var *)tmp79.data)[i];
+  for (int i = 0; i < tmp77.len; i++) {
+    Var arg = ((Var *)tmp77.data)[i];
 
     arg_struct =
         string_add(arg_struct, _STR("%.*s %.*s ;", arg.typ.len, arg.typ.str,
@@ -8620,7 +8609,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
                         .is_changed = 0,
                         .scope_level = 0};
 
-    _PUSH(&f->args, (int_arg), tmp91, Var);
+    _PUSH(&f->args, (int_arg), tmp89, Var);
   };
 
   bool types_only = p->tok == main__Token_mul ||
@@ -8652,7 +8641,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
                     .is_changed = 0,
                     .scope_level = 0};
 
-      _PUSH(&f->args, (v), tmp95, Var);
+      _PUSH(&f->args, (v), tmp93, Var);
 
       if (p->tok == main__Token_comma) {
 
@@ -8672,7 +8661,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
 
       Parser_fspace(p);
 
-      _PUSH(&names, (Parser_check_name(p)), tmp97, string);
+      _PUSH(&names, (Parser_check_name(p)), tmp95, string);
     };
 
     Parser_fspace(p);
@@ -8695,10 +8684,10 @@ void Parser_fn_args(Parser *p, Fn *f) {
                                            "mut int)` => `foo(n int) int`")));
     };
 
-    array_string tmp100 = names;
+    array_string tmp98 = names;
     ;
-    for (int tmp101 = 0; tmp101 < tmp100.len; tmp101++) {
-      string name = ((string *)tmp100.data)[tmp101];
+    for (int tmp99 = 0; tmp99 < tmp98.len; tmp99++) {
+      string name = ((string *)tmp98.data)[tmp99];
 
       if (!Parser_first_pass(&/* ? */ *p) &&
           !Table_known_type(&/* ? */ *p->table, typ)) {
@@ -8731,7 +8720,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
 
       Fn_register_var(f, v);
 
-      _PUSH(&f->args, (v), tmp103, Var);
+      _PUSH(&f->args, (v), tmp101, Var);
     };
 
     if (p->tok == main__Token_comma) {
@@ -8759,7 +8748,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
                    .is_used = 0,
                    .is_changed = 0,
                    .scope_level = 0}),
-            tmp104, Var);
+            tmp102, Var);
 
       Parser_next(p);
     };
@@ -8812,10 +8801,10 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
                             fn_name.str)));
   };
 
-  array_Var tmp108 = f->args;
+  array_Var tmp106 = f->args;
   ;
-  for (int i = 0; i < tmp108.len; i++) {
-    Var arg = ((Var *)tmp108.data)[i];
+  for (int i = 0; i < tmp106.len; i++) {
+    Var arg = ((Var *)tmp106.data)[i];
 
     if (i == 0 && f->is_method) {
 
@@ -9052,10 +9041,10 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
       Type *interface_type = Table_find_type(&/* ? */ *p->table, arg.typ);
 
-      array_Fn tmp127 = interface_type->methods;
+      array_Fn tmp125 = interface_type->methods;
       ;
-      for (int tmp128 = 0; tmp128 < tmp127.len; tmp128++) {
-        Fn method = ((Fn *)tmp127.data)[tmp128];
+      for (int tmp126 = 0; tmp126 < tmp125.len; tmp126++) {
+        Fn method = ((Fn *)tmp125.data)[tmp126];
 
         Parser_gen(p, _STR(", %.*s_%.*s ", typ.len, typ.str, method.name.len,
                            method.name.str));
@@ -9127,10 +9116,10 @@ string Fn_typ_str(Fn f) {
 
   strings__Builder_write(&/* ? */ sb, tos2((byte *)"fn ("));
 
-  array_Var tmp134 = f.args;
+  array_Var tmp132 = f.args;
   ;
-  for (int i = 0; i < tmp134.len; i++) {
-    Var arg = ((Var *)tmp134.data)[i];
+  for (int i = 0; i < tmp132.len; i++) {
+    Var arg = ((Var *)tmp132.data)[i];
 
     strings__Builder_write(&/* ? */ sb, arg.typ);
 
@@ -9153,10 +9142,10 @@ string Fn_str_args(Fn *f, Table *table) {
 
   string s = tos2((byte *)"");
 
-  array_Var tmp136 = f->args;
+  array_Var tmp134 = f->args;
   ;
-  for (int i = 0; i < tmp136.len; i++) {
-    Var arg = ((Var *)tmp136.data)[i];
+  for (int i = 0; i < tmp134.len; i++) {
+    Var arg = ((Var *)tmp134.data)[i];
 
     if (Table_is_interface(&/* ? */ *table, arg.typ)) {
 
@@ -9164,10 +9153,10 @@ string Fn_str_args(Fn *f, Table *table) {
 
       Type *interface_type = Table_find_type(&/* ? */ *table, arg.typ);
 
-      array_Fn tmp138 = interface_type->methods;
+      array_Fn tmp136 = interface_type->methods;
       ;
-      for (int tmp139 = 0; tmp139 < tmp138.len; tmp139++) {
-        Fn method = ((Fn *)tmp138.data)[tmp139];
+      for (int tmp137 = 0; tmp137 < tmp136.len; tmp137++) {
+        Fn method = ((Fn *)tmp136.data)[tmp137];
 
         s = string_add(s, _STR(", %.*s (*%.*s_%.*s)(void*", method.typ.len,
                                method.typ.str, arg.typ.len, arg.typ.str,
@@ -9175,10 +9164,10 @@ string Fn_str_args(Fn *f, Table *table) {
 
         if (method.args.len > 1) {
 
-          array_Var tmp140 = array_right(method.args, 1);
+          array_Var tmp138 = array_right(method.args, 1);
           ;
-          for (int tmp141 = 0; tmp141 < tmp140.len; tmp141++) {
-            Var a = ((Var *)tmp140.data)[tmp141];
+          for (int tmp139 = 0; tmp139 < tmp138.len; tmp139++) {
+            Var a = ((Var *)tmp138.data)[tmp139];
 
             s = string_add(s, _STR(", %.*s", a.typ.len, a.typ.str));
           };
@@ -9995,9 +9984,7 @@ void V_compile(V *v) {
 
   string dd = strings__Builder_str(d);
 
-  string tmp24 = dd;
-
-  array_set(&/*q*/ cgen->lines, defs_pos, &tmp24);
+  array_set(&/*q*/ cgen->lines, defs_pos, &(string[]){dd});
 
   V_generate_main(v);
 
@@ -10023,10 +10010,10 @@ void V_generate_main(V *v) {
 
     string consts_init_body = array_string_join_lines(cgen->consts_init);
 
-    array_string tmp27 = v->table->imports;
+    array_string tmp26 = v->table->imports;
     ;
-    for (int tmp28 = 0; tmp28 < tmp27.len; tmp28++) {
-      string imp = ((string *)tmp27.data)[tmp28];
+    for (int tmp27 = 0; tmp27 < tmp26.len; tmp27++) {
+      string imp = ((string *)tmp26.data)[tmp27];
 
       if (string_eq(imp, tos2((byte *)"http"))) {
 
@@ -10089,12 +10076,12 @@ void V_generate_main(V *v) {
 
       CGen_genln(cgen, tos2((byte *)"int main() { init_consts();"));
 
-      map_Fn tmp29 = v->table->fns;
-      array_string keys_tmp29 = map_keys(&tmp29);
-      for (int l = 0; l < keys_tmp29.len; l++) {
-        string _ = ((string *)keys_tmp29.data)[l];
+      map_Fn tmp28 = v->table->fns;
+      array_string keys_tmp28 = map_keys(&tmp28);
+      for (int l = 0; l < keys_tmp28.len; l++) {
+        string _ = ((string *)keys_tmp28.data)[l];
         Fn f = {0};
-        map_get(tmp29, _, &f);
+        map_get(tmp28, _, &f);
 
         if (string_starts_with(f.name, tos2((byte *)"test_"))) {
 
@@ -10185,10 +10172,10 @@ array_string V_v_files_from_dir(V *v, string dir) {
 
   array_string_sort(&/* ? */ files);
 
-  array_string tmp36 = files;
+  array_string tmp35 = files;
   ;
-  for (int tmp37 = 0; tmp37 < tmp36.len; tmp37++) {
-    string file = ((string *)tmp36.data)[tmp37];
+  for (int tmp36 = 0; tmp36 < tmp35.len; tmp36++) {
+    string file = ((string *)tmp35.data)[tmp36];
 
     if (!string_ends_with(file, tos2((byte *)".v")) &&
         !string_ends_with(file, tos2((byte *)".vh"))) {
@@ -10226,7 +10213,7 @@ array_string V_v_files_from_dir(V *v, string dir) {
     };
 
     _PUSH(&res, (_STR("%.*s/%.*s", dir.len, dir.str, file.len, file.str)),
-          tmp38, string);
+          tmp37, string);
   };
 
   return res;
@@ -10246,7 +10233,7 @@ void V_add_v_files_to_compile(V *v) {
 
   if (is_test_with_imports) {
 
-    _PUSH(&user_files, (dir), tmp42, string);
+    _PUSH(&user_files, (dir), tmp41, string);
 
     int pos = string_last_index(dir, tos2((byte *)"/"));
 
@@ -10255,7 +10242,7 @@ void V_add_v_files_to_compile(V *v) {
 
   if (string_ends_with(dir, tos2((byte *)".v"))) {
 
-    _PUSH(&user_files, (dir), tmp44, string);
+    _PUSH(&user_files, (dir), tmp43, string);
 
     dir = string_all_before(dir, tos2((byte *)"/"));
 
@@ -10263,12 +10250,12 @@ void V_add_v_files_to_compile(V *v) {
 
     array_string files = V_v_files_from_dir(&/* ? */ *v, dir);
 
-    array_string tmp46 = files;
+    array_string tmp45 = files;
     ;
-    for (int tmp47 = 0; tmp47 < tmp46.len; tmp47++) {
-      string file = ((string *)tmp46.data)[tmp47];
+    for (int tmp46 = 0; tmp46 < tmp45.len; tmp46++) {
+      string file = ((string *)tmp45.data)[tmp46];
 
-      _PUSH(&user_files, (file), tmp48, string);
+      _PUSH(&user_files, (file), tmp47, string);
     };
   };
 
@@ -10286,20 +10273,20 @@ void V_add_v_files_to_compile(V *v) {
     println(array_string_str(user_files));
   };
 
-  array_string tmp49 = v->files;
+  array_string tmp48 = v->files;
   ;
-  for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
-    string file = ((string *)tmp49.data)[tmp50];
+  for (int tmp49 = 0; tmp49 < tmp48.len; tmp49++) {
+    string file = ((string *)tmp48.data)[tmp49];
 
     Parser p = V_new_parser(v, file);
 
     Parser_parse(&/* ? */ p, main__Pass_imports);
   };
 
-  array_string tmp52 = user_files;
+  array_string tmp51 = user_files;
   ;
-  for (int tmp53 = 0; tmp53 < tmp52.len; tmp53++) {
-    string file = ((string *)tmp52.data)[tmp53];
+  for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
+    string file = ((string *)tmp51.data)[tmp52];
 
     Parser p = V_new_parser(v, file);
 
@@ -10320,10 +10307,10 @@ void V_add_v_files_to_compile(V *v) {
                   mod.len, mod.str, import_path.len, import_path.str));
     };
 
-    array_string tmp61 = vfiles;
+    array_string tmp60 = vfiles;
     ;
-    for (int tmp62 = 0; tmp62 < tmp61.len; tmp62++) {
-      string file = ((string *)tmp61.data)[tmp62];
+    for (int tmp61 = 0; tmp61 < tmp60.len; tmp61++) {
+      string file = ((string *)tmp60.data)[tmp61];
 
       Parser p = V_new_parser(v, file);
 
@@ -10351,10 +10338,10 @@ void V_add_v_files_to_compile(V *v) {
     cerror(tos2((byte *)"Import cycle detected."));
   };
 
-  array_string tmp66 = ModDepGraph_imports(&/* ? */ *deps_resolved);
+  array_string tmp65 = ModDepGraph_imports(&/* ? */ *deps_resolved);
   ;
-  for (int tmp67 = 0; tmp67 < tmp66.len; tmp67++) {
-    string mod = ((string *)tmp66.data)[tmp67];
+  for (int tmp66 = 0; tmp66 < tmp65.len; tmp66++) {
+    string mod = ((string *)tmp65.data)[tmp66];
 
     if (string_eq(mod, v->mod)) {
 
@@ -10365,26 +10352,26 @@ void V_add_v_files_to_compile(V *v) {
 
     array_string vfiles = V_v_files_from_dir(&/* ? */ *v, mod_path);
 
-    array_string tmp70 = vfiles;
+    array_string tmp69 = vfiles;
     ;
-    for (int tmp71 = 0; tmp71 < tmp70.len; tmp71++) {
-      string file = ((string *)tmp70.data)[tmp71];
+    for (int tmp70 = 0; tmp70 < tmp69.len; tmp70++) {
+      string file = ((string *)tmp69.data)[tmp70];
 
       if (!_IN(string, file, v->files)) {
 
-        _PUSH(&v->files, (file), tmp72, string);
+        _PUSH(&v->files, (file), tmp71, string);
       };
     };
   };
 
-  array_FileImportTable tmp73 = v->table->file_imports;
+  array_FileImportTable tmp72 = v->table->file_imports;
   ;
-  for (int tmp74 = 0; tmp74 < tmp73.len; tmp74++) {
-    FileImportTable fit = ((FileImportTable *)tmp73.data)[tmp74];
+  for (int tmp73 = 0; tmp73 < tmp72.len; tmp73++) {
+    FileImportTable fit = ((FileImportTable *)tmp72.data)[tmp73];
 
     if (!_IN(string, fit.file_path, v->files)) {
 
-      _PUSH(&v->files, (fit.file_path), tmp75, string);
+      _PUSH(&v->files, (fit.file_path), tmp74, string);
     };
   };
 }
@@ -10625,10 +10612,10 @@ V *new_v(array_string args) {
 
   if (!string_contains(out_name, tos2((byte *)"builtin.o"))) {
 
-    array_string tmp94 = builtins;
+    array_string tmp93 = builtins;
     ;
-    for (int tmp95 = 0; tmp95 < tmp94.len; tmp95++) {
-      string builtin = ((string *)tmp94.data)[tmp95];
+    for (int tmp94 = 0; tmp94 < tmp93.len; tmp94++) {
+      string builtin = ((string *)tmp93.data)[tmp94];
 
       string f = _STR("%.*s/vlib/builtin/%.*s", vroot.len, vroot.str,
                       builtin.len, builtin.str);
@@ -10637,16 +10624,16 @@ V *new_v(array_string args) {
           build_mode == main__BuildMode_build) {
       };
 
-      _PUSH(&files, (f), tmp97, string);
+      _PUSH(&files, (f), tmp96, string);
     };
   };
 
   string cflags = tos2((byte *)"");
 
-  array_string tmp99 = args;
+  array_string tmp98 = args;
   ;
-  for (int ci = 0; ci < tmp99.len; ci++) {
-    string cv = ((string *)tmp99.data)[ci];
+  for (int ci = 0; ci < tmp98.len; ci++) {
+    string cv = ((string *)tmp98.data)[ci];
 
     if (string_eq(cv, tos2((byte *)"-cflags"))) {
 
@@ -10718,19 +10705,19 @@ array_string env_vflags_and_os_args() {
 
   if (string_ne(tos2((byte *)""), vflags)) {
 
-    _PUSH(&args, ((*(string *)array__get(os__args, 0))), tmp106, string);
+    _PUSH(&args, ((*(string *)array__get(os__args, 0))), tmp105, string);
 
-    _PUSH_MANY(&args, (string_split(vflags, tos2((byte *)" "))), tmp109,
+    _PUSH_MANY(&args, (string_split(vflags, tos2((byte *)" "))), tmp108,
                array_string);
 
     if (os__args.len > 1) {
 
-      _PUSH_MANY(&args, (array_right(os__args, 1)), tmp110, array_string);
+      _PUSH_MANY(&args, (array_right(os__args, 1)), tmp109, array_string);
     };
 
   } else {
 
-    _PUSH_MANY(&args, (os__args), tmp111, array_string);
+    _PUSH_MANY(&args, (os__args), tmp110, array_string);
   };
 
   return args;
@@ -10741,16 +10728,16 @@ void update_v() {
 
   string vroot = os__dir(os__executable());
 
-  Option_os__Result tmp113 = os__exec(_STR(
+  Option_os__Result tmp112 = os__exec(_STR(
       "git -C \"%.*s\" pull --rebase origin master", vroot.len, vroot.str));
-  if (!tmp113.ok) {
-    string err = tmp113.error;
+  if (!tmp112.ok) {
+    string err = tmp112.error;
 
     cerror(err);
 
     return;
   }
-  os__Result s = *(os__Result *)tmp113.data;
+  os__Result s = *(os__Result *)tmp112.data;
   ;
 
   println(s.output);
@@ -10760,8 +10747,24 @@ void update_v() {
   os__mv(_STR("%.*s/v.exe", vroot.len, vroot.str),
          _STR("%.*s/v_old.exe", vroot.len, vroot.str));
 
-  Option_os__Result tmp114 =
+  Option_os__Result tmp113 =
       os__exec(_STR("%.*s/make.bat", vroot.len, vroot.str));
+  if (!tmp113.ok) {
+    string err = tmp113.error;
+
+    cerror(err);
+
+    return;
+  }
+  os__Result s2 = *(os__Result *)tmp113.data;
+  ;
+
+  println(s2.output);
+
+#else
+
+  Option_os__Result tmp114 =
+      os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
   if (!tmp114.ok) {
     string err = tmp114.error;
 
@@ -10770,22 +10773,6 @@ void update_v() {
     return;
   }
   os__Result s2 = *(os__Result *)tmp114.data;
-  ;
-
-  println(s2.output);
-
-#else
-
-  Option_os__Result tmp115 =
-      os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
-  if (!tmp115.ok) {
-    string err = tmp115.error;
-
-    cerror(err);
-
-    return;
-  }
-  os__Result s2 = *(os__Result *)tmp115.data;
   ;
 
   println(s2.output);
@@ -10810,10 +10797,10 @@ void test_v() {
   array_string test_files =
       os__walk_ext(tos2((byte *)"."), tos2((byte *)"_test.v"));
 
-  array_string tmp122 = test_files;
+  array_string tmp121 = test_files;
   ;
-  for (int tmp123 = 0; tmp123 < tmp122.len; tmp123++) {
-    string dot_relative_file = ((string *)tmp122.data)[tmp123];
+  for (int tmp122 = 0; tmp122 < tmp121.len; tmp122++) {
+    string dot_relative_file = ((string *)tmp121.data)[tmp122];
 
     string relative_file =
         string_replace(dot_relative_file, tos2((byte *)"./"), tos2((byte *)""));
@@ -10825,17 +10812,17 @@ void test_v() {
 
     print(string_add(relative_file, tos2((byte *)" ")));
 
-    Option_os__Result tmp127 =
+    Option_os__Result tmp126 =
         os__exec(_STR("%.*s %.*s -debug %.*s", vexe.len, vexe.str,
                       joined_args.len, joined_args.str, file.len, file.str));
-    if (!tmp127.ok) {
-      string err = tmp127.error;
+    if (!tmp126.ok) {
+      string err = tmp126.error;
 
       cerror(_STR("failed on %.*s", file.len, file.str));
 
       return;
     }
-    os__Result r = *(os__Result *)tmp127.data;
+    os__Result r = *(os__Result *)tmp126.data;
     ;
 
     if (r.exit_code != 0) {
@@ -10858,10 +10845,10 @@ void test_v() {
   array_string examples =
       os__walk_ext(tos2((byte *)"examples"), tos2((byte *)".v"));
 
-  array_string tmp129 = examples;
+  array_string tmp128 = examples;
   ;
-  for (int tmp130 = 0; tmp130 < tmp129.len; tmp130++) {
-    string relative_file = ((string *)tmp129.data)[tmp130];
+  for (int tmp129 = 0; tmp129 < tmp128.len; tmp129++) {
+    string relative_file = ((string *)tmp128.data)[tmp129];
 
     string file = os__realpath(relative_file);
 
@@ -10870,17 +10857,17 @@ void test_v() {
 
     print(string_add(relative_file, tos2((byte *)" ")));
 
-    Option_os__Result tmp133 =
+    Option_os__Result tmp132 =
         os__exec(_STR("%.*s %.*s -debug %.*s", vexe.len, vexe.str,
                       joined_args.len, joined_args.str, file.len, file.str));
-    if (!tmp133.ok) {
-      string err = tmp133.error;
+    if (!tmp132.ok) {
+      string err = tmp132.error;
 
       cerror(_STR("failed on %.*s", file.len, file.str));
 
       return;
     }
-    os__Result r = *(os__Result *)tmp133.data;
+    os__Result r = *(os__Result *)tmp132.data;
     ;
 
     if (r.exit_code != 0) {
@@ -10988,23 +10975,19 @@ ModDepGraph *ModDepGraph_resolve(ModDepGraph *graph) {
   for (int _ = 0; _ < tmp14.len; _++) {
     ModDepGraphNode node = ((ModDepGraphNode *)tmp14.data)[_];
 
-    ModDepGraphNode tmp15 = node;
-
-    map__set(&node_names, node.name, &tmp15);
+    map__set(&node_names, node.name, &(ModDepGraphNode[]){node});
 
     DepSet dep_set = (DepSet){.items = new_array(0, 1, sizeof(string))};
 
-    array_string tmp17 = node.deps;
+    array_string tmp16 = node.deps;
     ;
-    for (int _ = 0; _ < tmp17.len; _++) {
-      string dep = ((string *)tmp17.data)[_];
+    for (int _ = 0; _ < tmp16.len; _++) {
+      string dep = ((string *)tmp16.data)[_];
 
       DepSet_add(&/* ? */ dep_set, dep);
     };
 
-    DepSet tmp18 = dep_set;
-
-    map__set(&node_deps, node.name, &tmp18);
+    map__set(&node_deps, node.name, &(DepSet[]){dep_set});
   };
 
   ModDepGraph *resolved = new_mod_dep_graph();
@@ -11013,12 +10996,12 @@ ModDepGraph *ModDepGraph_resolve(ModDepGraph *graph) {
 
     DepSet ready_set = (DepSet){.items = new_array(0, 1, sizeof(string))};
 
-    map_DepSet tmp21 = node_deps;
-    array_string keys_tmp21 = map_keys(&tmp21);
-    for (int l = 0; l < keys_tmp21.len; l++) {
-      string name = ((string *)keys_tmp21.data)[l];
+    map_DepSet tmp19 = node_deps;
+    array_string keys_tmp19 = map_keys(&tmp19);
+    for (int l = 0; l < keys_tmp19.len; l++) {
+      string name = ((string *)keys_tmp19.data)[l];
       DepSet deps = {0};
-      map_get(tmp21, name, &deps);
+      map_get(tmp19, name, &deps);
 
       if (DepSet_size(&/* ? */ deps) == 0) {
 
@@ -11034,59 +11017,58 @@ ModDepGraph *ModDepGraph_resolve(ModDepGraph *graph) {
 
       array_string ndk = map_keys(&/* ? */ node_deps);
 
-      map_DepSet tmp24 = node_deps;
-      array_string keys_tmp24 = map_keys(&tmp24);
-      for (int l = 0; l < keys_tmp24.len; l++) {
-        string name = ((string *)keys_tmp24.data)[l];
+      map_DepSet tmp22 = node_deps;
+      array_string keys_tmp22 = map_keys(&tmp22);
+      for (int l = 0; l < keys_tmp22.len; l++) {
+        string name = ((string *)keys_tmp22.data)[l];
         DepSet _ = {0};
-        map_get(tmp24, name, &_);
+        map_get(tmp22, name, &_);
 
-        ModDepGraphNode tmp25 = {0};
-        bool tmp26 = map_get(node_names, name, &tmp25);
+        ModDepGraphNode tmp23 = {0};
+        bool tmp24 = map_get(node_names, name, &tmp23);
 
-        ModDepGraphNode node = tmp25;
+        ModDepGraphNode node = tmp23;
 
         if (string_eq(name, (*(string *)array__get(ndk, node_deps.size - 1)))) {
+
+          DepSet tmp28 = {0};
+          bool tmp29 = map_get(node_deps, name, &tmp28);
 
           DepSet tmp30 = {0};
           bool tmp31 = map_get(node_deps, name, &tmp30);
 
-          DepSet tmp32 = {0};
-          bool tmp33 = map_get(node_deps, name, &tmp32);
-
           node.last_cycle =
-              (*(string *)array__get(tmp30.items, tmp32.items.len - 1));
+              (*(string *)array__get(tmp28.items, tmp30.items.len - 1));
         };
 
-        _PUSH(&g->nodes, (node), tmp36, ModDepGraphNode);
+        _PUSH(&g->nodes, (node), tmp34, ModDepGraphNode);
       };
 
       return g;
     };
 
-    array_string tmp37 = ready_set.items;
+    array_string tmp35 = ready_set.items;
     ;
-    for (int tmp38 = 0; tmp38 < tmp37.len; tmp38++) {
-      string name = ((string *)tmp37.data)[tmp38];
+    for (int tmp36 = 0; tmp36 < tmp35.len; tmp36++) {
+      string name = ((string *)tmp35.data)[tmp36];
 
       map_delete(&/* ? */ node_deps, name);
 
-      ModDepGraphNode tmp40 = {0};
-      bool tmp41 = map_get(node_names, name, &tmp40);
+      ModDepGraphNode tmp38 = {0};
+      bool tmp39 = map_get(node_names, name, &tmp38);
 
-      _PUSH(&resolved->nodes, (tmp40), tmp39, ModDepGraphNode);
+      _PUSH(&resolved->nodes, (tmp38), tmp37, ModDepGraphNode);
     };
 
-    map_DepSet tmp42 = node_deps;
-    array_string keys_tmp42 = map_keys(&tmp42);
-    for (int l = 0; l < keys_tmp42.len; l++) {
-      string name = ((string *)keys_tmp42.data)[l];
+    map_DepSet tmp40 = node_deps;
+    array_string keys_tmp40 = map_keys(&tmp40);
+    for (int l = 0; l < keys_tmp40.len; l++) {
+      string name = ((string *)keys_tmp40.data)[l];
       DepSet deps = {0};
-      map_get(tmp42, name, &deps);
+      map_get(tmp40, name, &deps);
 
-      DepSet tmp43 = DepSet_diff(&/* ? */ deps, ready_set);
-
-      map__set(&node_deps, name, &tmp43);
+      map__set(&node_deps, name,
+               &(DepSet[]){DepSet_diff(&/* ? */ deps, ready_set)});
     };
   };
 
@@ -11097,17 +11079,17 @@ array_string ModDepGraph_imports(ModDepGraph *graph) {
   array_string mods =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-  array_ModDepGraphNode tmp45 = graph->nodes;
+  array_ModDepGraphNode tmp42 = graph->nodes;
   ;
-  for (int tmp46 = 0; tmp46 < tmp45.len; tmp46++) {
-    ModDepGraphNode node = ((ModDepGraphNode *)tmp45.data)[tmp46];
+  for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
+    ModDepGraphNode node = ((ModDepGraphNode *)tmp42.data)[tmp43];
 
     if (string_eq(node.name, tos2((byte *)"main"))) {
 
       continue;
     };
 
-    _PUSH(&mods, (node.name), tmp47, string);
+    _PUSH(&mods, (node.name), tmp44, string);
   };
 
   return mods;
@@ -11126,10 +11108,10 @@ void ModDepGraph_display(ModDepGraph *graph) {
 
     ModDepGraphNode node = (*(ModDepGraphNode *)array__get(graph->nodes, i));
 
-    array_string tmp54 = node.deps;
+    array_string tmp51 = node.deps;
     ;
-    for (int tmp55 = 0; tmp55 < tmp54.len; tmp55++) {
-      string dep = ((string *)tmp54.data)[tmp55];
+    for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
+      string dep = ((string *)tmp51.data)[tmp52];
 
       string out = _STR(" * %.*s -> %.*s", node.name.len, node.name.str,
                         dep.len, dep.str);
@@ -12161,9 +12143,7 @@ void Parser_parse(Parser *p, Pass pass) {
 
         for (int i = start; i < end; i++) {
 
-          string tmp21 = tos2((byte *)"");
-
-          array_set(&/*q*/ p->cgen->lines, i, &tmp21);
+          array_set(&/*q*/ p->cgen->lines, i, &(string[]){tos2((byte *)"")});
         };
 
       } else {
@@ -12250,7 +12230,7 @@ void Parser_import_statement(Parser *p) {
 
   Parser_log(&/* ? */ *p, _STR("adding import %.*s", mod.len, mod.str));
 
-  _PUSH(&p->table->imports, (mod), tmp28, string);
+  _PUSH(&p->table->imports, (mod), tmp27, string);
 
   Table_register_module(p->table, mod);
 
@@ -12303,7 +12283,7 @@ void Parser_const_decl(Parser *p) {
         _PUSH(&p->cgen->consts,
               (_STR("#define %.*s %.*s", name.len, name.str,
                     p->cgen->cur_line.len, p->cgen->cur_line.str)),
-              tmp31, string);
+              tmp30, string);
 
         CGen_resetln(p->cgen, tos2((byte *)""));
 
@@ -12319,7 +12299,7 @@ void Parser_const_decl(Parser *p) {
                   Table_cgen_name_type_pair(&/* ? */ *p->table, name, typ),
                   _STR(" = %.*s;", p->cgen->cur_line.len,
                        p->cgen->cur_line.str))),
-              tmp32, string);
+              tmp31, string);
 
       } else {
 
@@ -12327,12 +12307,12 @@ void Parser_const_decl(Parser *p) {
               (string_add(
                   Table_cgen_name_type_pair(&/* ? */ *p->table, name, typ),
                   tos2((byte *)";"))),
-              tmp33, string);
+              tmp32, string);
 
         _PUSH(&p->cgen->consts_init,
               (_STR("%.*s = %.*s;", name.len, name.str, p->cgen->cur_line.len,
                     p->cgen->cur_line.str)),
-              tmp34, string);
+              tmp33, string);
       };
 
       CGen_resetln(p->cgen, tos2((byte *)""));
@@ -12629,7 +12609,7 @@ void Parser_struct_decl(Parser *p) {
                                    "letters, use snake_case instead"));
     };
 
-    _PUSH(&names, (field_name), tmp54, string);
+    _PUSH(&names, (field_name), tmp53, string);
 
     if (is_interface) {
 
@@ -12708,7 +12688,7 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
       !Parser_first_pass(&/* ? */ *p)) {
 
     _PUSH(&p->cgen->typedefs,
-          (_STR("typedef int %.*s;", enum_name.len, enum_name.str)), tmp60,
+          (_STR("typedef int %.*s;", enum_name.len, enum_name.str)), tmp59,
           string);
   };
 
@@ -12723,7 +12703,7 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
 
     string field = Parser_check_name(p);
 
-    _PUSH(&fields, (field), tmp64, string);
+    _PUSH(&fields, (field), tmp63, string);
 
     Parser_fgenln(p, tos2((byte *)""));
 
@@ -12733,7 +12713,7 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
     if (p->pass == main__Pass_main) {
 
       _PUSH(&p->cgen->consts,
-            (_STR("#define %.*s %d", name.len, name.str, val)), tmp66, string);
+            (_STR("#define %.*s %d", name.len, name.str, val)), tmp65, string);
     };
 
     if (p->tok == main__Token_comma) {
@@ -13312,7 +13292,7 @@ void Parser_genln(Parser *p, string s) { CGen_genln(p->cgen, s); }
 void Parser_gen(Parser *p, string s) { CGen_gen(p->cgen, s); }
 void Parser_vh_genln(Parser *p, string s) {
 
-  _PUSH(&p->vh_lines, (s), tmp96, string);
+  _PUSH(&p->vh_lines, (s), tmp95, string);
 }
 string Parser_statement(Parser *p, bool add_semi) {
 
@@ -13847,9 +13827,9 @@ string Parser_bterm(Parser *p) {
 
       string sql_param = CGen_cut(p->cgen);
 
-      _PUSH(&p->sql_params, (sql_param), tmp132, string);
+      _PUSH(&p->sql_params, (sql_param), tmp131, string);
 
-      _PUSH(&p->sql_types, (typ), tmp133, string);
+      _PUSH(&p->sql_types, (typ), tmp132, string);
 
     } else {
 
@@ -14700,23 +14680,23 @@ string Parser_index_expr(Parser *p, string typ_, int fn_ph) {
 
     if (is_indexer && (is_map || is_arr)) {
 
-      string tmp = Parser_get_tmp(p);
-
-      string tmp_val = string_right(p->cgen->cur_line, assign_pos);
+      string val = string_right(p->cgen->cur_line, assign_pos);
 
       CGen_resetln(p->cgen, string_left(p->cgen->cur_line, assign_pos));
 
       string cao_tmp = p->cgen->cur_line;
 
+      string func = tos2((byte *)"");
+
       if (is_map) {
 
-        CGen_set_placeholder(p->cgen, fn_ph, tos2((byte *)"map__set(&"));
+        func = tos2((byte *)"map__set(&");
 
       } else {
 
         if (is_ptr) {
 
-          CGen_set_placeholder(p->cgen, fn_ph, tos2((byte *)"array_set("));
+          func = tos2((byte *)"array_set(");
 
           if (is_cao) {
 
@@ -14726,8 +14706,7 @@ string Parser_index_expr(Parser *p, string typ_, int fn_ph) {
 
         } else {
 
-          CGen_set_placeholder(p->cgen, fn_ph,
-                               tos2((byte *)"array_set(&/*q*/"));
+          func = tos2((byte *)"array_set(&/*q*/");
 
           if (is_cao) {
 
@@ -14737,26 +14716,17 @@ string Parser_index_expr(Parser *p, string typ_, int fn_ph) {
         };
       };
 
-      Parser_gen(p, _STR(", & %.*s)", tmp.len, tmp.str));
+      CGen_set_placeholder(p->cgen, fn_ph, func);
 
-      if (!is_cao) {
+      if (is_cao) {
 
-        CGen_insert_before(p->cgen,
-                           _STR("%.*s %.*s = %.*s;", typ.len, typ.str, tmp.len,
-                                tmp.str, tmp_val.len, tmp_val.str));
-
-      } else {
-
-        CGen_insert_before(
-            p->cgen,
-            string_add(
-                string_add(
-                    string_add(_STR("%.*s %.*s = %.*s ", typ.len, typ.str,
-                                    tmp.len, tmp.str, cao_tmp.len, cao_tmp.str),
-                               string_all_before(tmp_val, tos2((byte *)"="))),
-                    string_all_after(tmp_val, tos2((byte *)"="))),
-                tos2((byte *)";")));
+        val = string_add(
+            string_add(cao_tmp, string_all_before(val, tos2((byte *)"="))),
+            string_all_after(val, tos2((byte *)"=")));
       };
+
+      Parser_gen(p, _STR(", & (%.*s []) { %.*s })", typ.len, typ.str, val.len,
+                         val.str));
     };
 
     return typ;
@@ -15372,7 +15342,7 @@ string Parser_assoc(Parser *p) {
 
     string field = Parser_check_name(p);
 
-    _PUSH(&fields, (field), tmp234, string);
+    _PUSH(&fields, (field), tmp233, string);
 
     Parser_gen(p, _STR(".%.*s = ", field.len, field.str));
 
@@ -15390,10 +15360,10 @@ string Parser_assoc(Parser *p) {
 
   Type *T = Table_find_type(&/* ? */ *p->table, var.typ);
 
-  array_Var tmp236 = T->fields;
+  array_Var tmp235 = T->fields;
   ;
-  for (int tmp237 = 0; tmp237 < tmp236.len; tmp237++) {
-    Var ffield = ((Var *)tmp236.data)[tmp237];
+  for (int tmp236 = 0; tmp236 < tmp235.len; tmp236++) {
+    Var ffield = ((Var *)tmp235.data)[tmp236];
 
     string f = ffield.name;
 
@@ -15955,9 +15925,8 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
 
   if (string_eq(typ, tos2((byte *)"tm"))) {
 
-    string tmp282 = tos2((byte *)"");
-
-    array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 1, &tmp282);
+    array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 1,
+              &(string[]){tos2((byte *)"")});
   };
 
   Parser_check(p, main__Token_lcbr);
@@ -16032,7 +16001,7 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
 
       Var f = Type_find_field(&/* ? */ *t, field);
 
-      _PUSH(&inited_fields, (field), tmp289, string);
+      _PUSH(&inited_fields, (field), tmp287, string);
 
       Parser_gen(p, _STR(".%.*s = ", field.len, field.str));
 
@@ -16062,10 +16031,10 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
       Parser_gen(p, tos2((byte *)","));
     };
 
-    array_Var tmp290 = t->fields;
+    array_Var tmp288 = t->fields;
     ;
-    for (int i = 0; i < tmp290.len; i++) {
-      Var field = ((Var *)tmp290.data)[i];
+    for (int i = 0; i < tmp288.len; i++) {
+      Var field = ((Var *)tmp288.data)[i];
 
       if (array_string_contains(inited_fields, field.name)) {
 
@@ -16087,7 +16056,7 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
                            field.name.str, string_right(field_typ, 4).len,
                            string_right(field_typ, 4).str));
 
-        _PUSH(&inited_fields, (field.name), tmp292, string);
+        _PUSH(&inited_fields, (field.name), tmp290, string);
 
         if (i != t->fields.len - 1) {
 
@@ -16125,10 +16094,10 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
       T = Table_find_type(&/* ? */ *p->table, T->parent);
     };
 
-    array_Var tmp295 = T->fields;
+    array_Var tmp293 = T->fields;
     ;
-    for (int i = 0; i < tmp295.len; i++) {
-      Var ffield = ((Var *)tmp295.data)[i];
+    for (int i = 0; i < tmp293.len; i++) {
+      Var ffield = ((Var *)tmp293.data)[i];
 
       string expr_typ = Parser_bool_expression(p);
 
@@ -16953,9 +16922,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
             Parser_check(p, main__Token_rcbr);
           };
 
-          string tmp348 = res_typ;
+          string tmp346 = res_typ;
           { Parser_check(p, main__Token_rcbr); }
-          return tmp348;
+          return tmp346;
           ;
 
         } else {
@@ -16964,9 +16933,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
           p->returns = all_cases_return && p->returns;
 
-          string tmp349 = tos2((byte *)"");
+          string tmp347 = tos2((byte *)"");
           { Parser_check(p, main__Token_rcbr); }
-          return tmp349;
+          return tmp347;
           ;
         };
       };
@@ -16991,9 +16960,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         Parser_gen(p, strings__repeat(')', i + 1));
 
-        string tmp351 = res_typ;
+        string tmp349 = res_typ;
         { Parser_check(p, main__Token_rcbr); }
-        return tmp351;
+        return tmp349;
         ;
 
       } else {
@@ -17004,9 +16973,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         p->returns = all_cases_return && p->returns;
 
-        string tmp352 = tos2((byte *)"");
+        string tmp350 = tos2((byte *)"");
         { Parser_check(p, main__Token_rcbr); }
-        return tmp352;
+        return tmp350;
         ;
       };
     };
@@ -17110,9 +17079,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
   p->returns = 0;
 
-  string tmp354 = tos2((byte *)"");
+  string tmp352 = tos2((byte *)"");
   { Parser_check(p, main__Token_rcbr); }
-  return tmp354;
+  return tmp352;
   ;
 
   { Parser_check(p, main__Token_rcbr); }
@@ -17206,10 +17175,10 @@ void Parser_return_st(Parser *p) {
 
         string total_text = tos2((byte *)"");
 
-        array_string tmp365 = p->cur_fn->defer_text;
+        array_string tmp363 = p->cur_fn->defer_text;
         ;
-        for (int tmp366 = 0; tmp366 < tmp365.len; tmp366++) {
-          string text = ((string *)tmp365.data)[tmp366];
+        for (int tmp364 = 0; tmp364 < tmp363.len; tmp364++) {
+          string text = ((string *)tmp363.data)[tmp364];
 
           if (string_ne(text, tos2((byte *)""))) {
 
@@ -17373,10 +17342,10 @@ string Parser_js_decode(Parser *p) {
 
     Type *T = Table_find_type(&/* ? */ *p->table, typ);
 
-    array_Var tmp380 = T->fields;
+    array_Var tmp378 = T->fields;
     ;
-    for (int tmp381 = 0; tmp381 < tmp380.len; tmp381++) {
-      Var field = ((Var *)tmp380.data)[tmp381];
+    for (int tmp379 = 0; tmp379 < tmp378.len; tmp379++) {
+      Var field = ((Var *)tmp378.data)[tmp379];
 
       string def_val = type_default(field.typ);
 
@@ -17404,7 +17373,7 @@ string Parser_js_decode(Parser *p) {
     string opt_type = _STR("Option_%.*s", typ.len, typ.str);
 
     _PUSH(&p->cgen->typedefs,
-          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp384,
+          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp382,
           string);
 
     Table_register_type(p->table, opt_type);
@@ -19764,9 +19733,7 @@ void Parser_register_global(Parser *p, string name, string typ) {
 }
 void Table_register_fn(Table *t, Fn new_fn) {
 
-  Fn tmp16 = new_fn;
-
-  map__set(&t->fns, new_fn.name, &tmp16);
+  map__set(&t->fns, new_fn.name, &(Fn[]){new_fn});
 }
 bool Table_known_type(Table *table, string typ_) {
 
@@ -19778,10 +19745,10 @@ bool Table_known_type(Table *table, string typ_) {
     typ = string_left(typ, typ.len - 1);
   };
 
-  array_Type tmp18 = table->types;
+  array_Type tmp17 = table->types;
   ;
-  for (int tmp19 = 0; tmp19 < tmp18.len; tmp19++) {
-    Type t = ((Type *)tmp18.data)[tmp19];
+  for (int tmp18 = 0; tmp18 < tmp17.len; tmp18++) {
+    Type t = ((Type *)tmp17.data)[tmp18];
 
     if (string_eq(t.name, typ) && !t.is_placeholder) {
 
@@ -19793,10 +19760,10 @@ bool Table_known_type(Table *table, string typ_) {
 }
 Fn Table_find_fn(Table *t, string name) {
 
-  Fn tmp20 = {0};
-  bool tmp21 = map_get(t->fns, name, &tmp20);
+  Fn tmp19 = {0};
+  bool tmp20 = map_get(t->fns, name, &tmp19);
 
-  Fn f = tmp20;
+  Fn f = tmp19;
 
   if (!isnil(f.name.str)) {
 
@@ -19838,10 +19805,10 @@ void Table_register_type(Table *t, string typ) {
     return;
   };
 
-  array_Type tmp25 = t->types;
+  array_Type tmp24 = t->types;
   ;
-  for (int tmp26 = 0; tmp26 < tmp25.len; tmp26++) {
-    Type typ2 = ((Type *)tmp25.data)[tmp26];
+  for (int tmp25 = 0; tmp25 < tmp24.len; tmp25++) {
+    Type typ2 = ((Type *)tmp24.data)[tmp25];
 
     if (string_eq(typ2.name, typ)) {
 
@@ -19860,7 +19827,7 @@ void Table_register_type(Table *t, string typ) {
                 .gen_types = new_array(0, 1, sizeof(string)),
                 .is_placeholder = 0,
                 .gen_str = 0}),
-        tmp27, Type);
+        tmp26, Type);
 }
 void Parser_register_type_with_parent(Parser *p, string strtyp, string parent) {
 
@@ -19884,10 +19851,10 @@ void Table_register_type_with_parent(Table *t, string typ, string parent) {
     return;
   };
 
-  array_Type tmp29 = t->types;
+  array_Type tmp28 = t->types;
   ;
-  for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
-    Type typ2 = ((Type *)tmp29.data)[tmp30];
+  for (int tmp29 = 0; tmp29 < tmp28.len; tmp29++) {
+    Type typ2 = ((Type *)tmp28.data)[tmp29];
 
     if (string_eq(typ2.name, typ)) {
 
@@ -19906,7 +19873,7 @@ void Table_register_type_with_parent(Table *t, string typ, string parent) {
                 .gen_types = new_array(0, 1, sizeof(string)),
                 .is_placeholder = 0,
                 .gen_str = 0}),
-        tmp31, Type);
+        tmp30, Type);
 }
 void Table_register_type2(Table *t, Type typ) {
 
@@ -19915,10 +19882,10 @@ void Table_register_type2(Table *t, Type typ) {
     return;
   };
 
-  array_Type tmp32 = t->types;
+  array_Type tmp31 = t->types;
   ;
-  for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
-    Type typ2 = ((Type *)tmp32.data)[tmp33];
+  for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
+    Type typ2 = ((Type *)tmp31.data)[tmp32];
 
     if (string_eq(typ2.name, typ.name)) {
 
@@ -19926,7 +19893,7 @@ void Table_register_type2(Table *t, Type typ) {
     };
   };
 
-  _PUSH(&t->types, (typ), tmp34, Type);
+  _PUSH(&t->types, (typ), tmp33, Type);
 }
 void Type_add_field(Type *t, string name, string typ, bool is_mut, string attr,
                     AccessMod access_mod) {
@@ -19950,7 +19917,7 @@ void Type_add_field(Type *t, string name, string typ, bool is_mut, string attr,
                 .is_changed = 0,
                 .scope_level = 0};
 
-  _PUSH(&t->fields, (v), tmp36, Var);
+  _PUSH(&t->fields, (v), tmp35, Var);
 }
 bool Type_has_field(Type *t, string name) {
 
@@ -19964,10 +19931,10 @@ bool Type_has_enum_val(Type *t, string name) {
 }
 Var Type_find_field(Type *t, string name) {
 
-  array_Var tmp38 = t->fields;
+  array_Var tmp37 = t->fields;
   ;
-  for (int tmp39 = 0; tmp39 < tmp38.len; tmp39++) {
-    Var field = ((Var *)tmp38.data)[tmp39];
+  for (int tmp38 = 0; tmp38 < tmp37.len; tmp38++) {
+    Var field = ((Var *)tmp37.data)[tmp38];
 
     if (string_eq(field.name, name)) {
 
@@ -20012,7 +19979,7 @@ Var Table_find_field(Table *table, Type *typ, string name) {
 
   return field;
 }
-void Type_add_method(Type *t, Fn f) { _PUSH(&t->methods, (f), tmp43, Fn); }
+void Type_add_method(Type *t, Fn f) { _PUSH(&t->methods, (f), tmp42, Fn); }
 bool Type_has_method(Type *t, string name) {
 
   Fn method = Type_find_method(&/* ? */ *t, name);
@@ -20040,10 +20007,10 @@ Fn Table_find_method(Table *table, Type *typ, string name) {
 }
 Fn Type_find_method(Type *t, string name) {
 
-  array_Fn tmp48 = t->methods;
+  array_Fn tmp47 = t->methods;
   ;
-  for (int tmp49 = 0; tmp49 < tmp48.len; tmp49++) {
-    Fn method = ((Fn *)tmp48.data)[tmp49];
+  for (int tmp48 = 0; tmp48 < tmp47.len; tmp48++) {
+    Fn method = ((Fn *)tmp47.data)[tmp48];
 
     if (string_eq(method.name, name)) {
 
@@ -20089,10 +20056,10 @@ Type *Table_find_type(Table *t, string name_) {
     name = string_left(name, name.len - 1);
   };
 
-  array_Type tmp52 = t->types;
+  array_Type tmp51 = t->types;
   ;
-  for (int i = 0; i < tmp52.len; i++) {
-    Type typ = ((Type *)tmp52.data)[i];
+  for (int i = 0; i < tmp51.len; i++) {
+    Type typ = ((Type *)tmp51.data)[i];
 
     if (string_eq(typ.name, name)) {
 
@@ -20276,10 +20243,10 @@ bool Parser_satisfies_interface(Parser *p, string interface_name, string _typ,
 
   Type *typ = Table_find_type(&/* ? */ *p->table, _typ);
 
-  array_Fn tmp59 = int_typ->methods;
+  array_Fn tmp58 = int_typ->methods;
   ;
-  for (int tmp60 = 0; tmp60 < tmp59.len; tmp60++) {
-    Fn method = ((Fn *)tmp59.data)[tmp60];
+  for (int tmp59 = 0; tmp59 < tmp58.len; tmp59++) {
+    Fn method = ((Fn *)tmp58.data)[tmp59];
 
     if (!Type_has_method(&/* ? */ *typ, method.name)) {
 
@@ -20386,10 +20353,10 @@ string type_default(string typ) {
 }
 bool Table_is_interface(Table *t, string name) {
 
-  array_Type tmp61 = t->types;
+  array_Type tmp60 = t->types;
   ;
-  for (int tmp62 = 0; tmp62 < tmp61.len; tmp62++) {
-    Type typ = ((Type *)tmp61.data)[tmp62];
+  for (int tmp61 = 0; tmp61 < tmp60.len; tmp61++) {
+    Type typ = ((Type *)tmp60.data)[tmp61];
 
     if (typ.cat == main__TypeCategory_interface_ && string_eq(typ.name, name)) {
 
@@ -20401,12 +20368,12 @@ bool Table_is_interface(Table *t, string name) {
 }
 bool Table_main_exists(Table *t) {
 
-  map_Fn tmp63 = t->fns;
-  array_string keys_tmp63 = map_keys(&tmp63);
-  for (int l = 0; l < keys_tmp63.len; l++) {
-    string _ = ((string *)keys_tmp63.data)[l];
+  map_Fn tmp62 = t->fns;
+  array_string keys_tmp62 = map_keys(&tmp62);
+  for (int l = 0; l < keys_tmp62.len; l++) {
+    string _ = ((string *)keys_tmp62.data)[l];
     Fn f = {0};
-    map_get(tmp63, _, &f);
+    map_get(tmp62, _, &f);
 
     if (string_eq(f.name, tos2((byte *)"main"))) {
 
@@ -20418,10 +20385,10 @@ bool Table_main_exists(Table *t) {
 }
 Var Table_find_const(Table *t, string name) {
 
-  array_Var tmp64 = t->consts;
+  array_Var tmp63 = t->consts;
   ;
-  for (int tmp65 = 0; tmp65 < tmp64.len; tmp65++) {
-    Var c = ((Var *)tmp64.data)[tmp65];
+  for (int tmp64 = 0; tmp64 < tmp63.len; tmp64++) {
+    Var c = ((Var *)tmp63.data)[tmp64];
 
     if (string_eq(c.name, name)) {
 
@@ -20484,18 +20451,16 @@ string Table_cgen_name(Table *table, Fn *f) {
       !string_ends_with(name, tos2((byte *)"_str")) &&
       !string_contains(name, tos2((byte *)"contains"))) {
 
-    int tmp67 = 0;
-    bool tmp68 = map_get(table->obf_ids, name, &tmp67);
+    int tmp66 = 0;
+    bool tmp67 = map_get(table->obf_ids, name, &tmp66);
 
-    int idx = tmp67;
+    int idx = tmp66;
 
     if (idx == 0) {
 
       table->fn_cnt++;
 
-      int tmp70 = table->fn_cnt;
-
-      map__set(&table->obf_ids, name, &tmp70);
+      map__set(&table->obf_ids, name, &(int[]){table->fn_cnt});
 
       idx = table->fn_cnt;
     };
@@ -20578,14 +20543,14 @@ void Table_register_generic_fn(Table *t, string fn_name) {
   _PUSH(&t->generic_fns,
         ((GenTable){fn_name, new_array_from_c_array(0, 0, sizeof(string),
                                                     (string[]){0})}),
-        tmp79, GenTable);
+        tmp77, GenTable);
 }
 array_string Table_fn_gen_types(Table *t, string fn_name) {
 
-  array_GenTable tmp80 = t->generic_fns;
+  array_GenTable tmp78 = t->generic_fns;
   ;
-  for (int _ = 0; _ < tmp80.len; _++) {
-    GenTable f = ((GenTable *)tmp80.data)[_];
+  for (int _ = 0; _ < tmp78.len; _++) {
+    GenTable f = ((GenTable *)tmp78.data)[_];
 
     if (string_eq(f.fn_name, fn_name)) {
 
@@ -20599,14 +20564,14 @@ array_string Table_fn_gen_types(Table *t, string fn_name) {
 }
 void Table_register_generic_fn_type(Table *t, string fn_name, string typ) {
 
-  array_GenTable tmp81 = t->generic_fns;
+  array_GenTable tmp79 = t->generic_fns;
   ;
-  for (int i = 0; i < tmp81.len; i++) {
-    GenTable f = ((GenTable *)tmp81.data)[i];
+  for (int i = 0; i < tmp79.len; i++) {
+    GenTable f = ((GenTable *)tmp79.data)[i];
 
     if (string_eq(f.fn_name, fn_name)) {
 
-      _PUSH(&(*(GenTable *)array__get(t->generic_fns, i)).types, (typ), tmp84,
+      _PUSH(&(*(GenTable *)array__get(t->generic_fns, i)).types, (typ), tmp82,
             string);
 
       return;
@@ -20698,10 +20663,10 @@ bool is_compile_time_const(string s_) {
     return 1;
   };
 
-  string tmp87 = s;
+  string tmp85 = s;
   ;
-  for (int tmp88 = 0; tmp88 < tmp87.len; tmp88++) {
-    byte c = ((byte *)tmp87.str)[tmp88];
+  for (int tmp86 = 0; tmp86 < tmp85.len; tmp86++) {
+    byte c = ((byte *)tmp85.str)[tmp86];
 
     if (!((c >= '0' && c <= '9') || c == '.')) {
 
@@ -20713,10 +20678,10 @@ bool is_compile_time_const(string s_) {
 }
 string Table_qualify_module(Table *table, string mod, string file_path) {
 
-  array_string tmp89 = table->imports;
+  array_string tmp87 = table->imports;
   ;
-  for (int tmp90 = 0; tmp90 < tmp89.len; tmp90++) {
-    string m = ((string *)tmp89.data)[tmp90];
+  for (int tmp88 = 0; tmp88 < tmp87.len; tmp88++) {
+    string m = ((string *)tmp87.data)[tmp88];
 
     if (string_contains(m, tos2((byte *)".")) && string_contains(m, mod)) {
 
@@ -20771,17 +20736,17 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
     array_string internal_mod_parts =
         new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-    array_string tmp97 = mod_parts;
+    array_string tmp95 = mod_parts;
     ;
-    for (int tmp98 = 0; tmp98 < tmp97.len; tmp98++) {
-      string part = ((string *)tmp97.data)[tmp98];
+    for (int tmp96 = 0; tmp96 < tmp95.len; tmp96++) {
+      string part = ((string *)tmp95.data)[tmp96];
 
       if (string_eq(part, tos2((byte *)"internal"))) {
 
         break;
       };
 
-      _PUSH(&internal_mod_parts, (part), tmp99, string);
+      _PUSH(&internal_mod_parts, (part), tmp97, string);
     };
 
     string internal_parent =
@@ -20794,9 +20759,7 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
     };
   };
 
-  string tmp101 = mod;
-
-  map__set(&fit->imports, alias, &tmp101);
+  map__set(&fit->imports, alias, &(string[]){mod});
 }
 bool FileImportTable_known_alias(FileImportTable *fit, string alias) {
 
@@ -20804,12 +20767,12 @@ bool FileImportTable_known_alias(FileImportTable *fit, string alias) {
 }
 bool FileImportTable_is_aliased(FileImportTable *fit, string mod) {
 
-  map_string tmp102 = fit->imports;
-  array_string keys_tmp102 = map_keys(&tmp102);
-  for (int l = 0; l < keys_tmp102.len; l++) {
-    string _ = ((string *)keys_tmp102.data)[l];
+  map_string tmp99 = fit->imports;
+  array_string keys_tmp99 = map_keys(&tmp99);
+  for (int l = 0; l < keys_tmp99.len; l++) {
+    string _ = ((string *)keys_tmp99.data)[l];
     string val = {0};
-    map_get(tmp102, _, &val);
+    map_get(tmp99, _, &val);
 
     if (string_eq(val, mod)) {
 
@@ -20821,13 +20784,13 @@ bool FileImportTable_is_aliased(FileImportTable *fit, string mod) {
 }
 string FileImportTable_resolve_alias(FileImportTable *fit, string alias) {
 
-  string tmp103 = tos((byte *)"", 0);
-  bool tmp104 = map_get(fit->imports, alias, &tmp103);
+  string tmp100 = tos((byte *)"", 0);
+  bool tmp101 = map_get(fit->imports, alias, &tmp100);
 
-  if (!tmp104)
-    tmp103 = tos((byte *)"", 0);
+  if (!tmp101)
+    tmp100 = tos((byte *)"", 0);
 
-  return tmp103;
+  return tmp100;
 }
 bool Type_contains_field_type(Type *t, string typ) {
 
@@ -20836,10 +20799,10 @@ bool Type_contains_field_type(Type *t, string typ) {
     return 0;
   };
 
-  array_Var tmp107 = t->fields;
+  array_Var tmp104 = t->fields;
   ;
-  for (int tmp108 = 0; tmp108 < tmp107.len; tmp108++) {
-    Var field = ((Var *)tmp107.data)[tmp108];
+  for (int tmp105 = 0; tmp105 < tmp104.len; tmp105++) {
+    Var field = ((Var *)tmp104.data)[tmp105];
 
     if (string_eq(field.typ, typ)) {
 
@@ -20858,9 +20821,7 @@ map_int build_keys() {
 
     string key = (*(string *)array__get(main__TokenStr, t));
 
-    int tmp6 = ((int)(t));
-
-    map__set(&res, key, &tmp6);
+    map__set(&res, key, &(int[]){((int)(t))});
   };
 
   return res;
@@ -20870,390 +20831,227 @@ array_string build_token_str() {
   array_string s = array_repeat(&(string[]){tos2((byte *)"")}, main__NrTokens,
                                 sizeof(string));
 
-  string tmp8 = tos2((byte *)"");
+  array_set(&/*q*/ s, main__Token_keyword_beg, &(string[]){tos2((byte *)"")});
 
-  array_set(&/*q*/ s, main__Token_keyword_beg, &tmp8);
+  array_set(&/*q*/ s, main__Token_keyword_end, &(string[]){tos2((byte *)"")});
 
-  string tmp9 = tos2((byte *)"");
+  array_set(&/*q*/ s, main__Token_eof, &(string[]){tos2((byte *)"eof")});
 
-  array_set(&/*q*/ s, main__Token_keyword_end, &tmp9);
+  array_set(&/*q*/ s, main__Token_name, &(string[]){tos2((byte *)"name")});
 
-  string tmp10 = tos2((byte *)"eof");
+  array_set(&/*q*/ s, main__Token_number, &(string[]){tos2((byte *)"number")});
 
-  array_set(&/*q*/ s, main__Token_eof, &tmp10);
+  array_set(&/*q*/ s, main__Token_str, &(string[]){tos2((byte *)"STR")});
 
-  string tmp11 = tos2((byte *)"name");
+  array_set(&/*q*/ s, main__Token_chartoken, &(string[]){tos2((byte *)"char")});
 
-  array_set(&/*q*/ s, main__Token_name, &tmp11);
+  array_set(&/*q*/ s, main__Token_plus, &(string[]){tos2((byte *)"+")});
 
-  string tmp12 = tos2((byte *)"number");
+  array_set(&/*q*/ s, main__Token_minus, &(string[]){tos2((byte *)"-")});
 
-  array_set(&/*q*/ s, main__Token_number, &tmp12);
+  array_set(&/*q*/ s, main__Token_mul, &(string[]){tos2((byte *)"*")});
 
-  string tmp13 = tos2((byte *)"STR");
+  array_set(&/*q*/ s, main__Token_div, &(string[]){tos2((byte *)"/")});
 
-  array_set(&/*q*/ s, main__Token_str, &tmp13);
+  array_set(&/*q*/ s, main__Token_mod, &(string[]){tos2((byte *)"%")});
 
-  string tmp14 = tos2((byte *)"char");
+  array_set(&/*q*/ s, main__Token_xor, &(string[]){tos2((byte *)"^")});
 
-  array_set(&/*q*/ s, main__Token_chartoken, &tmp14);
+  array_set(&/*q*/ s, main__Token_bit_not, &(string[]){tos2((byte *)"~")});
 
-  string tmp15 = tos2((byte *)"+");
+  array_set(&/*q*/ s, main__Token_pipe, &(string[]){tos2((byte *)"|")});
 
-  array_set(&/*q*/ s, main__Token_plus, &tmp15);
+  array_set(&/*q*/ s, main__Token_hash, &(string[]){tos2((byte *)"#")});
 
-  string tmp16 = tos2((byte *)"-");
+  array_set(&/*q*/ s, main__Token_amp, &(string[]){tos2((byte *)"&")});
 
-  array_set(&/*q*/ s, main__Token_minus, &tmp16);
+  array_set(&/*q*/ s, main__Token_inc, &(string[]){tos2((byte *)"++")});
 
-  string tmp17 = tos2((byte *)"*");
+  array_set(&/*q*/ s, main__Token_dec, &(string[]){tos2((byte *)"--")});
 
-  array_set(&/*q*/ s, main__Token_mul, &tmp17);
+  array_set(&/*q*/ s, main__Token_and, &(string[]){tos2((byte *)"&&")});
 
-  string tmp18 = tos2((byte *)"/");
+  array_set(&/*q*/ s, main__Token_logical_or, &(string[]){tos2((byte *)"||")});
 
-  array_set(&/*q*/ s, main__Token_div, &tmp18);
+  array_set(&/*q*/ s, main__Token_not, &(string[]){tos2((byte *)"!")});
 
-  string tmp19 = tos2((byte *)"%");
+  array_set(&/*q*/ s, main__Token_dot, &(string[]){tos2((byte *)".")});
 
-  array_set(&/*q*/ s, main__Token_mod, &tmp19);
+  array_set(&/*q*/ s, main__Token_dotdot, &(string[]){tos2((byte *)"..")});
 
-  string tmp20 = tos2((byte *)"^");
+  array_set(&/*q*/ s, main__Token_comma, &(string[]){tos2((byte *)",")});
 
-  array_set(&/*q*/ s, main__Token_xor, &tmp20);
+  array_set(&/*q*/ s, main__Token_semicolon, &(string[]){tos2((byte *)";")});
 
-  string tmp21 = tos2((byte *)"~");
+  array_set(&/*q*/ s, main__Token_colon, &(string[]){tos2((byte *)":")});
 
-  array_set(&/*q*/ s, main__Token_bit_not, &tmp21);
+  array_set(&/*q*/ s, main__Token_arrow, &(string[]){tos2((byte *)"=>")});
 
-  string tmp22 = tos2((byte *)"|");
+  array_set(&/*q*/ s, main__Token_assign, &(string[]){tos2((byte *)"=")});
 
-  array_set(&/*q*/ s, main__Token_pipe, &tmp22);
+  array_set(&/*q*/ s, main__Token_decl_assign, &(string[]){tos2((byte *)":=")});
 
-  string tmp23 = tos2((byte *)"#");
+  array_set(&/*q*/ s, main__Token_plus_assign, &(string[]){tos2((byte *)"+=")});
 
-  array_set(&/*q*/ s, main__Token_hash, &tmp23);
+  array_set(&/*q*/ s, main__Token_minus_assign,
+            &(string[]){tos2((byte *)"-=")});
 
-  string tmp24 = tos2((byte *)"&");
+  array_set(&/*q*/ s, main__Token_mult_assign, &(string[]){tos2((byte *)"*=")});
 
-  array_set(&/*q*/ s, main__Token_amp, &tmp24);
+  array_set(&/*q*/ s, main__Token_div_assign, &(string[]){tos2((byte *)"/=")});
 
-  string tmp25 = tos2((byte *)"++");
+  array_set(&/*q*/ s, main__Token_xor_assign, &(string[]){tos2((byte *)"^=")});
 
-  array_set(&/*q*/ s, main__Token_inc, &tmp25);
+  array_set(&/*q*/ s, main__Token_mod_assign, &(string[]){tos2((byte *)"%=")});
 
-  string tmp26 = tos2((byte *)"--");
+  array_set(&/*q*/ s, main__Token_or_assign, &(string[]){tos2((byte *)"|=")});
 
-  array_set(&/*q*/ s, main__Token_dec, &tmp26);
+  array_set(&/*q*/ s, main__Token_and_assign, &(string[]){tos2((byte *)"&=")});
 
-  string tmp27 = tos2((byte *)"&&");
+  array_set(&/*q*/ s, main__Token_righ_shift_assign,
+            &(string[]){tos2((byte *)">>=")});
 
-  array_set(&/*q*/ s, main__Token_and, &tmp27);
+  array_set(&/*q*/ s, main__Token_left_shift_assign,
+            &(string[]){tos2((byte *)"<<=")});
 
-  string tmp28 = tos2((byte *)"||");
+  array_set(&/*q*/ s, main__Token_lcbr, &(string[]){tos2((byte *)"{")});
 
-  array_set(&/*q*/ s, main__Token_logical_or, &tmp28);
+  array_set(&/*q*/ s, main__Token_rcbr, &(string[]){tos2((byte *)"}")});
 
-  string tmp29 = tos2((byte *)"!");
+  array_set(&/*q*/ s, main__Token_lpar, &(string[]){tos2((byte *)"(")});
 
-  array_set(&/*q*/ s, main__Token_not, &tmp29);
+  array_set(&/*q*/ s, main__Token_rpar, &(string[]){tos2((byte *)")")});
 
-  string tmp30 = tos2((byte *)".");
+  array_set(&/*q*/ s, main__Token_lsbr, &(string[]){tos2((byte *)"[")});
 
-  array_set(&/*q*/ s, main__Token_dot, &tmp30);
+  array_set(&/*q*/ s, main__Token_rsbr, &(string[]){tos2((byte *)"]")});
 
-  string tmp31 = tos2((byte *)"..");
+  array_set(&/*q*/ s, main__Token_eq, &(string[]){tos2((byte *)"==")});
 
-  array_set(&/*q*/ s, main__Token_dotdot, &tmp31);
+  array_set(&/*q*/ s, main__Token_ne, &(string[]){tos2((byte *)"!=")});
 
-  string tmp32 = tos2((byte *)",");
+  array_set(&/*q*/ s, main__Token_gt, &(string[]){tos2((byte *)">")});
 
-  array_set(&/*q*/ s, main__Token_comma, &tmp32);
+  array_set(&/*q*/ s, main__Token_lt, &(string[]){tos2((byte *)"<")});
 
-  string tmp33 = tos2((byte *)";");
+  array_set(&/*q*/ s, main__Token_ge, &(string[]){tos2((byte *)">=")});
 
-  array_set(&/*q*/ s, main__Token_semicolon, &tmp33);
+  array_set(&/*q*/ s, main__Token_le, &(string[]){tos2((byte *)"<=")});
 
-  string tmp34 = tos2((byte *)":");
+  array_set(&/*q*/ s, main__Token_question, &(string[]){tos2((byte *)"?")});
 
-  array_set(&/*q*/ s, main__Token_colon, &tmp34);
+  array_set(&/*q*/ s, main__Token_left_shift, &(string[]){tos2((byte *)"<<")});
 
-  string tmp35 = tos2((byte *)"=>");
+  array_set(&/*q*/ s, main__Token_righ_shift, &(string[]){tos2((byte *)">>")});
 
-  array_set(&/*q*/ s, main__Token_arrow, &tmp35);
+  array_set(&/*q*/ s, main__Token_nl, &(string[]){tos2((byte *)"NLL")});
 
-  string tmp36 = tos2((byte *)"=");
+  array_set(&/*q*/ s, main__Token_dollar, &(string[]){tos2((byte *)"$")});
 
-  array_set(&/*q*/ s, main__Token_assign, &tmp36);
+  array_set(&/*q*/ s, main__Token_key_assert,
+            &(string[]){tos2((byte *)"assert")});
 
-  string tmp37 = tos2((byte *)":=");
+  array_set(&/*q*/ s, main__Token_key_struct,
+            &(string[]){tos2((byte *)"struct")});
 
-  array_set(&/*q*/ s, main__Token_decl_assign, &tmp37);
+  array_set(&/*q*/ s, main__Token_key_if, &(string[]){tos2((byte *)"if")});
 
-  string tmp38 = tos2((byte *)"+=");
+  array_set(&/*q*/ s, main__Token_key_else, &(string[]){tos2((byte *)"else")});
 
-  array_set(&/*q*/ s, main__Token_plus_assign, &tmp38);
+  array_set(&/*q*/ s, main__Token_key_return,
+            &(string[]){tos2((byte *)"return")});
 
-  string tmp39 = tos2((byte *)"-=");
+  array_set(&/*q*/ s, main__Token_key_module,
+            &(string[]){tos2((byte *)"module")});
 
-  array_set(&/*q*/ s, main__Token_minus_assign, &tmp39);
+  array_set(&/*q*/ s, main__Token_key_sizeof,
+            &(string[]){tos2((byte *)"sizeof")});
 
-  string tmp40 = tos2((byte *)"*=");
+  array_set(&/*q*/ s, main__Token_key_go, &(string[]){tos2((byte *)"go")});
 
-  array_set(&/*q*/ s, main__Token_mult_assign, &tmp40);
+  array_set(&/*q*/ s, main__Token_key_goto, &(string[]){tos2((byte *)"goto")});
 
-  string tmp41 = tos2((byte *)"/=");
+  array_set(&/*q*/ s, main__Token_key_const,
+            &(string[]){tos2((byte *)"const")});
 
-  array_set(&/*q*/ s, main__Token_div_assign, &tmp41);
+  array_set(&/*q*/ s, main__Token_key_mut, &(string[]){tos2((byte *)"mut")});
 
-  string tmp42 = tos2((byte *)"^=");
+  array_set(&/*q*/ s, main__Token_key_type, &(string[]){tos2((byte *)"type")});
 
-  array_set(&/*q*/ s, main__Token_xor_assign, &tmp42);
+  array_set(&/*q*/ s, main__Token_key_for, &(string[]){tos2((byte *)"for")});
 
-  string tmp43 = tos2((byte *)"%=");
+  array_set(&/*q*/ s, main__Token_key_switch,
+            &(string[]){tos2((byte *)"switch")});
 
-  array_set(&/*q*/ s, main__Token_mod_assign, &tmp43);
+  array_set(&/*q*/ s, main__Token_key_case, &(string[]){tos2((byte *)"case")});
 
-  string tmp44 = tos2((byte *)"|=");
+  array_set(&/*q*/ s, main__Token_func, &(string[]){tos2((byte *)"fn")});
 
-  array_set(&/*q*/ s, main__Token_or_assign, &tmp44);
+  array_set(&/*q*/ s, main__Token_key_true, &(string[]){tos2((byte *)"true")});
 
-  string tmp45 = tos2((byte *)"&=");
+  array_set(&/*q*/ s, main__Token_key_false,
+            &(string[]){tos2((byte *)"false")});
 
-  array_set(&/*q*/ s, main__Token_and_assign, &tmp45);
+  array_set(&/*q*/ s, main__Token_key_continue,
+            &(string[]){tos2((byte *)"continue")});
 
-  string tmp46 = tos2((byte *)">>=");
+  array_set(&/*q*/ s, main__Token_key_break,
+            &(string[]){tos2((byte *)"break")});
 
-  array_set(&/*q*/ s, main__Token_righ_shift_assign, &tmp46);
+  array_set(&/*q*/ s, main__Token_key_import,
+            &(string[]){tos2((byte *)"import")});
 
-  string tmp47 = tos2((byte *)"<<=");
+  array_set(&/*q*/ s, main__Token_key_embed,
+            &(string[]){tos2((byte *)"embed")});
 
-  array_set(&/*q*/ s, main__Token_left_shift_assign, &tmp47);
+  array_set(&/*q*/ s, main__Token_key_default,
+            &(string[]){tos2((byte *)"default")});
 
-  string tmp48 = tos2((byte *)"{");
+  array_set(&/*q*/ s, main__Token_key_enum, &(string[]){tos2((byte *)"enum")});
 
-  array_set(&/*q*/ s, main__Token_lcbr, &tmp48);
+  array_set(&/*q*/ s, main__Token_key_interface,
+            &(string[]){tos2((byte *)"interface")});
 
-  string tmp49 = tos2((byte *)"}");
+  array_set(&/*q*/ s, main__Token_key_pub, &(string[]){tos2((byte *)"pub")});
 
-  array_set(&/*q*/ s, main__Token_rcbr, &tmp49);
+  array_set(&/*q*/ s, main__Token_key_import_const,
+            &(string[]){tos2((byte *)"import_const")});
 
-  string tmp50 = tos2((byte *)"(");
+  array_set(&/*q*/ s, main__Token_key_in, &(string[]){tos2((byte *)"in")});
 
-  array_set(&/*q*/ s, main__Token_lpar, &tmp50);
+  array_set(&/*q*/ s, main__Token_key_atomic,
+            &(string[]){tos2((byte *)"atomic")});
 
-  string tmp51 = tos2((byte *)")");
+  array_set(&/*q*/ s, main__Token_key_orelse, &(string[]){tos2((byte *)"or")});
 
-  array_set(&/*q*/ s, main__Token_rpar, &tmp51);
+  array_set(&/*q*/ s, main__Token_key_global,
+            &(string[]){tos2((byte *)"__global")});
 
-  string tmp52 = tos2((byte *)"[");
+  array_set(&/*q*/ s, main__Token_key_union,
+            &(string[]){tos2((byte *)"union")});
 
-  array_set(&/*q*/ s, main__Token_lsbr, &tmp52);
+  array_set(&/*q*/ s, main__Token_key_static,
+            &(string[]){tos2((byte *)"static")});
 
-  string tmp53 = tos2((byte *)"]");
+  array_set(&/*q*/ s, main__Token_key_as, &(string[]){tos2((byte *)"as")});
 
-  array_set(&/*q*/ s, main__Token_rsbr, &tmp53);
+  array_set(&/*q*/ s, main__Token_key_defer,
+            &(string[]){tos2((byte *)"defer")});
 
-  string tmp54 = tos2((byte *)"==");
+  array_set(&/*q*/ s, main__Token_key_match,
+            &(string[]){tos2((byte *)"match")});
 
-  array_set(&/*q*/ s, main__Token_eq, &tmp54);
-
-  string tmp55 = tos2((byte *)"!=");
-
-  array_set(&/*q*/ s, main__Token_ne, &tmp55);
-
-  string tmp56 = tos2((byte *)">");
-
-  array_set(&/*q*/ s, main__Token_gt, &tmp56);
-
-  string tmp57 = tos2((byte *)"<");
-
-  array_set(&/*q*/ s, main__Token_lt, &tmp57);
-
-  string tmp58 = tos2((byte *)">=");
-
-  array_set(&/*q*/ s, main__Token_ge, &tmp58);
-
-  string tmp59 = tos2((byte *)"<=");
-
-  array_set(&/*q*/ s, main__Token_le, &tmp59);
-
-  string tmp60 = tos2((byte *)"?");
-
-  array_set(&/*q*/ s, main__Token_question, &tmp60);
-
-  string tmp61 = tos2((byte *)"<<");
-
-  array_set(&/*q*/ s, main__Token_left_shift, &tmp61);
-
-  string tmp62 = tos2((byte *)">>");
-
-  array_set(&/*q*/ s, main__Token_righ_shift, &tmp62);
-
-  string tmp63 = tos2((byte *)"NLL");
-
-  array_set(&/*q*/ s, main__Token_nl, &tmp63);
-
-  string tmp64 = tos2((byte *)"$");
-
-  array_set(&/*q*/ s, main__Token_dollar, &tmp64);
-
-  string tmp65 = tos2((byte *)"assert");
-
-  array_set(&/*q*/ s, main__Token_key_assert, &tmp65);
-
-  string tmp66 = tos2((byte *)"struct");
-
-  array_set(&/*q*/ s, main__Token_key_struct, &tmp66);
-
-  string tmp67 = tos2((byte *)"if");
-
-  array_set(&/*q*/ s, main__Token_key_if, &tmp67);
-
-  string tmp68 = tos2((byte *)"else");
-
-  array_set(&/*q*/ s, main__Token_key_else, &tmp68);
-
-  string tmp69 = tos2((byte *)"return");
-
-  array_set(&/*q*/ s, main__Token_key_return, &tmp69);
-
-  string tmp70 = tos2((byte *)"module");
-
-  array_set(&/*q*/ s, main__Token_key_module, &tmp70);
-
-  string tmp71 = tos2((byte *)"sizeof");
-
-  array_set(&/*q*/ s, main__Token_key_sizeof, &tmp71);
-
-  string tmp72 = tos2((byte *)"go");
-
-  array_set(&/*q*/ s, main__Token_key_go, &tmp72);
-
-  string tmp73 = tos2((byte *)"goto");
-
-  array_set(&/*q*/ s, main__Token_key_goto, &tmp73);
-
-  string tmp74 = tos2((byte *)"const");
-
-  array_set(&/*q*/ s, main__Token_key_const, &tmp74);
-
-  string tmp75 = tos2((byte *)"mut");
-
-  array_set(&/*q*/ s, main__Token_key_mut, &tmp75);
-
-  string tmp76 = tos2((byte *)"type");
-
-  array_set(&/*q*/ s, main__Token_key_type, &tmp76);
-
-  string tmp77 = tos2((byte *)"for");
-
-  array_set(&/*q*/ s, main__Token_key_for, &tmp77);
-
-  string tmp78 = tos2((byte *)"switch");
-
-  array_set(&/*q*/ s, main__Token_key_switch, &tmp78);
-
-  string tmp79 = tos2((byte *)"case");
-
-  array_set(&/*q*/ s, main__Token_key_case, &tmp79);
-
-  string tmp80 = tos2((byte *)"fn");
-
-  array_set(&/*q*/ s, main__Token_func, &tmp80);
-
-  string tmp81 = tos2((byte *)"true");
-
-  array_set(&/*q*/ s, main__Token_key_true, &tmp81);
-
-  string tmp82 = tos2((byte *)"false");
-
-  array_set(&/*q*/ s, main__Token_key_false, &tmp82);
-
-  string tmp83 = tos2((byte *)"continue");
-
-  array_set(&/*q*/ s, main__Token_key_continue, &tmp83);
-
-  string tmp84 = tos2((byte *)"break");
-
-  array_set(&/*q*/ s, main__Token_key_break, &tmp84);
-
-  string tmp85 = tos2((byte *)"import");
-
-  array_set(&/*q*/ s, main__Token_key_import, &tmp85);
-
-  string tmp86 = tos2((byte *)"embed");
-
-  array_set(&/*q*/ s, main__Token_key_embed, &tmp86);
-
-  string tmp87 = tos2((byte *)"default");
-
-  array_set(&/*q*/ s, main__Token_key_default, &tmp87);
-
-  string tmp88 = tos2((byte *)"enum");
-
-  array_set(&/*q*/ s, main__Token_key_enum, &tmp88);
-
-  string tmp89 = tos2((byte *)"interface");
-
-  array_set(&/*q*/ s, main__Token_key_interface, &tmp89);
-
-  string tmp90 = tos2((byte *)"pub");
-
-  array_set(&/*q*/ s, main__Token_key_pub, &tmp90);
-
-  string tmp91 = tos2((byte *)"import_const");
-
-  array_set(&/*q*/ s, main__Token_key_import_const, &tmp91);
-
-  string tmp92 = tos2((byte *)"in");
-
-  array_set(&/*q*/ s, main__Token_key_in, &tmp92);
-
-  string tmp93 = tos2((byte *)"atomic");
-
-  array_set(&/*q*/ s, main__Token_key_atomic, &tmp93);
-
-  string tmp94 = tos2((byte *)"or");
-
-  array_set(&/*q*/ s, main__Token_key_orelse, &tmp94);
-
-  string tmp95 = tos2((byte *)"__global");
-
-  array_set(&/*q*/ s, main__Token_key_global, &tmp95);
-
-  string tmp96 = tos2((byte *)"union");
-
-  array_set(&/*q*/ s, main__Token_key_union, &tmp96);
-
-  string tmp97 = tos2((byte *)"static");
-
-  array_set(&/*q*/ s, main__Token_key_static, &tmp97);
-
-  string tmp98 = tos2((byte *)"as");
-
-  array_set(&/*q*/ s, main__Token_key_as, &tmp98);
-
-  string tmp99 = tos2((byte *)"defer");
-
-  array_set(&/*q*/ s, main__Token_key_defer, &tmp99);
-
-  string tmp100 = tos2((byte *)"match");
-
-  array_set(&/*q*/ s, main__Token_key_match, &tmp100);
-
-  string tmp101 = tos2((byte *)"select");
-
-  array_set(&/*q*/ s, main__Token_key_select, &tmp101);
+  array_set(&/*q*/ s, main__Token_key_select,
+            &(string[]){tos2((byte *)"select")});
 
   return s;
 }
 Token key_to_token(string key) {
 
-  int tmp102 = 0;
-  bool tmp103 = map_get(main__KEYWORDS, key, &tmp102);
+  int tmp7 = 0;
+  bool tmp8 = map_get(main__KEYWORDS, key, &tmp7);
 
-  Token a = ((Token)(tmp102));
+  Token a = ((Token)(tmp7));
 
   return a;
 }
@@ -21273,10 +21071,10 @@ bool Token_is_decl(Token t) {
 bool Token_is_assign(Token t) { return _IN(Token, t, main__AssignTokens); }
 bool array_Token_contains(array_Token t, Token val) {
 
-  array_Token tmp107 = t;
+  array_Token tmp12 = t;
   ;
-  for (int tmp108 = 0; tmp108 < tmp107.len; tmp108++) {
-    Token tt = ((Token *)tmp107.data)[tmp108];
+  for (int tmp13 = 0; tmp13 < tmp12.len; tmp13++) {
+    Token tt = ((Token *)tmp12.data)[tmp13];
 
     if (tt == val) {
 
