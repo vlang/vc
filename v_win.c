@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "4abfb68"
+#define V_COMMIT_HASH "c04cca1"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -14250,7 +14250,8 @@ string Parser_var_expr(Parser *p, Var v) {
 
   string typ = v.typ;
 
-  if (string_starts_with(typ, tos2((byte *)"fn "))) {
+  if (string_starts_with(typ, tos2((byte *)"fn ")) &&
+      p->tok == main__Token_lpar) {
 
     Type *T = Table_find_type(&/* ? */ *p->table, typ);
 
