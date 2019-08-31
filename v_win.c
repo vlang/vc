@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "72363ad"
+#define V_COMMIT_HASH "b6ecbd8"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -2868,11 +2868,11 @@ void print_backtrace_skipping_top_frames(int skipframes) {
 
 #ifdef __APPLE__
 
-  byteptr buffer[100] = {0};
+  byte *buffer[100] = {0};
 
   void *nr_ptrs = backtrace(buffer, 100);
 
-  backtrace_symbols_fd(&/*vvar*/ buffer[skipframes] /*rbyteptr 0*/,
+  backtrace_symbols_fd(&/*vvar*/ buffer[skipframes] /*rbyte* 0*/,
                        (byte *)nr_ptrs - skipframes, 1);
 
   return;
@@ -2884,11 +2884,11 @@ void print_backtrace_skipping_top_frames(int skipframes) {
 
   if (backtrace_symbols_fd != 0) {
 
-    byteptr buffer[100] = {0};
+    byte *buffer[100] = {0};
 
     void *nr_ptrs = backtrace(buffer, 100);
 
-    backtrace_symbols_fd(&/*vvar*/ buffer[skipframes] /*rbyteptr 0*/,
+    backtrace_symbols_fd(&/*vvar*/ buffer[skipframes] /*rbyte* 0*/,
                          (byte *)nr_ptrs - skipframes, 1);
 
     return;
@@ -15786,9 +15786,9 @@ string Parser_array_init(Parser *p) {
 
           Parser_check(p, main__Token_rsbr);
 
-          string name = Parser_check_name(p);
+          string array_elem_typ = Parser_get_type(p);
 
-          if (Table_known_type(&/* ? */ *p->table, name)) {
+          if (Table_known_type(&/* ? */ *p->table, array_elem_typ)) {
 
             CGen_resetln(p->cgen, tos2((byte *)""));
 
@@ -15797,14 +15797,16 @@ string Parser_array_init(Parser *p) {
             if (is_const_len) {
 
               return _STR("[%.*s__%.*s]%.*s", p->mod.len, p->mod.str, lit.len,
-                          lit.str, name.len, name.str);
+                          lit.str, array_elem_typ.len, array_elem_typ.str);
             };
 
-            return _STR("[%.*s]%.*s", lit.len, lit.str, name.len, name.str);
+            return _STR("[%.*s]%.*s", lit.len, lit.str, array_elem_typ.len,
+                        array_elem_typ.str);
 
           } else {
 
-            Parser_error(p, _STR("bad type `%.*s`", name.len, name.str));
+            Parser_error(p, _STR("bad type `%.*s`", array_elem_typ.len,
+                                 array_elem_typ.str));
           };
         };
       };
