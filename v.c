@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "3bd7bcf"
+#define V_COMMIT_HASH "59ba551"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -14065,6 +14065,16 @@ string Parser_name_expr(Parser *p) {
           Parser_error(p, _STR("undefined: `%.*s`", name.len, name.str));
 
         } else {
+
+          if (string_eq(orig_name, tos2((byte *)"i32"))) {
+
+            println(tos2((byte *)"`i32` alias was removed, use `int` instead"));
+          };
+
+          if (string_eq(orig_name, tos2((byte *)"u8"))) {
+
+            println(tos2((byte *)"`u8` alias was removed, use `byte` instead"));
+          };
 
           Parser_error(p,
                        _STR("undefined: `%.*s`", orig_name.len, orig_name.str));
