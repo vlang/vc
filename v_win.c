@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "d078aa3"
+#define V_COMMIT_HASH "3bd7bcf"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -620,7 +620,6 @@ string tos2(byte *s);
 string string_clone(string a);
 string string_replace(string s, string rep, string with);
 int v_string_int(string s);
-i32 string_i32(string s);
 i64 string_i64(string s);
 f32 string_f32(string s);
 f64 string_f64(string s);
@@ -710,7 +709,6 @@ string ptr_str(void *ptr);
 bool f64_eq(f64 a, f64 b);
 string int_str(int nn);
 string u32_str(u32 nn);
-string u8_str(u8 nn);
 string i64_str(i64 nn);
 string u64_str(u64 nn);
 string bool_str(bool b);
@@ -1930,7 +1928,6 @@ string string_replace(string s, string rep, string with) {
   return tos(b, new_len);
 }
 int v_string_int(string s) { return atoi(s.str); }
-i32 string_i32(string s) { return atol(s.str); }
 i64 string_i64(string s) { return atoll(s.str); }
 f32 string_f32(string s) { return atof(s.str); }
 f64 string_f64(string s) { return atof(s.str); }
@@ -3131,34 +3128,6 @@ string u32_str(u32 nn) {
 
   return tos(buf + max - len, len);
 }
-string u8_str(u8 nn) {
-
-  u8 n = nn;
-
-  if (n == ((u8)(0))) {
-
-    return tos2((byte *)"0");
-  };
-
-  int max = 5;
-
-  byte *buf = v_malloc(max);
-
-  int len = 0;
-
-  while (n > ((u8)(0))) {
-
-    u8 d = n % ((u8)(10));
-
-    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + ((u8)('0'));
-
-    len++;
-
-    n = n / ((u8)(10));
-  };
-
-  return tos(buf + max - len, len);
-}
 string i64_str(i64 nn) {
 
   i64 n = nn;
@@ -3262,10 +3231,10 @@ string i64_hex(i64 n) {
 }
 bool array_byte_contains(array_byte a, byte val) {
 
-  array_byte tmp37 = a;
+  array_byte tmp32 = a;
   ;
-  for (int tmp38 = 0; tmp38 < tmp37.len; tmp38++) {
-    byte aa = ((byte *)tmp37.data)[tmp38];
+  for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
+    byte aa = ((byte *)tmp32.data)[tmp33];
 
     if (aa == val) {
 
@@ -9396,9 +9365,7 @@ bool is_js_prim(string typ) {
          string_eq(typ, tos2((byte *)"f64")) ||
          string_eq(typ, tos2((byte *)"i8")) ||
          string_eq(typ, tos2((byte *)"i16")) ||
-         string_eq(typ, tos2((byte *)"i32")) ||
          string_eq(typ, tos2((byte *)"i64")) ||
-         string_eq(typ, tos2((byte *)"u8")) ||
          string_eq(typ, tos2((byte *)"u16")) ||
          string_eq(typ, tos2((byte *)"u32")) ||
          string_eq(typ, tos2((byte *)"u64"));
@@ -19613,17 +19580,13 @@ Table *new_table(bool obfuscate) {
 
   Table_register_type_with_parent(t, tos2((byte *)"i8"), tos2((byte *)"int"));
 
-  Table_register_type_with_parent(t, tos2((byte *)"u8"), tos2((byte *)"u32"));
+  Table_register_type_with_parent(t, tos2((byte *)"byte"), tos2((byte *)"int"));
 
   Table_register_type_with_parent(t, tos2((byte *)"i16"), tos2((byte *)"int"));
 
   Table_register_type_with_parent(t, tos2((byte *)"u16"), tos2((byte *)"u32"));
 
-  Table_register_type_with_parent(t, tos2((byte *)"i32"), tos2((byte *)"int"));
-
   Table_register_type_with_parent(t, tos2((byte *)"u32"), tos2((byte *)"int"));
-
-  Table_register_type_with_parent(t, tos2((byte *)"byte"), tos2((byte *)"int"));
 
   Table_register_type_with_parent(t, tos2((byte *)"i64"), tos2((byte *)"int"));
 
@@ -20342,15 +20305,7 @@ string type_default(string typ) {
 
     return tos2((byte *)"0");
 
-  } else if (string_eq(typ, tos2((byte *)"i32"))) { /* case */
-
-    return tos2((byte *)"0");
-
   } else if (string_eq(typ, tos2((byte *)"i64"))) { /* case */
-
-    return tos2((byte *)"0");
-
-  } else if (string_eq(typ, tos2((byte *)"u8"))) { /* case */
 
     return tos2((byte *)"0");
 
@@ -20557,8 +20512,7 @@ bool is_valid_int_const(string val, string typ) {
 
   int x = v_string_int(val);
 
-  if (string_eq(typ, tos2((byte *)"byte")) ||
-      string_eq(typ, tos2((byte *)"u8"))) { /* case */
+  if (string_eq(typ, tos2((byte *)"u8"))) { /* case */
 
     return 0 <= x && x <= math__MaxU8;
 
@@ -20574,8 +20528,7 @@ bool is_valid_int_const(string val, string typ) {
 
     return math__MinI16 <= x && x <= math__MaxI16;
 
-  } else if (string_eq(typ, tos2((byte *)"int")) ||
-             string_eq(typ, tos2((byte *)"i32"))) { /* case */
+  } else if (string_eq(typ, tos2((byte *)"int"))) { /* case */
 
     return math__MinI32 <= x && x <= math__MaxI32;
   };
@@ -20644,14 +20597,12 @@ string Parser_typ_to_fmt(Parser *p, string typ, int level) {
              string_eq(typ, tos2((byte *)"int")) ||
              string_eq(typ, tos2((byte *)"char")) ||
              string_eq(typ, tos2((byte *)"byte")) ||
-             string_eq(typ, tos2((byte *)"i32")) ||
              string_eq(typ, tos2((byte *)"i16")) ||
              string_eq(typ, tos2((byte *)"i8"))) { /* case */
 
     return tos2((byte *)"%d");
 
-  } else if (string_eq(typ, tos2((byte *)"u8")) ||
-             string_eq(typ, tos2((byte *)"u16")) ||
+  } else if (string_eq(typ, tos2((byte *)"u16")) ||
              string_eq(typ, tos2((byte *)"u32"))) { /* case */
 
     return tos2((byte *)"%u");
@@ -21425,12 +21376,12 @@ void init_consts() {
           tos2((byte *)"while"),
       });
   main__number_types = new_array_from_c_array(
-      13, 13, sizeof(string),
+      11, 11, sizeof(string),
       (string[]){tos2((byte *)"number"), tos2((byte *)"int"),
-                 tos2((byte *)"i8"), tos2((byte *)"u8"), tos2((byte *)"i16"),
-                 tos2((byte *)"u16"), tos2((byte *)"i32"), tos2((byte *)"u32"),
-                 tos2((byte *)"byte"), tos2((byte *)"i64"), tos2((byte *)"u64"),
-                 tos2((byte *)"f32"), tos2((byte *)"f64")});
+                 tos2((byte *)"i8"), tos2((byte *)"i16"), tos2((byte *)"u16"),
+                 tos2((byte *)"u32"), tos2((byte *)"byte"), tos2((byte *)"i64"),
+                 tos2((byte *)"u64"), tos2((byte *)"f32"),
+                 tos2((byte *)"f64")});
   main__float_types = new_array_from_c_array(
       2, 2, sizeof(string),
       (string[]){tos2((byte *)"f32"), tos2((byte *)"f64")});
