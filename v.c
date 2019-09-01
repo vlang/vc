@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "bfa6505"
+#define V_COMMIT_HASH "24fdefe"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -10670,13 +10670,15 @@ void test_v() {
 
   printf("%.*s\n", joined_args.len, joined_args.str);
 
+  bool failed = 0;
+
   array_string test_files =
       os__walk_ext(tos2((byte *)"."), tos2((byte *)"_test.v"));
 
-  array_string tmp121 = test_files;
+  array_string tmp122 = test_files;
   ;
-  for (int tmp122 = 0; tmp122 < tmp121.len; tmp122++) {
-    string dot_relative_file = ((string *)tmp121.data)[tmp122];
+  for (int tmp123 = 0; tmp123 < tmp122.len; tmp123++) {
+    string dot_relative_file = ((string *)tmp122.data)[tmp123];
 
     string relative_file =
         string_replace(dot_relative_file, tos2((byte *)"./"), tos2((byte *)""));
@@ -10688,25 +10690,27 @@ void test_v() {
 
     print(string_add(relative_file, tos2((byte *)" ")));
 
-    Option_os__Result tmp126 =
+    Option_os__Result tmp127 =
         os__exec(_STR("%.*s %.*s -debug %.*s", vexe.len, vexe.str,
                       joined_args.len, joined_args.str, file.len, file.str));
-    if (!tmp126.ok) {
-      string err = tmp126.error;
+    if (!tmp127.ok) {
+      string err = tmp127.error;
 
-      cerror(_STR("failed on %.*s", file.len, file.str));
+      failed = 1;
 
-      return;
+      println(tos2((byte *)"FAIL"));
+
+      continue;
     }
-    os__Result r = *(os__Result *)tmp126.data;
+    os__Result r = *(os__Result *)tmp127.data;
     ;
 
     if (r.exit_code != 0) {
 
-      printf("failed `%.*s` (\n%.*s\n)\n", file.len, file.str, r.output.len,
+      printf("FAIL `%.*s` (\n%.*s\n)\n", file.len, file.str, r.output.len,
              r.output.str);
 
-      v_exit(1);
+      failed = 1;
 
     } else {
 
@@ -10721,10 +10725,10 @@ void test_v() {
   array_string examples =
       os__walk_ext(tos2((byte *)"examples"), tos2((byte *)".v"));
 
-  array_string tmp128 = examples;
+  array_string tmp129 = examples;
   ;
-  for (int tmp129 = 0; tmp129 < tmp128.len; tmp129++) {
-    string relative_file = ((string *)tmp128.data)[tmp129];
+  for (int tmp130 = 0; tmp130 < tmp129.len; tmp130++) {
+    string relative_file = ((string *)tmp129.data)[tmp130];
 
     string file = os__realpath(relative_file);
 
@@ -10733,25 +10737,27 @@ void test_v() {
 
     print(string_add(relative_file, tos2((byte *)" ")));
 
-    Option_os__Result tmp132 =
+    Option_os__Result tmp133 =
         os__exec(_STR("%.*s %.*s -debug %.*s", vexe.len, vexe.str,
                       joined_args.len, joined_args.str, file.len, file.str));
-    if (!tmp132.ok) {
-      string err = tmp132.error;
+    if (!tmp133.ok) {
+      string err = tmp133.error;
 
-      cerror(_STR("failed on %.*s", file.len, file.str));
+      failed = 1;
 
-      return;
+      println(tos2((byte *)"FAIL"));
+
+      continue;
     }
-    os__Result r = *(os__Result *)tmp132.data;
+    os__Result r = *(os__Result *)tmp133.data;
     ;
 
     if (r.exit_code != 0) {
 
-      printf("failed `%.*s` (\n%.*s\n)\n", file.len, file.str, r.output.len,
+      printf("FAIL `%.*s` (\n%.*s\n)\n", file.len, file.str, r.output.len,
              r.output.str);
 
-      v_exit(1);
+      failed = 1;
 
     } else {
 
@@ -10759,6 +10765,11 @@ void test_v() {
     };
 
     os__rm(tmpcfilepath);
+  };
+
+  if (failed) {
+
+    v_exit(1);
   };
 }
 void create_symlink() {
@@ -15774,7 +15785,7 @@ string Parser_array_init(Parser *p) {
     new_arr = string_add(new_arr, tos2((byte *)"_no_alloc"));
   };
 
-  if (i == 0) {
+  if (i == 0 && string_ne(p->pref->ccompiler, tos2((byte *)"tcc"))) {
 
     Parser_gen(p, tos2((byte *)" 0 })"));
 
