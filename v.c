@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "59ba551"
+#define V_COMMIT_HASH "0e2c41e"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -1041,6 +1041,7 @@ string Parser_check_string(Parser *p);
 string Parser_strtok(Parser *p);
 void Parser_check_space(Parser *p, Token expected);
 void Parser_check(Parser *p, Token expected);
+void Parser_warn(Parser *p, string s);
 void Parser_error(Parser *p, string s);
 bool Parser_first_pass(Parser *p);
 string Parser_get_type(Parser *p);
@@ -12706,6 +12707,11 @@ void Parser_check(Parser *p, Token expected) {
   if (string_ne(p->scanner->line_comment, tos2((byte *)""))) {
   };
 }
+void Parser_warn(Parser *p, string s) {
+
+  printf("%.*s:%d: %.*s\n", p->scanner->file_path.len,
+         p->scanner->file_path.str, p->scanner->line_nr + 1, s.len, s.str);
+}
 void Parser_error(Parser *p, string s) {
 
   if (p->pref->is_debug) {
@@ -12909,6 +12915,11 @@ string Parser_get_type(Parser *p) {
   };
 
   while (p->tok == main__Token_mul) {
+
+    if (Parser_first_pass(&/* ? */ *p)) {
+
+      Parser_warn(p, tos2((byte *)"use `&Foo` instead of `*Foo`"));
+    };
 
     mul = 1;
 
