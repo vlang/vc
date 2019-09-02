@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "1c6d51f"
+#define V_COMMIT_HASH "9b8de9b"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -50,7 +50,7 @@
 
 // MSVC cannot parse some things properly
 #undef EMPTY_STRUCT_DECLARATION
-#define EMPTY_STRUCT_DECLARATION void *____dummy_variable;
+#define EMPTY_STRUCT_DECLARATION void *____dummy_variable
 #undef OPTION_CAST
 #define OPTION_CAST(x)
 #endif
@@ -12666,6 +12666,19 @@ void Parser_struct_decl(Parser *p) {
 
   Parser_check(p, main__Token_rcbr);
 
+  if (!is_c) {
+
+    if (!did_gen_something) {
+
+      if (Parser_first_pass(&/* ? */ *p)) {
+
+        Table_add_field(p->table, typ.name, tos2((byte *)""),
+                        tos2((byte *)"EMPTY_STRUCT_DECLARATION"), 0,
+                        tos2((byte *)""), main__AccessMod_private);
+      };
+    };
+  };
+
   Parser_fgenln(p, tos2((byte *)"\n"));
 }
 void Parser_enum_decl(Parser *p, string _enum_name) {
@@ -21554,7 +21567,7 @@ void init_consts() {
              "long as /volatile:ms is passed)\n#define _Atomic volatile\n\n// "
              "MSVC cannot parse some things properly\n#undef "
              "EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_DECLARATION void "
-             "*____dummy_variable;\n#undef OPTION_CAST\n#define "
+             "*____dummy_variable\n#undef OPTION_CAST\n#define "
              "OPTION_CAST(x)\n#endif\n\nvoid pthread_mutex_lock(HANDLE *m) "
              "{\n	WaitForSingleObject(*m, INFINITE);\n}\n\nvoid "
              "pthread_mutex_unlock(HANDLE *m) {\n	"
