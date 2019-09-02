@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "0db1eaa"
+#define V_COMMIT_HASH "1c6d51f"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -64,16 +64,13 @@ void pthread_mutex_unlock(HANDLE *m) { ReleaseMutex(*m); }
 
 //================================== TYPEDEFS ================================*/
 
-typedef unsigned char byte;
-typedef unsigned int uint;
 typedef int64_t i64;
-typedef int32_t i32;
 typedef int16_t i16;
 typedef int8_t i8;
 typedef uint64_t u64;
 typedef uint32_t u32;
 typedef uint16_t u16;
-typedef uint8_t u8;
+typedef uint8_t byte;
 typedef uint32_t rune;
 typedef float f32;
 typedef double f64;
@@ -85,8 +82,6 @@ typedef struct map map;
 typedef array array_string;
 typedef array array_int;
 typedef array array_byte;
-typedef array array_uint;
-typedef array array_float;
 typedef array array_f32;
 typedef array array_f64;
 typedef map map_int;
@@ -14192,9 +14187,10 @@ string Parser_name_expr(Parser *p) {
             println(tos2((byte *)"`i32` alias was removed, use `int` instead"));
           };
 
-          if (string_eq(orig_name, tos2((byte *)"u8"))) {
+          if (string_eq(orig_name, tos2((byte *)"byte"))) {
 
-            println(tos2((byte *)"`u8` alias was removed, use `byte` instead"));
+            println(
+                tos2((byte *)"`byte` alias was removed, use `byte` instead"));
           };
 
           Parser_error(p,
@@ -20816,7 +20812,7 @@ bool is_valid_int_const(string val, string typ) {
 
   int x = v_string_int(val);
 
-  if (string_eq(typ, tos2((byte *)"u8"))) { /* case */
+  if (string_eq(typ, tos2((byte *)"byte"))) { /* case */
 
     return 0 <= x && x <= math__MaxU8;
 
@@ -21564,20 +21560,18 @@ void init_consts() {
              "pthread_mutex_unlock(HANDLE *m) {\n	"
              "ReleaseMutex(*m);\n}\n#else\n#include "
              "<pthread.h>\n#endif\n\n//================================== "
-             "TYPEDEFS ================================*/\n\ntypedef unsigned "
-             "char byte;\ntypedef unsigned int uint;\ntypedef int64_t "
-             "i64;\ntypedef int32_t i32;\ntypedef int16_t i16;\ntypedef int8_t "
-             "i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef "
-             "uint16_t u16;\ntypedef uint8_t u8;\ntypedef uint32_t "
-             "rune;\ntypedef float f32;\ntypedef double f64;\ntypedef unsigned "
-             "char* byteptr;\ntypedef int* intptr;\ntypedef void* "
-             "voidptr;\ntypedef struct array array;\ntypedef struct map "
-             "map;\ntypedef array array_string;\ntypedef array "
-             "array_int;\ntypedef array array_byte;\ntypedef array "
-             "array_uint;\ntypedef array array_float;\ntypedef array "
-             "array_f32;\ntypedef array array_f64;\ntypedef map "
-             "map_int;\ntypedef map map_string;\n#ifndef bool\n	typedef int "
-             "bool;\n	#define true 1\n	#define false "
+             "TYPEDEFS ================================*/\n\ntypedef int64_t "
+             "i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t "
+             "u64;\ntypedef uint32_t u32;\ntypedef uint16_t u16;\ntypedef "
+             "uint8_t byte;\ntypedef uint32_t rune;\ntypedef float "
+             "f32;\ntypedef double f64;\ntypedef unsigned char* "
+             "byteptr;\ntypedef int* intptr;\ntypedef void* voidptr;\ntypedef "
+             "struct array array;\ntypedef struct map map;\ntypedef array "
+             "array_string;\ntypedef array array_int;\ntypedef array "
+             "array_byte;\ntypedef array array_f32;\ntypedef array "
+             "array_f64;\ntypedef map map_int;\ntypedef map "
+             "map_string;\n#ifndef bool\n	typedef int bool;\n	"
+             "#define true 1\n	#define false "
              "0\n#endif\n\n//============================== HELPER C MACROS "
              "=============================*/\n\n#define _PUSH(arr, val, tmp, "
              "tmp_typ) {tmp_typ tmp = (val); array__push(arr, &tmp);}\n#define "
