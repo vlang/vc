@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "33ae752"
+#define V_COMMIT_HASH "7180411"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -614,6 +614,7 @@ string array_byte_hex(array_byte b);
 int copy(array_byte dst, array_byte src);
 int compare_ints(int *a, int *b);
 void array_int_sort(array_int *a);
+void todo();
 string tos(byte *s, int len);
 string tos_clone(byte *s);
 string tos2(byte *s);
@@ -752,7 +753,6 @@ string strings__Builder_str(strings__Builder b);
 void strings__Builder_cut(strings__Builder *b, int n);
 void strings__Builder_free(strings__Builder *b);
 string strings__repeat(byte c, int n);
-void os__todo_remove();
 array_string os__init_os_args(int argc, byteptr *argv);
 array_string os__parse_windows_cmd_line(byte *cmd);
 Option_string os__read_file(string path);
@@ -921,6 +921,7 @@ void term__erase_line_tobeg();
 void term__erase_line_clear();
 void term__show_cursor();
 void term__hide_cursor();
+void time__remove_me_when_c_bug_is_fixed();
 time__Time time__now();
 time__Time time__random();
 time__Time time__unix(int abs);
@@ -3822,7 +3823,6 @@ string strings__repeat(byte c, int n) {
 
   return (tos((byte *)arr, n));
 }
-void os__todo_remove() {}
 array_string os__init_os_args(int argc, byteptr *argv) {
 
   array_string args =
@@ -8063,8 +8063,6 @@ void Parser_fn_decl(Parser *p) {
           closed_scopes++;
         };
 
-        Parser_next(p);
-
         if (p->tok == main__Token_gt && p->prev_tok == main__Token_name &&
             p->prev_tok2 == main__Token_lt &&
             string_at(p->scanner->text, p->scanner->pos - 1) != 'T') {
@@ -8090,8 +8088,7 @@ void Parser_fn_decl(Parser *p) {
           p->scanner->pos = temp_scanner_pos;
         };
 
-        if (Token_is_decl(p->tok) && !(p->prev_tok == main__Token_dot &&
-                                       p->tok == main__Token_key_type)) {
+        if (Token_is_decl(p->tok)) {
 
           break;
         };
@@ -8103,6 +8100,8 @@ void Parser_fn_decl(Parser *p) {
             break;
           };
         };
+
+        Parser_next(p);
       };
     };
 
