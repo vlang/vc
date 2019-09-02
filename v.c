@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "510fb2a"
+#define V_COMMIT_HASH "d681e1c"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -14080,10 +14080,9 @@ string Parser_name_expr(Parser *p) {
             println(tos2((byte *)"`i32` alias was removed, use `int` instead"));
           };
 
-          if (string_eq(orig_name, tos2((byte *)"byte"))) {
+          if (string_eq(orig_name, tos2((byte *)"u8"))) {
 
-            println(
-                tos2((byte *)"`byte` alias was removed, use `byte` instead"));
+            println(tos2((byte *)"`u8` alias was removed, use `byte` instead"));
           };
 
           Parser_error(p,
