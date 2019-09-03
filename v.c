@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "b4d033f"
+#define V_COMMIT_HASH "38d26c8"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -1475,7 +1475,7 @@ array new_array(int mylen, int cap, int elm_size) {
   array arr = (array){.len = mylen,
                       .cap = cap,
                       .element_size = elm_size,
-                      .data = v_malloc(cap * elm_size)};
+                      .data = v_calloc(cap * elm_size)};
 
   return arr;
 }
