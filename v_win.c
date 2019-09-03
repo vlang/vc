@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "5dcfda0"
+#define V_COMMIT_HASH "6921c15"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -14581,7 +14581,7 @@ string Parser_dot(Parser *p, string str_typ, int method_ph) {
           p, string_add(
                  _STR("cannot modify immutable field `%.*s` (type `%.*s`)\n",
                       f.name.len, f.name.str, f.parent_fn.len, f.parent_fn.str),
-                 _STR("declare the field with `mut:`\n\nstruct %.*s {\n  "
+                 _STR("declare the field with `mut:`\nstruct %.*s {\n  "
                       "mut:\n	%.*s %.*s\n}\n",
                       f.parent_fn.len, f.parent_fn.str, f.name.len, f.name.str,
                       f.typ.len, f.typ.str)));
