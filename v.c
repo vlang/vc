@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "6921c15"
+#define V_COMMIT_HASH "b4d033f"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -155,14 +155,14 @@ typedef struct time__Time time__Time;
 typedef Option Option_int;
 typedef struct CGen CGen;
 typedef array array_Type;
+typedef struct DepGraphNode DepGraphNode;
+typedef struct DepGraph DepGraph;
+typedef array array_DepGraphNode;
+typedef struct DepSet DepSet;
 typedef struct Fn Fn;
 typedef array array_Var;
 typedef struct V V;
 typedef struct Preferences Preferences;
-typedef struct ModDepGraphNode ModDepGraphNode;
-typedef struct ModDepGraph ModDepGraph;
-typedef array array_ModDepGraphNode;
-typedef struct DepSet DepSet;
 typedef array array_FileImportTable;
 typedef struct MsvcResult MsvcResult;
 typedef voidptr RegKey; // type alias name="RegKey" parent=`voidptr`
@@ -194,11 +194,11 @@ typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__Result;
 typedef Option Option_int;
+typedef map map_DepGraphNode;
+typedef map map_DepSet;
 typedef int BuildMode;
 typedef int OS;
 typedef int Pass;
-typedef map map_ModDepGraphNode;
-typedef map map_DepSet;
 typedef Option Option_string;
 typedef Option Option_WindowsKit;
 typedef Option Option_VsInstallation;
@@ -232,6 +232,52 @@ struct Option {
 };
 
 //----
+struct MsvcResult {
+  string full_cl_exe_path;
+  string exe_path;
+  string um_lib_path;
+  string ucrt_lib_path;
+  string vs_lib_path;
+  string um_include_path;
+  string ucrt_include_path;
+  string vs_include_path;
+  string shared_include_path;
+};
+
+struct ParsedFlag {
+  string f;
+  string arg;
+};
+
+struct WindowsKit {
+  string um_lib_path;
+  string ucrt_lib_path;
+  string um_include_path;
+  string ucrt_include_path;
+  string shared_include_path;
+};
+
+struct VsInstallation {
+  string include_path;
+  string lib_path;
+  string exe_path;
+};
+
+struct os__File {
+  FILE *cfile;
+};
+
+struct DepGraphNode {
+  string name;
+  array_string deps;
+  string last_cycle;
+};
+
+struct DepGraph {
+  bool acyclic;
+  array_DepGraphNode nodes;
+};
+
 struct DepSet {
   array_string items;
 };
@@ -260,37 +306,9 @@ struct FileImportTable {
   map_string imports;
 };
 
-struct ModDepGraphNode {
-  string name;
-  array_string deps;
-  string last_cycle;
-};
-
-struct ModDepGraph {
-  bool acyclic;
-  array_ModDepGraphNode nodes;
-};
-
 struct GenTable {
   string fn_name;
   array_string types;
-};
-
-struct MsvcResult {
-  string full_cl_exe_path;
-  string exe_path;
-  string um_lib_path;
-  string ucrt_lib_path;
-  string vs_lib_path;
-  string um_include_path;
-  string ucrt_include_path;
-  string vs_include_path;
-  string shared_include_path;
-};
-
-struct ParsedFlag {
-  string f;
-  string arg;
 };
 
 struct Repl {
@@ -316,30 +334,12 @@ struct Table {
   bool obfuscate;
 };
 
-struct WindowsKit {
-  string um_lib_path;
-  string ucrt_lib_path;
-  string um_include_path;
-  string ucrt_include_path;
-  string shared_include_path;
-};
-
-struct VsInstallation {
-  string include_path;
-  string lib_path;
-  string exe_path;
-};
-
 struct mapnode {
   mapnode *left;
   mapnode *right;
   bool is_empty;
   string key;
   void *val;
-};
-
-struct os__File {
-  FILE *cfile;
 };
 
 struct os__FileInfo {
@@ -400,6 +400,80 @@ struct CGen {
   int line;
   bool line_directives;
   int cut_pos;
+};
+
+struct Preferences {
+  BuildMode build_mode;
+  bool nofmt;
+  bool is_test;
+  bool is_script;
+  bool is_live;
+  bool is_so;
+  bool is_prof;
+  bool translated;
+  bool is_prod;
+  bool is_verbose;
+  bool obfuscate;
+  bool is_repl;
+  bool is_run;
+  bool show_c_cmd;
+  bool sanitize;
+  bool is_debuggable;
+  bool is_debug;
+  bool no_auto_free;
+  string cflags;
+  string ccompiler;
+};
+
+struct Scanner {
+  string file_path;
+  string text;
+  int pos;
+  int line_nr;
+  bool inside_string;
+  bool dollar_start;
+  bool dollar_end;
+  bool debug;
+  string line_comment;
+  bool started;
+  strings__Builder fmt_out;
+  int fmt_indent;
+  bool fmt_line_empty;
+  Token prev_tok;
+};
+
+struct ScanRes {
+  Token tok;
+  string lit;
+};
+
+struct V {
+  OS os;
+  string out_name_c;
+  array_string files;
+  string dir;
+  Table *table;
+  CGen *cgen;
+  Preferences *pref;
+  string lang_dir;
+  string out_name;
+  string vroot;
+  string mod;
+};
+
+struct Type {
+  string mod;
+  string name;
+  TypeCategory cat;
+  array_Var fields;
+  array_Fn methods;
+  string parent;
+  Fn func;
+  bool is_c;
+  array_string enum_vals;
+  array_string gen_types;
+  bool is_placeholder;
+  bool gen_str;
 };
 
 struct Var {
@@ -477,80 +551,6 @@ struct Parser {
   int sql_i;
   array_string sql_params;
   array_string sql_types;
-};
-
-struct Preferences {
-  BuildMode build_mode;
-  bool nofmt;
-  bool is_test;
-  bool is_script;
-  bool is_live;
-  bool is_so;
-  bool is_prof;
-  bool translated;
-  bool is_prod;
-  bool is_verbose;
-  bool obfuscate;
-  bool is_repl;
-  bool is_run;
-  bool show_c_cmd;
-  bool sanitize;
-  bool is_debuggable;
-  bool is_debug;
-  bool no_auto_free;
-  string cflags;
-  string ccompiler;
-};
-
-struct Scanner {
-  string file_path;
-  string text;
-  int pos;
-  int line_nr;
-  bool inside_string;
-  bool dollar_start;
-  bool dollar_end;
-  bool debug;
-  string line_comment;
-  bool started;
-  strings__Builder fmt_out;
-  int fmt_indent;
-  bool fmt_line_empty;
-  Token prev_tok;
-};
-
-struct ScanRes {
-  Token tok;
-  string lit;
-};
-
-struct V {
-  OS os;
-  string out_name_c;
-  array_string files;
-  string dir;
-  Table *table;
-  CGen *cgen;
-  Preferences *pref;
-  string lang_dir;
-  string out_name;
-  string vroot;
-  string mod;
-};
-
-struct Type {
-  string mod;
-  string name;
-  TypeCategory cat;
-  array_Var fields;
-  array_Fn methods;
-  string parent;
-  Fn func;
-  bool is_c;
-  array_string enum_vals;
-  array_string gen_types;
-  bool is_placeholder;
-  bool gen_str;
 };
 
 struct TypeNode {
@@ -959,6 +959,15 @@ void Parser_chash(Parser *p);
 void Parser_comptime_method_call(Parser *p, Type typ);
 void Parser_gen_array_str(Parser *p, Type typ);
 void Parser_parse_t(Parser *p);
+void DepSet_add(DepSet *dset, string item);
+DepSet DepSet_diff(DepSet *dset, DepSet otherset);
+int DepSet_size(DepSet *dset);
+DepGraph *new_dep_graph();
+void DepGraph_add(DepGraph *graph, string mod, array_string deps);
+DepGraph *DepGraph_resolve(DepGraph *graph);
+DepGraphNode DepGraph_last_node(DepGraph *graph);
+string DepGraph_last_cycle(DepGraph *graph);
+void DepGraph_display(DepGraph *graph);
 Var Fn_find_var(Fn *f, string name);
 void Fn_open_scope(Fn *f);
 void Fn_close_scope(Fn *f);
@@ -1004,18 +1013,9 @@ void update_v();
 void test_v();
 void create_symlink();
 void cerror(string s);
-void DepSet_add(DepSet *dset, string item);
-DepSet DepSet_diff(DepSet *dset, DepSet otherset);
-int DepSet_size(DepSet *dset);
-ModDepGraph *new_mod_dep_graph();
-void ModDepGraph_from_import_tables(ModDepGraph *graph,
-                                    array_FileImportTable import_tables);
-void ModDepGraph_add(ModDepGraph *graph, string mod, array_string deps);
-ModDepGraph *ModDepGraph_resolve(ModDepGraph *graph);
-array_string ModDepGraph_imports(ModDepGraph *graph);
-ModDepGraphNode ModDepGraph_last_node(ModDepGraph *graph);
-string ModDepGraph_last_cycle(ModDepGraph *graph);
-void ModDepGraph_display(ModDepGraph *graph);
+void DepGraph_from_import_tables(DepGraph *graph,
+                                 array_FileImportTable import_tables);
+array_string DepGraph_imports(DepGraph *graph);
 string V_find_module_path(V *v, string mod);
 Option_string find_windows_kit_internal(RegKey key, array_string versions);
 Option_WindowsKit find_windows_kit_root();
@@ -6921,36 +6921,54 @@ string types_to_c(array_Type types, Table *table) {
 }
 void sort_structs(array_Type *types) {
 
-  int cnt = 0;
+  DepGraph *graph = new_dep_graph();
+
+  array_string type_names =
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
   for (int i = 0; i < types->len; i++) {
 
-    int tmp65 = 0;
+    _PUSH(&type_names, ((*(Type *)array__get(*types, i)).name), tmp66, string);
+  };
+
+  for (int i = 0; i < types->len; i++) {
+
+    Type t = (*(Type *)array__get(*types, i));
+
+    array_string field_types =
+        new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+
+    array_Var tmp74 = t.fields;
     ;
-    for (int tmp66 = tmp65; tmp66 < i; tmp66++) {
-      int j = tmp66;
+    for (int tmp75 = 0; tmp75 < tmp74.len; tmp75++) {
+      Var field = ((Var *)tmp74.data)[tmp75];
 
-      Type t = (*(Type *)array__get(*types, i));
+      if (!(_IN(string, field.typ, type_names))) {
 
-      if (Type_contains_field_type(&/* ? */ (*(Type *)array__get(*types, j)),
-                                   t.name)) {
+        continue;
+      };
 
-        array_insert(types, j, &/*112 EXP:"void*" GOT:"Type" */ t);
+      _PUSH(&field_types, (field.typ), tmp76, string);
+    };
 
-        array_delete(types, i + 1);
+    DepGraph_add(graph, t.name, field_types);
+  };
 
-        i = 0;
+  DepGraph *sorted = DepGraph_resolve(&/* ? */ *graph);
 
-        cnt++;
+  array_Type old_types = array_clone(*types);
 
-        if (cnt > 500) {
+  for (int i = 0; i < sorted->nodes.len; i++) {
 
-          printf("infinite type loop (perhaps you have a recursive struct "
-                 "`%.*s`?)\n",
-                 t.name.len, t.name.str);
+    DepGraphNode node = (*(DepGraphNode *)array__get(sorted->nodes, i));
 
-          v_exit(1);
-        };
+    for (int j = 0; j < old_types.len; j++) {
+
+      Type t = (*(Type *)array__get(old_types, j));
+
+      if (string_eq(t.name, node.name)) {
+
+        array_set(types, i, &(Type[]){t});
 
         continue;
       };
@@ -7415,6 +7433,183 @@ void Parser_gen_array_str(Parser *p, Type typ) {
         tmp40, string);
 }
 void Parser_parse_t(Parser *p) {}
+void DepSet_add(DepSet *dset, string item) {
+
+  _PUSH(&dset->items, (item), tmp1, string);
+}
+DepSet DepSet_diff(DepSet *dset, DepSet otherset) {
+
+  DepSet diff = (DepSet){.items = new_array(0, 1, sizeof(string))};
+
+  array_string tmp3 = dset->items;
+  ;
+  for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
+    string item = ((string *)tmp3.data)[tmp4];
+
+    if (!_IN(string, item, otherset.items)) {
+
+      _PUSH(&diff.items, (item), tmp5, string);
+    };
+  };
+
+  return diff;
+}
+int DepSet_size(DepSet *dset) { return dset->items.len; }
+DepGraph *new_dep_graph() {
+
+  return (DepGraph *)memdup(
+      &(DepGraph){.acyclic = 1, .nodes = new_array(0, 1, sizeof(DepGraphNode))},
+      sizeof(DepGraph));
+}
+void DepGraph_add(DepGraph *graph, string mod, array_string deps) {
+
+  _PUSH(&graph->nodes,
+        ((DepGraphNode){
+            .name = mod, .deps = deps, .last_cycle = tos((byte *)"", 0)}),
+        tmp6, DepGraphNode);
+}
+DepGraph *DepGraph_resolve(DepGraph *graph) {
+
+  map_DepGraphNode node_names = new_map(1, sizeof(DepGraphNode));
+
+  map_DepSet node_deps = new_map(1, sizeof(DepSet));
+
+  array_DepGraphNode tmp9 = graph->nodes;
+  ;
+  for (int _ = 0; _ < tmp9.len; _++) {
+    DepGraphNode node = ((DepGraphNode *)tmp9.data)[_];
+
+    map__set(&node_names, node.name, &(DepGraphNode[]){node});
+
+    DepSet dep_set = (DepSet){.items = new_array(0, 1, sizeof(string))};
+
+    array_string tmp11 = node.deps;
+    ;
+    for (int _ = 0; _ < tmp11.len; _++) {
+      string dep = ((string *)tmp11.data)[_];
+
+      DepSet_add(&/* ? */ dep_set, dep);
+    };
+
+    map__set(&node_deps, node.name, &(DepSet[]){dep_set});
+  };
+
+  DepGraph *resolved = new_dep_graph();
+
+  while (node_deps.size != 0) {
+
+    DepSet ready_set = (DepSet){.items = new_array(0, 1, sizeof(string))};
+
+    map_DepSet tmp14 = node_deps;
+    array_string keys_tmp14 = map_keys(&tmp14);
+    for (int l = 0; l < keys_tmp14.len; l++) {
+      string name = ((string *)keys_tmp14.data)[l];
+      DepSet deps = {0};
+      map_get(tmp14, name, &deps);
+
+      if (DepSet_size(&/* ? */ deps) == 0) {
+
+        DepSet_add(&/* ? */ ready_set, name);
+      };
+    };
+
+    if (DepSet_size(&/* ? */ ready_set) == 0) {
+
+      DepGraph *g = new_dep_graph();
+
+      g->acyclic = 0;
+
+      array_string ndk = map_keys(&/* ? */ node_deps);
+
+      map_DepSet tmp17 = node_deps;
+      array_string keys_tmp17 = map_keys(&tmp17);
+      for (int l = 0; l < keys_tmp17.len; l++) {
+        string name = ((string *)keys_tmp17.data)[l];
+        DepSet _ = {0};
+        map_get(tmp17, name, &_);
+
+        DepGraphNode tmp18 = {0};
+        bool tmp19 = map_get(node_names, name, &tmp18);
+
+        DepGraphNode node = tmp18;
+
+        if (string_eq(name, (*(string *)array__get(ndk, node_deps.size - 1)))) {
+
+          DepSet tmp23 = {0};
+          bool tmp24 = map_get(node_deps, name, &tmp23);
+
+          DepSet tmp25 = {0};
+          bool tmp26 = map_get(node_deps, name, &tmp25);
+
+          node.last_cycle =
+              (*(string *)array__get(tmp23.items, tmp25.items.len - 1));
+        };
+
+        _PUSH(&g->nodes, (node), tmp29, DepGraphNode);
+      };
+
+      return g;
+    };
+
+    array_string tmp30 = ready_set.items;
+    ;
+    for (int tmp31 = 0; tmp31 < tmp30.len; tmp31++) {
+      string name = ((string *)tmp30.data)[tmp31];
+
+      map_delete(&/* ? */ node_deps, name);
+
+      DepGraphNode tmp33 = {0};
+      bool tmp34 = map_get(node_names, name, &tmp33);
+
+      _PUSH(&resolved->nodes, (tmp33), tmp32, DepGraphNode);
+    };
+
+    map_DepSet tmp35 = node_deps;
+    array_string keys_tmp35 = map_keys(&tmp35);
+    for (int l = 0; l < keys_tmp35.len; l++) {
+      string name = ((string *)keys_tmp35.data)[l];
+      DepSet deps = {0};
+      map_get(tmp35, name, &deps);
+
+      map__set(&node_deps, name,
+               &(DepSet[]){DepSet_diff(&/* ? */ deps, ready_set)});
+    };
+  };
+
+  return resolved;
+}
+DepGraphNode DepGraph_last_node(DepGraph *graph) {
+
+  return (*(DepGraphNode *)array__get(graph->nodes, graph->nodes.len - 1));
+}
+string DepGraph_last_cycle(DepGraph *graph) {
+
+  return DepGraph_last_node(&/* ? */ *graph).last_cycle;
+}
+void DepGraph_display(DepGraph *graph) {
+
+  for (int i = 0; i < graph->nodes.len; i++) {
+
+    DepGraphNode node = (*(DepGraphNode *)array__get(graph->nodes, i));
+
+    array_string tmp42 = node.deps;
+    ;
+    for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
+      string dep = ((string *)tmp42.data)[tmp43];
+
+      string out = _STR(" * %.*s -> %.*s", node.name.len, node.name.str,
+                        dep.len, dep.str);
+
+      if (!graph->acyclic && i == graph->nodes.len - 1 &&
+          string_eq(dep, node.last_cycle)) {
+
+        out = string_add(out, tos2((byte *)" <-- last cycle"));
+      };
+
+      println(out);
+    };
+  };
+}
 Var Fn_find_var(Fn *f, string name) {
 
   int tmp1 = 0;
@@ -10207,20 +10402,20 @@ void V_add_v_files_to_compile(V *v) {
     println(array_string_str(v->table->imports));
   };
 
-  ModDepGraph *dep_graph = new_mod_dep_graph();
+  DepGraph *dep_graph = new_dep_graph();
 
-  ModDepGraph_from_import_tables(dep_graph, v->table->file_imports);
+  DepGraph_from_import_tables(dep_graph, v->table->file_imports);
 
-  ModDepGraph *deps_resolved = ModDepGraph_resolve(&/* ? */ *dep_graph);
+  DepGraph *deps_resolved = DepGraph_resolve(&/* ? */ *dep_graph);
 
   if (!deps_resolved->acyclic) {
 
-    ModDepGraph_display(&/* ? */ *deps_resolved);
+    DepGraph_display(&/* ? */ *deps_resolved);
 
     cerror(tos2((byte *)"Import cycle detected."));
   };
 
-  array_string tmp65 = ModDepGraph_imports(&/* ? */ *deps_resolved);
+  array_string tmp65 = DepGraph_imports(&/* ? */ *deps_resolved);
   ;
   for (int tmp66 = 0; tmp66 < tmp65.len; tmp66++) {
     string mod = ((string *)tmp65.data)[tmp66];
@@ -10806,227 +11001,49 @@ void cerror(string s) {
 
   v_exit(1);
 }
-void DepSet_add(DepSet *dset, string item) {
+void DepGraph_from_import_tables(DepGraph *graph,
+                                 array_FileImportTable import_tables) {
 
-  _PUSH(&dset->items, (item), tmp1, string);
-}
-DepSet DepSet_diff(DepSet *dset, DepSet otherset) {
-
-  DepSet diff = (DepSet){.items = new_array(0, 1, sizeof(string))};
-
-  array_string tmp3 = dset->items;
+  array_FileImportTable tmp1 = import_tables;
   ;
-  for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
-    string item = ((string *)tmp3.data)[tmp4];
-
-    if (!_IN(string, item, otherset.items)) {
-
-      _PUSH(&diff.items, (item), tmp5, string);
-    };
-  };
-
-  return diff;
-}
-int DepSet_size(DepSet *dset) { return dset->items.len; }
-ModDepGraph *new_mod_dep_graph() {
-
-  return (ModDepGraph *)memdup(
-      &(ModDepGraph){.acyclic = 1,
-                     .nodes = new_array(0, 1, sizeof(ModDepGraphNode))},
-      sizeof(ModDepGraph));
-}
-void ModDepGraph_from_import_tables(ModDepGraph *graph,
-                                    array_FileImportTable import_tables) {
-
-  array_FileImportTable tmp6 = import_tables;
-  ;
-  for (int tmp7 = 0; tmp7 < tmp6.len; tmp7++) {
-    FileImportTable fit = ((FileImportTable *)tmp6.data)[tmp7];
+  for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+    FileImportTable fit = ((FileImportTable *)tmp1.data)[tmp2];
 
     array_string deps =
         new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-    map_string tmp9 = fit.imports;
-    array_string keys_tmp9 = map_keys(&tmp9);
-    for (int l = 0; l < keys_tmp9.len; l++) {
-      string _ = ((string *)keys_tmp9.data)[l];
+    map_string tmp4 = fit.imports;
+    array_string keys_tmp4 = map_keys(&tmp4);
+    for (int l = 0; l < keys_tmp4.len; l++) {
+      string _ = ((string *)keys_tmp4.data)[l];
       string m = {0};
-      map_get(tmp9, _, &m);
+      map_get(tmp4, _, &m);
 
-      _PUSH(&deps, (m), tmp10, string);
+      _PUSH(&deps, (m), tmp5, string);
     };
 
-    ModDepGraph_add(graph, fit.module_name, deps);
+    DepGraph_add(graph, fit.module_name, deps);
   };
 }
-void ModDepGraph_add(ModDepGraph *graph, string mod, array_string deps) {
-
-  _PUSH(&graph->nodes,
-        ((ModDepGraphNode){
-            .name = mod, .deps = deps, .last_cycle = tos((byte *)"", 0)}),
-        tmp11, ModDepGraphNode);
-}
-ModDepGraph *ModDepGraph_resolve(ModDepGraph *graph) {
-
-  map_ModDepGraphNode node_names = new_map(1, sizeof(ModDepGraphNode));
-
-  map_DepSet node_deps = new_map(1, sizeof(DepSet));
-
-  array_ModDepGraphNode tmp14 = graph->nodes;
-  ;
-  for (int _ = 0; _ < tmp14.len; _++) {
-    ModDepGraphNode node = ((ModDepGraphNode *)tmp14.data)[_];
-
-    map__set(&node_names, node.name, &(ModDepGraphNode[]){node});
-
-    DepSet dep_set = (DepSet){.items = new_array(0, 1, sizeof(string))};
-
-    array_string tmp16 = node.deps;
-    ;
-    for (int _ = 0; _ < tmp16.len; _++) {
-      string dep = ((string *)tmp16.data)[_];
-
-      DepSet_add(&/* ? */ dep_set, dep);
-    };
-
-    map__set(&node_deps, node.name, &(DepSet[]){dep_set});
-  };
-
-  ModDepGraph *resolved = new_mod_dep_graph();
-
-  while (node_deps.size != 0) {
-
-    DepSet ready_set = (DepSet){.items = new_array(0, 1, sizeof(string))};
-
-    map_DepSet tmp19 = node_deps;
-    array_string keys_tmp19 = map_keys(&tmp19);
-    for (int l = 0; l < keys_tmp19.len; l++) {
-      string name = ((string *)keys_tmp19.data)[l];
-      DepSet deps = {0};
-      map_get(tmp19, name, &deps);
-
-      if (DepSet_size(&/* ? */ deps) == 0) {
-
-        DepSet_add(&/* ? */ ready_set, name);
-      };
-    };
-
-    if (DepSet_size(&/* ? */ ready_set) == 0) {
-
-      ModDepGraph *g = new_mod_dep_graph();
-
-      g->acyclic = 0;
-
-      array_string ndk = map_keys(&/* ? */ node_deps);
-
-      map_DepSet tmp22 = node_deps;
-      array_string keys_tmp22 = map_keys(&tmp22);
-      for (int l = 0; l < keys_tmp22.len; l++) {
-        string name = ((string *)keys_tmp22.data)[l];
-        DepSet _ = {0};
-        map_get(tmp22, name, &_);
-
-        ModDepGraphNode tmp23 = {0};
-        bool tmp24 = map_get(node_names, name, &tmp23);
-
-        ModDepGraphNode node = tmp23;
-
-        if (string_eq(name, (*(string *)array__get(ndk, node_deps.size - 1)))) {
-
-          DepSet tmp28 = {0};
-          bool tmp29 = map_get(node_deps, name, &tmp28);
-
-          DepSet tmp30 = {0};
-          bool tmp31 = map_get(node_deps, name, &tmp30);
-
-          node.last_cycle =
-              (*(string *)array__get(tmp28.items, tmp30.items.len - 1));
-        };
-
-        _PUSH(&g->nodes, (node), tmp34, ModDepGraphNode);
-      };
-
-      return g;
-    };
-
-    array_string tmp35 = ready_set.items;
-    ;
-    for (int tmp36 = 0; tmp36 < tmp35.len; tmp36++) {
-      string name = ((string *)tmp35.data)[tmp36];
-
-      map_delete(&/* ? */ node_deps, name);
-
-      ModDepGraphNode tmp38 = {0};
-      bool tmp39 = map_get(node_names, name, &tmp38);
-
-      _PUSH(&resolved->nodes, (tmp38), tmp37, ModDepGraphNode);
-    };
-
-    map_DepSet tmp40 = node_deps;
-    array_string keys_tmp40 = map_keys(&tmp40);
-    for (int l = 0; l < keys_tmp40.len; l++) {
-      string name = ((string *)keys_tmp40.data)[l];
-      DepSet deps = {0};
-      map_get(tmp40, name, &deps);
-
-      map__set(&node_deps, name,
-               &(DepSet[]){DepSet_diff(&/* ? */ deps, ready_set)});
-    };
-  };
-
-  return resolved;
-}
-array_string ModDepGraph_imports(ModDepGraph *graph) {
+array_string DepGraph_imports(DepGraph *graph) {
 
   array_string mods =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-  array_ModDepGraphNode tmp42 = graph->nodes;
+  array_DepGraphNode tmp7 = graph->nodes;
   ;
-  for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
-    ModDepGraphNode node = ((ModDepGraphNode *)tmp42.data)[tmp43];
+  for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
+    DepGraphNode node = ((DepGraphNode *)tmp7.data)[tmp8];
 
     if (string_eq(node.name, tos2((byte *)"main"))) {
 
       continue;
     };
 
-    _PUSH(&mods, (node.name), tmp44, string);
+    _PUSH(&mods, (node.name), tmp9, string);
   };
 
   return mods;
-}
-ModDepGraphNode ModDepGraph_last_node(ModDepGraph *graph) {
-
-  return (*(ModDepGraphNode *)array__get(graph->nodes, graph->nodes.len - 1));
-}
-string ModDepGraph_last_cycle(ModDepGraph *graph) {
-
-  return ModDepGraph_last_node(&/* ? */ *graph).last_cycle;
-}
-void ModDepGraph_display(ModDepGraph *graph) {
-
-  for (int i = 0; i < graph->nodes.len; i++) {
-
-    ModDepGraphNode node = (*(ModDepGraphNode *)array__get(graph->nodes, i));
-
-    array_string tmp51 = node.deps;
-    ;
-    for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
-      string dep = ((string *)tmp51.data)[tmp52];
-
-      string out = _STR(" * %.*s -> %.*s", node.name.len, node.name.str,
-                        dep.len, dep.str);
-
-      if (!graph->acyclic && i == graph->nodes.len - 1 &&
-          string_eq(dep, node.last_cycle)) {
-
-        out = string_add(out, tos2((byte *)" <-- last cycle"));
-      };
-
-      println(out);
-    };
-  };
 }
 string V_find_module_path(V *v, string mod) {
 
