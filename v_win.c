@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "d681e1c"
+#define V_COMMIT_HASH "83d724f"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -2916,8 +2916,8 @@ void print_backtrace_skipping_top_frames(int skipframes) {
 #endif
   ;
 
-  printf("print_backtrace_skipping_top_frames is not implemented on this "
-         "platform for now...\n");
+  println(tos2((byte *)"print_backtrace_skipping_top_frames is not implemented "
+                       "on this platform for now...\n"));
 }
 void print_backtrace() { print_backtrace_skipping_top_frames(2); }
 void _panic_debug(int line_no, string file, string mod, string fn_name,
