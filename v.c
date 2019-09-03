@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "83d724f"
+#define V_COMMIT_HASH "ecb661f"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
