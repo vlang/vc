@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "a206667"
+#define V_COMMIT_HASH "8e25019"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -269,6 +269,34 @@ struct os__File {
   FILE *cfile;
 };
 
+struct CGen {
+  os__File out;
+  string out_path;
+  array_string thread_fns;
+  bool is_user;
+  array_string lines;
+  array_string typedefs;
+  array_string type_aliases;
+  array_string includes;
+  array_string thread_args;
+  array_string consts;
+  array_string fns;
+  array_string so_fns;
+  array_string consts_init;
+  Pass pass;
+  bool nogen;
+  string tmp_line;
+  string cur_line;
+  string prev_line;
+  bool is_tmp;
+  string fn_main;
+  string stash;
+  string file;
+  int line;
+  bool line_directives;
+  int cut_pos;
+};
+
 struct DepGraphNode {
   string name;
   array_string deps;
@@ -313,6 +341,29 @@ struct GenTable {
   array_string types;
 };
 
+struct Preferences {
+  BuildMode build_mode;
+  bool nofmt;
+  bool is_test;
+  bool is_script;
+  bool is_live;
+  bool is_so;
+  bool is_prof;
+  bool translated;
+  bool is_prod;
+  bool is_verbose;
+  bool obfuscate;
+  bool is_repl;
+  bool is_run;
+  bool show_c_cmd;
+  bool sanitize;
+  bool is_debuggable;
+  bool is_debug;
+  bool no_auto_free;
+  string cflags;
+  string ccompiler;
+};
+
 struct Repl {
   int indent;
   bool in_func;
@@ -320,6 +371,25 @@ struct Repl {
   array_string temp_lines;
   array_string functions_name;
   array_string functions;
+};
+
+struct ScanRes {
+  Token tok;
+  string lit;
+};
+
+struct V {
+  OS os;
+  string out_name_c;
+  array_string files;
+  string dir;
+  Table *table;
+  CGen *cgen;
+  Preferences *pref;
+  string lang_dir;
+  string out_name;
+  string vroot;
+  string mod;
 };
 
 struct Table {
@@ -334,6 +404,27 @@ struct Table {
   array_string flags;
   int fn_cnt;
   bool obfuscate;
+};
+
+struct Var {
+  string typ;
+  string name;
+  bool is_arg;
+  bool is_const;
+  array_Var args;
+  string attr;
+  bool is_mut;
+  bool is_alloc;
+  bool ptr;
+  bool ref;
+  string parent_fn;
+  string mod;
+  int line_nr;
+  AccessMod access_mod;
+  bool is_global;
+  bool is_used;
+  bool is_changed;
+  int scope_level;
 };
 
 struct mapnode {
@@ -378,146 +469,6 @@ struct ustring {
   string s;
   array_int runes;
   int len;
-};
-
-struct os__win32finddata {
-  u32 dwFileAttributes;
-  os__filetime ftCreationTime;
-  os__filetime ftLastAccessTime;
-  os__filetime ftLastWriteTime;
-  u32 nFileSizeHigh;
-  u32 nFileSizeLow;
-  u32 dwReserved0;
-  u32 dwReserved1;
-  u16 cFileName[260];
-  u16 cAlternateFileName[14];
-  u32 dwFileType;
-  u32 dwCreatorType;
-  u16 wFinderFlags;
-};
-
-/*----*/
-struct CGen {
-  os__File out;
-  string out_path;
-  array_string thread_fns;
-  bool is_user;
-  array_string lines;
-  array_string typedefs;
-  array_string type_aliases;
-  array_string includes;
-  array_string thread_args;
-  array_string consts;
-  array_string fns;
-  array_string so_fns;
-  array_string consts_init;
-  Pass pass;
-  bool nogen;
-  string tmp_line;
-  string cur_line;
-  string prev_line;
-  bool is_tmp;
-  string fn_main;
-  string stash;
-  string file;
-  int line;
-  bool line_directives;
-  int cut_pos;
-};
-
-struct Preferences {
-  BuildMode build_mode;
-  bool nofmt;
-  bool is_test;
-  bool is_script;
-  bool is_live;
-  bool is_so;
-  bool is_prof;
-  bool translated;
-  bool is_prod;
-  bool is_verbose;
-  bool obfuscate;
-  bool is_repl;
-  bool is_run;
-  bool show_c_cmd;
-  bool sanitize;
-  bool is_debuggable;
-  bool is_debug;
-  bool no_auto_free;
-  string cflags;
-  string ccompiler;
-};
-
-struct Scanner {
-  string file_path;
-  string text;
-  int pos;
-  int line_nr;
-  bool inside_string;
-  bool dollar_start;
-  bool dollar_end;
-  bool debug;
-  string line_comment;
-  bool started;
-  strings__Builder fmt_out;
-  int fmt_indent;
-  bool fmt_line_empty;
-  Token prev_tok;
-};
-
-struct ScanRes {
-  Token tok;
-  string lit;
-};
-
-struct V {
-  OS os;
-  string out_name_c;
-  array_string files;
-  string dir;
-  Table *table;
-  CGen *cgen;
-  Preferences *pref;
-  string lang_dir;
-  string out_name;
-  string vroot;
-  string mod;
-};
-
-struct Type {
-  string mod;
-  string name;
-  TypeCategory cat;
-  array_Var fields;
-  array_Fn methods;
-  string parent;
-  Fn func;
-  bool is_c;
-  array_string enum_vals;
-  array_string gen_types;
-  bool is_placeholder;
-  bool gen_str;
-};
-
-struct Var {
-  string typ;
-  string name;
-  bool is_arg;
-  bool is_const;
-  array_Var args;
-  string attr;
-  bool is_mut;
-  bool is_alloc;
-  bool ptr;
-  bool ref;
-  string parent_fn;
-  string mod;
-  int line_nr;
-  AccessMod access_mod;
-  bool is_global;
-  bool is_used;
-  bool is_changed;
-  int scope_level;
 };
 
 struct Parser {
@@ -574,6 +525,54 @@ struct Parser {
   int sql_i;
   array_string sql_params;
   array_string sql_types;
+};
+
+struct Scanner {
+  string file_path;
+  string text;
+  int pos;
+  int line_nr;
+  bool inside_string;
+  bool dollar_start;
+  bool dollar_end;
+  bool debug;
+  string line_comment;
+  bool started;
+  strings__Builder fmt_out;
+  int fmt_indent;
+  bool fmt_line_empty;
+  Token prev_tok;
+};
+
+struct Type {
+  string mod;
+  string name;
+  TypeCategory cat;
+  array_Var fields;
+  array_Fn methods;
+  string parent;
+  Fn func;
+  bool is_c;
+  array_string enum_vals;
+  array_string gen_types;
+  bool is_placeholder;
+  bool gen_str;
+};
+
+struct os__win32finddata {
+  u32 dwFileAttributes;
+  os__filetime ftCreationTime;
+  os__filetime ftLastAccessTime;
+  os__filetime ftLastWriteTime;
+  u32 nFileSizeHigh;
+  u32 nFileSizeLow;
+  u32 dwReserved0;
+  u32 dwReserved1;
+  u16 cFileName[260];
+  u16 cAlternateFileName[14];
+  u32 dwFileType;
+  u32 dwCreatorType;
+  u16 wFinderFlags;
 };
 
 struct TypeNode {
@@ -979,7 +978,7 @@ string os_name_to_ifdef(string name);
 string platform_postfix_to_ifdefguard(string name);
 string V_c_type_definitions(V *v);
 string types_to_c(array_Type types, Table *table);
-void sort_structs(array_Type *types);
+array_Type sort_structs(array_Type types);
 void Parser_comp_time(Parser *p);
 void Parser_chash(Parser *p);
 void Parser_comptime_method_call(Parser *p, Type typ);
@@ -6921,11 +6920,6 @@ string platform_postfix_to_ifdefguard(string name) {
 }
 string V_c_type_definitions(V *v) {
 
-  array_Type types = new_array_from_c_array(0, 0, sizeof(Type), (Type[]){0});
-
-  array_Type top_types =
-      new_array_from_c_array(0, 0, sizeof(Type), (Type[]){0});
-
   array_Type builtin_types =
       new_array_from_c_array(0, 0, sizeof(Type), (Type[]){0});
 
@@ -6934,80 +6928,48 @@ string V_c_type_definitions(V *v) {
       (string[]){tos2((byte *)"string"), tos2((byte *)"array"),
                  tos2((byte *)"map"), tos2((byte *)"Option")});
 
-  array_string tmp40 = builtins;
+  array_string tmp38 = builtins;
   ;
-  for (int tmp41 = 0; tmp41 < tmp40.len; tmp41++) {
-    string builtin = ((string *)tmp40.data)[tmp41];
+  for (int tmp39 = 0; tmp39 < tmp38.len; tmp39++) {
+    string builtin = ((string *)tmp38.data)[tmp39];
 
-    Type tmp42 = {0};
-    bool tmp43 = map_get(v->table->typesmap, builtin, &tmp42);
+    Type tmp40 = {0};
+    bool tmp41 = map_get(v->table->typesmap, builtin, &tmp40);
 
-    Type typ = tmp42;
+    Type typ = tmp40;
 
-    _PUSH(&builtin_types, (typ), tmp45, Type);
-
-    map_delete(&/* ? */ v->table->typesmap, builtin);
+    _PUSH(&builtin_types, (typ), tmp43, Type);
   };
 
-  map_Type tmp46 = v->table->typesmap;
-  array_string keys_tmp46 = map_keys(&tmp46);
-  for (int l = 0; l < keys_tmp46.len; l++) {
-    string _ = ((string *)keys_tmp46.data)[l];
+  array_Type types = new_array_from_c_array(0, 0, sizeof(Type), (Type[]){0});
+
+  map_Type tmp45 = v->table->typesmap;
+  array_string keys_tmp45 = map_keys(&tmp45);
+  for (int l = 0; l < keys_tmp45.len; l++) {
+    string _ = ((string *)keys_tmp45.data)[l];
     Type t = {0};
-    map_get(tmp46, _, &t);
+    map_get(tmp45, _, &t);
 
-    if (!byte_is_capital(string_at(t.name, 0))) {
-
-      _PUSH(&top_types, (t), tmp49, Type);
+    if (_IN(string, t.name, builtins)) {
 
       continue;
     };
 
-    bool only_builtin_fields = 1;
-
-    array_Var tmp51 = t.fields;
-    ;
-    for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
-      Var field = ((Var *)tmp51.data)[tmp52];
-
-      if (byte_is_capital(string_at(field.typ, 0)) ||
-          string_contains(field.typ, tos2((byte *)"__"))) {
-
-        only_builtin_fields = 0;
-
-        break;
-      };
-    };
-
-    if (only_builtin_fields) {
-
-      _PUSH(&top_types, (t), tmp55, Type);
-
-      continue;
-    };
-
-    _PUSH(&types, (t), tmp56, Type);
+    _PUSH(&types, (t), tmp46, Type);
   };
 
-  sort_structs(&/*111*/ (array[]){top_types}[0]);
-
-  sort_structs(&/*111*/ (array[]){types}[0]);
-
-  return string_add(
-      string_add(string_add(string_add(types_to_c(builtin_types, v->table),
-                                       tos2((byte *)"\n//----\n")),
-                            types_to_c(top_types, v->table)),
-                 tos2((byte *)"\n/*----*/\n")),
-      types_to_c(types, v->table));
+  return string_add(string_add(types_to_c(builtin_types, v->table),
+                               tos2((byte *)"\n//----\n")),
+                    types_to_c(sort_structs(types), v->table));
 }
 string types_to_c(array_Type types, Table *table) {
 
   strings__Builder sb = strings__new_builder(10);
 
-  array_Type tmp58 = types;
+  array_Type tmp48 = types;
   ;
-  for (int tmp59 = 0; tmp59 < tmp58.len; tmp59++) {
-    Type t = ((Type *)tmp58.data)[tmp59];
+  for (int tmp49 = 0; tmp49 < tmp48.len; tmp49++) {
+    Type t = ((Type *)tmp48.data)[tmp49];
 
     if (t.cat != main__TypeCategory_union_ &&
         t.cat != main__TypeCategory_struct_) {
@@ -7023,10 +6985,10 @@ string types_to_c(array_Type types, Table *table) {
         &/* ? */ sb,
         _STR("%.*s %.*s {", kind.len, kind.str, t.name.len, t.name.str));
 
-    array_Var tmp61 = t.fields;
+    array_Var tmp51 = t.fields;
     ;
-    for (int tmp62 = 0; tmp62 < tmp61.len; tmp62++) {
-      Var field = ((Var *)tmp61.data)[tmp62];
+    for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
+      Var field = ((Var *)tmp51.data)[tmp52];
 
       strings__Builder_writeln(
           &/* ? */ sb, string_add(Table_cgen_name_type_pair(
@@ -7039,61 +7001,78 @@ string types_to_c(array_Type types, Table *table) {
 
   return strings__Builder_str(sb);
 }
-void sort_structs(array_Type *types) {
+array_Type sort_structs(array_Type types) {
 
-  DepGraph *graph = new_dep_graph();
+  DepGraph *dep_graph = new_dep_graph();
 
   array_string type_names =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-  for (int i = 0; i < types->len; i++) {
+  array_Type tmp55 = types;
+  ;
+  for (int tmp56 = 0; tmp56 < tmp55.len; tmp56++) {
+    Type t = ((Type *)tmp55.data)[tmp56];
 
-    _PUSH(&type_names, ((*(Type *)array__get(*types, i)).name), tmp66, string);
+    _PUSH(&type_names, (t.name), tmp57, string);
   };
 
-  for (int i = 0; i < types->len; i++) {
+  array_Type tmp58 = types;
+  ;
+  for (int tmp59 = 0; tmp59 < tmp58.len; tmp59++) {
+    Type t = ((Type *)tmp58.data)[tmp59];
 
-    Type t = (*(Type *)array__get(*types, i));
-
-    array_string field_types =
+    array_string field_deps =
         new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-    array_Var tmp74 = t.fields;
+    array_Var tmp61 = t.fields;
     ;
-    for (int tmp75 = 0; tmp75 < tmp74.len; tmp75++) {
-      Var field = ((Var *)tmp74.data)[tmp75];
+    for (int tmp62 = 0; tmp62 < tmp61.len; tmp62++) {
+      Var field = ((Var *)tmp61.data)[tmp62];
 
-      if (!(_IN(string, field.typ, type_names))) {
+      if (!(_IN(string, field.typ, type_names)) ||
+          _IN(string, field.typ, field_deps)) {
 
         continue;
       };
 
-      _PUSH(&field_types, (field.typ), tmp76, string);
+      _PUSH(&field_deps, (field.typ), tmp63, string);
     };
 
-    DepGraph_add(graph, t.name, field_types);
+    DepGraph_add(dep_graph, t.name, field_deps);
   };
 
-  DepGraph *sorted = DepGraph_resolve(&/* ? */ *graph);
+  DepGraph *dep_graph_sorted = DepGraph_resolve(&/* ? */ *dep_graph);
 
-  array_Type old_types = array_clone(*types);
+  if (!dep_graph_sorted->acyclic) {
 
-  for (int i = 0; i < sorted->nodes.len; i++) {
+    cerror(tos2((byte *)"error: cgen.sort_structs() DGNAC.\nplease create a "
+                        "new issue here: https://github.com/vlang/v/issues and "
+                        "tag @joe.conigliaro"));
+  };
 
-    DepGraphNode node = (*(DepGraphNode *)array__get(sorted->nodes, i));
+  array_Type types_sorted =
+      new_array_from_c_array(0, 0, sizeof(Type), (Type[]){0});
 
-    for (int j = 0; j < old_types.len; j++) {
+  array_DepGraphNode tmp66 = dep_graph_sorted->nodes;
+  ;
+  for (int tmp67 = 0; tmp67 < tmp66.len; tmp67++) {
+    DepGraphNode node = ((DepGraphNode *)tmp66.data)[tmp67];
 
-      Type t = (*(Type *)array__get(old_types, j));
+    array_Type tmp68 = types;
+    ;
+    for (int tmp69 = 0; tmp69 < tmp68.len; tmp69++) {
+      Type t = ((Type *)tmp68.data)[tmp69];
 
       if (string_eq(t.name, node.name)) {
 
-        array_set(types, i, &(Type[]){t});
+        _PUSH(&types_sorted, (t), tmp70, Type);
 
         continue;
       };
     };
   };
+
+  return types_sorted;
 }
 void Parser_comp_time(Parser *p) {
 
