@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "3b4703e"
+#define V_COMMIT_HASH "d1210b9"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -1078,7 +1078,6 @@ string Parser_if_st(Parser *p, bool is_expr, int elif_depth);
 void Parser_for_st(Parser *p);
 void Parser_switch_statement(Parser *p);
 string Parser_match_statement(Parser *p, bool is_expr);
-void Parser_match_parse_statement_branch(Parser *p);
 void Parser_assert_statement(Parser *p);
 void Parser_return_st(Parser *p);
 string prepend_mod(string mod, string name);
@@ -6800,6 +6799,8 @@ string platform_postfix_to_ifdefguard(string name) {
 }
 string V_c_type_definitions(V *v) {
 
+  array_Type types = new_array_from_c_array(0, 0, sizeof(Type), (Type[]){0});
+
   array_Type builtin_types =
       new_array_from_c_array(0, 0, sizeof(Type), (Type[]){0});
 
@@ -6808,29 +6809,27 @@ string V_c_type_definitions(V *v) {
       (string[]){tos2((byte *)"string"), tos2((byte *)"array"),
                  tos2((byte *)"map"), tos2((byte *)"Option")});
 
-  array_string tmp38 = builtins;
+  array_string tmp39 = builtins;
   ;
-  for (int tmp39 = 0; tmp39 < tmp38.len; tmp39++) {
-    string builtin = ((string *)tmp38.data)[tmp39];
+  for (int tmp40 = 0; tmp40 < tmp39.len; tmp40++) {
+    string builtin = ((string *)tmp39.data)[tmp40];
 
-    Type tmp40 = {0};
-    bool tmp41 = map_get(v->table->typesmap, builtin, &tmp40);
+    Type tmp41 = {0};
+    bool tmp42 = map_get(v->table->typesmap, builtin, &tmp41);
 
-    Type typ = tmp40;
+    Type typ = tmp41;
 
-    _PUSH(&builtin_types, (typ), tmp43, Type);
+    _PUSH(&builtin_types, (typ), tmp44, Type);
   };
-
-  array_Type types = new_array_from_c_array(0, 0, sizeof(Type), (Type[]){0});
 
   map_Type tmp45 = v->table->typesmap;
   array_string keys_tmp45 = map_keys(&tmp45);
   for (int l = 0; l < keys_tmp45.len; l++) {
-    string _ = ((string *)keys_tmp45.data)[l];
+    string t_name = ((string *)keys_tmp45.data)[l];
     Type t = {0};
-    map_get(tmp45, _, &t);
+    map_get(tmp45, t_name, &t);
 
-    if (_IN(string, t.name, builtins)) {
+    if (_IN(string, t_name, builtins)) {
 
       continue;
     };
@@ -6838,18 +6837,20 @@ string V_c_type_definitions(V *v) {
     _PUSH(&types, (t), tmp46, Type);
   };
 
+  array_Type types_sorted = sort_structs(types);
+
   return string_add(string_add(types_to_c(builtin_types, v->table),
                                tos2((byte *)"\n//----\n")),
-                    types_to_c(sort_structs(types), v->table));
+                    types_to_c(types_sorted, v->table));
 }
 string types_to_c(array_Type types, Table *table) {
 
   strings__Builder sb = strings__new_builder(10);
 
-  array_Type tmp48 = types;
+  array_Type tmp49 = types;
   ;
-  for (int tmp49 = 0; tmp49 < tmp48.len; tmp49++) {
-    Type t = ((Type *)tmp48.data)[tmp49];
+  for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
+    Type t = ((Type *)tmp49.data)[tmp50];
 
     if (t.cat != main__TypeCategory_union_ &&
         t.cat != main__TypeCategory_struct_) {
@@ -6865,10 +6866,10 @@ string types_to_c(array_Type types, Table *table) {
         &/* ? */ sb,
         _STR("%.*s %.*s {", kind.len, kind.str, t.name.len, t.name.str));
 
-    array_Var tmp51 = t.fields;
+    array_Var tmp52 = t.fields;
     ;
-    for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
-      Var field = ((Var *)tmp51.data)[tmp52];
+    for (int tmp53 = 0; tmp53 < tmp52.len; tmp53++) {
+      Var field = ((Var *)tmp52.data)[tmp53];
 
       strings__Builder_writeln(
           &/* ? */ sb, string_add(Table_cgen_name_type_pair(
@@ -6888,26 +6889,26 @@ array_Type sort_structs(array_Type types) {
   array_string type_names =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-  array_Type tmp55 = types;
+  array_Type tmp56 = types;
   ;
-  for (int tmp56 = 0; tmp56 < tmp55.len; tmp56++) {
-    Type t = ((Type *)tmp55.data)[tmp56];
+  for (int tmp57 = 0; tmp57 < tmp56.len; tmp57++) {
+    Type t = ((Type *)tmp56.data)[tmp57];
 
-    _PUSH(&type_names, (t.name), tmp57, string);
+    _PUSH(&type_names, (t.name), tmp58, string);
   };
 
-  array_Type tmp58 = types;
+  array_Type tmp59 = types;
   ;
-  for (int tmp59 = 0; tmp59 < tmp58.len; tmp59++) {
-    Type t = ((Type *)tmp58.data)[tmp59];
+  for (int tmp60 = 0; tmp60 < tmp59.len; tmp60++) {
+    Type t = ((Type *)tmp59.data)[tmp60];
 
     array_string field_deps =
         new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-    array_Var tmp61 = t.fields;
+    array_Var tmp62 = t.fields;
     ;
-    for (int tmp62 = 0; tmp62 < tmp61.len; tmp62++) {
-      Var field = ((Var *)tmp61.data)[tmp62];
+    for (int tmp63 = 0; tmp63 < tmp62.len; tmp63++) {
+      Var field = ((Var *)tmp62.data)[tmp63];
 
       if (!(_IN(string, field.typ, type_names)) ||
           _IN(string, field.typ, field_deps)) {
@@ -6915,7 +6916,7 @@ array_Type sort_structs(array_Type types) {
         continue;
       };
 
-      _PUSH(&field_deps, (field.typ), tmp63, string);
+      _PUSH(&field_deps, (field.typ), tmp64, string);
     };
 
     DepGraph_add(dep_graph, t.name, field_deps);
@@ -6927,25 +6928,25 @@ array_Type sort_structs(array_Type types) {
 
     cerror(tos2((byte *)"error: cgen.sort_structs() DGNAC.\nplease create a "
                         "new issue here: https://github.com/vlang/v/issues and "
-                        "tag @joe.conigliaro"));
+                        "tag @joe-conigliaro"));
   };
 
   array_Type types_sorted =
       new_array_from_c_array(0, 0, sizeof(Type), (Type[]){0});
 
-  array_DepGraphNode tmp66 = dep_graph_sorted->nodes;
+  array_DepGraphNode tmp67 = dep_graph_sorted->nodes;
   ;
-  for (int tmp67 = 0; tmp67 < tmp66.len; tmp67++) {
-    DepGraphNode node = ((DepGraphNode *)tmp66.data)[tmp67];
+  for (int tmp68 = 0; tmp68 < tmp67.len; tmp68++) {
+    DepGraphNode node = ((DepGraphNode *)tmp67.data)[tmp68];
 
-    array_Type tmp68 = types;
+    array_Type tmp69 = types;
     ;
-    for (int tmp69 = 0; tmp69 < tmp68.len; tmp69++) {
-      Type t = ((Type *)tmp68.data)[tmp69];
+    for (int tmp70 = 0; tmp70 < tmp69.len; tmp70++) {
+      Type t = ((Type *)tmp69.data)[tmp70];
 
       if (string_eq(t.name, node.name)) {
 
-        _PUSH(&types_sorted, (t), tmp70, Type);
+        _PUSH(&types_sorted, (t), tmp71, Type);
 
         continue;
       };
@@ -16945,7 +16946,13 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         } else {
 
-          Parser_match_parse_statement_branch(p);
+          p->returns = 0;
+
+          Parser_check(p, main__Token_lcbr);
+
+          Parser_genln(p, tos2((byte *)"{ "));
+
+          Parser_statements(p);
 
           p->returns = all_cases_return && p->returns;
 
@@ -16983,9 +16990,15 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
       } else {
 
+        p->returns = 0;
+
         Parser_genln(p, tos2((byte *)"else // default:"));
 
-        Parser_match_parse_statement_branch(p);
+        Parser_check(p, main__Token_lcbr);
+
+        Parser_genln(p, tos2((byte *)"{ "));
+
+        Parser_statements(p);
 
         p->returns = all_cases_return && p->returns;
 
@@ -17047,6 +17060,11 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
       if (p->tok != main__Token_comma) {
 
+        if (got_comma) {
+
+          Parser_gen(p, tos2((byte *)") "));
+        };
+
         break;
       };
 
@@ -17080,10 +17098,16 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
     } else {
 
-      Parser_match_parse_statement_branch(p);
-    };
+      p->returns = 0;
 
-    all_cases_return = all_cases_return && p->returns;
+      Parser_check(p, main__Token_lcbr);
+
+      Parser_genln(p, tos2((byte *)"{ "));
+
+      Parser_statements(p);
+
+      all_cases_return = all_cases_return && p->returns;
+    };
 
     i++;
   };
@@ -17101,14 +17125,6 @@ string Parser_match_statement(Parser *p, bool is_expr) {
   ;
 
   { Parser_check(p, main__Token_rcbr); }
-}
-void Parser_match_parse_statement_branch(Parser *p) {
-
-  Parser_check(p, main__Token_lcbr);
-
-  Parser_genln(p, tos2((byte *)"{ "));
-
-  Parser_statements(p);
 }
 void Parser_assert_statement(Parser *p) {
 
@@ -21588,22 +21604,22 @@ void init_consts() {
                  tos2((byte *)"openbsd"), tos2((byte *)"netbsd"),
                  tos2((byte *)"dragonfly"), tos2((byte *)"msvc")});
   main__ModPath = string_add(os__home_dir(), tos2((byte *)"/.vmodules/"));
-  main__HelpText = tos2((
-      byte
-          *)"\nUsage: v [options] [file | directory]\n\nOptions:\n  -          "
-            "       Read from stdin (Default; Interactive mode if in a tty)\n  "
-            "-h, help          Display this information.\n  -v, version       "
-            "Display compiler version.\n  -lib              Generate object "
-            "file.\n  -prod             Build an optimized executable.\n  -o "
-            "<file>         Place output into <file>.\n  -obf              "
-            "Obfuscate the resulting binary.\n  -show_c_cmd       Print the "
-            "full C compilation command and how much time it took.\n  -debug   "
-            "         Leave a C file for debugging in .program.c.\n  -live     "
-            "        Enable hot code reloading (required by functions marked "
-            "with [live]).\n  fmt               Run vfmt to format the source "
-            "code.\n  up                Update V.\n  run               Build "
-            "and execute a V program. You can add arguments after the file "
-            "name.\n\n\nFiles:\n  <file>_test.v     Test file.\n");
+  main__HelpText = tos2(
+      (byte *)"\nUsage: v [options] [file | directory]\n\nOptions:\n  -        "
+              "         Read from stdin (Default; Interactive mode if in a "
+              "tty)\n  -h, help          Display this information.\n  -v, "
+              "version       Display compiler version.\n  -prod             "
+              "Build an optimized executable.\n  -o <file>         Place "
+              "output into <file>.\n  -obf              Obfuscate the "
+              "resulting binary.\n  -show_c_cmd       Print the full C "
+              "compilation command and how much time it took.\n  -debug        "
+              "    Leave a C file for debugging in .program.c.\n  -live        "
+              "     Enable hot code reloading (required by functions marked "
+              "with [live]).\n  fmt               Run vfmt to format the "
+              "source code.\n  up                Update V.\n  run              "
+              " Build and execute a V program. You can add arguments after the "
+              "file name.\n  build module      Compile a module into an object "
+              "file.\n\n\nFiles:\n  <file>_test.v     Test file.\n");
   main__HKEY_LOCAL_MACHINE = ((RegKey)(0x80000002));
   main__KEY_QUERY_VALUE = (0x0001);
   main__KEY_WOW64_32KEY = (0x0200);
