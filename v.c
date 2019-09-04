@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "d1210b9"
+#define V_COMMIT_HASH "ec61821"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -9866,15 +9866,6 @@ int main(int argc, char **argv) {
     };
   };
 
-  if (args.len < 2 ||
-      (args.len == 2 &&
-       string_eq((*(string *)array__get(args, 1)), tos2((byte *)"-")))) {
-
-    run_repl();
-
-    return 0;
-  };
-
   V *v = new_v(args);
 
   if (v->pref->is_verbose) {
@@ -9892,6 +9883,16 @@ int main(int argc, char **argv) {
     V_compile(v);
 
     V_run_compiled_executable_and_exit(*v);
+  };
+
+  if (args.len < 2 ||
+      (args.len == 2 &&
+       string_eq((*(string *)array__get(args, 1)), tos2((byte *)"-"))) ||
+      _IN(string, tos2((byte *)"runrepl"), args)) {
+
+    run_repl();
+
+    return 0;
   };
 
   V_compile(v);
