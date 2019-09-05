@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "cc5470d"
+#define V_COMMIT_HASH "7ce5261"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -11477,6 +11477,11 @@ void V_cc_msvc(V *v) {
                       : (tos2((byte *)""));
 
       int lowest = string_index(base, tos2((byte *)"-"));
+
+      if (lowest != 0) {
+
+        lowest = -1;
+      };
 
       array_int tmp67 = new_array_from_c_array(
           2, 2, sizeof(int),
