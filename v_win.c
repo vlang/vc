@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "8a77d44"
+#define V_COMMIT_HASH "e8068b5"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -2477,41 +2477,21 @@ bool array_int_contains(array_int ar, int val) {
 
   return 0;
 }
-bool is_space(byte c) { return isspace(c); }
+bool is_space(byte c) {
+
+  return _IN(
+      byte, c,
+      new_array_from_c_array(6, 6, sizeof(byte),
+                             (byte[]){' ', '\n', '\t', '\v', '\f', '\r'}));
+}
 bool byte_is_space(byte c) { return is_space(c); }
 string string_trim_space(string s) {
 
-  if (string_eq(s, tos2((byte *)""))) {
-
-    return tos2((byte *)"");
-  };
-
-  int i = 0;
-
-  while (i < s.len && is_space(s.str[i] /*rbyte 0*/)) {
-
-    i++;
-  };
-
-  int end = s.len - 1;
-
-  while (end >= 0 && is_space(s.str[end] /*rbyte 0*/)) {
-
-    end--;
-  };
-
-  if (i > end + 1) {
-
-    return s;
-  };
-
-  string res = string_substr(s, i, end + 1);
-
-  return res;
+  return string_trim(s, tos2((byte *)" \n\t\v\f\r"));
 }
 string string_trim(string s, string cutset) {
 
-  if (s.len == 0 || cutset.len == 0) {
+  if (s.len < 1 || cutset.len < 1) {
 
     return s;
   };
@@ -2552,7 +2532,7 @@ string string_trim(string s, string cutset) {
 }
 string string_trim_left(string s, string cutset) {
 
-  if (s.len == 0 || cutset.len == 0) {
+  if (s.len < 1 || cutset.len < 1) {
 
     return s;
   };
@@ -2570,7 +2550,7 @@ string string_trim_left(string s, string cutset) {
 }
 string string_trim_right(string s, string cutset) {
 
-  if (s.len == 0 || cutset.len == 0) {
+  if (s.len < 1 || cutset.len < 1) {
 
     return s;
   };
@@ -2644,7 +2624,7 @@ ustring string_ustring(string s) {
 
     int char_len = utf8_char_len(s.str[/*ptr*/ i] /*rbyte 0*/);
 
-    _PUSH(&res.runes, (i), tmp109, int);
+    _PUSH(&res.runes, (i), tmp106, int);
 
     i += char_len - 1;
 
@@ -2765,10 +2745,10 @@ string array_string_join(array_string a, string del) {
 
   int len = 0;
 
-  array_string tmp124 = a;
+  array_string tmp121 = a;
   ;
-  for (int i = 0; i < tmp124.len; i++) {
-    string val = ((string *)tmp124.data)[i];
+  for (int i = 0; i < tmp121.len; i++) {
+    string val = ((string *)tmp121.data)[i];
 
     len += val.len + del.len;
   };
@@ -2783,10 +2763,10 @@ string array_string_join(array_string a, string del) {
 
   int idx = 0;
 
-  array_string tmp127 = a;
+  array_string tmp124 = a;
   ;
-  for (int i = 0; i < tmp127.len; i++) {
-    string val = ((string *)tmp127.data)[i];
+  for (int i = 0; i < tmp124.len; i++) {
+    string val = ((string *)tmp124.data)[i];
 
     for (int j = 0; j < val.len; j++) {
 
@@ -2850,10 +2830,10 @@ int string_hash(string s) {
 
   if (h == 0 && s.len > 0) {
 
-    string tmp136 = s;
+    string tmp133 = s;
     ;
-    for (int tmp137 = 0; tmp137 < tmp136.len; tmp137++) {
-      byte c = ((byte *)tmp136.str)[tmp137];
+    for (int tmp134 = 0; tmp134 < tmp133.len; tmp134++) {
+      byte c = ((byte *)tmp133.str)[tmp134];
 
       h = h * 31 + ((int)(c));
     };
@@ -10583,6 +10563,11 @@ V *new_v(array_string args) {
     dir = get_all_after(joined_args, tos2((byte *)"run"), tos2((byte *)""));
   };
 
+  if (string_ends_with(dir, tos2((byte *)"/"))) {
+
+    dir = string_all_before_last(dir, tos2((byte *)"/"));
+  };
+
   if (args.len < 2) {
 
     dir = tos2((byte *)"");
@@ -10596,10 +10581,9 @@ V *new_v(array_string args) {
 
     build_mode = main__BuildMode_build;
 
-    if (string_contains(dir, tos2((byte *)"/"))) {
-
-      mod = string_all_after(dir, tos2((byte *)"/"));
-    };
+    mod = (string_contains(dir, tos2((byte *)"/")))
+              ? (string_all_after(dir, tos2((byte *)"/")))
+              : (dir);
 
     printf("Building module \"%.*s\" (dir=\"%.*s\")...\n", mod.len, mod.str,
            dir.len, dir.str);
