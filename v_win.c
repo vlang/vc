@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "6de1f14"
+#define V_COMMIT_HASH "b7361d0"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -6100,7 +6100,8 @@ void V_cc(V *v) {
     _PUSH(&a, (tos2((byte *)"-fsanitize=leak")), tmp14, string);
   };
 
-  _PUSH(&a, (_STR("-o %.*s", v->out_name.len, v->out_name.str)), tmp15, string);
+  _PUSH(&a, (_STR("-o \"%.*s\"", v->out_name.len, v->out_name.str)), tmp15,
+        string);
 
   if (os__dir_exists(v->out_name)) {
 
@@ -11075,11 +11076,17 @@ void test_v() {
 
     print(string_add(relative_file, tos2((byte *)" ")));
 
-    Option_os__Result tmp130 =
-        os__exec(_STR("%.*s %.*s -debug %.*s", vexe.len, vexe.str,
-                      joined_args.len, joined_args.str, file.len, file.str));
-    if (!tmp130.ok) {
-      string err = tmp130.error;
+    string cmd = _STR("\"%.*s\" %.*s -debug \"%.*s\"", vexe.len, vexe.str,
+                      joined_args.len, joined_args.str, file.len, file.str);
+
+    if (string_eq(os__user_os(), tos2((byte *)"windows"))) {
+
+      cmd = _STR("\"%.*s\"", cmd.len, cmd.str);
+    };
+
+    Option_os__Result tmp131 = os__exec(cmd);
+    if (!tmp131.ok) {
+      string err = tmp131.error;
 
       failed = 1;
 
@@ -11087,7 +11094,7 @@ void test_v() {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp130.data;
+    os__Result r = *(os__Result *)tmp131.data;
     ;
 
     if (r.exit_code != 0) {
@@ -11110,10 +11117,10 @@ void test_v() {
   array_string examples =
       os__walk_ext(tos2((byte *)"examples"), tos2((byte *)".v"));
 
-  array_string tmp132 = examples;
+  array_string tmp133 = examples;
   ;
-  for (int tmp133 = 0; tmp133 < tmp132.len; tmp133++) {
-    string relative_file = ((string *)tmp132.data)[tmp133];
+  for (int tmp134 = 0; tmp134 < tmp133.len; tmp134++) {
+    string relative_file = ((string *)tmp133.data)[tmp134];
 
     string file = os__realpath(relative_file);
 
@@ -11122,11 +11129,17 @@ void test_v() {
 
     print(string_add(relative_file, tos2((byte *)" ")));
 
-    Option_os__Result tmp136 =
-        os__exec(_STR("%.*s %.*s -debug %.*s", vexe.len, vexe.str,
-                      joined_args.len, joined_args.str, file.len, file.str));
-    if (!tmp136.ok) {
-      string err = tmp136.error;
+    string cmd = _STR("\"%.*s\" %.*s -debug \"%.*s\"", vexe.len, vexe.str,
+                      joined_args.len, joined_args.str, file.len, file.str);
+
+    if (string_eq(os__user_os(), tos2((byte *)"windows"))) {
+
+      cmd = _STR("\"%.*s\"", cmd.len, cmd.str);
+    };
+
+    Option_os__Result tmp138 = os__exec(cmd);
+    if (!tmp138.ok) {
+      string err = tmp138.error;
 
       failed = 1;
 
@@ -11134,7 +11147,7 @@ void test_v() {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp136.data;
+    os__Result r = *(os__Result *)tmp138.data;
     ;
 
     if (r.exit_code != 0) {
