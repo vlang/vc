@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "bfdab58"
+#define V_COMMIT_HASH "6de1f14"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -956,9 +956,9 @@ void V_build_thirdparty_obj_files(V c);
 string find_c_compiler();
 string find_c_compiler_default();
 string find_c_compiler_thirdparty_options();
-bool Table_has_cflag(Table *table, CFlag cflag);
 array_CFlag V_get_os_cflags(V v);
 string CFlag_format(CFlag *cf);
+bool Table_has_cflag(Table *table, CFlag cflag);
 void Table_parse_cflag(Table *table, string cflag);
 CGen *new_cgen(string out_name_c);
 void CGen_genln(CGen *g, string s);
@@ -6432,30 +6432,14 @@ string find_c_compiler_thirdparty_options() {
 
   return tos2((byte *)"-fPIC");
 }
-bool Table_has_cflag(Table *table, CFlag cflag) {
-
-  array_CFlag tmp1 = table->cflags;
-  ;
-  for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-    CFlag cf = ((CFlag *)tmp1.data)[tmp2];
-
-    if (string_eq(cf.os, cflag.os) && string_eq(cf.name, cflag.name) &&
-        string_eq(cf.value, cflag.value)) {
-
-      return 1;
-    };
-  };
-
-  return 0;
-}
 array_CFlag V_get_os_cflags(V v) {
 
   array_CFlag flags = new_array_from_c_array(0, 0, sizeof(CFlag), (CFlag[]){0});
 
-  array_CFlag tmp4 = v.table->cflags;
+  array_CFlag tmp2 = v.table->cflags;
   ;
-  for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
-    CFlag flag = ((CFlag *)tmp4.data)[tmp5];
+  for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
+    CFlag flag = ((CFlag *)tmp2.data)[tmp3];
 
     if (string_eq(flag.os, tos2((byte *)"")) ||
         (string_eq(flag.os, tos2((byte *)"linux")) && v.os == main__OS_linux) ||
@@ -6463,7 +6447,7 @@ array_CFlag V_get_os_cflags(V v) {
         (string_eq(flag.os, tos2((byte *)"windows")) &&
          (v.os == main__OS_windows || v.os == main__OS_msvc))) {
 
-      _PUSH(&flags, (flag), tmp6, CFlag);
+      _PUSH(&flags, (flag), tmp4, CFlag);
     };
   };
 
@@ -6483,6 +6467,22 @@ string CFlag_format(CFlag *cf) {
 
   return string_trim_space(
       _STR("%.*s %.*s", cf->name.len, cf->name.str, value.len, value.str));
+}
+bool Table_has_cflag(Table *table, CFlag cflag) {
+
+  array_CFlag tmp6 = table->cflags;
+  ;
+  for (int tmp7 = 0; tmp7 < tmp6.len; tmp7++) {
+    CFlag cf = ((CFlag *)tmp6.data)[tmp7];
+
+    if (string_eq(cf.os, cflag.os) && string_eq(cf.name, cflag.name) &&
+        string_eq(cf.value, cflag.value)) {
+
+      return 1;
+    };
+  };
+
+  return 0;
 }
 void Table_parse_cflag(Table *table, string cflag) {
 
