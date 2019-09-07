@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "570e5f9"
+#define V_COMMIT_HASH "e78e284"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -6135,27 +6135,45 @@ void V_cc(V *v) {
   for (int tmp21 = 0; tmp21 < tmp20.len; tmp21++) {
     CFlag flag = ((CFlag *)tmp20.data)[tmp21];
 
+    if (string_ends_with(flag.value, tos2((byte *)".o"))) {
+
+      continue;
+    };
+
     _PUSH(&a, (CFlag_format(&/* ? */ flag)), tmp22, string);
   };
 
-  _PUSH(&a, (libs), tmp23, string);
+  array_CFlag tmp23 = V_get_os_cflags(*v);
+  ;
+  for (int tmp24 = 0; tmp24 < tmp23.len; tmp24++) {
+    CFlag flag = ((CFlag *)tmp23.data)[tmp24];
+
+    if (!string_ends_with(flag.value, tos2((byte *)".o"))) {
+
+      continue;
+    };
+
+    _PUSH(&a, (CFlag_format(&/* ? */ flag)), tmp25, string);
+  };
+
+  _PUSH(&a, (libs), tmp26, string);
 
   if (v->pref->build_mode != main__BuildMode_build &&
       (v->os == main__OS_linux || v->os == main__OS_freebsd ||
        v->os == main__OS_openbsd || v->os == main__OS_netbsd ||
        v->os == main__OS_dragonfly)) {
 
-    _PUSH(&a, (tos2((byte *)"-lm -lpthread ")), tmp24, string);
+    _PUSH(&a, (tos2((byte *)"-lm -lpthread ")), tmp27, string);
 
     if (v->os == main__OS_linux) {
 
-      _PUSH(&a, (tos2((byte *)" -ldl ")), tmp25, string);
+      _PUSH(&a, (tos2((byte *)" -ldl ")), tmp28, string);
     };
   };
 
   if (v->os == main__OS_windows) {
 
-    _PUSH(&a, (tos2((byte *)"-DUNICODE -D_UNICODE")), tmp26, string);
+    _PUSH(&a, (tos2((byte *)"-DUNICODE -D_UNICODE")), tmp29, string);
   };
 
   string args = array_string_join(a, tos2((byte *)" "));
@@ -6172,15 +6190,15 @@ void V_cc(V *v) {
 
   i64 ticks = time__ticks();
 
-  Option_os__Result tmp30 = os__exec(cmd);
-  if (!tmp30.ok) {
-    string err = tmp30.error;
+  Option_os__Result tmp33 = os__exec(cmd);
+  if (!tmp33.ok) {
+    string err = tmp33.error;
 
     cerror(err);
 
     return;
   }
-  os__Result res = *(os__Result *)tmp30.data;
+  os__Result res = *(os__Result *)tmp33.data;
   ;
 
   if (res.exit_code != 0) {
@@ -6257,10 +6275,10 @@ void V_cc_windows_cross(V *c) {
 
   string args = _STR("-o %.*s -w -L. ", c->out_name.len, c->out_name.str);
 
-  array_CFlag tmp34 = V_get_os_cflags(*c);
+  array_CFlag tmp37 = V_get_os_cflags(*c);
   ;
-  for (int tmp35 = 0; tmp35 < tmp34.len; tmp35++) {
-    CFlag flag = ((CFlag *)tmp34.data)[tmp35];
+  for (int tmp38 = 0; tmp38 < tmp37.len; tmp38++) {
+    CFlag flag = ((CFlag *)tmp37.data)[tmp38];
 
     if (string_ne(flag.name, tos2((byte *)"-l"))) {
 
@@ -6284,10 +6302,10 @@ void V_cc_windows_cross(V *c) {
       v_exit(1);
     };
 
-    array_string tmp37 = c->table->imports;
+    array_string tmp40 = c->table->imports;
     ;
-    for (int tmp38 = 0; tmp38 < tmp37.len; tmp38++) {
-      string imp = ((string *)tmp37.data)[tmp38];
+    for (int tmp41 = 0; tmp41 < tmp40.len; tmp41++) {
+      string imp = ((string *)tmp40.data)[tmp41];
 
       libs = string_add(libs, _STR(" \"%.*s/vlib/%.*s.o\"", main__ModPath.len,
                                    main__ModPath.str, imp.len, imp.str));
@@ -6296,10 +6314,10 @@ void V_cc_windows_cross(V *c) {
 
   args = string_add(args, _STR(" %.*s ", c->out_name_c.len, c->out_name_c.str));
 
-  array_CFlag tmp39 = V_get_os_cflags(*c);
+  array_CFlag tmp42 = V_get_os_cflags(*c);
   ;
-  for (int tmp40 = 0; tmp40 < tmp39.len; tmp40++) {
-    CFlag flag = ((CFlag *)tmp39.data)[tmp40];
+  for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
+    CFlag flag = ((CFlag *)tmp42.data)[tmp43];
 
     if (string_eq(flag.name, tos2((byte *)"-l"))) {
 
@@ -6389,10 +6407,10 @@ void V_cc_windows_cross(V *c) {
 }
 void V_build_thirdparty_obj_files(V c) {
 
-  array_CFlag tmp47 = V_get_os_cflags(c);
+  array_CFlag tmp50 = V_get_os_cflags(c);
   ;
-  for (int tmp48 = 0; tmp48 < tmp47.len; tmp48++) {
-    CFlag flag = ((CFlag *)tmp47.data)[tmp48];
+  for (int tmp51 = 0; tmp51 < tmp50.len; tmp51++) {
+    CFlag flag = ((CFlag *)tmp50.data)[tmp51];
 
     if (string_ends_with(flag.value, tos2((byte *)".o"))) {
 
