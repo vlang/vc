@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "c1f76ae"
+#define V_COMMIT_HASH "794cd56"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -11685,95 +11685,87 @@ void V_cc_msvc(V *v) {
 
     } else if (string_eq(flag.name, tos2((byte *)"-L"))) {
 
-      string lpath = flag.value;
+      _PUSH(&lib_paths, (flag.value), tmp61, string);
 
       _PUSH(&lib_paths,
-            (string_add(string_add(tos2((byte *)"\""), lpath),
-                        tos2((byte *)"\""))),
+            (string_add(string_add(flag.value, os__PathSeparator),
+                        tos2((byte *)"msvc"))),
             tmp62, string);
-
-      _PUSH(&lib_paths,
-            (string_add(
-                string_add(string_add(string_add(tos2((byte *)"\""), lpath),
-                                      os__PathSeparator),
-                           tos2((byte *)"msvc")),
-                tos2((byte *)"\""))),
-            tmp63, string);
 
     } else if (string_ends_with(flag.value, tos2((byte *)".o"))) {
 
       _PUSH(&other_flags,
             (string_replace(CFlag_format(&/* ? */ flag), tos2((byte *)".o"),
                             tos2((byte *)".obj"))),
-            tmp64, string);
+            tmp63, string);
 
     } else {
 
-      _PUSH(&other_flags, (arg), tmp65, string);
+      _PUSH(&other_flags, (arg), tmp64, string);
     };
   };
 
   _PUSH(
       &a,
       (_STR(" -I \"%.*s\" ", r.ucrt_include_path.len, r.ucrt_include_path.str)),
-      tmp66, string);
+      tmp65, string);
 
   _PUSH(&a,
         (_STR(" -I \"%.*s\" ", r.vs_include_path.len, r.vs_include_path.str)),
-        tmp67, string);
+        tmp66, string);
 
   _PUSH(&a,
         (_STR(" -I \"%.*s\" ", r.um_include_path.len, r.um_include_path.str)),
-        tmp68, string);
+        tmp67, string);
 
   _PUSH(&a,
         (_STR(" -I \"%.*s\" ", r.shared_include_path.len,
               r.shared_include_path.str)),
-        tmp69, string);
+        tmp68, string);
 
-  _PUSH_MANY(&a, (inc_paths), tmp70, array_string);
+  _PUSH_MANY(&a, (inc_paths), tmp69, array_string);
 
-  _PUSH_MANY(&a, (other_flags), tmp71, array_string);
+  _PUSH_MANY(&a, (other_flags), tmp70, array_string);
 
-  _PUSH(&a, (array_string_join(real_libs, tos2((byte *)" "))), tmp72, string);
+  _PUSH(&a, (array_string_join(real_libs, tos2((byte *)" "))), tmp71, string);
 
-  _PUSH(&a, (tos2((byte *)"/link")), tmp73, string);
+  _PUSH(&a, (tos2((byte *)"/link")), tmp72, string);
 
-  _PUSH(&a, (tos2((byte *)"/NOLOGO")), tmp74, string);
+  _PUSH(&a, (tos2((byte *)"/NOLOGO")), tmp73, string);
 
-  _PUSH(&a, (_STR("/OUT:\"%.*s\"", v->out_name.len, v->out_name.str)), tmp75,
+  _PUSH(&a, (_STR("/OUT:\"%.*s\"", v->out_name.len, v->out_name.str)), tmp74,
         string);
 
   _PUSH(&a,
         (_STR("/LIBPATH:\"%.*s\"", r.ucrt_lib_path.len, r.ucrt_lib_path.str)),
-        tmp76, string);
+        tmp75, string);
 
   _PUSH(&a, (_STR("/LIBPATH:\"%.*s\"", r.um_lib_path.len, r.um_lib_path.str)),
-        tmp77, string);
+        tmp76, string);
 
   _PUSH(&a, (_STR("/LIBPATH:\"%.*s\"", r.vs_lib_path.len, r.vs_lib_path.str)),
-        tmp78, string);
+        tmp77, string);
 
-  _PUSH(&a, (tos2((byte *)"/INCREMENTAL:NO")), tmp79, string);
+  _PUSH(&a, (tos2((byte *)"/INCREMENTAL:NO")), tmp78, string);
 
-  array_string tmp80 = lib_paths;
+  array_string tmp79 = lib_paths;
   ;
-  for (int tmp81 = 0; tmp81 < tmp80.len; tmp81++) {
-    string l = ((string *)tmp80.data)[tmp81];
+  for (int tmp80 = 0; tmp80 < tmp79.len; tmp80++) {
+    string l = ((string *)tmp79.data)[tmp80];
 
     _PUSH(&a,
           (string_add(string_add(tos2((byte *)"/LIBPATH:\""), os__realpath(l)),
                       tos2((byte *)"\""))),
-          tmp82, string);
+          tmp81, string);
   };
 
   if (!v->pref->is_prod) {
 
-    _PUSH(&a, (tos2((byte *)"/DEBUG:FULL")), tmp83, string);
+    _PUSH(&a, (tos2((byte *)"/DEBUG:FULL")), tmp82, string);
 
   } else {
 
-    _PUSH(&a, (tos2((byte *)"/DEBUG:NONE")), tmp84, string);
+    _PUSH(&a, (tos2((byte *)"/DEBUG:NONE")), tmp83, string);
   };
 
   string args = array_string_join(a, tos2((byte *)" "));
@@ -11790,9 +11782,9 @@ void V_cc_msvc(V *v) {
     println(tos2((byte *)"==========\n"));
   };
 
-  Option_os__Result tmp87 = os__exec(cmd);
-  if (!tmp87.ok) {
-    string err = tmp87.error;
+  Option_os__Result tmp86 = os__exec(cmd);
+  if (!tmp86.ok) {
+    string err = tmp86.error;
 
     println(err);
 
@@ -11800,7 +11792,7 @@ void V_cc_msvc(V *v) {
 
     return;
   }
-  os__Result res = *(os__Result *)tmp87.data;
+  os__Result res = *(os__Result *)tmp86.data;
   ;
 
   if (res.exit_code != 0) {
@@ -11818,15 +11810,15 @@ void V_cc_msvc(V *v) {
 }
 void build_thirdparty_obj_file_with_msvc(string path) {
 
-  Option_MsvcResult tmp88 = find_msvc();
-  if (!tmp88.ok) {
-    string err = tmp88.error;
+  Option_MsvcResult tmp87 = find_msvc();
+  if (!tmp87.ok) {
+    string err = tmp87.error;
 
     println(tos2((byte *)"Could not find visual studio"));
 
     return;
   }
-  MsvcResult msvc = *(MsvcResult *)tmp88.data;
+  MsvcResult msvc = *(MsvcResult *)tmp87.data;
   ;
 
   string obj_path = _STR("%.*sbj", path.len, path.str);
@@ -11849,10 +11841,10 @@ void build_thirdparty_obj_file_with_msvc(string path) {
 
   string cfiles = tos2((byte *)"");
 
-  array_string tmp93 = files;
+  array_string tmp92 = files;
   ;
-  for (int tmp94 = 0; tmp94 < tmp93.len; tmp94++) {
-    string file = ((string *)tmp93.data)[tmp94];
+  for (int tmp93 = 0; tmp93 < tmp92.len; tmp93++) {
+    string file = ((string *)tmp92.data)[tmp93];
 
     if (string_ends_with(file, tos2((byte *)".c"))) {
 
@@ -11881,15 +11873,15 @@ void build_thirdparty_obj_file_with_msvc(string path) {
 
   printf("thirdparty cmd line: %.*s\n", cmd.len, cmd.str);
 
-  Option_os__Result tmp97 = os__exec(cmd);
-  if (!tmp97.ok) {
-    string err = tmp97.error;
+  Option_os__Result tmp96 = os__exec(cmd);
+  if (!tmp96.ok) {
+    string err = tmp96.error;
 
     cerror(err);
 
     return;
   }
-  os__Result res = *(os__Result *)tmp97.data;
+  os__Result res = *(os__Result *)tmp96.data;
   ;
 
   println(res.output);
