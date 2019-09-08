@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "cb6fadf"
+#define V_COMMIT_HASH "a6f927a"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -1900,6 +1900,8 @@ string string_replace(string s, string rep, string with) {
   b[/*ptr*/ new_len] /*rbyte 1*/ = '\0';
 
   return tos(b, new_len);
+
+  v_array_free(idxs); // close_scope free
 }
 int v_string_int(string s) { return atoi(s.str); }
 i64 string_i64(string s) { return atoll(s.str); }
@@ -2039,6 +2041,8 @@ array_string string_split(string s, string delim) {
   };
 
   return res;
+
+  v_array_free(res); // close_scope free
 }
 array_string string_split_single(string s, byte delim) {
 
@@ -2083,6 +2087,8 @@ array_string string_split_single(string s, byte delim) {
   };
 
   return res;
+
+  v_array_free(res); // close_scope free
 }
 array_string string_split_into_lines(string s) {
 
@@ -2116,6 +2122,8 @@ array_string string_split_into_lines(string s) {
   };
 
   return res;
+
+  v_array_free(res); // close_scope free
 }
 string string_left(string s, int n) {
 
@@ -2206,6 +2214,8 @@ int string_index(string s, string p) {
   v_array_free(prefix);
 
   return -1;
+
+  v_array_free(prefix); // close_scope free
 }
 int string_index_any(string s, string chars) {
 
@@ -2400,6 +2410,8 @@ string string_title(string s) {
   string title = array_string_join(tit, tos2((byte *)" "));
 
   return title;
+
+  v_array_free(tit); // close_scope free
 }
 string string_find_between(string s, string start, string end) {
 
@@ -2827,6 +2839,8 @@ array_byte string_bytes(string s) {
   memcpy(buf.data, s.str, s.len);
 
   return buf;
+
+  v_array_free(buf); // close_scope free
 }
 void v_exit(int code) { exit(code); }
 bool isnil(void *v) { return v == 0; }
@@ -3236,6 +3250,8 @@ array_byte array_byte_clone(array_byte b) {
   };
 
   return res;
+
+  v_array_free(res); // close_scope free
 }
 int utf8_char_len(byte b) {
 
@@ -3621,6 +3637,8 @@ array_string map_keys(map *m) {
   preorder_keys(m->root, &/*111*/ (array[]){keys}[0], 0);
 
   return keys;
+
+  v_array_free(keys); // close_scope free
 }
 bool map_get(map m, string key, void *out) {
 
@@ -3809,6 +3827,8 @@ array_string os__init_os_args(int argc, byteptr *argv) {
   ;
 
   return args;
+
+  v_array_free(args); // close_scope free
 }
 array_string os__parse_windows_cmd_line(byte *cmd) {
 
@@ -3963,6 +3983,8 @@ array_string os__read_lines(string path) {
   fclose(fp);
 
   return res;
+
+  v_array_free(res); // close_scope free
 }
 array_ustring os__read_ulines(string path) {
 
@@ -3980,6 +4002,8 @@ array_ustring os__read_ulines(string path) {
   };
 
   return ulines;
+
+  v_array_free(ulines); // close_scope free
 }
 Option_os__File os__open(string path) {
 
@@ -4405,6 +4429,8 @@ array_string os__get_lines() {
   };
 
   return inputstr;
+
+  v_array_free(inputstr); // close_scope free
 }
 string os__get_lines_joined() {
 
@@ -4631,6 +4657,7 @@ string os__executable() {
 
   return (tos2((byte *)result));
 
+  v_array_free(mib); // close_scope free
 #endif
   ;
 
@@ -4800,6 +4827,8 @@ array_string os__walk_ext(string path, string ext) {
   };
 
   return res;
+
+  v_array_free(res); // close_scope free
 }
 void os__signal(int signum, void *handler) { signal(signum, handler); }
 int os__fork() {
@@ -4894,6 +4923,8 @@ array_string os__ls(string path) {
   closedir(dir);
 
   return res;
+
+  v_array_free(res); // close_scope free
 }
 bool os__dir_exists(string path) {
 
@@ -4951,6 +4982,8 @@ array_int math__digits(int _n, int base) {
   };
 
   return res;
+
+  v_array_free(res); // close_scope free
 }
 f64 math__erf(f64 a) { return erf(a); }
 f64 math__erfc(f64 a) { return erfc(a); }
@@ -5642,6 +5675,8 @@ int time__day_of_week(int y, int m, int d) {
           d - 1) %
              7 +
          1;
+
+  v_array_free(t); // close_scope free
 }
 int time__Time_day_of_week(time__Time t) {
 
@@ -6147,6 +6182,8 @@ void V_cc(V *v) {
 
     os__rm(v->out_name_c);
   };
+
+  v_array_free(a); // close_scope free
 }
 void V_cc_windows_cross(V *c) {
 
@@ -6359,6 +6396,8 @@ array_CFlag V_get_os_cflags(V v) {
   };
 
   return flags;
+
+  v_array_free(flags); // close_scope free
 }
 string CFlag_format(CFlag *cf) {
 
@@ -6513,6 +6552,8 @@ void Table_parse_cflag(Table *table, string cflag) {
       break;
     };
   };
+
+  v_array_free(allowed_flags); // close_scope free
 }
 CGen *new_cgen(string out_name_c) {
 
@@ -6774,6 +6815,8 @@ string V_prof_counters(V *c) {
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
   return array_string_join(res, tos2((byte *)";\n"));
+
+  v_array_free(res); // close_scope free
 }
 string Parser_print_prof_counters(Parser *p) {
 
@@ -6781,6 +6824,8 @@ string Parser_print_prof_counters(Parser *p) {
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
   return array_string_join(res, tos2((byte *)";\n"));
+
+  v_array_free(res); // close_scope free
 }
 void Parser_gen_typedef(Parser *p, string s) {
 
@@ -6972,6 +7017,10 @@ string V_c_type_definitions(V *v) {
   return string_add(string_add(types_to_c(builtin_types, v->table),
                                tos2((byte *)"\n//----\n")),
                     types_to_c(types_sorted, v->table));
+
+  v_array_free(builtins);      // close_scope free
+  v_array_free(builtin_types); // close_scope free
+  v_array_free(types);         // close_scope free
 }
 string types_to_c(array_Type types, Table *table) {
 
@@ -7050,6 +7099,8 @@ array_Type sort_structs(array_Type types) {
     };
 
     DepGraph_add(dep_graph, t.name, field_deps);
+
+    v_array_free(field_deps); // close_scope free
   };
 
   DepGraph *dep_graph_sorted = DepGraph_resolve(&/* ? */ *dep_graph);
@@ -7084,6 +7135,9 @@ array_Type sort_structs(array_Type types) {
   };
 
   return types_sorted;
+
+  v_array_free(types_sorted); // close_scope free
+  v_array_free(type_names);   // close_scope free
 }
 void Parser_comp_time(Parser *p) {
 
@@ -7519,8 +7573,9 @@ DepGraph *new_dep_graph() {
 void DepGraph_add(DepGraph *graph, string mod, array_string deps) {
 
   _PUSH(&graph->nodes,
-        ((DepGraphNode){
-            .name = mod, .deps = deps, .last_cycle = tos((byte *)"", 0)}),
+        ((DepGraphNode){.name = mod,
+                        .deps = array_clone(deps),
+                        .last_cycle = tos((byte *)"", 0)}),
         tmp6, DepGraphNode);
 }
 DepGraph *DepGraph_resolve(DepGraph *graph) {
@@ -8886,6 +8941,8 @@ void Parser_fn_args(Parser *p, Fn *f) {
 
       Parser_next(p);
     };
+
+    v_array_free(names); // close_scope free
   };
 
   { Parser_check(p, main__Token_rpar); }
@@ -9606,6 +9663,8 @@ array_string V_generate_hotcode_reloading_compiler_flags(V *v) {
   };
 
   return a;
+
+  v_array_free(a); // close_scope free
 }
 void V_generate_hotcode_reloading_declarations(V *v) {
 
@@ -10366,6 +10425,8 @@ array_string V_v_files_from_dir(V *v, string dir) {
   };
 
   return res;
+
+  v_array_free(res); // close_scope free
 }
 void V_add_v_files_to_compile(V *v) {
 
@@ -10542,6 +10603,8 @@ void V_add_v_files_to_compile(V *v) {
 
     _PUSH(&v->files, (fit.file_path), tmp77, string);
   };
+
+  v_array_free(user_files); // close_scope free
 }
 string get_arg(string joined_args, string arg, string def) {
 
@@ -10863,6 +10926,9 @@ V *new_v(array_string args) {
                           .pref = pref,
                           .mod = mod},
                      sizeof(V));
+
+  v_array_free(files);    // close_scope free
+  v_array_free(builtins); // close_scope free
 }
 array_string env_vflags_and_os_args() {
 
@@ -10889,6 +10955,8 @@ array_string env_vflags_and_os_args() {
   };
 
   return args;
+
+  v_array_free(args); // close_scope free
 }
 void update_v() {
 
@@ -11126,6 +11194,8 @@ void DepGraph_from_import_tables(DepGraph *graph,
     };
 
     DepGraph_add(graph, fit.module_name, deps);
+
+    v_array_free(deps); // close_scope free
   };
 }
 array_string DepGraph_imports(DepGraph *graph) {
@@ -11147,6 +11217,8 @@ array_string DepGraph_imports(DepGraph *graph) {
   };
 
   return mods;
+
+  v_array_free(mods); // close_scope free
 }
 string V_find_module_path(V *v, string mod) {
 
@@ -11702,6 +11774,13 @@ void V_cc_msvc(V *v) {
   };
 
   os__rm(out_name_obj);
+
+  v_array_free(other_flags); // close_scope free
+  v_array_free(lib_paths);   // close_scope free
+  v_array_free(inc_paths);   // close_scope free
+  v_array_free(real_libs);   // close_scope free
+  v_array_free(alibs);       // close_scope free
+  v_array_free(a);           // close_scope free
 }
 void build_thirdparty_obj_file_with_msvc(string path) {
 
@@ -12712,6 +12791,8 @@ void Parser_struct_decl(Parser *p) {
   };
 
   Parser_fgenln(p, tos2((byte *)"\n"));
+
+  v_array_free(names); // close_scope free
 }
 void Parser_enum_decl(Parser *p, string _enum_name) {
 
@@ -12769,7 +12850,7 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
                               .mod = p->mod,
                               .parent = tos2((byte *)"int"),
                               .cat = main__TypeCategory_enum_,
-                              .enum_vals = fields,
+                              .enum_vals = array_clone(fields),
                               .fields = new_array(0, 1, sizeof(Var)),
                               .methods = new_array(0, 1, sizeof(Fn)),
                               .is_c = 0,
@@ -12780,6 +12861,8 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
   Parser_check(p, main__Token_rcbr);
 
   Parser_fgenln(p, tos2((byte *)"\n"));
+
+  v_array_free(fields); // close_scope free
 }
 string Parser_check_name(Parser *p) {
 
@@ -13302,7 +13385,7 @@ void Parser_close_scope(Parser *p) {
       break;
     };
 
-    if (0 && !p->building_v && !v.is_mut && v.is_alloc) {
+    if (p->building_v && v.is_alloc) {
 
       if (string_starts_with(v.typ, tos2((byte *)"array_"))) {
 
@@ -13310,9 +13393,6 @@ void Parser_close_scope(Parser *p) {
                              v.name.len, v.name.str));
 
       } else if (string_eq(v.typ, tos2((byte *)"string"))) {
-
-        Parser_genln(p, _STR("v_string_free(%.*s); // close_scope free",
-                             v.name.len, v.name.str));
 
       } else if (v.ptr) {
       };
@@ -15452,6 +15532,8 @@ string Parser_assoc(Parser *p) {
   Parser_gen(p, tos2((byte *)"}"));
 
   return var.typ;
+
+  v_array_free(fields); // close_scope free
 }
 void Parser_char_expr(Parser *p) {
 
@@ -16258,6 +16340,8 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
   p->is_struct_init = 0;
 
   return typ;
+
+  v_array_free(inited_fields); // close_scope free
 }
 string Parser_cast(Parser *p, string typ) {
 
@@ -18219,6 +18303,8 @@ string Parser_select_query(Parser *p, int fn_ph) {
 
     return _STR("array_%.*s", table_name.len, table_name.str);
   };
+
+  v_array_free(fields); // close_scope free
 }
 void Parser_insert_query(Parser *p, int fn_ph) {
 
@@ -18325,6 +18411,8 @@ void Parser_insert_query(Parser *p, int fn_ph) {
                        "%d,\n0, params, 0, 0, 0)",
                        table_name.len, table_name.str, sfields.len, sfields.str,
                        vals.len, vals.str, nr_vals));
+
+  v_array_free(fields); // close_scope free
 }
 bool Repl_checks(Repl *r, string line) {
 
@@ -21191,6 +21279,8 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
       cerror(_STR("module %.*s can only be imported internally by libs.",
                   mod.len, mod.str));
     };
+
+    v_array_free(internal_mod_parts); // close_scope free
   };
 
   map__set(&fit->imports, alias, &(string[]){mod});
@@ -21479,6 +21569,8 @@ array_string build_token_str() {
             &(string[]){tos2((byte *)"select")});
 
   return s;
+
+  v_array_free(s); // close_scope free
 }
 Token key_to_token(string key) {
 
