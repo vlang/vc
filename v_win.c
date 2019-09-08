@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "f70d206"
+#define V_COMMIT_HASH "a6ec6e2"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -13429,8 +13429,22 @@ void Parser_close_scope(Parser *p) {
 
       if (string_starts_with(v.typ, tos2((byte *)"array_"))) {
 
-        Parser_genln(p, _STR("v_array_free(%.*s); // close_scope free",
-                             v.name.len, v.name.str));
+        if (0 && p->returns) {
+
+          string prev_line =
+              (*(string *)array__get(p->cgen->lines, p->cgen->lines.len - 2));
+
+          array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 2,
+                    &(string[]){string_add(
+                        _STR("v_array_free(%.*s); /*close_scope free */",
+                             v.name.len, v.name.str),
+                        prev_line)});
+
+        } else {
+
+          Parser_genln(p, _STR("v_array_free(%.*s); // close_scope free",
+                               v.name.len, v.name.str));
+        };
 
       } else if (string_eq(v.typ, tos2((byte *)"string"))) {
 
@@ -13453,7 +13467,7 @@ void Parser_genln(Parser *p, string s) { CGen_genln(p->cgen, s); }
 void Parser_gen(Parser *p, string s) { CGen_gen(p->cgen, s); }
 void Parser_vh_genln(Parser *p, string s) {
 
-  _PUSH(&p->vh_lines, (s), tmp95, string);
+  _PUSH(&p->vh_lines, (s), tmp98, string);
 }
 string Parser_statement(Parser *p, bool add_semi) {
 
@@ -13988,9 +14002,9 @@ string Parser_bterm(Parser *p) {
 
       string sql_param = CGen_cut(p->cgen);
 
-      _PUSH(&p->sql_params, (sql_param), tmp131, string);
+      _PUSH(&p->sql_params, (sql_param), tmp134, string);
 
-      _PUSH(&p->sql_types, (typ), tmp132, string);
+      _PUSH(&p->sql_types, (typ), tmp135, string);
 
     } else {
 
@@ -15533,7 +15547,7 @@ string Parser_assoc(Parser *p) {
 
     string field = Parser_check_name(p);
 
-    _PUSH(&fields, (field), tmp234, string);
+    _PUSH(&fields, (field), tmp237, string);
 
     Parser_gen(p, _STR(".%.*s = ", field.len, field.str));
 
@@ -15551,10 +15565,10 @@ string Parser_assoc(Parser *p) {
 
   Type T = Table_find_type(&/* ? */ *p->table, var.typ);
 
-  array_Var tmp236 = T.fields;
+  array_Var tmp239 = T.fields;
   ;
-  for (int tmp237 = 0; tmp237 < tmp236.len; tmp237++) {
-    Var ffield = ((Var *)tmp236.data)[tmp237];
+  for (int tmp240 = 0; tmp240 < tmp239.len; tmp240++) {
+    Var ffield = ((Var *)tmp239.data)[tmp240];
 
     string f = ffield.name;
 
@@ -16223,7 +16237,7 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
 
       Var f = Type_find_field(&/* ? */ t, field);
 
-      _PUSH(&inited_fields, (field), tmp291, string);
+      _PUSH(&inited_fields, (field), tmp294, string);
 
       Parser_gen(p, _STR(".%.*s = ", field.len, field.str));
 
@@ -16253,10 +16267,10 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
       Parser_gen(p, tos2((byte *)","));
     };
 
-    array_Var tmp292 = t.fields;
+    array_Var tmp295 = t.fields;
     ;
-    for (int i = 0; i < tmp292.len; i++) {
-      Var field = ((Var *)tmp292.data)[i];
+    for (int i = 0; i < tmp295.len; i++) {
+      Var field = ((Var *)tmp295.data)[i];
 
       if (array_string_contains(inited_fields, field.name)) {
 
@@ -16278,7 +16292,7 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
                            field.name.str, string_right(field_typ, 4).len,
                            string_right(field_typ, 4).str));
 
-        _PUSH(&inited_fields, (field.name), tmp294, string);
+        _PUSH(&inited_fields, (field.name), tmp297, string);
 
         if (i != t.fields.len - 1) {
 
@@ -16316,10 +16330,10 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
       T = Table_find_type(&/* ? */ *p->table, T.parent);
     };
 
-    array_Var tmp297 = T.fields;
+    array_Var tmp300 = T.fields;
     ;
-    for (int i = 0; i < tmp297.len; i++) {
-      Var ffield = ((Var *)tmp297.data)[i];
+    for (int i = 0; i < tmp300.len; i++) {
+      Var ffield = ((Var *)tmp300.data)[i];
 
       string expr_typ = Parser_bool_expression(p);
 
@@ -17148,9 +17162,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
             Parser_check(p, main__Token_rcbr);
           };
 
-          string tmp351 = res_typ;
+          string tmp354 = res_typ;
           { Parser_check(p, main__Token_rcbr); }
-          return tmp351;
+          return tmp354;
           ;
 
         } else {
@@ -17165,9 +17179,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
           p->returns = all_cases_return && p->returns;
 
-          string tmp352 = tos2((byte *)"");
+          string tmp355 = tos2((byte *)"");
           { Parser_check(p, main__Token_rcbr); }
-          return tmp352;
+          return tmp355;
           ;
         };
       };
@@ -17192,9 +17206,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         Parser_gen(p, strings__repeat(')', i + 1));
 
-        string tmp354 = res_typ;
+        string tmp357 = res_typ;
         { Parser_check(p, main__Token_rcbr); }
-        return tmp354;
+        return tmp357;
         ;
 
       } else {
@@ -17211,9 +17225,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         p->returns = all_cases_return && p->returns;
 
-        string tmp355 = tos2((byte *)"");
+        string tmp358 = tos2((byte *)"");
         { Parser_check(p, main__Token_rcbr); }
-        return tmp355;
+        return tmp358;
         ;
       };
     };
@@ -17328,9 +17342,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
   p->returns = 0;
 
-  string tmp357 = tos2((byte *)"");
+  string tmp360 = tos2((byte *)"");
   { Parser_check(p, main__Token_rcbr); }
-  return tmp357;
+  return tmp360;
   ;
 
   { Parser_check(p, main__Token_rcbr); }
@@ -17416,10 +17430,10 @@ void Parser_return_st(Parser *p) {
 
         string total_text = tos2((byte *)"");
 
-        array_string tmp368 = p->cur_fn->defer_text;
+        array_string tmp371 = p->cur_fn->defer_text;
         ;
-        for (int tmp369 = 0; tmp369 < tmp368.len; tmp369++) {
-          string text = ((string *)tmp368.data)[tmp369];
+        for (int tmp372 = 0; tmp372 < tmp371.len; tmp372++) {
+          string text = ((string *)tmp371.data)[tmp372];
 
           if (string_ne(text, tos2((byte *)""))) {
 
@@ -17584,10 +17598,10 @@ string Parser_js_decode(Parser *p) {
 
     Type T = Table_find_type(&/* ? */ *p->table, typ);
 
-    array_Var tmp383 = T.fields;
+    array_Var tmp386 = T.fields;
     ;
-    for (int tmp384 = 0; tmp384 < tmp383.len; tmp384++) {
-      Var field = ((Var *)tmp383.data)[tmp384];
+    for (int tmp387 = 0; tmp387 < tmp386.len; tmp387++) {
+      Var field = ((Var *)tmp386.data)[tmp387];
 
       string def_val = type_default(field.typ);
 
@@ -17615,7 +17629,7 @@ string Parser_js_decode(Parser *p) {
     string opt_type = _STR("Option_%.*s", typ.len, typ.str);
 
     _PUSH(&p->cgen->typedefs,
-          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp387,
+          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp390,
           string);
 
     Table_register_type(p->table, opt_type);
