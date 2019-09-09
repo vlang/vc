@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "00687de"
+#define V_COMMIT_HASH "7fc678c"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -13451,7 +13451,7 @@ void Parser_close_scope(Parser *p) {
       break;
     };
 
-    if (p->pref->building_v && v.is_alloc) {
+    if (p->pref->building_v && v.is_alloc && !p->pref->is_test) {
 
       if (string_starts_with(v.typ, tos2((byte *)"array_"))) {
 
