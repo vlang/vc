@@ -1,4 +1,7 @@
-#define V_COMMIT_HASH "08262b5"
+#define V_COMMIT_HASH "a53c69d"
+#ifndef V_COMMIT_HASH
+#define V_COMMIT_HASH "0000000"
+#endif
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -1942,6 +1945,7 @@ string string_replace(string s, string rep, string with) {
 
   b[/*ptr*/ new_len] /*rbyte 1*/ = '\0';
 
+  v_array_free(idxs); /* :) close_scope free */
   return tos(b, new_len);
 }
 int v_string_int(string s) { return atoi(s.str); }
@@ -2244,6 +2248,7 @@ int string_index(string s, string p) {
     };
   };
 
+  v_array_free(prefix); /* :) close_scope free */
   return -1;
 }
 int string_index_any(string s, string chars) {
@@ -2438,6 +2443,7 @@ string string_title(string s) {
 
   string title = array_string_join(tit, tos2((byte *)" "));
 
+  v_array_free(tit); /* :) close_scope free */
   return title;
 }
 string string_find_between(string s, string start, string end) {
@@ -4357,7 +4363,7 @@ string os__path_sans_ext(string path) {
 }
 string os__basedir(string path) {
 
-  int pos = string_last_index(path, tos2((byte *)"/"));
+  int pos = string_last_index(path, os__PathSeparator);
 
   if (pos == -1) {
 
@@ -4368,7 +4374,7 @@ string os__basedir(string path) {
 }
 string os__filename(string path) {
 
-  return string_all_after(path, tos2((byte *)"/"));
+  return string_all_after(path, os__PathSeparator);
 }
 string os__get_line() {
 
@@ -4553,7 +4559,7 @@ string os__home_dir() {
 #endif
   ;
 
-  home = string_add(home, tos2((byte *)"/"));
+  home = string_add(home, os__PathSeparator);
 
   return home;
 }
@@ -4668,6 +4674,7 @@ string os__executable() {
 
   sysctl(mib.data, 4, result, &/*vvar*/ size, 0, 0);
 
+  v_array_free(mib); /* :) close_scope free */
   return (tos2((byte *)result));
 
 #endif
@@ -4826,7 +4833,7 @@ array_string os__walk_ext(string path, string ext) {
       continue;
     };
 
-    string p = string_add(string_add(path, tos2((byte *)"/")), file);
+    string p = string_add(string_add(path, os__PathSeparator), file);
 
     if (os__is_dir(p)) {
 
@@ -6270,6 +6277,8 @@ void V_cc(V *v) {
 
     os__rm(v->out_name_c);
   };
+
+  v_array_free(a); // close_scope free
 }
 void V_cc_windows_cross(V *c) {
 
@@ -6636,6 +6645,8 @@ void Table_parse_cflag(Table *table, string cflag) {
       break;
     };
   };
+
+  v_array_free(allowed_flags); // close_scope free
 }
 CGen *new_cgen(string out_name_c) {
 
@@ -7092,6 +7103,8 @@ string V_c_type_definitions(V *v) {
 
   array_Type types_sorted = sort_structs(types);
 
+  v_array_free(types);    /* :) close_scope free */
+  v_array_free(builtins); /* :) close_scope free */
   return string_add(string_add(types_to_c(builtin_types, v->table),
                                tos2((byte *)"\n//----\n")),
                     types_to_c(types_sorted, v->table));
@@ -7173,6 +7186,8 @@ array_Type sort_structs(array_Type types) {
     };
 
     DepGraph_add(dep_graph, t.name, field_deps);
+
+    v_array_free(field_deps); // close_scope free
   };
 
   DepGraph *dep_graph_sorted = DepGraph_resolve(&/* ? */ *dep_graph);
@@ -7206,6 +7221,7 @@ array_Type sort_structs(array_Type types) {
     };
   };
 
+  v_array_free(type_names); /* :) close_scope free */
   return types_sorted;
 }
 void Parser_comp_time(Parser *p) {
@@ -9034,6 +9050,8 @@ void Parser_fn_args(Parser *p, Fn *f) {
 
       Parser_next(p);
     };
+
+    v_array_free(names); // close_scope free
   };
 
   { Parser_check(p, main__Token_rpar); }
@@ -10650,6 +10668,8 @@ void V_add_v_files_to_compile(V *v) {
 
     _PUSH(&v->files, (fit.file_path), tmp72, string);
   };
+
+  v_array_free(user_files); // close_scope free
 }
 string get_arg(string joined_args, string arg, string def) {
 
@@ -10919,6 +10939,10 @@ V *new_v(array_string args) {
     };
   };
 
+  string rdir = os__realpath(dir);
+
+  string rdir_name = os__filename(rdir);
+
   bool obfuscate = array_string_contains(args, tos2((byte *)"-obf"));
 
   bool is_repl = array_string_contains(args, tos2((byte *)"-repl"));
@@ -10947,7 +10971,7 @@ V *new_v(array_string args) {
           .cflags = cflags,
           .ccompiler = find_c_compiler(),
           .building_v =
-              !is_repl && (string_eq(dir, tos2((byte *)"compiler")) ||
+              !is_repl && (string_eq(rdir_name, tos2((byte *)"compiler")) ||
                            string_contains(dir, tos2((byte *)"v/vlib"))),
           .no_auto_free = 0,
       },
@@ -10964,6 +10988,7 @@ V *new_v(array_string args) {
                             tos2((byte *)"_shared_lib.c"));
   };
 
+  v_array_free(builtins); /* :) close_scope free */
   return (V *)memdup(&(V){.os = _os,
                           .out_name = out_name,
                           .files = files,
@@ -10986,19 +11011,19 @@ array_string env_vflags_and_os_args() {
 
   if (string_ne(tos2((byte *)""), vflags)) {
 
-    _PUSH(&args, ((*(string *)array__get(os__args, 0))), tmp104, string);
+    _PUSH(&args, ((*(string *)array__get(os__args, 0))), tmp106, string);
 
-    _PUSH_MANY(&args, (string_split(vflags, tos2((byte *)" "))), tmp107,
+    _PUSH_MANY(&args, (string_split(vflags, tos2((byte *)" "))), tmp109,
                array_string);
 
     if (os__args.len > 1) {
 
-      _PUSH_MANY(&args, (array_right(os__args, 1)), tmp108, array_string);
+      _PUSH_MANY(&args, (array_right(os__args, 1)), tmp110, array_string);
     };
 
   } else {
 
-    _PUSH_MANY(&args, (os__args), tmp109, array_string);
+    _PUSH_MANY(&args, (os__args), tmp111, array_string);
   };
 
   return args;
@@ -11009,16 +11034,16 @@ void update_v() {
 
   string vroot = os__dir(os__executable());
 
-  Option_os__Result tmp111 = os__exec(_STR(
+  Option_os__Result tmp113 = os__exec(_STR(
       "git -C \"%.*s\" pull --rebase origin master", vroot.len, vroot.str));
-  if (!tmp111.ok) {
-    string err = tmp111.error;
+  if (!tmp113.ok) {
+    string err = tmp113.error;
 
     cerror(err);
 
     return;
   }
-  os__Result s = *(os__Result *)tmp111.data;
+  os__Result s = *(os__Result *)tmp113.data;
   ;
 
   println(s.output);
@@ -11028,32 +11053,32 @@ void update_v() {
   os__mv(_STR("%.*s/v.exe", vroot.len, vroot.str),
          _STR("%.*s/v_old.exe", vroot.len, vroot.str));
 
-  Option_os__Result tmp112 =
+  Option_os__Result tmp114 =
       os__exec(_STR("%.*s/make.bat", vroot.len, vroot.str));
-  if (!tmp112.ok) {
-    string err = tmp112.error;
+  if (!tmp114.ok) {
+    string err = tmp114.error;
 
     cerror(err);
 
     return;
   }
-  os__Result s2 = *(os__Result *)tmp112.data;
+  os__Result s2 = *(os__Result *)tmp114.data;
   ;
 
   println(s2.output);
 
 #else
 
-  Option_os__Result tmp113 =
+  Option_os__Result tmp115 =
       os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
-  if (!tmp113.ok) {
-    string err = tmp113.error;
+  if (!tmp115.ok) {
+    string err = tmp115.error;
 
     cerror(err);
 
     return;
   }
-  os__Result s2 = *(os__Result *)tmp113.data;
+  os__Result s2 = *(os__Result *)tmp115.data;
   ;
 
   println(s2.output);
@@ -11082,16 +11107,16 @@ void install_v(array_string args) {
 
     os__chdir(string_add(vroot, tos2((byte *)"/tools")));
 
-    Option_os__Result tmp118 = os__exec(
+    Option_os__Result tmp120 = os__exec(
         _STR("%.*s -o %.*s vget.v", vexec.len, vexec.str, vget.len, vget.str));
-    if (!tmp118.ok) {
-      string err = tmp118.error;
+    if (!tmp120.ok) {
+      string err = tmp120.error;
 
       cerror(err);
 
       return;
     }
-    os__Result vgetcompilation = *(os__Result *)tmp118.data;
+    os__Result vgetcompilation = *(os__Result *)tmp120.data;
     ;
 
     if (vgetcompilation.exit_code != 0) {
@@ -11102,17 +11127,17 @@ void install_v(array_string args) {
     };
   };
 
-  Option_os__Result tmp119 =
+  Option_os__Result tmp121 =
       os__exec(string_add(_STR("%.*s ", vget.len, vget.str),
                           array_string_join(names, tos2((byte *)" "))));
-  if (!tmp119.ok) {
-    string err = tmp119.error;
+  if (!tmp121.ok) {
+    string err = tmp121.error;
 
     cerror(err);
 
     return;
   }
-  os__Result vgetresult = *(os__Result *)tmp119.data;
+  os__Result vgetresult = *(os__Result *)tmp121.data;
   ;
 
   if (vgetresult.exit_code != 0) {
@@ -11141,10 +11166,10 @@ void test_v() {
   array_string test_files =
       os__walk_ext(tos2((byte *)"."), tos2((byte *)"_test.v"));
 
-  array_string tmp127 = test_files;
+  array_string tmp129 = test_files;
   ;
-  for (int tmp128 = 0; tmp128 < tmp127.len; tmp128++) {
-    string dot_relative_file = ((string *)tmp127.data)[tmp128];
+  for (int tmp130 = 0; tmp130 < tmp129.len; tmp130++) {
+    string dot_relative_file = ((string *)tmp129.data)[tmp130];
 
     string relative_file =
         string_replace(dot_relative_file, tos2((byte *)"./"), tos2((byte *)""));
@@ -11164,9 +11189,9 @@ void test_v() {
       cmd = _STR("\"%.*s\"", cmd.len, cmd.str);
     };
 
-    Option_os__Result tmp133 = os__exec(cmd);
-    if (!tmp133.ok) {
-      string err = tmp133.error;
+    Option_os__Result tmp135 = os__exec(cmd);
+    if (!tmp135.ok) {
+      string err = tmp135.error;
 
       failed = 1;
 
@@ -11174,7 +11199,7 @@ void test_v() {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp133.data;
+    os__Result r = *(os__Result *)tmp135.data;
     ;
 
     if (r.exit_code != 0) {
@@ -11197,10 +11222,10 @@ void test_v() {
   array_string examples =
       os__walk_ext(tos2((byte *)"examples"), tos2((byte *)".v"));
 
-  array_string tmp135 = examples;
+  array_string tmp137 = examples;
   ;
-  for (int tmp136 = 0; tmp136 < tmp135.len; tmp136++) {
-    string relative_file = ((string *)tmp135.data)[tmp136];
+  for (int tmp138 = 0; tmp138 < tmp137.len; tmp138++) {
+    string relative_file = ((string *)tmp137.data)[tmp138];
 
     string file = os__realpath(relative_file);
 
@@ -11217,9 +11242,9 @@ void test_v() {
       cmd = _STR("\"%.*s\"", cmd.len, cmd.str);
     };
 
-    Option_os__Result tmp140 = os__exec(cmd);
-    if (!tmp140.ok) {
-      string err = tmp140.error;
+    Option_os__Result tmp142 = os__exec(cmd);
+    if (!tmp142.ok) {
+      string err = tmp142.error;
 
       failed = 1;
 
@@ -11227,7 +11252,7 @@ void test_v() {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp140.data;
+    os__Result r = *(os__Result *)tmp142.data;
     ;
 
     if (r.exit_code != 0) {
@@ -11301,6 +11326,8 @@ void DepGraph_from_import_tables(DepGraph *graph,
     };
 
     DepGraph_add(graph, fit.module_name, deps);
+
+    v_array_free(deps); // close_scope free
   };
 }
 array_string DepGraph_imports(DepGraph *graph) {
@@ -11877,6 +11904,13 @@ void V_cc_msvc(V *v) {
   };
 
   os__rm(out_name_obj);
+
+  v_array_free(other_flags); // close_scope free
+  v_array_free(lib_paths);   // close_scope free
+  v_array_free(inc_paths);   // close_scope free
+  v_array_free(real_libs);   // close_scope free
+  v_array_free(alibs);       // close_scope free
+  v_array_free(a);           // close_scope free
 }
 void build_thirdparty_obj_file_with_msvc(string path) {
 
@@ -12890,6 +12924,8 @@ void Parser_struct_decl(Parser *p) {
   };
 
   Parser_fgenln(p, tos2((byte *)"\n"));
+
+  v_array_free(names); // close_scope free
 }
 void Parser_enum_decl(Parser *p, string _enum_name) {
 
@@ -12958,6 +12994,8 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
   Parser_check(p, main__Token_rcbr);
 
   Parser_fgenln(p, tos2((byte *)"\n"));
+
+  v_array_free(fields); // close_scope free
 }
 string Parser_check_name(Parser *p) {
 
@@ -15647,6 +15685,7 @@ string Parser_assoc(Parser *p) {
 
   Parser_gen(p, tos2((byte *)"}"));
 
+  v_array_free(fields); /* :) close_scope free */
   return var.typ;
 }
 void Parser_char_expr(Parser *p) {
@@ -16453,6 +16492,7 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
 
   p->is_struct_init = 0;
 
+  v_array_free(inited_fields); /* :) close_scope free */
   return typ;
 }
 string Parser_cast(Parser *p, string typ) {
@@ -18425,7 +18465,9 @@ string Parser_select_query(Parser *p, int fn_ph) {
                           _STR("array_%.*s", table_name.len, table_name.str));
 
     return _STR("array_%.*s", table_name.len, table_name.str);
-  };
+  }
+  v_array_free(fields); /* :) close_scope free */
+  ;
 }
 void Parser_insert_query(Parser *p, int fn_ph) {
 
@@ -18532,6 +18574,8 @@ void Parser_insert_query(Parser *p, int fn_ph) {
                        "%d,\n0, params, 0, 0, 0)",
                        table_name.len, table_name.str, sfields.len, sfields.str,
                        vals.len, vals.str, nr_vals));
+
+  v_array_free(fields); // close_scope free
 }
 bool Repl_checks(Repl *r, string line) {
 
@@ -21485,6 +21529,8 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
       cerror(_STR("module %.*s can only be imported internally by libs.",
                   mod.len, mod.str));
     };
+
+    v_array_free(internal_mod_parts); // close_scope free
   };
 
   map__set(&fit->imports, alias, &(string[]){mod});
