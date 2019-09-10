@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "cd47f09"
+#define V_COMMIT_HASH "03b3278"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -1344,7 +1344,7 @@ string main__CommonCHeaders;
 string main__Version;
 #define main__BuildMode_default_mode 0
 #define main__BuildMode_embed_vlib 1
-#define main__BuildMode_build 2
+#define main__BuildMode_build_module 2
 array_string main__SupportedPlatforms;
 string main__ModPath;
 #define main__OS_mac 0
@@ -5911,7 +5911,7 @@ void V_cc(V *v) {
     v->out_name = string_add(v->out_name, tos2((byte *)".so"));
   };
 
-  if (v->pref->build_mode == main__BuildMode_build) {
+  if (v->pref->build_mode == main__BuildMode_build_module) {
 
     v->out_name =
         string_add(string_add(main__ModPath, v->dir), tos2((byte *)".o"));
@@ -5949,7 +5949,7 @@ void V_cc(V *v) {
 
   string libs = tos2((byte *)"");
 
-  if (v->pref->build_mode == main__BuildMode_build) {
+  if (v->pref->build_mode == main__BuildMode_build_module) {
 
     _PUSH(&a, (tos2((byte *)"-c")), tmp11, string);
 
@@ -6042,7 +6042,7 @@ void V_cc(V *v) {
 
   _PUSH(&a, (libs), tmp27, string);
 
-  if (v->pref->build_mode != main__BuildMode_build &&
+  if (v->pref->build_mode != main__BuildMode_build_module &&
       (v->os == main__OS_linux || v->os == main__OS_freebsd ||
        v->os == main__OS_openbsd || v->os == main__OS_netbsd ||
        v->os == main__OS_dragonfly)) {
@@ -6264,7 +6264,7 @@ void V_cc_windows_cross(V *c) {
     v_exit(1);
   };
 
-  if (c->pref->build_mode != main__BuildMode_build) {
+  if (c->pref->build_mode != main__BuildMode_build_module) {
 
     string link_cmd = string_add(
         string_add(_STR("lld-link %.*s %.*s/lib/libcmt.lib ", obj_name.len,
@@ -7806,7 +7806,7 @@ void Fn_clear_vars(Fn *f) {
 bool Parser_is_sig(Parser *p) {
 
   return (p->pref->build_mode == main__BuildMode_default_mode ||
-          p->pref->build_mode == main__BuildMode_build) &&
+          p->pref->build_mode == main__BuildMode_build_module) &&
          (string_contains(p->file_path, main__ModPath));
 }
 Fn *new_fn(string mod, bool is_public) {
@@ -10011,7 +10011,7 @@ void V_compile(V *v) {
   if (v->os == main__OS_mac &&
       ((v->pref->build_mode == main__BuildMode_embed_vlib &&
         array_string_contains(v->table->imports, tos2((byte *)"ui"))) ||
-       (v->pref->build_mode == main__BuildMode_build &&
+       (v->pref->build_mode == main__BuildMode_build_module &&
         string_contains(v->dir, tos2((byte *)"/ui"))))) {
 
     CGen_genln(cgen, tos2((byte *)"id defaultFont = 0; // main.v"));
@@ -10170,7 +10170,7 @@ void V_generate_main(V *v) {
                     "tos2(g_str_buf);\n}\n\n"));
   };
 
-  if (v->pref->build_mode != main__BuildMode_build) {
+  if (v->pref->build_mode != main__BuildMode_build_module) {
 
     if (!Table_main_exists(&/* ? */ *v->table) && !v->pref->is_test) {
 
@@ -10507,7 +10507,7 @@ void V_add_v_files_to_compile(V *v) {
 
     j++;
 
-    if (v->pref->build_mode == main__BuildMode_build && j >= len / 2) {
+    if (v->pref->build_mode == main__BuildMode_build_module && j >= len / 2) {
 
       break;
     };
@@ -10593,7 +10593,7 @@ V *new_v(array_string args) {
 
   if (string_contains(joined_args, tos2((byte *)"build module "))) {
 
-    build_mode = main__BuildMode_build;
+    build_mode = main__BuildMode_build_module;
 
     mod = (string_contains(dir, tos2((byte *)"/")))
               ? (string_all_after(dir, tos2((byte *)"/")))
@@ -10762,7 +10762,7 @@ V *new_v(array_string args) {
                     builtin.str);
 
     if (build_mode == main__BuildMode_default_mode ||
-        build_mode == main__BuildMode_build) {
+        build_mode == main__BuildMode_build_module) {
     };
 
     _PUSH(&files, (f), tmp93, string);
@@ -11519,7 +11519,7 @@ void V_cc_msvc(V *v) {
   array_string alibs =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-  if (v->pref->build_mode == main__BuildMode_build) {
+  if (v->pref->build_mode == main__BuildMode_build_module) {
 
   } else if (v->pref->build_mode == main__BuildMode_embed_vlib) {
 
