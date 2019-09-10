@@ -1,4 +1,8 @@
 # vc
-v.c is the V compiler's source translated to C
+V compiler's source translated to C.
 
-V source code can be found [here](https://github.com/vlang/v)
+The main repo can be found here:
+
+[github.com/vlang/v](https://github.com/vlang/v)
+
+This repository is generated automatically. Please do not submit PRs here, use the main repo.
