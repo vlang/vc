@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "a53c69d"
+#define V_COMMIT_HASH "bc60641"
 #ifndef V_COMMIT_HASH
 #define V_COMMIT_HASH "0000000"
 #endif
@@ -9843,10 +9843,10 @@ int main(int argc, char **argv) {
       _IN(string, tos2((byte *)"--version"), args) ||
       _IN(string, tos2((byte *)"version"), args)) {
 
-    string versionhash = vhash();
+    string version_hash = vhash();
 
     printf("V %.*s %.*s\n", main__Version.len, main__Version.str,
-           versionhash.len, versionhash.str);
+           version_hash.len, version_hash.str);
 
     return 0;
   };
@@ -11183,7 +11183,16 @@ void cerror(string s) {
 
   v_exit(1);
 }
-string vhash() { return tos2((byte *)"0000000"); }
+string vhash() {
+
+  byte buf[50] = {0};
+
+  buf[0] /*rbyte 1*/ = 0;
+
+  snprintf(buf, 50, "%s", V_COMMIT_HASH);
+
+  return tos_clone(buf);
+}
 void DepGraph_from_import_tables(DepGraph *graph,
                                  array_FileImportTable import_tables) {
 
@@ -18512,20 +18521,20 @@ bool Repl_function_call(Repl *r, string line) {
 }
 void repl_help() {
 
-  string versionhash = vhash();
+  string version_hash = vhash();
 
   printf("\nV %.*s %.*s\n  help                   Displays this information.\n "
          " Ctrl-C, Ctrl-D, exit   Exits the REPL.\n  clear                  "
          "Clears the screen.\n\n",
-         main__Version.len, main__Version.str, versionhash.len,
-         versionhash.str);
+         main__Version.len, main__Version.str, version_hash.len,
+         version_hash.str);
 }
 array_string run_repl() {
 
-  string versionhash = vhash();
+  string version_hash = vhash();
 
-  printf("V %.*s %.*s\n", main__Version.len, main__Version.str, versionhash.len,
-         versionhash.str);
+  printf("V %.*s %.*s\n", main__Version.len, main__Version.str,
+         version_hash.len, version_hash.str);
 
   println(tos2((byte *)"Use Ctrl-C or `exit` to exit"));
 
