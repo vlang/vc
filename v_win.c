@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "63f2f2b"
+#define V_COMMIT_HASH "9853323"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "797b35c"
+#define V_COMMIT_HASH "63f2f2b"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -8476,7 +8476,7 @@ void Parser_fn_decl(Parser *p) {
 
     Parser_genln(p, tos2((byte *)"init_consts();"));
 
-    if (array_string_contains(p->table->imports, tos2((byte *)"os"))) {
+    if (_IN(string, tos2((byte *)"os"), p->table->imports)) {
 
       if (string_eq(f->name, tos2((byte *)"main"))) {
 
@@ -8774,6 +8774,13 @@ void Parser_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
 
   if (!f.is_public && !f.is_c && !p->pref->is_test && !f.is_interface &&
       string_ne(f.mod, p->mod)) {
+
+    if (string_eq(f.name, tos2((byte *)"contains"))) {
+
+      println(tos2((
+          byte
+              *)"use `value in numbers` instead of `numbers.contains(value)`"));
+    };
 
     Parser_error(p, _STR("function `%.*s` is private", f.name.len, f.name.str));
   };
@@ -10146,12 +10153,11 @@ void V_compile(V *v) {
 
   V_generate_hotcode_reloading_declarations(v);
 
-  bool imports_json =
-      array_string_contains(v->table->imports, tos2((byte *)"json"));
+  bool imports_json = _IN(string, tos2((byte *)"json"), v->table->imports);
 
   if (v->os == main__OS_mac &&
       ((v->pref->build_mode == main__BuildMode_embed_vlib &&
-        array_string_contains(v->table->imports, tos2((byte *)"ui"))) ||
+        _IN(string, tos2((byte *)"ui"), v->table->imports)) ||
        (v->pref->build_mode == main__BuildMode_build_module &&
         string_contains(v->dir, tos2((byte *)"/ui"))))) {
 
@@ -10171,7 +10177,7 @@ void V_compile(V *v) {
 
     CGen_genln(cgen, tos2((byte *)"int g_test_ok = 1; "));
 
-    if (array_string_contains(v->table->imports, tos2((byte *)"json"))) {
+    if (_IN(string, tos2((byte *)"json"), v->table->imports)) {
 
       CGen_genln(
           cgen,
@@ -10180,7 +10186,7 @@ void V_compile(V *v) {
     };
   };
 
-  if (array_string_contains(os__args, tos2((byte *)"-debug_alloc"))) {
+  if (_IN(string, tos2((byte *)"-debug_alloc"), os__args)) {
 
     CGen_genln(cgen, tos2((byte *)"#define DEBUG_ALLOC 1"));
   };
@@ -10715,7 +10721,7 @@ V *new_v(array_string args) {
 
   string dir = *(string *)array_last(args);
 
-  if (array_string_contains(args, tos2((byte *)"run"))) {
+  if (_IN(string, tos2((byte *)"run"), args)) {
 
     dir = get_all_after(joined_args, tos2((byte *)"run"), tos2((byte *)""));
   };
@@ -10747,7 +10753,7 @@ V *new_v(array_string args) {
 
     out_name = string_add(mod, tos2((byte *)".o"));
 
-  } else if (!array_string_contains(args, tos2((byte *)"-embed_vlib"))) {
+  } else if (!(_IN(string, tos2((byte *)"-embed_vlib"), args))) {
 
     build_mode = main__BuildMode_embed_vlib;
   };
@@ -10930,29 +10936,28 @@ V *new_v(array_string args) {
 
   string rdir_name = os__filename(rdir);
 
-  bool obfuscate = array_string_contains(args, tos2((byte *)"-obf"));
+  bool obfuscate = _IN(string, tos2((byte *)"-obf"), args);
 
-  bool is_repl = array_string_contains(args, tos2((byte *)"-repl"));
+  bool is_repl = _IN(string, tos2((byte *)"-repl"), args);
 
   Preferences *pref = (Preferences *)memdup(
       &(Preferences){
           .is_test = is_test,
           .is_script = is_script,
-          .is_so = array_string_contains(args, tos2((byte *)"-shared")),
-          .is_prod = array_string_contains(args, tos2((byte *)"-prod")),
-          .is_verbose = array_string_contains(args, tos2((byte *)"-verbose")),
-          .is_debuggable = array_string_contains(args, tos2((byte *)"-g")),
-          .is_debug = array_string_contains(args, tos2((byte *)"-debug")) ||
-                      array_string_contains(args, tos2((byte *)"-g")),
+          .is_so = _IN(string, tos2((byte *)"-shared"), args),
+          .is_prod = _IN(string, tos2((byte *)"-prod"), args),
+          .is_verbose = _IN(string, tos2((byte *)"-verbose"), args),
+          .is_debuggable = _IN(string, tos2((byte *)"-g"), args),
+          .is_debug = _IN(string, tos2((byte *)"-debug"), args) ||
+                      _IN(string, tos2((byte *)"-g"), args),
           .obfuscate = obfuscate,
-          .is_prof = array_string_contains(args, tos2((byte *)"-prof")),
-          .is_live = array_string_contains(args, tos2((byte *)"-live")),
-          .sanitize = array_string_contains(args, tos2((byte *)"-sanitize")),
-          .nofmt = array_string_contains(args, tos2((byte *)"-nofmt")),
-          .show_c_cmd =
-              array_string_contains(args, tos2((byte *)"-show_c_cmd")),
-          .translated = array_string_contains(args, tos2((byte *)"translated")),
-          .is_run = array_string_contains(args, tos2((byte *)"run")),
+          .is_prof = _IN(string, tos2((byte *)"-prof"), args),
+          .is_live = _IN(string, tos2((byte *)"-live"), args),
+          .sanitize = _IN(string, tos2((byte *)"-sanitize"), args),
+          .nofmt = _IN(string, tos2((byte *)"-nofmt"), args),
+          .show_c_cmd = _IN(string, tos2((byte *)"-show_c_cmd"), args),
+          .translated = _IN(string, tos2((byte *)"translated"), args),
+          .is_run = _IN(string, tos2((byte *)"run"), args),
           .is_repl = is_repl,
           .build_mode = build_mode,
           .cflags = cflags,
@@ -12169,7 +12174,7 @@ void Parser_parse(Parser *p, Pass pass) {
       Parser_imports(p);
     };
 
-    if (array_string_contains(p->table->imports, tos2((byte *)"builtin"))) {
+    if (_IN(string, tos2((byte *)"builtin"), p->table->imports)) {
 
       Parser_error(p, tos2((byte *)"module `builtin` cannot be imported"));
     };
@@ -12464,7 +12469,7 @@ void Parser_import_statement(Parser *p) {
 
   FileImportTable_register_alias(p->import_table, mod_alias, mod);
 
-  if (array_string_contains(p->table->imports, mod)) {
+  if (_IN(string, mod, p->table->imports)) {
 
     return;
   };
@@ -16340,7 +16345,7 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
                              t.name.str, field.len, field.str));
       };
 
-      if (array_string_contains(inited_fields, field)) {
+      if (_IN(string, field, inited_fields)) {
 
         Parser_error(p, _STR("already initialized field `%.*s` in `%.*s`",
                              field.len, field.str, t.name.len, t.name.str));
@@ -16383,7 +16388,7 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
     for (int i = 0; i < tmp295.len; i++) {
       Var field = ((Var *)tmp295.data)[i];
 
-      if (array_string_contains(inited_fields, field.name)) {
+      if (_IN(string, field.name, inited_fields)) {
 
         continue;
       };
@@ -20407,7 +20412,7 @@ Table *new_table(bool obfuscate) {
 }
 string Table_var_cgen_name(Table *t, string name) {
 
-  if (array_string_contains(main__CReserved, name)) {
+  if (_IN(string, name, main__CReserved)) {
 
     return _STR("v_%.*s", name.len, name.str);
 
@@ -20418,7 +20423,7 @@ string Table_var_cgen_name(Table *t, string name) {
 }
 void Table_register_module(Table *t, string mod) {
 
-  if (array_string_contains(t->modules, mod)) {
+  if (_IN(string, mod, t->modules)) {
 
     return;
   };
@@ -21220,7 +21225,7 @@ string Table_cgen_name(Table *table, Fn *f) {
   };
 
   if (string_eq(f->mod, tos2((byte *)"builtin")) &&
-      array_string_contains(main__CReserved, f->name)) {
+      _IN(string, f->name, main__CReserved)) {
 
     return _STR("v_%.*s", name.len, name.str);
   };
