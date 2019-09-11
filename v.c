@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "26edb7d"
+#define V_COMMIT_HASH "c66fbd9"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f8d4d6c"
+#define V_COMMIT_HASH "26edb7d"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -22096,7 +22096,7 @@ void init_consts() {
             "gcc, clang, tcc, icc, cl ...\n  -cflags flags     Pass additional "
             "C flags to the C backend compiler.\n                    Example: "
             "-cflags `sdl2-config --cflags`\n                    \n  -debug    "
-            "        Keep the generatd C file for debugging in program.tmp.c "
+            "        Keep the generated C file for debugging in program.tmp.c "
             "even after compilation.\n  -g                Show v line numbers "
             "in backtraces. Implies -debug.  \n  -o <file>         Place "
             "output into <file>. If file has a .c suffix, produce C source, "
@@ -22109,16 +22109,16 @@ void init_consts() {
             "Build and execute the V program in file.v . You can add arguments "
             "for the V program *after* the file name.\n  build module      "
             "Compile a module into an object file.\n  runrepl           Run "
-            "the V REPL. If V is running in a tty terminal, the repl is "
+            "the V REPL. If V is running in a tty terminal, the REPL is "
             "interactive, otherwise it just reads from stdin.\n  symlink       "
             "    Useful on unix systems. Symlinks the current V executable to "
             "/usr/local/bin/v, so that V is globally available.\n  install "
-            "module    Install an user module from https://vpm.vlang.io/ .\n  "
+            "module    Install a user module from https://vpm.vlang.io/ .\n  "
             "test v            Run all V test files, and compile all V "
             "examples.\n\n  fmt               Run vfmt to format the source "
             "code. [wip]\n  doc               Run vdoc over the source code "
-            "and produce documenation. [wip]\n  translate         Translates C "
-            "to V. [wip, will be available in V 0.3]  \n");
+            "and produce documentation. [wip]\n  translate         Translates "
+            "C to V. [wip, will be available in V 0.3]  \n");
 }
 
 string _STR(const char *fmt, ...) {
