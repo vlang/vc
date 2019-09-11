@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "797b35c"
+#define V_COMMIT_HASH "63f2f2b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bc60641"
+#define V_COMMIT_HASH "797b35c"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -23,7 +23,9 @@
 #endif
 
 #ifdef __linux__
+#ifndef __BIONIC__
 #include <execinfo.h> // backtrace and backtrace_symbols_fd
+#endif
 #pragma weak backtrace
 #pragma weak backtrace_symbols_fd
 #endif
@@ -1399,7 +1401,6 @@ string main__ModPath;
 #define main__Pass_imports 0
 #define main__Pass_decl 1
 #define main__Pass_main 2
-string main__HelpText;
 RegKey main__HKEY_LOCAL_MACHINE;
 int main__KEY_QUERY_VALUE;
 int main__KEY_WOW64_32KEY;
@@ -1524,6 +1525,7 @@ array_string main__float_types;
 array_string main__TokenStr;
 map_int main__KEYWORDS;
 array_Token main__AssignTokens;
+string main__HelpText;
 
 array new_array(int mylen, int cap, int elm_size) {
 
@@ -6148,7 +6150,7 @@ void V_cc(V *v) {
   for (int tmp22 = 0; tmp22 < tmp21.len; tmp22++) {
     CFlag flag = ((CFlag *)tmp21.data)[tmp22];
 
-    if (string_ends_with(flag.value, tos2((byte *)".o"))) {
+    if (!string_ends_with(flag.value, tos2((byte *)".o"))) {
 
       continue;
     };
@@ -6161,7 +6163,7 @@ void V_cc(V *v) {
   for (int tmp25 = 0; tmp25 < tmp24.len; tmp25++) {
     CFlag flag = ((CFlag *)tmp24.data)[tmp25];
 
-    if (!string_ends_with(flag.value, tos2((byte *)".o"))) {
+    if (string_ends_with(flag.value, tos2((byte *)".o"))) {
 
       continue;
     };
@@ -9998,7 +10000,7 @@ int main(int argc, char **argv) {
   if (_IN(string, tos2((byte *)"get"), args)) {
 
     println(
-        tos2((byte *)"use `v install` to install modules from vpm.vlang.io"));
+        tos2((byte *)"use `v install` to install modules from vpm.vlang.io "));
 
     return 0;
   };
@@ -15479,12 +15481,6 @@ string Parser_factor(Parser *p) {
     Parser_check(p, main__Token_lpar);
 
     string sizeof_typ = Parser_get_type(p);
-
-    if (string_ends_with(sizeof_typ, tos2((byte *)"*"))) {
-
-      sizeof_typ = string_add(tos2((byte *)"*"),
-                              string_left(sizeof_typ, sizeof_typ.len - 1));
-    };
 
     Parser_check(p, main__Token_rpar);
 
@@ -22031,11 +22027,12 @@ void init_consts() {
              "<string.h> // memcpy\n\n#ifndef _WIN32\n#include "
              "<ctype.h>\n#include <locale.h> // tolower\n#include "
              "<sys/time.h>\n#include <unistd.h> // sleep	"
-             "\n#endif\n\n#ifdef __APPLE__\n#include <libproc.h> // "
+             "\n#endif\n\n\n#ifdef __APPLE__\n#include <libproc.h> // "
              "proc_pidpath\n#include <execinfo.h> // backtrace and "
-             "backtrace_symbols_fd\n#endif\n\n#ifdef __linux__\n#include "
-             "<execinfo.h> // backtrace and backtrace_symbols_fd\n#pragma weak "
-             "backtrace\n#pragma weak backtrace_symbols_fd\n#endif\n\n#ifdef "
+             "backtrace_symbols_fd\n#endif\n\n#ifdef __linux__\n#ifndef "
+             "__BIONIC__\n#include <execinfo.h> // backtrace and "
+             "backtrace_symbols_fd\n#endif\n#pragma weak backtrace\n#pragma "
+             "weak backtrace_symbols_fd\n#endif\n\n\n#ifdef "
              "__linux__\n#include <sys/types.h>\n#include <sys/wait.h> // "
              "os__wait uses wait on nix\n#endif\n\n\n#define "
              "EMPTY_STRUCT_DECLARATION\n#define OPTION_CAST(x) (x)\n\n#ifdef "
@@ -22084,22 +22081,6 @@ void init_consts() {
                  tos2((byte *)"openbsd"), tos2((byte *)"netbsd"),
                  tos2((byte *)"dragonfly"), tos2((byte *)"msvc")});
   main__ModPath = string_add(os__home_dir(), tos2((byte *)"/.vmodules/"));
-  main__HelpText = tos2(
-      (byte *)"\nUsage: v [options] [file | directory]\n\nOptions:\n  -        "
-              "         Read from stdin (Default; Interactive mode if in a "
-              "tty)\n  -h, help          Display this information.\n  -v, "
-              "version       Display compiler version.\n  -prod             "
-              "Build an optimized executable.\n  -o <file>         Place "
-              "output into <file>.\n  -obf              Obfuscate the "
-              "resulting binary.\n  -show_c_cmd       Print the full C "
-              "compilation command and how much time it took.\n  -debug        "
-              "    Leave a C file for debugging in .program.c.\n  -live        "
-              "     Enable hot code reloading (required by functions marked "
-              "with [live]).\n  fmt               Run vfmt to format the "
-              "source code.\n  up                Update V.\n  run              "
-              " Build and execute a V program. You can add arguments after the "
-              "file name.\n  build module      Compile a module into an object "
-              "file.\n\n\nFiles:\n  <file>_test.v     Test file.\n");
   main__HKEY_LOCAL_MACHINE = ((RegKey)(0x80000002));
   main__KEY_QUERY_VALUE = (0x0001);
   main__KEY_WOW64_32KEY = (0x0200);
@@ -22186,6 +22167,60 @@ void init_consts() {
                 main__Token_mod_assign, main__Token_or_assign,
                 main__Token_and_assign, main__Token_righ_shift_assign,
                 main__Token_left_shift_assign});
+  main__HelpText = tos2((
+      byte
+          *)"Usage: v [options/subcommands] [file.v | directory]\n\n\n\n   "
+            "When V is run without any arguments, it is a shorthand for `v "
+            "runrepl`.\n\n   When given a .v file, it will be compiled. The "
+            "output executable will have the same name as the input .v file.\n "
+            "  You can use -o to specify a different output name.\n\n   When "
+            "given a directory, all the .v files contained in it, will be "
+            "compiled as part of a single main module. \n   By default the "
+            "executable will be named a.out.\n\n   Any file ending in _test.v, "
+            "will be treated as a test. \n   It will be compiled and run, "
+            "evaluating the assert statements in every function named "
+            "test_xxx.\n\n   You can put common options inside an environment "
+            "variable named VFLAGS, so that you do not repeat them. \n   You "
+            "can set it like this: `export VFLAGS=\"-cc clang -debug\"` on "
+            "unix, `set VFLAGS=-os msvc` on windows.\n   \nOptions:  \n  -     "
+            "            Shorthand for `v runrepl` .\n  -h, help          "
+            "Display this information.\n  -live             Enable hot code "
+            "reloading (required by functions marked with [live]).\n  -os <OS> "
+            "         Produce an executable for the selected OS. \n            "
+            "        OS can be linux, mac, windows, msvc, etc...\n             "
+            "       -os msvc is useful, if you want to use the MSVC compiler "
+            "on Windows.\n  -prod             Build an optimized executable.\n "
+            " -v, version       Display compiler version and git hash of the "
+            "compiler source.\n  \nDebugging options:\n  -cc <ccompiler>   "
+            "Specify which C compiler you want to use as a C backend. \n       "
+            "             The C backend compiler should be able to handle C99 "
+            "compatible C code.\n                    Common C compilers are "
+            "gcc, clang, tcc, icc, cl ...\n  -cflags flags     Pass additional "
+            "C flags to the C backend compiler.\n                    Example: "
+            "-cflags `sdl2-config --cflags`\n                    \n  -debug    "
+            "        Keep the generatd C file for debugging in program.tmp.c "
+            "even after compilation.\n  -g                Show v line numbers "
+            "in backtraces. Implies -debug.  \n  -o <file>         Place "
+            "output into <file>. If file has a .c suffix, produce C source, "
+            "and do not compile it further.\n  -obf              Obfuscate the "
+            "resulting binary.\n  -show_c_cmd       Print the full C "
+            "compilation command and how much time it took.\n  "
+            "\n\nSubcommands:\n  up                Update V. Run `v up` at "
+            "least once per day, since V development is rapid and "
+            "features/bugfixes are added constantly.\n  run <file.v>      "
+            "Build and execute the V program in file.v . You can add arguments "
+            "for the V program *after* the file name.\n  build module      "
+            "Compile a module into an object file.\n  runrepl           Run "
+            "the V REPL. If V is running in a tty terminal, the repl is "
+            "interactive, otherwise it just reads from stdin.\n  symlink       "
+            "    Useful on unix systems. Symlinks the current V executable to "
+            "/usr/local/bin/v, so that V is globally available.\n  install "
+            "module    Install an user module from https://vpm.vlang.io/ .\n  "
+            "test v            Run all V test files, and compile all V "
+            "examples.\n\n  fmt               Run vfmt to format the source "
+            "code. [wip]\n  doc               Run vdoc over the source code "
+            "and produce documenation. [wip]\n  translate         Translates C "
+            "to V. [wip, will be available in V 0.3]  \n");
 }
 
 string _STR(const char *fmt, ...) {
