@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "949dfc5"
+#define V_COMMIT_HASH "af60f9e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9853323"
+#define V_COMMIT_HASH "949dfc5"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -20047,7 +20047,9 @@ string Scanner_ident_char(Scanner *s) {
     };
   };
 
-  return c;
+  return (string_eq(c, tos2((byte *)"\'")))
+             ? (string_add(tos2((byte *)"\\"), c))
+             : (c);
 }
 Token Scanner_peek(Scanner *s) {
 
