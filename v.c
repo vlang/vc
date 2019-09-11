@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f8d4d6c"
+#define V_COMMIT_HASH "26edb7d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "af60f9e"
+#define V_COMMIT_HASH "f8d4d6c"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -19367,7 +19367,9 @@ ScanRes Scanner_scan(Scanner *s) {
 
     if (string_eq(name, tos2((byte *)"FILE"))) {
 
-      return scan_res(main__Token_str, os__realpath(s->file_path));
+      return scan_res(main__Token_str,
+                      string_replace(os__realpath(s->file_path),
+                                     tos2((byte *)"\\"), tos2((byte *)"\\\\")));
     };
 
     if (string_eq(name, tos2((byte *)"LINE"))) {
