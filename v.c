@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "af60f9e"
+#define V_COMMIT_HASH "f8d4d6c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "949dfc5"
+#define V_COMMIT_HASH "af60f9e"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -6345,14 +6345,32 @@ string find_c_compiler_default() {
 }
 string find_c_compiler_thirdparty_options() {
 
+  if (_IN(string, tos2((byte *)"-m32"), os__args)) {
+
 #ifdef _WIN32
 
-  return tos2((byte *)"");
+    return tos2((byte *)"-m32");
+
+#else
+
+    return tos2((byte *)"-fPIC -m32");
 
 #endif
-  ;
+    ;
 
-  return tos2((byte *)"-fPIC");
+  } else {
+
+#ifdef _WIN32
+
+    return tos2((byte *)"");
+
+#else
+
+    return tos2((byte *)"-fPIC");
+
+#endif
+    ;
+  };
 }
 array_CFlag V_get_os_cflags(V v) {
 
