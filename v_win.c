@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c66fbd9"
+#define V_COMMIT_HASH "a555b1f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "26edb7d"
+#define V_COMMIT_HASH "c66fbd9"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -22100,7 +22100,7 @@ void init_consts() {
              "sizeof(type))\n\n//================================== GLOBALS "
              "=================================*/\nbyteptr g_str_buf;\nint "
              "load_so(byteptr);\nvoid reload_so();\nvoid init_consts();\n\n");
-  main__Version = tos2((byte *)"0.1.18");
+  main__Version = tos2((byte *)"0.1.19");
   main__SupportedPlatforms = new_array_from_c_array(
       8, 8, sizeof(string),
       (string[]){tos2((byte *)"windows"), tos2((byte *)"mac"),
