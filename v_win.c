@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2880baa"
+#define V_COMMIT_HASH "8fe46d5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "92b634d"
+#define V_COMMIT_HASH "2880baa"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -15752,7 +15752,7 @@ void Parser_string_expr(Parser *p) {
 
     string f = format_str(str);
 
-    if (p->calling_c ||
+    if ((p->calling_c && Parser_peek(p) != main__Token_dot) ||
         (p->pref->translated && string_eq(p->mod, tos2((byte *)"main")))) {
 
       Parser_gen(p, _STR("\"%.*s\"", f.len, f.str));
