@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7f3cfea"
+#define V_COMMIT_HASH "21f3b9e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9dd86f6"
+#define V_COMMIT_HASH "7f3cfea"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -13769,6 +13769,8 @@ void Parser_close_scope(Parser *p) {
       break;
     };
 
+#ifndef _WIN32
+
     if (p->pref->building_v && v.is_alloc && !p->pref->is_test) {
 
       string free_fn = tos2((byte *)"free");
@@ -13813,6 +13815,9 @@ void Parser_close_scope(Parser *p) {
                              free_fn.str, v.name.len, v.name.str));
       };
     };
+
+#endif
+    ;
   };
 
   if (string_ne(*(string *)array_last(p->cur_fn.defer_text),
