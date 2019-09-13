@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9dd86f6"
+#define V_COMMIT_HASH "7f3cfea"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f3a74e7"
+#define V_COMMIT_HASH "9dd86f6"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -763,8 +763,8 @@ string strings__Builder_str(strings__Builder b);
 void strings__Builder_cut(strings__Builder *b, int n);
 void strings__Builder_free(strings__Builder *b);
 int strings__levenshtein_distance(string a, string b);
-f64 strings__levenshtein_distance_percentage(string a, string b);
-f64 strings__dice_coefficient(string s1, string s2);
+f32 strings__levenshtein_distance_percentage(string a, string b);
+f32 strings__dice_coefficient(string s1, string s2);
 string strings__repeat(byte c, int n);
 array_string os__init_os_args(int argc, byteptr *argv);
 array_string os__parse_windows_cmd_line(byte *cmd);
@@ -1034,7 +1034,7 @@ void Parser_fn_args(Parser *p, Fn *f);
 Fn *Parser_fn_call_args(Parser *p, Fn *f);
 string Fn_typ_str(Fn f);
 string Fn_str_args(Fn *f, Table *table);
-string Fn_find_misspelled_local_var(Fn *f, string name, f64 min_match);
+string Fn_find_misspelled_local_var(Fn *f, string name, f32 min_match);
 void Parser_gen_json_for_type(Parser *p, Type typ);
 bool is_js_prim(string typ);
 string Parser_decode_array(Parser *p, string array_type);
@@ -1243,9 +1243,9 @@ string FileImportTable_resolve_alias(FileImportTable *fit, string alias);
 bool Type_contains_field_type(Type *t, string typ);
 string Table_identify_typo(Table *table, string name, Fn *current_fn,
                            FileImportTable *fit);
-string Table_find_misspelled_fn(Table *table, string name, f64 min_match);
+string Table_find_misspelled_fn(Table *table, string name, f32 min_match);
 string Table_find_misspelled_imported_mod(Table *table, string name,
-                                          FileImportTable *fit, f64 min_match);
+                                          FileImportTable *fit, f32 min_match);
 map_int build_keys();
 array_string build_token_str();
 Token key_to_token(string key);
@@ -1959,7 +1959,7 @@ string string_replace(string s, string rep, string with) {
 
   b[/*ptr*/ new_len] /*rbyte 1*/ = '\0';
 
-  v_array_free(idxs); /* :) close_scope free */
+  v_array_free(idxs); /* :) close_scope free array_int */
   return tos(b, new_len);
 }
 int v_string_int(string s) { return atoi(s.str); }
@@ -2262,7 +2262,7 @@ int string_index(string s, string p) {
     };
   };
 
-  v_array_free(prefix); /* :) close_scope free */
+  v_array_free(prefix); /* :) close_scope free array_int */
   return -1;
 }
 int string_index_any(string s, string chars) {
@@ -2457,7 +2457,7 @@ string string_title(string s) {
 
   string title = array_string_join(tit, tos2((byte *)" "));
 
-  v_array_free(tit); /* :) close_scope free */
+  v_array_free(tit); /* :) close_scope free array_string */
   return title;
 }
 string string_find_between(string s, string start, string end) {
@@ -2901,6 +2901,7 @@ void print_backtrace_skipping_top_frames(int skipframes) {
   backtrace_symbols_fd(&/*vvar*/ buffer[skipframes] /*rbyte* 0*/,
                        (byte *)nr_ptrs - skipframes, 1);
 
+  v_ptr_free(buffer); /* :) close_scope free [100]byte* */
   return;
 
 #endif
@@ -2917,6 +2918,7 @@ void print_backtrace_skipping_top_frames(int skipframes) {
     backtrace_symbols_fd(&/*vvar*/ buffer[skipframes] /*rbyte* 0*/,
                          (byte *)nr_ptrs - skipframes, 1);
 
+    v_ptr_free(buffer); /* :) close_scope free [100]byte* */
     return;
 
   } else {
@@ -3888,15 +3890,15 @@ int strings__levenshtein_distance(string a, string b) {
 
   return (*(int *)array__get(f, f.len - 1));
 }
-f64 strings__levenshtein_distance_percentage(string a, string b) {
+f32 strings__levenshtein_distance_percentage(string a, string b) {
 
   int d = strings__levenshtein_distance(a, b);
 
   int l = (a.len >= b.len) ? (a.len) : (b.len);
 
-  return (1.00 - ((f64)(d)) / ((f64)(l))) * 100.00;
+  return (1.00 - ((f32)(d)) / ((f32)(l))) * 100.00;
 }
-f64 strings__dice_coefficient(string s1, string s2) {
+f32 strings__dice_coefficient(string s1, string s2) {
 
   if (s1.len == 0 || s2.len == 0) {
 
@@ -3951,7 +3953,7 @@ f64 strings__dice_coefficient(string s1, string s2) {
     };
   };
 
-  return (2.0 * intersection_size) / (((f64)(s1.len)) + ((f64)(s2.len)) - 2);
+  return (2.0 * intersection_size) / (((f32)(s1.len)) + ((f32)(s2.len)) - 2);
 }
 string strings__repeat(byte c, int n) {
 
@@ -4158,6 +4160,7 @@ array_string os__read_lines(string path) {
 
   fclose(fp);
 
+  v_ptr_free(buf); /* :) close_scope free byte* */
   return res;
 }
 array_ustring os__read_ulines(string path) {
@@ -4189,6 +4192,7 @@ Option_os__File os__open(string path) {
 
   file = (struct os__File){.cfile = _wfopen(wpath, string_to_wide(mode))};
 
+  v_ptr_free(wpath); // close_scope free
 #else
 
   byte *cpath = path.str;
@@ -4219,6 +4223,7 @@ Option_os__File os__create(string path) {
 
   file = (os__File){.cfile = _wfopen(wpath, string_to_wide(mode))};
 
+  v_ptr_free(wpath); // close_scope free
 #else
 
   byte *cpath = path.str;
@@ -4249,6 +4254,7 @@ Option_os__File os__open_append(string path) {
 
   file = (os__File){.cfile = _wfopen(wpath, string_to_wide(mode))};
 
+  v_ptr_free(wpath); // close_scope free
 #else
 
   byte *cpath = path.str;
@@ -4825,7 +4831,7 @@ string os__executable() {
 
   sysctl(mib.data, 4, result, &/*vvar*/ size, 0, 0);
 
-  v_array_free(mib); /* :) close_scope free */
+  v_array_free(mib); /* :) close_scope free array_int */
   return (tos2((byte *)result));
 
 #endif
@@ -5086,6 +5092,7 @@ array_string os__ls(string path) {
 
   FindClose(h_find_files);
 
+  v_ptr_free(h_find_files); /* :) close_scope free void* */
   return dir_files;
 }
 bool os__dir_exists(string path) {
@@ -5130,6 +5137,7 @@ HANDLE os__get_file_handle(string path) {
 
   void *_handle = _get_osfhandle(_fileno(_fd));
 
+  v_ptr_free(_fd); /* :) close_scope free void* */
   return _handle;
 }
 Option_string os__get_module_filename(HANDLE handle) {
@@ -5155,6 +5163,7 @@ Option_string os__get_module_filename(HANDLE handle) {
     };
   };
 
+  v_ptr_free(buf); /* :) close_scope free u16* */
   v_panic(tos2((byte *)"this should be unreachable"));
 }
 void *os__ptr_win_get_error_msg(u32 code) {
@@ -7272,8 +7281,8 @@ string V_c_type_definitions(V *v) {
 
   array_Type types_sorted = sort_structs(types);
 
-  v_array_free(types);    /* :) close_scope free */
-  v_array_free(builtins); /* :) close_scope free */
+  v_array_free(types);    /* :) close_scope free array_Type */
+  v_array_free(builtins); /* :) close_scope free array_string */
   return string_add(string_add(types_to_c(builtin_types, v->table),
                                tos2((byte *)"\n//----\n")),
                     types_to_c(types_sorted, v->table));
@@ -7390,7 +7399,9 @@ array_Type sort_structs(array_Type types) {
     };
   };
 
-  v_array_free(type_names); /* :) close_scope free */
+  v_ptr_free(dep_graph);        /* :) close_scope free DepGraph* */
+  v_array_free(type_names);     /* :) close_scope free array_string */
+  v_ptr_free(dep_graph_sorted); /* :) close_scope free DepGraph* */
   return types_sorted;
 }
 void Parser_comp_time(Parser *p) {
@@ -9673,9 +9684,9 @@ string Fn_str_args(Fn *f, Table *table) {
 
   return s;
 }
-string Fn_find_misspelled_local_var(Fn *f, string name, f64 min_match) {
+string Fn_find_misspelled_local_var(Fn *f, string name, f32 min_match) {
 
-  f64 closest = ((f64)(0));
+  f32 closest = ((f32)(0));
 
   string closest_var = tos2((byte *)"");
 
@@ -9694,9 +9705,7 @@ string Fn_find_misspelled_local_var(Fn *f, string name, f64 min_match) {
       continue;
     };
 
-    f64 p = strings__dice_coefficient(name, n);
-
-    printf(" ## %.*s - %.*s: %f\n", name.len, name.str, n.len, n.str, p);
+    f32 p = strings__dice_coefficient(name, n);
 
     if (p > closest) {
 
@@ -9706,12 +9715,7 @@ string Fn_find_misspelled_local_var(Fn *f, string name, f64 min_match) {
     };
   };
 
-  if (closest >= min_match) {
-
-    return closest_var;
-  };
-
-  return tos2((byte *)"");
+  return (closest >= min_match) ? (closest_var) : (tos2((byte *)""));
 }
 void Parser_gen_json_for_type(Parser *p, Type typ) {
 
@@ -10295,6 +10299,8 @@ int main(int argc, char **argv) {
 
     V_run_compiled_executable_and_exit(*v);
   };
+
+  v_ptr_free(v); // close_scope free
 }
 void V_compile(V *v) {
 
@@ -10873,7 +10879,9 @@ void V_add_v_files_to_compile(V *v) {
     _PUSH(&v->files, (fit.file_path), tmp71, string);
   };
 
-  v_array_free(user_files); // close_scope free
+  v_ptr_free(deps_resolved); // close_scope free
+  v_ptr_free(dep_graph);     // close_scope free
+  v_array_free(user_files);  // close_scope free
 }
 string get_arg(string joined_args, string arg, string def) {
 
@@ -11191,7 +11199,7 @@ V *new_v(array_string args) {
                             tos2((byte *)"_shared_lib.c"));
   };
 
-  v_array_free(builtins); /* :) close_scope free */
+  v_array_free(builtins); /* :) close_scope free array_string */
   return (V *)memdup(&(V){.os = _os,
                           .out_name = out_name,
                           .files = files,
@@ -11651,6 +11659,8 @@ Option_string find_windows_kit_internal(RegKey key, array_string versions) {
       value[/*ptr*/ length] /*ru16 1*/ = ((u16)(0));
     };
 
+    v_ptr_free(result);  /* :) close_scope free void* */
+    v_ptr_free(result2); /* :) close_scope free void* */
     string tmp9 = OPTION_CAST(string)(string_from_wide(value));
     return opt_ok(&tmp9, sizeof(string));
   };
@@ -13086,6 +13096,8 @@ void Parser_struct_decl(Parser *p) {
       };
 
       continue;
+
+      v_ptr_free(f); // close_scope free
     };
 
     AccessMod access_mod =
@@ -15958,7 +15970,7 @@ string Parser_assoc(Parser *p) {
 
   Parser_gen(p, tos2((byte *)"}"));
 
-  v_array_free(fields); /* :) close_scope free */
+  v_array_free(fields); /* :) close_scope free array_string */
   return var.typ;
 }
 void Parser_char_expr(Parser *p) {
@@ -16767,7 +16779,7 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
 
   p->is_struct_init = 0;
 
-  v_array_free(inited_fields); /* :) close_scope free */
+  v_array_free(inited_fields); /* :) close_scope free array_string */
   return typ;
 }
 string Parser_cast(Parser *p, string typ) {
@@ -18748,7 +18760,7 @@ string Parser_select_query(Parser *p, int fn_ph) {
 
     return _STR("array_%.*s", table_name.len, table_name.str);
   }
-  v_array_free(fields); /* :) close_scope free */
+  v_array_free(fields); /* :) close_scope free array_Var */
   ;
 }
 void Parser_insert_query(Parser *p, int fn_ph) {
@@ -21917,9 +21929,9 @@ string Table_identify_typo(Table *table, string name, Fn *current_fn,
 
   return output;
 }
-string Table_find_misspelled_fn(Table *table, string name, f64 min_match) {
+string Table_find_misspelled_fn(Table *table, string name, f32 min_match) {
 
-  f64 closest = ((f64)(0));
+  f32 closest = ((f32)(0));
 
   string closest_fn = tos2((byte *)"");
 
@@ -21938,7 +21950,7 @@ string Table_find_misspelled_fn(Table *table, string name, f64 min_match) {
       continue;
     };
 
-    f64 p = strings__dice_coefficient(name, n);
+    f32 p = strings__dice_coefficient(name, n);
 
     if (p > closest) {
 
@@ -21948,17 +21960,12 @@ string Table_find_misspelled_fn(Table *table, string name, f64 min_match) {
     };
   };
 
-  if (closest >= min_match) {
-
-    return closest_fn;
-  };
-
-  return tos2((byte *)"");
+  return (closest >= min_match) ? (closest_fn) : (tos2((byte *)""));
 }
 string Table_find_misspelled_imported_mod(Table *table, string name,
-                                          FileImportTable *fit, f64 min_match) {
+                                          FileImportTable *fit, f32 min_match) {
 
-  f64 closest = ((f64)(0));
+  f32 closest = ((f32)(0));
 
   string closest_mod = tos2((byte *)"");
 
@@ -21978,7 +21985,7 @@ string Table_find_misspelled_imported_mod(Table *table, string name,
       continue;
     };
 
-    f64 p = strings__dice_coefficient(name, n);
+    f32 p = strings__dice_coefficient(name, n);
 
     if (p > closest) {
 
@@ -21988,12 +21995,7 @@ string Table_find_misspelled_imported_mod(Table *table, string name,
     };
   };
 
-  if (closest >= min_match) {
-
-    return closest_mod;
-  };
-
-  return tos2((byte *)"");
+  return (closest >= min_match) ? (closest_mod) : (tos2((byte *)""));
 }
 map_int build_keys() {
 
@@ -22563,59 +22565,59 @@ void init_consts() {
                 main__Token_and_assign, main__Token_righ_shift_assign,
                 main__Token_left_shift_assign});
   main__HelpText = tos2((
-      byte
-          *)"Usage: v [options/subcommands] [file.v | directory]\n\n\n\n   "
-            "When V is run without any arguments, it is a shorthand for `v "
-            "runrepl`.\n\n   When given a .v file, it will be compiled. The "
-            "output executable will have the same name as the input .v file.\n "
-            "  You can use -o to specify a different output name.\n\n   When "
-            "given a directory, all the .v files contained in it, will be "
-            "compiled as part of a single main module. \n   By default the "
-            "executable will be named a.out.\n\n   Any file ending in _test.v, "
-            "will be treated as a test. \n   It will be compiled and run, "
-            "evaluating the assert statements in every function named "
-            "test_xxx.\n\n   You can put common options inside an environment "
-            "variable named VFLAGS, so that you do not repeat them. \n   You "
-            "can set it like this: `export VFLAGS=\"-cc clang -debug\"` on "
-            "unix, `set VFLAGS=-os msvc` on windows.\n   \nOptions:  \n  -     "
-            "            Shorthand for `v runrepl` .\n  -h, help          "
-            "Display this information.\n  -live             Enable hot code "
-            "reloading (required by functions marked with [live]).\n  -os <OS> "
-            "         Produce an executable for the selected OS. \n            "
-            "        OS can be linux, mac, windows, msvc, etc...\n             "
-            "       -os msvc is useful, if you want to use the MSVC compiler "
-            "on Windows.\n  -prod             Build an optimized executable.\n "
-            " -v, version       Display compiler version and git hash of the "
-            "compiler source.\n  \nDebugging options:\n  -cc <ccompiler>   "
-            "Specify which C compiler you want to use as a C backend. \n       "
-            "             The C backend compiler should be able to handle C99 "
-            "compatible C code.\n                    Common C compilers are "
-            "gcc, clang, tcc, icc, cl ...\n  -cflags flags     Pass additional "
-            "C flags to the C backend compiler.\n                    Example: "
-            "-cflags `sdl2-config --cflags`\n                    \n  -debug    "
-            "        Keep the generated C file for debugging in program.tmp.c "
-            "even after compilation.\n  -g                Show v line numbers "
-            "in backtraces. Implies -debug.  \n  -o <file>         Place "
-            "output into <file>. If file has a .c suffix, produce C source, "
-            "and do not compile it further.\n  -obf              Obfuscate the "
-            "resulting binary.\n  -show_c_cmd       Print the full C "
-            "compilation command and how much time it took.\n  "
-            "\n\nSubcommands:\n  up                Update V. Run `v up` at "
-            "least once per day, since V development is rapid and "
-            "features/bugfixes are added constantly.\n  run <file.v>      "
-            "Build and execute the V program in file.v . You can add arguments "
-            "for the V program *after* the file name.\n  build module      "
-            "Compile a module into an object file.\n  runrepl           Run "
-            "the V REPL. If V is running in a tty terminal, the REPL is "
-            "interactive, otherwise it just reads from stdin.\n  symlink       "
-            "    Useful on unix systems. Symlinks the current V executable to "
-            "/usr/local/bin/v, so that V is globally available.\n  install "
-            "module    Install a user module from https://vpm.vlang.io/ .\n  "
-            "test v            Run all V test files, and compile all V "
-            "examples.\n\n  fmt               Run vfmt to format the source "
-            "code. [wip]\n  doc               Run vdoc over the source code "
-            "and produce documentation. [wip]\n  translate         Translates "
-            "C to V. [wip, will be available in V 0.3]  \n");
+      byte *)"Usage: v [options/subcommands] [file.v | directory]\n\n   When V "
+             "is run without any arguments, it is a shorthand for `v "
+             "runrepl`.\n\n   When given a .v file, it will be compiled. The "
+             "output executable will have the same name as the input .v "
+             "file.\n   You can use -o to specify a different output name.\n\n "
+             "  When given a directory, all the .v files contained in it, will "
+             "be compiled as part of a single main module.\n   By default the "
+             "executable will be named a.out.\n\n   Any file ending in "
+             "_test.v, will be treated as a test.\n   It will be compiled and "
+             "run, evaluating the assert statements in every function named "
+             "test_xxx.\n\n   You can put common options inside an environment "
+             "variable named VFLAGS, so that you do not repeat them.\n   You "
+             "can set it like this: `export VFLAGS=\"-cc clang -debug\"` on "
+             "unix, `set VFLAGS=-os msvc` on windows.\n\nOptions:\n  -         "
+             "        Shorthand for `v runrepl`.\n  -h, --help        Display "
+             "this information.\n  -live             Enable hot code reloading "
+             "(required by functions marked with [live]).\n  -os <OS>          "
+             "Produce an executable for the selected OS.\n                    "
+             "OS can be linux, mac, windows, msvc, etc...\n                    "
+             "-os msvc is useful, if you want to use the MSVC compiler on "
+             "Windows.\n  -prod             Build an optimized executable.\n  "
+             "-v, --version     Display compiler version and git hash of the "
+             "compiler source.\n\nDebugging options:\n  -cc <ccompiler>   "
+             "Specify which C compiler you want to use as a C backend.\n       "
+             "             The C backend compiler should be able to handle C99 "
+             "compatible C code.\n                    Common C compilers are "
+             "gcc, clang, tcc, icc, cl...\n  -cflags <flags>   Pass additional "
+             "C flags to the C backend compiler.\n                    Example: "
+             "-cflags `sdl2-config --cflags`\n\n  -debug            Keep the "
+             "generated C file for debugging in program.tmp.c even after "
+             "compilation.\n  -g                Show v line numbers in "
+             "backtraces. Implies -debug.\n  -o <file>         Place output "
+             "into <file>. If file has a .c suffix, produce C source, and do "
+             "not compile it further.\n  -obf              Obfuscate the "
+             "resulting binary.\n  -show_c_cmd       Print the full C "
+             "compilation command and how much time it "
+             "took.\n\n\nSubcommands:\n  up                Update V. Run `v "
+             "up` at least once per day, since V development is rapid and "
+             "features/bugfixes are added constantly.\n  run <file.v>      "
+             "Build and execute the V program in file.v. You can add arguments "
+             "for the V program *after* the file name.\n  build <module>    "
+             "Compile a module into an object file.\n  runrepl           Run "
+             "the V REPL. If V is running in a tty terminal, the REPL is "
+             "interactive, otherwise it just reads from stdin.\n  symlink      "
+             "     Useful on unix systems. Symlinks the current V executable "
+             "to /usr/local/bin/v, so that V is globally available.\n  install "
+             "<module>  Install a user module from https://vpm.vlang.io/.\n  "
+             "test v            Run all V test files, and compile all V "
+             "examples.\n\n  fmt               Run vfmt to format the source "
+             "code. [wip]\n  doc               Run vdoc over the source code "
+             "and produce documentation. [wip]\n  translate         Translates "
+             "C to V. [wip, will be available in V 0.3]\n  version           "
+             "Display compiler version and git hash of the compiler source.\n");
 }
 
 string _STR(const char *fmt, ...) {
