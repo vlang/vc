@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c614639"
+#define V_COMMIT_HASH "3dc4abd"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "21f3b9e"
+#define V_COMMIT_HASH "c614639"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -6077,6 +6077,11 @@ void V_cc(V *v) {
   };
 
   if (v->pref->build_mode == main__BuildMode_build_module) {
+
+    if (!os__file_exists(main__ModPath)) {
+
+      os__mkdir(main__ModPath);
+    };
 
     v->out_name =
         string_add(string_add(main__ModPath, v->dir), tos2((byte *)".o"));
