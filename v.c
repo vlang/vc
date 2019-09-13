@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "21f3b9e"
+#define V_COMMIT_HASH "c614639"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7f3cfea"
+#define V_COMMIT_HASH "21f3b9e"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -10822,9 +10822,9 @@ V *new_v(array_string args) {
     dir = get_all_after(joined_args, tos2((byte *)"run"), tos2((byte *)""));
   };
 
-  if (string_ends_with(dir, tos2((byte *)"/"))) {
+  if (string_ends_with(dir, os__PathSeparator)) {
 
-    dir = string_all_before_last(dir, tos2((byte *)"/"));
+    dir = string_all_before_last(dir, os__PathSeparator);
   };
 
   if (args.len < 2) {
@@ -10840,8 +10840,8 @@ V *new_v(array_string args) {
 
     build_mode = main__BuildMode_build_module;
 
-    mod = (string_contains(dir, tos2((byte *)"/")))
-              ? (string_all_after(dir, tos2((byte *)"/")))
+    mod = (string_contains(dir, os__PathSeparator))
+              ? (string_all_after(dir, os__PathSeparator))
               : (dir);
 
     printf("Building module \"%.*s\" (dir=\"%.*s\")...\n", mod.len, mod.str,
@@ -10874,7 +10874,7 @@ V *new_v(array_string args) {
   if (string_eq(dir, tos2((byte *)".")) &&
       string_eq(out_name, tos2((byte *)"a.out"))) {
 
-    string base = string_all_after(os__getwd(), tos2((byte *)"/"));
+    string base = string_all_after(os__getwd(), os__PathSeparator);
 
     out_name = string_trim_space(base);
   };
@@ -11060,7 +11060,7 @@ V *new_v(array_string args) {
           .ccompiler = find_c_compiler(),
           .building_v =
               !is_repl && (string_eq(rdir_name, tos2((byte *)"compiler")) ||
-                           string_contains(dir, tos2((byte *)"v/vlib"))),
+                           string_contains(dir, tos2((byte *)"vlib"))),
           .no_auto_free = 0,
       },
       sizeof(Preferences));
@@ -11072,7 +11072,7 @@ V *new_v(array_string args) {
 
   if (pref->is_so) {
 
-    out_name_c = string_add(string_all_after(out_name, tos2((byte *)"/")),
+    out_name_c = string_add(string_all_after(out_name, os__PathSeparator),
                             tos2((byte *)"_shared_lib.c"));
   };
 
