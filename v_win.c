@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5055ac4"
+#define V_COMMIT_HASH "41734af"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8fe46d5"
+#define V_COMMIT_HASH "5055ac4"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -759,6 +759,9 @@ void strings__Builder_writeln(strings__Builder *b, string s);
 string strings__Builder_str(strings__Builder b);
 void strings__Builder_cut(strings__Builder *b, int n);
 void strings__Builder_free(strings__Builder *b);
+int strings__levenshtein_distance(string a, string b);
+f64 strings__levenshtein_distance_percentage(string a, string b);
+f64 strings__dice_coefficient(string s1, string s2);
 string strings__repeat(byte c, int n);
 array_string os__init_os_args(int argc, byteptr *argv);
 array_string os__parse_windows_cmd_line(byte *cmd);
@@ -1029,6 +1032,7 @@ void Parser_fn_args(Parser *p, Fn *f);
 Fn *Parser_fn_call_args(Parser *p, Fn *f);
 string Fn_typ_str(Fn f);
 string Fn_str_args(Fn *f, Table *table);
+string Fn_find_misspelled_local_var(Fn *f, string name, f64 min_match);
 void Parser_gen_json_for_type(Parser *p, Type typ);
 bool is_js_prim(string typ);
 string Parser_decode_array(Parser *p, string array_type);
@@ -1235,6 +1239,11 @@ bool FileImportTable_known_alias(FileImportTable *fit, string alias);
 bool FileImportTable_is_aliased(FileImportTable *fit, string mod);
 string FileImportTable_resolve_alias(FileImportTable *fit, string alias);
 bool Type_contains_field_type(Type *t, string typ);
+string Table_identify_typo(Table *table, string name, Fn *current_fn,
+                           FileImportTable *fit);
+string Table_find_misspelled_fn(Table *table, string name, f64 min_match);
+string Table_find_misspelled_imported_mod(Table *table, string name,
+                                          FileImportTable *fit, f64 min_match);
 map_int build_keys();
 array_string build_token_str();
 Token key_to_token(string key);
@@ -3805,6 +3814,115 @@ string strings__Builder_str(strings__Builder b) {
 }
 void strings__Builder_cut(strings__Builder *b, int n) { b->len -= n; }
 void strings__Builder_free(strings__Builder *b) { v_free(b->buf.data); }
+int strings__levenshtein_distance(string a, string b) {
+
+  array_int f = array_repeat(&(int[]){((int)(0))}, b.len + 1, sizeof(int));
+
+  string tmp2 = a;
+  ;
+  for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
+    byte ca = ((byte *)tmp2.str)[tmp3];
+
+    int j = 1;
+
+    int fj1 = (*(int *)array__get(f, 0));
+
+    (*(int *)array__get(f, 0))++;
+
+    string tmp10 = b;
+    ;
+    for (int tmp11 = 0; tmp11 < tmp10.len; tmp11++) {
+      byte cb = ((byte *)tmp10.str)[tmp11];
+
+      int mn =
+          ((*(int *)array__get(f, j)) + 1 <= (*(int *)array__get(f, j - 1)) + 1)
+              ? ((*(int *)array__get(f, j)) + 1)
+              : ((*(int *)array__get(f, j - 1)) + 1);
+
+      if (cb != ca) {
+
+        mn = (mn <= fj1 + 1) ? (mn) : (fj1 + 1);
+
+      } else {
+
+        mn = (mn <= fj1) ? (mn) : (fj1);
+      };
+
+      fj1 = (*(int *)array__get(f, j));
+
+      array_set(&/*q*/ f, j, &(int[]){mn});
+
+      j++;
+    };
+  };
+
+  return (*(int *)array__get(f, f.len - 1));
+}
+f64 strings__levenshtein_distance_percentage(string a, string b) {
+
+  int d = strings__levenshtein_distance(a, b);
+
+  int l = (a.len >= b.len) ? (a.len) : (b.len);
+
+  return (1.00 - ((f64)(d)) / ((f64)(l))) * 100.00;
+}
+f64 strings__dice_coefficient(string s1, string s2) {
+
+  if (s1.len == 0 || s2.len == 0) {
+
+    return 0.0;
+  };
+
+  if (string_eq(s1, s2)) {
+
+    return 1.0;
+  };
+
+  if (s1.len < 2 || s2.len < 2) {
+
+    return 0.0;
+  };
+
+  map_int first_bigrams = new_map(1, sizeof(int));
+
+  for (int i = 0; i < s1.len - 1; i++) {
+
+    byte a = string_at(s1, i);
+
+    byte b = string_at(s1, i + 1);
+
+    string bigram = byte_str((a + b));
+
+    int tmp36 = 0;
+    bool tmp37 = map_get(first_bigrams, bigram, &tmp36);
+
+    map__set(&first_bigrams, bigram,
+             &(int[]){(_IN_MAP(bigram, first_bigrams)) ? (tmp36 + 1) : (1)});
+  };
+
+  int intersection_size = 0;
+
+  for (int i = 0; i < s2.len - 1; i++) {
+
+    byte a = string_at(s2, i);
+
+    byte b = string_at(s2, i + 1);
+
+    string bigram = byte_str((a + b));
+
+    int tmp47 = 0;
+    bool tmp48 = map_get(first_bigrams, bigram, &tmp47);
+
+    int count = (_IN_MAP(bigram, first_bigrams)) ? (tmp47) : (0);
+
+    if (count > 0) {
+
+      intersection_size++;
+    };
+  };
+
+  return (2.0 * intersection_size) / (((f64)(s1.len)) + ((f64)(s2.len)) - 2);
+}
 string strings__repeat(byte c, int n) {
 
   if (n <= 0) {
@@ -9522,6 +9640,46 @@ string Fn_str_args(Fn *f, Table *table) {
 
   return s;
 }
+string Fn_find_misspelled_local_var(Fn *f, string name, f64 min_match) {
+
+  f64 closest = ((f64)(0));
+
+  string closest_var = tos2((byte *)"");
+
+  array_Var tmp145 = f->local_vars;
+  ;
+  for (int tmp146 = 0; tmp146 < tmp145.len; tmp146++) {
+    Var var = ((Var *)tmp145.data)[tmp146];
+
+    string n =
+        _STR("%.*s.%.*s", f->mod.len, f->mod.str, var.name.len, var.name.str);
+
+    if (string_eq(var.name, tos2((byte *)"")) ||
+        !string_starts_with(name, f->mod) ||
+        (n.len - name.len > 3 || name.len - n.len > 3)) {
+
+      continue;
+    };
+
+    f64 p = strings__dice_coefficient(name, n);
+
+    printf(" ## %.*s - %.*s: %f\n", name.len, name.str, n.len, n.str, p);
+
+    if (p > closest) {
+
+      closest = p;
+
+      closest_var = n;
+    };
+  };
+
+  if (closest >= min_match) {
+
+    return closest_var;
+  };
+
+  return tos2((byte *)"");
+}
 void Parser_gen_json_for_type(Parser *p, Type typ) {
 
   string dec = tos2((byte *)"");
@@ -14490,6 +14648,15 @@ string Parser_name_expr(Parser *p) {
 
       if (string_eq(f.name, tos2((byte *)""))) {
 
+        string suggested = Table_identify_typo(&/* ? */ *p->table, name,
+                                               p->cur_fn, p->import_table);
+
+        if (string_ne(suggested, tos2((byte *)""))) {
+
+          Parser_error(p, _STR("undefined: `%.*s`. did you mean:%.*s", name.len,
+                               name.str, suggested.len, suggested.str));
+        };
+
         if (Table_known_mod(&/* ? */ *p->table, orig_name) ||
             FileImportTable_known_alias(&/* ? */ *p->import_table, orig_name)) {
 
@@ -15680,7 +15847,7 @@ string Parser_assoc(Parser *p) {
 
     string field = Parser_check_name(p);
 
-    _PUSH(&fields, (field), tmp237, string);
+    _PUSH(&fields, (field), tmp238, string);
 
     Parser_gen(p, _STR(".%.*s = ", field.len, field.str));
 
@@ -15698,10 +15865,10 @@ string Parser_assoc(Parser *p) {
 
   Type T = Table_find_type(&/* ? */ *p->table, var.typ);
 
-  array_Var tmp239 = T.fields;
+  array_Var tmp240 = T.fields;
   ;
-  for (int tmp240 = 0; tmp240 < tmp239.len; tmp240++) {
-    Var ffield = ((Var *)tmp239.data)[tmp240];
+  for (int tmp241 = 0; tmp241 < tmp240.len; tmp241++) {
+    Var ffield = ((Var *)tmp240.data)[tmp241];
 
     string f = ffield.name;
 
@@ -16371,7 +16538,7 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
 
       Var f = Type_find_field(&/* ? */ t, field);
 
-      _PUSH(&inited_fields, (field), tmp294, string);
+      _PUSH(&inited_fields, (field), tmp295, string);
 
       Parser_gen(p, _STR(".%.*s = ", field.len, field.str));
 
@@ -16401,10 +16568,10 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
       Parser_gen(p, tos2((byte *)","));
     };
 
-    array_Var tmp295 = t.fields;
+    array_Var tmp296 = t.fields;
     ;
-    for (int i = 0; i < tmp295.len; i++) {
-      Var field = ((Var *)tmp295.data)[i];
+    for (int i = 0; i < tmp296.len; i++) {
+      Var field = ((Var *)tmp296.data)[i];
 
       if (_IN(string, field.name, inited_fields)) {
 
@@ -16426,7 +16593,7 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
                            field.name.str, string_right(field_typ, 4).len,
                            string_right(field_typ, 4).str));
 
-        _PUSH(&inited_fields, (field.name), tmp297, string);
+        _PUSH(&inited_fields, (field.name), tmp298, string);
 
         if (i != t.fields.len - 1) {
 
@@ -16464,10 +16631,10 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
       T = Table_find_type(&/* ? */ *p->table, T.parent);
     };
 
-    array_Var tmp300 = T.fields;
+    array_Var tmp301 = T.fields;
     ;
-    for (int i = 0; i < tmp300.len; i++) {
-      Var ffield = ((Var *)tmp300.data)[i];
+    for (int i = 0; i < tmp301.len; i++) {
+      Var ffield = ((Var *)tmp301.data)[i];
 
       string expr_typ = Parser_bool_expression(p);
 
@@ -17302,9 +17469,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
             Parser_check(p, main__Token_rcbr);
           };
 
-          string tmp354 = res_typ;
+          string tmp355 = res_typ;
           { Parser_check(p, main__Token_rcbr); }
-          return tmp354;
+          return tmp355;
           ;
 
         } else {
@@ -17319,9 +17486,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
           p->returns = all_cases_return && p->returns;
 
-          string tmp355 = tos2((byte *)"");
+          string tmp356 = tos2((byte *)"");
           { Parser_check(p, main__Token_rcbr); }
-          return tmp355;
+          return tmp356;
           ;
         };
       };
@@ -17346,9 +17513,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         Parser_gen(p, strings__repeat(')', i + 1));
 
-        string tmp357 = res_typ;
+        string tmp358 = res_typ;
         { Parser_check(p, main__Token_rcbr); }
-        return tmp357;
+        return tmp358;
         ;
 
       } else {
@@ -17365,9 +17532,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         p->returns = all_cases_return && p->returns;
 
-        string tmp358 = tos2((byte *)"");
+        string tmp359 = tos2((byte *)"");
         { Parser_check(p, main__Token_rcbr); }
-        return tmp358;
+        return tmp359;
         ;
       };
     };
@@ -17482,9 +17649,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
   p->returns = 0;
 
-  string tmp360 = tos2((byte *)"");
+  string tmp361 = tos2((byte *)"");
   { Parser_check(p, main__Token_rcbr); }
-  return tmp360;
+  return tmp361;
   ;
 
   { Parser_check(p, main__Token_rcbr); }
@@ -17574,10 +17741,10 @@ void Parser_return_st(Parser *p) {
 
         string total_text = tos2((byte *)"");
 
-        array_string tmp371 = p->cur_fn->defer_text;
+        array_string tmp372 = p->cur_fn->defer_text;
         ;
-        for (int tmp372 = 0; tmp372 < tmp371.len; tmp372++) {
-          string text = ((string *)tmp371.data)[tmp372];
+        for (int tmp373 = 0; tmp373 < tmp372.len; tmp373++) {
+          string text = ((string *)tmp372.data)[tmp373];
 
           if (string_ne(text, tos2((byte *)""))) {
 
@@ -17743,10 +17910,10 @@ string Parser_js_decode(Parser *p) {
 
     Type T = Table_find_type(&/* ? */ *p->table, typ);
 
-    array_Var tmp386 = T.fields;
+    array_Var tmp387 = T.fields;
     ;
-    for (int tmp387 = 0; tmp387 < tmp386.len; tmp387++) {
-      Var field = ((Var *)tmp386.data)[tmp387];
+    for (int tmp388 = 0; tmp388 < tmp387.len; tmp388++) {
+      Var field = ((Var *)tmp387.data)[tmp388];
 
       string def_val = type_default(field.typ);
 
@@ -17774,7 +17941,7 @@ string Parser_js_decode(Parser *p) {
     string opt_type = _STR("Option_%.*s", typ.len, typ.str);
 
     _PUSH(&p->cgen->typedefs,
-          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp390,
+          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp391,
           string);
 
     Table_register_type(p->table, opt_type);
@@ -21622,6 +21789,124 @@ bool Type_contains_field_type(Type *t, string typ) {
   };
 
   return 0;
+}
+string Table_identify_typo(Table *table, string name, Fn *current_fn,
+                           FileImportTable *fit) {
+
+  if (name.len < 2) {
+
+    return tos2((byte *)"");
+  };
+
+  f32 min_match = 0.8;
+
+  string name_orig = string_replace(
+      string_replace(name, tos2((byte *)"__"), tos2((byte *)".")),
+      tos2((byte *)"_dot_"), tos2((byte *)"."));
+
+  string output = tos2((byte *)"");
+
+  string n = Table_find_misspelled_fn(&/* ? */ *table, name_orig, min_match);
+
+  if (string_ne(n, tos2((byte *)""))) {
+
+    output = string_add(output, _STR("\n  * function: `%.*s`", n.len, n.str));
+  };
+
+  n = Fn_find_misspelled_local_var(&/* ? */ *current_fn, name_orig, min_match);
+
+  if (string_ne(n, tos2((byte *)""))) {
+
+    output = string_add(output, _STR("\n  * variable: `%.*s`", n.len, n.str));
+  };
+
+  n = Table_find_misspelled_imported_mod(&/* ? */ *table, name_orig, fit,
+                                         min_match);
+
+  if (string_ne(n, tos2((byte *)""))) {
+
+    output = string_add(output, _STR("\n  * module: `%.*s`", n.len, n.str));
+  };
+
+  return output;
+}
+string Table_find_misspelled_fn(Table *table, string name, f64 min_match) {
+
+  f64 closest = ((f64)(0));
+
+  string closest_fn = tos2((byte *)"");
+
+  map_Fn tmp112 = table->fns;
+  array_string keys_tmp112 = map_keys(&tmp112);
+  for (int l = 0; l < keys_tmp112.len; l++) {
+    string _ = ((string *)keys_tmp112.data)[l];
+    Fn f = {0};
+    map_get(tmp112, _, &f);
+
+    string n = _STR("%.*s.%.*s", f.mod.len, f.mod.str, f.name.len, f.name.str);
+
+    if (!string_starts_with(name, f.mod) ||
+        (n.len - name.len > 3 || name.len - n.len > 3)) {
+
+      continue;
+    };
+
+    f64 p = strings__dice_coefficient(name, n);
+
+    if (p > closest) {
+
+      closest = p;
+
+      closest_fn = n;
+    };
+  };
+
+  if (closest >= min_match) {
+
+    return closest_fn;
+  };
+
+  return tos2((byte *)"");
+}
+string Table_find_misspelled_imported_mod(Table *table, string name,
+                                          FileImportTable *fit, f64 min_match) {
+
+  f64 closest = ((f64)(0));
+
+  string closest_mod = tos2((byte *)"");
+
+  map_string tmp117 = fit->imports;
+  array_string keys_tmp117 = map_keys(&tmp117);
+  for (int l = 0; l < keys_tmp117.len; l++) {
+    string alias = ((string *)keys_tmp117.data)[l];
+    string mod = {0};
+    map_get(tmp117, alias, &mod);
+
+    string n = _STR("%.*s.%.*s", fit->module_name.len, fit->module_name.str,
+                    alias.len, alias.str);
+
+    if (!string_starts_with(name, fit->module_name) ||
+        (n.len - name.len > 3 || name.len - n.len > 3)) {
+
+      continue;
+    };
+
+    f64 p = strings__dice_coefficient(name, n);
+
+    if (p > closest) {
+
+      closest = p;
+
+      closest_mod = _STR("%.*s (%.*s)", alias.len, alias.str, mod.len, mod.str);
+    };
+  };
+
+  if (closest >= min_match) {
+
+    return closest_mod;
+  };
+
+  return tos2((byte *)"");
 }
 map_int build_keys() {
 
