@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d340dd7"
+#define V_COMMIT_HASH "c604a5c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "81bf67b"
+#define V_COMMIT_HASH "d340dd7"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -16269,6 +16269,8 @@ string Parser_array_init(Parser *p) {
             CGen_resetln(p->cgen, tos2((byte *)""));
 
             Parser_gen(p, tos2((byte *)"{0}"));
+
+            p->is_alloc = 0;
 
             if (is_const_len) {
 
