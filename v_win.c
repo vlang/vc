@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c614639"
+#define V_COMMIT_HASH "d340dd7"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "21f3b9e"
+#define V_COMMIT_HASH "81bf67b"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1959,6 +1959,7 @@ string string_replace(string s, string rep, string with) {
 
   b[/*ptr*/ new_len] /*rbyte 1*/ = '\0';
 
+  v_array_free(idxs); /* :) close_scope free array_int */
   return tos(b, new_len);
 }
 int v_string_int(string s) { return atoi(s.str); }
@@ -2261,6 +2262,7 @@ int string_index(string s, string p) {
     };
   };
 
+  v_array_free(prefix); /* :) close_scope free array_int */
   return -1;
 }
 int string_index_any(string s, string chars) {
@@ -2455,6 +2457,7 @@ string string_title(string s) {
 
   string title = array_string_join(tit, tos2((byte *)" "));
 
+  v_array_free(tit); /* :) close_scope free array_string */
   return title;
 }
 string string_find_between(string s, string start, string end) {
@@ -2898,6 +2901,7 @@ void print_backtrace_skipping_top_frames(int skipframes) {
   backtrace_symbols_fd(&/*vvar*/ buffer[skipframes] /*rbyte* 0*/,
                        (byte *)nr_ptrs - skipframes, 1);
 
+  v_ptr_free(buffer); /* :) close_scope free [100]byte* */
   return;
 
 #endif
@@ -2914,6 +2918,7 @@ void print_backtrace_skipping_top_frames(int skipframes) {
     backtrace_symbols_fd(&/*vvar*/ buffer[skipframes] /*rbyte* 0*/,
                          (byte *)nr_ptrs - skipframes, 1);
 
+    v_ptr_free(buffer); /* :) close_scope free [100]byte* */
     return;
 
   } else {
@@ -2936,15 +2941,15 @@ void _panic_debug(int line_no, string file, string mod, string fn_name,
 
   println(tos2((byte *)"================ V panic ================"));
 
-  println(_STR("   module: %.*s", mod.len, mod.str));
+  printf("   module: %.*s\n", mod.len, mod.str);
 
-  println(_STR(" function: %.*s()", fn_name.len, fn_name.str));
+  printf(" function: %.*s()\n", fn_name.len, fn_name.str);
 
-  println(_STR("     file: %.*s", file.len, file.str));
+  printf("     file: %.*s\n", file.len, file.str);
 
   println(string_add(tos2((byte *)"     line: "), int_str(line_no)));
 
-  println(_STR("  message: %.*s", s.len, s.str));
+  printf("  message: %.*s\n", s.len, s.str);
 
   println(tos2((byte *)"========================================="));
 
@@ -2954,7 +2959,7 @@ void _panic_debug(int line_no, string file, string mod, string fn_name,
 }
 void v_panic(string s) {
 
-  println(_STR("V panic: %.*s", s.len, s.str));
+  printf("V panic: %.*s\n", s.len, s.str);
 
   print_backtrace();
 
@@ -4155,6 +4160,7 @@ array_string os__read_lines(string path) {
 
   fclose(fp);
 
+  v_ptr_free(buf); /* :) close_scope free byte* */
   return res;
 }
 array_ustring os__read_ulines(string path) {
@@ -4186,6 +4192,7 @@ Option_os__File os__open(string path) {
 
   file = (struct os__File){.cfile = _wfopen(wpath, string_to_wide(mode))};
 
+  v_ptr_free(wpath); // close_scope free
 #else
 
   byte *cpath = path.str;
@@ -4216,6 +4223,7 @@ Option_os__File os__create(string path) {
 
   file = (os__File){.cfile = _wfopen(wpath, string_to_wide(mode))};
 
+  v_ptr_free(wpath); // close_scope free
 #else
 
   byte *cpath = path.str;
@@ -4246,6 +4254,7 @@ Option_os__File os__open_append(string path) {
 
   file = (os__File){.cfile = _wfopen(wpath, string_to_wide(mode))};
 
+  v_ptr_free(wpath); // close_scope free
 #else
 
   byte *cpath = path.str;
@@ -4822,6 +4831,7 @@ string os__executable() {
 
   sysctl(mib.data, 4, result, &/*vvar*/ size, 0, 0);
 
+  v_array_free(mib); /* :) close_scope free array_int */
   return (tos2((byte *)result));
 
 #endif
@@ -5050,8 +5060,8 @@ array_string os__ls(string path) {
 
   if (!os__dir_exists(path)) {
 
-    println(_STR("ls() couldnt open dir \"%.*s\" (does not exist).", path.len,
-                 path.str));
+    printf("ls() couldnt open dir \"%.*s\" (does not exist).\n", path.len,
+           path.str);
 
     return dir_files;
   };
@@ -5082,6 +5092,7 @@ array_string os__ls(string path) {
 
   FindClose(h_find_files);
 
+  v_ptr_free(h_find_files); /* :) close_scope free void* */
   return dir_files;
 }
 bool os__dir_exists(string path) {
@@ -5126,6 +5137,7 @@ HANDLE os__get_file_handle(string path) {
 
   void *_handle = _get_osfhandle(_fileno(_fd));
 
+  v_ptr_free(_fd); /* :) close_scope free void* */
   return _handle;
 }
 Option_string os__get_module_filename(HANDLE handle) {
@@ -5151,6 +5163,7 @@ Option_string os__get_module_filename(HANDLE handle) {
     };
   };
 
+  v_ptr_free(buf); /* :) close_scope free u16* */
   v_panic(tos2((byte *)"this should be unreachable"));
 }
 void *os__ptr_win_get_error_msg(u32 code) {
@@ -6188,10 +6201,15 @@ void V_cc(V *v) {
 
   if (v->pref->build_mode == main__BuildMode_build_module) {
 
+    if (!os__file_exists(main__ModPath)) {
+
+      os__mkdir(main__ModPath);
+    };
+
     v->out_name =
         string_add(string_add(main__ModPath, v->dir), tos2((byte *)".o"));
 
-    println(_STR("Building %.*s...", v->out_name.len, v->out_name.str));
+    printf("Building %.*s...\n", v->out_name.len, v->out_name.str);
   };
 
   if (v->pref->is_prod) {
@@ -6236,7 +6254,7 @@ void V_cc(V *v) {
 
     if (!os__file_exists(libs)) {
 
-      println(_STR("object file `%.*s` not found", libs.len, libs.str));
+      printf("object file `%.*s` not found\n", libs.len, libs.str);
 
       v_exit(1);
     };
@@ -6413,8 +6431,8 @@ void V_cc(V *v) {
 
   if (v->pref->show_c_cmd || v->pref->is_verbose) {
 
-    println(_STR("%.*s took %lld ms", v->pref->ccompiler.len,
-                 v->pref->ccompiler.str, diff));
+    printf("%.*s took %lld ms\n", v->pref->ccompiler.len,
+           v->pref->ccompiler.str, diff);
 
     println(tos2((byte *)"=========\n"));
   };
@@ -6424,6 +6442,8 @@ void V_cc(V *v) {
 
     os__rm(v->out_name_c);
   };
+
+  v_array_free(a); // close_scope free
 }
 void V_cc_windows_cross(V *c) {
 
@@ -6458,7 +6478,7 @@ void V_cc_windows_cross(V *c) {
 
     if (!os__file_exists(libs)) {
 
-      println(_STR("`%.*s` not found", libs.len, libs.str));
+      printf("`%.*s` not found\n", libs.len, libs.str);
 
       v_exit(1);
     };
@@ -6497,10 +6517,10 @@ void V_cc_windows_cross(V *c) {
     string winroot_url = tos2((byte *)"https://github.com/vlang/v/releases/"
                                       "download/v0.1.10/winroot.zip");
 
-    println(_STR("\"%.*s\" not found.", winroot.len, winroot.str));
+    printf("\"%.*s\" not found.\n", winroot.len, winroot.str);
 
-    println(_STR("Download it from %.*s and save it in %.*s", winroot_url.len,
-                 winroot_url.str, main__ModPath.len, main__ModPath.str));
+    printf("Download it from %.*s and save it in %.*s\n", winroot_url.len,
+           winroot_url.str, main__ModPath.len, main__ModPath.str);
 
     println(tos2((byte *)"Unzip it afterwards.\n"));
 
@@ -6808,6 +6828,8 @@ void Table_parse_cflag(Table *table, string cflag) {
       break;
     };
   };
+
+  v_array_free(allowed_flags); // close_scope free
 }
 CGen *new_cgen(string out_name_c) {
 
@@ -6817,7 +6839,7 @@ CGen *new_cgen(string out_name_c) {
   if (!tmp2.ok) {
     string err = tmp2.error;
 
-    println(_STR("failed to create %.*s", path.len, path.str));
+    printf("failed to create %.*s\n", path.len, path.str);
 
     return (CGen *)memdup(
         &(CGen){.out_path = tos((byte *)"", 0),
@@ -6960,8 +6982,8 @@ void CGen_start_tmp(CGen *g) {
 
     println(g->tmp_line);
 
-    println(_STR("start_tmp() already started. cur_line=\"%.*s\"",
-                 g->cur_line.len, g->cur_line.str));
+    printf("start_tmp() already started. cur_line=\"%.*s\"\n", g->cur_line.len,
+           g->cur_line.str);
 
     v_exit(1);
   };
@@ -7108,7 +7130,7 @@ void build_thirdparty_obj_file(string path) {
     return;
   };
 
-  println(_STR("%.*s not found, building it...", obj_path.len, obj_path.str));
+  printf("%.*s not found, building it...\n", obj_path.len, obj_path.str);
 
   string parent = os__dir(obj_path);
 
@@ -7145,7 +7167,7 @@ void build_thirdparty_obj_file(string path) {
   if (!tmp35.ok) {
     string err = tmp35.error;
 
-    println(_STR("failed thirdparty object build cmd: %.*s", cmd.len, cmd.str));
+    printf("failed thirdparty object build cmd: %.*s\n", cmd.len, cmd.str);
 
     cerror(err);
 
@@ -7264,6 +7286,8 @@ string V_c_type_definitions(V *v) {
 
   array_Type types_sorted = sort_structs(types);
 
+  v_array_free(types);    /* :) close_scope free array_Type */
+  v_array_free(builtins); /* :) close_scope free array_string */
   return string_add(string_add(types_to_c(builtin_types, v->table),
                                tos2((byte *)"\n//----\n")),
                     types_to_c(types_sorted, v->table));
@@ -7345,6 +7369,8 @@ array_Type sort_structs(array_Type types) {
     };
 
     DepGraph_add(dep_graph, t.name, field_deps);
+
+    v_array_free(field_deps); // close_scope free
   };
 
   DepGraph *dep_graph_sorted = DepGraph_resolve(&/* ? */ *dep_graph);
@@ -7378,6 +7404,9 @@ array_Type sort_structs(array_Type types) {
     };
   };
 
+  v_ptr_free(dep_graph);        /* :) close_scope free DepGraph* */
+  v_array_free(type_names);     /* :) close_scope free array_string */
+  v_ptr_free(dep_graph_sorted); /* :) close_scope free DepGraph* */
   return types_sorted;
 }
 void Parser_comp_time(Parser *p) {
@@ -7517,7 +7546,7 @@ void Parser_comp_time(Parser *p) {
 
     if (p->pref->is_debug) {
 
-      println(_STR("compiling tmpl %.*s", path.len, path.str));
+      printf("compiling tmpl %.*s\n", path.len, path.str);
     };
 
     if (!os__file_exists(path)) {
@@ -8194,9 +8223,9 @@ void Parser_fn_decl(Parser *p) {
     if (!Parser_first_pass(&/* ? */ *p) && !p->builtin_mod &&
         string_ne(T.mod, p->mod)) {
 
-      println(_STR("T.mod=%.*s", T.mod.len, T.mod.str));
+      printf("T.mod=%.*s\n", T.mod.len, T.mod.str);
 
-      println(_STR("p.mod=%.*s", p->mod.len, p->mod.str));
+      printf("p.mod=%.*s\n", p->mod.len, p->mod.str);
 
       Parser_error(p, _STR("cannot define new methods on non-local type `%.*s`",
                            receiver_typ.len, receiver_typ.str));
@@ -8971,9 +9000,8 @@ void Parser_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
 
     if (Parser_first_pass(&/* ? */ *p)) {
 
-      println(_STR("registering %.*s in %.*s fname=%.*s", gen_type.len,
-                   gen_type.str, f.name.len, f.name.str, f.name.len,
-                   f.name.str));
+      printf("registering %.*s in %.*s fname=%.*s\n", gen_type.len,
+             gen_type.str, f.name.len, f.name.str, f.name.len, f.name.str);
 
       Table_register_generic_fn_type(p->table, f.name, gen_type);
 
@@ -8999,9 +9027,8 @@ void Parser_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
 
     if (receiver.is_mut && !p->expr_var.is_mut) {
 
-      println(_STR("%.*s  recv=%.*s recv_mut=%d", method_call.len,
-                   method_call.str, receiver.name.len, receiver.name.str,
-                   receiver.is_mut));
+      printf("%.*s  recv=%.*s recv_mut=%d\n", method_call.len, method_call.str,
+             receiver.name.len, receiver.name.str, receiver.is_mut);
 
       Parser_error(p, _STR("`%.*s` is immutable, declare it with `mut`",
                            p->expr_var.name.len, p->expr_var.name.str));
@@ -9218,6 +9245,8 @@ void Parser_fn_args(Parser *p, Fn *f) {
 
       Parser_next(p);
     };
+
+    v_array_free(names); // close_scope free
   };
 
   { Parser_check(p, main__Token_rpar); }
@@ -10166,8 +10195,8 @@ int main(int argc, char **argv) {
 
     string version_hash = vhash();
 
-    println(_STR("V %.*s %.*s", main__Version.len, main__Version.str,
-                 version_hash.len, version_hash.str));
+    printf("V %.*s %.*s\n", main__Version.len, main__Version.str,
+           version_hash.len, version_hash.str);
 
     return 0;
   };
@@ -10275,6 +10304,8 @@ int main(int argc, char **argv) {
 
     V_run_compiled_executable_and_exit(*v);
   };
+
+  v_ptr_free(v); // close_scope free
 }
 void V_compile(V *v) {
 
@@ -10572,8 +10603,8 @@ void V_run_compiled_executable_and_exit(V v) {
 
   if (v.pref->is_verbose) {
 
-    println(_STR("============ running %.*s ============", v.out_name.len,
-                 v.out_name.str));
+    printf("============ running %.*s ============\n", v.out_name.len,
+           v.out_name.str);
   };
 
   string cmd = string_add(
@@ -10626,7 +10657,7 @@ array_string V_v_files_from_dir(V *v, string dir) {
 
   if (v->pref->is_verbose) {
 
-    println(_STR("v_files_from_dir (\"%.*s\")", dir.len, dir.str));
+    printf("v_files_from_dir (\"%.*s\")\n", dir.len, dir.str);
   };
 
   array_string_sort(&/* ? */ files);
@@ -10852,6 +10883,10 @@ void V_add_v_files_to_compile(V *v) {
 
     _PUSH(&v->files, (fit.file_path), tmp71, string);
   };
+
+  v_ptr_free(deps_resolved); // close_scope free
+  v_ptr_free(dep_graph);     // close_scope free
+  v_array_free(user_files);  // close_scope free
 }
 string get_arg(string joined_args, string arg, string def) {
 
@@ -10937,8 +10972,8 @@ V *new_v(array_string args) {
               ? (string_all_after(dir, os__PathSeparator))
               : (dir);
 
-    println(_STR("Building module \"%.*s\" (dir=\"%.*s\")...", mod.len, mod.str,
-                 dir.len, dir.str));
+    printf("Building module \"%.*s\" (dir=\"%.*s\")...\n", mod.len, mod.str,
+           dir.len, dir.str);
 
     out_name = string_add(mod, tos2((byte *)".o"));
 
@@ -10953,7 +10988,7 @@ V *new_v(array_string args) {
 
   if (is_script && !os__file_exists(dir)) {
 
-    println(_STR("`%.*s` does not exist", dir.len, dir.str));
+    printf("`%.*s` does not exist\n", dir.len, dir.str);
 
     v_exit(1);
   };
@@ -11160,7 +11195,7 @@ V *new_v(array_string args) {
 
   if (pref->is_verbose || pref->is_debug) {
 
-    println(_STR("C compiler=%.*s", pref->ccompiler.len, pref->ccompiler.str));
+    printf("C compiler=%.*s\n", pref->ccompiler.len, pref->ccompiler.str);
   };
 
   if (pref->is_so) {
@@ -11169,6 +11204,7 @@ V *new_v(array_string args) {
                             tos2((byte *)"_shared_lib.c"));
   };
 
+  v_array_free(builtins); /* :) close_scope free array_string */
   return (V *)memdup(&(V){.os = _os,
                           .out_name = out_name,
                           .files = files,
@@ -11272,7 +11308,7 @@ void vfmt(array_string args) {
 
   if (!os__file_exists(file)) {
 
-    println(_STR("\"%.*s\" does not exist", file.len, file.str));
+    printf("\"%.*s\" does not exist\n", file.len, file.str);
 
     v_exit(1);
   };
@@ -11359,7 +11395,7 @@ void test_v() {
   joined_args = string_left(
       joined_args, string_last_index(joined_args, tos2((byte *)"test")));
 
-  println(_STR("%.*s", joined_args.len, joined_args.str));
+  printf("%.*s\n", joined_args.len, joined_args.str);
 
   bool failed = 0;
 
@@ -11404,8 +11440,8 @@ void test_v() {
 
     if (r.exit_code != 0) {
 
-      println(_STR("FAIL `%.*s` (\n%.*s\n)", file.len, file.str, r.output.len,
-                   r.output.str));
+      printf("FAIL `%.*s` (\n%.*s\n)\n", file.len, file.str, r.output.len,
+             r.output.str);
 
       failed = 1;
 
@@ -11457,8 +11493,8 @@ void test_v() {
 
     if (r.exit_code != 0) {
 
-      println(_STR("FAIL `%.*s` (\n%.*s\n)", file.len, file.str, r.output.len,
-                   r.output.str));
+      printf("FAIL `%.*s` (\n%.*s\n)\n", file.len, file.str, r.output.len,
+             r.output.str);
 
       failed = 1;
 
@@ -11486,8 +11522,7 @@ void create_symlink() {
 
   if (ret == 0) {
 
-    println(_STR("symlink \"%.*s\" has been created", link_path.len,
-                 link_path.str));
+    printf("symlink \"%.*s\" has been created\n", link_path.len, link_path.str);
 
   } else {
 
@@ -11498,7 +11533,7 @@ void create_symlink() {
 }
 void cerror(string s) {
 
-  println(_STR("V error: %.*s", s.len, s.str));
+  printf("V error: %.*s\n", s.len, s.str);
 
   os__flush_stdout();
 
@@ -11536,6 +11571,8 @@ void DepGraph_from_import_tables(DepGraph *graph,
     };
 
     DepGraph_add(graph, fit.module_name, deps);
+
+    v_array_free(deps); // close_scope free
   };
 }
 array_string DepGraph_imports(DepGraph *graph) {
@@ -11627,6 +11664,8 @@ Option_string find_windows_kit_internal(RegKey key, array_string versions) {
       value[/*ptr*/ length] /*ru16 1*/ = ((u16)(0));
     };
 
+    v_ptr_free(result);  /* :) close_scope free void* */
+    v_ptr_free(result2); /* :) close_scope free void* */
     string tmp9 = OPTION_CAST(string)(string_from_wide(value));
     return opt_ok(&tmp9, sizeof(string));
   };
@@ -11780,9 +11819,9 @@ Option_VsInstallation find_vs() {
     return opt_ok(&tmp32, sizeof(VsInstallation));
   };
 
-  println(_STR(
-      "Unable to find vs installation (attempted to use lib path \"%.*s\")",
-      lib_path.len, lib_path.str));
+  printf(
+      "Unable to find vs installation (attempted to use lib path \"%.*s\")\n",
+      lib_path.len, lib_path.str);
 
   return v_error(tos2((byte *)"Unable to find vs exe folder"));
 }
@@ -12112,6 +12151,13 @@ void V_cc_msvc(V *v) {
   };
 
   os__rm(out_name_obj);
+
+  v_array_free(other_flags); // close_scope free
+  v_array_free(lib_paths);   // close_scope free
+  v_array_free(inc_paths);   // close_scope free
+  v_array_free(real_libs);   // close_scope free
+  v_array_free(alibs);       // close_scope free
+  v_array_free(a);           // close_scope free
 }
 void build_thirdparty_obj_file_with_msvc(string path) {
 
@@ -12132,13 +12178,13 @@ void build_thirdparty_obj_file_with_msvc(string path) {
 
   if (os__file_exists(obj_path)) {
 
-    println(_STR("%.*s already build.", obj_path.len, obj_path.str));
+    printf("%.*s already build.\n", obj_path.len, obj_path.str);
 
     return;
   };
 
-  println(_STR("%.*s not found, building it (with msvc)...", obj_path.len,
-               obj_path.str));
+  printf("%.*s not found, building it (with msvc)...\n", obj_path.len,
+         obj_path.str);
 
   string parent = os__dir(obj_path);
 
@@ -12176,7 +12222,7 @@ void build_thirdparty_obj_file_with_msvc(string path) {
                     include_string.len, include_string.str, cfiles.len,
                     cfiles.str, obj_path.len, obj_path.str);
 
-  println(_STR("thirdparty cmd line: %.*s", cmd.len, cmd.str));
+  printf("thirdparty cmd line: %.*s\n", cmd.len, cmd.str);
 
   Option_os__Result tmp95 = os__exec(cmd);
   if (!tmp95.ok) {
@@ -13055,6 +13101,8 @@ void Parser_struct_decl(Parser *p) {
       };
 
       continue;
+
+      v_ptr_free(f); // close_scope free
     };
 
     AccessMod access_mod =
@@ -13125,6 +13173,8 @@ void Parser_struct_decl(Parser *p) {
   };
 
   Parser_fgenln(p, tos2((byte *)"\n"));
+
+  v_array_free(names); // close_scope free
 }
 void Parser_enum_decl(Parser *p, string _enum_name) {
 
@@ -13193,6 +13243,8 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
   Parser_check(p, main__Token_rcbr);
 
   Parser_fgenln(p, tos2((byte *)"\n"));
+
+  v_array_free(fields); // close_scope free
 }
 string Parser_check_name(Parser *p) {
 
@@ -13253,8 +13305,8 @@ void Parser_check(Parser *p, Token expected) {
 
     Parser_next(p);
 
-    println(_STR("next token = `%.*s`", Parser_strtok(&/* ? */ *p).len,
-                 Parser_strtok(&/* ? */ *p).str));
+    printf("next token = `%.*s`\n", Parser_strtok(&/* ? */ *p).len,
+           Parser_strtok(&/* ? */ *p).str);
 
     print_backtrace();
 
@@ -13284,9 +13336,8 @@ void Parser_check(Parser *p, Token expected) {
 }
 void Parser_warn(Parser *p, string s) {
 
-  println(_STR("warning: %.*s:%d: %.*s", p->scanner->file_path.len,
-               p->scanner->file_path.str, p->scanner->line_nr + 1, s.len,
-               s.str));
+  printf("warning: %.*s:%d: %.*s\n", p->scanner->file_path.len,
+         p->scanner->file_path.str, p->scanner->line_nr + 1, s.len, s.str);
 }
 void Parser_error(Parser *p, string s) {
 
@@ -13298,8 +13349,8 @@ void Parser_error(Parser *p, string s) {
 
   if (p->pref->is_verbose || p->pref->is_debug) {
 
-    println(_STR("pass=%d fn=`%.*s`\n", p->pass, p->cur_fn.name.len,
-                 p->cur_fn.name.str));
+    printf("pass=%d fn=`%.*s`\n\n", p->pass, p->cur_fn.name.len,
+           p->cur_fn.name.str);
   };
 
   CGen_save(p->cgen);
@@ -13641,7 +13692,7 @@ void Parser_print_tok(Parser *p) {
 
   if (p->tok == main__Token_str) {
 
-    println(_STR("\"%.*s\"", p->lit.len, p->lit.str));
+    printf("\"%.*s\"\n", p->lit.len, p->lit.str);
 
     return;
   };
@@ -13723,55 +13774,53 @@ void Parser_close_scope(Parser *p) {
       break;
     };
 
-#ifndef _WIN32
+    if (p->os != main__OS_windows) {
 
-    if (p->pref->building_v && v.is_alloc && !p->pref->is_test) {
+      if (p->pref->building_v && v.is_alloc && !p->pref->is_test) {
 
-      string free_fn = tos2((byte *)"free");
+        string free_fn = tos2((byte *)"free");
 
-      if (string_starts_with(v.typ, tos2((byte *)"array_"))) {
+        if (string_starts_with(v.typ, tos2((byte *)"array_"))) {
 
-        free_fn = tos2((byte *)"v_array_free");
+          free_fn = tos2((byte *)"v_array_free");
 
-      } else if (string_eq(v.typ, tos2((byte *)"string"))) {
+        } else if (string_eq(v.typ, tos2((byte *)"string"))) {
 
-        free_fn = tos2((byte *)"v_string_free");
+          free_fn = tos2((byte *)"v_string_free");
 
-        continue;
+          continue;
 
-      } else if (v.ptr || string_ends_with(v.typ, tos2((byte *)"*"))) {
+        } else if (v.ptr || string_ends_with(v.typ, tos2((byte *)"*"))) {
 
-        free_fn = tos2((byte *)"v_ptr_free");
+          free_fn = tos2((byte *)"v_ptr_free");
 
-      } else {
+        } else {
 
-        continue;
-      };
-
-      if (p->returns) {
-
-        if (!v.is_returned && string_ne(v.typ, tos2((byte *)"FILE*"))) {
-
-          string prev_line =
-              (*(string *)array__get(p->cgen->lines, p->cgen->lines.len - 2));
-
-          array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 2,
-                    &(string[]){string_add(
-                        _STR("%.*s(%.*s); /* :) close_scope free %.*s */",
-                             free_fn.len, free_fn.str, v.name.len, v.name.str,
-                             v.typ.len, v.typ.str),
-                        prev_line)});
+          continue;
         };
 
-      } else {
+        if (p->returns) {
 
-        Parser_genln(p, _STR("%.*s(%.*s); // close_scope free", free_fn.len,
-                             free_fn.str, v.name.len, v.name.str));
+          if (!v.is_returned && string_ne(v.typ, tos2((byte *)"FILE*"))) {
+
+            string prev_line =
+                (*(string *)array__get(p->cgen->lines, p->cgen->lines.len - 2));
+
+            array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 2,
+                      &(string[]){string_add(
+                          _STR("%.*s(%.*s); /* :) close_scope free %.*s */",
+                               free_fn.len, free_fn.str, v.name.len, v.name.str,
+                               v.typ.len, v.typ.str),
+                          prev_line)});
+          };
+
+        } else {
+
+          Parser_genln(p, _STR("%.*s(%.*s); // close_scope free", free_fn.len,
+                               free_fn.str, v.name.len, v.name.str));
+        };
       };
     };
-
-#endif
-    ;
   };
 
   if (string_ne(*(string *)array_last(p->cur_fn.defer_text),
@@ -13976,10 +14025,10 @@ void Parser_assign_statement(Parser *p, Var v, int ph, bool is_map) {
       if (p->cur_fn.args.len > 0 &&
           string_eq((*(Var *)array__get(p->cur_fn.args, 0)).name, v.name)) {
 
-        println(_STR("make the receiver `%.*s` mutable:\nfn (%.*s mut %.*s) "
-                     "%.*s (...) {\n",
-                     v.name.len, v.name.str, v.name.len, v.name.str, v.typ.len,
-                     v.typ.str, p->cur_fn.name.len, p->cur_fn.name.str));
+        printf("make the receiver `%.*s` mutable:\nfn (%.*s mut %.*s) %.*s "
+               "(...) {\n\n",
+               v.name.len, v.name.str, v.name.len, v.name.str, v.typ.len,
+               v.typ.str, p->cur_fn.name.len, p->cur_fn.name.str);
       };
     };
 
@@ -14502,8 +14551,8 @@ string Parser_name_expr(Parser *p) {
       if (!string_contains(typ, tos2((byte *)"*")) &&
           !string_ends_with(typ, tos2((byte *)"ptr"))) {
 
-        println(_STR("name=\"%.*s\", t=%.*s", name.len, name.str, v.typ.len,
-                     v.typ.str));
+        printf("name=\"%.*s\", t=%.*s\n", name.len, name.str, v.typ.len,
+               v.typ.str);
 
         Parser_error(p, _STR("dereferencing requires a pointer, but got `%.*s`",
                              typ.len, typ.str));
@@ -15130,14 +15179,14 @@ string Parser_index_expr(Parser *p, string typ_, int fn_ph) {
 
         if (Parser_fileis(&/* ? */ *p, tos2((byte *)"int_test"))) {
 
-          println(_STR("\nRRRR0 %.*s", typ.len, typ.str));
+          printf("\nRRRR0 %.*s\n", typ.len, typ.str);
         };
 
         typ = string_right(typ, 6);
 
         if (Parser_fileis(&/* ? */ *p, tos2((byte *)"int_test"))) {
 
-          println(_STR("RRRR %.*s", typ.len, typ.str));
+          printf("RRRR %.*s\n", typ.len, typ.str);
         };
       };
 
@@ -15358,7 +15407,7 @@ string Parser_expression(Parser *p) {
 
   if (string_contains(p->scanner->file_path, tos2((byte *)"test_test"))) {
 
-    println(_STR("expression() pass=%d tok=", p->pass));
+    printf("expression() pass=%d tok=\n", p->pass);
 
     Parser_print_tok(&/* ? */ *p);
   };
@@ -15853,10 +15902,10 @@ string Parser_factor(Parser *p) {
 
       Token next = Parser_peek(p);
 
-      println(_STR("prev=%.*s", Token_str(p->prev_tok).len,
-                   Token_str(p->prev_tok).str));
+      printf("prev=%.*s\n", Token_str(p->prev_tok).len,
+             Token_str(p->prev_tok).str);
 
-      println(_STR("next=%.*s", Token_str(next).len, Token_str(next).str));
+      printf("next=%.*s\n", Token_str(next).len, Token_str(next).str);
     };
 
     Parser_error(p, _STR("unexpected token: `%.*s`", Token_str(p->tok).len,
@@ -15929,6 +15978,7 @@ string Parser_assoc(Parser *p) {
 
   Parser_gen(p, tos2((byte *)"}"));
 
+  v_array_free(fields); /* :) close_scope free array_string */
   return var.typ;
 }
 void Parser_char_expr(Parser *p) {
@@ -16737,6 +16787,7 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
 
   p->is_struct_init = 0;
 
+  v_array_free(inited_fields); /* :) close_scope free array_string */
   return typ;
 }
 string Parser_cast(Parser *p, string typ) {
@@ -16967,8 +17018,8 @@ string Parser_if_st(Parser *p, bool is_expr, int elif_depth) {
 
   if (Parser_fileis(&/* ? */ *p, tos2((byte *)"test_test"))) {
 
-    println(_STR("if ret typ=\"%.*s\" line=%d", typ.len, typ.str,
-                 p->scanner->line_nr));
+    printf("if ret typ=\"%.*s\" line=%d\n", typ.len, typ.str,
+           p->scanner->line_nr);
   };
 
   return typ;
@@ -18589,7 +18640,7 @@ string Parser_select_query(Parser *p, int fn_ph) {
     };
   };
 
-  println(_STR("sql query=\"%.*s\"", q.len, q.str));
+  printf("sql query=\"%.*s\"\n", q.len, q.str);
 
   CGen_insert_before(
       p->cgen, _STR("// DEBUG_SQL prefix: %.*s | fn_ph: %d | query: \"%.*s\" ",
@@ -18716,7 +18767,9 @@ string Parser_select_query(Parser *p, int fn_ph) {
                           _STR("array_%.*s", table_name.len, table_name.str));
 
     return _STR("array_%.*s", table_name.len, table_name.str);
-  };
+  }
+  v_array_free(fields); /* :) close_scope free array_Var */
+  ;
 }
 void Parser_insert_query(Parser *p, int fn_ph) {
 
@@ -18823,6 +18876,8 @@ void Parser_insert_query(Parser *p, int fn_ph) {
                        "%d,\n0, params, 0, 0, 0)",
                        table_name.len, table_name.str, sfields.len, sfields.str,
                        vals.len, vals.str, nr_vals));
+
+  v_array_free(fields); // close_scope free
 }
 bool Repl_checks(Repl *r, string line) {
 
@@ -18881,18 +18936,18 @@ void repl_help() {
 
   string version_hash = vhash();
 
-  println(_STR("\nV %.*s %.*s\n  help                   Displays this "
-               "information.\n  Ctrl-C, Ctrl-D, exit   Exits the REPL.\n  "
-               "clear                  Clears the screen.\n",
-               main__Version.len, main__Version.str, version_hash.len,
-               version_hash.str));
+  printf("\nV %.*s %.*s\n  help                   Displays this information.\n "
+         " Ctrl-C, Ctrl-D, exit   Exits the REPL.\n  clear                  "
+         "Clears the screen.\n\n",
+         main__Version.len, main__Version.str, version_hash.len,
+         version_hash.str);
 }
 array_string run_repl() {
 
   string version_hash = vhash();
 
-  println(_STR("V %.*s %.*s", main__Version.len, main__Version.str,
-               version_hash.len, version_hash.str));
+  printf("V %.*s %.*s\n", main__Version.len, main__Version.str,
+         version_hash.len, version_hash.str);
 
   println(tos2((byte *)"Use Ctrl-C or `exit` to exit"));
 
@@ -20116,8 +20171,8 @@ void Scanner_error(Scanner *s, string msg) {
 
   string fullpath = os__realpath(s->file_path);
 
-  println(_STR("%.*s:%d:%d: %.*s", fullpath.len, fullpath.str, s->line_nr + 1,
-               column + 1, msg.len, msg.str));
+  printf("%.*s:%d:%d: %.*s\n", fullpath.len, fullpath.str, s->line_nr + 1,
+         column + 1, msg.len, msg.str);
 
   v_exit(1);
 }
@@ -20348,7 +20403,7 @@ void Scanner_debug_tokens(Scanner *s) {
 
   string fname = string_all_after(s->file_path, tos2((byte *)"/"));
 
-  println(_STR("\n===DEBUG TOKENS %.*s===", fname.len, fname.str));
+  printf("\n===DEBUG TOKENS %.*s===\n", fname.len, fname.str);
 
   while (1) {
 
@@ -20362,7 +20417,7 @@ void Scanner_debug_tokens(Scanner *s) {
 
     if (string_ne(lit, tos2((byte *)""))) {
 
-      println(_STR(" `%.*s`", lit.len, lit.str));
+      printf(" `%.*s`\n", lit.len, lit.str);
 
     } else {
 
@@ -20670,7 +20725,7 @@ void Parser_register_array(Parser *p, string typ) {
 
   if (string_contains(typ, tos2((byte *)"*"))) {
 
-    println(_STR("bad arr %.*s", typ.len, typ.str));
+    printf("bad arr %.*s\n", typ.len, typ.str);
 
     return;
   };
@@ -20687,7 +20742,7 @@ void Parser_register_map(Parser *p, string typ) {
 
   if (string_contains(typ, tos2((byte *)"*"))) {
 
-    println(_STR("bad map %.*s", typ.len, typ.str));
+    printf("bad map %.*s\n", typ.len, typ.str);
 
     return;
   };
@@ -21502,7 +21557,7 @@ string Table_cgen_name(Table *table, Fn *f) {
 
     name = _STR("f_%d", idx);
 
-    println(_STR("%.*s ==> %.*s", old.len, old.str, name.len, name.str));
+    printf("%.*s ==> %.*s\n", old.len, old.str, name.len, name.str);
   };
 
   return name;
@@ -21785,6 +21840,8 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
       cerror(_STR("module %.*s can only be imported internally by libs.",
                   mod.len, mod.str));
     };
+
+    v_array_free(internal_mod_parts); // close_scope free
   };
 
   map__set(&fit->imports, alias, &(string[]){mod});

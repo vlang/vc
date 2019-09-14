@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "81bf67b"
+#define V_COMMIT_HASH "d340dd7"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3dc4abd"
+#define V_COMMIT_HASH "81bf67b"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -13651,55 +13651,53 @@ void Parser_close_scope(Parser *p) {
       break;
     };
 
-#ifndef _WIN32
+    if (p->os != main__OS_windows) {
 
-    if (p->pref->building_v && v.is_alloc && !p->pref->is_test) {
+      if (p->pref->building_v && v.is_alloc && !p->pref->is_test) {
 
-      string free_fn = tos2((byte *)"free");
+        string free_fn = tos2((byte *)"free");
 
-      if (string_starts_with(v.typ, tos2((byte *)"array_"))) {
+        if (string_starts_with(v.typ, tos2((byte *)"array_"))) {
 
-        free_fn = tos2((byte *)"v_array_free");
+          free_fn = tos2((byte *)"v_array_free");
 
-      } else if (string_eq(v.typ, tos2((byte *)"string"))) {
+        } else if (string_eq(v.typ, tos2((byte *)"string"))) {
 
-        free_fn = tos2((byte *)"v_string_free");
+          free_fn = tos2((byte *)"v_string_free");
 
-        continue;
+          continue;
 
-      } else if (v.ptr || string_ends_with(v.typ, tos2((byte *)"*"))) {
+        } else if (v.ptr || string_ends_with(v.typ, tos2((byte *)"*"))) {
 
-        free_fn = tos2((byte *)"v_ptr_free");
+          free_fn = tos2((byte *)"v_ptr_free");
 
-      } else {
+        } else {
 
-        continue;
-      };
-
-      if (p->returns) {
-
-        if (!v.is_returned && string_ne(v.typ, tos2((byte *)"FILE*"))) {
-
-          string prev_line =
-              (*(string *)array__get(p->cgen->lines, p->cgen->lines.len - 2));
-
-          array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 2,
-                    &(string[]){string_add(
-                        _STR("%.*s(%.*s); /* :) close_scope free %.*s */",
-                             free_fn.len, free_fn.str, v.name.len, v.name.str,
-                             v.typ.len, v.typ.str),
-                        prev_line)});
+          continue;
         };
 
-      } else {
+        if (p->returns) {
 
-        Parser_genln(p, _STR("%.*s(%.*s); // close_scope free", free_fn.len,
-                             free_fn.str, v.name.len, v.name.str));
+          if (!v.is_returned && string_ne(v.typ, tos2((byte *)"FILE*"))) {
+
+            string prev_line =
+                (*(string *)array__get(p->cgen->lines, p->cgen->lines.len - 2));
+
+            array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 2,
+                      &(string[]){string_add(
+                          _STR("%.*s(%.*s); /* :) close_scope free %.*s */",
+                               free_fn.len, free_fn.str, v.name.len, v.name.str,
+                               v.typ.len, v.typ.str),
+                          prev_line)});
+          };
+
+        } else {
+
+          Parser_genln(p, _STR("%.*s(%.*s); // close_scope free", free_fn.len,
+                               free_fn.str, v.name.len, v.name.str));
+        };
       };
     };
-
-#endif
-    ;
   };
 
   if (string_ne(*(string *)array_last(p->cur_fn.defer_text),
