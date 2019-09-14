@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "079dcd1"
+#define V_COMMIT_HASH "3d2c266"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f4fa817"
+#define V_COMMIT_HASH "079dcd1"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -367,6 +367,7 @@ struct Preferences {
   string cflags;
   string ccompiler;
   bool building_v;
+  bool autofree;
 };
 
 struct Repl {
@@ -11057,6 +11058,7 @@ V *new_v(array_string args) {
           .show_c_cmd = _IN(string, tos2((byte *)"-show_c_cmd"), args),
           .translated = _IN(string, tos2((byte *)"translated"), args),
           .is_run = _IN(string, tos2((byte *)"run"), args),
+          .autofree = _IN(string, tos2((byte *)"autofree"), args),
           .is_repl = is_repl,
           .build_mode = build_mode,
           .cflags = cflags,
@@ -13649,7 +13651,7 @@ void Parser_close_scope(Parser *p) {
       break;
     };
 
-    if (p->pref->building_v && v.is_alloc && !p->pref->is_test) {
+    if (p->pref->autofree && v.is_alloc && !p->pref->is_test) {
 
       string free_fn = tos2((byte *)"free");
 
