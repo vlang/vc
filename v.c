@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3d2c266"
+#define V_COMMIT_HASH "1a099c9"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "079dcd1"
+#define V_COMMIT_HASH "3d2c266"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1924,7 +1924,6 @@ string string_replace(string s, string rep, string with) {
 
   b[/*ptr*/ new_len] /*rbyte 1*/ = '\0';
 
-  v_array_free(idxs); /* :) close_scope free array_int */
   return tos(b, new_len);
 }
 int v_string_int(string s) { return atoi(s.str); }
@@ -2227,7 +2226,6 @@ int string_index(string s, string p) {
     };
   };
 
-  v_array_free(prefix); /* :) close_scope free array_int */
   return -1;
 }
 int string_index_any(string s, string chars) {
@@ -2422,7 +2420,6 @@ string string_title(string s) {
 
   string title = array_string_join(tit, tos2((byte *)" "));
 
-  v_array_free(tit); /* :) close_scope free array_string */
   return title;
 }
 string string_find_between(string s, string start, string end) {
@@ -4123,7 +4120,6 @@ array_string os__read_lines(string path) {
 
   fclose(fp);
 
-  v_ptr_free(buf); /* :) close_scope free byte* */
   return res;
 }
 array_ustring os__read_ulines(string path) {
@@ -4155,7 +4151,6 @@ Option_os__File os__open(string path) {
 
   file = (struct os__File){.cfile = _wfopen(wpath, string_to_wide(mode))};
 
-  v_ptr_free(wpath); // close_scope free
 #else
 
   byte *cpath = path.str;
@@ -4186,7 +4181,6 @@ Option_os__File os__create(string path) {
 
   file = (os__File){.cfile = _wfopen(wpath, string_to_wide(mode))};
 
-  v_ptr_free(wpath); // close_scope free
 #else
 
   byte *cpath = path.str;
@@ -4217,7 +4211,6 @@ Option_os__File os__open_append(string path) {
 
   file = (os__File){.cfile = _wfopen(wpath, string_to_wide(mode))};
 
-  v_ptr_free(wpath); // close_scope free
 #else
 
   byte *cpath = path.str;
@@ -4794,7 +4787,6 @@ string os__executable() {
 
   sysctl(mib.data, 4, result, &/*vvar*/ size, 0, 0);
 
-  v_array_free(mib); /* :) close_scope free array_int */
   return (tos2((byte *)result));
 
 #endif
@@ -6318,8 +6310,6 @@ void V_cc(V *v) {
 
     os__rm(v->out_name_c);
   };
-
-  v_array_free(a); // close_scope free
 }
 void V_cc_windows_cross(V *c) {
 
@@ -6704,8 +6694,6 @@ void Table_parse_cflag(Table *table, string cflag) {
       break;
     };
   };
-
-  v_array_free(allowed_flags); // close_scope free
 }
 CGen *new_cgen(string out_name_c) {
 
@@ -7162,8 +7150,6 @@ string V_c_type_definitions(V *v) {
 
   array_Type types_sorted = sort_structs(types);
 
-  v_array_free(types);    /* :) close_scope free array_Type */
-  v_array_free(builtins); /* :) close_scope free array_string */
   return string_add(string_add(types_to_c(builtin_types, v->table),
                                tos2((byte *)"\n//----\n")),
                     types_to_c(types_sorted, v->table));
@@ -7245,8 +7231,6 @@ array_Type sort_structs(array_Type types) {
     };
 
     DepGraph_add(dep_graph, t.name, field_deps);
-
-    v_array_free(field_deps); // close_scope free
   };
 
   DepGraph *dep_graph_sorted = DepGraph_resolve(&/* ? */ *dep_graph);
@@ -7280,9 +7264,6 @@ array_Type sort_structs(array_Type types) {
     };
   };
 
-  v_ptr_free(dep_graph);        /* :) close_scope free DepGraph* */
-  v_array_free(type_names);     /* :) close_scope free array_string */
-  v_ptr_free(dep_graph_sorted); /* :) close_scope free DepGraph* */
   return types_sorted;
 }
 void Parser_comp_time(Parser *p) {
@@ -9121,8 +9102,6 @@ void Parser_fn_args(Parser *p, Fn *f) {
 
       Parser_next(p);
     };
-
-    v_array_free(names); // close_scope free
   };
 
   { Parser_check(p, main__Token_rpar); }
@@ -10180,8 +10159,6 @@ int main(int argc, char **argv) {
 
     V_run_compiled_executable_and_exit(*v);
   };
-
-  v_ptr_free(v); // close_scope free
 }
 void V_compile(V *v) {
 
@@ -10759,10 +10736,6 @@ void V_add_v_files_to_compile(V *v) {
 
     _PUSH(&v->files, (fit.file_path), tmp71, string);
   };
-
-  v_ptr_free(deps_resolved); // close_scope free
-  v_ptr_free(dep_graph);     // close_scope free
-  v_array_free(user_files);  // close_scope free
 }
 string get_arg(string joined_args, string arg, string def) {
 
@@ -11081,7 +11054,6 @@ V *new_v(array_string args) {
                             tos2((byte *)"_shared_lib.c"));
   };
 
-  v_array_free(builtins); /* :) close_scope free array_string */
   return (V *)memdup(&(V){.os = _os,
                           .out_name = out_name,
                           .files = files,
@@ -11448,8 +11420,6 @@ void DepGraph_from_import_tables(DepGraph *graph,
     };
 
     DepGraph_add(graph, fit.module_name, deps);
-
-    v_array_free(deps); // close_scope free
   };
 }
 array_string DepGraph_imports(DepGraph *graph) {
@@ -11541,8 +11511,6 @@ Option_string find_windows_kit_internal(RegKey key, array_string versions) {
       value[/*ptr*/ length] /*ru16 1*/ = ((u16)(0));
     };
 
-    v_ptr_free(result);  /* :) close_scope free void* */
-    v_ptr_free(result2); /* :) close_scope free void* */
     string tmp9 = OPTION_CAST(string)(string_from_wide(value));
     return opt_ok(&tmp9, sizeof(string));
   };
@@ -12028,13 +11996,6 @@ void V_cc_msvc(V *v) {
   };
 
   os__rm(out_name_obj);
-
-  v_array_free(other_flags); // close_scope free
-  v_array_free(lib_paths);   // close_scope free
-  v_array_free(inc_paths);   // close_scope free
-  v_array_free(real_libs);   // close_scope free
-  v_array_free(alibs);       // close_scope free
-  v_array_free(a);           // close_scope free
 }
 void build_thirdparty_obj_file_with_msvc(string path) {
 
@@ -12978,8 +12939,6 @@ void Parser_struct_decl(Parser *p) {
       };
 
       continue;
-
-      v_ptr_free(f); // close_scope free
     };
 
     AccessMod access_mod =
@@ -13050,8 +13009,6 @@ void Parser_struct_decl(Parser *p) {
   };
 
   Parser_fgenln(p, tos2((byte *)"\n"));
-
-  v_array_free(names); // close_scope free
 }
 void Parser_enum_decl(Parser *p, string _enum_name) {
 
@@ -13120,8 +13077,6 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
   Parser_check(p, main__Token_rcbr);
 
   Parser_fgenln(p, tos2((byte *)"\n"));
-
-  v_array_free(fields); // close_scope free
 }
 string Parser_check_name(Parser *p) {
 
@@ -15852,7 +15807,6 @@ string Parser_assoc(Parser *p) {
 
   Parser_gen(p, tos2((byte *)"}"));
 
-  v_array_free(fields); /* :) close_scope free array_string */
   return var.typ;
 }
 void Parser_char_expr(Parser *p) {
@@ -16663,7 +16617,6 @@ string Parser_struct_init(Parser *p, string typ, bool is_c_struct_init) {
 
   p->is_struct_init = 0;
 
-  v_array_free(inited_fields); /* :) close_scope free array_string */
   return typ;
 }
 string Parser_cast(Parser *p, string typ) {
@@ -18643,9 +18596,7 @@ string Parser_select_query(Parser *p, int fn_ph) {
                           _STR("array_%.*s", table_name.len, table_name.str));
 
     return _STR("array_%.*s", table_name.len, table_name.str);
-  }
-  v_array_free(fields); /* :) close_scope free array_Var */
-  ;
+  };
 }
 void Parser_insert_query(Parser *p, int fn_ph) {
 
@@ -18752,8 +18703,6 @@ void Parser_insert_query(Parser *p, int fn_ph) {
                        "%d,\n0, params, 0, 0, 0)",
                        table_name.len, table_name.str, sfields.len, sfields.str,
                        vals.len, vals.str, nr_vals));
-
-  v_array_free(fields); // close_scope free
 }
 bool Repl_checks(Repl *r, string line) {
 
@@ -21716,8 +21665,6 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
       cerror(_STR("module %.*s can only be imported internally by libs.",
                   mod.len, mod.str));
     };
-
-    v_array_free(internal_mod_parts); // close_scope free
   };
 
   map__set(&fit->imports, alias, &(string[]){mod});
