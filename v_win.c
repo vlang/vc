@@ -6187,6 +6187,11 @@ void V_cc(V *v) {
 
   if (v->pref->build_mode == main__BuildMode_build_module) {
 
+    if (!os__file_exists(main__ModPath)) {
+
+      os__mkdir(main__ModPath);
+    };
+
     v->out_name =
         string_add(string_add(main__ModPath, v->dir), tos2((byte *)".o"));
 
@@ -13749,7 +13754,7 @@ void Parser_close_scope(Parser *p) {
 
         if (p->returns) {
 
-          if (!v.is_returned && string_ne(v.typ, tos2((byte *)"*FILE"))) {
+          if (!v.is_returned && string_ne(v.typ, tos2((byte *)"FILE*"))) {
 
             string prev_line =
                 (*(string *)array__get(p->cgen->lines, p->cgen->lines.len - 2));
