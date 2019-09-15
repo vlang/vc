@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b5833a0"
+#define V_COMMIT_HASH "04ff9ed"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1a099c9"
+#define V_COMMIT_HASH "b5833a0"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -11963,27 +11963,17 @@ void update_v() {
 
 #ifdef _WIN32
 
-  os__mv(_STR("%.*s/v.exe", vroot.len, vroot.str),
-         _STR("%.*s/v_old.exe", vroot.len, vroot.str));
+  string v_backup_file = _STR("%.*s/v_old.exe", vroot.len, vroot.str);
 
-  Option_os__Result tmp115 =
-      os__exec(_STR("%.*s/make.bat", vroot.len, vroot.str));
-  if (!tmp115.ok) {
-    string err = tmp115.error;
+  if (os__file_exists(v_backup_file)) {
 
-    cerror(err);
+    os__rm(v_backup_file);
+  };
 
-    return;
-  }
-  os__Result s2 = *(os__Result *)tmp115.data;
-  ;
-
-  println(s2.output);
-
-#else
+  os__mv(_STR("%.*s/v.exe", vroot.len, vroot.str), v_backup_file);
 
   Option_os__Result tmp116 =
-      os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
+      os__exec(_STR("%.*s/make.bat", vroot.len, vroot.str));
   if (!tmp116.ok) {
     string err = tmp116.error;
 
@@ -11992,6 +11982,22 @@ void update_v() {
     return;
   }
   os__Result s2 = *(os__Result *)tmp116.data;
+  ;
+
+  println(s2.output);
+
+#else
+
+  Option_os__Result tmp117 =
+      os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
+  if (!tmp117.ok) {
+    string err = tmp117.error;
+
+    cerror(err);
+
+    return;
+  }
+  os__Result s2 = *(os__Result *)tmp117.data;
   ;
 
   println(s2.output);
@@ -12040,16 +12046,16 @@ void install_v(array_string args) {
 
     os__chdir(string_add(vroot, tos2((byte *)"/tools")));
 
-    Option_os__Result tmp122 = os__exec(
+    Option_os__Result tmp123 = os__exec(
         _STR("%.*s -o %.*s vget.v", vexec.len, vexec.str, vget.len, vget.str));
-    if (!tmp122.ok) {
-      string err = tmp122.error;
+    if (!tmp123.ok) {
+      string err = tmp123.error;
 
       cerror(err);
 
       return;
     }
-    os__Result vgetcompilation = *(os__Result *)tmp122.data;
+    os__Result vgetcompilation = *(os__Result *)tmp123.data;
     ;
 
     if (vgetcompilation.exit_code != 0) {
@@ -12060,17 +12066,17 @@ void install_v(array_string args) {
     };
   };
 
-  Option_os__Result tmp123 =
+  Option_os__Result tmp124 =
       os__exec(string_add(_STR("%.*s ", vget.len, vget.str),
                           array_string_join(names, tos2((byte *)" "))));
-  if (!tmp123.ok) {
-    string err = tmp123.error;
+  if (!tmp124.ok) {
+    string err = tmp124.error;
 
     cerror(err);
 
     return;
   }
-  os__Result vgetresult = *(os__Result *)tmp123.data;
+  os__Result vgetresult = *(os__Result *)tmp124.data;
   ;
 
   if (vgetresult.exit_code != 0) {
@@ -12099,9 +12105,9 @@ void test_v() {
   array_string test_files =
       os__walk_ext(tos2((byte *)"."), tos2((byte *)"_test.v"));
 
-  array_string tmp131 = test_files;
-  for (int tmp132 = 0; tmp132 < tmp131.len; tmp132++) {
-    string dot_relative_file = ((string *)tmp131.data)[tmp132];
+  array_string tmp132 = test_files;
+  for (int tmp133 = 0; tmp133 < tmp132.len; tmp133++) {
+    string dot_relative_file = ((string *)tmp132.data)[tmp133];
 
     string relative_file =
         string_replace(dot_relative_file, tos2((byte *)"./"), tos2((byte *)""));
@@ -12121,9 +12127,9 @@ void test_v() {
       cmd = _STR("\"%.*s\"", cmd.len, cmd.str);
     };
 
-    Option_os__Result tmp137 = os__exec(cmd);
-    if (!tmp137.ok) {
-      string err = tmp137.error;
+    Option_os__Result tmp138 = os__exec(cmd);
+    if (!tmp138.ok) {
+      string err = tmp138.error;
 
       failed = 1;
 
@@ -12131,7 +12137,7 @@ void test_v() {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp137.data;
+    os__Result r = *(os__Result *)tmp138.data;
     ;
 
     if (r.exit_code != 0) {
@@ -12154,9 +12160,9 @@ void test_v() {
   array_string examples =
       os__walk_ext(tos2((byte *)"examples"), tos2((byte *)".v"));
 
-  array_string tmp139 = examples;
-  for (int tmp140 = 0; tmp140 < tmp139.len; tmp140++) {
-    string relative_file = ((string *)tmp139.data)[tmp140];
+  array_string tmp140 = examples;
+  for (int tmp141 = 0; tmp141 < tmp140.len; tmp141++) {
+    string relative_file = ((string *)tmp140.data)[tmp141];
 
     string file = os__realpath(relative_file);
 
@@ -12173,9 +12179,9 @@ void test_v() {
       cmd = _STR("\"%.*s\"", cmd.len, cmd.str);
     };
 
-    Option_os__Result tmp144 = os__exec(cmd);
-    if (!tmp144.ok) {
-      string err = tmp144.error;
+    Option_os__Result tmp145 = os__exec(cmd);
+    if (!tmp145.ok) {
+      string err = tmp145.error;
 
       failed = 1;
 
@@ -12183,7 +12189,7 @@ void test_v() {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp144.data;
+    os__Result r = *(os__Result *)tmp145.data;
     ;
 
     if (r.exit_code != 0) {
