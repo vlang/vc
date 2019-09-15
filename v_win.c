@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b71bb95"
+#define V_COMMIT_HASH "897db23"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "602e472"
+#define V_COMMIT_HASH "b71bb95"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -36,6 +36,10 @@
 #endif
 
 #define EMPTY_STRUCT_DECLARATION
+#ifdef _MSC_VER
+#define EMPTY_STRUCT_DECLARATION int : 0
+#endif
+
 #define OPTION_CAST(x) (x)
 
 #ifdef _WIN32
@@ -1583,7 +1587,64 @@ array_string main__float_types;
 array_string main__TokenStr;
 map_int main__KEYWORDS;
 array_Token main__AssignTokens;
-string main__HelpText;
+#define main__HelpText                                                         \
+  tos2((                                                                       \
+      byte                                                                     \
+          *)"Usage: v [options/commands] [file.v | directory]\n\n   When V "   \
+            "is run without any arguments, it is run in REPL mode.\n\n   "     \
+            "When given a .v file, it will be compiled. The executable will "  \
+            "have the\n   same name as the input .v file: `v foo.v` produces " \
+            "`./foo` on *nix systems,\n  `foo.exe` on Windows.\n\n   You can " \
+            "use -o to specify a different output executable\'s name.\n\n   "  \
+            "When given a directory, all .v files contained in it will be "    \
+            "compiled as\n   part of a single main module.\n\n   By default "  \
+            "the executable will have the same name as the directory.\n\n   "  \
+            "To compile all V files in current directory, run `v .`\n\n   "    \
+            "Any file ending in _test.v, will be treated as a test.\n   It "   \
+            "will be compiled and run, evaluating the assert statements in "   \
+            "every\n   function named test_xxx.\n\n   You can put common "     \
+            "options inside an environment variable named VFLAGS, so that\n  " \
+            " you don\'t have to repeat them.\n\n   You can set it like "      \
+            "this: `export VFLAGS=\"-cc clang -debug\"` on *nix,\n   `set "    \
+            "VFLAGS=-os msvc` on Windows.\n\nOptions/commands:\n  -h, help   " \
+            "       Display this information.\n  -o <file>         Write "     \
+            "output to <file>.\n  -o <file>.c       Produce C source without " \
+            "compiling it.\n  -o <file>.js      Produce JavaScript source.\n " \
+            " -prod             Build an optimized executable.\n  -v, "        \
+            "version       Display compiler version and git hash of the "      \
+            "compiler source.\n  -live             Enable hot code reloading " \
+            "(required by functions marked with [live]).\n  -os <OS>         " \
+            " Produce an executable for the selected OS.\n                   " \
+            " OS can be linux, mac, windows, msvc.\n                    Use "  \
+            "msvc if you want to use the MSVC compiler on Windows.\n  -cc "    \
+            "<ccompiler>   Specify which C compiler you want to use as a C "   \
+            "backend.\n                    The C backend compiler should be "  \
+            "able to handle C99 compatible C code.\n                    "      \
+            "Common C compilers are gcc, clang, tcc, icc, cl...\n  -cflags "   \
+            "<flags>   Pass additional C flags to the C backend compiler.\n  " \
+            "                  Example: -cflags `sdl2-config --cflags`\n  "    \
+            "-debug            Keep the generated C file for debugging in "    \
+            "program.tmp.c even after compilation.\n  -g                Show " \
+            "v line numbers in backtraces. Implies -debug.\n  -obf           " \
+            "   Obfuscate the resulting binary.\n  -show_c_cmd       Print "   \
+            "the full C compilation command and how much time it took.\n  -  " \
+            "               Shorthand for `v runrepl`.\n\n  up               " \
+            " Update V. Run `v up` at least once per day, since V "            \
+            "development is rapid and features/bugfixes are added "            \
+            "constantly.\n  run <file.v>      Build and execute the V "        \
+            "program in file.v. You can add arguments for the V program "      \
+            "*after* the file name.\n  build <module>    Compile a module "    \
+            "into an object file.\n  runrepl           Run the V REPL. If V "  \
+            "is running in a tty terminal, the REPL is interactive, "          \
+            "otherwise it just reads from stdin.\n  symlink           Useful " \
+            "on unix systems. Symlinks the current V executable to "           \
+            "/usr/local/bin/v, so that V is globally available.\n  install "   \
+            "<module>  Install a user module from https://vpm.vlang.io/.\n  "  \
+            "test v            Run all V test files, and compile all V "       \
+            "examples.\n  fmt               Run vfmt to format the source "    \
+            "code. [wip]\n  doc               Run vdoc over the source code "  \
+            "and produce documentation. [wip]\n  translate         "           \
+            "Translates C to V. [wip, will be available in V 0.3]\n")
 
 array new_array(int mylen, int cap, int elm_size) {
 
@@ -22910,60 +22971,6 @@ void init_consts() {
                 main__Token_mod_assign, main__Token_or_assign,
                 main__Token_and_assign, main__Token_righ_shift_assign,
                 main__Token_left_shift_assign});
-  main__HelpText = tos2((
-      byte *)"Usage: v [options/subcommands] [file.v | directory]\n\n   When V "
-             "is run without any arguments, it is a shorthand for `v "
-             "runrepl`.\n\n   When given a .v file, it will be compiled. The "
-             "output executable will have the same name as the input .v "
-             "file.\n   You can use -o to specify a different output name.\n\n "
-             "  When given a directory, all the .v files contained in it, will "
-             "be compiled as part of a single main module.\n   By default the "
-             "executable will be named a.out.\n\n   Any file ending in "
-             "_test.v, will be treated as a test.\n   It will be compiled and "
-             "run, evaluating the assert statements in every function named "
-             "test_xxx.\n\n   You can put common options inside an environment "
-             "variable named VFLAGS, so that you do not repeat them.\n   You "
-             "can set it like this: `export VFLAGS=\"-cc clang -debug\"` on "
-             "unix, `set VFLAGS=-os msvc` on windows.\n\nOptions:\n  -         "
-             "        Shorthand for `v runrepl`.\n  -h, --help        Display "
-             "this information.\n  -live             Enable hot code reloading "
-             "(required by functions marked with [live]).\n  -os <OS>          "
-             "Produce an executable for the selected OS.\n                    "
-             "OS can be linux, mac, windows, msvc, etc...\n                    "
-             "-os msvc is useful, if you want to use the MSVC compiler on "
-             "Windows.\n  -prod             Build an optimized executable.\n  "
-             "-v, --version     Display compiler version and git hash of the "
-             "compiler source.\n\nDebugging options:\n  -cc <ccompiler>   "
-             "Specify which C compiler you want to use as a C backend.\n       "
-             "             The C backend compiler should be able to handle C99 "
-             "compatible C code.\n                    Common C compilers are "
-             "gcc, clang, tcc, icc, cl...\n  -cflags <flags>   Pass additional "
-             "C flags to the C backend compiler.\n                    Example: "
-             "-cflags `sdl2-config --cflags`\n\n  -debug            Keep the "
-             "generated C file for debugging in program.tmp.c even after "
-             "compilation.\n  -g                Show v line numbers in "
-             "backtraces. Implies -debug.\n  -o <file>         Place output "
-             "into <file>. If file has a .c suffix, produce C source, and do "
-             "not compile it further.\n  -obf              Obfuscate the "
-             "resulting binary.\n  -show_c_cmd       Print the full C "
-             "compilation command and how much time it "
-             "took.\n\n\nSubcommands:\n  up                Update V. Run `v "
-             "up` at least once per day, since V development is rapid and "
-             "features/bugfixes are added constantly.\n  run <file.v>      "
-             "Build and execute the V program in file.v. You can add arguments "
-             "for the V program *after* the file name.\n  build <module>    "
-             "Compile a module into an object file.\n  runrepl           Run "
-             "the V REPL. If V is running in a tty terminal, the REPL is "
-             "interactive, otherwise it just reads from stdin.\n  symlink      "
-             "     Useful on unix systems. Symlinks the current V executable "
-             "to /usr/local/bin/v, so that V is globally available.\n  install "
-             "<module>  Install a user module from https://vpm.vlang.io/.\n  "
-             "test v            Run all V test files, and compile all V "
-             "examples.\n\n  fmt               Run vfmt to format the source "
-             "code. [wip]\n  doc               Run vdoc over the source code "
-             "and produce documentation. [wip]\n  translate         Translates "
-             "C to V. [wip, will be available in V 0.3]\n  version           "
-             "Display compiler version and git hash of the compiler source.\n");
 }
 
 string _STR(const char *fmt, ...) {
