@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0b81c5a"
+#define V_COMMIT_HASH "52fc16b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3db4d66"
+#define V_COMMIT_HASH "0b81c5a"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -127,6 +127,7 @@ int load_so(byteptr);
 void reload_so();
 void init_consts();
 
+int g_test_ok = 1;
 #include <errno.h>
 #include <float.h>
 #include <math.h>
