@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "075a8e5"
+#define V_COMMIT_HASH "5db2535"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "52fc16b"
+#define V_COMMIT_HASH "075a8e5"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -22227,16 +22227,16 @@ string Table_find_misspelled_fn(Table *table, string name, FileImportTable *fit,
 
   string closest_fn = tos2((byte *)"");
 
-  bool is_main_fn = string_starts_with(name, tos2((byte *)"main__"));
+  string n1 = (string_starts_with(name, tos2((byte *)"main__")))
+                  ? (string_right(name, 6))
+                  : (name);
 
-  string n1 = (is_main_fn) ? (string_right(name, 6)) : (name);
-
-  map_Fn tmp109 = table->fns;
-  array_string keys_tmp109 = map_keys(&tmp109);
-  for (int l = 0; l < keys_tmp109.len; l++) {
-    string _ = ((string *)keys_tmp109.data)[l];
+  map_Fn tmp108 = table->fns;
+  array_string keys_tmp108 = map_keys(&tmp108);
+  for (int l = 0; l < keys_tmp108.len; l++) {
+    string _ = ((string *)keys_tmp108.data)[l];
     Fn f = {0};
-    map_get(tmp109, _, &f);
+    map_get(tmp108, _, &f);
 
     if (n1.len - f.name.len > 2 || f.name.len - n1.len > 2) {
 
@@ -22251,12 +22251,12 @@ string Table_find_misspelled_fn(Table *table, string name, FileImportTable *fit,
 
       bool mod_imported = 0;
 
-      map_string tmp111 = fit->imports;
-      array_string keys_tmp111 = map_keys(&tmp111);
-      for (int l = 0; l < keys_tmp111.len; l++) {
-        string _ = ((string *)keys_tmp111.data)[l];
+      map_string tmp110 = fit->imports;
+      array_string keys_tmp110 = map_keys(&tmp110);
+      for (int l = 0; l < keys_tmp110.len; l++) {
+        string _ = ((string *)keys_tmp110.data)[l];
         string m = {0};
-        map_get(tmp111, _, &m);
+        map_get(tmp110, _, &m);
 
         if (string_eq(f.mod, m)) {
 
@@ -22291,6 +22291,10 @@ string Table_find_misspelled_imported_mod(Table *table, string name,
 
   string closest_mod = tos2((byte *)"");
 
+  string n1 = (string_starts_with(name, tos2((byte *)"main.")))
+                  ? (string_right(name, 5))
+                  : (name);
+
   map_string tmp115 = fit->imports;
   array_string keys_tmp115 = map_keys(&tmp115);
   for (int l = 0; l < keys_tmp115.len; l++) {
@@ -22298,16 +22302,12 @@ string Table_find_misspelled_imported_mod(Table *table, string name,
     string mod = {0};
     map_get(tmp115, alias, &mod);
 
-    string n = _STR("%.*s.%.*s", fit->module_name.len, fit->module_name.str,
-                    alias.len, alias.str);
-
-    if (!string_starts_with(name, fit->module_name) ||
-        (n.len - name.len > 2 || name.len - n.len > 2)) {
+    if ((n1.len - alias.len > 2 || alias.len - n1.len > 2)) {
 
       continue;
     };
 
-    f32 p = strings__dice_coefficient(name, n);
+    f32 p = strings__dice_coefficient(n1, alias);
 
     if (p > closest) {
 
