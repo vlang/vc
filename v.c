@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "04ff9ed"
+#define V_COMMIT_HASH "602e472"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b5833a0"
+#define V_COMMIT_HASH "04ff9ed"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -726,6 +726,8 @@ int string_utf32_code(string _rune);
 u16 *string_to_wide(string _str);
 string string_from_wide(u16 *_wstr);
 string string_from_wide2(u16 *_wstr, int len);
+int utf8_len(byte c);
+int utf8_getchar();
 map new_map(int cap, int elm_size);
 map new_map_init(int cap, int elm_size, string *keys, void *vals);
 mapnode *new_node(string key, void *val, int element_size);
@@ -3567,6 +3569,82 @@ string string_from_wide2(u16 *_wstr, int len) {
 
 #endif
   ;
+}
+int utf8_len(byte c) {
+
+  int b = 0;
+
+  byte x = c;
+
+  if (((x & 240) != 0)) {
+
+    x >>= 4;
+
+  } else {
+
+    b += 4;
+  };
+
+  if (((x & 12) != 0)) {
+
+    x >>= 2;
+
+  } else {
+
+    b += 2;
+  };
+
+  if (((x & 2) == 0)) {
+
+    b++;
+  };
+
+  return b;
+}
+int utf8_getchar() {
+
+  int c = ((int)(getchar()));
+
+  int len = utf8_len(~c);
+
+  if (c < 0) {
+
+    return 0;
+
+  } else if ((len == 0)) {
+
+    return c;
+
+  } else if ((len == 1)) {
+
+    return -1;
+
+  } else {
+
+    int uc = ((int)(c & ((1 << (7 - len)) - 1)));
+
+    for (int i = 0; i + 1 < len; i++) {
+
+      int c2 = ((int)(getchar()));
+
+      if (c2 != -1 && (c2 >> 6) == 2) {
+
+        uc <<= 6;
+
+        uc |= ((int)((c2 & 63)));
+
+      } else if ((c2 == -1)) {
+
+        return 0;
+
+      } else {
+
+        return -1;
+      };
+    };
+
+    return uc;
+  };
 }
 map new_map(int cap, int elm_size) {
 
