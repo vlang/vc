@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "48c05b5"
+#define V_COMMIT_HASH "3db4d66"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "35f927e"
+#define V_COMMIT_HASH "48c05b5"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -3057,7 +3057,7 @@ array_byte string_bytes(string s) {
   array_byte buf = array_repeat2(
       new_array_from_c_array(1, 1, sizeof(byte), (byte[]){((byte)(0))}), s.len);
 
-  memcpy(buf.data, s.str, s.len);
+  memcpy(buf.data, (char *)s.str, s.len);
 
   return buf;
 }
@@ -3150,7 +3150,7 @@ void println(string s) {
 
 #else
 
-  printf("%.*s\n", s.len, s.str);
+  printf("%.*s\n", s.len, (char *)s.str);
 
 #endif
   ;
@@ -3164,7 +3164,7 @@ void eprintln(string s) {
 
 #ifdef __APPLE__
 
-  fprintf(stderr, "%.*s\n", s.len, s.str);
+  fprintf(stderr, "%.*s\n", s.len, (char *)s.str);
 
 #else
 
@@ -3181,7 +3181,7 @@ void print(string s) {
 
 #else
 
-  printf("%.*s", s.len, s.str);
+  printf("%.*s", s.len, (char *)s.str);
 
 #endif
   ;
@@ -3216,7 +3216,7 @@ void *memdup(void *src, int sz) {
 
   byte *mem = v_malloc(sz);
 
-  return memcpy(mem, src, sz);
+  return memcpy((char *)mem, src, sz);
 }
 void v_ptr_free(void *ptr) { free(ptr); }
 string f64_str(f64 d) {
@@ -3608,17 +3608,17 @@ u16 *string_to_wide(string _str) {
 
 #ifdef _WIN32
 
-  int num_chars = ((
-      int)(MultiByteToWideChar(builtin__CP_UTF8, 0, _str.str, _str.len, 0, 0)));
+  int num_chars = ((int)(MultiByteToWideChar(
+      builtin__CP_UTF8, 0, (char *)_str.str, _str.len, 0, 0)));
 
   u16 *wstr = ((u16 *)(v_malloc((num_chars + 1) * 2)));
 
   if (wstr > 0) {
 
-    MultiByteToWideChar(builtin__CP_UTF8, 0, _str.str, _str.len, wstr,
+    MultiByteToWideChar(builtin__CP_UTF8, 0, (char *)_str.str, _str.len, wstr,
                         num_chars);
 
-    memset(((byte *)(wstr)) + num_chars * 2, 0, 2);
+    memset((char *)((byte *)(wstr)) + num_chars * 2, 0, 2);
   };
 
   return wstr;
@@ -3656,10 +3656,10 @@ string string_from_wide2(u16 *_wstr, int len) {
 
   if (str_to > 0) {
 
-    WideCharToMultiByte(builtin__CP_UTF8, 0, _wstr, len, str_to, num_chars, 0,
-                        0);
+    WideCharToMultiByte(builtin__CP_UTF8, 0, _wstr, len, (char *)str_to,
+                        num_chars, 0, 0);
 
-    memset(((byte *)(str_to)) + num_chars, 0, 1);
+    memset((char *)((byte *)(str_to)) + num_chars, 0, 1);
   };
 
   return tos2(str_to);
@@ -4251,7 +4251,7 @@ Option_string os__read_file(string path) {
 
   byte *str = v_malloc(fsize + 1);
 
-  fread(str, fsize, 1, fp);
+  fread((char *)str, fsize, 1, fp);
 
   fclose(fp);
 
@@ -4325,7 +4325,7 @@ array_string os__read_lines(string path) {
 
   int buf_index = 0;
 
-  while (fgets(buf + buf_index, buf_len - buf_index, fp) != 0) {
+  while (fgets((char *)buf + buf_index, buf_len - buf_index, fp) != 0) {
 
     int len = vstrlen(buf);
 
@@ -4333,7 +4333,7 @@ array_string os__read_lines(string path) {
 
       buf_len *= 2;
 
-      buf = realloc(buf, buf_len);
+      buf = realloc((char *)buf, buf_len);
 
       if (isnil(buf)) {
 
@@ -4471,7 +4471,7 @@ Option_os__File os__open_append(string path) {
   os__File tmp35 = OPTION_CAST(os__File)(file);
   return opt_ok(&tmp35, sizeof(os__File));
 }
-void os__File_write(os__File f, string s) { fputs(s.str, f.cfile); }
+void os__File_write(os__File f, string s) { fputs((char *)s.str, f.cfile); }
 void os__File_write_bytes(os__File f, void *data, int size) {
 
   fwrite(data, 1, size, f.cfile);
@@ -4486,7 +4486,7 @@ void os__File_write_bytes_at(os__File f, void *data, int size, int pos) {
 }
 void os__File_writeln(os__File f, string s) {
 
-  fputs(s.str, f.cfile);
+  fputs((char *)s.str, f.cfile);
 
   fputs("\n", f.cfile);
 }
@@ -4506,7 +4506,7 @@ FILE *os__popen(string path) {
 
   byte *cpath = path.str;
 
-  return popen(cpath, "r");
+  return popen((char *)cpath, "r");
 
 #endif
   ;
@@ -4562,7 +4562,7 @@ int os__system(string cmd) {
 
 #else
 
-  ret = system(cmd.str);
+  ret = system((char *)cmd.str);
 
 #endif
   ;
@@ -4589,7 +4589,7 @@ string os__getenv(string key) {
 
 #else
 
-  byte *s = ((byte *)(getenv(key.str)));
+  byte *s = ((byte *)(getenv((char *)key.str)));
 
   if (isnil(s)) {
 
@@ -4609,14 +4609,14 @@ int os__setenv(string name, string value, bool overwrite) {
 
   if (overwrite) {
 
-    return _putenv(format.str);
+    return _putenv((char *)format.str);
   };
 
   return -1;
 
 #else
 
-  return setenv(name.str, value.str, overwrite);
+  return setenv((char *)name.str, (char *)value.str, overwrite);
 
 #endif
   ;
@@ -4627,11 +4627,11 @@ int os__unsetenv(string name) {
 
   string format = _STR("%.*s=", name.len, name.str);
 
-  return _putenv(format.str);
+  return _putenv((char *)format.str);
 
 #else
 
-  return unsetenv(name.str);
+  return unsetenv((char *)name.str);
 
 #endif
   ;
@@ -4646,7 +4646,7 @@ bool os__file_exists(string _path) {
 
 #else
 
-  return access(_path.str, 0) != -1;
+  return access((char *)_path.str, 0) != -1;
 
 #endif
   ;
@@ -4659,7 +4659,7 @@ void os__rm(string path) {
 
 #else
 
-  remove(path.str);
+  remove((char *)path.str);
 
 #endif
   ;
@@ -4668,7 +4668,7 @@ void os__rmdir(string path) {
 
 #ifndef _WIN32
 
-  rmdir(path.str);
+  rmdir((char *)path.str);
 
 #else
 
@@ -4767,9 +4767,9 @@ string os__get_raw_line() {
 
 #else
 
-  u64 max = ((u64)(256));
+  size_t max = ((size_t)(256));
 
-  byte *buf = v_malloc(((int)(max)));
+  char *buf = ((char *)(v_malloc(((int)(max)))));
 
   int nr_chars = getline(&/*vvar*/ buf, &/*vvar*/ max, stdin);
 
@@ -4778,7 +4778,7 @@ string os__get_raw_line() {
     return tos2((byte *)"");
   };
 
-  return (tos((byte *)buf, nr_chars));
+  return (tos((byte *)((byteptr)(buf)), nr_chars));
 
 #endif
   ;
@@ -4973,7 +4973,7 @@ string os__executable() {
 
   byte *result = v_malloc(os__MAX_PATH);
 
-  int count = ((int)(readlink("/proc/self/exe", result, os__MAX_PATH)));
+  int count = ((int)(readlink("/proc/self/exe", (char *)result, os__MAX_PATH)));
 
   if (count < 0) {
 
@@ -5002,9 +5002,9 @@ string os__executable() {
 
   byte *result = v_malloc(os__MAX_PATH);
 
-  void *pid = getpid();
+  int pid = getpid();
 
-  void *ret = proc_pidpath(pid, result, os__MAX_PATH);
+  int ret = proc_pidpath(pid, (char *)result, os__MAX_PATH);
 
   if (ret <= 0) {
 
@@ -5027,7 +5027,7 @@ string os__executable() {
 
   int size = os__MAX_PATH;
 
-  sysctl(mib.data, 4, result, &/*vvar*/ size, 0, 0);
+  sysctl(mib.data, 4, (char *)result, &/*vvar*/ size, 0, 0);
 
   return (tos2((byte *)result));
 
@@ -5045,7 +5045,8 @@ string os__executable() {
 
   byte *result = v_malloc(os__MAX_PATH);
 
-  int count = ((int)(readlink("/proc/curproc/exe", result, os__MAX_PATH)));
+  int count =
+      ((int)(readlink("/proc/curproc/exe", (char *)result, os__MAX_PATH)));
 
   if (count < 0) {
 
@@ -5061,7 +5062,8 @@ string os__executable() {
 
   byte *result = v_malloc(os__MAX_PATH);
 
-  int count = ((int)(readlink("/proc/curproc/file", result, os__MAX_PATH)));
+  int count =
+      ((int)(readlink("/proc/curproc/file", (char *)result, os__MAX_PATH)));
 
   if (count < 0) {
 
@@ -5089,7 +5091,7 @@ bool os__is_dir(string path) {
 
   byte *cstr = path.str;
 
-  if (stat(cstr, &/*vvar*/ statbuf) != 0) {
+  if (stat((char *)cstr, &/*vvar*/ statbuf) != 0) {
 
     return 0;
   };
@@ -5107,7 +5109,7 @@ void os__chdir(string path) {
 
 #else
 
-  chdir(path.str);
+  chdir((char *)path.str);
 
 #endif
   ;
@@ -5131,7 +5133,7 @@ string os__getwd() {
 
   byte *buf = v_malloc(512);
 
-  if (getcwd(buf, 512) == 0) {
+  if (getcwd((char *)buf, 512) == 0) {
 
     return tos2((byte *)"");
   };
@@ -5149,11 +5151,11 @@ string os__realpath(string fpath) {
 
 #ifdef _WIN32
 
-  res = ((int)(_fullpath(fullpath, fpath.str, os__MAX_PATH)));
+  res = ((int)(_fullpath((char *)fullpath, (char *)fpath.str, os__MAX_PATH)));
 
 #else
 
-  res = ((int)(realpath(fpath.str, fullpath)));
+  res = ((int)(realpath((char *)fpath.str, (char *)fullpath)));
 
 #endif
   ;
@@ -5205,7 +5207,7 @@ int os__fork() {
 
 #ifndef _WIN32
 
-  void *pid = fork();
+  int pid = fork();
 
   return pid;
 
@@ -5218,7 +5220,7 @@ int os__wait() {
 
 #ifndef _WIN32
 
-  void *pid = wait(0);
+  int pid = wait(0);
 
   return pid;
 
@@ -5233,7 +5235,7 @@ int os__file_last_mod_unix(string path) {
 
       stat attr;
 
-  stat(path.str, &/*vvar*/ attr);
+  stat((char *)path.str, &/*vvar*/ attr);
 
   return attr.st_mtime;
 }
@@ -5366,7 +5368,7 @@ Option_string os__get_module_filename(HANDLE handle) {
 
     void *status = GetModuleFileName(handle, &/*vvar*/ buf, sz);
 
-    if ((status == os__SUCCESS)) { /* case */
+    if (status == os__SUCCESS) { /* case */
 
       string _filename = string_from_wide2(buf, sz);
 
@@ -5804,7 +5806,7 @@ void term__hide_cursor() { print(tos2((byte *)"\x1b[?25l")); }
 void time__remove_me_when_c_bug_is_fixed() {}
 time__Time time__now() {
 
-  void *t = time(0);
+  i64 t = time(0);
 
   struct /*c struct init*/
 
@@ -13375,7 +13377,7 @@ void Parser_parse(Parser *p, Pass pass) {
 
   while (1) {
 
-    if ((p->tok == main__Token_key_import)) { /* case */
+    if (p->tok == main__Token_key_import) { /* case */
 
       if (Parser_peek(p) == main__Token_key_const) {
 
@@ -13391,7 +13393,7 @@ void Parser_parse(Parser *p, Pass pass) {
         };
       };
 
-    } else if ((p->tok == main__Token_key_enum)) { /* case */
+    } else if (p->tok == main__Token_key_enum) { /* case */
 
       Parser_next(p);
 
@@ -13414,7 +13416,7 @@ void Parser_parse(Parser *p, Pass pass) {
         Parser_check(p, main__Token_name);
       };
 
-    } else if ((p->tok == main__Token_key_pub)) { /* case */
+    } else if (p->tok == main__Token_key_pub) { /* case */
 
       if (Parser_peek(p) == main__Token_func) {
 
@@ -13430,38 +13432,38 @@ void Parser_parse(Parser *p, Pass pass) {
         Parser_error(p, tos2((byte *)"wrong pub keyword usage"));
       };
 
-    } else if ((p->tok == main__Token_func)) { /* case */
+    } else if (p->tok == main__Token_func) { /* case */
 
       Parser_fn_decl(p);
 
-    } else if ((p->tok == main__Token_key_type)) { /* case */
+    } else if (p->tok == main__Token_key_type) { /* case */
 
       Parser_type_decl(p);
 
-    } else if ((p->tok == main__Token_lsbr)) { /* case */
+    } else if (p->tok == main__Token_lsbr) { /* case */
 
       Parser_attribute(p);
 
-    } else if ((p->tok == main__Token_key_struct) ||
-               (p->tok == main__Token_key_interface) ||
-               (p->tok == main__Token_key_union) ||
-               (p->tok == main__Token_lsbr)) { /* case */
+    } else if (p->tok == main__Token_key_struct ||
+               p->tok == main__Token_key_interface ||
+               p->tok == main__Token_key_union ||
+               p->tok == main__Token_lsbr) { /* case */
 
       Parser_struct_decl(p);
 
-    } else if ((p->tok == main__Token_key_const)) { /* case */
+    } else if (p->tok == main__Token_key_const) { /* case */
 
       Parser_const_decl(p);
 
-    } else if ((p->tok == main__Token_hash)) { /* case */
+    } else if (p->tok == main__Token_hash) { /* case */
 
       Parser_chash(p);
 
-    } else if ((p->tok == main__Token_dollar)) { /* case */
+    } else if (p->tok == main__Token_dollar) { /* case */
 
       Parser_comp_time(p);
 
-    } else if ((p->tok == main__Token_key_global)) { /* case */
+    } else if (p->tok == main__Token_key_global) { /* case */
 
       if (!p->pref->translated && !p->pref->is_live && !p->builtin_mod &&
           !p->pref->building_v &&
@@ -13498,7 +13500,7 @@ void Parser_parse(Parser *p, Pass pass) {
 
       _PUSH(&p->cgen->consts, (g), tmp13, string);
 
-    } else if ((p->tok == main__Token_eof)) { /* case */
+    } else if (p->tok == main__Token_eof) { /* case */
 
       Parser_log(&/* ? */ *p, tos2((byte *)"end of parse()"));
 
@@ -13836,15 +13838,15 @@ Fn *Parser_interface_method(Parser *p, string field_name, string receiver) {
 }
 TypeCategory key_to_type_cat(Token tok) {
 
-  if ((tok == main__Token_key_interface)) { /* case */
+  if (tok == main__Token_key_interface) { /* case */
 
     return main__TypeCategory_interface_;
 
-  } else if ((tok == main__Token_key_struct)) { /* case */
+  } else if (tok == main__Token_key_struct) { /* case */
 
     return main__TypeCategory_struct_;
 
-  } else if ((tok == main__Token_key_union)) { /* case */
+  } else if (tok == main__Token_key_union) { /* case */
 
     return main__TypeCategory_union_;
   };
@@ -14809,7 +14811,7 @@ string Parser_statement(Parser *p, bool add_semi) {
 
   string q = tos2((byte *)"");
 
-  if ((tok == main__Token_name)) { /* case */
+  if (tok == main__Token_name) { /* case */
 
     Token next = Parser_peek(p);
 
@@ -14847,7 +14849,7 @@ string Parser_statement(Parser *p, bool add_semi) {
       q = Parser_bool_expression(p);
     };
 
-  } else if ((tok == main__Token_key_goto)) { /* case */
+  } else if (tok == main__Token_key_goto) { /* case */
 
     Parser_check(p, main__Token_key_goto);
 
@@ -14859,48 +14861,48 @@ string Parser_statement(Parser *p, bool add_semi) {
 
     return tos2((byte *)"");
 
-  } else if ((tok == main__Token_key_defer)) { /* case */
+  } else if (tok == main__Token_key_defer) { /* case */
 
     Parser_defer_st(p);
 
     return tos2((byte *)"");
 
-  } else if ((tok == main__Token_hash)) { /* case */
+  } else if (tok == main__Token_hash) { /* case */
 
     Parser_chash(p);
 
     return tos2((byte *)"");
 
-  } else if ((tok == main__Token_dollar)) { /* case */
+  } else if (tok == main__Token_dollar) { /* case */
 
     Parser_comp_time(p);
 
-  } else if ((tok == main__Token_key_if)) { /* case */
+  } else if (tok == main__Token_key_if) { /* case */
 
     Parser_if_st(p, 0, 0);
 
-  } else if ((tok == main__Token_key_for)) { /* case */
+  } else if (tok == main__Token_key_for) { /* case */
 
     Parser_for_st(p);
 
-  } else if ((tok == main__Token_key_switch)) { /* case */
+  } else if (tok == main__Token_key_switch) { /* case */
 
     Parser_switch_statement(p);
 
-  } else if ((tok == main__Token_key_match)) { /* case */
+  } else if (tok == main__Token_key_match) { /* case */
 
     Parser_match_statement(p, 0);
 
-  } else if ((tok == main__Token_key_mut) ||
-             (tok == main__Token_key_static)) { /* case */
+  } else if (tok == main__Token_key_mut ||
+             tok == main__Token_key_static) { /* case */
 
     Parser_var_decl(p);
 
-  } else if ((tok == main__Token_key_return)) { /* case */
+  } else if (tok == main__Token_key_return) { /* case */
 
     Parser_return_st(p);
 
-  } else if ((tok == main__Token_lcbr)) { /* case */
+  } else if (tok == main__Token_lcbr) { /* case */
 
     Parser_check(p, main__Token_lcbr);
 
@@ -14910,7 +14912,7 @@ string Parser_statement(Parser *p, bool add_semi) {
 
     return tos2((byte *)"");
 
-  } else if ((tok == main__Token_key_continue)) { /* case */
+  } else if (tok == main__Token_key_continue) { /* case */
 
     if (p->for_expr_cnt == 0) {
 
@@ -14921,7 +14923,7 @@ string Parser_statement(Parser *p, bool add_semi) {
 
     Parser_check(p, main__Token_key_continue);
 
-  } else if ((tok == main__Token_key_break)) { /* case */
+  } else if (tok == main__Token_key_break) { /* case */
 
     if (p->for_expr_cnt == 0) {
 
@@ -14932,11 +14934,11 @@ string Parser_statement(Parser *p, bool add_semi) {
 
     Parser_check(p, main__Token_key_break);
 
-  } else if ((tok == main__Token_key_go)) { /* case */
+  } else if (tok == main__Token_key_go) { /* case */
 
     Parser_go_statement(p);
 
-  } else if ((tok == main__Token_key_assert)) { /* case */
+  } else if (tok == main__Token_key_assert) { /* case */
 
     Parser_assert_statement(p);
 
@@ -14996,14 +14998,14 @@ void Parser_assign_statement(Parser *p, Var v, int ph, bool is_map) {
 
   bool is_str = string_eq(v.typ, tos2((byte *)"string"));
 
-  if ((tok == main__Token_assign)) { /* case */
+  if (tok == main__Token_assign) { /* case */
 
     if (!is_map && !p->is_empty_c_struct_init) {
 
       Parser_gen(p, tos2((byte *)" = "));
     };
 
-  } else if ((tok == main__Token_plus_assign)) { /* case */
+  } else if (tok == main__Token_plus_assign) { /* case */
 
     if (is_str && !p->is_js) {
 
@@ -15266,27 +15268,27 @@ string Parser_bterm(Parser *p) {
 
       Parser_gen(p, tos2((byte *)")"));
 
-      if ((tok == main__Token_eq)) { /* case */
+      if (tok == main__Token_eq) { /* case */
 
         CGen_set_placeholder(p->cgen, ph, tos2((byte *)"string_eq("));
 
-      } else if ((tok == main__Token_ne)) { /* case */
+      } else if (tok == main__Token_ne) { /* case */
 
         CGen_set_placeholder(p->cgen, ph, tos2((byte *)"string_ne("));
 
-      } else if ((tok == main__Token_le)) { /* case */
+      } else if (tok == main__Token_le) { /* case */
 
         CGen_set_placeholder(p->cgen, ph, tos2((byte *)"string_le("));
 
-      } else if ((tok == main__Token_ge)) { /* case */
+      } else if (tok == main__Token_ge) { /* case */
 
         CGen_set_placeholder(p->cgen, ph, tos2((byte *)"string_ge("));
 
-      } else if ((tok == main__Token_gt)) { /* case */
+      } else if (tok == main__Token_gt) { /* case */
 
         CGen_set_placeholder(p->cgen, ph, tos2((byte *)"string_gt("));
 
-      } else if ((tok == main__Token_lt)) { /* case */
+      } else if (tok == main__Token_lt) { /* case */
 
         CGen_set_placeholder(p->cgen, ph, tos2((byte *)"string_lt("));
       };
@@ -16196,10 +16198,6 @@ string Parser_expression(Parser *p) {
     Parser_print_tok(&/* ? */ *p);
   };
 
-  p->cgen;
-
-  (tos2((byte *)"/* expr start*/"));
-
   int ph = CGen_add_placeholder(p->cgen);
 
   string typ = Parser_term(p);
@@ -16312,6 +16310,12 @@ string Parser_expression(Parser *p) {
          p->tok == main__Token_xor) {
 
     Token tok_op = p->tok;
+
+    if (string_eq(typ, tos2((byte *)"bool"))) {
+
+      Parser_error(p, _STR("operator %.*s not defined on bool ",
+                           Token_str(p->tok).len, Token_str(p->tok).str));
+    };
 
     bool is_num = string_eq(typ, tos2((byte *)"void*")) ||
                   string_eq(typ, tos2((byte *)"byte*")) || is_number_type(typ);
@@ -16441,7 +16445,7 @@ string Parser_unary(Parser *p) {
 
   Token tok = p->tok;
 
-  if ((tok == main__Token_not)) { /* case */
+  if (tok == main__Token_not) { /* case */
 
     Parser_gen(p, tos2((byte *)"!"));
 
@@ -16451,7 +16455,7 @@ string Parser_unary(Parser *p) {
 
     Parser_bool_expression(p);
 
-  } else if ((tok == main__Token_bit_not)) { /* case */
+  } else if (tok == main__Token_bit_not) { /* case */
 
     Parser_gen(p, tos2((byte *)"~"));
 
@@ -16472,7 +16476,7 @@ string Parser_factor(Parser *p) {
 
   Token tok = p->tok;
 
-  if ((tok == main__Token_number)) { /* case */
+  if (tok == main__Token_number) { /* case */
 
     typ = tos2((byte *)"int");
 
@@ -16506,7 +16510,7 @@ string Parser_factor(Parser *p) {
 
     Parser_fgen(p, p->lit);
 
-  } else if ((tok == main__Token_minus)) { /* case */
+  } else if (tok == main__Token_minus) { /* case */
 
     Parser_gen(p, tos2((byte *)"-"));
 
@@ -16516,7 +16520,7 @@ string Parser_factor(Parser *p) {
 
     return Parser_factor(p);
 
-  } else if ((tok == main__Token_key_sizeof)) { /* case */
+  } else if (tok == main__Token_key_sizeof) { /* case */
 
     Parser_gen(p, tos2((byte *)"sizeof("));
 
@@ -16536,12 +16540,12 @@ string Parser_factor(Parser *p) {
 
     return tos2((byte *)"int");
 
-  } else if ((tok == main__Token_amp) || (tok == main__Token_dot) ||
-             (tok == main__Token_mul)) { /* case */
+  } else if (tok == main__Token_amp || tok == main__Token_dot ||
+             tok == main__Token_mul) { /* case */
 
     return Parser_name_expr(p);
 
-  } else if ((tok == main__Token_name)) { /* case */
+  } else if (tok == main__Token_name) { /* case */
 
     if (string_eq(p->lit, tos2((byte *)"map")) &&
         Parser_peek(p) == main__Token_lsbr) {
@@ -16564,7 +16568,7 @@ string Parser_factor(Parser *p) {
 
     return typ;
 
-  } else if ((tok == main__Token_key_default)) { /* case */
+  } else if (tok == main__Token_key_default) { /* case */
 
     Parser_next(p);
 
@@ -16583,7 +16587,7 @@ string Parser_factor(Parser *p) {
 
     return tos2((byte *)"T");
 
-  } else if ((tok == main__Token_lpar)) { /* case */
+  } else if (tok == main__Token_lpar) { /* case */
 
     Parser_gen(p, tos2((byte *)"("));
 
@@ -16602,7 +16606,7 @@ string Parser_factor(Parser *p) {
 
     return typ;
 
-  } else if ((tok == main__Token_chartoken)) { /* case */
+  } else if (tok == main__Token_chartoken) { /* case */
 
     Parser_char_expr(p);
 
@@ -16610,7 +16614,7 @@ string Parser_factor(Parser *p) {
 
     return typ;
 
-  } else if ((tok == main__Token_str)) { /* case */
+  } else if (tok == main__Token_str) { /* case */
 
     Parser_string_expr(p);
 
@@ -16618,7 +16622,7 @@ string Parser_factor(Parser *p) {
 
     return typ;
 
-  } else if ((tok == main__Token_key_false)) { /* case */
+  } else if (tok == main__Token_key_false) { /* case */
 
     typ = tos2((byte *)"bool");
 
@@ -16626,7 +16630,7 @@ string Parser_factor(Parser *p) {
 
     Parser_fgen(p, tos2((byte *)"false"));
 
-  } else if ((tok == main__Token_key_true)) { /* case */
+  } else if (tok == main__Token_key_true) { /* case */
 
     typ = tos2((byte *)"bool");
 
@@ -16634,11 +16638,11 @@ string Parser_factor(Parser *p) {
 
     Parser_fgen(p, tos2((byte *)"true"));
 
-  } else if ((tok == main__Token_lsbr)) { /* case */
+  } else if (tok == main__Token_lsbr) { /* case */
 
     return Parser_array_init(p);
 
-  } else if ((tok == main__Token_lcbr)) { /* case */
+  } else if (tok == main__Token_lcbr) { /* case */
 
     if (Parser_peek(p) == main__Token_str) {
 
@@ -16647,13 +16651,13 @@ string Parser_factor(Parser *p) {
 
     return Parser_assoc(p);
 
-  } else if ((tok == main__Token_key_if)) { /* case */
+  } else if (tok == main__Token_key_if) { /* case */
 
     typ = Parser_if_st(p, 1, 0);
 
     return typ;
 
-  } else if ((tok == main__Token_key_match)) { /* case */
+  } else if (tok == main__Token_key_match) { /* case */
 
     typ = Parser_match_statement(p, 1);
 
@@ -20140,7 +20144,7 @@ ScanRes Scanner_scan(Scanner *s) {
     return scan_res(main__Token_number, num);
   };
 
-  if ((c == '+')) { /* case */
+  if (c == '+') { /* case */
 
     if (nextc == '+') {
 
@@ -20157,7 +20161,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
     return scan_res(main__Token_plus, tos2((byte *)""));
 
-  } else if ((c == '-')) { /* case */
+  } else if (c == '-') { /* case */
 
     if (nextc == '-') {
 
@@ -20174,7 +20178,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
     return scan_res(main__Token_minus, tos2((byte *)""));
 
-  } else if ((c == '*')) { /* case */
+  } else if (c == '*') { /* case */
 
     if (nextc == '=') {
 
@@ -20185,7 +20189,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
     return scan_res(main__Token_mul, tos2((byte *)""));
 
-  } else if ((c == '^')) { /* case */
+  } else if (c == '^') { /* case */
 
     if (nextc == '=') {
 
@@ -20196,7 +20200,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
     return scan_res(main__Token_xor, tos2((byte *)""));
 
-  } else if ((c == '%')) { /* case */
+  } else if (c == '%') { /* case */
 
     if (nextc == '=') {
 
@@ -20207,35 +20211,35 @@ ScanRes Scanner_scan(Scanner *s) {
 
     return scan_res(main__Token_mod, tos2((byte *)""));
 
-  } else if ((c == '?')) { /* case */
+  } else if (c == '?') { /* case */
 
     return scan_res(main__Token_question, tos2((byte *)""));
 
-  } else if ((c == '\'')) { /* case */
+  } else if (c == '\'') { /* case */
 
     return scan_res(main__Token_str, Scanner_ident_string(s));
 
-  } else if ((c == '\`')) { /* case */
+  } else if (c == '\`') { /* case */
 
     return scan_res(main__Token_chartoken, Scanner_ident_char(s));
 
-  } else if ((c == '(')) { /* case */
+  } else if (c == '(') { /* case */
 
     return scan_res(main__Token_lpar, tos2((byte *)""));
 
-  } else if ((c == ')')) { /* case */
+  } else if (c == ')') { /* case */
 
     return scan_res(main__Token_rpar, tos2((byte *)""));
 
-  } else if ((c == '[')) { /* case */
+  } else if (c == '[') { /* case */
 
     return scan_res(main__Token_lsbr, tos2((byte *)""));
 
-  } else if ((c == ']')) { /* case */
+  } else if (c == ']') { /* case */
 
     return scan_res(main__Token_rsbr, tos2((byte *)""));
 
-  } else if ((c == '{')) { /* case */
+  } else if (c == '{') { /* case */
 
     if (s->inside_string) {
 
@@ -20244,11 +20248,11 @@ ScanRes Scanner_scan(Scanner *s) {
 
     return scan_res(main__Token_lcbr, tos2((byte *)""));
 
-  } else if ((c == '$')) { /* case */
+  } else if (c == '$') { /* case */
 
     return scan_res(main__Token_dollar, tos2((byte *)""));
 
-  } else if ((c == '}')) { /* case */
+  } else if (c == '}') { /* case */
 
     if (s->inside_string) {
 
@@ -20268,7 +20272,7 @@ ScanRes Scanner_scan(Scanner *s) {
       return scan_res(main__Token_rcbr, tos2((byte *)""));
     };
 
-  } else if ((c == '&')) { /* case */
+  } else if (c == '&') { /* case */
 
     if (nextc == '=') {
 
@@ -20286,7 +20290,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
     return scan_res(main__Token_amp, tos2((byte *)""));
 
-  } else if ((c == '|')) { /* case */
+  } else if (c == '|') { /* case */
 
     if (nextc == '|') {
 
@@ -20304,11 +20308,11 @@ ScanRes Scanner_scan(Scanner *s) {
 
     return scan_res(main__Token_pipe, tos2((byte *)""));
 
-  } else if ((c == ',')) { /* case */
+  } else if (c == ',') { /* case */
 
     return scan_res(main__Token_comma, tos2((byte *)""));
 
-  } else if ((c == '@')) { /* case */
+  } else if (c == '@') { /* case */
 
     s->pos++;
 
@@ -20351,7 +20355,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
     return scan_res(main__Token_name, name);
 
-  } else if ((c == '\r')) { /* case */
+  } else if (c == '\r') { /* case */
 
     if (nextc == '\n') {
 
@@ -20360,11 +20364,11 @@ ScanRes Scanner_scan(Scanner *s) {
       return scan_res(main__Token_nl, tos2((byte *)""));
     };
 
-  } else if ((c == '\n')) { /* case */
+  } else if (c == '\n') { /* case */
 
     return scan_res(main__Token_nl, tos2((byte *)""));
 
-  } else if ((c == '.')) { /* case */
+  } else if (c == '.') { /* case */
 
     if (nextc == '.') {
 
@@ -20375,7 +20379,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
     return scan_res(main__Token_dot, tos2((byte *)""));
 
-  } else if ((c == '#')) { /* case */
+  } else if (c == '#') { /* case */
 
     int start = s->pos + 1;
 
@@ -20401,7 +20405,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
     return scan_res(main__Token_hash, string_trim_space(hash));
 
-  } else if ((c == '>')) { /* case */
+  } else if (c == '>') { /* case */
 
     if (nextc == '=') {
 
@@ -20427,7 +20431,7 @@ ScanRes Scanner_scan(Scanner *s) {
       return scan_res(main__Token_gt, tos2((byte *)""));
     };
 
-  } else if ((c == 0xE2)) { /* case */
+  } else if (c == 0xE2) { /* case */
 
     if (nextc == 0x89 && string_at(s->text, s->pos + 2) == 0xA0) {
 
@@ -20448,7 +20452,7 @@ ScanRes Scanner_scan(Scanner *s) {
       return scan_res(main__Token_ge, tos2((byte *)""));
     };
 
-  } else if ((c == '<')) { /* case */
+  } else if (c == '<') { /* case */
 
     if (nextc == '=') {
 
@@ -20474,7 +20478,7 @@ ScanRes Scanner_scan(Scanner *s) {
       return scan_res(main__Token_lt, tos2((byte *)""));
     };
 
-  } else if ((c == '=')) { /* case */
+  } else if (c == '=') { /* case */
 
     if (nextc == '=') {
 
@@ -20493,7 +20497,7 @@ ScanRes Scanner_scan(Scanner *s) {
       return scan_res(main__Token_assign, tos2((byte *)""));
     };
 
-  } else if ((c == ':')) { /* case */
+  } else if (c == ':') { /* case */
 
     if (nextc == '=') {
 
@@ -20506,11 +20510,11 @@ ScanRes Scanner_scan(Scanner *s) {
       return scan_res(main__Token_colon, tos2((byte *)""));
     };
 
-  } else if ((c == ';')) { /* case */
+  } else if (c == ';') { /* case */
 
     return scan_res(main__Token_semicolon, tos2((byte *)""));
 
-  } else if ((c == '!')) { /* case */
+  } else if (c == '!') { /* case */
 
     if (nextc == '=') {
 
@@ -20523,11 +20527,11 @@ ScanRes Scanner_scan(Scanner *s) {
       return scan_res(main__Token_not, tos2((byte *)""));
     };
 
-  } else if ((c == '~')) { /* case */
+  } else if (c == '~') { /* case */
 
     return scan_res(main__Token_bit_not, tos2((byte *)""));
 
-  } else if ((c == '/')) { /* case */
+  } else if (c == '/') { /* case */
 
     if (nextc == '=') {
 
