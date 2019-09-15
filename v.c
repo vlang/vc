@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "854de4e"
+#define V_COMMIT_HASH "5f43a61"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5db2535"
+#define V_COMMIT_HASH "854de4e"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -36,10 +36,7 @@
 #endif
 
 #define EMPTY_STRUCT_DECLARATION
-#ifdef _MSC_VER
-#define EMPTY_STRUCT_DECLARATION int : 0
-#endif
-
+#define EMPTY_STRUCT_INITIALIZATION
 #define OPTION_CAST(x) (x)
 
 #ifdef _WIN32
@@ -61,9 +58,11 @@
 
 // MSVC cannot parse some things properly
 #undef EMPTY_STRUCT_DECLARATION
-#define EMPTY_STRUCT_DECLARATION void *____dummy_variable
-
+#undef EMPTY_STRUCT_INITIALIZATION
 #undef OPTION_CAST
+
+#define EMPTY_STRUCT_DECLARATION int ____dummy_variable
+#define EMPTY_STRUCT_INITIALIZATION 0
 #define OPTION_CAST(x)
 #endif
 
