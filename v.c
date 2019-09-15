@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "52fc16b"
+#define V_COMMIT_HASH "075a8e5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0b81c5a"
+#define V_COMMIT_HASH "52fc16b"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1262,7 +1262,8 @@ string FileImportTable_resolve_alias(FileImportTable *fit, string alias);
 bool Type_contains_field_type(Type *t, string typ);
 string Table_identify_typo(Table *table, string name, Fn *current_fn,
                            FileImportTable *fit);
-string Table_find_misspelled_fn(Table *table, string name, f32 min_match);
+string Table_find_misspelled_fn(Table *table, string name, FileImportTable *fit,
+                                f32 min_match);
 string Table_find_misspelled_imported_mod(Table *table, string name,
                                           FileImportTable *fit, f32 min_match);
 map_int build_keys();
@@ -4132,45 +4133,43 @@ f32 strings__dice_coefficient(string s1, string s2) {
     return 0.0;
   };
 
+  string a = (s1.len > s2.len) ? (s1) : (s2);
+
+  string b = (string_eq(a, s1)) ? (s2) : (s1);
+
   map_int first_bigrams = new_map(1, sizeof(int));
 
-  for (int i = 0; i < s1.len - 1; i++) {
+  for (int i = 0; i < a.len - 1; i++) {
 
-    byte a = string_at(s1, i);
+    string bigram = string_substr(a, i, i + 2);
 
-    byte b = string_at(s1, i + 1);
-
-    string bigram = byte_str((a + b));
-
-    int tmp36 = 0;
-    bool tmp37 = map_get(first_bigrams, bigram, &tmp36);
+    int tmp32 = 0;
+    bool tmp33 = map_get(first_bigrams, bigram, &tmp32);
 
     map__set(&first_bigrams, bigram,
-             &(int[]){(_IN_MAP(bigram, first_bigrams)) ? (tmp36 + 1) : (1)});
+             &(int[]){(_IN_MAP(bigram, first_bigrams)) ? (tmp32 + 1) : (1)});
   };
 
   int intersection_size = 0;
 
-  for (int i = 0; i < s2.len - 1; i++) {
+  for (int i = 0; i < b.len - 1; i++) {
 
-    byte a = string_at(s2, i);
+    string bigram = string_substr(b, i, i + 2);
 
-    byte b = string_at(s2, i + 1);
+    int tmp37 = 0;
+    bool tmp38 = map_get(first_bigrams, bigram, &tmp37);
 
-    string bigram = byte_str((a + b));
-
-    int tmp47 = 0;
-    bool tmp48 = map_get(first_bigrams, bigram, &tmp47);
-
-    int count = (_IN_MAP(bigram, first_bigrams)) ? (tmp47) : (0);
+    int count = (_IN_MAP(bigram, first_bigrams)) ? (tmp37) : (0);
 
     if (count > 0) {
+
+      map__set(&first_bigrams, bigram, &(int[]){count - 1});
 
       intersection_size++;
     };
   };
 
-  return (2.0 * intersection_size) / (((f32)(s1.len)) + ((f32)(s2.len)) - 2);
+  return (2.0 * intersection_size) / (((f32)(a.len)) + ((f32)(b.len)) - 2);
 }
 string strings__repeat(byte c, int n) {
 
@@ -9764,23 +9763,21 @@ string Fn_find_misspelled_local_var(Fn *f, string name, f32 min_match) {
   for (int tmp146 = 0; tmp146 < tmp145.len; tmp146++) {
     Var var = ((Var *)tmp145.data)[tmp146];
 
-    string n =
-        _STR("%.*s.%.*s", f->mod.len, f->mod.str, var.name.len, var.name.str);
+    string n = string_all_after(name, tos2((byte *)"."));
 
     if (string_eq(var.name, tos2((byte *)"")) ||
-        !string_starts_with(name, f->mod) ||
-        (n.len - name.len > 3 || name.len - n.len > 3)) {
+        (n.len - var.name.len > 2 || var.name.len - n.len > 2)) {
 
       continue;
     };
 
-    f32 p = strings__dice_coefficient(name, n);
+    f32 p = strings__dice_coefficient(var.name, n);
 
     if (p > closest) {
 
       closest = p;
 
-      closest_var = n;
+      closest_var = var.name;
     };
   };
 
@@ -22191,7 +22188,7 @@ string Table_identify_typo(Table *table, string name, Fn *current_fn,
     return tos2((byte *)"");
   };
 
-  f32 min_match = 0.8;
+  f32 min_match = 0.50;
 
   string name_orig = string_replace(
       string_replace(name, tos2((byte *)"__"), tos2((byte *)".")),
@@ -22199,7 +22196,7 @@ string Table_identify_typo(Table *table, string name, Fn *current_fn,
 
   string output = tos2((byte *)"");
 
-  string n = Table_find_misspelled_fn(&/* ? */ *table, name_orig, min_match);
+  string n = Table_find_misspelled_fn(&/* ? */ *table, name, fit, min_match);
 
   if (string_ne(n, tos2((byte *)""))) {
 
@@ -22223,34 +22220,65 @@ string Table_identify_typo(Table *table, string name, Fn *current_fn,
 
   return output;
 }
-string Table_find_misspelled_fn(Table *table, string name, f32 min_match) {
+string Table_find_misspelled_fn(Table *table, string name, FileImportTable *fit,
+                                f32 min_match) {
 
   f32 closest = ((f32)(0));
 
   string closest_fn = tos2((byte *)"");
 
-  map_Fn tmp107 = table->fns;
-  array_string keys_tmp107 = map_keys(&tmp107);
-  for (int l = 0; l < keys_tmp107.len; l++) {
-    string _ = ((string *)keys_tmp107.data)[l];
+  bool is_main_fn = string_starts_with(name, tos2((byte *)"main__"));
+
+  string n1 = (is_main_fn) ? (string_right(name, 6)) : (name);
+
+  map_Fn tmp109 = table->fns;
+  array_string keys_tmp109 = map_keys(&tmp109);
+  for (int l = 0; l < keys_tmp109.len; l++) {
+    string _ = ((string *)keys_tmp109.data)[l];
     Fn f = {0};
-    map_get(tmp107, _, &f);
+    map_get(tmp109, _, &f);
 
-    string n = _STR("%.*s.%.*s", f.mod.len, f.mod.str, f.name.len, f.name.str);
-
-    if (!string_starts_with(name, f.mod) ||
-        (n.len - name.len > 3 || name.len - n.len > 3)) {
+    if (n1.len - f.name.len > 2 || f.name.len - n1.len > 2) {
 
       continue;
     };
 
-    f32 p = strings__dice_coefficient(name, n);
+    if (!(_IN(string, f.mod,
+              new_array_from_c_array(3, 3, sizeof(string),
+                                     (string[]){tos2((byte *)""),
+                                                tos2((byte *)"main"),
+                                                tos2((byte *)"builtin")})))) {
+
+      bool mod_imported = 0;
+
+      map_string tmp111 = fit->imports;
+      array_string keys_tmp111 = map_keys(&tmp111);
+      for (int l = 0; l < keys_tmp111.len; l++) {
+        string _ = ((string *)keys_tmp111.data)[l];
+        string m = {0};
+        map_get(tmp111, _, &m);
+
+        if (string_eq(f.mod, m)) {
+
+          mod_imported = 1;
+
+          break;
+        };
+      };
+
+      if (!mod_imported) {
+
+        continue;
+      };
+    };
+
+    f32 p = strings__dice_coefficient(n1, f.name);
 
     if (p > closest) {
 
       closest = p;
 
-      closest_fn = n;
+      closest_fn = f.name;
     };
   };
 
@@ -22263,18 +22291,18 @@ string Table_find_misspelled_imported_mod(Table *table, string name,
 
   string closest_mod = tos2((byte *)"");
 
-  map_string tmp112 = fit->imports;
-  array_string keys_tmp112 = map_keys(&tmp112);
-  for (int l = 0; l < keys_tmp112.len; l++) {
-    string alias = ((string *)keys_tmp112.data)[l];
+  map_string tmp115 = fit->imports;
+  array_string keys_tmp115 = map_keys(&tmp115);
+  for (int l = 0; l < keys_tmp115.len; l++) {
+    string alias = ((string *)keys_tmp115.data)[l];
     string mod = {0};
-    map_get(tmp112, alias, &mod);
+    map_get(tmp115, alias, &mod);
 
     string n = _STR("%.*s.%.*s", fit->module_name.len, fit->module_name.str,
                     alias.len, alias.str);
 
     if (!string_starts_with(name, fit->module_name) ||
-        (n.len - name.len > 3 || name.len - n.len > 3)) {
+        (n.len - name.len > 2 || name.len - n.len > 2)) {
 
       continue;
     };
