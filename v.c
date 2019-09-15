@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3db4d66"
+#define V_COMMIT_HASH "0b81c5a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "48c05b5"
+#define V_COMMIT_HASH "3db4d66"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -11199,10 +11199,7 @@ void V_compile(V *v) {
   if (v->pref->build_mode == main__BuildMode_embed_vlib ||
       v->pref->build_mode == main__BuildMode_default_mode) {
 
-    if (v->pref->is_test) {
-
-      CGen_genln(cgen, tos2((byte *)"int g_test_ok = 1; "));
-    };
+    CGen_genln(cgen, tos2((byte *)"int g_test_ok = 1; "));
 
     if (_IN(string, tos2((byte *)"json"), v->table->imports)) {
 
