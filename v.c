@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5f43a61"
+#define V_COMMIT_HASH "cbd4478"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "854de4e"
+#define V_COMMIT_HASH "5f43a61"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -8960,6 +8960,8 @@ void Parser_async_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
         str_args = string_add(str_args, tos2((byte *)","));
       };
 
+      did_gen_something = 1;
+
       continue;
     };
 
@@ -8984,7 +8986,7 @@ void Parser_async_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
   if (!did_gen_something) {
 
     arg_struct =
-        string_add(arg_struct, tos2((byte *)"EMPTY_STRUCT_DECLARATION"));
+        string_add(arg_struct, tos2((byte *)"EMPTY_STRUCT_DECLARATION;"));
   };
 
   arg_struct = string_add(
@@ -10274,14 +10276,6 @@ bool Parser_gen_struct_init(Parser *p, string typ, Type t) {
     } else {
 
       Parser_gen(p, _STR("(%.*s) {", typ.len, typ.str));
-
-      if (t.fields.len == 1 &&
-          string_eq((*(Var *)array__get(t.fields, 0)).name, tos2((byte *)"")) &&
-          string_starts_with((*(Var *)array__get(t.fields, 0)).typ,
-                             tos2((byte *)"EMPTY_STRUCT_DECLARATION"))) {
-
-        Parser_gen(p, tos2((byte *)" EMPTY_STRUCT_INITIALIZATION "));
-      };
     };
 
   } else {
@@ -17269,9 +17263,9 @@ string Parser_struct_init(Parser *p, string typ) {
 
           Parser_gen(p, tos2((byte *)","));
         };
-      };
 
-      did_gen_something = 1;
+        did_gen_something = 1;
+      };
     };
 
   } else {
@@ -17329,7 +17323,7 @@ string Parser_struct_init(Parser *p, string typ) {
 
   if (!did_gen_something) {
 
-    Parser_gen(p, tos2((byte *)"0"));
+    Parser_gen(p, tos2((byte *)"EMPTY_STRUCT_INITIALIZATION"));
   };
 
   Parser_gen(p, tos2((byte *)"}"));
@@ -22749,20 +22743,20 @@ void init_consts() {
             "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
             "nix\n#endif\n\n#define EMPTY_STRUCT_DECLARATION\n#define "
             "EMPTY_STRUCT_INITIALIZATION\n#define OPTION_CAST(x) (x)\n\n#ifdef "
-            "_WIN32\n#define WIN32_LEAN_AND_MEAN\n#include <windows.h>\n\n// "
-            "must be included after <windows.h>\n#ifndef __TINYC__\n#include "
+            "_WIN32\n#undef EMPTY_STRUCT_INITIALIZATION\n#define "
+            "EMPTY_STRUCT_INITIALIZATION 0\n#define "
+            "WIN32_LEAN_AND_MEAN\n#include <windows.h>\n\n// must be included "
+            "after <windows.h>\n#ifndef __TINYC__\n#include "
             "<shellapi.h>\n#endif\n\n#include <io.h> // _waccess\n#include "
             "<fcntl.h> // _O_U8TEXT\n#include <direct.h> // "
             "_wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n// On MSVC "
             "these are the same (as long as /volatile:ms is passed)\n#define "
             "_Atomic volatile\n\n// MSVC cannot parse some things "
             "properly\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
-            "EMPTY_STRUCT_INITIALIZATION\n#undef OPTION_CAST\n\n#define "
-            "EMPTY_STRUCT_DECLARATION int ____dummy_variable\n#define "
-            "EMPTY_STRUCT_INITIALIZATION 0\n#define "
-            "OPTION_CAST(x)\n#endif\n\nvoid pthread_mutex_lock(HANDLE *m) "
-            "{\n	WaitForSingleObject(*m, INFINITE);\n}\n\nvoid "
-            "pthread_mutex_unlock(HANDLE *m) {\n	"
+            "OPTION_CAST\n\n#define EMPTY_STRUCT_DECLARATION int "
+            "____dummy_variable\n#define OPTION_CAST(x)\n#endif\n\nvoid "
+            "pthread_mutex_lock(HANDLE *m) {\n	WaitForSingleObject(*m, "
+            "INFINITE);\n}\n\nvoid pthread_mutex_unlock(HANDLE *m) {\n	"
             "ReleaseMutex(*m);\n}\n#else\n#include "
             "<pthread.h>\n#endif\n\n//================================== "
             "TYPEDEFS ================================*/\n\ntypedef int64_t "
