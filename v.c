@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3325775"
+#define V_COMMIT_HASH "a45895a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "155feca"
+#define V_COMMIT_HASH "3325775"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -164,6 +164,7 @@ typedef struct os__Result os__Result;
 typedef Option Option_os__Result;
 typedef struct time__Time time__Time;
 typedef Option Option_int;
+typedef struct benchmark__Benchmark benchmark__Benchmark;
 typedef struct CFlag CFlag;
 typedef array array_CFlag;
 typedef struct CGen CGen;
@@ -449,6 +450,17 @@ struct Var {
   bool is_changed;
   int scope_level;
   bool is_c;
+};
+
+struct benchmark__Benchmark {
+  i64 bench_start_time;
+  i64 bench_end_time;
+  i64 step_start_time;
+  i64 step_end_time;
+  int ntotal;
+  int nok;
+  int nfail;
+  bool verbose;
 };
 
 struct mapnode {
@@ -964,6 +976,16 @@ void time__sleep_ms(int n);
 bool time__is_leap_year(int year);
 Option_int time__days_in_month(int month, int year);
 string vweb_dot_tmpl__compile_template(string path);
+benchmark__Benchmark benchmark__new_benchmark();
+i64 benchmark__now();
+void benchmark__Benchmark_stop(benchmark__Benchmark *b);
+void benchmark__Benchmark_step(benchmark__Benchmark *b);
+void benchmark__Benchmark_fail(benchmark__Benchmark *b);
+void benchmark__Benchmark_ok(benchmark__Benchmark *b);
+string benchmark__Benchmark_step_message(benchmark__Benchmark *b, string msg);
+string benchmark__Benchmark_total_message(benchmark__Benchmark *b, string msg);
+string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark *b, string s,
+                                        i64 sticks, i64 eticks);
 void V_cc(V *v);
 void V_cc_windows_cross(V *c);
 void V_build_thirdparty_obj_files(V c);
@@ -1082,7 +1104,7 @@ array_string env_vflags_and_os_args();
 void update_v();
 void vfmt(array_string args);
 void install_v(array_string args);
-void test_v();
+void V_test_v(V *v);
 void create_symlink();
 void cerror(string s);
 string vhash();
@@ -6238,6 +6260,74 @@ string vweb_dot_tmpl__compile_template(string path) {
 
   return strings__Builder_str(s);
 }
+benchmark__Benchmark benchmark__new_benchmark() {
+
+  return (benchmark__Benchmark){
+      .bench_start_time = benchmark__now(),
+      .verbose = 1,
+      .bench_end_time = 0,
+      .step_start_time = 0,
+      .step_end_time = 0,
+      .ntotal = 0,
+      .nok = 0,
+      .nfail = 0,
+  };
+}
+i64 benchmark__now() { return time__ticks(); }
+void benchmark__Benchmark_stop(benchmark__Benchmark *b) {
+
+  b->bench_end_time = benchmark__now();
+}
+void benchmark__Benchmark_step(benchmark__Benchmark *b) {
+
+  b->step_start_time = benchmark__now();
+}
+void benchmark__Benchmark_fail(benchmark__Benchmark *b) {
+
+  b->step_end_time = benchmark__now();
+
+  b->ntotal++;
+
+  b->nfail++;
+}
+void benchmark__Benchmark_ok(benchmark__Benchmark *b) {
+
+  b->step_end_time = benchmark__now();
+
+  b->ntotal++;
+
+  b->nok++;
+}
+string benchmark__Benchmark_step_message(benchmark__Benchmark *b, string msg) {
+
+  return benchmark__Benchmark_tdiff_in_ms(b, msg, b->step_start_time,
+                                          b->step_end_time);
+}
+string benchmark__Benchmark_total_message(benchmark__Benchmark *b, string msg) {
+
+  string tmsg = _STR("%.*s : ok, fail, total = %5d, %5d, %5d", msg.len, msg.str,
+                     b->nok, b->nfail, b->ntotal);
+
+  if (b->verbose) {
+
+    tmsg = _STR("<=== total time spent %.*s", tmsg.len, tmsg.str);
+  };
+
+  return benchmark__Benchmark_tdiff_in_ms(b, tmsg, b->bench_start_time,
+                                          b->bench_end_time);
+}
+string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark *b, string s,
+                                        i64 sticks, i64 eticks) {
+
+  if (b->verbose) {
+
+    i64 tdiff = (eticks - sticks);
+
+    return _STR("%6d ms | %.*s", tdiff, s.len, s.str);
+  };
+
+  return s;
+}
 void V_cc(V *v) {
 
   V_build_thirdparty_obj_files(*v);
@@ -11026,14 +11116,6 @@ int main(int argc, char **argv) {
     return 0;
   };
 
-  if (string_contains(array_string_join(args, tos2((byte *)" ")),
-                      tos2((byte *)" test v"))) {
-
-    test_v();
-
-    return 0;
-  };
-
   if (_IN(string, tos2((byte *)"install"), args)) {
 
     install_v(args);
@@ -11049,6 +11131,14 @@ int main(int argc, char **argv) {
   };
 
   V *v = new_v(args);
+
+  if (string_contains(array_string_join(args, tos2((byte *)" ")),
+                      tos2((byte *)" test v"))) {
+
+    V_test_v(&/* ? */ *v);
+
+    return 0;
+  };
 
   if (v->pref->is_verbose) {
 
@@ -12007,7 +12097,8 @@ V *new_v(array_string args) {
           .is_script = is_script,
           .is_so = _IN(string, tos2((byte *)"-shared"), args),
           .is_prod = _IN(string, tos2((byte *)"-prod"), args),
-          .is_verbose = _IN(string, tos2((byte *)"-verbose"), args),
+          .is_verbose = _IN(string, tos2((byte *)"-verbose"), args) ||
+                        _IN(string, tos2((byte *)"--verbose"), args),
           .is_debuggable = _IN(string, tos2((byte *)"-g"), args),
           .is_debug = _IN(string, tos2((byte *)"-debug"), args) ||
                       _IN(string, tos2((byte *)"-g"), args),
@@ -12226,28 +12317,32 @@ void install_v(array_string args) {
     return;
   };
 }
-void test_v() {
+void V_test_v(V *v) {
 
   array_string args = env_vflags_and_os_args();
 
   string vexe = (*(string *)array__get(args, 0));
 
-  string joined_args = array_string_join(
-      array_right(env_vflags_and_os_args(), 1), tos2((byte *)" "));
+  string joined_args =
+      array_string_join(array_right(args, 1), tos2((byte *)" "));
 
   joined_args = string_left(
       joined_args, string_last_index(joined_args, tos2((byte *)"test")));
-
-  printf("%.*s\n", joined_args.len, joined_args.str);
 
   bool failed = 0;
 
   array_string test_files =
       os__walk_ext(tos2((byte *)"."), tos2((byte *)"_test.v"));
 
-  array_string tmp132 = test_files;
-  for (int tmp133 = 0; tmp133 < tmp132.len; tmp133++) {
-    string dot_relative_file = ((string *)tmp132.data)[tmp133];
+  println(tos2((byte *)"Testing..."));
+
+  benchmark__Benchmark tmark = benchmark__new_benchmark();
+
+  tmark.verbose = v->pref->is_verbose;
+
+  array_string tmp133 = test_files;
+  for (int tmp134 = 0; tmp134 < tmp133.len; tmp134++) {
+    string dot_relative_file = ((string *)tmp133.data)[tmp134];
 
     string relative_file =
         string_replace(dot_relative_file, tos2((byte *)"./"), tos2((byte *)""));
@@ -12257,8 +12352,6 @@ void test_v() {
     string tmpcfilepath = string_replace(file, tos2((byte *)"_test.v"),
                                          tos2((byte *)"_test.tmp.c"));
 
-    print(string_add(relative_file, tos2((byte *)" ")));
-
     string cmd = _STR("\"%.*s\" %.*s -debug \"%.*s\"", vexe.len, vexe.str,
                       joined_args.len, joined_args.str, file.len, file.str);
 
@@ -12267,49 +12360,70 @@ void test_v() {
       cmd = _STR("\"%.*s\"", cmd.len, cmd.str);
     };
 
-    Option_os__Result tmp138 = os__exec(cmd);
-    if (!tmp138.ok) {
-      string err = tmp138.error;
+    benchmark__Benchmark_step(&/* ? */ tmark);
+
+    Option_os__Result tmp139 = os__exec(cmd);
+    if (!tmp139.ok) {
+      string err = tmp139.error;
+
+      benchmark__Benchmark_fail(&/* ? */ tmark);
 
       failed = 1;
 
-      println(tos2((byte *)"FAIL"));
+      println(benchmark__Benchmark_step_message(
+          &/* ? */ tmark,
+          _STR("%.*s FAIL", relative_file.len, relative_file.str)));
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp138.data;
+    os__Result r = *(os__Result *)tmp139.data;
     ;
 
     if (r.exit_code != 0) {
 
-      printf("FAIL `%.*s` (\n%.*s\n)\n", file.len, file.str, r.output.len,
-             r.output.str);
-
       failed = 1;
+
+      benchmark__Benchmark_fail(&/* ? */ tmark);
+
+      println(benchmark__Benchmark_step_message(
+          &/* ? */ tmark, _STR("%.*s FAIL \n`%.*s`\n (\n%.*s\n)",
+                               relative_file.len, relative_file.str, file.len,
+                               file.str, r.output.len, r.output.str)));
 
     } else {
 
-      println(tos2((byte *)"OK"));
+      benchmark__Benchmark_ok(&/* ? */ tmark);
+
+      println(benchmark__Benchmark_step_message(
+          &/* ? */ tmark,
+          _STR("%.*s OK", relative_file.len, relative_file.str)));
     };
 
     os__rm(tmpcfilepath);
   };
+
+  benchmark__Benchmark_stop(&/* ? */ tmark);
+
+  println(benchmark__Benchmark_total_message(&/* ? */ tmark,
+                                             tos2((byte *)"running V tests")));
 
   println(tos2((byte *)"\nBuilding examples..."));
 
   array_string examples =
       os__walk_ext(tos2((byte *)"examples"), tos2((byte *)".v"));
 
-  array_string tmp140 = examples;
-  for (int tmp141 = 0; tmp141 < tmp140.len; tmp141++) {
-    string relative_file = ((string *)tmp140.data)[tmp141];
+  benchmark__Benchmark bmark = benchmark__new_benchmark();
+
+  bmark.verbose = v->pref->is_verbose;
+
+  array_string tmp142 = examples;
+  for (int tmp143 = 0; tmp143 < tmp142.len; tmp143++) {
+    string relative_file = ((string *)tmp142.data)[tmp143];
 
     string file = os__realpath(relative_file);
 
     string tmpcfilepath =
         string_replace(file, tos2((byte *)".v"), tos2((byte *)".tmp.c"));
-
-    print(string_add(relative_file, tos2((byte *)" ")));
 
     string cmd = _STR("\"%.*s\" %.*s -debug \"%.*s\"", vexe.len, vexe.str,
                       joined_args.len, joined_args.str, file.len, file.str);
@@ -12319,33 +12433,52 @@ void test_v() {
       cmd = _STR("\"%.*s\"", cmd.len, cmd.str);
     };
 
-    Option_os__Result tmp145 = os__exec(cmd);
-    if (!tmp145.ok) {
-      string err = tmp145.error;
+    benchmark__Benchmark_step(&/* ? */ bmark);
+
+    Option_os__Result tmp147 = os__exec(cmd);
+    if (!tmp147.ok) {
+      string err = tmp147.error;
 
       failed = 1;
 
-      println(tos2((byte *)"FAIL"));
+      benchmark__Benchmark_fail(&/* ? */ bmark);
+
+      println(benchmark__Benchmark_step_message(
+          &/* ? */ bmark,
+          _STR("%.*s FAIL", relative_file.len, relative_file.str)));
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp145.data;
+    os__Result r = *(os__Result *)tmp147.data;
     ;
 
     if (r.exit_code != 0) {
 
-      printf("FAIL `%.*s` (\n%.*s\n)\n", file.len, file.str, r.output.len,
-             r.output.str);
-
       failed = 1;
+
+      benchmark__Benchmark_fail(&/* ? */ bmark);
+
+      println(benchmark__Benchmark_step_message(
+          &/* ? */ bmark, _STR("%.*s FAIL \n`%.*s`\n (\n%.*s\n)",
+                               relative_file.len, relative_file.str, file.len,
+                               file.str, r.output.len, r.output.str)));
 
     } else {
 
-      println(tos2((byte *)"OK"));
+      benchmark__Benchmark_ok(&/* ? */ bmark);
+
+      println(benchmark__Benchmark_step_message(
+          &/* ? */ bmark,
+          _STR("%.*s OK", relative_file.len, relative_file.str)));
     };
 
     os__rm(tmpcfilepath);
   };
+
+  benchmark__Benchmark_stop(&/* ? */ bmark);
+
+  println(benchmark__Benchmark_total_message(
+      &/* ? */ bmark, tos2((byte *)"building examples")));
 
   if (failed) {
 
