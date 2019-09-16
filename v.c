@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c76d09f"
+#define V_COMMIT_HASH "a816565"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3e52984"
+#define V_COMMIT_HASH "c76d09f"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -6385,6 +6385,8 @@ void V_cc(V *v) {
 
         printf("Done. Run it with `node %.*s`\n", v->out_name.len,
                v->out_name.str);
+
+        println(tos2((byte *)"JS backend is at a very early stage."));
       };
     };
 
