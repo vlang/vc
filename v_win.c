@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "083d747"
+#define V_COMMIT_HASH "ff009f1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ca239fc"
+#define V_COMMIT_HASH "083d747"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -903,6 +903,7 @@ f64 math__tanh(f64 a);
 f64 math__trunc(f64 a);
 void rand__seed(int s);
 int rand__next(int max);
+int rand__rand_r(int *seed);
 string term___format(string msg, string open, string close);
 string term___format_rgb(int r, int g, int b, string msg, string open,
                          string close);
@@ -5582,6 +5583,16 @@ f64 math__tanh(f64 a) { return tanh(a); }
 f64 math__trunc(f64 a) { return trunc(a); }
 void rand__seed(int s) { srand(s); }
 int rand__next(int max) { return rand() % max; }
+int rand__rand_r(int *seed) {
+
+  int *rs = seed;
+
+  int ns = (*rs * 1103515245 + 12345);
+
+  *rs = ns;
+
+  return ns & 0x7fffffff;
+}
 string term___format(string msg, string open, string close) {
 
   return string_add(
