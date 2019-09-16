@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "19b04d5"
+#define V_COMMIT_HASH "9c9e629"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ff009f1"
+#define V_COMMIT_HASH "19b04d5"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -11224,7 +11224,7 @@ void V_generate_hot_reload_code(V *v) {
 }
 int main(int argc, char **argv) {
   init_consts();
-  os__args = os__init_os_args(argc, argv);
+  os__args = os__init_os_args(argc, (byteptr *)argv);
 
   array_string args = env_vflags_and_os_args();
 
