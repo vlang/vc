@@ -1,3 +1,4 @@
+#define V_COMMIT_HASH "74ec57e"
 #ifndef V_COMMIT_HASH
 #define V_COMMIT_HASH "5f43a61"
 #endif
@@ -22741,11 +22742,11 @@ void init_consts() {
             "weak backtrace_symbols_fd\n#endif\n\n\n#ifdef __linux__\n#include "
             "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
             "nix\n#endif\n\n#define EMPTY_STRUCT_DECLARATION\n#define "
-            "EMPTY_STRUCT_INITIALIZATION 0\n#define OPTION_CAST(x) "
-            "(x)\n\n#ifdef _WIN32\n#define WIN32_LEAN_AND_MEAN\n#include "
-            "<windows.h>\n\n// must be included after <windows.h>\n#ifndef "
-            "__TINYC__i\n#undef EMPTY_STRUCT_INITIALIZATION\n#define "
-            "EMPTY_STRUCT_INITIALIZATION\n#include "
+            "EMPTY_STRUCT_INITIALIZATION\n#define OPTION_CAST(x) (x)\n\n#ifdef "
+            "_WIN32\n#undef EMPTY_STRUCT_INITIALIZATION\n#define "
+            "EMPTY_STRUCT_INITIALIZATION 0\n#define "
+            "WIN32_LEAN_AND_MEAN\n#include <windows.h>\n\n// must be included "
+            "after <windows.h>\n#ifndef __TINYC__\n#include "
             "<shellapi.h>\n#endif\n\n#include <io.h> // _waccess\n#include "
             "<fcntl.h> // _O_U8TEXT\n#include <direct.h> // "
             "_wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n// On MSVC "
