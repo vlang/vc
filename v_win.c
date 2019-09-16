@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9158ba4"
+#define V_COMMIT_HASH "3e52984"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a45895a"
+#define V_COMMIT_HASH "9158ba4"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1003,7 +1003,6 @@ bool time__is_leap_year(int year);
 Option_int time__days_in_month(int month, int year);
 string vweb_dot_tmpl__compile_template(string path);
 benchmark__Benchmark benchmark__new_benchmark();
-i64 benchmark__now();
 void benchmark__Benchmark_stop(benchmark__Benchmark *b);
 void benchmark__Benchmark_step(benchmark__Benchmark *b);
 void benchmark__Benchmark_fail(benchmark__Benchmark *b);
@@ -1012,6 +1011,7 @@ string benchmark__Benchmark_step_message(benchmark__Benchmark *b, string msg);
 string benchmark__Benchmark_total_message(benchmark__Benchmark *b, string msg);
 string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark *b, string s,
                                         i64 sticks, i64 eticks);
+i64 benchmark__now();
 void V_cc(V *v);
 void V_cc_windows_cross(V *c);
 void V_build_thirdparty_obj_files(V c);
@@ -6414,7 +6414,6 @@ benchmark__Benchmark benchmark__new_benchmark() {
       .nfail = 0,
   };
 }
-i64 benchmark__now() { return time__ticks(); }
 void benchmark__Benchmark_stop(benchmark__Benchmark *b) {
 
   b->bench_end_time = benchmark__now();
@@ -6469,6 +6468,7 @@ string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark *b, string s,
 
   return s;
 }
+i64 benchmark__now() { return time__ticks(); }
 void V_cc(V *v) {
 
   V_build_thirdparty_obj_files(*v);
@@ -9556,6 +9556,8 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
     while (p->tok != main__Token_rpar) {
 
+      p->calling_c = 1;
+
       int ph = CGen_add_placeholder(p->cgen);
 
       string typ = Parser_bool_expression(p);
@@ -12479,8 +12481,6 @@ void V_test_v(V *v) {
 
   benchmark__Benchmark tmark = benchmark__new_benchmark();
 
-  tmark.verbose = v->pref->is_verbose;
-
   array_string tmp133 = test_files;
   for (int tmp134 = 0; tmp134 < tmp133.len; tmp134++) {
     string dot_relative_file = ((string *)tmp133.data)[tmp134];
@@ -12554,8 +12554,6 @@ void V_test_v(V *v) {
       os__walk_ext(tos2((byte *)"examples"), tos2((byte *)".v"));
 
   benchmark__Benchmark bmark = benchmark__new_benchmark();
-
-  bmark.verbose = v->pref->is_verbose;
 
   array_string tmp142 = examples;
   for (int tmp143 = 0; tmp143 < tmp142.len; tmp143++) {
