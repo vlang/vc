@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3e52984"
+#define V_COMMIT_HASH "c76d09f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9158ba4"
+#define V_COMMIT_HASH "3e52984"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -11299,7 +11299,12 @@ void V_compile(V *v) {
   if (v->pref->build_mode == main__BuildMode_embed_vlib ||
       v->pref->build_mode == main__BuildMode_default_mode) {
 
+#ifndef _VJS
+
     CGen_genln(cgen, tos2((byte *)"int g_test_ok = 1; "));
+
+#endif
+    ;
 
     if (_IN(string, tos2((byte *)"json"), v->table->imports)) {
 
@@ -11614,7 +11619,7 @@ array_string V_v_files_from_dir(V *v, string dir) {
       continue;
     };
 
-    if (string_ends_with(file, tos2((byte *)"_js.v"))) {
+    if (string_ends_with(file, tos2((byte *)"_js.v")) && v->os != main__OS_js) {
 
       continue;
     };
