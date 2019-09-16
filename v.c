@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "74ec57e"
+#define V_COMMIT_HASH "155feca"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5f43a61"
+#define V_COMMIT_HASH "74ec57e"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -36,17 +36,17 @@
 #endif
 
 #define EMPTY_STRUCT_DECLARATION
-#define EMPTY_STRUCT_INITIALIZATION 0
+#define EMPTY_STRUCT_INITIALIZATION
 #define OPTION_CAST(x) (x)
 
 #ifdef _WIN32
+#undef EMPTY_STRUCT_INITIALIZATION
+#define EMPTY_STRUCT_INITIALIZATION 0
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 // must be included after <windows.h>
-#ifndef __TINYC__i
-#undef EMPTY_STRUCT_INITIALIZATION
-#define EMPTY_STRUCT_INITIALIZATION
+#ifndef __TINYC__
 #include <shellapi.h>
 #endif
 
@@ -22726,62 +22726,61 @@ void init_consts() {
   time__Months = tos2((byte *)"JanFebMarAprMayJunJulAugSepOctNovDec");
   time__Days = tos2((byte *)"MonTueWedThuFriSatSun");
   main__CommonCHeaders = tos2((
-      byte
-          *)"\n\n#include <stdio.h>  // TODO remove all these includes, define "
-            "all function signatures and types manually\n#include "
-            "<stdlib.h>\n#include <signal.h>\n#include <stdarg.h> // for "
-            "va_list\n#include <inttypes.h>  // int64_t etc\n#include "
-            "<string.h> // memcpy\n\n#ifndef _WIN32\n#include "
-            "<ctype.h>\n#include <locale.h> // tolower\n#include "
-            "<sys/time.h>\n#include <unistd.h> // sleep	\n#endif\n\n\n#ifdef "
-            "__APPLE__\n#include <libproc.h> // proc_pidpath\n#include "
-            "<execinfo.h> // backtrace and "
-            "backtrace_symbols_fd\n#endif\n\n#ifdef __linux__\n#ifndef "
-            "__BIONIC__\n#include <execinfo.h> // backtrace and "
-            "backtrace_symbols_fd\n#endif\n#pragma weak backtrace\n#pragma "
-            "weak backtrace_symbols_fd\n#endif\n\n\n#ifdef __linux__\n#include "
-            "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
-            "nix\n#endif\n\n#define EMPTY_STRUCT_DECLARATION\n#define "
-            "EMPTY_STRUCT_INITIALIZATION\n#define OPTION_CAST(x) (x)\n\n#ifdef "
-            "_WIN32\n#undef EMPTY_STRUCT_INITIALIZATION\n#define "
-            "EMPTY_STRUCT_INITIALIZATION 0\n#define "
-            "WIN32_LEAN_AND_MEAN\n#include <windows.h>\n\n// must be included "
-            "after <windows.h>\n#ifndef __TINYC__\n#include "
-            "<shellapi.h>\n#endif\n\n#include <io.h> // _waccess\n#include "
-            "<fcntl.h> // _O_U8TEXT\n#include <direct.h> // "
-            "_wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n// On MSVC "
-            "these are the same (as long as /volatile:ms is passed)\n#define "
-            "_Atomic volatile\n\n// MSVC cannot parse some things "
-            "properly\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
-            "OPTION_CAST\n\n#define EMPTY_STRUCT_DECLARATION int "
-            "____dummy_variable\n#define OPTION_CAST(x)\n#endif\n\nvoid "
-            "pthread_mutex_lock(HANDLE *m) {\n	WaitForSingleObject(*m, "
-            "INFINITE);\n}\n\nvoid pthread_mutex_unlock(HANDLE *m) {\n	"
-            "ReleaseMutex(*m);\n}\n#else\n#include "
-            "<pthread.h>\n#endif\n\n//================================== "
-            "TYPEDEFS ================================*/\n\ntypedef int64_t "
-            "i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t "
-            "u64;\ntypedef uint32_t u32;\ntypedef uint16_t u16;\ntypedef "
-            "uint8_t byte;\ntypedef uint32_t rune;\ntypedef float "
-            "f32;\ntypedef double f64;\ntypedef unsigned char* "
-            "byteptr;\ntypedef int* intptr;\ntypedef void* voidptr;\ntypedef "
-            "struct array array;\ntypedef struct map map;\ntypedef array "
-            "array_string;\ntypedef array array_int;\ntypedef array "
-            "array_byte;\ntypedef array array_f32;\ntypedef array "
-            "array_f64;\ntypedef map map_int;\ntypedef map "
-            "map_string;\n#ifndef bool\n	typedef int bool;\n	"
-            "#define true 1\n	#define false "
-            "0\n#endif\n\n//============================== HELPER C MACROS "
-            "=============================*/\n\n#define _PUSH(arr, val, tmp, "
-            "tmp_typ) {tmp_typ tmp = (val); array__push(arr, &tmp);}\n#define "
-            "_PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); "
-            "array__push_many(arr, tmp.data, tmp.len);}\n#define _IN(typ, val, "
-            "arr) array_##typ##_contains(arr, val)\n#define _IN_MAP(val, m) "
-            "map__exists(m, val)\n//#define ALLOC_INIT(type, ...) (type "
-            "*)memdup((type[]){ __VA_ARGS__ }, "
-            "sizeof(type))\n\n//================================== GLOBALS "
-            "=================================*/\nbyteptr g_str_buf;\nint "
-            "load_so(byteptr);\nvoid reload_so();\nvoid init_consts();\n\n");
+      byte *)"\n\n#include <stdio.h>  // TODO remove all these includes, "
+             "define all function signatures and types manually\n#include "
+             "<stdlib.h>\n#include <signal.h>\n#include <stdarg.h> // for "
+             "va_list\n#include <inttypes.h>  // int64_t etc\n#include "
+             "<string.h> // memcpy\n\n#ifndef _WIN32\n#include "
+             "<ctype.h>\n#include <locale.h> // tolower\n#include "
+             "<sys/time.h>\n#include <unistd.h> // sleep	"
+             "\n#endif\n\n\n#ifdef __APPLE__\n#include <libproc.h> // "
+             "proc_pidpath\n#include <execinfo.h> // backtrace and "
+             "backtrace_symbols_fd\n#endif\n\n#ifdef __linux__\n#ifndef "
+             "__BIONIC__\n#include <execinfo.h> // backtrace and "
+             "backtrace_symbols_fd\n#endif\n#pragma weak backtrace\n#pragma "
+             "weak backtrace_symbols_fd\n#endif\n\n\n#ifdef "
+             "__linux__\n#include <sys/types.h>\n#include <sys/wait.h> // "
+             "os__wait uses wait on nix\n#endif\n\n#define "
+             "EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION "
+             "0\n#ifdef __TINYC__\n#undef EMPTY_STRUCT_INITIALIZATION\n#define "
+             "EMPTY_STRUCT_INITIALIZATION\n#endif\n\n#define OPTION_CAST(x) "
+             "(x)\n\n#ifdef _WIN32\n#define WIN32_LEAN_AND_MEAN\n#include "
+             "<windows.h>\n\n// must be included after <windows.h>\n#ifndef "
+             "__TINYC__\n#include <shellapi.h>\n#endif\n\n#include <io.h> // "
+             "_waccess\n#include <fcntl.h> // _O_U8TEXT\n#include <direct.h> "
+             "// _wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n// On "
+             "MSVC these are the same (as long as /volatile:ms is "
+             "passed)\n#define _Atomic volatile\n\n// MSVC cannot parse some "
+             "things properly\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
+             "OPTION_CAST\n\n#define EMPTY_STRUCT_DECLARATION int "
+             "____dummy_variable\n#define OPTION_CAST(x)\n#endif\n\nvoid "
+             "pthread_mutex_lock(HANDLE *m) {\n	WaitForSingleObject(*m, "
+             "INFINITE);\n}\n\nvoid pthread_mutex_unlock(HANDLE *m) {\n	"
+             "ReleaseMutex(*m);\n}\n#else\n#include "
+             "<pthread.h>\n#endif\n\n//================================== "
+             "TYPEDEFS ================================*/\n\ntypedef int64_t "
+             "i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t "
+             "u64;\ntypedef uint32_t u32;\ntypedef uint16_t u16;\ntypedef "
+             "uint8_t byte;\ntypedef uint32_t rune;\ntypedef float "
+             "f32;\ntypedef double f64;\ntypedef unsigned char* "
+             "byteptr;\ntypedef int* intptr;\ntypedef void* voidptr;\ntypedef "
+             "struct array array;\ntypedef struct map map;\ntypedef array "
+             "array_string;\ntypedef array array_int;\ntypedef array "
+             "array_byte;\ntypedef array array_f32;\ntypedef array "
+             "array_f64;\ntypedef map map_int;\ntypedef map "
+             "map_string;\n#ifndef bool\n	typedef int bool;\n	"
+             "#define true 1\n	#define false "
+             "0\n#endif\n\n//============================== HELPER C MACROS "
+             "=============================*/\n\n#define _PUSH(arr, val, tmp, "
+             "tmp_typ) {tmp_typ tmp = (val); array__push(arr, &tmp);}\n#define "
+             "_PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); "
+             "array__push_many(arr, tmp.data, tmp.len);}\n#define _IN(typ, "
+             "val, arr) array_##typ##_contains(arr, val)\n#define _IN_MAP(val, "
+             "m) map__exists(m, val)\n//#define ALLOC_INIT(type, ...) (type "
+             "*)memdup((type[]){ __VA_ARGS__ }, "
+             "sizeof(type))\n\n//================================== GLOBALS "
+             "=================================*/\nbyteptr g_str_buf;\nint "
+             "load_so(byteptr);\nvoid reload_so();\nvoid init_consts();\n\n");
   main__js_headers = tos2((
       byte *)"\n\nclass array_string {}\nclass array_byte {}\nclass array_int "
              "{}\nclass byte {}\nclass double {}\nclass int {}\nclass f64 "
