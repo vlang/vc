@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a45895a"
+#define V_COMMIT_HASH "9158ba4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3325775"
+#define V_COMMIT_HASH "a45895a"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -3108,6 +3108,8 @@ void print_backtrace_skipping_top_frames(int skipframes) {
 
 #ifdef __linux__
 
+#ifndef __BIONIC__
+
   if (backtrace_symbols_fd != 0) {
 
     byte *buffer[100];
@@ -3126,6 +3128,9 @@ void print_backtrace_skipping_top_frames(int skipframes) {
 
     printf("Some libc implementations like musl simply do not provide it.\n");
   };
+
+#endif
+  ;
 
 #endif
   ;
@@ -4906,6 +4911,13 @@ string os__user_os() {
 #ifdef _MSC_VER
 
   return tos2((byte *)"windows");
+
+#endif
+  ;
+
+#ifdef __BIONIC__
+
+  return tos2((byte *)"android");
 
 #endif
   ;
