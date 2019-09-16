@@ -1,6 +1,5 @@
-#define V_COMMIT_HASH "57cfdee"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "279f7d5"
+#define V_COMMIT_HASH "5f43a61"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -22762,7 +22761,6 @@ void Parser_fmt_dec(Parser *p) { p->scanner->fmt_indent--; }
 void init_consts() {
 #ifdef _WIN32
 #ifndef _BOOTSTRAP_NO_UNICODE_STREAM
-  _setmode(_fileno(stdin), _O_U16TEXT);
   _setmode(_fileno(stdout), _O_U8TEXT);
   SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE),
                  ENABLE_PROCESSED_OUTPUT | 0x0004);
