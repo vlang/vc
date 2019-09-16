@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "155feca"
+#define V_COMMIT_HASH "3325775"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "74ec57e"
+#define V_COMMIT_HASH "155feca"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -36,12 +36,15 @@
 #endif
 
 #define EMPTY_STRUCT_DECLARATION
+#define EMPTY_STRUCT_INITIALIZATION 0
+#ifdef __TINYC__
+#undef EMPTY_STRUCT_INITIALIZATION
 #define EMPTY_STRUCT_INITIALIZATION
+#endif
+
 #define OPTION_CAST(x) (x)
 
 #ifdef _WIN32
-#undef EMPTY_STRUCT_INITIALIZATION
-#define EMPTY_STRUCT_INITIALIZATION 0
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
@@ -7458,6 +7461,10 @@ string os_name_to_ifdef(string name) {
   } else if (string_eq(name, tos2((byte *)"msvc"))) { /* case */
 
     return tos2((byte *)"_MSC_VER");
+
+  } else if (string_eq(name, tos2((byte *)"android"))) { /* case */
+
+    return tos2((byte *)"__BIONIC__");
 
   } else if (string_eq(name, tos2((byte *)"js"))) { /* case */
 
@@ -22929,12 +22936,12 @@ void init_consts() {
   main__dot_ptr = tos2((byte *)"->");
   main__Version = tos2((byte *)"0.1.19");
   main__SupportedPlatforms = new_array_from_c_array(
-      9, 9, sizeof(string),
+      10, 10, sizeof(string),
       (string[]){tos2((byte *)"windows"), tos2((byte *)"mac"),
                  tos2((byte *)"linux"), tos2((byte *)"freebsd"),
                  tos2((byte *)"openbsd"), tos2((byte *)"netbsd"),
                  tos2((byte *)"dragonfly"), tos2((byte *)"msvc"),
-                 tos2((byte *)"js")});
+                 tos2((byte *)"android"), tos2((byte *)"js")});
   main__ModPath = string_add(os__home_dir(), tos2((byte *)"/.vmodules/"));
   main__HKEY_LOCAL_MACHINE = ((RegKey)(0x80000002));
   main__KEY_QUERY_VALUE = (0x0001);
