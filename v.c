@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "cbd4478"
+#define V_COMMIT_HASH "279f7d5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5f43a61"
+#define V_COMMIT_HASH "cbd4478"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -40,6 +40,8 @@
 #define OPTION_CAST(x) (x)
 
 #ifdef _WIN32
+#undef EMPTY_STRUCT_INITIALIZATION
+#define EMPTY_STRUCT_INITIALIZATION 0
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
@@ -58,11 +60,9 @@
 
 // MSVC cannot parse some things properly
 #undef EMPTY_STRUCT_DECLARATION
-#undef EMPTY_STRUCT_INITIALIZATION
 #undef OPTION_CAST
 
 #define EMPTY_STRUCT_DECLARATION int ____dummy_variable
-#define EMPTY_STRUCT_INITIALIZATION 0
 #define OPTION_CAST(x)
 #endif
 
@@ -11317,14 +11317,14 @@ void V_generate_main(V *v) {
       };
     };
 
-    CGen_genln(cgen,
-               _STR("void init_consts() {\n#ifdef _WIN32\n#ifndef "
-                    "_BOOTSTRAP_NO_UNICODE_STREAM\n_setmode(_fileno(stdout), "
-                    "_O_U8TEXT);\nSetConsoleMode(GetStdHandle(STD_OUTPUT_"
-                    "HANDLE), ENABLE_PROCESSED_OUTPUT | 0x0004);\n// "
-                    "ENABLE_VIRTUAL_TERMINAL_PROCESSING\n#endif\n#endif\ng_str_"
-                    "buf=malloc(1000);\n%.*s\n}",
-                    consts_init_body.len, consts_init_body.str));
+    CGen_genln(cgen, _STR("void init_consts() {\n#ifdef _WIN32\n#ifndef "
+                          "_BOOTSTRAP_NO_UNICODE_STREAM\n_setmode(_fileno("
+                          "stdin), _O_U16TEXT);\n_setmode(_fileno(stdout), "
+                          "_O_U8TEXT);\nSetConsoleMode(GetStdHandle(STD_OUTPUT_"
+                          "HANDLE), ENABLE_PROCESSED_OUTPUT | 0x0004);\n// "
+                          "ENABLE_VIRTUAL_TERMINAL_PROCESSING\n#endif\n#"
+                          "endif\ng_str_buf=malloc(1000);\n%.*s\n}",
+                          consts_init_body.len, consts_init_body.str));
 
     CGen_genln(
         cgen,
