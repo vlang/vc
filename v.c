@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ff009f1"
+#define V_COMMIT_HASH "19b04d5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "083d747"
+#define V_COMMIT_HASH "ff009f1"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1404,16 +1404,16 @@ f32 math__Log2E;
 #define math__Ln10                                                             \
   2.30258509299404568401799145468436420760110148862877297603332790
 f32 math__Log10E;
-int math__MaxI8;
+#define math__MaxI8 127
 int math__MinI8;
-int math__MaxI16;
+#define math__MaxI16 32767
 int math__MinI16;
-int math__MaxI32;
+#define math__MaxI32 2147483647
 int math__MinI32;
-int math__MaxU8;
-int math__MaxU16;
-int math__MaxU32;
-int math__MaxU64;
+#define math__MaxU8 255
+#define math__MaxU16 65535
+#define math__MaxU32 4294967295
+#define math__MaxU64 18446744073709551615
 array_int time__MonthDays;
 i64 time__absoluteZeroYear;
 #define time__secondsPerMinute 60
@@ -8865,8 +8865,9 @@ void Parser_fn_decl(Parser *p) {
 
       if (string_eq(f.name, tos2((byte *)"main"))) {
 
-        Parser_genln(p,
-                     tos2((byte *)"os__args = os__init_os_args(argc, argv);"));
+        Parser_genln(
+            p,
+            tos2((byte *)"os__args = os__init_os_args(argc, (byteptr*)argv);"));
 
       } else if (string_eq(f.name, tos2((byte *)"WinMain"))) {
 
@@ -12552,7 +12553,7 @@ string vhash() {
 
   buf[0] /*rbyte 1*/ = 0;
 
-  snprintf(buf, 50, "%s", V_COMMIT_HASH);
+  snprintf(((char *)(buf)), 50, "%s", V_COMMIT_HASH);
 
   return tos_clone(buf);
 }
@@ -22859,16 +22860,9 @@ void init_consts() {
   os__PathSeparator = tos2((byte *)"/");
   math__Log2E = 1.0 / math__Ln2;
   math__Log10E = 1.0 / math__Ln10;
-  math__MaxI8 = (1 << 7) - 1;
-  math__MinI8 = -1 << 7;
-  math__MaxI16 = (1 << 15) - 1;
-  math__MinI16 = -1 << 15;
-  math__MaxI32 = (1 << 31) - 1;
-  math__MinI32 = -1 << 31;
-  math__MaxU8 = (1 << 8) - 1;
-  math__MaxU16 = (1 << 16) - 1;
-  math__MaxU32 = (1 << 32) - 1;
-  math__MaxU64 = (1 << 64) - 1;
+  math__MinI8 = -128;
+  math__MinI16 = -32768;
+  math__MinI32 = -2147483648;
   time__MonthDays = new_array_from_c_array(
       12, 12, sizeof(int),
       (int[]){31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31});
