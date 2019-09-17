@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "32ad335"
+#define V_COMMIT_HASH "b94636b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1796869"
+#define V_COMMIT_HASH "32ad335"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1069,6 +1069,8 @@ void Parser_gen_for_header(Parser *p, string i, string tmp, string var_typ,
                            string val);
 void Parser_gen_for_str_header(Parser *p, string i, string tmp, string var_typ,
                                string val);
+void Parser_gen_for_range_header(Parser *p, string i, string range_end,
+                                 string tmp, string var_type, string val);
 void Parser_gen_for_map_header(Parser *p, string i, string tmp, string var_typ,
                                string val, string typ);
 void Parser_gen_array_init(Parser *p, string typ, bool no_alloc, int new_arr_ph,
@@ -10257,6 +10259,16 @@ void Parser_gen_for_str_header(Parser *p, string i, string tmp, string var_typ,
                        var_typ.len, var_typ.str, val.len, val.str, var_typ.len,
                        var_typ.str, tmp.len, tmp.str, i.len, i.str));
 }
+void Parser_gen_for_range_header(Parser *p, string i, string range_end,
+                                 string tmp, string var_type, string val) {
+
+  Parser_genln(p, _STR(";\nfor (int %.*s = %.*s; %.*s < %.*s; %.*s++) {", i.len,
+                       i.str, tmp.len, tmp.str, i.len, i.str, range_end.len,
+                       range_end.str, i.len, i.str));
+
+  Parser_genln(p, _STR("%.*s %.*s = %.*s;", var_type.len, var_type.str, val.len,
+                       val.str, i.len, i.str));
+}
 void Parser_gen_for_map_header(Parser *p, string i, string tmp, string var_typ,
                                string val, string typ) {
 
@@ -17659,8 +17671,6 @@ void Parser_for_st(Parser *p) {
 
   Parser_open_scope(p);
 
-  string i_type = (p->is_js) ? (tos2((byte *)"var")) : (tos2((byte *)"int"));
-
   if (p->tok == main__Token_lcbr) {
 
     Parser_gen(p, tos2((byte *)"while (1) {"));
@@ -17960,15 +17970,9 @@ void Parser_for_st(Parser *p) {
 
       Parser_gen_for_str_header(p, i, tmp, var_type, val);
 
-    } else if (is_range && !p->is_js) {
+    } else if (is_range) {
 
-      Parser_genln(p, _STR(";\nfor (%.*s %.*s = %.*s; %.*s < %.*s; %.*s++) {",
-                           i_type.len, i_type.str, i.len, i.str, tmp.len,
-                           tmp.str, i.len, i.str, range_end.len, range_end.str,
-                           i.len, i.str));
-
-      Parser_genln(p, _STR("%.*s %.*s = %.*s;", var_type.len, var_type.str,
-                           val.len, val.str, i.len, i.str));
+      Parser_gen_for_range_header(p, i, range_end, tmp, var_type, val);
     };
 
   } else {
@@ -18177,9 +18181,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
             Parser_check(p, main__Token_rcbr);
           };
 
-          string tmp338 = res_typ;
+          string tmp337 = res_typ;
           { Parser_check(p, main__Token_rcbr); }
-          return tmp338;
+          return tmp337;
           ;
 
         } else {
@@ -18194,9 +18198,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
           p->returns = all_cases_return && p->returns;
 
-          string tmp339 = tos2((byte *)"");
+          string tmp338 = tos2((byte *)"");
           { Parser_check(p, main__Token_rcbr); }
-          return tmp339;
+          return tmp338;
           ;
         };
       };
@@ -18221,9 +18225,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         Parser_gen(p, strings__repeat(')', i + 1));
 
-        string tmp341 = res_typ;
+        string tmp340 = res_typ;
         { Parser_check(p, main__Token_rcbr); }
-        return tmp341;
+        return tmp340;
         ;
 
       } else {
@@ -18240,9 +18244,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         p->returns = all_cases_return && p->returns;
 
-        string tmp342 = tos2((byte *)"");
+        string tmp341 = tos2((byte *)"");
         { Parser_check(p, main__Token_rcbr); }
-        return tmp342;
+        return tmp341;
         ;
       };
     };
@@ -18357,9 +18361,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
   p->returns = 0;
 
-  string tmp344 = tos2((byte *)"");
+  string tmp343 = tos2((byte *)"");
   { Parser_check(p, main__Token_rcbr); }
-  return tmp344;
+  return tmp343;
   ;
 
   { Parser_check(p, main__Token_rcbr); }
@@ -18449,9 +18453,9 @@ void Parser_return_st(Parser *p) {
 
         string total_text = tos2((byte *)"");
 
-        array_string tmp355 = p->cur_fn.defer_text;
-        for (int tmp356 = 0; tmp356 < tmp355.len; tmp356++) {
-          string text = ((string *)tmp355.data)[tmp356];
+        array_string tmp354 = p->cur_fn.defer_text;
+        for (int tmp355 = 0; tmp355 < tmp354.len; tmp355++) {
+          string text = ((string *)tmp354.data)[tmp355];
 
           if (string_ne(text, tos2((byte *)""))) {
 
@@ -18618,9 +18622,9 @@ string Parser_js_decode(Parser *p) {
 
     Type T = Table_find_type(&/* ? */ *p->table, typ);
 
-    array_Var tmp370 = T.fields;
-    for (int tmp371 = 0; tmp371 < tmp370.len; tmp371++) {
-      Var field = ((Var *)tmp370.data)[tmp371];
+    array_Var tmp369 = T.fields;
+    for (int tmp370 = 0; tmp370 < tmp369.len; tmp370++) {
+      Var field = ((Var *)tmp369.data)[tmp370];
 
       string def_val = type_default(field.typ);
 
@@ -18648,7 +18652,7 @@ string Parser_js_decode(Parser *p) {
     string opt_type = _STR("Option_%.*s", typ.len, typ.str);
 
     _PUSH(&p->cgen->typedefs,
-          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp374,
+          (_STR("typedef Option %.*s;", opt_type.len, opt_type.str)), tmp373,
           string);
 
     Table_register_type(p->table, opt_type);
