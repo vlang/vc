@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "52c5f01"
+#define V_COMMIT_HASH "3c0fce4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c76d09f"
+#define V_COMMIT_HASH "52c5f01"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -46,6 +46,8 @@
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
+#define _UNICODE
+#define UNICODE
 #include <windows.h>
 
 // must be included after <windows.h>
@@ -22804,12 +22806,10 @@ void Parser_fmt_inc(Parser *p) { p->scanner->fmt_indent++; }
 void Parser_fmt_dec(Parser *p) { p->scanner->fmt_indent--; }
 void init_consts() {
 #ifdef _WIN32
-#ifndef _BOOTSTRAP_NO_UNICODE_STREAM
   _setmode(_fileno(stdout), _O_U8TEXT);
   SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE),
                  ENABLE_PROCESSED_OUTPUT | 0x0004);
 // ENABLE_VIRTUAL_TERMINAL_PROCESSING
-#endif
 #endif
   g_str_buf = malloc(1000);
   os__FILE_ATTR_READONLY = 0x1;
