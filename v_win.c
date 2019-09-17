@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3c0fce4"
+#define V_COMMIT_HASH "1796869"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "52c5f01"
+#define V_COMMIT_HASH "3c0fce4"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -23093,7 +23093,7 @@ void init_consts() {
              "u8 {}\nclass bool {}\nclass rune {}\nclass map_string {}\nclass "
              "map_int {}\n\nfunction init_consts() {\n	\n}	\n\n");
   main__dot_ptr = tos2((byte *)"->");
-  main__Version = tos2((byte *)"0.1.19");
+  main__Version = tos2((byte *)"0.1.20");
   main__SupportedPlatforms = new_array_from_c_array(
       10, 10, sizeof(string),
       (string[]){tos2((byte *)"windows"), tos2((byte *)"mac"),
