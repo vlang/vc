@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1397d53"
+#define V_COMMIT_HASH "0a2f7a6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9c9e629"
+#define V_COMMIT_HASH "1397d53"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -20379,7 +20379,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
     return scan_res(main__Token_str, Scanner_ident_string(s));
 
-  } else if (c == '\`') { /* case */
+  } else if (c == '`') { /* case */
 
     return scan_res(main__Token_chartoken, Scanner_ident_char(s));
 
@@ -21038,7 +21038,7 @@ string Scanner_ident_char(Scanner *s) {
     bool double_slash =
         Scanner_expect(&/* ? */ *s, tos2((byte *)"\\\\"), s->pos - 2);
 
-    if (string_at(s->text, s->pos) == '\`' &&
+    if (string_at(s->text, s->pos) == '`' &&
         (string_at(s->text, s->pos - 1) != slash || double_slash)) {
 
       if (double_slash) {
@@ -21192,7 +21192,7 @@ int Scanner_get_opening_bracket(Scanner *s) {
 
     if (string_at(s->text, pos) == '\'' &&
         string_at(s->text, pos - 1) != '\\' &&
-        string_at(s->text, pos - 1) != '\`') {
+        string_at(s->text, pos - 1) != '`') {
 
       inside_string = !inside_string;
     };
