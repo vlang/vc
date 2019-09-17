@@ -1,3 +1,4 @@
+#define V_COMMIT_HASH "52c5f01"
 #ifndef V_COMMIT_HASH
 #define V_COMMIT_HASH "c76d09f"
 #endif
@@ -6596,11 +6597,6 @@ void V_cc(V *v) {
     _PUSH(&a, (tos2((byte *)"-lm")), tmp35, string);
   };
 
-  if (v->os == main__OS_windows) {
-
-    _PUSH(&a, (tos2((byte *)"-DUNICODE -D_UNICODE")), tmp36, string);
-  };
-
   string args = array_string_join(a, tos2((byte *)" "));
 
   string cmd = _STR("%.*s %.*s", v->pref->ccompiler.len, v->pref->ccompiler.str,
@@ -6615,15 +6611,15 @@ void V_cc(V *v) {
 
   i64 ticks = time__ticks();
 
-  Option_os__Result tmp40 = os__exec(cmd);
-  if (!tmp40.ok) {
-    string err = tmp40.error;
+  Option_os__Result tmp39 = os__exec(cmd);
+  if (!tmp39.ok) {
+    string err = tmp39.error;
 
     cerror(err);
 
     return;
   }
-  os__Result res = *(os__Result *)tmp40.data;
+  os__Result res = *(os__Result *)tmp39.data;
   ;
 
   if (res.exit_code != 0) {
@@ -6702,9 +6698,9 @@ void V_cc_windows_cross(V *c) {
 
   array_CFlag cflags = V_get_os_cflags(*c);
 
-  array_CFlag tmp45 = cflags;
-  for (int tmp46 = 0; tmp46 < tmp45.len; tmp46++) {
-    CFlag flag = ((CFlag *)tmp45.data)[tmp46];
+  array_CFlag tmp44 = cflags;
+  for (int tmp45 = 0; tmp45 < tmp44.len; tmp45++) {
+    CFlag flag = ((CFlag *)tmp44.data)[tmp45];
 
     if (string_ne(flag.name, tos2((byte *)"-l"))) {
 
@@ -6728,9 +6724,9 @@ void V_cc_windows_cross(V *c) {
       v_exit(1);
     };
 
-    array_string tmp48 = c->table->imports;
-    for (int tmp49 = 0; tmp49 < tmp48.len; tmp49++) {
-      string imp = ((string *)tmp48.data)[tmp49];
+    array_string tmp47 = c->table->imports;
+    for (int tmp48 = 0; tmp48 < tmp47.len; tmp48++) {
+      string imp = ((string *)tmp47.data)[tmp48];
 
       libs = string_add(libs, _STR(" \"%.*s/vlib/%.*s.o\"", main__ModPath.len,
                                    main__ModPath.str, imp.len, imp.str));
@@ -6739,9 +6735,9 @@ void V_cc_windows_cross(V *c) {
 
   args = string_add(args, _STR(" %.*s ", c->out_name_c.len, c->out_name_c.str));
 
-  array_CFlag tmp50 = cflags;
-  for (int tmp51 = 0; tmp51 < tmp50.len; tmp51++) {
-    CFlag flag = ((CFlag *)tmp50.data)[tmp51];
+  array_CFlag tmp49 = cflags;
+  for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
+    CFlag flag = ((CFlag *)tmp49.data)[tmp50];
 
     if (string_eq(flag.name, tos2((byte *)"-l"))) {
 
@@ -6783,11 +6779,10 @@ void V_cc_windows_cross(V *c) {
 
   string include = _STR("-I %.*s/include ", winroot.len, winroot.str);
 
-  string cmd = _STR("clang -o %.*s -w %.*s -DUNICODE -D_UNICODE -m32 -c "
-                    "-target x86_64-win32 %.*s/%.*s",
-                    obj_name.len, obj_name.str, include.len, include.str,
-                    main__ModPath.len, main__ModPath.str, c->out_name_c.len,
-                    c->out_name_c.str);
+  string cmd = _STR(
+      "clang -o %.*s -w %.*s -m32 -c -target x86_64-win32 %.*s/%.*s",
+      obj_name.len, obj_name.str, include.len, include.str, main__ModPath.len,
+      main__ModPath.str, c->out_name_c.len, c->out_name_c.str);
 
   if (c->pref->show_c_cmd) {
 
@@ -6831,9 +6826,9 @@ void V_cc_windows_cross(V *c) {
 }
 void V_build_thirdparty_obj_files(V c) {
 
-  array_CFlag tmp58 = V_get_os_cflags(c);
-  for (int tmp59 = 0; tmp59 < tmp58.len; tmp59++) {
-    CFlag flag = ((CFlag *)tmp58.data)[tmp59];
+  array_CFlag tmp57 = V_get_os_cflags(c);
+  for (int tmp58 = 0; tmp58 < tmp57.len; tmp58++) {
+    CFlag flag = ((CFlag *)tmp57.data)[tmp58];
 
     if (string_ends_with(flag.value, tos2((byte *)".o"))) {
 
@@ -11449,14 +11444,14 @@ void V_generate_main(V *v) {
       };
     };
 
-    CGen_genln(cgen,
-               _STR("void init_consts() {\n#ifdef _WIN32\n#ifndef "
-                    "_BOOTSTRAP_NO_UNICODE_STREAM\n_setmode(_fileno(stdout), "
-                    "_O_U8TEXT);\nSetConsoleMode(GetStdHandle(STD_OUTPUT_"
-                    "HANDLE), ENABLE_PROCESSED_OUTPUT | 0x0004);\n// "
-                    "ENABLE_VIRTUAL_TERMINAL_PROCESSING\n#endif\n#endif\ng_str_"
-                    "buf=malloc(1000);\n%.*s\n}",
-                    consts_init_body.len, consts_init_body.str));
+    CGen_genln(
+        cgen,
+        _STR("void init_consts() {\n#ifdef _WIN32\n_setmode(_fileno(stdout), "
+             "_O_U8TEXT);\nSetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), "
+             "ENABLE_PROCESSED_OUTPUT | 0x0004);\n// "
+             "ENABLE_VIRTUAL_TERMINAL_PROCESSING\n#endif\ng_str_buf=malloc("
+             "1000);\n%.*s\n}",
+             consts_init_body.len, consts_init_body.str));
 
     CGen_genln(
         cgen,
@@ -12889,10 +12884,9 @@ void V_cc_msvc(V *v) {
       os__realpath(string_add(v->out_name_c, tos2((byte *)".obj")));
 
   array_string a = new_array_from_c_array(
-      6, 6, sizeof(string),
+      4, 4, sizeof(string),
       (string[]){tos2((byte *)"-w"), tos2((byte *)"/we4013"),
-                 tos2((byte *)"/volatile:ms"), tos2((byte *)"/D_UNICODE"),
-                 tos2((byte *)"/DUNICODE"),
+                 tos2((byte *)"/volatile:ms"),
                  _STR("/Fo\"%.*s\"", out_name_obj.len, out_name_obj.str)});
 
   if (v->pref->is_prod) {
@@ -13202,8 +13196,7 @@ void build_thirdparty_obj_file_with_msvc(string path) {
            msvc.um_include_path.len, msvc.um_include_path.str,
            msvc.shared_include_path.len, msvc.shared_include_path.str);
 
-  string cmd = _STR("\"\"%.*s\" /volatile:ms /Z7 %.*s /c %.*s /Fo\"%.*s\" "
-                    "/D_UNICODE /DUNICODE\"",
+  string cmd = _STR("\"\"%.*s\" /volatile:ms /Z7 %.*s /c %.*s /Fo\"%.*s\"\"",
                     msvc.full_cl_exe_path.len, msvc.full_cl_exe_path.str,
                     include_string.len, include_string.str, cfiles.len,
                     cfiles.str, obj_path.len, obj_path.str);
@@ -22916,14 +22909,15 @@ void init_consts() {
              "EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION "
              "0\n#ifdef __TINYC__\n#undef EMPTY_STRUCT_INITIALIZATION\n#define "
              "EMPTY_STRUCT_INITIALIZATION\n#endif\n\n#define OPTION_CAST(x) "
-             "(x)\n\n#ifdef _WIN32\n#define WIN32_LEAN_AND_MEAN\n#include "
-             "<windows.h>\n\n// must be included after <windows.h>\n#ifndef "
-             "__TINYC__\n#include <shellapi.h>\n#endif\n\n#include <io.h> // "
-             "_waccess\n#include <fcntl.h> // _O_U8TEXT\n#include <direct.h> "
-             "// _wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n// On "
-             "MSVC these are the same (as long as /volatile:ms is "
-             "passed)\n#define _Atomic volatile\n\n// MSVC cannot parse some "
-             "things properly\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
+             "(x)\n\n#ifdef _WIN32\n#define WIN32_LEAN_AND_MEAN\n#define "
+             "_UNICODE\n#define UNICODE\n#include <windows.h>\n\n// must be "
+             "included after <windows.h>\n#ifndef __TINYC__\n#include "
+             "<shellapi.h>\n#endif\n\n#include <io.h> // _waccess\n#include "
+             "<fcntl.h> // _O_U8TEXT\n#include <direct.h> // "
+             "_wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n// On MSVC "
+             "these are the same (as long as /volatile:ms is passed)\n#define "
+             "_Atomic volatile\n\n// MSVC cannot parse some things "
+             "properly\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
              "OPTION_CAST\n\n#define EMPTY_STRUCT_DECLARATION int "
              "____dummy_variable\n#define OPTION_CAST(x)\n#endif\n\nvoid "
              "pthread_mutex_lock(HANDLE *m) {\n	WaitForSingleObject(*m, "
