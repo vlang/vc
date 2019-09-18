@@ -1,3 +1,4 @@
+#define V_COMMIT_HASH "d150051"
 #ifndef V_COMMIT_HASH
 #define V_COMMIT_HASH "c76d09f"
 #endif
