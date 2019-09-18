@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f187c35"
+#define V_COMMIT_HASH "b009223"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "695d401"
+#define V_COMMIT_HASH "f187c35"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -16427,7 +16427,7 @@ string Parser_expression(Parser *p) {
 
     Parser_fgen(p, tos2((byte *)" "));
 
-    Parser_gen(p, tos2((byte *)", "));
+    Parser_gen(p, tos2((byte *)"), "));
 
     string arr_typ = Parser_expression(p);
 
@@ -16448,11 +16448,11 @@ string Parser_expression(Parser *p) {
 
     if (is_map) {
 
-      CGen_set_placeholder(p->cgen, ph, tos2((byte *)"_IN_MAP( "));
+      CGen_set_placeholder(p->cgen, ph, tos2((byte *)"_IN_MAP( ("));
 
     } else {
 
-      CGen_set_placeholder(p->cgen, ph, _STR("_IN(%.*s, ", typ.len, typ.str));
+      CGen_set_placeholder(p->cgen, ph, _STR("_IN(%.*s, (", typ.len, typ.str));
     };
 
     Parser_gen(p, tos2((byte *)")"));
