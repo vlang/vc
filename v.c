@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "74b82b6"
+#define V_COMMIT_HASH "377956e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b009223"
+#define V_COMMIT_HASH "74b82b6"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -23186,13 +23186,17 @@ void init_consts() {
             "map__exists(m, val)\n//================================== GLOBALS "
             "=================================*/\nbyteptr g_str_buf;\nint "
             "load_so(byteptr);\nvoid reload_so();\nvoid init_consts();\n\n");
-  main__js_headers = tos2((
-      byte *)"\n\nclass array_string {}\nclass array_byte {}\nclass array_int "
-             "{}\nclass byte {}\nclass double {}\nclass int {}\nclass f64 "
-             "{}\nclass f32 {}\nclass i64 {}\nclass i32 {}\nclass i16 "
-             "{}\nclass u64 {}\nclass u32 {}\nclass u16 {}\nclass i8 {}\nclass "
-             "u8 {}\nclass bool {}\nclass rune {}\nclass map_string {}\nclass "
-             "map_int {}\n\nfunction init_consts() {\n	\n}	\n\n");
+  main__js_headers = tos2(
+      (byte *)"\n\nvar array_string = function() {}\nvar array_byte = "
+              "function() {}\nvar array_int = function() {}\nvar byte = "
+              "function() {}\nvar double = function() {}\nvar int = function() "
+              "{}\nvar f64 = function() {}\nvar f32 = function() {}\nvar i64 = "
+              "function() {}\nvar i32 = function() {}\nvar i16 = function() "
+              "{}\nvar u64 = function() {}\nvar u32 = function() {}\nvar u16 = "
+              "function() {}\nvar i8 = function() {}\nvar u8 = function() "
+              "{}\nvar bool = function() {}\nvar rune = function() {}\nvar "
+              "map_string = function() {}\nvar map_int = function() "
+              "{}\n\nfunction init_consts() {\n	\n}	\n\n");
   main__dot_ptr = tos2((byte *)"->");
   main__Version = tos2((byte *)"0.1.20");
   main__SupportedPlatforms = new_array_from_c_array(
