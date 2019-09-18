@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "040d039"
+#define V_COMMIT_HASH "695d401"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1c6cbda"
+#define V_COMMIT_HASH "040d039"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1904,8 +1904,7 @@ array array_reverse(array a) {
   for (int i = 0; i < a.len; i++) {
 
     memcpy((byte *)arr.data + i * arr.element_size,
-           &/*vvar*/ (*(array *)array__get(a, a.len - 1 - i)),
-           arr.element_size);
+           &/*v*/ (*(array *)array__get(a, a.len - 1 - i)), arr.element_size);
   };
 
   return arr;
@@ -1952,7 +1951,7 @@ string array_byte_hex(array_byte b) {
 
   byte *hex = v_malloc(b.len * 2 + 1);
 
-  byte *ptr = &/*vvar*/ hex[/*ptr*/ 0] /*rbyte 1*/;
+  byte *ptr = &/*v*/ hex[/*ptr*/ 0] /*rbyte 1*/;
 
   for (int i = 0; i < b.len; i++) {
 
@@ -3078,7 +3077,7 @@ void print_backtrace_skipping_top_frames(int skipframes) {
 
   int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
 
-  backtrace_symbols_fd(((voidptr *)(&/*vvar*/ buffer[skipframes] /*rbyte* 0*/)),
+  backtrace_symbols_fd(((voidptr *)(&/*v*/ buffer[skipframes] /*rbyte* 0*/)),
                        nr_ptrs - skipframes, 1);
 
   return;
@@ -3096,7 +3095,7 @@ void print_backtrace_skipping_top_frames(int skipframes) {
 
     int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
 
-    backtrace_symbols_fd(&/*vvar*/ buffer[skipframes] /*rbyte* 0*/,
+    backtrace_symbols_fd(&/*v*/ buffer[skipframes] /*rbyte* 0*/,
                          nr_ptrs - skipframes, 1);
 
     return;
@@ -4280,11 +4279,11 @@ int os__file_size(string path) {
 
 #ifdef _WIN32
 
-  _wstat(string_to_wide(path), &/*vvar*/ s);
+  _wstat(string_to_wide(path), &/*v*/ s);
 
 #else
 
-  stat(((char *)(path.str)), &/*vvar*/ s);
+  stat(((char *)(path.str)), &/*v*/ s);
 
 #endif
   ;
@@ -4783,7 +4782,7 @@ string os__get_raw_line() {
 
   char *buf = ((char *)(v_malloc(((int)(max)))));
 
-  int nr_chars = getline(&/*vvar*/ buf, &/*vvar*/ max, stdin);
+  int nr_chars = getline(&/*v*/ buf, &/*v*/ max, stdin);
 
   if (nr_chars == 0) {
 
@@ -4973,15 +4972,15 @@ void os__on_segfault(void *f) {
 
       sigaction sa;
 
-  memset(&/*vvar*/ sa, 0, sizeof(sigaction));
+  memset(&/*v*/ sa, 0, sizeof(sigaction));
 
-  sigemptyset(&/*vvar*/ sa.sa_mask);
+  sigemptyset(&/*v*/ sa.sa_mask);
 
   sa.sa_sigaction = f;
 
   sa.sa_flags = SA_SIGINFO;
 
-  sigaction(SIGSEGV, &/*vvar*/ sa, 0);
+  sigaction(SIGSEGV, &/*v*/ sa, 0);
 
 #endif
   ;
@@ -5046,7 +5045,7 @@ string os__executable() {
 
   int size = os__MAX_PATH;
 
-  sysctl(mib.data, 4, (char *)result, &/*vvar*/ size, 0, 0);
+  sysctl(mib.data, 4, (char *)result, &/*v*/ size, 0, 0);
 
   return (tos2((byte *)result));
 
@@ -5110,7 +5109,7 @@ bool os__is_dir(string path) {
 
   byte *cstr = path.str;
 
-  if (stat((char *)cstr, &/*vvar*/ statbuf) != 0) {
+  if (stat((char *)cstr, &/*v*/ statbuf) != 0) {
 
     return 0;
   };
@@ -5254,7 +5253,7 @@ int os__file_last_mod_unix(string path) {
 
       stat attr;
 
-  stat((char *)path.str, &/*vvar*/ attr);
+  stat((char *)path.str, &/*v*/ attr);
 
   return attr.st_mtime;
 }
@@ -5748,7 +5747,7 @@ time__Time time__now() {
 
       tm *now = 0;
 
-  now = localtime(&/*vvar*/ t);
+  now = localtime(&/*v*/ t);
 
   return time__convert_ctime(*now);
 }
@@ -5861,7 +5860,7 @@ time__Time time__convert_ctime(struct /*TM*/ tm t) {
                       .hour = t.tm_hour,
                       .minute = t.tm_min,
                       .second = t.tm_sec,
-                      .uni = mktime(&/*vvar*/ t)};
+                      .uni = mktime(&/*v*/ t)};
 }
 string time__Time_format_ss(time__Time t) {
 
@@ -6024,7 +6023,7 @@ int time__Time_calc_unix(time__Time *t) {
                                     .tm_mon = t->month - 1,
                                     .tm_year = t->year - 1900};
 
-  return mktime(&/*vvar*/ tt);
+  return mktime(&/*v*/ tt);
 }
 time__Time time__Time_add_seconds(time__Time t, int seconds) {
 
@@ -6108,7 +6107,7 @@ i64 time__ticks() {
 
       timeval ts;
 
-  gettimeofday(&/*vvar*/ ts, 0);
+  gettimeofday(&/*v*/ ts, 0);
 
   return ts.tv_sec * 1000 + (ts.tv_usec / 1000);
 
@@ -12777,7 +12776,7 @@ Option_string find_windows_kit_internal(RegKey key, array_string versions) {
     int required_bytes = 0;
 
     void *result = RegQueryValueExW(key, string_to_wide(version), 0, 0, 0,
-                                    &/*vvar*/ required_bytes);
+                                    &/*v*/ required_bytes);
 
     int length = required_bytes / 2;
 
@@ -12796,7 +12795,7 @@ Option_string find_windows_kit_internal(RegKey key, array_string versions) {
     };
 
     void *result2 = RegQueryValueExW(key, string_to_wide(version), 0, 0, value,
-                                     &/*vvar*/ alloc_length);
+                                     &/*v*/ alloc_length);
 
     if (result2 != 0) {
 
@@ -12828,7 +12827,7 @@ Option_WindowsKit find_windows_kit_root() {
                     "SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots", 0,
                     main__KEY_QUERY_VALUE | main__KEY_WOW64_32KEY |
                         main__KEY_ENUMERATE_SUB_KEYS,
-                    &/*vvar*/ root_key);
+                    &/*v*/ root_key);
 
   if (rc != 0) {
 
@@ -18894,7 +18893,8 @@ void Parser_attribute(Parser *p) {
 
   Parser_check(p, main__Token_rsbr);
 
-  if (p->tok == main__Token_func) {
+  if (p->tok == main__Token_func ||
+      (p->tok == main__Token_key_pub && Parser_peek(p) == main__Token_func)) {
 
     Parser_fn_decl(p);
 
