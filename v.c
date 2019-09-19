@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "cb31eee"
+#define V_COMMIT_HASH "a94c155"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "13e4c79"
+#define V_COMMIT_HASH "cb31eee"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -622,7 +622,6 @@ array new_array_from_c_array_no_alloc(int len, int cap, int elm_size,
                                       void *c_array);
 array array_repeat_old(void *val, int nr_repeats, int elm_size);
 array array_repeat(array a, int nr_repeats);
-array array_repeat2(array a, int nr_repeats);
 void array_sort_with_compare(array *a, void *compare);
 void array_insert(array *a, int i, void *val);
 void array_prepend(array *a, void *val);
@@ -1720,22 +1719,6 @@ array array_repeat(array a, int nr_repeats) {
 
   return arr;
 }
-array array_repeat2(array a, int nr_repeats) {
-
-  array arr = (array){.len = nr_repeats,
-                      .cap = nr_repeats,
-                      .element_size = a.element_size,
-                      .data = v_malloc(nr_repeats * a.element_size)};
-
-  void *val = (byte *)a.data + 0;
-
-  for (int i = 0; i < nr_repeats; i++) {
-
-    memcpy((byte *)arr.data + i * a.element_size, val, a.element_size);
-  };
-
-  return arr;
-}
 void array_sort_with_compare(array *a, void *compare) {
 
   qsort(a->data, a->len, a->element_size, compare);
@@ -2408,7 +2391,7 @@ int string_index(string s, string p) {
     return -1;
   };
 
-  array_int prefix = array_repeat2(
+  array_int prefix = array_repeat(
       new_array_from_c_array(1, 1, sizeof(int), (int[]){0}), p.len);
 
   int j = 0;
@@ -3062,7 +3045,7 @@ array_byte string_bytes(string s) {
     return new_array_from_c_array(0, 0, sizeof(byte), (byte[]){0});
   };
 
-  array_byte buf = array_repeat2(
+  array_byte buf = array_repeat(
       new_array_from_c_array(1, 1, sizeof(byte), (byte[]){((byte)(0))}), s.len);
 
   memcpy(buf.data, (char *)s.str, s.len);
@@ -3474,7 +3457,7 @@ string byte_str(byte c) {
 bool byte_is_capital(byte c) { return c >= 'A' && c <= 'Z'; }
 array_byte array_byte_clone(array_byte b) {
 
-  array_byte res = array_repeat2(
+  array_byte res = array_repeat(
       new_array_from_c_array(1, 1, sizeof(byte), (byte[]){((byte)(0))}), b.len);
 
   for (int i = 0; i < b.len; i++) {
@@ -3932,9 +3915,9 @@ int preorder_keys(mapnode *node, array_string *keys, int key_i) {
 array_string map_keys(map *m) {
 
   array_string keys =
-      array_repeat2(new_array_from_c_array(1, 1, sizeof(string),
-                                           (string[]){tos2((byte *)"")}),
-                    m->size);
+      array_repeat(new_array_from_c_array(1, 1, sizeof(string),
+                                          (string[]){tos2((byte *)"")}),
+                   m->size);
 
   if (isnil(m->root)) {
 
@@ -4113,7 +4096,7 @@ void strings__Builder_cut(strings__Builder *b, int n) { b->len -= n; }
 void strings__Builder_free(strings__Builder *b) { v_free(b->buf.data); }
 int strings__levenshtein_distance(string a, string b) {
 
-  array_int f = array_repeat2(
+  array_int f = array_repeat(
       new_array_from_c_array(1, 1, sizeof(int), (int[]){0}), b.len + 1);
 
   string tmp2 = a;
@@ -4228,7 +4211,7 @@ string strings__repeat(byte c, int n) {
     return tos2((byte *)"");
   };
 
-  array_byte arr = array_repeat2(
+  array_byte arr = array_repeat(
       new_array_from_c_array(1, 1, sizeof(byte), (byte[]){((byte)(0))}), n + 1);
 
   for (int i = 0; i < n; i++) {
@@ -8421,7 +8404,7 @@ bool Parser_is_sig(Parser *p) {
 Fn new_fn(string mod, bool is_public) {
 
   return (Fn){.mod = mod,
-              .local_vars = array_repeat2(
+              .local_vars = array_repeat(
                   new_array_from_c_array(
                       1, 1, sizeof(Var),
                       (Var[]){(Var){.typ = tos((byte *)"", 0),
@@ -22775,9 +22758,9 @@ map_int build_keys() {
 array_string build_token_str() {
 
   array_string s =
-      array_repeat2(new_array_from_c_array(1, 1, sizeof(string),
-                                           (string[]){tos2((byte *)"")}),
-                    main__NrTokens);
+      array_repeat(new_array_from_c_array(1, 1, sizeof(string),
+                                          (string[]){tos2((byte *)"")}),
+                   main__NrTokens);
 
   array_set(&/*q*/ s, main__Token_keyword_beg, &(string[]){tos2((byte *)"")});
 
