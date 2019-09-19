@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "13e4c79"
+#define V_COMMIT_HASH "cb31eee"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "377956e"
+#define V_COMMIT_HASH "13e4c79"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -139,7 +139,6 @@ int g_test_ok = 1;
 #ifndef _WIN32
 #include <unistd.h>
 #endif
-#include <math.h>
 #include <time.h>
 typedef struct array array;
 typedef array array_string;
@@ -15731,6 +15730,15 @@ string Parser_name_expr(Parser *p) {
     Option_Fn tmp149 = Table_find_fn(&/* ? */ *p->table, name);
     if (!tmp149.ok) {
       string err = tmp149.error;
+
+      if (0) {
+
+        Parser_warn(
+            &/* ? */ *p,
+            string_add(tos2((byte *)"\ndefine imported C function with "),
+                       _STR("`fn C.%.*s([args]) [return_type]`\n", name.len,
+                            name.str)));
+      };
 
       return tos2((byte *)"void*");
     }
