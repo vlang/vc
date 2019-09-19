@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a94c155"
+#define V_COMMIT_HASH "486b3d2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cb31eee"
+#define V_COMMIT_HASH "a94c155"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -12488,7 +12488,7 @@ void update_v() {
   os__mv(_STR("%.*s/v.exe", vroot.len, vroot.str), v_backup_file);
 
   Option_os__Result tmp116 =
-      os__exec(_STR("%.*s/make.bat", vroot.len, vroot.str));
+      os__exec(_STR("\"%.*s/make.bat\"", vroot.len, vroot.str));
   if (!tmp116.ok) {
     string err = tmp116.error;
 
