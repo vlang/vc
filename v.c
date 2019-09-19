@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "afb372b"
+#define V_COMMIT_HASH "c8a781b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ad6ab39"
+#define V_COMMIT_HASH "afb372b"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -6695,6 +6695,15 @@ void V_cc(V *v) {
   };
 
   if (v->pref->compress) {
+
+#ifdef _WIN32
+
+    println(tos2((byte *)"-compress does not work on Windows for now"));
+
+    return;
+
+#endif
+    ;
 
     int ret = os__system(_STR("strip %.*s", v->out_name.len, v->out_name.str));
 
