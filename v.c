@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ad6ab39"
+#define V_COMMIT_HASH "afb372b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f629069"
+#define V_COMMIT_HASH "ad6ab39"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -399,6 +399,7 @@ struct Preferences {
   string ccompiler;
   bool building_v;
   bool autofree;
+  bool compress;
 };
 
 struct Repl {
@@ -6692,6 +6693,47 @@ void V_cc(V *v) {
 
     os__rm(v->out_name_c);
   };
+
+  if (v->pref->compress) {
+
+    int ret = os__system(_STR("strip %.*s", v->out_name.len, v->out_name.str));
+
+    if (ret != 0) {
+
+      println(tos2((byte *)"strip failed"));
+
+      return;
+    };
+
+    int ret2 = os__system(
+        _STR("upx --lzma -qqq %.*s", v->out_name.len, v->out_name.str));
+
+    if (ret2 != 0) {
+
+      println(tos2((byte *)"upx failed"));
+
+#ifdef __APPLE__
+
+      println(tos2((byte *)"install upx with `brew install upx`"));
+
+#endif
+      ;
+
+#ifdef __linux__
+
+      println(string_add(tos2((byte *)"install upx\n"),
+                         tos2((byte *)"for example, on Debian/Ubuntu run `sudo "
+                                      "apt install upx`")));
+
+#endif
+      ;
+
+#ifdef _WIN32
+
+#endif
+      ;
+    };
+  };
 }
 void V_cc_windows_cross(V *c) {
 
@@ -6704,9 +6746,9 @@ void V_cc_windows_cross(V *c) {
 
   array_CFlag cflags = V_get_os_cflags(*c);
 
-  array_CFlag tmp44 = cflags;
-  for (int tmp45 = 0; tmp45 < tmp44.len; tmp45++) {
-    CFlag flag = ((CFlag *)tmp44.data)[tmp45];
+  array_CFlag tmp46 = cflags;
+  for (int tmp47 = 0; tmp47 < tmp46.len; tmp47++) {
+    CFlag flag = ((CFlag *)tmp46.data)[tmp47];
 
     if (string_ne(flag.name, tos2((byte *)"-l"))) {
 
@@ -6730,9 +6772,9 @@ void V_cc_windows_cross(V *c) {
       v_exit(1);
     };
 
-    array_string tmp47 = c->table->imports;
-    for (int tmp48 = 0; tmp48 < tmp47.len; tmp48++) {
-      string imp = ((string *)tmp47.data)[tmp48];
+    array_string tmp49 = c->table->imports;
+    for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
+      string imp = ((string *)tmp49.data)[tmp50];
 
       libs = string_add(libs, _STR(" \"%.*s/vlib/%.*s.o\"", main__ModPath.len,
                                    main__ModPath.str, imp.len, imp.str));
@@ -6741,9 +6783,9 @@ void V_cc_windows_cross(V *c) {
 
   args = string_add(args, _STR(" %.*s ", c->out_name_c.len, c->out_name_c.str));
 
-  array_CFlag tmp49 = cflags;
-  for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
-    CFlag flag = ((CFlag *)tmp49.data)[tmp50];
+  array_CFlag tmp51 = cflags;
+  for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
+    CFlag flag = ((CFlag *)tmp51.data)[tmp52];
 
     if (string_eq(flag.name, tos2((byte *)"-l"))) {
 
@@ -6832,9 +6874,9 @@ void V_cc_windows_cross(V *c) {
 }
 void V_build_thirdparty_obj_files(V c) {
 
-  array_CFlag tmp57 = V_get_os_cflags(c);
-  for (int tmp58 = 0; tmp58 < tmp57.len; tmp58++) {
-    CFlag flag = ((CFlag *)tmp57.data)[tmp58];
+  array_CFlag tmp59 = V_get_os_cflags(c);
+  for (int tmp60 = 0; tmp60 < tmp59.len; tmp60++) {
+    CFlag flag = ((CFlag *)tmp59.data)[tmp60];
 
     if (string_ends_with(flag.value, tos2((byte *)".o"))) {
 
@@ -12268,6 +12310,7 @@ V *new_v(array_string args) {
           .translated = _IN(string, (tos2((byte *)"translated")), args),
           .is_run = _IN(string, (tos2((byte *)"run")), args),
           .autofree = _IN(string, (tos2((byte *)"-autofree")), args),
+          .compress = _IN(string, (tos2((byte *)"-compress")), args),
           .is_repl = is_repl,
           .build_mode = build_mode,
           .cflags = cflags,
