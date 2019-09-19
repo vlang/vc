@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b6bb6a5"
+#define V_COMMIT_HASH "9a7ffac"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c8a781b"
+#define V_COMMIT_HASH "b6bb6a5"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -9143,8 +9143,16 @@ void Parser_check_unused_variables(Parser *p) {
 
       p->scanner->line_nr = var.line_nr - 1;
 
-      Parser_error(
-          p, _STR("`%.*s` declared and not used", var.name.len, var.name.str));
+      if (p->pref->is_prod) {
+
+        Parser_error(p, _STR("`%.*s` declared and not used", var.name.len,
+                             var.name.str));
+
+      } else {
+
+        Parser_warn(&/* ? */ *p, _STR("`%.*s` declared and not used",
+                                      var.name.len, var.name.str));
+      };
     };
 
     if (!var.is_changed && var.is_mut && !p->pref->is_repl &&
