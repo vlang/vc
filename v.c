@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "486b3d2"
+#define V_COMMIT_HASH "f629069"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a94c155"
+#define V_COMMIT_HASH "486b3d2"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -14897,8 +14897,6 @@ void Parser_close_scope(Parser *p) {
       } else if (string_eq(v.typ, tos2((byte *)"string"))) {
 
         free_fn = tos2((byte *)"v_string_free");
-
-        continue;
 
       } else if (v.ptr || string_ends_with(v.typ, tos2((byte *)"*"))) {
 
