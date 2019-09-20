@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ecc8728"
+#define V_COMMIT_HASH "56e8801"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "79abc0c"
+#define V_COMMIT_HASH "ecc8728"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -508,8 +508,8 @@ struct Scanner {
   int pos;
   int line_nr;
   bool inside_string;
-  bool dollar_start;
-  bool dollar_end;
+  bool inter_start;
+  bool inter_end;
   bool debug;
   string line_comment;
   bool started;
@@ -1508,6 +1508,8 @@ string main__and_or_error;
 #define main__IndexType_array0 4
 #define main__IndexType_fixed_array 5
 #define main__IndexType_ptr 6
+#define main__single_quote '\''
+#define main__double_quote '"'
 #define main__AccessMod_private 0
 #define main__AccessMod_private_mut 1
 #define main__AccessMod_public 2
@@ -11865,8 +11867,8 @@ void V_generate_main(V *v) {
              "mode);\n_setmode(_fileno(stdout), "
              "_O_U8TEXT);\nSetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), "
              "ENABLE_PROCESSED_OUTPUT | 0x0004);\n// "
-             "ENABLE_VIRTUAL_TERMINAL_PROCESSING\n#endif\ng_str_buf=malloc("
-             "1000);\n%.*s\n}",
+             "ENABLE_VIRTUAL_TERMINAL_PROCESSING\nsetbuf(stdout,0);\n#endif\ng_"
+             "str_buf=malloc(1000);\n%.*s\n}",
              consts_init_body.len, consts_init_body.str));
 
     CGen_genln(
@@ -20431,8 +20433,8 @@ Scanner *new_scanner(string file_path) {
           .pos = 0,
           .line_nr = 0,
           .inside_string = 0,
-          .dollar_start = 0,
-          .dollar_end = 0,
+          .inter_start = 0,
+          .inter_end = 0,
           .debug = 0,
           .line_comment = tos((byte *)"", 0),
           .started = 0,
@@ -20699,16 +20701,16 @@ ScanRes Scanner_scan(Scanner *s) {
     Scanner_skip_whitespace(s);
   };
 
-  if (s->dollar_end) {
+  if (s->inter_end) {
 
     if (string_at(s->text, s->pos) == '\'') {
 
-      s->dollar_end = 0;
+      s->inter_end = 0;
 
       return scan_res(main__Token_str, tos2((byte *)""));
     };
 
-    s->dollar_end = 0;
+    s->inter_end = 0;
 
     return scan_res(main__Token_str, Scanner_ident_string(s));
   };
@@ -20745,19 +20747,19 @@ ScanRes Scanner_scan(Scanner *s) {
 
       if (next_char == '\'') {
 
-        s->dollar_end = 1;
+        s->inter_end = 1;
 
-        s->dollar_start = 0;
+        s->inter_start = 0;
 
         s->inside_string = 0;
       };
     };
 
-    if (s->dollar_start && next_char != '.') {
+    if (s->inter_start && next_char != '.') {
 
-      s->dollar_end = 1;
+      s->inter_end = 1;
 
-      s->dollar_start = 0;
+      s->inter_start = 0;
     };
 
     if (s->pos == 0 && next_char == ' ') {
@@ -20845,7 +20847,11 @@ ScanRes Scanner_scan(Scanner *s) {
 
     return scan_res(main__Token_question, tos2((byte *)""));
 
-  } else if (c == '\'') { /* case */
+  } else if (c == main__single_quote) { /* case */
+
+    return scan_res(main__Token_str, Scanner_ident_string(s));
+
+  } else if (c == main__double_quote) { /* case */
 
     return scan_res(main__Token_str, Scanner_ident_string(s));
 
@@ -21452,7 +21458,7 @@ string Scanner_ident_string(Scanner *s) {
 
       s->inside_string = 1;
 
-      s->dollar_start = 1;
+      s->inter_start = 1;
 
       s->pos -= 2;
 
@@ -21553,9 +21559,9 @@ Token Scanner_peek(Scanner *s) {
 
   bool inside_string = s->inside_string;
 
-  bool dollar_start = s->dollar_start;
+  bool inter_start = s->inter_start;
 
-  bool dollar_end = s->dollar_end;
+  bool inter_end = s->inter_end;
 
   ScanRes res = Scanner_scan(s);
 
@@ -21567,9 +21573,9 @@ Token Scanner_peek(Scanner *s) {
 
   s->inside_string = inside_string;
 
-  s->dollar_start = dollar_start;
+  s->inter_start = inter_start;
 
-  s->dollar_end = dollar_end;
+  s->inter_end = inter_end;
 
   return tok;
 }
