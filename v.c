@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a42b4e2"
+#define V_COMMIT_HASH "5a03eac"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f042dfb"
+#define V_COMMIT_HASH "a42b4e2"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -23209,6 +23209,10 @@ void Parser_fmt_inc(Parser *p) { p->scanner->fmt_indent++; }
 void Parser_fmt_dec(Parser *p) { p->scanner->fmt_indent--; }
 void init_consts() {
 #ifdef _WIN32
+  DWORD consoleMode;
+  BOOL isConsole = GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &consoleMode);
+  int mode = isConsole ? _O_U16TEXT : _O_U8TEXT;
+  _setmode(_fileno(stdin), mode);
   _setmode(_fileno(stdout), _O_U8TEXT);
   SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE),
                  ENABLE_PROCESSED_OUTPUT | 0x0004);
