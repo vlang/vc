@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f042dfb"
+#define V_COMMIT_HASH "a42b4e2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f657d70"
+#define V_COMMIT_HASH "f042dfb"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -4800,15 +4800,15 @@ string os__get_raw_line() {
 
   int maxlinechars = 256;
 
-  u16 *buf = ((u16 *)(v_malloc(maxlinechars * 2)));
+  byte *buf = ((byte *)(v_malloc(maxlinechars * 2)));
 
-  int res = ((int)(fgetws(buf, maxlinechars, stdin)));
+  int res = ((int)(fgetws((char *)buf, maxlinechars, stdin)));
 
-  int len = ((int)(wcslen(buf)));
+  int len = ((int)(wcslen(((u16 *)(buf)))));
 
   if (0 != res) {
 
-    return string_from_wide2(buf, len);
+    return string_from_wide2(((u16 *)(buf)), len);
   };
 
   return tos2((byte *)"");
@@ -11791,7 +11791,11 @@ void V_generate_main(V *v) {
 
     CGen_genln(
         cgen,
-        _STR("void init_consts() {\n#ifdef _WIN32\n_setmode(_fileno(stdout), "
+        _STR("void init_consts() {\n#ifdef _WIN32\nDWORD consoleMode;\nBOOL "
+             "isConsole = GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), "
+             "&consoleMode);\nint mode = isConsole ? _O_U16TEXT : "
+             "_O_U8TEXT;\n_setmode(_fileno(stdin), "
+             "mode);\n_setmode(_fileno(stdout), "
              "_O_U8TEXT);\nSetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), "
              "ENABLE_PROCESSED_OUTPUT | 0x0004);\n// "
              "ENABLE_VIRTUAL_TERMINAL_PROCESSING\n#endif\ng_str_buf=malloc("
@@ -13321,23 +13325,14 @@ void V_cc_msvc(V *v) {
                     tos2((byte *)"\""))),
         tmp50, string);
 
-  array_string real_libs =
-      new_array_from_c_array(13, 13, sizeof(string),
-                             (string[]){
-                                 tos2((byte *)"kernel32.lib"),
-                                 tos2((byte *)"user32.lib"),
-                                 tos2((byte *)"gdi32.lib"),
-                                 tos2((byte *)"winspool.lib"),
-                                 tos2((byte *)"comdlg32.lib"),
-                                 tos2((byte *)"advapi32.lib"),
-                                 tos2((byte *)"shell32.lib"),
-                                 tos2((byte *)"ole32.lib"),
-                                 tos2((byte *)"oleaut32.lib"),
-                                 tos2((byte *)"uuid.lib"),
-                                 tos2((byte *)"odbc32.lib"),
-                                 tos2((byte *)"odbccp32.lib"),
-                                 tos2((byte *)"vcruntime.lib"),
-                             });
+  array_string real_libs = new_array_from_c_array(
+      12, 12, sizeof(string),
+      (string[]){tos2((byte *)"kernel32.lib"), tos2((byte *)"user32.lib"),
+                 tos2((byte *)"gdi32.lib"), tos2((byte *)"winspool.lib"),
+                 tos2((byte *)"comdlg32.lib"), tos2((byte *)"advapi32.lib"),
+                 tos2((byte *)"shell32.lib"), tos2((byte *)"ole32.lib"),
+                 tos2((byte *)"oleaut32.lib"), tos2((byte *)"uuid.lib"),
+                 tos2((byte *)"odbc32.lib"), tos2((byte *)"odbccp32.lib")});
 
   array_string inc_paths =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
