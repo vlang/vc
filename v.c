@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "56e8801"
+#define V_COMMIT_HASH "1110074"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ecc8728"
+#define V_COMMIT_HASH "56e8801"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1704,7 +1704,7 @@ array new_array_from_c_array(int len, int cap, int elm_size, void *c_array) {
   array arr = (array){.len = len,
                       .cap = cap,
                       .element_size = elm_size,
-                      .data = v_malloc(cap * elm_size)};
+                      .data = v_calloc(cap * elm_size)};
 
   memcpy(arr.data, c_array, len * elm_size);
 
@@ -1723,7 +1723,7 @@ array array_repeat_old(void *val, int nr_repeats, int elm_size) {
   array arr = (array){.len = nr_repeats,
                       .cap = nr_repeats,
                       .element_size = elm_size,
-                      .data = v_malloc(nr_repeats * elm_size)};
+                      .data = v_calloc(nr_repeats * elm_size)};
 
   for (int i = 0; i < nr_repeats; i++) {
 
@@ -1737,7 +1737,7 @@ array array_repeat(array a, int nr_repeats) {
   array arr = (array){.len = nr_repeats,
                       .cap = nr_repeats,
                       .element_size = a.element_size,
-                      .data = v_malloc(nr_repeats * a.element_size)};
+                      .data = v_calloc(nr_repeats * a.element_size)};
 
   void *val = (byte *)a.data + 0;
 
@@ -1871,7 +1871,7 @@ void array__push(array *arr, void *val) {
 
     if (arr->cap == 0) {
 
-      arr->data = v_malloc(cap * arr->element_size);
+      arr->data = v_calloc(cap * arr->element_size);
 
     } else {
 
@@ -1894,7 +1894,7 @@ void array__push_many(array *arr, void *val, int size) {
 
     if (arr->cap == 0) {
 
-      arr->data = v_malloc(cap * arr->element_size);
+      arr->data = v_calloc(cap * arr->element_size);
 
     } else {
 
@@ -1914,7 +1914,7 @@ array array_reverse(array a) {
   array arr = (array){.len = a.len,
                       .cap = a.cap,
                       .element_size = a.element_size,
-                      .data = v_malloc(a.cap * a.element_size)};
+                      .data = v_calloc(a.cap * a.element_size)};
 
   for (int i = 0; i < a.len; i++) {
 
@@ -1929,7 +1929,7 @@ array array_clone(array a) {
   array arr = (array){.len = a.len,
                       .cap = a.cap,
                       .element_size = a.element_size,
-                      .data = v_malloc(a.cap * a.element_size)};
+                      .data = v_calloc(a.cap * a.element_size)};
 
   memcpy(arr.data, a.data, a.cap * a.element_size);
 
@@ -23465,7 +23465,8 @@ void init_consts() {
   _setmode(_fileno(stdout), _O_U8TEXT);
   SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE),
                  ENABLE_PROCESSED_OUTPUT | 0x0004);
-// ENABLE_VIRTUAL_TERMINAL_PROCESSING
+  // ENABLE_VIRTUAL_TERMINAL_PROCESSING
+  setbuf(stdout, 0);
 #endif
   g_str_buf = malloc(1000);
   os__FILE_ATTR_READONLY = 0x1;
