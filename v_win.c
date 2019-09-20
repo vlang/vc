@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "79abc0c"
+#define V_COMMIT_HASH "ecc8728"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d51622d"
+#define V_COMMIT_HASH "79abc0c"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -8103,8 +8103,14 @@ void Parser_comp_time(Parser *p) {
 
     if (!os__file_exists(path)) {
 
-      Parser_error(
-          p, _STR("vweb HTML template \"%.*s\" not found", path.len, path.str));
+      path = string_add(
+          string_add(os__dir(p->scanner->file_path), tos2((byte *)"/")), path);
+
+      if (!os__file_exists(path)) {
+
+        Parser_error(p, _STR("vweb HTML template \"%.*s\" not found", path.len,
+                             path.str));
+      };
     };
 
     Parser_check(p, main__Token_name);
