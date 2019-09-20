@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9a7ffac"
+#define V_COMMIT_HASH "f657d70"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b6bb6a5"
+#define V_COMMIT_HASH "9a7ffac"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -10045,6 +10045,11 @@ string Fn_find_misspelled_local_var(Fn *f, string name, f32 min_match) {
   array_Var tmp160 = f->local_vars;
   for (int tmp161 = 0; tmp161 < tmp160.len; tmp161++) {
     Var var = ((Var *)tmp160.data)[tmp161];
+
+    if (var.scope_level > f->scope_level) {
+
+      continue;
+    };
 
     string n = string_all_after(name, tos2((byte *)"."));
 
