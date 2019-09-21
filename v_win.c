@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9b7ca24"
+#define V_COMMIT_HASH "b1e1536"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "15bf3f2"
+#define V_COMMIT_HASH "9b7ca24"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -9324,8 +9324,8 @@ void Parser_fn_decl(Parser *p) {
 
     if (p->pref->is_live) {
 
-      string file_base =
-          string_replace(p->file_path, tos2((byte *)".v"), tos2((byte *)""));
+      string file_base = string_replace(os__filename(p->file_path),
+                                        tos2((byte *)".v"), tos2((byte *)""));
 
       if (p->os != main__OS_windows && p->os != main__OS_msvc) {
 
@@ -11443,10 +11443,10 @@ void V_generate_hot_reload_code(V *v) {
 
   if (v->pref->is_live) {
 
-    string file = v->dir;
+    string file = os__realpath(v->dir);
 
-    string file_base =
-        string_replace(v->dir, tos2((byte *)".v"), tos2((byte *)""));
+    string file_base = string_replace(os__filename(file), tos2((byte *)".v"),
+                                      tos2((byte *)""));
 
     string so_name = string_add(file_base, tos2((byte *)".so"));
 
@@ -11455,6 +11455,8 @@ void V_generate_hot_reload_code(V *v) {
     if (string_eq(os__user_os(), tos2((byte *)"windows"))) {
 
       vexe = string_replace(vexe, tos2((byte *)"\\"), tos2((byte *)"\\\\"));
+
+      file = string_replace(file, tos2((byte *)"\\"), tos2((byte *)"\\\\"));
     };
 
     string msvc = tos2((byte *)"");
@@ -11935,7 +11937,7 @@ void V_compile(V *v) {
 
   V_generate_main(v);
 
-  V_generate_hot_reload_code(v);
+  V_generate_hot_reload_code(&/* ? */ *v);
 
   if (v->pref->is_verbose) {
 
