@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b1e1536"
+#define V_COMMIT_HASH "a232b21"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9b7ca24"
+#define V_COMMIT_HASH "b1e1536"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -526,6 +526,7 @@ struct Scanner {
   Token prev_tok;
   string fn_name;
   bool should_print_line_on_error;
+  byte quote;
 };
 
 struct Type {
@@ -20555,25 +20556,24 @@ Scanner *new_scanner(string file_path) {
 
   string text = raw_text;
 
-  Scanner *scanner = (Scanner *)memdup(
-      &(Scanner){
-          .file_path = file_path,
-          .text = text,
-          .fmt_out = strings__new_builder(1000),
-          .should_print_line_on_error = 1,
-          .pos = 0,
-          .line_nr = 0,
-          .inside_string = 0,
-          .inter_start = 0,
-          .inter_end = 0,
-          .debug = 0,
-          .line_comment = tos((byte *)"", 0),
-          .started = 0,
-          .fmt_indent = 0,
-          .fmt_line_empty = 0,
-          .fn_name = tos((byte *)"", 0),
-      },
-      sizeof(Scanner));
+  Scanner *scanner =
+      (Scanner *)memdup(&(Scanner){.file_path = file_path,
+                                   .text = text,
+                                   .fmt_out = strings__new_builder(1000),
+                                   .should_print_line_on_error = 1,
+                                   .pos = 0,
+                                   .line_nr = 0,
+                                   .inside_string = 0,
+                                   .inter_start = 0,
+                                   .inter_end = 0,
+                                   .debug = 0,
+                                   .line_comment = tos((byte *)"", 0),
+                                   .started = 0,
+                                   .fmt_indent = 0,
+                                   .fmt_line_empty = 0,
+                                   .fn_name = tos((byte *)"", 0),
+                                   .quote = 0},
+                        sizeof(Scanner));
 
   return scanner;
 }
@@ -20978,11 +20978,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
     return scan_res(main__Token_question, tos2((byte *)""));
 
-  } else if (c == main__single_quote) { /* case */
-
-    return scan_res(main__Token_str, Scanner_ident_string(s));
-
-  } else if (c == main__double_quote) { /* case */
+  } else if (c == main__single_quote || c == main__double_quote) { /* case */
 
     return scan_res(main__Token_str, Scanner_ident_string(s));
 
@@ -21530,6 +21526,14 @@ int Scanner_count_symbol_before(Scanner s, int p, byte sym) {
 }
 string Scanner_ident_string(Scanner *s) {
 
+  byte q = string_at(s->text, s->pos);
+
+  if ((q == main__single_quote || q == main__double_quote) &&
+      !s->inside_string) {
+
+    s->quote = q;
+  };
+
   int start = s->pos;
 
   s->inside_string = 0;
@@ -21549,7 +21553,7 @@ string Scanner_ident_string(Scanner *s) {
 
     byte prevc = string_at(s->text, s->pos - 1);
 
-    if (c == '\'' &&
+    if (c == s->quote &&
         (prevc != slash ||
          (prevc == slash && string_at(s->text, s->pos - 2) == slash))) {
 
@@ -21599,7 +21603,7 @@ string Scanner_ident_string(Scanner *s) {
 
   string lit = tos2((byte *)"");
 
-  if (string_at(s->text, start) == '\'') {
+  if (string_at(s->text, start) == s->quote) {
 
     start++;
   };
@@ -21724,10 +21728,10 @@ bool Scanner_expect(Scanner *s, string want, int start_pos) {
     return 0;
   };
 
-  int tmp149 = start_pos;
+  int tmp152 = start_pos;
   ;
-  for (int tmp150 = tmp149; tmp150 < end_pos; tmp150++) {
-    int pos = tmp150;
+  for (int tmp153 = tmp152; tmp153 < end_pos; tmp153++) {
+    int pos = tmp153;
 
     if (string_at(s->text, pos) != string_at(want, pos - start_pos)) {
 
@@ -21826,9 +21830,9 @@ void Scanner_create_type_string(Scanner *s, Type T, string name) {
 
   int end = s->pos;
 
-  array_Var tmp179 = T.fields;
-  for (int i = 0; i < tmp179.len; i++) {
-    Var field = ((Var *)tmp179.data)[i];
+  array_Var tmp182 = T.fields;
+  for (int i = 0; i < tmp182.len; i++) {
+    Var field = ((Var *)tmp182.data)[i];
 
     if (i != 0) {
 
@@ -21873,10 +21877,10 @@ bool good_type_name(string s) {
     return 1;
   };
 
-  int tmp184 = 2;
+  int tmp187 = 2;
   ;
-  for (int tmp185 = tmp184; tmp185 < s.len; tmp185++) {
-    int i = tmp185;
+  for (int tmp188 = tmp187; tmp188 < s.len; tmp188++) {
+    int i = tmp188;
 
     if (byte_is_capital(string_at(s, i)) &&
         byte_is_capital(string_at(s, i - 1)) &&
