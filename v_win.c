@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a585c8c"
+#define V_COMMIT_HASH "b4207e1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ab528bb"
+#define V_COMMIT_HASH "a585c8c"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -653,6 +653,7 @@ struct Parser {
   bool v_script;
   string var_decl_name;
   bool is_alloc;
+  bool is_const_literal;
   string cur_gen_type;
   bool is_vweb;
   bool is_sql;
@@ -14072,6 +14073,7 @@ Parser V_new_parser(V *v, string path) {
                .v_script = 0,
                .var_decl_name = tos((byte *)"", 0),
                .is_alloc = 0,
+               .is_const_literal = 0,
                .cur_gen_type = tos((byte *)"", 0),
                .is_vweb = 0,
                .is_sql = 0,
@@ -16182,6 +16184,8 @@ string Parser_name_expr(Parser *p) {
 
   p->has_immutable_field = 0;
 
+  p->is_const_literal = 0;
+
   int ph = CGen_add_placeholder(&/* ? */ *p->cgen);
 
   bool ptr = p->tok == main__Token_amp;
@@ -17153,12 +17157,7 @@ string Parser_indot_expr(Parser *p) {
 }
 string Parser_expression(Parser *p) {
 
-  if (string_contains(p->scanner->file_path, tos2((byte *)"test_test"))) {
-
-    printf("expression() pass=%d tok=\n", p->pass);
-
-    Parser_print_tok(&/* ? */ *p);
-  };
+  p->is_const_literal = 1;
 
   int ph = CGen_add_placeholder(&/* ? */ *p->cgen);
 
@@ -22940,6 +22939,11 @@ bool Parser__check_types(Parser *p, string got_, string expected_, bool throw) {
 
   if (string_eq(expected, tos2((byte *)"void*")) &&
       string_eq(got, tos2((byte *)"int"))) {
+
+    return 1;
+  };
+
+  if (is_number_type(got) && is_number_type(expected) && p->is_const_literal) {
 
     return 1;
   };
