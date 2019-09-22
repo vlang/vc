@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "049e228"
+#define V_COMMIT_HASH "ab528bb"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cec2173"
+#define V_COMMIT_HASH "049e228"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -17655,11 +17655,12 @@ string Parser_map_init(Parser *p) {
       };
     };
 
-    Parser_gen(p, string_add(_STR("new_map_init(%d, sizeof(%.*s), ", i,
-                                  val_type.len, val_type.str),
-                             _STR("(string[]){ %.*s }, (%.*s []){ %.*s } )",
-                                  keys_gen.len, keys_gen.str, val_type.len,
-                                  val_type.str, vals_gen.len, vals_gen.str)));
+    Parser_gen(p,
+               string_add(_STR("new_map_init(%d, sizeof(%.*s), ", i,
+                               val_type.len, val_type.str),
+                          _STR("(string[%d]){ %.*s }, (%.*s [%d]){ %.*s } )", i,
+                               keys_gen.len, keys_gen.str, val_type.len,
+                               val_type.str, i, vals_gen.len, vals_gen.str)));
 
     string typ = _STR("map_%.*s", val_type.len, val_type.str);
 
