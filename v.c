@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ab528bb"
+#define V_COMMIT_HASH "a585c8c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "049e228"
+#define V_COMMIT_HASH "ab528bb"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -159,6 +159,8 @@ typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef struct os__Result os__Result;
 typedef Option Option_os__Result;
+typedef struct rand__Pcg32 rand__Pcg32;
+typedef struct rand__Splitmix64 rand__Splitmix64;
 typedef struct time__Time time__Time;
 typedef Option Option_int;
 typedef struct benchmark__Benchmark benchmark__Benchmark;
@@ -186,6 +188,7 @@ typedef Option Option_WindowsKit;
 typedef struct VsInstallation VsInstallation;
 typedef Option Option_VsInstallation;
 typedef Option Option_MsvcResult;
+typedef struct MsvcStringFlags MsvcStringFlags;
 typedef struct Parser Parser;
 typedef struct IndexCfg IndexCfg;
 typedef struct Repl Repl;
@@ -263,6 +266,7 @@ struct Option {
 
 //----
 struct CFlag {
+  string mod;
   string os;
   string name;
   string value;
@@ -378,6 +382,13 @@ struct GenTable {
   array_string types;
 };
 
+struct MsvcStringFlags {
+  array_string real_libs;
+  array_string inc_paths;
+  array_string lib_paths;
+  array_string other_flags;
+};
+
 struct Preferences {
   BuildMode build_mode;
   bool nofmt;
@@ -479,6 +490,15 @@ struct os__FileInfo {
 struct os__Result {
   int exit_code;
   string output;
+};
+
+struct rand__Pcg32 {
+  u64 state;
+  u64 inc;
+};
+
+struct rand__Splitmix64 {
+  u64 state;
 };
 
 struct strings__Builder {
@@ -910,9 +930,16 @@ f64 math__sqrt(f64 a);
 f64 math__tan(f64 a);
 f64 math__tanh(f64 a);
 f64 math__trunc(f64 a);
+rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq);
+static inline u32 rand__Pcg32_next(rand__Pcg32 *rng);
+static inline u32 rand__Pcg32_bounded_next(rand__Pcg32 *rng, u32 bound);
 void rand__seed(int s);
 int rand__next(int max);
 int rand__rand_r(int *seed);
+rand__Splitmix64 rand__new_splitmix64(u64 seed);
+static inline u64 rand__Splitmix64_next(rand__Splitmix64 *rng);
+static inline u64 rand__Splitmix64_bounded_next(rand__Splitmix64 *rng,
+                                                u64 bound);
 string term___format(string msg, string open, string close);
 string term___format_rgb(int r, int g, int b, string msg, string open,
                          string close);
@@ -1024,15 +1051,21 @@ string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark *b, string s,
 i64 benchmark__now();
 void V_cc(V *v);
 void V_cc_windows_cross(V *c);
-void V_build_thirdparty_obj_files(V c);
+void V_build_thirdparty_obj_files(V *c);
 string find_c_compiler();
 string find_c_compiler_default();
 string find_c_compiler_thirdparty_options();
 string get_cmdline_cflags(array_string args);
-array_CFlag V_get_os_cflags(V v);
+string CFlag_str(CFlag *c);
+array_CFlag V_get_os_cflags(V *v);
+array_CFlag V_get_rest_of_module_cflags(V *v, CFlag *c);
 string CFlag_format(CFlag *cf);
 bool Table_has_cflag(Table *table, CFlag cflag);
-void Table_parse_cflag(Table *table, string cflag);
+void Table_parse_cflag(Table *table, string cflag, string mod);
+string array_CFlag_c_options_before_target(array_CFlag cflags);
+string array_CFlag_c_options_after_target(array_CFlag cflags);
+string array_CFlag_c_options_without_object_files(array_CFlag cflags);
+string array_CFlag_c_options_only_object_files(array_CFlag cflags);
 CGen *new_cgen(string out_name_c);
 void CGen_genln(CGen *g, string s);
 void CGen_gen(CGen *g, string s);
@@ -1052,7 +1085,7 @@ string Parser_print_prof_counters(Parser *p);
 void Parser_gen_typedef(Parser *p, string s);
 void Parser_gen_type_alias(Parser *p, string s);
 void CGen_add_to_main(CGen *g, string s);
-void build_thirdparty_obj_file(string path);
+void build_thirdparty_obj_file(string path, array_CFlag moduleflags);
 string os_name_to_ifdef(string name);
 string platform_postfix_to_ifdefguard(string name);
 string V_type_definitions(V *v);
@@ -1158,7 +1191,8 @@ Option_WindowsKit find_windows_kit_root();
 Option_VsInstallation find_vs();
 Option_MsvcResult find_msvc();
 void V_cc_msvc(V *v);
-void build_thirdparty_obj_file_with_msvc(string path);
+void build_thirdparty_obj_file_with_msvc(string path, array_CFlag moduleflags);
+MsvcStringFlags array_CFlag_msvc_string_flags(array_CFlag cflags);
 Parser V_new_parser(V *v, string path);
 void Parser_set_current_fn(Parser *p, Fn f);
 void Parser_next(Parser *p);
@@ -5638,6 +5672,51 @@ f64 math__sqrt(f64 a) { return sqrt(a); }
 f64 math__tan(f64 a) { return tan(a); }
 f64 math__tanh(f64 a) { return tanh(a); }
 f64 math__trunc(f64 a) { return trunc(a); }
+rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq) {
+
+  rand__Pcg32 rng = (rand__Pcg32){.state = 0, .inc = 0};
+
+  rng.state = ((u64)(0));
+
+  rng.inc = ((u64)(((u64)(initseq << ((u64)(1)))) | ((u64)(1))));
+
+  rand__Pcg32_next(&/* ? */ rng);
+
+  rng.state += initstate;
+
+  rand__Pcg32_next(&/* ? */ rng);
+
+  return rng;
+}
+static inline u32 rand__Pcg32_next(rand__Pcg32 *rng) {
+
+  u64 oldstate = rng->state;
+
+  rng->state = oldstate * ((u64)(6364136223846793005)) + rng->inc;
+
+  u32 xorshifted = ((u32)(
+      ((u64)(((u64)(oldstate >> ((u64)(18)))) ^ oldstate)) >> ((u64)(27))));
+
+  u32 rot = ((u32)(oldstate >> ((u64)(59))));
+
+  return ((u32)((xorshifted >> rot) | (xorshifted << ((-rot) & ((u32)(31))))));
+}
+static inline u32 rand__Pcg32_bounded_next(rand__Pcg32 *rng, u32 bound) {
+
+  u32 threshold = ((u32)(-bound % bound));
+
+  while (1) {
+
+    u32 r = rand__Pcg32_next(rng);
+
+    if (r >= threshold) {
+
+      return ((u32)(r % bound));
+    };
+  };
+
+  return ((u32)(0));
+}
 void rand__seed(int s) { srand(s); }
 int rand__next(int max) { return rand() % max; }
 int rand__rand_r(int *seed) {
@@ -5649,6 +5728,39 @@ int rand__rand_r(int *seed) {
   *rs = ns;
 
   return ns & 0x7fffffff;
+}
+rand__Splitmix64 rand__new_splitmix64(u64 seed) {
+
+  return (rand__Splitmix64){seed};
+}
+static inline u64 rand__Splitmix64_next(rand__Splitmix64 *rng) {
+
+  rng->state += ((u64)(0x9e3779b97f4a7c15));
+
+  u64 z = rng->state;
+
+  z = (z ^ ((u64)((z >> ((u64)(30)))))) * ((u64)(0xbf58476d1ce4e5b9));
+
+  z = (z ^ ((u64)((z >> ((u64)(27)))))) * ((u64)(0x94d049bb133111eb));
+
+  return z ^ ((u64)(z >> ((u64)(31))));
+}
+static inline u64 rand__Splitmix64_bounded_next(rand__Splitmix64 *rng,
+                                                u64 bound) {
+
+  u64 threshold = ((u64)(-bound % bound));
+
+  while (1) {
+
+    u64 r = rand__Splitmix64_next(rng);
+
+    if (r >= threshold) {
+
+      return ((u64)(r % bound));
+    };
+  };
+
+  return ((u64)(0));
 }
 string term___format(string msg, string open, string close) {
 
@@ -6539,7 +6651,7 @@ string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark *b, string s,
 i64 benchmark__now() { return time__ticks(); }
 void V_cc(V *v) {
 
-  V_build_thirdparty_obj_files(*v);
+  V_build_thirdparty_obj_files(&/* ? */ *v);
 
   if (string_ends_with(v->out_name, tos2((byte *)".c")) ||
       string_ends_with(v->out_name, tos2((byte *)".js"))) {
@@ -6738,50 +6850,31 @@ void V_cc(V *v) {
     _PUSH(&a, (tos2((byte *)"-mmacosx-version-min=10.7")), tmp24, string);
   };
 
-  array_CFlag cflags = V_get_os_cflags(*v);
+  array_CFlag cflags = V_get_os_cflags(&/* ? */ *v);
 
-  array_CFlag tmp26 = cflags;
-  for (int tmp27 = 0; tmp27 < tmp26.len; tmp27++) {
-    CFlag flag = ((CFlag *)tmp26.data)[tmp27];
+  _PUSH(&a, (array_CFlag_c_options_only_object_files(cflags)), tmp26, string);
 
-    if (!string_ends_with(flag.value, tos2((byte *)".o"))) {
+  _PUSH(&a, (array_CFlag_c_options_without_object_files(cflags)), tmp27,
+        string);
 
-      continue;
-    };
-
-    _PUSH(&a, (CFlag_format(&/* ? */ flag)), tmp28, string);
-  };
-
-  array_CFlag tmp29 = cflags;
-  for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
-    CFlag flag = ((CFlag *)tmp29.data)[tmp30];
-
-    if (string_ends_with(flag.value, tos2((byte *)".o"))) {
-
-      continue;
-    };
-
-    _PUSH(&a, (CFlag_format(&/* ? */ flag)), tmp31, string);
-  };
-
-  _PUSH(&a, (libs), tmp32, string);
+  _PUSH(&a, (libs), tmp28, string);
 
   if (v->pref->build_mode != main__BuildMode_build_module &&
       (v->os == main__OS_linux || v->os == main__OS_freebsd ||
        v->os == main__OS_openbsd || v->os == main__OS_netbsd ||
        v->os == main__OS_dragonfly)) {
 
-    _PUSH(&a, (tos2((byte *)"-lm -lpthread ")), tmp33, string);
+    _PUSH(&a, (tos2((byte *)"-lm -lpthread ")), tmp29, string);
 
     if (v->os == main__OS_linux) {
 
-      _PUSH(&a, (tos2((byte *)" -ldl ")), tmp34, string);
+      _PUSH(&a, (tos2((byte *)" -ldl ")), tmp30, string);
     };
   };
 
   if (v->os == main__OS_js && string_eq(os__user_os(), tos2((byte *)"linux"))) {
 
-    _PUSH(&a, (tos2((byte *)"-lm")), tmp35, string);
+    _PUSH(&a, (tos2((byte *)"-lm")), tmp31, string);
   };
 
   string args = array_string_join(a, tos2((byte *)" "));
@@ -6798,15 +6891,15 @@ void V_cc(V *v) {
 
   i64 ticks = time__ticks();
 
-  Option_os__Result tmp39 = os__exec(cmd);
-  if (!tmp39.ok) {
-    string err = tmp39.error;
+  Option_os__Result tmp35 = os__exec(cmd);
+  if (!tmp35.ok) {
+    string err = tmp35.error;
 
     cerror(err);
 
     return;
   }
-  os__Result res = *(os__Result *)tmp39.data;
+  os__Result res = *(os__Result *)tmp35.data;
   ;
 
   if (res.exit_code != 0) {
@@ -6933,19 +7026,9 @@ void V_cc_windows_cross(V *c) {
 
   string args = _STR("-o %.*s -w -L. ", c->out_name.len, c->out_name.str);
 
-  array_CFlag cflags = V_get_os_cflags(*c);
+  array_CFlag cflags = V_get_os_cflags(&/* ? */ *c);
 
-  array_CFlag tmp46 = cflags;
-  for (int tmp47 = 0; tmp47 < tmp46.len; tmp47++) {
-    CFlag flag = ((CFlag *)tmp46.data)[tmp47];
-
-    if (string_ne(flag.name, tos2((byte *)"-l"))) {
-
-      args = string_add(args, CFlag_format(&/* ? */ flag));
-
-      args = string_add(args, tos2((byte *)" "));
-    };
-  };
+  args = string_add(args, array_CFlag_c_options_before_target(cflags));
 
   string libs = tos2((byte *)"");
 
@@ -6961,9 +7044,9 @@ void V_cc_windows_cross(V *c) {
       v_exit(1);
     };
 
-    array_string tmp49 = c->table->imports;
-    for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
-      string imp = ((string *)tmp49.data)[tmp50];
+    array_string tmp43 = c->table->imports;
+    for (int tmp44 = 0; tmp44 < tmp43.len; tmp44++) {
+      string imp = ((string *)tmp43.data)[tmp44];
 
       libs = string_add(libs, _STR(" \"%.*s/vlib/%.*s.o\"", main__ModPath.len,
                                    main__ModPath.str, imp.len, imp.str));
@@ -6972,17 +7055,7 @@ void V_cc_windows_cross(V *c) {
 
   args = string_add(args, _STR(" %.*s ", c->out_name_c.len, c->out_name_c.str));
 
-  array_CFlag tmp51 = cflags;
-  for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
-    CFlag flag = ((CFlag *)tmp51.data)[tmp52];
-
-    if (string_eq(flag.name, tos2((byte *)"-l"))) {
-
-      args = string_add(args, CFlag_format(&/* ? */ flag));
-
-      args = string_add(args, tos2((byte *)" "));
-    };
-  };
+  args = string_add(args, array_CFlag_c_options_after_target(cflags));
 
   println(tos2((byte *)"Cross compiling for Windows..."));
 
@@ -7061,21 +7134,24 @@ void V_cc_windows_cross(V *c) {
 
   println(tos2((byte *)"Done!"));
 }
-void V_build_thirdparty_obj_files(V c) {
+void V_build_thirdparty_obj_files(V *c) {
 
-  array_CFlag tmp59 = V_get_os_cflags(c);
-  for (int tmp60 = 0; tmp60 < tmp59.len; tmp60++) {
-    CFlag flag = ((CFlag *)tmp59.data)[tmp60];
+  array_CFlag tmp51 = V_get_os_cflags(&/* ? */ *c);
+  for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
+    CFlag flag = ((CFlag *)tmp51.data)[tmp52];
 
     if (string_ends_with(flag.value, tos2((byte *)".o"))) {
 
-      if (c.os == main__OS_msvc) {
+      array_CFlag rest_of_module_flags = V_get_rest_of_module_cflags(
+          &/* ? */ *c, &/*112 EXP:"CFlag*" GOT:"CFlag" */ flag);
 
-        build_thirdparty_obj_file_with_msvc(flag.value);
+      if (c->os == main__OS_msvc) {
+
+        build_thirdparty_obj_file_with_msvc(flag.value, rest_of_module_flags);
 
       } else {
 
-        build_thirdparty_obj_file(flag.value);
+        build_thirdparty_obj_file(flag.value, rest_of_module_flags);
       };
     };
   };
@@ -7123,9 +7199,9 @@ string get_cmdline_cflags(array_string args) {
 
   string cflags = tos2((byte *)"");
 
-  array_string tmp66 = args;
-  for (int ci = 0; ci < tmp66.len; ci++) {
-    string cv = ((string *)tmp66.data)[ci];
+  array_string tmp59 = args;
+  for (int ci = 0; ci < tmp59.len; ci++) {
+    string cv = ((string *)tmp59.data)[ci];
 
     if (string_eq(cv, tos2((byte *)"-cflags"))) {
 
@@ -7137,21 +7213,53 @@ string get_cmdline_cflags(array_string args) {
 
   return cflags;
 }
-array_CFlag V_get_os_cflags(V v) {
+string CFlag_str(CFlag *c) {
+
+  return _STR(
+      "CFlag{ name: \"%.*s\" value: \"%.*s\" mod: \"%.*s\" os: \"%.*s\" }",
+      c->name.len, c->name.str, c->value.len, c->value.str, c->mod.len,
+      c->mod.str, c->os.len, c->os.str);
+}
+array_CFlag V_get_os_cflags(V *v) {
 
   array_CFlag flags = new_array_from_c_array(0, 0, sizeof(CFlag), (CFlag[]){0});
 
-  array_CFlag tmp2 = v.table->cflags;
+  array_CFlag tmp2 = v->table->cflags;
   for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
     CFlag flag = ((CFlag *)tmp2.data)[tmp3];
 
     if (string_eq(flag.os, tos2((byte *)"")) ||
-        (string_eq(flag.os, tos2((byte *)"linux")) && v.os == main__OS_linux) ||
-        (string_eq(flag.os, tos2((byte *)"darwin")) && v.os == main__OS_mac) ||
+        (string_eq(flag.os, tos2((byte *)"linux")) &&
+         v->os == main__OS_linux) ||
+        (string_eq(flag.os, tos2((byte *)"darwin")) && v->os == main__OS_mac) ||
         (string_eq(flag.os, tos2((byte *)"windows")) &&
-         (v.os == main__OS_windows || v.os == main__OS_msvc))) {
+         (v->os == main__OS_windows || v->os == main__OS_msvc))) {
 
       _PUSH(&flags, (flag), tmp4, CFlag);
+    };
+  };
+
+  return flags;
+}
+array_CFlag V_get_rest_of_module_cflags(V *v, CFlag *c) {
+
+  array_CFlag flags = new_array_from_c_array(0, 0, sizeof(CFlag), (CFlag[]){0});
+
+  array_CFlag cflags = V_get_os_cflags(&/* ? */ *v);
+
+  array_CFlag tmp7 = cflags;
+  for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
+    CFlag flag = ((CFlag *)tmp7.data)[tmp8];
+
+    if (string_eq(c->mod, flag.mod)) {
+
+      if (string_eq(c->name, flag.name) && string_eq(c->value, flag.value) &&
+          string_eq(c->os, flag.os)) {
+
+        continue;
+      };
+
+      _PUSH(&flags, (flag), tmp9, CFlag);
     };
   };
 
@@ -7180,9 +7288,9 @@ string CFlag_format(CFlag *cf) {
 }
 bool Table_has_cflag(Table *table, CFlag cflag) {
 
-  array_CFlag tmp6 = table->cflags;
-  for (int tmp7 = 0; tmp7 < tmp6.len; tmp7++) {
-    CFlag cf = ((CFlag *)tmp6.data)[tmp7];
+  array_CFlag tmp11 = table->cflags;
+  for (int tmp12 = 0; tmp12 < tmp11.len; tmp12++) {
+    CFlag cf = ((CFlag *)tmp11.data)[tmp12];
 
     if (string_eq(cf.os, cflag.os) && string_eq(cf.name, cflag.name) &&
         string_eq(cf.value, cflag.value)) {
@@ -7193,7 +7301,7 @@ bool Table_has_cflag(Table *table, CFlag cflag) {
 
   return 0;
 }
-void Table_parse_cflag(Table *table, string cflag) {
+void Table_parse_cflag(Table *table, string cflag, string mod) {
 
   array_string allowed_flags =
       new_array_from_c_array(5, 5, sizeof(string),
@@ -7235,9 +7343,9 @@ void Table_parse_cflag(Table *table, string cflag) {
 
     if (string_at(flag, 0) == '-') {
 
-      array_string tmp17 = allowed_flags;
-      for (int tmp18 = 0; tmp18 < tmp17.len; tmp18++) {
-        string f = ((string *)tmp17.data)[tmp18];
+      array_string tmp22 = allowed_flags;
+      for (int tmp23 = 0; tmp23 < tmp22.len; tmp23++) {
+        string f = ((string *)tmp22.data)[tmp23];
 
         int i = 1 + f.len;
 
@@ -7252,12 +7360,12 @@ void Table_parse_cflag(Table *table, string cflag) {
       };
     };
 
-    array_int tmp20 =
+    array_int tmp25 =
         new_array_from_c_array(2, 2, sizeof(int),
                                (int[]){string_index(flag, tos2((byte *)" ")),
                                        string_index(flag, tos2((byte *)","))});
-    for (int tmp21 = 0; tmp21 < tmp20.len; tmp21++) {
-      int i = ((int *)tmp20.data)[tmp21];
+    for (int tmp26 = 0; tmp26 < tmp25.len; tmp26++) {
+      int i = ((int *)tmp25.data)[tmp26];
 
       if (index == -1 || (i != -1 && i < index)) {
 
@@ -7268,9 +7376,9 @@ void Table_parse_cflag(Table *table, string cflag) {
     if (index != -1 && string_at(flag, index) == ' ' &&
         string_at(flag, index + 1) == '-') {
 
-      array_string tmp26 = allowed_flags;
-      for (int tmp27 = 0; tmp27 < tmp26.len; tmp27++) {
-        string f = ((string *)tmp26.data)[tmp27];
+      array_string tmp31 = allowed_flags;
+      for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
+        string f = ((string *)tmp31.data)[tmp32];
 
         int i = index + f.len;
 
@@ -7300,11 +7408,11 @@ void Table_parse_cflag(Table *table, string cflag) {
       index = -1;
     };
 
-    CFlag cf = (CFlag){.os = fos, .name = name, .value = value};
+    CFlag cf = (CFlag){.mod = mod, .os = fos, .name = name, .value = value};
 
     if (!Table_has_cflag(&/* ? */ *table, cf)) {
 
-      _PUSH(&table->cflags, (cf), tmp32, CFlag);
+      _PUSH(&table->cflags, (cf), tmp37, CFlag);
     };
 
     if (index == -1) {
@@ -7312,6 +7420,92 @@ void Table_parse_cflag(Table *table, string cflag) {
       break;
     };
   };
+}
+string array_CFlag_c_options_before_target(array_CFlag cflags) {
+
+#ifdef _MSC_VER
+
+  return tos2((byte *)"");
+
+#endif
+  ;
+
+  array_string args =
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+
+  array_CFlag tmp39 = cflags;
+  for (int tmp40 = 0; tmp40 < tmp39.len; tmp40++) {
+    CFlag flag = ((CFlag *)tmp39.data)[tmp40];
+
+    if (string_ne(flag.name, tos2((byte *)"-l"))) {
+
+      _PUSH(&args, (CFlag_format(&/* ? */ flag)), tmp41, string);
+    };
+  };
+
+  return array_string_join(args, tos2((byte *)" "));
+}
+string array_CFlag_c_options_after_target(array_CFlag cflags) {
+
+#ifdef _MSC_VER
+
+  return tos2((byte *)"");
+
+#endif
+  ;
+
+  array_string args =
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+
+  array_CFlag tmp43 = cflags;
+  for (int tmp44 = 0; tmp44 < tmp43.len; tmp44++) {
+    CFlag flag = ((CFlag *)tmp43.data)[tmp44];
+
+    if (string_eq(flag.name, tos2((byte *)"-l"))) {
+
+      _PUSH(&args, (CFlag_format(&/* ? */ flag)), tmp45, string);
+    };
+  };
+
+  return array_string_join(args, tos2((byte *)" "));
+}
+string array_CFlag_c_options_without_object_files(array_CFlag cflags) {
+
+  array_string args =
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+
+  array_CFlag tmp47 = cflags;
+  for (int tmp48 = 0; tmp48 < tmp47.len; tmp48++) {
+    CFlag flag = ((CFlag *)tmp47.data)[tmp48];
+
+    if (string_ends_with(flag.value, tos2((byte *)".o")) ||
+        string_ends_with(flag.value, tos2((byte *)".obj"))) {
+
+      continue;
+    };
+
+    _PUSH(&args, (CFlag_format(&/* ? */ flag)), tmp49, string);
+  };
+
+  return array_string_join(args, tos2((byte *)" "));
+}
+string array_CFlag_c_options_only_object_files(array_CFlag cflags) {
+
+  array_string args =
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+
+  array_CFlag tmp51 = cflags;
+  for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
+    CFlag flag = ((CFlag *)tmp51.data)[tmp52];
+
+    if (string_ends_with(flag.value, tos2((byte *)".o")) ||
+        string_ends_with(flag.value, tos2((byte *)".obj"))) {
+
+      _PUSH(&args, (CFlag_format(&/* ? */ flag)), tmp53, string);
+    };
+  };
+
+  return array_string_join(args, tos2((byte *)" "));
 }
 CGen *new_cgen(string out_name_c) {
 
@@ -7602,7 +7796,7 @@ void CGen_add_to_main(CGen *g, string s) {
 
   g->fn_main = string_add(g->fn_main, s);
 }
-void build_thirdparty_obj_file(string path) {
+void build_thirdparty_obj_file(string path, array_CFlag moduleflags) {
 
   string obj_path = os__realpath(path);
 
@@ -7639,13 +7833,18 @@ void build_thirdparty_obj_file(string path) {
 
   string cc_thirdparty_options = find_c_compiler_thirdparty_options();
 
-  string cmd = _STR("%.*s %.*s -c -o \"%.*s\" %.*s", cc.len, cc.str,
-                    cc_thirdparty_options.len, cc_thirdparty_options.str,
-                    obj_path.len, obj_path.str, cfiles.len, cfiles.str);
+  string btarget = array_CFlag_c_options_before_target(moduleflags);
 
-  Option_os__Result tmp35 = os__exec(cmd);
-  if (!tmp35.ok) {
-    string err = tmp35.error;
+  string atarget = array_CFlag_c_options_after_target(moduleflags);
+
+  string cmd = _STR("%.*s %.*s %.*s -c -o \"%.*s\" %.*s %.*s ", cc.len, cc.str,
+                    cc_thirdparty_options.len, cc_thirdparty_options.str,
+                    btarget.len, btarget.str, obj_path.len, obj_path.str,
+                    cfiles.len, cfiles.str, atarget.len, atarget.str);
+
+  Option_os__Result tmp37 = os__exec(cmd);
+  if (!tmp37.ok) {
+    string err = tmp37.error;
 
     printf("failed thirdparty object build cmd: %.*s\n", cmd.len, cmd.str);
 
@@ -7653,7 +7852,7 @@ void build_thirdparty_obj_file(string path) {
 
     return;
   }
-  os__Result res = *(os__Result *)tmp35.data;
+  os__Result res = *(os__Result *)tmp37.data;
   ;
 
   println(res.output);
@@ -7744,31 +7943,31 @@ string V_type_definitions(V *v) {
       (string[]){tos2((byte *)"string"), tos2((byte *)"array"),
                  tos2((byte *)"map"), tos2((byte *)"Option")});
 
-  array_string tmp39 = builtins;
-  for (int tmp40 = 0; tmp40 < tmp39.len; tmp40++) {
-    string builtin = ((string *)tmp39.data)[tmp40];
+  array_string tmp41 = builtins;
+  for (int tmp42 = 0; tmp42 < tmp41.len; tmp42++) {
+    string builtin = ((string *)tmp41.data)[tmp42];
 
-    Type tmp41 = {0};
-    bool tmp42 = map_get(v->table->typesmap, builtin, &tmp41);
+    Type tmp43 = {0};
+    bool tmp44 = map_get(v->table->typesmap, builtin, &tmp43);
 
-    Type typ = tmp41;
+    Type typ = tmp43;
 
-    _PUSH(&builtin_types, (typ), tmp44, Type);
+    _PUSH(&builtin_types, (typ), tmp46, Type);
   };
 
-  map_Type tmp45 = v->table->typesmap;
-  array_string keys_tmp45 = map_keys(&tmp45);
-  for (int l = 0; l < keys_tmp45.len; l++) {
-    string t_name = ((string *)keys_tmp45.data)[l];
+  map_Type tmp47 = v->table->typesmap;
+  array_string keys_tmp47 = map_keys(&tmp47);
+  for (int l = 0; l < keys_tmp47.len; l++) {
+    string t_name = ((string *)keys_tmp47.data)[l];
     Type t = {0};
-    map_get(tmp45, t_name, &t);
+    map_get(tmp47, t_name, &t);
 
     if (_IN(string, (t_name), builtins)) {
 
       continue;
     };
 
-    _PUSH(&types, (t), tmp46, Type);
+    _PUSH(&types, (t), tmp48, Type);
   };
 
   array_Type types_sorted = sort_structs(types);
@@ -7786,23 +7985,23 @@ array_Type sort_structs(array_Type types) {
   array_string type_names =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-  array_Type tmp51 = types;
-  for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
-    Type t = ((Type *)tmp51.data)[tmp52];
+  array_Type tmp53 = types;
+  for (int tmp54 = 0; tmp54 < tmp53.len; tmp54++) {
+    Type t = ((Type *)tmp53.data)[tmp54];
 
-    _PUSH(&type_names, (t.name), tmp53, string);
+    _PUSH(&type_names, (t.name), tmp55, string);
   };
 
-  array_Type tmp54 = types;
-  for (int tmp55 = 0; tmp55 < tmp54.len; tmp55++) {
-    Type t = ((Type *)tmp54.data)[tmp55];
+  array_Type tmp56 = types;
+  for (int tmp57 = 0; tmp57 < tmp56.len; tmp57++) {
+    Type t = ((Type *)tmp56.data)[tmp57];
 
     array_string field_deps =
         new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-    array_Var tmp57 = t.fields;
-    for (int tmp58 = 0; tmp58 < tmp57.len; tmp58++) {
-      Var field = ((Var *)tmp57.data)[tmp58];
+    array_Var tmp59 = t.fields;
+    for (int tmp60 = 0; tmp60 < tmp59.len; tmp60++) {
+      Var field = ((Var *)tmp59.data)[tmp60];
 
       if (!(_IN(string, (field.typ), type_names)) ||
           _IN(string, (field.typ), field_deps)) {
@@ -7810,7 +8009,7 @@ array_Type sort_structs(array_Type types) {
         continue;
       };
 
-      _PUSH(&field_deps, (field.typ), tmp59, string);
+      _PUSH(&field_deps, (field.typ), tmp61, string);
     };
 
     DepGraph_add(dep_graph, t.name, field_deps);
@@ -7828,17 +8027,17 @@ array_Type sort_structs(array_Type types) {
   array_Type types_sorted =
       new_array_from_c_array(0, 0, sizeof(Type), (Type[]){0});
 
-  array_DepGraphNode tmp62 = dep_graph_sorted->nodes;
-  for (int tmp63 = 0; tmp63 < tmp62.len; tmp63++) {
-    DepGraphNode node = ((DepGraphNode *)tmp62.data)[tmp63];
+  array_DepGraphNode tmp64 = dep_graph_sorted->nodes;
+  for (int tmp65 = 0; tmp65 < tmp64.len; tmp65++) {
+    DepGraphNode node = ((DepGraphNode *)tmp64.data)[tmp65];
 
-    array_Type tmp64 = types;
-    for (int tmp65 = 0; tmp65 < tmp64.len; tmp65++) {
-      Type t = ((Type *)tmp64.data)[tmp65];
+    array_Type tmp66 = types;
+    for (int tmp67 = 0; tmp67 < tmp66.len; tmp67++) {
+      Type t = ((Type *)tmp66.data)[tmp67];
 
       if (string_eq(t.name, node.name)) {
 
-        _PUSH(&types_sorted, (t), tmp66, Type);
+        _PUSH(&types_sorted, (t), tmp68, Type);
 
         continue;
       };
@@ -8081,7 +8280,7 @@ void Parser_chash(Parser *p) {
 
     Parser_log(&/* ? */ *p, _STR("adding flag \"%.*s\"", flag.len, flag.str));
 
-    Table_parse_cflag(p->table, flag);
+    Table_parse_cflag(p->table, flag, p->mod);
 
     return;
   };
@@ -11836,7 +12035,7 @@ void V_compile(V *v) {
 
     V_log(&/* ? */ *v, tos2((byte *)"flags="));
 
-    array_CFlag tmp22 = V_get_os_cflags(*v);
+    array_CFlag tmp22 = V_get_os_cflags(&/* ? */ *v);
     for (int tmp23 = 0; tmp23 < tmp22.len; tmp23++) {
       CFlag flag = ((CFlag *)tmp22.data)[tmp23];
 
@@ -13427,119 +13626,67 @@ void V_cc_msvc(V *v) {
                  tos2((byte *)"oleaut32.lib"), tos2((byte *)"uuid.lib"),
                  tos2((byte *)"odbc32.lib"), tos2((byte *)"odbccp32.lib")});
 
-  array_string inc_paths =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  MsvcStringFlags sflags =
+      array_CFlag_msvc_string_flags(V_get_os_cflags(&/* ? */ *v));
 
-  {}
+  _PUSH_MANY(&real_libs, (sflags.real_libs), tmp53, array_string);
 
-  array_string lib_paths =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string inc_paths = sflags.inc_paths;
 
-  {}
+  array_string lib_paths = sflags.lib_paths;
 
-  array_string other_flags =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
-
-  {}
-
-  array_CFlag tmp55 = V_get_os_cflags(*v);
-  for (int tmp56 = 0; tmp56 < tmp55.len; tmp56++) {
-    CFlag flag = ((CFlag *)tmp55.data)[tmp56];
-
-    if (string_eq(flag.name, tos2((byte *)"-l"))) {
-
-      if (string_ends_with(flag.value, tos2((byte *)".dll"))) {
-
-        cerror(_STR("MSVC cannot link against a dll (`#flag -l %.*s`)",
-                    flag.value.len, flag.value.str));
-      };
-
-      string lib_lib = string_add(flag.value, tos2((byte *)".lib"));
-
-      _PUSH(&real_libs, (lib_lib), tmp58, string);
-
-    } else if (string_eq(flag.name, tos2((byte *)"-I"))) {
-
-      _PUSH(&inc_paths, (CFlag_format(&/* ? */ flag)), tmp59, string);
-
-    } else if (string_eq(flag.name, tos2((byte *)"-L"))) {
-
-      _PUSH(&lib_paths, (flag.value), tmp60, string);
-
-      _PUSH(&lib_paths,
-            (string_add(string_add(flag.value, os__PathSeparator),
-                        tos2((byte *)"msvc"))),
-            tmp61, string);
-
-    } else if (string_ends_with(flag.value, tos2((byte *)".o"))) {
-
-      _PUSH(&other_flags, (_STR("\"%.*sbj\"", flag.value.len, flag.value.str)),
-            tmp62, string);
-
-    } else {
-
-      _PUSH(&other_flags, (flag.value), tmp63, string);
-    };
-  };
+  array_string other_flags = sflags.other_flags;
 
   _PUSH(&a,
         (_STR("-I \"%.*s\"", r.ucrt_include_path.len, r.ucrt_include_path.str)),
-        tmp64, string);
+        tmp57, string);
 
   _PUSH(&a, (_STR("-I \"%.*s\"", r.vs_include_path.len, r.vs_include_path.str)),
-        tmp65, string);
+        tmp58, string);
 
   _PUSH(&a, (_STR("-I \"%.*s\"", r.um_include_path.len, r.um_include_path.str)),
-        tmp66, string);
+        tmp59, string);
 
   _PUSH(&a,
         (_STR("-I \"%.*s\"", r.shared_include_path.len,
               r.shared_include_path.str)),
-        tmp67, string);
+        tmp60, string);
 
-  _PUSH_MANY(&a, (inc_paths), tmp68, array_string);
+  _PUSH_MANY(&a, (inc_paths), tmp61, array_string);
 
-  _PUSH_MANY(&a, (other_flags), tmp69, array_string);
+  _PUSH_MANY(&a, (other_flags), tmp62, array_string);
 
-  _PUSH(&a, (array_string_join(real_libs, tos2((byte *)" "))), tmp70, string);
+  _PUSH(&a, (array_string_join(real_libs, tos2((byte *)" "))), tmp63, string);
 
-  _PUSH(&a, (tos2((byte *)"/link")), tmp71, string);
+  _PUSH(&a, (tos2((byte *)"/link")), tmp64, string);
 
-  _PUSH(&a, (tos2((byte *)"/NOLOGO")), tmp72, string);
+  _PUSH(&a, (tos2((byte *)"/NOLOGO")), tmp65, string);
 
-  _PUSH(&a, (_STR("/OUT:\"%.*s\"", v->out_name.len, v->out_name.str)), tmp73,
+  _PUSH(&a, (_STR("/OUT:\"%.*s\"", v->out_name.len, v->out_name.str)), tmp66,
         string);
 
   _PUSH(&a,
         (_STR("/LIBPATH:\"%.*s\"", r.ucrt_lib_path.len, r.ucrt_lib_path.str)),
-        tmp74, string);
+        tmp67, string);
 
   _PUSH(&a, (_STR("/LIBPATH:\"%.*s\"", r.um_lib_path.len, r.um_lib_path.str)),
-        tmp75, string);
+        tmp68, string);
 
   _PUSH(&a, (_STR("/LIBPATH:\"%.*s\"", r.vs_lib_path.len, r.vs_lib_path.str)),
-        tmp76, string);
+        tmp69, string);
 
-  _PUSH(&a, (tos2((byte *)"/INCREMENTAL:NO")), tmp77, string);
-
-  array_string tmp78 = lib_paths;
-  for (int tmp79 = 0; tmp79 < tmp78.len; tmp79++) {
-    string l = ((string *)tmp78.data)[tmp79];
-
-    _PUSH(&a,
-          (string_add(string_add(tos2((byte *)"/LIBPATH:\""), os__realpath(l)),
-                      tos2((byte *)"\""))),
-          tmp80, string);
-  };
+  _PUSH(&a, (tos2((byte *)"/INCREMENTAL:NO")), tmp70, string);
 
   if (!v->pref->is_prod) {
 
-    _PUSH(&a, (tos2((byte *)"/DEBUG:FULL")), tmp81, string);
+    _PUSH(&a, (tos2((byte *)"/DEBUG:FULL")), tmp71, string);
 
   } else {
 
-    _PUSH(&a, (tos2((byte *)"/DEBUG:NONE")), tmp82, string);
+    _PUSH(&a, (tos2((byte *)"/DEBUG:NONE")), tmp72, string);
   };
+
+  _PUSH_MANY(&a, (lib_paths), tmp73, array_string);
 
   string args = array_string_join(a, tos2((byte *)" "));
 
@@ -13555,9 +13702,9 @@ void V_cc_msvc(V *v) {
     println(tos2((byte *)"==========\n"));
   };
 
-  Option_os__Result tmp85 = os__exec(cmd);
-  if (!tmp85.ok) {
-    string err = tmp85.error;
+  Option_os__Result tmp76 = os__exec(cmd);
+  if (!tmp76.ok) {
+    string err = tmp76.error;
 
     println(err);
 
@@ -13565,7 +13712,7 @@ void V_cc_msvc(V *v) {
 
     return;
   }
-  os__Result res = *(os__Result *)tmp85.data;
+  os__Result res = *(os__Result *)tmp76.data;
   ;
 
   if (res.exit_code != 0) {
@@ -13581,17 +13728,17 @@ void V_cc_msvc(V *v) {
 
   os__rm(out_name_obj);
 }
-void build_thirdparty_obj_file_with_msvc(string path) {
+void build_thirdparty_obj_file_with_msvc(string path, array_CFlag moduleflags) {
 
-  Option_MsvcResult tmp86 = find_msvc();
-  if (!tmp86.ok) {
-    string err = tmp86.error;
+  Option_MsvcResult tmp77 = find_msvc();
+  if (!tmp77.ok) {
+    string err = tmp77.error;
 
     println(tos2((byte *)"Could not find visual studio"));
 
     return;
   }
-  MsvcResult msvc = *(MsvcResult *)tmp86.data;
+  MsvcResult msvc = *(MsvcResult *)tmp77.data;
   ;
 
   string obj_path = _STR("%.*sbj", path.len, path.str);
@@ -13614,9 +13761,9 @@ void build_thirdparty_obj_file_with_msvc(string path) {
 
   string cfiles = tos2((byte *)"");
 
-  array_string tmp91 = files;
-  for (int tmp92 = 0; tmp92 < tmp91.len; tmp92++) {
-    string file = ((string *)tmp91.data)[tmp92];
+  array_string tmp82 = files;
+  for (int tmp83 = 0; tmp83 < tmp82.len; tmp83++) {
+    string file = ((string *)tmp82.data)[tmp83];
 
     if (string_ends_with(file, tos2((byte *)".c"))) {
 
@@ -13637,25 +13784,99 @@ void build_thirdparty_obj_file_with_msvc(string path) {
            msvc.um_include_path.len, msvc.um_include_path.str,
            msvc.shared_include_path.len, msvc.shared_include_path.str);
 
-  string cmd = _STR("\"\"%.*s\" /volatile:ms /Z7 %.*s /c %.*s /Fo\"%.*s\"\"",
-                    msvc.full_cl_exe_path.len, msvc.full_cl_exe_path.str,
-                    include_string.len, include_string.str, cfiles.len,
-                    cfiles.str, obj_path.len, obj_path.str);
+  string btarget = array_CFlag_c_options_before_target(moduleflags);
+
+  string atarget = array_CFlag_c_options_after_target(moduleflags);
+
+  string cmd = _STR(
+      "\"\"%.*s\" /volatile:ms /Z7 %.*s /c %.*s %.*s %.*s /Fo\"%.*s\"\"",
+      msvc.full_cl_exe_path.len, msvc.full_cl_exe_path.str, include_string.len,
+      include_string.str, btarget.len, btarget.str, cfiles.len, cfiles.str,
+      atarget.len, atarget.str, obj_path.len, obj_path.str);
 
   printf("thirdparty cmd line: %.*s\n", cmd.len, cmd.str);
 
-  Option_os__Result tmp95 = os__exec(cmd);
-  if (!tmp95.ok) {
-    string err = tmp95.error;
+  Option_os__Result tmp88 = os__exec(cmd);
+  if (!tmp88.ok) {
+    string err = tmp88.error;
 
     cerror(err);
 
     return;
   }
-  os__Result res = *(os__Result *)tmp95.data;
+  os__Result res = *(os__Result *)tmp88.data;
   ;
 
   println(res.output);
+}
+MsvcStringFlags array_CFlag_msvc_string_flags(array_CFlag cflags) {
+
+  array_string real_libs =
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+
+  array_string inc_paths =
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+
+  array_string lib_paths =
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+
+  array_string other_flags =
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+
+  array_CFlag tmp93 = cflags;
+  for (int tmp94 = 0; tmp94 < tmp93.len; tmp94++) {
+    CFlag flag = ((CFlag *)tmp93.data)[tmp94];
+
+    if (string_eq(flag.name, tos2((byte *)"-l"))) {
+
+      if (string_ends_with(flag.value, tos2((byte *)".dll"))) {
+
+        cerror(_STR("MSVC cannot link against a dll (`#flag -l %.*s`)",
+                    flag.value.len, flag.value.str));
+      };
+
+      string lib_lib = string_add(flag.value, tos2((byte *)".lib"));
+
+      _PUSH(&real_libs, (lib_lib), tmp96, string);
+
+    } else if (string_eq(flag.name, tos2((byte *)"-I"))) {
+
+      _PUSH(&inc_paths, (CFlag_format(&/* ? */ flag)), tmp97, string);
+
+    } else if (string_eq(flag.name, tos2((byte *)"-L"))) {
+
+      _PUSH(&lib_paths, (flag.value), tmp98, string);
+
+      _PUSH(&lib_paths,
+            (string_add(string_add(flag.value, os__PathSeparator),
+                        tos2((byte *)"msvc"))),
+            tmp99, string);
+
+    } else if (string_ends_with(flag.value, tos2((byte *)".o"))) {
+
+      _PUSH(&other_flags, (_STR("\"%.*sbj\"", flag.value.len, flag.value.str)),
+            tmp100, string);
+
+    } else {
+
+      _PUSH(&other_flags, (flag.value), tmp101, string);
+    };
+  };
+
+  array_string lpaths =
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+
+  array_string tmp103 = lib_paths;
+  for (int tmp104 = 0; tmp104 < tmp103.len; tmp104++) {
+    string l = ((string *)tmp103.data)[tmp104];
+
+    _PUSH(&lpaths,
+          (string_add(string_add(tos2((byte *)"/LIBPATH:\""), os__realpath(l)),
+                      tos2((byte *)"\""))),
+          tmp105, string);
+  };
+
+  return (MsvcStringFlags){real_libs, inc_paths, lpaths, other_flags};
 }
 Parser V_new_parser(V *v, string path) {
 
