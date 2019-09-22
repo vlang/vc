@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "45e9a8f"
+#define V_COMMIT_HASH "cec2173"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9d1814a"
+#define V_COMMIT_HASH "45e9a8f"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -11122,8 +11122,17 @@ void Parser_gen_array_push(Parser *p, int ph, string typ, string expr_type,
 
     CGen_set_placeholder(p->cgen, ph, push_call);
 
-    Parser_gen(
-        p, _STR("), %.*s, %.*s)", tmp.len, tmp.str, tmp_typ.len, tmp_typ.str));
+    if (string_ends_with(tmp_typ, tos2((byte *)"*"))) {
+
+      Parser_gen(p, _STR("), %.*s, %.*s)", tmp.len, tmp.str,
+                         string_left(tmp_typ, tmp_typ.len - 1).len,
+                         string_left(tmp_typ, tmp_typ.len - 1).str));
+
+    } else {
+
+      Parser_gen(p, _STR("), %.*s, %.*s)", tmp.len, tmp.str, tmp_typ.len,
+                         tmp_typ.str));
+    };
   };
 }
 void Parser_gen_json_for_type(Parser *p, Type typ) {
