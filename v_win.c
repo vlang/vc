@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f27f351"
+#define V_COMMIT_HASH "d74c916"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8d52d87"
+#define V_COMMIT_HASH "f27f351"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -8416,8 +8416,6 @@ void Parser_chash(Parser *p) {
 
     flag = string_replace(flag, tos2((byte *)"@VMOD"), main__ModPath);
 
-    Parser_log(&/* ? */ *p, _STR("adding flag \"%.*s\"", flag.len, flag.str));
-
     Table_parse_cflag(p->table, flag, p->mod);
 
     return;
@@ -14206,11 +14204,6 @@ void Parser_parse(Parser *p, Pass pass) {
 
   p->pass = pass;
 
-  Parser_log(&/* ? */ *p, _STR("\nparse() run=%d file=%.*s tok=%.*s", p->pass,
-                               p->file_name.len, p->file_name.str,
-                               Parser_strtok(&/* ? */ *p).len,
-                               Parser_strtok(&/* ? */ *p).str));
-
   if (p->is_script || p->pref->is_test) {
 
     p->mod = tos2((byte *)"main");
@@ -14395,8 +14388,6 @@ void Parser_parse(Parser *p, Pass pass) {
 
     } else if (p->tok == main__Token_eof) { /* case */
 
-      Parser_log(&/* ? */ *p, tos2((byte *)"end of parse()"));
-
       if (p->is_script && !p->pref->is_test) {
 
         Parser_set_current_fn(p, main__MainFn);
@@ -14563,8 +14554,6 @@ void Parser_import_statement(Parser *p) {
     return;
   };
 
-  Parser_log(&/* ? */ *p, _STR("adding import %.*s", mod.len, mod.str));
-
   _PUSH(&p->table->imports, (mod), tmp26, string);
 
   Table_register_module(p->table, mod);
@@ -14711,9 +14700,6 @@ Fn *Parser_interface_method(Parser *p, string field_name, string receiver) {
                          .is_decl = 0,
                          .defer_text = new_array(0, 1, sizeof(string))},
                    sizeof(Fn));
-
-  Parser_log(&/* ? */ *p, _STR("is interface. field=%.*s run=%d",
-                               field_name.len, field_name.str, p->pass));
 
   Parser_fn_args(p, method);
 
@@ -15574,16 +15560,11 @@ string Parser_get_type(Parser *p) {
 
   Parser_next(p);
 
-  if (p->tok == main__Token_question || is_question) {
+  if (is_question) {
 
     typ = _STR("Option_%.*s", typ.len, typ.str);
 
     Table_register_type_with_parent(p->table, typ, tos2((byte *)"Option"));
-
-    if (p->tok == main__Token_question) {
-
-      Parser_next(p);
-    };
   };
 
   if (string_eq(typ, tos2((byte *)"byteptr"))) {
@@ -15623,8 +15604,6 @@ void Parser_print_tok(Parser *p) {
   println(Token_str(p->tok));
 }
 string Parser_statements(Parser *p) {
-
-  Parser_log(&/* ? */ *p, tos2((byte *)"statements()"));
 
   string typ = Parser_statements_no_rcbr(p);
 
@@ -15800,8 +15779,6 @@ string Parser_statement(Parser *p, bool add_semi) {
 
     } else if (Parser_peek(p) == main__Token_decl_assign ||
                Parser_peek(p) == main__Token_comma) {
-
-      Parser_log(&/* ? */ *p, tos2((byte *)"var decl"));
 
       Parser_var_decl(p);
 
@@ -16738,8 +16715,6 @@ string Parser_name_expr(Parser *p) {
   if (string_eq(f.typ, tos2((byte *)"void")) && !p->inside_if_expr) {
   };
 
-  Parser_log(&/* ? */ *p, tos2((byte *)"calling function"));
-
   Parser_fn_call(p, f, 0, tos2((byte *)""), tos2((byte *)""));
 
   if (p->tok == main__Token_dot) {
@@ -16754,8 +16729,6 @@ string Parser_name_expr(Parser *p) {
     return typ;
   };
 
-  Parser_log(&/* ? */ *p, tos2((byte *)"end of name_expr"));
-
   if (string_ends_with(f.typ, tos2((byte *)"*"))) {
 
     p->is_alloc = 1;
@@ -16764,9 +16737,6 @@ string Parser_name_expr(Parser *p) {
   return f.typ;
 }
 string Parser_var_expr(Parser *p, Var v) {
-
-  Parser_log(&/* ? */ *p, _STR("\nvar_expr() v.name=\"%.*s\" v.typ=\"%.*s\"",
-                               v.name.len, v.name.str, v.typ.len, v.typ.str));
 
   if (!v.is_const) {
 
@@ -16823,8 +16793,6 @@ string Parser_var_expr(Parser *p, Var v) {
     };
 
     typ = Parser_dot(p, typ, fn_ph);
-
-    Parser_log(&/* ? */ *p, _STR("typ after dot=%.*s", typ.len, typ.str));
 
     if (p->tok == main__Token_lsbr) {
     };
@@ -20198,16 +20166,11 @@ Type Parser_get_type2(Parser *p) {
 
   Parser_next(p);
 
-  if (p->tok == main__Token_question || is_question) {
+  if (is_question) {
 
     typ = _STR("Option_%.*s", typ.len, typ.str);
 
     Table_register_type_with_parent(p->table, typ, tos2((byte *)"Option"));
-
-    if (p->tok == main__Token_question) {
-
-      Parser_next(p);
-    };
   };
 
   if (string_last_index(typ, tos2((byte *)"__")) >
