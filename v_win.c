@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "69b498d"
+#define V_COMMIT_HASH "fbc1931"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "db44004"
+#define V_COMMIT_HASH "69b498d"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -14383,11 +14383,11 @@ void Parser_parse(Parser *p, Pass pass) {
         Parser_set_current_fn(p, main__MainFn);
 
         Parser_check_unused_variables(p);
+      };
 
-        if (!Parser_first_pass(&/* ? */ *p) && !p->pref->is_repl) {
+      if (!Parser_first_pass(&/* ? */ *p) && !p->pref->is_repl) {
 
-          Parser_check_unused_imports(p);
-        };
+        Parser_check_unused_imports(p);
       };
 
       if (0 && !Parser_first_pass(&/* ? */ *p) &&
@@ -23534,19 +23534,15 @@ string Table_qualify_module(Table *table, string mod, string file_path) {
 }
 FileImportTable Table_get_file_import_table(Table *table, string file_path) {
 
-  map_string imports = new_map(1, sizeof(string));
+  FileImportTable fit = new_file_import_table(file_path);
 
   if (_IN_MAP((file_path), table->file_imports)) {
 
     FileImportTable tmp104 = {0};
     bool tmp105 = map_get(table->file_imports, file_path, &tmp104);
 
-    imports = tmp104.imports;
+    fit.imports = tmp104.imports;
   };
-
-  FileImportTable fit = new_file_import_table(string_clone(file_path));
-
-  fit.imports = imports;
 
   return fit;
 }
@@ -23569,13 +23565,13 @@ void FileImportTable_register_import(FileImportTable *fit, string mod) {
 void FileImportTable_register_alias(FileImportTable *fit, string alias,
                                     string mod) {
 
-  string tmp107 = tos((byte *)"", 0);
-  bool tmp108 = map_get(fit->imports, alias, &tmp107);
+  string tmp106 = tos((byte *)"", 0);
+  bool tmp107 = map_get(fit->imports, alias, &tmp106);
 
-  if (!tmp108)
-    tmp107 = tos((byte *)"", 0);
+  if (!tmp107)
+    tmp106 = tos((byte *)"", 0);
 
-  if (_IN_MAP((alias), fit->imports) && string_ne(tmp107, mod)) {
+  if (_IN_MAP((alias), fit->imports) && string_ne(tmp106, mod)) {
 
     cerror(_STR("cannot import %.*s as %.*s: import name %.*s already in use "
                 "in \"%.*s\".",
@@ -23590,16 +23586,16 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
     array_string internal_mod_parts =
         new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-    array_string tmp111 = mod_parts;
-    for (int tmp112 = 0; tmp112 < tmp111.len; tmp112++) {
-      string part = ((string *)tmp111.data)[tmp112];
+    array_string tmp110 = mod_parts;
+    for (int tmp111 = 0; tmp111 < tmp110.len; tmp111++) {
+      string part = ((string *)tmp110.data)[tmp111];
 
       if (string_eq(part, tos2((byte *)"internal"))) {
 
         break;
       };
 
-      _PUSH(&internal_mod_parts, (part), tmp113, string);
+      _PUSH(&internal_mod_parts, (part), tmp112, string);
     };
 
     string internal_parent =
@@ -23620,12 +23616,12 @@ bool FileImportTable_known_alias(FileImportTable *fit, string alias) {
 }
 bool FileImportTable_is_aliased(FileImportTable *fit, string mod) {
 
-  map_string tmp115 = fit->imports;
-  array_string keys_tmp115 = map_keys(&tmp115);
-  for (int l = 0; l < keys_tmp115.len; l++) {
-    string _ = ((string *)keys_tmp115.data)[l];
+  map_string tmp114 = fit->imports;
+  array_string keys_tmp114 = map_keys(&tmp114);
+  for (int l = 0; l < keys_tmp114.len; l++) {
+    string _ = ((string *)keys_tmp114.data)[l];
     string val = {0};
-    map_get(tmp115, _, &val);
+    map_get(tmp114, _, &val);
 
     if (string_eq(val, mod)) {
 
@@ -23637,19 +23633,19 @@ bool FileImportTable_is_aliased(FileImportTable *fit, string mod) {
 }
 string FileImportTable_resolve_alias(FileImportTable *fit, string alias) {
 
-  string tmp116 = tos((byte *)"", 0);
-  bool tmp117 = map_get(fit->imports, alias, &tmp116);
+  string tmp115 = tos((byte *)"", 0);
+  bool tmp116 = map_get(fit->imports, alias, &tmp115);
 
-  if (!tmp117)
-    tmp116 = tos((byte *)"", 0);
+  if (!tmp116)
+    tmp115 = tos((byte *)"", 0);
 
-  return tmp116;
+  return tmp115;
 }
 void FileImportTable_register_used_import(FileImportTable *fit, string alias) {
 
   if (!(_IN(string, (alias), fit->used_imports))) {
 
-    _PUSH(&fit->used_imports, (alias), tmp118, string);
+    _PUSH(&fit->used_imports, (alias), tmp117, string);
   };
 }
 bool FileImportTable_is_used_import(FileImportTable *fit, string alias) {
@@ -23663,9 +23659,9 @@ bool Type_contains_field_type(Type *t, string typ) {
     return 0;
   };
 
-  array_Var tmp121 = t->fields;
-  for (int tmp122 = 0; tmp122 < tmp121.len; tmp122++) {
-    Var field = ((Var *)tmp121.data)[tmp122];
+  array_Var tmp120 = t->fields;
+  for (int tmp121 = 0; tmp121 < tmp120.len; tmp121++) {
+    Var field = ((Var *)tmp120.data)[tmp121];
 
     if (string_eq(field.typ, typ)) {
 
@@ -23726,12 +23722,12 @@ string Table_find_misspelled_fn(Table *table, string name, FileImportTable *fit,
                   ? (string_right(name, 6))
                   : (name);
 
-  map_Fn tmp130 = table->fns;
-  array_string keys_tmp130 = map_keys(&tmp130);
-  for (int l = 0; l < keys_tmp130.len; l++) {
-    string _ = ((string *)keys_tmp130.data)[l];
+  map_Fn tmp129 = table->fns;
+  array_string keys_tmp129 = map_keys(&tmp129);
+  for (int l = 0; l < keys_tmp129.len; l++) {
+    string _ = ((string *)keys_tmp129.data)[l];
     Fn f = {0};
-    map_get(tmp130, _, &f);
+    map_get(tmp129, _, &f);
 
     if (n1.len - f.name.len > 2 || f.name.len - n1.len > 2) {
 
@@ -23746,12 +23742,12 @@ string Table_find_misspelled_fn(Table *table, string name, FileImportTable *fit,
 
       bool mod_imported = 0;
 
-      map_string tmp132 = fit->imports;
-      array_string keys_tmp132 = map_keys(&tmp132);
-      for (int l = 0; l < keys_tmp132.len; l++) {
-        string _ = ((string *)keys_tmp132.data)[l];
+      map_string tmp131 = fit->imports;
+      array_string keys_tmp131 = map_keys(&tmp131);
+      for (int l = 0; l < keys_tmp131.len; l++) {
+        string _ = ((string *)keys_tmp131.data)[l];
         string m = {0};
-        map_get(tmp132, _, &m);
+        map_get(tmp131, _, &m);
 
         if (string_eq(f.mod, m)) {
 
@@ -23790,12 +23786,12 @@ string Table_find_misspelled_imported_mod(Table *table, string name,
                   ? (string_right(name, 5))
                   : (name);
 
-  map_string tmp137 = fit->imports;
-  array_string keys_tmp137 = map_keys(&tmp137);
-  for (int l = 0; l < keys_tmp137.len; l++) {
-    string alias = ((string *)keys_tmp137.data)[l];
+  map_string tmp136 = fit->imports;
+  array_string keys_tmp136 = map_keys(&tmp136);
+  for (int l = 0; l < keys_tmp136.len; l++) {
+    string alias = ((string *)keys_tmp136.data)[l];
     string mod = {0};
-    map_get(tmp137, alias, &mod);
+    map_get(tmp136, alias, &mod);
 
     if ((n1.len - alias.len > 2 || alias.len - n1.len > 2)) {
 
