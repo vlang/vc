@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "60d932e"
+#define V_COMMIT_HASH "23e3096"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a0c5113"
+#define V_COMMIT_HASH "60d932e"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -9151,8 +9151,8 @@ void Parser_fn_decl(Parser *p) {
       array_string tmp53 = string_split(
           string_replace(string_replace(typ, tos2((byte *)"MultiReturn_"),
                                         tos2((byte *)"")),
-                         tos2((byte *)"0ptr0"), tos2((byte *)"*")),
-          tos2((byte *)"_"));
+                         tos2((byte *)"_ZptrZ_"), tos2((byte *)"*")),
+          tos2((byte *)"_Z_"));
       for (int i = 0; i < tmp53.len; i++) {
         string t = ((string *)tmp53.data)[i];
 
@@ -15129,8 +15129,8 @@ string Parser_get_type(Parser *p) {
 
     return string_add(
         tos2((byte *)"MultiReturn_"),
-        string_replace(array_string_join(types, tos2((byte *)"_")),
-                       tos2((byte *)"*"), tos2((byte *)"0ptr0")));
+        string_replace(array_string_join(types, tos2((byte *)"_Z_")),
+                       tos2((byte *)"*"), tos2((byte *)"_ZptrZ_")));
   };
 
   if (p->tok == main__Token_func) {
@@ -15909,8 +15909,8 @@ void Parser_var_decl(Parser *p) {
     types = string_split(
         string_replace(
             string_replace(t, tos2((byte *)"MultiReturn_"), tos2((byte *)"")),
-            tos2((byte *)"0ptr0"), tos2((byte *)"*")),
-        tos2((byte *)"_"));
+            tos2((byte *)"_ZptrZ_"), tos2((byte *)"*")),
+        tos2((byte *)"_Z_"));
   };
 
   array_string tmp131 = names;
@@ -19356,8 +19356,8 @@ void Parser_return_st(Parser *p) {
 
         expr_type = string_add(
             tos2((byte *)"MultiReturn_"),
-            string_replace(array_string_join(types, tos2((byte *)"_")),
-                           tos2((byte *)"*"), tos2((byte *)"0ptr0")));
+            string_replace(array_string_join(types, tos2((byte *)"_Z_")),
+                           tos2((byte *)"*"), tos2((byte *)"_ZptrZ_")));
 
         string ret_vals = string_right(p->cgen->cur_line, ph);
 
