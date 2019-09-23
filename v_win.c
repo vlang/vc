@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d74c916"
+#define V_COMMIT_HASH "f7d8fb0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f27f351"
+#define V_COMMIT_HASH "d74c916"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -728,8 +728,8 @@ array_string string_split_into_lines(string s);
 string string_left(string s, int n);
 string string_right(string s, int n);
 string string_substr(string s, int start, int end);
-int string_index_old(string s, string p);
 int string_index(string s, string p);
+int string_index_kmp(string s, string p);
 int string_index_any(string s, string chars);
 int string_last_index(string s, string p);
 int string_index_after(string s, string p, int start);
@@ -2464,7 +2464,7 @@ string string_substr(string s, int start, int end) {
 
   return res;
 }
-int string_index_old(string s, string p) {
+int string_index(string s, string p) {
 
   if (p.len > s.len) {
 
@@ -2477,18 +2477,14 @@ int string_index_old(string s, string p) {
 
     int j = 0;
 
-    int ii = i;
-
-    while (j < p.len && s.str[ii] /*rbyte 0*/ == p.str[j] /*rbyte 0*/) {
+    while (j < p.len && s.str[i + j] /*rbyte 0*/ == p.str[j] /*rbyte 0*/) {
 
       j++;
-
-      ii++;
     };
 
     if (j == p.len) {
 
-      return i - p.len + 1;
+      return i;
     };
 
     i++;
@@ -2496,7 +2492,7 @@ int string_index_old(string s, string p) {
 
   return -1;
 }
-int string_index(string s, string p) {
+int string_index_kmp(string s, string p) {
 
   if (p.len > s.len) {
 
@@ -2547,11 +2543,11 @@ int string_index(string s, string p) {
 }
 int string_index_any(string s, string chars) {
 
-  string tmp64 = chars;
-  array_byte bytes_tmp64 = string_bytes(tmp64);
+  string tmp63 = chars;
+  array_byte bytes_tmp63 = string_bytes(tmp63);
   ;
-  for (int tmp65 = 0; tmp65 < tmp64.len; tmp65++) {
-    byte c = ((byte *)bytes_tmp64.data)[tmp65];
+  for (int tmp64 = 0; tmp64 < tmp63.len; tmp64++) {
+    byte c = ((byte *)bytes_tmp63.data)[tmp64];
 
     int index = string_index(s, byte_str(c));
 
@@ -2728,11 +2724,11 @@ string string_title(string s) {
   array_string tit =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-  array_string tmp86 = words;
-  for (int tmp87 = 0; tmp87 < tmp86.len; tmp87++) {
-    string word = ((string *)tmp86.data)[tmp87];
+  array_string tmp85 = words;
+  for (int tmp86 = 0; tmp86 < tmp85.len; tmp86++) {
+    string word = ((string *)tmp85.data)[tmp86];
 
-    _PUSH(&tit, (string_capitalize(word)), tmp88, string);
+    _PUSH(&tit, (string_capitalize(word)), tmp87, string);
   };
 
   string title = array_string_join(tit, tos2((byte *)" "));
@@ -2761,9 +2757,9 @@ string string_find_between(string s, string start, string end) {
 }
 bool array_string_contains(array_string ar, string val) {
 
-  array_string tmp93 = ar;
-  for (int tmp94 = 0; tmp94 < tmp93.len; tmp94++) {
-    string s = ((string *)tmp93.data)[tmp94];
+  array_string tmp92 = ar;
+  for (int tmp93 = 0; tmp93 < tmp92.len; tmp93++) {
+    string s = ((string *)tmp92.data)[tmp93];
 
     if (string_eq(s, val)) {
 
@@ -2775,9 +2771,9 @@ bool array_string_contains(array_string ar, string val) {
 }
 bool array_int_contains(array_int ar, int val) {
 
-  array_int tmp95 = ar;
-  for (int i = 0; i < tmp95.len; i++) {
-    int s = ((int *)tmp95.data)[i];
+  array_int tmp94 = ar;
+  for (int i = 0; i < tmp94.len; i++) {
+    int s = ((int *)tmp94.data)[i];
 
     if (s == val) {
 
@@ -2934,7 +2930,7 @@ ustring string_ustring(string s) {
 
     int char_len = utf8_char_len(s.str[/*ptr*/ i] /*rbyte 0*/);
 
-    _PUSH(&res.runes, (i), tmp109, int);
+    _PUSH(&res.runes, (i), tmp108, int);
 
     i += char_len - 1;
 
@@ -3003,7 +2999,7 @@ ustring ustring_add(ustring u, ustring a) {
 
     int char_len = utf8_char_len(u.s.str[/*ptr*/ i] /*rbyte 0*/);
 
-    _PUSH(&res.runes, (j), tmp118, int);
+    _PUSH(&res.runes, (j), tmp117, int);
 
     i += char_len - 1;
 
@@ -3016,7 +3012,7 @@ ustring ustring_add(ustring u, ustring a) {
 
     int char_len = utf8_char_len(a.s.str[/*ptr*/ i] /*rbyte 0*/);
 
-    _PUSH(&res.runes, (j), tmp121, int);
+    _PUSH(&res.runes, (j), tmp120, int);
 
     i += char_len - 1;
 
@@ -3205,9 +3201,9 @@ string array_string_join(array_string a, string del) {
 
   int len = 0;
 
-  array_string tmp137 = a;
-  for (int i = 0; i < tmp137.len; i++) {
-    string val = ((string *)tmp137.data)[i];
+  array_string tmp136 = a;
+  for (int i = 0; i < tmp136.len; i++) {
+    string val = ((string *)tmp136.data)[i];
 
     len += val.len + del.len;
   };
@@ -3222,9 +3218,9 @@ string array_string_join(array_string a, string del) {
 
   int idx = 0;
 
-  array_string tmp140 = a;
-  for (int i = 0; i < tmp140.len; i++) {
-    string val = ((string *)tmp140.data)[i];
+  array_string tmp139 = a;
+  for (int i = 0; i < tmp139.len; i++) {
+    string val = ((string *)tmp139.data)[i];
 
     for (int j = 0; j < val.len; j++) {
 
@@ -3288,11 +3284,11 @@ int string_hash(string s) {
 
   if (h == 0 && s.len > 0) {
 
-    string tmp149 = s;
-    array_byte bytes_tmp149 = string_bytes(tmp149);
+    string tmp148 = s;
+    array_byte bytes_tmp148 = string_bytes(tmp148);
     ;
-    for (int tmp150 = 0; tmp150 < tmp149.len; tmp150++) {
-      byte c = ((byte *)bytes_tmp149.data)[tmp150];
+    for (int tmp149 = 0; tmp149 < tmp148.len; tmp149++) {
+      byte c = ((byte *)bytes_tmp148.data)[tmp149];
 
       h = h * 31 + ((int)(c));
     };
