@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3317d7f"
+#define V_COMMIT_HASH "55d09d2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a44a03f"
+#define V_COMMIT_HASH "3317d7f"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1207,7 +1207,7 @@ void vfmt(array_string args);
 void install_v(array_string args);
 void V_test_v(V *v);
 void create_symlink();
-void cerror(string s);
+void verror(string s);
 string vhash();
 void DepGraph_from_import_tables(DepGraph *graph,
                                  map_FileImportTable import_tables);
@@ -6963,7 +6963,7 @@ void V_cc(V *v) {
 
   if (os__dir_exists(v->out_name)) {
 
-    cerror(_STR("\'%.*s\' is a directory", v->out_name.len, v->out_name.str));
+    verror(_STR("\'%.*s\' is a directory", v->out_name.len, v->out_name.str));
   };
 
   if (v->os == main__OS_mac) {
@@ -7029,7 +7029,7 @@ void V_cc(V *v) {
   if (!tmp35.ok) {
     string err = tmp35.error;
 
-    cerror(err);
+    verror(err);
 
     return;
   }
@@ -7040,7 +7040,7 @@ void V_cc(V *v) {
 
     if (res.exit_code == 127) {
 
-      cerror(string_add(
+      verror(string_add(
           string_add(
               string_add(
                   string_add(
@@ -7079,7 +7079,7 @@ void V_cc(V *v) {
       };
     };
 
-    cerror(string_add(
+    verror(string_add(
         tos2((byte *)"C error. This should never happen. "),
         tos2((byte *)"Please create a GitHub issue: "
                      "https://github.com/vlang/v/issues/new/choose")));
@@ -7982,7 +7982,7 @@ void build_thirdparty_obj_file(string path, array_CFlag moduleflags) {
 
     printf("failed thirdparty object build cmd: %.*s\n", cmd.len, cmd.str);
 
-    cerror(err);
+    verror(err);
 
     return;
   }
@@ -8034,7 +8034,7 @@ string os_name_to_ifdef(string name) {
     return tos2((byte *)"_VJS");
   };
 
-  cerror(_STR("bad os ifdef name \"%.*s\"", name.len, name.str));
+  verror(_STR("bad os ifdef name \"%.*s\"", name.len, name.str));
 
   return tos2((byte *)"");
 }
@@ -8061,7 +8061,7 @@ string platform_postfix_to_ifdefguard(string name) {
     return tos2((byte *)"#ifdef __APPLE__");
   };
 
-  cerror(_STR("bad platform_postfix \"%.*s\"", name.len, name.str));
+  verror(_STR("bad platform_postfix \"%.*s\"", name.len, name.str));
 
   return tos2((byte *)"");
 }
@@ -8153,7 +8153,7 @@ array_Type sort_structs(array_Type types) {
 
   if (!dep_graph_sorted->acyclic) {
 
-    cerror(tos2((byte *)"error: cgen.sort_structs() DGNAC.\nplease create a "
+    verror(tos2((byte *)"error: cgen.sort_structs() DGNAC.\nplease create a "
                         "new issue here: https://github.com/vlang/v/issues and "
                         "tag @joe-conigliaro"));
   };
@@ -10368,14 +10368,14 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
     if (!is_interface) {
 
-      if (string_contains(got, tos2((byte *)"*")) &&
-          !string_contains(expected, tos2((byte *)"*"))) {
+      if (string_ends_with(got, tos2((byte *)"*")) &&
+          !string_ends_with(expected, tos2((byte *)"*"))) {
 
         CGen_set_placeholder(p->cgen, ph, tos2((byte *)"*"));
       };
 
-      if (!string_contains(got, tos2((byte *)"*")) &&
-          string_contains(expected, tos2((byte *)"*")) &&
+      if (!string_ends_with(got, tos2((byte *)"*")) &&
+          string_ends_with(expected, tos2((byte *)"*")) &&
           string_ne(got, tos2((byte *)"voidptr"))) {
 
         if (string_starts_with(expected, tos2((byte *)"array_")) &&
@@ -11968,7 +11968,7 @@ void V_compile(V *v) {
   if (string_ne(os__user_os(), tos2((byte *)"windows")) &&
       v->os == main__OS_msvc) {
 
-    cerror(_STR("Cannot build with msvc on %.*s", os__user_os().len,
+    verror(_STR("Cannot build with msvc on %.*s", os__user_os().len,
                 os__user_os().str));
   };
 
@@ -12280,12 +12280,12 @@ void V_generate_main(V *v) {
 
       if (Table_main_exists(&/* ? */ *v->table)) {
 
-        cerror(tos2((byte *)"test files cannot have function `main`"));
+        verror(tos2((byte *)"test files cannot have function `main`"));
       };
 
       if (!Table_has_at_least_one_test_fn(&/* ? */ *v->table)) {
 
-        cerror(
+        verror(
             tos2((byte *)"test files need to have at least one test function"));
       };
 
@@ -12374,11 +12374,11 @@ array_string V_v_files_from_dir(V *v, string dir) {
 
   if (!os__file_exists(dir)) {
 
-    cerror(_STR("%.*s doesn\'t exist", dir.len, dir.str));
+    verror(_STR("%.*s doesn\'t exist", dir.len, dir.str));
 
   } else if (!os__dir_exists(dir)) {
 
-    cerror(_STR("%.*s isn\'t a directory", dir.len, dir.str));
+    verror(_STR("%.*s isn\'t a directory", dir.len, dir.str));
   };
 
   array_string files = os__ls(dir);
@@ -12546,7 +12546,7 @@ void V_add_v_files_to_compile(V *v) {
 
     if (vfiles.len == 0) {
 
-      cerror(_STR("cannot import module %.*s (no .v files in \"%.*s\").",
+      verror(_STR("cannot import module %.*s (no .v files in \"%.*s\").",
                   mod.len, mod.str, import_path.len, import_path.str));
     };
 
@@ -12584,7 +12584,7 @@ void V_add_v_files_to_compile(V *v) {
 
     DepGraph_display(&/* ? */ *deps_resolved);
 
-    cerror(tos2((byte *)"Import cycle detected."));
+    verror(tos2((byte *)"Import cycle detected."));
   };
 
   array_string tmp65 = DepGraph_imports(&/* ? */ *deps_resolved);
@@ -13026,7 +13026,7 @@ void update_v() {
   if (!tmp116.ok) {
     string err = tmp116.error;
 
-    cerror(err);
+    verror(err);
 
     return;
   }
@@ -13051,7 +13051,7 @@ void update_v() {
   if (!tmp118.ok) {
     string err = tmp118.error;
 
-    cerror(err);
+    verror(err);
 
     return;
   }
@@ -13067,7 +13067,7 @@ void update_v() {
   if (!tmp119.ok) {
     string err = tmp119.error;
 
-    cerror(err);
+    verror(err);
 
     return;
   }
@@ -13125,7 +13125,7 @@ void install_v(array_string args) {
     if (!tmp125.ok) {
       string err = tmp125.error;
 
-      cerror(err);
+      verror(err);
 
       return;
     }
@@ -13134,7 +13134,7 @@ void install_v(array_string args) {
 
     if (vgetcompilation.exit_code != 0) {
 
-      cerror(vgetcompilation.output);
+      verror(vgetcompilation.output);
 
       return;
     };
@@ -13146,7 +13146,7 @@ void install_v(array_string args) {
   if (!tmp126.ok) {
     string err = tmp126.error;
 
-    cerror(err);
+    verror(err);
 
     return;
   }
@@ -13155,7 +13155,7 @@ void install_v(array_string args) {
 
   if (vgetresult.exit_code != 0) {
 
-    cerror(vgetresult.output);
+    verror(vgetresult.output);
 
     return;
   };
@@ -13351,7 +13351,7 @@ void create_symlink() {
                        tos2((byte *)"make sure you run with sudo")));
   };
 }
-void cerror(string s) {
+void verror(string s) {
 
   printf("V error: %.*s\n", s.len, s.str);
 
@@ -13434,7 +13434,7 @@ string V_find_module_path(V *v, string mod) {
 
     if (!os__dir_exists(import_path)) {
 
-      cerror(_STR("module \"%.*s\" not found", mod.len, mod.str));
+      verror(_STR("module \"%.*s\" not found", mod.len, mod.str));
     };
   };
 
@@ -13677,7 +13677,7 @@ Option_MsvcResult find_msvc() {
 
 #else
 
-  cerror(tos2((byte *)"Cannot find msvc on this OS"));
+  verror(tos2((byte *)"Cannot find msvc on this OS"));
 
   return v_error(tos2((byte *)"msvc not found"));
 
@@ -13696,7 +13696,7 @@ void V_cc_msvc(V *v) {
       os__rm(v->out_name_c);
     };
 
-    cerror(tos2((byte *)"Cannot find MSVC on this OS."));
+    verror(tos2((byte *)"Cannot find MSVC on this OS."));
 
     return;
   }
@@ -13882,7 +13882,7 @@ void V_cc_msvc(V *v) {
 
     println(err);
 
-    cerror(tos2((byte *)"msvc error"));
+    verror(tos2((byte *)"msvc error"));
 
     return;
   }
@@ -13891,7 +13891,7 @@ void V_cc_msvc(V *v) {
 
   if (res.exit_code != 0) {
 
-    cerror(res.output);
+    verror(res.output);
   };
 
   if (!v->pref->is_debug && string_ne(v->out_name_c, tos2((byte *)"v.c")) &&
@@ -13974,7 +13974,7 @@ void build_thirdparty_obj_file_with_msvc(string path, array_CFlag moduleflags) {
   if (!tmp88.ok) {
     string err = tmp88.error;
 
-    cerror(err);
+    verror(err);
 
     return;
   }
@@ -14005,7 +14005,7 @@ MsvcStringFlags array_CFlag_msvc_string_flags(array_CFlag cflags) {
 
       if (string_ends_with(flag.value, tos2((byte *)".dll"))) {
 
-        cerror(_STR("MSVC cannot link against a dll (`#flag -l %.*s`)",
+        verror(_STR("MSVC cannot link against a dll (`#flag -l %.*s`)",
                     flag.value.len, flag.value.str));
       };
 
@@ -14394,7 +14394,7 @@ void Parser_parse(Parser *p, Pass pass) {
         if (!tmp13.ok) {
           string err = tmp13.error;
 
-          cerror(tos2((byte *)"failed to create fmt.v"));
+          verror(tos2((byte *)"failed to create fmt.v"));
 
           return;
         }
@@ -14720,7 +14720,7 @@ TypeCategory key_to_type_cat(Token tok) {
     return main__TypeCategory_union_;
   };
 
-  cerror(_STR("Unknown token: %d", tok));
+  verror(_STR("Unknown token: %d", tok));
 
   return main__TypeCategory_builtin;
 }
@@ -15674,8 +15674,6 @@ void Parser_close_scope(Parser *p) {
       } else if (string_eq(v.typ, tos2((byte *)"string"))) {
 
         free_fn = tos2((byte *)"v_string_free");
-
-        continue;
 
       } else if (v.ptr || string_ends_with(v.typ, tos2((byte *)"*"))) {
 
@@ -19902,7 +19900,7 @@ void Parser_check_unused_imports(Parser *p) {
 
   if (p->pref->is_prod) {
 
-    cerror(output);
+    verror(output);
 
   } else {
 
@@ -20239,7 +20237,7 @@ string sql_params2params_gen(array_string sql_params, array_string sql_types,
 
       } else {
 
-        cerror(tos2((byte *)"orm: only int and string variable types are "
+        verror(tos2((byte *)"orm: only int and string variable types are "
                             "supported in queries"));
       };
     };
@@ -20823,7 +20821,7 @@ array_string run_repl() {
       if (!tmp32.ok) {
         string err = tmp32.error;
 
-        cerror(err);
+        verror(err);
 
         array_string tmp33 =
             new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
@@ -20887,7 +20885,7 @@ array_string run_repl() {
       if (!tmp42.ok) {
         string err = tmp42.error;
 
-        cerror(err);
+        verror(err);
 
         array_string tmp43 =
             new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
@@ -20969,14 +20967,14 @@ Scanner *new_scanner(string file_path) {
 
   if (!os__file_exists(file_path)) {
 
-    cerror(_STR("\"%.*s\" doesn\'t exist", file_path.len, file_path.str));
+    verror(_STR("\"%.*s\" doesn\'t exist", file_path.len, file_path.str));
   };
 
   Option_string tmp1 = os__read_file(file_path);
   if (!tmp1.ok) {
     string err = tmp1.error;
 
-    cerror(
+    verror(
         _STR("scanner: failed to open \"%.*s\"", file_path.len, file_path.str));
 
     return 0;
@@ -22755,7 +22753,7 @@ void Table_add_field(Table *table, string type_name, string field_name,
 
     print_backtrace();
 
-    cerror(tos2((byte *)"add_field: empty type"));
+    verror(tos2((byte *)"add_field: empty type"));
   };
 
   Type tmp27 = {0};
@@ -22878,7 +22876,7 @@ void Parser_add_method(Parser *p, string type_name, Fn f) {
 
     print_backtrace();
 
-    cerror(tos2((byte *)"add_method: empty type"));
+    verror(tos2((byte *)"add_method: empty type"));
   };
 
   Type tmp43 = {0};
@@ -23359,7 +23357,7 @@ array_string Table_fn_gen_types(Table *t, string fn_name) {
     };
   };
 
-  cerror(_STR("function %.*s not found", fn_name.len, fn_name.str));
+  verror(_STR("function %.*s not found", fn_name.len, fn_name.str));
 
   return new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 }
@@ -23538,7 +23536,7 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
 
   if (_IN_MAP((alias), fit->imports) && string_ne(tmp106, mod)) {
 
-    cerror(_STR("cannot import %.*s as %.*s: import name %.*s already in use "
+    verror(_STR("cannot import %.*s as %.*s: import name %.*s already in use "
                 "in \"%.*s\".",
                 mod.len, mod.str, alias.len, alias.str, alias.len, alias.str,
                 fit->file_path.len, fit->file_path.str));
@@ -23568,7 +23566,7 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
 
     if (!string_starts_with(fit->module_name, internal_parent)) {
 
-      cerror(_STR("module %.*s can only be imported internally by libs.",
+      verror(_STR("module %.*s can only be imported internally by libs.",
                   mod.len, mod.str));
     };
   };
