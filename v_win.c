@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f7d8fb0"
+#define V_COMMIT_HASH "a44a03f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d74c916"
+#define V_COMMIT_HASH "f7d8fb0"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -8849,7 +8849,7 @@ void Parser_open_scope(Parser *p) {
 }
 void Parser_mark_var_used(Parser *p, Var v) {
 
-  if (v.idx == -1) {
+  if (v.idx == -1 || v.idx >= p->local_vars.len) {
 
     return;
   };
@@ -14383,13 +14383,6 @@ void Parser_parse(Parser *p, Pass pass) {
       _PUSH(&p->cgen->consts, (g), tmp12, string);
 
     } else if (p->tok == main__Token_eof) { /* case */
-
-      if (p->is_script && !p->pref->is_test) {
-
-        Parser_set_current_fn(p, main__MainFn);
-
-        Parser_check_unused_variables(p);
-      };
 
       if (!Parser_first_pass(&/* ? */ *p) && !p->pref->is_repl) {
 
