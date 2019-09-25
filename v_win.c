@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a124d1f"
+#define V_COMMIT_HASH "d4bae35"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8974aa4"
+#define V_COMMIT_HASH "a124d1f"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -5650,7 +5650,7 @@ Option_string os__get_module_filename(HANDLE handle) {
 
     } else { // default:
 
-      return v_error(tos2((byte *)"Cannot get file name from handle."));
+      return v_error(tos2((byte *)"Cannot get file name from handle"));
     };
   };
 
@@ -12614,7 +12614,7 @@ void V_add_v_files_to_compile(V *v) {
 
     if (vfiles.len == 0) {
 
-      verror(_STR("cannot import module %.*s (no .v files in \"%.*s\").",
+      verror(_STR("cannot import module %.*s (no .v files in \"%.*s\")",
                   mod.len, mod.str, import_path.len, import_path.str));
     };
 
@@ -12652,7 +12652,7 @@ void V_add_v_files_to_compile(V *v) {
 
     DepGraph_display(&/* ? */ *deps_resolved);
 
-    verror(tos2((byte *)"Import cycle detected."));
+    verror(tos2((byte *)"Import cycle detected"));
   };
 
   array_string tmp65 = DepGraph_imports(&/* ? */ *deps_resolved);
@@ -13764,7 +13764,7 @@ void V_cc_msvc(V *v) {
       os__rm(v->out_name_c);
     };
 
-    verror(tos2((byte *)"Cannot find MSVC on this OS."));
+    verror(tos2((byte *)"Cannot find MSVC on this OS"));
 
     return;
   }
@@ -14567,7 +14567,7 @@ void Parser_import_statement(Parser *p) {
       string_at(p->scanner->text, p->scanner->pos + 1) == '.') {
 
     Parser_error(p, tos2((byte *)"bad import format. module/submodule names "
-                                 "cannot begin with a number."));
+                                 "cannot begin with a number"));
   };
 
   string mod = string_trim_space(Parser_check_name(p));
@@ -15990,7 +15990,7 @@ void Parser_assign_statement(Parser *p, Var v, int ph, bool is_map) {
       };
     };
 
-    Parser_error(p, _STR("`%.*s` is immutable.", v.name.len, v.name.str));
+    Parser_error(p, _STR("`%.*s` is immutable", v.name.len, v.name.str));
   };
 
   if (!v.is_changed) {
@@ -16146,7 +16146,7 @@ void Parser_var_decl(Parser *p) {
 
       if (names.len == 1) {
 
-        Parser_error(p, tos2((byte *)"no new variables on left side of :="));
+        Parser_error(p, tos2((byte *)"no new variables on left side of `:=`"));
       };
 
       continue;
@@ -16175,7 +16175,7 @@ void Parser_var_decl(Parser *p) {
             p->cgen->cur_line, tos2((byte *)"="), tos2((byte *)"(")));
 
         Parser_error(p, _STR("assignment mismatch: %d variables but `%.*s` "
-                             "returns %d values.",
+                             "returns %d values",
                              names.len, mr_fn.len, mr_fn.str, types.len));
       };
 
@@ -16515,7 +16515,7 @@ string Parser_name_expr(Parser *p) {
 
     if (string_eq(name, tos2((byte *)"_"))) {
 
-      Parser_error(p, tos2((byte *)"cannot use `_` as value."));
+      Parser_error(p, tos2((byte *)"cannot use `_` as value"));
     };
 
     Option_Var tmp160 = Parser_find_var_check_new_var(&/* ? */ *p, name);
@@ -18061,7 +18061,7 @@ void Parser_string_expr(Parser *p) {
 
           Parser_error(
               p, _STR("only V strings can be formatted with a :%.*s format, "
-                      "but you have given \"%.*s\", which has type %.*s.",
+                      "but you have given \"%.*s\", which has type %.*s",
                       cformat.len, cformat.str, val.len, val.str, typ.len,
                       typ.str));
         };
@@ -18872,6 +18872,12 @@ void Parser_for_st(Parser *p) {
     Parser_check(p, main__Token_comma);
 
     string val = Parser_check_name(p);
+
+    if (string_eq(i, tos2((byte *)"_")) && string_eq(val, tos2((byte *)"_"))) {
+
+      Parser_error(p,
+                   tos2((byte *)"no new variables on the left side of `in`"));
+    };
 
     Parser_fgen(p, tos2((byte *)" "));
 
@@ -23619,7 +23625,7 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
   if (_IN_MAP((alias), fit->imports) && string_ne(tmp106, mod)) {
 
     verror(_STR("cannot import %.*s as %.*s: import name %.*s already in use "
-                "in \"%.*s\".",
+                "in \"%.*s\"",
                 mod.len, mod.str, alias.len, alias.str, alias.len, alias.str,
                 fit->file_path.len, fit->file_path.str));
   };
@@ -23648,7 +23654,7 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
 
     if (!string_starts_with(fit->module_name, internal_parent)) {
 
-      verror(_STR("module %.*s can only be imported internally by libs.",
+      verror(_STR("module %.*s can only be imported internally by libs",
                   mod.len, mod.str));
     };
   };
