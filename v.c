@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "55d09d2"
+#define V_COMMIT_HASH "ab52b45"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3317d7f"
+#define V_COMMIT_HASH "55d09d2"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -2049,7 +2049,11 @@ int compare_ints(int *a, int *b) {
 
   return 0;
 }
-void array_int_sort(array_int *a) { array_sort_with_compare(a, compare_ints); }
+void array_int_sort(array_int *a) {
+
+  array_sort_with_compare(
+      a, &/*112 EXP:"void*" GOT:"fn (int*,int*) int" */ compare_ints);
+}
 int vstrlen(byte *s) { return strlen(((char *)(s))); }
 void todo() {}
 string tos(byte *s, int len) {
@@ -2875,15 +2879,20 @@ int compare_lower_strings(string *a, string *b) {
 }
 void array_string_sort(array_string *s) {
 
-  array_sort_with_compare(s, compare_strings);
+  array_sort_with_compare(
+      s, &/*112 EXP:"void*" GOT:"fn (string*,string*) int" */ compare_strings);
 }
 void array_string_sort_ignore_case(array_string *s) {
 
-  array_sort_with_compare(s, compare_lower_strings);
+  array_sort_with_compare(s,
+                          &/*112 EXP:"void*" GOT:"fn (string*,string*) int" */
+                          compare_lower_strings);
 }
 void array_string_sort_by_len(array_string *s) {
 
-  array_sort_with_compare(s, compare_strings_by_len);
+  array_sort_with_compare(s,
+                          &/*112 EXP:"void*" GOT:"fn (string*,string*) int" */
+                          compare_strings_by_len);
 }
 ustring string_ustring(string s) {
 
