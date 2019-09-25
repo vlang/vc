@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "746655c"
+#define V_COMMIT_HASH "8974aa4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ab52b45"
+#define V_COMMIT_HASH "746655c"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1734,7 +1734,8 @@ array new_array(int mylen, int cap, int elm_size) {
 
   int a = 3;
 
-  int _ = a;
+  a;
+  ;
 
   array arr = (array){.len = mylen,
                       .cap = cap,
@@ -6503,7 +6504,7 @@ string vweb_dot_tmpl__compile_template(string path) {
       &/* ? */ s,
       _STR("module main import strings fn %.*s_view() string {   // this line "
            "will get removed becase only function body is embedded \nmut sb := "
-           "strings.new_builder(%d)\nheader := \'%.*s\' \n_ := header "
+           "strings.new_builder(%d)\nheader := \'%.*s\' \n_ = header "
            "\n//footer := \'footer\' \n",
            base.len, base.str, lines.len * 30, header.len, header.str));
 
@@ -8762,8 +8763,7 @@ bool Parser_known_var(Parser *p, string name) {
     string err = tmp23.error;
 
     return 0;
-  }
-  Var _ = *(Var *)tmp23.data;
+  };
   ;
 
   return 1;
@@ -16015,6 +16015,11 @@ void Parser_var_decl(Parser *p) {
 
     if (string_eq(name, tos2((byte *)"_"))) {
 
+      if (names.len == 1) {
+
+        Parser_error(p, tos2((byte *)"no new variables on left side of :="));
+      };
+
       continue;
     };
 
@@ -22604,8 +22609,7 @@ bool Table_known_fn(Table *t, string name) {
     string err = tmp24.error;
 
     return 0;
-  }
-  Fn _ = *(Fn *)tmp24.data;
+  };
   ;
 
   return 1;
@@ -22617,8 +22621,7 @@ bool Table_known_const(Table *t, string name) {
     string err = tmp25.error;
 
     return 0;
-  }
-  Var _ = *(Var *)tmp25.data;
+  };
   ;
 
   return 1;
@@ -22749,8 +22752,7 @@ bool Type_has_field(Type *t, string name) {
     string err = tmp31.error;
 
     return 0;
-  }
-  Var _ = *(Var *)tmp31.data;
+  };
   ;
 
   return 1;
@@ -22781,8 +22783,7 @@ bool Table_type_has_field(Table *table, Type *typ, string name) {
     string err = tmp35.error;
 
     return 0;
-  }
-  Var _ = *(Var *)tmp35.data;
+  };
   ;
 
   return 1;
@@ -22859,8 +22860,7 @@ bool Type_has_method(Type *t, string name) {
     string err = tmp47.error;
 
     return 0;
-  }
-  Fn _ = *(Fn *)tmp47.data;
+  };
   ;
 
   return 1;
@@ -22872,8 +22872,7 @@ bool Table_type_has_method(Table *table, Type *typ, string name) {
     string err = tmp48.error;
 
     return 0;
-  }
-  Fn _ = *(Fn *)tmp48.data;
+  };
   ;
 
   return 1;
