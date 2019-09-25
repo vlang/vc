@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3fbfc5f"
+#define V_COMMIT_HASH "4c898ab"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d4bae35"
+#define V_COMMIT_HASH "3fbfc5f"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -4481,12 +4481,7 @@ string strings__repeat(byte c, int n) {
   };
 
   array_byte arr = array_repeat(
-      new_array_from_c_array(1, 1, sizeof(byte), (byte[]){((byte)(0))}), n + 1);
-
-  for (int i = 0; i < n; i++) {
-
-    array_set(&/*q*/ arr, i, &(byte[]){c});
-  };
+      new_array_from_c_array(1, 1, sizeof(byte), (byte[]){c}), n + 1);
 
   array_set(&/*q*/ arr, n, &(byte[]){'\0'});
 
