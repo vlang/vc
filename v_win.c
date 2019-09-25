@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ab52b45"
+#define V_COMMIT_HASH "746655c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "55d09d2"
+#define V_COMMIT_HASH "ab52b45"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1155,6 +1155,7 @@ string Fn_str_args(Fn *f, Table *table);
 string Parser_find_misspelled_local_var(Parser *p, string name, f32 min_match);
 string Parser_gen_var_decl(Parser *p, string name, bool is_static);
 void Parser_gen_fn_decl(Parser *p, Fn f, string typ, string str_args);
+void Parser_gen_blank_identifier_assign(Parser *p);
 string types_to_c(array_Type types, Table *table);
 void Parser_index_get(Parser *p, string typ, int fn_ph, IndexCfg cfg);
 string Table_fn_gen_name(Table *table, Fn *f);
@@ -10708,13 +10709,71 @@ void Parser_gen_fn_decl(Parser *p, Fn f, string typ, string str_args) {
                     dll_export_linkage.str, typ.len, typ.str, fn_name_cgen.len,
                     fn_name_cgen.str, str_args.len, str_args.str));
 }
+void Parser_gen_blank_identifier_assign(Parser *p) {
+
+  Parser_next(p);
+
+  Parser_check(p, main__Token_assign);
+
+  int pos = CGen_add_placeholder(&/* ? */ *p->cgen);
+
+  string typ = Parser_bool_expression(p);
+
+  string tmp = Parser_get_tmp(p);
+
+  if (p->tok == main__Token_key_orelse) {
+
+    CGen_set_placeholder(
+        p->cgen, pos, _STR("%.*s %.*s = ", typ.len, typ.str, tmp.len, tmp.str));
+
+    Parser_genln(p, tos2((byte *)";"));
+
+    typ = string_replace(typ, tos2((byte *)"Option_"), tos2((byte *)""));
+
+    Parser_next(p);
+
+    Parser_check(p, main__Token_lcbr);
+
+    Parser_genln(p, _STR("if (!%.*s .ok) {", tmp.len, tmp.str));
+
+    Parser_register_var(p, (Var){.name = tos2((byte *)"err"),
+                                 .typ = tos2((byte *)"string"),
+                                 .is_mut = 0,
+                                 .is_used = 1,
+                                 .idx = 0,
+                                 .is_arg = 0,
+                                 .is_const = 0,
+                                 .args = new_array(0, 1, sizeof(Var)),
+                                 .attr = tos((byte *)"", 0),
+                                 .is_alloc = 0,
+                                 .is_returned = 0,
+                                 .ptr = 0,
+                                 .ref = 0,
+                                 .parent_fn = tos((byte *)"", 0),
+                                 .mod = tos((byte *)"", 0),
+                                 .is_global = 0,
+                                 .is_changed = 0,
+                                 .scope_level = 0,
+                                 .is_c = 0,
+                                 .moved = 0,
+                                 .line_nr = 0});
+
+    Parser_genln(p, _STR("string err = %.*s . error;", tmp.len, tmp.str));
+
+    Parser_statements(p);
+
+    p->returns = 0;
+  };
+
+  Parser_gen(p, tos2((byte *)";"));
+}
 string types_to_c(array_Type types, Table *table) {
 
   strings__Builder sb = strings__new_builder(10);
 
-  array_Type tmp10 = types;
-  for (int tmp11 = 0; tmp11 < tmp10.len; tmp11++) {
-    Type t = ((Type *)tmp10.data)[tmp11];
+  array_Type tmp13 = types;
+  for (int tmp14 = 0; tmp14 < tmp13.len; tmp14++) {
+    Type t = ((Type *)tmp13.data)[tmp14];
 
     if (t.cat != main__TypeCategory_union_ &&
         t.cat != main__TypeCategory_struct_ &&
@@ -10740,9 +10799,9 @@ string types_to_c(array_Type types, Table *table) {
           _STR("%.*s %.*s {", kind.len, kind.str, t.name.len, t.name.str));
     };
 
-    array_Var tmp13 = t.fields;
-    for (int tmp14 = 0; tmp14 < tmp13.len; tmp14++) {
-      Var field = ((Var *)tmp13.data)[tmp14];
+    array_Var tmp16 = t.fields;
+    for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
+      Var field = ((Var *)tmp16.data)[tmp17];
 
       strings__Builder_write(&/* ? */ sb, tos2((byte *)"\t"));
 
@@ -10863,10 +10922,10 @@ string Table_fn_gen_name(Table *table, Fn *f) {
       !string_ends_with(name, tos2((byte *)"_str")) &&
       !string_contains(name, tos2((byte *)"contains"))) {
 
-    int tmp20 = 0;
-    bool tmp21 = map_get(table->obf_ids, name, &tmp20);
+    int tmp23 = 0;
+    bool tmp24 = map_get(table->obf_ids, name, &tmp23);
 
-    int idx = tmp20;
+    int idx = tmp23;
 
     if (idx == 0) {
 
@@ -15776,6 +15835,11 @@ string Parser_statement(Parser *p, bool add_semi) {
 
       Parser_var_decl(p);
 
+    } else if (string_eq(p->lit, tos2((byte *)"_")) &&
+               Parser_peek(p) == main__Token_assign) {
+
+      Parser_gen_blank_identifier_assign(p);
+
     } else {
 
       if (string_eq(p->lit, tos2((byte *)"panic")) ||
@@ -16078,7 +16142,25 @@ void Parser_var_decl(Parser *p) {
   for (int i = 0; i < tmp132.len; i++) {
     string name = ((string *)tmp132.data)[i];
 
+    if (string_eq(name, tos2((byte *)"_"))) {
+
+      continue;
+    };
+
     string typ = (*(string *)array__get(types, i));
+
+    ScannerPos var_scanner_pos = Scanner_get_scanner_pos(&/* ? */ *p->scanner);
+
+    if (!p->builtin_mod && Parser_known_var(p, name)) {
+
+      Parser_error(p, _STR("redefinition of `%.*s`", name.len, name.str));
+    };
+
+    if (name.len > 1 && contains_capital(name)) {
+
+      Parser_error(p, tos2((byte *)"variable names cannot contain uppercase "
+                                   "letters, use snake_case instead"));
+    };
 
     if (names.len > 1) {
 
@@ -16096,19 +16178,6 @@ void Parser_var_decl(Parser *p) {
 
       Parser_gen(p, _STR("%.*s %.*s = %.*s.var_%d", typ.len, typ.str, name.len,
                          name.str, mr_var_name.len, mr_var_name.str, i));
-    };
-
-    ScannerPos var_scanner_pos = Scanner_get_scanner_pos(&/* ? */ *p->scanner);
-
-    if (!p->builtin_mod && Parser_known_var(p, name)) {
-
-      Parser_error(p, _STR("redefinition of `%.*s`", name.len, name.str));
-    };
-
-    if (name.len > 1 && contains_capital(name)) {
-
-      Parser_error(p, tos2((byte *)"variable names cannot contain uppercase "
-                                   "letters, use snake_case instead"));
     };
 
     Parser_register_var(
@@ -16438,6 +16507,11 @@ string Parser_name_expr(Parser *p) {
   };
 
   while (1) {
+
+    if (string_eq(name, tos2((byte *)"_"))) {
+
+      Parser_error(p, tos2((byte *)"cannot use `_` as value."));
+    };
 
     Option_Var tmp160 = Parser_find_var_check_new_var(&/* ? */ *p, name);
     if (!tmp160.ok) {
