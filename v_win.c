@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0fcdd7d"
+#define V_COMMIT_HASH "157ef46"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8992707"
+#define V_COMMIT_HASH "0fcdd7d"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -10857,9 +10857,9 @@ void Parser_gen_fn_decl(Parser *p, Fn f, string typ, string str_args) {
 }
 void Parser_gen_blank_identifier_assign(Parser *p) {
 
-  Parser_next(p);
+  Parser_check_name(p);
 
-  Parser_check(p, main__Token_assign);
+  Parser_check_space(p, main__Token_assign);
 
   int pos = CGen_add_placeholder(&/* ? */ *p->cgen);
 
