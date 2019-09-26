@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "74bbf59"
+#define V_COMMIT_HASH "367f8d6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fcf8f7f"
+#define V_COMMIT_HASH "74bbf59"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -7110,7 +7110,7 @@ void V_cc(V *v) {
   if (v->pref->build_mode != main__BuildMode_build_module &&
       (v->os == main__OS_linux || v->os == main__OS_freebsd ||
        v->os == main__OS_openbsd || v->os == main__OS_netbsd ||
-       v->os == main__OS_dragonfly)) {
+       v->os == main__OS_dragonfly || v->os == main__OS_solaris)) {
 
     _PUSH(&a,
           (/*typ = array_string   tmp_typ=string*/ tos2(
