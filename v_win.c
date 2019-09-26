@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fb4f14b"
+#define V_COMMIT_HASH "fcf8f7f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "22d9114"
+#define V_COMMIT_HASH "fb4f14b"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -45,6 +45,8 @@
 #define OPTION_CAST(x) (x)
 
 #ifdef _WIN32
+#define WINVER 0x0600
+#define _WIN32_WINNT 0x0600
 #define WIN32_LEAN_AND_MEAN
 #define _UNICODE
 #define UNICODE
@@ -5375,7 +5377,7 @@ string os__executable() {
 #endif
   ;
 
-  return tos2((byte *)".");
+  return (*(string *)array__get(os__args, 0));
 }
 bool os__is_dir(string path) {
 
@@ -5479,9 +5481,9 @@ array_string os__walk_ext(string path, string ext) {
   array_string res =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-  array_string tmp98 = files;
-  for (int i = 0; i < tmp98.len; i++) {
-    string file = ((string *)tmp98.data)[i];
+  array_string tmp100 = files;
+  for (int i = 0; i < tmp100.len; i++) {
+    string file = ((string *)tmp100.data)[i];
 
     if (string_starts_with(file, tos2((byte *)"."))) {
 
@@ -5494,11 +5496,11 @@ array_string os__walk_ext(string path, string ext) {
 
       _PUSH_MANY(&res,
                  (/*typ = array_string   tmp_typ=string*/ os__walk_ext(p, ext)),
-                 tmp100, array_string);
+                 tmp102, array_string);
 
     } else if (string_ends_with(file, ext)) {
 
-      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp101, string);
+      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp103, string);
     };
   };
 
@@ -8154,6 +8156,10 @@ string os_name_to_ifdef(string name) {
   } else if (string_eq(name, tos2((byte *)"js"))) { /* case */
 
     return tos2((byte *)"_VJS");
+
+  } else if (string_eq(name, tos2((byte *)"solaris"))) { /* case */
+
+    return tos2((byte *)"__sun");
   };
 
   verror(_STR("bad os ifdef name \"%.*s\"", name.len, name.str));
@@ -8181,6 +8187,10 @@ string platform_postfix_to_ifdefguard(string name) {
   } else if (string_eq(name, tos2((byte *)"_mac.v"))) { /* case */
 
     return tos2((byte *)"#ifdef __APPLE__");
+
+  } else if (string_eq(name, tos2((byte *)"_solaris.v"))) { /* case */
+
+    return tos2((byte *)"#ifdef __sun");
   };
 
   verror(_STR("bad platform_postfix \"%.*s\"", name.len, name.str));
@@ -24632,12 +24642,13 @@ void init_consts() {
   main__dot_ptr = tos2((byte *)"->");
   main__Version = tos2((byte *)"0.1.20");
   main__SupportedPlatforms = new_array_from_c_array(
-      10, 10, sizeof(string),
+      11, 11, sizeof(string),
       (string[]){tos2((byte *)"windows"), tos2((byte *)"mac"),
                  tos2((byte *)"linux"), tos2((byte *)"freebsd"),
                  tos2((byte *)"openbsd"), tos2((byte *)"netbsd"),
                  tos2((byte *)"dragonfly"), tos2((byte *)"msvc"),
-                 tos2((byte *)"android"), tos2((byte *)"js")});
+                 tos2((byte *)"android"), tos2((byte *)"js"),
+                 tos2((byte *)"solaris")});
   main__ModPath = string_add(os__home_dir(), tos2((byte *)"/.vmodules/"));
   main__HKEY_LOCAL_MACHINE = ((RegKey)(0x80000002));
   main__KEY_QUERY_VALUE = (0x0001);
