@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fcf8f7f"
+#define V_COMMIT_HASH "74bbf59"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fb4f14b"
+#define V_COMMIT_HASH "fcf8f7f"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1537,6 +1537,8 @@ string main__ModPath;
 #define main__OS_dragonfly 6
 #define main__OS_msvc 7
 #define main__OS_js 8
+#define main__OS_android 9
+#define main__OS_solaris 10
 #define main__Pass_imports 0
 #define main__Pass_decl 1
 #define main__Pass_main 2
@@ -5152,6 +5154,13 @@ string os__user_os() {
 #endif
   ;
 
+#ifdef __sun
+
+  return tos2((byte *)"solaris");
+
+#endif
+  ;
+
   return tos2((byte *)"unknown");
 }
 string os__home_dir() {
@@ -5303,6 +5312,11 @@ string os__executable() {
 #ifdef __OpenBSD__
 
   return (*(string *)array__get(os__args, 0));
+
+#endif
+  ;
+
+#ifdef __sun
 
 #endif
   ;
@@ -12933,6 +12947,13 @@ V *new_v(array_string args) {
 #endif
     ;
 
+#ifdef __sun
+
+    _os = main__OS_solaris;
+
+#endif
+    ;
+
   } else {
 
     if (string_eq(target_os, tos2((byte *)"linux"))) { /* case */
@@ -12970,6 +12991,10 @@ V *new_v(array_string args) {
     } else if (string_eq(target_os, tos2((byte *)"js"))) { /* case */
 
       _os = main__OS_js;
+
+    } else if (string_eq(target_os, tos2((byte *)"solaris"))) { /* case */
+
+      _os = main__OS_solaris;
     };
   };
 
