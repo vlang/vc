@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "22d9114"
+#define V_COMMIT_HASH "fb4f14b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "47da52b"
+#define V_COMMIT_HASH "22d9114"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -765,6 +765,7 @@ string string_limit(string s, int max);
 bool byte_is_white(byte c);
 int string_hash(string s);
 array_byte string_bytes(string s);
+string string_repeat(string s, int count);
 void v_exit(int code);
 bool isnil(void *v);
 void on_panic(int (*f)(int /*FFF*/));
@@ -3291,6 +3292,26 @@ array_byte string_bytes(string s) {
   memcpy(buf.data, (char *)s.str, s.len);
 
   return buf;
+}
+string string_repeat(string s, int count) {
+
+  if (count <= 1) {
+
+    return s;
+  };
+
+  byte *ret = v_malloc(s.len * count + count);
+
+  strcpy((char *)ret, (char *)s.str);
+
+  while (count > 1) {
+
+    strcat((char *)ret, (char *)s.str);
+
+    count--;
+  };
+
+  return (tos2((byte *)ret));
 }
 void v_exit(int code) { exit(code); }
 bool isnil(void *v) { return v == 0; }
@@ -24420,9 +24441,10 @@ void init_consts() {
             "EMPTY_STRUCT_INITIALIZATION 0\n#ifdef __TINYC__\n#undef "
             "EMPTY_STRUCT_INITIALIZATION\n#define "
             "EMPTY_STRUCT_INITIALIZATION\n#endif\n\n#define OPTION_CAST(x) "
-            "(x)\n\n#ifdef _WIN32\n#define WIN32_LEAN_AND_MEAN\n#define "
-            "_UNICODE\n#define UNICODE\n#include <windows.h>\n\n// must be "
-            "included after <windows.h>\n#ifndef __TINYC__\n#include "
+            "(x)\n\n#ifdef _WIN32\n#define WINVER 0x0600\n#define _WIN32_WINNT "
+            "0x0600\n#define WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define "
+            "UNICODE\n#include <windows.h>\n\n// must be included after "
+            "<windows.h>\n#ifndef __TINYC__\n#include "
             "<shellapi.h>\n#endif\n\n#include <io.h> // _waccess\n#include "
             "<fcntl.h> // _O_U8TEXT\n#include <direct.h> // "
             "_wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n// On MSVC "
