@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ad99b82"
+#define V_COMMIT_HASH "931b71c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8cbfd7a"
+#define V_COMMIT_HASH "ad99b82"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -3454,15 +3454,14 @@ string string_repeat(string s, int count) {
     return s;
   };
 
-  byte *ret = v_malloc(s.len * count + count);
+  byte *ret = v_malloc(s.len * count + 1);
 
-  strcpy((char *)ret, (char *)s.str);
-
-  while (count > 1) {
+  int tmp152 = 0;
+  ;
+  for (int tmp153 = tmp152; tmp153 < count; tmp153++) {
+    int _ = tmp153;
 
     strcat((char *)ret, (char *)s.str);
-
-    count--;
   };
 
   return (tos2((byte *)ret));
