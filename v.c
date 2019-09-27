@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1821dac"
+#define V_COMMIT_HASH "a5391c8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7c83c05"
+#define V_COMMIT_HASH "1821dac"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -3424,9 +3424,15 @@ string string_repeat(string s, int count) {
   int tmp152 = 0;
   ;
   for (int tmp153 = tmp152; tmp153 < count; tmp153++) {
-    int _ = tmp153;
+    int i = tmp153;
 
-    strcat((char *)ret, (char *)s.str);
+    int tmp154 = 0;
+    ;
+    for (int tmp155 = tmp154; tmp155 < s.len; tmp155++) {
+      int j = tmp155;
+
+      ret[/*ptr*/ i * s.len + j] /*rbyte 1*/ = s.str[j] /*rbyte 0*/;
+    };
   };
 
   return (tos2((byte *)ret));
