@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7c83c05"
+#define V_COMMIT_HASH "1821dac"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "dd58298"
+#define V_COMMIT_HASH "7c83c05"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -10569,8 +10569,6 @@ void Parser_fn_decl(Parser *p) {
 
       int closed_scopes = 0;
 
-      int temp_scanner_pos = 0;
-
       while (1) {
 
         if (p->tok == main__Token_lcbr) {
@@ -10581,31 +10579,6 @@ void Parser_fn_decl(Parser *p) {
         if (p->tok == main__Token_rcbr) {
 
           closed_scopes++;
-        };
-
-        if (p->tok == main__Token_gt && p->prev_tok == main__Token_name &&
-            p->prev_tok2 == main__Token_lt &&
-            string_at(p->scanner->text, p->scanner->pos - 1) != 'T') {
-
-          temp_scanner_pos = p->scanner->pos;
-
-          p->scanner->pos -= 3;
-
-          while (p->scanner->pos > 0 &&
-                 (is_name_char(string_at(p->scanner->text, p->scanner->pos)) ||
-                  string_at(p->scanner->text, p->scanner->pos) == '.' ||
-                  string_at(p->scanner->text, p->scanner->pos) == '<')) {
-
-            p->scanner->pos--;
-          };
-
-          p->scanner->pos--;
-
-          Parser_next(p);
-
-          Parser_name_expr(p);
-
-          p->scanner->pos = temp_scanner_pos;
         };
 
         if (Token_is_decl(p->tok)) {
@@ -10629,7 +10602,7 @@ void Parser_fn_decl(Parser *p) {
         string_eq(p->mod, tos2((byte *)"main"))) {
 
       _PUSH(&p->cgen->so_fns,
-            (/*typ = array_string   tmp_typ=string*/ fn_name_cgen), tmp73,
+            (/*typ = array_string   tmp_typ=string*/ fn_name_cgen), tmp64,
             string);
 
       fn_name_cgen = _STR("(* %.*s )", fn_name_cgen.len, fn_name_cgen.str);
@@ -10657,7 +10630,7 @@ void Parser_fn_decl(Parser *p) {
       _PUSH(&p->cgen->fns,
             (/*typ = array_string   tmp_typ=string*/ string_add(
                 fn_decl, tos2((byte *)";"))),
-            tmp75, string);
+            tmp66, string);
     };
 
     return;
@@ -10811,9 +10784,9 @@ void Parser_fn_decl(Parser *p) {
 }
 void Parser_check_unused_variables(Parser *p) {
 
-  array_Var tmp82 = p->local_vars;
-  for (int tmp83 = 0; tmp83 < tmp82.len; tmp83++) {
-    Var var = ((Var *)tmp82.data)[tmp83];
+  array_Var tmp73 = p->local_vars;
+  for (int tmp74 = 0; tmp74 < tmp73.len; tmp74++) {
+    Var var = ((Var *)tmp73.data)[tmp74];
 
     if (string_eq(var.name, tos2((byte *)""))) {
 
@@ -10875,9 +10848,9 @@ void Parser_async_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
 
   bool did_gen_something = 0;
 
-  array_Var tmp91 = f.args;
-  for (int i = 0; i < tmp91.len; i++) {
-    Var arg = ((Var *)tmp91.data)[i];
+  array_Var tmp82 = f.args;
+  for (int i = 0; i < tmp82.len; i++) {
+    Var arg = ((Var *)tmp82.data)[i];
 
     arg_struct =
         string_add(arg_struct, _STR("%.*s %.*s ;", arg.typ.len, arg.typ.str,
@@ -11099,7 +11072,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
                         .is_moved = 0,
                         .line_nr = 0};
 
-    _PUSH(&f->args, (/*typ = array_Var   tmp_typ=Var*/ int_arg), tmp101, Var);
+    _PUSH(&f->args, (/*typ = array_Var   tmp_typ=Var*/ int_arg), tmp92, Var);
   };
 
   bool types_only = p->tok == main__Token_mul || p->tok == main__Token_amp ||
@@ -11140,7 +11113,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
           .is_moved = 0,
       };
 
-      _PUSH(&f->args, (/*typ = array_Var   tmp_typ=Var*/ v), tmp105, Var);
+      _PUSH(&f->args, (/*typ = array_Var   tmp_typ=Var*/ v), tmp96, Var);
 
       if (p->tok == main__Token_comma) {
 
@@ -11162,7 +11135,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
 
       _PUSH(&names,
             (/*typ = array_string   tmp_typ=string*/ Parser_check_name(p)),
-            tmp107, string);
+            tmp98, string);
     };
 
     Parser_fspace(p);
@@ -11187,9 +11160,9 @@ void Parser_fn_args(Parser *p, Fn *f) {
                                            "mut int)` => `foo(n int) int`")));
     };
 
-    array_string tmp110 = names;
-    for (int tmp111 = 0; tmp111 < tmp110.len; tmp111++) {
-      string name = ((string *)tmp110.data)[tmp111];
+    array_string tmp101 = names;
+    for (int tmp102 = 0; tmp102 < tmp101.len; tmp102++) {
+      string name = ((string *)tmp101.data)[tmp102];
 
       if (!Parser_first_pass(&/* ? */ *p) &&
           !Table_known_type(&/* ? */ *p->table, typ)) {
@@ -11229,7 +11202,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
 
       Parser_register_var(p, v);
 
-      _PUSH(&f->args, (/*typ = array_Var   tmp_typ=Var*/ v), tmp113, Var);
+      _PUSH(&f->args, (/*typ = array_Var   tmp_typ=Var*/ v), tmp104, Var);
     };
 
     if (p->tok == main__Token_comma) {
@@ -11262,7 +11235,7 @@ void Parser_fn_args(Parser *p, Fn *f) {
                 .is_c = 0,
                 .is_moved = 0,
                 .line_nr = 0}),
-            tmp114, Var);
+            tmp105, Var);
 
       Parser_next(p);
     };
@@ -11325,9 +11298,9 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
                             fn_name.str)));
   };
 
-  array_Var tmp120 = f->args;
-  for (int i = 0; i < tmp120.len; i++) {
-    Var arg = ((Var *)tmp120.data)[i];
+  array_Var tmp111 = f->args;
+  for (int i = 0; i < tmp111.len; i++) {
+    Var arg = ((Var *)tmp111.data)[i];
 
     if (i == 0 && f->is_method) {
 
@@ -11389,9 +11362,9 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
       string var_name = p->lit;
 
-      Option_Var tmp125 = Parser_find_var(&/* ? */ *p, var_name);
-      if (!tmp125.ok) {
-        string err = tmp125.error;
+      Option_Var tmp116 = Parser_find_var(&/* ? */ *p, var_name);
+      if (!tmp116.ok) {
+        string err = tmp116.error;
 
         Parser_error(
             p, _STR("`%.*s` is a mutable argument, you need to provide a "
@@ -11400,7 +11373,7 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
         v_exit(1);
       }
-      Var v = *(Var *)tmp125.data;
+      Var v = *(Var *)tmp116.data;
       ;
 
       if (!v.is_changed) {
@@ -11611,9 +11584,9 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
       Type interface_type = Table_find_type(&/* ? */ *p->table, arg.typ);
 
-      array_Fn tmp137 = interface_type.methods;
-      for (int tmp138 = 0; tmp138 < tmp137.len; tmp138++) {
-        Fn method = ((Fn *)tmp137.data)[tmp138];
+      array_Fn tmp128 = interface_type.methods;
+      for (int tmp129 = 0; tmp129 < tmp128.len; tmp129++) {
+        Fn method = ((Fn *)tmp128.data)[tmp129];
 
         Parser_gen(p, _STR(", %.*s_%.*s ", typ.len, typ.str, method.name.len,
                            method.name.str));
@@ -11685,9 +11658,9 @@ string Fn_typ_str(Fn f) {
 
   strings__Builder_write(&/* ? */ sb, tos2((byte *)"fn ("));
 
-  array_Var tmp144 = f.args;
-  for (int i = 0; i < tmp144.len; i++) {
-    Var arg = ((Var *)tmp144.data)[i];
+  array_Var tmp135 = f.args;
+  for (int i = 0; i < tmp135.len; i++) {
+    Var arg = ((Var *)tmp135.data)[i];
 
     strings__Builder_write(&/* ? */ sb, arg.typ);
 
@@ -11710,9 +11683,9 @@ string Fn_str_args(Fn *f, Table *table) {
 
   string s = tos2((byte *)"");
 
-  array_Var tmp146 = f->args;
-  for (int i = 0; i < tmp146.len; i++) {
-    Var arg = ((Var *)tmp146.data)[i];
+  array_Var tmp137 = f->args;
+  for (int i = 0; i < tmp137.len; i++) {
+    Var arg = ((Var *)tmp137.data)[i];
 
     if (Table_is_interface(&/* ? */ *table, arg.typ)) {
 
@@ -11720,9 +11693,9 @@ string Fn_str_args(Fn *f, Table *table) {
 
       Type interface_type = Table_find_type(&/* ? */ *table, arg.typ);
 
-      array_Fn tmp148 = interface_type.methods;
-      for (int tmp149 = 0; tmp149 < tmp148.len; tmp149++) {
-        Fn method = ((Fn *)tmp148.data)[tmp149];
+      array_Fn tmp139 = interface_type.methods;
+      for (int tmp140 = 0; tmp140 < tmp139.len; tmp140++) {
+        Fn method = ((Fn *)tmp139.data)[tmp140];
 
         s = string_add(s, _STR(", %.*s (*%.*s_%.*s)(void*", method.typ.len,
                                method.typ.str, arg.typ.len, arg.typ.str,
@@ -11730,9 +11703,9 @@ string Fn_str_args(Fn *f, Table *table) {
 
         if (method.args.len > 1) {
 
-          array_Var tmp150 = array_right(method.args, 1);
-          for (int tmp151 = 0; tmp151 < tmp150.len; tmp151++) {
-            Var a = ((Var *)tmp150.data)[tmp151];
+          array_Var tmp141 = array_right(method.args, 1);
+          for (int tmp142 = 0; tmp142 < tmp141.len; tmp142++) {
+            Var a = ((Var *)tmp141.data)[tmp142];
 
             s = string_add(s, _STR(", %.*s", a.typ.len, a.typ.str));
           };
@@ -11765,9 +11738,9 @@ string Parser_find_misspelled_local_var(Parser *p, string name, f32 min_match) {
 
   string closest_var = tos2((byte *)"");
 
-  array_Var tmp154 = p->local_vars;
-  for (int tmp155 = 0; tmp155 < tmp154.len; tmp155++) {
-    Var var = ((Var *)tmp154.data)[tmp155];
+  array_Var tmp145 = p->local_vars;
+  for (int tmp146 = 0; tmp146 < tmp145.len; tmp146++) {
+    Var var = ((Var *)tmp145.data)[tmp146];
 
     if (var.scope_level > p->cur_fn.scope_level) {
 
@@ -14486,6 +14459,11 @@ void V_test_v(V *v) {
   for (int tmp142 = 0; tmp142 < tmp141.len; tmp142++) {
     string dot_relative_file = ((string *)tmp141.data)[tmp142];
 
+    if (string_contains(dot_relative_file, tos2((byte *)"repl_test.v"))) {
+
+      continue;
+    };
+
     string relative_file =
         string_replace(dot_relative_file, tos2((byte *)"./"), tos2((byte *)""));
 
@@ -14559,6 +14537,11 @@ void V_test_v(V *v) {
   array_string tmp150 = examples;
   for (int tmp151 = 0; tmp151 < tmp150.len; tmp151++) {
     string relative_file = ((string *)tmp150.data)[tmp151];
+
+    if (string_contains(relative_file, tos2((byte *)"vweb"))) {
+
+      continue;
+    };
 
     string file = os__realpath(relative_file);
 
@@ -23127,6 +23110,8 @@ ScanRes Scanner_scan(Scanner *s) {
     };
 
   } else if (c == '\n') { /* case */
+
+    s->last_nl_pos = s->pos;
 
     return scan_res(main__Token_nl, tos2((byte *)""));
 
