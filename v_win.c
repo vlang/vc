@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8cbfd7a"
+#define V_COMMIT_HASH "ad99b82"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8f9c0b6"
+#define V_COMMIT_HASH "8cbfd7a"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -164,6 +164,9 @@ typedef struct os__win32finddata os__win32finddata;
 typedef Option Option_string;
 typedef struct rand__Pcg32 rand__Pcg32;
 typedef struct rand__Splitmix64 rand__Splitmix64;
+typedef struct crypto_dot_sha1__Digest crypto_dot_sha1__Digest;
+typedef array array_u32;
+typedef Option Option_int;
 typedef struct time__Time time__Time;
 typedef Option Option_int;
 typedef struct benchmark__Benchmark benchmark__Benchmark;
@@ -223,6 +226,7 @@ typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__Result;
 typedef Option Option_string;
+typedef Option Option_int;
 typedef Option Option_int;
 typedef map map_DepGraphNode;
 typedef map map_DepSet;
@@ -439,22 +443,6 @@ struct ScannerPos {
   int line_nr;
 };
 
-struct V {
-  OS os;
-  string out_name_c;
-  array_string files;
-  string dir;
-  Table *table;
-  CGen *cgen;
-  Preferences *pref;
-  string lang_dir;
-  string out_name;
-  string vroot;
-  string mod;
-  array_Parser parsers;
-  os__File vgen_file;
-};
-
 struct Table {
   map_Type typesmap;
   array_Var consts;
@@ -486,6 +474,13 @@ struct benchmark__Benchmark {
   int nok;
   int nfail;
   bool verbose;
+};
+
+struct crypto_dot_sha1__Digest {
+  array_u32 h;
+  array_byte x;
+  int nx;
+  u64 len;
 };
 
 struct mapnode {
@@ -562,6 +557,22 @@ struct Scanner {
   byte quote;
 };
 
+struct V {
+  OS os;
+  string out_name_c;
+  array_string files;
+  string dir;
+  Table *table;
+  CGen *cgen;
+  Preferences *pref;
+  string lang_dir;
+  string out_name;
+  string vroot;
+  string mod;
+  array_Parser parsers;
+  strings__Builder vgen_buf;
+};
+
 struct Type {
   string mod;
   string name;
@@ -620,6 +631,7 @@ struct os__win32finddata {
 };
 
 struct Parser {
+  string id;
   string file_path;
   string file_name;
   string file_platform;
@@ -866,6 +878,24 @@ string map_string_str(map_string m);
 Option opt_ok(void *data, int size);
 Option opt_none();
 Option v_error(string s);
+static inline u16 encoding_dot_binary__little_endian_endian_u16(array_byte b);
+static inline void encoding_dot_binary__little_endian_put_u16(array_byte *b,
+                                                              u16 v);
+static inline u32 encoding_dot_binary__little_endian_u32(array_byte b);
+static inline void encoding_dot_binary__little_endian_put_u32(array_byte *b,
+                                                              u32 v);
+static inline u64 encoding_dot_binary__little_endian_u64(array_byte b);
+static inline void encoding_dot_binary__little_endian_put_u64(array_byte *b,
+                                                              u64 v);
+static inline u16 encoding_dot_binary__big_endian_u16(array_byte b);
+static inline void encoding_dot_binary__big_endian_put_u16(array_byte *b,
+                                                           u16 v);
+static inline u32 encoding_dot_binary__big_endian_u32(array_byte b);
+static inline void encoding_dot_binary__big_endian_put_u32(array_byte *b,
+                                                           u32 v);
+static inline u64 encoding_dot_binary__big_endian_u64(array_byte b);
+static inline void encoding_dot_binary__big_endian_put_u64(array_byte *b,
+                                                           u64 v);
 strings__Builder strings__new_builder(int initial_size);
 void strings__Builder_write(strings__Builder *b, string s);
 void strings__Builder_writeln(strings__Builder *b, string s);
@@ -975,6 +1005,33 @@ f64 math__sqrt(f64 a);
 f64 math__tan(f64 a);
 f64 math__tanh(f64 a);
 f64 math__trunc(f64 a);
+int math_dot_bits__leading_zeros8(byte x);
+int math_dot_bits__leading_zeros16(u16 x);
+int math_dot_bits__leading_zeros32(u32 x);
+int math_dot_bits__leading_zeros64(u64 x);
+int math_dot_bits__trailing_zeros8(byte x);
+int math_dot_bits__trailing_zeros16(u16 x);
+int math_dot_bits__trailing_zeros32(u32 x);
+int math_dot_bits__trailing_zeros64(u64 x);
+int math_dot_bits__ones_count8(byte x);
+int math_dot_bits__ones_count16(u16 x);
+int math_dot_bits__ones_count32(u32 x);
+int math_dot_bits__ones_count64(u64 x);
+static inline byte math_dot_bits__rotate_left_8(byte x, int k);
+static inline u16 math_dot_bits__rotate_left_16(u16 x, int k);
+static inline u32 math_dot_bits__rotate_left_32(u32 x, int k);
+static inline u64 math_dot_bits__rotate_left_64(u64 x, int k);
+static inline byte math_dot_bits__reverse8(byte x);
+static inline u16 math_dot_bits__reverse16(u16 x);
+static inline u32 math_dot_bits__reverse32(u32 x);
+static inline u64 math_dot_bits__reverse64(u64 x);
+static inline u16 math_dot_bits__reverse_bytes16(u16 x);
+static inline u32 math_dot_bits__reverse_bytes32(u32 x);
+static inline u64 math_dot_bits__reverse_bytes64(u64 x);
+int math_dot_bits__len8(byte x);
+int math_dot_bits__len16(u16 x);
+int math_dot_bits__len32(u32 x);
+int math_dot_bits__len64(u64 x);
 rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq);
 static inline u32 rand__Pcg32_next(rand__Pcg32 *rng);
 static inline u32 rand__Pcg32_bounded_next(rand__Pcg32 *rng, u32 bound);
@@ -1053,6 +1110,20 @@ void term__erase_line_tobeg();
 void term__erase_line_clear();
 void term__show_cursor();
 void term__hide_cursor();
+void crypto_dot_sha1__Digest_reset(crypto_dot_sha1__Digest *d);
+crypto_dot_sha1__Digest *crypto_dot_sha1__new();
+Option_int crypto_dot_sha1__Digest_write(crypto_dot_sha1__Digest *d,
+                                         array_byte p_);
+array_byte crypto_dot_sha1__Digest_sum(crypto_dot_sha1__Digest *d,
+                                       array_byte *b_in);
+array_byte crypto_dot_sha1__Digest_checksum(crypto_dot_sha1__Digest *d);
+array_byte crypto_dot_sha1__sum(array_byte data);
+void crypto_dot_sha1__block(crypto_dot_sha1__Digest *dig, array_byte p);
+int crypto_dot_sha1__Digest_size(crypto_dot_sha1__Digest *d);
+int crypto_dot_sha1__Digest_block_size(crypto_dot_sha1__Digest *d);
+string crypto_dot_sha1__hexhash(string s);
+void crypto_dot_sha1__block_generic(crypto_dot_sha1__Digest *dig,
+                                    array_byte p_);
 void time__remove_me_when_c_bug_is_fixed();
 time__Time time__now();
 time__Time time__random();
@@ -1239,7 +1310,11 @@ Option_MsvcResult find_msvc();
 void V_cc_msvc(V *v);
 void build_thirdparty_obj_file_with_msvc(string path, array_CFlag moduleflags);
 MsvcStringFlags array_CFlag_msvc_string_flags(array_CFlag cflags);
-Parser V_new_parser(V *v, string path);
+Parser V_new_parser_string(V *v, string text);
+Parser V_new_parser_string_id(V *v, string text, string id);
+Parser V_new_parser_file(V *v, string path);
+Parser V_new_parser(V *v, Scanner *scanner, string id);
+void Parser_scan_tokens(Parser *p);
 void Parser_set_current_fn(Parser *p, Fn f);
 void Parser_next(Parser *p);
 Token Parser_peek(Parser *p);
@@ -1320,7 +1395,8 @@ bool Repl_checks(Repl *r, string line);
 bool Repl_function_call(Repl *r, string line);
 void repl_help();
 array_string run_repl();
-Scanner *new_scanner(string file_path);
+Scanner *new_scanner_file(string file_path);
+Scanner *new_scanner(string text);
 string ScannerPos_str(ScannerPos s);
 ScannerPos Scanner_get_scanner_pos(Scanner *s);
 void Scanner_goto_scanner_position(Scanner *s, ScannerPos scp);
@@ -1404,7 +1480,7 @@ void Table_register_generic_fn_type(Table *t, string fn_name, string typ);
 string Parser_typ_to_fmt(Parser *p, string typ, int level);
 bool is_compile_time_const(string s_);
 string Table_qualify_module(Table *table, string mod, string file_path);
-FileImportTable Table_get_file_import_table(Table *table, string file_path);
+FileImportTable Table_get_file_import_table(Table *table, string id);
 FileImportTable new_file_import_table(string file_path);
 bool FileImportTable_known_import(FileImportTable *fit, string mod);
 void FileImportTable_register_import(FileImportTable *fit, string mod);
@@ -1553,6 +1629,31 @@ int math__MinI32;
 #define math__MaxU16 65535
 #define math__MaxU32 4294967295
 #define math__MaxU64 18446744073709551615
+u32 math_dot_bits__de_bruijn32;
+array_byte math_dot_bits__de_bruijn32tab;
+u64 math_dot_bits__de_bruijn64;
+array_byte math_dot_bits__de_bruijn64tab;
+u64 math_dot_bits__m0;
+u64 math_dot_bits__m1;
+u64 math_dot_bits__m2;
+u64 math_dot_bits__m3;
+u64 math_dot_bits__m4;
+array_byte math_dot_bits__ntz8_tab;
+array_byte math_dot_bits__pop8_tab;
+array_byte math_dot_bits__rev8_tab;
+array_byte math_dot_bits__len8_tab;
+#define crypto_dot_sha1__Size 20
+#define crypto_dot_sha1__BlockSize 64
+#define crypto_dot_sha1__Chunk 64
+int crypto_dot_sha1__Init0;
+int crypto_dot_sha1__Init1;
+int crypto_dot_sha1__Init2;
+int crypto_dot_sha1__Init3;
+int crypto_dot_sha1__Init4;
+int crypto_dot_sha1___K0;
+int crypto_dot_sha1___K1;
+int crypto_dot_sha1___K2;
+int crypto_dot_sha1___K3;
 array_int time__MonthDays;
 i64 time__absoluteZeroYear;
 #define time__secondsPerMinute 60
@@ -1595,7 +1696,6 @@ RegKey main__HKEY_LOCAL_MACHINE;
 int main__KEY_QUERY_VALUE;
 int main__KEY_WOW64_32KEY;
 int main__KEY_ENUMERATE_SUB_KEYS;
-string main__vgen_file_name;
 Fn main__EmptyFn;
 Fn main__MainFn;
 #define main__MaxModuleDepth 4
@@ -4385,6 +4485,162 @@ Option opt_none() {
   };
 }
 Option v_error(string s) { return (Option){.error = s, .ok = 0, .is_none = 0}; }
+static inline u16 encoding_dot_binary__little_endian_endian_u16(array_byte b) {
+
+  (*(byte *)array__get(b, 1));
+  ;
+
+  return ((u16)((*(byte *)array__get(b, 0)))) |
+         ((u16)(((u16)((*(byte *)array__get(b, 1)))) << ((u16)(8))));
+}
+static inline void encoding_dot_binary__little_endian_put_u16(array_byte *b,
+                                                              u16 v) {
+
+  (*(byte *)array__get(*b, 1));
+  ;
+
+  array_set(b, 0, &(byte[]){((byte)(v))});
+
+  array_set(b, 1, &(byte[]){((byte)(v >> ((u16)(8))))});
+}
+static inline u32 encoding_dot_binary__little_endian_u32(array_byte b) {
+
+  (*(byte *)array__get(b, 3));
+  ;
+
+  return ((u32)((*(byte *)array__get(b, 0)))) |
+         ((u32)(((u32)((*(byte *)array__get(b, 1)))) << ((u32)(8)))) |
+         ((u32)(((u32)((*(byte *)array__get(b, 2)))) << ((u32)(16)))) |
+         ((u32)(((u32)((*(byte *)array__get(b, 3)))) << ((u32)(24))));
+}
+static inline void encoding_dot_binary__little_endian_put_u32(array_byte *b,
+                                                              u32 v) {
+
+  (*(byte *)array__get(*b, 3));
+  ;
+
+  array_set(b, 0, &(byte[]){((byte)(v))});
+
+  array_set(b, 1, &(byte[]){((byte)(v >> ((u32)(8))))});
+
+  array_set(b, 2, &(byte[]){((byte)(v >> ((u32)(16))))});
+
+  array_set(b, 3, &(byte[]){((byte)(v >> ((u32)(24))))});
+}
+static inline u64 encoding_dot_binary__little_endian_u64(array_byte b) {
+
+  (*(byte *)array__get(b, 7));
+  ;
+
+  return ((u64)((*(byte *)array__get(b, 0)))) |
+         ((u64)(((u64)((*(byte *)array__get(b, 1)))) << ((u64)(8)))) |
+         ((u64)(((u64)((*(byte *)array__get(b, 2)))) << ((u64)(16)))) |
+         ((u64)(((u64)((*(byte *)array__get(b, 3)))) << ((u64)(24)))) |
+         ((u64)(((u64)((*(byte *)array__get(b, 4)))) << ((u64)(32)))) |
+         ((u64)(((u64)((*(byte *)array__get(b, 5)))) << ((u64)(40)))) |
+         ((u64)(((u64)((*(byte *)array__get(b, 6)))) << ((u64)(48)))) |
+         ((u64)(((u64)((*(byte *)array__get(b, 7)))) << ((u64)(56))));
+}
+static inline void encoding_dot_binary__little_endian_put_u64(array_byte *b,
+                                                              u64 v) {
+
+  (*(byte *)array__get(*b, 7));
+  ;
+
+  array_set(b, 0, &(byte[]){((byte)(v))});
+
+  array_set(b, 1, &(byte[]){((byte)(v >> ((u64)(8))))});
+
+  array_set(b, 2, &(byte[]){((byte)(v >> ((u64)(16))))});
+
+  array_set(b, 3, &(byte[]){((byte)(v >> ((u64)(24))))});
+
+  array_set(b, 4, &(byte[]){((byte)(v >> ((u64)(32))))});
+
+  array_set(b, 5, &(byte[]){((byte)(v >> ((u64)(40))))});
+
+  array_set(b, 6, &(byte[]){((byte)(v >> ((u64)(48))))});
+
+  array_set(b, 7, &(byte[]){((byte)(v >> ((u64)(56))))});
+}
+static inline u16 encoding_dot_binary__big_endian_u16(array_byte b) {
+
+  (*(byte *)array__get(b, 1));
+  ;
+
+  return ((u16)((*(byte *)array__get(b, 1)))) |
+         ((u16)(((u16)((*(byte *)array__get(b, 0)))) << ((u16)(8))));
+}
+static inline void encoding_dot_binary__big_endian_put_u16(array_byte *b,
+                                                           u16 v) {
+
+  (*(byte *)array__get(*b, 1));
+  ;
+
+  array_set(b, 0, &(byte[]){((byte)(v >> ((u16)(8))))});
+
+  array_set(b, 1, &(byte[]){((byte)(v))});
+}
+static inline u32 encoding_dot_binary__big_endian_u32(array_byte b) {
+
+  (*(byte *)array__get(b, 3));
+  ;
+
+  return ((u32)((*(byte *)array__get(b, 3)))) |
+         ((u32)(((u32)((*(byte *)array__get(b, 2)))) << ((u32)(8)))) |
+         ((u32)(((u32)((*(byte *)array__get(b, 1)))) << ((u32)(16)))) |
+         ((u32)(((u32)((*(byte *)array__get(b, 0)))) << ((u32)(24))));
+}
+static inline void encoding_dot_binary__big_endian_put_u32(array_byte *b,
+                                                           u32 v) {
+
+  (*(byte *)array__get(*b, 3));
+  ;
+
+  array_set(b, 0, &(byte[]){((byte)(v >> ((u32)(24))))});
+
+  array_set(b, 1, &(byte[]){((byte)(v >> ((u32)(16))))});
+
+  array_set(b, 2, &(byte[]){((byte)(v >> ((u32)(8))))});
+
+  array_set(b, 3, &(byte[]){((byte)(v))});
+}
+static inline u64 encoding_dot_binary__big_endian_u64(array_byte b) {
+
+  (*(byte *)array__get(b, 7));
+  ;
+
+  return ((u64)((*(byte *)array__get(b, 7)))) |
+         ((u64)(((u64)((*(byte *)array__get(b, 6)))) << ((u64)(8)))) |
+         ((u64)(((u64)((*(byte *)array__get(b, 5)))) << ((u64)(16)))) |
+         ((u64)(((u64)((*(byte *)array__get(b, 4)))) << ((u64)(24)))) |
+         ((u64)(((u64)((*(byte *)array__get(b, 3)))) << ((u64)(32)))) |
+         ((u64)(((u64)((*(byte *)array__get(b, 2)))) << ((u64)(40)))) |
+         ((u64)(((u64)((*(byte *)array__get(b, 1)))) << ((u64)(48)))) |
+         ((u64)(((u64)((*(byte *)array__get(b, 0)))) << ((u64)(56))));
+}
+static inline void encoding_dot_binary__big_endian_put_u64(array_byte *b,
+                                                           u64 v) {
+
+  (*(byte *)array__get(*b, 7));
+  ;
+
+  array_set(b, 0, &(byte[]){((byte)(v >> ((u64)(56))))});
+
+  array_set(b, 1, &(byte[]){((byte)(v >> ((u64)(48))))});
+
+  array_set(b, 2, &(byte[]){((byte)(v >> ((u64)(40))))});
+
+  array_set(b, 3, &(byte[]){((byte)(v >> ((u64)(32))))});
+
+  array_set(b, 4, &(byte[]){((byte)(v >> ((u64)(24))))});
+
+  array_set(b, 5, &(byte[]){((byte)(v >> ((u64)(16))))});
+
+  array_set(b, 6, &(byte[]){((byte)(v >> ((u64)(8))))});
+
+  array_set(b, 7, &(byte[]){((byte)(v))});
+}
 strings__Builder strings__new_builder(int initial_size) {
 
   return (strings__Builder){.buf = new_array(0, 1, sizeof(byte)), .len = 0};
@@ -5881,6 +6137,265 @@ f64 math__sqrt(f64 a) { return sqrt(a); }
 f64 math__tan(f64 a) { return tan(a); }
 f64 math__tanh(f64 a) { return tanh(a); }
 f64 math__trunc(f64 a) { return trunc(a); }
+int math_dot_bits__leading_zeros8(byte x) { return 8 - math_dot_bits__len8(x); }
+int math_dot_bits__leading_zeros16(u16 x) {
+
+  return 16 - math_dot_bits__len16(x);
+}
+int math_dot_bits__leading_zeros32(u32 x) {
+
+  return 32 - math_dot_bits__len32(x);
+}
+int math_dot_bits__leading_zeros64(u64 x) {
+
+  return 64 - math_dot_bits__len64(x);
+}
+int math_dot_bits__trailing_zeros8(byte x) {
+
+  return ((int)((*(byte *)array__get(math_dot_bits__ntz8_tab, x))));
+}
+int math_dot_bits__trailing_zeros16(u16 x) {
+
+  if (x == 0) {
+
+    return 16;
+  };
+
+  return ((int)((*(byte *)array__get(
+      math_dot_bits__de_bruijn32tab,
+      ((u32)(x & -x)) * math_dot_bits__de_bruijn32 >> (32 - 5)))));
+}
+int math_dot_bits__trailing_zeros32(u32 x) {
+
+  if (x == 0) {
+
+    return 32;
+  };
+
+  return ((int)((
+      *(byte *)array__get(math_dot_bits__de_bruijn32tab,
+                          (x & -x) * math_dot_bits__de_bruijn32 >> (32 - 5)))));
+}
+int math_dot_bits__trailing_zeros64(u64 x) {
+
+  if (x == 0) {
+
+    return 64;
+  };
+
+  return ((int)((
+      *(byte *)array__get(math_dot_bits__de_bruijn64tab,
+                          (x & -x) * math_dot_bits__de_bruijn64 >> (64 - 6)))));
+}
+int math_dot_bits__ones_count8(byte x) {
+
+  return ((int)((*(byte *)array__get(math_dot_bits__pop8_tab, x))));
+}
+int math_dot_bits__ones_count16(u16 x) {
+
+  return (
+      (int)((*(byte *)array__get(math_dot_bits__pop8_tab, x >> 8)) +
+            (*(byte *)array__get(math_dot_bits__pop8_tab, x & ((u16)(0xff))))));
+}
+int math_dot_bits__ones_count32(u32 x) {
+
+  return (
+      (int)((*(byte *)array__get(math_dot_bits__pop8_tab, x >> 24)) +
+            (*(byte *)array__get(math_dot_bits__pop8_tab, x >> 16 & 0xff)) +
+            (*(byte *)array__get(math_dot_bits__pop8_tab, x >> 8 & 0xff)) +
+            (*(byte *)array__get(math_dot_bits__pop8_tab, x & ((u32)(0xff))))));
+}
+int math_dot_bits__ones_count64(u64 x) {
+
+  u64 m = ((u64)(1 << 64)) - 1;
+
+  u64 y = ((u64)(x >> ((u64)(1)) & (math_dot_bits__m0 & m))) +
+          ((u64)(x & (math_dot_bits__m0 & m)));
+
+  y = ((u64)(y >> ((u64)(2)) & (math_dot_bits__m1 & m))) +
+      ((u64)(y & (math_dot_bits__m1 & m)));
+
+  y = ((u64)(((u64)(y >> 4)) + y)) & (math_dot_bits__m2 & m);
+
+  y += y >> 8;
+
+  y += y >> 16;
+
+  y += y >> 32;
+
+  return ((int)(y)) & ((1 << 7) - 1);
+}
+static inline byte math_dot_bits__rotate_left_8(byte x, int k) {
+
+  byte n = ((byte)(8));
+
+  byte s = ((byte)(k)) & ((byte)(n - ((byte)(1))));
+
+  return ((byte)((x << s) | (x >> (n - s))));
+}
+static inline u16 math_dot_bits__rotate_left_16(u16 x, int k) {
+
+  u16 n = ((u16)(16));
+
+  u16 s = ((u16)(k)) & (n - ((u16)(1)));
+
+  return ((u16)((x << s) | (x >> (n - s))));
+}
+static inline u32 math_dot_bits__rotate_left_32(u32 x, int k) {
+
+  u32 n = ((u32)(32));
+
+  u32 s = ((u32)(k)) & (n - ((u32)(1)));
+
+  return ((u32)(((u32)(x << s)) | ((u32)(x >> (n - s)))));
+}
+static inline u64 math_dot_bits__rotate_left_64(u64 x, int k) {
+
+  u64 n = ((u64)(64));
+
+  u64 s = ((u64)(k)) & (n - ((u64)(1)));
+
+  return ((u64)(((u64)(x << s)) | ((u64)(x >> (n - s)))));
+}
+static inline byte math_dot_bits__reverse8(byte x) {
+
+  return (*(byte *)array__get(math_dot_bits__rev8_tab, x));
+}
+static inline u16 math_dot_bits__reverse16(u16 x) {
+
+  return ((u16)((*(byte *)array__get(math_dot_bits__rev8_tab, x >> 8)))) |
+         ((u16)(((u16)((*(byte *)array__get(math_dot_bits__rev8_tab,
+                                            x & ((u16)(0xff))))))
+                << 8));
+}
+static inline u32 math_dot_bits__reverse32(u32 x) {
+
+  u64 m = ((u64)(1 << 32)) - 1;
+
+  u32 y = ((u32)(x >> ((u32)(1)) & ((u32)(math_dot_bits__m0 & m)) |
+                 ((u32)(((u32)(x & ((u32)(math_dot_bits__m0 & m)))) << 1))));
+
+  y = ((u32)(
+      y >> ((u32)(2)) & ((u32)(math_dot_bits__m1 & m)) |
+      ((u32)(((u32)(y & ((u32)(math_dot_bits__m1 & m)))) << ((u32)(2))))));
+
+  y = ((u32)(
+      y >> ((u32)(4)) & ((u32)(math_dot_bits__m2 & m)) |
+      ((u32)(((u32)(y & ((u32)(math_dot_bits__m2 & m)))) << ((u32)(4))))));
+
+  return math_dot_bits__reverse_bytes32(y);
+}
+static inline u64 math_dot_bits__reverse64(u64 x) {
+
+  u64 m = ((u64)(1 << 64)) - 1;
+
+  u64 y = ((u64)(x >> ((u64)(1)) & (math_dot_bits__m0 & m) |
+                 ((u64)(((u64)(x & (math_dot_bits__m0 & m))) << 1))));
+
+  y = ((u64)(y >> ((u64)(2)) & (math_dot_bits__m1 & m) |
+             ((u64)(((u64)(y & (math_dot_bits__m1 & m))) << 2))));
+
+  y = ((u64)(y >> ((u64)(4)) & (math_dot_bits__m2 & m) |
+             ((u64)(((u64)(y & (math_dot_bits__m2 & m))) << 4))));
+
+  return math_dot_bits__reverse_bytes64(y);
+}
+static inline u16 math_dot_bits__reverse_bytes16(u16 x) {
+
+  return ((u16)(x >> 8)) | ((u16)(x << 8));
+}
+static inline u32 math_dot_bits__reverse_bytes32(u32 x) {
+
+  u64 m = ((u64)(1 << 32)) - 1;
+
+  u32 y = ((u32)(
+      x >> ((u32)(8)) & ((u32)(math_dot_bits__m3 & m)) |
+      ((u32)(((u32)(x & ((u32)(math_dot_bits__m3 & m)))) << ((u32)(8))))));
+
+  return ((u32)(y >> 16)) | ((u32)(y << 16));
+}
+static inline u64 math_dot_bits__reverse_bytes64(u64 x) {
+
+  u64 m = ((u64)(1 << 64)) - 1;
+
+  u64 y = ((u64)(x >> ((u64)(8)) & (math_dot_bits__m3 & m) |
+                 ((u64)(((u64)(x & (math_dot_bits__m3 & m))) << ((u64)(8))))));
+
+  y = ((u64)(y >> ((u64)(16)) & (math_dot_bits__m4 & m) |
+             ((u64)(((u64)(y & (math_dot_bits__m4 & m))) << ((u64)(16))))));
+
+  return ((u64)(y >> 32)) | ((u64)(y << 32));
+}
+int math_dot_bits__len8(byte x) {
+
+  return ((int)((*(byte *)array__get(math_dot_bits__len8_tab, x))));
+}
+int math_dot_bits__len16(u16 x) {
+
+  u16 y = x;
+
+  int n = 0;
+
+  if (y >= 1 << 8) {
+
+    y >>= 8;
+
+    n = 8;
+  };
+
+  return n + ((int)((*(byte *)array__get(math_dot_bits__len8_tab, y))));
+}
+int math_dot_bits__len32(u32 x) {
+
+  u32 y = x;
+
+  int n = 0;
+
+  if (y >= 1 << 16) {
+
+    y >>= 16;
+
+    n = 16;
+  };
+
+  if (y >= 1 << 8) {
+
+    y >>= 8;
+
+    n += 8;
+  };
+
+  return n + ((int)((*(byte *)array__get(math_dot_bits__len8_tab, y))));
+}
+int math_dot_bits__len64(u64 x) {
+
+  u64 y = x;
+
+  int n = 0;
+
+  if (y >= ((u64)(1)) << ((u64)(32))) {
+
+    y >>= 32;
+
+    n = 32;
+  };
+
+  if (y >= ((u64)(1)) << ((u64)(16))) {
+
+    y >>= 16;
+
+    n += 16;
+  };
+
+  if (y >= ((u64)(1)) << ((u64)(8))) {
+
+    y >>= 8;
+
+    n += 8;
+  };
+
+  return n + ((int)((*(byte *)array__get(math_dot_bits__len8_tab, y))));
+}
 rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq) {
 
   rand__Pcg32 rng = (rand__Pcg32){.state = 0, .inc = 0};
@@ -6228,6 +6743,393 @@ void term__erase_line_tobeg() { term__erase_line(tos2((byte *)"1")); }
 void term__erase_line_clear() { term__erase_line(tos2((byte *)"2")); }
 void term__show_cursor() { print(tos2((byte *)"\x1b[?25h")); }
 void term__hide_cursor() { print(tos2((byte *)"\x1b[?25l")); }
+void crypto_dot_sha1__Digest_reset(crypto_dot_sha1__Digest *d) {
+
+  d->x = array_repeat(
+      new_array_from_c_array(1, 1, sizeof(byte), (byte[]){((byte)(0))}),
+      crypto_dot_sha1__Chunk);
+
+  d->h = array_repeat(
+      new_array_from_c_array(1, 1, sizeof(u32), (u32[]){((u32)(0))}), 5);
+
+  array_set(&/*q*/ d->h, 0, &(u32[]){((u32)(crypto_dot_sha1__Init0))});
+
+  array_set(&/*q*/ d->h, 1, &(u32[]){((u32)(crypto_dot_sha1__Init1))});
+
+  array_set(&/*q*/ d->h, 2, &(u32[]){((u32)(crypto_dot_sha1__Init2))});
+
+  array_set(&/*q*/ d->h, 3, &(u32[]){((u32)(crypto_dot_sha1__Init3))});
+
+  array_set(&/*q*/ d->h, 4, &(u32[]){((u32)(crypto_dot_sha1__Init4))});
+
+  d->nx = 0;
+
+  d->len = 0;
+}
+crypto_dot_sha1__Digest *crypto_dot_sha1__new() {
+
+  crypto_dot_sha1__Digest *d = (crypto_dot_sha1__Digest *)memdup(
+      &(crypto_dot_sha1__Digest){.h = new_array(0, 1, sizeof(u32)),
+                                 .x = new_array(0, 1, sizeof(byte)),
+                                 .nx = 0,
+                                 .len = 0},
+      sizeof(crypto_dot_sha1__Digest));
+
+  crypto_dot_sha1__Digest_reset(d);
+
+  return d;
+}
+Option_int crypto_dot_sha1__Digest_write(crypto_dot_sha1__Digest *d,
+                                         array_byte p_) {
+
+  array_byte p = p_;
+
+  int nn = p.len;
+
+  d->len += ((u64)(nn));
+
+  if (d->nx > 0) {
+
+    int n = copy(array_right(d->x, d->nx), p);
+
+    d->nx += n;
+
+    if (d->nx == crypto_dot_sha1__Chunk) {
+
+      crypto_dot_sha1__block(d, d->x);
+
+      d->nx = 0;
+    };
+
+    if (n >= p.len) {
+
+      p = new_array_from_c_array(0, 0, sizeof(byte), (byte[]){0});
+
+    } else {
+
+      p = array_right(p, n);
+    };
+  };
+
+  if (p.len >= crypto_dot_sha1__Chunk) {
+
+    int n = p.len & ~(crypto_dot_sha1__Chunk - 1);
+
+    crypto_dot_sha1__block(d, array_left(p, n));
+
+    if (n >= p.len) {
+
+      p = new_array_from_c_array(0, 0, sizeof(byte), (byte[]){0});
+
+    } else {
+
+      p = array_right(p, n);
+    };
+  };
+
+  if (p.len > 0) {
+
+    d->nx = copy(d->x, p);
+  };
+
+  int tmp6 = OPTION_CAST(int)(nn);
+  return opt_ok(&tmp6, sizeof(int));
+}
+array_byte crypto_dot_sha1__Digest_sum(crypto_dot_sha1__Digest *d,
+                                       array_byte *b_in) {
+
+  crypto_dot_sha1__Digest d0 = *d;
+
+  array_byte hash = crypto_dot_sha1__Digest_checksum(&/* ? */ d0);
+
+  array_byte tmp9 = hash;
+  for (int tmp10 = 0; tmp10 < tmp9.len; tmp10++) {
+    byte b = ((byte *)tmp9.data)[tmp10];
+
+    _PUSH(b_in, (/*typ = array_byte*   tmp_typ=byte**/ b), tmp11, byte);
+  };
+
+  return *b_in;
+}
+array_byte crypto_dot_sha1__Digest_checksum(crypto_dot_sha1__Digest *d) {
+
+  u64 len = d->len;
+
+  array_byte tmp = array_repeat(
+      new_array_from_c_array(1, 1, sizeof(byte), (byte[]){((byte)(0))}), 64);
+
+  array_set(&/*q*/ tmp, 0, &(byte[]){0x80});
+
+  if (((int)(len)) % 64 < 56) {
+
+    crypto_dot_sha1__Digest_write(d, array_left(tmp, 56 - ((int)(len)) % 64));
+
+  } else {
+
+    crypto_dot_sha1__Digest_write(d,
+                                  array_left(tmp, 64 + 56 - ((int)(len)) % 64));
+  };
+
+  len <<= 3;
+
+  encoding_dot_binary__big_endian_put_u64(&/*111*/ (array[]){tmp}[0], len);
+
+  crypto_dot_sha1__Digest_write(d, array_left(tmp, 8));
+
+  array_byte digest = array_repeat(
+      new_array_from_c_array(1, 1, sizeof(byte), (byte[]){((byte)(0))}),
+      crypto_dot_sha1__Size);
+
+  encoding_dot_binary__big_endian_put_u32(&/*111*/ (array[]){digest}[0],
+                                          (*(u32 *)array__get(d->h, 0)));
+
+  encoding_dot_binary__big_endian_put_u32(
+      &/*111*/ (array[]){array_right(digest, 4)}[0],
+      (*(u32 *)array__get(d->h, 1)));
+
+  encoding_dot_binary__big_endian_put_u32(
+      &/*111*/ (array[]){array_right(digest, 8)}[0],
+      (*(u32 *)array__get(d->h, 2)));
+
+  encoding_dot_binary__big_endian_put_u32(
+      &/*111*/ (array[]){array_right(digest, 12)}[0],
+      (*(u32 *)array__get(d->h, 3)));
+
+  encoding_dot_binary__big_endian_put_u32(
+      &/*111*/ (array[]){array_right(digest, 16)}[0],
+      (*(u32 *)array__get(d->h, 4)));
+
+  return digest;
+}
+array_byte crypto_dot_sha1__sum(array_byte data) {
+
+  crypto_dot_sha1__Digest *d = crypto_dot_sha1__new();
+
+  crypto_dot_sha1__Digest_write(d, data);
+
+  return crypto_dot_sha1__Digest_checksum(d);
+}
+void crypto_dot_sha1__block(crypto_dot_sha1__Digest *dig, array_byte p) {
+
+  crypto_dot_sha1__block_generic(dig, p);
+}
+int crypto_dot_sha1__Digest_size(crypto_dot_sha1__Digest *d) {
+
+  return crypto_dot_sha1__Size;
+}
+int crypto_dot_sha1__Digest_block_size(crypto_dot_sha1__Digest *d) {
+
+  return crypto_dot_sha1__BlockSize;
+}
+string crypto_dot_sha1__hexhash(string s) {
+
+  return array_byte_hex(crypto_dot_sha1__sum(string_bytes(s)));
+}
+void crypto_dot_sha1__block_generic(crypto_dot_sha1__Digest *dig,
+                                    array_byte p_) {
+
+  array_byte p = p_;
+
+  array_u32 w = array_repeat(
+      new_array_from_c_array(1, 1, sizeof(u32), (u32[]){((u32)(0))}), 16);
+
+  u32 h0 = (*(u32 *)array__get(dig->h, 0));
+
+  u32 h1 = (*(u32 *)array__get(dig->h, 1));
+
+  u32 h2 = (*(u32 *)array__get(dig->h, 2));
+
+  u32 h3 = (*(u32 *)array__get(dig->h, 3));
+
+  u32 h4 = (*(u32 *)array__get(dig->h, 4));
+
+  while (p.len >= crypto_dot_sha1__Chunk) {
+
+    for (int i = 0; i < 16; i++) {
+
+      int j = i * 4;
+
+      array_set(&/*q*/ w, i,
+                &(u32[]){((u32)((*(byte *)array__get(p, j)) << 24)) |
+                         ((u32)((*(byte *)array__get(p, j + 1)) << 16)) |
+                         ((u32)((*(byte *)array__get(p, j + 2)) << 8)) |
+                         ((u32)((*(byte *)array__get(p, j + 3))))});
+    };
+
+    u32 a = h0;
+
+    u32 b = h1;
+
+    u32 c = h2;
+
+    u32 d = h3;
+
+    u32 e = h4;
+
+    int i = 0;
+
+    while (i < 16) {
+
+      u32 f = b & c | (~b) & d;
+
+      u32 t = math_dot_bits__rotate_left_32(a, 5) + f + e +
+              (*(u32 *)array__get(w, i & 0xf)) + ((u32)(crypto_dot_sha1___K0));
+
+      e = d;
+
+      d = c;
+
+      c = math_dot_bits__rotate_left_32(b, 30);
+
+      b = a;
+
+      a = t;
+
+      i++;
+    };
+
+    while (i < 20) {
+
+      u32 tmp = (*(u32 *)array__get(w, (i - 3) & 0xf)) ^
+                (*(u32 *)array__get(w, (i - 8) & 0xf)) ^
+                (*(u32 *)array__get(w, (i - 14) & 0xf)) ^
+                (*(u32 *)array__get(w, (i)&0xf));
+
+      array_set(&/*q*/ w, i & 0xf,
+                &(u32[]){tmp << 1 | ((u32)(tmp >> (32 - 1)))});
+
+      u32 f = b & c | (~b) & d;
+
+      u32 t = math_dot_bits__rotate_left_32(a, 5) + f + e +
+              (*(u32 *)array__get(w, i & 0xf)) + ((u32)(crypto_dot_sha1___K0));
+
+      e = d;
+
+      d = c;
+
+      c = math_dot_bits__rotate_left_32(b, 30);
+
+      b = a;
+
+      a = t;
+
+      i++;
+    };
+
+    while (i < 40) {
+
+      u32 tmp = (*(u32 *)array__get(w, (i - 3) & 0xf)) ^
+                (*(u32 *)array__get(w, (i - 8) & 0xf)) ^
+                (*(u32 *)array__get(w, (i - 14) & 0xf)) ^
+                (*(u32 *)array__get(w, (i)&0xf));
+
+      array_set(&/*q*/ w, i & 0xf,
+                &(u32[]){tmp << 1 | ((u32)(tmp >> (32 - 1)))});
+
+      u32 f = b ^ c ^ d;
+
+      u32 t = math_dot_bits__rotate_left_32(a, 5) + f + e +
+              (*(u32 *)array__get(w, i & 0xf)) + ((u32)(crypto_dot_sha1___K1));
+
+      e = d;
+
+      d = c;
+
+      c = math_dot_bits__rotate_left_32(b, 30);
+
+      b = a;
+
+      a = t;
+
+      i++;
+    };
+
+    while (i < 60) {
+
+      u32 tmp = (*(u32 *)array__get(w, (i - 3) & 0xf)) ^
+                (*(u32 *)array__get(w, (i - 8) & 0xf)) ^
+                (*(u32 *)array__get(w, (i - 14) & 0xf)) ^
+                (*(u32 *)array__get(w, (i)&0xf));
+
+      array_set(&/*q*/ w, i & 0xf,
+                &(u32[]){tmp << 1 | ((u32)(tmp >> (32 - 1)))});
+
+      u32 f = ((b | c) & d) | (b & c);
+
+      u32 t = math_dot_bits__rotate_left_32(a, 5) + f + e +
+              (*(u32 *)array__get(w, i & 0xf)) + ((u32)(crypto_dot_sha1___K2));
+
+      e = d;
+
+      d = c;
+
+      c = math_dot_bits__rotate_left_32(b, 30);
+
+      b = a;
+
+      a = t;
+
+      i++;
+    };
+
+    while (i < 80) {
+
+      u32 tmp = (*(u32 *)array__get(w, (i - 3) & 0xf)) ^
+                (*(u32 *)array__get(w, (i - 8) & 0xf)) ^
+                (*(u32 *)array__get(w, (i - 14) & 0xf)) ^
+                (*(u32 *)array__get(w, (i)&0xf));
+
+      array_set(&/*q*/ w, i & 0xf,
+                &(u32[]){tmp << 1 | ((u32)(tmp >> (32 - 1)))});
+
+      u32 f = b ^ c ^ d;
+
+      u32 t = math_dot_bits__rotate_left_32(a, 5) + f + e +
+              (*(u32 *)array__get(w, i & 0xf)) + ((u32)(crypto_dot_sha1___K3));
+
+      e = d;
+
+      d = c;
+
+      c = math_dot_bits__rotate_left_32(b, 30);
+
+      b = a;
+
+      a = t;
+
+      i++;
+    };
+
+    h0 += a;
+
+    h1 += b;
+
+    h2 += c;
+
+    h3 += d;
+
+    h4 += e;
+
+    if (crypto_dot_sha1__Chunk >= p.len) {
+
+      p = new_array_from_c_array(0, 0, sizeof(byte), (byte[]){0});
+
+    } else {
+
+      p = array_right(p, crypto_dot_sha1__Chunk);
+    };
+  };
+
+  array_set(&/*q*/ dig->h, 0, &(u32[]){h0});
+
+  array_set(&/*q*/ dig->h, 1, &(u32[]){h1});
+
+  array_set(&/*q*/ dig->h, 2, &(u32[]){h2});
+
+  array_set(&/*q*/ dig->h, 3, &(u32[]){h3});
+
+  array_set(&/*q*/ dig->h, 4, &(u32[]){h4});
+}
 void time__remove_me_when_c_bug_is_fixed() {}
 time__Time time__now() {
 
@@ -8519,7 +9421,7 @@ void Parser_comp_time(Parser *p) {
 
     int pos = p->cgen->lines.len - 1;
 
-    Parser pp = V_new_parser(p->v, tos2((byte *)".vwebtmpl.v"));
+    Parser pp = V_new_parser_file(p->v, tos2((byte *)".vwebtmpl.v"));
 
     if (!p->pref->is_debug) {
 
@@ -8766,8 +9668,8 @@ void Parser_gen_array_str(Parser *p, Type typ) {
                       elm_type.len, elm_type.str, elm_type.len, elm_type.str));
   };
 
-  os__File_writeln(
-      p->v->vgen_file,
+  strings__Builder_writeln(
+      &/* ? */ p->v->vgen_buf,
       _STR(
           "\nfn (a %.*s) str() string {\n	mut sb := "
           "strings.new_builder(a.len * 3)\n	sb.write(\"[\")\n	for i, "
@@ -8841,7 +9743,7 @@ void Parser_gen_struct_str(Parser *p, Type typ) {
 
   strings__Builder_writeln(&/* ? */ sb, tos2((byte *)"}"));
 
-  os__File_writeln(p->v->vgen_file, strings__Builder_str(sb));
+  strings__Builder_writeln(&/* ? */ p->v->vgen_buf, strings__Builder_str(sb));
 
   _PUSH(&p->cgen->fns,
         (/*typ = array_string   tmp_typ=string*/ _STR(
@@ -9289,8 +10191,7 @@ void Parser_fn_decl(Parser *p) {
     };
 
     if (!Parser_first_pass(&/* ? */ *p) && !p->builtin_mod &&
-        string_ne(T.mod, p->mod) &&
-        !Parser_fileis(&/* ? */ *p, main__vgen_file_name)) {
+        string_ne(T.mod, p->mod) && string_ne(p->id, tos2((byte *)"vgen"))) {
 
       printf("T.mod=%.*s\n", T.mod.len, T.mod.str);
 
@@ -12318,7 +13219,7 @@ void V_add_parser(V *v, Parser parser) {
   for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
     Parser p = ((Parser *)tmp7.data)[tmp8];
 
-    if (string_eq(p.file_path, parser.file_path)) {
+    if (string_eq(p.id, parser.id)) {
 
       return;
     };
@@ -12509,9 +13410,10 @@ void V_compile(V *v) {
     };
   };
 
-  os__File_close(v->vgen_file);
+  Parser vgen_parser = V_new_parser_string_id(
+      v, strings__Builder_str(v->vgen_buf), tos2((byte *)"vgen"));
 
-  Parser vgen_parser = V_new_parser(v, main__vgen_file_name);
+  strings__Builder_free(&/* ? */ v->vgen_buf);
 
   Parser_parse(&/* ? */ vgen_parser, main__Pass_main);
 
@@ -12890,7 +13792,7 @@ void V_add_v_files_to_compile(V *v) {
   for (int tmp54 = 0; tmp54 < tmp53.len; tmp54++) {
     string file = ((string *)tmp53.data)[tmp54];
 
-    Parser p = V_new_parser(v, file);
+    Parser p = V_new_parser_file(v, file);
 
     Parser_parse(&/* ? */ p, main__Pass_imports);
   };
@@ -12899,7 +13801,7 @@ void V_add_v_files_to_compile(V *v) {
   for (int tmp57 = 0; tmp57 < tmp56.len; tmp57++) {
     string file = ((string *)tmp56.data)[tmp57];
 
-    Parser p = V_new_parser(v, file);
+    Parser p = V_new_parser_file(v, file);
 
     Parser_parse(&/* ? */ p, main__Pass_imports);
   };
@@ -12922,7 +13824,7 @@ void V_add_v_files_to_compile(V *v) {
     for (int tmp66 = 0; tmp66 < tmp65.len; tmp66++) {
       string file = ((string *)tmp65.data)[tmp66];
 
-      Parser p = V_new_parser(v, file);
+      Parser p = V_new_parser_file(v, file);
 
       Parser_parse(&/* ? */ p, main__Pass_imports);
     };
@@ -13065,18 +13967,10 @@ void V_log(V *v, string s) {
 }
 V *new_v(array_string args) {
 
-  os__rm(main__vgen_file_name);
+  strings__Builder vgen_buf = strings__new_builder(1000);
 
-  Option_os__File tmp86 = os__open_append(main__vgen_file_name);
-  if (!tmp86.ok) {
-    string err = tmp86.error;
-
-    v_panic(err);
-  }
-  os__File vgen_file = *(os__File *)tmp86.data;
-  ;
-
-  os__File_writeln(vgen_file, tos2((byte *)"module main\nimport strings"));
+  strings__Builder_writeln(&/* ? */ vgen_buf,
+                           tos2((byte *)"module main\nimport strings"));
 
   string joined_args = array_string_join(args, tos2((byte *)" "));
 
@@ -13375,7 +14269,7 @@ V *new_v(array_string args) {
           .vroot = vroot,
           .pref = pref,
           .mod = mod,
-          .vgen_file = vgen_file,
+          .vgen_buf = vgen_buf,
           .parsers = new_array(0, 1, sizeof(Parser)),
       },
       sizeof(V));
@@ -14503,18 +15397,34 @@ MsvcStringFlags array_CFlag_msvc_string_flags(array_CFlag cflags) {
 
   return (MsvcStringFlags){real_libs, inc_paths, lpaths, other_flags};
 }
-Parser V_new_parser(V *v, string path) {
+Parser V_new_parser_string(V *v, string text) {
+
+  return V_new_parser_string_id(v, text, crypto_dot_sha1__hexhash(text));
+}
+Parser V_new_parser_string_id(V *v, string text, string id) {
+
+  Parser p = V_new_parser(v, new_scanner(text), id);
+
+  p.import_table = Table_get_file_import_table(&/* ? */ *v->table, id);
+
+  Parser_scan_tokens(&/* ? */ p);
+
+  V_add_parser(v, p);
+
+  return p;
+}
+Parser V_new_parser_file(V *v, string path) {
 
   string path_pcguard = tos2((byte *)"");
 
   string path_platform = tos2((byte *)".v");
 
-  array_string tmp3 = new_array_from_c_array(
+  array_string tmp4 = new_array_from_c_array(
       4, 4, sizeof(string),
       (string[]){tos2((byte *)"_lin.v"), tos2((byte *)"_mac.v"),
                  tos2((byte *)"_win.v"), tos2((byte *)"_nix.v")});
-  for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
-    string path_ending = ((string *)tmp3.data)[tmp4];
+  for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
+    string path_ending = ((string *)tmp4.data)[tmp5];
 
     if (string_ends_with(path, path_ending)) {
 
@@ -14526,83 +15436,157 @@ Parser V_new_parser(V *v, string path) {
     };
   };
 
-  Parser p = (Parser){
-      .v = v,
+  Parser p = V_new_parser(v, new_scanner_file(path), path);
+
+  p = (Parser){
       .file_path = path,
       .file_name = string_all_after(path, tos2((byte *)"/")),
       .file_platform = path_platform,
       .file_pcguard = path_pcguard,
-      .scanner = new_scanner(path),
-      .table = v->table,
       .import_table = Table_get_file_import_table(&/* ? */ *v->table, path),
-      .cur_fn = main__EmptyFn,
-      .cgen = v->cgen,
       .is_script = (v->pref->is_script && string_eq(path, v->dir)),
-      .pref = v->pref,
-      .os = v->os,
-      .vroot = v->vroot,
-      .local_vars =
-          array_repeat(new_array_from_c_array(
-                           1, 1, sizeof(Var),
-                           (Var[]){(Var){.typ = tos((byte *)"", 0),
-                                         .name = tos((byte *)"", 0),
-                                         .idx = 0,
-                                         .is_arg = 0,
-                                         .is_const = 0,
-                                         .args = new_array(0, 1, sizeof(Var)),
-                                         .attr = tos((byte *)"", 0),
-                                         .is_mut = 0,
-                                         .is_alloc = 0,
-                                         .is_returned = 0,
-                                         .ptr = 0,
-                                         .ref = 0,
-                                         .parent_fn = tos((byte *)"", 0),
-                                         .mod = tos((byte *)"", 0),
-                                         .is_global = 0,
-                                         .is_used = 0,
-                                         .is_changed = 0,
-                                         .scope_level = 0,
-                                         .is_c = 0,
-                                         .is_moved = 0,
-                                         .line_nr = 0}}),
-                       main__MaxLocalVars),
-      .tokens = new_array(0, 1, sizeof(Tok)),
-      .token_idx = 0,
-      .lit = tos((byte *)"", 0),
-      .mod = tos((byte *)"", 0),
-      .inside_const = 0,
-      .has_immutable_field = 0,
-      .assigned_type = tos((byte *)"", 0),
-      .expected_type = tos((byte *)"", 0),
-      .tmp_cnt = 0,
-      .builtin_mod = 0,
-      .vh_lines = new_array(0, 1, sizeof(string)),
-      .inside_if_expr = 0,
-      .inside_unwrapping_match_statement = 0,
-      .inside_return_expr = 0,
-      .is_struct_init = 0,
-      .if_expr_cnt = 0,
-      .for_expr_cnt = 0,
-      .ptr_cast = 0,
-      .calling_c = 0,
-      .var_idx = 0,
-      .returns = 0,
-      .is_c_struct_init = 0,
-      .is_empty_c_struct_init = 0,
-      .is_c_fn_call = 0,
-      .can_chash = 0,
-      .attr = tos((byte *)"", 0),
-      .v_script = 0,
-      .var_decl_name = tos((byte *)"", 0),
-      .is_alloc = 0,
-      .is_const_literal = 0,
-      .cur_gen_type = tos((byte *)"", 0),
-      .is_vweb = 0,
-      .is_sql = 0,
-      .is_js = 0,
-      .sql_i = 0,
-      .sql_params = new_array(0, 1, sizeof(string)),
-      .sql_types = new_array(0, 1, sizeof(string))};
+      .id = p.id,
+      .v = p.v,
+      .pref = p.pref,
+      .scanner = p.scanner,
+      .tokens = p.tokens,
+      .token_idx = p.token_idx,
+      .tok = p.tok,
+      .prev_tok = p.prev_tok,
+      .prev_tok2 = p.prev_tok2,
+      .lit = p.lit,
+      .cgen = p.cgen,
+      .table = p.table,
+      .pass = p.pass,
+      .os = p.os,
+      .mod = p.mod,
+      .inside_const = p.inside_const,
+      .expr_var = p.expr_var,
+      .has_immutable_field = p.has_immutable_field,
+      .first_immutable_field = p.first_immutable_field,
+      .assigned_type = p.assigned_type,
+      .expected_type = p.expected_type,
+      .tmp_cnt = p.tmp_cnt,
+      .builtin_mod = p.builtin_mod,
+      .vh_lines = p.vh_lines,
+      .inside_if_expr = p.inside_if_expr,
+      .inside_unwrapping_match_statement = p.inside_unwrapping_match_statement,
+      .inside_return_expr = p.inside_return_expr,
+      .is_struct_init = p.is_struct_init,
+      .if_expr_cnt = p.if_expr_cnt,
+      .for_expr_cnt = p.for_expr_cnt,
+      .ptr_cast = p.ptr_cast,
+      .calling_c = p.calling_c,
+      .cur_fn = p.cur_fn,
+      .local_vars = p.local_vars,
+      .var_idx = p.var_idx,
+      .returns = p.returns,
+      .vroot = p.vroot,
+      .is_c_struct_init = p.is_c_struct_init,
+      .is_empty_c_struct_init = p.is_empty_c_struct_init,
+      .is_c_fn_call = p.is_c_fn_call,
+      .can_chash = p.can_chash,
+      .attr = p.attr,
+      .v_script = p.v_script,
+      .var_decl_name = p.var_decl_name,
+      .is_alloc = p.is_alloc,
+      .is_const_literal = p.is_const_literal,
+      .cur_gen_type = p.cur_gen_type,
+      .is_vweb = p.is_vweb,
+      .is_sql = p.is_sql,
+      .is_js = p.is_js,
+      .sql_i = p.sql_i,
+      .sql_params = p.sql_params,
+      .sql_types = p.sql_types,
+  };
+
+  v->cgen->file = path;
+
+  Parser_scan_tokens(&/* ? */ p);
+
+  V_add_parser(v, p);
+
+  return p;
+}
+Parser V_new_parser(V *v, Scanner *scanner, string id) {
+
+  Parser p =
+      (Parser){.id = id,
+               .scanner = scanner,
+               .v = v,
+               .table = v->table,
+               .cur_fn = main__EmptyFn,
+               .cgen = v->cgen,
+               .is_script = 0,
+               .pref = v->pref,
+               .os = v->os,
+               .vroot = v->vroot,
+               .local_vars = array_repeat(
+                   new_array_from_c_array(
+                       1, 1, sizeof(Var),
+                       (Var[]){(Var){.typ = tos((byte *)"", 0),
+                                     .name = tos((byte *)"", 0),
+                                     .idx = 0,
+                                     .is_arg = 0,
+                                     .is_const = 0,
+                                     .args = new_array(0, 1, sizeof(Var)),
+                                     .attr = tos((byte *)"", 0),
+                                     .is_mut = 0,
+                                     .is_alloc = 0,
+                                     .is_returned = 0,
+                                     .ptr = 0,
+                                     .ref = 0,
+                                     .parent_fn = tos((byte *)"", 0),
+                                     .mod = tos((byte *)"", 0),
+                                     .is_global = 0,
+                                     .is_used = 0,
+                                     .is_changed = 0,
+                                     .scope_level = 0,
+                                     .is_c = 0,
+                                     .is_moved = 0,
+                                     .line_nr = 0}}),
+                   main__MaxLocalVars),
+               .file_path = tos((byte *)"", 0),
+               .file_name = tos((byte *)"", 0),
+               .file_platform = tos((byte *)"", 0),
+               .file_pcguard = tos((byte *)"", 0),
+               .tokens = new_array(0, 1, sizeof(Tok)),
+               .token_idx = 0,
+               .lit = tos((byte *)"", 0),
+               .mod = tos((byte *)"", 0),
+               .inside_const = 0,
+               .has_immutable_field = 0,
+               .assigned_type = tos((byte *)"", 0),
+               .expected_type = tos((byte *)"", 0),
+               .tmp_cnt = 0,
+               .builtin_mod = 0,
+               .vh_lines = new_array(0, 1, sizeof(string)),
+               .inside_if_expr = 0,
+               .inside_unwrapping_match_statement = 0,
+               .inside_return_expr = 0,
+               .is_struct_init = 0,
+               .if_expr_cnt = 0,
+               .for_expr_cnt = 0,
+               .ptr_cast = 0,
+               .calling_c = 0,
+               .var_idx = 0,
+               .returns = 0,
+               .is_c_struct_init = 0,
+               .is_empty_c_struct_init = 0,
+               .is_c_fn_call = 0,
+               .can_chash = 0,
+               .attr = tos((byte *)"", 0),
+               .v_script = 0,
+               .var_decl_name = tos((byte *)"", 0),
+               .is_alloc = 0,
+               .is_const_literal = 0,
+               .cur_gen_type = tos((byte *)"", 0),
+               .is_vweb = 0,
+               .is_sql = 0,
+               .is_js = 0,
+               .sql_i = 0,
+               .sql_params = new_array(0, 1, sizeof(string)),
+               .sql_types = new_array(0, 1, sizeof(string))};
 
 #ifdef _VJS
 
@@ -14618,31 +15602,29 @@ Parser V_new_parser(V *v, string path) {
 
   v->cgen->line_directives = v->pref->is_debuggable;
 
-  v->cgen->file = path;
+  return p;
+}
+void Parser_scan_tokens(Parser *p) {
 
   while (1) {
 
-    ScanRes res = Scanner_scan(p.scanner);
+    ScanRes res = Scanner_scan(p->scanner);
 
-    _PUSH(&p.tokens,
+    _PUSH(&p->tokens,
           (/*typ = array_Tok   tmp_typ=Tok*/ (Tok){
               .tok = res.tok,
               .lit = res.lit,
-              .line_nr = p.scanner->line_nr,
-              .col = p.scanner->pos - p.scanner->last_nl_pos,
+              .line_nr = p->scanner->line_nr,
+              .col = p->scanner->pos - p->scanner->last_nl_pos,
               .name_idx = 0,
           }),
-          tmp7, Tok);
+          tmp9, Tok);
 
     if (res.tok == main__Token_eof) {
 
       break;
     };
   };
-
-  V_add_parser(v, p);
-
-  return p;
 }
 void Parser_set_current_fn(Parser *p, Fn f) {
 
@@ -14764,7 +15746,7 @@ void Parser_parse(Parser *p, Pass pass) {
       Parser_error(p, tos2((byte *)"module `builtin` cannot be imported"));
     };
 
-    map__set(&p->table->file_imports, p->file_path,
+    map__set(&p->table->file_imports, p->id,
              &(FileImportTable[]){p->import_table});
 
     return;
@@ -14894,7 +15876,7 @@ void Parser_parse(Parser *p, Pass pass) {
       g = string_add(g, tos2((byte *)"; // global"));
 
       _PUSH(&p->cgen->consts, (/*typ = array_string   tmp_typ=string*/ g),
-            tmp22, string);
+            tmp24, string);
 
     } else if (p->tok == main__Token_eof) { /* case */
 
@@ -14906,15 +15888,15 @@ void Parser_parse(Parser *p, Pass pass) {
       if (0 && !Parser_first_pass(&/* ? */ *p) &&
           Parser_fileis(&/* ? */ *p, tos2((byte *)"main.v"))) {
 
-        Option_os__File tmp23 = os__create(tos2((byte *)"/var/tmp/fmt.v"));
-        if (!tmp23.ok) {
-          string err = tmp23.error;
+        Option_os__File tmp25 = os__create(tos2((byte *)"/var/tmp/fmt.v"));
+        if (!tmp25.ok) {
+          string err = tmp25.error;
 
           verror(tos2((byte *)"failed to create fmt.v"));
 
           return;
         }
-        os__File out = *(os__File *)tmp23.data;
+        os__File out = *(os__File *)tmp25.data;
         ;
 
         os__File_writeln(out, strings__Builder_str(p->scanner->fmt_out));
@@ -15058,7 +16040,7 @@ void Parser_import_statement(Parser *p) {
   };
 
   _PUSH(&p->table->imports, (/*typ = array_string   tmp_typ=string*/ mod),
-        tmp34, string);
+        tmp36, string);
 
   Table_register_module(p->table, mod);
 
@@ -15112,7 +16094,7 @@ void Parser_const_decl(Parser *p) {
               (/*typ = array_string   tmp_typ=string*/ _STR(
                   "#define %.*s %.*s", name.len, name.str,
                   p->cgen->cur_line.len, p->cgen->cur_line.str)),
-              tmp37, string);
+              tmp39, string);
 
         CGen_resetln(p->cgen, tos2((byte *)""));
 
@@ -15128,7 +16110,7 @@ void Parser_const_decl(Parser *p) {
                   Table_cgen_name_type_pair(&/* ? */ *p->table, name, typ),
                   _STR(" = %.*s;", p->cgen->cur_line.len,
                        p->cgen->cur_line.str))),
-              tmp38, string);
+              tmp40, string);
 
       } else {
 
@@ -15136,13 +16118,13 @@ void Parser_const_decl(Parser *p) {
               (/*typ = array_string   tmp_typ=string*/ string_add(
                   Table_cgen_name_type_pair(&/* ? */ *p->table, name, typ),
                   tos2((byte *)";"))),
-              tmp39, string);
+              tmp41, string);
 
         _PUSH(&p->cgen->consts_init,
               (/*typ = array_string   tmp_typ=string*/ _STR(
                   "%.*s = %.*s;", name.len, name.str, p->cgen->cur_line.len,
                   p->cgen->cur_line.str)),
-              tmp40, string);
+              tmp42, string);
       };
 
       CGen_resetln(p->cgen, tos2((byte *)""));
@@ -15458,7 +16440,7 @@ void Parser_struct_decl(Parser *p) {
                                    "letters, use snake_case instead"));
     };
 
-    _PUSH(&names, (/*typ = array_string   tmp_typ=string*/ field_name), tmp62,
+    _PUSH(&names, (/*typ = array_string   tmp_typ=string*/ field_name), tmp64,
           string);
 
     if (is_interface) {
@@ -15559,7 +16541,7 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
     _PUSH(&p->cgen->typedefs,
           (/*typ = array_string   tmp_typ=string*/ _STR(
               "typedef int %.*s;", enum_name.len, enum_name.str)),
-          tmp69, string);
+          tmp71, string);
   };
 
   Parser_check(p, main__Token_lcbr);
@@ -15573,7 +16555,7 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
 
     string field = Parser_check_name(p);
 
-    _PUSH(&fields, (/*typ = array_string   tmp_typ=string*/ field), tmp73,
+    _PUSH(&fields, (/*typ = array_string   tmp_typ=string*/ field), tmp75,
           string);
 
     Parser_fgenln(p, tos2((byte *)""));
@@ -15586,7 +16568,7 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
       _PUSH(&p->cgen->consts,
             (/*typ = array_string   tmp_typ=string*/ _STR(
                 "#define %.*s %d", name.len, name.str, val)),
-            tmp75, string);
+            tmp77, string);
     };
 
     if (p->tok == main__Token_comma) {
@@ -15792,7 +16774,7 @@ string Parser_get_type(Parser *p) {
     while (1) {
 
       _PUSH(&types,
-            (/*typ = array_string   tmp_typ=string*/ Parser_get_type(p)), tmp90,
+            (/*typ = array_string   tmp_typ=string*/ Parser_get_type(p)), tmp92,
             string);
 
       if (p->tok != main__Token_comma) {
@@ -16237,7 +17219,7 @@ void Parser_genln(Parser *p, string s) { CGen_genln(p->cgen, s); }
 void Parser_gen(Parser *p, string s) { CGen_gen(p->cgen, s); }
 void Parser_vh_genln(Parser *p, string s) {
 
-  _PUSH(&p->vh_lines, (/*typ = array_string   tmp_typ=string*/ s), tmp113,
+  _PUSH(&p->vh_lines, (/*typ = array_string   tmp_typ=string*/ s), tmp115,
         string);
 }
 string Parser_statement(Parser *p, bool add_semi) {
@@ -16552,7 +17534,7 @@ void Parser_var_decl(Parser *p) {
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
   _PUSH(&names, (/*typ = array_string   tmp_typ=string*/ Parser_check_name(p)),
-        tmp134, string);
+        tmp136, string);
 
   while (p->tok == main__Token_comma) {
 
@@ -16560,7 +17542,7 @@ void Parser_var_decl(Parser *p) {
 
     _PUSH(&names,
           (/*typ = array_string   tmp_typ=string*/ Parser_check_name(p)),
-          tmp135, string);
+          tmp137, string);
   };
 
   string mr_var_name =
@@ -16587,9 +17569,9 @@ void Parser_var_decl(Parser *p) {
         tos2((byte *)"_V_"));
   };
 
-  array_string tmp141 = names;
-  for (int i = 0; i < tmp141.len; i++) {
-    string name = ((string *)tmp141.data)[i];
+  array_string tmp143 = names;
+  for (int i = 0; i < tmp143.len; i++) {
+    string name = ((string *)tmp143.data)[i];
 
     if (string_eq(name, tos2((byte *)"_"))) {
 
@@ -16781,10 +17763,10 @@ string Parser_bterm(Parser *p) {
       string sql_param = CGen_cut(p->cgen);
 
       _PUSH(&p->sql_params, (/*typ = array_string   tmp_typ=string*/ sql_param),
-            tmp157, string);
+            tmp159, string);
 
       _PUSH(&p->sql_types, (/*typ = array_string   tmp_typ=string*/ typ),
-            tmp158, string);
+            tmp160, string);
 
     } else {
 
@@ -16969,13 +17951,13 @@ string Parser_name_expr(Parser *p) {
       Parser_error(p, tos2((byte *)"cannot use `_` as value"));
     };
 
-    Option_Var tmp169 = Parser_find_var_check_new_var(&/* ? */ *p, name);
-    if (!tmp169.ok) {
-      string err = tmp169.error;
+    Option_Var tmp171 = Parser_find_var_check_new_var(&/* ? */ *p, name);
+    if (!tmp171.ok) {
+      string err = tmp171.error;
 
       break;
     }
-    Var v = *(Var *)tmp169.data;
+    Var v = *(Var *)tmp171.data;
     ;
 
     if (ptr) {
@@ -17131,9 +18113,9 @@ string Parser_name_expr(Parser *p) {
 
     p->is_c_fn_call = 0;
 
-    Option_Fn tmp175 = Table_find_fn(&/* ? */ *p->table, name);
-    if (!tmp175.ok) {
-      string err = tmp175.error;
+    Option_Fn tmp177 = Table_find_fn(&/* ? */ *p->table, name);
+    if (!tmp177.ok) {
+      string err = tmp177.error;
 
       if (0) {
 
@@ -17146,7 +18128,7 @@ string Parser_name_expr(Parser *p) {
 
       return tos2((byte *)"void*");
     }
-    Fn cfn = *(Fn *)tmp175.data;
+    Fn cfn = *(Fn *)tmp177.data;
     ;
 
     return cfn.typ;
@@ -17154,13 +18136,13 @@ string Parser_name_expr(Parser *p) {
 
   while (1) {
 
-    Option_Var tmp176 = Table_find_const(&/* ? */ *p->table, name);
-    if (!tmp176.ok) {
-      string err = tmp176.error;
+    Option_Var tmp178 = Table_find_const(&/* ? */ *p->table, name);
+    if (!tmp178.ok) {
+      string err = tmp178.error;
 
       break;
     }
-    Var c = *(Var *)tmp176.data;
+    Var c = *(Var *)tmp178.data;
     ;
 
     if (ptr && !c.is_global) {
@@ -17183,9 +18165,9 @@ string Parser_name_expr(Parser *p) {
     return typ;
   };
 
-  Option_Fn tmp178 = Table_find_fn(&/* ? */ *p->table, name);
-  if (!tmp178.ok) {
-    string err = tmp178.error;
+  Option_Fn tmp180 = Table_find_fn(&/* ? */ *p->table, name);
+  if (!tmp180.ok) {
+    string err = tmp180.error;
 
     if (!Parser_first_pass(&/* ? */ *p)) {
 
@@ -17227,7 +18209,7 @@ string Parser_name_expr(Parser *p) {
 
     return tos2((byte *)"void");
   }
-  Fn f = *(Fn *)tmp178.data;
+  Fn f = *(Fn *)tmp180.data;
   ;
 
   Token peek = Parser_peek(&/* ? */ *p);
@@ -17463,14 +18445,14 @@ string Parser_dot(Parser *p, string str_typ, int method_ph) {
             ? (Table_var_cgen_name(&/* ? */ *p->table, field_name))
             : (field_name);
 
-    Option_Var tmp193 = Table_find_field(
+    Option_Var tmp195 = Table_find_field(
         &/* ? */ *p->table, &/*112 EXP:"Type*" GOT:"Type" */ typ, struct_field);
-    if (!tmp193.ok) {
-      string err = tmp193.error;
+    if (!tmp195.ok) {
+      string err = tmp195.error;
 
       v_panic(tos2((byte *)"field"));
     }
-    Var field = *(Var *)tmp193.data;
+    Var field = *(Var *)tmp195.data;
     ;
 
     if (!field.is_mut && !p->has_immutable_field) {
@@ -17523,17 +18505,17 @@ string Parser_dot(Parser *p, string str_typ, int method_ph) {
     return field.typ;
   };
 
-  Option_Fn tmp198 = Table_find_method(
+  Option_Fn tmp200 = Table_find_method(
       &/* ? */ *p->table, &/*112 EXP:"Type*" GOT:"Type" */ typ, field_name);
-  if (!tmp198.ok) {
-    string err = tmp198.error;
+  if (!tmp200.ok) {
+    string err = tmp200.error;
 
     Parser_error(p, _STR("could not find method `%.*s`", field_name.len,
                          field_name.str));
 
     v_exit(1);
   }
-  Fn method = *(Fn *)tmp198.data;
+  Fn method = *(Fn *)tmp200.data;
   ;
 
   Parser_fn_call(p, method, method_ph, tos2((byte *)""), str_typ);
@@ -18312,15 +19294,15 @@ string Parser_assoc(Parser *p) {
 
   string name = Parser_check_name(p);
 
-  Option_Var tmp255 = Parser_find_var(&/* ? */ *p, name);
-  if (!tmp255.ok) {
-    string err = tmp255.error;
+  Option_Var tmp257 = Parser_find_var(&/* ? */ *p, name);
+  if (!tmp257.ok) {
+    string err = tmp257.error;
 
     Parser_error(p, _STR("unknown variable `%.*s`", name.len, name.str));
 
     v_exit(1);
   }
-  Var var = *(Var *)tmp255.data;
+  Var var = *(Var *)tmp257.data;
   ;
 
   Parser_check(p, main__Token_pipe);
@@ -18334,7 +19316,7 @@ string Parser_assoc(Parser *p) {
 
     string field = Parser_check_name(p);
 
-    _PUSH(&fields, (/*typ = array_string   tmp_typ=string*/ field), tmp258,
+    _PUSH(&fields, (/*typ = array_string   tmp_typ=string*/ field), tmp260,
           string);
 
     Parser_gen(p, _STR(".%.*s = ", field.len, field.str));
@@ -18353,9 +19335,9 @@ string Parser_assoc(Parser *p) {
 
   Type T = Table_find_type(&/* ? */ *p->table, var.typ);
 
-  array_Var tmp260 = T.fields;
-  for (int tmp261 = 0; tmp261 < tmp260.len; tmp261++) {
-    Var ffield = ((Var *)tmp260.data)[tmp261];
+  array_Var tmp262 = T.fields;
+  for (int tmp263 = 0; tmp263 < tmp262.len; tmp263++) {
+    Var ffield = ((Var *)tmp262.data)[tmp263];
 
     string f = ffield.name;
 
@@ -18755,13 +19737,13 @@ string Parser_array_init(Parser *p) {
 
     if (Table_known_const(&/* ? */ *p->table, const_name)) {
 
-      Option_Var tmp292 = Table_find_const(&/* ? */ *p->table, const_name);
-      if (!tmp292.ok) {
-        string err = tmp292.error;
+      Option_Var tmp294 = Table_find_const(&/* ? */ *p->table, const_name);
+      if (!tmp294.ok) {
+        string err = tmp294.error;
 
         v_exit(1);
       }
-      Var c = *(Var *)tmp292.data;
+      Var c = *(Var *)tmp294.data;
       ;
 
       if (string_eq(c.typ, tos2((byte *)"int")) &&
@@ -18965,17 +19947,17 @@ string Parser_struct_init(Parser *p, string typ) {
                              field.len, field.str, t.name.len, t.name.str));
       };
 
-      Option_Var tmp309 = Type_find_field(&/* ? */ t, field);
-      if (!tmp309.ok) {
-        string err = tmp309.error;
+      Option_Var tmp311 = Type_find_field(&/* ? */ t, field);
+      if (!tmp311.ok) {
+        string err = tmp311.error;
 
         v_panic(tos2((byte *)"field"));
       }
-      Var f = *(Var *)tmp309.data;
+      Var f = *(Var *)tmp311.data;
       ;
 
       _PUSH(&inited_fields, (/*typ = array_string   tmp_typ=string*/ field),
-            tmp310, string);
+            tmp312, string);
 
       Parser_gen_struct_field_init(p, field);
 
@@ -19005,9 +19987,9 @@ string Parser_struct_init(Parser *p, string typ) {
       Parser_gen(p, tos2((byte *)","));
     };
 
-    array_Var tmp311 = t.fields;
-    for (int i = 0; i < tmp311.len; i++) {
-      Var field = ((Var *)tmp311.data)[i];
+    array_Var tmp313 = t.fields;
+    for (int i = 0; i < tmp313.len; i++) {
+      Var field = ((Var *)tmp313.data)[i];
 
       if (_IN(string, (field.name), inited_fields)) {
 
@@ -19030,7 +20012,7 @@ string Parser_struct_init(Parser *p, string typ) {
         Parser_gen_empty_map(p, string_right(field_typ, 4));
 
         _PUSH(&inited_fields,
-              (/*typ = array_string   tmp_typ=string*/ field.name), tmp313,
+              (/*typ = array_string   tmp_typ=string*/ field.name), tmp315,
               string);
 
         if (i != t.fields.len - 1) {
@@ -19070,9 +20052,9 @@ string Parser_struct_init(Parser *p, string typ) {
       T = Table_find_type(&/* ? */ *p->table, T.parent);
     };
 
-    array_Var tmp316 = T.fields;
-    for (int i = 0; i < tmp316.len; i++) {
-      Var ffield = ((Var *)tmp316.data)[i];
+    array_Var tmp318 = T.fields;
+    for (int i = 0; i < tmp318.len; i++) {
+      Var ffield = ((Var *)tmp318.data)[i];
 
       string expr_typ = Parser_bool_expression(p);
 
@@ -19810,9 +20792,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
             Parser_check(p, main__Token_rcbr);
           };
 
-          string tmp365 = res_typ;
+          string tmp367 = res_typ;
           { Parser_check(p, main__Token_rcbr); }
-          return tmp365;
+          return tmp367;
           ;
 
         } else {
@@ -19827,9 +20809,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
           p->returns = all_cases_return && p->returns;
 
-          string tmp366 = tos2((byte *)"");
+          string tmp368 = tos2((byte *)"");
           { Parser_check(p, main__Token_rcbr); }
-          return tmp366;
+          return tmp368;
           ;
         };
       };
@@ -19854,9 +20836,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         Parser_gen(p, strings__repeat(')', i + 1));
 
-        string tmp368 = res_typ;
+        string tmp370 = res_typ;
         { Parser_check(p, main__Token_rcbr); }
-        return tmp368;
+        return tmp370;
         ;
 
       } else {
@@ -19873,9 +20855,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         p->returns = all_cases_return && p->returns;
 
-        string tmp369 = tos2((byte *)"");
+        string tmp371 = tos2((byte *)"");
         { Parser_check(p, main__Token_rcbr); }
-        return tmp369;
+        return tmp371;
         ;
       };
     };
@@ -19990,9 +20972,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
   p->returns = 0;
 
-  string tmp371 = tos2((byte *)"");
+  string tmp373 = tos2((byte *)"");
   { Parser_check(p, main__Token_rcbr); }
-  return tmp371;
+  return tmp373;
   ;
 
   { Parser_check(p, main__Token_rcbr); }
@@ -20059,7 +21041,7 @@ void Parser_return_st(Parser *p) {
       array_string types =
           new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-      _PUSH(&types, (/*typ = array_string   tmp_typ=string*/ expr_type), tmp379,
+      _PUSH(&types, (/*typ = array_string   tmp_typ=string*/ expr_type), tmp381,
             string);
 
       while (p->tok == main__Token_comma) {
@@ -20069,7 +21051,7 @@ void Parser_return_st(Parser *p) {
         _PUSH(
             &types,
             (/*typ = array_string   tmp_typ=string*/ Parser_bool_expression(p)),
-            tmp380, string);
+            tmp382, string);
       };
 
       string cur_fn_typ_chk = p->cur_fn.typ;
@@ -20089,9 +21071,9 @@ void Parser_return_st(Parser *p) {
 
         string ret_fields = tos2((byte *)"");
 
-        array_string tmp384 = string_split(ret_vals, tos2((byte *)" "));
-        for (int ret_val_idx = 0; ret_val_idx < tmp384.len; ret_val_idx++) {
-          string ret_val = ((string *)tmp384.data)[ret_val_idx];
+        array_string tmp386 = string_split(ret_vals, tos2((byte *)" "));
+        for (int ret_val_idx = 0; ret_val_idx < tmp386.len; ret_val_idx++) {
+          string ret_val = ((string *)tmp386.data)[ret_val_idx];
 
           if (ret_val_idx > 0) {
 
@@ -20137,9 +21119,9 @@ void Parser_return_st(Parser *p) {
 
         string total_text = tos2((byte *)"");
 
-        array_string tmp390 = p->cur_fn.defer_text;
-        for (int tmp391 = 0; tmp391 < tmp390.len; tmp391++) {
-          string text = ((string *)tmp390.data)[tmp391];
+        array_string tmp392 = p->cur_fn.defer_text;
+        for (int tmp393 = 0; tmp393 < tmp392.len; tmp393++) {
+          string text = ((string *)tmp392.data)[tmp393];
 
           if (string_ne(text, tos2((byte *)""))) {
 
@@ -20215,13 +21197,13 @@ void Parser_go_statement(Parser *p) {
 
     string var_name = p->lit;
 
-    Option_Var tmp394 = Parser_find_var(&/* ? */ *p, var_name);
-    if (!tmp394.ok) {
-      string err = tmp394.error;
+    Option_Var tmp396 = Parser_find_var(&/* ? */ *p, var_name);
+    if (!tmp396.ok) {
+      string err = tmp396.error;
 
       return;
     }
-    Var v = *(Var *)tmp394.data;
+    Var v = *(Var *)tmp396.data;
     ;
 
     Parser_mark_var_used(p, v);
@@ -20232,27 +21214,27 @@ void Parser_go_statement(Parser *p) {
 
     Type typ = Table_find_type(&/* ? */ *p->table, v.typ);
 
-    Option_Fn tmp396 = Table_find_method(
+    Option_Fn tmp398 = Table_find_method(
         &/* ? */ *p->table, &/*112 EXP:"Type*" GOT:"Type" */ typ, p->lit);
-    if (!tmp396.ok) {
-      string err = tmp396.error;
+    if (!tmp398.ok) {
+      string err = tmp398.error;
 
       v_panic(tos2((byte *)"go method"));
     }
-    Fn method = *(Fn *)tmp396.data;
+    Fn method = *(Fn *)tmp398.data;
     ;
 
     Parser_async_fn_call(p, method, 0, var_name, v.typ);
 
   } else {
 
-    Option_Fn tmp397 = Table_find_fn(&/* ? */ *p->table, p->lit);
-    if (!tmp397.ok) {
-      string err = tmp397.error;
+    Option_Fn tmp399 = Table_find_fn(&/* ? */ *p->table, p->lit);
+    if (!tmp399.ok) {
+      string err = tmp399.error;
 
       v_panic(tos2((byte *)"fn"));
     }
-    Fn f = *(Fn *)tmp397.data;
+    Fn f = *(Fn *)tmp399.data;
     ;
 
     if (string_eq(f.name, tos2((byte *)"println")) ||
@@ -20296,9 +21278,9 @@ string Parser_js_decode(Parser *p) {
 
     Type T = Table_find_type(&/* ? */ *p->table, typ);
 
-    array_Var tmp405 = T.fields;
-    for (int tmp406 = 0; tmp406 < tmp405.len; tmp406++) {
-      Var field = ((Var *)tmp405.data)[tmp406];
+    array_Var tmp407 = T.fields;
+    for (int tmp408 = 0; tmp408 < tmp407.len; tmp408++) {
+      Var field = ((Var *)tmp407.data)[tmp408];
 
       string def_val = type_default(field.typ);
 
@@ -20328,7 +21310,7 @@ string Parser_js_decode(Parser *p) {
     _PUSH(&p->cgen->typedefs,
           (/*typ = array_string   tmp_typ=string*/ _STR(
               "typedef Option %.*s;", opt_type.len, opt_type.str)),
-          tmp409, string);
+          tmp411, string);
 
     Table_register_type(p->table, opt_type);
 
@@ -20435,19 +21417,19 @@ void Parser_check_and_register_used_imported_type(Parser *p, string typ_name) {
 }
 void Parser_check_unused_imports(Parser *p) {
 
-  if (Parser_fileis(&/* ? */ *p, main__vgen_file_name)) {
+  if (string_eq(p->id, tos2((byte *)"vgen"))) {
 
     return;
   };
 
   string output = tos2((byte *)"");
 
-  map_string tmp417 = p->import_table.imports;
-  array_string keys_tmp417 = map_keys(&tmp417);
-  for (int l = 0; l < keys_tmp417.len; l++) {
-    string alias = ((string *)keys_tmp417.data)[l];
+  map_string tmp419 = p->import_table.imports;
+  array_string keys_tmp419 = map_keys(&tmp419);
+  for (int l = 0; l < keys_tmp419.len; l++) {
+    string alias = ((string *)keys_tmp419.data)[l];
     string mod = {0};
-    map_get(tmp417, alias, &mod);
+    map_get(tmp419, alias, &mod);
 
     if (!FileImportTable_is_used_import(&/* ? */ p->import_table, alias)) {
 
@@ -21540,7 +22522,7 @@ array_string run_repl() {
     os__rm(string_left(temp_file, temp_file.len - 2));
   }
 }
-Scanner *new_scanner(string file_path) {
+Scanner *new_scanner_file(string file_path) {
 
   if (!os__file_exists(file_path)) {
 
@@ -21574,10 +22556,18 @@ Scanner *new_scanner(string file_path) {
     };
   };
 
-  return (Scanner *)memdup(&(Scanner){.file_path = file_path,
-                                      .text = raw_text,
+  Scanner *s = new_scanner(raw_text);
+
+  s->file_path = file_path;
+
+  return s;
+}
+Scanner *new_scanner(string text) {
+
+  return (Scanner *)memdup(&(Scanner){.text = text,
                                       .fmt_out = strings__new_builder(1000),
                                       .should_print_line_on_error = 1,
+                                      .file_path = tos((byte *)"", 0),
                                       .pos = 0,
                                       .line_nr = 0,
                                       .last_nl_pos = 0,
@@ -22500,11 +23490,11 @@ void Scanner_error_with_col(Scanner *s, string msg, int col) {
 
     byte *pl = pointerline.str;
 
-    string tmp105 = line;
-    array_byte bytes_tmp105 = string_bytes(tmp105);
+    string tmp106 = line;
+    array_byte bytes_tmp106 = string_bytes(tmp106);
     ;
-    for (int i = 0; i < tmp105.len; i++) {
-      byte c = ((byte *)bytes_tmp105.data)[i];
+    for (int i = 0; i < tmp106.len; i++) {
+      byte c = ((byte *)bytes_tmp106.data)[i];
 
       pl[/*ptr*/ i] /*rbyte 1*/ = ' ';
 
@@ -22725,10 +23715,10 @@ bool Scanner_expect(Scanner *s, string want, int start_pos) {
     return 0;
   };
 
-  int tmp144 = start_pos;
+  int tmp145 = start_pos;
   ;
-  for (int tmp145 = tmp144; tmp145 < end_pos; tmp145++) {
-    int pos = tmp145;
+  for (int tmp146 = tmp145; tmp146 < end_pos; tmp146++) {
+    int pos = tmp146;
 
     if (string_at(s->text, pos) != string_at(want, pos - start_pos)) {
 
@@ -22780,11 +23770,11 @@ bool is_name_char(byte c) { return byte_is_letter(c) || c == '_'; }
 bool is_nl(byte c) { return c == '\r' || c == '\n'; }
 bool contains_capital(string s) {
 
-  string tmp154 = s;
-  array_byte bytes_tmp154 = string_bytes(tmp154);
+  string tmp155 = s;
+  array_byte bytes_tmp155 = string_bytes(tmp155);
   ;
-  for (int tmp155 = 0; tmp155 < tmp154.len; tmp155++) {
-    byte c = ((byte *)bytes_tmp154.data)[tmp155];
+  for (int tmp156 = 0; tmp156 < tmp155.len; tmp156++) {
+    byte c = ((byte *)bytes_tmp155.data)[tmp156];
 
     if (c >= 'A' && c <= 'Z') {
 
@@ -22801,10 +23791,10 @@ bool good_type_name(string s) {
     return 1;
   };
 
-  int tmp156 = 2;
+  int tmp157 = 2;
   ;
-  for (int tmp157 = tmp156; tmp157 < s.len; tmp157++) {
-    int i = tmp157;
+  for (int tmp158 = tmp157; tmp158 < s.len; tmp158++) {
+    int i = tmp158;
 
     if (byte_is_capital(string_at(s, i)) &&
         byte_is_capital(string_at(s, i - 1)) &&
@@ -23978,14 +24968,14 @@ string Table_qualify_module(Table *table, string mod, string file_path) {
 
   return mod;
 }
-FileImportTable Table_get_file_import_table(Table *table, string file_path) {
+FileImportTable Table_get_file_import_table(Table *table, string id) {
 
-  FileImportTable fit = new_file_import_table(file_path);
+  FileImportTable fit = new_file_import_table(id);
 
-  if (_IN_MAP((file_path), table->file_imports)) {
+  if (_IN_MAP((id), table->file_imports)) {
 
     FileImportTable tmp104 = {0};
-    bool tmp105 = map_get(table->file_imports, file_path, &tmp104);
+    bool tmp105 = map_get(table->file_imports, id, &tmp104);
 
     fit.imports = tmp104.imports;
   };
@@ -24639,6 +25629,157 @@ void init_consts() {
   math__MinI8 = -128;
   math__MinI16 = -32768;
   math__MinI32 = -2147483648;
+  math_dot_bits__de_bruijn32 = ((u32)(0x077CB531));
+  math_dot_bits__de_bruijn32tab = new_array_from_c_array(
+      32, 32, sizeof(byte),
+      (byte[]){
+          ((byte)(0)), 1,  28, 2,  29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4,  8,
+          31,          27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6,  11, 5,  10, 9,
+      });
+  math_dot_bits__de_bruijn64 = ((u64)(0x03f79d71b4ca8b09));
+  math_dot_bits__de_bruijn64tab = new_array_from_c_array(
+      64, 64, sizeof(byte),
+      (byte[]){
+          ((byte)(0)), 1,  56, 2,  57, 49, 28, 3,  61, 58, 42, 50, 38,
+          29,          17, 4,  62, 47, 59, 36, 45, 43, 51, 22, 53, 39,
+          33,          30, 24, 18, 12, 5,  63, 55, 48, 27, 60, 41, 37,
+          16,          46, 35, 44, 21, 52, 32, 23, 11, 54, 26, 40, 15,
+          34,          20, 31, 10, 25, 14, 19, 9,  13, 8,  7,  6,
+      });
+  math_dot_bits__m0 = 0x5555555555555555;
+  math_dot_bits__m1 = 0x3333333333333333;
+  math_dot_bits__m2 = 0x0f0f0f0f0f0f0f0f;
+  math_dot_bits__m3 = 0x00ff00ff00ff00ff;
+  math_dot_bits__m4 = 0x0000ffff0000ffff;
+  math_dot_bits__ntz8_tab = new_array_from_c_array(
+      256, 256, sizeof(byte),
+      (byte[]){
+          ((byte)(0x08)), 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00,
+          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00,
+          0x02,           0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00,
+          0x01,           0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
+          0x03,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00,
+          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00,
+          0x02,           0x00, 0x01, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x00,
+          0x01,           0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
+          0x04,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00,
+          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00,
+          0x02,           0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00,
+          0x01,           0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
+          0x03,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x07, 0x00,
+          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00,
+          0x02,           0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00,
+          0x01,           0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
+          0x05,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00,
+          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00,
+          0x02,           0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00,
+          0x01,           0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
+          0x03,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00,
+          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00,
+          0x02,           0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00,
+          0x01,           0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
+          0x04,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00,
+          0x01,           0x00, 0x02, 0x00, 0x01, 0x00,
+      });
+  math_dot_bits__pop8_tab = new_array_from_c_array(
+      256, 256, sizeof(byte),
+      (byte[]){
+          ((byte)(0x00)), 0x01, 0x01, 0x02, 0x01, 0x02, 0x02, 0x03, 0x01, 0x02,
+          0x02,           0x03, 0x02, 0x03, 0x03, 0x04, 0x01, 0x02, 0x02, 0x03,
+          0x02,           0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04,
+          0x04,           0x05, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04,
+          0x02,           0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x02, 0x03,
+          0x03,           0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05,
+          0x04,           0x05, 0x05, 0x06, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03,
+          0x03,           0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05,
+          0x02,           0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04,
+          0x04,           0x05, 0x04, 0x05, 0x05, 0x06, 0x02, 0x03, 0x03, 0x04,
+          0x03,           0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05,
+          0x05,           0x06, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06,
+          0x04,           0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x01, 0x02,
+          0x02,           0x03, 0x02, 0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04,
+          0x03,           0x04, 0x04, 0x05, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04,
+          0x04,           0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06,
+          0x02,           0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04,
+          0x04,           0x05, 0x04, 0x05, 0x05, 0x06, 0x03, 0x04, 0x04, 0x05,
+          0x04,           0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06,
+          0x06,           0x07, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05,
+          0x03,           0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x03, 0x04,
+          0x04,           0x05, 0x04, 0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06,
+          0x05,           0x06, 0x06, 0x07, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05,
+          0x05,           0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07,
+          0x04,           0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x05, 0x06,
+          0x06,           0x07, 0x06, 0x07, 0x07, 0x08,
+      });
+  math_dot_bits__rev8_tab = new_array_from_c_array(
+      256, 256, sizeof(byte),
+      (byte[]){
+          ((byte)(0x00)), 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0, 0x10, 0x90,
+          0x50,           0xd0, 0x30, 0xb0, 0x70, 0xf0, 0x08, 0x88, 0x48, 0xc8,
+          0x28,           0xa8, 0x68, 0xe8, 0x18, 0x98, 0x58, 0xd8, 0x38, 0xb8,
+          0x78,           0xf8, 0x04, 0x84, 0x44, 0xc4, 0x24, 0xa4, 0x64, 0xe4,
+          0x14,           0x94, 0x54, 0xd4, 0x34, 0xb4, 0x74, 0xf4, 0x0c, 0x8c,
+          0x4c,           0xcc, 0x2c, 0xac, 0x6c, 0xec, 0x1c, 0x9c, 0x5c, 0xdc,
+          0x3c,           0xbc, 0x7c, 0xfc, 0x02, 0x82, 0x42, 0xc2, 0x22, 0xa2,
+          0x62,           0xe2, 0x12, 0x92, 0x52, 0xd2, 0x32, 0xb2, 0x72, 0xf2,
+          0x0a,           0x8a, 0x4a, 0xca, 0x2a, 0xaa, 0x6a, 0xea, 0x1a, 0x9a,
+          0x5a,           0xda, 0x3a, 0xba, 0x7a, 0xfa, 0x06, 0x86, 0x46, 0xc6,
+          0x26,           0xa6, 0x66, 0xe6, 0x16, 0x96, 0x56, 0xd6, 0x36, 0xb6,
+          0x76,           0xf6, 0x0e, 0x8e, 0x4e, 0xce, 0x2e, 0xae, 0x6e, 0xee,
+          0x1e,           0x9e, 0x5e, 0xde, 0x3e, 0xbe, 0x7e, 0xfe, 0x01, 0x81,
+          0x41,           0xc1, 0x21, 0xa1, 0x61, 0xe1, 0x11, 0x91, 0x51, 0xd1,
+          0x31,           0xb1, 0x71, 0xf1, 0x09, 0x89, 0x49, 0xc9, 0x29, 0xa9,
+          0x69,           0xe9, 0x19, 0x99, 0x59, 0xd9, 0x39, 0xb9, 0x79, 0xf9,
+          0x05,           0x85, 0x45, 0xc5, 0x25, 0xa5, 0x65, 0xe5, 0x15, 0x95,
+          0x55,           0xd5, 0x35, 0xb5, 0x75, 0xf5, 0x0d, 0x8d, 0x4d, 0xcd,
+          0x2d,           0xad, 0x6d, 0xed, 0x1d, 0x9d, 0x5d, 0xdd, 0x3d, 0xbd,
+          0x7d,           0xfd, 0x03, 0x83, 0x43, 0xc3, 0x23, 0xa3, 0x63, 0xe3,
+          0x13,           0x93, 0x53, 0xd3, 0x33, 0xb3, 0x73, 0xf3, 0x0b, 0x8b,
+          0x4b,           0xcb, 0x2b, 0xab, 0x6b, 0xeb, 0x1b, 0x9b, 0x5b, 0xdb,
+          0x3b,           0xbb, 0x7b, 0xfb, 0x07, 0x87, 0x47, 0xc7, 0x27, 0xa7,
+          0x67,           0xe7, 0x17, 0x97, 0x57, 0xd7, 0x37, 0xb7, 0x77, 0xf7,
+          0x0f,           0x8f, 0x4f, 0xcf, 0x2f, 0xaf, 0x6f, 0xef, 0x1f, 0x9f,
+          0x5f,           0xdf, 0x3f, 0xbf, 0x7f, 0xff,
+      });
+  math_dot_bits__len8_tab = new_array_from_c_array(
+      256, 256, sizeof(byte),
+      (byte[]){
+          ((byte)(0x00)), 0x01, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03, 0x04, 0x04,
+          0x04,           0x04, 0x04, 0x04, 0x04, 0x04, 0x05, 0x05, 0x05, 0x05,
+          0x05,           0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05,
+          0x05,           0x05, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
+          0x06,           0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
+          0x06,           0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
+          0x06,           0x06, 0x06, 0x06, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08,
+      });
+  crypto_dot_sha1__Init0 = 0x67452301;
+  crypto_dot_sha1__Init1 = 0xEFCDAB89;
+  crypto_dot_sha1__Init2 = 0x98BADCFE;
+  crypto_dot_sha1__Init3 = 0x10325476;
+  crypto_dot_sha1__Init4 = 0xC3D2E1F0;
+  crypto_dot_sha1___K0 = 0x5A827999;
+  crypto_dot_sha1___K1 = 0x6ED9EBA1;
+  crypto_dot_sha1___K2 = 0x8F1BBCDC;
+  crypto_dot_sha1___K3 = 0xCA62C1D6;
   time__MonthDays = new_array_from_c_array(
       12, 12, sizeof(int),
       (int[]){31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31});
@@ -24751,7 +25892,6 @@ void init_consts() {
   main__KEY_QUERY_VALUE = (0x0001);
   main__KEY_WOW64_32KEY = (0x0200);
   main__KEY_ENUMERATE_SUB_KEYS = (0x0008);
-  main__vgen_file_name = tos2((byte *)"vgen.tmp");
   main__EmptyFn = (Fn){.name = tos((byte *)"", 0),
                        .mod = tos((byte *)"", 0),
                        .args = new_array(0, 1, sizeof(Var)),
