@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "dc28c78"
+#define V_COMMIT_HASH "0bfb88e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "46ac22f"
+#define V_COMMIT_HASH "dc28c78"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -13425,7 +13425,9 @@ void install_v(array_string args) {
 }
 void V_test_vget(V *v) {
 
-  int ret = os__system(tos2((byte *)"v install nedpals.args"));
+  string vexe = os__executable();
+
+  int ret = os__system(_STR("%.*s install nedpals.args", vexe.len, vexe.str));
 
   if (ret != 0) {
 
@@ -13472,9 +13474,9 @@ void V_test_v(V *v) {
 
   benchmark__Benchmark tmark = benchmark__new_benchmark();
 
-  array_string tmp142 = test_files;
-  for (int tmp143 = 0; tmp143 < tmp142.len; tmp143++) {
-    string dot_relative_file = ((string *)tmp142.data)[tmp143];
+  array_string tmp143 = test_files;
+  for (int tmp144 = 0; tmp144 < tmp143.len; tmp144++) {
+    string dot_relative_file = ((string *)tmp143.data)[tmp144];
 
     if (string_contains(dot_relative_file, tos2((byte *)"repl_test.v"))) {
 
@@ -13499,9 +13501,9 @@ void V_test_v(V *v) {
 
     benchmark__Benchmark_step(&/* ? */ tmark);
 
-    Option_os__Result tmp148 = os__exec(cmd);
-    if (!tmp148.ok) {
-      string err = tmp148.error;
+    Option_os__Result tmp149 = os__exec(cmd);
+    if (!tmp149.ok) {
+      string err = tmp149.error;
 
       benchmark__Benchmark_fail(&/* ? */ tmark);
 
@@ -13513,7 +13515,7 @@ void V_test_v(V *v) {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp148.data;
+    os__Result r = *(os__Result *)tmp149.data;
     ;
 
     if (r.exit_code != 0) {
@@ -13551,9 +13553,9 @@ void V_test_v(V *v) {
 
   benchmark__Benchmark bmark = benchmark__new_benchmark();
 
-  array_string tmp151 = examples;
-  for (int tmp152 = 0; tmp152 < tmp151.len; tmp152++) {
-    string relative_file = ((string *)tmp151.data)[tmp152];
+  array_string tmp152 = examples;
+  for (int tmp153 = 0; tmp153 < tmp152.len; tmp153++) {
+    string relative_file = ((string *)tmp152.data)[tmp153];
 
     if (string_contains(relative_file, tos2((byte *)"vweb"))) {
 
@@ -13575,9 +13577,9 @@ void V_test_v(V *v) {
 
     benchmark__Benchmark_step(&/* ? */ bmark);
 
-    Option_os__Result tmp156 = os__exec(cmd);
-    if (!tmp156.ok) {
-      string err = tmp156.error;
+    Option_os__Result tmp157 = os__exec(cmd);
+    if (!tmp157.ok) {
+      string err = tmp157.error;
 
       failed = 1;
 
@@ -13589,7 +13591,7 @@ void V_test_v(V *v) {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp156.data;
+    os__Result r = *(os__Result *)tmp157.data;
     ;
 
     if (r.exit_code != 0) {
