@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a5391c8"
+#define V_COMMIT_HASH "802da8f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1821dac"
+#define V_COMMIT_HASH "a5391c8"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -163,9 +163,6 @@ typedef struct os__Result os__Result;
 typedef Option Option_os__Result;
 typedef struct rand__Pcg32 rand__Pcg32;
 typedef struct rand__Splitmix64 rand__Splitmix64;
-typedef struct crypto_dot_sha1__Digest crypto_dot_sha1__Digest;
-typedef array array_u32;
-typedef Option Option_int;
 typedef struct time__Time time__Time;
 typedef Option Option_int;
 typedef struct benchmark__Benchmark benchmark__Benchmark;
@@ -224,7 +221,6 @@ typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__Result;
-typedef Option Option_int;
 typedef Option Option_int;
 typedef map map_DepGraphNode;
 typedef map map_DepSet;
@@ -472,13 +468,6 @@ struct benchmark__Benchmark {
   int nok;
   int nfail;
   bool verbose;
-};
-
-struct crypto_dot_sha1__Digest {
-  array_u32 h;
-  array_byte x;
-  int nx;
-  u64 len;
 };
 
 struct mapnode {
@@ -855,24 +844,6 @@ string map_string_str(map_string m);
 Option opt_ok(void *data, int size);
 Option opt_none();
 Option v_error(string s);
-static inline u16 encoding_dot_binary__little_endian_endian_u16(array_byte b);
-static inline void encoding_dot_binary__little_endian_put_u16(array_byte *b,
-                                                              u16 v);
-static inline u32 encoding_dot_binary__little_endian_u32(array_byte b);
-static inline void encoding_dot_binary__little_endian_put_u32(array_byte *b,
-                                                              u32 v);
-static inline u64 encoding_dot_binary__little_endian_u64(array_byte b);
-static inline void encoding_dot_binary__little_endian_put_u64(array_byte *b,
-                                                              u64 v);
-static inline u16 encoding_dot_binary__big_endian_u16(array_byte b);
-static inline void encoding_dot_binary__big_endian_put_u16(array_byte *b,
-                                                           u16 v);
-static inline u32 encoding_dot_binary__big_endian_u32(array_byte b);
-static inline void encoding_dot_binary__big_endian_put_u32(array_byte *b,
-                                                           u32 v);
-static inline u64 encoding_dot_binary__big_endian_u64(array_byte b);
-static inline void encoding_dot_binary__big_endian_put_u64(array_byte *b,
-                                                           u64 v);
 strings__Builder strings__new_builder(int initial_size);
 void strings__Builder_write(strings__Builder *b, string s);
 void strings__Builder_writeln(strings__Builder *b, string s);
@@ -979,33 +950,6 @@ f64 math__sqrt(f64 a);
 f64 math__tan(f64 a);
 f64 math__tanh(f64 a);
 f64 math__trunc(f64 a);
-int math_dot_bits__leading_zeros8(byte x);
-int math_dot_bits__leading_zeros16(u16 x);
-int math_dot_bits__leading_zeros32(u32 x);
-int math_dot_bits__leading_zeros64(u64 x);
-int math_dot_bits__trailing_zeros8(byte x);
-int math_dot_bits__trailing_zeros16(u16 x);
-int math_dot_bits__trailing_zeros32(u32 x);
-int math_dot_bits__trailing_zeros64(u64 x);
-int math_dot_bits__ones_count8(byte x);
-int math_dot_bits__ones_count16(u16 x);
-int math_dot_bits__ones_count32(u32 x);
-int math_dot_bits__ones_count64(u64 x);
-static inline byte math_dot_bits__rotate_left_8(byte x, int k);
-static inline u16 math_dot_bits__rotate_left_16(u16 x, int k);
-static inline u32 math_dot_bits__rotate_left_32(u32 x, int k);
-static inline u64 math_dot_bits__rotate_left_64(u64 x, int k);
-static inline byte math_dot_bits__reverse8(byte x);
-static inline u16 math_dot_bits__reverse16(u16 x);
-static inline u32 math_dot_bits__reverse32(u32 x);
-static inline u64 math_dot_bits__reverse64(u64 x);
-static inline u16 math_dot_bits__reverse_bytes16(u16 x);
-static inline u32 math_dot_bits__reverse_bytes32(u32 x);
-static inline u64 math_dot_bits__reverse_bytes64(u64 x);
-int math_dot_bits__len8(byte x);
-int math_dot_bits__len16(u16 x);
-int math_dot_bits__len32(u32 x);
-int math_dot_bits__len64(u64 x);
 rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq);
 static inline u32 rand__Pcg32_next(rand__Pcg32 *rng);
 static inline u32 rand__Pcg32_bounded_next(rand__Pcg32 *rng, u32 bound);
@@ -1084,20 +1028,6 @@ void term__erase_line_tobeg();
 void term__erase_line_clear();
 void term__show_cursor();
 void term__hide_cursor();
-void crypto_dot_sha1__Digest_reset(crypto_dot_sha1__Digest *d);
-crypto_dot_sha1__Digest *crypto_dot_sha1__new();
-Option_int crypto_dot_sha1__Digest_write(crypto_dot_sha1__Digest *d,
-                                         array_byte p_);
-array_byte crypto_dot_sha1__Digest_sum(crypto_dot_sha1__Digest *d,
-                                       array_byte *b_in);
-array_byte crypto_dot_sha1__Digest_checksum(crypto_dot_sha1__Digest *d);
-array_byte crypto_dot_sha1__sum(array_byte data);
-void crypto_dot_sha1__block(crypto_dot_sha1__Digest *dig, array_byte p);
-int crypto_dot_sha1__Digest_size(crypto_dot_sha1__Digest *d);
-int crypto_dot_sha1__Digest_block_size(crypto_dot_sha1__Digest *d);
-string crypto_dot_sha1__hexhash(string s);
-void crypto_dot_sha1__block_generic(crypto_dot_sha1__Digest *dig,
-                                    array_byte p_);
 void time__remove_me_when_c_bug_is_fixed();
 time__Time time__now();
 time__Time time__random();
@@ -1284,8 +1214,7 @@ Option_MsvcResult find_msvc();
 void V_cc_msvc(V *v);
 void build_thirdparty_obj_file_with_msvc(string path, array_CFlag moduleflags);
 MsvcStringFlags array_CFlag_msvc_string_flags(array_CFlag cflags);
-Parser V_new_parser_string(V *v, string text);
-Parser V_new_parser_string_id(V *v, string text, string id);
+Parser V_new_parser_string(V *v, string text, string id);
 Parser V_new_parser_file(V *v, string path);
 Parser V_new_parser(V *v, Scanner *scanner, string id);
 void Parser_scan_tokens(Parser *p);
@@ -1594,31 +1523,6 @@ int math__MinI32;
 #define math__MaxU16 65535
 #define math__MaxU32 4294967295
 #define math__MaxU64 18446744073709551615
-u32 math_dot_bits__de_bruijn32;
-array_byte math_dot_bits__de_bruijn32tab;
-u64 math_dot_bits__de_bruijn64;
-array_byte math_dot_bits__de_bruijn64tab;
-u64 math_dot_bits__m0;
-u64 math_dot_bits__m1;
-u64 math_dot_bits__m2;
-u64 math_dot_bits__m3;
-u64 math_dot_bits__m4;
-array_byte math_dot_bits__ntz8_tab;
-array_byte math_dot_bits__pop8_tab;
-array_byte math_dot_bits__rev8_tab;
-array_byte math_dot_bits__len8_tab;
-#define crypto_dot_sha1__Size 20
-#define crypto_dot_sha1__BlockSize 64
-#define crypto_dot_sha1__Chunk 64
-int crypto_dot_sha1__Init0;
-int crypto_dot_sha1__Init1;
-int crypto_dot_sha1__Init2;
-int crypto_dot_sha1__Init3;
-int crypto_dot_sha1__Init4;
-int crypto_dot_sha1___K0;
-int crypto_dot_sha1___K1;
-int crypto_dot_sha1___K2;
-int crypto_dot_sha1___K3;
 array_int time__MonthDays;
 i64 time__absoluteZeroYear;
 #define time__secondsPerMinute 60
@@ -4455,162 +4359,6 @@ Option opt_none() {
   };
 }
 Option v_error(string s) { return (Option){.error = s, .ok = 0, .is_none = 0}; }
-static inline u16 encoding_dot_binary__little_endian_endian_u16(array_byte b) {
-
-  (*(byte *)array__get(b, 1));
-  ;
-
-  return ((u16)((*(byte *)array__get(b, 0)))) |
-         ((u16)(((u16)((*(byte *)array__get(b, 1)))) << ((u16)(8))));
-}
-static inline void encoding_dot_binary__little_endian_put_u16(array_byte *b,
-                                                              u16 v) {
-
-  (*(byte *)array__get(*b, 1));
-  ;
-
-  array_set(b, 0, &(byte[]){((byte)(v))});
-
-  array_set(b, 1, &(byte[]){((byte)(v >> ((u16)(8))))});
-}
-static inline u32 encoding_dot_binary__little_endian_u32(array_byte b) {
-
-  (*(byte *)array__get(b, 3));
-  ;
-
-  return ((u32)((*(byte *)array__get(b, 0)))) |
-         ((u32)(((u32)((*(byte *)array__get(b, 1)))) << ((u32)(8)))) |
-         ((u32)(((u32)((*(byte *)array__get(b, 2)))) << ((u32)(16)))) |
-         ((u32)(((u32)((*(byte *)array__get(b, 3)))) << ((u32)(24))));
-}
-static inline void encoding_dot_binary__little_endian_put_u32(array_byte *b,
-                                                              u32 v) {
-
-  (*(byte *)array__get(*b, 3));
-  ;
-
-  array_set(b, 0, &(byte[]){((byte)(v))});
-
-  array_set(b, 1, &(byte[]){((byte)(v >> ((u32)(8))))});
-
-  array_set(b, 2, &(byte[]){((byte)(v >> ((u32)(16))))});
-
-  array_set(b, 3, &(byte[]){((byte)(v >> ((u32)(24))))});
-}
-static inline u64 encoding_dot_binary__little_endian_u64(array_byte b) {
-
-  (*(byte *)array__get(b, 7));
-  ;
-
-  return ((u64)((*(byte *)array__get(b, 0)))) |
-         ((u64)(((u64)((*(byte *)array__get(b, 1)))) << ((u64)(8)))) |
-         ((u64)(((u64)((*(byte *)array__get(b, 2)))) << ((u64)(16)))) |
-         ((u64)(((u64)((*(byte *)array__get(b, 3)))) << ((u64)(24)))) |
-         ((u64)(((u64)((*(byte *)array__get(b, 4)))) << ((u64)(32)))) |
-         ((u64)(((u64)((*(byte *)array__get(b, 5)))) << ((u64)(40)))) |
-         ((u64)(((u64)((*(byte *)array__get(b, 6)))) << ((u64)(48)))) |
-         ((u64)(((u64)((*(byte *)array__get(b, 7)))) << ((u64)(56))));
-}
-static inline void encoding_dot_binary__little_endian_put_u64(array_byte *b,
-                                                              u64 v) {
-
-  (*(byte *)array__get(*b, 7));
-  ;
-
-  array_set(b, 0, &(byte[]){((byte)(v))});
-
-  array_set(b, 1, &(byte[]){((byte)(v >> ((u64)(8))))});
-
-  array_set(b, 2, &(byte[]){((byte)(v >> ((u64)(16))))});
-
-  array_set(b, 3, &(byte[]){((byte)(v >> ((u64)(24))))});
-
-  array_set(b, 4, &(byte[]){((byte)(v >> ((u64)(32))))});
-
-  array_set(b, 5, &(byte[]){((byte)(v >> ((u64)(40))))});
-
-  array_set(b, 6, &(byte[]){((byte)(v >> ((u64)(48))))});
-
-  array_set(b, 7, &(byte[]){((byte)(v >> ((u64)(56))))});
-}
-static inline u16 encoding_dot_binary__big_endian_u16(array_byte b) {
-
-  (*(byte *)array__get(b, 1));
-  ;
-
-  return ((u16)((*(byte *)array__get(b, 1)))) |
-         ((u16)(((u16)((*(byte *)array__get(b, 0)))) << ((u16)(8))));
-}
-static inline void encoding_dot_binary__big_endian_put_u16(array_byte *b,
-                                                           u16 v) {
-
-  (*(byte *)array__get(*b, 1));
-  ;
-
-  array_set(b, 0, &(byte[]){((byte)(v >> ((u16)(8))))});
-
-  array_set(b, 1, &(byte[]){((byte)(v))});
-}
-static inline u32 encoding_dot_binary__big_endian_u32(array_byte b) {
-
-  (*(byte *)array__get(b, 3));
-  ;
-
-  return ((u32)((*(byte *)array__get(b, 3)))) |
-         ((u32)(((u32)((*(byte *)array__get(b, 2)))) << ((u32)(8)))) |
-         ((u32)(((u32)((*(byte *)array__get(b, 1)))) << ((u32)(16)))) |
-         ((u32)(((u32)((*(byte *)array__get(b, 0)))) << ((u32)(24))));
-}
-static inline void encoding_dot_binary__big_endian_put_u32(array_byte *b,
-                                                           u32 v) {
-
-  (*(byte *)array__get(*b, 3));
-  ;
-
-  array_set(b, 0, &(byte[]){((byte)(v >> ((u32)(24))))});
-
-  array_set(b, 1, &(byte[]){((byte)(v >> ((u32)(16))))});
-
-  array_set(b, 2, &(byte[]){((byte)(v >> ((u32)(8))))});
-
-  array_set(b, 3, &(byte[]){((byte)(v))});
-}
-static inline u64 encoding_dot_binary__big_endian_u64(array_byte b) {
-
-  (*(byte *)array__get(b, 7));
-  ;
-
-  return ((u64)((*(byte *)array__get(b, 7)))) |
-         ((u64)(((u64)((*(byte *)array__get(b, 6)))) << ((u64)(8)))) |
-         ((u64)(((u64)((*(byte *)array__get(b, 5)))) << ((u64)(16)))) |
-         ((u64)(((u64)((*(byte *)array__get(b, 4)))) << ((u64)(24)))) |
-         ((u64)(((u64)((*(byte *)array__get(b, 3)))) << ((u64)(32)))) |
-         ((u64)(((u64)((*(byte *)array__get(b, 2)))) << ((u64)(40)))) |
-         ((u64)(((u64)((*(byte *)array__get(b, 1)))) << ((u64)(48)))) |
-         ((u64)(((u64)((*(byte *)array__get(b, 0)))) << ((u64)(56))));
-}
-static inline void encoding_dot_binary__big_endian_put_u64(array_byte *b,
-                                                           u64 v) {
-
-  (*(byte *)array__get(*b, 7));
-  ;
-
-  array_set(b, 0, &(byte[]){((byte)(v >> ((u64)(56))))});
-
-  array_set(b, 1, &(byte[]){((byte)(v >> ((u64)(48))))});
-
-  array_set(b, 2, &(byte[]){((byte)(v >> ((u64)(40))))});
-
-  array_set(b, 3, &(byte[]){((byte)(v >> ((u64)(32))))});
-
-  array_set(b, 4, &(byte[]){((byte)(v >> ((u64)(24))))});
-
-  array_set(b, 5, &(byte[]){((byte)(v >> ((u64)(16))))});
-
-  array_set(b, 6, &(byte[]){((byte)(v >> ((u64)(8))))});
-
-  array_set(b, 7, &(byte[]){((byte)(v))});
-}
 strings__Builder strings__new_builder(int initial_size) {
 
   return (strings__Builder){.buf = new_array(0, 1, sizeof(byte)), .len = 0};
@@ -6012,265 +5760,6 @@ f64 math__sqrt(f64 a) { return sqrt(a); }
 f64 math__tan(f64 a) { return tan(a); }
 f64 math__tanh(f64 a) { return tanh(a); }
 f64 math__trunc(f64 a) { return trunc(a); }
-int math_dot_bits__leading_zeros8(byte x) { return 8 - math_dot_bits__len8(x); }
-int math_dot_bits__leading_zeros16(u16 x) {
-
-  return 16 - math_dot_bits__len16(x);
-}
-int math_dot_bits__leading_zeros32(u32 x) {
-
-  return 32 - math_dot_bits__len32(x);
-}
-int math_dot_bits__leading_zeros64(u64 x) {
-
-  return 64 - math_dot_bits__len64(x);
-}
-int math_dot_bits__trailing_zeros8(byte x) {
-
-  return ((int)((*(byte *)array__get(math_dot_bits__ntz8_tab, x))));
-}
-int math_dot_bits__trailing_zeros16(u16 x) {
-
-  if (x == 0) {
-
-    return 16;
-  };
-
-  return ((int)((*(byte *)array__get(
-      math_dot_bits__de_bruijn32tab,
-      ((u32)(x & -x)) * math_dot_bits__de_bruijn32 >> (32 - 5)))));
-}
-int math_dot_bits__trailing_zeros32(u32 x) {
-
-  if (x == 0) {
-
-    return 32;
-  };
-
-  return ((int)((
-      *(byte *)array__get(math_dot_bits__de_bruijn32tab,
-                          (x & -x) * math_dot_bits__de_bruijn32 >> (32 - 5)))));
-}
-int math_dot_bits__trailing_zeros64(u64 x) {
-
-  if (x == 0) {
-
-    return 64;
-  };
-
-  return ((int)((
-      *(byte *)array__get(math_dot_bits__de_bruijn64tab,
-                          (x & -x) * math_dot_bits__de_bruijn64 >> (64 - 6)))));
-}
-int math_dot_bits__ones_count8(byte x) {
-
-  return ((int)((*(byte *)array__get(math_dot_bits__pop8_tab, x))));
-}
-int math_dot_bits__ones_count16(u16 x) {
-
-  return (
-      (int)((*(byte *)array__get(math_dot_bits__pop8_tab, x >> 8)) +
-            (*(byte *)array__get(math_dot_bits__pop8_tab, x & ((u16)(0xff))))));
-}
-int math_dot_bits__ones_count32(u32 x) {
-
-  return (
-      (int)((*(byte *)array__get(math_dot_bits__pop8_tab, x >> 24)) +
-            (*(byte *)array__get(math_dot_bits__pop8_tab, x >> 16 & 0xff)) +
-            (*(byte *)array__get(math_dot_bits__pop8_tab, x >> 8 & 0xff)) +
-            (*(byte *)array__get(math_dot_bits__pop8_tab, x & ((u32)(0xff))))));
-}
-int math_dot_bits__ones_count64(u64 x) {
-
-  u64 m = ((u64)(1 << 64)) - 1;
-
-  u64 y = ((u64)(x >> ((u64)(1)) & (math_dot_bits__m0 & m))) +
-          ((u64)(x & (math_dot_bits__m0 & m)));
-
-  y = ((u64)(y >> ((u64)(2)) & (math_dot_bits__m1 & m))) +
-      ((u64)(y & (math_dot_bits__m1 & m)));
-
-  y = ((u64)(((u64)(y >> 4)) + y)) & (math_dot_bits__m2 & m);
-
-  y += y >> 8;
-
-  y += y >> 16;
-
-  y += y >> 32;
-
-  return ((int)(y)) & ((1 << 7) - 1);
-}
-static inline byte math_dot_bits__rotate_left_8(byte x, int k) {
-
-  byte n = ((byte)(8));
-
-  byte s = ((byte)(k)) & ((byte)(n - ((byte)(1))));
-
-  return ((byte)((x << s) | (x >> (n - s))));
-}
-static inline u16 math_dot_bits__rotate_left_16(u16 x, int k) {
-
-  u16 n = ((u16)(16));
-
-  u16 s = ((u16)(k)) & (n - ((u16)(1)));
-
-  return ((u16)((x << s) | (x >> (n - s))));
-}
-static inline u32 math_dot_bits__rotate_left_32(u32 x, int k) {
-
-  u32 n = ((u32)(32));
-
-  u32 s = ((u32)(k)) & (n - ((u32)(1)));
-
-  return ((u32)(((u32)(x << s)) | ((u32)(x >> (n - s)))));
-}
-static inline u64 math_dot_bits__rotate_left_64(u64 x, int k) {
-
-  u64 n = ((u64)(64));
-
-  u64 s = ((u64)(k)) & (n - ((u64)(1)));
-
-  return ((u64)(((u64)(x << s)) | ((u64)(x >> (n - s)))));
-}
-static inline byte math_dot_bits__reverse8(byte x) {
-
-  return (*(byte *)array__get(math_dot_bits__rev8_tab, x));
-}
-static inline u16 math_dot_bits__reverse16(u16 x) {
-
-  return ((u16)((*(byte *)array__get(math_dot_bits__rev8_tab, x >> 8)))) |
-         ((u16)(((u16)((*(byte *)array__get(math_dot_bits__rev8_tab,
-                                            x & ((u16)(0xff))))))
-                << 8));
-}
-static inline u32 math_dot_bits__reverse32(u32 x) {
-
-  u64 m = ((u64)(1 << 32)) - 1;
-
-  u32 y = ((u32)(x >> ((u32)(1)) & ((u32)(math_dot_bits__m0 & m)) |
-                 ((u32)(((u32)(x & ((u32)(math_dot_bits__m0 & m)))) << 1))));
-
-  y = ((u32)(
-      y >> ((u32)(2)) & ((u32)(math_dot_bits__m1 & m)) |
-      ((u32)(((u32)(y & ((u32)(math_dot_bits__m1 & m)))) << ((u32)(2))))));
-
-  y = ((u32)(
-      y >> ((u32)(4)) & ((u32)(math_dot_bits__m2 & m)) |
-      ((u32)(((u32)(y & ((u32)(math_dot_bits__m2 & m)))) << ((u32)(4))))));
-
-  return math_dot_bits__reverse_bytes32(y);
-}
-static inline u64 math_dot_bits__reverse64(u64 x) {
-
-  u64 m = ((u64)(1 << 64)) - 1;
-
-  u64 y = ((u64)(x >> ((u64)(1)) & (math_dot_bits__m0 & m) |
-                 ((u64)(((u64)(x & (math_dot_bits__m0 & m))) << 1))));
-
-  y = ((u64)(y >> ((u64)(2)) & (math_dot_bits__m1 & m) |
-             ((u64)(((u64)(y & (math_dot_bits__m1 & m))) << 2))));
-
-  y = ((u64)(y >> ((u64)(4)) & (math_dot_bits__m2 & m) |
-             ((u64)(((u64)(y & (math_dot_bits__m2 & m))) << 4))));
-
-  return math_dot_bits__reverse_bytes64(y);
-}
-static inline u16 math_dot_bits__reverse_bytes16(u16 x) {
-
-  return ((u16)(x >> 8)) | ((u16)(x << 8));
-}
-static inline u32 math_dot_bits__reverse_bytes32(u32 x) {
-
-  u64 m = ((u64)(1 << 32)) - 1;
-
-  u32 y = ((u32)(
-      x >> ((u32)(8)) & ((u32)(math_dot_bits__m3 & m)) |
-      ((u32)(((u32)(x & ((u32)(math_dot_bits__m3 & m)))) << ((u32)(8))))));
-
-  return ((u32)(y >> 16)) | ((u32)(y << 16));
-}
-static inline u64 math_dot_bits__reverse_bytes64(u64 x) {
-
-  u64 m = ((u64)(1 << 64)) - 1;
-
-  u64 y = ((u64)(x >> ((u64)(8)) & (math_dot_bits__m3 & m) |
-                 ((u64)(((u64)(x & (math_dot_bits__m3 & m))) << ((u64)(8))))));
-
-  y = ((u64)(y >> ((u64)(16)) & (math_dot_bits__m4 & m) |
-             ((u64)(((u64)(y & (math_dot_bits__m4 & m))) << ((u64)(16))))));
-
-  return ((u64)(y >> 32)) | ((u64)(y << 32));
-}
-int math_dot_bits__len8(byte x) {
-
-  return ((int)((*(byte *)array__get(math_dot_bits__len8_tab, x))));
-}
-int math_dot_bits__len16(u16 x) {
-
-  u16 y = x;
-
-  int n = 0;
-
-  if (y >= 1 << 8) {
-
-    y >>= 8;
-
-    n = 8;
-  };
-
-  return n + ((int)((*(byte *)array__get(math_dot_bits__len8_tab, y))));
-}
-int math_dot_bits__len32(u32 x) {
-
-  u32 y = x;
-
-  int n = 0;
-
-  if (y >= 1 << 16) {
-
-    y >>= 16;
-
-    n = 16;
-  };
-
-  if (y >= 1 << 8) {
-
-    y >>= 8;
-
-    n += 8;
-  };
-
-  return n + ((int)((*(byte *)array__get(math_dot_bits__len8_tab, y))));
-}
-int math_dot_bits__len64(u64 x) {
-
-  u64 y = x;
-
-  int n = 0;
-
-  if (y >= ((u64)(1)) << ((u64)(32))) {
-
-    y >>= 32;
-
-    n = 32;
-  };
-
-  if (y >= ((u64)(1)) << ((u64)(16))) {
-
-    y >>= 16;
-
-    n += 16;
-  };
-
-  if (y >= ((u64)(1)) << ((u64)(8))) {
-
-    y >>= 8;
-
-    n += 8;
-  };
-
-  return n + ((int)((*(byte *)array__get(math_dot_bits__len8_tab, y))));
-}
 rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq) {
 
   rand__Pcg32 rng = (rand__Pcg32){.state = 0, .inc = 0};
@@ -6618,393 +6107,6 @@ void term__erase_line_tobeg() { term__erase_line(tos2((byte *)"1")); }
 void term__erase_line_clear() { term__erase_line(tos2((byte *)"2")); }
 void term__show_cursor() { print(tos2((byte *)"\x1b[?25h")); }
 void term__hide_cursor() { print(tos2((byte *)"\x1b[?25l")); }
-void crypto_dot_sha1__Digest_reset(crypto_dot_sha1__Digest *d) {
-
-  d->x = array_repeat(
-      new_array_from_c_array(1, 1, sizeof(byte), (byte[]){((byte)(0))}),
-      crypto_dot_sha1__Chunk);
-
-  d->h = array_repeat(
-      new_array_from_c_array(1, 1, sizeof(u32), (u32[]){((u32)(0))}), 5);
-
-  array_set(&/*q*/ d->h, 0, &(u32[]){((u32)(crypto_dot_sha1__Init0))});
-
-  array_set(&/*q*/ d->h, 1, &(u32[]){((u32)(crypto_dot_sha1__Init1))});
-
-  array_set(&/*q*/ d->h, 2, &(u32[]){((u32)(crypto_dot_sha1__Init2))});
-
-  array_set(&/*q*/ d->h, 3, &(u32[]){((u32)(crypto_dot_sha1__Init3))});
-
-  array_set(&/*q*/ d->h, 4, &(u32[]){((u32)(crypto_dot_sha1__Init4))});
-
-  d->nx = 0;
-
-  d->len = 0;
-}
-crypto_dot_sha1__Digest *crypto_dot_sha1__new() {
-
-  crypto_dot_sha1__Digest *d = (crypto_dot_sha1__Digest *)memdup(
-      &(crypto_dot_sha1__Digest){.h = new_array(0, 1, sizeof(u32)),
-                                 .x = new_array(0, 1, sizeof(byte)),
-                                 .nx = 0,
-                                 .len = 0},
-      sizeof(crypto_dot_sha1__Digest));
-
-  crypto_dot_sha1__Digest_reset(d);
-
-  return d;
-}
-Option_int crypto_dot_sha1__Digest_write(crypto_dot_sha1__Digest *d,
-                                         array_byte p_) {
-
-  array_byte p = p_;
-
-  int nn = p.len;
-
-  d->len += ((u64)(nn));
-
-  if (d->nx > 0) {
-
-    int n = copy(array_right(d->x, d->nx), p);
-
-    d->nx += n;
-
-    if (d->nx == crypto_dot_sha1__Chunk) {
-
-      crypto_dot_sha1__block(d, d->x);
-
-      d->nx = 0;
-    };
-
-    if (n >= p.len) {
-
-      p = new_array_from_c_array(0, 0, sizeof(byte), (byte[]){0});
-
-    } else {
-
-      p = array_right(p, n);
-    };
-  };
-
-  if (p.len >= crypto_dot_sha1__Chunk) {
-
-    int n = p.len & ~(crypto_dot_sha1__Chunk - 1);
-
-    crypto_dot_sha1__block(d, array_left(p, n));
-
-    if (n >= p.len) {
-
-      p = new_array_from_c_array(0, 0, sizeof(byte), (byte[]){0});
-
-    } else {
-
-      p = array_right(p, n);
-    };
-  };
-
-  if (p.len > 0) {
-
-    d->nx = copy(d->x, p);
-  };
-
-  int tmp6 = OPTION_CAST(int)(nn);
-  return opt_ok(&tmp6, sizeof(int));
-}
-array_byte crypto_dot_sha1__Digest_sum(crypto_dot_sha1__Digest *d,
-                                       array_byte *b_in) {
-
-  crypto_dot_sha1__Digest d0 = *d;
-
-  array_byte hash = crypto_dot_sha1__Digest_checksum(&/* ? */ d0);
-
-  array_byte tmp9 = hash;
-  for (int tmp10 = 0; tmp10 < tmp9.len; tmp10++) {
-    byte b = ((byte *)tmp9.data)[tmp10];
-
-    _PUSH(b_in, (/*typ = array_byte*   tmp_typ=byte**/ b), tmp11, byte);
-  };
-
-  return *b_in;
-}
-array_byte crypto_dot_sha1__Digest_checksum(crypto_dot_sha1__Digest *d) {
-
-  u64 len = d->len;
-
-  array_byte tmp = array_repeat(
-      new_array_from_c_array(1, 1, sizeof(byte), (byte[]){((byte)(0))}), 64);
-
-  array_set(&/*q*/ tmp, 0, &(byte[]){0x80});
-
-  if (((int)(len)) % 64 < 56) {
-
-    crypto_dot_sha1__Digest_write(d, array_left(tmp, 56 - ((int)(len)) % 64));
-
-  } else {
-
-    crypto_dot_sha1__Digest_write(d,
-                                  array_left(tmp, 64 + 56 - ((int)(len)) % 64));
-  };
-
-  len <<= 3;
-
-  encoding_dot_binary__big_endian_put_u64(&/*111*/ (array[]){tmp}[0], len);
-
-  crypto_dot_sha1__Digest_write(d, array_left(tmp, 8));
-
-  array_byte digest = array_repeat(
-      new_array_from_c_array(1, 1, sizeof(byte), (byte[]){((byte)(0))}),
-      crypto_dot_sha1__Size);
-
-  encoding_dot_binary__big_endian_put_u32(&/*111*/ (array[]){digest}[0],
-                                          (*(u32 *)array__get(d->h, 0)));
-
-  encoding_dot_binary__big_endian_put_u32(
-      &/*111*/ (array[]){array_right(digest, 4)}[0],
-      (*(u32 *)array__get(d->h, 1)));
-
-  encoding_dot_binary__big_endian_put_u32(
-      &/*111*/ (array[]){array_right(digest, 8)}[0],
-      (*(u32 *)array__get(d->h, 2)));
-
-  encoding_dot_binary__big_endian_put_u32(
-      &/*111*/ (array[]){array_right(digest, 12)}[0],
-      (*(u32 *)array__get(d->h, 3)));
-
-  encoding_dot_binary__big_endian_put_u32(
-      &/*111*/ (array[]){array_right(digest, 16)}[0],
-      (*(u32 *)array__get(d->h, 4)));
-
-  return digest;
-}
-array_byte crypto_dot_sha1__sum(array_byte data) {
-
-  crypto_dot_sha1__Digest *d = crypto_dot_sha1__new();
-
-  crypto_dot_sha1__Digest_write(d, data);
-
-  return crypto_dot_sha1__Digest_checksum(d);
-}
-void crypto_dot_sha1__block(crypto_dot_sha1__Digest *dig, array_byte p) {
-
-  crypto_dot_sha1__block_generic(dig, p);
-}
-int crypto_dot_sha1__Digest_size(crypto_dot_sha1__Digest *d) {
-
-  return crypto_dot_sha1__Size;
-}
-int crypto_dot_sha1__Digest_block_size(crypto_dot_sha1__Digest *d) {
-
-  return crypto_dot_sha1__BlockSize;
-}
-string crypto_dot_sha1__hexhash(string s) {
-
-  return array_byte_hex(crypto_dot_sha1__sum(string_bytes(s)));
-}
-void crypto_dot_sha1__block_generic(crypto_dot_sha1__Digest *dig,
-                                    array_byte p_) {
-
-  array_byte p = p_;
-
-  array_u32 w = array_repeat(
-      new_array_from_c_array(1, 1, sizeof(u32), (u32[]){((u32)(0))}), 16);
-
-  u32 h0 = (*(u32 *)array__get(dig->h, 0));
-
-  u32 h1 = (*(u32 *)array__get(dig->h, 1));
-
-  u32 h2 = (*(u32 *)array__get(dig->h, 2));
-
-  u32 h3 = (*(u32 *)array__get(dig->h, 3));
-
-  u32 h4 = (*(u32 *)array__get(dig->h, 4));
-
-  while (p.len >= crypto_dot_sha1__Chunk) {
-
-    for (int i = 0; i < 16; i++) {
-
-      int j = i * 4;
-
-      array_set(&/*q*/ w, i,
-                &(u32[]){((u32)((*(byte *)array__get(p, j)) << 24)) |
-                         ((u32)((*(byte *)array__get(p, j + 1)) << 16)) |
-                         ((u32)((*(byte *)array__get(p, j + 2)) << 8)) |
-                         ((u32)((*(byte *)array__get(p, j + 3))))});
-    };
-
-    u32 a = h0;
-
-    u32 b = h1;
-
-    u32 c = h2;
-
-    u32 d = h3;
-
-    u32 e = h4;
-
-    int i = 0;
-
-    while (i < 16) {
-
-      u32 f = b & c | (~b) & d;
-
-      u32 t = math_dot_bits__rotate_left_32(a, 5) + f + e +
-              (*(u32 *)array__get(w, i & 0xf)) + ((u32)(crypto_dot_sha1___K0));
-
-      e = d;
-
-      d = c;
-
-      c = math_dot_bits__rotate_left_32(b, 30);
-
-      b = a;
-
-      a = t;
-
-      i++;
-    };
-
-    while (i < 20) {
-
-      u32 tmp = (*(u32 *)array__get(w, (i - 3) & 0xf)) ^
-                (*(u32 *)array__get(w, (i - 8) & 0xf)) ^
-                (*(u32 *)array__get(w, (i - 14) & 0xf)) ^
-                (*(u32 *)array__get(w, (i)&0xf));
-
-      array_set(&/*q*/ w, i & 0xf,
-                &(u32[]){tmp << 1 | ((u32)(tmp >> (32 - 1)))});
-
-      u32 f = b & c | (~b) & d;
-
-      u32 t = math_dot_bits__rotate_left_32(a, 5) + f + e +
-              (*(u32 *)array__get(w, i & 0xf)) + ((u32)(crypto_dot_sha1___K0));
-
-      e = d;
-
-      d = c;
-
-      c = math_dot_bits__rotate_left_32(b, 30);
-
-      b = a;
-
-      a = t;
-
-      i++;
-    };
-
-    while (i < 40) {
-
-      u32 tmp = (*(u32 *)array__get(w, (i - 3) & 0xf)) ^
-                (*(u32 *)array__get(w, (i - 8) & 0xf)) ^
-                (*(u32 *)array__get(w, (i - 14) & 0xf)) ^
-                (*(u32 *)array__get(w, (i)&0xf));
-
-      array_set(&/*q*/ w, i & 0xf,
-                &(u32[]){tmp << 1 | ((u32)(tmp >> (32 - 1)))});
-
-      u32 f = b ^ c ^ d;
-
-      u32 t = math_dot_bits__rotate_left_32(a, 5) + f + e +
-              (*(u32 *)array__get(w, i & 0xf)) + ((u32)(crypto_dot_sha1___K1));
-
-      e = d;
-
-      d = c;
-
-      c = math_dot_bits__rotate_left_32(b, 30);
-
-      b = a;
-
-      a = t;
-
-      i++;
-    };
-
-    while (i < 60) {
-
-      u32 tmp = (*(u32 *)array__get(w, (i - 3) & 0xf)) ^
-                (*(u32 *)array__get(w, (i - 8) & 0xf)) ^
-                (*(u32 *)array__get(w, (i - 14) & 0xf)) ^
-                (*(u32 *)array__get(w, (i)&0xf));
-
-      array_set(&/*q*/ w, i & 0xf,
-                &(u32[]){tmp << 1 | ((u32)(tmp >> (32 - 1)))});
-
-      u32 f = ((b | c) & d) | (b & c);
-
-      u32 t = math_dot_bits__rotate_left_32(a, 5) + f + e +
-              (*(u32 *)array__get(w, i & 0xf)) + ((u32)(crypto_dot_sha1___K2));
-
-      e = d;
-
-      d = c;
-
-      c = math_dot_bits__rotate_left_32(b, 30);
-
-      b = a;
-
-      a = t;
-
-      i++;
-    };
-
-    while (i < 80) {
-
-      u32 tmp = (*(u32 *)array__get(w, (i - 3) & 0xf)) ^
-                (*(u32 *)array__get(w, (i - 8) & 0xf)) ^
-                (*(u32 *)array__get(w, (i - 14) & 0xf)) ^
-                (*(u32 *)array__get(w, (i)&0xf));
-
-      array_set(&/*q*/ w, i & 0xf,
-                &(u32[]){tmp << 1 | ((u32)(tmp >> (32 - 1)))});
-
-      u32 f = b ^ c ^ d;
-
-      u32 t = math_dot_bits__rotate_left_32(a, 5) + f + e +
-              (*(u32 *)array__get(w, i & 0xf)) + ((u32)(crypto_dot_sha1___K3));
-
-      e = d;
-
-      d = c;
-
-      c = math_dot_bits__rotate_left_32(b, 30);
-
-      b = a;
-
-      a = t;
-
-      i++;
-    };
-
-    h0 += a;
-
-    h1 += b;
-
-    h2 += c;
-
-    h3 += d;
-
-    h4 += e;
-
-    if (crypto_dot_sha1__Chunk >= p.len) {
-
-      p = new_array_from_c_array(0, 0, sizeof(byte), (byte[]){0});
-
-    } else {
-
-      p = array_right(p, crypto_dot_sha1__Chunk);
-    };
-  };
-
-  array_set(&/*q*/ dig->h, 0, &(u32[]){h0});
-
-  array_set(&/*q*/ dig->h, 1, &(u32[]){h1});
-
-  array_set(&/*q*/ dig->h, 2, &(u32[]){h2});
-
-  array_set(&/*q*/ dig->h, 3, &(u32[]){h3});
-
-  array_set(&/*q*/ dig->h, 4, &(u32[]){h4});
-}
 void time__remove_me_when_c_bug_is_fixed() {}
 time__Time time__now() {
 
@@ -13258,8 +12360,8 @@ void V_compile(V *v) {
     };
   };
 
-  Parser vgen_parser = V_new_parser_string_id(
-      v, strings__Builder_str(v->vgen_buf), tos2((byte *)"vgen"));
+  Parser vgen_parser = V_new_parser_string(v, strings__Builder_str(v->vgen_buf),
+                                           tos2((byte *)"vgen"));
 
   strings__Builder_free(&/* ? */ v->vgen_buf);
 
@@ -15255,15 +14357,9 @@ MsvcStringFlags array_CFlag_msvc_string_flags(array_CFlag cflags) {
 
   return (MsvcStringFlags){real_libs, inc_paths, lpaths, other_flags};
 }
-Parser V_new_parser_string(V *v, string text) {
-
-  return V_new_parser_string_id(v, text, crypto_dot_sha1__hexhash(text));
-}
-Parser V_new_parser_string_id(V *v, string text, string id) {
+Parser V_new_parser_string(V *v, string text, string id) {
 
   Parser p = V_new_parser(v, new_scanner(text), id);
-
-  p.import_table = Table_get_file_import_table(&/* ? */ *v->table, id);
 
   Parser_scan_tokens(&/* ? */ p);
 
@@ -15301,7 +14397,6 @@ Parser V_new_parser_file(V *v, string path) {
       .file_name = string_all_after(path, tos2((byte *)"/")),
       .file_platform = path_platform,
       .file_pcguard = path_pcguard,
-      .import_table = Table_get_file_import_table(&/* ? */ *v->table, path),
       .is_script = (v->pref->is_script && string_eq(path, v->dir)),
       .id = p.id,
       .v = p.v,
@@ -15315,6 +14410,7 @@ Parser V_new_parser_file(V *v, string path) {
       .lit = p.lit,
       .cgen = p.cgen,
       .table = p.table,
+      .import_table = p.import_table,
       .pass = p.pass,
       .os = p.os,
       .mod = p.mod,
@@ -15368,83 +14464,84 @@ Parser V_new_parser_file(V *v, string path) {
 }
 Parser V_new_parser(V *v, Scanner *scanner, string id) {
 
-  Parser p =
-      (Parser){.id = id,
-               .scanner = scanner,
-               .v = v,
-               .table = v->table,
-               .cur_fn = main__EmptyFn,
-               .cgen = v->cgen,
-               .is_script = 0,
-               .pref = v->pref,
-               .os = v->os,
-               .vroot = v->vroot,
-               .local_vars = array_repeat(
-                   new_array_from_c_array(
-                       1, 1, sizeof(Var),
-                       (Var[]){(Var){.typ = tos((byte *)"", 0),
-                                     .name = tos((byte *)"", 0),
-                                     .idx = 0,
-                                     .is_arg = 0,
-                                     .is_const = 0,
-                                     .args = new_array(0, 1, sizeof(Var)),
-                                     .attr = tos((byte *)"", 0),
-                                     .is_mut = 0,
-                                     .is_alloc = 0,
-                                     .is_returned = 0,
-                                     .ptr = 0,
-                                     .ref = 0,
-                                     .parent_fn = tos((byte *)"", 0),
-                                     .mod = tos((byte *)"", 0),
-                                     .is_global = 0,
-                                     .is_used = 0,
-                                     .is_changed = 0,
-                                     .scope_level = 0,
-                                     .is_c = 0,
-                                     .is_moved = 0,
-                                     .line_nr = 0}}),
-                   main__MaxLocalVars),
-               .file_path = tos((byte *)"", 0),
-               .file_name = tos((byte *)"", 0),
-               .file_platform = tos((byte *)"", 0),
-               .file_pcguard = tos((byte *)"", 0),
-               .tokens = new_array(0, 1, sizeof(Tok)),
-               .token_idx = 0,
-               .lit = tos((byte *)"", 0),
-               .mod = tos((byte *)"", 0),
-               .inside_const = 0,
-               .has_immutable_field = 0,
-               .assigned_type = tos((byte *)"", 0),
-               .expected_type = tos((byte *)"", 0),
-               .tmp_cnt = 0,
-               .builtin_mod = 0,
-               .vh_lines = new_array(0, 1, sizeof(string)),
-               .inside_if_expr = 0,
-               .inside_unwrapping_match_statement = 0,
-               .inside_return_expr = 0,
-               .is_struct_init = 0,
-               .if_expr_cnt = 0,
-               .for_expr_cnt = 0,
-               .ptr_cast = 0,
-               .calling_c = 0,
-               .var_idx = 0,
-               .returns = 0,
-               .is_c_struct_init = 0,
-               .is_empty_c_struct_init = 0,
-               .is_c_fn_call = 0,
-               .can_chash = 0,
-               .attr = tos((byte *)"", 0),
-               .v_script = 0,
-               .var_decl_name = tos((byte *)"", 0),
-               .is_alloc = 0,
-               .is_const_literal = 0,
-               .cur_gen_type = tos((byte *)"", 0),
-               .is_vweb = 0,
-               .is_sql = 0,
-               .is_js = 0,
-               .sql_i = 0,
-               .sql_params = new_array(0, 1, sizeof(string)),
-               .sql_types = new_array(0, 1, sizeof(string))};
+  Parser p = (Parser){
+      .id = id,
+      .scanner = scanner,
+      .v = v,
+      .table = v->table,
+      .cur_fn = main__EmptyFn,
+      .cgen = v->cgen,
+      .is_script = 0,
+      .pref = v->pref,
+      .os = v->os,
+      .vroot = v->vroot,
+      .local_vars =
+          array_repeat(new_array_from_c_array(
+                           1, 1, sizeof(Var),
+                           (Var[]){(Var){.typ = tos((byte *)"", 0),
+                                         .name = tos((byte *)"", 0),
+                                         .idx = 0,
+                                         .is_arg = 0,
+                                         .is_const = 0,
+                                         .args = new_array(0, 1, sizeof(Var)),
+                                         .attr = tos((byte *)"", 0),
+                                         .is_mut = 0,
+                                         .is_alloc = 0,
+                                         .is_returned = 0,
+                                         .ptr = 0,
+                                         .ref = 0,
+                                         .parent_fn = tos((byte *)"", 0),
+                                         .mod = tos((byte *)"", 0),
+                                         .is_global = 0,
+                                         .is_used = 0,
+                                         .is_changed = 0,
+                                         .scope_level = 0,
+                                         .is_c = 0,
+                                         .is_moved = 0,
+                                         .line_nr = 0}}),
+                       main__MaxLocalVars),
+      .import_table = Table_get_file_import_table(&/* ? */ *v->table, id),
+      .file_path = tos((byte *)"", 0),
+      .file_name = tos((byte *)"", 0),
+      .file_platform = tos((byte *)"", 0),
+      .file_pcguard = tos((byte *)"", 0),
+      .tokens = new_array(0, 1, sizeof(Tok)),
+      .token_idx = 0,
+      .lit = tos((byte *)"", 0),
+      .mod = tos((byte *)"", 0),
+      .inside_const = 0,
+      .has_immutable_field = 0,
+      .assigned_type = tos((byte *)"", 0),
+      .expected_type = tos((byte *)"", 0),
+      .tmp_cnt = 0,
+      .builtin_mod = 0,
+      .vh_lines = new_array(0, 1, sizeof(string)),
+      .inside_if_expr = 0,
+      .inside_unwrapping_match_statement = 0,
+      .inside_return_expr = 0,
+      .is_struct_init = 0,
+      .if_expr_cnt = 0,
+      .for_expr_cnt = 0,
+      .ptr_cast = 0,
+      .calling_c = 0,
+      .var_idx = 0,
+      .returns = 0,
+      .is_c_struct_init = 0,
+      .is_empty_c_struct_init = 0,
+      .is_c_fn_call = 0,
+      .can_chash = 0,
+      .attr = tos((byte *)"", 0),
+      .v_script = 0,
+      .var_decl_name = tos((byte *)"", 0),
+      .is_alloc = 0,
+      .is_const_literal = 0,
+      .cur_gen_type = tos((byte *)"", 0),
+      .is_vweb = 0,
+      .is_sql = 0,
+      .is_js = 0,
+      .sql_i = 0,
+      .sql_params = new_array(0, 1, sizeof(string)),
+      .sql_types = new_array(0, 1, sizeof(string))};
 
 #ifdef _VJS
 
@@ -25471,157 +24568,6 @@ void init_consts() {
   math__MinI8 = -128;
   math__MinI16 = -32768;
   math__MinI32 = -2147483648;
-  math_dot_bits__de_bruijn32 = ((u32)(0x077CB531));
-  math_dot_bits__de_bruijn32tab = new_array_from_c_array(
-      32, 32, sizeof(byte),
-      (byte[]){
-          ((byte)(0)), 1,  28, 2,  29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4,  8,
-          31,          27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6,  11, 5,  10, 9,
-      });
-  math_dot_bits__de_bruijn64 = ((u64)(0x03f79d71b4ca8b09));
-  math_dot_bits__de_bruijn64tab = new_array_from_c_array(
-      64, 64, sizeof(byte),
-      (byte[]){
-          ((byte)(0)), 1,  56, 2,  57, 49, 28, 3,  61, 58, 42, 50, 38,
-          29,          17, 4,  62, 47, 59, 36, 45, 43, 51, 22, 53, 39,
-          33,          30, 24, 18, 12, 5,  63, 55, 48, 27, 60, 41, 37,
-          16,          46, 35, 44, 21, 52, 32, 23, 11, 54, 26, 40, 15,
-          34,          20, 31, 10, 25, 14, 19, 9,  13, 8,  7,  6,
-      });
-  math_dot_bits__m0 = 0x5555555555555555;
-  math_dot_bits__m1 = 0x3333333333333333;
-  math_dot_bits__m2 = 0x0f0f0f0f0f0f0f0f;
-  math_dot_bits__m3 = 0x00ff00ff00ff00ff;
-  math_dot_bits__m4 = 0x0000ffff0000ffff;
-  math_dot_bits__ntz8_tab = new_array_from_c_array(
-      256, 256, sizeof(byte),
-      (byte[]){
-          ((byte)(0x08)), 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00,
-          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00,
-          0x02,           0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00,
-          0x01,           0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
-          0x03,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00,
-          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00,
-          0x02,           0x00, 0x01, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x00,
-          0x01,           0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
-          0x04,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00,
-          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00,
-          0x02,           0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00,
-          0x01,           0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
-          0x03,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x07, 0x00,
-          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00,
-          0x02,           0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00,
-          0x01,           0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
-          0x05,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00,
-          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00,
-          0x02,           0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00,
-          0x01,           0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
-          0x03,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00,
-          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00,
-          0x02,           0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00,
-          0x01,           0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
-          0x04,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00,
-          0x01,           0x00, 0x02, 0x00, 0x01, 0x00,
-      });
-  math_dot_bits__pop8_tab = new_array_from_c_array(
-      256, 256, sizeof(byte),
-      (byte[]){
-          ((byte)(0x00)), 0x01, 0x01, 0x02, 0x01, 0x02, 0x02, 0x03, 0x01, 0x02,
-          0x02,           0x03, 0x02, 0x03, 0x03, 0x04, 0x01, 0x02, 0x02, 0x03,
-          0x02,           0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04,
-          0x04,           0x05, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04,
-          0x02,           0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x02, 0x03,
-          0x03,           0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05,
-          0x04,           0x05, 0x05, 0x06, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03,
-          0x03,           0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05,
-          0x02,           0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04,
-          0x04,           0x05, 0x04, 0x05, 0x05, 0x06, 0x02, 0x03, 0x03, 0x04,
-          0x03,           0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05,
-          0x05,           0x06, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06,
-          0x04,           0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x01, 0x02,
-          0x02,           0x03, 0x02, 0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04,
-          0x03,           0x04, 0x04, 0x05, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04,
-          0x04,           0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06,
-          0x02,           0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04,
-          0x04,           0x05, 0x04, 0x05, 0x05, 0x06, 0x03, 0x04, 0x04, 0x05,
-          0x04,           0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06,
-          0x06,           0x07, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05,
-          0x03,           0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x03, 0x04,
-          0x04,           0x05, 0x04, 0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06,
-          0x05,           0x06, 0x06, 0x07, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05,
-          0x05,           0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07,
-          0x04,           0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x05, 0x06,
-          0x06,           0x07, 0x06, 0x07, 0x07, 0x08,
-      });
-  math_dot_bits__rev8_tab = new_array_from_c_array(
-      256, 256, sizeof(byte),
-      (byte[]){
-          ((byte)(0x00)), 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0, 0x10, 0x90,
-          0x50,           0xd0, 0x30, 0xb0, 0x70, 0xf0, 0x08, 0x88, 0x48, 0xc8,
-          0x28,           0xa8, 0x68, 0xe8, 0x18, 0x98, 0x58, 0xd8, 0x38, 0xb8,
-          0x78,           0xf8, 0x04, 0x84, 0x44, 0xc4, 0x24, 0xa4, 0x64, 0xe4,
-          0x14,           0x94, 0x54, 0xd4, 0x34, 0xb4, 0x74, 0xf4, 0x0c, 0x8c,
-          0x4c,           0xcc, 0x2c, 0xac, 0x6c, 0xec, 0x1c, 0x9c, 0x5c, 0xdc,
-          0x3c,           0xbc, 0x7c, 0xfc, 0x02, 0x82, 0x42, 0xc2, 0x22, 0xa2,
-          0x62,           0xe2, 0x12, 0x92, 0x52, 0xd2, 0x32, 0xb2, 0x72, 0xf2,
-          0x0a,           0x8a, 0x4a, 0xca, 0x2a, 0xaa, 0x6a, 0xea, 0x1a, 0x9a,
-          0x5a,           0xda, 0x3a, 0xba, 0x7a, 0xfa, 0x06, 0x86, 0x46, 0xc6,
-          0x26,           0xa6, 0x66, 0xe6, 0x16, 0x96, 0x56, 0xd6, 0x36, 0xb6,
-          0x76,           0xf6, 0x0e, 0x8e, 0x4e, 0xce, 0x2e, 0xae, 0x6e, 0xee,
-          0x1e,           0x9e, 0x5e, 0xde, 0x3e, 0xbe, 0x7e, 0xfe, 0x01, 0x81,
-          0x41,           0xc1, 0x21, 0xa1, 0x61, 0xe1, 0x11, 0x91, 0x51, 0xd1,
-          0x31,           0xb1, 0x71, 0xf1, 0x09, 0x89, 0x49, 0xc9, 0x29, 0xa9,
-          0x69,           0xe9, 0x19, 0x99, 0x59, 0xd9, 0x39, 0xb9, 0x79, 0xf9,
-          0x05,           0x85, 0x45, 0xc5, 0x25, 0xa5, 0x65, 0xe5, 0x15, 0x95,
-          0x55,           0xd5, 0x35, 0xb5, 0x75, 0xf5, 0x0d, 0x8d, 0x4d, 0xcd,
-          0x2d,           0xad, 0x6d, 0xed, 0x1d, 0x9d, 0x5d, 0xdd, 0x3d, 0xbd,
-          0x7d,           0xfd, 0x03, 0x83, 0x43, 0xc3, 0x23, 0xa3, 0x63, 0xe3,
-          0x13,           0x93, 0x53, 0xd3, 0x33, 0xb3, 0x73, 0xf3, 0x0b, 0x8b,
-          0x4b,           0xcb, 0x2b, 0xab, 0x6b, 0xeb, 0x1b, 0x9b, 0x5b, 0xdb,
-          0x3b,           0xbb, 0x7b, 0xfb, 0x07, 0x87, 0x47, 0xc7, 0x27, 0xa7,
-          0x67,           0xe7, 0x17, 0x97, 0x57, 0xd7, 0x37, 0xb7, 0x77, 0xf7,
-          0x0f,           0x8f, 0x4f, 0xcf, 0x2f, 0xaf, 0x6f, 0xef, 0x1f, 0x9f,
-          0x5f,           0xdf, 0x3f, 0xbf, 0x7f, 0xff,
-      });
-  math_dot_bits__len8_tab = new_array_from_c_array(
-      256, 256, sizeof(byte),
-      (byte[]){
-          ((byte)(0x00)), 0x01, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03, 0x04, 0x04,
-          0x04,           0x04, 0x04, 0x04, 0x04, 0x04, 0x05, 0x05, 0x05, 0x05,
-          0x05,           0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05,
-          0x05,           0x05, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
-          0x06,           0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
-          0x06,           0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
-          0x06,           0x06, 0x06, 0x06, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
-          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
-          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
-          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
-          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
-          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
-          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x08, 0x08,
-          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
-          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
-          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
-          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
-          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
-          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
-          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
-          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
-          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
-          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
-          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
-          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
-          0x08,           0x08, 0x08, 0x08, 0x08, 0x08,
-      });
-  crypto_dot_sha1__Init0 = 0x67452301;
-  crypto_dot_sha1__Init1 = 0xEFCDAB89;
-  crypto_dot_sha1__Init2 = 0x98BADCFE;
-  crypto_dot_sha1__Init3 = 0x10325476;
-  crypto_dot_sha1__Init4 = 0xC3D2E1F0;
-  crypto_dot_sha1___K0 = 0x5A827999;
-  crypto_dot_sha1___K1 = 0x6ED9EBA1;
-  crypto_dot_sha1___K2 = 0x8F1BBCDC;
-  crypto_dot_sha1___K3 = 0xCA62C1D6;
   time__MonthDays = new_array_from_c_array(
       12, 12, sizeof(int),
       (int[]){31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31});
