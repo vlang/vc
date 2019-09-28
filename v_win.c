@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a4d2633"
+#define V_COMMIT_HASH "6bba4b1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "802da8f"
+#define V_COMMIT_HASH "a4d2633"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -18880,30 +18880,46 @@ string Parser_array_init(Parser *p) {
       typ = val_typ;
 
       if (is_integer && p->tok == main__Token_rsbr &&
-          Parser_peek(&/* ? */ *p) == main__Token_name) {
+          Parser_peek(&/* ? */ *p) == main__Token_name &&
+          Parser_cur_tok(&/* ? */ *p).line_nr ==
+              Parser_peek_token(&/* ? */ *p).line_nr) {
 
-        Parser_check(p, main__Token_rsbr);
+        if (Parser_cur_tok(&/* ? */ *p).col +
+                Parser_peek_token(&/* ? */ *p).lit.len ==
+            Parser_peek_token(&/* ? */ *p).col) {
 
-        string array_elem_typ = Parser_get_type(p);
+          Parser_check(p, main__Token_rsbr);
 
-        if (!Table_known_type(&/* ? */ *p->table, array_elem_typ)) {
+          string array_elem_typ = Parser_get_type(p);
 
-          Parser_error(p, _STR("bad type `%.*s`", array_elem_typ.len,
-                               array_elem_typ.str));
+          if (!Table_known_type(&/* ? */ *p->table, array_elem_typ)) {
+
+            Parser_error(p, _STR("bad type `%.*s`", array_elem_typ.len,
+                                 array_elem_typ.str));
+          };
+
+          CGen_resetln(p->cgen, tos2((byte *)""));
+
+          p->is_alloc = 0;
+
+          if (is_const_len) {
+
+            return _STR("[%.*s__%.*s]%.*s", p->mod.len, p->mod.str, lit.len,
+                        lit.str, array_elem_typ.len, array_elem_typ.str);
+          };
+
+          return _STR("[%.*s]%.*s", lit.len, lit.str, array_elem_typ.len,
+                      array_elem_typ.str);
+
+        } else {
+
+          Parser_check(p, main__Token_rsbr);
+
+          typ = Parser_get_type(p);
+
+          Parser_error(p, _STR("no space allowed between [%.*s] and %.*s",
+                               lit.len, lit.str, typ.len, typ.str));
         };
-
-        CGen_resetln(p->cgen, tos2((byte *)""));
-
-        p->is_alloc = 0;
-
-        if (is_const_len) {
-
-          return _STR("[%.*s__%.*s]%.*s", p->mod.len, p->mod.str, lit.len,
-                      lit.str, array_elem_typ.len, array_elem_typ.str);
-        };
-
-        return _STR("[%.*s]%.*s", lit.len, lit.str, array_elem_typ.len,
-                    array_elem_typ.str);
       };
     };
 
