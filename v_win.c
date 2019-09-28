@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5c79c0e"
+#define V_COMMIT_HASH "4b03abd"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fd2d9c2"
+#define V_COMMIT_HASH "5c79c0e"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -3489,12 +3489,25 @@ void eprintln(string s) {
 
   fprintf(stderr, "%.*s\n", s.len, (char *)s.str);
 
-#else
+  fflush(stderr);
 
-  println(s);
+  return;
 
 #endif
   ;
+
+#ifdef __linux__
+
+  fprintf(stderr, "%.*s\n", s.len, (char *)s.str);
+
+  fflush(stderr);
+
+  return;
+
+#endif
+  ;
+
+  println(s);
 }
 void print(string s) {
 
@@ -7512,6 +7525,8 @@ array_CFlag V_get_os_cflags(V *v) {
         (string_eq(flag.os, tos2((byte *)"linux")) &&
          v->os == main__OS_linux) ||
         (string_eq(flag.os, tos2((byte *)"darwin")) && v->os == main__OS_mac) ||
+        (string_eq(flag.os, tos2((byte *)"freebsd")) &&
+         v->os == main__OS_freebsd) ||
         (string_eq(flag.os, tos2((byte *)"windows")) &&
          (v->os == main__OS_windows || v->os == main__OS_msvc))) {
 
@@ -7606,6 +7621,7 @@ void Table_parse_cflag(Table *table, string cflag, string mod) {
 
   if (string_starts_with(flag, tos2((byte *)"linux")) ||
       string_starts_with(flag, tos2((byte *)"darwin")) ||
+      string_starts_with(flag, tos2((byte *)"freebsd")) ||
       string_starts_with(flag, tos2((byte *)"windows"))) {
 
     int pos = string_index(flag, tos2((byte *)" "));
