@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0bfb88e"
+#define V_COMMIT_HASH "d59d921"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "dc28c78"
+#define V_COMMIT_HASH "0bfb88e"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -13423,29 +13423,7 @@ void install_v(array_string args) {
     return;
   };
 }
-void V_test_vget(V *v) {
-
-  string vexe = os__executable();
-
-  int ret = os__system(_STR("%.*s install nedpals.args", vexe.len, vexe.str));
-
-  if (ret != 0) {
-
-    println(tos2((byte *)"failed to run v install"));
-
-    v_exit(1);
-  };
-
-  if (!os__file_exists(
-          string_add(main__ModPath, tos2((byte *)"/nedpals/args")))) {
-
-    println(tos2((byte *)"v failed to install a test module"));
-
-    v_exit(1);
-  };
-
-  println(tos2((byte *)"vget is OK"));
-}
+void V_test_vget(V *v) {}
 void V_test_v(V *v) {
 
   if (!os__dir_exists(tos2((byte *)"vlib"))) {
@@ -13474,9 +13452,9 @@ void V_test_v(V *v) {
 
   benchmark__Benchmark tmark = benchmark__new_benchmark();
 
-  array_string tmp143 = test_files;
-  for (int tmp144 = 0; tmp144 < tmp143.len; tmp144++) {
-    string dot_relative_file = ((string *)tmp143.data)[tmp144];
+  array_string tmp141 = test_files;
+  for (int tmp142 = 0; tmp142 < tmp141.len; tmp142++) {
+    string dot_relative_file = ((string *)tmp141.data)[tmp142];
 
     if (string_contains(dot_relative_file, tos2((byte *)"repl_test.v"))) {
 
@@ -13501,9 +13479,9 @@ void V_test_v(V *v) {
 
     benchmark__Benchmark_step(&/* ? */ tmark);
 
-    Option_os__Result tmp149 = os__exec(cmd);
-    if (!tmp149.ok) {
-      string err = tmp149.error;
+    Option_os__Result tmp147 = os__exec(cmd);
+    if (!tmp147.ok) {
+      string err = tmp147.error;
 
       benchmark__Benchmark_fail(&/* ? */ tmark);
 
@@ -13515,7 +13493,7 @@ void V_test_v(V *v) {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp149.data;
+    os__Result r = *(os__Result *)tmp147.data;
     ;
 
     if (r.exit_code != 0) {
@@ -13553,9 +13531,9 @@ void V_test_v(V *v) {
 
   benchmark__Benchmark bmark = benchmark__new_benchmark();
 
-  array_string tmp152 = examples;
-  for (int tmp153 = 0; tmp153 < tmp152.len; tmp153++) {
-    string relative_file = ((string *)tmp152.data)[tmp153];
+  array_string tmp150 = examples;
+  for (int tmp151 = 0; tmp151 < tmp150.len; tmp151++) {
+    string relative_file = ((string *)tmp150.data)[tmp151];
 
     if (string_contains(relative_file, tos2((byte *)"vweb"))) {
 
@@ -13577,9 +13555,9 @@ void V_test_v(V *v) {
 
     benchmark__Benchmark_step(&/* ? */ bmark);
 
-    Option_os__Result tmp157 = os__exec(cmd);
-    if (!tmp157.ok) {
-      string err = tmp157.error;
+    Option_os__Result tmp155 = os__exec(cmd);
+    if (!tmp155.ok) {
+      string err = tmp155.error;
 
       failed = 1;
 
@@ -13591,7 +13569,7 @@ void V_test_v(V *v) {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp157.data;
+    os__Result r = *(os__Result *)tmp155.data;
     ;
 
     if (r.exit_code != 0) {
