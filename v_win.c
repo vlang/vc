@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0fc9ada"
+#define V_COMMIT_HASH "fd2d9c2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6bba4b1"
+#define V_COMMIT_HASH "0fc9ada"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -3566,7 +3566,7 @@ string ptr_str(void *ptr) {
 
   return tos(buf, vstrlen(buf));
 }
-bool f64_eq(f64 a, f64 b) { return (a - b) <= DBL_EPSILON; }
+bool f64_eq(f64 a, f64 b) { return fabs(a - b) <= DBL_EPSILON; }
 string int_str(int nn) {
 
   int n = nn;
