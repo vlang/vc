@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "802da8f"
+#define V_COMMIT_HASH "a4d2633"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a5391c8"
+#define V_COMMIT_HASH "802da8f"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -3374,6 +3374,8 @@ string string_repeat(string s, int count) {
       ret[/*ptr*/ i * s.len + j] /*rbyte 1*/ = s.str[j] /*rbyte 0*/;
     };
   };
+
+  ret[/*ptr*/ s.len * count] /*rbyte 1*/ = 0;
 
   return (tos2((byte *)ret));
 }
