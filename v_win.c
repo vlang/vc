@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ed93185"
+#define V_COMMIT_HASH "d68e31a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a4cbe78"
+#define V_COMMIT_HASH "ed93185"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -159,8 +159,8 @@ typedef Option Option_os__File;
 typedef struct os__Result os__Result;
 typedef Option Option_os__Result;
 typedef voidptr HANDLE; // type alias name="HANDLE" parent=`voidptr`
-typedef struct os__filetime os__filetime;
-typedef struct os__win32finddata os__win32finddata;
+typedef struct os__Filetime os__Filetime;
+typedef struct os__Win32finddata os__Win32finddata;
 typedef Option Option_string;
 typedef struct rand__Pcg32 rand__Pcg32;
 typedef struct rand__Splitmix64 rand__Splitmix64;
@@ -179,6 +179,7 @@ typedef struct Fn Fn;
 typedef array array_Var;
 typedef Option Option_Var;
 typedef Option Option_Var;
+typedef array array_Fn;
 typedef struct V V;
 typedef array array_Parser;
 typedef struct Preferences Preferences;
@@ -208,7 +209,6 @@ typedef struct GenTable GenTable;
 typedef struct FileImportTable FileImportTable;
 typedef struct Var Var;
 typedef struct Type Type;
-typedef array array_Fn;
 typedef struct TypeNode TypeNode;
 typedef Option Option_Fn;
 typedef Option Option_Var;
@@ -475,7 +475,7 @@ struct os__Result {
   string output;
 };
 
-struct os__filetime {
+struct os__Filetime {
   u32 dwLowDateTime;
   u32 dwHighDateTime;
 };
@@ -590,11 +590,11 @@ struct Var {
   int line_nr;
 };
 
-struct os__win32finddata {
+struct os__Win32finddata {
   u32 dwFileAttributes;
-  os__filetime ftCreationTime;
-  os__filetime ftLastAccessTime;
-  os__filetime ftLastWriteTime;
+  os__Filetime ftCreationTime;
+  os__Filetime ftLastAccessTime;
+  os__Filetime ftLastWriteTime;
   u32 nFileSizeHigh;
   u32 nFileSizeLow;
   u32 dwReserved0;
@@ -1164,6 +1164,7 @@ void Parser_register_var(Parser *p, Var v);
 void Parser_clear_vars(Parser *p);
 bool Parser_is_sig(Parser *p);
 void Parser_fn_decl(Parser *p);
+static inline void Parser_skip_fn_body(Parser *p);
 void Parser_check_unused_variables(Parser *p);
 void Parser_async_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
                           string receiver_type);
@@ -1171,9 +1172,11 @@ void Parser_fn_call(Parser *p, Fn f, int method_ph, string receiver_var,
                     string receiver_type);
 void Parser_fn_args(Parser *p, Fn *f);
 Fn *Parser_fn_call_args(Parser *p, Fn *f);
-string Fn_typ_str(Fn f);
+string Fn_typ_str(Fn *f);
+string Fn_v_definition(Fn *f);
 string Fn_str_args(Fn *f, Table *table);
 string Parser_find_misspelled_local_var(Parser *p, string name, f32 min_match);
+bool array_Fn_contains(array_Fn fns, Fn f);
 string Parser_gen_var_decl(Parser *p, string name, bool is_static);
 void Parser_gen_fn_decl(Parser *p, Fn f, string typ, string str_args);
 void Parser_gen_blank_identifier_assign(Parser *p);
@@ -1365,7 +1368,6 @@ bool main__is_name_char(byte c);
 bool main__is_nl(byte c);
 bool main__contains_capital(string s);
 bool main__good_type_name(string s);
-string Type_str(Type t);
 string Fn_str(Fn f);
 string Table_debug_fns(Table *t);
 bool main__is_number_type(string typ);
@@ -5636,7 +5638,7 @@ array_string os__init_os_args(int argc, byteptr *argv) {
 }
 array_string os__ls(string path) {
 
-  os__win32finddata find_file_data = (os__win32finddata){.dwFileAttributes = 0,
+  os__Win32finddata find_file_data = (os__Win32finddata){.dwFileAttributes = 0,
                                                          .nFileSizeHigh = 0,
                                                          .nFileSizeLow = 0,
                                                          .dwReserved0 = 0,
@@ -9347,7 +9349,7 @@ void Parser_fn_decl(Parser *p) {
                            receiver_typ.len, receiver_typ.str));
     };
 
-    if (string_contains(receiver_typ, tos2((byte *)"*"))) {
+    if (string_ends_with(receiver_typ, tos2((byte *)"*"))) {
 
       string t =
           string_replace(receiver_typ, tos2((byte *)"*"), tos2((byte *)""));
@@ -9708,44 +9710,14 @@ void Parser_fn_decl(Parser *p) {
 
     if (!is_sig && !is_fn_header) {
 
-      int opened_scopes = 0;
-
-      int closed_scopes = 0;
-
-      while (1) {
-
-        if (p->tok == main__Token_lcbr) {
-
-          opened_scopes++;
-        };
-
-        if (p->tok == main__Token_rcbr) {
-
-          closed_scopes++;
-        };
-
-        if (Token_is_decl(p->tok)) {
-
-          break;
-        };
-
-        if (closed_scopes > opened_scopes && p->prev_tok == main__Token_rcbr) {
-
-          if (p->tok == main__Token_lsbr) {
-
-            break;
-          };
-        };
-
-        Parser_next(p);
-      };
+      Parser_skip_fn_body(p);
     };
 
     if (is_live && Parser_first_pass(&/* ? */ *p) &&
         string_eq(p->mod, tos2((byte *)"main"))) {
 
       _PUSH(&p->cgen->so_fns,
-            (/*typ = array_string   tmp_typ=string*/ fn_name_cgen), tmp64,
+            (/*typ = array_string   tmp_typ=string*/ fn_name_cgen), tmp62,
             string);
 
       fn_name_cgen = _STR("(* %.*s )", fn_name_cgen.len, fn_name_cgen.str);
@@ -9772,7 +9744,7 @@ void Parser_fn_decl(Parser *p) {
       _PUSH(&p->cgen->fns,
             (/*typ = array_string   tmp_typ=string*/ string_add(
                 fn_decl, tos2((byte *)";"))),
-            tmp66, string);
+            tmp64, string);
     };
 
     return;
@@ -9876,6 +9848,40 @@ void Parser_fn_decl(Parser *p) {
   if (!is_generic) {
 
     Parser_genln(p, tos2((byte *)"}"));
+  };
+}
+static inline void Parser_skip_fn_body(Parser *p) {
+
+  int opened_scopes = 0;
+
+  int closed_scopes = 0;
+
+  while (1) {
+
+    if (p->tok == main__Token_lcbr) {
+
+      opened_scopes++;
+    };
+
+    if (p->tok == main__Token_rcbr) {
+
+      closed_scopes++;
+    };
+
+    if (Token_is_decl(p->tok)) {
+
+      break;
+    };
+
+    if (closed_scopes > opened_scopes && p->prev_tok == main__Token_rcbr) {
+
+      if (p->tok == main__Token_lsbr) {
+
+        break;
+      };
+    };
+
+    Parser_next(p);
   };
 }
 void Parser_check_unused_variables(Parser *p) {
@@ -10601,6 +10607,10 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
     string expected = arg.typ;
 
+    bool got_ptr = string_ends_with(got, tos2((byte *)"*"));
+
+    bool exp_ptr = string_ends_with(expected, tos2((byte *)"*"));
+
     if (!Parser_check_types_no_throw(p, got, expected)) {
 
       int j = i;
@@ -10636,18 +10646,14 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
     if (!is_interface) {
 
-      if (string_ends_with(got, tos2((byte *)"*")) &&
-          !string_ends_with(expected, tos2((byte *)"*"))) {
+      if (got_ptr && !exp_ptr) {
 
         CGen_set_placeholder(p->cgen, ph, tos2((byte *)"*"));
       };
 
-      if (!string_ends_with(got, tos2((byte *)"*")) &&
-          string_ends_with(expected, tos2((byte *)"*")) &&
-          string_ne(got, tos2((byte *)"voidptr"))) {
+      if (!got_ptr && exp_ptr && string_ne(got, tos2((byte *)"voidptr"))) {
 
-        if (string_starts_with(expected, tos2((byte *)"array_")) &&
-            string_ends_with(expected, tos2((byte *)"*"))) {
+        if (string_starts_with(expected, tos2((byte *)"array_")) && exp_ptr) {
 
           CGen_set_placeholder(p->cgen, ph,
                                tos2((byte *)"& /*111*/ (array[]){"));
@@ -10669,20 +10675,19 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
                                     got.str));
         };
       };
-    };
 
-    if (is_interface) {
+    } else if (is_interface) {
 
-      if (!string_contains(got, tos2((byte *)"*"))) {
+      if (!got_ptr) {
 
         CGen_set_placeholder(p->cgen, ph, tos2((byte *)"&"));
       };
 
       Type interface_type = Table_find_type(&/* ? */ *p->table, arg.typ);
 
-      array_Fn tmp125 = interface_type.methods;
-      for (int tmp126 = 0; tmp126 < tmp125.len; tmp126++) {
-        Fn method = ((Fn *)tmp125.data)[tmp126];
+      array_Fn tmp127 = interface_type.methods;
+      for (int tmp128 = 0; tmp128 < tmp127.len; tmp128++) {
+        Fn method = ((Fn *)tmp127.data)[tmp128];
 
         Parser_gen(p, _STR(", %.*s_%.*s ", typ.len, typ.str, method.name.len,
                            method.name.str));
@@ -10748,19 +10753,19 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
   return f;
 }
-string Fn_typ_str(Fn f) {
+string Fn_typ_str(Fn *f) {
 
   strings__Builder sb = strings__new_builder(50);
 
   strings__Builder_write(&/* ? */ sb, tos2((byte *)"fn ("));
 
-  array_Var tmp132 = f.args;
-  for (int i = 0; i < tmp132.len; i++) {
-    Var arg = ((Var *)tmp132.data)[i];
+  array_Var tmp134 = f->args;
+  for (int i = 0; i < tmp134.len; i++) {
+    Var arg = ((Var *)tmp134.data)[i];
 
     strings__Builder_write(&/* ? */ sb, arg.typ);
 
-    if (i < f.args.len - 1) {
+    if (i < f->args.len - 1) {
 
       strings__Builder_write(&/* ? */ sb, tos2((byte *)","));
     };
@@ -10768,20 +10773,21 @@ string Fn_typ_str(Fn f) {
 
   strings__Builder_write(&/* ? */ sb, tos2((byte *)")"));
 
-  if (string_ne(f.typ, tos2((byte *)"void"))) {
+  if (string_ne(f->typ, tos2((byte *)"void"))) {
 
-    strings__Builder_write(&/* ? */ sb, _STR(" %.*s", f.typ.len, f.typ.str));
+    strings__Builder_write(&/* ? */ sb, _STR(" %.*s", f->typ.len, f->typ.str));
   };
 
   return strings__Builder_str(sb);
 }
+string Fn_v_definition(Fn *f) { return tos2((byte *)"todo"); }
 string Fn_str_args(Fn *f, Table *table) {
 
   string s = tos2((byte *)"");
 
-  array_Var tmp134 = f->args;
-  for (int i = 0; i < tmp134.len; i++) {
-    Var arg = ((Var *)tmp134.data)[i];
+  array_Var tmp136 = f->args;
+  for (int i = 0; i < tmp136.len; i++) {
+    Var arg = ((Var *)tmp136.data)[i];
 
     if (Table_is_interface(&/* ? */ *table, arg.typ)) {
 
@@ -10789,9 +10795,9 @@ string Fn_str_args(Fn *f, Table *table) {
 
       Type interface_type = Table_find_type(&/* ? */ *table, arg.typ);
 
-      array_Fn tmp136 = interface_type.methods;
-      for (int tmp137 = 0; tmp137 < tmp136.len; tmp137++) {
-        Fn method = ((Fn *)tmp136.data)[tmp137];
+      array_Fn tmp138 = interface_type.methods;
+      for (int tmp139 = 0; tmp139 < tmp138.len; tmp139++) {
+        Fn method = ((Fn *)tmp138.data)[tmp139];
 
         s = string_add(s, _STR(", %.*s (*%.*s_%.*s)(void*", method.typ.len,
                                method.typ.str, arg.typ.len, arg.typ.str,
@@ -10799,9 +10805,9 @@ string Fn_str_args(Fn *f, Table *table) {
 
         if (method.args.len > 1) {
 
-          array_Var tmp138 = array_right(method.args, 1);
-          for (int tmp139 = 0; tmp139 < tmp138.len; tmp139++) {
-            Var a = ((Var *)tmp138.data)[tmp139];
+          array_Var tmp140 = array_right(method.args, 1);
+          for (int tmp141 = 0; tmp141 < tmp140.len; tmp141++) {
+            Var a = ((Var *)tmp140.data)[tmp141];
 
             s = string_add(s, _STR(", %.*s", a.typ.len, a.typ.str));
           };
@@ -10834,9 +10840,9 @@ string Parser_find_misspelled_local_var(Parser *p, string name, f32 min_match) {
 
   string closest_var = tos2((byte *)"");
 
-  array_Var tmp142 = p->local_vars;
-  for (int tmp143 = 0; tmp143 < tmp142.len; tmp143++) {
-    Var var = ((Var *)tmp142.data)[tmp143];
+  array_Var tmp144 = p->local_vars;
+  for (int tmp145 = 0; tmp145 < tmp144.len; tmp145++) {
+    Var var = ((Var *)tmp144.data)[tmp145];
 
     if (var.scope_level > p->cur_fn.scope_level) {
 
@@ -10862,6 +10868,20 @@ string Parser_find_misspelled_local_var(Parser *p, string name, f32 min_match) {
   };
 
   return (closest >= min_match) ? (closest_var) : (tos2((byte *)""));
+}
+bool array_Fn_contains(array_Fn fns, Fn f) {
+
+  array_Fn tmp148 = fns;
+  for (int tmp149 = 0; tmp149 < tmp148.len; tmp149++) {
+    Fn ff = ((Fn *)tmp148.data)[tmp149];
+
+    if (string_eq(ff.name, f.name)) {
+
+      return 1;
+    };
+  };
+
+  return 0;
 }
 string Parser_gen_var_decl(Parser *p, string name, bool is_static) {
 
@@ -12412,34 +12432,13 @@ void V_compile(V *v) {
     println(array_string_str(v->files));
   };
 
-  if (v->pref->is_debug) {
+  array_string tmp11 = v->files;
+  for (int tmp12 = 0; tmp12 < tmp11.len; tmp12++) {
+    string file = ((string *)tmp11.data)[tmp12];
 
-    println(tos2((byte *)"\nparsers:"));
-
-    array_Parser tmp11 = v->parsers;
-    for (int tmp12 = 0; tmp12 < tmp11.len; tmp12++) {
-      Parser q = ((Parser *)tmp11.data)[tmp12];
-
-      println(q.file_name);
-    };
-
-    println(tos2((byte *)"\nfiles:"));
-
-    array_string tmp13 = v->files;
-    for (int tmp14 = 0; tmp14 < tmp13.len; tmp14++) {
-      string q = ((string *)tmp13.data)[tmp14];
-
-      println(q);
-    };
-  };
-
-  array_string tmp15 = v->files;
-  for (int tmp16 = 0; tmp16 < tmp15.len; tmp16++) {
-    string file = ((string *)tmp15.data)[tmp16];
-
-    array_Parser tmp17 = v->parsers;
-    for (int i = 0; i < tmp17.len; i++) {
-      Parser p = ((Parser *)tmp17.data)[i];
+    array_Parser tmp13 = v->parsers;
+    for (int i = 0; i < tmp13.len; i++) {
+      Parser p = ((Parser *)tmp13.data)[i];
 
       if (string_eq(p.file_path, file)) {
 
@@ -12544,13 +12543,13 @@ void V_compile(V *v) {
 
   int defs_pos = cgen->lines.len - 1;
 
-  array_string tmp22 = v->files;
-  for (int tmp23 = 0; tmp23 < tmp22.len; tmp23++) {
-    string file = ((string *)tmp22.data)[tmp23];
+  array_string tmp18 = v->files;
+  for (int tmp19 = 0; tmp19 < tmp18.len; tmp19++) {
+    string file = ((string *)tmp18.data)[tmp19];
 
-    array_Parser tmp24 = v->parsers;
-    for (int i = 0; i < tmp24.len; i++) {
-      Parser p = ((Parser *)tmp24.data)[i];
+    array_Parser tmp20 = v->parsers;
+    for (int i = 0; i < tmp20.len; i++) {
+      Parser p = ((Parser *)tmp20.data)[i];
 
       if (string_eq(p.file_path, file)) {
 
@@ -12621,9 +12620,9 @@ void V_compile(V *v) {
 
     V_log(&/* ? */ *v, tos2((byte *)"flags="));
 
-    array_CFlag tmp29 = V_get_os_cflags(&/* ? */ *v);
-    for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
-      CFlag flag = ((CFlag *)tmp29.data)[tmp30];
+    array_CFlag tmp25 = V_get_os_cflags(&/* ? */ *v);
+    for (int tmp26 = 0; tmp26 < tmp25.len; tmp26++) {
+      CFlag flag = ((CFlag *)tmp25.data)[tmp26];
 
       println(string_add(tos2((byte *)" * "), CFlag_format(&/* ? */ flag)));
     };
@@ -12723,12 +12722,12 @@ void V_generate_main(V *v) {
 
       V_gen_main_start(v, 0);
 
-      map_Fn tmp33 = v->table->fns;
-      array_string keys_tmp33 = map_keys(&tmp33);
-      for (int l = 0; l < keys_tmp33.len; l++) {
-        string _ = ((string *)keys_tmp33.data)[l];
+      map_Fn tmp29 = v->table->fns;
+      array_string keys_tmp29 = map_keys(&tmp29);
+      for (int l = 0; l < keys_tmp29.len; l++) {
+        string _ = ((string *)keys_tmp29.data)[l];
         Fn f = {0};
-        map_get(tmp33, _, &f);
+        map_get(tmp29, _, &f);
 
         if (string_starts_with(f.name, tos2((byte *)"main__test_"))) {
 
@@ -12856,9 +12855,9 @@ array_string V_v_files_from_dir(V *v, string dir) {
 
   array_string_sort(&/* ? */ files);
 
-  array_string tmp40 = files;
-  for (int tmp41 = 0; tmp41 < tmp40.len; tmp41++) {
-    string file = ((string *)tmp40.data)[tmp41];
+  array_string tmp36 = files;
+  for (int tmp37 = 0; tmp37 < tmp36.len; tmp37++) {
+    string file = ((string *)tmp36.data)[tmp37];
 
     if (!string_ends_with(file, tos2((byte *)".v")) &&
         !string_ends_with(file, tos2((byte *)".vh"))) {
@@ -12913,7 +12912,7 @@ array_string V_v_files_from_dir(V *v, string dir) {
     _PUSH(&res,
           (/*typ = array_string   tmp_typ=string*/ _STR(
               "%.*s/%.*s", dir.len, dir.str, file.len, file.str)),
-          tmp42, string);
+          tmp38, string);
   };
 
   return res;
@@ -12933,7 +12932,7 @@ void V_add_v_files_to_compile(V *v) {
 
   if (is_test_with_imports) {
 
-    _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ dir), tmp46,
+    _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ dir), tmp42,
           string);
 
     int pos = string_last_index(dir, tos2((byte *)"/"));
@@ -12943,7 +12942,7 @@ void V_add_v_files_to_compile(V *v) {
 
   if (string_ends_with(dir, tos2((byte *)".v"))) {
 
-    _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ dir), tmp48,
+    _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ dir), tmp44,
           string);
 
     dir = string_all_before(dir, tos2((byte *)"/"));
@@ -12952,11 +12951,11 @@ void V_add_v_files_to_compile(V *v) {
 
     array_string files = V_v_files_from_dir(&/* ? */ *v, dir);
 
-    array_string tmp50 = files;
-    for (int tmp51 = 0; tmp51 < tmp50.len; tmp51++) {
-      string file = ((string *)tmp50.data)[tmp51];
+    array_string tmp46 = files;
+    for (int tmp47 = 0; tmp47 < tmp46.len; tmp47++) {
+      string file = ((string *)tmp46.data)[tmp47];
 
-      _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ file), tmp52,
+      _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ file), tmp48,
             string);
     };
   };
@@ -12975,18 +12974,18 @@ void V_add_v_files_to_compile(V *v) {
     println(array_string_str(user_files));
   };
 
-  array_string tmp53 = v->files;
-  for (int tmp54 = 0; tmp54 < tmp53.len; tmp54++) {
-    string file = ((string *)tmp53.data)[tmp54];
+  array_string tmp49 = v->files;
+  for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
+    string file = ((string *)tmp49.data)[tmp50];
 
     Parser p = V_new_parser_file(v, file);
 
     Parser_parse(&/* ? */ p, main__Pass_imports);
   };
 
-  array_string tmp56 = user_files;
-  for (int tmp57 = 0; tmp57 < tmp56.len; tmp57++) {
-    string file = ((string *)tmp56.data)[tmp57];
+  array_string tmp52 = user_files;
+  for (int tmp53 = 0; tmp53 < tmp52.len; tmp53++) {
+    string file = ((string *)tmp52.data)[tmp53];
 
     Parser p = V_new_parser_file(v, file);
 
@@ -13007,9 +13006,9 @@ void V_add_v_files_to_compile(V *v) {
                         mod.len, mod.str, import_path.len, import_path.str));
     };
 
-    array_string tmp65 = vfiles;
-    for (int tmp66 = 0; tmp66 < tmp65.len; tmp66++) {
-      string file = ((string *)tmp65.data)[tmp66];
+    array_string tmp61 = vfiles;
+    for (int tmp62 = 0; tmp62 < tmp61.len; tmp62++) {
+      string file = ((string *)tmp61.data)[tmp62];
 
       Parser p = V_new_parser_file(v, file);
 
@@ -13037,9 +13036,9 @@ void V_add_v_files_to_compile(V *v) {
     main__verror(tos2((byte *)"Import cycle detected"));
   };
 
-  array_string tmp70 = DepGraph_imports(&/* ? */ *deps_resolved);
-  for (int tmp71 = 0; tmp71 < tmp70.len; tmp71++) {
-    string mod = ((string *)tmp70.data)[tmp71];
+  array_string tmp66 = DepGraph_imports(&/* ? */ *deps_resolved);
+  for (int tmp67 = 0; tmp67 < tmp66.len; tmp67++) {
+    string mod = ((string *)tmp66.data)[tmp67];
 
     if (string_eq(mod, v->mod)) {
 
@@ -13055,13 +13054,13 @@ void V_add_v_files_to_compile(V *v) {
 
     array_string vfiles = V_v_files_from_dir(&/* ? */ *v, mod_path);
 
-    array_string tmp74 = vfiles;
-    for (int tmp75 = 0; tmp75 < tmp74.len; tmp75++) {
-      string file = ((string *)tmp74.data)[tmp75];
+    array_string tmp70 = vfiles;
+    for (int tmp71 = 0; tmp71 < tmp70.len; tmp71++) {
+      string file = ((string *)tmp70.data)[tmp71];
 
       if (!(_IN(string, (file), v->files))) {
 
-        _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ file), tmp76,
+        _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ file), tmp72,
               string);
       };
     };
@@ -13073,12 +13072,12 @@ void V_add_v_files_to_compile(V *v) {
 
   int len = -1;
 
-  map_FileImportTable tmp80 = v->table->file_imports;
-  array_string keys_tmp80 = map_keys(&tmp80);
-  for (int l = 0; l < keys_tmp80.len; l++) {
-    string _ = ((string *)keys_tmp80.data)[l];
+  map_FileImportTable tmp76 = v->table->file_imports;
+  array_string keys_tmp76 = map_keys(&tmp76);
+  for (int l = 0; l < keys_tmp76.len; l++) {
+    string _ = ((string *)keys_tmp76.data)[l];
     FileImportTable fit = {0};
-    map_get(tmp80, _, &fit);
+    map_get(tmp76, _, &fit);
 
     if (_IN(string, (fit.file_path), v->files) ||
         string_eq(fit.module_name, tos2((byte *)"builtin"))) {
@@ -13101,7 +13100,7 @@ void V_add_v_files_to_compile(V *v) {
     };
 
     _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ fit.file_path),
-          tmp81, string);
+          tmp77, string);
 
     i++;
   };
@@ -13368,9 +13367,9 @@ V *main__new_v(array_string args) {
   array_string files =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-  array_string tmp102 = builtins;
-  for (int tmp103 = 0; tmp103 < tmp102.len; tmp103++) {
-    string builtin = ((string *)tmp102.data)[tmp103];
+  array_string tmp98 = builtins;
+  for (int tmp99 = 0; tmp99 < tmp98.len; tmp99++) {
+    string builtin = ((string *)tmp98.data)[tmp99];
 
     string f = _STR("%.*s/vlib/builtin/%.*s", vroot.len, vroot.str, builtin.len,
                     builtin.str);
@@ -13389,7 +13388,7 @@ V *main__new_v(array_string args) {
         build_mode == main__BuildMode_build_module) {
     };
 
-    _PUSH(&files, (/*typ = array_string   tmp_typ=string*/ f), tmp106, string);
+    _PUSH(&files, (/*typ = array_string   tmp_typ=string*/ f), tmp102, string);
   };
 
   string cflags = main__get_cmdline_cflags(args);
@@ -13475,25 +13474,25 @@ array_string main__env_vflags_and_os_args() {
     _PUSH(&args,
           (/*typ = array_string   tmp_typ=string*/ (
               *(string *)array__get(os__args, 0))),
-          tmp115, string);
+          tmp111, string);
 
     _PUSH_MANY(&args,
                (/*typ = array_string   tmp_typ=string*/ string_split(
                    vflags, tos2((byte *)" "))),
-               tmp118, array_string);
+               tmp114, array_string);
 
     if (os__args.len > 1) {
 
       _PUSH_MANY(
           &args,
           (/*typ = array_string   tmp_typ=string*/ array_right(os__args, 1)),
-          tmp119, array_string);
+          tmp115, array_string);
     };
 
   } else {
 
     _PUSH_MANY(&args, (/*typ = array_string   tmp_typ=string*/ os__args),
-               tmp120, array_string);
+               tmp116, array_string);
   };
 
   return args;
@@ -13504,16 +13503,16 @@ void main__update_v() {
 
   string vroot = os__dir(os__executable());
 
-  Option_os__Result tmp122 = os__exec(_STR(
+  Option_os__Result tmp118 = os__exec(_STR(
       "git -C \"%.*s\" pull --rebase origin master", vroot.len, vroot.str));
-  if (!tmp122.ok) {
-    string err = tmp122.error;
+  if (!tmp118.ok) {
+    string err = tmp118.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result s = *(os__Result *)tmp122.data;
+  os__Result s = *(os__Result *)tmp118.data;
   ;
 
   println(s.output);
@@ -13529,32 +13528,32 @@ void main__update_v() {
 
   os__mv(_STR("%.*s/v.exe", vroot.len, vroot.str), v_backup_file);
 
-  Option_os__Result tmp124 =
+  Option_os__Result tmp120 =
       os__exec(_STR("\"%.*s/make.bat\"", vroot.len, vroot.str));
-  if (!tmp124.ok) {
-    string err = tmp124.error;
+  if (!tmp120.ok) {
+    string err = tmp120.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result s2 = *(os__Result *)tmp124.data;
+  os__Result s2 = *(os__Result *)tmp120.data;
   ;
 
   println(s2.output);
 
 #else
 
-  Option_os__Result tmp125 =
+  Option_os__Result tmp121 =
       os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
-  if (!tmp125.ok) {
-    string err = tmp125.error;
+  if (!tmp121.ok) {
+    string err = tmp121.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result s2 = *(os__Result *)tmp125.data;
+  os__Result s2 = *(os__Result *)tmp121.data;
   ;
 
   println(s2.output);
@@ -13603,16 +13602,16 @@ void main__install_v(array_string args) {
 
     os__chdir(string_add(vroot, tos2((byte *)"/tools")));
 
-    Option_os__Result tmp131 = os__exec(
+    Option_os__Result tmp127 = os__exec(
         _STR("%.*s -o %.*s vget.v", vexec.len, vexec.str, vget.len, vget.str));
-    if (!tmp131.ok) {
-      string err = tmp131.error;
+    if (!tmp127.ok) {
+      string err = tmp127.error;
 
       main__verror(err);
 
       return;
     }
-    os__Result vgetcompilation = *(os__Result *)tmp131.data;
+    os__Result vgetcompilation = *(os__Result *)tmp127.data;
     ;
 
     if (vgetcompilation.exit_code != 0) {
@@ -13623,17 +13622,17 @@ void main__install_v(array_string args) {
     };
   };
 
-  Option_os__Result tmp132 =
+  Option_os__Result tmp128 =
       os__exec(string_add(_STR("%.*s ", vget.len, vget.str),
                           array_string_join(names, tos2((byte *)" "))));
-  if (!tmp132.ok) {
-    string err = tmp132.error;
+  if (!tmp128.ok) {
+    string err = tmp128.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result vgetresult = *(os__Result *)tmp132.data;
+  os__Result vgetresult = *(os__Result *)tmp128.data;
   ;
 
   if (vgetresult.exit_code != 0) {
@@ -13672,9 +13671,9 @@ void V_test_v(V *v) {
 
   benchmark__Benchmark tmark = benchmark__new_benchmark();
 
-  array_string tmp141 = test_files;
-  for (int tmp142 = 0; tmp142 < tmp141.len; tmp142++) {
-    string dot_relative_file = ((string *)tmp141.data)[tmp142];
+  array_string tmp137 = test_files;
+  for (int tmp138 = 0; tmp138 < tmp137.len; tmp138++) {
+    string dot_relative_file = ((string *)tmp137.data)[tmp138];
 
     string relative_file =
         string_replace(dot_relative_file, tos2((byte *)"./"), tos2((byte *)""));
@@ -13694,9 +13693,9 @@ void V_test_v(V *v) {
 
     benchmark__Benchmark_step(&/* ? */ tmark);
 
-    Option_os__Result tmp147 = os__exec(cmd);
-    if (!tmp147.ok) {
-      string err = tmp147.error;
+    Option_os__Result tmp143 = os__exec(cmd);
+    if (!tmp143.ok) {
+      string err = tmp143.error;
 
       benchmark__Benchmark_fail(&/* ? */ tmark);
 
@@ -13708,7 +13707,7 @@ void V_test_v(V *v) {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp147.data;
+    os__Result r = *(os__Result *)tmp143.data;
     ;
 
     if (r.exit_code != 0) {
@@ -13746,9 +13745,9 @@ void V_test_v(V *v) {
 
   benchmark__Benchmark bmark = benchmark__new_benchmark();
 
-  array_string tmp150 = examples;
-  for (int tmp151 = 0; tmp151 < tmp150.len; tmp151++) {
-    string relative_file = ((string *)tmp150.data)[tmp151];
+  array_string tmp146 = examples;
+  for (int tmp147 = 0; tmp147 < tmp146.len; tmp147++) {
+    string relative_file = ((string *)tmp146.data)[tmp147];
 
     if (string_contains(relative_file, tos2((byte *)"vweb"))) {
 
@@ -13770,9 +13769,9 @@ void V_test_v(V *v) {
 
     benchmark__Benchmark_step(&/* ? */ bmark);
 
-    Option_os__Result tmp155 = os__exec(cmd);
-    if (!tmp155.ok) {
-      string err = tmp155.error;
+    Option_os__Result tmp151 = os__exec(cmd);
+    if (!tmp151.ok) {
+      string err = tmp151.error;
 
       failed = 1;
 
@@ -13784,7 +13783,7 @@ void V_test_v(V *v) {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp155.data;
+    os__Result r = *(os__Result *)tmp151.data;
     ;
 
     if (r.exit_code != 0) {
@@ -16063,7 +16062,7 @@ string Parser_get_type(Parser *p) {
       f.typ = tos2((byte *)"void");
     };
 
-    Type fn_typ = (Type){.name = Fn_typ_str(f),
+    Type fn_typ = (Type){.name = Fn_typ_str(&/* ? */ f),
                          .mod = p->mod,
                          .func = f,
                          .fields = new_array(0, 1, sizeof(Var)),
@@ -16077,7 +16076,7 @@ string Parser_get_type(Parser *p) {
 
     Table_register_type2(p->table, fn_typ);
 
-    return Fn_typ_str(f);
+    return Fn_typ_str(&/* ? */ f);
   };
 
   bool is_arr = 0;
@@ -17450,7 +17449,7 @@ string Parser_name_expr(Parser *p) {
 
   if (peek != main__Token_lpar && peek != main__Token_lt) {
 
-    Type fn_typ = (Type){.name = Fn_typ_str(f),
+    Type fn_typ = (Type){.name = Fn_typ_str(&/* ? */ f),
                          .mod = p->mod,
                          .func = f,
                          .fields = new_array(0, 1, sizeof(Var)),
@@ -17468,7 +17467,7 @@ string Parser_name_expr(Parser *p) {
 
     Parser_next(p);
 
-    return Fn_typ_str(f);
+    return Fn_typ_str(&/* ? */ f);
   };
 
   if (string_eq(f.typ, tos2((byte *)"void")) && !p->inside_if_expr) {
@@ -20751,7 +20750,7 @@ Type Parser_get_type2(Parser *p) {
       f.typ = tos2((byte *)"void");
     };
 
-    Type fn_typ = (Type){.name = Fn_typ_str(f),
+    Type fn_typ = (Type){.name = Fn_typ_str(&/* ? */ f),
                          .mod = p->mod,
                          .func = f,
                          .cat = main__TypeCategory_func,
@@ -23041,40 +23040,6 @@ bool main__good_type_name(string s) {
 
   return 1;
 }
-string Type_str(Type t) {
-
-  string s = _STR("type \"%.*s\" {", t.name.len, t.name.str);
-
-  if (t.fields.len > 0) {
-
-    array_Var tmp2 = t.fields;
-    for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
-      Var field = ((Var *)tmp2.data)[tmp3];
-
-      s = string_add(s, _STR("\n    %.*s %.*s", field.name.len, field.name.str,
-                             field.typ.len, field.typ.str));
-    };
-
-    s = string_add(s, tos2((byte *)"\n"));
-  };
-
-  if (t.methods.len > 0) {
-
-    array_Fn tmp4 = t.methods;
-    for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
-      Fn method = ((Fn *)tmp4.data)[tmp5];
-
-      s = string_add(
-          s, _STR("\n    %.*s", Fn_str(method).len, Fn_str(method).str));
-    };
-
-    s = string_add(s, tos2((byte *)"\n"));
-  };
-
-  s = string_add(s, tos2((byte *)"}\n"));
-
-  return s;
-}
 string Fn_str(Fn f) {
 
   Table t = (Table){.typesmap = new_map(1, sizeof(Type)),
@@ -23099,12 +23064,12 @@ string Table_debug_fns(Table *t) {
 
   strings__Builder s = strings__new_builder(1000);
 
-  map_Fn tmp9 = t->fns;
-  array_string keys_tmp9 = map_keys(&tmp9);
-  for (int l = 0; l < keys_tmp9.len; l++) {
-    string _ = ((string *)keys_tmp9.data)[l];
+  map_Fn tmp4 = t->fns;
+  array_string keys_tmp4 = map_keys(&tmp4);
+  for (int l = 0; l < keys_tmp4.len; l++) {
+    string _ = ((string *)keys_tmp4.data)[l];
     Fn f = {0};
-    map_get(tmp9, _, &f);
+    map_get(tmp4, _, &f);
 
     strings__Builder_writeln(&/* ? */ s, f.name);
   };
@@ -23219,7 +23184,7 @@ void Table_register_module(Table *t, string mod) {
     return;
   };
 
-  _PUSH(&t->modules, (/*typ = array_string   tmp_typ=string*/ mod), tmp11,
+  _PUSH(&t->modules, (/*typ = array_string   tmp_typ=string*/ mod), tmp6,
         string);
 }
 void Parser_register_array(Parser *p, string typ) {
@@ -23238,7 +23203,7 @@ void Parser_register_array(Parser *p, string typ) {
     _PUSH(&p->cgen->typedefs,
           (/*typ = array_string   tmp_typ=string*/ _STR("typedef array %.*s;",
                                                         typ.len, typ.str)),
-          tmp12, string);
+          tmp7, string);
   };
 }
 void Parser_register_map(Parser *p, string typ) {
@@ -23257,7 +23222,7 @@ void Parser_register_map(Parser *p, string typ) {
     _PUSH(&p->cgen->typedefs,
           (/*typ = array_string   tmp_typ=string*/ _STR("typedef map %.*s;",
                                                         typ.len, typ.str)),
-          tmp13, string);
+          tmp8, string);
   };
 }
 bool Table_known_mod(Table *table, string mod) {
@@ -23289,7 +23254,7 @@ void Table_register_const(Table *t, string name, string typ, string mod) {
             .is_c = 0,
             .is_moved = 0,
             .line_nr = 0}),
-        tmp14, Var);
+        tmp9, Var);
 }
 void Parser_register_global(Parser *p, string name, string typ) {
 
@@ -23316,7 +23281,7 @@ void Parser_register_global(Parser *p, string name, string typ) {
             .is_c = 0,
             .is_moved = 0,
             .line_nr = 0}),
-        tmp15, Var);
+        tmp10, Var);
 }
 void Table_register_fn(Table *t, Fn new_fn) {
 
@@ -23332,10 +23297,10 @@ bool Table_known_type(Table *table, string typ_) {
     typ = string_left(typ, typ.len - 1);
   };
 
-  Type tmp17 = {0};
-  bool tmp18 = map_get(table->typesmap, typ, &tmp17);
+  Type tmp12 = {0};
+  bool tmp13 = map_get(table->typesmap, typ, &tmp12);
 
-  Type t = tmp17;
+  Type t = tmp12;
 
   return t.name.len > 0 && !t.is_placeholder;
 }
@@ -23345,24 +23310,24 @@ bool Table_known_type_fast(Table *table, Type *t) {
 }
 Option_Fn Table_find_fn(Table *t, string name) {
 
-  Fn tmp20 = {0};
-  bool tmp21 = map_get(t->fns, name, &tmp20);
+  Fn tmp15 = {0};
+  bool tmp16 = map_get(t->fns, name, &tmp15);
 
-  Fn f = tmp20;
+  Fn f = tmp15;
 
   if (!isnil(f.name.str)) {
 
-    Fn tmp23 = OPTION_CAST(Fn)(f);
-    return opt_ok(&tmp23, sizeof(Fn));
+    Fn tmp18 = OPTION_CAST(Fn)(f);
+    return opt_ok(&tmp18, sizeof(Fn));
   };
 
   return opt_none();
 }
 bool Table_known_fn(Table *t, string name) {
 
-  Option_Fn tmp24 = Table_find_fn(&/* ? */ *t, name);
-  if (!tmp24.ok) {
-    string err = tmp24.error;
+  Option_Fn tmp19 = Table_find_fn(&/* ? */ *t, name);
+  if (!tmp19.ok) {
+    string err = tmp19.error;
 
     return 0;
   };
@@ -23372,9 +23337,9 @@ bool Table_known_fn(Table *t, string name) {
 }
 bool Table_known_const(Table *t, string name) {
 
-  Option_Var tmp25 = Table_find_const(&/* ? */ *t, name);
-  if (!tmp25.ok) {
-    string err = tmp25.error;
+  Option_Var tmp20 = Table_find_const(&/* ? */ *t, name);
+  if (!tmp20.ok) {
+    string err = tmp20.error;
 
     return 0;
   };
@@ -23469,10 +23434,10 @@ void Table_add_field(Table *table, string type_name, string field_name,
     main__verror(tos2((byte *)"add_field: empty type"));
   };
 
-  Type tmp27 = {0};
-  bool tmp28 = map_get(table->typesmap, type_name, &tmp27);
+  Type tmp22 = {0};
+  bool tmp23 = map_get(table->typesmap, type_name, &tmp22);
 
-  Type t = tmp27;
+  Type t = tmp22;
 
   _PUSH(&t.fields,
         (/*typ = array_Var   tmp_typ=Var*/ (Var){
@@ -23498,15 +23463,15 @@ void Table_add_field(Table *table, string type_name, string field_name,
             .is_c = 0,
             .is_moved = 0,
             .line_nr = 0}),
-        tmp30, Var);
+        tmp25, Var);
 
   map__set(&table->typesmap, type_name, &(Type[]){t});
 }
 bool Type_has_field(Type *t, string name) {
 
-  Option_Var tmp31 = Type_find_field(&/* ? */ *t, name);
-  if (!tmp31.ok) {
-    string err = tmp31.error;
+  Option_Var tmp26 = Type_find_field(&/* ? */ *t, name);
+  if (!tmp26.ok) {
+    string err = tmp26.error;
 
     return 0;
   };
@@ -23520,14 +23485,14 @@ bool Type_has_enum_val(Type *t, string name) {
 }
 Option_Var Type_find_field(Type *t, string name) {
 
-  array_Var tmp32 = t->fields;
-  for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
-    Var field = ((Var *)tmp32.data)[tmp33];
+  array_Var tmp27 = t->fields;
+  for (int tmp28 = 0; tmp28 < tmp27.len; tmp28++) {
+    Var field = ((Var *)tmp27.data)[tmp28];
 
     if (string_eq(field.name, name)) {
 
-      Var tmp34 = OPTION_CAST(Var)(field);
-      return opt_ok(&tmp34, sizeof(Var));
+      Var tmp29 = OPTION_CAST(Var)(field);
+      return opt_ok(&tmp29, sizeof(Var));
     };
   };
 
@@ -23535,9 +23500,9 @@ Option_Var Type_find_field(Type *t, string name) {
 }
 bool Table_type_has_field(Table *table, Type *typ, string name) {
 
-  Option_Var tmp35 = Table_find_field(&/* ? */ *table, typ, name);
-  if (!tmp35.ok) {
-    string err = tmp35.error;
+  Option_Var tmp30 = Table_find_field(&/* ? */ *table, typ, name);
+  if (!tmp30.ok) {
+    string err = tmp30.error;
 
     return 0;
   };
@@ -23547,14 +23512,14 @@ bool Table_type_has_field(Table *table, Type *typ, string name) {
 }
 Option_Var Table_find_field(Table *table, Type *typ, string name) {
 
-  array_Var tmp36 = typ->fields;
-  for (int tmp37 = 0; tmp37 < tmp36.len; tmp37++) {
-    Var field = ((Var *)tmp36.data)[tmp37];
+  array_Var tmp31 = typ->fields;
+  for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
+    Var field = ((Var *)tmp31.data)[tmp32];
 
     if (string_eq(field.name, name)) {
 
-      Var tmp38 = OPTION_CAST(Var)(field);
-      return opt_ok(&tmp38, sizeof(Var));
+      Var tmp33 = OPTION_CAST(Var)(field);
+      return opt_ok(&tmp33, sizeof(Var));
     };
   };
 
@@ -23562,14 +23527,14 @@ Option_Var Table_find_field(Table *table, Type *typ, string name) {
 
     Type parent = Table_find_type(&/* ? */ *table, typ->parent);
 
-    array_Var tmp40 = parent.fields;
-    for (int tmp41 = 0; tmp41 < tmp40.len; tmp41++) {
-      Var field = ((Var *)tmp40.data)[tmp41];
+    array_Var tmp35 = parent.fields;
+    for (int tmp36 = 0; tmp36 < tmp35.len; tmp36++) {
+      Var field = ((Var *)tmp35.data)[tmp36];
 
       if (string_eq(field.name, name)) {
 
-        Var tmp42 = OPTION_CAST(Var)(field);
-        return opt_ok(&tmp42, sizeof(Var));
+        Var tmp37 = OPTION_CAST(Var)(field);
+        return opt_ok(&tmp37, sizeof(Var));
       };
     };
   };
@@ -23591,30 +23556,26 @@ void Parser_add_method(Parser *p, string type_name, Fn f) {
     main__verror(tos2((byte *)"add_method: empty type"));
   };
 
-  Type tmp43 = {0};
-  bool tmp44 = map_get(p->table->typesmap, type_name, &tmp43);
+  Type tmp38 = {0};
+  bool tmp39 = map_get(p->table->typesmap, type_name, &tmp38);
 
-  Type t = tmp43;
+  Type t = tmp38;
 
-  if (string_eq(type_name, tos2((byte *)"str"))) {
+  if (string_ne(f.name, tos2((byte *)"str")) && _IN(Fn, (f), t.methods)) {
 
-    /*opt*/ printf("%d\n", t.methods.len);
+    Parser_error(p, _STR("redefinition of method `%.*s.%.*s`", type_name.len,
+                         type_name.str, f.name.len, f.name.str));
   };
 
-  _PUSH(&t.methods, (/*typ = array_Fn   tmp_typ=Fn*/ f), tmp46, Fn);
-
-  if (string_eq(type_name, tos2((byte *)"str"))) {
-
-    /*opt*/ printf("%d\n", t.methods.len);
-  };
+  _PUSH(&t.methods, (/*typ = array_Fn   tmp_typ=Fn*/ f), tmp41, Fn);
 
   map__set(&p->table->typesmap, type_name, &(Type[]){t});
 }
 bool Type_has_method(Type *t, string name) {
 
-  Option_Fn tmp47 = Type_find_method(&/* ? */ *t, name);
-  if (!tmp47.ok) {
-    string err = tmp47.error;
+  Option_Fn tmp42 = Type_find_method(&/* ? */ *t, name);
+  if (!tmp42.ok) {
+    string err = tmp42.error;
 
     return 0;
   };
@@ -23624,9 +23585,9 @@ bool Type_has_method(Type *t, string name) {
 }
 bool Table_type_has_method(Table *table, Type *typ, string name) {
 
-  Option_Fn tmp48 = Table_find_method(&/* ? */ *table, typ, name);
-  if (!tmp48.ok) {
-    string err = tmp48.error;
+  Option_Fn tmp43 = Table_find_method(&/* ? */ *table, typ, name);
+  if (!tmp43.ok) {
+    string err = tmp43.error;
 
     return 0;
   };
@@ -23636,19 +23597,19 @@ bool Table_type_has_method(Table *table, Type *typ, string name) {
 }
 Option_Fn Table_find_method(Table *table, Type *typ, string name) {
 
-  Type tmp49 = {0};
-  bool tmp50 = map_get(table->typesmap, typ->name, &tmp49);
+  Type tmp44 = {0};
+  bool tmp45 = map_get(table->typesmap, typ->name, &tmp44);
 
-  Type t = tmp49;
+  Type t = tmp44;
 
-  array_Fn tmp52 = t.methods;
-  for (int tmp53 = 0; tmp53 < tmp52.len; tmp53++) {
-    Fn method = ((Fn *)tmp52.data)[tmp53];
+  array_Fn tmp47 = t.methods;
+  for (int tmp48 = 0; tmp48 < tmp47.len; tmp48++) {
+    Fn method = ((Fn *)tmp47.data)[tmp48];
 
     if (string_eq(method.name, name)) {
 
-      Fn tmp54 = OPTION_CAST(Fn)(method);
-      return opt_ok(&tmp54, sizeof(Fn));
+      Fn tmp49 = OPTION_CAST(Fn)(method);
+      return opt_ok(&tmp49, sizeof(Fn));
     };
   };
 
@@ -23656,14 +23617,14 @@ Option_Fn Table_find_method(Table *table, Type *typ, string name) {
 
     Type parent = Table_find_type(&/* ? */ *table, typ->parent);
 
-    array_Fn tmp56 = parent.methods;
-    for (int tmp57 = 0; tmp57 < tmp56.len; tmp57++) {
-      Fn method = ((Fn *)tmp56.data)[tmp57];
+    array_Fn tmp51 = parent.methods;
+    for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
+      Fn method = ((Fn *)tmp51.data)[tmp52];
 
       if (string_eq(method.name, name)) {
 
-        Fn tmp58 = OPTION_CAST(Fn)(method);
-        return opt_ok(&tmp58, sizeof(Fn));
+        Fn tmp53 = OPTION_CAST(Fn)(method);
+        return opt_ok(&tmp53, sizeof(Fn));
       };
     };
 
@@ -23674,14 +23635,14 @@ Option_Fn Table_find_method(Table *table, Type *typ, string name) {
 }
 Option_Fn Type_find_method(Type *t, string name) {
 
-  array_Fn tmp59 = t->methods;
-  for (int tmp60 = 0; tmp60 < tmp59.len; tmp60++) {
-    Fn method = ((Fn *)tmp59.data)[tmp60];
+  array_Fn tmp54 = t->methods;
+  for (int tmp55 = 0; tmp55 < tmp54.len; tmp55++) {
+    Fn method = ((Fn *)tmp54.data)[tmp55];
 
     if (string_eq(method.name, name)) {
 
-      Fn tmp61 = OPTION_CAST(Fn)(method);
-      return opt_ok(&tmp61, sizeof(Fn));
+      Fn tmp56 = OPTION_CAST(Fn)(method);
+      return opt_ok(&tmp56, sizeof(Fn));
     };
   };
 
@@ -23723,10 +23684,10 @@ Type Table_find_type(Table *t, string name_) {
                   .gen_str = 0};
   };
 
-  Type tmp64 = {0};
-  bool tmp65 = map_get(t->typesmap, name, &tmp64);
+  Type tmp59 = {0};
+  bool tmp60 = map_get(t->typesmap, name, &tmp59);
 
-  return tmp64;
+  return tmp59;
 }
 bool Parser__check_types(Parser *p, string got_, string expected_, bool throw) {
 
@@ -23907,9 +23868,9 @@ bool Parser_satisfies_interface(Parser *p, string interface_name, string _typ,
 
   Type typ = Table_find_type(&/* ? */ *p->table, _typ);
 
-  array_Fn tmp70 = int_typ.methods;
-  for (int tmp71 = 0; tmp71 < tmp70.len; tmp71++) {
-    Fn method = ((Fn *)tmp70.data)[tmp71];
+  array_Fn tmp65 = int_typ.methods;
+  for (int tmp66 = 0; tmp66 < tmp65.len; tmp66++) {
+    Fn method = ((Fn *)tmp65.data)[tmp66];
 
     if (!Type_has_method(&/* ? */ typ, method.name)) {
 
@@ -23932,21 +23893,21 @@ bool Table_is_interface(Table *table, string name) {
     return 0;
   };
 
-  Type tmp72 = {0};
-  bool tmp73 = map_get(table->typesmap, name, &tmp72);
+  Type tmp67 = {0};
+  bool tmp68 = map_get(table->typesmap, name, &tmp67);
 
-  Type t = tmp72;
+  Type t = tmp67;
 
   return t.cat == main__TypeCategory_interface_;
 }
 bool Table_main_exists(Table *t) {
 
-  map_Fn tmp75 = t->fns;
-  array_string keys_tmp75 = map_keys(&tmp75);
-  for (int l = 0; l < keys_tmp75.len; l++) {
-    string _ = ((string *)keys_tmp75.data)[l];
+  map_Fn tmp70 = t->fns;
+  array_string keys_tmp70 = map_keys(&tmp70);
+  for (int l = 0; l < keys_tmp70.len; l++) {
+    string _ = ((string *)keys_tmp70.data)[l];
     Fn f = {0};
-    map_get(tmp75, _, &f);
+    map_get(tmp70, _, &f);
 
     if (string_eq(f.name, tos2((byte *)"main__main"))) {
 
@@ -23958,12 +23919,12 @@ bool Table_main_exists(Table *t) {
 }
 bool Table_has_at_least_one_test_fn(Table *t) {
 
-  map_Fn tmp76 = t->fns;
-  array_string keys_tmp76 = map_keys(&tmp76);
-  for (int l = 0; l < keys_tmp76.len; l++) {
-    string _ = ((string *)keys_tmp76.data)[l];
+  map_Fn tmp71 = t->fns;
+  array_string keys_tmp71 = map_keys(&tmp71);
+  for (int l = 0; l < keys_tmp71.len; l++) {
+    string _ = ((string *)keys_tmp71.data)[l];
     Fn f = {0};
-    map_get(tmp76, _, &f);
+    map_get(tmp71, _, &f);
 
     if (string_starts_with(f.name, tos2((byte *)"main__test_"))) {
 
@@ -23975,14 +23936,14 @@ bool Table_has_at_least_one_test_fn(Table *t) {
 }
 Option_Var Table_find_const(Table *t, string name) {
 
-  array_Var tmp77 = t->consts;
-  for (int tmp78 = 0; tmp78 < tmp77.len; tmp78++) {
-    Var c = ((Var *)tmp77.data)[tmp78];
+  array_Var tmp72 = t->consts;
+  for (int tmp73 = 0; tmp73 < tmp72.len; tmp73++) {
+    Var c = ((Var *)tmp72.data)[tmp73];
 
     if (string_eq(c.name, name)) {
 
-      Var tmp79 = OPTION_CAST(Var)(c);
-      return opt_ok(&tmp79, sizeof(Var));
+      Var tmp74 = OPTION_CAST(Var)(c);
+      return opt_ok(&tmp74, sizeof(Var));
     };
   };
 
@@ -24055,13 +24016,13 @@ void Table_register_generic_fn(Table *t, string fn_name) {
         (/*typ = array_GenTable   tmp_typ=GenTable*/ (GenTable){
             fn_name,
             new_array_from_c_array(0, 0, sizeof(string), (string[]){0})}),
-        tmp87, GenTable);
+        tmp82, GenTable);
 }
 array_string Table_fn_gen_types(Table *t, string fn_name) {
 
-  array_GenTable tmp88 = t->generic_fns;
-  for (int _ = 0; _ < tmp88.len; _++) {
-    GenTable f = ((GenTable *)tmp88.data)[_];
+  array_GenTable tmp83 = t->generic_fns;
+  for (int _ = 0; _ < tmp83.len; _++) {
+    GenTable f = ((GenTable *)tmp83.data)[_];
 
     if (string_eq(f.fn_name, fn_name)) {
 
@@ -24075,14 +24036,14 @@ array_string Table_fn_gen_types(Table *t, string fn_name) {
 }
 void Table_register_generic_fn_type(Table *t, string fn_name, string typ) {
 
-  array_GenTable tmp89 = t->generic_fns;
-  for (int i = 0; i < tmp89.len; i++) {
-    GenTable f = ((GenTable *)tmp89.data)[i];
+  array_GenTable tmp84 = t->generic_fns;
+  for (int i = 0; i < tmp84.len; i++) {
+    GenTable f = ((GenTable *)tmp84.data)[i];
 
     if (string_eq(f.fn_name, fn_name)) {
 
       _PUSH(&(*(GenTable *)array__get(t->generic_fns, i)).types,
-            (/*typ = array_string   tmp_typ=string*/ typ), tmp92, string);
+            (/*typ = array_string   tmp_typ=string*/ typ), tmp87, string);
 
       return;
     };
@@ -24171,11 +24132,11 @@ bool main__is_compile_time_const(string s_) {
     return 1;
   };
 
-  string tmp95 = s;
-  array_byte bytes_tmp95 = string_bytes(tmp95);
+  string tmp90 = s;
+  array_byte bytes_tmp90 = string_bytes(tmp90);
   ;
-  for (int tmp96 = 0; tmp96 < tmp95.len; tmp96++) {
-    byte c = ((byte *)bytes_tmp95.data)[tmp96];
+  for (int tmp91 = 0; tmp91 < tmp90.len; tmp91++) {
+    byte c = ((byte *)bytes_tmp90.data)[tmp91];
 
     if (!((c >= '0' && c <= '9') || c == '.')) {
 
@@ -24187,9 +24148,9 @@ bool main__is_compile_time_const(string s_) {
 }
 string Table_qualify_module(Table *table, string mod, string file_path) {
 
-  array_string tmp97 = table->imports;
-  for (int tmp98 = 0; tmp98 < tmp97.len; tmp98++) {
-    string m = ((string *)tmp97.data)[tmp98];
+  array_string tmp92 = table->imports;
+  for (int tmp93 = 0; tmp93 < tmp92.len; tmp93++) {
+    string m = ((string *)tmp92.data)[tmp93];
 
     if (string_contains(m, tos2((byte *)".")) && string_contains(m, mod)) {
 
@@ -24213,10 +24174,10 @@ FileImportTable Table_get_file_import_table(Table *table, string id) {
 
   if (_IN_MAP((id), table->file_imports)) {
 
-    FileImportTable tmp104 = {0};
-    bool tmp105 = map_get(table->file_imports, id, &tmp104);
+    FileImportTable tmp99 = {0};
+    bool tmp100 = map_get(table->file_imports, id, &tmp99);
 
-    fit.imports = tmp104.imports;
+    fit.imports = tmp99.imports;
   };
 
   return fit;
@@ -24240,13 +24201,13 @@ void FileImportTable_register_import(FileImportTable *fit, string mod) {
 void FileImportTable_register_alias(FileImportTable *fit, string alias,
                                     string mod) {
 
-  string tmp106 = tos((byte *)"", 0);
-  bool tmp107 = map_get(fit->imports, alias, &tmp106);
+  string tmp101 = tos((byte *)"", 0);
+  bool tmp102 = map_get(fit->imports, alias, &tmp101);
 
-  if (!tmp107)
-    tmp106 = tos((byte *)"", 0);
+  if (!tmp102)
+    tmp101 = tos((byte *)"", 0);
 
-  if (_IN_MAP((alias), fit->imports) && string_ne(tmp106, mod)) {
+  if (_IN_MAP((alias), fit->imports) && string_ne(tmp101, mod)) {
 
     main__verror(_STR("cannot import %.*s as %.*s: import name %.*s already in "
                       "use in \"%.*s\"",
@@ -24261,9 +24222,9 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
     array_string internal_mod_parts =
         new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-    array_string tmp110 = mod_parts;
-    for (int tmp111 = 0; tmp111 < tmp110.len; tmp111++) {
-      string part = ((string *)tmp110.data)[tmp111];
+    array_string tmp105 = mod_parts;
+    for (int tmp106 = 0; tmp106 < tmp105.len; tmp106++) {
+      string part = ((string *)tmp105.data)[tmp106];
 
       if (string_eq(part, tos2((byte *)"internal"))) {
 
@@ -24271,7 +24232,7 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
       };
 
       _PUSH(&internal_mod_parts, (/*typ = array_string   tmp_typ=string*/ part),
-            tmp112, string);
+            tmp107, string);
     };
 
     string internal_parent =
@@ -24292,12 +24253,12 @@ bool FileImportTable_known_alias(FileImportTable *fit, string alias) {
 }
 bool FileImportTable_is_aliased(FileImportTable *fit, string mod) {
 
-  map_string tmp114 = fit->imports;
-  array_string keys_tmp114 = map_keys(&tmp114);
-  for (int l = 0; l < keys_tmp114.len; l++) {
-    string _ = ((string *)keys_tmp114.data)[l];
+  map_string tmp109 = fit->imports;
+  array_string keys_tmp109 = map_keys(&tmp109);
+  for (int l = 0; l < keys_tmp109.len; l++) {
+    string _ = ((string *)keys_tmp109.data)[l];
     string val = {0};
-    map_get(tmp114, _, &val);
+    map_get(tmp109, _, &val);
 
     if (string_eq(val, mod)) {
 
@@ -24309,20 +24270,20 @@ bool FileImportTable_is_aliased(FileImportTable *fit, string mod) {
 }
 string FileImportTable_resolve_alias(FileImportTable *fit, string alias) {
 
-  string tmp115 = tos((byte *)"", 0);
-  bool tmp116 = map_get(fit->imports, alias, &tmp115);
+  string tmp110 = tos((byte *)"", 0);
+  bool tmp111 = map_get(fit->imports, alias, &tmp110);
 
-  if (!tmp116)
-    tmp115 = tos((byte *)"", 0);
+  if (!tmp111)
+    tmp110 = tos((byte *)"", 0);
 
-  return tmp115;
+  return tmp110;
 }
 void FileImportTable_register_used_import(FileImportTable *fit, string alias) {
 
   if (!(_IN(string, (alias), fit->used_imports))) {
 
     _PUSH(&fit->used_imports, (/*typ = array_string   tmp_typ=string*/ alias),
-          tmp117, string);
+          tmp112, string);
   };
 }
 bool FileImportTable_is_used_import(FileImportTable *fit, string alias) {
@@ -24336,9 +24297,9 @@ bool Type_contains_field_type(Type *t, string typ) {
     return 0;
   };
 
-  array_Var tmp120 = t->fields;
-  for (int tmp121 = 0; tmp121 < tmp120.len; tmp121++) {
-    Var field = ((Var *)tmp120.data)[tmp121];
+  array_Var tmp115 = t->fields;
+  for (int tmp116 = 0; tmp116 < tmp115.len; tmp116++) {
+    Var field = ((Var *)tmp115.data)[tmp116];
 
     if (string_eq(field.typ, typ)) {
 
@@ -24398,12 +24359,12 @@ string Table_find_misspelled_fn(Table *table, string name, FileImportTable *fit,
                   ? (string_right(name, 6))
                   : (name);
 
-  map_Fn tmp129 = table->fns;
-  array_string keys_tmp129 = map_keys(&tmp129);
-  for (int l = 0; l < keys_tmp129.len; l++) {
-    string _ = ((string *)keys_tmp129.data)[l];
+  map_Fn tmp124 = table->fns;
+  array_string keys_tmp124 = map_keys(&tmp124);
+  for (int l = 0; l < keys_tmp124.len; l++) {
+    string _ = ((string *)keys_tmp124.data)[l];
     Fn f = {0};
-    map_get(tmp129, _, &f);
+    map_get(tmp124, _, &f);
 
     if (n1.len - f.name.len > 2 || f.name.len - n1.len > 2) {
 
@@ -24418,12 +24379,12 @@ string Table_find_misspelled_fn(Table *table, string name, FileImportTable *fit,
 
       bool mod_imported = 0;
 
-      map_string tmp131 = fit->imports;
-      array_string keys_tmp131 = map_keys(&tmp131);
-      for (int l = 0; l < keys_tmp131.len; l++) {
-        string _ = ((string *)keys_tmp131.data)[l];
+      map_string tmp126 = fit->imports;
+      array_string keys_tmp126 = map_keys(&tmp126);
+      for (int l = 0; l < keys_tmp126.len; l++) {
+        string _ = ((string *)keys_tmp126.data)[l];
         string m = {0};
-        map_get(tmp131, _, &m);
+        map_get(tmp126, _, &m);
 
         if (string_eq(f.mod, m)) {
 
@@ -24462,12 +24423,12 @@ string Table_find_misspelled_imported_mod(Table *table, string name,
                   ? (string_right(name, 5))
                   : (name);
 
-  map_string tmp136 = fit->imports;
-  array_string keys_tmp136 = map_keys(&tmp136);
-  for (int l = 0; l < keys_tmp136.len; l++) {
-    string alias = ((string *)keys_tmp136.data)[l];
+  map_string tmp131 = fit->imports;
+  array_string keys_tmp131 = map_keys(&tmp131);
+  for (int l = 0; l < keys_tmp131.len; l++) {
+    string alias = ((string *)keys_tmp131.data)[l];
     string mod = {0};
-    map_get(tmp136, alias, &mod);
+    map_get(tmp131, alias, &mod);
 
     if ((n1.len - alias.len > 2 || alias.len - n1.len > 2)) {
 
