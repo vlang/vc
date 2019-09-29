@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "918edad"
+#define V_COMMIT_HASH "83022a2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a1f0e94"
+#define V_COMMIT_HASH "918edad"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -18149,6 +18149,19 @@ string Parser_expression(Parser *p) {
 
         Parser_error(p, _STR("`%.*s` is immutable (can\'t <<)",
                              p->expr_var.name.len, p->expr_var.name.str));
+      };
+
+      if (p->expr_var.is_arg &&
+          string_starts_with(p->expr_var.typ, tos2((byte *)"array_"))) {
+
+        Parser_error(
+            p,
+            string_add(
+                tos2((
+                    byte
+                        *)"for now it's not possible to append an element to "),
+                _STR("a mutable array argument `%.*s`", p->expr_var.name.len,
+                     p->expr_var.name.str)));
       };
 
       if (!p->expr_var.is_changed) {
