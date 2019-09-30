@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2aa6ab7"
+#define V_COMMIT_HASH "aaba7fd"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "223032f"
+#define V_COMMIT_HASH "2aa6ab7"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -13764,12 +13764,19 @@ V *main__new_v(array_string args) {
   if (!os__dir_exists(vroot) ||
       !os__dir_exists(string_add(vroot, tos2((byte *)"/vlib/builtin")))) {
 
-    println(tos2(
-        (byte *)"vlib not found. It should be next to the V executable. "));
+    println(tos2((byte *)"vlib not found, downloading it..."));
 
-    println(tos2((byte *)"Go to https://vlang.io to install V."));
+    int ret = os__system(
+        tos2((byte *)"git clone --depth=1 https://github.com/vlang/v ."));
 
-    v_exit(1);
+    if (ret != 0) {
+
+      println(tos2((byte *)"failed to `git clone` vlib"));
+
+      println(tos2((byte *)"make sure you are online and have git installed"));
+
+      v_exit(1);
+    };
   };
 
   string out_name_c =
@@ -13778,9 +13785,9 @@ V *main__new_v(array_string args) {
   array_string files =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-  array_string tmp98 = builtins;
-  for (int tmp99 = 0; tmp99 < tmp98.len; tmp99++) {
-    string builtin = ((string *)tmp98.data)[tmp99];
+  array_string tmp99 = builtins;
+  for (int tmp100 = 0; tmp100 < tmp99.len; tmp100++) {
+    string builtin = ((string *)tmp99.data)[tmp100];
 
     string f = _STR("%.*s/vlib/builtin/%.*s", vroot.len, vroot.str, builtin.len,
                     builtin.str);
@@ -13799,7 +13806,7 @@ V *main__new_v(array_string args) {
         build_mode == main__BuildMode_build_module) {
     };
 
-    _PUSH(&files, (/*typ = array_string   tmp_typ=string*/ f), tmp102, string);
+    _PUSH(&files, (/*typ = array_string   tmp_typ=string*/ f), tmp103, string);
   };
 
   string cflags = main__get_cmdline_cflags(args);
@@ -13885,25 +13892,25 @@ array_string main__env_vflags_and_os_args() {
     _PUSH(&args,
           (/*typ = array_string   tmp_typ=string*/ (
               *(string *)array__get(os__args, 0))),
-          tmp111, string);
+          tmp112, string);
 
     _PUSH_MANY(&args,
                (/*typ = array_string   tmp_typ=string*/ string_split(
                    vflags, tos2((byte *)" "))),
-               tmp114, array_string);
+               tmp115, array_string);
 
     if (os__args.len > 1) {
 
       _PUSH_MANY(
           &args,
           (/*typ = array_string   tmp_typ=string*/ array_right(os__args, 1)),
-          tmp115, array_string);
+          tmp116, array_string);
     };
 
   } else {
 
     _PUSH_MANY(&args, (/*typ = array_string   tmp_typ=string*/ os__args),
-               tmp116, array_string);
+               tmp117, array_string);
   };
 
   return args;
@@ -13914,16 +13921,16 @@ void main__update_v() {
 
   string vroot = os__dir(os__executable());
 
-  Option_os__Result tmp118 = os__exec(_STR(
+  Option_os__Result tmp119 = os__exec(_STR(
       "git -C \"%.*s\" pull --rebase origin master", vroot.len, vroot.str));
-  if (!tmp118.ok) {
-    string err = tmp118.error;
+  if (!tmp119.ok) {
+    string err = tmp119.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result s = *(os__Result *)tmp118.data;
+  os__Result s = *(os__Result *)tmp119.data;
   ;
 
   println(s.output);
@@ -13939,24 +13946,8 @@ void main__update_v() {
 
   os__mv(_STR("%.*s/v.exe", vroot.len, vroot.str), v_backup_file);
 
-  Option_os__Result tmp120 =
-      os__exec(_STR("\"%.*s/make.bat\"", vroot.len, vroot.str));
-  if (!tmp120.ok) {
-    string err = tmp120.error;
-
-    main__verror(err);
-
-    return;
-  }
-  os__Result s2 = *(os__Result *)tmp120.data;
-  ;
-
-  println(s2.output);
-
-#else
-
   Option_os__Result tmp121 =
-      os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
+      os__exec(_STR("\"%.*s/make.bat\"", vroot.len, vroot.str));
   if (!tmp121.ok) {
     string err = tmp121.error;
 
@@ -13965,6 +13956,22 @@ void main__update_v() {
     return;
   }
   os__Result s2 = *(os__Result *)tmp121.data;
+  ;
+
+  println(s2.output);
+
+#else
+
+  Option_os__Result tmp122 =
+      os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
+  if (!tmp122.ok) {
+    string err = tmp122.error;
+
+    main__verror(err);
+
+    return;
+  }
+  os__Result s2 = *(os__Result *)tmp122.data;
   ;
 
   println(s2.output);
@@ -14013,16 +14020,16 @@ void main__install_v(array_string args) {
 
     os__chdir(string_add(vroot, tos2((byte *)"/tools")));
 
-    Option_os__Result tmp127 = os__exec(
+    Option_os__Result tmp128 = os__exec(
         _STR("%.*s -o %.*s vget.v", vexec.len, vexec.str, vget.len, vget.str));
-    if (!tmp127.ok) {
-      string err = tmp127.error;
+    if (!tmp128.ok) {
+      string err = tmp128.error;
 
       main__verror(err);
 
       return;
     }
-    os__Result vget_compilation = *(os__Result *)tmp127.data;
+    os__Result vget_compilation = *(os__Result *)tmp128.data;
     ;
 
     if (vget_compilation.exit_code != 0) {
@@ -14033,17 +14040,17 @@ void main__install_v(array_string args) {
     };
   };
 
-  Option_os__Result tmp128 =
+  Option_os__Result tmp129 =
       os__exec(string_add(_STR("%.*s ", vget.len, vget.str),
                           array_string_join(names, tos2((byte *)" "))));
-  if (!tmp128.ok) {
-    string err = tmp128.error;
+  if (!tmp129.ok) {
+    string err = tmp129.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result vgetresult = *(os__Result *)tmp128.data;
+  os__Result vgetresult = *(os__Result *)tmp129.data;
   ;
 
   if (vgetresult.exit_code != 0) {
@@ -14084,9 +14091,9 @@ void V_test_v(V *v) {
 
   benchmark__Benchmark tmark = benchmark__new_benchmark();
 
-  array_string tmp136 = test_files;
-  for (int tmp137 = 0; tmp137 < tmp136.len; tmp137++) {
-    string dot_relative_file = ((string *)tmp136.data)[tmp137];
+  array_string tmp137 = test_files;
+  for (int tmp138 = 0; tmp138 < tmp137.len; tmp138++) {
+    string dot_relative_file = ((string *)tmp137.data)[tmp138];
 
     string relative_file =
         string_replace(dot_relative_file, tos2((byte *)"./"), tos2((byte *)""));
@@ -14106,9 +14113,9 @@ void V_test_v(V *v) {
 
     benchmark__Benchmark_step(&/* ? */ tmark);
 
-    Option_os__Result tmp142 = os__exec(cmd);
-    if (!tmp142.ok) {
-      string err = tmp142.error;
+    Option_os__Result tmp143 = os__exec(cmd);
+    if (!tmp143.ok) {
+      string err = tmp143.error;
 
       benchmark__Benchmark_fail(&/* ? */ tmark);
 
@@ -14120,7 +14127,7 @@ void V_test_v(V *v) {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp142.data;
+    os__Result r = *(os__Result *)tmp143.data;
     ;
 
     if (r.exit_code != 0) {
@@ -14158,9 +14165,9 @@ void V_test_v(V *v) {
 
   benchmark__Benchmark bmark = benchmark__new_benchmark();
 
-  array_string tmp145 = examples;
-  for (int tmp146 = 0; tmp146 < tmp145.len; tmp146++) {
-    string relative_file = ((string *)tmp145.data)[tmp146];
+  array_string tmp146 = examples;
+  for (int tmp147 = 0; tmp147 < tmp146.len; tmp147++) {
+    string relative_file = ((string *)tmp146.data)[tmp147];
 
     if (string_contains(relative_file, tos2((byte *)"vweb"))) {
 
@@ -14182,9 +14189,9 @@ void V_test_v(V *v) {
 
     benchmark__Benchmark_step(&/* ? */ bmark);
 
-    Option_os__Result tmp150 = os__exec(cmd);
-    if (!tmp150.ok) {
-      string err = tmp150.error;
+    Option_os__Result tmp151 = os__exec(cmd);
+    if (!tmp151.ok) {
+      string err = tmp151.error;
 
       failed = 1;
 
@@ -14196,7 +14203,7 @@ void V_test_v(V *v) {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp150.data;
+    os__Result r = *(os__Result *)tmp151.data;
     ;
 
     if (r.exit_code != 0) {
