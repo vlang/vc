@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fa7e0ce"
+#define V_COMMIT_HASH "223032f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "21f39f3"
+#define V_COMMIT_HASH "fa7e0ce"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -14190,8 +14190,8 @@ void V_test_v(V *v) {
 
   if (!os__dir_exists(string_add(parent_dir, tos2((byte *)"/vlib")))) {
 
-    println(tos2(
-        (byte *)"run vlib/ is missing, it must be next to the V executable"));
+    println(
+        tos2((byte *)"vlib/ is missing, it must be next to the V executable"));
 
     v_exit(1);
   };
@@ -14279,8 +14279,8 @@ void V_test_v(V *v) {
 
   println(tos2((byte *)"\nBuilding examples..."));
 
-  array_string examples =
-      os__walk_ext(tos2((byte *)"examples"), tos2((byte *)".v"));
+  array_string examples = os__walk_ext(
+      string_add(parent_dir, tos2((byte *)"/examples")), tos2((byte *)".v"));
 
   benchmark__Benchmark bmark = benchmark__new_benchmark();
 
@@ -25428,7 +25428,7 @@ void init_consts() {
               "map_string = function() {}\nvar map_int = function() "
               "{}\n\nfunction init_consts() {\n	\n}	\n\n");
   main__dot_ptr = tos2((byte *)"->");
-  main__Version = tos2((byte *)"0.1.20");
+  main__Version = tos2((byte *)"0.1.21");
   main__supported_platforms = new_array_from_c_array(
       11, 11, sizeof(string),
       (string[]){tos2((byte *)"windows"), tos2((byte *)"mac"),
