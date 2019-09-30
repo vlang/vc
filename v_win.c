@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "21f39f3"
+#define V_COMMIT_HASH "fa7e0ce"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7311db6"
+#define V_COMMIT_HASH "21f39f3"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -14182,16 +14182,19 @@ void main__install_v(array_string args) {
 void V_test_vget(V *v) {}
 void V_test_v(V *v) {
 
-  if (!os__dir_exists(tos2((byte *)"vlib"))) {
+  array_string args = main__env_vflags_and_os_args();
 
-    println(tos2((byte *)"run \"v test v\" next to the vlib/ directory"));
+  string vexe = os__executable();
+
+  string parent_dir = os__dir(vexe);
+
+  if (!os__dir_exists(string_add(parent_dir, tos2((byte *)"/vlib")))) {
+
+    println(tos2(
+        (byte *)"run vlib/ is missing, it must be next to the V executable"));
 
     v_exit(1);
   };
-
-  array_string args = main__env_vflags_and_os_args();
-
-  string vexe = (*(string *)array__get(args, 0));
 
   string joined_args =
       array_string_join(array_right(args, 1), tos2((byte *)" "));
@@ -14201,16 +14204,15 @@ void V_test_v(V *v) {
 
   bool failed = 0;
 
-  array_string test_files =
-      os__walk_ext(tos2((byte *)"."), tos2((byte *)"_test.v"));
+  array_string test_files = os__walk_ext(parent_dir, tos2((byte *)"_test.v"));
 
   println(tos2((byte *)"Testing..."));
 
   benchmark__Benchmark tmark = benchmark__new_benchmark();
 
-  array_string tmp137 = test_files;
-  for (int tmp138 = 0; tmp138 < tmp137.len; tmp138++) {
-    string dot_relative_file = ((string *)tmp137.data)[tmp138];
+  array_string tmp136 = test_files;
+  for (int tmp137 = 0; tmp137 < tmp136.len; tmp137++) {
+    string dot_relative_file = ((string *)tmp136.data)[tmp137];
 
     string relative_file =
         string_replace(dot_relative_file, tos2((byte *)"./"), tos2((byte *)""));
@@ -14230,9 +14232,9 @@ void V_test_v(V *v) {
 
     benchmark__Benchmark_step(&/* ? */ tmark);
 
-    Option_os__Result tmp143 = os__exec(cmd);
-    if (!tmp143.ok) {
-      string err = tmp143.error;
+    Option_os__Result tmp142 = os__exec(cmd);
+    if (!tmp142.ok) {
+      string err = tmp142.error;
 
       benchmark__Benchmark_fail(&/* ? */ tmark);
 
@@ -14244,7 +14246,7 @@ void V_test_v(V *v) {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp143.data;
+    os__Result r = *(os__Result *)tmp142.data;
     ;
 
     if (r.exit_code != 0) {
@@ -14282,9 +14284,9 @@ void V_test_v(V *v) {
 
   benchmark__Benchmark bmark = benchmark__new_benchmark();
 
-  array_string tmp146 = examples;
-  for (int tmp147 = 0; tmp147 < tmp146.len; tmp147++) {
-    string relative_file = ((string *)tmp146.data)[tmp147];
+  array_string tmp145 = examples;
+  for (int tmp146 = 0; tmp146 < tmp145.len; tmp146++) {
+    string relative_file = ((string *)tmp145.data)[tmp146];
 
     if (string_contains(relative_file, tos2((byte *)"vweb"))) {
 
@@ -14306,9 +14308,9 @@ void V_test_v(V *v) {
 
     benchmark__Benchmark_step(&/* ? */ bmark);
 
-    Option_os__Result tmp151 = os__exec(cmd);
-    if (!tmp151.ok) {
-      string err = tmp151.error;
+    Option_os__Result tmp150 = os__exec(cmd);
+    if (!tmp150.ok) {
+      string err = tmp150.error;
 
       failed = 1;
 
@@ -14320,7 +14322,7 @@ void V_test_v(V *v) {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp151.data;
+    os__Result r = *(os__Result *)tmp150.data;
     ;
 
     if (r.exit_code != 0) {
