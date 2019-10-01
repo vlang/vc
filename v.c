@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d535e78"
+#define V_COMMIT_HASH "841d824"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "061da15"
+#define V_COMMIT_HASH "d535e78"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -13748,7 +13748,7 @@ V *main__new_v(array_string args) {
 
   string builtin = tos2((byte *)"builtin.v");
 
-  array_string builtins = new_array_from_c_array(7, 7, sizeof(string),
+  array_string builtins = new_array_from_c_array(8, 8, sizeof(string),
                                                  (string[]){
                                                      tos2((byte *)"array.v"),
                                                      tos2((byte *)"string.v"),
@@ -13756,6 +13756,7 @@ V *main__new_v(array_string args) {
                                                      tos2((byte *)"int.v"),
                                                      tos2((byte *)"utf8.v"),
                                                      tos2((byte *)"map.v"),
+                                                     tos2((byte *)"hashmap.v"),
                                                      tos2((byte *)"option.v"),
                                                  });
 
