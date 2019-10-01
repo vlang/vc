@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "243626c"
+#define V_COMMIT_HASH "2ac8048"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "841d824"
+#define V_COMMIT_HASH "243626c"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1833,11 +1833,6 @@ array_Token main__AssignTokens;
 
 array new_array(int mylen, int cap, int elm_size) {
 
-  int a = 3;
-
-  a;
-  ;
-
   array arr = (array){.len = mylen,
                       .cap = cap,
                       .element_size = elm_size,
@@ -3448,7 +3443,7 @@ void print_backtrace_skipping_top_frames(int skipframes) {
 
     int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
 
-    backtrace_symbols_fd(&/*v*/ buffer[skipframes] /*rbyte* 0*/,
+    backtrace_symbols_fd(((voidptr *)(&/*v*/ buffer[skipframes] /*rbyte* 0*/)),
                          nr_ptrs - skipframes, 1);
 
     return;
@@ -3792,7 +3787,7 @@ string i64_hex(i64 n) {
 
   byte *hex = v_malloc(len);
 
-  int count = ((int)(sprintf(((char *)(hex)), "0x%llx", n)));
+  int count = ((int)(sprintf(((char *)(hex)), "0x%lx", n)));
 
   return tos(hex, count);
 }
