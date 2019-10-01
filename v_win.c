@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b7d1a17"
+#define V_COMMIT_HASH "30ca149"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9e7ee40"
+#define V_COMMIT_HASH "b7d1a17"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -11599,9 +11599,27 @@ void Parser_gen_fn_decl(Parser *p, Fn f, string typ, string str_args) {
 }
 void Parser_gen_blank_identifier_assign(Parser *p) {
 
+  int assign_error_tok_idx = p->token_idx;
+
   Parser_check_name(p);
 
   Parser_check_space(p, main__Token_assign);
+
+  string expr = p->lit;
+
+  bool is_indexer = Parser_peek(&/* ? */ *p) == main__Token_lsbr;
+
+  bool is_fn_call = Parser_peek(&/* ? */ *p) == main__Token_lpar ||
+                    (Parser_peek(&/* ? */ *p) == main__Token_dot &&
+                     (*(Tok *)array__get(p->tokens, p->token_idx + 2)).tok ==
+                         main__Token_lpar);
+
+  if (!is_indexer && !is_fn_call) {
+
+    Parser_error_with_token_index(
+        p, _STR("assigning `%.*s` to `_` is redundant", expr.len, expr.str),
+        assign_error_tok_idx);
+  };
 
   int pos = CGen_add_placeholder(&/* ? */ *p->cgen);
 
@@ -11652,17 +11670,27 @@ void Parser_gen_blank_identifier_assign(Parser *p) {
     Parser_statements(p);
 
     p->returns = 0;
-  };
 
-  Parser_gen(p, tos2((byte *)";"));
+  } else {
+
+    if (is_fn_call) {
+
+      Parser_gen(p, tos2((byte *)";"));
+
+    } else {
+
+      CGen_resetln(p->cgen, _STR("{%.*s _ = %.*s;}", typ.len, typ.str,
+                                 p->cgen->cur_line.len, p->cgen->cur_line.str));
+    };
+  };
 }
 string main__types_to_c(array_Type types, Table *table) {
 
   strings__Builder sb = strings__new_builder(10);
 
-  array_Type tmp13 = types;
-  for (int tmp14 = 0; tmp14 < tmp13.len; tmp14++) {
-    Type t = ((Type *)tmp13.data)[tmp14];
+  array_Type tmp19 = types;
+  for (int tmp20 = 0; tmp20 < tmp19.len; tmp20++) {
+    Type t = ((Type *)tmp19.data)[tmp20];
 
     if (t.cat != main__TypeCategory_union_ &&
         t.cat != main__TypeCategory_struct_ &&
@@ -11688,9 +11716,9 @@ string main__types_to_c(array_Type types, Table *table) {
           _STR("%.*s %.*s {", kind.len, kind.str, t.name.len, t.name.str));
     };
 
-    array_Var tmp16 = t.fields;
-    for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
-      Var field = ((Var *)tmp16.data)[tmp17];
+    array_Var tmp22 = t.fields;
+    for (int tmp23 = 0; tmp23 < tmp22.len; tmp23++) {
+      Var field = ((Var *)tmp22.data)[tmp23];
 
       strings__Builder_write(&/* ? */ sb, tos2((byte *)"\t"));
 
@@ -11811,10 +11839,10 @@ string Table_fn_gen_name(Table *table, Fn *f) {
       !string_ends_with(name, tos2((byte *)"_str")) &&
       !string_contains(name, tos2((byte *)"contains"))) {
 
-    int tmp23 = 0;
-    bool tmp24 = map_get(table->obf_ids, name, &tmp23);
+    int tmp29 = 0;
+    bool tmp30 = map_get(table->obf_ids, name, &tmp29);
 
-    int idx = tmp23;
+    int idx = tmp29;
 
     if (idx == 0) {
 
