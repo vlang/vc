@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "841d824"
+#define V_COMMIT_HASH "243626c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d535e78"
+#define V_COMMIT_HASH "841d824"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -148,6 +148,9 @@ typedef struct string string;
 typedef struct ustring ustring;
 typedef struct map map;
 typedef struct mapnode mapnode;
+typedef struct hashmap hashmap;
+typedef array array_hashmapentry;
+typedef struct hashmapentry hashmapentry;
 typedef struct Option Option;
 typedef struct strings__Builder strings__Builder;
 typedef struct os__File os__File;
@@ -509,6 +512,20 @@ struct benchmark__Benchmark {
   int nok;
   int nfail;
   bool verbose;
+};
+
+struct hashmap {
+  int cap;
+  array_string keys;
+  array_hashmapentry table;
+  int elm_size;
+  int nr_collisions;
+};
+
+struct hashmapentry {
+  string key;
+  int val;
+  hashmapentry *next;
 };
 
 struct mapnode {
@@ -882,6 +899,9 @@ void map_print(map m);
 void v_mapnode_free(mapnode *n);
 void v_map_free(map *m);
 string map_string_str(map_string m);
+hashmap new_hashmap(int planned_nr_items);
+void hashmap_set(hashmap *m, string key, int val);
+int hashmap_get(hashmap *m, string key);
 Option opt_ok(void *data, int size);
 Option opt_none();
 Option v_error(string s);
@@ -895,6 +915,43 @@ int strings__levenshtein_distance(string a, string b);
 f32 strings__levenshtein_distance_percentage(string a, string b);
 f32 strings__dice_coefficient(string s1, string s2);
 string strings__repeat(byte c, int n);
+f64 math__abs(f64 a);
+f64 math__acos(f64 a);
+f64 math__asin(f64 a);
+f64 math__atan(f64 a);
+f64 math__atan2(f64 a, f64 b);
+f64 math__cbrt(f64 a);
+int math__ceil(f64 a);
+f64 math__cos(f64 a);
+f64 math__cosh(f64 a);
+f64 math__degrees(f64 radians);
+f64 math__exp(f64 a);
+array_int math__digits(int _n, int base);
+f64 math__erf(f64 a);
+f64 math__erfc(f64 a);
+f64 math__exp2(f64 a);
+f64 math__floor(f64 a);
+f64 math__fmod(f64 a, f64 b);
+f64 math__gamma(f64 a);
+i64 math__gcd(i64 a_, i64 b_);
+f64 math__hypot(f64 a, f64 b);
+i64 math__lcm(i64 a, i64 b);
+f64 math__log(f64 a);
+f64 math__log2(f64 a);
+f64 math__log10(f64 a);
+f64 math__log_gamma(f64 a);
+f64 math__log_n(f64 a, f64 b);
+f64 math__max(f64 a, f64 b);
+f64 math__min(f64 a, f64 b);
+f64 math__pow(f64 a, f64 b);
+f64 math__radians(f64 degrees);
+f64 math__round(f64 f);
+f64 math__sin(f64 a);
+f64 math__sinh(f64 a);
+f64 math__sqrt(f64 a);
+f64 math__tan(f64 a);
+f64 math__tanh(f64 a);
+f64 math__trunc(f64 a);
 array_string os__parse_windows_cmd_line(byte *cmd);
 Option_string os__read_file(string path);
 int os__file_size(string path);
@@ -957,43 +1014,6 @@ HANDLE os__get_file_handle(string path);
 Option_string os__get_module_filename(HANDLE handle);
 void *os__ptr_win_get_error_msg(u32 code);
 string os__get_error_msg(int code);
-f64 math__abs(f64 a);
-f64 math__acos(f64 a);
-f64 math__asin(f64 a);
-f64 math__atan(f64 a);
-f64 math__atan2(f64 a, f64 b);
-f64 math__cbrt(f64 a);
-int math__ceil(f64 a);
-f64 math__cos(f64 a);
-f64 math__cosh(f64 a);
-f64 math__degrees(f64 radians);
-f64 math__exp(f64 a);
-array_int math__digits(int _n, int base);
-f64 math__erf(f64 a);
-f64 math__erfc(f64 a);
-f64 math__exp2(f64 a);
-f64 math__floor(f64 a);
-f64 math__fmod(f64 a, f64 b);
-f64 math__gamma(f64 a);
-i64 math__gcd(i64 a_, i64 b_);
-f64 math__hypot(f64 a, f64 b);
-i64 math__lcm(i64 a, i64 b);
-f64 math__log(f64 a);
-f64 math__log2(f64 a);
-f64 math__log10(f64 a);
-f64 math__log_gamma(f64 a);
-f64 math__log_n(f64 a, f64 b);
-f64 math__max(f64 a, f64 b);
-f64 math__min(f64 a, f64 b);
-f64 math__pow(f64 a, f64 b);
-f64 math__radians(f64 degrees);
-f64 math__round(f64 f);
-f64 math__sin(f64 a);
-f64 math__sinh(f64 a);
-f64 math__sqrt(f64 a);
-f64 math__tan(f64 a);
-f64 math__tanh(f64 a);
-f64 math__trunc(f64 a);
 rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq);
 static inline u32 rand__Pcg32_next(rand__Pcg32 *rng);
 static inline u32 rand__Pcg32_bounded_next(rand__Pcg32 *rng, u32 bound);
@@ -1496,6 +1516,41 @@ void Parser_fmt_dec(Parser *p);
 array_int g_ustring_runes; // global
 i64 total_m = 0;           // global
 #define builtin__CP_UTF8 65001
+int builtin__min_cap;
+int builtin__max_cap;
+#define math__E 2.71828182845904523536028747135266249775724709369995957496696763
+#define math__Pi                                                               \
+  3.14159265358979323846264338327950288419716939937510582097494459
+#define math__Phi                                                              \
+  1.61803398874989484820458683436563811772030917980576286213544862
+#define math__Tau                                                              \
+  6.28318530717958647692528676655900576839433879875021164194988918
+#define math__Sqrt2                                                            \
+  1.41421356237309504880168872420969807856967187537694807317667974
+#define math__SqrtE                                                            \
+  1.64872127070012814684865078781416357165377610071014801157507931
+#define math__SqrtPi                                                           \
+  1.77245385090551602729816748334114518279754945612238712821380779
+#define math__SqrtTau                                                          \
+  2.50662827463100050241576528481104525300698674060993831662992357
+#define math__SqrtPhi                                                          \
+  1.27201964951406896425242246173749149171560804184009624861664038
+#define math__Ln2                                                              \
+  0.693147180559945309417232121458176568075500134360255254120680009
+f32 math__Log2E;
+#define math__Ln10                                                             \
+  2.30258509299404568401799145468436420760110148862877297603332790
+f32 math__Log10E;
+#define math__MaxI8 127
+int math__MinI8;
+#define math__MaxI16 32767
+int math__MinI16;
+#define math__MaxI32 2147483647
+int math__MinI32;
+#define math__MaxU8 255
+#define math__MaxU16 65535
+#define math__MaxU32 4294967295
+#define math__MaxU64 18446744073709551615
 #define os__SUCCESS 0
 #define os__ERROR_INSUFFICIENT_BUFFER 130
 #define os__FILE_SHARE_READ 1
@@ -1577,39 +1632,6 @@ int os__SUBLANG_NEUTRAL;
 int os__SUBLANG_DEFAULT;
 int os__LANG_NEUTRAL;
 #define os__MAX_ERROR_CODE 15841
-#define math__E 2.71828182845904523536028747135266249775724709369995957496696763
-#define math__Pi                                                               \
-  3.14159265358979323846264338327950288419716939937510582097494459
-#define math__Phi                                                              \
-  1.61803398874989484820458683436563811772030917980576286213544862
-#define math__Tau                                                              \
-  6.28318530717958647692528676655900576839433879875021164194988918
-#define math__Sqrt2                                                            \
-  1.41421356237309504880168872420969807856967187537694807317667974
-#define math__SqrtE                                                            \
-  1.64872127070012814684865078781416357165377610071014801157507931
-#define math__SqrtPi                                                           \
-  1.77245385090551602729816748334114518279754945612238712821380779
-#define math__SqrtTau                                                          \
-  2.50662827463100050241576528481104525300698674060993831662992357
-#define math__SqrtPhi                                                          \
-  1.27201964951406896425242246173749149171560804184009624861664038
-#define math__Ln2                                                              \
-  0.693147180559945309417232121458176568075500134360255254120680009
-f32 math__Log2E;
-#define math__Ln10                                                             \
-  2.30258509299404568401799145468436420760110148862877297603332790
-f32 math__Log10E;
-#define math__MaxI8 127
-int math__MinI8;
-#define math__MaxI16 32767
-int math__MinI16;
-#define math__MaxI32 2147483647
-int math__MinI32;
-#define math__MaxU8 255
-#define math__MaxU16 65535
-#define math__MaxU32 4294967295
-#define math__MaxU64 18446744073709551615
 array_int time__MonthDays;
 i64 time__absoluteZeroYear;
 #define time__secondsPerMinute 60
@@ -4443,6 +4465,72 @@ string map_string_str(map_string m) {
 
   return strings__Builder_str(sb);
 }
+hashmap new_hashmap(int planned_nr_items) {
+
+  int cap = planned_nr_items * 3;
+
+  if (cap < builtin__min_cap) {
+
+    cap = builtin__min_cap;
+  };
+
+  if (cap > builtin__max_cap) {
+
+    cap = builtin__max_cap;
+  };
+
+  return (hashmap){.cap = cap,
+                   .elm_size = 4,
+                   .table = _make(cap, cap, sizeof(hashmapentry)),
+                   .keys = new_array(0, 1, sizeof(string)),
+                   .nr_collisions = 0};
+}
+void hashmap_set(hashmap *m, string key, int val) {
+
+  int hash = ((int)(math__abs(string_hash(key))));
+
+  int idx = hash % m->cap;
+
+  if ((*(hashmapentry *)array__get(m->table, idx)).key.len != 0) {
+
+    m->nr_collisions++;
+
+    hashmapentry *e = &/*v*/ (*(hashmapentry *)array__get(m->table, idx));
+
+    while (e->next != 0) {
+
+      e = e->next;
+    };
+
+    e->next = (hashmapentry *)memdup(&(hashmapentry){key, val, 0},
+                                     sizeof(hashmapentry));
+
+  } else {
+
+    array_set(&/*q*/ m->table, idx,
+              &(hashmapentry[]){(hashmapentry){key, val, 0}});
+  };
+}
+int hashmap_get(hashmap *m, string key) {
+
+  int hash = ((int)(math__abs(string_hash(key))));
+
+  int idx = hash % m->cap;
+
+  hashmapentry *e = &/*v*/ (*(hashmapentry *)array__get(m->table, idx));
+
+  while (e->next != 0) {
+
+    if (string_eq(e->key, key)) {
+
+      return e->val;
+    };
+
+    e = e->next;
+  };
+
+  return e->val;
+}
 Option opt_ok(void *data, int size) {
 
   if (size >= 255) {
@@ -4615,6 +4703,135 @@ string strings__repeat(byte c, int n) {
 
   return (tos((byte *)arr.data, n));
 }
+f64 math__abs(f64 a) {
+
+  if (a < 0) {
+
+    return -a;
+  };
+
+  return a;
+}
+f64 math__acos(f64 a) { return acos(a); }
+f64 math__asin(f64 a) { return asin(a); }
+f64 math__atan(f64 a) { return atan(a); }
+f64 math__atan2(f64 a, f64 b) { return atan2(a, b); }
+f64 math__cbrt(f64 a) { return cbrt(a); }
+int math__ceil(f64 a) { return ceil(a); }
+f64 math__cos(f64 a) { return cos(a); }
+f64 math__cosh(f64 a) { return cosh(a); }
+f64 math__degrees(f64 radians) { return radians * (180.0 / math__Pi); }
+f64 math__exp(f64 a) { return exp(a); }
+array_int math__digits(int _n, int base) {
+
+  int n = _n;
+
+  int sign = 1;
+
+  if (n < 0) {
+
+    sign = -1;
+
+    n = -n;
+  };
+
+  array_int res = new_array_from_c_array(0, 0, sizeof(int), (int[]){0});
+
+  while (n != 0) {
+
+    _PUSH(&res, (/*typ = array_int   tmp_typ=int*/ (n % base) * sign), tmp4,
+          int);
+
+    n /= base;
+  };
+
+  return res;
+}
+f64 math__erf(f64 a) { return erf(a); }
+f64 math__erfc(f64 a) { return erfc(a); }
+f64 math__exp2(f64 a) { return exp2(a); }
+f64 math__floor(f64 a) { return floor(a); }
+f64 math__fmod(f64 a, f64 b) { return fmod(a, b); }
+f64 math__gamma(f64 a) { return tgamma(a); }
+i64 math__gcd(i64 a_, i64 b_) {
+
+  i64 a = a_;
+
+  i64 b = b_;
+
+  if (a < 0) {
+
+    a = -a;
+  };
+
+  if (b < 0) {
+
+    b = -b;
+  };
+
+  while (b != 0) {
+
+    a %= b;
+
+    if (a == 0) {
+
+      return b;
+    };
+
+    b %= a;
+  };
+
+  return a;
+}
+f64 math__hypot(f64 a, f64 b) { return hypot(a, b); }
+i64 math__lcm(i64 a, i64 b) {
+
+  if (a == 0) {
+
+    return a;
+  };
+
+  i64 res = a * (b / math__gcd(b, a));
+
+  if (res < 0) {
+
+    return -res;
+  };
+
+  return res;
+}
+f64 math__log(f64 a) { return log(a); }
+f64 math__log2(f64 a) { return log2(a); }
+f64 math__log10(f64 a) { return log10(a); }
+f64 math__log_gamma(f64 a) { return lgamma(a); }
+f64 math__log_n(f64 a, f64 b) { return log(a) / log(b); }
+f64 math__max(f64 a, f64 b) {
+
+  if (a > b) {
+
+    return a;
+  };
+
+  return b;
+}
+f64 math__min(f64 a, f64 b) {
+
+  if (a < b) {
+
+    return a;
+  };
+
+  return b;
+}
+f64 math__pow(f64 a, f64 b) { return pow(a, b); }
+f64 math__radians(f64 degrees) { return degrees * (math__Pi / 180.0); }
+f64 math__round(f64 f) { return round(f); }
+f64 math__sin(f64 a) { return sin(a); }
+f64 math__sinh(f64 a) { return sinh(a); }
+f64 math__sqrt(f64 a) { return sqrt(a); }
+f64 math__tan(f64 a) { return tan(a); }
+f64 math__tanh(f64 a) { return tanh(a); }
+f64 math__trunc(f64 a) { return trunc(a); }
 array_string os__parse_windows_cmd_line(byte *cmd) {
 
   string s = (tos2((byte *)cmd));
@@ -5834,135 +6051,6 @@ string os__get_error_msg(int code) {
 
   return tos(_ptr_text, vstrlen(_ptr_text));
 }
-f64 math__abs(f64 a) {
-
-  if (a < 0) {
-
-    return -a;
-  };
-
-  return a;
-}
-f64 math__acos(f64 a) { return acos(a); }
-f64 math__asin(f64 a) { return asin(a); }
-f64 math__atan(f64 a) { return atan(a); }
-f64 math__atan2(f64 a, f64 b) { return atan2(a, b); }
-f64 math__cbrt(f64 a) { return cbrt(a); }
-int math__ceil(f64 a) { return ceil(a); }
-f64 math__cos(f64 a) { return cos(a); }
-f64 math__cosh(f64 a) { return cosh(a); }
-f64 math__degrees(f64 radians) { return radians * (180.0 / math__Pi); }
-f64 math__exp(f64 a) { return exp(a); }
-array_int math__digits(int _n, int base) {
-
-  int n = _n;
-
-  int sign = 1;
-
-  if (n < 0) {
-
-    sign = -1;
-
-    n = -n;
-  };
-
-  array_int res = new_array_from_c_array(0, 0, sizeof(int), (int[]){0});
-
-  while (n != 0) {
-
-    _PUSH(&res, (/*typ = array_int   tmp_typ=int*/ (n % base) * sign), tmp4,
-          int);
-
-    n /= base;
-  };
-
-  return res;
-}
-f64 math__erf(f64 a) { return erf(a); }
-f64 math__erfc(f64 a) { return erfc(a); }
-f64 math__exp2(f64 a) { return exp2(a); }
-f64 math__floor(f64 a) { return floor(a); }
-f64 math__fmod(f64 a, f64 b) { return fmod(a, b); }
-f64 math__gamma(f64 a) { return tgamma(a); }
-i64 math__gcd(i64 a_, i64 b_) {
-
-  i64 a = a_;
-
-  i64 b = b_;
-
-  if (a < 0) {
-
-    a = -a;
-  };
-
-  if (b < 0) {
-
-    b = -b;
-  };
-
-  while (b != 0) {
-
-    a %= b;
-
-    if (a == 0) {
-
-      return b;
-    };
-
-    b %= a;
-  };
-
-  return a;
-}
-f64 math__hypot(f64 a, f64 b) { return hypot(a, b); }
-i64 math__lcm(i64 a, i64 b) {
-
-  if (a == 0) {
-
-    return a;
-  };
-
-  i64 res = a * (b / math__gcd(b, a));
-
-  if (res < 0) {
-
-    return -res;
-  };
-
-  return res;
-}
-f64 math__log(f64 a) { return log(a); }
-f64 math__log2(f64 a) { return log2(a); }
-f64 math__log10(f64 a) { return log10(a); }
-f64 math__log_gamma(f64 a) { return lgamma(a); }
-f64 math__log_n(f64 a, f64 b) { return log(a) / log(b); }
-f64 math__max(f64 a, f64 b) {
-
-  if (a > b) {
-
-    return a;
-  };
-
-  return b;
-}
-f64 math__min(f64 a, f64 b) {
-
-  if (a < b) {
-
-    return a;
-  };
-
-  return b;
-}
-f64 math__pow(f64 a, f64 b) { return pow(a, b); }
-f64 math__radians(f64 degrees) { return degrees * (math__Pi / 180.0); }
-f64 math__round(f64 f) { return round(f); }
-f64 math__sin(f64 a) { return sin(a); }
-f64 math__sinh(f64 a) { return sinh(a); }
-f64 math__sqrt(f64 a) { return sqrt(a); }
-f64 math__tan(f64 a) { return tan(a); }
-f64 math__tanh(f64 a) { return tanh(a); }
-f64 math__trunc(f64 a) { return trunc(a); }
 rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq) {
 
   rand__Pcg32 rng = (rand__Pcg32){.state = 0, .inc = 0};
@@ -25280,6 +25368,13 @@ void init_consts() {
   setbuf(stdout, 0);
 #endif
   g_str_buf = malloc(1000);
+  builtin__min_cap = 2 << 10;
+  builtin__max_cap = 2 << 20;
+  math__Log2E = 1.0 / math__Ln2;
+  math__Log10E = 1.0 / math__Ln10;
+  math__MinI8 = -128;
+  math__MinI16 = -32768;
+  math__MinI32 = -2147483648;
   os__FILE_ATTR_READONLY = 0x1;
   os__FILE_ATTR_HIDDEN = 0x2;
   os__FILE_ATTR_SYSTEM = 0x4;
@@ -25333,11 +25428,6 @@ void init_consts() {
   os__SUBLANG_NEUTRAL = 0x00;
   os__SUBLANG_DEFAULT = 0x01;
   os__LANG_NEUTRAL = (os__SUBLANG_NEUTRAL);
-  math__Log2E = 1.0 / math__Ln2;
-  math__Log10E = 1.0 / math__Ln10;
-  math__MinI8 = -128;
-  math__MinI16 = -32768;
-  math__MinI32 = -2147483648;
   time__MonthDays = new_array_from_c_array(
       12, 12, sizeof(int),
       (int[]){31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31});
