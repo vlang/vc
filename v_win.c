@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2ac8048"
+#define V_COMMIT_HASH "ceee292"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "243626c"
+#define V_COMMIT_HASH "2ac8048"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -15883,10 +15883,15 @@ void Parser_const_decl(Parser *p) {
 
   if (p->tok == main__Token_key_import) {
 
-    Parser_error(
-        p, string_add(
-               tos2((byte *)"`import const` was removed from the language, "),
-               tos2((byte *)"use `foo(C.CONST_NAME)` instead")));
+    Parser_error_with_token_index(
+        p,
+        string_add(
+            string_add(
+                tos2((byte *)"`import const` was removed from the language, "),
+                tos2((byte *)"because predeclaring C constants is not needed "
+                             "anymore. ")),
+            tos2((byte *)"You can use them directly with C.CONST_NAME")),
+        Parser_cur_tok_index(&/* ? */ *p));
   };
 
   p->inside_const = 1;
