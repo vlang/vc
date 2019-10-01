@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f35f608"
+#define V_COMMIT_HASH "56e4ed1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "30ca149"
+#define V_COMMIT_HASH "f35f608"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -124,6 +124,11 @@ typedef int bool;
 #define _IN(typ, val, arr) array_##typ##_contains(arr, val)
 #define _IN_MAP(val, m) map__exists(m, val)
 #define DEFAULT_EQUAL(a, b) (a == b)
+#define DEFAULT_NOT_EQUAL(a, b) (a != b)
+#define DEFAULT_LT(a, b) (a < b)
+#define DEFAULT_LE(a, b) (a <= b)
+#define DEFAULT_GT(a, b) (a > b)
+#define DEFAULT_GE(a, b) (a >= b)
 //================================== GLOBALS =================================*/
 byteptr g_str_buf;
 int load_so(byteptr);
@@ -861,6 +866,26 @@ bool f64_eq(f64 a, f64 b);
 bool f32_eq(f32 a, f32 b);
 bool f64_eqbit(f64 a, f64 b);
 bool f32_eqbit(f32 a, f32 b);
+bool f64_ne(f64 a, f64 b);
+bool f32_ne(f32 a, f32 b);
+bool f64_nebit(f64 a, f64 b);
+bool f32_nebit(f32 a, f32 b);
+bool f64_lt(f64 a, f64 b);
+bool f32_lt(f32 a, f32 b);
+bool f64_ltbit(f64 a, f64 b);
+bool f32_ltbit(f32 a, f32 b);
+bool f64_le(f64 a, f64 b);
+bool f32_le(f32 a, f32 b);
+bool f64_lebit(f64 a, f64 b);
+bool f32_lebit(f32 a, f32 b);
+bool f64_gt(f64 a, f64 b);
+bool f32_gt(f32 a, f32 b);
+bool f64_gtbit(f64 a, f64 b);
+bool f32_gtbit(f32 a, f32 b);
+bool f64_ge(f64 a, f64 b);
+bool f32_ge(f32 a, f32 b);
+bool f64_gebit(f64 a, f64 b);
+bool f32_gebit(f32 a, f32 b);
 string int_str(int nn);
 string u32_str(u32 nn);
 string i64_str(i64 nn);
@@ -3656,6 +3681,26 @@ bool f64_eq(f64 a, f64 b) { return fabs(a - b) <= DBL_EPSILON; }
 bool f32_eq(f32 a, f32 b) { return fabsf(a - b) <= FLT_EPSILON; }
 bool f64_eqbit(f64 a, f64 b) { return DEFAULT_EQUAL(a, b); }
 bool f32_eqbit(f32 a, f32 b) { return DEFAULT_EQUAL(a, b); }
+bool f64_ne(f64 a, f64 b) { return !f64_eq(a, b); }
+bool f32_ne(f32 a, f32 b) { return !f32_eq(a, b); }
+bool f64_nebit(f64 a, f64 b) { return DEFAULT_NOT_EQUAL(a, b); }
+bool f32_nebit(f32 a, f32 b) { return DEFAULT_NOT_EQUAL(a, b); }
+bool f64_lt(f64 a, f64 b) { return f64_ne(a, b) && f64_ltbit(a, b); }
+bool f32_lt(f32 a, f32 b) { return f32_ne(a, b) && f32_ltbit(a, b); }
+bool f64_ltbit(f64 a, f64 b) { return DEFAULT_LT(a, b); }
+bool f32_ltbit(f32 a, f32 b) { return DEFAULT_LT(a, b); }
+bool f64_le(f64 a, f64 b) { return !f64_gt(a, b); }
+bool f32_le(f32 a, f32 b) { return !f32_gt(a, b); }
+bool f64_lebit(f64 a, f64 b) { return DEFAULT_LE(a, b); }
+bool f32_lebit(f32 a, f32 b) { return DEFAULT_LE(a, b); }
+bool f64_gt(f64 a, f64 b) { return f64_ne(a, b) && f64_gtbit(a, b); }
+bool f32_gt(f32 a, f32 b) { return f32_ne(a, b) && f32_gtbit(a, b); }
+bool f64_gtbit(f64 a, f64 b) { return DEFAULT_GT(a, b); }
+bool f32_gtbit(f32 a, f32 b) { return DEFAULT_GT(a, b); }
+bool f64_ge(f64 a, f64 b) { return !f64_lt(a, b); }
+bool f32_ge(f32 a, f32 b) { return !f32_lt(a, b); }
+bool f64_gebit(f64 a, f64 b) { return DEFAULT_GE(a, b); }
+bool f32_gebit(f32 a, f32 b) { return DEFAULT_GE(a, b); }
 string int_str(int nn) {
 
   int n = nn;
@@ -17606,8 +17651,7 @@ string Parser_bterm(Parser *p) {
     Parser_fgen(p,
                 _STR(" %.*s ", Token_str(p->tok).len, Token_str(p->tok).str));
 
-    if (((is_float && tok == main__Token_eq) || (is_str || is_ustr)) &&
-        !p->is_js) {
+    if ((is_float || is_str || is_ustr) && !p->is_js) {
 
       Parser_gen(p, tos2((byte *)","));
 
@@ -17707,12 +17751,40 @@ string Parser_bterm(Parser *p) {
       };
     };
 
-    if (is_float && tok == main__Token_eq) {
+    if (is_float) {
 
       Parser_gen(p, tos2((byte *)")"));
 
-      CGen_set_placeholder(p->cgen, ph,
-                           _STR("%.*s_eq(", expr_type.len, expr_type.str));
+      if (tok == main__Token_eq) { /* case */
+
+        CGen_set_placeholder(p->cgen, ph,
+                             _STR("%.*s_eq(", expr_type.len, expr_type.str));
+
+      } else if (tok == main__Token_ne) { /* case */
+
+        CGen_set_placeholder(p->cgen, ph,
+                             _STR("%.*s_ne(", expr_type.len, expr_type.str));
+
+      } else if (tok == main__Token_le) { /* case */
+
+        CGen_set_placeholder(p->cgen, ph,
+                             _STR("%.*s_le(", expr_type.len, expr_type.str));
+
+      } else if (tok == main__Token_ge) { /* case */
+
+        CGen_set_placeholder(p->cgen, ph,
+                             _STR("%.*s_ge(", expr_type.len, expr_type.str));
+
+      } else if (tok == main__Token_gt) { /* case */
+
+        CGen_set_placeholder(p->cgen, ph,
+                             _STR("%.*s_gt(", expr_type.len, expr_type.str));
+
+      } else if (tok == main__Token_lt) { /* case */
+
+        CGen_set_placeholder(p->cgen, ph,
+                             _STR("%.*s_lt(", expr_type.len, expr_type.str));
+      };
     };
   };
 
