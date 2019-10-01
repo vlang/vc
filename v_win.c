@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "30ca149"
+#define V_COMMIT_HASH "f35f608"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b7d1a17"
+#define V_COMMIT_HASH "30ca149"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -9654,7 +9654,6 @@ bool Parser_known_var(Parser *p, string name) {
 
     return 0;
   };
-  ;
 
   return 1;
 }
@@ -23980,7 +23979,6 @@ bool Table_known_fn(Table *t, string name) {
 
     return 0;
   };
-  ;
 
   return 1;
 }
@@ -23992,7 +23990,6 @@ bool Table_known_const(Table *t, string name) {
 
     return 0;
   };
-  ;
 
   return 1;
 }
@@ -24125,7 +24122,6 @@ bool Type_has_field(Type *t, string name) {
 
     return 0;
   };
-  ;
 
   return 1;
 }
@@ -24156,7 +24152,6 @@ bool Table_type_has_field(Table *table, Type *typ, string name) {
 
     return 0;
   };
-  ;
 
   return 1;
 }
@@ -24229,7 +24224,6 @@ bool Type_has_method(Type *t, string name) {
 
     return 0;
   };
-  ;
 
   return 1;
 }
@@ -24241,7 +24235,6 @@ bool Table_type_has_method(Table *table, Type *typ, string name) {
 
     return 0;
   };
-  ;
 
   return 1;
 }
@@ -25576,7 +25569,10 @@ void init_consts() {
              "array__push_many(arr, tmp.data, tmp.len);}\n#define _IN(typ, "
              "val, arr) array_##typ##_contains(arr, val)\n#define _IN_MAP(val, "
              "m) map__exists(m, val)\n#define DEFAULT_EQUAL(a, b) (a == "
-             "b)\n//================================== GLOBALS "
+             "b)\n#define DEFAULT_NOT_EQUAL(a, b) (a != b)\n#define "
+             "DEFAULT_LT(a, b) (a < b)\n#define DEFAULT_LE(a, b) (a <= "
+             "b)\n#define DEFAULT_GT(a, b) (a > b)\n#define DEFAULT_GE(a, b) "
+             "(a >= b)\n//================================== GLOBALS "
              "=================================*/\nbyteptr g_str_buf;\nint "
              "load_so(byteptr);\nvoid reload_so();\nvoid init_consts();\n\n");
   main__js_headers = tos2(
