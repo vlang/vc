@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9e7ee40"
+#define V_COMMIT_HASH "b7d1a17"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8fe0e88"
+#define V_COMMIT_HASH "9e7ee40"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -655,6 +655,7 @@ struct Scanner {
   string fn_name;
   bool should_print_line_on_error;
   bool should_print_errors_in_color;
+  bool should_print_relative_paths_on_error;
   byte quote;
   array_string file_lines;
 };
@@ -1166,6 +1167,7 @@ void Scanner_error_with_col(Scanner *s, string msg, int col);
 static inline int Parser_cur_tok_index(Parser *p);
 static inline int main__imax(int a, int b);
 static inline int main__imin(int a, int b);
+string Scanner_get_error_filepath(Scanner *s);
 bool Scanner_is_color_output_on(Scanner *s);
 void Parser_print_error_context(Parser *p);
 string main__normalized_error(string s);
@@ -8474,7 +8476,7 @@ void Scanner_warn(Scanner *s, string msg) {
 }
 void Scanner_warn_with_col(Scanner *s, string msg, int col) {
 
-  string fullpath = os__realpath(s->file_path);
+  string fullpath = Scanner_get_error_filepath(&/* ? */ *s);
 
   bool color_on = Scanner_is_color_output_on(&/* ? */ *s);
 
@@ -8486,7 +8488,7 @@ void Scanner_warn_with_col(Scanner *s, string msg, int col) {
 }
 void Scanner_error_with_col(Scanner *s, string msg, int col) {
 
-  string fullpath = os__realpath(s->file_path);
+  string fullpath = Scanner_get_error_filepath(&/* ? */ *s);
 
   bool color_on = Scanner_is_color_output_on(&/* ? */ *s);
 
@@ -8557,6 +8559,15 @@ void Scanner_error_with_col(Scanner *s, string msg, int col) {
 static inline int Parser_cur_tok_index(Parser *p) { return p->token_idx - 1; }
 static inline int main__imax(int a, int b) { return (a > b) ? (a) : (b); }
 static inline int main__imin(int a, int b) { return (a < b) ? (a) : (b); }
+string Scanner_get_error_filepath(Scanner *s) {
+
+  if (s->should_print_relative_paths_on_error) {
+
+    return s->file_path;
+  };
+
+  return os__realpath(s->file_path);
+}
 bool Scanner_is_color_output_on(Scanner *s) {
 
   return s->should_print_errors_in_color && term__can_show_color_on_stderr();
@@ -15201,6 +15212,11 @@ Parser V_new_parser_file(V *v, string path) {
       .sql_types = p.sql_types,
   };
 
+  if (p.pref->building_v) {
+
+    p.scanner->should_print_relative_paths_on_error = 0;
+  };
+
   v->cgen->file = path;
 
   Parser_scan_tokens(&/* ? */ p);
@@ -15303,6 +15319,8 @@ Parser V_new_parser(V *v, Scanner *scanner, string id) {
     p.scanner->should_print_line_on_error = 0;
 
     p.scanner->should_print_errors_in_color = 0;
+
+    p.scanner->should_print_relative_paths_on_error = 1;
   };
 
   v->cgen->line_directives = v->pref->is_debuggable;
@@ -22387,6 +22405,7 @@ Scanner *main__new_scanner(string text) {
                  .fmt_out = strings__new_builder(1000),
                  .should_print_line_on_error = 1,
                  .should_print_errors_in_color = 1,
+                 .should_print_relative_paths_on_error = 1,
                  .file_path = tos((byte *)"", 0),
                  .pos = 0,
                  .line_nr = 0,
