@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5ba354f"
+#define V_COMMIT_HASH "7d763e0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "56e4ed1"
+#define V_COMMIT_HASH "5ba354f"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -2098,7 +2098,7 @@ array array_reverse(array a) {
   for (int i = 0; i < a.len; i++) {
 
     memcpy((byte *)arr.data + i * arr.element_size,
-           &/*v*/ (*(array *)array__get(a, a.len - 1 - i)), arr.element_size);
+           &(*(array *)array__get(a, a.len - 1 - i)), arr.element_size);
   };
 
   return arr;
@@ -2145,7 +2145,7 @@ string array_byte_hex(array_byte b) {
 
   byte *hex = v_malloc(b.len * 2 + 1);
 
-  byte *ptr = &/*v*/ hex[/*ptr*/ 0] /*rbyte 1*/;
+  byte *ptr = &hex[/*ptr*/ 0] /*rbyte 1*/;
 
   for (int i = 0; i < b.len; i++) {
 
@@ -3459,7 +3459,7 @@ void print_backtrace_skipping_top_frames(int skipframes) {
 
   int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
 
-  backtrace_symbols_fd(((voidptr *)(&/*v*/ buffer[skipframes] /*rbyte* 0*/)),
+  backtrace_symbols_fd(((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)),
                        nr_ptrs - skipframes, 1);
 
   return;
@@ -3477,7 +3477,7 @@ void print_backtrace_skipping_top_frames(int skipframes) {
 
     int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
 
-    backtrace_symbols_fd(((voidptr *)(&/*v*/ buffer[skipframes] /*rbyte* 0*/)),
+    backtrace_symbols_fd(((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)),
                          nr_ptrs - skipframes, 1);
 
     return;
@@ -4508,7 +4508,7 @@ void hashmap_set(hashmap *m, string key, int val) {
 
     m->nr_collisions++;
 
-    hashmapentry *e = &/*v*/ (*(hashmapentry *)array__get(m->table, idx));
+    hashmapentry *e = &(*(hashmapentry *)array__get(m->table, idx));
 
     while (e->next != 0) {
 
@@ -4530,7 +4530,7 @@ int hashmap_get(hashmap *m, string key) {
 
   int idx = hash % m->cap;
 
-  hashmapentry *e = &/*v*/ (*(hashmapentry *)array__get(m->table, idx));
+  hashmapentry *e = &(*(hashmapentry *)array__get(m->table, idx));
 
   while (e->next != 0) {
 
@@ -4887,11 +4887,11 @@ int os__file_size(string path) {
 
 #ifdef _WIN32
 
-  _wstat(string_to_wide(path), &/*v*/ s);
+  _wstat(string_to_wide(path), &s);
 
 #else
 
-  stat(((char *)(path.str)), &/*v*/ s);
+  stat(((char *)(path.str)), &s);
 
 #endif
   ;
@@ -5393,7 +5393,7 @@ string os__get_raw_line() {
 
   char *buf = ((char *)(v_malloc(((int)(max)))));
 
-  int nr_chars = getline(&/*v*/ buf, &/*v*/ max, stdin);
+  int nr_chars = getline(&buf, &max, stdin);
 
   if (nr_chars == 0) {
 
@@ -5591,15 +5591,15 @@ void os__on_segfault(void *f) {
 
       sigaction sa;
 
-  memset(&/*v*/ sa, 0, sizeof(sigaction));
+  memset(&sa, 0, sizeof(sigaction));
 
-  sigemptyset(&/*v*/ sa.sa_mask);
+  sigemptyset(&sa.sa_mask);
 
   sa.sa_sigaction = f;
 
   sa.sa_flags = SA_SIGINFO;
 
-  sigaction(SIGSEGV, &/*v*/ sa, 0);
+  sigaction(SIGSEGV, &sa, 0);
 
 #endif
   ;
@@ -5664,7 +5664,7 @@ string os__executable() {
 
   int size = os__MAX_PATH;
 
-  sysctl(mib.data, 4, (char *)result, &/*v*/ size, 0, 0);
+  sysctl(mib.data, 4, (char *)result, &size, 0, 0);
 
   return (tos2((byte *)result));
 
@@ -5733,7 +5733,7 @@ bool os__is_dir(string path) {
 
   byte *cstr = path.str;
 
-  if (stat((char *)cstr, &/*v*/ statbuf) != 0) {
+  if (stat((char *)cstr, &statbuf) != 0) {
 
     return 0;
   };
@@ -5879,7 +5879,7 @@ int os__file_last_mod_unix(string path) {
 
       stat attr;
 
-  stat((char *)path.str, &/*v*/ attr);
+  stat((char *)path.str, &attr);
 
   return attr.st_mtime;
 }
@@ -6341,7 +6341,7 @@ time__Time time__now() {
 
       tm *now = 0;
 
-  now = localtime(&/*v*/ t);
+  now = localtime(&t);
 
   return time__convert_ctime(*now);
 }
@@ -6454,7 +6454,7 @@ time__Time time__convert_ctime(struct /*TM*/ tm t) {
                       .hour = t.tm_hour,
                       .minute = t.tm_min,
                       .second = t.tm_sec,
-                      .uni = mktime(&/*v*/ t)};
+                      .uni = mktime(&t)};
 }
 string time__Time_format_ss(time__Time t) {
 
@@ -6617,7 +6617,7 @@ int time__Time_calc_unix(time__Time *t) {
                                     .tm_mon = t->month - 1,
                                     .tm_year = t->year - 1900};
 
-  return mktime(&/*v*/ tt);
+  return mktime(&tt);
 }
 time__Time time__Time_add_seconds(time__Time t, int seconds) {
 
@@ -6701,7 +6701,7 @@ i64 time__ticks() {
 
       timeval ts;
 
-  gettimeofday(&/*v*/ ts, 0);
+  gettimeofday(&ts, 0);
 
   return ts.tv_sec * 1000 + (ts.tv_usec / 1000);
 
@@ -14541,7 +14541,7 @@ Option_string main__find_windows_kit_internal(RegKey key,
     int required_bytes = 0;
 
     void *result = RegQueryValueExW(key, string_to_wide(version), 0, 0, 0,
-                                    &/*v*/ required_bytes);
+                                    &required_bytes);
 
     int length = required_bytes / 2;
 
@@ -14560,7 +14560,7 @@ Option_string main__find_windows_kit_internal(RegKey key,
     };
 
     void *result2 = RegQueryValueExW(key, string_to_wide(version), 0, 0, value,
-                                     &/*v*/ alloc_length);
+                                     &alloc_length);
 
     if (result2 != 0) {
 
@@ -14592,7 +14592,7 @@ Option_WindowsKit main__find_windows_kit_root() {
                     "SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots", 0,
                     main__KEY_QUERY_VALUE | main__KEY_WOW64_32KEY |
                         main__KEY_ENUMERATE_SUB_KEYS,
-                    &/*v*/ root_key);
+                    &root_key);
 
   if (rc != 0) {
 
@@ -16935,6 +16935,8 @@ void Parser_close_scope(Parser *p) {
       } else if (string_eq(v.typ, tos2((byte *)"string"))) {
 
         free_fn = tos2((byte *)"v_string_free");
+
+        continue;
 
       } else if (v.ptr || string_ends_with(v.typ, tos2((byte *)"*"))) {
 
@@ -22883,7 +22885,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
   if (s->inter_end) {
 
-    if (string_at(s->text, s->pos) == '\'') {
+    if (string_at(s->text, s->pos) == s->quote) {
 
       s->inter_end = 0;
 
@@ -22925,7 +22927,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
     if (s->inside_string) {
 
-      if (next_char == '\'') {
+      if (next_char == s->quote) {
 
         s->inter_end = 1;
 
@@ -23070,7 +23072,7 @@ ScanRes Scanner_scan(Scanner *s) {
 
       s->pos++;
 
-      if (string_at(s->text, s->pos) == '\'') {
+      if (string_at(s->text, s->pos) == main__single_quote) {
 
         s->inside_string = 0;
 
