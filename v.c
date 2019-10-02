@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7d763e0"
+#define V_COMMIT_HASH "fce4199"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5ba354f"
+#define V_COMMIT_HASH "7d763e0"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -11807,9 +11807,16 @@ void Parser_gen_method_call(Parser *p, string receiver_type, string ftyp,
 
   if (string_eq(ftyp, tos2((byte *)"void*"))) {
 
-    cast = string_all_after(receiver_type, tos2((byte *)"_"));
+    if (string_starts_with(receiver_type, tos2((byte *)"array_"))) {
 
-    cast = _STR("*(%.*s*) ", cast.len, cast.str);
+      cast = string_all_after(receiver_type, tos2((byte *)"_"));
+
+      cast = _STR("*(%.*s*) ", cast.len, cast.str);
+
+    } else {
+
+      cast = tos2((byte *)"(voidptr) ");
+    };
   };
 
   CGen_set_placeholder(
