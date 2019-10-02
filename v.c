@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fce4199"
+#define V_COMMIT_HASH "9d57599"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7d763e0"
+#define V_COMMIT_HASH "fce4199"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1843,27 +1843,28 @@ array_Token main__AssignTokens;
             "<flags>   Pass additional C flags to the C backend compiler.\n  " \
             "                  Example: -cflags `sdl2-config --cflags`\n  "    \
             "-debug            Keep the generated C file for debugging in "    \
-            "program.tmp.c even after compilation.\n  -g                Show " \
-            "v line numbers in backtraces. Implies -debug.\n  -obf           " \
-            "   Obfuscate the resulting binary.\n  -show_c_cmd       Print "   \
-            "the full C compilation command and how much time it took.\n  -  " \
-            "               Shorthand for `v runrepl`.\n\n  up               " \
-            " Update V. Run `v up` at least once per day, since V "            \
-            "development is rapid and features/bugfixes are added "            \
-            "constantly.\n  run <file.v>      Build and execute the V "        \
-            "program in file.v. You can add arguments for the V program "      \
-            "*after* the file name.\n  build <module>    Compile a module "    \
-            "into an object file.\n  runrepl           Run the V REPL. If V "  \
-            "is running in a tty terminal, the REPL is interactive, "          \
-            "otherwise it just reads from stdin.\n  symlink           Useful " \
-            "on unix systems. Symlinks the current V executable to "           \
-            "/usr/local/bin/v, so that V is globally available.\n  install "   \
-            "<module>  Install a user module from https://vpm.vlang.io/.\n  "  \
-            "test v            Run all V test files, and compile all V "       \
-            "examples.\n  fmt               Run vfmt to format the source "    \
-            "code. [wip]\n  doc               Run vdoc over the source code "  \
-            "and produce documentation. [wip]\n  translate         "           \
-            "Translates C to V. [wip, will be available in V 0.3]\n")
+            "program.tmp.c even after compilation.\n  -shared           "      \
+            "Build a shared library.\n  -g                Show v line "        \
+            "numbers in backtraces. Implies -debug.\n  -obf              "     \
+            "Obfuscate the resulting binary.\n  -show_c_cmd       Print the "  \
+            "full C compilation command and how much time it took.\n  -      " \
+            "           Shorthand for `v runrepl`.\n\n  up                "    \
+            "Update V. Run `v up` at least once per day, since V development " \
+            "is rapid and features/bugfixes are added constantly.\n  run "     \
+            "<file.v>      Build and execute the V program in file.v. You "    \
+            "can add arguments for the V program *after* the file name.\n  "   \
+            "build <module>    Compile a module into an object file.\n  "      \
+            "runrepl           Run the V REPL. If V is running in a tty "      \
+            "terminal, the REPL is interactive, otherwise it just reads from " \
+            "stdin.\n  symlink           Useful on unix systems. Symlinks "    \
+            "the current V executable to /usr/local/bin/v, so that V is "      \
+            "globally available.\n  install <module>  Install a user module "  \
+            "from https://vpm.vlang.io/.\n  test v            Run all V test " \
+            "files, and compile all V examples.\n  fmt               Run "     \
+            "vfmt to format the source code. [wip]\n  doc               Run "  \
+            "vdoc over the source code and produce documentation. [wip]\n  "   \
+            "translate         Translates C to V. [wip, will be available in " \
+            "V 0.3]\n")
 
 array new_array(int mylen, int cap, int elm_size) {
 
