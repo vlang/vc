@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7454133"
+#define V_COMMIT_HASH "ac7824b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7eaf289"
+#define V_COMMIT_HASH "7454133"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -16889,9 +16889,6 @@ string Parser_get_type(Parser *p) {
     };
 
     Type t = Table_find_type(&/* ? */ *p->table, typ);
-
-    if (string_eq(typ, tos2((byte *)"V"))) {
-    };
 
     if (string_eq(t.name, tos2((byte *)"")) && !p->builtin_mod) {
 
