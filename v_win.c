@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ac7824b"
+#define V_COMMIT_HASH "f45d3f0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7454133"
+#define V_COMMIT_HASH "ac7824b"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -3878,7 +3878,7 @@ string i64_hex(i64 n) {
 
   byte *hex = v_malloc(len);
 
-  int count = ((int)(sprintf(((char *)(hex)), "0x%lx", n)));
+  int count = ((int)(sprintf(((char *)(hex)), "0x%llx", n)));
 
   return tos(hex, count);
 }
@@ -6461,7 +6461,7 @@ void term__hide_cursor() { print(tos2((byte *)"\x1b[?25l")); }
 void time__remove_me_when_c_bug_is_fixed() {}
 time__Time time__now() {
 
-  i64 t = time(0);
+  time_t t = time(0);
 
   struct /*c struct init*/
 
@@ -9394,9 +9394,10 @@ void Parser_gen_struct_str(Parser *p, Type typ) {
   for (int tmp38 = 0; tmp38 < tmp37.len; tmp38++) {
     Var field = ((Var *)tmp37.data)[tmp38];
 
-    strings__Builder_writeln(&/* ? */ sb, _STR("\t%.*s: \$a.%.*s",
-                                               field.name.len, field.name.str,
-                                               field.name.len, field.name.str));
+    strings__Builder_writeln(
+        &/* ? */ sb,
+        string_add(_STR("\t%.*s: $", field.name.len, field.name.str),
+                   _STR("a.%.*s", field.name.len, field.name.str)));
   };
 
   strings__Builder_writeln(&/* ? */ sb, tos2((byte *)"\n}'"));
@@ -14387,6 +14388,31 @@ void V_test_v(V *v) {
 
     v_exit(1);
   };
+
+  if (!os__dir_exists(string_add(parent_dir, tos2((byte *)"/compiler")))) {
+
+    println(tos2(
+        (byte *)"compiler/ is missing, it must be next to the V executable"));
+
+    v_exit(1);
+  };
+
+#ifdef __APPLE__
+
+  os__system(_STR("%.*s -o v.c compiler", vexe.len, vexe.str));
+
+  if (os__system(tos2((byte *)"cc -Werror v.c")) != 0) {
+
+    println(tos2((byte *)"cc failed to build v.c without warnings"));
+
+    v_exit(1);
+  };
+
+  println(
+      tos2((byte *)"v.c can be compiled without warnings. This is good :)"));
+
+#endif
+  ;
 
   string joined_args =
       array_string_join(array_right(args, 1), tos2((byte *)" "));
