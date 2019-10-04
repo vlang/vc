@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0525e6f"
+#define V_COMMIT_HASH "68bcf68"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "433e69e"
+#define V_COMMIT_HASH "0525e6f"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -149,6 +149,7 @@ typedef struct array array;
 typedef array array_string;
 typedef array array_byte;
 typedef array array_int;
+typedef array array_char;
 typedef struct hashmap hashmap;
 typedef array array_hashmapentry;
 typedef struct hashmapentry hashmapentry;
@@ -762,6 +763,10 @@ string array_byte_hex(array_byte b);
 int copy(array_byte dst, array_byte src);
 int compare_ints(int *a, int *b);
 void array_int_sort(array_int *a);
+int array_string_index(array_string a, string v);
+int array_int_index(array_int a, int v);
+int array_byte_index(array_byte a, byte v);
+int array_char_index(array_char a, char v);
 void v_exit(int code);
 bool isnil(void *v);
 void on_panic(int (*f)(int /*FFF*/));
@@ -2231,6 +2236,54 @@ void array_int_sort(array_int *a) {
 
   array_sort_with_compare(
       a, &/*112 EXP:"void*" GOT:"fn (int*,int*) int" */ compare_ints);
+}
+int array_string_index(array_string a, string v) {
+
+  for (int i = 0; i < a.len; i++) {
+
+    if (string_eq((*(string *)array__get(a, i)), v)) {
+
+      return i;
+    };
+  };
+
+  return -1;
+}
+int array_int_index(array_int a, int v) {
+
+  for (int i = 0; i < a.len; i++) {
+
+    if ((*(int *)array__get(a, i)) == v) {
+
+      return i;
+    };
+  };
+
+  return -1;
+}
+int array_byte_index(array_byte a, byte v) {
+
+  for (int i = 0; i < a.len; i++) {
+
+    if ((*(byte *)array__get(a, i)) == v) {
+
+      return i;
+    };
+  };
+
+  return -1;
+}
+int array_char_index(array_char a, char v) {
+
+  for (int i = 0; i < a.len; i++) {
+
+    if ((*(char *)array__get(a, i)) == v) {
+
+      return i;
+    };
+  };
+
+  return -1;
 }
 void v_exit(int code) { exit(code); }
 bool isnil(void *v) { return v == 0; }
