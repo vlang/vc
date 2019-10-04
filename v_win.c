@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "52f4f40"
+#define V_COMMIT_HASH "d2c5b6d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f45d3f0"
+#define V_COMMIT_HASH "52f4f40"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -149,14 +149,14 @@ typedef struct array array;
 typedef array array_string;
 typedef array array_byte;
 typedef array array_int;
-typedef struct string string;
-typedef struct ustring ustring;
-typedef struct map map;
-typedef struct mapnode mapnode;
 typedef struct hashmap hashmap;
 typedef array array_hashmapentry;
 typedef struct hashmapentry hashmapentry;
+typedef struct map map;
+typedef struct mapnode mapnode;
 typedef struct Option Option;
+typedef struct string string;
+typedef struct ustring ustring;
 typedef struct strings__Builder strings__Builder;
 typedef struct os__File os__File;
 typedef struct os__FileInfo os__FileInfo;
@@ -762,6 +762,85 @@ string array_byte_hex(array_byte b);
 int copy(array_byte dst, array_byte src);
 int compare_ints(int *a, int *b);
 void array_int_sort(array_int *a);
+void v_exit(int code);
+bool isnil(void *v);
+void on_panic(int (*f)(int /*FFF*/));
+void print_backtrace_skipping_top_frames(int skipframes);
+void print_backtrace();
+void _panic_debug(int line_no, string file, string mod, string fn_name,
+                  string s);
+void v_panic(string s);
+void println(string s);
+void eprintln(string s);
+void print(string s);
+byte *v_malloc(int n);
+byte *v_calloc(int n);
+void v_free(void *ptr);
+void *memdup(void *src, int sz);
+void v_ptr_free(void *ptr);
+hashmap new_hashmap(int planned_nr_items);
+void hashmap_set(hashmap *m, string key, int val);
+int hashmap_get(hashmap *m, string key);
+string f64_str(f64 d);
+string f32_str(f32 d);
+string ptr_str(void *ptr);
+bool f64_eq(f64 a, f64 b);
+bool f32_eq(f32 a, f32 b);
+bool f64_eqbit(f64 a, f64 b);
+bool f32_eqbit(f32 a, f32 b);
+bool f64_ne(f64 a, f64 b);
+bool f32_ne(f32 a, f32 b);
+bool f64_nebit(f64 a, f64 b);
+bool f32_nebit(f32 a, f32 b);
+bool f64_lt(f64 a, f64 b);
+bool f32_lt(f32 a, f32 b);
+bool f64_ltbit(f64 a, f64 b);
+bool f32_ltbit(f32 a, f32 b);
+bool f64_le(f64 a, f64 b);
+bool f32_le(f32 a, f32 b);
+bool f64_lebit(f64 a, f64 b);
+bool f32_lebit(f32 a, f32 b);
+bool f64_gt(f64 a, f64 b);
+bool f32_gt(f32 a, f32 b);
+bool f64_gtbit(f64 a, f64 b);
+bool f32_gtbit(f32 a, f32 b);
+bool f64_ge(f64 a, f64 b);
+bool f32_ge(f32 a, f32 b);
+bool f64_gebit(f64 a, f64 b);
+bool f32_gebit(f32 a, f32 b);
+string int_str(int nn);
+string u32_str(u32 nn);
+string i64_str(i64 nn);
+string u64_str(u64 nn);
+string bool_str(bool b);
+string int_hex(int n);
+string i64_hex(i64 n);
+bool array_byte_contains(array_byte a, byte val);
+string rune_str(rune c);
+string byte_str(byte c);
+bool byte_is_capital(byte c);
+array_byte array_byte_clone(array_byte b);
+map new_map(int cap, int elm_size);
+map new_map_init(int cap, int elm_size, string *keys, void *vals);
+mapnode *new_node(string key, void *val, int element_size);
+void map_insert(map *m, mapnode *n, string key, void *val);
+bool mapnode_find(mapnode *n, string key, void *out, int element_size);
+bool mapnode_find2(mapnode *n, string key, int element_size);
+void map__set(map *m, string key, void *val);
+int preorder_keys(mapnode *node, array_string *keys, int key_i);
+array_string map_keys(map *m);
+bool map_get(map m, string key, void *out);
+void v_mapnode_delete(mapnode *n, string key, int element_size);
+void v_map_delete(map *m, string key);
+void map_exists(map m, string key);
+bool map__exists(map m, string key);
+void map_print(map m);
+void v_mapnode_free(mapnode *n);
+void v_map_free(map *m);
+string map_string_str(map_string m);
+Option opt_ok(void *data, int size);
+Option opt_none();
+Option v_error(string s);
 int vstrlen(byte *s);
 void todo();
 string tos(byte *s, int len);
@@ -850,61 +929,6 @@ bool byte_is_white(byte c);
 int string_hash(string s);
 array_byte string_bytes(string s);
 string string_repeat(string s, int count);
-void v_exit(int code);
-bool isnil(void *v);
-void on_panic(int (*f)(int /*FFF*/));
-void print_backtrace_skipping_top_frames(int skipframes);
-void print_backtrace();
-void _panic_debug(int line_no, string file, string mod, string fn_name,
-                  string s);
-void v_panic(string s);
-void println(string s);
-void eprintln(string s);
-void print(string s);
-byte *v_malloc(int n);
-byte *v_calloc(int n);
-void v_free(void *ptr);
-void *memdup(void *src, int sz);
-void v_ptr_free(void *ptr);
-string f64_str(f64 d);
-string f32_str(f32 d);
-string ptr_str(void *ptr);
-bool f64_eq(f64 a, f64 b);
-bool f32_eq(f32 a, f32 b);
-bool f64_eqbit(f64 a, f64 b);
-bool f32_eqbit(f32 a, f32 b);
-bool f64_ne(f64 a, f64 b);
-bool f32_ne(f32 a, f32 b);
-bool f64_nebit(f64 a, f64 b);
-bool f32_nebit(f32 a, f32 b);
-bool f64_lt(f64 a, f64 b);
-bool f32_lt(f32 a, f32 b);
-bool f64_ltbit(f64 a, f64 b);
-bool f32_ltbit(f32 a, f32 b);
-bool f64_le(f64 a, f64 b);
-bool f32_le(f32 a, f32 b);
-bool f64_lebit(f64 a, f64 b);
-bool f32_lebit(f32 a, f32 b);
-bool f64_gt(f64 a, f64 b);
-bool f32_gt(f32 a, f32 b);
-bool f64_gtbit(f64 a, f64 b);
-bool f32_gtbit(f32 a, f32 b);
-bool f64_ge(f64 a, f64 b);
-bool f32_ge(f32 a, f32 b);
-bool f64_gebit(f64 a, f64 b);
-bool f32_gebit(f32 a, f32 b);
-string int_str(int nn);
-string u32_str(u32 nn);
-string i64_str(i64 nn);
-string u64_str(u64 nn);
-string bool_str(bool b);
-string int_hex(int n);
-string i64_hex(i64 n);
-bool array_byte_contains(array_byte a, byte val);
-string rune_str(rune c);
-string byte_str(byte c);
-bool byte_is_capital(byte c);
-array_byte array_byte_clone(array_byte b);
 int utf8_char_len(byte b);
 string utf32_to_str(u32 code);
 string utf32_to_str_no_malloc(u32 code, void *buf);
@@ -914,30 +938,6 @@ string string_from_wide(u16 *_wstr);
 string string_from_wide2(u16 *_wstr, int len);
 int utf8_len(byte c);
 int utf8_getchar();
-map new_map(int cap, int elm_size);
-map new_map_init(int cap, int elm_size, string *keys, void *vals);
-mapnode *new_node(string key, void *val, int element_size);
-void map_insert(map *m, mapnode *n, string key, void *val);
-bool mapnode_find(mapnode *n, string key, void *out, int element_size);
-bool mapnode_find2(mapnode *n, string key, int element_size);
-void map__set(map *m, string key, void *val);
-int preorder_keys(mapnode *node, array_string *keys, int key_i);
-array_string map_keys(map *m);
-bool map_get(map m, string key, void *out);
-void v_mapnode_delete(mapnode *n, string key, int element_size);
-void v_map_delete(map *m, string key);
-void map_exists(map m, string key);
-bool map__exists(map m, string key);
-void map_print(map m);
-void v_mapnode_free(mapnode *n);
-void v_map_free(map *m);
-string map_string_str(map_string m);
-hashmap new_hashmap(int planned_nr_items);
-void hashmap_set(hashmap *m, string key, int val);
-int hashmap_get(hashmap *m, string key);
-Option opt_ok(void *data, int size);
-Option opt_none();
-Option v_error(string s);
 strings__Builder strings__new_builder(int initial_size);
 void strings__Builder_write(strings__Builder *b, string s);
 void strings__Builder_writeln(strings__Builder *b, string s);
@@ -1556,11 +1556,11 @@ void Parser_fspace(Parser *p);
 void Parser_fgenln(Parser *p, string s);
 void Parser_fmt_inc(Parser *p);
 void Parser_fmt_dec(Parser *p);
-array_int g_ustring_runes; // global
-i64 total_m = 0;           // global
-#define builtin__CP_UTF8 65001
+i64 total_m = 0; // global
 int builtin__min_cap;
 int builtin__max_cap;
+array_int g_ustring_runes; // global
+#define builtin__CP_UTF8 65001
 #define math__E 2.71828182845904523536028747135266249775724709369995957496696763
 #define math__Pi                                                               \
   3.14159265358979323846264338327950288419716939937510582097494459
@@ -2232,6 +2232,850 @@ void array_int_sort(array_int *a) {
   array_sort_with_compare(
       a, &/*112 EXP:"void*" GOT:"fn (int*,int*) int" */ compare_ints);
 }
+void v_exit(int code) { exit(code); }
+bool isnil(void *v) { return v == 0; }
+void on_panic(int (*f)(int /*FFF*/)) {}
+void print_backtrace_skipping_top_frames(int skipframes) {
+
+#ifdef __APPLE__
+
+  byte *buffer[100];
+
+  int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
+
+  backtrace_symbols_fd(((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)),
+                       nr_ptrs - skipframes, 1);
+
+  return;
+
+#endif
+  ;
+
+#ifdef __linux__
+
+#ifndef __BIONIC__
+
+  if (backtrace_symbols_fd != 0) {
+
+    byte *buffer[100];
+
+    int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
+
+    backtrace_symbols_fd(((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)),
+                         nr_ptrs - skipframes, 1);
+
+    return;
+
+  } else {
+
+    printf("backtrace_symbols_fd is missing, so printing backtraces is not "
+           "available.\n");
+
+    printf("Some libc implementations like musl simply do not provide it.\n");
+  };
+
+#endif
+  ;
+
+#endif
+  ;
+
+  println(tos2((byte *)"print_backtrace_skipping_top_frames is not implemented "
+                       "on this platform for now...\n"));
+}
+void print_backtrace() { print_backtrace_skipping_top_frames(2); }
+void _panic_debug(int line_no, string file, string mod, string fn_name,
+                  string s) {
+
+  println(tos2((byte *)"================ V panic ================"));
+
+  printf("   module: %.*s\n", mod.len, mod.str);
+
+  printf(" function: %.*s()\n", fn_name.len, fn_name.str);
+
+  printf("     file: %.*s\n", file.len, file.str);
+
+  println(string_add(tos2((byte *)"     line: "), int_str(line_no)));
+
+  printf("  message: %.*s\n", s.len, s.str);
+
+  println(tos2((byte *)"========================================="));
+
+  print_backtrace_skipping_top_frames(1);
+
+  exit(1);
+}
+void v_panic(string s) {
+
+  printf("V panic: %.*s\n", s.len, s.str);
+
+  print_backtrace();
+
+  exit(1);
+}
+void println(string s) {
+
+  if (isnil(s.str)) {
+
+    v_panic(tos2((byte *)"println(NIL)"));
+  };
+
+#ifdef _WIN32
+
+  _putws(string_to_wide(s));
+
+#else
+
+  printf("%.*s\n", s.len, (char *)s.str);
+
+#endif
+  ;
+}
+void eprintln(string s) {
+
+  if (isnil(s.str)) {
+
+    v_panic(tos2((byte *)"eprintln(NIL)"));
+  };
+
+#ifdef __APPLE__
+
+  fprintf(stderr, "%.*s\n", s.len, (char *)s.str);
+
+  fflush(stderr);
+
+  return;
+
+#endif
+  ;
+
+#ifdef __linux__
+
+  fprintf(stderr, "%.*s\n", s.len, (char *)s.str);
+
+  fflush(stderr);
+
+  return;
+
+#endif
+  ;
+
+  println(s);
+}
+void print(string s) {
+
+#ifdef _WIN32
+
+  wprintf(string_to_wide(s));
+
+#else
+
+  printf("%.*s", s.len, (char *)s.str);
+
+#endif
+  ;
+}
+byte *v_malloc(int n) {
+
+  if (n < 0) {
+
+    v_panic(tos2((byte *)"malloc(<0)"));
+  };
+
+  byte *ptr = malloc(n);
+
+  if (isnil(ptr)) {
+
+    v_panic(_STR("malloc(%d) failed", n));
+  };
+
+  return ptr;
+}
+byte *v_calloc(int n) {
+
+  if (n < 0) {
+
+    v_panic(tos2((byte *)"calloc(<0)"));
+  };
+
+  return calloc(n, 1);
+}
+void v_free(void *ptr) { free(ptr); }
+void *memdup(void *src, int sz) {
+
+  byte *mem = v_malloc(sz);
+
+  return memcpy((char *)mem, src, sz);
+}
+void v_ptr_free(void *ptr) { free(ptr); }
+hashmap new_hashmap(int planned_nr_items) {
+
+  int cap = planned_nr_items * 3;
+
+  if (cap < builtin__min_cap) {
+
+    cap = builtin__min_cap;
+  };
+
+  if (cap > builtin__max_cap) {
+
+    cap = builtin__max_cap;
+  };
+
+  return (hashmap){.cap = cap,
+                   .elm_size = 4,
+                   .table = _make(cap, cap, sizeof(hashmapentry)),
+                   .keys = new_array(0, 1, sizeof(string)),
+                   .nr_collisions = 0};
+}
+void hashmap_set(hashmap *m, string key, int val) {
+
+  int hash = ((int)(math__abs(string_hash(key))));
+
+  int idx = hash % m->cap;
+
+  if ((*(hashmapentry *)array__get(m->table, idx)).key.len != 0) {
+
+    m->nr_collisions++;
+
+    hashmapentry *e = &(*(hashmapentry *)array__get(m->table, idx));
+
+    while (e->next != 0) {
+
+      e = e->next;
+    };
+
+    e->next = (hashmapentry *)memdup(&(hashmapentry){key, val, 0},
+                                     sizeof(hashmapentry));
+
+  } else {
+
+    array_set(&/*q*/ m->table, idx,
+              &(hashmapentry[]){(hashmapentry){key, val, 0}});
+  };
+}
+int hashmap_get(hashmap *m, string key) {
+
+  int hash = ((int)(math__abs(string_hash(key))));
+
+  int idx = hash % m->cap;
+
+  hashmapentry *e = &(*(hashmapentry *)array__get(m->table, idx));
+
+  while (e->next != 0) {
+
+    if (string_eq(e->key, key)) {
+
+      return e->val;
+    };
+
+    e = e->next;
+  };
+
+  return e->val;
+}
+string f64_str(f64 d) {
+
+  byte *buf = v_malloc(sizeof(double) * 5 + 1);
+
+  sprintf(((char *)(buf)), "%f", d);
+
+  return tos(buf, vstrlen(buf));
+}
+string f32_str(f32 d) {
+
+  byte *buf = v_malloc(sizeof(double) * 5 + 1);
+
+  sprintf(((char *)(buf)), "%f", d);
+
+  return tos(buf, vstrlen(buf));
+}
+string ptr_str(void *ptr) {
+
+  byte *buf = v_malloc(sizeof(double) * 5 + 1);
+
+  sprintf(((char *)(buf)), "%p", ptr);
+
+  return tos(buf, vstrlen(buf));
+}
+bool f64_eq(f64 a, f64 b) { return fabs(a - b) <= DBL_EPSILON; }
+bool f32_eq(f32 a, f32 b) { return fabsf(a - b) <= FLT_EPSILON; }
+bool f64_eqbit(f64 a, f64 b) { return DEFAULT_EQUAL(a, b); }
+bool f32_eqbit(f32 a, f32 b) { return DEFAULT_EQUAL(a, b); }
+bool f64_ne(f64 a, f64 b) { return !f64_eq(a, b); }
+bool f32_ne(f32 a, f32 b) { return !f32_eq(a, b); }
+bool f64_nebit(f64 a, f64 b) { return DEFAULT_NOT_EQUAL(a, b); }
+bool f32_nebit(f32 a, f32 b) { return DEFAULT_NOT_EQUAL(a, b); }
+bool f64_lt(f64 a, f64 b) { return f64_ne(a, b) && f64_ltbit(a, b); }
+bool f32_lt(f32 a, f32 b) { return f32_ne(a, b) && f32_ltbit(a, b); }
+bool f64_ltbit(f64 a, f64 b) { return DEFAULT_LT(a, b); }
+bool f32_ltbit(f32 a, f32 b) { return DEFAULT_LT(a, b); }
+bool f64_le(f64 a, f64 b) { return !f64_gt(a, b); }
+bool f32_le(f32 a, f32 b) { return !f32_gt(a, b); }
+bool f64_lebit(f64 a, f64 b) { return DEFAULT_LE(a, b); }
+bool f32_lebit(f32 a, f32 b) { return DEFAULT_LE(a, b); }
+bool f64_gt(f64 a, f64 b) { return f64_ne(a, b) && f64_gtbit(a, b); }
+bool f32_gt(f32 a, f32 b) { return f32_ne(a, b) && f32_gtbit(a, b); }
+bool f64_gtbit(f64 a, f64 b) { return DEFAULT_GT(a, b); }
+bool f32_gtbit(f32 a, f32 b) { return DEFAULT_GT(a, b); }
+bool f64_ge(f64 a, f64 b) { return !f64_lt(a, b); }
+bool f32_ge(f32 a, f32 b) { return !f32_lt(a, b); }
+bool f64_gebit(f64 a, f64 b) { return DEFAULT_GE(a, b); }
+bool f32_gebit(f32 a, f32 b) { return DEFAULT_GE(a, b); }
+string int_str(int nn) {
+
+  int n = nn;
+
+  if (n == 0) {
+
+    return tos2((byte *)"0");
+  };
+
+  int max = 16;
+
+  byte *buf = v_calloc(max);
+
+  int len = 0;
+
+  bool is_neg = 0;
+
+  if (n < 0) {
+
+    n = -n;
+
+    is_neg = 1;
+  };
+
+  while (n > 0) {
+
+    int d = n % 10;
+
+    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + ((int)('0'));
+
+    len++;
+
+    n = n / 10;
+  };
+
+  if (is_neg) {
+
+    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = '-';
+
+    len++;
+  };
+
+  return tos(buf + max - len, len);
+}
+string u32_str(u32 nn) {
+
+  u32 n = nn;
+
+  if (n == ((u32)(0))) {
+
+    return tos2((byte *)"0");
+  };
+
+  int max = 16;
+
+  byte *buf = v_malloc(max);
+
+  int len = 0;
+
+  while (n > ((u32)(0))) {
+
+    u32 d = n % ((u32)(10));
+
+    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + ((u32)('0'));
+
+    len++;
+
+    n = n / ((u32)(10));
+  };
+
+  return tos(buf + max - len, len);
+}
+string i64_str(i64 nn) {
+
+  i64 n = nn;
+
+  if (n == ((i64)(0))) {
+
+    return tos2((byte *)"0");
+  };
+
+  int max = 32;
+
+  byte *buf = v_malloc(max);
+
+  int len = 0;
+
+  bool is_neg = 0;
+
+  if (n < ((i64)(0))) {
+
+    n = -n;
+
+    is_neg = 1;
+  };
+
+  while (n > ((i64)(0))) {
+
+    int d = ((int)(n % ((i64)(10))));
+
+    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + ((int)('0'));
+
+    len++;
+
+    n = n / ((i64)(10));
+  };
+
+  if (is_neg) {
+
+    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = '-';
+
+    len++;
+  };
+
+  return tos(buf + max - len, len);
+}
+string u64_str(u64 nn) {
+
+  u64 n = nn;
+
+  if (n == ((u64)(0))) {
+
+    return tos2((byte *)"0");
+  };
+
+  int max = 32;
+
+  byte *buf = v_malloc(max);
+
+  int len = 0;
+
+  while (n > ((u64)(0))) {
+
+    u64 d = n % ((u64)(10));
+
+    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + ((u64)('0'));
+
+    len++;
+
+    n = n / ((u64)(10));
+  };
+
+  return tos(buf + max - len, len);
+}
+string bool_str(bool b) {
+
+  if (b) {
+
+    return tos2((byte *)"true");
+  };
+
+  return tos2((byte *)"false");
+}
+string int_hex(int n) {
+
+  int len = (n >= 0) ? (int_str(n).len + 3) : (11);
+
+  byte *hex = v_malloc(len);
+
+  int count = ((int)(sprintf(((char *)(hex)), "0x%x", n)));
+
+  return tos(hex, count);
+}
+string i64_hex(i64 n) {
+
+  int len = (n >= ((i64)(0))) ? (i64_str(n).len + 3) : (19);
+
+  byte *hex = v_malloc(len);
+
+  int count = ((int)(sprintf(((char *)(hex)), "0x%llx", n)));
+
+  return tos(hex, count);
+}
+bool array_byte_contains(array_byte a, byte val) {
+
+  array_byte tmp32 = a;
+  for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
+    byte aa = ((byte *)tmp32.data)[tmp33];
+
+    if (aa == val) {
+
+      return 1;
+    };
+  };
+
+  return 0;
+}
+string rune_str(rune c) {
+
+  int fst_byte = ((int)(c)) >> 8 * 3 & 0xff;
+
+  int len = utf8_char_len(fst_byte);
+
+  string str = (string){.len = len, .str = v_malloc(len + 1)};
+
+  for (int i = 0; i < len; i++) {
+
+    str.str[/*ptr*/ i] /*rbyte 1*/ = ((int)(c)) >> 8 * (3 - i) & 0xff;
+  };
+
+  str.str[len] /*rbyte 1*/ = '\0';
+
+  return str;
+}
+string byte_str(byte c) {
+
+  string str = (string){.len = 1, .str = v_malloc(2)};
+
+  str.str[/*ptr*/ 0] /*rbyte 1*/ = c;
+
+  str.str[/*ptr*/ 1] /*rbyte 1*/ = '\0';
+
+  return str;
+}
+bool byte_is_capital(byte c) { return c >= 'A' && c <= 'Z'; }
+array_byte array_byte_clone(array_byte b) {
+
+  array_byte res = array_repeat(
+      new_array_from_c_array(1, 1, sizeof(byte), (byte[]){((byte)(0))}), b.len);
+
+  for (int i = 0; i < b.len; i++) {
+
+    array_set(&/*q*/ res, i, &(byte[]){(*(byte *)array__get(b, i))});
+  };
+
+  return res;
+}
+map new_map(int cap, int elm_size) {
+
+  map res = (map){.element_size = elm_size, .root = 0, .size = 0};
+
+  return res;
+}
+map new_map_init(int cap, int elm_size, string *keys, void *vals) {
+
+  map res = (map){.element_size = elm_size, .root = 0, .size = 0};
+
+  int tmp3 = 0;
+  ;
+  for (int tmp4 = tmp3; tmp4 < cap; tmp4++) {
+    int i = tmp4;
+
+    map__set(&/* ? */ res, keys[/*ptr*/ i] /*rstring 0*/,
+             (byte *)vals + i * elm_size);
+  };
+
+  return res;
+}
+mapnode *new_node(string key, void *val, int element_size) {
+
+  mapnode *new_e = (mapnode *)memdup(
+      &(mapnode){
+          .key = key,
+          .val = v_malloc(element_size),
+          .left = 0,
+          .right = 0,
+          .is_empty = 0,
+      },
+      sizeof(mapnode));
+
+  memcpy(new_e->val, val, element_size);
+
+  return new_e;
+}
+void map_insert(map *m, mapnode *n, string key, void *val) {
+
+  if (string_eq(n->key, key)) {
+
+    memcpy(n->val, val, m->element_size);
+
+    return;
+  };
+
+  if (string_gt(n->key, key)) {
+
+    if (n->left == 0) {
+
+      n->left = new_node(key, val, m->element_size);
+
+      m->size++;
+
+    } else {
+
+      map_insert(m, n->left, key, val);
+    };
+
+    return;
+  };
+
+  if (n->right == 0) {
+
+    n->right = new_node(key, val, m->element_size);
+
+    m->size++;
+
+  } else {
+
+    map_insert(m, n->right, key, val);
+  };
+}
+bool mapnode_find(mapnode *n, string key, void *out, int element_size) {
+
+  if (string_eq(n->key, key)) {
+
+    memcpy(out, n->val, element_size);
+
+    return 1;
+
+  } else if (string_gt(n->key, key)) {
+
+    if (n->left == 0) {
+
+      return 0;
+
+    } else {
+
+      return mapnode_find(&/* ? */ *n->left, key, out, element_size);
+    };
+
+  } else {
+
+    if (n->right == 0) {
+
+      return 0;
+
+    } else {
+
+      return mapnode_find(&/* ? */ *n->right, key, out, element_size);
+    };
+  };
+}
+bool mapnode_find2(mapnode *n, string key, int element_size) {
+
+  if (string_eq(n->key, key)) {
+
+    return 1;
+
+  } else if (string_gt(n->key, key)) {
+
+    if (isnil(n->left)) {
+
+      return 0;
+
+    } else {
+
+      return mapnode_find2(&/* ? */ *n->left, key, element_size);
+    };
+
+  } else {
+
+    if (isnil(n->right)) {
+
+      return 0;
+
+    } else {
+
+      return mapnode_find2(&/* ? */ *n->right, key, element_size);
+    };
+  };
+}
+void map__set(map *m, string key, void *val) {
+
+  if (isnil(m->root)) {
+
+    m->root = new_node(key, val, m->element_size);
+
+    m->size++;
+
+    return;
+  };
+
+  map_insert(m, m->root, key, val);
+}
+int preorder_keys(mapnode *node, array_string *keys, int key_i) {
+
+  int i = key_i;
+
+  if (!node->is_empty) {
+
+    array_set(keys, i, &(string[]){node->key});
+
+    i++;
+  };
+
+  if (!isnil(node->left)) {
+
+    i = preorder_keys(node->left, keys, i);
+  };
+
+  if (!isnil(node->right)) {
+
+    i = preorder_keys(node->right, keys, i);
+  };
+
+  return i;
+}
+array_string map_keys(map *m) {
+
+  array_string keys =
+      array_repeat(new_array_from_c_array(1, 1, sizeof(string),
+                                          (string[]){tos2((byte *)"")}),
+                   m->size);
+
+  if (isnil(m->root)) {
+
+    return keys;
+  };
+
+  preorder_keys(m->root, &/*111*/ (array[]){keys}[0], 0);
+
+  return keys;
+}
+bool map_get(map m, string key, void *out) {
+
+  if (m.root == 0) {
+
+    return 0;
+  };
+
+  return mapnode_find(&/* ? */ *m.root, key, out, m.element_size);
+}
+void v_mapnode_delete(mapnode *n, string key, int element_size) {
+
+  if (string_eq(n->key, key)) {
+
+    memset(n->val, 0, element_size);
+
+    n->is_empty = 1;
+
+    return;
+
+  } else if (string_gt(n->key, key)) {
+
+    if (isnil(n->left)) {
+
+      return;
+
+    } else {
+
+      v_mapnode_delete(n->left, key, element_size);
+    };
+
+  } else {
+
+    if (isnil(n->right)) {
+
+      return;
+
+    } else {
+
+      v_mapnode_delete(n->right, key, element_size);
+    };
+  };
+}
+void v_map_delete(map *m, string key) {
+
+  v_mapnode_delete(m->root, key, m->element_size);
+
+  m->size--;
+}
+void map_exists(map m, string key) {
+
+  v_panic(tos2((byte *)"map.exists(key) was removed from the language. Use "
+                       "`key in map` instead."));
+}
+bool map__exists(map m, string key) {
+
+  return !isnil(m.root) && mapnode_find2(&/* ? */ *m.root, key, m.element_size);
+}
+void map_print(map m) {
+
+  println(tos2((byte *)"<<<<<<<<"));
+
+  println(tos2((byte *)">>>>>>>>>>"));
+}
+void v_mapnode_free(mapnode *n) {
+
+  if (n->val != 0) {
+
+    v_free(n->val);
+  };
+
+  if (n->left != 0) {
+
+    v_mapnode_free(n->left);
+  };
+
+  if (n->right != 0) {
+
+    v_mapnode_free(n->right);
+  };
+
+  v_free(n);
+}
+void v_map_free(map *m) {
+
+  if (m->root == 0) {
+
+    return;
+  };
+
+  v_mapnode_free(m->root);
+}
+string map_string_str(map_string m) {
+
+  if (m.size == 0) {
+
+    return tos2((byte *)"{}");
+  };
+
+  strings__Builder sb = strings__new_builder(50);
+
+  strings__Builder_writeln(&/* ? */ sb, tos2((byte *)"{"));
+
+  map_string tmp9 = m;
+  array_string keys_tmp9 = map_keys(&tmp9);
+  for (int l = 0; l < keys_tmp9.len; l++) {
+    string key = ((string *)keys_tmp9.data)[l];
+    string val = {0};
+    map_get(tmp9, key, &val);
+
+    strings__Builder_writeln(
+        &/* ? */ sb,
+        _STR("  \"%.*s\" => \"%.*s\"", key.len, key.str, val.len, val.str));
+  };
+
+  strings__Builder_writeln(&/* ? */ sb, tos2((byte *)"}"));
+
+  return strings__Builder_str(sb);
+}
+Option opt_ok(void *data, int size) {
+
+  if (size >= 255) {
+
+    v_panic(
+        _STR("option size too big: %d (max is 255), this is a temporary limit",
+             size));
+  };
+
+  Option res = (Option){.ok = 1, .error = tos((byte *)"", 0), .is_none = 0};
+
+  memcpy(res.data, data, size);
+
+  return res;
+}
+Option opt_none() {
+
+  return (Option){
+      .is_none = 1,
+      .error = tos((byte *)"", 0),
+      .ok = 0,
+  };
+}
+Option v_error(string s) { return (Option){.error = s, .ok = 0, .is_none = 0}; }
 int vstrlen(byte *s) { return strlen(((char *)(s))); }
 void todo() {}
 string tos(byte *s, int len) {
@@ -3499,457 +4343,6 @@ string string_repeat(string s, int count) {
 
   return (tos2((byte *)ret));
 }
-void v_exit(int code) { exit(code); }
-bool isnil(void *v) { return v == 0; }
-void on_panic(int (*f)(int /*FFF*/)) {}
-void print_backtrace_skipping_top_frames(int skipframes) {
-
-#ifdef __APPLE__
-
-  byte *buffer[100];
-
-  int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
-
-  backtrace_symbols_fd(((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)),
-                       nr_ptrs - skipframes, 1);
-
-  return;
-
-#endif
-  ;
-
-#ifdef __linux__
-
-#ifndef __BIONIC__
-
-  if (backtrace_symbols_fd != 0) {
-
-    byte *buffer[100];
-
-    int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
-
-    backtrace_symbols_fd(((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)),
-                         nr_ptrs - skipframes, 1);
-
-    return;
-
-  } else {
-
-    printf("backtrace_symbols_fd is missing, so printing backtraces is not "
-           "available.\n");
-
-    printf("Some libc implementations like musl simply do not provide it.\n");
-  };
-
-#endif
-  ;
-
-#endif
-  ;
-
-  println(tos2((byte *)"print_backtrace_skipping_top_frames is not implemented "
-                       "on this platform for now...\n"));
-}
-void print_backtrace() { print_backtrace_skipping_top_frames(2); }
-void _panic_debug(int line_no, string file, string mod, string fn_name,
-                  string s) {
-
-  println(tos2((byte *)"================ V panic ================"));
-
-  printf("   module: %.*s\n", mod.len, mod.str);
-
-  printf(" function: %.*s()\n", fn_name.len, fn_name.str);
-
-  printf("     file: %.*s\n", file.len, file.str);
-
-  println(string_add(tos2((byte *)"     line: "), int_str(line_no)));
-
-  printf("  message: %.*s\n", s.len, s.str);
-
-  println(tos2((byte *)"========================================="));
-
-  print_backtrace_skipping_top_frames(1);
-
-  exit(1);
-}
-void v_panic(string s) {
-
-  printf("V panic: %.*s\n", s.len, s.str);
-
-  print_backtrace();
-
-  exit(1);
-}
-void println(string s) {
-
-  if (isnil(s.str)) {
-
-    v_panic(tos2((byte *)"println(NIL)"));
-  };
-
-#ifdef _WIN32
-
-  _putws(string_to_wide(s));
-
-#else
-
-  printf("%.*s\n", s.len, (char *)s.str);
-
-#endif
-  ;
-}
-void eprintln(string s) {
-
-  if (isnil(s.str)) {
-
-    v_panic(tos2((byte *)"eprintln(NIL)"));
-  };
-
-#ifdef __APPLE__
-
-  fprintf(stderr, "%.*s\n", s.len, (char *)s.str);
-
-  fflush(stderr);
-
-  return;
-
-#endif
-  ;
-
-#ifdef __linux__
-
-  fprintf(stderr, "%.*s\n", s.len, (char *)s.str);
-
-  fflush(stderr);
-
-  return;
-
-#endif
-  ;
-
-  println(s);
-}
-void print(string s) {
-
-#ifdef _WIN32
-
-  wprintf(string_to_wide(s));
-
-#else
-
-  printf("%.*s", s.len, (char *)s.str);
-
-#endif
-  ;
-}
-byte *v_malloc(int n) {
-
-  if (n < 0) {
-
-    v_panic(tos2((byte *)"malloc(<0)"));
-  };
-
-  byte *ptr = malloc(n);
-
-  if (isnil(ptr)) {
-
-    v_panic(_STR("malloc(%d) failed", n));
-  };
-
-  return ptr;
-}
-byte *v_calloc(int n) {
-
-  if (n < 0) {
-
-    v_panic(tos2((byte *)"calloc(<0)"));
-  };
-
-  return calloc(n, 1);
-}
-void v_free(void *ptr) { free(ptr); }
-void *memdup(void *src, int sz) {
-
-  byte *mem = v_malloc(sz);
-
-  return memcpy((char *)mem, src, sz);
-}
-void v_ptr_free(void *ptr) { free(ptr); }
-string f64_str(f64 d) {
-
-  byte *buf = v_malloc(sizeof(double) * 5 + 1);
-
-  sprintf(((char *)(buf)), "%f", d);
-
-  return tos(buf, vstrlen(buf));
-}
-string f32_str(f32 d) {
-
-  byte *buf = v_malloc(sizeof(double) * 5 + 1);
-
-  sprintf(((char *)(buf)), "%f", d);
-
-  return tos(buf, vstrlen(buf));
-}
-string ptr_str(void *ptr) {
-
-  byte *buf = v_malloc(sizeof(double) * 5 + 1);
-
-  sprintf(((char *)(buf)), "%p", ptr);
-
-  return tos(buf, vstrlen(buf));
-}
-bool f64_eq(f64 a, f64 b) { return fabs(a - b) <= DBL_EPSILON; }
-bool f32_eq(f32 a, f32 b) { return fabsf(a - b) <= FLT_EPSILON; }
-bool f64_eqbit(f64 a, f64 b) { return DEFAULT_EQUAL(a, b); }
-bool f32_eqbit(f32 a, f32 b) { return DEFAULT_EQUAL(a, b); }
-bool f64_ne(f64 a, f64 b) { return !f64_eq(a, b); }
-bool f32_ne(f32 a, f32 b) { return !f32_eq(a, b); }
-bool f64_nebit(f64 a, f64 b) { return DEFAULT_NOT_EQUAL(a, b); }
-bool f32_nebit(f32 a, f32 b) { return DEFAULT_NOT_EQUAL(a, b); }
-bool f64_lt(f64 a, f64 b) { return f64_ne(a, b) && f64_ltbit(a, b); }
-bool f32_lt(f32 a, f32 b) { return f32_ne(a, b) && f32_ltbit(a, b); }
-bool f64_ltbit(f64 a, f64 b) { return DEFAULT_LT(a, b); }
-bool f32_ltbit(f32 a, f32 b) { return DEFAULT_LT(a, b); }
-bool f64_le(f64 a, f64 b) { return !f64_gt(a, b); }
-bool f32_le(f32 a, f32 b) { return !f32_gt(a, b); }
-bool f64_lebit(f64 a, f64 b) { return DEFAULT_LE(a, b); }
-bool f32_lebit(f32 a, f32 b) { return DEFAULT_LE(a, b); }
-bool f64_gt(f64 a, f64 b) { return f64_ne(a, b) && f64_gtbit(a, b); }
-bool f32_gt(f32 a, f32 b) { return f32_ne(a, b) && f32_gtbit(a, b); }
-bool f64_gtbit(f64 a, f64 b) { return DEFAULT_GT(a, b); }
-bool f32_gtbit(f32 a, f32 b) { return DEFAULT_GT(a, b); }
-bool f64_ge(f64 a, f64 b) { return !f64_lt(a, b); }
-bool f32_ge(f32 a, f32 b) { return !f32_lt(a, b); }
-bool f64_gebit(f64 a, f64 b) { return DEFAULT_GE(a, b); }
-bool f32_gebit(f32 a, f32 b) { return DEFAULT_GE(a, b); }
-string int_str(int nn) {
-
-  int n = nn;
-
-  if (n == 0) {
-
-    return tos2((byte *)"0");
-  };
-
-  int max = 16;
-
-  byte *buf = v_calloc(max);
-
-  int len = 0;
-
-  bool is_neg = 0;
-
-  if (n < 0) {
-
-    n = -n;
-
-    is_neg = 1;
-  };
-
-  while (n > 0) {
-
-    int d = n % 10;
-
-    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + ((int)('0'));
-
-    len++;
-
-    n = n / 10;
-  };
-
-  if (is_neg) {
-
-    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = '-';
-
-    len++;
-  };
-
-  return tos(buf + max - len, len);
-}
-string u32_str(u32 nn) {
-
-  u32 n = nn;
-
-  if (n == ((u32)(0))) {
-
-    return tos2((byte *)"0");
-  };
-
-  int max = 16;
-
-  byte *buf = v_malloc(max);
-
-  int len = 0;
-
-  while (n > ((u32)(0))) {
-
-    u32 d = n % ((u32)(10));
-
-    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + ((u32)('0'));
-
-    len++;
-
-    n = n / ((u32)(10));
-  };
-
-  return tos(buf + max - len, len);
-}
-string i64_str(i64 nn) {
-
-  i64 n = nn;
-
-  if (n == ((i64)(0))) {
-
-    return tos2((byte *)"0");
-  };
-
-  int max = 32;
-
-  byte *buf = v_malloc(max);
-
-  int len = 0;
-
-  bool is_neg = 0;
-
-  if (n < ((i64)(0))) {
-
-    n = -n;
-
-    is_neg = 1;
-  };
-
-  while (n > ((i64)(0))) {
-
-    int d = ((int)(n % ((i64)(10))));
-
-    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + ((int)('0'));
-
-    len++;
-
-    n = n / ((i64)(10));
-  };
-
-  if (is_neg) {
-
-    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = '-';
-
-    len++;
-  };
-
-  return tos(buf + max - len, len);
-}
-string u64_str(u64 nn) {
-
-  u64 n = nn;
-
-  if (n == ((u64)(0))) {
-
-    return tos2((byte *)"0");
-  };
-
-  int max = 32;
-
-  byte *buf = v_malloc(max);
-
-  int len = 0;
-
-  while (n > ((u64)(0))) {
-
-    u64 d = n % ((u64)(10));
-
-    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + ((u64)('0'));
-
-    len++;
-
-    n = n / ((u64)(10));
-  };
-
-  return tos(buf + max - len, len);
-}
-string bool_str(bool b) {
-
-  if (b) {
-
-    return tos2((byte *)"true");
-  };
-
-  return tos2((byte *)"false");
-}
-string int_hex(int n) {
-
-  int len = (n >= 0) ? (int_str(n).len + 3) : (11);
-
-  byte *hex = v_malloc(len);
-
-  int count = ((int)(sprintf(((char *)(hex)), "0x%x", n)));
-
-  return tos(hex, count);
-}
-string i64_hex(i64 n) {
-
-  int len = (n >= ((i64)(0))) ? (i64_str(n).len + 3) : (19);
-
-  byte *hex = v_malloc(len);
-
-  int count = ((int)(sprintf(((char *)(hex)), "0x%llx", n)));
-
-  return tos(hex, count);
-}
-bool array_byte_contains(array_byte a, byte val) {
-
-  array_byte tmp32 = a;
-  for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
-    byte aa = ((byte *)tmp32.data)[tmp33];
-
-    if (aa == val) {
-
-      return 1;
-    };
-  };
-
-  return 0;
-}
-string rune_str(rune c) {
-
-  int fst_byte = ((int)(c)) >> 8 * 3 & 0xff;
-
-  int len = utf8_char_len(fst_byte);
-
-  string str = (string){.len = len, .str = v_malloc(len + 1)};
-
-  for (int i = 0; i < len; i++) {
-
-    str.str[/*ptr*/ i] /*rbyte 1*/ = ((int)(c)) >> 8 * (3 - i) & 0xff;
-  };
-
-  str.str[len] /*rbyte 1*/ = '\0';
-
-  return str;
-}
-string byte_str(byte c) {
-
-  string str = (string){.len = 1, .str = v_malloc(2)};
-
-  str.str[/*ptr*/ 0] /*rbyte 1*/ = c;
-
-  str.str[/*ptr*/ 1] /*rbyte 1*/ = '\0';
-
-  return str;
-}
-bool byte_is_capital(byte c) { return c >= 'A' && c <= 'Z'; }
-array_byte array_byte_clone(array_byte b) {
-
-  array_byte res = array_repeat(
-      new_array_from_c_array(1, 1, sizeof(byte), (byte[]){((byte)(0))}), b.len);
-
-  for (int i = 0; i < b.len; i++) {
-
-    array_set(&/*q*/ res, i, &(byte[]){(*(byte *)array__get(b, i))});
-  };
-
-  return res;
-}
 int utf8_char_len(byte b) {
 
   return ((0xe5000000 >> ((b >> 3) & 0x1e)) & 3) + 1;
@@ -4226,399 +4619,6 @@ int utf8_getchar() {
     return uc;
   };
 }
-map new_map(int cap, int elm_size) {
-
-  map res = (map){.element_size = elm_size, .root = 0, .size = 0};
-
-  return res;
-}
-map new_map_init(int cap, int elm_size, string *keys, void *vals) {
-
-  map res = (map){.element_size = elm_size, .root = 0, .size = 0};
-
-  int tmp3 = 0;
-  ;
-  for (int tmp4 = tmp3; tmp4 < cap; tmp4++) {
-    int i = tmp4;
-
-    map__set(&/* ? */ res, keys[/*ptr*/ i] /*rstring 0*/,
-             (byte *)vals + i * elm_size);
-  };
-
-  return res;
-}
-mapnode *new_node(string key, void *val, int element_size) {
-
-  mapnode *new_e = (mapnode *)memdup(
-      &(mapnode){
-          .key = key,
-          .val = v_malloc(element_size),
-          .left = 0,
-          .right = 0,
-          .is_empty = 0,
-      },
-      sizeof(mapnode));
-
-  memcpy(new_e->val, val, element_size);
-
-  return new_e;
-}
-void map_insert(map *m, mapnode *n, string key, void *val) {
-
-  if (string_eq(n->key, key)) {
-
-    memcpy(n->val, val, m->element_size);
-
-    return;
-  };
-
-  if (string_gt(n->key, key)) {
-
-    if (n->left == 0) {
-
-      n->left = new_node(key, val, m->element_size);
-
-      m->size++;
-
-    } else {
-
-      map_insert(m, n->left, key, val);
-    };
-
-    return;
-  };
-
-  if (n->right == 0) {
-
-    n->right = new_node(key, val, m->element_size);
-
-    m->size++;
-
-  } else {
-
-    map_insert(m, n->right, key, val);
-  };
-}
-bool mapnode_find(mapnode *n, string key, void *out, int element_size) {
-
-  if (string_eq(n->key, key)) {
-
-    memcpy(out, n->val, element_size);
-
-    return 1;
-
-  } else if (string_gt(n->key, key)) {
-
-    if (n->left == 0) {
-
-      return 0;
-
-    } else {
-
-      return mapnode_find(&/* ? */ *n->left, key, out, element_size);
-    };
-
-  } else {
-
-    if (n->right == 0) {
-
-      return 0;
-
-    } else {
-
-      return mapnode_find(&/* ? */ *n->right, key, out, element_size);
-    };
-  };
-}
-bool mapnode_find2(mapnode *n, string key, int element_size) {
-
-  if (string_eq(n->key, key)) {
-
-    return 1;
-
-  } else if (string_gt(n->key, key)) {
-
-    if (isnil(n->left)) {
-
-      return 0;
-
-    } else {
-
-      return mapnode_find2(&/* ? */ *n->left, key, element_size);
-    };
-
-  } else {
-
-    if (isnil(n->right)) {
-
-      return 0;
-
-    } else {
-
-      return mapnode_find2(&/* ? */ *n->right, key, element_size);
-    };
-  };
-}
-void map__set(map *m, string key, void *val) {
-
-  if (isnil(m->root)) {
-
-    m->root = new_node(key, val, m->element_size);
-
-    m->size++;
-
-    return;
-  };
-
-  map_insert(m, m->root, key, val);
-}
-int preorder_keys(mapnode *node, array_string *keys, int key_i) {
-
-  int i = key_i;
-
-  if (!node->is_empty) {
-
-    array_set(keys, i, &(string[]){node->key});
-
-    i++;
-  };
-
-  if (!isnil(node->left)) {
-
-    i = preorder_keys(node->left, keys, i);
-  };
-
-  if (!isnil(node->right)) {
-
-    i = preorder_keys(node->right, keys, i);
-  };
-
-  return i;
-}
-array_string map_keys(map *m) {
-
-  array_string keys =
-      array_repeat(new_array_from_c_array(1, 1, sizeof(string),
-                                          (string[]){tos2((byte *)"")}),
-                   m->size);
-
-  if (isnil(m->root)) {
-
-    return keys;
-  };
-
-  preorder_keys(m->root, &/*111*/ (array[]){keys}[0], 0);
-
-  return keys;
-}
-bool map_get(map m, string key, void *out) {
-
-  if (m.root == 0) {
-
-    return 0;
-  };
-
-  return mapnode_find(&/* ? */ *m.root, key, out, m.element_size);
-}
-void v_mapnode_delete(mapnode *n, string key, int element_size) {
-
-  if (string_eq(n->key, key)) {
-
-    memset(n->val, 0, element_size);
-
-    n->is_empty = 1;
-
-    return;
-
-  } else if (string_gt(n->key, key)) {
-
-    if (isnil(n->left)) {
-
-      return;
-
-    } else {
-
-      v_mapnode_delete(n->left, key, element_size);
-    };
-
-  } else {
-
-    if (isnil(n->right)) {
-
-      return;
-
-    } else {
-
-      v_mapnode_delete(n->right, key, element_size);
-    };
-  };
-}
-void v_map_delete(map *m, string key) {
-
-  v_mapnode_delete(m->root, key, m->element_size);
-
-  m->size--;
-}
-void map_exists(map m, string key) {
-
-  v_panic(tos2((byte *)"map.exists(key) was removed from the language. Use "
-                       "`key in map` instead."));
-}
-bool map__exists(map m, string key) {
-
-  return !isnil(m.root) && mapnode_find2(&/* ? */ *m.root, key, m.element_size);
-}
-void map_print(map m) {
-
-  println(tos2((byte *)"<<<<<<<<"));
-
-  println(tos2((byte *)">>>>>>>>>>"));
-}
-void v_mapnode_free(mapnode *n) {
-
-  if (n->val != 0) {
-
-    v_free(n->val);
-  };
-
-  if (n->left != 0) {
-
-    v_mapnode_free(n->left);
-  };
-
-  if (n->right != 0) {
-
-    v_mapnode_free(n->right);
-  };
-
-  v_free(n);
-}
-void v_map_free(map *m) {
-
-  if (m->root == 0) {
-
-    return;
-  };
-
-  v_mapnode_free(m->root);
-}
-string map_string_str(map_string m) {
-
-  if (m.size == 0) {
-
-    return tos2((byte *)"{}");
-  };
-
-  strings__Builder sb = strings__new_builder(50);
-
-  strings__Builder_writeln(&/* ? */ sb, tos2((byte *)"{"));
-
-  map_string tmp9 = m;
-  array_string keys_tmp9 = map_keys(&tmp9);
-  for (int l = 0; l < keys_tmp9.len; l++) {
-    string key = ((string *)keys_tmp9.data)[l];
-    string val = {0};
-    map_get(tmp9, key, &val);
-
-    strings__Builder_writeln(
-        &/* ? */ sb,
-        _STR("  \"%.*s\" => \"%.*s\"", key.len, key.str, val.len, val.str));
-  };
-
-  strings__Builder_writeln(&/* ? */ sb, tos2((byte *)"}"));
-
-  return strings__Builder_str(sb);
-}
-hashmap new_hashmap(int planned_nr_items) {
-
-  int cap = planned_nr_items * 3;
-
-  if (cap < builtin__min_cap) {
-
-    cap = builtin__min_cap;
-  };
-
-  if (cap > builtin__max_cap) {
-
-    cap = builtin__max_cap;
-  };
-
-  return (hashmap){.cap = cap,
-                   .elm_size = 4,
-                   .table = _make(cap, cap, sizeof(hashmapentry)),
-                   .keys = new_array(0, 1, sizeof(string)),
-                   .nr_collisions = 0};
-}
-void hashmap_set(hashmap *m, string key, int val) {
-
-  int hash = ((int)(math__abs(string_hash(key))));
-
-  int idx = hash % m->cap;
-
-  if ((*(hashmapentry *)array__get(m->table, idx)).key.len != 0) {
-
-    m->nr_collisions++;
-
-    hashmapentry *e = &(*(hashmapentry *)array__get(m->table, idx));
-
-    while (e->next != 0) {
-
-      e = e->next;
-    };
-
-    e->next = (hashmapentry *)memdup(&(hashmapentry){key, val, 0},
-                                     sizeof(hashmapentry));
-
-  } else {
-
-    array_set(&/*q*/ m->table, idx,
-              &(hashmapentry[]){(hashmapentry){key, val, 0}});
-  };
-}
-int hashmap_get(hashmap *m, string key) {
-
-  int hash = ((int)(math__abs(string_hash(key))));
-
-  int idx = hash % m->cap;
-
-  hashmapentry *e = &(*(hashmapentry *)array__get(m->table, idx));
-
-  while (e->next != 0) {
-
-    if (string_eq(e->key, key)) {
-
-      return e->val;
-    };
-
-    e = e->next;
-  };
-
-  return e->val;
-}
-Option opt_ok(void *data, int size) {
-
-  if (size >= 255) {
-
-    v_panic(
-        _STR("option size too big: %d (max is 255), this is a temporary limit",
-             size));
-  };
-
-  Option res = (Option){.ok = 1, .error = tos((byte *)"", 0), .is_none = 0};
-
-  memcpy(res.data, data, size);
-
-  return res;
-}
-Option opt_none() {
-
-  return (Option){
-      .is_none = 1,
-      .error = tos((byte *)"", 0),
-      .ok = 0,
-  };
-}
-Option v_error(string s) { return (Option){.error = s, .ok = 0, .is_none = 0}; }
 strings__Builder strings__new_builder(int initial_size) {
 
   return (strings__Builder){.buf = new_array(0, 1, sizeof(byte)), .len = 0};
@@ -15297,13 +15297,20 @@ void V_cc_msvc(V *v) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/MD")),
           tmp40, string);
 
-  } else {
-
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/Z7")),
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/Zi")),
           tmp41, string);
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/MDd")),
+    _PUSH(&a,
+          (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/DNDEBUG")),
           tmp42, string);
+
+  } else {
+
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/Zi")),
+          tmp43, string);
+
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/MDd")),
+          tmp44, string);
   };
 
   if (v->pref->is_so) {
@@ -15314,7 +15321,7 @@ void V_cc_msvc(V *v) {
     };
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/LD")),
-          tmp43, string);
+          tmp45, string);
 
   } else if (!string_ends_with(v->out_name, tos2((byte *)".exe"))) {
 
@@ -15339,7 +15346,7 @@ void V_cc_msvc(V *v) {
     _PUSH(&alibs,
           (/*typ = array_string   tmp_typ=string*/ _STR("\"%.*s\"", b.len,
                                                         b.str)),
-          tmp46, string);
+          tmp48, string);
 
     if (!os__file_exists(b)) {
 
@@ -15348,9 +15355,9 @@ void V_cc_msvc(V *v) {
       v_exit(1);
     };
 
-    array_string tmp47 = v->table->imports;
-    for (int tmp48 = 0; tmp48 < tmp47.len; tmp48++) {
-      string imp = ((string *)tmp47.data)[tmp48];
+    array_string tmp49 = v->table->imports;
+    for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
+      string imp = ((string *)tmp49.data)[tmp50];
 
       if (string_eq(imp, tos2((byte *)"webview"))) {
 
@@ -15364,7 +15371,7 @@ void V_cc_msvc(V *v) {
                                "%.*s/vlib/%.*s.obj", main__v_modules_path.len,
                                main__v_modules_path.str, imp.len, imp.str))),
                 tos2((byte *)"\""))),
-            tmp49, string);
+            tmp51, string);
     };
   };
 
@@ -15377,7 +15384,7 @@ void V_cc_msvc(V *v) {
         (/*typ = array_string   tmp_typ=string*/ string_add(
             string_add(tos2((byte *)"\""), os__realpath(v->out_name_c)),
             tos2((byte *)"\""))),
-        tmp50, string);
+        tmp52, string);
 
   array_string real_libs = new_array_from_c_array(
       12, 12, sizeof(string),
@@ -15392,7 +15399,7 @@ void V_cc_msvc(V *v) {
       array_CFlag_msvc_string_flags(V_get_os_cflags(&/* ? */ *v));
 
   _PUSH_MANY(&real_libs,
-             (/*typ = array_string   tmp_typ=string*/ sflags.real_libs), tmp53,
+             (/*typ = array_string   tmp_typ=string*/ sflags.real_libs), tmp55,
              array_string);
 
   array_string inc_paths = sflags.inc_paths;
@@ -15404,80 +15411,82 @@ void V_cc_msvc(V *v) {
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "-I \"%.*s\"", r.ucrt_include_path.len, r.ucrt_include_path.str)),
-        tmp57, string);
+        tmp59, string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "-I \"%.*s\"", r.vs_include_path.len, r.vs_include_path.str)),
-        tmp58, string);
+        tmp60, string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "-I \"%.*s\"", r.um_include_path.len, r.um_include_path.str)),
-        tmp59, string);
+        tmp61, string);
 
   _PUSH(
       &a,
       (/*typ = array_string   tmp_typ=string*/ _STR(
           "-I \"%.*s\"", r.shared_include_path.len, r.shared_include_path.str)),
-      tmp60, string);
+      tmp62, string);
 
-  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ inc_paths), tmp61,
+  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ inc_paths), tmp63,
              array_string);
 
-  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ other_flags), tmp62,
+  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ other_flags), tmp64,
              array_string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ array_string_join(
             real_libs, tos2((byte *)" "))),
-        tmp63, string);
-
-  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/link")),
-        tmp64, string);
-
-  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/NOLOGO")),
         tmp65, string);
 
-  _PUSH(&a,
-        (/*typ = array_string   tmp_typ=string*/ _STR(
-            "/OUT:\"%.*s\"", v->out_name.len, v->out_name.str)),
+  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/link")),
         tmp66, string);
 
-  _PUSH(&a,
-        (/*typ = array_string   tmp_typ=string*/ _STR(
-            "/LIBPATH:\"%.*s\"", r.ucrt_lib_path.len, r.ucrt_lib_path.str)),
+  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/NOLOGO")),
         tmp67, string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
-            "/LIBPATH:\"%.*s\"", r.um_lib_path.len, r.um_lib_path.str)),
+            "/OUT:\"%.*s\"", v->out_name.len, v->out_name.str)),
         tmp68, string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
-            "/LIBPATH:\"%.*s\"", r.vs_lib_path.len, r.vs_lib_path.str)),
+            "/LIBPATH:\"%.*s\"", r.ucrt_lib_path.len, r.ucrt_lib_path.str)),
         tmp69, string);
 
-  _PUSH(
-      &a,
-      (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/INCREMENTAL:NO")),
-      tmp70, string);
+  _PUSH(&a,
+        (/*typ = array_string   tmp_typ=string*/ _STR(
+            "/LIBPATH:\"%.*s\"", r.um_lib_path.len, r.um_lib_path.str)),
+        tmp70, string);
 
-  if (!v->pref->is_prod) {
+  _PUSH(&a,
+        (/*typ = array_string   tmp_typ=string*/ _STR(
+            "/LIBPATH:\"%.*s\"", r.vs_lib_path.len, r.vs_lib_path.str)),
+        tmp71, string);
+
+  _PUSH(&a,
+        (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/DEBUG:FULL")),
+        tmp72, string);
+
+  if (v->pref->is_prod) {
 
     _PUSH(&a,
-          (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/DEBUG:FULL")),
-          tmp71, string);
-
-  } else {
+          (/*typ = array_string   tmp_typ=string*/ tos2(
+              (byte *)"/INCREMENTAL:NO")),
+          tmp73, string);
 
     _PUSH(&a,
-          (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/DEBUG:NONE")),
-          tmp72, string);
+          (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/OPT:REF")),
+          tmp74, string);
+
+    _PUSH(&a,
+          (/*typ = array_string   tmp_typ=string*/ tos2((byte *)"/OPT:ICF")),
+          tmp75, string);
   };
 
-  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ lib_paths), tmp73,
+  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ lib_paths), tmp76,
              array_string);
 
   string args = array_string_join(a, tos2((byte *)" "));
@@ -15494,9 +15503,9 @@ void V_cc_msvc(V *v) {
     println(tos2((byte *)"==========\n"));
   };
 
-  Option_os__Result tmp76 = os__exec(cmd);
-  if (!tmp76.ok) {
-    string err = tmp76.error;
+  Option_os__Result tmp79 = os__exec(cmd);
+  if (!tmp79.ok) {
+    string err = tmp79.error;
 
     println(err);
 
@@ -15504,7 +15513,7 @@ void V_cc_msvc(V *v) {
 
     return;
   }
-  os__Result res = *(os__Result *)tmp76.data;
+  os__Result res = *(os__Result *)tmp79.data;
   ;
 
   if (res.exit_code != 0) {
@@ -15523,15 +15532,15 @@ void V_cc_msvc(V *v) {
 void main__build_thirdparty_obj_file_with_msvc(string path,
                                                array_CFlag moduleflags) {
 
-  Option_MsvcResult tmp77 = main__find_msvc();
-  if (!tmp77.ok) {
-    string err = tmp77.error;
+  Option_MsvcResult tmp80 = main__find_msvc();
+  if (!tmp80.ok) {
+    string err = tmp80.error;
 
     println(tos2((byte *)"Could not find visual studio"));
 
     return;
   }
-  MsvcResult msvc = *(MsvcResult *)tmp77.data;
+  MsvcResult msvc = *(MsvcResult *)tmp80.data;
   ;
 
   string obj_path = _STR("%.*sbj", path.len, path.str);
@@ -15554,9 +15563,9 @@ void main__build_thirdparty_obj_file_with_msvc(string path,
 
   string cfiles = tos2((byte *)"");
 
-  array_string tmp82 = files;
-  for (int tmp83 = 0; tmp83 < tmp82.len; tmp83++) {
-    string file = ((string *)tmp82.data)[tmp83];
+  array_string tmp85 = files;
+  for (int tmp86 = 0; tmp86 < tmp85.len; tmp86++) {
+    string file = ((string *)tmp85.data)[tmp86];
 
     if (string_ends_with(file, tos2((byte *)".c"))) {
 
@@ -15581,23 +15590,24 @@ void main__build_thirdparty_obj_file_with_msvc(string path,
 
   string atarget = array_CFlag_c_options_after_target(moduleflags);
 
-  string cmd = _STR(
-      "\"\"%.*s\" /volatile:ms /Z7 %.*s /c %.*s %.*s %.*s /Fo\"%.*s\"\"",
-      msvc.full_cl_exe_path.len, msvc.full_cl_exe_path.str, include_string.len,
-      include_string.str, btarget.len, btarget.str, cfiles.len, cfiles.str,
-      atarget.len, atarget.str, obj_path.len, obj_path.str);
+  string cmd = _STR("\"\"%.*s\" /volatile:ms /Zi /DNDEBUG %.*s /c %.*s %.*s "
+                    "%.*s /Fo\"%.*s\"\"",
+                    msvc.full_cl_exe_path.len, msvc.full_cl_exe_path.str,
+                    include_string.len, include_string.str, btarget.len,
+                    btarget.str, cfiles.len, cfiles.str, atarget.len,
+                    atarget.str, obj_path.len, obj_path.str);
 
   printf("thirdparty cmd line: %.*s\n", cmd.len, cmd.str);
 
-  Option_os__Result tmp88 = os__exec(cmd);
-  if (!tmp88.ok) {
-    string err = tmp88.error;
+  Option_os__Result tmp91 = os__exec(cmd);
+  if (!tmp91.ok) {
+    string err = tmp91.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result res = *(os__Result *)tmp88.data;
+  os__Result res = *(os__Result *)tmp91.data;
   ;
 
   println(res.output);
@@ -15616,9 +15626,9 @@ MsvcStringFlags array_CFlag_msvc_string_flags(array_CFlag cflags) {
   array_string other_flags =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-  array_CFlag tmp93 = cflags;
-  for (int tmp94 = 0; tmp94 < tmp93.len; tmp94++) {
-    CFlag flag = ((CFlag *)tmp93.data)[tmp94];
+  array_CFlag tmp96 = cflags;
+  for (int tmp97 = 0; tmp97 < tmp96.len; tmp97++) {
+    CFlag flag = ((CFlag *)tmp96.data)[tmp97];
 
     if (string_eq(flag.name, tos2((byte *)"-l"))) {
 
@@ -15631,52 +15641,52 @@ MsvcStringFlags array_CFlag_msvc_string_flags(array_CFlag cflags) {
       string lib_lib = string_add(flag.value, tos2((byte *)".lib"));
 
       _PUSH(&real_libs, (/*typ = array_string   tmp_typ=string*/ lib_lib),
-            tmp96, string);
+            tmp99, string);
 
     } else if (string_eq(flag.name, tos2((byte *)"-I"))) {
 
       _PUSH(
           &inc_paths,
           (/*typ = array_string   tmp_typ=string*/ CFlag_format(&/* ? */ flag)),
-          tmp97, string);
+          tmp100, string);
 
     } else if (string_eq(flag.name, tos2((byte *)"-L"))) {
 
       _PUSH(&lib_paths, (/*typ = array_string   tmp_typ=string*/ flag.value),
-            tmp98, string);
+            tmp101, string);
 
       _PUSH(
           &lib_paths,
           (/*typ = array_string   tmp_typ=string*/ string_add(
               string_add(flag.value, os__PathSeparator), tos2((byte *)"msvc"))),
-          tmp99, string);
+          tmp102, string);
 
     } else if (string_ends_with(flag.value, tos2((byte *)".o"))) {
 
       _PUSH(&other_flags,
             (/*typ = array_string   tmp_typ=string*/ _STR(
                 "\"%.*sbj\"", flag.value.len, flag.value.str)),
-            tmp100, string);
+            tmp103, string);
 
     } else {
 
       _PUSH(&other_flags, (/*typ = array_string   tmp_typ=string*/ flag.value),
-            tmp101, string);
+            tmp104, string);
     };
   };
 
   array_string lpaths =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-  array_string tmp103 = lib_paths;
-  for (int tmp104 = 0; tmp104 < tmp103.len; tmp104++) {
-    string l = ((string *)tmp103.data)[tmp104];
+  array_string tmp106 = lib_paths;
+  for (int tmp107 = 0; tmp107 < tmp106.len; tmp107++) {
+    string l = ((string *)tmp106.data)[tmp107];
 
     _PUSH(&lpaths,
           (/*typ = array_string   tmp_typ=string*/ string_add(
               string_add(tos2((byte *)"/LIBPATH:\""), os__realpath(l)),
               tos2((byte *)"\""))),
-          tmp105, string);
+          tmp108, string);
   };
 
   return (MsvcStringFlags){real_libs, inc_paths, lpaths, other_flags};
