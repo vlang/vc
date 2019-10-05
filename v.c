@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "72ae128"
+#define V_COMMIT_HASH "9a0a8e8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a62dec2"
+#define V_COMMIT_HASH "72ae128"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -37,9 +37,18 @@
 
 #define EMPTY_STRUCT_DECLARATION
 #define EMPTY_STRUCT_INITIALIZATION 0
+// Due to a tcc bug, the length of an array needs to be specified, but GCC
+// crashes if it is...
+#define EMPTY_ARRAY_OF_ELEMS(x, n) (x[])
+#define TCCSKIP(x) x
+
 #ifdef __TINYC__
 #undef EMPTY_STRUCT_INITIALIZATION
 #define EMPTY_STRUCT_INITIALIZATION
+#undef EMPTY_ARRAY_OF_ELEMS
+#define EMPTY_ARRAY_OF_ELEMS(x, n) (x[n])
+#undef TCCSKIP
+#define TCCSKIP(x)
 #endif
 
 #define OPTION_CAST(x) (x)
@@ -2756,7 +2765,9 @@ bool byte_is_capital(byte c) { return c >= 'A' && c <= 'Z'; }
 array_byte array_byte_clone(array_byte b) {
 
   array_byte res = array_repeat(
-      new_array_from_c_array(1, 1, sizeof(byte), (byte[]){((byte)(0))}), b.len);
+      new_array_from_c_array(1, 1, sizeof(byte),
+                             EMPTY_ARRAY_OF_ELEMS(byte, 1){((byte)(0))}),
+      b.len);
 
   for (int i = 0; i < b.len; i++) {
 
@@ -2936,10 +2947,10 @@ int preorder_keys(mapnode *node, array_string *keys, int key_i) {
 }
 array_string map_keys(map *m) {
 
-  array_string keys =
-      array_repeat(new_array_from_c_array(1, 1, sizeof(string),
-                                          (string[]){tos2((byte *)"")}),
-                   m->size);
+  array_string keys = array_repeat(
+      new_array_from_c_array(1, 1, sizeof(string),
+                             EMPTY_ARRAY_OF_ELEMS(string, 1){tos2((byte *)"")}),
+      m->size);
 
   if (isnil(m->root)) {
 
@@ -3150,7 +3161,8 @@ string string_replace(string s, string rep, string with) {
     return s;
   };
 
-  array_int idxs = new_array_from_c_array(0, 0, sizeof(int), (int[]){0});
+  array_int idxs = new_array_from_c_array(
+      0, 0, sizeof(int), EMPTY_ARRAY_OF_ELEMS(int, 0){TCCSKIP(0)});
 
   string rem = s;
 
@@ -3299,8 +3311,8 @@ string string_add(string s, string a) {
 }
 array_string string_split(string s, string delim) {
 
-  array_string res =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string res = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   if (delim.len == 0) {
 
@@ -3364,8 +3376,8 @@ array_string string_split(string s, string delim) {
 }
 array_string string_split_single(string s, byte delim) {
 
-  array_string res =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string res = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   if (((int)(delim)) == 0) {
 
@@ -3409,8 +3421,8 @@ array_string string_split_single(string s, byte delim) {
 }
 array_string string_split_into_lines(string s) {
 
-  array_string res =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string res = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   if (s.len == 0) {
 
@@ -3514,8 +3526,10 @@ int string_index_kmp(string s, string p) {
     return -1;
   };
 
-  array_int prefix = array_repeat(
-      new_array_from_c_array(1, 1, sizeof(int), (int[]){0}), p.len);
+  array_int prefix =
+      array_repeat(new_array_from_c_array(1, 1, sizeof(int),
+                                          EMPTY_ARRAY_OF_ELEMS(int, 1){0}),
+                   p.len);
 
   int j = 0;
 
@@ -3736,8 +3750,8 @@ string string_title(string s) {
 
   array_string words = string_split(s, tos2((byte *)" "));
 
-  array_string tit =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string tit = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   array_string tmp83 = words;
   for (int tmp84 = 0; tmp84 < tmp83.len; tmp84++) {
@@ -3802,10 +3816,10 @@ bool array_int_contains(array_int ar, int val) {
 }
 bool is_space(byte c) {
 
-  return _IN(
-      byte, (c),
-      new_array_from_c_array(6, 6, sizeof(byte),
-                             (byte[]){' ', '\n', '\t', '\v', '\f', '\r'}));
+  return _IN(byte, (c),
+             new_array_from_c_array(6, 6, sizeof(byte),
+                                    EMPTY_ARRAY_OF_ELEMS(byte, 6){
+                                        ' ', '\n', '\t', '\v', '\f', '\r'}));
 }
 bool byte_is_space(byte c) { return is_space(c); }
 string string_trim_space(string s) {
@@ -4322,11 +4336,14 @@ array_byte string_bytes(string s) {
 
   if (s.len == 0) {
 
-    return new_array_from_c_array(0, 0, sizeof(byte), (byte[]){0});
+    return new_array_from_c_array(0, 0, sizeof(byte),
+                                  EMPTY_ARRAY_OF_ELEMS(byte, 0){TCCSKIP(0)});
   };
 
   array_byte buf = array_repeat(
-      new_array_from_c_array(1, 1, sizeof(byte), (byte[]){((byte)(0))}), s.len);
+      new_array_from_c_array(1, 1, sizeof(byte),
+                             EMPTY_ARRAY_OF_ELEMS(byte, 1){((byte)(0))}),
+      s.len);
 
   memcpy(buf.data, (char *)s.str, s.len);
 
@@ -4662,8 +4679,10 @@ void strings__Builder_cut(strings__Builder *b, int n) { b->len -= n; }
 void strings__Builder_free(strings__Builder *b) { v_free(b->buf.data); }
 int strings__levenshtein_distance(string a, string b) {
 
-  array_int f = array_repeat(
-      new_array_from_c_array(1, 1, sizeof(int), (int[]){0}), b.len + 1);
+  array_int f =
+      array_repeat(new_array_from_c_array(1, 1, sizeof(int),
+                                          EMPTY_ARRAY_OF_ELEMS(int, 1){0}),
+                   b.len + 1);
 
   string tmp2 = a;
   array_byte bytes_tmp2 = string_bytes(tmp2);
@@ -4777,8 +4796,10 @@ string strings__repeat(byte c, int n) {
     return tos2((byte *)"");
   };
 
-  array_byte arr = array_repeat(
-      new_array_from_c_array(1, 1, sizeof(byte), (byte[]){c}), n + 1);
+  array_byte arr =
+      array_repeat(new_array_from_c_array(1, 1, sizeof(byte),
+                                          EMPTY_ARRAY_OF_ELEMS(byte, 1){c}),
+                   n + 1);
 
   array_set(&/*q*/ arr, n, &(byte[]){'\0'});
 
@@ -4816,7 +4837,8 @@ array_int math__digits(int _n, int base) {
     n = -n;
   };
 
-  array_int res = new_array_from_c_array(0, 0, sizeof(int), (int[]){0});
+  array_int res = new_array_from_c_array(
+      0, 0, sizeof(int), EMPTY_ARRAY_OF_ELEMS(int, 0){TCCSKIP(0)});
 
   while (n != 0) {
 
@@ -4994,8 +5016,8 @@ FILE *os__vfopen(string path, string mode) {
 }
 array_string os__read_lines(string path) {
 
-  array_string res =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string res = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   int buf_len = 1024;
 
@@ -5057,8 +5079,8 @@ array_ustring os__read_ulines(string path) {
 
   array_string lines = os__read_lines(path);
 
-  array_ustring ulines =
-      new_array_from_c_array(0, 0, sizeof(ustring), (ustring[]){0});
+  array_ustring ulines = new_array_from_c_array(
+      0, 0, sizeof(ustring), EMPTY_ARRAY_OF_ELEMS(ustring, 0){TCCSKIP(0)});
 
   array_string tmp18 = lines;
   for (int tmp19 = 0; tmp19 < tmp18.len; tmp19++) {
@@ -5477,8 +5499,8 @@ array_string os__get_lines() {
 
   string line = tos2((byte *)"");
 
-  array_string inputstr =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string inputstr = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   while (1) {
 
@@ -5727,8 +5749,8 @@ string os__executable() {
 
   byte *result = v_malloc(os__MAX_PATH);
 
-  array_int mib =
-      new_array_from_c_array(4, 4, sizeof(int), (int[]){1, 14, 12, -1});
+  array_int mib = new_array_from_c_array(
+      4, 4, sizeof(int), EMPTY_ARRAY_OF_ELEMS(int, 4){1, 14, 12, -1});
 
   int size = os__MAX_PATH;
 
@@ -5881,13 +5903,14 @@ array_string os__walk_ext(string path, string ext) {
 
   if (!os__is_dir(path)) {
 
-    return new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+    return new_array_from_c_array(0, 0, sizeof(string),
+                                  EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   };
 
   array_string files = os__ls(path);
 
-  array_string res =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string res = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   array_string tmp100 = files;
   for (int i = 0; i < tmp100.len; i++) {
@@ -5956,8 +5979,8 @@ void os__flush_stdout() { fflush(stdout); }
 void os__print_backtrace() {}
 array_string os__init_os_args(int argc, byteptr *argv) {
 
-  array_string args =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string args = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   for (int i = 0; i < argc; i++) {
 
@@ -5982,8 +6005,8 @@ string os__get_error_msg(int code) {
 }
 array_string os__ls(string path) {
 
-  array_string res =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string res = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   void *dir = opendir((char *)path.str);
 
@@ -6733,7 +6756,8 @@ string time__Time_relative(time__Time t) {
 int time__day_of_week(int y, int m, int d) {
 
   array_int t = new_array_from_c_array(
-      12, 12, sizeof(int), (int[]){0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4});
+      12, 12, sizeof(int),
+      EMPTY_ARRAY_OF_ELEMS(int, 12){0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4});
 
   int sy = y;
 
@@ -7115,10 +7139,10 @@ void V_cc(V *v) {
   V_log(&/* ? */ *v, _STR("cc() isprod=%d outname=%.*s", v->pref->is_prod,
                           v->out_name.len, v->out_name.str));
 
-  array_string a = new_array_from_c_array(3, 3, sizeof(string),
-                                          (string[]){v->pref->cflags,
-                                                     tos2((byte *)"-std=gnu11"),
-                                                     tos2((byte *)"-w")});
+  array_string a = new_array_from_c_array(
+      3, 3, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 3){
+          v->pref->cflags, tos2((byte *)"-std=gnu11"), tos2((byte *)"-w")});
 
   if (v->pref->is_so) {
 
@@ -7673,7 +7697,8 @@ string CFlag_str(CFlag *c) {
 }
 array_CFlag V_get_os_cflags(V *v) {
 
-  array_CFlag flags = new_array_from_c_array(0, 0, sizeof(CFlag), (CFlag[]){0});
+  array_CFlag flags = new_array_from_c_array(
+      0, 0, sizeof(CFlag), EMPTY_ARRAY_OF_ELEMS(CFlag, 0){TCCSKIP(0)});
 
   array_CFlag tmp2 = v->table->cflags;
   for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
@@ -7696,7 +7721,8 @@ array_CFlag V_get_os_cflags(V *v) {
 }
 array_CFlag V_get_rest_of_module_cflags(V *v, CFlag *c) {
 
-  array_CFlag flags = new_array_from_c_array(0, 0, sizeof(CFlag), (CFlag[]){0});
+  array_CFlag flags = new_array_from_c_array(
+      0, 0, sizeof(CFlag), EMPTY_ARRAY_OF_ELEMS(CFlag, 0){TCCSKIP(0)});
 
   array_CFlag cflags = V_get_os_cflags(&/* ? */ *v);
 
@@ -7758,7 +7784,7 @@ void Table_parse_cflag(Table *table, string cflag, string mod) {
 
   array_string allowed_flags =
       new_array_from_c_array(5, 5, sizeof(string),
-                             (string[]){
+                             EMPTY_ARRAY_OF_ELEMS(string, 5){
                                  tos2((byte *)"framework"),
                                  tos2((byte *)"library"),
                                  tos2((byte *)"I"),
@@ -7814,10 +7840,10 @@ void Table_parse_cflag(Table *table, string cflag, string mod) {
       };
     };
 
-    array_int tmp25 =
-        new_array_from_c_array(2, 2, sizeof(int),
-                               (int[]){string_index(flag, tos2((byte *)" ")),
-                                       string_index(flag, tos2((byte *)","))});
+    array_int tmp25 = new_array_from_c_array(
+        2, 2, sizeof(int),
+        EMPTY_ARRAY_OF_ELEMS(int, 2){string_index(flag, tos2((byte *)" ")),
+                                     string_index(flag, tos2((byte *)","))});
     for (int tmp26 = 0; tmp26 < tmp25.len; tmp26++) {
       int i = ((int *)tmp25.data)[tmp26];
 
@@ -7885,8 +7911,8 @@ string array_CFlag_c_options_before_target(array_CFlag cflags) {
 #endif
   ;
 
-  array_string args =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string args = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   array_CFlag tmp39 = cflags;
   for (int tmp40 = 0; tmp40 < tmp39.len; tmp40++) {
@@ -7912,8 +7938,8 @@ string array_CFlag_c_options_after_target(array_CFlag cflags) {
 #endif
   ;
 
-  array_string args =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string args = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   array_CFlag tmp43 = cflags;
   for (int tmp44 = 0; tmp44 < tmp43.len; tmp44++) {
@@ -7932,8 +7958,8 @@ string array_CFlag_c_options_after_target(array_CFlag cflags) {
 }
 string array_CFlag_c_options_without_object_files(array_CFlag cflags) {
 
-  array_string args =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string args = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   array_CFlag tmp47 = cflags;
   for (int tmp48 = 0; tmp48 < tmp47.len; tmp48++) {
@@ -7954,8 +7980,8 @@ string array_CFlag_c_options_without_object_files(array_CFlag cflags) {
 }
 string array_CFlag_c_options_only_object_files(array_CFlag cflags) {
 
-  array_string args =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string args = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   array_CFlag tmp51 = cflags;
   for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
@@ -8232,15 +8258,15 @@ void CGen_register_thread_fn(CGen *g, string wrapper_name, string wrapper_text,
 }
 string V_prof_counters(V *v) {
 
-  array_string res =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string res = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   return array_string_join(res, tos2((byte *)";\n"));
 }
 string Parser_print_prof_counters(Parser *p) {
 
-  array_string res =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string res = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   return array_string_join(res, tos2((byte *)";\n"));
 }
@@ -8413,15 +8439,17 @@ string main__platform_postfix_to_ifdefguard(string name) {
 }
 string V_type_definitions(V *v) {
 
-  array_Type types = new_array_from_c_array(0, 0, sizeof(Type), (Type[]){0});
+  array_Type types = new_array_from_c_array(
+      0, 0, sizeof(Type), EMPTY_ARRAY_OF_ELEMS(Type, 0){TCCSKIP(0)});
 
-  array_Type builtin_types =
-      new_array_from_c_array(0, 0, sizeof(Type), (Type[]){0});
+  array_Type builtin_types = new_array_from_c_array(
+      0, 0, sizeof(Type), EMPTY_ARRAY_OF_ELEMS(Type, 0){TCCSKIP(0)});
 
-  array_string builtins = new_array_from_c_array(
-      4, 4, sizeof(string),
-      (string[]){tos2((byte *)"string"), tos2((byte *)"array"),
-                 tos2((byte *)"map"), tos2((byte *)"Option")});
+  array_string builtins =
+      new_array_from_c_array(4, 4, sizeof(string),
+                             EMPTY_ARRAY_OF_ELEMS(string, 4){
+                                 tos2((byte *)"string"), tos2((byte *)"array"),
+                                 tos2((byte *)"map"), tos2((byte *)"Option")});
 
   array_string tmp41 = builtins;
   for (int tmp42 = 0; tmp42 < tmp41.len; tmp42++) {
@@ -8463,8 +8491,8 @@ array_Type main__sort_structs(array_Type types) {
 
   DepGraph *dep_graph = main__new_dep_graph();
 
-  array_string type_names =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string type_names = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   array_Type tmp53 = types;
   for (int tmp54 = 0; tmp54 < tmp53.len; tmp54++) {
@@ -8478,8 +8506,8 @@ array_Type main__sort_structs(array_Type types) {
   for (int tmp57 = 0; tmp57 < tmp56.len; tmp57++) {
     Type t = ((Type *)tmp56.data)[tmp57];
 
-    array_string field_deps =
-        new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+    array_string field_deps = new_array_from_c_array(
+        0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
     array_Var tmp59 = t.fields;
     for (int tmp60 = 0; tmp60 < tmp59.len; tmp60++) {
@@ -8508,8 +8536,8 @@ array_Type main__sort_structs(array_Type types) {
                      "@joe-conigliaro"));
   };
 
-  array_Type types_sorted =
-      new_array_from_c_array(0, 0, sizeof(Type), (Type[]){0});
+  array_Type types_sorted = new_array_from_c_array(
+      0, 0, sizeof(Type), EMPTY_ARRAY_OF_ELEMS(Type, 0){TCCSKIP(0)});
 
   array_DepGraphNode tmp64 = dep_graph_sorted->nodes;
   for (int tmp65 = 0; tmp65 < tmp64.len; tmp65++) {
@@ -8643,8 +8671,8 @@ void Scanner_error_with_col(Scanner *s, string msg, int col) {
         continue;
       };
 
-      array_string pointerline =
-          new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+      array_string pointerline = new_array_from_c_array(
+          0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
       string tmp22 = line;
       array_byte bytes_tmp22 = string_bytes(tmp22);
@@ -8779,7 +8807,8 @@ ScannerPos Scanner_get_scanner_pos_of_token(Scanner *s, Tok *t) {
   Scanner_goto_scanner_position(
       s, (ScannerPos){.pos = 0, .line_nr = 0, .last_nl_pos = 0});
 
-  s->file_lines = new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  s->file_lines = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   int prevlinepos = 0;
 
@@ -9225,28 +9254,29 @@ void Parser_gen_array_str(Parser *p, Type typ) {
                          .typ = tos2((byte *)"string"),
                          .args = new_array_from_c_array(
                              1, 1, sizeof(Var),
-                             (Var[]){(Var){.typ = typ.name,
-                                           .is_arg = 1,
-                                           .name = tos((byte *)"", 0),
-                                           .idx = 0,
-                                           .is_const = 0,
-                                           .args = new_array(0, 1, sizeof(Var)),
-                                           .attr = tos((byte *)"", 0),
-                                           .is_mut = 0,
-                                           .is_alloc = 0,
-                                           .is_returned = 0,
-                                           .ptr = 0,
-                                           .ref = 0,
-                                           .parent_fn = tos((byte *)"", 0),
-                                           .mod = tos((byte *)"", 0),
-                                           .is_global = 0,
-                                           .is_used = 0,
-                                           .is_changed = 0,
-                                           .scope_level = 0,
-                                           .is_c = 0,
-                                           .is_moved = 0,
-                                           .line_nr = 0,
-                                           .token_idx = 0}}),
+                             EMPTY_ARRAY_OF_ELEMS(Var, 1){
+                                 (Var){.typ = typ.name,
+                                       .is_arg = 1,
+                                       .name = tos((byte *)"", 0),
+                                       .idx = 0,
+                                       .is_const = 0,
+                                       .args = new_array(0, 1, sizeof(Var)),
+                                       .attr = tos((byte *)"", 0),
+                                       .is_mut = 0,
+                                       .is_alloc = 0,
+                                       .is_returned = 0,
+                                       .ptr = 0,
+                                       .ref = 0,
+                                       .parent_fn = tos((byte *)"", 0),
+                                       .mod = tos((byte *)"", 0),
+                                       .is_global = 0,
+                                       .is_used = 0,
+                                       .is_changed = 0,
+                                       .scope_level = 0,
+                                       .is_c = 0,
+                                       .is_moved = 0,
+                                       .line_nr = 0,
+                                       .token_idx = 0}}),
                          .is_method = 1,
                          .is_public = 1,
                          .receiver_typ = typ.name,
@@ -9295,28 +9325,29 @@ void Parser_gen_struct_str(Parser *p, Type typ) {
                          .typ = tos2((byte *)"string"),
                          .args = new_array_from_c_array(
                              1, 1, sizeof(Var),
-                             (Var[]){(Var){.typ = typ.name,
-                                           .is_arg = 1,
-                                           .name = tos((byte *)"", 0),
-                                           .idx = 0,
-                                           .is_const = 0,
-                                           .args = new_array(0, 1, sizeof(Var)),
-                                           .attr = tos((byte *)"", 0),
-                                           .is_mut = 0,
-                                           .is_alloc = 0,
-                                           .is_returned = 0,
-                                           .ptr = 0,
-                                           .ref = 0,
-                                           .parent_fn = tos((byte *)"", 0),
-                                           .mod = tos((byte *)"", 0),
-                                           .is_global = 0,
-                                           .is_used = 0,
-                                           .is_changed = 0,
-                                           .scope_level = 0,
-                                           .is_c = 0,
-                                           .is_moved = 0,
-                                           .line_nr = 0,
-                                           .token_idx = 0}}),
+                             EMPTY_ARRAY_OF_ELEMS(Var, 1){
+                                 (Var){.typ = typ.name,
+                                       .is_arg = 1,
+                                       .name = tos((byte *)"", 0),
+                                       .idx = 0,
+                                       .is_const = 0,
+                                       .args = new_array(0, 1, sizeof(Var)),
+                                       .attr = tos((byte *)"", 0),
+                                       .is_mut = 0,
+                                       .is_alloc = 0,
+                                       .is_returned = 0,
+                                       .ptr = 0,
+                                       .ref = 0,
+                                       .parent_fn = tos((byte *)"", 0),
+                                       .mod = tos((byte *)"", 0),
+                                       .is_global = 0,
+                                       .is_used = 0,
+                                       .is_changed = 0,
+                                       .scope_level = 0,
+                                       .is_c = 0,
+                                       .is_moved = 0,
+                                       .line_nr = 0,
+                                       .token_idx = 0}}),
                          .is_method = 1,
                          .is_public = 1,
                          .receiver_typ = typ.name,
@@ -9715,7 +9746,8 @@ void Parser_clear_vars(Parser *p) {
       v_array_free(p->local_vars);
     };
 
-    p->local_vars = new_array_from_c_array(0, 0, sizeof(Var), (Var[]){0});
+    p->local_vars = new_array_from_c_array(
+        0, 0, sizeof(Var), EMPTY_ARRAY_OF_ELEMS(Var, 0){TCCSKIP(0)});
   };
 }
 bool Parser_is_sig(Parser *p) {
@@ -10688,7 +10720,8 @@ void Parser_fn_args(Parser *p, Fn *f) {
   while (p->tok != main__Token_rpar) {
 
     array_string names = new_array_from_c_array(
-        1, 1, sizeof(string), (string[]){Parser_check_name(p)});
+        1, 1, sizeof(string),
+        EMPTY_ARRAY_OF_ELEMS(string, 1){Parser_check_name(p)});
 
     while (p->tok == main__Token_comma) {
 
@@ -10729,7 +10762,9 @@ void Parser_fn_args(Parser *p, Fn *f) {
       string vargs_struct = _STR("_V_FnVargs_%.*s", f->name.len, f->name.str);
 
       Parser_fn_register_vargs_stuct(
-          p, f, t, new_array_from_c_array(0, 0, sizeof(string), (string[]){0}));
+          p, f, t,
+          new_array_from_c_array(0, 0, sizeof(string),
+                                 EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)}));
 
       _PUSH(&p->cgen->typedefs,
             (/*typ = array_string   tmp_typ=string*/ _STR(
@@ -11289,8 +11324,8 @@ void Parser_fn_gen_caller_vargs(Parser *p, Fn *f) {
 
   string varg_def_type = string_right(last_arg.typ, 3);
 
-  array_string values =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string values = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   while (p->tok != main__Token_rpar) {
 
@@ -12019,9 +12054,9 @@ void Parser_gen_array_init(Parser *p, string typ, bool no_alloc, int new_arr_ph,
     new_arr = string_add(new_arr, tos2((byte *)"_no_alloc"));
   };
 
-  if (nr_elems == 0 && string_ne(p->pref->ccompiler, tos2((byte *)"tcc"))) {
+  if (nr_elems == 0) {
 
-    Parser_gen(p, tos2((byte *)" 0 })"));
+    Parser_gen(p, tos2((byte *)" TCCSKIP(0) })"));
 
   } else {
 
@@ -12030,14 +12065,11 @@ void Parser_gen_array_init(Parser *p, string typ, bool no_alloc, int new_arr_ph,
 
   if (!Parser_first_pass(&/* ? */ *p)) {
 
-    string cast = (string_eq(p->pref->ccompiler, tos2((byte *)"tcc")))
-                      ? (_STR("(%.*s[%d])", typ.len, typ.str, nr_elems))
-                      : (_STR("(%.*s[])", typ.len, typ.str));
-
-    CGen_set_placeholder(p->cgen, new_arr_ph,
-                         _STR("%.*s(%d, %d, sizeof(%.*s), %.*s { ", new_arr.len,
-                              new_arr.str, nr_elems, nr_elems, typ.len, typ.str,
-                              cast.len, cast.str));
+    CGen_set_placeholder(
+        p->cgen, new_arr_ph,
+        _STR("%.*s(%d, %d, sizeof(%.*s), EMPTY_ARRAY_OF_ELEMS( %.*s, %d ) { ",
+             new_arr.len, new_arr.str, nr_elems, nr_elems, typ.len, typ.str,
+             typ.len, typ.str, nr_elems));
   };
 }
 void Parser_gen_array_set(Parser *p, string typ, bool is_ptr, bool is_map,
@@ -12640,7 +12672,8 @@ string Parser_encode_array(Parser *p, string array_type) {
 }
 array_string V_generate_hotcode_reloading_compiler_flags(V *v) {
 
-  array_string a = new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string a = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   if (v->pref->is_live || v->pref->is_so) {
 
@@ -13488,8 +13521,8 @@ void V_run_compiled_executable_and_exit(V v) {
 }
 array_string V_v_files_from_dir(V *v, string dir) {
 
-  array_string res =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string res = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   if (!os__file_exists(dir)) {
 
@@ -13670,8 +13703,8 @@ array_string V_get_user_files(V *v) {
 
   V_log(&/* ? */ *v, _STR("get_v_files(%.*s)", dir.len, dir.str));
 
-  array_string user_files =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string user_files = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   bool is_test_with_imports =
       string_ends_with(dir, tos2((byte *)"_test.v")) &&
@@ -13729,11 +13762,11 @@ array_string V_get_user_files(V *v) {
 }
 void V_parse_lib_imports(V *v) {
 
-  array_string done_fits =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string done_fits = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_string done_imports =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string done_imports = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   while (1) {
 
@@ -14142,8 +14175,8 @@ V *main__new_v(array_string args) {
 }
 array_string main__env_vflags_and_os_args() {
 
-  array_string args =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string args = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   string vflags = os__getenv(tos2((byte *)"VFLAGS"));
 
@@ -14821,7 +14854,8 @@ void V_generate_vh(V *v) {
 
   os__File_writeln(file, tos2((byte *)"// Functions"));
 
-  array_Fn fns = new_array_from_c_array(0, 0, sizeof(Fn), (Fn[]){0});
+  array_Fn fns = new_array_from_c_array(
+      0, 0, sizeof(Fn), EMPTY_ARRAY_OF_ELEMS(Fn, 0){TCCSKIP(0)});
 
   map_Fn tmp29 = v->table->fns;
   array_string keys_tmp29 = map_keys(&tmp29);
@@ -14894,8 +14928,8 @@ void DepGraph_from_import_tables(DepGraph *graph,
     FileImportTable fit = {0};
     map_get(tmp1, _, &fit);
 
-    array_string deps =
-        new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+    array_string deps = new_array_from_c_array(
+        0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
     map_string tmp3 = fit.imports;
     array_string keys_tmp3 = map_keys(&tmp3);
@@ -14912,8 +14946,8 @@ void DepGraph_from_import_tables(DepGraph *graph,
 }
 array_string DepGraph_imports(DepGraph *graph) {
 
-  array_string mods =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string mods = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   array_DepGraphNode tmp6 = graph->nodes;
   for (int tmp7 = 0; tmp7 < tmp6.len; tmp7++) {
@@ -15039,8 +15073,9 @@ Option_WindowsKit main__find_windows_kit_root() {
 
   Option_string tmp13 = main__find_windows_kit_internal(
       root_key, new_array_from_c_array(2, 2, sizeof(string),
-                                       (string[]){tos2((byte *)"KitsRoot10"),
-                                                  tos2((byte *)"KitsRoot81")}));
+                                       EMPTY_ARRAY_OF_ELEMS(string, 2){
+                                           tos2((byte *)"KitsRoot10"),
+                                           tos2((byte *)"KitsRoot81")}));
   if (!tmp13.ok) {
     string err = tmp13.error;
 
@@ -15233,9 +15268,10 @@ void V_cc_msvc(V *v) {
 
   array_string a = new_array_from_c_array(
       4, 4, sizeof(string),
-      (string[]){tos2((byte *)"-w"), tos2((byte *)"/we4013"),
-                 tos2((byte *)"/volatile:ms"),
-                 _STR("/Fo\"%.*s\"", out_name_obj.len, out_name_obj.str)});
+      EMPTY_ARRAY_OF_ELEMS(string, 4){
+          tos2((byte *)"-w"), tos2((byte *)"/we4013"),
+          tos2((byte *)"/volatile:ms"),
+          _STR("/Fo\"%.*s\"", out_name_obj.len, out_name_obj.str)});
 
   if (v->pref->is_prod) {
 
@@ -15278,8 +15314,8 @@ void V_cc_msvc(V *v) {
 
   v->out_name = os__realpath(v->out_name);
 
-  array_string alibs =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string alibs = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   if (v->pref->build_mode == main__BuildMode_build_module) {
 
@@ -15336,12 +15372,13 @@ void V_cc_msvc(V *v) {
 
   array_string real_libs = new_array_from_c_array(
       12, 12, sizeof(string),
-      (string[]){tos2((byte *)"kernel32.lib"), tos2((byte *)"user32.lib"),
-                 tos2((byte *)"gdi32.lib"), tos2((byte *)"winspool.lib"),
-                 tos2((byte *)"comdlg32.lib"), tos2((byte *)"advapi32.lib"),
-                 tos2((byte *)"shell32.lib"), tos2((byte *)"ole32.lib"),
-                 tos2((byte *)"oleaut32.lib"), tos2((byte *)"uuid.lib"),
-                 tos2((byte *)"odbc32.lib"), tos2((byte *)"odbccp32.lib")});
+      EMPTY_ARRAY_OF_ELEMS(string, 12){
+          tos2((byte *)"kernel32.lib"), tos2((byte *)"user32.lib"),
+          tos2((byte *)"gdi32.lib"), tos2((byte *)"winspool.lib"),
+          tos2((byte *)"comdlg32.lib"), tos2((byte *)"advapi32.lib"),
+          tos2((byte *)"shell32.lib"), tos2((byte *)"ole32.lib"),
+          tos2((byte *)"oleaut32.lib"), tos2((byte *)"uuid.lib"),
+          tos2((byte *)"odbc32.lib"), tos2((byte *)"odbccp32.lib")});
 
   MsvcStringFlags sflags =
       array_CFlag_msvc_string_flags(V_get_os_cflags(&/* ? */ *v));
@@ -15562,17 +15599,17 @@ void main__build_thirdparty_obj_file_with_msvc(string path,
 }
 MsvcStringFlags array_CFlag_msvc_string_flags(array_CFlag cflags) {
 
-  array_string real_libs =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string real_libs = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_string inc_paths =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string inc_paths = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_string lib_paths =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string lib_paths = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_string other_flags =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string other_flags = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   array_CFlag tmp96 = cflags;
   for (int tmp97 = 0; tmp97 < tmp96.len; tmp97++) {
@@ -15623,8 +15660,8 @@ MsvcStringFlags array_CFlag_msvc_string_flags(array_CFlag cflags) {
     };
   };
 
-  array_string lpaths =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string lpaths = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   array_string tmp106 = lib_paths;
   for (int tmp107 = 0; tmp107 < tmp106.len; tmp107++) {
@@ -15655,8 +15692,9 @@ Parser V_new_parser_from_file(V *v, string path) {
 
   array_string tmp4 = new_array_from_c_array(
       4, 4, sizeof(string),
-      (string[]){tos2((byte *)"_lin.v"), tos2((byte *)"_mac.v"),
-                 tos2((byte *)"_win.v"), tos2((byte *)"_nix.v")});
+      EMPTY_ARRAY_OF_ELEMS(string,
+                           4){tos2((byte *)"_lin.v"), tos2((byte *)"_mac.v"),
+                              tos2((byte *)"_win.v"), tos2((byte *)"_nix.v")});
   for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
     string path_ending = ((string *)tmp4.data)[tmp5];
 
@@ -15759,32 +15797,32 @@ Parser V_new_parser(V *v, Scanner *scanner, string id) {
       .pref = v->pref,
       .os = v->os,
       .vroot = v->vroot,
-      .local_vars =
-          array_repeat(new_array_from_c_array(
-                           1, 1, sizeof(Var),
-                           (Var[]){(Var){.typ = tos((byte *)"", 0),
-                                         .name = tos((byte *)"", 0),
-                                         .idx = 0,
-                                         .is_arg = 0,
-                                         .is_const = 0,
-                                         .args = new_array(0, 1, sizeof(Var)),
-                                         .attr = tos((byte *)"", 0),
-                                         .is_mut = 0,
-                                         .is_alloc = 0,
-                                         .is_returned = 0,
-                                         .ptr = 0,
-                                         .ref = 0,
-                                         .parent_fn = tos((byte *)"", 0),
-                                         .mod = tos((byte *)"", 0),
-                                         .is_global = 0,
-                                         .is_used = 0,
-                                         .is_changed = 0,
-                                         .scope_level = 0,
-                                         .is_c = 0,
-                                         .is_moved = 0,
-                                         .line_nr = 0,
-                                         .token_idx = 0}}),
-                       main__MaxLocalVars),
+      .local_vars = array_repeat(
+          new_array_from_c_array(1, 1, sizeof(Var),
+                                 EMPTY_ARRAY_OF_ELEMS(Var, 1){
+                                     (Var){.typ = tos((byte *)"", 0),
+                                           .name = tos((byte *)"", 0),
+                                           .idx = 0,
+                                           .is_arg = 0,
+                                           .is_const = 0,
+                                           .args = new_array(0, 1, sizeof(Var)),
+                                           .attr = tos((byte *)"", 0),
+                                           .is_mut = 0,
+                                           .is_alloc = 0,
+                                           .is_returned = 0,
+                                           .ptr = 0,
+                                           .ref = 0,
+                                           .parent_fn = tos((byte *)"", 0),
+                                           .mod = tos((byte *)"", 0),
+                                           .is_global = 0,
+                                           .is_used = 0,
+                                           .is_changed = 0,
+                                           .scope_level = 0,
+                                           .is_c = 0,
+                                           .is_moved = 0,
+                                           .line_nr = 0,
+                                           .token_idx = 0}}),
+          main__MaxLocalVars),
       .import_table = Table_get_file_import_table(&/* ? */ *v->table, id),
       .file_path = tos((byte *)"", 0),
       .file_name = tos((byte *)"", 0),
@@ -16645,8 +16683,8 @@ void Parser_struct_decl(Parser *p) {
 
   bool is_mut = 0;
 
-  array_string names =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string names = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   if (!is_ph && Parser_first_pass(&/* ? */ *p)) {
 
@@ -16843,8 +16881,8 @@ void Parser_enum_decl(Parser *p, string _enum_name) {
 
   int val = 0;
 
-  array_string fields =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string fields = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   while (p->tok == main__Token_name) {
 
@@ -16981,8 +17019,8 @@ string Parser_get_type(Parser *p) {
 
     Parser_check(p, main__Token_lpar);
 
-    array_string types =
-        new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+    array_string types = new_array_from_c_array(
+        0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
     while (1) {
 
@@ -17746,10 +17784,11 @@ void Parser_var_decl(Parser *p) {
     Parser_fspace(p);
   };
 
-  array_string names =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string names = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_int vtoken_idxs = new_array_from_c_array(0, 0, sizeof(int), (int[]){0});
+  array_int vtoken_idxs = new_array_from_c_array(
+      0, 0, sizeof(int), EMPTY_ARRAY_OF_ELEMS(int, 0){TCCSKIP(0)});
 
   _PUSH(&vtoken_idxs,
         (/*typ = array_int   tmp_typ=int*/ Parser_cur_tok_index(&/* ? */ *p)),
@@ -17786,8 +17825,8 @@ void Parser_var_decl(Parser *p) {
 
   string t = Parser_gen_var_decl(p, mr_var_name, is_static);
 
-  array_string types =
-      new_array_from_c_array(1, 1, sizeof(string), (string[]){t});
+  array_string types = new_array_from_c_array(
+      1, 1, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 1){t});
 
   if (names.len > 1) {
 
@@ -19717,8 +19756,8 @@ string Parser_assoc(Parser *p) {
 
   Parser_gen(p, _STR("(%.*s){", var.typ.len, var.typ.str));
 
-  array_string fields =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string fields = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   while (p->tok != main__Token_rcbr) {
 
@@ -20344,8 +20383,8 @@ string Parser_struct_init(Parser *p, string typ) {
 
   bool did_gen_something = 0;
 
-  array_string inited_fields =
-      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  array_string inited_fields = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   Token peek = Parser_peek(&/* ? */ *p);
 
@@ -21527,12 +21566,13 @@ void Parser_return_st(Parser *p) {
 
       string expr_type = Parser_bool_expression(p);
 
-      array_string types =
-          new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+      array_string types = new_array_from_c_array(
+          0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
       array_string mr_values = new_array_from_c_array(
           1, 1, sizeof(string),
-          (string[]){string_trim_space(string_right(p->cgen->cur_line, ph))});
+          EMPTY_ARRAY_OF_ELEMS(string, 1){
+              string_trim_space(string_right(p->cgen->cur_line, ph))});
 
       _PUSH(&types, (/*typ = array_string   tmp_typ=string*/ expr_type), tmp412,
             string);
@@ -22327,9 +22367,11 @@ string Parser_select_query(Parser *p, int fn_ph) {
 
   p->sql_i = 0;
 
-  p->sql_params = new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  p->sql_params = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  p->sql_types = new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  p->sql_types = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
   string q = tos2((byte *)"select ");
 
@@ -22354,7 +22396,8 @@ string Parser_select_query(Parser *p, int fn_ph) {
                  _STR("unknown type `%.*s`", table_name.len, table_name.str));
   };
 
-  array_Var fields = new_array_from_c_array(0, 0, sizeof(Var), (Var[]){0});
+  array_Var fields = new_array_from_c_array(
+      0, 0, sizeof(Var), EMPTY_ARRAY_OF_ELEMS(Var, 0){TCCSKIP(0)});
 
   array_Var tmp18 = typ.fields;
   for (int i = 0; i < tmp18.len; i++) {
@@ -22627,7 +22670,8 @@ void Parser_insert_query(Parser *p, int fn_ph) {
 
   Type typ = Table_find_type(&/* ? */ *p->table, var.typ);
 
-  array_Var fields = new_array_from_c_array(0, 0, sizeof(Var), (Var[]){0});
+  array_Var fields = new_array_from_c_array(
+      0, 0, sizeof(Var), EMPTY_ARRAY_OF_ELEMS(Var, 0){TCCSKIP(0)});
 
   array_Var tmp39 = typ.fields;
   for (int i = 0; i < tmp39.len; i++) {
@@ -22899,8 +22943,8 @@ array_string main__run_repl() {
 
         main__verror(err);
 
-        array_string tmp33 =
-            new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+        array_string tmp33 = new_array_from_c_array(
+            0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
         {
 
           os__rm(file);
@@ -22963,8 +23007,8 @@ array_string main__run_repl() {
 
         main__verror(err);
 
-        array_string tmp43 =
-            new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+        array_string tmp43 = new_array_from_c_array(
+            0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
         {
 
           os__rm(file);
@@ -25199,8 +25243,9 @@ void Table_register_generic_fn(Table *t, string fn_name) {
 
   _PUSH(&t->generic_fns,
         (/*typ = array_GenTable   tmp_typ=GenTable*/ (GenTable){
-            fn_name,
-            new_array_from_c_array(0, 0, sizeof(string), (string[]){0})}),
+            fn_name, new_array_from_c_array(
+                         0, 0, sizeof(string),
+                         EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)})}),
         tmp82, GenTable);
 }
 array_string Table_fn_gen_types(Table *t, string fn_name) {
@@ -25217,7 +25262,8 @@ array_string Table_fn_gen_types(Table *t, string fn_name) {
 
   main__verror(_STR("function %.*s not found", fn_name.len, fn_name.str));
 
-  return new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  return new_array_from_c_array(0, 0, sizeof(string),
+                                EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 }
 void Table_register_generic_fn_type(Table *t, string fn_name, string typ) {
 
@@ -25402,8 +25448,8 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
 
     array_string mod_parts = string_split(mod, tos2((byte *)"."));
 
-    array_string internal_mod_parts =
-        new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+    array_string internal_mod_parts = new_array_from_c_array(
+        0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
     array_string tmp104 = mod_parts;
     for (int tmp105 = 0; tmp105 < tmp104.len; tmp105++) {
@@ -25556,9 +25602,9 @@ string Table_find_misspelled_fn(Table *table, string name, FileImportTable *fit,
 
     if (!(_IN(string, (f.mod),
               new_array_from_c_array(3, 3, sizeof(string),
-                                     (string[]){tos2((byte *)""),
-                                                tos2((byte *)"main"),
-                                                tos2((byte *)"builtin")})))) {
+                                     EMPTY_ARRAY_OF_ELEMS(string, 3){
+                                         tos2((byte *)""), tos2((byte *)"main"),
+                                         tos2((byte *)"builtin")})))) {
 
       bool mod_imported = 0;
 
@@ -25651,10 +25697,10 @@ map_int main__build_keys() {
 }
 array_string main__build_token_str() {
 
-  array_string s =
-      array_repeat(new_array_from_c_array(1, 1, sizeof(string),
-                                          (string[]){tos2((byte *)"")}),
-                   main__NrTokens);
+  array_string s = array_repeat(
+      new_array_from_c_array(1, 1, sizeof(string),
+                             EMPTY_ARRAY_OF_ELEMS(string, 1){tos2((byte *)"")}),
+      main__NrTokens);
 
   array_set(&/*q*/ s, main__Token_keyword_beg, &(string[]){tos2((byte *)"")});
 
@@ -26005,11 +26051,13 @@ void init_consts() {
   os__ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
   os__DISABLE_NEWLINE_AUTO_RETURN = 0x0008;
   os__ENABLE_LVB_GRID_WORLDWIDE = 0x0010;
-  os__args = new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+  os__args = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   os__PathSeparator = tos2((byte *)"/");
   time__MonthDays = new_array_from_c_array(
       12, 12, sizeof(int),
-      (int[]){31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31});
+      EMPTY_ARRAY_OF_ELEMS(int, 12){31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30,
+                                    31});
   time__absoluteZeroYear = ((i64)(-292277022399));
   time__secondsPerHour = 60 * time__secondsPerMinute;
   time__secondsPerDay = 24 * time__secondsPerHour;
@@ -26019,7 +26067,7 @@ void init_consts() {
   time__daysPer4Years = 365 * 4 + 1;
   time__daysBefore = new_array_from_c_array(
       13, 13, sizeof(int),
-      (int[]){
+      EMPTY_ARRAY_OF_ELEMS(int, 13){
           0,
           31,
           31 + 28,
@@ -26053,18 +26101,23 @@ void init_consts() {
              "__linux__\n#include <sys/types.h>\n#include <sys/wait.h> // "
              "os__wait uses wait on nix\n#endif\n\n#define "
              "EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION "
-             "0\n#ifdef __TINYC__\n#undef EMPTY_STRUCT_INITIALIZATION\n#define "
-             "EMPTY_STRUCT_INITIALIZATION\n#endif\n\n#define OPTION_CAST(x) "
-             "(x)\n\n#ifdef _WIN32\n#define WINVER 0x0600\n#define "
-             "_WIN32_WINNT 0x0600\n#define WIN32_LEAN_AND_MEAN\n#define "
-             "_UNICODE\n#define UNICODE\n#include <windows.h>\n\n// must be "
-             "included after <windows.h>\n#ifndef __TINYC__\n#include "
-             "<shellapi.h>\n#endif\n\n#include <io.h> // _waccess\n#include "
-             "<fcntl.h> // _O_U8TEXT\n#include <direct.h> // "
-             "_wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n// On MSVC "
-             "these are the same (as long as /volatile:ms is passed)\n#define "
-             "_Atomic volatile\n\n// MSVC cannot parse some things "
-             "properly\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
+             "0\n// Due to a tcc bug, the length of an array needs to be "
+             "specified, but GCC crashes if it is...\n#define "
+             "EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#ifdef "
+             "__TINYC__\n#undef EMPTY_STRUCT_INITIALIZATION\n#define "
+             "EMPTY_STRUCT_INITIALIZATION\n#undef "
+             "EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) "
+             "(x[n])\n#undef TCCSKIP\n#define TCCSKIP(x)\n#endif\n\n#define "
+             "OPTION_CAST(x) (x)\n\n#ifdef _WIN32\n#define WINVER "
+             "0x0600\n#define _WIN32_WINNT 0x0600\n#define "
+             "WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define UNICODE\n#include "
+             "<windows.h>\n\n// must be included after <windows.h>\n#ifndef "
+             "__TINYC__\n#include <shellapi.h>\n#endif\n\n#include <io.h> // "
+             "_waccess\n#include <fcntl.h> // _O_U8TEXT\n#include <direct.h> "
+             "// _wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n// On "
+             "MSVC these are the same (as long as /volatile:ms is "
+             "passed)\n#define _Atomic volatile\n\n// MSVC cannot parse some "
+             "things properly\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
              "OPTION_CAST\n\n#define EMPTY_STRUCT_DECLARATION int "
              "____dummy_variable\n#define OPTION_CAST(x)\n#endif\n\nvoid "
              "pthread_mutex_lock(HANDLE *m) {\n	WaitForSingleObject(*m, "
@@ -26111,12 +26164,12 @@ void init_consts() {
   main__Version = tos2((byte *)"0.1.21");
   main__supported_platforms = new_array_from_c_array(
       11, 11, sizeof(string),
-      (string[]){tos2((byte *)"windows"), tos2((byte *)"mac"),
-                 tos2((byte *)"linux"), tos2((byte *)"freebsd"),
-                 tos2((byte *)"openbsd"), tos2((byte *)"netbsd"),
-                 tos2((byte *)"dragonfly"), tos2((byte *)"msvc"),
-                 tos2((byte *)"android"), tos2((byte *)"js"),
-                 tos2((byte *)"solaris")});
+      EMPTY_ARRAY_OF_ELEMS(string, 11){
+          tos2((byte *)"windows"), tos2((byte *)"mac"), tos2((byte *)"linux"),
+          tos2((byte *)"freebsd"), tos2((byte *)"openbsd"),
+          tos2((byte *)"netbsd"), tos2((byte *)"dragonfly"),
+          tos2((byte *)"msvc"), tos2((byte *)"android"), tos2((byte *)"js"),
+          tos2((byte *)"solaris")});
   main__v_modules_path = string_add(os__home_dir(), tos2((byte *)".vmodules"));
   main__HKEY_LOCAL_MACHINE = ((RegKey)(0x80000002));
   main__KEY_QUERY_VALUE = (0x0001);
@@ -26155,7 +26208,7 @@ void init_consts() {
       tos2((byte *)"for example: `(a && b) || c` instead of `a && b || c`"));
   main__CReserved = new_array_from_c_array(
       31, 31, sizeof(string),
-      (string[]){
+      EMPTY_ARRAY_OF_ELEMS(string, 31){
           tos2((byte *)"delete"),   tos2((byte *)"exit"),
           tos2((byte *)"unix"),     tos2((byte *)"error"),
           tos2((byte *)"malloc"),   tos2((byte *)"calloc"),
@@ -26175,24 +26228,25 @@ void init_consts() {
       });
   main__number_types = new_array_from_c_array(
       11, 11, sizeof(string),
-      (string[]){tos2((byte *)"number"), tos2((byte *)"int"),
-                 tos2((byte *)"i8"), tos2((byte *)"i16"), tos2((byte *)"u16"),
-                 tos2((byte *)"u32"), tos2((byte *)"byte"), tos2((byte *)"i64"),
-                 tos2((byte *)"u64"), tos2((byte *)"f32"),
-                 tos2((byte *)"f64")});
-  main__float_types = new_array_from_c_array(
-      2, 2, sizeof(string),
-      (string[]){tos2((byte *)"f32"), tos2((byte *)"f64")});
+      EMPTY_ARRAY_OF_ELEMS(string, 11){
+          tos2((byte *)"number"), tos2((byte *)"int"), tos2((byte *)"i8"),
+          tos2((byte *)"i16"), tos2((byte *)"u16"), tos2((byte *)"u32"),
+          tos2((byte *)"byte"), tos2((byte *)"i64"), tos2((byte *)"u64"),
+          tos2((byte *)"f32"), tos2((byte *)"f64")});
+  main__float_types =
+      new_array_from_c_array(2, 2, sizeof(string),
+                             EMPTY_ARRAY_OF_ELEMS(string, 2){
+                                 tos2((byte *)"f32"), tos2((byte *)"f64")});
   main__TokenStr = main__build_token_str();
   main__KEYWORDS = main__build_keys();
   main__AssignTokens = new_array_from_c_array(
       11, 11, sizeof(Token),
-      (Token[]){main__Token_assign, main__Token_plus_assign,
-                main__Token_minus_assign, main__Token_mult_assign,
-                main__Token_div_assign, main__Token_xor_assign,
-                main__Token_mod_assign, main__Token_or_assign,
-                main__Token_and_assign, main__Token_righ_shift_assign,
-                main__Token_left_shift_assign});
+      EMPTY_ARRAY_OF_ELEMS(Token, 11){
+          main__Token_assign, main__Token_plus_assign, main__Token_minus_assign,
+          main__Token_mult_assign, main__Token_div_assign,
+          main__Token_xor_assign, main__Token_mod_assign, main__Token_or_assign,
+          main__Token_and_assign, main__Token_righ_shift_assign,
+          main__Token_left_shift_assign});
 }
 
 string _STR(const char *fmt, ...) {
