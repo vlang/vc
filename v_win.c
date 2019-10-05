@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "24136ab"
+#define V_COMMIT_HASH "ed99fc2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "68bcf68"
+#define V_COMMIT_HASH "24136ab"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -4674,7 +4674,8 @@ int utf8_getchar() {
 }
 strings__Builder strings__new_builder(int initial_size) {
 
-  return (strings__Builder){.buf = new_array(0, 1, sizeof(byte)), .len = 0};
+  return (strings__Builder){.buf = _make(0, initial_size, sizeof(byte)),
+                            .len = 0};
 }
 void strings__Builder_write(strings__Builder *b, string s) {
 
