@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a62dec2"
+#define V_COMMIT_HASH "72ae128"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e148616"
+#define V_COMMIT_HASH "a62dec2"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -13538,11 +13538,6 @@ array_string V_v_files_from_dir(V *v, string dir) {
 
     if (string_ends_with(file, tos2((byte *)"_mac.v")) &&
         v->os != main__OS_mac) {
-
-      continue;
-    };
-
-    if (string_ends_with(file, tos2((byte *)"_js.v")) && v->os != main__OS_js) {
 
       continue;
     };
