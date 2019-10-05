@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "68bcf68"
+#define V_COMMIT_HASH "24136ab"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0525e6f"
+#define V_COMMIT_HASH "68bcf68"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -677,6 +677,7 @@ struct V {
   string out_name_c;
   array_string files;
   string dir;
+  string rdir;
   Table *table;
   CGen *cgen;
   Preferences *pref;
@@ -930,43 +931,6 @@ int strings__levenshtein_distance(string a, string b);
 f32 strings__levenshtein_distance_percentage(string a, string b);
 f32 strings__dice_coefficient(string s1, string s2);
 string strings__repeat(byte c, int n);
-f64 math__abs(f64 a);
-f64 math__acos(f64 a);
-f64 math__asin(f64 a);
-f64 math__atan(f64 a);
-f64 math__atan2(f64 a, f64 b);
-f64 math__cbrt(f64 a);
-int math__ceil(f64 a);
-f64 math__cos(f64 a);
-f64 math__cosh(f64 a);
-f64 math__degrees(f64 radians);
-f64 math__exp(f64 a);
-array_int math__digits(int _n, int base);
-f64 math__erf(f64 a);
-f64 math__erfc(f64 a);
-f64 math__exp2(f64 a);
-f64 math__floor(f64 a);
-f64 math__fmod(f64 a, f64 b);
-f64 math__gamma(f64 a);
-i64 math__gcd(i64 a_, i64 b_);
-f64 math__hypot(f64 a, f64 b);
-i64 math__lcm(i64 a, i64 b);
-f64 math__log(f64 a);
-f64 math__log2(f64 a);
-f64 math__log10(f64 a);
-f64 math__log_gamma(f64 a);
-f64 math__log_n(f64 a, f64 b);
-f64 math__max(f64 a, f64 b);
-f64 math__min(f64 a, f64 b);
-f64 math__pow(f64 a, f64 b);
-f64 math__radians(f64 degrees);
-f64 math__round(f64 f);
-f64 math__sin(f64 a);
-f64 math__sinh(f64 a);
-f64 math__sqrt(f64 a);
-f64 math__tan(f64 a);
-f64 math__tanh(f64 a);
-f64 math__trunc(f64 a);
 array_string os__parse_windows_cmd_line(byte *cmd);
 Option_string os__read_file(string path);
 int os__file_size(string path);
@@ -1026,6 +990,43 @@ string os__get_error_msg(int code);
 array_string os__ls(string path);
 bool os__dir_exists(string path);
 void os__mkdir(string path);
+f64 math__abs(f64 a);
+f64 math__acos(f64 a);
+f64 math__asin(f64 a);
+f64 math__atan(f64 a);
+f64 math__atan2(f64 a, f64 b);
+f64 math__cbrt(f64 a);
+int math__ceil(f64 a);
+f64 math__cos(f64 a);
+f64 math__cosh(f64 a);
+f64 math__degrees(f64 radians);
+f64 math__exp(f64 a);
+array_int math__digits(int _n, int base);
+f64 math__erf(f64 a);
+f64 math__erfc(f64 a);
+f64 math__exp2(f64 a);
+f64 math__floor(f64 a);
+f64 math__fmod(f64 a, f64 b);
+f64 math__gamma(f64 a);
+i64 math__gcd(i64 a_, i64 b_);
+f64 math__hypot(f64 a, f64 b);
+i64 math__lcm(i64 a, i64 b);
+f64 math__log(f64 a);
+f64 math__log2(f64 a);
+f64 math__log10(f64 a);
+f64 math__log_gamma(f64 a);
+f64 math__log_n(f64 a, f64 b);
+f64 math__max(f64 a, f64 b);
+f64 math__min(f64 a, f64 b);
+f64 math__pow(f64 a, f64 b);
+f64 math__radians(f64 degrees);
+f64 math__round(f64 f);
+f64 math__sin(f64 a);
+f64 math__sinh(f64 a);
+f64 math__sqrt(f64 a);
+f64 math__tan(f64 a);
+f64 math__tanh(f64 a);
+f64 math__trunc(f64 a);
 rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq);
 static inline u32 rand__Pcg32_next(rand__Pcg32 *rng);
 static inline u32 rand__Pcg32_bounded_next(rand__Pcg32 *rng, u32 bound);
@@ -1308,7 +1309,6 @@ void V_add_v_files_to_compile(V *v);
 array_string V_get_builtin_files(V *v);
 array_string V_get_user_files(V *v);
 void V_parse_lib_imports(V *v);
-void V_parse_file_imports(V *v, FileImportTable *fit);
 DepGraph *V_resolve_deps(V *v);
 string main__get_arg(string joined_args, string arg, string def);
 string main__get_all_after(string joined_args, string arg, string def);
@@ -1540,39 +1540,6 @@ int builtin__min_cap;
 int builtin__max_cap;
 array_int g_ustring_runes; // global
 #define builtin__CP_UTF8 65001
-#define math__E 2.71828182845904523536028747135266249775724709369995957496696763
-#define math__Pi                                                               \
-  3.14159265358979323846264338327950288419716939937510582097494459
-#define math__Phi                                                              \
-  1.61803398874989484820458683436563811772030917980576286213544862
-#define math__Tau                                                              \
-  6.28318530717958647692528676655900576839433879875021164194988918
-#define math__Sqrt2                                                            \
-  1.41421356237309504880168872420969807856967187537694807317667974
-#define math__SqrtE                                                            \
-  1.64872127070012814684865078781416357165377610071014801157507931
-#define math__SqrtPi                                                           \
-  1.77245385090551602729816748334114518279754945612238712821380779
-#define math__SqrtTau                                                          \
-  2.50662827463100050241576528481104525300698674060993831662992357
-#define math__SqrtPhi                                                          \
-  1.27201964951406896425242246173749149171560804184009624861664038
-#define math__Ln2                                                              \
-  0.693147180559945309417232121458176568075500134360255254120680009
-f32 math__Log2E;
-#define math__Ln10                                                             \
-  2.30258509299404568401799145468436420760110148862877297603332790
-f32 math__Log10E;
-#define math__MaxI8 127
-int math__MinI8;
-#define math__MaxI16 32767
-int math__MinI16;
-#define math__MaxI32 2147483647
-int math__MinI32;
-#define math__MaxU8 255
-#define math__MaxU16 65535
-#define math__MaxU32 4294967295
-#define math__MaxU64 18446744073709551615
 #define os__SUCCESS 0
 #define os__ERROR_INSUFFICIENT_BUFFER 130
 #define os__FILE_SHARE_READ 1
@@ -1644,6 +1611,39 @@ int os__ENABLE_LVB_GRID_WORLDWIDE;
 array_string os__args;
 #define os__MAX_PATH 4096
 string os__PathSeparator;
+#define math__E 2.71828182845904523536028747135266249775724709369995957496696763
+#define math__Pi                                                               \
+  3.14159265358979323846264338327950288419716939937510582097494459
+#define math__Phi                                                              \
+  1.61803398874989484820458683436563811772030917980576286213544862
+#define math__Tau                                                              \
+  6.28318530717958647692528676655900576839433879875021164194988918
+#define math__Sqrt2                                                            \
+  1.41421356237309504880168872420969807856967187537694807317667974
+#define math__SqrtE                                                            \
+  1.64872127070012814684865078781416357165377610071014801157507931
+#define math__SqrtPi                                                           \
+  1.77245385090551602729816748334114518279754945612238712821380779
+#define math__SqrtTau                                                          \
+  2.50662827463100050241576528481104525300698674060993831662992357
+#define math__SqrtPhi                                                          \
+  1.27201964951406896425242246173749149171560804184009624861664038
+#define math__Ln2                                                              \
+  0.693147180559945309417232121458176568075500134360255254120680009
+f32 math__Log2E;
+#define math__Ln10                                                             \
+  2.30258509299404568401799145468436420760110148862877297603332790
+f32 math__Log10E;
+#define math__MaxI8 127
+int math__MinI8;
+#define math__MaxI16 32767
+int math__MinI16;
+#define math__MaxI32 2147483647
+int math__MinI32;
+#define math__MaxU8 255
+#define math__MaxU16 65535
+#define math__MaxU32 4294967295
+#define math__MaxU64 18446744073709551615
 array_int time__MonthDays;
 i64 time__absoluteZeroYear;
 #define time__secondsPerMinute 60
@@ -4784,135 +4784,6 @@ string strings__repeat(byte c, int n) {
 
   return (tos((byte *)arr.data, n));
 }
-f64 math__abs(f64 a) {
-
-  if (f64_lt(a, 0)) {
-
-    return -a;
-  };
-
-  return a;
-}
-f64 math__acos(f64 a) { return acos(a); }
-f64 math__asin(f64 a) { return asin(a); }
-f64 math__atan(f64 a) { return atan(a); }
-f64 math__atan2(f64 a, f64 b) { return atan2(a, b); }
-f64 math__cbrt(f64 a) { return cbrt(a); }
-int math__ceil(f64 a) { return ceil(a); }
-f64 math__cos(f64 a) { return cos(a); }
-f64 math__cosh(f64 a) { return cosh(a); }
-f64 math__degrees(f64 radians) { return radians * (180.0 / math__Pi); }
-f64 math__exp(f64 a) { return exp(a); }
-array_int math__digits(int _n, int base) {
-
-  int n = _n;
-
-  int sign = 1;
-
-  if (n < 0) {
-
-    sign = -1;
-
-    n = -n;
-  };
-
-  array_int res = new_array_from_c_array(0, 0, sizeof(int), (int[]){0});
-
-  while (n != 0) {
-
-    _PUSH(&res, (/*typ = array_int   tmp_typ=int*/ (n % base) * sign), tmp4,
-          int);
-
-    n /= base;
-  };
-
-  return res;
-}
-f64 math__erf(f64 a) { return erf(a); }
-f64 math__erfc(f64 a) { return erfc(a); }
-f64 math__exp2(f64 a) { return exp2(a); }
-f64 math__floor(f64 a) { return floor(a); }
-f64 math__fmod(f64 a, f64 b) { return fmod(a, b); }
-f64 math__gamma(f64 a) { return tgamma(a); }
-i64 math__gcd(i64 a_, i64 b_) {
-
-  i64 a = a_;
-
-  i64 b = b_;
-
-  if (a < 0) {
-
-    a = -a;
-  };
-
-  if (b < 0) {
-
-    b = -b;
-  };
-
-  while (b != 0) {
-
-    a %= b;
-
-    if (a == 0) {
-
-      return b;
-    };
-
-    b %= a;
-  };
-
-  return a;
-}
-f64 math__hypot(f64 a, f64 b) { return hypot(a, b); }
-i64 math__lcm(i64 a, i64 b) {
-
-  if (a == 0) {
-
-    return a;
-  };
-
-  i64 res = a * (b / math__gcd(b, a));
-
-  if (res < 0) {
-
-    return -res;
-  };
-
-  return res;
-}
-f64 math__log(f64 a) { return log(a); }
-f64 math__log2(f64 a) { return log2(a); }
-f64 math__log10(f64 a) { return log10(a); }
-f64 math__log_gamma(f64 a) { return lgamma(a); }
-f64 math__log_n(f64 a, f64 b) { return log(a) / log(b); }
-f64 math__max(f64 a, f64 b) {
-
-  if (f64_gt(a, b)) {
-
-    return a;
-  };
-
-  return b;
-}
-f64 math__min(f64 a, f64 b) {
-
-  if (f64_lt(a, b)) {
-
-    return a;
-  };
-
-  return b;
-}
-f64 math__pow(f64 a, f64 b) { return pow(a, b); }
-f64 math__radians(f64 degrees) { return degrees * (math__Pi / 180.0); }
-f64 math__round(f64 f) { return round(f); }
-f64 math__sin(f64 a) { return sin(a); }
-f64 math__sinh(f64 a) { return sinh(a); }
-f64 math__sqrt(f64 a) { return sqrt(a); }
-f64 math__tan(f64 a) { return tan(a); }
-f64 math__tanh(f64 a) { return tanh(a); }
-f64 math__trunc(f64 a) { return trunc(a); }
 array_string os__parse_windows_cmd_line(byte *cmd) {
 
   string s = (tos2((byte *)cmd));
@@ -6037,6 +5908,135 @@ bool os__dir_exists(string path) {
   return res;
 }
 void os__mkdir(string path) { mkdir((char *)path.str, 511); }
+f64 math__abs(f64 a) {
+
+  if (f64_lt(a, 0)) {
+
+    return -a;
+  };
+
+  return a;
+}
+f64 math__acos(f64 a) { return acos(a); }
+f64 math__asin(f64 a) { return asin(a); }
+f64 math__atan(f64 a) { return atan(a); }
+f64 math__atan2(f64 a, f64 b) { return atan2(a, b); }
+f64 math__cbrt(f64 a) { return cbrt(a); }
+int math__ceil(f64 a) { return ceil(a); }
+f64 math__cos(f64 a) { return cos(a); }
+f64 math__cosh(f64 a) { return cosh(a); }
+f64 math__degrees(f64 radians) { return radians * (180.0 / math__Pi); }
+f64 math__exp(f64 a) { return exp(a); }
+array_int math__digits(int _n, int base) {
+
+  int n = _n;
+
+  int sign = 1;
+
+  if (n < 0) {
+
+    sign = -1;
+
+    n = -n;
+  };
+
+  array_int res = new_array_from_c_array(0, 0, sizeof(int), (int[]){0});
+
+  while (n != 0) {
+
+    _PUSH(&res, (/*typ = array_int   tmp_typ=int*/ (n % base) * sign), tmp4,
+          int);
+
+    n /= base;
+  };
+
+  return res;
+}
+f64 math__erf(f64 a) { return erf(a); }
+f64 math__erfc(f64 a) { return erfc(a); }
+f64 math__exp2(f64 a) { return exp2(a); }
+f64 math__floor(f64 a) { return floor(a); }
+f64 math__fmod(f64 a, f64 b) { return fmod(a, b); }
+f64 math__gamma(f64 a) { return tgamma(a); }
+i64 math__gcd(i64 a_, i64 b_) {
+
+  i64 a = a_;
+
+  i64 b = b_;
+
+  if (a < 0) {
+
+    a = -a;
+  };
+
+  if (b < 0) {
+
+    b = -b;
+  };
+
+  while (b != 0) {
+
+    a %= b;
+
+    if (a == 0) {
+
+      return b;
+    };
+
+    b %= a;
+  };
+
+  return a;
+}
+f64 math__hypot(f64 a, f64 b) { return hypot(a, b); }
+i64 math__lcm(i64 a, i64 b) {
+
+  if (a == 0) {
+
+    return a;
+  };
+
+  i64 res = a * (b / math__gcd(b, a));
+
+  if (res < 0) {
+
+    return -res;
+  };
+
+  return res;
+}
+f64 math__log(f64 a) { return log(a); }
+f64 math__log2(f64 a) { return log2(a); }
+f64 math__log10(f64 a) { return log10(a); }
+f64 math__log_gamma(f64 a) { return lgamma(a); }
+f64 math__log_n(f64 a, f64 b) { return log(a) / log(b); }
+f64 math__max(f64 a, f64 b) {
+
+  if (f64_gt(a, b)) {
+
+    return a;
+  };
+
+  return b;
+}
+f64 math__min(f64 a, f64 b) {
+
+  if (f64_lt(a, b)) {
+
+    return a;
+  };
+
+  return b;
+}
+f64 math__pow(f64 a, f64 b) { return pow(a, b); }
+f64 math__radians(f64 degrees) { return degrees * (math__Pi / 180.0); }
+f64 math__round(f64 f) { return round(f); }
+f64 math__sin(f64 a) { return sin(a); }
+f64 math__sinh(f64 a) { return sinh(a); }
+f64 math__sqrt(f64 a) { return sqrt(a); }
+f64 math__tan(f64 a) { return tan(a); }
+f64 math__tanh(f64 a) { return tanh(a); }
+f64 math__trunc(f64 a) { return trunc(a); }
 rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq) {
 
   rand__Pcg32 rng = (rand__Pcg32){.state = 0, .inc = 0};
@@ -7132,7 +7132,9 @@ void V_cc(V *v) {
 
   if (v->pref->build_mode == main__BuildMode_build_module) {
 
-    string out_dir = string_add(main__v_modules_path, v->dir);
+    string out_dir = _STR("%.*s%.*s%.*s", main__v_modules_path.len,
+                          main__v_modules_path.str, os__PathSeparator.len,
+                          os__PathSeparator.str, v->dir.len, v->dir.str);
 
     if (!os__dir_exists(out_dir)) {
 
@@ -13064,13 +13066,17 @@ void V_parse(V *v, string file, Pass pass) {
   for (int i = 0; i < tmp10.len; i++) {
     Parser p = ((Parser *)tmp10.data)[i];
 
-    if (string_eq(p.file_path, file)) {
+    if (string_eq(os__realpath(p.file_path), os__realpath(file))) {
 
       Parser_parse(&/* ? */ (*(Parser *)array__get(v->parsers, i)), pass);
 
       return;
     };
   };
+
+  Parser p = V_new_parser_from_file(v, file);
+
+  Parser_parse(&/* ? */ p, pass);
 }
 void V_compile(V *v) {
 
@@ -13101,9 +13107,9 @@ void V_compile(V *v) {
     println(array_string_str(v->files));
   };
 
-  array_string tmp14 = v->files;
-  for (int tmp15 = 0; tmp15 < tmp14.len; tmp15++) {
-    string file = ((string *)tmp14.data)[tmp15];
+  array_string tmp15 = v->files;
+  for (int tmp16 = 0; tmp16 < tmp15.len; tmp16++) {
+    string file = ((string *)tmp15.data)[tmp16];
 
     V_parse(v, file, main__Pass_decl);
   };
@@ -13201,9 +13207,9 @@ void V_compile(V *v) {
 
   int defs_pos = cgen->lines.len - 1;
 
-  array_string tmp18 = v->files;
-  for (int tmp19 = 0; tmp19 < tmp18.len; tmp19++) {
-    string file = ((string *)tmp18.data)[tmp19];
+  array_string tmp19 = v->files;
+  for (int tmp20 = 0; tmp20 < tmp19.len; tmp20++) {
+    string file = ((string *)tmp19.data)[tmp20];
 
     V_parse(v, file, main__Pass_main);
 
@@ -13272,9 +13278,9 @@ void V_compile(V *v) {
 
     V_log(&/* ? */ *v, tos2((byte *)"flags="));
 
-    array_CFlag tmp22 = V_get_os_cflags(&/* ? */ *v);
-    for (int tmp23 = 0; tmp23 < tmp22.len; tmp23++) {
-      CFlag flag = ((CFlag *)tmp22.data)[tmp23];
+    array_CFlag tmp23 = V_get_os_cflags(&/* ? */ *v);
+    for (int tmp24 = 0; tmp24 < tmp23.len; tmp24++) {
+      CFlag flag = ((CFlag *)tmp23.data)[tmp24];
 
       println(string_add(tos2((byte *)" * "), CFlag_format(&/* ? */ flag)));
     };
@@ -13374,12 +13380,12 @@ void V_generate_main(V *v) {
 
       V_gen_main_start(v, 0);
 
-      map_Fn tmp26 = v->table->fns;
-      array_string keys_tmp26 = map_keys(&tmp26);
-      for (int l = 0; l < keys_tmp26.len; l++) {
-        string _ = ((string *)keys_tmp26.data)[l];
+      map_Fn tmp27 = v->table->fns;
+      array_string keys_tmp27 = map_keys(&tmp27);
+      for (int l = 0; l < keys_tmp27.len; l++) {
+        string _ = ((string *)keys_tmp27.data)[l];
         Fn f = {0};
-        map_get(tmp26, _, &f);
+        map_get(tmp27, _, &f);
 
         if (string_starts_with(f.name, tos2((byte *)"main__test_"))) {
 
@@ -13507,9 +13513,9 @@ array_string V_v_files_from_dir(V *v, string dir) {
 
   array_string_sort(&/* ? */ files);
 
-  array_string tmp33 = files;
-  for (int tmp34 = 0; tmp34 < tmp33.len; tmp34++) {
-    string file = ((string *)tmp33.data)[tmp34];
+  array_string tmp34 = files;
+  for (int tmp35 = 0; tmp35 < tmp34.len; tmp35++) {
+    string file = ((string *)tmp34.data)[tmp35];
 
     if (!string_ends_with(file, tos2((byte *)".v")) &&
         !string_ends_with(file, tos2((byte *)".vh"))) {
@@ -13563,19 +13569,20 @@ array_string V_v_files_from_dir(V *v, string dir) {
 
     _PUSH(&res,
           (/*typ = array_string   tmp_typ=string*/ _STR(
-              "%.*s/%.*s", dir.len, dir.str, file.len, file.str)),
-          tmp35, string);
+              "%.*s%.*s%.*s", dir.len, dir.str, os__PathSeparator.len,
+              os__PathSeparator.str, file.len, file.str)),
+          tmp36, string);
   };
 
   return res;
 }
 void V_add_v_files_to_compile(V *v) {
 
-  array_string tmp36 = V_get_builtin_files(&/* ? */ *v);
-  for (int tmp37 = 0; tmp37 < tmp36.len; tmp37++) {
-    string file = ((string *)tmp36.data)[tmp37];
+  array_string tmp37 = V_get_builtin_files(&/* ? */ *v);
+  for (int tmp38 = 0; tmp38 < tmp37.len; tmp38++) {
+    string file = ((string *)tmp37.data)[tmp38];
 
-    _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ file), tmp38,
+    _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ file), tmp39,
           string);
 
     Parser p = V_new_parser_from_file(v, file);
@@ -13583,9 +13590,9 @@ void V_add_v_files_to_compile(V *v) {
     Parser_parse(&/* ? */ p, main__Pass_imports);
   };
 
-  array_string tmp40 = V_get_user_files(&/* ? */ *v);
-  for (int tmp41 = 0; tmp41 < tmp40.len; tmp41++) {
-    string file = ((string *)tmp40.data)[tmp41];
+  array_string tmp41 = V_get_user_files(&/* ? */ *v);
+  for (int tmp42 = 0; tmp42 < tmp41.len; tmp42++) {
+    string file = ((string *)tmp41.data)[tmp42];
 
     Parser p = V_new_parser_from_file(v, file);
 
@@ -13601,25 +13608,16 @@ void V_add_v_files_to_compile(V *v) {
     println(array_string_str(v->table->imports));
   };
 
-  array_string tmp43 = DepGraph_imports(&/* ? */ *V_resolve_deps(&/* ? */ *v));
-  for (int tmp44 = 0; tmp44 < tmp43.len; tmp44++) {
-    string mod = ((string *)tmp43.data)[tmp44];
+  array_string tmp44 = DepGraph_imports(&/* ? */ *V_resolve_deps(&/* ? */ *v));
+  for (int tmp45 = 0; tmp45 < tmp44.len; tmp45++) {
+    string mod = ((string *)tmp44.data)[tmp45];
 
-    if (string_eq(mod, tos2((byte *)"main"))) {
+    if (string_eq(mod, tos2((byte *)"builtin"))) {
 
       continue;
     };
 
-    string vh_path = _STR("%.*s/%.*s.vh", main__v_modules_path.len,
-                          main__v_modules_path.str, mod.len, mod.str);
-
-    if (os__file_exists(vh_path)) {
-
-      printf("using cached module `%.*s`: %.*s\n", mod.len, mod.str,
-             vh_path.len, vh_path.str);
-
-      _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ vh_path), tmp46,
-            string);
+    if (string_eq(mod, tos2((byte *)"main"))) {
 
       continue;
     };
@@ -13627,21 +13625,21 @@ void V_add_v_files_to_compile(V *v) {
     array_string vfiles =
         V_v_files_from_dir(&/* ? */ *v, V_find_module_path(&/* ? */ *v, mod));
 
-    array_string tmp48 = vfiles;
-    for (int tmp49 = 0; tmp49 < tmp48.len; tmp49++) {
-      string file = ((string *)tmp48.data)[tmp49];
+    array_string tmp47 = vfiles;
+    for (int tmp48 = 0; tmp48 < tmp47.len; tmp48++) {
+      string file = ((string *)tmp47.data)[tmp48];
 
-      _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ file), tmp50,
+      _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ file), tmp49,
             string);
     };
   };
 
-  map_FileImportTable tmp51 = v->table->file_imports;
-  array_string keys_tmp51 = map_keys(&tmp51);
-  for (int l = 0; l < keys_tmp51.len; l++) {
-    string _ = ((string *)keys_tmp51.data)[l];
+  map_FileImportTable tmp50 = v->table->file_imports;
+  array_string keys_tmp50 = map_keys(&tmp50);
+  for (int l = 0; l < keys_tmp50.len; l++) {
+    string _ = ((string *)keys_tmp50.data)[l];
     FileImportTable fit = {0};
-    map_get(tmp51, _, &fit);
+    map_get(tmp50, _, &fit);
 
     if (string_ne(fit.module_name, tos2((byte *)"main"))) {
 
@@ -13649,61 +13647,71 @@ void V_add_v_files_to_compile(V *v) {
     };
 
     _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ fit.file_path),
-          tmp52, string);
+          tmp51, string);
   };
 }
 array_string V_get_builtin_files(V *v) {
 
 #ifdef _VJS
 
-  return V_v_files_from_dir(
-      &/* ? */ *v, _STR("%.*s/vlib/builtin/js/", v->vroot.len, v->vroot.str));
+  return V_v_files_from_dir(&/* ? */ *v,
+                            _STR("%.*s%.*svlib%.*sbuiltin%.*sjs", v->vroot.len,
+                                 v->vroot.str, os__PathSeparator.len,
+                                 os__PathSeparator.str, os__PathSeparator.len,
+                                 os__PathSeparator.str, os__PathSeparator.len,
+                                 os__PathSeparator.str));
 
 #endif
   ;
 
   return V_v_files_from_dir(
-      &/* ? */ *v, _STR("%.*s/vlib/builtin/", v->vroot.len, v->vroot.str));
+      &/* ? */ *v, _STR("%.*s%.*svlib%.*sbuiltin", v->vroot.len, v->vroot.str,
+                        os__PathSeparator.len, os__PathSeparator.str,
+                        os__PathSeparator.len, os__PathSeparator.str));
 }
 array_string V_get_user_files(V *v) {
 
-  string dir = v->dir;
+  string dir = v->rdir;
 
   V_log(&/* ? */ *v, _STR("get_v_files(%.*s)", dir.len, dir.str));
 
   array_string user_files =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
-  bool is_test_with_imports = string_ends_with(dir, tos2((byte *)"_test.v")) &&
-                              (string_contains(dir, tos2((byte *)"/volt")) ||
-                               string_contains(dir, tos2((byte *)"/c2volt")));
+  bool is_test_with_imports =
+      string_ends_with(dir, tos2((byte *)"_test.v")) &&
+      (string_contains(dir, _STR("%.*svolt", os__PathSeparator.len,
+                                 os__PathSeparator.str)) ||
+       string_contains(dir, _STR("%.*sc2volt", os__PathSeparator.len,
+                                 os__PathSeparator.str)));
 
   if (is_test_with_imports) {
 
-    _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ dir), tmp56,
+    _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ dir), tmp55,
           string);
 
-    int pos = string_last_index(dir, tos2((byte *)"/"));
+    int pos = string_last_index(dir, os__PathSeparator);
 
-    dir = string_add(string_left(dir, pos), tos2((byte *)"/"));
+    dir = string_add(string_left(dir, pos), os__PathSeparator);
   };
 
   if (string_ends_with(dir, tos2((byte *)".v"))) {
 
-    _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ dir), tmp58,
+    _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ dir), tmp57,
           string);
 
-    dir = string_all_before(dir, tos2((byte *)"/"));
+    dir = string_all_before(
+        dir, _STR("%.*s", os__PathSeparator.len, os__PathSeparator.str));
 
   } else {
 
     array_string files = V_v_files_from_dir(&/* ? */ *v, dir);
 
-    array_string tmp60 = files;
-    for (int tmp61 = 0; tmp61 < tmp60.len; tmp61++) {
-      string file = ((string *)tmp60.data)[tmp61];
+    array_string tmp59 = files;
+    for (int tmp60 = 0; tmp60 < tmp59.len; tmp60++) {
+      string file = ((string *)tmp59.data)[tmp60];
 
-      _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ file), tmp62,
+      _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ file), tmp61,
             string);
     };
   };
@@ -13729,6 +13737,9 @@ void V_parse_lib_imports(V *v) {
   array_string done_fits =
       new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
 
+  array_string done_imports =
+      new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
+
   while (1) {
 
     map_FileImportTable tmp64 = v->table->file_imports;
@@ -13743,54 +13754,47 @@ void V_parse_lib_imports(V *v) {
         continue;
       };
 
-      V_parse_file_imports(
-          v, &/*112 EXP:"FileImportTable*" GOT:"FileImportTable" */ fit);
+      map_string tmp65 = fit.imports;
+      array_string keys_tmp65 = map_keys(&tmp65);
+      for (int l = 0; l < keys_tmp65.len; l++) {
+        string _ = ((string *)keys_tmp65.data)[l];
+        string mod = {0};
+        map_get(tmp65, _, &mod);
+
+        string import_path = V_find_module_path(&/* ? */ *v, mod);
+
+        array_string vfiles = V_v_files_from_dir(&/* ? */ *v, import_path);
+
+        if (vfiles.len == 0) {
+
+          main__verror(
+              _STR("cannot import module %.*s (no .v files in \"%.*s\")",
+                   mod.len, mod.str, import_path.len, import_path.str));
+        };
+
+        array_string tmp68 = vfiles;
+        for (int tmp69 = 0; tmp69 < tmp68.len; tmp69++) {
+          string file = ((string *)tmp68.data)[tmp69];
+
+          if (_IN(string, (file), done_imports)) {
+
+            continue;
+          };
+
+          V_parse(v, file, main__Pass_imports);
+
+          _PUSH(&done_imports, (/*typ = array_string   tmp_typ=string*/ file),
+                tmp70, string);
+        };
+      };
 
       _PUSH(&done_fits, (/*typ = array_string   tmp_typ=string*/ fit.file_path),
-            tmp65, string);
+            tmp71, string);
     };
 
     if (v->table->file_imports.size == done_fits.len) {
 
       break;
-    };
-  };
-}
-void V_parse_file_imports(V *v, FileImportTable *fit) {
-
-  map_string tmp66 = fit->imports;
-  array_string keys_tmp66 = map_keys(&tmp66);
-  for (int l = 0; l < keys_tmp66.len; l++) {
-    string _ = ((string *)keys_tmp66.data)[l];
-    string mod = {0};
-    map_get(tmp66, _, &mod);
-
-    string import_path = V_find_module_path(&/* ? */ *v, mod);
-
-    array_string vfiles = V_v_files_from_dir(&/* ? */ *v, import_path);
-
-    if (vfiles.len == 0) {
-
-      main__verror(_STR("cannot import module %.*s (no .v files in \"%.*s\")",
-                        mod.len, mod.str, import_path.len, import_path.str));
-    };
-
-    array_string tmp69 = vfiles;
-    for (int tmp70 = 0; tmp70 < tmp69.len; tmp70++) {
-      string file = ((string *)tmp69.data)[tmp70];
-
-      Parser p = V_new_parser_from_file(v, file);
-
-      Parser_parse(&/* ? */ p, main__Pass_imports);
-
-      if (string_ne(p.import_table.module_name, mod)) {
-
-        main__verror(_STR("bad module name: %.*s was imported as `%.*s` but it "
-                          "is defined as module `%.*s`",
-                          file.len, file.str, mod.len, mod.str,
-                          p.import_table.module_name.len,
-                          p.import_table.module_name.str));
-      };
     };
   };
 }
@@ -13876,6 +13880,8 @@ V *main__new_v(array_string args) {
     dir = string_all_before_last(dir, os__PathSeparator);
   };
 
+  string adir = os__realpath(dir);
+
   if (args.len < 2) {
 
     dir = tos2((byte *)"");
@@ -13889,14 +13895,16 @@ V *main__new_v(array_string args) {
 
     build_mode = main__BuildMode_build_module;
 
-    mod = (string_contains(dir, os__PathSeparator))
-              ? (string_all_after(dir, os__PathSeparator))
-              : (dir);
+    mod = (string_contains(adir, os__PathSeparator))
+              ? (string_all_after(adir, os__PathSeparator))
+              : (adir);
 
     printf("Building module \"%.*s\" (dir=\"%.*s\")...\n", mod.len, mod.str,
            dir.len, dir.str);
 
     out_name = string_add(mod, tos2((byte *)".o"));
+
+    printf("%.*s\n", out_name.len, out_name.str);
 
   } else if (!(_IN(string, (tos2((byte *)"-embed_vlib")), args))) {
 
@@ -14053,7 +14061,7 @@ V *main__new_v(array_string args) {
   };
 
   string out_name_c =
-      string_add(os__realpath(out_name), tos2((byte *)".tmp.c"));
+      os__realpath(_STR("%.*s.tmp.c", out_name.len, out_name.str));
 
   string cflags = main__get_cmdline_cflags(args);
 
@@ -14112,6 +14120,7 @@ V *main__new_v(array_string args) {
       &(V){
           .os = _os,
           .out_name = out_name,
+          .rdir = rdir,
           .dir = dir,
           .lang_dir = vroot,
           .table = main__new_table(obfuscate),
@@ -14138,25 +14147,25 @@ array_string main__env_vflags_and_os_args() {
     _PUSH(&args,
           (/*typ = array_string   tmp_typ=string*/ (
               *(string *)array__get(os__args, 0))),
-          tmp100, string);
+          tmp101, string);
 
     _PUSH_MANY(&args,
                (/*typ = array_string   tmp_typ=string*/ string_split(
                    vflags, tos2((byte *)" "))),
-               tmp103, array_string);
+               tmp104, array_string);
 
     if (os__args.len > 1) {
 
       _PUSH_MANY(
           &args,
           (/*typ = array_string   tmp_typ=string*/ array_right(os__args, 1)),
-          tmp104, array_string);
+          tmp105, array_string);
     };
 
   } else {
 
     _PUSH_MANY(&args, (/*typ = array_string   tmp_typ=string*/ os__args),
-               tmp105, array_string);
+               tmp106, array_string);
   };
 
   return args;
@@ -14167,16 +14176,16 @@ void main__update_v() {
 
   string vroot = os__dir(os__executable());
 
-  Option_os__Result tmp107 = os__exec(_STR(
+  Option_os__Result tmp108 = os__exec(_STR(
       "git -C \"%.*s\" pull --rebase origin master", vroot.len, vroot.str));
-  if (!tmp107.ok) {
-    string err = tmp107.error;
+  if (!tmp108.ok) {
+    string err = tmp108.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result s = *(os__Result *)tmp107.data;
+  os__Result s = *(os__Result *)tmp108.data;
   ;
 
   println(s.output);
@@ -14192,24 +14201,8 @@ void main__update_v() {
 
   os__mv(_STR("%.*s/v.exe", vroot.len, vroot.str), v_backup_file);
 
-  Option_os__Result tmp109 =
-      os__exec(_STR("\"%.*s/make.bat\"", vroot.len, vroot.str));
-  if (!tmp109.ok) {
-    string err = tmp109.error;
-
-    main__verror(err);
-
-    return;
-  }
-  os__Result s2 = *(os__Result *)tmp109.data;
-  ;
-
-  println(s2.output);
-
-#else
-
   Option_os__Result tmp110 =
-      os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
+      os__exec(_STR("\"%.*s/make.bat\"", vroot.len, vroot.str));
   if (!tmp110.ok) {
     string err = tmp110.error;
 
@@ -14218,6 +14211,22 @@ void main__update_v() {
     return;
   }
   os__Result s2 = *(os__Result *)tmp110.data;
+  ;
+
+  println(s2.output);
+
+#else
+
+  Option_os__Result tmp111 =
+      os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
+  if (!tmp111.ok) {
+    string err = tmp111.error;
+
+    main__verror(err);
+
+    return;
+  }
+  os__Result s2 = *(os__Result *)tmp111.data;
   ;
 
   println(s2.output);
@@ -14266,16 +14275,16 @@ void main__install_v(array_string args) {
 
     os__chdir(string_add(vroot, tos2((byte *)"/tools")));
 
-    Option_os__Result tmp116 = os__exec(
+    Option_os__Result tmp117 = os__exec(
         _STR("%.*s -o %.*s vget.v", vexec.len, vexec.str, vget.len, vget.str));
-    if (!tmp116.ok) {
-      string err = tmp116.error;
+    if (!tmp117.ok) {
+      string err = tmp117.error;
 
       main__verror(err);
 
       return;
     }
-    os__Result vget_compilation = *(os__Result *)tmp116.data;
+    os__Result vget_compilation = *(os__Result *)tmp117.data;
     ;
 
     if (vget_compilation.exit_code != 0) {
@@ -14286,17 +14295,17 @@ void main__install_v(array_string args) {
     };
   };
 
-  Option_os__Result tmp117 =
+  Option_os__Result tmp118 =
       os__exec(string_add(_STR("%.*s ", vget.len, vget.str),
                           array_string_join(names, tos2((byte *)" "))));
-  if (!tmp117.ok) {
-    string err = tmp117.error;
+  if (!tmp118.ok) {
+    string err = tmp118.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result vgetresult = *(os__Result *)tmp117.data;
+  os__Result vgetresult = *(os__Result *)tmp118.data;
   ;
 
   if (vgetresult.exit_code != 0) {
@@ -14362,9 +14371,9 @@ void V_test_v(V *v) {
 
   benchmark__Benchmark tmark = benchmark__new_benchmark();
 
-  array_string tmp125 = test_files;
-  for (int tmp126 = 0; tmp126 < tmp125.len; tmp126++) {
-    string dot_relative_file = ((string *)tmp125.data)[tmp126];
+  array_string tmp126 = test_files;
+  for (int tmp127 = 0; tmp127 < tmp126.len; tmp127++) {
+    string dot_relative_file = ((string *)tmp126.data)[tmp127];
 
     string relative_file =
         string_replace(dot_relative_file, tos2((byte *)"./"), tos2((byte *)""));
@@ -14384,9 +14393,9 @@ void V_test_v(V *v) {
 
     benchmark__Benchmark_step(&/* ? */ tmark);
 
-    Option_os__Result tmp131 = os__exec(cmd);
-    if (!tmp131.ok) {
-      string err = tmp131.error;
+    Option_os__Result tmp132 = os__exec(cmd);
+    if (!tmp132.ok) {
+      string err = tmp132.error;
 
       benchmark__Benchmark_fail(&/* ? */ tmark);
 
@@ -14398,7 +14407,7 @@ void V_test_v(V *v) {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp131.data;
+    os__Result r = *(os__Result *)tmp132.data;
     ;
 
     if (r.exit_code != 0) {
@@ -14436,9 +14445,9 @@ void V_test_v(V *v) {
 
   benchmark__Benchmark bmark = benchmark__new_benchmark();
 
-  array_string tmp134 = examples;
-  for (int tmp135 = 0; tmp135 < tmp134.len; tmp135++) {
-    string relative_file = ((string *)tmp134.data)[tmp135];
+  array_string tmp135 = examples;
+  for (int tmp136 = 0; tmp136 < tmp135.len; tmp136++) {
+    string relative_file = ((string *)tmp135.data)[tmp136];
 
     if (string_contains(relative_file, tos2((byte *)"vweb"))) {
 
@@ -14460,9 +14469,9 @@ void V_test_v(V *v) {
 
     benchmark__Benchmark_step(&/* ? */ bmark);
 
-    Option_os__Result tmp139 = os__exec(cmd);
-    if (!tmp139.ok) {
-      string err = tmp139.error;
+    Option_os__Result tmp140 = os__exec(cmd);
+    if (!tmp140.ok) {
+      string err = tmp140.error;
 
       failed = 1;
 
@@ -14474,7 +14483,7 @@ void V_test_v(V *v) {
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp139.data;
+    os__Result r = *(os__Result *)tmp140.data;
     ;
 
     if (r.exit_code != 0) {
@@ -14667,7 +14676,9 @@ void V_generate_vh(V *v) {
   printf("Generating a V header file for module `%.*s`\n", v->mod.len,
          v->mod.str);
 
-  string dir = string_add(main__v_modules_path, v->mod);
+  string dir = _STR("%.*s%.*s%.*s", main__v_modules_path.len,
+                    main__v_modules_path.str, os__PathSeparator.len,
+                    os__PathSeparator.str, v->mod.len, v->mod.str);
 
   string path = string_add(dir, tos2((byte *)".vh"));
 
@@ -14913,7 +14924,7 @@ string V_module_path(V *v, string mod) {
 
   if (string_contains(mod, tos2((byte *)"."))) {
 
-    return string_replace(mod, tos2((byte *)"."), tos2((byte *)"/"));
+    return string_replace(mod, tos2((byte *)"."), os__PathSeparator);
   };
 
   return mod;
@@ -14922,19 +14933,23 @@ string V_find_module_path(V *v, string mod) {
 
   string mod_path = V_module_path(&/* ? */ *v, mod);
 
-  string import_path =
-      string_add(os__getwd(), _STR("/%.*s", mod_path.len, mod_path.str));
+  string import_path = string_add(
+      os__getwd(), _STR("%.*s%.*s", os__PathSeparator.len,
+                        os__PathSeparator.str, mod_path.len, mod_path.str));
 
   if (!os__dir_exists(import_path)) {
 
-    import_path = _STR("%.*s/vlib/%.*s", v->lang_dir.len, v->lang_dir.str,
+    import_path = _STR("%.*s%.*svlib%.*s%.*s", v->lang_dir.len, v->lang_dir.str,
+                       os__PathSeparator.len, os__PathSeparator.str,
+                       os__PathSeparator.len, os__PathSeparator.str,
                        mod_path.len, mod_path.str);
   };
 
   if (!os__dir_exists(import_path)) {
 
-    import_path = _STR("%.*s/%.*s", main__v_modules_path.len,
-                       main__v_modules_path.str, mod_path.len, mod_path.str);
+    import_path = _STR("%.*s%.*s%.*s", main__v_modules_path.len,
+                       main__v_modules_path.str, os__PathSeparator.len,
+                       os__PathSeparator.str, mod_path.len, mod_path.str);
 
     if (!os__dir_exists(import_path)) {
 
@@ -15656,10 +15671,11 @@ Parser V_new_parser_from_file(V *v, string path) {
 
   p = (Parser){
       .file_path = path,
-      .file_name = string_all_after(path, tos2((byte *)"/")),
+      .file_name = string_all_after(path, os__PathSeparator),
       .file_platform = path_platform,
       .file_pcguard = path_pcguard,
-      .is_script = (v->pref->is_script && string_eq(path, v->dir)),
+      .is_script = (v->pref->is_script &&
+                    string_eq(os__realpath(path), os__realpath(path))),
       .id = p.id,
       .v = p.v,
       .pref = p.pref,
@@ -24091,7 +24107,7 @@ void Scanner_debug_tokens(Scanner *s) {
 
   s->debug = 1;
 
-  string fname = string_all_after(s->file_path, tos2((byte *)"/"));
+  string fname = string_all_after(s->file_path, os__PathSeparator);
 
   printf("\n===DEBUG TOKENS %.*s===\n", fname.len, fname.str);
 
@@ -25324,7 +25340,7 @@ string Table_qualify_module(Table *table, string mod, string file_path) {
 
       array_string m_parts = string_split(m, tos2((byte *)"."));
 
-      string m_path = array_string_join(m_parts, tos2((byte *)"/"));
+      string m_path = array_string_join(m_parts, os__PathSeparator);
 
       if (string_eq(mod, (*(string *)array__get(m_parts, m_parts.len - 1))) &&
           string_contains(file_path, m_path)) {
@@ -25941,11 +25957,6 @@ void init_consts() {
   g_str_buf = malloc(1000);
   builtin__min_cap = 2 << 10;
   builtin__max_cap = 2 << 20;
-  math__Log2E = 1.0 / math__Ln2;
-  math__Log10E = 1.0 / math__Ln10;
-  math__MinI8 = -128;
-  math__MinI16 = -32768;
-  math__MinI32 = -2147483648;
   os__FILE_ATTR_READONLY = 0x1;
   os__FILE_ATTR_HIDDEN = 0x2;
   os__FILE_ATTR_SYSTEM = 0x4;
@@ -25990,6 +26001,11 @@ void init_consts() {
   os__ENABLE_LVB_GRID_WORLDWIDE = 0x0010;
   os__args = new_array_from_c_array(0, 0, sizeof(string), (string[]){0});
   os__PathSeparator = tos2((byte *)"/");
+  math__Log2E = 1.0 / math__Ln2;
+  math__Log10E = 1.0 / math__Ln10;
+  math__MinI8 = -128;
+  math__MinI16 = -32768;
+  math__MinI32 = -2147483648;
   time__MonthDays = new_array_from_c_array(
       12, 12, sizeof(int),
       (int[]){31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31});
@@ -26100,8 +26116,7 @@ void init_consts() {
                  tos2((byte *)"dragonfly"), tos2((byte *)"msvc"),
                  tos2((byte *)"android"), tos2((byte *)"js"),
                  tos2((byte *)"solaris")});
-  main__v_modules_path =
-      string_add(os__home_dir(), tos2((byte *)"/.vmodules/"));
+  main__v_modules_path = string_add(os__home_dir(), tos2((byte *)".vmodules"));
   main__HKEY_LOCAL_MACHINE = ((RegKey)(0x80000002));
   main__KEY_QUERY_VALUE = (0x0001);
   main__KEY_WOW64_32KEY = (0x0200);
