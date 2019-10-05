@@ -15151,7 +15151,7 @@ Option_VsInstallation main__find_vs() {
 
   Option_os__Result tmp26 = os__exec(tos2(
       (byte *)"\"\"%ProgramFiles(x86)%\\Microsoft Visual "
-              "Studio\\Installer\\vswhere.exe\" -latest -products * -requires "
+              "Studio\\Installer\\vswhere.exe\" -latest -prerelease -products * -requires "
               "Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property "
               "installationPath\""));
   if (!tmp26.ok) {
