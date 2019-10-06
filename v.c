@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "62133c6"
+#define V_COMMIT_HASH "b242e8d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "65aafb3"
+#define V_COMMIT_HASH "62133c6"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -875,7 +875,6 @@ string string_title(string s);
 string string_find_between(string s, string start, string end);
 bool array_string_contains(array_string ar, string val);
 bool array_int_contains(array_int ar, int val);
-bool is_space(byte c);
 bool byte_is_space(byte c);
 string string_trim_space(string s);
 string string_trim(string s, string cutset);
@@ -1348,6 +1347,7 @@ void V_cc_msvc(V *v);
 void main__build_thirdparty_obj_file_with_msvc(string path,
                                                array_CFlag moduleflags);
 MsvcStringFlags array_CFlag_msvc_string_flags(array_CFlag cflags);
+void Parser_in_optimization(Parser *p, string typ, int ph);
 Parser V_new_parser_from_string(V *v, string text, string id);
 Parser V_new_parser_from_file(V *v, string path);
 Parser V_new_parser(V *v, Scanner *scanner, string id);
@@ -3816,14 +3816,11 @@ bool array_int_contains(array_int ar, int val) {
 
   return 0;
 }
-bool is_space(byte c) {
+bool byte_is_space(byte c) {
 
-  return _IN(byte, (c),
-             new_array_from_c_array(6, 6, sizeof(byte),
-                                    EMPTY_ARRAY_OF_ELEMS(byte, 6){
-                                        ' ', '\n', '\t', '\v', '\f', '\r'}));
+  return c == ' ' || c == '\n' || c == '\t' || c == '\v' || c == '\f' ||
+         c == '\r';
 }
-bool byte_is_space(byte c) { return is_space(c); }
 string string_trim_space(string s) {
 
   return string_trim(s, tos2((byte *)" \n\t\v\f\r"));
@@ -15690,6 +15687,61 @@ MsvcStringFlags array_CFlag_msvc_string_flags(array_CFlag cflags) {
 
   return (MsvcStringFlags){real_libs, inc_paths, lpaths, other_flags};
 }
+void Parser_in_optimization(Parser *p, string typ, int ph) {
+
+  Parser_check(p, main__Token_lsbr);
+
+  int i = 0;
+
+  string expr = string_right(p->cgen->cur_line, ph);
+
+  bool is_str = string_eq(typ, tos2((byte *)"string"));
+
+  while (p->tok != main__Token_rsbr && p->tok != main__Token_eof) {
+
+    if (i > 0) {
+
+      if (is_str) {
+
+        Parser_gen(p, _STR(" || string_eq(%.*s, ", expr.len, expr.str));
+
+      } else {
+
+        Parser_gen(p, _STR(" || %.*s == ", expr.len, expr.str));
+      };
+    };
+
+    if (i == 0) {
+
+      if (is_str) {
+
+        CGen_set_placeholder(p->cgen, ph, tos2((byte *)" string_eq("));
+
+        Parser_gen(p, tos2((byte *)", "));
+
+      } else {
+
+        Parser_gen(p, tos2((byte *)" =="));
+      };
+    };
+
+    Parser_check_types(p, Parser_bool_expression(p), typ);
+
+    if (is_str) {
+
+      Parser_gen(p, tos2((byte *)")"));
+    };
+
+    if (p->tok != main__Token_rsbr) {
+
+      Parser_check(p, main__Token_comma);
+    };
+
+    i++;
+  };
+
+  Parser_check(p, main__Token_rsbr);
+}
 Parser V_new_parser_from_string(V *v, string text, string id) {
 
   Parser p = V_new_parser(v, main__new_scanner(text), id);
@@ -19340,6 +19392,13 @@ string Parser_indot_expr(Parser *p) {
     Parser_fgen(p, tos2((byte *)" "));
 
     Parser_check(p, main__Token_key_in);
+
+    if (p->tok == main__Token_lsbr) {
+
+      Parser_in_optimization(p, typ, ph);
+
+      return tos2((byte *)"bool");
+    };
 
     Parser_fgen(p, tos2((byte *)" "));
 
@@ -25762,11 +25821,9 @@ string Table_find_misspelled_fn(Table *table, string name, FileImportTable *fit,
       continue;
     };
 
-    if (!(_IN(string, (f.mod),
-              new_array_from_c_array(3, 3, sizeof(string),
-                                     EMPTY_ARRAY_OF_ELEMS(string, 3){
-                                         tos2((byte *)""), tos2((byte *)"main"),
-                                         tos2((byte *)"builtin")})))) {
+    if (!(string_eq(f.mod, tos2((byte *)"")) ||
+          string_eq(f.mod, tos2((byte *)"main")) ||
+          string_eq(f.mod, tos2((byte *)"builtin")))) {
 
       bool mod_imported = 0;
 
