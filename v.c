@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fdef2b0"
+#define V_COMMIT_HASH "f1923d4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "30e7cd8"
+#define V_COMMIT_HASH "fdef2b0"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -17563,11 +17563,6 @@ string Parser_statement(Parser *p, bool add_semi) {
   if (tok == main__Token_name) { /* case */
 
     Token next = Parser_peek(&/* ? */ *p);
-
-    if (p->pref->is_verbose) {
-
-      println(Token_str(next));
-    };
 
     if (Parser_peek(&/* ? */ *p) == main__Token_colon) {
 
