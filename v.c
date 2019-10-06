@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b0573bd"
+#define V_COMMIT_HASH "5acadba"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b242e8d"
+#define V_COMMIT_HASH "b0573bd"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -15167,9 +15167,9 @@ Option_VsInstallation main__find_vs() {
 
   Option_os__Result tmp26 = os__exec(tos2(
       (byte *)"\"\"%ProgramFiles(x86)%\\Microsoft Visual "
-              "Studio\\Installer\\vswhere.exe\" -latest -products * -requires "
-              "Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property "
-              "installationPath\""));
+              "Studio\\Installer\\vswhere.exe\" -latest -prerelease -products "
+              "* -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 "
+              "-property installationPath\""));
   if (!tmp26.ok) {
     string err = tmp26.error;
 
