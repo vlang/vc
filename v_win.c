@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b242e8d"
+#define V_COMMIT_HASH "b0573bd"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "62133c6"
+#define V_COMMIT_HASH "b242e8d"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1153,6 +1153,7 @@ string time__Time_hhmm(time__Time t);
 string time__Time_hhmm12(time__Time t);
 string time__Time_hhmmss(time__Time t);
 string time__Time_ymmdd(time__Time t);
+string time__Time_ddmmy(time__Time t);
 string time__Time_md(time__Time t);
 string time__Time_clean(time__Time t);
 string time__Time_clean12(time__Time t);
@@ -6722,6 +6723,10 @@ string time__Time_ymmdd(time__Time t) {
 
   return _STR("%d-%02d-%02d", t.year, t.month, t.day);
 }
+string time__Time_ddmmy(time__Time t) {
+
+  return _STR("%02d.%02d.%d", t.day, t.month, t.year);
+}
 string time__Time_md(time__Time t) {
 
   string s = _STR("%.*s %d", time__Time_smonth(t).len, time__Time_smonth(t).str,
@@ -11995,16 +12000,18 @@ string Table_fn_gen_name(Table *table, Fn *f) {
     return _STR("v_%.*s", name.len, name.str);
   };
 
-  if (table->obfuscate && string_ne(f->name, tos2((byte *)"main")) &&
+  if (table->obfuscate && !f->is_c &&
+      string_ne(f->name, tos2((byte *)"main")) &&
       string_ne(f->name, tos2((byte *)"WinMain")) &&
-      string_ne(f->mod, tos2((byte *)"builtin")) && !f->is_c &&
-      string_ne(f->mod, tos2((byte *)"darwin")) &&
-      string_ne(f->mod, tos2((byte *)"os")) &&
-      !string_contains(f->name, tos2((byte *)"window_proc")) &&
+      string_ne(f->name, tos2((byte *)"main__main")) &&
       string_ne(f->name, tos2((byte *)"gg__vec2")) &&
       string_ne(f->name, tos2((byte *)"build_token_str")) &&
       string_ne(f->name, tos2((byte *)"build_keys")) &&
+      string_ne(f->mod, tos2((byte *)"builtin")) &&
+      string_ne(f->mod, tos2((byte *)"darwin")) &&
+      string_ne(f->mod, tos2((byte *)"os")) &&
       string_ne(f->mod, tos2((byte *)"json")) &&
+      !string_contains(f->name, tos2((byte *)"window_proc")) &&
       !string_ends_with(name, tos2((byte *)"_str")) &&
       !string_contains(name, tos2((byte *)"contains"))) {
 
