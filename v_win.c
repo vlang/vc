@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "03bc5ab"
+#define V_COMMIT_HASH "30e7cd8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5acadba"
+#define V_COMMIT_HASH "03bc5ab"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -452,6 +452,7 @@ struct Preferences {
 struct Repl {
   int indent;
   bool in_func;
+  string line;
   array_string lines;
   array_string temp_lines;
   array_string functions_name;
@@ -1454,7 +1455,7 @@ string main__sql_params2params_gen(array_string sql_params,
                                    array_string sql_types, string qprefix);
 string Parser_select_query(Parser *p, int fn_ph);
 void Parser_insert_query(Parser *p, int fn_ph);
-bool Repl_checks(Repl *r, string line);
+bool Repl_checks(Repl *r);
 bool Repl_function_call(Repl *r, string line);
 void main__repl_help();
 array_string main__run_repl();
@@ -23102,26 +23103,44 @@ void Parser_insert_query(Parser *p, int fn_ph) {
                        table_name.len, table_name.str, sfields.len, sfields.str,
                        vals.len, vals.str, nr_vals));
 }
-bool Repl_checks(Repl *r, string line) {
+bool Repl_checks(Repl *r) {
 
   bool in_string = 0;
 
+  bool is_cut = 0;
+
   bool was_indent = r->indent > 0;
 
-  for (int i = 0; i < line.len; i++) {
+  for (int i = 0; i < r->line.len; i++) {
 
-    if (string_at(line, i) == '\'' &&
-        (i == 0 || string_at(line, i - 1) != '\\')) {
+    if (string_at(r->line, i) == '\'' &&
+        (i == 0 || string_at(r->line, i - 1) != '\\')) {
 
       in_string = !in_string;
     };
 
-    if (string_at(line, i) == '{' && !in_string) {
+    if (string_at(r->line, i) == '{' && !in_string) {
+
+      r->line = string_add(
+          string_add(string_left(r->line, i + 1), tos2((byte *)"\n")),
+          string_right(r->line, i + 1));
+
+      is_cut = 1;
+
+      i++;
 
       r->indent++;
     };
 
-    if (string_at(line, i) == '}' && !in_string) {
+    if (string_at(r->line, i) == '}' && !in_string) {
+
+      r->line =
+          string_add(string_add(string_left(r->line, i), tos2((byte *)"\n")),
+                     string_right(r->line, i));
+
+      is_cut = 1;
+
+      i++;
 
       r->indent--;
 
@@ -23131,20 +23150,21 @@ bool Repl_checks(Repl *r, string line) {
       };
     };
 
-    if (i + 2 < line.len && r->indent == 0 && string_at(line, i + 1) == 'f' &&
-        string_at(line, i + 2) == 'n') {
+    if (i + 2 < r->line.len && r->indent == 0 &&
+        string_at(r->line, i + 1) == 'f' && string_at(r->line, i + 2) == 'n') {
 
       r->in_func = 1;
     };
   };
 
-  return r->in_func || (was_indent && r->indent <= 0) || r->indent > 0;
+  return r->in_func || (was_indent && r->indent <= 0) || r->indent > 0 ||
+         is_cut;
 }
 bool Repl_function_call(Repl *r, string line) {
 
-  array_string tmp16 = r->functions_name;
-  for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
-    string function = ((string *)tmp16.data)[tmp17];
+  array_string tmp17 = r->functions_name;
+  for (int tmp18 = 0; tmp18 < tmp17.len; tmp18++) {
+    string function = ((string *)tmp17.data)[tmp18];
 
     if (string_starts_with(line, function)) {
 
@@ -23179,6 +23199,7 @@ array_string main__run_repl() {
 
   Repl r = (Repl){.indent = 0,
                   .in_func = 0,
+                  .line = tos((byte *)"", 0),
                   .lines = new_array(0, 1, sizeof(string)),
                   .temp_lines = new_array(0, 1, sizeof(string)),
                   .functions_name = new_array(0, 1, sizeof(string)),
@@ -23197,65 +23218,70 @@ array_string main__run_repl() {
       print(tos2((byte *)"... "));
     };
 
-    string line = os__get_raw_line();
+    r.line = os__get_raw_line();
 
-    if (string_eq(string_trim_space(line), tos2((byte *)"")) &&
-        string_ends_with(line, tos2((byte *)"\n"))) {
+    if (string_eq(string_trim_space(r.line), tos2((byte *)"")) &&
+        string_ends_with(r.line, tos2((byte *)"\n"))) {
 
       continue;
     };
 
-    line = string_trim_space(line);
+    r.line = string_trim_space(r.line);
 
-    if (line.len == -1 || string_eq(line, tos2((byte *)"")) ||
-        string_eq(line, tos2((byte *)"exit"))) {
+    if (r.line.len == -1 || string_eq(r.line, tos2((byte *)"")) ||
+        string_eq(r.line, tos2((byte *)"exit"))) {
 
       break;
     };
 
-    if (string_eq(line, tos2((byte *)"\n"))) {
+    if (string_eq(r.line, tos2((byte *)"\n"))) {
 
       continue;
     };
 
-    if (string_eq(line, tos2((byte *)"clear"))) {
+    if (string_eq(r.line, tos2((byte *)"clear"))) {
 
       term__erase_display(tos2((byte *)"2"));
 
       continue;
     };
 
-    if (string_eq(line, tos2((byte *)"help"))) {
+    if (string_eq(r.line, tos2((byte *)"help"))) {
 
       main__repl_help();
 
       continue;
     };
 
-    if (string_starts_with(line, tos2((byte *)"fn"))) {
+    if (string_starts_with(r.line, tos2((byte *)"fn"))) {
 
       r.in_func = 1;
 
       _PUSH(&r.functions_name,
             (/*typ = array_string   tmp_typ=string*/ string_trim_space(
-                string_all_before(string_all_after(line, tos2((byte *)"fn")),
+                string_all_before(string_all_after(r.line, tos2((byte *)"fn")),
                                   tos2((byte *)"(")))),
             tmp27, string);
     };
 
     bool was_func = r.in_func;
 
-    if (Repl_checks(&/* ? */ r, line)) {
+    if (Repl_checks(&/* ? */ r)) {
 
-      if (r.in_func || was_func) {
+      array_string tmp29 = string_split(r.line, tos2((byte *)"\n"));
+      for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
+        string line = ((string *)tmp29.data)[tmp30];
 
-        _PUSH(&r.functions, (/*typ = array_string   tmp_typ=string*/ line),
-              tmp29, string);
+        if (r.in_func || was_func) {
 
-      } else {
+          _PUSH(&r.functions, (/*typ = array_string   tmp_typ=string*/ line),
+                tmp31, string);
 
-        _PUSH(&r.temp_lines, (/*typ = array_string   tmp_typ=string*/ line),
-              tmp30, string);
+        } else {
+
+          _PUSH(&r.temp_lines, (/*typ = array_string   tmp_typ=string*/ line),
+                tmp32, string);
+        };
       };
 
       if (r.indent > 0) {
@@ -23263,28 +23289,28 @@ array_string main__run_repl() {
         continue;
       };
 
-      line = tos2((byte *)"");
+      r.line = tos2((byte *)"");
     };
 
-    if (string_starts_with(line, tos2((byte *)"print"))) {
+    if (string_starts_with(r.line, tos2((byte *)"print"))) {
 
       string source_code = string_add(
           string_add(
               string_add(array_string_join(r.functions, tos2((byte *)"\n")),
                          array_string_join(r.lines, tos2((byte *)"\n"))),
               tos2((byte *)"\n")),
-          line);
+          r.line);
 
       os__write_file(file, source_code);
 
-      Option_os__Result tmp32 = os__exec(
+      Option_os__Result tmp34 = os__exec(
           _STR("%.*s run %.*s -repl", vexe.len, vexe.str, file.len, file.str));
-      if (!tmp32.ok) {
-        string err = tmp32.error;
+      if (!tmp34.ok) {
+        string err = tmp34.error;
 
         main__verror(err);
 
-        array_string tmp33 = new_array_from_c_array(
+        array_string tmp35 = new_array_from_c_array(
             0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
         {
 
@@ -23296,10 +23322,10 @@ array_string main__run_repl() {
 
           os__rm(string_left(temp_file, temp_file.len - 2));
         }
-        return tmp33;
+        return tmp35;
         ;
       }
-      os__Result s = *(os__Result *)tmp32.data;
+      os__Result s = *(os__Result *)tmp34.data;
       ;
 
       array_string vals = string_split(s.output, tos2((byte *)"\n"));
@@ -23311,20 +23337,20 @@ array_string main__run_repl() {
 
     } else {
 
-      string temp_line = line;
+      string temp_line = r.line;
 
       bool temp_flag = 0;
 
-      bool func_call = Repl_function_call(&/* ? */ r, line);
+      bool func_call = Repl_function_call(&/* ? */ r, r.line);
 
-      if (!(string_contains(line, tos2((byte *)" ")) ||
-            string_contains(line, tos2((byte *)":")) ||
-            string_contains(line, tos2((byte *)"=")) ||
-            string_contains(line, tos2((byte *)",")) ||
-            string_eq(line, tos2((byte *)""))) &&
+      if (!(string_contains(r.line, tos2((byte *)" ")) ||
+            string_contains(r.line, tos2((byte *)":")) ||
+            string_contains(r.line, tos2((byte *)"=")) ||
+            string_contains(r.line, tos2((byte *)",")) ||
+            string_eq(r.line, tos2((byte *)""))) &&
           !func_call) {
 
-        temp_line = _STR("println(%.*s)", line.len, line.str);
+        temp_line = _STR("println(%.*s)", r.line.len, r.line.str);
 
         temp_flag = 1;
       };
@@ -23332,23 +23358,26 @@ array_string main__run_repl() {
       string temp_source_code = string_add(
           string_add(
               string_add(
-                  string_add(array_string_join(r.functions, tos2((byte *)"\n")),
-                             array_string_join(r.lines, tos2((byte *)"\n"))),
+                  string_add(
+                      string_add(
+                          array_string_join(r.functions, tos2((byte *)"\n")),
+                          array_string_join(r.lines, tos2((byte *)"\n"))),
+                      tos2((byte *)"\n")),
                   array_string_join(r.temp_lines, tos2((byte *)"\n"))),
               tos2((byte *)"\n")),
           temp_line);
 
       os__write_file(temp_file, temp_source_code);
 
-      Option_os__Result tmp42 =
+      Option_os__Result tmp44 =
           os__exec(_STR("%.*s run %.*s -repl", vexe.len, vexe.str,
                         temp_file.len, temp_file.str));
-      if (!tmp42.ok) {
-        string err = tmp42.error;
+      if (!tmp44.ok) {
+        string err = tmp44.error;
 
         main__verror(err);
 
-        array_string tmp43 = new_array_from_c_array(
+        array_string tmp45 = new_array_from_c_array(
             0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
         {
 
@@ -23360,13 +23389,13 @@ array_string main__run_repl() {
 
           os__rm(string_left(temp_file, temp_file.len - 2));
         }
-        return tmp43;
+        return tmp45;
         ;
       }
-      os__Result s = *(os__Result *)tmp42.data;
+      os__Result s = *(os__Result *)tmp44.data;
       ;
 
-      if (!func_call && s.exit_code == 0) {
+      if (!func_call && s.exit_code == 0 && !temp_flag) {
 
         while (r.temp_lines.len > 0) {
 
@@ -23376,13 +23405,13 @@ array_string main__run_repl() {
             _PUSH(&r.lines,
                   (/*typ = array_string   tmp_typ=string*/ (
                       *(string *)array__get(r.temp_lines, 0))),
-                  tmp46, string);
+                  tmp48, string);
           };
 
           v_array_delete(&/* ? */ r.temp_lines, 0);
         };
 
-        _PUSH(&r.lines, (/*typ = array_string   tmp_typ=string*/ line), tmp49,
+        _PUSH(&r.lines, (/*typ = array_string   tmp_typ=string*/ r.line), tmp51,
               string);
 
       } else {
@@ -23402,7 +23431,7 @@ array_string main__run_repl() {
     };
   };
 
-  array_string tmp54 = r.lines;
+  array_string tmp56 = r.lines;
   {
 
     os__rm(file);
@@ -23413,7 +23442,7 @@ array_string main__run_repl() {
 
     os__rm(string_left(temp_file, temp_file.len - 2));
   }
-  return tmp54;
+  return tmp56;
   ;
 
   {
