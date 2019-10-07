@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f1923d4"
+#define V_COMMIT_HASH "ac5241b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fdef2b0"
+#define V_COMMIT_HASH "f1923d4"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -144,7 +144,8 @@ int load_so(byteptr);
 void reload_so();
 void init_consts();
 
-int g_test_ok = 1;
+int g_test_oks = 0;
+int g_test_fails = 0;
 #include <errno.h>
 #include <float.h>
 #include <math.h>
@@ -438,6 +439,7 @@ struct Preferences {
   bool sanitize;
   bool is_debuggable;
   bool is_debug;
+  bool is_stats;
   bool no_auto_free;
   string cflags;
   string ccompiler;
@@ -1047,6 +1049,8 @@ static inline u64 rand__Splitmix64_bounded_next(rand__Splitmix64 *rng,
                                                 u64 bound);
 bool term__can_show_color_on_stdout();
 bool term__can_show_color_on_stderr();
+string term__ok_message(string s);
+string term__fail_message(string s);
 bool term__can_show_color_on_fd(int fd);
 string term___format(string msg, string open, string close);
 string term___format_rgb(int r, int g, int b, string msg, string open,
@@ -1153,8 +1157,12 @@ void benchmark__Benchmark_stop(benchmark__Benchmark *b);
 void benchmark__Benchmark_step(benchmark__Benchmark *b);
 void benchmark__Benchmark_fail(benchmark__Benchmark *b);
 void benchmark__Benchmark_ok(benchmark__Benchmark *b);
+void benchmark__Benchmark_fail_many(benchmark__Benchmark *b, int n);
+void benchmark__Benchmark_ok_many(benchmark__Benchmark *b, int n);
+void benchmark__Benchmark_neither_fail_nor_ok(benchmark__Benchmark *b);
 string benchmark__Benchmark_step_message(benchmark__Benchmark *b, string msg);
 string benchmark__Benchmark_total_message(benchmark__Benchmark *b, string msg);
+i64 benchmark__Benchmark_total_duration(benchmark__Benchmark *b);
 string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark *b, string s,
                                         i64 sticks, i64 eticks);
 i64 benchmark__now();
@@ -6153,6 +6161,14 @@ static inline u64 rand__Splitmix64_bounded_next(rand__Splitmix64 *rng,
 }
 bool term__can_show_color_on_stdout() { return term__can_show_color_on_fd(1); }
 bool term__can_show_color_on_stderr() { return term__can_show_color_on_fd(2); }
+string term__ok_message(string s) {
+
+  return (term__can_show_color_on_stdout()) ? (term__green(s)) : (s);
+}
+string term__fail_message(string s) {
+
+  return (term__can_show_color_on_stdout()) ? (term__red(s)) : (s);
+}
 bool term__can_show_color_on_fd(int fd) {
 
   if (string_eq(os__getenv(tos2((byte *)"TERM")), tos2((byte *)"dumb"))) {
@@ -7028,6 +7044,26 @@ void benchmark__Benchmark_ok(benchmark__Benchmark *b) {
 
   b->nok++;
 }
+void benchmark__Benchmark_fail_many(benchmark__Benchmark *b, int n) {
+
+  b->step_end_time = benchmark__now();
+
+  b->ntotal += n;
+
+  b->nfail += n;
+}
+void benchmark__Benchmark_ok_many(benchmark__Benchmark *b, int n) {
+
+  b->step_end_time = benchmark__now();
+
+  b->ntotal += n;
+
+  b->nok += n;
+}
+void benchmark__Benchmark_neither_fail_nor_ok(benchmark__Benchmark *b) {
+
+  b->step_end_time = benchmark__now();
+}
 string benchmark__Benchmark_step_message(benchmark__Benchmark *b, string msg) {
 
   return benchmark__Benchmark_tdiff_in_ms(b, msg, b->step_start_time,
@@ -7035,8 +7071,17 @@ string benchmark__Benchmark_step_message(benchmark__Benchmark *b, string msg) {
 }
 string benchmark__Benchmark_total_message(benchmark__Benchmark *b, string msg) {
 
-  string tmsg = _STR("%.*s : ok, fail, total = %5d, %5d, %5d", msg.len, msg.str,
-                     b->nok, b->nfail, b->ntotal);
+  string tmsg = string_add(
+      string_add(
+          string_add(
+              string_add(string_add(_STR("%.*s \n ok, fail, total = ", msg.len,
+                                         msg.str),
+                                    term__ok_message(_STR("%5d", b->nok))),
+                         tos2((byte *)", ")),
+              (b->nfail > 0) ? (term__fail_message(_STR("%5d", b->nfail)))
+                             : (_STR("%5d", b->nfail))),
+          tos2((byte *)", ")),
+      _STR("%5d", b->ntotal));
 
   if (b->verbose) {
 
@@ -7045,6 +7090,10 @@ string benchmark__Benchmark_total_message(benchmark__Benchmark *b, string msg) {
 
   return benchmark__Benchmark_tdiff_in_ms(b, tmsg, b->bench_start_time,
                                           b->bench_end_time);
+}
+i64 benchmark__Benchmark_total_duration(benchmark__Benchmark *b) {
+
+  return (b->bench_end_time - b->bench_start_time);
 }
 string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark *b, string s,
                                         i64 sticks, i64 eticks) {
@@ -13063,7 +13112,19 @@ void main__main() {
     return;
   };
 
+  benchmark__Benchmark tmark = benchmark__new_benchmark();
+
   V_compile(v);
+
+  if (v->pref->is_stats) {
+
+    benchmark__Benchmark_stop(&/* ? */ tmark);
+
+    println(string_add(string_add(tos2((byte *)"compilation took: "),
+                                  i64_str(benchmark__Benchmark_total_duration(
+                                      &/* ? */ tmark))),
+                       tos2((byte *)"ms")));
+  };
 
   if (v->pref->is_test) {
 
@@ -13082,12 +13143,12 @@ void main__main() {
 
     v_free(v->cgen);
 
-    map_Fn tmp6 = v->table->fns;
-    array_string keys_tmp6 = map_keys(&tmp6);
-    for (int l = 0; l < keys_tmp6.len; l++) {
-      string _ = ((string *)keys_tmp6.data)[l];
+    map_Fn tmp7 = v->table->fns;
+    array_string keys_tmp7 = map_keys(&tmp7);
+    for (int l = 0; l < keys_tmp7.len; l++) {
+      string _ = ((string *)keys_tmp7.data)[l];
       Fn f = {0};
-      map_get(tmp6, _, &f);
+      map_get(tmp7, _, &f);
 
       v_array_free(f.args);
     };
@@ -13101,14 +13162,14 @@ void main__main() {
 }
 void V_add_parser(V *v, Parser parser) {
 
-  _PUSH(&v->parsers, (/*typ = array_Parser   tmp_typ=Parser*/ parser), tmp7,
+  _PUSH(&v->parsers, (/*typ = array_Parser   tmp_typ=Parser*/ parser), tmp8,
         Parser);
 }
 int V_parse(V *v, string file, Pass pass) {
 
-  array_Parser tmp8 = v->parsers;
-  for (int i = 0; i < tmp8.len; i++) {
-    Parser p = ((Parser *)tmp8.data)[i];
+  array_Parser tmp9 = v->parsers;
+  for (int i = 0; i < tmp9.len; i++) {
+    Parser p = ((Parser *)tmp9.data)[i];
 
     if (string_eq(os__realpath(p.file_path), os__realpath(file))) {
 
@@ -13155,9 +13216,9 @@ void V_compile(V *v) {
     println(array_string_str(v->files));
   };
 
-  array_string tmp13 = v->files;
-  for (int tmp14 = 0; tmp14 < tmp13.len; tmp14++) {
-    string file = ((string *)tmp13.data)[tmp14];
+  array_string tmp14 = v->files;
+  for (int tmp15 = 0; tmp15 < tmp14.len; tmp15++) {
+    string file = ((string *)tmp14.data)[tmp15];
 
     V_parse(v, file, main__Pass_decl);
   };
@@ -13232,7 +13293,9 @@ void V_compile(V *v) {
 
 #ifndef _VJS
 
-    CGen_genln(cgen, tos2((byte *)"int g_test_ok = 1; "));
+    CGen_genln(cgen, tos2((byte *)"int g_test_oks = 0;"));
+
+    CGen_genln(cgen, tos2((byte *)"int g_test_fails = 0;"));
 
 #endif
     ;
@@ -13255,9 +13318,9 @@ void V_compile(V *v) {
 
   int defs_pos = cgen->lines.len - 1;
 
-  array_string tmp17 = v->files;
-  for (int tmp18 = 0; tmp18 < tmp17.len; tmp18++) {
-    string file = ((string *)tmp17.data)[tmp18];
+  array_string tmp18 = v->files;
+  for (int tmp19 = 0; tmp19 < tmp18.len; tmp19++) {
+    string file = ((string *)tmp18.data)[tmp19];
 
     V_parse(v, file, main__Pass_main);
 
@@ -13326,9 +13389,9 @@ void V_compile(V *v) {
 
     V_log(&/* ? */ *v, tos2((byte *)"flags="));
 
-    array_CFlag tmp21 = V_get_os_cflags(&/* ? */ *v);
-    for (int tmp22 = 0; tmp22 < tmp21.len; tmp22++) {
-      CFlag flag = ((CFlag *)tmp21.data)[tmp22];
+    array_CFlag tmp22 = V_get_os_cflags(&/* ? */ *v);
+    for (int tmp23 = 0; tmp23 < tmp22.len; tmp23++) {
+      CFlag flag = ((CFlag *)tmp22.data)[tmp23];
 
       println(string_add(tos2((byte *)" * "), CFlag_format(&/* ? */ flag)));
     };
@@ -13428,20 +13491,45 @@ void V_generate_main(V *v) {
 
       V_gen_main_start(v, 0);
 
-      map_Fn tmp25 = v->table->fns;
-      array_string keys_tmp25 = map_keys(&tmp25);
-      for (int l = 0; l < keys_tmp25.len; l++) {
-        string _ = ((string *)keys_tmp25.data)[l];
+      if (v->pref->is_stats) {
+
+        CGen_genln(cgen,
+                   tos2((byte *)"BenchedTests bt = main__start_testing();"));
+      };
+
+      map_Fn tmp26 = v->table->fns;
+      array_string keys_tmp26 = map_keys(&tmp26);
+      for (int l = 0; l < keys_tmp26.len; l++) {
+        string _ = ((string *)keys_tmp26.data)[l];
         Fn f = {0};
-        map_get(tmp25, _, &f);
+        map_get(tmp26, _, &f);
 
         if (string_starts_with(f.name, tos2((byte *)"main__test_"))) {
 
+          if (v->pref->is_stats) {
+
+            CGen_genln(
+                cgen,
+                _STR("BenchedTests_testing_step_start(&bt, tos3(\"%.*s\"));",
+                     f.name.len, f.name.str));
+          };
+
           CGen_genln(cgen, _STR("%.*s();", f.name.len, f.name.str));
+
+          if (v->pref->is_stats) {
+
+            CGen_genln(cgen,
+                       tos2((byte *)"BenchedTests_testing_step_end(&bt);"));
+          };
         };
       };
 
-      V_gen_main_end(v, tos2((byte *)"return g_test_ok == 0"));
+      if (v->pref->is_stats) {
+
+        CGen_genln(cgen, tos2((byte *)"BenchedTests_end_testing(&bt);"));
+      };
+
+      V_gen_main_end(v, tos2((byte *)"return g_test_fails > 0"));
 
     } else if (Table_main_exists(&/* ? */ *v->table)) {
 
@@ -13561,9 +13649,9 @@ array_string V_v_files_from_dir(V *v, string dir) {
 
   array_string_sort(&/* ? */ files);
 
-  array_string tmp32 = files;
-  for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
-    string file = ((string *)tmp32.data)[tmp33];
+  array_string tmp33 = files;
+  for (int tmp34 = 0; tmp34 < tmp33.len; tmp34++) {
+    string file = ((string *)tmp33.data)[tmp34];
 
     if (!string_ends_with(file, tos2((byte *)".v")) &&
         !string_ends_with(file, tos2((byte *)".vh"))) {
@@ -13614,18 +13702,18 @@ array_string V_v_files_from_dir(V *v, string dir) {
           (/*typ = array_string   tmp_typ=string*/ _STR(
               "%.*s%.*s%.*s", dir.len, dir.str, os__PathSeparator.len,
               os__PathSeparator.str, file.len, file.str)),
-          tmp34, string);
+          tmp35, string);
   };
 
   return res;
 }
 void V_add_v_files_to_compile(V *v) {
 
-  array_string tmp35 = V_get_builtin_files(&/* ? */ *v);
-  for (int tmp36 = 0; tmp36 < tmp35.len; tmp36++) {
-    string file = ((string *)tmp35.data)[tmp36];
+  array_string tmp36 = V_get_builtin_files(&/* ? */ *v);
+  for (int tmp37 = 0; tmp37 < tmp36.len; tmp37++) {
+    string file = ((string *)tmp36.data)[tmp37];
 
-    _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ file), tmp37,
+    _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ file), tmp38,
           string);
 
     Parser p = V_new_parser_from_file(v, file);
@@ -13635,9 +13723,9 @@ void V_add_v_files_to_compile(V *v) {
     V_add_parser(v, p);
   };
 
-  array_string tmp39 = V_get_user_files(&/* ? */ *v);
-  for (int tmp40 = 0; tmp40 < tmp39.len; tmp40++) {
-    string file = ((string *)tmp39.data)[tmp40];
+  array_string tmp40 = V_get_user_files(&/* ? */ *v);
+  for (int tmp41 = 0; tmp41 < tmp40.len; tmp41++) {
+    string file = ((string *)tmp40.data)[tmp41];
 
     Parser p = V_new_parser_from_file(v, file);
 
@@ -13655,9 +13743,9 @@ void V_add_v_files_to_compile(V *v) {
     println(array_string_str(v->table->imports));
   };
 
-  array_string tmp42 = DepGraph_imports(&/* ? */ *V_resolve_deps(&/* ? */ *v));
-  for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
-    string mod = ((string *)tmp42.data)[tmp43];
+  array_string tmp43 = DepGraph_imports(&/* ? */ *V_resolve_deps(&/* ? */ *v));
+  for (int tmp44 = 0; tmp44 < tmp43.len; tmp44++) {
+    string mod = ((string *)tmp43.data)[tmp44];
 
     if (string_eq(mod, tos2((byte *)"builtin"))) {
 
@@ -13672,21 +13760,21 @@ void V_add_v_files_to_compile(V *v) {
     array_string vfiles =
         V_v_files_from_dir(&/* ? */ *v, V_find_module_path(&/* ? */ *v, mod));
 
-    array_string tmp45 = vfiles;
-    for (int tmp46 = 0; tmp46 < tmp45.len; tmp46++) {
-      string file = ((string *)tmp45.data)[tmp46];
+    array_string tmp46 = vfiles;
+    for (int tmp47 = 0; tmp47 < tmp46.len; tmp47++) {
+      string file = ((string *)tmp46.data)[tmp47];
 
-      _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ file), tmp47,
+      _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ file), tmp48,
             string);
     };
   };
 
-  map_FileImportTable tmp48 = v->table->file_imports;
-  array_string keys_tmp48 = map_keys(&tmp48);
-  for (int l = 0; l < keys_tmp48.len; l++) {
-    string _ = ((string *)keys_tmp48.data)[l];
+  map_FileImportTable tmp49 = v->table->file_imports;
+  array_string keys_tmp49 = map_keys(&tmp49);
+  for (int l = 0; l < keys_tmp49.len; l++) {
+    string _ = ((string *)keys_tmp49.data)[l];
     FileImportTable fit = {0};
-    map_get(tmp48, _, &fit);
+    map_get(tmp49, _, &fit);
 
     if (string_ne(fit.module_name, tos2((byte *)"main"))) {
 
@@ -13694,7 +13782,7 @@ void V_add_v_files_to_compile(V *v) {
     };
 
     _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ fit.file_path),
-          tmp49, string);
+          tmp50, string);
   };
 }
 array_string V_get_builtin_files(V *v) {
@@ -13725,6 +13813,20 @@ array_string V_get_user_files(V *v) {
   array_string user_files = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
+  if (v->pref->is_test && v->pref->is_stats) {
+
+    _PUSH(
+        &user_files,
+        (/*typ = array_string   tmp_typ=string*/ array_string_join(
+            new_array_from_c_array(
+                5, 5, sizeof(string),
+                EMPTY_ARRAY_OF_ELEMS(string, 5){
+                    v->vroot, tos2((byte *)"vlib"), tos2((byte *)"benchmark"),
+                    tos2((byte *)"tests"), tos2((byte *)"always_imported.v")}),
+            os__PathSeparator)),
+        tmp53, string);
+  };
+
   bool is_test_with_imports =
       string_ends_with(dir, tos2((byte *)"_test.v")) &&
       (string_contains(dir, _STR("%.*svolt", os__PathSeparator.len,
@@ -13734,7 +13836,7 @@ array_string V_get_user_files(V *v) {
 
   if (is_test_with_imports) {
 
-    _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ dir), tmp53,
+    _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ dir), tmp55,
           string);
 
     int pos = string_last_index(dir, os__PathSeparator);
@@ -13744,7 +13846,7 @@ array_string V_get_user_files(V *v) {
 
   if (string_ends_with(dir, tos2((byte *)".v"))) {
 
-    _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ dir), tmp55,
+    _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ dir), tmp57,
           string);
 
     dir = string_all_before(
@@ -13754,11 +13856,11 @@ array_string V_get_user_files(V *v) {
 
     array_string files = V_v_files_from_dir(&/* ? */ *v, dir);
 
-    array_string tmp57 = files;
-    for (int tmp58 = 0; tmp58 < tmp57.len; tmp58++) {
-      string file = ((string *)tmp57.data)[tmp58];
+    array_string tmp59 = files;
+    for (int tmp60 = 0; tmp60 < tmp59.len; tmp60++) {
+      string file = ((string *)tmp59.data)[tmp60];
 
-      _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ file), tmp59,
+      _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ file), tmp61,
             string);
     };
   };
@@ -13789,24 +13891,24 @@ void V_parse_lib_imports(V *v) {
 
   while (1) {
 
-    map_FileImportTable tmp62 = v->table->file_imports;
-    array_string keys_tmp62 = map_keys(&tmp62);
-    for (int l = 0; l < keys_tmp62.len; l++) {
-      string _ = ((string *)keys_tmp62.data)[l];
+    map_FileImportTable tmp64 = v->table->file_imports;
+    array_string keys_tmp64 = map_keys(&tmp64);
+    for (int l = 0; l < keys_tmp64.len; l++) {
+      string _ = ((string *)keys_tmp64.data)[l];
       FileImportTable fit = {0};
-      map_get(tmp62, _, &fit);
+      map_get(tmp64, _, &fit);
 
       if (_IN(string, (fit.file_path), done_fits)) {
 
         continue;
       };
 
-      map_string tmp63 = fit.imports;
-      array_string keys_tmp63 = map_keys(&tmp63);
-      for (int l = 0; l < keys_tmp63.len; l++) {
-        string _ = ((string *)keys_tmp63.data)[l];
+      map_string tmp65 = fit.imports;
+      array_string keys_tmp65 = map_keys(&tmp65);
+      for (int l = 0; l < keys_tmp65.len; l++) {
+        string _ = ((string *)keys_tmp65.data)[l];
         string mod = {0};
-        map_get(tmp63, _, &mod);
+        map_get(tmp65, _, &mod);
 
         string import_path = V_find_module_path(&/* ? */ *v, mod);
 
@@ -13819,9 +13921,9 @@ void V_parse_lib_imports(V *v) {
                    mod.len, mod.str, import_path.len, import_path.str));
         };
 
-        array_string tmp66 = vfiles;
-        for (int tmp67 = 0; tmp67 < tmp66.len; tmp67++) {
-          string file = ((string *)tmp66.data)[tmp67];
+        array_string tmp68 = vfiles;
+        for (int tmp69 = 0; tmp69 < tmp68.len; tmp69++) {
+          string file = ((string *)tmp68.data)[tmp69];
 
           if (_IN(string, (file), done_imports)) {
 
@@ -13831,7 +13933,7 @@ void V_parse_lib_imports(V *v) {
           int pid = V_parse(v, file, main__Pass_imports);
 
           _PUSH(&done_imports, (/*typ = array_string   tmp_typ=string*/ file),
-                tmp69, string);
+                tmp71, string);
 
           string p_mod =
               (*(Parser *)array__get(v->parsers, pid)).import_table.module_name;
@@ -13847,7 +13949,7 @@ void V_parse_lib_imports(V *v) {
       };
 
       _PUSH(&done_fits, (/*typ = array_string   tmp_typ=string*/ fit.file_path),
-            tmp73, string);
+            tmp75, string);
     };
 
     if (v->table->file_imports.size == done_fits.len) {
@@ -14142,6 +14244,7 @@ V *main__new_v(array_string args) {
           .is_debuggable = _IN(string, (tos2((byte *)"-g")), args),
           .is_debug = _IN(string, (tos2((byte *)"-debug")), args) ||
                       _IN(string, (tos2((byte *)"-g")), args),
+          .is_stats = _IN(string, (tos2((byte *)"-stats")), args),
           .obfuscate = obfuscate,
           .is_prof = _IN(string, (tos2((byte *)"-prof")), args),
           .is_live = _IN(string, (tos2((byte *)"-live")), args),
@@ -14204,25 +14307,25 @@ array_string main__env_vflags_and_os_args() {
     _PUSH(&args,
           (/*typ = array_string   tmp_typ=string*/ (
               *(string *)array__get(os__args, 0))),
-          tmp103, string);
+          tmp105, string);
 
     _PUSH_MANY(&args,
                (/*typ = array_string   tmp_typ=string*/ string_split(
                    vflags, tos2((byte *)" "))),
-               tmp106, array_string);
+               tmp108, array_string);
 
     if (os__args.len > 1) {
 
       _PUSH_MANY(
           &args,
           (/*typ = array_string   tmp_typ=string*/ array_right(os__args, 1)),
-          tmp107, array_string);
+          tmp109, array_string);
     };
 
   } else {
 
     _PUSH_MANY(&args, (/*typ = array_string   tmp_typ=string*/ os__args),
-               tmp108, array_string);
+               tmp110, array_string);
   };
 
   return args;
@@ -14233,16 +14336,16 @@ void main__update_v() {
 
   string vroot = os__dir(os__executable());
 
-  Option_os__Result tmp110 = os__exec(_STR(
+  Option_os__Result tmp112 = os__exec(_STR(
       "git -C \"%.*s\" pull --rebase origin master", vroot.len, vroot.str));
-  if (!tmp110.ok) {
-    string err = tmp110.error;
+  if (!tmp112.ok) {
+    string err = tmp112.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result s = *(os__Result *)tmp110.data;
+  os__Result s = *(os__Result *)tmp112.data;
   ;
 
   println(s.output);
@@ -14258,32 +14361,32 @@ void main__update_v() {
 
   os__mv(_STR("%.*s/v.exe", vroot.len, vroot.str), v_backup_file);
 
-  Option_os__Result tmp112 =
+  Option_os__Result tmp114 =
       os__exec(_STR("\"%.*s/make.bat\"", vroot.len, vroot.str));
-  if (!tmp112.ok) {
-    string err = tmp112.error;
+  if (!tmp114.ok) {
+    string err = tmp114.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result s2 = *(os__Result *)tmp112.data;
+  os__Result s2 = *(os__Result *)tmp114.data;
   ;
 
   println(s2.output);
 
 #else
 
-  Option_os__Result tmp113 =
+  Option_os__Result tmp115 =
       os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
-  if (!tmp113.ok) {
-    string err = tmp113.error;
+  if (!tmp115.ok) {
+    string err = tmp115.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result s2 = *(os__Result *)tmp113.data;
+  os__Result s2 = *(os__Result *)tmp115.data;
   ;
 
   println(s2.output);
@@ -14332,16 +14435,16 @@ void main__install_v(array_string args) {
 
     os__chdir(string_add(vroot, tos2((byte *)"/tools")));
 
-    Option_os__Result tmp119 = os__exec(
+    Option_os__Result tmp121 = os__exec(
         _STR("%.*s -o %.*s vget.v", vexec.len, vexec.str, vget.len, vget.str));
-    if (!tmp119.ok) {
-      string err = tmp119.error;
+    if (!tmp121.ok) {
+      string err = tmp121.error;
 
       main__verror(err);
 
       return;
     }
-    os__Result vget_compilation = *(os__Result *)tmp119.data;
+    os__Result vget_compilation = *(os__Result *)tmp121.data;
     ;
 
     if (vget_compilation.exit_code != 0) {
@@ -14352,17 +14455,17 @@ void main__install_v(array_string args) {
     };
   };
 
-  Option_os__Result tmp120 =
+  Option_os__Result tmp122 =
       os__exec(string_add(_STR("%.*s ", vget.len, vget.str),
                           array_string_join(names, tos2((byte *)" "))));
-  if (!tmp120.ok) {
-    string err = tmp120.error;
+  if (!tmp122.ok) {
+    string err = tmp122.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result vgetresult = *(os__Result *)tmp120.data;
+  os__Result vgetresult = *(os__Result *)tmp122.data;
   ;
 
   if (vgetresult.exit_code != 0) {
@@ -14424,13 +14527,17 @@ void V_test_v(V *v) {
 
   array_string test_files = os__walk_ext(parent_dir, tos2((byte *)"_test.v"));
 
+  string ok = term__ok_message(tos2((byte *)"OK"));
+
+  string fail = term__fail_message(tos2((byte *)"FAIL"));
+
   println(tos2((byte *)"Testing..."));
 
   benchmark__Benchmark tmark = benchmark__new_benchmark();
 
-  array_string tmp128 = test_files;
-  for (int tmp129 = 0; tmp129 < tmp128.len; tmp129++) {
-    string dot_relative_file = ((string *)tmp128.data)[tmp129];
+  array_string tmp132 = test_files;
+  for (int tmp133 = 0; tmp133 < tmp132.len; tmp133++) {
+    string dot_relative_file = ((string *)tmp132.data)[tmp133];
 
     string relative_file =
         string_replace(dot_relative_file, tos2((byte *)"./"), tos2((byte *)""));
@@ -14450,21 +14557,21 @@ void V_test_v(V *v) {
 
     benchmark__Benchmark_step(&/* ? */ tmark);
 
-    Option_os__Result tmp134 = os__exec(cmd);
-    if (!tmp134.ok) {
-      string err = tmp134.error;
+    Option_os__Result tmp138 = os__exec(cmd);
+    if (!tmp138.ok) {
+      string err = tmp138.error;
 
       benchmark__Benchmark_fail(&/* ? */ tmark);
 
       failed = 1;
 
       println(benchmark__Benchmark_step_message(
-          &/* ? */ tmark,
-          _STR("%.*s FAIL", relative_file.len, relative_file.str)));
+          &/* ? */ tmark, _STR("%.*s %.*s", relative_file.len,
+                               relative_file.str, fail.len, fail.str)));
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp134.data;
+    os__Result r = *(os__Result *)tmp138.data;
     ;
 
     if (r.exit_code != 0) {
@@ -14474,17 +14581,18 @@ void V_test_v(V *v) {
       benchmark__Benchmark_fail(&/* ? */ tmark);
 
       println(benchmark__Benchmark_step_message(
-          &/* ? */ tmark, _STR("%.*s FAIL \n`%.*s`\n (\n%.*s\n)",
-                               relative_file.len, relative_file.str, file.len,
-                               file.str, r.output.len, r.output.str)));
+          &/* ? */ tmark,
+          _STR("%.*s %.*s\n`%.*s`\n (\n%.*s\n)", relative_file.len,
+               relative_file.str, fail.len, fail.str, file.len, file.str,
+               r.output.len, r.output.str)));
 
     } else {
 
       benchmark__Benchmark_ok(&/* ? */ tmark);
 
       println(benchmark__Benchmark_step_message(
-          &/* ? */ tmark,
-          _STR("%.*s OK", relative_file.len, relative_file.str)));
+          &/* ? */ tmark, _STR("%.*s %.*s", relative_file.len,
+                               relative_file.str, ok.len, ok.str)));
     };
 
     os__rm(tmpc_filepath);
@@ -14502,9 +14610,9 @@ void V_test_v(V *v) {
 
   benchmark__Benchmark bmark = benchmark__new_benchmark();
 
-  array_string tmp137 = examples;
-  for (int tmp138 = 0; tmp138 < tmp137.len; tmp138++) {
-    string relative_file = ((string *)tmp137.data)[tmp138];
+  array_string tmp141 = examples;
+  for (int tmp142 = 0; tmp142 < tmp141.len; tmp142++) {
+    string relative_file = ((string *)tmp141.data)[tmp142];
 
     if (string_contains(relative_file, tos2((byte *)"vweb"))) {
 
@@ -14526,21 +14634,21 @@ void V_test_v(V *v) {
 
     benchmark__Benchmark_step(&/* ? */ bmark);
 
-    Option_os__Result tmp142 = os__exec(cmd);
-    if (!tmp142.ok) {
-      string err = tmp142.error;
+    Option_os__Result tmp146 = os__exec(cmd);
+    if (!tmp146.ok) {
+      string err = tmp146.error;
 
       failed = 1;
 
       benchmark__Benchmark_fail(&/* ? */ bmark);
 
       println(benchmark__Benchmark_step_message(
-          &/* ? */ bmark,
-          _STR("%.*s FAIL", relative_file.len, relative_file.str)));
+          &/* ? */ bmark, _STR("%.*s %.*s", relative_file.len,
+                               relative_file.str, fail.len, fail.str)));
 
       continue;
     }
-    os__Result r = *(os__Result *)tmp142.data;
+    os__Result r = *(os__Result *)tmp146.data;
     ;
 
     if (r.exit_code != 0) {
@@ -14550,17 +14658,18 @@ void V_test_v(V *v) {
       benchmark__Benchmark_fail(&/* ? */ bmark);
 
       println(benchmark__Benchmark_step_message(
-          &/* ? */ bmark, _STR("%.*s FAIL \n`%.*s`\n (\n%.*s\n)",
-                               relative_file.len, relative_file.str, file.len,
-                               file.str, r.output.len, r.output.str)));
+          &/* ? */ bmark,
+          _STR("%.*s %.*s \n`%.*s`\n (\n%.*s\n)", relative_file.len,
+               relative_file.str, fail.len, fail.str, file.len, file.str,
+               r.output.len, r.output.str)));
 
     } else {
 
       benchmark__Benchmark_ok(&/* ? */ bmark);
 
       println(benchmark__Benchmark_step_message(
-          &/* ? */ bmark,
-          _STR("%.*s OK", relative_file.len, relative_file.str)));
+          &/* ? */ bmark, _STR("%.*s %.*s", relative_file.len,
+                               relative_file.str, ok.len, ok.str)));
     };
 
     os__rm(tmpc_filepath);
@@ -21741,14 +21850,14 @@ void Parser_assert_statement(Parser *p) {
 
   Parser_genln(
       p,
-      _STR(
-          ";\n\nif (!%.*s) {\n  println(tos2((byte *)\"\\x1B[31mFAILED: %.*s() "
-          "in %.*s:%d\\x1B[0m\"));\ng_test_ok = 0 ;\n	// TODO\n	// "
-          "Maybe print all vars in a test function if it fails?\n}\nelse {\n  "
-          "//puts(\"\\x1B[32mPASSED: %.*s()\\x1B[0m\");\n}",
-          tmp.len, tmp.str, p->cur_fn.name.len, p->cur_fn.name.str,
-          filename.len, filename.str, p->scanner->line_nr, p->cur_fn.name.len,
-          p->cur_fn.name.str));
+      _STR(";\n\n\n\nif (!%.*s) {\n  println(tos2((byte *)\"\\x1B[31mFAILED: "
+           "%.*s() in %.*s:%d\\x1B[0m\"));\n  g_test_fails++;\n  // TODO\n  // "
+           "Maybe print all vars in a test function if it fails?\n} else {\n  "
+           "g_test_oks++;\n  //println(tos2((byte *)\"\\x1B[32mPASSED: "
+           "%.*s()\\x1B[0m\"));\n}\n\n",
+           tmp.len, tmp.str, p->cur_fn.name.len, p->cur_fn.name.str,
+           filename.len, filename.str, p->scanner->line_nr, p->cur_fn.name.len,
+           p->cur_fn.name.str));
 }
 void Parser_return_st(Parser *p) {
 
