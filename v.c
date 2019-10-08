@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "60d4f47"
+#define V_COMMIT_HASH "0963328"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "64349b5"
+#define V_COMMIT_HASH "60d4f47"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -143,6 +143,9 @@ byteptr g_str_buf;
 int load_so(byteptr);
 void reload_so();
 void init_consts();
+#ifdef _WIN32
+BOOL isConsole;
+#endif
 
 int g_test_oks = 0;
 int g_test_fails = 0;
@@ -13603,18 +13606,17 @@ void V_generate_main(V *v) {
 
     string consts_init_body = array_string_join_lines(cgen->consts_init);
 
-    CGen_genln(
-        cgen,
-        _STR("void init_consts() {\n#ifdef _WIN32\nDWORD consoleMode;\nBOOL "
-             "isConsole = GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), "
-             "&consoleMode);\nint mode = isConsole ? _O_U16TEXT : "
-             "_O_U8TEXT;\n_setmode(_fileno(stdin), "
-             "mode);\n_setmode(_fileno(stdout), "
-             "_O_U8TEXT);\nSetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), "
-             "ENABLE_PROCESSED_OUTPUT | 0x0004);\n// "
-             "ENABLE_VIRTUAL_TERMINAL_PROCESSING\nsetbuf(stdout,0);\n#endif\ng_"
-             "str_buf=malloc(1000);\n%.*s\n}",
-             consts_init_body.len, consts_init_body.str));
+    CGen_genln(cgen, _STR("void init_consts() {\n#ifdef _WIN32\nDWORD "
+                          "consoleMode;\nisConsole = "
+                          "GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), "
+                          "&consoleMode);\nint mode = isConsole ? _O_U16TEXT : "
+                          "_O_U8TEXT;\n_setmode(_fileno(stdin), "
+                          "mode);\n_setmode(_fileno(stdout), "
+                          "_O_U8TEXT);\nSetConsoleMode(GetStdHandle(STD_OUTPUT_"
+                          "HANDLE), ENABLE_PROCESSED_OUTPUT | 0x0004);\n// "
+                          "ENABLE_VIRTUAL_TERMINAL_PROCESSING\nsetbuf(stdout,0)"
+                          ";\n#endif\ng_str_buf=malloc(1000);\n%.*s\n}",
+                          consts_init_body.len, consts_init_body.str));
 
     CGen_genln(
         cgen,
@@ -26605,7 +26607,7 @@ void Parser_fmt_dec(Parser *p) { p->scanner->fmt_indent--; }
 void init_consts() {
 #ifdef _WIN32
   DWORD consoleMode;
-  BOOL isConsole = GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &consoleMode);
+  isConsole = GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &consoleMode);
   int mode = isConsole ? _O_U16TEXT : _O_U8TEXT;
   _setmode(_fileno(stdin), mode);
   _setmode(_fileno(stdout), _O_U8TEXT);
@@ -26761,7 +26763,8 @@ void init_consts() {
              "b)\n#define DEFAULT_GT(a, b) (a > b)\n#define DEFAULT_GE(a, b) "
              "(a >= b)\n//================================== GLOBALS "
              "=================================*/\nbyteptr g_str_buf;\nint "
-             "load_so(byteptr);\nvoid reload_so();\nvoid init_consts();\n\n");
+             "load_so(byteptr);\nvoid reload_so();\nvoid "
+             "init_consts();\n#ifdef _WIN32\nBOOL isConsole;\n#endif\n");
   main__js_headers = tos2(
       (byte *)"\n\nvar array_string = function() {}\nvar array_byte = "
               "function() {}\nvar array_int = function() {}\nvar byte = "
