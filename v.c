@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0963328"
+#define V_COMMIT_HASH "b4bf123"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "60d4f47"
+#define V_COMMIT_HASH "0963328"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -11307,12 +11307,16 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
       if (string_ne(fmt, tos2((byte *)""))) {
 
+        string nl = (string_eq(f->name, tos2((byte *)"println")))
+                        ? (tos2((byte *)"\\n"))
+                        : (tos2((byte *)""));
+
         CGen_resetln(
             p->cgen,
             string_replace(
                 p->cgen->cur_line, string_add(f->name, tos2((byte *)" (")),
                 string_add(string_add(tos2((byte *)"/*opt*/printf (\""), fmt),
-                           tos2((byte *)"\\n\", "))));
+                           _STR("%.*s\", ", nl.len, nl.str))));
 
         continue;
       };
@@ -11458,9 +11462,9 @@ Fn *Parser_fn_call_args(Parser *p, Fn *f) {
 
       Type interface_type = Table_find_type(&/* ? */ *p->table, arg.typ);
 
-      array_Fn tmp131 = interface_type.methods;
-      for (int tmp132 = 0; tmp132 < tmp131.len; tmp132++) {
-        Fn method = ((Fn *)tmp131.data)[tmp132];
+      array_Fn tmp132 = interface_type.methods;
+      for (int tmp133 = 0; tmp133 < tmp132.len; tmp133++) {
+        Fn method = ((Fn *)tmp132.data)[tmp133];
 
         Parser_gen(p, _STR(", %.*s_%.*s ", typ.len, typ.str, method.name.len,
                            method.name.str));
@@ -11577,12 +11581,12 @@ void Parser_fn_gen_caller_vargs(Parser *p, Fn *f) {
           (/*typ = array_string   tmp_typ=string*/ _STR(
               "%.*s%.*s", ref_deref.len, ref_deref.str, varg_value.len,
               varg_value.str)),
-          tmp141, string);
+          tmp142, string);
   };
 
-  array_VargAccess tmp142 = p->table->varg_access;
-  for (int tmp143 = 0; tmp143 < tmp142.len; tmp143++) {
-    VargAccess va = ((VargAccess *)tmp142.data)[tmp143];
+  array_VargAccess tmp143 = p->table->varg_access;
+  for (int tmp144 = 0; tmp144 < tmp143.len; tmp144++) {
+    VargAccess va = ((VargAccess *)tmp143.data)[tmp144];
 
     if (string_ne(va.fn_name, f->name)) {
 
@@ -11618,9 +11622,9 @@ string Fn_typ_str(Fn *f) {
 
   strings__Builder_write(&/* ? */ sb, tos2((byte *)"fn ("));
 
-  array_Var tmp145 = f->args;
-  for (int i = 0; i < tmp145.len; i++) {
-    Var arg = ((Var *)tmp145.data)[i];
+  array_Var tmp146 = f->args;
+  for (int i = 0; i < tmp146.len; i++) {
+    Var arg = ((Var *)tmp146.data)[i];
 
     strings__Builder_write(&/* ? */ sb, arg.typ);
 
@@ -11643,9 +11647,9 @@ string Fn_str_args(Fn *f, Table *table) {
 
   string s = tos2((byte *)"");
 
-  array_Var tmp147 = f->args;
-  for (int i = 0; i < tmp147.len; i++) {
-    Var arg = ((Var *)tmp147.data)[i];
+  array_Var tmp148 = f->args;
+  for (int i = 0; i < tmp148.len; i++) {
+    Var arg = ((Var *)tmp148.data)[i];
 
     if (Table_is_interface(&/* ? */ *table, arg.typ)) {
 
@@ -11653,9 +11657,9 @@ string Fn_str_args(Fn *f, Table *table) {
 
       Type interface_type = Table_find_type(&/* ? */ *table, arg.typ);
 
-      array_Fn tmp149 = interface_type.methods;
-      for (int tmp150 = 0; tmp150 < tmp149.len; tmp150++) {
-        Fn method = ((Fn *)tmp149.data)[tmp150];
+      array_Fn tmp150 = interface_type.methods;
+      for (int tmp151 = 0; tmp151 < tmp150.len; tmp151++) {
+        Fn method = ((Fn *)tmp150.data)[tmp151];
 
         s = string_add(s, _STR(", %.*s (*%.*s_%.*s)(void*", method.typ.len,
                                method.typ.str, arg.typ.len, arg.typ.str,
@@ -11663,9 +11667,9 @@ string Fn_str_args(Fn *f, Table *table) {
 
         if (method.args.len > 1) {
 
-          array_Var tmp151 = array_right(method.args, 1);
-          for (int tmp152 = 0; tmp152 < tmp151.len; tmp152++) {
-            Var a = ((Var *)tmp151.data)[tmp152];
+          array_Var tmp152 = array_right(method.args, 1);
+          for (int tmp153 = 0; tmp153 < tmp152.len; tmp153++) {
+            Var a = ((Var *)tmp152.data)[tmp153];
 
             s = string_add(s, _STR(", %.*s", a.typ.len, a.typ.str));
           };
@@ -11699,9 +11703,9 @@ string Parser_find_misspelled_local_var(Parser *p, string name, f32 min_match) {
 
   string closest_var = tos2((byte *)"");
 
-  array_Var tmp155 = p->local_vars;
-  for (int tmp156 = 0; tmp156 < tmp155.len; tmp156++) {
-    Var var = ((Var *)tmp155.data)[tmp156];
+  array_Var tmp156 = p->local_vars;
+  for (int tmp157 = 0; tmp157 < tmp156.len; tmp157++) {
+    Var var = ((Var *)tmp156.data)[tmp157];
 
     if (var.scope_level > p->cur_fn.scope_level) {
 
@@ -11730,9 +11734,9 @@ string Parser_find_misspelled_local_var(Parser *p, string name, f32 min_match) {
 }
 bool array_Fn_contains(array_Fn fns, Fn f) {
 
-  array_Fn tmp159 = fns;
-  for (int tmp160 = 0; tmp160 < tmp159.len; tmp160++) {
-    Fn ff = ((Fn *)tmp159.data)[tmp160];
+  array_Fn tmp160 = fns;
+  for (int tmp161 = 0; tmp161 < tmp160.len; tmp161++) {
+    Fn ff = ((Fn *)tmp160.data)[tmp161];
 
     if (string_eq(ff.name, f.name)) {
 
