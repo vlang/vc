@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b4bf123"
+#define V_COMMIT_HASH "e10848e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0963328"
+#define V_COMMIT_HASH "b4bf123"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -5679,6 +5679,17 @@ string os__get_raw_line() {
 
   byte *buf = ((byte *)(v_malloc(max_line_chars * 2)));
 
+  if (isConsole > 0) {
+
+    void *h_input = GetStdHandle(os__STD_INPUT_HANDLE);
+
+    int nr_chars = 0;
+
+    ReadConsole(h_input, (char *)buf, max_line_chars * 2, &nr_chars, 0);
+
+    return string_from_wide2(((u16 *)(buf)), nr_chars);
+  };
+
   int res = ((int)(fgetws((char *)buf, max_line_chars, stdin)));
 
   int len = ((int)(wcslen(((u16 *)(buf)))));
@@ -5726,7 +5737,7 @@ array_string os__get_lines() {
 
     line = string_trim_space(line);
 
-    _PUSH(&inputstr, (/*typ = array_string   tmp_typ=string*/ line), tmp69,
+    _PUSH(&inputstr, (/*typ = array_string   tmp_typ=string*/ line), tmp71,
           string);
   };
 
@@ -5860,13 +5871,13 @@ string os__home_dir() {
 }
 void os__write_file(string path, string text) {
 
-  Option_os__File tmp74 = os__create(path);
-  if (!tmp74.ok) {
-    string err = tmp74.error;
+  Option_os__File tmp76 = os__create(path);
+  if (!tmp76.ok) {
+    string err = tmp76.error;
 
     return;
   }
-  os__File f = *(os__File *)tmp74.data;
+  os__File f = *(os__File *)tmp76.data;
   ;
 
   os__File_write(f, text);
@@ -6125,9 +6136,9 @@ array_string os__walk_ext(string path, string ext) {
   array_string res = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_string tmp104 = files;
-  for (int i = 0; i < tmp104.len; i++) {
-    string file = ((string *)tmp104.data)[i];
+  array_string tmp106 = files;
+  for (int i = 0; i < tmp106.len; i++) {
+    string file = ((string *)tmp106.data)[i];
 
     if (string_starts_with(file, tos2((byte *)"."))) {
 
@@ -6140,11 +6151,11 @@ array_string os__walk_ext(string path, string ext) {
 
       _PUSH_MANY(&res,
                  (/*typ = array_string   tmp_typ=string*/ os__walk_ext(p, ext)),
-                 tmp106, array_string);
+                 tmp108, array_string);
 
     } else if (string_ends_with(file, ext)) {
 
-      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp107, string);
+      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp109, string);
     };
   };
 
