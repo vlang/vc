@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e10848e"
+#define V_COMMIT_HASH "c1eb714"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b4bf123"
+#define V_COMMIT_HASH "e10848e"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -771,6 +771,12 @@ int array_string_index(array_string a, string v);
 int array_int_index(array_int a, int v);
 int array_byte_index(array_byte a, byte v);
 int array_char_index(array_char a, char v);
+array_string array_string_filter(array_string a,
+                                 bool (*predicate)(string p_val, int p_i,
+                                                   array_string p_arr /*FFF*/));
+array_int array_int_filter(array_int a,
+                           bool (*predicate)(int p_val, int p_i,
+                                             array_int p_arr /*FFF*/));
 void v_exit(int code);
 bool isnil(void *v);
 void on_panic(int (*f)(int /*FFF*/));
@@ -2288,6 +2294,45 @@ int array_char_index(array_char a, char v) {
   };
 
   return -1;
+}
+array_string array_string_filter(
+    array_string a,
+    bool (*predicate)(string p_val, int p_i, array_string p_arr /*FFF*/)) {
+
+  array_string res = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+
+  for (int i = 0; i < a.len; i++) {
+
+    if (predicate((*(string *)array__get(a, i)), i, a)) {
+
+      _PUSH(&res,
+            (/*typ = array_string   tmp_typ=string*/ (
+                *(string *)array__get(a, i))),
+            tmp48, string);
+    };
+  };
+
+  return res;
+}
+array_int array_int_filter(array_int a,
+                           bool (*predicate)(int p_val, int p_i,
+                                             array_int p_arr /*FFF*/)) {
+
+  array_int res = new_array_from_c_array(
+      0, 0, sizeof(int), EMPTY_ARRAY_OF_ELEMS(int, 0){TCCSKIP(0)});
+
+  for (int i = 0; i < a.len; i++) {
+
+    if (predicate((*(int *)array__get(a, i)), i, a)) {
+
+      _PUSH(&res,
+            (/*typ = array_int   tmp_typ=int*/ (*(int *)array__get(a, i))),
+            tmp55, int);
+    };
+  };
+
+  return res;
 }
 void v_exit(int code) { exit(code); }
 bool isnil(void *v) { return v == 0; }
