@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "52168d0"
+#define V_COMMIT_HASH "cdfb742"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0796e1d"
+#define V_COMMIT_HASH "52168d0"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -128,15 +128,15 @@ typedef int bool;
 #define _PUSH(arr, val, tmp, tmp_typ)                                          \
   {                                                                            \
     tmp_typ tmp = (val);                                                       \
-    array__push(arr, &tmp);                                                    \
+    array_push(arr, &tmp);                                                     \
   }
 #define _PUSH_MANY(arr, val, tmp, tmp_typ)                                     \
   {                                                                            \
     tmp_typ tmp = (val);                                                       \
-    array__push_many(arr, tmp.data, tmp.len);                                  \
+    array_push_many(arr, tmp.data, tmp.len);                                   \
   }
 #define _IN(typ, val, arr) array_##typ##_contains(arr, val)
-#define _IN_MAP(val, m) map__exists(m, val)
+#define _IN_MAP(val, m) map_exists(m, val)
 #define DEFAULT_EQUAL(a, b) (a == b)
 #define DEFAULT_NOT_EQUAL(a, b) (a != b)
 #define DEFAULT_LT(a, b) (a < b)
@@ -2228,7 +2228,7 @@ array array_reverse(array a) {
   for (int i = 0; i < a.len; i++) {
 
     memcpy((byte *)arr.data + i * arr.element_size,
-           &(*(array *)array__get(a, a.len - 1 - i)), arr.element_size);
+           &(*(array *)array_get(a, a.len - 1 - i)), arr.element_size);
   };
 
   return arr;
@@ -2253,7 +2253,7 @@ string array_string_str(array_string a) {
 
   for (int i = 0; i < a.len; i++) {
 
-    string val = (*(string *)array__get(a, i));
+    string val = (*(string *)array_get(a, i));
 
     strings__Builder_write(&/* ? */ sb, tos3("\""));
 
@@ -2279,7 +2279,7 @@ string array_byte_hex(array_byte b) {
 
   for (int i = 0; i < b.len; i++) {
 
-    ptr += sprintf(((char *)(ptr)), "%02x", (*(byte *)array__get(b, i)));
+    ptr += sprintf(((char *)(ptr)), "%02x", (*(byte *)array_get(b, i)));
   };
 
   return (tos2((byte *)hex));
@@ -2320,7 +2320,7 @@ int array_string_index(array_string a, string v) {
 
   for (int i = 0; i < a.len; i++) {
 
-    if (string_eq((*(string *)array__get(a, i)), v)) {
+    if (string_eq((*(string *)array_get(a, i)), v)) {
 
       return i;
     };
@@ -2332,7 +2332,7 @@ int array_int_index(array_int a, int v) {
 
   for (int i = 0; i < a.len; i++) {
 
-    if ((*(int *)array__get(a, i)) == v) {
+    if ((*(int *)array_get(a, i)) == v) {
 
       return i;
     };
@@ -2344,7 +2344,7 @@ int array_byte_index(array_byte a, byte v) {
 
   for (int i = 0; i < a.len; i++) {
 
-    if ((*(byte *)array__get(a, i)) == v) {
+    if ((*(byte *)array_get(a, i)) == v) {
 
       return i;
     };
@@ -2356,7 +2356,7 @@ int array_char_index(array_char a, char v) {
 
   for (int i = 0; i < a.len; i++) {
 
-    if ((*(char *)array__get(a, i)) == v) {
+    if ((*(char *)array_get(a, i)) == v) {
 
       return i;
     };
@@ -2373,11 +2373,11 @@ array_string array_string_filter(
 
   for (int i = 0; i < a.len; i++) {
 
-    if (predicate((*(string *)array__get(a, i)), i, a)) {
+    if (predicate((*(string *)array_get(a, i)), i, a)) {
 
       _PUSH(&res,
             (/*typ = array_string   tmp_typ=string*/ (
-                *(string *)array__get(a, i))),
+                *(string *)array_get(a, i))),
             tmp50, string);
     };
   };
@@ -2393,10 +2393,9 @@ array_int array_int_filter(array_int a,
 
   for (int i = 0; i < a.len; i++) {
 
-    if (predicate((*(int *)array__get(a, i)), i, a)) {
+    if (predicate((*(int *)array_get(a, i)), i, a)) {
 
-      _PUSH(&res,
-            (/*typ = array_int   tmp_typ=int*/ (*(int *)array__get(a, i))),
+      _PUSH(&res, (/*typ = array_int   tmp_typ=int*/ (*(int *)array_get(a, i))),
             tmp57, int);
     };
   };
@@ -2605,11 +2604,11 @@ void hashmap_set(hashmap *m, string key, int val) {
 
   int idx = hash % m->cap;
 
-  if ((*(hashmapentry *)array__get(m->table, idx)).key.len != 0) {
+  if ((*(hashmapentry *)array_get(m->table, idx)).key.len != 0) {
 
     m->nr_collisions++;
 
-    hashmapentry *e = &(*(hashmapentry *)array__get(m->table, idx));
+    hashmapentry *e = &(*(hashmapentry *)array_get(m->table, idx));
 
     while (e->next != 0) {
 
@@ -2631,7 +2630,7 @@ int hashmap_get(hashmap *m, string key) {
 
   int idx = hash % m->cap;
 
-  hashmapentry *e = &(*(hashmapentry *)array__get(m->table, idx));
+  hashmapentry *e = &(*(hashmapentry *)array_get(m->table, idx));
 
   while (e->next != 0) {
 
@@ -2917,7 +2916,7 @@ array_byte array_byte_clone(array_byte b) {
 
   for (int i = 0; i < b.len; i++) {
 
-    array_set(&/*q*/ res, i, &(byte[]){(*(byte *)array__get(b, i))});
+    array_set(&/*q*/ res, i, &(byte[]){(*(byte *)array_get(b, i))});
   };
 
   return res;
@@ -3355,7 +3354,7 @@ string string_replace(string s, string rep, string with) {
 
   int idx_pos = 0;
 
-  int cur_idx = (*(int *)array__get(idxs, idx_pos));
+  int cur_idx = (*(int *)array_get(idxs, idx_pos));
 
   int b_i = 0;
 
@@ -3376,7 +3375,7 @@ string string_replace(string s, string rep, string with) {
 
       if (idx_pos < idxs.len) {
 
-        cur_idx = (*(int *)array__get(idxs, idx_pos));
+        cur_idx = (*(int *)array_get(idxs, idx_pos));
       };
 
     } else {
@@ -3695,7 +3694,7 @@ int string_index_kmp(string s, string p) {
 
     while (p.str[j] /*rbyte 0*/ != p.str[i] /*rbyte 0*/ && j > 0) {
 
-      j = (*(int *)array__get(prefix, j - 1));
+      j = (*(int *)array_get(prefix, j - 1));
     };
 
     if (p.str[j] /*rbyte 0*/ == p.str[i] /*rbyte 0*/) {
@@ -3712,7 +3711,7 @@ int string_index_kmp(string s, string p) {
 
     while (p.str[j] /*rbyte 0*/ != s.str[i] /*rbyte 0*/ && j > 0) {
 
-      j = (*(int *)array__get(prefix, j - 1));
+      j = (*(int *)array_get(prefix, j - 1));
     };
 
     if (p.str[j] /*rbyte 0*/ == s.str[i] /*rbyte 0*/) {
@@ -4298,9 +4297,9 @@ string ustring_substr(ustring u, int _start, int _end) {
     v_panic(_STR("substr(%d, %d) out of bounds (len=%d)", _start, _end, u.len));
   };
 
-  int end = (_end >= u.len) ? (u.s.len) : ((*(int *)array__get(u.runes, _end)));
+  int end = (_end >= u.len) ? (u.s.len) : ((*(int *)array_get(u.runes, _end)));
 
-  return string_substr(u.s, (*(int *)array__get(u.runes, _start)), end);
+  return string_substr(u.s, (*(int *)array_get(u.runes, _start)), end);
 }
 string ustring_left(ustring u, int pos) {
 
@@ -4847,9 +4846,9 @@ int strings__levenshtein_distance(string a, string b) {
 
     int j = 1;
 
-    int fj1 = (*(int *)array__get(f, 0));
+    int fj1 = (*(int *)array_get(f, 0));
 
-    (*(int *)array__get(f, 0))++;
+    (*(int *)array_get(f, 0))++;
 
     string tmp10 = b;
     array_byte bytes_tmp10 = string_bytes(tmp10);
@@ -4858,9 +4857,9 @@ int strings__levenshtein_distance(string a, string b) {
       byte cb = ((byte *)bytes_tmp10.data)[tmp11];
 
       int mn =
-          ((*(int *)array__get(f, j)) + 1 <= (*(int *)array__get(f, j - 1)) + 1)
-              ? ((*(int *)array__get(f, j)) + 1)
-              : ((*(int *)array__get(f, j - 1)) + 1);
+          ((*(int *)array_get(f, j)) + 1 <= (*(int *)array_get(f, j - 1)) + 1)
+              ? ((*(int *)array_get(f, j)) + 1)
+              : ((*(int *)array_get(f, j - 1)) + 1);
 
       if (cb != ca) {
 
@@ -4871,7 +4870,7 @@ int strings__levenshtein_distance(string a, string b) {
         mn = (mn <= fj1) ? (mn) : (fj1);
       };
 
-      fj1 = (*(int *)array__get(f, j));
+      fj1 = (*(int *)array_get(f, j));
 
       array_set(&/*q*/ f, j, &(int[]){mn});
 
@@ -4879,7 +4878,7 @@ int strings__levenshtein_distance(string a, string b) {
     };
   };
 
-  return (*(int *)array__get(f, f.len - 1));
+  return (*(int *)array_get(f, f.len - 1));
 }
 f32 strings__levenshtein_distance_percentage(string a, string b) {
 
@@ -4921,7 +4920,7 @@ f32 strings__dice_coefficient(string s1, string s2) {
 
     int q = (_IN_MAP((bigram), first_bigrams)) ? (tmp32 + 1) : (1);
 
-    map__set(&first_bigrams, bigram, &(int[]){q});
+    map_set(&first_bigrams, bigram, &(int[]){q});
   };
 
   int intersection_size = 0;
@@ -4937,7 +4936,7 @@ f32 strings__dice_coefficient(string s1, string s2) {
 
     if (count > 0) {
 
-      map__set(&first_bigrams, bigram, &(int[]){count - 1});
+      map_set(&first_bigrams, bigram, &(int[]){count - 1});
 
       intersection_size++;
     };
@@ -6075,7 +6074,7 @@ string os__executable() {
 
 #ifdef __OpenBSD__
 
-  return (*(string *)array__get(os__args, 0));
+  return (*(string *)array_get(os__args, 0));
 
 #endif
   ;
@@ -6119,7 +6118,7 @@ string os__executable() {
 #endif
   ;
 
-  return (*(string *)array__get(os__args, 0));
+  return (*(string *)array_get(os__args, 0));
 }
 bool os__is_dir(string path) {
 
@@ -6820,7 +6819,7 @@ time__Time time__unix(int abs) {
 
   int begin = 0;
 
-  int end = ((int)((*(int *)array__get(time__daysBefore, month + 1))));
+  int end = ((int)((*(int *)array_get(time__daysBefore, month + 1))));
 
   if (day >= end) {
 
@@ -6830,7 +6829,7 @@ time__Time time__unix(int abs) {
 
   } else {
 
-    begin = ((int)((*(int *)array__get(time__daysBefore, month))));
+    begin = ((int)((*(int *)array_get(time__daysBefore, month))));
   };
 
   month++;
@@ -6979,16 +6978,16 @@ time__Time time__parse(string s) {
 
   array_string hms = string_split(shms, tos3(":"));
 
-  string hour = (*(string *)array__get(hms, 0));
+  string hour = (*(string *)array_get(hms, 0));
 
-  string minute = (*(string *)array__get(hms, 1));
+  string minute = (*(string *)array_get(hms, 1));
 
-  string second = (*(string *)array__get(hms, 2));
+  string second = (*(string *)array_get(hms, 2));
 
   return time__new_time(
-      (time__Time){.year = v_string_int((*(string *)array__get(ymd, 0))),
-                   .month = v_string_int((*(string *)array__get(ymd, 1))),
-                   .day = v_string_int((*(string *)array__get(ymd, 2))),
+      (time__Time){.year = v_string_int((*(string *)array_get(ymd, 0))),
+                   .month = v_string_int((*(string *)array_get(ymd, 1))),
+                   .day = v_string_int((*(string *)array_get(ymd, 2))),
                    .hour = v_string_int(hour),
                    .minute = v_string_int(minute),
                    .second = v_string_int(second),
@@ -7078,7 +7077,7 @@ int time__day_of_week(int y, int m, int d) {
     sy = sy - 1;
   };
 
-  return (sy + sy / 4 - sy / 100 + sy / 400 + (*(int *)array__get(t, m - 1)) +
+  return (sy + sy / 4 - sy / 100 + sy / 400 + (*(int *)array_get(t, m - 1)) +
           d - 1) %
              7 +
          1;
@@ -7162,7 +7161,7 @@ Option_int time__days_in_month(int month, int year) {
 
   int extra = (month == 2 && time__is_leap_year(year)) ? (1) : (0);
 
-  int res = (*(int *)array__get(time__MonthDays, month - 1)) + extra;
+  int res = (*(int *)array_get(time__MonthDays, month - 1)) + extra;
 
   int tmp60 = OPTION_CAST(int)(res);
   return opt_ok(&tmp60, sizeof(int));
@@ -7984,7 +7983,7 @@ string main__get_cmdline_cflags(array_string args) {
     if (string_eq(cv, tos3("-cflags"))) {
 
       cflags = string_add(
-          cflags, string_add((*(string *)array__get(args, ci + 1)), tos3(" ")));
+          cflags, string_add((*(string *)array_get(args, ci + 1)), tos3(" ")));
     };
   };
 
@@ -8534,7 +8533,7 @@ void CGen_insert_before(CGen *g, string val) {
     return;
   };
 
-  string prev = (*(string *)array__get(g->lines, g->lines.len - 1));
+  string prev = (*(string *)array_get(g->lines, g->lines.len - 1));
 
   array_set(&/*q*/ g->lines, g->lines.len - 1,
             &(string[]){
@@ -8886,7 +8885,7 @@ void Parser_error_with_token_index(Parser *p, string s, int tokenindex) {
       p, s,
       Scanner_get_scanner_pos_of_token(
           p->scanner, &/*112 EXP:"Token*" GOT:"Token" */ (
-                          *(Token *)array__get(p->tokens, tokenindex))));
+                          *(Token *)array_get(p->tokens, tokenindex))));
 }
 void Parser_warn_with_token_index(Parser *p, string s, int tokenindex) {
 
@@ -8894,7 +8893,7 @@ void Parser_warn_with_token_index(Parser *p, string s, int tokenindex) {
       p, s,
       Scanner_get_scanner_pos_of_token(
           p->scanner, &/*112 EXP:"Token*" GOT:"Token" */ (
-                          *(Token *)array__get(p->tokens, tokenindex))));
+                          *(Token *)array_get(p->tokens, tokenindex))));
 }
 void Parser_error_with_position(Parser *p, string s, ScannerPos sp) {
 
@@ -8960,7 +8959,7 @@ void Scanner_error_with_col(Scanner *s, string msg, int col) {
     for (int cline = context_start_line; cline < context_end_line; cline++) {
 
       string line = string_add(_STR("%5d| ", (cline + 1)),
-                               (*(string *)array__get(s->file_lines, cline)));
+                               (*(string *)array_get(s->file_lines, cline)));
 
       string coloredline =
           (cline == s->line_nr && color_on) ? (term__red(line)) : (line);
@@ -9382,7 +9381,7 @@ void Parser_comp_time(Parser *p) {
 
     Parser_genln(p, tos3("/////////////////// tmpl end"));
 
-    Var receiver = (*(Var *)array__get(p->cur_fn.args, 0));
+    Var receiver = (*(Var *)array_get(p->cur_fn.args, 0));
 
     string dot = (receiver.is_mut) ? (tos3("->")) : (tos3("."));
 
@@ -9512,7 +9511,7 @@ void Parser_comptime_method_call(Parser *p, Type typ) {
       continue;
     };
 
-    Var receiver = (*(Var *)array__get(method.args, 0));
+    Var receiver = (*(Var *)array_get(method.args, 0));
 
     string amp = (receiver.is_mut) ? (tos3("&")) : (tos3(""));
 
@@ -9733,7 +9732,7 @@ DepGraph *DepGraph_resolve(DepGraph *graph) {
   for (int _ = 0; _ < tmp9.len; _++) {
     DepGraphNode node = ((DepGraphNode *)tmp9.data)[_];
 
-    map__set(&node_names, node.name, &(DepGraphNode[]){node});
+    map_set(&node_names, node.name, &(DepGraphNode[]){node});
 
     DepSet dep_set = (DepSet){.items = new_array(0, 1, sizeof(string))};
 
@@ -9744,7 +9743,7 @@ DepGraph *DepGraph_resolve(DepGraph *graph) {
       DepSet_add(&/* ? */ dep_set, dep);
     };
 
-    map__set(&node_deps, node.name, &(DepSet[]){dep_set});
+    map_set(&node_deps, node.name, &(DepSet[]){dep_set});
   };
 
   DepGraph *resolved = main__new_dep_graph();
@@ -9784,7 +9783,7 @@ DepGraph *DepGraph_resolve(DepGraph *graph) {
 
         DepGraphNode node = tmp18;
 
-        if (string_eq(name, (*(string *)array__get(ndk, node_deps.size - 1)))) {
+        if (string_eq(name, (*(string *)array_get(ndk, node_deps.size - 1)))) {
 
           DepSet tmp23 = {0};
           bool tmp24 = map_get(/*depgraph.v : 90*/ node_deps, name, &tmp23);
@@ -9793,7 +9792,7 @@ DepGraph *DepGraph_resolve(DepGraph *graph) {
           bool tmp26 = map_get(/*depgraph.v : 90*/ node_deps, name, &tmp25);
 
           node.last_cycle =
-              (*(string *)array__get(tmp23.items, tmp25.items.len - 1));
+              (*(string *)array_get(tmp23.items, tmp25.items.len - 1));
         };
 
         _PUSH(&g->nodes,
@@ -9825,8 +9824,8 @@ DepGraph *DepGraph_resolve(DepGraph *graph) {
       DepSet deps = {0};
       map_get(tmp35, name, &deps);
 
-      map__set(&node_deps, name,
-               &(DepSet[]){DepSet_diff(&/* ? */ deps, ready_set)});
+      map_set(&node_deps, name,
+              &(DepSet[]){DepSet_diff(&/* ? */ deps, ready_set)});
     };
   };
 
@@ -9834,7 +9833,7 @@ DepGraph *DepGraph_resolve(DepGraph *graph) {
 }
 DepGraphNode DepGraph_last_node(DepGraph *graph) {
 
-  return (*(DepGraphNode *)array__get(graph->nodes, graph->nodes.len - 1));
+  return (*(DepGraphNode *)array_get(graph->nodes, graph->nodes.len - 1));
 }
 string DepGraph_last_cycle(DepGraph *graph) {
 
@@ -9844,7 +9843,7 @@ void DepGraph_display(DepGraph *graph) {
 
   for (int i = 0; i < graph->nodes.len; i++) {
 
-    DepGraphNode node = (*(DepGraphNode *)array__get(graph->nodes, i));
+    DepGraphNode node = (*(DepGraphNode *)array_get(graph->nodes, i));
 
     array_string tmp42 = node.deps;
     for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
@@ -9870,9 +9869,9 @@ Option_Var Parser_find_var(Parser *p, string name) {
   for (int tmp2 = tmp1; tmp2 < p->var_idx; tmp2++) {
     int i = tmp2;
 
-    if (string_eq((*(Var *)array__get(p->local_vars, i)).name, name)) {
+    if (string_eq((*(Var *)array_get(p->local_vars, i)).name, name)) {
 
-      Var tmp7 = OPTION_CAST(Var)((*(Var *)array__get(p->local_vars, i)));
+      Var tmp7 = OPTION_CAST(Var)((*(Var *)array_get(p->local_vars, i)));
       return opt_ok(&tmp7, sizeof(Var));
     };
   };
@@ -9886,9 +9885,9 @@ Option_Var Parser_find_var_check_new_var(Parser *p, string name) {
   for (int tmp9 = tmp8; tmp9 < p->var_idx; tmp9++) {
     int i = tmp9;
 
-    if (string_eq((*(Var *)array__get(p->local_vars, i)).name, name)) {
+    if (string_eq((*(Var *)array_get(p->local_vars, i)).name, name)) {
 
-      Var tmp14 = OPTION_CAST(Var)((*(Var *)array__get(p->local_vars, i)));
+      Var tmp14 = OPTION_CAST(Var)((*(Var *)array_get(p->local_vars, i)));
       return opt_ok(&tmp14, sizeof(Var));
     };
   };
@@ -9936,7 +9935,7 @@ void Parser_mark_var_used(Parser *p, Var v) {
     return;
   };
 
-  (*(Var *)array__get(p->local_vars, v.idx)).is_used = 1;
+  (*(Var *)array_get(p->local_vars, v.idx)).is_used = 1;
 }
 void Parser_mark_var_returned(Parser *p, Var v) {
 
@@ -9945,7 +9944,7 @@ void Parser_mark_var_returned(Parser *p, Var v) {
     return;
   };
 
-  (*(Var *)array__get(p->local_vars, v.idx)).is_returned = 1;
+  (*(Var *)array_get(p->local_vars, v.idx)).is_returned = 1;
 }
 void Parser_mark_var_changed(Parser *p, Var v) {
 
@@ -9954,7 +9953,7 @@ void Parser_mark_var_changed(Parser *p, Var v) {
     return;
   };
 
-  (*(Var *)array__get(p->local_vars, v.idx)).is_changed = 1;
+  (*(Var *)array_get(p->local_vars, v.idx)).is_changed = 1;
 }
 void Parser_mark_arg_moved(Parser *p, Var v) {
 
@@ -9964,13 +9963,13 @@ void Parser_mark_arg_moved(Parser *p, Var v) {
 
     if (string_eq(arg.name, v.name)) {
 
-      (*(Var *)array__get(p->cur_fn.args, i)).is_moved = 1;
+      (*(Var *)array_get(p->cur_fn.args, i)).is_moved = 1;
 
       break;
     };
   };
 
-  map__set(&p->table->fns, p->cur_fn.name, &(Fn[]){p->cur_fn});
+  map_set(&p->table->fns, p->cur_fn.name, &(Fn[]){p->cur_fn});
 }
 bool Parser_known_var(Parser *p, string name) {
 
@@ -10538,7 +10537,7 @@ void Parser_fn_decl(Parser *p) {
 
     if (f.defer_text.len > f.scope_level) {
 
-      Parser_genln(p, (*(string *)array__get(f.defer_text, f.scope_level)));
+      Parser_genln(p, (*(string *)array_get(f.defer_text, f.scope_level)));
     };
   };
 
@@ -11928,7 +11927,7 @@ void Parser_gen_blank_identifier_assign(Parser *p) {
 
   bool is_fn_call = Parser_peek(&/* ? */ *p) == main__TokenKind_lpar ||
                     (Parser_peek(&/* ? */ *p) == main__TokenKind_dot &&
-                     (*(Token *)array__get(p->tokens, p->token_idx + 2)).tok ==
+                     (*(Token *)array_get(p->tokens, p->token_idx + 2)).tok ==
                          main__TokenKind_lpar);
 
   if (!is_indexer && !is_fn_call) {
@@ -12100,12 +12099,12 @@ void Parser_index_get(Parser *p, string typ, int fn_ph, IndexCfg cfg) {
 
       if (cfg.is_ptr) {
 
-        Parser_gen(p, _STR("( *(%.*s*) array__get(* %.*s) )", typ.len, typ.str,
+        Parser_gen(p, _STR("( *(%.*s*) array_get(* %.*s) )", typ.len, typ.str,
                            index_expr.len, index_expr.str));
 
       } else {
 
-        Parser_gen(p, _STR("( *(%.*s*) array__get(%.*s) )", typ.len, typ.str,
+        Parser_gen(p, _STR("( *(%.*s*) array_get(%.*s) )", typ.len, typ.str,
                            index_expr.len, index_expr.str));
       };
     };
@@ -12166,7 +12165,7 @@ string Table_fn_gen_name(Table *table, Fn *f) {
 
       table->fn_cnt++;
 
-      map__set(&table->obf_ids, name, &(int[]){table->fn_cnt});
+      map_set(&table->obf_ids, name, &(int[]){table->fn_cnt});
 
       idx = table->fn_cnt;
     };
@@ -12370,7 +12369,7 @@ void Parser_gen_array_set(Parser *p, string typ, bool is_ptr, bool is_map,
 
   if (is_map) {
 
-    func = tos3("map__set(&");
+    func = tos3("map_set(&");
 
   } else {
 
@@ -12380,7 +12379,7 @@ void Parser_gen_array_set(Parser *p, string typ, bool is_ptr, bool is_map,
 
       if (is_cao) {
 
-        cao_tmp = _STR("*(%.*s *) array__get(*%.*s)", p->expected_type.len,
+        cao_tmp = _STR("*(%.*s *) array_get(*%.*s)", p->expected_type.len,
                        p->expected_type.str, cao_tmp.len, cao_tmp.str);
       };
 
@@ -12390,7 +12389,7 @@ void Parser_gen_array_set(Parser *p, string typ, bool is_ptr, bool is_map,
 
       if (is_cao) {
 
-        cao_tmp = _STR("*(%.*s *) array__get(%.*s)", p->expected_type.len,
+        cao_tmp = _STR("*(%.*s *) array_get(%.*s)", p->expected_type.len,
                        p->expected_type.str, cao_tmp.len, cao_tmp.str);
       };
     };
@@ -12917,7 +12916,7 @@ string Parser_decode_array(Parser *p, string array_type) {
 
   return _STR("\n*res = new_array(0, 0, sizeof(%.*s));\nconst cJSON *jsval = "
               "NULL;\ncJSON_ArrayForEach(jsval, root)\n{\n%.*s\n  "
-              "array__push(res, &val);\n}\n",
+              "array_push(res, &val);\n}\n",
               typ.len, typ.str, s.len, s.str);
 }
 string main__js_enc_name(string typ) {
@@ -13054,7 +13053,7 @@ void V_generate_hot_reload_code(V *v) {
 
     string so_name = string_add(file_base, tos3(".so"));
 
-    string vexe = (*(string *)array__get(os__args, 0));
+    string vexe = (*(string *)array_get(os__args, 0));
 
     if (string_eq(os__user_os(), tos3("windows"))) {
 
@@ -13294,7 +13293,7 @@ void main__main() {
 
   if (args.len < 2 ||
       (args.len == 2 &&
-       string_eq((*(string *)array__get(args, 1)), tos3("-"))) ||
+       string_eq((*(string *)array_get(args, 1)), tos3("-"))) ||
       _IN(string, (tos3("runrepl")), args)) {
 
     main__run_repl();
@@ -13387,7 +13386,7 @@ int V_parse(V *v, string file, Pass pass) {
   int pidx = *(int *)tmp11.data;
   ;
 
-  Parser_parse(&/* ? */ (*(Parser *)array__get(v->parsers, pidx)), pass);
+  Parser_parse(&/* ? */ (*(Parser *)array_get(v->parsers, pidx)), pass);
 
   return pidx;
 }
@@ -14158,7 +14157,7 @@ void V_parse_lib_imports(V *v) {
           ;
 
           Parser_error_with_token_index(
-              &/* ? */ (*(Parser *)array__get(v->parsers, pidx)),
+              &/* ? */ (*(Parser *)array_get(v->parsers, pidx)),
               _STR("cannot import module \"%.*s\" (not found)", mod.len,
                    mod.str),
               FileImportTable_get_import_tok_idx(&/* ? */ fit, mod));
@@ -14185,7 +14184,7 @@ void V_parse_lib_imports(V *v) {
           ;
 
           Parser_error_with_token_index(
-              &/* ? */ (*(Parser *)array__get(v->parsers, pidx)),
+              &/* ? */ (*(Parser *)array_get(v->parsers, pidx)),
               _STR("cannot import module \"%.*s\" (no .v files in \"%.*s\")",
                    mod.len, mod.str, import_path.len, import_path.str),
               FileImportTable_get_import_tok_idx(&/* ? */ fit, mod));
@@ -14206,12 +14205,12 @@ void V_parse_lib_imports(V *v) {
                 tmp86, string);
 
           string p_mod =
-              (*(Parser *)array__get(v->parsers, pid)).import_table.module_name;
+              (*(Parser *)array_get(v->parsers, pid)).import_table.module_name;
 
           if (string_ne(p_mod, mod)) {
 
             Parser_error_with_token_index(
-                &/* ? */ (*(Parser *)array__get(v->parsers, pid)),
+                &/* ? */ (*(Parser *)array_get(v->parsers, pid)),
                 _STR("bad module definition: %.*s imports module \"%.*s\" but "
                      "%.*s is defined as module `%.*s`",
                      fit.file_path.len, fit.file_path.str, mod.len, mod.str,
@@ -14570,7 +14569,7 @@ array_string main__env_vflags_and_os_args() {
 
     _PUSH(&args,
           (/*typ = array_string   tmp_typ=string*/ (
-              *(string *)array__get(os__args, 0))),
+              *(string *)array_get(os__args, 0))),
           tmp122, string);
 
     _PUSH_MANY(&args,
@@ -14794,7 +14793,7 @@ string Fn_v_definition(Fn *f) {
 
   if (f->is_method) {
 
-    Var recv = (*(Var *)array__get(f->args, 0));
+    Var recv = (*(Var *)array_get(f->args, 0));
 
     string typ =
         string_replace(main__v_type_str(recv.typ), tos3("*"), tos3(""));
@@ -14885,7 +14884,7 @@ string main__v_type_str(string typ_) {
     for (int tmp13 = tmp12; tmp13 < words.len; tmp13++) {
       int i = tmp13;
 
-      typ = string_add(typ, (*(string *)array__get(words, i)));
+      typ = string_add(typ, (*(string *)array_get(words, i)));
 
       if (i != words.len - 1) {
 
@@ -16162,7 +16161,7 @@ void Parser_next(Parser *p) {
     return;
   };
 
-  Token res = (*(Token *)array__get(p->tokens, p->token_idx));
+  Token res = (*(Token *)array_get(p->tokens, p->token_idx));
 
   p->token_idx++;
 
@@ -16179,17 +16178,17 @@ TokenKind Parser_peek(Parser *p) {
     return main__TokenKind_eof;
   };
 
-  Token tok = (*(Token *)array__get(p->tokens, p->token_idx));
+  Token tok = (*(Token *)array_get(p->tokens, p->token_idx));
 
   return tok.tok;
 }
 static inline Token Parser_prev_token(Parser *p) {
 
-  return (*(Token *)array__get(p->tokens, p->token_idx - 2));
+  return (*(Token *)array_get(p->tokens, p->token_idx - 2));
 }
 static inline Token Parser_cur_tok(Parser *p) {
 
-  return (*(Token *)array__get(p->tokens, p->token_idx - 1));
+  return (*(Token *)array_get(p->tokens, p->token_idx - 1));
 }
 static inline Token Parser_peek_token(Parser *p) {
 
@@ -16202,7 +16201,7 @@ static inline Token Parser_peek_token(Parser *p) {
                    .col = 0};
   };
 
-  return (*(Token *)array__get(p->tokens, p->token_idx));
+  return (*(Token *)array_get(p->tokens, p->token_idx));
 }
 void Parser_log(Parser *p, string s) {}
 void Parser_parse(Parser *p, Pass pass) {
@@ -16272,8 +16271,8 @@ void Parser_parse(Parser *p, Pass pass) {
       Parser_error(p, tos3("module `builtin` cannot be imported"));
     };
 
-    map__set(&p->table->file_imports, p->id,
-             &(FileImportTable[]){p->import_table});
+    map_set(&p->table->file_imports, p->id,
+            &(FileImportTable[]){p->import_table});
 
     return;
   };
@@ -16460,7 +16459,7 @@ void Parser_parse(Parser *p, Pass pass) {
 
         Parser_statement(p, 1);
 
-        if (string_ne((*(string *)array__get(p->cgen->lines, start - 1)),
+        if (string_ne((*(string *)array_get(p->cgen->lines, start - 1)),
                       tos3("")) &&
             string_ne(p->cgen->fn_main, tos3(""))) {
 
@@ -17651,7 +17650,7 @@ void Parser_close_scope(Parser *p) {
 
   for (; i >= 0; i--) {
 
-    Var v = (*(Var *)array__get(p->local_vars, i));
+    Var v = (*(Var *)array_get(p->local_vars, i));
 
     if (v.scope_level != p->cur_fn.scope_level) {
 
@@ -17686,7 +17685,7 @@ void Parser_close_scope(Parser *p) {
         if (!v.is_returned && string_ne(v.typ, tos3("FILE*"))) {
 
           string prev_line =
-              (*(string *)array__get(p->cgen->lines, p->cgen->lines.len - 2));
+              (*(string *)array_get(p->cgen->lines, p->cgen->lines.len - 2));
 
           array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 2,
                     &(string[]){string_add(
@@ -17901,7 +17900,7 @@ void Parser_assign_statement(Parser *p, Var v, int ph, bool is_map) {
     if (v.is_arg) {
 
       if (p->cur_fn.args.len > 0 &&
-          string_eq((*(Var *)array__get(p->cur_fn.args, 0)).name, v.name)) {
+          string_eq((*(Var *)array_get(p->cur_fn.args, 0)).name, v.name)) {
 
         printf("make the receiver `%.*s` mutable:\nfn (%.*s mut %.*s) %.*s "
                "(...) {\n\n",
@@ -18061,12 +18060,12 @@ void Parser_var_decl(Parser *p) {
       EMPTY_ARRAY_OF_ELEMS(string, 1){Parser_check_name(p)});
 
   Scanner_validate_var_name(&/* ? */ *p->scanner,
-                            (*(string *)array__get(var_names, 0)));
+                            (*(string *)array_get(var_names, 0)));
 
   int new_vars = 0;
 
-  if (string_ne((*(string *)array__get(var_names, 0)), tos3("_")) &&
-      !Parser_known_var(p, (*(string *)array__get(var_names, 0)))) {
+  if (string_ne((*(string *)array_get(var_names, 0)), tos3("_")) &&
+      !Parser_known_var(p, (*(string *)array_get(var_names, 0)))) {
 
     new_vars++;
   };
@@ -18121,7 +18120,7 @@ void Parser_var_decl(Parser *p) {
   };
 
   if (is_decl_assign && var_names.len == 1 &&
-      string_eq((*(string *)array__get(var_names, 0)), tos3("_"))) {
+      string_eq((*(string *)array_get(var_names, 0)), tos3("_"))) {
 
     Parser_error_with_token_index(p, tos3("use `=` instead of `:=`"),
                                   *(int *)array_last(var_token_idxs));
@@ -18130,7 +18129,7 @@ void Parser_var_decl(Parser *p) {
   p->var_decl_name = (var_names.len > 1)
                          ? (string_add(tos3("_V_mret_"),
                                        array_string_join(var_names, tos3("_"))))
-                         : ((*(string *)array__get(var_names, 0)));
+                         : ((*(string *)array_get(var_names, 0)));
 
   string t = Parser_gen_var_decl(p, p->var_decl_name, is_static);
 
@@ -18161,11 +18160,11 @@ void Parser_var_decl(Parser *p) {
   for (int i = 0; i < tmp171.len; i++) {
     string var_name = ((string *)tmp171.data)[i];
 
-    int var_token_idx = (*(int *)array__get(var_token_idxs, i));
+    int var_token_idx = (*(int *)array_get(var_token_idxs, i));
 
-    bool var_is_mut = (*(bool *)array__get(var_mut, i));
+    bool var_is_mut = (*(bool *)array_get(var_mut, i));
 
-    string var_type = (*(string *)array__get(var_types, i));
+    string var_type = (*(string *)array_get(var_types, i));
 
     bool known_var = Parser_known_var(p, var_name);
 
@@ -18276,7 +18275,7 @@ void Parser_var_decl(Parser *p) {
             .is_mut = var_is_mut,
             .is_alloc =
                 p->is_alloc || string_starts_with(var_type, tos3("array_")),
-            .line_nr = (*(Token *)array__get(p->tokens, var_token_idx)).line_nr,
+            .line_nr = (*(Token *)array_get(p->tokens, var_token_idx)).line_nr,
             .token_idx = var_token_idx,
             .idx = 0,
             .is_arg = 0,
@@ -22711,7 +22710,7 @@ string main__sql_params2params_gen(array_string sql_params,
 
     string param = string_trim_space(mparam);
 
-    string paramtype = (*(string *)array__get(sql_types, i));
+    string paramtype = (*(string *)array_get(sql_types, i));
 
     if (byte_is_digit(string_at(param, 0))) {
 
@@ -22810,7 +22809,7 @@ string Parser_select_query(Parser *p, int fn_ph) {
                          table_name.len, table_name.str));
   };
 
-  if (string_ne((*(Var *)array__get(fields, 0)).name, tos3("id"))) {
+  if (string_ne((*(Var *)array_get(fields, 0)).name, tos3("id"))) {
 
     Parser_error(p, _STR("V orm: `id int` must be the first field in `%.*s`",
                          table_name.len, table_name.str));
@@ -22942,7 +22941,7 @@ string Parser_select_query(Parser *p, int fn_ph) {
 
       strings__Builder_writeln(&/* ? */ obj_gen,
                                _STR("%.*s%.*s . %.*s = %.*s( "
-                                    "*(string*)array__get(%.*srow.vals, %d) );",
+                                    "*(string*)array_get(%.*srow.vals, %d) );",
                                     qprefix.len, qprefix.str, tmp.len, tmp.str,
                                     field.name.len, field.name.str, cast.len,
                                     cast.str, qprefix.len, qprefix.str, i));
@@ -22995,9 +22994,9 @@ string Parser_select_query(Parser *p, int fn_ph) {
                ";\narray_pg__Row %.*srows = pg__res_to_rows(%.*sres);\n\n// "
                "TODO preallocate\narray %.*sarr_%.*s = new_array(0, 0, "
                "sizeof(%.*s));\nfor (int i = 0; i < %.*srows.len; i++) {\n    "
-               "pg__Row %.*srow = *(pg__Row*)array__get(%.*srows, i);\n    "
-               "%.*s %.*s%.*s;\n    %.*s\n    _PUSH(&%.*sarr_%.*s, %.*s%.*s, "
-               "%.*s2, %.*s);\n}\n",
+               "pg__Row %.*srow = *(pg__Row*)array_get(%.*srows, i);\n    %.*s "
+               "%.*s%.*s;\n    %.*s\n    _PUSH(&%.*sarr_%.*s, %.*s%.*s, %.*s2, "
+               "%.*s);\n}\n",
                qprefix.len, qprefix.str, p->sql_i, params_gen.len,
                params_gen.str, qprefix.len, qprefix.str, q.len, q.str, p->sql_i,
                qprefix.len, qprefix.str, qprefix.len, qprefix.str, qprefix.len,
@@ -23083,7 +23082,7 @@ void Parser_insert_query(Parser *p, int fn_ph) {
                          var.typ.str));
   };
 
-  if (string_ne((*(Var *)array__get(fields, 0)).name, tos3("id"))) {
+  if (string_ne((*(Var *)array_get(fields, 0)).name, tos3("id"))) {
 
     Parser_error(p, _STR("V orm: `id int` must be the first field in `%.*s`",
                          var.typ.len, var.typ.str));
@@ -23252,7 +23251,7 @@ array_string main__run_repl() {
                   .functions_name = new_array(0, 1, sizeof(string)),
                   .functions = new_array(0, 1, sizeof(string))};
 
-  string vexe = (*(string *)array__get(os__args, 0));
+  string vexe = (*(string *)array_get(os__args, 0));
 
   while (1) {
 
@@ -23378,7 +23377,7 @@ array_string main__run_repl() {
 
       for (int i = 0; i < vals.len; i++) {
 
-        println((*(string *)array__get(vals, i)));
+        println((*(string *)array_get(vals, i)));
       };
 
     } else {
@@ -23444,12 +23443,12 @@ array_string main__run_repl() {
 
         while (r.temp_lines.len > 0) {
 
-          if (!string_starts_with((*(string *)array__get(r.temp_lines, 0)),
+          if (!string_starts_with((*(string *)array_get(r.temp_lines, 0)),
                                   tos3("print"))) {
 
             _PUSH(&r.lines,
                   (/*typ = array_string   tmp_typ=string*/ (
-                      *(string *)array__get(r.temp_lines, 0))),
+                      *(string *)array_get(r.temp_lines, 0))),
                   tmp48, string);
           };
 
@@ -23471,7 +23470,7 @@ array_string main__run_repl() {
 
       for (int i = 0; i < vals.len; i++) {
 
-        println((*(string *)array__get(vals, i)));
+        println((*(string *)array_get(vals, i)));
       };
     };
   };
@@ -24907,7 +24906,7 @@ void Parser_register_global(Parser *p, string name, string typ) {
 }
 void Table_register_fn(Table *t, Fn new_fn) {
 
-  map__set(&t->fns, new_fn.name, &(Fn[]){new_fn});
+  map_set(&t->fns, new_fn.name, &(Fn[]){new_fn});
 }
 bool Table_known_type(Table *table, string typ_) {
 
@@ -24983,17 +24982,17 @@ void Table_register_type(Table *t, string typ) {
     return;
   };
 
-  map__set(&t->typesmap, typ,
-           &(Type[]){(Type){.name = typ,
-                            .mod = tos((byte *)"", 0),
-                            .fields = new_array(0, 1, sizeof(Var)),
-                            .methods = new_array(0, 1, sizeof(Fn)),
-                            .parent = tos((byte *)"", 0),
-                            .is_c = 0,
-                            .enum_vals = new_array(0, 1, sizeof(string)),
-                            .gen_types = new_array(0, 1, sizeof(string)),
-                            .is_placeholder = 0,
-                            .gen_str = 0}});
+  map_set(&t->typesmap, typ,
+          &(Type[]){(Type){.name = typ,
+                           .mod = tos((byte *)"", 0),
+                           .fields = new_array(0, 1, sizeof(Var)),
+                           .methods = new_array(0, 1, sizeof(Fn)),
+                           .parent = tos((byte *)"", 0),
+                           .is_c = 0,
+                           .enum_vals = new_array(0, 1, sizeof(string)),
+                           .gen_types = new_array(0, 1, sizeof(string)),
+                           .is_placeholder = 0,
+                           .gen_str = 0}});
 }
 void Parser_register_type_with_parent(Parser *p, string strtyp, string parent) {
 
@@ -25017,17 +25016,17 @@ void Table_register_type_with_parent(Table *t, string typ, string parent) {
     return;
   };
 
-  map__set(&t->typesmap, typ,
-           &(Type[]){(Type){.name = typ,
-                            .parent = parent,
-                            .mod = tos((byte *)"", 0),
-                            .fields = new_array(0, 1, sizeof(Var)),
-                            .methods = new_array(0, 1, sizeof(Fn)),
-                            .is_c = 0,
-                            .enum_vals = new_array(0, 1, sizeof(string)),
-                            .gen_types = new_array(0, 1, sizeof(string)),
-                            .is_placeholder = 0,
-                            .gen_str = 0}});
+  map_set(&t->typesmap, typ,
+          &(Type[]){(Type){.name = typ,
+                           .parent = parent,
+                           .mod = tos((byte *)"", 0),
+                           .fields = new_array(0, 1, sizeof(Var)),
+                           .methods = new_array(0, 1, sizeof(Fn)),
+                           .is_c = 0,
+                           .enum_vals = new_array(0, 1, sizeof(string)),
+                           .gen_types = new_array(0, 1, sizeof(string)),
+                           .is_placeholder = 0,
+                           .gen_str = 0}});
 }
 void Table_register_type2(Table *t, Type typ) {
 
@@ -25036,7 +25035,7 @@ void Table_register_type2(Table *t, Type typ) {
     return;
   };
 
-  map__set(&t->typesmap, typ.name, &(Type[]){typ});
+  map_set(&t->typesmap, typ.name, &(Type[]){typ});
 }
 void Table_rewrite_type(Table *t, Type typ) {
 
@@ -25045,7 +25044,7 @@ void Table_rewrite_type(Table *t, Type typ) {
     return;
   };
 
-  map__set(&t->typesmap, typ.name, &(Type[]){typ});
+  map_set(&t->typesmap, typ.name, &(Type[]){typ});
 }
 void Table_add_field(Table *table, string type_name, string field_name,
                      string field_type, bool is_mut, string attr,
@@ -25090,7 +25089,7 @@ void Table_add_field(Table *table, string type_name, string field_name,
             .token_idx = 0}),
         tmp25, Var);
 
-  map__set(&table->typesmap, type_name, &(Type[]){t});
+  map_set(&table->typesmap, type_name, &(Type[]){t});
 }
 bool Type_has_field(Type *t, string name) {
 
@@ -25191,7 +25190,7 @@ void Parser_add_method(Parser *p, string type_name, Fn f) {
 
   _PUSH(&t.methods, (/*typ = array_Fn   tmp_typ=Fn*/ f), tmp41, Fn);
 
-  map__set(&p->table->typesmap, type_name, &(Type[]){t});
+  map_set(&p->table->typesmap, type_name, &(Type[]){t});
 }
 bool Type_has_method(Type *t, string name) {
 
@@ -25672,7 +25671,7 @@ void Table_register_generic_fn_type(Table *t, string fn_name, string typ) {
 
     if (string_eq(f.fn_name, fn_name)) {
 
-      _PUSH(&(*(GenTable *)array__get(t->generic_fns, i)).types,
+      _PUSH(&(*(GenTable *)array_get(t->generic_fns, i)).types,
             (/*typ = array_string   tmp_typ=string*/ typ), tmp87, string);
 
       return;
@@ -25785,7 +25784,7 @@ string Table_qualify_module(Table *table, string mod, string file_path) {
 
       string m_path = array_string_join(m_parts, os__PathSeparator);
 
-      if (string_eq(mod, (*(string *)array__get(m_parts, m_parts.len - 1))) &&
+      if (string_eq(mod, (*(string *)array_get(m_parts, m_parts.len - 1))) &&
           string_contains(file_path, m_path)) {
 
         return m;
@@ -25871,9 +25870,9 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
     };
   };
 
-  map__set(&fit->imports, alias, &(string[]){mod});
+  map_set(&fit->imports, alias, &(string[]){mod});
 
-  map__set(&fit->import_tok_idx, mod, &(int[]){tok_idx});
+  map_set(&fit->import_tok_idx, mod, &(int[]){tok_idx});
 }
 int FileImportTable_get_import_tok_idx(FileImportTable *fit, string mod) {
 
@@ -26090,9 +26089,9 @@ map_int main__build_keys() {
   for (int t = ((int)(main__TokenKind_keyword_beg)) + 1;
        t < ((int)(main__TokenKind_keyword_end)); t++) {
 
-    string key = (*(string *)array__get(main__TokenStr, t));
+    string key = (*(string *)array_get(main__TokenStr, t));
 
-    map__set(&res, key, &(int[]){((int)(t))});
+    map_set(&res, key, &(int[]){((int)(t))});
   };
 
   return res;
@@ -26317,7 +26316,7 @@ TokenKind main__key_to_token(string key) {
 bool main__is_key(string key) { return ((int)(main__key_to_token(key))) > 0; }
 string TokenKind_str(TokenKind t) {
 
-  return (*(string *)array__get(main__TokenStr, ((int)(t))));
+  return (*(string *)array_get(main__TokenStr, ((int)(t))));
 }
 bool TokenKind_is_decl(TokenKind t) {
 
@@ -26803,14 +26802,13 @@ void init_consts() {
       "bool\n	typedef int bool;\n	#define true 1\n	#define false "
       "0\n#endif\n\n//============================== HELPER C MACROS "
       "=============================*/\n#define _PUSH(arr, val, tmp, tmp_typ) "
-      "{tmp_typ tmp = (val); array__push(arr, &tmp);}\n#define _PUSH_MANY(arr, "
-      "val, tmp, tmp_typ) {tmp_typ tmp = (val); array__push_many(arr, "
-      "tmp.data, tmp.len);}\n#define _IN(typ, val, arr) "
-      "array_##typ##_contains(arr, val)\n#define _IN_MAP(val, m) "
-      "map__exists(m, val)\n#define DEFAULT_EQUAL(a, b) (a == b)\n#define "
-      "DEFAULT_NOT_EQUAL(a, b) (a != b)\n#define DEFAULT_LT(a, b) (a < "
-      "b)\n#define DEFAULT_LE(a, b) (a <= b)\n#define DEFAULT_GT(a, b) (a > "
-      "b)\n#define DEFAULT_GE(a, b) (a >= "
+      "{tmp_typ tmp = (val); array_push(arr, &tmp);}\n#define _PUSH_MANY(arr, "
+      "val, tmp, tmp_typ) {tmp_typ tmp = (val); array_push_many(arr, tmp.data, "
+      "tmp.len);}\n#define _IN(typ, val, arr) array_##typ##_contains(arr, "
+      "val)\n#define _IN_MAP(val, m) map_exists(m, val)\n#define "
+      "DEFAULT_EQUAL(a, b) (a == b)\n#define DEFAULT_NOT_EQUAL(a, b) (a != "
+      "b)\n#define DEFAULT_LT(a, b) (a < b)\n#define DEFAULT_LE(a, b) (a <= "
+      "b)\n#define DEFAULT_GT(a, b) (a > b)\n#define DEFAULT_GE(a, b) (a >= "
       "b)\n//================================== GLOBALS "
       "=================================*/\nbyteptr g_str_buf;\nint "
       "load_so(byteptr);\nvoid reload_so();\nvoid init_consts();\n#ifdef "
