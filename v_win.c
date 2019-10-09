@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "cdfb742"
+#define V_COMMIT_HASH "1f6535a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "52168d0"
+#define V_COMMIT_HASH "cdfb742"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -788,7 +788,6 @@ void array_insert(array *a, int i, void *val);
 void array_prepend(array *a, void *val);
 void v_array_delete(array *a, int idx);
 void *array_get(array a, int i);
-void *array__get(array a, int i);
 void *array_first(array a);
 void *array_last(array a);
 array array_left(array s, int n);
@@ -796,8 +795,6 @@ array array_right(array s, int n);
 array array_slice(array s, int start, int _end);
 void array_set(array *a, int idx, void *val);
 void array_push(array *arr, void *val);
-void array__push(array *arr, void *val);
-void array__push_many(array *arr, void *val, int size);
 void array_push_many(array *arr, void *val, int size);
 array array_reverse(array a);
 array array_clone(array a);
@@ -881,7 +878,6 @@ mapnode *new_node(string key, void *val, int element_size);
 void map_insert(map *m, mapnode *n, string key, void *val);
 bool mapnode_find(mapnode *n, string key, void *out, int element_size);
 bool mapnode_find2(mapnode *n, string key, int element_size);
-void map__set(map *m, string key, void *val);
 void map_set(map *m, string key, void *val);
 int preorder_keys(mapnode *node, array_string *keys, int key_i);
 array_string map_keys(map *m);
@@ -889,7 +885,6 @@ bool map_get(map m, string key, void *out);
 void v_mapnode_delete(mapnode *n, string key, int element_size);
 void v_map_delete(map *m, string key);
 bool map_exists(map m, string key);
-bool map__exists(map m, string key);
 void map_print(map m);
 void v_mapnode_free(mapnode *n);
 void v_map_free(map *m);
@@ -2049,7 +2044,7 @@ void array_insert(array *a, int i, void *val) {
     v_panic(tos3("array.insert: index larger than length"));
   };
 
-  array__push(a, val);
+  array_push(a, val);
 
   int size = a->element_size;
 
@@ -2071,15 +2066,6 @@ void v_array_delete(array *a, int idx) {
   a->cap--;
 }
 void *array_get(array a, int i) {
-
-  if (i < 0 || i >= a.len) {
-
-    v_panic(_STR("array index out of range: %d/%d", i, a.len));
-  };
-
-  return (byte *)a.data + i * a.element_size;
-}
-void *array__get(array a, int i) {
 
   if (i < 0 || i >= a.len) {
 
@@ -2184,52 +2170,6 @@ void array_push(array *arr, void *val) {
          arr->element_size);
 
   arr->len++;
-}
-void array__push(array *arr, void *val) {
-
-  if (arr->len >= arr->cap - 1) {
-
-    int cap = (arr->len + 1) * 2;
-
-    if (arr->cap == 0) {
-
-      arr->data = v_calloc(cap * arr->element_size);
-
-    } else {
-
-      arr->data = realloc(arr->data, cap * arr->element_size);
-    };
-
-    arr->cap = cap;
-  };
-
-  memcpy((byte *)arr->data + arr->element_size * arr->len, val,
-         arr->element_size);
-
-  arr->len++;
-}
-void array__push_many(array *arr, void *val, int size) {
-
-  if (arr->len >= arr->cap - size) {
-
-    int cap = (arr->len + size) * 2;
-
-    if (arr->cap == 0) {
-
-      arr->data = v_calloc(cap * arr->element_size);
-
-    } else {
-
-      arr->data = realloc(arr->data, cap * arr->element_size);
-    };
-
-    arr->cap = cap;
-  };
-
-  memcpy((byte *)arr->data + arr->element_size * arr->len, val,
-         arr->element_size * size);
-
-  arr->len += size;
 }
 void array_push_many(array *arr, void *val, int size) {
 
@@ -2414,7 +2354,7 @@ array_string array_string_filter(
       _PUSH(&res,
             (/*typ = array_string   tmp_typ=string*/ (
                 *(string *)array_get(a, i))),
-            tmp50, string);
+            tmp48, string);
     };
   };
 
@@ -2432,7 +2372,7 @@ array_int array_int_filter(array_int a,
     if (predicate((*(int *)array_get(a, i)), i, a)) {
 
       _PUSH(&res, (/*typ = array_int   tmp_typ=int*/ (*(int *)array_get(a, i))),
-            tmp57, int);
+            tmp55, int);
     };
   };
 
@@ -2972,8 +2912,8 @@ map new_map_init(int cap, int elm_size, string *keys, void *vals) {
   for (int tmp4 = tmp3; tmp4 < cap; tmp4++) {
     int i = tmp4;
 
-    map__set(&/* ? */ res, keys[/*ptr*/ i] /*rstring 0*/,
-             (byte *)vals + i * elm_size);
+    map_set(&/* ? */ res, keys[/*ptr*/ i] /*rstring 0*/,
+            (byte *)vals + i * elm_size);
   };
 
   return res;
@@ -3090,19 +3030,6 @@ bool mapnode_find2(mapnode *n, string key, int element_size) {
     };
   };
 }
-void map__set(map *m, string key, void *val) {
-
-  if (isnil(m->root)) {
-
-    m->root = new_node(key, val, m->element_size);
-
-    m->size++;
-
-    return;
-  };
-
-  map_insert(m, m->root, key, val);
-}
 void map_set(map *m, string key, void *val) {
 
   if (isnil(m->root)) {
@@ -3204,10 +3131,6 @@ void v_map_delete(map *m, string key) {
   m->size--;
 }
 bool map_exists(map m, string key) {
-
-  return !isnil(m.root) && mapnode_find2(&/* ? */ *m.root, key, m.element_size);
-}
-bool map__exists(map m, string key) {
 
   return !isnil(m.root) && mapnode_find2(&/* ? */ *m.root, key, m.element_size);
 }
@@ -4849,13 +4772,13 @@ strings__Builder strings__new_builder(int initial_size) {
 }
 void strings__Builder_write(strings__Builder *b, string s) {
 
-  array__push_many(&/* ? */ b->buf, s.str, s.len);
+  array_push_many(&/* ? */ b->buf, s.str, s.len);
 
   b->len += s.len;
 }
 void strings__Builder_writeln(strings__Builder *b, string s) {
 
-  array__push_many(&/* ? */ b->buf, s.str, s.len);
+  array_push_many(&/* ? */ b->buf, s.str, s.len);
 
   _PUSH(&b->buf, (/*typ = array_byte   tmp_typ=byte*/ '\n'), tmp1, byte);
 
