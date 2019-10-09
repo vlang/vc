@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9385ed2"
+#define V_COMMIT_HASH "2ee252b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1f6535a"
+#define V_COMMIT_HASH "9385ed2"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -10128,7 +10128,8 @@ void Parser_fn_decl(Parser *p) {
 
   } else if (!p->pref->translated) {
 
-    if (main__contains_capital(f.name)) {
+    if (main__contains_capital(f.name) &&
+        !Parser_fileis(&/* ? */ *p, tos3("view.v"))) {
 
       Parser_error(p, tos3("function names cannot contain uppercase letters, "
                            "use snake_case instead"));
