@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7690b58"
+#define V_COMMIT_HASH "29f578d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f570cbf"
+#define V_COMMIT_HASH "7690b58"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -7673,6 +7673,8 @@ void V_cc(V *v) {
   };
 
   if (!v->pref->is_debug && string_ne(v->out_name_c, tos3("v.c"))) {
+
+    os__rm(v->out_name_c);
   };
 
   if (v->pref->compress) {
