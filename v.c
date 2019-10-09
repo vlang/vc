@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "80a6d78"
+#define V_COMMIT_HASH "2403abe"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3f1d7e1"
+#define V_COMMIT_HASH "80a6d78"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -31,6 +31,11 @@
 #endif
 
 #ifdef __linux__
+#include <sys/types.h>
+#include <sys/wait.h> // os__wait uses wait on nix
+#endif
+
+#ifdef __FreeBSD__
 #include <sys/types.h>
 #include <sys/wait.h> // os__wait uses wait on nix
 #endif
@@ -17214,7 +17219,10 @@ string Parser_get_type(Parser *p) {
 
     if (p->scanner->line_nr == line_nr) {
 
-      if (p->tok == main__TokenKind_name) {
+      if (p->tok == main__TokenKind_name || p->tok == main__TokenKind_mul ||
+          p->tok == main__TokenKind_amp || p->tok == main__TokenKind_lsbr ||
+          p->tok == main__TokenKind_question ||
+          p->tok == main__TokenKind_lpar) {
 
         f.typ = Parser_get_type(p);
 
@@ -26661,11 +26669,13 @@ void init_consts() {
       "backtrace_symbols_fd\n#endif\n#pragma weak backtrace\n#pragma weak "
       "backtrace_symbols_fd\n#endif\n\n\n#ifdef __linux__\n#include "
       "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
-      "nix\n#endif\n\n#define EMPTY_STRUCT_DECLARATION\n#define "
-      "EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an "
-      "array needs to be specified, but GCC crashes if it is...\n#define "
-      "EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#ifdef "
-      "__TINYC__\n#undef EMPTY_STRUCT_INITIALIZATION\n#define "
+      "nix\n#endif\n\n#ifdef __FreeBSD__\n#include <sys/types.h>\n#include "
+      "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#define "
+      "EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION 0\n// Due "
+      "to a tcc bug, the length of an array needs to be specified, but GCC "
+      "crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define "
+      "TCCSKIP(x) x\n\n#ifdef __TINYC__\n#undef "
+      "EMPTY_STRUCT_INITIALIZATION\n#define "
       "EMPTY_STRUCT_INITIALIZATION\n#undef EMPTY_ARRAY_OF_ELEMS\n#define "
       "EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef TCCSKIP\n#define "
       "TCCSKIP(x)\n#endif\n\n#define OPTION_CAST(x) (x)\n\n#ifdef "
