@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2403abe"
+#define V_COMMIT_HASH "b1da598"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "80a6d78"
+#define V_COMMIT_HASH "2403abe"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -5366,7 +5366,7 @@ Option_os__Result os__exec(string cmd) {
     return v_error(_STR("exec(\"%.*s\") failed", cmd.len, cmd.str));
   };
 
-  byte buf[1000];
+  byte buf[1000] = {0};
 
   string res = tos3("");
 
@@ -11812,6 +11812,10 @@ string Parser_gen_var_decl(Parser *p, string name, bool is_static) {
       CGen_resetln(
           p->cgen,
           string_add(tos3(" = {"), string_all_after(initializer, tos3("{"))));
+
+    } else if (initializer.len == 0) {
+
+      CGen_resetln(p->cgen, tos3(" = { 0 }"));
     };
   };
 
@@ -12085,7 +12089,7 @@ string Table_fn_gen_name(Table *table, Fn *f) {
       !string_contains(name, tos3("contains"))) {
 
     int tmp32 = 0;
-    bool tmp33 = map_get(/*gen_c.v : 232*/ table->obf_ids, name, &tmp32);
+    bool tmp33 = map_get(/*gen_c.v : 234*/ table->obf_ids, name, &tmp32);
 
     int idx = tmp32;
 
@@ -14695,7 +14699,7 @@ void main__verror(string s) {
 }
 string main__vhash() {
 
-  byte buf[50];
+  byte buf[50] = {0};
 
   buf[0] /*rbyte 1*/ = 0;
 
