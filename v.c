@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e1dd4c1"
+#define V_COMMIT_HASH "e7e0514"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a5ccc46"
+#define V_COMMIT_HASH "e1dd4c1"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -14490,17 +14490,11 @@ V *main__new_v(array_string args) {
 
     println(tos3("vlib not found, downloading it..."));
 
-    int ret =
-        os__system(tos3("git clone --depth=1 https://github.com/vlang/v ."));
+    println(tos3("vlib not found. It should be next to the V executable. "));
 
-    if (ret != 0) {
+    println(tos3("Go to https://vlang.io to install V."));
 
-      println(tos3("failed to `git clone` vlib"));
-
-      println(tos3("make sure you are online and have git installed"));
-
-      v_exit(1);
-    };
+    v_exit(1);
   };
 
   string out_name_c =
@@ -14589,25 +14583,25 @@ array_string main__env_vflags_and_os_args() {
     _PUSH(&args,
           (/*typ = array_string   tmp_typ=string*/ (
               *(string *)array_get(os__args, 0))),
-          tmp122, string);
+          tmp121, string);
 
     _PUSH_MANY(&args,
                (/*typ = array_string   tmp_typ=string*/ string_split(
                    vflags, tos3(" "))),
-               tmp125, array_string);
+               tmp124, array_string);
 
     if (os__args.len > 1) {
 
       _PUSH_MANY(
           &args,
           (/*typ = array_string   tmp_typ=string*/ array_right(os__args, 1)),
-          tmp126, array_string);
+          tmp125, array_string);
     };
 
   } else {
 
     _PUSH_MANY(&args, (/*typ = array_string   tmp_typ=string*/ os__args),
-               tmp127, array_string);
+               tmp126, array_string);
   };
 
   return args;
@@ -14618,16 +14612,16 @@ void main__update_v() {
 
   string vroot = os__dir(os__executable());
 
-  Option_os__Result tmp129 = os__exec(_STR(
+  Option_os__Result tmp128 = os__exec(_STR(
       "git -C \"%.*s\" pull --rebase origin master", vroot.len, vroot.str));
-  if (!tmp129.ok) {
-    string err = tmp129.error;
+  if (!tmp128.ok) {
+    string err = tmp128.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result s = *(os__Result *)tmp129.data;
+  os__Result s = *(os__Result *)tmp128.data;
   ;
 
   println(s.output);
@@ -14643,8 +14637,24 @@ void main__update_v() {
 
   os__mv(_STR("%.*s/v.exe", vroot.len, vroot.str), v_backup_file);
 
-  Option_os__Result tmp131 =
+  Option_os__Result tmp130 =
       os__exec(_STR("\"%.*s/make.bat\"", vroot.len, vroot.str));
+  if (!tmp130.ok) {
+    string err = tmp130.error;
+
+    main__verror(err);
+
+    return;
+  }
+  os__Result s2 = *(os__Result *)tmp130.data;
+  ;
+
+  println(s2.output);
+
+#else
+
+  Option_os__Result tmp131 =
+      os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
   if (!tmp131.ok) {
     string err = tmp131.error;
 
@@ -14653,22 +14663,6 @@ void main__update_v() {
     return;
   }
   os__Result s2 = *(os__Result *)tmp131.data;
-  ;
-
-  println(s2.output);
-
-#else
-
-  Option_os__Result tmp132 =
-      os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
-  if (!tmp132.ok) {
-    string err = tmp132.error;
-
-    main__verror(err);
-
-    return;
-  }
-  os__Result s2 = *(os__Result *)tmp132.data;
   ;
 
   println(s2.output);
@@ -14717,16 +14711,16 @@ void main__install_v(array_string args) {
 
     os__chdir(string_add(vroot, tos3("/tools")));
 
-    Option_os__Result tmp138 = os__exec(
+    Option_os__Result tmp137 = os__exec(
         _STR("%.*s -o %.*s vget.v", vexec.len, vexec.str, vget.len, vget.str));
-    if (!tmp138.ok) {
-      string err = tmp138.error;
+    if (!tmp137.ok) {
+      string err = tmp137.error;
 
       main__verror(err);
 
       return;
     }
-    os__Result vget_compilation = *(os__Result *)tmp138.data;
+    os__Result vget_compilation = *(os__Result *)tmp137.data;
     ;
 
     if (vget_compilation.exit_code != 0) {
@@ -14737,16 +14731,16 @@ void main__install_v(array_string args) {
     };
   };
 
-  Option_os__Result tmp139 = os__exec(string_add(
+  Option_os__Result tmp138 = os__exec(string_add(
       _STR("%.*s ", vget.len, vget.str), array_string_join(names, tos3(" "))));
-  if (!tmp139.ok) {
-    string err = tmp139.error;
+  if (!tmp138.ok) {
+    string err = tmp138.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result vgetresult = *(os__Result *)tmp139.data;
+  os__Result vgetresult = *(os__Result *)tmp138.data;
   ;
 
   if (vgetresult.exit_code != 0) {
