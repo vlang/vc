@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4d941b5"
+#define V_COMMIT_HASH "48e13a3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2ee252b"
+#define V_COMMIT_HASH "4d941b5"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -7624,13 +7624,8 @@ void V_cc(V *v) {
 
   } else if (v->pref->is_debug) {
 
-    libs = string_add(
-        string_add(_STR("%.*s/vlib/builtin.o ", main__v_modules_path.len,
-                        main__v_modules_path.str),
-                   _STR("%.*s/vlib/strings.o ", main__v_modules_path.len,
-                        main__v_modules_path.str)),
-        _STR("%.*s/vlib/math.o ", main__v_modules_path.len,
-             main__v_modules_path.str));
+    libs = _STR("%.*s/vlib/builtin.o ", main__v_modules_path.len,
+                main__v_modules_path.str);
 
     array_string tmp20 = v->table->imports;
     for (int tmp21 = 0; tmp21 < tmp20.len; tmp21++) {
@@ -7641,12 +7636,19 @@ void V_cc(V *v) {
         continue;
       };
 
-      string path = _STR("\"%.*s/vlib/%.*s.o\"", main__v_modules_path.len,
+      string path = _STR("%.*s/vlib/%.*s.o", main__v_modules_path.len,
                          main__v_modules_path.str, imp.len, imp.str);
+
+      printf("adding %.*s.o\n", imp.len, imp.str);
 
       if (os__file_exists(path)) {
 
         libs = string_add(libs, string_add(tos3(" "), path));
+
+      } else {
+
+        printf("%.*s not found... build module %.*s\n", path.len, path.str,
+               imp.len, imp.str);
       };
     };
   };
