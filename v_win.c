@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a5ccc46"
+#define V_COMMIT_HASH "e1dd4c1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4f4ac45"
+#define V_COMMIT_HASH "a5ccc46"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -7687,6 +7687,8 @@ void V_cc(V *v) {
 
   } else if (v->pref->is_debug) {
 
+    string vexe = os__executable();
+
     string builtin_o_path =
         _STR("%.*s/vlib/builtin.o", main__v_modules_path.len,
              main__v_modules_path.str);
@@ -7697,13 +7699,15 @@ void V_cc(V *v) {
 
     } else {
 
-      printf("%.*s not found... build module builtin\n", builtin_o_path.len,
+      printf("%.*s not found... building module builtin\n", builtin_o_path.len,
              builtin_o_path.str);
+
+      os__system(_STR("%.*s build module vlib/builtin", vexe.len, vexe.str));
     };
 
-    array_string tmp21 = v->table->imports;
-    for (int tmp22 = 0; tmp22 < tmp21.len; tmp22++) {
-      string imp = ((string *)tmp21.data)[tmp22];
+    array_string tmp22 = v->table->imports;
+    for (int tmp23 = 0; tmp23 < tmp22.len; tmp23++) {
+      string imp = ((string *)tmp22.data)[tmp23];
 
       if (string_eq(imp, tos3("webview"))) {
 
@@ -7721,8 +7725,11 @@ void V_cc(V *v) {
 
       } else {
 
-        printf("%.*s not found... build module %.*s\n", path.len, path.str,
+        printf("%.*s not found... building module %.*s\n", path.len, path.str,
                imp.len, imp.str);
+
+        os__system(_STR("%.*s build module vlib/%.*s", vexe.len, vexe.str,
+                        imp.len, imp.str));
       };
     };
   };
@@ -7730,13 +7737,13 @@ void V_cc(V *v) {
   if (v->pref->sanitize) {
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-fsanitize=leak")),
-          tmp24, string);
+          tmp25, string);
   };
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "-o \"%.*s\"", v->out_name.len, v->out_name.str)),
-        tmp25, string);
+        tmp26, string);
 
   if (os__dir_exists(v->out_name)) {
 
@@ -7747,17 +7754,17 @@ void V_cc(V *v) {
   if (v->os == main__OS_mac) {
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-x objective-c")),
-          tmp26, string);
+          tmp27, string);
   };
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "\"%.*s\"", v->out_name_c.len, v->out_name_c.str)),
-        tmp27, string);
+        tmp28, string);
 
   if (v->os == main__OS_mac) {
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-x none")), tmp28,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-x none")), tmp29,
           string);
   };
 
@@ -7766,7 +7773,7 @@ void V_cc(V *v) {
     _PUSH(&a,
           (/*typ = array_string   tmp_typ=string*/ tos3(
               "-mmacosx-version-min=10.7")),
-          tmp29, string);
+          tmp30, string);
   };
 
   array_CFlag cflags = V_get_os_cflags(&/* ? */ *v);
@@ -7774,14 +7781,14 @@ void V_cc(V *v) {
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/
          array_CFlag_c_options_only_object_files(cflags)),
-        tmp31, string);
+        tmp32, string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/
          array_CFlag_c_options_without_object_files(cflags)),
-        tmp32, string);
+        tmp33, string);
 
-  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ libs), tmp33, string);
+  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ libs), tmp34, string);
 
   if (v->pref->build_mode != main__BuildMode_build_module &&
       (v->os == main__OS_linux || v->os == main__OS_freebsd ||
@@ -7789,18 +7796,18 @@ void V_cc(V *v) {
        v->os == main__OS_dragonfly || v->os == main__OS_solaris)) {
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-lm -lpthread ")),
-          tmp34, string);
+          tmp35, string);
 
     if (v->os == main__OS_linux) {
 
-      _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3(" -ldl ")), tmp35,
+      _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3(" -ldl ")), tmp36,
             string);
     };
   };
 
   if (v->os == main__OS_js && string_eq(os__user_os(), tos3("linux"))) {
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-lm")), tmp36,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-lm")), tmp37,
           string);
   };
 
@@ -7818,15 +7825,15 @@ void V_cc(V *v) {
 
   i64 ticks = time__ticks();
 
-  Option_os__Result tmp40 = os__exec(cmd);
-  if (!tmp40.ok) {
-    string err = tmp40.error;
+  Option_os__Result tmp41 = os__exec(cmd);
+  if (!tmp41.ok) {
+    string err = tmp41.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result res = *(os__Result *)tmp40.data;
+  os__Result res = *(os__Result *)tmp41.data;
   ;
 
   if (res.exit_code != 0) {
@@ -7968,9 +7975,9 @@ void V_cc_windows_cross(V *c) {
       v_exit(1);
     };
 
-    array_string tmp48 = c->table->imports;
-    for (int tmp49 = 0; tmp49 < tmp48.len; tmp49++) {
-      string imp = ((string *)tmp48.data)[tmp49];
+    array_string tmp49 = c->table->imports;
+    for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
+      string imp = ((string *)tmp49.data)[tmp50];
 
       libs = string_add(libs,
                         _STR(" \"%.*s/vlib/%.*s.o\"", main__v_modules_path.len,
@@ -8062,9 +8069,9 @@ void V_cc_windows_cross(V *c) {
 }
 void V_build_thirdparty_obj_files(V *c) {
 
-  array_CFlag tmp56 = V_get_os_cflags(&/* ? */ *c);
-  for (int tmp57 = 0; tmp57 < tmp56.len; tmp57++) {
-    CFlag flag = ((CFlag *)tmp56.data)[tmp57];
+  array_CFlag tmp57 = V_get_os_cflags(&/* ? */ *c);
+  for (int tmp58 = 0; tmp58 < tmp57.len; tmp58++) {
+    CFlag flag = ((CFlag *)tmp57.data)[tmp58];
 
     if (string_ends_with(flag.value, tos3(".o"))) {
 
@@ -8126,9 +8133,9 @@ string main__get_cmdline_cflags(array_string args) {
 
   string cflags = tos3("");
 
-  array_string tmp64 = args;
-  for (int ci = 0; ci < tmp64.len; ci++) {
-    string cv = ((string *)tmp64.data)[ci];
+  array_string tmp65 = args;
+  for (int ci = 0; ci < tmp65.len; ci++) {
+    string cv = ((string *)tmp65.data)[ci];
 
     if (string_eq(cv, tos3("-cflags"))) {
 
@@ -10643,8 +10650,7 @@ void Parser_fn_decl(Parser *p) {
   if (string_eq(f.name, tos3("main__main")) ||
       string_eq(f.name, tos3("main")) || string_eq(f.name, tos3("WinMain"))) {
 
-    if (p->pref->is_test &&
-        !string_contains(p->scanner->file_path, tos3("/volt"))) {
+    if (p->pref->is_test) {
 
       Parser_error_with_token_index(
           p, tos3("tests cannot have function `main`"), f.fn_name_token_idx);
@@ -20640,8 +20646,8 @@ string Parser_map_init(Parser *p) {
 
       string key = p->lit;
 
-      keys_gen = string_add(keys_gen,
-                            _STR("tos2((byte*)\"%.*s\"), ", key.len, key.str));
+      keys_gen =
+          string_add(keys_gen, _STR("tos3(\"%.*s\"), ", key.len, key.str));
 
       Parser_check(p, main__TokenKind_str);
 
