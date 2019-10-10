@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4f4ac45"
+#define V_COMMIT_HASH "a5ccc46"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f86a52a"
+#define V_COMMIT_HASH "4f4ac45"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -21964,10 +21964,10 @@ void Parser_assert_statement(Parser *p) {
   Parser_genln(
       p,
       _STR(";\n\n\n\nif (!%.*s) {\n  println(tos2((byte *)\"\\x1B[31mFAILED: "
-           "%.*s() in %.*s:%d\\x1B[0m\"));\n  g_test_fails++;\n  // TODO\n  // "
-           "Maybe print all vars in a test function if it fails?\n} else {\n  "
-           "g_test_oks++;\n  //println(tos2((byte *)\"\\x1B[32mPASSED: "
-           "%.*s()\\x1B[0m\"));\n}\n\n",
+           "%.*s() in %.*s:%d\\x1B[0m\"));\n  g_test_fails++;\n  return;\n  // "
+           "TODO\n  // Maybe print all vars in a test function if it fails?\n} "
+           "else {\n  g_test_oks++;\n  //println(tos2((byte "
+           "*)\"\\x1B[32mPASSED: %.*s()\\x1B[0m\"));\n}\n\n",
            tmp.len, tmp.str, p->cur_fn.name.len, p->cur_fn.name.str,
            filename.len, filename.str, p->scanner->line_nr, p->cur_fn.name.len,
            p->cur_fn.name.str));
