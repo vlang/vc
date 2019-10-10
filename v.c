@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f8fefd5"
+#define V_COMMIT_HASH "f86a52a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1b79964"
+#define V_COMMIT_HASH "f8fefd5"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -36,6 +36,11 @@
 #endif
 
 #ifdef __FreeBSD__
+#include <sys/types.h>
+#include <sys/wait.h> // os__wait uses wait on nix
+#endif
+
+#ifdef __DragonFly__
 #include <sys/types.h>
 #include <sys/wait.h> // os__wait uses wait on nix
 #endif
@@ -148,9 +153,6 @@ byteptr g_str_buf;
 int load_so(byteptr);
 void reload_so();
 void init_consts();
-#ifdef _WIN32
-BOOL isConsole;
-#endif
 
 int g_test_oks = 0;
 int g_test_fails = 0;
@@ -791,6 +793,7 @@ array_string array_string_filter(array_string a,
 array_int array_int_filter(array_int a,
                            bool (*predicate)(int p_val, int p_i,
                                              array_int p_arr /*FFF*/));
+int builtin_init();
 void v_exit(int code);
 bool isnil(void *v);
 void on_panic(int (*f)(int /*FFF*/));
@@ -807,6 +810,7 @@ byte *v_calloc(int n);
 void v_free(void *ptr);
 void *memdup(void *src, int sz);
 void v_ptr_free(void *ptr);
+bool is_atty(int fd);
 hashmap new_hashmap(int planned_nr_items);
 void hashmap_set(hashmap *m, string key, int val);
 int hashmap_get(hashmap *m, string key);
@@ -978,7 +982,6 @@ int strings__levenshtein_distance(string a, string b);
 f32 strings__levenshtein_distance_percentage(string a, string b);
 f32 strings__dice_coefficient(string s1, string s2);
 string strings__repeat(byte c, int n);
-array_string os__parse_windows_cmd_line(byte *cmd);
 Option_string os__read_file(string path);
 int os__file_size(string path);
 void os__mv(string old, string new);
@@ -1090,7 +1093,6 @@ bool term__can_show_color_on_stdout();
 bool term__can_show_color_on_stderr();
 string term__ok_message(string s);
 string term__fail_message(string s);
-bool term__can_show_color_on_fd(int fd);
 string term__format(string msg, string open, string close);
 string term__format_rgb(int r, int g, int b, string msg, string open,
                         string close);
@@ -2345,6 +2347,31 @@ array_int array_int_filter(array_int a,
 
   return res;
 }
+int builtin_init() {
+
+#ifdef _WIN32
+
+  if (is_atty(0)) {
+
+    _setmode(_fileno(stdin), _O_U16TEXT);
+
+  } else {
+
+    _setmode(_fileno(stdin), _O_U8TEXT);
+  };
+
+  _setmode(_fileno(stdout), _O_U8TEXT);
+
+  SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE),
+                 ENABLE_PROCESSED_OUTPUT | 0x0004);
+
+  setbuf(stdout, 0);
+
+#endif
+  ;
+
+  return 1;
+}
 void v_exit(int code) { exit(code); }
 bool isnil(void *v) { return v == 0; }
 void on_panic(int (*f)(int /*FFF*/)) {}
@@ -2521,6 +2548,23 @@ void *memdup(void *src, int sz) {
   return memcpy((char *)mem, src, sz);
 }
 void v_ptr_free(void *ptr) { free(ptr); }
+bool is_atty(int fd) {
+
+#ifdef _WIN32
+
+  int mode = 0;
+
+  GetConsoleMode(_get_osfhandle(fd), &mode);
+
+  return mode > 0;
+
+#else
+
+  return isatty(fd) != 0;
+
+#endif
+  ;
+}
 hashmap new_hashmap(int planned_nr_items) {
 
   int cap = planned_nr_items * 3;
@@ -4911,12 +4955,6 @@ string strings__repeat(byte c, int n) {
 
   return (tos((byte *)arr.data, n));
 }
-array_string os__parse_windows_cmd_line(byte *cmd) {
-
-  string s = (tos2((byte *)cmd));
-
-  return string_split(s, tos3(" "));
-}
 Option_string os__read_file(string path) {
 
   string mode = tos3("rb");
@@ -4942,8 +4980,8 @@ Option_string os__read_file(string path) {
 
   str[/*ptr*/ fsize] /*rbyte 1*/ = 0;
 
-  string tmp6 = OPTION_CAST(string)((tos((byte *)str, fsize)));
-  return opt_ok(&tmp6, sizeof(string));
+  string tmp5 = OPTION_CAST(string)((tos((byte *)str, fsize)));
+  return opt_ok(&tmp5, sizeof(string));
 }
 int os__file_size(string path) {
 
@@ -5041,7 +5079,7 @@ array_string os__read_lines(string path) {
       buf[/*ptr*/ len - 2] /*rbyte 1*/ = '\0';
     };
 
-    _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ tos_clone(buf)), tmp15,
+    _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ tos_clone(buf)), tmp14,
           string);
 
     buf_index = 0;
@@ -5058,13 +5096,13 @@ array_ustring os__read_ulines(string path) {
   array_ustring ulines = new_array_from_c_array(
       0, 0, sizeof(ustring), EMPTY_ARRAY_OF_ELEMS(ustring, 0){TCCSKIP(0)});
 
-  array_string tmp18 = lines;
-  for (int tmp19 = 0; tmp19 < tmp18.len; tmp19++) {
-    string myline = ((string *)tmp18.data)[tmp19];
+  array_string tmp17 = lines;
+  for (int tmp18 = 0; tmp18 < tmp17.len; tmp18++) {
+    string myline = ((string *)tmp17.data)[tmp18];
 
     _PUSH(&ulines,
           (/*typ = array_ustring   tmp_typ=ustring*/ string_ustring(myline)),
-          tmp20, ustring);
+          tmp19, ustring);
   };
 
   return ulines;
@@ -5095,8 +5133,8 @@ Option_os__File os__open(string path) {
     return v_error(_STR("failed to open file \"%.*s\"", path.len, path.str));
   };
 
-  os__File tmp25 = OPTION_CAST(os__File)(file);
-  return opt_ok(&tmp25, sizeof(os__File));
+  os__File tmp24 = OPTION_CAST(os__File)(file);
+  return opt_ok(&tmp24, sizeof(os__File));
 }
 Option_os__File os__create(string path) {
 
@@ -5124,8 +5162,8 @@ Option_os__File os__create(string path) {
     return v_error(_STR("failed to create file \"%.*s\"", path.len, path.str));
   };
 
-  os__File tmp30 = OPTION_CAST(os__File)(file);
-  return opt_ok(&tmp30, sizeof(os__File));
+  os__File tmp29 = OPTION_CAST(os__File)(file);
+  return opt_ok(&tmp29, sizeof(os__File));
 }
 Option_os__File os__open_append(string path) {
 
@@ -5154,8 +5192,8 @@ Option_os__File os__open_append(string path) {
         _STR("failed to create(append) file \"%.*s\"", path.len, path.str));
   };
 
-  os__File tmp35 = OPTION_CAST(os__File)(file);
-  return opt_ok(&tmp35, sizeof(os__File));
+  os__File tmp34 = OPTION_CAST(os__File)(file);
+  return opt_ok(&tmp34, sizeof(os__File));
 }
 void os__File_write(os__File f, string s) { fputs((char *)s.str, f.cfile); }
 void os__File_write_bytes(os__File f, void *data, int size) {
@@ -5268,9 +5306,9 @@ Option_os__Result os__exec(string cmd) {
 
   int exit_code = os__pclose(f);
 
-  os__Result tmp47 = OPTION_CAST(os__Result)(
+  os__Result tmp46 = OPTION_CAST(os__Result)(
       (os__Result){.output = res, .exit_code = exit_code});
-  return opt_ok(&tmp47, sizeof(os__Result));
+  return opt_ok(&tmp46, sizeof(os__Result));
 }
 int os__system(string cmd) {
 
@@ -5588,7 +5626,7 @@ string os__get_raw_line() {
 
   byte *buf = ((byte *)(v_malloc(max_line_chars * 2)));
 
-  if (isConsole > 0) {
+  if (is_atty(0)) {
 
     void *h_input = GetStdHandle(os__STD_INPUT_HANDLE);
 
@@ -5646,7 +5684,7 @@ array_string os__get_lines() {
 
     line = string_trim_space(line);
 
-    _PUSH(&inputstr, (/*typ = array_string   tmp_typ=string*/ line), tmp71,
+    _PUSH(&inputstr, (/*typ = array_string   tmp_typ=string*/ line), tmp70,
           string);
   };
 
@@ -5779,13 +5817,13 @@ string os__home_dir() {
 }
 void os__write_file(string path, string text) {
 
-  Option_os__File tmp76 = os__create(path);
-  if (!tmp76.ok) {
-    string err = tmp76.error;
+  Option_os__File tmp75 = os__create(path);
+  if (!tmp75.ok) {
+    string err = tmp75.error;
 
     return;
   }
-  os__File f = *(os__File *)tmp76.data;
+  os__File f = *(os__File *)tmp75.data;
   ;
 
   os__File_write(f, text);
@@ -6044,9 +6082,9 @@ array_string os__walk_ext(string path, string ext) {
   array_string res = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_string tmp106 = files;
-  for (int i = 0; i < tmp106.len; i++) {
-    string file = ((string *)tmp106.data)[i];
+  array_string tmp105 = files;
+  for (int i = 0; i < tmp105.len; i++) {
+    string file = ((string *)tmp105.data)[i];
 
     if (string_starts_with(file, tos3("."))) {
 
@@ -6059,11 +6097,11 @@ array_string os__walk_ext(string path, string ext) {
 
       _PUSH_MANY(&res,
                  (/*typ = array_string   tmp_typ=string*/ os__walk_ext(p, ext)),
-                 tmp108, array_string);
+                 tmp107, array_string);
 
     } else if (string_ends_with(file, ext)) {
 
-      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp109, string);
+      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp108, string);
     };
   };
 
@@ -6411,8 +6449,14 @@ static inline u64 rand__Splitmix64_bounded_next(rand__Splitmix64 *rng,
 
   return ((u64)(0));
 }
-bool term__can_show_color_on_stdout() { return term__can_show_color_on_fd(1); }
-bool term__can_show_color_on_stderr() { return term__can_show_color_on_fd(2); }
+bool term__can_show_color_on_stdout() {
+
+  return is_atty(1) && string_ne(os__getenv(tos3("TERM")), tos3("dumb"));
+}
+bool term__can_show_color_on_stderr() {
+
+  return is_atty(2) && string_ne(os__getenv(tos3("TERM")), tos3("dumb"));
+}
 string term__ok_message(string s) {
 
   return (term__can_show_color_on_stdout()) ? (term__green(s)) : (s);
@@ -6420,20 +6464,6 @@ string term__ok_message(string s) {
 string term__fail_message(string s) {
 
   return (term__can_show_color_on_stdout()) ? (term__red(s)) : (s);
-}
-bool term__can_show_color_on_fd(int fd) {
-
-  if (string_eq(os__getenv(tos3("TERM")), tos3("dumb"))) {
-
-    return 0;
-  };
-
-  if (isatty(fd) != 0) {
-
-    return 1;
-  };
-
-  return 0;
 }
 string term__format(string msg, string open, string close) {
 
@@ -13618,17 +13648,9 @@ void V_generate_main(V *v) {
 
     string consts_init_body = array_string_join_lines(cgen->consts_init);
 
-    CGen_genln(cgen, _STR("void init_consts() {\n#ifdef _WIN32\nDWORD "
-                          "consoleMode;\nisConsole = "
-                          "GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), "
-                          "&consoleMode);\nint mode = isConsole ? _O_U16TEXT : "
-                          "_O_U8TEXT;\n_setmode(_fileno(stdin), "
-                          "mode);\n_setmode(_fileno(stdout), "
-                          "_O_U8TEXT);\nSetConsoleMode(GetStdHandle(STD_OUTPUT_"
-                          "HANDLE), ENABLE_PROCESSED_OUTPUT | 0x0004);\n// "
-                          "ENABLE_VIRTUAL_TERMINAL_PROCESSING\nsetbuf(stdout,0)"
-                          ";\n#endif\ng_str_buf=malloc(1000);\n%.*s\n}",
-                          consts_init_body.len, consts_init_body.str));
+    CGen_genln(cgen,
+               _STR("void init_consts() {\ng_str_buf=malloc(1000);\n%.*s\n}",
+                    consts_init_body.len, consts_init_body.str));
 
     CGen_genln(
         cgen,
@@ -26672,18 +26694,9 @@ void main__v_test_v(string args_before_test) {
 }
 void main__test_vget() {}
 void init_consts() {
-#ifdef _WIN32
-  DWORD consoleMode;
-  isConsole = GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &consoleMode);
-  int mode = isConsole ? _O_U16TEXT : _O_U8TEXT;
-  _setmode(_fileno(stdin), mode);
-  _setmode(_fileno(stdout), _O_U8TEXT);
-  SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE),
-                 ENABLE_PROCESSED_OUTPUT | 0x0004);
-  // ENABLE_VIRTUAL_TERMINAL_PROCESSING
-  setbuf(stdout, 0);
-#endif
   g_str_buf = malloc(1000);
+
+  builtin_init();
   builtin__min_cap = 2 << 10;
   builtin__max_cap = 2 << 20;
   os__FILE_ATTR_READONLY = 0x1;
@@ -26780,7 +26793,9 @@ void init_consts() {
       "backtrace_symbols_fd\n#endif\n\n\n#ifdef __linux__\n#include "
       "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
       "nix\n#endif\n\n#ifdef __FreeBSD__\n#include <sys/types.h>\n#include "
-      "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#define "
+      "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef "
+      "__DragonFly__\n#include <sys/types.h>\n#include <sys/wait.h> // "
+      "os__wait uses wait on nix\n#endif\n\n#define "
       "EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION 0\n// Due "
       "to a tcc bug, the length of an array needs to be specified, but GCC "
       "crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define "
@@ -26825,8 +26840,7 @@ void init_consts() {
       "b)\n#define DEFAULT_GT(a, b) (a > b)\n#define DEFAULT_GE(a, b) (a >= "
       "b)\n//================================== GLOBALS "
       "=================================*/\nbyteptr g_str_buf;\nint "
-      "load_so(byteptr);\nvoid reload_so();\nvoid init_consts();\n#ifdef "
-      "_WIN32\nBOOL isConsole;\n#endif\n");
+      "load_so(byteptr);\nvoid reload_so();\nvoid init_consts();\n");
   main__js_headers = tos3(
       "\n\nvar array_string = function() {}\nvar array_byte = function() "
       "{}\nvar array_int = function() {}\nvar byte = function() {}\nvar double "
