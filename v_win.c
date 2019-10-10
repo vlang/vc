@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "48e13a3"
+#define V_COMMIT_HASH "7423b21"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4d941b5"
+#define V_COMMIT_HASH "48e13a3"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -7559,13 +7559,13 @@ void V_cc(V *v) {
     printf("Building %.*s...\n", v->out_name.len, v->out_name.str);
   };
 
-  string debug_options = tos3("-g");
+  string debug_options = tos3("");
 
   string optimization_options = tos3("-O2");
 
   if (string_contains(v->pref->ccompiler, tos3("clang"))) {
 
-    if (v->pref->is_debug) {
+    if (v->pref->is_debuggable) {
 
       debug_options = tos3("-g -O0");
     };
@@ -7594,7 +7594,7 @@ void V_cc(V *v) {
           string);
   };
 
-  if (v->pref->is_debug && string_ne(os__user_os(), tos3("windows"))) {
+  if (v->pref->is_debuggable && string_ne(os__user_os(), tos3("windows"))) {
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3(" -rdynamic ")),
           tmp13, string);
