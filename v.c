@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a280e98"
+#define V_COMMIT_HASH "af46bf5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c3787e1"
+#define V_COMMIT_HASH "a280e98"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -240,6 +240,7 @@ typedef map map_Fn;
 typedef array array_GenTable;
 typedef array array_VargAccess;
 typedef struct VargAccess VargAccess;
+typedef struct Name Name;
 typedef struct GenTable GenTable;
 typedef struct FileImportTable FileImportTable;
 typedef struct Var Var;
@@ -274,6 +275,7 @@ typedef Option Option_VsInstallation;
 typedef Option Option_MsvcResult;
 typedef array array_bool;
 typedef int IndexType;
+typedef int NameCategory;
 typedef int AccessMod;
 typedef int TypeCategory;
 typedef Option Option_Fn;
@@ -437,6 +439,11 @@ struct MsvcStringFlags {
   array_string inc_paths;
   array_string lib_paths;
   array_string other_flags;
+};
+
+struct Name {
+  NameCategory cat;
+  int idx;
 };
 
 struct Preferences {
@@ -1766,6 +1773,10 @@ string main__and_or_error;
 #define main__double_quote '"'
 #define main__error_context_before 2
 #define main__error_context_after 2
+#define main__NameCategory_constant 0
+#define main__NameCategory_mod 1
+#define main__NameCategory_var 2
+#define main__NameCategory_typ 3
 #define main__AccessMod_private 0
 #define main__AccessMod_private_mut 1
 #define main__AccessMod_public 2
@@ -2583,7 +2594,7 @@ bool is_atty(int fd) {
 }
 hashmap new_hashmap(int planned_nr_items) {
 
-  int cap = planned_nr_items * 3;
+  int cap = planned_nr_items * 5;
 
   if (cap < builtin__min_cap) {
 
@@ -24981,7 +24992,7 @@ bool Table_known_type(Table *table, string typ_) {
   };
 
   Type tmp12 = {0};
-  bool tmp13 = map_get(/*table.v : 350*/ table->typesmap, typ, &tmp12);
+  bool tmp13 = map_get(/*table.v : 349*/ table->typesmap, typ, &tmp12);
 
   Type t = tmp12;
 
@@ -24994,7 +25005,7 @@ bool Table_known_type_fast(Table *table, Type *t) {
 Option_Fn Table_find_fn(Table *t, string name) {
 
   Fn tmp15 = {0};
-  bool tmp16 = map_get(/*table.v : 359*/ t->fns, name, &tmp15);
+  bool tmp16 = map_get(/*table.v : 358*/ t->fns, name, &tmp15);
 
   Fn f = tmp15;
 
@@ -25116,7 +25127,7 @@ void Table_add_field(Table *table, string type_name, string field_name,
   };
 
   Type tmp22 = {0};
-  bool tmp23 = map_get(/*table.v : 425*/ table->typesmap, type_name, &tmp22);
+  bool tmp23 = map_get(/*table.v : 424*/ table->typesmap, type_name, &tmp22);
 
   Type t = tmp22;
 
@@ -25236,7 +25247,7 @@ void Parser_add_method(Parser *p, string type_name, Fn f) {
   };
 
   Type tmp38 = {0};
-  bool tmp39 = map_get(/*table.v : 486*/ p->table->typesmap, type_name, &tmp38);
+  bool tmp39 = map_get(/*table.v : 485*/ p->table->typesmap, type_name, &tmp38);
 
   Type t = tmp38;
 
@@ -25275,7 +25286,7 @@ bool Table_type_has_method(Table *table, Type *typ, string name) {
 Option_Fn Table_find_method(Table *table, Type *typ, string name) {
 
   Type tmp44 = {0};
-  bool tmp45 = map_get(/*table.v : 505*/ table->typesmap, typ->name, &tmp44);
+  bool tmp45 = map_get(/*table.v : 504*/ table->typesmap, typ->name, &tmp44);
 
   Type t = tmp44;
 
@@ -25361,7 +25372,7 @@ Type Table_find_type(Table *t, string name_) {
   };
 
   Type tmp59 = {0};
-  bool tmp60 = map_get(/*table.v : 562*/ t->typesmap, name, &tmp59);
+  bool tmp60 = map_get(/*table.v : 561*/ t->typesmap, name, &tmp59);
 
   return tmp59;
 }
@@ -25579,7 +25590,7 @@ bool Table_is_interface(Table *table, string name) {
   };
 
   Type tmp67 = {0};
-  bool tmp68 = map_get(/*table.v : 718*/ table->typesmap, name, &tmp67);
+  bool tmp68 = map_get(/*table.v : 717*/ table->typesmap, name, &tmp67);
 
   Type t = tmp67;
 
@@ -25857,7 +25868,7 @@ FileImportTable Table_get_file_import_table(Table *table, string id) {
   if (_IN_MAP((id), table->file_imports)) {
 
     FileImportTable tmp98 = {0};
-    bool tmp99 = map_get(/*table.v : 884*/ table->file_imports, id, &tmp98);
+    bool tmp99 = map_get(/*table.v : 883*/ table->file_imports, id, &tmp98);
 
     return tmp98;
   };
@@ -25886,7 +25897,7 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
                                     string mod, int tok_idx) {
 
   string tmp100 = tos((byte *)"", 0);
-  bool tmp101 = map_get(/*table.v : 906*/ fit->imports, alias, &tmp100);
+  bool tmp101 = map_get(/*table.v : 905*/ fit->imports, alias, &tmp100);
 
   if (!tmp101)
     tmp100 = tos((byte *)"", 0);
@@ -25935,7 +25946,7 @@ void FileImportTable_register_alias(FileImportTable *fit, string alias,
 int FileImportTable_get_import_tok_idx(FileImportTable *fit, string mod) {
 
   int tmp108 = 0;
-  bool tmp109 = map_get(/*table.v : 927*/ fit->import_tok_idx, mod, &tmp108);
+  bool tmp109 = map_get(/*table.v : 926*/ fit->import_tok_idx, mod, &tmp108);
 
   return tmp108;
 }
@@ -25963,7 +25974,7 @@ bool FileImportTable_is_aliased(FileImportTable *fit, string mod) {
 string FileImportTable_resolve_alias(FileImportTable *fit, string alias) {
 
   string tmp111 = tos((byte *)"", 0);
-  bool tmp112 = map_get(/*table.v : 944*/ fit->imports, alias, &tmp111);
+  bool tmp112 = map_get(/*table.v : 943*/ fit->imports, alias, &tmp111);
 
   if (!tmp112)
     tmp111 = tos((byte *)"", 0);
