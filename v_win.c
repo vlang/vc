@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c3787e1"
+#define V_COMMIT_HASH "a280e98"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "942c56c"
+#define V_COMMIT_HASH "c3787e1"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -9397,6 +9397,16 @@ void Parser_comp_time(Parser *p) {
     } else if (string_eq(name, tos3("debug"))) {
 
       Parser_genln(p, tos3("#ifdef VDEBUG"));
+
+      Parser_check(p, main__TokenKind_lcbr);
+
+      Parser_statements_no_rcbr(p);
+
+      Parser_genln(p, tos3("#endif"));
+
+    } else if (string_eq(name, tos3("tinyc"))) {
+
+      Parser_genln(p, tos3("#ifdef __TINYC__"));
 
       Parser_check(p, main__TokenKind_lcbr);
 
