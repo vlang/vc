@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e7e0514"
+#define V_COMMIT_HASH "25ef0ee"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e1dd4c1"
+#define V_COMMIT_HASH "e7e0514"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -22070,10 +22070,6 @@ void Parser_return_st(Parser *p) {
         string ret = string_right(p->cgen->cur_line, ph);
 
         string typ = string_replace(expr_type, tos3("Option_"), tos3(""));
-
-        p->cgen->cur_line = _STR("%.*s %.*s = OPTION_CAST(%.*s)(%.*s);",
-                                 expr_type.len, expr_type.str, tmp.len, tmp.str,
-                                 typ.len, typ.str, ret.len, ret.str);
 
         CGen_resetln(p->cgen,
                      _STR("%.*s %.*s = OPTION_CAST(%.*s)(%.*s);", expr_type.len,
