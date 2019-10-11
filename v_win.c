@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "67ae167"
+#define V_COMMIT_HASH "942c56c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "25ef0ee"
+#define V_COMMIT_HASH "67ae167"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -816,6 +816,8 @@ array_string array_string_filter(array_string a,
 array_int array_int_filter(array_int a,
                            bool (*predicate)(int p_val, int p_i,
                                              array_int p_arr /*FFF*/));
+int array_int_reduce(array_int a, int (*iter)(int accum, int curr /*FFF*/),
+                     int accum_start);
 int builtin_init();
 void v_exit(int code);
 bool isnil(void *v);
@@ -2312,6 +2314,20 @@ array_int array_int_filter(array_int a,
   };
 
   return res;
+}
+int array_int_reduce(array_int a, int (*iter)(int accum, int curr /*FFF*/),
+                     int accum_start) {
+
+  int _accum = 0;
+
+  _accum = accum_start;
+
+  for (int i = 0; i < a.len; i++) {
+
+    _accum = iter(_accum, (*(int *)array_get(a, i)));
+  };
+
+  return _accum;
 }
 int builtin_init() {
 
