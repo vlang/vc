@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "af46bf5"
+#define V_COMMIT_HASH "9193242"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a280e98"
+#define V_COMMIT_HASH "af46bf5"
 #endif
 
 #include <inttypes.h> // int64_t etc
