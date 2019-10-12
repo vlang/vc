@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "acbca75"
+#define V_COMMIT_HASH "b107b4f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "baeb2e3"
+#define V_COMMIT_HASH "acbca75"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1069,6 +1069,7 @@ int os__file_last_mod_unix(string path);
 void os__log(string s);
 void os__flush_stdout();
 void os__print_backtrace();
+void os__mkdir_all(string path);
 array_string os__init_os_args(int argc, byteptr *argv);
 array_string os__ls(string path);
 bool os__dir_exists(string path);
@@ -6273,6 +6274,22 @@ int os__file_last_mod_unix(string path) {
 void os__log(string s) { println(string_add(tos3("os.log: "), s)); }
 void os__flush_stdout() { fflush(stdout); }
 void os__print_backtrace() {}
+void os__mkdir_all(string path) {
+
+  string p = tos3("");
+
+  array_string tmp113 = string_split(path, os__PathSeparator);
+  for (int tmp114 = 0; tmp114 < tmp113.len; tmp114++) {
+    string subdir = ((string *)tmp113.data)[tmp114];
+
+    p = string_add(p, string_add(os__PathSeparator, subdir));
+
+    if (!os__dir_exists(p)) {
+
+      os__mkdir(p);
+    };
+  };
+}
 array_string os__init_os_args(int argc, byteptr *argv) {
 
   array_string args = new_array_from_c_array(
@@ -7792,7 +7809,7 @@ void V_cc(V *v) {
     string vexe = os__executable();
 
     string builtin_o_path =
-        _STR("%.*s/vlib/builtin.o", main__v_modules_path.len,
+        _STR("%.*s/cache/builtin.o", main__v_modules_path.len,
              main__v_modules_path.str);
 
     if (os__file_exists(builtin_o_path)) {
@@ -7823,7 +7840,7 @@ void V_cc(V *v) {
 
       string imp_path = string_replace(imp, tos3("."), os__PathSeparator);
 
-      string path = _STR("%.*s/vlib/%.*s.o", main__v_modules_path.len,
+      string path = _STR("%.*s/cache/%.*s.o", main__v_modules_path.len,
                          main__v_modules_path.str, imp_path.len, imp_path.str);
 
       printf("adding %.*s.o\n", imp_path.len, imp_path.str);
@@ -14690,6 +14707,15 @@ void V_log(V *v, string s) {
 }
 V *main__new_v(array_string args) {
 
+  if (!os__dir_exists(main__v_modules_path)) {
+
+    os__mkdir(main__v_modules_path);
+
+    os__mkdir(_STR("%.*s%.*scache", main__v_modules_path.len,
+                   main__v_modules_path.str, os__PathSeparator.len,
+                   os__PathSeparator.str));
+  };
+
   strings__Builder vgen_buf = strings__new_builder(1000);
 
   strings__Builder_writeln(&/* ? */ vgen_buf,
@@ -15372,8 +15398,6 @@ void V_generate_vh(V *v) {
       };
     };
   };
-
-  println(path);
 
   Option_os__File tmp23 = os__create(path);
   if (!tmp23.ok) {
@@ -27432,7 +27456,7 @@ string _STR_TMP(const char *fmt, ...) {
 }
 
 ////////////////// Reset the file/line numbers //////////
-#line 29804 "/tmp/gen_vc/v_win.c.tmp.c"
+#line 29834 "/tmp/gen_vc/v_win.c.tmp.c"
 
 int main(int argc, char **argv) {
   init();
