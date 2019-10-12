@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "bf21108"
+#define V_COMMIT_HASH "343dced"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1292163"
+#define V_COMMIT_HASH "bf21108"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -10533,7 +10533,7 @@ void Parser_fn_decl(Parser *p) {
 
   f.fn_name_token_idx = Parser_cur_tok_index(&/* ? */ *p);
 
-  if (string_eq(f.name, tos3("init")) && f.is_public) {
+  if (string_eq(f.name, tos3("init")) && !f.is_method && f.is_public) {
 
     Parser_error(p, tos3("init function cannot be public"));
   };
