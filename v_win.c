@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "343dced"
+#define V_COMMIT_HASH "ae2af4c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bf21108"
+#define V_COMMIT_HASH "343dced"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -19825,9 +19825,7 @@ string Parser_dot(Parser *p, string str_typ_, int method_ph) {
                      (string_starts_with(field.typ, tos3("array_")) &&
                       next == main__TokenKind_left_shift);
 
-    bool is_vi = Parser_fileis(&/* ? */ *p, tos3("vid"));
-
-    if (!p->builtin_mod && !p->pref->translated && modifying && !is_vi &&
+    if (!p->builtin_mod && !p->pref->translated && modifying &&
         p->has_immutable_field) {
 
       Var f = p->first_immutable_field;
@@ -19842,9 +19840,6 @@ string Parser_dot(Parser *p, string str_typ_, int method_ph) {
                    f.parent_fn.len, f.parent_fn.str, f.name.len, f.name.str,
                    f.typ.len, f.typ.str)),
           fname_tidx);
-    };
-
-    if (!p->builtin_mod && string_ne(p->mod, typ.mod)) {
     };
 
     if (field.access_mod == main__AccessMod_private && !p->builtin_mod &&
@@ -19864,10 +19859,10 @@ string Parser_dot(Parser *p, string str_typ_, int method_ph) {
     return field.typ;
   };
 
-  Option_Fn tmp247 = Table_find_method(
+  Option_Fn tmp246 = Table_find_method(
       &/* ? */ *p->table, &/*112 EXP:"Type*" GOT:"Type" */ typ, field_name);
-  if (!tmp247.ok) {
-    string err = tmp247.error;
+  if (!tmp246.ok) {
+    string err = tmp246.error;
 
     Parser_error_with_token_index(
         p, _STR("could not find method `%.*s`", field_name.len, field_name.str),
@@ -19875,7 +19870,7 @@ string Parser_dot(Parser *p, string str_typ_, int method_ph) {
 
     v_exit(1);
   }
-  Fn method = *(Fn *)tmp247.data;
+  Fn method = *(Fn *)tmp246.data;
   ;
 
   Parser_fn_call(p, method, method_ph, tos3(""), str_typ);
@@ -20093,7 +20088,7 @@ string Parser_index_expr(Parser *p, string typ_, int fn_ph) {
                 .fn_name = p->cur_fn.name,
                 .tok_idx = index_error_tok_pos,
                 .index = v_string_int(index_val)}),
-            tmp270, VargAccess);
+            tmp269, VargAccess);
 
       CGen_set_placeholder(p->cgen, fn_ph,
                            _STR("%.*s->args[%.*s]", v.name.len, v.name.str,
@@ -20702,15 +20697,15 @@ string Parser_assoc(Parser *p) {
 
   string name = Parser_check_name(p);
 
-  Option_Var tmp309 = Parser_find_var(&/* ? */ *p, name);
-  if (!tmp309.ok) {
-    string err = tmp309.error;
+  Option_Var tmp308 = Parser_find_var(&/* ? */ *p, name);
+  if (!tmp308.ok) {
+    string err = tmp308.error;
 
     Parser_error(p, _STR("unknown variable `%.*s`", name.len, name.str));
 
     v_exit(1);
   }
-  Var var = *(Var *)tmp309.data;
+  Var var = *(Var *)tmp308.data;
   ;
 
   Parser_check(p, main__TokenKind_pipe);
@@ -20724,7 +20719,7 @@ string Parser_assoc(Parser *p) {
 
     string field = Parser_check_name(p);
 
-    _PUSH(&fields, (/*typ = array_string   tmp_typ=string*/ field), tmp312,
+    _PUSH(&fields, (/*typ = array_string   tmp_typ=string*/ field), tmp311,
           string);
 
     Parser_gen(p, _STR(".%.*s = ", field.len, field.str));
@@ -20743,9 +20738,9 @@ string Parser_assoc(Parser *p) {
 
   Type T = Table_find_type(&/* ? */ *p->table, var.typ);
 
-  array_Var tmp314 = T.fields;
-  for (int tmp315 = 0; tmp315 < tmp314.len; tmp315++) {
-    Var ffield = ((Var *)tmp314.data)[tmp315];
+  array_Var tmp313 = T.fields;
+  for (int tmp314 = 0; tmp314 < tmp313.len; tmp314++) {
+    Var ffield = ((Var *)tmp313.data)[tmp314];
 
     string f = ffield.name;
 
@@ -21145,13 +21140,13 @@ string Parser_array_init(Parser *p) {
 
     if (Table_known_const(&/* ? */ *p->table, const_name)) {
 
-      Option_Var tmp347 = Table_find_const(&/* ? */ *p->table, const_name);
-      if (!tmp347.ok) {
-        string err = tmp347.error;
+      Option_Var tmp346 = Table_find_const(&/* ? */ *p->table, const_name);
+      if (!tmp346.ok) {
+        string err = tmp346.error;
 
         v_exit(1);
       }
-      Var c = *(Var *)tmp347.data;
+      Var c = *(Var *)tmp346.data;
       ;
 
       if (string_eq(c.typ, tos3("int")) &&
@@ -21372,20 +21367,20 @@ string Parser_struct_init(Parser *p, string typ) {
                              field.len, field.str, t.name.len, t.name.str));
       };
 
-      Option_Var tmp364 = Type_find_field(&/* ? */ t, field);
-      if (!tmp364.ok) {
-        string err = tmp364.error;
+      Option_Var tmp363 = Type_find_field(&/* ? */ t, field);
+      if (!tmp363.ok) {
+        string err = tmp363.error;
 
         Parser_error(p, _STR("no such field: \"%.*s\" in type %.*s", field.len,
                              field.str, typ.len, typ.str));
 
         break;
       }
-      Var f = *(Var *)tmp364.data;
+      Var f = *(Var *)tmp363.data;
       ;
 
       _PUSH(&inited_fields, (/*typ = array_string   tmp_typ=string*/ field),
-            tmp365, string);
+            tmp364, string);
 
       Parser_gen_struct_field_init(p, field);
 
@@ -21415,9 +21410,9 @@ string Parser_struct_init(Parser *p, string typ) {
       Parser_gen(p, tos3(","));
     };
 
-    array_Var tmp366 = t.fields;
-    for (int i = 0; i < tmp366.len; i++) {
-      Var field = ((Var *)tmp366.data)[i];
+    array_Var tmp365 = t.fields;
+    for (int i = 0; i < tmp365.len; i++) {
+      Var field = ((Var *)tmp365.data)[i];
 
       string sanitized_name =
           (string_ne(typ, tos3("Option")))
@@ -21445,7 +21440,7 @@ string Parser_struct_init(Parser *p, string typ) {
         Parser_gen_empty_map(p, string_right(field_typ, 4));
 
         _PUSH(&inited_fields,
-              (/*typ = array_string   tmp_typ=string*/ sanitized_name), tmp369,
+              (/*typ = array_string   tmp_typ=string*/ sanitized_name), tmp368,
               string);
 
         if (i != t.fields.len - 1) {
@@ -21484,9 +21479,9 @@ string Parser_struct_init(Parser *p, string typ) {
       T = Table_find_type(&/* ? */ *p->table, T.parent);
     };
 
-    array_Var tmp372 = T.fields;
-    for (int i = 0; i < tmp372.len; i++) {
-      Var ffield = ((Var *)tmp372.data)[i];
+    array_Var tmp371 = T.fields;
+    for (int i = 0; i < tmp371.len; i++) {
+      Var ffield = ((Var *)tmp371.data)[i];
 
       string expr_typ = Parser_bool_expression(p);
 
@@ -22281,9 +22276,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
             Parser_check(p, main__TokenKind_rcbr);
           };
 
-          string tmp425 = res_typ;
+          string tmp424 = res_typ;
           { Parser_check(p, main__TokenKind_rcbr); }
-          return tmp425;
+          return tmp424;
           ;
 
         } else {
@@ -22298,9 +22293,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
           p->returns = all_cases_return && p->returns;
 
-          string tmp426 = tos3("");
+          string tmp425 = tos3("");
           { Parser_check(p, main__TokenKind_rcbr); }
-          return tmp426;
+          return tmp425;
           ;
         };
       };
@@ -22325,9 +22320,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         Parser_gen(p, strings__repeat(')', i + 1));
 
-        string tmp428 = res_typ;
+        string tmp427 = res_typ;
         { Parser_check(p, main__TokenKind_rcbr); }
-        return tmp428;
+        return tmp427;
         ;
 
       } else {
@@ -22344,9 +22339,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
         p->returns = all_cases_return && p->returns;
 
-        string tmp429 = tos3("");
+        string tmp428 = tos3("");
         { Parser_check(p, main__TokenKind_rcbr); }
-        return tmp429;
+        return tmp428;
         ;
       };
     };
@@ -22461,9 +22456,9 @@ string Parser_match_statement(Parser *p, bool is_expr) {
 
   p->returns = 0;
 
-  string tmp431 = tos3("");
+  string tmp430 = tos3("");
   { Parser_check(p, main__TokenKind_rcbr); }
-  return tmp431;
+  return tmp430;
   ;
 
   { Parser_check(p, main__TokenKind_rcbr); }
@@ -22535,7 +22530,7 @@ void Parser_return_st(Parser *p) {
         EMPTY_ARRAY_OF_ELEMS(string, 1){
             string_trim_space(string_right(p->cgen->cur_line, ph))});
 
-    _PUSH(&types, (/*typ = array_string   tmp_typ=string*/ expr_type), tmp441,
+    _PUSH(&types, (/*typ = array_string   tmp_typ=string*/ expr_type), tmp440,
           string);
 
     while (p->tok == main__TokenKind_comma) {
@@ -22546,12 +22541,12 @@ void Parser_return_st(Parser *p) {
 
       _PUSH(&types,
             (/*typ = array_string   tmp_typ=string*/ Parser_bool_expression(p)),
-            tmp442, string);
+            tmp441, string);
 
       _PUSH(&mr_values,
             (/*typ = array_string   tmp_typ=string*/ string_trim_space(
                 CGen_end_tmp(p->cgen))),
-            tmp443, string);
+            tmp442, string);
     };
 
     string cur_fn_typ_chk = p->cur_fn.typ;
@@ -22568,9 +22563,9 @@ void Parser_return_st(Parser *p) {
 
       string ret_fields = tos3("");
 
-      array_string tmp446 = mr_values;
-      for (int ret_val_idx = 0; ret_val_idx < tmp446.len; ret_val_idx++) {
-        string ret_val = ((string *)tmp446.data)[ret_val_idx];
+      array_string tmp445 = mr_values;
+      for (int ret_val_idx = 0; ret_val_idx < tmp445.len; ret_val_idx++) {
+        string ret_val = ((string *)tmp445.data)[ret_val_idx];
 
         if (ret_val_idx > 0) {
 
@@ -22671,9 +22666,9 @@ string Parser_get_deferred_text(Parser p) {
 
   string deferred_text = tos3("");
 
-  array_string tmp453 = p.cur_fn.defer_text;
-  for (int tmp454 = 0; tmp454 < tmp453.len; tmp454++) {
-    string text = ((string *)tmp453.data)[tmp454];
+  array_string tmp452 = p.cur_fn.defer_text;
+  for (int tmp453 = 0; tmp453 < tmp452.len; tmp453++) {
+    string text = ((string *)tmp452.data)[tmp453];
 
     if (string_ne(text, tos3(""))) {
 
@@ -22701,13 +22696,13 @@ void Parser_go_statement(Parser *p) {
 
     string var_name = p->lit;
 
-    Option_Var tmp457 = Parser_find_var(&/* ? */ *p, var_name);
-    if (!tmp457.ok) {
-      string err = tmp457.error;
+    Option_Var tmp456 = Parser_find_var(&/* ? */ *p, var_name);
+    if (!tmp456.ok) {
+      string err = tmp456.error;
 
       return;
     }
-    Var v = *(Var *)tmp457.data;
+    Var v = *(Var *)tmp456.data;
     ;
 
     Parser_mark_var_used(p, v);
@@ -22720,10 +22715,10 @@ void Parser_go_statement(Parser *p) {
 
     Type typ = Table_find_type(&/* ? */ *p->table, v.typ);
 
-    Option_Fn tmp459 = Table_find_method(
+    Option_Fn tmp458 = Table_find_method(
         &/* ? */ *p->table, &/*112 EXP:"Type*" GOT:"Type" */ typ, p->lit);
-    if (!tmp459.ok) {
-      string err = tmp459.error;
+    if (!tmp458.ok) {
+      string err = tmp458.error;
 
       Parser_error_with_token_index(
           p, _STR("go method missing %.*s", var_name.len, var_name.str),
@@ -22731,7 +22726,7 @@ void Parser_go_statement(Parser *p) {
 
       return;
     }
-    Fn method = *(Fn *)tmp459.data;
+    Fn method = *(Fn *)tmp458.data;
     ;
 
     Parser_async_fn_call(p, method, 0, var_name, v.typ);
@@ -22740,10 +22735,10 @@ void Parser_go_statement(Parser *p) {
 
     string f_name = p->lit;
 
-    Option_Fn tmp461 = Table_find_fn(&/* ? */ *p->table,
+    Option_Fn tmp460 = Table_find_fn(&/* ? */ *p->table,
                                      Parser_prepend_mod(&/* ? */ *p, f_name));
-    if (!tmp461.ok) {
-      string err = tmp461.error;
+    if (!tmp460.ok) {
+      string err = tmp460.error;
 
       println(Table_debug_fns(&/* ? */ *p->table));
 
@@ -22753,7 +22748,7 @@ void Parser_go_statement(Parser *p) {
 
       return;
     }
-    Fn f = *(Fn *)tmp461.data;
+    Fn f = *(Fn *)tmp460.data;
     ;
 
     if (string_eq(f.name, tos3("println")) ||
@@ -22800,9 +22795,9 @@ string Parser_js_decode(Parser *p) {
 
     Type T = Table_find_type(&/* ? */ *p->table, typ);
 
-    array_Var tmp470 = T.fields;
-    for (int tmp471 = 0; tmp471 < tmp470.len; tmp471++) {
-      Var field = ((Var *)tmp470.data)[tmp471];
+    array_Var tmp469 = T.fields;
+    for (int tmp470 = 0; tmp470 < tmp469.len; tmp470++) {
+      Var field = ((Var *)tmp469.data)[tmp470];
 
       string def_val = main__type_default(field.typ);
 
@@ -22832,7 +22827,7 @@ string Parser_js_decode(Parser *p) {
     _PUSH(&p->cgen->typedefs,
           (/*typ = array_string   tmp_typ=string*/ _STR(
               "typedef Option %.*s;", opt_type.len, opt_type.str)),
-          tmp474, string);
+          tmp473, string);
 
     Table_register_type(p->table, opt_type);
 
@@ -22948,12 +22943,12 @@ void Parser_check_unused_imports(Parser *p) {
 
   string output = tos3("");
 
-  map_string tmp483 = p->import_table.imports;
-  array_string keys_tmp483 = map_keys(&tmp483);
-  for (int l = 0; l < keys_tmp483.len; l++) {
-    string alias = ((string *)keys_tmp483.data)[l];
+  map_string tmp482 = p->import_table.imports;
+  array_string keys_tmp482 = map_keys(&tmp482);
+  for (int l = 0; l < keys_tmp482.len; l++) {
+    string alias = ((string *)keys_tmp482.data)[l];
     string mod = {0};
-    map_get(tmp483, alias, &mod);
+    map_get(tmp482, alias, &mod);
 
     if (!FileImportTable_is_used_import(&/* ? */ p->import_table, alias)) {
 
