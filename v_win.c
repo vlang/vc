@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "342e6a1"
+#define V_COMMIT_HASH "a06e229"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1e121d3"
+#define V_COMMIT_HASH "342e6a1"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -460,8 +460,10 @@ struct Preferences {
   bool is_run;
   bool show_c_cmd;
   bool sanitize;
-  bool is_debuggable;
   bool is_debug;
+  bool is_vlines;
+  bool is_keep_c;
+  bool is_cache;
   bool is_stats;
   bool no_auto_free;
   string cflags;
@@ -1938,61 +1940,68 @@ array_string main__TokenStr;
 map_int main__KEYWORDS;
 array_TokenKind main__AssignTokens;
 #define main__HelpText                                                         \
-  tos3("Usage: v [options/commands] [file.v | directory]\n\n   When V is run " \
-       "without any arguments, it is run in REPL mode.\n\n   When given a .v " \
-       "file, it will be compiled. The executable will have the\n   same "     \
-       "name as the input .v file: `v foo.v` produces `./foo` on *nix "        \
-       "systems,\n  `foo.exe` on Windows.\n\n   You can use -o to specify a "  \
-       "different output executable\'s name.\n\n   When given a directory, "   \
-       "all .v files contained in it will be compiled as\n   part of a "       \
-       "single main module.\n\n   By default the executable will have the "    \
-       "same name as the directory.\n\n   To compile all V files in current "  \
-       "directory, run `v .`\n\n   Any file ending in _test.v, will be "       \
-       "treated as a test.\n   It will be compiled and run, evaluating the "   \
-       "assert statements in every\n   function named test_xxx.\n\n   You "    \
-       "can put common options inside an environment variable named VFLAGS, "  \
-       "so that\n   you don\'t have to repeat them.\n\n   You can set it "     \
-       "like this: `export VFLAGS=\"-cc clang -debug\"` on *nix,\n   `set "    \
-       "VFLAGS=-os msvc` on Windows.\n\nOptions/commands:\n  -h, help        " \
-       "  Display this information.\n  -o <file>         Write output to "     \
-       "<file>.\n  -o <file>.c       Produce C source without compiling "      \
-       "it.\n  -o <file>.js      Produce JavaScript source.\n  -prod         " \
-       "    Build an optimized executable.\n  -v, version       Display "      \
-       "compiler version and git hash of the compiler source.\n  -live       " \
-       "      Enable hot code reloading (required by functions marked with "   \
-       "[live]).\n  -os <OS>          Produce an executable for the selected " \
-       "OS.\n                    OS can be linux, mac, windows, msvc.\n      " \
-       "              Use msvc if you want to use the MSVC compiler on "       \
-       "Windows.\n  -cc <ccompiler>   Specify which C compiler you want to "   \
-       "use as a C backend.\n                    The C backend compiler "      \
-       "should be able to handle C99 compatible C code.\n                    " \
-       "Common C compilers are gcc, clang, tcc, icc, cl...\n  -cflags "        \
-       "<flags>   Pass additional C flags to the C backend compiler.\n       " \
-       "             Example: -cflags `sdl2-config --cflags`\n  -debug       " \
-       "     Keep the generated C file for debugging in program.tmp.c even "   \
-       "after compilation.\n  -shared           Build a shared library.\n  "   \
-       "-stats            Show additional stats when compiling/running "       \
-       "tests. Try `v -stats test .`\n  -g                Show v line "        \
-       "numbers in backtraces. Implies -debug.\n  -obf              "          \
-       "Obfuscate the resulting binary.\n  -show_c_cmd       Print the full "  \
-       "C compilation command and how much time it took.\n  -                " \
-       " Shorthand for `v runrepl`.\n\n  up                Update V. Run `v "  \
-       "up` at least once per day, since V development is rapid and "          \
-       "features/bugfixes are added constantly.\n  run <file.v>      Build "   \
-       "and execute the V program in file.v. You can add arguments for the V " \
-       "program *after* the file name.\n  build <module>    Compile a module " \
-       "into an object file.\n  runrepl           Run the V REPL. If V is "    \
-       "running in a tty terminal, the REPL is interactive, otherwise it "     \
-       "just reads from stdin.\n  symlink           Useful on unix systems. "  \
-       "Symlinks the current V executable to /usr/local/bin/v, so that V is "  \
-       "globally available.\n  install <module>  Install a user module from "  \
-       "https://vpm.vlang.io/.\n  test v            Run all V test files, "    \
-       "and compile all V examples.\n  test folder/      Run all V test "      \
-       "files located in the folder and its subfolders. You can also pass "    \
-       "individual _test.v files too.\n  fmt               Run vfmt to "       \
-       "format the source code. [wip]\n  doc               Run vdoc over the " \
-       "source code and produce documentation. [wip]\n  translate         "    \
-       "Translates C to V. [wip, will be available in V 0.3]\n")
+  tos3(                                                                        \
+      "Usage: v [options/commands] [file.v | directory]\n\n   When V is run "  \
+      "without any arguments, it is run in REPL mode.\n\n   When given a .v "  \
+      "file, it will be compiled. The executable will have the\n   same name " \
+      "as the input .v file: `v foo.v` produces `./foo` on *nix systems,\n  "  \
+      "`foo.exe` on Windows.\n\n   You can use -o to specify a different "     \
+      "output executable\'s name.\n\n   When given a directory, all .v files " \
+      "contained in it will be compiled as\n   part of a single main "         \
+      "module.\n\n   By default the executable will have the same name as "    \
+      "the directory.\n\n   To compile all V files in current directory, run " \
+      "`v .`\n\n   Any file ending in _test.v, will be treated as a test.\n  " \
+      " It will be compiled and run, evaluating the assert statements in "     \
+      "every\n   function named test_xxx.\n\n   You can put common options "   \
+      "inside an environment variable named VFLAGS, so that\n   you don\'t "   \
+      "have to repeat them.\n\n   You can set it like this: `export "          \
+      "VFLAGS=\"-cc clang -debug\"` on *nix,\n   `set VFLAGS=-os msvc` on "    \
+      "Windows.\n\nOptions/commands:\n  -h, help          Display this "       \
+      "information.\n  -o <file>         Write output to <file>.\n  -o "       \
+      "<file>.c       Produce C source without compiling it.\n  -o <file>.js " \
+      "     Produce JavaScript source.\n  -prod             Build an "         \
+      "optimized executable.\n  -v, version       Display compiler version "   \
+      "and git hash of the compiler source.\n  -live             Enable hot "  \
+      "code reloading (required by functions marked with [live]).\n  -os "     \
+      "<OS>          Produce an executable for the selected OS.\n            " \
+      "        OS can be linux, mac, windows, msvc.\n                    Use " \
+      "msvc if you want to use the MSVC compiler on Windows.\n  -shared      " \
+      "     Build a shared library.\n  -stats            Show additional "     \
+      "stats when compiling/running tests. Try `v -stats test .`\n\n  -cache " \
+      "           Turn on usage of the precompiled module cache. \n          " \
+      "          It very significantly speeds up secondary compilations.\n\n " \
+      " -obf              Obfuscate the resulting binary.\n  -               " \
+      "  Shorthand for `v runrepl`.\n\nOptions for debugging/troubleshooting " \
+      "v programs:\n  -g                Generate debugging information in "    \
+      "the backtraces. Add *V* line numbers to the generated executable.\n  "  \
+      "-cg               Same as -g, but add *C* line numbers to the "         \
+      "generated executable instead of *V* line numbers.\n  -keep_c          " \
+      " Do NOT remove the generated .tmp.c files after compilation. \n       " \
+      "             It is useful when using debuggers like gdb/visual "        \
+      "studio, when given after -g / -cg .\n  -show_c_cmd       Print the "    \
+      "full C compilation command and how much time it took.\n  -cc "          \
+      "<ccompiler>   Specify which C compiler you want to use as a C "         \
+      "backend.\n                    The C backend compiler should be able "   \
+      "to handle C99 compatible C code.\n                    Common C "        \
+      "compilers are gcc, clang, tcc, icc, cl...\n  -cflags <flags>   Pass "   \
+      "additional C flags to the C backend compiler.\n                    "    \
+      "Example: -cflags `sdl2-config --cflags`\n\nCommands:\n  up            " \
+      "    Update V. Run `v up` at least once per day, since V development "   \
+      "is rapid and features/bugfixes are added constantly.\n  run <file.v>  " \
+      "    Build and execute the V program in file.v. You can add arguments "  \
+      "for the V program *after* the file name.\n  build <module>    Compile " \
+      "a module into an object file.\n  runrepl           Run the V REPL. If " \
+      "V is running in a tty terminal, the REPL is interactive, otherwise it " \
+      "just reads from stdin.\n  symlink           Useful on unix systems. "   \
+      "Symlinks the current V executable to /usr/local/bin/v, so that V is "   \
+      "globally available.\n  install <module>  Install a user module from "   \
+      "https://vpm.vlang.io/.\n  test v            Run all V test files, and " \
+      "compile all V examples.\n  test folder/      Run all V test files "     \
+      "located in the folder and its subfolders. You can also pass "           \
+      "individual _test.v files too.\n  fmt               Run vfmt to format " \
+      "the source code. [wip]\n  doc               Run vdoc over the source "  \
+      "code and produce documentation. [wip]\n  translate         Translates " \
+      "C to V. [wip, will be available in V 0.3]\n")
 
 array new_array(int mylen, int cap, int elm_size) {
 
@@ -7735,13 +7744,15 @@ void V_cc(V *v) {
     printf("Building %.*s...\n", v->out_name.len, v->out_name.str);
   };
 
-  string debug_options = tos3("");
+  bool debug_mode = v->pref->is_debug;
+
+  string debug_options = tos3("-g");
 
   string optimization_options = tos3("-O2");
 
   if (string_contains(v->pref->ccompiler, tos3("clang"))) {
 
-    if (v->pref->is_debuggable) {
+    if (debug_mode) {
 
       debug_options = tos3("-g -O0");
     };
@@ -7751,7 +7762,7 @@ void V_cc(V *v) {
 
   if (string_contains(v->pref->ccompiler, tos3("gcc"))) {
 
-    if (v->pref->is_debug) {
+    if (debug_mode) {
 
       debug_options = tos3("-g3");
     };
@@ -7759,21 +7770,22 @@ void V_cc(V *v) {
     optimization_options = tos3("-O3 -fno-strict-aliasing -flto");
   };
 
-  if (v->pref->is_prod) {
-
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ optimization_options),
-          tmp12, string);
-
-  } else {
+  if (debug_mode) {
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ debug_options), tmp13,
           string);
   };
 
-  if (v->pref->is_debuggable && string_ne(os__user_os(), tos3("windows"))) {
+  if (v->pref->is_prod) {
+
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ optimization_options),
+          tmp14, string);
+  };
+
+  if (debug_mode && string_ne(os__user_os(), tos3("windows"))) {
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3(" -rdynamic ")),
-          tmp14, string);
+          tmp15, string);
   };
 
   if (v->os != main__OS_msvc && v->os != main__OS_freebsd) {
@@ -7781,24 +7793,24 @@ void V_cc(V *v) {
     _PUSH(&a,
           (/*typ = array_string   tmp_typ=string*/ tos3(
               "-Werror=implicit-function-declaration")),
-          tmp15, string);
+          tmp16, string);
   };
 
-  array_string tmp16 = V_generate_hotcode_reloading_compiler_flags(&/* ? */ *v);
-  for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
-    string f = ((string *)tmp16.data)[tmp17];
+  array_string tmp17 = V_generate_hotcode_reloading_compiler_flags(&/* ? */ *v);
+  for (int tmp18 = 0; tmp18 < tmp17.len; tmp18++) {
+    string f = ((string *)tmp17.data)[tmp18];
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ f), tmp18, string);
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ f), tmp19, string);
   };
 
   string libs = tos3("");
 
   if (v->pref->build_mode == main__BuildMode_build_module) {
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-c")), tmp20,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-c")), tmp21,
           string);
 
-  } else if (v->pref->is_debug) {
+  } else if (v->pref->is_cache) {
 
     string vexe = os__executable();
 
@@ -7821,9 +7833,9 @@ void V_cc(V *v) {
                       os__PathSeparator.len, os__PathSeparator.str));
     };
 
-    array_string tmp23 = v->table->imports;
-    for (int tmp24 = 0; tmp24 < tmp23.len; tmp24++) {
-      string imp = ((string *)tmp23.data)[tmp24];
+    array_string tmp24 = v->table->imports;
+    for (int tmp25 = 0; tmp25 < tmp24.len; tmp25++) {
+      string imp = ((string *)tmp24.data)[tmp25];
 
       if (string_contains(imp, tos3("vweb"))) {
 
@@ -7865,13 +7877,13 @@ void V_cc(V *v) {
   if (v->pref->sanitize) {
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-fsanitize=leak")),
-          tmp27, string);
+          tmp28, string);
   };
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "-o \"%.*s\"", v->out_name.len, v->out_name.str)),
-        tmp28, string);
+        tmp29, string);
 
   if (os__dir_exists(v->out_name)) {
 
@@ -7882,17 +7894,17 @@ void V_cc(V *v) {
   if (v->os == main__OS_mac) {
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-x objective-c")),
-          tmp29, string);
+          tmp30, string);
   };
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "\"%.*s\"", v->out_name_c.len, v->out_name_c.str)),
-        tmp30, string);
+        tmp31, string);
 
   if (v->os == main__OS_mac) {
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-x none")), tmp31,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-x none")), tmp32,
           string);
   };
 
@@ -7901,7 +7913,7 @@ void V_cc(V *v) {
     _PUSH(&a,
           (/*typ = array_string   tmp_typ=string*/ tos3(
               "-mmacosx-version-min=10.7")),
-          tmp32, string);
+          tmp33, string);
   };
 
   array_CFlag cflags = V_get_os_cflags(&/* ? */ *v);
@@ -7909,14 +7921,14 @@ void V_cc(V *v) {
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/
          array_CFlag_c_options_only_object_files(cflags)),
-        tmp34, string);
+        tmp35, string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/
          array_CFlag_c_options_without_object_files(cflags)),
-        tmp35, string);
+        tmp36, string);
 
-  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ libs), tmp36, string);
+  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ libs), tmp37, string);
 
   if (v->pref->build_mode != main__BuildMode_build_module &&
       (v->os == main__OS_linux || v->os == main__OS_freebsd ||
@@ -7924,18 +7936,18 @@ void V_cc(V *v) {
        v->os == main__OS_dragonfly || v->os == main__OS_solaris)) {
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-lm -lpthread ")),
-          tmp37, string);
+          tmp38, string);
 
     if (v->os == main__OS_linux) {
 
-      _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3(" -ldl ")), tmp38,
+      _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3(" -ldl ")), tmp39,
             string);
     };
   };
 
   if (v->os == main__OS_js && string_eq(os__user_os(), tos3("linux"))) {
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-lm")), tmp39,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-lm")), tmp40,
           string);
   };
 
@@ -7953,15 +7965,15 @@ void V_cc(V *v) {
 
   i64 ticks = time__ticks();
 
-  Option_os__Result tmp43 = os__exec(cmd);
-  if (!tmp43.ok) {
-    string err = tmp43.error;
+  Option_os__Result tmp44 = os__exec(cmd);
+  if (!tmp44.ok) {
+    string err = tmp44.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result res = *(os__Result *)tmp43.data;
+  os__Result res = *(os__Result *)tmp44.data;
   ;
 
   if (res.exit_code != 0) {
@@ -7996,8 +8008,7 @@ void V_cc(V *v) {
 
       if (res.output.len > partial_output.len) {
 
-        println(
-            tos3("...\n(Use `v -debug` to print the entire error message)\n"));
+        println(tos3("...\n(Use `v -g` to print the entire error message)\n"));
 
       } else {
 
@@ -8021,7 +8032,7 @@ void V_cc(V *v) {
     println(tos3("=========\n"));
   };
 
-  if (!v->pref->is_debug && string_ne(v->out_name_c, tos3("v.c"))) {
+  if (!v->pref->is_keep_c && string_ne(v->out_name_c, tos3("v.c"))) {
 
     os__rm(v->out_name_c);
   };
@@ -8103,9 +8114,9 @@ void V_cc_windows_cross(V *c) {
       v_exit(1);
     };
 
-    array_string tmp51 = c->table->imports;
-    for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
-      string imp = ((string *)tmp51.data)[tmp52];
+    array_string tmp52 = c->table->imports;
+    for (int tmp53 = 0; tmp53 < tmp52.len; tmp53++) {
+      string imp = ((string *)tmp52.data)[tmp53];
 
       libs = string_add(libs,
                         _STR(" \"%.*s/vlib/%.*s.o\"", main__v_modules_path.len,
@@ -8197,9 +8208,9 @@ void V_cc_windows_cross(V *c) {
 }
 void V_build_thirdparty_obj_files(V *c) {
 
-  array_CFlag tmp59 = V_get_os_cflags(&/* ? */ *c);
-  for (int tmp60 = 0; tmp60 < tmp59.len; tmp60++) {
-    CFlag flag = ((CFlag *)tmp59.data)[tmp60];
+  array_CFlag tmp60 = V_get_os_cflags(&/* ? */ *c);
+  for (int tmp61 = 0; tmp61 < tmp60.len; tmp61++) {
+    CFlag flag = ((CFlag *)tmp60.data)[tmp61];
 
     if (string_ends_with(flag.value, tos3(".o"))) {
 
@@ -8261,9 +8272,9 @@ string main__get_cmdline_cflags(array_string args) {
 
   string cflags = tos3("");
 
-  array_string tmp67 = args;
-  for (int ci = 0; ci < tmp67.len; ci++) {
-    string cv = ((string *)tmp67.data)[ci];
+  array_string tmp68 = args;
+  for (int ci = 0; ci < tmp68.len; ci++) {
+    string cv = ((string *)tmp68.data)[ci];
 
     if (string_eq(cv, tos3("-cflags"))) {
 
@@ -10522,6 +10533,11 @@ void Parser_fn_decl(Parser *p) {
   };
 
   f.fn_name_token_idx = Parser_cur_tok_index(&/* ? */ *p);
+
+  if (string_eq(f.name, tos3("init")) && f.is_public) {
+
+    Parser_error(p, tos3("init function cannot be public"));
+  };
 
   bool is_c = string_eq(f.name, tos3("C")) && p->tok == main__TokenKind_dot;
 
@@ -13405,17 +13421,12 @@ void V_generate_hot_reload_code(V *v) {
       msvc = tos3("-os msvc");
     };
 
-    string debug = tos3("");
-
-    if (v->pref->is_debug) {
-
-      debug = tos3("-debug");
-    };
+    string so_debug_flag = (v->pref->is_debug) ? (tos3("-g")) : (tos3(""));
 
     string cmd_compile_shared_library =
         _STR("%.*s %.*s %.*s -o %.*s -shared %.*s", vexe.len, vexe.str,
-             msvc.len, msvc.str, debug.len, debug.str, file_base.len,
-             file_base.str, file.len, file.str);
+             msvc.len, msvc.str, so_debug_flag.len, so_debug_flag.str,
+             file_base.len, file_base.str, file.len, file.str);
 
     if (v->pref->show_c_cmd) {
 
@@ -14058,22 +14069,27 @@ void V_generate_main(V *v) {
 #endif
   ;
 
-  int lines_so_far =
-      string_count(array_string_join(cgen->lines, tos3("\n")), tos3("\n")) + 5;
+  if (v->pref->is_vlines) {
 
-  CGen_genln(cgen, tos3(""));
+    int lines_so_far =
+        string_count(array_string_join(cgen->lines, tos3("\n")), tos3("\n")) +
+        5;
 
-  CGen_genln(cgen,
-             tos3("////////////////// Reset the file/line numbers //////////"));
+    CGen_genln(cgen, tos3(""));
 
-  _PUSH(&cgen->lines,
-        (/*typ = array_string   tmp_typ=string*/ _STR(
-            "#line %d \"%.*s\"", lines_so_far,
-            main__cescaped_path(os__realpath(cgen->out_path)).len,
-            main__cescaped_path(os__realpath(cgen->out_path)).str)),
-        tmp38, string);
+    CGen_genln(
+        cgen,
+        tos3("////////////////// Reset the file/line numbers //////////"));
 
-  CGen_genln(cgen, tos3(""));
+    _PUSH(&cgen->lines,
+          (/*typ = array_string   tmp_typ=string*/ _STR(
+              "#line %d \"%.*s\"", lines_so_far,
+              main__cescaped_path(os__realpath(cgen->out_path)).len,
+              main__cescaped_path(os__realpath(cgen->out_path)).str)),
+          tmp38, string);
+
+    CGen_genln(cgen, tos3(""));
+  };
 
   if (v->pref->build_mode != main__BuildMode_build_module) {
 
@@ -14323,7 +14339,7 @@ void V_add_v_files_to_compile(V *v) {
            main__v_modules_path.str, os__PathSeparator.len,
            os__PathSeparator.str, os__PathSeparator.len, os__PathSeparator.str);
 
-  if (v->pref->is_debug && os__file_exists(builtin_vh)) {
+  if (v->pref->is_cache && os__file_exists(builtin_vh)) {
 
     _PUSH(&v->cached_mods,
           (/*typ = array_string   tmp_typ=string*/ tos3("builtin")), tmp50,
@@ -14396,7 +14412,7 @@ void V_add_v_files_to_compile(V *v) {
                             os__PathSeparator.str, os__PathSeparator.len,
                             os__PathSeparator.str, mod_path.len, mod_path.str);
 
-      if (v->pref->is_debug && os__file_exists(vh_path)) {
+      if (v->pref->is_cache && os__file_exists(vh_path)) {
 
         printf("using cached module `%.*s`: %.*s\n", mod.len, mod.str,
                vh_path.len, vh_path.str);
@@ -14913,9 +14929,12 @@ V *main__new_v(array_string args) {
                      .is_prod = _IN(string, (tos3("-prod")), args),
                      .is_verbose = _IN(string, (tos3("-verbose")), args) ||
                                    _IN(string, (tos3("--verbose")), args),
-                     .is_debuggable = _IN(string, (tos3("-g")), args),
-                     .is_debug = _IN(string, (tos3("-debug")), args) ||
-                                 _IN(string, (tos3("-g")), args),
+                     .is_debug = _IN(string, (tos3("-g")), args) ||
+                                 _IN(string, (tos3("-cg")), args),
+                     .is_vlines = _IN(string, (tos3("-g")), args) &&
+                                  !(_IN(string, (tos3("-cg")), args)),
+                     .is_keep_c = _IN(string, (tos3("-keep_c")), args),
+                     .is_cache = _IN(string, (tos3("-cache")), args),
                      .is_stats = _IN(string, (tos3("-stats")), args),
                      .obfuscate = obfuscate,
                      .is_prof = _IN(string, (tos3("-prof")), args),
@@ -15981,7 +16000,7 @@ void V_cc_msvc(V *v) {
   if (!tmp36.ok) {
     string err = tmp36.error;
 
-    if (!v->pref->is_debug && string_ne(v->out_name_c, tos3("v.c")) &&
+    if (!v->pref->is_keep_c && string_ne(v->out_name_c, tos3("v.c")) &&
         string_ne(v->out_name_c, tos3("v_macos.c"))) {
 
       os__rm(v->out_name_c);
@@ -16186,7 +16205,7 @@ void V_cc_msvc(V *v) {
     main__verror(res.output);
   };
 
-  if (!v->pref->is_debug && string_ne(v->out_name_c, tos3("v.c")) &&
+  if (!v->pref->is_keep_c && string_ne(v->out_name_c, tos3("v.c")) &&
       string_ne(v->out_name_c, tos3("v_macos.c"))) {
 
     os__rm(v->out_name_c);
@@ -16423,7 +16442,7 @@ void V_reset_cgen_file_line_parameters(V *v) {
 
   v->cgen->file = tos3("");
 
-  v->cgen->line_directives = v->pref->is_debuggable;
+  v->cgen->line_directives = v->pref->is_vlines;
 }
 Parser V_new_parser_from_file(V *v, string path) {
 
@@ -27465,9 +27484,6 @@ string _STR_TMP(const char *fmt, ...) {
 #endif
   return tos2(g_str_buf);
 }
-
-////////////////// Reset the file/line numbers //////////
-#line 29806 "/tmp/gen_vc/v_win.c.tmp.c"
 
 int main(int argc, char **argv) {
   init();
