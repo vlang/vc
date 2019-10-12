@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ae6a426"
+#define V_COMMIT_HASH "9850193"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5d60600"
+#define V_COMMIT_HASH "ae6a426"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -469,7 +469,6 @@ struct Preferences {
   bool building_v;
   bool autofree;
   bool compress;
-  bool skip_builtin;
 };
 
 struct Repl {
@@ -7727,8 +7726,6 @@ void V_cc(V *v) {
                os__PathSeparator.str, os__PathSeparator.len,
                os__PathSeparator.str, imp_path.len, imp_path.str);
 
-      printf("adding %.*s.o\n", imp_path.len, imp_path.str);
-
       if (os__file_exists(path)) {
 
         libs = string_add(libs, string_add(tos3(" "), path));
@@ -14802,38 +14799,38 @@ V *main__new_v(array_string args) {
   bool is_repl = _IN(string, (tos3("-repl")), args);
 
   Preferences *pref = (Preferences *)memdup(
-      &(Preferences){.is_test = is_test,
-                     .is_script = is_script,
-                     .is_so = _IN(string, (tos3("-shared")), args),
-                     .is_prod = _IN(string, (tos3("-prod")), args),
-                     .is_verbose = _IN(string, (tos3("-verbose")), args) ||
-                                   _IN(string, (tos3("--verbose")), args),
-                     .is_debug = _IN(string, (tos3("-g")), args) ||
-                                 _IN(string, (tos3("-cg")), args),
-                     .is_vlines = _IN(string, (tos3("-g")), args) &&
-                                  !(_IN(string, (tos3("-cg")), args)),
-                     .is_keep_c = _IN(string, (tos3("-keep_c")), args),
-                     .is_cache = _IN(string, (tos3("-cache")), args),
-                     .is_stats = _IN(string, (tos3("-stats")), args),
-                     .obfuscate = obfuscate,
-                     .is_prof = _IN(string, (tos3("-prof")), args),
-                     .is_live = _IN(string, (tos3("-live")), args),
-                     .sanitize = _IN(string, (tos3("-sanitize")), args),
-                     .nofmt = _IN(string, (tos3("-nofmt")), args),
-                     .show_c_cmd = _IN(string, (tos3("-show_c_cmd")), args),
-                     .translated = _IN(string, (tos3("translated")), args),
-                     .is_run = _IN(string, (tos3("run")), args),
-                     .autofree = _IN(string, (tos3("-autofree")), args),
-                     .compress = _IN(string, (tos3("-compress")), args),
-                     .is_repl = is_repl,
-                     .build_mode = build_mode,
-                     .cflags = cflags,
-                     .ccompiler = main__find_c_compiler(),
-                     .building_v =
-                         !is_repl && (string_eq(rdir_name, tos3("compiler")) ||
-                                      string_contains(dir, tos3("vlib"))),
-                     .no_auto_free = 0,
-                     .skip_builtin = 0},
+      &(Preferences){
+          .is_test = is_test,
+          .is_script = is_script,
+          .is_so = _IN(string, (tos3("-shared")), args),
+          .is_prod = _IN(string, (tos3("-prod")), args),
+          .is_verbose = _IN(string, (tos3("-verbose")), args) ||
+                        _IN(string, (tos3("--verbose")), args),
+          .is_debug = _IN(string, (tos3("-g")), args) ||
+                      _IN(string, (tos3("-cg")), args),
+          .is_vlines = _IN(string, (tos3("-g")), args) &&
+                       !(_IN(string, (tos3("-cg")), args)),
+          .is_keep_c = _IN(string, (tos3("-keep_c")), args),
+          .is_cache = _IN(string, (tos3("-cache")), args),
+          .is_stats = _IN(string, (tos3("-stats")), args),
+          .obfuscate = obfuscate,
+          .is_prof = _IN(string, (tos3("-prof")), args),
+          .is_live = _IN(string, (tos3("-live")), args),
+          .sanitize = _IN(string, (tos3("-sanitize")), args),
+          .nofmt = _IN(string, (tos3("-nofmt")), args),
+          .show_c_cmd = _IN(string, (tos3("-show_c_cmd")), args),
+          .translated = _IN(string, (tos3("translated")), args),
+          .is_run = _IN(string, (tos3("run")), args),
+          .autofree = _IN(string, (tos3("-autofree")), args),
+          .compress = _IN(string, (tos3("-compress")), args),
+          .is_repl = is_repl,
+          .build_mode = build_mode,
+          .cflags = cflags,
+          .ccompiler = main__find_c_compiler(),
+          .building_v = !is_repl && (string_eq(rdir_name, tos3("compiler")) ||
+                                     string_contains(dir, tos3("vlib"))),
+          .no_auto_free = 0,
+      },
       sizeof(Preferences));
 
   if (pref->is_verbose || pref->is_debug) {
@@ -15524,9 +15521,6 @@ void V_generate_vh(V *v) {
 
     if (string_ne(typ.mod, v->mod) &&
         !(string_eq(v->mod, tos3("builtin")) && string_eq(typ.mod, tos3("")))) {
-
-      printf("skipping method typ %.*s mod=%.*s\n", typ.name.len, typ.name.str,
-             typ.mod.len, typ.mod.str);
 
       continue;
     };
