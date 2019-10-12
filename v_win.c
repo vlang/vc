@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "baeb2e3"
+#define V_COMMIT_HASH "acbca75"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "114fce4"
+#define V_COMMIT_HASH "baeb2e3"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -20716,12 +20716,7 @@ string main__format_str(string _str) {
 
   string str = string_replace(_str, tos3("\""), tos3("\\\""));
 
-#ifdef _WIN32
-
   str = string_replace(str, tos3("\r\n"), tos3("\\n"));
-
-#endif
-  ;
 
   str = string_replace(str, tos3("\n"), tos3("\\n"));
 
@@ -27437,7 +27432,7 @@ string _STR_TMP(const char *fmt, ...) {
 }
 
 ////////////////// Reset the file/line numbers //////////
-#line 29809 "/tmp/gen_vc/v_win.c.tmp.c"
+#line 29804 "/tmp/gen_vc/v_win.c.tmp.c"
 
 int main(int argc, char **argv) {
   init();
