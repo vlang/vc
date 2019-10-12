@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4c91a5c"
+#define V_COMMIT_HASH "155d692"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4cd9099"
+#define V_COMMIT_HASH "4c91a5c"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -15343,8 +15343,10 @@ void V_generate_vh(V *v) {
     if (string_ne(typ.parent, tos3("")) &&
         typ.cat == main__TypeCategory_alias) {
 
+      string parent = main__v_type_str(typ.parent);
+
       os__File_writeln(file, _STR("type %.*s %.*s", typ.name.len, typ.name.str,
-                                  typ.parent.len, typ.parent.str));
+                                  parent.len, parent.str));
     };
 
     if (typ.cat == main__TypeCategory_struct_ ||
@@ -15355,9 +15357,9 @@ void V_generate_vh(V *v) {
       os__File_writeln(
           file, _STR("struct %.*s%.*s {", c.len, c.str, name.len, name.str));
 
-      array_Var tmp35 = typ.fields;
-      for (int tmp36 = 0; tmp36 < tmp35.len; tmp36++) {
-        Var field = ((Var *)tmp35.data)[tmp36];
+      array_Var tmp36 = typ.fields;
+      for (int tmp37 = 0; tmp37 < tmp36.len; tmp37++) {
+        Var field = ((Var *)tmp36.data)[tmp37];
 
         if (field.access_mod == main__AccessMod_public) {
 
@@ -15374,9 +15376,9 @@ void V_generate_vh(V *v) {
 
       string public_str = tos3("");
 
-      array_Var tmp39 = typ.fields;
-      for (int tmp40 = 0; tmp40 < tmp39.len; tmp40++) {
-        Var field = ((Var *)tmp39.data)[tmp40];
+      array_Var tmp40 = typ.fields;
+      for (int tmp41 = 0; tmp41 < tmp40.len; tmp41++) {
+        Var field = ((Var *)tmp40.data)[tmp41];
 
         if (field.access_mod == main__AccessMod_private) {
 
@@ -15405,24 +15407,24 @@ void V_generate_vh(V *v) {
   array_Fn fns = new_array_from_c_array(
       0, 0, sizeof(Fn), EMPTY_ARRAY_OF_ELEMS(Fn, 0){TCCSKIP(0)});
 
-  map_Fn tmp43 = v->table->fns;
-  array_string keys_tmp43 = map_keys(&tmp43);
-  for (int l = 0; l < keys_tmp43.len; l++) {
-    string _ = ((string *)keys_tmp43.data)[l];
+  map_Fn tmp44 = v->table->fns;
+  array_string keys_tmp44 = map_keys(&tmp44);
+  for (int l = 0; l < keys_tmp44.len; l++) {
+    string _ = ((string *)keys_tmp44.data)[l];
     Fn f = {0};
-    map_get(tmp43, _, &f);
+    map_get(tmp44, _, &f);
 
     if (string_eq(f.mod, v->mod) || string_eq(f.mod, tos3(""))) {
 
-      _PUSH(&fns, (/*typ = array_Fn   tmp_typ=Fn*/ f), tmp44, Fn);
+      _PUSH(&fns, (/*typ = array_Fn   tmp_typ=Fn*/ f), tmp45, Fn);
 
     } else {
     };
   };
 
-  array_Fn tmp45 = fns;
-  for (int _ = 0; _ < tmp45.len; _++) {
-    Fn f = ((Fn *)tmp45.data)[_];
+  array_Fn tmp46 = fns;
+  for (int _ = 0; _ < tmp46.len; _++) {
+    Fn f = ((Fn *)tmp46.data)[_];
 
     if (!f.is_public) {
 
@@ -15432,9 +15434,9 @@ void V_generate_vh(V *v) {
     os__File_writeln(file, Fn_v_definition(&/* ? */ f));
   };
 
-  array_Fn tmp46 = fns;
-  for (int _ = 0; _ < tmp46.len; _++) {
-    Fn f = ((Fn *)tmp46.data)[_];
+  array_Fn tmp47 = fns;
+  for (int _ = 0; _ < tmp47.len; _++) {
+    Fn f = ((Fn *)tmp47.data)[_];
 
     if (f.is_public) {
 
@@ -15446,12 +15448,12 @@ void V_generate_vh(V *v) {
 
   os__File_writeln(file, tos3("\n// Methods //////////////////"));
 
-  map_Type tmp47 = v->table->typesmap;
-  array_string keys_tmp47 = map_keys(&tmp47);
-  for (int l = 0; l < keys_tmp47.len; l++) {
-    string _ = ((string *)keys_tmp47.data)[l];
+  map_Type tmp48 = v->table->typesmap;
+  array_string keys_tmp48 = map_keys(&tmp48);
+  for (int l = 0; l < keys_tmp48.len; l++) {
+    string _ = ((string *)keys_tmp48.data)[l];
     Type typ = {0};
-    map_get(tmp47, _, &typ);
+    map_get(tmp48, _, &typ);
 
     if (string_ne(typ.mod, v->mod) &&
         !(string_eq(v->mod, tos3("builtin")) && string_eq(typ.mod, tos3("")))) {
@@ -15462,9 +15464,9 @@ void V_generate_vh(V *v) {
       continue;
     };
 
-    array_Fn tmp48 = typ.methods;
-    for (int tmp49 = 0; tmp49 < tmp48.len; tmp49++) {
-      Fn method = ((Fn *)tmp48.data)[tmp49];
+    array_Fn tmp49 = typ.methods;
+    for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
+      Fn method = ((Fn *)tmp49.data)[tmp50];
 
       os__File_writeln(file, Fn_v_definition(&/* ? */ method));
     };
@@ -27295,7 +27297,7 @@ string _STR_TMP(const char *fmt, ...) {
 }
 
 ////////////////// Reset the file/line numbers //////////
-#line 29669 "/tmp/gen_vc/v.c.tmp.c"
+#line 29671 "/tmp/gen_vc/v.c.tmp.c"
 
 int main(int argc, char **argv) {
   init();
