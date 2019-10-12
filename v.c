@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "114fce4"
+#define V_COMMIT_HASH "baeb2e3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "155d692"
+#define V_COMMIT_HASH "114fce4"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -13828,9 +13828,10 @@ void V_generate_init(V *v) {
     string init_fn_name =
         string_add(main__mod_gen_name(v->mod), tos3("__init_consts"));
 
-    CGen_genln(v->cgen, _STR("void %.*s() {\n%.*s\n}", init_fn_name.len,
-                             init_fn_name.str, consts_init_body.len,
-                             consts_init_body.str));
+    CGen_genln(v->cgen,
+               _STR("void %.*s();\nvoid %.*s() {\n%.*s\n}", init_fn_name.len,
+                    init_fn_name.str, init_fn_name.len, init_fn_name.str,
+                    consts_init_body.len, consts_init_body.str));
 
     v->cgen->nogen = nogen;
   };
