@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1292163"
+#define V_COMMIT_HASH "bf21108"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "432e074"
+#define V_COMMIT_HASH "1292163"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -16858,21 +16858,16 @@ void Parser_parse(Parser *p, Pass pass) {
 
       if (p->is_script && !p->pref->is_test) {
 
-        if (Parser_first_pass(&/* ? */ *p)) {
-
-          if (string_eq(p->cur_fn.name, tos3(""))) {
-
-            Parser_set_current_fn(p, main__MainFn);
-          };
-
-          return;
-        };
-
         if (string_eq(p->cur_fn.name, tos3(""))) {
 
           Parser_set_current_fn(p, main__MainFn);
 
           if (p->pref->is_repl) {
+
+            if (Parser_first_pass(&/* ? */ *p)) {
+
+              return;
+            };
 
             Parser_clear_vars(p);
           };
@@ -16882,7 +16877,8 @@ void Parser_parse(Parser *p, Pass pass) {
 
         Parser_statement(p, 1);
 
-        if (string_ne((*(string *)array_get(p->cgen->lines, start - 1)),
+        if (start > 0 &&
+            string_ne((*(string *)array_get(p->cgen->lines, start - 1)),
                       tos3("")) &&
             string_ne(p->cgen->fn_main, tos3(""))) {
 
