@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a06e229"
+#define V_COMMIT_HASH "336e82d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "342e6a1"
+#define V_COMMIT_HASH "a06e229"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -10433,7 +10433,9 @@ void Parser_fn_decl(Parser *p) {
 
     if (string_at(f.name, 0) == '_') {
 
-      Parser_warn(p, tos3("function names cannot start with `_`"));
+      Parser_error(
+          p,
+          tos3("function names cannot start with `_`, use snake_case instead"));
     };
 
     if (string_contains(f.name, tos3("__"))) {
