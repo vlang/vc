@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "51388fe"
+#define V_COMMIT_HASH "f461a21"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c7e47e6"
+#define V_COMMIT_HASH "51388fe"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -14690,7 +14690,8 @@ V *main__new_v(array_string args) {
     v_exit(1);
   };
 
-  if (string_eq(out_name, tos3("a.out")) && string_ends_with(dir, tos3(".v"))) {
+  if (string_eq(out_name, tos3("a.out")) && string_ends_with(dir, tos3(".v")) &&
+      string_ne(dir, tos3(".v"))) {
 
     out_name = string_left(dir, dir.len - 2);
   };
