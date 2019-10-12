@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "81f8b26"
+#define V_COMMIT_HASH "432e074"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9850193"
+#define V_COMMIT_HASH "81f8b26"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1689,53 +1689,52 @@ int os__DISABLE_NEWLINE_AUTO_RETURN;
 int os__ENABLE_LVB_GRID_WORLDWIDE;
 array_string os__args;
 #define os__MAX_PATH 4096
-string os__PathSeparator;
 string os__path_separator;
-#define math__E 2.71828182845904523536028747135266249775724709369995957496696763
-#define math__Pi                                                               \
+#define math__e 2.71828182845904523536028747135266249775724709369995957496696763
+#define math__pi                                                               \
   3.14159265358979323846264338327950288419716939937510582097494459
-#define math__Phi                                                              \
+#define math__phi                                                              \
   1.61803398874989484820458683436563811772030917980576286213544862
-#define math__Tau                                                              \
+#define math__tau                                                              \
   6.28318530717958647692528676655900576839433879875021164194988918
-#define math__Sqrt2                                                            \
+#define math__sqrt2                                                            \
   1.41421356237309504880168872420969807856967187537694807317667974
-#define math__SqrtE                                                            \
+#define math__sqrt_e                                                           \
   1.64872127070012814684865078781416357165377610071014801157507931
-#define math__SqrtPi                                                           \
+#define math__sqrt_pi                                                          \
   1.77245385090551602729816748334114518279754945612238712821380779
-#define math__SqrtTau                                                          \
+#define math__sqrt_tau                                                         \
   2.50662827463100050241576528481104525300698674060993831662992357
-#define math__SqrtPhi                                                          \
+#define math__sqrt_phi                                                         \
   1.27201964951406896425242246173749149171560804184009624861664038
-#define math__Ln2                                                              \
+#define math__ln2                                                              \
   0.693147180559945309417232121458176568075500134360255254120680009
-f32 math__Log2E;
-#define math__Ln10                                                             \
+f32 math__log2_e;
+#define math__ln10                                                             \
   2.30258509299404568401799145468436420760110148862877297603332790
-f32 math__Log10E;
-#define math__MaxI8 127
-int math__MinI8;
-#define math__MaxI16 32767
-int math__MinI16;
-#define math__MaxI32 2147483647
-int math__MinI32;
-#define math__MaxU8 255
-#define math__MaxU16 65535
-#define math__MaxU32 4294967295
-#define math__MaxU64 18446744073709551615
-array_int time__MonthDays;
-i64 time__absoluteZeroYear;
-#define time__secondsPerMinute 60
-int time__secondsPerHour;
-int time__secondsPerDay;
-int time__secondsPerWeek;
-int time__daysPer400Years;
-int time__daysPer100Years;
-int time__daysPer4Years;
-array_int time__daysBefore;
-string time__Months;
-string time__Days;
+f32 math__log10_e;
+#define math__max_i8 127
+int math__min_i8;
+#define math__max_i16 32767
+int math__min_i16;
+#define math__max_i32 2147483647
+int math__min_i32;
+#define math__max_u8 255
+#define math__max_u16 65535
+#define math__max_u32 4294967295
+#define math__max_u64 18446744073709551615
+array_int time__month_days;
+i64 time__absolute_zero_year;
+#define time__seconds_per_minute 60
+int time__seconds_per_hour;
+int time__seconds_per_day;
+int time__seconds_per_week;
+int time__days_per_400_years;
+int time__days_per_100_years;
+int time__days_per_4_years;
+array_int time__days_before;
+string time__months_string;
+string time__days_string;
 #define vweb_dot_tmpl__STR_START tos3("sb.write(\'")
 #define vweb_dot_tmpl__STR_END tos3("\' ) ")
 string main__CommonCHeaders;
@@ -5666,7 +5665,7 @@ string os__dir(string path) {
     return os__getwd();
   };
 
-  int pos = string_last_index(path, os__PathSeparator);
+  int pos = string_last_index(path, os__path_separator);
 
   if (pos == -1) {
 
@@ -5688,7 +5687,7 @@ string os__path_sans_ext(string path) {
 }
 string os__basedir(string path) {
 
-  int pos = string_last_index(path, os__PathSeparator);
+  int pos = string_last_index(path, os__path_separator);
 
   if (pos == -1) {
 
@@ -5699,7 +5698,7 @@ string os__basedir(string path) {
 }
 string os__filename(string path) {
 
-  return string_all_after(path, os__PathSeparator);
+  return string_all_after(path, os__path_separator);
 }
 string os__get_line() {
 
@@ -5909,7 +5908,7 @@ string os__home_dir() {
 #endif
   ;
 
-  home = string_add(home, os__PathSeparator);
+  home = string_add(home, os__path_separator);
 
   return home;
 }
@@ -6189,7 +6188,7 @@ array_string os__walk_ext(string path, string ext) {
       continue;
     };
 
-    string p = string_add(string_add(path, os__PathSeparator), file);
+    string p = string_add(string_add(path, os__path_separator), file);
 
     if (os__is_dir(p)) {
 
@@ -6247,14 +6246,15 @@ void os__flush_stdout() { fflush(stdout); }
 void os__print_backtrace() {}
 void os__mkdir_all(string path) {
 
-  string p = (string_starts_with(path, os__PathSeparator)) ? (os__PathSeparator)
-                                                           : (tos3(""));
+  string p = (string_starts_with(path, os__path_separator))
+                 ? (os__path_separator)
+                 : (tos3(""));
 
-  array_string tmp113 = string_split(path, os__PathSeparator);
+  array_string tmp113 = string_split(path, os__path_separator);
   for (int tmp114 = 0; tmp114 < tmp113.len; tmp114++) {
     string subdir = ((string *)tmp113.data)[tmp114];
 
-    p = string_add(p, string_add(subdir, os__PathSeparator));
+    p = string_add(p, string_add(subdir, os__path_separator));
 
     if (!os__dir_exists(p)) {
 
@@ -6361,7 +6361,7 @@ f64 math__cbrt(f64 a) { return cbrt(a); }
 int math__ceil(f64 a) { return ceil(a); }
 f64 math__cos(f64 a) { return cos(a); }
 f64 math__cosh(f64 a) { return cosh(a); }
-f64 math__degrees(f64 radians) { return radians * (180.0 / math__Pi); }
+f64 math__degrees(f64 radians) { return radians * (180.0 / math__pi); }
 f64 math__exp(f64 a) { return exp(a); }
 array_int math__digits(int _n, int base) {
 
@@ -6466,7 +6466,7 @@ f64 math__min(f64 a, f64 b) {
   return b;
 }
 f64 math__pow(f64 a, f64 b) { return pow(a, b); }
-f64 math__radians(f64 degrees) { return degrees * (math__Pi / 180.0); }
+f64 math__radians(f64 degrees) { return degrees * (math__pi / 180.0); }
 f64 math__round(f64 f) { return round(f); }
 f64 math__sin(f64 a) { return sin(a); }
 f64 math__sinh(f64 a) { return sinh(a); }
@@ -6849,27 +6849,27 @@ time__Time time__random() {
 }
 time__Time time__unix(int abs) {
 
-  int d = abs / time__secondsPerDay;
+  int d = abs / time__seconds_per_day;
 
-  int n = d / time__daysPer400Years;
+  int n = d / time__days_per_400_years;
 
   int y = 400 * n;
 
-  d -= time__daysPer400Years * n;
+  d -= time__days_per_400_years * n;
 
-  n = d / time__daysPer100Years;
+  n = d / time__days_per_100_years;
 
   n -= n >> 2;
 
   y += 100 * n;
 
-  d -= time__daysPer100Years * n;
+  d -= time__days_per_100_years * n;
 
-  n = d / time__daysPer4Years;
+  n = d / time__days_per_4_years;
 
   y += 4 * n;
 
-  d -= time__daysPer4Years * n;
+  d -= time__days_per_4_years * n;
 
   n = d / 365;
 
@@ -6885,11 +6885,11 @@ time__Time time__unix(int abs) {
 
   int year = abs / ((int)(3.154e+7)) + 1970;
 
-  int hour = ((int)(abs % time__secondsPerDay)) / time__secondsPerHour;
+  int hour = ((int)(abs % time__seconds_per_day)) / time__seconds_per_hour;
 
-  int minute = ((int)(abs % time__secondsPerHour)) / time__secondsPerMinute;
+  int minute = ((int)(abs % time__seconds_per_hour)) / time__seconds_per_minute;
 
-  int second = ((int)(abs % time__secondsPerMinute));
+  int second = ((int)(abs % time__seconds_per_minute));
 
   if (time__is_leap_year(year)) {
 
@@ -6915,7 +6915,7 @@ time__Time time__unix(int abs) {
 
   int begin = 0;
 
-  int end = ((int)((*(int *)array_get(time__daysBefore, month + 1))));
+  int end = ((int)((*(int *)array_get(time__days_before, month + 1))));
 
   if (day >= end) {
 
@@ -6925,7 +6925,7 @@ time__Time time__unix(int abs) {
 
   } else {
 
-    begin = ((int)((*(int *)array_get(time__daysBefore, month))));
+    begin = ((int)((*(int *)array_get(time__days_before, month))));
   };
 
   month++;
@@ -6964,7 +6964,7 @@ string time__Time_smonth(time__Time t) {
 
   int i = t.month - 1;
 
-  return string_substr(time__Months, i * 3, (i + 1) * 3);
+  return string_substr(time__months_string, i * 3, (i + 1) * 3);
 }
 string time__Time_hhmm(time__Time t) {
 
@@ -7186,7 +7186,7 @@ string time__Time_weekday_str(time__Time t) {
 
   int i = time__Time_day_of_week(t) - 1;
 
-  return string_substr(time__Days, i * 3, (i + 1) * 3);
+  return string_substr(time__days_string, i * 3, (i + 1) * 3);
 }
 i64 time__ticks() {
 
@@ -7257,7 +7257,7 @@ Option_int time__days_in_month(int month, int year) {
 
   int extra = (month == 2 && time__is_leap_year(year)) ? (1) : (0);
 
-  int res = (*(int *)array_get(time__MonthDays, month - 1)) + extra;
+  int res = (*(int *)array_get(time__month_days, month - 1)) + extra;
 
   int tmp60 = OPTION_CAST(int)(res);
   return opt_ok(&tmp60, sizeof(int));
@@ -7596,14 +7596,14 @@ void V_cc(V *v) {
     string out_dir =
         (string_starts_with(v->dir, tos3("vlib")))
             ? (_STR("%.*s%.*scache%.*s%.*s", main__v_modules_path.len,
-                    main__v_modules_path.str, os__PathSeparator.len,
-                    os__PathSeparator.str, os__PathSeparator.len,
-                    os__PathSeparator.str, v->dir.len, v->dir.str))
+                    main__v_modules_path.str, os__path_separator.len,
+                    os__path_separator.str, os__path_separator.len,
+                    os__path_separator.str, v->dir.len, v->dir.str))
             : (_STR("%.*s%.*s%.*s", main__v_modules_path.len,
-                    main__v_modules_path.str, os__PathSeparator.len,
-                    os__PathSeparator.str, v->dir.len, v->dir.str));
+                    main__v_modules_path.str, os__path_separator.len,
+                    os__path_separator.str, v->dir.len, v->dir.str));
 
-    string pdir = string_all_before_last(out_dir, os__PathSeparator);
+    string pdir = string_all_before_last(out_dir, os__path_separator);
 
     if (!os__dir_exists(pdir)) {
 
@@ -7687,9 +7687,9 @@ void V_cc(V *v) {
 
     string builtin_o_path = _STR(
         "%.*s%.*scache%.*svlib%.*sbuiltin.o", main__v_modules_path.len,
-        main__v_modules_path.str, os__PathSeparator.len, os__PathSeparator.str,
-        os__PathSeparator.len, os__PathSeparator.str, os__PathSeparator.len,
-        os__PathSeparator.str);
+        main__v_modules_path.str, os__path_separator.len,
+        os__path_separator.str, os__path_separator.len, os__path_separator.str,
+        os__path_separator.len, os__path_separator.str);
 
     if (os__file_exists(builtin_o_path)) {
 
@@ -7701,7 +7701,7 @@ void V_cc(V *v) {
              builtin_o_path.str);
 
       os__system(_STR("%.*s build module vlib%.*sbuiltin", vexe.len, vexe.str,
-                      os__PathSeparator.len, os__PathSeparator.str));
+                      os__path_separator.len, os__path_separator.str));
     };
 
     array_string tmp24 = v->table->imports;
@@ -7718,14 +7718,14 @@ void V_cc(V *v) {
         continue;
       };
 
-      string imp_path = string_replace(imp, tos3("."), os__PathSeparator);
+      string imp_path = string_replace(imp, tos3("."), os__path_separator);
 
       string path =
           _STR("%.*s%.*scache%.*svlib%.*s%.*s.o", main__v_modules_path.len,
-               main__v_modules_path.str, os__PathSeparator.len,
-               os__PathSeparator.str, os__PathSeparator.len,
-               os__PathSeparator.str, os__PathSeparator.len,
-               os__PathSeparator.str, imp_path.len, imp_path.str);
+               main__v_modules_path.str, os__path_separator.len,
+               os__path_separator.str, os__path_separator.len,
+               os__path_separator.str, os__path_separator.len,
+               os__path_separator.str, imp_path.len, imp_path.str);
 
       if (os__file_exists(path)) {
 
@@ -7737,7 +7737,7 @@ void V_cc(V *v) {
                imp.len, imp.str);
 
         os__system(_STR("%.*s build module vlib%.*s%.*s", vexe.len, vexe.str,
-                        os__PathSeparator.len, os__PathSeparator.str,
+                        os__path_separator.len, os__path_separator.str,
                         imp_path.len, imp_path.str));
       };
     };
@@ -8792,7 +8792,7 @@ void main__build_thirdparty_obj_file(string path, array_CFlag moduleflags) {
           string_add(
               string_add(tos3("\""),
                          os__realpath(string_add(
-                             string_add(parent, os__PathSeparator), file))),
+                             string_add(parent, os__path_separator), file))),
               tos3("\" ")));
     };
   };
@@ -14200,8 +14200,8 @@ array_string V_v_files_from_dir(V *v, string dir) {
 
     _PUSH(&res,
           (/*typ = array_string   tmp_typ=string*/ _STR(
-              "%.*s%.*s%.*s", dir.len, dir.str, os__PathSeparator.len,
-              os__PathSeparator.str, file.len, file.str)),
+              "%.*s%.*s%.*s", dir.len, dir.str, os__path_separator.len,
+              os__path_separator.str, file.len, file.str)),
           tmp47, string);
   };
 
@@ -14211,10 +14211,10 @@ void V_add_v_files_to_compile(V *v) {
 
   array_string builtin_files = V_get_builtin_files(&/* ? */ *v);
 
-  string builtin_vh =
-      _STR("%.*s%.*svlib%.*sbuiltin.vh", main__v_modules_path.len,
-           main__v_modules_path.str, os__PathSeparator.len,
-           os__PathSeparator.str, os__PathSeparator.len, os__PathSeparator.str);
+  string builtin_vh = _STR("%.*s%.*svlib%.*sbuiltin.vh",
+                           main__v_modules_path.len, main__v_modules_path.str,
+                           os__path_separator.len, os__path_separator.str,
+                           os__path_separator.len, os__path_separator.str);
 
   if (v->pref->is_cache && os__file_exists(builtin_vh)) {
 
@@ -14247,8 +14247,8 @@ void V_add_v_files_to_compile(V *v) {
     Parser p = V_new_parser_from_file(v, file);
 
     if (v->pref->build_mode == main__BuildMode_build_module &&
-        string_contains(file,
-                        string_replace(v->mod, tos3("."), os__PathSeparator))) {
+        string_contains(
+            file, string_replace(v->mod, tos3("."), os__path_separator))) {
 
       p.mod = v->mod;
     };
@@ -14282,12 +14282,12 @@ void V_add_v_files_to_compile(V *v) {
     if (v->pref->build_mode != main__BuildMode_build_module &&
         !string_contains(mod, tos3("vweb"))) {
 
-      string mod_path = string_replace(mod, tos3("."), os__PathSeparator);
+      string mod_path = string_replace(mod, tos3("."), os__path_separator);
 
       string vh_path = _STR("%.*s%.*svlib%.*s%.*s.vh", main__v_modules_path.len,
-                            main__v_modules_path.str, os__PathSeparator.len,
-                            os__PathSeparator.str, os__PathSeparator.len,
-                            os__PathSeparator.str, mod_path.len, mod_path.str);
+                            main__v_modules_path.str, os__path_separator.len,
+                            os__path_separator.str, os__path_separator.len,
+                            os__path_separator.str, mod_path.len, mod_path.str);
 
       if (v->pref->is_cache && os__file_exists(vh_path)) {
 
@@ -14348,18 +14348,18 @@ array_string V_get_builtin_files(V *v) {
 
   return V_v_files_from_dir(&/* ? */ *v,
                             _STR("%.*s%.*svlib%.*sbuiltin%.*sjs", v->vroot.len,
-                                 v->vroot.str, os__PathSeparator.len,
-                                 os__PathSeparator.str, os__PathSeparator.len,
-                                 os__PathSeparator.str, os__PathSeparator.len,
-                                 os__PathSeparator.str));
+                                 v->vroot.str, os__path_separator.len,
+                                 os__path_separator.str, os__path_separator.len,
+                                 os__path_separator.str, os__path_separator.len,
+                                 os__path_separator.str));
 
 #endif
   ;
 
   return V_v_files_from_dir(
       &/* ? */ *v, _STR("%.*s%.*svlib%.*sbuiltin", v->vroot.len, v->vroot.str,
-                        os__PathSeparator.len, os__PathSeparator.str,
-                        os__PathSeparator.len, os__PathSeparator.str));
+                        os__path_separator.len, os__path_separator.str,
+                        os__path_separator.len, os__path_separator.str));
 }
 array_string V_get_user_files(V *v) {
 
@@ -14379,25 +14379,25 @@ array_string V_get_user_files(V *v) {
                                          v->vroot, tos3("vlib"),
                                          tos3("benchmark"), tos3("tests"),
                                          tos3("always_imported.v")}),
-              os__PathSeparator)),
+              os__path_separator)),
           tmp74, string);
   };
 
   bool is_test_with_imports =
       string_ends_with(dir, tos3("_test.v")) &&
-      (string_contains(dir, _STR("%.*svolt", os__PathSeparator.len,
-                                 os__PathSeparator.str)) ||
-       string_contains(dir, _STR("%.*sc2volt", os__PathSeparator.len,
-                                 os__PathSeparator.str)));
+      (string_contains(dir, _STR("%.*svolt", os__path_separator.len,
+                                 os__path_separator.str)) ||
+       string_contains(dir, _STR("%.*sc2volt", os__path_separator.len,
+                                 os__path_separator.str)));
 
   if (is_test_with_imports) {
 
     _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ dir), tmp76,
           string);
 
-    int pos = string_last_index(dir, os__PathSeparator);
+    int pos = string_last_index(dir, os__path_separator);
 
-    dir = string_add(string_left(dir, pos), os__PathSeparator);
+    dir = string_add(string_left(dir, pos), os__path_separator);
   };
 
   if (string_ends_with(dir, tos3(".v"))) {
@@ -14406,7 +14406,7 @@ array_string V_get_user_files(V *v) {
           string);
 
     dir = string_all_before(
-        dir, _STR("%.*s", os__PathSeparator.len, os__PathSeparator.str));
+        dir, _STR("%.*s", os__path_separator.len, os__path_separator.str));
 
   } else {
 
@@ -14618,8 +14618,8 @@ V *main__new_v(array_string args) {
     os__mkdir(main__v_modules_path);
 
     os__mkdir(_STR("%.*s%.*scache", main__v_modules_path.len,
-                   main__v_modules_path.str, os__PathSeparator.len,
-                   os__PathSeparator.str));
+                   main__v_modules_path.str, os__path_separator.len,
+                   os__path_separator.str));
   };
 
   strings__Builder vgen_buf = strings__new_builder(1000);
@@ -14640,13 +14640,13 @@ V *main__new_v(array_string args) {
     dir = main__get_param_after(joined_args, tos3("run"), tos3(""));
   };
 
-  if (string_ends_with(dir, os__PathSeparator)) {
+  if (string_ends_with(dir, os__path_separator)) {
 
-    dir = string_all_before_last(dir, os__PathSeparator);
+    dir = string_all_before_last(dir, os__path_separator);
   };
 
   if (string_starts_with(
-          dir, _STR(".%.*s", os__PathSeparator.len, os__PathSeparator.str))) {
+          dir, _STR(".%.*s", os__path_separator.len, os__path_separator.str))) {
 
     dir = string_right(dir, 2);
   };
@@ -14667,15 +14667,15 @@ V *main__new_v(array_string args) {
     string mod_path =
         (string_contains(dir, tos3("vlib")))
             ? (string_all_after(dir,
-                                string_add(tos3("vlib"), os__PathSeparator)))
+                                string_add(tos3("vlib"), os__path_separator)))
             : ((string_starts_with(dir, tos3(".\\")) ||
                 string_starts_with(dir, tos3("./")))
                    ? (string_right(dir, 2))
-                   : ((string_starts_with(dir, os__PathSeparator))
-                          ? (string_all_after(dir, os__PathSeparator))
+                   : ((string_starts_with(dir, os__path_separator))
+                          ? (string_all_after(dir, os__path_separator))
                           : (dir)));
 
-    mod = string_replace(mod_path, os__PathSeparator, tos3("."));
+    mod = string_replace(mod_path, os__path_separator, tos3("."));
 
     printf("Building module \"%.*s\" (dir=\"%.*s\")...\n", mod.len, mod.str,
            dir.len, dir.str);
@@ -14702,7 +14702,7 @@ V *main__new_v(array_string args) {
 
   if (string_eq(dir, tos3(".")) && string_eq(out_name, tos3("a.out"))) {
 
-    string base = string_all_after(os__getwd(), os__PathSeparator);
+    string base = string_all_after(os__getwd(), os__path_separator);
 
     out_name = string_trim_space(base);
   };
@@ -14841,7 +14841,7 @@ V *main__new_v(array_string args) {
 
   if (pref->is_so) {
 
-    out_name_c = string_add(string_all_after(out_name, os__PathSeparator),
+    out_name_c = string_add(string_all_after(out_name, os__path_separator),
                             tos3("_shared_lib.c"));
   };
 
@@ -15290,19 +15290,19 @@ void V_generate_vh(V *v) {
   printf("\n\n\n\nGenerating a V header file for module `%.*s`\n", v->mod.len,
          v->mod.str);
 
-  string mod_path = string_replace(v->mod, tos3("."), os__PathSeparator);
+  string mod_path = string_replace(v->mod, tos3("."), os__path_separator);
 
   string dir = (string_starts_with(v->dir, tos3("vlib")))
                    ? (_STR("%.*s%.*s%.*s", main__v_modules_path.len,
-                           main__v_modules_path.str, os__PathSeparator.len,
-                           os__PathSeparator.str, v->dir.len, v->dir.str))
+                           main__v_modules_path.str, os__path_separator.len,
+                           os__path_separator.str, v->dir.len, v->dir.str))
                    : (_STR("%.*s%.*s%.*s", main__v_modules_path.len,
-                           main__v_modules_path.str, os__PathSeparator.len,
-                           os__PathSeparator.str, mod_path.len, mod_path.str));
+                           main__v_modules_path.str, os__path_separator.len,
+                           os__path_separator.str, mod_path.len, mod_path.str));
 
   string path = string_add(dir, tos3(".vh"));
 
-  string pdir = string_all_before_last(dir, os__PathSeparator);
+  string pdir = string_all_before_last(dir, os__path_separator);
 
   if (!os__dir_exists(pdir)) {
 
@@ -15581,7 +15581,7 @@ string V_module_path(V *v, string mod) {
 
   if (string_contains(mod, tos3("."))) {
 
-    return string_replace(mod, tos3("."), os__PathSeparator);
+    return string_replace(mod, tos3("."), os__path_separator);
   };
 
   return mod;
@@ -15591,22 +15591,22 @@ Option_string V_find_module_path(V *v, string mod) {
   string mod_path = V_module_path(&/* ? */ *v, mod);
 
   string import_path = string_add(
-      os__getwd(), _STR("%.*s%.*s", os__PathSeparator.len,
-                        os__PathSeparator.str, mod_path.len, mod_path.str));
+      os__getwd(), _STR("%.*s%.*s", os__path_separator.len,
+                        os__path_separator.str, mod_path.len, mod_path.str));
 
   if (!os__dir_exists(import_path)) {
 
     import_path = _STR("%.*s%.*svlib%.*s%.*s", v->lang_dir.len, v->lang_dir.str,
-                       os__PathSeparator.len, os__PathSeparator.str,
-                       os__PathSeparator.len, os__PathSeparator.str,
+                       os__path_separator.len, os__path_separator.str,
+                       os__path_separator.len, os__path_separator.str,
                        mod_path.len, mod_path.str);
   };
 
   if (!os__dir_exists(import_path)) {
 
     import_path = _STR("%.*s%.*s%.*s", main__v_modules_path.len,
-                       main__v_modules_path.str, os__PathSeparator.len,
-                       os__PathSeparator.str, mod_path.len, mod_path.str);
+                       main__v_modules_path.str, os__path_separator.len,
+                       os__path_separator.str, mod_path.len, mod_path.str);
 
     if (!os__dir_exists(import_path)) {
 
@@ -15849,7 +15849,7 @@ Option_MsvcResult main__find_msvc() {
 
   MsvcResult tmp35 = OPTION_CAST(MsvcResult)((MsvcResult){
       .full_cl_exe_path = os__realpath(string_add(
-          string_add(vs.exe_path, os__PathSeparator), tos3("cl.exe"))),
+          string_add(vs.exe_path, os__path_separator), tos3("cl.exe"))),
       .exe_path = vs.exe_path,
       .um_lib_path = wk.um_lib_path,
       .ucrt_lib_path = wk.ucrt_lib_path,
@@ -16133,7 +16133,7 @@ void main__build_thirdparty_obj_file_with_msvc(string path,
           string_add(
               string_add(tos3("\""),
                          os__realpath(string_add(
-                             string_add(parent, os__PathSeparator), file))),
+                             string_add(parent, os__path_separator), file))),
               tos3("\" ")));
     };
   };
@@ -16216,7 +16216,7 @@ MsvcStringFlags array_CFlag_msvc_string_flags(array_CFlag cflags) {
 
       _PUSH(&lib_paths,
             (/*typ = array_string   tmp_typ=string*/ string_add(
-                string_add(flag.value, os__PathSeparator), tos3("msvc"))),
+                string_add(flag.value, os__path_separator), tos3("msvc"))),
             tmp96, string);
 
     } else if (string_ends_with(flag.value, tos3(".o"))) {
@@ -16348,7 +16348,7 @@ Parser V_new_parser_from_file(V *v, string path) {
 
   p = (Parser){
       .file_path = path,
-      .file_name = string_all_after(path, os__PathSeparator),
+      .file_name = string_all_after(path, os__path_separator),
       .file_platform = path_platform,
       .file_pcguard = path_pcguard,
       .is_script = (v->pref->is_script &&
@@ -17041,9 +17041,6 @@ void Parser_const_decl(Parser *p) {
     };
 
     string name = Parser_check_name(p);
-
-    if (string_ne(p->mod, tos3("os")) && main__contains_capital(name)) {
-    };
 
     name = Parser_prepend_mod(&/* ? */ *p, name);
 
@@ -25004,7 +25001,7 @@ void Scanner_debug_tokens(Scanner *s) {
 
   s->debug = 1;
 
-  string fname = string_all_after(s->file_path, os__PathSeparator);
+  string fname = string_all_after(s->file_path, os__path_separator);
 
   printf("\n===DEBUG TOKENS %.*s===\n", fname.len, fname.str);
 
@@ -26059,23 +26056,23 @@ bool main__is_valid_int_const(string val, string typ) {
 
   if (string_eq(typ, tos3("byte"))) { /* case */
 
-    return 0 <= x && x <= math__MaxU8;
+    return 0 <= x && x <= math__max_u8;
 
   } else if (string_eq(typ, tos3("u16"))) { /* case */
 
-    return 0 <= x && x <= math__MaxU16;
+    return 0 <= x && x <= math__max_u16;
 
   } else if (string_eq(typ, tos3("i8"))) { /* case */
 
-    return math__MinI8 <= x && x <= math__MaxI8;
+    return math__min_i8 <= x && x <= math__max_i8;
 
   } else if (string_eq(typ, tos3("i16"))) { /* case */
 
-    return math__MinI16 <= x && x <= math__MaxI16;
+    return math__min_i16 <= x && x <= math__max_i16;
 
   } else if (string_eq(typ, tos3("int"))) { /* case */
 
-    return math__MinI32 <= x && x <= math__MaxI32;
+    return math__min_i32 <= x && x <= math__max_i32;
   };
 
   return 1;
@@ -26225,7 +26222,7 @@ string Table_qualify_module(Table *table, string mod, string file_path) {
 
       array_string m_parts = string_split(m, tos3("."));
 
-      string m_path = array_string_join(m_parts, os__PathSeparator);
+      string m_path = array_string_join(m_parts, os__path_separator);
 
       if (string_eq(mod, (*(string *)array_get(m_parts, m_parts.len - 1))) &&
           string_contains(file_path, m_path)) {
@@ -26896,7 +26893,7 @@ void main__test_v() {
       _PUSH_MANY(
           &ts.files,
           (/*typ = array_string   tmp_typ=string*/ os__walk_ext(
-              string_trim_right(targ, os__PathSeparator), tos3("_test.v"))),
+              string_trim_right(targ, os__path_separator), tos3("_test.v"))),
           tmp9, array_string);
 
       continue;
@@ -27149,25 +27146,24 @@ void init() {
   os__ENABLE_LVB_GRID_WORLDWIDE = 0x0010;
   os__args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  os__PathSeparator = tos3("/");
   os__path_separator = tos3("/");
-  math__Log2E = 1.0 / math__Ln2;
-  math__Log10E = 1.0 / math__Ln10;
-  math__MinI8 = -128;
-  math__MinI16 = -32768;
-  math__MinI32 = -2147483648;
-  time__MonthDays = new_array_from_c_array(
+  math__log2_e = 1.0 / math__ln2;
+  math__log10_e = 1.0 / math__ln10;
+  math__min_i8 = -128;
+  math__min_i16 = -32768;
+  math__min_i32 = -2147483648;
+  time__month_days = new_array_from_c_array(
       12, 12, sizeof(int),
       EMPTY_ARRAY_OF_ELEMS(int, 12){31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30,
                                     31});
-  time__absoluteZeroYear = ((i64)(-292277022399));
-  time__secondsPerHour = 60 * time__secondsPerMinute;
-  time__secondsPerDay = 24 * time__secondsPerHour;
-  time__secondsPerWeek = 7 * time__secondsPerDay;
-  time__daysPer400Years = 365 * 400 + 97;
-  time__daysPer100Years = 365 * 100 + 24;
-  time__daysPer4Years = 365 * 4 + 1;
-  time__daysBefore = new_array_from_c_array(
+  time__absolute_zero_year = ((i64)(-292277022399));
+  time__seconds_per_hour = 60 * time__seconds_per_minute;
+  time__seconds_per_day = 24 * time__seconds_per_hour;
+  time__seconds_per_week = 7 * time__seconds_per_day;
+  time__days_per_400_years = 365 * 400 + 97;
+  time__days_per_100_years = 365 * 100 + 24;
+  time__days_per_4_years = 365 * 4 + 1;
+  time__days_before = new_array_from_c_array(
       13, 13, sizeof(int),
       EMPTY_ARRAY_OF_ELEMS(int, 13){
           0,
@@ -27184,8 +27180,8 @@ void init() {
           31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30,
           31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31,
       });
-  time__Months = tos3("JanFebMarAprMayJunJulAugSepOctNovDec");
-  time__Days = tos3("MonTueWedThuFriSatSun");
+  time__months_string = tos3("JanFebMarAprMayJunJulAugSepOctNovDec");
+  time__days_string = tos3("MonTueWedThuFriSatSun");
   main__CommonCHeaders = tos3(
       "\n\n#include <stdio.h>  // TODO remove all these includes, define all "
       "function signatures and types manually\n#include <stdlib.h>\n#include "
