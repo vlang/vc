@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "85c05b6"
+#define V_COMMIT_HASH "5d60600"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "336e82d"
+#define V_COMMIT_HASH "85c05b6"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -24992,6 +24992,8 @@ bool Scanner_expect(Scanner *s, string want, int start_pos) {
 void Scanner_debug_tokens(Scanner *s) {
 
   s->pos = 0;
+
+  s->started = 0;
 
   s->debug = 1;
 
