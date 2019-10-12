@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "336e82d"
+#define V_COMMIT_HASH "85c05b6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a06e229"
+#define V_COMMIT_HASH "336e82d"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -12035,6 +12035,12 @@ string Parser_gen_var_decl(Parser *p, string name, bool is_static) {
 
     Parser_genln(p, tos3(";"));
 
+    if (!string_starts_with(typ, tos3("Option_"))) {
+
+      Parser_error(p,
+                   tos3("`or` block cannot be applied to non-optional type"));
+    };
+
     typ = string_replace(typ, tos3("Option_"), tos3(""));
 
     Parser_next(p);
@@ -12381,7 +12387,7 @@ string Table_fn_gen_name(Table *table, Fn *f) {
       !string_contains(name, tos3("contains"))) {
 
     int tmp32 = 0;
-    bool tmp33 = map_get(/*gen_c.v : 235*/ table->obf_ids, name, &tmp32);
+    bool tmp33 = map_get(/*gen_c.v : 238*/ table->obf_ids, name, &tmp32);
 
     int idx = tmp32;
 
