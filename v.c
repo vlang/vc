@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9850193"
+#define V_COMMIT_HASH "81f8b26"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ae6a426"
+#define V_COMMIT_HASH "9850193"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1690,6 +1690,7 @@ int os__ENABLE_LVB_GRID_WORLDWIDE;
 array_string os__args;
 #define os__MAX_PATH 4096
 string os__PathSeparator;
+string os__path_separator;
 #define math__E 2.71828182845904523536028747135266249775724709369995957496696763
 #define math__Pi                                                               \
   3.14159265358979323846264338327950288419716939937510582097494459
@@ -17041,6 +17042,9 @@ void Parser_const_decl(Parser *p) {
 
     string name = Parser_check_name(p);
 
+    if (string_ne(p->mod, tos3("os")) && main__contains_capital(name)) {
+    };
+
     name = Parser_prepend_mod(&/* ? */ *p, name);
 
     string typ = tos3("");
@@ -27146,6 +27150,7 @@ void init() {
   os__args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   os__PathSeparator = tos3("/");
+  os__path_separator = tos3("/");
   math__Log2E = 1.0 / math__Ln2;
   math__Log10E = 1.0 / math__Ln10;
   math__MinI8 = -128;

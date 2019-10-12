@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9850193"
+#define V_COMMIT_HASH "81f8b26"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ae6a426"
+#define V_COMMIT_HASH "9850193"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1716,6 +1716,7 @@ int os__ENABLE_LVB_GRID_WORLDWIDE;
 array_string os__args;
 #define os__MAX_PATH 4096
 string os__PathSeparator;
+string os__path_separator;
 int os__FORMAT_MESSAGE_ALLOCATE_BUFFER;
 int os__FORMAT_MESSAGE_ARGUMENT_ARRAY;
 int os__FORMAT_MESSAGE_FROM_HMODULE;
@@ -17171,6 +17172,9 @@ void Parser_const_decl(Parser *p) {
 
     string name = Parser_check_name(p);
 
+    if (string_ne(p->mod, tos3("os")) && main__contains_capital(name)) {
+    };
+
     name = Parser_prepend_mod(&/* ? */ *p, name);
 
     string typ = tos3("");
@@ -27276,6 +27280,7 @@ void init() {
   os__args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   os__PathSeparator = tos3("\\");
+  os__path_separator = tos3("\\");
   os__FORMAT_MESSAGE_ALLOCATE_BUFFER = 0x00000100;
   os__FORMAT_MESSAGE_ARGUMENT_ARRAY = 0x00002000;
   os__FORMAT_MESSAGE_FROM_HMODULE = 0x00000800;
