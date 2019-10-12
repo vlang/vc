@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1e121d3"
+#define V_COMMIT_HASH "342e6a1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4015639"
+#define V_COMMIT_HASH "1e121d3"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -14628,8 +14628,6 @@ V *main__new_v(array_string args) {
     dir = string_right(dir, 2);
   };
 
-  string adir = os__realpath(dir);
-
   if (args.len < 2) {
 
     dir = tos3("");
@@ -14644,12 +14642,15 @@ V *main__new_v(array_string args) {
     build_mode = main__BuildMode_build_module;
 
     string mod_path =
-        (string_contains(adir, tos3("vlib")))
-            ? (string_all_after(adir,
+        (string_contains(dir, tos3("vlib")))
+            ? (string_all_after(dir,
                                 string_add(tos3("vlib"), os__PathSeparator)))
-            : ((string_contains(adir, os__PathSeparator))
-                   ? (string_all_after(adir, os__PathSeparator))
-                   : (adir));
+            : ((string_starts_with(dir, tos3(".\\")) ||
+                string_starts_with(dir, tos3("./")))
+                   ? (string_right(dir, 2))
+                   : ((string_starts_with(dir, os__PathSeparator))
+                          ? (string_all_after(dir, os__PathSeparator))
+                          : (dir)));
 
     mod = string_replace(mod_path, os__PathSeparator, tos3("."));
 
@@ -14846,25 +14847,25 @@ array_string main__env_vflags_and_os_args() {
     _PUSH(&args,
           (/*typ = array_string   tmp_typ=string*/ (
               *(string *)array_get(os__args, 0))),
-          tmp134, string);
+          tmp133, string);
 
     _PUSH_MANY(&args,
                (/*typ = array_string   tmp_typ=string*/ string_split(
                    vflags, tos3(" "))),
-               tmp137, array_string);
+               tmp136, array_string);
 
     if (os__args.len > 1) {
 
       _PUSH_MANY(
           &args,
           (/*typ = array_string   tmp_typ=string*/ array_right(os__args, 1)),
-          tmp138, array_string);
+          tmp137, array_string);
     };
 
   } else {
 
     _PUSH_MANY(&args, (/*typ = array_string   tmp_typ=string*/ os__args),
-               tmp139, array_string);
+               tmp138, array_string);
   };
 
   return args;
@@ -14875,16 +14876,16 @@ void main__update_v() {
 
   string vroot = os__dir(os__executable());
 
-  Option_os__Result tmp141 = os__exec(_STR(
+  Option_os__Result tmp140 = os__exec(_STR(
       "git -C \"%.*s\" pull --rebase origin master", vroot.len, vroot.str));
-  if (!tmp141.ok) {
-    string err = tmp141.error;
+  if (!tmp140.ok) {
+    string err = tmp140.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result s = *(os__Result *)tmp141.data;
+  os__Result s = *(os__Result *)tmp140.data;
   ;
 
   println(s.output);
@@ -14900,8 +14901,24 @@ void main__update_v() {
 
   os__mv(_STR("%.*s/v.exe", vroot.len, vroot.str), v_backup_file);
 
-  Option_os__Result tmp143 =
+  Option_os__Result tmp142 =
       os__exec(_STR("\"%.*s/make.bat\"", vroot.len, vroot.str));
+  if (!tmp142.ok) {
+    string err = tmp142.error;
+
+    main__verror(err);
+
+    return;
+  }
+  os__Result s2 = *(os__Result *)tmp142.data;
+  ;
+
+  println(s2.output);
+
+#else
+
+  Option_os__Result tmp143 =
+      os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
   if (!tmp143.ok) {
     string err = tmp143.error;
 
@@ -14910,22 +14927,6 @@ void main__update_v() {
     return;
   }
   os__Result s2 = *(os__Result *)tmp143.data;
-  ;
-
-  println(s2.output);
-
-#else
-
-  Option_os__Result tmp144 =
-      os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
-  if (!tmp144.ok) {
-    string err = tmp144.error;
-
-    main__verror(err);
-
-    return;
-  }
-  os__Result s2 = *(os__Result *)tmp144.data;
   ;
 
   println(s2.output);
@@ -14974,16 +14975,16 @@ void main__install_v(array_string args) {
 
     os__chdir(string_add(vroot, tos3("/tools")));
 
-    Option_os__Result tmp150 = os__exec(
+    Option_os__Result tmp149 = os__exec(
         _STR("%.*s -o %.*s vget.v", vexec.len, vexec.str, vget.len, vget.str));
-    if (!tmp150.ok) {
-      string err = tmp150.error;
+    if (!tmp149.ok) {
+      string err = tmp149.error;
 
       main__verror(err);
 
       return;
     }
-    os__Result vget_compilation = *(os__Result *)tmp150.data;
+    os__Result vget_compilation = *(os__Result *)tmp149.data;
     ;
 
     if (vget_compilation.exit_code != 0) {
@@ -14994,16 +14995,16 @@ void main__install_v(array_string args) {
     };
   };
 
-  Option_os__Result tmp151 = os__exec(string_add(
+  Option_os__Result tmp150 = os__exec(string_add(
       _STR("%.*s ", vget.len, vget.str), array_string_join(names, tos3(" "))));
-  if (!tmp151.ok) {
-    string err = tmp151.error;
+  if (!tmp150.ok) {
+    string err = tmp150.error;
 
     main__verror(err);
 
     return;
   }
-  os__Result vgetresult = *(os__Result *)tmp151.data;
+  os__Result vgetresult = *(os__Result *)tmp150.data;
   ;
 
   if (vgetresult.exit_code != 0) {
@@ -27327,7 +27328,7 @@ string _STR_TMP(const char *fmt, ...) {
 }
 
 ////////////////// Reset the file/line numbers //////////
-#line 29670 "/tmp/gen_vc/v.c.tmp.c"
+#line 29668 "/tmp/gen_vc/v.c.tmp.c"
 
 int main(int argc, char **argv) {
   init();
