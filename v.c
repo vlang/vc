@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "53c64ab"
+#define V_COMMIT_HASH "a90427a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "59d4535"
+#define V_COMMIT_HASH "53c64ab"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -22205,7 +22205,11 @@ void compiler__Parser_for_st(compiler__Parser *p) {
 
     string i_var_type = tos3("int");
 
-    if (is_arr) {
+    if (is_variadic_arg) {
+
+      compiler__Parser_gen_for_varg_header(p, i, expr, typ, val);
+
+    } else if (is_arr) {
 
       compiler__Parser_gen_for_header(p, i, tmp, var_typ, val);
 
@@ -22220,10 +22224,6 @@ void compiler__Parser_for_st(compiler__Parser *p) {
       i_var_type = tos3("byte");
 
       compiler__Parser_gen_for_str_header(p, i, tmp, var_typ, val);
-
-    } else if (is_variadic_arg) {
-
-      compiler__Parser_gen_for_varg_header(p, i, expr, typ, val);
     };
 
     if (string_ne(i, tos3("_"))) {
@@ -22352,7 +22352,18 @@ void compiler__Parser_for_st(compiler__Parser *p) {
 
     string var_type = typ;
 
-    if (is_arr) {
+    if (is_variadic_arg) {
+
+      compiler__Parser_gen_for_varg_header(p, i, expr, typ, val);
+
+    } else if (is_range) {
+
+      var_type = tos3("int");
+
+      compiler__Parser_gen_for_range_header(p, i, range_end, tmp, var_type,
+                                            val);
+
+    } else if (is_arr) {
 
       var_type = string_right(typ, 6);
 
@@ -22363,17 +22374,6 @@ void compiler__Parser_for_st(compiler__Parser *p) {
       var_type = tos3("byte");
 
       compiler__Parser_gen_for_str_header(p, i, tmp, var_type, val);
-
-    } else if (is_range) {
-
-      var_type = tos3("int");
-
-      compiler__Parser_gen_for_range_header(p, i, range_end, tmp, var_type,
-                                            val);
-
-    } else if (is_variadic_arg) {
-
-      compiler__Parser_gen_for_varg_header(p, i, expr, typ, val);
     };
 
     if (string_ne(val, tos3("_"))) {
