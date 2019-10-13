@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "efe03a3"
+#define V_COMMIT_HASH "039dafb"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ae2af4c"
+#define V_COMMIT_HASH "efe03a3"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -7625,14 +7625,14 @@ void V_cc(V *v) {
 
   V_build_thirdparty_obj_files(&/* ? */ *v);
 
+  string vexe = os__executable();
+
   if (string_ends_with(v->out_name, tos3(".c")) ||
       string_ends_with(v->out_name, tos3(".js"))) {
 
 #ifndef _VJS
 
     if (string_ends_with(v->out_name, tos3(".js"))) {
-
-      string vexe = os__executable();
 
       string vjs_path = string_add(vexe, tos3("js"));
 
@@ -7703,6 +7703,18 @@ void V_cc(V *v) {
 #endif
   ;
 
+#ifdef __linux__
+
+  string tcc_path = tos3("/var/tmp/tcc/bin/tcc");
+
+  if (string_eq(v->pref->ccompiler, tos3("cc")) && os__file_exists(tcc_path)) {
+
+    v->pref->ccompiler = tcc_path;
+  };
+
+#endif
+  ;
+
   V_log(&/* ? */ *v, _STR("cc() isprod=%d outname=%.*s", v->pref->is_prod,
                           v->out_name.len, v->out_name.str));
 
@@ -7714,7 +7726,7 @@ void V_cc(V *v) {
   if (v->pref->is_so) {
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-shared -fPIC ")),
-          tmp7, string);
+          tmp8, string);
 
     v->out_name = string_add(v->out_name, tos3(".so"));
   };
@@ -7771,20 +7783,20 @@ void V_cc(V *v) {
 
   if (debug_mode) {
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ debug_options), tmp13,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ debug_options), tmp14,
           string);
   };
 
   if (v->pref->is_prod) {
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ optimization_options),
-          tmp14, string);
+          tmp15, string);
   };
 
   if (debug_mode && string_ne(os__user_os(), tos3("windows"))) {
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3(" -rdynamic ")),
-          tmp15, string);
+          tmp16, string);
   };
 
   if (v->os != main__OS_msvc && v->os != main__OS_freebsd) {
@@ -7792,26 +7804,24 @@ void V_cc(V *v) {
     _PUSH(&a,
           (/*typ = array_string   tmp_typ=string*/ tos3(
               "-Werror=implicit-function-declaration")),
-          tmp16, string);
+          tmp17, string);
   };
 
-  array_string tmp17 = V_generate_hotcode_reloading_compiler_flags(&/* ? */ *v);
-  for (int tmp18 = 0; tmp18 < tmp17.len; tmp18++) {
-    string f = ((string *)tmp17.data)[tmp18];
+  array_string tmp18 = V_generate_hotcode_reloading_compiler_flags(&/* ? */ *v);
+  for (int tmp19 = 0; tmp19 < tmp18.len; tmp19++) {
+    string f = ((string *)tmp18.data)[tmp19];
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ f), tmp19, string);
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ f), tmp20, string);
   };
 
   string libs = tos3("");
 
   if (v->pref->build_mode == main__BuildMode_build_module) {
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-c")), tmp21,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-c")), tmp22,
           string);
 
   } else if (v->pref->is_cache) {
-
-    string vexe = os__executable();
 
     string builtin_o_path = _STR(
         "%.*s%.*scache%.*svlib%.*sbuiltin.o", main__v_modules_path.len,
