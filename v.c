@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "12eba4d"
+#define V_COMMIT_HASH "d3a206d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8e90724"
+#define V_COMMIT_HASH "12eba4d"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -12442,7 +12442,7 @@ void Parser_gen_method_call(Parser *p, string receiver_type, string ftyp,
 
     if (string_starts_with(receiver_type, tos3("array_"))) {
 
-      cast = string_all_after(receiver_type, tos3("_"));
+      cast = string_all_after(receiver_type, tos3("array_"));
 
       cast = _STR("*(%.*s*) ", cast.len, cast.str);
 
