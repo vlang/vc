@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b1806b5"
+#define V_COMMIT_HASH "47115fd"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5dfdd87"
+#define V_COMMIT_HASH "b1806b5"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -17128,16 +17128,21 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
 
       if (p->pref->is_script && !p->pref->is_test) {
 
+        if (compiler__Parser_first_pass(&/* ? */ *p)) {
+
+          if (string_eq(p->cur_fn.name, tos3(""))) {
+
+            compiler__Parser_set_current_fn(p, compiler__MainFn);
+          };
+
+          return;
+        };
+
         if (string_eq(p->cur_fn.name, tos3(""))) {
 
           compiler__Parser_set_current_fn(p, compiler__MainFn);
 
           if (p->pref->is_repl) {
-
-            if (compiler__Parser_first_pass(&/* ? */ *p)) {
-
-              return;
-            };
 
             compiler__Parser_clear_vars(p);
           };
@@ -17147,8 +17152,7 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
 
         compiler__Parser_statement(p, 1);
 
-        if (start > 0 &&
-            string_ne((*(string *)array_get(p->cgen->lines, start - 1)),
+        if (string_ne((*(string *)array_get(p->cgen->lines, start - 1)),
                       tos3("")) &&
             string_ne(p->cgen->fn_main, tos3(""))) {
 
@@ -27866,8 +27870,6 @@ void main__main() {
   };
 
   compiler__V *v = compiler__new_v(args);
-
-  v->pref->building_v = 1;
 
   if (v->pref->is_verbose) {
 
