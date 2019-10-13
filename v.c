@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "039dafb"
+#define V_COMMIT_HASH "8e90724"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "efe03a3"
+#define V_COMMIT_HASH "039dafb"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -14471,6 +14471,11 @@ void V_parse_lib_imports(V *v) {
         string mod = {0};
         map_get(tmp86, _, &mod);
 
+        if (_IN(string, (mod), done_imports)) {
+
+          continue;
+        };
+
         Option_string tmp87 = V_find_module_path(&/* ? */ *v, mod);
         if (!tmp87.ok) {
           string err = tmp87.error;
@@ -14525,15 +14530,7 @@ void V_parse_lib_imports(V *v) {
         for (int tmp96 = 0; tmp96 < tmp95.len; tmp96++) {
           string file = ((string *)tmp95.data)[tmp96];
 
-          if (_IN(string, (file), done_imports)) {
-
-            continue;
-          };
-
           int pid = V_parse(v, file, main__Pass_imports);
-
-          _PUSH(&done_imports, (/*typ = array_string   tmp_typ=string*/ file),
-                tmp98, string);
 
           string p_mod =
               (*(Parser *)array_get(v->parsers, pid)).import_table.module_name;
@@ -14549,6 +14546,9 @@ void V_parse_lib_imports(V *v) {
                 1);
           };
         };
+
+        _PUSH(&done_imports, (/*typ = array_string   tmp_typ=string*/ mod),
+              tmp103, string);
       };
 
       _PUSH(&done_fits,
