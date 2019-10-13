@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d3a206d"
+#define V_COMMIT_HASH "6e62d97"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "12eba4d"
+#define V_COMMIT_HASH "d3a206d"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -15628,7 +15628,7 @@ Option_string V_find_module_path(V *v, string mod) {
       os__getwd(), _STR("%.*s%.*s", os__path_separator.len,
                         os__path_separator.str, mod_path.len, mod_path.str));
 
-  if (!os__dir_exists(import_path)) {
+  if (string_eq(mod, tos3("compiler")) || !os__dir_exists(import_path)) {
 
     import_path = _STR("%.*s%.*svlib%.*s%.*s", v->lang_dir.len, v->lang_dir.str,
                        os__path_separator.len, os__path_separator.str,
