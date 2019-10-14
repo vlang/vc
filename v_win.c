@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b237ffc"
+#define V_COMMIT_HASH "6a95175"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "47115fd"
+#define V_COMMIT_HASH "b237ffc"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -15179,6 +15179,7 @@ compiler__V *compiler__new_v(array_string args) {
           .cflags = cflags,
           .ccompiler = compiler__find_c_compiler(),
           .building_v = !is_repl && (string_eq(rdir_name, tos3("compiler")) ||
+                                     string_eq(dir, tos3("v.v")) ||
                                      string_contains(dir, tos3("vlib"))),
           .no_auto_free = 0,
       },
