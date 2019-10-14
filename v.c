@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a68222b"
+#define V_COMMIT_HASH "2d127cb"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9a2b8a0"
+#define V_COMMIT_HASH "a68222b"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -2774,8 +2774,32 @@ string ptr_str(void *ptr) {
 
   return tos(buf, vstrlen(buf));
 }
-bool f64_eq(f64 a, f64 b) { return fabs(a - b) <= DBL_EPSILON; }
-bool f32_eq(f32 a, f32 b) { return fabsf(a - b) <= FLT_EPSILON; }
+bool f64_eq(f64 a, f64 b) {
+
+#ifdef __TINYC__
+
+  return f64_le(a - b, 0.01);
+
+#else
+
+  return fabs(a - b) <= DBL_EPSILON;
+
+#endif
+  ;
+}
+bool f32_eq(f32 a, f32 b) {
+
+#ifdef __TINYC__
+
+  return f32_le(a - b, 0.01);
+
+#else
+
+  return fabsf(a - b) <= FLT_EPSILON;
+
+#endif
+  ;
+}
 bool f64_eqbit(f64 a, f64 b) { return DEFAULT_EQUAL(a, b); }
 bool f32_eqbit(f32 a, f32 b) { return DEFAULT_EQUAL(a, b); }
 bool f64_ne(f64 a, f64 b) { return !f64_eq(a, b); }
@@ -3483,8 +3507,32 @@ int v_string_int(string s) { return atoi(((char *)(s.str))); }
 i64 string_i64(string s) { return atoll(((char *)(s.str))); }
 f32 string_f32(string s) { return atof(((char *)(s.str))); }
 f64 string_f64(string s) { return atof(((char *)(s.str))); }
-u32 string_u32(string s) { return strtoul(((char *)(s.str)), 0, 0); }
-u64 string_u64(string s) { return strtoull(((char *)(s.str)), 0, 0); }
+u32 string_u32(string s) {
+
+#ifdef __TINYC__
+
+  return ((u32)(v_string_int(s)));
+
+#else
+
+  return strtoul(((char *)(s.str)), 0, 0);
+
+#endif
+  ;
+}
+u64 string_u64(string s) {
+
+#ifdef __TINYC__
+
+  return ((u64)(v_string_int(s)));
+
+#else
+
+  return strtoull(((char *)(s.str)), 0, 0);
+
+#endif
+  ;
+}
 bool string_eq(string s, string a) {
 
   if (isnil(s.str)) {
