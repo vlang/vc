@@ -1,4 +1,7 @@
+#define V_COMMIT_HASH "7dc740d"
+#ifndef V_COMMIT_HASH
 #define V_COMMIT_HASH "de10a52"
+#endif
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -15187,7 +15190,7 @@ compiler__V *compiler__new_v(array_string args) {
           .cflags = cflags,
           .ccompiler = compiler__find_c_compiler(),
           .building_v = !is_repl && (string_eq(rdir_name, tos3("compiler")) ||
-                                     string_eq(dir, tos3("v.v")) ||
+                                     string_eq(rdir_name, tos3("v.v")) ||
                                      string_contains(dir, tos3("vlib"))),
           .no_auto_free = 0,
       },
