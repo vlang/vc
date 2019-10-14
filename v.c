@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2d127cb"
+#define V_COMMIT_HASH "eb031b6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a68222b"
+#define V_COMMIT_HASH "2d127cb"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -19974,8 +19974,14 @@ string compiler__Parser_dot(compiler__Parser *p, string str_typ_,
 
       compiler__Parser_error_with_token_index(
           p,
-          _STR("cannot refer to unexported field `%.*s` (type `%.*s`)",
-               struct_field.len, struct_field.str, typ.name.len, typ.name.str),
+          string_add(
+              _STR("cannot refer to unexported field `%.*s` (type `%.*s`)\n",
+                   struct_field.len, struct_field.str, typ.name.len,
+                   typ.name.str),
+              _STR("declare the field with `pub:`\nstruct %.*s {\n  "
+                   "pub:\n	%.*s %.*s\n}\n",
+                   typ.name.len, typ.name.str, struct_field.len,
+                   struct_field.str, field.typ.len, field.typ.str)),
           fname_tidx);
     };
 
