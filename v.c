@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "093d8a2"
+#define V_COMMIT_HASH "9a2b8a0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7dc740d"
+#define V_COMMIT_HASH "093d8a2"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1188,6 +1188,10 @@ string compiler__CFlag_format(compiler__CFlag *cf);
 bool compiler__Table_has_cflag(compiler__Table *table, compiler__CFlag cflag);
 void compiler__Table_parse_cflag(compiler__Table *table, string cflag,
                                  string mod);
+string array_compiler__CFlag_c_options_before_target_msvc(
+    array_compiler__CFlag cflags);
+string
+array_compiler__CFlag_c_options_after_target_msvc(array_compiler__CFlag cflags);
 string
 array_compiler__CFlag_c_options_before_target(array_compiler__CFlag cflags);
 string
@@ -1936,7 +1940,7 @@ array_compiler__TokenKind compiler__AssignTokens;
       "every\n   function named test_xxx.\n\n   You can put common options "   \
       "inside an environment variable named VFLAGS, so that\n   you don\'t "   \
       "have to repeat them.\n\n   You can set it like this: `export "          \
-      "VFLAGS=\"-cc clang -debug\"` on *nix,\n   `set VFLAGS=-os msvc` on "    \
+      "VFLAGS=\"-cc clang -debug\"` on *nix,\n   `set VFLAGS=-cc msvc` on "    \
       "Windows.\n\nOptions/commands:\n  -h, help          Display this "       \
       "information.\n  -o <file>         Write output to <file>.\n  -o "       \
       "<file>.c       Produce C source without compiling it.\n  -o <file>.js " \
@@ -5877,13 +5881,6 @@ string os__user_os() {
 #endif
   ;
 
-#ifdef _MSC_VER
-
-  return tos3("windows");
-
-#endif
-  ;
-
 #ifdef __BIONIC__
 
   return tos3("android");
@@ -7456,7 +7453,7 @@ void compiler__V_cc(compiler__V *v) {
 
 #ifdef _WIN32
 
-  if (v->os == compiler__compiler__OS_msvc) {
+  if (string_eq(v->pref->ccompiler, tos3("msvc"))) {
 
     compiler__V_cc_msvc(v);
 
@@ -7563,7 +7560,7 @@ void compiler__V_cc(compiler__V *v) {
           tmp16, string);
   };
 
-  if (v->os != compiler__compiler__OS_msvc &&
+  if (string_ne(v->pref->ccompiler, tos3("msvc")) &&
       v->os != compiler__compiler__OS_freebsd) {
 
     _PUSH(&a,
@@ -7875,8 +7872,10 @@ void compiler__V_cc_windows_cross(compiler__V *c) {
 
   array_compiler__CFlag cflags = compiler__V_get_os_cflags(&/* ? */ *c);
 
-  args =
-      string_add(args, array_compiler__CFlag_c_options_before_target(cflags));
+  args = string_add(
+      args, (string_eq(c->pref->ccompiler, tos3("msvc")))
+                ? (array_compiler__CFlag_c_options_before_target_msvc(cflags))
+                : (array_compiler__CFlag_c_options_before_target(cflags)));
 
   string libs = tos3("");
 
@@ -7904,7 +7903,10 @@ void compiler__V_cc_windows_cross(compiler__V *c) {
 
   args = string_add(args, _STR(" %.*s ", c->out_name_c.len, c->out_name_c.str));
 
-  args = string_add(args, array_compiler__CFlag_c_options_after_target(cflags));
+  args = string_add(
+      args, (string_eq(c->pref->ccompiler, tos3("msvc")))
+                ? (array_compiler__CFlag_c_options_after_target_msvc(cflags))
+                : (array_compiler__CFlag_c_options_after_target(cflags)));
 
   println(tos3("Cross compiling for Windows..."));
 
@@ -7998,7 +8000,7 @@ void compiler__V_build_thirdparty_obj_files(compiler__V *c) {
               &/* ? */ *c,
               &/*112 EXP:"compiler__CFlag*" GOT:"compiler__CFlag" */ flag);
 
-      if (c->os == compiler__compiler__OS_msvc) {
+      if (string_eq(c->pref->ccompiler, tos3("msvc"))) {
 
         compiler__build_thirdparty_obj_file_with_msvc(flag.value,
                                                       rest_of_module_flags);
@@ -8092,8 +8094,7 @@ array_compiler__CFlag compiler__V_get_os_cflags(compiler__V *v) {
         (string_eq(flag.os, tos3("freebsd")) &&
          v->os == compiler__compiler__OS_freebsd) ||
         (string_eq(flag.os, tos3("windows")) &&
-         (v->os == compiler__compiler__OS_windows ||
-          v->os == compiler__compiler__OS_msvc))) {
+         v->os == compiler__compiler__OS_windows)) {
 
       _PUSH(&flags,
             (/*typ = array_compiler__CFlag   tmp_typ=compiler__CFlag*/ flag),
@@ -8291,15 +8292,18 @@ void compiler__Table_parse_cflag(compiler__Table *table, string cflag,
     };
   };
 }
-string
-array_compiler__CFlag_c_options_before_target(array_compiler__CFlag cflags) {
-
-#ifdef _MSC_VER
+string array_compiler__CFlag_c_options_before_target_msvc(
+    array_compiler__CFlag cflags) {
 
   return tos3("");
+}
+string array_compiler__CFlag_c_options_after_target_msvc(
+    array_compiler__CFlag cflags) {
 
-#endif
-  ;
+  return tos3("");
+}
+string
+array_compiler__CFlag_c_options_before_target(array_compiler__CFlag cflags) {
 
   array_string args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
@@ -8321,13 +8325,6 @@ array_compiler__CFlag_c_options_before_target(array_compiler__CFlag cflags) {
 }
 string
 array_compiler__CFlag_c_options_after_target(array_compiler__CFlag cflags) {
-
-#ifdef _MSC_VER
-
-  return tos3("");
-
-#endif
-  ;
 
   array_string args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
@@ -10577,7 +10574,7 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
   };
 
   string dll_export_linkage =
-      (p->os == compiler__compiler__OS_msvc &&
+      (string_eq(p->pref->ccompiler, tos3("msvc")) &&
        string_eq(p->attr, tos3("live")) && p->pref->is_so)
           ? (tos3("__declspec(dllexport) "))
           : ((string_eq(p->attr, tos3("inline"))) ? (tos3("static inline "))
@@ -10999,8 +10996,7 @@ void compiler__Parser_async_fn_call(compiler__Parser *p, compiler__Fn f,
 
   thread_name = _STR("_thread%d", tmp_nr);
 
-  if (p->os != compiler__compiler__OS_windows &&
-      p->os != compiler__compiler__OS_msvc) {
+  if (p->os != compiler__compiler__OS_windows) {
 
     compiler__Parser_genln(
         p, _STR("pthread_t %.*s;", thread_name.len, thread_name.str));
@@ -11015,8 +11011,7 @@ void compiler__Parser_async_fn_call(compiler__Parser *p, compiler__Fn f,
     parg = _STR(" %.*s", tmp_struct.len, tmp_struct.str);
   };
 
-  if (p->os == compiler__compiler__OS_windows ||
-      p->os == compiler__compiler__OS_msvc) {
+  if (p->os == compiler__compiler__OS_windows) {
 
     compiler__Parser_genln(p, _STR(" CreateThread(0,0, %.*s, %.*s, 0,0);",
                                    wrapper_name.len, wrapper_name.str, parg.len,
@@ -12198,7 +12193,7 @@ void compiler__Parser_gen_fn_decl(compiler__Parser *p, compiler__Fn f,
                                   string typ, string str_args) {
 
   string dll_export_linkage =
-      (p->os == compiler__compiler__OS_msvc &&
+      (string_eq(p->pref->ccompiler, tos3("msvc")) &&
        string_eq(p->attr, tos3("live")) && p->pref->is_so)
           ? (tos3("__declspec(dllexport) "))
           : ((string_eq(p->attr, tos3("inline"))) ? (tos3("static inline "))
@@ -13318,8 +13313,7 @@ void compiler__V_generate_hotcode_reloading_declarations(compiler__V *v) {
 
   compiler__CGen *cgen = v->cgen;
 
-  if (v->os != compiler__compiler__OS_windows &&
-      v->os != compiler__compiler__OS_msvc) {
+  if (v->os != compiler__compiler__OS_windows) {
 
     if (v->pref->is_so) {
 
@@ -13359,8 +13353,7 @@ void compiler__V_generate_hotcode_reloading_main_caller(compiler__V *v) {
 
   string file_base = string_replace(os__filename(v->dir), tos3(".v"), tos3(""));
 
-  if (!(v->os == compiler__compiler__OS_windows ||
-        v->os == compiler__compiler__OS_msvc)) {
+  if (v->os != compiler__compiler__OS_windows) {
 
     string so_name = string_add(file_base, tos3(".so"));
 
@@ -13376,9 +13369,10 @@ void compiler__V_generate_hotcode_reloading_main_caller(compiler__V *v) {
 
   } else {
 
-    string so_name = string_add(
-        file_base, (v->os == compiler__compiler__OS_msvc) ? (tos3(".dll"))
-                                                          : (tos3(".so")));
+    string so_name =
+        string_add(file_base, (string_eq(v->pref->ccompiler, tos3("msvc")))
+                                  ? (tos3(".dll"))
+                                  : (tos3(".so")));
 
     compiler__CGen_genln(cgen, _STR("  char *live_library_name = \"%.*s\";",
                                     so_name.len, so_name.str));
@@ -13418,9 +13412,9 @@ void compiler__V_generate_hot_reload_code(compiler__V *v) {
 
     string msvc = tos3("");
 
-    if (v->os == compiler__compiler__OS_msvc) {
+    if (string_eq(v->pref->ccompiler, tos3("msvc"))) {
 
-      msvc = tos3("-os msvc");
+      msvc = tos3("-cc msvc");
     };
 
     string so_debug_flag = (v->pref->is_debug) ? (tos3("-g")) : (tos3(""));
@@ -13451,8 +13445,7 @@ void compiler__V_generate_hot_reload_code(compiler__V *v) {
                    "live_fn_mutex: %p | %s\\n\", &live_fn_mutex, s);\n	"
                    "	fflush(stderr);\n	}\n}\n"));
 
-    if (v->os != compiler__compiler__OS_windows &&
-        v->os != compiler__compiler__OS_msvc) {
+    if (v->os != compiler__compiler__OS_windows) {
 
       compiler__CGen_genln(
           cgen,
@@ -16218,9 +16211,11 @@ void compiler__build_thirdparty_obj_file_with_msvc(
            msvc.um_include_path.len, msvc.um_include_path.str,
            msvc.shared_include_path.len, msvc.shared_include_path.str);
 
-  string btarget = array_compiler__CFlag_c_options_before_target(moduleflags);
+  string btarget =
+      array_compiler__CFlag_c_options_before_target_msvc(moduleflags);
 
-  string atarget = array_compiler__CFlag_c_options_after_target(moduleflags);
+  string atarget =
+      array_compiler__CFlag_c_options_after_target_msvc(moduleflags);
 
   string cmd = _STR("\"\"%.*s\" /volatile:ms /Zi /DNDEBUG %.*s /c %.*s %.*s "
                     "%.*s /Fo\"%.*s\"\"",
