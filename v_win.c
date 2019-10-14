@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "83b18af"
+#define V_COMMIT_HASH "ae3ec38"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "eb031b6"
+#define V_COMMIT_HASH "83b18af"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1809,10 +1809,9 @@ array_string compiler__supported_platforms;
 #define compiler__compiler__OS_openbsd 4
 #define compiler__compiler__OS_netbsd 5
 #define compiler__compiler__OS_dragonfly 6
-#define compiler__compiler__OS_msvc 7
-#define compiler__compiler__OS_js 8
-#define compiler__compiler__OS_android 9
-#define compiler__compiler__OS_solaris 10
+#define compiler__compiler__OS_js 7
+#define compiler__compiler__OS_android 8
+#define compiler__compiler__OS_solaris 9
 #define compiler__compiler__Pass_imports 0
 #define compiler__compiler__Pass_decl 1
 #define compiler__compiler__Pass_main 2
@@ -13803,7 +13802,7 @@ int compiler__V_parse(compiler__V *v, string file, compiler__Pass pass) {
 void compiler__V_compile(compiler__V *v) {
 
   if (string_ne(os__user_os(), tos3("windows")) &&
-      v->os == compiler__compiler__OS_msvc) {
+      string_eq(v->pref->ccompiler, tos3("msvc"))) {
 
     compiler__verror(_STR("Cannot build with msvc on %.*s", os__user_os().len,
                           os__user_os().str));
@@ -14360,8 +14359,7 @@ array_string compiler__V_v_files_from_dir(compiler__V *v, string dir) {
     };
 
     if (string_ends_with(file, tos3("_win.v")) &&
-        (v->os != compiler__compiler__OS_windows &&
-         v->os != compiler__compiler__OS_msvc)) {
+        v->os != compiler__compiler__OS_windows) {
 
       continue;
     };
@@ -14379,8 +14377,7 @@ array_string compiler__V_v_files_from_dir(compiler__V *v, string dir) {
     };
 
     if (string_ends_with(file, tos3("_nix.v")) &&
-        (v->os == compiler__compiler__OS_windows ||
-         v->os == compiler__compiler__OS_msvc)) {
+        v->os == compiler__compiler__OS_windows) {
 
       continue;
     };
@@ -15321,10 +15318,6 @@ compiler__OS compiler__os_from_string(string os) {
 
     return compiler__compiler__OS_dragonfly;
 
-  } else if (string_eq(os, tos3("msvc"))) { /* case */
-
-    return compiler__compiler__OS_msvc;
-
   } else if (string_eq(os, tos3("js"))) { /* case */
 
     return compiler__compiler__OS_js;
@@ -15336,6 +15329,10 @@ compiler__OS compiler__os_from_string(string os) {
   } else if (string_eq(os, tos3("android"))) { /* case */
 
     return compiler__compiler__OS_android;
+
+  } else if (string_eq(os, tos3("msvc"))) { /* case */
+
+    compiler__verror(tos3("use the flag `-cc msvc` to build using msvc"));
   };
 
   printf("bad os %.*s\n", os.len, os.str);
@@ -28063,11 +28060,11 @@ void init() {
   compiler__dot_ptr = tos3("->");
   compiler__Version = tos3("0.1.21");
   compiler__supported_platforms = new_array_from_c_array(
-      11, 11, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 11){
+      10, 10, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 10){
           tos3("windows"), tos3("mac"), tos3("linux"), tos3("freebsd"),
-          tos3("openbsd"), tos3("netbsd"), tos3("dragonfly"), tos3("msvc"),
-          tos3("android"), tos3("js"), tos3("solaris")});
+          tos3("openbsd"), tos3("netbsd"), tos3("dragonfly"), tos3("android"),
+          tos3("js"), tos3("solaris")});
   compiler__v_modules_path = string_add(os__home_dir(), tos3(".vmodules"));
   compiler__HKEY_LOCAL_MACHINE = ((RegKey)(0x80000002));
   compiler__KEY_QUERY_VALUE = (0x0001);
