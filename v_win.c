@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9a2b8a0"
+#define V_COMMIT_HASH "a68222b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "093d8a2"
+#define V_COMMIT_HASH "9a2b8a0"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -9532,7 +9532,12 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
 
       compiler__Parser_statements_no_rcbr(p);
 
-      compiler__Parser_genln(p, tos3("#endif"));
+      if (!(p->tok == compiler__compiler__TokenKind_dollar &&
+            compiler__Parser_peek(&/* ? */ *p) ==
+                compiler__compiler__TokenKind_key_else)) {
+
+        compiler__Parser_genln(p, tos3("#endif"));
+      };
 
     } else {
 
