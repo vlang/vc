@@ -1,7 +1,4 @@
-#define V_COMMIT_HASH "e5b0478"
-#ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6a95175"
-#endif
+#define V_COMMIT_HASH "de10a52"
 
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
@@ -7731,9 +7728,9 @@ void compiler__V_cc(compiler__V *v) {
 
         println(tos3("V.js compiler not found, building..."));
 
-        int ret = os__system(_STR("%.*s -o %.*s -os js %.*s/compiler", vexe.len,
-                                  vexe.str, vjs_path.len, vjs_path.str, dir.len,
-                                  dir.str));
+        int ret =
+            os__system(_STR("%.*s -o %.*s -os js %.*s/v.v", vexe.len, vexe.str,
+                            vjs_path.len, vjs_path.str, dir.len, dir.str));
 
         if (ret == 0) {
 
@@ -14482,11 +14479,11 @@ array_string compiler__V_v_files_from_dir(compiler__V *v, string dir) {
 
   if (!os__file_exists(dir)) {
 
-    compiler__verror(_STR("%.*s doesn\'t exist", dir.len, dir.str));
+    compiler__verror(_STR("%.*s doesn't exist!", dir.len, dir.str));
 
   } else if (!os__dir_exists(dir)) {
 
-    compiler__verror(_STR("%.*s isn\'t a directory", dir.len, dir.str));
+    compiler__verror(_STR("%.*s isn't a directory", dir.len, dir.str));
   };
 
   array_string files = os__ls(dir);
@@ -27873,16 +27870,16 @@ void compiler__v_test_v(string args_before_test) {
     v_exit(1);
   };
 
-  if (!os__dir_exists(string_add(parent_dir, tos3("/compiler")))) {
+  if (!os__file_exists(string_add(parent_dir, tos3("/v.v")))) {
 
-    println(tos3("compiler/ is missing, it must be next to the V executable"));
+    println(tos3("v.v is missing, it must be next to the V executable"));
 
     v_exit(1);
   };
 
 #ifdef __APPLE__
 
-  os__system(_STR("%.*s -o v.c compiler", vexe.len, vexe.str));
+  os__system(_STR("%.*s -o v.c v.v", vexe.len, vexe.str));
 
   if (os__system(tos3("cc -Werror v.c")) != 0) {
 
