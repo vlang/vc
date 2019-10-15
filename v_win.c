@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "bb1eca3"
+#define V_COMMIT_HASH "49d6c26"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "75e2a29"
+#define V_COMMIT_HASH "bb1eca3"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -20253,7 +20253,7 @@ string compiler__Parser_index_expr(compiler__Parser *p, string typ_,
       compiler__Parser_gen(p, tos3(","));
     };
 
-    if (is_arr) {
+    if (is_arr || is_str) {
 
       int index_pos = p->cgen->cur_line.len;
 
