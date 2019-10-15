@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "69b4594"
+#define V_COMMIT_HASH "0e0f0ae"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a5d61f6"
+#define V_COMMIT_HASH "69b4594"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -15162,8 +15162,8 @@ void compiler__install_v(array_string args) {
 
     os__chdir(string_add(vroot, tos3("/tools")));
 
-    Option_os__Result tmp145 = os__exec(
-        _STR("%.*s -o %.*s vget.v", vexec.len, vexec.str, vget.len, vget.str));
+    Option_os__Result tmp145 = os__exec(_STR(
+        "\"%.*s\" -o %.*s vget.v", vexec.len, vexec.str, vget.len, vget.str));
     if (!tmp145.ok) {
       string err = tmp145.error;
 
@@ -24238,8 +24238,8 @@ array_string compiler__run_repl() {
 
       os__write_file(file, source_code);
 
-      Option_os__Result tmp34 = os__exec(
-          _STR("%.*s run %.*s -repl", vexe.len, vexe.str, file.len, file.str));
+      Option_os__Result tmp34 = os__exec(_STR(
+          "\"%.*s\" run %.*s -repl", vexe.len, vexe.str, file.len, file.str));
       if (!tmp34.ok) {
         string err = tmp34.error;
 
@@ -24304,7 +24304,7 @@ array_string compiler__run_repl() {
       os__write_file(temp_file, temp_source_code);
 
       Option_os__Result tmp44 =
-          os__exec(_STR("%.*s run %.*s -repl", vexe.len, vexe.str,
+          os__exec(_STR("\"%.*s\" run %.*s -repl", vexe.len, vexe.str,
                         temp_file.len, temp_file.str));
       if (!tmp44.ok) {
         string err = tmp44.error;
