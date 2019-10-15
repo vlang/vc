@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0e0f0ae"
+#define V_COMMIT_HASH "9b38f59"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "69b4594"
+#define V_COMMIT_HASH "0e0f0ae"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -162,6 +162,12 @@ int g_test_fails = 0;
 #ifndef _WIN32
 #include <unistd.h>
 #endif
+#ifdef __linux__
+#include <termios.h>
+#endif
+#ifdef __linux__
+#include <sys/ioctl.h>
+#endif
 #include <time.h>
 typedef struct array array;
 typedef array array_string;
@@ -189,6 +195,13 @@ typedef struct os__Result os__Result;
 typedef Option Option_os__Result;
 typedef struct rand__Pcg32 rand__Pcg32;
 typedef struct rand__Splitmix64 rand__Splitmix64;
+typedef struct readline__Termios readline__Termios;
+typedef struct readline__Winsize readline__Winsize;
+typedef struct readline__Readline readline__Readline;
+typedef Option Option_ustring;
+typedef Option Option_string;
+typedef Option Option_ustring;
+typedef Option Option_string;
 typedef struct time__Time time__Time;
 typedef Option Option_int;
 typedef struct benchmark__Benchmark benchmark__Benchmark;
@@ -254,6 +267,11 @@ typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__Result;
+typedef int readline__Action;
+typedef Option Option_ustring;
+typedef Option Option_string;
+typedef Option Option_ustring;
+typedef Option Option_string;
 typedef Option Option_int;
 typedef map map_compiler__DepGraphNode;
 typedef map map_compiler__DepSet;
@@ -603,6 +621,21 @@ struct rand__Splitmix64 {
   u64 state;
 };
 
+struct readline__Termios {
+  int c_iflag;
+  int c_oflag;
+  int c_cflag;
+  int c_lflag;
+  int c_cc[12];
+};
+
+struct readline__Winsize {
+  u16 ws_row;
+  u16 ws_col;
+  u16 ws_xpixel;
+  u16 ws_ypixel;
+};
+
 struct strings__Builder {
   array_byte buf;
   int len;
@@ -746,6 +779,19 @@ struct compiler__Type {
   array_string gen_types;
   bool is_placeholder;
   bool gen_str;
+};
+
+struct readline__Readline {
+  bool is_raw;
+  readline__Termios orig_termios;
+  ustring current;
+  int cursor;
+  bool overwrite;
+  int cursor_row_offset;
+  string prompt;
+  array_ustring previous_lines;
+  int search_index;
+  bool is_tty;
 };
 
 struct compiler__TypeNode {
@@ -1128,6 +1174,47 @@ void term__erase_line_tobeg();
 void term__erase_line_clear();
 void term__show_cursor();
 void term__hide_cursor();
+void readline__Readline_enable_raw_mode(readline__Readline *r);
+void readline__Readline_enable_raw_mode2(readline__Readline *r);
+void readline__Readline_disable_raw_mode(readline__Readline *r);
+int readline__Readline_read_char(readline__Readline r);
+Option_ustring readline__Readline_read_line_utf8(readline__Readline *r,
+                                                 string prompt);
+Option_string readline__Readline_read_line(readline__Readline *r,
+                                           string prompt);
+Option_ustring readline__read_line_utf8(string prompt);
+Option_string readline__read_line(string prompt);
+readline__Action readline__Readline_analyse(readline__Readline r, int c);
+readline__Action readline__Readline_analyse_control(readline__Readline r);
+readline__Action
+readline__Readline_analyse_extended_control(readline__Readline r);
+readline__Action
+readline__Readline_analyse_extended_control_no_eat(readline__Readline r,
+                                                   byte last_c);
+bool readline__Readline_execute(readline__Readline *r, readline__Action a,
+                                int c);
+int readline__get_screen_columns();
+void readline__shift_cursor(int xpos, int yoffset);
+void readline__calculate_screen_position(int x_in, int y_in, int screen_columns,
+                                         int char_count, array_int *out);
+void readline__Readline_refresh_line(readline__Readline *r);
+bool readline__Readline_eof(readline__Readline *r);
+void readline__Readline_insert_character(readline__Readline *r, int c);
+void readline__Readline_delete_character(readline__Readline *r);
+void readline__Readline_suppr_character(readline__Readline *r);
+bool readline__Readline_commit_line(readline__Readline *r);
+void readline__Readline_move_cursor_left(readline__Readline *r);
+void readline__Readline_move_cursor_right(readline__Readline *r);
+void readline__Readline_move_cursor_begining(readline__Readline *r);
+void readline__Readline_move_cursor_end(readline__Readline *r);
+bool readline__Readline_is_break_character(readline__Readline r, string c);
+void readline__Readline_move_cursor_word_left(readline__Readline *r);
+void readline__Readline_move_cursor_word_right(readline__Readline *r);
+void readline__Readline_switch_overwrite(readline__Readline *r);
+void readline__Readline_clear_screen(readline__Readline *r);
+void readline__Readline_history_previous(readline__Readline *r);
+void readline__Readline_history_next(readline__Readline *r);
+void readline__Readline_suspend(readline__Readline *r);
 void time__remove_me_when_c_bug_is_fixed();
 time__Time time__now();
 time__Time time__random();
@@ -1409,8 +1496,9 @@ static inline string compiler__mod_gen_name(string mod);
 static inline string compiler__mod_gen_name_rev(string mod);
 Option_string compiler__find_windows_kit_internal(RegKey key,
                                                   array_string versions);
-Option_compiler__WindowsKit compiler__find_windows_kit_root();
-Option_compiler__VsInstallation compiler__find_vs();
+Option_compiler__WindowsKit compiler__find_windows_kit_root(string host_arch);
+Option_compiler__VsInstallation compiler__find_vs(string vswhere_dir,
+                                                  string host_arch);
 Option_compiler__MsvcResult compiler__find_msvc();
 void compiler__V_cc_msvc(compiler__V *v);
 void compiler__build_thirdparty_obj_file_with_msvc(
@@ -1745,6 +1833,23 @@ int os__ENABLE_LVB_GRID_WORLDWIDE;
 array_string os__args;
 #define os__MAX_PATH 4096
 string os__path_separator;
+#define readline__readline__Action_eof 0
+#define readline__readline__Action_nothing 1
+#define readline__readline__Action_insert_character 2
+#define readline__readline__Action_commit_line 3
+#define readline__readline__Action_delete_left 4
+#define readline__readline__Action_delete_right 5
+#define readline__readline__Action_move_cursor_left 6
+#define readline__readline__Action_move_cursor_right 7
+#define readline__readline__Action_move_cursor_begining 8
+#define readline__readline__Action_move_cursor_end 9
+#define readline__readline__Action_move_cursor_word_left 10
+#define readline__readline__Action_move_cursor_word_right 11
+#define readline__readline__Action_history_previous 12
+#define readline__readline__Action_history_next 13
+#define readline__readline__Action_overwrite 14
+#define readline__readline__Action_clear_screen 15
+#define readline__readline__Action_suspend 16
 array_int time__month_days;
 i64 time__absolute_zero_year;
 #define time__seconds_per_minute 60
@@ -6716,6 +6821,727 @@ void term__erase_line_tobeg() { term__erase_line(tos3("1")); }
 void term__erase_line_clear() { term__erase_line(tos3("2")); }
 void term__show_cursor() { print(tos3("\x1b[?25h")); }
 void term__hide_cursor() { print(tos3("\x1b[?25l")); }
+void readline__Readline_enable_raw_mode(readline__Readline *r) {
+
+  if ((tcgetattr(0, &r->orig_termios) == -1)) {
+
+    r->is_tty = 0;
+
+    r->is_raw = 0;
+
+    return;
+  };
+
+  readline__Termios raw = r->orig_termios;
+
+  raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
+
+  raw.c_cflag |= (CS8);
+
+  raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+
+  raw.c_cc[VMIN] /*rint 1*/ = 1;
+
+  raw.c_cc[VTIME] /*rint 1*/ = 0;
+
+  tcsetattr(0, TCSADRAIN, &raw);
+
+  r->is_raw = 1;
+
+  r->is_tty = 1;
+}
+void readline__Readline_enable_raw_mode2(readline__Readline *r) {
+
+  if ((tcgetattr(0, &r->orig_termios) == -1)) {
+
+    r->is_tty = 0;
+
+    r->is_raw = 0;
+
+    return;
+  };
+
+  readline__Termios raw = r->orig_termios;
+
+  raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
+
+  raw.c_cflag |= (CS8);
+
+  raw.c_lflag &= ~(ECHO | ICANON | IEXTEN);
+
+  raw.c_cc[VMIN] /*rint 1*/ = 1;
+
+  raw.c_cc[VTIME] /*rint 1*/ = 0;
+
+  tcsetattr(0, TCSADRAIN, &raw);
+
+  r->is_raw = 1;
+
+  r->is_tty = 1;
+}
+void readline__Readline_disable_raw_mode(readline__Readline *r) {
+
+  if (r->is_raw) {
+
+    tcsetattr(0, TCSADRAIN, &r->orig_termios);
+
+    r->is_raw = 0;
+  };
+}
+int readline__Readline_read_char(readline__Readline r) {
+
+  return utf8_getchar();
+}
+Option_ustring readline__Readline_read_line_utf8(readline__Readline *r,
+                                                 string prompt) {
+
+  r->current = string_ustring(tos3(""));
+
+  r->cursor = 0;
+
+  r->prompt = prompt;
+
+  r->search_index = 0;
+
+  if (r->previous_lines.len <= 1) {
+
+    _PUSH(&r->previous_lines,
+          (/*typ = array_ustring   tmp_typ=ustring*/ string_ustring(tos3(""))),
+          tmp3, ustring);
+
+    _PUSH(&r->previous_lines,
+          (/*typ = array_ustring   tmp_typ=ustring*/ string_ustring(tos3(""))),
+          tmp4, ustring);
+
+  } else {
+
+    array_set(&/*q*/ r->previous_lines, 0,
+              &(ustring[]){string_ustring(tos3(""))});
+  };
+
+  if (!r->is_raw) {
+
+    readline__Readline_enable_raw_mode2(r);
+  };
+
+  print(r->prompt);
+
+  while (1) {
+
+    int c = readline__Readline_read_char(*r);
+
+    readline__Action a = readline__Readline_analyse(*r, c);
+
+    if (readline__Readline_execute(r, a, c)) {
+
+      break;
+    };
+  };
+
+  array_set(&/*q*/ r->previous_lines, 0,
+            &(ustring[]){string_ustring(tos3(""))});
+
+  r->search_index = 0;
+
+  readline__Readline_disable_raw_mode(r);
+
+  if (string_eq(r->current.s, tos3(""))) {
+
+    return v_error(tos3("empty line"));
+  };
+
+  ustring tmp7 = OPTION_CAST(ustring)(r->current);
+  return opt_ok(&tmp7, sizeof(ustring));
+}
+Option_string readline__Readline_read_line(readline__Readline *r,
+                                           string prompt) {
+
+  Option_ustring tmp8 = readline__Readline_read_line_utf8(r, prompt);
+  if (!tmp8.ok) {
+    string err = tmp8.error;
+
+    return v_error(err);
+  }
+  ustring s = *(ustring *)tmp8.data;
+  ;
+
+  string tmp9 = OPTION_CAST(string)(s.s);
+  return opt_ok(&tmp9, sizeof(string));
+}
+Option_ustring readline__read_line_utf8(string prompt) {
+
+  readline__Readline r =
+      (readline__Readline){.is_raw = 0,
+                           .cursor = 0,
+                           .overwrite = 0,
+                           .cursor_row_offset = 0,
+                           .prompt = tos((byte *)"", 0),
+                           .previous_lines = new_array(0, 1, sizeof(ustring)),
+                           .search_index = 0,
+                           .is_tty = 0};
+
+  Option_ustring tmp11 = readline__Readline_read_line_utf8(&/* ? */ r, prompt);
+  if (!tmp11.ok) {
+    string err = tmp11.error;
+
+    return v_error(err);
+  }
+  ustring s = *(ustring *)tmp11.data;
+  ;
+
+  ustring tmp12 = OPTION_CAST(ustring)(s);
+  return opt_ok(&tmp12, sizeof(ustring));
+}
+Option_string readline__read_line(string prompt) {
+
+  readline__Readline r =
+      (readline__Readline){.is_raw = 0,
+                           .cursor = 0,
+                           .overwrite = 0,
+                           .cursor_row_offset = 0,
+                           .prompt = tos((byte *)"", 0),
+                           .previous_lines = new_array(0, 1, sizeof(ustring)),
+                           .search_index = 0,
+                           .is_tty = 0};
+
+  Option_string tmp14 = readline__Readline_read_line(&/* ? */ r, prompt);
+  if (!tmp14.ok) {
+    string err = tmp14.error;
+
+    return v_error(err);
+  }
+  string s = *(string *)tmp14.data;
+  ;
+
+  string tmp15 = OPTION_CAST(string)(s);
+  return opt_ok(&tmp15, sizeof(string));
+}
+readline__Action readline__Readline_analyse(readline__Readline r, int c) {
+
+  if (c == '\0') { /* case */
+
+    return readline__readline__Action_eof;
+
+  } else if (c == 0x3) { /* case */
+
+    return readline__readline__Action_eof;
+
+  } else if (c == 0x4) { /* case */
+
+    return readline__readline__Action_eof;
+
+  } else if (c == 255) { /* case */
+
+    return readline__readline__Action_eof;
+
+  } else if (c == '\n') { /* case */
+
+    return readline__readline__Action_commit_line;
+
+  } else if (c == '\r') { /* case */
+
+    return readline__readline__Action_commit_line;
+
+  } else if (c == '\f') { /* case */
+
+    return readline__readline__Action_clear_screen;
+
+  } else if (c == '\b') { /* case */
+
+    return readline__readline__Action_delete_left;
+
+  } else if (c == 127) { /* case */
+
+    return readline__readline__Action_delete_left;
+
+  } else if (c == 27) { /* case */
+
+    return readline__Readline_analyse_control(r);
+
+  } else if (c == 1) { /* case */
+
+    return readline__readline__Action_move_cursor_begining;
+
+  } else if (c == 5) { /* case */
+
+    return readline__readline__Action_move_cursor_end;
+
+  } else if (c == 26) { /* case */
+
+    return readline__readline__Action_suspend;
+
+  } else { // default:
+
+    return (c >= ' ') ? (readline__readline__Action_insert_character)
+                      : (readline__readline__Action_nothing);
+  };
+}
+readline__Action readline__Readline_analyse_control(readline__Readline r) {
+
+  int c = readline__Readline_read_char(r);
+
+  if (c == '[') { /* case */
+
+    int sequence = readline__Readline_read_char(r);
+
+    if (sequence == 'C') { /* case */
+
+      return readline__readline__Action_move_cursor_right;
+
+    } else if (sequence == 'D') { /* case */
+
+      return readline__readline__Action_move_cursor_left;
+
+    } else if (sequence == 'B') { /* case */
+
+      return readline__readline__Action_history_next;
+
+    } else if (sequence == 'A') { /* case */
+
+      return readline__readline__Action_history_previous;
+
+    } else if (sequence == '1') { /* case */
+
+      return readline__Readline_analyse_extended_control(r);
+
+    } else if (sequence == '2') { /* case */
+
+      return readline__Readline_analyse_extended_control_no_eat(r, sequence);
+
+    } else if (sequence == '3') { /* case */
+
+      return readline__Readline_analyse_extended_control_no_eat(r, sequence);
+    };
+  };
+
+  return readline__readline__Action_nothing;
+}
+readline__Action
+readline__Readline_analyse_extended_control(readline__Readline r) {
+
+  readline__Readline_read_char(r);
+
+  int c = readline__Readline_read_char(r);
+
+  if (c == '5') { /* case */
+
+    int direction = readline__Readline_read_char(r);
+
+    if (direction == 'C') { /* case */
+
+      return readline__readline__Action_move_cursor_word_right;
+
+    } else if (direction == 'D') { /* case */
+
+      return readline__readline__Action_move_cursor_word_left;
+    };
+  };
+
+  return readline__readline__Action_nothing;
+}
+readline__Action
+readline__Readline_analyse_extended_control_no_eat(readline__Readline r,
+                                                   byte last_c) {
+
+  int c = readline__Readline_read_char(r);
+
+  if (c == '~') { /* case */
+
+    if (last_c == '3') { /* case */
+
+      return readline__readline__Action_delete_right;
+
+    } else if (last_c == '2') { /* case */
+
+      return readline__readline__Action_overwrite;
+    };
+  };
+
+  return readline__readline__Action_nothing;
+}
+bool readline__Readline_execute(readline__Readline *r, readline__Action a,
+                                int c) {
+
+  if (a == readline__readline__Action_eof) { /* case */
+
+    return readline__Readline_eof(r);
+
+  } else if (a == readline__readline__Action_insert_character) { /* case */
+
+    readline__Readline_insert_character(r, c);
+
+  } else if (a == readline__readline__Action_commit_line) { /* case */
+
+    return readline__Readline_commit_line(r);
+
+  } else if (a == readline__readline__Action_delete_left) { /* case */
+
+    readline__Readline_delete_character(r);
+
+  } else if (a == readline__readline__Action_delete_right) { /* case */
+
+    readline__Readline_suppr_character(r);
+
+  } else if (a == readline__readline__Action_move_cursor_left) { /* case */
+
+    readline__Readline_move_cursor_left(r);
+
+  } else if (a == readline__readline__Action_move_cursor_right) { /* case */
+
+    readline__Readline_move_cursor_right(r);
+
+  } else if (a == readline__readline__Action_move_cursor_begining) { /* case */
+
+    readline__Readline_move_cursor_begining(r);
+
+  } else if (a == readline__readline__Action_move_cursor_end) { /* case */
+
+    readline__Readline_move_cursor_end(r);
+
+  } else if (a == readline__readline__Action_move_cursor_word_left) { /* case */
+
+    readline__Readline_move_cursor_word_left(r);
+
+  } else if (a ==
+             readline__readline__Action_move_cursor_word_right) { /* case */
+
+    readline__Readline_move_cursor_word_right(r);
+
+  } else if (a == readline__readline__Action_history_previous) { /* case */
+
+    readline__Readline_history_previous(r);
+
+  } else if (a == readline__readline__Action_history_next) { /* case */
+
+    readline__Readline_history_next(r);
+
+  } else if (a == readline__readline__Action_overwrite) { /* case */
+
+    readline__Readline_switch_overwrite(r);
+
+  } else if (a == readline__readline__Action_clear_screen) { /* case */
+
+    readline__Readline_clear_screen(r);
+
+  } else if (a == readline__readline__Action_suspend) { /* case */
+
+    readline__Readline_suspend(r);
+  };
+
+  return 0;
+}
+int readline__get_screen_columns() {
+
+  readline__Winsize ws = (readline__Winsize){
+      .ws_row = 0, .ws_col = 0, .ws_xpixel = 0, .ws_ypixel = 0};
+
+  int cols = (ioctl(1, TIOCGWINSZ, &ws) == -1) ? (80) : (((int)(ws.ws_col)));
+
+  return cols;
+}
+void readline__shift_cursor(int xpos, int yoffset) {
+
+  if (yoffset != 0) {
+
+    if (yoffset > 0) {
+
+      term__cursor_down(yoffset);
+
+    } else {
+
+      term__cursor_up(-yoffset);
+    };
+  };
+
+  print(_STR("\x1b[%dG", xpos + 1));
+}
+void readline__calculate_screen_position(int x_in, int y_in, int screen_columns,
+                                         int char_count, array_int *out) {
+
+  int x = x_in;
+
+  int y = y_in;
+
+  array_set(out, 0, &(int[]){x});
+
+  array_set(out, 1, &(int[]){y});
+
+  for (int chars_remaining = char_count; chars_remaining > 0;) {
+
+    int chars_this_row = (((x + chars_remaining) < screen_columns))
+                             ? (chars_remaining)
+                             : (screen_columns - x);
+
+    array_set(out, 0, &(int[]){x + chars_this_row});
+
+    array_set(out, 1, &(int[]){y});
+
+    chars_remaining -= chars_this_row;
+
+    x = 0;
+
+    y++;
+  };
+
+  if ((*(int *)array_get(*out, 0)) == screen_columns) {
+
+    array_set(out, 0, &(int[]){0});
+
+    (*(int *)array_get(*out, 1))++;
+  };
+}
+void readline__Readline_refresh_line(readline__Readline *r) {
+
+  array_int end_of_input = new_array_from_c_array(
+      2, 2, sizeof(int), EMPTY_ARRAY_OF_ELEMS(int, 2){0, 0});
+
+  readline__calculate_screen_position(
+      r->prompt.len, 0, readline__get_screen_columns(), r->current.len,
+      &/*111*/ (array[]){end_of_input}[0]);
+
+  array_set(&/*q*/ end_of_input, 1,
+            &(int[]){*(int *)array_get(end_of_input, 1) +
+                     ustring_count(r->current, string_ustring(tos3("\n")))});
+
+  array_int cursor_pos = new_array_from_c_array(
+      2, 2, sizeof(int), EMPTY_ARRAY_OF_ELEMS(int, 2){0, 0});
+
+  readline__calculate_screen_position(r->prompt.len, 0,
+                                      readline__get_screen_columns(), r->cursor,
+                                      &/*111*/ (array[]){cursor_pos}[0]);
+
+  readline__shift_cursor(0, -r->cursor_row_offset);
+
+  term__erase_toend();
+
+  print(r->prompt);
+
+  print(r->current.s);
+
+  if ((*(int *)array_get(end_of_input, 0)) == 0 &&
+      (*(int *)array_get(end_of_input, 1)) > 0) {
+
+    print(tos3("\n"));
+  };
+
+  readline__shift_cursor((*(int *)array_get(cursor_pos, 0)),
+                         -((*(int *)array_get(end_of_input, 1)) -
+                           (*(int *)array_get(cursor_pos, 1))));
+
+  r->cursor_row_offset = (*(int *)array_get(cursor_pos, 1));
+}
+bool readline__Readline_eof(readline__Readline *r) {
+
+  array_insert(&/* ? */ r->previous_lines, 1,
+               &/*112 EXP:"void*" GOT:"ustring" */ r->current);
+
+  r->cursor = r->current.len;
+
+  if (r->is_tty) {
+
+    readline__Readline_refresh_line(r);
+  };
+
+  return 1;
+}
+void readline__Readline_insert_character(readline__Readline *r, int c) {
+
+  if (!r->overwrite || r->cursor == r->current.len) {
+
+    r->current = ustring_add(
+        ustring_add(string_ustring(ustring_left(r->current, r->cursor)),
+                    string_ustring(utf32_to_str(((u32)(c))))),
+        string_ustring(ustring_right(r->current, r->cursor)));
+
+  } else {
+
+    r->current = ustring_add(
+        ustring_add(string_ustring(ustring_left(r->current, r->cursor)),
+                    string_ustring(utf32_to_str(((u32)(c))))),
+        string_ustring(ustring_right(r->current, r->cursor + 1)));
+  };
+
+  r->cursor++;
+
+  if (r->is_tty) {
+
+    readline__Readline_refresh_line(r);
+  };
+}
+void readline__Readline_delete_character(readline__Readline *r) {
+
+  if (r->cursor <= 0) {
+
+    return;
+  };
+
+  r->cursor--;
+
+  r->current =
+      ustring_add(string_ustring(ustring_left(r->current, r->cursor)),
+                  string_ustring(ustring_right(r->current, r->cursor + 1)));
+
+  readline__Readline_refresh_line(r);
+}
+void readline__Readline_suppr_character(readline__Readline *r) {
+
+  if (r->cursor > r->current.len) {
+
+    return;
+  };
+
+  r->current =
+      ustring_add(string_ustring(ustring_left(r->current, r->cursor)),
+                  string_ustring(ustring_right(r->current, r->cursor + 1)));
+
+  readline__Readline_refresh_line(r);
+}
+bool readline__Readline_commit_line(readline__Readline *r) {
+
+  array_insert(&/* ? */ r->previous_lines, 1,
+               &/*112 EXP:"void*" GOT:"ustring" */ r->current);
+
+  ustring a = string_ustring(tos3("\n"));
+
+  r->current = ustring_add(r->current, a);
+
+  r->cursor = r->current.len;
+
+  if (r->is_tty) {
+
+    readline__Readline_refresh_line(r);
+
+    println(tos3(""));
+  };
+
+  return 1;
+}
+void readline__Readline_move_cursor_left(readline__Readline *r) {
+
+  if (r->cursor > 0) {
+
+    r->cursor--;
+
+    readline__Readline_refresh_line(r);
+  };
+}
+void readline__Readline_move_cursor_right(readline__Readline *r) {
+
+  if (r->cursor < r->current.len) {
+
+    r->cursor++;
+
+    readline__Readline_refresh_line(r);
+  };
+}
+void readline__Readline_move_cursor_begining(readline__Readline *r) {
+
+  r->cursor = 0;
+
+  readline__Readline_refresh_line(r);
+}
+void readline__Readline_move_cursor_end(readline__Readline *r) {
+
+  r->cursor = r->current.len;
+
+  readline__Readline_refresh_line(r);
+}
+bool readline__Readline_is_break_character(readline__Readline r, string c) {
+
+  string break_characters =
+      tos3(" \t\v\f\a\b\r\n`~!@#$%^&*()-=+[{]}\\|;:\'\",<.>/?");
+
+  return string_contains(break_characters, c);
+}
+void readline__Readline_move_cursor_word_left(readline__Readline *r) {
+
+  if (r->cursor > 0) {
+
+    for (; r->cursor > 0 && readline__Readline_is_break_character(
+                                *r, ustring_at(r->current, r->cursor - 1));
+         r->cursor--) {
+    };
+
+    for (; r->cursor > 0 && !readline__Readline_is_break_character(
+                                *r, ustring_at(r->current, r->cursor - 1));
+         r->cursor--) {
+    };
+
+    readline__Readline_refresh_line(r);
+  };
+}
+void readline__Readline_move_cursor_word_right(readline__Readline *r) {
+
+  if (r->cursor < r->current.len) {
+
+    for (; r->cursor < r->current.len &&
+           readline__Readline_is_break_character(
+               *r, ustring_at(r->current, r->cursor));
+         r->cursor++) {
+    };
+
+    for (; r->cursor < r->current.len &&
+           !readline__Readline_is_break_character(
+               *r, ustring_at(r->current, r->cursor));
+         r->cursor++) {
+    };
+
+    readline__Readline_refresh_line(r);
+  };
+}
+void readline__Readline_switch_overwrite(readline__Readline *r) {
+
+  r->overwrite = !r->overwrite;
+}
+void readline__Readline_clear_screen(readline__Readline *r) {
+
+  term__set_cursor_position(1, 1);
+
+  term__erase_clear();
+
+  readline__Readline_refresh_line(r);
+}
+void readline__Readline_history_previous(readline__Readline *r) {
+
+  if (r->search_index + 2 >= r->previous_lines.len) {
+
+    return;
+  };
+
+  if (r->search_index == 0) {
+
+    array_set(&/*q*/ r->previous_lines, 0, &(ustring[]){r->current});
+  };
+
+  r->search_index++;
+
+  r->current = (*(ustring *)array_get(r->previous_lines, r->search_index));
+
+  r->cursor = r->current.len;
+
+  readline__Readline_refresh_line(r);
+}
+void readline__Readline_history_next(readline__Readline *r) {
+
+  if (r->search_index <= 0) {
+
+    return;
+  };
+
+  r->search_index--;
+
+  r->current = (*(ustring *)array_get(r->previous_lines, r->search_index));
+
+  r->cursor = r->current.len;
+
+  readline__Readline_refresh_line(r);
+}
+void readline__Readline_suspend(readline__Readline *r) {
+
+  raise(SIGSTOP);
+
+  readline__Readline_refresh_line(r);
+}
 void time__remove_me_when_c_bug_is_fixed() {}
 time__Time time__now() {
 
@@ -15703,8 +16529,8 @@ Option_string compiler__find_windows_kit_internal(RegKey key,
 
     int required_bytes = 0;
 
-    void *result = RegQueryValueExW(key, string_to_wide(version), 0, 0, 0,
-                                    &required_bytes);
+    void *result =
+        RegQueryValueEx(key, string_to_wide(version), 0, 0, 0, &required_bytes);
 
     int length = required_bytes / 2;
 
@@ -15722,8 +16548,8 @@ Option_string compiler__find_windows_kit_internal(RegKey key,
       continue;
     };
 
-    void *result2 = RegQueryValueExW(key, string_to_wide(version), 0, 0, value,
-                                     &alloc_length);
+    void *result2 = RegQueryValueEx(key, string_to_wide(version), 0, 0, value,
+                                    &alloc_length);
 
     if (result2 != 0) {
 
@@ -15744,18 +16570,20 @@ Option_string compiler__find_windows_kit_internal(RegKey key,
 
   return v_error(tos3("windows kit not found"));
 }
-Option_compiler__WindowsKit compiler__find_windows_kit_root() {
+Option_compiler__WindowsKit compiler__find_windows_kit_root(string host_arch) {
 
 #ifdef _WIN32
 
   RegKey root_key = ((RegKey)(0));
 
   void *rc =
-      RegOpenKeyExA(compiler__HKEY_LOCAL_MACHINE,
-                    "SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots", 0,
-                    compiler__KEY_QUERY_VALUE | compiler__KEY_WOW64_32KEY |
-                        compiler__KEY_ENUMERATE_SUB_KEYS,
-                    &root_key);
+      RegOpenKeyEx(compiler__HKEY_LOCAL_MACHINE,
+                   string_to_wide(tos3(
+                       "SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots")),
+                   0,
+                   compiler__KEY_QUERY_VALUE | compiler__KEY_WOW64_32KEY |
+                       compiler__KEY_ENUMERATE_SUB_KEYS,
+                   &root_key);
 
   if (rc != 0) {
 
@@ -15811,14 +16639,16 @@ Option_compiler__WindowsKit compiler__find_windows_kit_root() {
   string kit_include_highest =
       string_replace(kit_lib_highest, tos3("Lib"), tos3("Include"));
 
-  compiler__WindowsKit tmp25 =
-      OPTION_CAST(compiler__WindowsKit)((compiler__WindowsKit){
-          .um_lib_path = string_add(kit_lib_highest, tos3("\\um\\x64")),
-          .ucrt_lib_path = string_add(kit_lib_highest, tos3("\\ucrt\\x64")),
-          .um_include_path = string_add(kit_include_highest, tos3("\\um")),
-          .ucrt_include_path = string_add(kit_include_highest, tos3("\\ucrt")),
-          .shared_include_path =
-              string_add(kit_include_highest, tos3("\\shared"))});
+  compiler__WindowsKit tmp25 = OPTION_CAST(
+      compiler__WindowsKit)((compiler__WindowsKit){
+      .um_lib_path = string_add(
+          kit_lib_highest, _STR("\\um\\%.*s", host_arch.len, host_arch.str)),
+      .ucrt_lib_path = string_add(
+          kit_lib_highest, _STR("\\ucrt\\%.*s", host_arch.len, host_arch.str)),
+      .um_include_path = string_add(kit_include_highest, tos3("\\um")),
+      .ucrt_include_path = string_add(kit_include_highest, tos3("\\ucrt")),
+      .shared_include_path =
+          string_add(kit_include_highest, tos3("\\shared"))});
   { RegCloseKey(root_key); }
   return opt_ok(&tmp25, sizeof(compiler__WindowsKit));
 
@@ -15831,7 +16661,8 @@ Option_compiler__WindowsKit compiler__find_windows_kit_root() {
 
   return v_error(tos3("Host OS does not support funding a windows kit"));
 }
-Option_compiler__VsInstallation compiler__find_vs() {
+Option_compiler__VsInstallation compiler__find_vs(string vswhere_dir,
+                                                  string host_arch) {
 
 #ifndef _WIN32
 
@@ -15841,10 +16672,11 @@ Option_compiler__VsInstallation compiler__find_vs() {
   ;
 
   Option_os__Result tmp26 = os__exec(
-      tos3("\"\"%ProgramFiles(x86)%\\Microsoft Visual "
-           "Studio\\Installer\\vswhere.exe\" -latest -prerelease -products * "
-           "-requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 "
-           "-property installationPath\""));
+      _STR("\"\"%.*s\\Microsoft Visual Studio\\Installer\\vswhere.exe\" "
+           "-latest -prerelease -products * -requires "
+           "Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property "
+           "installationPath\"",
+           vswhere_dir.len, vswhere_dir.str));
   if (!tmp26.ok) {
     string err = tmp26.error;
 
@@ -15870,8 +16702,9 @@ Option_compiler__VsInstallation compiler__find_vs() {
                  ? (string_left(version, version.len - 2))
                  : (version);
 
-  string lib_path = _STR("%.*s\\VC\\Tools\\MSVC\\%.*s\\lib\\x64",
-                         res.output.len, res.output.str, v.len, v.str);
+  string lib_path =
+      _STR("%.*s\\VC\\Tools\\MSVC\\%.*s\\lib\\%.*s", res.output.len,
+           res.output.str, v.len, v.str, host_arch.len, host_arch.str);
 
   string include_path = _STR("%.*s\\VC\\Tools\\MSVC\\%.*s\\include",
                              res.output.len, res.output.str, v.len, v.str);
@@ -15879,8 +16712,9 @@ Option_compiler__VsInstallation compiler__find_vs() {
   if (os__file_exists(
           _STR("%.*s\\vcruntime.lib", lib_path.len, lib_path.str))) {
 
-    string p = _STR("%.*s\\VC\\Tools\\MSVC\\%.*s\\bin\\Hostx64\\x64",
-                    res.output.len, res.output.str, v.len, v.str);
+    string p = _STR("%.*s\\VC\\Tools\\MSVC\\%.*s\\bin\\Host%.*s\\%.*s",
+                    res.output.len, res.output.str, v.len, v.str, host_arch.len,
+                    host_arch.str, host_arch.len, host_arch.str);
 
     compiler__VsInstallation tmp32 =
         OPTION_CAST(compiler__VsInstallation)((compiler__VsInstallation){
@@ -15898,25 +16732,37 @@ Option_compiler__MsvcResult compiler__find_msvc() {
 
 #ifdef _WIN32
 
-  Option_compiler__WindowsKit tmp33 = compiler__find_windows_kit_root();
-  if (!tmp33.ok) {
-    string err = tmp33.error;
+  string processor_architecture = os__getenv(tos3("PROCESSOR_ARCHITECTURE"));
+
+  string vswhere_dir = (string_eq(processor_architecture, tos3("x86")))
+                           ? (tos3("%ProgramFiles%"))
+                           : (tos3("%ProgramFiles(x86)%"));
+
+  string host_arch = (string_eq(processor_architecture, tos3("x86")))
+                         ? (tos3("X86"))
+                         : (tos3("X64"));
+
+  Option_compiler__WindowsKit tmp36 =
+      compiler__find_windows_kit_root(host_arch);
+  if (!tmp36.ok) {
+    string err = tmp36.error;
 
     return v_error(tos3("Unable to find windows sdk"));
   }
-  compiler__WindowsKit wk = *(compiler__WindowsKit *)tmp33.data;
+  compiler__WindowsKit wk = *(compiler__WindowsKit *)tmp36.data;
   ;
 
-  Option_compiler__VsInstallation tmp34 = compiler__find_vs();
-  if (!tmp34.ok) {
-    string err = tmp34.error;
+  Option_compiler__VsInstallation tmp37 =
+      compiler__find_vs(vswhere_dir, host_arch);
+  if (!tmp37.ok) {
+    string err = tmp37.error;
 
     return v_error(tos3("Unable to find visual studio"));
   }
-  compiler__VsInstallation vs = *(compiler__VsInstallation *)tmp34.data;
+  compiler__VsInstallation vs = *(compiler__VsInstallation *)tmp37.data;
   ;
 
-  compiler__MsvcResult tmp35 =
+  compiler__MsvcResult tmp38 =
       OPTION_CAST(compiler__MsvcResult)((compiler__MsvcResult){
           .full_cl_exe_path = os__realpath(string_add(
               string_add(vs.exe_path, os__path_separator), tos3("cl.exe"))),
@@ -15928,7 +16774,7 @@ Option_compiler__MsvcResult compiler__find_msvc() {
           .ucrt_include_path = wk.ucrt_include_path,
           .vs_include_path = vs.include_path,
           .shared_include_path = wk.shared_include_path});
-  return opt_ok(&tmp35, sizeof(compiler__MsvcResult));
+  return opt_ok(&tmp38, sizeof(compiler__MsvcResult));
 
 #else
 
@@ -15941,9 +16787,9 @@ Option_compiler__MsvcResult compiler__find_msvc() {
 }
 void compiler__V_cc_msvc(compiler__V *v) {
 
-  Option_compiler__MsvcResult tmp36 = compiler__find_msvc();
-  if (!tmp36.ok) {
-    string err = tmp36.error;
+  Option_compiler__MsvcResult tmp39 = compiler__find_msvc();
+  if (!tmp39.ok) {
+    string err = tmp39.error;
 
     if (!v->pref->is_keep_c && string_ne(v->out_name_c, tos3("v.c")) &&
         string_ne(v->out_name_c, tos3("v_macos.c"))) {
@@ -15955,7 +16801,7 @@ void compiler__V_cc_msvc(compiler__V *v) {
 
     return;
   }
-  compiler__MsvcResult r = *(compiler__MsvcResult *)tmp36.data;
+  compiler__MsvcResult r = *(compiler__MsvcResult *)tmp39.data;
   ;
 
   string out_name_obj = os__realpath(string_add(v->out_name_c, tos3(".obj")));
@@ -15968,24 +16814,24 @@ void compiler__V_cc_msvc(compiler__V *v) {
 
   if (v->pref->is_prod) {
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/O2")), tmp39,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/O2")), tmp42,
           string);
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/MD")), tmp40,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/MD")), tmp43,
           string);
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/Zi")), tmp41,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/Zi")), tmp44,
           string);
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/DNDEBUG")), tmp42,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/DNDEBUG")), tmp45,
           string);
 
   } else {
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/Zi")), tmp43,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/Zi")), tmp46,
           string);
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/MDd")), tmp44,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/MDd")), tmp47,
           string);
   };
 
@@ -15996,7 +16842,7 @@ void compiler__V_cc_msvc(compiler__V *v) {
       v->out_name = string_add(v->out_name, tos3(".dll"));
     };
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/LD")), tmp45,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/LD")), tmp48,
           string);
 
   } else if (!string_ends_with(v->out_name, tos3(".exe"))) {
@@ -16020,7 +16866,7 @@ void compiler__V_cc_msvc(compiler__V *v) {
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ string_add(
             string_add(tos3("\""), os__realpath(v->out_name_c)), tos3("\""))),
-        tmp46, string);
+        tmp49, string);
 
   array_string real_libs = new_array_from_c_array(
       12, 12, sizeof(string),
@@ -16034,7 +16880,7 @@ void compiler__V_cc_msvc(compiler__V *v) {
       compiler__V_get_os_cflags(&/* ? */ *v));
 
   _PUSH_MANY(&real_libs,
-             (/*typ = array_string   tmp_typ=string*/ sflags.real_libs), tmp49,
+             (/*typ = array_string   tmp_typ=string*/ sflags.real_libs), tmp52,
              array_string);
 
   array_string inc_paths = sflags.inc_paths;
@@ -16046,77 +16892,77 @@ void compiler__V_cc_msvc(compiler__V *v) {
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "-I \"%.*s\"", r.ucrt_include_path.len, r.ucrt_include_path.str)),
-        tmp53, string);
+        tmp56, string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "-I \"%.*s\"", r.vs_include_path.len, r.vs_include_path.str)),
-        tmp54, string);
+        tmp57, string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "-I \"%.*s\"", r.um_include_path.len, r.um_include_path.str)),
-        tmp55, string);
+        tmp58, string);
 
   _PUSH(
       &a,
       (/*typ = array_string   tmp_typ=string*/ _STR(
           "-I \"%.*s\"", r.shared_include_path.len, r.shared_include_path.str)),
-      tmp56, string);
+      tmp59, string);
 
-  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ inc_paths), tmp57,
+  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ inc_paths), tmp60,
              array_string);
 
-  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ other_flags), tmp58,
+  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ other_flags), tmp61,
              array_string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ array_string_join(real_libs,
                                                                    tos3(" "))),
-        tmp59, string);
+        tmp62, string);
 
-  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/link")), tmp60,
+  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/link")), tmp63,
         string);
 
-  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/NOLOGO")), tmp61,
+  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/NOLOGO")), tmp64,
         string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "/OUT:\"%.*s\"", v->out_name.len, v->out_name.str)),
-        tmp62, string);
+        tmp65, string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "/LIBPATH:\"%.*s\"", r.ucrt_lib_path.len, r.ucrt_lib_path.str)),
-        tmp63, string);
+        tmp66, string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "/LIBPATH:\"%.*s\"", r.um_lib_path.len, r.um_lib_path.str)),
-        tmp64, string);
+        tmp67, string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "/LIBPATH:\"%.*s\"", r.vs_lib_path.len, r.vs_lib_path.str)),
-        tmp65, string);
+        tmp68, string);
 
   _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/DEBUG:FULL")),
-        tmp66, string);
+        tmp69, string);
 
   if (v->pref->is_prod) {
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/INCREMENTAL:NO")),
-          tmp67, string);
+          tmp70, string);
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/OPT:REF")), tmp68,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/OPT:REF")), tmp71,
           string);
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/OPT:ICF")), tmp69,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/OPT:ICF")), tmp72,
           string);
   };
 
-  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ lib_paths), tmp70,
+  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ lib_paths), tmp73,
              array_string);
 
   string args = array_string_join(a, tos3(" "));
@@ -16133,9 +16979,9 @@ void compiler__V_cc_msvc(compiler__V *v) {
     println(tos3("==========\n"));
   };
 
-  Option_os__Result tmp73 = os__exec(cmd);
-  if (!tmp73.ok) {
-    string err = tmp73.error;
+  Option_os__Result tmp76 = os__exec(cmd);
+  if (!tmp76.ok) {
+    string err = tmp76.error;
 
     println(err);
 
@@ -16143,7 +16989,7 @@ void compiler__V_cc_msvc(compiler__V *v) {
 
     return;
   }
-  os__Result res = *(os__Result *)tmp73.data;
+  os__Result res = *(os__Result *)tmp76.data;
   ;
 
   if (res.exit_code != 0) {
@@ -16162,15 +17008,15 @@ void compiler__V_cc_msvc(compiler__V *v) {
 void compiler__build_thirdparty_obj_file_with_msvc(
     string path, array_compiler__CFlag moduleflags) {
 
-  Option_compiler__MsvcResult tmp74 = compiler__find_msvc();
-  if (!tmp74.ok) {
-    string err = tmp74.error;
+  Option_compiler__MsvcResult tmp77 = compiler__find_msvc();
+  if (!tmp77.ok) {
+    string err = tmp77.error;
 
     println(tos3("Could not find visual studio"));
 
     return;
   }
-  compiler__MsvcResult msvc = *(compiler__MsvcResult *)tmp74.data;
+  compiler__MsvcResult msvc = *(compiler__MsvcResult *)tmp77.data;
   ;
 
   string obj_path = _STR("%.*sbj", path.len, path.str);
@@ -16193,9 +17039,9 @@ void compiler__build_thirdparty_obj_file_with_msvc(
 
   string cfiles = tos3("");
 
-  array_string tmp79 = files;
-  for (int tmp80 = 0; tmp80 < tmp79.len; tmp80++) {
-    string file = ((string *)tmp79.data)[tmp80];
+  array_string tmp82 = files;
+  for (int tmp83 = 0; tmp83 < tmp82.len; tmp83++) {
+    string file = ((string *)tmp82.data)[tmp83];
 
     if (string_ends_with(file, tos3(".c"))) {
 
@@ -16231,15 +17077,15 @@ void compiler__build_thirdparty_obj_file_with_msvc(
 
   printf("thirdparty cmd line: %.*s\n", cmd.len, cmd.str);
 
-  Option_os__Result tmp85 = os__exec(cmd);
-  if (!tmp85.ok) {
-    string err = tmp85.error;
+  Option_os__Result tmp88 = os__exec(cmd);
+  if (!tmp88.ok) {
+    string err = tmp88.error;
 
     compiler__verror(err);
 
     return;
   }
-  os__Result res = *(os__Result *)tmp85.data;
+  os__Result res = *(os__Result *)tmp88.data;
   ;
 
   println(res.output);
@@ -16259,9 +17105,9 @@ array_compiler__CFlag_msvc_string_flags(array_compiler__CFlag cflags) {
   array_string other_flags = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_compiler__CFlag tmp90 = cflags;
-  for (int tmp91 = 0; tmp91 < tmp90.len; tmp91++) {
-    compiler__CFlag flag = ((compiler__CFlag *)tmp90.data)[tmp91];
+  array_compiler__CFlag tmp93 = cflags;
+  for (int tmp94 = 0; tmp94 < tmp93.len; tmp94++) {
+    compiler__CFlag flag = ((compiler__CFlag *)tmp93.data)[tmp94];
 
     if (string_eq(flag.name, tos3("-l"))) {
 
@@ -16275,50 +17121,50 @@ array_compiler__CFlag_msvc_string_flags(array_compiler__CFlag cflags) {
       string lib_lib = string_add(flag.value, tos3(".lib"));
 
       _PUSH(&real_libs, (/*typ = array_string   tmp_typ=string*/ lib_lib),
-            tmp93, string);
+            tmp96, string);
 
     } else if (string_eq(flag.name, tos3("-I"))) {
 
       _PUSH(&inc_paths,
             (/*typ = array_string   tmp_typ=string*/ compiler__CFlag_format(
                 &/* ? */ flag)),
-            tmp94, string);
+            tmp97, string);
 
     } else if (string_eq(flag.name, tos3("-L"))) {
 
       _PUSH(&lib_paths, (/*typ = array_string   tmp_typ=string*/ flag.value),
-            tmp95, string);
+            tmp98, string);
 
       _PUSH(&lib_paths,
             (/*typ = array_string   tmp_typ=string*/ string_add(
                 string_add(flag.value, os__path_separator), tos3("msvc"))),
-            tmp96, string);
+            tmp99, string);
 
     } else if (string_ends_with(flag.value, tos3(".o"))) {
 
       _PUSH(&other_flags,
             (/*typ = array_string   tmp_typ=string*/ _STR(
                 "\"%.*sbj\"", flag.value.len, flag.value.str)),
-            tmp97, string);
+            tmp100, string);
 
     } else {
 
       _PUSH(&other_flags, (/*typ = array_string   tmp_typ=string*/ flag.value),
-            tmp98, string);
+            tmp101, string);
     };
   };
 
   array_string lpaths = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_string tmp100 = lib_paths;
-  for (int tmp101 = 0; tmp101 < tmp100.len; tmp101++) {
-    string l = ((string *)tmp100.data)[tmp101];
+  array_string tmp103 = lib_paths;
+  for (int tmp104 = 0; tmp104 < tmp103.len; tmp104++) {
+    string l = ((string *)tmp103.data)[tmp104];
 
     _PUSH(&lpaths,
           (/*typ = array_string   tmp_typ=string*/ string_add(
               string_add(tos3("/LIBPATH:\""), os__realpath(l)), tos3("\""))),
-          tmp102, string);
+          tmp105, string);
   };
 
   return (compiler__MsvcStringFlags){real_libs, inc_paths, lpaths, other_flags};
@@ -24015,34 +24861,56 @@ array_string compiler__run_repl() {
                        .functions_name = new_array(0, 1, sizeof(string)),
                        .functions = new_array(0, 1, sizeof(string))};
 
+  readline__Readline readline =
+      (readline__Readline){.is_raw = 0,
+                           .cursor = 0,
+                           .overwrite = 0,
+                           .cursor_row_offset = 0,
+                           .prompt = tos((byte *)"", 0),
+                           .previous_lines = new_array(0, 1, sizeof(ustring)),
+                           .search_index = 0,
+                           .is_tty = 0};
+
   string vexe = (*(string *)array_get(os__args, 0));
+
+  string prompt = tos3(">>> ");
 
   while (1) {
 
     if (r.indent == 0) {
 
-      print(tos3(">>> "));
+      prompt = tos3(">>> ");
 
     } else {
 
-      print(tos3("... "));
+      prompt = tos3("... ");
     };
 
-    r.line = os__get_raw_line();
+    Option_string tmp29 =
+        readline__Readline_read_line(&/* ? */ readline, prompt);
+    if (!tmp29.ok) {
+      string err = tmp29.error;
 
-    if (string_eq(string_trim_space(r.line), tos3("")) &&
-        string_ends_with(r.line, tos3("\n"))) {
+      break;
+    }
+    string line = *(string *)tmp29.data;
+    ;
+
+    if (string_eq(string_trim_space(line), tos3("")) &&
+        string_ends_with(line, tos3("\n"))) {
 
       continue;
     };
 
-    r.line = string_trim_space(r.line);
+    line = string_trim_space(line);
 
-    if (r.line.len == -1 || string_eq(r.line, tos3("")) ||
-        string_eq(r.line, tos3("exit"))) {
+    if (line.len <= -1 || string_eq(line, tos3("")) ||
+        string_eq(line, tos3("exit"))) {
 
       break;
     };
+
+    r.line = line;
 
     if (string_eq(r.line, tos3("\n"))) {
 
@@ -24071,26 +24939,26 @@ array_string compiler__run_repl() {
             (/*typ = array_string   tmp_typ=string*/ string_trim_space(
                 string_all_before(string_all_after(r.line, tos3("fn")),
                                   tos3("(")))),
-            tmp27, string);
+            tmp30, string);
     };
 
     bool was_func = r.in_func;
 
     if (compiler__Repl_checks(&/* ? */ r)) {
 
-      array_string tmp29 = string_split(r.line, tos3("\n"));
-      for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
-        string line = ((string *)tmp29.data)[tmp30];
+      array_string tmp32 = string_split(r.line, tos3("\n"));
+      for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
+        string line = ((string *)tmp32.data)[tmp33];
 
         if (r.in_func || was_func) {
 
           _PUSH(&r.functions, (/*typ = array_string   tmp_typ=string*/ line),
-                tmp31, string);
+                tmp34, string);
 
         } else {
 
           _PUSH(&r.temp_lines, (/*typ = array_string   tmp_typ=string*/ line),
-                tmp32, string);
+                tmp35, string);
         };
       };
 
@@ -24112,14 +24980,14 @@ array_string compiler__run_repl() {
 
       os__write_file(file, source_code);
 
-      Option_os__Result tmp34 = os__exec(_STR(
+      Option_os__Result tmp37 = os__exec(_STR(
           "\"%.*s\" run %.*s -repl", vexe.len, vexe.str, file.len, file.str));
-      if (!tmp34.ok) {
-        string err = tmp34.error;
+      if (!tmp37.ok) {
+        string err = tmp37.error;
 
         compiler__verror(err);
 
-        array_string tmp35 = new_array_from_c_array(
+        array_string tmp38 = new_array_from_c_array(
             0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
         {
 
@@ -24131,10 +24999,10 @@ array_string compiler__run_repl() {
 
           os__rm(string_left(temp_file, temp_file.len - 2));
         }
-        return tmp35;
+        return tmp38;
         ;
       }
-      os__Result s = *(os__Result *)tmp34.data;
+      os__Result s = *(os__Result *)tmp37.data;
       ;
 
       array_string vals = string_split(s.output, tos3("\n"));
@@ -24177,15 +25045,15 @@ array_string compiler__run_repl() {
 
       os__write_file(temp_file, temp_source_code);
 
-      Option_os__Result tmp44 =
+      Option_os__Result tmp47 =
           os__exec(_STR("\"%.*s\" run %.*s -repl", vexe.len, vexe.str,
                         temp_file.len, temp_file.str));
-      if (!tmp44.ok) {
-        string err = tmp44.error;
+      if (!tmp47.ok) {
+        string err = tmp47.error;
 
         compiler__verror(err);
 
-        array_string tmp45 = new_array_from_c_array(
+        array_string tmp48 = new_array_from_c_array(
             0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
         {
 
@@ -24197,10 +25065,10 @@ array_string compiler__run_repl() {
 
           os__rm(string_left(temp_file, temp_file.len - 2));
         }
-        return tmp45;
+        return tmp48;
         ;
       }
-      os__Result s = *(os__Result *)tmp44.data;
+      os__Result s = *(os__Result *)tmp47.data;
       ;
 
       if (!func_call && s.exit_code == 0 && !temp_flag) {
@@ -24213,13 +25081,13 @@ array_string compiler__run_repl() {
             _PUSH(&r.lines,
                   (/*typ = array_string   tmp_typ=string*/ (
                       *(string *)array_get(r.temp_lines, 0))),
-                  tmp48, string);
+                  tmp51, string);
           };
 
           v_array_delete(&/* ? */ r.temp_lines, 0);
         };
 
-        _PUSH(&r.lines, (/*typ = array_string   tmp_typ=string*/ r.line), tmp51,
+        _PUSH(&r.lines, (/*typ = array_string   tmp_typ=string*/ r.line), tmp54,
               string);
 
       } else {
@@ -24239,7 +25107,7 @@ array_string compiler__run_repl() {
     };
   };
 
-  array_string tmp56 = r.lines;
+  array_string tmp59 = r.lines;
   {
 
     os__rm(file);
@@ -24250,7 +25118,7 @@ array_string compiler__run_repl() {
 
     os__rm(string_left(temp_file, temp_file.len - 2));
   }
-  return tmp56;
+  return tmp59;
   ;
 
   {
