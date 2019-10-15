@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f9593bd"
+#define V_COMMIT_HASH "75e2a29"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4b176ba"
+#define V_COMMIT_HASH "f9593bd"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -3521,32 +3521,8 @@ int v_string_int(string s) { return atoi(((char *)(s.str))); }
 i64 string_i64(string s) { return atoll(((char *)(s.str))); }
 f32 string_f32(string s) { return atof(((char *)(s.str))); }
 f64 string_f64(string s) { return atof(((char *)(s.str))); }
-u32 string_u32(string s) {
-
-#ifdef __TINYC__
-
-  return ((u32)(v_string_int(s)));
-
-#else
-
-  return strtoul(((char *)(s.str)), 0, 0);
-
-#endif
-  ;
-}
-u64 string_u64(string s) {
-
-#ifdef __TINYC__
-
-  return ((u64)(string_i64(s)));
-
-#else
-
-  return strtoull(((char *)(s.str)), 0, 0);
-
-#endif
-  ;
-}
+u32 string_u32(string s) { return strtoul(((char *)(s.str)), 0, 0); }
+u64 string_u64(string s) { return strtoull(((char *)(s.str)), 0, 0); }
 bool string_eq(string s, string a) {
 
   if (isnil(s.str)) {
