@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ae3ec38"
+#define V_COMMIT_HASH "10ed65b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "83b18af"
+#define V_COMMIT_HASH "ae3ec38"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -2811,6 +2811,8 @@ string ptr_str(void *ptr) {
 }
 bool f64_eq(f64 a, f64 b) {
 
+#ifdef _WIN32
+
 #ifdef __TINYC__
 
   return f64_le(a - b, 0.01);
@@ -2821,12 +2823,28 @@ bool f64_eq(f64 a, f64 b) {
 
 #endif
   ;
+
+#else
+
+  return fabs(a - b) <= DBL_EPSILON;
+
+#endif
+  ;
 }
 bool f32_eq(f32 a, f32 b) {
+
+#ifdef _WIN32
 
 #ifdef __TINYC__
 
   return f32_le(a - b, 0.01);
+
+#else
+
+  return fabsf(a - b) <= FLT_EPSILON;
+
+#endif
+  ;
 
 #else
 
