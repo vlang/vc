@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "10ed65b"
+#define V_COMMIT_HASH "4b176ba"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ae3ec38"
+#define V_COMMIT_HASH "10ed65b"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -3541,7 +3541,7 @@ u64 string_u64(string s) {
 
 #ifdef __TINYC__
 
-  return ((u64)(v_string_int(s)));
+  return ((u64)(string_i64(s)));
 
 #else
 
