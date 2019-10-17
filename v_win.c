@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5faa7e7"
+#define V_COMMIT_HASH "5481f22"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8373264"
+#define V_COMMIT_HASH "5faa7e7"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -9905,11 +9905,17 @@ void compiler__Parser_gen_array_str(compiler__Parser *p, compiler__Type typ) {
   compiler__Type elm_type2 =
       compiler__Table_find_type(&/* ? */ *p->table, elm_type);
 
-  if (string_eq(compiler__Parser_typ_to_fmt(p, elm_type, 0), tos3("")) &&
-      !compiler__Table_type_has_method(
-          &/* ? */ *p->table,
-          &/*112 EXP:"compiler__Type*" GOT:"compiler__Type" */ elm_type2,
-          tos3("str"))) {
+  bool is_array = string_starts_with(elm_type, tos3("array_"));
+
+  if (is_array) {
+
+    compiler__Parser_gen_array_str(p, elm_type2);
+
+  } else if (string_eq(compiler__Parser_typ_to_fmt(p, elm_type, 0), tos3("")) &&
+             !compiler__Table_type_has_method(
+                 &/* ? */ *p->table,
+                 &/*112 EXP:"compiler__Type*" GOT:"compiler__Type" */ elm_type2,
+                 tos3("str"))) {
 
     compiler__Parser_error(p, _STR("cant print %.*s[], unhandled print of %.*s",
                                    elm_type.len, elm_type.str, elm_type.len,
@@ -9929,7 +9935,7 @@ void compiler__Parser_gen_array_str(compiler__Parser *p, compiler__Type typ) {
   _PUSH(&p->cgen->fns,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "string %.*s_str();", typ.name.len, typ.name.str)),
-        tmp36, string);
+        tmp37, string);
 }
 void compiler__Parser_gen_struct_str(compiler__Parser *p, compiler__Type typ) {
 
@@ -9982,9 +9988,9 @@ void compiler__Parser_gen_struct_str(compiler__Parser *p, compiler__Type typ) {
 
   strings__Builder_writeln(&/* ? */ sb, tos3("'{"));
 
-  array_compiler__Var tmp38 = typ.fields;
-  for (int tmp39 = 0; tmp39 < tmp38.len; tmp39++) {
-    compiler__Var field = ((compiler__Var *)tmp38.data)[tmp39];
+  array_compiler__Var tmp39 = typ.fields;
+  for (int tmp40 = 0; tmp40 < tmp39.len; tmp40++) {
+    compiler__Var field = ((compiler__Var *)tmp39.data)[tmp40];
 
     strings__Builder_writeln(
         &/* ? */ sb,
@@ -10001,7 +10007,7 @@ void compiler__Parser_gen_struct_str(compiler__Parser *p, compiler__Type typ) {
   _PUSH(&p->cgen->fns,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "string %.*s_str();", typ.name.len, typ.name.str)),
-        tmp40, string);
+        tmp41, string);
 }
 void compiler__DepSet_add(compiler__DepSet *dset, string item) {
 
@@ -18056,9 +18062,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
     return compiler__Fn_typ_str(&/* ? */ f);
   };
 
-  bool is_arr = 0;
-
-  bool is_arr2 = 0;
+  int arr_level = 0;
 
   bool is_question = p->tok == compiler__compiler__TokenKind_question;
 
@@ -18067,40 +18071,22 @@ string compiler__Parser_get_type(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_question);
   };
 
-  if (p->tok == compiler__compiler__TokenKind_lsbr) {
+  while (p->tok == compiler__compiler__TokenKind_lsbr) {
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_lsbr);
 
     if (p->tok == compiler__compiler__TokenKind_number) {
 
-      typ = _STR("[%.*s]", p->lit.len, p->lit.str);
+      typ = string_add(typ, _STR("[%.*s]", p->lit.len, p->lit.str));
 
       compiler__Parser_next(p);
 
     } else {
 
-      is_arr = 1;
+      arr_level++;
     };
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_rsbr);
-
-    if (p->tok == compiler__compiler__TokenKind_lsbr) {
-
-      compiler__Parser_next(p);
-
-      if (p->tok == compiler__compiler__TokenKind_number) {
-
-        typ = string_add(typ, _STR("[%.*s]", p->lit.len, p->lit.str));
-
-        compiler__Parser_check(p, compiler__compiler__TokenKind_number);
-
-      } else {
-
-        is_arr2 = 1;
-      };
-
-      compiler__Parser_check(p, compiler__compiler__TokenKind_rsbr);
-    };
   };
 
   if (!p->builtin_mod && p->tok == compiler__compiler__TokenKind_name &&
@@ -18234,15 +18220,12 @@ string compiler__Parser_get_type(compiler__Parser *p) {
     typ = string_add(typ, strings__repeat('*', nr_muls));
   };
 
-  if (is_arr2) {
+  if (arr_level > 0) {
 
-    typ = _STR("array_array_%.*s", typ.len, typ.str);
+    for (int i = 0; i < arr_level; i++) {
 
-    compiler__Parser_register_array(p, typ);
-
-  } else if (is_arr) {
-
-    typ = _STR("array_%.*s", typ.len, typ.str);
+      typ = _STR("array_%.*s", typ.len, typ.str);
+    };
 
     compiler__Parser_register_array(p, typ);
   };
