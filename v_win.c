@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "22e7e80"
+#define V_COMMIT_HASH "4932a32"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f46b58b"
+#define V_COMMIT_HASH "22e7e80"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -14461,8 +14461,11 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
 
       println(array_string_str(v->files));
 
-      compiler__FileImportTable_register_alias(&/* ? */ p.import_table,
-                                               tos3("os"), tos3("os"), 0);
+      compiler__FileImportTable_register_import(&/* ? */ p.import_table,
+                                                tos3("os"), 0);
+
+      map_set(&v->table->file_imports, p.file_path_id,
+              &(compiler__FileImportTable[]){p.import_table});
 
       _PUSH(&p.table->imports,
             (/*typ = array_string   tmp_typ=string*/ tos3("os")), tmp52,
