@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b32a462"
+#define V_COMMIT_HASH "f46b58b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5cd38ec"
+#define V_COMMIT_HASH "b32a462"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -3022,7 +3022,7 @@ string i64_hex(i64 n) {
 
   byte *hex = v_malloc(len);
 
-  int count = ((int)(sprintf(((char *)(hex)), "0x%llx", n)));
+  int count = ((int)(sprintf(((char *)(hex)), "0x%" PRIx64, n)));
 
   return tos(hex, count);
 }
