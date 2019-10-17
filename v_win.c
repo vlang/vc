@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4932a32"
+#define V_COMMIT_HASH "2709344"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "22e7e80"
+#define V_COMMIT_HASH "4932a32"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -189,6 +189,7 @@ typedef struct _V_FnVargs_os__join _V_FnVargs_os__join;
 typedef voidptr HANDLE; // type alias name="HANDLE" parent=`voidptr`
 typedef struct os__Filetime os__Filetime;
 typedef struct os__Win32finddata os__Win32finddata;
+typedef Option Option_array_string;
 typedef Option Option_string;
 typedef struct rand__Pcg32 rand__Pcg32;
 typedef struct rand__Splitmix64 rand__Splitmix64;
@@ -260,6 +261,7 @@ typedef Option Option_os__File;
 typedef Option Option_os__Result;
 typedef struct _V_FnVargs_os__join _V_FnVargs_os__join;
 
+typedef Option Option_array_string;
 typedef Option Option_string;
 typedef Option Option_int;
 typedef map map_compiler__DepGraphNode;
@@ -1081,7 +1083,7 @@ void os__print_backtrace();
 void os__mkdir_all(string path);
 string os__join(string base, _V_FnVargs_os__join *dirs);
 array_string os__init_os_args(int argc, byteptr *argv);
-array_string os__ls(string path);
+Option_array_string os__ls(string path);
 bool os__dir_exists(string path);
 void os__mkdir(string path);
 HANDLE os__get_file_handle(string path);
@@ -6243,7 +6245,14 @@ array_string os__walk_ext(string path, string ext) {
                                   EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   };
 
-  array_string files = os__ls(path);
+  Option_array_string tmp103 = os__ls(path);
+  if (!tmp103.ok) {
+    string err = tmp103.error;
+
+    v_panic(err);
+  }
+  array_string files = *(array_string *)tmp103.data;
+  ;
 
   array_string res = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
@@ -6370,7 +6379,7 @@ array_string os__init_os_args(int argc, byteptr *argv) {
 
   return args;
 }
-array_string os__ls(string path) {
+Option_array_string os__ls(string path) {
 
   os__Win32finddata find_file_data = (os__Win32finddata){.dwFileAttributes = 0,
                                                          .nFileSizeHigh = 0,
@@ -6386,10 +6395,7 @@ array_string os__ls(string path) {
 
   if (!os__dir_exists(path)) {
 
-    printf("ls() couldnt open dir \"%.*s\" (does not exist).\n", path.len,
-           path.str);
-
-    return dir_files;
+    return v_error(_STR("ls() couldnt open dir \"%.*s\"", path.len, path.str));
   };
 
   string path_files = _STR("%.*s\\*", path.len, path.str);
@@ -6420,7 +6426,8 @@ array_string os__ls(string path) {
 
   FindClose(h_find_files);
 
-  return dir_files;
+  array_string tmp14 = OPTION_CAST(array_string)(dir_files);
+  return opt_ok(&tmp14, sizeof(array_string));
 }
 bool os__dir_exists(string path) {
 
@@ -6480,8 +6487,8 @@ Option_string os__get_module_filename(HANDLE handle) {
 
       string _filename = string_from_wide2(buf, sz);
 
-      string tmp24 = OPTION_CAST(string)(_filename);
-      return opt_ok(&tmp24, sizeof(string));
+      string tmp25 = OPTION_CAST(string)(_filename);
+      return opt_ok(&tmp25, sizeof(string));
 
     } else { // default:
 
@@ -8872,7 +8879,14 @@ void compiler__build_thirdparty_obj_file(string path,
 
   string parent = os__dir(obj_path);
 
-  array_string files = os__ls(parent);
+  Option_array_string tmp28 = os__ls(parent);
+  if (!tmp28.ok) {
+    string err = tmp28.error;
+
+    v_panic(err);
+  }
+  array_string files = *(array_string *)tmp28.data;
+  ;
 
   string cfiles = tos3("");
 
@@ -14343,7 +14357,14 @@ array_string compiler__V_v_files_from_dir(compiler__V *v, string dir) {
     compiler__verror(_STR("%.*s isn't a directory", dir.len, dir.str));
   };
 
-  array_string files = os__ls(dir);
+  Option_array_string tmp38 = os__ls(dir);
+  if (!tmp38.ok) {
+    string err = tmp38.error;
+
+    v_panic(err);
+  }
+  array_string files = *(array_string *)tmp38.data;
+  ;
 
   if (v->pref->is_verbose) {
 
@@ -15989,7 +16010,14 @@ Option_compiler__WindowsKit compiler__find_windows_kit_root(string host_arch) {
 
   string kit_lib = string_add(kit_root, tos3("Lib"));
 
-  array_string files = os__ls(kit_lib);
+  Option_array_string tmp16 = os__ls(kit_lib);
+  if (!tmp16.ok) {
+    string err = tmp16.error;
+
+    v_panic(err);
+  }
+  array_string files = *(array_string *)tmp16.data;
+  ;
 
   string highest_path = tos3("");
 
@@ -16413,7 +16441,14 @@ void compiler__build_thirdparty_obj_file_with_msvc(
 
   string parent = os__dir(obj_path);
 
-  array_string files = os__ls(parent);
+  Option_array_string tmp80 = os__ls(parent);
+  if (!tmp80.ok) {
+    string err = tmp80.error;
+
+    v_panic(err);
+  }
+  array_string files = *(array_string *)tmp80.data;
+  ;
 
   string cfiles = tos3("");
 
