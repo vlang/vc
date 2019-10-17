@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2709344"
+#define V_COMMIT_HASH "8d16762"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4932a32"
+#define V_COMMIT_HASH "2709344"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1025,6 +1025,11 @@ int strings__levenshtein_distance(string a, string b);
 f32 strings__levenshtein_distance_percentage(string a, string b);
 f32 strings__dice_coefficient(string s1, string s2);
 string strings__repeat(byte c, int n);
+byte strconv__byte_to_lower(byte c);
+u64 strconv__parse_uint(string _s, int _base, int _bit_size);
+i64 strconv__parse_int(string _s, int base, int _bit_size);
+int strconv__atoi(string _s);
+bool strconv__underscore_ok(string _s);
 Option_string os__read_file(string path);
 int os__file_size(string path);
 void os__mv(string old, string new);
@@ -1719,6 +1724,8 @@ int builtin__min_cap;
 int builtin__max_cap;
 array_int g_ustring_runes; // global
 #define builtin__CP_UTF8 65001
+#define strconv__int_size 32
+u64 strconv__max_u64;
 #define os__SUCCESS 0
 #define os__ERROR_INSUFFICIENT_BUFFER 130
 #define os__FILE_SHARE_READ 1
@@ -3536,12 +3543,12 @@ string string_replace(string s, string rep, string with) {
 
   return tos(b, new_len);
 }
-int v_string_int(string s) { return atoi(((char *)(s.str))); }
-i64 string_i64(string s) { return atoll(((char *)(s.str))); }
+int v_string_int(string s) { return strconv__parse_int(s, 0, 32); }
+i64 string_i64(string s) { return strconv__parse_int(s, 0, 64); }
 f32 string_f32(string s) { return atof(((char *)(s.str))); }
 f64 string_f64(string s) { return atof(((char *)(s.str))); }
-u32 string_u32(string s) { return strtoul(((char *)(s.str)), 0, 0); }
-u64 string_u64(string s) { return strtoull(((char *)(s.str)), 0, 0); }
+u32 string_u32(string s) { return strconv__parse_uint(s, 0, 32); }
+u64 string_u64(string s) { return strconv__parse_uint(s, 0, 64); }
 bool string_eq(string s, string a) {
 
   if (isnil(s.str)) {
@@ -5129,6 +5136,296 @@ string strings__repeat(byte c, int n) {
   array_set(&/*q*/ arr, n, &(byte[]){'\0'});
 
   return (tos((byte *)arr.data, n));
+}
+byte strconv__byte_to_lower(byte c) { return c | ('x' - 'X'); }
+u64 strconv__parse_uint(string _s, int _base, int _bit_size) {
+
+  string s = string_trim_space(_s);
+
+  int bit_size = _bit_size;
+
+  int base = _base;
+
+  if (string_eq(s, tos3("")) || !strconv__underscore_ok(s)) {
+
+    return ((u64)(0));
+  };
+
+  bool base0 = base == 0;
+
+  string s0 = s;
+
+  if (2 <= base && base <= 36) {
+
+  } else if (base == 0) {
+
+    base = 10;
+
+    if (string_at(s, 0) == '0') {
+
+      if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == 'b') {
+
+        base = 2;
+
+        s = string_right(s, 2);
+
+      } else if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == 'o') {
+
+        base = 8;
+
+        s = string_right(s, 2);
+
+      } else if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == 'x') {
+
+        base = 16;
+
+        s = string_right(s, 2);
+
+      } else {
+
+        base = 8;
+
+        s = string_right(s, 1);
+      };
+    };
+
+  } else {
+
+    return ((u64)(0));
+  };
+
+  if (bit_size == 0) {
+
+    bit_size = ((int)(strconv__int_size));
+
+  } else if (bit_size < 0 || bit_size > 64) {
+
+    return ((u64)(0));
+  };
+
+  u64 cutoff = ((u64)(strconv__max_u64 / ((u64)(base)))) + ((u64)(1));
+
+  u64 max_val = (bit_size == 64)
+                    ? (strconv__max_u64)
+                    : (((u64)(((u32)(1)) << ((u32)(bit_size - ((u32)(1)))))));
+
+  bool underscores = 0;
+
+  u64 n = ((u64)(0));
+
+  string tmp18 = s;
+  array_byte bytes_tmp18 = string_bytes(tmp18);
+  ;
+  for (int _ = 0; _ < tmp18.len; _++) {
+    byte c = ((byte *)bytes_tmp18.data)[_];
+
+    byte d = ((byte)(0));
+
+    byte cl = strconv__byte_to_lower(c);
+
+    if (c == '_' && base0) {
+
+      underscores = 1;
+
+      continue;
+
+    } else if ('0' <= c && c <= '9') {
+
+      d = c - '0';
+
+    } else if ('a' <= cl && cl <= 'z') {
+
+      d = cl - 'a' + 10;
+
+    } else {
+
+      return ((u64)(0));
+    };
+
+    if (d >= ((byte)(base))) {
+
+      return ((u64)(0));
+    };
+
+    if (n >= cutoff) {
+
+      return max_val;
+    };
+
+    n *= ((u64)(base));
+
+    u64 n1 = n + ((u64)(d));
+
+    if (n1 < n || n1 > ((u64)(max_val))) {
+
+      return max_val;
+    };
+
+    n = n1;
+  };
+
+  if (underscores && !strconv__underscore_ok(s0)) {
+
+    return ((u64)(0));
+  };
+
+  return n;
+}
+i64 strconv__parse_int(string _s, int base, int _bit_size) {
+
+  string s = _s;
+
+  int bit_size = _bit_size;
+
+  if (string_eq(s, tos3(""))) {
+
+    return ((i64)(0));
+  };
+
+  string s0 = s;
+
+  bool neg = 0;
+
+  if (string_at(s, 0) == '+') {
+
+    s = string_right(s, 1);
+
+  } else if (string_at(s, 0) == '-') {
+
+    neg = 1;
+
+    s = string_right(s, 1);
+  };
+
+  u64 un = strconv__parse_uint(s, base, bit_size);
+
+  if (un == 0) {
+
+    return ((i64)(0));
+  };
+
+  if (bit_size == 0) {
+
+    bit_size = ((int)(strconv__int_size));
+  };
+
+  u64 cutoff = ((u64)(((u64)(1)) << ((u64)(bit_size - 1))));
+
+  if (!neg && un >= cutoff) {
+
+    return ((i64)(cutoff - ((u64)(1))));
+  };
+
+  if (neg && un > cutoff) {
+
+    return -((i64)(cutoff));
+  };
+
+  return (neg) ? (-((i64)(un))) : (((i64)(un)));
+}
+int strconv__atoi(string _s) {
+
+  string s = _s;
+
+  if ((strconv__int_size == 32 && (0 < s.len && s.len < 10)) ||
+      (strconv__int_size == 64 && (0 < s.len && s.len < 19))) {
+
+    string s0 = s;
+
+    if (string_at(s, 0) == '-' || string_at(s, 0) == '+') {
+
+      s = string_right(s, 1);
+
+      if (s.len < 1) {
+
+        return 0;
+      };
+    };
+
+    int n = 0;
+
+    string tmp39 = s;
+    array_byte bytes_tmp39 = string_bytes(tmp39);
+    ;
+    for (int _ = 0; _ < tmp39.len; _++) {
+      byte ch0 = ((byte *)bytes_tmp39.data)[_];
+
+      byte ch = ch0 - '0';
+
+      if (ch > 9) {
+
+        return 0;
+      };
+
+      n = n * 10 + ((int)(ch));
+    };
+
+    return (string_at(s0, 0) == '-') ? (-n) : (n);
+  };
+
+  i64 int64 = strconv__parse_int(s, 10, 0);
+
+  return ((int)(int64));
+}
+bool strconv__underscore_ok(string _s) {
+
+  string s = _s;
+
+  byte saw = '^';
+
+  int i = 0;
+
+  if (s.len >= 1 && (string_at(s, 0) == '-' || string_at(s, 0) == '+')) {
+
+    s = string_right(s, 1);
+  };
+
+  bool hex = 0;
+
+  if (s.len >= 2 && string_at(s, 0) == '0' &&
+      (strconv__byte_to_lower(string_at(s, 1)) == 'b' ||
+       strconv__byte_to_lower(string_at(s, 1)) == 'o' ||
+       strconv__byte_to_lower(string_at(s, 1)) == 'x')) {
+
+    i = 2;
+
+    saw = '0';
+
+    hex = strconv__byte_to_lower(string_at(s, 1)) == 'x';
+  };
+
+  for (; i < s.len; i++) {
+
+    if (('0' <= string_at(s, i) && string_at(s, i) <= '9') ||
+        (hex && 'a' <= strconv__byte_to_lower(string_at(s, i)) &&
+         strconv__byte_to_lower(string_at(s, i)) <= 'f')) {
+
+      saw = '0';
+
+      continue;
+    };
+
+    if (string_at(s, i) == '_') {
+
+      if (saw != '0') {
+
+        return 0;
+      };
+
+      saw = '_';
+
+      continue;
+    };
+
+    if (saw == '_') {
+
+      return 0;
+    };
+
+    saw = '!';
+  };
+
+  return saw != '_';
 }
 Option_string os__read_file(string path) {
 
@@ -28025,6 +28322,7 @@ void init() {
 
   builtin__min_cap = 2 << 10;
   builtin__max_cap = 2 << 20;
+  strconv__max_u64 = ((u64)(UINT64_MAX));
   os__FILE_ATTR_READONLY = 0x1;
   os__FILE_ATTR_HIDDEN = 0x2;
   os__FILE_ATTR_SYSTEM = 0x4;
