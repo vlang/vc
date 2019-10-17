@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8373264"
+#define V_COMMIT_HASH "5faa7e7"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "99e0771"
+#define V_COMMIT_HASH "8373264"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -190,13 +190,6 @@ typedef struct os__Win32finddata os__Win32finddata;
 typedef Option Option_string;
 typedef struct rand__Pcg32 rand__Pcg32;
 typedef struct rand__Splitmix64 rand__Splitmix64;
-typedef struct readline__Termios readline__Termios;
-typedef struct readline__Winsize readline__Winsize;
-typedef struct readline__Readline readline__Readline;
-typedef Option Option_ustring;
-typedef Option Option_string;
-typedef Option Option_ustring;
-typedef Option Option_string;
 typedef struct time__Time time__Time;
 typedef Option Option_int;
 typedef struct benchmark__Benchmark benchmark__Benchmark;
@@ -262,10 +255,6 @@ typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__Result;
-typedef Option Option_string;
-typedef Option Option_ustring;
-typedef Option Option_string;
-typedef Option Option_ustring;
 typedef Option Option_string;
 typedef Option Option_int;
 typedef map map_compiler__DepGraphNode;
@@ -621,21 +610,6 @@ struct rand__Splitmix64 {
   u64 state;
 };
 
-struct readline__Termios {
-  int c_iflag;
-  int c_oflag;
-  int c_cflag;
-  int c_lflag;
-  int c_cc[12];
-};
-
-struct readline__Winsize {
-  u16 ws_row;
-  u16 ws_col;
-  u16 ws_xpixel;
-  u16 ws_ypixel;
-};
-
 struct strings__Builder {
   array_byte buf;
   int len;
@@ -795,19 +769,6 @@ struct os__Win32finddata {
   u32 dwFileType;
   u32 dwCreatorType;
   u16 wFinderFlags;
-};
-
-struct readline__Readline {
-  bool is_raw;
-  readline__Termios orig_termios;
-  ustring current;
-  int cursor;
-  bool overwrite;
-  int cursor_row_offset;
-  string prompt;
-  array_ustring previous_lines;
-  int search_index;
-  bool is_tty;
 };
 
 struct compiler__TypeNode {
@@ -1193,12 +1154,6 @@ void term__erase_line_tobeg();
 void term__erase_line_clear();
 void term__show_cursor();
 void term__hide_cursor();
-Option_ustring readline__Readline_read_line_utf8(readline__Readline *r,
-                                                 string prompt);
-Option_string readline__Readline_read_line(readline__Readline *r,
-                                           string prompt);
-Option_ustring readline__read_line_utf8(string prompt);
-Option_string readline__read_line(string prompt);
 void time__remove_me_when_c_bug_is_fixed();
 time__Time time__now();
 time__Time time__random();
@@ -6888,113 +6843,6 @@ void term__erase_line_tobeg() { term__erase_line(tos3("1")); }
 void term__erase_line_clear() { term__erase_line(tos3("2")); }
 void term__show_cursor() { print(tos3("\x1b[?25h")); }
 void term__hide_cursor() { print(tos3("\x1b[?25l")); }
-Option_ustring readline__Readline_read_line_utf8(readline__Readline *r,
-                                                 string prompt) {
-
-  r->current = string_ustring(tos3(""));
-
-  r->cursor = 0;
-
-  r->prompt = prompt;
-
-  r->search_index = 0;
-
-  if (r->previous_lines.len <= 1) {
-
-    _PUSH(&r->previous_lines,
-          (/*typ = array_ustring   tmp_typ=ustring*/ string_ustring(tos3(""))),
-          tmp1, ustring);
-
-    _PUSH(&r->previous_lines,
-          (/*typ = array_ustring   tmp_typ=ustring*/ string_ustring(tos3(""))),
-          tmp2, ustring);
-
-  } else {
-
-    array_set(&/*q*/ r->previous_lines, 0,
-              &(ustring[]){string_ustring(tos3(""))});
-  };
-
-  print(r->prompt);
-
-  r->current = string_ustring(os__get_raw_line());
-
-  array_set(&/*q*/ r->previous_lines, 0,
-            &(ustring[]){string_ustring(tos3(""))});
-
-  r->search_index = 0;
-
-  if (string_eq(r->current.s, tos3(""))) {
-
-    return v_error(tos3("empty line"));
-  };
-
-  ustring tmp3 = OPTION_CAST(ustring)(r->current);
-  return opt_ok(&tmp3, sizeof(ustring));
-}
-Option_string readline__Readline_read_line(readline__Readline *r,
-                                           string prompt) {
-
-  Option_ustring tmp4 = readline__Readline_read_line_utf8(r, prompt);
-  if (!tmp4.ok) {
-    string err = tmp4.error;
-
-    return v_error(err);
-  }
-  ustring s = *(ustring *)tmp4.data;
-  ;
-
-  string tmp5 = OPTION_CAST(string)(s.s);
-  return opt_ok(&tmp5, sizeof(string));
-}
-Option_ustring readline__read_line_utf8(string prompt) {
-
-  readline__Readline r =
-      (readline__Readline){.is_raw = 0,
-                           .cursor = 0,
-                           .overwrite = 0,
-                           .cursor_row_offset = 0,
-                           .prompt = tos((byte *)"", 0),
-                           .previous_lines = new_array(0, 1, sizeof(ustring)),
-                           .search_index = 0,
-                           .is_tty = 0};
-
-  Option_ustring tmp7 = readline__Readline_read_line_utf8(&/* ? */ r, prompt);
-  if (!tmp7.ok) {
-    string err = tmp7.error;
-
-    return v_error(err);
-  }
-  ustring s = *(ustring *)tmp7.data;
-  ;
-
-  ustring tmp8 = OPTION_CAST(ustring)(s);
-  return opt_ok(&tmp8, sizeof(ustring));
-}
-Option_string readline__read_line(string prompt) {
-
-  readline__Readline r =
-      (readline__Readline){.is_raw = 0,
-                           .cursor = 0,
-                           .overwrite = 0,
-                           .cursor_row_offset = 0,
-                           .prompt = tos((byte *)"", 0),
-                           .previous_lines = new_array(0, 1, sizeof(ustring)),
-                           .search_index = 0,
-                           .is_tty = 0};
-
-  Option_string tmp10 = readline__Readline_read_line(&/* ? */ r, prompt);
-  if (!tmp10.ok) {
-    string err = tmp10.error;
-
-    return v_error(err);
-  }
-  string s = *(string *)tmp10.data;
-  ;
-
-  string tmp11 = OPTION_CAST(string)(s);
-  return opt_ok(&tmp11, sizeof(string));
-}
 void time__remove_me_when_c_bug_is_fixed() {}
 time__Time time__now() {
 
@@ -24301,8 +24149,6 @@ array_string compiler__run_repl() {
 
   string temp_file = tos3(".vrepl_temp.v");
 
-  string prompt = tos3(">>> ");
-
   compiler__Repl r =
       (compiler__Repl){.indent = 0,
                        .in_func = 0,
@@ -24312,54 +24158,34 @@ array_string compiler__run_repl() {
                        .functions_name = new_array(0, 1, sizeof(string)),
                        .functions = new_array(0, 1, sizeof(string))};
 
-  readline__Readline readline =
-      (readline__Readline){.is_raw = 0,
-                           .cursor = 0,
-                           .overwrite = 0,
-                           .cursor_row_offset = 0,
-                           .prompt = tos((byte *)"", 0),
-                           .previous_lines = new_array(0, 1, sizeof(ustring)),
-                           .search_index = 0,
-                           .is_tty = 0};
-
   string vexe = (*(string *)array_get(os__args, 0));
 
   while (1) {
 
     if (r.indent == 0) {
 
-      prompt = tos3(">>> ");
+      print(tos3(">>> "));
 
     } else {
 
-      prompt = tos3("... ");
+      print(tos3("... "));
     };
 
-    Option_string tmp29 =
-        readline__Readline_read_line(&/* ? */ readline, prompt);
-    if (!tmp29.ok) {
-      string err = tmp29.error;
+    r.line = os__get_raw_line();
 
-      break;
-    }
-    string line = *(string *)tmp29.data;
-    ;
-
-    if (string_eq(string_trim_space(line), tos3("")) &&
-        string_ends_with(line, tos3("\n"))) {
+    if (string_eq(string_trim_space(r.line), tos3("")) &&
+        string_ends_with(r.line, tos3("\n"))) {
 
       continue;
     };
 
-    line = string_trim_space(line);
+    r.line = string_trim_space(r.line);
 
-    if (line.len <= -1 || string_eq(line, tos3("")) ||
-        string_eq(line, tos3("exit"))) {
+    if (r.line.len == -1 || string_eq(r.line, tos3("")) ||
+        string_eq(r.line, tos3("exit"))) {
 
       break;
     };
-
-    r.line = line;
 
     if (string_eq(r.line, tos3("\n"))) {
 
@@ -24388,26 +24214,26 @@ array_string compiler__run_repl() {
             (/*typ = array_string   tmp_typ=string*/ string_trim_space(
                 string_all_before(string_all_after(r.line, tos3("fn")),
                                   tos3("(")))),
-            tmp30, string);
+            tmp27, string);
     };
 
     bool was_func = r.in_func;
 
     if (compiler__Repl_checks(&/* ? */ r)) {
 
-      array_string tmp32 = string_split(r.line, tos3("\n"));
-      for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
-        string line = ((string *)tmp32.data)[tmp33];
+      array_string tmp29 = string_split(r.line, tos3("\n"));
+      for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
+        string line = ((string *)tmp29.data)[tmp30];
 
         if (r.in_func || was_func) {
 
           _PUSH(&r.functions, (/*typ = array_string   tmp_typ=string*/ line),
-                tmp34, string);
+                tmp31, string);
 
         } else {
 
           _PUSH(&r.temp_lines, (/*typ = array_string   tmp_typ=string*/ line),
-                tmp35, string);
+                tmp32, string);
         };
       };
 
@@ -24429,14 +24255,14 @@ array_string compiler__run_repl() {
 
       os__write_file(file, source_code);
 
-      Option_os__Result tmp37 = os__exec(_STR(
+      Option_os__Result tmp34 = os__exec(_STR(
           "\"%.*s\" run %.*s -repl", vexe.len, vexe.str, file.len, file.str));
-      if (!tmp37.ok) {
-        string err = tmp37.error;
+      if (!tmp34.ok) {
+        string err = tmp34.error;
 
         compiler__verror(err);
 
-        array_string tmp38 = new_array_from_c_array(
+        array_string tmp35 = new_array_from_c_array(
             0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
         {
 
@@ -24448,10 +24274,10 @@ array_string compiler__run_repl() {
 
           os__rm(string_left(temp_file, temp_file.len - 2));
         }
-        return tmp38;
+        return tmp35;
         ;
       }
-      os__Result s = *(os__Result *)tmp37.data;
+      os__Result s = *(os__Result *)tmp34.data;
       ;
 
       array_string vals = string_split(s.output, tos3("\n"));
@@ -24494,15 +24320,15 @@ array_string compiler__run_repl() {
 
       os__write_file(temp_file, temp_source_code);
 
-      Option_os__Result tmp47 =
+      Option_os__Result tmp44 =
           os__exec(_STR("\"%.*s\" run %.*s -repl", vexe.len, vexe.str,
                         temp_file.len, temp_file.str));
-      if (!tmp47.ok) {
-        string err = tmp47.error;
+      if (!tmp44.ok) {
+        string err = tmp44.error;
 
         compiler__verror(err);
 
-        array_string tmp48 = new_array_from_c_array(
+        array_string tmp45 = new_array_from_c_array(
             0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
         {
 
@@ -24514,10 +24340,10 @@ array_string compiler__run_repl() {
 
           os__rm(string_left(temp_file, temp_file.len - 2));
         }
-        return tmp48;
+        return tmp45;
         ;
       }
-      os__Result s = *(os__Result *)tmp47.data;
+      os__Result s = *(os__Result *)tmp44.data;
       ;
 
       if (!func_call && s.exit_code == 0 && !temp_flag) {
@@ -24530,13 +24356,13 @@ array_string compiler__run_repl() {
             _PUSH(&r.lines,
                   (/*typ = array_string   tmp_typ=string*/ (
                       *(string *)array_get(r.temp_lines, 0))),
-                  tmp51, string);
+                  tmp48, string);
           };
 
           v_array_delete(&/* ? */ r.temp_lines, 0);
         };
 
-        _PUSH(&r.lines, (/*typ = array_string   tmp_typ=string*/ r.line), tmp54,
+        _PUSH(&r.lines, (/*typ = array_string   tmp_typ=string*/ r.line), tmp51,
               string);
 
       } else {
@@ -24556,7 +24382,7 @@ array_string compiler__run_repl() {
     };
   };
 
-  array_string tmp59 = r.lines;
+  array_string tmp56 = r.lines;
   {
 
     os__rm(file);
@@ -24567,7 +24393,7 @@ array_string compiler__run_repl() {
 
     os__rm(string_left(temp_file, temp_file.len - 2));
   }
-  return tmp59;
+  return tmp56;
   ;
 
   {
