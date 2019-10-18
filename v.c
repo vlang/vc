@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "368e8e8"
+#define V_COMMIT_HASH "6890034"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6dea235"
+#define V_COMMIT_HASH "368e8e8"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -258,8 +258,6 @@ typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__Result;
-typedef struct _V_FnVargs_os__join _V_FnVargs_os__join;
-
 typedef Option Option_array_string;
 typedef Option Option_int;
 typedef map map_compiler__DepGraphNode;
@@ -11685,16 +11683,20 @@ void compiler__Parser_fn_args(compiler__Parser *p, compiler__Fn *f) {
 
       string t = compiler__Parser_get_type(p);
 
-      string vargs_struct = compiler__Parser_fn_register_vargs_stuct(
-          p, f, t,
-          new_array_from_c_array(0, 0, sizeof(string),
-                                 EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)}));
+      if (compiler__Parser_first_pass(&/* ? */ *p)) {
 
-      _PUSH(&p->cgen->typedefs,
-            (/*typ = array_string   tmp_typ=string*/ _STR(
-                "typedef struct %.*s %.*s;\n", vargs_struct.len,
-                vargs_struct.str, vargs_struct.len, vargs_struct.str)),
-            tmp98, string);
+        string vargs_struct = compiler__Parser_fn_register_vargs_stuct(
+            p, f, t,
+            new_array_from_c_array(
+                0, 0, sizeof(string),
+                EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)}));
+
+        _PUSH(&p->cgen->typedefs,
+              (/*typ = array_string   tmp_typ=string*/ _STR(
+                  "typedef struct %.*s %.*s;\n", vargs_struct.len,
+                  vargs_struct.str, vargs_struct.len, vargs_struct.str)),
+              tmp98, string);
+      };
 
       typ = _STR("...%.*s", t.len, t.str);
 
