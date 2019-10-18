@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6dea235"
+#define V_COMMIT_HASH "368e8e8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c355e96"
+#define V_COMMIT_HASH "6dea235"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -14584,7 +14584,14 @@ array_string compiler__V_v_files_from_dir(compiler__V *v, string dir) {
 
   if (!os__file_exists(dir)) {
 
-    compiler__verror(_STR("%.*s doesn't exist!", dir.len, dir.str));
+    if (string_eq(dir, tos3("compiler")) && os__dir_exists(tos3("vlib"))) {
+
+      println(tos3("looks like you are trying to build V with an old command"));
+
+      println(tos3("use `v v.v` instead of `v -o v compiler`"));
+    };
+
+    compiler__verror(_STR("%.*s doesn't exist", dir.len, dir.str));
 
   } else if (!os__dir_exists(dir)) {
 
