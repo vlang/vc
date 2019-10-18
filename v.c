@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c355e96"
+#define V_COMMIT_HASH "6dea235"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d501dc4"
+#define V_COMMIT_HASH "c355e96"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1003,10 +1003,10 @@ f32 strings__levenshtein_distance_percentage(string a, string b);
 f32 strings__dice_coefficient(string s1, string s2);
 string strings__repeat(byte c, int n);
 byte strconv__byte_to_lower(byte c);
-u64 strconv__parse_uint(string _s, int _base, int _bit_size);
+u64 strconv__parse_uint(string s, int _base, int _bit_size);
 i64 strconv__parse_int(string _s, int base, int _bit_size);
-int strconv__atoi(string _s);
-bool strconv__underscore_ok(string _s);
+int strconv__atoi(string s);
+bool strconv__underscore_ok(string s);
 Option_string os__read_file(string path);
 int os__file_size(string path);
 void os__mv(string old, string new);
@@ -5104,22 +5104,20 @@ string strings__repeat(byte c, int n) {
   return (tos((byte *)arr.data, n));
 }
 byte strconv__byte_to_lower(byte c) { return c | ('x' - 'X'); }
-u64 strconv__parse_uint(string _s, int _base, int _bit_size) {
-
-  string s = string_trim_space(_s);
+u64 strconv__parse_uint(string s, int _base, int _bit_size) {
 
   int bit_size = _bit_size;
 
   int base = _base;
 
-  if (string_eq(s, tos3("")) || !strconv__underscore_ok(s)) {
+  if (s.len < 1 || !strconv__underscore_ok(s)) {
 
     return ((u64)(0));
   };
 
   bool base0 = base == 0;
 
-  string s0 = s;
+  int start_index = 0;
 
   if (2 <= base && base <= 36) {
 
@@ -5133,25 +5131,25 @@ u64 strconv__parse_uint(string _s, int _base, int _bit_size) {
 
         base = 2;
 
-        s = string_right(s, 2);
+        start_index += 2;
 
       } else if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == 'o') {
 
         base = 8;
 
-        s = string_right(s, 2);
+        start_index += 2;
 
       } else if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == 'x') {
 
         base = 16;
 
-        s = string_right(s, 2);
+        start_index += 2;
 
       } else {
 
         base = 8;
 
-        s = string_right(s, 1);
+        start_index++;
       };
     };
 
@@ -5173,21 +5171,22 @@ u64 strconv__parse_uint(string _s, int _base, int _bit_size) {
 
   u64 max_val = (bit_size == 64)
                     ? (strconv__max_u64)
-                    : (((u64)(((u32)(1)) << ((u32)(bit_size - ((u32)(1)))))));
+                    : (((u64)(((u64)(1)) << ((u64)(bit_size)))) - ((u64)(1)));
 
   bool underscores = 0;
 
   u64 n = ((u64)(0));
 
-  string tmp18 = s;
-  array_byte bytes_tmp18 = string_bytes(tmp18);
+  int tmp17 = start_index;
   ;
-  for (int _ = 0; _ < tmp18.len; _++) {
-    byte c = ((byte *)bytes_tmp18.data)[_];
+  for (int tmp18 = tmp17; tmp18 < s.len; tmp18++) {
+    int i = tmp18;
 
-    byte d = ((byte)(0));
+    byte c = string_at(s, i);
 
     byte cl = strconv__byte_to_lower(c);
+
+    byte d = ((byte)(0));
 
     if (c == '_' && base0) {
 
@@ -5222,7 +5221,7 @@ u64 strconv__parse_uint(string _s, int _base, int _bit_size) {
 
     u64 n1 = n + ((u64)(d));
 
-    if (n1 < n || n1 > ((u64)(max_val))) {
+    if (n1 < n || n1 > max_val) {
 
       return max_val;
     };
@@ -5230,7 +5229,7 @@ u64 strconv__parse_uint(string _s, int _base, int _bit_size) {
     n = n1;
   };
 
-  if (underscores && !strconv__underscore_ok(s0)) {
+  if (underscores && !strconv__underscore_ok(s)) {
 
     return ((u64)(0));
   };
@@ -5243,12 +5242,10 @@ i64 strconv__parse_int(string _s, int base, int _bit_size) {
 
   int bit_size = _bit_size;
 
-  if (string_eq(s, tos3(""))) {
+  if (s.len < 1) {
 
     return ((i64)(0));
   };
-
-  string s0 = s;
 
   bool neg = 0;
 
@@ -5289,20 +5286,18 @@ i64 strconv__parse_int(string _s, int base, int _bit_size) {
 
   return (neg) ? (-((i64)(un))) : (((i64)(un)));
 }
-int strconv__atoi(string _s) {
-
-  string s = _s;
+int strconv__atoi(string s) {
 
   if ((strconv__int_size == 32 && (0 < s.len && s.len < 10)) ||
       (strconv__int_size == 64 && (0 < s.len && s.len < 19))) {
 
-    string s0 = s;
+    int start_idx = 0;
 
     if (string_at(s, 0) == '-' || string_at(s, 0) == '+') {
 
-      s = string_right(s, 1);
+      start_idx++;
 
-      if (s.len < 1) {
+      if (s.len - start_idx < 1) {
 
         return 0;
       };
@@ -5310,13 +5305,12 @@ int strconv__atoi(string _s) {
 
     int n = 0;
 
-    string tmp39 = s;
-    array_byte bytes_tmp39 = string_bytes(tmp39);
+    int tmp40 = start_idx;
     ;
-    for (int _ = 0; _ < tmp39.len; _++) {
-      byte ch0 = ((byte *)bytes_tmp39.data)[_];
+    for (int tmp41 = tmp40; tmp41 < s.len; tmp41++) {
+      int i = tmp41;
 
-      byte ch = ch0 - '0';
+      byte ch = string_at(s, i) - '0';
 
       if (ch > 9) {
 
@@ -5326,16 +5320,14 @@ int strconv__atoi(string _s) {
       n = n * 10 + ((int)(ch));
     };
 
-    return (string_at(s0, 0) == '-') ? (-n) : (n);
+    return (string_at(s, 0) == '-') ? (-n) : (n);
   };
 
   i64 int64 = strconv__parse_int(s, 10, 0);
 
   return ((int)(int64));
 }
-bool strconv__underscore_ok(string _s) {
-
-  string s = _s;
+bool strconv__underscore_ok(string s) {
 
   byte saw = '^';
 
@@ -5343,21 +5335,21 @@ bool strconv__underscore_ok(string _s) {
 
   if (s.len >= 1 && (string_at(s, 0) == '-' || string_at(s, 0) == '+')) {
 
-    s = string_right(s, 1);
+    i++;
   };
 
   bool hex = 0;
 
-  if (s.len >= 2 && string_at(s, 0) == '0' &&
-      (strconv__byte_to_lower(string_at(s, 1)) == 'b' ||
-       strconv__byte_to_lower(string_at(s, 1)) == 'o' ||
-       strconv__byte_to_lower(string_at(s, 1)) == 'x')) {
-
-    i = 2;
+  if (s.len - i >= 2 && string_at(s, i) == '0' &&
+      (strconv__byte_to_lower(string_at(s, i + 1)) == 'b' ||
+       strconv__byte_to_lower(string_at(s, i + 1)) == 'o' ||
+       strconv__byte_to_lower(string_at(s, i + 1)) == 'x')) {
 
     saw = '0';
 
-    hex = strconv__byte_to_lower(string_at(s, 1)) == 'x';
+    hex = strconv__byte_to_lower(string_at(s, i + 1)) == 'x';
+
+    i += 2;
   };
 
   for (; i < s.len; i++) {
