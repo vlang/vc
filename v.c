@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8d16762"
+#define V_COMMIT_HASH "eda0c73"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2709344"
+#define V_COMMIT_HASH "8d16762"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -14704,8 +14704,8 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
 
       if (v->pref->is_cache && os__file_exists(vh_path)) {
 
-        printf("using cached module `%.*s`: %.*s\n", mod.len, mod.str,
-               vh_path.len, vh_path.str);
+        eprintln(_STR("using cached module `%.*s`: %.*s", mod.len, mod.str,
+                      vh_path.len, vh_path.str));
 
         _PUSH(&v->cached_mods, (/*typ = array_string   tmp_typ=string*/ mod),
               tmp58, string);
