@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "28b24ee"
+#define V_COMMIT_HASH "22c7438"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c18578a"
+#define V_COMMIT_HASH "28b24ee"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -198,6 +198,7 @@ typedef Option Option_int;
 typedef struct benchmark__Benchmark benchmark__Benchmark;
 typedef struct compiler__CFlag compiler__CFlag;
 typedef array array_compiler__CFlag;
+typedef Option Option_bool;
 typedef struct compiler__CGen compiler__CGen;
 typedef array array_compiler__Type;
 typedef struct compiler__ScannerPos compiler__ScannerPos;
@@ -262,6 +263,7 @@ typedef Option Option_os__Result;
 typedef Option Option_array_string;
 typedef Option Option_string;
 typedef Option Option_int;
+typedef Option Option_bool;
 typedef map map_compiler__DepGraphNode;
 typedef map map_compiler__DepSet;
 typedef Option Option_compiler__Var;
@@ -1231,8 +1233,8 @@ array_compiler__CFlag compiler__V_get_rest_of_module_cflags(compiler__V *v,
                                                             compiler__CFlag *c);
 string compiler__CFlag_format(compiler__CFlag *cf);
 bool compiler__Table_has_cflag(compiler__Table *table, compiler__CFlag cflag);
-void compiler__Table_parse_cflag(compiler__Table *table, string cflag,
-                                 string mod);
+Option_bool compiler__Table_parse_cflag(compiler__Table *table, string cflag,
+                                        string mod);
 string array_compiler__CFlag_c_options_before_target_msvc(
     array_compiler__CFlag cflags);
 string
@@ -8633,8 +8635,8 @@ bool compiler__Table_has_cflag(compiler__Table *table, compiler__CFlag cflag) {
 
   return 0;
 }
-void compiler__Table_parse_cflag(compiler__Table *table, string cflag,
-                                 string mod) {
+Option_bool compiler__Table_parse_cflag(compiler__Table *table, string cflag,
+                                        string mod) {
 
   array_string allowed_flags =
       new_array_from_c_array(5, 5, sizeof(string),
@@ -8646,11 +8648,14 @@ void compiler__Table_parse_cflag(compiler__Table *table, string cflag,
                                  tos3("L"),
                              });
 
-  string flag = string_trim_space(cflag);
+  string flag_orig = string_trim_space(cflag);
+
+  string flag = flag_orig;
 
   if (string_eq(flag, tos3(""))) {
 
-    return;
+    bool tmp16 = OPTION_CAST(bool)(1);
+    return opt_ok(&tmp16, sizeof(bool));
   };
 
   string fos = tos3("");
@@ -8677,9 +8682,9 @@ void compiler__Table_parse_cflag(compiler__Table *table, string cflag,
 
     if (string_at(flag, 0) == '-') {
 
-      array_string tmp22 = allowed_flags;
-      for (int tmp23 = 0; tmp23 < tmp22.len; tmp23++) {
-        string f = ((string *)tmp22.data)[tmp23];
+      array_string tmp24 = allowed_flags;
+      for (int tmp25 = 0; tmp25 < tmp24.len; tmp25++) {
+        string f = ((string *)tmp24.data)[tmp25];
 
         int i = 1 + f.len;
 
@@ -8694,12 +8699,12 @@ void compiler__Table_parse_cflag(compiler__Table *table, string cflag,
       };
     };
 
-    array_int tmp25 = new_array_from_c_array(
+    array_int tmp27 = new_array_from_c_array(
         2, 2, sizeof(int),
         EMPTY_ARRAY_OF_ELEMS(int, 2){string_index(flag, tos3(" ")),
                                      string_index(flag, tos3(","))});
-    for (int tmp26 = 0; tmp26 < tmp25.len; tmp26++) {
-      int i = ((int *)tmp25.data)[tmp26];
+    for (int tmp28 = 0; tmp28 < tmp27.len; tmp28++) {
+      int i = ((int *)tmp27.data)[tmp28];
 
       if (index == -1 || (i != -1 && i < index)) {
 
@@ -8710,9 +8715,9 @@ void compiler__Table_parse_cflag(compiler__Table *table, string cflag,
     if (index != -1 && string_at(flag, index) == ' ' &&
         string_at(flag, index + 1) == '-') {
 
-      array_string tmp31 = allowed_flags;
-      for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
-        string f = ((string *)tmp31.data)[tmp32];
+      array_string tmp33 = allowed_flags;
+      for (int tmp34 = 0; tmp34 < tmp33.len; tmp34++) {
+        string f = ((string *)tmp33.data)[tmp34];
 
         int i = index + f.len;
 
@@ -8742,6 +8747,22 @@ void compiler__Table_parse_cflag(compiler__Table *table, string cflag,
       index = -1;
     };
 
+    if ((string_eq(name, tos3("-I")) || string_eq(name, tos3("-l")) ||
+         string_eq(name, tos3("-L"))) &&
+        string_eq(value, tos3(""))) {
+
+      if (string_eq(name, tos3("-I")) || string_eq(name, tos3("-L"))) {
+
+        return v_error(_STR("bad #flag `%.*s`: missing path after `-I`",
+                            flag_orig.len, flag_orig.str));
+
+      } else if (string_eq(name, tos3("-l"))) {
+
+        return v_error(_STR("bad #flag `%.*s`: missing library name after `-l`",
+                            flag_orig.len, flag_orig.str));
+      };
+    };
+
     compiler__CFlag cf =
         (compiler__CFlag){.mod = mod, .os = fos, .name = name, .value = value};
 
@@ -8749,7 +8770,7 @@ void compiler__Table_parse_cflag(compiler__Table *table, string cflag,
 
       _PUSH(&table->cflags,
             (/*typ = array_compiler__CFlag   tmp_typ=compiler__CFlag*/ cf),
-            tmp37, compiler__CFlag);
+            tmp39, compiler__CFlag);
     };
 
     if (index == -1) {
@@ -8758,7 +8779,8 @@ void compiler__Table_parse_cflag(compiler__Table *table, string cflag,
     };
   };
 
-  return;
+  bool tmp40 = OPTION_CAST(bool)(1);
+  return opt_ok(&tmp40, sizeof(bool));
 }
 string array_compiler__CFlag_c_options_before_target_msvc(
     array_compiler__CFlag cflags) {
@@ -8776,16 +8798,16 @@ array_compiler__CFlag_c_options_before_target(array_compiler__CFlag cflags) {
   array_string args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_compiler__CFlag tmp39 = cflags;
-  for (int tmp40 = 0; tmp40 < tmp39.len; tmp40++) {
-    compiler__CFlag flag = ((compiler__CFlag *)tmp39.data)[tmp40];
+  array_compiler__CFlag tmp42 = cflags;
+  for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
+    compiler__CFlag flag = ((compiler__CFlag *)tmp42.data)[tmp43];
 
     if (string_ne(flag.name, tos3("-l"))) {
 
       _PUSH(&args,
             (/*typ = array_string   tmp_typ=string*/ compiler__CFlag_format(
                 &/* ? */ flag)),
-            tmp41, string);
+            tmp44, string);
     };
   };
 
@@ -8797,16 +8819,16 @@ array_compiler__CFlag_c_options_after_target(array_compiler__CFlag cflags) {
   array_string args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_compiler__CFlag tmp43 = cflags;
-  for (int tmp44 = 0; tmp44 < tmp43.len; tmp44++) {
-    compiler__CFlag flag = ((compiler__CFlag *)tmp43.data)[tmp44];
+  array_compiler__CFlag tmp46 = cflags;
+  for (int tmp47 = 0; tmp47 < tmp46.len; tmp47++) {
+    compiler__CFlag flag = ((compiler__CFlag *)tmp46.data)[tmp47];
 
     if (string_eq(flag.name, tos3("-l"))) {
 
       _PUSH(&args,
             (/*typ = array_string   tmp_typ=string*/ compiler__CFlag_format(
                 &/* ? */ flag)),
-            tmp45, string);
+            tmp48, string);
     };
   };
 
@@ -8818,9 +8840,9 @@ string array_compiler__CFlag_c_options_without_object_files(
   array_string args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_compiler__CFlag tmp47 = cflags;
-  for (int tmp48 = 0; tmp48 < tmp47.len; tmp48++) {
-    compiler__CFlag flag = ((compiler__CFlag *)tmp47.data)[tmp48];
+  array_compiler__CFlag tmp50 = cflags;
+  for (int tmp51 = 0; tmp51 < tmp50.len; tmp51++) {
+    compiler__CFlag flag = ((compiler__CFlag *)tmp50.data)[tmp51];
 
     if (string_ends_with(flag.value, tos3(".o")) ||
         string_ends_with(flag.value, tos3(".obj"))) {
@@ -8831,7 +8853,7 @@ string array_compiler__CFlag_c_options_without_object_files(
     _PUSH(&args,
           (/*typ = array_string   tmp_typ=string*/ compiler__CFlag_format(
               &/* ? */ flag)),
-          tmp49, string);
+          tmp52, string);
   };
 
   return array_string_join(args, tos3(" "));
@@ -8842,9 +8864,9 @@ string array_compiler__CFlag_c_options_only_object_files(
   array_string args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_compiler__CFlag tmp51 = cflags;
-  for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
-    compiler__CFlag flag = ((compiler__CFlag *)tmp51.data)[tmp52];
+  array_compiler__CFlag tmp54 = cflags;
+  for (int tmp55 = 0; tmp55 < tmp54.len; tmp55++) {
+    compiler__CFlag flag = ((compiler__CFlag *)tmp54.data)[tmp55];
 
     if (string_ends_with(flag.value, tos3(".o")) ||
         string_ends_with(flag.value, tos3(".obj"))) {
@@ -8852,7 +8874,7 @@ string array_compiler__CFlag_c_options_only_object_files(
       _PUSH(&args,
             (/*typ = array_string   tmp_typ=string*/ compiler__CFlag_format(
                 &/* ? */ flag)),
-            tmp53, string);
+            tmp56, string);
     };
   };
 
