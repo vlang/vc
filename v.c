@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "80e79a3"
+#define V_COMMIT_HASH "d501dc4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "eda0c73"
+#define V_COMMIT_HASH "80e79a3"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1950,7 +1950,7 @@ array_string compiler__float_types;
 array_string compiler__TokenStr;
 map_int compiler__KEYWORDS;
 array_compiler__TokenKind compiler__AssignTokens;
-#define compiler__HelpText                                                     \
+#define compiler__help_text                                                    \
   tos3(                                                                        \
       "Usage: v [options/commands] [file.v | directory]\n\n   When V is run "  \
       "without any arguments, it is run in REPL mode.\n\n   When given a .v "  \
@@ -1979,31 +1979,31 @@ array_compiler__TokenKind compiler__AssignTokens;
       "msvc if you want to use the MSVC compiler on Windows.\n  -shared      " \
       "     Build a shared library.\n  -stats            Show additional "     \
       "stats when compiling/running tests. Try `v -stats test .`\n\n  -cache " \
-      "           Turn on usage of the precompiled module cache. \n          " \
-      "          It very significantly speeds up secondary compilations.\n\n " \
-      " -obf              Obfuscate the resulting binary.\n  -               " \
-      "  Shorthand for `v runrepl`.\n\nOptions for debugging/troubleshooting " \
+      "           Turn on usage of the precompiled module cache.\n           " \
+      "         It very significantly speeds up secondary compilations.\n\n  " \
+      "-obf              Obfuscate the resulting binary.\n  -                " \
+      " Shorthand for `v runrepl`.\n\nOptions for debugging/troubleshooting "  \
       "v programs:\n  -g                Generate debugging information in "    \
       "the backtraces. Add *V* line numbers to the generated executable.\n  "  \
       "-cg               Same as -g, but add *C* line numbers to the "         \
       "generated executable instead of *V* line numbers.\n  -keep_c          " \
-      " Do NOT remove the generated .tmp.c files after compilation. \n       " \
-      "             It is useful when using debuggers like gdb/visual "        \
-      "studio, when given after -g / -cg .\n  -show_c_cmd       Print the "    \
-      "full C compilation command and how much time it took.\n  -cc "          \
-      "<ccompiler>   Specify which C compiler you want to use as a C "         \
-      "backend.\n                    The C backend compiler should be able "   \
-      "to handle C99 compatible C code.\n                    Common C "        \
-      "compilers are gcc, clang, tcc, icc, cl...\n  -cflags <flags>   Pass "   \
-      "additional C flags to the C backend compiler.\n                    "    \
-      "Example: -cflags `sdl2-config --cflags`\n\nCommands:\n  up            " \
-      "    Update V. Run `v up` at least once per day, since V development "   \
-      "is rapid and features/bugfixes are added constantly.\n  run <file.v>  " \
-      "    Build and execute the V program in file.v. You can add arguments "  \
-      "for the V program *after* the file name.\n  build <module>    Compile " \
-      "a module into an object file.\n  runrepl           Run the V REPL. If " \
-      "V is running in a tty terminal, the REPL is interactive, otherwise it " \
-      "just reads from stdin.\n  symlink           Useful on unix systems. "   \
+      " Do NOT remove the generated .tmp.c files after compilation.\n        " \
+      "            It is useful when using debuggers like gdb/visual studio, " \
+      "when given after -g / -cg .\n  -show_c_cmd       Print the full C "     \
+      "compilation command and how much time it took.\n  -cc <ccompiler>   "   \
+      "Specify which C compiler you want to use as a C backend.\n            " \
+      "        The C backend compiler should be able to handle C99 "           \
+      "compatible C code.\n                    Common C compilers are gcc, "   \
+      "clang, tcc, icc, cl...\n  -cflags <flags>   Pass additional C flags "   \
+      "to the C backend compiler.\n                    Example: -cflags "      \
+      "`sdl2-config --cflags`\n\nCommands:\n  up                Update V. "    \
+      "Run `v up` at least once per day, since V development is rapid and "    \
+      "features/bugfixes are added constantly.\n  run <file.v>      Build "    \
+      "and execute the V program in file.v. You can add arguments for the V "  \
+      "program *after* the file name.\n  build <module>    Compile a module "  \
+      "into an object file.\n  runrepl           Run the V REPL. If V is "     \
+      "running in a tty terminal, the REPL is interactive, otherwise it just " \
+      "reads from stdin.\n  symlink           Useful on unix systems. "        \
       "Symlinks the current V executable to /usr/local/bin/v, so that V is "   \
       "globally available.\n  install <module>  Install a user module from "   \
       "https://vpm.vlang.io/.\n  test v            Run all V test files, and " \
@@ -20274,11 +20274,6 @@ string compiler__Parser_dot(compiler__Parser *p, string str_typ_,
                                    val_type.len, val_type.str, val_type.len,
                                    val_type.str, a.len, a.str));
 
-    if (string_eq(val_type, tos3("string"))) {
-
-      compiler__Parser_genln(p, tos3("println(it);"));
-    };
-
     compiler__Parser_gen(p, tos3("if ("));
 
     compiler__Parser_bool_expression(p);
@@ -28149,9 +28144,25 @@ void main__main() {
 
   array_string args = compiler__env_vflags_and_os_args();
 
-  if (_IN(string, (tos3("-v")), args) ||
-      _IN(string, (tos3("--version")), args) ||
-      _IN(string, (tos3("version")), args)) {
+  array_string tmp2 = new_array(0, args.len, sizeof(string));
+  for (int i = 0; i < args.len; i++) {
+    string it = ((string *)args.data)[i];
+    if (string_starts_with(it, tos3("-")))
+      array_push(&tmp2, &it);
+  }
+  array_string options = tmp2;
+
+  array_string tmp4 = new_array(0, args.len, sizeof(string));
+  for (int i = 0; i < args.len; i++) {
+    string it = ((string *)args.data)[i];
+    if (!string_starts_with(it, tos3("-")))
+      array_push(&tmp4, &it);
+  }
+  array_string commands = tmp4;
+
+  if (_IN(string, (tos3("-v")), options) ||
+      _IN(string, (tos3("--version")), options) ||
+      _IN(string, (tos3("version")), commands)) {
 
     string version_hash = compiler__vhash();
 
@@ -28159,63 +28170,62 @@ void main__main() {
            version_hash.len, version_hash.str);
 
     return;
-  };
 
-  if (_IN(string, (tos3("-h")), args) || _IN(string, (tos3("--help")), args) ||
-      _IN(string, (tos3("help")), args)) {
+  } else if (_IN(string, (tos3("-h")), options) ||
+             _IN(string, (tos3("--help")), options) ||
+             _IN(string, (tos3("help")), commands)) {
 
-    println(compiler__HelpText);
+    println(compiler__help_text);
 
     return;
-  };
 
-  if (_IN(string, (tos3("translate")), args)) {
+  } else if (_IN(string, (tos3("translate")), commands)) {
 
     println(tos3("Translating C to V will be available in V 0.3"));
 
     return;
-  };
 
-  if (_IN(string, (tos3("up")), args)) {
+  } else if (_IN(string, (tos3("up")), commands)) {
 
     compiler__update_v();
 
     return;
-  };
 
-  if (_IN(string, (tos3("get")), args)) {
+  } else if (_IN(string, (tos3("get")), commands)) {
 
     println(tos3("use `v install` to install modules from vpm.vlang.io "));
 
     return;
-  };
 
-  if (_IN(string, (tos3("symlink")), args)) {
+  } else if (_IN(string, (tos3("symlink")), commands)) {
 
     compiler__create_symlink();
 
     return;
-  };
 
-  if (_IN(string, (tos3("install")), args)) {
+  } else if (_IN(string, (tos3("install")), commands)) {
 
     compiler__install_v(args);
 
     return;
-  };
 
-  if (_IN(string, (tos3("fmt")), args)) {
+  } else if (_IN(string, (tos3("fmt")), commands)) {
 
     compiler__vfmt(args);
 
     return;
-  };
 
-  if (_IN(string, (tos3("test")), args)) {
+  } else if (_IN(string, (tos3("test")), commands)) {
 
     compiler__test_v();
 
     return;
+
+  } else if (_IN(string, (tos3("doc")), commands)) {
+
+    v_exit(0);
+
+  } else {
   };
 
   compiler__V *v = compiler__new_v(args);
@@ -28223,11 +28233,6 @@ void main__main() {
   if (v->pref->is_verbose) {
 
     println(array_string_str(args));
-  };
-
-  if (_IN(string, (tos3("doc")), args)) {
-
-    v_exit(0);
   };
 
   if (_IN(string, (tos3("run")), args)) {
