@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b51b885"
+#define V_COMMIT_HASH "c24d94f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "22c7438"
+#define V_COMMIT_HASH "b51b885"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -10080,9 +10080,7 @@ void compiler__Parser_chash(compiler__Parser *p) {
 
   if (string_starts_with(hash, tos3("flag "))) {
 
-    compiler__Parser_first_pass(&/* ? */ *p);
-
-    {
+    if (compiler__Parser_first_pass(&/* ? */ *p)) {
 
       string flag = string_right(hash, 5);
 
@@ -10097,7 +10095,7 @@ void compiler__Parser_chash(compiler__Parser *p) {
         compiler__Parser_error_with_token_index(
             p, err, compiler__Parser_cur_tok_index(&/* ? */ *p) - 1);
       };
-    }
+    };
 
     return;
   };
