@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c24d94f"
+#define V_COMMIT_HASH "5977fc0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b51b885"
+#define V_COMMIT_HASH "c24d94f"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -9503,6 +9503,13 @@ string compiler__Scanner_get_error_filepath(compiler__Scanner *s) {
 
   if (s->should_print_relative_paths_on_error) {
 
+    string workdir = string_add(os__getwd(), os__path_separator);
+
+    if (string_starts_with(s->file_path, workdir)) {
+
+      return string_replace(s->file_path, workdir, tos3(""));
+    };
+
     return s->file_path;
   };
 
@@ -9636,7 +9643,7 @@ compiler__Scanner_get_scanner_pos_of_token(compiler__Scanner *s,
     string sline = string_substr(s->text, prevlinepos, s->pos);
 
     _PUSH(&s->file_lines, (/*typ = array_string   tmp_typ=string*/ sline),
-          tmp34, string);
+          tmp35, string);
   };
 
   compiler__Scanner_goto_scanner_position(s, cpos);
