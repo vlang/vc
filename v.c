@@ -45,6 +45,12 @@
 #include <sys/wait.h> // os__wait uses wait on nix
 #endif
 
+#ifdef __OpenBSD__
+#include <sys/types.h>
+#include <sys/resource.h>
+#include <sys/wait.h> // os__wait uses wait on nix
+#endif
+
 #define EMPTY_STRUCT_DECLARATION
 #define EMPTY_STRUCT_INITIALIZATION 0
 // Due to a tcc bug, the length of an array needs to be specified, but GCC
