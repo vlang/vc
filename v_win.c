@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "22c7438"
+#define V_COMMIT_HASH "b51b885"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "28b24ee"
+#define V_COMMIT_HASH "22c7438"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -8751,16 +8751,12 @@ Option_bool compiler__Table_parse_cflag(compiler__Table *table, string cflag,
          string_eq(name, tos3("-L"))) &&
         string_eq(value, tos3(""))) {
 
-      if (string_eq(name, tos3("-I")) || string_eq(name, tos3("-L"))) {
+      string hint = (string_eq(name, tos3("-l"))) ? (tos3("library name"))
+                                                  : (tos3("path"));
 
-        return v_error(_STR("bad #flag `%.*s`: missing path after `-I`",
-                            flag_orig.len, flag_orig.str));
-
-      } else if (string_eq(name, tos3("-l"))) {
-
-        return v_error(_STR("bad #flag `%.*s`: missing library name after `-l`",
-                            flag_orig.len, flag_orig.str));
-      };
+      return v_error(_STR("bad #flag `%.*s`: missing %.*s after `%.*s`",
+                          flag_orig.len, flag_orig.str, hint.len, hint.str,
+                          name.len, name.str));
     };
 
     compiler__CFlag cf =
@@ -8770,7 +8766,7 @@ Option_bool compiler__Table_parse_cflag(compiler__Table *table, string cflag,
 
       _PUSH(&table->cflags,
             (/*typ = array_compiler__CFlag   tmp_typ=compiler__CFlag*/ cf),
-            tmp39, compiler__CFlag);
+            tmp40, compiler__CFlag);
     };
 
     if (index == -1) {
@@ -8779,8 +8775,8 @@ Option_bool compiler__Table_parse_cflag(compiler__Table *table, string cflag,
     };
   };
 
-  bool tmp40 = OPTION_CAST(bool)(1);
-  return opt_ok(&tmp40, sizeof(bool));
+  bool tmp41 = OPTION_CAST(bool)(1);
+  return opt_ok(&tmp41, sizeof(bool));
 }
 string array_compiler__CFlag_c_options_before_target_msvc(
     array_compiler__CFlag cflags) {
@@ -8798,16 +8794,16 @@ array_compiler__CFlag_c_options_before_target(array_compiler__CFlag cflags) {
   array_string args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_compiler__CFlag tmp42 = cflags;
-  for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
-    compiler__CFlag flag = ((compiler__CFlag *)tmp42.data)[tmp43];
+  array_compiler__CFlag tmp43 = cflags;
+  for (int tmp44 = 0; tmp44 < tmp43.len; tmp44++) {
+    compiler__CFlag flag = ((compiler__CFlag *)tmp43.data)[tmp44];
 
     if (string_ne(flag.name, tos3("-l"))) {
 
       _PUSH(&args,
             (/*typ = array_string   tmp_typ=string*/ compiler__CFlag_format(
                 &/* ? */ flag)),
-            tmp44, string);
+            tmp45, string);
     };
   };
 
@@ -8819,16 +8815,16 @@ array_compiler__CFlag_c_options_after_target(array_compiler__CFlag cflags) {
   array_string args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_compiler__CFlag tmp46 = cflags;
-  for (int tmp47 = 0; tmp47 < tmp46.len; tmp47++) {
-    compiler__CFlag flag = ((compiler__CFlag *)tmp46.data)[tmp47];
+  array_compiler__CFlag tmp47 = cflags;
+  for (int tmp48 = 0; tmp48 < tmp47.len; tmp48++) {
+    compiler__CFlag flag = ((compiler__CFlag *)tmp47.data)[tmp48];
 
     if (string_eq(flag.name, tos3("-l"))) {
 
       _PUSH(&args,
             (/*typ = array_string   tmp_typ=string*/ compiler__CFlag_format(
                 &/* ? */ flag)),
-            tmp48, string);
+            tmp49, string);
     };
   };
 
@@ -8840,9 +8836,9 @@ string array_compiler__CFlag_c_options_without_object_files(
   array_string args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_compiler__CFlag tmp50 = cflags;
-  for (int tmp51 = 0; tmp51 < tmp50.len; tmp51++) {
-    compiler__CFlag flag = ((compiler__CFlag *)tmp50.data)[tmp51];
+  array_compiler__CFlag tmp51 = cflags;
+  for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
+    compiler__CFlag flag = ((compiler__CFlag *)tmp51.data)[tmp52];
 
     if (string_ends_with(flag.value, tos3(".o")) ||
         string_ends_with(flag.value, tos3(".obj"))) {
@@ -8853,7 +8849,7 @@ string array_compiler__CFlag_c_options_without_object_files(
     _PUSH(&args,
           (/*typ = array_string   tmp_typ=string*/ compiler__CFlag_format(
               &/* ? */ flag)),
-          tmp52, string);
+          tmp53, string);
   };
 
   return array_string_join(args, tos3(" "));
@@ -8864,9 +8860,9 @@ string array_compiler__CFlag_c_options_only_object_files(
   array_string args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_compiler__CFlag tmp54 = cflags;
-  for (int tmp55 = 0; tmp55 < tmp54.len; tmp55++) {
-    compiler__CFlag flag = ((compiler__CFlag *)tmp54.data)[tmp55];
+  array_compiler__CFlag tmp55 = cflags;
+  for (int tmp56 = 0; tmp56 < tmp55.len; tmp56++) {
+    compiler__CFlag flag = ((compiler__CFlag *)tmp55.data)[tmp56];
 
     if (string_ends_with(flag.value, tos3(".o")) ||
         string_ends_with(flag.value, tos3(".obj"))) {
@@ -8874,7 +8870,7 @@ string array_compiler__CFlag_c_options_only_object_files(
       _PUSH(&args,
             (/*typ = array_string   tmp_typ=string*/ compiler__CFlag_format(
                 &/* ? */ flag)),
-            tmp56, string);
+            tmp57, string);
     };
   };
 
@@ -10094,7 +10090,13 @@ void compiler__Parser_chash(compiler__Parser *p) {
 
       flag = string_replace(flag, tos3("@VMOD"), compiler__v_modules_path);
 
-      compiler__Table_parse_cflag(p->table, flag, p->mod);
+      Option_bool tmp23 = compiler__Table_parse_cflag(p->table, flag, p->mod);
+      if (!tmp23.ok) {
+        string err = tmp23.error;
+
+        compiler__Parser_error_with_token_index(
+            p, err, compiler__Parser_cur_tok_index(&/* ? */ *p) - 1);
+      };
     }
 
     return;
@@ -10110,7 +10112,7 @@ void compiler__Parser_chash(compiler__Parser *p) {
               (/*typ = array_string   tmp_typ=string*/ _STR(
                   "%.*s\n#%.*s\n#endif", p->file_pcguard.len,
                   p->file_pcguard.str, hash.len, hash.str)),
-              tmp23, string);
+              tmp24, string);
 
         return;
       };
@@ -10118,7 +10120,7 @@ void compiler__Parser_chash(compiler__Parser *p) {
       _PUSH(&p->cgen->includes,
             (/*typ = array_string   tmp_typ=string*/ _STR("#%.*s", hash.len,
                                                           hash.str)),
-            tmp24, string);
+            tmp25, string);
 
       return;
     };
@@ -10139,7 +10141,7 @@ void compiler__Parser_chash(compiler__Parser *p) {
     _PUSH(&p->cgen->includes,
           (/*typ = array_string   tmp_typ=string*/ _STR("#%.*s", hash.len,
                                                         hash.str)),
-          tmp27, string);
+          tmp28, string);
 
   } else if (string_eq(hash, tos3("-js"))) {
 
@@ -10186,9 +10188,9 @@ void compiler__Parser_comptime_method_call(compiler__Parser *p,
 
   string var = compiler__Parser_check_name(p);
 
-  array_compiler__Fn tmp29 = typ.methods;
-  for (int i = 0; i < tmp29.len; i++) {
-    compiler__Fn method = ((compiler__Fn *)tmp29.data)[i];
+  array_compiler__Fn tmp30 = typ.methods;
+  for (int i = 0; i < tmp30.len; i++) {
+    compiler__Fn method = ((compiler__Fn *)tmp30.data)[i];
 
     if (string_ne(method.typ, tos3("void"))) {
 
@@ -10305,7 +10307,7 @@ void compiler__Parser_gen_array_str(compiler__Parser *p, compiler__Type typ) {
   _PUSH(&p->cgen->fns,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "string %.*s_str();", typ.name.len, typ.name.str)),
-        tmp37, string);
+        tmp38, string);
 }
 void compiler__Parser_gen_struct_str(compiler__Parser *p, compiler__Type typ) {
 
@@ -10359,9 +10361,9 @@ void compiler__Parser_gen_struct_str(compiler__Parser *p, compiler__Type typ) {
 
   strings__Builder_writeln(&/* ? */ sb, tos3("'{"));
 
-  array_compiler__Var tmp39 = typ.fields;
-  for (int tmp40 = 0; tmp40 < tmp39.len; tmp40++) {
-    compiler__Var field = ((compiler__Var *)tmp39.data)[tmp40];
+  array_compiler__Var tmp40 = typ.fields;
+  for (int tmp41 = 0; tmp41 < tmp40.len; tmp41++) {
+    compiler__Var field = ((compiler__Var *)tmp40.data)[tmp41];
 
     strings__Builder_writeln(
         &/* ? */ sb,
@@ -10378,7 +10380,7 @@ void compiler__Parser_gen_struct_str(compiler__Parser *p, compiler__Type typ) {
   _PUSH(&p->cgen->fns,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "string %.*s_str();", typ.name.len, typ.name.str)),
-        tmp41, string);
+        tmp42, string);
 }
 void compiler__Parser_gen_array_filter(compiler__Parser *p, string str_typ,
                                        int method_ph) {
