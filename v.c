@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c13b58e"
+#define V_COMMIT_HASH "81b1b88"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1b518c1"
+#define V_COMMIT_HASH "c13b58e"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -5013,7 +5013,7 @@ string strings__Builder_str(strings__Builder b) {
   return (tos((byte *)b.buf.data, b.len));
 }
 void strings__Builder_cut(strings__Builder *b, int n) { b->len -= n; }
-void strings__Builder_free(strings__Builder *b) { v_free(b->buf.data); }
+void strings__Builder_free(strings__Builder *b) {}
 int strings__levenshtein_distance(string a, string b) {
 
   array_int f =
