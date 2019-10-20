@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6d8548d"
+#define V_COMMIT_HASH "f63e24e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b733876"
+#define V_COMMIT_HASH "6d8548d"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1697,7 +1697,6 @@ void compiler__Parser_fmt_dec(compiler__Parser *p);
 compiler__TestSession compiler__new_test_sesion(string vargs);
 void compiler__test_v();
 void compiler__TestSession_test(compiler__TestSession *ts);
-bool compiler__stable_example(string example, int index, array_string arr);
 void compiler__v_test_v(string args_before_test);
 void compiler__test_vget();
 void main__main();
@@ -28169,10 +28168,6 @@ void compiler__TestSession_test(compiler__TestSession *ts) {
 
   benchmark__Benchmark_stop(&/* ? */ ts->benchmark);
 }
-bool compiler__stable_example(string example, int index, array_string arr) {
-
-  return !string_contains(example, tos3("vweb"));
-}
 void compiler__v_test_v(string args_before_test) {
 
   string vexe = os__executable();
@@ -28229,12 +28224,19 @@ void compiler__v_test_v(string args_before_test) {
 
   compiler__TestSession es = compiler__new_test_sesion(args_before_test);
 
-  _PUSH_MANY(
-      &es.files,
-      (/*typ = array_string   tmp_typ=string*/ array_string_filter2(
-          os__walk_ext(string_add(parent_dir, tos3("/examples")), tos3(".v")),
-          compiler__stable_example)),
-      tmp27, array_string);
+  array_string files =
+      os__walk_ext(string_add(parent_dir, tos3("/examples")), tos3(".v"));
+
+  array_string tmp28 = new_array(0, files.len, sizeof(string));
+  for (int i = 0; i < files.len; i++) {
+    string it = ((string *)files.data)[i];
+    if (!string_contains(it, tos3("vweb")))
+      array_push(&tmp28, &it);
+  }
+  array_string stable = tmp28;
+
+  _PUSH_MANY(&es.files, (/*typ = array_string   tmp_typ=string*/ stable), tmp30,
+             array_string);
 
   compiler__TestSession_test(&/* ? */ es);
 
