@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8a31ee4"
+#define V_COMMIT_HASH "f7c00b8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f63e24e"
+#define V_COMMIT_HASH "8a31ee4"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -239,6 +239,7 @@ typedef struct compiler__Parser compiler__Parser;
 typedef array array_compiler__Token;
 typedef struct compiler__IndexCfg compiler__IndexCfg;
 typedef struct _V_MulRet_string_V_string _V_MulRet_string_V_string;
+typedef struct _V_MulRet_bool_V_string _V_MulRet_bool_V_string;
 typedef struct compiler__Repl compiler__Repl;
 typedef struct compiler__Scanner compiler__Scanner;
 typedef struct compiler__ScanRes compiler__ScanRes;
@@ -372,6 +373,11 @@ struct _V_MulRet_int_V_bool {
 struct _V_FnVargs_os__join {
   int len;
   string args[4];
+};
+
+struct _V_MulRet_bool_V_string {
+  bool var_0;
+  string var_1;
 };
 
 struct benchmark__Benchmark {
@@ -1582,6 +1588,8 @@ void compiler__Parser_defer_st(compiler__Parser *p);
 void compiler__Parser_check_and_register_used_imported_type(compiler__Parser *p,
                                                             string typ_name);
 void compiler__Parser_check_unused_imports(compiler__Parser *p);
+_V_MulRet_bool_V_string
+compiler__Parser_is_next_expr_fn_call(compiler__Parser *p);
 compiler__Type compiler__Parser_get_type2(compiler__Parser *p);
 string compiler__sql_params2params_gen(array_string sql_params,
                                        array_string sql_types, string qprefix);
@@ -10131,9 +10139,7 @@ void compiler__Parser_chash(compiler__Parser *p) {
             p, err, compiler__Parser_cur_tok_index(&/* ? */ *p) - 1);
 
         return;
-      }
-      bool _p = *(bool *)tmp23.data;
-      ;
+      };
     };
 
     return;
@@ -13451,34 +13457,10 @@ void compiler__Parser_gen_blank_identifier_assign(compiler__Parser *p) {
   bool is_indexer =
       compiler__Parser_peek(&/* ? */ *p) == compiler__compiler__TokenKind_lsbr;
 
-  string expr = p->lit;
-
-  bool is_fn_call =
-      compiler__Parser_peek(&/* ? */ *p) == compiler__compiler__TokenKind_lpar;
-
-  if (!is_fn_call) {
-
-    int i = p->token_idx + 1;
-
-    while (((*(compiler__Token *)array_get(p->tokens, i)).tok ==
-                compiler__compiler__TokenKind_dot ||
-            (*(compiler__Token *)array_get(p->tokens, i)).tok ==
-                compiler__compiler__TokenKind_name) &&
-           string_ne((*(compiler__Token *)array_get(p->tokens, i)).lit,
-                     tos3("_"))) {
-
-      expr = string_add(
-          expr, ((*(compiler__Token *)array_get(p->tokens, i)).tok ==
-                 compiler__compiler__TokenKind_dot)
-                    ? (tos3("."))
-                    : ((*(compiler__Token *)array_get(p->tokens, i)).lit));
-
-      i++;
-    };
-
-    is_fn_call = (*(compiler__Token *)array_get(p->tokens, i)).tok ==
-                 compiler__compiler__TokenKind_lpar;
-  };
+  _V_MulRet_bool_V_string _V_mret_is_fn_call_next_expr =
+      compiler__Parser_is_next_expr_fn_call(p);
+  bool is_fn_call = _V_mret_is_fn_call_next_expr.var_0;
+  string next_expr = _V_mret_is_fn_call_next_expr.var_1;
 
   int pos = compiler__CGen_add_placeholder(&/* ? */ *p->cgen);
 
@@ -13487,7 +13469,9 @@ void compiler__Parser_gen_blank_identifier_assign(compiler__Parser *p) {
   if (!is_indexer && !is_fn_call) {
 
     compiler__Parser_error_with_token_index(
-        p, _STR("assigning `%.*s` to `_` is redundant", expr.len, expr.str),
+        p,
+        _STR("assigning `%.*s` to `_` is redundant", next_expr.len,
+             next_expr.str),
         assign_error_tok_idx);
   };
 
@@ -13559,9 +13543,9 @@ string compiler__types_to_c(array_compiler__Type types,
 
   strings__Builder sb = strings__new_builder(10);
 
-  array_compiler__Type tmp33 = types;
-  for (int tmp34 = 0; tmp34 < tmp33.len; tmp34++) {
-    compiler__Type t = ((compiler__Type *)tmp33.data)[tmp34];
+  array_compiler__Type tmp19 = types;
+  for (int tmp20 = 0; tmp20 < tmp19.len; tmp20++) {
+    compiler__Type t = ((compiler__Type *)tmp19.data)[tmp20];
 
     if (t.cat != compiler__compiler__TypeCategory_union_ &&
         t.cat != compiler__compiler__TypeCategory_struct_ &&
@@ -13587,9 +13571,9 @@ string compiler__types_to_c(array_compiler__Type types,
           _STR("%.*s %.*s {", kind.len, kind.str, t.name.len, t.name.str));
     };
 
-    array_compiler__Var tmp36 = t.fields;
-    for (int tmp37 = 0; tmp37 < tmp36.len; tmp37++) {
-      compiler__Var field = ((compiler__Var *)tmp36.data)[tmp37];
+    array_compiler__Var tmp22 = t.fields;
+    for (int tmp23 = 0; tmp23 < tmp22.len; tmp23++) {
+      compiler__Var field = ((compiler__Var *)tmp22.data)[tmp23];
 
       strings__Builder_write(&/* ? */ sb, tos3("\t"));
 
@@ -13716,10 +13700,10 @@ string compiler__Table_fn_gen_name(compiler__Table *table, compiler__Fn *f) {
       !string_ends_with(name, tos3("_str")) &&
       !string_contains(name, tos3("contains"))) {
 
-    int tmp43 = 0;
-    bool tmp44 = map_get(/*gen_c.v : 247*/ table->obf_ids, name, &tmp43);
+    int tmp29 = 0;
+    bool tmp30 = map_get(/*gen_c.v : 237*/ table->obf_ids, name, &tmp29);
 
-    int idx = tmp43;
+    int idx = tmp29;
 
     if (idx == 0) {
 
@@ -24558,6 +24542,41 @@ void compiler__Parser_check_unused_imports(compiler__Parser *p) {
       _STR("the following imports were never used: %.*s", output.len,
            output.str),
       0);
+}
+_V_MulRet_bool_V_string
+compiler__Parser_is_next_expr_fn_call(compiler__Parser *p) {
+
+  string next_expr = p->lit;
+
+  bool is_fn_call =
+      compiler__Parser_peek(&/* ? */ *p) == compiler__compiler__TokenKind_lpar;
+
+  if (!is_fn_call) {
+
+    int i = p->token_idx + 1;
+
+    while (((*(compiler__Token *)array_get(p->tokens, i)).tok ==
+                compiler__compiler__TokenKind_dot ||
+            (*(compiler__Token *)array_get(p->tokens, i)).tok ==
+                compiler__compiler__TokenKind_name) &&
+           string_ne((*(compiler__Token *)array_get(p->tokens, i)).lit,
+                     tos3("_")) &&
+           i < p->tokens.len) {
+
+      next_expr = string_add(
+          next_expr, ((*(compiler__Token *)array_get(p->tokens, i)).tok ==
+                      compiler__compiler__TokenKind_dot)
+                         ? (tos3("."))
+                         : ((*(compiler__Token *)array_get(p->tokens, i)).lit));
+
+      i++;
+    };
+
+    is_fn_call = (*(compiler__Token *)array_get(p->tokens, i)).tok ==
+                 compiler__compiler__TokenKind_lpar;
+  };
+
+  return (_V_MulRet_bool_V_string){.var_0 = is_fn_call, .var_1 = next_expr};
 }
 compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
 
