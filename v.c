@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1b518c1"
+#define V_COMMIT_HASH "c13b58e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f7c00b8"
+#define V_COMMIT_HASH "1b518c1"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -663,6 +663,7 @@ struct compiler__Fn {
   bool returns_error;
   bool is_decl;
   bool is_unsafe;
+  bool is_deprecated;
   array_string defer_text;
   bool is_generic;
   array_string type_pars;
@@ -10194,6 +10195,7 @@ void compiler__Parser_gen_array_str(compiler__Parser *p, compiler__Type typ) {
                      .returns_error = 0,
                      .is_decl = 0,
                      .is_unsafe = 0,
+                     .is_deprecated = 0,
                      .defer_text = new_array(0, 1, sizeof(string)),
                      .is_generic = 0,
                      .type_pars = new_array(0, 1, sizeof(string)),
@@ -10280,6 +10282,7 @@ void compiler__Parser_gen_struct_str(compiler__Parser *p, compiler__Type typ) {
                      .returns_error = 0,
                      .is_decl = 0,
                      .is_unsafe = 0,
+                     .is_deprecated = 0,
                      .defer_text = new_array(0, 1, sizeof(string)),
                      .is_generic = 0,
                      .type_pars = new_array(0, 1, sizeof(string)),
@@ -10703,7 +10706,7 @@ string array_compiler__TypeInst_str(array_compiler__TypeInst a) {
       string k = ((string *)tmp5.data)[tmp6];
 
       string tmp7 = tos((byte *)"", 0);
-      bool tmp8 = map_get(/*fn.v : 55*/ t.inst, k, &tmp7);
+      bool tmp8 = map_get(/*fn.v : 56*/ t.inst, k, &tmp7);
 
       if (!tmp8)
         tmp7 = tos((byte *)"", 0);
@@ -10930,6 +10933,7 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
       .mod = p->mod,
       .is_public = p->tok == compiler__compiler__TokenKind_key_pub,
       .is_unsafe = string_eq(p->attr, tos3("unsafe_fn")),
+      .is_deprecated = string_eq(p->attr, tos3("deprecated")),
       .name = tos((byte *)"", 0),
       .args = new_array(0, 1, sizeof(compiler__Var)),
       .is_interface = 0,
@@ -11700,6 +11704,12 @@ void compiler__Parser_fn_call(compiler__Parser *p, compiler__Fn *f,
     compiler__Parser_error(
         p,
         tos3("you are calling an unsafe function outside of an unsafe block"));
+  };
+
+  if (f->is_deprecated) {
+
+    compiler__Parser_warn(p,
+                          _STR("%.*s is deprecated", f->name.len, f->name.str));
   };
 
   if (!f->is_public && !f->is_c && !p->pref->is_test && !f->is_interface &&
@@ -12604,7 +12614,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
 
     string tmp164 = tos((byte *)"", 0);
-    bool tmp165 = map_get(/*fn.v : 1110*/ r.inst, tp, &tmp164);
+    bool tmp165 = map_get(/*fn.v : 1115*/ r.inst, tp, &tmp164);
 
     if (!tmp165)
       tmp164 = tos((byte *)"", 0);
@@ -12612,7 +12622,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     if (string_ne(tmp164, tos3(""))) {
 
       string tmp166 = tos((byte *)"", 0);
-      bool tmp167 = map_get(/*fn.v : 1111*/ r.inst, tp, &tmp166);
+      bool tmp167 = map_get(/*fn.v : 1116*/ r.inst, tp, &tmp166);
 
       if (!tmp167)
         tmp166 = tos((byte *)"", 0);
@@ -12620,7 +12630,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       if (string_ne(tmp166, ti)) {
 
         string tmp168 = tos((byte *)"", 0);
-        bool tmp169 = map_get(/*fn.v : 1112*/ r.inst, tp, &tmp168);
+        bool tmp169 = map_get(/*fn.v : 1117*/ r.inst, tp, &tmp168);
 
         if (!tmp169)
           tmp168 = tos((byte *)"", 0);
@@ -12644,7 +12654,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
   };
 
   string tmp170 = tos((byte *)"", 0);
-  bool tmp171 = map_get(/*fn.v : 1121*/ r.inst, f->typ, &tmp170);
+  bool tmp171 = map_get(/*fn.v : 1126*/ r.inst, f->typ, &tmp170);
 
   if (!tmp171)
     tmp170 = tos((byte *)"", 0);
@@ -12712,7 +12722,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
         if (_IN(string, (fna), map_keys(&/* ? */ ti.inst))) {
 
           string tmp185 = tos((byte *)"", 0);
-          bool tmp186 = map_get(/*fn.v : 1150*/ ti.inst, fna, &tmp185);
+          bool tmp186 = map_get(/*fn.v : 1155*/ ti.inst, fna, &tmp185);
 
           if (!tmp186)
             tmp185 = tos((byte *)"", 0);
@@ -12749,7 +12759,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
     if (_IN(string, (fi), map_keys(&/* ? */ ti.inst))) {
 
       string tmp188 = tos((byte *)"", 0);
-      bool tmp189 = map_get(/*fn.v : 1169*/ ti.inst, fi, &tmp188);
+      bool tmp189 = map_get(/*fn.v : 1174*/ ti.inst, fi, &tmp188);
 
       if (!tmp189)
         tmp188 = tos((byte *)"", 0);
@@ -12955,7 +12965,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
       string k = ((string *)tmp209.data)[tmp210];
 
       string tmp211 = tos((byte *)"", 0);
-      bool tmp212 = map_get(/*fn.v : 1255*/ ti.inst, k, &tmp211);
+      bool tmp212 = map_get(/*fn.v : 1260*/ ti.inst, k, &tmp211);
 
       if (!tmp212)
         tmp211 = tos((byte *)"", 0);
@@ -13025,7 +13035,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
     string k = ((string *)tmp224.data)[tmp225];
 
     string tmp226 = tos((byte *)"", 0);
-    bool tmp227 = map_get(/*fn.v : 1287*/ ti.inst, k, &tmp226);
+    bool tmp227 = map_get(/*fn.v : 1292*/ ti.inst, k, &tmp226);
 
     if (!tmp227)
       tmp226 = tos((byte *)"", 0);
@@ -13075,7 +13085,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   if (_IN_MAP((f->typ), ti.inst)) {
 
     string tmp238 = tos((byte *)"", 0);
-    bool tmp239 = map_get(/*fn.v : 1306*/ ti.inst, f->typ, &tmp238);
+    bool tmp239 = map_get(/*fn.v : 1311*/ ti.inst, f->typ, &tmp238);
 
     if (!tmp239)
       tmp238 = tos((byte *)"", 0);
@@ -14277,6 +14287,7 @@ void compiler__Parser_gen_json_for_type(compiler__Parser *p,
                      .returns_error = 0,
                      .is_decl = 0,
                      .is_unsafe = 0,
+                     .is_deprecated = 0,
                      .defer_text = new_array(0, 1, sizeof(string)),
                      .is_generic = 0,
                      .type_pars = new_array(0, 1, sizeof(string)),
@@ -14334,6 +14345,7 @@ void compiler__Parser_gen_json_for_type(compiler__Parser *p,
                      .returns_error = 0,
                      .is_decl = 0,
                      .is_unsafe = 0,
+                     .is_deprecated = 0,
                      .defer_text = new_array(0, 1, sizeof(string)),
                      .is_generic = 0,
                      .type_pars = new_array(0, 1, sizeof(string)),
@@ -18573,6 +18585,7 @@ compiler__Fn *compiler__Parser_interface_method(compiler__Parser *p,
                       .returns_error = 0,
                       .is_decl = 0,
                       .is_unsafe = 0,
+                      .is_deprecated = 0,
                       .defer_text = new_array(0, 1, sizeof(string)),
                       .is_generic = 0,
                       .type_pars = new_array(0, 1, sizeof(string)),
@@ -19104,6 +19117,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
                        .returns_error = 0,
                        .is_decl = 0,
                        .is_unsafe = 0,
+                       .is_deprecated = 0,
                        .defer_text = new_array(0, 1, sizeof(string)),
                        .is_generic = 0,
                        .type_pars = new_array(0, 1, sizeof(string)),
@@ -20812,6 +20826,7 @@ string compiler__Parser_get_c_func_type(compiler__Parser *p, string name) {
                      .returns_error = 0,
                      .is_decl = 0,
                      .is_unsafe = 0,
+                     .is_deprecated = 0,
                      .defer_text = new_array(0, 1, sizeof(string)),
                      .is_generic = 0,
                      .type_pars = new_array(0, 1, sizeof(string)),
@@ -24490,6 +24505,7 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
                        .returns_error = 0,
                        .is_decl = 0,
                        .is_unsafe = 0,
+                       .is_deprecated = 0,
                        .defer_text = new_array(0, 1, sizeof(string)),
                        .is_generic = 0,
                        .type_pars = new_array(0, 1, sizeof(string)),
@@ -29256,6 +29272,7 @@ void init() {
                      .returns_error = 0,
                      .is_decl = 0,
                      .is_unsafe = 0,
+                     .is_deprecated = 0,
                      .defer_text = new_array(0, 1, sizeof(string)),
                      .is_generic = 0,
                      .type_pars = new_array(0, 1, sizeof(string)),
@@ -29276,6 +29293,7 @@ void init() {
                      .returns_error = 0,
                      .is_decl = 0,
                      .is_unsafe = 0,
+                     .is_deprecated = 0,
                      .defer_text = new_array(0, 1, sizeof(string)),
                      .is_generic = 0,
                      .type_pars = new_array(0, 1, sizeof(string)),
