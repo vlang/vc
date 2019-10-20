@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b733876"
+#define V_COMMIT_HASH "6d8548d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5977fc0"
+#define V_COMMIT_HASH "b733876"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -41,6 +41,12 @@
 #endif
 
 #ifdef __DragonFly__
+#include <sys/types.h>
+#include <sys/wait.h> // os__wait uses wait on nix
+#endif
+
+#ifdef __OpenBSD__
+#include <sys/resource.h>
 #include <sys/types.h>
 #include <sys/wait.h> // os__wait uses wait on nix
 #endif
@@ -28473,6 +28479,8 @@ void init() {
       "nix\n#endif\n\n#ifdef __FreeBSD__\n#include <sys/types.h>\n#include "
       "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef "
       "__DragonFly__\n#include <sys/types.h>\n#include <sys/wait.h> // "
+      "os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n#include "
+      "<sys/types.h>\n#include <sys/resource.h>\n#include <sys/wait.h> // "
       "os__wait uses wait on nix\n#endif\n\n#define "
       "EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION 0\n// Due "
       "to a tcc bug, the length of an array needs to be specified, but GCC "
