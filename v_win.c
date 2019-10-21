@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "eef73ee"
+#define V_COMMIT_HASH "7680d9a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cd8b0d0"
+#define V_COMMIT_HASH "eef73ee"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -12662,14 +12662,10 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
                                        f->name.len, f->name.str, f->args.len));
       };
 
-      if (p->tok == compiler__compiler__TokenKind_comma) {
+      if (p->tok == compiler__compiler__TokenKind_comma &&
+          (!is_variadic || (is_variadic && i < f->args.len - 2))) {
 
-        compiler__Parser_fgen(p, tos3(", "));
-      };
-
-      if (!is_variadic) {
-
-        compiler__Parser_next(p);
+        compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
 
         compiler__Parser_gen(p, tos3(","));
       };
@@ -12769,7 +12765,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
 
     string tmp163 = tos((byte *)"", 0);
-    bool tmp164 = map_get(/*fn.v : 1105*/ r.inst, tp, &tmp163);
+    bool tmp164 = map_get(/*fn.v : 1102*/ r.inst, tp, &tmp163);
 
     if (!tmp164)
       tmp163 = tos((byte *)"", 0);
@@ -12777,7 +12773,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     if (string_ne(tmp163, tos3(""))) {
 
       string tmp165 = tos((byte *)"", 0);
-      bool tmp166 = map_get(/*fn.v : 1106*/ r.inst, tp, &tmp165);
+      bool tmp166 = map_get(/*fn.v : 1103*/ r.inst, tp, &tmp165);
 
       if (!tmp166)
         tmp165 = tos((byte *)"", 0);
@@ -12785,7 +12781,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       if (string_ne(tmp165, ti)) {
 
         string tmp167 = tos((byte *)"", 0);
-        bool tmp168 = map_get(/*fn.v : 1107*/ r.inst, tp, &tmp167);
+        bool tmp168 = map_get(/*fn.v : 1104*/ r.inst, tp, &tmp167);
 
         if (!tmp168)
           tmp167 = tos((byte *)"", 0);
@@ -12809,7 +12805,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
   };
 
   string tmp169 = tos((byte *)"", 0);
-  bool tmp170 = map_get(/*fn.v : 1116*/ r.inst, f->typ, &tmp169);
+  bool tmp170 = map_get(/*fn.v : 1113*/ r.inst, f->typ, &tmp169);
 
   if (!tmp170)
     tmp169 = tos((byte *)"", 0);
@@ -12877,7 +12873,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
         if (_IN(string, (fna), map_keys(&/* ? */ ti.inst))) {
 
           string tmp184 = tos((byte *)"", 0);
-          bool tmp185 = map_get(/*fn.v : 1145*/ ti.inst, fna, &tmp184);
+          bool tmp185 = map_get(/*fn.v : 1142*/ ti.inst, fna, &tmp184);
 
           if (!tmp185)
             tmp184 = tos((byte *)"", 0);
@@ -12914,7 +12910,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
     if (_IN(string, (fi), map_keys(&/* ? */ ti.inst))) {
 
       string tmp187 = tos((byte *)"", 0);
-      bool tmp188 = map_get(/*fn.v : 1164*/ ti.inst, fi, &tmp187);
+      bool tmp188 = map_get(/*fn.v : 1161*/ ti.inst, fi, &tmp187);
 
       if (!tmp188)
         tmp187 = tos((byte *)"", 0);
@@ -13113,7 +13109,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
       string k = ((string *)tmp208.data)[tmp209];
 
       string tmp210 = tos((byte *)"", 0);
-      bool tmp211 = map_get(/*fn.v : 1247*/ ti.inst, k, &tmp210);
+      bool tmp211 = map_get(/*fn.v : 1244*/ ti.inst, k, &tmp210);
 
       if (!tmp211)
         tmp210 = tos((byte *)"", 0);
@@ -13183,7 +13179,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
     string k = ((string *)tmp223.data)[tmp224];
 
     string tmp225 = tos((byte *)"", 0);
-    bool tmp226 = map_get(/*fn.v : 1279*/ ti.inst, k, &tmp225);
+    bool tmp226 = map_get(/*fn.v : 1276*/ ti.inst, k, &tmp225);
 
     if (!tmp226)
       tmp225 = tos((byte *)"", 0);
@@ -13238,7 +13234,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   if (_IN_MAP((f->typ), ti.inst)) {
 
     string tmp237 = tos((byte *)"", 0);
-    bool tmp238 = map_get(/*fn.v : 1303*/ ti.inst, f->typ, &tmp237);
+    bool tmp238 = map_get(/*fn.v : 1300*/ ti.inst, f->typ, &tmp237);
 
     if (!tmp238)
       tmp237 = tos((byte *)"", 0);
