@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7680d9a"
+#define V_COMMIT_HASH "a29c80c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "eef73ee"
+#define V_COMMIT_HASH "7680d9a"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -11891,7 +11891,7 @@ void compiler__Parser_fn_call(compiler__Parser *p, compiler__Fn *f,
 
   if (f->is_unsafe && !p->builtin_mod && !p->inside_unsafe) {
 
-    compiler__Parser_error(
+    compiler__Parser_warn(
         p,
         tos3("you are calling an unsafe function outside of an unsafe block"));
   };
