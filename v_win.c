@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a52cb31"
+#define V_COMMIT_HASH "cd8b0d0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "dfc654f"
+#define V_COMMIT_HASH "a52cb31"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -10781,12 +10781,37 @@ void compiler__Parser_enum_decl(compiler__Parser *p, string _enum_name) {
                        compiler__mod_gen_name(p->mod).str, enum_name.len,
                        enum_name.str, field.len, field.str);
 
+    if (p->tok == compiler__compiler__TokenKind_assign) {
+
+      int enum_assign_tidx = compiler__Parser_cur_tok_index(&/* ? */ *p);
+
+      if (compiler__Parser_peek(&/* ? */ *p) ==
+          compiler__compiler__TokenKind_number) {
+
+        compiler__Parser_next(p);
+
+        val = v_string_int(p->lit);
+
+        compiler__Parser_next(p);
+
+      } else {
+
+        compiler__Parser_next(p);
+
+        enum_assign_tidx = compiler__Parser_cur_tok_index(&/* ? */ *p);
+
+        compiler__Parser_error_with_token_index(
+            p, tos3("only numbers are allowed in enum initializations"),
+            enum_assign_tidx);
+      };
+    };
+
     if (p->pass == compiler__compiler__Pass_main) {
 
       _PUSH(&p->cgen->consts,
             (/*typ = array_string   tmp_typ=string*/ _STR(
                 "#define %.*s %d", name.len, name.str, val)),
-            tmp8, string);
+            tmp9, string);
     };
 
     if (p->tok == compiler__compiler__TokenKind_comma) {
