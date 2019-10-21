@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "333f0ab"
+#define V_COMMIT_HASH "2829298"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3d6b936"
+#define V_COMMIT_HASH "333f0ab"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -6323,9 +6323,14 @@ void os__write_file(string path, string text) {
 }
 void os__clear() {
 
+#ifndef _WIN32
+
   printf("\x1b[2J");
 
   printf("\x1b[H");
+
+#endif
+  ;
 }
 void os__on_segfault(void *f) {
 
@@ -14612,6 +14617,12 @@ void compiler__V_generate_hotcode_reloading_declarations(compiler__V *v) {
     if (v->pref->is_so) {
 
       compiler__CGen_genln(cgen, tos3("HANDLE live_fn_mutex;"));
+
+      compiler__CGen_genln(
+          cgen,
+          tos3("\nvoid pthread_mutex_lock(HANDLE *m) {\n	"
+               "WaitForSingleObject(*m, INFINITE);\n}\n\nvoid "
+               "pthread_mutex_unlock(HANDLE *m) {\n	ReleaseMutex(*m);\n}"));
     };
 
     if (v->pref->is_live) {
