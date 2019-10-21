@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a29c80c"
+#define V_COMMIT_HASH "fdfa564"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7680d9a"
+#define V_COMMIT_HASH "a29c80c"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -18567,17 +18567,11 @@ void compiler__Parser_const_decl(compiler__Parser *p) {
       compiler__Table_register_const(p->table, name, typ, p->mod);
     };
 
-    while (1) {
+    Option_compiler__Var tmp46 =
+        compiler__Table_find_const(&/* ? */ *p->v->table, name);
 
-      Option_compiler__Var tmp46 =
-          compiler__Table_find_const(&/* ? */ *p->v->table, name);
-      if (!tmp46.ok) {
-        string err = tmp46.error;
-
-        break;
-      }
+    if (tmp46.ok) {
       compiler__Var my_const = *(compiler__Var *)tmp46.data;
-      ;
 
       if (string_eq(my_const.typ, tos3("void"))) {
 
@@ -18593,8 +18587,6 @@ void compiler__Parser_const_decl(compiler__Parser *p) {
           };
         };
       };
-
-      break;
     };
 
     if (p->pass == compiler__compiler__Pass_main && !p->cgen->nogen) {
@@ -19385,7 +19377,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
   if (_IN(string, (p->lit), map_keys(&/* ? */ ti))) {
 
     string tmp107 = tos((byte *)"", 0);
-    bool tmp108 = map_get(/*parser.v : 1029*/ ti, p->lit, &tmp107);
+    bool tmp108 = map_get(/*parser.v : 1025*/ ti, p->lit, &tmp107);
 
     if (!tmp108)
       tmp107 = tos((byte *)"", 0);
