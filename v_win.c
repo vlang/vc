@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4574039"
+#define V_COMMIT_HASH "d8edc27"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "14c273f"
+#define V_COMMIT_HASH "4574039"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1877,6 +1877,7 @@ string time__days_string;
 #define vweb_dot_tmpl__STR_END tos3("\' ) ")
 string compiler__CommonCHeaders;
 string compiler__js_headers;
+string compiler__match_arrow_warning;
 #define compiler__MaxLocalVars 50
 compiler__Fn compiler__EmptyFn;
 compiler__Fn compiler__MainFn;
@@ -19820,9 +19821,7 @@ string compiler__Parser_statements_no_rcbr(compiler__Parser *p) {
   while (p->tok != compiler__compiler__TokenKind_rcbr &&
          p->tok != compiler__compiler__TokenKind_eof &&
          p->tok != compiler__compiler__TokenKind_key_case &&
-         p->tok != compiler__compiler__TokenKind_key_default &&
-         compiler__Parser_peek(&/* ? */ *p) !=
-             compiler__compiler__TokenKind_arrow) {
+         p->tok != compiler__compiler__TokenKind_key_default) {
 
     last_st_typ = compiler__Parser_statement(p, 1);
 
@@ -24088,6 +24087,8 @@ string compiler__Parser_match_statement(compiler__Parser *p, bool is_expr) {
 
       if (p->tok == compiler__compiler__TokenKind_arrow) {
 
+        compiler__Parser_warn(p, compiler__match_arrow_warning);
+
         compiler__Parser_check(p, compiler__compiler__TokenKind_arrow);
       };
 
@@ -24264,7 +24265,12 @@ string compiler__Parser_match_statement(compiler__Parser *p, bool is_expr) {
 
     compiler__Parser_gen(p, tos3(")"));
 
-    compiler__Parser_check(p, compiler__compiler__TokenKind_arrow);
+    if (p->tok == compiler__compiler__TokenKind_arrow) {
+
+      compiler__Parser_warn(p, compiler__match_arrow_warning);
+
+      compiler__Parser_check(p, compiler__compiler__TokenKind_arrow);
+    };
 
     if (is_expr) {
 
@@ -29684,6 +29690,10 @@ void init() {
       "function() {}\nvar u16 = function() {}\nvar i8 = function() {}\nvar u8 "
       "= function() {}\nvar bool = function() {}\nvar rune = function() "
       "{}\nvar map_string = function() {}\nvar map_int = function() {}\n\n");
+  compiler__match_arrow_warning =
+      string_add(tos3("=> is no longer needed in match statements, use\n"),
+                 tos3("match foo {\n	1 { bar }\n	2 { baz }\n	else { "
+                      "... }\n}"));
   compiler__EmptyFn =
       (compiler__Fn){.name = tos((byte *)"", 0),
                      .mod = tos((byte *)"", 0),
