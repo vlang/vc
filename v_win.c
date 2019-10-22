@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fdfa564"
+#define V_COMMIT_HASH "fb89c12"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a29c80c"
+#define V_COMMIT_HASH "fdfa564"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -15130,7 +15130,7 @@ void compiler__V_compile(compiler__V *v) {
   };
 
   compiler__CGen_genln(cgen,
-                       tos3("this line will be replaced with definitions"));
+                       tos3("// this line will be replaced with definitions"));
 
   int defs_pos = cgen->lines.len - 1;
 
