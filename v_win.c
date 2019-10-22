@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "eeea257"
+#define V_COMMIT_HASH "7696a60"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d289a90"
+#define V_COMMIT_HASH "eeea257"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -16166,6 +16166,18 @@ compiler__V *compiler__new_v(array_string args) {
       string_ne(dir, tos3(".v"))) {
 
     out_name = string_left(dir, dir.len - 2);
+
+    if (string_eq(out_name, tos3("v")) &&
+        os__dir_exists(tos3("vlib/compiler"))) {
+
+      println(tos3("Saving the resulting V executable in `./v2`"));
+
+      println(
+          string_add(tos3("Use `v -o v v.v` if you want to replace current "),
+                     tos3("V executable.")));
+
+      out_name = tos3("v2");
+    };
   };
 
   if (string_eq(dir, tos3(".")) && string_eq(out_name, tos3("a.out"))) {
