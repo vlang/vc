@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d289a90"
+#define V_COMMIT_HASH "eeea257"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fb89c12"
+#define V_COMMIT_HASH "d289a90"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -694,7 +694,8 @@ struct compiler__Scanner {
   bool should_print_errors_in_color;
   bool should_print_relative_paths_on_error;
   byte quote;
-  array_string file_lines;
+  array_int line_ends;
+  int nlines;
 };
 
 struct compiler__TestSession {
@@ -1600,6 +1601,7 @@ void compiler__Scanner_debug_tokens(compiler__Scanner *s);
 void compiler__Scanner_ignore_line(compiler__Scanner *s);
 void compiler__Scanner_eat_to_end_of_line(compiler__Scanner *s);
 void compiler__Scanner_inc_line_number(compiler__Scanner *s);
+string compiler__Scanner_line(compiler__Scanner s, int n);
 bool compiler__is_name_char(byte c);
 bool compiler__is_nl(byte c);
 bool compiler__contains_capital(string s);
@@ -9512,18 +9514,18 @@ void compiler__Scanner_error_with_col(compiler__Scanner *s, string msg,
   eprintln(_STR("%.*s:%d:%d: %.*s", fullpath.len, fullpath.str, s->line_nr + 1,
                 col, final_message.len, final_message.str));
 
-  if (s->should_print_line_on_error && s->file_lines.len > 0) {
+  if (s->should_print_line_on_error && s->nlines > 0) {
 
     int context_start_line =
         compiler__imax(0, (s->line_nr - compiler__error_context_before + 1));
 
     int context_end_line = compiler__imin(
-        s->file_lines.len, (s->line_nr + compiler__error_context_after + 1));
+        s->nlines - 1, (s->line_nr + compiler__error_context_after + 1));
 
     for (int cline = context_start_line; cline < context_end_line; cline++) {
 
       string line = string_add(_STR("%5d| ", (cline + 1)),
-                               (*(string *)array_get(s->file_lines, cline)));
+                               compiler__Scanner_line(*s, cline));
 
       string coloredline =
           (cline == s->line_nr && color_on) ? (term__red(line)) : (line);
@@ -9538,18 +9540,18 @@ void compiler__Scanner_error_with_col(compiler__Scanner *s, string msg,
       array_string pointerline = new_array_from_c_array(
           0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-      string tmp22 = line;
-      array_byte bytes_tmp22 = string_bytes(tmp22);
+      string tmp20 = line;
+      array_byte bytes_tmp20 = string_bytes(tmp20);
       ;
-      for (int i = 0; i < tmp22.len; i++) {
-        byte c = ((byte *)bytes_tmp22.data)[i];
+      for (int i = 0; i < tmp20.len; i++) {
+        byte c = ((byte *)bytes_tmp20.data)[i];
 
         if (i < col) {
 
           byte x = (byte_is_space(c)) ? (c) : (' ');
 
           _PUSH(&pointerline,
-                (/*typ = array_string   tmp_typ=string*/ byte_str(x)), tmp24,
+                (/*typ = array_string   tmp_typ=string*/ byte_str(x)), tmp22,
                 string);
 
           continue;
@@ -9559,7 +9561,7 @@ void compiler__Scanner_error_with_col(compiler__Scanner *s, string msg,
               (/*typ = array_string   tmp_typ=string*/ (color_on)
                    ? (term__bold(term__blue(tos3("^"))))
                    : (tos3("^"))),
-              tmp25, string);
+              tmp23, string);
 
         break;
       };
@@ -9684,9 +9686,6 @@ compiler__Scanner_get_scanner_pos_of_token(compiler__Scanner *s,
   compiler__Scanner_goto_scanner_position(
       s, (compiler__ScannerPos){.pos = 0, .line_nr = 0, .last_nl_pos = 0});
 
-  s->file_lines = new_array_from_c_array(
-      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-
   int prevlinepos = 0;
 
   int ate = 0;
@@ -9702,7 +9701,7 @@ compiler__Scanner_get_scanner_pos_of_token(compiler__Scanner *s,
       break;
     };
 
-    if (s->line_nr > tline + 10) {
+    if (s->line_nr > tline) {
 
       break;
     };
@@ -9717,11 +9716,6 @@ compiler__Scanner_get_scanner_pos_of_token(compiler__Scanner *s,
     compiler__Scanner_ignore_line(s);
 
     compiler__Scanner_eat_single_newline(s);
-
-    string sline = string_substr(s->text, prevlinepos, s->pos);
-
-    _PUSH(&s->file_lines, (/*typ = array_string   tmp_typ=string*/ sline),
-          tmp35, string);
   };
 
   compiler__Scanner_goto_scanner_position(s, cpos);
@@ -25780,7 +25774,8 @@ compiler__Scanner *compiler__new_scanner(string text) {
                            .fmt_line_empty = 0,
                            .fn_name = tos((byte *)"", 0),
                            .quote = 0,
-                           .file_lines = new_array(0, 1, sizeof(string))},
+                           .line_ends = new_array(0, 1, sizeof(int)),
+                           .nlines = 0},
       sizeof(compiler__Scanner));
 }
 compiler__ScanRes compiler__scan_res(compiler__TokenKind tok, string lit) {
@@ -26662,7 +26657,7 @@ string compiler__Scanner_ident_string(compiler__Scanner *s) {
       compiler__Scanner_inc_line_number(s);
     };
 
-    if (c == '0' && s->pos > 2 && string_at(s->text, s->pos - 1) == '\\') {
+    if (c == '0' && s->pos > 2 && string_at(s->text, s->pos - 1) == slash) {
 
       compiler__Scanner_error(&/* ? */ *s,
                               tos3("0 character in a string literal"));
@@ -26676,7 +26671,7 @@ string compiler__Scanner_ident_string(compiler__Scanner *s) {
     };
 
     if (c == '{' && prevc == '$' &&
-        compiler__Scanner_count_symbol_before(*s, s->pos - 2, '\\') % 2 == 0) {
+        compiler__Scanner_count_symbol_before(*s, s->pos - 2, slash) % 2 == 0) {
 
       s->inside_string = 1;
 
@@ -26686,7 +26681,7 @@ string compiler__Scanner_ident_string(compiler__Scanner *s) {
     };
 
     if ((byte_is_letter(c) || c == '_') && prevc == '$' &&
-        compiler__Scanner_count_symbol_before(*s, s->pos - 2, '\\') % 2 == 0) {
+        compiler__Scanner_count_symbol_before(*s, s->pos - 2, slash) % 2 == 0) {
 
       s->inside_string = 1;
 
@@ -26866,16 +26861,39 @@ void compiler__Scanner_inc_line_number(compiler__Scanner *s) {
   s->last_nl_pos = s->pos;
 
   s->line_nr++;
+
+  _PUSH(&s->line_ends, (/*typ = array_int   tmp_typ=int*/ s->pos), tmp129, int);
+
+  s->nlines++;
+}
+string compiler__Scanner_line(compiler__Scanner s, int n) {
+
+  string res = tos3("");
+
+  if (n >= 0 && n < s.line_ends.len) {
+
+    int nline_start =
+        (n == 0) ? (0) : ((*(int *)array_get(s.line_ends, n - 1)));
+
+    int nline_end = (*(int *)array_get(s.line_ends, n));
+
+    if (nline_start <= nline_end) {
+
+      res = string_substr(s.text, nline_start, nline_end);
+    };
+  };
+
+  return string_trim_left(string_trim_right(res, tos3("\r\n")), tos3("\r\n"));
 }
 bool compiler__is_name_char(byte c) { return byte_is_letter(c) || c == '_'; }
 bool compiler__is_nl(byte c) { return c == '\r' || c == '\n'; }
 bool compiler__contains_capital(string s) {
 
-  string tmp129 = s;
-  array_byte bytes_tmp129 = string_bytes(tmp129);
+  string tmp137 = s;
+  array_byte bytes_tmp137 = string_bytes(tmp137);
   ;
-  for (int tmp130 = 0; tmp130 < tmp129.len; tmp130++) {
-    byte c = ((byte *)bytes_tmp129.data)[tmp130];
+  for (int tmp138 = 0; tmp138 < tmp137.len; tmp138++) {
+    byte c = ((byte *)bytes_tmp137.data)[tmp138];
 
     if (c >= 'A' && c <= 'Z') {
 
@@ -26892,10 +26910,10 @@ bool compiler__good_type_name(string s) {
     return 1;
   };
 
-  int tmp131 = 2;
+  int tmp139 = 2;
   ;
-  for (int tmp132 = tmp131; tmp132 < s.len; tmp132++) {
-    int i = tmp132;
+  for (int tmp140 = tmp139; tmp140 < s.len; tmp140++) {
+    int i = tmp140;
 
     if (byte_is_capital(string_at(s, i)) &&
         byte_is_capital(string_at(s, i - 1)) &&
