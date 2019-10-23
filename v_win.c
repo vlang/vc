@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a6aad88"
+#define V_COMMIT_HASH "1752f68"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8b74c71"
+#define V_COMMIT_HASH "a6aad88"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1487,9 +1487,8 @@ compiler__OS compiler__os_from_string(string os);
 void compiler__set_vroot_folder(string vroot_path);
 compiler__V *compiler__new_v_compiler_with_args(array_string args);
 void compiler__generate_vh(string mod);
-void compiler__generate_fn(os__File file, array_compiler__Token tokens, int i);
-void compiler__generate_const(os__File file, array_compiler__Token tokens,
-                              int i);
+string compiler__generate_fn(array_compiler__Token tokens, int i);
+string compiler__generate_const(array_compiler__Token tokens, int i);
 void compiler__DepGraph_from_import_tables(
     compiler__DepGraph *graph, map_compiler__FileImportTable import_tables);
 array_string compiler__DepGraph_imports(compiler__DepGraph *graph);
@@ -1778,6 +1777,19 @@ array_int g_ustring_runes; // global
 #define builtin__CP_UTF8 65001
 #define strconv__int_size 32
 u64 strconv__max_u64;
+#define os__O_RDONLY 1
+#define os__O_WRONLY 2
+#define os__O_RDWR 3
+#define os__O_APPEND 8
+#define os__O_CREATE 16
+#define os__O_EXCL 32
+#define os__O_SYNC 64
+#define os__O_TRUNC 128
+int os__S_IFMT;
+int os__S_IFDIR;
+int os__STD_INPUT_HANDLE;
+int os__STD_OUTPUT_HANDLE;
+int os__STD_ERROR_HANDLE;
 #define os__SUCCESS 0
 #define os__ERROR_INSUFFICIENT_BUFFER 130
 #define os__FILE_SHARE_READ 1
@@ -1818,20 +1830,7 @@ int os__FILE_TYPE_CHAR;
 int os__FILE_TYPE_PIPE;
 int os__FILE_TYPE_UNKNOWN;
 int os__FILE_INVALID_FILE_ID;
-#define os__O_RDONLY 1
-#define os__O_WRONLY 2
-#define os__O_RDWR 3
-#define os__O_APPEND 8
-#define os__O_CREATE 16
-#define os__O_EXCL 32
-#define os__O_SYNC 64
-#define os__O_TRUNC 128
-int os__S_IFMT;
-int os__S_IFDIR;
 int os__INVALID_HANDLE_VALUE;
-int os__STD_INPUT_HANDLE;
-int os__STD_OUTPUT_HANDLE;
-int os__STD_ERROR_HANDLE;
 int os__ENABLE_ECHO_INPUT;
 int os__ENABLE_EXTENDED_FLAGS;
 int os__ENABLE_INSERT_MODE;
@@ -15605,19 +15604,22 @@ array_string compiler__V_v_files_from_dir(compiler__V *v, string dir) {
       continue;
     };
 
-    if (string_ends_with(file, tos3("_win.v")) &&
+    if ((string_ends_with(file, tos3("_win.v")) ||
+         string_ends_with(file, tos3("_windows.v"))) &&
         v->os != compiler__compiler__OS_windows) {
 
       continue;
     };
 
-    if (string_ends_with(file, tos3("_lin.v")) &&
+    if ((string_ends_with(file, tos3("_lin.v")) ||
+         string_ends_with(file, tos3("_linux.v"))) &&
         v->os != compiler__compiler__OS_linux) {
 
       continue;
     };
 
-    if (string_ends_with(file, tos3("_mac.v")) &&
+    if ((string_ends_with(file, tos3("_mac.v")) ||
+         string_ends_with(file, tos3("_darwin.v"))) &&
         v->os != compiler__compiler__OS_mac) {
 
       continue;
@@ -16710,7 +16712,7 @@ void compiler__generate_vh(string mod) {
   for (int i = 0; i < vfiles.len; i++) {
     string it = ((string *)vfiles.data)[i];
     if (!string_ends_with(it, tos3("test.v")) &&
-        !string_ends_with(it, tos3("_win.v")))
+        !string_ends_with(it, tos3("_windows.v")))
       array_push(&tmp9, &it);
   }
   array_string filtered = tmp9;
@@ -16720,9 +16722,13 @@ void compiler__generate_vh(string mod) {
   compiler__V *v = compiler__new_v(new_array_from_c_array(
       1, 1, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 1){tos3("foo.v")}));
 
-  array_string tmp12 = filtered;
-  for (int tmp13 = 0; tmp13 < tmp12.len; tmp13++) {
-    string file = ((string *)tmp12.data)[tmp13];
+  strings__Builder consts = strings__new_builder(100);
+
+  strings__Builder fns = strings__new_builder(100);
+
+  array_string tmp14 = filtered;
+  for (int tmp15 = 0; tmp15 < tmp14.len; tmp15++) {
+    string file = ((string *)tmp14.data)[tmp15];
 
     compiler__Parser p = compiler__V_new_parser_from_file(v, file);
 
@@ -16730,29 +16736,41 @@ void compiler__generate_vh(string mod) {
 
     compiler__Parser_parse(&/* ? */ p, compiler__compiler__Pass_decl);
 
-    array_compiler__Token tmp15 = p.tokens;
-    for (int i = 0; i < tmp15.len; i++) {
-      compiler__Token tok = ((compiler__Token *)tmp15.data)[i];
+    array_compiler__Token tmp17 = p.tokens;
+    for (int i = 0; i < tmp17.len; i++) {
+      compiler__Token tok = ((compiler__Token *)tmp17.data)[i];
 
       if (!compiler__TokenKind_is_decl(p.tok)) {
 
         continue;
       };
 
-      compiler__TokenKind tmp16 = tok.tok;
+      compiler__TokenKind tmp18 = tok.tok;
 
-      if (tmp16 == compiler__compiler__TokenKind_key_fn) {
+      if (tmp18 == compiler__compiler__TokenKind_key_fn) {
 
-        compiler__generate_fn(out, p.tokens, i);
+        strings__Builder_writeln(&/* ? */ fns,
+                                 compiler__generate_fn(p.tokens, i));
 
-      } else if (tmp16 == compiler__compiler__TokenKind_key_const) {
+      } else if (tmp18 == compiler__compiler__TokenKind_key_const) {
 
-        compiler__generate_const(out, p.tokens, i);
+        strings__Builder_writeln(&/* ? */ consts,
+                                 compiler__generate_const(p.tokens, i));
       };
     };
   };
+
+  string result = string_add(
+      strings__Builder_str(consts),
+      string_replace(strings__Builder_str(fns), tos3("\n\n"), tos3("")));
+
+  os__File_writeln(
+      out, string_replace(string_replace(result, tos3("[ ]"), tos3("[]")),
+                          tos3("? "), tos3("?")));
+
+  os__File_close(out);
 }
-void compiler__generate_fn(os__File file, array_compiler__Token tokens, int i) {
+string compiler__generate_fn(array_compiler__Token tokens, int i) {
 
   strings__Builder out = strings__new_builder(100);
 
@@ -16761,7 +16779,7 @@ void compiler__generate_fn(os__File file, array_compiler__Token tokens, int i) {
   if ((*(compiler__Token *)array_get(tokens, i - 1)).tok !=
       compiler__compiler__TokenKind_key_pub) {
 
-    return;
+    return tos3("");
   };
 
   if (next.tok == compiler__compiler__TokenKind_name &&
@@ -16769,7 +16787,7 @@ void compiler__generate_fn(os__File file, array_compiler__Token tokens, int i) {
 
     println(tos3("skipping C"));
 
-    return;
+    return tos3("");
   };
 
   compiler__Token tok = (*(compiler__Token *)array_get(tokens, i));
@@ -16792,10 +16810,9 @@ void compiler__generate_fn(os__File file, array_compiler__Token tokens, int i) {
     tok = (*(compiler__Token *)array_get(tokens, i));
   };
 
-  os__File_writeln(file, strings__Builder_str(out));
+  return strings__Builder_str(out);
 }
-void compiler__generate_const(os__File file, array_compiler__Token tokens,
-                              int i) {
+string compiler__generate_const(array_compiler__Token tokens, int i) {
 
   strings__Builder out = strings__new_builder(100);
 
@@ -16820,7 +16837,7 @@ void compiler__generate_const(os__File file, array_compiler__Token tokens,
 
   strings__Builder_writeln(&/* ? */ out, tos3("\n)"));
 
-  os__File_writeln(file, strings__Builder_str(out));
+  return strings__Builder_str(out);
 }
 void compiler__DepGraph_from_import_tables(
     compiler__DepGraph *graph, map_compiler__FileImportTable import_tables) {
@@ -29139,6 +29156,11 @@ void init() {
   builtin__min_cap = 2 << 10;
   builtin__max_cap = 2 << 20;
   strconv__max_u64 = ((u64)(UINT64_MAX));
+  os__S_IFMT = 0xF000;
+  os__S_IFDIR = 0x4000;
+  os__STD_INPUT_HANDLE = -10;
+  os__STD_OUTPUT_HANDLE = -11;
+  os__STD_ERROR_HANDLE = -12;
   os__FILE_ATTR_READONLY = 0x1;
   os__FILE_ATTR_HIDDEN = 0x2;
   os__FILE_ATTR_SYSTEM = 0x4;
@@ -29161,12 +29183,7 @@ void init() {
   os__FILE_TYPE_PIPE = 0x3;
   os__FILE_TYPE_UNKNOWN = 0x0;
   os__FILE_INVALID_FILE_ID = (-1);
-  os__S_IFMT = 0xF000;
-  os__S_IFDIR = 0x4000;
   os__INVALID_HANDLE_VALUE = -1;
-  os__STD_INPUT_HANDLE = -10;
-  os__STD_OUTPUT_HANDLE = -11;
-  os__STD_ERROR_HANDLE = -12;
   os__ENABLE_ECHO_INPUT = 0x0004;
   os__ENABLE_EXTENDED_FLAGS = 0x0080;
   os__ENABLE_INSERT_MODE = 0x0020;
