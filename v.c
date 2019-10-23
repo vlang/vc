@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1752f68"
+#define V_COMMIT_HASH "27e254c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a6aad88"
+#define V_COMMIT_HASH "1752f68"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -16530,7 +16530,8 @@ void compiler__generate_vh(string mod) {
   for (int i = 0; i < vfiles.len; i++) {
     string it = ((string *)vfiles.data)[i];
     if (!string_ends_with(it, tos3("test.v")) &&
-        !string_ends_with(it, tos3("_windows.v")))
+        !string_ends_with(it, tos3("_windows.v")) &&
+        !string_ends_with(it, tos3("_win.v")))
       array_push(&tmp9, &it);
   }
   array_string filtered = tmp9;
@@ -16578,12 +16579,14 @@ void compiler__generate_vh(string mod) {
     };
   };
 
-  string result = string_add(
-      strings__Builder_str(consts),
-      string_replace(strings__Builder_str(fns), tos3("\n\n"), tos3("")));
+  string result =
+      string_add(strings__Builder_str(consts),
+                 string_replace(string_replace(strings__Builder_str(fns),
+                                               tos3("\n\n\n"), tos3("\n")),
+                                tos3("\n\n"), tos3("\n")));
 
   os__File_writeln(
-      out, string_replace(string_replace(result, tos3("[ ]"), tos3("[]")),
+      out, string_replace(string_replace(result, tos3("[ ] "), tos3("[]")),
                           tos3("? "), tos3("?")));
 
   os__File_close(out);
