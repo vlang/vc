@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8b74c71"
+#define V_COMMIT_HASH "a6aad88"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fcead2f"
+#define V_COMMIT_HASH "8b74c71"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -16600,8 +16600,6 @@ void compiler__generate_vh(string mod) {
     compiler__Parser p = compiler__V_new_parser_from_file(v, file);
 
     p.scanner->is_vh = 1;
-
-    printf("kek %.*s\n", file.len, file.str);
 
     compiler__Parser_parse(&/* ? */ p, compiler__compiler__Pass_decl);
 
