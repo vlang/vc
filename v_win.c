@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6174dfb"
+#define V_COMMIT_HASH "054dd23"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e69117a"
+#define V_COMMIT_HASH "6174dfb"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -16710,11 +16710,19 @@ void compiler__generate_vh(string mod) {
   os__File out = *(os__File *)tmp7.data;
   ;
 
+  string mod_def = (string_contains(mod, tos3("/")))
+                       ? (string_all_after(mod, tos3("/")))
+                       : (mod);
+
+  os__File_writeln(out, _STR("// %.*s module header \n", mod.len, mod.str));
+
+  os__File_writeln(out, _STR("module %.*s\n", mod_def.len, mod_def.str));
+
   println(full_mod_path);
 
   array_string vfiles = os__walk_ext(full_mod_path, tos3(".v"));
 
-  array_string tmp9 = new_array(0, vfiles.len, sizeof(string));
+  array_string tmp10 = new_array(0, vfiles.len, sizeof(string));
   for (int i = 0; i < vfiles.len; i++) {
     string it = ((string *)vfiles.data)[i];
     if (string_ends_with(it, tos3(".v")) &&
@@ -16722,9 +16730,9 @@ void compiler__generate_vh(string mod) {
         !string_ends_with(it, tos3("_windows.v")) &&
         !string_ends_with(it, tos3("_win.v")) &&
         !string_contains(it, tos3("/js")))
-      array_push(&tmp9, &it);
+      array_push(&tmp10, &it);
   }
-  array_string filtered = tmp9;
+  array_string filtered = tmp10;
 
   println(array_string_str(filtered));
 
@@ -16737,9 +16745,9 @@ void compiler__generate_vh(string mod) {
 
   strings__Builder types = strings__new_builder(100);
 
-  array_string tmp15 = filtered;
-  for (int tmp16 = 0; tmp16 < tmp15.len; tmp16++) {
-    string file = ((string *)tmp15.data)[tmp16];
+  array_string tmp16 = filtered;
+  for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
+    string file = ((string *)tmp16.data)[tmp17];
 
     compiler__Parser p = compiler__V_new_parser_from_file(v, file);
 
@@ -16747,28 +16755,28 @@ void compiler__generate_vh(string mod) {
 
     compiler__Parser_parse(&/* ? */ p, compiler__compiler__Pass_decl);
 
-    array_compiler__Token tmp18 = p.tokens;
-    for (int i = 0; i < tmp18.len; i++) {
-      compiler__Token tok = ((compiler__Token *)tmp18.data)[i];
+    array_compiler__Token tmp19 = p.tokens;
+    for (int i = 0; i < tmp19.len; i++) {
+      compiler__Token tok = ((compiler__Token *)tmp19.data)[i];
 
       if (!compiler__TokenKind_is_decl(p.tok)) {
 
         continue;
       };
 
-      compiler__TokenKind tmp19 = tok.tok;
+      compiler__TokenKind tmp20 = tok.tok;
 
-      if (tmp19 == compiler__compiler__TokenKind_key_fn) {
+      if (tmp20 == compiler__compiler__TokenKind_key_fn) {
 
         strings__Builder_writeln(&/* ? */ fns,
                                  compiler__generate_fn(p.tokens, i));
 
-      } else if (tmp19 == compiler__compiler__TokenKind_key_const) {
+      } else if (tmp20 == compiler__compiler__TokenKind_key_const) {
 
         strings__Builder_writeln(&/* ? */ consts,
                                  compiler__generate_const(p.tokens, i));
 
-      } else if (tmp19 == compiler__compiler__TokenKind_key_struct) {
+      } else if (tmp20 == compiler__compiler__TokenKind_key_struct) {
 
         strings__Builder_writeln(&/* ? */ types,
                                  compiler__generate_type(p.tokens, i));
@@ -29366,9 +29374,9 @@ void init() {
       "= function() {}\nvar int = function() {}\nvar f64 = function() {}\nvar "
       "f32 = function() {}\nvar i64 = function() {}\nvar i32 = function() "
       "{}\nvar i16 = function() {}\nvar u64 = function() {}\nvar u32 = "
-      "function() {}\nvar u16 = function() {}\nvar i8 = function() {}\nvar u8 "
-      "= function() {}\nvar bool = function() {}\nvar rune = function() "
-      "{}\nvar map_string = function() {}\nvar map_int = function() {}\n\n");
+      "function() {}\nvar u16 = function() {}\nvar i8 = function() {}\nvar "
+      "bool = function() {}\nvar rune = function() {}\nvar map_string = "
+      "function() {}\nvar map_int = function() {}\n\n");
   compiler__match_arrow_warning =
       string_add(tos3("=> is no longer needed in match statements, use\n"),
                  tos3("match foo {\n	1 { bar }\n	2 { baz }\n	else { "
