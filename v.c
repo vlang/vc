@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0806aa3"
+#define V_COMMIT_HASH "fcead2f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d8edc27"
+#define V_COMMIT_HASH "0806aa3"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1825,7 +1825,9 @@ int os__ENABLE_LVB_GRID_WORLDWIDE;
 array_string os__args;
 #define os__MAX_PATH 4096
 string os__path_separator;
+string time__days_string;
 array_int time__month_days;
+string time__months_string;
 i64 time__absolute_zero_year;
 #define time__seconds_per_minute 60
 int time__seconds_per_hour;
@@ -1835,8 +1837,6 @@ int time__days_per_400_years;
 int time__days_per_100_years;
 int time__days_per_4_years;
 array_int time__days_before;
-string time__months_string;
-string time__days_string;
 #define vweb_dot_tmpl__STR_START tos3("sb.write(\'")
 #define vweb_dot_tmpl__STR_END tos3("\' ) ")
 string compiler__CommonCHeaders;
@@ -29454,10 +29454,12 @@ void init() {
   os__args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   os__path_separator = tos3("/");
+  time__days_string = tos3("MonTueWedThuFriSatSun");
   time__month_days = new_array_from_c_array(
       12, 12, sizeof(int),
       EMPTY_ARRAY_OF_ELEMS(int, 12){31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30,
                                     31});
+  time__months_string = tos3("JanFebMarAprMayJunJulAugSepOctNovDec");
   time__absolute_zero_year = ((i64)(-292277022399));
   time__seconds_per_hour = 60 * time__seconds_per_minute;
   time__seconds_per_day = 24 * time__seconds_per_hour;
@@ -29482,8 +29484,6 @@ void init() {
           31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30,
           31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31,
       });
-  time__months_string = tos3("JanFebMarAprMayJunJulAugSepOctNovDec");
-  time__days_string = tos3("MonTueWedThuFriSatSun");
   compiler__CommonCHeaders = tos3(
       "\n\n#include <stdio.h>  // TODO remove all these includes, define all "
       "function signatures and types manually\n#include <stdlib.h>\n#include "
