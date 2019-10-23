@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c58c031"
+#define V_COMMIT_HASH "f14425e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2f5a742"
+#define V_COMMIT_HASH "c58c031"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -18850,6 +18850,12 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
     };
   };
 
+  if (name.len == 1 && !p->pref->building_v && !p->pref->is_repl) {
+
+    compiler__Parser_warn(
+        p, tos3("struct names must have more than one character"));
+  };
+
   if (!is_c && !compiler__good_type_name(name)) {
 
     compiler__Parser_error(p, tos3("bad struct name, e.g. use `HttpRequest` "
@@ -18868,17 +18874,8 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
           &/* ? */ *p->table,
           &/*112 EXP:"compiler__Type*" GOT:"compiler__Type" */ typ)) {
 
-    if (_IN(string, (name), compiler__reserved_type_param_names)) {
-
-      compiler__Parser_error(p,
-                             _STR("name `%.*s` is reserved for type parameters",
-                                  name.len, name.str));
-
-    } else {
-
-      compiler__Parser_error(
-          p, _STR("type `%.*s` redeclared", name.len, name.str));
-    };
+    compiler__Parser_error(p,
+                           _STR("type `%.*s` redeclared", name.len, name.str));
   };
 
   if (is_objc) {
@@ -19409,7 +19406,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
   if (_IN(string, (p->lit), map_keys(&/* ? */ ti))) {
 
     string tmp110 = tos((byte *)"", 0);
-    bool tmp111 = map_get(/*parser.v : 1039*/ ti, p->lit, &tmp110);
+    bool tmp111 = map_get(/*parser.v : 1042*/ ti, p->lit, &tmp110);
 
     if (!tmp111)
       tmp110 = tos((byte *)"", 0);
