@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "dce3275"
+#define V_COMMIT_HASH "4a88a28"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1c564bc"
+#define V_COMMIT_HASH "dce3275"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1650,7 +1650,7 @@ Option_compiler__Fn compiler__Table_find_fn_is_script(compiler__Table *t,
                                                       bool is_script);
 bool compiler__Table_known_fn(compiler__Table *t, string name);
 bool compiler__Table_known_const(compiler__Table *t, string name);
-void compiler__Table_register_type(compiler__Table *t, string typ);
+void compiler__Table_register_builtin(compiler__Table *t, string typ);
 void compiler__Parser_register_type_with_parent(compiler__Parser *p,
                                                 string strtyp, string parent);
 void compiler__Table_register_type_with_parent(compiler__Table *t, string typ,
@@ -19362,6 +19362,12 @@ string compiler__Parser_get_type(compiler__Parser *p) {
         compiler__Parser_error(p,
                                _STR("unknown type `%.*s`", typ.len, typ.str));
       };
+
+    } else if (!t.is_public && string_ne(t.mod, p->mod) &&
+               string_ne(t.name, tos3(""))) {
+
+      compiler__Parser_warn(
+          p, _STR("type `%.*s` is private", t.name.len, t.name.str));
     };
   };
 
@@ -22778,6 +22784,12 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ) {
 
   compiler__Type t = compiler__Table_find_type(&/* ? */ *p->table, typ);
 
+  if (!t.is_public && string_ne(t.mod, p->mod)) {
+
+    compiler__Parser_warn(
+        p, _STR("type `%.*s` is private", t.name.len, t.name.str));
+  };
+
   if (compiler__Parser_gen_struct_init(p, typ, t)) {
 
     return typ;
@@ -24343,7 +24355,7 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
               "typedef Option %.*s;", opt_type.len, opt_type.str)),
           tmp484, string);
 
-    compiler__Table_register_type(p->table, opt_type);
+    compiler__Table_register_builtin(p->table, opt_type);
 
     return opt_type;
 
@@ -25170,7 +25182,7 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
               "typedef Option %.*s;", opt_type.len, opt_type.str)),
           tmp34, string);
 
-    compiler__Table_register_type(p->table, opt_type);
+    compiler__Table_register_builtin(p->table, opt_type);
 
     return opt_type;
 
@@ -26928,9 +26940,9 @@ compiler__Table *compiler__new_table(bool obfuscate) {
           .varg_access = new_array(0, 1, sizeof(compiler__VargAccess))},
       sizeof(compiler__Table));
 
-  compiler__Table_register_type(t, tos3("int"));
+  compiler__Table_register_builtin(t, tos3("int"));
 
-  compiler__Table_register_type(t, tos3("size_t"));
+  compiler__Table_register_builtin(t, tos3("size_t"));
 
   compiler__Table_register_type_with_parent(t, tos3("i8"), tos3("int"));
 
@@ -26948,29 +26960,29 @@ compiler__Table *compiler__new_table(bool obfuscate) {
 
   compiler__Table_register_type_with_parent(t, tos3("u64"), tos3("u32"));
 
-  compiler__Table_register_type(t, tos3("byteptr"));
+  compiler__Table_register_builtin(t, tos3("byteptr"));
 
-  compiler__Table_register_type(t, tos3("intptr"));
+  compiler__Table_register_builtin(t, tos3("intptr"));
 
-  compiler__Table_register_type(t, tos3("f32"));
+  compiler__Table_register_builtin(t, tos3("f32"));
 
-  compiler__Table_register_type(t, tos3("f64"));
+  compiler__Table_register_builtin(t, tos3("f64"));
 
-  compiler__Table_register_type(t, tos3("rune"));
+  compiler__Table_register_builtin(t, tos3("rune"));
 
-  compiler__Table_register_type(t, tos3("bool"));
+  compiler__Table_register_builtin(t, tos3("bool"));
 
-  compiler__Table_register_type(t, tos3("void"));
+  compiler__Table_register_builtin(t, tos3("void"));
 
-  compiler__Table_register_type(t, tos3("voidptr"));
+  compiler__Table_register_builtin(t, tos3("voidptr"));
 
-  compiler__Table_register_type(t, tos3("va_list"));
+  compiler__Table_register_builtin(t, tos3("va_list"));
 
   array_string tmp6 = compiler__reserved_type_param_names;
   for (int tmp7 = 0; tmp7 < tmp6.len; tmp7++) {
     string c = ((string *)tmp6.data)[tmp7];
 
-    compiler__Table_register_type(t, c);
+    compiler__Table_register_builtin(t, c);
   };
 
   compiler__Table_register_const(t, tos3("stdin"), tos3("int"), tos3("main"),
@@ -27219,7 +27231,7 @@ bool compiler__Table_known_const(compiler__Table *t, string name) {
 
   return 1;
 }
-void compiler__Table_register_type(compiler__Table *t, string typ) {
+void compiler__Table_register_builtin(compiler__Table *t, string typ) {
 
   if (typ.len == 0) {
 
@@ -27234,8 +27246,8 @@ void compiler__Table_register_type(compiler__Table *t, string typ) {
   map_set(&t->typesmap, typ,
           &(compiler__Type[]){
               (compiler__Type){.name = typ,
+                               .is_public = 1,
                                .mod = tos((byte *)"", 0),
-                               .is_public = 0,
                                .fields = new_array(0, 1, sizeof(compiler__Var)),
                                .methods = new_array(0, 1, sizeof(compiler__Fn)),
                                .parent = tos((byte *)"", 0),
@@ -27252,7 +27264,7 @@ void compiler__Parser_register_type_with_parent(compiler__Parser *p,
       (compiler__Type){.name = strtyp,
                        .parent = parent,
                        .mod = p->mod,
-                       .is_public = 0,
+                       .is_public = 1,
                        .fields = new_array(0, 1, sizeof(compiler__Var)),
                        .methods = new_array(0, 1, sizeof(compiler__Fn)),
                        .is_c = 0,
@@ -27275,8 +27287,8 @@ void compiler__Table_register_type_with_parent(compiler__Table *t, string typ,
           &(compiler__Type[]){
               (compiler__Type){.name = typ,
                                .parent = parent,
+                               .is_public = 1,
                                .mod = tos((byte *)"", 0),
-                               .is_public = 0,
                                .fields = new_array(0, 1, sizeof(compiler__Var)),
                                .methods = new_array(0, 1, sizeof(compiler__Fn)),
                                .is_c = 0,
@@ -27316,7 +27328,7 @@ void compiler__Table_add_field(compiler__Table *table, string type_name,
   };
 
   compiler__Type tmp31 = {0};
-  bool tmp32 = map_get(/*table.v : 442*/ table->typesmap, type_name, &tmp31);
+  bool tmp32 = map_get(/*table.v : 444*/ table->typesmap, type_name, &tmp31);
 
   compiler__Type t = tmp31;
 
@@ -27445,7 +27457,7 @@ void compiler__Parser_add_method(compiler__Parser *p, string type_name,
   };
 
   compiler__Type tmp47 = {0};
-  bool tmp48 = map_get(/*table.v : 503*/ p->table->typesmap, type_name, &tmp47);
+  bool tmp48 = map_get(/*table.v : 505*/ p->table->typesmap, type_name, &tmp47);
 
   compiler__Type t = tmp47;
 
@@ -27490,7 +27502,7 @@ Option_compiler__Fn compiler__Table_find_method(compiler__Table *table,
                                                 string name) {
 
   compiler__Type tmp53 = {0};
-  bool tmp54 = map_get(/*table.v : 522*/ table->typesmap, typ->name, &tmp53);
+  bool tmp54 = map_get(/*table.v : 524*/ table->typesmap, typ->name, &tmp53);
 
   compiler__Type t = tmp53;
 
@@ -27578,7 +27590,7 @@ compiler__Type compiler__Table_find_type(compiler__Table *t, string name_) {
   };
 
   compiler__Type tmp68 = {0};
-  bool tmp69 = map_get(/*table.v : 579*/ t->typesmap, name, &tmp68);
+  bool tmp69 = map_get(/*table.v : 581*/ t->typesmap, name, &tmp68);
 
   return tmp68;
 }
@@ -27810,7 +27822,7 @@ bool compiler__Table_is_interface(compiler__Table *table, string name) {
   };
 
   compiler__Type tmp76 = {0};
-  bool tmp77 = map_get(/*table.v : 742*/ table->typesmap, name, &tmp76);
+  bool tmp77 = map_get(/*table.v : 744*/ table->typesmap, name, &tmp76);
 
   compiler__Type t = tmp76;
 
@@ -28054,7 +28066,7 @@ compiler__Table_get_file_import_table(compiler__Table *table,
 
     compiler__FileImportTable tmp102 = {0};
     bool tmp103 =
-        map_get(/*table.v : 889*/ table->file_imports, file_path_id, &tmp102);
+        map_get(/*table.v : 891*/ table->file_imports, file_path_id, &tmp102);
 
     return tmp102;
   };
@@ -28086,7 +28098,7 @@ void compiler__FileImportTable_register_alias(compiler__FileImportTable *fit,
                                               int tok_idx) {
 
   string tmp104 = tos((byte *)"", 0);
-  bool tmp105 = map_get(/*table.v : 911*/ fit->imports, alias, &tmp104);
+  bool tmp105 = map_get(/*table.v : 913*/ fit->imports, alias, &tmp104);
 
   if (!tmp105)
     tmp104 = tos((byte *)"", 0);
@@ -28138,7 +28150,7 @@ int compiler__FileImportTable_get_import_tok_idx(compiler__FileImportTable *fit,
                                                  string mod) {
 
   int tmp112 = 0;
-  bool tmp113 = map_get(/*table.v : 932*/ fit->import_tok_idx, mod, &tmp112);
+  bool tmp113 = map_get(/*table.v : 934*/ fit->import_tok_idx, mod, &tmp112);
 
   return tmp112;
 }
@@ -28169,7 +28181,7 @@ string compiler__FileImportTable_resolve_alias(compiler__FileImportTable *fit,
                                                string alias) {
 
   string tmp115 = tos((byte *)"", 0);
-  bool tmp116 = map_get(/*table.v : 949*/ fit->imports, alias, &tmp115);
+  bool tmp116 = map_get(/*table.v : 951*/ fit->imports, alias, &tmp115);
 
   if (!tmp116)
     tmp115 = tos((byte *)"", 0);
