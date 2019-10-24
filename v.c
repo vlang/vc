@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3d6bdc2"
+#define V_COMMIT_HASH "75a6c75"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4a88a28"
+#define V_COMMIT_HASH "3d6bdc2"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -10643,6 +10643,12 @@ void compiler__Parser_enum_decl(compiler__Parser *p, string _enum_name) {
   while (p->tok == compiler__compiler__TokenKind_name) {
 
     string field = compiler__Parser_check_name(p);
+
+    if (compiler__contains_capital(field)) {
+
+      compiler__Parser_warn(p, tos3("enum values cannot contain uppercase "
+                                    "letters, use snake_case instead"));
+    };
 
     _PUSH(&fields, (/*typ = array_string   tmp_typ=string*/ field), tmp7,
           string);
