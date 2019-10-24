@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "892d1c6"
+#define V_COMMIT_HASH "d4c1bba"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2032da7"
+#define V_COMMIT_HASH "892d1c6"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -13180,8 +13180,6 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
 
   f->defer_text = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-
-  {}
 
   array_compiler__Var old_args = f->args;
 
