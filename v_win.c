@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1ce2acb"
+#define V_COMMIT_HASH "71d965b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "baf49b2"
+#define V_COMMIT_HASH "1ce2acb"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -9529,9 +9529,12 @@ array_compiler__Type compiler__sort_structs(array_compiler__Type types) {
 
     compiler__verror(string_add(
         string_add(
-            tos3("cgen.sort_structs(): the following structs form a dependancy "
-                 "cycle:\n"),
-            compiler__DepGraph_display_cycles(&/* ? */ *dep_graph_sorted)),
+            string_add(
+                tos3("cgen.sort_structs(): the following structs form a "
+                     "dependancy cycle:\n"),
+                compiler__DepGraph_display_cycles(&/* ? */ *dep_graph_sorted)),
+            tos3("\nyou can solve this by making one or both of the dependant "
+                 "struct fields references, eg: field &MyStruct")),
         tos3("\nif you feel this is an error, please create a new issue here: "
              "https://github.com/vlang/v/issues and tag @joe-conigliaro")));
   };
