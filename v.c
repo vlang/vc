@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "580abe0"
+#define V_COMMIT_HASH "98c016b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fe17dd9"
+#define V_COMMIT_HASH "580abe0"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1086,6 +1086,7 @@ void os__chdir(string path);
 string os__getwd();
 string os__realpath(string fpath);
 array_string os__walk_ext(string path, string ext);
+void os__walk(string path, void (*fnc)(string path /*FFF*/));
 void os__signal(int signum, void *handler);
 int os__fork();
 int os__wait();
@@ -6581,6 +6582,40 @@ array_string os__walk_ext(string path, string ext) {
 
   return res;
 }
+void os__walk(string path, void (*fnc)(string path /*FFF*/)) {
+
+  if (!os__is_dir(path)) {
+
+    return;
+  };
+
+  Option_array_string tmp112 = os__ls(path);
+  if (!tmp112.ok) {
+    string err = tmp112.error;
+
+    v_panic(err);
+  }
+  array_string files = *(array_string *)tmp112.data;
+  ;
+
+  array_string tmp113 = files;
+  for (int tmp114 = 0; tmp114 < tmp113.len; tmp114++) {
+    string file = ((string *)tmp113.data)[tmp114];
+
+    string p = string_add(string_add(path, os__path_separator), file);
+
+    if (os__is_dir(p)) {
+
+      os__walk(p, fnc);
+
+    } else if (os__file_exists(p)) {
+
+      fnc(p);
+    };
+  };
+
+  return;
+}
 void os__signal(int signum, void *handler) { signal(signum, handler); }
 int os__fork() {
 
@@ -6627,9 +6662,9 @@ void os__mkdir_all(string path) {
                  ? (os__path_separator)
                  : (tos3(""));
 
-  array_string tmp116 = string_split(path, os__path_separator);
-  for (int tmp117 = 0; tmp117 < tmp116.len; tmp117++) {
-    string subdir = ((string *)tmp116.data)[tmp117];
+  array_string tmp120 = string_split(path, os__path_separator);
+  for (int tmp121 = 0; tmp121 < tmp120.len; tmp121++) {
+    string subdir = ((string *)tmp120.data)[tmp121];
 
     p = string_add(p, string_add(subdir, os__path_separator));
 
@@ -6645,8 +6680,8 @@ string os__join(string base, _V_FnVargs_os__join *dirs) {
 
   strings__Builder_write(&/* ? */ path, string_trim_right(base, tos3("\\/")));
 
-  for (int tmp120 = 0; tmp120 < dirs->len; tmp120++) {
-    string d = ((string *)dirs->args)[tmp120];
+  for (int tmp124 = 0; tmp124 < dirs->len; tmp124++) {
+    string d = ((string *)dirs->args)[tmp124];
 
     strings__Builder_write(&/* ? */ path, os__path_separator);
 
