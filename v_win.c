@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2032da7"
+#define V_COMMIT_HASH "892d1c6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "36eb1b7"
+#define V_COMMIT_HASH "2032da7"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -11387,7 +11387,10 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
   bool is_c = string_eq(f.name, tos3("C")) &&
               p->tok == compiler__compiler__TokenKind_dot;
 
-  if (p->pref->build_mode == compiler__compiler__BuildMode_build_module) {
+  if (p->pref->is_verbose) {
+
+    printf("\n\nfn_decl() name=%.*s receiver_typ=%.*s nogen=%d\n", f.name.len,
+           f.name.str, receiver_typ.len, receiver_typ.str, p->cgen->nogen);
   };
 
   if (is_c) {
@@ -11844,7 +11847,7 @@ void compiler__Parser_check_unused_variables(compiler__Parser *p) {
     };
 
     if (!var.is_changed && var.is_mut && !p->pref->is_repl &&
-        !p->pref->translated) {
+        !p->pref->translated && string_ne(var.typ, tos3("T*"))) {
 
       compiler__Parser_error_with_token_index(
           p,
@@ -12871,7 +12874,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
 
     string tmp161 = tos3("");
-    bool tmp162 = map_get(/*fn.v : 1104*/ r.inst, tp, &tmp161);
+    bool tmp162 = map_get(/*fn.v : 1106*/ r.inst, tp, &tmp161);
 
     if (!tmp162)
       tmp161 = tos((byte *)"", 0);
@@ -12879,7 +12882,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     if (string_ne(tmp161, tos3(""))) {
 
       string tmp163 = tos3("");
-      bool tmp164 = map_get(/*fn.v : 1105*/ r.inst, tp, &tmp163);
+      bool tmp164 = map_get(/*fn.v : 1107*/ r.inst, tp, &tmp163);
 
       if (!tmp164)
         tmp163 = tos((byte *)"", 0);
@@ -12887,7 +12890,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       if (string_ne(tmp163, ti)) {
 
         string tmp165 = tos3("");
-        bool tmp166 = map_get(/*fn.v : 1106*/ r.inst, tp, &tmp165);
+        bool tmp166 = map_get(/*fn.v : 1108*/ r.inst, tp, &tmp165);
 
         if (!tmp166)
           tmp165 = tos((byte *)"", 0);
@@ -12911,7 +12914,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
   };
 
   string tmp167 = tos3("");
-  bool tmp168 = map_get(/*fn.v : 1115*/ r.inst, f->typ, &tmp167);
+  bool tmp168 = map_get(/*fn.v : 1117*/ r.inst, f->typ, &tmp167);
 
   if (!tmp168)
     tmp167 = tos((byte *)"", 0);
@@ -12979,7 +12982,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
         if (_IN(string, (fna), map_keys(&/* ? */ ti.inst))) {
 
           string tmp182 = tos3("");
-          bool tmp183 = map_get(/*fn.v : 1144*/ ti.inst, fna, &tmp182);
+          bool tmp183 = map_get(/*fn.v : 1146*/ ti.inst, fna, &tmp182);
 
           if (!tmp183)
             tmp182 = tos((byte *)"", 0);
@@ -13023,7 +13026,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
     if (_IN(string, (fi), map_keys(&/* ? */ ti.inst))) {
 
       string tmp186 = tos3("");
-      bool tmp187 = map_get(/*fn.v : 1164*/ ti.inst, fi, &tmp186);
+      bool tmp187 = map_get(/*fn.v : 1166*/ ti.inst, fi, &tmp186);
 
       if (!tmp187)
         tmp186 = tos((byte *)"", 0);
@@ -13259,7 +13262,7 @@ void compiler__Parser_rename_generic_fn_instance(compiler__Parser *p,
     string k = ((string *)tmp210.data)[tmp211];
 
     string tmp212 = tos3("");
-    bool tmp213 = map_get(/*fn.v : 1259*/ ti.inst, k, &tmp212);
+    bool tmp213 = map_get(/*fn.v : 1261*/ ti.inst, k, &tmp212);
 
     if (!tmp213)
       tmp212 = tos((byte *)"", 0);
@@ -13393,7 +13396,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   if (_IN_MAP((f->typ), ti.inst)) {
 
     string tmp238 = tos3("");
-    bool tmp239 = map_get(/*fn.v : 1325*/ ti.inst, f->typ, &tmp238);
+    bool tmp239 = map_get(/*fn.v : 1327*/ ti.inst, f->typ, &tmp238);
 
     if (!tmp239)
       tmp238 = tos((byte *)"", 0);
@@ -18630,18 +18633,6 @@ void compiler__Parser_const_decl(compiler__Parser *p) {
     compiler__Parser_next(p);
   };
 
-  if (p->tok == compiler__compiler__TokenKind_key_import) {
-
-    compiler__Parser_error_with_token_index(
-        p,
-        string_add(
-            string_add(tos3("`import const` was removed from the language, "),
-                       tos3("because predeclaring C constants is not needed "
-                            "anymore. ")),
-            tos3("You can use them directly with C.CONST_NAME")),
-        compiler__Parser_cur_tok_index(&/* ? */ *p));
-  };
-
   p->inside_const = 1;
 
   compiler__Parser_check(p, compiler__compiler__TokenKind_key_const);
@@ -18989,9 +18980,6 @@ void compiler__Parser_check(compiler__Parser *p, compiler__TokenKind expected) {
   };
 
   compiler__Parser_next(p);
-
-  if (string_ne(p->scanner->line_comment, tos3(""))) {
-  };
 }
 static inline bool compiler__Parser_first_pass(compiler__Parser *p) {
 
@@ -19188,7 +19176,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
   if (_IN(string, (p->lit), map_keys(&/* ? */ ti))) {
 
     string tmp88 = tos3("");
-    bool tmp89 = map_get(/*parser.v : 846*/ ti, p->lit, &tmp88);
+    bool tmp89 = map_get(/*parser.v : 838*/ ti, p->lit, &tmp88);
 
     if (!tmp89)
       tmp88 = tos((byte *)"", 0);
@@ -19268,7 +19256,8 @@ string compiler__Parser_get_type(compiler__Parser *p) {
       };
 
     } else if (!t.is_public && string_ne(t.mod, p->mod) &&
-               string_ne(t.name, tos3(""))) {
+               string_ne(t.name, tos3("")) &&
+               !compiler__Parser_first_pass(&/* ? */ *p)) {
 
       compiler__Parser_error(
           p, _STR("type `%.*s` is private", t.name.len, t.name.str));
@@ -26695,6 +26684,8 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
     typ.cat = cat;
 
     typ.parent = objc_parent;
+
+    typ.is_public = is_pub;
 
     compiler__Table_rewrite_type(p->table, typ);
 
