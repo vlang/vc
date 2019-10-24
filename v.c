@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1c564bc"
+#define V_COMMIT_HASH "dce3275"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "71d965b"
+#define V_COMMIT_HASH "1c564bc"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -20830,6 +20830,12 @@ string compiler__Parser_get_const_type(compiler__Parser *p, string name,
   } else if (is_ptr && c.is_global) {
 
     compiler__Parser_gen(p, tos3("& /*const*/ "));
+  };
+
+  if (!c.is_public && string_ne(c.mod, p->mod)) {
+
+    compiler__Parser_warn(
+        p, _STR("constant `%.*s` is private", c.name.len, c.name.str));
   };
 
   string typ = compiler__Parser_var_expr(p, c);
