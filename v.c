@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "98c016b"
+#define V_COMMIT_HASH "3a929fa"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "580abe0"
+#define V_COMMIT_HASH "98c016b"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -174,6 +174,8 @@ typedef array array_string;
 typedef array array_byte;
 typedef array array_int;
 typedef array array_char;
+typedef struct _V_FnVargs_sprintf _V_FnVargs_sprintf;
+
 typedef struct hashmap hashmap;
 typedef array array_hashmapentry;
 typedef struct hashmapentry hashmapentry;
@@ -364,14 +366,19 @@ struct os__File {
   FILE *cfile;
 };
 
-struct _V_MulRet_int_V_bool {
-  int var_0;
-  bool var_1;
+struct _V_FnVargs_sprintf {
+  int len;
+  void *args[0];
 };
 
 struct _V_FnVargs_os__join {
   int len;
   string args[4];
+};
+
+struct _V_MulRet_int_V_bool {
+  int var_0;
+  bool var_1;
 };
 
 struct _V_MulRet_bool_V_string {
@@ -19638,6 +19645,8 @@ void compiler__Parser_gen(compiler__Parser *p, string s) {
 }
 string compiler__Parser_statement(compiler__Parser *p, bool add_semi) {
 
+  p->expected_type = tos3("");
+
   if (p->returns && !p->is_vweb) {
 
     compiler__Parser_error(p, tos3("unreachable code"));
@@ -20947,14 +20956,6 @@ string compiler__Parser_get_c_func_type(compiler__Parser *p, string name) {
   if (!tmp234.ok) {
     string err = tmp234.error;
 
-    if (0) {
-
-      compiler__Parser_warn(
-          p, string_add(tos3("\ndefine imported C function with "),
-                        _STR("`fn C.%.*s([args]) [return_type]`\n", name.len,
-                             name.str)));
-    };
-
     return tos3("void*");
   }
   compiler__Fn cfn = *(compiler__Fn *)tmp234.data;
@@ -21618,6 +21619,8 @@ string compiler__Parser_indot_expr(compiler__Parser *p) {
     compiler__Parser_fgen(p, tos3(" "));
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_key_in);
+
+    p->expected_type = typ;
 
     if (p->tok == compiler__compiler__TokenKind_lsbr) {
 
