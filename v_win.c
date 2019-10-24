@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f14425e"
+#define V_COMMIT_HASH "baf49b2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c58c031"
+#define V_COMMIT_HASH "f14425e"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -442,7 +442,6 @@ struct compiler__CGen {
 struct compiler__DepGraphNode {
   string name;
   array_string deps;
-  string last_cycle;
 };
 
 struct compiler__DepGraph {
@@ -1352,8 +1351,8 @@ void compiler__DepGraph_add(compiler__DepGraph *graph, string mod,
                             array_string deps);
 compiler__DepGraph *compiler__DepGraph_resolve(compiler__DepGraph *graph);
 compiler__DepGraphNode compiler__DepGraph_last_node(compiler__DepGraph *graph);
-string compiler__DepGraph_last_cycle(compiler__DepGraph *graph);
-void compiler__DepGraph_display(compiler__DepGraph *graph);
+string compiler__DepGraph_display(compiler__DepGraph *graph);
+string compiler__DepGraph_display_cycles(compiler__DepGraph *graph);
 void compiler__Parser_enum_decl(compiler__Parser *p, string _enum_name);
 void compiler__Parser_check_enum_member_access(compiler__Parser *p);
 string array_compiler__TypeInst_str(array_compiler__TypeInst a);
@@ -9528,9 +9527,13 @@ array_compiler__Type compiler__sort_structs(array_compiler__Type types) {
 
   if (!dep_graph_sorted->acyclic) {
 
-    compiler__verror(tos3(
-        "error: cgen.sort_structs() DGNAC.\nplease create a new issue here: "
-        "https://github.com/vlang/v/issues and tag @joe-conigliaro"));
+    compiler__verror(string_add(
+        string_add(
+            tos3("cgen.sort_structs(): the following structs form a dependancy "
+                 "cycle:\n"),
+            compiler__DepGraph_display_cycles(&/* ? */ *dep_graph_sorted)),
+        tos3("\nif you feel this is an error, please create a new issue here: "
+             "https://github.com/vlang/v/issues and tag @joe-conigliaro")));
   };
 
   array_compiler__Type types_sorted = new_array_from_c_array(
@@ -10605,9 +10608,7 @@ void compiler__DepGraph_add(compiler__DepGraph *graph, string mod,
   _PUSH(
       &graph->nodes,
       (/*typ = array_compiler__DepGraphNode   tmp_typ=compiler__DepGraphNode*/ (
-          compiler__DepGraphNode){.name = mod,
-                                  .deps = array_clone(deps),
-                                  .last_cycle = tos((byte *)"", 0)}),
+          compiler__DepGraphNode){.name = mod, .deps = array_clone(deps)}),
       tmp6, compiler__DepGraphNode);
 }
 compiler__DepGraph *compiler__DepGraph_resolve(compiler__DepGraph *graph) {
@@ -10662,62 +10663,46 @@ compiler__DepGraph *compiler__DepGraph_resolve(compiler__DepGraph *graph) {
 
       g->acyclic = 0;
 
-      array_string ndk = map_keys(&/* ? */ node_deps);
-
-      map_compiler__DepSet tmp17 = node_deps;
-      array_string keys_tmp17 = map_keys(&tmp17);
-      for (int l = 0; l < keys_tmp17.len; l++) {
-        string name = ((string *)keys_tmp17.data)[l];
+      map_compiler__DepSet tmp16 = node_deps;
+      array_string keys_tmp16 = map_keys(&tmp16);
+      for (int l = 0; l < keys_tmp16.len; l++) {
+        string name = ((string *)keys_tmp16.data)[l];
 
         compiler__DepGraphNode tmp18 = {0};
-        bool tmp19 = map_get(/*depgraph.v : 89*/ node_names, name, &tmp18);
-
-        compiler__DepGraphNode node = tmp18;
-
-        if (string_eq(name, (*(string *)array_get(ndk, node_deps.size - 1)))) {
-
-          compiler__DepSet tmp23 = {0};
-          bool tmp24 = map_get(/*depgraph.v : 90*/ node_deps, name, &tmp23);
-
-          compiler__DepSet tmp25 = {0};
-          bool tmp26 = map_get(/*depgraph.v : 90*/ node_deps, name, &tmp25);
-
-          node.last_cycle =
-              (*(string *)array_get(tmp23.items, tmp25.items.len - 1));
-        };
+        bool tmp19 = map_get(/*depgraph.v : 87*/ node_names, name, &tmp18);
 
         _PUSH(&g->nodes,
               (/*typ = array_compiler__DepGraphNode
                   tmp_typ=compiler__DepGraphNode*/
-               node),
-              tmp29, compiler__DepGraphNode);
+               tmp18),
+              tmp17, compiler__DepGraphNode);
       };
 
       return g;
     };
 
-    array_string tmp30 = ready_set.items;
-    for (int tmp31 = 0; tmp31 < tmp30.len; tmp31++) {
-      string name = ((string *)tmp30.data)[tmp31];
+    array_string tmp20 = ready_set.items;
+    for (int tmp21 = 0; tmp21 < tmp20.len; tmp21++) {
+      string name = ((string *)tmp20.data)[tmp21];
 
       v_map_delete(&/* ? */ node_deps, name);
 
-      compiler__DepGraphNode tmp33 = {0};
-      bool tmp34 = map_get(/*depgraph.v : 100*/ node_names, name, &tmp33);
+      compiler__DepGraphNode tmp23 = {0};
+      bool tmp24 = map_get(/*depgraph.v : 94*/ node_names, name, &tmp23);
 
       _PUSH(&resolved->nodes,
             (/*typ = array_compiler__DepGraphNode
                 tmp_typ=compiler__DepGraphNode*/
-             tmp33),
-            tmp32, compiler__DepGraphNode);
+             tmp23),
+            tmp22, compiler__DepGraphNode);
     };
 
-    map_compiler__DepSet tmp35 = node_deps;
-    array_string keys_tmp35 = map_keys(&tmp35);
-    for (int l = 0; l < keys_tmp35.len; l++) {
-      string name = ((string *)keys_tmp35.data)[l];
+    map_compiler__DepSet tmp25 = node_deps;
+    array_string keys_tmp25 = map_keys(&tmp25);
+    for (int l = 0; l < keys_tmp25.len; l++) {
+      string name = ((string *)keys_tmp25.data)[l];
       compiler__DepSet deps = {0};
-      map_get(tmp35, name, &deps);
+      map_get(tmp25, name, &deps);
 
       map_set(&node_deps, name,
               &(compiler__DepSet[]){
@@ -10732,33 +10717,66 @@ compiler__DepGraphNode compiler__DepGraph_last_node(compiler__DepGraph *graph) {
   return (
       *(compiler__DepGraphNode *)array_get(graph->nodes, graph->nodes.len - 1));
 }
-string compiler__DepGraph_last_cycle(compiler__DepGraph *graph) {
+string compiler__DepGraph_display(compiler__DepGraph *graph) {
 
-  return compiler__DepGraph_last_node(&/* ? */ *graph).last_cycle;
-}
-void compiler__DepGraph_display(compiler__DepGraph *graph) {
+  string out = tos3("\n");
 
-  for (int i = 0; i < graph->nodes.len; i++) {
+  array_compiler__DepGraphNode tmp29 = graph->nodes;
+  for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
+    compiler__DepGraphNode node = ((compiler__DepGraphNode *)tmp29.data)[tmp30];
 
-    compiler__DepGraphNode node =
-        (*(compiler__DepGraphNode *)array_get(graph->nodes, i));
+    array_string tmp31 = node.deps;
+    for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
+      string dep = ((string *)tmp31.data)[tmp32];
 
-    array_string tmp42 = node.deps;
-    for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
-      string dep = ((string *)tmp42.data)[tmp43];
-
-      string out = _STR(" * %.*s -> %.*s", node.name.len, node.name.str,
-                        dep.len, dep.str);
-
-      if (!graph->acyclic && i == graph->nodes.len - 1 &&
-          string_eq(dep, node.last_cycle)) {
-
-        out = string_add(out, tos3(" <-- last cycle"));
-      };
-
-      println(out);
+      out = string_add(out, _STR(" * %.*s -> %.*s\n", node.name.len,
+                                 node.name.str, dep.len, dep.str));
     };
   };
+
+  return out;
+}
+string compiler__DepGraph_display_cycles(compiler__DepGraph *graph) {
+
+  map_compiler__DepGraphNode node_names =
+      new_map(1, sizeof(compiler__DepGraphNode));
+
+  array_compiler__DepGraphNode tmp34 = graph->nodes;
+  for (int tmp35 = 0; tmp35 < tmp34.len; tmp35++) {
+    compiler__DepGraphNode node = ((compiler__DepGraphNode *)tmp34.data)[tmp35];
+
+    map_set(&node_names, node.name, &(compiler__DepGraphNode[]){node});
+  };
+
+  string out = tos3("\n");
+
+  array_compiler__DepGraphNode tmp37 = graph->nodes;
+  for (int tmp38 = 0; tmp38 < tmp37.len; tmp38++) {
+    compiler__DepGraphNode node = ((compiler__DepGraphNode *)tmp37.data)[tmp38];
+
+    array_string tmp39 = node.deps;
+    for (int tmp40 = 0; tmp40 < tmp39.len; tmp40++) {
+      string dep = ((string *)tmp39.data)[tmp40];
+
+      if (!(_IN_MAP((dep), node_names))) {
+
+        continue;
+      };
+
+      compiler__DepGraphNode tmp41 = {0};
+      bool tmp42 = map_get(/*depgraph.v : 128*/ node_names, dep, &tmp41);
+
+      compiler__DepGraphNode dn = tmp41;
+
+      if (_IN(string, (node.name), dn.deps)) {
+
+        out = string_add(out, _STR(" * %.*s -> %.*s\n", node.name.len,
+                                   node.name.str, dep.len, dep.str));
+      };
+    };
+  };
+
+  return out;
 }
 void compiler__Parser_enum_decl(compiler__Parser *p, string _enum_name) {
 
@@ -16109,9 +16127,9 @@ compiler__DepGraph *compiler__V_resolve_deps(compiler__V *v) {
 
   if (!deps_resolved->acyclic) {
 
-    compiler__DepGraph_display(&/* ? */ *deps_resolved);
-
-    compiler__verror(tos3("import cycle detected"));
+    compiler__verror(string_add(
+        tos3("import cycle detected between the following modules: \n"),
+        compiler__DepGraph_display_cycles(&/* ? */ *deps_resolved)));
   };
 
   return deps_resolved;
