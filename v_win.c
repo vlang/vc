@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4a88a28"
+#define V_COMMIT_HASH "3d6bdc2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "dce3275"
+#define V_COMMIT_HASH "4a88a28"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -9533,7 +9533,7 @@ array_compiler__Type compiler__sort_structs(array_compiler__Type types) {
         string_add(
             string_add(
                 tos3("cgen.sort_structs(): the following structs form a "
-                     "dependancy cycle:\n"),
+                     "dependency cycle:\n"),
                 compiler__DepGraph_display_cycles(&/* ? */ *dep_graph_sorted)),
             tos3("\nyou can solve this by making one or both of the dependant "
                  "struct fields references, eg: field &MyStruct")),
@@ -10790,6 +10790,17 @@ void compiler__Parser_enum_decl(compiler__Parser *p, string _enum_name) {
 
   string enum_name = _enum_name;
 
+  bool is_pub = p->tok == compiler__compiler__TokenKind_key_pub;
+
+  if (is_pub) {
+
+    compiler__Parser_next(p);
+
+    compiler__Parser_check(p, compiler__compiler__TokenKind_key_enum);
+
+    enum_name = compiler__Parser_check_name(p);
+  };
+
   if (!p->builtin_mod && string_ne(p->mod, tos3("main"))) {
 
     enum_name = compiler__Parser_prepend_mod(&/* ? */ *p, enum_name);
@@ -10801,7 +10812,7 @@ void compiler__Parser_enum_decl(compiler__Parser *p, string _enum_name) {
     _PUSH(&p->cgen->typedefs,
           (/*typ = array_string   tmp_typ=string*/ _STR(
               "typedef int %.*s;", enum_name.len, enum_name.str)),
-          tmp2, string);
+          tmp3, string);
   };
 
   compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
@@ -10815,7 +10826,7 @@ void compiler__Parser_enum_decl(compiler__Parser *p, string _enum_name) {
 
     string field = compiler__Parser_check_name(p);
 
-    _PUSH(&fields, (/*typ = array_string   tmp_typ=string*/ field), tmp6,
+    _PUSH(&fields, (/*typ = array_string   tmp_typ=string*/ field), tmp7,
           string);
 
     compiler__Parser_fgenln(p, tos3(""));
@@ -10854,7 +10865,7 @@ void compiler__Parser_enum_decl(compiler__Parser *p, string _enum_name) {
       _PUSH(&p->cgen->consts,
             (/*typ = array_string   tmp_typ=string*/ _STR(
                 "#define %.*s %d", name.len, name.str, val)),
-            tmp9, string);
+            tmp10, string);
     };
 
     if (p->tok == compiler__compiler__TokenKind_comma) {
@@ -10872,7 +10883,7 @@ void compiler__Parser_enum_decl(compiler__Parser *p, string _enum_name) {
                        .parent = tos3("int"),
                        .cat = compiler__compiler__TypeCategory_enum_,
                        .enum_vals = array_clone(fields),
-                       .is_public = 0,
+                       .is_public = is_pub,
                        .fields = new_array(0, 1, sizeof(compiler__Var)),
                        .methods = new_array(0, 1, sizeof(compiler__Fn)),
                        .is_c = 0,
@@ -18295,6 +18306,10 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
 
         compiler__Parser_struct_decl(p);
 
+      } else if (tmp28 == compiler__compiler__TokenKind_key_enum) {
+
+        compiler__Parser_enum_decl(p, tos3(""));
+
       } else // default:
       {
 
@@ -19466,7 +19481,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
   if (_IN(string, (p->lit), map_keys(&/* ? */ ti))) {
 
     string tmp114 = tos((byte *)"", 0);
-    bool tmp115 = map_get(/*parser.v : 1052*/ ti, p->lit, &tmp114);
+    bool tmp115 = map_get(/*parser.v : 1055*/ ti, p->lit, &tmp114);
 
     if (!tmp115)
       tmp114 = tos((byte *)"", 0);
@@ -19548,7 +19563,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
     } else if (!t.is_public && string_ne(t.mod, p->mod) &&
                string_ne(t.name, tos3(""))) {
 
-      compiler__Parser_warn(
+      compiler__Parser_error(
           p, _STR("type `%.*s` is private", t.name.len, t.name.str));
     };
   };
