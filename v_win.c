@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c7e6d37"
+#define V_COMMIT_HASH "be0830b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ef9cae6"
+#define V_COMMIT_HASH "c7e6d37"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -2589,82 +2589,84 @@ void print_backtrace_skipping_top_frames(int skipframes) {
 
 #ifndef __BIONIC__
 
-  if (backtrace_symbols_fd != 0) {
+#ifdef __GLIBC__
 
-    byte *buffer[100];
+  byte *buffer[100];
 
-    int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
+  int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
 
-    int nr_actual_frames = nr_ptrs - skipframes;
+  int nr_actual_frames = nr_ptrs - skipframes;
 
-    array_string sframes = new_array_from_c_array(
-        0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+  array_string sframes = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-    byteptr *csymbols = ((byteptr *)(backtrace_symbols(
-        ((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)), nr_actual_frames)));
+  byteptr *csymbols = ((byteptr *)(backtrace_symbols(
+      ((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)), nr_actual_frames)));
 
-    int tmp8 = 0;
-    ;
-    for (int tmp9 = tmp8; tmp9 < nr_actual_frames; tmp9++) {
-      int i = tmp9;
+  int tmp8 = 0;
+  ;
+  for (int tmp9 = tmp8; tmp9 < nr_actual_frames; tmp9++) {
+    int i = tmp9;
 
-      _PUSH(&sframes,
-            (/*typ = array_string   tmp_typ=string*/ tos2(
-                csymbols[/*ptr*/ i] /*rbyteptr 0*/)),
-            tmp10, string);
-    };
-
-    array_string tmp11 = sframes;
-    for (int tmp12 = 0; tmp12 < tmp11.len; tmp12++) {
-      string sframe = ((string *)tmp11.data)[tmp12];
-
-      string executable = string_all_before(sframe, tos3("("));
-
-      string addr =
-          string_all_before(string_all_after(sframe, tos3("[")), tos3("]"));
-
-      string cmd = _STR("addr2line -e %.*s %.*s", executable.len,
-                        executable.str, addr.len, addr.str);
-
-      byteptr f = ((byteptr)(popen((char *)cmd.str, "r")));
-
-      if (isnil(&/*112 EXP:"void*" GOT:"byteptr" */ f)) {
-
-        println(sframe);
-
-        continue;
-      };
-
-      byte buf[1000] = {0};
-
-      string output = tos3("");
-
-      while (fgets(buf, 1000, f) != 0) {
-
-        output = string_add(output, tos(buf, vstrlen(buf)));
-      };
-
-      output = string_add(string_trim_space(output), tos3(":"));
-
-      if (0 != ((int)(pclose(f)))) {
-
-        println(sframe);
-
-        continue;
-      };
-
-      printf("%-45s | %.*s\n", output.str, sframe.len, sframe.str);
-    };
-
-    return;
-
-  } else {
-
-    printf("backtrace_symbols_fd is missing, so printing backtraces is not "
-           "available.\n");
-
-    printf("Some libc implementations like musl simply do not provide it.\n");
+    _PUSH(&sframes,
+          (/*typ = array_string   tmp_typ=string*/ tos2(
+              csymbols[/*ptr*/ i] /*rbyteptr 0*/)),
+          tmp10, string);
   };
+
+  array_string tmp11 = sframes;
+  for (int tmp12 = 0; tmp12 < tmp11.len; tmp12++) {
+    string sframe = ((string *)tmp11.data)[tmp12];
+
+    string executable = string_all_before(sframe, tos3("("));
+
+    string addr =
+        string_all_before(string_all_after(sframe, tos3("[")), tos3("]"));
+
+    string cmd = _STR("addr2line -e %.*s %.*s", executable.len, executable.str,
+                      addr.len, addr.str);
+
+    byteptr f = ((byteptr)(popen((char *)cmd.str, "r")));
+
+    if (isnil(&/*112 EXP:"void*" GOT:"byteptr" */ f)) {
+
+      println(sframe);
+
+      continue;
+    };
+
+    byte buf[1000] = {0};
+
+    string output = tos3("");
+
+    while (fgets(buf, 1000, f) != 0) {
+
+      output = string_add(output, tos(buf, vstrlen(buf)));
+    };
+
+    output = string_add(string_trim_space(output), tos3(":"));
+
+    if (0 != ((int)(pclose(f)))) {
+
+      println(sframe);
+
+      continue;
+    };
+
+    printf("%-45s | %.*s\n", output.str, sframe.len, sframe.str);
+  };
+
+  return;
+
+#else
+
+  printf("backtrace_symbols_fd is missing, so printing backtraces is not "
+         "available.\n");
+
+  printf("Some libc implementations like musl simply do not provide it.\n");
+
+#endif
+  ;
 
 #endif
   ;
