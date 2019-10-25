@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "090e1a8"
+#define V_COMMIT_HASH "c30f16a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "be0830b"
+#define V_COMMIT_HASH "090e1a8"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1259,6 +1259,7 @@ i64 benchmark__Benchmark_total_duration(benchmark__Benchmark *b);
 string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark *b, string s,
                                         i64 sticks, i64 eticks);
 i64 benchmark__now();
+void compiler__todo();
 void compiler__V_cc(compiler__V *v);
 void compiler__V_cc_windows_cross(compiler__V *c);
 void compiler__V_build_thirdparty_obj_files(compiler__V *c);
@@ -7982,6 +7983,7 @@ string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark *b, string s,
   return s;
 }
 i64 benchmark__now() { return time__ticks(); }
+void compiler__todo() {}
 void compiler__V_cc(compiler__V *v) {
 
   compiler__V_build_thirdparty_obj_files(&/* ? */ *v);
@@ -8332,9 +8334,9 @@ void compiler__V_cc(compiler__V *v) {
 
   string args = array_string_join(a, tos3(" "));
 
-start:
+start:;
 
-  777;
+  compiler__todo();
 
   string cmd = _STR("%.*s %.*s", v->pref->ccompiler.len, v->pref->ccompiler.str,
                     args.len, args.str);
@@ -8363,6 +8365,18 @@ start:
 
     if (res.exit_code == 127) {
 
+#ifdef __linux__
+
+      if (string_eq(v->pref->ccompiler, tos3("tcc"))) {
+
+        v->pref->ccompiler = tos3("cc");
+
+        goto start;
+      };
+
+#endif
+      ;
+
       compiler__verror(string_add(
           string_add(
               string_add(
@@ -8376,18 +8390,6 @@ start:
                        "----\n")),
               tos3("Probably your C compiler is missing. \n")),
           tos3("Please reinstall it, or make it available in your PATH.")));
-
-#ifdef __linux__
-
-      if (string_eq(v->pref->ccompiler, tos3("tcc"))) {
-
-        v->pref->ccompiler = tos3("cc");
-
-        goto start;
-      };
-
-#endif
-      ;
     };
 
     if (v->pref->is_debug) {
@@ -19618,7 +19620,7 @@ string compiler__Parser_statement(compiler__Parser *p, bool add_semi) {
 
       compiler__Parser_fmt_inc(p);
 
-      compiler__Parser_genln(p, string_add(label, tos3(":")));
+      compiler__Parser_genln(p, string_add(label, tos3(": ;")));
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_colon);
 
