@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c30f16a"
+#define V_COMMIT_HASH "7d02ecc"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "090e1a8"
+#define V_COMMIT_HASH "c30f16a"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -8367,7 +8367,7 @@ start:;
 
 #ifdef __linux__
 
-      if (string_eq(v->pref->ccompiler, tos3("tcc"))) {
+      if (string_contains(v->pref->ccompiler, tos3("tcc"))) {
 
         v->pref->ccompiler = tos3("cc");
 
