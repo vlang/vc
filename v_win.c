@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "be0830b"
+#define V_COMMIT_HASH "090e1a8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c7e6d37"
+#define V_COMMIT_HASH "be0830b"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -8332,6 +8332,10 @@ void compiler__V_cc(compiler__V *v) {
 
   string args = array_string_join(a, tos3(" "));
 
+start:
+
+  777;
+
   string cmd = _STR("%.*s %.*s", v->pref->ccompiler.len, v->pref->ccompiler.str,
                     args.len, args.str);
 
@@ -8372,6 +8376,18 @@ void compiler__V_cc(compiler__V *v) {
                        "----\n")),
               tos3("Probably your C compiler is missing. \n")),
           tos3("Please reinstall it, or make it available in your PATH.")));
+
+#ifdef __linux__
+
+      if (string_eq(v->pref->ccompiler, tos3("tcc"))) {
+
+        v->pref->ccompiler = tos3("cc");
+
+        goto start;
+      };
+
+#endif
+      ;
     };
 
     if (v->pref->is_debug) {
