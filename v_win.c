@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9c5a359"
+#define V_COMMIT_HASH "b6fa252"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "280c7d3"
+#define V_COMMIT_HASH "9c5a359"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -321,6 +321,7 @@ struct map {
 struct Option {
   byte data[255];
   string error;
+  int ecode;
   bool ok;
   bool is_none;
 };
@@ -954,6 +955,7 @@ string map_string_str(map_string m);
 Option opt_ok(void *data, int size);
 Option opt_none();
 Option v_error(string s);
+Option error_with_code(string s, int code);
 int vstrlen(byte *s);
 string tos(byte *s, int len);
 string tos_clone(byte *s);
@@ -3476,7 +3478,7 @@ Option opt_ok(void *data, int size) {
              size));
   };
 
-  Option res = (Option){.ok = 1, .error = tos3(""), .is_none = 0};
+  Option res = (Option){.ok = 1, .error = tos3(""), .ecode = 0, .is_none = 0};
 
   memcpy(res.data, data, size);
 
@@ -3487,10 +3489,18 @@ Option opt_none() {
   return (Option){
       .is_none = 1,
       .error = tos3(""),
+      .ecode = 0,
       .ok = 0,
   };
 }
-Option v_error(string s) { return (Option){.error = s, .ok = 0, .is_none = 0}; }
+Option v_error(string s) {
+
+  return (Option){.error = s, .ecode = 0, .ok = 0, .is_none = 0};
+}
+Option error_with_code(string s, int code) {
+
+  return (Option){.error = s, .ecode = code, .ok = 0, .is_none = 0};
+}
 int vstrlen(byte *s) { return strlen(((char *)(s))); }
 string tos(byte *s, int len) {
 
@@ -6384,6 +6394,7 @@ void os__write_file(string path, string text) {
   Option_os__File tmp80 = os__create(path);
   if (!tmp80.ok) {
     string err = tmp80.error;
+    int errcode = tmp80.ecode;
 
     return;
   }
@@ -6649,6 +6660,7 @@ array_string os__walk_ext(string path, string ext) {
   Option_array_string tmp108 = os__ls(path);
   if (!tmp108.ok) {
     string err = tmp108.error;
+    int errcode = tmp108.ecode;
 
     v_panic(err);
   }
@@ -6693,6 +6705,7 @@ void os__walk(string path, void (*fnc)(string path /*FFF*/)) {
   Option_array_string tmp114 = os__ls(path);
   if (!tmp114.ok) {
     string err = tmp114.error;
+    int errcode = tmp114.ecode;
 
     v_panic(err);
   }
@@ -7758,6 +7771,7 @@ string vweb_dot_tmpl__compile_template(string path) {
   Option_string tmp1 = os__read_file(path);
   if (!tmp1.ok) {
     string err = tmp1.error;
+    int errcode = tmp1.ecode;
 
     v_panic(tos3("html failed"));
   }
@@ -7771,6 +7785,7 @@ string vweb_dot_tmpl__compile_template(string path) {
     Option_string tmp3 = os__read_file(tos3("header.html"));
     if (!tmp3.ok) {
       string err = tmp3.error;
+      int errcode = tmp3.ecode;
 
       v_panic(tos3("html failed"));
     }
@@ -8354,6 +8369,7 @@ start:;
   Option_os__Result tmp45 = os__exec(cmd);
   if (!tmp45.ok) {
     string err = tmp45.error;
+    int errcode = tmp45.ecode;
 
     compiler__verror(err);
 
@@ -9039,6 +9055,7 @@ compiler__CGen *compiler__new_cgen(string out_name_c) {
   Option_os__File tmp2 = os__create(path);
   if (!tmp2.ok) {
     string err = tmp2.error;
+    int errcode = tmp2.ecode;
 
     printf("failed to create %.*s\n", path.len, path.str);
 
@@ -9356,6 +9373,7 @@ void compiler__build_thirdparty_obj_file(string path,
   Option_array_string tmp28 = os__ls(parent);
   if (!tmp28.ok) {
     string err = tmp28.error;
+    int errcode = tmp28.ecode;
 
     v_panic(err);
   }
@@ -9396,6 +9414,7 @@ void compiler__build_thirdparty_obj_file(string path,
   Option_os__Result tmp37 = os__exec(cmd);
   if (!tmp37.ok) {
     string err = tmp37.error;
+    int errcode = tmp37.ecode;
 
     printf("failed thirdparty object build cmd: %.*s\n", cmd.len, cmd.str);
 
@@ -10268,6 +10287,7 @@ void compiler__Parser_chash(compiler__Parser *p) {
       Option_bool tmp23 = compiler__Table_parse_cflag(p->table, flag, p->mod);
       if (!tmp23.ok) {
         string err = tmp23.error;
+        int errcode = tmp23.ecode;
 
         compiler__Parser_error_with_token_index(
             p, err, compiler__Parser_cur_tok_index(&/* ? */ *p) - 1);
@@ -11157,6 +11177,7 @@ bool compiler__Parser_known_var(compiler__Parser *p, string name) {
   Option_compiler__Var tmp35 = compiler__Parser_find_var(&/* ? */ *p, name);
   if (!tmp35.ok) {
     string err = tmp35.error;
+    int errcode = tmp35.ecode;
 
     return 0;
   };
@@ -11170,6 +11191,7 @@ bool compiler__Parser_known_var_check_new_var(compiler__Parser *p,
       compiler__Parser_find_var_check_new_var(&/* ? */ *p, name);
   if (!tmp36.ok) {
     string err = tmp36.error;
+    int errcode = tmp36.ecode;
 
     return 0;
   };
@@ -11473,6 +11495,7 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
           compiler__Table_find_fn(&/* ? */ *p->table, f.name);
       if (!tmp53.ok) {
         string err = tmp53.error;
+        int errcode = tmp53.ecode;
 
         break;
       }
@@ -12559,6 +12582,7 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
           compiler__Parser_find_var(&/* ? */ *p, var_name);
       if (!tmp127.ok) {
         string err = tmp127.error;
+        int errcode = tmp127.ecode;
 
         compiler__Parser_error(
             p, _STR("`%.*s` is a mutable argument, you need to provide a "
@@ -13377,6 +13401,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
         compiler__Table_find_fn(&/* ? */ *p->table, f->name);
     if (!tmp225.ok) {
       string err = tmp225.error;
+      int errcode = tmp225.ecode;
 
       compiler__Parser_error(p, _STR("function instance `%.*s` not found",
                                      f->name.len, f->name.str));
@@ -13774,8 +13799,37 @@ string compiler__Parser_gen_var_decl(compiler__Parser *p, string name,
                            .is_for_var = 0,
                            .is_public = 0});
 
+    compiler__Parser_register_var(
+        p, (compiler__Var){.name = tos3("errcode"),
+                           .typ = tos3("int"),
+                           .is_mut = 0,
+                           .is_used = 1,
+                           .idx = 0,
+                           .is_arg = 0,
+                           .is_const = 0,
+                           .args = new_array(0, 1, sizeof(compiler__Var)),
+                           .attr = tos3(""),
+                           .is_alloc = 0,
+                           .is_returned = 0,
+                           .ptr = 0,
+                           .ref = 0,
+                           .parent_fn = tos3(""),
+                           .mod = tos3(""),
+                           .is_global = 0,
+                           .is_changed = 0,
+                           .scope_level = 0,
+                           .is_c = 0,
+                           .is_moved = 0,
+                           .line_nr = 0,
+                           .token_idx = 0,
+                           .is_for_var = 0,
+                           .is_public = 0});
+
     compiler__Parser_genln(
         p, _STR("string err = %.*s . error;", tmp.len, tmp.str));
+
+    compiler__Parser_genln(
+        p, _STR("int    errcode = %.*s . ecode;", tmp.len, tmp.str));
 
     compiler__Parser_statements(p);
 
@@ -13921,8 +13975,37 @@ void compiler__Parser_gen_blank_identifier_assign(compiler__Parser *p) {
                            .is_for_var = 0,
                            .is_public = 0});
 
+    compiler__Parser_register_var(
+        p, (compiler__Var){.name = tos3("errcode"),
+                           .typ = tos3("int"),
+                           .is_mut = 0,
+                           .is_used = 1,
+                           .idx = 0,
+                           .is_arg = 0,
+                           .is_const = 0,
+                           .args = new_array(0, 1, sizeof(compiler__Var)),
+                           .attr = tos3(""),
+                           .is_alloc = 0,
+                           .is_returned = 0,
+                           .ptr = 0,
+                           .ref = 0,
+                           .parent_fn = tos3(""),
+                           .mod = tos3(""),
+                           .is_global = 0,
+                           .is_changed = 0,
+                           .scope_level = 0,
+                           .is_c = 0,
+                           .is_moved = 0,
+                           .line_nr = 0,
+                           .token_idx = 0,
+                           .is_for_var = 0,
+                           .is_public = 0});
+
     compiler__Parser_genln(
         p, _STR("string err = %.*s . error;", tmp.len, tmp.str));
+
+    compiler__Parser_genln(
+        p, _STR("int    errcode = %.*s . ecode;", tmp.len, tmp.str));
 
     compiler__Parser_statements(p);
 
@@ -14105,7 +14188,7 @@ string compiler__Table_fn_gen_name(compiler__Table *table, compiler__Fn *f) {
       !string_contains(name, tos3("contains"))) {
 
     int tmp29 = 0;
-    bool tmp30 = map_get(/*gen_c.v : 237*/ table->obf_ids, name, &tmp29);
+    bool tmp30 = map_get(/*gen_c.v : 251*/ table->obf_ids, name, &tmp29);
 
     int idx = tmp29;
 
@@ -15252,6 +15335,7 @@ int compiler__V_parse(compiler__V *v, string file, compiler__Pass pass) {
   Option_int tmp7 = compiler__V_get_file_parser_index(&/* ? */ *v, file);
   if (!tmp7.ok) {
     string err = tmp7.error;
+    int errcode = tmp7.ecode;
 
     compiler__Parser p = compiler__V_new_parser_from_file(v, file);
 
@@ -15843,6 +15927,7 @@ array_string compiler__V_v_files_from_dir(compiler__V *v, string dir) {
   Option_array_string tmp44 = os__ls(dir);
   if (!tmp44.ok) {
     string err = tmp44.error;
+    int errcode = tmp44.ecode;
 
     v_panic(err);
   }
@@ -16190,6 +16275,7 @@ void compiler__V_parse_lib_imports(compiler__V *v) {
       Option_string tmp94 = compiler__V_find_module_path(&/* ? */ *v, mod);
       if (!tmp94.ok) {
         string err = tmp94.error;
+        int errcode = tmp94.ecode;
 
         compiler__Parser_error_with_token_index(
             &/* ? */ (*(compiler__Parser *)array_get(v->parsers, i)),
@@ -16603,6 +16689,7 @@ void compiler__update_v() {
       "git -C \"%.*s\" pull --rebase origin master", vroot.len, vroot.str));
   if (!tmp149.ok) {
     string err = tmp149.error;
+    int errcode = tmp149.ecode;
 
     compiler__verror(err);
 
@@ -16628,6 +16715,7 @@ void compiler__update_v() {
       os__exec(_STR("\"%.*s/make.bat\"", vroot.len, vroot.str));
   if (!tmp151.ok) {
     string err = tmp151.error;
+    int errcode = tmp151.ecode;
 
     compiler__verror(err);
 
@@ -16644,6 +16732,7 @@ void compiler__update_v() {
       os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
   if (!tmp152.ok) {
     string err = tmp152.error;
+    int errcode = tmp152.ecode;
 
     compiler__verror(err);
 
@@ -16702,6 +16791,7 @@ void compiler__install_v(array_string args) {
         "\"%.*s\" -o %.*s vget.v", vexec.len, vexec.str, vget.len, vget.str));
     if (!tmp158.ok) {
       string err = tmp158.error;
+      int errcode = tmp158.ecode;
 
       compiler__verror(err);
 
@@ -16722,6 +16812,7 @@ void compiler__install_v(array_string args) {
       _STR("%.*s ", vget.len, vget.str), array_string_join(names, tos3(" "))));
   if (!tmp159.ok) {
     string err = tmp159.error;
+    int errcode = tmp159.ecode;
 
     compiler__verror(err);
 
@@ -16901,6 +16992,7 @@ void compiler__generate_vh(string mod) {
   Option_os__File tmp7 = os__create(path);
   if (!tmp7.ok) {
     string err = tmp7.error;
+    int errcode = tmp7.ecode;
 
     v_panic(err);
   }
@@ -17421,6 +17513,7 @@ Option_compiler__WindowsKit compiler__find_windows_kit_root(string host_arch) {
                                  tos3("KitsRoot10"), tos3("KitsRoot81")}));
   if (!tmp13.ok) {
     string err = tmp13.error;
+    int errcode = tmp13.ecode;
 
     Option tmp14 = v_error(tos3("Unable to find a windows kit"));
     { RegCloseKey(root_key); }
@@ -17435,6 +17528,7 @@ Option_compiler__WindowsKit compiler__find_windows_kit_root(string host_arch) {
   Option_array_string tmp16 = os__ls(kit_lib);
   if (!tmp16.ok) {
     string err = tmp16.error;
+    int errcode = tmp16.ecode;
 
     v_panic(err);
   }
@@ -17507,6 +17601,7 @@ Option_compiler__VsInstallation compiler__find_vs(string vswhere_dir,
            vswhere_dir.len, vswhere_dir.str));
   if (!tmp26.ok) {
     string err = tmp26.error;
+    int errcode = tmp26.ecode;
 
     return v_error(err);
   }
@@ -17518,6 +17613,7 @@ Option_compiler__VsInstallation compiler__find_vs(string vswhere_dir,
            res.output.len, res.output.str));
   if (!tmp27.ok) {
     string err = tmp27.error;
+    int errcode = tmp27.ecode;
 
     println(tos3("Unable to find msvc version"));
 
@@ -17574,6 +17670,7 @@ Option_compiler__MsvcResult compiler__find_msvc() {
       compiler__find_windows_kit_root(host_arch);
   if (!tmp36.ok) {
     string err = tmp36.error;
+    int errcode = tmp36.ecode;
 
     return v_error(tos3("Unable to find windows sdk"));
   }
@@ -17584,6 +17681,7 @@ Option_compiler__MsvcResult compiler__find_msvc() {
       compiler__find_vs(vswhere_dir, host_arch);
   if (!tmp37.ok) {
     string err = tmp37.error;
+    int errcode = tmp37.ecode;
 
     return v_error(tos3("Unable to find visual studio"));
   }
@@ -17618,6 +17716,7 @@ void compiler__V_cc_msvc(compiler__V *v) {
   Option_compiler__MsvcResult tmp39 = compiler__find_msvc();
   if (!tmp39.ok) {
     string err = tmp39.error;
+    int errcode = tmp39.ecode;
 
     if (!v->pref->is_keep_c && string_ne(v->out_name_c, tos3("v.c")) &&
         string_ne(v->out_name_c, tos3("v_macos.c"))) {
@@ -17810,6 +17909,7 @@ void compiler__V_cc_msvc(compiler__V *v) {
   Option_os__Result tmp76 = os__exec(cmd);
   if (!tmp76.ok) {
     string err = tmp76.error;
+    int errcode = tmp76.ecode;
 
     println(err);
 
@@ -17839,6 +17939,7 @@ void compiler__build_thirdparty_obj_file_with_msvc(
   Option_compiler__MsvcResult tmp77 = compiler__find_msvc();
   if (!tmp77.ok) {
     string err = tmp77.error;
+    int errcode = tmp77.ecode;
 
     println(tos3("Could not find visual studio"));
 
@@ -17866,6 +17967,7 @@ void compiler__build_thirdparty_obj_file_with_msvc(
   Option_array_string tmp80 = os__ls(parent);
   if (!tmp80.ok) {
     string err = tmp80.error;
+    int errcode = tmp80.ecode;
 
     v_panic(err);
   }
@@ -17915,6 +18017,7 @@ void compiler__build_thirdparty_obj_file_with_msvc(
   Option_os__Result tmp88 = os__exec(cmd);
   if (!tmp88.ok) {
     string err = tmp88.error;
+    int errcode = tmp88.ecode;
 
     compiler__verror(err);
 
@@ -18646,6 +18749,7 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
         Option_os__File tmp35 = os__create(tos3("/var/tmp/fmt.v"));
         if (!tmp35.ok) {
           string err = tmp35.error;
+          int errcode = tmp35.ecode;
 
           compiler__verror(tos3("failed to create fmt.v"));
 
@@ -20208,6 +20312,7 @@ void compiler__Parser_var_decl(compiler__Parser *p) {
             compiler__Parser_find_var(&/* ? */ *p, var_name);
         if (!tmp168.ok) {
           string err = tmp168.error;
+          int errcode = tmp168.ecode;
 
           compiler__Parser_error_with_token_index(
               p, _STR("cannot find `%.*s`", var_name.len, var_name.str),
@@ -20749,6 +20854,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
       compiler__Table_find_fn_is_script(&/* ? */ *p->table, name, p->v_script);
   if (!tmp203.ok) {
     string err = tmp203.error;
+    int errcode = tmp203.ecode;
 
     return compiler__Parser_get_undefined_fn_type(p, name, orig_name);
   }
@@ -20800,6 +20906,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
         compiler__Table_find_fn(&/* ? */ *p->table, f.name);
     if (!tmp207.ok) {
       string err = tmp207.error;
+      int errcode = tmp207.ecode;
 
       return tos3("");
     }
@@ -20855,6 +20962,7 @@ string compiler__Parser_get_var_type(compiler__Parser *p, string name,
       compiler__Parser_find_var_check_new_var(&/* ? */ *p, name);
   if (!tmp210.ok) {
     string err = tmp210.error;
+    int errcode = tmp210.ecode;
 
     return tos3("");
   }
@@ -20921,6 +21029,7 @@ string compiler__Parser_get_const_type(compiler__Parser *p, string name,
       compiler__Table_find_const(&/* ? */ *p->table, name);
   if (!tmp212.ok) {
     string err = tmp212.error;
+    int errcode = tmp212.ecode;
 
     return tos3("");
   }
@@ -20989,6 +21098,7 @@ string compiler__Parser_get_c_func_type(compiler__Parser *p, string name) {
       compiler__Table_find_fn(&/* ? */ *p->table, name);
   if (!tmp215.ok) {
     string err = tmp215.error;
+    int errcode = tmp215.ecode;
 
     return tos3("void*");
   }
@@ -21273,6 +21383,7 @@ string compiler__Parser_dot(compiler__Parser *p, string str_typ_,
         &/*112 EXP:"compiler__Type*" GOT:"compiler__Type" */ typ, struct_field);
     if (!tmp232.ok) {
       string err = tmp232.error;
+      int errcode = tmp232.ecode;
 
       compiler__Parser_error_with_token_index(
           p,
@@ -21346,6 +21457,7 @@ string compiler__Parser_dot(compiler__Parser *p, string str_typ_,
       &/*112 EXP:"compiler__Type*" GOT:"compiler__Type" */ typ, field_name);
   if (!tmp236.ok) {
     string err = tmp236.error;
+    int errcode = tmp236.ecode;
 
     compiler__Parser_error_with_token_index(
         p, _STR("could not find method `%.*s`", field_name.len, field_name.str),
@@ -22226,6 +22338,7 @@ string compiler__Parser_assoc(compiler__Parser *p) {
   Option_compiler__Var tmp300 = compiler__Parser_find_var(&/* ? */ *p, name);
   if (!tmp300.ok) {
     string err = tmp300.error;
+    int errcode = tmp300.ecode;
 
     compiler__Parser_error(p,
                            _STR("unknown variable `%.*s`", name.len, name.str));
@@ -22689,6 +22802,7 @@ string compiler__Parser_array_init(compiler__Parser *p) {
           compiler__Table_find_const(&/* ? */ *p->table, const_name);
       if (!tmp339.ok) {
         string err = tmp339.error;
+        int errcode = tmp339.ecode;
 
         v_exit(1);
       }
@@ -24097,6 +24211,7 @@ void compiler__Parser_go_statement(compiler__Parser *p) {
         compiler__Parser_find_var(&/* ? */ *p, var_name);
     if (!tmp435.ok) {
       string err = tmp435.error;
+      int errcode = tmp435.ecode;
 
       return;
     }
@@ -24118,6 +24233,7 @@ void compiler__Parser_go_statement(compiler__Parser *p) {
         &/*112 EXP:"compiler__Type*" GOT:"compiler__Type" */ typ, p->lit);
     if (!tmp437.ok) {
       string err = tmp437.error;
+      int errcode = tmp437.ecode;
 
       compiler__Parser_error_with_token_index(
           p, _STR("go method missing %.*s", var_name.len, var_name.str),
@@ -24138,6 +24254,7 @@ void compiler__Parser_go_statement(compiler__Parser *p) {
         &/* ? */ *p->table, compiler__Parser_prepend_mod(&/* ? */ *p, f_name));
     if (!tmp439.ok) {
       string err = tmp439.error;
+      int errcode = tmp439.ecode;
 
       println(compiler__Table_debug_fns(&/* ? */ *p->table));
 
@@ -25081,6 +25198,7 @@ void compiler__Parser_insert_query(compiler__Parser *p, int fn_ph) {
   Option_compiler__Var tmp36 = compiler__Parser_find_var(&/* ? */ *p, var_name);
   if (!tmp36.ok) {
     string err = tmp36.error;
+    int errcode = tmp36.ecode;
 
     return;
   }
@@ -25386,6 +25504,7 @@ array_string compiler__run_repl() {
           "\"%.*s\" run %.*s -repl", vexe.len, vexe.str, file.len, file.str));
       if (!tmp34.ok) {
         string err = tmp34.error;
+        int errcode = tmp34.ecode;
 
         compiler__verror(err);
 
@@ -25452,6 +25571,7 @@ array_string compiler__run_repl() {
                         temp_file.len, temp_file.str));
       if (!tmp44.ok) {
         string err = tmp44.error;
+        int errcode = tmp44.ecode;
 
         compiler__verror(err);
 
@@ -25544,6 +25664,7 @@ compiler__Scanner *compiler__new_scanner_file(string file_path) {
   Option_string tmp1 = os__read_file(file_path);
   if (!tmp1.ok) {
     string err = tmp1.error;
+    int errcode = tmp1.ecode;
 
     compiler__verror(
         _STR("scanner: failed to open %.*s", file_path.len, file_path.str));
@@ -27164,6 +27285,7 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ) {
       Option_compiler__Var tmp35 = compiler__Type_find_field(&/* ? */ t, field);
       if (!tmp35.ok) {
         string err = tmp35.error;
+        int errcode = tmp35.ecode;
 
         compiler__Parser_error(p, _STR("no such field: \"%.*s\" in type %.*s",
                                        field.len, field.str, typ.len, typ.str));
@@ -27677,6 +27799,7 @@ bool compiler__Table_known_fn(compiler__Table *t, string name) {
   Option_compiler__Fn tmp28 = compiler__Table_find_fn(&/* ? */ *t, name);
   if (!tmp28.ok) {
     string err = tmp28.error;
+    int errcode = tmp28.ecode;
 
     return 0;
   };
@@ -27688,6 +27811,7 @@ bool compiler__Table_known_const(compiler__Table *t, string name) {
   Option_compiler__Var tmp29 = compiler__Table_find_const(&/* ? */ *t, name);
   if (!tmp29.ok) {
     string err = tmp29.error;
+    int errcode = tmp29.ecode;
 
     return 0;
   };
@@ -27831,6 +27955,7 @@ bool compiler__Type_has_field(compiler__Type *t, string name) {
   Option_compiler__Var tmp35 = compiler__Type_find_field(&/* ? */ *t, name);
   if (!tmp35.ok) {
     string err = tmp35.error;
+    int errcode = tmp35.ecode;
 
     return 0;
   };
@@ -27863,6 +27988,7 @@ bool compiler__Table_type_has_field(compiler__Table *table, compiler__Type *typ,
       compiler__Table_find_field(&/* ? */ *table, typ, name);
   if (!tmp39.ok) {
     string err = tmp39.error;
+    int errcode = tmp39.ecode;
 
     return 0;
   };
@@ -27941,6 +28067,7 @@ bool compiler__Type_has_method(compiler__Type *t, string name) {
   Option_compiler__Fn tmp51 = compiler__Type_find_method(&/* ? */ *t, name);
   if (!tmp51.ok) {
     string err = tmp51.error;
+    int errcode = tmp51.ecode;
 
     return 0;
   };
@@ -27954,6 +28081,7 @@ bool compiler__Table_type_has_method(compiler__Table *table,
       compiler__Table_find_method(&/* ? */ *table, typ, name);
   if (!tmp52.ok) {
     string err = tmp52.error;
+    int errcode = tmp52.ecode;
 
     return 0;
   };
@@ -29308,6 +29436,7 @@ void compiler__TestSession_test(compiler__TestSession *ts) {
       Option_os__Result tmp21 = os__exec(cmd);
       if (!tmp21.ok) {
         string err = tmp21.error;
+        int errcode = tmp21.ecode;
 
         benchmark__Benchmark_fail(&/* ? */ ts->benchmark);
 
