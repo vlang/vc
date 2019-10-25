@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "dc2c628"
+#define V_COMMIT_HASH "7de95a6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5510327"
+#define V_COMMIT_HASH "dc2c628"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -15,20 +15,6 @@
 #include <locale.h> // tolower
 #include <sys/time.h>
 #include <unistd.h> // sleep
-#endif
-
-#ifdef __APPLE__
-#include <libproc.h> // proc_pidpath
-//#include <execinfo.h> // backtrace and backtrace_symbols_fd
-#endif
-
-#ifdef __linux__
-//#if !defined(__BIONIC__) && !defined(__GNUC_PREREQ)
-//#include <execinfo.h> // backtrace and backtrace_symbols_fd
-//#endif
-
-#pragma weak backtrace
-#pragma weak backtrace_symbols_fd
 #endif
 
 #ifdef __linux__
@@ -867,6 +853,7 @@ void v_ptr_free(void *ptr);
 bool is_atty(int fd);
 int backtrace(void *a, int b);
 void backtrace_symbols_fd(void *, int, int);
+int proc_pidpath(int, void *, int);
 string f64_str(f64 d);
 string f32_str(f32 d);
 f32 f32_abs(f32 a);
@@ -2734,6 +2721,7 @@ bool is_atty(int fd) {
 }
 int backtrace(void *a, int b);
 void backtrace_symbols_fd(void *, int, int);
+int proc_pidpath(int, void *, int);
 string f64_str(f64 d) {
 
   byte *buf = v_malloc(sizeof(double) * 5 + 1);
@@ -29596,24 +29584,18 @@ void init() {
       "// int64_t etc\n#include <string.h> // memcpy\n\n#ifndef "
       "_WIN32\n#include <ctype.h>\n#include <locale.h> // tolower\n#include "
       "<sys/time.h>\n#include <unistd.h> // sleep	\n#endif\n\n\n#ifdef "
-      "__APPLE__\n#include <libproc.h> // proc_pidpath\n//#include "
-      "<execinfo.h> // backtrace and backtrace_symbols_fd\n#endif\n\n#ifdef "
-      "__linux__\n//#if !defined(__BIONIC__) && "
-      "!defined(__GNUC_PREREQ)\n//#include <execinfo.h> // backtrace and "
-      "backtrace_symbols_fd\n//#endif\n\n#pragma weak backtrace\n#pragma weak "
-      "backtrace_symbols_fd\n#endif\n\n\n#ifdef __linux__\n#include "
+      "__linux__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait "
+      "uses wait on nix\n#endif\n\n#ifdef __FreeBSD__\n#include "
       "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
-      "nix\n#endif\n\n#ifdef __FreeBSD__\n#include <sys/types.h>\n#include "
+      "nix\n#endif\n\n#ifdef __DragonFly__\n#include <sys/types.h>\n#include "
       "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef "
-      "__DragonFly__\n#include <sys/types.h>\n#include <sys/wait.h> // "
-      "os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n#include "
-      "<sys/types.h>\n#include <sys/resource.h>\n#include <sys/wait.h> // "
-      "os__wait uses wait on nix\n#endif\n\n#define "
-      "EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION 0\n// Due "
-      "to a tcc bug, the length of an array needs to be specified, but GCC "
-      "crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define "
-      "TCCSKIP(x) x\n\n#ifdef __TINYC__\n#undef "
-      "EMPTY_STRUCT_INITIALIZATION\n#define "
+      "__OpenBSD__\n#include <sys/types.h>\n#include "
+      "<sys/resource.h>\n#include <sys/wait.h> // os__wait uses wait on "
+      "nix\n#endif\n\n#define EMPTY_STRUCT_DECLARATION\n#define "
+      "EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an "
+      "array needs to be specified, but GCC crashes if it is...\n#define "
+      "EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#ifdef "
+      "__TINYC__\n#undef EMPTY_STRUCT_INITIALIZATION\n#define "
       "EMPTY_STRUCT_INITIALIZATION\n#undef EMPTY_ARRAY_OF_ELEMS\n#define "
       "EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef TCCSKIP\n#define "
       "TCCSKIP(x)\n#endif\n\n#define OPTION_CAST(x) (x)\n\n#ifdef "
