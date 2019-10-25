@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "97096e4"
+#define V_COMMIT_HASH "784847c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d4c1bba"
+#define V_COMMIT_HASH "97096e4"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -23,9 +23,10 @@
 #endif
 
 #ifdef __linux__
-#ifndef __BIONIC__
+//#if !defined(__BIONIC__) && !defined(__GNUC_PREREQ)
 #include <execinfo.h> // backtrace and backtrace_symbols_fd
-#endif
+//#endif
+
 #pragma weak backtrace
 #pragma weak backtrace_symbols_fd
 #endif
@@ -931,7 +932,6 @@ Option opt_ok(void *data, int size);
 Option opt_none();
 Option v_error(string s);
 int vstrlen(byte *s);
-void todo();
 string tos(byte *s, int len);
 string tos_clone(byte *s);
 string tos2(byte *s);
@@ -3404,7 +3404,6 @@ Option opt_none() {
 }
 Option v_error(string s) { return (Option){.error = s, .ok = 0, .is_none = 0}; }
 int vstrlen(byte *s) { return strlen(((char *)(s))); }
-void todo() {}
 string tos(byte *s, int len) {
 
   if (s == 0) {
@@ -11351,9 +11350,8 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
     typ = compiler__Parser_get_type(p);
   };
 
-  bool is_fn_header = !is_c && !p->is_vh &&
-                      (p->pref->translated || p->pref->is_test || p->is_vh) &&
-                      p->tok != compiler__compiler__TokenKind_lcbr;
+  bool is_fn_header =
+      !is_c && !p->is_vh && p->tok != compiler__compiler__TokenKind_lcbr;
 
   if (is_fn_header) {
 
@@ -21964,7 +21962,7 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
 
     } else if (p->is_js) {
 
-      compiler__Parser_gen(p, _STR("\"%.*s\"", f.len, f.str));
+      compiler__Parser_gen(p, _STR("tos(\"%.*s\")", f.len, f.str));
 
     } else {
 
@@ -29426,8 +29424,9 @@ void init() {
       "<sys/time.h>\n#include <unistd.h> // sleep	\n#endif\n\n\n#ifdef "
       "__APPLE__\n#include <libproc.h> // proc_pidpath\n#include <execinfo.h> "
       "// backtrace and backtrace_symbols_fd\n#endif\n\n#ifdef "
-      "__linux__\n#ifndef __BIONIC__\n#include <execinfo.h> // backtrace and "
-      "backtrace_symbols_fd\n#endif\n#pragma weak backtrace\n#pragma weak "
+      "__linux__\n//#if !defined(__BIONIC__) && "
+      "!defined(__GNUC_PREREQ)\n#include <execinfo.h> // backtrace and "
+      "backtrace_symbols_fd\n//#endif\n\n#pragma weak backtrace\n#pragma weak "
       "backtrace_symbols_fd\n#endif\n\n\n#ifdef __linux__\n#include "
       "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
       "nix\n#endif\n\n#ifdef __FreeBSD__\n#include <sys/types.h>\n#include "
