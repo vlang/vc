@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b6fa252"
+#define V_COMMIT_HASH "8d21111"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9c5a359"
+#define V_COMMIT_HASH "b6fa252"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -10250,6 +10250,11 @@ void compiler__Parser_comptime_method_call(compiler__Parser *p,
 }
 void compiler__Parser_gen_array_str(compiler__Parser *p, compiler__Type typ) {
 
+  if (compiler__Type_has_method(&/* ? */ typ, tos3("str"))) {
+
+    return;
+  };
+
   compiler__Parser_add_method(
       p, typ.name,
       (compiler__Fn){.name = tos3("str"),
@@ -12335,7 +12340,7 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
 
     if (i == 0 && f->is_method) {
 
-      if (f->args.len > 1 && !p->is_js) {
+      if (f->args.len > 1) {
 
         compiler__Parser_gen(p, tos3(","));
       };
