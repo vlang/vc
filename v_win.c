@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ef9cae6"
+#define V_COMMIT_HASH "c7e6d37"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a83aa28"
+#define V_COMMIT_HASH "ef9cae6"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -10035,6 +10035,21 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
     } else if (string_eq(name, tos3("tinyc"))) {
 
       compiler__Parser_genln(p, tos3("#ifdef __TINYC__"));
+
+      compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
+
+      compiler__Parser_statements_no_rcbr(p);
+
+      if (!(p->tok == compiler__compiler__TokenKind_dollar &&
+            compiler__Parser_peek(&/* ? */ *p) ==
+                compiler__compiler__TokenKind_key_else)) {
+
+        compiler__Parser_genln(p, tos3("#endif"));
+      };
+
+    } else if (string_eq(name, tos3("glibc"))) {
+
+      compiler__Parser_genln(p, tos3("#ifdef __GLIBC__"));
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
 
