@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "570a7aa"
+#define V_COMMIT_HASH "dd12a85"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "678ce54"
+#define V_COMMIT_HASH "570a7aa"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -14211,17 +14211,17 @@ void compiler__Parser_index_get(compiler__Parser *p, string typ, int fn_ph,
 
     } else {
 
-      string amp = (cfg.is_ptr) ? (tos3("&")) : (tos3(""));
+      string ref = (cfg.is_ptr) ? (tos3("*")) : (tos3(""));
 
       if (cfg.is_slice) {
 
-        compiler__Parser_gen(p, _STR(" array_slice(%.*s %.*s) ", amp.len,
-                                     amp.str, index_expr.len, index_expr.str));
+        compiler__Parser_gen(p, _STR(" array_slice(%.*s %.*s) ", ref.len,
+                                     ref.str, index_expr.len, index_expr.str));
 
       } else {
 
         compiler__Parser_gen(p, _STR("( *(%.*s*) array_get(%.*s %.*s) )",
-                                     typ.len, typ.str, amp.len, amp.str,
+                                     typ.len, typ.str, ref.len, ref.str,
                                      index_expr.len, index_expr.str));
       };
     };
