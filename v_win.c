@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "70c9565"
+#define V_COMMIT_HASH "272b0ae"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f40d672"
+#define V_COMMIT_HASH "70c9565"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -849,12 +849,6 @@ int array_string_index(array_string a, string v);
 int array_int_index(array_int a, int v);
 int array_byte_index(array_byte a, byte v);
 int array_char_index(array_char a, char v);
-array_string array_string_filter2(
-    array_string a,
-    bool (*predicate)(string p_val, int p_i, array_string p_arr /*FFF*/));
-array_int array_int_filter2(array_int a,
-                            bool (*predicate)(int p_val, int p_i,
-                                              array_int p_arr /*FFF*/));
 int array_int_reduce(array_int a, int (*iter)(int accum, int curr /*FFF*/),
                      int accum_start);
 void builtin__init();
@@ -2513,44 +2507,6 @@ int array_char_index(array_char a, char v) {
   };
 
   return -1;
-}
-array_string array_string_filter2(
-    array_string a,
-    bool (*predicate)(string p_val, int p_i, array_string p_arr /*FFF*/)) {
-
-  array_string res = new_array_from_c_array(
-      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-
-  for (int i = 0; i < a.len; i++) {
-
-    if (predicate((*(string *)array_get(a, i)), i, a)) {
-
-      _PUSH(&res,
-            (/*typ = array_string   tmp_typ=string*/ (
-                *(string *)array_get(a, i))),
-            tmp53, string);
-    };
-  };
-
-  return res;
-}
-array_int array_int_filter2(array_int a,
-                            bool (*predicate)(int p_val, int p_i,
-                                              array_int p_arr /*FFF*/)) {
-
-  array_int res = new_array_from_c_array(
-      0, 0, sizeof(int), EMPTY_ARRAY_OF_ELEMS(int, 0){TCCSKIP(0)});
-
-  for (int i = 0; i < a.len; i++) {
-
-    if (predicate((*(int *)array_get(a, i)), i, a)) {
-
-      _PUSH(&res, (/*typ = array_int   tmp_typ=int*/ (*(int *)array_get(a, i))),
-            tmp60, int);
-    };
-  };
-
-  return res;
 }
 int array_int_reduce(array_int a, int (*iter)(int accum, int curr /*FFF*/),
                      int accum_start) {
@@ -7023,7 +6979,7 @@ string os__get_error_msg(int code) {
     return tos3("");
   };
 
-  return tos(_ptr_text, vstrlen(_ptr_text));
+  return string_from_wide(_ptr_text);
 }
 rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq) {
 
