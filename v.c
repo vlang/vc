@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fbd41ea"
+#define V_COMMIT_HASH "f6f5b8c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "58f0503"
+#define V_COMMIT_HASH "fbd41ea"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -8,7 +8,7 @@
 #include <stdarg.h> // for va_list
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
 #include <stdlib.h>
-//#include <string.h> // memcpy
+#include <string.h> // memcpy
 
 #ifndef _WIN32
 #include <ctype.h>
@@ -29581,7 +29581,7 @@ void init() {
       "\n\n#include <stdio.h>  // TODO remove all these includes, define all "
       "function signatures and types manually\n#include <stdlib.h>\n#include "
       "<signal.h>\n#include <stdarg.h> // for va_list\n#include <inttypes.h>  "
-      "// int64_t etc\n//#include <string.h> // memcpy\n\n#ifndef "
+      "// int64_t etc\n#include <string.h> // memcpy\n\n#ifndef "
       "_WIN32\n#include <ctype.h>\n#include <locale.h> // tolower\n#include "
       "<sys/time.h>\n#include <unistd.h> // sleep	\n#endif\n\n\n#ifdef "
       "__linux__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait "
