@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f40d672"
+#define V_COMMIT_HASH "70c9565"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4ef10c9"
+#define V_COMMIT_HASH "f40d672"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -158,6 +158,7 @@ int g_test_fails = 0;
 #include <time.h>
 typedef struct array array;
 typedef array array_string;
+typedef array array_bool;
 typedef array array_byte;
 typedef array array_int;
 typedef array array_char;
@@ -271,7 +272,6 @@ typedef Option Option_string;
 typedef Option Option_compiler__WindowsKit;
 typedef Option Option_compiler__VsInstallation;
 typedef Option Option_compiler__MsvcResult;
-typedef array array_bool;
 typedef int compiler__IndexType;
 typedef int compiler__NameCategory;
 typedef int compiler__AccessMod;
@@ -817,6 +817,7 @@ array array_reverse(array a);
 array array_clone(array a);
 void v_array_free(array a);
 string array_string_str(array_string a);
+string array_bool_str(array_bool a);
 string array_byte_hex(array_byte b);
 int copy(array_byte dst, array_byte src);
 int compare_ints(int *a, int *b);
@@ -1316,8 +1317,8 @@ void compiler__Parser_gen_array_str(compiler__Parser *p, compiler__Type typ);
 void compiler__Parser_gen_struct_str(compiler__Parser *p, compiler__Type typ);
 void compiler__Parser_gen_array_filter(compiler__Parser *p, string str_typ,
                                        int method_ph);
-void compiler__Parser_gen_array_map(compiler__Parser *p, string str_typ,
-                                    int method_ph);
+string compiler__Parser_gen_array_map(compiler__Parser *p, string str_typ,
+                                      int method_ph);
 void compiler__DepSet_add(compiler__DepSet *dset, string item);
 compiler__DepSet compiler__DepSet_diff(compiler__DepSet *dset,
                                        compiler__DepSet otherset);
@@ -2300,6 +2301,35 @@ string array_string_str(array_string a) {
 
   return strings__Builder_str(sb);
 }
+string array_bool_str(array_bool a) {
+
+  strings__Builder sb = strings__new_builder(a.len * 3);
+
+  strings__Builder_write(&/* ? */ sb, tos3("["));
+
+  for (int i = 0; i < a.len; i++) {
+
+    bool val = (*(bool *)array_get(a, i));
+
+    if (val) {
+
+      strings__Builder_write(&/* ? */ sb, tos3("true"));
+
+    } else {
+
+      strings__Builder_write(&/* ? */ sb, tos3("false"));
+    };
+
+    if (i < a.len - 1) {
+
+      strings__Builder_write(&/* ? */ sb, tos3(", "));
+    };
+  };
+
+  strings__Builder_write(&/* ? */ sb, tos3("]"));
+
+  return strings__Builder_str(sb);
+}
 string array_byte_hex(array_byte b) {
 
   byte *hex = v_malloc(b.len * 2 + 1);
@@ -2407,7 +2437,7 @@ array_string array_string_filter2(
       _PUSH(&res,
             (/*typ = array_string   tmp_typ=string*/ (
                 *(string *)array_get(a, i))),
-            tmp48, string);
+            tmp53, string);
     };
   };
 
@@ -2425,7 +2455,7 @@ array_int array_int_filter2(array_int a,
     if (predicate((*(int *)array_get(a, i)), i, a)) {
 
       _PUSH(&res, (/*typ = array_int   tmp_typ=int*/ (*(int *)array_get(a, i))),
-            tmp55, int);
+            tmp60, int);
     };
   };
 
@@ -10511,8 +10541,8 @@ void compiler__Parser_gen_array_filter(compiler__Parser *p, string str_typ,
 
   compiler__Parser_close_scope(p);
 }
-void compiler__Parser_gen_array_map(compiler__Parser *p, string str_typ,
-                                    int method_ph) {
+string compiler__Parser_gen_array_map(compiler__Parser *p, string str_typ,
+                                      int method_ph) {
 
   string val_type = string_right(str_typ, 6);
 
@@ -10585,6 +10615,8 @@ void compiler__Parser_gen_array_map(compiler__Parser *p, string str_typ,
   compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
 
   compiler__Parser_close_scope(p);
+
+  return string_add(tos3("array_"), map_type);
 }
 void compiler__DepSet_add(compiler__DepSet *dset, string item) {
 
@@ -21232,9 +21264,7 @@ string compiler__Parser_dot(compiler__Parser *p, string str_typ_,
   } else if (string_eq(field_name, tos3("map")) &&
              string_starts_with(str_typ, tos3("array_"))) {
 
-    compiler__Parser_gen_array_map(p, str_typ, method_ph);
-
-    return str_typ;
+    return compiler__Parser_gen_array_map(p, str_typ, method_ph);
   };
 
   int fname_tidx = compiler__Parser_cur_tok_index(&/* ? */ *p);
