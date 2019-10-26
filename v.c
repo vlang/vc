@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f6f5b8c"
+#define V_COMMIT_HASH "4ef10c9"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fbd41ea"
+#define V_COMMIT_HASH "f6f5b8c"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1316,6 +1316,8 @@ void compiler__Parser_gen_array_str(compiler__Parser *p, compiler__Type typ);
 void compiler__Parser_gen_struct_str(compiler__Parser *p, compiler__Type typ);
 void compiler__Parser_gen_array_filter(compiler__Parser *p, string str_typ,
                                        int method_ph);
+void compiler__Parser_gen_array_map(compiler__Parser *p, string str_typ,
+                                    int method_ph);
 void compiler__DepSet_add(compiler__DepSet *dset, string item);
 compiler__DepSet compiler__DepSet_diff(compiler__DepSet *dset,
                                        compiler__DepSet otherset);
@@ -10500,6 +10502,81 @@ void compiler__Parser_gen_array_filter(compiler__Parser *p, string str_typ,
 
   compiler__Parser_genln(p,
                          _STR(") array_push(&%.*s, &it);", tmp.len, tmp.str));
+
+  compiler__Parser_genln(p, tos3("}"));
+
+  compiler__Parser_gen(p, tmp);
+
+  compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
+
+  compiler__Parser_close_scope(p);
+}
+void compiler__Parser_gen_array_map(compiler__Parser *p, string str_typ,
+                                    int method_ph) {
+
+  string val_type = string_right(str_typ, 6);
+
+  compiler__Parser_open_scope(p);
+
+  compiler__Parser_register_var(
+      p, (compiler__Var){.name = tos3("it"),
+                         .typ = val_type,
+                         .idx = 0,
+                         .is_arg = 0,
+                         .is_const = 0,
+                         .args = new_array(0, 1, sizeof(compiler__Var)),
+                         .attr = tos3(""),
+                         .is_mut = 0,
+                         .is_alloc = 0,
+                         .is_returned = 0,
+                         .ptr = 0,
+                         .ref = 0,
+                         .parent_fn = tos3(""),
+                         .mod = tos3(""),
+                         .is_global = 0,
+                         .is_used = 0,
+                         .is_changed = 0,
+                         .scope_level = 0,
+                         .is_c = 0,
+                         .is_moved = 0,
+                         .line_nr = 0,
+                         .token_idx = 0,
+                         .is_for_var = 0,
+                         .is_public = 0});
+
+  compiler__Parser_next(p);
+
+  compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
+
+  compiler__CGen_resetln(p->cgen, tos3(""));
+
+  string tmp = compiler__Parser_get_tmp(p);
+
+  string tmp_elm = compiler__Parser_get_tmp(p);
+
+  string a = p->expr_var.name;
+
+  _V_MulRet_string_V_string _V_mret_map_type_expr =
+      compiler__Parser_tmp_expr(p);
+  string map_type = _V_mret_map_type_expr.var_0;
+  string expr = _V_mret_map_type_expr.var_1;
+
+  compiler__CGen_set_placeholder(
+      p->cgen, method_ph,
+      string_add(_STR("\narray %.*s = new_array(0, %.*s .len, ", tmp.len,
+                      tmp.str, a.len, a.str),
+                 _STR("sizeof(%.*s));\n", map_type.len, map_type.str)));
+
+  compiler__Parser_genln(
+      p, _STR("for (int i = 0; i < %.*s.len; i++) {", a.len, a.str));
+
+  compiler__Parser_genln(p, _STR("%.*s it = ((%.*s*)%.*s.data)[i];",
+                                 val_type.len, val_type.str, val_type.len,
+                                 val_type.str, a.len, a.str));
+
+  compiler__Parser_genln(p, _STR("_PUSH(&%.*s, %.*s, %.*s, %.*s)", tmp.len,
+                                 tmp.str, expr.len, expr.str, tmp_elm.len,
+                                 tmp_elm.str, map_type.len, map_type.str));
 
   compiler__Parser_genln(p, tos3("}"));
 
@@ -21149,6 +21226,13 @@ string compiler__Parser_dot(compiler__Parser *p, string str_typ_,
       string_starts_with(str_typ, tos3("array_"))) {
 
     compiler__Parser_gen_array_filter(p, str_typ, method_ph);
+
+    return str_typ;
+
+  } else if (string_eq(field_name, tos3("map")) &&
+             string_starts_with(str_typ, tos3("array_"))) {
+
+    compiler__Parser_gen_array_map(p, str_typ, method_ph);
 
     return str_typ;
   };
