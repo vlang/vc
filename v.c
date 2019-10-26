@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2d05c90"
+#define V_COMMIT_HASH "678ce54"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "272b0ae"
+#define V_COMMIT_HASH "2d05c90"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -6193,7 +6193,7 @@ string os__get_lines_joined() {
 
     line = os__get_line();
 
-    if ((line.len <= 0)) {
+    if (line.len <= 0) {
 
       break;
     };
