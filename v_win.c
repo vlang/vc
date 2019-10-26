@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ef022c2"
+#define V_COMMIT_HASH "e80cf18"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ee51313"
+#define V_COMMIT_HASH "ef022c2"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -18751,7 +18751,9 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
 
         compiler__Parser_const_decl(p);
 
-      } else if (tmp29 == compiler__compiler__TokenKind_key_struct) {
+      } else if ((tmp29 == compiler__compiler__TokenKind_key_struct) ||
+                 (tmp29 == compiler__compiler__TokenKind_key_union) ||
+                 (tmp29 == compiler__compiler__TokenKind_key_interface)) {
 
         compiler__Parser_struct_decl(p);
 
