@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e80cf18"
+#define V_COMMIT_HASH "7ba5248"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ef022c2"
+#define V_COMMIT_HASH "e80cf18"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -811,6 +811,7 @@ void *array_first(array a);
 void *array_last(array a);
 array array_left(array s, int n);
 array array_right(array s, int n);
+array array_slice2(array s, int start, int _end, bool end_max);
 array array_slice(array s, int start, int _end);
 void array_set(array *a, int idx, void *val);
 void array_push(array *arr, void *val);
@@ -942,6 +943,7 @@ array_string string_split_single(string s, byte delim);
 array_string string_split_into_lines(string s);
 string string_left(string s, int n);
 string string_right(string s, int n);
+string string_substr2(string s, int start, int _end, bool end_max);
 string string_substr(string s, int start, int end);
 int string_index(string s, string p);
 int string_index_kmp(string s, string p);
@@ -2159,6 +2161,12 @@ array array_right(array s, int n) {
   };
 
   return array_slice(s, n, s.len);
+}
+array array_slice2(array s, int start, int _end, bool end_max) {
+
+  int end = (end_max) ? (s.len) : (_end);
+
+  return array_slice(s, start, end);
 }
 array array_slice(array s, int start, int _end) {
 
@@ -3782,6 +3790,12 @@ string string_right(string s, int n) {
 
   return string_substr(s, n, s.len);
 }
+string string_substr2(string s, int start, int _end, bool end_max) {
+
+  int end = (end_max) ? (s.len) : (_end);
+
+  return string_substr(s, start, end);
+}
 string string_substr(string s, int start, int end) {
 
   if (start > end || start > s.len || end > s.len || start < 0 || end < 0) {
@@ -3883,11 +3897,11 @@ int string_index_kmp(string s, string p) {
 }
 int string_index_any(string s, string chars) {
 
-  string tmp64 = chars;
-  array_byte bytes_tmp64 = string_bytes(tmp64);
+  string tmp65 = chars;
+  array_byte bytes_tmp65 = string_bytes(tmp65);
   ;
-  for (int tmp65 = 0; tmp65 < tmp64.len; tmp65++) {
-    byte c = ((byte *)bytes_tmp64.data)[tmp65];
+  for (int tmp66 = 0; tmp66 < tmp65.len; tmp66++) {
+    byte c = ((byte *)bytes_tmp65.data)[tmp66];
 
     int index = string_index(s, byte_str(c));
 
@@ -4088,13 +4102,13 @@ string string_title(string s) {
   array_string tit = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_string tmp88 = words;
-  for (int tmp89 = 0; tmp89 < tmp88.len; tmp89++) {
-    string word = ((string *)tmp88.data)[tmp89];
+  array_string tmp89 = words;
+  for (int tmp90 = 0; tmp90 < tmp89.len; tmp90++) {
+    string word = ((string *)tmp89.data)[tmp90];
 
     _PUSH(&tit,
           (/*typ = array_string   tmp_typ=string*/ string_capitalize(word)),
-          tmp90, string);
+          tmp91, string);
   };
 
   string title = array_string_join(tit, tos3(" "));
@@ -4123,9 +4137,9 @@ string string_find_between(string s, string start, string end) {
 }
 bool array_string_contains(array_string ar, string val) {
 
-  array_string tmp95 = ar;
-  for (int tmp96 = 0; tmp96 < tmp95.len; tmp96++) {
-    string s = ((string *)tmp95.data)[tmp96];
+  array_string tmp96 = ar;
+  for (int tmp97 = 0; tmp97 < tmp96.len; tmp97++) {
+    string s = ((string *)tmp96.data)[tmp97];
 
     if (string_eq(s, val)) {
 
@@ -4137,9 +4151,9 @@ bool array_string_contains(array_string ar, string val) {
 }
 bool array_int_contains(array_int ar, int val) {
 
-  array_int tmp97 = ar;
-  for (int i = 0; i < tmp97.len; i++) {
-    int s = ((int *)tmp97.data)[i];
+  array_int tmp98 = ar;
+  for (int i = 0; i < tmp98.len; i++) {
+    int s = ((int *)tmp98.data)[i];
 
     if (s == val) {
 
@@ -4298,7 +4312,7 @@ ustring string_ustring(string s) {
 
     int char_len = utf8_char_len(s.str[/*ptr*/ i] /*rbyte 0*/);
 
-    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ i), tmp111, int);
+    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ i), tmp112, int);
 
     i += char_len - 1;
 
@@ -4367,7 +4381,7 @@ ustring ustring_add(ustring u, ustring a) {
 
     int char_len = utf8_char_len(u.s.str[/*ptr*/ i] /*rbyte 0*/);
 
-    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp120, int);
+    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp121, int);
 
     i += char_len - 1;
 
@@ -4380,7 +4394,7 @@ ustring ustring_add(ustring u, ustring a) {
 
     int char_len = utf8_char_len(a.s.str[/*ptr*/ i] /*rbyte 0*/);
 
-    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp123, int);
+    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp124, int);
 
     i += char_len - 1;
 
@@ -4569,9 +4583,9 @@ string array_string_join(array_string a, string del) {
 
   int len = 0;
 
-  array_string tmp139 = a;
-  for (int i = 0; i < tmp139.len; i++) {
-    string val = ((string *)tmp139.data)[i];
+  array_string tmp140 = a;
+  for (int i = 0; i < tmp140.len; i++) {
+    string val = ((string *)tmp140.data)[i];
 
     len += val.len + del.len;
   };
@@ -4586,9 +4600,9 @@ string array_string_join(array_string a, string del) {
 
   int idx = 0;
 
-  array_string tmp142 = a;
-  for (int i = 0; i < tmp142.len; i++) {
-    string val = ((string *)tmp142.data)[i];
+  array_string tmp143 = a;
+  for (int i = 0; i < tmp143.len; i++) {
+    string val = ((string *)tmp143.data)[i];
 
     for (int j = 0; j < val.len; j++) {
 
@@ -4652,11 +4666,11 @@ int string_hash(string s) {
 
   if (h == 0 && s.len > 0) {
 
-    string tmp151 = s;
-    array_byte bytes_tmp151 = string_bytes(tmp151);
+    string tmp152 = s;
+    array_byte bytes_tmp152 = string_bytes(tmp152);
     ;
-    for (int tmp152 = 0; tmp152 < tmp151.len; tmp152++) {
-      byte c = ((byte *)bytes_tmp151.data)[tmp152];
+    for (int tmp153 = 0; tmp153 < tmp152.len; tmp153++) {
+      byte c = ((byte *)bytes_tmp152.data)[tmp153];
 
       h = h * 31 + ((int)(c));
     };
@@ -4690,15 +4704,15 @@ string string_repeat(string s, int count) {
 
   byte *ret = v_malloc(s.len * count + 1);
 
-  int tmp155 = 0;
+  int tmp156 = 0;
   ;
-  for (int tmp156 = tmp155; tmp156 < count; tmp156++) {
-    int i = tmp156;
+  for (int tmp157 = tmp156; tmp157 < count; tmp157++) {
+    int i = tmp157;
 
-    int tmp157 = 0;
+    int tmp158 = 0;
     ;
-    for (int tmp158 = tmp157; tmp158 < s.len; tmp158++) {
-      int j = tmp158;
+    for (int tmp159 = tmp158; tmp159 < s.len; tmp159++) {
+      int j = tmp159;
 
       ret[/*ptr*/ i * s.len + j] /*rbyte 1*/ = s.str[j] /*rbyte 0*/;
     };
@@ -14034,7 +14048,7 @@ void compiler__Parser_index_get(compiler__Parser *p, string typ, int fn_ph,
 
       if (cfg.is_slice) {
 
-        compiler__Parser_gen(p, _STR(" array_slice(%.*s %.*s) ", ref.len,
+        compiler__Parser_gen(p, _STR(" array_slice2(%.*s %.*s) ", ref.len,
                                      ref.str, index_expr.len, index_expr.str));
 
       } else {
@@ -14050,7 +14064,7 @@ void compiler__Parser_index_get(compiler__Parser *p, string typ, int fn_ph,
     if (cfg.is_slice) {
 
       compiler__Parser_gen(
-          p, _STR("string_substr(%.*s)", index_expr.len, index_expr.str));
+          p, _STR("string_substr2(%.*s)", index_expr.len, index_expr.str));
 
     } else {
 
@@ -21562,22 +21576,29 @@ string compiler__Parser_index_expr(compiler__Parser *p, string typ_,
 
     if (is_arr || is_str) {
 
-      int index_pos = p->cgen->cur_line.len;
+      if (p->tok != compiler__compiler__TokenKind_dotdot) {
 
-      compiler__Type T = compiler__Table_find_type(
-          &/* ? */ *p->table, compiler__Parser_expression(p));
+        int index_pos = p->cgen->cur_line.len;
 
-      if (string_ne(T.parent, tos3("int")) &&
-          string_ne(T.parent, tos3("u32"))) {
+        compiler__Type T = compiler__Table_find_type(
+            &/* ? */ *p->table, compiler__Parser_expression(p));
 
-        compiler__Parser_check_types(p, T.name, tos3("int"));
-      };
+        if (string_ne(T.parent, tos3("int")) &&
+            string_ne(T.parent, tos3("u32"))) {
 
-      if (v_string_int(
-              string_replace(string_right(p->cgen->cur_line, index_pos),
-                             tos3(" "), tos3(""))) < 0) {
+          compiler__Parser_check_types(p, T.name, tos3("int"));
+        };
 
-        compiler__Parser_error(p, tos3("cannot access negative array index"));
+        if (v_string_int(
+                string_replace(string_right(p->cgen->cur_line, index_pos),
+                               tos3(" "), tos3(""))) < 0) {
+
+          compiler__Parser_error(p, tos3("cannot access negative array index"));
+        };
+
+      } else {
+
+        compiler__Parser_gen(p, tos3("0"));
       };
 
       if (p->tok == compiler__compiler__TokenKind_dotdot) {
@@ -21602,8 +21623,17 @@ string compiler__Parser_index_expr(compiler__Parser *p, string typ_,
 
         compiler__Parser_gen(p, tos3(","));
 
-        compiler__Parser_check_types(p, compiler__Parser_expression(p),
-                                     tos3("int"));
+        if (p->tok != compiler__compiler__TokenKind_rsbr) {
+
+          compiler__Parser_check_types(p, compiler__Parser_expression(p),
+                                       tos3("int"));
+
+          compiler__Parser_gen(p, tos3(", false"));
+
+        } else {
+
+          compiler__Parser_gen(p, tos3("-1, true"));
+        };
       };
 
     } else {
