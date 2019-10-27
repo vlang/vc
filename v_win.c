@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d00fdca"
+#define V_COMMIT_HASH "293cf18"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d81b067"
+#define V_COMMIT_HASH "d00fdca"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -10013,7 +10013,7 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_key_if);
 
-    compiler__Parser_fspace(p);
+    p;
 
     bool not = p->tok == compiler__compiler__TokenKind_not;
 
@@ -10024,7 +10024,7 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
 
     string name = compiler__Parser_check_name(p);
 
-    compiler__Parser_fspace(p);
+    p;
 
     if (_IN(string, (name), compiler__supported_platforms)) {
 
@@ -11039,7 +11039,7 @@ void compiler__Parser_enum_decl(compiler__Parser *p, string _enum_name) {
     _PUSH(&fields, (/*typ = array_string   tmp_typ=string*/ field), tmp7,
           string);
 
-    compiler__Parser_fgenln(p, tos3(""));
+    p;
 
     string name = _STR("%.*s__%.*s_%.*s", compiler__mod_gen_name(p->mod).len,
                        compiler__mod_gen_name(p->mod).str, enum_name.len,
@@ -11103,7 +11103,7 @@ void compiler__Parser_enum_decl(compiler__Parser *p, string _enum_name) {
 
   compiler__Parser_check(p, compiler__compiler__TokenKind_rcbr);
 
-  compiler__Parser_fgenln(p, tos3("\n"));
+  p;
 }
 void compiler__Parser_check_enum_member_access(compiler__Parser *p) {
 
@@ -11376,7 +11376,7 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
 
   compiler__Parser_clear_vars(p);
 
-  compiler__Parser_fgen(p, tos3("fn "));
+  p;
 
   compiler__Fn f = (compiler__Fn){
       .mod = p->mod,
@@ -11491,7 +11491,7 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
 
-    compiler__Parser_fspace(p);
+    p;
 
     compiler__Var receiver = (compiler__Var){
         .name = receiver_name,
@@ -11688,7 +11688,7 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
       p->tok == compiler__compiler__TokenKind_question ||
       p->tok == compiler__compiler__TokenKind_lpar) {
 
-    compiler__Parser_fgen(p, tos3(" "));
+    p;
 
     typ = compiler__Parser_get_type(p);
   };
@@ -11703,7 +11703,7 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
 
   if (!is_c && !p->is_vh && !is_fn_header) {
 
-    compiler__Parser_fgen(p, tos3(" "));
+    p;
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
   };
@@ -11815,12 +11815,12 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
                                    fn_name_cgen.len, fn_name_cgen.str,
                                    str_args.len, str_args.str));
 
-    compiler__Parser_fgenln(p, tos3(""));
+    p;
   };
 
   if (is_c) {
 
-    compiler__Parser_fgenln(p, tos3("\n"));
+    p;
   };
 
   if (string_ne(receiver_typ, tos3(""))) {
@@ -12428,7 +12428,7 @@ void compiler__Parser_fn_args(compiler__Parser *p, compiler__Fn *f) {
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
 
-      compiler__Parser_fspace(p);
+      p;
 
       _PUSH(
           &names,
@@ -12437,7 +12437,7 @@ void compiler__Parser_fn_args(compiler__Parser *p, compiler__Fn *f) {
           tmp108, string);
     };
 
-    compiler__Parser_fspace(p);
+    p;
 
     bool is_mut = p->tok == compiler__compiler__TokenKind_key_mut;
 
@@ -18677,7 +18677,7 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
 
       compiler__Parser_next(p);
 
-      compiler__Parser_fgen(p, tos3("module "));
+      p;
 
       p->mod = compiler__Parser_check_name(p);
 
@@ -18690,7 +18690,7 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_key_module);
 
-    compiler__Parser_fspace(p);
+    p;
 
     p->mod = compiler__Parser_check_name(p);
   };
@@ -18703,7 +18703,7 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
     p->cgen->nogen = 1;
   };
 
-  compiler__Parser_fgenln(p, tos3("\n"));
+  p;
 
   p->builtin_mod = string_eq(p->mod, tos3("builtin"));
 
@@ -18755,7 +18755,7 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
 
         if (p->tok != compiler__compiler__TokenKind_key_import) {
 
-          compiler__Parser_fgenln(p, tos3(""));
+          p;
         };
       };
 
@@ -18765,11 +18765,11 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
 
       if (p->tok == compiler__compiler__TokenKind_name) {
 
-        compiler__Parser_fgen(p, tos3("enum "));
+        p;
 
         string name = compiler__Parser_check_name(p);
 
-        compiler__Parser_fgen(p, tos3(" "));
+        p;
 
         compiler__Parser_enum_decl(p, name);
 
@@ -19055,7 +19055,7 @@ void compiler__Parser_import_statement(compiler__Parser *p) {
 
   compiler__Table_register_module(p->table, mod);
 
-  compiler__Parser_fgenln(p, string_add(tos3(" "), mod));
+  p;
 }
 void compiler__Parser_const_decl(compiler__Parser *p) {
 
@@ -19070,13 +19070,13 @@ void compiler__Parser_const_decl(compiler__Parser *p) {
 
   compiler__Parser_check(p, compiler__compiler__TokenKind_key_const);
 
-  compiler__Parser_fspace(p);
+  p;
 
   compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
 
-  compiler__Parser_fgenln(p, tos3(""));
+  p;
 
-  compiler__Parser_fmt_inc(p);
+  p;
 
   while (p->tok == compiler__compiler__TokenKind_name) {
 
@@ -19182,7 +19182,7 @@ void compiler__Parser_const_decl(compiler__Parser *p) {
 
         compiler__CGen_resetln(p->cgen, tos3(""));
 
-        compiler__Parser_fgenln(p, tos3(""));
+        p;
 
         continue;
       };
@@ -19216,14 +19216,14 @@ void compiler__Parser_const_decl(compiler__Parser *p) {
       compiler__CGen_resetln(p->cgen, tos3(""));
     };
 
-    compiler__Parser_fgenln(p, tos3(""));
+    p;
   };
 
-  compiler__Parser_fmt_dec(p);
+  p;
 
   compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
 
-  compiler__Parser_fgenln(p, tos3("\n"));
+  p;
 
   p->inside_const = 0;
 }
@@ -19315,9 +19315,9 @@ compiler__Fn *compiler__Parser_interface_method(compiler__Parser *p,
 
     method->typ = compiler__Parser_get_type(p);
 
-    compiler__Parser_fspace(p);
+    p;
 
-    compiler__Parser_fgenln(p, tos3(""));
+    p;
   };
 
   return method;
@@ -19385,11 +19385,11 @@ string compiler__Parser_strtok(compiler__Parser *p) {
 void compiler__Parser_check_space(compiler__Parser *p,
                                   compiler__TokenKind expected) {
 
-  compiler__Parser_fspace(p);
+  p;
 
   compiler__Parser_check(p, expected);
 
-  compiler__Parser_fspace(p);
+  p;
 }
 void compiler__Parser_check(compiler__Parser *p, compiler__TokenKind expected) {
 
@@ -19625,7 +19625,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
 
   if (!p->is_struct_init) {
 
-    compiler__Parser_fgen(p, p->lit);
+    p;
   };
 
   if (string_eq(p->lit, tos3("C")) &&
@@ -19799,7 +19799,7 @@ string compiler__Parser_statements_no_rcbr(compiler__Parser *p) {
 
       compiler__Parser_genln(p, tos3(""));
 
-      compiler__Parser_fgenln(p, tos3(""));
+      p;
     };
 
     i++;
@@ -19932,11 +19932,11 @@ string compiler__Parser_statement(compiler__Parser *p, bool add_semi) {
     if (compiler__Parser_peek(&/* ? */ *p) ==
         compiler__compiler__TokenKind_colon) {
 
-      compiler__Parser_fmt_dec(p);
+      p;
 
       string label = compiler__Parser_check_name(p);
 
-      compiler__Parser_fmt_inc(p);
+      p;
 
       compiler__Parser_genln(p, string_add(label, tos3(": ;")));
 
@@ -19971,7 +19971,7 @@ string compiler__Parser_statement(compiler__Parser *p, bool add_semi) {
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_key_goto);
 
-    compiler__Parser_fgen(p, tos3(" "));
+    p;
 
     string label = compiler__Parser_check_name(p);
 
@@ -20172,11 +20172,11 @@ void compiler__Parser_assign_statement(compiler__Parser *p, compiler__Var v,
                       tos3(" ")));
   };
 
-  compiler__Parser_fspace(p);
+  p;
 
-  compiler__Parser_fgen(p, compiler__TokenKind_str(tok));
+  p;
 
-  compiler__Parser_fspace(p);
+  p;
 
   compiler__Parser_next(p);
 
@@ -20264,14 +20264,14 @@ void compiler__Parser_var_decl(compiler__Parser *p) {
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_key_mut);
 
-    compiler__Parser_fspace(p);
+    p;
   };
 
   if (p->tok == compiler__compiler__TokenKind_key_static) {
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_key_static);
 
-    compiler__Parser_fspace(p);
+    p;
   };
 
   array_int var_token_idxs =
@@ -20635,8 +20635,7 @@ string compiler__Parser_bterm(compiler__Parser *p) {
       tok == compiler__compiler__TokenKind_ge ||
       tok == compiler__compiler__TokenKind_ne) {
 
-    compiler__Parser_fgen(p, _STR(" %.*s ", compiler__TokenKind_str(p->tok).len,
-                                  compiler__TokenKind_str(p->tok).str));
+    p;
 
     if ((is_float || is_str || is_ustr) && !p->is_js) {
 
@@ -20811,7 +20810,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
     return tos3("string");
   };
 
-  compiler__Parser_fgen(p, name);
+  p;
 
   string orig_name = name;
 
@@ -20893,7 +20892,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
 
     name = p->lit;
 
-    compiler__Parser_fgen(p, name);
+    p;
 
     name = compiler__prepend_mod(compiler__mod_gen_name(mod), name);
 
@@ -21402,7 +21401,7 @@ string compiler__Parser_var_expr(compiler__Parser *p, compiler__Var v) {
 
     compiler__Parser_gen(p, compiler__TokenKind_str(p->tok));
 
-    compiler__Parser_fgen(p, compiler__TokenKind_str(p->tok));
+    p;
 
     compiler__Parser_next(p);
 
@@ -21474,7 +21473,7 @@ string compiler__Parser_dot(compiler__Parser *p, string str_typ_,
 
   int fname_tidx = compiler__Parser_cur_tok_index(&/* ? */ *p);
 
-  compiler__Parser_fgen(p, field_name);
+  p;
 
   bool has_field = compiler__Table_type_has_field(
       &/* ? */ *p->table,
@@ -21726,7 +21725,7 @@ string compiler__Parser_index_expr(compiler__Parser *p, string typ_,
 
       typ = tos3("byte");
 
-      compiler__Parser_fgen(p, tos3("["));
+      p;
 
       if (p->builtin_mod) {
 
@@ -21965,7 +21964,7 @@ string compiler__Parser_indot_expr(compiler__Parser *p) {
 
   if (p->tok == compiler__compiler__TokenKind_key_in) {
 
-    compiler__Parser_fgen(p, tos3(" "));
+    p;
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_key_in);
 
@@ -21978,7 +21977,7 @@ string compiler__Parser_indot_expr(compiler__Parser *p) {
       return tos3("bool");
     };
 
-    compiler__Parser_fgen(p, tos3(" "));
+    p;
 
     compiler__Parser_gen(p, tos3("), "));
 
@@ -22233,9 +22232,7 @@ string compiler__Parser_term(compiler__Parser *p) {
 
     compiler__Parser_gen(p, compiler__TokenKind_str(tok));
 
-    compiler__Parser_fgen(
-        p, string_add(string_add(tos3(" "), compiler__TokenKind_str(tok)),
-                      tos3(" ")));
+    p;
 
     if ((is_div || is_mod) && p->tok == compiler__compiler__TokenKind_number &&
         string_eq(p->lit, tos3("0"))) {
@@ -22348,13 +22345,13 @@ string compiler__Parser_factor(compiler__Parser *p) {
 
     compiler__Parser_gen(p, p->lit);
 
-    compiler__Parser_fgen(p, p->lit);
+    p;
 
   } else if (tmp319 == compiler__compiler__TokenKind_minus) {
 
     compiler__Parser_gen(p, tos3("-"));
 
-    compiler__Parser_fgen(p, tos3("-"));
+    p;
 
     compiler__Parser_next(p);
 
@@ -22364,7 +22361,7 @@ string compiler__Parser_factor(compiler__Parser *p) {
 
     compiler__Parser_gen(p, tos3("sizeof("));
 
-    compiler__Parser_fgen(p, tos3("sizeof("));
+    p;
 
     compiler__Parser_next(p);
 
@@ -22376,7 +22373,7 @@ string compiler__Parser_factor(compiler__Parser *p) {
 
     compiler__Parser_gen(p, _STR("%.*s)", sizeof_typ.len, sizeof_typ.str));
 
-    compiler__Parser_fgen(p, _STR("%.*s)", sizeof_typ.len, sizeof_typ.str));
+    p;
 
     return tos3("int");
 
@@ -22474,7 +22471,7 @@ string compiler__Parser_factor(compiler__Parser *p) {
 
     compiler__Parser_gen(p, tos3("0"));
 
-    compiler__Parser_fgen(p, tos3("false"));
+    p;
 
   } else if (tmp319 == compiler__compiler__TokenKind_key_true) {
 
@@ -22482,7 +22479,7 @@ string compiler__Parser_factor(compiler__Parser *p) {
 
     compiler__Parser_gen(p, tos3("1"));
 
-    compiler__Parser_fgen(p, tos3("true"));
+    p;
 
   } else if (tmp319 == compiler__compiler__TokenKind_lsbr) {
 
@@ -22637,7 +22634,7 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
           compiler__compiler__TokenKind_dollar ||
       is_raw) {
 
-    compiler__Parser_fgen(p, _STR("'%.*s'", str.len, str.str));
+    p;
 
     string f =
         (is_raw) ? (compiler__cescaped_path(str)) : (compiler__format_str(str));
@@ -22680,13 +22677,13 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
 
   string format = tos3("\"");
 
-  compiler__Parser_fgen(p, tos3("\'"));
+  p;
 
   bool complex_inter = 0;
 
   while (p->tok == compiler__compiler__TokenKind_str) {
 
-    compiler__Parser_fgen(p, p->lit);
+    p;
 
     p->lit = string_replace(p->lit, tos3("%"), tos3("%%"));
 
@@ -22704,7 +22701,7 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
     if (compiler__Parser_peek(&/* ? */ *p) !=
         compiler__compiler__TokenKind_str) {
 
-      compiler__Parser_fgen(p, tos3("{"));
+      p;
 
       complex_inter = 1;
     };
@@ -22831,10 +22828,10 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
 
   if (complex_inter) {
 
-    compiler__Parser_fgen(p, tos3("}"));
+    p;
   };
 
-  compiler__Parser_fgen(p, tos3("\'"));
+  p;
 
   if (p->cgen->nogen) {
 
@@ -23112,7 +23109,7 @@ string compiler__Parser_array_init(compiler__Parser *p) {
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
 
-      compiler__Parser_fspace(p);
+      p;
     };
 
     i++;
@@ -23232,7 +23229,7 @@ string compiler__Parser_if_st(compiler__Parser *p, bool is_expr,
 
     compiler__Parser_gen(p, tos3("if ("));
 
-    compiler__Parser_fgen(p, tos3("if "));
+    p;
   };
 
   compiler__Parser_next(p);
@@ -23313,7 +23310,7 @@ string compiler__Parser_if_st(compiler__Parser *p, bool is_expr,
     compiler__Parser_genln(p, tos3(") {"));
   };
 
-  compiler__Parser_fgen(p, tos3(" "));
+  p;
 
   compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
 
@@ -23336,11 +23333,11 @@ string compiler__Parser_if_st(compiler__Parser *p, bool is_expr,
 
   if (p->tok == compiler__compiler__TokenKind_key_else) {
 
-    compiler__Parser_fgenln(p, tos3(""));
+    p;
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_key_else);
 
-    compiler__Parser_fspace(p);
+    p;
 
     if (p->tok == compiler__compiler__TokenKind_key_if) {
 
@@ -23415,7 +23412,7 @@ void compiler__Parser_for_st(compiler__Parser *p) {
 
   compiler__Parser_check(p, compiler__compiler__TokenKind_key_for);
 
-  compiler__Parser_fgen(p, tos3(" "));
+  p;
 
   p->for_expr_cnt++;
 
@@ -23450,7 +23447,7 @@ void compiler__Parser_for_st(compiler__Parser *p) {
 
     compiler__Parser_gen(p, tos3(" ; "));
 
-    compiler__Parser_fgen(p, tos3(" "));
+    p;
 
     if (p->tok != compiler__compiler__TokenKind_semicolon) {
 
@@ -23461,7 +23458,7 @@ void compiler__Parser_for_st(compiler__Parser *p) {
 
     compiler__Parser_gen(p, tos3(" ; "));
 
-    compiler__Parser_fgen(p, tos3(" "));
+    p;
 
     if (p->tok != compiler__compiler__TokenKind_lcbr) {
 
@@ -23485,11 +23482,11 @@ void compiler__Parser_for_st(compiler__Parser *p) {
                              tos3("no new variables on the left side of `in`"));
     };
 
-    compiler__Parser_fgen(p, tos3(" "));
+    p;
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_key_in);
 
-    compiler__Parser_fgen(p, tos3(" "));
+    p;
 
     string tmp = compiler__Parser_get_tmp(p);
 
@@ -23625,11 +23622,11 @@ void compiler__Parser_for_st(compiler__Parser *p) {
 
     string val = compiler__Parser_check_name(p);
 
-    compiler__Parser_fgen(p, tos3(" "));
+    p;
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_key_in);
 
-    compiler__Parser_fspace(p);
+    p;
 
     string tmp = compiler__Parser_get_tmp(p);
 
@@ -23755,7 +23752,7 @@ void compiler__Parser_for_st(compiler__Parser *p) {
     compiler__Parser_genln(p, tos3(") {"));
   };
 
-  compiler__Parser_fspace(p);
+  p;
 
   compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
 
@@ -24185,7 +24182,7 @@ void compiler__Parser_assert_statement(compiler__Parser *p) {
 
   compiler__Parser_check(p, compiler__compiler__TokenKind_key_assert);
 
-  compiler__Parser_fspace(p);
+  p;
 
   string tmp = compiler__Parser_get_tmp(p);
 
@@ -24211,7 +24208,7 @@ void compiler__Parser_return_st(compiler__Parser *p) {
 
   compiler__Parser_check(p, compiler__compiler__TokenKind_key_return);
 
-  compiler__Parser_fgen(p, tos3(" "));
+  p;
 
   string deferred_text = compiler__Parser_get_deferred_text(*p);
 
@@ -24938,7 +24935,7 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
 
   if (!p->is_struct_init) {
 
-    compiler__Parser_fgen(p, p->lit);
+    p;
   };
 
   if (string_eq(p->lit, tos3("C")) &&
@@ -26501,9 +26498,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
       s->line_comment =
           string_trim_space(string_substr2(s->text, start + 1, s->pos, false));
 
-      compiler__Scanner_fgenln(s,
-                               _STR("// shebang line \"%.*s\"",
-                                    s->line_comment.len, s->line_comment.str));
+      s;
 
       return compiler__Scanner_scan(s);
     };
@@ -26665,10 +26660,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
 
       s->line_comment = string_trim_space(s->line_comment);
 
-      compiler__Scanner_fgenln(
-          s, _STR("// %.*s \"%.*s\"", compiler__TokenKind_str(s->prev_tok).len,
-                  compiler__TokenKind_str(s->prev_tok).str, s->line_comment.len,
-                  s->line_comment.str));
+      s;
 
       return compiler__Scanner_scan(s);
     };
@@ -26716,7 +26708,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
 
       string comm = string_substr2(s->text, start, end, false);
 
-      compiler__Scanner_fgenln(s, comm);
+      s;
 
       return compiler__Scanner_scan(s);
     };
@@ -27117,8 +27109,7 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
     cat = compiler__compiler__TypeCategory_objc_interface;
   };
 
-  compiler__Parser_fgen(p,
-                        string_add(compiler__TokenKind_str(p->tok), tos3(" ")));
+  p;
 
   compiler__Parser_next(p);
 
@@ -27245,7 +27236,7 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
     return;
   };
 
-  compiler__Parser_fgen(p, tos3(" "));
+  p;
 
   compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
 
@@ -27275,7 +27266,7 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
 
       is_pub_field = 1;
 
-      compiler__Parser_fmt_dec(p);
+      p;
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_key_pub);
 
@@ -27284,9 +27275,9 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
         compiler__Parser_check(p, compiler__compiler__TokenKind_colon);
       };
 
-      compiler__Parser_fmt_inc(p);
+      p;
 
-      compiler__Parser_fgenln(p, tos3(""));
+      p;
     };
 
     if (p->tok == compiler__compiler__TokenKind_key_mut) {
@@ -27300,7 +27291,7 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
 
       is_mut = 1;
 
-      compiler__Parser_fmt_dec(p);
+      p;
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_key_mut);
 
@@ -27309,9 +27300,9 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
         compiler__Parser_check(p, compiler__compiler__TokenKind_colon);
       };
 
-      compiler__Parser_fmt_inc(p);
+      p;
 
-      compiler__Parser_fgenln(p, tos3(""));
+      p;
     };
 
     int field_name_token_idx = compiler__Parser_cur_tok_index(&/* ? */ *p);
@@ -27354,7 +27345,7 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
         (is_pub_field) ? (compiler__compiler__AccessMod_public)
                        : (compiler__compiler__AccessMod_private);
 
-    compiler__Parser_fgen(p, tos3(" "));
+    p;
 
     string field_type = compiler__Parser_get_type(p);
 
@@ -27429,7 +27420,7 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
                                 is_mut, attr, access_mod);
     };
 
-    compiler__Parser_fgenln(p, tos3(""));
+    p;
   };
 
   compiler__Parser_check(p, compiler__compiler__TokenKind_rcbr);
@@ -27447,7 +27438,7 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
     };
   };
 
-  compiler__Parser_fgenln(p, tos3("\n"));
+  p;
 }
 string compiler__Parser_struct_init(compiler__Parser *p, string typ) {
 
@@ -27522,7 +27513,7 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ) {
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_colon);
 
-      compiler__Parser_fspace(p);
+      p;
 
       compiler__Parser_check_types(p, compiler__Parser_bool_expression(p),
                                    f.typ);
@@ -27537,7 +27528,7 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ) {
         compiler__Parser_gen(p, tos3(","));
       };
 
-      compiler__Parser_fgenln(p, tos3(""));
+      p;
 
       did_gen_something = 1;
     };
@@ -29483,18 +29474,9 @@ void compiler__Scanner_fgenln(compiler__Scanner *scanner, string s_) {
 
   scanner->fmt_line_empty = 1;
 }
-void compiler__Parser_fgen(compiler__Parser *p, string s) {
-
-  compiler__Scanner_fgen(p->scanner, s);
-}
-void compiler__Parser_fspace(compiler__Parser *p) {
-
-  compiler__Parser_fgen(p, tos3(" "));
-}
-void compiler__Parser_fgenln(compiler__Parser *p, string s) {
-
-  compiler__Scanner_fgenln(p->scanner, s);
-}
+void compiler__Parser_fgen(compiler__Parser *p, string s) { p->scanner; }
+void compiler__Parser_fspace(compiler__Parser *p) { p; }
+void compiler__Parser_fgenln(compiler__Parser *p, string s) { p->scanner; }
 void compiler__Parser_fmt_inc(compiler__Parser *p) { p->scanner->fmt_indent++; }
 void compiler__Parser_fmt_dec(compiler__Parser *p) { p->scanner->fmt_indent--; }
 compiler__TestSession compiler__new_test_sesion(string vargs) {
