@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a7568ea"
+#define V_COMMIT_HASH "44b99bc"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "373873d"
+#define V_COMMIT_HASH "a7568ea"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -29443,6 +29443,16 @@ void compiler__TestSession_test(compiler__TestSession *ts) {
         string_replace(dot_relative_file, tos3("./"), tos3(""));
 
     string file = os__realpath(relative_file);
+
+#ifdef _WIN32
+
+    if (string_contains(file, tos3("sqlite"))) {
+
+      continue;
+    };
+
+#endif
+    ;
 
     string tmpc_filepath = string_replace(file, tos3(".v"), tos3(".tmp.c"));
 
