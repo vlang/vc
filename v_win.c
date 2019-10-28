@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "44b99bc"
+#define V_COMMIT_HASH "15deaa7"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a7568ea"
+#define V_COMMIT_HASH "44b99bc"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -9449,6 +9449,15 @@ void compiler__build_thirdparty_obj_file(string path,
   os__Result res = *(os__Result *)tmp53.data;
   ;
 
+  if (res.exit_code != 0) {
+
+    printf("failed thirdparty object build cmd: %.*s\n", cmd.len, cmd.str);
+
+    compiler__verror(res.output);
+
+    return;
+  };
+
   println(res.output);
 }
 string compiler__os_name_to_ifdef(string name) {
@@ -9553,7 +9562,7 @@ string compiler__V_type_definitions(compiler__V *v) {
     string builtin = ((string *)tmp60.data)[tmp61];
 
     compiler__Type tmp62 = {0};
-    bool tmp63 = map_get(/*cgen.v : 321*/ v->table->typesmap, builtin, &tmp62);
+    bool tmp63 = map_get(/*cgen.v : 326*/ v->table->typesmap, builtin, &tmp62);
 
     compiler__Type typ = tmp62;
 
@@ -18165,12 +18174,25 @@ void compiler__build_thirdparty_obj_file_with_msvc(
     string err = tmp90.error;
     int errcode = tmp90.ecode;
 
+    printf("msvc: failed thirdparty object build cmd: %.*s\n", cmd.len,
+           cmd.str);
+
     compiler__verror(err);
 
     return;
   }
   os__Result res = *(os__Result *)tmp90.data;
   ;
+
+  if (res.exit_code != 0) {
+
+    printf("msvc: failed thirdparty object build cmd: %.*s\n", cmd.len,
+           cmd.str);
+
+    compiler__verror(res.output);
+
+    return;
+  };
 
   println(res.output);
 }
