@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9abbfa7"
+#define V_COMMIT_HASH "96f7620"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ba6cc5d"
+#define V_COMMIT_HASH "9abbfa7"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -10489,10 +10489,7 @@ void compiler__Parser_chash(compiler__Parser *p) {
 
     string file = string_substr2(hash, pos, -1, true);
 
-    if (p->pref->build_mode != compiler__compiler__BuildMode_default_mode) {
-
-      compiler__Parser_genln(p, _STR("#include %.*s", file.len, file.str));
-    };
+    compiler__Parser_genln(p, _STR("#include %.*s", file.len, file.str));
 
   } else if (string_contains(hash, tos3("define"))) {
 
@@ -11683,12 +11680,6 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
 
   bool is_c = string_eq(f.name, tos3("C")) &&
               p->tok == compiler__compiler__TokenKind_dot;
-
-  if (p->pref->is_verbose) {
-
-    printf("\n\nfn_decl() name=%.*s receiver_typ=%.*s nogen=%d\n", f.name.len,
-           f.name.str, receiver_typ.len, receiver_typ.str, p->cgen->nogen);
-  };
 
   if (is_c) {
 
@@ -17313,6 +17304,8 @@ void compiler__generate_vh(string mod) {
         !string_ends_with(it, tos3("test.v")) &&
         !string_ends_with(it, tos3("_windows.v")) &&
         !string_ends_with(it, tos3("_win.v")) &&
+        !string_ends_with(it, tos3("_lin.v")) &&
+        !string_contains(it, tos3("/examples")) &&
         !string_contains(it, tos3("/js")))
       array_push(&tmp10, &it);
   }
@@ -19008,7 +19001,7 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
     } else if (tmp26 == compiler__compiler__TokenKind_key_global) {
 
       if (!p->pref->translated && !p->pref->is_live && !p->builtin_mod &&
-          !p->pref->building_v &&
+          !p->pref->building_v && string_ne(p->mod, tos3("ui")) &&
           !string_contains(os__getwd(), tos3("/volt"))) {
 
         compiler__Parser_error(
@@ -19773,7 +19766,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
   if (_IN(string, (p->lit), map_keys(&/* ? */ ti))) {
 
     string tmp88 = tos3("");
-    bool tmp89 = map_get(/*parser.v : 836*/ ti, p->lit, &tmp88);
+    bool tmp89 = map_get(/*parser.v : 837*/ ti, p->lit, &tmp88);
 
     if (!tmp89)
       tmp88 = tos((byte *)"", 0);
@@ -21090,7 +21083,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
       if (_IN(string, (typ), map_keys(&/* ? */ p->cur_fn.dispatch_of.inst))) {
 
         string tmp214 = tos3("");
-        bool tmp215 = map_get(/*parser.v : 1621*/ p->cur_fn.dispatch_of.inst,
+        bool tmp215 = map_get(/*parser.v : 1622*/ p->cur_fn.dispatch_of.inst,
                               typ, &tmp214);
 
         if (!tmp215)
@@ -21133,6 +21126,13 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
         compiler__Parser_error(p, _STR("enum `%.*s` does not have value `%.*s`",
                                        enum_type.name.len, enum_type.name.str,
                                        val.len, val.str));
+      };
+
+      if (string_eq(p->expected_type, enum_type.name)) {
+
+        compiler__Parser_warn(p, _STR("`%.*s.%.*s` is unnecessary, use `.%.*s`",
+                                      enum_type.name.len, enum_type.name.str,
+                                      val.len, val.str, val.len, val.str));
       };
 
       compiler__Parser_gen(
@@ -24224,18 +24224,18 @@ void compiler__Parser_assert_statement(compiler__Parser *p) {
   };
 
   compiler__Parser_genln(
-      p,
-      _STR(";\n\nif (!%.*s) {\n  g_test_fails++;\n  main__cb_assertion_failed( "
-           "\n     tos3(\"%.*s\"), \n     %d, \n     tos3(\"%.*s\"),\n     "
-           "tos3(\"%.*s()\")\n  );\n  return;\n  // TODO\n  // Maybe print all "
-           "vars in a test function if it fails?\n} else {\n  g_test_oks++;\n  "
-           "main__cb_assertion_ok( \n     tos3(\"%.*s\"), \n     %d, \n     "
-           "tos3(\"%.*s\"),\n     tos3(\"%.*s()\")\n  );\n}\n\n",
-           tmp.len, tmp.str, filename.len, filename.str, p->scanner->line_nr,
-           sourceline.len, sourceline.str, p->cur_fn.name.len,
-           p->cur_fn.name.str, filename.len, filename.str, p->scanner->line_nr,
-           sourceline.len, sourceline.str, p->cur_fn.name.len,
-           p->cur_fn.name.str));
+      p, _STR(";\n\nif (!%.*s) {\n  g_test_fails++;\n  "
+              "main__cb_assertion_failed(\n     tos3(\"%.*s\"),\n     %d,\n    "
+              " tos3(\"%.*s\"),\n     tos3(\"%.*s()\")\n  );\n  return;\n  // "
+              "TODO\n  // Maybe print all vars in a test function if it "
+              "fails?\n} else {\n  g_test_oks++;\n  main__cb_assertion_ok(\n   "
+              "  tos3(\"%.*s\"),\n     %d,\n     tos3(\"%.*s\"),\n     "
+              "tos3(\"%.*s()\")\n  );\n}\n\n",
+              tmp.len, tmp.str, filename.len, filename.str, p->scanner->line_nr,
+              sourceline.len, sourceline.str, p->cur_fn.name.len,
+              p->cur_fn.name.str, filename.len, filename.str,
+              p->scanner->line_nr, sourceline.len, sourceline.str,
+              p->cur_fn.name.len, p->cur_fn.name.str));
 }
 void compiler__Parser_return_st(compiler__Parser *p) {
 
