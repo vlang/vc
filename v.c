@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5da3c49"
+#define V_COMMIT_HASH "e8d3400"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6b4dcb9"
+#define V_COMMIT_HASH "5da3c49"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -3401,9 +3401,12 @@ void v_mapnode_delete(mapnode *n, string key, int element_size) {
 }
 void v_map_delete(map *m, string key) {
 
-  v_mapnode_delete(m->root, key, m->element_size);
+  if (map_exists(*m, key)) {
 
-  m->size--;
+    v_mapnode_delete(m->root, key, m->element_size);
+
+    m->size--;
+  };
 }
 bool map_exists(map m, string key) {
 
