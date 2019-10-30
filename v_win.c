@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "96f7620"
+#define V_COMMIT_HASH "aa39451"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9abbfa7"
+#define V_COMMIT_HASH "96f7620"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -21130,9 +21130,10 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
 
       if (string_eq(p->expected_type, enum_type.name)) {
 
-        compiler__Parser_warn(p, _STR("`%.*s.%.*s` is unnecessary, use `.%.*s`",
-                                      enum_type.name.len, enum_type.name.str,
-                                      val.len, val.str, val.len, val.str));
+        compiler__Parser_error(p,
+                               _STR("`%.*s.%.*s` is unnecessary, use `.%.*s`",
+                                    enum_type.name.len, enum_type.name.str,
+                                    val.len, val.str, val.len, val.str));
       };
 
       compiler__Parser_gen(
