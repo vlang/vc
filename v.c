@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "08c1f40"
+#define V_COMMIT_HASH "9044f14"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2bd2501"
+#define V_COMMIT_HASH "08c1f40"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -29712,6 +29712,31 @@ void main__main() {
     return;
 
   } else if (_IN(string, (tos3("doc")), commands)) {
+
+    string vexe = os__executable();
+
+    string vdir = os__dir(os__executable());
+
+    os__chdir(vdir);
+
+    string mod = *(string *)array_last(args);
+
+    os__system(string_add(_STR("%.*s build module vlib/", vexe.len, vexe.str),
+                          *(string *)array_last(args)));
+
+    Option_string tmp10 =
+        os__read_file(_STR("%.*s/vlib/%.*s.vh", compiler__v_modules_path.len,
+                           compiler__v_modules_path.str, mod.len, mod.str));
+    if (!tmp10.ok) {
+      string err = tmp10.error;
+      int errcode = tmp10.ecode;
+
+      v_panic(err);
+    }
+    string txt = *(string *)tmp10.data;
+    ;
+
+    println(txt);
 
     v_exit(0);
 
