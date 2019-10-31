@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "07ad60b"
+#define V_COMMIT_HASH "7fa33fc"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0c229aa"
+#define V_COMMIT_HASH "07ad60b"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -805,22 +805,23 @@ array make(int len, int cap, int elm_size);
 array new_array_from_c_array(int len, int cap, int elm_size, void *c_array);
 array new_array_from_c_array_no_alloc(int len, int cap, int elm_size,
                                       void *c_array);
+void array_ensure_cap(array *a, int required);
 array array_repeat_old(void *val, int nr_repeats, int elm_size);
 array array_repeat(array a, int nr_repeats);
 void array_sort_with_compare(array *a, void *compare);
 void array_insert(array *a, int i, void *val);
 void array_prepend(array *a, void *val);
-void v_array_delete(array *a, int idx);
+void v_array_delete(array *a, int i);
 void *array_get(array a, int i);
 void *array_first(array a);
 void *array_last(array a);
-array array_left(array s, int n);
-array array_right(array s, int n);
-array array_slice2(array s, int start, int _end, bool end_max);
-array array_slice(array s, int start, int _end);
-void array_set(array *a, int idx, void *val);
-void array_push(array *arr, void *val);
-void array_push_many(array *arr, void *val, int size);
+array array_left(array a, int n);
+array array_right(array a, int n);
+array array_slice2(array a, int start, int _end, bool end_max);
+array array_slice(array a, int start, int _end);
+void array_set(array *a, int i, void *val);
+void array_push(array *a, void *val);
+void array_push_many(array *a, void *val, int size);
 array array_reverse(array a);
 array array_clone(array a);
 void v_array_free(array a);
@@ -828,7 +829,7 @@ string array_string_str(array_string a);
 string array_bool_str(array_bool a);
 string array_byte_hex(array_byte b);
 int copy(array_byte dst, array_byte src);
-int compare_ints(int *a, int *b);
+int compare_ints(int a, int b);
 void array_int_sort(array_int *a);
 int array_string_index(array_string a, string v);
 int array_int_index(array_int a, int v);
@@ -2153,7 +2154,35 @@ array new_array_from_c_array_no_alloc(int len, int cap, int elm_size,
 
   return arr;
 }
+void array_ensure_cap(array *a, int required) {
+
+  if (required > a->cap) {
+
+    int cap = (a->cap == 0) ? (2) : (a->cap * 2);
+
+    while (required > cap) {
+
+      cap *= 2;
+    };
+
+    if (a->cap == 0) {
+
+      a->data = v_calloc(cap * a->element_size);
+
+    } else {
+
+      a->data = realloc(a->data, cap * a->element_size);
+    };
+
+    a->cap = cap;
+  };
+}
 array array_repeat_old(void *val, int nr_repeats, int elm_size) {
+
+  if (nr_repeats < 0) {
+
+    v_panic(_STR("[0; len]: `len` is negative (len == %d)", nr_repeats));
+  };
 
   array arr = (array){.len = nr_repeats,
                       .cap = nr_repeats,
@@ -2169,16 +2198,20 @@ array array_repeat_old(void *val, int nr_repeats, int elm_size) {
 }
 array array_repeat(array a, int nr_repeats) {
 
-  array arr = (array){.len = nr_repeats,
-                      .cap = nr_repeats,
-                      .element_size = a.element_size,
-                      .data = v_calloc(nr_repeats * a.element_size)};
+  if (nr_repeats < 0) {
 
-  void *val = (byte *)a.data + 0;
+    v_panic(_STR("array.repeat: count is negative (count == %d)", nr_repeats));
+  };
+
+  array arr = (array){.len = nr_repeats * a.len,
+                      .cap = nr_repeats * a.len,
+                      .element_size = a.element_size,
+                      .data = v_calloc(nr_repeats * a.len * a.element_size)};
 
   for (int i = 0; i < nr_repeats; i++) {
 
-    memcpy((byte *)arr.data + i * a.element_size, val, a.element_size);
+    memcpy((byte *)arr.data + i * a.len * a.element_size, a.data,
+           a.len * a.element_size);
   };
 
   return arr;
@@ -2189,37 +2222,45 @@ void array_sort_with_compare(array *a, void *compare) {
 }
 void array_insert(array *a, int i, void *val) {
 
-  if (i >= a->len) {
+  if (i < 0 || i > a->len) {
 
-    v_panic(tos3("array.insert: index larger than length"));
+    v_panic(_STR("array.insert: index out of range (i == %d, a.len == %d)", i,
+                 a->len));
   };
 
-  array_push(a, val);
+  array_ensure_cap(a, a->len + 1);
 
   int size = a->element_size;
 
   memmove((byte *)a->data + (i + 1) * size, (byte *)a->data + i * size,
           (a->len - i) * size);
 
-  array_set(a, i, val);
+  memcpy((byte *)a->data + i * size, val, size);
+
+  a->len++;
 }
 void array_prepend(array *a, void *val) { array_insert(a, 0, val); }
-void v_array_delete(array *a, int idx) {
+void v_array_delete(array *a, int i) {
+
+  if (i < 0 || i >= a->len) {
+
+    v_panic(_STR("array.delete: index out of range (i == %d, a.len == %d)", i,
+                 a->len));
+  };
 
   int size = a->element_size;
 
-  memmove((byte *)a->data + idx * size, (byte *)a->data + (idx + 1) * size,
-          (a->len - idx) * size);
+  memmove((byte *)a->data + i * size, (byte *)a->data + (i + 1) * size,
+          (a->len - i) * size);
 
   a->len--;
-
-  a->cap--;
 }
 void *array_get(array a, int i) {
 
   if (i < 0 || i >= a.len) {
 
-    v_panic(_STR("array index out of range: %d/%d", i, a.len));
+    v_panic(
+        _STR("array.get: index out of range (i == %d, a.len == %d)", i, a.len));
   };
 
   return (byte *)a.data + i * a.element_size;
@@ -2228,7 +2269,7 @@ void *array_first(array a) {
 
   if (a.len == 0) {
 
-    v_panic(tos3("array.first: empty array"));
+    v_panic(tos3("array.first: array is empty"));
   };
 
   return (byte *)a.data + 0;
@@ -2237,118 +2278,100 @@ void *array_last(array a) {
 
   if (a.len == 0) {
 
-    v_panic(tos3("array.last: empty array"));
+    v_panic(tos3("array.last: array is empty"));
   };
 
   return (byte *)a.data + (a.len - 1) * a.element_size;
 }
-array array_left(array s, int n) {
+array array_left(array a, int n) {
 
-  if (n >= s.len) {
+  if (n < 0) {
 
-    return s;
+    v_panic(_STR("array.left: index is negative (n == %d)", n));
   };
 
-  return array_slice(s, 0, n);
-}
-array array_right(array s, int n) {
+  if (n >= a.len) {
 
-  if (n >= s.len) {
-
-    return new_array(0, 0, s.element_size);
+    return array_slice(a, 0, a.len);
   };
 
-  return array_slice(s, n, s.len);
+  return array_slice(a, 0, n);
 }
-array array_slice2(array s, int start, int _end, bool end_max) {
+array array_right(array a, int n) {
 
-  int end = (end_max) ? (s.len) : (_end);
+  if (n < 0) {
 
-  return array_slice(s, start, end);
+    v_panic(_STR("array.right: index is negative (n == %d)", n));
+  };
+
+  if (n >= a.len) {
+
+    return new_array(0, 0, a.element_size);
+  };
+
+  return array_slice(a, n, a.len);
 }
-array array_slice(array s, int start, int _end) {
+array array_slice2(array a, int start, int _end, bool end_max) {
+
+  int end = (end_max) ? (a.len) : (_end);
+
+  return array_slice(a, start, end);
+}
+array array_slice(array a, int start, int _end) {
 
   int end = _end;
 
   if (start > end) {
 
-    v_panic(_STR("invalid slice index: %d > %d", start, end));
+    v_panic(_STR("array.slice: invalid slice index (%d > %d)", start, end));
   };
 
-  if (end > s.len) {
+  if (end > a.len) {
 
-    v_panic(_STR("runtime error: slice bounds out of range (%d >= %d)", end,
-                 s.len));
+    v_panic(
+        _STR("array.slice: slice bounds out of range (%d >= %d)", end, a.len));
   };
 
   if (start < 0) {
 
-    v_panic(_STR("runtime error: slice bounds out of range (%d < 0)", start));
+    v_panic(_STR("array.slice: slice bounds out of range (%d < 0)", start));
   };
 
   int l = end - start;
 
-  array res = (array){.element_size = s.element_size,
-                      .data = (byte *)s.data + start * s.element_size,
+  array res = (array){.element_size = a.element_size,
+                      .data = (byte *)a.data + start * a.element_size,
                       .len = l,
                       .cap = l};
 
   return res;
 }
-void array_set(array *a, int idx, void *val) {
+void array_set(array *a, int i, void *val) {
 
-  if (idx < 0 || idx >= a->len) {
+  if (i < 0 || i >= a->len) {
 
-    v_panic(_STR("array index out of range: %d / %d", idx, a->len));
+    v_panic(_STR("array.set: index out of range (i == %d, a.len == %d)", i,
+                 a->len));
   };
 
-  memcpy((byte *)a->data + a->element_size * idx, val, a->element_size);
+  memcpy((byte *)a->data + a->element_size * i, val, a->element_size);
 }
-void array_push(array *arr, void *val) {
+void array_push(array *a, void *val) {
 
-  if (arr->len >= arr->cap - 1) {
+  array_ensure_cap(a, a->len + 1);
 
-    int cap = (arr->len + 1) * 2;
+  memcpy((byte *)a->data + a->element_size * a->len, val, a->element_size);
 
-    if (arr->cap == 0) {
-
-      arr->data = v_calloc(cap * arr->element_size);
-
-    } else {
-
-      arr->data = realloc(arr->data, cap * arr->element_size);
-    };
-
-    arr->cap = cap;
-  };
-
-  memcpy((byte *)arr->data + arr->element_size * arr->len, val,
-         arr->element_size);
-
-  arr->len++;
+  a->len++;
 }
-void array_push_many(array *arr, void *val, int size) {
+void array_push_many(array *a, void *val, int size) {
 
-  if (arr->len >= arr->cap - size) {
+  array_ensure_cap(a, a->len + size);
 
-    int cap = (arr->len + size) * 2;
+  memcpy((byte *)a->data + a->element_size * a->len, val,
+         a->element_size * size);
 
-    if (arr->cap == 0) {
-
-      arr->data = v_calloc(cap * arr->element_size);
-
-    } else {
-
-      arr->data = realloc(arr->data, cap * arr->element_size);
-    };
-
-    arr->cap = cap;
-  };
-
-  memcpy((byte *)arr->data + arr->element_size * arr->len, val,
-         arr->element_size * size);
-
-  arr->len += size;
+  a->len += size;
 }
 array array_reverse(array a) {
 
@@ -2458,7 +2481,7 @@ int copy(array_byte dst, array_byte src) {
 
   return 0;
 }
-int compare_ints(int *a, int *b) {
+int compare_ints(int a, int b) {
 
   if (a < b) {
 
@@ -2475,7 +2498,7 @@ int compare_ints(int *a, int *b) {
 void array_int_sort(array_int *a) {
 
   array_sort_with_compare(
-      a, &/*112 EXP:"void*" GOT:"fn (int*,int*) int" */ compare_ints);
+      a, &/*112 EXP:"void*" GOT:"fn (int,int) int" */ compare_ints);
 }
 int array_string_index(array_string a, string v) {
 
