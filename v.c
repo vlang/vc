@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "114953f"
+#define V_COMMIT_HASH "55f6e81"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7fa33fc"
+#define V_COMMIT_HASH "114953f"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -232,7 +232,6 @@ typedef struct compiler__Parser compiler__Parser;
 typedef struct compiler__IndexConfig compiler__IndexConfig;
 typedef struct _V_MulRet_string_V_string _V_MulRet_string_V_string;
 typedef struct _V_MulRet_bool_V_string _V_MulRet_bool_V_string;
-typedef struct compiler__Repl compiler__Repl;
 typedef struct compiler__Scanner compiler__Scanner;
 typedef struct compiler__ScanRes compiler__ScanRes;
 typedef struct compiler__Table compiler__Table;
@@ -503,16 +502,6 @@ struct compiler__Preferences {
   bool autofree;
   bool compress;
   string comptime_define;
-};
-
-struct compiler__Repl {
-  int indent;
-  bool in_func;
-  string line;
-  array_string lines;
-  array_string temp_lines;
-  array_string functions_name;
-  array_string functions;
 };
 
 struct compiler__ScanRes {
@@ -1480,6 +1469,7 @@ array_string compiler__env_vflags_and_os_args();
 void compiler__update_v();
 void compiler__vfmt(array_string args);
 void compiler__install_v(array_string args);
+void compiler__run_repl();
 void compiler__create_symlink();
 string compiler__vexe_path();
 void compiler__verror(string s);
@@ -1626,10 +1616,6 @@ string compiler__sql_params2params_gen(array_string sql_params,
                                        array_string sql_types, string qprefix);
 string compiler__Parser_select_query(compiler__Parser *p, int fn_ph);
 void compiler__Parser_insert_query(compiler__Parser *p, int fn_ph);
-bool compiler__Repl_checks(compiler__Repl *r);
-bool compiler__Repl_function_call(compiler__Repl *r, string line);
-void compiler__repl_help();
-array_string compiler__run_repl();
 compiler__Scanner *compiler__new_scanner_file(string file_path);
 compiler__Scanner *compiler__new_scanner(string text);
 compiler__ScanRes compiler__scan_res(compiler__TokenKind tok, string lit);
@@ -16907,6 +16893,39 @@ void compiler__install_v(array_string args) {
     return;
   };
 }
+void compiler__run_repl() {
+
+  string vexec = compiler__vexe_path();
+
+  string vroot = os__dir(vexec);
+
+  string vrepl = _STR("%.*s/tools/vrepl", vroot.len, vroot.str);
+
+  os__chdir(string_add(vroot, tos3("/tools")));
+
+  Option_os__Result tmp98 = os__exec(_STR("\"%.*s\" -o %.*s vrepl.v", vexec.len,
+                                          vexec.str, vrepl.len, vrepl.str));
+  if (!tmp98.ok) {
+    string err = tmp98.error;
+    int errcode = tmp98.ecode;
+
+    compiler__verror(err);
+
+    return;
+  }
+  os__Result vrepl_compilation = *(os__Result *)tmp98.data;
+  ;
+
+  if (vrepl_compilation.exit_code != 0) {
+
+    compiler__verror(vrepl_compilation.output);
+
+    return;
+  };
+
+  int vreplresult = os__system(
+      _STR("%.*s \"%.*s\"", vrepl.len, vrepl.str, vexec.len, vexec.str));
+}
 void compiler__create_symlink() {
 
   string vexe = compiler__vexe_path();
@@ -16962,49 +16981,49 @@ string compiler__cescaped_path(string s) {
 }
 compiler__OS compiler__os_from_string(string os) {
 
-  string tmp98 = os;
+  string tmp99 = os;
 
-  if (string_eq(tmp98, tos3("linux"))) {
+  if (string_eq(tmp99, tos3("linux"))) {
 
     return compiler__compiler__OS_linux;
 
-  } else if (string_eq(tmp98, tos3("windows"))) {
+  } else if (string_eq(tmp99, tos3("windows"))) {
 
     return compiler__compiler__OS_windows;
 
-  } else if (string_eq(tmp98, tos3("mac"))) {
+  } else if (string_eq(tmp99, tos3("mac"))) {
 
     return compiler__compiler__OS_mac;
 
-  } else if (string_eq(tmp98, tos3("freebsd"))) {
+  } else if (string_eq(tmp99, tos3("freebsd"))) {
 
     return compiler__compiler__OS_freebsd;
 
-  } else if (string_eq(tmp98, tos3("openbsd"))) {
+  } else if (string_eq(tmp99, tos3("openbsd"))) {
 
     return compiler__compiler__OS_openbsd;
 
-  } else if (string_eq(tmp98, tos3("netbsd"))) {
+  } else if (string_eq(tmp99, tos3("netbsd"))) {
 
     return compiler__compiler__OS_netbsd;
 
-  } else if (string_eq(tmp98, tos3("dragonfly"))) {
+  } else if (string_eq(tmp99, tos3("dragonfly"))) {
 
     return compiler__compiler__OS_dragonfly;
 
-  } else if (string_eq(tmp98, tos3("js"))) {
+  } else if (string_eq(tmp99, tos3("js"))) {
 
     return compiler__compiler__OS_js;
 
-  } else if (string_eq(tmp98, tos3("solaris"))) {
+  } else if (string_eq(tmp99, tos3("solaris"))) {
 
     return compiler__compiler__OS_solaris;
 
-  } else if (string_eq(tmp98, tos3("android"))) {
+  } else if (string_eq(tmp99, tos3("android"))) {
 
     return compiler__compiler__OS_android;
 
-  } else if (string_eq(tmp98, tos3("msvc"))) {
+  } else if (string_eq(tmp99, tos3("msvc"))) {
 
     compiler__verror(tos3("use the flag `-cc msvc` to build using msvc"));
   };
@@ -17033,7 +17052,7 @@ compiler__V *compiler__new_v_compiler_with_args(array_string args) {
   array_string allargs = new_array_from_c_array(
       1, 1, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 1){vexe});
 
-  _PUSH_MANY(&allargs, (/*typ = array_string   tmp_typ=string*/ args), tmp99,
+  _PUSH_MANY(&allargs, (/*typ = array_string   tmp_typ=string*/ args), tmp100,
              array_string);
 
   os__setenv(tos3("VOSARGS"), array_string_join(allargs, tos3(" ")), 1);
@@ -25341,360 +25360,6 @@ void compiler__Parser_insert_query(compiler__Parser *p, int fn_ph) {
                                  "(%.*s)\", %d,\n0, params, 0, 0, 0)",
                                  table_name.len, table_name.str, sfields.len,
                                  sfields.str, vals.len, vals.str, nr_vals));
-}
-bool compiler__Repl_checks(compiler__Repl *r) {
-
-  bool in_string = 0;
-
-  bool is_cut = 0;
-
-  bool was_indent = r->indent > 0;
-
-  for (int i = 0; i < r->line.len; i++) {
-
-    if (string_at(r->line, i) == '\'' &&
-        (i == 0 || string_at(r->line, i - 1) != '\\')) {
-
-      in_string = !in_string;
-    };
-
-    if (string_at(r->line, i) == '{' && !in_string) {
-
-      r->line = string_add(
-          string_add(string_substr2(r->line, 0, i + 1, false), tos3("\n")),
-          string_substr2(r->line, i + 1, -1, true));
-
-      is_cut = 1;
-
-      i++;
-
-      r->indent++;
-    };
-
-    if (string_at(r->line, i) == '}' && !in_string) {
-
-      r->line = string_add(
-          string_add(string_substr2(r->line, 0, i, false), tos3("\n")),
-          string_substr2(r->line, i, -1, true));
-
-      is_cut = 1;
-
-      i++;
-
-      r->indent--;
-
-      if (r->indent == 0) {
-
-        r->in_func = 0;
-      };
-    };
-
-    if (i + 2 < r->line.len && r->indent == 0 &&
-        string_at(r->line, i + 1) == 'f' && string_at(r->line, i + 2) == 'n') {
-
-      r->in_func = 1;
-    };
-  };
-
-  return r->in_func || (was_indent && r->indent <= 0) || r->indent > 0 ||
-         is_cut;
-}
-bool compiler__Repl_function_call(compiler__Repl *r, string line) {
-
-  array_string tmp21 = r->functions_name;
-  for (int tmp22 = 0; tmp22 < tmp21.len; tmp22++) {
-    string function = ((string *)tmp21.data)[tmp22];
-
-    if (string_starts_with(line, function)) {
-
-      return 1;
-    };
-  };
-
-  return 0;
-}
-void compiler__repl_help() {
-
-  string version_hash = compiler__vhash();
-
-  printf("\nV %.*s %.*s\n  help                   Displays this information.\n "
-         " Ctrl-C, Ctrl-D, exit   Exits the REPL.\n  clear                  "
-         "Clears the screen.\n\n",
-         compiler__Version.len, compiler__Version.str, version_hash.len,
-         version_hash.str);
-}
-array_string compiler__run_repl() {
-
-  string version_hash = compiler__vhash();
-
-  printf("V %.*s %.*s\n", compiler__Version.len, compiler__Version.str,
-         version_hash.len, version_hash.str);
-
-  println(tos3("Use Ctrl-C or `exit` to exit"));
-
-  string file = tos3(".vrepl.v");
-
-  string temp_file = tos3(".vrepl_temp.v");
-
-  compiler__Repl r =
-      (compiler__Repl){.indent = 0,
-                       .in_func = 0,
-                       .line = tos3(""),
-                       .lines = new_array(0, 1, sizeof(string)),
-                       .temp_lines = new_array(0, 1, sizeof(string)),
-                       .functions_name = new_array(0, 1, sizeof(string)),
-                       .functions = new_array(0, 1, sizeof(string))};
-
-  string vexe = (*(string *)array_get(os__args, 0));
-
-  while (1) {
-
-    if (r.indent == 0) {
-
-      print(tos3(">>> "));
-
-    } else {
-
-      print(tos3("... "));
-    };
-
-    r.line = os__get_raw_line();
-
-    if (string_eq(string_trim_space(r.line), tos3("")) &&
-        string_ends_with(r.line, tos3("\n"))) {
-
-      continue;
-    };
-
-    r.line = string_trim_space(r.line);
-
-    if (r.line.len == -1 || string_eq(r.line, tos3("")) ||
-        string_eq(r.line, tos3("exit"))) {
-
-      break;
-    };
-
-    if (string_eq(r.line, tos3("\n"))) {
-
-      continue;
-    };
-
-    if (string_eq(r.line, tos3("clear"))) {
-
-      term__erase_display(tos3("2"));
-
-      continue;
-    };
-
-    if (string_eq(r.line, tos3("help"))) {
-
-      compiler__repl_help();
-
-      continue;
-    };
-
-    if (string_starts_with(r.line, tos3("fn"))) {
-
-      r.in_func = 1;
-
-      _PUSH(&r.functions_name,
-            (/*typ = array_string   tmp_typ=string*/ string_trim_space(
-                string_all_before(string_all_after(r.line, tos3("fn")),
-                                  tos3("(")))),
-            tmp29, string);
-    };
-
-    bool was_func = r.in_func;
-
-    if (compiler__Repl_checks(&/* ? */ r)) {
-
-      array_string tmp30 = string_split(r.line, tos3("\n"));
-      for (int tmp31 = 0; tmp31 < tmp30.len; tmp31++) {
-        string line = ((string *)tmp30.data)[tmp31];
-
-        if (r.in_func || was_func) {
-
-          _PUSH(&r.functions, (/*typ = array_string   tmp_typ=string*/ line),
-                tmp32, string);
-
-        } else {
-
-          _PUSH(&r.temp_lines, (/*typ = array_string   tmp_typ=string*/ line),
-                tmp33, string);
-        };
-      };
-
-      if (r.indent > 0) {
-
-        continue;
-      };
-
-      r.line = tos3("");
-    };
-
-    if (string_starts_with(r.line, tos3("print"))) {
-
-      string source_code = string_add(
-          string_add(string_add(array_string_join(r.functions, tos3("\n")),
-                                array_string_join(r.lines, tos3("\n"))),
-                     tos3("\n")),
-          r.line);
-
-      os__write_file(file, source_code);
-
-      Option_os__Result tmp34 = os__exec(_STR(
-          "\"%.*s\" run %.*s -repl", vexe.len, vexe.str, file.len, file.str));
-      if (!tmp34.ok) {
-        string err = tmp34.error;
-        int errcode = tmp34.ecode;
-
-        compiler__verror(err);
-
-        array_string tmp35 = new_array_from_c_array(
-            0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-        {
-
-          os__rm(file);
-
-          os__rm(temp_file);
-
-          os__rm(string_substr2(file, 0, file.len - 2, false));
-
-          os__rm(string_substr2(temp_file, 0, temp_file.len - 2, false));
-        }
-        return tmp35;
-        ;
-      }
-      os__Result s = *(os__Result *)tmp34.data;
-      ;
-
-      array_string vals = string_split(s.output, tos3("\n"));
-
-      for (int i = 0; i < vals.len; i++) {
-
-        println((*(string *)array_get(vals, i)));
-      };
-
-    } else {
-
-      string temp_line = r.line;
-
-      bool temp_flag = 0;
-
-      bool func_call = compiler__Repl_function_call(&/* ? */ r, r.line);
-
-      if (!(string_contains(r.line, tos3(" ")) ||
-            string_contains(r.line, tos3(":")) ||
-            string_contains(r.line, tos3("=")) ||
-            string_contains(r.line, tos3(",")) ||
-            string_eq(r.line, tos3(""))) &&
-          !func_call) {
-
-        temp_line = _STR("println(%.*s)", r.line.len, r.line.str);
-
-        temp_flag = 1;
-      };
-
-      string temp_source_code = string_add(
-          string_add(
-              string_add(
-                  string_add(
-                      string_add(array_string_join(r.functions, tos3("\n")),
-                                 array_string_join(r.lines, tos3("\n"))),
-                      tos3("\n")),
-                  array_string_join(r.temp_lines, tos3("\n"))),
-              tos3("\n")),
-          temp_line);
-
-      os__write_file(temp_file, temp_source_code);
-
-      Option_os__Result tmp38 =
-          os__exec(_STR("\"%.*s\" run %.*s -repl", vexe.len, vexe.str,
-                        temp_file.len, temp_file.str));
-      if (!tmp38.ok) {
-        string err = tmp38.error;
-        int errcode = tmp38.ecode;
-
-        compiler__verror(err);
-
-        array_string tmp39 = new_array_from_c_array(
-            0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-        {
-
-          os__rm(file);
-
-          os__rm(temp_file);
-
-          os__rm(string_substr2(file, 0, file.len - 2, false));
-
-          os__rm(string_substr2(temp_file, 0, temp_file.len - 2, false));
-        }
-        return tmp39;
-        ;
-      }
-      os__Result s = *(os__Result *)tmp38.data;
-      ;
-
-      if (!func_call && s.exit_code == 0 && !temp_flag) {
-
-        while (r.temp_lines.len > 0) {
-
-          if (!string_starts_with((*(string *)array_get(r.temp_lines, 0)),
-                                  tos3("print"))) {
-
-            _PUSH(&r.lines,
-                  (/*typ = array_string   tmp_typ=string*/ (
-                      *(string *)array_get(r.temp_lines, 0))),
-                  tmp42, string);
-          };
-
-          v_array_delete(&/* ? */ r.temp_lines, 0);
-        };
-
-        _PUSH(&r.lines, (/*typ = array_string   tmp_typ=string*/ r.line), tmp45,
-              string);
-
-      } else {
-
-        while (r.temp_lines.len > 0) {
-
-          v_array_delete(&/* ? */ r.temp_lines, 0);
-        };
-      };
-
-      array_string vals = string_split(s.output, tos3("\n"));
-
-      for (int i = 0; i < vals.len; i++) {
-
-        println((*(string *)array_get(vals, i)));
-      };
-    };
-  };
-
-  array_string tmp48 = r.lines;
-  {
-
-    os__rm(file);
-
-    os__rm(temp_file);
-
-    os__rm(string_substr2(file, 0, file.len - 2, false));
-
-    os__rm(string_substr2(temp_file, 0, temp_file.len - 2, false));
-  }
-  return tmp48;
-  ;
-
-  {
-
-    os__rm(file);
-
-    os__rm(temp_file);
-
-    os__rm(string_substr2(file, 0, file.len - 2, false));
-
-    os__rm(string_substr2(temp_file, 0, temp_file.len - 2, false));
-  }
 }
 compiler__Scanner *compiler__new_scanner_file(string file_path) {
 
