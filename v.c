@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d5cf4d6"
+#define V_COMMIT_HASH "b1730b7"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e8d3400"
+#define V_COMMIT_HASH "d5cf4d6"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -16586,8 +16586,6 @@ compiler__V *compiler__new_v(array_string args) {
   if (string_contains(out_name, os__path_separator)) {
 
     string d = string_all_before_last(out_name, os__path_separator);
-
-    println(string_add(tos3("DIRRR "), d));
 
     if (!os__dir_exists(d)) {
 
