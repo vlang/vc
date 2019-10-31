@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "987f5fd"
+#define V_COMMIT_HASH "91df08f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "01dba47"
+#define V_COMMIT_HASH "987f5fd"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -502,6 +502,7 @@ struct compiler__Preferences {
   bool autofree;
   bool compress;
   string comptime_define;
+  bool fast;
 };
 
 struct compiler__ScanRes {
@@ -8070,31 +8071,39 @@ void compiler__V_cc(compiler__V *v) {
 #endif
   ;
 
+  if (v->pref->fast) {
+
 #ifdef __linux__
 
 #ifndef __BIONIC__
 
-  string vdir = os__dir(vexe);
+    string vdir = os__dir(vexe);
 
-  string tcc_3rd = _STR("%.*s/thirdparty/tcc/bin/tcc", vdir.len, vdir.str);
+    string tcc_3rd = _STR("%.*s/thirdparty/tcc/bin/tcc", vdir.len, vdir.str);
 
-  string tcc_path = tos3("/var/tmp/tcc/bin/tcc");
+    string tcc_path = tos3("/var/tmp/tcc/bin/tcc");
 
-  if (os__file_exists(tcc_3rd) && !os__file_exists(tcc_path)) {
+    if (os__file_exists(tcc_3rd) && !os__file_exists(tcc_path)) {
 
-    os__system(_STR("mv %.*s/thirdparty/tcc /var/tmp/", vdir.len, vdir.str));
-  };
+      os__system(_STR("mv %.*s/thirdparty/tcc /var/tmp/", vdir.len, vdir.str));
+    };
 
-  if (string_eq(v->pref->ccompiler, tos3("cc")) && os__file_exists(tcc_path)) {
+    if (string_eq(v->pref->ccompiler, tos3("cc")) &&
+        os__file_exists(tcc_path)) {
 
-    v->pref->ccompiler = tcc_path;
-  };
-
-#endif
-  ;
+      v->pref->ccompiler = tcc_path;
+    };
 
 #endif
-  ;
+    ;
+
+#else
+
+    compiler__verror(tos3("-fast is only supported on Linux right now"));
+
+#endif
+    ;
+  };
 
   compiler__V_log(&/* ? */ *v,
                   _STR("cc() isprod=%d outname=%.*s", v->pref->is_prod,
@@ -15404,7 +15413,7 @@ Option_int compiler__V_get_file_parser_index(compiler__V *v, string file) {
   if (_IN_MAP((file_path), v->file_parser_idx)) {
 
     int tmp2 = 0;
-    bool tmp3 = map_get(/*main.v : 152*/ v->file_parser_idx, file_path, &tmp2);
+    bool tmp3 = map_get(/*main.v : 153*/ v->file_parser_idx, file_path, &tmp2);
 
     int tmp4 = OPTION_CAST(int)(tmp2);
     return opt_ok(&tmp4, sizeof(int));
@@ -16706,6 +16715,7 @@ compiler__V *compiler__new_v(array_string args) {
           .is_run = _IN(string, (tos3("run")), args),
           .autofree = _IN(string, (tos3("-autofree")), args),
           .compress = _IN(string, (tos3("-compress")), args),
+          .fast = _IN(string, (tos3("-fast")), args),
           .is_repl = is_repl,
           .build_mode = build_mode,
           .cflags = cflags,
