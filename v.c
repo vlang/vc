@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7fa33fc"
+#define V_COMMIT_HASH "114953f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "07ad60b"
+#define V_COMMIT_HASH "7fa33fc"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -23962,7 +23962,7 @@ string compiler__Parser_match_statement(compiler__Parser *p, bool is_expr) {
 
   if (is_expr) {
 
-    compiler__Parser_error(p, tos3("Match expession requires \"else\""));
+    compiler__Parser_error(p, tos3("Match expression requires \"else\""));
   };
 
   p->returns = 0;
