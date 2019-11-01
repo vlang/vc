@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fe9d884"
+#define V_COMMIT_HASH "7b1993b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "de8297c"
+#define V_COMMIT_HASH "fe9d884"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1701,6 +1701,9 @@ void compiler__Parser_fgenln(compiler__Parser *p, string s);
 void compiler__Parser_fmt_inc(compiler__Parser *p);
 void compiler__Parser_fmt_dec(compiler__Parser *p);
 void compiler__launch_tool(string tname);
+string filepath__ext(string path);
+bool filepath__is_abs(string path);
+string filepath__join(string base, _V_FnVargs_string *dirs);
 void time__remove_me_when_c_bug_is_fixed();
 time__Time time__now();
 time__Time time__random();
@@ -6904,19 +6907,9 @@ void os__mkdir_all(string path) {
 }
 string os__join(string base, _V_FnVargs_string *dirs) {
 
-  strings__Builder path = strings__new_builder(50);
+  println(tos3("use filepath.join"));
 
-  strings__Builder_write(&/* ? */ path, string_trim_right(base, tos3("\\/")));
-
-  for (int tmp36 = 0; tmp36 < dirs->len; tmp36++) {
-    string d = ((string *)dirs->args)[tmp36];
-
-    strings__Builder_write(&/* ? */ path, os__path_separator);
-
-    strings__Builder_write(&/* ? */ path, d);
-  };
-
-  return strings__Builder_str(path);
+  return filepath__join(base, dirs);
 }
 array_string os__init_os_args(int argc, byteptr *argv) {
 
@@ -7578,11 +7571,11 @@ void compiler__V_cc(compiler__V *v) {
 
   } else if (v->pref->is_cache) {
 
-    string builtin_o_path =
-        os__join(compiler__v_modules_path,
-                 &(_V_FnVargs_string){
-                     .len = 3,
-                     .args = {tos3("cache"), tos3("vlib"), tos3("builtin.o")}});
+    string builtin_o_path = filepath__join(
+        compiler__v_modules_path,
+        &(_V_FnVargs_string){
+            .len = 3,
+            .args = {tos3("cache"), tos3("vlib"), tos3("builtin.o")}});
 
     _PUSH(&a,
           (/*typ = array_string   tmp_typ=string*/ string_replace(
@@ -14835,7 +14828,7 @@ Option_int compiler__V_get_file_parser_index(compiler__V *v, string file) {
   if (_IN_MAP((file_path), v->file_parser_idx)) {
 
     int tmp2 = 0;
-    bool tmp3 = map_get(/*main.v : 153*/ v->file_parser_idx, file_path, &tmp2);
+    bool tmp3 = map_get(/*main.v : 154*/ v->file_parser_idx, file_path, &tmp2);
 
     int tmp4 = OPTION_CAST(int)(tmp2);
     return opt_ok(&tmp4, sizeof(int));
@@ -15682,7 +15675,7 @@ array_string compiler__V_get_user_files(compiler__V *v) {
   if (v->pref->is_test) {
 
     _PUSH(&user_files,
-          (/*typ = array_string   tmp_typ=string*/ os__join(
+          (/*typ = array_string   tmp_typ=string*/ filepath__join(
               v->vroot,
               &(_V_FnVargs_string){.len = 4,
                                    .args = {tos3("vlib"), tos3("compiler"),
@@ -15694,7 +15687,7 @@ array_string compiler__V_get_user_files(compiler__V *v) {
   if (v->pref->is_test && v->pref->is_stats) {
 
     _PUSH(&user_files,
-          (/*typ = array_string   tmp_typ=string*/ os__join(
+          (/*typ = array_string   tmp_typ=string*/ filepath__join(
               v->vroot,
               &(_V_FnVargs_string){.len = 4,
                                    .args = {tos3("vlib"), tos3("compiler"),
@@ -28404,6 +28397,45 @@ void compiler__launch_tool(string tname) {
   };
 
   v_exit(os__system(tool_command));
+}
+string filepath__ext(string path) {
+
+  int pos = string_last_index_byte(path, '.');
+
+  if (pos != -1) {
+
+    return string_substr2(path, pos, -1, true);
+  };
+
+  return tos3("");
+}
+bool filepath__is_abs(string path) {
+
+#ifdef _WIN32
+
+  return string_at(path, 0) == '/' ||
+         (byte_is_letter(string_at(path, 0)) && string_at(path, 1) == ':');
+
+#endif
+  ;
+
+  return string_at(path, 0) == '/';
+}
+string filepath__join(string base, _V_FnVargs_string *dirs) {
+
+  strings__Builder path = strings__new_builder(50);
+
+  strings__Builder_write(&/* ? */ path, string_trim_right(base, tos3("\\/")));
+
+  for (int tmp12 = 0; tmp12 < dirs->len; tmp12++) {
+    string d = ((string *)dirs->args)[tmp12];
+
+    strings__Builder_write(&/* ? */ path, os__path_separator);
+
+    strings__Builder_write(&/* ? */ path, d);
+  };
+
+  return strings__Builder_str(path);
 }
 void time__remove_me_when_c_bug_is_fixed() {}
 time__Time time__now() {
