@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "59efd42"
+#define V_COMMIT_HASH "80ba8f0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a83e233"
+#define V_COMMIT_HASH "59efd42"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -214,6 +214,7 @@ typedef struct compiler__V compiler__V;
 typedef array array_compiler__Parser;
 typedef struct compiler__Preferences compiler__Preferences;
 typedef Option Option_int;
+typedef struct compiler__VhGen compiler__VhGen;
 typedef array array_compiler__Token;
 typedef struct compiler__ImportTable compiler__ImportTable;
 typedef Option Option_string;
@@ -703,6 +704,14 @@ struct compiler__Scanner {
   array_int line_ends;
   int nlines;
   bool is_vh;
+};
+
+struct compiler__VhGen {
+  int i;
+  strings__Builder consts;
+  strings__Builder fns;
+  strings__Builder types;
+  array_compiler__Token tokens;
 };
 
 struct os__Win32finddata {
@@ -1454,10 +1463,10 @@ compiler__OS compiler__os_from_string(string os);
 void compiler__set_vroot_folder(string vroot_path);
 compiler__V *compiler__new_v_compiler_with_args(array_string args);
 void compiler__generate_vh(string mod);
-string compiler__generate_fn(array_compiler__Token tokens, int i);
-string compiler__generate_alias(array_compiler__Token tokens, int i);
-string compiler__generate_const(array_compiler__Token tokens, int i);
-string compiler__generate_type(array_compiler__Token tokens, int i);
+void compiler__VhGen_generate_fn(compiler__VhGen *g);
+void compiler__VhGen_generate_alias(compiler__VhGen *g);
+void compiler__VhGen_generate_const(compiler__VhGen *g);
+void compiler__VhGen_generate_type(compiler__VhGen *g);
 string compiler__Table_qualify_module(compiler__Table *table, string mod,
                                       string file_path);
 compiler__ImportTable compiler__new_import_table();
@@ -11126,7 +11135,8 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
 
   f.fn_name_token_idx = compiler__Parser_cur_tok_index(&/* ? */ *p);
 
-  if (string_eq(f.name, tos3("init")) && !f.is_method && f.is_public) {
+  if (string_eq(f.name, tos3("init")) && !f.is_method && f.is_public &&
+      !p->is_vh) {
 
     compiler__Parser_error(p, tos3("init function cannot be public"));
   };
@@ -16533,7 +16543,7 @@ compiler__V *compiler__new_v_compiler_with_args(array_string args) {
 }
 void compiler__generate_vh(string mod) {
 
-  printf("\n\n\n\nGenerating a V header file for module `%.*s`\n", mod.len,
+  printf("\n\n\n\n1Generating a V header file for module `%.*s`\n", mod.len,
          mod.str);
 
   string vexe = os__executable();
@@ -16590,21 +16600,25 @@ void compiler__generate_vh(string mod) {
         !string_ends_with(it, tos3("_win.v")) &&
         !string_ends_with(it, tos3("_lin.v")) &&
         !string_contains(it, tos3("/examples")) &&
+        !string_contains(it, tos3("_js.v")) &&
         !string_contains(it, tos3("/js")))
       array_push(&tmp2, &it);
   }
   array_string filtered = tmp2;
+
+  println(tos3("f:"));
 
   println(array_string_str(filtered));
 
   compiler__V *v = compiler__new_v(new_array_from_c_array(
       1, 1, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 1){tos3("foo.v")}));
 
-  strings__Builder consts = strings__new_builder(100);
-
-  strings__Builder fns = strings__new_builder(100);
-
-  strings__Builder types = strings__new_builder(100);
+  compiler__VhGen g =
+      (compiler__VhGen){.consts = strings__new_builder(1000),
+                        .fns = strings__new_builder(1000),
+                        .types = strings__new_builder(1000),
+                        .i = 0,
+                        .tokens = new_array(0, 1, sizeof(compiler__Token))};
 
   array_string tmp3 = filtered;
   for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
@@ -16616,45 +16630,45 @@ void compiler__generate_vh(string mod) {
 
     compiler__Parser_parse(&/* ? */ p, compiler__compiler__Pass_decl);
 
-    array_compiler__Token tmp5 = p.tokens;
-    for (int i = 0; i < tmp5.len; i++) {
-      compiler__Token tok = ((compiler__Token *)tmp5.data)[i];
+    g.tokens = p.tokens;
 
-      if (!compiler__TokenKind_is_decl(p.tok)) {
+    g.i = 0;
+
+    for (; g.i < p.tokens.len; g.i++) {
+
+      if (!compiler__TokenKind_is_decl(
+              (*(compiler__Token *)array_get(p.tokens, g.i)).tok)) {
 
         continue;
       };
 
-      compiler__TokenKind tmp6 = tok.tok;
+      compiler__TokenKind tmp9 =
+          (*(compiler__Token *)array_get(g.tokens, g.i)).tok;
 
-      if (tmp6 == compiler__compiler__TokenKind_key_fn) {
+      if (tmp9 == compiler__compiler__TokenKind_key_fn) {
 
-        strings__Builder_writeln(&/* ? */ fns,
-                                 compiler__generate_fn(p.tokens, i));
+        compiler__VhGen_generate_fn(&/* ? */ g);
 
-      } else if (tmp6 == compiler__compiler__TokenKind_key_const) {
+      } else if (tmp9 == compiler__compiler__TokenKind_key_const) {
 
-        strings__Builder_writeln(&/* ? */ consts,
-                                 compiler__generate_const(p.tokens, i));
+        compiler__VhGen_generate_const(&/* ? */ g);
 
-      } else if (tmp6 == compiler__compiler__TokenKind_key_struct) {
+      } else if (tmp9 == compiler__compiler__TokenKind_key_struct) {
 
-        strings__Builder_writeln(&/* ? */ types,
-                                 compiler__generate_type(p.tokens, i));
+        compiler__VhGen_generate_type(&/* ? */ g);
 
-      } else if (tmp6 == compiler__compiler__TokenKind_key_type) {
+      } else if (tmp9 == compiler__compiler__TokenKind_key_type) {
 
-        strings__Builder_writeln(&/* ? */ types,
-                                 compiler__generate_alias(p.tokens, i));
+        compiler__VhGen_generate_alias(&/* ? */ g);
       };
     };
   };
 
   string result = string_add(
-      string_add(strings__Builder_str(consts), strings__Builder_str(types)),
-      string_replace(
-          string_replace(strings__Builder_str(fns), tos3("\n\n\n"), tos3("\n")),
-          tos3("\n\n"), tos3("\n")));
+      string_add(strings__Builder_str(g.types), strings__Builder_str(g.consts)),
+      string_replace(string_replace(strings__Builder_str(g.fns), tos3("\n\n\n"),
+                                    tos3("\n")),
+                     tos3("\n\n"), tos3("\n")));
 
   os__File_writeln(
       out, string_replace(string_replace(result, tos3("[ ] "), tos3("[]")),
@@ -16662,16 +16676,17 @@ void compiler__generate_vh(string mod) {
 
   os__File_close(out);
 }
-string compiler__generate_fn(array_compiler__Token tokens, int i) {
+void compiler__VhGen_generate_fn(compiler__VhGen *g) {
 
-  strings__Builder out = strings__new_builder(100);
+  if (g->i >= g->tokens.len - 2) {
 
-  compiler__Token next = (*(compiler__Token *)array_get(tokens, i + 1));
+    return;
+  };
 
-  if ((*(compiler__Token *)array_get(tokens, i - 1)).tok !=
-      compiler__compiler__TokenKind_key_pub) {
+  compiler__Token next = (*(compiler__Token *)array_get(g->tokens, g->i + 1));
 
-    return tos3("");
+  if (g->i > 0 && (*(compiler__Token *)array_get(g->tokens, g->i - 1)).tok !=
+                      compiler__compiler__TokenKind_key_pub) {
   };
 
   if (next.tok == compiler__compiler__TokenKind_name &&
@@ -16679,110 +16694,102 @@ string compiler__generate_fn(array_compiler__Token tokens, int i) {
 
     println(tos3("skipping C"));
 
-    return tos3("");
+    return;
   };
 
-  compiler__Token tok = (*(compiler__Token *)array_get(tokens, i));
+  compiler__Token tok = (*(compiler__Token *)array_get(g->tokens, g->i));
 
-  while (i < tokens.len && tok.tok != compiler__compiler__TokenKind_lcbr) {
+  while (g->i < g->tokens.len - 1 &&
+         tok.tok != compiler__compiler__TokenKind_lcbr) {
 
-    next = (*(compiler__Token *)array_get(tokens, i + 1));
+    next = (*(compiler__Token *)array_get(g->tokens, g->i + 1));
 
-    strings__Builder_write(&/* ? */ out, compiler__Token_str(tok));
+    strings__Builder_write(&/* ? */ g->fns, compiler__Token_str(tok));
 
     if (tok.tok != compiler__compiler__TokenKind_lpar &&
         !(next.tok == compiler__compiler__TokenKind_comma ||
           next.tok == compiler__compiler__TokenKind_rpar)) {
 
-      strings__Builder_write(&/* ? */ out, tos3(" "));
+      strings__Builder_write(&/* ? */ g->fns, tos3(" "));
     };
 
-    i++;
+    g->i++;
 
-    tok = (*(compiler__Token *)array_get(tokens, i));
+    tok = (*(compiler__Token *)array_get(g->tokens, g->i));
   };
 
-  return strings__Builder_str(out);
+  strings__Builder_writeln(&/* ? */ g->fns, tos3(""));
 }
-string compiler__generate_alias(array_compiler__Token tokens, int i) {
+void compiler__VhGen_generate_alias(compiler__VhGen *g) {
 
-  strings__Builder out = strings__new_builder(100);
+  compiler__Token tok = (*(compiler__Token *)array_get(g->tokens, g->i));
 
-  compiler__Token tok = (*(compiler__Token *)array_get(tokens, i));
+  while (g->i < g->tokens.len - 1) {
 
-  while (i < tokens.len - 1) {
+    strings__Builder_write(&/* ? */ g->types, compiler__Token_str(tok));
 
-    strings__Builder_write(&/* ? */ out, compiler__Token_str(tok));
+    strings__Builder_write(&/* ? */ g->types, tos3(" "));
 
-    strings__Builder_write(&/* ? */ out, tos3(" "));
-
-    if (tok.line_nr != (*(compiler__Token *)array_get(tokens, i + 1)).line_nr) {
+    if (tok.line_nr !=
+        (*(compiler__Token *)array_get(g->tokens, g->i + 1)).line_nr) {
 
       break;
     };
 
-    i++;
+    g->i++;
 
-    tok = (*(compiler__Token *)array_get(tokens, i));
+    tok = (*(compiler__Token *)array_get(g->tokens, g->i));
   };
 
-  strings__Builder_writeln(&/* ? */ out, tos3("\n"));
-
-  return strings__Builder_str(out);
+  strings__Builder_writeln(&/* ? */ g->types, tos3("\n"));
 }
-string compiler__generate_const(array_compiler__Token tokens, int i) {
+void compiler__VhGen_generate_const(compiler__VhGen *g) {
 
-  strings__Builder out = strings__new_builder(100);
+  compiler__Token tok = (*(compiler__Token *)array_get(g->tokens, g->i));
 
-  compiler__Token tok = (*(compiler__Token *)array_get(tokens, i));
+  while (g->i < g->tokens.len &&
+         tok.tok != compiler__compiler__TokenKind_rpar) {
 
-  while (i < tokens.len && tok.tok != compiler__compiler__TokenKind_rpar) {
+    strings__Builder_write(&/* ? */ g->consts, compiler__Token_str(tok));
 
-    strings__Builder_write(&/* ? */ out, compiler__Token_str(tok));
+    strings__Builder_write(&/* ? */ g->consts, tos3(" "));
 
-    strings__Builder_write(&/* ? */ out, tos3(" "));
-
-    if ((*(compiler__Token *)array_get(tokens, i + 2)).tok ==
+    if ((*(compiler__Token *)array_get(g->tokens, g->i + 2)).tok ==
         compiler__compiler__TokenKind_assign) {
 
-      strings__Builder_write(&/* ? */ out, tos3("\n\t"));
+      strings__Builder_write(&/* ? */ g->consts, tos3("\n\t"));
     };
 
-    i++;
+    g->i++;
 
-    tok = (*(compiler__Token *)array_get(tokens, i));
+    tok = (*(compiler__Token *)array_get(g->tokens, g->i));
   };
 
-  strings__Builder_writeln(&/* ? */ out, tos3("\n)"));
-
-  return strings__Builder_str(out);
+  strings__Builder_writeln(&/* ? */ g->consts, tos3("\n)"));
 }
-string compiler__generate_type(array_compiler__Token tokens, int i) {
+void compiler__VhGen_generate_type(compiler__VhGen *g) {
 
-  strings__Builder out = strings__new_builder(100);
+  compiler__Token tok = (*(compiler__Token *)array_get(g->tokens, g->i));
 
-  compiler__Token tok = (*(compiler__Token *)array_get(tokens, i));
+  while (g->i < g->tokens.len &&
+         tok.tok != compiler__compiler__TokenKind_rcbr) {
 
-  while (i < tokens.len && tok.tok != compiler__compiler__TokenKind_rcbr) {
+    strings__Builder_write(&/* ? */ g->types, compiler__Token_str(tok));
 
-    strings__Builder_write(&/* ? */ out, compiler__Token_str(tok));
+    strings__Builder_write(&/* ? */ g->types, tos3(" "));
 
-    strings__Builder_write(&/* ? */ out, tos3(" "));
+    if ((*(compiler__Token *)array_get(g->tokens, g->i + 1)).line_nr !=
+        (*(compiler__Token *)array_get(g->tokens, g->i)).line_nr) {
 
-    if ((*(compiler__Token *)array_get(tokens, i + 1)).line_nr !=
-        (*(compiler__Token *)array_get(tokens, i)).line_nr) {
-
-      strings__Builder_write(&/* ? */ out, tos3("\n\t"));
+      strings__Builder_write(&/* ? */ g->types, tos3("\n\t"));
     };
 
-    i++;
+    g->i++;
 
-    tok = (*(compiler__Token *)array_get(tokens, i));
+    tok = (*(compiler__Token *)array_get(g->tokens, g->i));
   };
 
-  strings__Builder_writeln(&/* ? */ out, tos3("\n}"));
-
-  return strings__Builder_str(out);
+  strings__Builder_writeln(&/* ? */ g->types, tos3("\n}"));
 }
 string compiler__Table_qualify_module(compiler__Table *table, string mod,
                                       string file_path) {
