@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "15f971e"
+#define V_COMMIT_HASH "e15abb3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a691cc8"
+#define V_COMMIT_HASH "15f971e"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1418,7 +1418,6 @@ string compiler__get_param_after(string joined_args, string arg, string def);
 void compiler__V_log(compiler__V *v, string s);
 compiler__V *compiler__new_v(array_string args);
 array_string compiler__env_vflags_and_os_args();
-void compiler__update_v();
 void compiler__vfmt(array_string args);
 void compiler__install_v(array_string args);
 void compiler__run_repl();
@@ -16186,73 +16185,6 @@ array_string compiler__env_vflags_and_os_args() {
 
   return args;
 }
-void compiler__update_v() {
-
-  println(tos3("Updating V..."));
-
-  string vroot = os__dir(compiler__vexe_path());
-
-  Option_os__Result tmp93 = os__exec(_STR(
-      "git -C \"%.*s\" pull --rebase origin master", vroot.len, vroot.str));
-  if (!tmp93.ok) {
-    string err = tmp93.error;
-    int errcode = tmp93.ecode;
-
-    compiler__verror(err);
-
-    return;
-  }
-  os__Result s = *(os__Result *)tmp93.data;
-  ;
-
-  println(s.output);
-
-#ifdef _WIN32
-
-  string v_backup_file = _STR("%.*s/v_old.exe", vroot.len, vroot.str);
-
-  if (os__file_exists(v_backup_file)) {
-
-    os__rm(v_backup_file);
-  };
-
-  os__mv(_STR("%.*s/v.exe", vroot.len, vroot.str), v_backup_file);
-
-  Option_os__Result tmp94 =
-      os__exec(_STR("\"%.*s/make.bat\"", vroot.len, vroot.str));
-  if (!tmp94.ok) {
-    string err = tmp94.error;
-    int errcode = tmp94.ecode;
-
-    compiler__verror(err);
-
-    return;
-  }
-  os__Result s2 = *(os__Result *)tmp94.data;
-  ;
-
-  println(s2.output);
-
-#else
-
-  Option_os__Result tmp95 =
-      os__exec(_STR("make -C \"%.*s\"", vroot.len, vroot.str));
-  if (!tmp95.ok) {
-    string err = tmp95.error;
-    int errcode = tmp95.ecode;
-
-    compiler__verror(err);
-
-    return;
-  }
-  os__Result s2 = *(os__Result *)tmp95.data;
-  ;
-
-  println(s2.output);
-
-#endif
-  ;
-}
 void compiler__vfmt(array_string args) {
 
   string file = *(string *)array_last(args);
@@ -16294,17 +16226,17 @@ void compiler__install_v(array_string args) {
 
     os__chdir(string_add(vroot, tos3("/tools")));
 
-    Option_os__Result tmp96 = os__exec(_STR(
+    Option_os__Result tmp93 = os__exec(_STR(
         "\"%.*s\" -o %.*s vget.v", vexec.len, vexec.str, vget.len, vget.str));
-    if (!tmp96.ok) {
-      string err = tmp96.error;
-      int errcode = tmp96.ecode;
+    if (!tmp93.ok) {
+      string err = tmp93.error;
+      int errcode = tmp93.ecode;
 
       compiler__verror(err);
 
       return;
     }
-    os__Result vget_compilation = *(os__Result *)tmp96.data;
+    os__Result vget_compilation = *(os__Result *)tmp93.data;
     ;
 
     if (vget_compilation.exit_code != 0) {
@@ -16315,17 +16247,17 @@ void compiler__install_v(array_string args) {
     };
   };
 
-  Option_os__Result tmp97 = os__exec(string_add(
+  Option_os__Result tmp94 = os__exec(string_add(
       _STR("%.*s ", vget.len, vget.str), array_string_join(names, tos3(" "))));
-  if (!tmp97.ok) {
-    string err = tmp97.error;
-    int errcode = tmp97.ecode;
+  if (!tmp94.ok) {
+    string err = tmp94.error;
+    int errcode = tmp94.ecode;
 
     compiler__verror(err);
 
     return;
   }
-  os__Result vgetresult = *(os__Result *)tmp97.data;
+  os__Result vgetresult = *(os__Result *)tmp94.data;
   ;
 
   if (vgetresult.exit_code != 0) {
@@ -16345,17 +16277,17 @@ void compiler__run_repl() {
 
   os__chdir(string_add(vroot, tos3("/tools")));
 
-  Option_os__Result tmp98 = os__exec(_STR("\"%.*s\" -o %.*s vrepl.v", vexec.len,
+  Option_os__Result tmp95 = os__exec(_STR("\"%.*s\" -o %.*s vrepl.v", vexec.len,
                                           vexec.str, vrepl.len, vrepl.str));
-  if (!tmp98.ok) {
-    string err = tmp98.error;
-    int errcode = tmp98.ecode;
+  if (!tmp95.ok) {
+    string err = tmp95.error;
+    int errcode = tmp95.ecode;
 
     compiler__verror(err);
 
     return;
   }
-  os__Result vrepl_compilation = *(os__Result *)tmp98.data;
+  os__Result vrepl_compilation = *(os__Result *)tmp95.data;
   ;
 
   if (vrepl_compilation.exit_code != 0) {
@@ -16423,49 +16355,49 @@ string compiler__cescaped_path(string s) {
 }
 compiler__OS compiler__os_from_string(string os) {
 
-  string tmp99 = os;
+  string tmp96 = os;
 
-  if (string_eq(tmp99, tos3("linux"))) {
+  if (string_eq(tmp96, tos3("linux"))) {
 
     return compiler__compiler__OS_linux;
 
-  } else if (string_eq(tmp99, tos3("windows"))) {
+  } else if (string_eq(tmp96, tos3("windows"))) {
 
     return compiler__compiler__OS_windows;
 
-  } else if (string_eq(tmp99, tos3("mac"))) {
+  } else if (string_eq(tmp96, tos3("mac"))) {
 
     return compiler__compiler__OS_mac;
 
-  } else if (string_eq(tmp99, tos3("freebsd"))) {
+  } else if (string_eq(tmp96, tos3("freebsd"))) {
 
     return compiler__compiler__OS_freebsd;
 
-  } else if (string_eq(tmp99, tos3("openbsd"))) {
+  } else if (string_eq(tmp96, tos3("openbsd"))) {
 
     return compiler__compiler__OS_openbsd;
 
-  } else if (string_eq(tmp99, tos3("netbsd"))) {
+  } else if (string_eq(tmp96, tos3("netbsd"))) {
 
     return compiler__compiler__OS_netbsd;
 
-  } else if (string_eq(tmp99, tos3("dragonfly"))) {
+  } else if (string_eq(tmp96, tos3("dragonfly"))) {
 
     return compiler__compiler__OS_dragonfly;
 
-  } else if (string_eq(tmp99, tos3("js"))) {
+  } else if (string_eq(tmp96, tos3("js"))) {
 
     return compiler__compiler__OS_js;
 
-  } else if (string_eq(tmp99, tos3("solaris"))) {
+  } else if (string_eq(tmp96, tos3("solaris"))) {
 
     return compiler__compiler__OS_solaris;
 
-  } else if (string_eq(tmp99, tos3("android"))) {
+  } else if (string_eq(tmp96, tos3("android"))) {
 
     return compiler__compiler__OS_android;
 
-  } else if (string_eq(tmp99, tos3("msvc"))) {
+  } else if (string_eq(tmp96, tos3("msvc"))) {
 
     compiler__verror(tos3("use the flag `-cc msvc` to build using msvc"));
   };
@@ -16494,7 +16426,7 @@ compiler__V *compiler__new_v_compiler_with_args(array_string args) {
   array_string allargs = new_array_from_c_array(
       1, 1, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 1){vexe});
 
-  _PUSH_MANY(&allargs, (/*typ = array_string   tmp_typ=string*/ args), tmp100,
+  _PUSH_MANY(&allargs, (/*typ = array_string   tmp_typ=string*/ args), tmp97,
              array_string);
 
   os__setenv(tos3("VOSARGS"), array_string_join(allargs, tos3(" ")), 1);
@@ -29355,7 +29287,7 @@ void main__main() {
 
   } else if (_IN(string, (tos3("up")), commands)) {
 
-    compiler__update_v();
+    compiler__launch_tool(tos3("vup"));
 
     return;
 
