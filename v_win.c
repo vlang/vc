@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "15d4f68"
+#define V_COMMIT_HASH "a83e233"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e15abb3"
+#define V_COMMIT_HASH "15d4f68"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -7540,6 +7540,8 @@ void compiler__V_cc(compiler__V *v) {
 
   string vexe = compiler__vexe_path();
 
+  string vdir = os__dir(vexe);
+
   if (string_ends_with(v->out_name, tos3(".c")) ||
       string_ends_with(v->out_name, tos3(".js"))) {
 
@@ -7549,15 +7551,13 @@ void compiler__V_cc(compiler__V *v) {
 
       string vjs_path = string_add(vexe, tos3("js"));
 
-      string dir = os__dir(vexe);
-
       if (!os__file_exists(vjs_path)) {
 
         println(tos3("V.js compiler not found, building..."));
 
         int ret =
             os__system(_STR("%.*s -o %.*s -os js %.*s/v.v", vexe.len, vexe.str,
-                            vjs_path.len, vjs_path.str, dir.len, dir.str));
+                            vjs_path.len, vjs_path.str, vdir.len, vdir.str));
 
         if (ret == 0) {
 
@@ -7621,8 +7621,6 @@ void compiler__V_cc(compiler__V *v) {
 #ifdef __linux__
 
 #ifndef __BIONIC__
-
-    string vdir = os__dir(vexe);
 
     string tcc_3rd = _STR("%.*s/thirdparty/tcc/bin/tcc", vdir.len, vdir.str);
 
@@ -7737,21 +7735,26 @@ void compiler__V_cc(compiler__V *v) {
 
   if (string_ne(v->pref->ccompiler, tos3("msvc")) &&
       v->os != compiler__compiler__OS_freebsd) {
+
+    _PUSH(&a,
+          (/*typ = array_string   tmp_typ=string*/ tos3(
+              "-Werror=implicit-function-declaration")),
+          tmp5, string);
   };
 
-  array_string tmp5 =
+  array_string tmp6 =
       compiler__V_generate_hotcode_reloading_compiler_flags(&/* ? */ *v);
-  for (int tmp6 = 0; tmp6 < tmp5.len; tmp6++) {
-    string f = ((string *)tmp5.data)[tmp6];
+  for (int tmp7 = 0; tmp7 < tmp6.len; tmp7++) {
+    string f = ((string *)tmp6.data)[tmp7];
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ f), tmp7, string);
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ f), tmp8, string);
   };
 
   string libs = tos3("");
 
   if (v->pref->build_mode == compiler__compiler__BuildMode_build_module) {
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-c")), tmp8,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-c")), tmp9,
           string);
 
   } else if (v->pref->is_cache) {
@@ -7765,7 +7768,7 @@ void compiler__V_cc(compiler__V *v) {
     _PUSH(&a,
           (/*typ = array_string   tmp_typ=string*/ string_replace(
               builtin_o_path, tos3("builtin.o"), tos3("strconv.o"))),
-          tmp9, string);
+          tmp10, string);
 
     if (os__file_exists(builtin_o_path)) {
 
@@ -7780,9 +7783,9 @@ void compiler__V_cc(compiler__V *v) {
                       os__path_separator.len, os__path_separator.str));
     };
 
-    array_string tmp10 = v->table->imports;
-    for (int tmp11 = 0; tmp11 < tmp10.len; tmp11++) {
-      string imp = ((string *)tmp10.data)[tmp11];
+    array_string tmp11 = v->table->imports;
+    for (int tmp12 = 0; tmp12 < tmp11.len; tmp12++) {
+      string imp = ((string *)tmp11.data)[tmp12];
 
       if (string_contains(imp, tos3("vweb"))) {
 
@@ -7814,8 +7817,6 @@ void compiler__V_cc(compiler__V *v) {
 
         if (string_ends_with(path, tos3("vlib/ui.o"))) {
 
-          string vdir = os__dir(vexe);
-
           println(tos3("copying ui..."));
 
           os__cp(_STR("%.*s/thirdparty/ui/ui.o", vdir.len, vdir.str), path);
@@ -7836,7 +7837,7 @@ void compiler__V_cc(compiler__V *v) {
         _PUSH(&a,
               (/*typ = array_string   tmp_typ=string*/ tos3(
                   "-framework Cocoa -framework Carbon")),
-              tmp12, string);
+              tmp13, string);
       };
     };
   };
@@ -7844,13 +7845,13 @@ void compiler__V_cc(compiler__V *v) {
   if (v->pref->sanitize) {
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-fsanitize=leak")),
-          tmp13, string);
+          tmp14, string);
   };
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "-o \"%.*s\"", v->out_name.len, v->out_name.str)),
-        tmp14, string);
+        tmp15, string);
 
   if (os__dir_exists(v->out_name)) {
 
@@ -7861,17 +7862,17 @@ void compiler__V_cc(compiler__V *v) {
   if (v->os == compiler__compiler__OS_mac) {
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-x objective-c")),
-          tmp15, string);
+          tmp16, string);
   };
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "\"%.*s\"", v->out_name_c.len, v->out_name_c.str)),
-        tmp16, string);
+        tmp17, string);
 
   if (v->os == compiler__compiler__OS_mac) {
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-x none")), tmp17,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-x none")), tmp18,
           string);
   };
 
@@ -7880,7 +7881,7 @@ void compiler__V_cc(compiler__V *v) {
     _PUSH(&a,
           (/*typ = array_string   tmp_typ=string*/ tos3(
               "-mmacosx-version-min=10.7")),
-          tmp18, string);
+          tmp19, string);
   };
 
   array_compiler__CFlag cflags = compiler__V_get_os_cflags(&/* ? */ *v);
@@ -7888,14 +7889,14 @@ void compiler__V_cc(compiler__V *v) {
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/
          array_compiler__CFlag_c_options_only_object_files(cflags)),
-        tmp19, string);
+        tmp20, string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/
          array_compiler__CFlag_c_options_without_object_files(cflags)),
-        tmp20, string);
+        tmp21, string);
 
-  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ libs), tmp21, string);
+  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ libs), tmp22, string);
 
   if (v->pref->build_mode != compiler__compiler__BuildMode_build_module &&
       (v->os == compiler__compiler__OS_linux ||
@@ -7906,11 +7907,11 @@ void compiler__V_cc(compiler__V *v) {
        v->os == compiler__compiler__OS_solaris)) {
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-lm -lpthread ")),
-          tmp22, string);
+          tmp23, string);
 
     if (v->os == compiler__compiler__OS_linux) {
 
-      _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3(" -ldl ")), tmp23,
+      _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3(" -ldl ")), tmp24,
             string);
     };
   };
@@ -7918,7 +7919,7 @@ void compiler__V_cc(compiler__V *v) {
   if (v->os == compiler__compiler__OS_js &&
       string_eq(os__user_os(), tos3("linux"))) {
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-lm")), tmp24,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-lm")), tmp25,
           string);
   };
 
@@ -7940,16 +7941,16 @@ start:;
 
   i64 ticks = time__ticks();
 
-  Option_os__Result tmp25 = os__exec(cmd);
-  if (!tmp25.ok) {
-    string err = tmp25.error;
-    int errcode = tmp25.ecode;
+  Option_os__Result tmp26 = os__exec(cmd);
+  if (!tmp26.ok) {
+    string err = tmp26.error;
+    int errcode = tmp26.ecode;
 
     compiler__verror(err);
 
     return;
   }
-  os__Result res = *(os__Result *)tmp25.data;
+  os__Result res = *(os__Result *)tmp26.data;
   ;
 
   if (res.exit_code != 0) {
@@ -8105,9 +8106,9 @@ void compiler__V_cc_windows_cross(compiler__V *c) {
       v_exit(1);
     };
 
-    array_string tmp26 = c->table->imports;
-    for (int tmp27 = 0; tmp27 < tmp26.len; tmp27++) {
-      string imp = ((string *)tmp26.data)[tmp27];
+    array_string tmp27 = c->table->imports;
+    for (int tmp28 = 0; tmp28 < tmp27.len; tmp28++) {
+      string imp = ((string *)tmp27.data)[tmp28];
 
       libs = string_add(
           libs, _STR(" \"%.*s/vlib/%.*s.o\"", compiler__v_modules_path.len,
@@ -8203,9 +8204,9 @@ void compiler__V_cc_windows_cross(compiler__V *c) {
 }
 void compiler__V_build_thirdparty_obj_files(compiler__V *c) {
 
-  array_compiler__CFlag tmp28 = compiler__V_get_os_cflags(&/* ? */ *c);
-  for (int tmp29 = 0; tmp29 < tmp28.len; tmp29++) {
-    compiler__CFlag flag = ((compiler__CFlag *)tmp28.data)[tmp29];
+  array_compiler__CFlag tmp29 = compiler__V_get_os_cflags(&/* ? */ *c);
+  for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
+    compiler__CFlag flag = ((compiler__CFlag *)tmp29.data)[tmp30];
 
     if (string_ends_with(flag.value, tos3(".o"))) {
 
@@ -8270,9 +8271,9 @@ string compiler__get_cmdline_cflags(array_string args) {
 
   string cflags = tos3("");
 
-  array_string tmp30 = args;
-  for (int ci = 0; ci < tmp30.len; ci++) {
-    string cv = ((string *)tmp30.data)[ci];
+  array_string tmp31 = args;
+  for (int ci = 0; ci < tmp31.len; ci++) {
+    string cv = ((string *)tmp31.data)[ci];
 
     if (string_eq(cv, tos3("-cflags"))) {
 
@@ -16058,6 +16059,8 @@ compiler__V *compiler__new_v(array_string args) {
                    os__path_separator.str));
   };
 
+  string vroot = os__dir(compiler__vexe_path());
+
   strings__Builder vgen_buf = strings__new_builder(1000);
 
   strings__Builder_writeln(&/* ? */ vgen_buf,
@@ -16101,6 +16104,8 @@ compiler__V *compiler__new_v(array_string args) {
   if (string_contains(joined_args, tos3("build module "))) {
 
     build_mode = compiler__compiler__BuildMode_build_module;
+
+    os__chdir(vroot);
 
     string mod_path =
         (string_contains(dir, tos3("vlib")))
@@ -16234,8 +16239,6 @@ compiler__V *compiler__new_v(array_string args) {
 
     _os = compiler__os_from_string(target_os);
   };
-
-  string vroot = os__dir(compiler__vexe_path());
 
   if (!os__dir_exists(vroot) ||
       !os__dir_exists(string_add(vroot, tos3("/vlib/builtin")))) {
