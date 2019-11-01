@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a83e233"
+#define V_COMMIT_HASH "59efd42"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "15d4f68"
+#define V_COMMIT_HASH "a83e233"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1419,8 +1419,6 @@ void compiler__V_log(compiler__V *v, string s);
 compiler__V *compiler__new_v(array_string args);
 array_string compiler__env_vflags_and_os_args();
 void compiler__vfmt(array_string args);
-void compiler__install_v(array_string args);
-void compiler__run_repl();
 void compiler__create_symlink();
 string compiler__vexe_path();
 void compiler__verror(string s);
@@ -2086,14 +2084,20 @@ array_compiler__TokenKind compiler__AssignTokens;
       "running in a tty terminal, the REPL is interactive, otherwise it just " \
       "reads from stdin.\n  symlink           Useful on Unix systems. "        \
       "Symlinks the current V executable to /usr/local/bin/v, so that V is "   \
-      "globally available.\n  install <module>  Install a user module from "   \
-      "https://vpm.vlang.io/.\n  test v            Run all V test files, and " \
+      "globally available.\n  test v            Run all V test files, and "    \
       "compile all V examples.\n  test folder/      Run all V test files "     \
       "located in the folder and its subfolders. You can also pass "           \
       "individual _test.v files too.\n  fmt               Run vfmt to format " \
       "the source code. [wip]\n  doc               Run vdoc over the source "  \
       "code and produce documentation.\n  translate         Translates C to "  \
-      "V. [wip, will be available in V 0.3]\n")
+      "V. [wip, will be available in V 0.3]\n\nV package management "          \
+      "commands:\n  search  keywords  Search the https://vpm.vlang.io/ "       \
+      "module repository for matching modules and shows their details.\n  "    \
+      "install <module>  Install a user module from https://vpm.vlang.io/.\n " \
+      " update  [module]  Updates an already installed module, or ALL "        \
+      "installed modules at once, when no module name is given.\n  remove  "   \
+      "[module]  Removes an installed module, or ALL installed modules at "    \
+      "once, when no module name is given.\n")
 string time__days_string;
 array_int time__month_days;
 string time__months_string;
@@ -16208,101 +16212,6 @@ void compiler__vfmt(array_string args) {
 
   println(tos3("vfmt is temporarily disabled"));
 }
-void compiler__install_v(array_string args) {
-
-  if (args.len < 3) {
-
-    println(tos3("usage: v install [module] [module] [...]"));
-
-    return;
-  };
-
-  array_string names = array_slice(args, 2, args.len);
-
-  string vexec = compiler__vexe_path();
-
-  string vroot = os__dir(vexec);
-
-  string vget = _STR("%.*s/tools/vget", vroot.len, vroot.str);
-
-  if (1) {
-
-    os__chdir(string_add(vroot, tos3("/tools")));
-
-    Option_os__Result tmp93 = os__exec(_STR(
-        "\"%.*s\" -o %.*s vget.v", vexec.len, vexec.str, vget.len, vget.str));
-    if (!tmp93.ok) {
-      string err = tmp93.error;
-      int errcode = tmp93.ecode;
-
-      compiler__verror(err);
-
-      return;
-    }
-    os__Result vget_compilation = *(os__Result *)tmp93.data;
-    ;
-
-    if (vget_compilation.exit_code != 0) {
-
-      compiler__verror(vget_compilation.output);
-
-      return;
-    };
-  };
-
-  Option_os__Result tmp94 = os__exec(string_add(
-      _STR("%.*s ", vget.len, vget.str), array_string_join(names, tos3(" "))));
-  if (!tmp94.ok) {
-    string err = tmp94.error;
-    int errcode = tmp94.ecode;
-
-    compiler__verror(err);
-
-    return;
-  }
-  os__Result vgetresult = *(os__Result *)tmp94.data;
-  ;
-
-  if (vgetresult.exit_code != 0) {
-
-    compiler__verror(vgetresult.output);
-
-    return;
-  };
-}
-void compiler__run_repl() {
-
-  string vexec = compiler__vexe_path();
-
-  string vroot = os__dir(vexec);
-
-  string vrepl = _STR("%.*s/tools/vrepl", vroot.len, vroot.str);
-
-  os__chdir(string_add(vroot, tos3("/tools")));
-
-  Option_os__Result tmp95 = os__exec(_STR("\"%.*s\" -o %.*s vrepl.v", vexec.len,
-                                          vexec.str, vrepl.len, vrepl.str));
-  if (!tmp95.ok) {
-    string err = tmp95.error;
-    int errcode = tmp95.ecode;
-
-    compiler__verror(err);
-
-    return;
-  }
-  os__Result vrepl_compilation = *(os__Result *)tmp95.data;
-  ;
-
-  if (vrepl_compilation.exit_code != 0) {
-
-    compiler__verror(vrepl_compilation.output);
-
-    return;
-  };
-
-  int vreplresult = os__system(
-      _STR("%.*s \"%.*s\"", vrepl.len, vrepl.str, vexec.len, vexec.str));
-}
 void compiler__create_symlink() {
 
   string vexe = compiler__vexe_path();
@@ -16358,49 +16267,49 @@ string compiler__cescaped_path(string s) {
 }
 compiler__OS compiler__os_from_string(string os) {
 
-  string tmp96 = os;
+  string tmp93 = os;
 
-  if (string_eq(tmp96, tos3("linux"))) {
+  if (string_eq(tmp93, tos3("linux"))) {
 
     return compiler__compiler__OS_linux;
 
-  } else if (string_eq(tmp96, tos3("windows"))) {
+  } else if (string_eq(tmp93, tos3("windows"))) {
 
     return compiler__compiler__OS_windows;
 
-  } else if (string_eq(tmp96, tos3("mac"))) {
+  } else if (string_eq(tmp93, tos3("mac"))) {
 
     return compiler__compiler__OS_mac;
 
-  } else if (string_eq(tmp96, tos3("freebsd"))) {
+  } else if (string_eq(tmp93, tos3("freebsd"))) {
 
     return compiler__compiler__OS_freebsd;
 
-  } else if (string_eq(tmp96, tos3("openbsd"))) {
+  } else if (string_eq(tmp93, tos3("openbsd"))) {
 
     return compiler__compiler__OS_openbsd;
 
-  } else if (string_eq(tmp96, tos3("netbsd"))) {
+  } else if (string_eq(tmp93, tos3("netbsd"))) {
 
     return compiler__compiler__OS_netbsd;
 
-  } else if (string_eq(tmp96, tos3("dragonfly"))) {
+  } else if (string_eq(tmp93, tos3("dragonfly"))) {
 
     return compiler__compiler__OS_dragonfly;
 
-  } else if (string_eq(tmp96, tos3("js"))) {
+  } else if (string_eq(tmp93, tos3("js"))) {
 
     return compiler__compiler__OS_js;
 
-  } else if (string_eq(tmp96, tos3("solaris"))) {
+  } else if (string_eq(tmp93, tos3("solaris"))) {
 
     return compiler__compiler__OS_solaris;
 
-  } else if (string_eq(tmp96, tos3("android"))) {
+  } else if (string_eq(tmp93, tos3("android"))) {
 
     return compiler__compiler__OS_android;
 
-  } else if (string_eq(tmp96, tos3("msvc"))) {
+  } else if (string_eq(tmp93, tos3("msvc"))) {
 
     compiler__verror(tos3("use the flag `-cc msvc` to build using msvc"));
   };
@@ -16429,7 +16338,7 @@ compiler__V *compiler__new_v_compiler_with_args(array_string args) {
   array_string allargs = new_array_from_c_array(
       1, 1, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 1){vexe});
 
-  _PUSH_MANY(&allargs, (/*typ = array_string   tmp_typ=string*/ args), tmp97,
+  _PUSH_MANY(&allargs, (/*typ = array_string   tmp_typ=string*/ args), tmp94,
              array_string);
 
   os__setenv(tos3("VOSARGS"), array_string_join(allargs, tos3(" ")), 1);
@@ -29255,13 +29164,15 @@ void main__main() {
   }
   array_string options = tmp1;
 
-  array_string tmp2 = new_array(0, args.len, sizeof(string));
-  for (int i = 0; i < args.len; i++) {
-    string it = ((string *)args.data)[i];
+  array_string stuff_after_executable = array_slice2(os__args, 1, -1, true);
+
+  array_string tmp4 = new_array(0, stuff_after_executable.len, sizeof(string));
+  for (int i = 0; i < stuff_after_executable.len; i++) {
+    string it = ((string *)stuff_after_executable.data)[i];
     if (!string_starts_with(it, tos3("-")))
-      array_push(&tmp2, &it);
+      array_push(&tmp4, &it);
   }
-  array_string commands = tmp2;
+  array_string commands = tmp4;
 
   if (_IN(string, (tos3("-v")), options) ||
       _IN(string, (tos3("--version")), options) ||
@@ -29271,14 +29182,6 @@ void main__main() {
 
     printf("V %.*s %.*s\n", compiler__Version.len, compiler__Version.str,
            version_hash.len, version_hash.str);
-
-    return;
-
-  } else if (_IN(string, (tos3("-h")), options) ||
-             _IN(string, (tos3("--help")), options) ||
-             _IN(string, (tos3("help")), commands)) {
-
-    println(compiler__help_text);
 
     return;
 
@@ -29294,7 +29197,16 @@ void main__main() {
 
     return;
 
-  } else if (_IN(string, (tos3("get")), commands)) {
+  } else if ((_IN(string, (tos3("search")), commands)) ||
+             (_IN(string, (tos3("install")), commands)) ||
+             (_IN(string, (tos3("update")), commands)) ||
+             (_IN(string, (tos3("remove")), commands))) {
+
+    compiler__launch_tool(tos3("vpm"));
+
+    return;
+
+  } else if ((_IN(string, (tos3("get")), commands))) {
 
     println(tos3("use `v install` to install modules from vpm.vlang.io "));
 
@@ -29303,12 +29215,6 @@ void main__main() {
   } else if (_IN(string, (tos3("symlink")), commands)) {
 
     compiler__create_symlink();
-
-    return;
-
-  } else if (_IN(string, (tos3("install")), commands)) {
-
-    compiler__install_v(args);
 
     return;
 
@@ -29321,6 +29227,14 @@ void main__main() {
   } else if (_IN(string, (tos3("test")), commands)) {
 
     compiler__launch_tool(tos3("vtest"));
+
+    return;
+
+  } else if (_IN(string, (tos3("runrepl")), commands) || commands.len == 0 ||
+             (args.len == 2 &&
+              string_eq((*(string *)array_get(args, 1)), tos3("-")))) {
+
+    compiler__launch_tool(tos3("vrepl"));
 
     return;
 
@@ -29337,21 +29251,29 @@ void main__main() {
     os__system(string_add(_STR("%.*s build module vlib/", vexe.len, vexe.str),
                           *(string *)array_last(args)));
 
-    Option_string tmp3 =
+    Option_string tmp7 =
         os__read_file(_STR("%.*s/vlib/%.*s.vh", compiler__v_modules_path.len,
                            compiler__v_modules_path.str, mod.len, mod.str));
-    if (!tmp3.ok) {
-      string err = tmp3.error;
-      int errcode = tmp3.ecode;
+    if (!tmp7.ok) {
+      string err = tmp7.error;
+      int errcode = tmp7.ecode;
 
       v_panic(err);
     }
-    string txt = *(string *)tmp3.data;
+    string txt = *(string *)tmp7.data;
     ;
 
     println(txt);
 
     v_exit(0);
+
+  } else if (_IN(string, (tos3("-h")), options) ||
+             _IN(string, (tos3("--help")), options) ||
+             _IN(string, (tos3("help")), commands)) {
+
+    println(compiler__help_text);
+
+    return;
 
   } else {
   };
@@ -29368,16 +29290,6 @@ void main__main() {
     compiler__V_compile(v);
 
     compiler__V_run_compiled_executable_and_exit(*v);
-  };
-
-  if (args.len < 2 ||
-      (args.len == 2 &&
-       string_eq((*(string *)array_get(args, 1)), tos3("-"))) ||
-      _IN(string, (tos3("runrepl")), args)) {
-
-    compiler__run_repl();
-
-    return;
   };
 
   benchmark__Benchmark tmark = benchmark__new_benchmark();
