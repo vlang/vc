@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e15abb3"
+#define V_COMMIT_HASH "15d4f68"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "15f971e"
+#define V_COMMIT_HASH "e15abb3"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -7701,7 +7701,7 @@ void compiler__V_cc(compiler__V *v) {
 
     if (debug_mode) {
 
-      debug_options = tos3("-g -O0");
+      debug_options = tos3("-g -O0 -no-pie");
     };
 
     optimization_options = tos3("-O3 -flto");
@@ -7711,7 +7711,7 @@ void compiler__V_cc(compiler__V *v) {
 
     if (debug_mode) {
 
-      debug_options = tos3("-g3");
+      debug_options = tos3("-g3 -no-pie");
     };
 
     optimization_options = tos3("-O3 -fno-strict-aliasing -flto");
