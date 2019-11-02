@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4120982"
+#define V_COMMIT_HASH "3b3f0eb"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7b1993b"
+#define V_COMMIT_HASH "4120982"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -28396,8 +28396,10 @@ void compiler__launch_tool(string tname) {
 
   if (tool_should_be_recompiled) {
 
-    string compilation_command = _STR("%.*s -prod %.*s", vexe.len, vexe.str,
-                                      tool_source.len, tool_source.str);
+    string compilation_command =
+        _STR("%.*s %.*s", vexe.len, vexe.str, tool_source.len, tool_source.str);
+
+    printf("Building %.*s for the first time...\n", tname.len, tname.str);
 
     Option_os__Result tmp1 = os__exec(compilation_command);
     if (!tmp1.ok) {
