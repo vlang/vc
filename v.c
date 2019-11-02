@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3b3f0eb"
+#define V_COMMIT_HASH "56e1dac"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4120982"
+#define V_COMMIT_HASH "3b3f0eb"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -28398,8 +28398,6 @@ void compiler__launch_tool(string tname) {
 
     string compilation_command =
         _STR("%.*s %.*s", vexe.len, vexe.str, tool_source.len, tool_source.str);
-
-    printf("Building %.*s for the first time...\n", tname.len, tname.str);
 
     Option_os__Result tmp1 = os__exec(compilation_command);
     if (!tmp1.ok) {
