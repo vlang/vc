@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "104fab7"
+#define V_COMMIT_HASH "3449a8b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8de2f00"
+#define V_COMMIT_HASH "104fab7"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -6002,6 +6002,11 @@ int os__vpclose(FILE *f) {
 }
 Option_os__Result os__exec(string cmd) {
 
+  if (string_contains(cmd, tos3(";")) || string_contains(cmd, tos3("&&"))) {
+
+    return v_error(tos3("; and && are not allowed in shell commands"));
+  };
+
   string pcmd = _STR("%.*s 2>&1", cmd.len, cmd.str);
 
   FILE *f = os__vpopen(pcmd);
@@ -6029,6 +6034,11 @@ Option_os__Result os__exec(string cmd) {
   return opt_ok(&tmp11, sizeof(os__Result));
 }
 int os__system(string cmd) {
+
+  if (string_contains(cmd, tos3(";")) || string_contains(cmd, tos3("&&"))) {
+
+    v_panic(tos3("; and && are not allowed in shell commands"));
+  };
 
   int ret = ((int)(0));
 
