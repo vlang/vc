@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "df5faf3"
+#define V_COMMIT_HASH "e3d8ab5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4e64a58"
+#define V_COMMIT_HASH "df5faf3"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -6094,9 +6094,10 @@ int os__vpclose(FILE *f) {
 }
 Option_os__Result os__exec(string cmd) {
 
-  if (string_contains(cmd, tos3(";")) || string_contains(cmd, tos3("&&"))) {
+  if (string_contains(cmd, tos3(";")) || string_contains(cmd, tos3("&&")) ||
+      string_contains(cmd, tos3("||")) || string_contains(cmd, tos3("\n"))) {
 
-    return v_error(tos3("; and && are not allowed in shell commands"));
+    return v_error(tos3(";, &&, || and \\n are not allowed in shell commands"));
   };
 
   string pcmd = _STR("%.*s 2>&1", cmd.len, cmd.str);
@@ -6127,9 +6128,10 @@ Option_os__Result os__exec(string cmd) {
 }
 int os__system(string cmd) {
 
-  if (string_contains(cmd, tos3(";")) || string_contains(cmd, tos3("&&"))) {
+  if (string_contains(cmd, tos3(";")) || string_contains(cmd, tos3("&&")) ||
+      string_contains(cmd, tos3("||")) || string_contains(cmd, tos3("\n"))) {
 
-    v_panic(tos3("; and && are not allowed in shell commands"));
+    v_panic(tos3(";, &&, || and \\n are not allowed in shell commands"));
   };
 
   int ret = ((int)(0));
