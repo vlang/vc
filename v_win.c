@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3449a8b"
+#define V_COMMIT_HASH "4e64a58"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "104fab7"
+#define V_COMMIT_HASH "3449a8b"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -25866,8 +25866,11 @@ string compiler__Scanner_ident_string(compiler__Scanner *s) {
 
   byte q = string_at(s->text, s->pos);
 
-  if ((q == compiler__single_quote || q == compiler__double_quote) &&
-      !s->inside_string) {
+  bool is_quote = q == compiler__single_quote || q == compiler__double_quote;
+
+  bool is_raw = is_quote && string_at(s->text, s->pos - 1) == 'r';
+
+  if (is_quote && !s->inside_string) {
 
     s->quote = q;
   };
@@ -25916,7 +25919,7 @@ string compiler__Scanner_ident_string(compiler__Scanner *s) {
                               tos3("0 character in a string literal"));
     };
 
-    if (c == '{' && prevc == '$' &&
+    if (c == '{' && prevc == '$' && !is_raw &&
         compiler__Scanner_count_symbol_before(*s, s->pos - 2, slash) % 2 == 0) {
 
       s->inside_string = 1;
@@ -25926,7 +25929,7 @@ string compiler__Scanner_ident_string(compiler__Scanner *s) {
       break;
     };
 
-    if ((byte_is_letter(c) || c == '_') && prevc == '$' &&
+    if ((byte_is_letter(c) || c == '_') && prevc == '$' && !is_raw &&
         compiler__Scanner_count_symbol_before(*s, s->pos - 2, slash) % 2 == 0) {
 
       s->inside_string = 1;
@@ -26037,10 +26040,10 @@ bool compiler__Scanner_expect(compiler__Scanner *s, string want,
     return 0;
   };
 
-  int tmp95 = start_pos;
+  int tmp97 = start_pos;
   ;
-  for (int tmp96 = tmp95; tmp96 < end_pos; tmp96++) {
-    int pos = tmp96;
+  for (int tmp98 = tmp97; tmp98 < end_pos; tmp98++) {
+    int pos = tmp98;
 
     if (string_at(s->text, pos) != string_at(want, pos - start_pos)) {
 
@@ -26108,7 +26111,7 @@ void compiler__Scanner_inc_line_number(compiler__Scanner *s) {
 
   s->line_nr++;
 
-  _PUSH(&s->line_ends, (/*typ = array_int   tmp_typ=int*/ s->pos), tmp103, int);
+  _PUSH(&s->line_ends, (/*typ = array_int   tmp_typ=int*/ s->pos), tmp105, int);
 
   if (s->line_nr > s->nlines) {
 
@@ -26138,11 +26141,11 @@ bool compiler__is_name_char(byte c) { return byte_is_letter(c) || c == '_'; }
 static inline bool compiler__is_nl(byte c) { return c == '\r' || c == '\n'; }
 bool compiler__contains_capital(string s) {
 
-  string tmp110 = s;
-  array_byte bytes_tmp110 = string_bytes(tmp110);
+  string tmp112 = s;
+  array_byte bytes_tmp112 = string_bytes(tmp112);
   ;
-  for (int tmp111 = 0; tmp111 < tmp110.len; tmp111++) {
-    byte c = ((byte *)bytes_tmp110.data)[tmp111];
+  for (int tmp113 = 0; tmp113 < tmp112.len; tmp113++) {
+    byte c = ((byte *)bytes_tmp112.data)[tmp113];
 
     if (c >= 'A' && c <= 'Z') {
 
@@ -26159,10 +26162,10 @@ bool compiler__good_type_name(string s) {
     return 1;
   };
 
-  int tmp112 = 2;
+  int tmp114 = 2;
   ;
-  for (int tmp113 = tmp112; tmp113 < s.len; tmp113++) {
-    int i = tmp113;
+  for (int tmp115 = tmp114; tmp115 < s.len; tmp115++) {
+    int i = tmp115;
 
     if (byte_is_capital(string_at(s, i)) &&
         byte_is_capital(string_at(s, i - 1)) &&
