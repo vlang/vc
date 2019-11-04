@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b8b7258"
+#define V_COMMIT_HASH "ee4db9f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b4e8989"
+#define V_COMMIT_HASH "b8b7258"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -1275,6 +1275,7 @@ void compiler__Parser_gen_array_filter(compiler__Parser *p, string str_typ,
                                        int method_ph);
 string compiler__Parser_gen_array_map(compiler__Parser *p, string str_typ,
                                       int method_ph);
+void compiler__Parser_comptime_if_block(compiler__Parser *p, string name);
 void compiler__DepSet_add(compiler__DepSet *dset, string item);
 compiler__DepSet compiler__DepSet_diff(compiler__DepSet *dset,
                                        compiler__DepSet otherset);
@@ -9557,33 +9558,23 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
 
     } else if (string_eq(name, tos3("tinyc"))) {
 
-      compiler__Parser_genln(p, tos3("#ifdef __TINYC__"));
-
-      compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
-
-      compiler__Parser_statements_no_rcbr(p);
-
-      if (!(p->tok == compiler__compiler__TokenKind_dollar &&
-            compiler__Parser_peek(&/* ? */ *p) ==
-                compiler__compiler__TokenKind_key_else)) {
-
-        compiler__Parser_genln(p, tos3("#endif"));
-      };
+      compiler__Parser_comptime_if_block(p, tos3("__TINYC__"));
 
     } else if (string_eq(name, tos3("glibc"))) {
 
-      compiler__Parser_genln(p, tos3("#ifdef __GLIBC__"));
+      compiler__Parser_comptime_if_block(p, tos3("__GLIBC__"));
 
-      compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
+    } else if (string_eq(name, tos3("mingw"))) {
 
-      compiler__Parser_statements_no_rcbr(p);
+      compiler__Parser_comptime_if_block(p, tos3("__MINGW32__"));
 
-      if (!(p->tok == compiler__compiler__TokenKind_dollar &&
-            compiler__Parser_peek(&/* ? */ *p) ==
-                compiler__compiler__TokenKind_key_else)) {
+    } else if (string_eq(name, tos3("msvc"))) {
 
-        compiler__Parser_genln(p, tos3("#endif"));
-      };
+      compiler__Parser_comptime_if_block(p, tos3("__MSC_VER__"));
+
+    } else if (string_eq(name, tos3("clang"))) {
+
+      compiler__Parser_comptime_if_block(p, tos3("__clang__"));
 
     } else {
 
@@ -10268,6 +10259,21 @@ string compiler__Parser_gen_array_map(compiler__Parser *p, string str_typ,
   compiler__Parser_close_scope(p);
 
   return string_add(tos3("array_"), map_type);
+}
+void compiler__Parser_comptime_if_block(compiler__Parser *p, string name) {
+
+  compiler__Parser_genln(p, _STR("#ifdef %.*s", name.len, name.str));
+
+  compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
+
+  compiler__Parser_statements_no_rcbr(p);
+
+  if (!(p->tok == compiler__compiler__TokenKind_dollar &&
+        compiler__Parser_peek(&/* ? */ *p) ==
+            compiler__compiler__TokenKind_key_else)) {
+
+    compiler__Parser_genln(p, tos3("#endif"));
+  };
 }
 void compiler__DepSet_add(compiler__DepSet *dset, string item) {
 
