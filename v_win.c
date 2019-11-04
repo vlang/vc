@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f8d14a2"
+#define V_COMMIT_HASH "f60d44e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0a6840b"
+#define V_COMMIT_HASH "f8d14a2"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -498,6 +498,7 @@ struct compiler__Preferences {
   bool compress;
   string comptime_define;
   bool fast;
+  bool enable_globals;
 };
 
 struct compiler__ScanRes {
@@ -15175,7 +15176,7 @@ Option_int compiler__V_get_file_parser_index(compiler__V *v, string file) {
   if (_IN_MAP((file_path), v->file_parser_idx)) {
 
     int tmp2 = 0;
-    bool tmp3 = map_get(/*main.v : 154*/ v->file_parser_idx, file_path, &tmp2);
+    bool tmp3 = map_get(/*main.v : 155*/ v->file_parser_idx, file_path, &tmp2);
 
     int tmp4 = OPTION_CAST(int)(tmp2);
     return opt_ok(&tmp4, sizeof(int));
@@ -16480,6 +16481,7 @@ compiler__V *compiler__new_v(array_string args) {
           .is_run = _IN(string, (tos3("run")), args),
           .autofree = _IN(string, (tos3("-autofree")), args),
           .compress = _IN(string, (tos3("-compress")), args),
+          .enable_globals = _IN(string, (tos3("--enable-globals")), args),
           .fast = _IN(string, (tos3("-fast")), args),
           .is_repl = is_repl,
           .build_mode = build_mode,
@@ -18534,10 +18536,11 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
 
       if (!p->pref->translated && !p->pref->is_live && !p->builtin_mod &&
           !p->pref->building_v && string_ne(p->mod, tos3("ui")) &&
-          !string_contains(os__getwd(), tos3("/volt"))) {
+          !string_contains(os__getwd(), tos3("/volt")) &&
+          !p->pref->enable_globals) {
 
         compiler__Parser_error(
-            p, tos3("__global is only allowed in translated code"));
+            p, tos3("use `v --enable-globals ...` to enable globals"));
       };
 
       compiler__Parser_next(p);
@@ -19320,7 +19323,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
   if (_IN(string, (p->lit), map_keys(&/* ? */ ti))) {
 
     string tmp34 = tos3("");
-    bool tmp35 = map_get(/*parser.v : 855*/ ti, p->lit, &tmp34);
+    bool tmp35 = map_get(/*parser.v : 859*/ ti, p->lit, &tmp34);
 
     if (!tmp35)
       tmp34 = tos((byte *)"", 0);
@@ -20676,7 +20679,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
       if (_IN(string, (typ), map_keys(&/* ? */ p->cur_fn.dispatch_of.inst))) {
 
         string tmp91 = tos3("");
-        bool tmp92 = map_get(/*parser.v : 1652*/ p->cur_fn.dispatch_of.inst,
+        bool tmp92 = map_get(/*parser.v : 1656*/ p->cur_fn.dispatch_of.inst,
                              typ, &tmp91);
 
         if (!tmp92)
