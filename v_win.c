@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0a6840b"
+#define V_COMMIT_HASH "f8d14a2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ee4db9f"
+#define V_COMMIT_HASH "0a6840b"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -19113,7 +19113,10 @@ void compiler__Parser_check(compiler__Parser *p, compiler__TokenKind expected) {
     printf("next token = `%.*s`\n", compiler__Parser_strtok(&/* ? */ *p).len,
            compiler__Parser_strtok(&/* ? */ *p).str);
 
-    print_backtrace();
+    if (p->pref->is_debug) {
+
+      print_backtrace();
+    };
 
     compiler__Parser_error(p, s);
   };
@@ -19317,7 +19320,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
   if (_IN(string, (p->lit), map_keys(&/* ? */ ti))) {
 
     string tmp34 = tos3("");
-    bool tmp35 = map_get(/*parser.v : 853*/ ti, p->lit, &tmp34);
+    bool tmp35 = map_get(/*parser.v : 855*/ ti, p->lit, &tmp34);
 
     if (!tmp35)
       tmp34 = tos((byte *)"", 0);
@@ -20673,7 +20676,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
       if (_IN(string, (typ), map_keys(&/* ? */ p->cur_fn.dispatch_of.inst))) {
 
         string tmp91 = tos3("");
-        bool tmp92 = map_get(/*parser.v : 1650*/ p->cur_fn.dispatch_of.inst,
+        bool tmp92 = map_get(/*parser.v : 1652*/ p->cur_fn.dispatch_of.inst,
                              typ, &tmp91);
 
         if (!tmp92)
