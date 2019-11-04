@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ee4db9f"
+#define V_COMMIT_HASH "0a6840b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b8b7258"
+#define V_COMMIT_HASH "ee4db9f"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -15769,7 +15769,7 @@ array_string compiler__V_v_files_from_dir(compiler__V *v, string dir) {
 
       println(tos3("looks like you are trying to build V with an old command"));
 
-      println(tos3("use `v v.v` instead of `v -o v compiler`"));
+      println(tos3("use `v -o v v.v` instead of `v -o v compiler`"));
     };
 
     compiler__verror(_STR("%.*s doesn't exist", dir.len, dir.str));
