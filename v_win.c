@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5f1e634"
+#define V_COMMIT_HASH "b4e8989"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a6a233d"
+#define V_COMMIT_HASH "5f1e634"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -29725,6 +29725,14 @@ void main__main() {
 
     return;
 
+  } else if (_IN(string, (tos3("-h")), options) ||
+             _IN(string, (tos3("--help")), options) ||
+             _IN(string, (tos3("help")), commands)) {
+
+    println(compiler__help_text);
+
+    return;
+
   } else if (_IN(string, (tos3("translate")), commands)) {
 
     println(tos3("Translating C to V will be available in V 0.3"));
@@ -29807,14 +29815,6 @@ void main__main() {
     println(txt);
 
     v_exit(0);
-
-  } else if (_IN(string, (tos3("-h")), options) ||
-             _IN(string, (tos3("--help")), options) ||
-             _IN(string, (tos3("help")), commands)) {
-
-    println(compiler__help_text);
-
-    return;
 
   } else {
   };
