@@ -1,13 +1,14 @@
-#define V_COMMIT_HASH "5306c14"
+#define V_COMMIT_HASH "c5d868c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "883041f"
+#define V_COMMIT_HASH "5306c14"
 #endif
 
+#include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
+#include <stdlib.h>
+//#include "fns.h"
 #include <inttypes.h> // int64_t etc
 #include <signal.h>
 #include <stdarg.h> // for va_list
-#include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
-#include <stdlib.h>
 #include <string.h> // memcpy
 
 #ifndef _WIN32
@@ -151,7 +152,6 @@ int g_test_oks = 0;
 int g_test_fails = 0;
 #include <errno.h>
 #include <float.h>
-#include <signal.h>
 #include <sys/stat.h>
 #ifdef _WIN32
 #include <winsock2.h>
@@ -30116,12 +30116,12 @@ void init() {
   os__LANG_NEUTRAL = (os__SUBLANG_NEUTRAL);
   compiler__CommonCHeaders = tos3(
       "\n\n#include <stdio.h>  // TODO remove all these includes, define all "
-      "function signatures and types manually\n#include <stdlib.h>\n#include "
-      "<signal.h>\n#include <stdarg.h> // for va_list\n#include <inttypes.h>  "
-      "// int64_t etc\n#include <string.h> // memcpy\n\n#ifndef "
-      "_WIN32\n#include <ctype.h>\n#include <locale.h> // tolower\n#include "
-      "<sys/time.h>\n#include <unistd.h> // sleep\n#else\n#if "
-      "defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ < "
+      "function signatures and types manually\n#include <stdlib.h>\n//#include "
+      "\"fns.h\"\n#include <signal.h>\n#include <stdarg.h> // for "
+      "va_list\n#include <inttypes.h>  // int64_t etc\n#include <string.h> // "
+      "memcpy\n\n#ifndef _WIN32\n#include <ctype.h>\n#include <locale.h> // "
+      "tolower\n#include <sys/time.h>\n#include <unistd.h> // "
+      "sleep\n#else\n#if defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ < "
       "__MSVCR90_DLL\n#error Please upgrade your MinGW distribution to use "
       "msvcr90.dll or later.\n#endif\n#endif\n\n\n#ifdef __linux__\n#include "
       "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
