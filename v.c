@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7fc7c05"
+#define V_COMMIT_HASH "1b5f724"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b91a537"
+#define V_COMMIT_HASH "7fc7c05"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -9815,6 +9815,15 @@ void compiler__Parser_chash(compiler__Parser *p) {
   if (string_starts_with(hash, tos3("include"))) {
 
     if (compiler__Parser_first_pass(&/* ? */ *p) && !p->is_vh) {
+
+      if (!p->pref->building_v &&
+          !compiler__Parser_fileis(&/* ? */ *p, tos3("vlib"))) {
+
+        compiler__Parser_warn(
+            p, string_add(
+                   tos3("C #includes will soon be removed from the language"),
+                   tos3("\ndefine the C structs and functions in V")));
+      };
 
       if (p->file_pcguard.len != 0) {
 
@@ -26418,6 +26427,16 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
       string_eq(name, tos3("C")) && p->tok == compiler__compiler__TokenKind_dot;
 
   if (is_c) {
+
+    if (!p->pref->building_v &&
+        !compiler__Parser_fileis(&/* ? */ *p, tos3("vlib"))) {
+
+      compiler__Parser_warn(
+          p,
+          string_add(
+              tos3("Virtual C structs will soon be removed from the language"),
+              tos3("\ndefine the C structs and functions in V")));
+    };
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_dot);
 
