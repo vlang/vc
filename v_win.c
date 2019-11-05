@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "67f68df"
+#define V_COMMIT_HASH "883041f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b2f8944"
+#define V_COMMIT_HASH "67f68df"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -361,7 +361,7 @@ struct compiler__VsInstallation {
 };
 
 struct os__File {
-  FILE *cfile;
+  void *cfile;
 };
 
 struct _V_MulRet_int_V_bool {
@@ -1067,7 +1067,7 @@ Option_string os__read_file(string path);
 int os__file_size(string path);
 void os__mv(string old, string new);
 Option_bool os__cp(string old, string new);
-FILE *os__vfopen(string path, string mode);
+void *os__vfopen(string path, string mode);
 array_string os__read_lines(string path);
 array_ustring os__read_ulines(string path);
 Option_os__File os__open(string path);
@@ -1079,9 +1079,9 @@ void os__File_write_bytes_at(os__File f, void *data, int size, int pos);
 void os__File_writeln(os__File f, string s);
 void os__File_flush(os__File f);
 void os__File_close(os__File f);
-FILE *os__vpopen(string path);
+void *os__vpopen(string path);
 _V_MulRet_int_V_bool os__posix_wait4_to_exit_status(int waitret);
-int os__vpclose(FILE *f);
+int os__vpclose(void *f);
 Option_os__Result os__exec(string cmd);
 int os__system(string cmd);
 string os__sigint_to_signal_name(int si);
@@ -5752,7 +5752,7 @@ Option_string os__read_file(string path) {
 
   string mode = tos3("rb");
 
-  FILE *fp = os__vfopen(path, mode);
+  void *fp = os__vfopen(path, mode);
 
   if (isnil(fp)) {
 
@@ -5842,7 +5842,7 @@ Option_bool os__cp(string old, string new) {
 #endif
   ;
 }
-FILE *os__vfopen(string path, string mode) {
+void *os__vfopen(string path, string mode) {
 
 #ifdef _WIN32
 
@@ -5866,7 +5866,7 @@ array_string os__read_lines(string path) {
 
   string mode = tos3("rb");
 
-  FILE *fp = os__vfopen(path, mode);
+  void *fp = os__vfopen(path, mode);
 
   if (isnil(fp)) {
 
@@ -6044,7 +6044,7 @@ void os__File_writeln(os__File f, string s) {
 }
 void os__File_flush(os__File f) { fflush(f.cfile); }
 void os__File_close(os__File f) { fclose(f.cfile); }
-FILE *os__vpopen(string path) {
+void *os__vpopen(string path) {
 
 #ifdef _WIN32
 
@@ -6093,7 +6093,7 @@ _V_MulRet_int_V_bool os__posix_wait4_to_exit_status(int waitret) {
 #endif
   ;
 }
-int os__vpclose(FILE *f) {
+int os__vpclose(void *f) {
 
 #ifdef _WIN32
 
@@ -6120,7 +6120,7 @@ Option_os__Result os__exec(string cmd) {
 
   string pcmd = _STR("%.*s 2>&1", cmd.len, cmd.str);
 
-  FILE *f = os__vpopen(pcmd);
+  void *f = os__vpopen(pcmd);
 
   if (isnil(f)) {
 
