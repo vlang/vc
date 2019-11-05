@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b2f8944"
+#define V_COMMIT_HASH "67f68df"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "425c9ce"
+#define V_COMMIT_HASH "b2f8944"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -15,6 +15,10 @@
 #include <locale.h> // tolower
 #include <sys/time.h>
 #include <unistd.h> // sleep
+#else
+#if defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ < __MSVCR90_DLL
+#error Please upgrade your MinGW distribution to use msvcr90.dll or later.
+#endif
 #endif
 
 #ifdef __linux__
@@ -29870,19 +29874,22 @@ void init() {
       "<signal.h>\n#include <stdarg.h> // for va_list\n#include <inttypes.h>  "
       "// int64_t etc\n#include <string.h> // memcpy\n\n#ifndef "
       "_WIN32\n#include <ctype.h>\n#include <locale.h> // tolower\n#include "
-      "<sys/time.h>\n#include <unistd.h> // sleep	\n#endif\n\n\n#ifdef "
-      "__linux__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait "
-      "uses wait on nix\n#endif\n\n#ifdef __FreeBSD__\n#include "
+      "<sys/time.h>\n#include <unistd.h> // sleep\n#else\n#if "
+      "defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ < "
+      "__MSVCR90_DLL\n#error Please upgrade your MinGW distribution to use "
+      "msvcr90.dll or later.\n#endif\n#endif\n\n\n#ifdef __linux__\n#include "
       "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
-      "nix\n#endif\n\n#ifdef __DragonFly__\n#include <sys/types.h>\n#include "
+      "nix\n#endif\n\n#ifdef __FreeBSD__\n#include <sys/types.h>\n#include "
       "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef "
-      "__OpenBSD__\n#include <sys/types.h>\n#include "
-      "<sys/resource.h>\n#include <sys/wait.h> // os__wait uses wait on "
-      "nix\n#endif\n\n#define EMPTY_STRUCT_DECLARATION\n#define "
-      "EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an "
-      "array needs to be specified, but GCC crashes if it is...\n#define "
-      "EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#ifdef "
-      "__TINYC__\n#undef EMPTY_STRUCT_INITIALIZATION\n#define "
+      "__DragonFly__\n#include <sys/types.h>\n#include <sys/wait.h> // "
+      "os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n#include "
+      "<sys/types.h>\n#include <sys/resource.h>\n#include <sys/wait.h> // "
+      "os__wait uses wait on nix\n#endif\n\n#define "
+      "EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION 0\n// Due "
+      "to a tcc bug, the length of an array needs to be specified, but GCC "
+      "crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define "
+      "TCCSKIP(x) x\n\n#ifdef __TINYC__\n#undef "
+      "EMPTY_STRUCT_INITIALIZATION\n#define "
       "EMPTY_STRUCT_INITIALIZATION\n#undef EMPTY_ARRAY_OF_ELEMS\n#define "
       "EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef TCCSKIP\n#define "
       "TCCSKIP(x)\n#endif\n\n#define OPTION_CAST(x) (x)\n\n#ifdef "
