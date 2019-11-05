@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b91a537"
+#define V_COMMIT_HASH "7fc7c05"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "62f54d9"
+#define V_COMMIT_HASH "b91a537"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -14353,6 +14353,13 @@ void compiler__Parser_cast(compiler__Parser *p, string typ) {
 
       compiler__Parser_error(
           p, _STR("cannot cast `%.*s` to `bool`", expr_typ.len, expr_typ.str));
+    };
+
+    if (string_eq(expr_typ, tos3("string"))) {
+
+      compiler__Parser_error(p,
+                             _STR("cannot cast `%.*s` to `%.*s`", expr_typ.len,
+                                  expr_typ.str, typ.len, typ.str));
     };
 
     compiler__CGen_set_placeholder(p->cgen, pos,
