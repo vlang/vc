@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c5d868c"
+#define V_COMMIT_HASH "eb06983"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5306c14"
+#define V_COMMIT_HASH "c5d868c"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -20,6 +20,10 @@
 #if defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ < __MSVCR90_DLL
 #error Please upgrade your MinGW distribution to use msvcr90.dll or later.
 #endif
+#endif
+
+#if defined(__CYGWIN__) && !defined(_WIN32)
+#error Cygwin is not supported, please use MinGW or Visual Studio.
 #endif
 
 #ifdef __linux__
@@ -30123,7 +30127,9 @@ void init() {
       "tolower\n#include <sys/time.h>\n#include <unistd.h> // "
       "sleep\n#else\n#if defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ < "
       "__MSVCR90_DLL\n#error Please upgrade your MinGW distribution to use "
-      "msvcr90.dll or later.\n#endif\n#endif\n\n\n#ifdef __linux__\n#include "
+      "msvcr90.dll or later.\n#endif\n#endif\n\n#if defined(__CYGWIN__) && "
+      "!defined(_WIN32)\n#error Cygwin is not supported, please use MinGW or "
+      "Visual Studio.\n#endif\n\n#ifdef __linux__\n#include "
       "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
       "nix\n#endif\n\n#ifdef __FreeBSD__\n#include <sys/types.h>\n#include "
       "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef "
