@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "883041f"
+#define V_COMMIT_HASH "5306c14"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "67f68df"
+#define V_COMMIT_HASH "883041f"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -14525,6 +14525,18 @@ void compiler__Parser_cast(compiler__Parser *p, string typ) {
                                    _STR("*(%.*s*)(", typ.len, typ.str));
 
   } else {
+
+    if (string_eq(typ, tos3("bool"))) {
+
+      if (compiler__is_number_type(expr_typ) ||
+          compiler__is_float_type(expr_typ)) {
+
+        compiler__Parser_error(p, tos3("cannot cast a number to `bool`"));
+      };
+
+      compiler__Parser_error(
+          p, _STR("cannot cast `%.*s` to `bool`", expr_typ.len, expr_typ.str));
+    };
 
     compiler__CGen_set_placeholder(p->cgen, pos,
                                    _STR("(%.*s)(", typ.len, typ.str));
