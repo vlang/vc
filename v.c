@@ -1,13 +1,15 @@
-#define V_COMMIT_HASH "62f54d9"
+#define V_COMMIT_HASH "b91a537"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "eb06983"
+#define V_COMMIT_HASH "62f54d9"
 #endif
 
-#include "fns.h"
-#include <inttypes.h> // int64_t etc
-#include <stdarg.h>   // for va_list
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
 #include <stdlib.h>
+
+//#include "fns.h"
+#include <inttypes.h> // int64_t etc
+#include <signal.h>
+#include <stdarg.h> // for va_list
 #include <string.h> // memcpy
 
 #ifndef _WIN32
@@ -19,6 +21,10 @@
 #if defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ < __MSVCR90_DLL
 #error Please upgrade your MinGW distribution to use msvcr90.dll or later.
 #endif
+#endif
+
+#if defined(__CYGWIN__) && !defined(_WIN32)
+#error Cygwin is not supported, please use MinGW or Visual Studio.
 #endif
 
 #ifdef __linux__
@@ -29881,14 +29887,17 @@ void init() {
   os__path_separator = tos3("/");
   compiler__CommonCHeaders = tos3(
       "\n\n#include <stdio.h>  // TODO remove all these includes, define all "
-      "function signatures and types manually\n#include <stdlib.h>\n#include "
-      "\"fns.h\"\n#include <stdarg.h> // for va_list\n#include <inttypes.h>  "
-      "// int64_t etc\n#include <string.h> // memcpy\n\n#ifndef "
-      "_WIN32\n#include <ctype.h>\n#include <locale.h> // tolower\n#include "
+      "function signatures and types manually\n#include "
+      "<stdlib.h>\n\n//#include \"fns.h\"\n#include <signal.h>\n#include "
+      "<stdarg.h> // for va_list\n#include <inttypes.h>  // int64_t "
+      "etc\n#include <string.h> // memcpy\n\n#ifndef _WIN32\n#include "
+      "<ctype.h>\n#include <locale.h> // tolower\n#include "
       "<sys/time.h>\n#include <unistd.h> // sleep\n#else\n#if "
       "defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ < "
       "__MSVCR90_DLL\n#error Please upgrade your MinGW distribution to use "
-      "msvcr90.dll or later.\n#endif\n#endif\n\n\n#ifdef __linux__\n#include "
+      "msvcr90.dll or later.\n#endif\n#endif\n\n#if defined(__CYGWIN__) && "
+      "!defined(_WIN32)\n#error Cygwin is not supported, please use MinGW or "
+      "Visual Studio.\n#endif\n\n\n#ifdef __linux__\n#include "
       "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
       "nix\n#endif\n\n#ifdef __FreeBSD__\n#include <sys/types.h>\n#include "
       "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef "
