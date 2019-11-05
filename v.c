@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "425c9ce"
+#define V_COMMIT_HASH "b2f8944"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d279ced"
+#define V_COMMIT_HASH "425c9ce"
 #endif
 
 #include <inttypes.h> // int64_t etc
@@ -23391,8 +23391,11 @@ void compiler__Parser_for_st(compiler__Parser *p) {
                              .is_for_var = 0,
                              .is_public = 0});
 
-      compiler__Parser_genln(p, _STR("bool last = %.*s == %.*s . len - 1;",
-                                     i.len, i.str, tmp.len, tmp.str));
+      if (!p->is_js) {
+
+        compiler__Parser_genln(p, _STR("bool last = %.*s == %.*s . len - 1;",
+                                       i.len, i.str, tmp.len, tmp.str));
+      };
 
     } else if (is_str) {
 
