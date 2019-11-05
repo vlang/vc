@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1b5f724"
+#define V_COMMIT_HASH "3080959"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7fc7c05"
+#define V_COMMIT_HASH "1b5f724"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -1614,6 +1614,7 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ);
 string compiler__Fn_str(compiler__Fn f);
 string compiler__Table_debug_fns(compiler__Table *t);
 bool compiler__is_number_type(string typ);
+bool compiler__is_integer_type(string typ);
 bool compiler__is_float_type(string typ);
 bool compiler__is_primitive_type(string typ);
 compiler__Table *compiler__new_table(bool obfuscate);
@@ -1952,7 +1953,7 @@ string compiler__and_or_error;
 #define compiler__compiler__TypeCategory_array 9
 #define compiler__compiler__TypeCategory_alias 10
 array_string compiler__CReserved;
-array_string compiler__number_types;
+array_string compiler__integer_types;
 array_string compiler__float_types;
 array_string compiler__reserved_type_param_names;
 #define compiler__compiler__TokenKind_eof 0
@@ -21807,9 +21808,10 @@ string compiler__Parser_expression(compiler__Parser *p) {
 
       compiler__Parser_gen(p, tos3(" << "));
 
-      compiler__Parser_check_types(p, compiler__Parser_expression(p), typ);
+      compiler__Parser_check_types(p, compiler__Parser_expression(p),
+                                   tos3("integer"));
 
-      return tos3("int");
+      return typ;
     };
   };
 
@@ -21819,9 +21821,10 @@ string compiler__Parser_expression(compiler__Parser *p) {
 
     compiler__Parser_gen(p, tos3(" >> "));
 
-    compiler__Parser_check_types(p, compiler__Parser_expression(p), typ);
+    compiler__Parser_check_types(p, compiler__Parser_expression(p),
+                                 tos3("integer"));
 
-    return tos3("int");
+    return typ;
   };
 
   while (p->tok == compiler__compiler__TokenKind_plus ||
@@ -27012,7 +27015,12 @@ string compiler__Table_debug_fns(compiler__Table *t) {
 }
 bool compiler__is_number_type(string typ) {
 
-  return _IN(string, (typ), compiler__number_types);
+  return _IN(string, (typ), compiler__integer_types) ||
+         _IN(string, (typ), compiler__float_types);
+}
+bool compiler__is_integer_type(string typ) {
+
+  return _IN(string, (typ), compiler__integer_types);
 }
 bool compiler__is_float_type(string typ) {
 
@@ -27242,7 +27250,7 @@ bool compiler__Table_known_type(compiler__Table *table, string typ_) {
   };
 
   compiler__Type tmp11 = {0};
-  bool tmp12 = map_get(/*table.v : 335*/ table->typesmap, typ, &tmp11);
+  bool tmp12 = map_get(/*table.v : 339*/ table->typesmap, typ, &tmp11);
 
   compiler__Type t = tmp11;
 
@@ -27256,7 +27264,7 @@ bool compiler__Table_known_type_fast(compiler__Table *table,
 Option_compiler__Fn compiler__Table_find_fn(compiler__Table *t, string name) {
 
   compiler__Fn tmp13 = {0};
-  bool tmp14 = map_get(/*table.v : 344*/ t->fns, name, &tmp13);
+  bool tmp14 = map_get(/*table.v : 348*/ t->fns, name, &tmp13);
 
   compiler__Fn f = tmp13;
 
@@ -27273,7 +27281,7 @@ Option_compiler__Fn compiler__Table_find_fn_is_script(compiler__Table *t,
                                                       bool is_script) {
 
   compiler__Fn tmp16 = {0};
-  bool tmp17 = map_get(/*table.v : 352*/ t->fns, name, &tmp16);
+  bool tmp17 = map_get(/*table.v : 356*/ t->fns, name, &tmp16);
 
   compiler__Fn f = tmp16;
 
@@ -27289,7 +27297,7 @@ Option_compiler__Fn compiler__Table_find_fn_is_script(compiler__Table *t,
 
     compiler__Fn tmp19 = {0};
     bool tmp20 =
-        map_get(/*table.v : 359*/ t->fns,
+        map_get(/*table.v : 363*/ t->fns,
                 string_replace(name, tos3("main__"), tos3("os__")), &tmp19);
 
     f = tmp19;
@@ -27424,7 +27432,7 @@ void compiler__Table_add_field(compiler__Table *table, string type_name,
   };
 
   compiler__Type tmp24 = {0};
-  bool tmp25 = map_get(/*table.v : 428*/ table->typesmap, type_name, &tmp24);
+  bool tmp25 = map_get(/*table.v : 432*/ table->typesmap, type_name, &tmp24);
 
   compiler__Type t = tmp24;
 
@@ -27558,7 +27566,7 @@ void compiler__Parser_add_method(compiler__Parser *p, string type_name,
   };
 
   compiler__Type tmp38 = {0};
-  bool tmp39 = map_get(/*table.v : 489*/ p->table->typesmap, type_name, &tmp38);
+  bool tmp39 = map_get(/*table.v : 493*/ p->table->typesmap, type_name, &tmp38);
 
   compiler__Type t = tmp38;
 
@@ -27605,7 +27613,7 @@ Option_compiler__Fn compiler__Table_find_method(compiler__Table *table,
                                                 string name) {
 
   compiler__Type tmp43 = {0};
-  bool tmp44 = map_get(/*table.v : 508*/ table->typesmap, typ->name, &tmp43);
+  bool tmp44 = map_get(/*table.v : 512*/ table->typesmap, typ->name, &tmp43);
 
   compiler__Type t = tmp43;
 
@@ -27696,7 +27704,7 @@ compiler__Type compiler__Table_find_type(compiler__Table *t, string name_) {
   };
 
   compiler__Type tmp56 = {0};
-  bool tmp57 = map_get(/*table.v : 565*/ t->typesmap, name, &tmp56);
+  bool tmp57 = map_get(/*table.v : 569*/ t->typesmap, name, &tmp56);
 
   return tmp56;
 }
@@ -27837,6 +27845,20 @@ bool compiler__Parser_check_types2(compiler__Parser *p, string got_,
     return 1;
   };
 
+  if (string_eq(expected, tos3("integer"))) {
+
+    if (compiler__is_integer_type(got)) {
+
+      return 1;
+
+    } else {
+
+      compiler__Parser_error(p, _STR("expected type `%.*s`, but got `%.*s`",
+                                     expected.len, expected.str, got.len,
+                                     got.str));
+    };
+  };
+
   expected = string_replace(expected, tos3("*"), tos3(""));
 
   got = string_replace(got, tos3("*"), tos3(""));
@@ -27929,7 +27951,7 @@ bool compiler__Table_is_interface(compiler__Table *table, string name) {
   };
 
   compiler__Type tmp64 = {0};
-  bool tmp65 = map_get(/*table.v : 728*/ table->typesmap, name, &tmp64);
+  bool tmp65 = map_get(/*table.v : 741*/ table->typesmap, name, &tmp64);
 
   compiler__Type t = tmp64;
 
@@ -30063,12 +30085,11 @@ void init() {
           tos3("switch"), tos3("typedef"),  tos3("union"),    tos3("unsigned"),
           tos3("void"),   tos3("volatile"), tos3("while"),
       });
-  compiler__number_types = new_array_from_c_array(
-      11, 11, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 11){tos3("number"), tos3("int"), tos3("i8"),
-                                       tos3("i16"), tos3("u16"), tos3("u32"),
-                                       tos3("byte"), tos3("i64"), tos3("u64"),
-                                       tos3("f32"), tos3("f64")});
+  compiler__integer_types = new_array_from_c_array(
+      8, 8, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 8){tos3("int"), tos3("i8"), tos3("byte"),
+                                      tos3("i16"), tos3("u16"), tos3("u32"),
+                                      tos3("i64"), tos3("u64")});
   compiler__float_types = new_array_from_c_array(
       2, 2, sizeof(string),
       EMPTY_ARRAY_OF_ELEMS(string, 2){tos3("f32"), tos3("f64")});
