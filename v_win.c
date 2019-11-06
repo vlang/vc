@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "75510e2"
+#define V_COMMIT_HASH "0f0bef2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6a812f7"
+#define V_COMMIT_HASH "75510e2"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -20383,6 +20383,12 @@ string compiler__Parser_bool_expression(compiler__Parser *p) {
     compiler__Parser_check_space(p, p->tok);
 
     compiler__Parser_check_types(p, compiler__Parser_bterm(p), typ);
+
+    if (string_ne(typ, tos3("bool"))) {
+
+      compiler__Parser_error(
+          p, tos3("logical operators `&&` and `||` require booleans"));
+    };
   };
 
   if (string_eq(typ, tos3(""))) {
@@ -20731,7 +20737,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
       if (_IN(string, (typ), map_keys(&/* ? */ p->cur_fn.dispatch_of.inst))) {
 
         string tmp91 = tos3("");
-        bool tmp92 = map_get(/*parser.v : 1662*/ p->cur_fn.dispatch_of.inst,
+        bool tmp92 = map_get(/*parser.v : 1666*/ p->cur_fn.dispatch_of.inst,
                              typ, &tmp91);
 
         if (!tmp92)
@@ -22010,6 +22016,11 @@ string compiler__Parser_expression(compiler__Parser *p) {
 
         compiler__Parser_gen(p, tos3(","));
       };
+    };
+
+    if (is_str && tok_op != compiler__compiler__TokenKind_plus) {
+
+      compiler__Parser_error(p, tos3("strings only support `+` operator"));
     };
 
     compiler__Parser_check_types(p, compiler__Parser_term(p), typ);
