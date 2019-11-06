@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fdd4afa"
+#define V_COMMIT_HASH "c9d0bd7"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bd18f50"
+#define V_COMMIT_HASH "fdd4afa"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -12393,8 +12393,8 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
     if (i == 0 &&
         (string_eq(f->name, tos3("println")) ||
          string_eq(f->name, tos3("print"))) &&
-        string_ne(typ, tos3("string")) && string_ne(typ, tos3("ustring")) &&
-        string_ne(typ, tos3("void"))) {
+        !(string_eq(typ, tos3("string")) || string_eq(typ, tos3("ustring")) ||
+          string_eq(typ, tos3("void")))) {
 
       compiler__Type T = compiler__Table_find_type(&/* ? */ *p->table, typ);
 
@@ -12404,7 +12404,7 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
 
       string fmt = compiler__Parser_typ_to_fmt(p, typ, 0);
 
-      if (string_ne(fmt, tos3(""))) {
+      if (string_ne(fmt, tos3("")) && string_ne(typ, tos3("bool"))) {
 
         string nl =
             (string_eq(f->name, tos3("println"))) ? (tos3("\\n")) : (tos3(""));
@@ -12723,7 +12723,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
 
     string tmp83 = tos3("");
-    bool tmp84 = map_get(/*fn.v : 1145*/ r.inst, tp, &tmp83);
+    bool tmp84 = map_get(/*fn.v : 1148*/ r.inst, tp, &tmp83);
 
     if (!tmp84)
       tmp83 = tos((byte *)"", 0);
@@ -12731,7 +12731,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     if (string_ne(tmp83, tos3(""))) {
 
       string tmp85 = tos3("");
-      bool tmp86 = map_get(/*fn.v : 1146*/ r.inst, tp, &tmp85);
+      bool tmp86 = map_get(/*fn.v : 1149*/ r.inst, tp, &tmp85);
 
       if (!tmp86)
         tmp85 = tos((byte *)"", 0);
@@ -12739,7 +12739,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       if (string_ne(tmp85, ti)) {
 
         string tmp87 = tos3("");
-        bool tmp88 = map_get(/*fn.v : 1147*/ r.inst, tp, &tmp87);
+        bool tmp88 = map_get(/*fn.v : 1150*/ r.inst, tp, &tmp87);
 
         if (!tmp88)
           tmp87 = tos((byte *)"", 0);
@@ -12763,7 +12763,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
   };
 
   string tmp89 = tos3("");
-  bool tmp90 = map_get(/*fn.v : 1156*/ r.inst, f->typ, &tmp89);
+  bool tmp90 = map_get(/*fn.v : 1159*/ r.inst, f->typ, &tmp89);
 
   if (!tmp90)
     tmp89 = tos((byte *)"", 0);
@@ -12778,7 +12778,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp91.data)[tmp92];
 
     string tmp93 = tos3("");
-    bool tmp94 = map_get(/*fn.v : 1160*/ r.inst, tp, &tmp93);
+    bool tmp94 = map_get(/*fn.v : 1163*/ r.inst, tp, &tmp93);
 
     if (!tmp94)
       tmp93 = tos((byte *)"", 0);
@@ -12849,7 +12849,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
         if ((_IN(string, (fna), map_keys(&/* ? */ ti.inst)))) {
 
           string tmp106 = tos3("");
-          bool tmp107 = map_get(/*fn.v : 1190*/ ti.inst, fna, &tmp106);
+          bool tmp107 = map_get(/*fn.v : 1193*/ ti.inst, fna, &tmp106);
 
           if (!tmp107)
             tmp106 = tos((byte *)"", 0);
@@ -12893,7 +12893,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
     if ((_IN(string, (fi), map_keys(&/* ? */ ti.inst)))) {
 
       string tmp113 = tos3("");
-      bool tmp114 = map_get(/*fn.v : 1212*/ ti.inst, fi, &tmp113);
+      bool tmp114 = map_get(/*fn.v : 1215*/ ti.inst, fi, &tmp113);
 
       if (!tmp114)
         tmp113 = tos((byte *)"", 0);
@@ -13159,7 +13159,7 @@ void compiler__Parser_rename_generic_fn_instance(compiler__Parser *p,
     string k = ((string *)tmp137.data)[tmp138];
 
     string tmp139 = tos3("");
-    bool tmp140 = map_get(/*fn.v : 1322*/ ti.inst, k, &tmp139);
+    bool tmp140 = map_get(/*fn.v : 1325*/ ti.inst, k, &tmp139);
 
     if (!tmp140)
       tmp139 = tos((byte *)"", 0);
@@ -13292,7 +13292,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   if ((_IN_MAP((f->typ), ti.inst))) {
 
     string tmp152 = tos3("");
-    bool tmp153 = map_get(/*fn.v : 1388*/ ti.inst, f->typ, &tmp152);
+    bool tmp153 = map_get(/*fn.v : 1391*/ ti.inst, f->typ, &tmp152);
 
     if (!tmp153)
       tmp152 = tos((byte *)"", 0);
