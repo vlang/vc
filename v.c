@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3080959"
+#define V_COMMIT_HASH "af81b02"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1b5f724"
+#define V_COMMIT_HASH "3080959"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -19889,6 +19889,27 @@ void compiler__Parser_assign_statement(compiler__Parser *p, compiler__Var v,
                       left.len, left.str, etype.len, etype.str, expr.len,
                       expr.str, left.len, left.str));
 
+  } else if (tok == compiler__compiler__TokenKind_left_shift_assign ||
+             tok == compiler__compiler__TokenKind_righ_shift_assign) {
+
+    if (!compiler__is_integer_type(p->assigned_type)) {
+
+      compiler__Parser_error_with_token_index(
+          p,
+          _STR("cannot use shift operator on non-integer type `%.*s`",
+               p->assigned_type.len, p->assigned_type.str),
+          errtok);
+    };
+
+    if (!compiler__is_integer_type(expr_type)) {
+
+      compiler__Parser_error_with_token_index(
+          p,
+          _STR("cannot use non-integer type `%.*s` as shift argument",
+               expr_type.len, expr_type.str),
+          errtok);
+    };
+
   } else if (!p->builtin_mod && !compiler__Parser_check_types_no_throw(
                                     p, expr_type, p->assigned_type)) {
 
@@ -20614,7 +20635,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
       if (_IN(string, (typ), map_keys(&/* ? */ p->cur_fn.dispatch_of.inst))) {
 
         string tmp91 = tos3("");
-        bool tmp92 = map_get(/*parser.v : 1656*/ p->cur_fn.dispatch_of.inst,
+        bool tmp92 = map_get(/*parser.v : 1664*/ p->cur_fn.dispatch_of.inst,
                              typ, &tmp91);
 
         if (!tmp92)
@@ -21804,6 +21825,13 @@ string compiler__Parser_expression(compiler__Parser *p) {
 
     } else {
 
+      if (!compiler__is_integer_type(typ)) {
+
+        compiler__Parser_error(
+            p, _STR("cannot use shift operator on non-integer type `%.*s`",
+                    typ.len, typ.str));
+      };
+
       compiler__Parser_next(p);
 
       compiler__Parser_gen(p, tos3(" << "));
@@ -21816,6 +21844,13 @@ string compiler__Parser_expression(compiler__Parser *p) {
   };
 
   if (p->tok == compiler__compiler__TokenKind_righ_shift) {
+
+    if (!compiler__is_integer_type(typ)) {
+
+      compiler__Parser_error(
+          p, _STR("cannot use shift operator on non-integer type `%.*s`",
+                  typ.len, typ.str));
+    };
 
     compiler__Parser_next(p);
 
