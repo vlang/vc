@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8dd3352"
+#define V_COMMIT_HASH "b720bb2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4d876d1"
+#define V_COMMIT_HASH "8dd3352"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -12037,7 +12037,7 @@ void compiler__Parser_fn_call(compiler__Parser *p, compiler__Fn *f,
       };
     };
 
-    if (!p->expr_var.is_changed) {
+    if (!p->expr_var.is_changed && receiver.is_mut) {
 
       compiler__Parser_mark_var_changed(p, p->expr_var);
     };
