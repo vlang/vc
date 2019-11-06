@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e3ad367"
+#define V_COMMIT_HASH "ca25933"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f6d06fc"
+#define V_COMMIT_HASH "e3ad367"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -21990,13 +21990,15 @@ string compiler__Parser_term(compiler__Parser *p) {
       compiler__Parser_error(p, tos3("division or modulo by zero"));
     };
 
-    if (is_mod &&
-        (compiler__is_float_type(typ) || !compiler__is_number_type(typ))) {
+    string expr_type = compiler__Parser_unary(p);
 
-      compiler__Parser_error(p, tos3("operator .mod requires integer types"));
+    compiler__Parser_check_types(p, expr_type, typ);
+
+    if (is_mod && (!compiler__is_integer_type(expr_type) ||
+                   !compiler__is_integer_type(typ))) {
+
+      compiler__Parser_error(p, tos3("operator % requires integer types"));
     };
-
-    compiler__Parser_check_types(p, compiler__Parser_unary(p), typ);
   };
 
   return typ;
