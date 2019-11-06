@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f6d06fc"
+#define V_COMMIT_HASH "e3ad367"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b720bb2"
+#define V_COMMIT_HASH "f6d06fc"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
