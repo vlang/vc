@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6a812f7"
+#define V_COMMIT_HASH "75510e2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6afd7d5"
+#define V_COMMIT_HASH "6a812f7"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -2774,7 +2774,6 @@ void print_backtrace_skipping_top_frames(int skipframes) {
   array_string tmp4 = sframes;
   for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
     string sframe = ((string *)tmp4.data)[tmp5];
-    bool last = tmp5 == tmp4.len - 1;
 
     string executable = string_all_before(sframe, tos3("("));
 
@@ -3276,7 +3275,6 @@ bool array_byte_contains(array_byte a, byte val) {
   array_byte tmp1 = a;
   for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
     byte aa = ((byte *)tmp1.data)[tmp2];
-    bool last = tmp2 == tmp1.len - 1;
 
     if (aa == val) {
 
@@ -4397,7 +4395,6 @@ string string_title(string s) {
   array_string tmp17 = words;
   for (int tmp18 = 0; tmp18 < tmp17.len; tmp18++) {
     string word = ((string *)tmp17.data)[tmp18];
-    bool last = tmp18 == tmp17.len - 1;
 
     _PUSH(&tit,
           (/*typ = array_string   tmp_typ=string*/ string_capitalize(word)),
@@ -4433,7 +4430,6 @@ bool array_string_contains(array_string ar, string val) {
   array_string tmp20 = ar;
   for (int tmp21 = 0; tmp21 < tmp20.len; tmp21++) {
     string s = ((string *)tmp20.data)[tmp21];
-    bool last = tmp21 == tmp20.len - 1;
 
     if (string_eq(s, val)) {
 
@@ -5932,7 +5928,6 @@ array_ustring os__read_ulines(string path) {
   array_string tmp5 = lines;
   for (int tmp6 = 0; tmp6 < tmp5.len; tmp6++) {
     string myline = ((string *)tmp5.data)[tmp6];
-    bool last = tmp6 == tmp5.len - 1;
 
     _PUSH(&ulines,
           (/*typ = array_ustring   tmp_typ=ustring*/ string_ustring(myline)),
@@ -6987,7 +6982,6 @@ void os__walk(string path, void (*fnc)(string path /*FFF*/)) {
   array_string tmp33 = files;
   for (int tmp34 = 0; tmp34 < tmp33.len; tmp34++) {
     string file = ((string *)tmp33.data)[tmp34];
-    bool last = tmp34 == tmp33.len - 1;
 
     string p = string_add(string_add(path, os__path_separator), file);
 
@@ -7052,7 +7046,6 @@ void os__mkdir_all(string path) {
   array_string tmp35 = string_split(path, os__path_separator);
   for (int tmp36 = 0; tmp36 < tmp35.len; tmp36++) {
     string subdir = ((string *)tmp35.data)[tmp36];
-    bool last = tmp36 == tmp35.len - 1;
 
     p = string_add(p, string_add(subdir, os__path_separator));
 
@@ -7812,7 +7805,6 @@ void compiler__V_cc(compiler__V *v) {
       compiler__V_generate_hotcode_reloading_compiler_flags(&/* ? */ *v);
   for (int tmp7 = 0; tmp7 < tmp6.len; tmp7++) {
     string f = ((string *)tmp6.data)[tmp7];
-    bool last = tmp7 == tmp6.len - 1;
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ f), tmp8, string);
   };
@@ -7853,7 +7845,6 @@ void compiler__V_cc(compiler__V *v) {
     array_string tmp11 = v->table->imports;
     for (int tmp12 = 0; tmp12 < tmp11.len; tmp12++) {
       string imp = ((string *)tmp11.data)[tmp12];
-      bool last = tmp12 == tmp11.len - 1;
 
       if (string_contains(imp, tos3("vweb"))) {
 
@@ -8192,7 +8183,6 @@ void compiler__V_cc_windows_cross(compiler__V *c) {
     array_string tmp29 = c->table->imports;
     for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
       string imp = ((string *)tmp29.data)[tmp30];
-      bool last = tmp30 == tmp29.len - 1;
 
       libs = string_add(
           libs, _STR(" \"%.*s/vlib/%.*s.o\"", compiler__v_modules_path.len,
@@ -8291,7 +8281,6 @@ void compiler__V_build_thirdparty_obj_files(compiler__V *c) {
   array_compiler__CFlag tmp31 = compiler__V_get_os_cflags(&/* ? */ *c);
   for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
     compiler__CFlag flag = ((compiler__CFlag *)tmp31.data)[tmp32];
-    bool last = tmp32 == tmp31.len - 1;
 
     if (string_ends_with(flag.value, tos3(".o"))) {
 
@@ -8385,7 +8374,6 @@ array_compiler__CFlag compiler__V_get_os_cflags(compiler__V *v) {
   array_compiler__CFlag tmp1 = v->table->cflags;
   for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
     compiler__CFlag flag = ((compiler__CFlag *)tmp1.data)[tmp2];
-    bool last = tmp2 == tmp1.len - 1;
 
     if (string_eq(flag.os, tos3("")) ||
         (string_eq(flag.os, tos3("linux")) &&
@@ -8417,7 +8405,6 @@ compiler__V_get_rest_of_module_cflags(compiler__V *v, compiler__CFlag *c) {
   array_compiler__CFlag tmp4 = cflags;
   for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
     compiler__CFlag flag = ((compiler__CFlag *)tmp4.data)[tmp5];
-    bool last = tmp5 == tmp4.len - 1;
 
     if (string_eq(c->mod, flag.mod)) {
 
@@ -8459,7 +8446,6 @@ bool compiler__Table_has_cflag(compiler__Table *table, compiler__CFlag cflag) {
   array_compiler__CFlag tmp7 = table->cflags;
   for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
     compiler__CFlag cf = ((compiler__CFlag *)tmp7.data)[tmp8];
-    bool last = tmp8 == tmp7.len - 1;
 
     if (string_eq(cf.os, cflag.os) && string_eq(cf.name, cflag.name) &&
         string_eq(cf.value, cflag.value)) {
@@ -8520,7 +8506,6 @@ Option_bool compiler__Table_parse_cflag(compiler__Table *table, string cflag,
       array_string tmp16 = allowed_flags;
       for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
         string f = ((string *)tmp16.data)[tmp17];
-        bool last = tmp17 == tmp16.len - 1;
 
         int i = 1 + f.len;
 
@@ -8541,7 +8526,6 @@ Option_bool compiler__Table_parse_cflag(compiler__Table *table, string cflag,
                                      string_index(flag, tos3(","))});
     for (int tmp25 = 0; tmp25 < tmp24.len; tmp25++) {
       int i = ((int *)tmp24.data)[tmp25];
-      bool last = tmp25 == tmp24.len - 1;
 
       if (index == -1 || (i != -1 && i < index)) {
 
@@ -8555,7 +8539,6 @@ Option_bool compiler__Table_parse_cflag(compiler__Table *table, string cflag,
       array_string tmp30 = allowed_flags;
       for (int tmp31 = 0; tmp31 < tmp30.len; tmp31++) {
         string f = ((string *)tmp30.data)[tmp31];
-        bool last = tmp31 == tmp30.len - 1;
 
         int i = index + f.len;
 
@@ -8636,7 +8619,6 @@ array_compiler__CFlag_c_options_before_target(array_compiler__CFlag cflags) {
   array_compiler__CFlag tmp46 = cflags;
   for (int tmp47 = 0; tmp47 < tmp46.len; tmp47++) {
     compiler__CFlag flag = ((compiler__CFlag *)tmp46.data)[tmp47];
-    bool last = tmp47 == tmp46.len - 1;
 
     if (string_ne(flag.name, tos3("-l"))) {
 
@@ -8658,7 +8640,6 @@ array_compiler__CFlag_c_options_after_target(array_compiler__CFlag cflags) {
   array_compiler__CFlag tmp49 = cflags;
   for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
     compiler__CFlag flag = ((compiler__CFlag *)tmp49.data)[tmp50];
-    bool last = tmp50 == tmp49.len - 1;
 
     if (string_eq(flag.name, tos3("-l"))) {
 
@@ -8680,7 +8661,6 @@ string array_compiler__CFlag_c_options_without_object_files(
   array_compiler__CFlag tmp52 = cflags;
   for (int tmp53 = 0; tmp53 < tmp52.len; tmp53++) {
     compiler__CFlag flag = ((compiler__CFlag *)tmp52.data)[tmp53];
-    bool last = tmp53 == tmp52.len - 1;
 
     if (string_ends_with(flag.value, tos3(".o")) ||
         string_ends_with(flag.value, tos3(".obj"))) {
@@ -8705,7 +8685,6 @@ string array_compiler__CFlag_c_options_only_object_files(
   array_compiler__CFlag tmp55 = cflags;
   for (int tmp56 = 0; tmp56 < tmp55.len; tmp56++) {
     compiler__CFlag flag = ((compiler__CFlag *)tmp55.data)[tmp56];
-    bool last = tmp56 == tmp55.len - 1;
 
     if (string_ends_with(flag.value, tos3(".o")) ||
         string_ends_with(flag.value, tos3(".obj"))) {
@@ -8984,7 +8963,6 @@ void compiler__CGen_register_thread_fn(compiler__CGen *g, string wrapper_name,
   array_string tmp25 = g->thread_args;
   for (int tmp26 = 0; tmp26 < tmp25.len; tmp26++) {
     string arg = ((string *)tmp25.data)[tmp26];
-    bool last = tmp26 == tmp25.len - 1;
 
     if (string_contains(arg, wrapper_name)) {
 
@@ -9066,7 +9044,6 @@ void compiler__build_thirdparty_obj_file(string path,
   array_string tmp32 = files;
   for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
     string file = ((string *)tmp32.data)[tmp33];
-    bool last = tmp33 == tmp32.len - 1;
 
     if (string_ends_with(file, tos3(".c"))) {
 
@@ -9219,7 +9196,6 @@ string compiler__V_type_definitions(compiler__V *v) {
   array_string tmp37 = builtins;
   for (int tmp38 = 0; tmp38 < tmp37.len; tmp38++) {
     string builtin = ((string *)tmp37.data)[tmp38];
-    bool last = tmp38 == tmp37.len - 1;
 
     compiler__Type tmp39 = {0};
     bool tmp40 = map_get(/*cgen.v : 330*/ v->table->typesmap, builtin, &tmp39);
@@ -9266,7 +9242,6 @@ array_compiler__Type compiler__sort_structs(array_compiler__Type types) {
   array_compiler__Type tmp44 = types;
   for (int tmp45 = 0; tmp45 < tmp44.len; tmp45++) {
     compiler__Type t = ((compiler__Type *)tmp44.data)[tmp45];
-    bool last = tmp45 == tmp44.len - 1;
 
     _PUSH(&type_names, (/*typ = array_string   tmp_typ=string*/ t.name), tmp46,
           string);
@@ -9275,7 +9250,6 @@ array_compiler__Type compiler__sort_structs(array_compiler__Type types) {
   array_compiler__Type tmp47 = types;
   for (int tmp48 = 0; tmp48 < tmp47.len; tmp48++) {
     compiler__Type t = ((compiler__Type *)tmp47.data)[tmp48];
-    bool last = tmp48 == tmp47.len - 1;
 
     array_string field_deps = new_array_from_c_array(
         0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
@@ -9283,7 +9257,6 @@ array_compiler__Type compiler__sort_structs(array_compiler__Type types) {
     array_compiler__Var tmp49 = t.fields;
     for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
       compiler__Var field = ((compiler__Var *)tmp49.data)[tmp50];
-      bool last = tmp50 == tmp49.len - 1;
 
       if (!(_IN(string, (field.typ), type_names)) ||
           _IN(string, (field.typ), field_deps)) {
@@ -9322,12 +9295,10 @@ array_compiler__Type compiler__sort_structs(array_compiler__Type types) {
   array_compiler__DepGraphNode tmp52 = dep_graph_sorted->nodes;
   for (int tmp53 = 0; tmp53 < tmp52.len; tmp53++) {
     compiler__DepGraphNode node = ((compiler__DepGraphNode *)tmp52.data)[tmp53];
-    bool last = tmp53 == tmp52.len - 1;
 
     array_compiler__Type tmp54 = types;
     for (int tmp55 = 0; tmp55 < tmp54.len; tmp55++) {
       compiler__Type t = ((compiler__Type *)tmp54.data)[tmp55];
-      bool last = tmp55 == tmp54.len - 1;
 
       if (string_eq(t.name, node.name)) {
 
@@ -10290,7 +10261,6 @@ void compiler__Parser_gen_struct_str(compiler__Parser *p, compiler__Type typ) {
   array_compiler__Var tmp21 = typ.fields;
   for (int tmp22 = 0; tmp22 < tmp21.len; tmp22++) {
     compiler__Var field = ((compiler__Var *)tmp21.data)[tmp22];
-    bool last = tmp22 == tmp21.len - 1;
 
     strings__Builder_writeln(
         &/* ? */ sb,
@@ -10518,7 +10488,6 @@ compiler__DepSet compiler__DepSet_diff(compiler__DepSet *dset,
   array_string tmp2 = dset->items;
   for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
     string item = ((string *)tmp2.data)[tmp3];
-    bool last = tmp3 == tmp2.len - 1;
 
     if (!_IN(string, (item), otherset.items)) {
 
@@ -10620,7 +10589,6 @@ compiler__DepGraph *compiler__DepGraph_resolve(compiler__DepGraph *graph) {
     array_string tmp13 = ready_set.items;
     for (int tmp14 = 0; tmp14 < tmp13.len; tmp14++) {
       string name = ((string *)tmp13.data)[tmp14];
-      bool last = tmp14 == tmp13.len - 1;
 
       v_map_delete(&/* ? */ node_deps, name);
 
@@ -10661,12 +10629,10 @@ string compiler__DepGraph_display(compiler__DepGraph *graph) {
   array_compiler__DepGraphNode tmp21 = graph->nodes;
   for (int tmp22 = 0; tmp22 < tmp21.len; tmp22++) {
     compiler__DepGraphNode node = ((compiler__DepGraphNode *)tmp21.data)[tmp22];
-    bool last = tmp22 == tmp21.len - 1;
 
     array_string tmp23 = node.deps;
     for (int tmp24 = 0; tmp24 < tmp23.len; tmp24++) {
       string dep = ((string *)tmp23.data)[tmp24];
-      bool last = tmp24 == tmp23.len - 1;
 
       out = string_add(out, _STR(" * %.*s -> %.*s\n", node.name.len,
                                  node.name.str, dep.len, dep.str));
@@ -10683,7 +10649,6 @@ string compiler__DepGraph_display_cycles(compiler__DepGraph *graph) {
   array_compiler__DepGraphNode tmp25 = graph->nodes;
   for (int tmp26 = 0; tmp26 < tmp25.len; tmp26++) {
     compiler__DepGraphNode node = ((compiler__DepGraphNode *)tmp25.data)[tmp26];
-    bool last = tmp26 == tmp25.len - 1;
 
     map_set(&node_names, node.name, &(compiler__DepGraphNode[]){node});
   };
@@ -10693,12 +10658,10 @@ string compiler__DepGraph_display_cycles(compiler__DepGraph *graph) {
   array_compiler__DepGraphNode tmp27 = graph->nodes;
   for (int tmp28 = 0; tmp28 < tmp27.len; tmp28++) {
     compiler__DepGraphNode node = ((compiler__DepGraphNode *)tmp27.data)[tmp28];
-    bool last = tmp28 == tmp27.len - 1;
 
     array_string tmp29 = node.deps;
     for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
       string dep = ((string *)tmp29.data)[tmp30];
-      bool last = tmp30 == tmp29.len - 1;
 
       if (!(_IN_MAP((dep), node_names))) {
 
@@ -10880,14 +10843,12 @@ string array_compiler__TypeInst_str(array_compiler__TypeInst a) {
   array_compiler__TypeInst tmp1 = a;
   for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
     compiler__TypeInst t = ((compiler__TypeInst *)tmp1.data)[tmp2];
-    bool last = tmp2 == tmp1.len - 1;
 
     string s = tos3(" | ");
 
     array_string tmp3 = map_keys(&/* ? */ t.inst);
     for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
       string k = ((string *)tmp3.data)[tmp4];
-      bool last = tmp4 == tmp3.len - 1;
 
       string tmp5 = tos3("");
       bool tmp6 = map_get(/*fn.v : 66*/ t.inst, k, &tmp5);
@@ -11769,7 +11730,6 @@ void compiler__Parser_check_unused_variables(compiler__Parser *p) {
   array_compiler__Var tmp49 = p->local_vars;
   for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
     compiler__Var var = ((compiler__Var *)tmp49.data)[tmp50];
-    bool last = tmp50 == tmp49.len - 1;
 
     if (string_eq(var.name, tos3(""))) {
 
@@ -12245,7 +12205,6 @@ void compiler__Parser_fn_args(compiler__Parser *p, compiler__Fn *f) {
     array_string tmp59 = names;
     for (int tmp60 = 0; tmp60 < tmp59.len; tmp60++) {
       string name = ((string *)tmp59.data)[tmp60];
-      bool last = tmp60 == tmp59.len - 1;
 
       if (is_mut) {
 
@@ -12707,7 +12666,6 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
       array_compiler__Fn tmp67 = interface_type.methods;
       for (int tmp68 = 0; tmp68 < tmp67.len; tmp68++) {
         compiler__Fn method = ((compiler__Fn *)tmp67.data)[tmp68];
-        bool last = tmp68 == tmp67.len - 1;
 
         compiler__Parser_gen(p, _STR(", %.*s_%.*s ", typ.len, typ.str,
                                      method.name.len, method.name.str));
@@ -12787,7 +12745,6 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
   array_string tmp71 = args;
   for (int tmp72 = 0; tmp72 < tmp71.len; tmp72++) {
     string e = ((string *)tmp71.data)[tmp72];
-    bool last = tmp72 == tmp71.len - 1;
 
     if (string_eq(e, tos3(""))) {
 
@@ -12809,7 +12766,6 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       array_string tmp77 = fn_args;
       for (int tmp78 = 0; tmp78 < tmp77.len; tmp78++) {
         string fa_ = ((string *)tmp77.data)[tmp78];
-        bool last = tmp78 == tmp77.len - 1;
 
         string fa = fa_;
 
@@ -12897,7 +12853,6 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
   array_string tmp91 = f->type_pars;
   for (int tmp92 = 0; tmp92 < tmp91.len; tmp92++) {
     string tp = ((string *)tmp91.data)[tmp92];
-    bool last = tmp92 == tmp91.len - 1;
 
     string tmp93 = tos3("");
     bool tmp94 = map_get(/*fn.v : 1156*/ r.inst, tp, &tmp93);
@@ -12925,7 +12880,6 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
   array_compiler__Var tmp95 = f->args;
   for (int tmp96 = 0; tmp96 < tmp95.len; tmp96++) {
     compiler__Var a = ((compiler__Var *)tmp95.data)[tmp96];
-    bool last = tmp96 == tmp95.len - 1;
 
     _PUSH(&sig, (/*typ = array_string   tmp_typ=string*/ a.typ), tmp97, string);
   };
@@ -13145,7 +13099,6 @@ compiler__Parser_fn_call_vargs(compiler__Parser *p, compiler__Fn f) {
         array_string tmp125 = types;
         for (int tmp126 = 0; tmp126 < tmp125.len; tmp126++) {
           string t = ((string *)tmp125.data)[tmp126];
-          bool last = tmp126 == tmp125.len - 1;
 
           compiler__Parser_check_types(p, varg_type, t);
         };
@@ -13173,7 +13126,6 @@ compiler__Parser_fn_call_vargs(compiler__Parser *p, compiler__Fn f) {
   array_compiler__VargAccess tmp129 = p->table->varg_access;
   for (int tmp130 = 0; tmp130 < tmp129.len; tmp130++) {
     compiler__VargAccess va = ((compiler__VargAccess *)tmp129.data)[tmp130];
-    bool last = tmp130 == tmp129.len - 1;
 
     if (string_ne(va.fn_name, f.name)) {
 
@@ -13282,7 +13234,6 @@ void compiler__Parser_rename_generic_fn_instance(compiler__Parser *p,
   array_string tmp137 = map_keys(&/* ? */ ti.inst);
   for (int tmp138 = 0; tmp138 < tmp137.len; tmp138++) {
     string k = ((string *)tmp137.data)[tmp138];
-    bool last = tmp138 == tmp137.len - 1;
 
     string tmp139 = tos3("");
     bool tmp140 = map_get(/*fn.v : 1318*/ ti.inst, k, &tmp139);
@@ -13303,7 +13254,6 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   array_compiler__TypeInst tmp141 = f->type_inst;
   for (int tmp142 = 0; tmp142 < tmp141.len; tmp142++) {
     compiler__TypeInst e = ((compiler__TypeInst *)tmp141.data)[tmp142];
-    bool last = tmp142 == tmp141.len - 1;
 
     if (string_eq(map_string_str(e.inst), map_string_str(ti.inst))) {
 
@@ -13453,7 +13403,6 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   array_compiler__Var tmp156 = f->args;
   for (int tmp157 = 0; tmp157 < tmp156.len; tmp157++) {
     compiler__Var arg = ((compiler__Var *)tmp156.data)[tmp157];
-    bool last = tmp157 == tmp156.len - 1;
 
     compiler__Parser_register_var(p, arg);
   };
@@ -13494,7 +13443,6 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   array_string tmp160 = p->cgen->lines;
   for (int tmp161 = 0; tmp161 < tmp160.len; tmp161++) {
     string l = ((string *)tmp160.data)[tmp161];
-    bool last = tmp161 == tmp160.len - 1;
 
     _PUSH(&p->cgen->fns, (/*typ = array_string   tmp_typ=string*/ l), tmp162,
           string);
@@ -13567,7 +13515,6 @@ string compiler__Fn_str_args(compiler__Fn *f, compiler__Table *table) {
       array_compiler__Fn tmp165 = interface_type.methods;
       for (int tmp166 = 0; tmp166 < tmp165.len; tmp166++) {
         compiler__Fn method = ((compiler__Fn *)tmp165.data)[tmp166];
-        bool last = tmp166 == tmp165.len - 1;
 
         s = string_add(s, _STR(", %.*s (*%.*s_%.*s)(void*", method.typ.len,
                                method.typ.str, arg.typ.len, arg.typ.str,
@@ -13578,7 +13525,6 @@ string compiler__Fn_str_args(compiler__Fn *f, compiler__Table *table) {
           array_compiler__Var tmp167 = array_slice2(method.args, 1, -1, true);
           for (int tmp170 = 0; tmp170 < tmp167.len; tmp170++) {
             compiler__Var a = ((compiler__Var *)tmp167.data)[tmp170];
-            bool last = tmp170 == tmp167.len - 1;
 
             s = string_add(s, _STR(", %.*s", a.typ.len, a.typ.str));
           };
@@ -13616,7 +13562,6 @@ string compiler__Parser_find_misspelled_local_var(compiler__Parser *p,
   array_compiler__Var tmp171 = p->local_vars;
   for (int tmp172 = 0; tmp172 < tmp171.len; tmp172++) {
     compiler__Var var = ((compiler__Var *)tmp171.data)[tmp172];
-    bool last = tmp172 == tmp171.len - 1;
 
     if (var.scope_level > p->cur_fn.scope_level) {
 
@@ -13648,7 +13593,6 @@ bool array_compiler__Fn_contains(array_compiler__Fn fns, compiler__Fn f) {
   array_compiler__Fn tmp173 = fns;
   for (int tmp174 = 0; tmp174 < tmp173.len; tmp174++) {
     compiler__Fn ff = ((compiler__Fn *)tmp173.data)[tmp174];
-    bool last = tmp174 == tmp173.len - 1;
 
     if (string_eq(ff.name, f.name)) {
 
@@ -13946,7 +13890,6 @@ string compiler__types_to_c(array_compiler__Type types,
   array_compiler__Type tmp13 = types;
   for (int tmp14 = 0; tmp14 < tmp13.len; tmp14++) {
     compiler__Type t = ((compiler__Type *)tmp13.data)[tmp14];
-    bool last = tmp14 == tmp13.len - 1;
 
     if (t.cat != compiler__compiler__TypeCategory_union_ &&
         t.cat != compiler__compiler__TypeCategory_struct_ &&
@@ -13975,7 +13918,6 @@ string compiler__types_to_c(array_compiler__Type types,
     array_compiler__Var tmp15 = t.fields;
     for (int tmp16 = 0; tmp16 < tmp15.len; tmp16++) {
       compiler__Var field = ((compiler__Var *)tmp15.data)[tmp16];
-      bool last = tmp16 == tmp15.len - 1;
 
       strings__Builder_write(&/* ? */ sb, tos3("\t"));
 
@@ -14851,7 +14793,6 @@ void compiler__Parser_gen_json_for_type(compiler__Parser *p,
   array_compiler__Var tmp3 = typ.fields;
   for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
     compiler__Var field = ((compiler__Var *)tmp3.data)[tmp4];
-    bool last = tmp4 == tmp3.len - 1;
 
     if (string_eq(field.attr, tos3("skip"))) {
 
@@ -15161,7 +15102,6 @@ void compiler__V_generate_hot_reload_code(compiler__V *v) {
       array_string tmp5 = cgen->so_fns;
       for (int tmp6 = 0; tmp6 < tmp5.len; tmp6++) {
         string so_fn = ((string *)tmp5.data)[tmp6];
-        bool last = tmp6 == tmp5.len - 1;
 
         compiler__CGen_genln(cgen,
                              _STR("%.*s = dlsym(live_lib, \"%.*s\");  ",
@@ -15185,7 +15125,6 @@ void compiler__V_generate_hot_reload_code(compiler__V *v) {
       array_string tmp7 = cgen->so_fns;
       for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
         string so_fn = ((string *)tmp7.data)[tmp8];
-        bool last = tmp8 == tmp7.len - 1;
 
         compiler__CGen_genln(
             cgen, _STR("%.*s = (void *)GetProcAddress(live_lib, \"%.*s\");  ",
@@ -15335,7 +15274,6 @@ void compiler__V_compile(compiler__V *v) {
   array_string tmp8 = v->files;
   for (int tmp9 = 0; tmp9 < tmp8.len; tmp9++) {
     string file = ((string *)tmp8.data)[tmp9];
-    bool last = tmp9 == tmp8.len - 1;
 
     compiler__V_parse(v, file, compiler__compiler__Pass_decl);
   };
@@ -15446,7 +15384,6 @@ void compiler__V_compile(compiler__V *v) {
   array_string tmp10 = v->files;
   for (int tmp11 = 0; tmp11 < tmp10.len; tmp11++) {
     string file = ((string *)tmp10.data)[tmp11];
-    bool last = tmp11 == tmp10.len - 1;
 
     compiler__V_parse(v, file, compiler__compiler__Pass_main);
 
@@ -15526,7 +15463,6 @@ void compiler__V_compile(compiler__V *v) {
     array_compiler__CFlag tmp12 = compiler__V_get_os_cflags(&/* ? */ *v);
     for (int tmp13 = 0; tmp13 < tmp12.len; tmp13++) {
       compiler__CFlag flag = ((compiler__CFlag *)tmp12.data)[tmp13];
-      bool last = tmp13 == tmp12.len - 1;
 
       println(string_add(tos3(" * "), compiler__CFlag_format(&/* ? */ flag)));
     };
@@ -15588,7 +15524,6 @@ void compiler__V_generate_init(compiler__V *v) {
     array_string tmp14 = v->table->imports;
     for (int tmp15 = 0; tmp15 < tmp14.len; tmp15++) {
       string mod = ((string *)tmp14.data)[tmp15];
-      bool last = tmp15 == tmp14.len - 1;
 
       string init_fn_name =
           string_add(compiler__mod_gen_name(mod), tos3("__init"));
@@ -15902,7 +15837,6 @@ array_string compiler__V_v_files_from_dir(compiler__V *v, string dir) {
   array_string tmp22 = files;
   for (int tmp23 = 0; tmp23 < tmp22.len; tmp23++) {
     string file = ((string *)tmp22.data)[tmp23];
-    bool last = tmp23 == tmp22.len - 1;
 
     if (!string_ends_with(file, tos3(".v")) &&
         !string_ends_with(file, tos3(".vh"))) {
@@ -15985,7 +15919,6 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
   array_string tmp26 = builtin_files;
   for (int tmp27 = 0; tmp27 < tmp26.len; tmp27++) {
     string file = ((string *)tmp26.data)[tmp27];
-    bool last = tmp27 == tmp26.len - 1;
 
     _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ file), tmp28,
           string);
@@ -16000,7 +15933,6 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
   array_string tmp29 = compiler__V_get_user_files(&/* ? */ *v);
   for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
     string file = ((string *)tmp29.data)[tmp30];
-    bool last = tmp30 == tmp29.len - 1;
 
     compiler__Parser p = compiler__V_new_parser_from_file(v, file);
 
@@ -16041,7 +15973,6 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
   array_string tmp32 = imported_mods;
   for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
     string mod = ((string *)tmp32.data)[tmp33];
-    bool last = tmp33 == tmp32.len - 1;
 
     if (string_eq(mod, tos3("builtin")) || string_eq(mod, tos3("main"))) {
 
@@ -16080,7 +16011,6 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
     array_string tmp36 = vfiles;
     for (int tmp37 = 0; tmp37 < tmp36.len; tmp37++) {
       string file = ((string *)tmp36.data)[tmp37];
-      bool last = tmp37 == tmp36.len - 1;
 
       _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ file), tmp38,
             string);
@@ -16090,7 +16020,6 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
   array_compiler__Parser tmp39 = v->parsers;
   for (int tmp40 = 0; tmp40 < tmp39.len; tmp40++) {
     compiler__Parser p = ((compiler__Parser *)tmp39.data)[tmp40];
-    bool last = tmp40 == tmp39.len - 1;
 
     if (string_ne(p.mod, tos3("main"))) {
 
@@ -16183,7 +16112,6 @@ array_string compiler__V_get_user_files(compiler__V *v) {
     array_string tmp48 = files;
     for (int tmp49 = 0; tmp49 < tmp48.len; tmp49++) {
       string file = ((string *)tmp48.data)[tmp49];
-      bool last = tmp49 == tmp48.len - 1;
 
       _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ file), tmp50,
             string);
@@ -16214,7 +16142,6 @@ array_string compiler__V_get_imported_module_files(compiler__V *v, string mod) {
   array_compiler__Parser tmp51 = v->parsers;
   for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
     compiler__Parser p = ((compiler__Parser *)tmp51.data)[tmp52];
-    bool last = tmp52 == tmp51.len - 1;
 
     if (string_eq(p.mod, mod)) {
 
@@ -16285,7 +16212,6 @@ void compiler__V_parse_lib_imports(compiler__V *v) {
       array_string tmp68 = vfiles;
       for (int tmp69 = 0; tmp69 < tmp68.len; tmp69++) {
         string file = ((string *)tmp68.data)[tmp69];
-        bool last = tmp69 == tmp68.len - 1;
 
         int pidx = compiler__V_parse(v, file, compiler__compiler__Pass_imports);
 
@@ -16912,7 +16838,6 @@ void compiler__generate_vh(string mod) {
   array_string tmp3 = filtered;
   for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
     string file = ((string *)tmp3.data)[tmp4];
-    bool last = tmp4 == tmp3.len - 1;
 
     compiler__Parser p = compiler__V_new_parser_from_file(v, file);
 
@@ -17087,7 +17012,6 @@ string compiler__Table_qualify_module(compiler__Table *table, string mod,
   array_string tmp1 = table->imports;
   for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
     string m = ((string *)tmp1.data)[tmp2];
-    bool last = tmp2 == tmp1.len - 1;
 
     if (string_contains(m, tos3(".")) && string_contains(m, mod)) {
 
@@ -17143,7 +17067,6 @@ void compiler__Parser_register_import_alias(compiler__Parser *p, string alias,
     array_string tmp7 = mod_parts;
     for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
       string part = ((string *)tmp7.data)[tmp8];
-      bool last = tmp8 == tmp7.len - 1;
 
       if (string_eq(part, tos3("internal"))) {
 
@@ -17271,7 +17194,6 @@ compiler__DepGraph *compiler__V_import_graph(compiler__V *v) {
   array_compiler__Parser tmp18 = v->parsers;
   for (int tmp19 = 0; tmp19 < tmp18.len; tmp19++) {
     compiler__Parser p = ((compiler__Parser *)tmp18.data)[tmp19];
-    bool last = tmp19 == tmp18.len - 1;
 
     array_string deps = new_array_from_c_array(
         0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
@@ -17299,7 +17221,6 @@ array_string compiler__DepGraph_imports(compiler__DepGraph *graph) {
   array_compiler__DepGraphNode tmp22 = graph->nodes;
   for (int tmp23 = 0; tmp23 < tmp22.len; tmp23++) {
     compiler__DepGraphNode node = ((compiler__DepGraphNode *)tmp22.data)[tmp23];
-    bool last = tmp23 == tmp22.len - 1;
 
     _PUSH(&mods, (/*typ = array_string   tmp_typ=string*/ node.name), tmp24,
           string);
@@ -17363,7 +17284,6 @@ Option_string compiler__find_windows_kit_internal(RegKey key,
   array_string tmp1 = versions;
   for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
     string version = ((string *)tmp1.data)[tmp2];
-    bool last = tmp2 == tmp1.len - 1;
 
     int required_bytes = 0;
 
@@ -17469,7 +17389,6 @@ Option_compiler__WindowsKit compiler__find_windows_kit_root(string host_arch) {
   array_string tmp8 = files;
   for (int tmp9 = 0; tmp9 < tmp8.len; tmp9++) {
     string f = ((string *)tmp8.data)[tmp9];
-    bool last = tmp9 == tmp8.len - 1;
 
     string no_dot = string_replace(f, tos3("."), tos3(""));
 
@@ -17915,7 +17834,6 @@ void compiler__build_thirdparty_obj_file_with_msvc(
   array_string tmp50 = files;
   for (int tmp51 = 0; tmp51 < tmp50.len; tmp51++) {
     string file = ((string *)tmp50.data)[tmp51];
-    bool last = tmp51 == tmp50.len - 1;
 
     if (string_ends_with(file, tos3(".c"))) {
 
@@ -17997,7 +17915,6 @@ array_compiler__CFlag_msvc_string_flags(array_compiler__CFlag cflags) {
   array_compiler__CFlag tmp53 = cflags;
   for (int tmp54 = 0; tmp54 < tmp53.len; tmp54++) {
     compiler__CFlag flag = ((compiler__CFlag *)tmp53.data)[tmp54];
-    bool last = tmp54 == tmp53.len - 1;
 
     if (string_eq(flag.name, tos3("-l"))) {
 
@@ -18050,7 +17967,6 @@ array_compiler__CFlag_msvc_string_flags(array_compiler__CFlag cflags) {
   array_string tmp61 = lib_paths;
   for (int tmp62 = 0; tmp62 < tmp61.len; tmp62++) {
     string l = ((string *)tmp61.data)[tmp62];
-    bool last = tmp62 == tmp61.len - 1;
 
     _PUSH(&lpaths,
           (/*typ = array_string   tmp_typ=string*/ string_add(
@@ -18149,7 +18065,6 @@ compiler__Parser compiler__V_new_parser_from_file(compiler__V *v, string path) {
           tos3("_linux.v"), tos3("_darwin.v"), tos3("_windows.v")});
   for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
     string path_ending = ((string *)tmp1.data)[tmp2];
-    bool last = tmp2 == tmp1.len - 1;
 
     if (string_ends_with(path, path_ending)) {
 
@@ -22512,7 +22427,6 @@ string compiler__Parser_assoc(compiler__Parser *p) {
   array_compiler__Var tmp135 = T.fields;
   for (int tmp136 = 0; tmp136 < tmp135.len; tmp136++) {
     compiler__Var ffield = ((compiler__Var *)tmp135.data)[tmp136];
-    bool last = tmp136 == tmp135.len - 1;
 
     string f = ffield.name;
 
@@ -23628,38 +23542,6 @@ void compiler__Parser_for_st(compiler__Parser *p) {
 
       compiler__Parser_gen_for_header(p, i, tmp, typ, val);
 
-      compiler__Parser_register_var(
-          p, (compiler__Var){.name = tos3("last"),
-                             .typ = tos3("bool"),
-                             .is_mut = 0,
-                             .is_used = 1,
-                             .idx = 0,
-                             .is_arg = 0,
-                             .is_const = 0,
-                             .args = new_array(0, 1, sizeof(compiler__Var)),
-                             .attr = tos3(""),
-                             .is_alloc = 0,
-                             .is_returned = 0,
-                             .ptr = 0,
-                             .ref = 0,
-                             .parent_fn = tos3(""),
-                             .mod = tos3(""),
-                             .is_global = 0,
-                             .is_changed = 0,
-                             .scope_level = 0,
-                             .is_c = 0,
-                             .is_moved = 0,
-                             .line_nr = 0,
-                             .token_idx = 0,
-                             .is_for_var = 0,
-                             .is_public = 0});
-
-      if (!p->is_js) {
-
-        compiler__Parser_genln(p, _STR("bool last = %.*s == %.*s . len - 1;",
-                                       i.len, i.str, tmp.len, tmp.str));
-      };
-
     } else if (is_str) {
 
       typ = tos3("byte");
@@ -24230,7 +24112,6 @@ string compiler__Parser_get_deferred_text(compiler__Parser p) {
   array_string tmp169 = p.cur_fn.defer_text;
   for (int tmp170 = 0; tmp170 < tmp169.len; tmp170++) {
     string text = ((string *)tmp169.data)[tmp170];
-    bool last = tmp170 == tmp169.len - 1;
 
     if (string_ne(text, tos3(""))) {
 
@@ -24369,7 +24250,6 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     array_compiler__Var tmp174 = T.fields;
     for (int tmp175 = 0; tmp175 < tmp174.len; tmp175++) {
       compiler__Var field = ((compiler__Var *)tmp174.data)[tmp175];
-      bool last = tmp175 == tmp174.len - 1;
 
       string def_val = compiler__type_default(field.typ);
 
@@ -25043,7 +24923,6 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
   array_compiler__Var tmp13 = fields;
   for (int tmp14 = 0; tmp14 < tmp13.len; tmp14++) {
     compiler__Var field = ((compiler__Var *)tmp13.data)[tmp14];
-    bool last = tmp14 == tmp13.len - 1;
 
     if (string_ne(field.typ, tos3("string")) &&
         string_ne(field.typ, tos3("int"))) {
@@ -27302,7 +27181,6 @@ compiler__Table *compiler__new_table(bool obfuscate) {
   array_string tmp2 = compiler__reserved_type_param_names;
   for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
     string c = ((string *)tmp2.data)[tmp3];
-    bool last = tmp3 == tmp2.len - 1;
 
     compiler__Table_register_builtin(t, c);
   };
@@ -27703,7 +27581,6 @@ Option_compiler__Var compiler__Type_find_field(compiler__Type *t, string name) {
   array_compiler__Var tmp28 = t->fields;
   for (int tmp29 = 0; tmp29 < tmp28.len; tmp29++) {
     compiler__Var field = ((compiler__Var *)tmp28.data)[tmp29];
-    bool last = tmp29 == tmp28.len - 1;
 
     if (string_eq(field.name, name)) {
 
@@ -27735,7 +27612,6 @@ Option_compiler__Var compiler__Table_find_field(compiler__Table *table,
   array_compiler__Var tmp32 = typ->fields;
   for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
     compiler__Var field = ((compiler__Var *)tmp32.data)[tmp33];
-    bool last = tmp33 == tmp32.len - 1;
 
     if (string_eq(field.name, name)) {
 
@@ -27752,7 +27628,6 @@ Option_compiler__Var compiler__Table_find_field(compiler__Table *table,
     array_compiler__Var tmp35 = parent.fields;
     for (int tmp36 = 0; tmp36 < tmp35.len; tmp36++) {
       compiler__Var field = ((compiler__Var *)tmp35.data)[tmp36];
-      bool last = tmp36 == tmp35.len - 1;
 
       if (string_eq(field.name, name)) {
 
@@ -27835,7 +27710,6 @@ Option_compiler__Fn compiler__Table_find_method(compiler__Table *table,
   array_compiler__Fn tmp45 = t.methods;
   for (int tmp46 = 0; tmp46 < tmp45.len; tmp46++) {
     compiler__Fn method = ((compiler__Fn *)tmp45.data)[tmp46];
-    bool last = tmp46 == tmp45.len - 1;
 
     if (string_eq(method.name, name)) {
 
@@ -27852,7 +27726,6 @@ Option_compiler__Fn compiler__Table_find_method(compiler__Table *table,
     array_compiler__Fn tmp48 = parent.methods;
     for (int tmp49 = 0; tmp49 < tmp48.len; tmp49++) {
       compiler__Fn method = ((compiler__Fn *)tmp48.data)[tmp49];
-      bool last = tmp49 == tmp48.len - 1;
 
       if (string_eq(method.name, name)) {
 
@@ -27871,7 +27744,6 @@ Option_compiler__Fn compiler__Type_find_method(compiler__Type *t, string name) {
   array_compiler__Fn tmp51 = t->methods;
   for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
     compiler__Fn method = ((compiler__Fn *)tmp51.data)[tmp52];
-    bool last = tmp52 == tmp51.len - 1;
 
     if (string_eq(method.name, name)) {
 
@@ -28142,7 +28014,6 @@ bool compiler__Parser_satisfies_interface(compiler__Parser *p,
   array_compiler__Fn tmp62 = int_typ.methods;
   for (int tmp63 = 0; tmp63 < tmp62.len; tmp63++) {
     compiler__Fn method = ((compiler__Fn *)tmp62.data)[tmp63];
-    bool last = tmp63 == tmp62.len - 1;
 
     if (!compiler__Type_has_method(&/* ? */ typ, method.name)) {
 
@@ -28212,7 +28083,6 @@ Option_compiler__Var compiler__Table_find_const(compiler__Table *t,
   array_compiler__Var tmp68 = t->consts;
   for (int tmp69 = 0; tmp69 < tmp68.len; tmp69++) {
     compiler__Var c = ((compiler__Var *)tmp68.data)[tmp69];
-    bool last = tmp69 == tmp68.len - 1;
 
     if (string_eq(c.name, name)) {
 
@@ -28398,7 +28268,6 @@ bool compiler__Type_contains_field_type(compiler__Type *t, string typ) {
   array_compiler__Var tmp79 = t->fields;
   for (int tmp80 = 0; tmp80 < tmp79.len; tmp80++) {
     compiler__Var field = ((compiler__Var *)tmp79.data)[tmp80];
-    bool last = tmp80 == tmp79.len - 1;
 
     if (string_eq(field.typ, typ)) {
 
@@ -28576,7 +28445,6 @@ string compiler__Table_find_misspelled_const(compiler__Table *table,
   array_compiler__Var tmp91 = table->consts;
   for (int tmp92 = 0; tmp92 < tmp91.len; tmp92++) {
     compiler__Var cnst = ((compiler__Var *)tmp91.data)[tmp92];
-    bool last = tmp92 == tmp91.len - 1;
 
     if (string_contains(cnst.name, tos3("__")) &&
         !compiler__Parser_is_mod_in_scope(&/* ? */ *p, cnst.mod)) {
@@ -29034,7 +28902,6 @@ bool array_compiler__TokenKind_contains(array_compiler__TokenKind t,
   array_compiler__TokenKind tmp7 = t;
   for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
     compiler__TokenKind tt = ((compiler__TokenKind *)tmp7.data)[tmp8];
-    bool last = tmp8 == tmp7.len - 1;
 
     if (tt == val) {
 
@@ -29787,7 +29654,6 @@ string vweb_dot_tmpl__compile_template(string path) {
   array_string tmp3 = lines;
   for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
     string _line = ((string *)tmp3.data)[tmp4];
-    bool last = tmp4 == tmp3.len - 1;
 
     string line = string_trim_space(_line);
 
