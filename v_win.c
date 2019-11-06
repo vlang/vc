@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "91bb969"
+#define V_COMMIT_HASH "4d876d1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "af81b02"
+#define V_COMMIT_HASH "91bb969"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -1323,7 +1323,7 @@ compiler__DepGraph *compiler__DepGraph_resolve(compiler__DepGraph *graph);
 compiler__DepGraphNode compiler__DepGraph_last_node(compiler__DepGraph *graph);
 string compiler__DepGraph_display(compiler__DepGraph *graph);
 string compiler__DepGraph_display_cycles(compiler__DepGraph *graph);
-void compiler__Parser_enum_decl(compiler__Parser *p, string _enum_name);
+void compiler__Parser_enum_decl(compiler__Parser *p, bool no_name);
 void compiler__Parser_check_enum_member_access(compiler__Parser *p);
 string array_compiler__TypeInst_str(array_compiler__TypeInst a);
 Option_compiler__Var compiler__Parser_find_var(compiler__Parser *p,
@@ -10005,15 +10005,6 @@ void compiler__Parser_chash(compiler__Parser *p) {
 
     if (compiler__Parser_first_pass(&/* ? */ *p) && !p->is_vh) {
 
-      if (!p->pref->building_v &&
-          !compiler__Parser_fileis(&/* ? */ *p, tos3("vlib"))) {
-
-        compiler__Parser_warn(
-            p, string_add(
-                   tos3("C #includes will soon be removed from the language"),
-                   tos3("\ndefine the C structs and functions in V")));
-      };
-
       if (p->file_pcguard.len != 0) {
 
         _PUSH(&p->cgen->includes,
@@ -10729,17 +10720,25 @@ string compiler__DepGraph_display_cycles(compiler__DepGraph *graph) {
 
   return out;
 }
-void compiler__Parser_enum_decl(compiler__Parser *p, string _enum_name) {
-
-  string enum_name = _enum_name;
+void compiler__Parser_enum_decl(compiler__Parser *p, bool no_name) {
 
   bool is_pub = p->tok == compiler__compiler__TokenKind_key_pub;
 
   if (is_pub) {
 
     compiler__Parser_next(p);
+  };
 
-    compiler__Parser_check(p, compiler__compiler__TokenKind_key_enum);
+  compiler__Parser_check(p, compiler__compiler__TokenKind_key_enum);
+
+  string enum_name = compiler__Parser_check_name(p);
+
+  bool is_c = string_eq(enum_name, tos3("C")) &&
+              p->tok == compiler__compiler__TokenKind_dot;
+
+  if (is_c) {
+
+    compiler__Parser_check(p, compiler__compiler__TokenKind_dot);
 
     enum_name = compiler__Parser_check_name(p);
   };
@@ -10749,8 +10748,7 @@ void compiler__Parser_enum_decl(compiler__Parser *p, string _enum_name) {
     enum_name = compiler__Parser_prepend_mod(&/* ? */ *p, enum_name);
   };
 
-  if (string_ne(enum_name, tos3("int")) &&
-      !compiler__Parser_first_pass(&/* ? */ *p)) {
+  if (!no_name && !compiler__Parser_first_pass(&/* ? */ *p)) {
 
     _PUSH(&p->cgen->typedefs,
           (/*typ = array_string   tmp_typ=string*/ _STR(
@@ -18573,25 +18571,20 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
 
     } else if (tmp14 == compiler__compiler__TokenKind_key_enum) {
 
-      compiler__Parser_next(p);
+      compiler__TokenKind next = compiler__Parser_peek(&/* ? */ *p);
 
-      if (p->tok == compiler__compiler__TokenKind_name) {
-
-        ;
-
-        string name = compiler__Parser_check_name(p);
+      if (next == compiler__compiler__TokenKind_name) {
 
         ;
 
-        compiler__Parser_enum_decl(p, name);
+        ;
 
-      } else if (p->pref->translated) {
+        compiler__Parser_enum_decl(p, 0);
 
-        compiler__Parser_enum_decl(p, tos3("int"));
+      } else if (next == compiler__compiler__TokenKind_lcbr &&
+                 p->pref->translated) {
 
-      } else {
-
-        compiler__Parser_check(p, compiler__compiler__TokenKind_name);
+        compiler__Parser_enum_decl(p, 1);
       };
 
     } else if (tmp14 == compiler__compiler__TokenKind_key_pub) {
@@ -18616,7 +18609,7 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
 
       } else if (tmp15 == compiler__compiler__TokenKind_key_enum) {
 
-        compiler__Parser_enum_decl(p, tos3(""));
+        compiler__Parser_enum_decl(p, 0);
 
       } else // default:
       {
@@ -19446,7 +19439,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
   if (_IN(string, (p->lit), map_keys(&/* ? */ ti))) {
 
     string tmp34 = tos3("");
-    bool tmp35 = map_get(/*parser.v : 859*/ ti, p->lit, &tmp34);
+    bool tmp35 = map_get(/*parser.v : 857*/ ti, p->lit, &tmp34);
 
     if (!tmp35)
       tmp34 = tos((byte *)"", 0);
@@ -20823,7 +20816,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
       if (_IN(string, (typ), map_keys(&/* ? */ p->cur_fn.dispatch_of.inst))) {
 
         string tmp91 = tos3("");
-        bool tmp92 = map_get(/*parser.v : 1664*/ p->cur_fn.dispatch_of.inst,
+        bool tmp92 = map_get(/*parser.v : 1662*/ p->cur_fn.dispatch_of.inst,
                              typ, &tmp91);
 
         if (!tmp92)
@@ -20870,10 +20863,9 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
 
       if (string_eq(p->expected_type, enum_type.name)) {
 
-        compiler__Parser_error(p,
-                               _STR("`%.*s.%.*s` is unnecessary, use `.%.*s`",
-                                    enum_type.name.len, enum_type.name.str,
-                                    val.len, val.str, val.len, val.str));
+        compiler__Parser_warn(p, _STR("`%.*s.%.*s` is unnecessary, use `.%.*s`",
+                                      enum_type.name.len, enum_type.name.str,
+                                      val.len, val.str, val.len, val.str));
       };
 
       compiler__Parser_gen(
@@ -26654,16 +26646,6 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
 
   if (is_c) {
 
-    if (!p->pref->building_v &&
-        !compiler__Parser_fileis(&/* ? */ *p, tos3("vlib"))) {
-
-      compiler__Parser_warn(
-          p,
-          string_add(
-              tos3("Virtual C structs will soon be removed from the language"),
-              tos3("\ndefine the C structs and functions in V")));
-    };
-
     compiler__Parser_check(p, compiler__compiler__TokenKind_dot);
 
     name = compiler__Parser_check_name(p);
@@ -27041,6 +27023,8 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_colon);
 
       ;
+
+      p->expected_type = f.typ;
 
       compiler__Parser_check_types(p, compiler__Parser_bool_expression(p),
                                    f.typ);
