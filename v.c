@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e266c8a"
+#define V_COMMIT_HASH "8dbeab9"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c4e9f09"
+#define V_COMMIT_HASH "e266c8a"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -859,7 +859,7 @@ byte *v_calloc(int n);
 void v_free(void *ptr);
 void *memdup(void *src, int sz);
 void v_ptr_free(void *ptr);
-bool is_atty(int fd);
+int is_atty(int fd);
 int backtrace(void *a, int b);
 byteptr *backtrace_symbols(void *, int);
 void backtrace_symbols_fd(void *, int, int);
@@ -1121,6 +1121,7 @@ static inline u64 rand__Splitmix64_bounded_next(rand__Splitmix64 *rng,
                                                 u64 bound);
 bool term__can_show_color_on_stdout();
 bool term__can_show_color_on_stderr();
+bool term__supports_escape_sequences(int fd);
 string term__ok_message(string s);
 string term__fail_message(string s);
 string term__format(string msg, string open, string close);
@@ -2613,7 +2614,7 @@ void builtin__init() {
 
 #ifdef _WIN32
 
-  if (is_atty(0)) {
+  if (is_atty(0) > 0) {
 
     _setmode(_fileno(stdin), _O_U16TEXT);
 
@@ -2868,7 +2869,7 @@ void *memdup(void *src, int sz) {
   return memcpy((char *)mem, src, sz);
 }
 void v_ptr_free(void *ptr) { free(ptr); }
-bool is_atty(int fd) {
+int is_atty(int fd) {
 
 #ifdef _WIN32
 
@@ -2876,11 +2877,11 @@ bool is_atty(int fd) {
 
   GetConsoleMode(_get_osfhandle(fd), &mode);
 
-  return mode > 0;
+  return mode;
 
 #else
 
-  return isatty(fd) != 0;
+  return isatty(fd);
 
 #endif
   ;
@@ -6380,7 +6381,7 @@ string os__get_raw_line() {
 
   byte *buf = ((byte *)(v_malloc(max_line_chars * 2)));
 
-  if (is_atty(0)) {
+  if (is_atty(0) > 0) {
 
     void *h_input = GetStdHandle(os__STD_INPUT_HANDLE);
 
@@ -7144,11 +7145,25 @@ static inline u64 rand__Splitmix64_bounded_next(rand__Splitmix64 *rng,
 }
 bool term__can_show_color_on_stdout() {
 
-  return is_atty(1) && string_ne(os__getenv(tos3("TERM")), tos3("dumb"));
+  return term__supports_escape_sequences(1);
 }
 bool term__can_show_color_on_stderr() {
 
-  return is_atty(2) && string_ne(os__getenv(tos3("TERM")), tos3("dumb"));
+  return term__supports_escape_sequences(2);
+}
+bool term__supports_escape_sequences(int fd) {
+
+#ifdef _WIN32
+
+  return (is_atty(fd) & 0x0004) > 0 &&
+         string_ne(os__getenv(tos3("TERM")), tos3("dumb"));
+
+#else
+
+  return is_atty(fd) > 0 && string_ne(os__getenv(tos3("TERM")), tos3("dumb"));
+
+#endif
+  ;
 }
 string term__ok_message(string s) {
 
@@ -11664,10 +11679,18 @@ void compiler__Parser_async_fn_call(compiler__Parser *p, compiler__Fn f,
 
   string wrapper_name = _STR("%.*s_thread_wrapper", fn_name.len, fn_name.str);
 
+  string wrapper_type = tos3("void*");
+
+  if (p->os == compiler__compiler__OS_windows) {
+
+    wrapper_type = tos3("void* __stdcall");
+  };
+
   string wrapper_text =
-      _STR("void* %.*s(%.*s * arg) {%.*s( /*f*/%.*s );  }", wrapper_name.len,
-           wrapper_name.str, arg_struct_name.len, arg_struct_name.str,
-           fn_name.len, fn_name.str, str_args.len, str_args.str);
+      _STR("%.*s %.*s(%.*s * arg) {%.*s( /*f*/%.*s );  }", wrapper_type.len,
+           wrapper_type.str, wrapper_name.len, wrapper_name.str,
+           arg_struct_name.len, arg_struct_name.str, fn_name.len, fn_name.str,
+           str_args.len, str_args.str);
 
   compiler__CGen_register_thread_fn(p->cgen, wrapper_name, wrapper_text,
                                     arg_struct);
@@ -12612,7 +12635,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
 
     string tmp83 = tos3("");
-    bool tmp84 = map_get(/*fn.v : 1141*/ r.inst, tp, &tmp83);
+    bool tmp84 = map_get(/*fn.v : 1145*/ r.inst, tp, &tmp83);
 
     if (!tmp84)
       tmp83 = tos((byte *)"", 0);
@@ -12620,7 +12643,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     if (string_ne(tmp83, tos3(""))) {
 
       string tmp85 = tos3("");
-      bool tmp86 = map_get(/*fn.v : 1142*/ r.inst, tp, &tmp85);
+      bool tmp86 = map_get(/*fn.v : 1146*/ r.inst, tp, &tmp85);
 
       if (!tmp86)
         tmp85 = tos((byte *)"", 0);
@@ -12628,7 +12651,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       if (string_ne(tmp85, ti)) {
 
         string tmp87 = tos3("");
-        bool tmp88 = map_get(/*fn.v : 1143*/ r.inst, tp, &tmp87);
+        bool tmp88 = map_get(/*fn.v : 1147*/ r.inst, tp, &tmp87);
 
         if (!tmp88)
           tmp87 = tos((byte *)"", 0);
@@ -12652,7 +12675,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
   };
 
   string tmp89 = tos3("");
-  bool tmp90 = map_get(/*fn.v : 1152*/ r.inst, f->typ, &tmp89);
+  bool tmp90 = map_get(/*fn.v : 1156*/ r.inst, f->typ, &tmp89);
 
   if (!tmp90)
     tmp89 = tos((byte *)"", 0);
@@ -12667,7 +12690,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp91.data)[tmp92];
 
     string tmp93 = tos3("");
-    bool tmp94 = map_get(/*fn.v : 1156*/ r.inst, tp, &tmp93);
+    bool tmp94 = map_get(/*fn.v : 1160*/ r.inst, tp, &tmp93);
 
     if (!tmp94)
       tmp93 = tos((byte *)"", 0);
@@ -12738,7 +12761,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
         if ((_IN(string, (fna), map_keys(&/* ? */ ti.inst)))) {
 
           string tmp106 = tos3("");
-          bool tmp107 = map_get(/*fn.v : 1186*/ ti.inst, fna, &tmp106);
+          bool tmp107 = map_get(/*fn.v : 1190*/ ti.inst, fna, &tmp106);
 
           if (!tmp107)
             tmp106 = tos((byte *)"", 0);
@@ -12782,7 +12805,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
     if ((_IN(string, (fi), map_keys(&/* ? */ ti.inst)))) {
 
       string tmp113 = tos3("");
-      bool tmp114 = map_get(/*fn.v : 1208*/ ti.inst, fi, &tmp113);
+      bool tmp114 = map_get(/*fn.v : 1212*/ ti.inst, fi, &tmp113);
 
       if (!tmp114)
         tmp113 = tos((byte *)"", 0);
@@ -13048,7 +13071,7 @@ void compiler__Parser_rename_generic_fn_instance(compiler__Parser *p,
     string k = ((string *)tmp137.data)[tmp138];
 
     string tmp139 = tos3("");
-    bool tmp140 = map_get(/*fn.v : 1318*/ ti.inst, k, &tmp139);
+    bool tmp140 = map_get(/*fn.v : 1322*/ ti.inst, k, &tmp139);
 
     if (!tmp140)
       tmp139 = tos((byte *)"", 0);
@@ -13181,7 +13204,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   if ((_IN_MAP((f->typ), ti.inst))) {
 
     string tmp152 = tos3("");
-    bool tmp153 = map_get(/*fn.v : 1384*/ ti.inst, f->typ, &tmp152);
+    bool tmp153 = map_get(/*fn.v : 1388*/ ti.inst, f->typ, &tmp152);
 
     if (!tmp153)
       tmp152 = tos((byte *)"", 0);
@@ -29666,7 +29689,7 @@ string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark *b, string s,
 
     i64 tdiff = (eticks - sticks);
 
-    return _STR("%6d ms | %.*s", tdiff, s.len, s.str);
+    return _STR("%6lld ms | %.*s", tdiff, s.len, s.str);
   };
 
   return s;
