@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0f0bef2"
+#define V_COMMIT_HASH "7c70f3d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "75510e2"
+#define V_COMMIT_HASH "0f0bef2"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -4481,14 +4481,14 @@ string string_trim(string s, string cutset) {
 
     cs_match = 0;
 
-    if (_IN(byte, (s.str[pos_left] /*rbyte 0*/), cs_arr)) {
+    if ((_IN(byte, (s.str[pos_left] /*rbyte 0*/), cs_arr))) {
 
       pos_left++;
 
       cs_match = 1;
     };
 
-    if (_IN(byte, (s.str[pos_right] /*rbyte 0*/), cs_arr)) {
+    if ((_IN(byte, (s.str[pos_right] /*rbyte 0*/), cs_arr))) {
 
       pos_right--;
 
@@ -4514,7 +4514,7 @@ string string_trim_left(string s, string cutset) {
 
   int pos = 0;
 
-  while (pos <= s.len && _IN(byte, (s.str[pos] /*rbyte 0*/), cs_arr)) {
+  while (pos <= s.len && (_IN(byte, (s.str[pos] /*rbyte 0*/), cs_arr))) {
 
     pos++;
   };
@@ -4532,7 +4532,7 @@ string string_trim_right(string s, string cutset) {
 
   int pos = s.len - 1;
 
-  while (pos >= -1 && _IN(byte, (s.str[pos] /*rbyte 0*/), cs_arr)) {
+  while (pos >= -1 && (_IN(byte, (s.str[pos] /*rbyte 0*/), cs_arr))) {
 
     pos--;
   };
@@ -5400,7 +5400,7 @@ f32 strings__dice_coefficient(string s1, string s2) {
     int tmp23 = 0;
     bool tmp24 = map_get(/*similarity.v : 47*/ first_bigrams, bigram, &tmp23);
 
-    int q = (_IN_MAP((bigram), first_bigrams)) ? (tmp23 + 1) : (1);
+    int q = ((_IN_MAP((bigram), first_bigrams))) ? (tmp23 + 1) : (1);
 
     map_set(&first_bigrams, bigram, &(int[]){q});
   };
@@ -5414,7 +5414,7 @@ f32 strings__dice_coefficient(string s1, string s2) {
     int tmp27 = 0;
     bool tmp28 = map_get(/*similarity.v : 53*/ first_bigrams, bigram, &tmp27);
 
-    int count = (_IN_MAP((bigram), first_bigrams)) ? (tmp27) : (0);
+    int count = ((_IN_MAP((bigram), first_bigrams))) ? (tmp27) : (0);
 
     if (count > 0) {
 
@@ -8334,7 +8334,7 @@ string compiler__find_c_compiler_thirdparty_options() {
 #endif
   ;
 
-  if (_IN(string, (tos3("-m32")), fullargs)) {
+  if ((_IN(string, (tos3("-m32")), fullargs))) {
 
     cflags = string_add(cflags, tos3(" -m32"));
   };
@@ -9214,7 +9214,7 @@ string compiler__V_type_definitions(compiler__V *v) {
     compiler__Type t = {0};
     map_get(tmp42, t_name, &t);
 
-    if (_IN(string, (t_name), builtins)) {
+    if ((_IN(string, (t_name), builtins))) {
 
       continue;
     };
@@ -9258,8 +9258,8 @@ array_compiler__Type compiler__sort_structs(array_compiler__Type types) {
     for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
       compiler__Var field = ((compiler__Var *)tmp49.data)[tmp50];
 
-      if (!(_IN(string, (field.typ), type_names)) ||
-          _IN(string, (field.typ), field_deps)) {
+      if (!((_IN(string, (field.typ), type_names))) ||
+          (_IN(string, (field.typ), field_deps))) {
 
         continue;
       };
@@ -9683,7 +9683,7 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
 
     ;
 
-    if (_IN(string, (name), compiler__supported_platforms)) {
+    if ((_IN(string, (name), compiler__supported_platforms))) {
 
       string ifdef_name = compiler__os_name_to_ifdef(name);
 
@@ -10489,7 +10489,7 @@ compiler__DepSet compiler__DepSet_diff(compiler__DepSet *dset,
   for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
     string item = ((string *)tmp2.data)[tmp3];
 
-    if (!_IN(string, (item), otherset.items)) {
+    if (!(_IN(string, (item), otherset.items))) {
 
       _PUSH(&diff.items, (/*typ = array_string   tmp_typ=string*/ item), tmp4,
             string);
@@ -10663,7 +10663,7 @@ string compiler__DepGraph_display_cycles(compiler__DepGraph *graph) {
     for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
       string dep = ((string *)tmp29.data)[tmp30];
 
-      if (!(_IN_MAP((dep), node_names))) {
+      if (!((_IN_MAP((dep), node_names)))) {
 
         continue;
       };
@@ -10673,7 +10673,7 @@ string compiler__DepGraph_display_cycles(compiler__DepGraph *graph) {
 
       compiler__DepGraphNode dn = tmp31;
 
-      if (_IN(string, (node.name), dn.deps)) {
+      if ((_IN(string, (node.name), dn.deps))) {
 
         out = string_add(out, _STR(" * %.*s -> %.*s\n", node.name.len,
                                    node.name.str, dep.len, dep.str));
@@ -11338,7 +11338,7 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
       string type_par = compiler__Parser_check_name(p);
 
       if (type_par.len > 1 ||
-          !(_IN(string, (type_par), compiler__reserved_type_param_names))) {
+          !((_IN(string, (type_par), compiler__reserved_type_param_names)))) {
 
         string tmp40 = array_string_str(compiler__reserved_type_param_names);
 
@@ -11348,7 +11348,7 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
                     tmp40.len, tmp40.str));
       };
 
-      if (_IN(string, (type_par), f.type_pars)) {
+      if ((_IN(string, (type_par), f.type_pars))) {
 
         compiler__Parser_error(p, _STR("redeclaration of type parameter `%.*s`",
                                        type_par.len, type_par.str));
@@ -12845,7 +12845,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
   if (!tmp90)
     tmp89 = tos((byte *)"", 0);
 
-  if (string_eq(tmp89, tos3("")) && _IN(string, (f->typ), f->type_pars)) {
+  if (string_eq(tmp89, tos3("")) && (_IN(string, (f->typ), f->type_pars))) {
 
     map_set(&r.inst, f->typ, &(string[]){tos3("_ANYTYPE_")});
   };
@@ -12923,7 +12923,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
           fr = string_add(fr, tos3("array_"));
         };
 
-        if (_IN(string, (fna), map_keys(&/* ? */ ti.inst))) {
+        if ((_IN(string, (fna), map_keys(&/* ? */ ti.inst)))) {
 
           string tmp106 = tos3("");
           bool tmp107 = map_get(/*fn.v : 1186*/ ti.inst, fna, &tmp106);
@@ -12967,7 +12967,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
       fr = string_add(fr, tos3("varg_"));
     };
 
-    if (_IN(string, (fi), map_keys(&/* ? */ ti.inst))) {
+    if ((_IN(string, (fi), map_keys(&/* ? */ ti.inst)))) {
 
       string tmp113 = tos3("");
       bool tmp114 = map_get(/*fn.v : 1208*/ ti.inst, fi, &tmp113);
@@ -13361,12 +13361,12 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
 
   f->typ = *(string *)array_last(new_types);
 
-  if (_IN(string, (f->typ), f->type_pars)) {
+  if ((_IN(string, (f->typ), f->type_pars))) {
 
     f->typ = tos3("_ANYTYPE_");
   };
 
-  if (_IN_MAP((f->typ), ti.inst)) {
+  if ((_IN_MAP((f->typ), ti.inst))) {
 
     string tmp152 = tos3("");
     bool tmp153 = map_get(/*fn.v : 1384*/ ti.inst, f->typ, &tmp152);
@@ -14039,7 +14039,7 @@ string compiler__Table_fn_gen_name(compiler__Table *table, compiler__Fn *f) {
   };
 
   if (string_eq(f->mod, tos3("builtin")) &&
-      _IN(string, (f->name), compiler__CReserved)) {
+      (_IN(string, (f->name), compiler__CReserved))) {
 
     return _STR("v_%.*s", name.len, name.str);
   };
@@ -15209,7 +15209,7 @@ Option_int compiler__V_get_file_parser_index(compiler__V *v, string file) {
 
   string file_path = os__realpath(file);
 
-  if (_IN_MAP((file_path), v->file_parser_idx)) {
+  if ((_IN_MAP((file_path), v->file_parser_idx))) {
 
     int tmp2 = 0;
     bool tmp3 = map_get(/*main.v : 155*/ v->file_parser_idx, file_path, &tmp2);
@@ -15335,7 +15335,7 @@ void compiler__V_compile(compiler__V *v) {
 
   compiler__V_generate_hotcode_reloading_declarations(&/* ? */ *v);
 
-  bool imports_json = _IN(string, (tos3("json")), v->table->imports);
+  bool imports_json = (_IN(string, (tos3("json")), v->table->imports));
 
   if (v->pref->build_mode == compiler__compiler__BuildMode_default_mode) {
 
@@ -15364,7 +15364,7 @@ void compiler__V_compile(compiler__V *v) {
     };
   };
 
-  if (_IN(string, (tos3("-debug_alloc")), os__args)) {
+  if ((_IN(string, (tos3("-debug_alloc")), os__args))) {
 
     compiler__CGen_genln(cgen, tos3("#define DEBUG_ALLOC 1"));
   };
@@ -15513,7 +15513,7 @@ void compiler__V_generate_init(compiler__V *v) {
 
     string call_mod_init_consts = tos3("");
 
-    if (_IN(string, (tos3("builtin")), v->cached_mods)) {
+    if ((_IN(string, (tos3("builtin")), v->cached_mods))) {
 
       compiler__CGen_genln(v->cgen, tos3("void builtin__init_consts();"));
 
@@ -15535,7 +15535,7 @@ void compiler__V_generate_init(compiler__V *v) {
                        _STR("%.*s();\n", init_fn_name.len, init_fn_name.str));
       };
 
-      if (_IN(string, (mod), v->cached_mods)) {
+      if ((_IN(string, (mod), v->cached_mods))) {
 
         compiler__CGen_genln(v->cgen, _STR("void %.*s_consts();",
                                            init_fn_name.len, init_fn_name.str));
@@ -15699,7 +15699,7 @@ void compiler__V_gen_main_start(compiler__V *v, bool add_os_args) {
 
   compiler__CGen_genln(v->cgen, tos3("  init();"));
 
-  if (add_os_args && _IN(string, (tos3("os")), v->table->imports)) {
+  if (add_os_args && (_IN(string, (tos3("os")), v->table->imports))) {
 
     compiler__CGen_genln(
         v->cgen, tos3("  os__args = os__init_os_args(argc, (byteptr*)argv);"));
@@ -16170,7 +16170,7 @@ void compiler__V_parse_lib_imports(compiler__V *v) {
       string mod = tos3("");
       map_get(tmp56, _, &mod);
 
-      if (_IN(string, (mod), done_imports)) {
+      if ((_IN(string, (mod), done_imports))) {
 
         continue;
       };
@@ -16303,7 +16303,7 @@ compiler__V *compiler__new_v(array_string args) {
 
   string dir = *(string *)array_last(args);
 
-  if (_IN(string, (tos3("run")), args)) {
+  if ((_IN(string, (tos3("run")), args))) {
 
     dir = compiler__get_param_after(joined_args, tos3("run"), tos3(""));
   };
@@ -16488,37 +16488,37 @@ compiler__V *compiler__new_v(array_string args) {
 
   string rdir_name = os__filename(rdir);
 
-  bool obfuscate = _IN(string, (tos3("-obf")), args);
+  bool obfuscate = (_IN(string, (tos3("-obf")), args));
 
-  bool is_repl = _IN(string, (tos3("-repl")), args);
+  bool is_repl = (_IN(string, (tos3("-repl")), args));
 
   compiler__Preferences *pref = (compiler__Preferences *)memdup(
       &(compiler__Preferences){
           .is_test = is_test,
           .is_script = is_script,
-          .is_so = _IN(string, (tos3("-shared")), args),
-          .is_prod = _IN(string, (tos3("-prod")), args),
-          .is_verbose = _IN(string, (tos3("-verbose")), args) ||
-                        _IN(string, (tos3("--verbose")), args),
-          .is_debug = _IN(string, (tos3("-g")), args) ||
-                      _IN(string, (tos3("-cg")), args),
-          .is_vlines = _IN(string, (tos3("-g")), args) &&
-                       !(_IN(string, (tos3("-cg")), args)),
-          .is_keep_c = _IN(string, (tos3("-keep_c")), args),
-          .is_cache = _IN(string, (tos3("-cache")), args),
-          .is_stats = _IN(string, (tos3("-stats")), args),
+          .is_so = (_IN(string, (tos3("-shared")), args)),
+          .is_prod = (_IN(string, (tos3("-prod")), args)),
+          .is_verbose = (_IN(string, (tos3("-verbose")), args)) ||
+                        (_IN(string, (tos3("--verbose")), args)),
+          .is_debug = (_IN(string, (tos3("-g")), args)) ||
+                      (_IN(string, (tos3("-cg")), args)),
+          .is_vlines = (_IN(string, (tos3("-g")), args)) &&
+                       !((_IN(string, (tos3("-cg")), args))),
+          .is_keep_c = (_IN(string, (tos3("-keep_c")), args)),
+          .is_cache = (_IN(string, (tos3("-cache")), args)),
+          .is_stats = (_IN(string, (tos3("-stats")), args)),
           .obfuscate = obfuscate,
-          .is_prof = _IN(string, (tos3("-prof")), args),
-          .is_live = _IN(string, (tos3("-live")), args),
-          .sanitize = _IN(string, (tos3("-sanitize")), args),
-          .nofmt = _IN(string, (tos3("-nofmt")), args),
-          .show_c_cmd = _IN(string, (tos3("-show_c_cmd")), args),
-          .translated = _IN(string, (tos3("translated")), args),
-          .is_run = _IN(string, (tos3("run")), args),
-          .autofree = _IN(string, (tos3("-autofree")), args),
-          .compress = _IN(string, (tos3("-compress")), args),
-          .enable_globals = _IN(string, (tos3("--enable-globals")), args),
-          .fast = _IN(string, (tos3("-fast")), args),
+          .is_prof = (_IN(string, (tos3("-prof")), args)),
+          .is_live = (_IN(string, (tos3("-live")), args)),
+          .sanitize = (_IN(string, (tos3("-sanitize")), args)),
+          .nofmt = (_IN(string, (tos3("-nofmt")), args)),
+          .show_c_cmd = (_IN(string, (tos3("-show_c_cmd")), args)),
+          .translated = (_IN(string, (tos3("translated")), args)),
+          .is_run = (_IN(string, (tos3("run")), args)),
+          .autofree = (_IN(string, (tos3("-autofree")), args)),
+          .compress = (_IN(string, (tos3("-compress")), args)),
+          .enable_globals = (_IN(string, (tos3("--enable-globals")), args)),
+          .fast = (_IN(string, (tos3("-fast")), args)),
           .is_repl = is_repl,
           .build_mode = build_mode,
           .cflags = cflags,
@@ -17050,7 +17050,7 @@ void compiler__Parser_register_import_alias(compiler__Parser *p, string alias,
   if (!tmp6)
     tmp5 = tos((byte *)"", 0);
 
-  if (_IN_MAP((alias), p->import_table.imports) && string_ne(tmp5, mod)) {
+  if ((_IN_MAP((alias), p->import_table.imports)) && string_ne(tmp5, mod)) {
 
     compiler__Parser_error(
         p, _STR("cannot import %.*s as %.*s: import name %.*s already in use\"",
@@ -17101,13 +17101,13 @@ int compiler__ImportTable_get_import_tok_idx(compiler__ImportTable *it,
 }
 bool compiler__ImportTable_known_import(compiler__ImportTable *it, string mod) {
 
-  return _IN_MAP((mod), it->imports) ||
+  return (_IN_MAP((mod), it->imports)) ||
          compiler__ImportTable_is_aliased(&/* ? */ *it, mod);
 }
 bool compiler__ImportTable_known_alias(compiler__ImportTable *it,
                                        string alias) {
 
-  return _IN_MAP((alias), it->imports);
+  return (_IN_MAP((alias), it->imports));
 }
 bool compiler__ImportTable_is_aliased(compiler__ImportTable *it, string mod) {
 
@@ -17140,7 +17140,7 @@ string compiler__ImportTable_resolve_alias(compiler__ImportTable *it,
 void compiler__ImportTable_register_used_import(compiler__ImportTable *it,
                                                 string alias) {
 
-  if (!(_IN(string, (alias), it->used_imports))) {
+  if (!((_IN(string, (alias), it->used_imports)))) {
 
     _PUSH(&it->used_imports, (/*typ = array_string   tmp_typ=string*/ alias),
           tmp15, string);
@@ -17149,7 +17149,7 @@ void compiler__ImportTable_register_used_import(compiler__ImportTable *it,
 bool compiler__ImportTable_is_used_import(compiler__ImportTable *it,
                                           string alias) {
 
-  return _IN(string, (alias), it->used_imports);
+  return (_IN(string, (alias), it->used_imports));
 }
 bool compiler__Parser_is_mod_in_scope(compiler__Parser *p, string mod) {
 
@@ -17169,7 +17169,7 @@ bool compiler__Parser_is_mod_in_scope(compiler__Parser *p, string mod) {
           string);
   };
 
-  return _IN(string, (mod), mods_in_scope);
+  return (_IN(string, (mod), mods_in_scope));
 }
 compiler__DepGraph *compiler__V_resolve_deps(compiler__V *v) {
 
@@ -18455,7 +18455,7 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
       compiler__Parser_imports(p);
     };
 
-    if (_IN(string, (tos3("builtin")), p->table->imports)) {
+    if ((_IN(string, (tos3("builtin")), p->table->imports))) {
 
       compiler__Parser_error(p, tos3("module `builtin` cannot be imported"));
     };
@@ -18767,7 +18767,7 @@ void compiler__Parser_import_statement(compiler__Parser *p) {
 
   compiler__Parser_register_import_alias(p, mod_alias, mod, import_tok_idx);
 
-  if (_IN(string, (mod), p->table->imports)) {
+  if ((_IN(string, (mod), p->table->imports))) {
 
     return;
   };
@@ -19351,7 +19351,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
 
   map_string ti = p->cur_fn.dispatch_of.inst;
 
-  if (_IN(string, (p->lit), map_keys(&/* ? */ ti))) {
+  if ((_IN(string, (p->lit), map_keys(&/* ? */ ti)))) {
 
     string tmp34 = tos3("");
     bool tmp35 = map_get(/*parser.v : 857*/ ti, p->lit, &tmp34);
@@ -20734,10 +20734,10 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
 
       string typ = name;
 
-      if (_IN(string, (typ), map_keys(&/* ? */ p->cur_fn.dispatch_of.inst))) {
+      if ((_IN(string, (typ), map_keys(&/* ? */ p->cur_fn.dispatch_of.inst)))) {
 
         string tmp91 = tos3("");
-        bool tmp92 = map_get(/*parser.v : 1666*/ p->cur_fn.dispatch_of.inst,
+        bool tmp92 = map_get(/*parser.v : 1665*/ p->cur_fn.dispatch_of.inst,
                              typ, &tmp91);
 
         if (!tmp92)
@@ -20937,7 +20937,7 @@ string compiler__Parser_get_struct_type(compiler__Parser *p, string name_,
     name = string_add(name, tos3("*"));
   };
 
-  if (_IN(string, (name), compiler__reserved_type_param_names)) {
+  if ((_IN(string, (name), compiler__reserved_type_param_names))) {
 
     compiler__Parser_warn(p, _STR("name `%.*s` is reserved for type parameters",
                                   name.len, name.str));
@@ -21125,7 +21125,7 @@ void compiler__Parser_undefined_error(compiler__Parser *p, string name,
                                    name_dotted.len, name_dotted.str,
                                    orig_name.len, orig_name.str));
 
-  } else if (_IN(string, (orig_name), compiler__reserved_type_param_names)) {
+  } else if ((_IN(string, (orig_name), compiler__reserved_type_param_names))) {
 
     compiler__Parser_error(
         p, _STR("the letter `%.*s` is reserved for type parameters",
@@ -21843,15 +21843,15 @@ string compiler__Parser_indot_expr(compiler__Parser *p) {
 
     if (is_map) {
 
-      compiler__CGen_set_placeholder(p->cgen, ph, tos3("_IN_MAP( ("));
+      compiler__CGen_set_placeholder(p->cgen, ph, tos3("(_IN_MAP( ("));
 
     } else {
 
       compiler__CGen_set_placeholder(p->cgen, ph,
-                                     _STR("_IN(%.*s, (", typ.len, typ.str));
+                                     _STR("(_IN(%.*s, (", typ.len, typ.str));
     };
 
-    compiler__Parser_gen(p, tos3(")"));
+    compiler__Parser_gen(p, tos3("))"));
 
     return tos3("bool");
   };
@@ -22023,7 +22023,18 @@ string compiler__Parser_expression(compiler__Parser *p) {
       compiler__Parser_error(p, tos3("strings only support `+` operator"));
     };
 
-    compiler__Parser_check_types(p, compiler__Parser_term(p), typ);
+    string expr_type = compiler__Parser_term(p);
+
+    if ((tok_op == compiler__compiler__TokenKind_pipe ||
+         tok_op == compiler__compiler__TokenKind_amp) &&
+        !(compiler__is_integer_type(expr_type) &&
+          compiler__is_integer_type(typ))) {
+
+      compiler__Parser_error(
+          p, tos3("operators `&` and `|` are defined only on integer types"));
+    };
+
+    compiler__Parser_check_types(p, expr_type, typ);
 
     if ((is_str || is_ustr) && tok_op == compiler__compiler__TokenKind_plus &&
         !p->is_js) {
@@ -22268,7 +22279,7 @@ string compiler__Parser_factor(compiler__Parser *p) {
         compiler__Parser_peek(&/* ? */ *p) ==
             compiler__compiler__TokenKind_dot) {
 
-      if (!(_IN(string, (tos3("json")), p->table->imports))) {
+      if (!((_IN(string, (tos3("json")), p->table->imports)))) {
 
         compiler__Parser_error(p, tos3("undefined: `json`, use `import json`"));
       };
@@ -22441,7 +22452,7 @@ string compiler__Parser_assoc(compiler__Parser *p) {
 
     string f = ffield.name;
 
-    if (_IN(string, (f), fields)) {
+    if ((_IN(string, (f), fields))) {
 
       continue;
     };
@@ -26719,7 +26730,7 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
                                              compiler__Parser_check_name(p)))
             : (compiler__Parser_check_name(p));
 
-    if (_IN(string, (field_name), names)) {
+    if ((_IN(string, (field_name), names))) {
 
       compiler__Parser_error(
           p, _STR("duplicate field `%.*s`", field_name.len, field_name.str));
@@ -26892,7 +26903,7 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ) {
                                        t.name.str, field.len, field.str));
       };
 
-      if (_IN(string, (field), inited_fields)) {
+      if ((_IN(string, (field), inited_fields))) {
 
         compiler__Parser_error(
             p, _STR("already initialized field `%.*s` in `%.*s`", field.len,
@@ -26956,7 +26967,7 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ) {
               ? (compiler__Table_var_cgen_name(&/* ? */ *p->table, field.name))
               : (field.name);
 
-      if (_IN(string, (sanitized_name), inited_fields)) {
+      if ((_IN(string, (sanitized_name), inited_fields))) {
 
         continue;
       };
@@ -27120,16 +27131,16 @@ string compiler__Table_debug_fns(compiler__Table *t) {
 }
 bool compiler__is_number_type(string typ) {
 
-  return _IN(string, (typ), compiler__integer_types) ||
-         _IN(string, (typ), compiler__float_types);
+  return (_IN(string, (typ), compiler__integer_types)) ||
+         (_IN(string, (typ), compiler__float_types));
 }
 bool compiler__is_integer_type(string typ) {
 
-  return _IN(string, (typ), compiler__integer_types);
+  return (_IN(string, (typ), compiler__integer_types));
 }
 bool compiler__is_float_type(string typ) {
 
-  return _IN(string, (typ), compiler__float_types);
+  return (_IN(string, (typ), compiler__float_types));
 }
 bool compiler__is_primitive_type(string typ) {
 
@@ -27216,7 +27227,7 @@ compiler__Table *compiler__new_table(bool obfuscate) {
 }
 string compiler__Table_var_cgen_name(compiler__Table *t, string name) {
 
-  if (_IN(string, (name), compiler__CReserved)) {
+  if ((_IN(string, (name), compiler__CReserved))) {
 
     return _STR("v_%.*s", name.len, name.str);
 
@@ -27227,7 +27238,7 @@ string compiler__Table_var_cgen_name(compiler__Table *t, string name) {
 }
 void compiler__Table_register_module(compiler__Table *t, string mod) {
 
-  if (_IN(string, (mod), t->modules)) {
+  if ((_IN(string, (mod), t->modules))) {
 
     return;
   };
@@ -27275,7 +27286,7 @@ void compiler__Parser_register_map(compiler__Parser *p, string typ) {
 }
 bool compiler__Table_known_mod(compiler__Table *table, string mod) {
 
-  return _IN(string, (mod), table->modules);
+  return (_IN(string, (mod), table->modules));
 }
 void compiler__Table_register_const(compiler__Table *t, string name, string typ,
                                     string mod, bool is_pub) {
@@ -27446,7 +27457,7 @@ void compiler__Table_register_builtin(compiler__Table *t, string typ) {
     return;
   };
 
-  if (_IN_MAP((typ), t->typesmap)) {
+  if ((_IN_MAP((typ), t->typesmap))) {
 
     return;
   };
@@ -27585,7 +27596,7 @@ bool compiler__Type_has_field(compiler__Type *t, string name) {
 }
 bool compiler__Type_has_enum_val(compiler__Type *t, string name) {
 
-  return _IN(string, (name), t->enum_vals);
+  return (_IN(string, (name), t->enum_vals));
 }
 Option_compiler__Var compiler__Type_find_field(compiler__Type *t, string name) {
 
@@ -27671,7 +27682,7 @@ void compiler__Parser_add_method(compiler__Parser *p, string type_name,
 
   compiler__Type t = tmp38;
 
-  if (string_ne(f.name, tos3("str")) && _IN(compiler__Fn, (f), t.methods)) {
+  if (string_ne(f.name, tos3("str")) && (_IN(compiler__Fn, (f), t.methods))) {
 
     compiler__Parser_error(p, _STR("redefinition of method `%.*s.%.*s`",
                                    type_name.len, type_name.str, f.name.len,
@@ -27786,7 +27797,7 @@ compiler__Type compiler__Table_find_type(compiler__Table *t, string name_) {
     name = string_substr2(name, 0, name.len - 1, false);
   };
 
-  if (!(_IN_MAP((name), t->typesmap))) {
+  if (!((_IN_MAP((name), t->typesmap)))) {
 
     return (compiler__Type){.mod = tos3(""),
                             .name = tos3(""),
@@ -28042,7 +28053,7 @@ bool compiler__Parser_satisfies_interface(compiler__Parser *p,
 }
 bool compiler__Table_is_interface(compiler__Table *table, string name) {
 
-  if (!(_IN_MAP((name), table->typesmap))) {
+  if (!((_IN_MAP((name), table->typesmap)))) {
 
     return 0;
   };
@@ -28905,7 +28916,7 @@ bool compiler__TokenKind_is_decl(compiler__TokenKind t) {
 }
 bool compiler__TokenKind_is_assign(compiler__TokenKind t) {
 
-  return _IN(compiler__TokenKind, (t), compiler__AssignTokens);
+  return (_IN(compiler__TokenKind, (t), compiler__AssignTokens));
 }
 bool array_compiler__TokenKind_contains(array_compiler__TokenKind t,
                                         compiler__TokenKind val) {
@@ -29871,9 +29882,9 @@ void main__main() {
   }
   array_string commands = tmp4;
 
-  if (_IN(string, (tos3("-v")), options) ||
-      _IN(string, (tos3("--version")), options) ||
-      _IN(string, (tos3("version")), commands)) {
+  if ((_IN(string, (tos3("-v")), options)) ||
+      (_IN(string, (tos3("--version")), options)) ||
+      (_IN(string, (tos3("version")), commands))) {
 
     string version_hash = compiler__vhash();
 
@@ -29882,60 +29893,60 @@ void main__main() {
 
     return;
 
-  } else if (_IN(string, (tos3("-h")), options) ||
-             _IN(string, (tos3("--help")), options) ||
-             _IN(string, (tos3("help")), commands)) {
+  } else if ((_IN(string, (tos3("-h")), options)) ||
+             (_IN(string, (tos3("--help")), options)) ||
+             (_IN(string, (tos3("help")), commands))) {
 
     println(compiler__help_text);
 
     return;
 
-  } else if (_IN(string, (tos3("translate")), commands)) {
+  } else if ((_IN(string, (tos3("translate")), commands))) {
 
     println(tos3("Translating C to V will be available in V 0.3"));
 
     return;
 
-  } else if (_IN(string, (tos3("up")), commands)) {
+  } else if ((_IN(string, (tos3("up")), commands))) {
 
     compiler__launch_tool(tos3("vup"));
 
     return;
 
-  } else if ((_IN(string, (tos3("search")), commands)) ||
-             (_IN(string, (tos3("install")), commands)) ||
-             (_IN(string, (tos3("update")), commands)) ||
-             (_IN(string, (tos3("remove")), commands))) {
+  } else if (((_IN(string, (tos3("search")), commands))) ||
+             ((_IN(string, (tos3("install")), commands))) ||
+             ((_IN(string, (tos3("update")), commands))) ||
+             ((_IN(string, (tos3("remove")), commands)))) {
 
     compiler__launch_tool(tos3("vpm"));
 
     return;
 
-  } else if ((_IN(string, (tos3("get")), commands))) {
+  } else if (((_IN(string, (tos3("get")), commands)))) {
 
     println(tos3("use `v install` to install modules from vpm.vlang.io "));
 
     return;
 
-  } else if (_IN(string, (tos3("symlink")), commands)) {
+  } else if ((_IN(string, (tos3("symlink")), commands))) {
 
     compiler__create_symlink();
 
     return;
 
-  } else if (_IN(string, (tos3("fmt")), commands)) {
+  } else if ((_IN(string, (tos3("fmt")), commands))) {
 
     compiler__vfmt(args);
 
     return;
 
-  } else if (_IN(string, (tos3("test")), commands)) {
+  } else if ((_IN(string, (tos3("test")), commands))) {
 
     compiler__launch_tool(tos3("vtest"));
 
     return;
 
-  } else if (_IN(string, (tos3("runrepl")), commands) || commands.len == 0 ||
+  } else if ((_IN(string, (tos3("runrepl")), commands)) || commands.len == 0 ||
              (args.len == 2 &&
               string_eq((*(string *)array_get(args, 1)), tos3("-")))) {
 
@@ -29943,7 +29954,7 @@ void main__main() {
 
     return;
 
-  } else if (_IN(string, (tos3("doc")), commands)) {
+  } else if ((_IN(string, (tos3("doc")), commands))) {
 
     string vexe = os__executable();
 
@@ -29983,7 +29994,7 @@ void main__main() {
     println(array_string_str(args));
   };
 
-  if (_IN(string, (tos3("run")), args)) {
+  if ((_IN(string, (tos3("run")), args))) {
 
     compiler__V_compile(v);
 
