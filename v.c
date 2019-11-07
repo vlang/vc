@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0ca75f7"
+#define V_COMMIT_HASH "3a99217"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6c1b078"
+#define V_COMMIT_HASH "0ca75f7"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -12983,7 +12983,7 @@ void compiler__Parser_async_fn_call(compiler__Parser *p, compiler__Fn f,
   } else {
 
     compiler__Parser_genln(
-        p, _STR("int %.*s = pthread_create(& %.*s, NULL, %.*s, %.*s);",
+        p, _STR("int %.*s = pthread_create(& %.*s, NULL, (void *)%.*s, %.*s);",
                 tmp2.len, tmp2.str, thread_name.len, thread_name.str,
                 wrapper_name.len, wrapper_name.str, parg.len, parg.str));
   };
@@ -16469,7 +16469,7 @@ void compiler__V_generate_hotcode_reloading_main_caller(compiler__V *v) {
     compiler__CGen_genln(cgen, tos3("  pthread_t _thread_so;"));
 
     compiler__CGen_genln(cgen, tos3("  pthread_create(&_thread_so , NULL, "
-                                    "&reload_so, live_library_name);"));
+                                    "(void *)&reload_so, live_library_name);"));
 
   } else {
 
