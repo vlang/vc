@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "86447c1"
+#define V_COMMIT_HASH "2d39442"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d57c0cf"
+#define V_COMMIT_HASH "86447c1"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -29299,8 +29299,9 @@ void compiler__launch_tool(string tname) {
 
     if (tool_compilation.exit_code != 0) {
 
-      v_panic(_STR("V tool \"%.*s\" could not be compiled.", tool_source.len,
-                   tool_source.str));
+      v_panic(string_add(_STR("V tool \"%.*s\" could not be compiled\n",
+                              tool_source.len, tool_source.str),
+                         tool_compilation.output));
     };
   };
 
