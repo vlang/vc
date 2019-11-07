@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ef71867"
+#define V_COMMIT_HASH "c8de2c0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c9d0bd7"
+#define V_COMMIT_HASH "ef71867"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -6900,7 +6900,7 @@ string os__realpath(string fpath) {
 
 #else
 
-  res = ((int)(realpath((char *)fpath.str, (char *)fullpath)));
+  res = ((int)(!isnil(realpath((char *)fpath.str, (char *)fullpath))));
 
 #endif
   ;
