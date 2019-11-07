@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f579376"
+#define V_COMMIT_HASH "27f6b2d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2f5de11"
+#define V_COMMIT_HASH "f579376"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -27976,7 +27976,7 @@ bool compiler__Parser_check_types2(compiler__Parser *p, string got_,
     return 1;
   };
 
-  if (compiler__is_number_type(got) && compiler__is_number_type(expected) &&
+  if (compiler__is_integer_type(got) && compiler__is_number_type(expected) &&
       p->is_const_literal) {
 
     return 1;
