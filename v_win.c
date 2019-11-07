@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d57c0cf"
+#define V_COMMIT_HASH "86447c1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c8de2c0"
+#define V_COMMIT_HASH "d57c0cf"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -191,14 +191,17 @@ typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef struct _V_MulRet_int_V_bool _V_MulRet_int_V_bool;
 typedef struct os__Result os__Result;
-typedef Option Option_os__Result;
 typedef struct varg_string varg_string;
 
 typedef voidptr HANDLE; // type alias name="HANDLE" parent=`voidptr`
 typedef struct os__Filetime os__Filetime;
 typedef struct os__Win32finddata os__Win32finddata;
+typedef struct os__ProcessInformation os__ProcessInformation;
+typedef struct os__StartupInfo os__StartupInfo;
+typedef struct os__SecurityAttributes os__SecurityAttributes;
 typedef Option Option_array_string;
 typedef Option Option_string;
+typedef Option Option_os__Result;
 typedef struct rand__Pcg32 rand__Pcg32;
 typedef struct rand__Splitmix64 rand__Splitmix64;
 typedef struct compiler__CFlag compiler__CFlag;
@@ -270,9 +273,9 @@ typedef Option Option_bool;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
-typedef Option Option_os__Result;
 typedef Option Option_array_string;
 typedef Option Option_string;
+typedef Option Option_os__Result;
 typedef Option Option_bool;
 typedef map map_compiler__DepGraphNode;
 typedef map map_compiler__DepSet;
@@ -606,6 +609,40 @@ struct os__Result {
 struct os__Filetime {
   u32 dwLowDateTime;
   u32 dwHighDateTime;
+};
+
+struct os__ProcessInformation {
+  void *hProcess;
+  void *hThread;
+  u32 dwProcessId;
+  u32 dwThreadId;
+};
+
+struct os__StartupInfo {
+  u32 cb;
+  u16 *lpReserved;
+  u16 *lpDesktop;
+  u16 *lpTitle;
+  u32 dwX;
+  u32 dwY;
+  u32 dwXSize;
+  u32 dwYSize;
+  u32 dwXCountChars;
+  u32 dwYCountChars;
+  u32 dwFillAttribute;
+  u32 dwFlags;
+  u16 wShowWindow;
+  u16 cbReserved2;
+  byte *lpReserved2;
+  void *hStdInput;
+  void *hStdOutput;
+  void *hStdError;
+};
+
+struct os__SecurityAttributes {
+  u32 nLength;
+  void *lpSecurityDescriptor;
+  bool bInheritHandle;
 };
 
 struct rand__Pcg32 {
@@ -1091,7 +1128,6 @@ void os__File_close(os__File f);
 void *os__vpopen(string path);
 _V_MulRet_int_V_bool os__posix_wait4_to_exit_status(int waitret);
 int os__vpclose(void *f);
-Option_os__Result os__exec(string cmd);
 int os__system(string cmd);
 string os__sigint_to_signal_name(int si);
 string os__getenv(string key);
@@ -1139,6 +1175,7 @@ HANDLE os__get_file_handle(string path);
 Option_string os__get_module_filename(HANDLE handle);
 void *os__ptr_win_get_error_msg(u32 code);
 string os__get_error_msg(int code);
+Option_os__Result os__exec(string cmd);
 rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq);
 static inline u32 rand__Pcg32_next(rand__Pcg32 *rng);
 static inline u32 rand__Pcg32_bounded_next(rand__Pcg32 *rng, u32 bound);
@@ -6203,40 +6240,6 @@ int os__vpclose(void *f) {
 #endif
   ;
 }
-Option_os__Result os__exec(string cmd) {
-
-  if (string_contains(cmd, tos3(";")) || string_contains(cmd, tos3("&&")) ||
-      string_contains(cmd, tos3("||")) || string_contains(cmd, tos3("\n"))) {
-
-    return v_error(tos3(";, &&, || and \\n are not allowed in shell commands"));
-  };
-
-  string pcmd = _STR("%.*s 2>&1", cmd.len, cmd.str);
-
-  void *f = os__vpopen(pcmd);
-
-  if (isnil(f)) {
-
-    return v_error(_STR("exec(\"%.*s\") failed", cmd.len, cmd.str));
-  };
-
-  byte buf[1000] = {0};
-
-  string res = tos3("");
-
-  while (fgets(((char *)(buf)), 1000, f) != 0) {
-
-    res = string_add(res, tos(buf, vstrlen(buf)));
-  };
-
-  res = string_trim_space(res);
-
-  int exit_code = os__vpclose(f);
-
-  os__Result tmp18 = OPTION_CAST(os__Result)(
-      (os__Result){.output = res, .exit_code = exit_code});
-  return opt_ok(&tmp18, sizeof(os__Result));
-}
 int os__system(string cmd) {
 
   if (string_contains(cmd, tos3(";")) || string_contains(cmd, tos3("&&")) ||
@@ -6286,94 +6289,94 @@ int os__system(string cmd) {
 }
 string os__sigint_to_signal_name(int si) {
 
-  int tmp19 = si;
+  int tmp18 = si;
 
-  if (tmp19 == 1) {
+  if (tmp18 == 1) {
 
     return tos3("SIGHUP");
 
-  } else if (tmp19 == 2) {
+  } else if (tmp18 == 2) {
 
     return tos3("SIGINT");
 
-  } else if (tmp19 == 3) {
+  } else if (tmp18 == 3) {
 
     return tos3("SIGQUIT");
 
-  } else if (tmp19 == 4) {
+  } else if (tmp18 == 4) {
 
     return tos3("SIGILL");
 
-  } else if (tmp19 == 6) {
+  } else if (tmp18 == 6) {
 
     return tos3("SIGABRT");
 
-  } else if (tmp19 == 8) {
+  } else if (tmp18 == 8) {
 
     return tos3("SIGFPE");
 
-  } else if (tmp19 == 9) {
+  } else if (tmp18 == 9) {
 
     return tos3("SIGKILL");
 
-  } else if (tmp19 == 11) {
+  } else if (tmp18 == 11) {
 
     return tos3("SIGSEGV");
 
-  } else if (tmp19 == 13) {
+  } else if (tmp18 == 13) {
 
     return tos3("SIGPIPE");
 
-  } else if (tmp19 == 14) {
+  } else if (tmp18 == 14) {
 
     return tos3("SIGALRM");
 
-  } else if (tmp19 == 15) {
+  } else if (tmp18 == 15) {
 
     return tos3("SIGTERM");
   };
 
 #ifdef __linux__
 
-  int tmp20 = si;
+  int tmp19 = si;
 
-  if ((tmp20 == 30) || (tmp20 == 10) || (tmp20 == 16)) {
+  if ((tmp19 == 30) || (tmp19 == 10) || (tmp19 == 16)) {
 
     return tos3("SIGUSR1");
 
-  } else if ((tmp20 == 31) || (tmp20 == 12) || (tmp20 == 17)) {
+  } else if ((tmp19 == 31) || (tmp19 == 12) || (tmp19 == 17)) {
 
     return tos3("SIGUSR2");
 
-  } else if ((tmp20 == 20) || (tmp20 == 17) || (tmp20 == 18)) {
+  } else if ((tmp19 == 20) || (tmp19 == 17) || (tmp19 == 18)) {
 
     return tos3("SIGCHLD");
 
-  } else if ((tmp20 == 19) || (tmp20 == 18) || (tmp20 == 25)) {
+  } else if ((tmp19 == 19) || (tmp19 == 18) || (tmp19 == 25)) {
 
     return tos3("SIGCONT");
 
-  } else if ((tmp20 == 17) || (tmp20 == 19) || (tmp20 == 23)) {
+  } else if ((tmp19 == 17) || (tmp19 == 19) || (tmp19 == 23)) {
 
     return tos3("SIGSTOP");
 
-  } else if ((tmp20 == 18) || (tmp20 == 20) || (tmp20 == 24)) {
+  } else if ((tmp19 == 18) || (tmp19 == 20) || (tmp19 == 24)) {
 
     return tos3("SIGTSTP");
 
-  } else if ((tmp20 == 21) || (tmp20 == 21) || (tmp20 == 26)) {
+  } else if ((tmp19 == 21) || (tmp19 == 21) || (tmp19 == 26)) {
 
     return tos3("SIGTTIN");
 
-  } else if ((tmp20 == 22) || (tmp20 == 22) || (tmp20 == 27)) {
+  } else if ((tmp19 == 22) || (tmp19 == 22) || (tmp19 == 27)) {
 
     return tos3("SIGTTOU");
 
-  } else if (tmp20 == 5) {
+  } else if (tmp19 == 5) {
 
     return tos3("SIGTRAP");
 
-  } else if (tmp20 == 7) {
+  } else if (tmp19 == 7) {
 
     return tos3("SIGBUS");
   };
@@ -6621,7 +6624,7 @@ array_string os__get_lines() {
 
     line = string_trim_space(line);
 
-    _PUSH(&inputstr, (/*typ = array_string   tmp_typ=string*/ line), tmp29,
+    _PUSH(&inputstr, (/*typ = array_string   tmp_typ=string*/ line), tmp28,
           string);
   };
 
@@ -6747,15 +6750,15 @@ string os__home_dir() {
 }
 void os__write_file(string path, string text) {
 
-  Option_os__File tmp30 = os__create(path);
+  Option_os__File tmp29 = os__create(path);
   os__File f;
-  if (!tmp30.ok) {
-    string err = tmp30.error;
-    int errcode = tmp30.ecode;
+  if (!tmp29.ok) {
+    string err = tmp29.error;
+    int errcode = tmp29.ecode;
 
     return;
   }
-  f = *(os__File *)tmp30.data;
+  f = *(os__File *)tmp29.data;
   ;
 
   os__File_write(f, text);
@@ -7014,23 +7017,23 @@ array_string os__walk_ext(string path, string ext) {
                                   EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   };
 
-  Option_array_string tmp35 = os__ls(path);
+  Option_array_string tmp34 = os__ls(path);
   array_string files;
-  if (!tmp35.ok) {
-    string err = tmp35.error;
-    int errcode = tmp35.ecode;
+  if (!tmp34.ok) {
+    string err = tmp34.error;
+    int errcode = tmp34.ecode;
 
     v_panic(err);
   }
-  files = *(array_string *)tmp35.data;
+  files = *(array_string *)tmp34.data;
   ;
 
   array_string res = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_string tmp36 = files;
-  for (int i = 0; i < tmp36.len; i++) {
-    string file = ((string *)tmp36.data)[i];
+  array_string tmp35 = files;
+  for (int i = 0; i < tmp35.len; i++) {
+    string file = ((string *)tmp35.data)[i];
 
     if (string_starts_with(file, tos3("."))) {
 
@@ -7043,11 +7046,11 @@ array_string os__walk_ext(string path, string ext) {
 
       _PUSH_MANY(&res,
                  (/*typ = array_string   tmp_typ=string*/ os__walk_ext(p, ext)),
-                 tmp37, array_string);
+                 tmp36, array_string);
 
     } else if (string_ends_with(file, ext)) {
 
-      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp38, string);
+      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp37, string);
     };
   };
 
@@ -7060,20 +7063,20 @@ void os__walk(string path, void (*fnc)(string path /*FFF*/)) {
     return;
   };
 
-  Option_array_string tmp39 = os__ls(path);
+  Option_array_string tmp38 = os__ls(path);
   array_string files;
-  if (!tmp39.ok) {
-    string err = tmp39.error;
-    int errcode = tmp39.ecode;
+  if (!tmp38.ok) {
+    string err = tmp38.error;
+    int errcode = tmp38.ecode;
 
     v_panic(err);
   }
-  files = *(array_string *)tmp39.data;
+  files = *(array_string *)tmp38.data;
   ;
 
-  array_string tmp40 = files;
-  for (int tmp41 = 0; tmp41 < tmp40.len; tmp41++) {
-    string file = ((string *)tmp40.data)[tmp41];
+  array_string tmp39 = files;
+  for (int tmp40 = 0; tmp40 < tmp39.len; tmp40++) {
+    string file = ((string *)tmp39.data)[tmp40];
 
     string p = string_add(string_add(path, os__path_separator), file);
 
@@ -7135,9 +7138,9 @@ void os__mkdir_all(string path) {
                  ? (os__path_separator)
                  : (tos3(""));
 
-  array_string tmp42 = string_split(path, os__path_separator);
-  for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
-    string subdir = ((string *)tmp42.data)[tmp43];
+  array_string tmp41 = string_split(path, os__path_separator);
+  for (int tmp42 = 0; tmp42 < tmp41.len; tmp42++) {
+    string subdir = ((string *)tmp41.data)[tmp42];
 
     p = string_add(p, string_add(subdir, os__path_separator));
 
@@ -7331,6 +7334,135 @@ string os__get_error_msg(int code) {
   };
 
   return string_from_wide(_ptr_text);
+}
+Option_os__Result os__exec(string cmd) {
+
+  if (string_contains(cmd, tos3(";")) || string_contains(cmd, tos3("&&")) ||
+      string_contains(cmd, tos3("||")) || string_contains(cmd, tos3("\n"))) {
+
+    return v_error(tos3(";, &&, || and \\n are not allowed in shell commands"));
+  };
+
+  u32 *child_stdin = ((u32 *)(0));
+
+  u32 *child_stdout_read = ((u32 *)(0));
+
+  u32 *child_stdout_write = ((u32 *)(0));
+
+  os__SecurityAttributes sa = (os__SecurityAttributes){
+      .nLength = 0, .lpSecurityDescriptor = 0, .bInheritHandle = 0};
+
+  sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+
+  sa.bInheritHandle = 1;
+
+  void *create_pipe_result =
+      CreatePipe(&child_stdout_read, &child_stdout_write, &sa, 0);
+
+  if (create_pipe_result == 0) {
+
+    string error_msg = os__get_error_msg(((int)(GetLastError())));
+
+    return v_error(
+        _STR("exec failed (CreatePipe): %.*s", error_msg.len, error_msg.str));
+  };
+
+  void *set_handle_info_result =
+      SetHandleInformation(child_stdout_read, HANDLE_FLAG_INHERIT, 0);
+
+  if (set_handle_info_result == 0) {
+
+    string error_msg = os__get_error_msg(((int)(GetLastError())));
+
+    v_panic(_STR("exec failed (SetHandleInformation): %.*s", error_msg.len,
+                 error_msg.str));
+  };
+
+  os__ProcessInformation proc_info = (os__ProcessInformation){
+      .hProcess = 0, .hThread = 0, .dwProcessId = 0, .dwThreadId = 0};
+
+  os__StartupInfo start_info = (os__StartupInfo){.cb = 0,
+                                                 .lpReserved = 0,
+                                                 .lpDesktop = 0,
+                                                 .lpTitle = 0,
+                                                 .dwX = 0,
+                                                 .dwY = 0,
+                                                 .dwXSize = 0,
+                                                 .dwYSize = 0,
+                                                 .dwXCountChars = 0,
+                                                 .dwYCountChars = 0,
+                                                 .dwFillAttribute = 0,
+                                                 .dwFlags = 0,
+                                                 .wShowWindow = 0,
+                                                 .cbReserved2 = 0,
+                                                 .lpReserved2 = 0,
+                                                 .hStdInput = 0,
+                                                 .hStdOutput = 0,
+                                                 .hStdError = 0};
+
+  start_info.cb = sizeof(PROCESS_INFORMATION);
+
+  start_info.hStdInput = child_stdin;
+
+  start_info.hStdOutput = child_stdout_write;
+
+  start_info.hStdError = child_stdout_write;
+
+  start_info.dwFlags = ((u32)(STARTF_USESTDHANDLES));
+
+  u16 command_line[32768] = {0};
+
+  ExpandEnvironmentStrings(string_to_wide(cmd), &command_line, 32768);
+
+  void *create_process_result = CreateProcess(0, command_line, 0, 0, TRUE, 0, 0,
+                                              0, &start_info, &proc_info);
+
+  if (create_process_result == 0) {
+
+    string error_msg = os__get_error_msg(((int)(GetLastError())));
+
+    return v_error(_STR("exec failed (CreateProcess): %.*s", error_msg.len,
+                        error_msg.str));
+  };
+
+  CloseHandle(child_stdin);
+
+  CloseHandle(child_stdout_write);
+
+  byte buf[1000] = {0};
+
+  int bytes_read = 0;
+
+  string read_data = tos3("");
+
+  while (1) {
+
+    void *readfile_result =
+        ReadFile(child_stdout_read, buf, 1000, &bytes_read, 0);
+
+    read_data = string_add(read_data, tos(buf, bytes_read));
+
+    if ((readfile_result == 0 || bytes_read == 0)) {
+
+      break;
+    };
+  };
+
+  read_data = string_trim_space(read_data);
+
+  int exit_code = 0;
+
+  WaitForSingleObject(proc_info.hProcess, INFINITE);
+
+  GetExitCodeProcess(proc_info.hProcess, &exit_code);
+
+  CloseHandle(proc_info.hProcess);
+
+  CloseHandle(proc_info.hThread);
+
+  os__Result tmp7 = OPTION_CAST(os__Result)(
+      (os__Result){.output = read_data, .exit_code = exit_code});
+  return opt_ok(&tmp7, sizeof(os__Result));
 }
 rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq) {
 
@@ -18180,12 +18312,12 @@ Option_compiler__VsInstallation compiler__find_vs(string vswhere_dir,
 #endif
   ;
 
-  Option_os__Result tmp11 = os__exec(
-      _STR("\"\"%.*s\\Microsoft Visual Studio\\Installer\\vswhere.exe\" "
-           "-latest -prerelease -products * -requires "
-           "Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property "
-           "installationPath\"",
-           vswhere_dir.len, vswhere_dir.str));
+  Option_os__Result tmp11 =
+      os__exec(_STR("\"%.*s\\Microsoft Visual Studio\\Installer\\vswhere.exe\" "
+                    "-latest -prerelease -products * -requires "
+                    "Microsoft.VisualStudio.Component.VC.Tools.x86.x64 "
+                    "-property installationPath",
+                    vswhere_dir.len, vswhere_dir.str));
   os__Result res;
   if (!tmp11.ok) {
     string err = tmp11.error;
@@ -18486,7 +18618,7 @@ void compiler__V_cc_msvc(compiler__V *v) {
 
   string args = array_string_join(a, tos3(" "));
 
-  string cmd = _STR("\"\"%.*s\" %.*s\"", r.full_cl_exe_path.len,
+  string cmd = _STR("\"%.*s\" %.*s", r.full_cl_exe_path.len,
                     r.full_cl_exe_path.str, args.len, args.str);
 
   if (v->pref->show_c_cmd || v->pref->is_verbose) {
@@ -18600,12 +18732,11 @@ void compiler__build_thirdparty_obj_file_with_msvc(
   string atarget =
       array_compiler__CFlag_c_options_after_target_msvc(moduleflags);
 
-  string cmd = _STR("\"\"%.*s\" /volatile:ms /Zi /DNDEBUG %.*s /c %.*s %.*s "
-                    "%.*s /Fo\"%.*s\"\"",
-                    msvc.full_cl_exe_path.len, msvc.full_cl_exe_path.str,
-                    include_string.len, include_string.str, btarget.len,
-                    btarget.str, cfiles.len, cfiles.str, atarget.len,
-                    atarget.str, obj_path.len, obj_path.str);
+  string cmd = _STR(
+      "\"%.*s\" /volatile:ms /Zi /DNDEBUG %.*s /c %.*s %.*s %.*s /Fo\"%.*s\"",
+      msvc.full_cl_exe_path.len, msvc.full_cl_exe_path.str, include_string.len,
+      include_string.str, btarget.len, btarget.str, cfiles.len, cfiles.str,
+      atarget.len, atarget.str, obj_path.len, obj_path.str);
 
   printf("thirdparty cmd line: %.*s\n", cmd.len, cmd.str);
 
