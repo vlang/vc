@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2f5de11"
+#define V_COMMIT_HASH "f579376"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3a99217"
+#define V_COMMIT_HASH "2f5de11"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -28172,6 +28172,11 @@ bool compiler__Parser_check_types2(compiler__Parser *p, string got_,
     return 1;
   };
 
+  if (string_eq(got, expected)) {
+
+    return 1;
+  };
+
   if (string_eq(expected, tos3("_ANYTYPE_"))) {
 
     p->cur_fn.typ = got;
@@ -28402,7 +28407,7 @@ bool compiler__Table_is_interface(compiler__Table *table, string name) {
   };
 
   compiler__Type tmp64 = {0};
-  bool tmp65 = map_get(/*table.v : 741*/ table->typesmap, name, &tmp64);
+  bool tmp65 = map_get(/*table.v : 744*/ table->typesmap, name, &tmp64);
 
   compiler__Type t = tmp64;
 
