@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3a99217"
+#define V_COMMIT_HASH "2f5de11"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0ca75f7"
+#define V_COMMIT_HASH "3a99217"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -2843,7 +2843,7 @@ void print_backtrace_skipping_top_frames(int skipframes) {
 
     string output = tos3("");
 
-    while (fgets(buf, 1000, f) != 0) {
+    while (fgets(((voidptr)(buf)), 1000, f) != 0) {
 
       output = string_add(output, tos(buf, vstrlen(buf)));
     };
