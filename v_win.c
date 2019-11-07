@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c8de2c0"
+#define V_COMMIT_HASH "d57c0cf"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ef71867"
+#define V_COMMIT_HASH "c8de2c0"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -237,6 +237,7 @@ typedef Option Option_compiler__VsInstallation;
 typedef Option Option_compiler__MsvcResult;
 typedef struct compiler__MsvcStringFlags compiler__MsvcStringFlags;
 typedef struct compiler__Parser compiler__Parser;
+typedef map map_bool;
 typedef struct compiler__IndexConfig compiler__IndexConfig;
 typedef struct _V_MulRet_string_V_string _V_MulRet_string_V_string;
 typedef struct _V_MulRet_bool_V_string _V_MulRet_bool_V_string;
@@ -1544,6 +1545,7 @@ compiler__Fn *compiler__Parser_interface_method(compiler__Parser *p,
 compiler__TypeCategory compiler__key_to_type_cat(compiler__TokenKind tok);
 string compiler__Parser_check_name(compiler__Parser *p);
 string compiler__Parser_check_string(compiler__Parser *p);
+void compiler__Parser_check_not_reserved(compiler__Parser *p);
 string compiler__Parser_strtok(compiler__Parser *p);
 void compiler__Parser_check_space(compiler__Parser *p,
                                   compiler__TokenKind expected);
@@ -2015,6 +2017,7 @@ int compiler__KEY_QUERY_VALUE;
 int compiler__KEY_WOW64_32KEY;
 int compiler__KEY_ENUMERATE_SUB_KEYS;
 #define compiler__MaxModuleDepth 4
+map_bool compiler__Reserved_Types;
 string compiler__and_or_error;
 #define compiler__compiler__IndexType_noindex 0
 #define compiler__compiler__IndexType_str 1
@@ -19835,6 +19838,14 @@ string compiler__Parser_check_string(compiler__Parser *p) {
 
   return s;
 }
+void compiler__Parser_check_not_reserved(compiler__Parser *p) {
+
+  if ((_IN_MAP((p->lit), compiler__Reserved_Types))) {
+
+    compiler__Parser_error(
+        p, _STR("`%.*s` can\'t be used as name", p->lit.len, p->lit.str));
+  };
+}
 string compiler__Parser_strtok(compiler__Parser *p) {
 
   if (p->tok == compiler__compiler__TokenKind_name) {
@@ -20091,7 +20102,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
   if ((_IN(string, (p->lit), map_keys(&/* ? */ ti)))) {
 
     string tmp34 = tos3("");
-    bool tmp35 = map_get(/*parser.v : 857*/ ti, p->lit, &tmp34);
+    bool tmp35 = map_get(/*parser.v : 869*/ ti, p->lit, &tmp34);
 
     if (!tmp35)
       tmp34 = tos((byte *)"", 0);
@@ -20430,6 +20441,8 @@ string compiler__Parser_statement(compiler__Parser *p, bool add_semi) {
                    compiler__compiler__TokenKind_decl_assign ||
                compiler__Parser_peek(&/* ? */ *p) ==
                    compiler__compiler__TokenKind_comma) {
+
+      compiler__Parser_check_not_reserved(p);
 
       compiler__Parser_var_decl(p);
 
@@ -21474,7 +21487,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
       if ((_IN(string, (typ), map_keys(&/* ? */ p->cur_fn.dispatch_of.inst)))) {
 
         string tmp91 = tos3("");
-        bool tmp92 = map_get(/*parser.v : 1665*/ p->cur_fn.dispatch_of.inst,
+        bool tmp92 = map_get(/*parser.v : 1678*/ p->cur_fn.dispatch_of.inst,
                              typ, &tmp91);
 
         if (!tmp92)
@@ -23840,6 +23853,8 @@ string compiler__Parser_if_st(compiler__Parser *p, bool is_expr,
   if (p->tok == compiler__compiler__TokenKind_name &&
       compiler__Parser_peek(&/* ? */ *p) ==
           compiler__compiler__TokenKind_decl_assign) {
+
+    compiler__Parser_check_not_reserved(p);
 
     string option_tmp = compiler__Parser_get_tmp(p);
 
@@ -30335,6 +30350,41 @@ void init() {
   compiler__KEY_QUERY_VALUE = (0x0001);
   compiler__KEY_WOW64_32KEY = (0x0200);
   compiler__KEY_ENUMERATE_SUB_KEYS = (0x0008);
+  compiler__Reserved_Types = new_map_init(15, sizeof(bool),
+                                          (string[15]){
+                                              tos3("i8"),
+                                              tos3("i16"),
+                                              tos3("int"),
+                                              tos3("i64"),
+                                              tos3("i128"),
+                                              tos3("byte"),
+                                              tos3("u16"),
+                                              tos3("u32"),
+                                              tos3("u64"),
+                                              tos3("u128"),
+                                              tos3("f32"),
+                                              tos3("f64"),
+                                              tos3("rune"),
+                                              tos3("byteptr"),
+                                              tos3("voidptr"),
+                                          },
+                                          (bool[15]){
+                                              1,
+                                              1,
+                                              1,
+                                              1,
+                                              1,
+                                              1,
+                                              1,
+                                              1,
+                                              1,
+                                              1,
+                                              1,
+                                              1,
+                                              1,
+                                              1,
+                                              1,
+                                          });
   compiler__and_or_error =
       string_add(tos3("use `()` to make the boolean expression clear\n"),
                  tos3("for example: `(a && b) || c` instead of `a && b || c`"));
