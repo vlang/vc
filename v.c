@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "cac719c"
+#define V_COMMIT_HASH "32fec2c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6f95be6"
+#define V_COMMIT_HASH "cac719c"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -9307,6 +9307,11 @@ string compiler__V_interface_table(compiler__V *v) {
       strings__Builder_writeln(&/* ? */ sb,
                                _STR("int _%.*s_%.*s_index = %d;", t.name.len,
                                     t.name.str, gen_type.len, gen_type.str, i));
+    };
+
+    if (t.methods.len == 0) {
+
+      methods = tos3("{TCCSKIP(0)}");
     };
 
     strings__Builder_writeln(
