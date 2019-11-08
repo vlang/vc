@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "bc82617"
+#define V_COMMIT_HASH "c4ff0d5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "06a7954"
+#define V_COMMIT_HASH "bc82617"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -11670,13 +11670,6 @@ string compiler__Parser_term(compiler__Parser *p) {
 
     ;
 
-    if ((is_mul || is_div) && p->tok == compiler__compiler__TokenKind_str) {
-
-      compiler__Parser_error(p, _STR("operator %.*s cannot be used on strings",
-                                     compiler__TokenKind_str(tok).len,
-                                     compiler__TokenKind_str(tok).str));
-    };
-
     if ((is_div || is_mod) && p->tok == compiler__compiler__TokenKind_number &&
         string_eq(p->lit, tos3("0"))) {
 
@@ -11684,6 +11677,13 @@ string compiler__Parser_term(compiler__Parser *p) {
     };
 
     string expr_type = compiler__Parser_unary(p);
+
+    if ((is_mul || is_div) && string_eq(expr_type, tos3("string"))) {
+
+      compiler__Parser_error(p, _STR("operator %.*s cannot be used on strings",
+                                     compiler__TokenKind_str(tok).len,
+                                     compiler__TokenKind_str(tok).str));
+    };
 
     if (!compiler__is_primitive_type(expr_type) && string_eq(expr_type, typ)) {
 
