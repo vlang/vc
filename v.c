@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "27f6b2d"
+#define V_COMMIT_HASH "5a8c3da"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f579376"
+#define V_COMMIT_HASH "27f6b2d"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -6813,7 +6813,7 @@ bool os__is_dir(string path) {
     return 0;
   };
 
-  return (statbuf.st_mode & os__S_IFMT) == os__S_IFDIR;
+  return (((int)(statbuf.st_mode)) & os__S_IFMT) == os__S_IFDIR;
 
 #endif
   ;
