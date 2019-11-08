@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5a8c3da"
+#define V_COMMIT_HASH "db4a7ed"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "27f6b2d"
+#define V_COMMIT_HASH "5a8c3da"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -13267,10 +13267,10 @@ void compiler__Parser_async_fn_call(compiler__Parser *p, compiler__Fn f,
   };
 
   string wrapper_text =
-      _STR("%.*s %.*s(%.*s * arg) {%.*s( /*f*/%.*s );  }", wrapper_type.len,
-           wrapper_type.str, wrapper_name.len, wrapper_name.str,
-           arg_struct_name.len, arg_struct_name.str, fn_name.len, fn_name.str,
-           str_args.len, str_args.str);
+      _STR("%.*s %.*s(%.*s * arg) {%.*s( /*f*/%.*s ); return NULL; }",
+           wrapper_type.len, wrapper_type.str, wrapper_name.len,
+           wrapper_name.str, arg_struct_name.len, arg_struct_name.str,
+           fn_name.len, fn_name.str, str_args.len, str_args.str);
 
   compiler__CGen_register_thread_fn(p->cgen, wrapper_name, wrapper_text,
                                     arg_struct);
