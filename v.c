@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "06a7954"
+#define V_COMMIT_HASH "bc82617"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7a8e7b4"
+#define V_COMMIT_HASH "06a7954"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -9750,7 +9750,7 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
 
     } else if (string_eq(name, tos3("msvc"))) {
 
-      compiler__Parser_comptime_if_block(p, tos3("__MSC_VER__"));
+      compiler__Parser_comptime_if_block(p, tos3("_MSC_VER"));
 
     } else if (string_eq(name, tos3("clang"))) {
 
