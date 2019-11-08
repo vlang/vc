@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "985fb91"
+#define V_COMMIT_HASH "7a8e7b4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f543847"
+#define V_COMMIT_HASH "985fb91"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -13489,11 +13489,12 @@ void compiler__Parser_fn_call(compiler__Parser *p, compiler__Fn *f,
 
         string iname = (*(compiler__Var *)array_get(f->args, 0)).typ;
 
-        compiler__Parser_gen(p, _STR("((void "
-                                     "(*)())(%.*s_name_table[%.*s._interface_"
-                                     "idx][%d]))(%.*s._object)",
-                                     iname.len, iname.str, var.len, var.str,
-                                     idx, var.len, var.str));
+        compiler__Parser_gen(p,
+                             _STR("((%.*s "
+                                  "(*)())(%.*s_name_table[%.*s._interface_idx]["
+                                  "%d]))(%.*s._object)",
+                                  f->typ.len, f->typ.str, iname.len, iname.str,
+                                  var.len, var.str, idx, var.len, var.str));
       };
     };
 
