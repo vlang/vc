@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b1d2c6c"
+#define V_COMMIT_HASH "e6c9c7d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "aef02f6"
+#define V_COMMIT_HASH "b1d2c6c"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -22246,14 +22246,20 @@ void compiler__Parser_assign_statement(compiler__Parser *p, compiler__Var v,
                       expr.str, left.len, left.str));
 
   } else if (tok == compiler__compiler__TokenKind_left_shift_assign ||
-             tok == compiler__compiler__TokenKind_righ_shift_assign) {
+             tok == compiler__compiler__TokenKind_righ_shift_assign ||
+             tok == compiler__compiler__TokenKind_mod_assign ||
+             tok == compiler__compiler__TokenKind_xor_assign ||
+             tok == compiler__compiler__TokenKind_and_assign ||
+             tok == compiler__compiler__TokenKind_or_assign) {
 
     if (!compiler__is_integer_type(p->assigned_type)) {
 
       compiler__Parser_error_with_token_index(
           p,
-          _STR("cannot use shift operator on non-integer type `%.*s`",
-               p->assigned_type.len, p->assigned_type.str),
+          _STR("cannot use %.*s assignment operator on non-integer type `%.*s`",
+               compiler__TokenKind_str(tok).len,
+               compiler__TokenKind_str(tok).str, p->assigned_type.len,
+               p->assigned_type.str),
           errtok);
     };
 
@@ -22261,28 +22267,9 @@ void compiler__Parser_assign_statement(compiler__Parser *p, compiler__Var v,
 
       compiler__Parser_error_with_token_index(
           p,
-          _STR("cannot use non-integer type `%.*s` as shift argument",
-               expr_type.len, expr_type.str),
-          errtok);
-    };
-
-  } else if (tok == compiler__compiler__TokenKind_mod_assign) {
-
-    if (!compiler__is_integer_type(p->assigned_type)) {
-
-      compiler__Parser_error_with_token_index(
-          p,
-          _STR("cannot use modulo operator on non-integer type `%.*s`",
-               p->assigned_type.len, p->assigned_type.str),
-          errtok);
-    };
-
-    if (!compiler__is_integer_type(expr_type)) {
-
-      compiler__Parser_error_with_token_index(
-          p,
-          _STR("cannot use non-integer type `%.*s` as modulo argument",
-               expr_type.len, expr_type.str),
+          _STR("cannot use non-integer type `%.*s` as %.*s argument",
+               expr_type.len, expr_type.str, compiler__TokenKind_str(tok).len,
+               compiler__TokenKind_str(tok).str),
           errtok);
     };
 
