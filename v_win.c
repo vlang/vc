@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e6c9c7d"
+#define V_COMMIT_HASH "30481a3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b1d2c6c"
+#define V_COMMIT_HASH "e6c9c7d"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -18988,22 +18988,19 @@ void compiler__Parser_switch_statement(compiler__Parser *p) {
 }
 void compiler__generate_vh(string mod) {
 
-  printf("\n\n\n\n1Generating a V header file for module `%.*s`\n", mod.len,
+  printf("\n\n\n\nGenerating a V header file for module `%.*s`\n", mod.len,
          mod.str);
 
   string vexe = os__executable();
 
-  string full_mod_path = string_add(string_add(os__dir(vexe), tos3("/")), mod);
-
-  string mod_path = string_replace(mod, tos3("."), os__path_separator);
+  string full_mod_path =
+      filepath__join(os__dir(vexe), &(varg_string){.len = 1, .args = {mod}});
 
   string dir = (string_starts_with(mod, tos3("vlib")))
                    ? (_STR("%.*s%.*s%.*s", compiler__v_modules_path.len,
                            compiler__v_modules_path.str, os__path_separator.len,
                            os__path_separator.str, mod.len, mod.str))
-                   : (_STR("%.*s%.*s%.*s", compiler__v_modules_path.len,
-                           compiler__v_modules_path.str, os__path_separator.len,
-                           os__path_separator.str, mod.len, mod.str));
+                   : (mod);
 
   string path = string_add(dir, tos3(".vh"));
 
@@ -19025,11 +19022,14 @@ void compiler__generate_vh(string mod) {
   out = *(os__File *)tmp1.data;
   ;
 
-  string mod_def = (string_contains(mod, tos3("/")))
-                       ? (string_all_after(mod, tos3("/")))
-                       : (mod);
+  string mod_path = string_replace(mod, tos3("\\"), tos3("/"));
 
-  os__File_writeln(out, _STR("// %.*s module header \n", mod.len, mod.str));
+  os__File_writeln(out,
+                   _STR("// %.*s module header\n", mod_path.len, mod_path.str));
+
+  string mod_def = (string_contains(mod_path, tos3("/")))
+                       ? (string_all_after(mod_path, tos3("/")))
+                       : (mod_path);
 
   os__File_writeln(out, _STR("module %.*s\n", mod_def.len, mod_def.str));
 
@@ -19045,9 +19045,11 @@ void compiler__generate_vh(string mod) {
         !string_ends_with(it, tos3("_windows.v")) &&
         !string_ends_with(it, tos3("_win.v")) &&
         !string_ends_with(it, tos3("_lin.v")) &&
-        !string_contains(it, tos3("/examples")) &&
+        !string_contains(it, _STR("%.*sexamples", os__path_separator.len,
+                                  os__path_separator.str)) &&
         !string_contains(it, tos3("_js.v")) &&
-        !string_contains(it, tos3("/js")))
+        !string_contains(
+            it, _STR("%.*sjs", os__path_separator.len, os__path_separator.str)))
       array_push(&tmp2, &it);
   }
   array_string filtered = tmp2;
@@ -19864,6 +19866,9 @@ void compiler__V_cc_msvc(compiler__V *v) {
 
   if (v->pref->build_mode == compiler__compiler__BuildMode_build_module) {
 
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/c")), tmp27,
+          string);
+
   } else if (v->pref->build_mode ==
              compiler__compiler__BuildMode_default_mode) {
   };
@@ -19876,7 +19881,7 @@ void compiler__V_cc_msvc(compiler__V *v) {
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ string_add(
             string_add(tos3("\""), os__realpath(v->out_name_c)), tos3("\""))),
-        tmp27, string);
+        tmp28, string);
 
   array_string real_libs = new_array_from_c_array(
       12, 12, sizeof(string),
@@ -19890,7 +19895,7 @@ void compiler__V_cc_msvc(compiler__V *v) {
       compiler__V_get_os_cflags(&/* ? */ *v));
 
   _PUSH_MANY(&real_libs,
-             (/*typ = array_string   tmp_typ=string*/ sflags.real_libs), tmp28,
+             (/*typ = array_string   tmp_typ=string*/ sflags.real_libs), tmp29,
              array_string);
 
   array_string inc_paths = sflags.inc_paths;
@@ -19902,77 +19907,77 @@ void compiler__V_cc_msvc(compiler__V *v) {
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "-I \"%.*s\"", r.ucrt_include_path.len, r.ucrt_include_path.str)),
-        tmp29, string);
-
-  _PUSH(&a,
-        (/*typ = array_string   tmp_typ=string*/ _STR(
-            "-I \"%.*s\"", r.vs_include_path.len, r.vs_include_path.str)),
         tmp30, string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
-            "-I \"%.*s\"", r.um_include_path.len, r.um_include_path.str)),
+            "-I \"%.*s\"", r.vs_include_path.len, r.vs_include_path.str)),
         tmp31, string);
+
+  _PUSH(&a,
+        (/*typ = array_string   tmp_typ=string*/ _STR(
+            "-I \"%.*s\"", r.um_include_path.len, r.um_include_path.str)),
+        tmp32, string);
 
   _PUSH(
       &a,
       (/*typ = array_string   tmp_typ=string*/ _STR(
           "-I \"%.*s\"", r.shared_include_path.len, r.shared_include_path.str)),
-      tmp32, string);
+      tmp33, string);
 
-  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ inc_paths), tmp33,
+  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ inc_paths), tmp34,
              array_string);
 
-  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ other_flags), tmp34,
+  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ other_flags), tmp35,
              array_string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ array_string_join(real_libs,
                                                                    tos3(" "))),
-        tmp35, string);
+        tmp36, string);
 
-  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/link")), tmp36,
+  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/link")), tmp37,
         string);
 
-  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/NOLOGO")), tmp37,
+  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/NOLOGO")), tmp38,
         string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "/OUT:\"%.*s\"", v->out_name.len, v->out_name.str)),
-        tmp38, string);
-
-  _PUSH(&a,
-        (/*typ = array_string   tmp_typ=string*/ _STR(
-            "/LIBPATH:\"%.*s\"", r.ucrt_lib_path.len, r.ucrt_lib_path.str)),
         tmp39, string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
-            "/LIBPATH:\"%.*s\"", r.um_lib_path.len, r.um_lib_path.str)),
+            "/LIBPATH:\"%.*s\"", r.ucrt_lib_path.len, r.ucrt_lib_path.str)),
         tmp40, string);
 
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
-            "/LIBPATH:\"%.*s\"", r.vs_lib_path.len, r.vs_lib_path.str)),
+            "/LIBPATH:\"%.*s\"", r.um_lib_path.len, r.um_lib_path.str)),
         tmp41, string);
 
-  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/DEBUG:FULL")),
+  _PUSH(&a,
+        (/*typ = array_string   tmp_typ=string*/ _STR(
+            "/LIBPATH:\"%.*s\"", r.vs_lib_path.len, r.vs_lib_path.str)),
         tmp42, string);
+
+  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/DEBUG:FULL")),
+        tmp43, string);
 
   if (v->pref->is_prod) {
 
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/INCREMENTAL:NO")),
-          tmp43, string);
+          tmp44, string);
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/OPT:REF")), tmp44,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/OPT:REF")), tmp45,
           string);
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/OPT:ICF")), tmp45,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/OPT:ICF")), tmp46,
           string);
   };
 
-  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ lib_paths), tmp46,
+  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ lib_paths), tmp47,
              array_string);
 
   string args = array_string_join(a, tos3(" "));
@@ -19989,11 +19994,11 @@ void compiler__V_cc_msvc(compiler__V *v) {
     println(tos3("==========\n"));
   };
 
-  Option_os__Result tmp47 = os__exec(cmd);
+  Option_os__Result tmp48 = os__exec(cmd);
   os__Result res;
-  if (!tmp47.ok) {
-    string err = tmp47.error;
-    int errcode = tmp47.ecode;
+  if (!tmp48.ok) {
+    string err = tmp48.error;
+    int errcode = tmp48.ecode;
 
     println(err);
 
@@ -20001,7 +20006,7 @@ void compiler__V_cc_msvc(compiler__V *v) {
 
     return;
   }
-  res = *(os__Result *)tmp47.data;
+  res = *(os__Result *)tmp48.data;
   ;
 
   if (res.exit_code != 0) {
@@ -20020,17 +20025,17 @@ void compiler__V_cc_msvc(compiler__V *v) {
 void compiler__build_thirdparty_obj_file_with_msvc(
     string path, array_compiler__CFlag moduleflags) {
 
-  Option_compiler__MsvcResult tmp48 = compiler__find_msvc();
+  Option_compiler__MsvcResult tmp49 = compiler__find_msvc();
   compiler__MsvcResult msvc;
-  if (!tmp48.ok) {
-    string err = tmp48.error;
-    int errcode = tmp48.ecode;
+  if (!tmp49.ok) {
+    string err = tmp49.error;
+    int errcode = tmp49.ecode;
 
     println(tos3("Could not find visual studio"));
 
     return;
   }
-  msvc = *(compiler__MsvcResult *)tmp48.data;
+  msvc = *(compiler__MsvcResult *)tmp49.data;
   ;
 
   string obj_path = _STR("%.*sbj", path.len, path.str);
@@ -20049,22 +20054,22 @@ void compiler__build_thirdparty_obj_file_with_msvc(
 
   string parent = os__dir(obj_path);
 
-  Option_array_string tmp49 = os__ls(parent);
+  Option_array_string tmp50 = os__ls(parent);
   array_string files;
-  if (!tmp49.ok) {
-    string err = tmp49.error;
-    int errcode = tmp49.ecode;
+  if (!tmp50.ok) {
+    string err = tmp50.error;
+    int errcode = tmp50.ecode;
 
     v_panic(err);
   }
-  files = *(array_string *)tmp49.data;
+  files = *(array_string *)tmp50.data;
   ;
 
   string cfiles = tos3("");
 
-  array_string tmp50 = files;
-  for (int tmp51 = 0; tmp51 < tmp50.len; tmp51++) {
-    string file = ((string *)tmp50.data)[tmp51];
+  array_string tmp51 = files;
+  for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
+    string file = ((string *)tmp51.data)[tmp52];
 
     if (string_ends_with(file, tos3(".c"))) {
 
@@ -20099,11 +20104,11 @@ void compiler__build_thirdparty_obj_file_with_msvc(
 
   printf("thirdparty cmd line: %.*s\n", cmd.len, cmd.str);
 
-  Option_os__Result tmp52 = os__exec(cmd);
+  Option_os__Result tmp53 = os__exec(cmd);
   os__Result res;
-  if (!tmp52.ok) {
-    string err = tmp52.error;
-    int errcode = tmp52.ecode;
+  if (!tmp53.ok) {
+    string err = tmp53.error;
+    int errcode = tmp53.ecode;
 
     printf("msvc: failed thirdparty object build cmd: %.*s\n", cmd.len,
            cmd.str);
@@ -20112,7 +20117,7 @@ void compiler__build_thirdparty_obj_file_with_msvc(
 
     return;
   }
-  res = *(os__Result *)tmp52.data;
+  res = *(os__Result *)tmp53.data;
   ;
 
   if (res.exit_code != 0) {
@@ -20142,9 +20147,9 @@ array_compiler__CFlag_msvc_string_flags(array_compiler__CFlag cflags) {
   array_string other_flags = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_compiler__CFlag tmp53 = cflags;
-  for (int tmp54 = 0; tmp54 < tmp53.len; tmp54++) {
-    compiler__CFlag flag = ((compiler__CFlag *)tmp53.data)[tmp54];
+  array_compiler__CFlag tmp54 = cflags;
+  for (int tmp55 = 0; tmp55 < tmp54.len; tmp55++) {
+    compiler__CFlag flag = ((compiler__CFlag *)tmp54.data)[tmp55];
 
     if (string_eq(flag.name, tos3("-l"))) {
 
@@ -20158,50 +20163,50 @@ array_compiler__CFlag_msvc_string_flags(array_compiler__CFlag cflags) {
       string lib_lib = string_add(flag.value, tos3(".lib"));
 
       _PUSH(&real_libs, (/*typ = array_string   tmp_typ=string*/ lib_lib),
-            tmp55, string);
+            tmp56, string);
 
     } else if (string_eq(flag.name, tos3("-I"))) {
 
       _PUSH(&inc_paths,
             (/*typ = array_string   tmp_typ=string*/ compiler__CFlag_format(
                 &/* ? */ flag)),
-            tmp56, string);
+            tmp57, string);
 
     } else if (string_eq(flag.name, tos3("-L"))) {
 
       _PUSH(&lib_paths, (/*typ = array_string   tmp_typ=string*/ flag.value),
-            tmp57, string);
+            tmp58, string);
 
       _PUSH(&lib_paths,
             (/*typ = array_string   tmp_typ=string*/ string_add(
                 string_add(flag.value, os__path_separator), tos3("msvc"))),
-            tmp58, string);
+            tmp59, string);
 
     } else if (string_ends_with(flag.value, tos3(".o"))) {
 
       _PUSH(&other_flags,
             (/*typ = array_string   tmp_typ=string*/ _STR(
                 "\"%.*sbj\"", flag.value.len, flag.value.str)),
-            tmp59, string);
+            tmp60, string);
 
     } else {
 
       _PUSH(&other_flags, (/*typ = array_string   tmp_typ=string*/ flag.value),
-            tmp60, string);
+            tmp61, string);
     };
   };
 
   array_string lpaths = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  array_string tmp61 = lib_paths;
-  for (int tmp62 = 0; tmp62 < tmp61.len; tmp62++) {
-    string l = ((string *)tmp61.data)[tmp62];
+  array_string tmp62 = lib_paths;
+  for (int tmp63 = 0; tmp63 < tmp62.len; tmp63++) {
+    string l = ((string *)tmp62.data)[tmp63];
 
     _PUSH(&lpaths,
           (/*typ = array_string   tmp_typ=string*/ string_add(
               string_add(tos3("/LIBPATH:\""), os__realpath(l)), tos3("\""))),
-          tmp63, string);
+          tmp64, string);
   };
 
   return (compiler__MsvcStringFlags){real_libs, inc_paths, lpaths, other_flags};
@@ -30559,12 +30564,15 @@ void main__main() {
 
     string mod = *(string *)array_last(args);
 
-    os__system(string_add(_STR("%.*s build module vlib/", vexe.len, vexe.str),
+    os__system(string_add(_STR("%.*s build module vlib%.*s", vexe.len, vexe.str,
+                               os__path_separator.len, os__path_separator.str),
                           *(string *)array_last(args)));
 
-    Option_string tmp7 =
-        os__read_file(_STR("%.*s/vlib/%.*s.vh", compiler__v_modules_path.len,
-                           compiler__v_modules_path.str, mod.len, mod.str));
+    Option_string tmp7 = os__read_file(filepath__join(
+        compiler__v_modules_path,
+        &(varg_string){
+            .len = 2,
+            .args = {tos3("vlib"), _STR("%.*s.vh", mod.len, mod.str)}}));
     string txt;
     if (!tmp7.ok) {
       string err = tmp7.error;
