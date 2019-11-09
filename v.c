@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "da57464"
+#define V_COMMIT_HASH "ab37081"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f33d8bd"
+#define V_COMMIT_HASH "da57464"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -6912,6 +6912,10 @@ array_string os__walk_ext(string path, string ext) {
   array_string res = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
+  string separator = (string_ends_with(path, os__path_separator))
+                         ? (tos3(""))
+                         : (os__path_separator);
+
   array_string tmp35 = files;
   for (int i = 0; i < tmp35.len; i++) {
     string file = ((string *)tmp35.data)[i];
@@ -6921,7 +6925,7 @@ array_string os__walk_ext(string path, string ext) {
       continue;
     };
 
-    string p = string_add(string_add(path, os__path_separator), file);
+    string p = string_add(string_add(path, separator), file);
 
     if (os__is_dir(p)) {
 
