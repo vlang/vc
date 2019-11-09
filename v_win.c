@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "be4eaa6"
+#define V_COMMIT_HASH "f33d8bd"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fad0cc2"
+#define V_COMMIT_HASH "be4eaa6"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -9602,6 +9602,9 @@ string compiler__V_interface_table(compiler__V *v) {
 
     string methods = tos3("");
 
+    strings__Builder_writeln(&/* ? */ sb,
+                             _STR("// NR methods = %d", t.gen_types.len));
+
     array_string tmp58 = t.gen_types;
     for (int i = 0; i < tmp58.len; i++) {
       string gen_type = ((string *)tmp58.data)[i];
@@ -9629,15 +9632,14 @@ string compiler__V_interface_table(compiler__V *v) {
                                     t.name.str, gen_type.len, gen_type.str, i));
     };
 
-    if (t.methods.len == 0) {
+    if (t.gen_types.len > 0) {
 
-      methods = tos3("{TCCSKIP(0)}");
+      strings__Builder_writeln(
+          &/* ? */ sb,
+          string_add(_STR("void* (* %.*s_name_table[][%d]) = ", t.name.len,
+                          t.name.str, t.methods.len),
+                     _STR("{ %.*s }; ", methods.len, methods.str)));
     };
-
-    strings__Builder_writeln(
-        &/* ? */ sb, string_add(_STR("void* (* %.*s_name_table[][%d]) = ",
-                                     t.name.len, t.name.str, t.methods.len),
-                                _STR("{ %.*s }; ", methods.len, methods.str)));
 
     continue;
   };
