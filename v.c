@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ab37081"
+#define V_COMMIT_HASH "aef02f6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "da57464"
+#define V_COMMIT_HASH "ab37081"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -11617,12 +11617,15 @@ string compiler__Parser_expression(compiler__Parser *p) {
     string expr_type = compiler__Parser_term(p);
 
     if ((tok_op == compiler__compiler__TokenKind_pipe ||
-         tok_op == compiler__compiler__TokenKind_amp) &&
+         tok_op == compiler__compiler__TokenKind_amp ||
+         tok_op == compiler__compiler__TokenKind_xor) &&
         !(compiler__is_integer_type(expr_type) &&
           compiler__is_integer_type(typ))) {
 
       compiler__Parser_error(
-          p, tos3("operators `&` and `|` are defined only on integer types"));
+          p, _STR("operator %.*s is defined only on integer types",
+                  compiler__TokenKind_str(tok_op).len,
+                  compiler__TokenKind_str(tok_op).str));
     };
 
     compiler__Parser_check_types(p, expr_type, typ);
