@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "73bd82e"
+#define V_COMMIT_HASH "d1e7a54"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3d4f850"
+#define V_COMMIT_HASH "73bd82e"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -18,6 +18,7 @@
 #include <sys/time.h>
 #include <unistd.h> // sleep
 #else
+#pragma comment(lib, "Dbghelp.lib")
 #if defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ < __MSVCR90_DLL
 #error Please upgrade your MinGW distribution to use msvcr90.dll or later.
 #endif
@@ -155,6 +156,9 @@ void reload_so();
 
 int g_test_oks = 0;
 int g_test_fails = 0;
+#ifdef _WIN32
+#include <dbghelp.h>
+#endif
 #include <errno.h>
 #include <float.h>
 #include <sys/stat.h>
@@ -171,6 +175,9 @@ typedef array array_char;
 typedef array array_T;
 typedef array array_i64;
 typedef array array_f32;
+typedef struct SymbolInfo SymbolInfo;
+typedef struct SymbolInfoContainer SymbolInfoContainer;
+typedef struct Line64 Line64;
 typedef struct hashmap hashmap;
 typedef array array_hashmapentry;
 typedef struct hashmapentry hashmapentry;
@@ -373,6 +380,32 @@ struct compiler__VsInstallation {
 
 struct os__File {
   void *cfile;
+};
+
+struct Line64 {
+  u32 f_size_of_struct;
+  void *f_key;
+  u32 f_line_number;
+  byte *f_file_name;
+  u64 f_address;
+};
+
+struct SymbolInfo {
+  u32 f_size_of_struct;
+  u32 f_type_index;
+  u64 f_reserved[2];
+  u32 f_index;
+  u32 f_size;
+  u64 f_mod_base;
+  u32 f_flags;
+  u64 f_value;
+  u64 f_address;
+  u32 f_register;
+  u32 f_scope;
+  u32 f_tag;
+  u32 f_name_len;
+  u32 f_max_name_len;
+  byte f_name;
 };
 
 struct _V_MulRet_int_V_bool {
@@ -680,6 +713,11 @@ struct varg_string {
   string args[4];
 };
 
+struct SymbolInfoContainer {
+  SymbolInfo syminfo;
+  char f_name_rest[254];
+};
+
 struct compiler__V {
   compiler__OS os;
   string out_name_c;
@@ -923,6 +961,9 @@ void v_free(void *ptr);
 void *memdup(void *src, int sz);
 void v_ptr_free(void *ptr);
 int is_atty(int fd);
+bool print_backtrace_skipping_top_frames_msvc(int skipframes);
+bool print_backtrace_skipping_top_frames_mingw(int skipframes);
+bool print_backtrace_skipping_top_frames_nix(int skipframes);
 int backtrace(void *a, int b);
 byteptr *backtrace_symbols(void *, int);
 void backtrace_symbols_fd(void *, int, int);
@@ -1949,6 +1990,13 @@ bool array_eq_T_f32(array_f32 a1, array_f32 a2) {
 }
 
 i64 total_m = 0; // global
+int builtin__SYMOPT_UNDNAME;
+int builtin__SYMOPT_DEFERRED_LOADS;
+int builtin__SYMOPT_NO_CPP;
+int builtin__SYMOPT_LOAD_LINES;
+int builtin__SYMOPT_INCLUDE_32BIT_MODULES;
+int builtin__SYMOPT_ALLOW_ZERO_ADDRESS;
+int builtin__SYMOPT_DEBUG;
 int builtin__min_cap;
 int builtin__max_cap;
 array_int g_ustring_runes; // global
@@ -2785,105 +2833,34 @@ bool isnil(void *v) { return v == 0; }
 void on_panic(int (*f)(int /*FFF*/)) {}
 void print_backtrace_skipping_top_frames(int skipframes) {
 
-#ifdef __APPLE__
+#ifdef _WIN32
 
-  byte *buffer[100];
+#ifdef _MSC_VER
 
-  int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
+  if (print_backtrace_skipping_top_frames_msvc(skipframes)) {
 
-  backtrace_symbols_fd(((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)),
-                       nr_ptrs - skipframes, 1);
-
-  return;
+    return;
+  };
 
 #endif
   ;
 
-#ifdef __linux__
+#ifdef __MINGW32__
 
-#ifndef __BIONIC__
+  if (print_backtrace_skipping_top_frames_mingw(skipframes)) {
 
-#ifdef __GLIBC__
+    return;
+  };
 
-  byte *buffer[100];
-
-  int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
-
-  int nr_actual_frames = nr_ptrs - skipframes;
-
-  array_string sframes = new_array_from_c_array(
-      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-
-  byteptr *csymbols = ((byteptr *)(backtrace_symbols(
-      ((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)), nr_actual_frames)));
-
-  int tmp1 = 0;
+#endif
   ;
-  for (int tmp2 = tmp1; tmp2 < nr_actual_frames; tmp2++) {
-    int i = tmp2;
-
-    _PUSH(&sframes,
-          (/*typ = array_string   tmp_typ=string*/ tos2(
-              csymbols[/*ptr*/ i] /*rbyteptr 0*/)),
-          tmp3, string);
-  };
-
-  array_string tmp4 = sframes;
-  for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
-    string sframe = ((string *)tmp4.data)[tmp5];
-
-    string executable = string_all_before(sframe, tos3("("));
-
-    string addr =
-        string_all_before(string_all_after(sframe, tos3("[")), tos3("]"));
-
-    string cmd = _STR("addr2line -e %.*s %.*s", executable.len, executable.str,
-                      addr.len, addr.str);
-
-    void *f = popen((char *)cmd.str, "r");
-
-    if (isnil(f)) {
-
-      println(sframe);
-
-      continue;
-    };
-
-    byte buf[1000] = {0};
-
-    string output = tos3("");
-
-    while (fgets(((voidptr)(buf)), 1000, f) != 0) {
-
-      output = string_add(output, tos(buf, vstrlen(buf)));
-    };
-
-    output = string_add(string_trim_space(output), tos3(":"));
-
-    if (0 != ((int)(pclose(f)))) {
-
-      println(sframe);
-
-      continue;
-    };
-
-    printf("%-45s | %.*s\n", output.str, sframe.len, sframe.str);
-  };
-
-  return;
 
 #else
 
-  printf("backtrace_symbols_fd is missing, so printing backtraces is not "
-         "available.\n");
+  if (print_backtrace_skipping_top_frames_nix(skipframes)) {
 
-  printf("Some libc implementations like musl simply do not provide it.\n");
-
-#endif
-  ;
-
-#endif
-  ;
+    return;
+  };
 
 #endif
   ;
@@ -3032,6 +3009,123 @@ int is_atty(int fd) {
 
 #endif
   ;
+}
+bool print_backtrace_skipping_top_frames_msvc(int skipframes) {
+
+  u64 offset = ((u64)(0));
+
+  void *backtraces[100];
+
+  SymbolInfoContainer sic = (SymbolInfoContainer){EMPTY_STRUCT_INITIALIZATION};
+
+  SymbolInfo *si = &sic.syminfo;
+
+  si->f_size_of_struct = sizeof(SymbolInfo);
+
+  si->f_max_name_len = sizeof(SymbolInfoContainer) - sizeof(SymbolInfo) - 1;
+
+  char *fname = ((char *)(&si->f_name));
+
+  Line64 sline64 = (Line64){.f_size_of_struct = 0,
+                            .f_key = 0,
+                            .f_line_number = 0,
+                            .f_file_name = 0,
+                            .f_address = 0};
+
+  sline64.f_size_of_struct = sizeof(Line64);
+
+  void *handle = GetCurrentProcess();
+
+  u32 options =
+      SymSetOptions(builtin__SYMOPT_DEBUG | builtin__SYMOPT_LOAD_LINES |
+                    builtin__SYMOPT_UNDNAME);
+
+  int syminitok = SymInitialize(handle, 0, 1);
+
+  if (syminitok != 1) {
+
+    println(tos3("Failed getting process: Aborting backtrace.\n"));
+
+    bool tmp1 = 1;
+    { SymCleanup(handle); }
+    return tmp1;
+    ;
+  };
+
+  int frames =
+      ((int)(CaptureStackBackTrace(skipframes + 1, 100, backtraces, 0)));
+
+  for (int i = 0; i < frames; i++) {
+
+    voidptr *s =
+        ((voidptr *)(((u64)(backtraces)) + ((u64)(i * sizeof(void *)))));
+
+    int symfa_ok = SymFromAddr(handle, *s, &offset, si);
+
+    if (symfa_ok == 1) {
+
+      int nframe = frames - i - 1;
+
+      string lineinfo = tos3("");
+
+      int symglfa_ok = SymGetLineFromAddr64(handle, *s, &offset, &sline64);
+
+      if (symglfa_ok == 1) {
+
+        lineinfo = _STR(" %s:%u", sline64.f_file_name, sline64.f_line_number);
+
+      } else {
+
+        lineinfo = _STR(" ?? : address= %p", s);
+      };
+
+      string sfunc = tos3(fname);
+
+      printf("%-2d: %-25s  %.*s\n", nframe, sfunc.str, lineinfo.len,
+             lineinfo.str);
+
+    } else {
+
+      int cerr = ((int)(GetLastError()));
+
+      if ((cerr == 87)) {
+
+        printf("SymFromAddr failure: %d = The parameter is incorrect)\n", cerr);
+
+      } else if ((cerr == 487)) {
+
+        printf("SymFromAddr failure: %d = Attempt to access invalid address "
+               "(Verify that you have the .pdb file in the right folder.)\n",
+               cerr);
+
+      } else {
+
+        printf("SymFromAddr failure: %d (see "
+               "https://docs.microsoft.com/en-us/windows/win32/debug/"
+               "system-error-codes)\n",
+               cerr);
+      };
+    };
+  };
+
+  bool tmp2 = 1;
+  { SymCleanup(handle); }
+  return tmp2;
+  ;
+
+  { SymCleanup(handle); }
+}
+bool print_backtrace_skipping_top_frames_mingw(int skipframes) {
+
+  printf("TODO: print_backtrace_skipping_top_frames_mingw(%d)\n", skipframes);
+
+  return 0;
+}
+bool print_backtrace_skipping_top_frames_nix(int skipframes) {
+
+  println(tos3("not implemented, see builtin_nix.v"));
+
+  return 0;
 }
 int backtrace(void *a, int b);
 byteptr *backtrace_symbols(void *, int);
@@ -30692,6 +30786,13 @@ void main__main() {
 void init() {
   g_str_buf = malloc(1000);
 
+  builtin__SYMOPT_UNDNAME = 0x00000002;
+  builtin__SYMOPT_DEFERRED_LOADS = 0x00000004;
+  builtin__SYMOPT_NO_CPP = 0x00000008;
+  builtin__SYMOPT_LOAD_LINES = 0x00000010;
+  builtin__SYMOPT_INCLUDE_32BIT_MODULES = 0x00002000;
+  builtin__SYMOPT_ALLOW_ZERO_ADDRESS = 0x01000000;
+  builtin__SYMOPT_DEBUG = 0x80000000;
   builtin__min_cap = 2 << 10;
   builtin__max_cap = 2 << 20;
   strconv__max_u64 = ((u64)(UINT64_MAX));
@@ -30756,9 +30857,9 @@ void init() {
       "<stdarg.h> // for va_list\n#include <inttypes.h>  // int64_t "
       "etc\n#include <string.h> // memcpy\n\n#ifndef _WIN32\n#include "
       "<ctype.h>\n#include <locale.h> // tolower\n#include "
-      "<sys/time.h>\n#include <unistd.h> // sleep\n#else\n#if "
-      "defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ < "
-      "__MSVCR90_DLL\n#error Please upgrade your MinGW distribution to use "
+      "<sys/time.h>\n#include <unistd.h> // sleep\n#else\n#pragma comment(lib, "
+      "\"Dbghelp.lib\")\n#if defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ "
+      "< __MSVCR90_DLL\n#error Please upgrade your MinGW distribution to use "
       "msvcr90.dll or later.\n#endif\n#endif\n\n#if defined(__CYGWIN__) && "
       "!defined(_WIN32)\n#error Cygwin is not supported, please use MinGW or "
       "Visual Studio.\n#endif\n\n\n#ifdef __linux__\n#include "
