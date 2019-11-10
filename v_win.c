@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ffa9646"
+#define V_COMMIT_HASH "aea5b2e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fdf6682"
+#define V_COMMIT_HASH "ffa9646"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -22673,7 +22673,7 @@ string compiler__Parser_get_var_type(compiler__Parser *p, string name,
 
     if (!p->inside_unsafe) {
 
-      compiler__Parser_warn(
+      compiler__Parser_error(
           p, tos3("dereferencing can only be done inside an `unsafe` block"));
     };
 
