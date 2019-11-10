@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "703202c"
+#define V_COMMIT_HASH "76c27c0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3c4bb16"
+#define V_COMMIT_HASH "703202c"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -2264,14 +2264,16 @@ array_compiler__TokenKind compiler__AssignTokens;
       "individual _test.v files too.\n  fmt               Run vfmt to format " \
       "the source code. [wip]\n  doc               Run vdoc over the source "  \
       "code and produce documentation.\n  translate         Translates C to "  \
-      "V. [wip, will be available in V 0.3]\n\nV package management "          \
-      "commands:\n  search  keywords  Search the https://vpm.vlang.io/ "       \
-      "module repository for matching modules and shows their details.\n  "    \
-      "install <module>  Install a user module from https://vpm.vlang.io/.\n " \
-      " update  [module]  Updates an already installed module, or ALL "        \
-      "installed modules at once, when no module name is given.\n  remove  "   \
-      "[module]  Removes an installed module, or ALL installed modules at "    \
-      "once, when no module name is given.\n")
+      "V. [wip, will be available in V 0.3]\n  create            Create a "    \
+      "new v project interactively. Answer the questions, and run it with `v " \
+      "run projectname`\n\nV package management commands:\n  search  "         \
+      "keywords  Search the https://vpm.vlang.io/ module repository for "      \
+      "matching modules and shows their details.\n  install <module>  "        \
+      "Install a user module from https://vpm.vlang.io/.\n  update  [module] " \
+      " Updates an already installed module, or ALL installed modules at "     \
+      "once, when no module name is given.\n  remove  [module]  Removes an "   \
+      "installed module, or ALL installed modules at once, when no module "    \
+      "name is given.\n")
 string time__days_string;
 array_int time__month_days;
 string time__months_string;
@@ -30591,6 +30593,12 @@ void main__main() {
   } else if ((_IN(string, (tos3("symlink")), commands))) {
 
     compiler__create_symlink();
+
+    return;
+
+  } else if ((_IN(string, (tos3("create")), commands))) {
+
+    compiler__launch_tool(tos3("vcreate"));
 
     return;
 
