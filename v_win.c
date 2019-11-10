@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c7f3413"
+#define V_COMMIT_HASH "fdf6682"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b9728c7"
+#define V_COMMIT_HASH "c7f3413"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -7631,13 +7631,16 @@ void rand__seed(int s) { srand(s); }
 int rand__next(int max) { return rand() % max; }
 int rand__rand_r(int *seed) {
 
-  int *rs = seed;
+  {
 
-  int ns = (*rs * 1103515245 + 12345);
+    int *rs = seed;
 
-  *rs = ns;
+    int ns = (*rs * 1103515245 + 12345);
 
-  return ns & 0x7fffffff;
+    *rs = ns;
+
+    return ns & 0x7fffffff;
+  };
 }
 rand__Splitmix64 rand__new_splitmix64(u64 seed) {
 
@@ -15084,7 +15087,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   p->cgen->lines = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
 
-  p->cur_fn = *f;
+  { p->cur_fn = *f; };
 
   array_compiler__Var tmp157 = f->args;
   for (int tmp158 = 0; tmp158 < tmp157.len; tmp158++) {
@@ -22761,6 +22764,12 @@ string compiler__Parser_get_var_type(compiler__Parser *p, string name,
   string typ = compiler__Parser_var_expr(p, v);
 
   if (is_deref) {
+
+    if (!p->inside_unsafe) {
+
+      compiler__Parser_warn(
+          p, tos3("dereferencing can only be done inside an `unsafe` block"));
+    };
 
     if (!string_contains(typ, tos3("*")) &&
         !string_ends_with(typ, tos3("ptr"))) {
