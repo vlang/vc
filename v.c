@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fdf6682"
+#define V_COMMIT_HASH "ffa9646"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c7f3413"
+#define V_COMMIT_HASH "fdf6682"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -18,7 +18,6 @@
 #include <sys/time.h>
 #include <unistd.h> // sleep
 #else
-#pragma comment(lib, "Dbghelp.lib")
 #if defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ < __MSVCR90_DLL
 #error Please upgrade your MinGW distribution to use msvcr90.dll or later.
 #endif
@@ -865,11 +864,6 @@ void v_free(void *ptr);
 void *memdup(void *src, int sz);
 void v_ptr_free(void *ptr);
 int is_atty(int fd);
-bool print_backtrace_skipping_top_frames_msvc(int skipframes);
-bool print_backtrace_skipping_top_frames_mingw(int skipframes);
-bool print_backtrace_skipping_top_frames_nix(int xskipframes);
-bool print_backtrace_skipping_top_frames_mac(int skipframes);
-bool print_backtrace_skipping_top_frames_linux(int skipframes);
 int backtrace(void *a, int b);
 byteptr *backtrace_symbols(void *, int);
 void backtrace_symbols_fd(void *, int, int);
@@ -2662,34 +2656,105 @@ bool isnil(void *v) { return v == 0; }
 void on_panic(int (*f)(int /*FFF*/)) {}
 void print_backtrace_skipping_top_frames(int skipframes) {
 
-#ifdef _WIN32
+#ifdef __APPLE__
 
-#ifdef _MSC_VER
+  byte *buffer[100];
 
-  if (print_backtrace_skipping_top_frames_msvc(skipframes)) {
+  int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
 
-    return;
-  };
+  backtrace_symbols_fd(((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)),
+                       nr_ptrs - skipframes, 1);
 
-#endif
-  ;
-
-#ifdef __MINGW32__
-
-  if (print_backtrace_skipping_top_frames_mingw(skipframes)) {
-
-    return;
-  };
+  return;
 
 #endif
   ;
+
+#ifdef __linux__
+
+#ifndef __BIONIC__
+
+#ifdef __GLIBC__
+
+  byte *buffer[100];
+
+  int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
+
+  int nr_actual_frames = nr_ptrs - skipframes;
+
+  array_string sframes = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+
+  byteptr *csymbols = ((byteptr *)(backtrace_symbols(
+      ((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)), nr_actual_frames)));
+
+  int tmp1 = 0;
+  ;
+  for (int tmp2 = tmp1; tmp2 < nr_actual_frames; tmp2++) {
+    int i = tmp2;
+
+    _PUSH(&sframes,
+          (/*typ = array_string   tmp_typ=string*/ tos2(
+              csymbols[/*ptr*/ i] /*rbyteptr 0*/)),
+          tmp3, string);
+  };
+
+  array_string tmp4 = sframes;
+  for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
+    string sframe = ((string *)tmp4.data)[tmp5];
+
+    string executable = string_all_before(sframe, tos3("("));
+
+    string addr =
+        string_all_before(string_all_after(sframe, tos3("[")), tos3("]"));
+
+    string cmd = _STR("addr2line -e %.*s %.*s", executable.len, executable.str,
+                      addr.len, addr.str);
+
+    void *f = popen((char *)cmd.str, "r");
+
+    if (isnil(f)) {
+
+      println(sframe);
+
+      continue;
+    };
+
+    byte buf[1000] = {0};
+
+    string output = tos3("");
+
+    while (fgets(((voidptr)(buf)), 1000, f) != 0) {
+
+      output = string_add(output, tos(buf, vstrlen(buf)));
+    };
+
+    output = string_add(string_trim_space(output), tos3(":"));
+
+    if (0 != ((int)(pclose(f)))) {
+
+      println(sframe);
+
+      continue;
+    };
+
+    printf("%-45s | %.*s\n", output.str, sframe.len, sframe.str);
+  };
+
+  return;
 
 #else
 
-  if (print_backtrace_skipping_top_frames_nix(skipframes)) {
+  printf("backtrace_symbols_fd is missing, so printing backtraces is not "
+         "available.\n");
 
-    return;
-  };
+  printf("Some libc implementations like musl simply do not provide it.\n");
+
+#endif
+  ;
+
+#endif
+  ;
 
 #endif
   ;
@@ -2838,148 +2903,6 @@ int is_atty(int fd) {
 
 #endif
   ;
-}
-bool print_backtrace_skipping_top_frames_msvc(int skipframes) {
-
-  println(tos3("not implemented, see builtin_windows.v"));
-
-  return 0;
-}
-bool print_backtrace_skipping_top_frames_mingw(int skipframes) {
-
-  println(tos3("not implemented, see builtin_windows.v"));
-
-  return 0;
-}
-bool print_backtrace_skipping_top_frames_nix(int xskipframes) {
-
-  int skipframes = xskipframes + 2;
-
-#ifdef __APPLE__
-
-  return print_backtrace_skipping_top_frames_mac(skipframes);
-
-#endif
-  ;
-
-#ifdef __linux__
-
-  return print_backtrace_skipping_top_frames_linux(skipframes);
-
-#endif
-  ;
-
-  return 0;
-}
-bool print_backtrace_skipping_top_frames_mac(int skipframes) {
-
-  byte *buffer[100];
-
-  int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
-
-  backtrace_symbols_fd(((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)),
-                       nr_ptrs - skipframes, 1);
-
-  return 1;
-}
-bool print_backtrace_skipping_top_frames_linux(int skipframes) {
-
-#ifdef __TINYC__
-
-  printf("TODO: print_backtrace_skipping_top_frames_linux %d with tcc fails "
-         "tests with \"stack smashing detected\" .\n",
-         skipframes);
-
-  return 0;
-
-#endif
-  ;
-
-#ifndef __BIONIC__
-
-#ifdef __GLIBC__
-
-  byte *buffer[100];
-
-  int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
-
-  int nr_actual_frames = nr_ptrs - skipframes;
-
-  array_string sframes = new_array_from_c_array(
-      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-
-  byteptr *csymbols = ((byteptr *)(backtrace_symbols(
-      ((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)), nr_actual_frames)));
-
-  int tmp1 = 0;
-  ;
-  for (int tmp2 = tmp1; tmp2 < nr_actual_frames; tmp2++) {
-    int i = tmp2;
-
-    _PUSH(&sframes,
-          (/*typ = array_string   tmp_typ=string*/ tos2(
-              csymbols[/*ptr*/ i] /*rbyteptr 0*/)),
-          tmp3, string);
-  };
-
-  array_string tmp4 = sframes;
-  for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
-    string sframe = ((string *)tmp4.data)[tmp5];
-
-    string executable = string_all_before(sframe, tos3("("));
-
-    string addr =
-        string_all_before(string_all_after(sframe, tos3("[")), tos3("]"));
-
-    string cmd = _STR("addr2line -e %.*s %.*s", executable.len, executable.str,
-                      addr.len, addr.str);
-
-    void *f = popen((char *)cmd.str, "r");
-
-    if (isnil(f)) {
-
-      println(sframe);
-
-      continue;
-    };
-
-    byte buf[1000] = {0};
-
-    string output = tos3("");
-
-    while (fgets(((voidptr)(buf)), 1000, f) != 0) {
-
-      output = string_add(output, tos(buf, vstrlen(buf)));
-    };
-
-    output = string_add(string_trim_space(output), tos3(":"));
-
-    if (0 != ((int)(pclose(f)))) {
-
-      println(sframe);
-
-      continue;
-    };
-
-    printf("%-45s | %.*s\n", output.str, sframe.len, sframe.str);
-  };
-
-  return 1;
-
-#else
-
-  printf("backtrace_symbols_fd is missing, so printing backtraces is not "
-         "available.\n");
-
-  printf("Some libc implementations like musl simply do not provide it.\n");
-
-#endif
-  ;
-
-#endif
-  ;
-
-  return 0;
 }
 int backtrace(void *a, int b);
 byteptr *backtrace_symbols(void *, int);
@@ -30469,9 +30392,9 @@ void init() {
       "<stdarg.h> // for va_list\n#include <inttypes.h>  // int64_t "
       "etc\n#include <string.h> // memcpy\n\n#ifndef _WIN32\n#include "
       "<ctype.h>\n#include <locale.h> // tolower\n#include "
-      "<sys/time.h>\n#include <unistd.h> // sleep\n#else\n#pragma comment(lib, "
-      "\"Dbghelp.lib\")\n#if defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ "
-      "< __MSVCR90_DLL\n#error Please upgrade your MinGW distribution to use "
+      "<sys/time.h>\n#include <unistd.h> // sleep\n#else\n#if "
+      "defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ < "
+      "__MSVCR90_DLL\n#error Please upgrade your MinGW distribution to use "
       "msvcr90.dll or later.\n#endif\n#endif\n\n#if defined(__CYGWIN__) && "
       "!defined(_WIN32)\n#error Cygwin is not supported, please use MinGW or "
       "Visual Studio.\n#endif\n\n\n#ifdef __linux__\n#include "
