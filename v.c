@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1cda5c1"
+#define V_COMMIT_HASH "d9b29bf"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f2b1a8c"
+#define V_COMMIT_HASH "1cda5c1"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -1036,7 +1036,6 @@ strings__Builder strings__new_builder(int initial_size);
 void strings__Builder_write(strings__Builder *b, string s);
 void strings__Builder_writeln(strings__Builder *b, string s);
 string strings__Builder_str(strings__Builder b);
-void strings__Builder_cut(strings__Builder *b, int n);
 void strings__Builder_free(strings__Builder *b);
 int strings__levenshtein_distance(string a, string b);
 f32 strings__levenshtein_distance_percentage(string a, string b);
@@ -4177,8 +4176,7 @@ int utf8_getchar() {
   };
 }
 strings__Builder strings__new_builder(int initial_size) {
-  return (strings__Builder){.buf = make(0, initial_size, sizeof(byte)),
-                            .len = 0};
+  return (strings__Builder){.buf = make(0, initial_size, 1), .len = 0};
 }
 void strings__Builder_write(strings__Builder *b, string s) {
   array_push_many(&/* ? */ b->buf, s.str, s.len);
@@ -4192,7 +4190,6 @@ void strings__Builder_writeln(strings__Builder *b, string s) {
 string strings__Builder_str(strings__Builder b) {
   return (tos((byte *)b.buf.data, b.len));
 }
-void strings__Builder_cut(strings__Builder *b, int n) { b->len -= n; }
 void strings__Builder_free(strings__Builder *b) {}
 int strings__levenshtein_distance(string a, string b) {
   array_int f =
@@ -18097,7 +18094,7 @@ compiler__Scanner *compiler__new_scanner_file(string file_path) {
 compiler__Scanner *compiler__new_scanner(string text) {
   return (compiler__Scanner *)memdup(
       &(compiler__Scanner){.text = text,
-                           .fmt_out = strings__new_builder(10000),
+                           .fmt_out = strings__new_builder(1000),
                            .should_print_line_on_error = 1,
                            .should_print_errors_in_color = 1,
                            .should_print_relative_paths_on_error = 1,
@@ -19059,7 +19056,6 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ) {
   if (compiler__Parser_gen_struct_init(p, typ, t)) {
     return typ;
   };
-  strings__Builder_cut(&/* ? */ p->scanner->fmt_out, typ.len);
   bool ptr = string_contains(typ, tos3("*"));
   bool did_gen_something = 0;
   array_string inited_fields = new_array_from_c_array(
@@ -20687,8 +20683,7 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
   }
   out = *(os__File *)tmp5.data;
   ;
-  os__File_writeln(
-      out, string_trim_space(strings__Builder_str(p->scanner->fmt_out)));
+  os__File_writeln(out, s);
   os__File_close(out);
 }
 void compiler__launch_tool(string tname) {
