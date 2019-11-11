@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e677591"
+#define V_COMMIT_HASH "de5b4f0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d9b29bf"
+#define V_COMMIT_HASH "e677591"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -56,8 +56,10 @@
 #define TCCSKIP(x) x
 
 #ifdef __TINYC__
+#undef EMPTY_STRUCT_DECLARATION
 #undef EMPTY_STRUCT_INITIALIZATION
-#define EMPTY_STRUCT_INITIALIZATION
+#define EMPTY_STRUCT_DECLARATION char _dummy
+#define EMPTY_STRUCT_INITIALIZATION 0
 #undef EMPTY_ARRAY_OF_ELEMS
 #define EMPTY_ARRAY_OF_ELEMS(x, n) (x[n])
 #undef TCCSKIP
@@ -21759,8 +21761,9 @@ void init() {
       "to a tcc bug, the length of an array needs to be specified, but GCC "
       "crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define "
       "TCCSKIP(x) x\n\n#ifdef __TINYC__\n#undef "
-      "EMPTY_STRUCT_INITIALIZATION\n#define "
-      "EMPTY_STRUCT_INITIALIZATION\n#undef EMPTY_ARRAY_OF_ELEMS\n#define "
+      "EMPTY_STRUCT_DECLARATION\n#undef EMPTY_STRUCT_INITIALIZATION\n#define "
+      "EMPTY_STRUCT_DECLARATION char _dummy\n#define "
+      "EMPTY_STRUCT_INITIALIZATION 0\n#undef EMPTY_ARRAY_OF_ELEMS\n#define "
       "EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef TCCSKIP\n#define "
       "TCCSKIP(x)\n#endif\n\n#define OPTION_CAST(x) (x)\n\n#ifdef "
       "_WIN32\n#define WINVER 0x0600\n#define _WIN32_WINNT 0x0600\n#define "
