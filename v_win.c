@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "bf98eb5"
+#define V_COMMIT_HASH "730ef96"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b3143bb"
+#define V_COMMIT_HASH "bf98eb5"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -9693,8 +9693,7 @@ void compiler__Parser_error_with_token_index(compiler__Parser *p, string s,
       p, s,
       compiler__Scanner_get_scanner_pos_of_token(
           p->scanner,
-          &/*113 e="compiler__Token*" g="compiler__Token"*/ (compiler__Token[]){
-              (*(compiler__Token *)array_get(p->tokens, tokenindex))}[0]));
+          &/*114*/ (*(compiler__Token *)array_get(p->tokens, tokenindex))));
 }
 void compiler__Parser_warn_with_token_index(compiler__Parser *p, string s,
                                             int tokenindex) {
@@ -9703,8 +9702,7 @@ void compiler__Parser_warn_with_token_index(compiler__Parser *p, string s,
       p, s,
       compiler__Scanner_get_scanner_pos_of_token(
           p->scanner,
-          &/*113 e="compiler__Token*" g="compiler__Token"*/ (compiler__Token[]){
-              (*(compiler__Token *)array_get(p->tokens, tokenindex))}[0]));
+          &/*114*/ (*(compiler__Token *)array_get(p->tokens, tokenindex))));
 }
 void compiler__Parser_error_with_position(compiler__Parser *p, string s,
                                           compiler__ScannerPos sp) {
@@ -14234,6 +14232,8 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
 
           string expr = string_substr2(p->cgen->cur_line, ph, -1, true);
 
+#ifdef __TINYC__
+
           if (string_contains(expr, tos3("("))) {
 
             compiler__CGen_set_placeholder(
@@ -14247,6 +14247,13 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
 
             compiler__CGen_set_placeholder(p->cgen, ph, tos3("& /*114*/"));
           };
+
+#else
+
+          compiler__CGen_set_placeholder(p->cgen, ph, tos3("& /*114*/"));
+
+#endif
+          ;
 
         } else if (!(string_eq(expected, tos3("void*")) &&
                      string_eq(got, tos3("int"))) &&
@@ -14401,7 +14408,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
 
     string tmp86 = tos3("");
-    bool tmp87 = map_get(/*fn.v : 1207*/ r.inst, tp, &tmp86);
+    bool tmp87 = map_get(/*fn.v : 1211*/ r.inst, tp, &tmp86);
 
     if (!tmp87)
       tmp86 = tos((byte *)"", 0);
@@ -14409,7 +14416,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     if (string_ne(tmp86, tos3(""))) {
 
       string tmp88 = tos3("");
-      bool tmp89 = map_get(/*fn.v : 1208*/ r.inst, tp, &tmp88);
+      bool tmp89 = map_get(/*fn.v : 1212*/ r.inst, tp, &tmp88);
 
       if (!tmp89)
         tmp88 = tos((byte *)"", 0);
@@ -14417,7 +14424,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       if (string_ne(tmp88, ti)) {
 
         string tmp90 = tos3("");
-        bool tmp91 = map_get(/*fn.v : 1209*/ r.inst, tp, &tmp90);
+        bool tmp91 = map_get(/*fn.v : 1213*/ r.inst, tp, &tmp90);
 
         if (!tmp91)
           tmp90 = tos((byte *)"", 0);
@@ -14441,7 +14448,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
   };
 
   string tmp92 = tos3("");
-  bool tmp93 = map_get(/*fn.v : 1218*/ r.inst, f->typ, &tmp92);
+  bool tmp93 = map_get(/*fn.v : 1222*/ r.inst, f->typ, &tmp92);
 
   if (!tmp93)
     tmp92 = tos((byte *)"", 0);
@@ -14456,7 +14463,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp94.data)[tmp95];
 
     string tmp96 = tos3("");
-    bool tmp97 = map_get(/*fn.v : 1222*/ r.inst, tp, &tmp96);
+    bool tmp97 = map_get(/*fn.v : 1226*/ r.inst, tp, &tmp96);
 
     if (!tmp97)
       tmp96 = tos((byte *)"", 0);
@@ -14528,7 +14535,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
         if ((_IN(string, (fna), map_keys(&/* ? */ ti.inst)))) {
 
           string tmp109 = tos3("");
-          bool tmp110 = map_get(/*fn.v : 1252*/ ti.inst, fna, &tmp109);
+          bool tmp110 = map_get(/*fn.v : 1256*/ ti.inst, fna, &tmp109);
 
           if (!tmp110)
             tmp109 = tos((byte *)"", 0);
@@ -14572,7 +14579,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
     if ((_IN(string, (fi), map_keys(&/* ? */ ti.inst)))) {
 
       string tmp116 = tos3("");
-      bool tmp117 = map_get(/*fn.v : 1274*/ ti.inst, fi, &tmp116);
+      bool tmp117 = map_get(/*fn.v : 1278*/ ti.inst, fi, &tmp116);
 
       if (!tmp117)
         tmp116 = tos((byte *)"", 0);
@@ -14837,7 +14844,7 @@ void compiler__Parser_rename_generic_fn_instance(compiler__Parser *p,
     string k = ((string *)tmp140.data)[tmp141];
 
     string tmp142 = tos3("");
-    bool tmp143 = map_get(/*fn.v : 1383*/ ti.inst, k, &tmp142);
+    bool tmp143 = map_get(/*fn.v : 1387*/ ti.inst, k, &tmp142);
 
     if (!tmp143)
       tmp142 = tos((byte *)"", 0);
@@ -14970,7 +14977,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   if ((_IN_MAP((f->typ), ti.inst))) {
 
     string tmp155 = tos3("");
-    bool tmp156 = map_get(/*fn.v : 1449*/ ti.inst, f->typ, &tmp155);
+    bool tmp156 = map_get(/*fn.v : 1453*/ ti.inst, f->typ, &tmp155);
 
     if (!tmp156)
       tmp155 = tos((byte *)"", 0);
