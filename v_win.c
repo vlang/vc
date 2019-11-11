@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "887c94d"
+#define V_COMMIT_HASH "b3143bb"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "00b3557"
+#define V_COMMIT_HASH "887c94d"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -208,6 +208,7 @@ typedef struct compiler__CFlag compiler__CFlag;
 typedef array array_compiler__CFlag;
 typedef Option Option_bool;
 typedef struct compiler__CGen compiler__CGen;
+typedef struct _V_MulRet_string_V_string _V_MulRet_string_V_string;
 typedef array array_compiler__Type;
 typedef struct compiler__ScannerPos compiler__ScannerPos;
 typedef struct compiler__DepGraphNode compiler__DepGraphNode;
@@ -242,7 +243,6 @@ typedef struct compiler__MsvcStringFlags compiler__MsvcStringFlags;
 typedef struct compiler__Parser compiler__Parser;
 typedef map map_bool;
 typedef struct compiler__IndexConfig compiler__IndexConfig;
-typedef struct _V_MulRet_string_V_string _V_MulRet_string_V_string;
 typedef struct _V_MulRet_bool_V_string _V_MulRet_bool_V_string;
 typedef struct compiler__Scanner compiler__Scanner;
 typedef struct compiler__ScanRes compiler__ScanRes;
@@ -1291,8 +1291,7 @@ void compiler__CGen_genln(compiler__CGen *g, string s);
 void compiler__CGen_gen(compiler__CGen *g, string s);
 void compiler__CGen_resetln(compiler__CGen *g, string s);
 void compiler__CGen_save(compiler__CGen *g);
-void compiler__CGen_start_tmp(compiler__CGen *g);
-string compiler__CGen_end_tmp(compiler__CGen *g);
+_V_MulRet_string_V_string compiler__Parser_tmp_expr(compiler__Parser *p);
 int compiler__CGen_add_placeholder(compiler__CGen *g);
 void compiler__CGen_start_cut(compiler__CGen *g);
 string compiler__CGen_cut(compiler__CGen *g);
@@ -1639,7 +1638,6 @@ string compiler__Parser_map_init(compiler__Parser *p);
 string compiler__Parser_array_init(compiler__Parser *p);
 string compiler__Parser_get_tmp(compiler__Parser *p);
 int compiler__Parser_get_tmp_counter(compiler__Parser *p);
-_V_MulRet_string_V_string compiler__Parser_tmp_expr(compiler__Parser *p);
 string compiler__Parser_if_st(compiler__Parser *p, bool is_expr,
                               int elif_depth);
 void compiler__Parser_assert_statement(compiler__Parser *p);
@@ -9142,36 +9140,38 @@ void compiler__CGen_save(compiler__CGen *g) {
 
   os__File_close(g->out);
 }
-void compiler__CGen_start_tmp(compiler__CGen *g) {
+_V_MulRet_string_V_string compiler__Parser_tmp_expr(compiler__Parser *p) {
 
-  if (g->is_tmp) {
+  if (p->cgen->is_tmp) {
 
-    _PUSH(&g->prev_tmps, (/*typ = array_string   tmp_typ=string*/ g->tmp_line),
-          tmp4, string);
+    _PUSH(&p->cgen->prev_tmps,
+          (/*typ = array_string   tmp_typ=string*/ p->cgen->tmp_line), tmp4,
+          string);
   };
 
-  g->tmp_line = tos3("");
+  p->cgen->tmp_line = tos3("");
 
-  g->is_tmp = 1;
-}
-string compiler__CGen_end_tmp(compiler__CGen *g) {
+  p->cgen->is_tmp = 1;
 
-  string res = g->tmp_line;
+  string typ = compiler__Parser_bool_expression(p);
 
-  if (g->prev_tmps.len > 0) {
+  string res = p->cgen->tmp_line;
 
-    g->tmp_line = *(string *)array_last(g->prev_tmps);
+  if (p->cgen->prev_tmps.len > 0) {
 
-    g->prev_tmps = array_slice2(g->prev_tmps, 0, g->prev_tmps.len - 1, false);
+    p->cgen->tmp_line = *(string *)array_last(p->cgen->prev_tmps);
+
+    p->cgen->prev_tmps =
+        array_slice2(p->cgen->prev_tmps, 0, p->cgen->prev_tmps.len - 1, false);
 
   } else {
 
-    g->tmp_line = tos3("");
+    p->cgen->tmp_line = tos3("");
 
-    g->is_tmp = 0;
+    p->cgen->is_tmp = 0;
   };
 
-  return res;
+  return (_V_MulRet_string_V_string){.var_0 = typ, .var_1 = res};
 }
 int compiler__CGen_add_placeholder(compiler__CGen *g) {
 
@@ -9488,7 +9488,7 @@ string compiler__V_type_definitions(compiler__V *v) {
     string builtin = ((string *)tmp37.data)[tmp38];
 
     compiler__Type tmp39 = {0};
-    bool tmp40 = map_get(/*cgen.v : 331*/ v->table->typesmap, builtin, &tmp39);
+    bool tmp40 = map_get(/*cgen.v : 334*/ v->table->typesmap, builtin, &tmp39);
 
     compiler__Type typ = tmp39;
 
@@ -18747,16 +18747,14 @@ string compiler__Parser_match_statement(compiler__Parser *p, bool is_expr) {
 
   ;
 
-  compiler__CGen_start_tmp(p->cgen);
-
-  string typ = compiler__Parser_bool_expression(p);
+  _V_MulRet_string_V_string _V_mret_typ_expr = compiler__Parser_tmp_expr(p);
+  string typ = _V_mret_typ_expr.var_0;
+  string expr = _V_mret_typ_expr.var_1;
 
   if (string_starts_with(typ, tos3("array_"))) {
 
     compiler__Parser_error(p, tos3("arrays cannot be compared"));
   };
-
-  string expr = compiler__CGen_end_tmp(p->cgen);
 
   string tmp_var = compiler__Parser_get_tmp(p);
 
@@ -24190,16 +24188,6 @@ int compiler__Parser_get_tmp_counter(compiler__Parser *p) {
 
   return p->tmp_cnt;
 }
-_V_MulRet_string_V_string compiler__Parser_tmp_expr(compiler__Parser *p) {
-
-  compiler__CGen_start_tmp(p->cgen);
-
-  string typ = compiler__Parser_bool_expression(p);
-
-  string val = compiler__CGen_end_tmp(p->cgen);
-
-  return (_V_MulRet_string_V_string){.var_0 = typ, .var_1 = val};
-}
 string compiler__Parser_if_st(compiler__Parser *p, bool is_expr,
                               int elif_depth) {
 
@@ -25483,16 +25471,14 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
 
     compiler__Parser_next(p);
 
-    compiler__CGen_start_tmp(p->cgen);
+    _V_MulRet_string_V_string _V_mret___expr = compiler__Parser_tmp_expr(p);
+    string expr = _V_mret___expr.var_1;
 
     p->is_sql = 1;
 
-    compiler__Parser_bool_expression(p);
-
     p->is_sql = 0;
 
-    q = string_add(
-        q, string_add(tos3(" where "), compiler__CGen_end_tmp(p->cgen)));
+    q = string_add(q, string_add(tos3(" where "), expr));
   };
 
   bool query_one = 0;
@@ -25502,15 +25488,12 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
 
     compiler__Parser_next(p);
 
-    compiler__CGen_start_tmp(p->cgen);
+    _V_MulRet_string_V_string _V_mret___limit = compiler__Parser_tmp_expr(p);
+    string limit = _V_mret___limit.var_1;
 
     p->is_sql = 1;
 
-    compiler__Parser_bool_expression(p);
-
     p->is_sql = 0;
-
-    string limit = compiler__CGen_end_tmp(p->cgen);
 
     q = string_add(q, string_add(tos3(" limit "), limit));
 
