@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f30d0ce"
+#define V_COMMIT_HASH "00b3557"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "76c27c0"
+#define V_COMMIT_HASH "f30d0ce"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -10223,13 +10223,8 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_assign);
 
-    compiler__CGen_start_tmp(p->cgen);
-
-    compiler__Parser_bool_expression(p);
-
-    string val = compiler__CGen_end_tmp(p->cgen);
-
-    println(val);
+    _V_MulRet_string_V_string _V_mret___val = compiler__Parser_tmp_expr(p);
+    string val = _V_mret___val.var_1;
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_rcbr);
 
@@ -23707,13 +23702,11 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
       complex_inter = 1;
     };
 
-    compiler__CGen_start_tmp(p->cgen);
+    _V_MulRet_string_V_string _V_mret_typ_val_ = compiler__Parser_tmp_expr(p);
+    string typ = _V_mret_typ_val_.var_0;
+    string val_ = _V_mret_typ_val_.var_1;
 
-    string typ = compiler__Parser_bool_expression(p);
-
-    string val = compiler__CGen_end_tmp(p->cgen);
-
-    val = string_trim_space(val);
+    string val = string_trim_space(val_);
 
     args = string_add(args, _STR(", %.*s", val.len, val.str));
 
@@ -23892,9 +23885,10 @@ string compiler__Parser_map_init(compiler__Parser *p) {
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_colon);
 
-      compiler__CGen_start_tmp(p->cgen);
-
-      string t = compiler__Parser_bool_expression(p);
+      _V_MulRet_string_V_string _V_mret_t_val_expr =
+          compiler__Parser_tmp_expr(p);
+      string t = _V_mret_t_val_expr.var_0;
+      string val_expr = _V_mret_t_val_expr.var_1;
 
       if (i == 0) {
 
@@ -23912,8 +23906,6 @@ string compiler__Parser_map_init(compiler__Parser *p) {
                       val_type.len, val_type.str, t.len, t.str));
         };
       };
-
-      string val_expr = compiler__CGen_end_tmp(p->cgen);
 
       vals_gen =
           string_add(vals_gen, _STR("%.*s, ", val_expr.len, val_expr.str));
