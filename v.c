@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d9b29bf"
+#define V_COMMIT_HASH "e677591"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1cda5c1"
+#define V_COMMIT_HASH "d9b29bf"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -705,6 +705,7 @@ struct compiler__Scanner {
   array_int line_ends;
   int nlines;
   bool is_vh;
+  bool is_fmt;
 };
 
 struct compiler__VhGen {
@@ -775,7 +776,6 @@ struct compiler__Parser {
   array_string sql_params;
   array_string sql_types;
   bool is_vh;
-  bool fmt_dollar;
   string mod;
 };
 
@@ -1736,6 +1736,7 @@ void compiler__Parser_fspace(compiler__Parser *p);
 void compiler__Parser_fgenln(compiler__Parser *p, string s);
 void compiler__Parser_fmt_inc(compiler__Parser *p);
 void compiler__Parser_fmt_dec(compiler__Parser *p);
+void compiler__Scanner_init_fmt(compiler__Scanner *p);
 void compiler__Parser_fnext(compiler__Parser *p);
 void compiler__Parser_gen_fmt(compiler__Parser *p);
 void compiler__launch_tool(string tname);
@@ -9956,6 +9957,7 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
                     arg.name.len, arg.name.str, f->name.len, f->name.str));
       };
       compiler__Parser_check(p, compiler__compiler__TokenKind_key_mut);
+      ;
       string var_name = p->lit;
       Option_compiler__Var tmp67 =
           compiler__Parser_find_var(&/* ? */ *p, var_name);
@@ -10236,21 +10238,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp86 = tos3("");
-    bool tmp87 = map_get(/*fn.v : 1211*/ r.inst, tp, &tmp86);
+    bool tmp87 = map_get(/*fn.v : 1212*/ r.inst, tp, &tmp86);
 
     if (!tmp87)
       tmp86 = tos((byte *)"", 0);
 
     if (string_ne(tmp86, tos3(""))) {
       string tmp88 = tos3("");
-      bool tmp89 = map_get(/*fn.v : 1212*/ r.inst, tp, &tmp88);
+      bool tmp89 = map_get(/*fn.v : 1213*/ r.inst, tp, &tmp88);
 
       if (!tmp89)
         tmp88 = tos((byte *)"", 0);
 
       if (string_ne(tmp88, ti)) {
         string tmp90 = tos3("");
-        bool tmp91 = map_get(/*fn.v : 1213*/ r.inst, tp, &tmp90);
+        bool tmp91 = map_get(/*fn.v : 1214*/ r.inst, tp, &tmp90);
 
         if (!tmp91)
           tmp90 = tos((byte *)"", 0);
@@ -10268,7 +10270,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp92 = tos3("");
-  bool tmp93 = map_get(/*fn.v : 1222*/ r.inst, f->typ, &tmp92);
+  bool tmp93 = map_get(/*fn.v : 1223*/ r.inst, f->typ, &tmp92);
 
   if (!tmp93)
     tmp92 = tos((byte *)"", 0);
@@ -10281,7 +10283,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp94.data)[tmp95];
 
     string tmp96 = tos3("");
-    bool tmp97 = map_get(/*fn.v : 1226*/ r.inst, tp, &tmp96);
+    bool tmp97 = map_get(/*fn.v : 1227*/ r.inst, tp, &tmp96);
 
     if (!tmp97)
       tmp96 = tos((byte *)"", 0);
@@ -10336,7 +10338,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
         };
         if ((_IN(string, (fna), map_keys(&/* ? */ ti.inst)))) {
           string tmp109 = tos3("");
-          bool tmp110 = map_get(/*fn.v : 1256*/ ti.inst, fna, &tmp109);
+          bool tmp110 = map_get(/*fn.v : 1257*/ ti.inst, fna, &tmp109);
 
           if (!tmp110)
             tmp109 = tos((byte *)"", 0);
@@ -10365,7 +10367,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
     };
     if ((_IN(string, (fi), map_keys(&/* ? */ ti.inst)))) {
       string tmp116 = tos3("");
-      bool tmp117 = map_get(/*fn.v : 1278*/ ti.inst, fi, &tmp116);
+      bool tmp117 = map_get(/*fn.v : 1279*/ ti.inst, fi, &tmp116);
 
       if (!tmp117)
         tmp116 = tos((byte *)"", 0);
@@ -10567,7 +10569,7 @@ void compiler__Parser_rename_generic_fn_instance(compiler__Parser *p,
     string k = ((string *)tmp140.data)[tmp141];
 
     string tmp142 = tos3("");
-    bool tmp143 = map_get(/*fn.v : 1387*/ ti.inst, k, &tmp142);
+    bool tmp143 = map_get(/*fn.v : 1388*/ ti.inst, k, &tmp142);
 
     if (!tmp143)
       tmp142 = tos((byte *)"", 0);
@@ -10658,7 +10660,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   };
   if ((_IN_MAP((f->typ), ti.inst))) {
     string tmp155 = tos3("");
-    bool tmp156 = map_get(/*fn.v : 1453*/ ti.inst, f->typ, &tmp155);
+    bool tmp156 = map_get(/*fn.v : 1454*/ ti.inst, f->typ, &tmp155);
 
     if (!tmp156)
       tmp155 = tos((byte *)"", 0);
@@ -14493,7 +14495,6 @@ compiler__Parser compiler__V_new_parser_from_file(compiler__V *v, string path) {
       .sql_i = p.sql_i,
       .sql_params = p.sql_params,
       .sql_types = p.sql_types,
-      .fmt_dollar = p.fmt_dollar,
       .mod = p.mod,
   };
   if (p.v_script) {
@@ -14590,7 +14591,6 @@ compiler__Parser compiler__V_new_parser(compiler__V *v,
       .sql_params = new_array(0, 1, sizeof(string)),
       .sql_types = new_array(0, 1, sizeof(string)),
       .is_vh = 0,
-      .fmt_dollar = 0,
       .mod = tos3("")};
 #ifdef _VJS
   p.is_js = 1;
@@ -15135,7 +15135,7 @@ string compiler__Parser_check_string(compiler__Parser *p) {
 void compiler__Parser_check_not_reserved(compiler__Parser *p) {
   bool tmp32 = 0;
   bool tmp33 =
-      map_get(/*parser.v : 699*/ compiler__Reserved_Types, p->lit, &tmp32);
+      map_get(/*parser.v : 698*/ compiler__Reserved_Types, p->lit, &tmp32);
 
   if (tmp32) {
     compiler__Parser_error(
@@ -15318,7 +15318,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
   map_string ti = p->cur_fn.dispatch_of.inst;
   if ((_IN(string, (p->lit), map_keys(&/* ? */ ti)))) {
     string tmp35 = tos3("");
-    bool tmp36 = map_get(/*parser.v : 876*/ ti, p->lit, &tmp35);
+    bool tmp36 = map_get(/*parser.v : 875*/ ti, p->lit, &tmp35);
 
     if (!tmp36)
       tmp35 = tos((byte *)"", 0);
@@ -18088,6 +18088,7 @@ compiler__Scanner *compiler__new_scanner_file(string file_path) {
     };
   };
   compiler__Scanner *s = compiler__new_scanner(raw_text);
+  ;
   s->file_path = file_path;
   return s;
 }
@@ -18114,7 +18115,8 @@ compiler__Scanner *compiler__new_scanner(string text) {
                            .quote = 0,
                            .line_ends = new_array(0, 1, sizeof(int)),
                            .nlines = 0,
-                           .is_vh = 0},
+                           .is_vh = 0,
+                           .is_fmt = 0},
       sizeof(compiler__Scanner));
 }
 compiler__ScanRes compiler__scan_res(compiler__TokenKind tok, string lit) {
@@ -18643,13 +18645,14 @@ string compiler__Scanner_ident_string(compiler__Scanner *s) {
       compiler__Scanner_error(&/* ? */ *s,
                               tos3("0 character in a string literal"));
     };
-    if (c == '{' && prevc == '$' && !is_raw &&
+    if (c == '{' && prevc == '$' && !is_raw && !s->is_fmt &&
         compiler__Scanner_count_symbol_before(*s, s->pos - 2, slash) % 2 == 0) {
       s->inside_string = 1;
       s->pos -= 2;
       break;
     };
-    if ((byte_is_letter(c) || c == '_') && prevc == '$' && !is_raw &&
+    if ((byte_is_letter(c) || c == '_') && prevc == '$' && !s->is_fmt &&
+        !is_raw &&
         compiler__Scanner_count_symbol_before(*s, s->pos - 2, slash) % 2 == 0) {
       s->inside_string = 1;
       s->inter_start = 1;
@@ -20570,6 +20573,9 @@ string compiler__Token_str(compiler__Token t) {
   if (t.tok == compiler__compiler__TokenKind_number) {
     return t.lit;
   };
+  if (t.tok == compiler__compiler__TokenKind_chartoken) {
+    return _STR("`%.*s`", t.lit.len, t.lit.str);
+  };
   if (t.tok == compiler__compiler__TokenKind_str) {
     return _STR("'%.*s'", t.lit.len, t.lit.str);
   };
@@ -20629,6 +20635,7 @@ void compiler__Parser_fmt_dec(compiler__Parser *p) {
   };
   p->scanner->fmt_indent--;
 }
+void compiler__Scanner_init_fmt(compiler__Scanner *p) { p->is_fmt = 1; }
 void compiler__Parser_fnext(compiler__Parser *p) {
   if (p->tok == compiler__compiler__TokenKind_eof) {
 
@@ -20639,15 +20646,6 @@ void compiler__Parser_fnext(compiler__Parser *p) {
     ;
   };
   string s = compiler__Parser_strtok(&/* ? */ *p);
-  if (p->tok == compiler__compiler__TokenKind_str &&
-      compiler__Parser_peek(&/* ? */ *p) ==
-          compiler__compiler__TokenKind_dollar) {
-    s = string_substr2(s, 0, s.len - 1, false);
-    p->fmt_dollar = 1;
-  } else if (p->tok == compiler__compiler__TokenKind_str && p->fmt_dollar) {
-    s = string_substr2(s, 1, -1, true);
-    p->fmt_dollar = 0;
-  };
   ;
   if (p->tok == compiler__compiler__TokenKind_lcbr && !p->inside_if_expr &&
       compiler__Parser_peek(&/* ? */ *p) !=
@@ -20671,17 +20669,17 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
     return;
   };
   printf("GENERATING %.*s.V\n", p->file_name.len, p->file_name.str);
-  Option_os__File tmp5 =
+  Option_os__File tmp1 =
       os__create(string_add(tos3("/var/tmp/fmt/"), p->file_name));
   os__File out;
-  if (!tmp5.ok) {
-    string err = tmp5.error;
-    int errcode = tmp5.ecode;
+  if (!tmp1.ok) {
+    string err = tmp1.error;
+    int errcode = tmp1.ecode;
     compiler__verror(tos3("failed to create fmt.v"));
 
     return;
   }
-  out = *(os__File *)tmp5.data;
+  out = *(os__File *)tmp1.data;
   ;
   os__File_writeln(out, s);
   os__File_close(out);
