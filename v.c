@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "19c9e22"
+#define V_COMMIT_HASH "10b0432"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d732be6"
+#define V_COMMIT_HASH "19c9e22"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -2386,7 +2386,7 @@ string array_bool_str(array_bool a) {
 }
 string array_byte_hex(array_byte b) {
   byte *hex = v_malloc(b.len * 2 + 1);
-  byte *ptr = &hex[/*ptr*/ 0] /*rbyte 1*/;
+  byte *ptr = &hex[/*ptr!*/ 0] /*rbyte 1*/;
   for (int i = 0; i < b.len; i++) {
 
     ptr += sprintf(((char *)(ptr)), "%02x", (*(byte *)array_get(b, i)));
@@ -2513,7 +2513,7 @@ void print_backtrace_skipping_top_frames(int skipframes) {
 
     _PUSH(&sframes,
           (/*typ = array_string   tmp_typ=string*/ tos2(
-              csymbols[/*ptr*/ i] /*rbyteptr 0*/)),
+              csymbols[/*ptr!*/ i] /*rbyteptr 0*/)),
           tmp3, string);
   };
   array_string tmp4 = sframes;
@@ -2753,12 +2753,12 @@ string int_str(int nn) {
   while (n > 0) {
 
     int d = n % 10;
-    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + ((int)('0'));
+    buf[/*ptr!*/ max - len - 1] /*rbyte 1*/ = d + ((int)('0'));
     len++;
     n = n / 10;
   };
   if (is_neg) {
-    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = '-';
+    buf[/*ptr!*/ max - len - 1] /*rbyte 1*/ = '-';
     len++;
   };
   return tos((byte *)(byte *)buf + max - len, len);
@@ -2774,7 +2774,7 @@ string u32_str(u32 nn) {
   while (n > ((u32)(0))) {
 
     u32 d = n % ((u32)(10));
-    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + ((u32)('0'));
+    buf[/*ptr!*/ max - len - 1] /*rbyte 1*/ = d + ((u32)('0'));
     len++;
     n = n / ((u32)(10));
   };
@@ -2796,12 +2796,12 @@ string i64_str(i64 nn) {
   while (n > ((i64)(0))) {
 
     int d = ((int)(n % ((i64)(10))));
-    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + ((int)('0'));
+    buf[/*ptr!*/ max - len - 1] /*rbyte 1*/ = d + ((int)('0'));
     len++;
     n = n / ((i64)(10));
   };
   if (is_neg) {
-    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = '-';
+    buf[/*ptr!*/ max - len - 1] /*rbyte 1*/ = '-';
     len++;
   };
   return tos((byte *)(byte *)buf + max - len, len);
@@ -2817,7 +2817,7 @@ string u64_str(u64 nn) {
   while (n > ((u64)(0))) {
 
     u64 d = n % ((u64)(10));
-    buf[/*ptr*/ max - len - 1] /*rbyte 1*/ = d + ((u64)('0'));
+    buf[/*ptr!*/ max - len - 1] /*rbyte 1*/ = d + ((u64)('0'));
     len++;
     n = n / ((u64)(10));
   };
@@ -2858,15 +2858,15 @@ string rune_str(rune c) {
   string str = (string){.len = len, .str = v_malloc(len + 1)};
   for (int i = 0; i < len; i++) {
 
-    str.str[/*ptr*/ i] /*rbyte 1*/ = ((int)(c)) >> 8 * (3 - i) & 0xff;
+    str.str[/*ptr!*/ i] /*rbyte 1*/ = ((int)(c)) >> 8 * (3 - i) & 0xff;
   };
   str.str[len] /*rbyte 1*/ = '\0';
   return str;
 }
 string byte_str(byte c) {
   string str = (string){.len = 1, .str = v_malloc(2)};
-  str.str[/*ptr*/ 0] /*rbyte 1*/ = c;
-  str.str[/*ptr*/ 1] /*rbyte 1*/ = '\0';
+  str.str[/*ptr!*/ 0] /*rbyte 1*/ = c;
+  str.str[/*ptr!*/ 1] /*rbyte 1*/ = '\0';
   return str;
 }
 bool byte_is_capital(byte c) { return c >= 'A' && c <= 'Z'; }
@@ -2892,7 +2892,7 @@ map new_map_init(int cap, int elm_size, string *keys, void *vals) {
   for (int tmp2 = tmp1; tmp2 < cap; tmp2++) {
     int i = tmp2;
 
-    map_set(&/* ? */ res, keys[/*ptr*/ i] /*rstring 0*/,
+    map_set(&/* ? */ res, keys[/*ptr!*/ i] /*rstring 0*/,
             (byte *)vals + i * elm_size);
   };
   return res;
@@ -3179,7 +3179,7 @@ string string_replace(string s, string rep, string with) {
     if (i == cur_idx) {
       for (int j = 0; j < with.len; j++) {
 
-        b[/*ptr*/ b_i] /*rbyte 1*/ = with.str[j] /*rbyte 0*/;
+        b[/*ptr!*/ b_i] /*rbyte 1*/ = with.str[j] /*rbyte 0*/;
         b_i++;
       };
       i += rep.len - 1;
@@ -3188,11 +3188,11 @@ string string_replace(string s, string rep, string with) {
         cur_idx = (*(int *)array_get(idxs, idx_pos));
       };
     } else {
-      b[/*ptr*/ b_i] /*rbyte 1*/ = s.str[i] /*rbyte 0*/;
+      b[/*ptr!*/ b_i] /*rbyte 1*/ = s.str[i] /*rbyte 0*/;
       b_i++;
     };
   };
-  b[/*ptr*/ new_len] /*rbyte 1*/ = '\0';
+  b[/*ptr!*/ new_len] /*rbyte 1*/ = '\0';
   return tos(b, new_len);
 }
 int v_string_int(string s) {
@@ -3405,9 +3405,9 @@ string string_substr(string s, int start, int end) {
   string res = (string){.len = len, .str = v_malloc(len + 1)};
   for (int i = 0; i < len; i++) {
 
-    res.str[/*ptr*/ i] /*rbyte 1*/ = s.str[/*ptr*/ start + i] /*rbyte 0*/;
+    res.str[/*ptr!*/ i] /*rbyte 1*/ = s.str[/*ptr!*/ start + i] /*rbyte 0*/;
   };
-  res.str[/*ptr*/ len] /*rbyte 1*/ = '\0';
+  res.str[/*ptr!*/ len] /*rbyte 1*/ = '\0';
   return res;
 }
 int string_index(string s, string p) {
@@ -3582,7 +3582,7 @@ string string_to_lower(string s) {
   byte *b = v_malloc(s.len + 1);
   for (int i = 0; i < s.len; i++) {
 
-    b[/*ptr*/ i] /*rbyte 1*/ = tolower(s.str[/*ptr*/ i] /*rbyte 0*/);
+    b[/*ptr!*/ i] /*rbyte 1*/ = tolower(s.str[/*ptr!*/ i] /*rbyte 0*/);
   };
   return tos(b, s.len);
 }
@@ -3590,7 +3590,7 @@ string string_to_upper(string s) {
   byte *b = v_malloc(s.len + 1);
   for (int i = 0; i < s.len; i++) {
 
-    b[/*ptr*/ i] /*rbyte 1*/ = toupper(s.str[/*ptr*/ i] /*rbyte 0*/);
+    b[/*ptr!*/ i] /*rbyte 1*/ = toupper(s.str[/*ptr!*/ i] /*rbyte 0*/);
   };
   return tos(b, s.len);
 }
@@ -3747,7 +3747,7 @@ ustring string_ustring(string s) {
       (ustring){.s = s, .runes = new_array(0, s.len, sizeof(int)), .len = 0};
   for (int i = 0; i < s.len; i++) {
 
-    int char_len = utf8_char_len(s.str[/*ptr*/ i] /*rbyte 0*/);
+    int char_len = utf8_char_len(s.str[/*ptr!*/ i] /*rbyte 0*/);
     _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ i), tmp25, int);
     i += char_len - 1;
     res.len++;
@@ -3765,7 +3765,7 @@ ustring string_ustring_tmp(string s) {
   int j = 0;
   for (int i = 0; i < s.len; i++) {
 
-    int char_len = utf8_char_len(s.str[/*ptr*/ i] /*rbyte 0*/);
+    int char_len = utf8_char_len(s.str[/*ptr!*/ i] /*rbyte 0*/);
     array_set(&/*q*/ res.runes, j, &(int[]){i});
     j++;
     i += char_len - 1;
@@ -3793,7 +3793,7 @@ ustring ustring_add(ustring u, ustring a) {
   int j = 0;
   for (int i = 0; i < u.s.len; i++) {
 
-    int char_len = utf8_char_len(u.s.str[/*ptr*/ i] /*rbyte 0*/);
+    int char_len = utf8_char_len(u.s.str[/*ptr!*/ i] /*rbyte 0*/);
     _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp26, int);
     i += char_len - 1;
     j += char_len;
@@ -3801,7 +3801,7 @@ ustring ustring_add(ustring u, ustring a) {
   };
   for (int i = 0; i < a.s.len; i++) {
 
-    int char_len = utf8_char_len(a.s.str[/*ptr*/ i] /*rbyte 0*/);
+    int char_len = utf8_char_len(a.s.str[/*ptr!*/ i] /*rbyte 0*/);
     _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp27, int);
     i += char_len - 1;
     j += char_len;
@@ -3880,7 +3880,7 @@ byte string_at(string s, int idx) {
   if (idx < 0 || idx >= s.len) {
     v_panic(_STR("string index out of range: %d / %d", idx, s.len));
   };
-  return s.str[/*ptr*/ idx] /*rbyte 0*/;
+  return s.str[/*ptr!*/ idx] /*rbyte 0*/;
 }
 string ustring_at(ustring u, int idx) {
   if (idx < 0 || idx >= u.len) {
@@ -3942,18 +3942,18 @@ string array_string_join(array_string a, string del) {
     for (int j = 0; j < val.len; j++) {
 
       byte c = val.str[j] /*rbyte 0*/;
-      res.str[/*ptr*/ idx] /*rbyte 1*/ = val.str[/*ptr*/ j] /*rbyte 0*/;
+      res.str[/*ptr!*/ idx] /*rbyte 1*/ = val.str[/*ptr!*/ j] /*rbyte 0*/;
       idx++;
     };
     if (i != a.len - 1) {
       for (int k = 0; k < del.len; k++) {
 
-        res.str[/*ptr*/ idx] /*rbyte 1*/ = del.str[/*ptr*/ k] /*rbyte 0*/;
+        res.str[/*ptr!*/ idx] /*rbyte 1*/ = del.str[/*ptr!*/ k] /*rbyte 0*/;
         idx++;
       };
     };
   };
-  res.str[/*ptr*/ res.len] /*rbyte 1*/ = '\0';
+  res.str[/*ptr!*/ res.len] /*rbyte 1*/ = '\0';
   return res;
 }
 string array_string_join_lines(array_string s) {
@@ -4019,10 +4019,10 @@ string string_repeat(string s, int count) {
     for (int tmp39 = tmp38; tmp39 < s.len; tmp39++) {
       int j = tmp39;
 
-      ret[/*ptr*/ i * s.len + j] /*rbyte 1*/ = s.str[j] /*rbyte 0*/;
+      ret[/*ptr!*/ i * s.len + j] /*rbyte 1*/ = s.str[j] /*rbyte 0*/;
     };
   };
-  ret[/*ptr*/ s.len * count] /*rbyte 1*/ = 0;
+  ret[/*ptr!*/ s.len * count] /*rbyte 1*/ = 0;
   return (tos2((byte *)ret));
 }
 int utf8_char_len(byte b) {
@@ -4032,25 +4032,25 @@ string utf32_to_str(u32 code) {
   int icode = ((int)(code));
   byte *buffer = v_malloc(5);
   if (icode <= 127) {
-    buffer[/*ptr*/ 0] /*rbyte 1*/ = icode;
+    buffer[/*ptr!*/ 0] /*rbyte 1*/ = icode;
     return tos(buffer, 1);
   };
   if ((icode <= 2047)) {
-    buffer[/*ptr*/ 0] /*rbyte 1*/ = 192 | (icode >> 6);
-    buffer[/*ptr*/ 1] /*rbyte 1*/ = 128 | (icode & 63);
+    buffer[/*ptr!*/ 0] /*rbyte 1*/ = 192 | (icode >> 6);
+    buffer[/*ptr!*/ 1] /*rbyte 1*/ = 128 | (icode & 63);
     return tos(buffer, 2);
   };
   if ((icode <= 65535)) {
-    buffer[/*ptr*/ 0] /*rbyte 1*/ = 224 | (icode >> 12);
-    buffer[/*ptr*/ 1] /*rbyte 1*/ = 128 | ((icode >> 6) & 63);
-    buffer[/*ptr*/ 2] /*rbyte 1*/ = 128 | (icode & 63);
+    buffer[/*ptr!*/ 0] /*rbyte 1*/ = 224 | (icode >> 12);
+    buffer[/*ptr!*/ 1] /*rbyte 1*/ = 128 | ((icode >> 6) & 63);
+    buffer[/*ptr!*/ 2] /*rbyte 1*/ = 128 | (icode & 63);
     return tos(buffer, 3);
   };
   if ((icode <= 1114111)) {
-    buffer[/*ptr*/ 0] /*rbyte 1*/ = 240 | (icode >> 18);
-    buffer[/*ptr*/ 1] /*rbyte 1*/ = 128 | ((icode >> 12) & 63);
-    buffer[/*ptr*/ 2] /*rbyte 1*/ = 128 | ((icode >> 6) & 63);
-    buffer[/*ptr*/ 3] /*rbyte 1*/ = 128 | (icode & 63);
+    buffer[/*ptr!*/ 0] /*rbyte 1*/ = 240 | (icode >> 18);
+    buffer[/*ptr!*/ 1] /*rbyte 1*/ = 128 | ((icode >> 12) & 63);
+    buffer[/*ptr!*/ 2] /*rbyte 1*/ = 128 | ((icode >> 6) & 63);
+    buffer[/*ptr!*/ 3] /*rbyte 1*/ = 128 | (icode & 63);
     return tos(buffer, 4);
   };
   return tos3("");
@@ -4059,25 +4059,25 @@ string utf32_to_str_no_malloc(u32 code, void *buf) {
   int icode = ((int)(code));
   byteptr buffer = ((byteptr)(buf));
   if (icode <= 127) {
-    buffer[/*ptr*/ 0] /*rbyteptr 1*/ = icode;
+    buffer[/*ptr!*/ 0] /*rbyteptr 1*/ = icode;
     return tos(buffer, 1);
   };
   if ((icode <= 2047)) {
-    buffer[/*ptr*/ 0] /*rbyteptr 1*/ = 192 | (icode >> 6);
-    buffer[/*ptr*/ 1] /*rbyteptr 1*/ = 128 | (icode & 63);
+    buffer[/*ptr!*/ 0] /*rbyteptr 1*/ = 192 | (icode >> 6);
+    buffer[/*ptr!*/ 1] /*rbyteptr 1*/ = 128 | (icode & 63);
     return tos(buffer, 2);
   };
   if ((icode <= 65535)) {
-    buffer[/*ptr*/ 0] /*rbyteptr 1*/ = 224 | (icode >> 12);
-    buffer[/*ptr*/ 1] /*rbyteptr 1*/ = 128 | ((icode >> 6) & 63);
-    buffer[/*ptr*/ 2] /*rbyteptr 1*/ = 128 | (icode & 63);
+    buffer[/*ptr!*/ 0] /*rbyteptr 1*/ = 224 | (icode >> 12);
+    buffer[/*ptr!*/ 1] /*rbyteptr 1*/ = 128 | ((icode >> 6) & 63);
+    buffer[/*ptr!*/ 2] /*rbyteptr 1*/ = 128 | (icode & 63);
     return tos(buffer, 3);
   };
   if ((icode <= 1114111)) {
-    buffer[/*ptr*/ 0] /*rbyteptr 1*/ = 240 | (icode >> 18);
-    buffer[/*ptr*/ 1] /*rbyteptr 1*/ = 128 | ((icode >> 12) & 63);
-    buffer[/*ptr*/ 2] /*rbyteptr 1*/ = 128 | ((icode >> 6) & 63);
-    buffer[/*ptr*/ 3] /*rbyteptr 1*/ = 128 | (icode & 63);
+    buffer[/*ptr!*/ 0] /*rbyteptr 1*/ = 240 | (icode >> 18);
+    buffer[/*ptr!*/ 1] /*rbyteptr 1*/ = 128 | ((icode >> 12) & 63);
+    buffer[/*ptr!*/ 2] /*rbyteptr 1*/ = 128 | ((icode >> 6) & 63);
+    buffer[/*ptr!*/ 3] /*rbyteptr 1*/ = 128 | (icode & 63);
     return tos(buffer, 4);
   };
   return tos3("");
@@ -4476,7 +4476,7 @@ array_byte os__File_read_bytes_at(os__File f, int size, int pos) {
   fseek(f.cfile, 0, SEEK_SET);
   for (int e = 0; e < size; e++) {
 
-    array_set(&/*q*/ arr, e, &(byte[]){data[/*ptr*/ e] /*rbyte 1*/});
+    array_set(&/*q*/ arr, e, &(byte[]){data[/*ptr!*/ e] /*rbyte 1*/});
   };
   return arr;
 }
@@ -4492,7 +4492,7 @@ Option_string os__read_file(string path) {
   byte *str = v_malloc(fsize + 1);
   fread((char *)str, fsize, 1, fp);
   fclose(fp);
-  str[/*ptr*/ fsize] /*rbyte 1*/ = 0;
+  str[/*ptr!*/ fsize] /*rbyte 1*/ = 0;
   string tmp1 = OPTION_CAST(string)((tos((byte *)str, fsize)));
   return opt_ok(&tmp1, sizeof(string));
 }
@@ -4620,7 +4620,7 @@ array_string os__read_lines(string path) {
   while (fgets((char *)(byte *)buf + buf_index, buf_len - buf_index, fp) != 0) {
 
     int len = vstrlen(buf);
-    if (len == buf_len - 1 && buf[/*ptr*/ len - 1] /*rbyte 1*/ != 10) {
+    if (len == buf_len - 1 && buf[/*ptr!*/ len - 1] /*rbyte 1*/ != 10) {
       buf_len *= 2;
       buf = realloc((char *)buf, buf_len);
       if (isnil(buf)) {
@@ -4629,12 +4629,12 @@ array_string os__read_lines(string path) {
       buf_index = len;
       continue;
     };
-    if (buf[/*ptr*/ len - 1] /*rbyte 1*/ == 10 ||
-        buf[/*ptr*/ len - 1] /*rbyte 1*/ == 13) {
-      buf[/*ptr*/ len - 1] /*rbyte 1*/ = '\0';
+    if (buf[/*ptr!*/ len - 1] /*rbyte 1*/ == 10 ||
+        buf[/*ptr!*/ len - 1] /*rbyte 1*/ == 13) {
+      buf[/*ptr!*/ len - 1] /*rbyte 1*/ = '\0';
     };
-    if (len > 1 && buf[/*ptr*/ len - 2] /*rbyte 1*/ == 13) {
-      buf[/*ptr*/ len - 2] /*rbyte 1*/ = '\0';
+    if (len > 1 && buf[/*ptr!*/ len - 2] /*rbyte 1*/ == 13) {
+      buf[/*ptr!*/ len - 2] /*rbyte 1*/ = '\0';
     };
     _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ tos_clone(buf)), tmp11,
           string);
@@ -5343,7 +5343,7 @@ array_string os__init_os_args(int argc, byteptr *argv) {
 
     _PUSH(&args,
           (/*typ = array_string   tmp_typ=string*/ (
-              tos2((byte *)argv[/*ptr*/ i] /*rbyteptr 0*/))),
+              tos2((byte *)argv[/*ptr!*/ i] /*rbyteptr 0*/))),
           tmp3, string);
   };
   return args;
@@ -11591,7 +11591,11 @@ void compiler__Parser_gen_array_set(compiler__Parser *p, string typ,
   string cao_tmp = p->cgen->cur_line;
   string func = tos3("");
   if (is_map) {
-    func = tos3("map_set(&");
+    if (is_ptr) {
+      func = tos3("map_set(");
+    } else {
+      func = tos3("map_set(&");
+    };
   } else {
     if (is_ptr) {
       func = tos3("array_set(");
@@ -13892,8 +13896,8 @@ Option_string compiler__find_windows_kit_internal(RegKey key,
     if (result2 != 0) {
       continue;
     };
-    if ((value[/*ptr*/ length - 1] /*ru16 1*/ != ((u16)(0)))) {
-      value[/*ptr*/ length] /*ru16 1*/ = ((u16)(0));
+    if ((value[/*ptr!*/ length - 1] /*ru16 1*/ != ((u16)(0)))) {
+      value[/*ptr!*/ length] /*ru16 1*/ = ((u16)(0));
     };
     string tmp3 = OPTION_CAST(string)(string_from_wide(value));
     return opt_ok(&tmp3, sizeof(string));
@@ -16428,8 +16432,8 @@ string compiler__Parser_index_expr(compiler__Parser *p, string typ_,
     if (!is_str && !is_arr && !is_map && !is_ptr && !is_fixed_arr &&
         !is_variadic_arg) {
       compiler__Parser_error(
-          p, _STR("Cant [] non-array/string/map. Got type \"%.*s\"", typ.len,
-                  typ.str));
+          p, _STR("invalid operation: type `%.*s` does not support indexing",
+                  typ.len, typ.str));
     };
     compiler__Parser_check(p, compiler__compiler__TokenKind_lsbr);
     if (is_str) {
@@ -16438,7 +16442,7 @@ string compiler__Parser_index_expr(compiler__Parser *p, string typ_,
         compiler__Parser_gen(p, tos3(".str["));
         close_bracket = 1;
       } else {
-        compiler__Parser_gen(p, tos3(","));
+        compiler__Parser_gen(p, tos3(", "));
       };
     };
     if (is_variadic_arg) {
@@ -16455,8 +16459,8 @@ string compiler__Parser_index_expr(compiler__Parser *p, string typ_,
       close_bracket = 1;
     } else if (is_ptr && !is_variadic_arg) {
       typ = string_replace(typ, tos3("*"), tos3(""));
-      if (!is_arr) {
-        compiler__Parser_gen(p, tos3("[/*ptr*/"));
+      if (!is_arr && !is_map) {
+        compiler__Parser_gen(p, tos3("[/*ptr!*/"));
         close_bracket = 1;
       };
     };
@@ -18126,11 +18130,11 @@ compiler__Scanner *compiler__new_scanner_file(string file_path) {
   ;
   if (raw_text.len >= 3) {
     byte *c_text = raw_text.str;
-    if (c_text[/*ptr*/ 0] /*rbyte 0*/ == 0xEF &&
-        c_text[/*ptr*/ 1] /*rbyte 0*/ == 0xBB &&
-        c_text[/*ptr*/ 2] /*rbyte 0*/ == 0xBF) {
+    if (c_text[/*ptr!*/ 0] /*rbyte 0*/ == 0xEF &&
+        c_text[/*ptr!*/ 1] /*rbyte 0*/ == 0xBB &&
+        c_text[/*ptr!*/ 2] /*rbyte 0*/ == 0xBF) {
       int offset_from_begin = 3;
-      raw_text = tos(&/*114*/ c_text[/*ptr*/ offset_from_begin] /*rbyte 0*/,
+      raw_text = tos(&/*114*/ c_text[/*ptr!*/ offset_from_begin] /*rbyte 0*/,
                      vstrlen(c_text) - offset_from_begin);
     };
   };
