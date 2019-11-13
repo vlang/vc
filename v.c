@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3b929cd"
+#define V_COMMIT_HASH "861f2d4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f30b0f1"
+#define V_COMMIT_HASH "3b929cd"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -2482,15 +2482,6 @@ bool array_byte_eq(array_byte a, array_byte a2) {
 bool array_f32_eq(array_f32 a, array_f32 a2) { return array_eq_T_f32(a, a2); }
 void builtin__init() {
 #ifdef _WIN32
-  if (is_atty(0) > 0) {
-    _setmode(_fileno(stdin), _O_U16TEXT);
-  } else {
-    _setmode(_fileno(stdin), _O_U8TEXT);
-  };
-  _setmode(_fileno(stdout), _O_U8TEXT);
-  SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE),
-                 ENABLE_PROCESSED_OUTPUT | 0x0004);
-  setbuf(stdout, 0);
 #endif
   ;
 }
@@ -2499,20 +2490,6 @@ bool isnil(void *v) { return v == 0; }
 void on_panic(int (*f)(int /*FFF*/)) {}
 void print_backtrace_skipping_top_frames(int skipframes) {
 #ifdef _WIN32
-#ifdef _MSC_VER
-  if (print_backtrace_skipping_top_frames_msvc(skipframes)) {
-
-    return;
-  };
-#endif
-  ;
-#ifdef __MINGW32__
-  if (print_backtrace_skipping_top_frames_mingw(skipframes)) {
-
-    return;
-  };
-#endif
-  ;
 #else
   if (print_backtrace_skipping_top_frames_nix(skipframes)) {
 
@@ -2546,7 +2523,6 @@ void println(string s) {
     v_panic(tos3("println(NIL)"));
   };
 #ifdef _WIN32
-  _putws(string_to_wide(s));
 #else
   printf("%.*s\n", s.len, (char *)s.str);
 #endif
@@ -2557,10 +2533,6 @@ void eprintln(string s) {
     v_panic(tos3("eprintln(NIL)"));
   };
 #ifdef __APPLE__
-  fprintf(stderr, "%.*s\n", s.len, (char *)s.str);
-  fflush(stderr);
-
-  return;
 #endif
   ;
 #ifdef __linux__
@@ -2574,7 +2546,6 @@ void eprintln(string s) {
 }
 void print(string s) {
 #ifdef _WIN32
-  wprintf(string_to_wide(s));
 #else
   printf("%.*s", s.len, (char *)s.str);
 #endif
@@ -2604,9 +2575,6 @@ void *memdup(void *src, int sz) {
 void v_ptr_free(void *ptr) { free(ptr); }
 int is_atty(int fd) {
 #ifdef _WIN32
-  int mode = 0;
-  GetConsoleMode(_get_osfhandle(fd), &mode);
-  return mode;
 #else
   return isatty(fd);
 #endif
@@ -2623,7 +2591,6 @@ bool print_backtrace_skipping_top_frames_mingw(int skipframes) {
 bool print_backtrace_skipping_top_frames_nix(int xskipframes) {
   int skipframes = xskipframes + 2;
 #ifdef __APPLE__
-  return print_backtrace_skipping_top_frames_mac(skipframes);
 #endif
   ;
 #ifdef __linux__
@@ -4161,15 +4128,6 @@ int string_utf32_code(string _rune) {
 }
 u16 *string_to_wide(string _str) {
 #ifdef _WIN32
-  int num_chars = ((int)(MultiByteToWideChar(
-      builtin__CP_UTF8, 0, (char *)_str.str, _str.len, 0, 0)));
-  u16 *wstr = ((u16 *)(v_malloc((num_chars + 1) * 2)));
-  if (wstr > 0) {
-    MultiByteToWideChar(builtin__CP_UTF8, 0, (char *)_str.str, _str.len, wstr,
-                        num_chars);
-    memset((char *)(byte *)((byte *)(wstr)) + num_chars * 2, 0, 2);
-  };
-  return wstr;
 #else
   return 0;
 #endif
@@ -4177,8 +4135,6 @@ u16 *string_to_wide(string _str) {
 }
 string string_from_wide(u16 *_wstr) {
 #ifdef _WIN32
-  int wstr_len = ((int)(wcslen(_wstr)));
-  return string_from_wide2(_wstr, wstr_len);
 #else
   return tos3("");
 #endif
@@ -4186,15 +4142,6 @@ string string_from_wide(u16 *_wstr) {
 }
 string string_from_wide2(u16 *_wstr, int len) {
 #ifdef _WIN32
-  int num_chars =
-      ((int)(WideCharToMultiByte(builtin__CP_UTF8, 0, _wstr, len, 0, 0, 0, 0)));
-  byte *str_to = ((byte *)(v_malloc(num_chars + 1)));
-  if (str_to > 0) {
-    WideCharToMultiByte(builtin__CP_UTF8, 0, _wstr, len, (char *)str_to,
-                        num_chars, 0, 0);
-    memset((char *)(byte *)((byte *)(str_to)) + num_chars, 0, 1);
-  };
-  return tos2(str_to);
 #else
   return tos3("");
 #endif
@@ -4558,7 +4505,6 @@ int os__file_size(string path) {
 
       stat s;
 #ifdef _WIN32
-  _wstat(string_to_wide(path), &s);
 #else
   stat(((char *)(path.str)), &s);
 #endif
@@ -4567,7 +4513,6 @@ int os__file_size(string path) {
 }
 void os__mv(string old, string new) {
 #ifdef _WIN32
-  _wrename(string_to_wide(old), string_to_wide(new));
 #else
   rename(((char *)(old.str)), ((char *)(new.str)));
 #endif
@@ -4575,22 +4520,10 @@ void os__mv(string old, string new) {
 }
 Option_bool os__cp(string old, string new) {
 #ifdef _WIN32
-  string _old = string_replace(old, tos3("/"), tos3("\\"));
-  string _new = string_replace(new, tos3("/"), tos3("\\"));
-  CopyFile(string_to_wide(_old), string_to_wide(_new), 0);
-  u32 result = GetLastError();
-  if (result == 0) {
-    bool tmp2 = OPTION_CAST(bool)(1);
-    return opt_ok(&tmp2, sizeof(bool));
-  } else {
-    return error_with_code(
-        _STR("failed to copy %.*s to %.*s", old.len, old.str, new.len, new.str),
-        ((int)(result)));
-  };
 #else
   os__system(_STR("cp %.*s %.*s", old.len, old.str, new.len, new.str));
-  bool tmp3 = OPTION_CAST(bool)(1);
-  return opt_ok(&tmp3, sizeof(bool));
+  bool tmp2 = OPTION_CAST(bool)(1);
+  return opt_ok(&tmp2, sizeof(bool));
 #endif
   ;
 }
@@ -4612,30 +4545,30 @@ Option_bool os__cp_r(string source_path, string dest_path, bool overwrite) {
         return v_error(tos3("Destination file path already exist"));
       };
     };
-    Option_bool tmp4 = os__cp(source_path, adjasted_path);
-    if (!tmp4.ok) {
-      string err = tmp4.error;
-      int errcode = tmp4.ecode;
+    Option_bool tmp3 = os__cp(source_path, adjasted_path);
+    if (!tmp3.ok) {
+      string err = tmp3.error;
+      int errcode = tmp3.ecode;
       return v_error(err);
     };
-    bool tmp5 = OPTION_CAST(bool)(1);
-    return opt_ok(&tmp5, sizeof(bool));
+    bool tmp4 = OPTION_CAST(bool)(1);
+    return opt_ok(&tmp4, sizeof(bool));
   };
   if (!os__is_dir(dest_path)) {
     return v_error(tos3("Destination path is not a valid directory"));
   };
-  Option_array_string tmp6 = os__ls(source_path);
+  Option_array_string tmp5 = os__ls(source_path);
   array_string files;
-  if (!tmp6.ok) {
-    string err = tmp6.error;
-    int errcode = tmp6.ecode;
+  if (!tmp5.ok) {
+    string err = tmp5.error;
+    int errcode = tmp5.ecode;
     return v_error(err);
   }
-  files = *(array_string *)tmp6.data;
+  files = *(array_string *)tmp5.data;
   ;
-  array_string tmp7 = files;
-  for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
-    string file = ((string *)tmp7.data)[tmp8];
+  array_string tmp6 = files;
+  for (int tmp7 = 0; tmp7 < tmp6.len; tmp7++) {
+    string file = ((string *)tmp6.data)[tmp7];
 
     string sp =
         filepath__join(source_path, &(varg_string){.len = 1, .args = {file}});
@@ -4644,20 +4577,19 @@ Option_bool os__cp_r(string source_path, string dest_path, bool overwrite) {
     if (os__is_dir(sp)) {
       os__mkdir(dp);
     };
-    Option_bool tmp9 = os__cp_r(sp, dp, overwrite);
-    if (!tmp9.ok) {
-      string err = tmp9.error;
-      int errcode = tmp9.ecode;
+    Option_bool tmp8 = os__cp_r(sp, dp, overwrite);
+    if (!tmp8.ok) {
+      string err = tmp8.error;
+      int errcode = tmp8.ecode;
       os__rmdir(dp);
       v_panic(err);
     };
   };
-  bool tmp10 = OPTION_CAST(bool)(1);
-  return opt_ok(&tmp10, sizeof(bool));
+  bool tmp9 = OPTION_CAST(bool)(1);
+  return opt_ok(&tmp9, sizeof(bool));
 }
 FILE *os__vfopen(string path, string mode) {
 #ifdef _WIN32
-  return _wfopen(string_to_wide(path), string_to_wide(mode));
 #else
   return fopen(((char *)(path.str)), ((char *)(mode.str)));
 #endif
@@ -4693,7 +4625,7 @@ array_string os__read_lines(string path) {
     if (len > 1 && buf[/*ptr!*/ len - 2] /*rbyte 1*/ == 13) {
       buf[/*ptr!*/ len - 2] /*rbyte 1*/ = '\0';
     };
-    _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ tos_clone(buf)), tmp11,
+    _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ tos_clone(buf)), tmp10,
           string);
     buf_index = 0;
   };
@@ -4704,22 +4636,19 @@ array_ustring os__read_ulines(string path) {
   array_string lines = os__read_lines(path);
   array_ustring ulines = new_array_from_c_array(
       0, 0, sizeof(ustring), EMPTY_ARRAY_OF_ELEMS(ustring, 0){TCCSKIP(0)});
-  array_string tmp12 = lines;
-  for (int tmp13 = 0; tmp13 < tmp12.len; tmp13++) {
-    string myline = ((string *)tmp12.data)[tmp13];
+  array_string tmp11 = lines;
+  for (int tmp12 = 0; tmp12 < tmp11.len; tmp12++) {
+    string myline = ((string *)tmp11.data)[tmp12];
 
     _PUSH(&ulines,
           (/*typ = array_ustring   tmp_typ=ustring*/ string_ustring(myline)),
-          tmp14, ustring);
+          tmp13, ustring);
   };
   return ulines;
 }
 Option_os__File os__open(string path) {
   os__File file = (os__File){.cfile = 0};
 #ifdef _WIN32
-  u16 *wpath = string_to_wide(path);
-  string mode = tos3("rb");
-  file = (os__File){.cfile = _wfopen(wpath, string_to_wide(mode))};
 #else
   byte *cpath = path.str;
   file = (os__File){.cfile = fopen(((char *)(cpath)), "rb")};
@@ -4728,15 +4657,12 @@ Option_os__File os__open(string path) {
   if (isnil(file.cfile)) {
     return v_error(_STR("failed to open file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp15 = OPTION_CAST(os__File)(file);
-  return opt_ok(&tmp15, sizeof(os__File));
+  os__File tmp14 = OPTION_CAST(os__File)(file);
+  return opt_ok(&tmp14, sizeof(os__File));
 }
 Option_os__File os__create(string path) {
   os__File file = (os__File){.cfile = 0};
 #ifdef _WIN32
-  u16 *wpath = string_to_wide(string_replace(path, tos3("/"), tos3("\\")));
-  string mode = tos3("wb");
-  file = (os__File){.cfile = _wfopen(wpath, string_to_wide(mode))};
 #else
   byte *cpath = path.str;
   file = (os__File){.cfile = fopen(((char *)(cpath)), "wb")};
@@ -4745,15 +4671,12 @@ Option_os__File os__create(string path) {
   if (isnil(file.cfile)) {
     return v_error(_STR("failed to create file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp16 = OPTION_CAST(os__File)(file);
-  return opt_ok(&tmp16, sizeof(os__File));
+  os__File tmp15 = OPTION_CAST(os__File)(file);
+  return opt_ok(&tmp15, sizeof(os__File));
 }
 Option_os__File os__open_append(string path) {
   os__File file = (os__File){.cfile = 0};
 #ifdef _WIN32
-  u16 *wpath = string_to_wide(string_replace(path, tos3("/"), tos3("\\")));
-  string mode = tos3("ab");
-  file = (os__File){.cfile = _wfopen(wpath, string_to_wide(mode))};
 #else
   byte *cpath = path.str;
   file = (os__File){.cfile = fopen(((char *)(cpath)), "ab")};
@@ -4763,8 +4686,8 @@ Option_os__File os__open_append(string path) {
     return v_error(
         _STR("failed to create(append) file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp17 = OPTION_CAST(os__File)(file);
-  return opt_ok(&tmp17, sizeof(os__File));
+  os__File tmp16 = OPTION_CAST(os__File)(file);
+  return opt_ok(&tmp16, sizeof(os__File));
 }
 void os__File_write(os__File f, string s) { fputs((char *)s.str, f.cfile); }
 void os__File_write_bytes(os__File f, void *data, int size) {
@@ -4783,9 +4706,6 @@ void os__File_flush(os__File f) { fflush(f.cfile); }
 void os__File_close(os__File f) { fclose(f.cfile); }
 void *os__vpopen(string path) {
 #ifdef _WIN32
-  string mode = tos3("rb");
-  u16 *wpath = string_to_wide(path);
-  return _wpopen(wpath, string_to_wide(mode));
 #else
   byte *cpath = path.str;
   return popen((char *)cpath, "r");
@@ -4794,7 +4714,6 @@ void *os__vpopen(string path) {
 }
 _V_MulRet_int_V_bool os__posix_wait4_to_exit_status(int waitret) {
 #ifdef _WIN32
-  return (_V_MulRet_int_V_bool){.var_0 = waitret, .var_1 = 0};
 #else
   int ret = 0;
   bool is_signaled = 1;
@@ -4811,7 +4730,6 @@ _V_MulRet_int_V_bool os__posix_wait4_to_exit_status(int waitret) {
 }
 int os__vpclose(void *f) {
 #ifdef _WIN32
-  return ((int)(_pclose(f)));
 #else
   _V_MulRet_int_V_bool _V_mret_ret__ =
       os__posix_wait4_to_exit_status(((int)(pclose(f))));
@@ -4827,7 +4745,6 @@ int os__system(string cmd) {
   };
   int ret = ((int)(0));
 #ifdef _WIN32
-  ret = _wsystem(string_to_wide(cmd));
 #else
   ret = system((char *)cmd.str);
 #endif
@@ -4851,53 +4768,53 @@ int os__system(string cmd) {
   return ret;
 }
 string os__sigint_to_signal_name(int si) {
-  int tmp18 = si;
+  int tmp17 = si;
 
-  if (tmp18 == 1) {
+  if (tmp17 == 1) {
     return tos3("SIGHUP");
-  } else if (tmp18 == 2) {
+  } else if (tmp17 == 2) {
     return tos3("SIGINT");
-  } else if (tmp18 == 3) {
+  } else if (tmp17 == 3) {
     return tos3("SIGQUIT");
-  } else if (tmp18 == 4) {
+  } else if (tmp17 == 4) {
     return tos3("SIGILL");
-  } else if (tmp18 == 6) {
+  } else if (tmp17 == 6) {
     return tos3("SIGABRT");
-  } else if (tmp18 == 8) {
+  } else if (tmp17 == 8) {
     return tos3("SIGFPE");
-  } else if (tmp18 == 9) {
+  } else if (tmp17 == 9) {
     return tos3("SIGKILL");
-  } else if (tmp18 == 11) {
+  } else if (tmp17 == 11) {
     return tos3("SIGSEGV");
-  } else if (tmp18 == 13) {
+  } else if (tmp17 == 13) {
     return tos3("SIGPIPE");
-  } else if (tmp18 == 14) {
+  } else if (tmp17 == 14) {
     return tos3("SIGALRM");
-  } else if (tmp18 == 15) {
+  } else if (tmp17 == 15) {
     return tos3("SIGTERM");
   };
 #ifdef __linux__
-  int tmp19 = si;
+  int tmp18 = si;
 
-  if ((tmp19 == 30) || (tmp19 == 10) || (tmp19 == 16)) {
+  if ((tmp18 == 30) || (tmp18 == 10) || (tmp18 == 16)) {
     return tos3("SIGUSR1");
-  } else if ((tmp19 == 31) || (tmp19 == 12) || (tmp19 == 17)) {
+  } else if ((tmp18 == 31) || (tmp18 == 12) || (tmp18 == 17)) {
     return tos3("SIGUSR2");
-  } else if ((tmp19 == 20) || (tmp19 == 17) || (tmp19 == 18)) {
+  } else if ((tmp18 == 20) || (tmp18 == 17) || (tmp18 == 18)) {
     return tos3("SIGCHLD");
-  } else if ((tmp19 == 19) || (tmp19 == 18) || (tmp19 == 25)) {
+  } else if ((tmp18 == 19) || (tmp18 == 18) || (tmp18 == 25)) {
     return tos3("SIGCONT");
-  } else if ((tmp19 == 17) || (tmp19 == 19) || (tmp19 == 23)) {
+  } else if ((tmp18 == 17) || (tmp18 == 19) || (tmp18 == 23)) {
     return tos3("SIGSTOP");
-  } else if ((tmp19 == 18) || (tmp19 == 20) || (tmp19 == 24)) {
+  } else if ((tmp18 == 18) || (tmp18 == 20) || (tmp18 == 24)) {
     return tos3("SIGTSTP");
-  } else if ((tmp19 == 21) || (tmp19 == 21) || (tmp19 == 26)) {
+  } else if ((tmp18 == 21) || (tmp18 == 21) || (tmp18 == 26)) {
     return tos3("SIGTTIN");
-  } else if ((tmp19 == 22) || (tmp19 == 22) || (tmp19 == 27)) {
+  } else if ((tmp18 == 22) || (tmp18 == 22) || (tmp18 == 27)) {
     return tos3("SIGTTOU");
-  } else if (tmp19 == 5) {
+  } else if (tmp18 == 5) {
     return tos3("SIGTRAP");
-  } else if (tmp19 == 7) {
+  } else if (tmp18 == 7) {
     return tos3("SIGBUS");
   };
 #endif
@@ -4906,11 +4823,6 @@ string os__sigint_to_signal_name(int si) {
 }
 string os__getenv(string key) {
 #ifdef _WIN32
-  void *s = _wgetenv(string_to_wide(key));
-  if (isnil(s)) {
-    return tos3("");
-  };
-  return string_from_wide(s);
 #else
   byte *s = ((byte *)(getenv((char *)key.str)));
   if (isnil(s)) {
@@ -4922,11 +4834,6 @@ string os__getenv(string key) {
 }
 int os__setenv(string name, string value, bool overwrite) {
 #ifdef _WIN32
-  string format = _STR("%.*s=%.*s", name.len, name.str, value.len, value.str);
-  if (overwrite) {
-    return _putenv((char *)format.str);
-  };
-  return -1;
 #else
   return setenv((char *)name.str, (char *)value.str, overwrite);
 #endif
@@ -4934,8 +4841,6 @@ int os__setenv(string name, string value, bool overwrite) {
 }
 int os__unsetenv(string name) {
 #ifdef _WIN32
-  string format = _STR("%.*s=", name.len, name.str);
-  return _putenv((char *)format.str);
 #else
   return unsetenv((char *)name.str);
 #endif
@@ -4943,8 +4848,6 @@ int os__unsetenv(string name) {
 }
 bool os__file_exists(string _path) {
 #ifdef _WIN32
-  string path = string_replace(_path, tos3("/"), tos3("\\"));
-  return _waccess(string_to_wide(path), 0) != -1;
 #else
   return access((char *)_path.str, 0) != -1;
 #endif
@@ -4952,7 +4855,6 @@ bool os__file_exists(string _path) {
 }
 void os__rm(string path) {
 #ifdef _WIN32
-  _wremove(string_to_wide(path));
 #else
   remove((char *)path.str);
 #endif
@@ -5004,7 +4906,6 @@ string os__filename(string path) {
 string os__get_line() {
   string str = os__get_raw_line();
 #ifdef _WIN32
-  return string_trim_right(str, tos3("\r\n"));
 #else
   return string_trim_right(str, tos3("\n"));
 #endif
@@ -5012,20 +4913,6 @@ string os__get_line() {
 }
 string os__get_raw_line() {
 #ifdef _WIN32
-  int max_line_chars = 256;
-  byte *buf = ((byte *)(v_malloc(max_line_chars * 2)));
-  if (is_atty(0) > 0) {
-    void *h_input = GetStdHandle(os__STD_INPUT_HANDLE);
-    int nr_chars = 0;
-    ReadConsole(h_input, (char *)buf, max_line_chars * 2, &nr_chars, 0);
-    return string_from_wide2(((u16 *)(buf)), nr_chars);
-  };
-  int res = ((int)(fgetws((char *)buf, max_line_chars, stdin)));
-  int len = ((int)(wcslen(((u16 *)(buf)))));
-  if (0 != res) {
-    return string_from_wide2(((u16 *)(buf)), len);
-  };
-  return tos3("");
 #else
   size_t max = ((size_t)(256));
   char *buf = ((char *)(v_malloc(((int)(max)))));
@@ -5047,7 +4934,7 @@ array_string os__get_lines() {
       break;
     };
     line = string_trim_space(line);
-    _PUSH(&inputstr, (/*typ = array_string   tmp_typ=string*/ line), tmp28,
+    _PUSH(&inputstr, (/*typ = array_string   tmp_typ=string*/ line), tmp27,
           string);
   };
   return inputstr;
@@ -5071,35 +4958,27 @@ string os__user_os() {
 #endif
   ;
 #ifdef __APPLE__
-  return tos3("mac");
 #endif
   ;
 #ifdef _WIN32
-  return tos3("windows");
 #endif
   ;
 #ifdef __FreeBSD__
-  return tos3("freebsd");
 #endif
   ;
 #ifdef __OpenBSD__
-  return tos3("openbsd");
 #endif
   ;
 #ifdef __NetBSD__
-  return tos3("netbsd");
 #endif
   ;
 #ifdef __DragonFly__
-  return tos3("dragonfly");
 #endif
   ;
 #ifdef __BIONIC__
-  return tos3("android");
 #endif
   ;
 #ifdef __sun
-  return tos3("solaris");
 #endif
   ;
   return tos3("unknown");
@@ -5107,30 +4986,21 @@ string os__user_os() {
 string os__home_dir() {
   string home = os__getenv(tos3("HOME"));
 #ifdef _WIN32
-  home = os__getenv(tos3("HOMEDRIVE"));
-  if (home.len == 0) {
-    home = os__getenv(tos3("SYSTEMDRIVE"));
-  };
-  string homepath = os__getenv(tos3("HOMEPATH"));
-  if (homepath.len == 0) {
-    homepath = string_add(tos3("\\Users\\"), os__getenv(tos3("USERNAME")));
-  };
-  home = string_add(home, homepath);
 #endif
   ;
   home = string_add(home, os__path_separator);
   return home;
 }
 void os__write_file(string path, string text) {
-  Option_os__File tmp29 = os__create(path);
+  Option_os__File tmp28 = os__create(path);
   os__File f;
-  if (!tmp29.ok) {
-    string err = tmp29.error;
-    int errcode = tmp29.ecode;
+  if (!tmp28.ok) {
+    string err = tmp28.error;
+    int errcode = tmp28.ecode;
 
     return;
   }
-  f = *(os__File *)tmp29.data;
+  f = *(os__File *)tmp28.data;
   ;
   os__File_write(f, text);
   os__File_close(f);
@@ -5144,19 +5014,9 @@ void os__clear() {
 }
 void os__on_segfault(void *f) {
 #ifdef _WIN32
-
-  return;
 #endif
   ;
 #ifdef __APPLE__
-  struct /*c struct init*/
-
-      sigaction sa;
-  memset(&sa, 0, sizeof(sigaction));
-  sigemptyset(&sa.sa_mask);
-  sa.sa_sigaction = f;
-  sa.sa_flags = SA_SIGINFO;
-  sigaction(SIGSEGV, &sa, 0);
 #endif
   ;
 }
@@ -5171,64 +5031,30 @@ string os__executable() {
 #endif
   ;
 #ifdef _WIN32
-  int max = 512;
-  u16 *result = ((u16 *)(v_malloc(max * 2)));
-  int len = ((int)(GetModuleFileName(0, result, max)));
-  return string_from_wide2(result, len);
 #endif
   ;
 #ifdef __APPLE__
-  byte *result = v_malloc(os__MAX_PATH);
-  int pid = getpid();
-  int ret = proc_pidpath(pid, (char *)result, os__MAX_PATH);
-  if (ret <= 0) {
-    println(tos3("os.executable() failed"));
-    return tos3(".");
-  };
-  return (tos2((byte *)result));
 #endif
   ;
 #ifdef __FreeBSD__
-  byte *result = v_malloc(os__MAX_PATH);
-  array_int mib = new_array_from_c_array(
-      4, 4, sizeof(int), EMPTY_ARRAY_OF_ELEMS(int, 4){1, 14, 12, -1});
-  int size = os__MAX_PATH;
-  sysctl(mib.data, 4, (char *)result, &size, 0, 0);
-  return (tos2((byte *)result));
 #endif
   ;
 #ifdef __OpenBSD__
-  return (*(string *)array_get(os__args, 0));
 #endif
   ;
 #ifdef __sun
 #endif
   ;
 #ifdef __NetBSD__
-  byte *result = v_malloc(os__MAX_PATH);
-  int count =
-      ((int)(readlink("/proc/curproc/exe", (char *)result, os__MAX_PATH)));
-  if (count < 0) {
-    v_panic(tos3("error reading /proc/curproc/exe to get exe path"));
-  };
-  return (tos((byte *)result, count));
 #endif
   ;
 #ifdef __DragonFly__
-  byte *result = v_malloc(os__MAX_PATH);
-  int count =
-      ((int)(readlink("/proc/curproc/file", (char *)result, os__MAX_PATH)));
-  if (count < 0) {
-    v_panic(tos3("error reading /proc/curproc/file to get exe path"));
-  };
-  return (tos((byte *)result, count));
 #endif
   ;
   return (*(string *)array_get(os__args, 0));
 }
 bool os__is_dir(string path) {
 #ifdef _WIN32
-  return os__dir_exists(path);
 #else
   struct /*c struct init*/
 
@@ -5243,7 +5069,6 @@ bool os__is_dir(string path) {
 }
 void os__chdir(string path) {
 #ifdef _WIN32
-  _wchdir(string_to_wide(path));
 #else
   chdir((char *)path.str);
 #endif
@@ -5251,12 +5076,6 @@ void os__chdir(string path) {
 }
 string os__getwd() {
 #ifdef _WIN32
-  int max = 512;
-  u16 *buf = ((u16 *)(v_malloc(max * 2)));
-  if (_wgetcwd(buf, max) == 0) {
-    return tos3("");
-  };
-  return string_from_wide(buf);
 #else
   byte *buf = v_malloc(512);
   if (getcwd((char *)buf, 512) == 0) {
@@ -5270,7 +5089,6 @@ string os__realpath(string fpath) {
   byte *fullpath = v_malloc(os__MAX_PATH);
   int res = 0;
 #ifdef _WIN32
-  res = ((int)(_fullpath((char *)fullpath, (char *)fpath.str, os__MAX_PATH)));
 #else
   res = ((int)(!isnil(realpath((char *)fpath.str, (char *)fullpath))));
 #endif
@@ -5285,23 +5103,23 @@ array_string os__walk_ext(string path, string ext) {
     return new_array_from_c_array(0, 0, sizeof(string),
                                   EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   };
-  Option_array_string tmp34 = os__ls(path);
+  Option_array_string tmp31 = os__ls(path);
   array_string files;
-  if (!tmp34.ok) {
-    string err = tmp34.error;
-    int errcode = tmp34.ecode;
+  if (!tmp31.ok) {
+    string err = tmp31.error;
+    int errcode = tmp31.ecode;
     v_panic(err);
   }
-  files = *(array_string *)tmp34.data;
+  files = *(array_string *)tmp31.data;
   ;
   array_string res = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   string separator = (string_ends_with(path, os__path_separator))
                          ? (tos3(""))
                          : (os__path_separator);
-  array_string tmp35 = files;
-  for (int i = 0; i < tmp35.len; i++) {
-    string file = ((string *)tmp35.data)[i];
+  array_string tmp32 = files;
+  for (int i = 0; i < tmp32.len; i++) {
+    string file = ((string *)tmp32.data)[i];
 
     if (string_starts_with(file, tos3("."))) {
       continue;
@@ -5310,9 +5128,9 @@ array_string os__walk_ext(string path, string ext) {
     if (os__is_dir(p)) {
       _PUSH_MANY(&res,
                  (/*typ = array_string   tmp_typ=string*/ os__walk_ext(p, ext)),
-                 tmp36, array_string);
+                 tmp33, array_string);
     } else if (string_ends_with(file, ext)) {
-      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp37, string);
+      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp34, string);
     };
   };
   return res;
@@ -5322,18 +5140,18 @@ void os__walk(string path, void (*fnc)(string path /*FFF*/)) {
 
     return;
   };
-  Option_array_string tmp38 = os__ls(path);
+  Option_array_string tmp35 = os__ls(path);
   array_string files;
-  if (!tmp38.ok) {
-    string err = tmp38.error;
-    int errcode = tmp38.ecode;
+  if (!tmp35.ok) {
+    string err = tmp35.error;
+    int errcode = tmp35.ecode;
     v_panic(err);
   }
-  files = *(array_string *)tmp38.data;
+  files = *(array_string *)tmp35.data;
   ;
-  array_string tmp39 = files;
-  for (int tmp40 = 0; tmp40 < tmp39.len; tmp40++) {
-    string file = ((string *)tmp39.data)[tmp40];
+  array_string tmp36 = files;
+  for (int tmp37 = 0; tmp37 < tmp36.len; tmp37++) {
+    string file = ((string *)tmp36.data)[tmp37];
 
     string p = string_add(string_add(path, os__path_separator), file);
     if (os__is_dir(p)) {
@@ -5376,9 +5194,9 @@ void os__mkdir_all(string path) {
   string p = (string_starts_with(path, os__path_separator))
                  ? (os__path_separator)
                  : (tos3(""));
-  array_string tmp41 = string_split(path, os__path_separator);
-  for (int tmp42 = 0; tmp42 < tmp41.len; tmp42++) {
-    string subdir = ((string *)tmp41.data)[tmp42];
+  array_string tmp38 = string_split(path, os__path_separator);
+  for (int tmp39 = 0; tmp39 < tmp38.len; tmp39++) {
+    string subdir = ((string *)tmp38.data)[tmp39];
 
     p = string_add(p, string_add(subdir, os__path_separator));
     if (!os__dir_exists(p)) {
@@ -5534,8 +5352,6 @@ bool term__can_show_color_on_stderr() {
 }
 bool term__supports_escape_sequences(int fd) {
 #ifdef _WIN32
-  return (is_atty(fd) & 0x0004) > 0 &&
-         string_ne(os__getenv(tos3("TERM")), tos3("dumb"));
 #else
   return is_atty(fd) > 0 && string_ne(os__getenv(tos3("TERM")), tos3("dumb"));
 #endif
@@ -5802,12 +5618,6 @@ void compiler__V_cc(compiler__V *v) {
     ;
   };
 #ifdef _WIN32
-  if (string_eq(v->pref->ccompiler, tos3("msvc")) ||
-      compiler__no_mingw_installed()) {
-    compiler__V_cc_msvc(v);
-
-    return;
-  };
 #endif
   ;
   if (v->pref->fast) {
@@ -6106,9 +5916,6 @@ start:;
   };
   if (v->pref->compress) {
 #ifdef _WIN32
-    println(tos3("-compress does not work on Windows for now"));
-
-    return;
 #endif
     ;
     int ret = os__system(_STR("strip %.*s", v->out_name.len, v->out_name.str));
@@ -6122,7 +5929,6 @@ start:;
     if (ret2 != 0) {
       println(tos3("upx failed"));
 #ifdef __APPLE__
-      println(tos3("install upx with `brew install upx`"));
 #endif
       ;
 #ifdef __linux__
@@ -6247,7 +6053,6 @@ string compiler__find_c_compiler() {
 }
 string compiler__find_c_compiler_default() {
 #ifdef _WIN32
-  return tos3("gcc");
 #endif
   ;
   return tos3("cc");
@@ -7324,10 +7129,12 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
       };
       compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
       compiler__OS os = compiler__os_from_string(name);
-      if (0 && compiler__Parser_fileis(&/* ? */ *p, tos3("runtime.v")) &&
-          os != p->os) {
+      if ((!not&&os != p->os) || (not&&os == p->os)) {
         int stack = 1;
         while (1) {
+          if (p->tok == compiler__compiler__TokenKind_key_return) {
+            p->returns = 1;
+          };
           if (p->tok == compiler__compiler__TokenKind_lcbr) {
             stack++;
           } else if (p->tok == compiler__compiler__TokenKind_rcbr) {
@@ -7509,10 +7316,6 @@ void compiler__Parser_chash(compiler__Parser *p) {
           tmp14, string);
   } else if (string_eq(hash, tos3("-js"))) {
 #ifdef _VJS
-    while (p->tok != compiler__compiler__TokenKind_eof) {
-
-      compiler__Parser_next(p);
-    };
 #else
     compiler__Parser_next(p);
 #endif
@@ -12366,7 +12169,6 @@ void compiler__V_compile(compiler__V *v) {
   cgen->pass = compiler__compiler__Pass_main;
   if (v->pref->is_debug) {
 #ifdef _VJS
-    compiler__CGen_genln(cgen, tos3("const VDEBUG = 1;\n"));
 #else
     compiler__CGen_genln(cgen, tos3("#define VDEBUG (1)"));
 #endif
@@ -12377,8 +12179,6 @@ void compiler__V_compile(compiler__V *v) {
   };
   string v_hash = compiler__vhash();
 #ifdef _VJS
-  compiler__CGen_genln(
-      cgen, _STR("const V_COMMIT_HASH = \"%.*s\";\n", v_hash.len, v_hash.str));
 #else
   compiler__CGen_genln(cgen, tos3("#ifndef V_COMMIT_HASH"));
   compiler__CGen_genln(
@@ -12389,7 +12189,6 @@ void compiler__V_compile(compiler__V *v) {
   bool q = cgen->nogen;
   cgen->nogen = 0;
 #ifdef _VJS
-  compiler__CGen_genln(cgen, compiler__js_headers);
 #else
   compiler__CGen_genln(cgen, compiler__CommonCHeaders);
 #endif
@@ -12480,7 +12279,6 @@ void compiler__V_compile(compiler__V *v) {
     };
   };
 #ifdef _VJS
-  compiler__CGen_genln(cgen, tos3("main__main();"));
 #endif
   ;
   compiler__CGen_save(cgen);
@@ -12488,8 +12286,6 @@ void compiler__V_compile(compiler__V *v) {
 }
 void compiler__V_generate_init(compiler__V *v) {
 #ifdef _VJS
-
-  return;
 #endif
   ;
   if (v->pref->build_mode == compiler__compiler__BuildMode_build_module) {
@@ -12562,8 +12358,6 @@ void compiler__V_generate_init(compiler__V *v) {
 void compiler__V_generate_main(compiler__V *v) {
   compiler__CGen *cgen = v->cgen;
 #ifdef _VJS
-
-  return;
 #endif
   ;
   if (v->pref->is_vlines) {
@@ -12656,8 +12450,6 @@ void compiler__V_gen_main_end(compiler__V *v, string return_statement) {
 }
 string compiler__final_target_out_name(string out_name) {
 #ifdef _WIN32
-  return string_add(string_replace(out_name, tos3("/"), tos3("\\")),
-                    tos3(".exe"));
 #endif
   ;
   return (string_starts_with(out_name, tos3("/")))
@@ -12873,12 +12665,6 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
 }
 array_string compiler__V_get_builtin_files(compiler__V *v) {
 #ifdef _VJS
-  return compiler__V_v_files_from_dir(
-      &/* ? */ *v,
-      _STR("%.*s%.*svlib%.*sbuiltin%.*sjs", v->vroot.len, v->vroot.str,
-           os__path_separator.len, os__path_separator.str,
-           os__path_separator.len, os__path_separator.str,
-           os__path_separator.len, os__path_separator.str));
 #endif
   ;
   return compiler__V_v_files_from_dir(
@@ -13142,31 +12928,24 @@ compiler__V *compiler__new_v(array_string args) {
 #endif
     ;
 #ifdef __APPLE__
-    _os = compiler__compiler__OS_mac;
 #endif
     ;
 #ifdef _WIN32
-    _os = compiler__compiler__OS_windows;
 #endif
     ;
 #ifdef __FreeBSD__
-    _os = compiler__compiler__OS_freebsd;
 #endif
     ;
 #ifdef __OpenBSD__
-    _os = compiler__compiler__OS_openbsd;
 #endif
     ;
 #ifdef __NetBSD__
-    _os = compiler__compiler__OS_netbsd;
 #endif
     ;
 #ifdef __DragonFly__
-    _os = compiler__compiler__OS_dragonfly;
 #endif
     ;
 #ifdef __sun
-    _os = compiler__compiler__OS_solaris;
 #endif
     ;
   } else {
@@ -13932,112 +13711,12 @@ static inline string compiler__mod_gen_name_rev(string mod) {
 Option_string compiler__find_windows_kit_internal(RegKey key,
                                                   array_string versions) {
 #ifdef _WIN32
-  array_string tmp1 = versions;
-  for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-    string version = ((string *)tmp1.data)[tmp2];
-
-    int required_bytes = 0;
-    void *result =
-        RegQueryValueEx(key, string_to_wide(version), 0, 0, 0, &required_bytes);
-    int length = required_bytes / 2;
-    if (result != 0) {
-      continue;
-    };
-    int alloc_length = (required_bytes + 2);
-    u16 *value = ((u16 *)(v_malloc(alloc_length)));
-    if (isnil(value)) {
-      continue;
-    };
-    void *result2 = RegQueryValueEx(key, string_to_wide(version), 0, 0, value,
-                                    &alloc_length);
-    if (result2 != 0) {
-      continue;
-    };
-    if ((value[/*ptr!*/ length - 1] /*ru16 1*/ != ((u16)(0)))) {
-      value[/*ptr!*/ length] /*ru16 1*/ = ((u16)(0));
-    };
-    string tmp3 = OPTION_CAST(string)(string_from_wide(value));
-    return opt_ok(&tmp3, sizeof(string));
-  };
 #endif
   ;
   return v_error(tos3("windows kit not found"));
 }
 Option_compiler__WindowsKit compiler__find_windows_kit_root(string host_arch) {
 #ifdef _WIN32
-  RegKey root_key = ((RegKey)(0));
-  void *rc =
-      RegOpenKeyEx(compiler__HKEY_LOCAL_MACHINE,
-                   string_to_wide(tos3(
-                       "SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots")),
-                   0,
-                   compiler__KEY_QUERY_VALUE | compiler__KEY_WOW64_32KEY |
-                       compiler__KEY_ENUMERATE_SUB_KEYS,
-                   &root_key);
-  if (rc != 0) {
-    Option tmp4 = v_error(tos3("Unable to open root key"));
-    { RegCloseKey(root_key); }
-    return tmp4;
-    ;
-  };
-  Option_string tmp5 = compiler__find_windows_kit_internal(
-      root_key,
-      new_array_from_c_array(2, 2, sizeof(string),
-                             EMPTY_ARRAY_OF_ELEMS(string, 2){
-                                 tos3("KitsRoot10"), tos3("KitsRoot81")}));
-  string kit_root;
-  if (!tmp5.ok) {
-    string err = tmp5.error;
-    int errcode = tmp5.ecode;
-    Option tmp6 = v_error(tos3("Unable to find a windows kit"));
-    { RegCloseKey(root_key); }
-    return tmp6;
-    ;
-  }
-  kit_root = *(string *)tmp5.data;
-  ;
-  string kit_lib = string_add(kit_root, tos3("Lib"));
-  Option_array_string tmp7 = os__ls(kit_lib);
-  array_string files;
-  if (!tmp7.ok) {
-    string err = tmp7.error;
-    int errcode = tmp7.ecode;
-    v_panic(err);
-  }
-  files = *(array_string *)tmp7.data;
-  ;
-  string highest_path = tos3("");
-  int highest_int = 0;
-  array_string tmp8 = files;
-  for (int tmp9 = 0; tmp9 < tmp8.len; tmp9++) {
-    string f = ((string *)tmp8.data)[tmp9];
-
-    string no_dot = string_replace(f, tos3("."), tos3(""));
-    int v_int = v_string_int(no_dot);
-    if (v_int > highest_int) {
-      highest_int = v_int;
-      highest_path = f;
-    };
-  };
-  string kit_lib_highest =
-      string_add(kit_lib, _STR("\\%.*s", highest_path.len, highest_path.str));
-  string kit_include_highest =
-      string_replace(kit_lib_highest, tos3("Lib"), tos3("Include"));
-  compiler__WindowsKit tmp10 = OPTION_CAST(
-      compiler__WindowsKit)((compiler__WindowsKit){
-      .um_lib_path = string_add(
-          kit_lib_highest, _STR("\\um\\%.*s", host_arch.len, host_arch.str)),
-      .ucrt_lib_path = string_add(
-          kit_lib_highest, _STR("\\ucrt\\%.*s", host_arch.len, host_arch.str)),
-      .um_include_path = string_add(kit_include_highest, tos3("\\um")),
-      .ucrt_include_path = string_add(kit_include_highest, tos3("\\ucrt")),
-      .shared_include_path =
-          string_add(kit_include_highest, tos3("\\shared"))});
-  { RegCloseKey(root_key); }
-  return opt_ok(&tmp10, sizeof(compiler__WindowsKit));
-  {
-    RegCloseKey(root_key);
-  }
 #endif
   ;
   return v_error(tos3("Host OS does not support funding a windows kit"));
@@ -14048,31 +13727,31 @@ Option_compiler__VsInstallation compiler__find_vs(string vswhere_dir,
   return v_error(tos3("Host OS does not support finding a Vs installation"));
 #endif
   ;
-  Option_os__Result tmp11 =
+  Option_os__Result tmp1 =
       os__exec(_STR("\"%.*s\\Microsoft Visual Studio\\Installer\\vswhere.exe\" "
                     "-latest -prerelease -products * -requires "
                     "Microsoft.VisualStudio.Component.VC.Tools.x86.x64 "
                     "-property installationPath",
                     vswhere_dir.len, vswhere_dir.str));
   os__Result res;
-  if (!tmp11.ok) {
-    string err = tmp11.error;
-    int errcode = tmp11.ecode;
+  if (!tmp1.ok) {
+    string err = tmp1.error;
+    int errcode = tmp1.ecode;
     return v_error(err);
   }
-  res = *(os__Result *)tmp11.data;
+  res = *(os__Result *)tmp1.data;
   ;
-  Option_string tmp12 = os__read_file(
+  Option_string tmp2 = os__read_file(
       _STR("%.*s\\VC\\Auxiliary\\Build\\Microsoft.VCToolsVersion.default.txt",
            res.output.len, res.output.str));
   string version;
-  if (!tmp12.ok) {
-    string err = tmp12.error;
-    int errcode = tmp12.ecode;
+  if (!tmp2.ok) {
+    string err = tmp2.error;
+    int errcode = tmp2.ecode;
     println(tos3("Unable to find msvc version"));
     return v_error(tos3("Unable to find vs installation"));
   }
-  version = *(string *)tmp12.data;
+  version = *(string *)tmp2.data;
   ;
   string v = (string_ends_with(version, tos3("\n")))
                  ? (string_substr2(version, 0, version.len - 2, false))
@@ -14087,10 +13766,10 @@ Option_compiler__VsInstallation compiler__find_vs(string vswhere_dir,
     string p = _STR("%.*s\\VC\\Tools\\MSVC\\%.*s\\bin\\Host%.*s\\%.*s",
                     res.output.len, res.output.str, v.len, v.str, host_arch.len,
                     host_arch.str, host_arch.len, host_arch.str);
-    compiler__VsInstallation tmp15 =
+    compiler__VsInstallation tmp5 =
         OPTION_CAST(compiler__VsInstallation)((compiler__VsInstallation){
             .exe_path = p, .lib_path = lib_path, .include_path = include_path});
-    return opt_ok(&tmp15, sizeof(compiler__VsInstallation));
+    return opt_ok(&tmp5, sizeof(compiler__VsInstallation));
   };
   printf(
       "Unable to find vs installation (attempted to use lib path \"%.*s\")\n",
@@ -14099,46 +13778,6 @@ Option_compiler__VsInstallation compiler__find_vs(string vswhere_dir,
 }
 Option_compiler__MsvcResult compiler__find_msvc() {
 #ifdef _WIN32
-  string processor_architecture = os__getenv(tos3("PROCESSOR_ARCHITECTURE"));
-  string vswhere_dir = (string_eq(processor_architecture, tos3("x86")))
-                           ? (tos3("%ProgramFiles%"))
-                           : (tos3("%ProgramFiles(x86)%"));
-  string host_arch = (string_eq(processor_architecture, tos3("x86")))
-                         ? (tos3("X86"))
-                         : (tos3("X64"));
-  Option_compiler__WindowsKit tmp16 =
-      compiler__find_windows_kit_root(host_arch);
-  compiler__WindowsKit wk;
-  if (!tmp16.ok) {
-    string err = tmp16.error;
-    int errcode = tmp16.ecode;
-    return v_error(tos3("Unable to find windows sdk"));
-  }
-  wk = *(compiler__WindowsKit *)tmp16.data;
-  ;
-  Option_compiler__VsInstallation tmp17 =
-      compiler__find_vs(vswhere_dir, host_arch);
-  compiler__VsInstallation vs;
-  if (!tmp17.ok) {
-    string err = tmp17.error;
-    int errcode = tmp17.ecode;
-    return v_error(tos3("Unable to find visual studio"));
-  }
-  vs = *(compiler__VsInstallation *)tmp17.data;
-  ;
-  compiler__MsvcResult tmp18 =
-      OPTION_CAST(compiler__MsvcResult)((compiler__MsvcResult){
-          .full_cl_exe_path = os__realpath(string_add(
-              string_add(vs.exe_path, os__path_separator), tos3("cl.exe"))),
-          .exe_path = vs.exe_path,
-          .um_lib_path = wk.um_lib_path,
-          .ucrt_lib_path = wk.ucrt_lib_path,
-          .vs_lib_path = vs.lib_path,
-          .um_include_path = wk.um_include_path,
-          .ucrt_include_path = wk.ucrt_include_path,
-          .vs_include_path = vs.include_path,
-          .shared_include_path = wk.shared_include_path});
-  return opt_ok(&tmp18, sizeof(compiler__MsvcResult));
 #else
   compiler__verror(tos3("Cannot find msvc on this OS"));
   return v_error(tos3("msvc not found"));
@@ -14146,11 +13785,11 @@ Option_compiler__MsvcResult compiler__find_msvc() {
   ;
 }
 void compiler__V_cc_msvc(compiler__V *v) {
-  Option_compiler__MsvcResult tmp19 = compiler__find_msvc();
+  Option_compiler__MsvcResult tmp6 = compiler__find_msvc();
   compiler__MsvcResult r;
-  if (!tmp19.ok) {
-    string err = tmp19.error;
-    int errcode = tmp19.ecode;
+  if (!tmp6.ok) {
+    string err = tmp6.error;
+    int errcode = tmp6.ecode;
     if (!v->pref->is_keep_c && string_ne(v->out_name_c, tos3("v.c")) &&
         string_ne(v->out_name_c, tos3("v_macos.c"))) {
       os__rm(v->out_name_c);
@@ -14159,7 +13798,7 @@ void compiler__V_cc_msvc(compiler__V *v) {
 
     return;
   }
-  r = *(compiler__MsvcResult *)tmp19.data;
+  r = *(compiler__MsvcResult *)tmp6.data;
   ;
   string out_name_obj = os__realpath(string_add(v->out_name_c, tos3(".obj")));
   array_string a = new_array_from_c_array(
@@ -14168,32 +13807,32 @@ void compiler__V_cc_msvc(compiler__V *v) {
           tos3("-w"), tos3("/we4013"), tos3("/volatile:ms"),
           _STR("/Fo\"%.*s\"", out_name_obj.len, out_name_obj.str)});
   if (v->pref->is_prod) {
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/O2")), tmp20,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/O2")), tmp7,
           string);
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/MD")), tmp21,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/MD")), tmp8,
           string);
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/Zi")), tmp22,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/Zi")), tmp9,
           string);
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/DNDEBUG")), tmp23,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/DNDEBUG")), tmp10,
           string);
   } else {
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/Zi")), tmp24,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/Zi")), tmp11,
           string);
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/MDd")), tmp25,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/MDd")), tmp12,
           string);
   };
   if (v->pref->is_so) {
     if (!string_ends_with(v->out_name, tos3(".dll"))) {
       v->out_name = string_add(v->out_name, tos3(".dll"));
     };
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/LD")), tmp26,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/LD")), tmp13,
           string);
   } else if (!string_ends_with(v->out_name, tos3(".exe"))) {
     v->out_name = string_add(v->out_name, tos3(".exe"));
   };
   v->out_name = os__realpath(v->out_name);
   if (v->pref->build_mode == compiler__compiler__BuildMode_build_module) {
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/c")), tmp27,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/c")), tmp14,
           string);
   } else if (v->pref->build_mode ==
              compiler__compiler__BuildMode_default_mode) {
@@ -14204,7 +13843,7 @@ void compiler__V_cc_msvc(compiler__V *v) {
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ string_add(
             string_add(tos3("\""), os__realpath(v->out_name_c)), tos3("\""))),
-        tmp28, string);
+        tmp15, string);
   array_string real_libs = new_array_from_c_array(
       12, 12, sizeof(string),
       EMPTY_ARRAY_OF_ELEMS(string, 12){
@@ -14215,7 +13854,7 @@ void compiler__V_cc_msvc(compiler__V *v) {
   compiler__MsvcStringFlags sflags = array_compiler__CFlag_msvc_string_flags(
       compiler__V_get_os_cflags(&/* ? */ *v));
   _PUSH_MANY(&real_libs,
-             (/*typ = array_string   tmp_typ=string*/ sflags.real_libs), tmp29,
+             (/*typ = array_string   tmp_typ=string*/ sflags.real_libs), tmp16,
              array_string);
   array_string inc_paths = sflags.inc_paths;
   array_string lib_paths = sflags.lib_paths;
@@ -14223,59 +13862,59 @@ void compiler__V_cc_msvc(compiler__V *v) {
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "-I \"%.*s\"", r.ucrt_include_path.len, r.ucrt_include_path.str)),
-        tmp30, string);
+        tmp17, string);
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "-I \"%.*s\"", r.vs_include_path.len, r.vs_include_path.str)),
-        tmp31, string);
+        tmp18, string);
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "-I \"%.*s\"", r.um_include_path.len, r.um_include_path.str)),
-        tmp32, string);
+        tmp19, string);
   _PUSH(
       &a,
       (/*typ = array_string   tmp_typ=string*/ _STR(
           "-I \"%.*s\"", r.shared_include_path.len, r.shared_include_path.str)),
-      tmp33, string);
-  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ inc_paths), tmp34,
+      tmp20, string);
+  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ inc_paths), tmp21,
              array_string);
-  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ other_flags), tmp35,
+  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ other_flags), tmp22,
              array_string);
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ array_string_join(real_libs,
                                                                    tos3(" "))),
-        tmp36, string);
-  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/link")), tmp37,
+        tmp23, string);
+  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/link")), tmp24,
         string);
-  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/NOLOGO")), tmp38,
+  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/NOLOGO")), tmp25,
         string);
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "/OUT:\"%.*s\"", v->out_name.len, v->out_name.str)),
-        tmp39, string);
+        tmp26, string);
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "/LIBPATH:\"%.*s\"", r.ucrt_lib_path.len, r.ucrt_lib_path.str)),
-        tmp40, string);
+        tmp27, string);
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "/LIBPATH:\"%.*s\"", r.um_lib_path.len, r.um_lib_path.str)),
-        tmp41, string);
+        tmp28, string);
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "/LIBPATH:\"%.*s\"", r.vs_lib_path.len, r.vs_lib_path.str)),
-        tmp42, string);
+        tmp29, string);
   _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/DEBUG:FULL")),
-        tmp43, string);
+        tmp30, string);
   if (v->pref->is_prod) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/INCREMENTAL:NO")),
-          tmp44, string);
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/OPT:REF")), tmp45,
+          tmp31, string);
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/OPT:REF")), tmp32,
           string);
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/OPT:ICF")), tmp46,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/OPT:ICF")), tmp33,
           string);
   };
-  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ lib_paths), tmp47,
+  _PUSH_MANY(&a, (/*typ = array_string   tmp_typ=string*/ lib_paths), tmp34,
              array_string);
   string args = array_string_join(a, tos3(" "));
   string cmd = _STR("\"%.*s\" %.*s", r.full_cl_exe_path.len,
@@ -14285,17 +13924,17 @@ void compiler__V_cc_msvc(compiler__V *v) {
     println(cmd);
     println(tos3("==========\n"));
   };
-  Option_os__Result tmp48 = os__exec(cmd);
+  Option_os__Result tmp35 = os__exec(cmd);
   os__Result res;
-  if (!tmp48.ok) {
-    string err = tmp48.error;
-    int errcode = tmp48.ecode;
+  if (!tmp35.ok) {
+    string err = tmp35.error;
+    int errcode = tmp35.ecode;
     println(err);
     compiler__verror(tos3("msvc error"));
 
     return;
   }
-  res = *(os__Result *)tmp48.data;
+  res = *(os__Result *)tmp35.data;
   ;
   if (res.exit_code != 0) {
     compiler__verror(res.output);
@@ -14308,16 +13947,16 @@ void compiler__V_cc_msvc(compiler__V *v) {
 }
 void compiler__build_thirdparty_obj_file_with_msvc(
     string path, array_compiler__CFlag moduleflags) {
-  Option_compiler__MsvcResult tmp49 = compiler__find_msvc();
+  Option_compiler__MsvcResult tmp36 = compiler__find_msvc();
   compiler__MsvcResult msvc;
-  if (!tmp49.ok) {
-    string err = tmp49.error;
-    int errcode = tmp49.ecode;
+  if (!tmp36.ok) {
+    string err = tmp36.error;
+    int errcode = tmp36.ecode;
     println(tos3("Could not find visual studio"));
 
     return;
   }
-  msvc = *(compiler__MsvcResult *)tmp49.data;
+  msvc = *(compiler__MsvcResult *)tmp36.data;
   ;
   string obj_path = _STR("%.*sbj", path.len, path.str);
   obj_path = os__realpath(obj_path);
@@ -14329,19 +13968,19 @@ void compiler__build_thirdparty_obj_file_with_msvc(
   printf("%.*s not found, building it (with msvc)...\n", obj_path.len,
          obj_path.str);
   string parent = os__dir(obj_path);
-  Option_array_string tmp50 = os__ls(parent);
+  Option_array_string tmp37 = os__ls(parent);
   array_string files;
-  if (!tmp50.ok) {
-    string err = tmp50.error;
-    int errcode = tmp50.ecode;
+  if (!tmp37.ok) {
+    string err = tmp37.error;
+    int errcode = tmp37.ecode;
     v_panic(err);
   }
-  files = *(array_string *)tmp50.data;
+  files = *(array_string *)tmp37.data;
   ;
   string cfiles = tos3("");
-  array_string tmp51 = files;
-  for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
-    string file = ((string *)tmp51.data)[tmp52];
+  array_string tmp38 = files;
+  for (int tmp39 = 0; tmp39 < tmp38.len; tmp39++) {
+    string file = ((string *)tmp38.data)[tmp39];
 
     if (string_ends_with(file, tos3(".c"))) {
       cfiles = string_add(
@@ -14369,18 +14008,18 @@ void compiler__build_thirdparty_obj_file_with_msvc(
       include_string.str, btarget.len, btarget.str, cfiles.len, cfiles.str,
       atarget.len, atarget.str, obj_path.len, obj_path.str);
   printf("thirdparty cmd line: %.*s\n", cmd.len, cmd.str);
-  Option_os__Result tmp53 = os__exec(cmd);
+  Option_os__Result tmp40 = os__exec(cmd);
   os__Result res;
-  if (!tmp53.ok) {
-    string err = tmp53.error;
-    int errcode = tmp53.ecode;
+  if (!tmp40.ok) {
+    string err = tmp40.error;
+    int errcode = tmp40.ecode;
     printf("msvc: failed thirdparty object build cmd: %.*s\n", cmd.len,
            cmd.str);
     compiler__verror(err);
 
     return;
   }
-  res = *(os__Result *)tmp53.data;
+  res = *(os__Result *)tmp40.data;
   ;
   if (res.exit_code != 0) {
     printf("msvc: failed thirdparty object build cmd: %.*s\n", cmd.len,
@@ -14401,9 +14040,9 @@ array_compiler__CFlag_msvc_string_flags(array_compiler__CFlag cflags) {
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   array_string other_flags = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  array_compiler__CFlag tmp54 = cflags;
-  for (int tmp55 = 0; tmp55 < tmp54.len; tmp55++) {
-    compiler__CFlag flag = ((compiler__CFlag *)tmp54.data)[tmp55];
+  array_compiler__CFlag tmp41 = cflags;
+  for (int tmp42 = 0; tmp42 < tmp41.len; tmp42++) {
+    compiler__CFlag flag = ((compiler__CFlag *)tmp41.data)[tmp42];
 
     if (string_eq(flag.name, tos3("-l"))) {
       if (string_ends_with(flag.value, tos3(".dll"))) {
@@ -14413,39 +14052,39 @@ array_compiler__CFlag_msvc_string_flags(array_compiler__CFlag cflags) {
       };
       string lib_lib = string_add(flag.value, tos3(".lib"));
       _PUSH(&real_libs, (/*typ = array_string   tmp_typ=string*/ lib_lib),
-            tmp56, string);
+            tmp43, string);
     } else if (string_eq(flag.name, tos3("-I"))) {
       _PUSH(&inc_paths,
             (/*typ = array_string   tmp_typ=string*/ compiler__CFlag_format(
                 &/* ? */ flag)),
-            tmp57, string);
+            tmp44, string);
     } else if (string_eq(flag.name, tos3("-L"))) {
       _PUSH(&lib_paths, (/*typ = array_string   tmp_typ=string*/ flag.value),
-            tmp58, string);
+            tmp45, string);
       _PUSH(&lib_paths,
             (/*typ = array_string   tmp_typ=string*/ string_add(
                 string_add(flag.value, os__path_separator), tos3("msvc"))),
-            tmp59, string);
+            tmp46, string);
     } else if (string_ends_with(flag.value, tos3(".o"))) {
       _PUSH(&other_flags,
             (/*typ = array_string   tmp_typ=string*/ _STR(
                 "\"%.*sbj\"", flag.value.len, flag.value.str)),
-            tmp60, string);
+            tmp47, string);
     } else {
       _PUSH(&other_flags, (/*typ = array_string   tmp_typ=string*/ flag.value),
-            tmp61, string);
+            tmp48, string);
     };
   };
   array_string lpaths = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  array_string tmp62 = lib_paths;
-  for (int tmp63 = 0; tmp63 < tmp62.len; tmp63++) {
-    string l = ((string *)tmp62.data)[tmp63];
+  array_string tmp49 = lib_paths;
+  for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
+    string l = ((string *)tmp49.data)[tmp50];
 
     _PUSH(&lpaths,
           (/*typ = array_string   tmp_typ=string*/ string_add(
               string_add(tos3("/LIBPATH:\""), os__realpath(l)), tos3("\""))),
-          tmp64, string);
+          tmp51, string);
   };
   return (compiler__MsvcStringFlags){real_libs, inc_paths, lpaths, other_flags};
 }
@@ -14691,7 +14330,6 @@ compiler__Parser compiler__V_new_parser(compiler__V *v,
       .is_vh = 0,
       .mod = tos3("")};
 #ifdef _VJS
-  p.is_js = 1;
 #endif
   ;
   if (p.pref->is_repl) {
@@ -16773,8 +16411,6 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
     return;
   };
 #ifdef _VJS
-  compiler__Parser_error(
-      p, tos3("js backend does not support string formatting yet"));
 #endif
   ;
   p->is_alloc = 1;
@@ -18712,9 +18348,6 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
     return compiler__scan_res(compiler__compiler__TokenKind_div, tos3(""));
   };
 #ifdef _WIN32
-  if (c == '\0') {
-    return compiler__Scanner_end_of_file(s);
-  };
 #endif
   ;
   string msg =
@@ -20921,8 +20554,6 @@ string filepath__ext(string path) {
 }
 bool filepath__is_abs(string path) {
 #ifdef _WIN32
-  return string_at(path, 0) == '/' ||
-         (byte_is_letter(string_at(path, 0)) && string_at(path, 1) == ':');
 #endif
   ;
   return string_at(path, 0) == '/';
@@ -20930,8 +20561,8 @@ bool filepath__is_abs(string path) {
 string filepath__join(string base, varg_string *dirs) {
   strings__Builder path = strings__new_builder(50);
   strings__Builder_write(&/* ? */ path, string_trim_right(base, tos3("\\/")));
-  for (int tmp12 = 0; tmp12 < dirs->len; tmp12++) {
-    string d = ((string *)dirs->args)[tmp12];
+  for (int tmp6 = 0; tmp6 < dirs->len; tmp6++) {
+    string d = ((string *)dirs->args)[tmp6];
 
     strings__Builder_write(&/* ? */ path, os__path_separator);
     strings__Builder_write(&/* ? */ path, d);
@@ -21177,7 +20808,6 @@ string time__Time_weekday_str(time__Time t) {
 }
 i64 time__ticks() {
 #ifdef _WIN32
-  return GetTickCount();
 #else
   struct /*c struct init*/
 
@@ -21189,7 +20819,6 @@ i64 time__ticks() {
 }
 void time__sleep(int seconds) {
 #ifdef _WIN32
-  _sleep(seconds * 1000);
 #else
   sleep(seconds);
 #endif
@@ -21204,7 +20833,6 @@ void time__usleep(int n) {
 }
 void time__sleep_ms(int n) {
 #ifdef _WIN32
-  Sleep(n);
 #else
   usleep(n * 1000);
 #endif
