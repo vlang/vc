@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "861f2d4"
+#define V_COMMIT_HASH "72249ce"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3b929cd"
+#define V_COMMIT_HASH "861f2d4"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -7310,10 +7310,12 @@ void compiler__Parser_chash(compiler__Parser *p) {
     string file = string_substr2(hash, pos, -1, true);
     compiler__Parser_genln(p, _STR("#include %.*s", file.len, file.str));
   } else if (string_contains(hash, tos3("define"))) {
-    _PUSH(&p->cgen->includes,
-          (/*typ = array_string   tmp_typ=string*/ _STR("#%.*s", hash.len,
-                                                        hash.str)),
-          tmp14, string);
+    if (compiler__Parser_first_pass(&/* ? */ *p)) {
+      _PUSH(&p->cgen->includes,
+            (/*typ = array_string   tmp_typ=string*/ _STR("#%.*s", hash.len,
+                                                          hash.str)),
+            tmp14, string);
+    };
   } else if (string_eq(hash, tos3("-js"))) {
 #ifdef _VJS
 #else
