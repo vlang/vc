@@ -1,13 +1,43 @@
-#define V_COMMIT_HASH "6eaa2db"
+#define V_COMMIT_HASH "34c4565"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7d92467"
+#define V_COMMIT_HASH "6eaa2db"
+#endif
+
+//================================== TYPEDEFS ================================*/
+
+#include <inttypes.h> // int64_t etc
+typedef int64_t i64;
+typedef int16_t i16;
+typedef int8_t i8;
+typedef uint64_t u64;
+typedef uint32_t u32;
+typedef uint16_t u16;
+typedef uint8_t byte;
+typedef uint32_t rune;
+typedef float f32;
+typedef double f64;
+typedef unsigned char *byteptr;
+typedef int *intptr;
+typedef void *voidptr;
+typedef struct array array;
+typedef struct map map;
+typedef array array_string;
+typedef array array_int;
+typedef array array_byte;
+typedef array array_f32;
+typedef array array_f64;
+typedef map map_int;
+typedef map map_string;
+#ifndef bool
+typedef int bool;
+#define true 1
+#define false 0
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
 #include <stdlib.h>
 
 //#include "fns.h"
-#include <inttypes.h> // int64_t etc
 #include <signal.h>
 #include <stdarg.h> // for va_list
 #include <string.h> // memcpy
@@ -102,36 +132,6 @@
 
 #else
 #include <pthread.h>
-#endif
-
-//================================== TYPEDEFS ================================*/
-
-typedef int64_t i64;
-typedef int16_t i16;
-typedef int8_t i8;
-typedef uint64_t u64;
-typedef uint32_t u32;
-typedef uint16_t u16;
-typedef uint8_t byte;
-typedef uint32_t rune;
-typedef float f32;
-typedef double f64;
-typedef unsigned char *byteptr;
-typedef int *intptr;
-typedef void *voidptr;
-typedef struct array array;
-typedef struct map map;
-typedef array array_string;
-typedef array array_int;
-typedef array array_byte;
-typedef array array_f32;
-typedef array array_f64;
-typedef map map_int;
-typedef map map_string;
-#ifndef bool
-typedef int bool;
-#define true 1
-#define false 0
 #endif
 
 //============================== HELPER C MACROS =============================*/
@@ -1895,8 +1895,9 @@ int os__STD_ERROR_HANDLE;
 array_string os__args;
 #define os__MAX_PATH 4096
 string os__path_separator;
-string compiler__CommonCHeaders;
+string compiler__c_headers;
 string compiler__js_headers;
+string compiler__c_builtin_types;
 string compiler__warn_match_arrow;
 string compiler__err_used_as_value;
 string compiler__and_or_error;
@@ -5652,6 +5653,12 @@ void compiler__V_cc(compiler__V *v) {
           tmp2, string);
     v->out_name = string_add(v->out_name, tos3(".so"));
   };
+  if (v->pref->is_bare) {
+    _PUSH(&a,
+          (/*typ = array_string   tmp_typ=string*/ _STR(
+              "-nostdlib %.*s/vlib/os/bare/bare.S", vdir.len, vdir.str)),
+          tmp3, string);
+  };
   if (v->pref->build_mode == compiler__compiler__BuildMode_build_module) {
     string out_dir =
         (string_starts_with(v->dir, tos3("vlib")))
@@ -5685,34 +5692,34 @@ void compiler__V_cc(compiler__V *v) {
     optimization_options = tos3("-O3 -fno-strict-aliasing -flto");
   };
   if (debug_mode) {
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ debug_options), tmp3,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ debug_options), tmp4,
           string);
   };
   if (v->pref->is_prod) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ optimization_options),
-          tmp4, string);
+          tmp5, string);
   };
   if (debug_mode && string_ne(os__user_os(), tos3("windows"))) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3(" -rdynamic ")),
-          tmp5, string);
+          tmp6, string);
   };
   if (string_ne(v->pref->ccompiler, tos3("msvc")) &&
       v->os != compiler__compiler__OS_freebsd) {
     _PUSH(&a,
           (/*typ = array_string   tmp_typ=string*/ tos3(
               "-Werror=implicit-function-declaration")),
-          tmp6, string);
+          tmp7, string);
   };
-  array_string tmp7 =
+  array_string tmp8 =
       compiler__V_generate_hotcode_reloading_compiler_flags(&/* ? */ *v);
-  for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
-    string f = ((string *)tmp7.data)[tmp8];
+  for (int tmp9 = 0; tmp9 < tmp8.len; tmp9++) {
+    string f = ((string *)tmp8.data)[tmp9];
 
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ f), tmp9, string);
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ f), tmp10, string);
   };
   string libs = tos3("");
   if (v->pref->build_mode == compiler__compiler__BuildMode_build_module) {
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-c")), tmp10,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-c")), tmp11,
           string);
   } else if (v->pref->is_cache) {
     string builtin_o_path =
@@ -5723,7 +5730,7 @@ void compiler__V_cc(compiler__V *v) {
     _PUSH(&a,
           (/*typ = array_string   tmp_typ=string*/ string_replace(
               builtin_o_path, tos3("builtin.o"), tos3("strconv.o"))),
-          tmp11, string);
+          tmp12, string);
     if (os__file_exists(builtin_o_path)) {
       libs = builtin_o_path;
     } else {
@@ -5732,9 +5739,9 @@ void compiler__V_cc(compiler__V *v) {
       os__system(_STR("%.*s build module vlib%.*sbuiltin", vexe.len, vexe.str,
                       os__path_separator.len, os__path_separator.str));
     };
-    array_string tmp12 = v->table->imports;
-    for (int tmp13 = 0; tmp13 < tmp12.len; tmp13++) {
-      string imp = ((string *)tmp12.data)[tmp13];
+    array_string tmp13 = v->table->imports;
+    for (int tmp14 = 0; tmp14 < tmp13.len; tmp14++) {
+      string imp = ((string *)tmp13.data)[tmp14];
 
       if (string_contains(imp, tos3("vweb"))) {
         continue;
@@ -5756,19 +5763,19 @@ void compiler__V_cc(compiler__V *v) {
                imp.len, imp.str);
         if (string_ends_with(path, tos3("vlib/ui.o"))) {
           println(tos3("copying ui..."));
-          Option_bool tmp14 =
-              os__cp(_STR("%.*s/thirdparty/ui/ui.o", vdir.len, vdir.str), path);
-          if (!tmp14.ok) {
-            string err = tmp14.error;
-            int errcode = tmp14.ecode;
-            v_panic(tos3("error copying ui files"));
-          };
           Option_bool tmp15 =
-              os__cp(_STR("%.*s/thirdparty/ui/ui.vh", vdir.len, vdir.str),
-                     string_add(compiler__v_modules_path, tos3("/vlib/ui.vh")));
+              os__cp(_STR("%.*s/thirdparty/ui/ui.o", vdir.len, vdir.str), path);
           if (!tmp15.ok) {
             string err = tmp15.error;
             int errcode = tmp15.ecode;
+            v_panic(tos3("error copying ui files"));
+          };
+          Option_bool tmp16 =
+              os__cp(_STR("%.*s/thirdparty/ui/ui.vh", vdir.len, vdir.str),
+                     string_add(compiler__v_modules_path, tos3("/vlib/ui.vh")));
+          if (!tmp16.ok) {
+            string err = tmp16.error;
+            int errcode = tmp16.ecode;
             v_panic(tos3("error copying ui files"));
           };
         } else {
@@ -5781,50 +5788,50 @@ void compiler__V_cc(compiler__V *v) {
         _PUSH(&a,
               (/*typ = array_string   tmp_typ=string*/ tos3(
                   "-framework Cocoa -framework Carbon")),
-              tmp16, string);
+              tmp17, string);
       };
     };
   };
   if (v->pref->sanitize) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-fsanitize=leak")),
-          tmp17, string);
+          tmp18, string);
   };
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "-o \"%.*s\"", v->out_name.len, v->out_name.str)),
-        tmp18, string);
+        tmp19, string);
   if (os__dir_exists(v->out_name)) {
     compiler__verror(
         _STR("\'%.*s\' is a directory", v->out_name.len, v->out_name.str));
   };
   if (v->os == compiler__compiler__OS_mac) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-x objective-c")),
-          tmp19, string);
+          tmp20, string);
   };
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "\"%.*s\"", v->out_name_c.len, v->out_name_c.str)),
-        tmp20, string);
+        tmp21, string);
   if (v->os == compiler__compiler__OS_mac) {
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-x none")), tmp21,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-x none")), tmp22,
           string);
   };
   if (v->os == compiler__compiler__OS_mac) {
     _PUSH(&a,
           (/*typ = array_string   tmp_typ=string*/ tos3(
               "-mmacosx-version-min=10.7")),
-          tmp22, string);
+          tmp23, string);
   };
   array_compiler__CFlag cflags = compiler__V_get_os_cflags(&/* ? */ *v);
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/
          array_compiler__CFlag_c_options_only_object_files(cflags)),
-        tmp23, string);
+        tmp24, string);
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/
          array_compiler__CFlag_c_options_without_object_files(cflags)),
-        tmp24, string);
-  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ libs), tmp25, string);
+        tmp25, string);
+  _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ libs), tmp26, string);
   if (v->pref->build_mode != compiler__compiler__BuildMode_build_module &&
       (v->os == compiler__compiler__OS_linux ||
        v->os == compiler__compiler__OS_freebsd ||
@@ -5833,15 +5840,15 @@ void compiler__V_cc(compiler__V *v) {
        v->os == compiler__compiler__OS_dragonfly ||
        v->os == compiler__compiler__OS_solaris)) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-lm -lpthread ")),
-          tmp26, string);
+          tmp27, string);
     if (v->os == compiler__compiler__OS_linux) {
-      _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3(" -ldl ")), tmp27,
+      _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3(" -ldl ")), tmp28,
             string);
     };
   };
   if (v->os == compiler__compiler__OS_js &&
       string_eq(os__user_os(), tos3("linux"))) {
-    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-lm")), tmp28,
+    _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-lm")), tmp29,
           string);
   };
   string args = array_string_join(a, tos3(" "));
@@ -5854,17 +5861,17 @@ start:;
     println(cmd);
   };
   i64 ticks = time__ticks();
-  Option_os__Result tmp29 = os__exec(cmd);
+  Option_os__Result tmp30 = os__exec(cmd);
   os__Result res;
-  if (!tmp29.ok) {
-    string err = tmp29.error;
-    int errcode = tmp29.ecode;
+  if (!tmp30.ok) {
+    string err = tmp30.error;
+    int errcode = tmp30.ecode;
     println(tos3("C compilation failed."));
     compiler__verror(err);
 
     return;
   }
-  res = *(os__Result *)tmp29.data;
+  res = *(os__Result *)tmp30.data;
   ;
   if (res.exit_code != 0) {
     if (res.exit_code == 127) {
@@ -5962,9 +5969,9 @@ void compiler__V_cc_windows_cross(compiler__V *c) {
       printf("`%.*s` not found\n", libs.len, libs.str);
       v_exit(1);
     };
-    array_string tmp30 = c->table->imports;
-    for (int tmp31 = 0; tmp31 < tmp30.len; tmp31++) {
-      string imp = ((string *)tmp30.data)[tmp31];
+    array_string tmp31 = c->table->imports;
+    for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
+      string imp = ((string *)tmp31.data)[tmp32];
 
       libs = string_add(
           libs, _STR(" \"%.*s/vlib/%.*s.o\"", compiler__v_modules_path.len,
@@ -6030,9 +6037,9 @@ void compiler__V_cc_windows_cross(compiler__V *c) {
   println(tos3("Done!"));
 }
 void compiler__V_build_thirdparty_obj_files(compiler__V *c) {
-  array_compiler__CFlag tmp32 = compiler__V_get_os_cflags(&/* ? */ *c);
-  for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
-    compiler__CFlag flag = ((compiler__CFlag *)tmp32.data)[tmp33];
+  array_compiler__CFlag tmp33 = compiler__V_get_os_cflags(&/* ? */ *c);
+  for (int tmp34 = 0; tmp34 < tmp33.len; tmp34++) {
+    compiler__CFlag flag = ((compiler__CFlag *)tmp33.data)[tmp34];
 
     if (string_ends_with(flag.value, tos3(".o"))) {
       array_compiler__CFlag rest_of_module_flags =
@@ -6072,9 +6079,9 @@ string compiler__find_c_compiler_thirdparty_options() {
 }
 string compiler__get_cmdline_cflags(array_string args) {
   string cflags = tos3("");
-  array_string tmp34 = args;
-  for (int ci = 0; ci < tmp34.len; ci++) {
-    string cv = ((string *)tmp34.data)[ci];
+  array_string tmp35 = args;
+  for (int ci = 0; ci < tmp35.len; ci++) {
+    string cv = ((string *)tmp35.data)[ci];
 
     if (string_eq(cv, tos3("-cflags"))) {
       cflags = string_add(
@@ -10059,7 +10066,8 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
                    !(string_eq(expected, tos3("byte*")) &&
                      string_eq(got, tos3("string"))) &&
                    !(string_eq(expected, tos3("byte*")) &&
-                     string_eq(got, tos3("byteptr")))) {
+                     string_eq(got, tos3("byteptr"))) &&
+                   !p->pref->is_bare) {
           compiler__CGen_set_placeholder(
               p->cgen, ph,
               _STR("& /*112 e=\"%.*s\" g=\"%.*s\" */", expected.len,
@@ -12221,7 +12229,10 @@ void compiler__V_compile(compiler__V *v) {
   cgen->nogen = 0;
 #ifdef _VJS
 #else
-  compiler__CGen_genln(cgen, compiler__CommonCHeaders);
+  compiler__CGen_genln(cgen, compiler__c_builtin_types);
+  if (!v->pref->is_bare) {
+    compiler__CGen_genln(cgen, compiler__c_headers);
+  };
 #endif
   ;
   compiler__V_generate_hotcode_reloading_declarations(&/* ? */ *v);
@@ -12275,10 +12286,12 @@ void compiler__V_compile(compiler__V *v) {
                            array_string_join_lines(cgen->typedefs));
   strings__Builder_writeln(&/* ? */ def,
                            compiler__V_type_definitions(&/* ? */ *v));
-  strings__Builder_writeln(&/* ? */ def,
-                           tos3("\nstring _STR(const char*, ...);\n"));
-  strings__Builder_writeln(&/* ? */ def,
-                           tos3("\nstring _STR_TMP(const char*, ...);\n"));
+  if (!v->pref->is_bare) {
+    strings__Builder_writeln(&/* ? */ def,
+                             tos3("\nstring _STR(const char*, ...);\n"));
+    strings__Builder_writeln(&/* ? */ def,
+                             tos3("\nstring _STR_TMP(const char*, ...);\n"));
+  };
   strings__Builder_writeln(&/* ? */ def, array_string_join_lines(cgen->fns));
   strings__Builder_writeln(&/* ? */ def,
                            compiler__V_interface_table(&/* ? */ *v));
@@ -12359,31 +12372,33 @@ void compiler__V_generate_init(compiler__V *v) {
       };
     };
     string consts_init_body = array_string_join_lines(v->cgen->consts_init);
-    compiler__CGen_genln(
-        v->cgen,
-        _STR(
-            "void init() "
-            "{\ng_str_buf=malloc(1000);\n%.*s\n%.*s\nbuiltin__init();\n%.*s\n}",
-            call_mod_init_consts.len, call_mod_init_consts.str,
-            consts_init_body.len, consts_init_body.str, call_mod_init.len,
-            call_mod_init.str));
-    compiler__CGen_genln(
-        v->cgen,
-        tos3("\nstring _STR(const char *fmt, ...) {\n	va_list "
-             "argptr;\n	va_start(argptr, fmt);\n	size_t len = "
-             "vsnprintf(0, 0, fmt, argptr) + 1;\n	"
-             "va_end(argptr);\n	byte* buf = malloc(len);\n	"
-             "va_start(argptr, fmt);\n	vsprintf((char *)buf, fmt, "
-             "argptr);\n	va_end(argptr);\n#ifdef DEBUG_ALLOC\n	"
-             "puts(\"_STR:\");\n	puts(buf);\n#endif\n	return "
-             "tos2(buf);\n}\n\nstring _STR_TMP(const char *fmt, ...) "
-             "{\n	va_list argptr;\n	va_start(argptr, "
-             "fmt);\n	//size_t len = vsnprintf(0, 0, fmt, argptr) + "
-             "1;\n	va_end(argptr);\n	va_start(argptr, "
-             "fmt);\n	vsprintf((char *)g_str_buf, fmt, argptr);\n	"
-             "va_end(argptr);\n#ifdef DEBUG_ALLOC\n	"
-             "//puts(\"_STR_TMP:\");\n	//puts(g_str_buf);\n#endif\n	return "
-             "tos2(g_str_buf);\n}\n\n"));
+    if (!v->pref->is_bare) {
+      compiler__CGen_genln(
+          v->cgen, _STR("void init() "
+                        "{\ng_str_buf=malloc(1000);\n%.*s\n%.*s\nbuiltin__init("
+                        ");\n%.*s\n}",
+                        call_mod_init_consts.len, call_mod_init_consts.str,
+                        consts_init_body.len, consts_init_body.str,
+                        call_mod_init.len, call_mod_init.str));
+      compiler__CGen_genln(
+          v->cgen,
+          tos3(
+              "\nstring _STR(const char *fmt, ...) {\n	va_list "
+              "argptr;\n	va_start(argptr, fmt);\n	size_t len = "
+              "vsnprintf(0, 0, fmt, argptr) + 1;\n	"
+              "va_end(argptr);\n	byte* buf = malloc(len);\n	"
+              "va_start(argptr, fmt);\n	vsprintf((char *)buf, fmt, "
+              "argptr);\n	va_end(argptr);\n#ifdef DEBUG_ALLOC\n	"
+              "puts(\"_STR:\");\n	puts(buf);\n#endif\n	return "
+              "tos2(buf);\n}\n\nstring _STR_TMP(const char *fmt, ...) "
+              "{\n	va_list argptr;\n	va_start(argptr, "
+              "fmt);\n	//size_t len = vsnprintf(0, 0, fmt, argptr) + "
+              "1;\n	va_end(argptr);\n	va_start(argptr, "
+              "fmt);\n	vsprintf((char *)g_str_buf, fmt, argptr);\n	"
+              "va_end(argptr);\n#ifdef DEBUG_ALLOC\n	"
+              "//puts(\"_STR_TMP:\");\n	//puts(g_str_buf);\n#endif\n	return "
+              "tos2(g_str_buf);\n}\n\n"));
+    };
   };
 }
 void compiler__V_generate_main(compiler__V *v) {
@@ -12396,9 +12411,7 @@ void compiler__V_generate_main(compiler__V *v) {
         string_count(array_string_join(cgen->lines, tos3("\n")), tos3("\n")) +
         5;
     compiler__CGen_genln(cgen, tos3(""));
-    compiler__CGen_genln(
-        cgen,
-        tos3("////////////////// Reset the file/line numbers //////////"));
+    compiler__CGen_genln(cgen, tos3("// Reset the file/line numbers"));
     _PUSH(&cgen->lines,
           (/*typ = array_string   tmp_typ=string*/ _STR(
               "#line %d \"%.*s\"", lines_so_far,
@@ -12465,7 +12478,9 @@ void compiler__V_generate_main(compiler__V *v) {
 }
 void compiler__V_gen_main_start(compiler__V *v, bool add_os_args) {
   compiler__CGen_genln(v->cgen, tos3("int main(int argc, char** argv) { "));
-  compiler__CGen_genln(v->cgen, tos3("  init();"));
+  if (!v->pref->is_bare) {
+    compiler__CGen_genln(v->cgen, tos3("  init();"));
+  };
   if (add_os_args && (_IN(string, (tos3("os")), v->table->imports))) {
     compiler__CGen_genln(
         v->cgen, tos3("  os__args = os__init_os_args(argc, (byteptr*)argv);"));
@@ -16435,6 +16450,7 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
         (is_raw) ? (compiler__cescaped_path(str)) : (compiler__format_str(str));
     if ((p->calling_c && compiler__Parser_peek(&/* ? */ *p) !=
                              compiler__compiler__TokenKind_dot) ||
+        p->pref->is_bare ||
         (p->pref->translated && string_eq(p->mod, tos3("main")))) {
       compiler__Parser_gen(p, _STR("\"%.*s\"", f.len, f.str));
     } else if (p->is_sql) {
@@ -21301,13 +21317,12 @@ void init() {
   os__args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   os__path_separator = tos3("/");
-  compiler__CommonCHeaders = tos3(
+  compiler__c_headers = tos3(
       "\n\n#include <stdio.h>  // TODO remove all these includes, define all "
       "function signatures and types manually\n#include "
       "<stdlib.h>\n\n//#include \"fns.h\"\n#include <signal.h>\n#include "
-      "<stdarg.h> // for va_list\n#include <inttypes.h>  // int64_t "
-      "etc\n#include <string.h> // memcpy\n\n#ifndef _WIN32\n#include "
-      "<ctype.h>\n#include <locale.h> // tolower\n#include "
+      "<stdarg.h> // for va_list\n#include <string.h> // memcpy\n\n#ifndef "
+      "_WIN32\n#include <ctype.h>\n#include <locale.h> // tolower\n#include "
       "<sys/time.h>\n#include <unistd.h> // sleep\n#else\n#if "
       "defined(_MSC_VER)\n#pragma comment(lib, \"Dbghelp.lib\")\n#endif\n#if "
       "defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ < "
@@ -21342,26 +21357,16 @@ void init() {
       "EMPTY_STRUCT_DECLARATION\n#undef OPTION_CAST\n\n#define "
       "EMPTY_STRUCT_DECLARATION int ____dummy_variable\n#define "
       "OPTION_CAST(x)\n#endif\n\n#else\n#include "
-      "<pthread.h>\n#endif\n\n//================================== TYPEDEFS "
-      "================================*/\n\ntypedef int64_t i64;\ntypedef "
-      "int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef "
-      "uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef "
-      "uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef "
-      "unsigned char* byteptr;\ntypedef int* intptr;\ntypedef void* "
-      "voidptr;\ntypedef struct array array;\ntypedef struct map map;\ntypedef "
-      "array array_string;\ntypedef array array_int;\ntypedef array "
-      "array_byte;\ntypedef array array_f32;\ntypedef array "
-      "array_f64;\ntypedef map map_int;\ntypedef map map_string;\n#ifndef "
-      "bool\n	typedef int bool;\n	#define true 1\n	#define false "
-      "0\n#endif\n\n//============================== HELPER C MACROS "
-      "=============================*/\n#define _PUSH(arr, val, tmp, tmp_typ) "
-      "{tmp_typ tmp = (val); array_push(arr, &tmp);}\n#define _PUSH_MANY(arr, "
-      "val, tmp, tmp_typ) {tmp_typ tmp = (val); array_push_many(arr, tmp.data, "
-      "tmp.len);}\n#define _IN(typ, val, arr) array_##typ##_contains(arr, "
-      "val)\n#define _IN_MAP(val, m) map_exists(m, val)\n#define "
-      "DEFAULT_EQUAL(a, b) (a == b)\n#define DEFAULT_NOT_EQUAL(a, b) (a != "
-      "b)\n#define DEFAULT_LT(a, b) (a < b)\n#define DEFAULT_LE(a, b) (a <= "
-      "b)\n#define DEFAULT_GT(a, b) (a > b)\n#define DEFAULT_GE(a, b) (a >= "
+      "<pthread.h>\n#endif\n\n\n//============================== HELPER C "
+      "MACROS =============================*/\n#define _PUSH(arr, val, tmp, "
+      "tmp_typ) {tmp_typ tmp = (val); array_push(arr, &tmp);}\n#define "
+      "_PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); "
+      "array_push_many(arr, tmp.data, tmp.len);}\n#define _IN(typ, val, arr) "
+      "array_##typ##_contains(arr, val)\n#define _IN_MAP(val, m) map_exists(m, "
+      "val)\n#define DEFAULT_EQUAL(a, b) (a == b)\n#define "
+      "DEFAULT_NOT_EQUAL(a, b) (a != b)\n#define DEFAULT_LT(a, b) (a < "
+      "b)\n#define DEFAULT_LE(a, b) (a <= b)\n#define DEFAULT_GT(a, b) (a > "
+      "b)\n#define DEFAULT_GE(a, b) (a >= "
       "b)\n//================================== GLOBALS "
       "=================================*/\nbyteptr g_str_buf;\nint "
       "load_so(byteptr);\nvoid reload_so();\n");
@@ -21374,6 +21379,19 @@ void init() {
       "function() {}\nvar u16 = function() {}\nvar i8 = function() {}\nvar "
       "bool = function() {}\nvar rune = function() {}\nvar map_string = "
       "function() {}\nvar map_int = function() {}\n\n");
+  compiler__c_builtin_types = tos3(
+      "\n\n//================================== TYPEDEFS "
+      "================================*/\n\n#include <inttypes.h>  // int64_t "
+      "etc\ntypedef int64_t i64;\ntypedef int16_t i16;\ntypedef int8_t "
+      "i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint16_t "
+      "u16;\ntypedef uint8_t byte;\ntypedef uint32_t rune;\ntypedef float "
+      "f32;\ntypedef double f64;\ntypedef unsigned char* byteptr;\ntypedef "
+      "int* intptr;\ntypedef void* voidptr;\ntypedef struct array "
+      "array;\ntypedef struct map map;\ntypedef array array_string;\ntypedef "
+      "array array_int;\ntypedef array array_byte;\ntypedef array "
+      "array_f32;\ntypedef array array_f64;\ntypedef map map_int;\ntypedef map "
+      "map_string;\n#ifndef bool\n	typedef int bool;\n	#define true "
+      "1\n	#define false 0\n#endif\n");
   compiler__warn_match_arrow =
       string_add(tos3("=> is no longer needed in match statements, use\n"),
                  tos3("match foo {\n	1 { bar }\n	2 { baz }\n	else { "
