@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2545e1c"
+#define V_COMMIT_HASH "9499275"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2dcb8b3"
+#define V_COMMIT_HASH "2545e1c"
 #endif
 
 //================================== TYPEDEFS ================================*/
@@ -5265,7 +5265,14 @@ bool os__dir_exists(string path) {
   };
   return res;
 }
-void os__mkdir(string path) { mkdir((char *)path.str, 511); }
+void os__mkdir(string path) {
+#ifdef __linux__
+  syscall(83, (char *)path.str, 511);
+#else
+  mkdir((char *)path.str, 511);
+#endif
+  ;
+}
 Option_os__Result os__exec(string cmd) {
   if (string_contains(cmd, tos3(";")) || string_contains(cmd, tos3("&&")) ||
       string_contains(cmd, tos3("||")) || string_contains(cmd, tos3("\n"))) {
