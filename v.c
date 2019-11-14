@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5df5f97"
+#define V_COMMIT_HASH "4a833d8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1d460c4"
+#define V_COMMIT_HASH "5df5f97"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -10534,6 +10534,8 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
     f->type_inst = new_array_from_c_array(
         0, 0, sizeof(compiler__TypeInst),
         EMPTY_ARRAY_OF_ELEMS(compiler__TypeInst, 0){TCCSKIP(0)});
+    if (0) {
+    };
     f->dispatch_of = ti;
 
     return;
@@ -10557,10 +10559,14 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   f->type_inst = new_array_from_c_array(
       0, 0, sizeof(compiler__TypeInst),
       EMPTY_ARRAY_OF_ELEMS(compiler__TypeInst, 0){TCCSKIP(0)});
+  if (0) {
+  };
   f->scope_level = 0;
   f->dispatch_of = ti;
   f->defer_text = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+  if (0) {
+  };
   array_compiler__Var old_args = f->args;
   array_string new_types = compiler__Parser_replace_type_params(p, f, ti);
   f->args = new_array_from_c_array(
@@ -10582,7 +10588,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   };
   if ((_IN_MAP((f->typ), ti.inst))) {
     string tmp155 = tos3("");
-    bool tmp156 = map_get(/*fn.v : 1454*/ ti.inst, f->typ, &tmp155);
+    bool tmp156 = map_get(/*fn.v : 1456*/ ti.inst, f->typ, &tmp155);
 
     if (!tmp156)
       tmp155 = tos((byte *)"", 0);
@@ -16740,14 +16746,18 @@ string compiler__Parser_array_init(compiler__Parser *p) {
     };
   };
   compiler__Parser_check(p, compiler__compiler__TokenKind_rsbr);
-  if (p->tok != compiler__compiler__TokenKind_name && i == 0 &&
-      !string_starts_with(p->expected_type, tos3("array_"))) {
+  bool exp_array = string_starts_with(p->expected_type, tos3("array_"));
+  if (p->tok != compiler__compiler__TokenKind_name && i == 0 && !exp_array) {
     compiler__Parser_error(p,
                            tos3("specify array type: `[]typ` instead of `[]`"));
   };
   if (p->tok == compiler__compiler__TokenKind_name && i == 0) {
+    if (exp_array) {
+      compiler__Parser_error(p,
+                             tos3("use `foo = []` instead of `foo = []Type`"));
+    };
     typ = compiler__Parser_get_type(p);
-  } else if (string_starts_with(p->expected_type, tos3("array_"))) {
+  } else if (exp_array) {
     typ = string_substr2(p->expected_type, 6, -1, true);
   };
   bool no_alloc = p->tok == compiler__compiler__TokenKind_not;
@@ -17563,6 +17573,8 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
   p->sql_i = 0;
   p->sql_params = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+  if (0) {
+  };
   p->sql_types = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   string q = tos3("select ");
