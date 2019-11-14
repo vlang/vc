@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9499275"
+#define V_COMMIT_HASH "a04c3ba"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2545e1c"
+#define V_COMMIT_HASH "9499275"
 #endif
 
 //================================== TYPEDEFS ================================*/
@@ -2602,10 +2602,9 @@ bool print_backtrace_skipping_top_frames_nix(int xskipframes) {
   return 0;
 }
 bool print_backtrace_skipping_top_frames_mac(int skipframes) {
-  byte *buffer[100];
-  int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
-  backtrace_symbols_fd(((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)),
-                       nr_ptrs - skipframes, 1);
+#ifdef __APPLE__
+#endif
+  ;
   return 1;
 }
 bool print_backtrace_skipping_top_frames_linux(int skipframes) {
