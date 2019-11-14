@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0b3b241"
+#define V_COMMIT_HASH "751a89c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bd97dc0"
+#define V_COMMIT_HASH "0b3b241"
 #endif
 
 //================================== TYPEDEFS ================================*/
@@ -8162,7 +8162,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
     return temp_type;
   };
   string name = p->lit;
-  if (string_eq(name, tos3("r")) &&
+  if ((string_eq(name, tos3("r")) || string_eq(name, tos3("c"))) &&
       compiler__Parser_peek(&/* ? */ *p) == compiler__compiler__TokenKind_str) {
     compiler__Parser_string_expr(p);
     return tos3("string");
@@ -12635,8 +12635,6 @@ array_string compiler__V_v_files_from_dir(compiler__V *v, string dir) {
 void compiler__V_add_v_files_to_compile(compiler__V *v) {
   array_string builtin_files = compiler__V_get_builtin_files(&/* ? */ *v);
   if (v->pref->is_bare) {
-    builtin_files = new_array_from_c_array(
-        0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   };
   string builtin_vh = _STR(
       "%.*s%.*svlib%.*sbuiltin.vh", compiler__v_modules_path.len,
@@ -12731,6 +12729,14 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
   };
 }
 array_string compiler__V_get_builtin_files(compiler__V *v) {
+  if (v->pref->is_bare) {
+    return compiler__V_v_files_from_dir(
+        &/* ? */ *v,
+        filepath__join(v->vroot,
+                       &(varg_string){.len = 3,
+                                      .args = {tos3("vlib"), tos3("builtin"),
+                                               tos3("bare")}}));
+  };
 #ifdef _VJS
 #endif
   ;
@@ -16456,7 +16462,9 @@ string compiler__format_str(string _str) {
 void compiler__Parser_string_expr(compiler__Parser *p) {
   bool is_raw = p->tok == compiler__compiler__TokenKind_name &&
                 string_eq(p->lit, tos3("r"));
-  if (is_raw) {
+  bool is_cstr = p->tok == compiler__compiler__TokenKind_name &&
+                 string_eq(p->lit, tos3("c"));
+  if (is_raw || is_cstr) {
     compiler__Parser_next(p);
   };
   string str = p->lit;
@@ -16467,8 +16475,7 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
         (is_raw) ? (compiler__cescaped_path(str)) : (compiler__format_str(str));
     if ((p->calling_c && compiler__Parser_peek(&/* ? */ *p) !=
                              compiler__compiler__TokenKind_dot) ||
-        p->pref->is_bare ||
-        (p->pref->translated && string_eq(p->mod, tos3("main")))) {
+        is_cstr || (p->pref->translated && string_eq(p->mod, tos3("main")))) {
       compiler__Parser_gen(p, _STR("\"%.*s\"", f.len, f.str));
     } else if (p->is_sql) {
       compiler__Parser_gen(p, _STR("'%.*s'", str.len, str.str));
