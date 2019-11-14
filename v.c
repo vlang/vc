@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "34c4565"
+#define V_COMMIT_HASH "a329104"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6eaa2db"
+#define V_COMMIT_HASH "34c4565"
 #endif
 
 //================================== TYPEDEFS ================================*/
@@ -7055,13 +7055,9 @@ compiler__Scanner_get_scanner_pos_of_token(compiler__Scanner *s,
       (compiler__ScannerPos){.pos = 0, .line_nr = 0, .last_nl_pos = 0};
   compiler__Scanner_goto_scanner_position(
       s, (compiler__ScannerPos){.pos = 0, .line_nr = 0, .last_nl_pos = 0});
-  int prevlinepos = 0;
-  int ate = 0;
-  ate++;
   int maxline =
       compiler__imin(s->nlines, tline + 2 * compiler__error_context_after);
   while (1) {
-    prevlinepos = s->pos;
     if (s->pos >= s->text.len) {
       break;
     };
