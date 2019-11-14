@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b1fa0d2"
+#define V_COMMIT_HASH "1d460c4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "72249ce"
+#define V_COMMIT_HASH "b1fa0d2"
 #endif
 
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
@@ -551,6 +551,7 @@ struct compiler__Preferences {
   bool fast;
   bool enable_globals;
   bool is_fmt;
+  bool is_bare;
 };
 
 struct compiler__ScanRes {
@@ -8705,11 +8706,9 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
   } else if (!p->is_var_decl && is_or_else) {
     f.typ = compiler__Parser_gen_handle_option_or_else(p, f.typ, tos3(""),
                                                        fn_call_ph);
-    compiler__Parser_print_tok(&/* ? */ *p);
   } else if (!p->is_var_decl && !is_or_else && !p->inside_return_expr &&
              string_starts_with(f.typ, tos3("Option_"))) {
     string opt_type = string_substr2(f.typ, 7, -1, true);
-    compiler__Parser_print_tok(&/* ? */ *p);
     compiler__Parser_error(
         p, _STR("unhandled option type: `?%.*s`", opt_type.len, opt_type.str));
   };
@@ -12489,7 +12488,7 @@ Option_int compiler__V_get_file_parser_index(compiler__V *v, string file) {
   string file_path = os__realpath(file);
   if ((_IN_MAP((file_path), v->file_parser_idx))) {
     int tmp2 = 0;
-    bool tmp3 = map_get(/*main.v : 156*/ v->file_parser_idx, file_path, &tmp2);
+    bool tmp3 = map_get(/*main.v : 157*/ v->file_parser_idx, file_path, &tmp2);
 
     int tmp4 = OPTION_CAST(int)(tmp2);
     return opt_ok(&tmp4, sizeof(int));
@@ -13361,6 +13360,7 @@ compiler__V *compiler__new_v(array_string args) {
           .compress = (_IN(string, (tos3("-compress")), args)),
           .enable_globals = (_IN(string, (tos3("--enable-globals")), args)),
           .fast = (_IN(string, (tos3("-fast")), args)),
+          .is_bare = (_IN(string, (tos3("-bare")), args)),
           .is_repl = is_repl,
           .build_mode = build_mode,
           .cflags = cflags,
@@ -13380,6 +13380,12 @@ compiler__V *compiler__new_v(array_string args) {
     out_name_c = string_add(string_all_after(out_name, os__path_separator),
                             tos3("_shared_lib.c"));
   };
+#ifndef __linux__
+  if (pref->is_bare) {
+    compiler__verror(tos3("-bare only works on Linux for now"));
+  };
+#endif
+  ;
   return (compiler__V *)memdup(
       &(compiler__V){.os = _os,
                      .out_name = out_name,
