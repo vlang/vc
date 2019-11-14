@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a329104"
+#define V_COMMIT_HASH "a8b5c00"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "34c4565"
+#define V_COMMIT_HASH "a329104"
 #endif
 
 //================================== TYPEDEFS ================================*/
@@ -8413,9 +8413,12 @@ string compiler__Parser_expression(compiler__Parser *p) {
       return tos3("void");
     } else {
       if (!compiler__is_integer_type(typ)) {
-        compiler__Parser_error(
-            p, _STR("cannot use shift operator on non-integer type `%.*s`",
-                    typ.len, typ.str));
+        compiler__Type t = compiler__Table_find_type(&/* ? */ *p->table, typ);
+        if (t.cat != compiler__compiler__TypeCategory_enum_) {
+          compiler__Parser_error(
+              p, _STR("cannot use shift operator on non-integer type `%.*s`",
+                      typ.len, typ.str));
+        };
       };
       compiler__Parser_next(p);
       compiler__Parser_gen(p, tos3(" << "));
@@ -8426,9 +8429,12 @@ string compiler__Parser_expression(compiler__Parser *p) {
   };
   if (p->tok == compiler__compiler__TokenKind_righ_shift) {
     if (!compiler__is_integer_type(typ)) {
-      compiler__Parser_error(
-          p, _STR("cannot use shift operator on non-integer type `%.*s`",
-                  typ.len, typ.str));
+      compiler__Type t = compiler__Table_find_type(&/* ? */ *p->table, typ);
+      if (t.cat != compiler__compiler__TypeCategory_enum_) {
+        compiler__Parser_error(
+            p, _STR("cannot use shift operator on non-integer type `%.*s`",
+                    typ.len, typ.str));
+      };
     };
     compiler__Parser_next(p);
     compiler__Parser_gen(p, tos3(" >> "));
