@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "bf66901"
+#define V_COMMIT_HASH "bd97dc0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a04c3ba"
+#define V_COMMIT_HASH "bf66901"
 #endif
 
 //================================== TYPEDEFS ================================*/
@@ -5340,7 +5340,15 @@ string os__realpath(string fpath) {
 #ifdef _WIN32
   res = ((int)(_fullpath((char *)fullpath, (char *)fpath.str, os__MAX_PATH)));
 #else
-  res = ((int)(!isnil(realpath((char *)fpath.str, (char *)fullpath))));
+  if (fpath.len != strlen((char *)fpath.str)) {
+    int l = strlen((char *)fpath.str);
+    printf("FIXME realpath diff len %d strlen=%d\n", fpath.len, l);
+  };
+  char *ret = realpath((char *)fpath.str, (char *)fullpath);
+  if (ret == 0) {
+    return fpath;
+  };
+  return (tos2((byte *)fullpath));
 #endif
   ;
   if (res != 0) {
