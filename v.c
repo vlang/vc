@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e577b40"
+#define V_COMMIT_HASH "1dadf9d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "751a89c"
+#define V_COMMIT_HASH "e577b40"
 #endif
 
 //================================== TYPEDEFS ================================*/
@@ -128,6 +128,9 @@ typedef int bool;
 
 #ifdef _WIN32
 #define WINVER 0x0600
+#ifdef _WIN32_WINNT
+#undef _WIN32_WINNT
+#endif
 #define _WIN32_WINNT 0x0600
 #define WIN32_LEAN_AND_MEAN
 #define _UNICODE
@@ -5199,20 +5202,27 @@ void os__walk(string path, void (*fnc)(string path /*FFF*/)) {
 }
 void os__signal(int signum, void *handler) { signal(signum, handler); }
 int os__fork() {
+  int pid = -1;
 #ifndef _WIN32
-  int pid = fork();
-  return pid;
+  pid = fork();
 #endif
   ;
-  v_panic(tos3("os.fork not supported in windows"));
+#ifdef _WIN32
+#endif
+  ;
+  return pid;
 }
 int os__wait() {
+  int pid = -1;
 #ifndef _WIN32
-  int pid = wait(0);
-  return pid;
+  pid = wait(0);
 #endif
   ;
+#ifndef _WIN32
   v_panic(tos3("os.wait not supported in windows"));
+#endif
+  ;
+  return pid;
 }
 int os__file_last_mod_unix(string path) {
   struct /*c struct init*/
@@ -5684,9 +5694,12 @@ void compiler__V_cc(compiler__V *v) {
                   _STR("cc() isprod=%d outname=%.*s", v->pref->is_prod,
                        v->out_name.len, v->out_name.str));
   array_string a = new_array_from_c_array(
-      3, 3, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 3){v->pref->cflags, tos3("-std=gnu11"),
-                                      tos3("-w")});
+      10, 10, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 10){
+          v->pref->cflags, tos3("-std=gnu11"), tos3("-Wall"), tos3("-Wextra"),
+          tos3("-Wno-unused-variable"), tos3("-Wno-unused-but-set-variable"),
+          tos3("-Wno-unused-parameter"), tos3("-Wno-unused-result"),
+          tos3("-Wno-missing-braces"), tos3("-Wno-unused-label")});
   if (v->pref->is_so) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-shared -fPIC ")),
           tmp2, string);
@@ -9513,10 +9526,10 @@ void compiler__Parser_async_fn_call(compiler__Parser *p, compiler__Fn f,
   string wrapper_name = _STR("%.*s_thread_wrapper", fn_name.len, fn_name.str);
   string wrapper_type = tos3("void*");
   if (p->os == compiler__compiler__OS_windows) {
-    wrapper_type = tos3("void* __stdcall");
+    wrapper_type = tos3("DWORD WINAPI");
   };
   string wrapper_text =
-      _STR("%.*s %.*s(%.*s * arg) {%.*s( /*f*/%.*s ); return NULL; }",
+      _STR("%.*s %.*s(%.*s * arg) {%.*s( /*f*/%.*s ); return 0; }",
            wrapper_type.len, wrapper_type.str, wrapper_name.len,
            wrapper_name.str, arg_struct_name.len, arg_struct_name.str,
            fn_name.len, fn_name.str, str_args.len, str_args.str);
@@ -9534,9 +9547,9 @@ void compiler__Parser_async_fn_call(compiler__Parser *p, compiler__Fn f,
     parg = _STR(" %.*s", tmp_struct.len, tmp_struct.str);
   };
   if (p->os == compiler__compiler__OS_windows) {
-    compiler__Parser_genln(p, _STR(" CreateThread(0,0, %.*s, %.*s, 0,0);",
-                                   wrapper_name.len, wrapper_name.str, parg.len,
-                                   parg.str));
+    compiler__Parser_genln(
+        p, _STR(" CreateThread(0,0, (LPTHREAD_START_ROUTINE)%.*s, %.*s, 0,0);",
+                wrapper_name.len, wrapper_name.str, parg.len, parg.str));
   } else {
     compiler__Parser_genln(
         p, _STR("int %.*s = pthread_create(& %.*s, NULL, (void *)%.*s, %.*s);",
@@ -21415,7 +21428,8 @@ void init() {
       "_dummy\n#define EMPTY_STRUCT_INITIALIZATION 0\n#undef "
       "EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef "
       "TCCSKIP\n#define TCCSKIP(x)\n#endif\n\n#define OPTION_CAST(x) "
-      "(x)\n\n#ifdef _WIN32\n#define WINVER 0x0600\n#define _WIN32_WINNT "
+      "(x)\n\n#ifdef _WIN32\n#define WINVER 0x0600\n#ifdef "
+      "_WIN32_WINNT\n#undef _WIN32_WINNT\n#endif\n#define _WIN32_WINNT "
       "0x0600\n#define WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define "
       "UNICODE\n#include <windows.h>\n\n// must be included after "
       "<windows.h>\n#ifndef __TINYC__\n#include "

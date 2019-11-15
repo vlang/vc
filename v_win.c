@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e577b40"
+#define V_COMMIT_HASH "1dadf9d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "751a89c"
+#define V_COMMIT_HASH "e577b40"
 #endif
 
 //================================== TYPEDEFS ================================*/
@@ -128,6 +128,9 @@ typedef int bool;
 
 #ifdef _WIN32
 #define WINVER 0x0600
+#ifdef _WIN32_WINNT
+#undef _WIN32_WINNT
+#endif
 #define _WIN32_WINNT 0x0600
 #define WIN32_LEAN_AND_MEAN
 #define _UNICODE
@@ -2062,7 +2065,7 @@ int os__FILE_TYPE_CHAR;
 int os__FILE_TYPE_PIPE;
 int os__FILE_TYPE_UNKNOWN;
 int os__FILE_INVALID_FILE_ID;
-int os__INVALID_HANDLE_VALUE;
+voidptr os__INVALID_HANDLE_VALUE;
 int os__ENABLE_ECHO_INPUT;
 int os__ENABLE_EXTENDED_FLAGS;
 int os__ENABLE_INSERT_MODE;
@@ -2793,9 +2796,10 @@ void *memdup(void *src, int sz) {
 void v_ptr_free(void *ptr) { free(ptr); }
 int is_atty(int fd) {
 #ifdef _WIN32
-  int mode = 0;
-  GetConsoleMode(_get_osfhandle(fd), &mode);
-  return mode;
+  u32 mode = ((u32)(0));
+  voidptr osfh = ((voidptr)(_get_osfhandle(fd)));
+  GetConsoleMode(osfh, ((voidptr)(&mode)));
+  return ((int)(mode));
 #else
   return isatty(fd);
 #endif
@@ -4344,7 +4348,7 @@ u16 *string_to_wide(string _str) {
   int num_chars = ((int)(MultiByteToWideChar(
       builtin__CP_UTF8, 0, (char *)_str.str, _str.len, 0, 0)));
   u16 *wstr = ((u16 *)(v_malloc((num_chars + 1) * 2)));
-  if (wstr > 0) {
+  if (!isnil(wstr)) {
     MultiByteToWideChar(builtin__CP_UTF8, 0, (char *)_str.str, _str.len, wstr,
                         num_chars);
     memset((char *)(byte *)((byte *)(wstr)) + num_chars * 2, 0, 2);
@@ -4369,7 +4373,7 @@ string string_from_wide2(u16 *_wstr, int len) {
   int num_chars =
       ((int)(WideCharToMultiByte(builtin__CP_UTF8, 0, _wstr, len, 0, 0, 0, 0)));
   byte *str_to = ((byte *)(v_malloc(num_chars + 1)));
-  if (str_to > 0) {
+  if (!isnil(str_to)) {
     WideCharToMultiByte(builtin__CP_UTF8, 0, _wstr, len, (char *)str_to,
                         num_chars, 0, 0);
     memset((char *)(byte *)((byte *)(str_to)) + num_chars, 0, 1);
@@ -4738,7 +4742,7 @@ int os__file_size(string path) {
 
       stat s;
 #ifdef _WIN32
-  _wstat(string_to_wide(path), &s);
+  _wstat(string_to_wide(path), ((voidptr)(&s)));
 #else
   stat(((char *)(path.str)), &s);
 #endif
@@ -5162,13 +5166,14 @@ string os__get_raw_line() {
   byte *buf = ((byte *)(v_malloc(max_line_chars * 2)));
   if (is_atty(0) > 0) {
     void *h_input = GetStdHandle(os__STD_INPUT_HANDLE);
-    int nr_chars = 0;
-    ReadConsole(h_input, (char *)buf, max_line_chars * 2, &nr_chars, 0);
-    return string_from_wide2(((u16 *)(buf)), nr_chars);
+    u32 nr_chars = ((u32)(0));
+    ReadConsole(h_input, (char *)buf, max_line_chars * 2,
+                ((voidptr)(&nr_chars)), 0);
+    return string_from_wide2(((u16 *)(buf)), ((int)(nr_chars)));
   };
-  int res = ((int)(fgetws((char *)buf, max_line_chars, stdin)));
+  void *res = fgetws(((u16 *)(buf)), max_line_chars, stdin);
   int len = ((int)(wcslen(((u16 *)(buf)))));
-  if (0 != res) {
+  if (!isnil(res)) {
     return string_from_wide2(((u16 *)(buf)), len);
   };
   return tos3("");
@@ -5363,7 +5368,8 @@ string os__realpath(string fpath) {
   byte *fullpath = v_calloc(os__MAX_PATH);
   int res = 0;
 #ifdef _WIN32
-  res = ((int)(_fullpath((char *)fullpath, (char *)fpath.str, os__MAX_PATH)));
+  res = ((int)(!isnil(
+      _fullpath((char *)fullpath, (char *)fpath.str, os__MAX_PATH))));
 #else
   if (fpath.len != strlen((char *)fpath.str)) {
     int l = strlen((char *)fpath.str);
@@ -5448,16 +5454,25 @@ void os__walk(string path, void (*fnc)(string path /*FFF*/)) {
 }
 void os__signal(int signum, void *handler) { signal(signum, handler); }
 int os__fork() {
+  int pid = -1;
 #ifndef _WIN32
 #endif
   ;
+#ifdef _WIN32
   v_panic(tos3("os.fork not supported in windows"));
+#endif
+  ;
+  return pid;
 }
 int os__wait() {
+  int pid = -1;
 #ifndef _WIN32
 #endif
   ;
-  v_panic(tos3("os.wait not supported in windows"));
+#ifndef _WIN32
+#endif
+  ;
+  return pid;
 }
 int os__file_last_mod_unix(string path) {
   struct /*c struct init*/
@@ -5492,7 +5507,7 @@ array_string os__init_os_args(int argc, byteptr *argv) {
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   voidptr *args_list = ((voidptr *)(0));
   int args_count = 0;
-  args_list = CommandLineToArgvW(GetCommandLine(), &args_count);
+  args_list = ((voidptr *)(CommandLineToArgvW(GetCommandLine(), &args_count)));
   for (int i = 0; i < args_count; i++) {
 
     _PUSH(&args,
@@ -5521,14 +5536,14 @@ Option_array_string os__ls(string path) {
   };
   string path_files = _STR("%.*s\\*", path.len, path.str);
   void *h_find_files =
-      FindFirstFile(string_to_wide(path_files), &find_file_data);
+      FindFirstFile(string_to_wide(path_files), ((voidptr)(&find_file_data)));
   string first_filename = string_from_wide(((u16 *)(find_file_data.cFileName)));
   if (string_ne(first_filename, tos3(".")) &&
       string_ne(first_filename, tos3(".."))) {
     _PUSH(&dir_files, (/*typ = array_string   tmp_typ=string*/ first_filename),
           tmp2, string);
   };
-  while (FindNextFile(h_find_files, &find_file_data)) {
+  while (FindNextFile(h_find_files, ((voidptr)(&find_file_data)))) {
 
     string filename = string_from_wide(((u16 *)(find_file_data.cFileName)));
     if (string_ne(filename, tos3(".")) && string_ne(filename, tos3(".."))) {
@@ -5543,11 +5558,11 @@ Option_array_string os__ls(string path) {
 }
 bool os__dir_exists(string path) {
   string _path = string_replace(path, tos3("/"), tos3("\\"));
-  int attr = ((int)(GetFileAttributes(string_to_wide(_path))));
-  if (attr == INVALID_FILE_ATTRIBUTES) {
+  u32 attr = GetFileAttributesW(string_to_wide(_path));
+  if (((int)(attr)) == ((int)(INVALID_FILE_ATTRIBUTES))) {
     return 0;
   };
-  if ((attr & FILE_ATTRIBUTE_DIRECTORY) != 0) {
+  if ((((int)(attr)) & FILE_ATTRIBUTE_DIRECTORY) != 0) {
     return 1;
   };
   return 0;
@@ -5565,15 +5580,15 @@ HANDLE os__get_file_handle(string path) {
   if (_fd == 0) {
     return ((HANDLE)(os__INVALID_HANDLE_VALUE));
   };
-  void *_handle = _get_osfhandle(_fileno(_fd));
+  HANDLE _handle = ((HANDLE)(_get_osfhandle(_fileno(_fd))));
   return _handle;
 }
 Option_string os__get_module_filename(HANDLE handle) {
   int sz = ((int)(4096));
   u16 *buf = ((u16 *)(v_malloc(4096)));
   while (1) {
-    void *status = GetModuleFileName(handle, &buf, sz);
-    void *tmp5 = status;
+    int status = ((int)(GetModuleFileNameW(handle, ((voidptr)(&buf)), sz)));
+    int tmp5 = status;
 
     if (tmp5 == os__SUCCESS) {
       string _filename = string_from_wide2(buf, sz);
@@ -5591,10 +5606,11 @@ void *os__ptr_win_get_error_msg(u32 code) {
   if (code > ((u32)(os__MAX_ERROR_CODE))) {
     return buf;
   };
-  FormatMessage(
-      os__FORMAT_MESSAGE_ALLOCATE_BUFFER | os__FORMAT_MESSAGE_FROM_SYSTEM |
-          os__FORMAT_MESSAGE_IGNORE_INSERTS,
-      0, code, MAKELANGID(os__LANG_NEUTRAL, os__SUBLANG_DEFAULT), &buf, 0, 0);
+  FormatMessage(os__FORMAT_MESSAGE_ALLOCATE_BUFFER |
+                    os__FORMAT_MESSAGE_FROM_SYSTEM |
+                    os__FORMAT_MESSAGE_IGNORE_INSERTS,
+                0, code, MAKELANGID(os__LANG_NEUTRAL, os__SUBLANG_DEFAULT),
+                ((voidptr)(&buf)), 0, 0);
   return buf;
 }
 string os__get_error_msg(int code) {
@@ -5619,15 +5635,16 @@ Option_os__Result os__exec(string cmd) {
       .nLength = 0, .lpSecurityDescriptor = 0, .bInheritHandle = 0};
   sa.nLength = sizeof(SECURITY_ATTRIBUTES);
   sa.bInheritHandle = 1;
-  void *create_pipe_result =
-      CreatePipe(&child_stdout_read, &child_stdout_write, &sa, 0);
+  int create_pipe_result = ((int)(CreatePipe(((voidptr)(&child_stdout_read)),
+                                             ((voidptr)(&child_stdout_write)),
+                                             ((voidptr)(&sa)), 0)));
   if (create_pipe_result == 0) {
     string error_msg = os__get_error_msg(((int)(GetLastError())));
     return v_error(
         _STR("exec failed (CreatePipe): %.*s", error_msg.len, error_msg.str));
   };
-  void *set_handle_info_result =
-      SetHandleInformation(child_stdout_read, HANDLE_FLAG_INHERIT, 0);
+  int set_handle_info_result =
+      ((int)(SetHandleInformation(child_stdout_read, HANDLE_FLAG_INHERIT, 0)));
   if (set_handle_info_result == 0) {
     string error_msg = os__get_error_msg(((int)(GetLastError())));
     v_panic(_STR("exec failed (SetHandleInformation): %.*s", error_msg.len,
@@ -5659,9 +5676,11 @@ Option_os__Result os__exec(string cmd) {
   start_info.hStdError = child_stdout_write;
   start_info.dwFlags = ((u32)(STARTF_USESTDHANDLES));
   u16 command_line[32768] = {0};
-  ExpandEnvironmentStrings(string_to_wide(cmd), &command_line, 32768);
-  void *create_process_result = CreateProcess(0, command_line, 0, 0, TRUE, 0, 0,
-                                              0, &start_info, &proc_info);
+  ExpandEnvironmentStringsW(string_to_wide(cmd), ((voidptr)(&command_line)),
+                            32768);
+  int create_process_result = ((
+      int)(CreateProcessW(0, command_line, 0, 0, TRUE, 0, 0, 0,
+                          ((voidptr)(&start_info)), ((voidptr)(&proc_info)))));
   if (create_process_result == 0) {
     string error_msg = os__get_error_msg(((int)(GetLastError())));
     return v_error(_STR("exec failed (CreateProcess): %.*s", error_msg.len,
@@ -5670,24 +5689,24 @@ Option_os__Result os__exec(string cmd) {
   CloseHandle(child_stdin);
   CloseHandle(child_stdout_write);
   byte buf[1000] = {0};
-  int bytes_read = 0;
+  u32 bytes_read = ((u32)(0));
   string read_data = tos3("");
   while (1) {
-    void *readfile_result =
-        ReadFile(child_stdout_read, buf, 1000, &bytes_read, 0);
-    read_data = string_add(read_data, tos(buf, bytes_read));
-    if ((readfile_result == 0 || bytes_read == 0)) {
+    bool readfile_result =
+        ReadFile(child_stdout_read, buf, 1000, ((voidptr)(&bytes_read)), 0);
+    read_data = string_add(read_data, tos(buf, ((int)(bytes_read))));
+    if ((readfile_result == 0 || ((int)(bytes_read)) == 0)) {
       break;
     };
   };
   read_data = string_trim_space(read_data);
-  int exit_code = 0;
+  u32 exit_code = ((u32)(0));
   WaitForSingleObject(proc_info.hProcess, INFINITE);
-  GetExitCodeProcess(proc_info.hProcess, &exit_code);
+  GetExitCodeProcess(proc_info.hProcess, ((voidptr)(&exit_code)));
   CloseHandle(proc_info.hProcess);
   CloseHandle(proc_info.hThread);
   os__Result tmp7 = OPTION_CAST(os__Result)(
-      (os__Result){.output = read_data, .exit_code = exit_code});
+      (os__Result){.output = read_data, .exit_code = ((int)(exit_code))});
   return opt_ok(&tmp7, sizeof(os__Result));
 }
 rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq) {
@@ -6039,9 +6058,12 @@ void compiler__V_cc(compiler__V *v) {
                   _STR("cc() isprod=%d outname=%.*s", v->pref->is_prod,
                        v->out_name.len, v->out_name.str));
   array_string a = new_array_from_c_array(
-      3, 3, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 3){v->pref->cflags, tos3("-std=gnu11"),
-                                      tos3("-w")});
+      10, 10, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 10){
+          v->pref->cflags, tos3("-std=gnu11"), tos3("-Wall"), tos3("-Wextra"),
+          tos3("-Wno-unused-variable"), tos3("-Wno-unused-but-set-variable"),
+          tos3("-Wno-unused-parameter"), tos3("-Wno-unused-result"),
+          tos3("-Wno-missing-braces"), tos3("-Wno-unused-label")});
   if (v->pref->is_so) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-shared -fPIC ")),
           tmp2, string);
@@ -9864,10 +9886,10 @@ void compiler__Parser_async_fn_call(compiler__Parser *p, compiler__Fn f,
   string wrapper_name = _STR("%.*s_thread_wrapper", fn_name.len, fn_name.str);
   string wrapper_type = tos3("void*");
   if (p->os == compiler__compiler__OS_windows) {
-    wrapper_type = tos3("void* __stdcall");
+    wrapper_type = tos3("DWORD WINAPI");
   };
   string wrapper_text =
-      _STR("%.*s %.*s(%.*s * arg) {%.*s( /*f*/%.*s ); return NULL; }",
+      _STR("%.*s %.*s(%.*s * arg) {%.*s( /*f*/%.*s ); return 0; }",
            wrapper_type.len, wrapper_type.str, wrapper_name.len,
            wrapper_name.str, arg_struct_name.len, arg_struct_name.str,
            fn_name.len, fn_name.str, str_args.len, str_args.str);
@@ -9885,9 +9907,9 @@ void compiler__Parser_async_fn_call(compiler__Parser *p, compiler__Fn f,
     parg = _STR(" %.*s", tmp_struct.len, tmp_struct.str);
   };
   if (p->os == compiler__compiler__OS_windows) {
-    compiler__Parser_genln(p, _STR(" CreateThread(0,0, %.*s, %.*s, 0,0);",
-                                   wrapper_name.len, wrapper_name.str, parg.len,
-                                   parg.str));
+    compiler__Parser_genln(
+        p, _STR(" CreateThread(0,0, (LPTHREAD_START_ROUTINE)%.*s, %.*s, 0,0);",
+                wrapper_name.len, wrapper_name.str, parg.len, parg.str));
   } else {
     compiler__Parser_genln(
         p, _STR("int %.*s = pthread_create(& %.*s, NULL, (void *)%.*s, %.*s);",
@@ -21416,7 +21438,7 @@ i64 time__ticks() {
 }
 void time__sleep(int seconds) {
 #ifdef _WIN32
-  _sleep(seconds * 1000);
+  Sleep(seconds * 1000);
 #else
   sleep(seconds);
 #endif
@@ -21876,7 +21898,7 @@ void init() {
   os__FILE_TYPE_PIPE = 0x3;
   os__FILE_TYPE_UNKNOWN = 0x0;
   os__FILE_INVALID_FILE_ID = (-1);
-  os__INVALID_HANDLE_VALUE = -1;
+  os__INVALID_HANDLE_VALUE = ((voidptr)(-1));
   os__ENABLE_ECHO_INPUT = 0x0004;
   os__ENABLE_EXTENDED_FLAGS = 0x0080;
   os__ENABLE_INSERT_MODE = 0x0020;
@@ -21947,7 +21969,8 @@ void init() {
       "_dummy\n#define EMPTY_STRUCT_INITIALIZATION 0\n#undef "
       "EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef "
       "TCCSKIP\n#define TCCSKIP(x)\n#endif\n\n#define OPTION_CAST(x) "
-      "(x)\n\n#ifdef _WIN32\n#define WINVER 0x0600\n#define _WIN32_WINNT "
+      "(x)\n\n#ifdef _WIN32\n#define WINVER 0x0600\n#ifdef "
+      "_WIN32_WINNT\n#undef _WIN32_WINNT\n#endif\n#define _WIN32_WINNT "
       "0x0600\n#define WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define "
       "UNICODE\n#include <windows.h>\n\n// must be included after "
       "<windows.h>\n#ifndef __TINYC__\n#include "
