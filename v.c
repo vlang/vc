@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "751a89c"
+#define V_COMMIT_HASH "e577b40"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0b3b241"
+#define V_COMMIT_HASH "751a89c"
 #endif
 
 //================================== TYPEDEFS ================================*/
@@ -41,6 +41,31 @@ typedef int bool;
 #include <signal.h>
 #include <stdarg.h> // for va_list
 #include <string.h> // memcpy
+
+#if INTPTR_MAX == INT32_MAX
+#define TARGET_IS_32BIT 1
+#elif INTPTR_MAX == INT64_MAX
+#define TARGET_IS_64BIT 1
+#else
+#error "The environment is not 32 or 64-bit."
+#endif
+
+#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ ||       \
+    defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN ||                   \
+    defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) ||   \
+    defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) ||         \
+    defined(__MIBSEB__)
+#define TARGET_ORDER_IS_BIG
+#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ ||  \
+    defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN ||                \
+    defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) ||                        \
+    defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) ||      \
+    defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) ||           \
+    defined(_M_X64) || defined(_M_IX86)
+#define TARGET_ORDER_IS_LITTLE
+#else
+#error "Unknown architecture endianness"
+#endif
 
 #ifndef _WIN32
 #include <ctype.h>
@@ -5078,7 +5103,7 @@ void os__chdir(string path) {
 string os__getwd() {
 #ifdef _WIN32
 #else
-  byte *buf = v_malloc(512);
+  byte *buf = v_calloc(512);
   if (getcwd((char *)buf, 512) == 0) {
     return tos3("");
   };
@@ -5087,7 +5112,7 @@ string os__getwd() {
   ;
 }
 string os__realpath(string fpath) {
-  byte *fullpath = v_malloc(os__MAX_PATH);
+  byte *fullpath = v_calloc(os__MAX_PATH);
   int res = 0;
 #ifdef _WIN32
 #else
@@ -7176,11 +7201,16 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
                 compiler__compiler__TokenKind_key_else)) {
         compiler__Parser_genln(p, tos3("#endif"));
       };
+    } else if (string_eq(name, tos3("x64"))) {
+      compiler__Parser_comptime_if_block(p, tos3("TARGET_IS_64BIT"));
+    } else if (string_eq(name, tos3("x32"))) {
+      compiler__Parser_comptime_if_block(p, tos3("TARGET_IS_32BIT"));
+    } else if (string_eq(name, tos3("big_endian"))) {
+      compiler__Parser_comptime_if_block(p, tos3("TARGET_ORDER_IS_BIG"));
+    } else if (string_eq(name, tos3("little_endian"))) {
+      compiler__Parser_comptime_if_block(p, tos3("TARGET_ORDER_IS_LITTLE"));
     } else if (string_eq(name, tos3("debug"))) {
-      compiler__Parser_genln(p, tos3("#ifdef VDEBUG"));
-      compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
-      compiler__Parser_statements_no_rcbr(p);
-      compiler__Parser_genln(p, tos3("#endif"));
+      compiler__Parser_comptime_if_block(p, tos3("VDEBUG"));
     } else if (string_eq(name, tos3("tinyc"))) {
       compiler__Parser_comptime_if_block(p, tos3("__TINYC__"));
     } else if (string_eq(name, tos3("glibc"))) {
@@ -21345,42 +21375,57 @@ void init() {
       "\n\n#include <stdio.h>  // TODO remove all these includes, define all "
       "function signatures and types manually\n#include "
       "<stdlib.h>\n\n//#include \"fns.h\"\n#include <signal.h>\n#include "
-      "<stdarg.h> // for va_list\n#include <string.h> // memcpy\n\n#ifndef "
-      "_WIN32\n#include <ctype.h>\n#include <locale.h> // tolower\n#include "
-      "<sys/time.h>\n#include <unistd.h> // sleep\n#else\n#if "
-      "defined(_MSC_VER)\n#pragma comment(lib, \"Dbghelp.lib\")\n#endif\n#if "
-      "defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ < "
-      "__MSVCR90_DLL\n#error Please upgrade your MinGW distribution to use "
-      "msvcr90.dll or later.\n#endif\n#endif\n\n#if defined(__CYGWIN__) && "
-      "!defined(_WIN32)\n#error Cygwin is not supported, please use MinGW or "
-      "Visual Studio.\n#endif\n\n\n#ifdef __linux__\n#include "
+      "<stdarg.h> // for va_list\n#include <string.h> // memcpy\n\n#if "
+      "INTPTR_MAX == INT32_MAX\n    #define TARGET_IS_32BIT 1\n#elif "
+      "INTPTR_MAX == INT64_MAX\n    #define TARGET_IS_64BIT 1\n#else\n    "
+      "#error \"The environment is not 32 or 64-bit.\"\n#endif\n\n#if "
+      "defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || "
+      "defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || "
+      "defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) "
+      "|| defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || "
+      "defined(__MIBSEB__) \n    #define TARGET_ORDER_IS_BIG\n#elif "
+      "defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || "
+      "defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || "
+      "defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || "
+      "defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || "
+      "defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || "
+      "defined(_M_X64) || defined(_M_IX86) \n    #define "
+      "TARGET_ORDER_IS_LITTLE\n#else\n    #error \"Unknown architecture "
+      "endianness\"\n#endif\n\n#ifndef _WIN32\n#include <ctype.h>\n#include "
+      "<locale.h> // tolower\n#include <sys/time.h>\n#include <unistd.h> // "
+      "sleep\n#else\n#if defined(_MSC_VER)\n#pragma comment(lib, "
+      "\"Dbghelp.lib\")\n#endif\n#if defined(__MSVCRT_VERSION__) && "
+      "__MSVCRT_VERSION__ < __MSVCR90_DLL\n#error Please upgrade your MinGW "
+      "distribution to use msvcr90.dll or later.\n#endif\n#endif\n\n#if "
+      "defined(__CYGWIN__) && !defined(_WIN32)\n#error Cygwin is not "
+      "supported, please use MinGW or Visual Studio.\n#endif\n\n\n#ifdef "
+      "__linux__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait "
+      "uses wait on nix\n#endif\n\n#ifdef __FreeBSD__\n#include "
       "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
-      "nix\n#endif\n\n#ifdef __FreeBSD__\n#include <sys/types.h>\n#include "
+      "nix\n#endif\n\n#ifdef __DragonFly__\n#include <sys/types.h>\n#include "
       "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef "
-      "__DragonFly__\n#include <sys/types.h>\n#include <sys/wait.h> // "
-      "os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n#include "
-      "<sys/types.h>\n#include <sys/resource.h>\n#include <sys/wait.h> // "
-      "os__wait uses wait on nix\n#endif\n\n#define "
-      "EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION 0\n// Due "
-      "to a tcc bug, the length of an array needs to be specified, but GCC "
-      "crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define "
-      "TCCSKIP(x) x\n\n#ifdef __TINYC__\n#undef "
-      "EMPTY_STRUCT_DECLARATION\n#undef EMPTY_STRUCT_INITIALIZATION\n#define "
-      "EMPTY_STRUCT_DECLARATION char _dummy\n#define "
-      "EMPTY_STRUCT_INITIALIZATION 0\n#undef EMPTY_ARRAY_OF_ELEMS\n#define "
-      "EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef TCCSKIP\n#define "
-      "TCCSKIP(x)\n#endif\n\n#define OPTION_CAST(x) (x)\n\n#ifdef "
-      "_WIN32\n#define WINVER 0x0600\n#define _WIN32_WINNT 0x0600\n#define "
-      "WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define UNICODE\n#include "
-      "<windows.h>\n\n// must be included after <windows.h>\n#ifndef "
-      "__TINYC__\n#include <shellapi.h>\n#endif\n\n#include <io.h> // "
-      "_waccess\n#include <fcntl.h> // _O_U8TEXT\n#include <direct.h> // "
-      "_wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n// On MSVC these "
-      "are the same (as long as /volatile:ms is passed)\n#define _Atomic "
-      "volatile\n\n// MSVC cannot parse some things properly\n#undef "
-      "EMPTY_STRUCT_DECLARATION\n#undef OPTION_CAST\n\n#define "
-      "EMPTY_STRUCT_DECLARATION int ____dummy_variable\n#define "
-      "OPTION_CAST(x)\n#endif\n\n#else\n#include "
+      "__OpenBSD__\n#include <sys/types.h>\n#include "
+      "<sys/resource.h>\n#include <sys/wait.h> // os__wait uses wait on "
+      "nix\n#endif\n\n#define EMPTY_STRUCT_DECLARATION\n#define "
+      "EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an "
+      "array needs to be specified, but GCC crashes if it is...\n#define "
+      "EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#ifdef "
+      "__TINYC__\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
+      "EMPTY_STRUCT_INITIALIZATION\n#define EMPTY_STRUCT_DECLARATION char "
+      "_dummy\n#define EMPTY_STRUCT_INITIALIZATION 0\n#undef "
+      "EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef "
+      "TCCSKIP\n#define TCCSKIP(x)\n#endif\n\n#define OPTION_CAST(x) "
+      "(x)\n\n#ifdef _WIN32\n#define WINVER 0x0600\n#define _WIN32_WINNT "
+      "0x0600\n#define WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define "
+      "UNICODE\n#include <windows.h>\n\n// must be included after "
+      "<windows.h>\n#ifndef __TINYC__\n#include "
+      "<shellapi.h>\n#endif\n\n#include <io.h> // _waccess\n#include <fcntl.h> "
+      "// _O_U8TEXT\n#include <direct.h> // _wgetcwd\n//#include "
+      "<WinSock2.h>\n#ifdef _MSC_VER\n// On MSVC these are the same (as long "
+      "as /volatile:ms is passed)\n#define _Atomic volatile\n\n// MSVC cannot "
+      "parse some things properly\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
+      "OPTION_CAST\n\n#define EMPTY_STRUCT_DECLARATION int "
+      "____dummy_variable\n#define OPTION_CAST(x)\n#endif\n\n#else\n#include "
       "<pthread.h>\n#endif\n\n\n//============================== HELPER C "
       "MACROS =============================*/\n#define _PUSH(arr, val, tmp, "
       "tmp_typ) {tmp_typ tmp = (val); array_push(arr, &tmp);}\n#define "
