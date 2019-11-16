@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "328cceb"
+#define V_COMMIT_HASH "8d1eb75"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "dc50ed6"
+#define V_COMMIT_HASH "328cceb"
 #endif
 #include <inttypes.h>
 
@@ -6006,6 +6006,7 @@ void compiler__V_cc(compiler__V *v) {
   compiler__V_build_thirdparty_obj_files(&/* ? */ *v);
   string vexe = compiler__vexe_path();
   string vdir = os__dir(vexe);
+  printf("CC() %.*s\n", v->out_name.len, v->out_name.str);
   if (string_ends_with(v->out_name, tos3(".c")) ||
       string_ends_with(v->out_name, tos3(".js"))) {
 #ifndef _VJS
@@ -13362,7 +13363,9 @@ compiler__V *compiler__new_v(array_string args) {
     mod = string_replace(mod_path, os__path_separator, tos3("."));
     printf("Building module \"%.*s\" (dir=\"%.*s\")...\n", mod.len, mod.str,
            dir.len, dir.str);
-    out_name = mod;
+    if (!string_ends_with(out_name, tos3(".c"))) {
+      out_name = mod;
+    };
   };
   bool is_test = string_ends_with(dir, tos3("_test.v"));
   bool is_script =
