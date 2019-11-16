@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5a1de13"
+#define V_COMMIT_HASH "2964bf9"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0c5854e"
+#define V_COMMIT_HASH "5a1de13"
 #endif
 #include <inttypes.h>
 
@@ -470,19 +470,6 @@ struct benchmark__Benchmark {
   bool verbose;
 };
 
-struct compiler__Table {
-  map_compiler__Type typesmap;
-  array_compiler__Var consts;
-  map_compiler__Fn fns;
-  map_int obf_ids;
-  array_string modules;
-  array_string imports;
-  array_compiler__CFlag cflags;
-  int fn_cnt;
-  bool obfuscate;
-  array_compiler__VargAccess varg_access;
-};
-
 struct compiler__CGen {
   os__File out;
   string out_path;
@@ -551,6 +538,19 @@ struct compiler__MsvcStringFlags {
 struct compiler__Name {
   compiler__NameCategory cat;
   int idx;
+};
+
+struct compiler__Table {
+  map_compiler__Type typesmap;
+  array_compiler__Var consts;
+  map_compiler__Fn fns;
+  map_int obf_ids;
+  array_string modules;
+  array_string imports;
+  array_compiler__CFlag cflags;
+  int fn_cnt;
+  bool obfuscate;
+  array_compiler__VargAccess varg_access;
 };
 
 struct compiler__Preferences {
@@ -755,24 +755,6 @@ struct SymbolInfoContainer {
   char f_name_rest[254];
 };
 
-struct compiler__V {
-  compiler__OS os;
-  string out_name_c;
-  array_string files;
-  string dir;
-  compiler__Table *table;
-  compiler__CGen *cgen;
-  compiler__Preferences *pref;
-  string lang_dir;
-  string out_name;
-  string vroot;
-  string mod;
-  array_compiler__Parser parsers;
-  strings__Builder vgen_buf;
-  map_int file_parser_idx;
-  array_string cached_mods;
-};
-
 struct compiler__Fn {
   string name;
   string mod;
@@ -798,6 +780,24 @@ struct compiler__Fn {
   int fn_name_token_idx;
   string comptime_define;
   bool is_used;
+};
+
+struct compiler__V {
+  compiler__OS os;
+  string out_name_c;
+  array_string files;
+  string dir;
+  compiler__Table *table;
+  compiler__CGen *cgen;
+  compiler__Preferences *pref;
+  string lang_dir;
+  string out_name;
+  string vroot;
+  string mod;
+  array_compiler__Parser parsers;
+  strings__Builder vgen_buf;
+  map_int file_parser_idx;
+  array_string cached_mods;
 };
 
 struct compiler__Scanner {
@@ -1335,6 +1335,7 @@ void term__erase_line_tobeg();
 void term__erase_line_clear();
 void term__show_cursor();
 void term__hide_cursor();
+void compiler__Parser_inline_asm(compiler__Parser *p);
 void compiler__todo();
 bool compiler__no_mingw_installed();
 void compiler__V_cc(compiler__V *v);
@@ -1720,7 +1721,7 @@ string compiler__Parser_if_st(compiler__Parser *p, bool is_expr,
                               int elif_depth);
 void compiler__Parser_assert_statement(compiler__Parser *p);
 void compiler__Parser_return_st(compiler__Parser *p);
-string compiler__Parser_get_deferred_text(compiler__Parser p);
+string compiler__Parser_get_deferred_text(compiler__Parser *p);
 string compiler__prepend_mod(string mod, string name);
 string compiler__Parser_prepend_mod(compiler__Parser *p, string name);
 void compiler__Parser_go_statement(compiler__Parser *p);
@@ -2227,43 +2228,44 @@ array_string compiler__reserved_type_param_names;
 #define compiler__compiler__TokenKind_ellipsis 58
 #define compiler__compiler__TokenKind_keyword_beg 59
 #define compiler__compiler__TokenKind_key_as 60
-#define compiler__compiler__TokenKind_key_assert 61
-#define compiler__compiler__TokenKind_key_atomic 62
-#define compiler__compiler__TokenKind_key_break 63
-#define compiler__compiler__TokenKind_key_const 64
-#define compiler__compiler__TokenKind_key_continue 65
-#define compiler__compiler__TokenKind_key_defer 66
-#define compiler__compiler__TokenKind_key_else 67
-#define compiler__compiler__TokenKind_key_embed 68
-#define compiler__compiler__TokenKind_key_enum 69
-#define compiler__compiler__TokenKind_key_false 70
-#define compiler__compiler__TokenKind_key_for 71
-#define compiler__compiler__TokenKind_key_fn 72
-#define compiler__compiler__TokenKind_key_global 73
-#define compiler__compiler__TokenKind_key_go 74
-#define compiler__compiler__TokenKind_key_goto 75
-#define compiler__compiler__TokenKind_key_if 76
-#define compiler__compiler__TokenKind_key_import 77
-#define compiler__compiler__TokenKind_key_import_const 78
-#define compiler__compiler__TokenKind_key_in 79
-#define compiler__compiler__TokenKind_key_interface 80
-#define compiler__compiler__TokenKind_key_match 81
-#define compiler__compiler__TokenKind_key_module 82
-#define compiler__compiler__TokenKind_key_mut 83
-#define compiler__compiler__TokenKind_key_none 84
-#define compiler__compiler__TokenKind_key_return 85
-#define compiler__compiler__TokenKind_key_select 86
-#define compiler__compiler__TokenKind_key_sizeof 87
-#define compiler__compiler__TokenKind_key_struct 88
-#define compiler__compiler__TokenKind_key_switch 89
-#define compiler__compiler__TokenKind_key_true 90
-#define compiler__compiler__TokenKind_key_type 91
-#define compiler__compiler__TokenKind_key_orelse 92
-#define compiler__compiler__TokenKind_key_union 93
-#define compiler__compiler__TokenKind_key_pub 94
-#define compiler__compiler__TokenKind_key_static 95
-#define compiler__compiler__TokenKind_key_unsafe 96
-#define compiler__compiler__TokenKind_keyword_end 97
+#define compiler__compiler__TokenKind_key_asm 61
+#define compiler__compiler__TokenKind_key_assert 62
+#define compiler__compiler__TokenKind_key_atomic 63
+#define compiler__compiler__TokenKind_key_break 64
+#define compiler__compiler__TokenKind_key_const 65
+#define compiler__compiler__TokenKind_key_continue 66
+#define compiler__compiler__TokenKind_key_defer 67
+#define compiler__compiler__TokenKind_key_else 68
+#define compiler__compiler__TokenKind_key_embed 69
+#define compiler__compiler__TokenKind_key_enum 70
+#define compiler__compiler__TokenKind_key_false 71
+#define compiler__compiler__TokenKind_key_for 72
+#define compiler__compiler__TokenKind_key_fn 73
+#define compiler__compiler__TokenKind_key_global 74
+#define compiler__compiler__TokenKind_key_go 75
+#define compiler__compiler__TokenKind_key_goto 76
+#define compiler__compiler__TokenKind_key_if 77
+#define compiler__compiler__TokenKind_key_import 78
+#define compiler__compiler__TokenKind_key_import_const 79
+#define compiler__compiler__TokenKind_key_in 80
+#define compiler__compiler__TokenKind_key_interface 81
+#define compiler__compiler__TokenKind_key_match 82
+#define compiler__compiler__TokenKind_key_module 83
+#define compiler__compiler__TokenKind_key_mut 84
+#define compiler__compiler__TokenKind_key_none 85
+#define compiler__compiler__TokenKind_key_return 86
+#define compiler__compiler__TokenKind_key_select 87
+#define compiler__compiler__TokenKind_key_sizeof 88
+#define compiler__compiler__TokenKind_key_struct 89
+#define compiler__compiler__TokenKind_key_switch 90
+#define compiler__compiler__TokenKind_key_true 91
+#define compiler__compiler__TokenKind_key_type 92
+#define compiler__compiler__TokenKind_key_orelse 93
+#define compiler__compiler__TokenKind_key_union 94
+#define compiler__compiler__TokenKind_key_pub 95
+#define compiler__compiler__TokenKind_key_static 96
+#define compiler__compiler__TokenKind_key_unsafe 97
+#define compiler__compiler__TokenKind_keyword_end 98
 #define compiler__NrTokens 140
 array_string compiler__TokenStr;
 map_int compiler__KEYWORDS;
@@ -5988,6 +5990,38 @@ void term__erase_line_tobeg() { term__erase_line(tos3("1")); }
 void term__erase_line_clear() { term__erase_line(tos3("2")); }
 void term__show_cursor() { print(tos3("\x1b[?25h")); }
 void term__hide_cursor() { print(tos3("\x1b[?25l")); }
+void compiler__Parser_inline_asm(compiler__Parser *p) {
+  if (!p->inside_unsafe) {
+    compiler__Parser_error(p, tos3("asm() needs to be run unside `unsafe {}`"));
+  };
+  compiler__Parser_next(p);
+  compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
+  string s = compiler__Parser_check_string(p);
+  compiler__Parser_genln(p, _STR("asm(\"%.*s\"", s.len, s.str));
+  while (p->tok == compiler__compiler__TokenKind_str) {
+
+    compiler__Parser_genln(p, _STR("\"%.*s\"", p->lit.len, p->lit.str));
+    compiler__Parser_next(p);
+  };
+  while (p->tok == compiler__compiler__TokenKind_colon) {
+
+    compiler__Parser_next(p);
+    string arg = compiler__Parser_check_string(p);
+    compiler__Parser_gen(p, _STR(": \"%.*s\"", arg.len, arg.str));
+    if (p->tok == compiler__compiler__TokenKind_lpar) {
+      compiler__Parser_next(p);
+      string var_name = compiler__Parser_check_name(p);
+      if (!compiler__Parser_known_var(p, var_name)) {
+        compiler__Parser_error(
+            p, _STR("unknown variable `%.*s`", var_name.len, var_name.str));
+      };
+      compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
+      compiler__Parser_genln(p, _STR("(%.*s)", var_name.len, var_name.str));
+    };
+  };
+  compiler__Parser_genln(p, tos3(");"));
+  compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
+}
 void compiler__todo() {}
 bool compiler__no_mingw_installed() {
 #ifndef _WIN32
@@ -15968,6 +16002,8 @@ string compiler__Parser_statement(compiler__Parser *p, bool add_semi) {
     compiler__Parser_go_statement(p);
   } else if (tmp43 == compiler__compiler__TokenKind_key_assert) {
     compiler__Parser_assert_statement(p);
+  } else if (tmp43 == compiler__compiler__TokenKind_key_asm) {
+    compiler__Parser_inline_asm(p);
   } else // default:
   {
     string typ = compiler__Parser_expression(p);
@@ -17542,7 +17578,7 @@ void compiler__Parser_assert_statement(compiler__Parser *p) {
 void compiler__Parser_return_st(compiler__Parser *p) {
   compiler__Parser_check(p, compiler__compiler__TokenKind_key_return);
   ;
-  string deferred_text = compiler__Parser_get_deferred_text(*p);
+  string deferred_text = compiler__Parser_get_deferred_text(&/* ? */ *p);
   bool fn_returns = string_ne(p->cur_fn.typ, tos3("void"));
   if (fn_returns) {
     if (p->tok == compiler__compiler__TokenKind_rcbr) {
@@ -17652,9 +17688,9 @@ void compiler__Parser_return_st(compiler__Parser *p) {
   };
   p->returns = 1;
 }
-string compiler__Parser_get_deferred_text(compiler__Parser p) {
+string compiler__Parser_get_deferred_text(compiler__Parser *p) {
   string deferred_text = tos3("");
-  array_string tmp138 = p.cur_fn.defer_text;
+  array_string tmp138 = p->cur_fn.defer_text;
   for (int tmp139 = 0; tmp139 < tmp138.len; tmp139++) {
     string text = ((string *)tmp138.data)[tmp139];
 
@@ -20871,6 +20907,8 @@ array_string compiler__build_token_str() {
             &(string[]){tos3("if")});
   array_set(&/*q*/ s, compiler__compiler__TokenKind_key_else,
             &(string[]){tos3("else")});
+  array_set(&/*q*/ s, compiler__compiler__TokenKind_key_asm,
+            &(string[]){tos3("asm")});
   array_set(&/*q*/ s, compiler__compiler__TokenKind_key_return,
             &(string[]){tos3("return")});
   array_set(&/*q*/ s, compiler__compiler__TokenKind_key_module,
@@ -20941,7 +20979,7 @@ array_string compiler__build_token_str() {
 }
 compiler__TokenKind compiler__key_to_token(string key) {
   int tmp3 = 0;
-  bool tmp4 = map_get(/*token.v : 247*/ compiler__KEYWORDS, key, &tmp3);
+  bool tmp4 = map_get(/*token.v : 249*/ compiler__KEYWORDS, key, &tmp3);
 
   compiler__TokenKind a = ((compiler__TokenKind)(tmp3));
   return a;
