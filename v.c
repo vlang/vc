@@ -1,11 +1,14 @@
-#define V_COMMIT_HASH "56fee68"
+#define V_COMMIT_HASH "a545ccb"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "791cee8"
+#define V_COMMIT_HASH "56fee68"
 #endif
+#include <inttypes.h>
+
+//#include <inttypes.h>  // int64_t etc
+//#include <stdint.h>  // int64_t etc
 
 //================================== TYPEDEFS ================================*/
 
-#include <inttypes.h> // int64_t etc
 typedef int64_t i64;
 typedef int16_t i16;
 typedef int8_t i8;
@@ -34,6 +37,7 @@ typedef int bool;
 #define false 0
 #endif
 
+//#include <inttypes.h>  // int64_t etc
 #include <stdio.h> // TODO remove all these includes, define all function signatures and types manually
 #include <stdlib.h>
 
@@ -12293,6 +12297,11 @@ void compiler__V_compile(compiler__V *v) {
   cgen->nogen = 0;
 #ifdef _VJS
 #else
+  if (!v->pref->is_bare) {
+    compiler__CGen_genln(cgen, tos3("#include <inttypes.h>"));
+  } else {
+    compiler__CGen_genln(cgen, tos3("#include <stdint.h>"));
+  };
   compiler__CGen_genln(cgen, compiler__c_builtin_types);
   if (!v->pref->is_bare) {
     compiler__CGen_genln(cgen, compiler__c_headers);
@@ -21391,24 +21400,24 @@ void init() {
   os__MAP_ANONYMOUS = 0x20;
   os__path_separator = tos3("/");
   compiler__c_headers = tos3(
-      "\n\n#include <stdio.h>  // TODO remove all these includes, define all "
-      "function signatures and types manually\n#include "
-      "<stdlib.h>\n\n//#include \"fns.h\"\n#include <signal.h>\n#include "
-      "<stdarg.h> // for va_list\n#include <string.h> // memcpy\n\n#if "
-      "INTPTR_MAX == INT32_MAX\n    #define TARGET_IS_32BIT 1\n#elif "
-      "INTPTR_MAX == INT64_MAX\n    #define TARGET_IS_64BIT 1\n#else\n    "
-      "#error \"The environment is not 32 or 64-bit.\"\n#endif\n\n#if "
-      "defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || "
-      "defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || "
-      "defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) "
-      "|| defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || "
-      "defined(__MIBSEB__) \n    #define TARGET_ORDER_IS_BIG\n#elif "
-      "defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || "
-      "defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || "
-      "defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || "
+      "\n\n//#include <inttypes.h>  // int64_t etc\n#include <stdio.h>  // "
+      "TODO remove all these includes, define all function signatures and "
+      "types manually\n#include <stdlib.h>\n\n//#include \"fns.h\"\n#include "
+      "<signal.h>\n#include <stdarg.h> // for va_list\n#include <string.h> // "
+      "memcpy\n\n#if INTPTR_MAX == INT32_MAX\n    #define TARGET_IS_32BIT "
+      "1\n#elif INTPTR_MAX == INT64_MAX\n    #define TARGET_IS_64BIT "
+      "1\n#else\n    #error \"The environment is not 32 or "
+      "64-bit.\"\n#endif\n\n#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == "
+      "__ORDER_BIG_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == "
+      "__BIG_ENDIAN || defined(__BIG_ENDIAN__) || defined(__ARMEB__) || "
+      "defined(__THUMBEB__) || defined(__AARCH64EB__) || defined(_MIBSEB) || "
+      "defined(__MIBSEB) || defined(__MIBSEB__)\n    #define "
+      "TARGET_ORDER_IS_BIG\n#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == "
+      "__ORDER_LITTLE_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == "
+      "__LITTLE_ENDIAN || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || "
       "defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || "
       "defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || "
-      "defined(_M_X64) || defined(_M_IX86) \n    #define "
+      "defined(_M_X64) || defined(_M_IX86)\n    #define "
       "TARGET_ORDER_IS_LITTLE\n#else\n    #error \"Unknown architecture "
       "endianness\"\n#endif\n\n#ifndef _WIN32\n#include <ctype.h>\n#include "
       "<locale.h> // tolower\n#include <sys/time.h>\n#include <unistd.h> // "
@@ -21469,18 +21478,19 @@ void init() {
       "bool = function() {}\nvar rune = function() {}\nvar map_string = "
       "function() {}\nvar map_int = function() {}\n\n");
   compiler__c_builtin_types = tos3(
-      "\n\n//================================== TYPEDEFS "
-      "================================*/\n\n#include <inttypes.h>  // int64_t "
-      "etc\ntypedef int64_t i64;\ntypedef int16_t i16;\ntypedef int8_t "
-      "i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint16_t "
-      "u16;\ntypedef uint8_t byte;\ntypedef uint32_t rune;\ntypedef float "
-      "f32;\ntypedef double f64;\ntypedef unsigned char* byteptr;\ntypedef "
-      "int* intptr;\ntypedef void* voidptr;\ntypedef struct array "
-      "array;\ntypedef struct map map;\ntypedef array array_string;\ntypedef "
-      "array array_int;\ntypedef array array_byte;\ntypedef array "
-      "array_f32;\ntypedef array array_f64;\ntypedef map map_int;\ntypedef map "
-      "map_string;\n#ifndef bool\n	typedef int bool;\n	#define true "
-      "1\n	#define false 0\n#endif\n");
+      "\n\n//#include <inttypes.h>  // int64_t etc\n//#include <stdint.h>  // "
+      "int64_t etc\n\n//================================== TYPEDEFS "
+      "================================*/\n\ntypedef int64_t i64;\ntypedef "
+      "int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef "
+      "uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef "
+      "uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef "
+      "unsigned char* byteptr;\ntypedef int* intptr;\ntypedef void* "
+      "voidptr;\ntypedef struct array array;\ntypedef struct map map;\ntypedef "
+      "array array_string;\ntypedef array array_int;\ntypedef array "
+      "array_byte;\ntypedef array array_f32;\ntypedef array "
+      "array_f64;\ntypedef map map_int;\ntypedef map map_string;\n#ifndef "
+      "bool\n	typedef int bool;\n	#define true 1\n	#define false "
+      "0\n#endif\n");
   compiler__warn_match_arrow =
       string_add(tos3("=> is no longer needed in match statements, use\n"),
                  tos3("match foo {\n	1 { bar }\n	2 { baz }\n	else { "
