@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0c5854e"
+#define V_COMMIT_HASH "5a1de13"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8d1eb75"
+#define V_COMMIT_HASH "0c5854e"
 #endif
 #include <inttypes.h>
 
@@ -11682,8 +11682,10 @@ void compiler__Parser_index_get(compiler__Parser *p, string typ, int fn_ph,
                                      index_expr.len, index_expr.str));
       };
     };
-  } else if (cfg.is_str && !p->builtin_mod && !p->pref->is_bare) {
-    if (cfg.is_slice) {
+  } else if (cfg.is_str && !p->builtin_mod) {
+    if (p->pref->is_bare) {
+      compiler__Parser_gen(p, index_expr);
+    } else if (cfg.is_slice) {
       compiler__Parser_gen(
           p, _STR("string_substr2(%.*s)", index_expr.len, index_expr.str));
     } else {
@@ -11739,7 +11741,7 @@ string compiler__Table_fn_gen_name(compiler__Table *table, compiler__Fn *f) {
       !string_ends_with(name, tos3("_str")) &&
       !string_contains(name, tos3("contains"))) {
     int tmp28 = 0;
-    bool tmp29 = map_get(/*gen_c.v : 275*/ table->obf_ids, name, &tmp28);
+    bool tmp29 = map_get(/*gen_c.v : 278*/ table->obf_ids, name, &tmp28);
 
     int idx = tmp28;
     if (idx == 0) {
@@ -16763,7 +16765,7 @@ string compiler__Parser_index_expr(compiler__Parser *p, string typ_,
     compiler__Parser_check(p, compiler__compiler__TokenKind_lsbr);
     if (is_str) {
       typ = tos3("byte");
-      if (p->builtin_mod) {
+      if (p->builtin_mod || p->pref->is_bare) {
         compiler__Parser_gen(p, tos3(".str["));
         close_bracket = 1;
       } else {
