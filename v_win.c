@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8d1eb75"
+#define V_COMMIT_HASH "0c5854e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "328cceb"
+#define V_COMMIT_HASH "8d1eb75"
 #endif
 #include <inttypes.h>
 
@@ -6006,7 +6006,6 @@ void compiler__V_cc(compiler__V *v) {
   compiler__V_build_thirdparty_obj_files(&/* ? */ *v);
   string vexe = compiler__vexe_path();
   string vdir = os__dir(vexe);
-  printf("CC() %.*s\n", v->out_name.len, v->out_name.str);
   if (string_ends_with(v->out_name, tos3(".c")) ||
       string_ends_with(v->out_name, tos3(".js"))) {
 #ifndef _VJS
@@ -8571,7 +8570,8 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
   };
   string name = p->lit;
   if ((string_eq(name, tos3("r")) || string_eq(name, tos3("c"))) &&
-      compiler__Parser_peek(&/* ? */ *p) == compiler__compiler__TokenKind_str) {
+      compiler__Parser_peek(&/* ? */ *p) == compiler__compiler__TokenKind_str &&
+      p->prev_tok != compiler__compiler__TokenKind_dollar) {
     compiler__Parser_string_expr(p);
     return tos3("string");
   };
