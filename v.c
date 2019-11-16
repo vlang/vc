@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a545ccb"
+#define V_COMMIT_HASH "dc50ed6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "56fee68"
+#define V_COMMIT_HASH "a545ccb"
 #endif
 #include <inttypes.h>
 
@@ -11339,7 +11339,7 @@ void compiler__Parser_index_get(compiler__Parser *p, string typ, int fn_ph,
                                      index_expr.len, index_expr.str));
       };
     };
-  } else if (cfg.is_str && !p->builtin_mod) {
+  } else if (cfg.is_str && !p->builtin_mod && !p->pref->is_bare) {
     if (cfg.is_slice) {
       compiler__Parser_gen(
           p, _STR("string_substr2(%.*s)", index_expr.len, index_expr.str));
