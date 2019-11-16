@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1dadf9d"
+#define V_COMMIT_HASH "d1b8d34"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e577b40"
+#define V_COMMIT_HASH "1dadf9d"
 #endif
 
 //================================== TYPEDEFS ================================*/
@@ -1922,6 +1922,10 @@ int os__STD_OUTPUT_HANDLE;
 int os__STD_ERROR_HANDLE;
 array_string os__args;
 #define os__MAX_PATH 4096
+#define os__PROT_READ 1
+#define os__PROT_WRITE 2
+int os__MAP_PRIVATE;
+int os__MAP_ANONYMOUS;
 string os__path_separator;
 string compiler__c_headers;
 string compiler__js_headers;
@@ -5706,11 +5710,11 @@ void compiler__V_cc(compiler__V *v) {
     v->out_name = string_add(v->out_name, tos3(".so"));
   };
   if (v->pref->is_bare) {
-    _PUSH(
-        &a,
-        (/*typ = array_string   tmp_typ=string*/ _STR(
-            "-static -nostdlib %.*s/vlib/os/bare/bare.S", vdir.len, vdir.str)),
-        tmp3, string);
+    _PUSH(&a,
+          (/*typ = array_string   tmp_typ=string*/ _STR(
+              "-static -ffreestanding -nostdlib %.*s/vlib/os/bare/bare.S",
+              vdir.len, vdir.str)),
+          tmp3, string);
   };
   if (v->pref->build_mode == compiler__compiler__BuildMode_build_module) {
     string out_dir =
@@ -21383,6 +21387,8 @@ void init() {
   os__STD_ERROR_HANDLE = -12;
   os__args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+  os__MAP_PRIVATE = 0x02;
+  os__MAP_ANONYMOUS = 0x20;
   os__path_separator = tos3("/");
   compiler__c_headers = tos3(
       "\n\n#include <stdio.h>  // TODO remove all these includes, define all "

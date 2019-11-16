@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1dadf9d"
+#define V_COMMIT_HASH "d1b8d34"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e577b40"
+#define V_COMMIT_HASH "1dadf9d"
 #endif
 
 //================================== TYPEDEFS ================================*/
@@ -6070,11 +6070,11 @@ void compiler__V_cc(compiler__V *v) {
     v->out_name = string_add(v->out_name, tos3(".so"));
   };
   if (v->pref->is_bare) {
-    _PUSH(
-        &a,
-        (/*typ = array_string   tmp_typ=string*/ _STR(
-            "-static -nostdlib %.*s/vlib/os/bare/bare.S", vdir.len, vdir.str)),
-        tmp3, string);
+    _PUSH(&a,
+          (/*typ = array_string   tmp_typ=string*/ _STR(
+              "-static -ffreestanding -nostdlib %.*s/vlib/os/bare/bare.S",
+              vdir.len, vdir.str)),
+          tmp3, string);
   };
   if (v->pref->build_mode == compiler__compiler__BuildMode_build_module) {
     string out_dir =
