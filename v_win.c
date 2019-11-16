@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6c51d0b"
+#define V_COMMIT_HASH "2391c72"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2964bf9"
+#define V_COMMIT_HASH "6c51d0b"
 #endif
 #include <inttypes.h>
 
@@ -6085,6 +6085,13 @@ void compiler__V_cc(compiler__V *v) {
   };
 #endif
   ;
+  array_string a = new_array_from_c_array(
+      10, 10, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 10){
+          v->pref->cflags, tos3("-std=gnu11"), tos3("-Wall"), tos3("-Wextra"),
+          tos3("-Wno-unused-variable"), tos3("-Wno-unused-but-set-variable"),
+          tos3("-Wno-unused-parameter"), tos3("-Wno-unused-result"),
+          tos3("-Wno-missing-braces"), tos3("-Wno-unused-label")});
   if (v->pref->fast) {
 #ifdef __linux__
 #else
@@ -6095,13 +6102,6 @@ void compiler__V_cc(compiler__V *v) {
   compiler__V_log(&/* ? */ *v,
                   _STR("cc() isprod=%d outname=%.*s", v->pref->is_prod,
                        v->out_name.len, v->out_name.str));
-  array_string a = new_array_from_c_array(
-      10, 10, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 10){
-          v->pref->cflags, tos3("-std=gnu11"), tos3("-Wall"), tos3("-Wextra"),
-          tos3("-Wno-unused-variable"), tos3("-Wno-unused-but-set-variable"),
-          tos3("-Wno-unused-parameter"), tos3("-Wno-unused-result"),
-          tos3("-Wno-missing-braces"), tos3("-Wno-unused-label")});
   if (v->pref->is_so) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-shared -fPIC ")),
           tmp2, string);
