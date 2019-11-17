@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "43863ed"
+#define V_COMMIT_HASH "6d7fe1f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6ae8457"
+#define V_COMMIT_HASH "43863ed"
 #endif
 #include <inttypes.h>
 
@@ -20734,13 +20734,13 @@ void compiler__launch_tool(string tname) {
   string vexe = compiler__vexe_path();
   string vroot = os__dir(vexe);
   array_string oargs = os__args;
-  array_set(&/*q*/ oargs, 0, &(string[]){vexe});
+  array_set(&/*q*/ oargs, 0, &(string[]){_STR("\"%.*s\"", vexe.len, vexe.str)});
   string tool_exe = os__realpath(
       _STR("%.*s/tools/%.*s", vroot.len, vroot.str, tname.len, tname.str));
   string tool_source = os__realpath(
       _STR("%.*s/tools/%.*s.v", vroot.len, vroot.str, tname.len, tname.str));
   string tool_args = array_string_join(oargs, tos3(" "));
-  string tool_command = _STR("%.*s %.*s", tool_exe.len, tool_exe.str,
+  string tool_command = _STR("\"%.*s\" %.*s", tool_exe.len, tool_exe.str,
                              tool_args.len, tool_args.str);
   bool tool_should_be_recompiled = 0;
   if (!os__file_exists(tool_exe)) {
@@ -20755,8 +20755,8 @@ void compiler__launch_tool(string tname) {
     };
   };
   if (tool_should_be_recompiled) {
-    string compilation_command =
-        _STR("%.*s %.*s", vexe.len, vexe.str, tool_source.len, tool_source.str);
+    string compilation_command = _STR("\"%.*s\" \"%.*s\"", vexe.len, vexe.str,
+                                      tool_source.len, tool_source.str);
     Option_os__Result tmp1 = os__exec(compilation_command);
     os__Result tool_compilation;
     if (!tmp1.ok) {
