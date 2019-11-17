@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "be7cf3e"
+#define V_COMMIT_HASH "6ae8457"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "200fcd4"
+#define V_COMMIT_HASH "be7cf3e"
 #endif
 #include <inttypes.h>
 
@@ -1174,7 +1174,7 @@ int utf8_getchar();
 strings__Builder strings__new_builder(int initial_size);
 void strings__Builder_write(strings__Builder *b, string s);
 void strings__Builder_writeln(strings__Builder *b, string s);
-string strings__Builder_str(strings__Builder b);
+string strings__Builder_str(strings__Builder *b);
 void strings__Builder_free(strings__Builder *b);
 int strings__levenshtein_distance(string a, string b);
 f32 strings__levenshtein_distance_percentage(string a, string b);
@@ -2587,7 +2587,7 @@ string array_string_str(array_string a) {
     };
   };
   strings__Builder_write(&/* ? */ sb, tos3("]"));
-  return strings__Builder_str(sb);
+  return strings__Builder_str(&/* ? */ sb);
 }
 string array_bool_str(array_bool a) {
   strings__Builder sb = strings__new_builder(a.len * 3);
@@ -2605,7 +2605,7 @@ string array_bool_str(array_bool a) {
     };
   };
   strings__Builder_write(&/* ? */ sb, tos3("]"));
-  return strings__Builder_str(sb);
+  return strings__Builder_str(&/* ? */ sb);
 }
 string array_byte_hex(array_byte b) {
   byte *hex = v_malloc(b.len * 2 + 1);
@@ -3333,7 +3333,7 @@ string map_string_str(map_string m) {
         _STR("  \"%.*s\" => \"%.*s\"", key.len, key.str, val.len, val.str));
   };
   strings__Builder_writeln(&/* ? */ sb, tos3("}"));
-  return strings__Builder_str(sb);
+  return strings__Builder_str(&/* ? */ sb);
 }
 Option opt_ok(void *data, int size) {
   if (size >= 300) {
@@ -4452,8 +4452,9 @@ void strings__Builder_writeln(strings__Builder *b, string s) {
   _PUSH(&b->buf, (/*typ = array_byte   tmp_typ=byte*/ '\n'), tmp1, byte);
   b->len += s.len + 1;
 }
-string strings__Builder_str(strings__Builder b) {
-  return (tos((byte *)b.buf.data, b.len));
+string strings__Builder_str(strings__Builder *b) {
+  _PUSH(&b->buf, (/*typ = array_byte   tmp_typ=byte*/ '\0'), tmp2, byte);
+  return (tos((byte *)b->buf.data, b->len));
 }
 void strings__Builder_free(strings__Builder *b) {}
 int strings__levenshtein_distance(string a, string b) {
@@ -7330,7 +7331,7 @@ string compiler__V_interface_table(compiler__V *v) {
     };
     continue;
   };
-  return strings__Builder_str(sb);
+  return strings__Builder_str(&/* ? */ sb);
 }
 void compiler__Parser_error(compiler__Parser *p, string s) {
   compiler__Parser_error_with_token_index(p, s, p->token_idx - 1);
@@ -8012,7 +8013,8 @@ void compiler__Parser_gen_struct_str(compiler__Parser *p, compiler__Type typ) {
   };
   strings__Builder_writeln(&/* ? */ sb, tos3("}'"));
   strings__Builder_writeln(&/* ? */ sb, tos3("}"));
-  strings__Builder_writeln(&/* ? */ p->v->vgen_buf, strings__Builder_str(sb));
+  strings__Builder_writeln(&/* ? */ p->v->vgen_buf,
+                           strings__Builder_str(&/* ? */ sb));
   _PUSH(&p->cgen->fns,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "string %.*s_str();", typ.name.len, typ.name.str)),
@@ -11150,7 +11152,7 @@ string compiler__Fn_typ_str(compiler__Fn *f) {
   if (string_ne(f->typ, tos3("void"))) {
     strings__Builder_write(&/* ? */ sb, _STR(" %.*s", f->typ.len, f->typ.str));
   };
-  return strings__Builder_str(sb);
+  return strings__Builder_str(&/* ? */ sb);
 }
 string compiler__Fn_str_args(compiler__Fn *f, compiler__Table *table) {
   string s = tos3("");
@@ -11701,7 +11703,7 @@ string compiler__types_to_c(array_compiler__Type types,
       strings__Builder_writeln(&/* ? */ sb, tos3("@end"));
     };
   };
-  return strings__Builder_str(sb);
+  return strings__Builder_str(&/* ? */ sb);
 }
 void compiler__Parser_index_get(compiler__Parser *p, string typ, int fn_ph,
                                 compiler__IndexConfig cfg) {
@@ -12751,8 +12753,8 @@ void compiler__V_compile(compiler__V *v) {
   if (v->pref->build_mode == compiler__compiler__BuildMode_build_module) {
     compiler__generate_vh(v->dir);
   };
-  compiler__Parser vgen_parser =
-      compiler__V_new_parser_from_string(v, strings__Builder_str(v->vgen_buf));
+  compiler__Parser vgen_parser = compiler__V_new_parser_from_string(
+      v, strings__Builder_str(&/* ? */ v->vgen_buf));
   vgen_parser.is_vgen = 1;
   strings__Builder_free(&/* ? */ v->vgen_buf);
   compiler__Parser_parse(&/* ? */ vgen_parser, compiler__compiler__Pass_main);
@@ -12787,7 +12789,7 @@ void compiler__V_compile(compiler__V *v) {
                              compiler__V_prof_counters(&/* ? */ *v));
   };
   array_set(&/*q*/ cgen->lines, defs_pos,
-            &(string[]){strings__Builder_str(def)});
+            &(string[]){strings__Builder_str(&/* ? */ def)});
   compiler__V_generate_init(v);
   compiler__V_generate_main(v);
   compiler__V_generate_hot_reload_code(&/* ? */ *v);
@@ -13954,9 +13956,10 @@ void compiler__generate_vh(string mod) {
     };
   };
   string result = string_add(
-      string_add(strings__Builder_str(g.types), strings__Builder_str(g.consts)),
-      string_replace(string_replace(strings__Builder_str(g.fns), tos3("\n\n\n"),
-                                    tos3("\n")),
+      string_add(strings__Builder_str(&/* ? */ g.types),
+                 strings__Builder_str(&/* ? */ g.consts)),
+      string_replace(string_replace(strings__Builder_str(&/* ? */ g.fns),
+                                    tos3("\n\n\n"), tos3("\n")),
                      tos3("\n\n"), tos3("\n")));
   os__File_writeln(
       out, string_replace(string_replace(result, tos3("[ ] "), tos3("[]")),
@@ -18375,10 +18378,10 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
                qprefix.str, tmp.len, tmp.str, qprefix.len, qprefix.str,
                table_name.len, table_name.str, qprefix.len, qprefix.str,
                tmp.len, tmp.str, qprefix.len, qprefix.str, qprefix.len,
-               qprefix.str, strings__Builder_str(obj_gen).len,
-               strings__Builder_str(obj_gen).str, qprefix.len, qprefix.str,
-               tmp.len, tmp.str, qprefix.len, qprefix.str, tmp.len, tmp.str,
-               table_name.len, table_name.str));
+               qprefix.str, strings__Builder_str(&/* ? */ obj_gen).len,
+               strings__Builder_str(&/* ? */ obj_gen).str, qprefix.len,
+               qprefix.str, tmp.len, tmp.str, qprefix.len, qprefix.str, tmp.len,
+               tmp.str, table_name.len, table_name.str));
       compiler__CGen_resetln(p->cgen, _STR("opt_%.*s%.*s", qprefix.len,
                                            qprefix.str, tmp.len, tmp.str));
     } else {
@@ -18402,10 +18405,10 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
                table_name.len, table_name.str, qprefix.len, qprefix.str,
                qprefix.len, qprefix.str, qprefix.len, qprefix.str,
                table_name.len, table_name.str, qprefix.len, qprefix.str,
-               tmp.len, tmp.str, strings__Builder_str(obj_gen).len,
-               strings__Builder_str(obj_gen).str, qprefix.len, qprefix.str,
-               tmp.len, tmp.str, qprefix.len, qprefix.str, tmp.len, tmp.str,
-               tmp.len, tmp.str, table_name.len, table_name.str));
+               tmp.len, tmp.str, strings__Builder_str(&/* ? */ obj_gen).len,
+               strings__Builder_str(&/* ? */ obj_gen).str, qprefix.len,
+               qprefix.str, tmp.len, tmp.str, qprefix.len, qprefix.str, tmp.len,
+               tmp.str, tmp.len, tmp.str, table_name.len, table_name.str));
       compiler__CGen_resetln(p->cgen, _STR("%.*sarr_%.*s", qprefix.len,
                                            qprefix.str, tmp.len, tmp.str));
     };
@@ -19697,7 +19700,7 @@ string compiler__Table_debug_fns(compiler__Table *t) {
 
     strings__Builder_writeln(&/* ? */ s, f.name);
   };
-  return strings__Builder_str(s);
+  return strings__Builder_str(&/* ? */ s);
 }
 bool compiler__is_number_type(string typ) {
   return (_IN(string, (typ), compiler__integer_types)) ||
@@ -21173,7 +21176,8 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
 
     return;
   };
-  string s = string_trim_space(strings__Builder_str(p->scanner->fmt_out));
+  string s =
+      string_trim_space(strings__Builder_str(&/* ? */ p->scanner->fmt_out));
   if (string_eq(s, tos3(""))) {
 
     return;
@@ -21755,7 +21759,7 @@ string vweb_dot_tmpl__compile_template(string path) {
   strings__Builder_writeln(&/* ? */ s, vweb_dot_tmpl__STR_END);
   strings__Builder_writeln(&/* ? */ s, tos3("tmpl_res := sb.str() "));
   strings__Builder_writeln(&/* ? */ s, tos3("return tmpl_res }"));
-  return strings__Builder_str(s);
+  return strings__Builder_str(&/* ? */ s);
 }
 benchmark__Benchmark benchmark__new_benchmark() {
   return (benchmark__Benchmark){
