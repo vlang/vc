@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3c03051"
+#define V_COMMIT_HASH "200fcd4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2391c72"
+#define V_COMMIT_HASH "3c03051"
 #endif
 #include <inttypes.h>
 
@@ -14604,8 +14604,9 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
   };
   ;
   p->builtin_mod = string_eq(p->mod, tos3("builtin"));
-  p->can_chash =
-      string_eq(p->mod, tos3("ui")) || string_eq(p->mod, tos3("darwin"));
+  p->can_chash = string_eq(p->mod, tos3("ui")) ||
+                 string_eq(p->mod, tos3("darwin")) ||
+                 string_eq(p->mod, tos3("clipboard"));
   string fq_mod =
       (p->pref->build_mode == compiler__compiler__BuildMode_build_module &&
        string_ends_with(p->v->mod, p->mod))
