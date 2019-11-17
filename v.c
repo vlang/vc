@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6d7fe1f"
+#define V_COMMIT_HASH "ffb72e8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "43863ed"
+#define V_COMMIT_HASH "6d7fe1f"
 #endif
 #include <inttypes.h>
 
@@ -2141,23 +2141,24 @@ array_compiler__TokenKind compiler__AssignTokens;
       "stats when compiling/running tests. Try `v -stats test .`\n\n  -cache " \
       "           Turn on usage of the precompiled module cache.\n           " \
       "         It very significantly speeds up secondary compilations.\n\n  " \
-      "-obf              Obfuscate the resulting binary.\n  -                " \
-      " Shorthand for `v runrepl`.\n\nOptions for debugging/troubleshooting "  \
-      "v programs:\n  -g                Generate debugging information in "    \
-      "the backtraces. Add *V* line numbers to the generated executable.\n  "  \
-      "-cg               Same as -g, but add *C* line numbers to the "         \
-      "generated executable instead of *V* line numbers.\n  -keep_c          " \
-      " Do NOT remove the generated .tmp.c files after compilation.\n        " \
-      "            It is useful when using debuggers like gdb/visual studio, " \
-      "when given after -g / -cg .\n  -show_c_cmd       Print the full C "     \
-      "compilation command and how much time it took.\n  -cc <ccompiler>   "   \
-      "Specify which C compiler you want to use as a C backend.\n            " \
-      "        The C backend compiler should be able to handle C99 "           \
-      "compatible C code.\n                    Common C compilers are gcc, "   \
-      "clang, tcc, icc, cl...\n  -cflags <flags>   Pass additional C flags "   \
-      "to the C backend compiler.\n                    Example: -cflags "      \
-      "`sdl2-config --cflags`\n\nCommands:\n  up                Update V. "    \
-      "Run `v up` at least once per day, since V development is rapid and "    \
+      "-obf              Obfuscate the resulting binary.\n  -compress        " \
+      " Compress the resulting binary.\n  -                 Shorthand for `v " \
+      "runrepl`.\n\nOptions for debugging/troubleshooting v programs:\n  -g  " \
+      "              Generate debugging information in the backtraces. Add "   \
+      "*V* line numbers to the generated executable.\n  -cg               "    \
+      "Same as -g, but add *C* line numbers to the generated executable "      \
+      "instead of *V* line numbers.\n  -keep_c           Do NOT remove the "   \
+      "generated .tmp.c files after compilation.\n                    It is "  \
+      "useful when using debuggers like gdb/visual studio, when given after "  \
+      "-g / -cg .\n  -show_c_cmd       Print the full C compilation command "  \
+      "and how much time it took.\n  -cc <ccompiler>   Specify which C "       \
+      "compiler you want to use as a C backend.\n                    The C "   \
+      "backend compiler should be able to handle C99 compatible C code.\n    " \
+      "                Common C compilers are gcc, clang, tcc, icc, cl...\n  " \
+      "-cflags <flags>   Pass additional C flags to the C backend "            \
+      "compiler.\n                    Example: -cflags `sdl2-config "          \
+      "--cflags`\n\nCommands:\n  up                Update V. Run `v up` at "   \
+      "least once per day, since V development is rapid and "                  \
       "features/bugfixes are added constantly.\n  run <file.v>      Build "    \
       "and execute the V program in file.v. You can add arguments for the V "  \
       "program *after* the file name.\n  build <module>    Compile a module "  \
