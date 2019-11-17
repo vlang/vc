@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "200fcd4"
+#define V_COMMIT_HASH "be7cf3e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3c03051"
+#define V_COMMIT_HASH "200fcd4"
 #endif
 #include <inttypes.h>
 
@@ -1096,7 +1096,7 @@ Option_string os__read_file(string path);
 int os__file_size(string path);
 void os__mv(string old, string new);
 Option_bool os__cp(string old, string new);
-Option_bool os__cp_r(string source_path, string dest_path, bool overwrite);
+Option_bool os__cp_r(string osource_path, string odest_path, bool overwrite);
 FILE *os__vfopen(string path, string mode);
 array_string os__read_lines(string path);
 array_ustring os__read_ulines(string path);
@@ -1151,6 +1151,7 @@ void os__flush_stdout();
 void os__print_backtrace();
 void os__mkdir_all(string path);
 string os__join(string base, varg_string *dirs);
+string os__tmpdir();
 array_string os__init_os_args(int argc, byteptr *argv);
 string os__get_error_msg(int code);
 Option_array_string os__ls(string path);
@@ -1784,6 +1785,8 @@ void compiler__Parser_fmt_dec(compiler__Parser *p);
 void compiler__Scanner_init_fmt(compiler__Scanner *p);
 void compiler__Parser_fnext(compiler__Parser *p);
 void compiler__Parser_gen_fmt(compiler__Parser *p);
+string compiler__get_vtmp_folder();
+string compiler__get_vtmp_filename(string base_file_name, string postfix);
 void compiler__launch_tool(string tname);
 string filepath__ext(string path);
 bool filepath__is_abs(string path);
@@ -2121,7 +2124,10 @@ array_compiler__TokenKind compiler__AssignTokens;
       "inside an environment variable named VFLAGS, so that\n   you don\'t "   \
       "have to repeat them.\n\n   You can set it like this: `export "          \
       "VFLAGS=\"-cc clang -debug\"` on *nix,\n   `set VFLAGS=-cc msvc` on "    \
-      "Windows.\n\nOptions/commands:\n  -h, help          Display this "       \
+      "Windows.\n\n   V respects the TMPDIR environment variable, and will "   \
+      "put .tmp.c files in TMPDIR/v/ .\n   If you have not set it, a "         \
+      "suitable platform specific folder (like /tmp) will be "                 \
+      "used.\n\nOptions/commands:\n  -h, help          Display this "          \
       "information.\n  -o <file>         Write output to <file>.\n  -o "       \
       "<file>.c       Produce C source without compiling it.\n  -o <file>.js " \
       "     Produce JavaScript source.\n  -prod             Build an "         \
@@ -4566,16 +4572,18 @@ Option_bool os__cp(string old, string new) {
 #endif
   ;
 }
-Option_bool os__cp_r(string source_path, string dest_path, bool overwrite) {
+Option_bool os__cp_r(string osource_path, string odest_path, bool overwrite) {
+  string source_path = os__realpath(osource_path);
+  string dest_path = os__realpath(odest_path);
   if (!os__file_exists(source_path)) {
     return v_error(tos3("Source path doesn\'t exist"));
   };
   if (!os__is_dir(source_path)) {
     string adjasted_path =
         (os__is_dir(dest_path))
-            ? (filepath__join(
-                  dest_path,
-                  &(varg_string){.len = 1, .args = {os__basedir(source_path)}}))
+            ? (filepath__join(dest_path, &(varg_string){.len = 1,
+                                                        .args = {os__filename(
+                                                            source_path)}}))
             : (dest_path);
     if (os__file_exists(adjasted_path)) {
       if (overwrite) {
@@ -4937,7 +4945,7 @@ string os__basedir(string path) {
   if (pos == -1) {
     return path;
   };
-  return string_substr2(path, 0, pos + 1, false);
+  return string_substr2(path, 0, pos, false);
 }
 string os__filename(string path) {
   return string_all_after(path, os__path_separator);
@@ -5129,10 +5137,6 @@ string os__realpath(string fpath) {
   int res = 0;
 #ifdef _WIN32
 #else
-  if (fpath.len != strlen((char *)fpath.str)) {
-    int l = strlen((char *)fpath.str);
-    printf("FIXME realpath diff len %d strlen=%d\n", fpath.len, l);
-  };
   char *ret = realpath((char *)fpath.str, (char *)fullpath);
   if (ret == 0) {
     return fpath;
@@ -5261,6 +5265,22 @@ void os__mkdir_all(string path) {
 string os__join(string base, varg_string *dirs) {
   println(tos3("use filepath.join"));
   return filepath__join(base, dirs);
+}
+string os__tmpdir() {
+  string path = os__getenv(tos3("TMPDIR"));
+#ifdef __linux__
+  if (string_eq(path, tos3(""))) {
+    path = tos3("/tmp");
+  };
+#endif
+  ;
+#ifdef __APPLE__
+#endif
+  ;
+#ifdef _WIN32
+#endif
+  ;
+  return path;
 }
 array_string os__init_os_args(int argc, byteptr *argv) {
   array_string args = new_array_from_c_array(
@@ -13127,8 +13147,7 @@ compiler__V *compiler__new_v(array_string args) {
     println(tos3("Go to https://vlang.io to install V."));
     v_exit(1);
   };
-  string out_name_c =
-      os__realpath(_STR("%.*s.tmp.c", out_name.len, out_name.str));
+  string out_name_c = compiler__get_vtmp_filename(out_name, tos3(".tmp.c"));
   string cflags = compiler__get_cmdline_cflags(args);
   string rdir = os__realpath(dir);
   string rdir_name = os__filename(rdir);
@@ -13177,8 +13196,7 @@ compiler__V *compiler__new_v(array_string args) {
     printf("C compiler=%.*s\n", pref->ccompiler.len, pref->ccompiler.str);
   };
   if (pref->is_so) {
-    out_name_c = string_add(string_all_after(out_name, os__path_separator),
-                            tos3("_shared_lib.c"));
+    out_name_c = compiler__get_vtmp_filename(out_name, tos3(".tmp.so.c"));
   };
 #ifndef __linux__
 #endif
@@ -20693,6 +20711,21 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
   os__File_writeln(out, s);
   os__File_close(out);
 }
+string compiler__get_vtmp_folder() {
+  string vtmp = filepath__join(os__tmpdir(),
+                               &(varg_string){.len = 1, .args = {tos3("v")}});
+  if (!os__dir_exists(vtmp)) {
+    os__mkdir(vtmp);
+  };
+  return vtmp;
+}
+string compiler__get_vtmp_filename(string base_file_name, string postfix) {
+  string vtmp = compiler__get_vtmp_folder();
+  return os__realpath(filepath__join(
+      vtmp, &(varg_string){
+                .len = 1,
+                .args = {string_add(os__filename(base_file_name), postfix)}}));
+}
 void compiler__launch_tool(string tname) {
   string vexe = compiler__vexe_path();
   string vroot = os__dir(vexe);
@@ -20751,15 +20784,18 @@ bool filepath__is_abs(string path) {
   return string_at(path, 0) == '/';
 }
 string filepath__join(string base, varg_string *dirs) {
-  strings__Builder path = strings__new_builder(50);
-  strings__Builder_write(&/* ? */ path, string_trim_right(base, tos3("\\/")));
-  for (int tmp6 = 0; tmp6 < dirs->len; tmp6++) {
-    string d = ((string *)dirs->args)[tmp6];
+  array_string result = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+  _PUSH(&result,
+        (/*typ = array_string   tmp_typ=string*/ string_trim_right(
+            base, tos3("\\/"))),
+        tmp5, string);
+  for (int tmp7 = 0; tmp7 < dirs->len; tmp7++) {
+    string d = ((string *)dirs->args)[tmp7];
 
-    strings__Builder_write(&/* ? */ path, os__path_separator);
-    strings__Builder_write(&/* ? */ path, d);
+    _PUSH(&result, (/*typ = array_string   tmp_typ=string*/ d), tmp8, string);
   };
-  return strings__Builder_str(path);
+  return array_string_join(result, os__path_separator);
 }
 void time__remove_me_when_c_bug_is_fixed() {}
 time__Time time__now() {
