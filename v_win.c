@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ffb72e8"
+#define V_COMMIT_HASH "32fbc2b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6d7fe1f"
+#define V_COMMIT_HASH "ffb72e8"
 #endif
 #include <inttypes.h>
 
@@ -12907,7 +12907,8 @@ void compiler__V_generate_main(compiler__V *v) {
   };
   if (v->pref->build_mode != compiler__compiler__BuildMode_build_module) {
     if (!compiler__Table_main_exists(&/* ? */ *v->table) && !v->pref->is_test) {
-      if (v->pref->is_script) {
+      if (v->pref->is_script &&
+          string_ne(string_trim_space(cgen->fn_main), tos3(""))) {
         compiler__V_gen_main_start(v, 1);
         compiler__CGen_genln(
             cgen, _STR("%.*s;", cgen->fn_main.len, cgen->fn_main.str));
