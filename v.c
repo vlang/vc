@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "32fbc2b"
+#define V_COMMIT_HASH "e081791"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ffb72e8"
+#define V_COMMIT_HASH "32fbc2b"
 #endif
 #include <inttypes.h>
 
@@ -12563,7 +12563,7 @@ void compiler__V_generate_main(compiler__V *v) {
         compiler__CGen_genln(
             cgen, _STR("%.*s;", cgen->fn_main.len, cgen->fn_main.str));
         compiler__V_gen_main_end(v, tos3("return 0"));
-      } else {
+      } else if (!v->pref->is_repl) {
         compiler__verror(
             tos3("function `main` is not declared in the main module"));
       };
