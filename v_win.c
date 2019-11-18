@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f7c7ffe"
+#define V_COMMIT_HASH "4c02695"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e081791"
+#define V_COMMIT_HASH "f7c7ffe"
 #endif
 #include <inttypes.h>
 
@@ -6027,7 +6027,7 @@ void compiler__Parser_inline_asm(compiler__Parser *p) {
     compiler__Parser_error(p, tos3("asm() needs to be run unside `unsafe {}`"));
   };
   compiler__Parser_next(p);
-  compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
+  compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
   string s = compiler__Parser_check_string(p);
   compiler__Parser_genln(p, _STR("asm(\"%.*s\"", s.len, s.str));
   while (p->tok == compiler__compiler__TokenKind_str) {
@@ -6052,7 +6052,7 @@ void compiler__Parser_inline_asm(compiler__Parser *p) {
     };
   };
   compiler__Parser_genln(p, tos3(");"));
-  compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
+  compiler__Parser_check(p, compiler__compiler__TokenKind_rcbr);
 }
 void compiler__todo() {}
 bool compiler__no_mingw_installed() {
@@ -6118,12 +6118,12 @@ void compiler__V_cc(compiler__V *v) {
 #endif
   ;
   array_string a = new_array_from_c_array(
-      10, 10, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 10){
+      9, 9, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 9){
           v->pref->cflags, tos3("-std=gnu11"), tos3("-Wall"), tos3("-Wextra"),
-          tos3("-Wno-unused-variable"), tos3("-Wno-unused-but-set-variable"),
-          tos3("-Wno-unused-parameter"), tos3("-Wno-unused-result"),
-          tos3("-Wno-missing-braces"), tos3("-Wno-unused-label")});
+          tos3("-Wno-unused-variable"), tos3("-Wno-unused-parameter"),
+          tos3("-Wno-unused-result"), tos3("-Wno-missing-braces"),
+          tos3("-Wno-unused-label")});
   if (v->pref->fast) {
 #ifdef __linux__
 #else
@@ -12907,8 +12907,9 @@ void compiler__V_generate_main(compiler__V *v) {
   };
   if (v->pref->build_mode != compiler__compiler__BuildMode_build_module) {
     if (!compiler__Table_main_exists(&/* ? */ *v->table) && !v->pref->is_test) {
-      if (v->pref->is_script &&
-          string_ne(string_trim_space(cgen->fn_main), tos3(""))) {
+      if ((v->pref->is_script &&
+           string_ne(string_trim_space(cgen->fn_main), tos3(""))) ||
+          v->pref->is_repl) {
         compiler__V_gen_main_start(v, 1);
         compiler__CGen_genln(
             cgen, _STR("%.*s;", cgen->fn_main.len, cgen->fn_main.str));
