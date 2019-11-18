@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "52e3586"
+#define V_COMMIT_HASH "20d6492"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c98db8c"
+#define V_COMMIT_HASH "52e3586"
 #endif
 #include <inttypes.h>
 
@@ -225,7 +225,9 @@ typedef struct os__FileInfo os__FileInfo;
 typedef Option Option_string;
 typedef Option Option_bool;
 typedef Option Option_bool;
+typedef Option Option_array_string;
 typedef array array_ustring;
+typedef Option Option_array_ustring;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
@@ -303,6 +305,8 @@ typedef struct benchmark__Benchmark benchmark__Benchmark;
 typedef Option Option_string;
 typedef Option Option_bool;
 typedef Option Option_bool;
+typedef Option Option_array_string;
+typedef Option Option_array_ustring;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
@@ -1098,8 +1102,8 @@ void os__mv(string old, string new);
 Option_bool os__cp(string old, string new);
 Option_bool os__cp_r(string osource_path, string odest_path, bool overwrite);
 FILE *os__vfopen(string path, string mode);
-array_string os__read_lines(string path);
-array_ustring os__read_ulines(string path);
+Option_array_string os__read_lines(string path);
+Option_array_ustring os__read_ulines(string path);
 Option_os__File os__open(string path);
 Option_os__File os__create(string path);
 Option_os__File os__open_append(string path);
@@ -4650,7 +4654,7 @@ FILE *os__vfopen(string path, string mode) {
 #endif
   ;
 }
-array_string os__read_lines(string path) {
+Option_array_string os__read_lines(string path) {
   array_string res = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   int buf_len = 1024;
@@ -4658,7 +4662,8 @@ array_string os__read_lines(string path) {
   string mode = tos3("rb");
   FILE *fp = os__vfopen(path, mode);
   if (isnil(fp)) {
-    return res;
+    return v_error(
+        _STR("read_lines() failed to open file \"%.*s\"", path.len, path.str));
   };
   int buf_index = 0;
   while (fgets((char *)(byte *)buf + buf_index, buf_len - buf_index, fp) != 0) {
@@ -4668,7 +4673,7 @@ array_string os__read_lines(string path) {
       buf_len *= 2;
       buf = realloc((char *)buf, buf_len);
       if (isnil(buf)) {
-        v_panic(tos3("Could not reallocate the read buffer"));
+        return v_error(tos3("could not reallocate the read buffer"));
       };
       buf_index = len;
       continue;
@@ -4685,21 +4690,32 @@ array_string os__read_lines(string path) {
     buf_index = 0;
   };
   fclose(fp);
-  return res;
+  array_string tmp11 = OPTION_CAST(array_string)(res);
+  return opt_ok(&tmp11, sizeof(array_string));
 }
-array_ustring os__read_ulines(string path) {
-  array_string lines = os__read_lines(path);
+Option_array_ustring os__read_ulines(string path) {
+  Option_array_string tmp12 = os__read_lines(path);
+  array_string lines;
+  if (!tmp12.ok) {
+    string err = tmp12.error;
+    int errcode = tmp12.ecode;
+    string tmp13 = OPTION_CAST(string)(err);
+    return opt_ok(&tmp13, sizeof(string));
+  }
+  lines = *(array_string *)tmp12.data;
+  ;
   array_ustring ulines = new_array_from_c_array(
       0, 0, sizeof(ustring), EMPTY_ARRAY_OF_ELEMS(ustring, 0){TCCSKIP(0)});
-  array_string tmp11 = lines;
-  for (int tmp12 = 0; tmp12 < tmp11.len; tmp12++) {
-    string myline = ((string *)tmp11.data)[tmp12];
+  array_string tmp14 = lines;
+  for (int tmp15 = 0; tmp15 < tmp14.len; tmp15++) {
+    string myline = ((string *)tmp14.data)[tmp15];
 
     _PUSH(&ulines,
           (/*typ = array_ustring   tmp_typ=ustring*/ string_ustring(myline)),
-          tmp13, ustring);
+          tmp16, ustring);
   };
-  return ulines;
+  array_ustring tmp17 = OPTION_CAST(array_ustring)(ulines);
+  return opt_ok(&tmp17, sizeof(array_ustring));
 }
 Option_os__File os__open(string path) {
   os__File file = (os__File){.cfile = 0};
@@ -4712,8 +4728,8 @@ Option_os__File os__open(string path) {
   if (isnil(file.cfile)) {
     return v_error(_STR("failed to open file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp14 = OPTION_CAST(os__File)(file);
-  return opt_ok(&tmp14, sizeof(os__File));
+  os__File tmp18 = OPTION_CAST(os__File)(file);
+  return opt_ok(&tmp18, sizeof(os__File));
 }
 Option_os__File os__create(string path) {
   os__File file = (os__File){.cfile = 0};
@@ -4726,8 +4742,8 @@ Option_os__File os__create(string path) {
   if (isnil(file.cfile)) {
     return v_error(_STR("failed to create file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp15 = OPTION_CAST(os__File)(file);
-  return opt_ok(&tmp15, sizeof(os__File));
+  os__File tmp19 = OPTION_CAST(os__File)(file);
+  return opt_ok(&tmp19, sizeof(os__File));
 }
 Option_os__File os__open_append(string path) {
   os__File file = (os__File){.cfile = 0};
@@ -4741,8 +4757,8 @@ Option_os__File os__open_append(string path) {
     return v_error(
         _STR("failed to create(append) file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp16 = OPTION_CAST(os__File)(file);
-  return opt_ok(&tmp16, sizeof(os__File));
+  os__File tmp20 = OPTION_CAST(os__File)(file);
+  return opt_ok(&tmp20, sizeof(os__File));
 }
 void os__File_write(os__File f, string s) { fputs((char *)s.str, f.cfile); }
 void os__File_write_bytes(os__File f, void *data, int size) {
@@ -4823,53 +4839,53 @@ int os__system(string cmd) {
   return ret;
 }
 string os__sigint_to_signal_name(int si) {
-  int tmp17 = si;
+  int tmp21 = si;
 
-  if (tmp17 == 1) {
+  if (tmp21 == 1) {
     return tos3("SIGHUP");
-  } else if (tmp17 == 2) {
+  } else if (tmp21 == 2) {
     return tos3("SIGINT");
-  } else if (tmp17 == 3) {
+  } else if (tmp21 == 3) {
     return tos3("SIGQUIT");
-  } else if (tmp17 == 4) {
+  } else if (tmp21 == 4) {
     return tos3("SIGILL");
-  } else if (tmp17 == 6) {
+  } else if (tmp21 == 6) {
     return tos3("SIGABRT");
-  } else if (tmp17 == 8) {
+  } else if (tmp21 == 8) {
     return tos3("SIGFPE");
-  } else if (tmp17 == 9) {
+  } else if (tmp21 == 9) {
     return tos3("SIGKILL");
-  } else if (tmp17 == 11) {
+  } else if (tmp21 == 11) {
     return tos3("SIGSEGV");
-  } else if (tmp17 == 13) {
+  } else if (tmp21 == 13) {
     return tos3("SIGPIPE");
-  } else if (tmp17 == 14) {
+  } else if (tmp21 == 14) {
     return tos3("SIGALRM");
-  } else if (tmp17 == 15) {
+  } else if (tmp21 == 15) {
     return tos3("SIGTERM");
   };
 #ifdef __linux__
-  int tmp18 = si;
+  int tmp22 = si;
 
-  if ((tmp18 == 30) || (tmp18 == 10) || (tmp18 == 16)) {
+  if ((tmp22 == 30) || (tmp22 == 10) || (tmp22 == 16)) {
     return tos3("SIGUSR1");
-  } else if ((tmp18 == 31) || (tmp18 == 12) || (tmp18 == 17)) {
+  } else if ((tmp22 == 31) || (tmp22 == 12) || (tmp22 == 17)) {
     return tos3("SIGUSR2");
-  } else if ((tmp18 == 20) || (tmp18 == 17) || (tmp18 == 18)) {
+  } else if ((tmp22 == 20) || (tmp22 == 17) || (tmp22 == 18)) {
     return tos3("SIGCHLD");
-  } else if ((tmp18 == 19) || (tmp18 == 18) || (tmp18 == 25)) {
+  } else if ((tmp22 == 19) || (tmp22 == 18) || (tmp22 == 25)) {
     return tos3("SIGCONT");
-  } else if ((tmp18 == 17) || (tmp18 == 19) || (tmp18 == 23)) {
+  } else if ((tmp22 == 17) || (tmp22 == 19) || (tmp22 == 23)) {
     return tos3("SIGSTOP");
-  } else if ((tmp18 == 18) || (tmp18 == 20) || (tmp18 == 24)) {
+  } else if ((tmp22 == 18) || (tmp22 == 20) || (tmp22 == 24)) {
     return tos3("SIGTSTP");
-  } else if ((tmp18 == 21) || (tmp18 == 21) || (tmp18 == 26)) {
+  } else if ((tmp22 == 21) || (tmp22 == 21) || (tmp22 == 26)) {
     return tos3("SIGTTIN");
-  } else if ((tmp18 == 22) || (tmp18 == 22) || (tmp18 == 27)) {
+  } else if ((tmp22 == 22) || (tmp22 == 22) || (tmp22 == 27)) {
     return tos3("SIGTTOU");
-  } else if (tmp18 == 5) {
+  } else if (tmp22 == 5) {
     return tos3("SIGTRAP");
-  } else if (tmp18 == 7) {
+  } else if (tmp22 == 7) {
     return tos3("SIGBUS");
   };
 #endif
@@ -4989,7 +5005,7 @@ array_string os__get_lines() {
       break;
     };
     line = string_trim_space(line);
-    _PUSH(&inputstr, (/*typ = array_string   tmp_typ=string*/ line), tmp27,
+    _PUSH(&inputstr, (/*typ = array_string   tmp_typ=string*/ line), tmp31,
           string);
   };
   return inputstr;
@@ -5047,15 +5063,15 @@ string os__home_dir() {
   return home;
 }
 void os__write_file(string path, string text) {
-  Option_os__File tmp28 = os__create(path);
+  Option_os__File tmp32 = os__create(path);
   os__File f;
-  if (!tmp28.ok) {
-    string err = tmp28.error;
-    int errcode = tmp28.ecode;
+  if (!tmp32.ok) {
+    string err = tmp32.error;
+    int errcode = tmp32.ecode;
 
     return;
   }
-  f = *(os__File *)tmp28.data;
+  f = *(os__File *)tmp32.data;
   ;
   os__File_write(f, text);
   os__File_close(f);
@@ -5162,43 +5178,6 @@ array_string os__walk_ext(string path, string ext) {
     return new_array_from_c_array(0, 0, sizeof(string),
                                   EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   };
-  Option_array_string tmp31 = os__ls(path);
-  array_string files;
-  if (!tmp31.ok) {
-    string err = tmp31.error;
-    int errcode = tmp31.ecode;
-    v_panic(err);
-  }
-  files = *(array_string *)tmp31.data;
-  ;
-  array_string res = new_array_from_c_array(
-      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  string separator = (string_ends_with(path, os__path_separator))
-                         ? (tos3(""))
-                         : (os__path_separator);
-  array_string tmp32 = files;
-  for (int i = 0; i < tmp32.len; i++) {
-    string file = ((string *)tmp32.data)[i];
-
-    if (string_starts_with(file, tos3("."))) {
-      continue;
-    };
-    string p = string_add(string_add(path, separator), file);
-    if (os__is_dir(p)) {
-      _PUSH_MANY(&res,
-                 (/*typ = array_string   tmp_typ=string*/ os__walk_ext(p, ext)),
-                 tmp33, array_string);
-    } else if (string_ends_with(file, ext)) {
-      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp34, string);
-    };
-  };
-  return res;
-}
-void os__walk(string path, void (*fnc)(string path /*FFF*/)) {
-  if (!os__is_dir(path)) {
-
-    return;
-  };
   Option_array_string tmp35 = os__ls(path);
   array_string files;
   if (!tmp35.ok) {
@@ -5208,9 +5187,46 @@ void os__walk(string path, void (*fnc)(string path /*FFF*/)) {
   }
   files = *(array_string *)tmp35.data;
   ;
+  array_string res = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+  string separator = (string_ends_with(path, os__path_separator))
+                         ? (tos3(""))
+                         : (os__path_separator);
   array_string tmp36 = files;
-  for (int tmp37 = 0; tmp37 < tmp36.len; tmp37++) {
-    string file = ((string *)tmp36.data)[tmp37];
+  for (int i = 0; i < tmp36.len; i++) {
+    string file = ((string *)tmp36.data)[i];
+
+    if (string_starts_with(file, tos3("."))) {
+      continue;
+    };
+    string p = string_add(string_add(path, separator), file);
+    if (os__is_dir(p)) {
+      _PUSH_MANY(&res,
+                 (/*typ = array_string   tmp_typ=string*/ os__walk_ext(p, ext)),
+                 tmp37, array_string);
+    } else if (string_ends_with(file, ext)) {
+      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp38, string);
+    };
+  };
+  return res;
+}
+void os__walk(string path, void (*fnc)(string path /*FFF*/)) {
+  if (!os__is_dir(path)) {
+
+    return;
+  };
+  Option_array_string tmp39 = os__ls(path);
+  array_string files;
+  if (!tmp39.ok) {
+    string err = tmp39.error;
+    int errcode = tmp39.ecode;
+    v_panic(err);
+  }
+  files = *(array_string *)tmp39.data;
+  ;
+  array_string tmp40 = files;
+  for (int tmp41 = 0; tmp41 < tmp40.len; tmp41++) {
+    string file = ((string *)tmp40.data)[tmp41];
 
     string p = string_add(string_add(path, os__path_separator), file);
     if (os__is_dir(p)) {
@@ -5260,9 +5276,9 @@ void os__mkdir_all(string path) {
   string p = (string_starts_with(path, os__path_separator))
                  ? (os__path_separator)
                  : (tos3(""));
-  array_string tmp38 = string_split(path, os__path_separator);
-  for (int tmp39 = 0; tmp39 < tmp38.len; tmp39++) {
-    string subdir = ((string *)tmp38.data)[tmp39];
+  array_string tmp42 = string_split(path, os__path_separator);
+  for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
+    string subdir = ((string *)tmp42.data)[tmp43];
 
     p = string_add(p, string_add(subdir, os__path_separator));
     if (!os__dir_exists(p)) {
