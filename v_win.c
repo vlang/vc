@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e081791"
+#define V_COMMIT_HASH "f7c7ffe"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "32fbc2b"
+#define V_COMMIT_HASH "e081791"
 #endif
 #include <inttypes.h>
 
@@ -13917,13 +13917,12 @@ void compiler__generate_vh(string mod) {
         !string_contains(it, _STR("%.*sexamples", os__path_separator.len,
                                   os__path_separator.str)) &&
         !string_contains(it, tos3("_js.v")) &&
+        !string_contains(it, tos3("_bare.v")) &&
         !string_contains(
             it, _STR("%.*sjs", os__path_separator.len, os__path_separator.str)))
       array_push(&tmp2, &it);
   }
   array_string filtered = tmp2;
-  println(tos3("f:"));
-  println(array_string_str(filtered));
   compiler__V *v = compiler__new_v(new_array_from_c_array(
       1, 1, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 1){tos3("foo.v")}));
   compiler__VhGen g =
@@ -13983,7 +13982,6 @@ void compiler__VhGen_generate_fn(compiler__VhGen *g) {
   };
   if (next.tok == compiler__compiler__TokenKind_name &&
       string_eq(next.lit, tos3("C"))) {
-    println(tos3("skipping C"));
 
     return;
   };
