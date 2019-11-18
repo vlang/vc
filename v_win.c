@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1ccd197"
+#define V_COMMIT_HASH "c73f34c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "439bb0c"
+#define V_COMMIT_HASH "1ccd197"
 #endif
 #include <inttypes.h>
 
@@ -4459,7 +4459,11 @@ string strings__Builder_str(strings__Builder *b) {
   _PUSH(&b->buf, (/*typ = array_byte   tmp_typ=byte*/ '\0'), tmp2, byte);
   return (tos((byte *)b->buf.data, b->len));
 }
-void strings__Builder_free(strings__Builder *b) {}
+void strings__Builder_free(strings__Builder *b) {
+  { v_free(b->buf.data); };
+  b->buf = make(0, 1, 1);
+  b->len = 0;
+}
 int strings__levenshtein_distance(string a, string b) {
   array_int f =
       array_repeat(new_array_from_c_array(1, 1, sizeof(int),
