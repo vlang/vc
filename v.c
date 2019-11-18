@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c98db8c"
+#define V_COMMIT_HASH "52e3586"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c73f34c"
+#define V_COMMIT_HASH "c98db8c"
 #endif
 #include <inttypes.h>
 
@@ -5345,14 +5345,7 @@ bool os__dir_exists(string path) {
   };
   return res;
 }
-void os__mkdir(string path) {
-#ifdef __linux__
-  syscall(83, (char *)path.str, 511);
-#else
-  mkdir((char *)path.str, 511);
-#endif
-  ;
-}
+void os__mkdir(string path) { mkdir((char *)path.str, 511); }
 Option_os__Result os__exec(string cmd) {
   if (string_contains(cmd, tos3(";")) || string_contains(cmd, tos3("&&")) ||
       string_contains(cmd, tos3("||")) || string_contains(cmd, tos3("\n"))) {
