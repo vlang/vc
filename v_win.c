@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c73f34c"
+#define V_COMMIT_HASH "c98db8c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1ccd197"
+#define V_COMMIT_HASH "c73f34c"
 #endif
 #include <inttypes.h>
 
@@ -968,7 +968,7 @@ string array_string_str(array_string a);
 string array_bool_str(array_bool a);
 string array_byte_hex(array_byte b);
 int copy(array_byte dst, array_byte src);
-int compare_ints(int a, int b);
+int compare_ints(int *a, int *b);
 void array_int_sort(array_int *a);
 int array_string_index(array_string a, string v);
 int array_int_index(array_int a, int v);
@@ -2627,18 +2627,18 @@ int copy(array_byte dst, array_byte src) {
   };
   return 0;
 }
-int compare_ints(int a, int b) {
-  if (a < b) {
+int compare_ints(int *a, int *b) {
+  if (*a < *b) {
     return -1;
   };
-  if (a > b) {
+  if (*a > *b) {
     return 1;
   };
   return 0;
 }
 void array_int_sort(array_int *a) {
   array_sort_with_compare(
-      a, &/*112 e="void*" g="fn (int,int) int" */ compare_ints);
+      a, &/*112 e="void*" g="fn (int*,int*) int" */ compare_ints);
 }
 int array_string_index(array_string a, string v) {
   for (int i = 0; i < a.len; i++) {
