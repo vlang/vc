@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4bbed4f"
+#define V_COMMIT_HASH "5536eb5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ddcff7e"
+#define V_COMMIT_HASH "4bbed4f"
 #endif
 #include <inttypes.h>
 
@@ -9716,6 +9716,7 @@ void compiler__Parser_fn_call(compiler__Parser *p, compiler__Fn *f,
   };
   if (f->is_method) {
     compiler__Var receiver = *(compiler__Var *)array_first(f->args);
+    bool receiver_is_interface = 0;
     if (string_ends_with(receiver.typ, tos3("er"))) {
       compiler__Type t =
           compiler__Table_find_type(&/* ? */ *p->table, receiver.typ);
@@ -9735,9 +9736,10 @@ void compiler__Parser_fn_call(compiler__Parser *p, compiler__Fn *f,
         compiler__Parser_gen(p,
                              _STR("((%.*s "
                                   "(*)())(%.*s_name_table[%.*s._interface_idx]["
-                                  "%d]))(%.*s._object)",
+                                  "%d]))(%.*s._object",
                                   f->typ.len, f->typ.str, iname.len, iname.str,
                                   var.len, var.str, idx, var.len, var.str));
+        receiver_is_interface = 1;
       };
     };
     if (receiver.is_mut && !p->expr_var.is_mut) {
@@ -9755,8 +9757,10 @@ void compiler__Parser_fn_call(compiler__Parser *p, compiler__Fn *f,
     if (!p->expr_var.is_changed && receiver.is_mut) {
       compiler__Parser_mark_var_changed(p, p->expr_var);
     };
-    compiler__Parser_gen_method_call(p, &/*114*/ receiver, receiver_type,
-                                     cgen_name, f->typ, method_ph);
+    if (!receiver_is_interface) {
+      compiler__Parser_gen_method_call(p, &/*114*/ receiver, receiver_type,
+                                       cgen_name, f->typ, method_ph);
+    };
   } else {
     compiler__Parser_gen(p, _STR("%.*s (", cgen_name.len, cgen_name.str));
   };
@@ -10332,21 +10336,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp86 = tos3("");
-    bool tmp87 = map_get(/*fn.v : 1214*/ r.inst, tp, &tmp86);
+    bool tmp87 = map_get(/*fn.v : 1220*/ r.inst, tp, &tmp86);
 
     if (!tmp87)
       tmp86 = tos((byte *)"", 0);
 
     if (string_ne(tmp86, tos3(""))) {
       string tmp88 = tos3("");
-      bool tmp89 = map_get(/*fn.v : 1215*/ r.inst, tp, &tmp88);
+      bool tmp89 = map_get(/*fn.v : 1221*/ r.inst, tp, &tmp88);
 
       if (!tmp89)
         tmp88 = tos((byte *)"", 0);
 
       if (string_ne(tmp88, ti)) {
         string tmp90 = tos3("");
-        bool tmp91 = map_get(/*fn.v : 1216*/ r.inst, tp, &tmp90);
+        bool tmp91 = map_get(/*fn.v : 1222*/ r.inst, tp, &tmp90);
 
         if (!tmp91)
           tmp90 = tos((byte *)"", 0);
@@ -10364,7 +10368,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp92 = tos3("");
-  bool tmp93 = map_get(/*fn.v : 1225*/ r.inst, f->typ, &tmp92);
+  bool tmp93 = map_get(/*fn.v : 1231*/ r.inst, f->typ, &tmp92);
 
   if (!tmp93)
     tmp92 = tos((byte *)"", 0);
@@ -10377,7 +10381,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp94.data)[tmp95];
 
     string tmp96 = tos3("");
-    bool tmp97 = map_get(/*fn.v : 1229*/ r.inst, tp, &tmp96);
+    bool tmp97 = map_get(/*fn.v : 1235*/ r.inst, tp, &tmp96);
 
     if (!tmp97)
       tmp96 = tos((byte *)"", 0);
@@ -10432,7 +10436,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
         };
         if ((_IN(string, (fna), map_keys(&/* ? */ ti.inst)))) {
           string tmp109 = tos3("");
-          bool tmp110 = map_get(/*fn.v : 1259*/ ti.inst, fna, &tmp109);
+          bool tmp110 = map_get(/*fn.v : 1265*/ ti.inst, fna, &tmp109);
 
           if (!tmp110)
             tmp109 = tos((byte *)"", 0);
@@ -10461,7 +10465,7 @@ array_string compiler__Parser_replace_type_params(compiler__Parser *p,
     };
     if ((_IN(string, (fi), map_keys(&/* ? */ ti.inst)))) {
       string tmp116 = tos3("");
-      bool tmp117 = map_get(/*fn.v : 1281*/ ti.inst, fi, &tmp116);
+      bool tmp117 = map_get(/*fn.v : 1287*/ ti.inst, fi, &tmp116);
 
       if (!tmp117)
         tmp116 = tos((byte *)"", 0);
@@ -10663,7 +10667,7 @@ void compiler__Parser_rename_generic_fn_instance(compiler__Parser *p,
     string k = ((string *)tmp140.data)[tmp141];
 
     string tmp142 = tos3("");
-    bool tmp143 = map_get(/*fn.v : 1390*/ ti.inst, k, &tmp142);
+    bool tmp143 = map_get(/*fn.v : 1396*/ ti.inst, k, &tmp142);
 
     if (!tmp143)
       tmp142 = tos((byte *)"", 0);
@@ -10760,7 +10764,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   };
   if ((_IN_MAP((f->typ), ti.inst))) {
     string tmp155 = tos3("");
-    bool tmp156 = map_get(/*fn.v : 1458*/ ti.inst, f->typ, &tmp155);
+    bool tmp156 = map_get(/*fn.v : 1464*/ ti.inst, f->typ, &tmp155);
 
     if (!tmp156)
       tmp155 = tos((byte *)"", 0);
@@ -21125,7 +21129,7 @@ i64 time__ticks() {
 
       timeval ts;
   gettimeofday(&ts, 0);
-  return ts.tv_sec * 1000 + (ts.tv_usec / 1000);
+  return ((i64)(ts.tv_sec * ((u64)(1000)) + (ts.tv_usec / ((u64)(1000)))));
 #endif
   ;
 }
