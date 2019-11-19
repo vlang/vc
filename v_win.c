@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "94b3625"
+#define V_COMMIT_HASH "fe81cca"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "20d6492"
+#define V_COMMIT_HASH "94b3625"
 #endif
 #include <inttypes.h>
 
@@ -6046,7 +6046,7 @@ void term__show_cursor() { print(tos3("\x1b[?25h")); }
 void term__hide_cursor() { print(tos3("\x1b[?25l")); }
 void compiler__Parser_inline_asm(compiler__Parser *p) {
   if (!p->inside_unsafe) {
-    compiler__Parser_error(p, tos3("asm() needs to be run unside `unsafe {}`"));
+    compiler__Parser_error(p, tos3("asm() needs to be run inside `unsafe {}`"));
   };
   compiler__Parser_next(p);
   compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
