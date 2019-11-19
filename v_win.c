@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ddcff7e"
+#define V_COMMIT_HASH "4bbed4f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a620e66"
+#define V_COMMIT_HASH "ddcff7e"
 #endif
 #include <inttypes.h>
 
@@ -11685,8 +11685,12 @@ string compiler__Parser_gen_handle_option_or_else(compiler__Parser *p,
     string last_expr = string_substr2(expr_line, last_ph, -1, true);
     array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 2,
               &(string[]){tos3("")});
-    compiler__Parser_genln(p, _STR("if (!%.*s.ok) {", tmp.len, tmp.str));
-    compiler__Parser_genln(p, _STR("%.*s = %.*s;", name.len, name.str,
+    compiler__Parser_genln(p, _STR("if (%.*s .ok) {", tmp.len, tmp.str));
+    compiler__Parser_genln(p,
+                           _STR("%.*s = *(%.*s*) %.*s . data;", name.len,
+                                name.str, typ.len, typ.str, tmp.len, tmp.str));
+    compiler__Parser_genln(p, tos3("} else {"));
+    compiler__Parser_genln(p, _STR("%.*s = %.*s", name.len, name.str,
                                    last_expr.len, last_expr.str));
     compiler__Parser_genln(p, tos3("}"));
   } else if (is_assign) {
@@ -11851,7 +11855,7 @@ string compiler__Table_fn_gen_name(compiler__Table *table, compiler__Fn *f) {
       !string_ends_with(name, tos3("_str")) &&
       !string_contains(name, tos3("contains"))) {
     int tmp28 = 0;
-    bool tmp29 = map_get(/*gen_c.v : 278*/ table->obf_ids, name, &tmp28);
+    bool tmp29 = map_get(/*gen_c.v : 280*/ table->obf_ids, name, &tmp28);
 
     int idx = tmp28;
     if (idx == 0) {
