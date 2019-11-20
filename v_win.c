@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3e564a2"
+#define V_COMMIT_HASH "8e32ef3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2811735"
+#define V_COMMIT_HASH "3e564a2"
 #endif
 #include <inttypes.h>
 
@@ -13683,7 +13683,12 @@ void compiler__vfmt(array_string args) {
   };
 }
 void compiler__create_symlink() {
-  string vexe = compiler__vexe_path();
+#ifdef _WIN32
+
+  return;
+#endif
+  ;
+  string vexe = os__executable();
   string link_path = tos3("/usr/local/bin/v");
   int ret = os__system(_STR("ln -sf %.*s %.*s", vexe.len, vexe.str,
                             link_path.len, link_path.str));
