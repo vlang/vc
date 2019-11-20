@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2811735"
+#define V_COMMIT_HASH "3e564a2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "01dc267"
+#define V_COMMIT_HASH "2811735"
 #endif
 #include <inttypes.h>
 
@@ -19511,7 +19511,7 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
     };
     int field_name_token_idx = compiler__Parser_cur_tok_index(&/* ? */ *p);
     string field_name =
-        (string_ne(name, tos3("Option")))
+        (string_ne(name, tos3("Option")) && !is_interface)
             ? (compiler__Table_var_cgen_name(&/* ? */ *p->table,
                                              compiler__Parser_check_name(p)))
             : (compiler__Parser_check_name(p));
