@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8e32ef3"
+#define V_COMMIT_HASH "dcea76f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3e564a2"
+#define V_COMMIT_HASH "8e32ef3"
 #endif
 #include <inttypes.h>
 
@@ -13688,16 +13688,15 @@ void compiler__create_symlink() {
   return;
 #endif
   ;
-  string vexe = os__executable();
+  string vexe = compiler__vexe_path();
   string link_path = tos3("/usr/local/bin/v");
   int ret = os__system(_STR("ln -sf %.*s %.*s", vexe.len, vexe.str,
                             link_path.len, link_path.str));
   if (ret == 0) {
-    printf("symlink \"%.*s\" has been created\n", link_path.len, link_path.str);
+    printf("Symlink \"%.*s\" has been created\n", link_path.len, link_path.str);
   } else {
-    println(string_add(_STR("failed to create symlink \"%.*s\", ",
-                            link_path.len, link_path.str),
-                       tos3("make sure you run with sudo")));
+    printf("Failed to create symlink \"%.*s\". Try again with sudo.\n",
+           link_path.len, link_path.str);
   };
 }
 string compiler__vexe_path() {
@@ -13705,7 +13704,9 @@ string compiler__vexe_path() {
   if (string_ne(tos3(""), vexe)) {
     return vexe;
   };
-  return os__executable();
+  string real_vexe_path = os__realpath(os__executable());
+  os__setenv(tos3("VEXE"), real_vexe_path, 1);
+  return real_vexe_path;
 }
 void compiler__verror(string s) {
   printf("V error: %.*s\n", s.len, s.str);
@@ -13946,7 +13947,7 @@ void compiler__Parser_switch_statement(compiler__Parser *p) {
 void compiler__generate_vh(string mod) {
   printf("\n\n\n\nGenerating a V header file for module `%.*s`\n", mod.len,
          mod.str);
-  string vexe = os__executable();
+  string vexe = compiler__vexe_path();
   string full_mod_path =
       filepath__join(os__dir(vexe), &(varg_string){.len = 1, .args = {mod}});
   string dir = (string_starts_with(mod, tos3("vlib")))
