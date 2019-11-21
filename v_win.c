@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "00365b0"
+#define V_COMMIT_HASH "76cd70c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8c7f5d5"
+#define V_COMMIT_HASH "00365b0"
 #endif
 #include <inttypes.h>
 
@@ -590,6 +590,8 @@ struct compiler__Preferences {
   bool enable_globals;
   bool is_fmt;
   bool is_bare;
+  string vlib_path;
+  string vpath;
 };
 
 struct compiler__ScanRes {
@@ -753,7 +755,7 @@ struct ustring {
 
 struct varg_string {
   int len;
-  string args[4];
+  string args[3];
 };
 
 struct SymbolInfoContainer {
@@ -1602,6 +1604,8 @@ array_string compiler__V_get_imported_module_files(compiler__V *v, string mod);
 void compiler__V_parse_lib_imports(compiler__V *v);
 string compiler__get_arg(string joined_args, string arg, string def);
 string compiler__get_param_after(string joined_args, string arg, string def);
+string compiler__get_cmdline_option(array_string args, string param,
+                                    string def);
 void compiler__V_log(compiler__V *v, string s);
 compiler__V *compiler__new_v(array_string args);
 array_string compiler__env_vflags_and_os_args();
@@ -7811,6 +7815,8 @@ void compiler__Parser_chash(compiler__Parser *p) {
     if (compiler__Parser_first_pass(&/* ? */ *p)) {
       string flag = string_substr2(hash, 5, -1, true);
       flag = string_replace(flag, tos3("@VROOT"), p->vroot);
+      flag = string_replace(flag, tos3("@VPATH"), p->pref->vpath);
+      flag = string_replace(flag, tos3("@VLIB_PATH"), p->pref->vlib_path);
       flag = string_replace(flag, tos3("@VMOD"), compiler__v_modules_path);
       Option_bool tmp9 = compiler__Table_parse_cflag(p->table, flag, p->mod);
       if (!tmp9.ok) {
@@ -12701,7 +12707,7 @@ Option_int compiler__V_get_file_parser_index(compiler__V *v, string file) {
   string file_path = os__realpath(file);
   if ((_IN_MAP((file_path), v->file_parser_idx))) {
     int tmp2 = 0;
-    bool tmp3 = map_get(/*main.v : 157*/ v->file_parser_idx, file_path, &tmp2);
+    bool tmp3 = map_get(/*main.v : 160*/ v->file_parser_idx, file_path, &tmp2);
 
     int tmp4 = OPTION_CAST(int)(tmp2);
     return opt_ok(&tmp4, sizeof(int));
@@ -13170,10 +13176,9 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
   array_string builtin_files = compiler__V_get_builtin_files(&/* ? */ *v);
   if (v->pref->is_bare) {
   };
-  string builtin_vh = _STR(
-      "%.*s%.*svlib%.*sbuiltin.vh", compiler__v_modules_path.len,
-      compiler__v_modules_path.str, os__path_separator.len,
-      os__path_separator.str, os__path_separator.len, os__path_separator.str);
+  string builtin_vh =
+      _STR("%.*s%.*sbuiltin.vh", v->pref->vlib_path.len, v->pref->vlib_path.str,
+           os__path_separator.len, os__path_separator.str);
   if (v->pref->is_cache && os__file_exists(builtin_vh)) {
     _PUSH(&v->cached_mods,
           (/*typ = array_string   tmp_typ=string*/ tos3("builtin")), tmp24,
@@ -13223,7 +13228,8 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
     if (string_eq(mod, tos3("builtin")) || string_eq(mod, tos3("main"))) {
       continue;
     };
-    if (v->pref->build_mode != compiler__compiler__BuildMode_build_module &&
+    if (string_ne(v->pref->vpath, tos3("")) &&
+        v->pref->build_mode != compiler__compiler__BuildMode_build_module &&
         !string_contains(mod, tos3("vweb"))) {
       string mod_path = string_replace(mod, tos3("."), os__path_separator);
       string vh_path =
@@ -13266,18 +13272,17 @@ array_string compiler__V_get_builtin_files(compiler__V *v) {
   if (v->pref->is_bare) {
     return compiler__V_v_files_from_dir(
         &/* ? */ *v,
-        filepath__join(v->vroot,
-                       &(varg_string){.len = 3,
-                                      .args = {tos3("vlib"), tos3("builtin"),
-                                               tos3("bare")}}));
+        filepath__join(
+            v->pref->vlib_path,
+            &(varg_string){.len = 2, .args = {tos3("builtin"), tos3("bare")}}));
   };
 #ifdef _VJS
 #endif
   ;
   return compiler__V_v_files_from_dir(
-      &/* ? */ *v, _STR("%.*s%.*svlib%.*sbuiltin", v->vroot.len, v->vroot.str,
-                        os__path_separator.len, os__path_separator.str,
-                        os__path_separator.len, os__path_separator.str));
+      &/* ? */ *v,
+      filepath__join(v->pref->vlib_path,
+                     &(varg_string){.len = 1, .args = {tos3("builtin")}}));
 }
 array_string compiler__V_get_user_files(compiler__V *v) {
   string dir = v->dir;
@@ -13287,19 +13292,19 @@ array_string compiler__V_get_user_files(compiler__V *v) {
   if (v->pref->is_test) {
     _PUSH(&user_files,
           (/*typ = array_string   tmp_typ=string*/ filepath__join(
-              v->vroot, &(varg_string){.len = 4,
-                                       .args = {tos3("vlib"), tos3("compiler"),
-                                                tos3("preludes"),
-                                                tos3("tests_assertions.v")}})),
+              v->pref->vlib_path,
+              &(varg_string){.len = 3,
+                             .args = {tos3("compiler"), tos3("preludes"),
+                                      tos3("tests_assertions.v")}})),
           tmp41, string);
   };
   if (v->pref->is_test && v->pref->is_stats) {
     _PUSH(&user_files,
           (/*typ = array_string   tmp_typ=string*/ filepath__join(
-              v->vroot, &(varg_string){.len = 4,
-                                       .args = {tos3("vlib"), tos3("compiler"),
-                                                tos3("preludes"),
-                                                tos3("tests_with_stats.v")}})),
+              v->pref->vlib_path,
+              &(varg_string){.len = 3,
+                             .args = {tos3("compiler"), tos3("preludes"),
+                                      tos3("tests_with_stats.v")}})),
           tmp42, string);
   };
   bool is_test_with_imports =
@@ -13442,6 +13447,21 @@ string compiler__get_param_after(string joined_args, string arg, string def) {
   string res = string_substr2(joined_args, pos, space, false);
   return res;
 }
+string compiler__get_cmdline_option(array_string args, string param,
+                                    string def) {
+  bool found = 0;
+  array_string tmp78 = args;
+  for (int tmp79 = 0; tmp79 < tmp78.len; tmp79++) {
+    string arg = ((string *)tmp78.data)[tmp79];
+
+    if (found) {
+      return arg;
+    } else if (string_eq(param, arg)) {
+      found = 1;
+    };
+  };
+  return def;
+}
 void compiler__V_log(compiler__V *v, string s) {
   if (!v->pref->is_verbose) {
 
@@ -13457,6 +13477,11 @@ compiler__V *compiler__new_v(array_string args) {
                    os__path_separator.str));
   };
   string vroot = os__dir(compiler__vexe_path());
+  string vlib_path = compiler__get_cmdline_option(
+      args, tos3("-vlib-path"),
+      filepath__join(vroot, &(varg_string){.len = 1, .args = {tos3("vlib")}}));
+  string vpath = compiler__get_cmdline_option(args, tos3("-vpath"),
+                                              compiler__v_modules_path);
   strings__Builder vgen_buf = strings__new_builder(1000);
   strings__Builder_writeln(&/* ? */ vgen_buf,
                            tos3("module vgen\nimport strings"));
@@ -13560,8 +13585,9 @@ compiler__V *compiler__new_v(array_string args) {
   } else {
     _os = compiler__os_from_string(target_os);
   };
-  if (!os__dir_exists(vroot) ||
-      !os__dir_exists(string_add(vroot, tos3("/vlib/builtin")))) {
+  if (!os__dir_exists(vlib_path) ||
+      !os__dir_exists(string_add(string_add(vlib_path, os__path_separator),
+                                 tos3("builtin")))) {
     println(tos3("vlib not found. It should be next to the V executable. "));
     println(tos3("Go to https://vlang.io to install V."));
     v_exit(1);
@@ -13608,6 +13634,8 @@ compiler__V *compiler__new_v(array_string args) {
                                      string_contains(dir, tos3("vlib"))),
           .comptime_define = comptime_define,
           .is_fmt = string_eq(comptime_define, tos3("vfmt")),
+          .vlib_path = vlib_path,
+          .vpath = vpath,
           .no_auto_free = 0,
       },
       sizeof(compiler__Preferences));
@@ -13653,19 +13681,19 @@ array_string compiler__env_vflags_and_os_args() {
     _PUSH(&args,
           (/*typ = array_string   tmp_typ=string*/ (
               *(string *)array_get(os__args, 0))),
-          tmp84, string);
+          tmp86, string);
     _PUSH_MANY(&args,
                (/*typ = array_string   tmp_typ=string*/ string_split(
                    vflags, tos3(" "))),
-               tmp87, array_string);
+               tmp89, array_string);
     if (os__args.len > 1) {
       _PUSH_MANY(&args,
                  (/*typ = array_string   tmp_typ=string*/ array_slice2(
                      os__args, 1, -1, true)),
-                 tmp88, array_string);
+                 tmp90, array_string);
     };
   } else {
-    _PUSH_MANY(&args, (/*typ = array_string   tmp_typ=string*/ os__args), tmp91,
+    _PUSH_MANY(&args, (/*typ = array_string   tmp_typ=string*/ os__args), tmp93,
                array_string);
   };
   return args;
@@ -13723,29 +13751,29 @@ string compiler__cescaped_path(string s) {
   return string_replace(s, tos3("\\"), tos3("\\\\"));
 }
 compiler__OS compiler__os_from_string(string os) {
-  string tmp92 = os;
+  string tmp94 = os;
 
-  if (string_eq(tmp92, tos3("linux"))) {
+  if (string_eq(tmp94, tos3("linux"))) {
     return compiler__compiler__OS_linux;
-  } else if (string_eq(tmp92, tos3("windows"))) {
+  } else if (string_eq(tmp94, tos3("windows"))) {
     return compiler__compiler__OS_windows;
-  } else if (string_eq(tmp92, tos3("mac"))) {
+  } else if (string_eq(tmp94, tos3("mac"))) {
     return compiler__compiler__OS_mac;
-  } else if (string_eq(tmp92, tos3("freebsd"))) {
+  } else if (string_eq(tmp94, tos3("freebsd"))) {
     return compiler__compiler__OS_freebsd;
-  } else if (string_eq(tmp92, tos3("openbsd"))) {
+  } else if (string_eq(tmp94, tos3("openbsd"))) {
     return compiler__compiler__OS_openbsd;
-  } else if (string_eq(tmp92, tos3("netbsd"))) {
+  } else if (string_eq(tmp94, tos3("netbsd"))) {
     return compiler__compiler__OS_netbsd;
-  } else if (string_eq(tmp92, tos3("dragonfly"))) {
+  } else if (string_eq(tmp94, tos3("dragonfly"))) {
     return compiler__compiler__OS_dragonfly;
-  } else if (string_eq(tmp92, tos3("js"))) {
+  } else if (string_eq(tmp94, tos3("js"))) {
     return compiler__compiler__OS_js;
-  } else if (string_eq(tmp92, tos3("solaris"))) {
+  } else if (string_eq(tmp94, tos3("solaris"))) {
     return compiler__compiler__OS_solaris;
-  } else if (string_eq(tmp92, tos3("android"))) {
+  } else if (string_eq(tmp94, tos3("android"))) {
     return compiler__compiler__OS_android;
-  } else if (string_eq(tmp92, tos3("msvc"))) {
+  } else if (string_eq(tmp94, tos3("msvc"))) {
     compiler__verror(tos3("use the flag `-cc msvc` to build using msvc"));
   };
   printf("bad os %.*s\n", os.len, os.str);
@@ -13766,7 +13794,7 @@ compiler__V *compiler__new_v_compiler_with_args(array_string args) {
   string vexe = compiler__vexe_path();
   array_string allargs = new_array_from_c_array(
       1, 1, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 1){vexe});
-  _PUSH_MANY(&allargs, (/*typ = array_string   tmp_typ=string*/ args), tmp93,
+  _PUSH_MANY(&allargs, (/*typ = array_string   tmp_typ=string*/ args), tmp95,
              array_string);
   os__setenv(tos3("VOSARGS"), array_string_join(allargs, tos3(" ")), 1);
   return compiler__new_v(allargs);
@@ -14308,15 +14336,14 @@ Option_string compiler__V_find_module_path(compiler__V *v, string mod) {
       os__getwd(), _STR("%.*s%.*s", os__path_separator.len,
                         os__path_separator.str, mod_path.len, mod_path.str));
   if (string_eq(mod, tos3("compiler")) || !os__dir_exists(import_path)) {
-    import_path = _STR("%.*s%.*svlib%.*s%.*s", v->lang_dir.len, v->lang_dir.str,
-                       os__path_separator.len, os__path_separator.str,
-                       os__path_separator.len, os__path_separator.str,
-                       mod_path.len, mod_path.str);
+    import_path = _STR("%.*s%.*s%.*s", v->pref->vlib_path.len,
+                       v->pref->vlib_path.str, os__path_separator.len,
+                       os__path_separator.str, mod_path.len, mod_path.str);
   };
   if (!os__dir_exists(import_path)) {
-    import_path = _STR("%.*s%.*s%.*s", compiler__v_modules_path.len,
-                       compiler__v_modules_path.str, os__path_separator.len,
-                       os__path_separator.str, mod_path.len, mod_path.str);
+    import_path = _STR("%.*s%.*s%.*s", v->pref->vpath.len, v->pref->vpath.str,
+                       os__path_separator.len, os__path_separator.str,
+                       mod_path.len, mod_path.str);
     if (!os__dir_exists(import_path)) {
       return v_error(_STR("module \"%.*s\" not found", mod.len, mod.str));
     };
