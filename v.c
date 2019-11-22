@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "76cd70c"
+#define V_COMMIT_HASH "7c802f3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "00365b0"
+#define V_COMMIT_HASH "76cd70c"
 #endif
 #include <inttypes.h>
 
@@ -29,6 +29,9 @@ typedef array array_int;
 typedef array array_byte;
 typedef array array_f32;
 typedef array array_f64;
+typedef array array_u16;
+typedef array array_u32;
+typedef array array_u64;
 typedef map map_int;
 typedef map map_string;
 #ifndef bool
@@ -8486,14 +8489,11 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
   if (f.is_generic) {
     Option_compiler__Fn tmp13 =
         compiler__Table_find_fn(&/* ? */ *p->table, f.name);
-    compiler__Fn f2;
     if (!tmp13.ok) {
       string err = tmp13.error;
       int errcode = tmp13.ecode;
       return tos3("");
-    }
-    f2 = *(compiler__Fn *)tmp13.data;
-    ;
+    };
   };
   f = new_f;
   bool is_or_else = p->tok == compiler__compiler__TokenKind_key_orelse;
@@ -21704,9 +21704,10 @@ void init() {
       "voidptr;\ntypedef struct array array;\ntypedef struct map map;\ntypedef "
       "array array_string;\ntypedef array array_int;\ntypedef array "
       "array_byte;\ntypedef array array_f32;\ntypedef array "
-      "array_f64;\ntypedef map map_int;\ntypedef map map_string;\n#ifndef "
-      "bool\n	typedef int bool;\n	#define true 1\n	#define false "
-      "0\n#endif\n");
+      "array_f64;\ntypedef array array_u16;\ntypedef array array_u32;\ntypedef "
+      "array array_u64;\ntypedef map map_int;\ntypedef map "
+      "map_string;\n#ifndef bool\n	typedef int bool;\n	#define true "
+      "1\n	#define false 0\n#endif\n");
   compiler__warn_match_arrow =
       string_add(tos3("=> is no longer needed in match statements, use\n"),
                  tos3("match foo {\n	1 { bar }\n	2 { baz }\n	else { "
