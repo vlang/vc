@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8fbfcee"
+#define V_COMMIT_HASH "4edade5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7c802f3"
+#define V_COMMIT_HASH "8fbfcee"
 #endif
 #include <inttypes.h>
 
@@ -12072,7 +12072,7 @@ void compiler__Parser_cast(compiler__Parser *p, string typ) {
                 expr_typ.len, expr_typ.str));
   } else if (casting_voidptr_to_value) {
     compiler__CGen_set_placeholder(p->cgen, pos,
-                                   _STR("*(%.*s*)(", typ.len, typ.str));
+                                   _STR("(%.*s)(", typ.len, typ.str));
   } else {
     if (string_eq(typ, tos3("bool"))) {
       if (compiler__is_number_type(expr_typ) ||
