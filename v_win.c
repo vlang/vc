@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ab91733"
+#define V_COMMIT_HASH "9712213"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4edade5"
+#define V_COMMIT_HASH "ab91733"
 #endif
 #include <inttypes.h>
 
@@ -225,9 +225,12 @@ typedef struct mapnode mapnode;
 typedef struct Option Option;
 typedef struct string string;
 typedef struct ustring ustring;
+typedef struct compiler_dot_x64__SectionConfig compiler_dot_x64__SectionConfig;
+typedef struct compiler_dot_x64__Gen compiler_dot_x64__Gen;
 typedef struct strings__Builder strings__Builder;
 typedef struct os__File os__File;
 typedef struct os__FileInfo os__FileInfo;
+typedef Option Option_array_byte;
 typedef Option Option_string;
 typedef Option Option_bool;
 typedef Option Option_bool;
@@ -316,6 +319,10 @@ typedef array array_compiler__TokenKind;
 typedef struct time__Time time__Time;
 typedef Option Option_int;
 typedef struct benchmark__Benchmark benchmark__Benchmark;
+typedef int compiler_dot_x64__SectionType;
+typedef int compiler_dot_x64__Register;
+typedef int compiler_dot_x64__Size;
+typedef Option Option_array_byte;
 typedef Option Option_string;
 typedef Option Option_bool;
 typedef Option Option_bool;
@@ -479,6 +486,16 @@ struct benchmark__Benchmark {
   bool verbose;
 };
 
+struct compiler_dot_x64__Gen {
+  string out_name;
+  array_byte buf;
+  int sect_header_name_pos;
+  i64 offset;
+  array_i64 str_pos;
+  array_string strings;
+  i64 file_size_pos;
+};
+
 struct compiler__CGen {
   os__File out;
   string out_path;
@@ -621,6 +638,7 @@ struct compiler__Preferences {
   bool is_bare;
   string vlib_path;
   string vpath;
+  bool x64;
 };
 
 struct compiler__ScanRes {
@@ -679,6 +697,19 @@ struct compiler__Var {
   int token_idx;
   bool is_for_var;
   bool is_public;
+};
+
+struct compiler_dot_x64__SectionConfig {
+  string name;
+  compiler_dot_x64__SectionType typ;
+  i64 flags;
+  void *data;
+  bool is_saa;
+  i64 datalen;
+  int link;
+  int info;
+  i64 align;
+  i64 entsize;
 };
 
 struct hashmap {
@@ -807,6 +838,7 @@ struct compiler__Parser {
   compiler__TokenKind prev_tok2;
   string lit;
   compiler__CGen *cgen;
+  compiler_dot_x64__Gen *x64;
   compiler__Table *table;
   compiler__ImportTable import_table;
   compiler__Pass pass;
@@ -862,6 +894,7 @@ struct compiler__V {
   string dir;
   compiler__Table *table;
   compiler__CGen *cgen;
+  compiler_dot_x64__Gen *x64;
   compiler__Preferences *pref;
   string lang_dir;
   string out_name;
@@ -1182,6 +1215,36 @@ string string_from_wide(u16 *_wstr);
 string string_from_wide2(u16 *_wstr, int len);
 int utf8_len(byte c);
 int utf8_getchar();
+void compiler_dot_x64__Gen_generate_elf_header(compiler_dot_x64__Gen *g);
+void compiler_dot_x64__Gen_generate_elf_footer(compiler_dot_x64__Gen *g);
+void compiler_dot_x64__Gen_section_header(compiler_dot_x64__Gen *g,
+                                          compiler_dot_x64__SectionConfig c);
+void compiler_dot_x64__genobj();
+compiler_dot_x64__Gen *compiler_dot_x64__new_gen(string out_name);
+void compiler_dot_x64__Gen_write8(compiler_dot_x64__Gen *g, int n);
+void compiler_dot_x64__Gen_write16(compiler_dot_x64__Gen *g, int n);
+void compiler_dot_x64__Gen_write32(compiler_dot_x64__Gen *g, int n);
+void compiler_dot_x64__Gen_write64(compiler_dot_x64__Gen *g, i64 n);
+void compiler_dot_x64__Gen_write64_at(compiler_dot_x64__Gen *g, i64 n, i64 at);
+void compiler_dot_x64__Gen_write_string(compiler_dot_x64__Gen *g, string s);
+void compiler_dot_x64__Gen_inc(compiler_dot_x64__Gen *g,
+                               compiler_dot_x64__Register reg);
+void compiler_dot_x64__Gen_cmp(compiler_dot_x64__Gen *g,
+                               compiler_dot_x64__Register reg,
+                               compiler_dot_x64__Size size, i64 val);
+i64 compiler_dot_x64__abs(i64 a);
+void compiler_dot_x64__Gen_jle(compiler_dot_x64__Gen *g, i64 addr);
+void compiler_dot_x64__Gen_mov64(compiler_dot_x64__Gen *g,
+                                 compiler_dot_x64__Register reg, i64 val);
+void compiler_dot_x64__Gen_call(compiler_dot_x64__Gen *g, int val);
+void compiler_dot_x64__Gen_syscall(compiler_dot_x64__Gen *g);
+void compiler_dot_x64__Gen_ret(compiler_dot_x64__Gen *g);
+int compiler_dot_x64__Gen_gen_loop_start(compiler_dot_x64__Gen *g, int from);
+void compiler_dot_x64__Gen_gen_loop_end(compiler_dot_x64__Gen *g, int to,
+                                        int label);
+void compiler_dot_x64__Gen_gen_print(compiler_dot_x64__Gen *g, string s);
+void compiler_dot_x64__Gen_mov(compiler_dot_x64__Gen *g,
+                               compiler_dot_x64__Register reg, int val);
 strings__Builder strings__new_builder(int initial_size);
 void strings__Builder_write(strings__Builder *b, string s);
 void strings__Builder_writeln(strings__Builder *b, string s);
@@ -1198,6 +1261,7 @@ int strconv__atoi(string s);
 bool strconv__underscore_ok(string s);
 array_byte os__File_read_bytes(os__File f, int size);
 array_byte os__File_read_bytes_at(os__File f, int size, int pos);
+Option_array_byte os__read_bytes(string path);
 Option_string os__read_file(string path);
 int os__file_size(string path);
 void os__mv(string old, string new);
@@ -1582,6 +1646,7 @@ string compiler__type_default(string typ);
 void compiler__Parser_gen_array_push(compiler__Parser *p, int ph, string typ,
                                      string expr_type, string tmp,
                                      string elm_type);
+void compiler__V_compile_x64(compiler__V *v);
 void compiler__Parser_gen_json_for_type(compiler__Parser *p,
                                         compiler__Type typ);
 bool compiler__is_js_prim(string typ);
@@ -1755,6 +1820,7 @@ void compiler__Parser_check_and_register_used_imported_type(compiler__Parser *p,
 void compiler__Parser_check_unused_imports(compiler__Parser *p);
 _V_MulRet_bool_V_string compiler__Parser_is_expr_fn_call(compiler__Parser *p,
                                                          int start_tok_idx);
+void compiler__todo_remove();
 compiler__Type compiler__Parser_get_type2(compiler__Parser *p);
 string compiler__sql_params2params_gen(array_string sql_params,
                                        array_string sql_types, string qprefix);
@@ -1985,6 +2051,39 @@ int builtin__min_cap;
 int builtin__max_cap;
 array_int g_ustring_runes; // global
 #define builtin__CP_UTF8 65001
+int compiler_dot_x64__mag0;
+#define compiler_dot_x64__mag1 'E'
+#define compiler_dot_x64__mag2 'L'
+#define compiler_dot_x64__mag3 'F'
+#define compiler_dot_x64__ei_class 4
+#define compiler_dot_x64__elfclass64 2
+#define compiler_dot_x64__elfdata2lsb 1
+#define compiler_dot_x64__ev_current 1
+#define compiler_dot_x64__elf_osabi 0
+#define compiler_dot_x64__et_rel 1
+#define compiler_dot_x64__et_exec 2
+#define compiler_dot_x64__et_dyn 3
+int compiler_dot_x64__e_machine;
+int compiler_dot_x64__shn_xindex;
+#define compiler_dot_x64__sht_null 0
+int compiler_dot_x64__segment_start;
+#define compiler_dot_x64__compiler_dot_x64__SectionType_null 0
+#define compiler_dot_x64__compiler_dot_x64__SectionType_progbits 1
+#define compiler_dot_x64__compiler_dot_x64__SectionType_symtab 2
+#define compiler_dot_x64__compiler_dot_x64__SectionType_strtab 3
+#define compiler_dot_x64__compiler_dot_x64__SectionType_rela 4
+#define compiler_dot_x64__compiler_dot_x64__Register_eax 0
+#define compiler_dot_x64__compiler_dot_x64__Register_edi 1
+#define compiler_dot_x64__compiler_dot_x64__Register_rax 2
+#define compiler_dot_x64__compiler_dot_x64__Register_rdi 3
+#define compiler_dot_x64__compiler_dot_x64__Register_rsi 4
+#define compiler_dot_x64__compiler_dot_x64__Register_edx 5
+#define compiler_dot_x64__compiler_dot_x64__Register_rdx 6
+#define compiler_dot_x64__compiler_dot_x64__Register_r12 7
+#define compiler_dot_x64__compiler_dot_x64__Size__8 0
+#define compiler_dot_x64__compiler_dot_x64__Size__16 1
+#define compiler_dot_x64__compiler_dot_x64__Size__32 2
+#define compiler_dot_x64__compiler_dot_x64__Size__64 3
 #define strconv__int_size 32
 u64 strconv__max_u64;
 #define os__O_RDONLY 1
@@ -4408,6 +4507,283 @@ int utf8_getchar() {
     return uc;
   };
 }
+void compiler_dot_x64__Gen_generate_elf_header(compiler_dot_x64__Gen *g) {
+  _PUSH_MANY(&g->buf,
+             (/*typ = array_byte   tmp_typ=byte*/ new_array_from_c_array(
+                 4, 4, sizeof(byte),
+                 EMPTY_ARRAY_OF_ELEMS(byte, 4){
+                     ((byte)(compiler_dot_x64__mag0)), compiler_dot_x64__mag1,
+                     compiler_dot_x64__mag2, compiler_dot_x64__mag3})),
+             tmp1, array_byte);
+  _PUSH(&g->buf,
+        (/*typ = array_byte   tmp_typ=byte*/ compiler_dot_x64__elfclass64),
+        tmp2, byte);
+  _PUSH(&g->buf,
+        (/*typ = array_byte   tmp_typ=byte*/ compiler_dot_x64__elfdata2lsb),
+        tmp3, byte);
+  _PUSH(&g->buf,
+        (/*typ = array_byte   tmp_typ=byte*/ compiler_dot_x64__ev_current),
+        tmp4, byte);
+  _PUSH(&g->buf, (/*typ = array_byte   tmp_typ=byte*/ 1), tmp5, byte);
+  compiler_dot_x64__Gen_write64(g, 0);
+  compiler_dot_x64__Gen_write16(g, 2);
+  compiler_dot_x64__Gen_write16(g, compiler_dot_x64__e_machine);
+  compiler_dot_x64__Gen_write32(g, compiler_dot_x64__ev_current);
+  int eh_size = 0x40;
+  int phent_size = 0x38;
+  compiler_dot_x64__Gen_write64(g, compiler_dot_x64__segment_start + eh_size +
+                                       phent_size);
+  compiler_dot_x64__Gen_write64(g, 0x40);
+  compiler_dot_x64__Gen_write64(g, 0);
+  compiler_dot_x64__Gen_write32(g, 0);
+  compiler_dot_x64__Gen_write16(g, eh_size);
+  compiler_dot_x64__Gen_write16(g, phent_size);
+  compiler_dot_x64__Gen_write16(g, 1);
+  compiler_dot_x64__Gen_write16(g, 0);
+  compiler_dot_x64__Gen_write16(g, 0);
+  compiler_dot_x64__Gen_write16(g, 0);
+  compiler_dot_x64__Gen_write32(g, 1);
+  compiler_dot_x64__Gen_write32(g, 5);
+  compiler_dot_x64__Gen_write64(g, 0);
+  compiler_dot_x64__Gen_write64(g, compiler_dot_x64__segment_start);
+  compiler_dot_x64__Gen_write64(g, compiler_dot_x64__segment_start);
+  g->file_size_pos = g->buf.len;
+  compiler_dot_x64__Gen_write64(g, 0);
+  compiler_dot_x64__Gen_write64(g, 0);
+  compiler_dot_x64__Gen_write64(g, 0x1000);
+}
+void compiler_dot_x64__Gen_generate_elf_footer(compiler_dot_x64__Gen *g) {
+  compiler_dot_x64__Gen_mov(g, compiler_dot_x64__compiler_dot_x64__Register_edi,
+                            0);
+  compiler_dot_x64__Gen_mov(g, compiler_dot_x64__compiler_dot_x64__Register_eax,
+                            60);
+  compiler_dot_x64__Gen_syscall(g);
+  array_string tmp6 = g->strings;
+  for (int i = 0; i < tmp6.len; i++) {
+    string s = ((string *)tmp6.data)[i];
+
+    compiler_dot_x64__Gen_write64_at(
+        g, compiler_dot_x64__segment_start + g->buf.len,
+        ((int)((*(i64 *)array_get(g->str_pos, i)))));
+    compiler_dot_x64__Gen_write_string(g, s);
+    compiler_dot_x64__Gen_write8(g, 6);
+  };
+  int file_size = g->buf.len;
+  compiler_dot_x64__Gen_write64_at(g, file_size, g->file_size_pos);
+  compiler_dot_x64__Gen_write64_at(g, file_size, g->file_size_pos + 8);
+  Option_os__File tmp9 = os__create(tos3("out.bin"));
+  os__File f;
+  if (!tmp9.ok) {
+    string err = tmp9.error;
+    int errcode = tmp9.ecode;
+    v_panic(err);
+  }
+  f = *(os__File *)tmp9.data;
+  ;
+  os__File_write_bytes(f, g->buf.data, g->buf.len);
+  os__File_close(f);
+  println(tos3("x64 elf binary has been successfully generated"));
+}
+void compiler_dot_x64__Gen_section_header(compiler_dot_x64__Gen *g,
+                                          compiler_dot_x64__SectionConfig c) {
+  compiler_dot_x64__Gen_write32(g, g->sect_header_name_pos);
+  g->sect_header_name_pos += c.name.len + 1;
+  compiler_dot_x64__Gen_write32(g, ((int)(c.typ)));
+  compiler_dot_x64__Gen_write64(g, c.flags);
+  compiler_dot_x64__Gen_write64(g, 0);
+  compiler_dot_x64__Gen_write64(g, g->offset);
+  g->offset += c.datalen + 1;
+  compiler_dot_x64__Gen_write64(g, c.datalen);
+  compiler_dot_x64__Gen_write32(g, c.link);
+  compiler_dot_x64__Gen_write32(g, c.info);
+  compiler_dot_x64__Gen_write64(g, c.align);
+  compiler_dot_x64__Gen_write64(g, c.entsize);
+}
+void compiler_dot_x64__genobj() {}
+compiler_dot_x64__Gen *compiler_dot_x64__new_gen(string out_name) {
+  return (compiler_dot_x64__Gen *)memdup(
+      &(compiler_dot_x64__Gen){
+          .sect_header_name_pos = 0,
+          .buf = new_array_from_c_array(
+              0, 0, sizeof(byte), EMPTY_ARRAY_OF_ELEMS(byte, 0){TCCSKIP(0)}),
+          .out_name = out_name,
+          .offset = 0,
+          .str_pos = new_array(0, 1, sizeof(i64)),
+          .strings = new_array(0, 1, sizeof(string)),
+          .file_size_pos = 0},
+      sizeof(compiler_dot_x64__Gen));
+}
+void compiler_dot_x64__Gen_write8(compiler_dot_x64__Gen *g, int n) {
+  _PUSH(&g->buf, (/*typ = array_byte   tmp_typ=byte*/ ((byte)(n))), tmp1, byte);
+}
+void compiler_dot_x64__Gen_write16(compiler_dot_x64__Gen *g, int n) {
+  _PUSH(&g->buf, (/*typ = array_byte   tmp_typ=byte*/ ((byte)(n))), tmp2, byte);
+  _PUSH(&g->buf, (/*typ = array_byte   tmp_typ=byte*/ ((byte)(n >> 8))), tmp3,
+        byte);
+}
+void compiler_dot_x64__Gen_write32(compiler_dot_x64__Gen *g, int n) {
+  _PUSH(&g->buf, (/*typ = array_byte   tmp_typ=byte*/ ((byte)(n))), tmp4, byte);
+  _PUSH(&g->buf, (/*typ = array_byte   tmp_typ=byte*/ ((byte)(n >> 8))), tmp5,
+        byte);
+  _PUSH(&g->buf, (/*typ = array_byte   tmp_typ=byte*/ ((byte)(n >> 16))), tmp6,
+        byte);
+  _PUSH(&g->buf, (/*typ = array_byte   tmp_typ=byte*/ ((byte)(n >> 24))), tmp7,
+        byte);
+}
+void compiler_dot_x64__Gen_write64(compiler_dot_x64__Gen *g, i64 n) {
+  _PUSH(&g->buf, (/*typ = array_byte   tmp_typ=byte*/ ((byte)(n))), tmp8, byte);
+  _PUSH(&g->buf, (/*typ = array_byte   tmp_typ=byte*/ ((byte)(n >> 8))), tmp9,
+        byte);
+  _PUSH(&g->buf, (/*typ = array_byte   tmp_typ=byte*/ ((byte)(n >> 16))), tmp10,
+        byte);
+  _PUSH(&g->buf, (/*typ = array_byte   tmp_typ=byte*/ ((byte)(n >> 24))), tmp11,
+        byte);
+  _PUSH(&g->buf, (/*typ = array_byte   tmp_typ=byte*/ ((byte)(n >> 32))), tmp12,
+        byte);
+  _PUSH(&g->buf, (/*typ = array_byte   tmp_typ=byte*/ ((byte)(n >> 40))), tmp13,
+        byte);
+  _PUSH(&g->buf, (/*typ = array_byte   tmp_typ=byte*/ ((byte)(n >> 48))), tmp14,
+        byte);
+  _PUSH(&g->buf, (/*typ = array_byte   tmp_typ=byte*/ ((byte)(n >> 56))), tmp15,
+        byte);
+}
+void compiler_dot_x64__Gen_write64_at(compiler_dot_x64__Gen *g, i64 n, i64 at) {
+  array_set(&/*q*/ g->buf, at, &(byte[]){((byte)(n))});
+  array_set(&/*q*/ g->buf, at + 1, &(byte[]){((byte)(n >> 8))});
+  array_set(&/*q*/ g->buf, at + 2, &(byte[]){((byte)(n >> 16))});
+  array_set(&/*q*/ g->buf, at + 3, &(byte[]){((byte)(n >> 24))});
+  array_set(&/*q*/ g->buf, at + 4, &(byte[]){((byte)(n >> 32))});
+  array_set(&/*q*/ g->buf, at + 5, &(byte[]){((byte)(n >> 40))});
+  array_set(&/*q*/ g->buf, at + 6, &(byte[]){((byte)(n >> 48))});
+  array_set(&/*q*/ g->buf, at + 7, &(byte[]){((byte)(n >> 56))});
+}
+void compiler_dot_x64__Gen_write_string(compiler_dot_x64__Gen *g, string s) {
+  string tmp16 = s;
+  array_byte bytes_tmp16 = string_bytes(tmp16);
+  ;
+  for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
+    byte c = ((byte *)bytes_tmp16.data)[tmp17];
+
+    compiler_dot_x64__Gen_write8(g, ((int)(c)));
+  };
+}
+void compiler_dot_x64__Gen_inc(compiler_dot_x64__Gen *g,
+                               compiler_dot_x64__Register reg) {
+  compiler_dot_x64__Gen_write16(g, 0xff49);
+  compiler_dot_x64__Register tmp18 = reg;
+
+  if (tmp18 == compiler_dot_x64__compiler_dot_x64__Register_r12) {
+    compiler_dot_x64__Gen_write8(g, 0xc4);
+  } else // default:
+  {
+    v_panic(_STR("unhandled inc %d", reg));
+  };
+}
+void compiler_dot_x64__Gen_cmp(compiler_dot_x64__Gen *g,
+                               compiler_dot_x64__Register reg,
+                               compiler_dot_x64__Size size, i64 val) {
+  compiler_dot_x64__Gen_write8(g, 0x49);
+  compiler_dot_x64__Size tmp19 = size;
+
+  if (tmp19 == compiler_dot_x64__compiler_dot_x64__Size__8) {
+    compiler_dot_x64__Gen_write8(g, 0x83);
+  } else if (tmp19 == compiler_dot_x64__compiler_dot_x64__Size__32) {
+    compiler_dot_x64__Gen_write8(g, 0x81);
+  } else // default:
+  {
+    v_panic(tos3("unhandled cmp"));
+  };
+  compiler_dot_x64__Register tmp20 = reg;
+
+  if (tmp20 == compiler_dot_x64__compiler_dot_x64__Register_r12) {
+    compiler_dot_x64__Gen_write8(g, 0xfc);
+  } else // default:
+  {
+    v_panic(tos3("unhandled cmp"));
+  };
+  compiler_dot_x64__Gen_write8(g, ((int)(val)));
+}
+i64 compiler_dot_x64__abs(i64 a) { return (a < 0) ? (-a) : (a); }
+void compiler_dot_x64__Gen_jle(compiler_dot_x64__Gen *g, i64 addr) {
+  int offset = 0xff - ((int)(compiler_dot_x64__abs(addr - g->buf.len))) - 1;
+  compiler_dot_x64__Gen_write8(g, 0x7e);
+  compiler_dot_x64__Gen_write8(g, offset);
+}
+void compiler_dot_x64__Gen_mov64(compiler_dot_x64__Gen *g,
+                                 compiler_dot_x64__Register reg, i64 val) {
+  compiler_dot_x64__Register tmp21 = reg;
+
+  if (tmp21 == compiler_dot_x64__compiler_dot_x64__Register_rsi) {
+    compiler_dot_x64__Gen_write8(g, 0x48);
+    compiler_dot_x64__Gen_write8(g, 0xbe);
+  } else // default:
+  {
+    printf("unhandled mov %d\n", reg);
+  };
+  compiler_dot_x64__Gen_write64(g, val);
+}
+void compiler_dot_x64__Gen_call(compiler_dot_x64__Gen *g, int val) {
+  compiler_dot_x64__Gen_write8(g, 0xe8);
+}
+void compiler_dot_x64__Gen_syscall(compiler_dot_x64__Gen *g) {
+  compiler_dot_x64__Gen_write8(g, 0x0f);
+  compiler_dot_x64__Gen_write8(g, 0x05);
+}
+void compiler_dot_x64__Gen_ret(compiler_dot_x64__Gen *g) {
+  compiler_dot_x64__Gen_write8(g, 0xc3);
+}
+int compiler_dot_x64__Gen_gen_loop_start(compiler_dot_x64__Gen *g, int from) {
+  compiler_dot_x64__Gen_mov(g, compiler_dot_x64__compiler_dot_x64__Register_r12,
+                            from);
+  int label = g->buf.len;
+  compiler_dot_x64__Gen_inc(g,
+                            compiler_dot_x64__compiler_dot_x64__Register_r12);
+  return label;
+}
+void compiler_dot_x64__Gen_gen_loop_end(compiler_dot_x64__Gen *g, int to,
+                                        int label) {
+  compiler_dot_x64__Gen_cmp(g, compiler_dot_x64__compiler_dot_x64__Register_r12,
+                            compiler_dot_x64__compiler_dot_x64__Size__8, to);
+  compiler_dot_x64__Gen_jle(g, label);
+}
+void compiler_dot_x64__Gen_gen_print(compiler_dot_x64__Gen *g, string s) {
+  _PUSH(&g->strings,
+        (/*typ = array_string   tmp_typ=string*/ string_add(s, tos3("\n"))),
+        tmp22, string);
+  compiler_dot_x64__Gen_mov(g, compiler_dot_x64__compiler_dot_x64__Register_eax,
+                            1);
+  compiler_dot_x64__Gen_mov(g, compiler_dot_x64__compiler_dot_x64__Register_edi,
+                            1);
+  int str_pos = g->buf.len + 2;
+  _PUSH(&g->str_pos, (/*typ = array_i64   tmp_typ=i64*/ str_pos), tmp23, i64);
+  compiler_dot_x64__Gen_mov64(
+      g, compiler_dot_x64__compiler_dot_x64__Register_rsi, 0);
+  compiler_dot_x64__Gen_mov(g, compiler_dot_x64__compiler_dot_x64__Register_edx,
+                            s.len + 1);
+  compiler_dot_x64__Gen_syscall(g);
+}
+void compiler_dot_x64__Gen_mov(compiler_dot_x64__Gen *g,
+                               compiler_dot_x64__Register reg, int val) {
+  compiler_dot_x64__Register tmp24 = reg;
+
+  if (tmp24 == compiler_dot_x64__compiler_dot_x64__Register_eax) {
+    compiler_dot_x64__Gen_write8(g, 0xb8);
+  } else if (tmp24 == compiler_dot_x64__compiler_dot_x64__Register_edi) {
+    compiler_dot_x64__Gen_write8(g, 0xbf);
+  } else if (tmp24 == compiler_dot_x64__compiler_dot_x64__Register_edx) {
+    compiler_dot_x64__Gen_write8(g, 0xba);
+  } else if (tmp24 == compiler_dot_x64__compiler_dot_x64__Register_rsi) {
+    compiler_dot_x64__Gen_write8(g, 0x48);
+    compiler_dot_x64__Gen_write8(g, 0xbe);
+  } else if (tmp24 == compiler_dot_x64__compiler_dot_x64__Register_r12) {
+    compiler_dot_x64__Gen_write8(g, 0x41);
+    compiler_dot_x64__Gen_write8(g, 0xbc);
+  } else // default:
+  {
+    v_panic(_STR("unhandled mov %d", reg));
+  };
+  compiler_dot_x64__Gen_write32(g, val);
+}
 strings__Builder strings__new_builder(int initial_size) {
   return (strings__Builder){.buf = make(0, initial_size, 1), .len = 0};
 }
@@ -4706,6 +5082,32 @@ array_byte os__File_read_bytes_at(os__File f, int size, int pos) {
   };
   return arr;
 }
+Option_array_byte os__read_bytes(string path) {
+  FILE *fp = os__vfopen(path, tos3("rb"));
+  if (isnil(fp)) {
+    return v_error(_STR("failed to open file \"%.*s\"", path.len, path.str));
+  };
+  fseek(fp, 0, SEEK_END);
+  int fsize = ftell(fp);
+  rewind(fp);
+  printf("fsize=%d\n", fsize);
+  byte *data = v_malloc(fsize);
+  fread((char *)data, fsize, 1, fp);
+  array_byte res =
+      array_repeat(new_array_from_c_array(1, 1, sizeof(byte),
+                                          EMPTY_ARRAY_OF_ELEMS(byte, 1){'0'}),
+                   fsize);
+  int tmp1 = 0;
+  ;
+  for (int tmp2 = tmp1; tmp2 < fsize; tmp2++) {
+    int i = tmp2;
+
+    array_set(&/*q*/ res, i, &(byte[]){data[/*ptr!*/ i] /*rbyte 1*/});
+  };
+  fclose(fp);
+  array_byte tmp3 = OPTION_CAST(array_byte)(res);
+  return opt_ok(&tmp3, sizeof(array_byte));
+}
 Option_string os__read_file(string path) {
   string mode = tos3("rb");
   FILE *fp = os__vfopen(path, mode);
@@ -4719,8 +5121,8 @@ Option_string os__read_file(string path) {
   fread((char *)str, fsize, 1, fp);
   fclose(fp);
   str[/*ptr!*/ fsize] /*rbyte 1*/ = 0;
-  string tmp1 = OPTION_CAST(string)((tos((byte *)str, fsize)));
-  return opt_ok(&tmp1, sizeof(string));
+  string tmp4 = OPTION_CAST(string)((tos((byte *)str, fsize)));
+  return opt_ok(&tmp4, sizeof(string));
 }
 int os__file_size(string path) {
   struct /*c struct init*/
@@ -4749,8 +5151,8 @@ Option_bool os__cp(string old, string new) {
   CopyFile(string_to_wide(_old), string_to_wide(_new), 0);
   u32 result = GetLastError();
   if (result == 0) {
-    bool tmp2 = OPTION_CAST(bool)(1);
-    return opt_ok(&tmp2, sizeof(bool));
+    bool tmp5 = OPTION_CAST(bool)(1);
+    return opt_ok(&tmp5, sizeof(bool));
   } else {
     return error_with_code(
         _STR("failed to copy %.*s to %.*s", old.len, old.str, new.len, new.str),
@@ -4758,8 +5160,8 @@ Option_bool os__cp(string old, string new) {
   };
 #else
   os__system(_STR("cp %.*s %.*s", old.len, old.str, new.len, new.str));
-  bool tmp3 = OPTION_CAST(bool)(1);
-  return opt_ok(&tmp3, sizeof(bool));
+  bool tmp6 = OPTION_CAST(bool)(1);
+  return opt_ok(&tmp6, sizeof(bool));
 #endif
   ;
 }
@@ -4783,30 +5185,30 @@ Option_bool os__cp_r(string osource_path, string odest_path, bool overwrite) {
         return v_error(tos3("Destination file path already exist"));
       };
     };
-    Option_bool tmp4 = os__cp(source_path, adjasted_path);
-    if (!tmp4.ok) {
-      string err = tmp4.error;
-      int errcode = tmp4.ecode;
+    Option_bool tmp7 = os__cp(source_path, adjasted_path);
+    if (!tmp7.ok) {
+      string err = tmp7.error;
+      int errcode = tmp7.ecode;
       return v_error(err);
     };
-    bool tmp5 = OPTION_CAST(bool)(1);
-    return opt_ok(&tmp5, sizeof(bool));
+    bool tmp8 = OPTION_CAST(bool)(1);
+    return opt_ok(&tmp8, sizeof(bool));
   };
   if (!os__is_dir(dest_path)) {
     return v_error(tos3("Destination path is not a valid directory"));
   };
-  Option_array_string tmp6 = os__ls(source_path);
+  Option_array_string tmp9 = os__ls(source_path);
   array_string files;
-  if (!tmp6.ok) {
-    string err = tmp6.error;
-    int errcode = tmp6.ecode;
+  if (!tmp9.ok) {
+    string err = tmp9.error;
+    int errcode = tmp9.ecode;
     return v_error(err);
   }
-  files = *(array_string *)tmp6.data;
+  files = *(array_string *)tmp9.data;
   ;
-  array_string tmp7 = files;
-  for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
-    string file = ((string *)tmp7.data)[tmp8];
+  array_string tmp10 = files;
+  for (int tmp11 = 0; tmp11 < tmp10.len; tmp11++) {
+    string file = ((string *)tmp10.data)[tmp11];
 
     string sp =
         filepath__join(source_path, &(varg_string){.len = 1, .args = {file}});
@@ -4815,27 +5217,27 @@ Option_bool os__cp_r(string osource_path, string odest_path, bool overwrite) {
     if (os__is_dir(sp)) {
       os__mkdir(dp);
     };
-    Option_bool tmp9 = os__cp_r(sp, dp, overwrite);
-    if (!tmp9.ok) {
-      string err = tmp9.error;
-      int errcode = tmp9.ecode;
+    Option_bool tmp12 = os__cp_r(sp, dp, overwrite);
+    if (!tmp12.ok) {
+      string err = tmp12.error;
+      int errcode = tmp12.ecode;
       os__rmdir(dp);
       v_panic(err);
     };
   };
-  bool tmp10 = OPTION_CAST(bool)(1);
-  return opt_ok(&tmp10, sizeof(bool));
+  bool tmp13 = OPTION_CAST(bool)(1);
+  return opt_ok(&tmp13, sizeof(bool));
 }
 Option_bool os__mv_by_cp(string source, string target) {
-  Option_bool tmp11 = os__cp(source, target);
-  if (!tmp11.ok) {
-    string err = tmp11.error;
-    int errcode = tmp11.ecode;
+  Option_bool tmp14 = os__cp(source, target);
+  if (!tmp14.ok) {
+    string err = tmp14.error;
+    int errcode = tmp14.ecode;
     return v_error(err);
   };
   os__rm(source);
-  bool tmp12 = OPTION_CAST(bool)(1);
-  return opt_ok(&tmp12, sizeof(bool));
+  bool tmp15 = OPTION_CAST(bool)(1);
+  return opt_ok(&tmp15, sizeof(bool));
 }
 FILE *os__vfopen(string path, string mode) {
 #ifdef _WIN32
@@ -4876,37 +5278,37 @@ Option_array_string os__read_lines(string path) {
     if (len > 1 && buf[/*ptr!*/ len - 2] /*rbyte 1*/ == 13) {
       buf[/*ptr!*/ len - 2] /*rbyte 1*/ = '\0';
     };
-    _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ tos_clone(buf)), tmp13,
+    _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ tos_clone(buf)), tmp16,
           string);
     buf_index = 0;
   };
   fclose(fp);
-  array_string tmp14 = OPTION_CAST(array_string)(res);
-  return opt_ok(&tmp14, sizeof(array_string));
+  array_string tmp17 = OPTION_CAST(array_string)(res);
+  return opt_ok(&tmp17, sizeof(array_string));
 }
 Option_array_ustring os__read_ulines(string path) {
-  Option_array_string tmp15 = os__read_lines(path);
+  Option_array_string tmp18 = os__read_lines(path);
   array_string lines;
-  if (!tmp15.ok) {
-    string err = tmp15.error;
-    int errcode = tmp15.ecode;
-    string tmp16 = OPTION_CAST(string)(err);
-    return opt_ok(&tmp16, sizeof(string));
+  if (!tmp18.ok) {
+    string err = tmp18.error;
+    int errcode = tmp18.ecode;
+    string tmp19 = OPTION_CAST(string)(err);
+    return opt_ok(&tmp19, sizeof(string));
   }
-  lines = *(array_string *)tmp15.data;
+  lines = *(array_string *)tmp18.data;
   ;
   array_ustring ulines = new_array_from_c_array(
       0, 0, sizeof(ustring), EMPTY_ARRAY_OF_ELEMS(ustring, 0){TCCSKIP(0)});
-  array_string tmp17 = lines;
-  for (int tmp18 = 0; tmp18 < tmp17.len; tmp18++) {
-    string myline = ((string *)tmp17.data)[tmp18];
+  array_string tmp20 = lines;
+  for (int tmp21 = 0; tmp21 < tmp20.len; tmp21++) {
+    string myline = ((string *)tmp20.data)[tmp21];
 
     _PUSH(&ulines,
           (/*typ = array_ustring   tmp_typ=ustring*/ string_ustring(myline)),
-          tmp19, ustring);
+          tmp22, ustring);
   };
-  array_ustring tmp20 = OPTION_CAST(array_ustring)(ulines);
-  return opt_ok(&tmp20, sizeof(array_ustring));
+  array_ustring tmp23 = OPTION_CAST(array_ustring)(ulines);
+  return opt_ok(&tmp23, sizeof(array_ustring));
 }
 Option_os__File os__open(string path) {
   os__File file = (os__File){.cfile = 0};
@@ -4922,8 +5324,8 @@ Option_os__File os__open(string path) {
   if (isnil(file.cfile)) {
     return v_error(_STR("failed to open file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp21 = OPTION_CAST(os__File)(file);
-  return opt_ok(&tmp21, sizeof(os__File));
+  os__File tmp24 = OPTION_CAST(os__File)(file);
+  return opt_ok(&tmp24, sizeof(os__File));
 }
 Option_os__File os__create(string path) {
   os__File file = (os__File){.cfile = 0};
@@ -4939,8 +5341,8 @@ Option_os__File os__create(string path) {
   if (isnil(file.cfile)) {
     return v_error(_STR("failed to create file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp22 = OPTION_CAST(os__File)(file);
-  return opt_ok(&tmp22, sizeof(os__File));
+  os__File tmp25 = OPTION_CAST(os__File)(file);
+  return opt_ok(&tmp25, sizeof(os__File));
 }
 Option_os__File os__open_append(string path) {
   os__File file = (os__File){.cfile = 0};
@@ -4957,8 +5359,8 @@ Option_os__File os__open_append(string path) {
     return v_error(
         _STR("failed to create(append) file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp23 = OPTION_CAST(os__File)(file);
-  return opt_ok(&tmp23, sizeof(os__File));
+  os__File tmp26 = OPTION_CAST(os__File)(file);
+  return opt_ok(&tmp26, sizeof(os__File));
 }
 void os__File_write(os__File f, string s) { fputs((char *)s.str, f.cfile); }
 void os__File_write_bytes(os__File f, void *data, int size) {
@@ -5039,29 +5441,29 @@ int os__system(string cmd) {
   return ret;
 }
 string os__sigint_to_signal_name(int si) {
-  int tmp28 = si;
+  int tmp31 = si;
 
-  if (tmp28 == 1) {
+  if (tmp31 == 1) {
     return tos3("SIGHUP");
-  } else if (tmp28 == 2) {
+  } else if (tmp31 == 2) {
     return tos3("SIGINT");
-  } else if (tmp28 == 3) {
+  } else if (tmp31 == 3) {
     return tos3("SIGQUIT");
-  } else if (tmp28 == 4) {
+  } else if (tmp31 == 4) {
     return tos3("SIGILL");
-  } else if (tmp28 == 6) {
+  } else if (tmp31 == 6) {
     return tos3("SIGABRT");
-  } else if (tmp28 == 8) {
+  } else if (tmp31 == 8) {
     return tos3("SIGFPE");
-  } else if (tmp28 == 9) {
+  } else if (tmp31 == 9) {
     return tos3("SIGKILL");
-  } else if (tmp28 == 11) {
+  } else if (tmp31 == 11) {
     return tos3("SIGSEGV");
-  } else if (tmp28 == 13) {
+  } else if (tmp31 == 13) {
     return tos3("SIGPIPE");
-  } else if (tmp28 == 14) {
+  } else if (tmp31 == 14) {
     return tos3("SIGALRM");
-  } else if (tmp28 == 15) {
+  } else if (tmp31 == 15) {
     return tos3("SIGTERM");
   };
 #ifdef __linux__
@@ -5212,7 +5614,7 @@ array_string os__get_lines() {
       break;
     };
     line = string_trim_space(line);
-    _PUSH(&inputstr, (/*typ = array_string   tmp_typ=string*/ line), tmp37,
+    _PUSH(&inputstr, (/*typ = array_string   tmp_typ=string*/ line), tmp40,
           string);
   };
   return inputstr;
@@ -5279,15 +5681,15 @@ string os__home_dir() {
   return home;
 }
 void os__write_file(string path, string text) {
-  Option_os__File tmp38 = os__create(path);
+  Option_os__File tmp41 = os__create(path);
   os__File f;
-  if (!tmp38.ok) {
-    string err = tmp38.error;
-    int errcode = tmp38.ecode;
+  if (!tmp41.ok) {
+    string err = tmp41.error;
+    int errcode = tmp41.ecode;
 
     return;
   }
-  f = *(os__File *)tmp38.data;
+  f = *(os__File *)tmp41.data;
   ;
   os__File_write(f, text);
   os__File_close(f);
@@ -5402,23 +5804,23 @@ array_string os__walk_ext(string path, string ext) {
     return new_array_from_c_array(0, 0, sizeof(string),
                                   EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   };
-  Option_array_string tmp41 = os__ls(path);
+  Option_array_string tmp44 = os__ls(path);
   array_string files;
-  if (!tmp41.ok) {
-    string err = tmp41.error;
-    int errcode = tmp41.ecode;
+  if (!tmp44.ok) {
+    string err = tmp44.error;
+    int errcode = tmp44.ecode;
     v_panic(err);
   }
-  files = *(array_string *)tmp41.data;
+  files = *(array_string *)tmp44.data;
   ;
   array_string res = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   string separator = (string_ends_with(path, os__path_separator))
                          ? (tos3(""))
                          : (os__path_separator);
-  array_string tmp42 = files;
-  for (int i = 0; i < tmp42.len; i++) {
-    string file = ((string *)tmp42.data)[i];
+  array_string tmp45 = files;
+  for (int i = 0; i < tmp45.len; i++) {
+    string file = ((string *)tmp45.data)[i];
 
     if (string_starts_with(file, tos3("."))) {
       continue;
@@ -5427,9 +5829,9 @@ array_string os__walk_ext(string path, string ext) {
     if (os__is_dir(p)) {
       _PUSH_MANY(&res,
                  (/*typ = array_string   tmp_typ=string*/ os__walk_ext(p, ext)),
-                 tmp43, array_string);
+                 tmp46, array_string);
     } else if (string_ends_with(file, ext)) {
-      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp44, string);
+      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp47, string);
     };
   };
   return res;
@@ -5439,18 +5841,18 @@ void os__walk(string path, void (*fnc)(string path /*FFF*/)) {
 
     return;
   };
-  Option_array_string tmp45 = os__ls(path);
+  Option_array_string tmp48 = os__ls(path);
   array_string files;
-  if (!tmp45.ok) {
-    string err = tmp45.error;
-    int errcode = tmp45.ecode;
+  if (!tmp48.ok) {
+    string err = tmp48.error;
+    int errcode = tmp48.ecode;
     v_panic(err);
   }
-  files = *(array_string *)tmp45.data;
+  files = *(array_string *)tmp48.data;
   ;
-  array_string tmp46 = files;
-  for (int tmp47 = 0; tmp47 < tmp46.len; tmp47++) {
-    string file = ((string *)tmp46.data)[tmp47];
+  array_string tmp49 = files;
+  for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
+    string file = ((string *)tmp49.data)[tmp50];
 
     string p = string_add(string_add(path, os__path_separator), file);
     if (os__is_dir(p)) {
@@ -5498,9 +5900,9 @@ void os__mkdir_all(string path) {
   string p = (string_starts_with(path, os__path_separator))
                  ? (os__path_separator)
                  : (tos3(""));
-  array_string tmp48 = string_split(path, os__path_separator);
-  for (int tmp49 = 0; tmp49 < tmp48.len; tmp49++) {
-    string subdir = ((string *)tmp48.data)[tmp49];
+  array_string tmp51 = string_split(path, os__path_separator);
+  for (int tmp52 = 0; tmp52 < tmp51.len; tmp52++) {
+    string subdir = ((string *)tmp51.data)[tmp52];
 
     p = string_add(p, string_add(subdir, os__path_separator));
     if (!os__dir_exists(p)) {
@@ -9546,8 +9948,6 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
   };
   bool is_c = string_eq(f.name, tos3("C")) &&
               p->tok == compiler__compiler__TokenKind_dot;
-  if (p->is_vh) {
-  };
   if (is_c) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_dot);
     f.name = compiler__Parser_check_name(p);
@@ -10397,6 +10797,12 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
           _STR("/*YY f=%.*s arg=%.*s is_moved=%d*/string_clone(", f->name.len,
                f->name.str, arg.name.len, arg.name.str, arg.is_moved));
     };
+    if (p->pref->x64 && i == 0 && string_eq(f->name, tos3("println")) &&
+        p->tok == compiler__compiler__TokenKind_str &&
+        compiler__Parser_peek(&/* ? */ *p) ==
+            compiler__compiler__TokenKind_rpar) {
+      compiler_dot_x64__Gen_gen_print(p->x64, p->lit);
+    };
     string typ = compiler__Parser_bool_expression(p);
     if (string_ends_with(arg.typ, tos3("er"))) {
       compiler__Type t = compiler__Table_find_type(&/* ? */ *p->table, arg.typ);
@@ -10636,21 +11042,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp87 = tos3("");
-    bool tmp88 = map_get(/*fn.v : 1217*/ r.inst, tp, &tmp87);
+    bool tmp88 = map_get(/*fn.v : 1227*/ r.inst, tp, &tmp87);
 
     if (!tmp88)
       tmp87 = tos((byte *)"", 0);
 
     if (string_ne(tmp87, tos3(""))) {
       string tmp89 = tos3("");
-      bool tmp90 = map_get(/*fn.v : 1218*/ r.inst, tp, &tmp89);
+      bool tmp90 = map_get(/*fn.v : 1228*/ r.inst, tp, &tmp89);
 
       if (!tmp90)
         tmp89 = tos((byte *)"", 0);
 
       if (string_ne(tmp89, ti)) {
         string tmp91 = tos3("");
-        bool tmp92 = map_get(/*fn.v : 1219*/ r.inst, tp, &tmp91);
+        bool tmp92 = map_get(/*fn.v : 1229*/ r.inst, tp, &tmp91);
 
         if (!tmp92)
           tmp91 = tos((byte *)"", 0);
@@ -10668,7 +11074,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp93 = tos3("");
-  bool tmp94 = map_get(/*fn.v : 1228*/ r.inst, f->typ, &tmp93);
+  bool tmp94 = map_get(/*fn.v : 1238*/ r.inst, f->typ, &tmp93);
 
   if (!tmp94)
     tmp93 = tos((byte *)"", 0);
@@ -10681,7 +11087,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp95.data)[tmp96];
 
     string tmp97 = tos3("");
-    bool tmp98 = map_get(/*fn.v : 1232*/ r.inst, tp, &tmp97);
+    bool tmp98 = map_get(/*fn.v : 1242*/ r.inst, tp, &tmp97);
 
     if (!tmp98)
       tmp97 = tos((byte *)"", 0);
@@ -10946,7 +11352,7 @@ string compiler__Fn_generic_tmpl_to_inst(compiler__Fn *f,
     if (tok.tok == compiler__compiler__TokenKind_name &&
         (_IN_MAP((tok_str), ti.inst))) {
       string tmp133 = tos3("");
-      bool tmp134 = map_get(/*fn.v : 1375*/ ti.inst, tok_str, &tmp133);
+      bool tmp134 = map_get(/*fn.v : 1385*/ ti.inst, tok_str, &tmp133);
 
       if (!tmp134)
         tmp133 = tos((byte *)"", 0);
@@ -10969,7 +11375,7 @@ void compiler__Parser_rename_generic_fn_instance(compiler__Parser *p,
     string k = ((string *)tmp135.data)[tmp136];
 
     string tmp137 = tos3("");
-    bool tmp138 = map_get(/*fn.v : 1387*/ ti.inst, k, &tmp137);
+    bool tmp138 = map_get(/*fn.v : 1397*/ ti.inst, k, &tmp137);
 
     if (!tmp138)
       tmp137 = tos((byte *)"", 0);
@@ -11028,7 +11434,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   if ((_IN_MAP((f->mod), p->v->gen_parser_idx))) {
     int tmp145 = 0;
     bool tmp146 =
-        map_get(/*fn.v : 1428*/ p->v->gen_parser_idx, f->mod, &tmp145);
+        map_get(/*fn.v : 1438*/ p->v->gen_parser_idx, f->mod, &tmp145);
 
     int pidx = tmp145;
     compiler__Parser_add_text(
@@ -11219,6 +11625,8 @@ void compiler__Parser_for_st(compiler__Parser *p) {
   p->for_expr_cnt++;
   compiler__TokenKind next_tok = compiler__Parser_peek(&/* ? */ *p);
   compiler__Parser_open_scope(p);
+  int label = 0;
+  int to = 0;
   if (p->tok == compiler__compiler__TokenKind_lcbr) {
     compiler__Parser_gen(p, tos3("while (1) {"));
   } else if (p->tok == compiler__compiler__TokenKind_key_mut) {
@@ -11364,12 +11772,19 @@ void compiler__Parser_for_st(compiler__Parser *p) {
     if (is_range) {
       compiler__Parser_check_types(p, typ, tos3("int"));
       compiler__Parser_check_space(p, compiler__compiler__TokenKind_dotdot);
+      if (p->pref->x64) {
+        to = v_string_int(p->lit);
+      };
       _V_MulRet_string_V_string _V_mret_range_typ_range_expr =
           compiler__Parser_tmp_expr(p);
       string range_typ = _V_mret_range_typ_range_expr.var_0;
       string range_expr = _V_mret_range_typ_range_expr.var_1;
       compiler__Parser_check_types(p, range_typ, tos3("int"));
       range_end = range_expr;
+      if (p->pref->x64) {
+        label =
+            compiler_dot_x64__Gen_gen_loop_start(p->x64, v_string_int(expr));
+      };
     };
     bool is_arr = string_contains(typ, tos3("array"));
     bool is_str = string_eq(typ, tos3("string"));
@@ -11440,6 +11855,9 @@ void compiler__Parser_for_st(compiler__Parser *p) {
   compiler__Parser_close_scope(p);
   p->for_expr_cnt--;
   p->returns = 0;
+  if (label > 0) {
+    compiler_dot_x64__Gen_gen_loop_end(p->x64, to, label);
+  };
 }
 string compiler__Parser_gen_var_decl(compiler__Parser *p, string name,
                                      bool is_static) {
@@ -12163,6 +12581,38 @@ void compiler__Parser_gen_array_push(compiler__Parser *p, int ph, string typ,
     };
   };
 }
+void compiler__V_compile_x64(compiler__V *v) {
+#ifndef __linux__
+  println(tos3("v -x64 can only generate Linux binaries for now"));
+  println(string_add(tos3("You are not on a Linux system, so you will not "),
+                     tos3("be able to run the resulting executable")));
+#endif
+  ;
+  _PUSH_MANY(
+      &v->files,
+      (/*typ = array_string   tmp_typ=string*/ compiler__V_v_files_from_dir(
+          &/* ? */ *v, filepath__join(v->pref->vlib_path,
+                                      &(varg_string){.len = 2,
+                                                     .args = {tos3("builtin"),
+                                                              tos3("bare")}}))),
+      tmp1, array_string);
+  _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ v->dir), tmp2,
+        string);
+  compiler_dot_x64__Gen_generate_elf_header(v->x64);
+  array_string tmp3 = v->files;
+  for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
+    string f = ((string *)tmp3.data)[tmp4];
+
+    compiler__V_parse(v, f, compiler__compiler__Pass_decl);
+  };
+  array_string tmp5 = v->files;
+  for (int tmp6 = 0; tmp6 < tmp5.len; tmp6++) {
+    string f = ((string *)tmp5.data)[tmp6];
+
+    compiler__V_parse(v, f, compiler__compiler__Pass_main);
+  };
+  compiler_dot_x64__Gen_generate_elf_footer(v->x64);
+}
 void compiler__Parser_gen_json_for_type(compiler__Parser *p,
                                         compiler__Type typ) {
   string dec = tos3("");
@@ -12616,7 +13066,7 @@ Option_int compiler__V_get_file_parser_index(compiler__V *v, string file) {
   string file_path = os__realpath(file);
   if ((_IN_MAP((file_path), v->file_parser_idx))) {
     int tmp2 = 0;
-    bool tmp3 = map_get(/*main.v : 161*/ v->file_parser_idx, file_path, &tmp2);
+    bool tmp3 = map_get(/*main.v : 164*/ v->file_parser_idx, file_path, &tmp2);
 
     int tmp4 = OPTION_CAST(int)(tmp2);
     return opt_ok(&tmp4, sizeof(int));
@@ -13524,6 +13974,9 @@ compiler__V *compiler__new_v(array_string args) {
   string cflags = compiler__get_cmdline_cflags(args);
   string rdir = os__realpath(dir);
   string rdir_name = os__filename(rdir);
+  if ((_IN(string, (tos3("-bare")), args))) {
+    compiler__verror(tos3("use -freestanding instead of -bare"));
+  };
   bool obfuscate = (_IN(string, (tos3("-obf")), args));
   bool is_repl = (_IN(string, (tos3("-repl")), args));
   compiler__Preferences *pref = (compiler__Preferences *)memdup(
@@ -13552,7 +14005,8 @@ compiler__V *compiler__new_v(array_string args) {
           .compress = (_IN(string, (tos3("-compress")), args)),
           .enable_globals = (_IN(string, (tos3("--enable-globals")), args)),
           .fast = (_IN(string, (tos3("-fast")), args)),
-          .is_bare = (_IN(string, (tos3("-bare")), args)),
+          .is_bare = (_IN(string, (tos3("-freestanding")), args)),
+          .x64 = (_IN(string, (tos3("-x64")), args)),
           .is_repl = is_repl,
           .build_mode = build_mode,
           .cflags = cflags,
@@ -13587,6 +14041,7 @@ compiler__V *compiler__new_v(array_string args) {
                      .table = compiler__new_table(obfuscate),
                      .out_name_c = out_name_c,
                      .cgen = compiler__new_cgen(out_name_c),
+                     .x64 = compiler_dot_x64__new_gen(out_name),
                      .vroot = vroot,
                      .pref = pref,
                      .mod = mod,
@@ -14906,6 +15361,7 @@ compiler__Parser compiler__V_new_parser_from_file(compiler__V *v, string path) {
       .prev_tok2 = p.prev_tok2,
       .lit = p.lit,
       .cgen = p.cgen,
+      .x64 = p.x64,
       .table = p.table,
       .import_table = p.import_table,
       .pass = p.pass,
@@ -14969,6 +15425,7 @@ compiler__Parser compiler__V_new_parser(compiler__V *v,
       .table = v->table,
       .cur_fn = compiler__EmptyFn,
       .cgen = v->cgen,
+      .x64 = v->x64,
       .pref = v->pref,
       .os = v->os,
       .vroot = v->vroot,
@@ -15601,7 +16058,7 @@ string compiler__Parser_check_string(compiler__Parser *p) {
 void compiler__Parser_check_not_reserved(compiler__Parser *p) {
   bool tmp34 = 0;
   bool tmp35 =
-      map_get(/*parser.v : 718*/ compiler__Reserved_Types, p->lit, &tmp34);
+      map_get(/*parser.v : 721*/ compiler__Reserved_Types, p->lit, &tmp34);
 
   if (tmp34) {
     compiler__Parser_error(
@@ -18010,6 +18467,7 @@ _V_MulRet_bool_V_string compiler__Parser_is_expr_fn_call(compiler__Parser *p,
   };
   return (_V_MulRet_bool_V_string){.var_0 = is_fn_call, .var_1 = expr};
 }
+void compiler__todo_remove() { compiler_dot_x64__new_gen(tos3("f")); }
 compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
   bool mul = 0;
   int nr_muls = 0;
@@ -19637,8 +20095,8 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ) {
       };
       string field_typ = field.typ;
       if (!p->builtin_mod && string_ends_with(field_typ, tos3("*")) &&
-          string_contains(field_typ, tos3("Cfg"))) {
-        compiler__Parser_error(
+          string_ne(p->mod, tos3("os"))) {
+        compiler__Parser_warn(
             p, _STR("pointer field `%.*s.%.*s` must be initialized", typ.len,
                     typ.str, field.name.len, field.name.str));
       };
@@ -22014,7 +22472,11 @@ void main__main() {
     compiler__V_run_compiled_executable_and_exit(*v);
   };
   benchmark__Benchmark tmark = benchmark__new_benchmark();
-  compiler__V_compile(v);
+  if (v->pref->x64) {
+    compiler__V_compile_x64(v);
+  } else {
+    compiler__V_compile(v);
+  };
   if (v->pref->is_stats) {
     benchmark__Benchmark_stop(&/* ? */ tmark);
     println(string_add(string_add(tos3("compilation took: "),
@@ -22100,6 +22562,10 @@ void init() {
   builtin__SYMOPT_DEBUG = 0x80000000;
   builtin__min_cap = 2 << 10;
   builtin__max_cap = 2 << 20;
+  compiler_dot_x64__mag0 = 0x7f;
+  compiler_dot_x64__e_machine = 0x3e;
+  compiler_dot_x64__shn_xindex = 0xffff;
+  compiler_dot_x64__segment_start = 0x400000;
   strconv__max_u64 = ((u64)(UINT64_MAX));
   os__S_IFMT = 0xF000;
   os__S_IFDIR = 0x4000;
