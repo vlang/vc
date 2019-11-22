@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "39adc98"
+#define V_COMMIT_HASH "57fbf0b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "19fb46b"
+#define V_COMMIT_HASH "39adc98"
 #endif
 #include <inttypes.h>
 
@@ -3272,7 +3272,7 @@ bool mapnode_find(mapnode *n, string key, void *out, int element_size) {
   };
 }
 bool mapnode_find2(mapnode *n, string key, int element_size) {
-  if (string_eq(n->key, key)) {
+  if (string_eq(n->key, key) && !n->is_empty) {
     return 1;
   } else if (string_gt(n->key, key)) {
     if (isnil(n->left)) {
