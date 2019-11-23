@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9c1107f"
+#define V_COMMIT_HASH "0382331"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "57fbf0b"
+#define V_COMMIT_HASH "9c1107f"
 #endif
 #include <inttypes.h>
 
@@ -2753,6 +2753,7 @@ bool print_backtrace_skipping_top_frames_linux(int skipframes) {
     string executable = string_all_before(sframe, tos3("("));
     string addr =
         string_all_before(string_all_after(sframe, tos3("[")), tos3("]"));
+    string beforeaddr = string_all_before(sframe, tos3("["));
     string cmd = _STR("addr2line -e %.*s %.*s", executable.len, executable.str,
                       addr.len, addr.str);
     void *f = popen((char *)cmd.str, "r");
@@ -2771,7 +2772,11 @@ bool print_backtrace_skipping_top_frames_linux(int skipframes) {
       println(sframe);
       continue;
     };
-    printf("%-45s | %.*s\n", output.str, sframe.len, sframe.str);
+    if (string_eq(output, tos3("??:0:")) || string_eq(output, tos3("??:?:"))) {
+      output = tos3("");
+    };
+    printf("%-46s | %14s | %.*s\n", output.str, addr.str, beforeaddr.len,
+           beforeaddr.str);
   };
   return 1;
 #else
