@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3a6ccf7"
+#define V_COMMIT_HASH "1f93bb5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0fb0c43"
+#define V_COMMIT_HASH "3a6ccf7"
 #endif
 #include <inttypes.h>
 
@@ -5795,8 +5795,11 @@ string os__realpath(string fpath) {
   byte *fullpath = v_calloc(os__MAX_PATH);
   int res = 0;
 #ifdef _WIN32
-  res = ((int)(!isnil(
-      _fullpath((char *)fullpath, (char *)fpath.str, os__MAX_PATH))));
+  void *ret = _fullpath((char *)fullpath, (char *)fpath.str, os__MAX_PATH);
+  if (ret == 0) {
+    return fpath;
+  };
+  return (tos2((byte *)fullpath));
 #else
   char *ret = realpath((char *)fpath.str, (char *)fullpath);
   if (ret == 0) {
@@ -5805,10 +5808,6 @@ string os__realpath(string fpath) {
   return (tos2((byte *)fullpath));
 #endif
   ;
-  if (res != 0) {
-    return (tos((byte *)fullpath, vstrlen(fullpath)));
-  };
-  return fpath;
 }
 array_string os__walk_ext(string path, string ext) {
   if (!os__is_dir(path)) {
@@ -6023,8 +6022,7 @@ Option_bool os__mkdir(string path) {
     return opt_ok(&tmp5, sizeof(bool));
   };
   string apath = os__realpath(path);
-  int r = ((int)(CreateDirectory(string_to_wide(apath), 0)));
-  if (r == 0) {
+  if (!CreateDirectory(string_to_wide(apath), 0)) {
     return v_error(string_add(
         _STR("mkdir failed for \"%.*s\", because CreateDirectory returned ",
              apath.len, apath.str),
@@ -6094,17 +6092,17 @@ Option_os__Result os__exec(string cmd) {
       .nLength = 0, .lpSecurityDescriptor = 0, .bInheritHandle = 0};
   sa.nLength = sizeof(SECURITY_ATTRIBUTES);
   sa.bInheritHandle = 1;
-  int create_pipe_result = ((int)(CreatePipe(((voidptr)(&child_stdout_read)),
-                                             ((voidptr)(&child_stdout_write)),
-                                             ((voidptr)(&sa)), 0)));
-  if (create_pipe_result == 0) {
+  bool create_pipe_ok =
+      CreatePipe(((voidptr)(&child_stdout_read)),
+                 ((voidptr)(&child_stdout_write)), ((voidptr)(&sa)), 0);
+  if (!create_pipe_ok) {
     string error_msg = os__get_error_msg(((int)(GetLastError())));
     return v_error(
         _STR("exec failed (CreatePipe): %.*s", error_msg.len, error_msg.str));
   };
-  int set_handle_info_result =
-      ((int)(SetHandleInformation(child_stdout_read, HANDLE_FLAG_INHERIT, 0)));
-  if (set_handle_info_result == 0) {
+  bool set_handle_info_ok =
+      SetHandleInformation(child_stdout_read, HANDLE_FLAG_INHERIT, 0);
+  if (!set_handle_info_ok) {
     string error_msg = os__get_error_msg(((int)(GetLastError())));
     v_panic(_STR("exec failed (SetHandleInformation): %.*s", error_msg.len,
                  error_msg.str));
@@ -6137,10 +6135,10 @@ Option_os__Result os__exec(string cmd) {
   u16 command_line[32768] = {0};
   ExpandEnvironmentStringsW(string_to_wide(cmd), ((voidptr)(&command_line)),
                             32768);
-  int create_process_result = ((
-      int)(CreateProcessW(0, command_line, 0, 0, TRUE, 0, 0, 0,
-                          ((voidptr)(&start_info)), ((voidptr)(&proc_info)))));
-  if (create_process_result == 0) {
+  bool create_process_ok =
+      CreateProcessW(0, command_line, 0, 0, TRUE, 0, 0, 0,
+                     ((voidptr)(&start_info)), ((voidptr)(&proc_info)));
+  if (!create_process_ok) {
     string error_msg = os__get_error_msg(((int)(GetLastError())));
     return v_error(_STR("exec failed (CreateProcess): %.*s", error_msg.len,
                         error_msg.str));
@@ -6154,7 +6152,7 @@ Option_os__Result os__exec(string cmd) {
     bool readfile_result =
         ReadFile(child_stdout_read, buf, 1000, ((voidptr)(&bytes_read)), 0);
     read_data = string_add(read_data, tos(buf, ((int)(bytes_read))));
-    if ((readfile_result == 0 || ((int)(bytes_read)) == 0)) {
+    if (readfile_result == 0 || ((int)(bytes_read)) == 0) {
       break;
     };
   };
@@ -12530,6 +12528,10 @@ void compiler__Parser_cast(compiler__Parser *p, string typ) {
       compiler__Parser_error(p,
                              _STR("cannot cast `%.*s` to `%.*s`", expr_typ.len,
                                   expr_typ.str, typ.len, typ.str));
+    };
+    if (string_eq(expr_typ, tos3("bool"))) {
+      compiler__Parser_error(
+          p, _STR("cannot cast `bool` to `%.*s`", typ.len, typ.str));
     };
     compiler__CGen_set_placeholder(p->cgen, pos,
                                    _STR("(%.*s)(", typ.len, typ.str));

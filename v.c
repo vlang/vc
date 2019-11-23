@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3a6ccf7"
+#define V_COMMIT_HASH "1f93bb5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0fb0c43"
+#define V_COMMIT_HASH "3a6ccf7"
 #endif
 #include <inttypes.h>
 
@@ -5558,10 +5558,6 @@ string os__realpath(string fpath) {
   return (tos2((byte *)fullpath));
 #endif
   ;
-  if (res != 0) {
-    return (tos((byte *)fullpath, vstrlen(fullpath)));
-  };
-  return fpath;
 }
 array_string os__walk_ext(string path, string ext) {
   if (!os__is_dir(path)) {
@@ -12181,6 +12177,10 @@ void compiler__Parser_cast(compiler__Parser *p, string typ) {
       compiler__Parser_error(p,
                              _STR("cannot cast `%.*s` to `%.*s`", expr_typ.len,
                                   expr_typ.str, typ.len, typ.str));
+    };
+    if (string_eq(expr_typ, tos3("bool"))) {
+      compiler__Parser_error(
+          p, _STR("cannot cast `bool` to `%.*s`", typ.len, typ.str));
     };
     compiler__CGen_set_placeholder(p->cgen, pos,
                                    _STR("(%.*s)(", typ.len, typ.str));
