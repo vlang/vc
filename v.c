@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3d23516"
+#define V_COMMIT_HASH "f42be06"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0382331"
+#define V_COMMIT_HASH "3d23516"
 #endif
 #include <inttypes.h>
 
@@ -748,6 +748,7 @@ struct compiler__V {
   string out_name_c;
   array_string files;
   string dir;
+  string compiled_dir;
   compiler__Table *table;
   compiler__CGen *cgen;
   compiler_dot_x64__Gen *x64;
@@ -1624,7 +1625,7 @@ bool compiler__Parser_is_mod_in_scope(compiler__Parser *p, string mod);
 compiler__DepGraph *compiler__V_resolve_deps(compiler__V *v);
 compiler__DepGraph *compiler__V_import_graph(compiler__V *v);
 array_string compiler__DepGraph_imports(compiler__DepGraph *graph);
-string compiler__V_module_path(compiler__V *v, string mod);
+static inline string compiler__V_module_path(compiler__V *v, string mod);
 Option_string compiler__V_find_module_path(compiler__V *v, string mod);
 static inline string compiler__mod_gen_name(string mod);
 static inline string compiler__mod_gen_name_rev(string mod);
@@ -12720,7 +12721,7 @@ Option_int compiler__V_get_file_parser_index(compiler__V *v, string file) {
   string file_path = os__realpath(file);
   if ((_IN_MAP((file_path), v->file_parser_idx))) {
     int tmp2 = 0;
-    bool tmp3 = map_get(/*main.v : 164*/ v->file_parser_idx, file_path, &tmp2);
+    bool tmp3 = map_get(/*main.v : 165*/ v->file_parser_idx, file_path, &tmp2);
 
     int tmp4 = OPTION_CAST(int)(tmp2);
     return opt_ok(&tmp4, sizeof(int));
@@ -13715,6 +13716,8 @@ compiler__V *compiler__new_v(array_string args) {
       &(compiler__V){.os = _os,
                      .out_name = out_name,
                      .dir = dir,
+                     .compiled_dir =
+                         ((os__is_dir(rdir)) ? (rdir) : (os__dir(rdir))),
                      .lang_dir = vroot,
                      .table = compiler__new_table(obfuscate),
                      .out_name_c = out_name_c,
@@ -14240,14 +14243,14 @@ void compiler__Parser_register_import(compiler__Parser *p, string mod,
 void compiler__Parser_register_import_alias(compiler__Parser *p, string alias,
                                             string mod, int tok_idx) {
   string tmp5 = tos3("");
-  bool tmp6 = map_get(/*modules.v : 48*/ p->import_table.imports, alias, &tmp5);
+  bool tmp6 = map_get(/*modules.v : 49*/ p->import_table.imports, alias, &tmp5);
 
   if (!tmp6)
     tmp5 = tos((byte *)"", 0);
 
   if ((_IN_MAP((alias), p->import_table.imports)) && string_ne(tmp5, mod)) {
     compiler__Parser_error(
-        p, _STR("cannot import %.*s as %.*s: import name %.*s already in use\"",
+        p, _STR("cannot import %.*s as %.*s: import name %.*s already in use",
                 mod.len, mod.str, alias.len, alias.str, alias.len, alias.str));
   };
   if (string_contains(mod, tos3(".internal.")) && !p->is_vgen) {
@@ -14277,7 +14280,7 @@ void compiler__Parser_register_import_alias(compiler__Parser *p, string alias,
 int compiler__ImportTable_get_import_tok_idx(compiler__ImportTable *it,
                                              string mod) {
   int tmp10 = 0;
-  bool tmp11 = map_get(/*modules.v : 69*/ it->import_tok_idx, mod, &tmp10);
+  bool tmp11 = map_get(/*modules.v : 70*/ it->import_tok_idx, mod, &tmp10);
 
   return tmp10;
 }
@@ -14306,7 +14309,7 @@ bool compiler__ImportTable_is_aliased(compiler__ImportTable *it, string mod) {
 string compiler__ImportTable_resolve_alias(compiler__ImportTable *it,
                                            string alias) {
   string tmp13 = tos3("");
-  bool tmp14 = map_get(/*modules.v : 90*/ it->imports, alias, &tmp13);
+  bool tmp14 = map_get(/*modules.v : 91*/ it->imports, alias, &tmp13);
 
   if (!tmp14)
     tmp13 = tos((byte *)"", 0);
@@ -14385,32 +14388,44 @@ array_string compiler__DepGraph_imports(compiler__DepGraph *graph) {
   };
   return mods;
 }
-string compiler__V_module_path(compiler__V *v, string mod) {
-  if (string_contains(mod, tos3("."))) {
-    return string_replace(mod, tos3("."), os__path_separator);
-  };
-  return mod;
+static inline string compiler__V_module_path(compiler__V *v, string mod) {
+  return string_replace(mod, tos3("."), os__path_separator);
 }
 Option_string compiler__V_find_module_path(compiler__V *v, string mod) {
   string mod_path = compiler__V_module_path(&/* ? */ *v, mod);
-  string import_path = string_add(
-      os__getwd(), _STR("%.*s%.*s", os__path_separator.len,
-                        os__path_separator.str, mod_path.len, mod_path.str));
-  if (string_eq(mod, tos3("compiler")) || !os__dir_exists(import_path)) {
-    import_path = _STR("%.*s%.*s%.*s", v->pref->vlib_path.len,
-                       v->pref->vlib_path.str, os__path_separator.len,
-                       os__path_separator.str, mod_path.len, mod_path.str);
-  };
-  if (!os__dir_exists(import_path)) {
-    import_path = _STR("%.*s%.*s%.*s", v->pref->vpath.len, v->pref->vpath.str,
-                       os__path_separator.len, os__path_separator.str,
-                       mod_path.len, mod_path.str);
-    if (!os__dir_exists(import_path)) {
-      return v_error(_STR("module \"%.*s\" not found", mod.len, mod.str));
+  array_string tried_paths = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+  _PUSH(&tried_paths,
+        (/*typ = array_string   tmp_typ=string*/ filepath__join(
+            v->compiled_dir, &(varg_string){.len = 1, .args = {mod_path}})),
+        tmp25, string);
+  _PUSH(&tried_paths,
+        (/*typ = array_string   tmp_typ=string*/ filepath__join(
+            os__getwd(), &(varg_string){.len = 1, .args = {mod_path}})),
+        tmp26, string);
+  _PUSH(&tried_paths,
+        (/*typ = array_string   tmp_typ=string*/ filepath__join(
+            v->pref->vlib_path, &(varg_string){.len = 1, .args = {mod_path}})),
+        tmp27, string);
+  _PUSH(&tried_paths,
+        (/*typ = array_string   tmp_typ=string*/ filepath__join(
+            compiler__v_modules_path,
+            &(varg_string){.len = 1, .args = {mod_path}})),
+        tmp28, string);
+  array_string tmp29 = tried_paths;
+  for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
+    string try_path = ((string *)tmp29.data)[tmp30];
+
+    if (v->pref->is_verbose) {
+      printf("  >> trying to find %.*s in %.*s ...\n", mod.len, mod.str,
+             try_path.len, try_path.str);
+    };
+    if (os__dir_exists(try_path)) {
+      string tmp31 = OPTION_CAST(string)(try_path);
+      return opt_ok(&tmp31, sizeof(string));
     };
   };
-  string tmp25 = OPTION_CAST(string)(import_path);
-  return opt_ok(&tmp25, sizeof(string));
+  return v_error(_STR("module \"%.*s\" not found", mod.len, mod.str));
 }
 static inline string compiler__mod_gen_name(string mod) {
   return string_replace(mod, tos3("."), tos3("_dot_"));
