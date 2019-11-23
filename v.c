@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f42be06"
+#define V_COMMIT_HASH "6665096"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3d23516"
+#define V_COMMIT_HASH "f42be06"
 #endif
 #include <inttypes.h>
 
@@ -599,7 +599,7 @@ struct compiler__Token {
   string lit;
   int line_nr;
   int name_idx;
-  int col;
+  int pos;
 };
 
 struct compiler__VargAccess {
@@ -1400,10 +1400,10 @@ string compiler__ScannerPos_str(compiler__ScannerPos s);
 compiler__ScannerPos compiler__Scanner_get_scanner_pos(compiler__Scanner *s);
 void compiler__Scanner_goto_scanner_position(compiler__Scanner *s,
                                              compiler__ScannerPos scp);
+int compiler__Scanner_get_last_nl_from_pos(compiler__Scanner *s, int pos);
 compiler__ScannerPos
 compiler__Scanner_get_scanner_pos_of_token(compiler__Scanner *s,
-                                           compiler__Token *t);
-void compiler__Scanner_eat_single_newline(compiler__Scanner *s);
+                                           compiler__Token *tok);
 void compiler__Parser_mutable_arg_error(compiler__Parser *p, int i,
                                         compiler__Var arg, compiler__Fn f);
 void compiler__Parser_comp_time(compiler__Parser *p);
@@ -7567,55 +7567,22 @@ void compiler__Scanner_goto_scanner_position(compiler__Scanner *s,
   s->line_nr = scp.line_nr;
   s->last_nl_pos = scp.last_nl_pos;
 }
+int compiler__Scanner_get_last_nl_from_pos(compiler__Scanner *s, int pos) {
+  for (int i = pos; i >= 0; i--) {
+
+    if (string_at(s->text, i) == '\n') {
+      return i;
+    };
+  };
+  return 0;
+}
 compiler__ScannerPos
 compiler__Scanner_get_scanner_pos_of_token(compiler__Scanner *s,
-                                           compiler__Token *t) {
-  int tline = t->line_nr;
-  int tcol = ((t->line_nr == 0) ? (t->col + 1) : (t->col - 1));
-  compiler__ScannerPos cpos = compiler__Scanner_get_scanner_pos(&/* ? */ *s);
-  compiler__ScannerPos sptoken =
-      (compiler__ScannerPos){.pos = 0, .line_nr = 0, .last_nl_pos = 0};
-  compiler__Scanner_goto_scanner_position(
-      s, (compiler__ScannerPos){.pos = 0, .line_nr = 0, .last_nl_pos = 0});
-  int maxline =
-      compiler__imin(s->nlines, tline + 2 * compiler__error_context_after);
-  while (1) {
-    if (s->pos >= s->text.len) {
-      break;
-    };
-    if (s->line_nr > maxline) {
-      break;
-    };
-    if (tline == s->line_nr) {
-      sptoken = compiler__Scanner_get_scanner_pos(&/* ? */ *s);
-      sptoken.pos += tcol;
-    };
-    compiler__Scanner_ignore_line(s);
-    compiler__Scanner_eat_single_newline(s);
-  };
-  compiler__Scanner_goto_scanner_position(s, cpos);
-  return sptoken;
-}
-void compiler__Scanner_eat_single_newline(compiler__Scanner *s) {
-  if (s->pos >= s->text.len) {
-
-    return;
-  };
-  if (compiler__Scanner_expect(&/* ? */ *s, tos3("\r\n"), s->pos)) {
-    s->pos += 2;
-
-    return;
-  };
-  if (string_at(s->text, s->pos) == '\n') {
-    s->pos++;
-
-    return;
-  };
-  if (string_at(s->text, s->pos) == '\r') {
-    s->pos++;
-
-    return;
-  };
+                                           compiler__Token *tok) {
+  return (compiler__ScannerPos){
+      .pos = tok->pos,
+      .line_nr = tok->line_nr,
+      .last_nl_pos = compiler__Scanner_get_last_nl_from_pos(s, tok->pos)};
 }
 void compiler__Parser_mutable_arg_error(compiler__Parser *p, int i,
                                         compiler__Var arg, compiler__Fn f) {
@@ -15075,7 +15042,7 @@ void compiler__Parser_scan_tokens(compiler__Parser *p) {
               .tok = res.tok,
               .lit = res.lit,
               .line_nr = p->scanner->line_nr,
-              .col = p->scanner->pos - p->scanner->last_nl_pos,
+              .pos = p->scanner->pos,
               .name_idx = 0,
           }),
           tmp3, compiler__Token);
@@ -15126,7 +15093,7 @@ static inline compiler__Token compiler__Parser_peek_token(compiler__Parser *p) {
                              .lit = tos3(""),
                              .line_nr = 0,
                              .name_idx = 0,
-                             .col = 0};
+                             .pos = 0};
   };
   return (*(compiler__Token *)array_get(p->tokens, p->token_idx));
 }
@@ -17380,9 +17347,9 @@ string compiler__Parser_array_init(compiler__Parser *p) {
               compiler__compiler__TokenKind_name &&
           compiler__Parser_cur_tok(&/* ? */ *p).line_nr ==
               compiler__Parser_peek_token(&/* ? */ *p).line_nr) {
-        if (compiler__Parser_cur_tok(&/* ? */ *p).col +
+        if (compiler__Parser_cur_tok(&/* ? */ *p).pos +
                 compiler__Parser_peek_token(&/* ? */ *p).lit.len ==
-            compiler__Parser_peek_token(&/* ? */ *p).col) {
+            compiler__Parser_peek_token(&/* ? */ *p).pos) {
           compiler__Parser_check(p, compiler__compiler__TokenKind_rsbr);
           string array_elem_typ = compiler__Parser_get_type(p);
           if (!compiler__Table_known_type(&/* ? */ *p->table, array_elem_typ)) {
