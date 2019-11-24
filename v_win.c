@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "19b4cf6"
+#define V_COMMIT_HASH "5794594"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1f93bb5"
+#define V_COMMIT_HASH "19b4cf6"
 #endif
 #include <inttypes.h>
 
@@ -2199,6 +2199,7 @@ array_string compiler__supported_platforms;
 #define compiler__compiler__OS_js 7
 #define compiler__compiler__OS_android 8
 #define compiler__compiler__OS_solaris 9
+#define compiler__compiler__OS_haiku 10
 #define compiler__compiler__Pass_imports 0
 #define compiler__compiler__Pass_decl 1
 #define compiler__compiler__Pass_main 2
@@ -7584,6 +7585,8 @@ string compiler__os_name_to_ifdef(string name) {
     return tos3("_VJS");
   } else if (string_eq(tmp35, tos3("solaris"))) {
     return tos3("__sun");
+  } else if (string_eq(tmp35, tos3("haiku"))) {
+    return tos3("__haiku__");
   };
   compiler__verror(_STR("bad os ifdef name \"%.*s\"", name.len, name.str));
   return tos3("");
@@ -7607,7 +7610,11 @@ string compiler__platform_postfix_to_ifdefguard(string name) {
                                        ? (tos3("#ifdef __APPLE__"))
                                        : ((string_eq(tmp36, tos3("_solaris.v")))
                                               ? (tos3("#ifdef __sun"))
-                                              : (tos3(""))))))));
+                                              : ((string_eq(tmp36,
+                                                            tos3("_haiku.v")))
+                                                     ? (tos3(
+                                                           "#ifdef __haiku__"))
+                                                     : (tos3("")))))))));
   if (string_eq(s, tos3(""))) {
     compiler__verror(_STR("bad platform_postfix \"%.*s\"", name.len, name.str));
   };
@@ -7629,7 +7636,7 @@ string compiler__V_type_definitions(compiler__V *v) {
     string builtin = ((string *)tmp37.data)[tmp38];
 
     compiler__Type tmp39 = {0};
-    bool tmp40 = map_get(/*cgen.v : 334*/ v->table->typesmap, builtin, &tmp39);
+    bool tmp40 = map_get(/*cgen.v : 336*/ v->table->typesmap, builtin, &tmp39);
 
     compiler__Type typ = tmp39;
     _PUSH(&builtin_types,
@@ -13074,7 +13081,7 @@ Option_int compiler__V_get_file_parser_index(compiler__V *v, string file) {
   string file_path = os__realpath(file);
   if ((_IN_MAP((file_path), v->file_parser_idx))) {
     int tmp2 = 0;
-    bool tmp3 = map_get(/*main.v : 165*/ v->file_parser_idx, file_path, &tmp2);
+    bool tmp3 = map_get(/*main.v : 166*/ v->file_parser_idx, file_path, &tmp2);
 
     int tmp4 = OPTION_CAST(int)(tmp2);
     return opt_ok(&tmp4, sizeof(int));
@@ -14778,30 +14785,43 @@ Option_string compiler__V_find_module_path(compiler__V *v, string mod) {
         (/*typ = array_string   tmp_typ=string*/ filepath__join(
             v->compiled_dir, &(varg_string){.len = 1, .args = {mod_path}})),
         tmp25, string);
-  _PUSH(&tried_paths,
-        (/*typ = array_string   tmp_typ=string*/ filepath__join(
-            os__getwd(), &(varg_string){.len = 1, .args = {mod_path}})),
-        tmp26, string);
-  _PUSH(&tried_paths,
+  if (v->pref->vpath.len > 0) {
+    _PUSH(
+        &tried_paths,
         (/*typ = array_string   tmp_typ=string*/ filepath__join(
             v->pref->vlib_path, &(varg_string){.len = 1, .args = {mod_path}})),
-        tmp27, string);
-  _PUSH(&tried_paths,
+        tmp26, string);
+    _PUSH(&tried_paths,
+          (/*typ = array_string   tmp_typ=string*/ filepath__join(
+              v->pref->vpath, &(varg_string){.len = 1, .args = {mod_path}})),
+          tmp27, string);
+  } else {
+    _PUSH(&tried_paths,
+          (/*typ = array_string   tmp_typ=string*/ filepath__join(
+              os__getwd(), &(varg_string){.len = 1, .args = {mod_path}})),
+          tmp28, string);
+    _PUSH(
+        &tried_paths,
         (/*typ = array_string   tmp_typ=string*/ filepath__join(
-            compiler__v_modules_path,
-            &(varg_string){.len = 1, .args = {mod_path}})),
-        tmp28, string);
-  array_string tmp29 = tried_paths;
-  for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
-    string try_path = ((string *)tmp29.data)[tmp30];
+            v->pref->vlib_path, &(varg_string){.len = 1, .args = {mod_path}})),
+        tmp29, string);
+    _PUSH(&tried_paths,
+          (/*typ = array_string   tmp_typ=string*/ filepath__join(
+              compiler__v_modules_path,
+              &(varg_string){.len = 1, .args = {mod_path}})),
+          tmp30, string);
+  };
+  array_string tmp31 = tried_paths;
+  for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
+    string try_path = ((string *)tmp31.data)[tmp32];
 
     if (v->pref->is_verbose) {
       printf("  >> trying to find %.*s in %.*s ...\n", mod.len, mod.str,
              try_path.len, try_path.str);
     };
     if (os__dir_exists(try_path)) {
-      string tmp31 = OPTION_CAST(string)(try_path);
-      return opt_ok(&tmp31, sizeof(string));
+      string tmp33 = OPTION_CAST(string)(try_path);
+      return opt_ok(&tmp33, sizeof(string));
     };
   };
   return v_error(_STR("module \"%.*s\" not found", mod.len, mod.str));
@@ -22897,11 +22917,11 @@ void init() {
   compiler__dot_ptr = tos3("->");
   compiler__Version = tos3("0.1.22");
   compiler__supported_platforms = new_array_from_c_array(
-      10, 10, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 10){
+      11, 11, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 11){
           tos3("windows"), tos3("mac"), tos3("linux"), tos3("freebsd"),
           tos3("openbsd"), tos3("netbsd"), tos3("dragonfly"), tos3("android"),
-          tos3("js"), tos3("solaris")});
+          tos3("js"), tos3("solaris"), tos3("haiku")});
   compiler__v_modules_path = string_add(os__home_dir(), tos3(".vmodules"));
   compiler__HKEY_LOCAL_MACHINE = ((RegKey)(0x80000002));
   compiler__KEY_QUERY_VALUE = (0x0001);
