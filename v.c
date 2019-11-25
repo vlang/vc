@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7158a01"
+#define V_COMMIT_HASH "837af9b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4758075"
+#define V_COMMIT_HASH "7158a01"
 #endif
 #include <inttypes.h>
 
@@ -966,6 +966,7 @@ bool print_backtrace_skipping_top_frames_msvc(int skipframes);
 bool print_backtrace_skipping_top_frames_mingw(int skipframes);
 bool print_backtrace_skipping_top_frames_nix(int xskipframes);
 bool print_backtrace_skipping_top_frames_mac(int skipframes);
+bool print_backtrace_skipping_top_frames_freebsd(int skipframes);
 bool print_backtrace_skipping_top_frames_linux(int skipframes);
 int backtrace(void *a, int b);
 byteptr *backtrace_symbols(void *, int);
@@ -2681,6 +2682,9 @@ void eprintln(string s) {
   return;
 #endif
   ;
+#ifdef __FreeBSD__
+#endif
+  ;
   println(s);
 }
 void print(string s) {
@@ -2737,10 +2741,19 @@ bool print_backtrace_skipping_top_frames_nix(int xskipframes) {
   return print_backtrace_skipping_top_frames_linux(skipframes);
 #endif
   ;
+#ifdef __FreeBSD__
+#endif
+  ;
   return 0;
 }
 bool print_backtrace_skipping_top_frames_mac(int skipframes) {
 #ifdef __APPLE__
+#endif
+  ;
+  return 1;
+}
+bool print_backtrace_skipping_top_frames_freebsd(int skipframes) {
+#ifdef __FreeBSD__
 #endif
   ;
   return 1;
@@ -7260,13 +7273,21 @@ string compiler__platform_postfix_to_ifdefguard(string name) {
                                 : (((string_eq(tmp36, tos3("_mac.v"))) ||
                                     (string_eq(tmp36, tos3("_darwin.v"))))
                                        ? (tos3("#ifdef __APPLE__"))
-                                       : ((string_eq(tmp36, tos3("_solaris.v")))
-                                              ? (tos3("#ifdef __sun"))
+                                       : (((string_eq(tmp36, tos3("_bsd.v"))) ||
+                                           (string_eq(tmp36,
+                                                      tos3("_freebsd.v "))))
+                                              ? (tos3("#ifdef __FreeBSD__"))
                                               : ((string_eq(tmp36,
+                                                            tos3("_solaris.v")))
+                                                     ? (tos3("#ifdef __sun"))
+                                                     : ((string_eq(
+                                                            tmp36,
                                                             tos3("_haiku.v")))
-                                                     ? (tos3(
-                                                           "#ifdef __haiku__"))
-                                                     : (tos3("")))))))));
+                                                            ? (tos3(
+                                                                  "#ifdef "
+                                                                  "__haiku__"))
+                                                            : (tos3(
+                                                                  ""))))))))));
   if (string_eq(s, tos3(""))) {
     compiler__verror(_STR("bad platform_postfix \"%.*s\"", name.len, name.str));
   };
@@ -7288,7 +7309,7 @@ string compiler__V_type_definitions(compiler__V *v) {
     string builtin = ((string *)tmp37.data)[tmp38];
 
     compiler__Type tmp39 = {0};
-    bool tmp40 = map_get(/*cgen.v : 336*/ v->table->typesmap, builtin, &tmp39);
+    bool tmp40 = map_get(/*cgen.v : 337*/ v->table->typesmap, builtin, &tmp39);
 
     compiler__Type typ = tmp39;
     _PUSH(&builtin_types,

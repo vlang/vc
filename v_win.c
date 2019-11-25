@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7158a01"
+#define V_COMMIT_HASH "837af9b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4758075"
+#define V_COMMIT_HASH "7158a01"
 #endif
 #include <inttypes.h>
 
@@ -2865,6 +2865,9 @@ void eprintln(string s) {
 #endif
   ;
 #ifdef __linux__
+#endif
+  ;
+#ifdef __FreeBSD__
 #endif
   ;
   println(s);
@@ -7625,13 +7628,21 @@ string compiler__platform_postfix_to_ifdefguard(string name) {
                                 : (((string_eq(tmp36, tos3("_mac.v"))) ||
                                     (string_eq(tmp36, tos3("_darwin.v"))))
                                        ? (tos3("#ifdef __APPLE__"))
-                                       : ((string_eq(tmp36, tos3("_solaris.v")))
-                                              ? (tos3("#ifdef __sun"))
+                                       : (((string_eq(tmp36, tos3("_bsd.v"))) ||
+                                           (string_eq(tmp36,
+                                                      tos3("_freebsd.v "))))
+                                              ? (tos3("#ifdef __FreeBSD__"))
                                               : ((string_eq(tmp36,
+                                                            tos3("_solaris.v")))
+                                                     ? (tos3("#ifdef __sun"))
+                                                     : ((string_eq(
+                                                            tmp36,
                                                             tos3("_haiku.v")))
-                                                     ? (tos3(
-                                                           "#ifdef __haiku__"))
-                                                     : (tos3("")))))))));
+                                                            ? (tos3(
+                                                                  "#ifdef "
+                                                                  "__haiku__"))
+                                                            : (tos3(
+                                                                  ""))))))))));
   if (string_eq(s, tos3(""))) {
     compiler__verror(_STR("bad platform_postfix \"%.*s\"", name.len, name.str));
   };
@@ -7653,7 +7664,7 @@ string compiler__V_type_definitions(compiler__V *v) {
     string builtin = ((string *)tmp37.data)[tmp38];
 
     compiler__Type tmp39 = {0};
-    bool tmp40 = map_get(/*cgen.v : 336*/ v->table->typesmap, builtin, &tmp39);
+    bool tmp40 = map_get(/*cgen.v : 337*/ v->table->typesmap, builtin, &tmp39);
 
     compiler__Type typ = tmp39;
     _PUSH(&builtin_types,
