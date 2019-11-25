@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "837af9b"
+#define V_COMMIT_HASH "edd4706"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7158a01"
+#define V_COMMIT_HASH "837af9b"
 #endif
 #include <inttypes.h>
 
@@ -583,7 +583,9 @@ struct compiler__Table {
 };
 
 struct compiler__ParserState {
+  int scanner_line_nr;
   string scanner_text;
+  int scanner_pos;
   array_compiler__Token tokens;
   int token_idx;
   compiler__TokenKind tok;
@@ -8172,7 +8174,9 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
     compiler__ImportTable_register_used_import(&/* ? */ p->import_table,
                                                tos3("strings"));
     compiler__Parser_genln(p, tos3("/////////////////// tmpl start"));
+    p->is_vweb = 1;
     compiler__Parser_statements_from_text(p, v_code, 0);
+    p->is_vweb = 0;
     compiler__Parser_genln(p, tos3("/////////////////// tmpl end"));
     compiler__Var receiver = (*(compiler__Var *)array_get(p->cur_fn.args, 0));
     string dot = ((receiver.is_mut) ? (tos3("->")) : (tos3(".")));
@@ -15671,7 +15675,9 @@ static inline compiler__Token compiler__Parser_peek_token(compiler__Parser *p) {
 }
 void compiler__Parser_log(compiler__Parser *p, string s) {}
 compiler__ParserState compiler__Parser_save_state(compiler__Parser *p) {
-  return (compiler__ParserState){.scanner_text = p->scanner->text,
+  return (compiler__ParserState){.scanner_line_nr = p->scanner->line_nr,
+                                 .scanner_text = p->scanner->text,
+                                 .scanner_pos = p->scanner->pos,
                                  .tokens = p->tokens,
                                  .token_idx = p->token_idx,
                                  .tok = p->tok,
@@ -15681,7 +15687,9 @@ compiler__ParserState compiler__Parser_save_state(compiler__Parser *p) {
 }
 void compiler__Parser_restore_state(compiler__Parser *p,
                                     compiler__ParserState state) {
+  p->scanner->line_nr = state.scanner_line_nr;
   p->scanner->text = state.scanner_text;
+  p->scanner->pos = state.scanner_pos;
   p->tokens = state.tokens;
   p->token_idx = state.token_idx;
   p->tok = state.tok;
@@ -15690,11 +15698,14 @@ void compiler__Parser_restore_state(compiler__Parser *p,
   p->lit = state.lit;
 }
 void compiler__Parser_clear_state(compiler__Parser *p) {
+  p->scanner->line_nr = 0;
+  p->scanner->text = tos3("");
+  p->scanner->pos = 0;
   p->tokens = new_array_from_c_array(
       0, 0, sizeof(compiler__Token),
       EMPTY_ARRAY_OF_ELEMS(compiler__Token, 0){TCCSKIP(0)});
   p->token_idx = 0;
-  p->scanner->text = tos3("");
+  p->lit = tos3("");
 }
 void compiler__Parser_add_text(compiler__Parser *p, string text) {
   if (p->tokens.len > 1 &&
@@ -15710,6 +15721,7 @@ void compiler__Parser_statements_from_text(compiler__Parser *p, string text,
   compiler__ParserState saved_state = compiler__Parser_save_state(p);
   compiler__Parser_clear_state(p);
   compiler__Parser_add_text(p, text);
+  compiler__Parser_next(p);
   if (rcbr) {
     compiler__Parser_statements(p);
   } else {
@@ -16189,7 +16201,7 @@ string compiler__Parser_check_string(compiler__Parser *p) {
 void compiler__Parser_check_not_reserved(compiler__Parser *p) {
   bool tmp34 = 0;
   bool tmp35 =
-      map_get(/*parser.v : 771*/ compiler__Reserved_Types, p->lit, &tmp34);
+      map_get(/*parser.v : 781*/ compiler__Reserved_Types, p->lit, &tmp34);
 
   if (tmp34) {
     compiler__Parser_error(
