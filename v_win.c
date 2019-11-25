@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f7c103d"
+#define V_COMMIT_HASH "4758075"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ee52b41"
+#define V_COMMIT_HASH "f7c103d"
 #endif
 #include <inttypes.h>
 
@@ -1502,7 +1502,7 @@ string compiler__ScannerPos_str(compiler__ScannerPos s);
 compiler__ScannerPos compiler__Scanner_get_scanner_pos(compiler__Scanner *s);
 void compiler__Scanner_goto_scanner_position(compiler__Scanner *s,
                                              compiler__ScannerPos scp);
-int compiler__Scanner_get_last_nl_from_pos(compiler__Scanner *s, int pos);
+int compiler__Scanner_get_last_nl_from_pos(compiler__Scanner *s, int _pos);
 compiler__ScannerPos
 compiler__Scanner_get_scanner_pos_of_token(compiler__Scanner *s,
                                            compiler__Token *tok);
@@ -7965,7 +7965,8 @@ void compiler__Scanner_goto_scanner_position(compiler__Scanner *s,
   s->line_nr = scp.line_nr;
   s->last_nl_pos = scp.last_nl_pos;
 }
-int compiler__Scanner_get_last_nl_from_pos(compiler__Scanner *s, int pos) {
+int compiler__Scanner_get_last_nl_from_pos(compiler__Scanner *s, int _pos) {
+  int pos = ((_pos >= s->text.len) ? (s->text.len - 1) : (_pos));
   for (int i = pos; i >= 0; i--) {
 
     if (string_at(s->text, i) == '\n') {
