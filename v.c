@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "edd4706"
+#define V_COMMIT_HASH "92f920b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "837af9b"
+#define V_COMMIT_HASH "edd4706"
 #endif
 #include <inttypes.h>
 
@@ -549,6 +549,8 @@ struct compiler__ParserState {
   int scanner_line_nr;
   string scanner_text;
   int scanner_pos;
+  array_int scanner_line_ends;
+  int scanner_nlines;
   array_compiler__Token tokens;
   int token_idx;
   compiler__TokenKind tok;
@@ -15188,6 +15190,8 @@ compiler__ParserState compiler__Parser_save_state(compiler__Parser *p) {
   return (compiler__ParserState){.scanner_line_nr = p->scanner->line_nr,
                                  .scanner_text = p->scanner->text,
                                  .scanner_pos = p->scanner->pos,
+                                 .scanner_line_ends = p->scanner->line_ends,
+                                 .scanner_nlines = p->scanner->nlines,
                                  .tokens = p->tokens,
                                  .token_idx = p->token_idx,
                                  .tok = p->tok,
@@ -15200,6 +15204,8 @@ void compiler__Parser_restore_state(compiler__Parser *p,
   p->scanner->line_nr = state.scanner_line_nr;
   p->scanner->text = state.scanner_text;
   p->scanner->pos = state.scanner_pos;
+  p->scanner->line_ends = state.scanner_line_ends;
+  p->scanner->nlines = state.scanner_nlines;
   p->tokens = state.tokens;
   p->token_idx = state.token_idx;
   p->tok = state.tok;
@@ -15211,6 +15217,9 @@ void compiler__Parser_clear_state(compiler__Parser *p) {
   p->scanner->line_nr = 0;
   p->scanner->text = tos3("");
   p->scanner->pos = 0;
+  p->scanner->line_ends = new_array_from_c_array(
+      0, 0, sizeof(int), EMPTY_ARRAY_OF_ELEMS(int, 0){TCCSKIP(0)});
+  p->scanner->nlines = 0;
   p->tokens = new_array_from_c_array(
       0, 0, sizeof(compiler__Token),
       EMPTY_ARRAY_OF_ELEMS(compiler__Token, 0){TCCSKIP(0)});
@@ -15711,7 +15720,7 @@ string compiler__Parser_check_string(compiler__Parser *p) {
 void compiler__Parser_check_not_reserved(compiler__Parser *p) {
   bool tmp34 = 0;
   bool tmp35 =
-      map_get(/*parser.v : 781*/ compiler__Reserved_Types, p->lit, &tmp34);
+      map_get(/*parser.v : 789*/ compiler__Reserved_Types, p->lit, &tmp34);
 
   if (tmp34) {
     compiler__Parser_error(
