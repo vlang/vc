@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4758075"
+#define V_COMMIT_HASH "7158a01"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f7c103d"
+#define V_COMMIT_HASH "4758075"
 #endif
 #include <inttypes.h>
 
@@ -285,6 +285,7 @@ typedef Option Option_compiler__MsvcResult;
 typedef struct compiler__MsvcStringFlags compiler__MsvcStringFlags;
 typedef struct compiler__Parser compiler__Parser;
 typedef map map_bool;
+typedef struct compiler__ParserState compiler__ParserState;
 typedef struct compiler__IndexConfig compiler__IndexConfig;
 typedef struct _V_MulRet_bool_V_string _V_MulRet_bool_V_string;
 typedef struct compiler__Scanner compiler__Scanner;
@@ -542,6 +543,16 @@ struct compiler__Table {
   int fn_cnt;
   bool obfuscate;
   array_compiler__VargAccess varg_access;
+};
+
+struct compiler__ParserState {
+  string scanner_text;
+  array_compiler__Token tokens;
+  int token_idx;
+  compiler__TokenKind tok;
+  compiler__TokenKind prev_tok;
+  compiler__TokenKind prev_tok2;
+  string lit;
 };
 
 struct compiler__Preferences {
@@ -1659,7 +1670,13 @@ static inline compiler__Token compiler__Parser_prev_token(compiler__Parser *p);
 static inline compiler__Token compiler__Parser_cur_tok(compiler__Parser *p);
 static inline compiler__Token compiler__Parser_peek_token(compiler__Parser *p);
 void compiler__Parser_log(compiler__Parser *p, string s);
+compiler__ParserState compiler__Parser_save_state(compiler__Parser *p);
+void compiler__Parser_restore_state(compiler__Parser *p,
+                                    compiler__ParserState state);
+void compiler__Parser_clear_state(compiler__Parser *p);
 void compiler__Parser_add_text(compiler__Parser *p, string text);
+void compiler__Parser_statements_from_text(compiler__Parser *p, string text,
+                                           bool rcbr);
 void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass);
 void compiler__Parser_imports(compiler__Parser *p);
 void compiler__Parser_import_statement(compiler__Parser *p);
@@ -7771,28 +7788,15 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
     string v_code = vweb_dot_tmpl__compile_template(path);
-    if (os__file_exists(tos3(".vwebtmpl.v"))) {
-      os__rm(tos3(".vwebtmpl.v"));
+    bool is_strings_imorted = compiler__ImportTable_known_import(
+        &/* ? */ p->import_table, tos3("strings"));
+    if (!is_strings_imorted) {
+      compiler__Parser_register_import(p, tos3("strings"), 0);
     };
-    os__write_file(tos3(".vwebtmpl.v"), string_clone(v_code));
-    compiler__Parser_genln(p, tos3(""));
-    int pos = p->cgen->lines.len - 1;
-    compiler__Parser pp =
-        compiler__V_new_parser_from_file(p->v, tos3(".vwebtmpl.v"));
-    if (!p->pref->is_debug) {
-      os__rm(tos3(".vwebtmpl.v"));
-    };
-    pp.is_vweb = 1;
-    compiler__Parser_set_current_fn(&/* ? */ pp, p->cur_fn);
-    compiler__Parser_parse(&/* ? */ pp, compiler__compiler__Pass_main);
-    compiler__V_add_parser(pp.v, pp);
-    string tmpl_fn_body = string_clone(array_string_join(
-        array_slice(p->cgen->lines, pos + 2, p->cgen->lines.len), tos3("\n")));
-    int end_pos =
-        string_last_index(tmpl_fn_body, tos3("Builder_str( sb )")) + 19;
-    p->cgen->lines = array_slice2(p->cgen->lines, 0, pos, false);
+    compiler__ImportTable_register_used_import(&/* ? */ p->import_table,
+                                               tos3("strings"));
     compiler__Parser_genln(p, tos3("/////////////////// tmpl start"));
-    compiler__Parser_genln(p, string_substr2(tmpl_fn_body, 0, end_pos, false));
+    compiler__Parser_statements_from_text(p, v_code, 0);
     compiler__Parser_genln(p, tos3("/////////////////// tmpl end"));
     compiler__Var receiver = (*(compiler__Var *)array_get(p->cur_fn.args, 0));
     string dot = ((receiver.is_mut) ? (tos3("->")) : (tos3(".")));
@@ -7813,10 +7817,10 @@ void compiler__Parser_chash(compiler__Parser *p) {
       flag = string_replace(flag, tos3("@VPATH"), p->pref->vpath);
       flag = string_replace(flag, tos3("@VLIB_PATH"), p->pref->vlib_path);
       flag = string_replace(flag, tos3("@VMOD"), compiler__v_modules_path);
-      Option_bool tmp9 = compiler__Table_parse_cflag(p->table, flag, p->mod);
-      if (!tmp9.ok) {
-        string err = tmp9.error;
-        int errcode = tmp9.ecode;
+      Option_bool tmp5 = compiler__Table_parse_cflag(p->table, flag, p->mod);
+      if (!tmp5.ok) {
+        string err = tmp5.error;
+        int errcode = tmp5.ecode;
         compiler__Parser_error_with_token_index(
             p, err, compiler__Parser_cur_tok_index(&/* ? */ *p) - 1);
 
@@ -7833,14 +7837,14 @@ void compiler__Parser_chash(compiler__Parser *p) {
               (/*typ = array_string   tmp_typ=string*/ _STR(
                   "%.*s\n#%.*s\n#endif", p->file_pcguard.len,
                   p->file_pcguard.str, hash.len, hash.str)),
-              tmp10, string);
+              tmp6, string);
 
         return;
       };
       _PUSH(&p->cgen->includes,
             (/*typ = array_string   tmp_typ=string*/ _STR("#%.*s", hash.len,
                                                           hash.str)),
-            tmp11, string);
+            tmp7, string);
 
       return;
     };
@@ -7853,7 +7857,7 @@ void compiler__Parser_chash(compiler__Parser *p) {
       _PUSH(&p->cgen->includes,
             (/*typ = array_string   tmp_typ=string*/ _STR("#%.*s", hash.len,
                                                           hash.str)),
-            tmp14, string);
+            tmp10, string);
     };
   } else if (string_eq(hash, tos3("-js"))) {
 #ifdef _VJS
@@ -7882,9 +7886,9 @@ void compiler__Parser_comptime_method_call(compiler__Parser *p,
   p->cgen->cur_line = tos3("");
   compiler__Parser_check(p, compiler__compiler__TokenKind_dollar);
   string var = compiler__Parser_check_name(p);
-  array_compiler__Fn tmp15 = typ.methods;
-  for (int i = 0; i < tmp15.len; i++) {
-    compiler__Fn method = ((compiler__Fn *)tmp15.data)[i];
+  array_compiler__Fn tmp11 = typ.methods;
+  for (int i = 0; i < tmp11.len; i++) {
+    compiler__Fn method = ((compiler__Fn *)tmp11.data)[i];
 
     if (string_ne(method.typ, tos3("void"))) {
       continue;
@@ -7990,7 +7994,7 @@ void compiler__Parser_gen_array_str(compiler__Parser *p, compiler__Type typ) {
   _PUSH(&p->cgen->fns,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "string %.*s_str();", typ.name.len, typ.name.str)),
-        tmp20, string);
+        tmp16, string);
 }
 void compiler__Parser_gen_struct_str(compiler__Parser *p, compiler__Type typ) {
   compiler__Parser_add_method(
@@ -8049,9 +8053,9 @@ void compiler__Parser_gen_struct_str(compiler__Parser *p, compiler__Type typ) {
       &/* ? */ sb,
       _STR("fn (a %.*s) str() string {\nreturn", typ.name.len, typ.name.str));
   strings__Builder_writeln(&/* ? */ sb, tos3("'{"));
-  array_compiler__Var tmp21 = typ.fields;
-  for (int tmp22 = 0; tmp22 < tmp21.len; tmp22++) {
-    compiler__Var field = ((compiler__Var *)tmp21.data)[tmp22];
+  array_compiler__Var tmp17 = typ.fields;
+  for (int tmp18 = 0; tmp18 < tmp17.len; tmp18++) {
+    compiler__Var field = ((compiler__Var *)tmp17.data)[tmp18];
 
     strings__Builder_writeln(
         &/* ? */ sb,
@@ -8065,7 +8069,7 @@ void compiler__Parser_gen_struct_str(compiler__Parser *p, compiler__Type typ) {
   _PUSH(&p->cgen->fns,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "string %.*s_str();", typ.name.len, typ.name.str)),
-        tmp23, string);
+        tmp19, string);
 }
 void compiler__Parser_gen_varg_str(compiler__Parser *p, compiler__Type typ) {
   string elm_type = string_substr2(typ.name, 5, -1, true);
@@ -8088,7 +8092,7 @@ void compiler__Parser_gen_varg_str(compiler__Parser *p, compiler__Type typ) {
   _PUSH(&p->cgen->fns,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "string %.*s_str();", typ.name.len, typ.name.str)),
-        tmp26, string);
+        tmp22, string);
 }
 void compiler__Parser_gen_array_filter(compiler__Parser *p, string str_typ,
                                        int method_ph) {
@@ -15155,6 +15159,32 @@ static inline compiler__Token compiler__Parser_peek_token(compiler__Parser *p) {
   return (*(compiler__Token *)array_get(p->tokens, p->token_idx));
 }
 void compiler__Parser_log(compiler__Parser *p, string s) {}
+compiler__ParserState compiler__Parser_save_state(compiler__Parser *p) {
+  return (compiler__ParserState){.scanner_text = p->scanner->text,
+                                 .tokens = p->tokens,
+                                 .token_idx = p->token_idx,
+                                 .tok = p->tok,
+                                 .prev_tok = p->prev_tok,
+                                 .prev_tok2 = p->prev_tok2,
+                                 .lit = p->lit};
+}
+void compiler__Parser_restore_state(compiler__Parser *p,
+                                    compiler__ParserState state) {
+  p->scanner->text = state.scanner_text;
+  p->tokens = state.tokens;
+  p->token_idx = state.token_idx;
+  p->tok = state.tok;
+  p->prev_tok = state.prev_tok;
+  p->prev_tok2 = state.prev_tok2;
+  p->lit = state.lit;
+}
+void compiler__Parser_clear_state(compiler__Parser *p) {
+  p->tokens = new_array_from_c_array(
+      0, 0, sizeof(compiler__Token),
+      EMPTY_ARRAY_OF_ELEMS(compiler__Token, 0){TCCSKIP(0)});
+  p->token_idx = 0;
+  p->scanner->text = tos3("");
+}
 void compiler__Parser_add_text(compiler__Parser *p, string text) {
   if (p->tokens.len > 1 &&
       (*(compiler__Token *)array_get(p->tokens, p->tokens.len - 1)).tok ==
@@ -15163,6 +15193,18 @@ void compiler__Parser_add_text(compiler__Parser *p, string text) {
   };
   p->scanner->text = string_add(string_add(p->scanner->text, tos3("\n")), text);
   compiler__Parser_scan_tokens(p);
+}
+void compiler__Parser_statements_from_text(compiler__Parser *p, string text,
+                                           bool rcbr) {
+  compiler__ParserState saved_state = compiler__Parser_save_state(p);
+  compiler__Parser_clear_state(p);
+  compiler__Parser_add_text(p, text);
+  if (rcbr) {
+    compiler__Parser_statements(p);
+  } else {
+    compiler__Parser_statements_no_rcbr(p);
+  };
+  compiler__Parser_restore_state(p, saved_state);
 }
 void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
   p->cgen->line = 0;
@@ -15636,7 +15678,7 @@ string compiler__Parser_check_string(compiler__Parser *p) {
 void compiler__Parser_check_not_reserved(compiler__Parser *p) {
   bool tmp34 = 0;
   bool tmp35 =
-      map_get(/*parser.v : 721*/ compiler__Reserved_Types, p->lit, &tmp34);
+      map_get(/*parser.v : 771*/ compiler__Reserved_Types, p->lit, &tmp34);
 
   if (tmp34) {
     compiler__Parser_error(
@@ -21871,12 +21913,9 @@ string vweb_dot_tmpl__compile_template(string path) {
   string base = string_replace(string_all_after(path, tos3("/")), tos3(".html"),
                                tos3(""));
   strings__Builder_writeln(
-      &/* ? */ s,
-      _STR("module main import strings fn %.*s_view() string {   // this line "
-           "will get removed becase only function body is embedded \nmut sb := "
-           "strings.new_builder(%d)\nheader := \'%.*s\' \n_ = header "
-           "\n//footer := \'footer\' \n",
-           base.len, base.str, lines.len * 30, header.len, header.str));
+      &/* ? */ s, _STR(" \nmut sb := strings.new_builder(%d)\nheader := "
+                       "\'%.*s\' \n_ = header \n//footer := \'footer\' \n",
+                       lines.len * 30, header.len, header.str));
   strings__Builder_writeln(&/* ? */ s, vweb_dot_tmpl__STR_START);
   bool in_css = 1;
   array_string tmp3 = lines;
