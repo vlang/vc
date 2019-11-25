@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "268a6dc"
+#define V_COMMIT_HASH "a4ab7b1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5794594"
+#define V_COMMIT_HASH "268a6dc"
 #endif
 #include <inttypes.h>
 
@@ -19602,7 +19602,9 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
                                        field_type.len, field_type.str,
                                        def_val_type.len, def_val_type.str));
       };
-      compiler__Table_add_default_val(p->table, i, typ.name, expr);
+      if (!compiler__Parser_first_pass(&/* ? */ *p)) {
+        compiler__Table_add_default_val(p->table, i, typ.name, expr);
+      };
     };
     string attr = tos3("");
     if (p->tok == compiler__compiler__TokenKind_lsbr) {
@@ -19745,7 +19747,11 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ) {
         did_gen_something = 1;
         continue;
       };
-      string def_val = compiler__type_default(field_typ);
+      string def_val =
+          ((t.default_vals.len > i &&
+            string_ne((*(string *)array_get(t.default_vals, i)), tos3("")))
+               ? ((*(string *)array_get(t.default_vals, i)))
+               : (compiler__type_default(field_typ)));
       if (string_ne(def_val, tos3("")) && string_ne(def_val, tos3("{0}"))) {
         compiler__Parser_gen_struct_field_init(p, sanitized_name);
         compiler__Parser_gen(p, def_val);
@@ -19760,9 +19766,9 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ) {
     if (T.fields.len == 0 && string_ne(T.parent, tos3(""))) {
       T = compiler__Table_find_type(&/* ? */ *p->table, T.parent);
     };
-    array_compiler__Var tmp15 = T.fields;
-    for (int i = 0; i < tmp15.len; i++) {
-      compiler__Var ffield = ((compiler__Var *)tmp15.data)[i];
+    array_compiler__Var tmp19 = T.fields;
+    for (int i = 0; i < tmp19.len; i++) {
+      compiler__Var ffield = ((compiler__Var *)tmp19.data)[i];
 
       string expr_typ = compiler__Parser_bool_expression(p);
       if (!compiler__Parser_check_types_no_throw(p, expr_typ, ffield.typ)) {
@@ -20200,6 +20206,12 @@ void compiler__Table_add_default_val(compiler__Table *table, int idx,
   bool tmp26 = map_get(/*table.v : 446*/ table->typesmap, type_name, &tmp25);
 
   compiler__Type t = tmp25;
+  if (t.default_vals.len == 0) {
+    t.default_vals = array_repeat(
+        new_array_from_c_array(1, 1, sizeof(string),
+                               EMPTY_ARRAY_OF_ELEMS(string, 1){tos3("")}),
+        t.fields.len);
+  };
   array_set(&/*q*/ t.default_vals, idx, &(string[]){val_expr});
   map_set(&table->typesmap, type_name, &(compiler__Type[]){t});
 }
@@ -20277,7 +20289,7 @@ void compiler__Parser_add_method(compiler__Parser *p, string type_name,
     compiler__verror(tos3("add_method: empty type"));
   };
   compiler__Type tmp38 = {0};
-  bool tmp39 = map_get(/*table.v : 500*/ p->table->typesmap, type_name, &tmp38);
+  bool tmp39 = map_get(/*table.v : 503*/ p->table->typesmap, type_name, &tmp38);
 
   compiler__Type t = tmp38;
   if (string_ne(f.name, tos3("str")) && (_IN(compiler__Fn, (f), t.methods))) {
@@ -20313,7 +20325,7 @@ Option_compiler__Fn compiler__Table_find_method(compiler__Table *table,
                                                 compiler__Type *typ,
                                                 string name) {
   compiler__Type tmp43 = {0};
-  bool tmp44 = map_get(/*table.v : 519*/ table->typesmap, typ->name, &tmp43);
+  bool tmp44 = map_get(/*table.v : 522*/ table->typesmap, typ->name, &tmp43);
 
   compiler__Type t = tmp43;
   array_compiler__Fn tmp45 = t.methods;
@@ -20356,7 +20368,7 @@ Option_compiler__Fn compiler__Type_find_method(compiler__Type *t, string name) {
 void compiler__Table_add_gen_type(compiler__Table *table, string type_name,
                                   string gen_type) {
   compiler__Type tmp54 = {0};
-  bool tmp55 = map_get(/*table.v : 549*/ table->typesmap, type_name, &tmp54);
+  bool tmp55 = map_get(/*table.v : 552*/ table->typesmap, type_name, &tmp54);
 
   compiler__Type t = tmp54;
   if ((_IN(string, (gen_type), t.gen_types))) {
@@ -20395,7 +20407,7 @@ compiler__Type compiler__Table_find_type(compiler__Table *t, string name_) {
                             .gen_str = 0};
   };
   compiler__Type tmp57 = {0};
-  bool tmp58 = map_get(/*table.v : 574*/ t->typesmap, name, &tmp57);
+  bool tmp58 = map_get(/*table.v : 577*/ t->typesmap, name, &tmp57);
 
   return tmp57;
 }
@@ -20563,7 +20575,7 @@ bool compiler__Table_is_interface(compiler__Table *table, string name) {
     return 0;
   };
   compiler__Type tmp65 = {0};
-  bool tmp66 = map_get(/*table.v : 750*/ table->typesmap, name, &tmp65);
+  bool tmp66 = map_get(/*table.v : 753*/ table->typesmap, name, &tmp65);
 
   compiler__Type t = tmp65;
   return t.cat == compiler__compiler__TypeCategory_interface_;
