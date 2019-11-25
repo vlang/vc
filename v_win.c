@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ee52b41"
+#define V_COMMIT_HASH "f7c103d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9bfea5e"
+#define V_COMMIT_HASH "ee52b41"
 #endif
 #include <inttypes.h>
 
@@ -14778,6 +14778,9 @@ static inline string compiler__V_module_path(compiler__V *v, string mod) {
   return string_replace(mod, tos3("."), os__path_separator);
 }
 Option_string compiler__V_find_module_path(compiler__V *v, string mod) {
+  string modules_lookup_path =
+      ((v->pref->vpath.len > 0) ? (v->pref->vpath)
+                                : (compiler__v_modules_path));
   string mod_path = compiler__V_module_path(&/* ? */ *v, mod);
   array_string tried_paths = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
@@ -14785,43 +14788,25 @@ Option_string compiler__V_find_module_path(compiler__V *v, string mod) {
         (/*typ = array_string   tmp_typ=string*/ filepath__join(
             v->compiled_dir, &(varg_string){.len = 1, .args = {mod_path}})),
         tmp25, string);
-  if (v->pref->vpath.len > 0) {
-    _PUSH(
-        &tried_paths,
+  _PUSH(&tried_paths,
         (/*typ = array_string   tmp_typ=string*/ filepath__join(
             v->pref->vlib_path, &(varg_string){.len = 1, .args = {mod_path}})),
         tmp26, string);
-    _PUSH(&tried_paths,
-          (/*typ = array_string   tmp_typ=string*/ filepath__join(
-              v->pref->vpath, &(varg_string){.len = 1, .args = {mod_path}})),
-          tmp27, string);
-  } else {
-    _PUSH(&tried_paths,
-          (/*typ = array_string   tmp_typ=string*/ filepath__join(
-              os__getwd(), &(varg_string){.len = 1, .args = {mod_path}})),
-          tmp28, string);
-    _PUSH(
-        &tried_paths,
+  _PUSH(&tried_paths,
         (/*typ = array_string   tmp_typ=string*/ filepath__join(
-            v->pref->vlib_path, &(varg_string){.len = 1, .args = {mod_path}})),
-        tmp29, string);
-    _PUSH(&tried_paths,
-          (/*typ = array_string   tmp_typ=string*/ filepath__join(
-              compiler__v_modules_path,
-              &(varg_string){.len = 1, .args = {mod_path}})),
-          tmp30, string);
-  };
-  array_string tmp31 = tried_paths;
-  for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
-    string try_path = ((string *)tmp31.data)[tmp32];
+            modules_lookup_path, &(varg_string){.len = 1, .args = {mod_path}})),
+        tmp27, string);
+  array_string tmp28 = tried_paths;
+  for (int tmp29 = 0; tmp29 < tmp28.len; tmp29++) {
+    string try_path = ((string *)tmp28.data)[tmp29];
 
     if (v->pref->is_verbose) {
       printf("  >> trying to find %.*s in %.*s ...\n", mod.len, mod.str,
              try_path.len, try_path.str);
     };
     if (os__dir_exists(try_path)) {
-      string tmp33 = OPTION_CAST(string)(try_path);
-      return opt_ok(&tmp33, sizeof(string));
+      string tmp30 = OPTION_CAST(string)(try_path);
+      return opt_ok(&tmp30, sizeof(string));
     };
   };
   return v_error(_STR("module \"%.*s\" not found", mod.len, mod.str));
