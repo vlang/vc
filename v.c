@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5330759"
+#define V_COMMIT_HASH "a3b14e0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "eb5df5c"
+#define V_COMMIT_HASH "5330759"
 #endif
 #include <inttypes.h>
 
@@ -9923,7 +9923,7 @@ void compiler__Parser_check_unused_variables(compiler__Parser *p) {
       break;
     };
     if (!var.is_used && !p->pref->is_repl && !var.is_arg &&
-        !p->pref->translated) {
+        !p->pref->translated && string_ne(var.name, tos3("tmpl_res"))) {
       compiler__Parser_production_error_with_token_index(
           p, _STR("`%.*s` declared and not used", var.name.len, var.name.str),
           var.token_idx);
@@ -10715,21 +10715,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp90 = tos3("");
-    bool tmp91 = map_get(/*fn.v : 1238*/ r.inst, tp, &tmp90);
+    bool tmp91 = map_get(/*fn.v : 1240*/ r.inst, tp, &tmp90);
 
     if (!tmp91)
       tmp90 = tos((byte *)"", 0);
 
     if (string_ne(tmp90, tos3(""))) {
       string tmp92 = tos3("");
-      bool tmp93 = map_get(/*fn.v : 1239*/ r.inst, tp, &tmp92);
+      bool tmp93 = map_get(/*fn.v : 1241*/ r.inst, tp, &tmp92);
 
       if (!tmp93)
         tmp92 = tos((byte *)"", 0);
 
       if (string_ne(tmp92, ti)) {
         string tmp94 = tos3("");
-        bool tmp95 = map_get(/*fn.v : 1240*/ r.inst, tp, &tmp94);
+        bool tmp95 = map_get(/*fn.v : 1242*/ r.inst, tp, &tmp94);
 
         if (!tmp95)
           tmp94 = tos((byte *)"", 0);
@@ -10747,7 +10747,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp96 = tos3("");
-  bool tmp97 = map_get(/*fn.v : 1249*/ r.inst, f->typ, &tmp96);
+  bool tmp97 = map_get(/*fn.v : 1251*/ r.inst, f->typ, &tmp96);
 
   if (!tmp97)
     tmp96 = tos((byte *)"", 0);
@@ -10760,7 +10760,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp98.data)[tmp99];
 
     string tmp100 = tos3("");
-    bool tmp101 = map_get(/*fn.v : 1253*/ r.inst, tp, &tmp100);
+    bool tmp101 = map_get(/*fn.v : 1255*/ r.inst, tp, &tmp100);
 
     if (!tmp101)
       tmp100 = tos((byte *)"", 0);
@@ -10783,7 +10783,7 @@ string compiler__replace_generic_type(string gen_type, compiler__TypeInst *ti) {
   };
   if ((_IN_MAP((typ), ti->inst))) {
     string tmp104 = tos3("");
-    bool tmp105 = map_get(/*fn.v : 1267*/ ti->inst, typ, &tmp104);
+    bool tmp105 = map_get(/*fn.v : 1269*/ ti->inst, typ, &tmp104);
 
     if (!tmp105)
       tmp104 = tos((byte *)"", 0);
@@ -11051,7 +11051,7 @@ string compiler__Fn_generic_tmpl_to_inst(compiler__Fn *f,
     if (tok.tok == compiler__compiler__TokenKind_name &&
         (_IN_MAP((tok_str), ti->inst))) {
       string tmp143 = tos3("");
-      bool tmp144 = map_get(/*fn.v : 1416*/ ti->inst, tok_str, &tmp143);
+      bool tmp144 = map_get(/*fn.v : 1418*/ ti->inst, tok_str, &tmp143);
 
       if (!tmp144)
         tmp143 = tos((byte *)"", 0);
@@ -11073,7 +11073,7 @@ void compiler__rename_generic_fn_instance(compiler__Fn *f,
     string k = ((string *)tmp145.data)[tmp146];
 
     string tmp147 = tos3("");
-    bool tmp148 = map_get(/*fn.v : 1428*/ ti->inst, k, &tmp147);
+    bool tmp148 = map_get(/*fn.v : 1430*/ ti->inst, k, &tmp147);
 
     if (!tmp148)
       tmp147 = tos((byte *)"", 0);
@@ -11132,7 +11132,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   if ((_IN_MAP((f->mod), p->v->gen_parser_idx))) {
     int tmp153 = 0;
     bool tmp154 =
-        map_get(/*fn.v : 1471*/ p->v->gen_parser_idx, f->mod, &tmp153);
+        map_get(/*fn.v : 1473*/ p->v->gen_parser_idx, f->mod, &tmp153);
 
     int pidx = tmp153;
     compiler__Parser_add_text(
@@ -13126,7 +13126,9 @@ void compiler__V_generate_main(compiler__V *v) {
     } else if (compiler__Table_main_exists(&/* ? */ *v->table)) {
       compiler__V_gen_main_start(v, 1);
       compiler__CGen_genln(cgen, tos3("  main__main();"));
-      compiler__CGen_genln(cgen, tos3("free(g_str_buf);"));
+      if (!v->pref->is_bare) {
+        compiler__CGen_genln(cgen, tos3("free(g_str_buf);"));
+      };
       compiler__V_gen_main_end(v, tos3("return 0"));
     };
   };
