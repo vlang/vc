@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3107618"
+#define V_COMMIT_HASH "db21438"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6349bd3"
+#define V_COMMIT_HASH "3107618"
 #endif
 #include <inttypes.h>
 
@@ -7798,8 +7798,10 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
     compiler__Parser_statements_from_text(p, v_code, 0);
     compiler__Parser_genln(p, tos3("/////////////////// tmpl end"));
     compiler__Var receiver = (*(compiler__Var *)array_get(p->cur_fn.args, 0));
-    string dot =
-        ((receiver.is_mut || receiver.ptr) ? (tos3("->")) : (tos3(".")));
+    string dot = ((receiver.is_mut || receiver.ptr ||
+                   string_ends_with(receiver.typ, tos3("*")))
+                      ? (tos3("->"))
+                      : (tos3(".")));
     compiler__Parser_genln(
         p, _STR("vweb__Context_html(%.*s /*!*/%.*s vweb, tmpl_res)",
                 receiver.name.len, receiver.name.str, dot.len, dot.str));
