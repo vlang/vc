@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "92f920b"
+#define V_COMMIT_HASH "5c217b9"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "edd4706"
+#define V_COMMIT_HASH "92f920b"
 #endif
 #include <inttypes.h>
 
@@ -3380,43 +3380,11 @@ string string_replace(string s, string rep, string with) {
   b[/*ptr!*/ new_len] /*rbyte 1*/ = '\0';
   return tos(b, new_len);
 }
-int v_string_int(string s) {
-  bool neg = 0;
-  int i = 0;
-  if (s.str[0] /*rbyte 0*/ == '-') {
-    neg = 1;
-    i++;
-  } else if (s.str[0] /*rbyte 0*/ == '+') {
-    i++;
-  };
-  int n = 0;
-  while (isdigit(s.str[i] /*rbyte 0*/)) {
-
-    n = 10 * n - ((int)(s.str[i] /*rbyte 0*/ - '0'));
-    i++;
-  };
-  return ((neg) ? (n) : (-n));
-}
+int v_string_int(string s) { return ((int)(strconv__parse_int(s, 0, 32))); }
 i64 string_i64(string s) { return strconv__parse_int(s, 0, 64); }
 f32 string_f32(string s) { return atof(((char *)(s.str))); }
 f64 string_f64(string s) { return atof(((char *)(s.str))); }
-u32 string_u32(string s) {
-  bool neg = 0;
-  int i = 0;
-  if (s.str[0] /*rbyte 0*/ == '-') {
-    neg = 1;
-    i++;
-  } else if (s.str[0] /*rbyte 0*/ == '+') {
-    i++;
-  };
-  u32 n = ((u32)(0));
-  while (isdigit(s.str[i] /*rbyte 0*/)) {
-
-    n = ((u32)(10)) * n - ((u32)(s.str[i] /*rbyte 0*/ - '0'));
-    i++;
-  };
-  return ((neg) ? (n) : (-n));
-}
+u32 string_u32(string s) { return ((u32)(strconv__parse_uint(s, 0, 32))); }
 u64 string_u64(string s) { return strconv__parse_uint(s, 0, 64); }
 bool string_eq(string s, string a) {
   if (isnil(s.str)) {
