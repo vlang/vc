@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6349bd3"
+#define V_COMMIT_HASH "3107618"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "79a02a4"
+#define V_COMMIT_HASH "6349bd3"
 #endif
 #include <inttypes.h>
 
@@ -872,7 +872,6 @@ struct compiler__Parser {
   bool is_const_literal;
   bool in_dispatch;
   bool is_vgen;
-  bool is_vweb;
   bool is_sql;
   bool is_js;
   int sql_i;
@@ -7796,9 +7795,7 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
     compiler__ImportTable_register_used_import(&/* ? */ p->import_table,
                                                tos3("strings"));
     compiler__Parser_genln(p, tos3("/////////////////// tmpl start"));
-    p->is_vweb = 1;
     compiler__Parser_statements_from_text(p, v_code, 0);
-    p->is_vweb = 0;
     compiler__Parser_genln(p, tos3("/////////////////// tmpl end"));
     compiler__Var receiver = (*(compiler__Var *)array_get(p->cur_fn.args, 0));
     string dot =
@@ -9731,9 +9728,7 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
     };
   };
   string dll_export_linkage = compiler__Parser_get_linkage_prefix(&/* ? */ *p);
-  if (!p->is_vweb) {
-    compiler__Parser_set_current_fn(p, f);
-  };
+  compiler__Parser_set_current_fn(p, f);
   string fn_name_cgen = compiler__Table_fn_gen_name(p->table, &/*114*/ f);
   bool skip_main_in_test = 0;
   if (!is_c && !is_live && !p->is_vh && !is_fn_header && !skip_main_in_test) {
@@ -9858,11 +9853,9 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
     compiler__Parser_genln(p,
                            compiler__Parser_print_prof_counters(&/* ? */ *p));
   };
-  if (!p->is_vweb) {
-    if (f.defer_text.len > f.scope_level) {
-      compiler__Parser_genln(
-          p, (*(string *)array_get(f.defer_text, f.scope_level)));
-    };
+  if (f.defer_text.len > f.scope_level) {
+    compiler__Parser_genln(p,
+                           (*(string *)array_get(f.defer_text, f.scope_level)));
   };
   if (string_ne(typ, tos3("void")) && !p->returns) {
     compiler__Parser_error_with_token_index(p,
@@ -10720,21 +10713,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp90 = tos3("");
-    bool tmp91 = map_get(/*fn.v : 1242*/ r.inst, tp, &tmp90);
+    bool tmp91 = map_get(/*fn.v : 1238*/ r.inst, tp, &tmp90);
 
     if (!tmp91)
       tmp90 = tos((byte *)"", 0);
 
     if (string_ne(tmp90, tos3(""))) {
       string tmp92 = tos3("");
-      bool tmp93 = map_get(/*fn.v : 1243*/ r.inst, tp, &tmp92);
+      bool tmp93 = map_get(/*fn.v : 1239*/ r.inst, tp, &tmp92);
 
       if (!tmp93)
         tmp92 = tos((byte *)"", 0);
 
       if (string_ne(tmp92, ti)) {
         string tmp94 = tos3("");
-        bool tmp95 = map_get(/*fn.v : 1244*/ r.inst, tp, &tmp94);
+        bool tmp95 = map_get(/*fn.v : 1240*/ r.inst, tp, &tmp94);
 
         if (!tmp95)
           tmp94 = tos((byte *)"", 0);
@@ -10752,7 +10745,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp96 = tos3("");
-  bool tmp97 = map_get(/*fn.v : 1253*/ r.inst, f->typ, &tmp96);
+  bool tmp97 = map_get(/*fn.v : 1249*/ r.inst, f->typ, &tmp96);
 
   if (!tmp97)
     tmp96 = tos((byte *)"", 0);
@@ -10765,7 +10758,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp98.data)[tmp99];
 
     string tmp100 = tos3("");
-    bool tmp101 = map_get(/*fn.v : 1257*/ r.inst, tp, &tmp100);
+    bool tmp101 = map_get(/*fn.v : 1253*/ r.inst, tp, &tmp100);
 
     if (!tmp101)
       tmp100 = tos((byte *)"", 0);
@@ -10788,7 +10781,7 @@ string compiler__replace_generic_type(string gen_type, compiler__TypeInst *ti) {
   };
   if ((_IN_MAP((typ), ti->inst))) {
     string tmp104 = tos3("");
-    bool tmp105 = map_get(/*fn.v : 1271*/ ti->inst, typ, &tmp104);
+    bool tmp105 = map_get(/*fn.v : 1267*/ ti->inst, typ, &tmp104);
 
     if (!tmp105)
       tmp104 = tos((byte *)"", 0);
@@ -11056,7 +11049,7 @@ string compiler__Fn_generic_tmpl_to_inst(compiler__Fn *f,
     if (tok.tok == compiler__compiler__TokenKind_name &&
         (_IN_MAP((tok_str), ti->inst))) {
       string tmp143 = tos3("");
-      bool tmp144 = map_get(/*fn.v : 1420*/ ti->inst, tok_str, &tmp143);
+      bool tmp144 = map_get(/*fn.v : 1416*/ ti->inst, tok_str, &tmp143);
 
       if (!tmp144)
         tmp143 = tos((byte *)"", 0);
@@ -11078,7 +11071,7 @@ void compiler__rename_generic_fn_instance(compiler__Fn *f,
     string k = ((string *)tmp145.data)[tmp146];
 
     string tmp147 = tos3("");
-    bool tmp148 = map_get(/*fn.v : 1432*/ ti->inst, k, &tmp147);
+    bool tmp148 = map_get(/*fn.v : 1428*/ ti->inst, k, &tmp147);
 
     if (!tmp148)
       tmp147 = tos((byte *)"", 0);
@@ -11137,7 +11130,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   if ((_IN_MAP((f->mod), p->v->gen_parser_idx))) {
     int tmp153 = 0;
     bool tmp154 =
-        map_get(/*fn.v : 1475*/ p->v->gen_parser_idx, f->mod, &tmp153);
+        map_get(/*fn.v : 1471*/ p->v->gen_parser_idx, f->mod, &tmp153);
 
     int pidx = tmp153;
     compiler__Parser_add_text(
@@ -15026,7 +15019,6 @@ compiler__Parser compiler__V_new_parser_from_file(compiler__V *v, string path) {
       .is_const_literal = p.is_const_literal,
       .in_dispatch = p.in_dispatch,
       .is_vgen = p.is_vgen,
-      .is_vweb = p.is_vweb,
       .is_sql = p.is_sql,
       .is_js = p.is_js,
       .sql_i = p.sql_i,
@@ -15122,7 +15114,6 @@ compiler__Parser compiler__V_new_parser(compiler__V *v,
       .is_const_literal = 0,
       .in_dispatch = 0,
       .is_vgen = 0,
-      .is_vweb = 0,
       .is_sql = 0,
       .is_js = 0,
       .sql_i = 0,
@@ -15739,7 +15730,7 @@ string compiler__Parser_check_string(compiler__Parser *p) {
 void compiler__Parser_check_not_reserved(compiler__Parser *p) {
   bool tmp34 = 0;
   bool tmp35 =
-      map_get(/*parser.v : 789*/ compiler__Reserved_Types, p->lit, &tmp34);
+      map_get(/*parser.v : 788*/ compiler__Reserved_Types, p->lit, &tmp34);
 
   if (tmp34) {
     compiler__Parser_error(
@@ -16112,7 +16103,7 @@ void compiler__Parser_gen(compiler__Parser *p, string s) {
 }
 string compiler__Parser_statement(compiler__Parser *p, bool add_semi) {
   p->expected_type = tos3("");
-  if (p->returns && !p->is_vweb) {
+  if (p->returns) {
     compiler__Parser_error(p, tos3("unreachable code"));
   };
   p->cgen->is_tmp = 0;
@@ -17915,9 +17906,9 @@ void compiler__Parser_return_st(compiler__Parser *p) {
     };
     compiler__Parser_check_types(p, expr_type, cur_fn_typ_chk);
   } else {
-    if (!p->is_vweb && (p->tok == compiler__compiler__TokenKind_name ||
-                        p->tok == compiler__compiler__TokenKind_number ||
-                        p->tok == compiler__compiler__TokenKind_str)) {
+    if (p->tok == compiler__compiler__TokenKind_name ||
+        p->tok == compiler__compiler__TokenKind_number ||
+        p->tok == compiler__compiler__TokenKind_str) {
       compiler__Parser_error_with_token_index(
           p,
           _STR("function `%.*s` should not return a value", p->cur_fn.name.len,
@@ -22051,8 +22042,7 @@ string vweb_dot_tmpl__compile_template(string path) {
     };
   };
   strings__Builder_writeln(&/* ? */ s, vweb_dot_tmpl__STR_END);
-  strings__Builder_writeln(&/* ? */ s, tos3("tmpl_res := sb.str() "));
-  strings__Builder_writeln(&/* ? */ s, tos3("return tmpl_res }"));
+  strings__Builder_writeln(&/* ? */ s, tos3("tmpl_res := sb.str() }"));
   return strings__Builder_str(&/* ? */ s);
 }
 benchmark__Benchmark benchmark__new_benchmark() {
