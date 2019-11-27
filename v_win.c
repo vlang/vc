@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "dbaa37e"
+#define V_COMMIT_HASH "e63300e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "584786d"
+#define V_COMMIT_HASH "dbaa37e"
 #endif
 #include <inttypes.h>
 
@@ -21100,7 +21100,8 @@ bool compiler__Parser_check_types2(compiler__Parser *p, string got_,
     };
   };
   expected = string_replace(expected, tos3("*"), tos3(""));
-  got = string_replace(got, tos3("*"), tos3(""));
+  got = string_replace(string_replace(got, tos3("*"), tos3("")), tos3("ptr"),
+                       tos3(""));
   if (string_ne(got, expected)) {
     if (string_ends_with(expected, tos3("er"))) {
       if (compiler__Parser_satisfies_interface(p, expected, got, throw)) {
