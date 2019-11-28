@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9374168"
+#define V_COMMIT_HASH "3b7466a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e63300e"
+#define V_COMMIT_HASH "9374168"
 #endif
 #include <inttypes.h>
 
@@ -1276,7 +1276,13 @@ f32 strings__levenshtein_distance_percentage(string a, string b);
 f32 strings__dice_coefficient(string s1, string s2);
 string strings__repeat(byte c, int n);
 byte strconv__byte_to_lower(byte c);
+u64 strconv__common_parse_uint(string s, int _base, int _bit_size,
+                               bool error_on_non_digit,
+                               bool error_on_high_digit);
 u64 strconv__parse_uint(string s, int _base, int _bit_size);
+i64 strconv__common_parse_int(string _s, int base, int _bit_size,
+                              bool error_on_non_digit,
+                              bool error_on_high_digit);
 i64 strconv__parse_int(string _s, int base, int _bit_size);
 int strconv__atoi(string s);
 bool strconv__underscore_ok(string s);
@@ -3555,12 +3561,16 @@ string string_replace(string s, string rep, string with) {
   b[/*ptr!*/ new_len] /*rbyte 1*/ = '\0';
   return tos(b, new_len);
 }
-int v_string_int(string s) { return ((int)(strconv__parse_int(s, 0, 32))); }
-i64 string_i64(string s) { return strconv__parse_int(s, 0, 64); }
+int v_string_int(string s) {
+  return ((int)(strconv__common_parse_int(s, 0, 32, 0, 0)));
+}
+i64 string_i64(string s) { return strconv__common_parse_int(s, 0, 64, 0, 0); }
 f32 string_f32(string s) { return atof(((char *)(s.str))); }
 f64 string_f64(string s) { return atof(((char *)(s.str))); }
-u32 string_u32(string s) { return ((u32)(strconv__parse_uint(s, 0, 32))); }
-u64 string_u64(string s) { return strconv__parse_uint(s, 0, 64); }
+u32 string_u32(string s) {
+  return ((u32)(strconv__common_parse_uint(s, 0, 32, 0, 0)));
+}
+u64 string_u64(string s) { return strconv__common_parse_uint(s, 0, 64, 0, 0); }
 bool string_eq(string s, string a) {
   if (isnil(s.str)) {
     v_panic(tos3("string.eq(): nil string"));
@@ -4905,7 +4915,9 @@ string strings__repeat(byte c, int n) {
   return (tos((byte *)arr.data, n));
 }
 byte strconv__byte_to_lower(byte c) { return c | ('x' - 'X'); }
-u64 strconv__parse_uint(string s, int _base, int _bit_size) {
+u64 strconv__common_parse_uint(string s, int _base, int _bit_size,
+                               bool error_on_non_digit,
+                               bool error_on_high_digit) {
   int bit_size = _bit_size;
   int base = _base;
   if (s.len < 1 || !strconv__underscore_ok(s)) {
@@ -4961,10 +4973,18 @@ u64 strconv__parse_uint(string s, int _base, int _bit_size) {
     } else if ('a' <= cl && cl <= 'z') {
       d = cl - 'a' + 10;
     } else {
-      return ((u64)(0));
+      if (error_on_non_digit) {
+        return ((u64)(0));
+      } else {
+        break;
+      };
     };
     if (d >= ((byte)(base))) {
-      return ((u64)(0));
+      if (error_on_high_digit) {
+        return ((u64)(0));
+      } else {
+        break;
+      };
     };
     if (n >= cutoff) {
       return max_val;
@@ -4981,7 +5001,12 @@ u64 strconv__parse_uint(string s, int _base, int _bit_size) {
   };
   return n;
 }
-i64 strconv__parse_int(string _s, int base, int _bit_size) {
+u64 strconv__parse_uint(string s, int _base, int _bit_size) {
+  return strconv__common_parse_uint(s, _base, _bit_size, 1, 1);
+}
+i64 strconv__common_parse_int(string _s, int base, int _bit_size,
+                              bool error_on_non_digit,
+                              bool error_on_high_digit) {
   string s = _s;
   int bit_size = _bit_size;
   if (s.len < 1) {
@@ -4994,7 +5019,8 @@ i64 strconv__parse_int(string _s, int base, int _bit_size) {
     neg = 1;
     s = string_substr2(s, 1, -1, true);
   };
-  u64 un = strconv__parse_uint(s, base, bit_size);
+  u64 un = strconv__common_parse_uint(s, base, bit_size, error_on_non_digit,
+                                      error_on_high_digit);
   if (un == 0) {
     return ((i64)(0));
   };
@@ -5009,6 +5035,9 @@ i64 strconv__parse_int(string _s, int base, int _bit_size) {
     return -((i64)(cutoff));
   };
   return ((neg) ? (-((i64)(un))) : (((i64)(un))));
+}
+i64 strconv__parse_int(string _s, int base, int _bit_size) {
+  return strconv__common_parse_int(_s, base, _bit_size, 1, 1);
 }
 int strconv__atoi(string s) {
   if ((strconv__int_size == 32 && (0 < s.len && s.len < 10)) ||
