@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "208f671"
+#define V_COMMIT_HASH "52d2533"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7545ea7"
+#define V_COMMIT_HASH "208f671"
 #endif
 #include <inttypes.h>
 
@@ -499,6 +499,8 @@ struct compiler_dot_x64__Gen {
   array_i64 str_pos;
   array_string strings;
   i64 file_size_pos;
+  i64 main_fn_addr;
+  i64 code_start_pos;
 };
 
 struct compiler__CGen {
@@ -1257,6 +1259,9 @@ void compiler_dot_x64__Gen_cmp(compiler_dot_x64__Gen *g,
                                compiler_dot_x64__Size size, i64 val);
 i64 compiler_dot_x64__abs(i64 a);
 void compiler_dot_x64__Gen_jle(compiler_dot_x64__Gen *g, i64 addr);
+void compiler_dot_x64__Gen_jl(compiler_dot_x64__Gen *g, i64 addr);
+int compiler_dot_x64__Gen_abs_to_rel_addr(compiler_dot_x64__Gen *g, i64 addr);
+void compiler_dot_x64__Gen_jmp(compiler_dot_x64__Gen *g, i64 addr);
 void compiler_dot_x64__Gen_mov64(compiler_dot_x64__Gen *g,
                                  compiler_dot_x64__Register reg, i64 val);
 void compiler_dot_x64__Gen_call(compiler_dot_x64__Gen *g, int val);
@@ -1265,7 +1270,9 @@ void compiler_dot_x64__Gen_ret(compiler_dot_x64__Gen *g);
 int compiler_dot_x64__Gen_gen_loop_start(compiler_dot_x64__Gen *g, int from);
 void compiler_dot_x64__Gen_gen_loop_end(compiler_dot_x64__Gen *g, int to,
                                         int label);
+void compiler_dot_x64__Gen_save_main_fn_addr(compiler_dot_x64__Gen *g);
 void compiler_dot_x64__Gen_gen_print(compiler_dot_x64__Gen *g, string s);
+void compiler_dot_x64__Gen_gen_exit(compiler_dot_x64__Gen *g);
 void compiler_dot_x64__Gen_mov(compiler_dot_x64__Gen *g,
                                compiler_dot_x64__Register reg, int val);
 strings__Builder strings__new_builder(int initial_size);
@@ -4572,6 +4579,8 @@ void compiler_dot_x64__Gen_generate_elf_header(compiler_dot_x64__Gen *g) {
   compiler_dot_x64__Gen_write64(g, 0);
   compiler_dot_x64__Gen_write64(g, 0);
   compiler_dot_x64__Gen_write64(g, 0x1000);
+  g->code_start_pos = g->buf.len;
+  compiler_dot_x64__Gen_call(g, 0);
 }
 void compiler_dot_x64__Gen_generate_elf_footer(compiler_dot_x64__Gen *g) {
   compiler_dot_x64__Gen_mov(g, compiler_dot_x64__compiler_dot_x64__Register_edi,
@@ -4592,6 +4601,9 @@ void compiler_dot_x64__Gen_generate_elf_footer(compiler_dot_x64__Gen *g) {
   int file_size = g->buf.len;
   compiler_dot_x64__Gen_write64_at(g, file_size, g->file_size_pos);
   compiler_dot_x64__Gen_write64_at(g, file_size, g->file_size_pos + 8);
+  compiler_dot_x64__Gen_write64_at(
+      g, ((int)(g->main_fn_addr - g->code_start_pos)) - 5,
+      g->code_start_pos + 1);
   Option_os__File tmp9 = os__create(g->out_name);
   os__File f;
   if (!tmp9.ok) {
@@ -4632,7 +4644,9 @@ compiler_dot_x64__Gen *compiler_dot_x64__new_gen(string out_name) {
           .offset = 0,
           .str_pos = new_array(0, 1, sizeof(i64)),
           .strings = new_array(0, 1, sizeof(string)),
-          .file_size_pos = 0},
+          .file_size_pos = 0,
+          .main_fn_addr = 0,
+          .code_start_pos = 0},
       sizeof(compiler_dot_x64__Gen));
 }
 void compiler_dot_x64__Gen_write8(compiler_dot_x64__Gen *g, int n) {
@@ -4731,6 +4745,19 @@ void compiler_dot_x64__Gen_jle(compiler_dot_x64__Gen *g, i64 addr) {
   compiler_dot_x64__Gen_write8(g, 0x7e);
   compiler_dot_x64__Gen_write8(g, offset);
 }
+void compiler_dot_x64__Gen_jl(compiler_dot_x64__Gen *g, i64 addr) {
+  int offset = 0xff - ((int)(compiler_dot_x64__abs(addr - g->buf.len))) - 1;
+  compiler_dot_x64__Gen_write8(g, 0x7c);
+  compiler_dot_x64__Gen_write8(g, offset);
+}
+int compiler_dot_x64__Gen_abs_to_rel_addr(compiler_dot_x64__Gen *g, i64 addr) {
+  return ((int)(compiler_dot_x64__abs(addr - g->buf.len))) - 1;
+}
+void compiler_dot_x64__Gen_jmp(compiler_dot_x64__Gen *g, i64 addr) {
+  int offset = 0xff - compiler_dot_x64__Gen_abs_to_rel_addr(&/* ? */ *g, addr);
+  compiler_dot_x64__Gen_write8(g, 0xe9);
+  compiler_dot_x64__Gen_write8(g, offset);
+}
 void compiler_dot_x64__Gen_mov64(compiler_dot_x64__Gen *g,
                                  compiler_dot_x64__Register reg, i64 val) {
   compiler_dot_x64__Register tmp21 = reg;
@@ -4746,6 +4773,7 @@ void compiler_dot_x64__Gen_mov64(compiler_dot_x64__Gen *g,
 }
 void compiler_dot_x64__Gen_call(compiler_dot_x64__Gen *g, int val) {
   compiler_dot_x64__Gen_write8(g, 0xe8);
+  compiler_dot_x64__Gen_write32(g, val);
 }
 void compiler_dot_x64__Gen_syscall(compiler_dot_x64__Gen *g) {
   compiler_dot_x64__Gen_write8(g, 0x0f);
@@ -4768,6 +4796,9 @@ void compiler_dot_x64__Gen_gen_loop_end(compiler_dot_x64__Gen *g, int to,
                             compiler_dot_x64__compiler_dot_x64__Size__8, to);
   compiler_dot_x64__Gen_jle(g, label);
 }
+void compiler_dot_x64__Gen_save_main_fn_addr(compiler_dot_x64__Gen *g) {
+  g->main_fn_addr = g->buf.len;
+}
 void compiler_dot_x64__Gen_gen_print(compiler_dot_x64__Gen *g, string s) {
   _PUSH(&g->strings,
         (/*typ = array_string   tmp_typ=string*/ string_add(s, tos3("\n"))),
@@ -4782,6 +4813,13 @@ void compiler_dot_x64__Gen_gen_print(compiler_dot_x64__Gen *g, string s) {
       g, compiler_dot_x64__compiler_dot_x64__Register_rsi, 0);
   compiler_dot_x64__Gen_mov(g, compiler_dot_x64__compiler_dot_x64__Register_edx,
                             s.len + 1);
+  compiler_dot_x64__Gen_syscall(g);
+}
+void compiler_dot_x64__Gen_gen_exit(compiler_dot_x64__Gen *g) {
+  compiler_dot_x64__Gen_mov(g, compiler_dot_x64__compiler_dot_x64__Register_edi,
+                            0);
+  compiler_dot_x64__Gen_mov(g, compiler_dot_x64__compiler_dot_x64__Register_eax,
+                            60);
   compiler_dot_x64__Gen_syscall(g);
 }
 void compiler_dot_x64__Gen_mov(compiler_dot_x64__Gen *g,
@@ -9643,7 +9681,7 @@ string array_compiler__TypeInst_str(array_compiler__TypeInst a) {
       string k = ((string *)tmp3.data)[tmp4];
 
       string tmp5 = tos3("");
-      bool tmp6 = map_get(/*fn.v : 65*/ t.inst, k, &tmp5);
+      bool tmp6 = map_get(/*fn.v : 66*/ t.inst, k, &tmp5);
 
       if (!tmp6)
         tmp5 = tos((byte *)"", 0);
@@ -10095,6 +10133,9 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
   f.typ = typ;
   string str_args = compiler__Fn_str_args(&/* ? */ f, p->table);
   if (string_eq(f.name, tos3("main__main")) && !has_receiver) {
+    if (p->pref->x64 && !compiler__Parser_first_pass(&/* ? */ *p)) {
+      compiler_dot_x64__Gen_save_main_fn_addr(p->x64);
+    };
     if (string_ne(str_args, tos3("")) || string_ne(typ, tos3("void"))) {
       compiler__Parser_error_with_token_index(
           p, tos3("fn main must have no arguments and no return values"),
@@ -10240,6 +10281,13 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
   };
   if (string_eq(p->attr, tos3("live")) && p->pref->is_so) {
     compiler__Parser_genln(p, tos3("pthread_mutex_unlock(&live_fn_mutex);"));
+  };
+  if (p->pref->x64 && string_eq(f.name, tos3("main__main")) &&
+      !compiler__Parser_first_pass(&/* ? */ *p)) {
+    compiler_dot_x64__Gen_gen_exit(p->x64);
+  };
+  if (p->pref->x64 && !compiler__Parser_first_pass(&/* ? */ *p)) {
+    compiler_dot_x64__Gen_ret(p->x64);
   };
   if (string_eq(p->mod, tos3("main"))) {
   };
@@ -11075,21 +11123,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp90 = tos3("");
-    bool tmp91 = map_get(/*fn.v : 1241*/ r.inst, tp, &tmp90);
+    bool tmp91 = map_get(/*fn.v : 1252*/ r.inst, tp, &tmp90);
 
     if (!tmp91)
       tmp90 = tos((byte *)"", 0);
 
     if (string_ne(tmp90, tos3(""))) {
       string tmp92 = tos3("");
-      bool tmp93 = map_get(/*fn.v : 1242*/ r.inst, tp, &tmp92);
+      bool tmp93 = map_get(/*fn.v : 1253*/ r.inst, tp, &tmp92);
 
       if (!tmp93)
         tmp92 = tos((byte *)"", 0);
 
       if (string_ne(tmp92, ti)) {
         string tmp94 = tos3("");
-        bool tmp95 = map_get(/*fn.v : 1243*/ r.inst, tp, &tmp94);
+        bool tmp95 = map_get(/*fn.v : 1254*/ r.inst, tp, &tmp94);
 
         if (!tmp95)
           tmp94 = tos((byte *)"", 0);
@@ -11107,7 +11155,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp96 = tos3("");
-  bool tmp97 = map_get(/*fn.v : 1252*/ r.inst, f->typ, &tmp96);
+  bool tmp97 = map_get(/*fn.v : 1263*/ r.inst, f->typ, &tmp96);
 
   if (!tmp97)
     tmp96 = tos((byte *)"", 0);
@@ -11120,7 +11168,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp98.data)[tmp99];
 
     string tmp100 = tos3("");
-    bool tmp101 = map_get(/*fn.v : 1256*/ r.inst, tp, &tmp100);
+    bool tmp101 = map_get(/*fn.v : 1267*/ r.inst, tp, &tmp100);
 
     if (!tmp101)
       tmp100 = tos((byte *)"", 0);
@@ -11143,7 +11191,7 @@ string compiler__replace_generic_type(string gen_type, compiler__TypeInst *ti) {
   };
   if ((_IN_MAP((typ), ti->inst))) {
     string tmp104 = tos3("");
-    bool tmp105 = map_get(/*fn.v : 1270*/ ti->inst, typ, &tmp104);
+    bool tmp105 = map_get(/*fn.v : 1281*/ ti->inst, typ, &tmp104);
 
     if (!tmp105)
       tmp104 = tos((byte *)"", 0);
@@ -11411,7 +11459,7 @@ string compiler__Fn_generic_tmpl_to_inst(compiler__Fn *f,
     if (tok.tok == compiler__compiler__TokenKind_name &&
         (_IN_MAP((tok_str), ti->inst))) {
       string tmp143 = tos3("");
-      bool tmp144 = map_get(/*fn.v : 1419*/ ti->inst, tok_str, &tmp143);
+      bool tmp144 = map_get(/*fn.v : 1430*/ ti->inst, tok_str, &tmp143);
 
       if (!tmp144)
         tmp143 = tos((byte *)"", 0);
@@ -11433,7 +11481,7 @@ void compiler__rename_generic_fn_instance(compiler__Fn *f,
     string k = ((string *)tmp145.data)[tmp146];
 
     string tmp147 = tos3("");
-    bool tmp148 = map_get(/*fn.v : 1431*/ ti->inst, k, &tmp147);
+    bool tmp148 = map_get(/*fn.v : 1442*/ ti->inst, k, &tmp147);
 
     if (!tmp148)
       tmp147 = tos((byte *)"", 0);
@@ -11492,7 +11540,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   if ((_IN_MAP((f->mod), p->v->gen_parser_idx))) {
     int tmp153 = 0;
     bool tmp154 =
-        map_get(/*fn.v : 1474*/ p->v->gen_parser_idx, f->mod, &tmp153);
+        map_get(/*fn.v : 1485*/ p->v->gen_parser_idx, f->mod, &tmp153);
 
     int pidx = tmp153;
     compiler__Parser_add_text(
@@ -14434,7 +14482,7 @@ string compiler__Parser_match_statement(compiler__Parser *p, bool is_expr) {
     };
     compiler__Parser_gen(p, tos3(")"));
     if (p->tok == compiler__compiler__TokenKind_arrow) {
-      compiler__Parser_warn(p, compiler__warn_match_arrow);
+      compiler__Parser_error(p, compiler__warn_match_arrow);
       compiler__Parser_check(p, compiler__compiler__TokenKind_arrow);
     };
     if (is_expr) {
