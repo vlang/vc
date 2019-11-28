@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7545ea7"
+#define V_COMMIT_HASH "208f671"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3b7466a"
+#define V_COMMIT_HASH "7545ea7"
 #endif
 #include <inttypes.h>
 
@@ -592,6 +592,7 @@ struct compiler__Preferences {
   bool enable_globals;
   bool is_fmt;
   bool is_bare;
+  string user_mod_path;
   string vlib_path;
   string vpath;
   bool x64;
@@ -12791,7 +12792,7 @@ Option_int compiler__V_get_file_parser_index(compiler__V *v, string file) {
   string file_path = os__realpath(file);
   if ((_IN_MAP((file_path), v->file_parser_idx))) {
     int tmp2 = 0;
-    bool tmp3 = map_get(/*main.v : 166*/ v->file_parser_idx, file_path, &tmp2);
+    bool tmp3 = map_get(/*main.v : 167*/ v->file_parser_idx, file_path, &tmp2);
 
     int tmp4 = OPTION_CAST(int)(tmp2);
     return opt_ok(&tmp4, sizeof(int));
@@ -13623,6 +13624,8 @@ compiler__V *compiler__new_v(array_string args) {
       v_panic(err);
     };
   };
+  string user_mod_path =
+      compiler__get_cmdline_option(args, tos3("-user_mod_path"), tos3(""));
   string vroot = os__dir(compiler__vexe_path());
   string vlib_path = compiler__get_cmdline_option(
       args, tos3("-vlib-path"),
@@ -13790,6 +13793,7 @@ compiler__V *compiler__new_v(array_string args) {
                                      string_contains(dir, tos3("vlib"))),
           .comptime_define = comptime_define,
           .is_fmt = string_eq(comptime_define, tos3("vfmt")),
+          .user_mod_path = user_mod_path,
           .vlib_path = vlib_path,
           .vpath = vpath,
           .no_auto_free = 0,
@@ -14507,17 +14511,22 @@ Option_string compiler__V_find_module_path(compiler__V *v, string mod) {
         (/*typ = array_string   tmp_typ=string*/ filepath__join(
             modules_lookup_path, &(varg_string){.len = 1, .args = {mod_path}})),
         tmp28, string);
-  array_string tmp29 = tried_paths;
-  for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
-    string try_path = ((string *)tmp29.data)[tmp30];
+  if (v->pref->user_mod_path.len > 0) {
+    _PUSH(&tried_paths,
+          (/*typ = array_string   tmp_typ=string*/ v->pref->user_mod_path),
+          tmp29, string);
+  };
+  array_string tmp30 = tried_paths;
+  for (int tmp31 = 0; tmp31 < tmp30.len; tmp31++) {
+    string try_path = ((string *)tmp30.data)[tmp31];
 
     if (v->pref->is_verbose) {
       printf("  >> trying to find %.*s in %.*s ...\n", mod.len, mod.str,
              try_path.len, try_path.str);
     };
     if (os__dir_exists(try_path)) {
-      string tmp31 = OPTION_CAST(string)(try_path);
-      return opt_ok(&tmp31, sizeof(string));
+      string tmp32 = OPTION_CAST(string)(try_path);
+      return opt_ok(&tmp32, sizeof(string));
     };
   };
   return v_error(_STR("module \"%.*s\" not found", mod.len, mod.str));
