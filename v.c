@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e957fd6"
+#define V_COMMIT_HASH "f724a95"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "43d0199"
+#define V_COMMIT_HASH "e957fd6"
 #endif
 #include <inttypes.h>
 
@@ -3071,12 +3071,12 @@ bool array_byte_contains(array_byte a, byte val) {
   return 0;
 }
 string rune_str(rune c) {
-  int fst_byte = ((int)(c)) >> 8 * 3 & 0xff;
+  int fst_byte = ((int)(c)) >> (8 * 3 & 0xff);
   int len = utf8_char_len(fst_byte);
   string str = (string){.len = len, .str = v_malloc(len + 1)};
   for (int i = 0; i < len; i++) {
 
-    str.str[/*ptr!*/ i] /*rbyte 1*/ = ((int)(c)) >> 8 * (3 - i) & 0xff;
+    str.str[/*ptr!*/ i] /*rbyte 1*/ = ((int)(c)) >> (8 * (3 - i) & 0xff);
   };
   str.str[len] /*rbyte 1*/ = '\0';
   return str;
@@ -4223,7 +4223,7 @@ string string_repeat(string s, int count) {
   return (tos2((byte *)ret));
 }
 int utf8_char_len(byte b) {
-  return ((0xe5000000 >> ((b >> 3) & 0x1e)) & 3) + 1;
+  return (((0xe5000000 >> (((b >> 3) & 0x1e))) & 3)) + 1;
 }
 string utf32_to_str(u32 code) {
   int icode = ((int)(code));
@@ -4233,21 +4233,21 @@ string utf32_to_str(u32 code) {
     return tos(buffer, 1);
   };
   if ((icode <= 2047)) {
-    buffer[/*ptr!*/ 0] /*rbyte 1*/ = 192 | (icode >> 6);
-    buffer[/*ptr!*/ 1] /*rbyte 1*/ = 128 | (icode & 63);
+    buffer[/*ptr!*/ 0] /*rbyte 1*/ = (192 | (icode >> 6));
+    buffer[/*ptr!*/ 1] /*rbyte 1*/ = (128 | ((icode & 63)));
     return tos(buffer, 2);
   };
   if ((icode <= 65535)) {
-    buffer[/*ptr!*/ 0] /*rbyte 1*/ = 224 | (icode >> 12);
-    buffer[/*ptr!*/ 1] /*rbyte 1*/ = 128 | ((icode >> 6) & 63);
-    buffer[/*ptr!*/ 2] /*rbyte 1*/ = 128 | (icode & 63);
+    buffer[/*ptr!*/ 0] /*rbyte 1*/ = (224 | (icode >> 12));
+    buffer[/*ptr!*/ 1] /*rbyte 1*/ = (128 | (((icode >> 6) & 63)));
+    buffer[/*ptr!*/ 2] /*rbyte 1*/ = (128 | ((icode & 63)));
     return tos(buffer, 3);
   };
   if ((icode <= 1114111)) {
-    buffer[/*ptr!*/ 0] /*rbyte 1*/ = 240 | (icode >> 18);
-    buffer[/*ptr!*/ 1] /*rbyte 1*/ = 128 | ((icode >> 12) & 63);
-    buffer[/*ptr!*/ 2] /*rbyte 1*/ = 128 | ((icode >> 6) & 63);
-    buffer[/*ptr!*/ 3] /*rbyte 1*/ = 128 | (icode & 63);
+    buffer[/*ptr!*/ 0] /*rbyte 1*/ = (240 | (icode >> 18));
+    buffer[/*ptr!*/ 1] /*rbyte 1*/ = (128 | (((icode >> 12) & 63)));
+    buffer[/*ptr!*/ 2] /*rbyte 1*/ = (128 | (((icode >> 6) & 63)));
+    buffer[/*ptr!*/ 3] /*rbyte 1*/ = (128 | ((icode & 63)));
     return tos(buffer, 4);
   };
   return tos3("");
@@ -4260,21 +4260,21 @@ string utf32_to_str_no_malloc(u32 code, void *buf) {
     return tos(buffer, 1);
   };
   if ((icode <= 2047)) {
-    buffer[/*ptr!*/ 0] /*rbyteptr 1*/ = 192 | (icode >> 6);
-    buffer[/*ptr!*/ 1] /*rbyteptr 1*/ = 128 | (icode & 63);
+    buffer[/*ptr!*/ 0] /*rbyteptr 1*/ = (192 | (icode >> 6));
+    buffer[/*ptr!*/ 1] /*rbyteptr 1*/ = (128 | ((icode & 63)));
     return tos(buffer, 2);
   };
   if ((icode <= 65535)) {
-    buffer[/*ptr!*/ 0] /*rbyteptr 1*/ = 224 | (icode >> 12);
-    buffer[/*ptr!*/ 1] /*rbyteptr 1*/ = 128 | ((icode >> 6) & 63);
-    buffer[/*ptr!*/ 2] /*rbyteptr 1*/ = 128 | (icode & 63);
+    buffer[/*ptr!*/ 0] /*rbyteptr 1*/ = (224 | (icode >> 12));
+    buffer[/*ptr!*/ 1] /*rbyteptr 1*/ = (128 | (((icode >> 6) & 63)));
+    buffer[/*ptr!*/ 2] /*rbyteptr 1*/ = (128 | ((icode & 63)));
     return tos(buffer, 3);
   };
   if ((icode <= 1114111)) {
-    buffer[/*ptr!*/ 0] /*rbyteptr 1*/ = 240 | (icode >> 18);
-    buffer[/*ptr!*/ 1] /*rbyteptr 1*/ = 128 | ((icode >> 12) & 63);
-    buffer[/*ptr!*/ 2] /*rbyteptr 1*/ = 128 | ((icode >> 6) & 63);
-    buffer[/*ptr!*/ 3] /*rbyteptr 1*/ = 128 | (icode & 63);
+    buffer[/*ptr!*/ 0] /*rbyteptr 1*/ = (240 | (icode >> 18));
+    buffer[/*ptr!*/ 1] /*rbyteptr 1*/ = (128 | (((icode >> 12) & 63)));
+    buffer[/*ptr!*/ 2] /*rbyteptr 1*/ = (128 | (((icode >> 6) & 63)));
+    buffer[/*ptr!*/ 3] /*rbyteptr 1*/ = (128 | ((icode & 63)));
     return tos(buffer, 4);
   };
   return tos3("");
@@ -4294,7 +4294,7 @@ int string_utf32_code(string _rune) {
 
     int c = ((int)(_rune.str[i] /*rbyte 0*/));
     res = res << shift;
-    res |= c & 63;
+    res |= (c & 63);
     shift = 6;
   };
   return res;
@@ -4323,17 +4323,17 @@ string string_from_wide2(u16 *_wstr, int len) {
 int utf8_len(byte c) {
   int b = 0;
   byte x = c;
-  if (((x & 240) != 0)) {
+  if ((((x & 240)) != 0)) {
     x >>= 4;
   } else {
     b += 4;
   };
-  if (((x & 12) != 0)) {
+  if ((((x & 12)) != 0)) {
     x >>= 2;
   } else {
     b += 2;
   };
-  if (((x & 2) == 0)) {
+  if ((((x & 2)) == 0)) {
     b++;
   };
   return b;
@@ -4348,13 +4348,13 @@ int utf8_getchar() {
   } else if (len == 1) {
     return -1;
   } else {
-    int uc = ((int)(c & ((1 << (7 - len)) - 1)));
+    int uc = ((int)((c & ((1 << (7 - len)) - 1))));
     for (int i = 0; i + 1 < len; i++) {
 
       int c2 = ((int)(getchar()));
       if (c2 != -1 && (c2 >> 6) == 2) {
         uc <<= 6;
-        uc |= ((int)((c2 & 63)));
+        uc |= ((int)(((c2 & 63))));
       } else if (c2 == -1) {
         return 0;
       } else {
@@ -4367,7 +4367,7 @@ int utf8_getchar() {
 string string_utf8_to_upper(string s) { return string_utf8_up_low(s, 1); }
 string string_utf8_to_lower(string s) { return string_utf8_up_low(s, 0); }
 int utf8util_char_len(byte b) {
-  return ((0xe5000000 >> ((b >> 3) & 0x1e)) & 3) + 1;
+  return (((0xe5000000 >> (((b >> 3) & 0x1e))) & 3)) + 1;
 }
 string string_utf8_up_low(string s, bool uppper_flag) {
   int _index = 0;
@@ -4393,19 +4393,23 @@ string string_utf8_up_low(string s, bool uppper_flag) {
       int lword = ((int)(0));
       for (int i = 0; i < ch_len; i++) {
 
-        lword = (lword << 8) | ((int)(s.str[/*ptr!*/ _index + i] /*rbyte 0*/));
+        lword =
+            ((lword << 8) | ((int)(s.str[/*ptr!*/ _index + i] /*rbyte 0*/)));
       };
       int res = ((int)(0));
       if (ch_len == 2) {
-        res = (lword & 0x1f00) >> 2 | (lword & 0x3f);
+        res = ((lword & 0x1f00)) >> (2 | ((lword & 0x3f)));
       } else if (ch_len == 3) {
-        res = (lword & 0x0f00) >> 4 | (lword & 0x3f00) >> 2 | (lword & 0x3f);
+        res = ((lword & 0x0f00)) >> (4 | ((lword & 0x3f00))) >>
+              (2 | ((lword & 0x3f)));
       } else if (ch_len == 4) {
-        res = ((lword & 0x07000000) >> 6) | ((lword & 0x003f0000) >> 4) |
-              ((lword & 0x00003F00) >> 2) | (lword & 0x0000003f);
+        res =
+            ((((((lword & 0x07000000)) >> 6) | (((lword & 0x003f0000)) >> 4)) |
+              (((lword & 0x00003F00)) >> 2)) |
+             ((lword & 0x0000003f)));
       };
       int ch_index = find_char(((u16)(res)));
-      if (ch_index == 0 || (ch_index & 1) == test_result) {
+      if (ch_index == 0 || ((ch_index & 1)) == test_result) {
         int tmp1 = 0;
         ;
         for (int tmp2 = tmp1; tmp2 < ch_len; tmp2++) {
@@ -4418,14 +4422,14 @@ string string_utf8_up_low(string s, bool uppper_flag) {
         u16 tab_char = ((u16)((
             *(u16 *)array_get(builtin__unicode_con_table, ch_index + offset))));
         if (ch_len == 2) {
-          u16 ch0 = ((tab_char >> 6) & 0x1f) | 0xc0;
-          u16 ch1 = ((tab_char >> 0) & 0x3f) | 0x80;
+          u16 ch0 = ((((tab_char >> 6) & 0x1f)) | 0xc0);
+          u16 ch1 = ((((tab_char >> 0) & 0x3f)) | 0x80);
           str_res[/*ptr!*/ _index + 0] /*rbyte 1*/ = ch0;
           str_res[/*ptr!*/ _index + 1] /*rbyte 1*/ = ch1;
         } else if (ch_len == 3) {
-          u16 ch0 = ((tab_char >> 12) & 0x0f) | 0xe0;
-          u16 ch1 = ((tab_char >> 6) & 0x3f) | 0x80;
-          u16 ch2 = ((tab_char >> 0) & 0x3f) | 0x80;
+          u16 ch0 = ((((tab_char >> 12) & 0x0f)) | 0xe0);
+          u16 ch1 = ((((tab_char >> 6) & 0x3f)) | 0x80);
+          u16 ch2 = ((((tab_char >> 0) & 0x3f)) | 0x80);
           str_res[/*ptr!*/ _index + 0] /*rbyte 1*/ = ch0;
           str_res[/*ptr!*/ _index + 1] /*rbyte 1*/ = ch1;
           str_res[/*ptr!*/ _index + 2] /*rbyte 1*/ = ch2;
@@ -4912,7 +4916,7 @@ string strings__repeat(byte c, int n) {
   array_set(&/*q*/ arr, n, &(byte[]){'\0'});
   return (tos((byte *)arr.data, n));
 }
-byte strconv__byte_to_lower(byte c) { return c | ('x' - 'X'); }
+byte strconv__byte_to_lower(byte c) { return (c | ('x' - 'X')); }
 u64 strconv__common_parse_uint(string s, int _base, int _bit_size,
                                bool error_on_non_digit,
                                bool error_on_high_digit) {
@@ -5739,7 +5743,7 @@ bool os__is_dir(string path) {
   if (stat((char *)cstr, &statbuf) != 0) {
     return 0;
   };
-  return (((int)(statbuf.st_mode)) & os__S_IFMT) == os__S_IFDIR;
+  return ((((int)(statbuf.st_mode)) & os__S_IFMT)) == os__S_IFDIR;
 #endif
   ;
 }
@@ -6002,7 +6006,7 @@ Option_os__Result os__exec(string cmd) {
 rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq) {
   rand__Pcg32 rng = (rand__Pcg32){.state = 0, .inc = 0};
   rng.state = ((u64)(0));
-  rng.inc = ((u64)(((u64)(initseq << ((u64)(1)))) | ((u64)(1))));
+  rng.inc = ((u64)((((u64)(initseq << ((u64)(1)))) | ((u64)(1)))));
   rand__Pcg32_next(&/* ? */ rng);
   rng.state += initstate;
   rand__Pcg32_next(&/* ? */ rng);
@@ -6012,9 +6016,10 @@ static inline u32 rand__Pcg32_next(rand__Pcg32 *rng) {
   u64 oldstate = rng->state;
   rng->state = oldstate * ((u64)(6364136223846793005)) + rng->inc;
   u32 xorshifted = ((u32)(
-      ((u64)(((u64)(oldstate >> ((u64)(18)))) ^ oldstate)) >> ((u64)(27))));
+      ((u64)((((u64)(oldstate >> ((u64)(18)))) ^ oldstate))) >> ((u64)(27))));
   u32 rot = ((u32)(oldstate >> ((u64)(59))));
-  return ((u32)((xorshifted >> rot) | (xorshifted << ((-rot) & ((u32)(31))))));
+  return (
+      (u32)(((xorshifted >> rot) | (xorshifted << (((-rot) & ((u32)(31))))))));
 }
 static inline u32 rand__Pcg32_bounded_next(rand__Pcg32 *rng, u32 bound) {
   u32 threshold = ((u32)(-bound % bound));
@@ -6033,7 +6038,7 @@ int rand__rand_r(int *seed) {
     int *rs = seed;
     int ns = (*rs * 1103515245 + 12345);
     *rs = ns;
-    return ns & 0x7fffffff;
+    return (ns & 0x7fffffff);
   };
 }
 rand__Splitmix64 rand__new_splitmix64(u64 seed) {
@@ -6042,9 +6047,9 @@ rand__Splitmix64 rand__new_splitmix64(u64 seed) {
 static inline u64 rand__Splitmix64_next(rand__Splitmix64 *rng) {
   rng->state += ((u64)(0x9e3779b97f4a7c15));
   u64 z = rng->state;
-  z = (z ^ ((u64)((z >> ((u64)(30)))))) * ((u64)(0xbf58476d1ce4e5b9));
-  z = (z ^ ((u64)((z >> ((u64)(27)))))) * ((u64)(0x94d049bb133111eb));
-  return z ^ ((u64)(z >> ((u64)(31))));
+  z = ((z ^ ((u64)((z >> ((u64)(30))))))) * ((u64)(0xbf58476d1ce4e5b9));
+  z = ((z ^ ((u64)((z >> ((u64)(27))))))) * ((u64)(0x94d049bb133111eb));
+  return (z ^ ((u64)(z >> ((u64)(31)))));
 }
 static inline u64 rand__Splitmix64_bounded_next(rand__Splitmix64 *rng,
                                                 u64 bound) {
@@ -6119,11 +6124,11 @@ string term__bg_rgb(int r, int g, int b, string msg) {
   return term__format_rgb(r, g, b, msg, tos3("48"), tos3("49"));
 }
 string term__hex(int hex, string msg) {
-  return term__format_rgb(hex >> 16, hex >> 8 & 0xFF, hex & 0xFF, msg,
+  return term__format_rgb(hex >> 16, hex >> (8 & 0xFF), (hex & 0xFF), msg,
                           tos3("38"), tos3("39"));
 }
 string term__bg_hex(int hex, string msg) {
-  return term__format_rgb(hex >> 16, hex >> 8 & 0xFF, hex & 0xFF, msg,
+  return term__format_rgb(hex >> 16, hex >> (8 & 0xFF), (hex & 0xFF), msg,
                           tos3("48"), tos3("49"));
 }
 string term__bg_black(string msg) {
@@ -9232,19 +9237,26 @@ string compiler__Parser_expression(compiler__Parser *p) {
       compiler__Parser_error(p, tos3("strings only support `+` operator"));
     };
     string expr_type = compiler__Parser_term(p);
-    if (((tok_op == compiler__compiler__TokenKind_pipe ||
-          tok_op == compiler__compiler__TokenKind_amp ||
-          tok_op == compiler__compiler__TokenKind_xor)) &&
-        !(compiler__is_integer_type(expr_type) &&
-          compiler__is_integer_type(typ))) {
-      compiler__Parser_error(
-          p, _STR("operator %.*s is defined only on integer types",
-                  compiler__TokenKind_str(tok_op).len,
-                  compiler__TokenKind_str(tok_op).str));
+    bool open = 0;
+    if ((tok_op == compiler__compiler__TokenKind_pipe ||
+         tok_op == compiler__compiler__TokenKind_amp ||
+         tok_op == compiler__compiler__TokenKind_xor)) {
+      if (!(compiler__is_integer_type(expr_type) &&
+            compiler__is_integer_type(typ))) {
+        compiler__Parser_error(
+            p, _STR("operator %.*s is defined only on integer types",
+                    compiler__TokenKind_str(tok_op).len,
+                    compiler__TokenKind_str(tok_op).str));
+      };
+      compiler__CGen_set_placeholder(p->cgen, ph, tos3("("));
+      open = 1;
     };
     compiler__Parser_check_types(p, expr_type, typ);
     if ((is_str || is_ustr) && tok_op == compiler__compiler__TokenKind_plus &&
         !p->is_js) {
+      compiler__Parser_gen(p, tos3(")"));
+    };
+    if (open) {
       compiler__Parser_gen(p, tos3(")"));
     };
     if (!p->pref->translated && !is_str && !is_ustr && !is_num) {
