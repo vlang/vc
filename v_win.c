@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "39bc382"
+#define V_COMMIT_HASH "431568f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9e19472"
+#define V_COMMIT_HASH "39bc382"
 #endif
 #include <inttypes.h>
 
@@ -4805,7 +4805,7 @@ void compiler_dot_x64__Gen_gen_loop_end(compiler_dot_x64__Gen *g, int to,
                                         int label) {
   compiler_dot_x64__Gen_cmp(g, compiler_dot_x64__compiler_dot_x64__Register_r12,
                             compiler_dot_x64__compiler_dot_x64__Size__8, to);
-  compiler_dot_x64__Gen_jle(g, label);
+  compiler_dot_x64__Gen_jl(g, label);
 }
 void compiler_dot_x64__Gen_save_main_fn_addr(compiler_dot_x64__Gen *g) {
   g->main_fn_addr = g->buf.len;
