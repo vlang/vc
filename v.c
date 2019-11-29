@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e31d892"
+#define V_COMMIT_HASH "9e19472"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "729f9c3"
+#define V_COMMIT_HASH "e31d892"
 #endif
 #include <inttypes.h>
 
@@ -224,6 +224,7 @@ typedef struct string string;
 typedef struct ustring ustring;
 typedef struct compiler_dot_x64__SectionConfig compiler_dot_x64__SectionConfig;
 typedef struct compiler_dot_x64__Gen compiler_dot_x64__Gen;
+typedef map map_i64;
 typedef struct strings__Builder strings__Builder;
 typedef struct os__File os__File;
 typedef struct os__FileInfo os__FileInfo;
@@ -464,6 +465,7 @@ struct compiler_dot_x64__Gen {
   i64 file_size_pos;
   i64 main_fn_addr;
   i64 code_start_pos;
+  map_i64 fn_addr;
 };
 
 struct compiler__CGen {
@@ -1152,6 +1154,7 @@ void compiler_dot_x64__Gen_section_header(compiler_dot_x64__Gen *g,
                                           compiler_dot_x64__SectionConfig c);
 void compiler_dot_x64__genobj();
 compiler_dot_x64__Gen *compiler_dot_x64__new_gen(string out_name);
+i64 compiler_dot_x64__Gen_pos(compiler_dot_x64__Gen *g);
 void compiler_dot_x64__Gen_write8(compiler_dot_x64__Gen *g, int n);
 void compiler_dot_x64__Gen_write16(compiler_dot_x64__Gen *g, int n);
 void compiler_dot_x64__Gen_write32(compiler_dot_x64__Gen *g, int n);
@@ -1170,7 +1173,7 @@ int compiler_dot_x64__Gen_abs_to_rel_addr(compiler_dot_x64__Gen *g, i64 addr);
 void compiler_dot_x64__Gen_jmp(compiler_dot_x64__Gen *g, i64 addr);
 void compiler_dot_x64__Gen_mov64(compiler_dot_x64__Gen *g,
                                  compiler_dot_x64__Register reg, i64 val);
-void compiler_dot_x64__Gen_call(compiler_dot_x64__Gen *g, int val);
+void compiler_dot_x64__Gen_call(compiler_dot_x64__Gen *g, int addr);
 void compiler_dot_x64__Gen_syscall(compiler_dot_x64__Gen *g);
 void compiler_dot_x64__Gen_ret(compiler_dot_x64__Gen *g);
 int compiler_dot_x64__Gen_gen_loop_start(compiler_dot_x64__Gen *g, int from);
@@ -1181,6 +1184,9 @@ void compiler_dot_x64__Gen_gen_print(compiler_dot_x64__Gen *g, string s);
 void compiler_dot_x64__Gen_gen_exit(compiler_dot_x64__Gen *g);
 void compiler_dot_x64__Gen_mov(compiler_dot_x64__Gen *g,
                                compiler_dot_x64__Register reg, int val);
+void compiler_dot_x64__Gen_register_function_address(compiler_dot_x64__Gen *g,
+                                                     string name);
+void compiler_dot_x64__Gen_call_fn(compiler_dot_x64__Gen *g, string name);
 strings__Builder strings__new_builder(int initial_size);
 void strings__Builder_write(strings__Builder *b, string s);
 void strings__Builder_writeln(strings__Builder *b, string s);
@@ -1362,6 +1368,7 @@ string compiler__find_c_compiler();
 string compiler__find_c_compiler_default();
 string compiler__find_c_compiler_thirdparty_options();
 string compiler__get_cmdline_cflags(array_string args);
+string compiler__missing_compiler_info();
 string compiler__CFlag_str(compiler__CFlag *c);
 array_compiler__CFlag compiler__V_get_os_cflags(compiler__V *v);
 array_compiler__CFlag compiler__V_get_rest_of_module_cflags(compiler__V *v,
@@ -4460,9 +4467,11 @@ compiler_dot_x64__Gen *compiler_dot_x64__new_gen(string out_name) {
           .strings = new_array(0, 1, sizeof(string)),
           .file_size_pos = 0,
           .main_fn_addr = 0,
-          .code_start_pos = 0},
+          .code_start_pos = 0,
+          .fn_addr = new_map(1, sizeof(i64))},
       sizeof(compiler_dot_x64__Gen));
 }
+i64 compiler_dot_x64__Gen_pos(compiler_dot_x64__Gen *g) { return g->buf.len; }
 void compiler_dot_x64__Gen_write8(compiler_dot_x64__Gen *g, int n) {
   _PUSH(&g->buf, (/*typ = array_byte   tmp_typ=byte*/ ((byte)(n))), tmp1, byte);
 }
@@ -4585,9 +4594,11 @@ void compiler_dot_x64__Gen_mov64(compiler_dot_x64__Gen *g,
   };
   compiler_dot_x64__Gen_write64(g, val);
 }
-void compiler_dot_x64__Gen_call(compiler_dot_x64__Gen *g, int val) {
+void compiler_dot_x64__Gen_call(compiler_dot_x64__Gen *g, int addr) {
+  int rel = 0xffffffff - ((int)(compiler_dot_x64__abs(addr - g->buf.len))) - 1;
+  printf("call addr=%d rel_addr=%d pos=%d\n", addr, addr, g->buf.len);
   compiler_dot_x64__Gen_write8(g, 0xe8);
-  compiler_dot_x64__Gen_write32(g, val);
+  compiler_dot_x64__Gen_write32(g, addr);
 }
 void compiler_dot_x64__Gen_syscall(compiler_dot_x64__Gen *g) {
   compiler_dot_x64__Gen_write8(g, 0x0f);
@@ -4657,6 +4668,24 @@ void compiler_dot_x64__Gen_mov(compiler_dot_x64__Gen *g,
     v_panic(_STR("unhandled mov %d", reg));
   };
   compiler_dot_x64__Gen_write32(g, val);
+}
+void compiler_dot_x64__Gen_register_function_address(compiler_dot_x64__Gen *g,
+                                                     string name) {
+  i64 addr = compiler_dot_x64__Gen_pos(&/* ? */ *g);
+  printf("reg fn addr %.*s %lld\n", name.len, name.str, addr);
+  map_set(&g->fn_addr, name, &(i64[]){addr});
+}
+void compiler_dot_x64__Gen_call_fn(compiler_dot_x64__Gen *g, string name) {
+  if (!string_contains(name, tos3("__"))) {
+
+    return;
+  };
+  i64 tmp25 = 0;
+  bool tmp26 = map_get(/*gen.v : 249*/ g->fn_addr, name, &tmp25);
+
+  i64 addr = tmp25;
+  compiler_dot_x64__Gen_call(g, ((int)(addr)));
+  printf("call %.*s %lld\n", name.len, name.str, addr);
 }
 strings__Builder strings__new_builder(int initial_size) {
   return (strings__Builder){.buf = make(0, initial_size, 1), .len = 0};
@@ -6505,14 +6534,17 @@ start:;
               string_add(
                   string_add(
                       string_add(
-                          tos3("C compiler error, while attempting to run: \n"),
-                          tos3("-----------------------------------------------"
-                               "------------\n")),
-                      _STR("%.*s\n", cmd.len, cmd.str)),
-                  tos3("-------------------------------------------------------"
-                       "----\n")),
-              tos3("Probably your C compiler is missing. \n")),
-          tos3("Please reinstall it, or make it available in your PATH.")));
+                          string_add(tos3("C compiler error, while attempting "
+                                          "to run: \n"),
+                                     tos3("------------------------------------"
+                                          "-----------------------\n")),
+                          _STR("%.*s\n", cmd.len, cmd.str)),
+                      tos3("---------------------------------------------------"
+                           "--------\n")),
+                  tos3("Probably your C compiler is missing. \n")),
+              tos3("Please reinstall it, or make it available in your "
+                   "PATH.\n\n")),
+          compiler__missing_compiler_info()));
     };
     if (v->pref->is_debug) {
       println(res.output);
@@ -6707,6 +6739,19 @@ string compiler__get_cmdline_cflags(array_string args) {
     };
   };
   return cflags;
+}
+string compiler__missing_compiler_info() {
+#ifdef _WIN32
+#endif
+  ;
+#ifdef __linux__
+  return tos3("On Debian/Ubuntu, run `sudo apt install build-essential`");
+#endif
+  ;
+#ifdef __APPLE__
+#endif
+  ;
+  return tos3("");
 }
 string compiler__CFlag_str(compiler__CFlag *c) {
   return _STR(
@@ -9914,6 +9959,9 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
                                  cgen_name.len, cgen_name.str)});
     };
   };
+  if (p->pref->x64) {
+    compiler_dot_x64__Gen_register_function_address(p->x64, f.name);
+  };
   compiler__Parser_statements_no_rcbr(p);
   if (p->pref->is_prof && string_eq(f.name, tos3("main"))) {
     compiler__Parser_genln(p,
@@ -10132,6 +10180,9 @@ void compiler__Parser_fn_call(compiler__Parser *p, compiler__Fn *f,
       string_ne(f->comptime_define, p->pref->comptime_define);
   if (is_comptime_define) {
     p->cgen->nogen = 1;
+  };
+  if (p->pref->x64 && !compiler__Parser_first_pass(&/* ? */ *p)) {
+    compiler_dot_x64__Gen_call_fn(p->x64, f->name);
   };
   p->calling_c = f->is_c;
   if (f->is_c && !p->builtin_mod) {
@@ -10713,10 +10764,10 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
       };
     };
   };
-  _V_MulRet_string_V_array_string _V_mret_5840_varg_type_varg_values =
+  _V_MulRet_string_V_array_string _V_mret_5883_varg_type_varg_values =
       compiler__Parser_fn_call_vargs(p, *f);
-  string varg_type = _V_mret_5840_varg_type_varg_values.var_0;
-  array_string varg_values = _V_mret_5840_varg_type_varg_values.var_1;
+  string varg_type = _V_mret_5883_varg_type_varg_values.var_0;
+  array_string varg_values = _V_mret_5883_varg_type_varg_values.var_1;
   if (f->is_variadic) {
     _PUSH(&saved_args, (/*typ = array_string   tmp_typ=string*/ varg_type),
           tmp76, string);
@@ -10788,21 +10839,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp90 = tos3("");
-    bool tmp91 = map_get(/*fn.v : 1252*/ r.inst, tp, &tmp90);
+    bool tmp91 = map_get(/*fn.v : 1258*/ r.inst, tp, &tmp90);
 
     if (!tmp91)
       tmp90 = tos((byte *)"", 0);
 
     if (string_ne(tmp90, tos3(""))) {
       string tmp92 = tos3("");
-      bool tmp93 = map_get(/*fn.v : 1253*/ r.inst, tp, &tmp92);
+      bool tmp93 = map_get(/*fn.v : 1259*/ r.inst, tp, &tmp92);
 
       if (!tmp93)
         tmp92 = tos((byte *)"", 0);
 
       if (string_ne(tmp92, ti)) {
         string tmp94 = tos3("");
-        bool tmp95 = map_get(/*fn.v : 1254*/ r.inst, tp, &tmp94);
+        bool tmp95 = map_get(/*fn.v : 1260*/ r.inst, tp, &tmp94);
 
         if (!tmp95)
           tmp94 = tos((byte *)"", 0);
@@ -10820,7 +10871,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp96 = tos3("");
-  bool tmp97 = map_get(/*fn.v : 1263*/ r.inst, f->typ, &tmp96);
+  bool tmp97 = map_get(/*fn.v : 1269*/ r.inst, f->typ, &tmp96);
 
   if (!tmp97)
     tmp96 = tos((byte *)"", 0);
@@ -10833,7 +10884,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp98.data)[tmp99];
 
     string tmp100 = tos3("");
-    bool tmp101 = map_get(/*fn.v : 1267*/ r.inst, tp, &tmp100);
+    bool tmp101 = map_get(/*fn.v : 1273*/ r.inst, tp, &tmp100);
 
     if (!tmp101)
       tmp100 = tos((byte *)"", 0);
@@ -10856,7 +10907,7 @@ string compiler__replace_generic_type(string gen_type, compiler__TypeInst *ti) {
   };
   if ((_IN_MAP((typ), ti->inst))) {
     string tmp104 = tos3("");
-    bool tmp105 = map_get(/*fn.v : 1281*/ ti->inst, typ, &tmp104);
+    bool tmp105 = map_get(/*fn.v : 1287*/ ti->inst, typ, &tmp104);
 
     if (!tmp105)
       tmp104 = tos((byte *)"", 0);
@@ -10970,10 +11021,10 @@ compiler__Parser_fn_call_vargs(compiler__Parser *p, compiler__Fn f) {
     if (p->tok == compiler__compiler__TokenKind_comma) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
     };
-    _V_MulRet_string_V_string _V_mret_6746_varg_type_varg_value =
+    _V_MulRet_string_V_string _V_mret_6789_varg_type_varg_value =
         compiler__Parser_tmp_expr(p);
-    string varg_type = _V_mret_6746_varg_type_varg_value.var_0;
-    string varg_value = _V_mret_6746_varg_type_varg_value.var_1;
+    string varg_type = _V_mret_6789_varg_type_varg_value.var_0;
+    string varg_value = _V_mret_6789_varg_type_varg_value.var_1;
     if (string_starts_with(varg_type, tos3("varg_")) &&
         (values.len > 0 || p->tok == compiler__compiler__TokenKind_comma)) {
       compiler__Parser_error(
@@ -11124,7 +11175,7 @@ string compiler__Fn_generic_tmpl_to_inst(compiler__Fn *f,
     if (tok.tok == compiler__compiler__TokenKind_name &&
         (_IN_MAP((tok_str), ti->inst))) {
       string tmp143 = tos3("");
-      bool tmp144 = map_get(/*fn.v : 1430*/ ti->inst, tok_str, &tmp143);
+      bool tmp144 = map_get(/*fn.v : 1436*/ ti->inst, tok_str, &tmp143);
 
       if (!tmp144)
         tmp143 = tos((byte *)"", 0);
@@ -11146,7 +11197,7 @@ void compiler__rename_generic_fn_instance(compiler__Fn *f,
     string k = ((string *)tmp145.data)[tmp146];
 
     string tmp147 = tos3("");
-    bool tmp148 = map_get(/*fn.v : 1442*/ ti->inst, k, &tmp147);
+    bool tmp148 = map_get(/*fn.v : 1448*/ ti->inst, k, &tmp147);
 
     if (!tmp148)
       tmp147 = tos((byte *)"", 0);
@@ -11205,7 +11256,7 @@ void compiler__Parser_dispatch_generic_fn_instance(compiler__Parser *p,
   if ((_IN_MAP((f->mod), p->v->gen_parser_idx))) {
     int tmp153 = 0;
     bool tmp154 =
-        map_get(/*fn.v : 1485*/ p->v->gen_parser_idx, f->mod, &tmp153);
+        map_get(/*fn.v : 1491*/ p->v->gen_parser_idx, f->mod, &tmp153);
 
     int pidx = tmp153;
     compiler__Parser_add_text(
