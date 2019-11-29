@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "71378b8"
+#define V_COMMIT_HASH "1bfcdaa"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "11aaee6"
+#define V_COMMIT_HASH "71378b8"
 #endif
 #include <inttypes.h>
 
@@ -5417,10 +5417,6 @@ int os__vpclose(void *f) {
   ;
 }
 int os__system(string cmd) {
-  if (string_contains(cmd, tos3(";")) || string_contains(cmd, tos3("&&")) ||
-      string_contains(cmd, tos3("||")) || string_contains(cmd, tos3("\n"))) {
-    v_panic(tos3(";, &&, || and \\n are not allowed in shell commands"));
-  };
   int ret = ((int)(0));
 #ifdef _WIN32
 #else
@@ -5431,10 +5427,10 @@ int os__system(string cmd) {
     os__print_c_errno();
   };
 #ifndef _WIN32
-  _V_MulRet_int_V_bool _V_mret_2084_pret_is_signaled =
+  _V_MulRet_int_V_bool _V_mret_2050_pret_is_signaled =
       os__posix_wait4_to_exit_status(ret);
-  int pret = _V_mret_2084_pret_is_signaled.var_0;
-  bool is_signaled = _V_mret_2084_pret_is_signaled.var_1;
+  int pret = _V_mret_2050_pret_is_signaled.var_0;
+  bool is_signaled = _V_mret_2050_pret_is_signaled.var_1;
   if (is_signaled) {
     println(string_add(string_add(_STR("Terminated by signal %2d (", ret),
                                   os__sigint_to_signal_name(pret)),
@@ -5986,10 +5982,6 @@ Option_bool os__mkdir(string path) {
   return opt_ok(&tmp7, sizeof(bool));
 }
 Option_os__Result os__exec(string cmd) {
-  if (string_contains(cmd, tos3(";")) || string_contains(cmd, tos3("&&")) ||
-      string_contains(cmd, tos3("||")) || string_contains(cmd, tos3("\n"))) {
-    return v_error(tos3(";, &&, || and \\n are not allowed in shell commands"));
-  };
   string pcmd = _STR("%.*s 2>&1", cmd.len, cmd.str);
   void *f = os__vpopen(pcmd);
   if (isnil(f)) {

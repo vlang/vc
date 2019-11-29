@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "71378b8"
+#define V_COMMIT_HASH "1bfcdaa"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "11aaee6"
+#define V_COMMIT_HASH "71378b8"
 #endif
 #include <inttypes.h>
 
@@ -5632,10 +5632,6 @@ int os__vpclose(void *f) {
   ;
 }
 int os__system(string cmd) {
-  if (string_contains(cmd, tos3(";")) || string_contains(cmd, tos3("&&")) ||
-      string_contains(cmd, tos3("||")) || string_contains(cmd, tos3("\n"))) {
-    v_panic(tos3(";, &&, || and \\n are not allowed in shell commands"));
-  };
   int ret = ((int)(0));
 #ifdef _WIN32
   string wcmd =
