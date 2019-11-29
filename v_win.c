@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f724a95"
+#define V_COMMIT_HASH "4c11eb5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e957fd6"
+#define V_COMMIT_HASH "f724a95"
 #endif
 #include <inttypes.h>
 
@@ -14260,7 +14260,7 @@ compiler__V *compiler__new_v(array_string args) {
   };
 #ifndef __linux__
   if (pref->is_bare && !string_ends_with(out_name, tos3(".c"))) {
-    compiler__verror(tos3("-bare only works on Linux for now"));
+    compiler__verror(tos3("-freestanding only works on Linux for now"));
   };
 #endif
   ;
