@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c7f8f21"
+#define V_COMMIT_HASH "d71532b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "661ddf3"
+#define V_COMMIT_HASH "c7f8f21"
 #endif
 #include <inttypes.h>
 
@@ -3642,10 +3642,9 @@ array_string string_split(string s, string delim) {
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   if (delim.len == 0) {
     string tmp6 = s;
-    array_byte bytes_tmp6 = string_bytes(tmp6);
     ;
     for (int tmp7 = 0; tmp7 < tmp6.len; tmp7++) {
-      byte ch = ((byte *)bytes_tmp6.data)[tmp7];
+      byte ch = tmp6.str[tmp7];
 
       _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ byte_str(ch)), tmp8,
             string);
@@ -3822,10 +3821,9 @@ int string_index_kmp(string s, string p) {
 }
 int string_index_any(string s, string chars) {
   string tmp17 = chars;
-  array_byte bytes_tmp17 = string_bytes(tmp17);
   ;
   for (int tmp18 = 0; tmp18 < tmp17.len; tmp18++) {
-    byte c = ((byte *)bytes_tmp17.data)[tmp18];
+    byte c = tmp17.str[tmp18];
 
     int index = string_index(s, byte_str(c));
     if (index != -1) {
@@ -4338,10 +4336,9 @@ int string_hash(string s) {
   int h = 0;
   if (h == 0 && s.len > 0) {
     string tmp34 = s;
-    array_byte bytes_tmp34 = string_bytes(tmp34);
     ;
     for (int tmp35 = 0; tmp35 < tmp34.len; tmp35++) {
-      byte c = ((byte *)bytes_tmp34.data)[tmp35];
+      byte c = tmp34.str[tmp35];
 
       h = h * 31 + ((int)(c));
     };
@@ -4705,10 +4702,9 @@ void compiler_dot_x64__Gen_write64_at(compiler_dot_x64__Gen *g, i64 n, i64 at) {
 }
 void compiler_dot_x64__Gen_write_string(compiler_dot_x64__Gen *g, string s) {
   string tmp16 = s;
-  array_byte bytes_tmp16 = string_bytes(tmp16);
   ;
   for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
-    byte c = ((byte *)bytes_tmp16.data)[tmp17];
+    byte c = tmp16.str[tmp17];
 
     compiler_dot_x64__Gen_write8(g, ((int)(c)));
   };
@@ -4901,19 +4897,17 @@ int strings__levenshtein_distance(string a, string b) {
                                           EMPTY_ARRAY_OF_ELEMS(int, 1){0}),
                    b.len + 1);
   string tmp1 = a;
-  array_byte bytes_tmp1 = string_bytes(tmp1);
   ;
   for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-    byte ca = ((byte *)bytes_tmp1.data)[tmp2];
+    byte ca = tmp1.str[tmp2];
 
     int j = 1;
     int fj1 = (*(int *)array_get(f, 0));
     (*(int *)array_get(f, 0))++;
     string tmp7 = b;
-    array_byte bytes_tmp7 = string_bytes(tmp7);
     ;
     for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
-      byte cb = ((byte *)bytes_tmp7.data)[tmp8];
+      byte cb = tmp7.str[tmp8];
 
       int mn =
           (((*(int *)array_get(f, j)) + 1 <= (*(int *)array_get(f, j - 1)) + 1)
@@ -7971,10 +7965,9 @@ void compiler__Scanner_error_with_col(compiler__Scanner *s, string msg,
       array_string pointerline = new_array_from_c_array(
           0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
       string tmp5 = line;
-      array_byte bytes_tmp5 = string_bytes(tmp5);
       ;
       for (int i = 0; i < tmp5.len; i++) {
-        byte c = ((byte *)bytes_tmp5.data)[i];
+        byte c = tmp5.str[i];
 
         if (i < col) {
           byte x = ((byte_is_space(c)) ? (c) : (' '));
@@ -12376,9 +12369,6 @@ void compiler__Parser_gen_for_header(compiler__Parser *p, string i, string tmp,
 void compiler__Parser_gen_for_str_header(compiler__Parser *p, string i,
                                          string tmp, string var_typ,
                                          string val) {
-  compiler__Parser_genln(p,
-                         _STR("array_byte bytes_%.*s = string_bytes( %.*s );",
-                              tmp.len, tmp.str, tmp.len, tmp.str));
   compiler__Parser_genln(
       p, _STR(";\nfor (int %.*s = 0; %.*s < %.*s .len; %.*s ++) {", i.len,
               i.str, i.len, i.str, tmp.len, tmp.str, i.len, i.str));
@@ -12386,10 +12376,9 @@ void compiler__Parser_gen_for_str_header(compiler__Parser *p, string i,
 
     return;
   };
-  compiler__Parser_genln(
-      p, _STR("%.*s %.*s = ((%.*s *) bytes_%.*s . data)[%.*s];", var_typ.len,
-              var_typ.str, val.len, val.str, var_typ.len, var_typ.str, tmp.len,
-              tmp.str, i.len, i.str));
+  compiler__Parser_genln(p, _STR("%.*s %.*s = %.*s.str[%.*s];", var_typ.len,
+                                 var_typ.str, val.len, val.str, tmp.len,
+                                 tmp.str, i.len, i.str));
 }
 void compiler__Parser_gen_for_range_header(compiler__Parser *p, string i,
                                            string range_end, string tmp,
@@ -20010,10 +19999,9 @@ bool compiler__is_name_char(byte c) { return byte_is_letter(c) || c == '_'; }
 static inline bool compiler__is_nl(byte c) { return c == '\r' || c == '\n'; }
 bool compiler__contains_capital(string s) {
   string tmp112 = s;
-  array_byte bytes_tmp112 = string_bytes(tmp112);
   ;
   for (int tmp113 = 0; tmp113 < tmp112.len; tmp113++) {
-    byte c = ((byte *)bytes_tmp112.data)[tmp113];
+    byte c = tmp112.str[tmp113];
 
     if (c >= 'A' && c <= 'Z') {
       return 1;
@@ -21374,10 +21362,9 @@ bool compiler__is_compile_time_const(string s_) {
     return 1;
   };
   string tmp76 = s;
-  array_byte bytes_tmp76 = string_bytes(tmp76);
   ;
   for (int tmp77 = 0; tmp77 < tmp76.len; tmp77++) {
-    byte c = ((byte *)bytes_tmp76.data)[tmp77];
+    byte c = tmp76.str[tmp77];
 
     if (!((c >= '0' && c <= '9') || c == '.')) {
       return 0;
