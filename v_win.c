@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d71532b"
+#define V_COMMIT_HASH "c00a7f3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c7f8f21"
+#define V_COMMIT_HASH "d71532b"
 #endif
 #include <inttypes.h>
 
@@ -10702,6 +10702,9 @@ void compiler__Parser_fn_args(compiler__Parser *p, compiler__Fn *f) {
     while (p->tok != compiler__compiler__TokenKind_rpar) {
 
       string typ = compiler__Parser_get_type(p);
+      if (string_eq(typ, tos3("")) && !f->is_c) {
+        compiler__Parser_error(p, tos3("bad fn arg type"));
+      };
       compiler__Parser_check_and_register_used_imported_type(p, typ);
       compiler__Var v = (compiler__Var){
           .typ = typ,
@@ -11135,10 +11138,10 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
       };
     };
   };
-  _V_MulRet_string_V_array_string _V_mret_5951_varg_type_varg_values =
+  _V_MulRet_string_V_array_string _V_mret_5968_varg_type_varg_values =
       compiler__Parser_fn_call_vargs(p, *f);
-  string varg_type = _V_mret_5951_varg_type_varg_values.var_0;
-  array_string varg_values = _V_mret_5951_varg_type_varg_values.var_1;
+  string varg_type = _V_mret_5968_varg_type_varg_values.var_0;
+  array_string varg_values = _V_mret_5968_varg_type_varg_values.var_1;
   if (f->is_variadic) {
     _PUSH(&saved_args, (/*typ = array_string   tmp_typ=string*/ varg_type),
           tmp77, string);
@@ -11210,21 +11213,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp91 = tos3("");
-    bool tmp92 = map_get(/*fn.v : 1272*/ r.inst, tp, &tmp91);
+    bool tmp92 = map_get(/*fn.v : 1276*/ r.inst, tp, &tmp91);
 
     if (!tmp92)
       tmp91 = tos((byte *)"", 0);
 
     if (string_ne(tmp91, tos3(""))) {
       string tmp93 = tos3("");
-      bool tmp94 = map_get(/*fn.v : 1273*/ r.inst, tp, &tmp93);
+      bool tmp94 = map_get(/*fn.v : 1277*/ r.inst, tp, &tmp93);
 
       if (!tmp94)
         tmp93 = tos((byte *)"", 0);
 
       if (string_ne(tmp93, ti)) {
         string tmp95 = tos3("");
-        bool tmp96 = map_get(/*fn.v : 1274*/ r.inst, tp, &tmp95);
+        bool tmp96 = map_get(/*fn.v : 1278*/ r.inst, tp, &tmp95);
 
         if (!tmp96)
           tmp95 = tos((byte *)"", 0);
@@ -11242,7 +11245,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp97 = tos3("");
-  bool tmp98 = map_get(/*fn.v : 1283*/ r.inst, f->typ, &tmp97);
+  bool tmp98 = map_get(/*fn.v : 1287*/ r.inst, f->typ, &tmp97);
 
   if (!tmp98)
     tmp97 = tos((byte *)"", 0);
@@ -11255,7 +11258,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp99.data)[tmp100];
 
     string tmp101 = tos3("");
-    bool tmp102 = map_get(/*fn.v : 1287*/ r.inst, tp, &tmp101);
+    bool tmp102 = map_get(/*fn.v : 1291*/ r.inst, tp, &tmp101);
 
     if (!tmp102)
       tmp101 = tos((byte *)"", 0);
@@ -11278,7 +11281,7 @@ string compiler__replace_generic_type(string gen_type, compiler__TypeInst *ti) {
   };
   if ((_IN_MAP((typ), ti->inst))) {
     string tmp105 = tos3("");
-    bool tmp106 = map_get(/*fn.v : 1301*/ ti->inst, typ, &tmp105);
+    bool tmp106 = map_get(/*fn.v : 1305*/ ti->inst, typ, &tmp105);
 
     if (!tmp106)
       tmp105 = tos((byte *)"", 0);
@@ -11392,10 +11395,10 @@ compiler__Parser_fn_call_vargs(compiler__Parser *p, compiler__Fn f) {
     if (p->tok == compiler__compiler__TokenKind_comma) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
     };
-    _V_MulRet_string_V_string _V_mret_6857_varg_type_varg_value =
+    _V_MulRet_string_V_string _V_mret_6874_varg_type_varg_value =
         compiler__Parser_tmp_expr(p);
-    string varg_type = _V_mret_6857_varg_type_varg_value.var_0;
-    string varg_value = _V_mret_6857_varg_type_varg_value.var_1;
+    string varg_type = _V_mret_6874_varg_type_varg_value.var_0;
+    string varg_value = _V_mret_6874_varg_type_varg_value.var_1;
     if (string_starts_with(varg_type, tos3("varg_")) &&
         (values.len > 0 || p->tok == compiler__compiler__TokenKind_comma)) {
       compiler__Parser_error(
@@ -11519,7 +11522,7 @@ void compiler__rename_generic_fn_instance(compiler__Fn *f,
     string k = ((string *)tmp137.data)[tmp138];
 
     string tmp139 = tos3("");
-    bool tmp140 = map_get(/*fn.v : 1432*/ ti->inst, k, &tmp139);
+    bool tmp140 = map_get(/*fn.v : 1436*/ ti->inst, k, &tmp139);
 
     if (!tmp140)
       tmp139 = tos((byte *)"", 0);
