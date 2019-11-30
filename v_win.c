@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "68b4dab"
+#define V_COMMIT_HASH "b92a354"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c00a7f3"
+#define V_COMMIT_HASH "68b4dab"
 #endif
 #include <inttypes.h>
 
@@ -14849,7 +14849,9 @@ Option_string compiler__V_find_module_path(compiler__V *v, string mod) {
         tmp28, string);
   if (v->pref->user_mod_path.len > 0) {
     _PUSH(&tried_paths,
-          (/*typ = array_string   tmp_typ=string*/ v->pref->user_mod_path),
+          (/*typ = array_string   tmp_typ=string*/ filepath__join(
+              v->pref->user_mod_path,
+              &(varg_string){.len = 1, .args = {mod_path}})),
           tmp29, string);
   };
   array_string tmp30 = tried_paths;
