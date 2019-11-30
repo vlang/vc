@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "850788c"
+#define V_COMMIT_HASH "661ddf3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4c11eb5"
+#define V_COMMIT_HASH "850788c"
 #endif
 #include <inttypes.h>
 
@@ -21691,7 +21691,8 @@ string compiler__get_vtmp_filename(string base_file_name, string postfix) {
   return os__realpath(filepath__join(
       vtmp, &(varg_string){
                 .len = 1,
-                .args = {string_add(os__filename(base_file_name), postfix)}}));
+                .args = {string_add(os__filename(os__realpath(base_file_name)),
+                                    postfix)}}));
 }
 void compiler__launch_tool(string tname) {
   string vexe = compiler__vexe_path();
