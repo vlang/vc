@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "854309a"
+#define V_COMMIT_HASH "ec15bfb"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3fea8f3"
+#define V_COMMIT_HASH "854309a"
 #endif
 #include <inttypes.h>
 
@@ -428,10 +428,6 @@ struct compiler__VsInstallation {
   string exe_path;
 };
 
-struct os__File {
-  void *cfile;
-};
-
 struct _V_MulRet_int_V_bool {
   int var_0;
   bool var_1;
@@ -469,36 +465,6 @@ struct compiler_dot_x64__Gen {
   i64 main_fn_addr;
   i64 code_start_pos;
   map_i64 fn_addr;
-};
-
-struct compiler__CGen {
-  os__File out;
-  string out_path;
-  array_string thread_fns;
-  bool is_user;
-  array_string lines;
-  array_string lines_extra;
-  array_string typedefs;
-  array_string type_aliases;
-  array_string includes;
-  array_string thread_args;
-  array_string consts;
-  array_string fns;
-  array_string so_fns;
-  array_string consts_init;
-  compiler__Pass pass;
-  bool nogen;
-  array_string prev_tmps;
-  string tmp_line;
-  string cur_line;
-  string prev_line;
-  bool is_tmp;
-  string fn_main;
-  string stash;
-  string file;
-  int line;
-  bool line_directives;
-  int cut_pos;
 };
 
 struct compiler__DepGraphNode {
@@ -702,6 +668,11 @@ struct mapnode {
   void *val;
 };
 
+struct os__File {
+  void *cfile;
+  bool opened;
+};
+
 struct os__FileInfo {
   string name;
   int size;
@@ -745,6 +716,36 @@ struct ustring {
 struct varg_string {
   int len;
   string args[3];
+};
+
+struct compiler__CGen {
+  os__File out;
+  string out_path;
+  array_string thread_fns;
+  bool is_user;
+  array_string lines;
+  array_string lines_extra;
+  array_string typedefs;
+  array_string type_aliases;
+  array_string includes;
+  array_string thread_args;
+  array_string consts;
+  array_string fns;
+  array_string so_fns;
+  array_string consts_init;
+  compiler__Pass pass;
+  bool nogen;
+  array_string prev_tmps;
+  string tmp_line;
+  string cur_line;
+  string prev_line;
+  bool is_tmp;
+  string fn_main;
+  string stash;
+  string file;
+  int line;
+  bool line_directives;
+  int cut_pos;
 };
 
 struct compiler__Fn {
@@ -1217,8 +1218,9 @@ i64 strconv__common_parse_int(string _s, int base, int _bit_size,
 i64 strconv__parse_int(string _s, int base, int _bit_size);
 int strconv__atoi(string s);
 bool strconv__underscore_ok(string s);
-array_byte os__File_read_bytes(os__File f, int size);
-array_byte os__File_read_bytes_at(os__File f, int size, int pos);
+bool os__File_is_opened(os__File f);
+array_byte os__File_read_bytes(os__File *f, int size);
+array_byte os__File_read_bytes_at(os__File *f, int size, int pos);
 Option_array_byte os__read_bytes(string path);
 Option_string os__read_file(string path);
 int os__file_size(string path);
@@ -1232,12 +1234,12 @@ Option_array_ustring os__read_ulines(string path);
 Option_os__File os__open(string path);
 Option_os__File os__create(string path);
 Option_os__File os__open_append(string path);
-void os__File_write(os__File f, string s);
-void os__File_write_bytes(os__File f, void *data, int size);
-void os__File_write_bytes_at(os__File f, void *data, int size, int pos);
-void os__File_writeln(os__File f, string s);
-void os__File_flush(os__File f);
-void os__File_close(os__File f);
+void os__File_write(os__File *f, string s);
+void os__File_write_bytes(os__File *f, void *data, int size);
+void os__File_write_bytes_at(os__File *f, void *data, int size, int pos);
+void os__File_writeln(os__File *f, string s);
+void os__File_flush(os__File *f);
+void os__File_close(os__File *f);
 void *os__vpopen(string path);
 _V_MulRet_int_V_bool os__posix_wait4_to_exit_status(int waitret);
 int os__vpclose(void *f);
@@ -4502,8 +4504,8 @@ void compiler_dot_x64__Gen_generate_elf_footer(compiler_dot_x64__Gen *g) {
   f = *(os__File *)tmp9.data;
   ;
   os__chmod(g->out_name, 0775);
-  os__File_write_bytes(f, g->buf.data, g->buf.len);
-  os__File_close(f);
+  os__File_write_bytes(&/* ? */ f, g->buf.data, g->buf.len);
+  os__File_close(&/* ? */ f);
   println(tos3("x64 elf binary has been successfully generated"));
 }
 void compiler_dot_x64__Gen_section_header(compiler_dot_x64__Gen *g,
@@ -5050,17 +5052,18 @@ bool strconv__underscore_ok(string s) {
   };
   return saw != '_';
 }
-array_byte os__File_read_bytes(os__File f, int size) {
+bool os__File_is_opened(os__File f) { return f.opened; }
+array_byte os__File_read_bytes(os__File *f, int size) {
   return os__File_read_bytes_at(f, size, 0);
 }
-array_byte os__File_read_bytes_at(os__File f, int size, int pos) {
+array_byte os__File_read_bytes_at(os__File *f, int size, int pos) {
   array_byte arr =
       array_repeat(new_array_from_c_array(1, 1, sizeof(byte),
                                           EMPTY_ARRAY_OF_ELEMS(byte, 1){'0'}),
                    size);
-  fseek(f.cfile, pos, SEEK_SET);
-  int nreadbytes = fread(arr.data, 1, size, f.cfile);
-  fseek(f.cfile, 0, SEEK_SET);
+  fseek(f->cfile, pos, SEEK_SET);
+  int nreadbytes = fread(arr.data, 1, size, f->cfile);
+  fseek(f->cfile, 0, SEEK_SET);
   return array_slice2(arr, 0, nreadbytes, false);
 }
 Option_array_byte os__read_bytes(string path) {
@@ -5275,63 +5278,84 @@ Option_array_ustring os__read_ulines(string path) {
   return opt_ok(&tmp25, sizeof(array_ustring));
 }
 Option_os__File os__open(string path) {
-  os__File file = (os__File){.cfile = 0};
+  os__File file = (os__File){.cfile = 0, .opened = 0};
 #ifdef _WIN32
 #else
   byte *cpath = path.str;
-  file = (os__File){.cfile = fopen(((charptr)(cpath)), "rb")};
+  file = (os__File){.cfile = fopen(((charptr)(cpath)), "rb"), .opened = 0};
 #endif
   ;
   if (isnil(file.cfile)) {
     return v_error(_STR("failed to open file \"%.*s\"", path.len, path.str));
   };
+  file.opened = 1;
   os__File tmp26 = OPTION_CAST(os__File)(file);
   return opt_ok(&tmp26, sizeof(os__File));
 }
 Option_os__File os__create(string path) {
-  os__File file = (os__File){.cfile = 0};
+  os__File file = (os__File){.cfile = 0, .opened = 0};
 #ifdef _WIN32
 #else
   byte *cpath = path.str;
-  file = (os__File){.cfile = fopen(((charptr)(cpath)), "wb")};
+  file = (os__File){.cfile = fopen(((charptr)(cpath)), "wb"), .opened = 0};
 #endif
   ;
   if (isnil(file.cfile)) {
     return v_error(_STR("failed to create file \"%.*s\"", path.len, path.str));
   };
+  file.opened = 1;
   os__File tmp27 = OPTION_CAST(os__File)(file);
   return opt_ok(&tmp27, sizeof(os__File));
 }
 Option_os__File os__open_append(string path) {
-  os__File file = (os__File){.cfile = 0};
+  os__File file = (os__File){.cfile = 0, .opened = 0};
 #ifdef _WIN32
 #else
   byte *cpath = path.str;
-  file = (os__File){.cfile = fopen(((charptr)(cpath)), "ab")};
+  file = (os__File){.cfile = fopen(((charptr)(cpath)), "ab"), .opened = 0};
 #endif
   ;
   if (isnil(file.cfile)) {
     return v_error(
         _STR("failed to create(append) file \"%.*s\"", path.len, path.str));
   };
+  file.opened = 1;
   os__File tmp28 = OPTION_CAST(os__File)(file);
   return opt_ok(&tmp28, sizeof(os__File));
 }
-void os__File_write(os__File f, string s) { fputs((char *)s.str, f.cfile); }
-void os__File_write_bytes(os__File f, void *data, int size) {
-  fwrite(data, 1, size, f.cfile);
+void os__File_write(os__File *f, string s) { fputs((char *)s.str, f->cfile); }
+void os__File_write_bytes(os__File *f, void *data, int size) {
+  fwrite(data, 1, size, f->cfile);
 }
-void os__File_write_bytes_at(os__File f, void *data, int size, int pos) {
-  fseek(f.cfile, pos, SEEK_SET);
-  fwrite(data, 1, size, f.cfile);
-  fseek(f.cfile, 0, SEEK_END);
+void os__File_write_bytes_at(os__File *f, void *data, int size, int pos) {
+  fseek(f->cfile, pos, SEEK_SET);
+  fwrite(data, 1, size, f->cfile);
+  fseek(f->cfile, 0, SEEK_END);
 }
-void os__File_writeln(os__File f, string s) {
-  fputs((char *)s.str, f.cfile);
-  fputs("\n", f.cfile);
+void os__File_writeln(os__File *f, string s) {
+  if (!f->opened) {
+
+    return;
+  };
+  fputs((char *)s.str, f->cfile);
+  fputs("\n", f->cfile);
 }
-void os__File_flush(os__File f) { fflush(f.cfile); }
-void os__File_close(os__File f) { fclose(f.cfile); }
+void os__File_flush(os__File *f) {
+  if (!f->opened) {
+
+    return;
+  };
+  fflush(f->cfile);
+}
+void os__File_close(os__File *f) {
+  if (!f->opened) {
+
+    return;
+  };
+  f->opened = 0;
+  fflush(f->cfile);
+  fclose(f->cfile);
+}
 void *os__vpopen(string path) {
 #ifdef _WIN32
 #else
@@ -5359,9 +5383,9 @@ _V_MulRet_int_V_bool os__posix_wait4_to_exit_status(int waitret) {
 int os__vpclose(void *f) {
 #ifdef _WIN32
 #else
-  _V_MulRet_int_V_bool _V_mret_1913_ret__ =
+  _V_MulRet_int_V_bool _V_mret_1993_ret__ =
       os__posix_wait4_to_exit_status(((int)(pclose(f))));
-  int ret = _V_mret_1913_ret__.var_0;
+  int ret = _V_mret_1993_ret__.var_0;
   return ret;
 #endif
   ;
@@ -5377,10 +5401,10 @@ int os__system(string cmd) {
     os__print_c_errno();
   };
 #ifndef _WIN32
-  _V_MulRet_int_V_bool _V_mret_2038_pret_is_signaled =
+  _V_MulRet_int_V_bool _V_mret_2118_pret_is_signaled =
       os__posix_wait4_to_exit_status(ret);
-  int pret = _V_mret_2038_pret_is_signaled.var_0;
-  bool is_signaled = _V_mret_2038_pret_is_signaled.var_1;
+  int pret = _V_mret_2118_pret_is_signaled.var_0;
+  bool is_signaled = _V_mret_2118_pret_is_signaled.var_1;
   if (is_signaled) {
     println(string_add(string_add(_STR("Terminated by signal %2d (", ret),
                                   os__sigint_to_signal_name(pret)),
@@ -5626,8 +5650,8 @@ void os__write_file(string path, string text) {
   }
   f = *(os__File *)tmp40.data;
   ;
-  os__File_write(f, text);
-  os__File_close(f);
+  os__File_write(&/* ? */ f, text);
+  os__File_close(&/* ? */ f);
 }
 void os__clear() {
 #ifndef _WIN32
@@ -7204,9 +7228,10 @@ void compiler__CGen_resetln(compiler__CGen *g, string s) {
 }
 void compiler__CGen_save(compiler__CGen *g) {
   string s = array_string_join(g->lines, tos3("\n"));
-  os__File_writeln(g->out, s);
-  os__File_writeln(g->out, array_string_join(g->lines_extra, tos3("\n")));
-  os__File_close(g->out);
+  os__File_writeln(&/* ? */ g->out, s);
+  os__File_writeln(&/* ? */ g->out,
+                   array_string_join(g->lines_extra, tos3("\n")));
+  os__File_close(&/* ? */ g->out);
 }
 _V_MulRet_string_V_string compiler__Parser_tmp_expr(compiler__Parser *p) {
   if (p->cgen->is_tmp) {
@@ -14245,12 +14270,13 @@ void compiler__generate_vh(string mod) {
   out = *(os__File *)tmp1.data;
   ;
   string mod_path = string_replace(mod, tos3("\\"), tos3("/"));
-  os__File_writeln(out,
+  os__File_writeln(&/* ? */ out,
                    _STR("// %.*s module header\n", mod_path.len, mod_path.str));
   string mod_def = ((string_contains(mod_path, tos3("/")))
                         ? (string_all_after(mod_path, tos3("/")))
                         : (mod_path));
-  os__File_writeln(out, _STR("module %.*s\n", mod_def.len, mod_def.str));
+  os__File_writeln(&/* ? */ out,
+                   _STR("module %.*s\n", mod_def.len, mod_def.str));
   println(full_mod_path);
   array_string vfiles = os__walk_ext(full_mod_path, tos3(".v"));
 
@@ -14315,9 +14341,10 @@ void compiler__generate_vh(string mod) {
                                     tos3("\n\n\n"), tos3("\n")),
                      tos3("\n\n"), tos3("\n")));
   os__File_writeln(
-      out, string_replace(string_replace(result, tos3("[ ] "), tos3("[]")),
-                          tos3("? "), tos3("?")));
-  os__File_close(out);
+      &/* ? */ out,
+      string_replace(string_replace(result, tos3("[ ] "), tos3("[]")),
+                     tos3("? "), tos3("?")));
+  os__File_close(&/* ? */ out);
 }
 void compiler__VhGen_generate_fn(compiler__VhGen *g) {
   if (g->i >= g->tokens.len - 2) {
@@ -21682,8 +21709,8 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
   }
   out = *(os__File *)tmp15.data;
   ;
-  os__File_writeln(out, s);
-  os__File_close(out);
+  os__File_writeln(&/* ? */ out, s);
+  os__File_close(&/* ? */ out);
 }
 string compiler__get_vtmp_folder() {
   string vtmp = filepath__join(os__tmpdir(),
@@ -22361,6 +22388,21 @@ void main__main() {
       array_push(&tmp4, &it);
   }
   array_string commands = tmp4;
+  array_string simple_tools = new_array_from_c_array(
+      6, 6, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 6){
+          tos3("up"), tos3("create"), tos3("test"), tos3("test-compiler"),
+          tos3("build-tools"), tos3("build-examples")});
+  array_string tmp5 = simple_tools;
+  for (int tmp6 = 0; tmp6 < tmp5.len; tmp6++) {
+    string tool = ((string *)tmp5.data)[tmp6];
+
+    if ((_IN(string, (tool), commands))) {
+      compiler__launch_tool(_STR("v%.*s", tool.len, tool.str));
+
+      return;
+    };
+  };
   if ((_IN(string, (tos3("-v")), options)) ||
       (_IN(string, (tos3("--version")), options)) ||
       (_IN(string, (tos3("version")), commands))) {
@@ -22379,10 +22421,6 @@ void main__main() {
     println(tos3("Translating C to V will be available in V 0.3"));
 
     return;
-  } else if ((_IN(string, (tos3("up")), commands))) {
-    compiler__launch_tool(tos3("vup"));
-
-    return;
   } else if ((_IN(string, (tos3("search")), commands)) ||
              (_IN(string, (tos3("install")), commands)) ||
              (_IN(string, (tos3("update")), commands)) ||
@@ -22398,16 +22436,8 @@ void main__main() {
     compiler__create_symlink();
 
     return;
-  } else if ((_IN(string, (tos3("create")), commands))) {
-    compiler__launch_tool(tos3("vcreate"));
-
-    return;
   } else if ((_IN(string, (tos3("fmt")), commands))) {
     compiler__vfmt(args);
-
-    return;
-  } else if ((_IN(string, (tos3("test")), commands))) {
-    compiler__launch_tool(tos3("vtest"));
 
     return;
   } else if ((_IN(string, (tos3("runrepl")), commands)) || commands.len == 0 ||
@@ -22424,18 +22454,18 @@ void main__main() {
     os__system(string_add(_STR("%.*s build module vlib%.*s", vexe.len, vexe.str,
                                os__path_separator.len, os__path_separator.str),
                           *(string *)array_last(args)));
-    Option_string tmp7 = os__read_file(filepath__join(
+    Option_string tmp9 = os__read_file(filepath__join(
         compiler__v_modules_path,
         &(varg_string){
             .len = 2,
             .args = {tos3("vlib"), _STR("%.*s.vh", mod.len, mod.str)}}));
     string txt;
-    if (!tmp7.ok) {
-      string err = tmp7.error;
-      int errcode = tmp7.ecode;
+    if (!tmp9.ok) {
+      string err = tmp9.error;
+      int errcode = tmp9.ecode;
       v_panic(err);
     }
-    txt = *(string *)tmp7.data;
+    txt = *(string *)tmp9.data;
     ;
     println(txt);
     v_exit(0);
