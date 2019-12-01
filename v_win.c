@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0999273"
+#define V_COMMIT_HASH "698c382"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d323b48"
+#define V_COMMIT_HASH "0999273"
 #endif
 #include <inttypes.h>
 
@@ -21218,10 +21218,17 @@ bool compiler__Parser_check_types2(compiler__Parser *p, string got_,
   if (string_eq(got, tos3("byte*")) && string_eq(expected, tos3("byteptr"))) {
     return 1;
   };
+  if (string_eq(got, tos3("charptr")) && string_eq(expected, tos3("char*"))) {
+    return 1;
+  };
+  if (string_eq(got, tos3("char*")) && string_eq(expected, tos3("charptr"))) {
+    return 1;
+  };
   if (string_eq(got, tos3("int")) && string_eq(expected, tos3("byte*"))) {
     return 1;
   };
-  if (string_eq(got, tos3("int")) && string_eq(expected, tos3("byteptr"))) {
+  if (string_eq(got, tos3("int")) && (string_eq(expected, tos3("byteptr")) ||
+                                      string_eq(expected, tos3("charptr")))) {
     return 1;
   };
   if (string_eq(got, tos3("Option")) &&
@@ -21328,7 +21335,7 @@ bool compiler__Table_is_interface(compiler__Table *table, string name) {
     return 0;
   };
   compiler__Type tmp65 = {0};
-  bool tmp66 = map_get(/*table.v : 754*/ table->typesmap, name, &tmp65);
+  bool tmp66 = map_get(/*table.v : 760*/ table->typesmap, name, &tmp65);
 
   compiler__Type t = tmp65;
   return t.cat == compiler__compiler__TypeCategory_interface_;
@@ -21511,11 +21518,11 @@ string compiler__Parser_identify_typo(compiler__Parser *p, string name) {
   if (string_ne(n, tos3(""))) {
     output = string_add(output, _STR("\n  * const: `%.*s`", n.len, n.str));
   };
-  _V_MulRet_string_V_string _V_mret_3707_typ_type_cat =
+  _V_MulRet_string_V_string _V_mret_3735_typ_type_cat =
       compiler__Table_find_misspelled_type(&/* ? */ *p->table, name, p,
                                            min_match);
-  string typ = _V_mret_3707_typ_type_cat.var_0;
-  string type_cat = _V_mret_3707_typ_type_cat.var_1;
+  string typ = _V_mret_3735_typ_type_cat.var_0;
+  string type_cat = _V_mret_3735_typ_type_cat.var_1;
   if (typ.len > 0) {
     output = string_add(output, _STR("\n  * %.*s: `%.*s`", type_cat.len,
                                      type_cat.str, typ.len, typ.str));
