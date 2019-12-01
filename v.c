@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ec15bfb"
+#define V_COMMIT_HASH "ee1edab"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "854309a"
+#define V_COMMIT_HASH "ec15bfb"
 #endif
 #include <inttypes.h>
 
@@ -1081,7 +1081,7 @@ bool string_gt(string s, string a);
 bool string_ge(string s, string a);
 string string_add(string s, string a);
 array_string string_split(string s, string delim);
-array_string string_split_single(string s, byte delim);
+array_string string_split_nth(string s, string delim, int nth);
 array_string string_split_into_lines(string s);
 string string_left(string s, int n);
 string string_right(string s, int n);
@@ -3489,78 +3489,64 @@ string string_add(string s, string a) {
   return res;
 }
 array_string string_split(string s, string delim) {
+  return string_split_nth(s, delim, 0);
+}
+array_string string_split_nth(string s, string delim, int nth) {
   array_string res = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+  int i = 0;
   if (delim.len == 0) {
+    i = 1;
     string tmp8 = s;
     ;
     for (int tmp9 = 0; tmp9 < tmp8.len; tmp9++) {
       byte ch = tmp8.str[tmp9];
 
-      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ byte_str(ch)), tmp10,
+      if (nth > 0 && i >= nth) {
+        _PUSH(&res,
+              (/*typ = array_string   tmp_typ=string*/ string_substr(s, i,
+                                                                     s.len)),
+              tmp10, string);
+        break;
+      };
+      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ byte_str(ch)), tmp11,
             string);
+      i++;
     };
     return res;
   };
-  if (delim.len == 1) {
-    return string_split_single(s, delim.str[0] /*rbyte 0*/);
-  };
-  int i = 0;
   int start = 0;
-  while (i < s.len) {
+  while (i <= s.len) {
 
-    bool a = s.str[i] /*rbyte 0*/ == delim.str[0] /*rbyte 0*/;
-    int j = 1;
-    while (j < delim.len && a) {
+    bool is_delim = s.str[i] /*rbyte 0*/ == delim.str[0] /*rbyte 0*/;
+    int j = 0;
+    while (is_delim && j < delim.len) {
 
-      a = a && s.str[i + j] /*rbyte 0*/ == delim.str[j] /*rbyte 0*/;
+      is_delim =
+          is_delim && s.str[i + j] /*rbyte 0*/ == delim.str[j] /*rbyte 0*/;
       j++;
     };
-    bool last = i == s.len - 1;
-    if (a || last) {
-      if (last) {
-        i++;
-      };
-      string val = string_substr(s, start, i);
-      if (val.len > 0) {
-        if (string_starts_with(val, delim)) {
-          val = string_right(val, delim.len);
-        };
-        _PUSH(&res,
-              (/*typ = array_string   tmp_typ=string*/ string_trim_space(val)),
-              tmp11, string);
-      };
-      start = i;
+    bool was_last = nth > 0 && res.len == nth;
+    if (was_last) {
+      break;
     };
-    i++;
-  };
-  return res;
-}
-array_string string_split_single(string s, byte delim) {
-  array_string res = new_array_from_c_array(
-      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  if (((int)(delim)) == 0) {
-    _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ s), tmp12, string);
-    return res;
-  };
-  int i = 0;
-  int start = 0;
-  while (i < s.len) {
-
-    bool is_delim = s.str[i] /*rbyte 0*/ == delim;
     bool last = i == s.len - 1;
     if (is_delim || last) {
-      if (!is_delim && i == s.len - 1) {
+      if (!is_delim && last) {
         i++;
       };
       string val = string_substr(s, start, i);
-      if (val.len > 0) {
-        _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ val), tmp13,
-              string);
+      if (string_starts_with(val, delim)) {
+        val = string_right(val, delim.len);
       };
-      start = i + 1;
+      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ val), tmp12, string);
+      start = i + delim.len;
     };
     i++;
+  };
+  if (string_ends_with(s, delim) && (nth < 1 || res.len < nth)) {
+    _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ tos3("")), tmp13,
+          string);
   };
   return res;
 }
@@ -22389,10 +22375,11 @@ void main__main() {
   }
   array_string commands = tmp4;
   array_string simple_tools = new_array_from_c_array(
-      6, 6, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 6){
-          tos3("up"), tos3("create"), tos3("test"), tos3("test-compiler"),
-          tos3("build-tools"), tos3("build-examples")});
+      7, 7, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string,
+                           7){tos3("up"), tos3("create"), tos3("test"),
+                              tos3("test-compiler"), tos3("build-tools"),
+                              tos3("build-examples"), tos3("build-vbinaries")});
   array_string tmp5 = simple_tools;
   for (int tmp6 = 0; tmp6 < tmp5.len; tmp6++) {
     string tool = ((string *)tmp5.data)[tmp6];
