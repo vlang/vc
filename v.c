@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "698c382"
+#define V_COMMIT_HASH "3fea8f3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0999273"
+#define V_COMMIT_HASH "698c382"
 #endif
 #include <inttypes.h>
 
@@ -2577,7 +2577,7 @@ string array_byte_hex(array_byte b) {
   byte *ptr = &hex[/*ptr!*/ 0] /*rbyte 1*/;
   for (int i = 0; i < b.len; i++) {
 
-    ptr += sprintf(((char *)(ptr)), "%02x", (*(byte *)array_get(b, i)));
+    ptr += sprintf(((charptr)(ptr)), "%02x", (*(byte *)array_get(b, i)));
   };
   return (tos2((byte *)hex));
 }
@@ -2868,12 +2868,12 @@ void backtrace_symbols_fd(void *, int, int);
 int proc_pidpath(int, void *, int);
 string f64_str(f64 d) {
   byte *buf = v_malloc(sizeof(double) * 5 + 1);
-  sprintf(((char *)(buf)), "%f", d);
+  sprintf(((charptr)(buf)), "%f", d);
   return tos(buf, vstrlen(buf));
 }
 string f32_str(f32 d) {
   byte *buf = v_malloc(sizeof(double) * 5 + 1);
-  sprintf(((char *)(buf)), "%f", d);
+  sprintf(((charptr)(buf)), "%f", d);
   return tos(buf, vstrlen(buf));
 }
 f32 f32_abs(f32 a) { return ((a < 0) ? (-a) : (a)); }
@@ -2949,7 +2949,7 @@ int hashmap_get(hashmap *m, string key) {
 static inline f64 b_fabs(int v) { return ((v < 0) ? (-v) : (v)); }
 string ptr_str(void *ptr) {
   byte *buf = v_malloc(sizeof(double) * 5 + 1);
-  sprintf(((char *)(buf)), "%p", ptr);
+  sprintf(((charptr)(buf)), "%p", ptr);
   return tos(buf, vstrlen(buf));
 }
 string int_str(int nn) {
@@ -3047,13 +3047,13 @@ string bool_str(bool b) {
 string int_hex(int n) {
   int len = ((n >= 0) ? (int_str(n).len + 3) : (11));
   byte *hex = v_malloc(len);
-  int count = ((int)(sprintf(((char *)(hex)), "0x%x", n)));
+  int count = ((int)(sprintf(((charptr)(hex)), "0x%x", n)));
   return tos(hex, count);
 }
 string i64_hex(i64 n) {
   int len = ((n >= ((i64)(0))) ? (i64_str(n).len + 3) : (19));
   byte *hex = v_malloc(len);
-  int count = ((int)(sprintf(((char *)(hex)), "0x%" PRIx64, n)));
+  int count = ((int)(sprintf(((charptr)(hex)), "0x%" PRIx64, n)));
   return tos(hex, count);
 }
 bool array_byte_contains(array_byte a, byte val) {
@@ -3321,7 +3321,7 @@ Option v_error(string s) {
 Option error_with_code(string s, int code) {
   return (Option){.error = s, .ecode = code, .ok = 0, .is_none = 0};
 }
-int vstrlen(byte *s) { return strlen(((char *)(s))); }
+int vstrlen(byte *s) { return strlen(((charptr)(s))); }
 string tos(byte *s, int len) {
   if (s == 0) {
     v_panic(tos3("tos(): nil string"));
@@ -3430,8 +3430,8 @@ int v_string_int(string s) {
   return ((int)(strconv__common_parse_int(s, 0, 32, 0, 0)));
 }
 i64 string_i64(string s) { return strconv__common_parse_int(s, 0, 64, 0, 0); }
-f32 string_f32(string s) { return atof(((char *)(s.str))); }
-f64 string_f64(string s) { return atof(((char *)(s.str))); }
+f32 string_f32(string s) { return atof(((charptr)(s.str))); }
+f64 string_f64(string s) { return atof(((charptr)(s.str))); }
 u32 string_u32(string s) {
   return ((u32)(strconv__common_parse_uint(s, 0, 32, 0, 0)));
 }
@@ -5103,7 +5103,7 @@ int os__file_size(string path) {
       stat s;
 #ifdef _WIN32
 #else
-  stat(((char *)(path.str)), &s);
+  stat(((charptr)(path.str)), &s);
 #endif
   ;
   return s.st_size;
@@ -5111,7 +5111,7 @@ int os__file_size(string path) {
 void os__mv(string old, string new) {
 #ifdef _WIN32
 #else
-  rename(((char *)(old.str)), ((char *)(new.str)));
+  rename(((charptr)(old.str)), ((charptr)(new.str)));
 #endif
   ;
 }
@@ -5206,7 +5206,7 @@ Option_bool os__mv_by_cp(string source, string target) {
 FILE *os__vfopen(string path, string mode) {
 #ifdef _WIN32
 #else
-  return fopen(((char *)(path.str)), ((char *)(mode.str)));
+  return fopen(((charptr)(path.str)), ((charptr)(mode.str)));
 #endif
   ;
 }
@@ -5278,7 +5278,7 @@ Option_os__File os__open(string path) {
 #ifdef _WIN32
 #else
   byte *cpath = path.str;
-  file = (os__File){.cfile = fopen(((char *)(cpath)), "rb")};
+  file = (os__File){.cfile = fopen(((charptr)(cpath)), "rb")};
 #endif
   ;
   if (isnil(file.cfile)) {
@@ -5292,7 +5292,7 @@ Option_os__File os__create(string path) {
 #ifdef _WIN32
 #else
   byte *cpath = path.str;
-  file = (os__File){.cfile = fopen(((char *)(cpath)), "wb")};
+  file = (os__File){.cfile = fopen(((charptr)(cpath)), "wb")};
 #endif
   ;
   if (isnil(file.cfile)) {
@@ -5306,7 +5306,7 @@ Option_os__File os__open_append(string path) {
 #ifdef _WIN32
 #else
   byte *cpath = path.str;
-  file = (os__File){.cfile = fopen(((char *)(cpath)), "ab")};
+  file = (os__File){.cfile = fopen(((charptr)(cpath)), "ab")};
 #endif
   ;
   if (isnil(file.cfile)) {
@@ -5358,9 +5358,9 @@ _V_MulRet_int_V_bool os__posix_wait4_to_exit_status(int waitret) {
 int os__vpclose(void *f) {
 #ifdef _WIN32
 #else
-  _V_MulRet_int_V_bool _V_mret_1921_ret__ =
+  _V_MulRet_int_V_bool _V_mret_1913_ret__ =
       os__posix_wait4_to_exit_status(((int)(pclose(f))));
-  int ret = _V_mret_1921_ret__.var_0;
+  int ret = _V_mret_1913_ret__.var_0;
   return ret;
 #endif
   ;
@@ -5376,10 +5376,10 @@ int os__system(string cmd) {
     os__print_c_errno();
   };
 #ifndef _WIN32
-  _V_MulRet_int_V_bool _V_mret_2046_pret_is_signaled =
+  _V_MulRet_int_V_bool _V_mret_2038_pret_is_signaled =
       os__posix_wait4_to_exit_status(ret);
-  int pret = _V_mret_2046_pret_is_signaled.var_0;
-  bool is_signaled = _V_mret_2046_pret_is_signaled.var_1;
+  int pret = _V_mret_2038_pret_is_signaled.var_0;
+  bool is_signaled = _V_mret_2038_pret_is_signaled.var_1;
   if (is_signaled) {
     println(string_add(string_add(_STR("Terminated by signal %2d (", ret),
                                   os__sigint_to_signal_name(pret)),
@@ -5538,7 +5538,7 @@ string os__get_raw_line() {
 #ifdef _WIN32
 #else
   size_t max = ((size_t)(256));
-  char *buf = ((char *)(v_malloc(((int)(max)))));
+  charptr buf = ((charptr)(v_malloc(((int)(max)))));
   int nr_chars = getline(&buf, &max, stdin);
   if (nr_chars == 0) {
     return tos3("");
@@ -5712,7 +5712,7 @@ string os__getwd() {
 }
 string os__realpath(string fpath) {
   byte *fullpath = v_calloc(os__MAX_PATH);
-  char *ret = ((char *)(0));
+  charptr ret = ((charptr)(0));
 #ifdef _WIN32
 #else
   ret = realpath((char *)fpath.str, (char *)fullpath);
@@ -5938,7 +5938,7 @@ Option_os__Result os__exec(string cmd) {
   };
   byte buf[1000] = {0};
   string res = tos3("");
-  while (fgets(((char *)(buf)), 1000, f) != 0) {
+  while (fgets(((charptr)(buf)), 1000, f) != 0) {
 
     res = string_add(res, tos(buf, vstrlen(buf)));
   };
@@ -13985,7 +13985,7 @@ void compiler__verror(string s) {
 string compiler__vhash() {
   byte buf[50] = {0};
   buf[0] /*rbyte 1*/ = 0;
-  snprintf(((char *)(buf)), 50, "%s", V_COMMIT_HASH);
+  snprintf(((charptr)(buf)), 50, "%s", V_COMMIT_HASH);
   return tos_clone(buf);
 }
 string compiler__cescaped_path(string s) {
