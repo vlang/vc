@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d323b48"
+#define V_COMMIT_HASH "0999273"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "15aeaf2"
+#define V_COMMIT_HASH "d323b48"
 #endif
 #include <inttypes.h>
 
@@ -22,6 +22,7 @@ typedef double f64;
 typedef unsigned char *byteptr;
 typedef int *intptr;
 typedef void *voidptr;
+typedef char *charptr;
 typedef struct array array;
 typedef struct map map;
 typedef array array_string;
@@ -2129,7 +2130,7 @@ map_bool compiler__Reserved_Types;
 #define compiler__compiler__TypeCategory_objc_interface 8
 #define compiler__compiler__TypeCategory_array 9
 #define compiler__compiler__TypeCategory_alias 10
-array_string compiler__CReserved;
+array_string compiler__c_reserved;
 array_string compiler__integer_types;
 array_string compiler__float_types;
 array_string compiler__reserved_type_param_names;
@@ -12038,7 +12039,7 @@ string compiler__Table_fn_gen_name(compiler__Table *table, compiler__Fn *f) {
     return tos3("");
   };
   if (string_eq(f->mod, tos3("builtin")) &&
-      (_IN(string, (f->name), compiler__CReserved))) {
+      (_IN(string, (f->name), compiler__c_reserved))) {
     return _STR("v_%.*s", name.len, name.str);
   };
   if (table->obfuscate && !f->is_c && string_ne(f->name, tos3("main")) &&
@@ -20151,6 +20152,7 @@ compiler__Table *compiler__new_table(bool obfuscate) {
   compiler__Table_register_builtin(t, tos3("bool"));
   compiler__Table_register_builtin(t, tos3("void"));
   compiler__Table_register_builtin(t, tos3("voidptr"));
+  compiler__Table_register_builtin(t, tos3("charptr"));
   compiler__Table_register_builtin(t, tos3("va_list"));
   array_string tmp2 = compiler__reserved_type_param_names;
   for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
@@ -20171,7 +20173,7 @@ compiler__Table *compiler__new_table(bool obfuscate) {
   return t;
 }
 string compiler__Table_var_cgen_name(compiler__Table *t, string name) {
-  if ((_IN(string, (name), compiler__CReserved))) {
+  if ((_IN(string, (name), compiler__c_reserved))) {
     return _STR("v_%.*s", name.len, name.str);
   } else {
     return name;
@@ -20286,7 +20288,7 @@ bool compiler__Table_known_type(compiler__Table *table, string typ_) {
     typ = string_replace(typ, tos3("*"), tos3(""));
   };
   compiler__Type tmp9 = {0};
-  bool tmp10 = map_get(/*table.v : 340*/ table->typesmap, typ, &tmp9);
+  bool tmp10 = map_get(/*table.v : 341*/ table->typesmap, typ, &tmp9);
 
   compiler__Type t = tmp9;
   return t.name.len > 0 && !t.is_placeholder;
@@ -20297,7 +20299,7 @@ bool compiler__Table_known_type_fast(compiler__Table *table,
 }
 Option_compiler__Fn compiler__Table_find_fn(compiler__Table *t, string name) {
   compiler__Fn tmp11 = {0};
-  bool tmp12 = map_get(/*table.v : 349*/ t->fns, name, &tmp11);
+  bool tmp12 = map_get(/*table.v : 350*/ t->fns, name, &tmp11);
 
   compiler__Fn f = tmp11;
   if (f.name.str != 0) {
@@ -20310,7 +20312,7 @@ Option_compiler__Fn compiler__Table_find_fn_is_script(compiler__Table *t,
                                                       string name,
                                                       bool is_script) {
   compiler__Fn tmp14 = {0};
-  bool tmp15 = map_get(/*table.v : 357*/ t->fns, name, &tmp14);
+  bool tmp15 = map_get(/*table.v : 358*/ t->fns, name, &tmp14);
 
   compiler__Fn f = tmp14;
   if (f.name.str != 0) {
@@ -20321,7 +20323,7 @@ Option_compiler__Fn compiler__Table_find_fn_is_script(compiler__Table *t,
     printf("trying replace %.*s\n", name.len, name.str);
     compiler__Fn tmp17 = {0};
     bool tmp18 =
-        map_get(/*table.v : 364*/ t->fns,
+        map_get(/*table.v : 365*/ t->fns,
                 string_replace(name, tos3("main__"), tos3("os__")), &tmp17);
 
     f = tmp17;
@@ -20435,7 +20437,7 @@ void compiler__Table_add_field(compiler__Table *table, string type_name,
     compiler__verror(tos3("add_field: empty type"));
   };
   compiler__Type tmp22 = {0};
-  bool tmp23 = map_get(/*table.v : 433*/ table->typesmap, type_name, &tmp22);
+  bool tmp23 = map_get(/*table.v : 434*/ table->typesmap, type_name, &tmp22);
 
   compiler__Type t = tmp22;
   _PUSH(&t.fields,
@@ -20471,7 +20473,7 @@ void compiler__Table_add_field(compiler__Table *table, string type_name,
 void compiler__Table_add_default_val(compiler__Table *table, int idx,
                                      string type_name, string val_expr) {
   compiler__Type tmp25 = {0};
-  bool tmp26 = map_get(/*table.v : 446*/ table->typesmap, type_name, &tmp25);
+  bool tmp26 = map_get(/*table.v : 447*/ table->typesmap, type_name, &tmp25);
 
   compiler__Type t = tmp25;
   if (t.default_vals.len == 0) {
@@ -20557,7 +20559,7 @@ void compiler__Parser_add_method(compiler__Parser *p, string type_name,
     compiler__verror(tos3("add_method: empty type"));
   };
   compiler__Type tmp38 = {0};
-  bool tmp39 = map_get(/*table.v : 503*/ p->table->typesmap, type_name, &tmp38);
+  bool tmp39 = map_get(/*table.v : 504*/ p->table->typesmap, type_name, &tmp38);
 
   compiler__Type t = tmp38;
   if (string_ne(f.name, tos3("str")) && (_IN(compiler__Fn, (f), t.methods))) {
@@ -20593,7 +20595,7 @@ Option_compiler__Fn compiler__Table_find_method(compiler__Table *table,
                                                 compiler__Type *typ,
                                                 string name) {
   compiler__Type tmp43 = {0};
-  bool tmp44 = map_get(/*table.v : 522*/ table->typesmap, typ->name, &tmp43);
+  bool tmp44 = map_get(/*table.v : 523*/ table->typesmap, typ->name, &tmp43);
 
   compiler__Type t = tmp43;
   array_compiler__Fn tmp45 = t.methods;
@@ -20636,7 +20638,7 @@ Option_compiler__Fn compiler__Type_find_method(compiler__Type *t, string name) {
 void compiler__Table_add_gen_type(compiler__Table *table, string type_name,
                                   string gen_type) {
   compiler__Type tmp54 = {0};
-  bool tmp55 = map_get(/*table.v : 552*/ table->typesmap, type_name, &tmp54);
+  bool tmp55 = map_get(/*table.v : 553*/ table->typesmap, type_name, &tmp54);
 
   compiler__Type t = tmp54;
   if ((_IN(string, (gen_type), t.gen_types))) {
@@ -20675,7 +20677,7 @@ compiler__Type compiler__Table_find_type(compiler__Table *t, string name_) {
                             .gen_str = 0};
   };
   compiler__Type tmp57 = {0};
-  bool tmp58 = map_get(/*table.v : 577*/ t->typesmap, name, &tmp57);
+  bool tmp58 = map_get(/*table.v : 578*/ t->typesmap, name, &tmp57);
 
   return tmp57;
 }
@@ -20844,7 +20846,7 @@ bool compiler__Table_is_interface(compiler__Table *table, string name) {
     return 0;
   };
   compiler__Type tmp65 = {0};
-  bool tmp66 = map_get(/*table.v : 753*/ table->typesmap, name, &tmp65);
+  bool tmp66 = map_get(/*table.v : 754*/ table->typesmap, name, &tmp65);
 
   compiler__Type t = tmp65;
   return t.cat == compiler__compiler__TypeCategory_interface_;
@@ -21027,11 +21029,11 @@ string compiler__Parser_identify_typo(compiler__Parser *p, string name) {
   if (string_ne(n, tos3(""))) {
     output = string_add(output, _STR("\n  * const: `%.*s`", n.len, n.str));
   };
-  _V_MulRet_string_V_string _V_mret_3701_typ_type_cat =
+  _V_MulRet_string_V_string _V_mret_3707_typ_type_cat =
       compiler__Table_find_misspelled_type(&/* ? */ *p->table, name, p,
                                            min_match);
-  string typ = _V_mret_3701_typ_type_cat.var_0;
-  string type_cat = _V_mret_3701_typ_type_cat.var_1;
+  string typ = _V_mret_3707_typ_type_cat.var_0;
+  string type_cat = _V_mret_3707_typ_type_cat.var_1;
   if (typ.len > 0) {
     output = string_add(output, _STR("\n  * %.*s: `%.*s`", type_cat.len,
                                      type_cat.str, typ.len, typ.str));
@@ -22559,13 +22561,13 @@ void init() {
       "uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef "
       "uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef "
       "unsigned char* byteptr;\ntypedef int* intptr;\ntypedef void* "
-      "voidptr;\ntypedef struct array array;\ntypedef struct map map;\ntypedef "
-      "array array_string;\ntypedef array array_int;\ntypedef array "
-      "array_byte;\ntypedef array array_f32;\ntypedef array "
-      "array_f64;\ntypedef array array_u16;\ntypedef array array_u32;\ntypedef "
-      "array array_u64;\ntypedef map map_int;\ntypedef map "
-      "map_string;\n#ifndef bool\n	typedef int bool;\n	#define true "
-      "1\n	#define false 0\n#endif\n");
+      "voidptr;\ntypedef char* charptr;\ntypedef struct array array;\ntypedef "
+      "struct map map;\ntypedef array array_string;\ntypedef array "
+      "array_int;\ntypedef array array_byte;\ntypedef array "
+      "array_f32;\ntypedef array array_f64;\ntypedef array array_u16;\ntypedef "
+      "array array_u32;\ntypedef array array_u64;\ntypedef map "
+      "map_int;\ntypedef map map_string;\n#ifndef bool\n	typedef int "
+      "bool;\n	#define true 1\n	#define false 0\n#endif\n");
   compiler__warn_match_arrow =
       string_add(tos3("=> is no longer needed in match statements, use\n"),
                  tos3("match foo {\n	1 { bar }\n	2 { baz }\n	else { "
@@ -22672,7 +22674,7 @@ void init() {
                                               1,
                                               1,
                                           });
-  compiler__CReserved = new_array_from_c_array(
+  compiler__c_reserved = new_array_from_c_array(
       31, 31, sizeof(string),
       EMPTY_ARRAY_OF_ELEMS(string, 31){
           tos3("delete"), tos3("exit"),     tos3("unix"),     tos3("error"),
