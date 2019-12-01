@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3fea8f3"
+#define V_COMMIT_HASH "854309a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "698c382"
+#define V_COMMIT_HASH "3fea8f3"
 #endif
 #include <inttypes.h>
 
@@ -2232,6 +2232,7 @@ int os__LANG_NEUTRAL;
 string compiler__c_headers;
 string compiler__js_headers;
 string compiler__c_builtin_types;
+string compiler__bare_c_headers;
 string compiler__warn_match_arrow;
 string compiler__err_used_as_value;
 string compiler__and_or_error;
@@ -6715,7 +6716,8 @@ void compiler__V_cc(compiler__V *v) {
   if (v->pref->is_bare) {
     _PUSH(&a,
           (/*typ = array_string   tmp_typ=string*/ _STR(
-              "-static -ffreestanding -nostdlib %.*s/vlib/os/bare/bare.S",
+              "-fno-stack-protector -static -ffreestanding -nostdlib "
+              "%.*s/vlib/os/bare/bare.S",
               vdir.len, vdir.str)),
           tmp4, string);
   };
@@ -6892,7 +6894,8 @@ void compiler__V_cc(compiler__V *v) {
          array_compiler__CFlag_c_options_without_object_files(cflags)),
         tmp26, string);
   _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ libs), tmp27, string);
-  if (v->pref->build_mode != compiler__compiler__BuildMode_build_module &&
+  if (!v->pref->is_bare &&
+      v->pref->build_mode != compiler__compiler__BuildMode_build_module &&
       (v->os == compiler__compiler__OS_linux ||
        v->os == compiler__compiler__OS_freebsd ||
        v->os == compiler__compiler__OS_openbsd ||
@@ -6906,7 +6909,7 @@ void compiler__V_cc(compiler__V *v) {
             string);
     };
   };
-  if (v->os == compiler__compiler__OS_js &&
+  if (!v->pref->is_bare && v->os == compiler__compiler__OS_js &&
       string_eq(os__user_os(), tos3("linux"))) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-lm")), tmp30,
           string);
@@ -13306,6 +13309,8 @@ void compiler__V_compile(compiler__V *v) {
   compiler__CGen_genln(cgen, compiler__c_builtin_types);
   if (!v->pref->is_bare) {
     compiler__CGen_genln(cgen, compiler__c_headers);
+  } else {
+    compiler__CGen_genln(cgen, compiler__bare_c_headers);
   };
 #endif
   ;
@@ -23113,6 +23118,11 @@ void init() {
       "array array_u32;\ntypedef array array_u64;\ntypedef map "
       "map_int;\ntypedef map map_string;\n#ifndef bool\n	typedef int "
       "bool;\n	#define true 1\n	#define false 0\n#endif\n");
+  compiler__bare_c_headers =
+      tos3("\n\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) "
+           "x\n\n#ifdef __TINYC__\n#undef EMPTY_ARRAY_OF_ELEMS\n#define "
+           "EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef TCCSKIP\n#define "
+           "TCCSKIP(x)\n#endif\n");
   compiler__warn_match_arrow =
       string_add(tos3("=> is no longer needed in match statements, use\n"),
                  tos3("match foo {\n	1 { bar }\n	2 { baz }\n	else { "
