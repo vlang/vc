@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c724c17"
+#define V_COMMIT_HASH "753e926"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "254afcb"
+#define V_COMMIT_HASH "c724c17"
 #endif
 #include <inttypes.h>
 
@@ -14188,6 +14188,9 @@ compiler__V *compiler__new_v(array_string args) {
                                  tos3("builtin")))) {
     println(tos3("vlib not found. It should be next to the V executable."));
     println(tos3("Go to https://vlang.io to install V."));
+    printf("(os.executable=%.*s vlib_path=%.*s vexe_path=%.*s\n",
+           os__executable().len, os__executable().str, vlib_path.len,
+           vlib_path.str, compiler__vexe_path().len, compiler__vexe_path().str);
     v_exit(1);
   };
   string out_name_c = compiler__get_vtmp_filename(out_name, tos3(".tmp.c"));
