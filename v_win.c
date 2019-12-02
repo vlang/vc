@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "dcbb196"
+#define V_COMMIT_HASH "254afcb"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2c424c1"
+#define V_COMMIT_HASH "dcbb196"
 #endif
 #include <inttypes.h>
 
@@ -1156,7 +1156,7 @@ int vstrlen(byte *s);
 string tos(byte *s, int len);
 string tos_clone(byte *s);
 string tos2(byte *s);
-string tos3(char *s);
+string tos3(charptr s);
 string string_clone(string a);
 string cstring_to_vstring(byte *cstr);
 string string_replace_once(string s, string rep, string with);
@@ -2991,7 +2991,7 @@ bool print_backtrace_skipping_top_frames_msvc(int skipframes) {
       } else {
         lineinfo = _STR(" ?? : address= %p", s);
       };
-      string sfunc = tos3(&/*112 e="char*" g="charptr" */ fname);
+      string sfunc = tos3(fname);
       printf("%-2d: %-25s  %.*s\n", nframe, sfunc.str, lineinfo.len,
              lineinfo.str);
     } else {
@@ -3509,7 +3509,7 @@ string tos2(byte *s) {
   };
   return (string){.str = s, .len = vstrlen(s)};
 }
-string tos3(char *s) {
+string tos3(charptr s) {
   if (s == 0) {
     v_panic(tos3("tos3: nil string"));
   };
@@ -14186,7 +14186,7 @@ compiler__V *compiler__new_v(array_string args) {
   if (!os__dir_exists(vlib_path) ||
       !os__dir_exists(string_add(string_add(vlib_path, os__path_separator),
                                  tos3("builtin")))) {
-    println(tos3("vlib not found. It should be next to the V executable. "));
+    println(tos3("vlib not found. It should be next to the V executable."));
     println(tos3("Go to https://vlang.io to install V."));
     v_exit(1);
   };
