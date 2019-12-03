@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "66f271f"
+#define V_COMMIT_HASH "c4a4363"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "89d4056"
+#define V_COMMIT_HASH "66f271f"
 #endif
 #include <inttypes.h>
 
@@ -1026,6 +1026,9 @@ int hashmap_get(hashmap *m, string key);
 static inline f64 b_fabs(int v);
 string ptr_str(void *ptr);
 string int_str(int nn);
+string i8_str(i8 n);
+string i16_str(i16 n);
+string u16_str(u16 n);
 string u32_str(u32 nn);
 string i64_str(i64 nn);
 string u64_str(u64 nn);
@@ -2982,6 +2985,9 @@ string int_str(int nn) {
   };
   return tos((byte *)(byte *)buf + max - len, len);
 }
+string i8_str(i8 n) { return int_str(((int)(n))); }
+string i16_str(i16 n) { return int_str(((int)(n))); }
+string u16_str(u16 n) { return int_str(((int)(n))); }
 string u32_str(u32 nn) {
   u32 n = nn;
   if (n == ((u32)(0))) {
