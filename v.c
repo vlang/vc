@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "89d4056"
+#define V_COMMIT_HASH "66f271f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f192429"
+#define V_COMMIT_HASH "89d4056"
 #endif
 #include <inttypes.h>
 
@@ -2164,78 +2164,79 @@ array_string compiler__reserved_type_param_names;
 #define compiler__compiler__TokenKind_amp 24
 #define compiler__compiler__TokenKind_hash 25
 #define compiler__compiler__TokenKind_dollar 26
-#define compiler__compiler__TokenKind_left_shift 27
-#define compiler__compiler__TokenKind_righ_shift 28
-#define compiler__compiler__TokenKind_assign 29
-#define compiler__compiler__TokenKind_decl_assign 30
-#define compiler__compiler__TokenKind_plus_assign 31
-#define compiler__compiler__TokenKind_minus_assign 32
-#define compiler__compiler__TokenKind_div_assign 33
-#define compiler__compiler__TokenKind_mult_assign 34
-#define compiler__compiler__TokenKind_xor_assign 35
-#define compiler__compiler__TokenKind_mod_assign 36
-#define compiler__compiler__TokenKind_or_assign 37
-#define compiler__compiler__TokenKind_and_assign 38
-#define compiler__compiler__TokenKind_righ_shift_assign 39
-#define compiler__compiler__TokenKind_left_shift_assign 40
-#define compiler__compiler__TokenKind_lcbr 41
-#define compiler__compiler__TokenKind_rcbr 42
-#define compiler__compiler__TokenKind_lpar 43
-#define compiler__compiler__TokenKind_rpar 44
-#define compiler__compiler__TokenKind_lsbr 45
-#define compiler__compiler__TokenKind_rsbr 46
-#define compiler__compiler__TokenKind_eq 47
-#define compiler__compiler__TokenKind_ne 48
-#define compiler__compiler__TokenKind_gt 49
-#define compiler__compiler__TokenKind_lt 50
-#define compiler__compiler__TokenKind_ge 51
-#define compiler__compiler__TokenKind_le 52
-#define compiler__compiler__TokenKind_line_comment 53
-#define compiler__compiler__TokenKind_mline_comment 54
-#define compiler__compiler__TokenKind_nl 55
-#define compiler__compiler__TokenKind_dot 56
-#define compiler__compiler__TokenKind_dotdot 57
-#define compiler__compiler__TokenKind_ellipsis 58
-#define compiler__compiler__TokenKind_keyword_beg 59
-#define compiler__compiler__TokenKind_key_as 60
-#define compiler__compiler__TokenKind_key_asm 61
-#define compiler__compiler__TokenKind_key_assert 62
-#define compiler__compiler__TokenKind_key_atomic 63
-#define compiler__compiler__TokenKind_key_break 64
-#define compiler__compiler__TokenKind_key_const 65
-#define compiler__compiler__TokenKind_key_continue 66
-#define compiler__compiler__TokenKind_key_defer 67
-#define compiler__compiler__TokenKind_key_else 68
-#define compiler__compiler__TokenKind_key_embed 69
-#define compiler__compiler__TokenKind_key_enum 70
-#define compiler__compiler__TokenKind_key_false 71
-#define compiler__compiler__TokenKind_key_for 72
-#define compiler__compiler__TokenKind_key_fn 73
-#define compiler__compiler__TokenKind_key_global 74
-#define compiler__compiler__TokenKind_key_go 75
-#define compiler__compiler__TokenKind_key_goto 76
-#define compiler__compiler__TokenKind_key_if 77
-#define compiler__compiler__TokenKind_key_import 78
-#define compiler__compiler__TokenKind_key_import_const 79
-#define compiler__compiler__TokenKind_key_in 80
-#define compiler__compiler__TokenKind_key_interface 81
-#define compiler__compiler__TokenKind_key_match 82
-#define compiler__compiler__TokenKind_key_module 83
-#define compiler__compiler__TokenKind_key_mut 84
-#define compiler__compiler__TokenKind_key_none 85
-#define compiler__compiler__TokenKind_key_return 86
-#define compiler__compiler__TokenKind_key_select 87
-#define compiler__compiler__TokenKind_key_sizeof 88
-#define compiler__compiler__TokenKind_key_struct 89
-#define compiler__compiler__TokenKind_key_switch 90
-#define compiler__compiler__TokenKind_key_true 91
-#define compiler__compiler__TokenKind_key_type 92
-#define compiler__compiler__TokenKind_key_orelse 93
-#define compiler__compiler__TokenKind_key_union 94
-#define compiler__compiler__TokenKind_key_pub 95
-#define compiler__compiler__TokenKind_key_static 96
-#define compiler__compiler__TokenKind_key_unsafe 97
-#define compiler__compiler__TokenKind_keyword_end 98
+#define compiler__compiler__TokenKind_str_dollar 27
+#define compiler__compiler__TokenKind_left_shift 28
+#define compiler__compiler__TokenKind_righ_shift 29
+#define compiler__compiler__TokenKind_assign 30
+#define compiler__compiler__TokenKind_decl_assign 31
+#define compiler__compiler__TokenKind_plus_assign 32
+#define compiler__compiler__TokenKind_minus_assign 33
+#define compiler__compiler__TokenKind_div_assign 34
+#define compiler__compiler__TokenKind_mult_assign 35
+#define compiler__compiler__TokenKind_xor_assign 36
+#define compiler__compiler__TokenKind_mod_assign 37
+#define compiler__compiler__TokenKind_or_assign 38
+#define compiler__compiler__TokenKind_and_assign 39
+#define compiler__compiler__TokenKind_righ_shift_assign 40
+#define compiler__compiler__TokenKind_left_shift_assign 41
+#define compiler__compiler__TokenKind_lcbr 42
+#define compiler__compiler__TokenKind_rcbr 43
+#define compiler__compiler__TokenKind_lpar 44
+#define compiler__compiler__TokenKind_rpar 45
+#define compiler__compiler__TokenKind_lsbr 46
+#define compiler__compiler__TokenKind_rsbr 47
+#define compiler__compiler__TokenKind_eq 48
+#define compiler__compiler__TokenKind_ne 49
+#define compiler__compiler__TokenKind_gt 50
+#define compiler__compiler__TokenKind_lt 51
+#define compiler__compiler__TokenKind_ge 52
+#define compiler__compiler__TokenKind_le 53
+#define compiler__compiler__TokenKind_line_comment 54
+#define compiler__compiler__TokenKind_mline_comment 55
+#define compiler__compiler__TokenKind_nl 56
+#define compiler__compiler__TokenKind_dot 57
+#define compiler__compiler__TokenKind_dotdot 58
+#define compiler__compiler__TokenKind_ellipsis 59
+#define compiler__compiler__TokenKind_keyword_beg 60
+#define compiler__compiler__TokenKind_key_as 61
+#define compiler__compiler__TokenKind_key_asm 62
+#define compiler__compiler__TokenKind_key_assert 63
+#define compiler__compiler__TokenKind_key_atomic 64
+#define compiler__compiler__TokenKind_key_break 65
+#define compiler__compiler__TokenKind_key_const 66
+#define compiler__compiler__TokenKind_key_continue 67
+#define compiler__compiler__TokenKind_key_defer 68
+#define compiler__compiler__TokenKind_key_else 69
+#define compiler__compiler__TokenKind_key_embed 70
+#define compiler__compiler__TokenKind_key_enum 71
+#define compiler__compiler__TokenKind_key_false 72
+#define compiler__compiler__TokenKind_key_for 73
+#define compiler__compiler__TokenKind_key_fn 74
+#define compiler__compiler__TokenKind_key_global 75
+#define compiler__compiler__TokenKind_key_go 76
+#define compiler__compiler__TokenKind_key_goto 77
+#define compiler__compiler__TokenKind_key_if 78
+#define compiler__compiler__TokenKind_key_import 79
+#define compiler__compiler__TokenKind_key_import_const 80
+#define compiler__compiler__TokenKind_key_in 81
+#define compiler__compiler__TokenKind_key_interface 82
+#define compiler__compiler__TokenKind_key_match 83
+#define compiler__compiler__TokenKind_key_module 84
+#define compiler__compiler__TokenKind_key_mut 85
+#define compiler__compiler__TokenKind_key_none 86
+#define compiler__compiler__TokenKind_key_return 87
+#define compiler__compiler__TokenKind_key_select 88
+#define compiler__compiler__TokenKind_key_sizeof 89
+#define compiler__compiler__TokenKind_key_struct 90
+#define compiler__compiler__TokenKind_key_switch 91
+#define compiler__compiler__TokenKind_key_true 92
+#define compiler__compiler__TokenKind_key_type 93
+#define compiler__compiler__TokenKind_key_orelse 94
+#define compiler__compiler__TokenKind_key_union 95
+#define compiler__compiler__TokenKind_key_pub 96
+#define compiler__compiler__TokenKind_key_static 97
+#define compiler__compiler__TokenKind_key_unsafe 98
+#define compiler__compiler__TokenKind_keyword_end 99
 #define compiler__NrTokens 140
 array_string compiler__TokenStr;
 map_int compiler__KEYWORDS;
@@ -8940,7 +8941,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
   };
   if ((string_eq(name, tos3("r")) || string_eq(name, tos3("c"))) &&
       compiler__Parser_peek(&/* ? */ *p) == compiler__compiler__TokenKind_str &&
-      p->prev_tok != compiler__compiler__TokenKind_dollar) {
+      p->prev_tok != compiler__compiler__TokenKind_str_dollar) {
     compiler__Parser_string_expr(p);
     return tos3("string");
   };
@@ -17493,7 +17494,7 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
   };
   string str = p->lit;
   if (compiler__Parser_peek(&/* ? */ *p) !=
-          compiler__compiler__TokenKind_dollar ||
+          compiler__compiler__TokenKind_str_dollar ||
       is_raw) {
     string f = ((is_raw) ? (compiler__cescaped_path(str))
                          : (compiler__format_str(str)));
@@ -17524,10 +17525,10 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
     p->lit = string_replace(p->lit, tos3("%"), tos3("%%"));
     format = string_add(format, compiler__format_str(p->lit));
     compiler__Parser_next(p);
-    if (p->tok != compiler__compiler__TokenKind_dollar) {
+    if (p->tok != compiler__compiler__TokenKind_str_dollar) {
       continue;
     };
-    compiler__Parser_check(p, compiler__compiler__TokenKind_dollar);
+    compiler__Parser_check(p, compiler__compiler__TokenKind_str_dollar);
     if (compiler__Parser_peek(&/* ? */ *p) !=
         compiler__compiler__TokenKind_str) {
       ;
@@ -19266,7 +19267,12 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
     };
     return compiler__scan_res(compiler__compiler__TokenKind_lcbr, tos3(""));
   } else if (tmp46 == '$') {
-    return compiler__scan_res(compiler__compiler__TokenKind_dollar, tos3(""));
+    if (s->inside_string) {
+      return compiler__scan_res(compiler__compiler__TokenKind_str_dollar,
+                                tos3(""));
+    } else {
+      return compiler__scan_res(compiler__compiler__TokenKind_dollar, tos3(""));
+    };
   } else if (tmp46 == '}') {
     if (s->inside_string) {
       s->pos++;
@@ -20061,7 +20067,7 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ) {
       if (!p->builtin_mod && string_ends_with(field_typ, tos3("*")) &&
           string_ne(p->mod, tos3("os"))) {
         compiler__Parser_warn(
-            p, _STR("pointer field `%.*s.%.*s` must be initialized", typ.len,
+            p, _STR("reference field `%.*s.%.*s` must be initialized", typ.len,
                     typ.str, field.name.len, field.name.str));
       };
       if (string_starts_with(field_typ, tos3("map_"))) {
@@ -21440,6 +21446,8 @@ array_string compiler__build_token_str() {
             &(string[]){tos3("NLL")});
   array_set(&/*q*/ s, compiler__compiler__TokenKind_dollar,
             &(string[]){tos3("$")});
+  array_set(&/*q*/ s, compiler__compiler__TokenKind_str_dollar,
+            &(string[]){tos3("$2")});
   array_set(&/*q*/ s, compiler__compiler__TokenKind_key_assert,
             &(string[]){tos3("assert")});
   array_set(&/*q*/ s, compiler__compiler__TokenKind_key_struct,
@@ -21520,7 +21528,7 @@ array_string compiler__build_token_str() {
 }
 compiler__TokenKind compiler__key_to_token(string key) {
   int tmp3 = 0;
-  bool tmp4 = map_get(/*token.v : 249*/ compiler__KEYWORDS, key, &tmp3);
+  bool tmp4 = map_get(/*token.v : 251*/ compiler__KEYWORDS, key, &tmp3);
 
   compiler__TokenKind a = ((compiler__TokenKind)(tmp3));
   return a;
