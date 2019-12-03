@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b907cf2"
+#define V_COMMIT_HASH "ff80e3a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0a8d2d5"
+#define V_COMMIT_HASH "b907cf2"
 #endif
 #include <inttypes.h>
 
@@ -7783,6 +7783,8 @@ string compiler__os_name_to_ifdef(string name) {
     return tos3("_WIN32");
   } else if (string_eq(tmp35, tos3("mac"))) {
     return tos3("__APPLE__");
+  } else if (string_eq(tmp35, tos3("macos"))) {
+    return tos3("__APPLE__");
   } else if (string_eq(tmp35, tos3("linux"))) {
     return tos3("__linux__");
   } else if (string_eq(tmp35, tos3("freebsd"))) {
@@ -7860,7 +7862,7 @@ string compiler__V_type_definitions(compiler__V *v) {
     string builtin = ((string *)tmp37.data)[tmp38];
 
     compiler__Type tmp39 = {0};
-    bool tmp40 = map_get(/*cgen.v : 339*/ v->table->typesmap, builtin, &tmp39);
+    bool tmp40 = map_get(/*cgen.v : 340*/ v->table->typesmap, builtin, &tmp39);
 
     compiler__Type typ = tmp39;
     _PUSH(&builtin_types,
@@ -8235,6 +8237,9 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
     ;
     if ((_IN(string, (name), compiler__supported_platforms))) {
       string ifdef_name = compiler__os_name_to_ifdef(name);
+      if (string_eq(name, tos3("mac"))) {
+        compiler__Parser_warn(p, tos3("use `macos` instead of `mac`"));
+      };
       if (not) {
         compiler__Parser_genln(
             p, _STR("#ifndef %.*s", ifdef_name.len, ifdef_name.str));
@@ -8336,8 +8341,8 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_dollar);
     compiler__Parser_check(p, compiler__compiler__TokenKind_name);
     compiler__Parser_check(p, compiler__compiler__TokenKind_assign);
-    _V_MulRet_string_V_string _V_mret_625___val = compiler__Parser_tmp_expr(p);
-    string val = _V_mret_625___val.var_1;
+    _V_MulRet_string_V_string _V_mret_637___val = compiler__Parser_tmp_expr(p);
+    string val = _V_mret_637___val.var_1;
     compiler__Parser_check(p, compiler__compiler__TokenKind_rcbr);
   } else if (p->tok == compiler__compiler__TokenKind_name &&
              string_eq(p->lit, tos3("vweb"))) {
@@ -8776,10 +8781,10 @@ string compiler__Parser_gen_array_map(compiler__Parser *p, string str_typ,
   string tmp = compiler__Parser_get_tmp(p);
   string tmp_elm = compiler__Parser_get_tmp(p);
   string a = p->expr_var.name;
-  _V_MulRet_string_V_string _V_mret_2099_map_type_expr =
+  _V_MulRet_string_V_string _V_mret_2111_map_type_expr =
       compiler__Parser_tmp_expr(p);
-  string map_type = _V_mret_2099_map_type_expr.var_0;
-  string expr = _V_mret_2099_map_type_expr.var_1;
+  string map_type = _V_mret_2111_map_type_expr.var_0;
+  string expr = _V_mret_2111_map_type_expr.var_1;
   compiler__CGen_set_placeholder(
       p->cgen, method_ph,
       string_add(_STR("\narray %.*s = new_array(0, %.*s .len, ", tmp.len,
@@ -14398,6 +14403,8 @@ compiler__OS compiler__os_from_string(string os) {
   } else if (string_eq(tmp104, tos3("windows"))) {
     return compiler__compiler__OS_windows;
   } else if (string_eq(tmp104, tos3("mac"))) {
+    return compiler__compiler__OS_mac;
+  } else if (string_eq(tmp104, tos3("macos"))) {
     return compiler__compiler__OS_mac;
   } else if (string_eq(tmp104, tos3("freebsd"))) {
     return compiler__compiler__OS_freebsd;
@@ -23237,11 +23244,11 @@ void init() {
   compiler__dot_ptr = tos3("->");
   compiler__Version = tos3("0.1.23");
   compiler__supported_platforms = new_array_from_c_array(
-      11, 11, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 11){
-          tos3("windows"), tos3("mac"), tos3("linux"), tos3("freebsd"),
-          tos3("openbsd"), tos3("netbsd"), tos3("dragonfly"), tos3("android"),
-          tos3("js"), tos3("solaris"), tos3("haiku")});
+      12, 12, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 12){
+          tos3("windows"), tos3("mac"), tos3("macos"), tos3("linux"),
+          tos3("freebsd"), tos3("openbsd"), tos3("netbsd"), tos3("dragonfly"),
+          tos3("android"), tos3("js"), tos3("solaris"), tos3("haiku")});
   compiler__v_modules_path = string_add(os__home_dir(), tos3(".vmodules"));
   compiler__HKEY_LOCAL_MACHINE = ((RegKey)(0x80000002));
   compiler__KEY_QUERY_VALUE = (0x0001);
