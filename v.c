@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f806e0f"
+#define V_COMMIT_HASH "6d28a80"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "33793a8"
+#define V_COMMIT_HASH "f806e0f"
 #endif
 #include <inttypes.h>
 
@@ -5615,6 +5615,9 @@ string os__user_os() {
 #ifdef __sun
 #endif
   ;
+#ifdef __haiku__
+#endif
+  ;
   return tos3("unknown");
 }
 string os__home_dir() {
@@ -5679,6 +5682,9 @@ string os__executable() {
 #endif
   ;
 #ifdef __sun
+#endif
+  ;
+#ifdef __haiku__
 #endif
   ;
 #ifdef __NetBSD__
@@ -6554,7 +6560,8 @@ void compiler__V_cc(compiler__V *v) {
        v->os == compiler__compiler__OS_openbsd ||
        v->os == compiler__compiler__OS_netbsd ||
        v->os == compiler__compiler__OS_dragonfly ||
-       v->os == compiler__compiler__OS_solaris)) {
+       v->os == compiler__compiler__OS_solaris ||
+       v->os == compiler__compiler__OS_haiku)) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-lm -lpthread ")),
           tmp29, string);
     if (v->os == compiler__compiler__OS_linux) {
@@ -13835,6 +13842,9 @@ compiler__V *compiler__new_v(array_string args) {
 #ifdef __sun
 #endif
     ;
+#ifdef __haiku__
+#endif
+    ;
   } else {
     _os = compiler__os_from_string(target_os);
   };
@@ -14035,6 +14045,8 @@ compiler__OS compiler__os_from_string(string os) {
     return compiler__compiler__OS_android;
   } else if (string_eq(tmp104, tos3("msvc"))) {
     compiler__verror(tos3("use the flag `-cc msvc` to build using msvc"));
+  } else if (string_eq(tmp104, tos3("haiku"))) {
+    return compiler__compiler__OS_haiku;
   };
   printf("bad os %.*s\n", os.len, os.str);
   return compiler__compiler__OS_linux;
