@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "590566f"
+#define V_COMMIT_HASH "eb20dd3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c4a4363"
+#define V_COMMIT_HASH "590566f"
 #endif
 #include <inttypes.h>
 
@@ -13533,6 +13533,15 @@ void compiler__V_generate_init(compiler__V *v) {
       };
     };
     string consts_init_body = array_string_join_lines(v->cgen->consts_init);
+    if (v->pref->is_bare) {
+      compiler__CGen_genln(
+          v->cgen, _STR("\n          void init() {\n                %.*s\n     "
+                        "           %.*s\n                builtin__init();\n   "
+                        "             %.*s\n          }\n      ",
+                        call_mod_init_consts.len, call_mod_init_consts.str,
+                        consts_init_body.len, consts_init_body.str,
+                        call_mod_init.len, call_mod_init.str));
+    };
     if (!v->pref->is_bare) {
       compiler__CGen_genln(
           v->cgen, _STR("void init() "
@@ -13644,9 +13653,7 @@ void compiler__V_generate_main(compiler__V *v) {
 }
 void compiler__V_gen_main_start(compiler__V *v, bool add_os_args) {
   compiler__CGen_genln(v->cgen, tos3("int main(int argc, char** argv) { "));
-  if (!v->pref->is_bare) {
-    compiler__CGen_genln(v->cgen, tos3("  init();"));
-  };
+  compiler__CGen_genln(v->cgen, tos3("  init();"));
   if (add_os_args && (_IN(string, (tos3("os")), v->table->imports))) {
     compiler__CGen_genln(
         v->cgen, tos3("  os__args = os__init_os_args(argc, (byteptr*)argv);"));
