@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d8bf0df"
+#define V_COMMIT_HASH "9a6711f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "40df064"
+#define V_COMMIT_HASH "d8bf0df"
 #endif
 #include <inttypes.h>
 
@@ -9299,11 +9299,17 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
 
     name = tmp10;
   };
-  if ((string_eq(name, tos3("r")) || string_eq(name, tos3("c"))) &&
+  if (string_eq(name, tos3("r")) &&
       compiler__Parser_peek(&/* ? */ *p) == compiler__compiler__TokenKind_str &&
       p->prev_tok != compiler__compiler__TokenKind_str_dollar) {
     compiler__Parser_string_expr(p);
     return tos3("string");
+  };
+  if (string_eq(name, tos3("c")) &&
+      compiler__Parser_peek(&/* ? */ *p) == compiler__compiler__TokenKind_str &&
+      p->prev_tok != compiler__compiler__TokenKind_str_dollar) {
+    compiler__Parser_string_expr(p);
+    return tos3("charptr");
   };
   string orig_name = name;
   bool is_c =
