@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fb546f3"
+#define V_COMMIT_HASH "867f952"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e707ac4"
+#define V_COMMIT_HASH "fb546f3"
 #endif
 #include <inttypes.h>
 
@@ -1582,6 +1582,9 @@ void compiler__Parser_gen_array_at(compiler__Parser *p, string typ_,
                                    bool is_arr0, int fn_ph);
 void compiler__Parser_gen_for_header(compiler__Parser *p, string i, string tmp,
                                      string var_typ, string val);
+void compiler__Parser_gen_for_fixed_header(compiler__Parser *p, string i,
+                                           string tmp, string var_typ,
+                                           string val);
 void compiler__Parser_gen_for_str_header(compiler__Parser *p, string i,
                                          string tmp, string var_typ,
                                          string val);
@@ -11958,8 +11961,9 @@ void compiler__Parser_for_st(compiler__Parser *p) {
       };
     };
     bool is_arr = string_contains(typ, tos3("array"));
+    bool is_fixed = string_starts_with(typ, tos3("["));
     bool is_str = string_eq(typ, tos3("string"));
-    if (!is_arr && !is_str && !is_range && !is_variadic_arg) {
+    if (!is_arr && !is_str && !is_range && !is_fixed && !is_variadic_arg) {
       compiler__Parser_error(
           p, _STR("cannot range over type `%.*s`", typ.len, typ.str));
     };
@@ -11967,7 +11971,7 @@ void compiler__Parser_for_st(compiler__Parser *p) {
       if (p->is_js) {
         compiler__Parser_genln(
             p, _STR("var %.*s = %.*s;", tmp.len, tmp.str, expr.len, expr.str));
-      } else {
+      } else if (!is_fixed) {
         compiler__Parser_genln(p, _STR("%.*s %.*s = %.*s;", typ.len, typ.str,
                                        tmp.len, tmp.str, expr.len, expr.str));
       };
@@ -11985,6 +11989,9 @@ void compiler__Parser_for_st(compiler__Parser *p) {
     } else if (is_str) {
       typ = tos3("byte");
       compiler__Parser_gen_for_str_header(p, i, tmp, typ, val);
+    } else if (is_fixed) {
+      typ = string_all_after(typ, tos3("]"));
+      compiler__Parser_gen_for_fixed_header(p, i, expr, typ, val);
     };
     if (string_ne(val, tos3("_"))) {
       compiler__Parser_register_var(
@@ -12460,6 +12467,21 @@ void compiler__Parser_gen_for_header(compiler__Parser *p, string i, string tmp,
                                  var_typ.len, var_typ.str, val.len, val.str,
                                  var_typ.len, var_typ.str, tmp.len, tmp.str,
                                  i.len, i.str));
+}
+void compiler__Parser_gen_for_fixed_header(compiler__Parser *p, string i,
+                                           string tmp, string var_typ,
+                                           string val) {
+  compiler__Parser_genln(p, _STR("for (int %.*s = 0; %.*s < sizeof(%.*s) / "
+                                 "sizeof(%.*s [0]); %.*s++) {",
+                                 i.len, i.str, i.len, i.str, tmp.len, tmp.str,
+                                 tmp.len, tmp.str, i.len, i.str));
+  if (string_eq(val, tos3("_"))) {
+
+    return;
+  };
+  compiler__Parser_genln(p, _STR("%.*s %.*s = %.*s[%.*s];", var_typ.len,
+                                 var_typ.str, val.len, val.str, tmp.len,
+                                 tmp.str, i.len, i.str));
 }
 void compiler__Parser_gen_for_str_header(compiler__Parser *p, string i,
                                          string tmp, string var_typ,
