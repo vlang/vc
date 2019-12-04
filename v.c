@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9a6711f"
+#define V_COMMIT_HASH "d9248e8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d8bf0df"
+#define V_COMMIT_HASH "9a6711f"
 #endif
 #include <inttypes.h>
 
@@ -11121,7 +11121,7 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
       if (f->is_method) {
         j--;
       };
-      string nr = _STR("%dth", i + 1);
+      string nr = _STR("%dth", j + 1);
       if (j == 0) {
         nr = tos3("first");
       } else if (j == 1) {
