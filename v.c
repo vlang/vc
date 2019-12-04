@@ -1,3 +1,4 @@
+#define V_COMMIT_HASH "40df064"
 #ifndef V_COMMIT_HASH
 #define V_COMMIT_HASH "47f5e11"
 #endif
@@ -214,7 +215,6 @@ typedef array array_char;
 typedef array array_T;
 typedef array array_i64;
 typedef array array_f32;
-typedef struct Error Error;
 typedef struct hashmap hashmap;
 typedef array array_hashmapentry;
 typedef struct hashmapentry hashmapentry;
@@ -426,11 +426,6 @@ struct compiler__VsInstallation {
   string include_path;
   string lib_path;
   string exe_path;
-};
-
-struct Error {
-  int code;
-  string message;
 };
 
 struct _V_MulRet_int_V_bool {
@@ -998,8 +993,6 @@ int backtrace(void *a, int b);
 byteptr *backtrace_symbols(void *, int);
 void backtrace_symbols_fd(void *, int, int);
 int proc_pidpath(int, void *, int);
-Error new_error(string message);
-Error new_error_with_code(string message, int code);
 string f64_str(f64 d);
 string f32_str(f32 d);
 f32 f32_abs(f32 a);
@@ -2920,15 +2913,6 @@ int backtrace(void *a, int b);
 byteptr *backtrace_symbols(void *, int);
 void backtrace_symbols_fd(void *, int, int);
 int proc_pidpath(int, void *, int);
-Error new_error(string message) {
-  return (Error){
-      .message = message,
-      .code = 0,
-  };
-}
-Error new_error_with_code(string message, int code) {
-  return (Error){.code = code, .message = message};
-}
 string f64_str(f64 d) {
   byte *buf = v_malloc(sizeof(double) * 5 + 1);
   sprintf(((charptr)(buf)), "%f", d);
@@ -12589,15 +12573,11 @@ bool compiler__Parser_gen_struct_init(compiler__Parser *p, string typ,
     };
   } else {
     if (p->tok == compiler__compiler__TokenKind_not) {
-      compiler__Parser_warn(p, _STR("use `%.*s(0)` instead of `&%.*s{!}`",
-                                    t.name.len, t.name.str, t.name.len,
-                                    t.name.str));
-      compiler__Parser_next(p);
-      compiler__Parser_gen(p, tos3("0"));
-      compiler__Parser_check(p, compiler__compiler__TokenKind_rcbr);
-      return 1;
+      compiler__Parser_error(p, _STR("use `%.*s(0)` instead of `&%.*s{!}`",
+                                     t.name.len, t.name.str, t.name.len,
+                                     t.name.str));
     };
-    compiler__Parser_gen(p, _STR("(%.*s*)memdup(&(%.*s)  {", t.name.len,
+    compiler__Parser_gen(p, _STR("(%.*s*)memdup(&(%.*s) {", t.name.len,
                                  t.name.str, t.name.len, t.name.str));
   };
   return 0;
