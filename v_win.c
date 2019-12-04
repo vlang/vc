@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e707ac4"
+#define V_COMMIT_HASH "fb546f3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2144c16"
+#define V_COMMIT_HASH "e707ac4"
 #endif
 #include <inttypes.h>
 
@@ -2272,8 +2272,8 @@ RegKey compiler__HKEY_LOCAL_MACHINE;
 int compiler__KEY_QUERY_VALUE;
 int compiler__KEY_WOW64_32KEY;
 int compiler__KEY_ENUMERATE_SUB_KEYS;
-#define compiler__MaxModuleDepth 4
-map_bool compiler__Reserved_Types;
+#define compiler__max_module_depth 5
+map_bool compiler__reserved_types;
 #define compiler__compiler__IndexType_noindex 0
 #define compiler__compiler__IndexType_str 1
 #define compiler__compiler__IndexType_map 2
@@ -16237,10 +16237,10 @@ void compiler__Parser_import_statement(compiler__Parser *p) {
     mod_alias = submodule;
     mod = string_add(mod, string_add(tos3("."), submodule));
     depth++;
-    if (depth > compiler__MaxModuleDepth) {
-      compiler__Parser_error(p,
-                             _STR("module depth of %d exceeded: %.*s",
-                                  compiler__MaxModuleDepth, mod.len, mod.str));
+    if (depth > compiler__max_module_depth) {
+      compiler__Parser_error(p, _STR("module depth of %d exceeded: %.*s",
+                                     compiler__max_module_depth, mod.len,
+                                     mod.str));
     };
   };
   if (p->tok == compiler__compiler__TokenKind_key_as &&
@@ -16487,7 +16487,7 @@ string compiler__Parser_check_string(compiler__Parser *p) {
 void compiler__Parser_check_not_reserved(compiler__Parser *p) {
   bool tmp36 = 0;
   bool tmp37 =
-      map_get(/*parser.v : 809*/ compiler__Reserved_Types, p->lit, &tmp36);
+      map_get(/*parser.v : 809*/ compiler__reserved_types, p->lit, &tmp36);
 
   if (tmp36) {
     compiler__Parser_error(
@@ -23337,7 +23337,7 @@ void init() {
   compiler__KEY_QUERY_VALUE = (0x0001);
   compiler__KEY_WOW64_32KEY = (0x0200);
   compiler__KEY_ENUMERATE_SUB_KEYS = (0x0008);
-  compiler__Reserved_Types = new_map_init(15, sizeof(bool),
+  compiler__reserved_types = new_map_init(15, sizeof(bool),
                                           (string[15]){
                                               tos3("i8"),
                                               tos3("i16"),
