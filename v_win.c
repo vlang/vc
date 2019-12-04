@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fb237b9"
+#define V_COMMIT_HASH "a57e29d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f0f62f6"
+#define V_COMMIT_HASH "fb237b9"
 #endif
 #include <inttypes.h>
 
@@ -1346,6 +1346,7 @@ string os__sigint_to_signal_name(int si);
 string os__getenv(string key);
 int os__setenv(string name, string value, bool overwrite);
 int os__unsetenv(string name);
+bool os__exists(string path);
 bool os__file_exists(string _path);
 void os__rm(string path);
 void os__rmdir(string path);
@@ -1365,6 +1366,7 @@ void os__write_file(string path, string text);
 void os__clear();
 void os__on_segfault(void *f);
 string os__executable();
+bool os__dir_exists(string path);
 bool os__is_dir(string path);
 void os__chdir(string path);
 string os__getwd();
@@ -1384,7 +1386,6 @@ string os__tmpdir();
 void os__chmod(string path, int mode);
 array_string os__init_os_args(int argc, byteptr *argv);
 Option_array_string os__ls(string path);
-bool os__dir_exists(string path);
 Option_bool os__mkdir(string path);
 HANDLE os__get_file_handle(string path);
 Option_string os__get_module_filename(HANDLE handle);
@@ -5325,7 +5326,7 @@ Option_bool os__cp(string old, string new) {
 Option_bool os__cp_r(string osource_path, string odest_path, bool overwrite) {
   string source_path = os__realpath(osource_path);
   string dest_path = os__realpath(odest_path);
-  if (!os__file_exists(source_path)) {
+  if (!os__exists(source_path)) {
     return v_error(tos3("Source path doesn\'t exist"));
   };
   if (!os__is_dir(source_path)) {
@@ -5335,7 +5336,7 @@ Option_bool os__cp_r(string osource_path, string odest_path, bool overwrite) {
                                                          .args = {os__filename(
                                                              source_path)}}))
              : (dest_path));
-    if (os__file_exists(adjasted_path)) {
+    if (os__exists(adjasted_path)) {
       if (overwrite) {
         os__rm(adjasted_path);
       } else {
@@ -5687,14 +5688,17 @@ int os__unsetenv(string name) {
 #endif
   ;
 }
-bool os__file_exists(string _path) {
+bool os__exists(string path) {
 #ifdef _WIN32
-  string path = string_replace(_path, tos3("/"), tos3("\\"));
-  return _waccess(string_to_wide(path), 0) != -1;
+  string p = string_replace(path, tos3("/"), tos3("\\"));
+  return _waccess(string_to_wide(p), 0) != -1;
 #else
-  return access((char *)_path.str, 0) != -1;
+  return access((char *)path.str, 0) != -1;
 #endif
   ;
+}
+bool os__file_exists(string _path) {
+  v_panic(tos3("use os.exists(path) instead of os.file_exists(path)"));
 }
 void os__rm(string path) {
 #ifdef _WIN32
@@ -5925,9 +5929,18 @@ string os__executable() {
   ;
   return (*(string *)array_get(os__args, 0));
 }
+bool os__dir_exists(string path) { v_panic(tos3("use os.is_dir()")); }
 bool os__is_dir(string path) {
 #ifdef _WIN32
-  return os__dir_exists(path);
+  string _path = string_replace(path, tos3("/"), tos3("\\"));
+  u32 attr = GetFileAttributesW(string_to_wide(_path));
+  if (((int)(attr)) == ((int)(INVALID_FILE_ATTRIBUTES))) {
+    return 0;
+  };
+  if ((((int)(attr)) & FILE_ATTRIBUTE_DIRECTORY) != 0) {
+    return 1;
+  };
+  return 0;
 #else
   struct /*c struct init*/
 
@@ -6040,7 +6053,7 @@ void os__walk(string path, void (*fnc)(string path /*FFF*/)) {
     string p = string_add(string_add(path, os__path_separator), file);
     if (os__is_dir(p)) {
       os__walk(p, fnc);
-    } else if (os__file_exists(p)) {
+    } else if (os__exists(p)) {
       fnc(p);
     };
   };
@@ -6088,7 +6101,7 @@ void os__mkdir_all(string path) {
     string subdir = ((string *)tmp54.data)[tmp55];
 
     p = string_add(p, string_add(subdir, os__path_separator));
-    if (!os__dir_exists(p)) {
+    if (!os__is_dir(p)) {
       Option_bool tmp56 = os__mkdir(p);
       if (!tmp56.ok) {
         string err = tmp56.error;
@@ -6152,7 +6165,7 @@ Option_array_string os__ls(string path) {
                                                          .wFinderFlags = 0};
   array_string dir_files = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  if (!os__dir_exists(path)) {
+  if (!os__is_dir(path)) {
     return v_error(
         _STR("ls() couldnt open dir \"%.*s\": directory does not exist",
              path.len, path.str));
@@ -6178,17 +6191,6 @@ Option_array_string os__ls(string path) {
   FindClose(h_find_files);
   array_string tmp4 = OPTION_CAST(array_string)(dir_files);
   return opt_ok(&tmp4, sizeof(array_string));
-}
-bool os__dir_exists(string path) {
-  string _path = string_replace(path, tos3("/"), tos3("\\"));
-  u32 attr = GetFileAttributesW(string_to_wide(_path));
-  if (((int)(attr)) == ((int)(INVALID_FILE_ATTRIBUTES))) {
-    return 0;
-  };
-  if ((((int)(attr)) & FILE_ATTRIBUTE_DIRECTORY) != 0) {
-    return 1;
-  };
-  return 0;
 }
 Option_bool os__mkdir(string path) {
   if (string_eq(path, tos3("."))) {
@@ -6670,7 +6672,7 @@ void compiler__V_cc(compiler__V *v) {
 #ifndef _VJS
     if (string_ends_with(v->out_name, tos3(".js"))) {
       string vjs_path = string_add(vexe, tos3("js"));
-      if (!os__file_exists(vjs_path)) {
+      if (!os__exists(vjs_path)) {
         println(tos3("V.js compiler not found, building..."));
         int ret =
             os__system(_STR("%.*s -o %.*s -os js %.*s/v.v", vexe.len, vexe.str,
@@ -6754,7 +6756,7 @@ void compiler__V_cc(compiler__V *v) {
                      compiler__v_modules_path.str, os__path_separator.len,
                      os__path_separator.str, v->dir.len, v->dir.str)));
     string pdir = string_all_before_last(out_dir, os__path_separator);
-    if (!os__dir_exists(pdir)) {
+    if (!os__is_dir(pdir)) {
       os__mkdir_all(pdir);
     };
     v->out_name = _STR("%.*s.o", out_dir.len, out_dir.str);
@@ -6835,7 +6837,7 @@ void compiler__V_cc(compiler__V *v) {
           (/*typ = array_string   tmp_typ=string*/ string_replace(
               builtin_o_path, tos3("builtin.o"), tos3("strconv.o"))),
           tmp14, string);
-    if (os__file_exists(builtin_o_path)) {
+    if (os__exists(builtin_o_path)) {
       libs = builtin_o_path;
     } else {
       printf("%.*s not found... building module builtin\n", builtin_o_path.len,
@@ -6860,7 +6862,7 @@ void compiler__V_cc(compiler__V *v) {
                os__path_separator.str, os__path_separator.len,
                os__path_separator.str, os__path_separator.len,
                os__path_separator.str, imp_path.len, imp_path.str);
-      if (os__file_exists(path)) {
+      if (os__exists(path)) {
         libs = string_add(libs, string_add(tos3(" "), path));
       } else {
         printf("%.*s not found... building module %.*s\n", path.len, path.str,
@@ -6904,7 +6906,7 @@ void compiler__V_cc(compiler__V *v) {
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "-o \"%.*s\"", v->out_name.len, v->out_name.str)),
         tmp21, string);
-  if (os__dir_exists(v->out_name)) {
+  if (os__is_dir(v->out_name)) {
     compiler__verror(
         _STR("\'%.*s\' is a directory", v->out_name.len, v->out_name.str));
   };
@@ -7070,7 +7072,7 @@ void compiler__V_cc_windows_cross(compiler__V *c) {
   if (c->pref->build_mode == compiler__compiler__BuildMode_default_mode) {
     libs = _STR("\"%.*s/vlib/builtin.o\"", compiler__v_modules_path.len,
                 compiler__v_modules_path.str);
-    if (!os__file_exists(libs)) {
+    if (!os__exists(libs)) {
       printf("`%.*s` not found\n", libs.len, libs.str);
       v_exit(1);
     };
@@ -7091,7 +7093,7 @@ void compiler__V_cc_windows_cross(compiler__V *c) {
   println(tos3("Cross compiling for Windows..."));
   string winroot = _STR("%.*s/winroot", compiler__v_modules_path.len,
                         compiler__v_modules_path.str);
-  if (!os__dir_exists(winroot)) {
+  if (!os__is_dir(winroot)) {
     string winroot_url = tos3(
         "https://github.com/vlang/v/releases/download/v0.1.10/winroot.zip");
     printf("\"%.*s\" not found.\n", winroot.len, winroot.str);
@@ -7724,7 +7726,7 @@ void compiler__CGen_add_to_main(compiler__CGen *g, string s) {
 void compiler__build_thirdparty_obj_file(string path,
                                          array_compiler__CFlag moduleflags) {
   string obj_path = os__realpath(path);
-  if (os__file_exists(obj_path)) {
+  if (os__exists(obj_path)) {
 
     return;
   };
@@ -8357,10 +8359,10 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
     if (p->pref->is_debug) {
       printf("compiling tmpl %.*s\n", path.len, path.str);
     };
-    if (!os__file_exists(path)) {
+    if (!os__exists(path)) {
       path = string_add(string_add(os__dir(p->scanner->file_path), tos3("/")),
                         path);
-      if (!os__file_exists(path)) {
+      if (!os__exists(path)) {
         compiler__Parser_error(p, _STR("vweb HTML template \"%.*s\" not found",
                                        path.len, path.str));
       };
@@ -13257,7 +13259,7 @@ void compiler__V_generate_hot_reload_code(compiler__V *v) {
              "	sprintf(compile_cmd, \"%.*s %.*s -o %%s -shared %.*s\", "
              "new_so_base);\n			"
              "os__system(tos2(compile_cmd));\n\n			if( "
-             "!os__file_exists(tos2(new_so_name)) ) {\n			"
+             "!os__exists(tos2(new_so_name)) ) {\n			"
              "	fprintf(stderr, \"Errors while compiling %.*s\\n\");\n	"
              "			continue;\n			}\n\n	"
              "		lfnmutex_print(\"reload_so locking...\");\n	"
@@ -13744,13 +13746,13 @@ void compiler__V_run_compiled_executable_and_exit(compiler__V v) {
 array_string compiler__V_v_files_from_dir(compiler__V *v, string dir) {
   array_string res = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  if (!os__file_exists(dir)) {
-    if (string_eq(dir, tos3("compiler")) && os__dir_exists(tos3("vlib"))) {
+  if (!os__exists(dir)) {
+    if (string_eq(dir, tos3("compiler")) && os__is_dir(tos3("vlib"))) {
       println(tos3("looks like you are trying to build V with an old command"));
       println(tos3("use `v -o v v.v` instead of `v -o v compiler`"));
     };
     compiler__verror(_STR("%.*s doesn't exist", dir.len, dir.str));
-  } else if (!os__dir_exists(dir)) {
+  } else if (!os__is_dir(dir)) {
     compiler__verror(_STR("%.*s isn't a directory", dir.len, dir.str));
   };
   Option_array_string tmp26 = os__ls(dir);
@@ -13819,7 +13821,7 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
   string builtin_vh =
       _STR("%.*s%.*sbuiltin.vh", v->pref->vlib_path.len, v->pref->vlib_path.str,
            os__path_separator.len, os__path_separator.str);
-  if (v->pref->is_cache && os__file_exists(builtin_vh)) {
+  if (v->pref->is_cache && os__exists(builtin_vh)) {
     _PUSH(&v->cached_mods,
           (/*typ = array_string   tmp_typ=string*/ tos3("builtin")), tmp30,
           string);
@@ -13877,7 +13879,7 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
                compiler__v_modules_path.str, os__path_separator.len,
                os__path_separator.str, os__path_separator.len,
                os__path_separator.str, mod_path.len, mod_path.str);
-      if (v->pref->is_cache && os__file_exists(vh_path)) {
+      if (v->pref->is_cache && os__exists(vh_path)) {
         eprintln(_STR("using cached module `%.*s`: %.*s", mod.len, mod.str,
                       vh_path.len, vh_path.str));
         _PUSH(&v->cached_mods, (/*typ = array_string   tmp_typ=string*/ mod),
@@ -14118,7 +14120,7 @@ void compiler__V_log(compiler__V *v, string s) {
   println(s);
 }
 compiler__V *compiler__new_v(array_string args) {
-  if (!os__dir_exists(compiler__v_modules_path)) {
+  if (!os__is_dir(compiler__v_modules_path)) {
     Option_bool tmp87 = os__mkdir(compiler__v_modules_path);
     if (!tmp87.ok) {
       string err = tmp87.error;
@@ -14189,15 +14191,14 @@ compiler__V *compiler__new_v(array_string args) {
   bool is_test = string_ends_with(dir, tos3("_test.v"));
   bool is_script =
       string_ends_with(dir, tos3(".v")) || string_ends_with(dir, tos3(".vsh"));
-  if (is_script && !os__file_exists(dir)) {
+  if (is_script && !os__exists(dir)) {
     printf("`%.*s` does not exist\n", dir.len, dir.str);
     v_exit(1);
   };
   if (string_eq(out_name, tos3("a.out")) && string_ends_with(dir, tos3(".v")) &&
       string_ne(dir, tos3(".v"))) {
     out_name = string_substr2(dir, 0, dir.len - 2, false);
-    if (string_eq(out_name, tos3("v")) &&
-        os__dir_exists(tos3("vlib/compiler"))) {
+    if (string_eq(out_name, tos3("v")) && os__is_dir(tos3("vlib/compiler"))) {
       println(tos3("Saving the resulting V executable in `./v2`"));
       println(
           string_add(tos3("Use `v -o v v.v` if you want to replace current "),
@@ -14211,7 +14212,7 @@ compiler__V *compiler__new_v(array_string args) {
   };
   if (string_contains(out_name, os__path_separator)) {
     string d = string_all_before_last(out_name, os__path_separator);
-    if (!os__dir_exists(d)) {
+    if (!os__is_dir(d)) {
       printf("creating a new directory \"%.*s\"\n", d.len, d.str);
       Option_bool tmp95 = os__mkdir(d);
       if (!tmp95.ok) {
@@ -14254,9 +14255,9 @@ compiler__V *compiler__new_v(array_string args) {
   } else {
     _os = compiler__os_from_string(target_os);
   };
-  if (!os__dir_exists(vlib_path) ||
-      !os__dir_exists(string_add(string_add(vlib_path, os__path_separator),
-                                 tos3("builtin")))) {
+  if (!os__is_dir(vlib_path) ||
+      !os__is_dir(string_add(string_add(vlib_path, os__path_separator),
+                             tos3("builtin")))) {
     println(tos3("vlib not found. It should be next to the V executable."));
     println(tos3("Go to https://vlang.io to install V."));
     printf("(os.executable=%.*s vlib_path=%.*s vexe_path=%.*s\n",
@@ -14384,7 +14385,7 @@ array_string compiler__env_vflags_and_os_args() {
 void compiler__vfmt(array_string args) {
   println(tos3("running vfmt..."));
   string file = *(string *)array_last(args);
-  if (!os__file_exists(file)) {
+  if (!os__exists(file)) {
     printf("\"%.*s\" does not exist\n", file.len, file.str);
     v_exit(1);
   };
@@ -14673,7 +14674,7 @@ void compiler__generate_vh(string mod) {
            : (mod));
   string path = string_add(dir, tos3(".vh"));
   string pdir = string_all_before_last(dir, os__path_separator);
-  if (!os__dir_exists(pdir)) {
+  if (!os__is_dir(pdir)) {
     os__mkdir_all(pdir);
   };
   Option_os__File tmp1 = os__create(path);
@@ -15056,7 +15057,7 @@ Option_string compiler__V_find_module_path(compiler__V *v, string mod) {
       printf("  >> trying to find %.*s in %.*s ...\n", mod.len, mod.str,
              try_path.len, try_path.str);
     };
-    if (os__dir_exists(try_path)) {
+    if (os__is_dir(try_path)) {
       string tmp32 = OPTION_CAST(string)(try_path);
       return opt_ok(&tmp32, sizeof(string));
     };
@@ -15221,8 +15222,7 @@ Option_compiler__VsInstallation compiler__find_vs(string vswhere_dir,
            res.output.str, v.len, v.str, host_arch.len, host_arch.str);
   string include_path = _STR("%.*s\\VC\\Tools\\MSVC\\%.*s\\include",
                              res.output.len, res.output.str, v.len, v.str);
-  if (os__file_exists(
-          _STR("%.*s\\vcruntime.lib", lib_path.len, lib_path.str))) {
+  if (os__exists(_STR("%.*s\\vcruntime.lib", lib_path.len, lib_path.str))) {
     string p = _STR("%.*s\\VC\\Tools\\MSVC\\%.*s\\bin\\Host%.*s\\%.*s",
                     res.output.len, res.output.str, v.len, v.str, host_arch.len,
                     host_arch.str, host_arch.len, host_arch.str);
@@ -15460,7 +15460,7 @@ void compiler__build_thirdparty_obj_file_with_msvc(
   ;
   string obj_path = _STR("%.*sbj", path.len, path.str);
   obj_path = os__realpath(obj_path);
-  if (os__file_exists(obj_path)) {
+  if (os__exists(obj_path)) {
     printf("%.*s already build.\n", obj_path.len, obj_path.str);
 
     return;
@@ -19478,7 +19478,7 @@ void compiler__Parser_insert_query(compiler__Parser *p, int fn_ph) {
                                  sfields.str, vals.len, vals.str, nr_vals));
 }
 compiler__Scanner *compiler__new_scanner_file(string file_path) {
-  if (!os__file_exists(file_path)) {
+  if (!os__exists(file_path)) {
     compiler__verror(_STR("%.*s doesn't exist", file_path.len, file_path.str));
   };
   Option_string tmp1 = os__read_file(file_path);
@@ -22280,7 +22280,7 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
 string compiler__get_vtmp_folder() {
   string vtmp = filepath__join(os__tmpdir(),
                                &(varg_string){.len = 1, .args = {tos3("v")}});
-  if (!os__dir_exists(vtmp)) {
+  if (!os__is_dir(vtmp)) {
     Option_bool tmp1 = os__mkdir(vtmp);
     if (!tmp1.ok) {
       string err = tmp1.error;
@@ -22311,7 +22311,7 @@ void compiler__launch_tool(string tname) {
   string tool_command = _STR("\"%.*s\" %.*s", tool_exe.len, tool_exe.str,
                              tool_args.len, tool_args.str);
   bool tool_should_be_recompiled = 0;
-  if (!os__file_exists(tool_exe)) {
+  if (!os__exists(tool_exe)) {
     tool_should_be_recompiled = 1;
   } else {
     if (os__file_last_mod_unix(tool_exe) <= os__file_last_mod_unix(vexe)) {
@@ -22773,7 +22773,7 @@ string vweb_dot_tmpl__compile_template(string path) {
   html = *(string *)tmp1.data;
   ;
   string header = tos3("");
-  if (os__file_exists(tos3("header.html"))) {
+  if (os__exists(tos3("header.html"))) {
     Option_string tmp2 = os__read_file(tos3("header.html"));
     string h;
     if (!tmp2.ok) {
