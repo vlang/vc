@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a57e29d"
+#define V_COMMIT_HASH "2144c16"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fb237b9"
+#define V_COMMIT_HASH "a57e29d"
 #endif
 #include <inttypes.h>
 
@@ -1274,6 +1274,7 @@ void os__on_segfault(void *f);
 string os__executable();
 bool os__dir_exists(string path);
 bool os__is_dir(string path);
+bool os__is_link(string path);
 void os__chdir(string path);
 string os__getwd();
 string os__realpath(string fpath);
@@ -2061,6 +2062,7 @@ u64 strconv__max_u64;
 #define os__O_TRUNC 128
 int os__S_IFMT;
 int os__S_IFDIR;
+int os__S_IFLNK;
 int os__STD_INPUT_HANDLE;
 int os__STD_OUTPUT_HANDLE;
 int os__STD_ERROR_HANDLE;
@@ -5903,7 +5905,7 @@ bool os__is_dir(string path) {
 #ifdef _WIN32
   string _path = string_replace(path, tos3("/"), tos3("\\"));
   u32 attr = GetFileAttributesW(string_to_wide(_path));
-  if (((int)(attr)) == ((int)(INVALID_FILE_ATTRIBUTES))) {
+  if (((int)(attr)) == INVALID_FILE_ATTRIBUTES) {
     return 0;
   };
   if ((((int)(attr)) & FILE_ATTRIBUTE_DIRECTORY) != 0) {
@@ -5914,13 +5916,21 @@ bool os__is_dir(string path) {
   struct /*c struct init*/
 
       stat statbuf;
-  byte *cstr = path.str;
-  if (stat((char *)cstr, &statbuf) != 0) {
+  if (stat((char *)path.str, &statbuf) != 0) {
     return 0;
   };
   return (((int)(statbuf.st_mode)) & os__S_IFMT) == os__S_IFDIR;
 #endif
   ;
+}
+bool os__is_link(string path) {
+  struct /*c struct init*/
+
+      stat statbuf;
+  if (lstat((char *)path.str, &statbuf) != 0) {
+    return 0;
+  };
+  return (((int)(statbuf.st_mode)) & os__S_IFMT) == os__S_IFLNK;
 }
 void os__chdir(string path) {
 #ifdef _WIN32
@@ -23014,6 +23024,7 @@ void init() {
   strconv__max_u64 = ((u64)(UINT64_MAX));
   os__S_IFMT = 0xF000;
   os__S_IFDIR = 0x4000;
+  os__S_IFLNK = 0xa000;
   os__STD_INPUT_HANDLE = -10;
   os__STD_OUTPUT_HANDLE = -11;
   os__STD_ERROR_HANDLE = -12;
