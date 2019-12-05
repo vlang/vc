@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "867f952"
+#define V_COMMIT_HASH "6dd1270"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fb546f3"
+#define V_COMMIT_HASH "867f952"
 #endif
 #include <inttypes.h>
 
@@ -2929,7 +2929,6 @@ byte *v_malloc(int n) {
   if (n < 0) {
     v_panic(tos3("malloc(<0)"));
   };
-  v_free(malloc(n));
   byte *ptr = malloc(n);
   if (isnil(ptr)) {
     v_panic(_STR("malloc(%d) failed", n));
