@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "79b26b1"
+#define V_COMMIT_HASH "71c0c48"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cca650c"
+#define V_COMMIT_HASH "79b26b1"
 #endif
 #include <inttypes.h>
 
@@ -19395,9 +19395,9 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
   if (p->tok == compiler__compiler__TokenKind_name &&
       string_eq(p->lit, tos3("where"))) {
     compiler__Parser_next(p);
-    _V_MulRet_string_V_string _V_mret_432___expr = compiler__Parser_tmp_expr(p);
-    string expr = _V_mret_432___expr.var_1;
     p->is_sql = 1;
+    _V_MulRet_string_V_string _V_mret_437___expr = compiler__Parser_tmp_expr(p);
+    string expr = _V_mret_437___expr.var_1;
     p->is_sql = 0;
     q = string_add(q, string_add(tos3(" where "), expr));
   };
@@ -19405,10 +19405,10 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
   if (p->tok == compiler__compiler__TokenKind_name &&
       string_eq(p->lit, tos3("limit"))) {
     compiler__Parser_next(p);
-    _V_MulRet_string_V_string _V_mret_480___limit =
-        compiler__Parser_tmp_expr(p);
-    string limit = _V_mret_480___limit.var_1;
     p->is_sql = 1;
+    _V_MulRet_string_V_string _V_mret_485___limit =
+        compiler__Parser_tmp_expr(p);
+    string limit = _V_mret_485___limit.var_1;
     p->is_sql = 0;
     q = string_add(q, string_add(tos3(" limit "), limit));
     if (string_eq(string_trim_space(limit), tos3("1"))) {
