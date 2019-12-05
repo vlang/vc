@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6dd1270"
+#define V_COMMIT_HASH "9d854c5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "867f952"
+#define V_COMMIT_HASH "6dd1270"
 #endif
 #include <inttypes.h>
 
@@ -5772,13 +5772,13 @@ string os__get_raw_line() {
   int max_line_chars = 256;
   byte *buf = ((byte *)(v_malloc(max_line_chars * 2)));
   if (is_atty(0) > 0) {
-    int h_input = GetStdHandle(os__STD_INPUT_HANDLE);
+    void *h_input = GetStdHandle(os__STD_INPUT_HANDLE);
     u32 nr_chars = ((u32)(0));
     ReadConsole(h_input, (char *)buf, max_line_chars * 2,
                 ((voidptr)(&nr_chars)), 0);
     return string_from_wide2(((u16 *)(buf)), ((int)(nr_chars)));
   };
-  int res = fgetws(((u16 *)(buf)), max_line_chars, stdin);
+  void *res = fgetws(((u16 *)(buf)), max_line_chars, stdin);
   int len = ((int)(wcslen(((u16 *)(buf)))));
   if (!isnil(res)) {
     return string_from_wide2(((u16 *)(buf)), len);
@@ -5946,7 +5946,7 @@ bool os__is_dir(string path) {
 #ifdef _WIN32
   string _path = string_replace(path, tos3("/"), tos3("\\"));
   u32 attr = GetFileAttributesW(string_to_wide(_path));
-  if (((int)(attr)) == INVALID_FILE_ATTRIBUTES) {
+  if (attr == ((u32)(INVALID_FILE_ATTRIBUTES))) {
     return 0;
   };
   if ((((int)(attr)) & FILE_ATTRIBUTE_DIRECTORY) != 0) {
