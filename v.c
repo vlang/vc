@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2e30e14"
+#define V_COMMIT_HASH "2a1b0a8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "90e3ab8"
+#define V_COMMIT_HASH "2e30e14"
 #endif
 #include <inttypes.h>
 
@@ -1858,7 +1858,7 @@ void compiler__Parser_register_type_with_parent(compiler__Parser *p,
                                                 string strtyp, string parent);
 void compiler__Table_register_type_with_parent(compiler__Table *t, string typ,
                                                string parent);
-void compiler__Table_register_type2(compiler__Table *t, compiler__Type typ);
+void compiler__Table_register_type(compiler__Table *t, compiler__Type typ);
 void compiler__Table_rewrite_type(compiler__Table *t, compiler__Type typ);
 void compiler__Table_add_field(compiler__Table *table, string type_name,
                                string field_name, string field_type,
@@ -8971,7 +8971,7 @@ void compiler__Parser_enum_decl(compiler__Parser *p, bool no_name) {
     };
     val++;
   };
-  compiler__Table_register_type2(
+  compiler__Table_register_type(
       p->table,
       (compiler__Type){.name = enum_name,
                        .mod = p->mod,
@@ -9385,7 +9385,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
                          .default_vals = new_array(0, 1, sizeof(string)),
                          .is_placeholder = 0,
                          .gen_str = 0};
-    compiler__Table_register_type2(p->table, fn_typ);
+    compiler__Table_register_type(p->table, fn_typ);
     compiler__Parser_gen(p, compiler__Table_fn_gen_name(p->table, &/*114*/ f));
     compiler__Parser_next(p);
     return compiler__Fn_typ_str(&/* ? */ f);
@@ -10362,7 +10362,7 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
           .gen_types = new_array(0, 1, sizeof(string)),
           .default_vals = new_array(0, 1, sizeof(string)),
           .gen_str = 0};
-      compiler__Table_register_type2(p->table, receiver_t);
+      compiler__Table_register_type(p->table, receiver_t);
     };
     compiler__Parser_add_method(p, receiver_t.name, f);
   } else if (compiler__Parser_first_pass(&/* ? */ *p)) {
@@ -11446,7 +11446,7 @@ string compiler__Parser_register_vargs_stuct(compiler__Parser *p, string typ,
                        .gen_str = 0};
   int varg_len = len;
   if (!compiler__Table_known_type(&/* ? */ *p->table, vargs_struct)) {
-    compiler__Table_register_type2(p->table, varg_type);
+    compiler__Table_register_type(p->table, varg_type);
     _PUSH(&p->cgen->typedefs,
           (/*typ = array_string   tmp_typ=string*/ _STR(
               "typedef struct %.*s %.*s;\n", vargs_struct.len, vargs_struct.str,
@@ -11574,7 +11574,7 @@ string compiler__Parser_register_multi_return_stuct(compiler__Parser *p,
   if (compiler__Table_known_type(&/* ? */ *p->table, typ)) {
     return typ;
   };
-  compiler__Table_register_type2(
+  compiler__Table_register_type(
       p->table,
       (compiler__Type){.cat = compiler__compiler__TypeCategory_struct_,
                        .name = typ,
@@ -16350,7 +16350,7 @@ void compiler__Parser_type_decl(compiler__Parser *p) {
       p, _STR("typedef %.*s %.*s; //type alias name=\"%.*s\" parent=`%.*s`",
               _struct.len, _struct.str, nt_pair.len, nt_pair.str, name.len,
               name.str, parent.name.len, parent.name.str));
-  compiler__Table_register_type2(
+  compiler__Table_register_type(
       p->table,
       (compiler__Type){.name = name,
                        .parent = parent.name,
@@ -16568,7 +16568,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
                          .default_vals = new_array(0, 1, sizeof(string)),
                          .is_placeholder = 0,
                          .gen_str = 0};
-    compiler__Table_register_type2(p->table, fn_typ);
+    compiler__Table_register_type(p->table, fn_typ);
     return compiler__Fn_typ_str(&/* ? */ f);
   };
   int arr_level = 0;
@@ -18985,7 +18985,7 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
                          .default_vals = new_array(0, 1, sizeof(string)),
                          .is_placeholder = 0,
                          .gen_str = 0};
-    compiler__Table_register_type2(p->table, fn_typ);
+    compiler__Table_register_type(p->table, fn_typ);
     return fn_typ;
   };
   bool is_arr = 0;
@@ -20336,7 +20336,7 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
                            .gen_str = 0};
   };
   if (is_c && is_struct && p->tok != compiler__compiler__TokenKind_lcbr) {
-    compiler__Table_register_type2(p->table, typ);
+    compiler__Table_register_type(p->table, typ);
 
     return;
   };
@@ -20359,7 +20359,7 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
     };
   };
   if (!is_ph && compiler__Parser_first_pass(&/* ? */ *p)) {
-    compiler__Table_register_type2(p->table, typ);
+    compiler__Table_register_type(p->table, typ);
   };
   bool did_gen_something = 0;
   int i = -1;
@@ -20971,7 +20971,7 @@ void compiler__Parser_register_type_with_parent(compiler__Parser *p,
                        .default_vals = new_array(0, 1, sizeof(string)),
                        .is_placeholder = 0,
                        .gen_str = 0};
-  compiler__Table_register_type2(p->table, typ);
+  compiler__Table_register_type(p->table, typ);
 }
 void compiler__Table_register_type_with_parent(compiler__Table *t, string typ,
                                                string parent) {
@@ -20994,7 +20994,7 @@ void compiler__Table_register_type_with_parent(compiler__Table *t, string typ,
                                .is_placeholder = 0,
                                .gen_str = 0}});
 }
-void compiler__Table_register_type2(compiler__Table *t, compiler__Type typ) {
+void compiler__Table_register_type(compiler__Table *t, compiler__Type typ) {
   if (typ.name.len == 0) {
 
     return;
