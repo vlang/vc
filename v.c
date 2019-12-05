@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2a1b0a8"
+#define V_COMMIT_HASH "4ca453b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2e30e14"
+#define V_COMMIT_HASH "2a1b0a8"
 #endif
 #include <inttypes.h>
 
@@ -13142,14 +13142,13 @@ void compiler__V_generate_hot_reload_code(compiler__V *v) {
     if (v->os != compiler__compiler__OS_windows) {
       compiler__CGen_genln(
           cgen,
-          tos3(
-              "\n#include <dlfcn.h>\nvoid* live_lib=0;\nint load_so(byteptr "
-              "path) {\n	char cpath[1024];\n	"
-              "sprintf(cpath,\"./%s\", path);\n	//printf(\"load_so %s\\n\", "
-              "cpath);\n	if (live_lib) dlclose(live_lib);\n	"
-              "live_lib = dlopen(cpath, RTLD_LAZY);\n	if (!live_lib) "
-              "{\n		puts(\"open failed\");\n		"
-              "exit(1);\n		return 0;\n	}\n"));
+          tos3("\nvoid* live_lib=0;\nint load_so(byteptr path) {\n	char "
+               "cpath[1024];\n	sprintf(cpath,\"./%s\", path);\n	"
+               "//printf(\"load_so %s\\n\", cpath);\n	if (live_lib) "
+               "dlclose(live_lib);\n	live_lib = dlopen(cpath, "
+               "RTLD_LAZY);\n	if (!live_lib) {\n		puts(\"open "
+               "failed\");\n		exit(1);\n		return "
+               "0;\n	}\n"));
       array_string tmp5 = cgen->so_fns;
       for (int tmp6 = 0; tmp6 < tmp5.len; tmp6++) {
         string so_fn = ((string *)tmp5.data)[tmp6];
@@ -13358,6 +13357,11 @@ void compiler__V_compile(compiler__V *v) {
   if ((_IN(string, (tos3("-debug_alloc")), os__args))) {
     compiler__CGen_genln(cgen, tos3("#define DEBUG_ALLOC 1"));
   };
+  if (v->pref->is_live && v->os != compiler__compiler__OS_windows) {
+    _PUSH(&cgen->includes,
+          (/*typ = array_string   tmp_typ=string*/ tos3("#include <dlfcn.h>")),
+          tmp10, string);
+  };
   compiler__CGen_genln(cgen,
                        tos3("// this line will be replaced with definitions"));
   int defs_pos = cgen->lines.len - 1;
@@ -13365,9 +13369,9 @@ void compiler__V_compile(compiler__V *v) {
     defs_pos = 0;
   };
   cgen->nogen = q;
-  array_string tmp10 = v->files;
-  for (int i = 0; i < tmp10.len; i++) {
-    string file = ((string *)tmp10.data)[i];
+  array_string tmp11 = v->files;
+  for (int i = 0; i < tmp11.len; i++) {
+    string file = ((string *)tmp11.data)[i];
 
     compiler__V_parse(v, file, compiler__compiler__Pass_main);
   };
@@ -13416,9 +13420,9 @@ void compiler__V_compile(compiler__V *v) {
   compiler__V_generate_hot_reload_code(&/* ? */ *v);
   if (v->pref->is_verbose) {
     compiler__V_log(&/* ? */ *v, tos3("flags="));
-    array_compiler__CFlag tmp11 = compiler__V_get_os_cflags(&/* ? */ *v);
-    for (int tmp12 = 0; tmp12 < tmp11.len; tmp12++) {
-      compiler__CFlag flag = ((compiler__CFlag *)tmp11.data)[tmp12];
+    array_compiler__CFlag tmp12 = compiler__V_get_os_cflags(&/* ? */ *v);
+    for (int tmp13 = 0; tmp13 < tmp12.len; tmp13++) {
+      compiler__CFlag flag = ((compiler__CFlag *)tmp12.data)[tmp13];
 
       println(string_add(tos3(" * "), compiler__CFlag_format(&/* ? */ flag)));
     };
@@ -13444,19 +13448,19 @@ void compiler__V_compile_x64(compiler__V *v) {
                                       &(varg_string){.len = 2,
                                                      .args = {tos3("builtin"),
                                                               tos3("bare")}}))),
-      tmp13, array_string);
-  _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ v->dir), tmp14,
+      tmp14, array_string);
+  _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ v->dir), tmp15,
         string);
   compiler_dot_x64__Gen_generate_elf_header(v->x64);
-  array_string tmp15 = v->files;
-  for (int tmp16 = 0; tmp16 < tmp15.len; tmp16++) {
-    string f = ((string *)tmp15.data)[tmp16];
+  array_string tmp16 = v->files;
+  for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
+    string f = ((string *)tmp16.data)[tmp17];
 
     compiler__V_parse(v, f, compiler__compiler__Pass_decl);
   };
-  array_string tmp17 = v->files;
-  for (int tmp18 = 0; tmp18 < tmp17.len; tmp18++) {
-    string f = ((string *)tmp17.data)[tmp18];
+  array_string tmp18 = v->files;
+  for (int tmp19 = 0; tmp19 < tmp18.len; tmp19++) {
+    string f = ((string *)tmp18.data)[tmp19];
 
     compiler__V_parse(v, f, compiler__compiler__Pass_main);
   };
@@ -13488,9 +13492,9 @@ void compiler__V_generate_init(compiler__V *v) {
       call_mod_init_consts =
           string_add(call_mod_init_consts, tos3("builtin__init_consts();\n"));
     };
-    array_string tmp19 = v->table->imports;
-    for (int tmp20 = 0; tmp20 < tmp19.len; tmp20++) {
-      string mod = ((string *)tmp19.data)[tmp20];
+    array_string tmp20 = v->table->imports;
+    for (int tmp21 = 0; tmp21 < tmp20.len; tmp21++) {
+      string mod = ((string *)tmp20.data)[tmp21];
 
       string init_fn_name =
           string_add(compiler__mod_gen_name(mod), tos3("__init"));
@@ -13564,7 +13568,7 @@ void compiler__V_generate_main(compiler__V *v) {
               "#line %d \"%.*s\"", lines_so_far,
               compiler__cescaped_path(os__realpath(cgen->out_path)).len,
               compiler__cescaped_path(os__realpath(cgen->out_path)).str)),
-          tmp21, string);
+          tmp22, string);
     compiler__CGen_genln(cgen, tos3(""));
   };
   if (v->pref->build_mode != compiler__compiler__BuildMode_build_module) {
@@ -13593,12 +13597,12 @@ void compiler__V_generate_main(compiler__V *v) {
         compiler__CGen_genln(cgen,
                              tos3("BenchedTests bt = main__start_testing();"));
       };
-      map_compiler__Fn tmp22 = v->table->fns;
-      array_string keys_tmp22 = map_keys(&tmp22);
-      for (int l = 0; l < keys_tmp22.len; l++) {
-        string _ = ((string *)keys_tmp22.data)[l];
+      map_compiler__Fn tmp23 = v->table->fns;
+      array_string keys_tmp23 = map_keys(&tmp23);
+      for (int l = 0; l < keys_tmp23.len; l++) {
+        string _ = ((string *)keys_tmp23.data)[l];
         compiler__Fn f = {0};
-        map_get(tmp22, _, &f);
+        map_get(tmp23, _, &f);
 
         if (string_starts_with(f.name, tos3("main__test_"))) {
           if (v->pref->is_stats) {
@@ -13666,9 +13670,9 @@ void compiler__V_run_compiled_executable_and_exit(compiler__V v) {
                                 tos3(".exe"), tos3(""))),
       tos3("\""));
   string args_after = tos3(" ");
-  array_string tmp23 = args;
-  for (int i = 0; i < tmp23.len; i++) {
-    string a = ((string *)tmp23.data)[i];
+  array_string tmp24 = args;
+  for (int i = 0; i < tmp24.len; i++) {
+    string a = ((string *)tmp24.data)[i];
 
     if (i == 0) {
       continue;
@@ -13708,22 +13712,22 @@ array_string compiler__V_v_files_from_dir(compiler__V *v, string dir) {
   } else if (!os__is_dir(dir)) {
     compiler__verror(_STR("%.*s isn't a directory", dir.len, dir.str));
   };
-  Option_array_string tmp26 = os__ls(dir);
+  Option_array_string tmp27 = os__ls(dir);
   array_string files;
-  if (!tmp26.ok) {
-    string err = tmp26.error;
-    int errcode = tmp26.ecode;
+  if (!tmp27.ok) {
+    string err = tmp27.error;
+    int errcode = tmp27.ecode;
     v_panic(err);
   }
-  files = *(array_string *)tmp26.data;
+  files = *(array_string *)tmp27.data;
   ;
   if (v->pref->is_verbose) {
     printf("v_files_from_dir (\"%.*s\")\n", dir.len, dir.str);
   };
   array_string_sort(&/* ? */ files);
-  array_string tmp27 = files;
-  for (int tmp28 = 0; tmp28 < tmp27.len; tmp28++) {
-    string file = ((string *)tmp27.data)[tmp28];
+  array_string tmp28 = files;
+  for (int tmp29 = 0; tmp29 < tmp28.len; tmp29++) {
+    string file = ((string *)tmp28.data)[tmp29];
 
     if (!string_ends_with(file, tos3(".v")) &&
         !string_ends_with(file, tos3(".vh"))) {
@@ -13763,7 +13767,7 @@ array_string compiler__V_v_files_from_dir(compiler__V *v, string dir) {
           (/*typ = array_string   tmp_typ=string*/ _STR(
               "%.*s%.*s%.*s", dir.len, dir.str, os__path_separator.len,
               os__path_separator.str, file.len, file.str)),
-          tmp29, string);
+          tmp30, string);
   };
   return res;
 }
@@ -13776,24 +13780,24 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
            os__path_separator.len, os__path_separator.str);
   if (v->pref->is_cache && os__exists(builtin_vh)) {
     _PUSH(&v->cached_mods,
-          (/*typ = array_string   tmp_typ=string*/ tos3("builtin")), tmp30,
+          (/*typ = array_string   tmp_typ=string*/ tos3("builtin")), tmp31,
           string);
     builtin_files = new_array_from_c_array(
         1, 1, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 1){builtin_vh});
   };
-  array_string tmp31 = builtin_files;
-  for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
-    string file = ((string *)tmp31.data)[tmp32];
+  array_string tmp32 = builtin_files;
+  for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
+    string file = ((string *)tmp32.data)[tmp33];
 
-    _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ file), tmp33,
+    _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ file), tmp34,
           string);
     compiler__Parser p = compiler__V_new_parser_from_file(v, file);
     compiler__Parser_parse(&/* ? */ p, compiler__compiler__Pass_imports);
     compiler__V_add_parser(v, p);
   };
-  array_string tmp34 = compiler__V_get_user_files(&/* ? */ *v);
-  for (int tmp35 = 0; tmp35 < tmp34.len; tmp35++) {
-    string file = ((string *)tmp34.data)[tmp35];
+  array_string tmp35 = compiler__V_get_user_files(&/* ? */ *v);
+  for (int tmp36 = 0; tmp36 < tmp35.len; tmp36++) {
+    string file = ((string *)tmp35.data)[tmp36];
 
     compiler__Parser p = compiler__V_new_parser_from_file(v, file);
     compiler__Parser_parse(&/* ? */ p, compiler__compiler__Pass_imports);
@@ -13803,7 +13807,7 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
       println(array_string_str(v->files));
       compiler__Parser_register_import(&/* ? */ p, tos3("os"), 0);
       _PUSH(&p.table->imports,
-            (/*typ = array_string   tmp_typ=string*/ tos3("os")), tmp36,
+            (/*typ = array_string   tmp_typ=string*/ tos3("os")), tmp37,
             string);
       compiler__Table_register_module(p.table, tos3("os"));
     };
@@ -13816,9 +13820,9 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
   };
   array_string imported_mods = compiler__DepGraph_imports(
       &/* ? */ *compiler__V_resolve_deps(&/* ? */ *v));
-  array_string tmp37 = imported_mods;
-  for (int tmp38 = 0; tmp38 < tmp37.len; tmp38++) {
-    string mod = ((string *)tmp37.data)[tmp38];
+  array_string tmp38 = imported_mods;
+  for (int tmp39 = 0; tmp39 < tmp38.len; tmp39++) {
+    string mod = ((string *)tmp38.data)[tmp39];
 
     if (string_eq(mod, tos3("builtin")) || string_eq(mod, tos3("main"))) {
       continue;
@@ -13836,25 +13840,25 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
         eprintln(_STR("using cached module `%.*s`: %.*s", mod.len, mod.str,
                       vh_path.len, vh_path.str));
         _PUSH(&v->cached_mods, (/*typ = array_string   tmp_typ=string*/ mod),
-              tmp39, string);
-        _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ vh_path),
               tmp40, string);
+        _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ vh_path),
+              tmp41, string);
         continue;
       };
     };
     array_string vfiles =
         compiler__V_get_imported_module_files(&/* ? */ *v, mod);
-    array_string tmp41 = vfiles;
-    for (int tmp42 = 0; tmp42 < tmp41.len; tmp42++) {
-      string file = ((string *)tmp41.data)[tmp42];
+    array_string tmp42 = vfiles;
+    for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
+      string file = ((string *)tmp42.data)[tmp43];
 
-      _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ file), tmp43,
+      _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ file), tmp44,
             string);
     };
   };
-  array_compiler__Parser tmp44 = v->parsers;
-  for (int tmp45 = 0; tmp45 < tmp44.len; tmp45++) {
-    compiler__Parser p = ((compiler__Parser *)tmp44.data)[tmp45];
+  array_compiler__Parser tmp45 = v->parsers;
+  for (int tmp46 = 0; tmp46 < tmp45.len; tmp46++) {
+    compiler__Parser p = ((compiler__Parser *)tmp45.data)[tmp46];
 
     if (string_ne(p.mod, tos3("main"))) {
       continue;
@@ -13863,7 +13867,7 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
       continue;
     };
     _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ p.file_path),
-          tmp46, string);
+          tmp47, string);
   };
 }
 array_string compiler__V_get_builtin_files(compiler__V *v) {
@@ -13899,7 +13903,7 @@ array_string compiler__V_get_user_files(compiler__V *v) {
               &(varg_string){.len = 3,
                              .args = {tos3("compiler"), tos3("preludes"),
                                       tos3("tests_assertions.v")}})),
-          tmp47, string);
+          tmp48, string);
   };
   if (v->pref->is_test && v->pref->is_stats) {
     _PUSH(&user_files,
@@ -13908,7 +13912,7 @@ array_string compiler__V_get_user_files(compiler__V *v) {
               &(varg_string){.len = 3,
                              .args = {tos3("compiler"), tos3("preludes"),
                                       tos3("tests_with_stats.v")}})),
-          tmp48, string);
+          tmp49, string);
   };
   bool is_test_with_imports =
       string_ends_with(dir, tos3("_test.v")) &&
@@ -13917,23 +13921,23 @@ array_string compiler__V_get_user_files(compiler__V *v) {
        string_contains(dir, _STR("%.*sc2volt", os__path_separator.len,
                                  os__path_separator.str)));
   if (is_test_with_imports) {
-    _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ dir), tmp49,
+    _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ dir), tmp50,
           string);
     int pos = string_last_index(dir, os__path_separator);
     dir = string_add(string_substr2(dir, 0, pos, false), os__path_separator);
   };
   if (string_ends_with(dir, tos3(".v")) ||
       string_ends_with(dir, tos3(".vsh"))) {
-    _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ dir), tmp52,
+    _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ dir), tmp53,
           string);
     dir = string_all_before(dir, os__path_separator);
   } else {
     array_string files = compiler__V_v_files_from_dir(&/* ? */ *v, dir);
-    array_string tmp53 = files;
-    for (int tmp54 = 0; tmp54 < tmp53.len; tmp54++) {
-      string file = ((string *)tmp53.data)[tmp54];
+    array_string tmp54 = files;
+    for (int tmp55 = 0; tmp55 < tmp54.len; tmp55++) {
+      string file = ((string *)tmp54.data)[tmp55];
 
-      _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ file), tmp55,
+      _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ file), tmp56,
             string);
     };
   };
@@ -13950,13 +13954,13 @@ array_string compiler__V_get_user_files(compiler__V *v) {
 array_string compiler__V_get_imported_module_files(compiler__V *v, string mod) {
   array_string files = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  array_compiler__Parser tmp56 = v->parsers;
-  for (int tmp57 = 0; tmp57 < tmp56.len; tmp57++) {
-    compiler__Parser p = ((compiler__Parser *)tmp56.data)[tmp57];
+  array_compiler__Parser tmp57 = v->parsers;
+  for (int tmp58 = 0; tmp58 < tmp57.len; tmp58++) {
+    compiler__Parser p = ((compiler__Parser *)tmp57.data)[tmp58];
 
     if (string_eq(p.mod, mod)) {
       _PUSH(&files, (/*typ = array_string   tmp_typ=string*/ p.file_path),
-            tmp58, string);
+            tmp59, string);
     };
   };
   return files;
@@ -13964,27 +13968,27 @@ array_string compiler__V_get_imported_module_files(compiler__V *v, string mod) {
 void compiler__V_parse_lib_imports(compiler__V *v) {
   array_string done_imports = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  int tmp59 = 0;
+  int tmp60 = 0;
   ;
-  for (int tmp60 = tmp59; tmp60 < v->parsers.len; tmp60++) {
-    int i = tmp60;
+  for (int tmp61 = tmp60; tmp61 < v->parsers.len; tmp61++) {
+    int i = tmp61;
 
-    map_string tmp61 =
+    map_string tmp62 =
         (*(compiler__Parser *)array_get(v->parsers, i)).import_table.imports;
-    array_string keys_tmp61 = map_keys(&tmp61);
-    for (int l = 0; l < keys_tmp61.len; l++) {
-      string _ = ((string *)keys_tmp61.data)[l];
+    array_string keys_tmp62 = map_keys(&tmp62);
+    for (int l = 0; l < keys_tmp62.len; l++) {
+      string _ = ((string *)keys_tmp62.data)[l];
       string mod = tos3("");
-      map_get(tmp61, _, &mod);
+      map_get(tmp62, _, &mod);
 
       if ((_IN(string, (mod), done_imports))) {
         continue;
       };
-      Option_string tmp64 = compiler__V_find_module_path(&/* ? */ *v, mod);
+      Option_string tmp65 = compiler__V_find_module_path(&/* ? */ *v, mod);
       string import_path;
-      if (!tmp64.ok) {
-        string err = tmp64.error;
-        int errcode = tmp64.ecode;
+      if (!tmp65.ok) {
+        string err = tmp65.error;
+        int errcode = tmp65.ecode;
         compiler__Parser_error_with_token_index(
             &/* ? */ (*(compiler__Parser *)array_get(v->parsers, i)),
             _STR("cannot import module \"%.*s\" (not found)", mod.len, mod.str),
@@ -13994,7 +13998,7 @@ void compiler__V_parse_lib_imports(compiler__V *v) {
                 mod));
         break;
       }
-      import_path = *(string *)tmp64.data;
+      import_path = *(string *)tmp65.data;
       ;
       array_string vfiles =
           compiler__V_v_files_from_dir(&/* ? */ *v, import_path);
@@ -14008,9 +14012,9 @@ void compiler__V_parse_lib_imports(compiler__V *v) {
                      .import_table,
                 mod));
       };
-      array_string tmp73 = vfiles;
-      for (int tmp74 = 0; tmp74 < tmp73.len; tmp74++) {
-        string file = ((string *)tmp73.data)[tmp74];
+      array_string tmp74 = vfiles;
+      for (int tmp75 = 0; tmp75 < tmp74.len; tmp75++) {
+        string file = ((string *)tmp74.data)[tmp75];
 
         int pidx = compiler__V_parse(v, file, compiler__compiler__Pass_imports);
         string p_mod = (*(compiler__Parser *)array_get(v->parsers, pidx)).mod;
@@ -14027,7 +14031,7 @@ void compiler__V_parse_lib_imports(compiler__V *v) {
               1);
         };
       };
-      _PUSH(&done_imports, (/*typ = array_string   tmp_typ=string*/ mod), tmp81,
+      _PUSH(&done_imports, (/*typ = array_string   tmp_typ=string*/ mod), tmp82,
             string);
     };
   };
@@ -14038,14 +14042,14 @@ string compiler__get_arg(string joined_args, string arg, string def) {
 }
 string compiler__get_param_after(string joined_args, string arg, string def) {
   string key = _STR("%.*s ", arg.len, arg.str);
-  Option_int tmp82 = string_index(joined_args, key);
+  Option_int tmp83 = string_index(joined_args, key);
   int pos;
-  if (!tmp82.ok) {
-    string err = tmp82.error;
-    int errcode = tmp82.ecode;
+  if (!tmp83.ok) {
+    string err = tmp83.error;
+    int errcode = tmp83.ecode;
     return def;
   }
-  pos = *(int *)tmp82.data;
+  pos = *(int *)tmp83.data;
   ;
   pos += key.len;
   int space = string_index_after(joined_args, tos3(" "), pos);
@@ -14058,9 +14062,9 @@ string compiler__get_param_after(string joined_args, string arg, string def) {
 string compiler__get_cmdline_option(array_string args, string param,
                                     string def) {
   bool found = 0;
-  array_string tmp85 = args;
-  for (int tmp86 = 0; tmp86 < tmp85.len; tmp86++) {
-    string arg = ((string *)tmp85.data)[tmp86];
+  array_string tmp86 = args;
+  for (int tmp87 = 0; tmp87 < tmp86.len; tmp87++) {
+    string arg = ((string *)tmp86.data)[tmp87];
 
     if (found) {
       return arg;
@@ -14079,19 +14083,19 @@ void compiler__V_log(compiler__V *v, string s) {
 }
 compiler__V *compiler__new_v(array_string args) {
   if (!os__is_dir(compiler__v_modules_path)) {
-    Option_bool tmp87 = os__mkdir(compiler__v_modules_path);
-    if (!tmp87.ok) {
-      string err = tmp87.error;
-      int errcode = tmp87.ecode;
-      v_panic(err);
-    };
-    Option_bool tmp88 =
-        os__mkdir(_STR("%.*s%.*scache", compiler__v_modules_path.len,
-                       compiler__v_modules_path.str, os__path_separator.len,
-                       os__path_separator.str));
+    Option_bool tmp88 = os__mkdir(compiler__v_modules_path);
     if (!tmp88.ok) {
       string err = tmp88.error;
       int errcode = tmp88.ecode;
+      v_panic(err);
+    };
+    Option_bool tmp89 =
+        os__mkdir(_STR("%.*s%.*scache", compiler__v_modules_path.len,
+                       compiler__v_modules_path.str, os__path_separator.len,
+                       os__path_separator.str));
+    if (!tmp89.ok) {
+      string err = tmp89.error;
+      int errcode = tmp89.ecode;
       v_panic(err);
     };
   };
@@ -14172,10 +14176,10 @@ compiler__V *compiler__new_v(array_string args) {
     string d = string_all_before_last(out_name, os__path_separator);
     if (!os__is_dir(d)) {
       printf("creating a new directory \"%.*s\"\n", d.len, d.str);
-      Option_bool tmp95 = os__mkdir(d);
-      if (!tmp95.ok) {
-        string err = tmp95.error;
-        int errcode = tmp95.ecode;
+      Option_bool tmp96 = os__mkdir(d);
+      if (!tmp96.ok) {
+        string err = tmp96.error;
+        int errcode = tmp96.ecode;
         v_panic(err);
       };
     };
@@ -14331,20 +14335,20 @@ array_string compiler__env_vflags_and_os_args() {
     _PUSH(&args,
           (/*typ = array_string   tmp_typ=string*/ (
               *(string *)array_get(os__args, 0))),
-          tmp96, string);
+          tmp97, string);
     _PUSH_MANY(&args,
                (/*typ = array_string   tmp_typ=string*/ string_split(
                    vflags, tos3(" "))),
-               tmp99, array_string);
+               tmp100, array_string);
     if (os__args.len > 1) {
       _PUSH_MANY(&args,
                  (/*typ = array_string   tmp_typ=string*/ array_slice2(
                      os__args, 1, -1, true)),
-                 tmp100, array_string);
+                 tmp101, array_string);
     };
   } else {
     _PUSH_MANY(&args, (/*typ = array_string   tmp_typ=string*/ os__args),
-               tmp103, array_string);
+               tmp104, array_string);
   };
   return args;
 }
@@ -14401,33 +14405,33 @@ string compiler__cescaped_path(string s) {
   return string_replace(s, tos3("\\"), tos3("\\\\"));
 }
 compiler__OS compiler__os_from_string(string os) {
-  string tmp104 = os;
+  string tmp105 = os;
 
-  if (string_eq(tmp104, tos3("linux"))) {
+  if (string_eq(tmp105, tos3("linux"))) {
     return compiler__compiler__OS_linux;
-  } else if (string_eq(tmp104, tos3("windows"))) {
+  } else if (string_eq(tmp105, tos3("windows"))) {
     return compiler__compiler__OS_windows;
-  } else if (string_eq(tmp104, tos3("mac"))) {
+  } else if (string_eq(tmp105, tos3("mac"))) {
     return compiler__compiler__OS_mac;
-  } else if (string_eq(tmp104, tos3("macos"))) {
+  } else if (string_eq(tmp105, tos3("macos"))) {
     return compiler__compiler__OS_mac;
-  } else if (string_eq(tmp104, tos3("freebsd"))) {
+  } else if (string_eq(tmp105, tos3("freebsd"))) {
     return compiler__compiler__OS_freebsd;
-  } else if (string_eq(tmp104, tos3("openbsd"))) {
+  } else if (string_eq(tmp105, tos3("openbsd"))) {
     return compiler__compiler__OS_openbsd;
-  } else if (string_eq(tmp104, tos3("netbsd"))) {
+  } else if (string_eq(tmp105, tos3("netbsd"))) {
     return compiler__compiler__OS_netbsd;
-  } else if (string_eq(tmp104, tos3("dragonfly"))) {
+  } else if (string_eq(tmp105, tos3("dragonfly"))) {
     return compiler__compiler__OS_dragonfly;
-  } else if (string_eq(tmp104, tos3("js"))) {
+  } else if (string_eq(tmp105, tos3("js"))) {
     return compiler__compiler__OS_js;
-  } else if (string_eq(tmp104, tos3("solaris"))) {
+  } else if (string_eq(tmp105, tos3("solaris"))) {
     return compiler__compiler__OS_solaris;
-  } else if (string_eq(tmp104, tos3("android"))) {
+  } else if (string_eq(tmp105, tos3("android"))) {
     return compiler__compiler__OS_android;
-  } else if (string_eq(tmp104, tos3("msvc"))) {
+  } else if (string_eq(tmp105, tos3("msvc"))) {
     compiler__verror(tos3("use the flag `-cc msvc` to build using msvc"));
-  } else if (string_eq(tmp104, tos3("haiku"))) {
+  } else if (string_eq(tmp105, tos3("haiku"))) {
     return compiler__compiler__OS_haiku;
   };
   printf("bad os %.*s\n", os.len, os.str);
@@ -14448,7 +14452,7 @@ compiler__V *compiler__new_v_compiler_with_args(array_string args) {
   string vexe = compiler__vexe_path();
   array_string allargs = new_array_from_c_array(
       1, 1, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 1){vexe});
-  _PUSH_MANY(&allargs, (/*typ = array_string   tmp_typ=string*/ args), tmp105,
+  _PUSH_MANY(&allargs, (/*typ = array_string   tmp_typ=string*/ args), tmp106,
              array_string);
   os__setenv(tos3("VOSARGS"), array_string_join(allargs, tos3(" ")), 1);
   return compiler__new_v(allargs);
