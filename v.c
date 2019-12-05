@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "cca650c"
+#define V_COMMIT_HASH "79b26b1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cb46bf3"
+#define V_COMMIT_HASH "cca650c"
 #endif
 #include <inttypes.h>
 
@@ -279,7 +279,7 @@ typedef array array_compiler__Token;
 typedef struct compiler__ImportTable compiler__ImportTable;
 typedef Option Option_string;
 typedef struct compiler__MsvcResult compiler__MsvcResult;
-typedef voidptr RegKey; // type alias name="RegKey" parent=`voidptr`
+typedef void *RegKey; // type alias name="RegKey" parent=`void*`
 typedef Option Option_string;
 typedef struct compiler__WindowsKit compiler__WindowsKit;
 typedef Option Option_compiler__WindowsKit;
@@ -1612,7 +1612,7 @@ string compiler__type_default(string typ);
 void compiler__Parser_gen_array_push(compiler__Parser *p, int ph, string typ,
                                      string expr_type, string tmp,
                                      string elm_type);
-compiler__Type compiler__Parser_get_type3(compiler__Parser *p);
+compiler__Type compiler__Parser_get_type2(compiler__Parser *p);
 void compiler__Parser_gen_json_for_type(compiler__Parser *p,
                                         compiler__Type typ);
 bool compiler__is_js_prim(string typ);
@@ -12800,7 +12800,7 @@ void compiler__Parser_gen_array_push(compiler__Parser *p, int ph, string typ,
     };
   };
 }
-compiler__Type compiler__Parser_get_type3(compiler__Parser *p) {
+compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
   bool mul = 0;
   int nr_muls = 0;
   string typ = tos3("");
@@ -13036,6 +13036,12 @@ compiler__Type compiler__Parser_get_type3(compiler__Parser *p) {
   if (is_question) {
     typ = _STR("Option_%.*s", typ.len, typ.str);
     compiler__Table_register_type_with_parent(p->table, typ, tos3("Option"));
+  };
+  if (string_eq(typ, tos3("byteptr"))) {
+    typ = tos3("byte*");
+  };
+  if (string_eq(typ, tos3("voidptr"))) {
+    typ = tos3("void*");
   };
   return (compiler__Type){.name = typ,
                           .cat = cat,
@@ -16598,7 +16604,7 @@ void compiler__Parser_type_decl(compiler__Parser *p) {
         p, _STR("use `struct %.*s {` instead of `type %.*s struct {`", name.len,
                 name.str, name.len, name.str));
   };
-  compiler__Type parent = compiler__Parser_get_type3(p);
+  compiler__Type parent = compiler__Parser_get_type2(p);
   string nt_pair = compiler__Table_cgen_name_type_pair(&/* ? */ *p->table, name,
                                                        parent.name);
   string _struct =
@@ -20486,7 +20492,8 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
         ((is_pub_field) ? (compiler__compiler__AccessMod_public)
                         : (compiler__compiler__AccessMod_private));
     ;
-    string field_type = compiler__Parser_get_type(p);
+    compiler__Type tt = compiler__Parser_get_type2(p);
+    string field_type = tt.name;
     if (string_eq(field_type, name)) {
       compiler__Parser_error_with_token_index(
           p,
@@ -20505,10 +20512,10 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
     };
     if (p->tok == compiler__compiler__TokenKind_assign) {
       compiler__Parser_next(p);
-      _V_MulRet_string_V_string _V_mret_960_def_val_type_expr =
+      _V_MulRet_string_V_string _V_mret_965_def_val_type_expr =
           compiler__Parser_tmp_expr(p);
-      string def_val_type = _V_mret_960_def_val_type_expr.var_0;
-      string expr = _V_mret_960_def_val_type_expr.var_1;
+      string def_val_type = _V_mret_965_def_val_type_expr.var_0;
+      string expr = _V_mret_965_def_val_type_expr.var_1;
       if (string_ne(def_val_type, field_type)) {
         compiler__Parser_error(p, _STR("expected `%.*s` but got `%.*s`",
                                        field_type.len, field_type.str,
