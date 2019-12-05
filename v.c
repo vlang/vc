@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "cb46bf3"
+#define V_COMMIT_HASH "cca650c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0a38b30"
+#define V_COMMIT_HASH "cb46bf3"
 #endif
 #include <inttypes.h>
 
@@ -8085,12 +8085,18 @@ void compiler__Parser_print_error_context(compiler__Parser *p) {
   };
 }
 string compiler__normalized_error(string s) {
-  return string_replace(
+  string res = string_replace(
       string_replace(
           string_replace(string_replace(s, tos3("array_"), tos3("[]")),
                          tos3("__"), tos3(".")),
           tos3("Option_"), tos3("?")),
       tos3("main."), tos3(""));
+  if (string_contains(res, tos3("_V_MulRet_"))) {
+    res = string_replace(string_replace(res, tos3("_V_MulRet_"), tos3("(")),
+                         tos3("_V_"), tos3(", "));
+    res = string_add(string_substr2(res, 0, res.len - 1, false), tos3(")\""));
+  };
+  return res;
 }
 string compiler__ScannerPos_str(compiler__ScannerPos s) {
   return _STR("ScannerPos{ %5d , %5d , %5d }", s.pos, s.line_nr, s.last_nl_pos);
