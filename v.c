@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "be323e2"
+#define V_COMMIT_HASH "aed22a5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "71c0c48"
+#define V_COMMIT_HASH "be323e2"
 #endif
 #include <inttypes.h>
 
@@ -196,6 +196,116 @@ void reload_so();
 
 int g_test_oks = 0;
 int g_test_fails = 0;
+#define builtin__CP_UTF8 65001
+#define compiler_dot_x64__mag1 'E'
+#define compiler_dot_x64__mag2 'L'
+#define compiler_dot_x64__mag3 'F'
+#define compiler_dot_x64__ei_class 4
+#define compiler_dot_x64__elfclass64 2
+#define compiler_dot_x64__elfdata2lsb 1
+#define compiler_dot_x64__ev_current 1
+#define compiler_dot_x64__elf_osabi 0
+#define compiler_dot_x64__et_rel 1
+#define compiler_dot_x64__et_exec 2
+#define compiler_dot_x64__et_dyn 3
+#define compiler_dot_x64__sht_null 0
+#define strconv__int_size 32
+#define os__O_RDONLY 1
+#define os__O_WRONLY 2
+#define os__O_RDWR 3
+#define os__O_APPEND 8
+#define os__O_CREATE 16
+#define os__O_EXCL 32
+#define os__O_SYNC 64
+#define os__O_TRUNC 128
+#define os__MAX_PATH 4096
+#define os__PROT_READ 1
+#define os__PROT_WRITE 2
+#define compiler__MaxLocalVars 50
+#define compiler__max_module_depth 5
+#define compiler__single_quote '\''
+#define compiler__double_quote '"'
+#define compiler__error_context_before 2
+#define compiler__error_context_after 2
+#define compiler__NrTokens 140
+#define compiler__help_text                                                    \
+  tos3(                                                                        \
+      "Usage: v [options/commands] [file.v | directory]\n\n   When V is run "  \
+      "without any arguments, it is run in REPL mode.\n\n   When given a .v "  \
+      "file, it will be compiled. The executable will have the\n   same name " \
+      "as the input .v file: `v foo.v` produces `./foo` on *nix systems,\n  "  \
+      "`foo.exe` on Windows.\n\n   You can use -o to specify a different "     \
+      "output executable\'s name.\n\n   When given a directory, all .v files " \
+      "contained in it will be compiled as\n   part of a single main "         \
+      "module.\n\n   By default the executable will have the same name as "    \
+      "the directory.\n\n   To compile all V files in current directory, run " \
+      "`v .`\n\n   Any file ending in _test.v, will be treated as a test.\n  " \
+      " It will be compiled and run, evaluating the assert statements in "     \
+      "every\n   function named test_xxx.\n\n   You can put common options "   \
+      "inside an environment variable named VFLAGS, so that\n   you don\'t "   \
+      "have to repeat them.\n\n   You can set it like this: `export "          \
+      "VFLAGS=\"-cc clang -debug\"` on *nix,\n   `set VFLAGS=-cc msvc` on "    \
+      "Windows.\n\n   V respects the TMPDIR environment variable, and will "   \
+      "put .tmp.c files in TMPDIR/v/ .\n   If you have not set it, a "         \
+      "suitable platform specific folder (like /tmp) will be "                 \
+      "used.\n\nOptions/commands:\n  -h, help          Display this "          \
+      "information.\n  -o <file>         Write output to <file>.\n  -o "       \
+      "<file>.c       Produce C source without compiling it.\n  -o <file>.js " \
+      "     Produce JavaScript source.\n  -prod             Build an "         \
+      "optimized executable.\n  -v, version       Display compiler version "   \
+      "and git hash of the compiler source.\n  -live             Enable hot "  \
+      "code reloading (required by functions marked with [live]).\n  -os "     \
+      "<OS>          Produce an executable for the selected OS.\n            " \
+      "        OS can be linux, mac, windows, msvc.\n                    Use " \
+      "msvc if you want to use the MSVC compiler on Windows.\n  -shared      " \
+      "     Build a shared library.\n  -stats            Show additional "     \
+      "stats when compiling/running tests. Try `v -stats test .`\n\n  -cache " \
+      "           Turn on usage of the precompiled module cache.\n           " \
+      "         It very significantly speeds up secondary compilations.\n\n  " \
+      "-obf              Obfuscate the resulting binary.\n  -compress        " \
+      " Compress the resulting binary.\n  -                 Shorthand for `v " \
+      "runrepl`.\n\nOptions for debugging/troubleshooting v programs:\n  -g  " \
+      "              Generate debugging information in the backtraces. Add "   \
+      "*V* line numbers to the generated executable.\n  -cg               "    \
+      "Same as -g, but add *C* line numbers to the generated executable "      \
+      "instead of *V* line numbers.\n  -keep_c           Do NOT remove the "   \
+      "generated .tmp.c files after compilation.\n                    It is "  \
+      "useful when using debuggers like gdb/visual studio, when given after "  \
+      "-g / -cg .\n  -show_c_cmd       Print the full C compilation command "  \
+      "and how much time it took.\n  -cc <ccompiler>   Specify which C "       \
+      "compiler you want to use as a C backend.\n                    The C "   \
+      "backend compiler should be able to handle C99 compatible C code.\n    " \
+      "                Common C compilers are gcc, clang, tcc, icc, cl...\n  " \
+      "-cflags <flags>   Pass additional C flags to the C backend "            \
+      "compiler.\n                    Example: -cflags `sdl2-config "          \
+      "--cflags`\n\nCommands:\n  up                Update V. Run `v up` at "   \
+      "least once per day, since V development is rapid and "                  \
+      "features/bugfixes are added constantly.\n  run <file.v>      Build "    \
+      "and execute the V program in file.v. You can add arguments for the V "  \
+      "program *after* the file name.\n  build <module>    Compile a module "  \
+      "into an object file.\n  runrepl           Run the V REPL. If V is "     \
+      "running in a tty terminal, the REPL is interactive, otherwise it just " \
+      "reads from stdin.\n  symlink           Useful on Unix systems. "        \
+      "Symlinks the current V executable to /usr/local/bin/v, so that V is "   \
+      "globally available.\n  test v            Run all V test files, and "    \
+      "compile all V examples.\n  test folder/      Run all V test files "     \
+      "located in the folder and its subfolders. You can also pass "           \
+      "individual _test.v files too.\n  fmt               Run vfmt to format " \
+      "the source code. [wip]\n  doc               Run vdoc over the source "  \
+      "code and produce documentation.\n  translate         Translates C to "  \
+      "V. [wip, will be available in V 0.3]\n  create            Create a "    \
+      "new v project interactively. Answer the questions, and run it with `v " \
+      "run projectname`\n\nV package management commands:\n  search  "         \
+      "keywords  Search the https://vpm.vlang.io/ module repository for "      \
+      "matching modules and shows their details.\n  install <module>  "        \
+      "Install a user module from https://vpm.vlang.io/.\n  update  [module] " \
+      " Updates an already installed module, or ALL installed modules at "     \
+      "once, when no module name is given.\n  remove  [module]  Removes an "   \
+      "installed module, or ALL installed modules at once, when no module "    \
+      "name is given.\n")
+#define time__seconds_per_minute 60
+#define vweb_dot_tmpl__STR_START tos3("sb.write(\'")
+#define vweb_dot_tmpl__STR_END tos3("\' ) ")
 #include <errno.h>
 #include <float.h>
 #include <sys/stat.h>
@@ -731,6 +841,7 @@ struct compiler__CGen {
   array_string includes;
   array_string thread_args;
   array_string consts;
+  array_string const_defines;
   array_string fns;
   array_string so_fns;
   array_string consts_init;
@@ -2019,22 +2130,9 @@ i64 total_m = 0; // global
 int builtin__min_cap;
 int builtin__max_cap;
 array_int g_ustring_runes; // global
-#define builtin__CP_UTF8 65001
 int compiler_dot_x64__mag0;
-#define compiler_dot_x64__mag1 'E'
-#define compiler_dot_x64__mag2 'L'
-#define compiler_dot_x64__mag3 'F'
-#define compiler_dot_x64__ei_class 4
-#define compiler_dot_x64__elfclass64 2
-#define compiler_dot_x64__elfdata2lsb 1
-#define compiler_dot_x64__ev_current 1
-#define compiler_dot_x64__elf_osabi 0
-#define compiler_dot_x64__et_rel 1
-#define compiler_dot_x64__et_exec 2
-#define compiler_dot_x64__et_dyn 3
 int compiler_dot_x64__e_machine;
 int compiler_dot_x64__shn_xindex;
-#define compiler_dot_x64__sht_null 0
 int compiler_dot_x64__segment_start;
 #define compiler_dot_x64__compiler_dot_x64__SectionType_null 0
 #define compiler_dot_x64__compiler_dot_x64__SectionType_progbits 1
@@ -2053,16 +2151,7 @@ int compiler_dot_x64__segment_start;
 #define compiler_dot_x64__compiler_dot_x64__Size__16 1
 #define compiler_dot_x64__compiler_dot_x64__Size__32 2
 #define compiler_dot_x64__compiler_dot_x64__Size__64 3
-#define strconv__int_size 32
 u64 strconv__max_u64;
-#define os__O_RDONLY 1
-#define os__O_WRONLY 2
-#define os__O_RDWR 3
-#define os__O_APPEND 8
-#define os__O_CREATE 16
-#define os__O_EXCL 32
-#define os__O_SYNC 64
-#define os__O_TRUNC 128
 int os__S_IFMT;
 int os__S_IFDIR;
 int os__S_IFLNK;
@@ -2070,9 +2159,6 @@ int os__STD_INPUT_HANDLE;
 int os__STD_OUTPUT_HANDLE;
 int os__STD_ERROR_HANDLE;
 array_string os__args;
-#define os__MAX_PATH 4096
-#define os__PROT_READ 1
-#define os__PROT_WRITE 2
 int os__MAP_PRIVATE;
 int os__MAP_ANONYMOUS;
 string os__path_separator;
@@ -2083,7 +2169,6 @@ string compiler__bare_c_headers;
 string compiler__warn_match_arrow;
 string compiler__err_used_as_value;
 string compiler__and_or_error;
-#define compiler__MaxLocalVars 50
 compiler__Fn compiler__EmptyFn;
 compiler__Fn compiler__MainFn;
 string compiler__dot_ptr;
@@ -2110,7 +2195,6 @@ RegKey compiler__HKEY_LOCAL_MACHINE;
 int compiler__KEY_QUERY_VALUE;
 int compiler__KEY_WOW64_32KEY;
 int compiler__KEY_ENUMERATE_SUB_KEYS;
-#define compiler__max_module_depth 5
 map_bool compiler__reserved_types;
 #define compiler__compiler__IndexType_noindex 0
 #define compiler__compiler__IndexType_str 1
@@ -2119,10 +2203,6 @@ map_bool compiler__reserved_types;
 #define compiler__compiler__IndexType_array0 4
 #define compiler__compiler__IndexType_fixed_array 5
 #define compiler__compiler__IndexType_ptr 6
-#define compiler__single_quote '\''
-#define compiler__double_quote '"'
-#define compiler__error_context_before 2
-#define compiler__error_context_after 2
 #define compiler__compiler__NameCategory_constant 0
 #define compiler__compiler__NameCategory_mod 1
 #define compiler__compiler__NameCategory_var 2
@@ -2247,90 +2327,13 @@ array_string compiler__reserved_type_param_names;
 #define compiler__compiler__TokenKind_key_static 97
 #define compiler__compiler__TokenKind_key_unsafe 98
 #define compiler__compiler__TokenKind_keyword_end 99
-#define compiler__NrTokens 140
 array_string compiler__TokenStr;
 map_int compiler__KEYWORDS;
 array_compiler__TokenKind compiler__AssignTokens;
-#define compiler__help_text                                                    \
-  tos3(                                                                        \
-      "Usage: v [options/commands] [file.v | directory]\n\n   When V is run "  \
-      "without any arguments, it is run in REPL mode.\n\n   When given a .v "  \
-      "file, it will be compiled. The executable will have the\n   same name " \
-      "as the input .v file: `v foo.v` produces `./foo` on *nix systems,\n  "  \
-      "`foo.exe` on Windows.\n\n   You can use -o to specify a different "     \
-      "output executable\'s name.\n\n   When given a directory, all .v files " \
-      "contained in it will be compiled as\n   part of a single main "         \
-      "module.\n\n   By default the executable will have the same name as "    \
-      "the directory.\n\n   To compile all V files in current directory, run " \
-      "`v .`\n\n   Any file ending in _test.v, will be treated as a test.\n  " \
-      " It will be compiled and run, evaluating the assert statements in "     \
-      "every\n   function named test_xxx.\n\n   You can put common options "   \
-      "inside an environment variable named VFLAGS, so that\n   you don\'t "   \
-      "have to repeat them.\n\n   You can set it like this: `export "          \
-      "VFLAGS=\"-cc clang -debug\"` on *nix,\n   `set VFLAGS=-cc msvc` on "    \
-      "Windows.\n\n   V respects the TMPDIR environment variable, and will "   \
-      "put .tmp.c files in TMPDIR/v/ .\n   If you have not set it, a "         \
-      "suitable platform specific folder (like /tmp) will be "                 \
-      "used.\n\nOptions/commands:\n  -h, help          Display this "          \
-      "information.\n  -o <file>         Write output to <file>.\n  -o "       \
-      "<file>.c       Produce C source without compiling it.\n  -o <file>.js " \
-      "     Produce JavaScript source.\n  -prod             Build an "         \
-      "optimized executable.\n  -v, version       Display compiler version "   \
-      "and git hash of the compiler source.\n  -live             Enable hot "  \
-      "code reloading (required by functions marked with [live]).\n  -os "     \
-      "<OS>          Produce an executable for the selected OS.\n            " \
-      "        OS can be linux, mac, windows, msvc.\n                    Use " \
-      "msvc if you want to use the MSVC compiler on Windows.\n  -shared      " \
-      "     Build a shared library.\n  -stats            Show additional "     \
-      "stats when compiling/running tests. Try `v -stats test .`\n\n  -cache " \
-      "           Turn on usage of the precompiled module cache.\n           " \
-      "         It very significantly speeds up secondary compilations.\n\n  " \
-      "-obf              Obfuscate the resulting binary.\n  -compress        " \
-      " Compress the resulting binary.\n  -                 Shorthand for `v " \
-      "runrepl`.\n\nOptions for debugging/troubleshooting v programs:\n  -g  " \
-      "              Generate debugging information in the backtraces. Add "   \
-      "*V* line numbers to the generated executable.\n  -cg               "    \
-      "Same as -g, but add *C* line numbers to the generated executable "      \
-      "instead of *V* line numbers.\n  -keep_c           Do NOT remove the "   \
-      "generated .tmp.c files after compilation.\n                    It is "  \
-      "useful when using debuggers like gdb/visual studio, when given after "  \
-      "-g / -cg .\n  -show_c_cmd       Print the full C compilation command "  \
-      "and how much time it took.\n  -cc <ccompiler>   Specify which C "       \
-      "compiler you want to use as a C backend.\n                    The C "   \
-      "backend compiler should be able to handle C99 compatible C code.\n    " \
-      "                Common C compilers are gcc, clang, tcc, icc, cl...\n  " \
-      "-cflags <flags>   Pass additional C flags to the C backend "            \
-      "compiler.\n                    Example: -cflags `sdl2-config "          \
-      "--cflags`\n\nCommands:\n  up                Update V. Run `v up` at "   \
-      "least once per day, since V development is rapid and "                  \
-      "features/bugfixes are added constantly.\n  run <file.v>      Build "    \
-      "and execute the V program in file.v. You can add arguments for the V "  \
-      "program *after* the file name.\n  build <module>    Compile a module "  \
-      "into an object file.\n  runrepl           Run the V REPL. If V is "     \
-      "running in a tty terminal, the REPL is interactive, otherwise it just " \
-      "reads from stdin.\n  symlink           Useful on Unix systems. "        \
-      "Symlinks the current V executable to /usr/local/bin/v, so that V is "   \
-      "globally available.\n  test v            Run all V test files, and "    \
-      "compile all V examples.\n  test folder/      Run all V test files "     \
-      "located in the folder and its subfolders. You can also pass "           \
-      "individual _test.v files too.\n  fmt               Run vfmt to format " \
-      "the source code. [wip]\n  doc               Run vdoc over the source "  \
-      "code and produce documentation.\n  translate         Translates C to "  \
-      "V. [wip, will be available in V 0.3]\n  create            Create a "    \
-      "new v project interactively. Answer the questions, and run it with `v " \
-      "run projectname`\n\nV package management commands:\n  search  "         \
-      "keywords  Search the https://vpm.vlang.io/ module repository for "      \
-      "matching modules and shows their details.\n  install <module>  "        \
-      "Install a user module from https://vpm.vlang.io/.\n  update  [module] " \
-      " Updates an already installed module, or ALL installed modules at "     \
-      "once, when no module name is given.\n  remove  [module]  Removes an "   \
-      "installed module, or ALL installed modules at once, when no module "    \
-      "name is given.\n")
 string time__days_string;
 array_int time__month_days;
 string time__months_string;
 i64 time__absolute_zero_year;
-#define time__seconds_per_minute 60
 int time__seconds_per_hour;
 int time__seconds_per_day;
 int time__seconds_per_week;
@@ -2356,8 +2359,6 @@ array_int time__days_before;
 #define time__time__FormatDelimiter_hyphen 1
 #define time__time__FormatDelimiter_slash 2
 #define time__time__FormatDelimiter_space 3
-#define vweb_dot_tmpl__STR_START tos3("sb.write(\'")
-#define vweb_dot_tmpl__STR_END tos3("\' ) ")
 
 array new_array(int mylen, int cap, int elm_size) {
   array arr = (array){.len = mylen,
@@ -7406,6 +7407,7 @@ compiler__CGen *compiler__new_cgen(string out_name_c) {
                           .includes = new_array(0, 1, sizeof(string)),
                           .thread_args = new_array(0, 1, sizeof(string)),
                           .consts = new_array(0, 1, sizeof(string)),
+                          .const_defines = new_array(0, 1, sizeof(string)),
                           .fns = new_array(0, 1, sizeof(string)),
                           .so_fns = new_array(0, 1, sizeof(string)),
                           .consts_init = new_array(0, 1, sizeof(string)),
@@ -7437,6 +7439,7 @@ compiler__CGen *compiler__new_cgen(string out_name_c) {
                         .includes = new_array(0, 1, sizeof(string)),
                         .thread_args = new_array(0, 1, sizeof(string)),
                         .consts = new_array(0, 1, sizeof(string)),
+                        .const_defines = new_array(0, 1, sizeof(string)),
                         .fns = new_array(0, 1, sizeof(string)),
                         .so_fns = new_array(0, 1, sizeof(string)),
                         .consts_init = new_array(0, 1, sizeof(string)),
@@ -7777,7 +7780,7 @@ string compiler__V_type_definitions(compiler__V *v) {
     string builtin = ((string *)tmp37.data)[tmp38];
 
     compiler__Type tmp39 = {0};
-    bool tmp40 = map_get(/*cgen.v : 340*/ v->table->typesmap, builtin, &tmp39);
+    bool tmp40 = map_get(/*cgen.v : 341*/ v->table->typesmap, builtin, &tmp39);
 
     compiler__Type typ = tmp39;
     _PUSH(&builtin_types,
@@ -12904,8 +12907,14 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
   while (p->tok == compiler__compiler__TokenKind_lsbr) {
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_lsbr);
-    if (p->tok == compiler__compiler__TokenKind_number) {
-      typ = string_add(typ, _STR("[%.*s]", p->lit.len, p->lit.str));
+    if (p->tok == compiler__compiler__TokenKind_number ||
+        (p->tok == compiler__compiler__TokenKind_name && !p->inside_const)) {
+      if (p->tok == compiler__compiler__TokenKind_name) {
+        typ = string_add(typ, _STR("[%.*s__%.*s]", p->mod.len, p->mod.str,
+                                   p->lit.len, p->lit.str));
+      } else {
+        typ = string_add(typ, _STR("[%.*s]", p->lit.len, p->lit.str));
+      };
       compiler__Parser_next(p);
     } else {
       arr_level++;
@@ -12955,7 +12964,7 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
   map_string ti = p->cur_fn.dispatch_of.inst;
   if ((_IN(string, (p->lit), map_keys(&/* ? */ ti)))) {
     string tmp2 = tos3("");
-    bool tmp3 = map_get(/*get_type.v : 119*/ ti, p->lit, &tmp2);
+    bool tmp3 = map_get(/*get_type.v : 124*/ ti, p->lit, &tmp2);
 
     if (!tmp3)
       tmp2 = tos((byte *)"", 0);
@@ -13000,11 +13009,11 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
           !compiler__Parser_first_pass(&/* ? */ *p) &&
           !string_starts_with(typ, tos3("["))) {
         println(tos3("get_type() bad type"));
-        _V_MulRet_string_V_string _V_mret_739_t_suggest_tc_suggest =
+        _V_MulRet_string_V_string _V_mret_778_t_suggest_tc_suggest =
             compiler__Table_find_misspelled_type(&/* ? */ *p->table, typ, p,
                                                  0.50);
-        string t_suggest = _V_mret_739_t_suggest_tc_suggest.var_0;
-        string tc_suggest = _V_mret_739_t_suggest_tc_suggest.var_1;
+        string t_suggest = _V_mret_778_t_suggest_tc_suggest.var_0;
+        string tc_suggest = _V_mret_778_t_suggest_tc_suggest.var_1;
         if (t_suggest.len > 0) {
           t_suggest = _STR(". did you mean: (%.*s) `%.*s`", tc_suggest.len,
                            tc_suggest.str, t_suggest.len, t_suggest.str);
@@ -13647,6 +13656,8 @@ void compiler__V_compile(compiler__V *v) {
     compiler__generate_vh(v->dir);
   };
   strings__Builder def = strings__new_builder(10000);
+  strings__Builder_writeln(&/* ? */ def,
+                           array_string_join_lines(cgen->const_defines));
 #ifndef _VJS
   strings__Builder_writeln(&/* ? */ def,
                            array_string_join_lines(cgen->includes));
@@ -16558,7 +16569,7 @@ void compiler__Parser_const_decl(compiler__Parser *p) {
     if (p->pass == compiler__compiler__Pass_main && !p->cgen->nogen) {
       if (p->pref->build_mode != compiler__compiler__BuildMode_build_module &&
           compiler__is_compile_time_const(p->cgen->cur_line)) {
-        _PUSH(&p->cgen->consts,
+        _PUSH(&p->cgen->const_defines,
               (/*typ = array_string   tmp_typ=string*/ _STR(
                   "#define %.*s %.*s", name.len, name.str,
                   p->cgen->cur_line.len, p->cgen->cur_line.str)),
