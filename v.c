@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "55f32fc"
+#define V_COMMIT_HASH "5a8c07d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c8d1119"
+#define V_COMMIT_HASH "55f32fc"
 #endif
 #include <inttypes.h>
 
@@ -1314,6 +1314,7 @@ void compiler_dot_x64__Gen_register_function_address(compiler_dot_x64__Gen *g,
                                                      string name);
 void compiler_dot_x64__Gen_call_fn(compiler_dot_x64__Gen *g, string name);
 strings__Builder strings__new_builder(int initial_size);
+void strings__Builder_write_b(strings__Builder *b, byte data);
 void strings__Builder_write(strings__Builder *b, string s);
 void strings__Builder_writeln(strings__Builder *b, string s);
 string strings__Builder_str(strings__Builder *b);
@@ -4818,17 +4819,21 @@ void compiler_dot_x64__Gen_call_fn(compiler_dot_x64__Gen *g, string name) {
 strings__Builder strings__new_builder(int initial_size) {
   return (strings__Builder){.buf = make(0, initial_size, 1), .len = 0};
 }
+void strings__Builder_write_b(strings__Builder *b, byte data) {
+  _PUSH(&b->buf, (/*typ = array_byte   tmp_typ=byte*/ data), tmp1, byte);
+  b->len += 1;
+}
 void strings__Builder_write(strings__Builder *b, string s) {
   array_push_many(&/* ? */ b->buf, s.str, s.len);
   b->len += s.len;
 }
 void strings__Builder_writeln(strings__Builder *b, string s) {
   array_push_many(&/* ? */ b->buf, s.str, s.len);
-  _PUSH(&b->buf, (/*typ = array_byte   tmp_typ=byte*/ '\n'), tmp1, byte);
+  _PUSH(&b->buf, (/*typ = array_byte   tmp_typ=byte*/ '\n'), tmp2, byte);
   b->len += s.len + 1;
 }
 string strings__Builder_str(strings__Builder *b) {
-  _PUSH(&b->buf, (/*typ = array_byte   tmp_typ=byte*/ '\0'), tmp2, byte);
+  _PUSH(&b->buf, (/*typ = array_byte   tmp_typ=byte*/ '\0'), tmp3, byte);
   return (tos((byte *)b->buf.data, b->len));
 }
 void strings__Builder_free(strings__Builder *b) {
