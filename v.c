@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "49f960a"
+#define V_COMMIT_HASH "dc2da1d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "751ba48"
+#define V_COMMIT_HASH "49f960a"
 #endif
 #include <inttypes.h>
 
@@ -7266,9 +7266,9 @@ Option_bool compiler__Table_parse_cflag(compiler__Table *table, string cflag,
     Option_int tmp26 = string_index(flag, tos3(","));
 
     if (tmp26.ok) {
-      int i = *(int *)tmp26.data;
-      if (index == -1 || i < index) {
-        index = i;
+      int i2 = *(int *)tmp26.data;
+      if (index == -1 || i2 < index) {
+        index = i2;
       };
     };
     if (index != -1 && string_at(flag, index) == ' ' &&
@@ -13273,13 +13273,22 @@ string compiler__Parser_if_statement(compiler__Parser *p, bool is_expr,
     compiler__Parser_check_not_reserved(p);
     string option_tmp = compiler__Parser_get_tmp(p);
     string var_name = p->lit;
+    if (compiler__Parser_known_var(&/* ? */ *p, var_name)) {
+      compiler__Parser_error(
+          p, _STR("redefinition of `%.*s`", var_name.len, var_name.str));
+    };
     compiler__Parser_next(p);
     compiler__Parser_check(p, compiler__compiler__TokenKind_decl_assign);
     p->is_var_decl = 1;
-    _V_MulRet_string_V_string _V_mret_830_option_type_expr =
+    _V_MulRet_string_V_string _V_mret_848_option_type_expr =
         compiler__Parser_tmp_expr(p);
-    string option_type = _V_mret_830_option_type_expr.var_0;
-    string expr = _V_mret_830_option_type_expr.var_1;
+    string option_type = _V_mret_848_option_type_expr.var_0;
+    string expr = _V_mret_848_option_type_expr.var_1;
+    if (!string_starts_with(option_type, tos3("Option_"))) {
+      compiler__Parser_error(p,
+                             tos3("`if x := opt() {` syntax requires a "
+                                  "function that returns an optional value"));
+    };
     p->is_var_decl = 0;
     string typ = string_substr2(option_type, 7, -1, true);
     compiler__CGen_insert_before(
