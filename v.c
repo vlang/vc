@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9352903"
+#define V_COMMIT_HASH "d735867"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7d58dc2"
+#define V_COMMIT_HASH "9352903"
 #endif
 #include <inttypes.h>
 
@@ -13913,12 +13913,7 @@ void compiler__V_compile(compiler__V *v) {
   compiler__CGen_genln(cgen, compiler__js_headers);
 #else
   if (!v->pref->is_bare) {
-#ifdef _MSC_VER
-    compiler__CGen_genln(cgen, tos3("#include <stdint.h>"));
-#else
     compiler__CGen_genln(cgen, tos3("#include <inttypes.h>"));
-#endif
-    ;
   } else {
     compiler__CGen_genln(cgen, tos3("#include <stdint.h>"));
   };
@@ -18836,7 +18831,7 @@ void compiler__Parser_assert_statement(compiler__Parser *p) {
         p, _STR(";\n\n/// sline: \"%.*s\"\nif (!%.*s) {\n	"
                 "g_test_fails++;\n	eprintln(tos3(\"%.*s:%d: FAILED: "
                 "%.*s()\"));\n	eprintln(tos3(\"Source: %.*s\"));\n    "
-                "v_panic(tos3(\"An assertion failed.\"));\n	return;\n} "
+                "v_panic(tos3(\"An assertion failed.\"));\n    exit(1);\n} "
                 "else {\n	g_test_oks++;\n}\n",
                 sourceline.len, sourceline.str, tmp.len, tmp.str, filename.len,
                 filename.str, p->scanner->line_nr, cfname.len, cfname.str,
@@ -18847,7 +18842,7 @@ void compiler__Parser_assert_statement(compiler__Parser *p) {
   compiler__Parser_genln(
       p, _STR(";\n\nif (!%.*s) {\n  g_test_fails++;\n  "
               "main__cb_assertion_failed(\n     tos3(\"%.*s\"),\n     %d,\n    "
-              " tos3(\"%.*s\"),\n     tos3(\"%.*s()\")\n  );\n  return;\n  // "
+              " tos3(\"%.*s\"),\n     tos3(\"%.*s()\")\n  );\n  exit(1);\n  // "
               "TODO\n  // Maybe print all vars in a test function if it "
               "fails?\n} else {\n  g_test_oks++;\n  main__cb_assertion_ok(\n   "
               "  tos3(\"%.*s\"),\n     %d,\n     tos3(\"%.*s\"),\n     "
