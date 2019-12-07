@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7b0e378"
+#define V_COMMIT_HASH "7d58dc2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e1ad179"
+#define V_COMMIT_HASH "7b0e378"
 #endif
 #include <inttypes.h>
 
@@ -20167,8 +20167,12 @@ string compiler__Scanner_ident_string(compiler__Scanner *s) {
       compiler__Scanner_inc_line_number(s);
     };
     if (c == '0' && s->pos > 2 && string_at(s->text, s->pos - 1) == slash) {
-      compiler__Scanner_error(&/* ? */ *s,
-                              tos3("0 character in a string literal"));
+      if (s->pos < s->text.len - 1 &&
+          byte_is_digit(string_at(s->text, s->pos + 1))) {
+      } else {
+        compiler__Scanner_error(&/* ? */ *s,
+                                tos3("0 character in a string literal"));
+      };
     };
     if (c == '0' && s->pos > 5 &&
         compiler__Scanner_expect(&/* ? */ *s, tos3("\\x0"), s->pos - 3)) {
@@ -20250,10 +20254,10 @@ bool compiler__Scanner_expect(compiler__Scanner *s, string want,
   if (end_pos < 0 || end_pos > s->text.len) {
     return 0;
   };
-  int tmp97 = start_pos;
+  int tmp99 = start_pos;
   ;
-  for (int tmp98 = tmp97; tmp98 < end_pos; tmp98++) {
-    int pos = tmp98;
+  for (int tmp100 = tmp99; tmp100 < end_pos; tmp100++) {
+    int pos = tmp100;
 
     if (string_at(s->text, pos) != string_at(want, pos - start_pos)) {
       return 0;
@@ -20296,7 +20300,7 @@ void compiler__Scanner_eat_to_end_of_line(compiler__Scanner *s) {
 void compiler__Scanner_inc_line_number(compiler__Scanner *s) {
   s->last_nl_pos = s->pos;
   s->line_nr++;
-  _PUSH(&s->line_ends, (/*typ = array_int   tmp_typ=int*/ s->pos), tmp105, int);
+  _PUSH(&s->line_ends, (/*typ = array_int   tmp_typ=int*/ s->pos), tmp107, int);
   if (s->line_nr > s->nlines) {
     s->nlines = s->line_nr;
   };
@@ -20316,10 +20320,10 @@ string compiler__Scanner_line(compiler__Scanner s, int n) {
 bool compiler__is_name_char(byte c) { return byte_is_letter(c) || c == '_'; }
 static inline bool compiler__is_nl(byte c) { return c == '\r' || c == '\n'; }
 bool compiler__contains_capital(string s) {
-  string tmp112 = s;
+  string tmp114 = s;
   ;
-  for (int tmp113 = 0; tmp113 < tmp112.len; tmp113++) {
-    byte c = tmp112.str[tmp113];
+  for (int tmp115 = 0; tmp115 < tmp114.len; tmp115++) {
+    byte c = tmp114.str[tmp115];
 
     if (c >= 'A' && c <= 'Z') {
       return 1;
@@ -20331,10 +20335,10 @@ bool compiler__good_type_name(string s) {
   if (s.len < 4) {
     return 1;
   };
-  int tmp114 = 2;
+  int tmp116 = 2;
   ;
-  for (int tmp115 = tmp114; tmp115 < s.len; tmp115++) {
-    int i = tmp115;
+  for (int tmp117 = tmp116; tmp117 < s.len; tmp117++) {
+    int i = tmp117;
 
     if (byte_is_capital(string_at(s, i)) &&
         byte_is_capital(string_at(s, i - 1)) &&
