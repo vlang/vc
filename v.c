@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "dc2da1d"
+#define V_COMMIT_HASH "b26a0bd"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "49f960a"
+#define V_COMMIT_HASH "dc2da1d"
 #endif
 #include <inttypes.h>
 
@@ -13277,13 +13277,14 @@ string compiler__Parser_if_statement(compiler__Parser *p, bool is_expr,
       compiler__Parser_error(
           p, _STR("redefinition of `%.*s`", var_name.len, var_name.str));
     };
+    compiler__Parser_open_scope(p);
     compiler__Parser_next(p);
     compiler__Parser_check(p, compiler__compiler__TokenKind_decl_assign);
     p->is_var_decl = 1;
-    _V_MulRet_string_V_string _V_mret_848_option_type_expr =
+    _V_MulRet_string_V_string _V_mret_853_option_type_expr =
         compiler__Parser_tmp_expr(p);
-    string option_type = _V_mret_848_option_type_expr.var_0;
-    string expr = _V_mret_848_option_type_expr.var_1;
+    string option_type = _V_mret_853_option_type_expr.var_0;
+    string expr = _V_mret_853_option_type_expr.var_1;
     if (!string_starts_with(option_type, tos3("Option_"))) {
       compiler__Parser_error(p,
                              tos3("`if x := opt() {` syntax requires a "
@@ -13325,6 +13326,7 @@ string compiler__Parser_if_statement(compiler__Parser *p, bool is_expr,
                            .is_for_var = 0,
                            .is_public = 0});
     compiler__Parser_statements(p);
+    compiler__Parser_close_scope(p);
     p->returns = 0;
     return tos3("void");
   } else {
