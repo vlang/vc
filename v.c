@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "751ba48"
+#define V_COMMIT_HASH "49f960a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d735867"
+#define V_COMMIT_HASH "751ba48"
 #endif
 #include <inttypes.h>
 
@@ -5475,11 +5475,11 @@ _V_MulRet_int_V_bool os__posix_wait4_to_exit_status(int waitret) {
 }
 int os__vpclose(void *f) {
 #ifdef _WIN32
-  return ((int)(_pclose(f)));
+  return _pclose(f);
 #else
-  _V_MulRet_int_V_bool _V_mret_1993_ret__ =
+  _V_MulRet_int_V_bool _V_mret_1990_ret__ =
       os__posix_wait4_to_exit_status(pclose(f));
-  int ret = _V_mret_1993_ret__.var_0;
+  int ret = _V_mret_1990_ret__.var_0;
   return ret;
 #endif
   ;
@@ -5500,10 +5500,10 @@ int os__system(string cmd) {
     os__print_c_errno();
   };
 #ifndef _WIN32
-  _V_MulRet_int_V_bool _V_mret_2112_pret_is_signaled =
+  _V_MulRet_int_V_bool _V_mret_2109_pret_is_signaled =
       os__posix_wait4_to_exit_status(ret);
-  int pret = _V_mret_2112_pret_is_signaled.var_0;
-  bool is_signaled = _V_mret_2112_pret_is_signaled.var_1;
+  int pret = _V_mret_2109_pret_is_signaled.var_0;
+  bool is_signaled = _V_mret_2109_pret_is_signaled.var_1;
   if (is_signaled) {
     println(string_add(string_add(_STR("Terminated by signal %2d (", ret),
                                   os__sigint_to_signal_name(pret)),
@@ -5853,7 +5853,7 @@ string os__executable() {
 #ifdef _WIN32
   int max = 512;
   u16 *result = ((u16 *)(v_calloc(max * 2)));
-  int len = ((int)(GetModuleFileName(0, result, max)));
+  int len = GetModuleFileName(0, result, max);
   return string_from_wide2(result, len);
 #endif
   ;

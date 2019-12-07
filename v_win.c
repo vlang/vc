@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "751ba48"
+#define V_COMMIT_HASH "49f960a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d735867"
+#define V_COMMIT_HASH "751ba48"
 #endif
 #include <inttypes.h>
 
@@ -5602,11 +5602,11 @@ _V_MulRet_int_V_bool os__posix_wait4_to_exit_status(int waitret) {
 }
 int os__vpclose(void *f) {
 #ifdef _WIN32
-  return ((int)(_pclose(f)));
+  return _pclose(f);
 #else
-  _V_MulRet_int_V_bool _V_mret_1993_ret__ =
+  _V_MulRet_int_V_bool _V_mret_1990_ret__ =
       os__posix_wait4_to_exit_status(pclose(f));
-  int ret = _V_mret_1993_ret__.var_0;
+  int ret = _V_mret_1990_ret__.var_0;
   return ret;
 #endif
   ;
@@ -5917,7 +5917,7 @@ string os__executable() {
 #ifdef _WIN32
   int max = 512;
   u16 *result = ((u16 *)(v_calloc(max * 2)));
-  int len = ((int)(GetModuleFileName(0, result, max)));
+  int len = GetModuleFileName(0, result, max);
   return string_from_wide2(result, len);
 #endif
   ;
@@ -6175,7 +6175,7 @@ array_string os__init_os_args(int argc, byteptr *argv) {
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   voidptr *args_list = ((voidptr *)(0));
   int args_count = 0;
-  args_list = ((voidptr *)(CommandLineToArgvW(GetCommandLine(), &args_count)));
+  args_list = CommandLineToArgvW(GetCommandLine(), &args_count);
   for (int i = 0; i < args_count; i++) {
 
     _PUSH(&args,
@@ -6249,7 +6249,7 @@ HANDLE os__get_file_handle(string path) {
   return _handle;
 }
 Option_string os__get_module_filename(HANDLE handle) {
-  int sz = ((int)(4096));
+  int sz = 4096;
   u16 *buf = ((u16 *)(v_malloc(4096)));
   while (1) {
     int status = ((int)(GetModuleFileNameW(handle, ((voidptr)(&buf)), sz)));
