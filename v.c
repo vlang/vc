@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d7ccbba"
+#define V_COMMIT_HASH "f51784e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a854d39"
+#define V_COMMIT_HASH "d7ccbba"
 #endif
 #include <inttypes.h>
 
@@ -5478,14 +5478,14 @@ int os__vpclose(void *f) {
   return ((int)(_pclose(f)));
 #else
   _V_MulRet_int_V_bool _V_mret_1993_ret__ =
-      os__posix_wait4_to_exit_status(((int)(pclose(f))));
+      os__posix_wait4_to_exit_status(pclose(f));
   int ret = _V_mret_1993_ret__.var_0;
   return ret;
 #endif
   ;
 }
 int os__system(string cmd) {
-  int ret = ((int)(0));
+  int ret = 0;
 #ifdef _WIN32
   string wcmd =
       ((cmd.len > 1 && string_at(cmd, 0) == '"' && string_at(cmd, 1) != '"')
@@ -5500,10 +5500,10 @@ int os__system(string cmd) {
     os__print_c_errno();
   };
 #ifndef _WIN32
-  _V_MulRet_int_V_bool _V_mret_2118_pret_is_signaled =
+  _V_MulRet_int_V_bool _V_mret_2112_pret_is_signaled =
       os__posix_wait4_to_exit_status(ret);
-  int pret = _V_mret_2118_pret_is_signaled.var_0;
-  bool is_signaled = _V_mret_2118_pret_is_signaled.var_1;
+  int pret = _V_mret_2112_pret_is_signaled.var_0;
+  bool is_signaled = _V_mret_2112_pret_is_signaled.var_1;
   if (is_signaled) {
     println(string_add(string_add(_STR("Terminated by signal %2d (", ret),
                                   os__sigint_to_signal_name(pret)),
@@ -6199,7 +6199,7 @@ Option_bool os__mkdir(string path) {
     return opt_ok(&tmp6, sizeof(bool));
   };
   string apath = os__realpath(path);
-  int r = ((int)(mkdir((char *)apath.str, 511)));
+  int r = mkdir((char *)apath.str, 511);
   if (r == -1) {
     return v_error(os__get_error_msg(errno));
   };
@@ -6227,7 +6227,7 @@ Option_os__Result os__exec(string cmd) {
 rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq) {
   rand__Pcg32 rng = (rand__Pcg32){.state = 0, .inc = 0};
   rng.state = ((u64)(0));
-  rng.inc = ((u64)(((u64)(initseq << ((u64)(1)))) | ((u64)(1))));
+  rng.inc = (initseq << ((u64)(1))) | ((u64)(1));
   rand__Pcg32_next(&/* ? */ rng);
   rng.state += initstate;
   rand__Pcg32_next(&/* ? */ rng);
@@ -6235,18 +6235,18 @@ rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq) {
 }
 static inline u32 rand__Pcg32_next(rand__Pcg32 *rng) {
   u64 oldstate = rng->state;
-  rng->state = oldstate * ((u64)(6364136223846793005)) + rng->inc;
-  u32 xorshifted = ((u32)(
-      ((u64)(((u64)(oldstate >> ((u64)(18)))) ^ oldstate)) >> ((u64)(27))));
+  rng->state = oldstate * (6364136223846793005) + rng->inc;
+  u32 xorshifted =
+      ((u32)(((oldstate >> ((u64)(18))) ^ oldstate) >> ((u64)(27))));
   u32 rot = ((u32)(oldstate >> ((u64)(59))));
-  return ((u32)((xorshifted >> rot) | (xorshifted << ((-rot) & ((u32)(31))))));
+  return ((xorshifted >> rot) | (xorshifted << ((-rot) & ((u32)(31)))));
 }
 static inline u32 rand__Pcg32_bounded_next(rand__Pcg32 *rng, u32 bound) {
-  u32 threshold = ((u32)(-bound % bound));
+  u32 threshold = (-bound % bound);
   while (1) {
     u32 r = rand__Pcg32_next(rng);
     if (r >= threshold) {
-      return ((u32)(r % bound));
+      return (r % bound);
     };
   };
   return ((u32)(0));
@@ -6265,19 +6265,19 @@ rand__Splitmix64 rand__new_splitmix64(u64 seed) {
   return (rand__Splitmix64){seed};
 }
 static inline u64 rand__Splitmix64_next(rand__Splitmix64 *rng) {
-  rng->state += ((u64)(0x9e3779b97f4a7c15));
+  rng->state += (0x9e3779b97f4a7c15);
   u64 z = rng->state;
-  z = (z ^ ((u64)((z >> ((u64)(30)))))) * ((u64)(0xbf58476d1ce4e5b9));
-  z = (z ^ ((u64)((z >> ((u64)(27)))))) * ((u64)(0x94d049bb133111eb));
-  return z ^ ((u64)(z >> ((u64)(31))));
+  z = (z ^ ((z >> ((u64)(30))))) * (0xbf58476d1ce4e5b9);
+  z = (z ^ ((z >> ((u64)(27))))) * (0x94d049bb133111eb);
+  return z ^ (z >> (31));
 }
 static inline u64 rand__Splitmix64_bounded_next(rand__Splitmix64 *rng,
                                                 u64 bound) {
-  u64 threshold = ((u64)(-bound % bound));
+  u64 threshold = -bound % bound;
   while (1) {
     u64 r = rand__Splitmix64_next(rng);
     if (r >= threshold) {
-      return ((u64)(r % bound));
+      return r % bound;
     };
   };
   return ((u64)(0));
@@ -21923,7 +21923,7 @@ map_int compiler__build_keys() {
        t < ((int)(compiler__compiler__TokenKind_keyword_end)); t++) {
 
     string key = (*(string *)array_get(compiler__TokenStr, t));
-    map_set(&res, key, &(int[]){((int)(t))});
+    map_set(&res, key, &(int[]){t});
   };
   return res;
 }
@@ -22476,12 +22476,12 @@ time__Time time__unix(int abs) {
   n -= n >> 2;
   y += n;
   d -= 365 * n;
-  int yday = ((int)(d));
+  int yday = d;
   int day = yday;
   int year = abs / ((int)(3.154e+7)) + 1970;
-  int hour = ((int)(abs % time__seconds_per_day)) / time__seconds_per_hour;
-  int minute = ((int)(abs % time__seconds_per_hour)) / time__seconds_per_minute;
-  int second = ((int)(abs % time__seconds_per_minute));
+  int hour = (abs % time__seconds_per_day) / time__seconds_per_hour;
+  int minute = (abs % time__seconds_per_hour) / time__seconds_per_minute;
+  int second = (abs % time__seconds_per_minute);
   if (time__is_leap_year(year)) {
     if (day > 31 + 29 - 1) {
       day--;
@@ -22498,12 +22498,12 @@ time__Time time__unix(int abs) {
   };
   int month = day / 31;
   int begin = 0;
-  int end = ((int)((*(int *)array_get(time__days_before, month + 1))));
+  int end = ((*(int *)array_get(time__days_before, month + 1)));
   if (day >= end) {
     month++;
     begin = end;
   } else {
-    begin = ((int)((*(int *)array_get(time__days_before, month))));
+    begin = ((*(int *)array_get(time__days_before, month)));
   };
   month++;
   day = day - begin + 1;
