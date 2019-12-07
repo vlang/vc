@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5a8c07d"
+#define V_COMMIT_HASH "cc834dd"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "55f32fc"
+#define V_COMMIT_HASH "5a8c07d"
 #endif
 #include <inttypes.h>
 
@@ -15960,6 +15960,9 @@ array_compiler__CFlag_msvc_string_flags(array_compiler__CFlag cflags) {
 }
 void compiler__Parser_in_optimization(compiler__Parser *p, string typ, int ph) {
   compiler__Parser_check(p, compiler__compiler__TokenKind_lsbr);
+  if (p->tok == compiler__compiler__TokenKind_rsbr) {
+    compiler__Parser_error(p, tos3("`x in []` is always false"));
+  };
   int i = 0;
   string expr = string_substr2(p->cgen->cur_line, ph, -1, true);
   bool is_str = string_eq(typ, tos3("string"));
