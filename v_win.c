@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b26a0bd"
+#define V_COMMIT_HASH "7069cd6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "dc2da1d"
+#define V_COMMIT_HASH "b26a0bd"
 #endif
 #include <inttypes.h>
 
@@ -7382,9 +7382,9 @@ Option_bool compiler__Table_parse_cflag(compiler__Table *table, string cflag,
     Option_int tmp26 = string_index(flag, tos3(","));
 
     if (tmp26.ok) {
-      int i2 = *(int *)tmp26.data;
-      if (index == -1 || i2 < index) {
-        index = i2;
+      int i = *(int *)tmp26.data;
+      if (index == -1 || i < index) {
+        index = i;
       };
     };
     if (index != -1 && string_at(flag, index) == ' ' &&
