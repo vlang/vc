@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a854d39"
+#define V_COMMIT_HASH "d7ccbba"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c2814c1"
+#define V_COMMIT_HASH "a854d39"
 #endif
 #include <inttypes.h>
 
@@ -4589,7 +4589,7 @@ int utf8_len(byte c) {
   return b;
 }
 int utf8_getchar() {
-  int c = ((int)(getchar()));
+  int c = getchar();
   int len = utf8_len(~c);
   if (c < 0) {
     return 0;
@@ -4598,13 +4598,13 @@ int utf8_getchar() {
   } else if (len == 1) {
     return -1;
   } else {
-    int uc = ((int)(c & ((1 << (7 - len)) - 1)));
+    int uc = c & ((1 << (7 - len)) - 1);
     for (int i = 0; i + 1 < len; i++) {
 
-      int c2 = ((int)(getchar()));
+      int c2 = getchar();
       if (c2 != -1 && (c2 >> 6) == 2) {
         uc <<= 6;
-        uc |= ((int)((c2 & 63)));
+        uc |= (c2 & 63);
       } else if (c2 == -1) {
         return 0;
       } else {
@@ -5088,14 +5088,14 @@ u64 strconv__common_parse_uint(string s, int _base, int _bit_size,
     return ((u64)(0));
   };
   if (bit_size == 0) {
-    bit_size = ((int)(strconv__int_size));
+    bit_size = strconv__int_size;
   } else if (bit_size < 0 || bit_size > 64) {
     return ((u64)(0));
   };
-  u64 cutoff = ((u64)(strconv__max_u64 / ((u64)(base)))) + ((u64)(1));
-  u64 max_val = ((bit_size == 64)
-                     ? (strconv__max_u64)
-                     : (((u64)(((u64)(1)) << ((u64)(bit_size)))) - ((u64)(1))));
+  u64 cutoff = strconv__max_u64 / ((u64)(base)) + ((u64)(1));
+  u64 max_val =
+      ((bit_size == 64) ? (strconv__max_u64)
+                        : ((((u64)(1)) << ((u64)(bit_size))) - ((u64)(1))));
   bool underscores = 0;
   u64 n = ((u64)(0));
   int tmp9 = start_index;
@@ -5166,9 +5166,9 @@ i64 strconv__common_parse_int(string _s, int base, int _bit_size,
     return ((i64)(0));
   };
   if (bit_size == 0) {
-    bit_size = ((int)(strconv__int_size));
+    bit_size = strconv__int_size;
   };
-  u64 cutoff = ((u64)(((u64)(1)) << ((u64)(bit_size - 1))));
+  u64 cutoff = ((u64)(1)) << ((u64)(bit_size - 1));
   if (!neg && un >= cutoff) {
     return ((i64)(cutoff - ((u64)(1))));
   };
@@ -12762,6 +12762,11 @@ void compiler__Parser_cast(compiler__Parser *p, string typ) {
   compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
   p->expected_type = typ;
   string expr_typ = compiler__Parser_bool_expression(p);
+  if (string_eq(expr_typ, typ)) {
+    compiler__Parser_warn(p,
+                          _STR("casting `%.*s` to `%.*s` is not needed",
+                               typ.len, typ.str, expr_typ.len, expr_typ.str));
+  };
   bool casting_voidptr_to_value =
       string_eq(expr_typ, tos3("void*")) && string_ne(typ, tos3("int")) &&
       string_ne(typ, tos3("byteptr")) && !string_ends_with(typ, tos3("*"));
