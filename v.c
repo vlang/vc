@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d735867"
+#define V_COMMIT_HASH "751ba48"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9352903"
+#define V_COMMIT_HASH "d735867"
 #endif
 #include <inttypes.h>
 
@@ -23284,7 +23284,8 @@ void init() {
       tos3("\n\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) "
            "x\n\n#ifdef __TINYC__\n#undef EMPTY_ARRAY_OF_ELEMS\n#define "
            "EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef TCCSKIP\n#define "
-           "TCCSKIP(x)\n#endif\n");
+           "TCCSKIP(x)\n#endif\n\n#ifndef exit\n#define exit(rc) "
+           "sys_exit(rc)\nvoid sys_exit (int);\n#endif\n");
   compiler__warn_match_arrow =
       string_add(tos3("=> is no longer needed in match statements, use\n"),
                  tos3("match foo {\n	1 { bar }\n	2 { baz }\n	else { "
