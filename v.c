@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7d58dc2"
+#define V_COMMIT_HASH "9352903"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7b0e378"
+#define V_COMMIT_HASH "7d58dc2"
 #endif
 #include <inttypes.h>
 
@@ -13913,7 +13913,12 @@ void compiler__V_compile(compiler__V *v) {
   compiler__CGen_genln(cgen, compiler__js_headers);
 #else
   if (!v->pref->is_bare) {
+#ifdef _MSC_VER
+    compiler__CGen_genln(cgen, tos3("#include <stdint.h>"));
+#else
     compiler__CGen_genln(cgen, tos3("#include <inttypes.h>"));
+#endif
+    ;
   } else {
     compiler__CGen_genln(cgen, tos3("#include <stdint.h>"));
   };
