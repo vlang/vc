@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ef82137"
+#define V_COMMIT_HASH "8f9b6ac"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "874ff42"
+#define V_COMMIT_HASH "ef82137"
 #endif
 #include <inttypes.h>
 
@@ -8157,7 +8157,7 @@ void compiler__Parser_mutable_arg_error(compiler__Parser *p, int i,
       p, string_add(
              _STR("`%.*s` is a mutable argument, you need to provide `mut`: ",
                   arg.name.len, arg.name.str),
-             _STR("`%.*s(%.*s)`", f.name.len, f.name.str, dots_example.len,
+             _STR("`%.*s (%.*s)`", f.name.len, f.name.str, dots_example.len,
                   dots_example.str)));
 }
 void compiler__Parser_comp_time(compiler__Parser *p) {
@@ -8437,7 +8437,7 @@ void compiler__Parser_comptime_method_call(compiler__Parser *p,
     compiler__Parser_genln(
         p, string_add(_STR("if ( string_eq(%.*s, _STR(\"%.*s\")) ) ", var.len,
                            var.str, method.name.len, method.name.str),
-                      _STR("%.*s_%.*s(%.*s %.*s);", typ.name.len, typ.name.str,
+                      _STR("%.*s_%.*s (%.*s %.*s);", typ.name.len, typ.name.str,
                            method.name.len, method.name.str, amp.len, amp.str,
                            p->expr_var.name.len, p->expr_var.name.str)));
     j++;
@@ -10371,7 +10371,7 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
     };
   };
   if (is_fn_header) {
-    compiler__Parser_genln(p, _STR("%.*s %.*s(%.*s);", typ.len, typ.str,
+    compiler__Parser_genln(p, _STR("%.*s %.*s (%.*s);", typ.len, typ.str,
                                    fn_name_cgen.len, fn_name_cgen.str,
                                    str_args.len, str_args.str));
     ;
@@ -10416,7 +10416,7 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
       fn_name_cgen = _STR("(* %.*s )", fn_name_cgen.len, fn_name_cgen.str);
     };
     string fn_decl =
-        _STR("%.*s%.*s %.*s(%.*s)", dll_export_linkage.len,
+        _STR("%.*s%.*s %.*s (%.*s)", dll_export_linkage.len,
              dll_export_linkage.str, typ.len, typ.str, fn_name_cgen.len,
              fn_name_cgen.str, str_args.len, str_args.str);
     if (p->pref->obfuscate) {
@@ -10620,7 +10620,7 @@ void compiler__Parser_async_fn_call(compiler__Parser *p, compiler__Fn f,
     wrapper_type = tos3("DWORD WINAPI");
   };
   string wrapper_text =
-      _STR("%.*s %.*s(%.*s * arg) {%.*s( /*f*/%.*s ); return 0; }",
+      _STR("%.*s %.*s (%.*s * arg) {%.*s ( /*f*/%.*s ); return 0; }",
            wrapper_type.len, wrapper_type.str, wrapper_name.len,
            wrapper_name.str, arg_struct_name.len, arg_struct_name.str,
            fn_name.len, fn_name.str, str_args.len, str_args.str);
@@ -11044,9 +11044,11 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
       if (compiler__Parser_peek(&/* ? */ *p) !=
           compiler__compiler__TokenKind_name) {
         compiler__Parser_error(
-            p, _STR("`%.*s` is a mutable argument, you need to provide a "
-                    "variable to modify: `%.*s(... mut a...)`",
-                    arg.name.len, arg.name.str, f->name.len, f->name.str));
+            p, string_add(
+                   _STR("`%.*s` is a mutable argument, you need to ",
+                        arg.name.len, arg.name.str),
+                   _STR("provide a variable to modify: `%.*s(... mut a...)`",
+                        f->name.len, f->name.str)));
       };
       compiler__Parser_check(p, compiler__compiler__TokenKind_key_mut);
       ;
@@ -11058,9 +11060,11 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
         string err = tmp74.error;
         int errcode = tmp74.ecode;
         compiler__Parser_error(
-            p, _STR("`%.*s` is a mutable argument, you need to provide a "
-                    "variable to modify: `%.*s(... mut a...)`",
-                    arg.name.len, arg.name.str, f->name.len, f->name.str));
+            p, string_add(
+                   _STR("`%.*s` is a mutable argument, you need to ",
+                        arg.name.len, arg.name.str),
+                   _STR("provide a variable to modify: `%.*s(... mut a...)`",
+                        f->name.len, f->name.str)));
         v_exit(1);
       }
       v = *(compiler__Var *)tmp74.data;
@@ -11264,10 +11268,10 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
       };
     };
   };
-  _V_MulRet_string_V_array_string _V_mret_5968_varg_type_varg_values =
+  _V_MulRet_string_V_array_string _V_mret_5972_varg_type_varg_values =
       compiler__Parser_fn_call_vargs(p, *f);
-  string varg_type = _V_mret_5968_varg_type_varg_values.var_0;
-  array_string varg_values = _V_mret_5968_varg_type_varg_values.var_1;
+  string varg_type = _V_mret_5972_varg_type_varg_values.var_0;
+  array_string varg_values = _V_mret_5972_varg_type_varg_values.var_1;
   if (f->is_variadic) {
     _PUSH(&saved_args, (/*typ = array_string   tmp_typ=string*/ varg_type),
           tmp79, string);
@@ -11339,21 +11343,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp93 = tos3("");
-    bool tmp94 = map_get(/*fn.v : 1281*/ r.inst, tp, &tmp93);
+    bool tmp94 = map_get(/*fn.v : 1283*/ r.inst, tp, &tmp93);
 
     if (!tmp94)
       tmp93 = tos((byte *)"", 0);
 
     if (string_ne(tmp93, tos3(""))) {
       string tmp95 = tos3("");
-      bool tmp96 = map_get(/*fn.v : 1282*/ r.inst, tp, &tmp95);
+      bool tmp96 = map_get(/*fn.v : 1284*/ r.inst, tp, &tmp95);
 
       if (!tmp96)
         tmp95 = tos((byte *)"", 0);
 
       if (string_ne(tmp95, ti)) {
         string tmp97 = tos3("");
-        bool tmp98 = map_get(/*fn.v : 1283*/ r.inst, tp, &tmp97);
+        bool tmp98 = map_get(/*fn.v : 1285*/ r.inst, tp, &tmp97);
 
         if (!tmp98)
           tmp97 = tos((byte *)"", 0);
@@ -11371,7 +11375,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp99 = tos3("");
-  bool tmp100 = map_get(/*fn.v : 1292*/ r.inst, f->typ, &tmp99);
+  bool tmp100 = map_get(/*fn.v : 1294*/ r.inst, f->typ, &tmp99);
 
   if (!tmp100)
     tmp99 = tos((byte *)"", 0);
@@ -11384,7 +11388,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp101.data)[tmp102];
 
     string tmp103 = tos3("");
-    bool tmp104 = map_get(/*fn.v : 1296*/ r.inst, tp, &tmp103);
+    bool tmp104 = map_get(/*fn.v : 1298*/ r.inst, tp, &tmp103);
 
     if (!tmp104)
       tmp103 = tos((byte *)"", 0);
@@ -11407,7 +11411,7 @@ string compiler__replace_generic_type(string gen_type, compiler__TypeInst *ti) {
   };
   if ((_IN_MAP((typ), ti->inst))) {
     string tmp107 = tos3("");
-    bool tmp108 = map_get(/*fn.v : 1310*/ ti->inst, typ, &tmp107);
+    bool tmp108 = map_get(/*fn.v : 1312*/ ti->inst, typ, &tmp107);
 
     if (!tmp108)
       tmp107 = tos((byte *)"", 0);
@@ -11520,10 +11524,10 @@ compiler__Parser_fn_call_vargs(compiler__Parser *p, compiler__Fn f) {
     if (p->tok == compiler__compiler__TokenKind_comma) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
     };
-    _V_MulRet_string_V_string _V_mret_6862_varg_type_varg_value =
+    _V_MulRet_string_V_string _V_mret_6866_varg_type_varg_value =
         compiler__Parser_tmp_expr(p);
-    string varg_type = _V_mret_6862_varg_type_varg_value.var_0;
-    string varg_value = _V_mret_6862_varg_type_varg_value.var_1;
+    string varg_type = _V_mret_6866_varg_type_varg_value.var_0;
+    string varg_value = _V_mret_6866_varg_type_varg_value.var_1;
     if (string_starts_with(varg_type, tos3("varg_")) &&
         (values.len > 0 || p->tok == compiler__compiler__TokenKind_comma)) {
       compiler__Parser_error(
@@ -11647,7 +11651,7 @@ void compiler__rename_generic_fn_instance(compiler__Fn *f,
     string k = ((string *)tmp137.data)[tmp138];
 
     string tmp139 = tos3("");
-    bool tmp140 = map_get(/*fn.v : 1441*/ ti->inst, k, &tmp139);
+    bool tmp140 = map_get(/*fn.v : 1443*/ ti->inst, k, &tmp139);
 
     if (!tmp140)
       tmp139 = tos((byte *)"", 0);
@@ -12108,7 +12112,7 @@ void compiler__Parser_gen_fn_decl(compiler__Parser *p, compiler__Fn f,
            : (((string_eq(p->attr, tos3("inline"))) ? (tos3("static inline "))
                                                     : (tos3("")))));
   string fn_name_cgen = compiler__Table_fn_gen_name(p->table, &/*114*/ f);
-  compiler__Parser_genln(p, _STR("%.*s%.*s %.*s(%.*s) {",
+  compiler__Parser_genln(p, _STR("%.*s%.*s %.*s (%.*s) {",
                                  dll_export_linkage.len, dll_export_linkage.str,
                                  typ.len, typ.str, fn_name_cgen.len,
                                  fn_name_cgen.str, str_args.len, str_args.str));
@@ -13530,7 +13534,7 @@ void compiler__Parser_gen_json_for_type(compiler__Parser *p,
   compiler__Table_register_fn(p->table, enc_fn);
   dec = string_add(
       dec,
-      _STR("\n//%.*s %.*s(cJSON* root) {\nOption %.*s(cJSON* root, %.*s* res) "
+      _STR("\n//%.*s %.*s (cJSON* root) {\nOption %.*s(cJSON* root, %.*s* res) "
            "{\n//  %.*s res;\n  if (!root) {\n    const char *error_ptr = "
            "cJSON_GetErrorPtr();\n    if (error_ptr != NULL)	{\n      "
            "fprintf(stderr, \"Error in decode() for %.*s error_ptr=: "
@@ -13539,7 +13543,7 @@ void compiler__Parser_gen_json_for_type(compiler__Parser *p,
            t.len, t.str, dec_fn.name.len, dec_fn.name.str, dec_fn.name.len,
            dec_fn.name.str, t.len, t.str, t.len, t.str, t.len, t.str));
   enc =
-      string_add(enc, _STR("\ncJSON* %.*s(%.*s val) {\ncJSON *o = "
+      string_add(enc, _STR("\ncJSON* %.*s (%.*s val) {\ncJSON *o = "
                            "cJSON_CreateObject();\nstring res = tos2(\"\");\n",
                            enc_fn.name.len, enc_fn.name.str, t.len, t.str));
   if (string_starts_with(t, tos3("array_"))) {
@@ -13571,19 +13575,19 @@ void compiler__Parser_gen_json_for_type(compiler__Parser *p,
       string dec_name = compiler__js_dec_name(_typ);
       if (compiler__is_js_prim(_typ)) {
         dec = string_add(
-            dec, string_add(_STR(" res->%.*s = %.*s(js_get(", field.name.len,
+            dec, string_add(_STR(" res->%.*s = %.*s (js_get(", field.name.len,
                                  field.name.str, dec_name.len, dec_name.str),
                             _STR("root, \"%.*s\"))", name.len, name.str)));
       } else {
-        dec =
-            string_add(dec, _STR(" %.*s(js_get(root, \"%.*s\"), & (res->%.*s))",
-                                 dec_name.len, dec_name.str, name.len, name.str,
-                                 field.name.len, field.name.str));
+        dec = string_add(dec,
+                         _STR(" %.*s (js_get(root, \"%.*s\"), & (res->%.*s))",
+                              dec_name.len, dec_name.str, name.len, name.str,
+                              field.name.len, field.name.str));
       };
       dec = string_add(dec, tos3(";\n"));
     };
     enc = string_add(
-        enc, _STR("  cJSON_AddItemToObject(o,  \"%.*s\",%.*s(val.%.*s)); \n",
+        enc, _STR("  cJSON_AddItemToObject(o,  \"%.*s\",%.*s (val.%.*s)); \n",
                   name.len, name.str, enc_name.len, enc_name.str,
                   field.name.len, field.name.str));
   };
@@ -13611,10 +13615,10 @@ string compiler__Parser_decode_array(compiler__Parser *p, string array_type) {
   compiler__Parser_gen_json_for_type(p, t);
   string s = tos3("");
   if (compiler__is_js_prim(typ)) {
-    s = _STR("%.*s val= %.*s(jsval); ", typ.len, typ.str, fn_name.len,
+    s = _STR("%.*s val= %.*s (jsval); ", typ.len, typ.str, fn_name.len,
              fn_name.str);
   } else {
-    s = _STR("  %.*s val; %.*s(jsval, &val); ", typ.len, typ.str, fn_name.len,
+    s = _STR("  %.*s val; %.*s (jsval, &val); ", typ.len, typ.str, fn_name.len,
              fn_name.str);
   };
   return _STR("\n*res = new_array(0, 0, sizeof(%.*s));\nconst cJSON *jsval = "
@@ -13635,7 +13639,7 @@ string compiler__Parser_encode_array(compiler__Parser *p, string array_type) {
   string fn_name = compiler__js_enc_name(typ);
   return _STR(
       "\no = cJSON_CreateArray();\nfor (int i = 0; i < val.len; i++){\n  "
-      "cJSON_AddItemToArray(o, %.*s(  ((%.*s*)val.data)[i]  ));\n}\n",
+      "cJSON_AddItemToArray(o, %.*s (  ((%.*s*)val.data)[i]  ));\n}\n",
       fn_name.len, fn_name.str, typ.len, typ.str);
 }
 array_string
@@ -14204,8 +14208,6 @@ void compiler__V_generate_main(compiler__V *v) {
       };
       compiler__V_gen_main_start(v, 0);
       if (v->pref->is_stats) {
-        compiler__CGen_genln(cgen,
-                             tos3("BenchedTests bt = main__start_testing();"));
       };
       map_compiler__Fn tmp23 = v->table->fns;
       array_string keys_tmp23 = map_keys(&tmp23);
@@ -14221,7 +14223,7 @@ void compiler__V_generate_main(compiler__V *v) {
                 _STR("BenchedTests_testing_step_start(&bt, tos3(\"%.*s\"));",
                      f.name.len, f.name.str));
           };
-          compiler__CGen_genln(cgen, _STR("%.*s();", f.name.len, f.name.str));
+          compiler__CGen_genln(cgen, _STR("%.*s ();", f.name.len, f.name.str));
           if (v->pref->is_stats) {
             compiler__CGen_genln(cgen,
                                  tos3("BenchedTests_testing_step_end(&bt);"));
@@ -17244,13 +17246,13 @@ void compiler__Parser_free_var(compiler__Parser *p, compiler__Var v) {
       array_set(
           &/*q*/ p->cgen->lines, p->cgen->lines.len - 2,
           &(string[]){string_add(
-              _STR("%.*s(%.*s); /* :) close_scope free %.*s */", free_fn.len,
+              _STR("%.*s (%.*s); /* :) close_scope free %.*s */", free_fn.len,
                    free_fn.str, v.name.len, v.name.str, v.typ.len, v.typ.str),
               prev_line)});
     };
   } else {
     compiler__Parser_genln(p,
-                           _STR("%.*s(%.*s); // close_scope free", free_fn.len,
+                           _STR("%.*s (%.*s); // close_scope free", free_fn.len,
                                 free_fn.str, v.name.len, v.name.str));
   };
 }
@@ -19281,12 +19283,12 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
       if (string_eq(field.typ, tos3("int"))) {
         cast = tos3("v_string_int");
       };
-      strings__Builder_writeln(&/* ? */ obj_gen,
-                               _STR("%.*s%.*s . %.*s = %.*s( "
-                                    "*(string*)array_get(%.*srow.vals, %d) );",
-                                    qprefix.len, qprefix.str, tmp.len, tmp.str,
-                                    field.name.len, field.name.str, cast.len,
-                                    cast.str, qprefix.len, qprefix.str, i));
+      strings__Builder_writeln(
+          &/* ? */ obj_gen,
+          string_add(_STR("%.*s%.*s.%.*s = ", qprefix.len, qprefix.str, tmp.len,
+                          tmp.str, field.name.len, field.name.str),
+                     _STR("%.*s(*(string*)array_get(%.*srow.vals, %d));",
+                          cast.len, cast.str, qprefix.len, qprefix.str, i)));
     };
     if (query_one) {
       string params_gen =
@@ -19680,7 +19682,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
         s->inside_string = 0;
       };
     };
-    if (s->inter_start && next_char != '.') {
+    if (s->inter_start && next_char != '.' && next_char != '(') {
       s->inter_end = 1;
       s->inter_start = 0;
     };
@@ -19692,9 +19694,20 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
     string num = compiler__Scanner_ident_number(s);
     return compiler__scan_res(compiler__compiler__TokenKind_number, num);
   };
-  byte tmp46 = c;
+  if (c == ')' && s->inter_start) {
+    s->inter_end = 1;
+    s->inter_start = 0;
+    byte next_char =
+        ((s->pos + 1 < s->text.len) ? (string_at(s->text, s->pos + 1))
+                                    : ('\0'));
+    if (next_char == s->quote) {
+      s->inside_string = 0;
+    };
+    return compiler__scan_res(compiler__compiler__TokenKind_rpar, tos3(""));
+  };
+  byte tmp48 = c;
 
-  if (tmp46 == '+') {
+  if (tmp48 == '+') {
     if (nextc == '+') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_inc, tos3(""));
@@ -19704,7 +19717,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
                                 tos3(""));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_plus, tos3(""));
-  } else if (tmp46 == '-') {
+  } else if (tmp48 == '-') {
     if (nextc == '-') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_dec, tos3(""));
@@ -19714,57 +19727,57 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
                                 tos3(""));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_minus, tos3(""));
-  } else if (tmp46 == '*') {
+  } else if (tmp48 == '*') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_mult_assign,
                                 tos3(""));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_mul, tos3(""));
-  } else if (tmp46 == '^') {
+  } else if (tmp48 == '^') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_xor_assign,
                                 tos3(""));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_xor, tos3(""));
-  } else if (tmp46 == '%') {
+  } else if (tmp48 == '%') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_mod_assign,
                                 tos3(""));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_mod, tos3(""));
-  } else if (tmp46 == '?') {
+  } else if (tmp48 == '?') {
     return compiler__scan_res(compiler__compiler__TokenKind_question, tos3(""));
-  } else if ((tmp46 == compiler__single_quote) ||
-             (tmp46 == compiler__double_quote)) {
+  } else if ((tmp48 == compiler__single_quote) ||
+             (tmp48 == compiler__double_quote)) {
     return compiler__scan_res(compiler__compiler__TokenKind_str,
                               compiler__Scanner_ident_string(s));
-  } else if (tmp46 == '`') {
+  } else if (tmp48 == '`') {
     return compiler__scan_res(compiler__compiler__TokenKind_chartoken,
                               compiler__Scanner_ident_char(s));
-  } else if (tmp46 == '(') {
+  } else if (tmp48 == '(') {
     return compiler__scan_res(compiler__compiler__TokenKind_lpar, tos3(""));
-  } else if (tmp46 == ')') {
+  } else if (tmp48 == ')') {
     return compiler__scan_res(compiler__compiler__TokenKind_rpar, tos3(""));
-  } else if (tmp46 == '[') {
+  } else if (tmp48 == '[') {
     return compiler__scan_res(compiler__compiler__TokenKind_lsbr, tos3(""));
-  } else if (tmp46 == ']') {
+  } else if (tmp48 == ']') {
     return compiler__scan_res(compiler__compiler__TokenKind_rsbr, tos3(""));
-  } else if (tmp46 == '{') {
+  } else if (tmp48 == '{') {
     if (s->inside_string) {
       return compiler__Scanner_scan(s);
     };
     return compiler__scan_res(compiler__compiler__TokenKind_lcbr, tos3(""));
-  } else if (tmp46 == '$') {
+  } else if (tmp48 == '$') {
     if (s->inside_string) {
       return compiler__scan_res(compiler__compiler__TokenKind_str_dollar,
                                 tos3(""));
     } else {
       return compiler__scan_res(compiler__compiler__TokenKind_dollar, tos3(""));
     };
-  } else if (tmp46 == '}') {
+  } else if (tmp48 == '}') {
     if (s->inside_string) {
       s->pos++;
       if (string_at(s->text, s->pos) == s->quote) {
@@ -19776,7 +19789,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
     } else {
       return compiler__scan_res(compiler__compiler__TokenKind_rcbr, tos3(""));
     };
-  } else if (tmp46 == '&') {
+  } else if (tmp48 == '&') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_and_assign,
@@ -19787,7 +19800,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
       return compiler__scan_res(compiler__compiler__TokenKind_and, tos3(""));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_amp, tos3(""));
-  } else if (tmp46 == '|') {
+  } else if (tmp48 == '|') {
     if (nextc == '|') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_logical_or,
@@ -19799,9 +19812,9 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
                                 tos3(""));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_pipe, tos3(""));
-  } else if (tmp46 == ',') {
+  } else if (tmp48 == ',') {
     return compiler__scan_res(compiler__compiler__TokenKind_comma, tos3(""));
-  } else if (tmp46 == '@') {
+  } else if (tmp48 == '@') {
     s->pos++;
     string name = compiler__Scanner_ident_name(s);
     if (string_eq(name, tos3("FN"))) {
@@ -19831,7 +19844,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
           tos3("@ must be used before keywords (e.g. `@type string`)"));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_name, name);
-  } else if (tmp46 == '.') {
+  } else if (tmp48 == '.') {
     if (nextc == '.') {
       s->pos++;
       if (string_at(s->text, s->pos + 1) == '.') {
@@ -19842,7 +19855,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
       return compiler__scan_res(compiler__compiler__TokenKind_dotdot, tos3(""));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_dot, tos3(""));
-  } else if (tmp46 == '#') {
+  } else if (tmp48 == '#') {
     int start = s->pos + 1;
     compiler__Scanner_ignore_line(s);
     if (nextc == '!') {
@@ -19853,7 +19866,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
     string hash = string_substr2(s->text, start, s->pos, false);
     return compiler__scan_res(compiler__compiler__TokenKind_hash,
                               string_trim_space(hash));
-  } else if (tmp46 == '>') {
+  } else if (tmp48 == '>') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_ge, tos3(""));
@@ -19869,7 +19882,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
     } else {
       return compiler__scan_res(compiler__compiler__TokenKind_gt, tos3(""));
     };
-  } else if (tmp46 == 0xE2) {
+  } else if (tmp48 == 0xE2) {
     if (nextc == 0x89 && string_at(s->text, s->pos + 2) == 0xA0) {
       s->pos += 2;
       return compiler__scan_res(compiler__compiler__TokenKind_ne, tos3(""));
@@ -19880,7 +19893,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
       s->pos += 2;
       return compiler__scan_res(compiler__compiler__TokenKind_ge, tos3(""));
     };
-  } else if (tmp46 == '<') {
+  } else if (tmp48 == '<') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_le, tos3(""));
@@ -19896,7 +19909,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
     } else {
       return compiler__scan_res(compiler__compiler__TokenKind_lt, tos3(""));
     };
-  } else if (tmp46 == '=') {
+  } else if (tmp48 == '=') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_eq, tos3(""));
@@ -19906,7 +19919,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
     } else {
       return compiler__scan_res(compiler__compiler__TokenKind_assign, tos3(""));
     };
-  } else if (tmp46 == ':') {
+  } else if (tmp48 == ':') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_decl_assign,
@@ -19914,19 +19927,19 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
     } else {
       return compiler__scan_res(compiler__compiler__TokenKind_colon, tos3(""));
     };
-  } else if (tmp46 == ';') {
+  } else if (tmp48 == ';') {
     return compiler__scan_res(compiler__compiler__TokenKind_semicolon,
                               tos3(""));
-  } else if (tmp46 == '!') {
+  } else if (tmp48 == '!') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_ne, tos3(""));
     } else {
       return compiler__scan_res(compiler__compiler__TokenKind_not, tos3(""));
     };
-  } else if (tmp46 == '~') {
+  } else if (tmp48 == '~') {
     return compiler__scan_res(compiler__compiler__TokenKind_bit_not, tos3(""));
-  } else if (tmp46 == '/') {
+  } else if (tmp48 == '/') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_div_assign,
@@ -20121,10 +20134,10 @@ bool compiler__Scanner_expect(compiler__Scanner *s, string want,
   if (end_pos < 0 || end_pos > s->text.len) {
     return 0;
   };
-  int tmp99 = start_pos;
+  int tmp101 = start_pos;
   ;
-  for (int tmp100 = tmp99; tmp100 < end_pos; tmp100++) {
-    int pos = tmp100;
+  for (int tmp102 = tmp101; tmp102 < end_pos; tmp102++) {
+    int pos = tmp102;
 
     if (string_at(s->text, pos) != string_at(want, pos - start_pos)) {
       return 0;
@@ -20167,7 +20180,7 @@ void compiler__Scanner_eat_to_end_of_line(compiler__Scanner *s) {
 void compiler__Scanner_inc_line_number(compiler__Scanner *s) {
   s->last_nl_pos = s->pos;
   s->line_nr++;
-  _PUSH(&s->line_ends, (/*typ = array_int   tmp_typ=int*/ s->pos), tmp107, int);
+  _PUSH(&s->line_ends, (/*typ = array_int   tmp_typ=int*/ s->pos), tmp109, int);
   if (s->line_nr > s->nlines) {
     s->nlines = s->line_nr;
   };
@@ -20187,10 +20200,10 @@ string compiler__Scanner_line(compiler__Scanner s, int n) {
 bool compiler__is_name_char(byte c) { return byte_is_letter(c) || c == '_'; }
 static inline bool compiler__is_nl(byte c) { return c == '\r' || c == '\n'; }
 bool compiler__contains_capital(string s) {
-  string tmp114 = s;
+  string tmp116 = s;
   ;
-  for (int tmp115 = 0; tmp115 < tmp114.len; tmp115++) {
-    byte c = tmp114.str[tmp115];
+  for (int tmp117 = 0; tmp117 < tmp116.len; tmp117++) {
+    byte c = tmp116.str[tmp117];
 
     if (c >= 'A' && c <= 'Z') {
       return 1;
@@ -20202,10 +20215,10 @@ bool compiler__good_type_name(string s) {
   if (s.len < 4) {
     return 1;
   };
-  int tmp116 = 2;
+  int tmp118 = 2;
   ;
-  for (int tmp117 = tmp116; tmp117 < s.len; tmp117++) {
-    int i = tmp117;
+  for (int tmp119 = tmp118; tmp119 < s.len; tmp119++) {
+    int i = tmp119;
 
     if (byte_is_capital(string_at(s, i)) &&
         byte_is_capital(string_at(s, i - 1)) &&
