@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4d1f721"
+#define V_COMMIT_HASH "1bb38a3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d58982a"
+#define V_COMMIT_HASH "4d1f721"
 #endif
 #include <inttypes.h>
 
@@ -2160,6 +2160,7 @@ int os__STD_INPUT_HANDLE;
 int os__STD_OUTPUT_HANDLE;
 int os__STD_ERROR_HANDLE;
 array_string os__args;
+string os__wd_at_startup;
 int os__MAP_PRIVATE;
 int os__MAP_ANONYMOUS;
 string os__path_separator;
@@ -23204,6 +23205,7 @@ void init() {
   os__STD_ERROR_HANDLE = -12;
   os__args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+  os__wd_at_startup = os__getwd();
   os__MAP_PRIVATE = 0x02;
   os__MAP_ANONYMOUS = 0x20;
   os__path_separator = tos3("/");

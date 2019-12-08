@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4d1f721"
+#define V_COMMIT_HASH "1bb38a3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d58982a"
+#define V_COMMIT_HASH "4d1f721"
 #endif
 #include <inttypes.h>
 
@@ -2318,6 +2318,7 @@ int os__ENABLE_VIRTUAL_TERMINAL_PROCESSING;
 int os__DISABLE_NEWLINE_AUTO_RETURN;
 int os__ENABLE_LVB_GRID_WORLDWIDE;
 array_string os__args;
+string os__wd_at_startup;
 string os__path_separator;
 int os__FORMAT_MESSAGE_ALLOCATE_BUFFER;
 int os__FORMAT_MESSAGE_ARGUMENT_ARRAY;
@@ -23310,6 +23311,7 @@ void init() {
   os__ENABLE_LVB_GRID_WORLDWIDE = 0x0010;
   os__args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+  os__wd_at_startup = os__getwd();
   os__path_separator = tos3("\\");
   os__FORMAT_MESSAGE_ALLOCATE_BUFFER = 0x00000100;
   os__FORMAT_MESSAGE_ARGUMENT_ARRAY = 0x00002000;
