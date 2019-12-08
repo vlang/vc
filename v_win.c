@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "faedebb"
+#define V_COMMIT_HASH "4ebf53c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9730164"
+#define V_COMMIT_HASH "faedebb"
 #endif
 #include <inttypes.h>
 
@@ -10315,24 +10315,8 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_dot);
     f.name = compiler__Parser_check_name(p);
     f.is_c = 1;
-  } else if (!p->pref->translated) {
-    if (compiler__contains_capital(f.name) &&
-        !compiler__Parser_fileis(&/* ? */ *p, tos3("view.v")) && !p->is_vgen) {
-      printf("`%.*s`\n", f.name.len, f.name.str);
-      compiler__Parser_error(p, tos3("function names cannot contain uppercase "
-                                     "letters, use snake_case instead"));
-    };
-    if (string_at(f.name, 0) == '_') {
-      compiler__Parser_error(
-          p,
-          tos3("function names cannot start with `_`, use snake_case instead"));
-    };
-    if (string_contains(f.name, tos3("__"))) {
-      compiler__Parser_error(
-          p, tos3("function names cannot contain double underscores, use "
-                  "single underscores instead"));
-    };
   };
+  string orig_name = f.name;
   bool has_receiver = receiver_typ.len > 0;
   if (string_ne(receiver_typ, tos3(""))) {
   };
@@ -10342,11 +10326,11 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
     f.name = compiler__Parser_prepend_mod(&/* ? */ *p, f.name);
   };
   if (compiler__Parser_first_pass(&/* ? */ *p) && receiver_typ.len == 0) {
-    Option_compiler__Fn tmp44 =
+    Option_compiler__Fn tmp42 =
         compiler__Table_find_fn(&/* ? */ *p->table, f.name);
 
-    if (tmp44.ok) {
-      compiler__Fn existing_fn = *(compiler__Fn *)tmp44.data;
+    if (tmp42.ok) {
+      compiler__Fn existing_fn = *(compiler__Fn *)tmp42.data;
       if (!existing_fn.is_decl) {
         compiler__Parser_error(
             p, _STR("redefinition of `%.*s`", f.name.len, f.name.str));
@@ -10365,19 +10349,19 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
       string type_par = compiler__Parser_check_name(p);
       if (type_par.len > 1 ||
           !((_IN(string, (type_par), compiler__reserved_type_param_names)))) {
-        string tmp45 = array_string_str(compiler__reserved_type_param_names);
+        string tmp43 = array_string_str(compiler__reserved_type_param_names);
 
         compiler__Parser_error(
             p, _STR("type parameters must be single-character, upper-case "
                     "letters of the following set: %.*s ",
-                    tmp45.len, tmp45.str));
+                    tmp43.len, tmp43.str));
       };
       if ((_IN(string, (type_par), f.type_pars))) {
         compiler__Parser_error(p, _STR("redeclaration of type parameter `%.*s`",
                                        type_par.len, type_par.str));
       };
       _PUSH(&f.type_pars, (/*typ = array_string   tmp_typ=string*/ type_par),
-            tmp46, string);
+            tmp44, string);
       if (p->tok == compiler__compiler__TokenKind_gt) {
         break;
       };
@@ -10405,6 +10389,23 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
       !is_c && !p->is_vh && p->tok != compiler__compiler__TokenKind_lcbr;
   if (is_fn_header) {
     f.is_decl = 1;
+  };
+  if (!is_c && !p->pref->translated && !is_fn_header) {
+    if (compiler__contains_capital(orig_name) &&
+        !compiler__Parser_fileis(&/* ? */ *p, tos3("view.v")) && !p->is_vgen) {
+      compiler__Parser_error(p, tos3("function names cannot contain uppercase "
+                                     "letters, use snake_case instead"));
+    };
+    if (string_at(f.name, 0) == '_') {
+      compiler__Parser_error(
+          p,
+          tos3("function names cannot start with `_`, use snake_case instead"));
+    };
+    if (string_contains(orig_name, tos3("__"))) {
+      compiler__Parser_error(
+          p, tos3("function names cannot contain double underscores, use "
+                  "single underscores instead"));
+    };
   };
   if (!is_c && !p->is_vh && !is_fn_header) {
     ;
@@ -11370,10 +11371,10 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
       };
     };
   };
-  _V_MulRet_string_V_array_string _V_mret_5972_varg_type_varg_values =
+  _V_MulRet_string_V_array_string _V_mret_5969_varg_type_varg_values =
       compiler__Parser_fn_call_vargs(p, *f);
-  string varg_type = _V_mret_5972_varg_type_varg_values.var_0;
-  array_string varg_values = _V_mret_5972_varg_type_varg_values.var_1;
+  string varg_type = _V_mret_5969_varg_type_varg_values.var_0;
+  array_string varg_values = _V_mret_5969_varg_type_varg_values.var_1;
   if (f->is_variadic) {
     _PUSH(&saved_args, (/*typ = array_string   tmp_typ=string*/ varg_type),
           tmp79, string);
@@ -11445,21 +11446,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp93 = tos3("");
-    bool tmp94 = map_get(/*fn.v : 1283*/ r.inst, tp, &tmp93);
+    bool tmp94 = map_get(/*fn.v : 1285*/ r.inst, tp, &tmp93);
 
     if (!tmp94)
       tmp93 = tos((byte *)"", 0);
 
     if (string_ne(tmp93, tos3(""))) {
       string tmp95 = tos3("");
-      bool tmp96 = map_get(/*fn.v : 1284*/ r.inst, tp, &tmp95);
+      bool tmp96 = map_get(/*fn.v : 1286*/ r.inst, tp, &tmp95);
 
       if (!tmp96)
         tmp95 = tos((byte *)"", 0);
 
       if (string_ne(tmp95, ti)) {
         string tmp97 = tos3("");
-        bool tmp98 = map_get(/*fn.v : 1285*/ r.inst, tp, &tmp97);
+        bool tmp98 = map_get(/*fn.v : 1287*/ r.inst, tp, &tmp97);
 
         if (!tmp98)
           tmp97 = tos((byte *)"", 0);
@@ -11477,7 +11478,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp99 = tos3("");
-  bool tmp100 = map_get(/*fn.v : 1294*/ r.inst, f->typ, &tmp99);
+  bool tmp100 = map_get(/*fn.v : 1296*/ r.inst, f->typ, &tmp99);
 
   if (!tmp100)
     tmp99 = tos((byte *)"", 0);
@@ -11490,7 +11491,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp101.data)[tmp102];
 
     string tmp103 = tos3("");
-    bool tmp104 = map_get(/*fn.v : 1298*/ r.inst, tp, &tmp103);
+    bool tmp104 = map_get(/*fn.v : 1300*/ r.inst, tp, &tmp103);
 
     if (!tmp104)
       tmp103 = tos((byte *)"", 0);
@@ -11513,7 +11514,7 @@ string compiler__replace_generic_type(string gen_type, compiler__TypeInst *ti) {
   };
   if ((_IN_MAP((typ), ti->inst))) {
     string tmp107 = tos3("");
-    bool tmp108 = map_get(/*fn.v : 1312*/ ti->inst, typ, &tmp107);
+    bool tmp108 = map_get(/*fn.v : 1314*/ ti->inst, typ, &tmp107);
 
     if (!tmp108)
       tmp107 = tos((byte *)"", 0);
@@ -11626,10 +11627,10 @@ compiler__Parser_fn_call_vargs(compiler__Parser *p, compiler__Fn f) {
     if (p->tok == compiler__compiler__TokenKind_comma) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
     };
-    _V_MulRet_string_V_string _V_mret_6866_varg_type_varg_value =
+    _V_MulRet_string_V_string _V_mret_6863_varg_type_varg_value =
         compiler__Parser_tmp_expr(p);
-    string varg_type = _V_mret_6866_varg_type_varg_value.var_0;
-    string varg_value = _V_mret_6866_varg_type_varg_value.var_1;
+    string varg_type = _V_mret_6863_varg_type_varg_value.var_0;
+    string varg_value = _V_mret_6863_varg_type_varg_value.var_1;
     if (string_starts_with(varg_type, tos3("varg_")) &&
         (values.len > 0 || p->tok == compiler__compiler__TokenKind_comma)) {
       compiler__Parser_error(
@@ -11753,7 +11754,7 @@ void compiler__rename_generic_fn_instance(compiler__Fn *f,
     string k = ((string *)tmp137.data)[tmp138];
 
     string tmp139 = tos3("");
-    bool tmp140 = map_get(/*fn.v : 1443*/ ti->inst, k, &tmp139);
+    bool tmp140 = map_get(/*fn.v : 1445*/ ti->inst, k, &tmp139);
 
     if (!tmp140)
       tmp139 = tos((byte *)"", 0);
