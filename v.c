@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8f9b6ac"
+#define V_COMMIT_HASH "9730164"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ef82137"
+#define V_COMMIT_HASH "8f9b6ac"
 #endif
 #include <inttypes.h>
 
@@ -4953,6 +4953,10 @@ u64 strconv__common_parse_uint(string s, int _base, int _bit_size,
       } else if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == 'x') {
         base = 16;
         start_index += 2;
+      } else if (s.len >= 2 &&
+                 (string_at(s, 1) >= '0' && string_at(s, 1) <= '9')) {
+        base = 10;
+        start_index++;
       } else {
         base = 8;
         start_index++;
@@ -4972,10 +4976,10 @@ u64 strconv__common_parse_uint(string s, int _base, int _bit_size,
                         : ((((u64)(1)) << ((u64)(bit_size))) - ((u64)(1))));
   bool underscores = 0;
   u64 n = ((u64)(0));
-  int tmp9 = start_index;
+  int tmp13 = start_index;
   ;
-  for (int tmp10 = tmp9; tmp10 < s.len; tmp10++) {
-    int i = tmp10;
+  for (int tmp14 = tmp13; tmp14 < s.len; tmp14++) {
+    int i = tmp14;
 
     byte c = string_at(s, i);
     byte cl = strconv__byte_to_lower(c);
@@ -5065,10 +5069,10 @@ int strconv__atoi(string s) {
       };
     };
     int n = 0;
-    int tmp25 = start_idx;
+    int tmp29 = start_idx;
     ;
-    for (int tmp26 = tmp25; tmp26 < s.len; tmp26++) {
-      int i = tmp26;
+    for (int tmp30 = tmp29; tmp30 < s.len; tmp30++) {
+      int i = tmp30;
 
       byte ch = string_at(s, i) - '0';
       if (ch > 9) {
