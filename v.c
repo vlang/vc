@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e31bf63"
+#define V_COMMIT_HASH "874ff42"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1bb38a3"
+#define V_COMMIT_HASH "e31bf63"
 #endif
 #include <inttypes.h>
 
@@ -21783,23 +21783,19 @@ f32 compiler__typo_compare_name_mod(string a, string b, string b_mod) {
   if (!tmp82.ok) {
     string err = tmp82.error;
     int errcode = tmp82.ecode;
+    return 0;
   }
-  if (tmp82.ok) {
-    auidx = *(int *)tmp82.data;
-  } else {
-    auidx = -1;
-  };
+  auidx = *(int *)tmp82.data;
+  ;
   Option_int tmp83 = string_index(b, tos3("__"));
   int buidx;
   if (!tmp83.ok) {
     string err = tmp83.error;
     int errcode = tmp83.ecode;
+    return 0;
   }
-  if (tmp83.ok) {
-    buidx = *(int *)tmp83.data;
-  } else {
-    buidx = -1;
-  };
+  buidx = *(int *)tmp83.data;
+  ;
   string a_mod =
       ((auidx != -1)
            ? (compiler__mod_gen_name_rev(string_substr2(a, 0, auidx, false)))
