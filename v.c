@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "cc682ea"
+#define V_COMMIT_HASH "c9886e6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8b0de95"
+#define V_COMMIT_HASH "cc682ea"
 #endif
 #include <inttypes.h>
 
@@ -13249,7 +13249,7 @@ string compiler__Parser_match_statement(compiler__Parser *p, bool is_expr) {
     i++;
     ;
   };
-  compiler__Parser_error(p, tos3("match expression requires `else`"));
+  compiler__Parser_error(p, tos3("match must be exhaustive"));
   string tmp5 = tos3("");
   { compiler__Parser_check(p, compiler__compiler__TokenKind_rcbr); }
   return tmp5;
@@ -17418,7 +17418,7 @@ void compiler__Parser_assign_statement(compiler__Parser *p, compiler__Var v,
       compiler__Token next = compiler__Parser_peek_token(&/* ? */ *p);
       if (next.tok == compiler__compiler__TokenKind_number &&
           string_eq(next.lit, tos3("1"))) {
-        compiler__Parser_warn(p, tos3("use ++ instead of += 1"));
+        compiler__Parser_error(p, tos3("use `++` instead of `+= 1`"));
       };
       compiler__Parser_gen(p, tos3(" += "));
     };
