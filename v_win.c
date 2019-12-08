@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7adda3b"
+#define V_COMMIT_HASH "6ae51b2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5330859"
+#define V_COMMIT_HASH "7adda3b"
 #endif
 #include <inttypes.h>
 
@@ -9371,8 +9371,11 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_dot);
     name = p->lit;
     if (compiler__Parser_peek(&/* ? */ *p) ==
-            compiler__compiler__TokenKind_lcbr &&
-        compiler__Table_known_type(&/* ? */ *p->table, name)) {
+        compiler__compiler__TokenKind_lcbr) {
+      if (!compiler__Table_known_type(&/* ? */ *p->table, name)) {
+        compiler__Parser_error(
+            p, _STR("unknown C type `%.*s`", name.len, name.str));
+      };
       return compiler__Parser_get_struct_type(p, name, 1, ptr);
     };
     if (ptr && compiler__Parser_peek(&/* ? */ *p) ==
