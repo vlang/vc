@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6f49d4c"
+#define V_COMMIT_HASH "51051cd"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "32b0225"
+#define V_COMMIT_HASH "6f49d4c"
 #endif
 #include <inttypes.h>
 
@@ -22948,13 +22948,14 @@ string vweb_dot_tmpl__compile_template(string path) {
     h = *(string *)tmp2.data;
     ;
     header = string_replace(h, tos3("\'"), tos3("\""));
+    html = string_add(header, html);
   };
   array_string lines = string_split_into_lines(html);
   strings__Builder s = strings__new_builder(1000);
   strings__Builder_writeln(
-      &/* ? */ s, _STR("\nmut sb := strings.new_builder(%d)\nheader := "
-                       "\'%.*s\'\n_ = header\n//footer := \'footer\'\n",
-                       lines.len * 30, header.len, header.str));
+      &/* ? */ s, _STR("\nmut sb := strings.new_builder(%d)\nheader := \' \' "
+                       "// TODO remove\n_ = header\n//footer := \'footer\'\n",
+                       lines.len * 30));
   strings__Builder_writeln(&/* ? */ s, vweb_dot_tmpl__STR_START);
   bool in_css = 1;
   array_string tmp3 = lines;
