@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f68d9d1"
+#define V_COMMIT_HASH "75280bb"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7ffa315"
+#define V_COMMIT_HASH "f68d9d1"
 #endif
 #include <inttypes.h>
 
@@ -3141,7 +3141,7 @@ string int_str(int nn) {
     return tos3("0");
   };
   int max = 16;
-  byte *buf = v_calloc(max);
+  byte *buf = v_calloc(max + 1);
   int len = 0;
   bool is_neg = 0;
   if (n < 0) {
@@ -3159,6 +3159,7 @@ string int_str(int nn) {
     buf[/*ptr!*/ max - len - 1] /*rbyte 1*/ = '-';
     len++;
   };
+  buf[/*ptr!*/ max] /*rbyte 1*/ = '\0';
   return tos((byte *)(byte *)buf + max - len, len);
 }
 string i8_str(i8 n) { return int_str(((int)(n))); }
