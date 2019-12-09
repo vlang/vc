@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "32b0225"
+#define V_COMMIT_HASH "6f49d4c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8082a5e"
+#define V_COMMIT_HASH "32b0225"
 #endif
 #include <inttypes.h>
 
@@ -1183,6 +1183,7 @@ string string_clone(string a);
 string cstring_to_vstring(byte *cstr);
 string string_replace_once(string s, string rep, string with);
 string string_replace(string s, string rep, string with);
+bool string_bool(string s);
 int v_string_int(string s);
 i64 string_i64(string s);
 f32 string_f32(string s);
@@ -3485,6 +3486,9 @@ string string_replace(string s, string rep, string with) {
   };
   b[/*ptr!*/ new_len] /*rbyte 1*/ = '\0';
   return tos(b, new_len);
+}
+bool string_bool(string s) {
+  return string_eq(s, tos3("true")) || string_eq(s, tos3("t"));
 }
 int v_string_int(string s) {
   return ((int)(strconv__common_parse_int(s, 0, 32, 0, 0)));
@@ -9094,8 +9098,8 @@ string compiler__Parser_bterm(compiler__Parser *p) {
       ((string_eq(typ, tos3("f64")) || string_eq(typ, tos3("f32")))) &&
       !((string_eq(p->cur_fn.name, tos3("f64_abs")) ||
          string_eq(p->cur_fn.name, tos3("f32_abs")))) &&
-      !(string_eq(p->cur_fn.name, tos3("eq")));
-  bool is_array = string_contains(typ, tos3("array_"));
+      string_ne(p->cur_fn.name, tos3("eq"));
+  bool is_array = string_starts_with(typ, tos3("array_"));
   string expr_type = typ;
   compiler__TokenKind tok = p->tok;
   if ((tok == compiler__compiler__TokenKind_eq ||
@@ -9105,7 +9109,7 @@ string compiler__Parser_bterm(compiler__Parser *p) {
        tok == compiler__compiler__TokenKind_ge ||
        tok == compiler__compiler__TokenKind_ne)) {
     if (is_array) {
-      compiler__Parser_error(p, tos3("array comparing is not supported yet"));
+      compiler__Parser_error(p, tos3("array comparison is not supported yet"));
     };
     ;
     if ((is_float || is_str || is_ustr) && !p->is_js) {
@@ -9237,7 +9241,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
   string name = p->lit;
   if ((_IN(string, (name), map_keys(&/* ? */ p->cur_fn.dispatch_of.inst)))) {
     string tmp10 = tos3("");
-    bool tmp11 = map_get(/*expression.v : 169*/ p->cur_fn.dispatch_of.inst,
+    bool tmp11 = map_get(/*expression.v : 172*/ p->cur_fn.dispatch_of.inst,
                          name, &tmp10);
 
     if (!tmp11)
@@ -19200,8 +19204,10 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
   for (int i = 0; i < tmp8.len; i++) {
     compiler__Var field = ((compiler__Var *)tmp8.data)[i];
 
-    if (string_ne(field.typ, tos3("string")) &&
-        string_ne(field.typ, tos3("int"))) {
+    if (!((string_eq(field.typ, tos3("string")) ||
+           string_eq(field.typ, tos3("int")) ||
+           string_eq(field.typ, tos3("bool"))))) {
+      printf("orm: skipping %.*s\n", field.name.len, field.name.str);
       continue;
     };
     _PUSH(&fields,
@@ -19233,12 +19239,16 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
   for (int tmp14 = 0; tmp14 < tmp13.len; tmp14++) {
     compiler__Var field = ((compiler__Var *)tmp13.data)[tmp14];
 
-    if (string_ne(field.typ, tos3("string")) &&
-        string_ne(field.typ, tos3("int"))) {
+    if (!((string_eq(field.typ, tos3("string")) ||
+           string_eq(field.typ, tos3("int")) ||
+           string_eq(field.typ, tos3("bool"))))) {
+      printf("orm: skipping %.*s\n", field.name.len, field.name.str);
       continue;
     };
     compiler__Parser_register_var(p, (compiler__Var){
+                                         .is_mut = 1,
                                          .is_used = 1,
+                                         .is_changed = 1,
                                          .typ = field.typ,
                                          .name = field.name,
                                          .idx = field.idx,
@@ -19246,7 +19256,6 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
                                          .is_const = field.is_const,
                                          .args = field.args,
                                          .attr = field.attr,
-                                         .is_mut = field.is_mut,
                                          .is_alloc = field.is_alloc,
                                          .is_returned = field.is_returned,
                                          .ptr = field.ptr,
@@ -19255,7 +19264,6 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
                                          .mod = field.mod,
                                          .access_mod = field.access_mod,
                                          .is_global = field.is_global,
-                                         .is_changed = field.is_changed,
                                          .scope_level = field.scope_level,
                                          .is_c = field.is_c,
                                          .is_moved = field.is_moved,
@@ -19265,13 +19273,13 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
                                          .is_public = field.is_public,
                                      });
   };
-  q = string_add(q, table_name);
+  q = string_add(q, string_add(table_name, tos3("s")));
   if (p->tok == compiler__compiler__TokenKind_name &&
       string_eq(p->lit, tos3("where"))) {
     compiler__Parser_next(p);
     p->is_sql = 1;
-    _V_MulRet_string_V_string _V_mret_437___expr = compiler__Parser_tmp_expr(p);
-    string expr = _V_mret_437___expr.var_1;
+    _V_MulRet_string_V_string _V_mret_471___expr = compiler__Parser_tmp_expr(p);
+    string expr = _V_mret_471___expr.var_1;
     p->is_sql = 0;
     q = string_add(q, string_add(tos3(" where "), expr));
   };
@@ -19280,9 +19288,9 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
       string_eq(p->lit, tos3("limit"))) {
     compiler__Parser_next(p);
     p->is_sql = 1;
-    _V_MulRet_string_V_string _V_mret_485___limit =
+    _V_MulRet_string_V_string _V_mret_519___limit =
         compiler__Parser_tmp_expr(p);
-    string limit = _V_mret_485___limit.var_1;
+    string limit = _V_mret_519___limit.var_1;
     p->is_sql = 0;
     q = string_add(q, string_add(tos3(" limit "), limit));
     if (string_eq(string_trim_space(limit), tos3("1"))) {
@@ -19306,6 +19314,8 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
       string cast = tos3("");
       if (string_eq(field.typ, tos3("int"))) {
         cast = tos3("v_string_int");
+      } else if (string_eq(field.typ, tos3("bool"))) {
+        cast = tos3("string_bool");
       };
       strings__Builder_writeln(
           &/* ? */ obj_gen,
