@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "75280bb"
+#define V_COMMIT_HASH "8082a5e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f68d9d1"
+#define V_COMMIT_HASH "75280bb"
 #endif
 #include <inttypes.h>
 
@@ -14305,6 +14305,8 @@ void compiler__V_generate_main(compiler__V *v) {
       };
       compiler__V_gen_main_start(v, 0);
       if (v->pref->is_stats) {
+        compiler__CGen_genln(cgen,
+                             tos3("BenchedTests bt = main__start_testing();"));
       };
       map_compiler__Fn tmp23 = v->table->fns;
       array_string keys_tmp23 = map_keys(&tmp23);
