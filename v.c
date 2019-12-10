@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6d5e9f8"
+#define V_COMMIT_HASH "9726e18"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0650d58"
+#define V_COMMIT_HASH "6d5e9f8"
 #endif
 #include <inttypes.h>
 
@@ -3445,22 +3445,14 @@ string string_replace(string s, string rep, string with) {
   };
   array_int idxs = new_array_from_c_array(
       0, 0, sizeof(int), EMPTY_ARRAY_OF_ELEMS(int, 0){TCCSKIP(0)});
-  string rem = s;
-  int rstart = 0;
+  int idx = 0;
   while (1) {
-    Option_int tmp2 = string_index(rem, rep);
-    int i;
-    if (!tmp2.ok) {
-      string err = tmp2.error;
-      int errcode = tmp2.ecode;
+    idx = string_index_after(s, rep, idx);
+    if (idx == -1) {
       break;
-    }
-    i = *(int *)tmp2.data;
-    ;
-    _PUSH(&idxs, (/*typ = array_int   tmp_typ=int*/ rstart + i), tmp3, int);
-    i += rep.len;
-    rstart += i;
-    rem = string_substr(rem, i, rem.len);
+    };
+    _PUSH(&idxs, (/*typ = array_int   tmp_typ=int*/ idx), tmp2, int);
+    idx++;
   };
   if (idxs.len == 0) {
     return s;
@@ -3564,19 +3556,19 @@ array_string string_split_nth(string s, string delim, int nth) {
   int i = 0;
   if (delim.len == 0) {
     i = 1;
-    string tmp8 = s;
+    string tmp7 = s;
     ;
-    for (int tmp9 = 0; tmp9 < tmp8.len; tmp9++) {
-      byte ch = tmp8.str[tmp9];
+    for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
+      byte ch = tmp7.str[tmp8];
 
       if (nth > 0 && i >= nth) {
         _PUSH(&res,
               (/*typ = array_string   tmp_typ=string*/ string_substr(s, i,
                                                                      s.len)),
-              tmp10, string);
+              tmp9, string);
         break;
       };
-      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ byte_str(ch)), tmp11,
+      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ byte_str(ch)), tmp10,
             string);
       i++;
     };
@@ -3606,13 +3598,13 @@ array_string string_split_nth(string s, string delim, int nth) {
       if (string_starts_with(val, delim)) {
         val = string_right(val, delim.len);
       };
-      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ val), tmp12, string);
+      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ val), tmp11, string);
       start = i + delim.len;
     };
     i++;
   };
   if (string_ends_with(s, delim) && (nth < 1 || res.len < nth)) {
-    _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ tos3("")), tmp13,
+    _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ tos3("")), tmp12,
           string);
   };
   return res;
@@ -3632,7 +3624,7 @@ array_string string_split_into_lines(string s) {
         i++;
       };
       string line = string_substr(s, start, i);
-      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ line), tmp14,
+      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ line), tmp13,
             string);
       start = i + 1;
     };
@@ -3700,8 +3692,8 @@ Option_int string_index(string s, string p) {
       j++;
     };
     if (j == p.len) {
-      int tmp15 = OPTION_CAST(int)(i);
-      return opt_ok(&tmp15, sizeof(int));
+      int tmp14 = OPTION_CAST(int)(i);
+      return opt_ok(&tmp14, sizeof(int));
     };
     i++;
   };
@@ -3744,19 +3736,19 @@ int string_index_kmp(string s, string p) {
   return -1;
 }
 int string_index_any(string s, string chars) {
-  string tmp20 = chars;
+  string tmp19 = chars;
   ;
-  for (int tmp21 = 0; tmp21 < tmp20.len; tmp21++) {
-    byte c = tmp20.str[tmp21];
+  for (int tmp20 = 0; tmp20 < tmp19.len; tmp20++) {
+    byte c = tmp19.str[tmp20];
 
-    Option_int tmp22 = string_index(s, byte_str(c));
+    Option_int tmp21 = string_index(s, byte_str(c));
     int index;
-    if (!tmp22.ok) {
-      string err = tmp22.error;
-      int errcode = tmp22.ecode;
+    if (!tmp21.ok) {
+      string err = tmp21.error;
+      int errcode = tmp21.ecode;
       continue;
     }
-    index = *(int *)tmp22.data;
+    index = *(int *)tmp21.data;
     ;
     return index;
   };
@@ -3847,23 +3839,23 @@ int string_count(string s, string substr) {
   return 0;
 }
 bool string_contains(string s, string p) {
-  Option_int tmp23 = string_index(s, p);
-  if (!tmp23.ok) {
-    string err = tmp23.error;
-    int errcode = tmp23.ecode;
+  Option_int tmp22 = string_index(s, p);
+  if (!tmp22.ok) {
+    string err = tmp22.error;
+    int errcode = tmp22.ecode;
     return 0;
   };
   return 1;
 }
 bool string_starts_with(string s, string p) {
-  Option_int tmp24 = string_index(s, p);
+  Option_int tmp23 = string_index(s, p);
   int idx;
-  if (!tmp24.ok) {
-    string err = tmp24.error;
-    int errcode = tmp24.ecode;
+  if (!tmp23.ok) {
+    string err = tmp23.error;
+    int errcode = tmp23.ecode;
     return 0;
   }
-  idx = *(int *)tmp24.data;
+  idx = *(int *)tmp23.data;
   ;
   return idx == 0;
 }
@@ -3900,43 +3892,43 @@ string string_title(string s) {
   array_string words = string_split(s, tos3(" "));
   array_string tit = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  array_string tmp25 = words;
-  for (int tmp26 = 0; tmp26 < tmp25.len; tmp26++) {
-    string word = ((string *)tmp25.data)[tmp26];
+  array_string tmp24 = words;
+  for (int tmp25 = 0; tmp25 < tmp24.len; tmp25++) {
+    string word = ((string *)tmp24.data)[tmp25];
 
     _PUSH(&tit,
           (/*typ = array_string   tmp_typ=string*/ string_capitalize(word)),
-          tmp27, string);
+          tmp26, string);
   };
   string title = array_string_join(tit, tos3(" "));
   return title;
 }
 string string_find_between(string s, string start, string end) {
-  Option_int tmp28 = string_index(s, start);
+  Option_int tmp27 = string_index(s, start);
   int start_pos;
+  if (!tmp27.ok) {
+    string err = tmp27.error;
+    int errcode = tmp27.ecode;
+    return tos3("");
+  }
+  start_pos = *(int *)tmp27.data;
+  ;
+  string val = string_right(s, start_pos + start.len);
+  Option_int tmp28 = string_index(val, end);
+  int end_pos;
   if (!tmp28.ok) {
     string err = tmp28.error;
     int errcode = tmp28.ecode;
-    return tos3("");
-  }
-  start_pos = *(int *)tmp28.data;
-  ;
-  string val = string_right(s, start_pos + start.len);
-  Option_int tmp29 = string_index(val, end);
-  int end_pos;
-  if (!tmp29.ok) {
-    string err = tmp29.error;
-    int errcode = tmp29.ecode;
     return val;
   }
-  end_pos = *(int *)tmp29.data;
+  end_pos = *(int *)tmp28.data;
   ;
   return string_left(val, end_pos);
 }
 bool array_string_contains(array_string ar, string val) {
-  array_string tmp30 = ar;
-  for (int tmp31 = 0; tmp31 < tmp30.len; tmp31++) {
-    string s = ((string *)tmp30.data)[tmp31];
+  array_string tmp29 = ar;
+  for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
+    string s = ((string *)tmp29.data)[tmp30];
 
     if (string_eq(s, val)) {
       return 1;
@@ -3945,9 +3937,9 @@ bool array_string_contains(array_string ar, string val) {
   return 0;
 }
 bool array_int_contains(array_int ar, int val) {
-  array_int tmp32 = ar;
-  for (int i = 0; i < tmp32.len; i++) {
-    int s = ((int *)tmp32.data)[i];
+  array_int tmp31 = ar;
+  for (int i = 0; i < tmp31.len; i++) {
+    int s = ((int *)tmp31.data)[i];
 
     if (s == val) {
       return 1;
@@ -4054,7 +4046,7 @@ ustring string_ustring(string s) {
   for (int i = 0; i < s.len; i++) {
 
     int char_len = utf8_char_len(s.str[/*ptr!*/ i] /*rbyte 0*/);
-    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ i), tmp33, int);
+    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ i), tmp32, int);
     i += char_len - 1;
     res.len++;
   };
@@ -4100,7 +4092,7 @@ ustring ustring_add(ustring u, ustring a) {
   for (int i = 0; i < u.s.len; i++) {
 
     int char_len = utf8_char_len(u.s.str[/*ptr!*/ i] /*rbyte 0*/);
-    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp34, int);
+    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp33, int);
     i += char_len - 1;
     j += char_len;
     res.len++;
@@ -4108,7 +4100,7 @@ ustring ustring_add(ustring u, ustring a) {
   for (int i = 0; i < a.s.len; i++) {
 
     int char_len = utf8_char_len(a.s.str[/*ptr!*/ i] /*rbyte 0*/);
-    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp35, int);
+    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp34, int);
     i += char_len - 1;
     j += char_len;
     res.len++;
@@ -4206,14 +4198,14 @@ bool byte_is_letter(byte c) {
 }
 void v_string_free(string s) { v_free(s.str); }
 string string_all_before(string s, string dot) {
-  Option_int tmp40 = string_index(s, dot);
+  Option_int tmp39 = string_index(s, dot);
   int pos;
-  if (!tmp40.ok) {
-    string err = tmp40.error;
-    int errcode = tmp40.ecode;
+  if (!tmp39.ok) {
+    string err = tmp39.error;
+    int errcode = tmp39.ecode;
     return s;
   }
-  pos = *(int *)tmp40.data;
+  pos = *(int *)tmp39.data;
   ;
   return string_left(s, pos);
 }
@@ -4236,9 +4228,9 @@ string array_string_join(array_string a, string del) {
     return tos3("");
   };
   int len = 0;
-  array_string tmp41 = a;
-  for (int i = 0; i < tmp41.len; i++) {
-    string val = ((string *)tmp41.data)[i];
+  array_string tmp40 = a;
+  for (int i = 0; i < tmp40.len; i++) {
+    string val = ((string *)tmp40.data)[i];
 
     len += val.len + del.len;
   };
@@ -4247,9 +4239,9 @@ string array_string_join(array_string a, string del) {
   res.len = len;
   res.str = v_malloc(res.len + 1);
   int idx = 0;
-  array_string tmp42 = a;
-  for (int i = 0; i < tmp42.len; i++) {
-    string val = ((string *)tmp42.data)[i];
+  array_string tmp41 = a;
+  for (int i = 0; i < tmp41.len; i++) {
+    string val = ((string *)tmp41.data)[i];
 
     for (int j = 0; j < val.len; j++) {
 
@@ -4293,10 +4285,10 @@ bool byte_is_white(byte c) {
 int string_hash(string s) {
   int h = 0;
   if (h == 0 && s.len > 0) {
-    string tmp43 = s;
+    string tmp42 = s;
     ;
-    for (int tmp44 = 0; tmp44 < tmp43.len; tmp44++) {
-      byte c = tmp43.str[tmp44];
+    for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
+      byte c = tmp42.str[tmp43];
 
       h = h * 31 + ((int)(c));
     };
@@ -4320,15 +4312,15 @@ string string_repeat(string s, int count) {
     return s;
   };
   byte *ret = v_malloc(s.len * count + 1);
-  int tmp45 = 0;
+  int tmp44 = 0;
   ;
-  for (int tmp46 = tmp45; tmp46 < count; tmp46++) {
-    int i = tmp46;
+  for (int tmp45 = tmp44; tmp45 < count; tmp45++) {
+    int i = tmp45;
 
-    int tmp47 = 0;
+    int tmp46 = 0;
     ;
-    for (int tmp48 = tmp47; tmp48 < s.len; tmp48++) {
-      int j = tmp48;
+    for (int tmp47 = tmp46; tmp47 < s.len; tmp47++) {
+      int j = tmp47;
 
       ret[/*ptr!*/ i * s.len + j] /*rbyte 1*/ = s.str[j] /*rbyte 0*/;
     };
