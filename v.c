@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "13769f4"
+#define V_COMMIT_HASH "7dcd473"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cfeec92"
+#define V_COMMIT_HASH "13769f4"
 #endif
 #include <inttypes.h>
 
@@ -2144,7 +2144,10 @@ bool array_eq_T_string(array_string a1, array_string a2);
 bool array_eq_T_byte(array_byte a1, array_byte a2);
 bool array_eq_T_f32(array_f32 a1, array_f32 a2);
 
-i64 total_m = 0; // global
+byte *g_m2_ptr;     // global
+byte *g_m2_ptr;     // global
+i64 total_m = 0;    // global
+int nr_mallocs = 0; // global
 int builtin__min_cap;
 int builtin__max_cap;
 array_int g_ustring_runes; // global
@@ -2791,11 +2794,19 @@ byte *v_malloc(int n) {
   if (n < 0) {
     v_panic(tos3("malloc(<0)"));
   };
+#ifdef VDEBUG
+  byte *res = g_m2_ptr;
+  g_m2_ptr += n;
+  nr_mallocs++;
+  return res;
+#else
   byte *ptr = malloc(n);
   if (ptr == 0) {
     v_panic(_STR("malloc(%d) failed", n));
   };
   return ptr;
+#endif
+  ;
 }
 byte *v_calloc(int n) {
   if (n < 0) {
@@ -14144,7 +14155,7 @@ void compiler__V_compile(compiler__V *v) {
     println(array_string_str(v->files));
   };
   compiler__V_add_v_files_to_compile(v);
-  if (v->pref->is_verbose || v->pref->is_debug) {
+  if (v->pref->is_verbose) {
     println(tos3("all .v files:"));
     println(array_string_str(v->files));
   };
@@ -14385,12 +14396,13 @@ void compiler__V_generate_init(compiler__V *v) {
     };
     if (!v->pref->is_bare) {
       compiler__CGen_genln(
-          v->cgen, _STR("void init() "
-                        "{\ng_str_buf=malloc(1000);\n%.*s\n%.*s\nbuiltin__init("
-                        ");\n%.*s\n}",
-                        call_mod_init_consts.len, call_mod_init_consts.str,
-                        consts_init_body.len, consts_init_body.str,
-                        call_mod_init.len, call_mod_init.str));
+          v->cgen,
+          _STR("void init() {\ng_str_buf=malloc(1000);\n#if "
+               "VDEBUG\ng_m2_ptr=malloc(50 * 1000 * 1000);\nputs(\"allocated "
+               "50 mb\");\n#endif\n%.*s\n%.*s\nbuiltin__init();\n%.*s\n}",
+               call_mod_init_consts.len, call_mod_init_consts.str,
+               consts_init_body.len, consts_init_body.str, call_mod_init.len,
+               call_mod_init.str));
       compiler__CGen_genln(
           v->cgen,
           tos3(
@@ -23594,6 +23606,10 @@ void main__main() {
 }
 void init() {
   g_str_buf = malloc(1000);
+#if VDEBUG
+  g_m2_ptr = malloc(50 * 1000 * 1000);
+  puts("allocated 50 mb");
+#endif
 
   builtin__min_cap = 2 << 10;
   builtin__max_cap = 2 << 20;
