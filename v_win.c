@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7dcd473"
+#define V_COMMIT_HASH "28f76f1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "13769f4"
+#define V_COMMIT_HASH "7dcd473"
 #endif
 #include <inttypes.h>
 
@@ -1439,6 +1439,8 @@ void compiler_dot_x64__Gen_register_function_address(compiler_dot_x64__Gen *g,
                                                      string name);
 void compiler_dot_x64__Gen_call_fn(compiler_dot_x64__Gen *g, string name);
 strings__Builder strings__new_builder(int initial_size);
+void strings__Builder_write_bytes(strings__Builder *b, byte *bytes,
+                                  int howmany);
 void strings__Builder_write_b(strings__Builder *b, byte data);
 void strings__Builder_write(strings__Builder *b, string s);
 void strings__Builder_writeln(strings__Builder *b, string s);
@@ -5049,6 +5051,11 @@ strings__Builder strings__new_builder(int initial_size) {
       .initial_size = initial_size,
       .len = 0,
   };
+}
+void strings__Builder_write_bytes(strings__Builder *b, byte *bytes,
+                                  int howmany) {
+  array_push_many(&/* ? */ b->buf, bytes, howmany);
+  b->len += howmany;
 }
 void strings__Builder_write_b(strings__Builder *b, byte data) {
   _PUSH(&b->buf, (/*typ = array_byte   tmp_typ=byte*/ data), tmp1, byte);
