@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3486118"
+#define V_COMMIT_HASH "cfeec92"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cdfbb29"
+#define V_COMMIT_HASH "3486118"
 #endif
 #include <inttypes.h>
 
@@ -6842,12 +6842,12 @@ void compiler__V_cc(compiler__V *v) {
 #endif
   ;
   array_string a = new_array_from_c_array(
-      9, 9, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 9){
+      10, 10, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 10){
           v->pref->cflags, tos3("-std=gnu11"), tos3("-Wall"), tos3("-Wextra"),
           tos3("-Wno-unused-variable"), tos3("-Wno-unused-parameter"),
-          tos3("-Wno-unused-result"), tos3("-Wno-missing-braces"),
-          tos3("-Wno-unused-label")});
+          tos3("-Wno-unused-result"), tos3("-Wunused-function"),
+          tos3("-Wno-missing-braces"), tos3("-Wno-unused-label")});
   if (v->pref->fast) {
 #ifdef __linux__
 #else
