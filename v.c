@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ad25052"
+#define V_COMMIT_HASH "e182274"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6ffed85"
+#define V_COMMIT_HASH "ad25052"
 #endif
 #include <inttypes.h>
 
@@ -14414,13 +14414,13 @@ void compiler__V_generate_init(compiler__V *v) {
     };
     if (!v->pref->is_bare) {
       compiler__CGen_genln(
-          v->cgen,
-          _STR("void init() {\ng_str_buf=malloc(1000);\n#if "
-               "VDEBUG\ng_m2_ptr=malloc(50 * 1000 * 1000);\nputs(\"allocated "
-               "50 mb\");\n#endif\n%.*s\n%.*s\nbuiltin__init();\n%.*s\n}",
-               call_mod_init_consts.len, call_mod_init_consts.str,
-               consts_init_body.len, consts_init_body.str, call_mod_init.len,
-               call_mod_init.str));
+          v->cgen, _STR("void init() {\ng_str_buf=malloc(1000);\n#if "
+                        "VDEBUG\ng_m2_buf = malloc(50 * 1000 * "
+                        "1000);\ng_m2_ptr = g_m2_buf;\nputs(\"allocated 50 "
+                        "mb\");\n#endif\n%.*s\n%.*s\nbuiltin__init();\n%.*s\n}",
+                        call_mod_init_consts.len, call_mod_init_consts.str,
+                        consts_init_body.len, consts_init_body.str,
+                        call_mod_init.len, call_mod_init.str));
       compiler__CGen_genln(
           v->cgen,
           tos3(
@@ -14519,7 +14519,10 @@ void compiler__V_generate_main(compiler__V *v) {
       compiler__CGen_genln(cgen, tos3("  main__main();"));
       if (!v->pref->is_bare) {
         compiler__CGen_genln(cgen, tos3("free(g_str_buf);"));
-        compiler__CGen_genln(cgen, tos3("free(g_m2_ptr);"));
+        compiler__CGen_genln(cgen, tos3("#if VDEBUG"));
+        compiler__CGen_genln(cgen, tos3("free(g_m2_buf);"));
+        compiler__CGen_genln(cgen, tos3("puts(\"freed mem buf\");"));
+        compiler__CGen_genln(cgen, tos3("#endif"));
       };
       compiler__V_gen_main_end(v, tos3("return 0"));
     };
@@ -23626,7 +23629,8 @@ void main__main() {
 void init() {
   g_str_buf = malloc(1000);
 #if VDEBUG
-  g_m2_ptr = malloc(50 * 1000 * 1000);
+  g_m2_buf = malloc(50 * 1000 * 1000);
+  g_m2_ptr = g_m2_buf;
   puts("allocated 50 mb");
 #endif
 
@@ -23968,7 +23972,10 @@ int main(int argc, char **argv) {
 
   main__main();
   free(g_str_buf);
-  free(g_m2_ptr);
+#if VDEBUG
+  free(g_m2_buf);
+  puts("freed mem buf");
+#endif
 
   return 0;
 }
