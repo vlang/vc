@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6ffed85"
+#define V_COMMIT_HASH "ad25052"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "47f9c02"
+#define V_COMMIT_HASH "6ffed85"
 #endif
 #include <inttypes.h>
 
@@ -2147,7 +2147,9 @@ bool array_eq_T_string(array_string a1, array_string a2);
 bool array_eq_T_byte(array_byte a1, array_byte a2);
 bool array_eq_T_f32(array_f32 a1, array_f32 a2);
 
+byte *g_m2_buf;     // global
 byte *g_m2_ptr;     // global
+byte *g_m2_buf;     // global
 byte *g_m2_ptr;     // global
 i64 total_m = 0;    // global
 int nr_mallocs = 0; // global
@@ -14517,6 +14519,7 @@ void compiler__V_generate_main(compiler__V *v) {
       compiler__CGen_genln(cgen, tos3("  main__main();"));
       if (!v->pref->is_bare) {
         compiler__CGen_genln(cgen, tos3("free(g_str_buf);"));
+        compiler__CGen_genln(cgen, tos3("free(g_m2_ptr);"));
       };
       compiler__V_gen_main_end(v, tos3("return 0"));
     };
@@ -18642,7 +18645,7 @@ string compiler__Parser_index_expr(compiler__Parser *p, string typ_,
   return typ;
 }
 bool compiler__Parser_fileis(compiler__Parser *p, string s) {
-  return string_contains(p->scanner->file_path, s);
+  return string_contains(os__filename(p->scanner->file_path), s);
 }
 string compiler__Parser_indot_expr(compiler__Parser *p) {
   int ph = compiler__CGen_add_placeholder(&/* ? */ *p->cgen);
@@ -18769,10 +18772,10 @@ string compiler__Parser_map_init(compiler__Parser *p) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_str);
       compiler__Parser_check(p, compiler__compiler__TokenKind_colon);
       ;
-      _V_MulRet_string_V_string _V_mret_10990_t_val_expr =
+      _V_MulRet_string_V_string _V_mret_10995_t_val_expr =
           compiler__Parser_tmp_expr(p);
-      string t = _V_mret_10990_t_val_expr.var_0;
-      string val_expr = _V_mret_10990_t_val_expr.var_1;
+      string t = _V_mret_10995_t_val_expr.var_0;
+      string val_expr = _V_mret_10995_t_val_expr.var_1;
       if (i == 0) {
         val_type = t;
       };
@@ -19052,10 +19055,10 @@ void compiler__Parser_return_st(compiler__Parser *p) {
     while (p->tok == compiler__compiler__TokenKind_comma) {
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-      _V_MulRet_string_V_string _V_mret_12343_typ_expr =
+      _V_MulRet_string_V_string _V_mret_12348_typ_expr =
           compiler__Parser_tmp_expr(p);
-      string typ = _V_mret_12343_typ_expr.var_0;
-      string expr = _V_mret_12343_typ_expr.var_1;
+      string typ = _V_mret_12348_typ_expr.var_0;
+      string expr = _V_mret_12348_typ_expr.var_1;
       _PUSH(&types, (/*typ = array_string   tmp_typ=string*/ typ), tmp148,
             string);
       _PUSH(&mr_values,
@@ -19228,10 +19231,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
     string typ = compiler__Parser_get_type(p);
     compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-    _V_MulRet_string_V_string _V_mret_13122_styp_expr =
+    _V_MulRet_string_V_string _V_mret_13127_styp_expr =
         compiler__Parser_tmp_expr(p);
-    string styp = _V_mret_13122_styp_expr.var_0;
-    string expr = _V_mret_13122_styp_expr.var_1;
+    string styp = _V_mret_13127_styp_expr.var_0;
+    string expr = _V_mret_13127_styp_expr.var_1;
     compiler__Parser_check_types(p, styp, tos3("string"));
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
     string tmp = compiler__Parser_get_tmp(p);
@@ -19268,10 +19271,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     return opt_type;
   } else if (string_eq(op, tos3("encode"))) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
-    _V_MulRet_string_V_string _V_mret_13302_typ_expr =
+    _V_MulRet_string_V_string _V_mret_13307_typ_expr =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_13302_typ_expr.var_0;
-    string expr = _V_mret_13302_typ_expr.var_1;
+    string typ = _V_mret_13307_typ_expr.var_0;
+    string expr = _V_mret_13307_typ_expr.var_1;
     compiler__Type T = compiler__Table_find_type(&/* ? */ *p->table, typ);
     compiler__Parser_gen_json_for_type(p, T);
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
@@ -23965,6 +23968,7 @@ int main(int argc, char **argv) {
 
   main__main();
   free(g_str_buf);
+  free(g_m2_ptr);
 
   return 0;
 }
