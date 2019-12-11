@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "cfeec92"
+#define V_COMMIT_HASH "13769f4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3486118"
+#define V_COMMIT_HASH "cfeec92"
 #endif
 #include <inttypes.h>
 
@@ -814,6 +814,7 @@ struct rand__Splitmix64 {
 struct strings__Builder {
   array_byte buf;
   int len;
+  int initial_size;
 };
 
 struct time__Time {
@@ -4905,7 +4906,11 @@ void compiler_dot_x64__Gen_call_fn(compiler_dot_x64__Gen *g, string name) {
   printf("call %.*s %lld\n", name.len, name.str, addr);
 }
 strings__Builder strings__new_builder(int initial_size) {
-  return (strings__Builder){.buf = make(0, initial_size, 1), .len = 0};
+  return (strings__Builder){
+      .buf = make(0, initial_size, 1),
+      .initial_size = initial_size,
+      .len = 0,
+  };
 }
 void strings__Builder_write_b(strings__Builder *b, byte data) {
   _PUSH(&b->buf, (/*typ = array_byte   tmp_typ=byte*/ data), tmp1, byte);
@@ -4926,7 +4931,7 @@ string strings__Builder_str(strings__Builder *b) {
 }
 void strings__Builder_free(strings__Builder *b) {
   { v_free(b->buf.data); };
-  b->buf = make(0, 1, 1);
+  b->buf = make(0, b->initial_size, 1);
   b->len = 0;
 }
 int strings__levenshtein_distance(string a, string b) {
@@ -8408,7 +8413,7 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
                       ? (tos3("->"))
                       : (tos3(".")));
     compiler__Parser_genln(
-        p, _STR("vweb__Context_html(%.*s /*!*/%.*s vweb, tmpl_res)",
+        p, _STR("vweb__Context_html( & %.*s /*!*/%.*s vweb, tmpl_res)",
                 receiver.name.len, receiver.name.str, dot.len, dot.str));
   } else {
     compiler__Parser_error(p, tos3("bad comptime expr"));
@@ -10773,7 +10778,8 @@ void compiler__Parser_check_unused_and_mut_vars(compiler__Parser *p) {
       break;
     };
     if (!var.is_used && !p->pref->is_repl && !var.is_arg &&
-        !p->pref->translated && string_ne(var.name, tos3("tmpl_res"))) {
+        !p->pref->translated && string_ne(var.name, tos3("tmpl_res")) &&
+        string_ne(p->mod, tos3("vweb"))) {
       compiler__Parser_production_error_with_token_index(
           p, _STR("`%.*s` declared and not used", var.name.len, var.name.str),
           var.token_idx);
@@ -11504,10 +11510,10 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
       };
     };
   };
-  _V_MulRet_string_V_array_string _V_mret_5998_varg_type_varg_values =
+  _V_MulRet_string_V_array_string _V_mret_6004_varg_type_varg_values =
       compiler__Parser_fn_call_vargs(p, *f);
-  string varg_type = _V_mret_5998_varg_type_varg_values.var_0;
-  array_string varg_values = _V_mret_5998_varg_type_varg_values.var_1;
+  string varg_type = _V_mret_6004_varg_type_varg_values.var_0;
+  array_string varg_values = _V_mret_6004_varg_type_varg_values.var_1;
   if (f->is_variadic) {
     _PUSH(&saved_args, (/*typ = array_string   tmp_typ=string*/ varg_type),
           tmp79, string);
@@ -11761,10 +11767,10 @@ compiler__Parser_fn_call_vargs(compiler__Parser *p, compiler__Fn f) {
     if (p->tok == compiler__compiler__TokenKind_comma) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
     };
-    _V_MulRet_string_V_string _V_mret_6892_varg_type_varg_value =
+    _V_MulRet_string_V_string _V_mret_6898_varg_type_varg_value =
         compiler__Parser_tmp_expr(p);
-    string varg_type = _V_mret_6892_varg_type_varg_value.var_0;
-    string varg_value = _V_mret_6892_varg_type_varg_value.var_1;
+    string varg_type = _V_mret_6898_varg_type_varg_value.var_0;
+    string varg_value = _V_mret_6898_varg_type_varg_value.var_1;
     if (string_starts_with(varg_type, tos3("varg_")) &&
         (values.len > 0 || p->tok == compiler__compiler__TokenKind_comma)) {
       compiler__Parser_error(
