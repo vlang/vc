@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "88ec9c2"
+#define V_COMMIT_HASH "8ba29f9"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "576618d"
+#define V_COMMIT_HASH "88ec9c2"
 #endif
 #include <inttypes.h>
 
@@ -1620,7 +1620,7 @@ void term__show_cursor();
 void term__hide_cursor();
 void compiler__Parser_inline_asm(compiler__Parser *p);
 void compiler__todo();
-bool compiler__no_mingw_installed();
+bool compiler__V_no_mingw_installed(compiler__V *v);
 void compiler__V_cc(compiler__V *v);
 void compiler__V_cc_windows_cross(compiler__V *c);
 void compiler__V_build_thirdparty_obj_files(compiler__V *c);
@@ -6790,7 +6790,7 @@ void compiler__Parser_inline_asm(compiler__Parser *p) {
   compiler__Parser_check(p, compiler__compiler__TokenKind_rcbr);
 }
 void compiler__todo() {}
-bool compiler__no_mingw_installed() {
+bool compiler__V_no_mingw_installed(compiler__V *v) {
 #ifndef _WIN32
 #endif
   ;
@@ -6798,7 +6798,9 @@ bool compiler__no_mingw_installed() {
   if (!tmp1.ok) {
     string err = tmp1.error;
     int errcode = tmp1.ecode;
-    println(tos3("mingw not found, trying to build with msvc..."));
+    if (v->pref->is_verbose) {
+      println(tos3("mingw not found, trying to build with msvc..."));
+    };
     return 1;
   };
   return 0;
@@ -6850,7 +6852,7 @@ void compiler__V_cc(compiler__V *v) {
   };
 #ifdef _WIN32
   if (string_eq(v->pref->ccompiler, tos3("msvc")) ||
-      compiler__no_mingw_installed()) {
+      compiler__V_no_mingw_installed(&/* ? */ *v)) {
     compiler__V_cc_msvc(v);
 
     return;
