@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "576618d"
+#define V_COMMIT_HASH "88ec9c2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e182274"
+#define V_COMMIT_HASH "576618d"
 #endif
 #include <inttypes.h>
 
@@ -8056,10 +8056,10 @@ array_compiler__Type compiler__sort_structs(array_compiler__Type types) {
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   array_compiler__Type tmp45 = types;
   for (int tmp46 = 0; tmp46 < tmp45.len; tmp46++) {
-    compiler__Type t = ((compiler__Type *)tmp45.data)[tmp46];
+    compiler__Type typ = ((compiler__Type *)tmp45.data)[tmp46];
 
-    _PUSH(&type_names, (/*typ = array_string   tmp_typ=string*/ t.name), tmp47,
-          string);
+    _PUSH(&type_names, (/*typ = array_string   tmp_typ=string*/ typ.name),
+          tmp47, string);
   };
   array_compiler__Type tmp48 = types;
   for (int tmp49 = 0; tmp49 < tmp48.len; tmp49++) {
@@ -8071,12 +8071,15 @@ array_compiler__Type compiler__sort_structs(array_compiler__Type types) {
     for (int tmp51 = 0; tmp51 < tmp50.len; tmp51++) {
       compiler__Var field = ((compiler__Var *)tmp50.data)[tmp51];
 
-      if (!((_IN(string, (field.typ), type_names))) ||
-          (_IN(string, (field.typ), field_deps))) {
+      string ft = ((string_starts_with(field.typ, tos3("[")))
+                       ? (string_all_after(field.typ, tos3("]")))
+                       : (field.typ));
+      if (!((_IN(string, (ft), type_names))) ||
+          (_IN(string, (ft), field_deps))) {
         continue;
       };
-      _PUSH(&field_deps, (/*typ = array_string   tmp_typ=string*/ field.typ),
-            tmp52, string);
+      _PUSH(&field_deps, (/*typ = array_string   tmp_typ=string*/ ft), tmp52,
+            string);
     };
     compiler__DepGraph_add(dep_graph, t.name, field_deps);
   };
