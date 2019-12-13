@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "797d436"
+#define V_COMMIT_HASH "88cde6e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fb3da32"
+#define V_COMMIT_HASH "797d436"
 #endif
 #include <inttypes.h>
 
@@ -19687,6 +19687,9 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
       printf("orm: skipping %.*s\n", field.name.len, field.name.str);
       continue;
     };
+    if (string_contains(field.attr, tos3("skip"))) {
+      continue;
+    };
     _PUSH(&fields,
           (/*typ = array_compiler__Var   tmp_typ=compiler__Var*/ field), tmp9,
           compiler__Var);
@@ -19755,8 +19758,8 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
       string_eq(p->lit, tos3("where"))) {
     compiler__Parser_next(p);
     p->is_sql = 1;
-    _V_MulRet_string_V_string _V_mret_471___expr = compiler__Parser_tmp_expr(p);
-    string expr = _V_mret_471___expr.var_1;
+    _V_MulRet_string_V_string _V_mret_483___expr = compiler__Parser_tmp_expr(p);
+    string expr = _V_mret_483___expr.var_1;
     p->is_sql = 0;
     q = string_add(q, string_add(tos3(" where "), expr));
   };
@@ -19765,9 +19768,9 @@ string compiler__Parser_select_query(compiler__Parser *p, int fn_ph) {
       string_eq(p->lit, tos3("limit"))) {
     compiler__Parser_next(p);
     p->is_sql = 1;
-    _V_MulRet_string_V_string _V_mret_519___limit =
+    _V_MulRet_string_V_string _V_mret_531___limit =
         compiler__Parser_tmp_expr(p);
-    string limit = _V_mret_519___limit.var_1;
+    string limit = _V_mret_531___limit.var_1;
     p->is_sql = 0;
     q = string_add(q, string_add(tos3(" limit "), limit));
     if (string_eq(string_trim_space(limit), tos3("1"))) {
@@ -20022,10 +20025,10 @@ void compiler__Parser_update_query(compiler__Parser *p, int fn_ph) {
   string q = _STR("update %.*ss set %.*s=", typ.name.len, typ.name.str,
                   field.len, field.str);
   p->is_sql = 1;
-  _V_MulRet_string_V_string _V_mret_1516_set_typ_expr =
+  _V_MulRet_string_V_string _V_mret_1528_set_typ_expr =
       compiler__Parser_tmp_expr(p);
-  string set_typ = _V_mret_1516_set_typ_expr.var_0;
-  string expr = _V_mret_1516_set_typ_expr.var_1;
+  string set_typ = _V_mret_1528_set_typ_expr.var_0;
+  string expr = _V_mret_1528_set_typ_expr.var_1;
   p->is_sql = 0;
   if (string_eq(set_typ, tos3("bool"))) {
     if (string_eq(string_trim_space(expr), tos3("1"))) {
@@ -20040,9 +20043,9 @@ void compiler__Parser_update_query(compiler__Parser *p, int fn_ph) {
       string_eq(p->lit, tos3("where"))) {
     compiler__Parser_next(p);
     p->is_sql = 1;
-    _V_MulRet_string_V_string _V_mret_1585___wexpr =
+    _V_MulRet_string_V_string _V_mret_1597___wexpr =
         compiler__Parser_tmp_expr(p);
-    string wexpr = _V_mret_1585___wexpr.var_1;
+    string wexpr = _V_mret_1597___wexpr.var_1;
     p->is_sql = 0;
     q = string_add(q, string_add(tos3(" where "), wexpr));
   };
