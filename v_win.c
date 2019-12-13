@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "88cde6e"
+#define V_COMMIT_HASH "ef56241"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "797d436"
+#define V_COMMIT_HASH "88cde6e"
 #endif
 #include <inttypes.h>
 
@@ -749,6 +749,7 @@ struct compiler__Preferences {
   string vpath;
   bool x64;
   bool output_cross_c;
+  bool prealloc;
 };
 
 struct compiler__ScanRes {
@@ -2955,19 +2956,11 @@ byte *v_malloc(int n) {
   if (n < 0) {
     v_panic(tos3("malloc(<0)"));
   };
-#ifdef VDEBUG
-  byte *res = g_m2_ptr;
-  g_m2_ptr += n;
-  nr_mallocs++;
-  return res;
-#else
   byte *ptr = malloc(n);
   if (ptr == 0) {
     v_panic(_STR("malloc(%d) failed", n));
   };
   return ptr;
-#endif
-  ;
 }
 byte *v_calloc(int n) {
   if (n < 0) {
@@ -8508,6 +8501,8 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
       compiler__Parser_comptime_if_block(p, tos3("TARGET_ORDER_IS_LITTLE"));
     } else if (string_eq(name, tos3("debug"))) {
       compiler__Parser_comptime_if_block(p, tos3("VDEBUG"));
+    } else if (string_eq(name, tos3("prealloc"))) {
+      compiler__Parser_comptime_if_block(p, tos3("VPREALLOC"));
     } else if (string_eq(name, tos3("tinyc"))) {
       compiler__Parser_comptime_if_block(p, tos3("__TINYC__"));
     } else if (string_eq(name, tos3("glibc"))) {
@@ -8562,8 +8557,8 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_dollar);
     compiler__Parser_check(p, compiler__compiler__TokenKind_name);
     compiler__Parser_check(p, compiler__compiler__TokenKind_assign);
-    _V_MulRet_string_V_string _V_mret_646___val = compiler__Parser_tmp_expr(p);
-    string val = _V_mret_646___val.var_1;
+    _V_MulRet_string_V_string _V_mret_659___val = compiler__Parser_tmp_expr(p);
+    string val = _V_mret_659___val.var_1;
     compiler__Parser_check(p, compiler__compiler__TokenKind_rcbr);
   } else if (p->tok == compiler__compiler__TokenKind_name &&
              string_eq(p->lit, tos3("vweb"))) {
@@ -9002,10 +8997,10 @@ string compiler__Parser_gen_array_map(compiler__Parser *p, string str_typ,
   string tmp = compiler__Parser_get_tmp(p);
   string tmp_elm = compiler__Parser_get_tmp(p);
   string a = p->expr_var.name;
-  _V_MulRet_string_V_string _V_mret_2118_map_type_expr =
+  _V_MulRet_string_V_string _V_mret_2131_map_type_expr =
       compiler__Parser_tmp_expr(p);
-  string map_type = _V_mret_2118_map_type_expr.var_0;
-  string expr = _V_mret_2118_map_type_expr.var_1;
+  string map_type = _V_mret_2131_map_type_expr.var_0;
+  string expr = _V_mret_2131_map_type_expr.var_1;
   compiler__CGen_set_placeholder(
       p->cgen, method_ph,
       string_add(_STR("\narray %.*s = new_array(0, %.*s .len, ", tmp.len,
@@ -14278,7 +14273,7 @@ Option_int compiler__V_get_file_parser_index(compiler__V *v, string file) {
   string file_path = os__realpath(file);
   if ((_IN_MAP((file_path), v->file_parser_idx))) {
     int tmp2 = 0;
-    bool tmp3 = map_get(/*main.v : 170*/ v->file_parser_idx, file_path, &tmp2);
+    bool tmp3 = map_get(/*main.v : 171*/ v->file_parser_idx, file_path, &tmp2);
 
     int tmp4 = OPTION_CAST(int)(tmp2);
     return opt_ok(&tmp4, sizeof(int));
@@ -14549,7 +14544,7 @@ void compiler__V_generate_init(compiler__V *v) {
     if (!v->pref->is_bare) {
       compiler__CGen_genln(
           v->cgen, _STR("void init() {\ng_str_buf=malloc(1000);\n#if "
-                        "VDEBUG\ng_m2_buf = malloc(50 * 1000 * "
+                        "VPREALLOC\ng_m2_buf = malloc(50 * 1000 * "
                         "1000);\ng_m2_ptr = g_m2_buf;\nputs(\"allocated 50 "
                         "mb\");\n#endif\n%.*s\n%.*s\nbuiltin__init();\n%.*s\n}",
                         call_mod_init_consts.len, call_mod_init_consts.str,
@@ -14651,7 +14646,7 @@ void compiler__V_generate_main(compiler__V *v) {
       compiler__CGen_genln(cgen, tos3("  main__main();"));
       if (!v->pref->is_bare) {
         compiler__CGen_genln(cgen, tos3("free(g_str_buf);"));
-        compiler__CGen_genln(cgen, tos3("#if VDEBUG"));
+        compiler__CGen_genln(cgen, tos3("#if VPREALLOC"));
         compiler__CGen_genln(cgen, tos3("free(g_m2_buf);"));
         compiler__CGen_genln(cgen, tos3("puts(\"freed mem buf\");"));
         compiler__CGen_genln(cgen, tos3("#endif"));
@@ -15327,6 +15322,7 @@ compiler__V *compiler__new_v(array_string args) {
           .x64 = (_IN(string, (tos3("-x64")), args)),
           .output_cross_c =
               (_IN(string, (tos3("-output-cross-platform-c")), args)),
+          .prealloc = (_IN(string, (tos3("-prealloc")), args)),
           .is_repl = is_repl,
           .build_mode = build_mode,
           .cflags = cflags,
@@ -23846,7 +23842,7 @@ void main__main() {
 }
 void init() {
   g_str_buf = malloc(1000);
-#if VDEBUG
+#if VPREALLOC
   g_m2_buf = malloc(50 * 1000 * 1000);
   g_m2_ptr = g_m2_buf;
   puts("allocated 50 mb");
@@ -24241,7 +24237,7 @@ int main(int argc, char **argv) {
 
   main__main();
   free(g_str_buf);
-#if VDEBUG
+#if VPREALLOC
   free(g_m2_buf);
   puts("freed mem buf");
 #endif
