@@ -21111,7 +21111,7 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
     i++;
     if (p->tok == compiler__compiler__TokenKind_key_pub) {
       if (is_pub_field) {
-        compiler__Parser_error(p, tos3("structs can only have one `pub:`, all "
+        compiler__Parser_warn(p, tos3("structs can only have one `pub:`, all "
                                        "public fields have to be grouped"));
       };
       is_pub_field = 1;
@@ -21125,7 +21125,7 @@ void compiler__Parser_struct_decl(compiler__Parser *p) {
     };
     if (p->tok == compiler__compiler__TokenKind_key_mut) {
       if (is_mut) {
-        compiler__Parser_error(
+        compiler__Parser_warn(
             p, tos3("structs can only have one `mut:`, all private mutable "
                     "fields have to be grouped"));
       };
