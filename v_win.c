@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "962109e"
+#define V_COMMIT_HASH "8581c11"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ef56241"
+#define V_COMMIT_HASH "962109e"
 #endif
 #include <inttypes.h>
 
@@ -2958,11 +2958,19 @@ byte *v_malloc(int n) {
   if (n < 0) {
     v_panic(tos3("malloc(<0)"));
   };
+#ifdef VPREALLOC
+  byte *res = g_m2_ptr;
+  g_m2_ptr += n;
+  nr_mallocs++;
+  return res;
+#else
   byte *ptr = malloc(n);
   if (ptr == 0) {
     v_panic(_STR("malloc(%d) failed", n));
   };
   return ptr;
+#endif
+  ;
 }
 byte *v_calloc(int n) {
   if (n < 0) {
@@ -14333,6 +14341,9 @@ void compiler__V_compile(compiler__V *v) {
     compiler__CGen_genln(cgen, tos3("#define VDEBUG (1)"));
 #endif
     ;
+  };
+  if (v->pref->prealloc) {
+    compiler__CGen_genln(cgen, tos3("#define VPREALLOC (1)"));
   };
   if (v->os == compiler__compiler__OS_js) {
     compiler__CGen_genln(cgen, tos3("#define _VJS (1) "));
