@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "be2b569"
+#define V_COMMIT_HASH "2e23592"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4569554"
+#define V_COMMIT_HASH "be2b569"
 #endif
 #include <inttypes.h>
 
@@ -12235,6 +12235,9 @@ void compiler__Parser_for_st(compiler__Parser *p) {
       compiler__Parser_gen_for_str_header(p, i, tmp, typ, val);
     };
     if (string_ne(i, tos3("_"))) {
+      if (compiler__Parser_known_var(&/* ? */ *p, i)) {
+        compiler__Parser_error(p, _STR("redefinition of `%.*s`", i.len, i.str));
+      };
       compiler__Parser_register_var(
           p, (compiler__Var){.name = i,
                              .typ = i_var_type,
@@ -12262,6 +12265,10 @@ void compiler__Parser_for_st(compiler__Parser *p) {
                              .is_public = 0});
     };
     if (string_ne(val, tos3("_"))) {
+      if (compiler__Parser_known_var(&/* ? */ *p, val)) {
+        compiler__Parser_error(
+            p, _STR("redefinition of `%.*s`", val.len, val.str));
+      };
       compiler__Parser_register_var(
           p, (compiler__Var){.name = val,
                              .typ = typ,
@@ -12295,10 +12302,10 @@ void compiler__Parser_for_st(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_key_in);
     ;
     string tmp = compiler__Parser_get_tmp(p);
-    _V_MulRet_string_V_string _V_mret_587_typ_expr =
+    _V_MulRet_string_V_string _V_mret_623_typ_expr =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_587_typ_expr.var_0;
-    string expr = _V_mret_587_typ_expr.var_1;
+    string typ = _V_mret_623_typ_expr.var_0;
+    string expr = _V_mret_623_typ_expr.var_1;
     bool is_range = p->tok == compiler__compiler__TokenKind_dotdot;
     bool is_variadic_arg = string_starts_with(typ, tos3("varg_"));
     string range_end = tos3("");
@@ -12308,10 +12315,10 @@ void compiler__Parser_for_st(compiler__Parser *p) {
       if (p->pref->x64) {
         to = v_string_int(p->lit);
       };
-      _V_MulRet_string_V_string _V_mret_651_range_typ_range_expr =
+      _V_MulRet_string_V_string _V_mret_687_range_typ_range_expr =
           compiler__Parser_tmp_expr(p);
-      string range_typ = _V_mret_651_range_typ_range_expr.var_0;
-      string range_expr = _V_mret_651_range_typ_range_expr.var_1;
+      string range_typ = _V_mret_687_range_typ_range_expr.var_0;
+      string range_expr = _V_mret_687_range_typ_range_expr.var_1;
       compiler__Parser_check_types(p, range_typ, tos3("int"));
       range_end = range_expr;
       if (p->pref->x64) {
@@ -12353,6 +12360,10 @@ void compiler__Parser_for_st(compiler__Parser *p) {
       compiler__Parser_gen_for_fixed_header(p, i, expr, typ, val);
     };
     if (string_ne(val, tos3("_"))) {
+      if (compiler__Parser_known_var(&/* ? */ *p, val)) {
+        compiler__Parser_error(
+            p, _STR("redefinition of `%.*s`", val.len, val.str));
+      };
       compiler__Parser_register_var(
           p, (compiler__Var){.name = val,
                              .typ = typ,
