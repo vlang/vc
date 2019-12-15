@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f2c40bf"
+#define V_COMMIT_HASH "faa04c5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2e23592"
+#define V_COMMIT_HASH "f2c40bf"
 #endif
 #include <inttypes.h>
 
@@ -397,6 +397,7 @@ typedef struct compiler__CGen compiler__CGen;
 typedef struct _V_MulRet_string_V_string _V_MulRet_string_V_string;
 typedef array array_compiler__Type;
 typedef struct compiler__ScannerPos compiler__ScannerPos;
+typedef struct _V_MulRet_array_string_V_string _V_MulRet_array_string_V_string;
 typedef struct compiler__DepGraphNode compiler__DepGraphNode;
 typedef struct compiler__DepGraph compiler__DepGraph;
 typedef array array_compiler__DepGraphNode;
@@ -605,6 +606,11 @@ struct SymbolInfo {
 struct _V_MulRet_int_V_bool {
   int var_0;
   bool var_1;
+};
+
+struct _V_MulRet_array_string_V_string {
+  array_string var_0;
+  string var_1;
 };
 
 struct _V_MulRet_bool_V_string {
@@ -1716,6 +1722,8 @@ compiler__Scanner_get_scanner_pos_of_token(compiler__Scanner *s,
                                            compiler__Token *tok);
 void compiler__Parser_mutable_arg_error(compiler__Parser *p, int i,
                                         compiler__Var arg, compiler__Fn f);
+_V_MulRet_array_string_V_string
+compiler__get_v_options_and_main_command(array_string args);
 void compiler__Parser_comp_time(compiler__Parser *p);
 void compiler__Parser_chash(compiler__Parser *p);
 void compiler__Parser_comptime_method_call(compiler__Parser *p,
@@ -8450,6 +8458,33 @@ void compiler__Parser_mutable_arg_error(compiler__Parser *p, int i,
                   arg.name.len, arg.name.str),
              _STR("`%.*s (%.*s)`", f.name.len, f.name.str, dots_example.len,
                   dots_example.str)));
+}
+_V_MulRet_array_string_V_string
+compiler__get_v_options_and_main_command(array_string args) {
+  array_string options = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+  array_string potential_commands = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+  for (int i = 0; i < args.len; i++) {
+
+    string a = (*(string *)array_get(args, i));
+    if (!string_starts_with(a, tos3("-"))) {
+      _PUSH(&potential_commands, (/*typ = array_string   tmp_typ=string*/ a),
+            tmp3, string);
+      continue;
+    } else {
+      _PUSH(&options, (/*typ = array_string   tmp_typ=string*/ a), tmp4,
+            string);
+      if ((string_eq(a, tos3("-o")) || string_eq(a, tos3("-os")) ||
+           string_eq(a, tos3("-cc")) || string_eq(a, tos3("-cflags")))) {
+        i++;
+      };
+    };
+  };
+  string command = ((potential_commands.len > 1)
+                        ? ((*(string *)array_get(potential_commands, 1)))
+                        : (tos3("")));
+  return (_V_MulRet_array_string_V_string){.var_0 = options, .var_1 = command};
 }
 void compiler__Parser_comp_time(compiler__Parser *p) {
   compiler__Parser_check(p, compiler__compiler__TokenKind_dollar);
@@ -23782,16 +23817,10 @@ string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark *b, string s,
 i64 benchmark__now() { return time__ticks(); }
 void main__main() {
   array_string args = compiler__env_vflags_and_os_args();
-
-  array_string tmp1 = new_array(0, args.len, sizeof(string));
-  for (int i = 0; i < args.len; i++) {
-    string it = ((string *)args.data)[i];
-    if (string_starts_with(it, tos3("-")))
-      array_push(&tmp1, &it);
-  }
-  array_string options = tmp1;
-  string command =
-      ((os__args.len > 1) ? ((*(string *)array_get(os__args, 1))) : (tos3("")));
+  _V_MulRet_array_string_V_string _V_mret_57_options_command =
+      compiler__get_v_options_and_main_command(args);
+  array_string options = _V_mret_57_options_command.var_0;
+  string command = _V_mret_57_options_command.var_1;
   if ((_IN(string, (command), main__simple_tools))) {
     compiler__launch_tool(string_add(tos3("v"), command));
 
@@ -23847,32 +23876,32 @@ void main__main() {
   compiler__V_finalize_compilation(&/* ? */ *v);
 }
 void main__v_command(string command, array_string args) {
-  string tmp6 = command;
+  string tmp3 = command;
 
-  if ((string_eq(tmp6, tos3(""))) || (string_eq(tmp6, tos3("."))) ||
-      (string_eq(tmp6, tos3("run")))) {
+  if ((string_eq(tmp3, tos3(""))) || (string_eq(tmp3, tos3("."))) ||
+      (string_eq(tmp3, tos3("run")))) {
 
     return;
-  } else if (string_eq(tmp6, tos3("version"))) {
+  } else if (string_eq(tmp3, tos3("version"))) {
     printf("V %.*s %.*s\n", compiler__Version.len, compiler__Version.str,
            compiler__vhash().len, compiler__vhash().str);
-  } else if (string_eq(tmp6, tos3("help"))) {
+  } else if (string_eq(tmp3, tos3("help"))) {
     println(compiler__help_text);
-  } else if (string_eq(tmp6, tos3("translate"))) {
+  } else if (string_eq(tmp3, tos3("translate"))) {
     println(tos3("Translating C to V will be available in V 0.3 (January)"));
-  } else if ((string_eq(tmp6, tos3("search"))) ||
-             (string_eq(tmp6, tos3("install"))) ||
-             (string_eq(tmp6, tos3("update")))) {
+  } else if ((string_eq(tmp3, tos3("search"))) ||
+             (string_eq(tmp3, tos3("install"))) ||
+             (string_eq(tmp3, tos3("update")))) {
     compiler__launch_tool(tos3("vpm"));
-  } else if (string_eq(tmp6, tos3("get"))) {
+  } else if (string_eq(tmp3, tos3("get"))) {
     println(tos3("use `v install` to install modules from vpm.vlang.io "));
-  } else if (string_eq(tmp6, tos3("symlink"))) {
+  } else if (string_eq(tmp3, tos3("symlink"))) {
     compiler__create_symlink();
-  } else if (string_eq(tmp6, tos3("fmt"))) {
+  } else if (string_eq(tmp3, tos3("fmt"))) {
     compiler__vfmt(args);
-  } else if (string_eq(tmp6, tos3("runrepl"))) {
+  } else if (string_eq(tmp3, tos3("runrepl"))) {
     compiler__launch_tool(tos3("vrepl"));
-  } else if (string_eq(tmp6, tos3("doc"))) {
+  } else if (string_eq(tmp3, tos3("doc"))) {
     string vexe = os__executable();
     string vdir = os__dir(os__executable());
     os__chdir(vdir);
@@ -23880,18 +23909,18 @@ void main__v_command(string command, array_string args) {
     os__system(string_add(_STR("%.*s build module vlib%.*s", vexe.len, vexe.str,
                                os__path_separator.len, os__path_separator.str),
                           *(string *)array_last(args)));
-    Option_string tmp7 = os__read_file(filepath__join(
+    Option_string tmp4 = os__read_file(filepath__join(
         compiler__v_modules_path,
         &(varg_string){
             .len = 2,
             .args = {tos3("vlib"), _STR("%.*s.vh", mod.len, mod.str)}}));
     string txt;
-    if (!tmp7.ok) {
-      string err = tmp7.error;
-      int errcode = tmp7.ecode;
+    if (!tmp4.ok) {
+      string err = tmp4.error;
+      int errcode = tmp4.ecode;
       v_panic(err);
     }
-    txt = *(string *)tmp7.data;
+    txt = *(string *)tmp4.data;
     ;
     println(txt);
   } else // default:
