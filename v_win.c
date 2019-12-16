@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1071855"
+#define V_COMMIT_HASH "e7856a1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bcde155"
+#define V_COMMIT_HASH "1071855"
 #endif
 #include <inttypes.h>
 
@@ -2968,7 +2968,7 @@ void print(string s) {
   ;
 }
 byte *v_malloc(int n) {
-  if (n < 0) {
+  if (n <= 0) {
     v_panic(tos3("malloc(<0)"));
   };
 #ifdef VPREALLOC
@@ -4526,6 +4526,9 @@ string array_string_join_lines(array_string s) {
   return array_string_join(s, tos3("\n"));
 }
 string string_reverse(string s) {
+  if (s.len == 0) {
+    return tos3("");
+  };
   string res = (string){.len = s.len, .str = v_malloc(s.len)};
   for (int i = s.len - 1; i >= 0; i--) {
 
