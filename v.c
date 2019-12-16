@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5a56ca0"
+#define V_COMMIT_HASH "6008fa4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "560d138"
+#define V_COMMIT_HASH "5a56ca0"
 #endif
 #include <inttypes.h>
 
@@ -209,6 +209,27 @@ int g_test_fails = 0;
 #define compiler_dot_x64__et_exec 2
 #define compiler_dot_x64__et_dyn 3
 #define compiler_dot_x64__sht_null 0
+#define strconv__DIGITS 18
+#define strconv__FSM_A 0
+#define strconv__FSM_B 1
+#define strconv__FSM_C 2
+#define strconv__FSM_D 3
+#define strconv__FSM_E 4
+#define strconv__FSM_F 5
+#define strconv__FSM_G 6
+#define strconv__FSM_H 7
+#define strconv__FSM_I 8
+#define strconv__FSM_STOP 9
+#define strconv__PARSER_OK 0
+#define strconv__PARSER_PZERO 1
+#define strconv__PARSER_MZERO 2
+#define strconv__PARSER_PINF 3
+#define strconv__PARSER_MINF 4
+#define strconv__DPOINT '.'
+#define strconv__PLUS '+'
+#define strconv__MINUS '-'
+#define strconv__ZERO '0'
+#define strconv__NINE '9'
 #define strconv__int_size 32
 #define os__O_RDONLY 1
 #define os__O_WRONLY 2
@@ -341,6 +362,10 @@ typedef struct compiler_dot_x64__SectionConfig compiler_dot_x64__SectionConfig;
 typedef struct compiler_dot_x64__Gen compiler_dot_x64__Gen;
 typedef map map_i64;
 typedef struct strings__Builder strings__Builder;
+typedef struct _V_MulRet_u32_V_u32_V_u32 _V_MulRet_u32_V_u32_V_u32;
+typedef struct strconv__PrepNumber strconv__PrepNumber;
+typedef struct _V_MulRet_int_V_strconv__PrepNumber
+    _V_MulRet_int_V_strconv__PrepNumber;
 typedef struct os__File os__File;
 typedef struct os__FileInfo os__FileInfo;
 typedef Option Option_array_byte;
@@ -549,6 +574,12 @@ struct RepIndex {
   int val_idx;
 };
 
+struct _V_MulRet_u32_V_u32_V_u32 {
+  u32 var_0;
+  u32 var_1;
+  u32 var_2;
+};
+
 struct _V_MulRet_int_V_bool {
   int var_0;
   bool var_1;
@@ -656,6 +687,7 @@ struct compiler__ParserState {
   array_string cgen_lines;
   string cgen_cur_line;
   string cgen_tmp_line;
+  bool cgen_is_tmp;
   array_compiler__Token tokens;
   int token_idx;
   compiler__TokenKind tok;
@@ -821,6 +853,12 @@ struct rand__Splitmix64 {
   u64 state;
 };
 
+struct strconv__PrepNumber {
+  bool negative;
+  int exponent;
+  u64 mantissa;
+};
+
 struct strings__Builder {
   array_byte buf;
   int len;
@@ -846,6 +884,11 @@ struct ustring {
 struct varg_string {
   int len;
   string args[3];
+};
+
+struct _V_MulRet_int_V_strconv__PrepNumber {
+  int var_0;
+  strconv__PrepNumber var_1;
 };
 
 struct compiler__CGen {
@@ -1128,6 +1171,8 @@ void backtrace_symbols_fd(void *, int, int);
 int proc_pidpath(int, void *, int);
 string f64_str(f64 d);
 string f32_str(f32 d);
+string f64_strsci(f64 x, int digit_num);
+string f64_strlong(f64 x);
 f32 f32_abs(f32 a);
 f64 f64_abs(f64 a);
 bool f64_eq(f64 a, f64 b);
@@ -1351,6 +1396,18 @@ int strings__levenshtein_distance(string a, string b);
 f32 strings__levenshtein_distance_percentage(string a, string b);
 f32 strings__dice_coefficient(string s1, string s2);
 string strings__repeat(byte c, int n);
+_V_MulRet_u32_V_u32_V_u32 strconv__lsr96(u32 s2, u32 s1, u32 s0);
+_V_MulRet_u32_V_u32_V_u32 strconv__lsl96(u32 s2, u32 s1, u32 s0);
+_V_MulRet_u32_V_u32_V_u32 strconv__add96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1,
+                                         u32 d0);
+_V_MulRet_u32_V_u32_V_u32 strconv__sub96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1,
+                                         u32 d0);
+bool strconv__is_digit(byte x);
+bool strconv__is_space(byte x);
+bool strconv__is_exp(byte x);
+_V_MulRet_int_V_strconv__PrepNumber strconv__parser(string s);
+u64 strconv__converter(strconv__PrepNumber *pn);
+f64 strconv__atof64(string s);
 byte strconv__byte_to_lower(byte c);
 u64 strconv__common_parse_uint(string s, int _base, int _bit_size,
                                bool error_on_non_digit,
@@ -2198,6 +2255,11 @@ int compiler_dot_x64__segment_start;
 #define compiler_dot_x64__compiler_dot_x64__Size__16 1
 #define compiler_dot_x64__compiler_dot_x64__Size__32 2
 #define compiler_dot_x64__compiler_dot_x64__Size__64 3
+u64 strconv__DOUBLE_PLUS_ZERO;
+u64 strconv__DOUBLE_MINUS_ZERO;
+u64 strconv__DOUBLE_PLUS_INFINITY;
+u64 strconv__DOUBLE_MINUS_INFINITY;
+u32 strconv__TEN;
 u64 strconv__max_u64;
 int os__S_IFMT;
 int os__S_IFDIR;
@@ -2989,6 +3051,20 @@ string f32_str(f32 d) {
   sprintf(((charptr)(buf)), "%f", d);
   return tos(buf, vstrlen(buf));
 }
+string f64_strsci(f64 x, int digit_num) {
+  byte *buf = v_malloc(digit_num * 2 + 2);
+  string conf_str =
+      string_add(string_add(tos3("%0."), int_str(digit_num)), tos3("e"));
+  sprintf(((charptr)(buf)), ((charptr)(conf_str.str)), x);
+  string tmpstr = tos(buf, vstrlen(buf));
+  return tmpstr;
+}
+string f64_strlong(f64 x) {
+  byte *buf = v_malloc(18 + 32);
+  sprintf(((charptr)(buf)), "%0.30lf", x);
+  string tmpstr = tos(buf, vstrlen(buf));
+  return tmpstr;
+}
 f32 f32_abs(f32 a) { return ((a < 0) ? (-a) : (a)); }
 f64 f64_abs(f64 a) { return ((a < 0) ? (-a) : (a)); }
 bool f64_eq(f64 a, f64 b) { return f64_abs(a - b) <= DBL_EPSILON; }
@@ -3616,8 +3692,8 @@ int v_string_int(string s) {
   return ((int)(strconv__common_parse_int(s, 0, 32, 0, 0)));
 }
 i64 string_i64(string s) { return strconv__common_parse_int(s, 0, 64, 0, 0); }
-f32 string_f32(string s) { return atof(((charptr)(s.str))); }
-f64 string_f64(string s) { return atof(((charptr)(s.str))); }
+f32 string_f32(string s) { return ((f32)(strconv__atof64(s))); }
+f64 string_f64(string s) { return strconv__atof64(s); }
 u32 string_u32(string s) {
   return ((u32)(strconv__common_parse_uint(s, 0, 32, 0, 0)));
 }
@@ -5087,6 +5163,381 @@ string strings__repeat(byte c, int n) {
                    n + 1);
   array_set(&/*q*/ arr, n, &(byte[]){'\0'});
   return (tos((byte *)arr.data, n));
+}
+_V_MulRet_u32_V_u32_V_u32 strconv__lsr96(u32 s2, u32 s1, u32 s0) {
+  u32 r0 = ((u32)(0));
+  u32 r1 = ((u32)(0));
+  u32 r2 = ((u32)(0));
+  r0 = (s0 >> 1) | ((s1 & ((u32)(1))) << 31);
+  r1 = (s1 >> 1) | ((s2 & ((u32)(1))) << 31);
+  r2 = s2 >> 1;
+  return (_V_MulRet_u32_V_u32_V_u32){.var_0 = r2, .var_1 = r1, .var_2 = r0};
+}
+_V_MulRet_u32_V_u32_V_u32 strconv__lsl96(u32 s2, u32 s1, u32 s0) {
+  u32 r0 = ((u32)(0));
+  u32 r1 = ((u32)(0));
+  u32 r2 = ((u32)(0));
+  r2 = (s2 << 1) | ((s1 & (((u32)(1)) << 31)) >> 31);
+  r1 = (s1 << 1) | ((s0 & (((u32)(1)) << 31)) >> 31);
+  r0 = s0 << 1;
+  return (_V_MulRet_u32_V_u32_V_u32){.var_0 = r2, .var_1 = r1, .var_2 = r0};
+}
+_V_MulRet_u32_V_u32_V_u32 strconv__add96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1,
+                                         u32 d0) {
+  u64 w = ((u64)(0));
+  u32 r0 = ((u32)(0));
+  u32 r1 = ((u32)(0));
+  u32 r2 = ((u32)(0));
+  w = ((u64)(s0)) + ((u64)(d0));
+  r0 = ((u32)(w));
+  w >>= 32;
+  w += ((u64)(s1)) + ((u64)(d1));
+  r1 = ((u32)(w));
+  w >>= 32;
+  w += ((u64)(s2)) + ((u64)(d2));
+  r2 = ((u32)(w));
+  return (_V_MulRet_u32_V_u32_V_u32){.var_0 = r2, .var_1 = r1, .var_2 = r0};
+}
+_V_MulRet_u32_V_u32_V_u32 strconv__sub96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1,
+                                         u32 d0) {
+  u64 w = ((u64)(0));
+  u32 r0 = ((u32)(0));
+  u32 r1 = ((u32)(0));
+  u32 r2 = ((u32)(0));
+  w = ((u64)(s0)) - ((u64)(d0));
+  r0 = ((u32)(w));
+  w >>= 32;
+  w += ((u64)(s1)) - ((u64)(d1));
+  r1 = ((u32)(w));
+  w >>= 32;
+  w += ((u64)(s2)) - ((u64)(d2));
+  r2 = ((u32)(w));
+  return (_V_MulRet_u32_V_u32_V_u32){.var_0 = r2, .var_1 = r1, .var_2 = r0};
+}
+bool strconv__is_digit(byte x) {
+  return (x >= strconv__ZERO && x <= strconv__NINE) == 1;
+}
+bool strconv__is_space(byte x) {
+  return ((x >= 0x89 && x <= 0x13) || x == 0x20) == 1;
+}
+bool strconv__is_exp(byte x) { return (x == 'E' || x == 'e') == 1; }
+_V_MulRet_int_V_strconv__PrepNumber strconv__parser(string s) {
+  int state = strconv__FSM_A;
+  int digx = 0;
+  byte c = ' ';
+  int result = strconv__PARSER_OK;
+  bool expneg = 0;
+  int expexp = 0;
+  int i = 0;
+  strconv__PrepNumber pn = (strconv__PrepNumber){
+      .negative = 0, .exponent = 0, .mantissa = ((u64)(0))};
+  while (state != strconv__FSM_STOP) {
+
+    int tmp1 = state;
+
+    if (tmp1 == strconv__FSM_A) {
+      if (strconv__is_space(c) == 1) {
+        c = string_at(s, i++);
+      } else {
+        state = strconv__FSM_B;
+      };
+    } else if (tmp1 == strconv__FSM_B) {
+      state = strconv__FSM_C;
+      if (c == strconv__PLUS) {
+        c = string_at(s, i++);
+      } else if (c == strconv__MINUS) {
+        pn.negative = 1;
+        c = string_at(s, i++);
+      } else if (strconv__is_digit(c)) {
+      } else if (c == strconv__DPOINT) {
+      } else {
+        state = strconv__FSM_STOP;
+      };
+    } else if (tmp1 == strconv__FSM_C) {
+      if (c == strconv__ZERO) {
+        c = string_at(s, i++);
+      } else if (c == strconv__DPOINT) {
+        c = string_at(s, i++);
+        state = strconv__FSM_D;
+      } else {
+        state = strconv__FSM_E;
+      };
+    } else if (tmp1 == strconv__FSM_D) {
+      if (c == strconv__ZERO) {
+        c = string_at(s, i++);
+        if (pn.exponent > -2147483647) {
+          pn.exponent--;
+        };
+      } else {
+        state = strconv__FSM_F;
+      };
+    } else if (tmp1 == strconv__FSM_E) {
+      if (strconv__is_digit(c)) {
+        if (digx < strconv__DIGITS) {
+          pn.mantissa *= 10;
+          pn.mantissa += ((u64)(c - strconv__ZERO));
+          digx++;
+        } else if (pn.exponent < 2147483647) {
+          pn.exponent++;
+        };
+        c = string_at(s, i++);
+      } else if (c == strconv__DPOINT) {
+        c = string_at(s, i++);
+        state = strconv__FSM_F;
+      } else {
+        state = strconv__FSM_F;
+      };
+    } else if (tmp1 == strconv__FSM_F) {
+      if (strconv__is_digit(c)) {
+        if (digx < strconv__DIGITS) {
+          pn.mantissa *= 10;
+          pn.mantissa += ((u64)(c - strconv__ZERO));
+          pn.exponent--;
+          digx++;
+        };
+        c = string_at(s, i++);
+      } else if (strconv__is_exp(c)) {
+        c = string_at(s, i++);
+        state = strconv__FSM_G;
+      } else {
+        state = strconv__FSM_G;
+      };
+    } else if (tmp1 == strconv__FSM_G) {
+      if ((c == strconv__PLUS)) {
+        c = string_at(s, i++);
+      } else if (c == strconv__MINUS) {
+        expneg = 1;
+        c = string_at(s, i++);
+      };
+      state = strconv__FSM_H;
+    } else if (tmp1 == strconv__FSM_H) {
+      if (c == strconv__ZERO) {
+        c = string_at(s, i++);
+      } else {
+        state = strconv__FSM_I;
+      };
+    } else if (tmp1 == strconv__FSM_I) {
+      if (strconv__is_digit(c)) {
+        if (expexp < 214748364) {
+          expexp *= 10;
+          expexp += ((int)(c - strconv__ZERO));
+        };
+        c = string_at(s, i++);
+      } else {
+        state = strconv__FSM_STOP;
+      };
+    } else // default:
+    {
+    };
+    if (i >= s.len) {
+      state = strconv__FSM_STOP;
+    };
+  };
+  if (expneg) {
+    expexp = -expexp;
+  };
+  pn.exponent += expexp;
+  if (pn.mantissa == 0) {
+    if (pn.negative) {
+      result = strconv__PARSER_MZERO;
+    } else {
+      result = strconv__PARSER_PZERO;
+    };
+  } else if ((pn.exponent > 309)) {
+    if (pn.negative) {
+      result = strconv__PARSER_MINF;
+    } else {
+      result = strconv__PARSER_PINF;
+    };
+  } else if (pn.exponent < -328) {
+    if (pn.negative) {
+      result = strconv__PARSER_MZERO;
+    } else {
+      result = strconv__PARSER_PZERO;
+    };
+  };
+  return (_V_MulRet_int_V_strconv__PrepNumber){.var_0 = result, .var_1 = pn};
+}
+u64 strconv__converter(strconv__PrepNumber *pn) {
+  int binexp = 92;
+  u32 s2 = ((u32)(0));
+  u32 s1 = ((u32)(0));
+  u32 s0 = ((u32)(0));
+  u32 q2 = ((u32)(0));
+  u32 q1 = ((u32)(0));
+  u32 q0 = ((u32)(0));
+  u32 r2 = ((u32)(0));
+  u32 r1 = ((u32)(0));
+  u32 r0 = ((u32)(0));
+  u32 mask28 = ((u32)(0xF << 28));
+  u64 result = ((u64)(0));
+  s0 = ((u32)(pn->mantissa & ((u64)(0x00000000FFFFFFFF))));
+  s1 = ((u32)(pn->mantissa >> 32));
+  s2 = ((u32)(0));
+  while (pn->exponent > 0) {
+
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1315_q2_q1_q0 =
+        strconv__lsl96(s2, s1, s0);
+    q2 = _V_mret_1315_q2_q1_q0.var_0;
+    q1 = _V_mret_1315_q2_q1_q0.var_1;
+    q0 = _V_mret_1315_q2_q1_q0.var_2;
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1329_r2_r1_r0 =
+        strconv__lsl96(q2, q1, q0);
+    r2 = _V_mret_1329_r2_r1_r0.var_0;
+    r1 = _V_mret_1329_r2_r1_r0.var_1;
+    r0 = _V_mret_1329_r2_r1_r0.var_2;
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1343_s2_s1_s0 =
+        strconv__lsl96(r2, r1, r0);
+    s2 = _V_mret_1343_s2_s1_s0.var_0;
+    s1 = _V_mret_1343_s2_s1_s0.var_1;
+    s0 = _V_mret_1343_s2_s1_s0.var_2;
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1357_s2_s1_s0 =
+        strconv__add96(s2, s1, s0, q2, q1, q0);
+    s2 = _V_mret_1357_s2_s1_s0.var_0;
+    s1 = _V_mret_1357_s2_s1_s0.var_1;
+    s0 = _V_mret_1357_s2_s1_s0.var_2;
+    pn->exponent--;
+    while ((s2 & mask28) != 0) {
+
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1390_q2_q1_q0 =
+          strconv__lsr96(s2, s1, s0);
+      q2 = _V_mret_1390_q2_q1_q0.var_0;
+      q1 = _V_mret_1390_q2_q1_q0.var_1;
+      q0 = _V_mret_1390_q2_q1_q0.var_2;
+      binexp++;
+      s2 = q2;
+      s1 = q1;
+      s0 = q0;
+    };
+  };
+  while (pn->exponent < 0) {
+
+    while (!((s2 & (((u32)(1)) << 31)) != 0)) {
+
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1443_q2_q1_q0 =
+          strconv__lsl96(s2, s1, s0);
+      q2 = _V_mret_1443_q2_q1_q0.var_0;
+      q1 = _V_mret_1443_q2_q1_q0.var_1;
+      q0 = _V_mret_1443_q2_q1_q0.var_2;
+      binexp--;
+      s2 = q2;
+      s1 = q1;
+      s0 = q0;
+    };
+    q2 = s2 / strconv__TEN;
+    r1 = s2 % strconv__TEN;
+    r2 = (s1 >> 8) | (r1 << 24);
+    q1 = r2 / strconv__TEN;
+    r1 = r2 % strconv__TEN;
+    r2 = ((s1 & ((u32)(0xFF))) << 16) | (s0 >> 16) | (r1 << 24);
+    r0 = r2 / strconv__TEN;
+    r1 = r2 % strconv__TEN;
+    q1 = (q1 << 8) | ((r0 & ((u32)(0x00FF0000))) >> 16);
+    q0 = r0 << 16;
+    r2 = (s0 & ((u32)(0xFFFF))) | (r1 << 16);
+    q0 |= r2 / strconv__TEN;
+    s2 = q2;
+    s1 = q1;
+    s0 = q0;
+    pn->exponent++;
+  };
+  if ((s2 != 0 || s1 != 0 || s0 != 0)) {
+    while (((s2 & mask28) == 0)) {
+
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1624_q2_q1_q0 =
+          strconv__lsl96(s2, s1, s0);
+      q2 = _V_mret_1624_q2_q1_q0.var_0;
+      q1 = _V_mret_1624_q2_q1_q0.var_1;
+      q0 = _V_mret_1624_q2_q1_q0.var_2;
+      binexp--;
+      s2 = q2;
+      s1 = q1;
+      s0 = q0;
+    };
+  };
+  int nbit = 7;
+  u32 check_round_bit = ((u32)(1)) << ((u32)(nbit));
+  u32 check_round_mask = ((u32)(0xFFFFFFFF)) << ((u32)(nbit));
+  if ((s1 & check_round_bit) != 0) {
+    if ((s1 & ~check_round_mask) != 0) {
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1695_s2_s1_s0 =
+          strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
+      s2 = _V_mret_1695_s2_s1_s0.var_0;
+      s1 = _V_mret_1695_s2_s1_s0.var_1;
+      s0 = _V_mret_1695_s2_s1_s0.var_2;
+    } else {
+      if ((s1 & (check_round_bit << ((u32)(1)))) != 0) {
+        _V_MulRet_u32_V_u32_V_u32 _V_mret_1734_s2_s1_s0 =
+            strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
+        s2 = _V_mret_1734_s2_s1_s0.var_0;
+        s1 = _V_mret_1734_s2_s1_s0.var_1;
+        s0 = _V_mret_1734_s2_s1_s0.var_2;
+      };
+    };
+    s1 = s1 & check_round_mask;
+    s0 = ((u32)(0));
+  };
+  if (((s2 & (mask28 << ((u32)(1)))) != 0)) {
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1784_q2_q1_q0 =
+        strconv__lsr96(s2, s1, s0);
+    q2 = _V_mret_1784_q2_q1_q0.var_0;
+    q1 = _V_mret_1784_q2_q1_q0.var_1;
+    q0 = _V_mret_1784_q2_q1_q0.var_2;
+    binexp--;
+    s2 = q2;
+    s1 = q1;
+    s0 = q0;
+  };
+  binexp += 1023;
+  if ((binexp > 2046)) {
+    if (pn->negative) {
+      result = strconv__DOUBLE_MINUS_INFINITY;
+    } else {
+      result = strconv__DOUBLE_PLUS_INFINITY;
+    };
+  } else if (binexp < 1) {
+    if (pn->negative) {
+      result = strconv__DOUBLE_MINUS_ZERO;
+    };
+  } else if (s2 != 0) {
+    u64 q = ((u64)(0));
+    u64 binexs2 = ((u64)(binexp)) << 52;
+    q = (((u64)(s2 & ~mask28)) << 24) | ((((u64)(s1)) + ((u64)(128))) >> 8) |
+        binexs2;
+    if (pn->negative) {
+      q |= (((u64)(1)) << 63);
+    };
+    result = q;
+  };
+  return result;
+}
+f64 strconv__atof64(string s) {
+  strconv__PrepNumber pn = (strconv__PrepNumber){
+      .negative = 0, .exponent = 0, .mantissa = ((u64)(0))};
+  int res_parsing = 0;
+  f64 result = ((f64)(0));
+  result = ((f64)(0.0));
+  u64 *res_ptr = ((u64 *)(&result));
+  _V_MulRet_int_V_strconv__PrepNumber _V_mret_1966_res_parsing_pn =
+      strconv__parser(string_add(s, tos3(" ")));
+  res_parsing = _V_mret_1966_res_parsing_pn.var_0;
+  pn = _V_mret_1966_res_parsing_pn.var_1;
+  int tmp30 = res_parsing;
+
+  if (tmp30 == strconv__PARSER_OK) {
+    *res_ptr = strconv__converter(&/*114*/ pn);
+  } else if (tmp30 == strconv__PARSER_PZERO) {
+    *res_ptr = strconv__DOUBLE_PLUS_ZERO;
+  } else if (tmp30 == strconv__PARSER_MZERO) {
+    *res_ptr = strconv__DOUBLE_MINUS_ZERO;
+  } else if (tmp30 == strconv__PARSER_PINF) {
+    *res_ptr = strconv__DOUBLE_PLUS_INFINITY;
+  } else if (tmp30 == strconv__PARSER_MINF) {
+    *res_ptr = strconv__DOUBLE_MINUS_INFINITY;
+  } else // default:
+  {
+  };
+  return result;
 }
 byte strconv__byte_to_lower(byte c) { return c | ('x' - 'X'); }
 u64 strconv__common_parse_uint(string s, int _base, int _bit_size,
@@ -11156,10 +11607,12 @@ void compiler__Parser_fn_call(compiler__Parser *p, compiler__Fn *f,
   bool generic = f->is_generic;
   compiler__Parser_fn_call_args(p, f);
   if (generic) {
+    string line =
+        ((p->cgen->is_tmp) ? (p->cgen->tmp_line) : (p->cgen->cur_line));
     compiler__CGen_resetln(
-        p->cgen, string_replace(p->cgen->cur_line,
-                                _STR("%.*s (", cgen_name.len, cgen_name.str),
-                                _STR("%.*s (", f->name.len, f->name.str)));
+        p->cgen,
+        string_replace(line, _STR("%.*s (", cgen_name.len, cgen_name.str),
+                       _STR("%.*s (", f->name.len, f->name.str)));
   };
   compiler__Parser_gen(p, tos3(")"));
   p->calling_c = 0;
@@ -11680,10 +12133,10 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
       };
     };
   };
-  _V_MulRet_string_V_array_string _V_mret_6155_varg_type_varg_values =
+  _V_MulRet_string_V_array_string _V_mret_6174_varg_type_varg_values =
       compiler__Parser_fn_call_vargs(p, *f);
-  string varg_type = _V_mret_6155_varg_type_varg_values.var_0;
-  array_string varg_values = _V_mret_6155_varg_type_varg_values.var_1;
+  string varg_type = _V_mret_6174_varg_type_varg_values.var_0;
+  array_string varg_values = _V_mret_6174_varg_type_varg_values.var_1;
   if (f->is_variadic) {
     _PUSH(&saved_args, (/*typ = array_string   tmp_typ=string*/ varg_type),
           tmp83, string);
@@ -11755,21 +12208,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp97 = tos3("");
-    bool tmp98 = map_get(/*fn.v : 1318*/ r.inst, tp, &tmp97);
+    bool tmp98 = map_get(/*fn.v : 1323*/ r.inst, tp, &tmp97);
 
     if (!tmp98)
       tmp97 = tos((byte *)"", 0);
 
     if (string_ne(tmp97, tos3(""))) {
       string tmp99 = tos3("");
-      bool tmp100 = map_get(/*fn.v : 1319*/ r.inst, tp, &tmp99);
+      bool tmp100 = map_get(/*fn.v : 1324*/ r.inst, tp, &tmp99);
 
       if (!tmp100)
         tmp99 = tos((byte *)"", 0);
 
       if (string_ne(tmp99, ti)) {
         string tmp101 = tos3("");
-        bool tmp102 = map_get(/*fn.v : 1320*/ r.inst, tp, &tmp101);
+        bool tmp102 = map_get(/*fn.v : 1325*/ r.inst, tp, &tmp101);
 
         if (!tmp102)
           tmp101 = tos((byte *)"", 0);
@@ -11787,7 +12240,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp103 = tos3("");
-  bool tmp104 = map_get(/*fn.v : 1329*/ r.inst, f->typ, &tmp103);
+  bool tmp104 = map_get(/*fn.v : 1334*/ r.inst, f->typ, &tmp103);
 
   if (!tmp104)
     tmp103 = tos((byte *)"", 0);
@@ -11800,7 +12253,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp105.data)[tmp106];
 
     string tmp107 = tos3("");
-    bool tmp108 = map_get(/*fn.v : 1333*/ r.inst, tp, &tmp107);
+    bool tmp108 = map_get(/*fn.v : 1338*/ r.inst, tp, &tmp107);
 
     if (!tmp108)
       tmp107 = tos((byte *)"", 0);
@@ -11823,7 +12276,7 @@ string compiler__replace_generic_type(string gen_type, compiler__TypeInst *ti) {
   };
   if ((_IN_MAP((typ), ti->inst))) {
     string tmp111 = tos3("");
-    bool tmp112 = map_get(/*fn.v : 1347*/ ti->inst, typ, &tmp111);
+    bool tmp112 = map_get(/*fn.v : 1352*/ ti->inst, typ, &tmp111);
 
     if (!tmp112)
       tmp111 = tos((byte *)"", 0);
@@ -11937,10 +12390,10 @@ compiler__Parser_fn_call_vargs(compiler__Parser *p, compiler__Fn f) {
     if (p->tok == compiler__compiler__TokenKind_comma) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
     };
-    _V_MulRet_string_V_string _V_mret_7049_varg_type_varg_value =
+    _V_MulRet_string_V_string _V_mret_7068_varg_type_varg_value =
         compiler__Parser_tmp_expr(p);
-    string varg_type = _V_mret_7049_varg_type_varg_value.var_0;
-    string varg_value = _V_mret_7049_varg_type_varg_value.var_1;
+    string varg_type = _V_mret_7068_varg_type_varg_value.var_0;
+    string varg_value = _V_mret_7068_varg_type_varg_value.var_1;
     if (string_starts_with(varg_type, tos3("varg_")) &&
         (values.len > 0 || p->tok == compiler__compiler__TokenKind_comma)) {
       compiler__Parser_error(
@@ -12065,7 +12518,7 @@ void compiler__rename_generic_fn_instance(compiler__Fn *f,
     string k = ((string *)tmp141.data)[tmp142];
 
     string tmp143 = tos3("");
-    bool tmp144 = map_get(/*fn.v : 1478*/ ti->inst, k, &tmp143);
+    bool tmp144 = map_get(/*fn.v : 1483*/ ti->inst, k, &tmp143);
 
     if (!tmp144)
       tmp143 = tos((byte *)"", 0);
@@ -16846,6 +17299,7 @@ compiler__ParserState compiler__Parser_save_state(compiler__Parser *p) {
                                  .cgen_lines = p->cgen->lines,
                                  .cgen_cur_line = p->cgen->cur_line,
                                  .cgen_tmp_line = p->cgen->tmp_line,
+                                 .cgen_is_tmp = p->cgen->is_tmp,
                                  .tokens = p->tokens,
                                  .token_idx = p->token_idx,
                                  .tok = p->tok,
@@ -16867,6 +17321,7 @@ void compiler__Parser_restore_state(compiler__Parser *p,
     p->cgen->lines = state.cgen_lines;
     p->cgen->cur_line = state.cgen_cur_line;
     p->cgen->tmp_line = state.cgen_tmp_line;
+    p->cgen->is_tmp = state.cgen_is_tmp;
   };
   p->tokens = state.tokens;
   p->token_idx = state.token_idx;
@@ -16890,6 +17345,7 @@ void compiler__Parser_clear_state(compiler__Parser *p, bool scanner,
         0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
     p->cgen->cur_line = tos3("");
     p->cgen->tmp_line = tos3("");
+    p->cgen->is_tmp = 0;
   };
   p->tokens = new_array_from_c_array(
       0, 0, sizeof(compiler__Token),
@@ -17039,9 +17495,9 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
       if (p->tok == compiler__compiler__TokenKind_assign) {
         compiler__Parser_next(p);
         g = string_add(g, tos3(" = "));
-        _V_MulRet_string_V_string _V_mret_2183___expr =
+        _V_MulRet_string_V_string _V_mret_2208___expr =
             compiler__Parser_tmp_expr(p);
-        string expr = _V_mret_2183___expr.var_1;
+        string expr = _V_mret_2208___expr.var_1;
         g = string_add(g, expr);
       };
       g = string_add(g, tos3("; // global"));
@@ -17403,7 +17859,7 @@ string compiler__Parser_check_string(compiler__Parser *p) {
 void compiler__Parser_check_not_reserved(compiler__Parser *p) {
   bool tmp36 = 0;
   bool tmp37 =
-      map_get(/*parser.v : 817*/ compiler__reserved_types, p->lit, &tmp36);
+      map_get(/*parser.v : 821*/ compiler__reserved_types, p->lit, &tmp36);
 
   if (tmp36) {
     compiler__Parser_error(
@@ -17591,7 +18047,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
   map_string ti = p->cur_fn.dispatch_of.inst;
   if ((_IN(string, (p->lit), map_keys(&/* ? */ ti)))) {
     string tmp39 = tos3("");
-    bool tmp40 = map_get(/*parser.v : 996*/ ti, p->lit, &tmp39);
+    bool tmp40 = map_get(/*parser.v : 1000*/ ti, p->lit, &tmp39);
 
     if (!tmp40)
       tmp39 = tos((byte *)"", 0);
@@ -17636,11 +18092,11 @@ string compiler__Parser_get_type(compiler__Parser *p) {
           !compiler__Parser_first_pass(&/* ? */ *p) &&
           !string_starts_with(typ, tos3("["))) {
         println(tos3("get_type() bad type"));
-        _V_MulRet_string_V_string _V_mret_4693_t_suggest_tc_suggest =
+        _V_MulRet_string_V_string _V_mret_4718_t_suggest_tc_suggest =
             compiler__Table_find_misspelled_type(&/* ? */ *p->table, typ, p,
                                                  0.50);
-        string t_suggest = _V_mret_4693_t_suggest_tc_suggest.var_0;
-        string tc_suggest = _V_mret_4693_t_suggest_tc_suggest.var_1;
+        string t_suggest = _V_mret_4718_t_suggest_tc_suggest.var_0;
+        string tc_suggest = _V_mret_4718_t_suggest_tc_suggest.var_1;
         if (t_suggest.len > 0) {
           t_suggest = _STR(". did you mean: (%.*s) `%.*s`", tc_suggest.len,
                            tc_suggest.str, t_suggest.len, t_suggest.str);
@@ -17970,9 +18426,9 @@ void compiler__Parser_assign_statement(compiler__Parser *p, compiler__Var v,
   string expr_type = compiler__Parser_bool_expression(p);
   p->is_var_decl = 0;
   if (string_eq(expr_type, tos3("void"))) {
-    _V_MulRet_bool_V_string _V_mret_6378___fn_name =
+    _V_MulRet_bool_V_string _V_mret_6403___fn_name =
         compiler__Parser_is_expr_fn_call(&/* ? */ *p, p->token_idx - 3);
-    string fn_name = _V_mret_6378___fn_name.var_1;
+    string fn_name = _V_mret_6403___fn_name.var_1;
     compiler__Parser_error_with_token_index(
         p,
         _STR("%.*s() %.*s", fn_name.len, fn_name.str,
@@ -18147,9 +18603,9 @@ void compiler__Parser_var_decl(compiler__Parser *p) {
            : ((*(string *)array_get(var_names, 0))));
   string t = compiler__Parser_gen_var_decl(p, p->var_decl_name, is_static);
   if (string_eq(t, tos3("void"))) {
-    _V_MulRet_bool_V_string _V_mret_7235___fn_name =
+    _V_MulRet_bool_V_string _V_mret_7260___fn_name =
         compiler__Parser_is_expr_fn_call(&/* ? */ *p, p->token_idx - 3);
-    string fn_name = _V_mret_7235___fn_name.var_1;
+    string fn_name = _V_mret_7260___fn_name.var_1;
     compiler__Parser_error_with_token_index(
         p,
         _STR("%.*s() %.*s", fn_name.len, fn_name.str,
@@ -19027,10 +19483,10 @@ string compiler__Parser_map_init(compiler__Parser *p) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_str);
       compiler__Parser_check(p, compiler__compiler__TokenKind_colon);
       ;
-      _V_MulRet_string_V_string _V_mret_11139_t_val_expr =
+      _V_MulRet_string_V_string _V_mret_11164_t_val_expr =
           compiler__Parser_tmp_expr(p);
-      string t = _V_mret_11139_t_val_expr.var_0;
-      string val_expr = _V_mret_11139_t_val_expr.var_1;
+      string t = _V_mret_11164_t_val_expr.var_0;
+      string val_expr = _V_mret_11164_t_val_expr.var_1;
       if (i == 0) {
         val_type = t;
       };
@@ -19310,10 +19766,10 @@ void compiler__Parser_return_st(compiler__Parser *p) {
     while (p->tok == compiler__compiler__TokenKind_comma) {
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-      _V_MulRet_string_V_string _V_mret_12492_typ_expr =
+      _V_MulRet_string_V_string _V_mret_12517_typ_expr =
           compiler__Parser_tmp_expr(p);
-      string typ = _V_mret_12492_typ_expr.var_0;
-      string expr = _V_mret_12492_typ_expr.var_1;
+      string typ = _V_mret_12517_typ_expr.var_0;
+      string expr = _V_mret_12517_typ_expr.var_1;
       _PUSH(&types, (/*typ = array_string   tmp_typ=string*/ typ), tmp150,
             string);
       _PUSH(&mr_values,
@@ -19486,10 +19942,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
     string typ = compiler__Parser_get_type(p);
     compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-    _V_MulRet_string_V_string _V_mret_13271_styp_expr =
+    _V_MulRet_string_V_string _V_mret_13296_styp_expr =
         compiler__Parser_tmp_expr(p);
-    string styp = _V_mret_13271_styp_expr.var_0;
-    string expr = _V_mret_13271_styp_expr.var_1;
+    string styp = _V_mret_13296_styp_expr.var_0;
+    string expr = _V_mret_13296_styp_expr.var_1;
     compiler__Parser_check_types(p, styp, tos3("string"));
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
     string tmp = compiler__Parser_get_tmp(p);
@@ -19526,10 +19982,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     return opt_type;
   } else if (string_eq(op, tos3("encode"))) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
-    _V_MulRet_string_V_string _V_mret_13451_typ_expr =
+    _V_MulRet_string_V_string _V_mret_13476_typ_expr =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_13451_typ_expr.var_0;
-    string expr = _V_mret_13451_typ_expr.var_1;
+    string typ = _V_mret_13476_typ_expr.var_0;
+    string expr = _V_mret_13476_typ_expr.var_1;
     compiler__Type T = compiler__Table_find_type(&/* ? */ *p->table, typ);
     compiler__Parser_gen_json_for_type(p, T);
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
@@ -23929,6 +24385,11 @@ void init() {
   compiler_dot_x64__e_machine = 0x3e;
   compiler_dot_x64__shn_xindex = 0xffff;
   compiler_dot_x64__segment_start = 0x400000;
+  strconv__DOUBLE_PLUS_ZERO = ((u64)(0x0000000000000000));
+  strconv__DOUBLE_MINUS_ZERO = 0x8000000000000000;
+  strconv__DOUBLE_PLUS_INFINITY = 0x7FF0000000000000;
+  strconv__DOUBLE_MINUS_INFINITY = 0xFFF0000000000000;
+  strconv__TEN = ((u32)(10));
   strconv__max_u64 = ((u64)(UINT64_MAX));
   os__S_IFMT = 0xF000;
   os__S_IFDIR = 0x4000;
