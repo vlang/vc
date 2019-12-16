@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9dd86a2"
+#define V_COMMIT_HASH "b30f989"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "faa04c5"
+#define V_COMMIT_HASH "9dd86a2"
 #endif
 #include <inttypes.h>
 
@@ -23879,7 +23879,7 @@ void main__v_command(string command, array_string args) {
   string tmp3 = command;
 
   if ((string_eq(tmp3, tos3(""))) || (string_eq(tmp3, tos3("."))) ||
-      (string_eq(tmp3, tos3("run")))) {
+      (string_eq(tmp3, tos3("run"))) || (string_eq(tmp3, tos3("build")))) {
 
     return;
   } else if (string_eq(tmp3, tos3("version"))) {
