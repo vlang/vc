@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "bcde155"
+#define V_COMMIT_HASH "1071855"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8c0e0f8"
+#define V_COMMIT_HASH "bcde155"
 #endif
 #include <inttypes.h>
 
@@ -20949,7 +20949,7 @@ bool compiler__good_type_name(string s) {
   return 1;
 }
 void compiler__Scanner_validate_var_name(compiler__Scanner *s, string name) {
-  if (name.len > 11 && !string_contains(name, tos3("_"))) {
+  if (name.len > 15 && !string_contains(name, tos3("_"))) {
     compiler__Scanner_error(
         &/* ? */ *s,
         string_add(
