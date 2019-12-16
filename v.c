@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b30f989"
+#define V_COMMIT_HASH "d1714c4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9dd86a2"
+#define V_COMMIT_HASH "b30f989"
 #endif
 #include <inttypes.h>
 
@@ -1518,7 +1518,7 @@ void term__show_cursor();
 void term__hide_cursor();
 void compiler__Parser_inline_asm(compiler__Parser *p);
 void compiler__todo();
-bool compiler__V_no_mingw_installed(compiler__V *v);
+bool compiler__V_no_cc_installed(compiler__V *v);
 void compiler__V_cc(compiler__V *v);
 void compiler__V_cc_windows_cross(compiler__V *c);
 void compiler__V_build_thirdparty_obj_files(compiler__V *c);
@@ -6706,22 +6706,20 @@ void compiler__Parser_inline_asm(compiler__Parser *p) {
   compiler__Parser_check(p, compiler__compiler__TokenKind_rcbr);
 }
 void compiler__todo() {}
-bool compiler__V_no_mingw_installed(compiler__V *v) {
-#ifndef _WIN32
-  v_panic(tos3("no_mingw_installed() can only run on Windows"));
-  return false;
-  ;
-#endif
-  ;
-  Option_os__Result tmp1 = os__exec(tos3("gcc -v"));
+bool compiler__V_no_cc_installed(compiler__V *v) {
+#ifdef _WIN32
+  Option_os__Result tmp1 =
+      os__exec(_STR("%.*s -v", v->pref->ccompiler.len, v->pref->ccompiler.str));
   if (!tmp1.ok) {
     string err = tmp1.error;
     int errcode = tmp1.ecode;
     if (v->pref->is_verbose) {
-      println(tos3("mingw not found, trying to build with msvc..."));
+      println(tos3("C compiler not found, trying to build with msvc..."));
     };
     return 1;
   };
+#endif
+  ;
   return 0;
 }
 void compiler__V_cc(compiler__V *v) {
@@ -6774,7 +6772,7 @@ void compiler__V_cc(compiler__V *v) {
   };
 #ifdef _WIN32
   if (string_eq(v->pref->ccompiler, tos3("msvc")) ||
-      compiler__V_no_mingw_installed(&/* ? */ *v)) {
+      compiler__V_no_cc_installed(&/* ? */ *v)) {
     compiler__V_cc_msvc(v);
 
     return;
@@ -7236,7 +7234,8 @@ void compiler__V_build_thirdparty_obj_files(compiler__V *c) {
     if (string_ends_with(flag.value, tos3(".o"))) {
       array_compiler__CFlag rest_of_module_flags =
           compiler__V_get_rest_of_module_cflags(&/* ? */ *c, &/*114*/ flag);
-      if (string_eq(c->pref->ccompiler, tos3("msvc"))) {
+      if (string_eq(c->pref->ccompiler, tos3("msvc")) ||
+          compiler__V_no_cc_installed(&/* ? */ *c)) {
         compiler__build_thirdparty_obj_file_with_msvc(flag.value,
                                                       rest_of_module_flags);
       } else {
@@ -8360,7 +8359,8 @@ compiler__get_v_options_and_main_command(array_string args) {
       _PUSH(&options, (/*typ = array_string   tmp_typ=string*/ a), tmp4,
             string);
       if ((string_eq(a, tos3("-o")) || string_eq(a, tos3("-os")) ||
-           string_eq(a, tos3("-cc")) || string_eq(a, tos3("-cflags")))) {
+           string_eq(a, tos3("-cc")) || string_eq(a, tos3("-cflags")) ||
+           string_eq(a, tos3("-d")))) {
         i++;
       };
     };
