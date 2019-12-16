@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ea781a5"
+#define V_COMMIT_HASH "84f535d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "562f243"
+#define V_COMMIT_HASH "ea781a5"
 #endif
 #include <inttypes.h>
 
@@ -5450,7 +5450,7 @@ _V_MulRet_int_V_strconv__PrepNumber strconv__parser(string s) {
         state = strconv__FSM_G;
       };
     } else if (tmp1 == strconv__FSM_G) {
-      if ((c == strconv__PLUS)) {
+      if (c == strconv__PLUS) {
         c = string_at(s, i++);
       } else if (c == strconv__MINUS) {
         expneg = 1;
@@ -5523,34 +5523,34 @@ u64 strconv__converter(strconv__PrepNumber *pn) {
   s2 = ((u32)(0));
   while (pn->exponent > 0) {
 
-    _V_MulRet_u32_V_u32_V_u32 _V_mret_1315_q2_q1_q0 =
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1313_q2_q1_q0 =
         strconv__lsl96(s2, s1, s0);
-    q2 = _V_mret_1315_q2_q1_q0.var_0;
-    q1 = _V_mret_1315_q2_q1_q0.var_1;
-    q0 = _V_mret_1315_q2_q1_q0.var_2;
-    _V_MulRet_u32_V_u32_V_u32 _V_mret_1329_r2_r1_r0 =
+    q2 = _V_mret_1313_q2_q1_q0.var_0;
+    q1 = _V_mret_1313_q2_q1_q0.var_1;
+    q0 = _V_mret_1313_q2_q1_q0.var_2;
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1327_r2_r1_r0 =
         strconv__lsl96(q2, q1, q0);
-    r2 = _V_mret_1329_r2_r1_r0.var_0;
-    r1 = _V_mret_1329_r2_r1_r0.var_1;
-    r0 = _V_mret_1329_r2_r1_r0.var_2;
-    _V_MulRet_u32_V_u32_V_u32 _V_mret_1343_s2_s1_s0 =
+    r2 = _V_mret_1327_r2_r1_r0.var_0;
+    r1 = _V_mret_1327_r2_r1_r0.var_1;
+    r0 = _V_mret_1327_r2_r1_r0.var_2;
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1341_s2_s1_s0 =
         strconv__lsl96(r2, r1, r0);
-    s2 = _V_mret_1343_s2_s1_s0.var_0;
-    s1 = _V_mret_1343_s2_s1_s0.var_1;
-    s0 = _V_mret_1343_s2_s1_s0.var_2;
-    _V_MulRet_u32_V_u32_V_u32 _V_mret_1357_s2_s1_s0 =
+    s2 = _V_mret_1341_s2_s1_s0.var_0;
+    s1 = _V_mret_1341_s2_s1_s0.var_1;
+    s0 = _V_mret_1341_s2_s1_s0.var_2;
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1355_s2_s1_s0 =
         strconv__add96(s2, s1, s0, q2, q1, q0);
-    s2 = _V_mret_1357_s2_s1_s0.var_0;
-    s1 = _V_mret_1357_s2_s1_s0.var_1;
-    s0 = _V_mret_1357_s2_s1_s0.var_2;
+    s2 = _V_mret_1355_s2_s1_s0.var_0;
+    s1 = _V_mret_1355_s2_s1_s0.var_1;
+    s0 = _V_mret_1355_s2_s1_s0.var_2;
     pn->exponent--;
     while ((s2 & mask28) != 0) {
 
-      _V_MulRet_u32_V_u32_V_u32 _V_mret_1390_q2_q1_q0 =
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1388_q2_q1_q0 =
           strconv__lsr96(s2, s1, s0);
-      q2 = _V_mret_1390_q2_q1_q0.var_0;
-      q1 = _V_mret_1390_q2_q1_q0.var_1;
-      q0 = _V_mret_1390_q2_q1_q0.var_2;
+      q2 = _V_mret_1388_q2_q1_q0.var_0;
+      q1 = _V_mret_1388_q2_q1_q0.var_1;
+      q0 = _V_mret_1388_q2_q1_q0.var_2;
       binexp++;
       s2 = q2;
       s1 = q1;
@@ -5561,11 +5561,11 @@ u64 strconv__converter(strconv__PrepNumber *pn) {
 
     while (!((s2 & (((u32)(1)) << 31)) != 0)) {
 
-      _V_MulRet_u32_V_u32_V_u32 _V_mret_1443_q2_q1_q0 =
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1441_q2_q1_q0 =
           strconv__lsl96(s2, s1, s0);
-      q2 = _V_mret_1443_q2_q1_q0.var_0;
-      q1 = _V_mret_1443_q2_q1_q0.var_1;
-      q0 = _V_mret_1443_q2_q1_q0.var_2;
+      q2 = _V_mret_1441_q2_q1_q0.var_0;
+      q1 = _V_mret_1441_q2_q1_q0.var_1;
+      q0 = _V_mret_1441_q2_q1_q0.var_2;
       binexp--;
       s2 = q2;
       s1 = q1;
@@ -5588,14 +5588,14 @@ u64 strconv__converter(strconv__PrepNumber *pn) {
     s0 = q0;
     pn->exponent++;
   };
-  if ((s2 != 0 || s1 != 0 || s0 != 0)) {
-    while (((s2 & mask28) == 0)) {
+  if (s2 != 0 || s1 != 0 || s0 != 0) {
+    while ((s2 & mask28) == 0) {
 
-      _V_MulRet_u32_V_u32_V_u32 _V_mret_1624_q2_q1_q0 =
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1618_q2_q1_q0 =
           strconv__lsl96(s2, s1, s0);
-      q2 = _V_mret_1624_q2_q1_q0.var_0;
-      q1 = _V_mret_1624_q2_q1_q0.var_1;
-      q0 = _V_mret_1624_q2_q1_q0.var_2;
+      q2 = _V_mret_1618_q2_q1_q0.var_0;
+      q1 = _V_mret_1618_q2_q1_q0.var_1;
+      q0 = _V_mret_1618_q2_q1_q0.var_2;
       binexp--;
       s2 = q2;
       s1 = q1;
@@ -5607,36 +5607,36 @@ u64 strconv__converter(strconv__PrepNumber *pn) {
   u32 check_round_mask = ((u32)(0xFFFFFFFF)) << ((u32)(nbit));
   if ((s1 & check_round_bit) != 0) {
     if ((s1 & ~check_round_mask) != 0) {
-      _V_MulRet_u32_V_u32_V_u32 _V_mret_1695_s2_s1_s0 =
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1689_s2_s1_s0 =
           strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
-      s2 = _V_mret_1695_s2_s1_s0.var_0;
-      s1 = _V_mret_1695_s2_s1_s0.var_1;
-      s0 = _V_mret_1695_s2_s1_s0.var_2;
+      s2 = _V_mret_1689_s2_s1_s0.var_0;
+      s1 = _V_mret_1689_s2_s1_s0.var_1;
+      s0 = _V_mret_1689_s2_s1_s0.var_2;
     } else {
       if ((s1 & (check_round_bit << ((u32)(1)))) != 0) {
-        _V_MulRet_u32_V_u32_V_u32 _V_mret_1734_s2_s1_s0 =
+        _V_MulRet_u32_V_u32_V_u32 _V_mret_1728_s2_s1_s0 =
             strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
-        s2 = _V_mret_1734_s2_s1_s0.var_0;
-        s1 = _V_mret_1734_s2_s1_s0.var_1;
-        s0 = _V_mret_1734_s2_s1_s0.var_2;
+        s2 = _V_mret_1728_s2_s1_s0.var_0;
+        s1 = _V_mret_1728_s2_s1_s0.var_1;
+        s0 = _V_mret_1728_s2_s1_s0.var_2;
       };
     };
     s1 = s1 & check_round_mask;
     s0 = ((u32)(0));
   };
-  if (((s2 & (mask28 << ((u32)(1)))) != 0)) {
-    _V_MulRet_u32_V_u32_V_u32 _V_mret_1784_q2_q1_q0 =
+  if ((s2 & (mask28 << ((u32)(1)))) != 0) {
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1776_q2_q1_q0 =
         strconv__lsr96(s2, s1, s0);
-    q2 = _V_mret_1784_q2_q1_q0.var_0;
-    q1 = _V_mret_1784_q2_q1_q0.var_1;
-    q0 = _V_mret_1784_q2_q1_q0.var_2;
+    q2 = _V_mret_1776_q2_q1_q0.var_0;
+    q1 = _V_mret_1776_q2_q1_q0.var_1;
+    q0 = _V_mret_1776_q2_q1_q0.var_2;
     binexp--;
     s2 = q2;
     s1 = q1;
     s0 = q0;
   };
   binexp += 1023;
-  if ((binexp > 2046)) {
+  if (binexp > 2046) {
     if (pn->negative) {
       result = strconv__DOUBLE_MINUS_INFINITY;
     } else {
@@ -5665,10 +5665,10 @@ f64 strconv__atof64(string s) {
   f64 result = ((f64)(0));
   result = ((f64)(0.0));
   u64 *res_ptr = ((u64 *)(&result));
-  _V_MulRet_int_V_strconv__PrepNumber _V_mret_1966_res_parsing_pn =
+  _V_MulRet_int_V_strconv__PrepNumber _V_mret_1956_res_parsing_pn =
       strconv__parser(string_add(s, tos3(" ")));
-  res_parsing = _V_mret_1966_res_parsing_pn.var_0;
-  pn = _V_mret_1966_res_parsing_pn.var_1;
+  res_parsing = _V_mret_1956_res_parsing_pn.var_0;
+  pn = _V_mret_1956_res_parsing_pn.var_1;
   int tmp30 = res_parsing;
 
   if (tmp30 == strconv__PARSER_OK) {
