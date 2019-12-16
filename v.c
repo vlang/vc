@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "dadf147"
+#define V_COMMIT_HASH "8c0e0f8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d1714c4"
+#define V_COMMIT_HASH "dadf147"
 #endif
 #include <inttypes.h>
 
@@ -2210,6 +2210,7 @@ string os__wd_at_startup;
 int os__MAP_PRIVATE;
 int os__MAP_ANONYMOUS;
 string os__path_separator;
+string compiler__c_common_macros;
 string compiler__c_headers;
 string compiler__js_headers;
 string compiler__c_builtin_types;
@@ -11527,6 +11528,19 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
                                          _STR("%.*s_str(", typ.len, typ.str));
           compiler__Parser_gen(p, tos3(")"));
           continue;
+        } else {
+          string base = compiler__Parser_base_type(p, T.name);
+          if (string_ne(base, T.name)) {
+            compiler__Type base_type =
+                compiler__Parser_find_type(&/* ? */ *p, base);
+            if (compiler__Type_has_method(&/* ? */ base_type, tos3("str"))) {
+              compiler__CGen_set_placeholder(
+                  p->cgen, ph,
+                  _STR("%.*s_str(", base_type.name.len, base_type.name.str));
+              compiler__Parser_gen(p, tos3(")"));
+              continue;
+            };
+          };
         };
         string error_msg =
             (_STR("`%.*s` needs to have method `str() string` to be printable",
@@ -11634,10 +11648,10 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
       };
     };
   };
-  _V_MulRet_string_V_array_string _V_mret_6040_varg_type_varg_values =
+  _V_MulRet_string_V_array_string _V_mret_6100_varg_type_varg_values =
       compiler__Parser_fn_call_vargs(p, *f);
-  string varg_type = _V_mret_6040_varg_type_varg_values.var_0;
-  array_string varg_values = _V_mret_6040_varg_type_varg_values.var_1;
+  string varg_type = _V_mret_6100_varg_type_varg_values.var_0;
+  array_string varg_values = _V_mret_6100_varg_type_varg_values.var_1;
   if (f->is_variadic) {
     _PUSH(&saved_args, (/*typ = array_string   tmp_typ=string*/ varg_type),
           tmp79, string);
@@ -11709,21 +11723,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp93 = tos3("");
-    bool tmp94 = map_get(/*fn.v : 1297*/ r.inst, tp, &tmp93);
+    bool tmp94 = map_get(/*fn.v : 1307*/ r.inst, tp, &tmp93);
 
     if (!tmp94)
       tmp93 = tos((byte *)"", 0);
 
     if (string_ne(tmp93, tos3(""))) {
       string tmp95 = tos3("");
-      bool tmp96 = map_get(/*fn.v : 1298*/ r.inst, tp, &tmp95);
+      bool tmp96 = map_get(/*fn.v : 1308*/ r.inst, tp, &tmp95);
 
       if (!tmp96)
         tmp95 = tos((byte *)"", 0);
 
       if (string_ne(tmp95, ti)) {
         string tmp97 = tos3("");
-        bool tmp98 = map_get(/*fn.v : 1299*/ r.inst, tp, &tmp97);
+        bool tmp98 = map_get(/*fn.v : 1309*/ r.inst, tp, &tmp97);
 
         if (!tmp98)
           tmp97 = tos((byte *)"", 0);
@@ -11741,7 +11755,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp99 = tos3("");
-  bool tmp100 = map_get(/*fn.v : 1308*/ r.inst, f->typ, &tmp99);
+  bool tmp100 = map_get(/*fn.v : 1318*/ r.inst, f->typ, &tmp99);
 
   if (!tmp100)
     tmp99 = tos((byte *)"", 0);
@@ -11754,7 +11768,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp101.data)[tmp102];
 
     string tmp103 = tos3("");
-    bool tmp104 = map_get(/*fn.v : 1312*/ r.inst, tp, &tmp103);
+    bool tmp104 = map_get(/*fn.v : 1322*/ r.inst, tp, &tmp103);
 
     if (!tmp104)
       tmp103 = tos((byte *)"", 0);
@@ -11777,7 +11791,7 @@ string compiler__replace_generic_type(string gen_type, compiler__TypeInst *ti) {
   };
   if ((_IN_MAP((typ), ti->inst))) {
     string tmp107 = tos3("");
-    bool tmp108 = map_get(/*fn.v : 1326*/ ti->inst, typ, &tmp107);
+    bool tmp108 = map_get(/*fn.v : 1336*/ ti->inst, typ, &tmp107);
 
     if (!tmp108)
       tmp107 = tos((byte *)"", 0);
@@ -11891,10 +11905,10 @@ compiler__Parser_fn_call_vargs(compiler__Parser *p, compiler__Fn f) {
     if (p->tok == compiler__compiler__TokenKind_comma) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
     };
-    _V_MulRet_string_V_string _V_mret_6934_varg_type_varg_value =
+    _V_MulRet_string_V_string _V_mret_6994_varg_type_varg_value =
         compiler__Parser_tmp_expr(p);
-    string varg_type = _V_mret_6934_varg_type_varg_value.var_0;
-    string varg_value = _V_mret_6934_varg_type_varg_value.var_1;
+    string varg_type = _V_mret_6994_varg_type_varg_value.var_0;
+    string varg_value = _V_mret_6994_varg_type_varg_value.var_1;
     if (string_starts_with(varg_type, tos3("varg_")) &&
         (values.len > 0 || p->tok == compiler__compiler__TokenKind_comma)) {
       compiler__Parser_error(
@@ -12019,7 +12033,7 @@ void compiler__rename_generic_fn_instance(compiler__Fn *f,
     string k = ((string *)tmp137.data)[tmp138];
 
     string tmp139 = tos3("");
-    bool tmp140 = map_get(/*fn.v : 1457*/ ti->inst, k, &tmp139);
+    bool tmp140 = map_get(/*fn.v : 1467*/ ti->inst, k, &tmp139);
 
     if (!tmp140)
       tmp139 = tos((byte *)"", 0);
@@ -23895,7 +23909,17 @@ void init() {
   os__MAP_PRIVATE = 0x02;
   os__MAP_ANONYMOUS = 0x20;
   os__path_separator = tos3("/");
-  compiler__c_headers = tos3(
+  compiler__c_common_macros = tos3(
+      "\n\n#define EMPTY_STRUCT_DECLARATION\n#define "
+      "EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an "
+      "array needs to be specified, but GCC crashes if it is...\n#define "
+      "EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#ifdef "
+      "__TINYC__\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
+      "EMPTY_STRUCT_INITIALIZATION\n#define EMPTY_STRUCT_DECLARATION char "
+      "_dummy\n#define EMPTY_STRUCT_INITIALIZATION 0\n#undef "
+      "EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef "
+      "TCCSKIP\n#define TCCSKIP(x)\n#endif\n\n#define OPTION_CAST(x) (x)\n");
+  compiler__c_headers = _STR(
       "\n\n//#include <inttypes.h>  // int64_t etc\n#include <stdio.h>  // "
       "TODO remove all these includes, define all function signatures and "
       "types manually\n#include <stdlib.h>\n\n//#include \"fns.h\"\n#include "
@@ -23930,16 +23954,7 @@ void init() {
       "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef "
       "__OpenBSD__\n#include <sys/types.h>\n#include "
       "<sys/resource.h>\n#include <sys/wait.h> // os__wait uses wait on "
-      "nix\n#endif\n\n#define EMPTY_STRUCT_DECLARATION\n#define "
-      "EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an "
-      "array needs to be specified, but GCC crashes if it is...\n#define "
-      "EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#ifdef "
-      "__TINYC__\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
-      "EMPTY_STRUCT_INITIALIZATION\n#define EMPTY_STRUCT_DECLARATION char "
-      "_dummy\n#define EMPTY_STRUCT_INITIALIZATION 0\n#undef "
-      "EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef "
-      "TCCSKIP\n#define TCCSKIP(x)\n#endif\n\n#define OPTION_CAST(x) "
-      "(x)\n\n#ifdef _WIN32\n#define WINVER 0x0600\n#ifdef "
+      "nix\n#endif\n\n%.*s \n\n#ifdef _WIN32\n#define WINVER 0x0600\n#ifdef "
       "_WIN32_WINNT\n#undef _WIN32_WINNT\n#endif\n#define _WIN32_WINNT "
       "0x0600\n#define WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define "
       "UNICODE\n#include <windows.h>\n\n// must be included after "
@@ -23963,7 +23978,8 @@ void init() {
       "b)\n#define DEFAULT_GE(a, b) (a >= "
       "b)\n//================================== GLOBALS "
       "=================================*/\nbyteptr g_str_buf;\nint "
-      "load_so(byteptr);\nvoid reload_so();\n");
+      "load_so(byteptr);\nvoid reload_so();\n",
+      compiler__c_common_macros.len, compiler__c_common_macros.str);
   compiler__js_headers = tos3(
       "\n\nvar array_string = function() {}\nvar array_byte = function() "
       "{}\nvar array_int = function() {}\nvar byte = function() {}\nvar double "
@@ -23989,12 +24005,9 @@ void init() {
       "map_int;\ntypedef map map_string;\n#ifndef bool\n	typedef int "
       "bool;\n	#define true 1\n	#define false 0\n#endif\n");
   compiler__bare_c_headers =
-      tos3("\n\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) "
-           "x\n\n#ifdef __TINYC__\n#undef EMPTY_ARRAY_OF_ELEMS\n#define "
-           "EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef TCCSKIP\n#define "
-           "TCCSKIP(x)\n#endif\n\n#ifndef EMPTY_STRUCT_INITIALIZATION\n#define "
-           "EMPTY_STRUCT_INITIALIZATION 0\n#endif\n\n#ifndef exit\n#define "
-           "exit(rc) sys_exit(rc)\nvoid sys_exit (int);\n#endif\n");
+      _STR("\n\n%.*s\n\n#ifndef exit\n#define exit(rc) sys_exit(rc)\nvoid "
+           "sys_exit (int);\n#endif\n",
+           compiler__c_common_macros.len, compiler__c_common_macros.str);
   compiler__warn_match_arrow =
       string_add(tos3("=> is no longer needed in match statements, use\n"),
                  tos3("match foo {\n	1 { bar }\n	2 { baz }\n	else { "
