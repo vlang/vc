@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6008fa4"
+#define V_COMMIT_HASH "562f243"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5a56ca0"
+#define V_COMMIT_HASH "6008fa4"
 #endif
 #include <inttypes.h>
 
@@ -2797,7 +2797,7 @@ array array_slice(array a, int start, int _end) {
                       .data = (byte *)a.data + start * a.element_size,
                       .len = l,
                       .cap = l};
-  return res;
+  return array_clone(res);
 }
 void array_set(array *a, int i, void *val) {
   if (i < 0 || i >= a->len) {
