@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "562f243"
+#define V_COMMIT_HASH "ea781a5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6008fa4"
+#define V_COMMIT_HASH "562f243"
 #endif
 #include <inttypes.h>
 
@@ -1232,6 +1232,7 @@ array array_left(array a, int n);
 array array_right(array a, int n);
 array array_slice2(array a, int start, int _end, bool end_max);
 array array_slice(array a, int start, int _end);
+array array_slice_clone(array a, int start, int _end);
 void array_set(array *a, int i, void *val);
 void array_push(array *a, void *val);
 void array_push_many(array *a, void *val, int size);
@@ -2781,6 +2782,25 @@ array array_slice2(array a, int start, int _end, bool end_max) {
   return array_slice(a, start, end);
 }
 array array_slice(array a, int start, int _end) {
+  int end = _end;
+  if (start > end) {
+    v_panic(_STR("array.slice: invalid slice index (%d > %d)", start, end));
+  };
+  if (end > a.len) {
+    v_panic(
+        _STR("array.slice: slice bounds out of range (%d >= %d)", end, a.len));
+  };
+  if (start < 0) {
+    v_panic(_STR("array.slice: slice bounds out of range (%d < 0)", start));
+  };
+  int l = end - start;
+  array res = (array){.element_size = a.element_size,
+                      .data = (byte *)a.data + start * a.element_size,
+                      .len = l,
+                      .cap = l};
+  return res;
+}
+array array_slice_clone(array a, int start, int _end) {
   int end = _end;
   if (start > end) {
     v_panic(_STR("array.slice: invalid slice index (%d > %d)", start, end));
