@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e7856a1"
+#define V_COMMIT_HASH "54707ff"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1071855"
+#define V_COMMIT_HASH "e7856a1"
 #endif
 #include <inttypes.h>
 
@@ -2578,20 +2578,22 @@ array_string main__known_commands;
 array_string main__simple_tools;
 
 array new_array(int mylen, int cap, int elm_size) {
+  int cap_ = ((cap == 0) ? (1) : (cap));
   array arr = (array){.len = mylen,
                       .cap = cap,
                       .element_size = elm_size,
-                      .data = v_calloc(cap * elm_size)};
+                      .data = v_calloc(cap_ * elm_size)};
   return arr;
 }
 array make(int len, int cap, int elm_size) {
   return new_array(len, cap, elm_size);
 }
 array new_array_from_c_array(int len, int cap, int elm_size, void *c_array) {
+  int cap_ = ((cap == 0) ? (1) : (cap));
   array arr = (array){.len = len,
                       .cap = cap,
                       .element_size = elm_size,
-                      .data = v_calloc(cap * elm_size)};
+                      .data = v_calloc(cap_ * elm_size)};
   memcpy(arr.data, c_array, len * elm_size);
   return arr;
 }
@@ -2634,10 +2636,14 @@ array array_repeat(array a, int nr_repeats) {
   if (nr_repeats < 0) {
     v_panic(_STR("array.repeat: count is negative (count == %d)", nr_repeats));
   };
+  int size = nr_repeats * a.len * a.element_size;
+  if (size == 0) {
+    size = a.element_size;
+  };
   array arr = (array){.len = nr_repeats * a.len,
                       .cap = nr_repeats * a.len,
                       .element_size = a.element_size,
-                      .data = v_calloc(nr_repeats * a.len * a.element_size)};
+                      .data = v_calloc(size)};
   for (int i = 0; i < nr_repeats; i++) {
 
     memcpy((byte *)arr.data + i * a.len * a.element_size, a.data,
@@ -2762,10 +2768,14 @@ array array_reverse(array a) {
   return arr;
 }
 array array_clone(array a) {
+  int size = a.cap * a.element_size;
+  if (size == 0) {
+    size++;
+  };
   array arr = (array){.len = a.len,
                       .cap = a.cap,
                       .element_size = a.element_size,
-                      .data = v_calloc(a.cap * a.element_size)};
+                      .data = v_calloc(size)};
   memcpy(arr.data, a.data, a.cap * a.element_size);
   return arr;
 }
@@ -2969,7 +2979,7 @@ void print(string s) {
 }
 byte *v_malloc(int n) {
   if (n <= 0) {
-    v_panic(tos3("malloc(<0)"));
+    v_panic(tos3("malloc(<=0)"));
   };
 #ifdef VPREALLOC
   byte *res = g_m2_ptr;
@@ -2986,8 +2996,8 @@ byte *v_malloc(int n) {
   ;
 }
 byte *v_calloc(int n) {
-  if (n < 0) {
-    v_panic(tos3("calloc(<0)"));
+  if (n <= 0) {
+    v_panic(tos3("calloc(<=0)"));
   };
   return calloc(n, 1);
 }
@@ -11833,21 +11843,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp93 = tos3("");
-    bool tmp94 = map_get(/*fn.v : 1307*/ r.inst, tp, &tmp93);
+    bool tmp94 = map_get(/*fn.v : 1308*/ r.inst, tp, &tmp93);
 
     if (!tmp94)
       tmp93 = tos((byte *)"", 0);
 
     if (string_ne(tmp93, tos3(""))) {
       string tmp95 = tos3("");
-      bool tmp96 = map_get(/*fn.v : 1308*/ r.inst, tp, &tmp95);
+      bool tmp96 = map_get(/*fn.v : 1309*/ r.inst, tp, &tmp95);
 
       if (!tmp96)
         tmp95 = tos((byte *)"", 0);
 
       if (string_ne(tmp95, ti)) {
         string tmp97 = tos3("");
-        bool tmp98 = map_get(/*fn.v : 1309*/ r.inst, tp, &tmp97);
+        bool tmp98 = map_get(/*fn.v : 1310*/ r.inst, tp, &tmp97);
 
         if (!tmp98)
           tmp97 = tos((byte *)"", 0);
@@ -11865,7 +11875,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp99 = tos3("");
-  bool tmp100 = map_get(/*fn.v : 1318*/ r.inst, f->typ, &tmp99);
+  bool tmp100 = map_get(/*fn.v : 1319*/ r.inst, f->typ, &tmp99);
 
   if (!tmp100)
     tmp99 = tos((byte *)"", 0);
@@ -11878,7 +11888,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp101.data)[tmp102];
 
     string tmp103 = tos3("");
-    bool tmp104 = map_get(/*fn.v : 1322*/ r.inst, tp, &tmp103);
+    bool tmp104 = map_get(/*fn.v : 1323*/ r.inst, tp, &tmp103);
 
     if (!tmp104)
       tmp103 = tos((byte *)"", 0);
@@ -11901,7 +11911,7 @@ string compiler__replace_generic_type(string gen_type, compiler__TypeInst *ti) {
   };
   if ((_IN_MAP((typ), ti->inst))) {
     string tmp107 = tos3("");
-    bool tmp108 = map_get(/*fn.v : 1336*/ ti->inst, typ, &tmp107);
+    bool tmp108 = map_get(/*fn.v : 1337*/ ti->inst, typ, &tmp107);
 
     if (!tmp108)
       tmp107 = tos((byte *)"", 0);
@@ -12143,7 +12153,7 @@ void compiler__rename_generic_fn_instance(compiler__Fn *f,
     string k = ((string *)tmp137.data)[tmp138];
 
     string tmp139 = tos3("");
-    bool tmp140 = map_get(/*fn.v : 1467*/ ti->inst, k, &tmp139);
+    bool tmp140 = map_get(/*fn.v : 1468*/ ti->inst, k, &tmp139);
 
     if (!tmp140)
       tmp139 = tos((byte *)"", 0);
