@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "37add98"
+#define V_COMMIT_HASH "ba519f1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "84f535d"
+#define V_COMMIT_HASH "37add98"
 #endif
 #include <inttypes.h>
 
@@ -1973,6 +1973,7 @@ string compiler__get_cmdline_option(array_string args, string param,
                                     string def);
 void compiler__V_log(compiler__V *v, string s);
 compiler__V *compiler__new_v(array_string args);
+array_string compiler__non_empty(array_string a);
 array_string compiler__env_vflags_and_os_args();
 void compiler__vfmt(array_string args);
 void compiler__create_symlink();
@@ -15986,10 +15987,20 @@ compiler__V *compiler__new_v(array_string args) {
                      .module_lookup_paths = new_array(0, 1, sizeof(string))},
       sizeof(compiler__V));
 }
+array_string compiler__non_empty(array_string a) {
+
+  array_string tmp101 = new_array(0, a.len, sizeof(string));
+  for (int i = 0; i < a.len; i++) {
+    string it = ((string *)a.data)[i];
+    if (it.len != 0)
+      array_push(&tmp101, &it);
+  }
+  return tmp101;
+}
 array_string compiler__env_vflags_and_os_args() {
   string vosargs = os__getenv(tos3("VOSARGS"));
   if (string_ne(tos3(""), vosargs)) {
-    return string_split(vosargs, tos3(" "));
+    return compiler__non_empty(string_split(vosargs, tos3(" ")));
   };
   array_string args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
@@ -15998,22 +16009,22 @@ array_string compiler__env_vflags_and_os_args() {
     _PUSH(&args,
           (/*typ = array_string   tmp_typ=string*/ (
               *(string *)array_get(os__args, 0))),
-          tmp101, string);
+          tmp102, string);
     _PUSH_MANY(&args,
                (/*typ = array_string   tmp_typ=string*/ string_split(
                    vflags, tos3(" "))),
-               tmp104, array_string);
+               tmp105, array_string);
     if (os__args.len > 1) {
       _PUSH_MANY(&args,
                  (/*typ = array_string   tmp_typ=string*/ array_slice2(
                      os__args, 1, -1, true)),
-                 tmp105, array_string);
+                 tmp106, array_string);
     };
   } else {
     _PUSH_MANY(&args, (/*typ = array_string   tmp_typ=string*/ os__args),
-               tmp108, array_string);
+               tmp109, array_string);
   };
-  return args;
+  return compiler__non_empty(args);
 }
 void compiler__vfmt(array_string args) {
   println(tos3("running vfmt..."));
@@ -16068,33 +16079,33 @@ string compiler__cescaped_path(string s) {
   return string_replace(s, tos3("\\"), tos3("\\\\"));
 }
 compiler__OS compiler__os_from_string(string os) {
-  string tmp109 = os;
+  string tmp110 = os;
 
-  if (string_eq(tmp109, tos3("linux"))) {
+  if (string_eq(tmp110, tos3("linux"))) {
     return compiler__compiler__OS_linux;
-  } else if (string_eq(tmp109, tos3("windows"))) {
+  } else if (string_eq(tmp110, tos3("windows"))) {
     return compiler__compiler__OS_windows;
-  } else if (string_eq(tmp109, tos3("mac"))) {
+  } else if (string_eq(tmp110, tos3("mac"))) {
     return compiler__compiler__OS_mac;
-  } else if (string_eq(tmp109, tos3("macos"))) {
+  } else if (string_eq(tmp110, tos3("macos"))) {
     return compiler__compiler__OS_mac;
-  } else if (string_eq(tmp109, tos3("freebsd"))) {
+  } else if (string_eq(tmp110, tos3("freebsd"))) {
     return compiler__compiler__OS_freebsd;
-  } else if (string_eq(tmp109, tos3("openbsd"))) {
+  } else if (string_eq(tmp110, tos3("openbsd"))) {
     return compiler__compiler__OS_openbsd;
-  } else if (string_eq(tmp109, tos3("netbsd"))) {
+  } else if (string_eq(tmp110, tos3("netbsd"))) {
     return compiler__compiler__OS_netbsd;
-  } else if (string_eq(tmp109, tos3("dragonfly"))) {
+  } else if (string_eq(tmp110, tos3("dragonfly"))) {
     return compiler__compiler__OS_dragonfly;
-  } else if (string_eq(tmp109, tos3("js"))) {
+  } else if (string_eq(tmp110, tos3("js"))) {
     return compiler__compiler__OS_js;
-  } else if (string_eq(tmp109, tos3("solaris"))) {
+  } else if (string_eq(tmp110, tos3("solaris"))) {
     return compiler__compiler__OS_solaris;
-  } else if (string_eq(tmp109, tos3("android"))) {
+  } else if (string_eq(tmp110, tos3("android"))) {
     return compiler__compiler__OS_android;
-  } else if (string_eq(tmp109, tos3("msvc"))) {
+  } else if (string_eq(tmp110, tos3("msvc"))) {
     compiler__verror(tos3("use the flag `-cc msvc` to build using msvc"));
-  } else if (string_eq(tmp109, tos3("haiku"))) {
+  } else if (string_eq(tmp110, tos3("haiku"))) {
     return compiler__compiler__OS_haiku;
   } else // default:
   {
@@ -16117,7 +16128,7 @@ compiler__V *compiler__new_v_compiler_with_args(array_string args) {
   string vexe = compiler__vexe_path();
   array_string allargs = new_array_from_c_array(
       1, 1, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 1){vexe});
-  _PUSH_MANY(&allargs, (/*typ = array_string   tmp_typ=string*/ args), tmp110,
+  _PUSH_MANY(&allargs, (/*typ = array_string   tmp_typ=string*/ args), tmp111,
              array_string);
   os__setenv(tos3("VOSARGS"), array_string_join(allargs, tos3(" ")), 1);
   return compiler__new_v(allargs);
