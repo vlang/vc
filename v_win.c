@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7456d55"
+#define V_COMMIT_HASH "3d1db35"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a46a2e4"
+#define V_COMMIT_HASH "7456d55"
 #endif
 #include <inttypes.h>
 
@@ -23717,11 +23717,17 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
 
     return;
   };
-  string s = string_replace(
-      string_replace(
-          string_trim_space(array_string_join(p->scanner->fmt_lines, tos3(""))),
-          tos3("\n\n\n\n"), tos3("\n\n")),
-      tos3(" \n"), tos3("\n"));
+  string s = string_replace_each(
+      string_trim_space(array_string_join(p->scanner->fmt_lines, tos3(""))),
+      new_array_from_c_array(6, 6, sizeof(string),
+                             EMPTY_ARRAY_OF_ELEMS(string, 6){
+                                 tos3("\n\n\n\n"),
+                                 tos3("\n\n"),
+                                 tos3(" \n"),
+                                 tos3("\n"),
+                                 tos3(") or{"),
+                                 tos3(") or {"),
+                             }));
   if (string_eq(s, tos3(""))) {
 
     return;
