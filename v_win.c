@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "20e73ff"
+#define V_COMMIT_HASH "8104502"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "489ec05"
+#define V_COMMIT_HASH "20e73ff"
 #endif
 #include <inttypes.h>
 
@@ -750,9 +750,9 @@ struct compiler__Scanner {
   bool fmt_line_empty;
   compiler__TokenKind prev_tok;
   string fn_name;
-  bool should_print_line_on_error;
-  bool should_print_errors_in_color;
-  bool should_print_relative_paths_on_error;
+  bool print_line_on_error;
+  bool print_colored_error;
+  bool print_rel_paths_on_error;
   byte quote;
   array_int line_ends;
   int nlines;
@@ -2272,6 +2272,7 @@ void compiler__Parser_fmt_inc(compiler__Parser *p);
 void compiler__Parser_fmt_dec(compiler__Parser *p);
 void compiler__Scanner_init_fmt(compiler__Scanner *p);
 void compiler__Parser_fnext(compiler__Parser *p);
+void compiler__Parser_fremove_last(compiler__Parser *p);
 void compiler__Parser_gen_fmt(compiler__Parser *p);
 string compiler__get_vtmp_folder();
 string compiler__get_vtmp_filename(string base_file_name, string postfix);
@@ -8791,7 +8792,7 @@ void compiler__Scanner_error_with_col(compiler__Scanner *s, string msg,
   string final_message = ((color_on) ? (term__red(term__bold(msg))) : (msg));
   eprintln(_STR("%.*s:%d:%d: %.*s", fullpath.len, fullpath.str, s->line_nr + 1,
                 col, final_message.len, final_message.str));
-  if (s->should_print_line_on_error && s->nlines > 0) {
+  if (s->print_line_on_error && s->nlines > 0) {
     int context_start_line =
         compiler__imax(0, (s->line_nr - compiler__error_context_before));
     int context_end_line = compiler__imin(
@@ -8842,12 +8843,11 @@ string compiler__Scanner_get_error_filepath(compiler__Scanner *s) {
   string verror_paths_override = os__getenv(tos3("VERROR_PATHS"));
   string tmp8 = verror_paths_override;
 
-  bool use_relative_paths =
-      ((string_eq(tmp8, tos3("relative")))
-           ? (1)
-           : ((string_eq(tmp8, tos3("absolute")))
-                  ? (0)
-                  : (s->should_print_relative_paths_on_error)));
+  bool use_relative_paths = ((string_eq(tmp8, tos3("relative")))
+                                 ? (1)
+                                 : ((string_eq(tmp8, tos3("absolute")))
+                                        ? (0)
+                                        : (s->print_rel_paths_on_error)));
   if (use_relative_paths) {
     string workdir = string_add(os__getwd(), os__path_separator);
     if (string_starts_with(s->file_path, workdir)) {
@@ -8858,7 +8858,7 @@ string compiler__Scanner_get_error_filepath(compiler__Scanner *s) {
   return os__realpath(s->file_path);
 }
 bool compiler__Scanner_is_color_output_on(compiler__Scanner *s) {
-  return s->should_print_errors_in_color && term__can_show_color_on_stderr();
+  return s->print_colored_error && term__can_show_color_on_stderr();
 }
 void compiler__Parser_print_error_context(compiler__Parser *p) {
   if (p->pref->is_debug) {
@@ -17242,7 +17242,7 @@ compiler__Parser compiler__V_new_parser_from_file(compiler__V *v, string path) {
     println(tos3("new_parser: V script"));
   };
   if (p.pref->building_v) {
-    p.scanner->should_print_relative_paths_on_error = 1;
+    p.scanner->print_rel_paths_on_error = 1;
   };
   compiler__Parser_scan_tokens(&/* ? */ p);
   return p;
@@ -17337,9 +17337,9 @@ compiler__Parser compiler__V_new_parser(compiler__V *v,
 #endif
   ;
   if (p.pref->is_repl) {
-    p.scanner->should_print_line_on_error = 0;
-    p.scanner->should_print_errors_in_color = 0;
-    p.scanner->should_print_relative_paths_on_error = 1;
+    p.scanner->print_line_on_error = 0;
+    p.scanner->print_colored_error = 0;
+    p.scanner->print_rel_paths_on_error = 1;
   };
   return p;
 }
@@ -18206,11 +18206,11 @@ string compiler__Parser_get_type(compiler__Parser *p) {
           !compiler__Parser_first_pass(&/* ? */ *p) &&
           !string_starts_with(typ, tos3("["))) {
         println(tos3("get_type() bad type"));
-        _V_MulRet_string_V_string _V_mret_4692_t_suggest_tc_suggest =
+        _V_MulRet_string_V_string _V_mret_4691_t_suggest_tc_suggest =
             compiler__Table_find_misspelled_type(&/* ? */ *p->table, typ, p,
                                                  0.50);
-        string t_suggest = _V_mret_4692_t_suggest_tc_suggest.var_0;
-        string tc_suggest = _V_mret_4692_t_suggest_tc_suggest.var_1;
+        string t_suggest = _V_mret_4691_t_suggest_tc_suggest.var_0;
+        string tc_suggest = _V_mret_4691_t_suggest_tc_suggest.var_1;
         if (t_suggest.len > 0) {
           t_suggest = _STR(". did you mean: (%.*s) `%.*s`", tc_suggest.len,
                            tc_suggest.str, t_suggest.len, t_suggest.str);
@@ -18540,9 +18540,9 @@ void compiler__Parser_assign_statement(compiler__Parser *p, compiler__Var v,
   string expr_type = compiler__Parser_bool_expression(p);
   p->is_var_decl = 0;
   if (string_eq(expr_type, tos3("void"))) {
-    _V_MulRet_bool_V_string _V_mret_6377___fn_name =
+    _V_MulRet_bool_V_string _V_mret_6376___fn_name =
         compiler__Parser_is_expr_fn_call(&/* ? */ *p, p->token_idx - 3);
-    string fn_name = _V_mret_6377___fn_name.var_1;
+    string fn_name = _V_mret_6376___fn_name.var_1;
     compiler__Parser_error_with_token_index(
         p,
         _STR("%.*s() %.*s", fn_name.len, fn_name.str,
@@ -18717,9 +18717,9 @@ void compiler__Parser_var_decl(compiler__Parser *p) {
            : ((*(string *)array_get(var_names, 0))));
   string t = compiler__Parser_gen_var_decl(p, p->var_decl_name, is_static);
   if (string_eq(t, tos3("void"))) {
-    _V_MulRet_bool_V_string _V_mret_7234___fn_name =
+    _V_MulRet_bool_V_string _V_mret_7233___fn_name =
         compiler__Parser_is_expr_fn_call(&/* ? */ *p, p->token_idx - 3);
-    string fn_name = _V_mret_7234___fn_name.var_1;
+    string fn_name = _V_mret_7233___fn_name.var_1;
     compiler__Parser_error_with_token_index(
         p,
         _STR("%.*s() %.*s", fn_name.len, fn_name.str,
@@ -19621,10 +19621,10 @@ string compiler__Parser_map_init(compiler__Parser *p) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_str);
       compiler__Parser_check(p, compiler__compiler__TokenKind_colon);
       ;
-      _V_MulRet_string_V_string _V_mret_11272_t_val_expr =
+      _V_MulRet_string_V_string _V_mret_11269_t_val_expr =
           compiler__Parser_tmp_expr(p);
-      string t = _V_mret_11272_t_val_expr.var_0;
-      string val_expr = _V_mret_11272_t_val_expr.var_1;
+      string t = _V_mret_11269_t_val_expr.var_0;
+      string val_expr = _V_mret_11269_t_val_expr.var_1;
       if (i == 0) {
         val_type = t;
       };
@@ -19908,10 +19908,10 @@ void compiler__Parser_return_st(compiler__Parser *p) {
     while (p->tok == compiler__compiler__TokenKind_comma) {
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-      _V_MulRet_string_V_string _V_mret_12658_typ_expr =
+      _V_MulRet_string_V_string _V_mret_12655_typ_expr =
           compiler__Parser_tmp_expr(p);
-      string typ = _V_mret_12658_typ_expr.var_0;
-      string expr = _V_mret_12658_typ_expr.var_1;
+      string typ = _V_mret_12655_typ_expr.var_0;
+      string expr = _V_mret_12655_typ_expr.var_1;
       _PUSH(&types, (/*typ = array_string   tmp_typ=string*/ typ), tmp148,
             string);
       _PUSH(&mr_values,
@@ -20084,10 +20084,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
     string typ = compiler__Parser_get_type(p);
     compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-    _V_MulRet_string_V_string _V_mret_13437_styp_expr =
+    _V_MulRet_string_V_string _V_mret_13434_styp_expr =
         compiler__Parser_tmp_expr(p);
-    string styp = _V_mret_13437_styp_expr.var_0;
-    string expr = _V_mret_13437_styp_expr.var_1;
+    string styp = _V_mret_13434_styp_expr.var_0;
+    string expr = _V_mret_13434_styp_expr.var_1;
     compiler__Parser_check_types(p, styp, tos3("string"));
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
     string tmp = compiler__Parser_get_tmp(p);
@@ -20124,10 +20124,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     return opt_type;
   } else if (string_eq(op, tos3("encode"))) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
-    _V_MulRet_string_V_string _V_mret_13617_typ_expr =
+    _V_MulRet_string_V_string _V_mret_13614_typ_expr =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_13617_typ_expr.var_0;
-    string expr = _V_mret_13617_typ_expr.var_1;
+    string typ = _V_mret_13614_typ_expr.var_0;
+    string expr = _V_mret_13614_typ_expr.var_1;
     compiler__Type T = compiler__Table_find_type(&/* ? */ *p->table, typ);
     compiler__Parser_gen_json_for_type(p, T);
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
@@ -20746,9 +20746,9 @@ compiler__Scanner *compiler__new_scanner_file(string file_path) {
 compiler__Scanner *compiler__new_scanner(string text) {
   return (compiler__Scanner *)memdup(
       &(compiler__Scanner){.text = text,
-                           .should_print_line_on_error = 1,
-                           .should_print_errors_in_color = 1,
-                           .should_print_relative_paths_on_error = 1,
+                           .print_line_on_error = 1,
+                           .print_colored_error = 1,
+                           .print_rel_paths_on_error = 1,
                            .file_path = tos3(""),
                            .pos = 0,
                            .line_nr = 0,
@@ -21994,6 +21994,7 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ) {
                                    f.typ);
       if (p->tok == compiler__compiler__TokenKind_comma) {
         compiler__Parser_next(p);
+        ;
       };
       if (p->tok != compiler__compiler__TokenKind_rcbr) {
         compiler__Parser_gen(p, tos3(","));
@@ -23659,8 +23660,6 @@ void compiler__Parser_fnext(compiler__Parser *p) {
        (*(compiler__Token *)array_get(p->tokens, p->token_idx)).tok ==
            compiler__compiler__TokenKind_mline_comment)) {
     if (p->inside_const) {
-      ;
-      ;
     };
     while (p->token_idx < p->tokens.len - 1) {
 
@@ -23712,6 +23711,10 @@ void compiler__Parser_fnext(compiler__Parser *p) {
     };
   };
 }
+void compiler__Parser_fremove_last(compiler__Parser *p) {
+  array_set(&/*q*/ p->scanner->fmt_lines, p->scanner->fmt_lines.len - 1,
+            &(string[]){tos3("")});
+}
 void compiler__Parser_gen_fmt(compiler__Parser *p) {
   if (p->pass != compiler__compiler__Pass_main) {
 
@@ -23736,7 +23739,7 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
 
     return;
   };
-  if (!string_contains(p->file_name, tos3("parser.v"))) {
+  if (!string_contains(p->file_name, tos3("scanner.v"))) {
 
     return;
   };
