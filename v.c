@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "569b32b"
+#define V_COMMIT_HASH "67bdc2c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8104502"
+#define V_COMMIT_HASH "569b32b"
 #endif
 #include <inttypes.h>
 
@@ -12769,6 +12769,7 @@ void compiler__Parser_for_st(compiler__Parser *p) {
              compiler__compiler__TokenKind_comma) {
     string i = compiler__Parser_check_name(p);
     compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
+    ;
     string val = compiler__Parser_check_name(p);
     if (string_eq(i, tos3("_")) && string_eq(val, tos3("_"))) {
       compiler__Parser_error(p,
@@ -12778,10 +12779,10 @@ void compiler__Parser_for_st(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_key_in);
     ;
     string tmp = compiler__Parser_get_tmp(p);
-    _V_MulRet_string_V_string _V_mret_296_typ_expr =
+    _V_MulRet_string_V_string _V_mret_301_typ_expr =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_296_typ_expr.var_0;
-    string expr = _V_mret_296_typ_expr.var_1;
+    string typ = _V_mret_301_typ_expr.var_0;
+    string expr = _V_mret_301_typ_expr.var_1;
     bool is_arr = string_starts_with(typ, tos3("array_"));
     bool is_map = string_starts_with(typ, tos3("map_"));
     bool is_str = string_eq(typ, tos3("string"));
@@ -12883,10 +12884,10 @@ void compiler__Parser_for_st(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_key_in);
     ;
     string tmp = compiler__Parser_get_tmp(p);
-    _V_MulRet_string_V_string _V_mret_639_typ_expr =
+    _V_MulRet_string_V_string _V_mret_644_typ_expr =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_639_typ_expr.var_0;
-    string expr = _V_mret_639_typ_expr.var_1;
+    string typ = _V_mret_644_typ_expr.var_0;
+    string expr = _V_mret_644_typ_expr.var_1;
     bool is_range = p->tok == compiler__compiler__TokenKind_dotdot;
     bool is_variadic_arg = string_starts_with(typ, tos3("varg_"));
     string range_end = tos3("");
@@ -12896,10 +12897,10 @@ void compiler__Parser_for_st(compiler__Parser *p) {
       if (p->pref->x64) {
         to = v_string_int(p->lit);
       };
-      _V_MulRet_string_V_string _V_mret_703_range_typ_range_expr =
+      _V_MulRet_string_V_string _V_mret_708_range_typ_range_expr =
           compiler__Parser_tmp_expr(p);
-      string range_typ = _V_mret_703_range_typ_range_expr.var_0;
-      string range_expr = _V_mret_703_range_typ_range_expr.var_1;
+      string range_typ = _V_mret_708_range_typ_range_expr.var_0;
+      string range_expr = _V_mret_708_range_typ_range_expr.var_1;
       compiler__Parser_check_types(p, range_typ, tos3("int"));
       range_end = range_expr;
       if (p->pref->x64) {
@@ -13773,6 +13774,7 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
         break;
       };
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
+      ;
     };
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
     typ = compiler__Parser_register_multi_return_stuct(p, types);
@@ -13919,7 +13921,7 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
   map_string ti = p->cur_fn.dispatch_of.inst;
   if ((_IN(string, (p->lit), map_keys(&/* ? */ ti)))) {
     string tmp2 = tos3("");
-    bool tmp3 = map_get(/*get_type.v : 124*/ ti, p->lit, &tmp2);
+    bool tmp3 = map_get(/*get_type.v : 125*/ ti, p->lit, &tmp2);
 
     if (!tmp3)
       tmp2 = tos((byte *)"", 0);
@@ -13964,11 +13966,11 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
           !compiler__Parser_first_pass(&/* ? */ *p) &&
           !string_starts_with(typ, tos3("["))) {
         println(tos3("get_type() bad type"));
-        _V_MulRet_string_V_string _V_mret_777_t_suggest_tc_suggest =
+        _V_MulRet_string_V_string _V_mret_782_t_suggest_tc_suggest =
             compiler__Table_find_misspelled_type(&/* ? */ *p->table, typ, p,
                                                  0.50);
-        string t_suggest = _V_mret_777_t_suggest_tc_suggest.var_0;
-        string tc_suggest = _V_mret_777_t_suggest_tc_suggest.var_1;
+        string t_suggest = _V_mret_782_t_suggest_tc_suggest.var_0;
+        string tc_suggest = _V_mret_782_t_suggest_tc_suggest.var_1;
         if (t_suggest.len > 0) {
           t_suggest = _STR(". did you mean: (%.*s) `%.*s`", tc_suggest.len,
                            tc_suggest.str, t_suggest.len, t_suggest.str);
