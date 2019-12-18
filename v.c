@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "489ec05"
+#define V_COMMIT_HASH "20e73ff"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "02939d7"
+#define V_COMMIT_HASH "489ec05"
 #endif
 #include <inttypes.h>
 
@@ -5779,10 +5779,10 @@ Option_array_byte os__read_bytes(string path) {
       array_repeat(new_array_from_c_array(1, 1, sizeof(byte),
                                           EMPTY_ARRAY_OF_ELEMS(byte, 1){'0'}),
                    fsize);
-  int nreadelements = fread(res.data, fsize, 1, fp);
+  int nr_read_elements = fread(res.data, fsize, 1, fp);
   fclose(fp);
   array_byte tmp5 = OPTION_CAST(array_byte)(
-      array_slice2(res, 0, nreadelements * fsize, false));
+      array_slice2(res, 0, nr_read_elements * fsize, false));
   return opt_ok(&tmp5, sizeof(array_byte));
 }
 Option_string os__read_file(string path) {
