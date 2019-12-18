@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "53b3341"
+#define V_COMMIT_HASH "a46a2e4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "67cf7f1"
+#define V_COMMIT_HASH "53b3341"
 #endif
 #include <inttypes.h>
 
@@ -17895,7 +17895,7 @@ string compiler__Parser_check_string(compiler__Parser *p) {
 void compiler__Parser_check_not_reserved(compiler__Parser *p) {
   bool tmp34 = 0;
   bool tmp35 =
-      map_get(/*parser.v : 828*/ compiler__reserved_types, p->lit, &tmp34);
+      map_get(/*parser.v : 842*/ compiler__reserved_types, p->lit, &tmp34);
 
   if (tmp34) {
     compiler__Parser_error(
@@ -18083,7 +18083,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
   map_string ti = p->cur_fn.dispatch_of.inst;
   if ((_IN(string, (p->lit), map_keys(&/* ? */ ti)))) {
     string tmp37 = tos3("");
-    bool tmp38 = map_get(/*parser.v : 1007*/ ti, p->lit, &tmp37);
+    bool tmp38 = map_get(/*parser.v : 1024*/ ti, p->lit, &tmp37);
 
     if (!tmp38)
       tmp37 = tos((byte *)"", 0);
@@ -19123,7 +19123,7 @@ string compiler__Parser_dot(compiler__Parser *p, string str_typ_,
           string_add(
               _STR("cannot modify immutable field `%.*s` (type `%.*s`)\n",
                    f.name.len, f.name.str, f.parent_fn.len, f.parent_fn.str),
-              _STR("declare the field with `mut:`\nstruct %.*s {\n  "
+              _STR("declare the field with `mut:`\nstruct %.*s {\n "
                    "mut:\n	%.*s %.*s\n}\n",
                    f.parent_fn.len, f.parent_fn.str, f.name.len, f.name.str,
                    f.typ.len, f.typ.str)),
@@ -19138,7 +19138,7 @@ string compiler__Parser_dot(compiler__Parser *p, string str_typ_,
               _STR("cannot refer to unexported field `%.*s` (type `%.*s`)\n",
                    struct_field.len, struct_field.str, typ.name.len,
                    typ.name.str),
-              _STR("declare the field with `pub:`\nstruct %.*s {\n  "
+              _STR("declare the field with `pub:`\nstruct %.*s {\n "
                    "pub:\n	%.*s %.*s\n}\n",
                    typ.name.len, typ.name.str, struct_field.len,
                    struct_field.str, field.typ.len, field.typ.str)),
@@ -19177,6 +19177,9 @@ string compiler__Parser_dot(compiler__Parser *p, string str_typ_,
   ;
   compiler__Parser_fn_call(p, &/*114*/ method, method_ph, tos3(""), str_typ);
   bool is_or_else = p->tok == compiler__compiler__TokenKind_key_orelse;
+  if (is_or_else) {
+    ;
+  };
   if (p->tok == compiler__compiler__TokenKind_question) {
     return compiler__Parser_gen_handle_question_suffix(p, method, method_ph);
   } else if (!p->is_var_decl && is_or_else) {
@@ -19537,10 +19540,10 @@ string compiler__Parser_map_init(compiler__Parser *p) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_str);
       compiler__Parser_check(p, compiler__compiler__TokenKind_colon);
       ;
-      _V_MulRet_string_V_string _V_mret_11249_t_val_expr =
+      _V_MulRet_string_V_string _V_mret_11258_t_val_expr =
           compiler__Parser_tmp_expr(p);
-      string t = _V_mret_11249_t_val_expr.var_0;
-      string val_expr = _V_mret_11249_t_val_expr.var_1;
+      string t = _V_mret_11258_t_val_expr.var_0;
+      string val_expr = _V_mret_11258_t_val_expr.var_1;
       if (i == 0) {
         val_type = t;
       };
@@ -19774,9 +19777,9 @@ void compiler__Parser_assert_statement(compiler__Parser *p) {
     compiler__Parser_genln(
         p, _STR(";\n\n/// sline: \"%.*s\"\nif (!%.*s) {\n	"
                 "g_test_fails++;\n	eprintln(tos3(\"%.*s:%d: FAILED: "
-                "%.*s()\"));\n	eprintln(tos3(\"Source: %.*s\"));\n    "
-                "v_panic(tos3(\"An assertion failed.\"));\n    exit(1);\n} "
-                "else {\n	g_test_oks++;\n}\n",
+                "%.*s()\"));\n	eprintln(tos3(\"Source: %.*s\"));\n   "
+                "v_panic(tos3(\"An assertion failed.\"));\n   exit(1);\n} else "
+                "{\n	g_test_oks++;\n}\n",
                 sourceline.len, sourceline.str, tmp.len, tmp.str, filename.len,
                 filename.str, p->scanner->line_nr, cfname.len, cfname.str,
                 sourceline.len, sourceline.str));
@@ -19784,18 +19787,18 @@ void compiler__Parser_assert_statement(compiler__Parser *p) {
     return;
   };
   compiler__Parser_genln(
-      p, _STR(";\n\nif (!%.*s) {\n  g_test_fails++;\n  "
-              "main__cb_assertion_failed(\n     tos3(\"%.*s\"),\n     %d,\n    "
-              " tos3(\"%.*s\"),\n     tos3(\"%.*s()\")\n  );\n  exit(1);\n  // "
-              "TODO\n  // Maybe print all vars in a test function if it "
-              "fails?\n} else {\n  g_test_oks++;\n  main__cb_assertion_ok(\n   "
-              "  tos3(\"%.*s\"),\n     %d,\n     tos3(\"%.*s\"),\n     "
-              "tos3(\"%.*s()\")\n  );\n}\n\n",
-              tmp.len, tmp.str, filename.len, filename.str, p->scanner->line_nr,
-              sourceline.len, sourceline.str, p->cur_fn.name.len,
-              p->cur_fn.name.str, filename.len, filename.str,
-              p->scanner->line_nr, sourceline.len, sourceline.str,
-              p->cur_fn.name.len, p->cur_fn.name.str));
+      p,
+      _STR(";\n\nif (!%.*s) {\n g_test_fails++;\n main__cb_assertion_failed(\n "
+           "   tos3(\"%.*s\"),\n    %d,\n    tos3(\"%.*s\"),\n    "
+           "tos3(\"%.*s()\")\n );\n exit(1);\n // TODO\n // Maybe print all "
+           "vars in a test function if it fails?\n} else {\n g_test_oks++;\n "
+           "main__cb_assertion_ok(\n    tos3(\"%.*s\"),\n    %d,\n    "
+           "tos3(\"%.*s\"),\n    tos3(\"%.*s()\")\n );\n}\n\n",
+           tmp.len, tmp.str, filename.len, filename.str, p->scanner->line_nr,
+           sourceline.len, sourceline.str, p->cur_fn.name.len,
+           p->cur_fn.name.str, filename.len, filename.str, p->scanner->line_nr,
+           sourceline.len, sourceline.str, p->cur_fn.name.len,
+           p->cur_fn.name.str));
 }
 void compiler__Parser_return_st(compiler__Parser *p) {
   compiler__Parser_check(p, compiler__compiler__TokenKind_key_return);
@@ -19824,10 +19827,10 @@ void compiler__Parser_return_st(compiler__Parser *p) {
     while (p->tok == compiler__compiler__TokenKind_comma) {
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-      _V_MulRet_string_V_string _V_mret_12635_typ_expr =
+      _V_MulRet_string_V_string _V_mret_12644_typ_expr =
           compiler__Parser_tmp_expr(p);
-      string typ = _V_mret_12635_typ_expr.var_0;
-      string expr = _V_mret_12635_typ_expr.var_1;
+      string typ = _V_mret_12644_typ_expr.var_0;
+      string expr = _V_mret_12644_typ_expr.var_1;
       _PUSH(&types, (/*typ = array_string   tmp_typ=string*/ typ), tmp148,
             string);
       _PUSH(&mr_values,
@@ -20000,10 +20003,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
     string typ = compiler__Parser_get_type(p);
     compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-    _V_MulRet_string_V_string _V_mret_13414_styp_expr =
+    _V_MulRet_string_V_string _V_mret_13423_styp_expr =
         compiler__Parser_tmp_expr(p);
-    string styp = _V_mret_13414_styp_expr.var_0;
-    string expr = _V_mret_13414_styp_expr.var_1;
+    string styp = _V_mret_13423_styp_expr.var_0;
+    string expr = _V_mret_13423_styp_expr.var_1;
     compiler__Parser_check_types(p, styp, tos3("string"));
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
     string tmp = compiler__Parser_get_tmp(p);
@@ -20040,10 +20043,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     return opt_type;
   } else if (string_eq(op, tos3("encode"))) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
-    _V_MulRet_string_V_string _V_mret_13594_typ_expr =
+    _V_MulRet_string_V_string _V_mret_13603_typ_expr =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_13594_typ_expr.var_0;
-    string expr = _V_mret_13594_typ_expr.var_1;
+    string typ = _V_mret_13603_typ_expr.var_0;
+    string expr = _V_mret_13603_typ_expr.var_1;
     compiler__Type T = compiler__Table_find_type(&/* ? */ *p->table, typ);
     compiler__Parser_gen_json_for_type(p, T);
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
@@ -23493,6 +23496,8 @@ string compiler__Token_str(compiler__Token t) {
 }
 void compiler__Scanner_fgen(compiler__Scanner *scanner, string s_) {
   string s = s_;
+  if (string_ne(s, tos3(" "))) {
+  };
   if (scanner->fmt_line_empty) {
     s = string_add(strings__repeat('\t', scanner->fmt_indent),
                    string_trim_left(s, tos3(" ")));
@@ -23568,8 +23573,7 @@ void compiler__Parser_fmt_dec(compiler__Parser *p) {
 }
 void compiler__Scanner_init_fmt(compiler__Scanner *p) { p->is_fmt = 1; }
 void compiler__Parser_fnext(compiler__Parser *p) {
-  if (p->tok == compiler__compiler__TokenKind_rcbr && !p->inside_if_expr &&
-      p->prev_tok != compiler__compiler__TokenKind_lcbr) {
+  if (p->tok == compiler__compiler__TokenKind_rcbr && !p->inside_if_expr) {
     ;
   };
   string s = compiler__Parser_strtok(&/* ? */ *p);
@@ -23577,9 +23581,7 @@ void compiler__Parser_fnext(compiler__Parser *p) {
     ;
   };
   bool inc_indent = 0;
-  if (p->tok == compiler__compiler__TokenKind_lcbr && !p->inside_if_expr &&
-      compiler__Parser_peek(&/* ? */ *p) !=
-          compiler__compiler__TokenKind_rcbr) {
+  if (p->tok == compiler__compiler__TokenKind_lcbr && !p->inside_if_expr) {
     ;
     ;
   };
@@ -23650,15 +23652,22 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
 
     return;
   };
-  string s =
-      string_trim_space(array_string_join(p->scanner->fmt_lines, tos3("")));
+  string s = string_replace(
+      string_replace(
+          string_trim_space(array_string_join(p->scanner->fmt_lines, tos3(""))),
+          tos3("\n\n\n\n"), tos3("\n\n")),
+      tos3(" \n"), tos3("\n"));
   if (string_eq(s, tos3(""))) {
 
     return;
   };
-  printf("generating %.*s\n", p->file_name.len, p->file_name.str);
-  Option_os__File tmp25 =
-      os__create(string_add(tos3("/var/tmp/fmt/"), p->file_name));
+  if (!string_contains(p->file_name, tos3("parser.v"))) {
+
+    return;
+  };
+  string path = string_add(string_add(os__tmpdir(), tos3("/")), p->file_name);
+  printf("generating %.*s\n", path.len, path.str);
+  Option_os__File tmp25 = os__create(path);
   os__File out;
   if (!tmp25.ok) {
     string err = tmp25.error;
@@ -23669,6 +23678,8 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
   }
   out = *(os__File *)tmp25.data;
   ;
+  printf("replacing %.*s...\n", p->file_path.len, p->file_path.str);
+  os__mv(path, p->file_path);
   os__File_writeln(&/* ? */ out, s);
   os__File_close(&/* ? */ out);
 }
