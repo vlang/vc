@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9e11de4"
+#define V_COMMIT_HASH "1cef83a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0ebe86f"
+#define V_COMMIT_HASH "9e11de4"
 #endif
 #include <inttypes.h>
 
@@ -754,7 +754,6 @@ struct compiler__Preferences {
   string comptime_define;
   bool fast;
   bool enable_globals;
-  bool is_fmt;
   bool is_bare;
   string user_mod_path;
   string vlib_path;
@@ -2156,7 +2155,7 @@ void compiler__Parser_fgen_nl(compiler__Parser *p);
 void compiler__Scanner_fgen_nl(compiler__Scanner *scanner);
 void compiler__Parser_fmt_inc(compiler__Parser *p);
 void compiler__Parser_fmt_dec(compiler__Parser *p);
-void compiler__Scanner_init_fmt(compiler__Scanner *p);
+void compiler__Scanner_init_fmt(compiler__Scanner *s);
 void compiler__Parser_fnext(compiler__Parser *p);
 void compiler__Parser_fremove_last(compiler__Parser *p);
 void compiler__Parser_gen_fmt(compiler__Parser *p);
@@ -7215,6 +7214,10 @@ bool compiler__V_no_cc_installed(compiler__V *v) {
   return 0;
 }
 void compiler__V_cc(compiler__V *v) {
+  if (string_contains(os__executable(), tos3("vfmt"))) {
+
+    return;
+  };
   compiler__V_build_thirdparty_obj_files(&/* ? */ *v);
   string vexe = compiler__vexe_path();
   string vdir = os__dir(vexe);
@@ -11208,7 +11211,7 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
     if (p->pref->obfuscate) {
       compiler__Parser_genln(p, _STR("; // %.*s", f.name.len, f.name.str));
     };
-    if (f.is_generic) {
+    if (f.is_generic && !p->scanner->is_fmt) {
       if (compiler__Parser_first_pass(&/* ? */ *p)) {
         if (!p->scanner->is_vh) {
           Option_int tmp55 =
@@ -12181,10 +12184,10 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
       };
     };
   };
-  _V_MulRet_string_V_array_string _V_mret_6192_varg_type_varg_values =
+  _V_MulRet_string_V_array_string _V_mret_6199_varg_type_varg_values =
       compiler__Parser_fn_call_vargs(p, *f);
-  string varg_type = _V_mret_6192_varg_type_varg_values.var_0;
-  array_string varg_values = _V_mret_6192_varg_type_varg_values.var_1;
+  string varg_type = _V_mret_6199_varg_type_varg_values.var_0;
+  array_string varg_values = _V_mret_6199_varg_type_varg_values.var_1;
   if (f->is_variadic) {
     _PUSH(&saved_args, (/*typ = array_string   tmp_typ=string*/ varg_type),
           tmp83, string);
@@ -12196,7 +12199,7 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f) {
                                 compiler__Fn_str_for_error(&/* ? */ *f).str));
   };
   compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
-  if (f->is_generic) {
+  if (f->is_generic && !p->scanner->is_fmt) {
     compiler__TypeInst type_map =
         compiler__Parser_extract_type_inst(p, f, saved_args);
     compiler__Parser_dispatch_generic_fn_instance(p, f, &type_map);
@@ -12438,10 +12441,10 @@ compiler__Parser_fn_call_vargs(compiler__Parser *p, compiler__Fn f) {
     if (p->tok == compiler__compiler__TokenKind_comma) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
     };
-    _V_MulRet_string_V_string _V_mret_7086_varg_type_varg_value =
+    _V_MulRet_string_V_string _V_mret_7100_varg_type_varg_value =
         compiler__Parser_tmp_expr(p);
-    string varg_type = _V_mret_7086_varg_type_varg_value.var_0;
-    string varg_value = _V_mret_7086_varg_type_varg_value.var_1;
+    string varg_type = _V_mret_7100_varg_type_varg_value.var_0;
+    string varg_value = _V_mret_7100_varg_type_varg_value.var_1;
     if (string_starts_with(varg_type, tos3("varg_")) &&
         (values.len > 0 || p->tok == compiler__compiler__TokenKind_comma)) {
       compiler__Parser_error(
@@ -15891,7 +15894,6 @@ compiler__V *compiler__new_v(array_string args) {
                                      string_eq(rdir_name, tos3("v.v")) ||
                                      string_contains(dir, tos3("vlib"))),
           .comptime_define = comptime_define,
-          .is_fmt = string_eq(comptime_define, tos3("vfmt")),
           .user_mod_path = user_mod_path,
           .vlib_path = vlib_path,
           .vpath = vpath,
@@ -23606,7 +23608,7 @@ void compiler__Parser_fmt_dec(compiler__Parser *p) {
   };
   p->scanner->fmt_indent--;
 }
-void compiler__Scanner_init_fmt(compiler__Scanner *p) { p->is_fmt = 1; }
+void compiler__Scanner_init_fmt(compiler__Scanner *s) { s->is_fmt = 1; }
 void compiler__Parser_fnext(compiler__Parser *p) {
   if (p->tok == compiler__compiler__TokenKind_rcbr && !p->inside_if_expr) {
     ;
@@ -23704,7 +23706,7 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
 
     return;
   };
-  if (!string_contains(p->file_name, tos3("fn.v"))) {
+  if (!string_contains(p->file_name, tos3("parser.v"))) {
 
     return;
   };
