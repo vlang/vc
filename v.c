@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2096018"
+#define V_COMMIT_HASH "a38a0f4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "26f5d34"
+#define V_COMMIT_HASH "2096018"
 #endif
 #include <inttypes.h>
 
@@ -19315,7 +19315,8 @@ string compiler__Parser_dot(compiler__Parser *p, string str_typ_,
       compiler__Type tmp_typ =
           compiler__Table_find_type(&/* ? */ *p->table, base);
       compiler__Fn f = tmp_typ.func;
-      compiler__Parser_gen(p, _STR(".%.*s", field.name.len, field.name.str));
+      compiler__Parser_gen(p, _STR("%.*s%.*s", dot.len, dot.str, field.name.len,
+                                   field.name.str));
       compiler__Parser_gen(p, tos3("("));
       compiler__Parser_check(p, compiler__compiler__TokenKind_name);
       compiler__Parser_fn_call_args(p, &/*114*/ f);
@@ -19707,10 +19708,10 @@ string compiler__Parser_map_init(compiler__Parser *p) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_str);
       compiler__Parser_check(p, compiler__compiler__TokenKind_colon);
       ;
-      _V_MulRet_string_V_string _V_mret_11390_t_val_expr =
+      _V_MulRet_string_V_string _V_mret_11393_t_val_expr =
           compiler__Parser_tmp_expr(p);
-      string t = _V_mret_11390_t_val_expr.var_0;
-      string val_expr = _V_mret_11390_t_val_expr.var_1;
+      string t = _V_mret_11393_t_val_expr.var_0;
+      string val_expr = _V_mret_11393_t_val_expr.var_1;
       if (i == 0) {
         val_type = t;
       };
@@ -19994,10 +19995,10 @@ void compiler__Parser_return_st(compiler__Parser *p) {
     while (p->tok == compiler__compiler__TokenKind_comma) {
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-      _V_MulRet_string_V_string _V_mret_12776_typ_expr =
+      _V_MulRet_string_V_string _V_mret_12779_typ_expr =
           compiler__Parser_tmp_expr(p);
-      string typ = _V_mret_12776_typ_expr.var_0;
-      string expr = _V_mret_12776_typ_expr.var_1;
+      string typ = _V_mret_12779_typ_expr.var_0;
+      string expr = _V_mret_12779_typ_expr.var_1;
       _PUSH(&types, (/*typ = array_string   tmp_typ=string*/ typ), tmp148,
             string);
       _PUSH(&mr_values,
@@ -20170,10 +20171,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
     string typ = compiler__Parser_get_type(p);
     compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-    _V_MulRet_string_V_string _V_mret_13555_styp_expr =
+    _V_MulRet_string_V_string _V_mret_13558_styp_expr =
         compiler__Parser_tmp_expr(p);
-    string styp = _V_mret_13555_styp_expr.var_0;
-    string expr = _V_mret_13555_styp_expr.var_1;
+    string styp = _V_mret_13558_styp_expr.var_0;
+    string expr = _V_mret_13558_styp_expr.var_1;
     compiler__Parser_check_types(p, styp, tos3("string"));
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
     string tmp = compiler__Parser_get_tmp(p);
@@ -20210,10 +20211,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     return opt_type;
   } else if (string_eq(op, tos3("encode"))) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
-    _V_MulRet_string_V_string _V_mret_13735_typ_expr =
+    _V_MulRet_string_V_string _V_mret_13738_typ_expr =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_13735_typ_expr.var_0;
-    string expr = _V_mret_13735_typ_expr.var_1;
+    string typ = _V_mret_13738_typ_expr.var_0;
+    string expr = _V_mret_13738_typ_expr.var_1;
     compiler__Type T = compiler__Table_find_type(&/* ? */ *p->table, typ);
     compiler__Parser_gen_json_for_type(p, T);
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
