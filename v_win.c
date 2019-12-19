@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6af54d0"
+#define V_COMMIT_HASH "00b8a5d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6210984"
+#define V_COMMIT_HASH "6af54d0"
 #endif
 #include <inttypes.h>
 
@@ -10038,15 +10038,16 @@ void compiler__Parser_enum_decl(compiler__Parser *p, bool no_name) {
     };
     _PUSH(&fields, (/*typ = array_string   tmp_typ=string*/ field), tmp2,
           string);
-    ;
     string name = _STR("%.*s__%.*s_%.*s", compiler__mod_gen_name(p->mod).len,
                        compiler__mod_gen_name(p->mod).str, enum_name.len,
                        enum_name.str, field.len, field.str);
     if (p->tok == compiler__compiler__TokenKind_assign) {
+      ;
       int enum_assign_tidx = compiler__Parser_cur_tok_index(&/* ? */ *p);
       if (compiler__Parser_peek(&/* ? */ *p) ==
           compiler__compiler__TokenKind_number) {
         compiler__Parser_next(p);
+        ;
         val = v_string_int(p->lit);
         compiler__Parser_next(p);
       } else {
@@ -10066,6 +10067,7 @@ void compiler__Parser_enum_decl(compiler__Parser *p, bool no_name) {
     if (p->tok == compiler__compiler__TokenKind_comma) {
       compiler__Parser_next(p);
     };
+    ;
     val++;
   };
   bool is_flag = string_eq(p->attr, tos3("flag"));
@@ -10094,6 +10096,7 @@ void compiler__Parser_enum_decl(compiler__Parser *p, bool no_name) {
   };
   compiler__Table_register_type(p->table, T);
   compiler__Parser_check(p, compiler__compiler__TokenKind_rcbr);
+  ;
   ;
 }
 void compiler__Parser_check_enum_member_access(compiler__Parser *p) {
@@ -23683,7 +23686,7 @@ array_string compiler__build_token_str() {
 }
 compiler__TokenKind compiler__key_to_token(string key) {
   int tmp3 = 0;
-  bool tmp4 = map_get(/*token.v : 251*/ compiler__KEYWORDS, key, &tmp3);
+  bool tmp4 = map_get(/*token.v : 249*/ compiler__KEYWORDS, key, &tmp3);
 
   compiler__TokenKind a = ((compiler__TokenKind)(tmp3));
   return a;
