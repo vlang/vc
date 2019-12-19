@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "76c800f"
+#define V_COMMIT_HASH "d082b3f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d38687f"
+#define V_COMMIT_HASH "76c800f"
 #endif
 #include <inttypes.h>
 
@@ -10946,7 +10946,7 @@ string array_compiler__TypeInst_str(array_compiler__TypeInst a) {
       string k = ((string *)tmp3.data)[tmp4];
 
       string tmp5 = tos3("");
-      bool tmp6 = map_get(/*fn.v : 71*/ t.inst, k, &tmp5);
+      bool tmp6 = map_get(/*fn.v : 69*/ t.inst, k, &tmp5);
 
       if (!tmp6)
         tmp5 = tos((byte *)"", 0);
@@ -12475,21 +12475,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp97 = tos3("");
-    bool tmp98 = map_get(/*fn.v : 1323*/ r.inst, tp, &tmp97);
+    bool tmp98 = map_get(/*fn.v : 1321*/ r.inst, tp, &tmp97);
 
     if (!tmp98)
       tmp97 = tos((byte *)"", 0);
 
     if (string_ne(tmp97, tos3(""))) {
       string tmp99 = tos3("");
-      bool tmp100 = map_get(/*fn.v : 1324*/ r.inst, tp, &tmp99);
+      bool tmp100 = map_get(/*fn.v : 1322*/ r.inst, tp, &tmp99);
 
       if (!tmp100)
         tmp99 = tos((byte *)"", 0);
 
       if (string_ne(tmp99, ti)) {
         string tmp101 = tos3("");
-        bool tmp102 = map_get(/*fn.v : 1325*/ r.inst, tp, &tmp101);
+        bool tmp102 = map_get(/*fn.v : 1323*/ r.inst, tp, &tmp101);
 
         if (!tmp102)
           tmp101 = tos((byte *)"", 0);
@@ -12507,7 +12507,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp103 = tos3("");
-  bool tmp104 = map_get(/*fn.v : 1336*/ r.inst, f->typ, &tmp103);
+  bool tmp104 = map_get(/*fn.v : 1334*/ r.inst, f->typ, &tmp103);
 
   if (!tmp104)
     tmp103 = tos((byte *)"", 0);
@@ -12520,7 +12520,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp105.data)[tmp106];
 
     string tmp107 = tos3("");
-    bool tmp108 = map_get(/*fn.v : 1340*/ r.inst, tp, &tmp107);
+    bool tmp108 = map_get(/*fn.v : 1338*/ r.inst, tp, &tmp107);
 
     if (!tmp108)
       tmp107 = tos((byte *)"", 0);
@@ -12543,7 +12543,7 @@ string compiler__replace_generic_type(string gen_type, compiler__TypeInst *ti) {
   };
   if ((_IN_MAP((typ), ti->inst))) {
     string tmp111 = tos3("");
-    bool tmp112 = map_get(/*fn.v : 1355*/ ti->inst, typ, &tmp111);
+    bool tmp112 = map_get(/*fn.v : 1353*/ ti->inst, typ, &tmp111);
 
     if (!tmp112)
       tmp111 = tos((byte *)"", 0);
@@ -12785,7 +12785,7 @@ void compiler__rename_generic_fn_instance(compiler__Fn *f,
     string k = ((string *)tmp141.data)[tmp142];
 
     string tmp143 = tos3("");
-    bool tmp144 = map_get(/*fn.v : 1491*/ ti->inst, k, &tmp143);
+    bool tmp144 = map_get(/*fn.v : 1489*/ ti->inst, k, &tmp143);
 
     if (!tmp144)
       tmp143 = tos((byte *)"", 0);
@@ -13591,7 +13591,7 @@ string compiler__Table_fn_gen_name(compiler__Table *table, compiler__Fn *f) {
       !string_ends_with(name, tos3("_str")) &&
       !string_contains(name, tos3("contains"))) {
     int tmp30 = 0;
-    bool tmp31 = map_get(/*gen_c.v : 306*/ table->obf_ids, name, &tmp30);
+    bool tmp31 = map_get(/*gen_c.v : 297*/ table->obf_ids, name, &tmp30);
 
     int idx = tmp30;
     if (idx == 0) {
@@ -14150,7 +14150,7 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
   map_string ti = p->cur_fn.dispatch_of.inst;
   if ((_IN(string, (p->lit), map_keys(&/* ? */ ti)))) {
     string tmp2 = tos3("");
-    bool tmp3 = map_get(/*get_type.v : 125*/ ti, p->lit, &tmp2);
+    bool tmp3 = map_get(/*get_type.v : 130*/ ti, p->lit, &tmp2);
 
     if (!tmp3)
       tmp2 = tos((byte *)"", 0);
@@ -14195,11 +14195,11 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
           !compiler__Parser_first_pass(&/* ? */ *p) &&
           !string_starts_with(typ, tos3("["))) {
         println(tos3("get_type() bad type"));
-        _V_MulRet_string_V_string _V_mret_782_t_suggest_tc_suggest =
+        _V_MulRet_string_V_string _V_mret_781_t_suggest_tc_suggest =
             compiler__Table_find_misspelled_type(&/* ? */ *p->table, typ, p,
                                                  0.50);
-        string t_suggest = _V_mret_782_t_suggest_tc_suggest.var_0;
-        string tc_suggest = _V_mret_782_t_suggest_tc_suggest.var_1;
+        string t_suggest = _V_mret_781_t_suggest_tc_suggest.var_0;
+        string tc_suggest = _V_mret_781_t_suggest_tc_suggest.var_1;
         if (t_suggest.len > 0) {
           t_suggest = _STR(". did you mean: (%.*s) `%.*s`", tc_suggest.len,
                            tc_suggest.str, t_suggest.len, t_suggest.str);
@@ -23903,10 +23903,9 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
     return;
   };
   array_string files = new_array_from_c_array(
-      4, 4, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 4){tos3("cgen.v"), tos3("comptime.v"),
-                                      tos3("cc.v"), tos3("if_match.v")});
-  if (!((_IN(string, (p->file_name), files)))) {
+      1, 1, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 1){tos3("get_type.v")});
+  if (!string_contains(p->file_path, tos3("vlib/builtin"))) {
 
     return;
   };
