@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d38687f"
+#define V_COMMIT_HASH "76c800f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ce86626"
+#define V_COMMIT_HASH "d38687f"
 #endif
 #include <inttypes.h>
 
@@ -360,6 +360,9 @@ typedef array array_bool;
 typedef array array_byte;
 typedef array array_int;
 typedef array array_char;
+typedef array array_T;
+typedef array array_i64;
+typedef array array_f32;
 typedef struct SymbolInfo SymbolInfo;
 typedef struct SymbolInfoContainer SymbolInfoContainer;
 typedef struct Line64 Line64;
@@ -377,7 +380,6 @@ typedef Option Option_int;
 typedef Option Option_int;
 typedef struct compiler_dot_x64__SectionConfig compiler_dot_x64__SectionConfig;
 typedef struct compiler_dot_x64__Gen compiler_dot_x64__Gen;
-typedef array array_i64;
 typedef map map_i64;
 typedef struct strings__Builder strings__Builder;
 typedef struct _V_MulRet_u32_V_u32_V_u32 _V_MulRet_u32_V_u32_V_u32;
@@ -1249,6 +1251,11 @@ int array_byte_index(array_byte a, byte v);
 int array_char_index(array_char a, char v);
 int array_int_reduce(array_int a, int (*iter)(int accum, int curr /*FFF*/),
                      int accum_start);
+bool array_int_eq(array_int a, array_int a2);
+bool array_i64_eq(array_i64 a, array_i64 a2);
+bool array_string_eq(array_string a, array_string a2);
+bool array_byte_eq(array_byte a, array_byte a2);
+bool array_f32_eq(array_f32 a, array_f32 a2);
 void builtin__init();
 void v_exit(int code);
 bool isnil(void *v);
@@ -2330,6 +2337,11 @@ string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark *b, string s,
 i64 benchmark__now();
 void main__main();
 void main__v_command(string command, array_string args);
+bool array_eq_T_int(array_int a1, array_int a2);
+bool array_eq_T_i64(array_i64 a1, array_i64 a2);
+bool array_eq_T_string(array_string a1, array_string a2);
+bool array_eq_T_byte(array_byte a1, array_byte a2);
+bool array_eq_T_f32(array_f32 a1, array_f32 a2);
 
 byte *g_m2_buf;     // global
 byte *g_m2_ptr;     // global
@@ -2965,6 +2977,15 @@ int array_int_reduce(array_int a, int (*iter)(int accum, int curr /*FFF*/),
   };
   return _accum;
 }
+bool array_int_eq(array_int a, array_int a2) { return array_eq_T_int(a, a2); }
+bool array_i64_eq(array_i64 a, array_i64 a2) { return array_eq_T_i64(a, a2); }
+bool array_string_eq(array_string a, array_string a2) {
+  return array_eq_T_string(a, a2);
+}
+bool array_byte_eq(array_byte a, array_byte a2) {
+  return array_eq_T_byte(a, a2);
+}
+bool array_f32_eq(array_f32 a, array_f32 a2) { return array_eq_T_f32(a, a2); }
 void builtin__init() {
 #ifdef _WIN32
   if (is_atty(0) > 0) {
@@ -25318,4 +25339,65 @@ int main(int argc, char **argv) {
 #endif
 
   return 0;
+}
+bool array_eq_T_int(array_int a1, array_int a2) {
+  if (a1.len != a2.len) {
+    return 0;
+  };
+  for (int i = 0; i < a1.len; i++) {
+
+    if ((*(int *)array_get(a1, i)) != (*(int *)array_get(a2, i))) {
+      return 0;
+    };
+  };
+  return 1;
+}
+bool array_eq_T_i64(array_i64 a1, array_i64 a2) {
+  if (a1.len != a2.len) {
+    return 0;
+  };
+  for (int i = 0; i < a1.len; i++) {
+
+    if ((*(i64 *)array_get(a1, i)) != (*(i64 *)array_get(a2, i))) {
+      return 0;
+    };
+  };
+  return 1;
+}
+bool array_eq_T_string(array_string a1, array_string a2) {
+  if (a1.len != a2.len) {
+    return 0;
+  };
+  for (int i = 0; i < a1.len; i++) {
+
+    if (string_ne((*(string *)array_get(a1, i)),
+                  (*(string *)array_get(a2, i)))) {
+      return 0;
+    };
+  };
+  return 1;
+}
+bool array_eq_T_byte(array_byte a1, array_byte a2) {
+  if (a1.len != a2.len) {
+    return 0;
+  };
+  for (int i = 0; i < a1.len; i++) {
+
+    if ((*(byte *)array_get(a1, i)) != (*(byte *)array_get(a2, i))) {
+      return 0;
+    };
+  };
+  return 1;
+}
+bool array_eq_T_f32(array_f32 a1, array_f32 a2) {
+  if (a1.len != a2.len) {
+    return 0;
+  };
+  for (int i = 0; i < a1.len; i++) {
+
+    if (f32_ne((*(f32 *)array_get(a1, i)), (*(f32 *)array_get(a2, i)))) {
+      return 0;
+    };
+  };
+  return 1;
 }
