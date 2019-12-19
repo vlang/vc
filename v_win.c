@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "519f299"
+#define V_COMMIT_HASH "26f5d34"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "aa0ad9d"
+#define V_COMMIT_HASH "519f299"
 #endif
 #include <inttypes.h>
 
@@ -3473,6 +3473,9 @@ mapnode *new_node(string key, void *val, int element_size) {
 void map_insert(map *m, mapnode *n, string key, void *val) {
   if (string_eq(n->key, key)) {
     memcpy(n->val, val, m->element_size);
+    if (n->is_empty) {
+      m->size++;
+    };
 
     return;
   };
