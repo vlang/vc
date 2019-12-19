@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d082b3f"
+#define V_COMMIT_HASH "b6fe2eb"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "76c800f"
+#define V_COMMIT_HASH "d082b3f"
 #endif
 #include <inttypes.h>
 
@@ -23902,9 +23902,6 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
 
     return;
   };
-  array_string files = new_array_from_c_array(
-      1, 1, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 1){tos3("get_type.v")});
   if (!string_contains(p->file_path, tos3("vlib/builtin"))) {
 
     return;
