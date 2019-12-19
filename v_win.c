@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "26f5d34"
+#define V_COMMIT_HASH "2096018"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "519f299"
+#define V_COMMIT_HASH "26f5d34"
 #endif
 #include <inttypes.h>
 
@@ -3475,6 +3475,7 @@ void map_insert(map *m, mapnode *n, string key, void *val) {
     memcpy(n->val, val, m->element_size);
     if (n->is_empty) {
       m->size++;
+      n->is_empty = 0;
     };
 
     return;
