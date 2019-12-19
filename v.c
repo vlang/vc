@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b6fe2eb"
+#define V_COMMIT_HASH "6210984"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d082b3f"
+#define V_COMMIT_HASH "b6fe2eb"
 #endif
 #include <inttypes.h>
 
@@ -329,7 +329,7 @@ int g_test_fails = 0;
 #define vweb_dot_tmpl__STR_END tos3("\' ) ")
 #include <errno.h>
 #include <float.h>
-#include <sys/stat.h>
+#include <sys/stat.h> // #include <signal.h>
 #ifndef _WIN32
 #include <dirent.h>
 #endif
@@ -5066,7 +5066,7 @@ void compiler_dot_x64__Gen_call_fn(compiler_dot_x64__Gen *g, string name) {
     return;
   };
   i64 tmp25 = 0;
-  bool tmp26 = map_get(/*gen.v : 249*/ g->fn_addr, name, &tmp25);
+  bool tmp26 = map_get(/*gen.v : 264*/ g->fn_addr, name, &tmp25);
 
   i64 addr = tmp25;
   compiler_dot_x64__Gen_call(g, ((int)(addr)));
@@ -5162,7 +5162,7 @@ f32 strings__dice_coefficient(string s1, string s2) {
 
     string bigram = string_substr2(a, i, i + 2, false);
     int tmp23 = 0;
-    bool tmp24 = map_get(/*similarity.v : 54*/ first_bigrams, bigram, &tmp23);
+    bool tmp24 = map_get(/*similarity.v : 52*/ first_bigrams, bigram, &tmp23);
 
     int q = (((_IN_MAP((bigram), first_bigrams))) ? (tmp23 + 1) : (1));
     map_set(&first_bigrams, bigram, &(int[]){q});
@@ -5172,7 +5172,7 @@ f32 strings__dice_coefficient(string s1, string s2) {
 
     string bigram = string_substr2(b, i, i + 2, false);
     int tmp27 = 0;
-    bool tmp28 = map_get(/*similarity.v : 60*/ first_bigrams, bigram, &tmp27);
+    bool tmp28 = map_get(/*similarity.v : 58*/ first_bigrams, bigram, &tmp27);
 
     int count = (((_IN_MAP((bigram), first_bigrams))) ? (tmp27) : (0));
     if (count > 0) {
@@ -9797,7 +9797,7 @@ compiler__DepGraph *compiler__DepGraph_resolve(compiler__DepGraph *graph) {
         string name = ((string *)keys_tmp9.data)[l];
 
         compiler__DepGraphNode tmp11 = {0};
-        bool tmp12 = map_get(/*depgraph.v : 87*/ node_names, name, &tmp11);
+        bool tmp12 = map_get(/*depgraph.v : 83*/ node_names, name, &tmp11);
 
         _PUSH(&g->nodes,
               (/*typ = array_compiler__DepGraphNode
@@ -9813,7 +9813,7 @@ compiler__DepGraph *compiler__DepGraph_resolve(compiler__DepGraph *graph) {
 
       v_map_delete(&/* ? */ node_deps, name);
       compiler__DepGraphNode tmp16 = {0};
-      bool tmp17 = map_get(/*depgraph.v : 94*/ node_names, name, &tmp16);
+      bool tmp17 = map_get(/*depgraph.v : 89*/ node_names, name, &tmp16);
 
       _PUSH(&resolved->nodes,
             (/*typ = array_compiler__DepGraphNode
@@ -9877,7 +9877,7 @@ string compiler__DepGraph_display_cycles(compiler__DepGraph *graph) {
         continue;
       };
       compiler__DepGraphNode tmp31 = {0};
-      bool tmp32 = map_get(/*depgraph.v : 128*/ node_names, dep, &tmp31);
+      bool tmp32 = map_get(/*depgraph.v : 123*/ node_names, dep, &tmp31);
 
       compiler__DepGraphNode dn = tmp31;
       if ((_IN(string, (node.name), dn.deps))) {
@@ -14283,6 +14283,7 @@ string compiler__Parser_match_statement(compiler__Parser *p, bool is_expr) {
         break;
       };
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
+      ;
       got_comma = 1;
     };
     compiler__Parser_gen(p, tos3(")"));
@@ -14351,10 +14352,10 @@ string compiler__Parser_if_statement(compiler__Parser *p, bool is_expr,
     compiler__Parser_next(p);
     compiler__Parser_check(p, compiler__compiler__TokenKind_decl_assign);
     p->is_var_decl = 1;
-    _V_MulRet_string_V_string _V_mret_863_option_type_expr =
+    _V_MulRet_string_V_string _V_mret_868_option_type_expr =
         compiler__Parser_tmp_expr(p);
-    string option_type = _V_mret_863_option_type_expr.var_0;
-    string expr = _V_mret_863_option_type_expr.var_1;
+    string option_type = _V_mret_868_option_type_expr.var_0;
+    string expr = _V_mret_868_option_type_expr.var_1;
     if (!string_starts_with(option_type, tos3("Option_"))) {
       compiler__Parser_error(p,
                              tos3("`if x := opt() {` syntax requires a "
@@ -14927,7 +14928,7 @@ Option_int compiler__V_get_file_parser_index(compiler__V *v, string file) {
   string file_path = os__realpath(file);
   if ((_IN_MAP((file_path), v->file_parser_idx))) {
     int tmp2 = 0;
-    bool tmp3 = map_get(/*main.v : 171*/ v->file_parser_idx, file_path, &tmp2);
+    bool tmp3 = map_get(/*main.v : 166*/ v->file_parser_idx, file_path, &tmp2);
 
     int tmp4 = OPTION_CAST(int)(tmp2);
     return opt_ok(&tmp4, sizeof(int));
@@ -16422,7 +16423,7 @@ void compiler__Parser_register_import(compiler__Parser *p, string mod,
 void compiler__Parser_register_import_alias(compiler__Parser *p, string alias,
                                             string mod, int tok_idx) {
   string tmp5 = tos3("");
-  bool tmp6 = map_get(/*modules.v : 49*/ p->import_table.imports, alias, &tmp5);
+  bool tmp6 = map_get(/*modules.v : 46*/ p->import_table.imports, alias, &tmp5);
 
   if (!tmp6)
     tmp5 = tos((byte *)"", 0);
@@ -16459,7 +16460,7 @@ void compiler__Parser_register_import_alias(compiler__Parser *p, string alias,
 int compiler__ImportTable_get_import_tok_idx(compiler__ImportTable *it,
                                              string mod) {
   int tmp10 = 0;
-  bool tmp11 = map_get(/*modules.v : 70*/ it->import_tok_idx, mod, &tmp10);
+  bool tmp11 = map_get(/*modules.v : 69*/ it->import_tok_idx, mod, &tmp10);
 
   return tmp10;
 }
@@ -16488,7 +16489,7 @@ bool compiler__ImportTable_is_aliased(compiler__ImportTable *it, string mod) {
 string compiler__ImportTable_resolve_alias(compiler__ImportTable *it,
                                            string alias) {
   string tmp13 = tos3("");
-  bool tmp14 = map_get(/*modules.v : 91*/ it->imports, alias, &tmp13);
+  bool tmp14 = map_get(/*modules.v : 90*/ it->imports, alias, &tmp13);
 
   if (!tmp14)
     tmp13 = tos((byte *)"", 0);
@@ -18047,7 +18048,7 @@ string compiler__Parser_check_string(compiler__Parser *p) {
 void compiler__Parser_check_not_reserved(compiler__Parser *p) {
   bool tmp34 = 0;
   bool tmp35 =
-      map_get(/*parser.v : 854*/ compiler__reserved_types, p->lit, &tmp34);
+      map_get(/*parser.v : 852*/ compiler__reserved_types, p->lit, &tmp34);
 
   if (tmp34) {
     compiler__Parser_error(
@@ -18242,7 +18243,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
   map_string ti = p->cur_fn.dispatch_of.inst;
   if ((_IN(string, (p->lit), map_keys(&/* ? */ ti)))) {
     string tmp37 = tos3("");
-    bool tmp38 = map_get(/*parser.v : 1042*/ ti, p->lit, &tmp37);
+    bool tmp38 = map_get(/*parser.v : 1040*/ ti, p->lit, &tmp37);
 
     if (!tmp38)
       tmp37 = tos((byte *)"", 0);
@@ -23840,7 +23841,7 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
 
     return;
   };
-  if (!string_contains(p->file_path, tos3("vlib/builtin"))) {
+  if (string_contains(p->file_path, tos3("vfmt"))) {
 
     return;
   };
@@ -24933,7 +24934,7 @@ void init() {
       "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef "
       "__OpenBSD__\n#include <sys/types.h>\n#include "
       "<sys/resource.h>\n#include <sys/wait.h> // os__wait uses wait on "
-      "nix\n#endif\n\n%.*s \n\n#ifdef _WIN32\n#define WINVER 0x0600\n#ifdef "
+      "nix\n#endif\n\n%.*s\n\n#ifdef _WIN32\n#define WINVER 0x0600\n#ifdef "
       "_WIN32_WINNT\n#undef _WIN32_WINNT\n#endif\n#define _WIN32_WINNT "
       "0x0600\n#define WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define "
       "UNICODE\n#include <windows.h>\n\n// must be included after "
