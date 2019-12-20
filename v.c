@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6e94938"
+#define V_COMMIT_HASH "b3a402e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "00b8a5d"
+#define V_COMMIT_HASH "6e94938"
 #endif
 #include <inttypes.h>
 
@@ -21447,8 +21447,7 @@ string compiler__Scanner_ident_string(compiler__Scanner *s) {
       s->pos -= 2;
       break;
     };
-    if ((byte_is_letter(c) || c == '_') && prevc == '$' && !s->is_fmt &&
-        !is_raw &&
+    if (compiler__is_name_char(c) && prevc == '$' && !s->is_fmt && !is_raw &&
         compiler__Scanner_count_symbol_before(*s, s->pos - 2, slash) % 2 == 0) {
       s->inside_string = 1;
       s->inter_start = 1;
@@ -21581,7 +21580,7 @@ string compiler__Scanner_line(compiler__Scanner s, int n) {
   };
   return string_trim_left(string_trim_right(res, tos3("\r\n")), tos3("\r\n"));
 }
-bool compiler__is_name_char(byte c) { return byte_is_letter(c) || c == '_'; }
+bool compiler__is_name_char(byte c) { return c == '_' || byte_is_letter(c); }
 static inline bool compiler__is_nl(byte c) { return c == '\r' || c == '\n'; }
 bool compiler__contains_capital(string s) {
   string tmp116 = s;
