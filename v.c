@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4fc8842"
+#define V_COMMIT_HASH "2b9392c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "31b7991"
+#define V_COMMIT_HASH "4fc8842"
 #endif
 #include <inttypes.h>
 
@@ -199,8 +199,6 @@ void reload_so();
 
 int g_test_oks = 0;
 int g_test_fails = 0;
-#define builtin__fnv64_prime 1099511628211
-#define builtin__fnv64_offset_basis 14695981039346656037
 #define builtin__CP_UTF8 65001
 #define compiler_dot_x64__mag1 'E'
 #define compiler_dot_x64__mag2 'L'
@@ -351,9 +349,6 @@ typedef array array_char;
 typedef array array_T;
 typedef array array_i64;
 typedef array array_f32;
-typedef struct hashmap hashmap;
-typedef array array_hashmapentry;
-typedef struct hashmapentry hashmapentry;
 typedef struct map map;
 typedef struct mapnode mapnode;
 typedef struct Option Option;
@@ -869,20 +864,6 @@ struct compiler_dot_x64__SectionConfig {
   i64 entsize;
 };
 
-struct hashmap {
-  int cap;
-  array_string keys;
-  array_hashmapentry table;
-  int elm_size;
-  int nr_collisions;
-};
-
-struct hashmapentry {
-  string key;
-  int val;
-  hashmapentry *next;
-};
-
 struct mapnode {
   mapnode *left;
   mapnode *right;
@@ -1209,12 +1190,6 @@ bool f64_ge(f64 a, f64 b);
 bool f32_ge(f32 a, f32 b);
 bool f64_gebit(f64 a, f64 b);
 bool f32_gebit(f32 a, f32 b);
-hashmap new_hashmap(int planned_nr_items);
-void hashmap_set(hashmap *m, string key, int val);
-int hashmap_get(hashmap *m, string key);
-static inline f64 b_fabs(int v);
-static inline u32 fnv1a32(string data);
-static inline u64 fnv1a64(string data);
 string ptr_str(void *ptr);
 string int_str(int nn);
 string i8_str(i8 n);
@@ -2249,16 +2224,12 @@ bool array_eq_T_string(array_string a1, array_string a2);
 bool array_eq_T_byte(array_byte a1, array_byte a2);
 bool array_eq_T_f32(array_f32 a1, array_f32 a2);
 
-byte *g_m2_buf;     // global
-byte *g_m2_ptr;     // global
-byte *g_m2_buf;     // global
-byte *g_m2_ptr;     // global
-i64 total_m = 0;    // global
-int nr_mallocs = 0; // global
-int builtin__min_cap;
-int builtin__max_cap;
-u32 builtin__fnv32_offset_basis;
-u32 builtin__fnv32_prime;
+byte *g_m2_buf;            // global
+byte *g_m2_ptr;            // global
+byte *g_m2_buf;            // global
+byte *g_m2_ptr;            // global
+i64 total_m = 0;           // global
+int nr_mallocs = 0;        // global
 array_int g_ustring_runes; // global
 int compiler_dot_x64__mag0;
 int compiler_dot_x64__e_machine;
@@ -3139,65 +3110,6 @@ bool f64_ge(f64 a, f64 b) { return !f64_lt(a, b); }
 bool f32_ge(f32 a, f32 b) { return !f32_lt(a, b); }
 bool f64_gebit(f64 a, f64 b) { return DEFAULT_GE(a, b); }
 bool f32_gebit(f32 a, f32 b) { return DEFAULT_GE(a, b); }
-hashmap new_hashmap(int planned_nr_items) {
-  int cap = planned_nr_items * 5;
-  if (cap < builtin__min_cap) {
-    cap = builtin__min_cap;
-  };
-  if (cap > builtin__max_cap) {
-    cap = builtin__max_cap;
-  };
-  return (hashmap){.cap = cap,
-                   .elm_size = 4,
-                   .table = make(cap, cap, sizeof(hashmapentry)),
-                   .keys = new_array(0, 1, sizeof(string)),
-                   .nr_collisions = 0};
-}
-void hashmap_set(hashmap *m, string key, int val) {
-  int idx = ((int)(fnv1a32(key) % m->cap));
-  if ((*(hashmapentry *)array_get(m->table, idx)).key.len != 0) {
-    m->nr_collisions++;
-    hashmapentry *e = &(*(hashmapentry *)array_get(m->table, idx));
-    while (e->next != 0) {
-
-      e = e->next;
-    };
-    e->next = (hashmapentry *)memdup(&(hashmapentry){key, val, 0},
-                                     sizeof(hashmapentry));
-  } else {
-    array_set(&/*q*/ m->table, idx,
-              &(hashmapentry[]){(hashmapentry){key, val, 0}});
-  };
-}
-int hashmap_get(hashmap *m, string key) {
-  int idx = ((int)(fnv1a32(key) % m->cap));
-  hashmapentry *e = &(*(hashmapentry *)array_get(m->table, idx));
-  while (e->next != 0) {
-
-    if (string_eq(e->key, key)) {
-      return e->val;
-    };
-    e = e->next;
-  };
-  return e->val;
-}
-static inline f64 b_fabs(int v) { return ((v < 0) ? (-v) : (v)); }
-static inline u32 fnv1a32(string data) {
-  u32 hash = builtin__fnv32_offset_basis;
-  for (int i = 0; i < data.len; i++) {
-
-    hash = (hash ^ ((u32)(data.str[i] /*rbyte 0*/))) * builtin__fnv32_prime;
-  };
-  return hash;
-}
-static inline u64 fnv1a64(string data) {
-  u64 hash = builtin__fnv64_offset_basis;
-  for (int i = 0; i < data.len; i++) {
-
-    hash = (hash ^ ((u64)(data.str[i] /*rbyte 0*/))) * builtin__fnv64_prime;
-  };
-  return hash;
-}
 string ptr_str(void *ptr) {
   byte *buf = v_malloc(sizeof(double) * 5 + 1);
   sprintf(((charptr)(buf)), "%p", ptr);
@@ -16231,7 +16143,6 @@ void compiler__vfmt(array_string args) {
     println(tos3("v fmt can only be used on .v files"));
     v_exit(1);
   };
-  println(tos3("WIP"));
   string vexe = compiler__vexe_path();
   string vroot = os__dir(vexe);
   os__chdir(vroot);
@@ -25024,10 +24935,6 @@ void init() {
   puts("allocated 50 mb");
 #endif
 
-  builtin__min_cap = 2 << 10;
-  builtin__max_cap = 2 << 20;
-  builtin__fnv32_offset_basis = ((u32)(2166136261));
-  builtin__fnv32_prime = ((u32)(16777619));
   compiler_dot_x64__mag0 = 0x7f;
   compiler_dot_x64__e_machine = 0x3e;
   compiler_dot_x64__shn_xindex = 0xffff;
