@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2b9392c"
+#define V_COMMIT_HASH "ef28a6b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4fc8842"
+#define V_COMMIT_HASH "2b9392c"
 #endif
 #include <inttypes.h>
 
@@ -12374,21 +12374,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp94 = tos3("");
-    bool tmp95 = map_get(/*fn.v : 1329*/ r.inst, tp, &tmp94);
+    bool tmp95 = map_get(/*fn.v : 1328*/ r.inst, tp, &tmp94);
 
     if (!tmp95)
       tmp94 = tos((byte *)"", 0);
 
     if (string_ne(tmp94, tos3(""))) {
       string tmp96 = tos3("");
-      bool tmp97 = map_get(/*fn.v : 1330*/ r.inst, tp, &tmp96);
+      bool tmp97 = map_get(/*fn.v : 1329*/ r.inst, tp, &tmp96);
 
       if (!tmp97)
         tmp96 = tos((byte *)"", 0);
 
       if (string_ne(tmp96, ti)) {
         string tmp98 = tos3("");
-        bool tmp99 = map_get(/*fn.v : 1331*/ r.inst, tp, &tmp98);
+        bool tmp99 = map_get(/*fn.v : 1330*/ r.inst, tp, &tmp98);
 
         if (!tmp99)
           tmp98 = tos((byte *)"", 0);
@@ -12406,7 +12406,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp100 = tos3("");
-  bool tmp101 = map_get(/*fn.v : 1342*/ r.inst, f->typ, &tmp100);
+  bool tmp101 = map_get(/*fn.v : 1341*/ r.inst, f->typ, &tmp100);
 
   if (!tmp101)
     tmp100 = tos((byte *)"", 0);
@@ -12419,7 +12419,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp102.data)[tmp103];
 
     string tmp104 = tos3("");
-    bool tmp105 = map_get(/*fn.v : 1346*/ r.inst, tp, &tmp104);
+    bool tmp105 = map_get(/*fn.v : 1345*/ r.inst, tp, &tmp104);
 
     if (!tmp105)
       tmp104 = tos((byte *)"", 0);
@@ -12442,7 +12442,7 @@ string compiler__replace_generic_type(string gen_type, compiler__TypeInst *ti) {
   };
   if ((_IN_MAP((typ), ti->inst))) {
     string tmp108 = tos3("");
-    bool tmp109 = map_get(/*fn.v : 1361*/ ti->inst, typ, &tmp108);
+    bool tmp109 = map_get(/*fn.v : 1360*/ ti->inst, typ, &tmp108);
 
     if (!tmp109)
       tmp108 = tos((byte *)"", 0);
@@ -12496,7 +12496,7 @@ void compiler__replace_generic_type_params(compiler__Fn *f,
   if (string_ends_with(f->typ, tos3("_T"))) {
     string par = (*(string *)array_get(map_keys(&/* ? */ ti->inst), 0));
     string tmp121 = tos3("");
-    bool tmp122 = map_get(/*fn.v : 1394*/ ti->inst, par, &tmp121);
+    bool tmp122 = map_get(/*fn.v : 1393*/ ti->inst, par, &tmp121);
 
     if (!tmp122)
       tmp121 = tos((byte *)"", 0);
@@ -12697,7 +12697,7 @@ void compiler__rename_generic_fn_instance(compiler__Fn *f,
     string k = ((string *)tmp142.data)[tmp143];
 
     string tmp144 = tos3("");
-    bool tmp145 = map_get(/*fn.v : 1498*/ ti->inst, k, &tmp144);
+    bool tmp145 = map_get(/*fn.v : 1497*/ ti->inst, k, &tmp144);
 
     if (!tmp145)
       tmp144 = tos((byte *)"", 0);
@@ -14957,7 +14957,7 @@ Option_int compiler__V_get_file_parser_index(compiler__V *v, string file) {
   string file_path = ((filepath__is_abs(file)) ? (file) : (os__realpath(file)));
   if ((_IN_MAP((file_path), v->file_parser_idx))) {
     int tmp2 = 0;
-    bool tmp3 = map_get(/*main.v : 169*/ v->file_parser_idx, file_path, &tmp2);
+    bool tmp3 = map_get(/*main.v : 167*/ v->file_parser_idx, file_path, &tmp2);
 
     int tmp4 = OPTION_CAST(int)(tmp2);
     return opt_ok(&tmp4, sizeof(int));
@@ -22036,7 +22036,7 @@ void compiler__Parser_struct_decl(compiler__Parser *p,
   array_string names = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   int tmp8 = 0;
-  bool tmp9 = map_get(/*struct.v : 166*/ p->table->max_field_len, name, &tmp8);
+  bool tmp9 = map_get(/*struct.v : 169*/ p->table->max_field_len, name, &tmp8);
 
   int fmt_max_len = tmp8;
   if ((!is_ph && compiler__Parser_first_pass(&/* ? */ *p)) || is_generic) {
@@ -22243,7 +22243,7 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ_) {
       string type_param = compiler__Parser_check_name(p);
       if ((_IN_MAP((type_param), p->generic_dispatch.inst))) {
         string tmp13 = tos3("");
-        bool tmp14 = map_get(/*struct.v : 349*/ p->generic_dispatch.inst,
+        bool tmp14 = map_get(/*struct.v : 355*/ p->generic_dispatch.inst,
                              type_param, &tmp13);
 
         if (!tmp14)
@@ -22445,7 +22445,7 @@ void compiler__Parser_dispatch_generic_struct(compiler__Parser *p,
   if ((_IN_MAP((t->name), p->table->generic_struct_params))) {
     int i = 0;
     array_string tmp29 = new_array(0, 1, sizeof(string));
-    bool tmp30 = map_get(/*struct.v : 502*/ p->table->generic_struct_params,
+    bool tmp30 = map_get(/*struct.v : 509*/ p->table->generic_struct_params,
                          t->name, &tmp29);
 
     array_string tmp28 = tmp29;
