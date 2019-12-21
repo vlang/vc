@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f7c1b78"
+#define V_COMMIT_HASH "6763a92"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ecd46d3"
+#define V_COMMIT_HASH "f7c1b78"
 #endif
 #include <inttypes.h>
 
@@ -22015,23 +22015,21 @@ void compiler__Parser_struct_decl(compiler__Parser *p,
   bool is_generic = 0;
   if (p->tok == compiler__compiler__TokenKind_lt) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lt);
-    int i = 0;
-    while (1) {
-      if (generic_param_types.len > 0 && i != generic_param_types.len - 1) {
+    for (int i = 0;; i++) {
+
+      if (generic_param_types.len > 0 && i > generic_param_types.len - 1) {
         compiler__Parser_error(p, tos3("mismatched generic type params"));
       };
       string type_param = compiler__Parser_check_name(p);
-      if (generic_param_types.len > 0) {
-        map_set(&generic_types, type_param,
-                &(string[]){(*(string *)array_get(generic_param_types, i))});
-      } else {
-        map_set(&generic_types, type_param, &(string[]){tos3("")});
-      };
+      map_set(
+          &generic_types, type_param,
+          &(string[]){((generic_param_types.len > 0)
+                           ? ((*(string *)array_get(generic_param_types, i)))
+                           : (tos3("")))});
       if (p->tok != compiler__compiler__TokenKind_comma) {
         break;
       };
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-      i++;
     };
     compiler__Parser_check(p, compiler__compiler__TokenKind_gt);
     is_generic = 1;
@@ -22142,7 +22140,7 @@ void compiler__Parser_struct_decl(compiler__Parser *p,
   array_string names = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   int tmp8 = 0;
-  bool tmp9 = map_get(/*struct.v : 171*/ p->table->max_field_len, name, &tmp8);
+  bool tmp9 = map_get(/*struct.v : 166*/ p->table->max_field_len, name, &tmp8);
 
   int fmt_max_len = tmp8;
   if ((!is_ph && compiler__Parser_first_pass(&/* ? */ *p)) || is_generic) {
@@ -22262,10 +22260,10 @@ void compiler__Parser_struct_decl(compiler__Parser *p,
     };
     if (p->tok == compiler__compiler__TokenKind_assign) {
       compiler__Parser_next(p);
-      _V_MulRet_string_V_string _V_mret_1323_def_val_type_expr =
+      _V_MulRet_string_V_string _V_mret_1319_def_val_type_expr =
           compiler__Parser_tmp_expr(p);
-      string def_val_type = _V_mret_1323_def_val_type_expr.var_0;
-      string expr = _V_mret_1323_def_val_type_expr.var_1;
+      string def_val_type = _V_mret_1319_def_val_type_expr.var_0;
+      string expr = _V_mret_1319_def_val_type_expr.var_1;
       if (string_ne(def_val_type, field_type)) {
         compiler__Parser_error(p, _STR("expected `%.*s` but got `%.*s`",
                                        field_type.len, field_type.str,
@@ -22349,7 +22347,7 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ_) {
       string type_param = compiler__Parser_check_name(p);
       if ((_IN_MAP((type_param), p->generic_dispatch.inst))) {
         string tmp13 = tos3("");
-        bool tmp14 = map_get(/*struct.v : 354*/ p->generic_dispatch.inst,
+        bool tmp14 = map_get(/*struct.v : 349*/ p->generic_dispatch.inst,
                              type_param, &tmp13);
 
         if (!tmp14)
@@ -22551,7 +22549,7 @@ void compiler__Parser_dispatch_generic_struct(compiler__Parser *p,
   if ((_IN_MAP((t->name), p->table->generic_struct_params))) {
     int i = 0;
     array_string tmp29 = new_array(0, 1, sizeof(string));
-    bool tmp30 = map_get(/*struct.v : 507*/ p->table->generic_struct_params,
+    bool tmp30 = map_get(/*struct.v : 502*/ p->table->generic_struct_params,
                          t->name, &tmp29);
 
     array_string tmp28 = tmp29;
