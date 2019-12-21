@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9198285"
+#define V_COMMIT_HASH "a251db0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "848cd3c"
+#define V_COMMIT_HASH "9198285"
 #endif
 #include <inttypes.h>
 
@@ -2265,6 +2265,7 @@ void compiler__Scanner_fgen(compiler__Scanner *scanner, string s_);
 void compiler__Scanner_fgenln(compiler__Scanner *scanner, string s_);
 void compiler__Parser_fgen(compiler__Parser *p, string s);
 void compiler__Parser_fspace(compiler__Parser *p);
+void compiler__Parser_fspace_or_newline(compiler__Parser *p);
 void compiler__Parser_fgenln(compiler__Parser *p, string s);
 void compiler__Parser_fgen_nl(compiler__Parser *p);
 void compiler__Scanner_fgen_nl(compiler__Scanner *scanner);
@@ -20006,6 +20007,8 @@ string compiler__Parser_array_init(compiler__Parser *p) {
       if (!tmp138.ok) {
         string err = tmp138.error;
         int errcode = tmp138.ecode;
+        compiler__Parser_error(
+            p, _STR("unknown const `%.*s`", const_name.len, const_name.str));
         v_exit(1);
       }
       c = *(compiler__Var *)tmp138.data;
@@ -20087,6 +20090,7 @@ string compiler__Parser_array_init(compiler__Parser *p) {
     if (p->tok != compiler__compiler__TokenKind_rsbr &&
         p->tok != compiler__compiler__TokenKind_semicolon) {
       compiler__Parser_gen(p, tos3(", "));
+      compiler__TokenKind line_nr = p->tok;
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
       ;
     };
@@ -20229,10 +20233,10 @@ void compiler__Parser_return_st(compiler__Parser *p) {
     while (p->tok == compiler__compiler__TokenKind_comma) {
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-      _V_MulRet_string_V_string _V_mret_13019_typ_expr =
+      _V_MulRet_string_V_string _V_mret_13033_typ_expr =
           compiler__Parser_tmp_expr(p);
-      string typ = _V_mret_13019_typ_expr.var_0;
-      string expr = _V_mret_13019_typ_expr.var_1;
+      string typ = _V_mret_13033_typ_expr.var_0;
+      string expr = _V_mret_13033_typ_expr.var_1;
       _PUSH(&types, (/*typ = array_string   tmp_typ=string*/ typ), tmp150,
             string);
       _PUSH(&mr_values,
@@ -20407,10 +20411,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
     string typ = compiler__Parser_get_type(p);
     compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-    _V_MulRet_string_V_string _V_mret_13804_styp_expr =
+    _V_MulRet_string_V_string _V_mret_13818_styp_expr =
         compiler__Parser_tmp_expr(p);
-    string styp = _V_mret_13804_styp_expr.var_0;
-    string expr = _V_mret_13804_styp_expr.var_1;
+    string styp = _V_mret_13818_styp_expr.var_0;
+    string expr = _V_mret_13818_styp_expr.var_1;
     compiler__Parser_check_types(p, styp, tos3("string"));
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
     string tmp = compiler__Parser_get_tmp(p);
@@ -20447,10 +20451,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     return opt_type;
   } else if (string_eq(op, tos3("encode"))) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
-    _V_MulRet_string_V_string _V_mret_13984_typ_expr =
+    _V_MulRet_string_V_string _V_mret_13998_typ_expr =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_13984_typ_expr.var_0;
-    string expr = _V_mret_13984_typ_expr.var_1;
+    string typ = _V_mret_13998_typ_expr.var_0;
+    string expr = _V_mret_13998_typ_expr.var_1;
     compiler__Type T = compiler__Table_find_type(&/* ? */ *p->table, typ);
     compiler__Parser_gen_json_for_type(p, T);
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
@@ -24116,6 +24120,20 @@ void compiler__Parser_fspace(compiler__Parser *p) {
   };
   ;
 }
+void compiler__Parser_fspace_or_newline(compiler__Parser *p) {
+  if (compiler__Parser_first_pass(&/* ? */ *p)) {
+
+    return;
+  };
+  if (p->token_idx >= 2 &&
+      (*(compiler__Token *)array_get(p->tokens, p->token_idx - 1)).line_nr !=
+          (*(compiler__Token *)array_get(p->tokens, p->token_idx - 2))
+              .line_nr) {
+    ;
+  } else {
+    ;
+  };
+}
 void compiler__Parser_fgenln(compiler__Parser *p, string s) {
   if (p->pass != compiler__compiler__Pass_main) {
 
@@ -24140,7 +24158,7 @@ void compiler__Parser_fgen_nl(compiler__Parser *p) {
 }
 void compiler__Scanner_fgen_nl(compiler__Scanner *scanner) {
   _PUSH(&scanner->fmt_lines,
-        (/*typ = array_string   tmp_typ=string*/ tos3("\n")), tmp6, string);
+        (/*typ = array_string   tmp_typ=string*/ tos3("\n")), tmp10, string);
   scanner->fmt_line_empty = 1;
 }
 void compiler__Parser_fmt_inc(compiler__Parser *p) {
@@ -24263,16 +24281,16 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
   };
   string path = string_add(string_add(os__tmpdir(), tos3("/")), p->file_name);
   printf("generating %.*s\n", path.len, path.str);
-  Option_os__File tmp27 = os__create(path);
+  Option_os__File tmp31 = os__create(path);
   os__File out;
-  if (!tmp27.ok) {
-    string err = tmp27.error;
-    int errcode = tmp27.ecode;
+  if (!tmp31.ok) {
+    string err = tmp31.error;
+    int errcode = tmp31.ecode;
     compiler__verror(tos3("failed to create os_nix.v"));
 
     return;
   }
-  out = *(os__File *)tmp27.data;
+  out = *(os__File *)tmp31.data;
   ;
   printf("replacing %.*s...\n\n", p->file_path.len, p->file_path.str);
   os__File_writeln(&/* ? */ out, string_trim_space(s));
