@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "28ecfb2"
+#define V_COMMIT_HASH "848cd3c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b76227b"
+#define V_COMMIT_HASH "28ecfb2"
 #endif
 #include <inttypes.h>
 
@@ -24195,12 +24195,14 @@ void compiler__Parser_fnext(compiler__Parser *p) {
               (*(compiler__Token *)array_get(p->tokens, i - 1)).line_nr;
       string comment = comment_token.lit;
       if (i > 0 &&
-          (*(compiler__Token *)array_get(p->tokens, i - 1)).tok !=
-              compiler__compiler__TokenKind_line_comment &&
-          (*(compiler__Token *)array_get(p->tokens, i - 1)).tok !=
-              compiler__compiler__TokenKind_lcbr &&
-          comment_token.line_nr >
-              (*(compiler__Token *)array_get(p->tokens, i - 1)).line_nr) {
+          (((*(compiler__Token *)array_get(p->tokens, i - 1)).tok !=
+                compiler__compiler__TokenKind_line_comment &&
+            (*(compiler__Token *)array_get(p->tokens, i - 1)).tok !=
+                compiler__compiler__TokenKind_lcbr &&
+            comment_token.line_nr >
+                (*(compiler__Token *)array_get(p->tokens, i - 1)).line_nr) ||
+           (*(compiler__Token *)array_get(p->tokens, i - 1)).tok ==
+               compiler__compiler__TokenKind_hash)) {
         ;
       };
       if (i > 0 &&
@@ -24261,16 +24263,16 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
   };
   string path = string_add(string_add(os__tmpdir(), tos3("/")), p->file_name);
   printf("generating %.*s\n", path.len, path.str);
-  Option_os__File tmp25 = os__create(path);
+  Option_os__File tmp27 = os__create(path);
   os__File out;
-  if (!tmp25.ok) {
-    string err = tmp25.error;
-    int errcode = tmp25.ecode;
+  if (!tmp27.ok) {
+    string err = tmp27.error;
+    int errcode = tmp27.ecode;
     compiler__verror(tos3("failed to create os_nix.v"));
 
     return;
   }
-  out = *(os__File *)tmp25.data;
+  out = *(os__File *)tmp27.data;
   ;
   printf("replacing %.*s...\n\n", p->file_path.len, p->file_path.str);
   os__File_writeln(&/* ? */ out, string_trim_space(s));
