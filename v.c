@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6763a92"
+#define V_COMMIT_HASH "4dc4f12"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f7c1b78"
+#define V_COMMIT_HASH "6763a92"
 #endif
 #include <inttypes.h>
 
@@ -196,6 +196,8 @@ void reload_so();
 
 int g_test_oks = 0;
 int g_test_fails = 0;
+#define builtin__fnv64_prime 1099511628211
+#define builtin__fnv64_offset_basis 14695981039346656037
 #define builtin__CP_UTF8 65001
 #define compiler_dot_x64__mag1 'E'
 #define compiler_dot_x64__mag2 'L'
@@ -1208,6 +1210,8 @@ hashmap new_hashmap(int planned_nr_items);
 void hashmap_set(hashmap *m, string key, int val);
 int hashmap_get(hashmap *m, string key);
 static inline f64 b_fabs(int v);
+static inline u32 fnv1a32(string data);
+static inline u64 fnv1a64(string data);
 string ptr_str(void *ptr);
 string int_str(int nn);
 string i8_str(i8 n);
@@ -2250,6 +2254,8 @@ i64 total_m = 0;    // global
 int nr_mallocs = 0; // global
 int builtin__min_cap;
 int builtin__max_cap;
+u32 builtin__fnv32_offset_basis;
+u32 builtin__fnv32_prime;
 array_int g_ustring_runes; // global
 int compiler_dot_x64__mag0;
 int compiler_dot_x64__e_machine;
@@ -3144,8 +3150,7 @@ hashmap new_hashmap(int planned_nr_items) {
                    .nr_collisions = 0};
 }
 void hashmap_set(hashmap *m, string key, int val) {
-  int hash = ((int)(b_fabs(string_hash(key))));
-  int idx = hash % m->cap;
+  int idx = ((int)(fnv1a32(key) % m->cap));
   if ((*(hashmapentry *)array_get(m->table, idx)).key.len != 0) {
     m->nr_collisions++;
     hashmapentry *e = &(*(hashmapentry *)array_get(m->table, idx));
@@ -3161,8 +3166,7 @@ void hashmap_set(hashmap *m, string key, int val) {
   };
 }
 int hashmap_get(hashmap *m, string key) {
-  int hash = ((int)(b_fabs(string_hash(key))));
-  int idx = hash % m->cap;
+  int idx = ((int)(fnv1a32(key) % m->cap));
   hashmapentry *e = &(*(hashmapentry *)array_get(m->table, idx));
   while (e->next != 0) {
 
@@ -3174,6 +3178,22 @@ int hashmap_get(hashmap *m, string key) {
   return e->val;
 }
 static inline f64 b_fabs(int v) { return ((v < 0) ? (-v) : (v)); }
+static inline u32 fnv1a32(string data) {
+  u32 hash = builtin__fnv32_offset_basis;
+  for (int i = 0; i < data.len; i++) {
+
+    hash = (hash ^ ((u32)(data.str[i] /*rbyte 0*/))) * builtin__fnv32_prime;
+  };
+  return hash;
+}
+static inline u64 fnv1a64(string data) {
+  u64 hash = builtin__fnv64_offset_basis;
+  for (int i = 0; i < data.len; i++) {
+
+    hash = (hash ^ ((u64)(data.str[i] /*rbyte 0*/))) * builtin__fnv64_prime;
+  };
+  return hash;
+}
 string ptr_str(void *ptr) {
   byte *buf = v_malloc(sizeof(double) * 5 + 1);
   sprintf(((charptr)(buf)), "%p", ptr);
@@ -24977,6 +24997,8 @@ void init() {
 
   builtin__min_cap = 2 << 10;
   builtin__max_cap = 2 << 20;
+  builtin__fnv32_offset_basis = ((u32)(2166136261));
+  builtin__fnv32_prime = ((u32)(16777619));
   compiler_dot_x64__mag0 = 0x7f;
   compiler_dot_x64__e_machine = 0x3e;
   compiler_dot_x64__shn_xindex = 0xffff;
