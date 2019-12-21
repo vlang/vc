@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "31b7991"
+#define V_COMMIT_HASH "4fc8842"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "faca61c"
+#define V_COMMIT_HASH "31b7991"
 #endif
 #include <inttypes.h>
 
@@ -131,6 +131,9 @@ typedef int bool;
 #undef TCCSKIP
 #define TCCSKIP(x)
 #endif
+
+// for __offset_of
+#define __offsetof(s, memb) ((size_t)((char *)&((s *)0)->memb - (char *)0))
 
 #define OPTION_CAST(x) (x)
 
@@ -267,7 +270,7 @@ int g_test_fails = 0;
 #define compiler__double_quote '"'
 #define compiler__error_context_before 2
 #define compiler__error_context_after 2
-#define compiler__NrTokens 140
+#define compiler__NrTokens 141
 #define compiler__help_text                                                    \
   tos3(                                                                        \
       "Usage: v [options/commands] [file.v | directory]\n\n   When V is run "  \
@@ -2619,16 +2622,17 @@ array_string compiler__reserved_type_param_names;
 #define compiler__compiler__TokenKind_key_return 87
 #define compiler__compiler__TokenKind_key_select 88
 #define compiler__compiler__TokenKind_key_sizeof 89
-#define compiler__compiler__TokenKind_key_struct 90
-#define compiler__compiler__TokenKind_key_switch 91
-#define compiler__compiler__TokenKind_key_true 92
-#define compiler__compiler__TokenKind_key_type 93
-#define compiler__compiler__TokenKind_key_orelse 94
-#define compiler__compiler__TokenKind_key_union 95
-#define compiler__compiler__TokenKind_key_pub 96
-#define compiler__compiler__TokenKind_key_static 97
-#define compiler__compiler__TokenKind_key_unsafe 98
-#define compiler__compiler__TokenKind_keyword_end 99
+#define compiler__compiler__TokenKind_key_offsetof 90
+#define compiler__compiler__TokenKind_key_struct 91
+#define compiler__compiler__TokenKind_key_switch 92
+#define compiler__compiler__TokenKind_key_true 93
+#define compiler__compiler__TokenKind_key_type 94
+#define compiler__compiler__TokenKind_key_orelse 95
+#define compiler__compiler__TokenKind_key_union 96
+#define compiler__compiler__TokenKind_key_pub 97
+#define compiler__compiler__TokenKind_key_static 98
+#define compiler__compiler__TokenKind_key_unsafe 99
+#define compiler__compiler__TokenKind_keyword_end 100
 array_string compiler__TokenStr;
 map_int compiler__KEYWORDS;
 array_compiler__TokenKind compiler__AssignTokens;
@@ -10920,6 +10924,16 @@ string compiler__Parser_factor(compiler__Parser *p) {
     string sizeof_typ = compiler__Parser_get_type(p);
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
     compiler__Parser_gen(p, _STR("%.*s)", sizeof_typ.len, sizeof_typ.str));
+    return tos3("int");
+  } else if (tmp26 == compiler__compiler__TokenKind_key_offsetof) {
+    compiler__Parser_next(p);
+    compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
+    string offsetof_typ = compiler__Parser_get_type(p);
+    compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
+    string member = compiler__Parser_check_name(p);
+    compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
+    compiler__Parser_gen(p, _STR("__offsetof(%.*s, %.*s)", offsetof_typ.len,
+                                 offsetof_typ.str, member.len, member.str));
     return tos3("int");
   } else if ((tmp26 == compiler__compiler__TokenKind_amp) ||
              (tmp26 == compiler__compiler__TokenKind_dot) ||
@@ -24039,11 +24053,13 @@ array_string compiler__build_token_str() {
             &(string[]){tos3("select")});
   array_set(&/*q*/ s, compiler__compiler__TokenKind_key_none,
             &(string[]){tos3("none")});
+  array_set(&/*q*/ s, compiler__compiler__TokenKind_key_offsetof,
+            &(string[]){tos3("__offsetof")});
   return s;
 }
 compiler__TokenKind compiler__key_to_token(string key) {
   int tmp3 = 0;
-  bool tmp4 = map_get(/*token.v : 249*/ compiler__KEYWORDS, key, &tmp3);
+  bool tmp4 = map_get(/*token.v : 251*/ compiler__KEYWORDS, key, &tmp3);
 
   compiler__TokenKind a = ((compiler__TokenKind)(tmp3));
   return a;
@@ -25364,16 +25380,18 @@ void init() {
   os__SUBLANG_NEUTRAL = 0x00;
   os__SUBLANG_DEFAULT = 0x01;
   os__LANG_NEUTRAL = (os__SUBLANG_NEUTRAL);
-  compiler__c_common_macros = tos3(
-      "\n\n#define EMPTY_STRUCT_DECLARATION\n#define "
-      "EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an "
-      "array needs to be specified, but GCC crashes if it is...\n#define "
-      "EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#ifdef "
-      "__TINYC__\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
-      "EMPTY_STRUCT_INITIALIZATION\n#define EMPTY_STRUCT_DECLARATION char "
-      "_dummy\n#define EMPTY_STRUCT_INITIALIZATION 0\n#undef "
-      "EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef "
-      "TCCSKIP\n#define TCCSKIP(x)\n#endif\n\n#define OPTION_CAST(x) (x)\n");
+  compiler__c_common_macros =
+      tos3("\n\n#define EMPTY_STRUCT_DECLARATION\n#define "
+           "EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of "
+           "an array needs to be specified, but GCC crashes if it "
+           "is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) "
+           "x\n\n#ifdef __TINYC__\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
+           "EMPTY_STRUCT_INITIALIZATION\n#define EMPTY_STRUCT_DECLARATION char "
+           "_dummy\n#define EMPTY_STRUCT_INITIALIZATION 0\n#undef "
+           "EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) "
+           "(x[n])\n#undef TCCSKIP\n#define TCCSKIP(x)\n#endif\n\n// for "
+           "__offset_of\n#define __offsetof(s,memb) \\\n    ((size_t)((char "
+           "*)&((s *)0)->memb - (char *)0))\n\n#define OPTION_CAST(x) (x)\n");
   compiler__c_headers = _STR(
       "\n\n//#include <inttypes.h>  // int64_t etc\n#include <stdio.h>  // "
       "TODO remove all these includes, define all function signatures and "
