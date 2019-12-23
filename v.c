@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b101369"
+#define V_COMMIT_HASH "d03f0ec"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "dced76d"
+#define V_COMMIT_HASH "b101369"
 #endif
 #include <inttypes.h>
 
@@ -7452,7 +7452,7 @@ time__Time time__parse(string s) {
   };
   string shms = string_substr2(s, pos, -1, true);
   array_string hms = string_split(shms, tos3(":"));
-  string hour = (*(string *)array_get(hms, 0));
+  string hour = string_substr2((*(string *)array_get(hms, 0)), 1, -1, true);
   string minute = (*(string *)array_get(hms, 1));
   string second = (*(string *)array_get(hms, 2));
   return time__new_time(
@@ -7582,8 +7582,8 @@ Option_int time__days_in_month(int month, int year) {
   };
   int extra = ((month == 2 && time__is_leap_year(year)) ? (1) : (0));
   int res = (*(int *)array_get(time__month_days, month - 1)) + extra;
-  int tmp30 = OPTION_CAST(int)(res);
-  return opt_ok(&tmp30, sizeof(int));
+  int tmp32 = OPTION_CAST(int)(res);
+  return opt_ok(&tmp32, sizeof(int));
 }
 string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time) {
   if (fmt_time == time__time__FormatTime_no_time) {
@@ -7592,17 +7592,17 @@ string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time) {
   string tp = ((t.hour > 11) ? (tos3("p.m.")) : (tos3("a.m.")));
   int hour =
       ((t.hour > 12) ? (t.hour - 12) : (((t.hour == 0) ? (12) : (t.hour))));
-  time__FormatTime tmp31 = fmt_time;
+  time__FormatTime tmp33 = fmt_time;
 
   return (
-      (tmp31 == time__time__FormatTime_hhmm12)
+      (tmp33 == time__time__FormatTime_hhmm12)
           ? (_STR("%d:%02d %.*s", hour, t.minute, tp.len, tp.str))
-          : ((tmp31 == time__time__FormatTime_hhmm24)
+          : ((tmp33 == time__time__FormatTime_hhmm24)
                  ? (_STR("%02d:%02d", t.hour, t.minute))
-                 : ((tmp31 == time__time__FormatTime_hhmmss12)
+                 : ((tmp33 == time__time__FormatTime_hhmmss12)
                         ? (_STR("%d:%02d:%02d %.*s", hour, t.minute, t.second,
                                 tp.len, tp.str))
-                        : ((tmp31 == time__time__FormatTime_hhmmss24)
+                        : ((tmp33 == time__time__FormatTime_hhmmss24)
                                ? (_STR("%02d:%02d:%02d", t.hour, t.minute,
                                        t.second))
                                : (_STR("unknown enumeration %d", fmt_time))))));
@@ -7616,34 +7616,34 @@ string time__Time_get_fmt_date_str(time__Time t,
   string month =
       _STR("%.*s", time__Time_smonth(t).len, time__Time_smonth(t).str);
   string year = string_substr2(int_str(t.year), 2, -1, true);
-  time__FormatDate tmp34 = fmt_date;
+  time__FormatDate tmp36 = fmt_date;
 
-  time__FormatDelimiter tmp35 = fmt_dlmtr;
+  time__FormatDelimiter tmp37 = fmt_dlmtr;
 
   return string_replace(
-      ((tmp34 == time__time__FormatDate_ddmmyy)
+      ((tmp36 == time__time__FormatDate_ddmmyy)
            ? (_STR("%02d|%02d|%.*s", t.day, t.month, year.len, year.str))
-           : ((tmp34 == time__time__FormatDate_ddmmyyyy)
+           : ((tmp36 == time__time__FormatDate_ddmmyyyy)
                   ? (_STR("%02d|%02d|%d", t.day, t.month, t.year))
-                  : ((tmp34 == time__time__FormatDate_mmddyy)
+                  : ((tmp36 == time__time__FormatDate_mmddyy)
                          ? (_STR("%02d|%02d|%.*s", t.month, t.day, year.len,
                                  year.str))
-                         : ((tmp34 == time__time__FormatDate_mmddyyyy)
+                         : ((tmp36 == time__time__FormatDate_mmddyyyy)
                                 ? (_STR("%02d|%02d|%d", t.month, t.day, t.year))
-                                : ((tmp34 == time__time__FormatDate_mmmd)
+                                : ((tmp36 == time__time__FormatDate_mmmd)
                                        ? (_STR("%.*s|%d", month.len, month.str,
                                                t.day))
-                                       : ((tmp34 ==
+                                       : ((tmp36 ==
                                            time__time__FormatDate_mmmdd)
                                               ? (_STR("%.*s|%02d", month.len,
                                                       month.str, t.day))
-                                              : ((tmp34 ==
+                                              : ((tmp36 ==
                                                   time__time__FormatDate_mmmddyyyy)
                                                      ? (_STR("%.*s|%02d|%d",
                                                              month.len,
                                                              month.str, t.day,
                                                              t.year))
-                                                     : ((tmp34 ==
+                                                     : ((tmp36 ==
                                                          time__time__FormatDate_yyyymmdd)
                                                             ? (_STR("%d|%02d|%"
                                                                     "02d",
@@ -7656,13 +7656,13 @@ string time__Time_get_fmt_date_str(time__Time t,
                                                                   "%d",
                                                                   fmt_date)))))))))),
       tos3("|"),
-      ((tmp35 == time__time__FormatDelimiter_dot)
+      ((tmp37 == time__time__FormatDelimiter_dot)
            ? (tos3("."))
-           : ((tmp35 == time__time__FormatDelimiter_hyphen)
+           : ((tmp37 == time__time__FormatDelimiter_hyphen)
                   ? (tos3("-"))
-                  : ((tmp35 == time__time__FormatDelimiter_slash)
+                  : ((tmp37 == time__time__FormatDelimiter_slash)
                          ? (tos3("/"))
-                         : ((tmp35 == time__time__FormatDelimiter_space)
+                         : ((tmp37 == time__time__FormatDelimiter_space)
                                 ? (tos3(" "))
                                 : (_STR("unknown enumeration %d",
                                         fmt_dlmtr)))))));
