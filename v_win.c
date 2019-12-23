@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "28594a6"
+#define V_COMMIT_HASH "42b1660"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7ab993c"
+#define V_COMMIT_HASH "28594a6"
 #endif
 #include <inttypes.h>
 
@@ -1967,7 +1967,6 @@ void compiler__V_log(compiler__V *v, string s);
 compiler__V *compiler__new_v(array_string args);
 array_string compiler__non_empty(array_string a);
 array_string compiler__env_vflags_and_os_args();
-void compiler__vfmt(array_string args);
 void compiler__create_symlink();
 string compiler__vexe_path();
 void compiler__verror(string s);
@@ -2276,6 +2275,7 @@ void compiler__Scanner_init_fmt(compiler__Scanner *s);
 void compiler__Parser_fnext(compiler__Parser *p);
 void compiler__Parser_fremove_last(compiler__Parser *p);
 void compiler__Parser_gen_fmt(compiler__Parser *p);
+string compiler__write_formatted_source(string file_name, string s);
 string compiler__get_vtmp_folder();
 string compiler__get_vtmp_filename(string base_file_name, string postfix);
 void compiler__launch_tool(string tname);
@@ -16303,36 +16303,6 @@ array_string compiler__env_vflags_and_os_args() {
   };
   return compiler__non_empty(args);
 }
-void compiler__vfmt(array_string args) {
-  string file = *(string *)array_last(args);
-  if (!os__exists(file)) {
-    printf("\"%.*s\" does not exist\n", file.len, file.str);
-    v_exit(1);
-  };
-  if (!string_ends_with(file, tos3(".v"))) {
-    println(tos3("v fmt can only be used on .v files"));
-    v_exit(1);
-  };
-  string vexe = compiler__vexe_path();
-  string vroot = os__dir(vexe);
-  os__chdir(vroot);
-  println(tos3("building vfmt... (it will be cached soon)"));
-  int ret = os__system(_STR("%.*s -o %.*s/tools/vfmt -d vfmt v.v", vexe.len,
-                            vexe.str, vroot.len, vroot.str));
-  if (ret != 0) {
-    println(tos3("err"));
-
-    return;
-  };
-  println(tos3("running vfmt..."));
-  Option_os__Result tmp110 = os__exec(
-      _STR("%.*s/tools/vfmt %.*s", vroot.len, vroot.str, file.len, file.str));
-  if (!tmp110.ok) {
-    string err = tmp110.error;
-    int errcode = tmp110.ecode;
-    v_panic(err);
-  };
-}
 void compiler__create_symlink() {
 #ifdef _WIN32
 
@@ -16374,33 +16344,33 @@ string compiler__cescaped_path(string s) {
   return string_replace(s, tos3("\\"), tos3("\\\\"));
 }
 compiler__OS compiler__os_from_string(string os) {
-  string tmp111 = os;
+  string tmp110 = os;
 
-  if (string_eq(tmp111, tos3("linux"))) {
+  if (string_eq(tmp110, tos3("linux"))) {
     return compiler__compiler__OS_linux;
-  } else if (string_eq(tmp111, tos3("windows"))) {
+  } else if (string_eq(tmp110, tos3("windows"))) {
     return compiler__compiler__OS_windows;
-  } else if (string_eq(tmp111, tos3("mac"))) {
+  } else if (string_eq(tmp110, tos3("mac"))) {
     return compiler__compiler__OS_mac;
-  } else if (string_eq(tmp111, tos3("macos"))) {
+  } else if (string_eq(tmp110, tos3("macos"))) {
     return compiler__compiler__OS_mac;
-  } else if (string_eq(tmp111, tos3("freebsd"))) {
+  } else if (string_eq(tmp110, tos3("freebsd"))) {
     return compiler__compiler__OS_freebsd;
-  } else if (string_eq(tmp111, tos3("openbsd"))) {
+  } else if (string_eq(tmp110, tos3("openbsd"))) {
     return compiler__compiler__OS_openbsd;
-  } else if (string_eq(tmp111, tos3("netbsd"))) {
+  } else if (string_eq(tmp110, tos3("netbsd"))) {
     return compiler__compiler__OS_netbsd;
-  } else if (string_eq(tmp111, tos3("dragonfly"))) {
+  } else if (string_eq(tmp110, tos3("dragonfly"))) {
     return compiler__compiler__OS_dragonfly;
-  } else if (string_eq(tmp111, tos3("js"))) {
+  } else if (string_eq(tmp110, tos3("js"))) {
     return compiler__compiler__OS_js;
-  } else if (string_eq(tmp111, tos3("solaris"))) {
+  } else if (string_eq(tmp110, tos3("solaris"))) {
     return compiler__compiler__OS_solaris;
-  } else if (string_eq(tmp111, tos3("android"))) {
+  } else if (string_eq(tmp110, tos3("android"))) {
     return compiler__compiler__OS_android;
-  } else if (string_eq(tmp111, tos3("msvc"))) {
+  } else if (string_eq(tmp110, tos3("msvc"))) {
     compiler__verror(tos3("use the flag `-cc msvc` to build using msvc"));
-  } else if (string_eq(tmp111, tos3("haiku"))) {
+  } else if (string_eq(tmp110, tos3("haiku"))) {
     return compiler__compiler__OS_haiku;
   } else // default:
   {
@@ -16423,7 +16393,7 @@ compiler__V *compiler__new_v_compiler_with_args(array_string args) {
   string vexe = compiler__vexe_path();
   array_string allargs = new_array_from_c_array(
       1, 1, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 1){vexe});
-  _PUSH_MANY(&allargs, (/*typ = array_string   tmp_typ=string*/ args), tmp112,
+  _PUSH_MANY(&allargs, (/*typ = array_string   tmp_typ=string*/ args), tmp111,
              array_string);
   os__setenv(tos3("VOSARGS"), array_string_join(allargs, tos3(" ")), 1);
   return compiler__new_v(allargs);
@@ -24321,6 +24291,11 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
 
     return;
   };
+  bool is_all = string_eq(os__getenv(tos3("VFMT_OPTION_ALL")), tos3("yes"));
+  if (string_ne(p->file_path, p->v->dir) && !is_all) {
+
+    return;
+  };
   string s = string_replace_each(
       array_string_join(p->scanner->fmt_lines, tos3("")),
       new_array_from_c_array(6, 6, sizeof(string),
@@ -24336,28 +24311,43 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
 
     return;
   };
-  if (string_contains(p->file_path, tos3("vfmt"))) {
+  if (string_contains(p->file_path, tos3("compiler/vfmt.v"))) {
 
     return;
   };
-  string path = string_add(string_add(os__tmpdir(), tos3("/")), p->file_name);
-  printf("generating %.*s\n", path.len, path.str);
-  Option_os__File tmp31 = os__create(path);
+  if (is_all) {
+    if (p->file_path.len > 0) {
+      string path = compiler__write_formatted_source(p->file_name, s);
+      Option_bool tmp31 = os__cp(path, p->file_path);
+      if (!tmp31.ok) {
+        string err = tmp31.error;
+        int errcode = tmp31.ecode;
+        v_panic(err);
+      };
+      eprintln(_STR("Written fmt file to: %.*s", p->file_path.len,
+                    p->file_path.str));
+    };
+  };
+  if (string_eq(p->file_path, p->v->dir)) {
+    string res_path = compiler__write_formatted_source(p->file_name, s);
+    os__setenv(tos3("VFMT_FILE_RESULT"), res_path, 1);
+  };
+}
+string compiler__write_formatted_source(string file_name, string s) {
+  string path = string_add(string_add(os__tmpdir(), tos3("/")), file_name);
+  Option_os__File tmp32 = os__create(path);
   os__File out;
-  if (!tmp31.ok) {
-    string err = tmp31.error;
-    int errcode = tmp31.ecode;
-    compiler__verror(tos3("failed to create os_nix.v"));
-
-    return;
+  if (!tmp32.ok) {
+    string err = tmp32.error;
+    int errcode = tmp32.ecode;
+    compiler__verror(_STR("failed to create file %.*s", path.len, path.str));
+    return tos3("");
   }
-  out = *(os__File *)tmp31.data;
+  out = *(os__File *)tmp32.data;
   ;
-  printf("replacing %.*s...\n\n", p->file_path.len, p->file_path.str);
   os__File_writeln(&/* ? */ out, string_trim_space(s));
-  os__File_writeln(&/* ? */ out, tos3(""));
   os__File_close(&/* ? */ out);
-  os__mv(path, p->file_path);
+  return path;
 }
 string compiler__get_vtmp_folder() {
   string vtmp = filepath__join(os__tmpdir(),
@@ -24381,17 +24371,27 @@ string compiler__get_vtmp_filename(string base_file_name, string postfix) {
                                     postfix)}}));
 }
 void compiler__launch_tool(string tname) {
+  bool is_verbose = (_IN(string, (tos3("-verbose")), os__args)) ||
+                    (_IN(string, (tos3("--verbose")), os__args));
   string vexe = compiler__vexe_path();
   string vroot = os__dir(vexe);
-  array_string oargs = os__args;
-  array_set(&/*q*/ oargs, 0, &(string[]){_STR("\"%.*s\"", vexe.len, vexe.str)});
+  compiler__set_vroot_folder(vroot);
+  string tool_args =
+      array_string_join(array_slice2(os__args, 1, -1, true), tos3(" "));
   string tool_exe = os__realpath(
       _STR("%.*s/tools/%.*s", vroot.len, vroot.str, tname.len, tname.str));
   string tool_source = os__realpath(
       _STR("%.*s/tools/%.*s.v", vroot.len, vroot.str, tname.len, tname.str));
-  string tool_args = array_string_join(oargs, tos3(" "));
   string tool_command = _STR("\"%.*s\" %.*s", tool_exe.len, tool_exe.str,
                              tool_args.len, tool_args.str);
+  if (is_verbose) {
+    eprintln(_STR("launch_tool vexe        : %.*s", vroot.len, vroot.str));
+    eprintln(_STR("launch_tool vroot       : %.*s", vroot.len, vroot.str));
+    eprintln(
+        _STR("launch_tool tool_args   : %.*s", tool_args.len, tool_args.str));
+    eprintln(_STR("launch_tool tool_command: %.*s", tool_command.len,
+                  tool_command.str));
+  };
   bool tool_should_be_recompiled = 0;
   if (!os__exists(tool_exe)) {
     tool_should_be_recompiled = 1;
@@ -24404,23 +24404,40 @@ void compiler__launch_tool(string tname) {
       tool_should_be_recompiled = 1;
     };
   };
+  if (is_verbose) {
+    eprintln(_STR("launch_tool tool_should_be_recompiled: %d",
+                  tool_should_be_recompiled));
+  };
   if (tool_should_be_recompiled) {
-    string compilation_command = _STR("\"%.*s\" \"%.*s\"", vexe.len, vexe.str,
-                                      tool_source.len, tool_source.str);
-    Option_os__Result tmp1 = os__exec(compilation_command);
+    string compilation_options = tos3("");
+    if (string_eq(tname, tos3("vfmt"))) {
+      compilation_options = tos3("-d vfmt");
+    };
+    string compilation_command = _STR(
+        "\"%.*s\" %.*s \"%.*s\"", vexe.len, vexe.str, compilation_options.len,
+        compilation_options.str, tool_source.len, tool_source.str);
+    if (is_verbose) {
+      eprintln(_STR("Compiling %.*s with: \"%.*s\"", tname.len, tname.str,
+                    compilation_command.len, compilation_command.str));
+    };
+    Option_os__Result tmp3 = os__exec(compilation_command);
     os__Result tool_compilation;
-    if (!tmp1.ok) {
-      string err = tmp1.error;
-      int errcode = tmp1.ecode;
+    if (!tmp3.ok) {
+      string err = tmp3.error;
+      int errcode = tmp3.ecode;
       v_panic(err);
     }
-    tool_compilation = *(os__Result *)tmp1.data;
+    tool_compilation = *(os__Result *)tmp3.data;
     ;
     if (tool_compilation.exit_code != 0) {
       v_panic(string_add(_STR("V tool \"%.*s\" could not be compiled\n",
                               tool_source.len, tool_source.str),
                          tool_compilation.output));
     };
+  };
+  if (is_verbose) {
+    eprintln(_STR("launch_tool running tool command: %.*s ...",
+                  tool_command.len, tool_command.str));
   };
   v_exit(os__system(tool_command));
 }
@@ -25021,11 +25038,22 @@ string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark *b, string s,
 }
 i64 benchmark__now() { return time__ticks(); }
 void main__main() {
+  bool is_verbose = (_IN(string, (tos3("-verbose")), os__args)) ||
+                    (_IN(string, (tos3("--verbose")), os__args));
   array_string args = compiler__env_vflags_and_os_args();
-  _V_MulRet_array_string_V_string _V_mret_57_options_command =
+  _V_MulRet_array_string_V_string _V_mret_72_options_command =
       compiler__get_v_options_and_main_command(args);
-  array_string options = _V_mret_57_options_command.var_0;
-  string command = _V_mret_57_options_command.var_1;
+  array_string options = _V_mret_72_options_command.var_0;
+  string command = _V_mret_72_options_command.var_1;
+  if (is_verbose) {
+    string tmp1 = array_string_str(args);
+
+    eprintln(_STR("v    args: %.*s ", tmp1.len, tmp1.str));
+    eprintln(_STR("v command: %.*s", command.len, command.str));
+    string tmp2 = array_string_str(options);
+
+    eprintln(_STR("v options: %.*s ", tmp2.len, tmp2.str));
+  };
   if ((_IN(string, (command), main__simple_tools))) {
     compiler__launch_tool(string_add(tos3("v"), command));
 
@@ -25081,32 +25109,31 @@ void main__main() {
   compiler__V_finalize_compilation(&/* ? */ *v);
 }
 void main__v_command(string command, array_string args) {
-  string tmp3 = command;
+  string tmp5 = command;
 
-  if ((string_eq(tmp3, tos3(""))) || (string_eq(tmp3, tos3("."))) ||
-      (string_eq(tmp3, tos3("run"))) || (string_eq(tmp3, tos3("build")))) {
+  if ((string_eq(tmp5, tos3(""))) || (string_eq(tmp5, tos3("."))) ||
+      (string_eq(tmp5, tos3("run"))) || (string_eq(tmp5, tos3("build")))) {
 
     return;
-  } else if (string_eq(tmp3, tos3("version"))) {
+  } else if (string_eq(tmp5, tos3("version"))) {
     printf("V %.*s %.*s\n", compiler__Version.len, compiler__Version.str,
            compiler__vhash().len, compiler__vhash().str);
-  } else if (string_eq(tmp3, tos3("help"))) {
+  } else if (string_eq(tmp5, tos3("help"))) {
     println(compiler__help_text);
-  } else if (string_eq(tmp3, tos3("translate"))) {
+  } else if (string_eq(tmp5, tos3("translate"))) {
     println(tos3("Translating C to V will be available in V 0.3 (January)"));
-  } else if ((string_eq(tmp3, tos3("search"))) ||
-             (string_eq(tmp3, tos3("install"))) ||
-             (string_eq(tmp3, tos3("update")))) {
+  } else if ((string_eq(tmp5, tos3("search"))) ||
+             (string_eq(tmp5, tos3("install"))) ||
+             (string_eq(tmp5, tos3("update"))) ||
+             (string_eq(tmp5, tos3("remove")))) {
     compiler__launch_tool(tos3("vpm"));
-  } else if (string_eq(tmp3, tos3("get"))) {
+  } else if (string_eq(tmp5, tos3("get"))) {
     println(tos3("use `v install` to install modules from vpm.vlang.io "));
-  } else if (string_eq(tmp3, tos3("symlink"))) {
+  } else if (string_eq(tmp5, tos3("symlink"))) {
     compiler__create_symlink();
-  } else if (string_eq(tmp3, tos3("fmt"))) {
-    compiler__vfmt(args);
-  } else if (string_eq(tmp3, tos3("runrepl"))) {
+  } else if (string_eq(tmp5, tos3("runrepl"))) {
     compiler__launch_tool(tos3("vrepl"));
-  } else if (string_eq(tmp3, tos3("doc"))) {
+  } else if (string_eq(tmp5, tos3("doc"))) {
     string vexe = os__executable();
     string vdir = os__dir(os__executable());
     os__chdir(vdir);
@@ -25114,18 +25141,19 @@ void main__v_command(string command, array_string args) {
     os__system(string_add(_STR("%.*s build module vlib%.*s", vexe.len, vexe.str,
                                os__path_separator.len, os__path_separator.str),
                           *(string *)array_last(args)));
-    Option_string tmp4 = os__read_file(filepath__join(
+    string vhfile = filepath__join(
         compiler__v_modules_path,
         &(varg_string){
             .len = 2,
-            .args = {tos3("vlib"), _STR("%.*s.vh", mod.len, mod.str)}}));
+            .args = {tos3("vlib"), _STR("%.*s.vh", mod.len, mod.str)}});
+    Option_string tmp6 = os__read_file(vhfile);
     string txt;
-    if (!tmp4.ok) {
-      string err = tmp4.error;
-      int errcode = tmp4.ecode;
+    if (!tmp6.ok) {
+      string err = tmp6.error;
+      int errcode = tmp6.ecode;
       v_panic(err);
     }
-    txt = *(string *)tmp4.data;
+    txt = *(string *)tmp6.data;
     ;
     println(txt);
   } else // default:
@@ -25718,11 +25746,11 @@ void init() {
       EMPTY_ARRAY_OF_ELEMS(string, 4){tos3("run"), tos3("build"),
                                       tos3("version"), tos3("doc")});
   main__simple_tools = new_array_from_c_array(
-      7, 7, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string,
-                           7){tos3("up"), tos3("create"), tos3("test"),
-                              tos3("test-compiler"), tos3("build-tools"),
-                              tos3("build-examples"), tos3("build-vbinaries")});
+      8, 8, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 8){
+          tos3("fmt"), tos3("up"), tos3("create"), tos3("test"),
+          tos3("test-compiler"), tos3("build-tools"), tos3("build-examples"),
+          tos3("build-vbinaries")});
   builtin__init();
 }
 
