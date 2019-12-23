@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "dced76d"
+#define V_COMMIT_HASH "b101369"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "42b1660"
+#define V_COMMIT_HASH "dced76d"
 #endif
 #include <inttypes.h>
 
@@ -1506,6 +1506,7 @@ bool term__can_show_color_on_stderr();
 bool term__supports_escape_sequences(int fd);
 string term__ok_message(string s);
 string term__fail_message(string s);
+string term__h_divider();
 string term__format(string msg, string open, string close);
 string term__format_rgb(int r, int g, int b, string msg, string open,
                         string close);
@@ -7018,6 +7019,22 @@ string term__ok_message(string s) {
 }
 string term__fail_message(string s) {
   return ((term__can_show_color_on_stdout()) ? (term__red(s)) : (s));
+}
+string term__h_divider() {
+  int cols = 76;
+  Option_os__Result tmp1 = os__exec(tos3("stty size"));
+
+  if (tmp1.ok) {
+    os__Result term_size = *(os__Result *)tmp1.data;
+    if (term_size.exit_code == 0) {
+      int term_cols = v_string_int(
+          (*(string *)array_get(string_split(term_size.output, tos3(" ")), 1)));
+      if (term_cols > 0) {
+        cols = term_cols;
+      };
+    };
+  };
+  return string_repeat(tos3("-"), cols);
 }
 string term__format(string msg, string open, string close) {
   return string_add(
