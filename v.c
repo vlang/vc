@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7ab993c"
+#define V_COMMIT_HASH "28594a6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d2c3c66"
+#define V_COMMIT_HASH "7ab993c"
 #endif
 #include <inttypes.h>
 
@@ -9984,7 +9984,7 @@ void compiler__Parser_enum_decl(compiler__Parser *p, bool no_name) {
   if (is_flag && !compiler__Parser_first_pass(&/* ? */ *p)) {
     compiler__Parser_gen_enum_flag_methods(p, &/*114*/ T);
   };
-  if (p->pass == compiler__compiler__Pass_decl) {
+  if (p->pass == compiler__compiler__Pass_decl || is_flag) {
     compiler__Table_register_type(p->table, T);
   };
   if (tuple_variants.len > 0 && p->pass == compiler__compiler__Pass_main) {
