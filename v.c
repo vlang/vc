@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1d86f4b"
+#define V_COMMIT_HASH "ae4c8af"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f2bab4a"
+#define V_COMMIT_HASH "1d86f4b"
 #endif
 #include <inttypes.h>
 
@@ -14130,8 +14130,11 @@ string compiler__Parser_gen_handle_option_or_else(compiler__Parser *p,
   typ = compiler__parse_pointer(string_substr2(typ, 7, -1, true));
   compiler__Parser_genln(p, tos3(";"));
   int or_tok_idx = p->token_idx;
+  ;
   compiler__Parser_check(p, compiler__compiler__TokenKind_key_orelse);
+  ;
   compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
+  ;
   compiler__Parser_register_var(
       p, (compiler__Var){.name = tos3("err"),
                          .typ = tos3("string"),
@@ -14398,7 +14401,7 @@ string compiler__Table_fn_gen_name(compiler__Table *table, compiler__Fn *f) {
       !string_ends_with(name, tos3("_str")) &&
       !string_contains(name, tos3("contains"))) {
     int tmp30 = 0;
-    bool tmp31 = map_get(/*gen_c.v : 297*/ table->obf_ids, name, &tmp30);
+    bool tmp31 = map_get(/*gen_c.v : 300*/ table->obf_ids, name, &tmp30);
 
     int idx = tmp30;
     if (idx == 0) {
@@ -15333,12 +15336,14 @@ string compiler__Parser_if_statement(compiler__Parser *p, bool is_expr,
     };
     compiler__Parser_open_scope(p);
     compiler__Parser_next(p);
+    ;
     compiler__Parser_check(p, compiler__compiler__TokenKind_decl_assign);
+    ;
     p->is_var_decl = 1;
-    _V_MulRet_string_V_string _V_mret_971_option_type_expr =
+    _V_MulRet_string_V_string _V_mret_981_option_type_expr =
         compiler__Parser_tmp_expr(p);
-    string option_type = _V_mret_971_option_type_expr.var_0;
-    string expr = _V_mret_971_option_type_expr.var_1;
+    string option_type = _V_mret_981_option_type_expr.var_0;
+    string expr = _V_mret_981_option_type_expr.var_1;
     if (!string_starts_with(option_type, tos3("Option_"))) {
       compiler__Parser_error(p,
                              tos3("`if x := opt() {` syntax requires a "
@@ -15350,6 +15355,7 @@ string compiler__Parser_if_statement(compiler__Parser *p, bool is_expr,
     compiler__CGen_insert_before(
         p->cgen, _STR("%.*s %.*s = %.*s; ", option_type.len, option_type.str,
                       option_tmp.len, option_tmp.str, expr.len, expr.str));
+    ;
     compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
     compiler__Parser_genln(p, string_add(option_tmp, tos3(".ok) {")));
     compiler__Parser_genln(p, _STR("%.*s %.*s = *(%.*s*) %.*s . data;", typ.len,
