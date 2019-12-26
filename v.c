@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fe8a6ab"
+#define V_COMMIT_HASH "8d9f89e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c1f4fc3"
+#define V_COMMIT_HASH "fe8a6ab"
 #endif
 #include <inttypes.h>
 
@@ -5063,6 +5063,10 @@ void strings__Builder_write_b(strings__Builder *b, byte data) {
   b->len++;
 }
 void strings__Builder_write(strings__Builder *b, string s) {
+  if (string_eq(s, tos3(""))) {
+
+    return;
+  };
   array_push_many(&/* ? */ b->buf, s.str, s.len);
   b->len += s.len;
 }
@@ -13265,21 +13269,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp98 = tos3("");
-    bool tmp99 = map_get(/*fn.v : 1328*/ r.inst, tp, &tmp98);
+    bool tmp99 = map_get(/*fn.v : 1331*/ r.inst, tp, &tmp98);
 
     if (!tmp99)
       tmp98 = tos((byte *)"", 0);
 
     if (string_ne(tmp98, tos3(""))) {
       string tmp100 = tos3("");
-      bool tmp101 = map_get(/*fn.v : 1329*/ r.inst, tp, &tmp100);
+      bool tmp101 = map_get(/*fn.v : 1332*/ r.inst, tp, &tmp100);
 
       if (!tmp101)
         tmp100 = tos((byte *)"", 0);
 
       if (string_ne(tmp100, ti)) {
         string tmp102 = tos3("");
-        bool tmp103 = map_get(/*fn.v : 1330*/ r.inst, tp, &tmp102);
+        bool tmp103 = map_get(/*fn.v : 1333*/ r.inst, tp, &tmp102);
 
         if (!tmp103)
           tmp102 = tos((byte *)"", 0);
@@ -13297,7 +13301,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp104 = tos3("");
-  bool tmp105 = map_get(/*fn.v : 1341*/ r.inst, f->typ, &tmp104);
+  bool tmp105 = map_get(/*fn.v : 1344*/ r.inst, f->typ, &tmp104);
 
   if (!tmp105)
     tmp104 = tos((byte *)"", 0);
@@ -13310,7 +13314,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp106.data)[tmp107];
 
     string tmp108 = tos3("");
-    bool tmp109 = map_get(/*fn.v : 1345*/ r.inst, tp, &tmp108);
+    bool tmp109 = map_get(/*fn.v : 1348*/ r.inst, tp, &tmp108);
 
     if (!tmp109)
       tmp108 = tos((byte *)"", 0);
@@ -13335,7 +13339,7 @@ string compiler__replace_generic_type(string gen_type, compiler__TypeInst *ti) {
   };
   if ((_IN_MAP((typ), ti->inst))) {
     string tmp112 = tos3("");
-    bool tmp113 = map_get(/*fn.v : 1360*/ ti->inst, typ, &tmp112);
+    bool tmp113 = map_get(/*fn.v : 1363*/ ti->inst, typ, &tmp112);
 
     if (!tmp113)
       tmp112 = tos((byte *)"", 0);
@@ -13389,7 +13393,7 @@ void compiler__replace_generic_type_params(compiler__Fn *f,
   if (string_ends_with(f->typ, tos3("_T"))) {
     string par = (*(string *)array_get(map_keys(&/* ? */ ti->inst), 0));
     string tmp125 = tos3("");
-    bool tmp126 = map_get(/*fn.v : 1393*/ ti->inst, par, &tmp125);
+    bool tmp126 = map_get(/*fn.v : 1396*/ ti->inst, par, &tmp125);
 
     if (!tmp126)
       tmp125 = tos((byte *)"", 0);
@@ -13590,7 +13594,7 @@ void compiler__rename_generic_fn_instance(compiler__Fn *f,
     string k = ((string *)tmp146.data)[tmp147];
 
     string tmp148 = tos3("");
-    bool tmp149 = map_get(/*fn.v : 1497*/ ti->inst, k, &tmp148);
+    bool tmp149 = map_get(/*fn.v : 1500*/ ti->inst, k, &tmp148);
 
     if (!tmp149)
       tmp148 = tos((byte *)"", 0);
