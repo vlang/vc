@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d9835c1"
+#define V_COMMIT_HASH "9b37fc7"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8d9f89e"
+#define V_COMMIT_HASH "d9835c1"
 #endif
 #include <inttypes.h>
 
@@ -25077,7 +25077,8 @@ void compiler__Parser_fmt_dec(compiler__Parser *p) {
 }
 void compiler__Scanner_init_fmt(compiler__Scanner *s) { s->is_fmt = 1; }
 void compiler__Parser_fnext(compiler__Parser *p) {
-  if (p->tok == compiler__compiler__TokenKind_rcbr && !p->inside_if_expr) {
+  if (p->tok == compiler__compiler__TokenKind_rcbr && !p->inside_if_expr &&
+      p->prev_tok != compiler__compiler__TokenKind_lcbr) {
     ;
   };
   string s = compiler__Parser_strtok(&/* ? */ *p);
@@ -25085,7 +25086,9 @@ void compiler__Parser_fnext(compiler__Parser *p) {
     ;
   };
   bool inc_indent = 0;
-  if (p->tok == compiler__compiler__TokenKind_lcbr && !p->inside_if_expr) {
+  if (p->tok == compiler__compiler__TokenKind_lcbr && !p->inside_if_expr &&
+      compiler__Parser_peek(&/* ? */ *p) !=
+          compiler__compiler__TokenKind_rcbr) {
     ;
     ;
   };
