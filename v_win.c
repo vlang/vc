@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fc5f4ff"
+#define V_COMMIT_HASH "c9be519"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d27c5eb"
+#define V_COMMIT_HASH "fc5f4ff"
 #endif
 #include <inttypes.h>
 
@@ -16329,7 +16329,7 @@ void compiler__V_generate_main(compiler__V *v) {
   };
 }
 void compiler__V_gen_main_start(compiler__V *v, bool add_os_args) {
-  if ((v->os == compiler__compiler__OS_windows)) {
+  if (v->os == compiler__compiler__OS_windows) {
     if ((_IN(string, (tos3("glfw")), v->table->imports))) {
       compiler__CGen_genln(v->cgen, tos3("#ifdef V_BOOTSTRAP"));
       compiler__CGen_genln(v->cgen, tos3("int main(int argc, char** argv) { "));
@@ -17001,12 +17001,12 @@ compiler__V *compiler__new_v(array_string args) {
       os_dot_cmdline__many_values(args, tos3("-cflags")), tos3(" "));
   array_string defines = os_dot_cmdline__many_values(args, tos3("-d"));
   _V_MulRet_array_string_V_array_string
-      _V_mret_4738_compile_defines_compile_defines_all =
+      _V_mret_4736_compile_defines_compile_defines_all =
           compiler__parse_defines(defines);
   array_string compile_defines =
-      _V_mret_4738_compile_defines_compile_defines_all.var_0;
+      _V_mret_4736_compile_defines_compile_defines_all.var_0;
   array_string compile_defines_all =
-      _V_mret_4738_compile_defines_compile_defines_all.var_1;
+      _V_mret_4736_compile_defines_compile_defines_all.var_1;
   string rdir = os__realpath(dir);
   string rdir_name = filepath__filename(rdir);
   if ((_IN(string, (tos3("-bare")), args))) {
