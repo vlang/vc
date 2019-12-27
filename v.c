@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "796c376"
+#define V_COMMIT_HASH "7518d2d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "66a07d7"
+#define V_COMMIT_HASH "796c376"
 #endif
 #include <inttypes.h>
 
@@ -16236,9 +16236,6 @@ void compiler__V_generate_main(compiler__V *v) {
 void compiler__V_gen_main_start(compiler__V *v, bool add_os_args) {
   if (v->os == compiler__compiler__OS_windows) {
     if ((_IN(string, (tos3("glfw")), v->table->imports))) {
-      compiler__CGen_genln(v->cgen, tos3("#ifdef V_BOOTSTRAP"));
-      compiler__CGen_genln(v->cgen, tos3("int main(int argc, char** argv) { "));
-      compiler__CGen_genln(v->cgen, tos3("#else"));
       compiler__CGen_genln(
           v->cgen, tos3("int WINAPI wWinMain(HINSTANCE instance, HINSTANCE "
                         "prev_instance, LPWSTR cmd_line, int show_cmd) { "));
@@ -16257,17 +16254,10 @@ void compiler__V_gen_main_start(compiler__V *v, bool add_os_args) {
       compiler__CGen_genln(
           v->cgen,
           tos3("    wchar_t** argv = CommandLineToArgvW(cmd_line, &argc);"));
-      compiler__CGen_genln(
-          v->cgen, tos3("    os__args = os__init_os_args_wide(argc, argv);"));
-      compiler__CGen_genln(v->cgen, tos3("#endif"));
     } else {
-      compiler__CGen_genln(v->cgen, tos3("#ifdef V_BOOTSTRAP"));
-      compiler__CGen_genln(v->cgen, tos3("int main(int argc, char** argv) { "));
-      compiler__CGen_genln(v->cgen, tos3("#else"));
       compiler__CGen_genln(
           v->cgen,
           tos3("int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) { "));
-      compiler__CGen_genln(v->cgen, tos3("#endif"));
     };
   } else {
     compiler__CGen_genln(v->cgen, tos3("int main(int argc, char** argv) { "));
@@ -16275,14 +16265,8 @@ void compiler__V_gen_main_start(compiler__V *v, bool add_os_args) {
   compiler__CGen_genln(v->cgen, tos3("  init();"));
   if (add_os_args && (_IN(string, (tos3("os")), v->table->imports))) {
     if (v->os == compiler__compiler__OS_windows) {
-      compiler__CGen_genln(v->cgen, tos3("#ifdef V_BOOTSTRAP"));
-      compiler__CGen_genln(
-          v->cgen,
-          tos3("  os__args = os__init_os_args(argc, (byteptr*)argv);"));
-      compiler__CGen_genln(v->cgen, tos3("#else"));
       compiler__CGen_genln(
           v->cgen, tos3("  os__args = os__init_os_args_wide(argc, argv);"));
-      compiler__CGen_genln(v->cgen, tos3("#endif"));
     } else {
       compiler__CGen_genln(
           v->cgen,
@@ -16919,12 +16903,12 @@ compiler__V *compiler__new_v(array_string args) {
       os_dot_cmdline__many_values(args, tos3("-cflags")), tos3(" "));
   array_string defines = os_dot_cmdline__many_values(args, tos3("-d"));
   _V_MulRet_array_string_V_array_string
-      _V_mret_4736_compile_defines_compile_defines_all =
+      _V_mret_4632_compile_defines_compile_defines_all =
           compiler__parse_defines(defines);
   array_string compile_defines =
-      _V_mret_4736_compile_defines_compile_defines_all.var_0;
+      _V_mret_4632_compile_defines_compile_defines_all.var_0;
   array_string compile_defines_all =
-      _V_mret_4736_compile_defines_compile_defines_all.var_1;
+      _V_mret_4632_compile_defines_compile_defines_all.var_1;
   string rdir = os__realpath(dir);
   string rdir_name = filepath__filename(rdir);
   if ((_IN(string, (tos3("-bare")), args))) {

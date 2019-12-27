@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "796c376"
+#define V_COMMIT_HASH "7518d2d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "66a07d7"
+#define V_COMMIT_HASH "796c376"
 #endif
 #include <inttypes.h>
 
@@ -1598,7 +1598,6 @@ void os__mkdir_all(string path);
 string os__join(string base, varg_string *dirs);
 string os__tmpdir();
 void os__chmod(string path, int mode);
-array_string os__init_os_args(int argc, byteptr *argv);
 array_string os__init_os_args_wide(int argc, byteptr *argv);
 Option_array_string os__ls(string path);
 Option_bool os__mkdir(string path);
@@ -6778,18 +6777,6 @@ string os__tmpdir() {
   return path;
 }
 void os__chmod(string path, int mode) { chmod((char *)path.str, mode); }
-array_string os__init_os_args(int argc, byteptr *argv) {
-  array_string args = new_array_from_c_array(
-      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  for (int i = 0; i < argc; i++) {
-
-    _PUSH(&args,
-          (/*typ = array_string   tmp_typ=string*/ (
-              tos2((byte *)argv[/*ptr!*/ i] /*rbyteptr 0*/))),
-          tmp1, string);
-  };
-  return args;
-}
 array_string os__init_os_args_wide(int argc, byteptr *argv) {
   array_string args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
@@ -6798,7 +6785,7 @@ array_string os__init_os_args_wide(int argc, byteptr *argv) {
     _PUSH(&args,
           (/*typ = array_string   tmp_typ=string*/ string_from_wide(
               ((u16 *)(argv[/*ptr!*/ i] /*rbyteptr 0*/)))),
-          tmp2, string);
+          tmp1, string);
   };
   return args;
 }
@@ -6825,7 +6812,7 @@ Option_array_string os__ls(string path) {
   if (string_ne(first_filename, tos3(".")) &&
       string_ne(first_filename, tos3(".."))) {
     _PUSH(&dir_files, (/*typ = array_string   tmp_typ=string*/ first_filename),
-          tmp3, string);
+          tmp2, string);
   };
   while (FindNextFile(h_find_files, ((voidptr)(&find_file_data)))) {
 
@@ -6833,17 +6820,17 @@ Option_array_string os__ls(string path) {
     if (string_ne(filename, tos3(".")) && string_ne(filename, tos3(".."))) {
       _PUSH(&dir_files,
             (/*typ = array_string   tmp_typ=string*/ string_clone(filename)),
-            tmp4, string);
+            tmp3, string);
     };
   };
   FindClose(h_find_files);
-  array_string tmp5 = OPTION_CAST(array_string)(dir_files);
-  return opt_ok(&tmp5, sizeof(array_string));
+  array_string tmp4 = OPTION_CAST(array_string)(dir_files);
+  return opt_ok(&tmp4, sizeof(array_string));
 }
 Option_bool os__mkdir(string path) {
   if (string_eq(path, tos3("."))) {
-    bool tmp6 = OPTION_CAST(bool)(1);
-    return opt_ok(&tmp6, sizeof(bool));
+    bool tmp5 = OPTION_CAST(bool)(1);
+    return opt_ok(&tmp5, sizeof(bool));
   };
   string apath = os__realpath(path);
   if (!CreateDirectory(string_to_wide(apath), 0)) {
@@ -6852,8 +6839,8 @@ Option_bool os__mkdir(string path) {
              apath.len, apath.str),
         os__get_error_msg(((int)(GetLastError())))));
   };
-  bool tmp7 = OPTION_CAST(bool)(1);
-  return opt_ok(&tmp7, sizeof(bool));
+  bool tmp6 = OPTION_CAST(bool)(1);
+  return opt_ok(&tmp6, sizeof(bool));
 }
 HANDLE os__get_file_handle(string path) {
   string mode = tos3("rb");
@@ -6869,12 +6856,12 @@ Option_string os__get_module_filename(HANDLE handle) {
   u16 *buf = ((u16 *)(v_malloc(4096)));
   while (1) {
     int status = ((int)(GetModuleFileNameW(handle, ((voidptr)(&buf)), sz)));
-    int tmp8 = status;
+    int tmp7 = status;
 
-    if (tmp8 == os__SUCCESS) {
+    if (tmp7 == os__SUCCESS) {
       string _filename = string_from_wide2(buf, sz);
-      string tmp9 = OPTION_CAST(string)(_filename);
-      return opt_ok(&tmp9, sizeof(string));
+      string tmp8 = OPTION_CAST(string)(_filename);
+      return opt_ok(&tmp8, sizeof(string));
     } else // default:
     {
       return v_error(tos3("Cannot get file name from handle"));
@@ -6986,9 +6973,9 @@ Option_os__Result os__exec(string cmd) {
   GetExitCodeProcess(proc_info.hProcess, ((voidptr)(&exit_code)));
   CloseHandle(proc_info.hProcess);
   CloseHandle(proc_info.hThread);
-  os__Result tmp10 = OPTION_CAST(os__Result)(
+  os__Result tmp9 = OPTION_CAST(os__Result)(
       (os__Result){.output = read_data, .exit_code = ((int)(exit_code))});
-  return opt_ok(&tmp10, sizeof(os__Result));
+  return opt_ok(&tmp9, sizeof(os__Result));
 }
 array_string os_dot_cmdline__many_values(array_string args, string optname) {
   array_string flags = new_array_from_c_array(
@@ -16333,9 +16320,6 @@ void compiler__V_generate_main(compiler__V *v) {
 void compiler__V_gen_main_start(compiler__V *v, bool add_os_args) {
   if (v->os == compiler__compiler__OS_windows) {
     if ((_IN(string, (tos3("glfw")), v->table->imports))) {
-      compiler__CGen_genln(v->cgen, tos3("#ifdef V_BOOTSTRAP"));
-      compiler__CGen_genln(v->cgen, tos3("int main(int argc, char** argv) { "));
-      compiler__CGen_genln(v->cgen, tos3("#else"));
       compiler__CGen_genln(
           v->cgen, tos3("int WINAPI wWinMain(HINSTANCE instance, HINSTANCE "
                         "prev_instance, LPWSTR cmd_line, int show_cmd) { "));
@@ -16354,17 +16338,10 @@ void compiler__V_gen_main_start(compiler__V *v, bool add_os_args) {
       compiler__CGen_genln(
           v->cgen,
           tos3("    wchar_t** argv = CommandLineToArgvW(cmd_line, &argc);"));
-      compiler__CGen_genln(
-          v->cgen, tos3("    os__args = os__init_os_args_wide(argc, argv);"));
-      compiler__CGen_genln(v->cgen, tos3("#endif"));
     } else {
-      compiler__CGen_genln(v->cgen, tos3("#ifdef V_BOOTSTRAP"));
-      compiler__CGen_genln(v->cgen, tos3("int main(int argc, char** argv) { "));
-      compiler__CGen_genln(v->cgen, tos3("#else"));
       compiler__CGen_genln(
           v->cgen,
           tos3("int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) { "));
-      compiler__CGen_genln(v->cgen, tos3("#endif"));
     };
   } else {
     compiler__CGen_genln(v->cgen, tos3("int main(int argc, char** argv) { "));
@@ -16372,14 +16349,8 @@ void compiler__V_gen_main_start(compiler__V *v, bool add_os_args) {
   compiler__CGen_genln(v->cgen, tos3("  init();"));
   if (add_os_args && (_IN(string, (tos3("os")), v->table->imports))) {
     if (v->os == compiler__compiler__OS_windows) {
-      compiler__CGen_genln(v->cgen, tos3("#ifdef V_BOOTSTRAP"));
-      compiler__CGen_genln(
-          v->cgen,
-          tos3("  os__args = os__init_os_args(argc, (byteptr*)argv);"));
-      compiler__CGen_genln(v->cgen, tos3("#else"));
       compiler__CGen_genln(
           v->cgen, tos3("  os__args = os__init_os_args_wide(argc, argv);"));
-      compiler__CGen_genln(v->cgen, tos3("#endif"));
     } else {
       compiler__CGen_genln(
           v->cgen,
@@ -17003,12 +16974,12 @@ compiler__V *compiler__new_v(array_string args) {
       os_dot_cmdline__many_values(args, tos3("-cflags")), tos3(" "));
   array_string defines = os_dot_cmdline__many_values(args, tos3("-d"));
   _V_MulRet_array_string_V_array_string
-      _V_mret_4736_compile_defines_compile_defines_all =
+      _V_mret_4632_compile_defines_compile_defines_all =
           compiler__parse_defines(defines);
   array_string compile_defines =
-      _V_mret_4736_compile_defines_compile_defines_all.var_0;
+      _V_mret_4632_compile_defines_compile_defines_all.var_0;
   array_string compile_defines_all =
-      _V_mret_4736_compile_defines_compile_defines_all.var_1;
+      _V_mret_4632_compile_defines_compile_defines_all.var_1;
   string rdir = os__realpath(dir);
   string rdir_name = filepath__filename(rdir);
   if ((_IN(string, (tos3("-bare")), args))) {
@@ -25937,17 +25908,9 @@ string _STR_TMP(const char *fmt, ...) {
   return tos2(g_str_buf);
 }
 
-#ifdef V_BOOTSTRAP
-int main(int argc, char **argv) {
-#else
 int wmain(int argc, wchar_t *argv[], wchar_t *envp[]) {
-#endif
   init();
-#ifdef V_BOOTSTRAP
-  os__args = os__init_os_args(argc, (byteptr *)argv);
-#else
   os__args = os__init_os_args_wide(argc, argv);
-#endif
 
   main__main();
   free(g_str_buf);
