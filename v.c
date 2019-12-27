@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7518d2d"
+#define V_COMMIT_HASH "e71b99c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "796c376"
+#define V_COMMIT_HASH "7518d2d"
 #endif
 #include <inttypes.h>
 
@@ -388,6 +388,7 @@ typedef struct varg_string varg_string;
 typedef Option Option_array_string;
 typedef Option Option_bool;
 typedef Option Option_os__Result;
+typedef Option Option_bool;
 typedef struct rand__Pcg32 rand__Pcg32;
 typedef struct rand__Splitmix64 rand__Splitmix64;
 typedef struct time__Time time__Time;
@@ -478,6 +479,7 @@ typedef Option Option_os__File;
 typedef Option Option_array_string;
 typedef Option Option_bool;
 typedef Option Option_os__Result;
+typedef Option Option_bool;
 typedef int time__FormatTime;
 typedef int time__FormatDate;
 typedef int time__FormatDelimiter;
@@ -1492,6 +1494,7 @@ string os__get_error_msg(int code);
 Option_array_string os__ls(string path);
 Option_bool os__mkdir(string path);
 Option_os__Result os__exec(string cmd);
+Option_bool os__symlink(string origin, string target);
 array_string os_dot_cmdline__many_values(array_string args, string optname);
 string os_dot_cmdline__option(array_string args, string param, string def);
 array_string os_dot_cmdline__before(array_string args, array_string what);
@@ -6837,6 +6840,14 @@ Option_os__Result os__exec(string cmd) {
   os__Result tmp8 = OPTION_CAST(os__Result)(
       (os__Result){.output = res, .exit_code = exit_code});
   return opt_ok(&tmp8, sizeof(os__Result));
+}
+Option_bool os__symlink(string origin, string target) {
+  int res = symlink((char *)origin.str, (char *)target.str);
+  if (res == 0) {
+    bool tmp9 = OPTION_CAST(bool)(1);
+    return opt_ok(&tmp9, sizeof(bool));
+  };
+  return v_error(os__get_error_msg(errno));
 }
 array_string os_dot_cmdline__many_values(array_string args, string optname) {
   array_string flags = new_array_from_c_array(
