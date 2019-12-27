@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d27c5eb"
+#define V_COMMIT_HASH "fc5f4ff"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1af274a"
+#define V_COMMIT_HASH "d27c5eb"
 #endif
 #include <inttypes.h>
 
@@ -9569,11 +9569,13 @@ string compiler__normalized_error(string s) {
   string res = string_replace(
       string_replace(
           string_replace(
-              string_replace(string_replace(s, tos3("array_"), tos3("[]")),
-                             tos3("__"), tos3(".")),
-              tos3("Option_"), tos3("?")),
-          tos3("main."), tos3("")),
-      tos3("ptr_"), tos3("&"));
+              string_replace(
+                  string_replace(string_replace(s, tos3("array_"), tos3("[]")),
+                                 tos3("__"), tos3(".")),
+                  tos3("Option_"), tos3("?")),
+              tos3("main."), tos3("")),
+          tos3("ptr_"), tos3("&")),
+      tos3("_dot_"), tos3("."));
   if (string_contains(res, tos3("_V_MulRet_"))) {
     res = string_replace(string_replace(res, tos3("_V_MulRet_"), tos3("(")),
                          tos3("_V_"), tos3(", "));
