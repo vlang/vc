@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c9be519"
+#define V_COMMIT_HASH "6c16bac"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fc5f4ff"
+#define V_COMMIT_HASH "c9be519"
 #endif
 #include <inttypes.h>
 
@@ -1594,7 +1594,6 @@ int os__wait();
 int os__file_last_mod_unix(string path);
 void os__log(string s);
 void os__flush_stdout();
-void os__print_backtrace();
 void os__mkdir_all(string path);
 string os__join(string base, varg_string *dirs);
 string os__tmpdir();
@@ -6351,7 +6350,11 @@ void os__rmdir(string path) {
 #endif
   ;
 }
-void os__print_c_errno() {}
+void os__print_c_errno() {
+  int e = errno;
+  string se = tos_clone(((byteptr)(strerror(errno))));
+  printf("errno=%d err=%.*s\n", e, se.len, se.str);
+}
 string os__ext(string path) {
   println(tos3("Use filepath.ext"));
   return filepath__ext(path);
@@ -6726,7 +6729,6 @@ int os__file_last_mod_unix(string path) {
 }
 void os__log(string s) { println(string_add(tos3("os.log: "), s)); }
 void os__flush_stdout() { fflush(stdout); }
-void os__print_backtrace() {}
 void os__mkdir_all(string path) {
   string p =
       ((string_starts_with(path, os__path_separator)) ? (os__path_separator)
@@ -17052,6 +17054,7 @@ compiler__V *compiler__new_v(array_string args) {
           .ccompiler = compiler__find_c_compiler(),
           .building_v = !is_repl && (string_eq(rdir_name, tos3("compiler")) ||
                                      string_eq(rdir_name, tos3("v.v")) ||
+                                     string_eq(rdir_name, tos3("vfmt.v")) ||
                                      string_contains(dir, tos3("vlib"))),
           .user_mod_path = user_mod_path,
           .vlib_path = vlib_path,
