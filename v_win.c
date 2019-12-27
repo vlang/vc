@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e20ca28"
+#define V_COMMIT_HASH "98b8125"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "320174b"
+#define V_COMMIT_HASH "e20ca28"
 #endif
 #include <inttypes.h>
 
@@ -3706,7 +3706,7 @@ string string_replace(string s, string rep, string with) {
       break;
     };
     _PUSH(&idxs, (/*typ = array_int   tmp_typ=int*/ idx), tmp2, int);
-    idx++;
+    idx += rep.len;
   };
   if (idxs.len == 0) {
     return s;
