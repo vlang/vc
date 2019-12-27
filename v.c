@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "320174b"
+#define V_COMMIT_HASH "e20ca28"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6363118"
+#define V_COMMIT_HASH "320174b"
 #endif
 #include <inttypes.h>
 
@@ -10766,6 +10766,9 @@ string compiler__Parser_bool_expression(compiler__Parser *p) {
     println(compiler__TokenKind_str(tok));
     compiler__Parser_error(p, tos3("expr() returns empty type"));
   };
+  if (p->inside_return_expr) {
+    expected = p->expected_type;
+  };
   if (string_ne(expected, typ) &&
       (_IN(string, (expected), p->table->sum_types))) {
     compiler__CGen_set_placeholder(
@@ -10937,7 +10940,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
   if ((_IN(string, (name), map_keys(&/* ? */ p->generic_dispatch.inst)))) {
     string tmp10 = tos3("");
     bool tmp11 =
-        map_get(/*expression.v : 229*/ p->generic_dispatch.inst, name, &tmp10);
+        map_get(/*expression.v : 234*/ p->generic_dispatch.inst, name, &tmp10);
 
     if (!tmp11)
       tmp10 = tos((byte *)"", 0);
@@ -11087,7 +11090,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
           };
         };
         array_string tmp17 = new_array(0, 1, sizeof(string));
-        bool tmp18 = map_get(/*expression.v : 374*/ p->table->tuple_variants,
+        bool tmp18 = map_get(/*expression.v : 379*/ p->table->tuple_variants,
                              enum_type.name, &tmp17);
 
         array_string q = tmp17;
@@ -25116,7 +25119,8 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
   string s3 = string_replace(s2, tos3(") or{"), tos3(") or {"));
   string s4 = string_replace(s3, tos3(")or{"), tos3(") or {"));
   string s5 = string_replace(s4, tos3("or{"), tos3("or {"));
-  string s = s5;
+  string s6 = string_replace(s5, tos3("}}\n"), tos3("}\n\t}\n"));
+  string s = s6;
   if (string_eq(s, tos3(""))) {
 
     return;
