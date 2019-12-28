@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "68e1d8e"
+#define V_COMMIT_HASH "b5fe406"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "48585e5"
+#define V_COMMIT_HASH "68e1d8e"
 #endif
 #include <inttypes.h>
 
@@ -14176,7 +14176,8 @@ string compiler__Parser_bool_expression(compiler__Parser *p) {
     println(compiler__TokenKind_str(tok));
     compiler__Parser_error(p, tos3("expr() returns empty type"));
   };
-  if (p->inside_return_expr) {
+  if (p->inside_return_expr &&
+      string_contains(p->expected_type, tos3("_MulRet_"))) {
     expected = p->expected_type;
   };
   if (string_ne(expected, typ) &&
@@ -14185,10 +14186,10 @@ string compiler__Parser_bool_expression(compiler__Parser *p) {
     if (string_eq(T.parent, expected)) {
       compiler__CGen_set_placeholder(
           p->cgen, start_ph,
-          _STR("/*SUM TYPE CAST*/(%.*s) { .obj = memdup(& ", expected.len,
-               expected.str));
+          _STR("/*SUM TYPE CAST2*/(%.*s) { .obj = memdup( &(%.*s[]) { ",
+               expected.len, expected.str, typ.len, typ.str));
       string tt = string_all_after(typ, tos3("_"));
-      compiler__Parser_gen(p, _STR(", sizeof(%.*s) ), .typ = SumType_%.*s }",
+      compiler__Parser_gen(p, _STR("}, sizeof(%.*s) ), .typ = SumType_%.*s }",
                                    typ.len, typ.str, tt.len, tt.str));
     };
   };
@@ -14353,7 +14354,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
   if ((_IN(string, (name), map_keys(&/* ? */ p->generic_dispatch.inst)))) {
     string tmp10 = tos3("");
     bool tmp11 =
-        map_get(/*expression.v : 236*/ p->generic_dispatch.inst, name, &tmp10);
+        map_get(/*expression.v : 234*/ p->generic_dispatch.inst, name, &tmp10);
 
     if (!tmp11)
       tmp10 = tos((byte *)"", 0);
@@ -14503,7 +14504,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
           };
         };
         array_string tmp17 = new_array(0, 1, sizeof(string));
-        bool tmp18 = map_get(/*expression.v : 381*/ p->table->tuple_variants,
+        bool tmp18 = map_get(/*expression.v : 379*/ p->table->tuple_variants,
                              enum_type.name, &tmp17);
 
         array_string q = tmp17;
