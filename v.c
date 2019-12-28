@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ec6a8cc"
+#define V_COMMIT_HASH "e02d6a3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f40f023"
+#define V_COMMIT_HASH "ec6a8cc"
 #endif
 #include <inttypes.h>
 
@@ -258,80 +258,81 @@ int g_test_fails = 0;
 #define compiler__error_context_after 2
 #define compiler__NrTokens 141
 #define compiler__help_text                                                    \
-  tos3(                                                                        \
-      "Usage: v [options/commands] [file.v | directory]\n\n   When V is run "  \
-      "without any arguments, it is run in REPL mode.\n\n   When given a .v "  \
-      "file, it will be compiled. The executable will have the\n   same name " \
-      "as the input .v file: `v foo.v` produces `./foo` on *nix systems,\n  "  \
-      "`foo.exe` on Windows.\n\n   You can use -o to specify a different "     \
-      "output executable\'s name.\n\n   When given a directory, all .v files " \
-      "contained in it will be compiled as\n   part of a single main "         \
-      "module.\n\n   By default the executable will have the same name as "    \
-      "the directory.\n\n   To compile all V files in current directory, run " \
-      "`v .`\n\n   Any file ending in _test.v, will be treated as a test.\n  " \
-      " It will be compiled and run, evaluating the assert statements in "     \
-      "every\n   function named test_xxx.\n\n   You can put common options "   \
-      "inside an environment variable named VFLAGS, so that\n   you don\'t "   \
-      "have to repeat them.\n\n   You can set it like this: `export "          \
-      "VFLAGS=\"-cc clang -debug\"` on *nix,\n   `set VFLAGS=-cc msvc` on "    \
-      "Windows.\n\n   V respects the TMPDIR environment variable, and will "   \
-      "put .tmp.c files in TMPDIR/v/ .\n   If you have not set it, a "         \
-      "suitable platform specific folder (like /tmp) will be "                 \
-      "used.\n\nOptions/commands:\n  -h, help          Display this "          \
-      "information.\n  -o <file>         Write output to <file>.\n  -o "       \
-      "<file>.c       Produce C source without compiling it.\n  -o <file>.js " \
-      "     Produce JavaScript source.\n  -prod             Build an "         \
-      "optimized executable.\n  -v, version       Display compiler version "   \
-      "and git hash of the compiler source.\n  -live             Enable hot "  \
-      "code reloading (required by functions marked with [live]).\n  -os "     \
-      "<OS>          Produce an executable for the selected OS.\n            " \
-      "        OS can be linux, mac, windows, msvc.\n                    Use " \
-      "msvc if you want to use the MSVC compiler on Windows.\n  -shared      " \
-      "     Build a shared library.\n  -stats            Show additional "     \
-      "stats when compiling/running tests. Try `v -stats test .`\n\n  -cache " \
-      "           Turn on usage of the precompiled module cache.\n           " \
-      "         It very significantly speeds up secondary compilations.\n\n  " \
-      "-obf              Obfuscate the resulting binary.\n  -compress        " \
-      " Compress the resulting binary.\n  -                 Shorthand for `v " \
-      "runrepl`.\n\nOptions for debugging/troubleshooting v programs:\n  -g  " \
-      "              Generate debugging information in the backtraces. Add "   \
-      "*V* line numbers to the generated executable.\n  -cg               "    \
-      "Same as -g, but add *C* line numbers to the generated executable "      \
-      "instead of *V* line numbers.\n  -keep_c           Do NOT remove the "   \
-      "generated .tmp.c files after compilation.\n                    It is "  \
-      "useful when using debuggers like gdb/visual studio, when given after "  \
-      "-g / -cg .\n  -show_c_cmd       Print the full C compilation command "  \
-      "and how much time it took.\n  -cc <ccompiler>   Specify which C "       \
-      "compiler you want to use as a C backend.\n                    The C "   \
-      "backend compiler should be able to handle C99 compatible C code.\n    " \
-      "                Common C compilers are gcc, clang, tcc, icc, cl...\n  " \
-      "-cflags <flags>   Pass additional C flags to the C backend "            \
-      "compiler.\n                    Example: -cflags `sdl2-config "          \
-      "--cflags`\n\nCommands:\n  up                Update V. Run `v up` at "   \
-      "least once per day, since V development is rapid and "                  \
-      "features/bugfixes are added constantly.\n  run <file.v>      Build "    \
-      "and execute the V program in file.v. You can add arguments for the V "  \
-      "program *after* the file name.\n  build <module>    Compile a module "  \
-      "into an object file.\n  runrepl           Run the V REPL. If V is "     \
-      "running in a tty terminal, the REPL is interactive, otherwise it just " \
-      "reads from stdin.\n  symlink           Useful on Unix systems. "        \
-      "Symlinks the current V executable to /usr/local/bin/v, so that V is "   \
-      "globally available.\n  test v            Run all V test files, and "    \
-      "compile all V examples.\n  test folder/      Run all V test files "     \
-      "located in the folder and its subfolders. You can also pass "           \
-      "individual _test.v files too.\n  fmt               Run vfmt to format " \
-      "the source code. [wip]\n  doc               Run vdoc over the source "  \
-      "code and produce documentation.\n  translate         Translates C to "  \
-      "V. [wip, will be available in V 0.3]\n  create            Create a "    \
-      "new v project interactively. Answer the questions, and run it with `v " \
-      "run projectname`\n\nV package management commands:\n  search  "         \
-      "keywords  Search the https://vpm.vlang.io/ module repository for "      \
-      "matching modules and shows their details.\n  install <module>  "        \
-      "Install a user module from https://vpm.vlang.io/.\n  update  [module] " \
-      " Updates an already installed module, or ALL installed modules at "     \
-      "once, when no module name is given.\n  remove  [module]  Removes an "   \
-      "installed module, or ALL installed modules at once, when no module "    \
-      "name is given.\n")
+  tos3("Usage: v [options/commands] [file.v | directory]\n\n   When V is run " \
+       "without any arguments, it is run in REPL mode.\n\n   When given a .v " \
+       "file, it will be compiled. The executable will have the\n   same "     \
+       "name as the input .v file: `v foo.v` produces `./foo` on *nix "        \
+       "systems,\n  `foo.exe` on Windows.\n\n   You can use -o to specify a "  \
+       "different output executable\'s name.\n\n   When given a directory, "   \
+       "all .v files contained in it will be compiled as\n   part of a "       \
+       "single main module.\n\n   By default the executable will have the "    \
+       "same name as the directory.\n\n   To compile all V files in current "  \
+       "directory, run `v .`\n\n   Any file ending in _test.v, will be "       \
+       "treated as a test.\n   It will be compiled and run, evaluating the "   \
+       "assert statements in every\n   function named test_xxx.\n\n   You "    \
+       "can put common options inside an environment variable named VFLAGS, "  \
+       "so that\n   you don\'t have to repeat them.\n\n   You can set it "     \
+       "like this: `export VFLAGS=\"-cc clang -debug\"` on *nix,\n   `set "    \
+       "VFLAGS=-cc msvc` on Windows.\n\n   V respects the TMPDIR environment " \
+       "variable, and will put .tmp.c files in TMPDIR/v/ .\n   If you have "   \
+       "not set it, a suitable platform specific folder (like /tmp) will be "  \
+       "used.\n\nOptions/commands:\n  -h, help          Display this "         \
+       "information.\n  -o <file>         Write output to <file>.\n  -o "      \
+       "<file>.c       Produce C source without compiling it.\n  -o "          \
+       "<file>.js      Produce JavaScript source.\n  -prod             Build " \
+       "an optimized executable.\n  -v, version       Display compiler "       \
+       "version and git hash of the compiler source.\n  -verbose          "    \
+       "Produce a verbose log about what the compiler is doing, where it "     \
+       "seeks for files and so on.\n  -live             Enable hot code "      \
+       "reloading (required by functions marked with [live]).\n  -os <OS>    " \
+       "      Produce an executable for the selected OS.\n                   " \
+       " OS can be linux, mac, windows, msvc.\n                    Use msvc "  \
+       "if you want to use the MSVC compiler on Windows.\n  -shared          " \
+       " Build a shared library.\n  -stats            Show additional stats "  \
+       "when compiling/running tests. Try `v -stats test .`\n\n  -cache      " \
+       "      Turn on usage of the precompiled module cache.\n               " \
+       "     It very significantly speeds up secondary compilations.\n\n  "    \
+       "-obf              Obfuscate the resulting binary.\n  -compress       " \
+       "  Compress the resulting binary.\n  -                 Shorthand for "  \
+       "`v runrepl`.\n\nOptions for debugging/troubleshooting v programs:\n  " \
+       "-g                Generate debugging information in the backtraces. "  \
+       "Add *V* line numbers to the generated executable.\n  -cg             " \
+       "  Same as -g, but add *C* line numbers to the generated executable "   \
+       "instead of *V* line numbers.\n  -keep_c           Do NOT remove the "  \
+       "generated .tmp.c files after compilation.\n                    It is " \
+       "useful when using debuggers like gdb/visual studio, when given after " \
+       "`-g` / `-cg`.\n  -show_c_cmd       Print the full C compilation "      \
+       "command and how much time it took. See also `-verbose`.\n  -cc "       \
+       "<ccompiler>   Specify which C compiler you want to use as a C "        \
+       "backend.\n                    The C backend compiler should be able "  \
+       "to handle C99 compatible C code.\n                    Common C "       \
+       "compilers are gcc, clang, tcc, icc, cl...\n  -cflags <flags>   Pass "  \
+       "additional C flags to the C backend compiler.\n                    "   \
+       "Example: -cflags `sdl2-config --cflags`\n\nCommands:\n  up           " \
+       "     Update V. Run `v up` at least once per day, since V development " \
+       "is rapid and features/bugfixes are added constantly.\n  run <file.v> " \
+       "     Build and execute the V program in file.v. You can add "          \
+       "arguments for the V program *after* the file name.\n  build <module> " \
+       "   Compile a module into an object file.\n  runrepl           Run "    \
+       "the V REPL. If V is running in a tty terminal, the REPL is "           \
+       "interactive, otherwise it just reads from stdin.\n  symlink          " \
+       " Useful on Unix systems. Symlinks the current V executable to "        \
+       "/usr/local/bin/v, so that V is globally available.\n  test v         " \
+       "   Run all V test files, and compile all V examples.\n  test folder/ " \
+       "     Run all V test files located in the folder and its subfolders. "  \
+       "You can also pass individual _test.v files too.\n  fmt               " \
+       "Run vfmt to format the source code. [wip]\n  doc               Run "   \
+       "vdoc over the source code and produce documentation.\n  translate    " \
+       "     Translates C to V. [wip, will be available in V 0.3]\n  create  " \
+       "          Create a new v project interactively. Answer the "           \
+       "questions, and run it with `v run projectname`\n\nV package "          \
+       "management commands:\n  search  keywords  Search the "                 \
+       "https://vpm.vlang.io/ module repository for matching modules and "     \
+       "shows their details.\n  install <module>  Install a user module from " \
+       "https://vpm.vlang.io/.\n  update  [module]  Updates an already "       \
+       "installed module, or ALL installed modules at once, when no module "   \
+       "name is given.\n  remove  [module]  Removes an installed module, or "  \
+       "ALL installed modules at once, when no module name is given.\n")
 #include <errno.h>
 #include <float.h>
 #include <sys/stat.h> // #include <signal.h>
