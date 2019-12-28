@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "379c790"
+#define V_COMMIT_HASH "651c7e8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e02d6a3"
+#define V_COMMIT_HASH "379c790"
 #endif
 #include <inttypes.h>
 
@@ -1159,6 +1159,7 @@ void panic_debug(int line_no, string file, string mod, string fn_name,
                  string s);
 void v_panic(string s);
 void eprintln(string s);
+void eprint(string s);
 void print(string s);
 byte *v_malloc(int n);
 byte *v_calloc(int n);
@@ -2914,6 +2915,21 @@ void eprintln(string s) {
 #endif
   ;
   println(s);
+}
+void eprint(string s) {
+  if (isnil(s.str)) {
+    v_panic(tos3("eprint(NIL)"));
+  };
+#ifndef _WIN32
+  fflush(stdout);
+  fflush(stderr);
+  fprintf(stderr, "%.*s", s.len, (char *)s.str);
+  fflush(stderr);
+
+  return;
+#endif
+  ;
+  print(s);
 }
 void print(string s) {
 #ifdef _WIN32
