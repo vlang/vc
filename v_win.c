@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0bdf9bb"
+#define V_COMMIT_HASH "4925aa5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e71b99c"
+#define V_COMMIT_HASH "0bdf9bb"
 #endif
 #include <inttypes.h>
 
@@ -6363,7 +6363,7 @@ string os__ext(string path) {
 }
 string os__dir(string path) {
   println(tos3("Use filepath.dir"));
-  return filepath__ext(path);
+  return filepath__dir(path);
 }
 string os__basedir(string path) {
   println(tos3("Use filepath.basedir"));
@@ -10898,13 +10898,16 @@ string compiler__Parser_bool_expression(compiler__Parser *p) {
   };
   if (string_ne(expected, typ) &&
       (_IN(string, (expected), p->table->sum_types))) {
-    compiler__CGen_set_placeholder(
-        p->cgen, start_ph,
-        _STR("/*SUM TYPE CAST*/(%.*s) { .obj = memdup(& ", expected.len,
-             expected.str));
-    string tt = string_all_after(typ, tos3("_"));
-    compiler__Parser_gen(p, _STR(", sizeof(%.*s) ), .typ = SumType_%.*s }",
-                                 typ.len, typ.str, tt.len, tt.str));
+    compiler__Type T = compiler__Table_find_type(&/* ? */ *p->table, typ);
+    if (string_eq(T.parent, expected)) {
+      compiler__CGen_set_placeholder(
+          p->cgen, start_ph,
+          _STR("/*SUM TYPE CAST*/(%.*s) { .obj = memdup(& ", expected.len,
+               expected.str));
+      string tt = string_all_after(typ, tos3("_"));
+      compiler__Parser_gen(p, _STR(", sizeof(%.*s) ), .typ = SumType_%.*s }",
+                                   typ.len, typ.str, tt.len, tt.str));
+    };
   };
   return typ;
 }
@@ -11067,7 +11070,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
   if ((_IN(string, (name), map_keys(&/* ? */ p->generic_dispatch.inst)))) {
     string tmp10 = tos3("");
     bool tmp11 =
-        map_get(/*expression.v : 234*/ p->generic_dispatch.inst, name, &tmp10);
+        map_get(/*expression.v : 236*/ p->generic_dispatch.inst, name, &tmp10);
 
     if (!tmp11)
       tmp10 = tos((byte *)"", 0);
@@ -11217,7 +11220,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
           };
         };
         array_string tmp17 = new_array(0, 1, sizeof(string));
-        bool tmp18 = map_get(/*expression.v : 379*/ p->table->tuple_variants,
+        bool tmp18 = map_get(/*expression.v : 381*/ p->table->tuple_variants,
                              enum_type.name, &tmp17);
 
         array_string q = tmp17;
