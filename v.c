@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "48585e5"
+#define V_COMMIT_HASH "68e1d8e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "59c784a"
+#define V_COMMIT_HASH "48585e5"
 #endif
 #include <inttypes.h>
 
@@ -11139,6 +11139,7 @@ void compiler__Parser_attribute(compiler__Parser *p) {
   compiler__Parser_check(p, compiler__compiler__TokenKind_lsbr);
   if (p->tok == compiler__compiler__TokenKind_key_if) {
     compiler__Parser_next(p);
+    ;
     p->attr = string_add(tos3("if "), compiler__Parser_check_name(p));
   } else {
     p->attr = compiler__Parser_check_name(p);
@@ -25214,13 +25215,13 @@ void compiler__Parser_gen_fmt(compiler__Parser *p) {
 
     return;
   };
-  string s1 = array_string_join(p->scanner->fmt_lines, tos3(""));
-  string s2 = string_replace(s1, tos3(" \n"), tos3("\n"));
-  string s3 = string_replace(s2, tos3(") or{"), tos3(") or {"));
-  string s4 = string_replace(s3, tos3(")or{"), tos3(") or {"));
-  string s5 = string_replace(s4, tos3("or{"), tos3("or {"));
-  string s6 = string_replace(s5, tos3("}}\n"), tos3("}\n\t}\n"));
-  string s = s6;
+  string s = array_string_join(p->scanner->fmt_lines, tos3(""));
+  s = string_replace(s, tos3(" \n"), tos3("\n"));
+  s = string_replace(s, tos3(")  or {"), tos3(") or {"));
+  s = string_replace(s, tos3(") or{"), tos3(") or {"));
+  s = string_replace(s, tos3(")or{"), tos3(") or {"));
+  s = string_replace(s, tos3("or{"), tos3("or {"));
+  s = string_replace(s, tos3("}}\n"), tos3("}\n\t}\n"));
   if (string_eq(s, tos3(""))) {
 
     return;
