@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "89d3075"
+#define V_COMMIT_HASH "63b70dd"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "482f4c1"
+#define V_COMMIT_HASH "89d3075"
 #endif
 #include <inttypes.h>
 
@@ -6820,15 +6820,6 @@ string os__join(string base, varg_string *dirs) {
 }
 string os__tmpdir() {
   string path = os__getenv(tos3("TMPDIR"));
-#ifdef __linux__
-#endif
-  ;
-#ifdef __FreeBSD__
-#endif
-  ;
-#ifdef __APPLE__
-#endif
-  ;
 #ifdef _WIN32
   if (string_eq(path, tos3(""))) {
     path = os__getenv(tos3("TEMP"));
@@ -6841,6 +6832,9 @@ string os__tmpdir() {
   };
 #endif
   ;
+  if (string_eq(path, tos3(""))) {
+    path = tos3("/tmp");
+  };
   return path;
 }
 void os__chmod(string path, int mode) { chmod((char *)path.str, mode); }
