@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2d597d7"
+#define V_COMMIT_HASH "ca62b66"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1d9916f"
+#define V_COMMIT_HASH "2d597d7"
 #endif
 #include <inttypes.h>
 
@@ -13406,19 +13406,18 @@ void compiler__Parser_print_error_context(compiler__Parser *p) {
   };
 }
 string compiler__normalized_error(string s) {
-  string res = string_replace(
-      string_replace(
-          string_replace(
-              string_replace(
-                  string_replace(string_replace(s, tos3("array_"), tos3("[]")),
-                                 tos3("__"), tos3(".")),
-                  tos3("Option_"), tos3("?")),
-              tos3("main."), tos3("")),
-          tos3("ptr_"), tos3("&")),
-      tos3("_dot_"), tos3("."));
+  string res = s;
+  if (!string_contains(res, tos3("__"))) {
+    res = string_replace(res, tos3("array_"), tos3("[]"));
+  };
+  res = string_replace(res, tos3("__"), tos3("."));
+  res = string_replace(res, tos3("Option_"), tos3("?"));
+  res = string_replace(res, tos3("main."), tos3(""));
+  res = string_replace(res, tos3("ptr_"), tos3("&"));
+  res = string_replace(res, tos3("_dot_"), tos3("."));
   if (string_contains(res, tos3("_V_MulRet_"))) {
-    res = string_replace(string_replace(res, tos3("_V_MulRet_"), tos3("(")),
-                         tos3("_V_"), tos3(", "));
+    res = string_replace(res, tos3("_V_MulRet_"), tos3("("));
+    res = string_replace(res, tos3("_V_"), tos3(", "));
     res = string_add(string_substr2(res, 0, res.len - 1, false), tos3(")\""));
   };
   return res;
@@ -14625,6 +14624,19 @@ string compiler__Parser_bool_expression(compiler__Parser *p) {
                                    typ.len, typ.str, tt.len, tt.str));
     };
   };
+  if (p->tok == compiler__compiler__TokenKind_key_as) {
+    compiler__Parser_next(p);
+    string cast_typ = compiler__Parser_get_type(p);
+    if (string_eq(typ, cast_typ)) {
+      compiler__Parser_warn(p,
+                            _STR("casting `%.*s` to `%.*s` is not needed",
+                                 typ.len, typ.str, cast_typ.len, cast_typ.str));
+    };
+    compiler__CGen_set_placeholder(p->cgen, start_ph,
+                                   _STR("(%.*s)(", cast_typ.len, cast_typ.str));
+    compiler__Parser_gen(p, tos3(")"));
+    return cast_typ;
+  };
   return typ;
 }
 string compiler__Parser_bterm(compiler__Parser *p) {
@@ -14786,7 +14798,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
   if ((_IN(string, (name), map_keys(&/* ? */ p->generic_dispatch.inst)))) {
     string tmp10 = tos3("");
     bool tmp11 =
-        map_get(/*expression.v : 234*/ p->generic_dispatch.inst, name, &tmp10);
+        map_get(/*expression.v : 246*/ p->generic_dispatch.inst, name, &tmp10);
 
     if (!tmp11)
       tmp10 = tos((byte *)"", 0);
@@ -14936,7 +14948,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
           };
         };
         array_string tmp17 = new_array(0, 1, sizeof(string));
-        bool tmp18 = map_get(/*expression.v : 379*/ p->table->tuple_variants,
+        bool tmp18 = map_get(/*expression.v : 391*/ p->table->tuple_variants,
                              enum_type.name, &tmp17);
 
         array_string q = tmp17;
