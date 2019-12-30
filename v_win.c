@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "482f4c1"
+#define V_COMMIT_HASH "89d3075"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "349576b"
+#define V_COMMIT_HASH "482f4c1"
 #endif
 #include <inttypes.h>
 
@@ -676,6 +676,10 @@ struct benchmark__Benchmark {
   int nok;
   int nfail;
   bool verbose;
+  int nexpected_steps;
+  int cstep;
+  string bok;
+  string bfail;
 };
 
 struct compiler_dot_x64__Gen {
@@ -1569,6 +1573,8 @@ bool os__exists(string path);
 bool os__file_exists(string _path);
 void os__rm(string path);
 void os__rmdir(string path);
+void os__rmdir_recursive(string path);
+bool os__is_dir_empty(string path);
 void os__print_c_errno();
 string os__ext(string path);
 string os__dir(string path);
@@ -1746,6 +1752,8 @@ string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr,
                               time__FormatDate fmt_date);
 string vweb_dot_tmpl__compile_template(string path);
 benchmark__Benchmark benchmark__new_benchmark();
+void benchmark__Benchmark_set_total_expected_steps(benchmark__Benchmark *b,
+                                                   int n);
 void benchmark__Benchmark_stop(benchmark__Benchmark *b);
 void benchmark__Benchmark_step(benchmark__Benchmark *b);
 void benchmark__Benchmark_fail(benchmark__Benchmark *b);
@@ -1753,7 +1761,13 @@ void benchmark__Benchmark_ok(benchmark__Benchmark *b);
 void benchmark__Benchmark_fail_many(benchmark__Benchmark *b, int n);
 void benchmark__Benchmark_ok_many(benchmark__Benchmark *b, int n);
 void benchmark__Benchmark_neither_fail_nor_ok(benchmark__Benchmark *b);
+string benchmark__Benchmark_step_message_with_label(benchmark__Benchmark *b,
+                                                    string label, string msg);
 string benchmark__Benchmark_step_message(benchmark__Benchmark *b, string msg);
+string benchmark__Benchmark_step_message_ok(benchmark__Benchmark *b,
+                                            string msg);
+string benchmark__Benchmark_step_message_fail(benchmark__Benchmark *b,
+                                              string msg);
 string benchmark__Benchmark_total_message(benchmark__Benchmark *b, string msg);
 i64 benchmark__Benchmark_total_duration(benchmark__Benchmark *b);
 string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark *b, string s,
@@ -2490,6 +2504,8 @@ array_int time__days_before;
 #define time__time__FormatDelimiter_hyphen 1
 #define time__time__FormatDelimiter_slash 2
 #define time__time__FormatDelimiter_space 3
+string benchmark__BOK;
+string benchmark__BFAIL;
 map_bool compiler__reserved_types;
 #define compiler__compiler__IndexType_noindex 0
 #define compiler__compiler__IndexType_str 1
@@ -6363,6 +6379,43 @@ void os__rmdir(string path) {
 #endif
   ;
 }
+void os__rmdir_recursive(string path) {
+  Option_array_string tmp35 = os__ls(path);
+  array_string items;
+  if (!tmp35.ok) {
+    string err = tmp35.error;
+    int errcode = tmp35.ecode;
+    v_panic(err);
+  }
+  items = *(array_string *)tmp35.data;
+  ;
+  array_string tmp36 = items;
+  for (int tmp37 = 0; tmp37 < tmp36.len; tmp37++) {
+    string item = ((string *)tmp36.data)[tmp37];
+
+    if (os__is_dir(
+            filepath__join(path, &(varg_string){.len = 1, .args = {item}}))) {
+      os__rmdir_recursive(
+          filepath__join(path, &(varg_string){.len = 1, .args = {item}}));
+    };
+    os__rm(filepath__join(path, &(varg_string){.len = 1, .args = {item}}));
+  };
+  os__rmdir(path);
+}
+bool os__is_dir_empty(string path) {
+  Option_array_string tmp38 = os__ls(path);
+  array_string items;
+  if (!tmp38.ok) {
+    string err = tmp38.error;
+    int errcode = tmp38.ecode;
+    v_panic(err);
+    return false;
+    ;
+  }
+  items = *(array_string *)tmp38.data;
+  ;
+  return items.len == 0;
+}
 void os__print_c_errno() {
   int e = errno;
   string se = tos_clone(((byteptr)(strerror(errno))));
@@ -6431,7 +6484,7 @@ array_string os__get_lines() {
       break;
     };
     line = string_trim_space(line);
-    _PUSH(&inputstr, (/*typ = array_string   tmp_typ=string*/ line), tmp35,
+    _PUSH(&inputstr, (/*typ = array_string   tmp_typ=string*/ line), tmp39,
           string);
   };
   return inputstr;
@@ -6501,15 +6554,15 @@ string os__home_dir() {
   return home;
 }
 void os__write_file(string path, string text) {
-  Option_os__File tmp36 = os__create(path);
+  Option_os__File tmp40 = os__create(path);
   os__File f;
-  if (!tmp36.ok) {
-    string err = tmp36.error;
-    int errcode = tmp36.ecode;
+  if (!tmp40.ok) {
+    string err = tmp40.error;
+    int errcode = tmp40.ecode;
 
     return;
   }
-  f = *(os__File *)tmp36.data;
+  f = *(os__File *)tmp40.data;
   ;
   os__File_write(&/* ? */ f, text);
   os__File_close(&/* ? */ f);
@@ -6651,43 +6704,6 @@ array_string os__walk_ext(string path, string ext) {
     return new_array_from_c_array(0, 0, sizeof(string),
                                   EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   };
-  Option_array_string tmp39 = os__ls(path);
-  array_string files;
-  if (!tmp39.ok) {
-    string err = tmp39.error;
-    int errcode = tmp39.ecode;
-    v_panic(err);
-  }
-  files = *(array_string *)tmp39.data;
-  ;
-  array_string res = new_array_from_c_array(
-      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  string separator =
-      ((string_ends_with(path, os__path_separator)) ? (tos3(""))
-                                                    : (os__path_separator));
-  array_string tmp40 = files;
-  for (int i = 0; i < tmp40.len; i++) {
-    string file = ((string *)tmp40.data)[i];
-
-    if (string_starts_with(file, tos3("."))) {
-      continue;
-    };
-    string p = string_add(string_add(path, separator), file);
-    if (os__is_dir(p)) {
-      _PUSH_MANY(&res,
-                 (/*typ = array_string   tmp_typ=string*/ os__walk_ext(p, ext)),
-                 tmp41, array_string);
-    } else if (string_ends_with(file, ext)) {
-      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp42, string);
-    };
-  };
-  return res;
-}
-void os__walk(string path, void (*fnc)(string path /*FFF*/)) {
-  if (!os__is_dir(path)) {
-
-    return;
-  };
   Option_array_string tmp43 = os__ls(path);
   array_string files;
   if (!tmp43.ok) {
@@ -6697,12 +6713,49 @@ void os__walk(string path, void (*fnc)(string path /*FFF*/)) {
   }
   files = *(array_string *)tmp43.data;
   ;
+  array_string res = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+  string separator =
+      ((string_ends_with(path, os__path_separator)) ? (tos3(""))
+                                                    : (os__path_separator));
   array_string tmp44 = files;
-  for (int tmp45 = 0; tmp45 < tmp44.len; tmp45++) {
-    string file = ((string *)tmp44.data)[tmp45];
+  for (int i = 0; i < tmp44.len; i++) {
+    string file = ((string *)tmp44.data)[i];
+
+    if (string_starts_with(file, tos3("."))) {
+      continue;
+    };
+    string p = string_add(string_add(path, separator), file);
+    if (os__is_dir(p) && !os__is_link(p)) {
+      _PUSH_MANY(&res,
+                 (/*typ = array_string   tmp_typ=string*/ os__walk_ext(p, ext)),
+                 tmp45, array_string);
+    } else if (string_ends_with(file, ext)) {
+      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp46, string);
+    };
+  };
+  return res;
+}
+void os__walk(string path, void (*fnc)(string path /*FFF*/)) {
+  if (!os__is_dir(path)) {
+
+    return;
+  };
+  Option_array_string tmp47 = os__ls(path);
+  array_string files;
+  if (!tmp47.ok) {
+    string err = tmp47.error;
+    int errcode = tmp47.ecode;
+    v_panic(err);
+  }
+  files = *(array_string *)tmp47.data;
+  ;
+  array_string tmp48 = files;
+  for (int tmp49 = 0; tmp49 < tmp48.len; tmp49++) {
+    string file = ((string *)tmp48.data)[tmp49];
 
     string p = string_add(string_add(path, os__path_separator), file);
-    if (os__is_dir(p)) {
+    if (os__is_dir(p) && !os__is_link(p)) {
       os__walk(p, fnc);
     } else if (os__exists(p)) {
       fnc(p);
@@ -6746,16 +6799,16 @@ void os__mkdir_all(string path) {
   string p =
       ((string_starts_with(path, os__path_separator)) ? (os__path_separator)
                                                       : (tos3("")));
-  array_string tmp46 = string_split(path, os__path_separator);
-  for (int tmp47 = 0; tmp47 < tmp46.len; tmp47++) {
-    string subdir = ((string *)tmp46.data)[tmp47];
+  array_string tmp50 = string_split(path, os__path_separator);
+  for (int tmp51 = 0; tmp51 < tmp50.len; tmp51++) {
+    string subdir = ((string *)tmp50.data)[tmp51];
 
     p = string_add(p, string_add(subdir, os__path_separator));
     if (!os__is_dir(p)) {
-      Option_bool tmp48 = os__mkdir(p);
-      if (!tmp48.ok) {
-        string err = tmp48.error;
-        int errcode = tmp48.ecode;
+      Option_bool tmp52 = os__mkdir(p);
+      if (!tmp52.ok) {
+        string err = tmp52.error;
+        int errcode = tmp52.ecode;
         v_panic(err);
       };
     };
@@ -7972,22 +8025,29 @@ string vweb_dot_tmpl__compile_template(string path) {
   return strings__Builder_str(&/* ? */ s);
 }
 benchmark__Benchmark benchmark__new_benchmark() {
-  return (benchmark__Benchmark){
-      .bench_start_time = benchmark__now(),
-      .verbose = 1,
-      .bench_end_time = 0,
-      .step_start_time = 0,
-      .step_end_time = 0,
-      .ntotal = 0,
-      .nok = 0,
-      .nfail = 0,
-  };
+  return (benchmark__Benchmark){.bench_start_time = benchmark__now(),
+                                .verbose = 1,
+                                .bench_end_time = 0,
+                                .step_start_time = 0,
+                                .step_end_time = 0,
+                                .ntotal = 0,
+                                .nok = 0,
+                                .nfail = 0,
+                                .nexpected_steps = 0,
+                                .cstep = 0,
+                                .bok = tos3(""),
+                                .bfail = tos3("")};
+}
+void benchmark__Benchmark_set_total_expected_steps(benchmark__Benchmark *b,
+                                                   int n) {
+  b->nexpected_steps = n;
 }
 void benchmark__Benchmark_stop(benchmark__Benchmark *b) {
   b->bench_end_time = benchmark__now();
 }
 void benchmark__Benchmark_step(benchmark__Benchmark *b) {
   b->step_start_time = benchmark__now();
+  b->cstep++;
 }
 void benchmark__Benchmark_fail(benchmark__Benchmark *b) {
   b->step_end_time = benchmark__now();
@@ -8012,18 +8072,53 @@ void benchmark__Benchmark_ok_many(benchmark__Benchmark *b, int n) {
 void benchmark__Benchmark_neither_fail_nor_ok(benchmark__Benchmark *b) {
   b->step_end_time = benchmark__now();
 }
+string benchmark__Benchmark_step_message_with_label(benchmark__Benchmark *b,
+                                                    string label, string msg) {
+  string timed_line = tos3("");
+  if (b->nexpected_steps > 0) {
+    string sprogress = tos3("");
+    if (b->nexpected_steps < 10) {
+      sprogress = _STR("%1d/%1d", b->cstep, b->nexpected_steps);
+    };
+    if (b->nexpected_steps >= 10 && b->nexpected_steps < 100) {
+      sprogress = _STR("%2d/%2d", b->cstep, b->nexpected_steps);
+    };
+    if (b->nexpected_steps >= 100 && b->nexpected_steps < 1000) {
+      sprogress = _STR("%3d/%3d", b->cstep, b->nexpected_steps);
+    };
+    timed_line = benchmark__Benchmark_tdiff_in_ms(
+        &/* ? */ *b,
+        _STR("[%.*s] %.*s", sprogress.len, sprogress.str, msg.len, msg.str),
+        b->step_start_time, b->step_end_time);
+  } else {
+    timed_line = benchmark__Benchmark_tdiff_in_ms(
+        &/* ? */ *b, msg, b->step_start_time, b->step_end_time);
+  };
+  return _STR("%-5s%.*s", label.str, timed_line.len, timed_line.str);
+}
 string benchmark__Benchmark_step_message(benchmark__Benchmark *b, string msg) {
-  return benchmark__Benchmark_tdiff_in_ms(&/* ? */ *b, msg, b->step_start_time,
-                                          b->step_end_time);
+  return benchmark__Benchmark_step_message_with_label(&/* ? */ *b, tos3(""),
+                                                      msg);
+}
+string benchmark__Benchmark_step_message_ok(benchmark__Benchmark *b,
+                                            string msg) {
+  return benchmark__Benchmark_step_message_with_label(&/* ? */ *b,
+                                                      benchmark__BOK, msg);
+}
+string benchmark__Benchmark_step_message_fail(benchmark__Benchmark *b,
+                                              string msg) {
+  return benchmark__Benchmark_step_message_with_label(&/* ? */ *b,
+                                                      benchmark__BFAIL, msg);
 }
 string benchmark__Benchmark_total_message(benchmark__Benchmark *b, string msg) {
   string tmsg = string_add(
       string_add(
           string_add(
-              string_add(string_add(_STR("%.*s \n ok, fail, total = ", msg.len,
-                                         msg.str),
-                                    term__ok_message(_STR("%5d", b->nok))),
-                         tos3(", ")),
+              string_add(
+                  string_add(_STR("%.*s\n                 ok, fail, total = ",
+                                  msg.len, msg.str),
+                             term__ok_message(_STR("%5d", b->nok))),
+                  tos3(", ")),
               ((b->nfail > 0) ? (term__fail_message(_STR("%5d", b->nfail)))
                               : (_STR("%5d", b->nfail)))),
           tos3(", ")),
@@ -8031,8 +8126,9 @@ string benchmark__Benchmark_total_message(benchmark__Benchmark *b, string msg) {
   if (b->verbose) {
     tmsg = _STR("<=== total time spent %.*s", tmsg.len, tmsg.str);
   };
-  return benchmark__Benchmark_tdiff_in_ms(
-      &/* ? */ *b, tmsg, b->bench_start_time, b->bench_end_time);
+  return string_add(tos3("  "), benchmark__Benchmark_tdiff_in_ms(
+                                    &/* ? */ *b, tmsg, b->bench_start_time,
+                                    b->bench_end_time));
 }
 i64 benchmark__Benchmark_total_duration(benchmark__Benchmark *b) {
   return (b->bench_end_time - b->bench_start_time);
@@ -8041,7 +8137,7 @@ string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark *b, string s,
                                         i64 sticks, i64 eticks) {
   if (b->verbose) {
     i64 tdiff = (eticks - sticks);
-    return _STR("%6lld ms | %.*s", tdiff, s.len, s.str);
+    return _STR("%6lld ms %.*s", tdiff, s.len, s.str);
   };
   return s;
 }
@@ -8887,9 +8983,7 @@ void compiler__Parser_type_decl(compiler__Parser *p) {
     if (p->pass == compiler__compiler__Pass_decl) {
       _PUSH(&p->table->sum_types,
             (/*typ = array_string   tmp_typ=string*/ name), tmp40, string);
-      println(array_string_str(p->table->sum_types));
     };
-    printf("registering sum %.*s\n", name.len, name.str);
     compiler__Table_register_type(
         p->table,
         (compiler__Type){.name = name,
@@ -9263,11 +9357,11 @@ string compiler__Parser_get_type(compiler__Parser *p) {
           !compiler__Parser_first_pass(&/* ? */ *p) &&
           !string_starts_with(typ, tos3("["))) {
         println(tos3("get_type() bad type"));
-        _V_MulRet_string_V_string _V_mret_5101_t_suggest_tc_suggest =
+        _V_MulRet_string_V_string _V_mret_5086_t_suggest_tc_suggest =
             compiler__Table_find_misspelled_type(&/* ? */ *p->table, typ, p,
                                                  0.50);
-        string t_suggest = _V_mret_5101_t_suggest_tc_suggest.var_0;
-        string tc_suggest = _V_mret_5101_t_suggest_tc_suggest.var_1;
+        string t_suggest = _V_mret_5086_t_suggest_tc_suggest.var_0;
+        string tc_suggest = _V_mret_5086_t_suggest_tc_suggest.var_1;
         if (t_suggest.len > 0) {
           t_suggest = _STR(". did you mean: (%.*s) `%.*s`", tc_suggest.len,
                            tc_suggest.str, t_suggest.len, t_suggest.str);
@@ -9624,9 +9718,9 @@ void compiler__Parser_assign_statement(compiler__Parser *p, compiler__Var v,
   string expr_type = compiler__Parser_bool_expression(p);
   p->is_var_decl = 0;
   if (string_eq(expr_type, tos3("void"))) {
-    _V_MulRet_bool_V_string _V_mret_6886___fn_name =
+    _V_MulRet_bool_V_string _V_mret_6871___fn_name =
         compiler__Parser_is_expr_fn_call(&/* ? */ *p, p->token_idx - 3);
-    string fn_name = _V_mret_6886___fn_name.var_1;
+    string fn_name = _V_mret_6871___fn_name.var_1;
     compiler__Parser_error_with_token_index(
         p,
         _STR("%.*s() %.*s", fn_name.len, fn_name.str,
@@ -9804,9 +9898,9 @@ void compiler__Parser_var_decl(compiler__Parser *p) {
            : ((*(string *)array_get(var_names, 0))));
   string t = compiler__Parser_gen_var_decl(p, p->var_decl_name, is_static);
   if (string_eq(t, tos3("void"))) {
-    _V_MulRet_bool_V_string _V_mret_7757___fn_name =
+    _V_MulRet_bool_V_string _V_mret_7742___fn_name =
         compiler__Parser_is_expr_fn_call(&/* ? */ *p, p->token_idx - 3);
-    string fn_name = _V_mret_7757___fn_name.var_1;
+    string fn_name = _V_mret_7742___fn_name.var_1;
     compiler__Parser_error_with_token_index(
         p,
         _STR("%.*s() %.*s", fn_name.len, fn_name.str,
@@ -10733,10 +10827,10 @@ string compiler__Parser_map_init(compiler__Parser *p) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_str);
       compiler__Parser_check(p, compiler__compiler__TokenKind_colon);
       ;
-      _V_MulRet_string_V_string _V_mret_11911_t_val_expr =
+      _V_MulRet_string_V_string _V_mret_11896_t_val_expr =
           compiler__Parser_tmp_expr(p);
-      string t = _V_mret_11911_t_val_expr.var_0;
-      string val_expr = _V_mret_11911_t_val_expr.var_1;
+      string t = _V_mret_11896_t_val_expr.var_0;
+      string val_expr = _V_mret_11896_t_val_expr.var_1;
       if (i == 0) {
         val_type = t;
       };
@@ -11034,10 +11128,10 @@ void compiler__Parser_return_st(compiler__Parser *p) {
     while (p->tok == compiler__compiler__TokenKind_comma) {
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-      _V_MulRet_string_V_string _V_mret_13359_typ_expr =
+      _V_MulRet_string_V_string _V_mret_13344_typ_expr =
           compiler__Parser_tmp_expr(p);
-      string typ = _V_mret_13359_typ_expr.var_0;
-      string expr = _V_mret_13359_typ_expr.var_1;
+      string typ = _V_mret_13344_typ_expr.var_0;
+      string expr = _V_mret_13344_typ_expr.var_1;
       _PUSH(&types, (/*typ = array_string   tmp_typ=string*/ typ), tmp158,
             string);
       _PUSH(&mr_values,
@@ -11212,10 +11306,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
     string typ = compiler__Parser_get_type(p);
     compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-    _V_MulRet_string_V_string _V_mret_14144_styp_expr =
+    _V_MulRet_string_V_string _V_mret_14129_styp_expr =
         compiler__Parser_tmp_expr(p);
-    string styp = _V_mret_14144_styp_expr.var_0;
-    string expr = _V_mret_14144_styp_expr.var_1;
+    string styp = _V_mret_14129_styp_expr.var_0;
+    string expr = _V_mret_14129_styp_expr.var_1;
     compiler__Parser_check_types(p, styp, tos3("string"));
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
     string tmp = compiler__Parser_get_tmp(p);
@@ -11252,10 +11346,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     return opt_type;
   } else if (string_eq(op, tos3("encode"))) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
-    _V_MulRet_string_V_string _V_mret_14324_typ_expr =
+    _V_MulRet_string_V_string _V_mret_14309_typ_expr =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_14324_typ_expr.var_0;
-    string expr = _V_mret_14324_typ_expr.var_1;
+    string typ = _V_mret_14309_typ_expr.var_0;
+    string expr = _V_mret_14309_typ_expr.var_1;
     compiler__Type T = compiler__Table_find_type(&/* ? */ *p->table, typ);
     compiler__Parser_gen_json_for_type(p, T);
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
@@ -19664,7 +19758,7 @@ void compiler__V_generate_main(compiler__V *v) {
         compiler__CGen_genln(
             cgen, _STR("%.*s;", cgen->fn_main.len, cgen->fn_main.str));
         compiler__V_gen_main_end(v, tos3("return 0"));
-      } else if (!v->pref->is_repl) {
+      } else if (string_eq(v->v_fmt_file, tos3("")) && !v->pref->is_repl) {
         compiler__verror(
             tos3("function `main` is not declared in the main module"));
       };
@@ -19680,8 +19774,10 @@ void compiler__V_generate_main(compiler__V *v) {
       };
       compiler__V_gen_main_start(v, 0);
       if (v->pref->is_stats) {
-        compiler__CGen_genln(cgen,
-                             tos3("BenchedTests bt = main__start_testing();"));
+        compiler__CGen_genln(
+            cgen,
+            _STR("BenchedTests bt = main__start_testing(%d,tos3(\"%.*s\"));",
+                 test_fn_names.len, v->dir.len, v->dir.str));
       };
       array_string tmp25 = test_fn_names;
       for (int tmp26 = 0; tmp26 < tmp25.len; tmp26++) {
@@ -19693,7 +19789,7 @@ void compiler__V_generate_main(compiler__V *v) {
               _STR("BenchedTests_testing_step_start(&bt, tos3(\"%.*s\"));",
                    tfname.len, tfname.str));
         };
-        compiler__CGen_genln(cgen, _STR("%.*s ();", tfname.len, tfname.str));
+        compiler__CGen_genln(cgen, _STR("%.*s();", tfname.len, tfname.str));
         if (v->pref->is_stats) {
           compiler__CGen_genln(cgen,
                                tos3("BenchedTests_testing_step_end(&bt);"));
@@ -20374,12 +20470,12 @@ compiler__V *compiler__new_v(array_string args) {
       os_dot_cmdline__many_values(args, tos3("-cflags")), tos3(" "));
   array_string defines = os_dot_cmdline__many_values(args, tos3("-d"));
   _V_MulRet_array_string_V_array_string
-      _V_mret_4632_compile_defines_compile_defines_all =
+      _V_mret_4648_compile_defines_compile_defines_all =
           compiler__parse_defines(defines);
   array_string compile_defines =
-      _V_mret_4632_compile_defines_compile_defines_all.var_0;
+      _V_mret_4648_compile_defines_compile_defines_all.var_0;
   array_string compile_defines_all =
-      _V_mret_4632_compile_defines_compile_defines_all.var_1;
+      _V_mret_4648_compile_defines_compile_defines_all.var_1;
   string rdir = os__realpath(dir);
   string rdir_name = filepath__filename(rdir);
   if ((_IN(string, (tos3("-bare")), args))) {
@@ -25647,6 +25743,8 @@ void init() {
           31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30,
           31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31,
       });
+  benchmark__BOK = term__ok_message(tos3("OK"));
+  benchmark__BFAIL = term__fail_message(tos3("FAIL"));
   compiler__reserved_types = new_map_init(15, sizeof(bool),
                                           (string[15]){
                                               tos3("i8"),
