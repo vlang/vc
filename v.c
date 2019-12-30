@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2d2e030"
+#define V_COMMIT_HASH "8a4bce6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "63b70dd"
+#define V_COMMIT_HASH "2d2e030"
 #endif
 #include <inttypes.h>
 
@@ -201,6 +201,7 @@ void reload_so();
 
 int g_test_oks = 0;
 int g_test_fails = 0;
+#define builtin__degree 6
 #define builtin__CP_UTF8 65001
 #define compiler_dot_x64__mag1 'E'
 #define compiler_dot_x64__mag2 'L'
@@ -214,6 +215,17 @@ int g_test_fails = 0;
 #define compiler_dot_x64__et_exec 2
 #define compiler_dot_x64__et_dyn 3
 #define compiler_dot_x64__sht_null 0
+#define os__O_RDONLY 1
+#define os__O_WRONLY 2
+#define os__O_RDWR 3
+#define os__O_APPEND 8
+#define os__O_CREATE 16
+#define os__O_EXCL 32
+#define os__O_SYNC 64
+#define os__O_TRUNC 128
+#define os__MAX_PATH 4096
+#define os__PROT_READ 1
+#define os__PROT_WRITE 2
 #define strconv__DIGITS 18
 #define strconv__FSM_A 0
 #define strconv__FSM_B 1
@@ -236,17 +248,6 @@ int g_test_fails = 0;
 #define strconv__ZERO '0'
 #define strconv__NINE '9'
 #define strconv__int_size 32
-#define os__O_RDONLY 1
-#define os__O_WRONLY 2
-#define os__O_RDWR 3
-#define os__O_APPEND 8
-#define os__O_CREATE 16
-#define os__O_EXCL 32
-#define os__O_SYNC 64
-#define os__O_TRUNC 128
-#define os__MAX_PATH 4096
-#define os__PROT_READ 1
-#define os__PROT_WRITE 2
 #define time__seconds_per_minute 60
 #define vweb_dot_tmpl__STR_START tos3("sb.write(\'")
 #define vweb_dot_tmpl__STR_END tos3("\' ) ")
@@ -364,11 +365,6 @@ typedef Option Option_int;
 typedef struct compiler_dot_x64__SectionConfig compiler_dot_x64__SectionConfig;
 typedef struct compiler_dot_x64__Gen compiler_dot_x64__Gen;
 typedef map map_i64;
-typedef struct strings__Builder strings__Builder;
-typedef struct _V_MulRet_u32_V_u32_V_u32 _V_MulRet_u32_V_u32_V_u32;
-typedef struct strconv__PrepNumber strconv__PrepNumber;
-typedef struct _V_MulRet_int_V_strconv__PrepNumber
-    _V_MulRet_int_V_strconv__PrepNumber;
 typedef struct os__File os__File;
 typedef struct os__FileInfo os__FileInfo;
 typedef Option Option_array_byte;
@@ -392,6 +388,11 @@ typedef Option Option_os__Result;
 typedef Option Option_bool;
 typedef struct rand__Pcg32 rand__Pcg32;
 typedef struct rand__Splitmix64 rand__Splitmix64;
+typedef struct _V_MulRet_u32_V_u32_V_u32 _V_MulRet_u32_V_u32_V_u32;
+typedef struct strconv__PrepNumber strconv__PrepNumber;
+typedef struct _V_MulRet_int_V_strconv__PrepNumber
+    _V_MulRet_int_V_strconv__PrepNumber;
+typedef struct strings__Builder strings__Builder;
 typedef struct time__Time time__Time;
 typedef Option Option_int;
 typedef struct benchmark__Benchmark benchmark__Benchmark;
@@ -525,7 +526,7 @@ struct array {
 };
 
 struct map {
-  int element_size;
+  int value_bytes;
   mapnode *root;
   int size;
 };
@@ -563,6 +564,12 @@ struct compiler__MsvcResult {
   string shared_include_path;
 };
 
+struct compiler__VsInstallation {
+  string include_path;
+  string lib_path;
+  string exe_path;
+};
+
 struct compiler__WindowsKit {
   string um_lib_path;
   string ucrt_lib_path;
@@ -571,31 +578,9 @@ struct compiler__WindowsKit {
   string shared_include_path;
 };
 
-struct compiler__VsInstallation {
-  string include_path;
-  string lib_path;
-  string exe_path;
-};
-
 struct RepIndex {
   int idx;
   int val_idx;
-};
-
-struct _V_MulRet_u32_V_u32_V_u32 {
-  u32 var_0;
-  u32 var_1;
-  u32 var_2;
-};
-
-struct _V_MulRet_int_V_bool {
-  int var_0;
-  bool var_1;
-};
-
-struct _V_MulRet_bool_V_string {
-  bool var_0;
-  string var_1;
 };
 
 struct _V_MulRet_array_string_V_array_string {
@@ -608,9 +593,25 @@ struct _V_MulRet_array_string_V_string {
   string var_1;
 };
 
+struct _V_MulRet_bool_V_string {
+  bool var_0;
+  string var_1;
+};
+
+struct _V_MulRet_int_V_bool {
+  int var_0;
+  bool var_1;
+};
+
 struct _V_MulRet_string_V_array_string {
   string var_0;
   array_string var_1;
+};
+
+struct _V_MulRet_u32_V_u32_V_u32 {
+  u32 var_0;
+  u32 var_1;
+  u32 var_2;
 };
 
 struct benchmark__Benchmark {
@@ -628,36 +629,14 @@ struct benchmark__Benchmark {
   string bfail;
 };
 
-struct compiler_dot_x64__Gen {
-  string out_name;
-  array_byte buf;
-  int sect_header_name_pos;
-  i64 offset;
-  array_i64 str_pos;
-  array_string strings;
-  i64 file_size_pos;
-  i64 main_fn_addr;
-  i64 code_start_pos;
-  map_i64 fn_addr;
-};
-
-struct compiler__IndexConfig {
-  bool is_map;
-  bool is_str;
-  bool is_ptr;
-  bool is_arr;
-  bool is_arr0;
-  bool is_slice;
+struct compiler__DepGraph {
+  bool acyclic;
+  array_compiler__DepGraphNode nodes;
 };
 
 struct compiler__DepGraphNode {
   string name;
   array_string deps;
-};
-
-struct compiler__DepGraph {
-  bool acyclic;
-  array_compiler__DepGraphNode nodes;
 };
 
 struct compiler__DepSet {
@@ -697,6 +676,15 @@ struct compiler__ImportTable {
   map_int import_tok_idx;
 };
 
+struct compiler__IndexConfig {
+  bool is_map;
+  bool is_str;
+  bool is_ptr;
+  bool is_arr;
+  bool is_arr0;
+  bool is_slice;
+};
+
 struct compiler__MsvcStringFlags {
   array_string real_libs;
   array_string inc_paths;
@@ -725,50 +713,6 @@ struct compiler__ParserState {
   compiler__TokenKind prev_tok;
   compiler__TokenKind prev_tok2;
   string lit;
-};
-
-struct compiler__Table {
-  map_compiler__Type typesmap;
-  array_compiler__Var consts;
-  map_compiler__Fn fns;
-  map_int obf_ids;
-  array_string modules;
-  array_string imports;
-  array_compiler__CFlag cflags;
-  int fn_cnt;
-  bool obfuscate;
-  array_compiler__VargAccess varg_access;
-  map_int max_field_len;
-  map_array_string generic_struct_params;
-  map_array_string tuple_variants;
-  array_string sum_types;
-};
-
-struct compiler__Scanner {
-  string file_path;
-  string text;
-  int pos;
-  int line_nr;
-  int last_nl_pos;
-  bool inside_string;
-  bool inter_start;
-  bool inter_end;
-  bool debug;
-  string line_comment;
-  bool started;
-  array_string fmt_lines;
-  int fmt_indent;
-  bool fmt_line_empty;
-  compiler__TokenKind prev_tok;
-  string fn_name;
-  bool print_line_on_error;
-  bool print_colored_error;
-  bool print_rel_paths_on_error;
-  byte quote;
-  array_int line_ends;
-  int nlines;
-  bool is_vh;
-  bool is_fmt;
 };
 
 struct compiler__Preferences {
@@ -814,15 +758,54 @@ struct compiler__ScanRes {
   string lit;
 };
 
+struct compiler__Scanner {
+  string file_path;
+  string text;
+  int pos;
+  int line_nr;
+  int last_nl_pos;
+  bool inside_string;
+  bool inter_start;
+  bool inter_end;
+  bool debug;
+  string line_comment;
+  bool started;
+  array_string fmt_lines;
+  int fmt_indent;
+  bool fmt_line_empty;
+  compiler__TokenKind prev_tok;
+  string fn_name;
+  bool print_line_on_error;
+  bool print_colored_error;
+  bool print_rel_paths_on_error;
+  byte quote;
+  array_int line_ends;
+  int nlines;
+  bool is_vh;
+  bool is_fmt;
+};
+
 struct compiler__ScannerPos {
   int pos;
   int line_nr;
   int last_nl_pos;
 };
 
-struct compiler__TypeInst {
-  map_string inst;
-  bool done;
+struct compiler__Table {
+  map_compiler__Type typesmap;
+  array_compiler__Var consts;
+  map_compiler__Fn fns;
+  map_int obf_ids;
+  array_string modules;
+  array_string imports;
+  array_compiler__CFlag cflags;
+  int fn_cnt;
+  bool obfuscate;
+  array_compiler__VargAccess varg_access;
+  map_int max_field_len;
+  map_array_string generic_struct_params;
+  map_array_string tuple_variants;
+  array_string sum_types;
 };
 
 struct compiler__Token {
@@ -833,10 +816,9 @@ struct compiler__Token {
   int pos;
 };
 
-struct compiler__VargAccess {
-  string fn_name;
-  int tok_idx;
-  int index;
+struct compiler__TypeInst {
+  map_string inst;
+  bool done;
 };
 
 struct compiler__Var {
@@ -867,6 +849,25 @@ struct compiler__Var {
   bool is_public;
 };
 
+struct compiler__VargAccess {
+  string fn_name;
+  int tok_idx;
+  int index;
+};
+
+struct compiler_dot_x64__Gen {
+  string out_name;
+  array_byte buf;
+  int sect_header_name_pos;
+  i64 offset;
+  array_i64 str_pos;
+  array_string strings;
+  i64 file_size_pos;
+  i64 main_fn_addr;
+  i64 code_start_pos;
+  map_i64 fn_addr;
+};
+
 struct compiler_dot_x64__SectionConfig {
   string name;
   compiler_dot_x64__SectionType typ;
@@ -881,11 +882,10 @@ struct compiler_dot_x64__SectionConfig {
 };
 
 struct mapnode {
-  mapnode *left;
-  mapnode *right;
-  bool is_empty;
-  string key;
-  void *val;
+  string keys[11];
+  voidptr values[11];
+  voidptr *children;
+  int size;
 };
 
 struct os__File {
@@ -948,6 +948,37 @@ struct varg_string {
 struct _V_MulRet_int_V_strconv__PrepNumber {
   int var_0;
   strconv__PrepNumber var_1;
+};
+
+struct compiler__CGen {
+  os__File out;
+  string out_path;
+  array_string thread_fns;
+  bool is_user;
+  array_string lines;
+  array_string lines_extra;
+  array_string typedefs;
+  array_string type_aliases;
+  array_string includes;
+  array_string thread_args;
+  array_string consts;
+  array_string const_defines;
+  array_string fns;
+  array_string so_fns;
+  array_string consts_init;
+  compiler__Pass pass;
+  bool nogen;
+  array_string prev_tmps;
+  string tmp_line;
+  string cur_line;
+  string prev_line;
+  bool is_tmp;
+  string fn_main;
+  string stash;
+  string file;
+  int line;
+  bool line_directives;
+  int cut_pos;
 };
 
 struct compiler__Parser {
@@ -1014,35 +1045,25 @@ struct compiler__Parser {
   string mod;
 };
 
-struct compiler__CGen {
-  os__File out;
-  string out_path;
-  array_string thread_fns;
-  bool is_user;
-  array_string lines;
-  array_string lines_extra;
-  array_string typedefs;
-  array_string type_aliases;
-  array_string includes;
-  array_string thread_args;
-  array_string consts;
-  array_string const_defines;
-  array_string fns;
-  array_string so_fns;
-  array_string consts_init;
-  compiler__Pass pass;
-  bool nogen;
-  array_string prev_tmps;
-  string tmp_line;
-  string cur_line;
-  string prev_line;
-  bool is_tmp;
-  string fn_main;
-  string stash;
-  string file;
-  int line;
-  bool line_directives;
-  int cut_pos;
+struct compiler__Type {
+  string mod;
+  string name;
+  compiler__TypeCategory cat;
+  bool is_public;
+  array_compiler__Var fields;
+  array_compiler__Fn methods;
+  string parent;
+  compiler__Fn func;
+  bool is_c;
+  array_string enum_vals;
+  array_string gen_types;
+  array_string default_vals;
+  int parser_idx;
+  int decl_tok_idx;
+  bool is_placeholder;
+  bool gen_str;
+  bool is_flag;
+  bool is_generic;
 };
 
 struct compiler__V {
@@ -1070,27 +1091,6 @@ struct compiler__V {
   bool v_fmt_all;
   string v_fmt_file;
   string v_fmt_file_result;
-};
-
-struct compiler__Type {
-  string mod;
-  string name;
-  compiler__TypeCategory cat;
-  bool is_public;
-  array_compiler__Var fields;
-  array_compiler__Fn methods;
-  string parent;
-  compiler__Fn func;
-  bool is_c;
-  array_string enum_vals;
-  array_string gen_types;
-  array_string default_vals;
-  int parser_idx;
-  int decl_tok_idx;
-  bool is_placeholder;
-  bool gen_str;
-  bool is_flag;
-  bool is_generic;
 };
 
 struct compiler__VhGen {
@@ -1228,22 +1228,27 @@ string rune_str(rune c);
 string byte_str(byte c);
 bool byte_is_capital(byte c);
 array_byte array_byte_clone(array_byte b);
-map new_map(int cap, int elm_size);
-map new_map_init(int cap, int elm_size, string *keys, void *vals);
-mapnode *new_node(string key, void *val, int element_size);
-void map_insert(map *m, mapnode *n, string key, void *val);
-bool mapnode_find(mapnode *n, string key, void *out, int element_size);
-bool mapnode_find2(mapnode *n, string key, int element_size);
-void map_set(map *m, string key, void *val);
-int preorder_keys(mapnode *node, array_string *keys, int key_i);
-array_string map_keys(map *m);
+map new_map(int n, int value_bytes);
+map new_map_init(int n, int value_bytes, string *keys, void *values);
+mapnode *new_node();
+void map_set(map *m, string key, void *value);
+void mapnode_split_child(mapnode *n, int child_index, mapnode *y);
 bool map_get(map m, string key, void *out);
-void v_mapnode_delete(mapnode *n, string key, int element_size);
-void v_map_delete(map *m, string key);
 bool map_exists(map m, string key);
-void map_print(map m);
+int mapnode_find_key(mapnode n, string k);
+bool mapnode_remove_key(mapnode *n, string k);
+void mapnode_remove_from_leaf(mapnode *n, int idx);
+void mapnode_remove_from_non_leaf(mapnode *n, int idx);
+void mapnode_fill(mapnode *n, int idx);
+void mapnode_borrow_from_prev(mapnode *n, int idx);
+void mapnode_borrow_from_next(mapnode *n, int idx);
+void mapnode_merge(mapnode *n, int idx);
+void v_map_delete(map *m, string key);
+int mapnode_subkeys(mapnode n, array_string *keys, int at);
+array_string map_keys(map *m);
 void v_mapnode_free(mapnode *n);
 void v_map_free(map *m);
+void map_print(map m);
 string map_string_str(map_string m);
 Option opt_ok(void *data, int size);
 Option opt_none();
@@ -1393,41 +1398,6 @@ void compiler_dot_x64__Gen_mov(compiler_dot_x64__Gen *g,
 void compiler_dot_x64__Gen_register_function_address(compiler_dot_x64__Gen *g,
                                                      string name);
 void compiler_dot_x64__Gen_call_fn(compiler_dot_x64__Gen *g, string name);
-strings__Builder strings__new_builder(int initial_size);
-void strings__Builder_write_bytes(strings__Builder *b, byte *bytes,
-                                  int howmany);
-void strings__Builder_write_b(strings__Builder *b, byte data);
-void strings__Builder_write(strings__Builder *b, string s);
-void strings__Builder_writeln(strings__Builder *b, string s);
-string strings__Builder_str(strings__Builder *b);
-void strings__Builder_free(strings__Builder *b);
-int strings__levenshtein_distance(string a, string b);
-f32 strings__levenshtein_distance_percentage(string a, string b);
-f32 strings__dice_coefficient(string s1, string s2);
-string strings__repeat(byte c, int n);
-_V_MulRet_u32_V_u32_V_u32 strconv__lsr96(u32 s2, u32 s1, u32 s0);
-_V_MulRet_u32_V_u32_V_u32 strconv__lsl96(u32 s2, u32 s1, u32 s0);
-_V_MulRet_u32_V_u32_V_u32 strconv__add96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1,
-                                         u32 d0);
-_V_MulRet_u32_V_u32_V_u32 strconv__sub96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1,
-                                         u32 d0);
-bool strconv__is_digit(byte x);
-bool strconv__is_space(byte x);
-bool strconv__is_exp(byte x);
-_V_MulRet_int_V_strconv__PrepNumber strconv__parser(string s);
-u64 strconv__converter(strconv__PrepNumber *pn);
-f64 strconv__atof64(string s);
-byte strconv__byte_to_lower(byte c);
-u64 strconv__common_parse_uint(string s, int _base, int _bit_size,
-                               bool error_on_non_digit,
-                               bool error_on_high_digit);
-u64 strconv__parse_uint(string s, int _base, int _bit_size);
-i64 strconv__common_parse_int(string _s, int base, int _bit_size,
-                              bool error_on_non_digit,
-                              bool error_on_high_digit);
-i64 strconv__parse_int(string _s, int base, int _bit_size);
-int strconv__atoi(string s);
-bool strconv__underscore_ok(string s);
 bool os__File_is_opened(os__File f);
 array_byte os__File_read_bytes(os__File *f, int size);
 array_byte os__File_read_bytes_at(os__File *f, int size, int pos);
@@ -1519,6 +1489,41 @@ rand__Splitmix64 rand__new_splitmix64(u64 seed);
 static inline u64 rand__Splitmix64_next(rand__Splitmix64 *rng);
 static inline u64 rand__Splitmix64_bounded_next(rand__Splitmix64 *rng,
                                                 u64 bound);
+_V_MulRet_u32_V_u32_V_u32 strconv__lsr96(u32 s2, u32 s1, u32 s0);
+_V_MulRet_u32_V_u32_V_u32 strconv__lsl96(u32 s2, u32 s1, u32 s0);
+_V_MulRet_u32_V_u32_V_u32 strconv__add96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1,
+                                         u32 d0);
+_V_MulRet_u32_V_u32_V_u32 strconv__sub96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1,
+                                         u32 d0);
+bool strconv__is_digit(byte x);
+bool strconv__is_space(byte x);
+bool strconv__is_exp(byte x);
+_V_MulRet_int_V_strconv__PrepNumber strconv__parser(string s);
+u64 strconv__converter(strconv__PrepNumber *pn);
+f64 strconv__atof64(string s);
+byte strconv__byte_to_lower(byte c);
+u64 strconv__common_parse_uint(string s, int _base, int _bit_size,
+                               bool error_on_non_digit,
+                               bool error_on_high_digit);
+u64 strconv__parse_uint(string s, int _base, int _bit_size);
+i64 strconv__common_parse_int(string _s, int base, int _bit_size,
+                              bool error_on_non_digit,
+                              bool error_on_high_digit);
+i64 strconv__parse_int(string _s, int base, int _bit_size);
+int strconv__atoi(string s);
+bool strconv__underscore_ok(string s);
+strings__Builder strings__new_builder(int initial_size);
+void strings__Builder_write_bytes(strings__Builder *b, byte *bytes,
+                                  int howmany);
+void strings__Builder_write_b(strings__Builder *b, byte data);
+void strings__Builder_write(strings__Builder *b, string s);
+void strings__Builder_writeln(strings__Builder *b, string s);
+string strings__Builder_str(strings__Builder *b);
+void strings__Builder_free(strings__Builder *b);
+int strings__levenshtein_distance(string a, string b);
+f32 strings__levenshtein_distance_percentage(string a, string b);
+f32 strings__dice_coefficient(string s1, string s2);
+string strings__repeat(byte c, int n);
 bool term__can_show_color_on_stdout();
 bool term__can_show_color_on_stderr();
 bool term__supports_escape_sequences(int fd);
@@ -2265,12 +2270,15 @@ bool array_eq_T_string(array_string a1, array_string a2);
 bool array_eq_T_byte(array_byte a1, array_byte a2);
 bool array_eq_T_f32(array_f32 a1, array_f32 a2);
 
-byte *g_m2_buf;            // global
-byte *g_m2_ptr;            // global
-byte *g_m2_buf;            // global
-byte *g_m2_ptr;            // global
-i64 total_m = 0;           // global
-int nr_mallocs = 0;        // global
+byte *g_m2_buf;     // global
+byte *g_m2_ptr;     // global
+byte *g_m2_buf;     // global
+byte *g_m2_ptr;     // global
+i64 total_m = 0;    // global
+int nr_mallocs = 0; // global
+int builtin__mid_index;
+int builtin__max_size;
+int builtin__children_bytes;
 array_int g_ustring_runes; // global
 int compiler_dot_x64__mag0;
 int compiler_dot_x64__e_machine;
@@ -2293,12 +2301,6 @@ int compiler_dot_x64__segment_start;
 #define compiler_dot_x64__compiler_dot_x64__Size__16 1
 #define compiler_dot_x64__compiler_dot_x64__Size__32 2
 #define compiler_dot_x64__compiler_dot_x64__Size__64 3
-u64 strconv__DOUBLE_PLUS_ZERO;
-u64 strconv__DOUBLE_MINUS_ZERO;
-u64 strconv__DOUBLE_PLUS_INFINITY;
-u64 strconv__DOUBLE_MINUS_INFINITY;
-u32 strconv__TEN;
-u64 strconv__max_u64;
 int os__S_IFMT;
 int os__S_IFDIR;
 int os__S_IFLNK;
@@ -2310,6 +2312,12 @@ string os__wd_at_startup;
 int os__MAP_PRIVATE;
 int os__MAP_ANONYMOUS;
 string os__path_separator;
+u64 strconv__DOUBLE_PLUS_ZERO;
+u64 strconv__DOUBLE_MINUS_ZERO;
+u64 strconv__DOUBLE_PLUS_INFINITY;
+u64 strconv__DOUBLE_MINUS_INFINITY;
+u32 strconv__TEN;
+u64 strconv__max_u64;
 string time__days_string;
 array_int time__month_days;
 string time__months_string;
@@ -3319,190 +3327,428 @@ array_byte array_byte_clone(array_byte b) {
   };
   return res;
 }
-map new_map(int cap, int elm_size) {
-  map res = (map){.element_size = elm_size, .root = 0, .size = 0};
-  return res;
+map new_map(int n, int value_bytes) {
+  return (map){.value_bytes = value_bytes, .root = new_node(), .size = 0};
 }
-map new_map_init(int cap, int elm_size, string *keys, void *vals) {
-  map res = (map){.element_size = elm_size, .root = 0, .size = 0};
+map new_map_init(int n, int value_bytes, string *keys, void *values) {
+  map out = new_map(n, value_bytes);
   int tmp1 = 0;
   ;
-  for (int tmp2 = tmp1; tmp2 < cap; tmp2++) {
+  for (int tmp2 = tmp1; tmp2 < n; tmp2++) {
     int i = tmp2;
 
-    map_set(&/* ? */ res, keys[/*ptr!*/ i] /*rstring 0*/,
-            (byte *)vals + i * elm_size);
+    map_set(&/* ? */ out, keys[/*ptr!*/ i] /*rstring 0*/,
+            (byte *)values + i * value_bytes);
   };
-  return res;
+  return out;
 }
-mapnode *new_node(string key, void *val, int element_size) {
-  mapnode *new_e = (mapnode *)memdup(
+mapnode *new_node() {
+  return (mapnode *)memdup(
       &(mapnode){
-          .key = key,
-          .val = v_malloc(element_size),
-          .left = 0,
-          .right = 0,
-          .is_empty = 0,
+          .children = 0,
+          .size = 0,
       },
       sizeof(mapnode));
-  memcpy(new_e->val, val, element_size);
-  return new_e;
 }
-void map_insert(map *m, mapnode *n, string key, void *val) {
-  if (string_eq(n->key, key)) {
-    memcpy(n->val, val, m->element_size);
-    if (n->is_empty) {
+void map_set(map *m, string key, void *value) {
+  mapnode *node = m->root;
+  int child_index = 0;
+  mapnode *parent = ((mapnode *)(0));
+  while (1) {
+    if (node->size == builtin__max_size) {
+      if (isnil(parent)) {
+        parent = new_node();
+        m->root = parent;
+      };
+      mapnode_split_child(parent, child_index, node);
+      if (string_eq(key, parent->keys[child_index] /*rstring 1*/)) {
+        memcpy(parent->values[child_index] /*rvoidptr 1*/, value,
+               m->value_bytes);
+
+        return;
+      };
+      node = ((string_lt(key, parent->keys[child_index] /*rstring 1*/))
+                  ? (((mapnode *)(parent->children
+                                      [/*ptr!*/ child_index] /*rvoidptr 1*/)))
+                  : (((mapnode *)(parent->children[/*ptr!*/ child_index +
+                                                   1] /*rvoidptr 1*/))));
+    };
+    int i = 0;
+    while (i < node->size && string_gt(key, node->keys[i] /*rstring 1*/)) {
+
+      i++;
+    };
+    if (i != node->size && string_eq(key, node->keys[i] /*rstring 1*/)) {
+      memcpy(node->values[i] /*rvoidptr 1*/, value, m->value_bytes);
+
+      return;
+    };
+    if (isnil(node->children)) {
+      int j = node->size - 1;
+      while (j >= 0 && string_lt(key, node->keys[j] /*rstring 1*/)) {
+
+        node->keys[j + 1] /*rstring 1*/ = node->keys[j] /*rstring 1*/;
+        node->values[j + 1] /*rvoidptr 1*/ = node->values[j] /*rvoidptr 1*/;
+        j--;
+      };
+      node->keys[j + 1] /*rstring 1*/ = key;
+      node->values[j + 1] /*rvoidptr 1*/ = v_malloc(m->value_bytes);
+      memcpy(node->values[j + 1] /*rvoidptr 1*/, value, m->value_bytes);
+      node->size++;
       m->size++;
-      n->is_empty = 0;
-    };
 
-    return;
-  };
-  if (string_gt(n->key, key)) {
-    if (n->left == 0) {
-      n->left = new_node(key, val, m->element_size);
-      m->size++;
-    } else {
-      map_insert(m, n->left, key, val);
+      return;
     };
-
-    return;
-  };
-  if (n->right == 0) {
-    n->right = new_node(key, val, m->element_size);
-    m->size++;
-  } else {
-    map_insert(m, n->right, key, val);
+    parent = node;
+    child_index = i;
+    node = ((mapnode *)(node->children[/*ptr!*/ child_index] /*rvoidptr 1*/));
   };
 }
-bool mapnode_find(mapnode *n, string key, void *out, int element_size) {
-  if (string_eq(n->key, key)) {
-    memcpy(out, n->val, element_size);
+void mapnode_split_child(mapnode *n, int child_index, mapnode *y) {
+  mapnode *z = new_node();
+  z->size = builtin__mid_index;
+  y->size = builtin__mid_index;
+  for (int j = builtin__mid_index - 1; j >= 0; j--) {
+
+    z->keys[j] /*rstring 1*/ = y->keys[j + builtin__degree] /*rstring 1*/;
+    z->values[j] /*rvoidptr 1*/ = y->values[j + builtin__degree] /*rvoidptr 1*/;
+  };
+  if (!isnil(y->children)) {
+    z->children = ((voidptr *)(v_malloc(builtin__children_bytes)));
+    for (int j = builtin__degree - 1; j >= 0; j--) {
+
+      z->children[/*ptr!*/ j] /*rvoidptr 1*/ =
+          y->children[/*ptr!*/ j + builtin__degree] /*rvoidptr 1*/;
+    };
+  };
+  if (isnil(n->children)) {
+    n->children = ((voidptr *)(v_malloc(builtin__children_bytes)));
+  };
+  n->children[/*ptr!*/ n->size + 1] /*rvoidptr 1*/ =
+      n->children[/*ptr!*/ n->size] /*rvoidptr 1*/;
+  for (int j = n->size; j > child_index; j--) {
+
+    n->keys[j] /*rstring 1*/ = n->keys[j - 1] /*rstring 1*/;
+    n->values[j] /*rvoidptr 1*/ = n->values[j - 1] /*rvoidptr 1*/;
+    n->children[/*ptr!*/ j] /*rvoidptr 1*/ =
+        n->children[/*ptr!*/ j - 1] /*rvoidptr 1*/;
+  };
+  n->keys[child_index] /*rstring 1*/ =
+      y->keys[builtin__mid_index] /*rstring 1*/;
+  n->values[child_index] /*rvoidptr 1*/ =
+      y->values[builtin__mid_index] /*rvoidptr 1*/;
+  n->children[/*ptr!*/ child_index] /*rvoidptr 1*/ = ((voidptr)(y));
+  n->children[/*ptr!*/ child_index + 1] /*rvoidptr 1*/ = ((voidptr)(z));
+  n->size++;
+}
+bool map_get(map m, string key, void *out) {
+  mapnode *node = m.root;
+  while (1) {
+    int i = node->size - 1;
+    while (i >= 0 && string_lt(key, node->keys[i] /*rstring 1*/)) {
+
+      i--;
+    };
+    if (i != -1 && string_eq(key, node->keys[i] /*rstring 1*/)) {
+      memcpy(out, node->values[i] /*rvoidptr 1*/, m.value_bytes);
+      return 1;
+    };
+    if (isnil(node->children)) {
+      break;
+    };
+    node = ((mapnode *)(node->children[/*ptr!*/ i + 1] /*rvoidptr 1*/));
+  };
+  return 0;
+}
+bool map_exists(map m, string key) {
+  if (isnil(m.root)) {
+    return 0;
+  };
+  mapnode *node = m.root;
+  while (1) {
+    int i = node->size - 1;
+    while (i >= 0 && string_lt(key, node->keys[i] /*rstring 1*/)) {
+
+      i--;
+    };
+    if (i != -1 && string_eq(key, node->keys[i] /*rstring 1*/)) {
+      return 1;
+    };
+    if (isnil(node->children)) {
+      break;
+    };
+    node = ((mapnode *)(node->children[/*ptr!*/ i + 1] /*rvoidptr 1*/));
+  };
+  return 0;
+}
+int mapnode_find_key(mapnode n, string k) {
+  int idx = 0;
+  while (idx < n.size && string_lt(n.keys[idx] /*rstring 0*/, k)) {
+
+    idx++;
+  };
+  return idx;
+}
+bool mapnode_remove_key(mapnode *n, string k) {
+  int idx = mapnode_find_key(*n, k);
+  if (idx < n->size && string_eq(n->keys[idx] /*rstring 1*/, k)) {
+    if (isnil(n->children)) {
+      mapnode_remove_from_leaf(n, idx);
+    } else {
+      mapnode_remove_from_non_leaf(n, idx);
+    };
     return 1;
-  } else if (string_gt(n->key, key)) {
-    if (n->left == 0) {
-      return 0;
-    } else {
-      return mapnode_find(&/* ? */ *n->left, key, out, element_size);
-    };
   } else {
-    if (n->right == 0) {
+    if (isnil(n->children)) {
       return 0;
+    };
+    bool flag = ((idx == n->size) ? (1) : (0));
+    if ((((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/)))->size <
+        builtin__degree) {
+      mapnode_fill(n, idx);
+    };
+    if (flag && idx > n->size) {
+      return mapnode_remove_key(
+          (((mapnode *)(n->children[/*ptr!*/ idx - 1] /*rvoidptr 1*/))), k);
     } else {
-      return mapnode_find(&/* ? */ *n->right, key, out, element_size);
+      return mapnode_remove_key(
+          (((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/))), k);
     };
   };
 }
-bool mapnode_find2(mapnode *n, string key, int element_size) {
-  if (string_eq(n->key, key) && !n->is_empty) {
-    return 1;
-  } else if (string_gt(n->key, key)) {
-    if (isnil(n->left)) {
-      return 0;
-    } else {
-      return mapnode_find2(&/* ? */ *n->left, key, element_size);
+void mapnode_remove_from_leaf(mapnode *n, int idx) {
+  for (int i = idx + 1; i < n->size; i++) {
+
+    n->keys[i - 1] /*rstring 1*/ = n->keys[i] /*rstring 1*/;
+    n->values[i - 1] /*rvoidptr 1*/ = n->values[i] /*rvoidptr 1*/;
+  };
+  n->size--;
+}
+void mapnode_remove_from_non_leaf(mapnode *n, int idx) {
+  string k = n->keys[idx] /*rstring 1*/;
+  if (((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/))->size >=
+      builtin__degree) {
+    mapnode *current = ((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/));
+    while (!isnil(current->children)) {
+
+      current = ((
+          mapnode *)(current->children[/*ptr!*/ current->size] /*rvoidptr 1*/));
     };
+    string predecessor = current->keys[current->size - 1] /*rstring 1*/;
+    n->keys[idx] /*rstring 1*/ = predecessor;
+    n->values[idx] /*rvoidptr 1*/ =
+        current->values[current->size - 1] /*rvoidptr 1*/;
+    mapnode_remove_key(
+        (((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/))), predecessor);
+  } else if (((mapnode *)(n->children[/*ptr!*/ idx + 1] /*rvoidptr 1*/))
+                 ->size >= builtin__degree) {
+    mapnode *current =
+        ((mapnode *)(n->children[/*ptr!*/ idx + 1] /*rvoidptr 1*/));
+    while (!isnil(current->children)) {
+
+      current = ((mapnode *)(current->children[/*ptr!*/ 0] /*rvoidptr 1*/));
+    };
+    string successor = current->keys[0] /*rstring 1*/;
+    n->keys[idx] /*rstring 1*/ = successor;
+    n->values[idx] /*rvoidptr 1*/ = current->values[0] /*rvoidptr 1*/;
+    mapnode_remove_key(
+        (((mapnode *)(n->children[/*ptr!*/ idx + 1] /*rvoidptr 1*/))),
+        successor);
   } else {
-    if (isnil(n->right)) {
-      return 0;
-    } else {
-      return mapnode_find2(&/* ? */ *n->right, key, element_size);
-    };
+    mapnode_merge(n, idx);
+    mapnode_remove_key(
+        (((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/))), k);
   };
 }
-void map_set(map *m, string key, void *val) {
-  if (isnil(m->root)) {
-    m->root = new_node(key, val, m->element_size);
-    m->size++;
+void mapnode_fill(mapnode *n, int idx) {
+  if (idx != 0 &&
+      ((mapnode *)(n->children[/*ptr!*/ idx - 1] /*rvoidptr 1*/))->size >=
+          builtin__degree) {
+    mapnode_borrow_from_prev(n, idx);
+  } else if (idx != n->size &&
+             ((mapnode *)(n->children[/*ptr!*/ idx + 1] /*rvoidptr 1*/))
+                     ->size >= builtin__degree) {
+    mapnode_borrow_from_next(n, idx);
+  } else if (idx != n->size) {
+    mapnode_merge(n, idx);
+  } else {
+    mapnode_merge(n, idx - 1);
+  };
+}
+void mapnode_borrow_from_prev(mapnode *n, int idx) {
+  mapnode *child = ((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/));
+  mapnode *sibling =
+      ((mapnode *)(n->children[/*ptr!*/ idx - 1] /*rvoidptr 1*/));
+  for (int i = child->size - 1; i >= 0; i--) {
+
+    child->keys[i + 1] /*rstring 1*/ = child->keys[i] /*rstring 1*/;
+    child->values[i + 1] /*rvoidptr 1*/ = child->values[i] /*rvoidptr 1*/;
+  };
+  if (!isnil(child->children)) {
+    for (int i = child->size; i >= 0; i--) {
+
+      child->children[/*ptr!*/ i + 1] /*rvoidptr 1*/ =
+          child->children[/*ptr!*/ i] /*rvoidptr 1*/;
+    };
+  };
+  child->keys[0] /*rstring 1*/ = n->keys[idx - 1] /*rstring 1*/;
+  child->values[0] /*rvoidptr 1*/ = n->values[idx - 1] /*rvoidptr 1*/;
+  if (!isnil(child->children)) {
+    child->children[/*ptr!*/ 0] /*rvoidptr 1*/ =
+        sibling->children[/*ptr!*/ sibling->size] /*rvoidptr 1*/;
+  };
+  n->keys[idx - 1] /*rstring 1*/ =
+      sibling->keys[sibling->size - 1] /*rstring 1*/;
+  n->values[idx - 1] /*rvoidptr 1*/ =
+      sibling->values[sibling->size - 1] /*rvoidptr 1*/;
+  child->size++;
+  sibling->size--;
+}
+void mapnode_borrow_from_next(mapnode *n, int idx) {
+  mapnode *child = ((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/));
+  mapnode *sibling =
+      ((mapnode *)(n->children[/*ptr!*/ idx + 1] /*rvoidptr 1*/));
+  child->keys[child->size] /*rstring 1*/ = n->keys[idx] /*rstring 1*/;
+  child->values[child->size] /*rvoidptr 1*/ = n->values[idx] /*rvoidptr 1*/;
+  if (!isnil(child->children)) {
+    child->children[/*ptr!*/ child->size + 1] /*rvoidptr 1*/ =
+        sibling->children[/*ptr!*/ 0] /*rvoidptr 1*/;
+  };
+  n->keys[idx] /*rstring 1*/ = sibling->keys[0] /*rstring 1*/;
+  n->values[idx] /*rvoidptr 1*/ = sibling->values[0] /*rvoidptr 1*/;
+  for (int i = 1; i < sibling->size; i++) {
+
+    sibling->keys[i - 1] /*rstring 1*/ = sibling->keys[i] /*rstring 1*/;
+    sibling->values[i - 1] /*rvoidptr 1*/ = sibling->values[i] /*rvoidptr 1*/;
+  };
+  if (!isnil(sibling->children)) {
+    for (int i = 1; i <= sibling->size; i++) {
+
+      sibling->children[/*ptr!*/ i - 1] /*rvoidptr 1*/ =
+          sibling->children[/*ptr!*/ i] /*rvoidptr 1*/;
+    };
+  };
+  child->size++;
+  sibling->size--;
+}
+void mapnode_merge(mapnode *n, int idx) {
+  mapnode *child = ((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/));
+  mapnode *sibling =
+      ((mapnode *)(n->children[/*ptr!*/ idx + 1] /*rvoidptr 1*/));
+  child->keys[builtin__mid_index] /*rstring 1*/ = n->keys[idx] /*rstring 1*/;
+  child->values[builtin__mid_index] /*rvoidptr 1*/ =
+      n->values[idx] /*rvoidptr 1*/;
+  for (int i = 0; i < sibling->size; i++) {
+
+    child->keys[i + builtin__degree] /*rstring 1*/ =
+        sibling->keys[i] /*rstring 0*/;
+    child->values[i + builtin__degree] /*rvoidptr 1*/ =
+        sibling->values[i] /*rvoidptr 0*/;
+  };
+  if (!isnil(child->children)) {
+    for (int i = 0; i <= sibling->size; i++) {
+
+      child->children[/*ptr!*/ i + builtin__degree] /*rvoidptr 1*/ =
+          sibling->children[/*ptr!*/ i] /*rvoidptr 0*/;
+    };
+  };
+  for (int i = idx + 1; i < n->size; i++) {
+
+    n->keys[i - 1] /*rstring 1*/ = n->keys[i] /*rstring 1*/;
+    n->values[i - 1] /*rvoidptr 1*/ = n->values[i] /*rvoidptr 1*/;
+  };
+  for (int i = idx + 2; i <= n->size; i++) {
+
+    n->children[/*ptr!*/ i - 1] /*rvoidptr 1*/ =
+        n->children[/*ptr!*/ i] /*rvoidptr 1*/;
+  };
+  child->size += sibling->size + 1;
+  n->size--;
+}
+void v_map_delete(map *m, string key) {
+  if (m->root->size == 0) {
 
     return;
   };
-  map_insert(m, m->root, key, val);
+  bool removed = mapnode_remove_key(m->root, key);
+  if (removed) {
+    m->size--;
+  };
+  if (m->root->size == 0) {
+    if (isnil(m->root->children)) {
+
+      return;
+    } else {
+      m->root = ((mapnode *)(m->root->children[/*ptr!*/ 0] /*rvoidptr 1*/));
+    };
+  };
 }
-int preorder_keys(mapnode *node, array_string *keys, int key_i) {
-  int i = key_i;
-  if (!node->is_empty) {
-    array_set(keys, i, &(string[]){node->key});
-    i++;
+int mapnode_subkeys(mapnode n, array_string *keys, int at) {
+  int position = at;
+  if (!isnil(n.children)) {
+    int tmp3 = 0;
+    ;
+    for (int tmp4 = tmp3; tmp4 < n.size; tmp4++) {
+      int i = tmp4;
+
+      mapnode *child = ((mapnode *)(n.children[/*ptr!*/ i] /*rvoidptr 0*/));
+      position += mapnode_subkeys(*child, keys, position);
+      array_set(keys, position, &(string[]){n.keys[i] /*rstring 0*/});
+      position++;
+    };
+    mapnode *child = ((mapnode *)(n.children[/*ptr!*/ n.size] /*rvoidptr 0*/));
+    position += mapnode_subkeys(*child, keys, position);
+  } else {
+    int tmp5 = 0;
+    ;
+    for (int tmp6 = tmp5; tmp6 < n.size; tmp6++) {
+      int i = tmp6;
+
+      array_set(keys, position + i, &(string[]){n.keys[i] /*rstring 0*/});
+    };
+    position += n.size;
   };
-  if (!isnil(node->left)) {
-    i = preorder_keys(node->left, keys, i);
-  };
-  if (!isnil(node->right)) {
-    i = preorder_keys(node->right, keys, i);
-  };
-  return i;
+  return position - at;
 }
 array_string map_keys(map *m) {
   array_string keys = array_repeat(
       new_array_from_c_array(1, 1, sizeof(string),
                              EMPTY_ARRAY_OF_ELEMS(string, 1){tos3("")}),
       m->size);
-  if (isnil(m->root)) {
+  if (isnil(m->root) || m->root->size == 0) {
     return keys;
   };
-  preorder_keys(m->root, &/*111*/ (array[]){keys}[0], 0);
+  mapnode_subkeys(*m->root, &/*111*/ (array[]){keys}[0], 0);
   return keys;
 }
-bool map_get(map m, string key, void *out) {
-  if (m.root == 0) {
-    return 0;
-  };
-  return mapnode_find(&/* ? */ *m.root, key, out, m.element_size);
-}
-void v_mapnode_delete(mapnode *n, string key, int element_size) {
-  if (string_eq(n->key, key)) {
-    memset(n->val, 0, element_size);
-    n->is_empty = 1;
+void v_mapnode_free(mapnode *n) {
+  int i = 0;
+  if (isnil(n->children)) {
+    i = 0;
+    while (i < n->size) {
 
-    return;
-  } else if (string_gt(n->key, key)) {
-    if (isnil(n->left)) {
-
-      return;
-    } else {
-      v_mapnode_delete(n->left, key, element_size);
+      i++;
     };
   } else {
-    if (isnil(n->right)) {
+    i = 0;
+    while (i < n->size) {
 
-      return;
-    } else {
-      v_mapnode_delete(n->right, key, element_size);
+      v_mapnode_free(((mapnode *)(n->children[/*ptr!*/ i] /*rvoidptr 1*/)));
+      i++;
     };
+    v_mapnode_free(((mapnode *)(n->children[/*ptr!*/ i] /*rvoidptr 1*/)));
   };
-}
-void v_map_delete(map *m, string key) {
-  if (map_exists(*m, key)) {
-    v_mapnode_delete(m->root, key, m->element_size);
-    m->size--;
-  };
-}
-bool map_exists(map m, string key) {
-  return !isnil(m.root) && mapnode_find2(&/* ? */ *m.root, key, m.element_size);
-}
-void map_print(map m) {
-  println(tos3("<<<<<<<<"));
-  println(tos3(">>>>>>>>>>"));
-}
-void v_mapnode_free(mapnode *n) {
-  if (n->val != 0) {
-    v_free(n->val);
-  };
-  if (n->left != 0) {
-    v_mapnode_free(n->left);
-  };
-  if (n->right != 0) {
-    v_mapnode_free(n->right);
-  };
-  v_free(n);
 }
 void v_map_free(map *m) {
-  if (m->root == 0) {
+  if (isnil(m->root)) {
 
     return;
   };
   v_mapnode_free(m->root);
+}
+void map_print(map m) {
+  println(tos3("<<<<<<<<"));
+  println(tos3(">>>>>>>>>>"));
 }
 string map_string_str(map_string m) {
   if (m.size == 0) {
@@ -3510,12 +3756,12 @@ string map_string_str(map_string m) {
   };
   strings__Builder sb = strings__new_builder(50);
   strings__Builder_writeln(&/* ? */ sb, tos3("{"));
-  map_string tmp3 = m;
-  array_string keys_tmp3 = map_keys(&tmp3);
-  for (int l = 0; l < keys_tmp3.len; l++) {
-    string key = ((string *)keys_tmp3.data)[l];
+  map_string tmp7 = m;
+  array_string keys_tmp7 = map_keys(&tmp7);
+  for (int l = 0; l < keys_tmp7.len; l++) {
+    string key = ((string *)keys_tmp7.data)[l];
     string val = tos3("");
-    map_get(tmp3, key, &val);
+    map_get(tmp7, key, &val);
 
     strings__Builder_writeln(
         &/* ? */ sb,
@@ -5077,701 +5323,6 @@ void compiler_dot_x64__Gen_call_fn(compiler_dot_x64__Gen *g, string name) {
   compiler_dot_x64__Gen_call(g, ((int)(addr)));
   printf("call %.*s %lld\n", name.len, name.str, addr);
 }
-strings__Builder strings__new_builder(int initial_size) {
-  return (strings__Builder){
-      .buf = make(0, initial_size, 1),
-      .initial_size = initial_size,
-      .len = 0,
-  };
-}
-void strings__Builder_write_bytes(strings__Builder *b, byte *bytes,
-                                  int howmany) {
-  array_push_many(&/* ? */ b->buf, bytes, howmany);
-  b->len += howmany;
-}
-void strings__Builder_write_b(strings__Builder *b, byte data) {
-  _PUSH(&b->buf, (/*typ = array_byte   tmp_typ=byte*/ data), tmp1, byte);
-  b->len++;
-}
-void strings__Builder_write(strings__Builder *b, string s) {
-  if (string_eq(s, tos3(""))) {
-
-    return;
-  };
-  array_push_many(&/* ? */ b->buf, s.str, s.len);
-  b->len += s.len;
-}
-void strings__Builder_writeln(strings__Builder *b, string s) {
-  array_push_many(&/* ? */ b->buf, s.str, s.len);
-  _PUSH(&b->buf, (/*typ = array_byte   tmp_typ=byte*/ '\n'), tmp2, byte);
-  b->len += s.len + 1;
-}
-string strings__Builder_str(strings__Builder *b) {
-  _PUSH(&b->buf, (/*typ = array_byte   tmp_typ=byte*/ '\0'), tmp3, byte);
-  return (tos((byte *)b->buf.data, b->len));
-}
-void strings__Builder_free(strings__Builder *b) {
-  { v_free(b->buf.data); };
-  b->buf = make(0, b->initial_size, 1);
-  b->len = 0;
-}
-int strings__levenshtein_distance(string a, string b) {
-  array_int f =
-      array_repeat(new_array_from_c_array(1, 1, sizeof(int),
-                                          EMPTY_ARRAY_OF_ELEMS(int, 1){0}),
-                   b.len + 1);
-  string tmp1 = a;
-  ;
-  for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-    byte ca = tmp1.str[tmp2];
-
-    int j = 1;
-    int fj1 = (*(int *)array_get(f, 0));
-    (*(int *)array_get(f, 0))++;
-    string tmp7 = b;
-    ;
-    for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
-      byte cb = tmp7.str[tmp8];
-
-      int mn =
-          (((*(int *)array_get(f, j)) + 1 <= (*(int *)array_get(f, j - 1)) + 1)
-               ? ((*(int *)array_get(f, j)) + 1)
-               : ((*(int *)array_get(f, j - 1)) + 1));
-      if (cb != ca) {
-        mn = ((mn <= fj1 + 1) ? (mn) : (fj1 + 1));
-      } else {
-        mn = ((mn <= fj1) ? (mn) : (fj1));
-      };
-      fj1 = (*(int *)array_get(f, j));
-      array_set(&/*q*/ f, j, &(int[]){mn});
-      j++;
-    };
-  };
-  return (*(int *)array_get(f, f.len - 1));
-}
-f32 strings__levenshtein_distance_percentage(string a, string b) {
-  int d = strings__levenshtein_distance(a, b);
-  int l = ((a.len >= b.len) ? (a.len) : (b.len));
-  return (1.00 - ((f32)(d)) / ((f32)(l))) * 100.00;
-}
-f32 strings__dice_coefficient(string s1, string s2) {
-  if (s1.len == 0 || s2.len == 0) {
-    return 0.0;
-  };
-  if (string_eq(s1, s2)) {
-    return 1.0;
-  };
-  if (s1.len < 2 || s2.len < 2) {
-    return 0.0;
-  };
-  string a = ((s1.len > s2.len) ? (s1) : (s2));
-  string b = ((string_eq(a, s1)) ? (s2) : (s1));
-  map_int first_bigrams = new_map(1, sizeof(int));
-  for (int i = 0; i < a.len - 1; i++) {
-
-    string bigram = string_substr2(a, i, i + 2, false);
-    int tmp23 = 0;
-    bool tmp24 = map_get(/*similarity.v : 52*/ first_bigrams, bigram, &tmp23);
-
-    int q = (((_IN_MAP((bigram), first_bigrams))) ? (tmp23 + 1) : (1));
-    map_set(&first_bigrams, bigram, &(int[]){q});
-  };
-  int intersection_size = 0;
-  for (int i = 0; i < b.len - 1; i++) {
-
-    string bigram = string_substr2(b, i, i + 2, false);
-    int tmp27 = 0;
-    bool tmp28 = map_get(/*similarity.v : 58*/ first_bigrams, bigram, &tmp27);
-
-    int count = (((_IN_MAP((bigram), first_bigrams))) ? (tmp27) : (0));
-    if (count > 0) {
-      map_set(&first_bigrams, bigram, &(int[]){count - 1});
-      intersection_size++;
-    };
-  };
-  return (2.0 * intersection_size) / (((f32)(a.len)) + ((f32)(b.len)) - 2);
-}
-string strings__repeat(byte c, int n) {
-  if (n <= 0) {
-    return tos3("");
-  };
-  array_byte arr =
-      array_repeat(new_array_from_c_array(1, 1, sizeof(byte),
-                                          EMPTY_ARRAY_OF_ELEMS(byte, 1){c}),
-                   n + 1);
-  array_set(&/*q*/ arr, n, &(byte[]){'\0'});
-  return (tos((byte *)arr.data, n));
-}
-_V_MulRet_u32_V_u32_V_u32 strconv__lsr96(u32 s2, u32 s1, u32 s0) {
-  u32 r0 = ((u32)(0));
-  u32 r1 = ((u32)(0));
-  u32 r2 = ((u32)(0));
-  r0 = (s0 >> 1) | ((s1 & ((u32)(1))) << 31);
-  r1 = (s1 >> 1) | ((s2 & ((u32)(1))) << 31);
-  r2 = s2 >> 1;
-  return (_V_MulRet_u32_V_u32_V_u32){.var_0 = r2, .var_1 = r1, .var_2 = r0};
-}
-_V_MulRet_u32_V_u32_V_u32 strconv__lsl96(u32 s2, u32 s1, u32 s0) {
-  u32 r0 = ((u32)(0));
-  u32 r1 = ((u32)(0));
-  u32 r2 = ((u32)(0));
-  r2 = (s2 << 1) | ((s1 & (((u32)(1)) << 31)) >> 31);
-  r1 = (s1 << 1) | ((s0 & (((u32)(1)) << 31)) >> 31);
-  r0 = s0 << 1;
-  return (_V_MulRet_u32_V_u32_V_u32){.var_0 = r2, .var_1 = r1, .var_2 = r0};
-}
-_V_MulRet_u32_V_u32_V_u32 strconv__add96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1,
-                                         u32 d0) {
-  u64 w = ((u64)(0));
-  u32 r0 = ((u32)(0));
-  u32 r1 = ((u32)(0));
-  u32 r2 = ((u32)(0));
-  w = ((u64)(s0)) + ((u64)(d0));
-  r0 = ((u32)(w));
-  w >>= 32;
-  w += ((u64)(s1)) + ((u64)(d1));
-  r1 = ((u32)(w));
-  w >>= 32;
-  w += ((u64)(s2)) + ((u64)(d2));
-  r2 = ((u32)(w));
-  return (_V_MulRet_u32_V_u32_V_u32){.var_0 = r2, .var_1 = r1, .var_2 = r0};
-}
-_V_MulRet_u32_V_u32_V_u32 strconv__sub96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1,
-                                         u32 d0) {
-  u64 w = ((u64)(0));
-  u32 r0 = ((u32)(0));
-  u32 r1 = ((u32)(0));
-  u32 r2 = ((u32)(0));
-  w = ((u64)(s0)) - ((u64)(d0));
-  r0 = ((u32)(w));
-  w >>= 32;
-  w += ((u64)(s1)) - ((u64)(d1));
-  r1 = ((u32)(w));
-  w >>= 32;
-  w += ((u64)(s2)) - ((u64)(d2));
-  r2 = ((u32)(w));
-  return (_V_MulRet_u32_V_u32_V_u32){.var_0 = r2, .var_1 = r1, .var_2 = r0};
-}
-bool strconv__is_digit(byte x) {
-  return (x >= strconv__ZERO && x <= strconv__NINE) == 1;
-}
-bool strconv__is_space(byte x) {
-  return ((x >= 0x89 && x <= 0x13) || x == 0x20) == 1;
-}
-bool strconv__is_exp(byte x) { return (x == 'E' || x == 'e') == 1; }
-_V_MulRet_int_V_strconv__PrepNumber strconv__parser(string s) {
-  int state = strconv__FSM_A;
-  int digx = 0;
-  byte c = ' ';
-  int result = strconv__PARSER_OK;
-  bool expneg = 0;
-  int expexp = 0;
-  int i = 0;
-  strconv__PrepNumber pn = (strconv__PrepNumber){
-      .negative = 0, .exponent = 0, .mantissa = ((u64)(0))};
-  while (state != strconv__FSM_STOP) {
-
-    int tmp1 = state;
-
-    if (tmp1 == strconv__FSM_A) {
-      if (strconv__is_space(c) == 1) {
-        c = string_at(s, i++);
-      } else {
-        state = strconv__FSM_B;
-      };
-    } else if (tmp1 == strconv__FSM_B) {
-      state = strconv__FSM_C;
-      if (c == strconv__PLUS) {
-        c = string_at(s, i++);
-      } else if (c == strconv__MINUS) {
-        pn.negative = 1;
-        c = string_at(s, i++);
-      } else if (strconv__is_digit(c)) {
-      } else if (c == strconv__DPOINT) {
-      } else {
-        state = strconv__FSM_STOP;
-      };
-    } else if (tmp1 == strconv__FSM_C) {
-      if (c == strconv__ZERO) {
-        c = string_at(s, i++);
-      } else if (c == strconv__DPOINT) {
-        c = string_at(s, i++);
-        state = strconv__FSM_D;
-      } else {
-        state = strconv__FSM_E;
-      };
-    } else if (tmp1 == strconv__FSM_D) {
-      if (c == strconv__ZERO) {
-        c = string_at(s, i++);
-        if (pn.exponent > -2147483647) {
-          pn.exponent--;
-        };
-      } else {
-        state = strconv__FSM_F;
-      };
-    } else if (tmp1 == strconv__FSM_E) {
-      if (strconv__is_digit(c)) {
-        if (digx < strconv__DIGITS) {
-          pn.mantissa *= 10;
-          pn.mantissa += ((u64)(c - strconv__ZERO));
-          digx++;
-        } else if (pn.exponent < 2147483647) {
-          pn.exponent++;
-        };
-        c = string_at(s, i++);
-      } else if (c == strconv__DPOINT) {
-        c = string_at(s, i++);
-        state = strconv__FSM_F;
-      } else {
-        state = strconv__FSM_F;
-      };
-    } else if (tmp1 == strconv__FSM_F) {
-      if (strconv__is_digit(c)) {
-        if (digx < strconv__DIGITS) {
-          pn.mantissa *= 10;
-          pn.mantissa += ((u64)(c - strconv__ZERO));
-          pn.exponent--;
-          digx++;
-        };
-        c = string_at(s, i++);
-      } else if (strconv__is_exp(c)) {
-        c = string_at(s, i++);
-        state = strconv__FSM_G;
-      } else {
-        state = strconv__FSM_G;
-      };
-    } else if (tmp1 == strconv__FSM_G) {
-      if (c == strconv__PLUS) {
-        c = string_at(s, i++);
-      } else if (c == strconv__MINUS) {
-        expneg = 1;
-        c = string_at(s, i++);
-      };
-      state = strconv__FSM_H;
-    } else if (tmp1 == strconv__FSM_H) {
-      if (c == strconv__ZERO) {
-        c = string_at(s, i++);
-      } else {
-        state = strconv__FSM_I;
-      };
-    } else if (tmp1 == strconv__FSM_I) {
-      if (strconv__is_digit(c)) {
-        if (expexp < 214748364) {
-          expexp *= 10;
-          expexp += ((int)(c - strconv__ZERO));
-        };
-        c = string_at(s, i++);
-      } else {
-        state = strconv__FSM_STOP;
-      };
-    } else // default:
-    {
-    };
-    if (i >= s.len) {
-      state = strconv__FSM_STOP;
-    };
-  };
-  if (expneg) {
-    expexp = -expexp;
-  };
-  pn.exponent += expexp;
-  if (pn.mantissa == 0) {
-    if (pn.negative) {
-      result = strconv__PARSER_MZERO;
-    } else {
-      result = strconv__PARSER_PZERO;
-    };
-  } else if ((pn.exponent > 309)) {
-    if (pn.negative) {
-      result = strconv__PARSER_MINF;
-    } else {
-      result = strconv__PARSER_PINF;
-    };
-  } else if (pn.exponent < -328) {
-    if (pn.negative) {
-      result = strconv__PARSER_MZERO;
-    } else {
-      result = strconv__PARSER_PZERO;
-    };
-  };
-  return (_V_MulRet_int_V_strconv__PrepNumber){.var_0 = result, .var_1 = pn};
-}
-u64 strconv__converter(strconv__PrepNumber *pn) {
-  int binexp = 92;
-  u32 s2 = ((u32)(0));
-  u32 s1 = ((u32)(0));
-  u32 s0 = ((u32)(0));
-  u32 q2 = ((u32)(0));
-  u32 q1 = ((u32)(0));
-  u32 q0 = ((u32)(0));
-  u32 r2 = ((u32)(0));
-  u32 r1 = ((u32)(0));
-  u32 r0 = ((u32)(0));
-  u32 mask28 = ((u32)(0xF << 28));
-  u64 result = ((u64)(0));
-  s0 = ((u32)(pn->mantissa & ((u64)(0x00000000FFFFFFFF))));
-  s1 = ((u32)(pn->mantissa >> 32));
-  s2 = ((u32)(0));
-  while (pn->exponent > 0) {
-
-    _V_MulRet_u32_V_u32_V_u32 _V_mret_1313_q2_q1_q0 =
-        strconv__lsl96(s2, s1, s0);
-    q2 = _V_mret_1313_q2_q1_q0.var_0;
-    q1 = _V_mret_1313_q2_q1_q0.var_1;
-    q0 = _V_mret_1313_q2_q1_q0.var_2;
-    _V_MulRet_u32_V_u32_V_u32 _V_mret_1327_r2_r1_r0 =
-        strconv__lsl96(q2, q1, q0);
-    r2 = _V_mret_1327_r2_r1_r0.var_0;
-    r1 = _V_mret_1327_r2_r1_r0.var_1;
-    r0 = _V_mret_1327_r2_r1_r0.var_2;
-    _V_MulRet_u32_V_u32_V_u32 _V_mret_1341_s2_s1_s0 =
-        strconv__lsl96(r2, r1, r0);
-    s2 = _V_mret_1341_s2_s1_s0.var_0;
-    s1 = _V_mret_1341_s2_s1_s0.var_1;
-    s0 = _V_mret_1341_s2_s1_s0.var_2;
-    _V_MulRet_u32_V_u32_V_u32 _V_mret_1355_s2_s1_s0 =
-        strconv__add96(s2, s1, s0, q2, q1, q0);
-    s2 = _V_mret_1355_s2_s1_s0.var_0;
-    s1 = _V_mret_1355_s2_s1_s0.var_1;
-    s0 = _V_mret_1355_s2_s1_s0.var_2;
-    pn->exponent--;
-    while ((s2 & mask28) != 0) {
-
-      _V_MulRet_u32_V_u32_V_u32 _V_mret_1388_q2_q1_q0 =
-          strconv__lsr96(s2, s1, s0);
-      q2 = _V_mret_1388_q2_q1_q0.var_0;
-      q1 = _V_mret_1388_q2_q1_q0.var_1;
-      q0 = _V_mret_1388_q2_q1_q0.var_2;
-      binexp++;
-      s2 = q2;
-      s1 = q1;
-      s0 = q0;
-    };
-  };
-  while (pn->exponent < 0) {
-
-    while (!((s2 & (((u32)(1)) << 31)) != 0)) {
-
-      _V_MulRet_u32_V_u32_V_u32 _V_mret_1441_q2_q1_q0 =
-          strconv__lsl96(s2, s1, s0);
-      q2 = _V_mret_1441_q2_q1_q0.var_0;
-      q1 = _V_mret_1441_q2_q1_q0.var_1;
-      q0 = _V_mret_1441_q2_q1_q0.var_2;
-      binexp--;
-      s2 = q2;
-      s1 = q1;
-      s0 = q0;
-    };
-    q2 = s2 / strconv__TEN;
-    r1 = s2 % strconv__TEN;
-    r2 = (s1 >> 8) | (r1 << 24);
-    q1 = r2 / strconv__TEN;
-    r1 = r2 % strconv__TEN;
-    r2 = ((s1 & ((u32)(0xFF))) << 16) | (s0 >> 16) | (r1 << 24);
-    r0 = r2 / strconv__TEN;
-    r1 = r2 % strconv__TEN;
-    q1 = (q1 << 8) | ((r0 & ((u32)(0x00FF0000))) >> 16);
-    q0 = r0 << 16;
-    r2 = (s0 & ((u32)(0xFFFF))) | (r1 << 16);
-    q0 |= r2 / strconv__TEN;
-    s2 = q2;
-    s1 = q1;
-    s0 = q0;
-    pn->exponent++;
-  };
-  if (s2 != 0 || s1 != 0 || s0 != 0) {
-    while ((s2 & mask28) == 0) {
-
-      _V_MulRet_u32_V_u32_V_u32 _V_mret_1618_q2_q1_q0 =
-          strconv__lsl96(s2, s1, s0);
-      q2 = _V_mret_1618_q2_q1_q0.var_0;
-      q1 = _V_mret_1618_q2_q1_q0.var_1;
-      q0 = _V_mret_1618_q2_q1_q0.var_2;
-      binexp--;
-      s2 = q2;
-      s1 = q1;
-      s0 = q0;
-    };
-  };
-  int nbit = 7;
-  u32 check_round_bit = ((u32)(1)) << ((u32)(nbit));
-  u32 check_round_mask = ((u32)(0xFFFFFFFF)) << ((u32)(nbit));
-  if ((s1 & check_round_bit) != 0) {
-    if ((s1 & ~check_round_mask) != 0) {
-      _V_MulRet_u32_V_u32_V_u32 _V_mret_1689_s2_s1_s0 =
-          strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
-      s2 = _V_mret_1689_s2_s1_s0.var_0;
-      s1 = _V_mret_1689_s2_s1_s0.var_1;
-      s0 = _V_mret_1689_s2_s1_s0.var_2;
-    } else {
-      if ((s1 & (check_round_bit << ((u32)(1)))) != 0) {
-        _V_MulRet_u32_V_u32_V_u32 _V_mret_1728_s2_s1_s0 =
-            strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
-        s2 = _V_mret_1728_s2_s1_s0.var_0;
-        s1 = _V_mret_1728_s2_s1_s0.var_1;
-        s0 = _V_mret_1728_s2_s1_s0.var_2;
-      };
-    };
-    s1 = s1 & check_round_mask;
-    s0 = ((u32)(0));
-    if ((s2 & (mask28 << ((u32)(1)))) != 0) {
-      _V_MulRet_u32_V_u32_V_u32 _V_mret_1775_q2_q1_q0 =
-          strconv__lsr96(s2, s1, s0);
-      q2 = _V_mret_1775_q2_q1_q0.var_0;
-      q1 = _V_mret_1775_q2_q1_q0.var_1;
-      q0 = _V_mret_1775_q2_q1_q0.var_2;
-      binexp--;
-      s2 = q2;
-      s1 = q1;
-      s0 = q0;
-    };
-  };
-  binexp += 1023;
-  if (binexp > 2046) {
-    if (pn->negative) {
-      result = strconv__DOUBLE_MINUS_INFINITY;
-    } else {
-      result = strconv__DOUBLE_PLUS_INFINITY;
-    };
-  } else if (binexp < 1) {
-    if (pn->negative) {
-      result = strconv__DOUBLE_MINUS_ZERO;
-    } else {
-      result = strconv__DOUBLE_PLUS_ZERO;
-    };
-  } else if (s2 != 0) {
-    u64 q = ((u64)(0));
-    u64 binexs2 = ((u64)(binexp)) << 52;
-    q = (((u64)(s2 & ~mask28)) << 24) | ((((u64)(s1)) + ((u64)(128))) >> 8) |
-        binexs2;
-    if (pn->negative) {
-      q |= (((u64)(1)) << 63);
-    };
-    result = q;
-  };
-  return result;
-}
-f64 strconv__atof64(string s) {
-  strconv__PrepNumber pn = (strconv__PrepNumber){
-      .negative = 0, .exponent = 0, .mantissa = ((u64)(0))};
-  int res_parsing = 0;
-  f64 result = ((f64)(0));
-  result = ((f64)(0.0));
-  u64 *res_ptr = ((u64 *)(&result));
-  _V_MulRet_int_V_strconv__PrepNumber _V_mret_1962_res_parsing_pn =
-      strconv__parser(string_add(s, tos3(" ")));
-  res_parsing = _V_mret_1962_res_parsing_pn.var_0;
-  pn = _V_mret_1962_res_parsing_pn.var_1;
-  int tmp30 = res_parsing;
-
-  if (tmp30 == strconv__PARSER_OK) {
-    *res_ptr = strconv__converter(&/*114*/ pn);
-  } else if (tmp30 == strconv__PARSER_PZERO) {
-    *res_ptr = strconv__DOUBLE_PLUS_ZERO;
-  } else if (tmp30 == strconv__PARSER_MZERO) {
-    *res_ptr = strconv__DOUBLE_MINUS_ZERO;
-  } else if (tmp30 == strconv__PARSER_PINF) {
-    *res_ptr = strconv__DOUBLE_PLUS_INFINITY;
-  } else if (tmp30 == strconv__PARSER_MINF) {
-    *res_ptr = strconv__DOUBLE_MINUS_INFINITY;
-  } else // default:
-  {
-  };
-  return result;
-}
-byte strconv__byte_to_lower(byte c) { return c | ('x' - 'X'); }
-u64 strconv__common_parse_uint(string s, int _base, int _bit_size,
-                               bool error_on_non_digit,
-                               bool error_on_high_digit) {
-  int bit_size = _bit_size;
-  int base = _base;
-  if (s.len < 1 || !strconv__underscore_ok(s)) {
-    return ((u64)(0));
-  };
-  bool base0 = base == 0;
-  int start_index = 0;
-  if (2 <= base && base <= 36) {
-  } else if (base == 0) {
-    base = 10;
-    if (string_at(s, 0) == '0') {
-      if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == 'b') {
-        base = 2;
-        start_index += 2;
-      } else if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == 'o') {
-        base = 8;
-        start_index += 2;
-      } else if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == 'x') {
-        base = 16;
-        start_index += 2;
-      } else if (s.len >= 2 &&
-                 (string_at(s, 1) >= '0' && string_at(s, 1) <= '9')) {
-        base = 10;
-        start_index++;
-      } else {
-        base = 8;
-        start_index++;
-      };
-    };
-  } else {
-    return ((u64)(0));
-  };
-  if (bit_size == 0) {
-    bit_size = strconv__int_size;
-  } else if (bit_size < 0 || bit_size > 64) {
-    return ((u64)(0));
-  };
-  u64 cutoff = strconv__max_u64 / ((u64)(base)) + ((u64)(1));
-  u64 max_val =
-      ((bit_size == 64) ? (strconv__max_u64)
-                        : ((((u64)(1)) << ((u64)(bit_size))) - ((u64)(1))));
-  bool underscores = 0;
-  u64 n = ((u64)(0));
-  int tmp13 = start_index;
-  ;
-  for (int tmp14 = tmp13; tmp14 < s.len; tmp14++) {
-    int i = tmp14;
-
-    byte c = string_at(s, i);
-    byte cl = strconv__byte_to_lower(c);
-    byte d = ((byte)(0));
-    if (c == '_' && base0) {
-      underscores = 1;
-      continue;
-    } else if ('0' <= c && c <= '9') {
-      d = c - '0';
-    } else if ('a' <= cl && cl <= 'z') {
-      d = cl - 'a' + 10;
-    } else {
-      if (error_on_non_digit) {
-        return ((u64)(0));
-      } else {
-        break;
-      };
-    };
-    if (d >= ((byte)(base))) {
-      if (error_on_high_digit) {
-        return ((u64)(0));
-      } else {
-        break;
-      };
-    };
-    if (n >= cutoff) {
-      return max_val;
-    };
-    n *= ((u64)(base));
-    u64 n1 = n + ((u64)(d));
-    if (n1 < n || n1 > max_val) {
-      return max_val;
-    };
-    n = n1;
-  };
-  if (underscores && !strconv__underscore_ok(s)) {
-    return ((u64)(0));
-  };
-  return n;
-}
-u64 strconv__parse_uint(string s, int _base, int _bit_size) {
-  return strconv__common_parse_uint(s, _base, _bit_size, 1, 1);
-}
-i64 strconv__common_parse_int(string _s, int base, int _bit_size,
-                              bool error_on_non_digit,
-                              bool error_on_high_digit) {
-  string s = _s;
-  int bit_size = _bit_size;
-  if (s.len < 1) {
-    return ((i64)(0));
-  };
-  bool neg = 0;
-  if (string_at(s, 0) == '+') {
-    s = string_substr2(s, 1, -1, true);
-  } else if (string_at(s, 0) == '-') {
-    neg = 1;
-    s = string_substr2(s, 1, -1, true);
-  };
-  u64 un = strconv__common_parse_uint(s, base, bit_size, error_on_non_digit,
-                                      error_on_high_digit);
-  if (un == 0) {
-    return ((i64)(0));
-  };
-  if (bit_size == 0) {
-    bit_size = strconv__int_size;
-  };
-  u64 cutoff = ((u64)(1)) << ((u64)(bit_size - 1));
-  if (!neg && un >= cutoff) {
-    return ((i64)(cutoff - ((u64)(1))));
-  };
-  if (neg && un > cutoff) {
-    return -((i64)(cutoff));
-  };
-  return ((neg) ? (-((i64)(un))) : (((i64)(un))));
-}
-i64 strconv__parse_int(string _s, int base, int _bit_size) {
-  return strconv__common_parse_int(_s, base, _bit_size, 1, 1);
-}
-int strconv__atoi(string s) {
-  if ((strconv__int_size == 32 && (0 < s.len && s.len < 10)) ||
-      (strconv__int_size == 64 && (0 < s.len && s.len < 19))) {
-    int start_idx = 0;
-    if (string_at(s, 0) == '-' || string_at(s, 0) == '+') {
-      start_idx++;
-      if (s.len - start_idx < 1) {
-        return 0;
-      };
-    };
-    int n = 0;
-    int tmp29 = start_idx;
-    ;
-    for (int tmp30 = tmp29; tmp30 < s.len; tmp30++) {
-      int i = tmp30;
-
-      byte ch = string_at(s, i) - '0';
-      if (ch > 9) {
-        return 0;
-      };
-      n = n * 10 + ((int)(ch));
-    };
-    return ((string_at(s, 0) == '-') ? (-n) : (n));
-  };
-  i64 int64 = strconv__parse_int(s, 10, 0);
-  return ((int)(int64));
-}
-bool strconv__underscore_ok(string s) {
-  byte saw = '^';
-  int i = 0;
-  if (s.len >= 1 && (string_at(s, 0) == '-' || string_at(s, 0) == '+')) {
-    i++;
-  };
-  bool hex = 0;
-  if (s.len - i >= 2 && string_at(s, i) == '0' &&
-      (strconv__byte_to_lower(string_at(s, i + 1)) == 'b' ||
-       strconv__byte_to_lower(string_at(s, i + 1)) == 'o' ||
-       strconv__byte_to_lower(string_at(s, i + 1)) == 'x')) {
-    saw = '0';
-    hex = strconv__byte_to_lower(string_at(s, i + 1)) == 'x';
-    i += 2;
-  };
-  for (; i < s.len; i++) {
-
-    if (('0' <= string_at(s, i) && string_at(s, i) <= '9') ||
-        (hex && 'a' <= strconv__byte_to_lower(string_at(s, i)) &&
-         strconv__byte_to_lower(string_at(s, i)) <= 'f')) {
-      saw = '0';
-      continue;
-    };
-    if (string_at(s, i) == '_') {
-      if (saw != '0') {
-        return 0;
-      };
-      saw = '_';
-      continue;
-    };
-    if (saw == '_') {
-      return 0;
-    };
-    saw = '!';
-  };
-  return saw != '_';
-}
 bool os__File_is_opened(os__File f) { return f.opened; }
 array_byte os__File_read_bytes(os__File *f, int size) {
   return os__File_read_bytes_at(f, size, 0);
@@ -7049,6 +6600,701 @@ static inline u64 rand__Splitmix64_bounded_next(rand__Splitmix64 *rng,
     };
   };
   return ((u64)(0));
+}
+_V_MulRet_u32_V_u32_V_u32 strconv__lsr96(u32 s2, u32 s1, u32 s0) {
+  u32 r0 = ((u32)(0));
+  u32 r1 = ((u32)(0));
+  u32 r2 = ((u32)(0));
+  r0 = (s0 >> 1) | ((s1 & ((u32)(1))) << 31);
+  r1 = (s1 >> 1) | ((s2 & ((u32)(1))) << 31);
+  r2 = s2 >> 1;
+  return (_V_MulRet_u32_V_u32_V_u32){.var_0 = r2, .var_1 = r1, .var_2 = r0};
+}
+_V_MulRet_u32_V_u32_V_u32 strconv__lsl96(u32 s2, u32 s1, u32 s0) {
+  u32 r0 = ((u32)(0));
+  u32 r1 = ((u32)(0));
+  u32 r2 = ((u32)(0));
+  r2 = (s2 << 1) | ((s1 & (((u32)(1)) << 31)) >> 31);
+  r1 = (s1 << 1) | ((s0 & (((u32)(1)) << 31)) >> 31);
+  r0 = s0 << 1;
+  return (_V_MulRet_u32_V_u32_V_u32){.var_0 = r2, .var_1 = r1, .var_2 = r0};
+}
+_V_MulRet_u32_V_u32_V_u32 strconv__add96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1,
+                                         u32 d0) {
+  u64 w = ((u64)(0));
+  u32 r0 = ((u32)(0));
+  u32 r1 = ((u32)(0));
+  u32 r2 = ((u32)(0));
+  w = ((u64)(s0)) + ((u64)(d0));
+  r0 = ((u32)(w));
+  w >>= 32;
+  w += ((u64)(s1)) + ((u64)(d1));
+  r1 = ((u32)(w));
+  w >>= 32;
+  w += ((u64)(s2)) + ((u64)(d2));
+  r2 = ((u32)(w));
+  return (_V_MulRet_u32_V_u32_V_u32){.var_0 = r2, .var_1 = r1, .var_2 = r0};
+}
+_V_MulRet_u32_V_u32_V_u32 strconv__sub96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1,
+                                         u32 d0) {
+  u64 w = ((u64)(0));
+  u32 r0 = ((u32)(0));
+  u32 r1 = ((u32)(0));
+  u32 r2 = ((u32)(0));
+  w = ((u64)(s0)) - ((u64)(d0));
+  r0 = ((u32)(w));
+  w >>= 32;
+  w += ((u64)(s1)) - ((u64)(d1));
+  r1 = ((u32)(w));
+  w >>= 32;
+  w += ((u64)(s2)) - ((u64)(d2));
+  r2 = ((u32)(w));
+  return (_V_MulRet_u32_V_u32_V_u32){.var_0 = r2, .var_1 = r1, .var_2 = r0};
+}
+bool strconv__is_digit(byte x) {
+  return (x >= strconv__ZERO && x <= strconv__NINE) == 1;
+}
+bool strconv__is_space(byte x) {
+  return ((x >= 0x89 && x <= 0x13) || x == 0x20) == 1;
+}
+bool strconv__is_exp(byte x) { return (x == 'E' || x == 'e') == 1; }
+_V_MulRet_int_V_strconv__PrepNumber strconv__parser(string s) {
+  int state = strconv__FSM_A;
+  int digx = 0;
+  byte c = ' ';
+  int result = strconv__PARSER_OK;
+  bool expneg = 0;
+  int expexp = 0;
+  int i = 0;
+  strconv__PrepNumber pn = (strconv__PrepNumber){
+      .negative = 0, .exponent = 0, .mantissa = ((u64)(0))};
+  while (state != strconv__FSM_STOP) {
+
+    int tmp1 = state;
+
+    if (tmp1 == strconv__FSM_A) {
+      if (strconv__is_space(c) == 1) {
+        c = string_at(s, i++);
+      } else {
+        state = strconv__FSM_B;
+      };
+    } else if (tmp1 == strconv__FSM_B) {
+      state = strconv__FSM_C;
+      if (c == strconv__PLUS) {
+        c = string_at(s, i++);
+      } else if (c == strconv__MINUS) {
+        pn.negative = 1;
+        c = string_at(s, i++);
+      } else if (strconv__is_digit(c)) {
+      } else if (c == strconv__DPOINT) {
+      } else {
+        state = strconv__FSM_STOP;
+      };
+    } else if (tmp1 == strconv__FSM_C) {
+      if (c == strconv__ZERO) {
+        c = string_at(s, i++);
+      } else if (c == strconv__DPOINT) {
+        c = string_at(s, i++);
+        state = strconv__FSM_D;
+      } else {
+        state = strconv__FSM_E;
+      };
+    } else if (tmp1 == strconv__FSM_D) {
+      if (c == strconv__ZERO) {
+        c = string_at(s, i++);
+        if (pn.exponent > -2147483647) {
+          pn.exponent--;
+        };
+      } else {
+        state = strconv__FSM_F;
+      };
+    } else if (tmp1 == strconv__FSM_E) {
+      if (strconv__is_digit(c)) {
+        if (digx < strconv__DIGITS) {
+          pn.mantissa *= 10;
+          pn.mantissa += ((u64)(c - strconv__ZERO));
+          digx++;
+        } else if (pn.exponent < 2147483647) {
+          pn.exponent++;
+        };
+        c = string_at(s, i++);
+      } else if (c == strconv__DPOINT) {
+        c = string_at(s, i++);
+        state = strconv__FSM_F;
+      } else {
+        state = strconv__FSM_F;
+      };
+    } else if (tmp1 == strconv__FSM_F) {
+      if (strconv__is_digit(c)) {
+        if (digx < strconv__DIGITS) {
+          pn.mantissa *= 10;
+          pn.mantissa += ((u64)(c - strconv__ZERO));
+          pn.exponent--;
+          digx++;
+        };
+        c = string_at(s, i++);
+      } else if (strconv__is_exp(c)) {
+        c = string_at(s, i++);
+        state = strconv__FSM_G;
+      } else {
+        state = strconv__FSM_G;
+      };
+    } else if (tmp1 == strconv__FSM_G) {
+      if (c == strconv__PLUS) {
+        c = string_at(s, i++);
+      } else if (c == strconv__MINUS) {
+        expneg = 1;
+        c = string_at(s, i++);
+      };
+      state = strconv__FSM_H;
+    } else if (tmp1 == strconv__FSM_H) {
+      if (c == strconv__ZERO) {
+        c = string_at(s, i++);
+      } else {
+        state = strconv__FSM_I;
+      };
+    } else if (tmp1 == strconv__FSM_I) {
+      if (strconv__is_digit(c)) {
+        if (expexp < 214748364) {
+          expexp *= 10;
+          expexp += ((int)(c - strconv__ZERO));
+        };
+        c = string_at(s, i++);
+      } else {
+        state = strconv__FSM_STOP;
+      };
+    } else // default:
+    {
+    };
+    if (i >= s.len) {
+      state = strconv__FSM_STOP;
+    };
+  };
+  if (expneg) {
+    expexp = -expexp;
+  };
+  pn.exponent += expexp;
+  if (pn.mantissa == 0) {
+    if (pn.negative) {
+      result = strconv__PARSER_MZERO;
+    } else {
+      result = strconv__PARSER_PZERO;
+    };
+  } else if ((pn.exponent > 309)) {
+    if (pn.negative) {
+      result = strconv__PARSER_MINF;
+    } else {
+      result = strconv__PARSER_PINF;
+    };
+  } else if (pn.exponent < -328) {
+    if (pn.negative) {
+      result = strconv__PARSER_MZERO;
+    } else {
+      result = strconv__PARSER_PZERO;
+    };
+  };
+  return (_V_MulRet_int_V_strconv__PrepNumber){.var_0 = result, .var_1 = pn};
+}
+u64 strconv__converter(strconv__PrepNumber *pn) {
+  int binexp = 92;
+  u32 s2 = ((u32)(0));
+  u32 s1 = ((u32)(0));
+  u32 s0 = ((u32)(0));
+  u32 q2 = ((u32)(0));
+  u32 q1 = ((u32)(0));
+  u32 q0 = ((u32)(0));
+  u32 r2 = ((u32)(0));
+  u32 r1 = ((u32)(0));
+  u32 r0 = ((u32)(0));
+  u32 mask28 = ((u32)(0xF << 28));
+  u64 result = ((u64)(0));
+  s0 = ((u32)(pn->mantissa & ((u64)(0x00000000FFFFFFFF))));
+  s1 = ((u32)(pn->mantissa >> 32));
+  s2 = ((u32)(0));
+  while (pn->exponent > 0) {
+
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1313_q2_q1_q0 =
+        strconv__lsl96(s2, s1, s0);
+    q2 = _V_mret_1313_q2_q1_q0.var_0;
+    q1 = _V_mret_1313_q2_q1_q0.var_1;
+    q0 = _V_mret_1313_q2_q1_q0.var_2;
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1327_r2_r1_r0 =
+        strconv__lsl96(q2, q1, q0);
+    r2 = _V_mret_1327_r2_r1_r0.var_0;
+    r1 = _V_mret_1327_r2_r1_r0.var_1;
+    r0 = _V_mret_1327_r2_r1_r0.var_2;
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1341_s2_s1_s0 =
+        strconv__lsl96(r2, r1, r0);
+    s2 = _V_mret_1341_s2_s1_s0.var_0;
+    s1 = _V_mret_1341_s2_s1_s0.var_1;
+    s0 = _V_mret_1341_s2_s1_s0.var_2;
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1355_s2_s1_s0 =
+        strconv__add96(s2, s1, s0, q2, q1, q0);
+    s2 = _V_mret_1355_s2_s1_s0.var_0;
+    s1 = _V_mret_1355_s2_s1_s0.var_1;
+    s0 = _V_mret_1355_s2_s1_s0.var_2;
+    pn->exponent--;
+    while ((s2 & mask28) != 0) {
+
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1388_q2_q1_q0 =
+          strconv__lsr96(s2, s1, s0);
+      q2 = _V_mret_1388_q2_q1_q0.var_0;
+      q1 = _V_mret_1388_q2_q1_q0.var_1;
+      q0 = _V_mret_1388_q2_q1_q0.var_2;
+      binexp++;
+      s2 = q2;
+      s1 = q1;
+      s0 = q0;
+    };
+  };
+  while (pn->exponent < 0) {
+
+    while (!((s2 & (((u32)(1)) << 31)) != 0)) {
+
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1441_q2_q1_q0 =
+          strconv__lsl96(s2, s1, s0);
+      q2 = _V_mret_1441_q2_q1_q0.var_0;
+      q1 = _V_mret_1441_q2_q1_q0.var_1;
+      q0 = _V_mret_1441_q2_q1_q0.var_2;
+      binexp--;
+      s2 = q2;
+      s1 = q1;
+      s0 = q0;
+    };
+    q2 = s2 / strconv__TEN;
+    r1 = s2 % strconv__TEN;
+    r2 = (s1 >> 8) | (r1 << 24);
+    q1 = r2 / strconv__TEN;
+    r1 = r2 % strconv__TEN;
+    r2 = ((s1 & ((u32)(0xFF))) << 16) | (s0 >> 16) | (r1 << 24);
+    r0 = r2 / strconv__TEN;
+    r1 = r2 % strconv__TEN;
+    q1 = (q1 << 8) | ((r0 & ((u32)(0x00FF0000))) >> 16);
+    q0 = r0 << 16;
+    r2 = (s0 & ((u32)(0xFFFF))) | (r1 << 16);
+    q0 |= r2 / strconv__TEN;
+    s2 = q2;
+    s1 = q1;
+    s0 = q0;
+    pn->exponent++;
+  };
+  if (s2 != 0 || s1 != 0 || s0 != 0) {
+    while ((s2 & mask28) == 0) {
+
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1618_q2_q1_q0 =
+          strconv__lsl96(s2, s1, s0);
+      q2 = _V_mret_1618_q2_q1_q0.var_0;
+      q1 = _V_mret_1618_q2_q1_q0.var_1;
+      q0 = _V_mret_1618_q2_q1_q0.var_2;
+      binexp--;
+      s2 = q2;
+      s1 = q1;
+      s0 = q0;
+    };
+  };
+  int nbit = 7;
+  u32 check_round_bit = ((u32)(1)) << ((u32)(nbit));
+  u32 check_round_mask = ((u32)(0xFFFFFFFF)) << ((u32)(nbit));
+  if ((s1 & check_round_bit) != 0) {
+    if ((s1 & ~check_round_mask) != 0) {
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1689_s2_s1_s0 =
+          strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
+      s2 = _V_mret_1689_s2_s1_s0.var_0;
+      s1 = _V_mret_1689_s2_s1_s0.var_1;
+      s0 = _V_mret_1689_s2_s1_s0.var_2;
+    } else {
+      if ((s1 & (check_round_bit << ((u32)(1)))) != 0) {
+        _V_MulRet_u32_V_u32_V_u32 _V_mret_1728_s2_s1_s0 =
+            strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
+        s2 = _V_mret_1728_s2_s1_s0.var_0;
+        s1 = _V_mret_1728_s2_s1_s0.var_1;
+        s0 = _V_mret_1728_s2_s1_s0.var_2;
+      };
+    };
+    s1 = s1 & check_round_mask;
+    s0 = ((u32)(0));
+    if ((s2 & (mask28 << ((u32)(1)))) != 0) {
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1775_q2_q1_q0 =
+          strconv__lsr96(s2, s1, s0);
+      q2 = _V_mret_1775_q2_q1_q0.var_0;
+      q1 = _V_mret_1775_q2_q1_q0.var_1;
+      q0 = _V_mret_1775_q2_q1_q0.var_2;
+      binexp--;
+      s2 = q2;
+      s1 = q1;
+      s0 = q0;
+    };
+  };
+  binexp += 1023;
+  if (binexp > 2046) {
+    if (pn->negative) {
+      result = strconv__DOUBLE_MINUS_INFINITY;
+    } else {
+      result = strconv__DOUBLE_PLUS_INFINITY;
+    };
+  } else if (binexp < 1) {
+    if (pn->negative) {
+      result = strconv__DOUBLE_MINUS_ZERO;
+    } else {
+      result = strconv__DOUBLE_PLUS_ZERO;
+    };
+  } else if (s2 != 0) {
+    u64 q = ((u64)(0));
+    u64 binexs2 = ((u64)(binexp)) << 52;
+    q = (((u64)(s2 & ~mask28)) << 24) | ((((u64)(s1)) + ((u64)(128))) >> 8) |
+        binexs2;
+    if (pn->negative) {
+      q |= (((u64)(1)) << 63);
+    };
+    result = q;
+  };
+  return result;
+}
+f64 strconv__atof64(string s) {
+  strconv__PrepNumber pn = (strconv__PrepNumber){
+      .negative = 0, .exponent = 0, .mantissa = ((u64)(0))};
+  int res_parsing = 0;
+  f64 result = ((f64)(0));
+  result = ((f64)(0.0));
+  u64 *res_ptr = ((u64 *)(&result));
+  _V_MulRet_int_V_strconv__PrepNumber _V_mret_1962_res_parsing_pn =
+      strconv__parser(string_add(s, tos3(" ")));
+  res_parsing = _V_mret_1962_res_parsing_pn.var_0;
+  pn = _V_mret_1962_res_parsing_pn.var_1;
+  int tmp30 = res_parsing;
+
+  if (tmp30 == strconv__PARSER_OK) {
+    *res_ptr = strconv__converter(&/*114*/ pn);
+  } else if (tmp30 == strconv__PARSER_PZERO) {
+    *res_ptr = strconv__DOUBLE_PLUS_ZERO;
+  } else if (tmp30 == strconv__PARSER_MZERO) {
+    *res_ptr = strconv__DOUBLE_MINUS_ZERO;
+  } else if (tmp30 == strconv__PARSER_PINF) {
+    *res_ptr = strconv__DOUBLE_PLUS_INFINITY;
+  } else if (tmp30 == strconv__PARSER_MINF) {
+    *res_ptr = strconv__DOUBLE_MINUS_INFINITY;
+  } else // default:
+  {
+  };
+  return result;
+}
+byte strconv__byte_to_lower(byte c) { return c | ('x' - 'X'); }
+u64 strconv__common_parse_uint(string s, int _base, int _bit_size,
+                               bool error_on_non_digit,
+                               bool error_on_high_digit) {
+  int bit_size = _bit_size;
+  int base = _base;
+  if (s.len < 1 || !strconv__underscore_ok(s)) {
+    return ((u64)(0));
+  };
+  bool base0 = base == 0;
+  int start_index = 0;
+  if (2 <= base && base <= 36) {
+  } else if (base == 0) {
+    base = 10;
+    if (string_at(s, 0) == '0') {
+      if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == 'b') {
+        base = 2;
+        start_index += 2;
+      } else if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == 'o') {
+        base = 8;
+        start_index += 2;
+      } else if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == 'x') {
+        base = 16;
+        start_index += 2;
+      } else if (s.len >= 2 &&
+                 (string_at(s, 1) >= '0' && string_at(s, 1) <= '9')) {
+        base = 10;
+        start_index++;
+      } else {
+        base = 8;
+        start_index++;
+      };
+    };
+  } else {
+    return ((u64)(0));
+  };
+  if (bit_size == 0) {
+    bit_size = strconv__int_size;
+  } else if (bit_size < 0 || bit_size > 64) {
+    return ((u64)(0));
+  };
+  u64 cutoff = strconv__max_u64 / ((u64)(base)) + ((u64)(1));
+  u64 max_val =
+      ((bit_size == 64) ? (strconv__max_u64)
+                        : ((((u64)(1)) << ((u64)(bit_size))) - ((u64)(1))));
+  bool underscores = 0;
+  u64 n = ((u64)(0));
+  int tmp13 = start_index;
+  ;
+  for (int tmp14 = tmp13; tmp14 < s.len; tmp14++) {
+    int i = tmp14;
+
+    byte c = string_at(s, i);
+    byte cl = strconv__byte_to_lower(c);
+    byte d = ((byte)(0));
+    if (c == '_' && base0) {
+      underscores = 1;
+      continue;
+    } else if ('0' <= c && c <= '9') {
+      d = c - '0';
+    } else if ('a' <= cl && cl <= 'z') {
+      d = cl - 'a' + 10;
+    } else {
+      if (error_on_non_digit) {
+        return ((u64)(0));
+      } else {
+        break;
+      };
+    };
+    if (d >= ((byte)(base))) {
+      if (error_on_high_digit) {
+        return ((u64)(0));
+      } else {
+        break;
+      };
+    };
+    if (n >= cutoff) {
+      return max_val;
+    };
+    n *= ((u64)(base));
+    u64 n1 = n + ((u64)(d));
+    if (n1 < n || n1 > max_val) {
+      return max_val;
+    };
+    n = n1;
+  };
+  if (underscores && !strconv__underscore_ok(s)) {
+    return ((u64)(0));
+  };
+  return n;
+}
+u64 strconv__parse_uint(string s, int _base, int _bit_size) {
+  return strconv__common_parse_uint(s, _base, _bit_size, 1, 1);
+}
+i64 strconv__common_parse_int(string _s, int base, int _bit_size,
+                              bool error_on_non_digit,
+                              bool error_on_high_digit) {
+  string s = _s;
+  int bit_size = _bit_size;
+  if (s.len < 1) {
+    return ((i64)(0));
+  };
+  bool neg = 0;
+  if (string_at(s, 0) == '+') {
+    s = string_substr2(s, 1, -1, true);
+  } else if (string_at(s, 0) == '-') {
+    neg = 1;
+    s = string_substr2(s, 1, -1, true);
+  };
+  u64 un = strconv__common_parse_uint(s, base, bit_size, error_on_non_digit,
+                                      error_on_high_digit);
+  if (un == 0) {
+    return ((i64)(0));
+  };
+  if (bit_size == 0) {
+    bit_size = strconv__int_size;
+  };
+  u64 cutoff = ((u64)(1)) << ((u64)(bit_size - 1));
+  if (!neg && un >= cutoff) {
+    return ((i64)(cutoff - ((u64)(1))));
+  };
+  if (neg && un > cutoff) {
+    return -((i64)(cutoff));
+  };
+  return ((neg) ? (-((i64)(un))) : (((i64)(un))));
+}
+i64 strconv__parse_int(string _s, int base, int _bit_size) {
+  return strconv__common_parse_int(_s, base, _bit_size, 1, 1);
+}
+int strconv__atoi(string s) {
+  if ((strconv__int_size == 32 && (0 < s.len && s.len < 10)) ||
+      (strconv__int_size == 64 && (0 < s.len && s.len < 19))) {
+    int start_idx = 0;
+    if (string_at(s, 0) == '-' || string_at(s, 0) == '+') {
+      start_idx++;
+      if (s.len - start_idx < 1) {
+        return 0;
+      };
+    };
+    int n = 0;
+    int tmp29 = start_idx;
+    ;
+    for (int tmp30 = tmp29; tmp30 < s.len; tmp30++) {
+      int i = tmp30;
+
+      byte ch = string_at(s, i) - '0';
+      if (ch > 9) {
+        return 0;
+      };
+      n = n * 10 + ((int)(ch));
+    };
+    return ((string_at(s, 0) == '-') ? (-n) : (n));
+  };
+  i64 int64 = strconv__parse_int(s, 10, 0);
+  return ((int)(int64));
+}
+bool strconv__underscore_ok(string s) {
+  byte saw = '^';
+  int i = 0;
+  if (s.len >= 1 && (string_at(s, 0) == '-' || string_at(s, 0) == '+')) {
+    i++;
+  };
+  bool hex = 0;
+  if (s.len - i >= 2 && string_at(s, i) == '0' &&
+      (strconv__byte_to_lower(string_at(s, i + 1)) == 'b' ||
+       strconv__byte_to_lower(string_at(s, i + 1)) == 'o' ||
+       strconv__byte_to_lower(string_at(s, i + 1)) == 'x')) {
+    saw = '0';
+    hex = strconv__byte_to_lower(string_at(s, i + 1)) == 'x';
+    i += 2;
+  };
+  for (; i < s.len; i++) {
+
+    if (('0' <= string_at(s, i) && string_at(s, i) <= '9') ||
+        (hex && 'a' <= strconv__byte_to_lower(string_at(s, i)) &&
+         strconv__byte_to_lower(string_at(s, i)) <= 'f')) {
+      saw = '0';
+      continue;
+    };
+    if (string_at(s, i) == '_') {
+      if (saw != '0') {
+        return 0;
+      };
+      saw = '_';
+      continue;
+    };
+    if (saw == '_') {
+      return 0;
+    };
+    saw = '!';
+  };
+  return saw != '_';
+}
+strings__Builder strings__new_builder(int initial_size) {
+  return (strings__Builder){
+      .buf = make(0, initial_size, 1),
+      .initial_size = initial_size,
+      .len = 0,
+  };
+}
+void strings__Builder_write_bytes(strings__Builder *b, byte *bytes,
+                                  int howmany) {
+  array_push_many(&/* ? */ b->buf, bytes, howmany);
+  b->len += howmany;
+}
+void strings__Builder_write_b(strings__Builder *b, byte data) {
+  _PUSH(&b->buf, (/*typ = array_byte   tmp_typ=byte*/ data), tmp1, byte);
+  b->len++;
+}
+void strings__Builder_write(strings__Builder *b, string s) {
+  if (string_eq(s, tos3(""))) {
+
+    return;
+  };
+  array_push_many(&/* ? */ b->buf, s.str, s.len);
+  b->len += s.len;
+}
+void strings__Builder_writeln(strings__Builder *b, string s) {
+  array_push_many(&/* ? */ b->buf, s.str, s.len);
+  _PUSH(&b->buf, (/*typ = array_byte   tmp_typ=byte*/ '\n'), tmp2, byte);
+  b->len += s.len + 1;
+}
+string strings__Builder_str(strings__Builder *b) {
+  _PUSH(&b->buf, (/*typ = array_byte   tmp_typ=byte*/ '\0'), tmp3, byte);
+  return (tos((byte *)b->buf.data, b->len));
+}
+void strings__Builder_free(strings__Builder *b) {
+  { v_free(b->buf.data); };
+  b->buf = make(0, b->initial_size, 1);
+  b->len = 0;
+}
+int strings__levenshtein_distance(string a, string b) {
+  array_int f =
+      array_repeat(new_array_from_c_array(1, 1, sizeof(int),
+                                          EMPTY_ARRAY_OF_ELEMS(int, 1){0}),
+                   b.len + 1);
+  string tmp1 = a;
+  ;
+  for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+    byte ca = tmp1.str[tmp2];
+
+    int j = 1;
+    int fj1 = (*(int *)array_get(f, 0));
+    (*(int *)array_get(f, 0))++;
+    string tmp7 = b;
+    ;
+    for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
+      byte cb = tmp7.str[tmp8];
+
+      int mn =
+          (((*(int *)array_get(f, j)) + 1 <= (*(int *)array_get(f, j - 1)) + 1)
+               ? ((*(int *)array_get(f, j)) + 1)
+               : ((*(int *)array_get(f, j - 1)) + 1));
+      if (cb != ca) {
+        mn = ((mn <= fj1 + 1) ? (mn) : (fj1 + 1));
+      } else {
+        mn = ((mn <= fj1) ? (mn) : (fj1));
+      };
+      fj1 = (*(int *)array_get(f, j));
+      array_set(&/*q*/ f, j, &(int[]){mn});
+      j++;
+    };
+  };
+  return (*(int *)array_get(f, f.len - 1));
+}
+f32 strings__levenshtein_distance_percentage(string a, string b) {
+  int d = strings__levenshtein_distance(a, b);
+  int l = ((a.len >= b.len) ? (a.len) : (b.len));
+  return (1.00 - ((f32)(d)) / ((f32)(l))) * 100.00;
+}
+f32 strings__dice_coefficient(string s1, string s2) {
+  if (s1.len == 0 || s2.len == 0) {
+    return 0.0;
+  };
+  if (string_eq(s1, s2)) {
+    return 1.0;
+  };
+  if (s1.len < 2 || s2.len < 2) {
+    return 0.0;
+  };
+  string a = ((s1.len > s2.len) ? (s1) : (s2));
+  string b = ((string_eq(a, s1)) ? (s2) : (s1));
+  map_int first_bigrams = new_map(1, sizeof(int));
+  for (int i = 0; i < a.len - 1; i++) {
+
+    string bigram = string_substr2(a, i, i + 2, false);
+    int tmp23 = 0;
+    bool tmp24 = map_get(/*similarity.v : 52*/ first_bigrams, bigram, &tmp23);
+
+    int q = (((_IN_MAP((bigram), first_bigrams))) ? (tmp23 + 1) : (1));
+    map_set(&first_bigrams, bigram, &(int[]){q});
+  };
+  int intersection_size = 0;
+  for (int i = 0; i < b.len - 1; i++) {
+
+    string bigram = string_substr2(b, i, i + 2, false);
+    int tmp27 = 0;
+    bool tmp28 = map_get(/*similarity.v : 58*/ first_bigrams, bigram, &tmp27);
+
+    int count = (((_IN_MAP((bigram), first_bigrams))) ? (tmp27) : (0));
+    if (count > 0) {
+      map_set(&first_bigrams, bigram, &(int[]){count - 1});
+      intersection_size++;
+    };
+  };
+  return (2.0 * intersection_size) / (((f32)(a.len)) + ((f32)(b.len)) - 2);
+}
+string strings__repeat(byte c, int n) {
+  if (n <= 0) {
+    return tos3("");
+  };
+  array_byte arr =
+      array_repeat(new_array_from_c_array(1, 1, sizeof(byte),
+                                          EMPTY_ARRAY_OF_ELEMS(byte, 1){c}),
+                   n + 1);
+  array_set(&/*q*/ arr, n, &(byte[]){'\0'});
+  return (tos((byte *)arr.data, n));
 }
 bool term__can_show_color_on_stdout() {
   return term__supports_escape_sequences(1);
@@ -25570,16 +25816,13 @@ void init() {
   puts("allocated 50 mb");
 #endif
 
+  builtin__mid_index = builtin__degree - 1;
+  builtin__max_size = 2 * builtin__degree - 1;
+  builtin__children_bytes = sizeof(void *) * (builtin__max_size + 1);
   compiler_dot_x64__mag0 = 0x7f;
   compiler_dot_x64__e_machine = 0x3e;
   compiler_dot_x64__shn_xindex = 0xffff;
   compiler_dot_x64__segment_start = 0x400000;
-  strconv__DOUBLE_PLUS_ZERO = ((u64)(0x0000000000000000));
-  strconv__DOUBLE_MINUS_ZERO = 0x8000000000000000;
-  strconv__DOUBLE_PLUS_INFINITY = 0x7FF0000000000000;
-  strconv__DOUBLE_MINUS_INFINITY = 0xFFF0000000000000;
-  strconv__TEN = ((u32)(10));
-  strconv__max_u64 = ((u64)(UINT64_MAX));
   os__S_IFMT = 0xF000;
   os__S_IFDIR = 0x4000;
   os__S_IFLNK = 0xa000;
@@ -25592,6 +25835,12 @@ void init() {
   os__MAP_PRIVATE = 0x02;
   os__MAP_ANONYMOUS = 0x20;
   os__path_separator = tos3("/");
+  strconv__DOUBLE_PLUS_ZERO = ((u64)(0x0000000000000000));
+  strconv__DOUBLE_MINUS_ZERO = 0x8000000000000000;
+  strconv__DOUBLE_PLUS_INFINITY = 0x7FF0000000000000;
+  strconv__DOUBLE_MINUS_INFINITY = 0xFFF0000000000000;
+  strconv__TEN = ((u32)(10));
+  strconv__max_u64 = ((u64)(UINT64_MAX));
   time__days_string = tos3("MonTueWedThuFriSatSun");
   time__month_days = new_array_from_c_array(
       12, 12, sizeof(int),
