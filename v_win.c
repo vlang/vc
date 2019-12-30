@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "63b70dd"
+#define V_COMMIT_HASH "2d2e030"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "89d3075"
+#define V_COMMIT_HASH "63b70dd"
 #endif
 #include <inttypes.h>
 
@@ -11456,11 +11456,8 @@ void compiler__Parser_check_unused_imports(compiler__Parser *p) {
 
     return;
   };
-  compiler__Parser_production_error_with_token_index(
-      p,
-      _STR("the following imports were never used: %.*s", output.len,
-           output.str),
-      0);
+  compiler__Parser_warn(p, _STR("the following imports were never used: %.*s",
+                                output.len, output.str));
 }
 _V_MulRet_bool_V_string compiler__Parser_is_expr_fn_call(compiler__Parser *p,
                                                          int start_tok_idx) {
