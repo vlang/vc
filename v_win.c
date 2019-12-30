@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d2f2ac5"
+#define V_COMMIT_HASH "093a025"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d07953b"
+#define V_COMMIT_HASH "d2f2ac5"
 #endif
 #include <inttypes.h>
 
@@ -19660,7 +19660,7 @@ Option_int compiler__V_get_file_parser_index(compiler__V *v, string file) {
   string file_path = ((filepath__is_abs(file)) ? (file) : (os__realpath(file)));
   if ((_IN_MAP((file_path), v->file_parser_idx))) {
     int tmp2 = 0;
-    bool tmp3 = map_get(/*main.v : 175*/ v->file_parser_idx, file_path, &tmp2);
+    bool tmp3 = map_get(/*main.v : 180*/ v->file_parser_idx, file_path, &tmp2);
 
     int tmp4 = OPTION_CAST(int)(tmp2);
     return opt_ok(&tmp4, sizeof(int));
