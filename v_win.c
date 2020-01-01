@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "327314c"
+#define V_COMMIT_HASH "e8bbb00"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f87177d"
+#define V_COMMIT_HASH "327314c"
 #endif
 #include <inttypes.h>
 
@@ -27853,10 +27853,10 @@ v_dot_parser__Parser_call_expr(v_dot_parser__Parser *p) {
       v_dot_parser__Parser_error(&/* ? */ *p,
                                  _STR("too many arguments in call to `%.*s`",
                                       fn_name.len, fn_name.str));
-    } else {
-      v_dot_parser__Parser_error(&/* ? */ *p, _STR("unknown function `%.*s`",
-                                                   fn_name.len, fn_name.str));
     };
+  } else {
+    v_dot_parser__Parser_error(
+        &/* ? */ *p, _STR("unknown function `%.*s`", fn_name.len, fn_name.str));
   };
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rpar);
   v_dot_ast__CallExpr node =
