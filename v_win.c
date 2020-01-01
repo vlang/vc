@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "abe4898"
+#define V_COMMIT_HASH "a99f214"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "51222ba"
+#define V_COMMIT_HASH "abe4898"
 #endif
 #include <inttypes.h>
 
@@ -7831,6 +7831,9 @@ time__calculate_date_from_offset(int day_offset_) {
   while (day_offset <=
          (*(int *)array_get(time__days_before, estimated_month))) {
 
+    if (estimated_month == 0) {
+      break;
+    };
     estimated_month--;
   };
   day_offset -= (*(int *)array_get(time__days_before, estimated_month));
