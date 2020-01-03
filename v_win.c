@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4389526"
+#define V_COMMIT_HASH "67f397f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "520ec0f"
+#define V_COMMIT_HASH "4389526"
 #endif
 #include <inttypes.h>
 
@@ -1867,6 +1867,7 @@ void os__log(string s);
 void os__flush_stdout();
 void os__mkdir_all(string path);
 string os__join(string base, varg_string *dirs);
+string os__cachedir();
 string os__tmpdir();
 void os__chmod(string path, int mode);
 array_string os__init_os_args_wide(int argc, byteptr *argv);
@@ -6994,6 +6995,21 @@ string os__join(string base, varg_string *dirs) {
   println(tos3("use filepath.join"));
   return filepath__join(base, dirs);
 }
+string os__cachedir() {
+#ifndef _WIN32
+#endif
+  ;
+  string cdir = string_add(os__home_dir(), tos3(".cache"));
+  if (!os__is_dir(cdir) && !os__is_link(cdir)) {
+    Option_bool tmp49 = os__mkdir(cdir);
+    if (!tmp49.ok) {
+      string err = tmp49.error;
+      int errcode = tmp49.ecode;
+      v_panic(err);
+    };
+  };
+  return cdir;
+}
 string os__tmpdir() {
   string path = os__getenv(tos3("TMPDIR"));
 #ifdef _WIN32
@@ -7008,6 +7024,9 @@ string os__tmpdir() {
   };
 #endif
   ;
+  if (string_eq(path, tos3(""))) {
+    path = os__cachedir();
+  };
   if (string_eq(path, tos3(""))) {
     path = tos3("/tmp");
   };
