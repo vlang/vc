@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3344111"
+#define V_COMMIT_HASH "7bc5cfc"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "aeda48d"
+#define V_COMMIT_HASH "3344111"
 #endif
 #include <inttypes.h>
 
@@ -24546,7 +24546,8 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
     if ((p->calling_c && compiler__Parser_peek(&/* ? */ *p) !=
                              compiler__compiler__TokenKind_dot) ||
         is_cstr || (p->pref->translated && string_eq(p->mod, tos3("main")))) {
-      if (p->os == compiler__compiler__OS_windows) {
+      if (p->os == compiler__compiler__OS_windows &&
+          string_eq(p->mod, tos3("ui"))) {
         compiler__Parser_gen(p, _STR("L\"%.*s\"", f.len, f.str));
       } else {
         compiler__Parser_gen(p, _STR("\"%.*s\"", f.len, f.str));
@@ -24585,10 +24586,10 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
       ;
       complex_inter = 1;
     };
-    _V_MulRet_string_V_string _V_mret_304_typ_val_ =
+    _V_MulRet_string_V_string _V_mret_310_typ_val_ =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_304_typ_val_.var_0;
-    string val_ = _V_mret_304_typ_val_.var_1;
+    string typ = _V_mret_310_typ_val_.var_0;
+    string val_ = _V_mret_310_typ_val_.var_1;
     string val = string_trim_space(val_);
     args = string_add(args, _STR(", %.*s", val.len, val.str));
     if (string_eq(typ, tos3("string"))) {

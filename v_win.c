@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3344111"
+#define V_COMMIT_HASH "7bc5cfc"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "aeda48d"
+#define V_COMMIT_HASH "3344111"
 #endif
 #include <inttypes.h>
 
@@ -3505,7 +3505,7 @@ string array_byte_hex(array_byte b) {
   byte *ptr = &hex[/*ptr!*/ 0] /*rbyte 1*/;
   for (int i = 0; i < b.len; i++) {
 
-    ptr += sprintf(((charptr)(ptr)), L"%02x", (*(byte *)array_get(b, i)));
+    ptr += sprintf(((charptr)(ptr)), "%02x", (*(byte *)array_get(b, i)));
   };
   return (tos2((byte *)hex));
 }
@@ -3668,7 +3668,7 @@ void print(string s) {
 #ifdef _WIN32
   wprintf(string_to_wide(s));
 #else
-  printf(L"%.*s", s.len, (char *)s.str);
+  printf("%.*s", s.len, (char *)s.str);
 #endif
   ;
 }
@@ -3803,12 +3803,12 @@ void backtrace_symbols_fd(void *, int, int);
 int proc_pidpath(int, void *, int);
 string f64_str(f64 d) {
   byte *buf = v_malloc(sizeof(double) * 5 + 1);
-  sprintf(((charptr)(buf)), L"%f", d);
+  sprintf(((charptr)(buf)), "%f", d);
   return tos(buf, vstrlen(buf));
 }
 string f32_str(f32 d) {
   byte *buf = v_malloc(sizeof(double) * 5 + 1);
-  sprintf(((charptr)(buf)), L"%f", d);
+  sprintf(((charptr)(buf)), "%f", d);
   return tos(buf, vstrlen(buf));
 }
 string f64_strsci(f64 x, int digit_num) {
@@ -3821,7 +3821,7 @@ string f64_strsci(f64 x, int digit_num) {
 }
 string f64_strlong(f64 x) {
   byte *buf = v_malloc(18 + 32);
-  sprintf(((charptr)(buf)), L"%0.30lf", x);
+  sprintf(((charptr)(buf)), "%0.30lf", x);
   string tmpstr = tos(buf, vstrlen(buf));
   return tmpstr;
 }
@@ -3853,7 +3853,7 @@ bool f64_gebit(f64 a, f64 b) { return DEFAULT_GE(a, b); }
 bool f32_gebit(f32 a, f32 b) { return DEFAULT_GE(a, b); }
 string ptr_str(void *ptr) {
   byte *buf = v_malloc(sizeof(double) * 5 + 1);
-  sprintf(((charptr)(buf)), L"%p", ptr);
+  sprintf(((charptr)(buf)), "%p", ptr);
   return tos(buf, vstrlen(buf));
 }
 string int_str(int nn) {
@@ -3955,13 +3955,13 @@ string bool_str(bool b) {
 string int_hex(int n) {
   int len = ((n >= 0) ? (int_str(n).len + 3) : (11));
   byte *hex = v_malloc(len);
-  int count = ((int)(sprintf(((charptr)(hex)), L"0x%x", n)));
+  int count = ((int)(sprintf(((charptr)(hex)), "0x%x", n)));
   return tos(hex, count);
 }
 string i64_hex(i64 n) {
   int len = ((n >= ((i64)(0))) ? (i64_str(n).len + 3) : (19));
   byte *hex = v_malloc(len);
-  int count = ((int)(sprintf(((charptr)(hex)), L"0x%" PRIx64, n)));
+  int count = ((int)(sprintf(((charptr)(hex)), "0x%" PRIx64, n)));
   return tos(hex, count);
 }
 bool array_byte_contains(array_byte a, byte val) {
@@ -6365,7 +6365,7 @@ Option_os__File os__open_append(string path) {
 #else
   byte *cpath = path.str;
   file = (os__File){
-      .cfile = fopen(((charptr)(cpath)), L"ab"), .fd = 0, .opened = 0};
+      .cfile = fopen(((charptr)(cpath)), "ab"), .fd = 0, .opened = 0};
 #endif
   ;
   if (isnil(file.cfile)) {
@@ -6390,7 +6390,7 @@ void *os__vpopen(string path) {
   return _wpopen(wpath, string_to_wide(mode));
 #else
   byte *cpath = path.str;
-  return popen((char *)cpath, L"r");
+  return popen((char *)cpath, "r");
 #endif
   ;
 }
@@ -7108,7 +7108,7 @@ void os__File_writeln(os__File *f, string s) {
     return;
   };
   fputs((char *)s.str, f->cfile);
-  fputs(L"\n", f->cfile);
+  fputs("\n", f->cfile);
 }
 Option_bool os__mkdir(string path) {
   if (string_eq(path, tos3("."))) {
@@ -9698,7 +9698,7 @@ void v_dot_scanner__verror(string s) {
 string v_dot_scanner__vhash() {
   byte buf[50] = {0};
   buf[0] /*rbyte 1*/ = 0;
-  snprintf(((charptr)(buf)), 50, L"%s", V_COMMIT_HASH);
+  snprintf(((charptr)(buf)), 50, "%s", V_COMMIT_HASH);
   return tos_clone(buf);
 }
 string v_dot_scanner__cescaped_path(string s) {
@@ -22232,7 +22232,7 @@ void compiler__verror(string s) {
 string compiler__vhash() {
   byte buf[50] = {0};
   buf[0] /*rbyte 1*/ = 0;
-  snprintf(((charptr)(buf)), 50, L"%s", V_COMMIT_HASH);
+  snprintf(((charptr)(buf)), 50, "%s", V_COMMIT_HASH);
   return tos_clone(buf);
 }
 string compiler__cescaped_path(string s) {
@@ -24543,7 +24543,8 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
     if ((p->calling_c && compiler__Parser_peek(&/* ? */ *p) !=
                              compiler__compiler__TokenKind_dot) ||
         is_cstr || (p->pref->translated && string_eq(p->mod, tos3("main")))) {
-      if (p->os == compiler__compiler__OS_windows) {
+      if (p->os == compiler__compiler__OS_windows &&
+          string_eq(p->mod, tos3("ui"))) {
         compiler__Parser_gen(p, _STR("L\"%.*s\"", f.len, f.str));
       } else {
         compiler__Parser_gen(p, _STR("\"%.*s\"", f.len, f.str));
@@ -24580,10 +24581,10 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
       ;
       complex_inter = 1;
     };
-    _V_MulRet_string_V_string _V_mret_304_typ_val_ =
+    _V_MulRet_string_V_string _V_mret_310_typ_val_ =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_304_typ_val_.var_0;
-    string val_ = _V_mret_304_typ_val_.var_1;
+    string typ = _V_mret_310_typ_val_.var_0;
+    string val_ = _V_mret_310_typ_val_.var_1;
     string val = string_trim_space(val_);
     args = string_add(args, _STR(", %.*s", val.len, val.str));
     if (string_eq(typ, tos3("string"))) {
