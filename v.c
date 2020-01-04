@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7bc5cfc"
+#define V_COMMIT_HASH "778a1cc"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3344111"
+#define V_COMMIT_HASH "7bc5cfc"
 #endif
 #include <inttypes.h>
 
@@ -195,7 +195,7 @@ typedef int bool;
 #define DEFAULT_GT(a, b) (a > b)
 #define DEFAULT_GE(a, b) (a >= b)
 //================================== GLOBALS =================================*/
-byteptr g_str_buf;
+byte g_str_buf[1024];
 int load_so(byteptr);
 void reload_so();
 
@@ -21279,13 +21279,13 @@ void compiler__V_generate_init(compiler__V *v) {
     };
     if (!v->pref->is_bare) {
       compiler__CGen_genln(
-          v->cgen, _STR("void init() {\ng_str_buf=malloc(1000);\n#if "
-                        "VPREALLOC\ng_m2_buf = malloc(50 * 1000 * "
-                        "1000);\ng_m2_ptr = g_m2_buf;\nputs(\"allocated 50 "
-                        "mb\");\n#endif\n%.*s\n%.*s\nbuiltin__init();\n%.*s\n}",
-                        call_mod_init_consts.len, call_mod_init_consts.str,
-                        consts_init_body.len, consts_init_body.str,
-                        call_mod_init.len, call_mod_init.str));
+          v->cgen,
+          _STR("void init() {\n#if VPREALLOC\ng_m2_buf = malloc(50 * 1000 * "
+               "1000);\ng_m2_ptr = g_m2_buf;\nputs(\"allocated 50 "
+               "mb\");\n#endif\n%.*s\n%.*s\nbuiltin__init();\n%.*s\n}",
+               call_mod_init_consts.len, call_mod_init_consts.str,
+               consts_init_body.len, consts_init_body.str, call_mod_init.len,
+               call_mod_init.str));
       compiler__CGen_genln(
           v->cgen,
           tos3(
@@ -21382,7 +21382,6 @@ void compiler__V_generate_main(compiler__V *v) {
       compiler__V_gen_main_start(v, 1);
       compiler__CGen_genln(cgen, tos3("  main__main();"));
       if (!v->pref->is_bare) {
-        compiler__CGen_genln(cgen, tos3("free(g_str_buf);"));
         compiler__CGen_genln(cgen, tos3("#if VPREALLOC"));
         compiler__CGen_genln(cgen, tos3("free(g_m2_buf);"));
         compiler__CGen_genln(cgen, tos3("puts(\"freed mem buf\");"));
@@ -22062,12 +22061,12 @@ compiler__V *compiler__new_v(array_string args) {
       os_dot_cmdline__many_values(args, tos3("-cflags")), tos3(" "));
   array_string defines = os_dot_cmdline__many_values(args, tos3("-d"));
   _V_MulRet_array_string_V_array_string
-      _V_mret_4790_compile_defines_compile_defines_all =
+      _V_mret_4784_compile_defines_compile_defines_all =
           compiler__parse_defines(defines);
   array_string compile_defines =
-      _V_mret_4790_compile_defines_compile_defines_all.var_0;
+      _V_mret_4784_compile_defines_compile_defines_all.var_0;
   array_string compile_defines_all =
-      _V_mret_4790_compile_defines_compile_defines_all.var_1;
+      _V_mret_4784_compile_defines_compile_defines_all.var_1;
   string rdir = os__realpath(dir);
   string rdir_name = filepath__filename(rdir);
   if ((_IN(string, (tos3("-bare")), args))) {
@@ -29208,7 +29207,6 @@ void main__v_command(string command, array_string args) {
   v_exit(0);
 }
 void init() {
-  g_str_buf = malloc(1000);
 #if VPREALLOC
   g_m2_buf = malloc(50 * 1000 * 1000);
   g_m2_ptr = g_m2_buf;
@@ -29410,7 +29408,7 @@ void init() {
       "b)\n#define DEFAULT_LE(a, b) (a <= b)\n#define DEFAULT_GT(a, b) (a > "
       "b)\n#define DEFAULT_GE(a, b) (a >= "
       "b)\n//================================== GLOBALS "
-      "=================================*/\nbyteptr g_str_buf;\nint "
+      "=================================*/\nbyte g_str_buf[1024];\nint "
       "load_so(byteptr);\nvoid reload_so();\n",
       compiler__c_common_macros.len, compiler__c_common_macros.str);
   compiler__js_headers = tos3(
@@ -29609,7 +29607,6 @@ int main(int argc, char **argv) {
   os__args = os__init_os_args(argc, (byteptr *)argv);
 
   main__main();
-  free(g_str_buf);
 #if VPREALLOC
   free(g_m2_buf);
   puts("freed mem buf");
