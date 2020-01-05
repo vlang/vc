@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4c3df96"
+#define V_COMMIT_HASH "126289c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8053175"
+#define V_COMMIT_HASH "4c3df96"
 #endif
 #include <inttypes.h>
 
@@ -2300,6 +2300,7 @@ string compiler__V_type_definitions(compiler__V *v);
 array_compiler__Type compiler__sort_structs(array_compiler__Type types);
 string compiler__V_interface_table(compiler__V *v);
 void compiler__Parser_error(compiler__Parser *p, string s);
+void compiler__Parser_warn_or_error(compiler__Parser *p, string s);
 void compiler__Parser_warn(compiler__Parser *p, string s);
 void compiler__Parser_production_error_with_token_index(compiler__Parser *p,
                                                         string e,
@@ -14917,6 +14918,13 @@ string compiler__V_interface_table(compiler__V *v) {
 void compiler__Parser_error(compiler__Parser *p, string s) {
   compiler__Parser_error_with_token_index(p, s, p->token_idx - 1);
 }
+void compiler__Parser_warn_or_error(compiler__Parser *p, string s) {
+  if (p->pref->is_prod) {
+    compiler__Parser_error(p, s);
+  } else {
+    compiler__Parser_warn(p, s);
+  };
+}
 void compiler__Parser_warn(compiler__Parser *p, string s) {
   compiler__Parser_warn_with_token_index(p, s, p->token_idx - 1);
 }
@@ -17898,11 +17906,9 @@ void compiler__Parser_check_unused_and_mut_vars(compiler__Parser *p) {
     if (!var.is_changed && var.is_mut && !p->pref->is_repl &&
         !p->pref->translated && string_ne(var.typ, tos3("T*")) &&
         string_ne(p->mod, tos3("ui")) && string_ne(var.typ, tos3("App*"))) {
-      compiler__Parser_error_with_token_index(
-          p,
-          _STR("`%.*s` is declared as mutable, but it was never changed",
-               var.name.len, var.name.str),
-          var.token_idx);
+      compiler__Parser_warn_or_error(
+          p, _STR("`%.*s` is declared as mutable, but it was never changed",
+                  var.name.len, var.name.str));
     };
   };
 }
@@ -18649,10 +18655,10 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f,
       };
     };
   };
-  _V_MulRet_string_V_array_string _V_mret_6185_varg_type_varg_values =
+  _V_MulRet_string_V_array_string _V_mret_6181_varg_type_varg_values =
       compiler__Parser_fn_call_vargs(p, *f);
-  string varg_type = _V_mret_6185_varg_type_varg_values.var_0;
-  array_string varg_values = _V_mret_6185_varg_type_varg_values.var_1;
+  string varg_type = _V_mret_6181_varg_type_varg_values.var_0;
+  array_string varg_values = _V_mret_6181_varg_type_varg_values.var_1;
   if (f->is_variadic) {
     _PUSH(&saved_args, (/*typ = array_string   tmp_typ=string*/ varg_type),
           tmp84, string);
@@ -18921,10 +18927,10 @@ compiler__Parser_fn_call_vargs(compiler__Parser *p, compiler__Fn f) {
     if (p->tok == compiler__compiler__TokenKind_comma) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
     };
-    _V_MulRet_string_V_string _V_mret_7132_varg_type_varg_value =
+    _V_MulRet_string_V_string _V_mret_7128_varg_type_varg_value =
         compiler__Parser_tmp_expr(p);
-    string varg_type = _V_mret_7132_varg_type_varg_value.var_0;
-    string varg_value = _V_mret_7132_varg_type_varg_value.var_1;
+    string varg_type = _V_mret_7128_varg_type_varg_value.var_0;
+    string varg_value = _V_mret_7128_varg_type_varg_value.var_1;
     if (string_starts_with(varg_type, tos3("varg_")) &&
         (values.len > 0 || p->tok == compiler__compiler__TokenKind_comma)) {
       compiler__Parser_error(
