@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8053175"
+#define V_COMMIT_HASH "4c3df96"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c24a1b3"
+#define V_COMMIT_HASH "8053175"
 #endif
 #include <inttypes.h>
 
@@ -3788,19 +3788,7 @@ int is_atty(int fd) {
 #endif
   ;
 }
-void println(string s) {
-#ifdef __linux__
-#ifndef __BIONIC__
-  string snl = string_add(s, tos3("\n"));
-  syscall(1, 1, (char *)snl.str, s.len + 1);
-
-  return;
-#endif
-  ;
-#endif
-  ;
-  printf("%.*s\n", s.len, (char *)s.str);
-}
+void println(string s) { printf("%.*s\n", s.len, (char *)s.str); }
 bool print_backtrace_skipping_top_frames_msvc(int skipframes) {
   println(tos3("not implemented, see builtin_windows.v"));
   return 0;
@@ -7290,7 +7278,7 @@ Option_array_string os__ls(string path) {
 }
 Option_os__File os__open(string path) {
   os__File file = (os__File){.cfile = 0, .fd = 0, .opened = 0};
-#if defined(__linux__) || defined(__APPLE__)
+#ifdef __linux__
 #ifndef __BIONIC__
   int fd = syscall(os__sys_open, (char *)path.str, 511);
   if (fd == -1) {
@@ -7321,16 +7309,9 @@ Option_os__File os__open(string path) {
 Option_os__File os__create(string path) {
   int fd = 0;
   os__File file = (os__File){.cfile = 0, .fd = 0, .opened = 0};
-#if defined(__linux__) || defined(__APPLE__)
-#ifndef __BIONIC__
-#ifdef __APPLE__
-  fd = syscall(398, (char *)path.str, 0x601, 0x1b6);
-#endif
-  ;
 #ifdef __linux__
+#ifndef __BIONIC__
   fd = syscall(os__sys_creat, (char *)path.str, 511);
-#endif
-  ;
   if (fd == -1) {
     return v_error(_STR("failed to create file \"%.*s\"", path.len, path.str));
   };
@@ -7361,7 +7342,7 @@ void os__File_write(os__File *f, string s) {
 
     return;
   };
-#if defined(__linux__) || defined(__APPLE__)
+#ifdef __linux__
 #ifndef __BIONIC__
   syscall(os__sys_write, f->fd, (char *)s.str, s.len);
 
@@ -7377,7 +7358,7 @@ void os__File_writeln(os__File *f, string s) {
 
     return;
   };
-#if defined(__linux__) || defined(__APPLE__)
+#ifdef __linux__
 #ifndef __BIONIC__
   string snl = string_add(s, tos3("\n"));
   syscall(os__sys_write, f->fd, (char *)snl.str, snl.len);
@@ -7396,7 +7377,7 @@ Option_bool os__mkdir(string path) {
     return opt_ok(&tmp10, sizeof(bool));
   };
   string apath = os__realpath(path);
-#if defined(__linux__) || defined(__APPLE__)
+#ifdef __linux__
 #ifndef __BIONIC__
   int ret = syscall(os__sys_mkdir, (char *)apath.str, 511);
   if (ret == -1) {
@@ -7442,7 +7423,7 @@ Option_bool os__symlink(string origin, string target) {
   return v_error(os__get_error_msg(errno));
 }
 void os__File_write_bytes(os__File *f, void *data, int size) {
-#if defined(__linux__) || defined(__APPLE__)
+#ifdef __linux__
 #ifndef __BIONIC__
   syscall(os__sys_write, f->fd, data, 1);
 
@@ -7459,7 +7440,7 @@ void os__File_close(os__File *f) {
     return;
   };
   f->opened = 0;
-#if defined(__linux__) || defined(__APPLE__)
+#ifdef __linux__
 #ifndef __BIONIC__
   syscall(os__sys_close, f->fd);
 
