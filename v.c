@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c24a1b3"
+#define V_COMMIT_HASH "8053175"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "868d6c8"
+#define V_COMMIT_HASH "c24a1b3"
 #endif
 #include <inttypes.h>
 
@@ -3788,7 +3788,19 @@ int is_atty(int fd) {
 #endif
   ;
 }
-void println(string s) { printf("%.*s\n", s.len, (char *)s.str); }
+void println(string s) {
+#ifdef __linux__
+#ifndef __BIONIC__
+  string snl = string_add(s, tos3("\n"));
+  syscall(1, 1, (char *)snl.str, s.len + 1);
+
+  return;
+#endif
+  ;
+#endif
+  ;
+  printf("%.*s\n", s.len, (char *)s.str);
+}
 bool print_backtrace_skipping_top_frames_msvc(int skipframes) {
   println(tos3("not implemented, see builtin_windows.v"));
   return 0;
@@ -6960,8 +6972,7 @@ string os__executable() {
   ;
 #ifdef __NetBSD__
   byte *result = v_calloc(os__MAX_PATH);
-  int count =
-      ((int)(readlink("/proc/curproc/exe", (char *)result, os__MAX_PATH)));
+  int count = readlink("/proc/curproc/exe", (char *)result, os__MAX_PATH);
   if (count < 0) {
     eprintln(tos3(
         "os.executable() failed at reading /proc/curproc/exe to get exe path"));
@@ -6972,8 +6983,7 @@ string os__executable() {
   ;
 #ifdef __DragonFly__
   byte *result = v_calloc(os__MAX_PATH);
-  int count =
-      ((int)(readlink("/proc/curproc/file", (char *)result, os__MAX_PATH)));
+  int count = readlink("/proc/curproc/file", (char *)result, os__MAX_PATH);
   if (count < 0) {
     eprintln(tos3("os.executable() failed at reading /proc/curproc/file to get "
                   "exe path"));
@@ -7279,7 +7289,9 @@ Option_array_string os__ls(string path) {
   return opt_ok(&tmp5, sizeof(array_string));
 }
 Option_os__File os__open(string path) {
-#ifdef __linux__
+  os__File file = (os__File){.cfile = 0, .fd = 0, .opened = 0};
+#if defined(__linux__) || defined(__APPLE__)
+#ifndef __BIONIC__
   int fd = syscall(os__sys_open, (char *)path.str, 511);
   if (fd == -1) {
     return v_error(_STR("failed to open file \"%.*s\"", path.len, path.str));
@@ -7290,9 +7302,12 @@ Option_os__File os__open(string path) {
       .cfile = 0,
   });
   return opt_ok(&tmp6, sizeof(os__File));
-#else
+#endif
+  ;
+#endif
+  ;
   byte *cpath = path.str;
-  os__File file = (os__File){
+  file = (os__File){
       .cfile = fopen(((charptr)(cpath)), "rb"),
       .opened = 1,
       .fd = 0,
@@ -7302,25 +7317,35 @@ Option_os__File os__open(string path) {
   };
   os__File tmp7 = OPTION_CAST(os__File)(file);
   return opt_ok(&tmp7, sizeof(os__File));
-#endif
-  ;
 }
 Option_os__File os__create(string path) {
-#ifdef __linux__
   int fd = 0;
+  os__File file = (os__File){.cfile = 0, .fd = 0, .opened = 0};
+#if defined(__linux__) || defined(__APPLE__)
+#ifndef __BIONIC__
+#ifdef __APPLE__
+  fd = syscall(398, (char *)path.str, 0x601, 0x1b6);
+#endif
+  ;
+#ifdef __linux__
   fd = syscall(os__sys_creat, (char *)path.str, 511);
+#endif
+  ;
   if (fd == -1) {
     return v_error(_STR("failed to create file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp8 = OPTION_CAST(os__File)((os__File){
+  file = (os__File){
       .fd = fd,
       .opened = 1,
       .cfile = 0,
-  });
+  };
+  os__File tmp8 = OPTION_CAST(os__File)(file);
   return opt_ok(&tmp8, sizeof(os__File));
 #endif
   ;
-  os__File file = (os__File){
+#endif
+  ;
+  file = (os__File){
       .cfile = fopen(((charptr)(path.str)), "wb"),
       .opened = 1,
       .fd = 0,
@@ -7336,10 +7361,13 @@ void os__File_write(os__File *f, string s) {
 
     return;
   };
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
+#ifndef __BIONIC__
   syscall(os__sys_write, f->fd, (char *)s.str, s.len);
 
   return;
+#endif
+  ;
 #endif
   ;
   fputs((char *)s.str, f->cfile);
@@ -7349,11 +7377,14 @@ void os__File_writeln(os__File *f, string s) {
 
     return;
   };
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
+#ifndef __BIONIC__
   string snl = string_add(s, tos3("\n"));
   syscall(os__sys_write, f->fd, (char *)snl.str, snl.len);
 
   return;
+#endif
+  ;
 #endif
   ;
   fputs((char *)s.str, f->cfile);
@@ -7365,13 +7396,16 @@ Option_bool os__mkdir(string path) {
     return opt_ok(&tmp10, sizeof(bool));
   };
   string apath = os__realpath(path);
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
+#ifndef __BIONIC__
   int ret = syscall(os__sys_mkdir, (char *)apath.str, 511);
   if (ret == -1) {
     return v_error(os__get_error_msg(errno));
   };
   bool tmp11 = OPTION_CAST(bool)(1);
   return opt_ok(&tmp11, sizeof(bool));
+#endif
+  ;
 #endif
   ;
   int r = mkdir((char *)apath.str, 511);
@@ -7408,12 +7442,16 @@ Option_bool os__symlink(string origin, string target) {
   return v_error(os__get_error_msg(errno));
 }
 void os__File_write_bytes(os__File *f, void *data, int size) {
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
+#ifndef __BIONIC__
   syscall(os__sys_write, f->fd, data, 1);
-#else
-  fwrite(data, 1, size, f->cfile);
+
+  return;
 #endif
   ;
+#endif
+  ;
+  fwrite(data, 1, size, f->cfile);
 }
 void os__File_close(os__File *f) {
   if (!f->opened) {
@@ -7421,10 +7459,13 @@ void os__File_close(os__File *f) {
     return;
   };
   f->opened = 0;
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
+#ifndef __BIONIC__
   syscall(os__sys_close, f->fd);
 
   return;
+#endif
+  ;
 #endif
   ;
   fflush(f->cfile);
@@ -15173,12 +15214,17 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
         compiler__Parser_warn(p, tos3("use `macos` instead of `mac`"));
       };
       if (not) {
-        compiler__Parser_genln(
-            p, _STR("#ifndef %.*s", ifdef_name.len, ifdef_name.str));
+        if (string_eq(name, tos3("linux_or_macos"))) {
+          compiler__Parser_genln(
+              p, tos3("#if !defined(__linux__) && !defined(__APPLE__)"));
+        } else {
+          compiler__Parser_genln(
+              p, _STR("#ifndef %.*s", ifdef_name.len, ifdef_name.str));
+        };
       } else {
         if (string_eq(name, tos3("linux_or_macos"))) {
           compiler__Parser_genln(
-              p, tos3("#if defined(__linux) || defined(__APPLE__)"));
+              p, tos3("#if defined(__linux__) || defined(__APPLE__)"));
         } else {
           compiler__Parser_genln(
               p, _STR("#ifdef %.*s", ifdef_name.len, ifdef_name.str));
@@ -15286,8 +15332,8 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_dollar);
     compiler__Parser_check(p, compiler__compiler__TokenKind_name);
     compiler__Parser_check(p, compiler__compiler__TokenKind_assign);
-    _V_MulRet_string_V_string _V_mret_720___val = compiler__Parser_tmp_expr(p);
-    string val = _V_mret_720___val.var_1;
+    _V_MulRet_string_V_string _V_mret_735___val = compiler__Parser_tmp_expr(p);
+    string val = _V_mret_735___val.var_1;
     compiler__Parser_check(p, compiler__compiler__TokenKind_rcbr);
   } else if (p->tok == compiler__compiler__TokenKind_name &&
              string_eq(p->lit, tos3("vweb"))) {
@@ -15742,10 +15788,10 @@ string compiler__Parser_gen_array_map(compiler__Parser *p, string str_typ,
   string tmp = compiler__Parser_get_tmp(p);
   string tmp_elm = compiler__Parser_get_tmp(p);
   string a = p->expr_var.name;
-  _V_MulRet_string_V_string _V_mret_2243_map_type_expr =
+  _V_MulRet_string_V_string _V_mret_2258_map_type_expr =
       compiler__Parser_tmp_expr(p);
-  string map_type = _V_mret_2243_map_type_expr.var_0;
-  string expr = _V_mret_2243_map_type_expr.var_1;
+  string map_type = _V_mret_2258_map_type_expr.var_0;
+  string expr = _V_mret_2258_map_type_expr.var_1;
   compiler__CGen_set_placeholder(
       p->cgen, method_ph,
       string_add(_STR("\narray %.*s = new_array(0, %.*s .len, ", tmp.len,

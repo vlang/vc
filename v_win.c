@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c24a1b3"
+#define V_COMMIT_HASH "8053175"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "868d6c8"
+#define V_COMMIT_HASH "c24a1b3"
 #endif
 #include <inttypes.h>
 
@@ -15211,12 +15211,17 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
         compiler__Parser_warn(p, tos3("use `macos` instead of `mac`"));
       };
       if (not) {
-        compiler__Parser_genln(
-            p, _STR("#ifndef %.*s", ifdef_name.len, ifdef_name.str));
+        if (string_eq(name, tos3("linux_or_macos"))) {
+          compiler__Parser_genln(
+              p, tos3("#if !defined(__linux__) && !defined(__APPLE__)"));
+        } else {
+          compiler__Parser_genln(
+              p, _STR("#ifndef %.*s", ifdef_name.len, ifdef_name.str));
+        };
       } else {
         if (string_eq(name, tos3("linux_or_macos"))) {
           compiler__Parser_genln(
-              p, tos3("#if defined(__linux) || defined(__APPLE__)"));
+              p, tos3("#if defined(__linux__) || defined(__APPLE__)"));
         } else {
           compiler__Parser_genln(
               p, _STR("#ifdef %.*s", ifdef_name.len, ifdef_name.str));
@@ -15324,8 +15329,8 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_dollar);
     compiler__Parser_check(p, compiler__compiler__TokenKind_name);
     compiler__Parser_check(p, compiler__compiler__TokenKind_assign);
-    _V_MulRet_string_V_string _V_mret_720___val = compiler__Parser_tmp_expr(p);
-    string val = _V_mret_720___val.var_1;
+    _V_MulRet_string_V_string _V_mret_735___val = compiler__Parser_tmp_expr(p);
+    string val = _V_mret_735___val.var_1;
     compiler__Parser_check(p, compiler__compiler__TokenKind_rcbr);
   } else if (p->tok == compiler__compiler__TokenKind_name &&
              string_eq(p->lit, tos3("vweb"))) {
@@ -15776,10 +15781,10 @@ string compiler__Parser_gen_array_map(compiler__Parser *p, string str_typ,
   string tmp = compiler__Parser_get_tmp(p);
   string tmp_elm = compiler__Parser_get_tmp(p);
   string a = p->expr_var.name;
-  _V_MulRet_string_V_string _V_mret_2243_map_type_expr =
+  _V_MulRet_string_V_string _V_mret_2258_map_type_expr =
       compiler__Parser_tmp_expr(p);
-  string map_type = _V_mret_2243_map_type_expr.var_0;
-  string expr = _V_mret_2243_map_type_expr.var_1;
+  string map_type = _V_mret_2258_map_type_expr.var_0;
+  string expr = _V_mret_2258_map_type_expr.var_1;
   compiler__CGen_set_placeholder(
       p->cgen, method_ph,
       string_add(_STR("\narray %.*s = new_array(0, %.*s .len, ", tmp.len,
