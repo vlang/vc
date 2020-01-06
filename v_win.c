@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "126289c"
+#define V_COMMIT_HASH "025efcb"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4c3df96"
+#define V_COMMIT_HASH "126289c"
 #endif
 #include <inttypes.h>
 
@@ -251,6 +251,10 @@ int g_test_fails = 0;
 #define os__FILE_ACTION_RENAMED_OLD_NAME 4
 #define os__FILE_ACTION_RENAMED_NEW_NAME 5
 #define os__MAX_PATH 4096
+#define os__F_OK 0
+#define os__X_OK 1
+#define os__W_OK 2
+#define os__R_OK 4
 #define os__MAX_ERROR_CODE 15841
 #define time__seconds_per_minute 60
 #define v_dot_token__nr_tokens 141
@@ -1958,6 +1962,9 @@ string os__getenv(string key);
 int os__setenv(string name, string value, bool overwrite);
 int os__unsetenv(string name);
 bool os__exists(string path);
+bool os__is_executable(string path);
+bool os__is_writable(string path);
+bool os__is_readable(string path);
 bool os__file_exists(string _path);
 void os__rm(string path);
 void os__rmdir(string path);
@@ -6736,9 +6743,36 @@ int os__unsetenv(string name) {
 bool os__exists(string path) {
 #ifdef _WIN32
   string p = string_replace(path, tos3("/"), tos3("\\"));
-  return _waccess(string_to_wide(p), 0) != -1;
+  return _waccess(string_to_wide(p), os__F_OK) != -1;
 #else
-  return access((char *)path.str, 0) != -1;
+  return access((char *)path.str, os__F_OK) != -1;
+#endif
+  ;
+}
+bool os__is_executable(string path) {
+#ifdef _WIN32
+  string p = os__realpath(path);
+  return (os__exists(p) && string_ends_with(p, tos3(".exe")));
+#else
+  return access((char *)path.str, os__X_OK) != -1;
+#endif
+  ;
+}
+bool os__is_writable(string path) {
+#ifdef _WIN32
+  string p = string_replace(path, tos3("/"), tos3("\\"));
+  return _waccess(string_to_wide(p), os__W_OK) != -1;
+#else
+  return access((char *)path.str, os__W_OK) != -1;
+#endif
+  ;
+}
+bool os__is_readable(string path) {
+#ifdef _WIN32
+  string p = string_replace(path, tos3("/"), tos3("\\"));
+  return _waccess(string_to_wide(p), os__R_OK) != -1;
+#else
+  return access((char *)path.str, os__R_OK) != -1;
 #endif
   ;
 }
