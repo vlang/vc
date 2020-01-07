@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a0c8ad7"
+#define V_COMMIT_HASH "6d30697"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "706c606"
+#define V_COMMIT_HASH "a0c8ad7"
 #endif
 #include <inttypes.h>
 
@@ -406,8 +406,6 @@ typedef Option Option_os__File;
 typedef Option Option_bool;
 typedef Option Option_os__Result;
 typedef Option Option_bool;
-typedef struct rand__Pcg32 rand__Pcg32;
-typedef struct rand__Splitmix64 rand__Splitmix64;
 typedef struct time__Time time__Time;
 typedef Option Option_int;
 typedef struct _V_MulRet_int_V_int_V_int _V_MulRet_int_V_int_V_int;
@@ -1060,15 +1058,6 @@ struct os__FileInfo {
 struct os__Result {
   int exit_code;
   string output;
-};
-
-struct rand__Pcg32 {
-  u64 state;
-  u64 inc;
-};
-
-struct rand__Splitmix64 {
-  u64 state;
 };
 
 struct strconv__PrepNumber {
@@ -1979,19 +1968,7 @@ array_string os_dot_cmdline__before(array_string args, array_string what);
 array_string os_dot_cmdline__after(array_string args, array_string what);
 array_string os_dot_cmdline__only_non_options(array_string args);
 array_string os_dot_cmdline__only_options(array_string args);
-rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq);
-static inline u32 rand__Pcg32_next(rand__Pcg32 *rng);
-static inline u32 rand__Pcg32_bounded_next(rand__Pcg32 *rng, u32 bound);
-void rand__seed(int s);
-int rand__next(int max);
-int rand__rand_r(int *seed);
-rand__Splitmix64 rand__new_splitmix64(u64 seed);
-static inline u64 rand__Splitmix64_next(rand__Splitmix64 *rng);
-static inline u64 rand__Splitmix64_bounded_next(rand__Splitmix64 *rng,
-                                                u64 bound);
-void time__remove_me_when_c_bug_is_fixed();
 time__Time time__now();
-time__Time time__random();
 string time__Time_format_ss(time__Time t);
 string time__Time_format(time__Time t);
 string time__Time_smonth(time__Time t);
@@ -2016,8 +1993,8 @@ int time__Time_day_of_week(time__Time t);
 string time__Time_weekday_str(time__Time t);
 i64 time__ticks();
 void time__sleep(int seconds);
-void time__usleep(int n);
-void time__sleep_ms(int n);
+void time__sleep_ms(int milliseconds);
+void time__usleep(int microseconds);
 bool time__is_leap_year(int year);
 Option_int time__days_in_month(int month, int year);
 string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time);
@@ -7689,65 +7666,6 @@ array_string os_dot_cmdline__only_options(array_string args) {
   }
   return tmp14;
 }
-rand__Pcg32 rand__new_pcg32(u64 initstate, u64 initseq) {
-  rand__Pcg32 rng = (rand__Pcg32){.state = 0, .inc = 0};
-  rng.state = ((u64)(0));
-  rng.inc = (initseq << ((u64)(1))) | ((u64)(1));
-  rand__Pcg32_next(&/* ? */ rng);
-  rng.state += initstate;
-  rand__Pcg32_next(&/* ? */ rng);
-  return rng;
-}
-static inline u32 rand__Pcg32_next(rand__Pcg32 *rng) {
-  u64 oldstate = rng->state;
-  rng->state = oldstate * (6364136223846793005) + rng->inc;
-  u32 xorshifted =
-      ((u32)(((oldstate >> ((u64)(18))) ^ oldstate) >> ((u64)(27))));
-  u32 rot = ((u32)(oldstate >> ((u64)(59))));
-  return ((xorshifted >> rot) | (xorshifted << ((-rot) & ((u32)(31)))));
-}
-static inline u32 rand__Pcg32_bounded_next(rand__Pcg32 *rng, u32 bound) {
-  u32 threshold = (-bound % bound);
-  while (1) {
-    u32 r = rand__Pcg32_next(rng);
-    if (r >= threshold) {
-      return (r % bound);
-    };
-  };
-  return ((u32)(0));
-}
-void rand__seed(int s) { srand(s); }
-int rand__next(int max) { return rand() % max; }
-int rand__rand_r(int *seed) {
-  {
-    int *rs = seed;
-    int ns = (*rs * 1103515245 + 12345);
-    *rs = ns;
-    return ns & 0x7fffffff;
-  };
-}
-rand__Splitmix64 rand__new_splitmix64(u64 seed) {
-  return (rand__Splitmix64){seed};
-}
-static inline u64 rand__Splitmix64_next(rand__Splitmix64 *rng) {
-  rng->state += (0x9e3779b97f4a7c15);
-  u64 z = rng->state;
-  z = (z ^ ((z >> ((u64)(30))))) * (0xbf58476d1ce4e5b9);
-  z = (z ^ ((z >> ((u64)(27))))) * (0x94d049bb133111eb);
-  return z ^ (z >> (31));
-}
-static inline u64 rand__Splitmix64_bounded_next(rand__Splitmix64 *rng,
-                                                u64 bound) {
-  u64 threshold = -bound % bound;
-  while (1) {
-    u64 r = rand__Splitmix64_next(rng);
-    if (r >= threshold) {
-      return r % bound;
-    };
-  };
-  return ((u64)(0));
-}
-void time__remove_me_when_c_bug_is_fixed() {}
 time__Time time__now() {
   time_t t = time(0);
   struct /*C.Foo(0)*/
@@ -7755,11 +7673,6 @@ time__Time time__now() {
       tm *now = 0;
   now = localtime(&t);
   return time__convert_ctime(*now);
-}
-time__Time time__random() {
-  int now_unix = time__now().v_unix;
-  int rand_unix = rand__next(now_unix);
-  return time__unix(rand_unix);
 }
 string time__Time_format_ss(time__Time t) {
   return time__Time_get_fmt_str(t, time__time__FormatDelimiter_hyphen,
@@ -7980,18 +7893,20 @@ void time__sleep(int seconds) {
 #endif
   ;
 }
-void time__usleep(int n) {
+void time__sleep_ms(int milliseconds) {
 #ifdef _WIN32
+  Sleep(milliseconds);
 #else
-  usleep(n);
+  usleep(milliseconds * 1000);
 #endif
   ;
 }
-void time__sleep_ms(int n) {
+void time__usleep(int microseconds) {
 #ifdef _WIN32
-  Sleep(n);
+  int milliseconds = microseconds / 1000;
+  Sleep(milliseconds);
 #else
-  usleep(n * 1000);
+  usleep(microseconds);
 #endif
   ;
 }
