@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d823d82"
+#define V_COMMIT_HASH "fb08172"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6d30697"
+#define V_COMMIT_HASH "d823d82"
 #endif
 #include <inttypes.h>
 
@@ -14081,6 +14081,12 @@ void compiler__V_cc(compiler__V *v) {
     compiler__verror(tos3("-fast is only supported on Linux right now"));
 #endif
     ;
+  };
+  if (!v->pref->is_so &&
+      v->pref->build_mode != compiler__compiler__BuildMode_build_module &&
+      string_eq(os__user_os(), tos3("windows")) &&
+      !string_ends_with(v->out_name, tos3(".exe"))) {
+    v->out_name = string_add(v->out_name, tos3(".exe"));
   };
   compiler__V_log(&/* ? */ *v,
                   _STR("cc() isprod=%d outname=%.*s", v->pref->is_prod,
