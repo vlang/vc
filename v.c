@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "56421be"
+#define V_COMMIT_HASH "0d93eeb"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "38e5f0d"
+#define V_COMMIT_HASH "56421be"
 #endif
 #include <inttypes.h>
 
@@ -22284,9 +22284,10 @@ array_string compiler__V_get_user_files(compiler__V *v) {
   compiler__V_log(&/* ? */ *v, _STR("get_v_files(%.*s)", dir.len, dir.str));
   array_string user_files = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+  string vroot = filepath__dir(compiler__vexe_path());
   string preludes_path = filepath__join(
-      v->pref->vlib_path,
-      &(varg_string){.len = 2, .args = {tos3("compiler"), tos3("preludes")}});
+      vroot,
+      &(varg_string){.len = 2, .args = {tos3("tools"), tos3("preludes")}});
   if (v->pref->is_live) {
     _PUSH(&user_files,
           (/*typ = array_string   tmp_typ=string*/ filepath__join(
@@ -22639,12 +22640,12 @@ compiler__V *compiler__new_v(array_string args) {
       os_dot_cmdline__many_values(args, tos3("-cflags")), tos3(" "));
   array_string defines = os_dot_cmdline__many_values(args, tos3("-d"));
   _V_MulRet_array_string_V_array_string
-      _V_mret_4784_compile_defines_compile_defines_all =
+      _V_mret_4790_compile_defines_compile_defines_all =
           compiler__parse_defines(defines);
   array_string compile_defines =
-      _V_mret_4784_compile_defines_compile_defines_all.var_0;
+      _V_mret_4790_compile_defines_compile_defines_all.var_0;
   array_string compile_defines_all =
-      _V_mret_4784_compile_defines_compile_defines_all.var_1;
+      _V_mret_4790_compile_defines_compile_defines_all.var_1;
   string rdir = os__realpath(dir);
   string rdir_name = filepath__filename(rdir);
   if ((_IN(string, (tos3("-bare")), args))) {
