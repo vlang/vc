@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "38e5f0d"
+#define V_COMMIT_HASH "56421be"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "526f12f"
+#define V_COMMIT_HASH "38e5f0d"
 #endif
 #include <inttypes.h>
 
@@ -2896,7 +2896,7 @@ void compiler__Parser_gen_fmt(compiler__Parser *p);
 string compiler__write_formatted_source(string file_name, string s);
 string compiler__get_vtmp_folder();
 string compiler__get_vtmp_filename(string base_file_name, string postfix);
-void compiler__launch_tool(string tname);
+void compiler__launch_tool(string tname, string cmdname);
 string v_dot_gen__cgen(array_v_dot_ast__File files, v_dot_table__Table *table);
 void v_dot_gen__Gen_save(v_dot_gen__Gen *g);
 void v_dot_gen__Gen_write(v_dot_gen__Gen *g, string s);
@@ -27591,12 +27591,18 @@ string compiler__get_vtmp_filename(string base_file_name, string postfix) {
                                filepath__filename(os__realpath(base_file_name)),
                                postfix)}}));
 }
-void compiler__launch_tool(string tname) {
+void compiler__launch_tool(string tname, string cmdname) {
   bool is_verbose = (_IN(string, (tos3("-verbose")), os__args)) ||
                     (_IN(string, (tos3("--verbose")), os__args));
   string vexe = compiler__vexe_path();
   string vroot = filepath__dir(vexe);
   compiler__set_vroot_folder(vroot);
+  int tname_index = array_string_index(os__args, cmdname);
+  if (tname_index == -1) {
+    tname_index = os__args.len;
+  };
+  array_string compilation_options =
+      array_clone(array_slice2(os__args, 1, tname_index, false));
   string tool_args =
       array_string_join(array_slice2(os__args, 1, -1, true), tos3(" "));
   string tool_exe = os__realpath(
@@ -27630,25 +27636,30 @@ void compiler__launch_tool(string tname) {
                   tool_should_be_recompiled));
   };
   if (tool_should_be_recompiled) {
-    string compilation_options = tos3("");
     if (string_eq(tname, tos3("vfmt"))) {
-      compilation_options = tos3("-d vfmt");
+      _PUSH_MANY(
+          &compilation_options,
+          (/*typ = array_string   tmp_typ=string*/ new_array_from_c_array(
+              2, 2, sizeof(string),
+              EMPTY_ARRAY_OF_ELEMS(string, 2){tos3("-d"), tos3("vfmt")})),
+          tmp5, array_string);
     };
-    string compilation_command = _STR(
-        "\"%.*s\" %.*s \"%.*s\"", vexe.len, vexe.str, compilation_options.len,
-        compilation_options.str, tool_source.len, tool_source.str);
+    string compilation_args = array_string_join(compilation_options, tos3(" "));
+    string compilation_command =
+        _STR("\"%.*s\" %.*s \"%.*s\"", vexe.len, vexe.str, compilation_args.len,
+             compilation_args.str, tool_source.len, tool_source.str);
     if (is_verbose) {
       eprintln(_STR("Compiling %.*s with: \"%.*s\"", tname.len, tname.str,
                     compilation_command.len, compilation_command.str));
     };
-    Option_os__Result tmp3 = os__exec(compilation_command);
+    Option_os__Result tmp6 = os__exec(compilation_command);
     os__Result tool_compilation;
-    if (!tmp3.ok) {
-      string err = tmp3.error;
-      int errcode = tmp3.ecode;
+    if (!tmp6.ok) {
+      string err = tmp6.error;
+      int errcode = tmp6.ecode;
       v_panic(err);
     }
-    tool_compilation = *(os__Result *)tmp3.data;
+    tool_compilation = *(os__Result *)tmp6.data;
     ;
     if (tool_compilation.exit_code != 0) {
       v_panic(string_add(_STR("V tool \"%.*s\" could not be compiled\n",
@@ -30477,7 +30488,7 @@ void main__main() {
     eprintln(_STR("v options: %.*s ", tmp2.len, tmp2.str));
   };
   if ((_IN(string, (command), main__simple_tools))) {
-    compiler__launch_tool(string_add(tos3("v"), command));
+    compiler__launch_tool(string_add(tos3("v"), command), command);
 
     return;
   };
@@ -30500,7 +30511,7 @@ void main__main() {
   } else if (string_eq(command, tos3("")) ||
              (args.len == 2 &&
               string_eq((*(string *)array_get(args, 1)), tos3("-")))) {
-    compiler__launch_tool(tos3("vrepl"));
+    compiler__launch_tool(tos3("vrepl"), tos3(""));
 
     return;
   };
@@ -30550,13 +30561,13 @@ void main__v_command(string command, array_string args) {
              (string_eq(tmp5, tos3("install"))) ||
              (string_eq(tmp5, tos3("update"))) ||
              (string_eq(tmp5, tos3("remove")))) {
-    compiler__launch_tool(tos3("vpm"));
+    compiler__launch_tool(tos3("vpm"), command);
   } else if (string_eq(tmp5, tos3("get"))) {
     println(tos3("use `v install` to install modules from vpm.vlang.io "));
   } else if (string_eq(tmp5, tos3("symlink"))) {
     compiler__create_symlink();
   } else if (string_eq(tmp5, tos3("runrepl"))) {
-    compiler__launch_tool(tos3("vrepl"));
+    compiler__launch_tool(tos3("vrepl"), tos3("runrepl"));
   } else if (string_eq(tmp5, tos3("doc"))) {
     string vexe = os__executable();
     string vdir = filepath__dir(os__executable());
