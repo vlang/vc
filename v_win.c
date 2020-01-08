@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e3275f6"
+#define V_COMMIT_HASH "e70ef53"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3c0fca9"
+#define V_COMMIT_HASH "e3275f6"
 #endif
 #include <inttypes.h>
 
@@ -3821,7 +3821,7 @@ string array_byte_hex(array_byte b) {
 int copy(array_byte dst, array_byte src) {
   if (dst.len > 0 && src.len > 0) {
     int min = ((dst.len < src.len) ? (dst.len) : (src.len));
-    memcpy(dst.data, array_slice2(src, min, -1, true).data,
+    memcpy(dst.data, array_slice2(src, 0, min, false).data,
            dst.element_size * min);
     return min;
   };
