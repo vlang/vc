@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7bf49ab"
+#define V_COMMIT_HASH "8412c6f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7882312"
+#define V_COMMIT_HASH "7bf49ab"
 #endif
 #include <inttypes.h>
 
@@ -3954,7 +3954,15 @@ void eprint(string s) {
 }
 void print(string s) {
 #ifdef _WIN32
-  wprintf(string_to_wide(s));
+  void *output_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+  int bytes_written = 0;
+  if (is_atty(1) > 0) {
+    u16 *wide_str = string_to_wide(s);
+    int wide_len = wcslen(wide_str);
+    WriteConsole(output_handle, wide_str, wide_len, &bytes_written, 0);
+  } else {
+    WriteFile(output_handle, (char *)s.str, s.len, &bytes_written, 0);
+  };
 #else
   printf("%.*s", s.len, (char *)s.str);
 #endif
@@ -4084,7 +4092,7 @@ bool print_backtrace_skipping_top_frames_nix(int skipframes) {
   println(tos3("not implemented, see builtin_nix.v"));
   return 0;
 }
-void println(string s) { _putws(string_to_wide(s)); }
+void println(string s) { print(_STR("%.*s\n", s.len, s.str)); }
 int backtrace(void *a, int b);
 byteptr *backtrace_symbols(void *, int);
 void backtrace_symbols_fd(void *, int, int);
