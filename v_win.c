@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8412c6f"
+#define V_COMMIT_HASH "66a6fa1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7bf49ab"
+#define V_COMMIT_HASH "8412c6f"
 #endif
 #include <inttypes.h>
 
@@ -80,13 +80,6 @@ typedef int bool;
 #include <locale.h> // tolower
 #include <sys/time.h>
 #include <unistd.h> // sleep
-#else
-#if defined(_MSC_VER)
-#pragma comment(lib, "Dbghelp.lib")
-#endif
-#if defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ < __MSVCR90_DLL
-#error Please upgrade your MinGW distribution to use msvcr90.dll or later.
-#endif
 #endif
 
 #if defined(__CYGWIN__) && !defined(_WIN32)
@@ -150,13 +143,7 @@ typedef int bool;
 #define UNICODE
 #include <windows.h>
 
-// must be included after <windows.h>
-#ifndef __TINYC__
-#include <shellapi.h>
-#endif
-
 #include <direct.h> // _wgetcwd
-#include <fcntl.h>  // _O_U8TEXT
 #include <io.h>     // _waccess
 //#include <WinSock2.h>
 #ifdef _MSC_VER
@@ -169,6 +156,10 @@ typedef int bool;
 
 #define EMPTY_STRUCT_DECLARATION int ____dummy_variable
 #define OPTION_CAST(x)
+
+#include <dbghelp.h>
+#pragma comment(lib, "Dbghelp.lib")
+
 #endif
 
 #else
@@ -3875,15 +3866,11 @@ bool array_byte_eq(array_byte a, array_byte a2) {
 bool array_f32_eq(array_f32 a, array_f32 a2) { return array_eq_T_f32(a, a2); }
 void builtin__init() {
 #ifdef _WIN32
-  if (is_atty(0) > 0) {
-    _setmode(_fileno(stdin), _O_U16TEXT);
-  } else {
-    _setmode(_fileno(stdin), _O_U8TEXT);
+  if (is_atty(1) > 0) {
+    SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE),
+                   ENABLE_PROCESSED_OUTPUT | 0x0004);
+    setbuf(stdout, 0);
   };
-  _setmode(_fileno(stdout), _O_U8TEXT);
-  SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE),
-                 ENABLE_PROCESSED_OUTPUT | 0x0004);
-  setbuf(stdout, 0);
 #endif
   ;
 }
@@ -6935,19 +6922,26 @@ string os__get_raw_line() {
 #ifdef _WIN32
   int max_line_chars = 256;
   byte *buf = v_malloc(max_line_chars * 2);
+  void *h_input = GetStdHandle(os__STD_INPUT_HANDLE);
+  int bytes_read = 0;
   if (is_atty(0) > 0) {
-    void *h_input = GetStdHandle(os__STD_INPUT_HANDLE);
-    u32 nr_chars = ((u32)(0));
-    ReadConsole(h_input, (char *)buf, max_line_chars * 2,
-                ((voidptr)(&nr_chars)), 0);
-    return string_from_wide2(((u16 *)(buf)), ((int)(nr_chars)));
+    ReadConsole(h_input, (char *)buf, max_line_chars * 2, &bytes_read, 0);
+    return string_from_wide2(((u16 *)(buf)), bytes_read);
   };
-  void *res = fgetws(((u16 *)(buf)), max_line_chars, stdin);
-  int len = wcslen(((u16 *)(buf)));
-  if (!isnil(res)) {
-    return string_from_wide2(((u16 *)(buf)), len);
+  int offset = 0;
+  while (1) {
+    byte *pos = (byte *)buf + offset;
+    bool res = ReadFile(h_input, (char *)pos, 1, &bytes_read, 0);
+    if (!res || bytes_read == 0) {
+      break;
+    };
+    if (*pos == '\n' || *pos == '\r') {
+      offset++;
+      break;
+    };
+    offset++;
   };
-  return tos3("");
+  return (tos((byte *)buf, offset));
 #else
   size_t max = ((size_t)(256));
   charptr buf = ((charptr)(v_malloc(((int)(max)))));
@@ -30860,31 +30854,26 @@ void init() {
       "TARGET_ORDER_IS_LITTLE\n#else\n    #error \"Unknown architecture "
       "endianness\"\n#endif\n\n#ifndef _WIN32\n#include <ctype.h>\n#include "
       "<locale.h> // tolower\n#include <sys/time.h>\n#include <unistd.h> // "
-      "sleep\n#else\n#if defined(_MSC_VER)\n#pragma comment(lib, "
-      "\"Dbghelp.lib\")\n#endif\n#if defined(__MSVCRT_VERSION__) && "
-      "__MSVCRT_VERSION__ < __MSVCR90_DLL\n#error Please upgrade your MinGW "
-      "distribution to use msvcr90.dll or later.\n#endif\n#endif\n\n#if "
-      "defined(__CYGWIN__) && !defined(_WIN32)\n#error Cygwin is not "
-      "supported, please use MinGW or Visual Studio.\n#endif\n\n\n#ifdef "
-      "__linux__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait "
-      "uses wait on nix\n#endif\n\n#ifdef __FreeBSD__\n#include "
-      "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
-      "nix\n#endif\n\n#ifdef __DragonFly__\n#include <sys/types.h>\n#include "
+      "sleep\n#endif\n\n#if defined(__CYGWIN__) && !defined(_WIN32)\n#error "
+      "Cygwin is not supported, please use MinGW or Visual "
+      "Studio.\n#endif\n\n\n#ifdef __linux__\n#include <sys/types.h>\n#include "
       "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef "
-      "__OpenBSD__\n#include <sys/types.h>\n#include "
+      "__FreeBSD__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait "
+      "uses wait on nix\n#endif\n\n#ifdef __DragonFly__\n#include "
+      "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
+      "nix\n#endif\n\n#ifdef __OpenBSD__\n#include <sys/types.h>\n#include "
       "<sys/resource.h>\n#include <sys/wait.h> // os__wait uses wait on "
       "nix\n#endif\n\n%.*s\n\n#ifdef _WIN32\n#define WINVER 0x0600\n#ifdef "
       "_WIN32_WINNT\n#undef _WIN32_WINNT\n#endif\n#define _WIN32_WINNT "
       "0x0600\n#define WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define "
-      "UNICODE\n#include <windows.h>\n\n// must be included after "
-      "<windows.h>\n#ifndef __TINYC__\n#include "
-      "<shellapi.h>\n#endif\n\n#include <io.h> // _waccess\n#include <fcntl.h> "
-      "// _O_U8TEXT\n#include <direct.h> // _wgetcwd\n//#include "
-      "<WinSock2.h>\n#ifdef _MSC_VER\n// On MSVC these are the same (as long "
-      "as /volatile:ms is passed)\n#define _Atomic volatile\n\n// MSVC cannot "
-      "parse some things properly\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
-      "OPTION_CAST\n\n#define EMPTY_STRUCT_DECLARATION int "
-      "____dummy_variable\n#define OPTION_CAST(x)\n#endif\n\n#else\n#include "
+      "UNICODE\n#include <windows.h>\n\n#include <io.h> // _waccess\n#include "
+      "<direct.h> // _wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n// On "
+      "MSVC these are the same (as long as /volatile:ms is passed)\n#define "
+      "_Atomic volatile\n\n// MSVC cannot parse some things properly\n#undef "
+      "EMPTY_STRUCT_DECLARATION\n#undef OPTION_CAST\n\n#define "
+      "EMPTY_STRUCT_DECLARATION int ____dummy_variable\n#define "
+      "OPTION_CAST(x)\n\n#include <dbghelp.h>\n#pragma comment(lib, "
+      "\"Dbghelp.lib\")\n\n#endif\n\n#else\n#include "
       "<pthread.h>\n#endif\n\n\n//============================== HELPER C "
       "MACROS =============================*/\n#define _PUSH(arr, val, tmp, "
       "tmp_typ) {tmp_typ tmp = (val); array_push(arr, &tmp);}\n#define "
