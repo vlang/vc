@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5537b09"
+#define V_COMMIT_HASH "06f581e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "66a6fa1"
+#define V_COMMIT_HASH "5537b09"
 #endif
 #include <inttypes.h>
 
@@ -25161,6 +25161,10 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
       compiler__Parser_gen(p, _STR("tos3(\"%.*s\")", f.len, f.str));
     };
     compiler__Parser_next(p);
+    if (p->scanner->is_fmt && p->tok == compiler__compiler__TokenKind_not) {
+      ;
+      compiler__Parser_check(p, compiler__compiler__TokenKind_not);
+    };
 
     return;
   };
@@ -25187,10 +25191,10 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
       ;
       complex_inter = 1;
     };
-    _V_MulRet_string_V_string _V_mret_310_typ_val_ =
+    _V_MulRet_string_V_string _V_mret_338_typ_val_ =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_310_typ_val_.var_0;
-    string val_ = _V_mret_310_typ_val_.var_1;
+    string typ = _V_mret_338_typ_val_.var_0;
+    string val_ = _V_mret_338_typ_val_.var_1;
     string val = string_trim_space(val_);
     args = string_add(args, _STR(", %.*s", val.len, val.str));
     if (string_eq(typ, tos3("string"))) {
@@ -25281,6 +25285,7 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
 #endif
   ;
   if (p->tok == compiler__compiler__TokenKind_not) {
+    ;
     compiler__Parser_check(p, compiler__compiler__TokenKind_not);
     compiler__Parser_gen(p, _STR("_STR_TMP(%.*s%.*s)", format.len, format.str,
                                  args.len, args.str));
