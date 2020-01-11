@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "06f581e"
+#define V_COMMIT_HASH "0a33c9e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5537b09"
+#define V_COMMIT_HASH "06f581e"
 #endif
 #include <inttypes.h>
 
@@ -20970,6 +20970,22 @@ string compiler__Parser_if_statement(compiler__Parser *p, bool is_expr,
   ;
   if (p->tok == compiler__compiler__TokenKind_name &&
       compiler__Parser_peek(&/* ? */ *p) ==
+          compiler__compiler__TokenKind_assign) {
+    compiler__Parser_error(p, tos3("cannot assign on if-else statement"));
+  };
+  if (p->tok == compiler__compiler__TokenKind_name &&
+      (compiler__Parser_peek(&/* ? */ *p) ==
+           compiler__compiler__TokenKind_inc ||
+       compiler__Parser_peek(&/* ? */ *p) ==
+           compiler__compiler__TokenKind_dec)) {
+    compiler__Parser_error(
+        p,
+        _STR("`%.*s` is a statement",
+             compiler__TokenKind_str(compiler__Parser_peek(&/* ? */ *p)).len,
+             compiler__TokenKind_str(compiler__Parser_peek(&/* ? */ *p)).str));
+  };
+  if (p->tok == compiler__compiler__TokenKind_name &&
+      compiler__Parser_peek(&/* ? */ *p) ==
           compiler__compiler__TokenKind_decl_assign) {
     compiler__Parser_check_not_reserved(p);
     string option_tmp = compiler__Parser_get_tmp(p);
@@ -20984,10 +21000,10 @@ string compiler__Parser_if_statement(compiler__Parser *p, bool is_expr,
     compiler__Parser_check(p, compiler__compiler__TokenKind_decl_assign);
     ;
     p->is_var_decl = 1;
-    _V_MulRet_string_V_string _V_mret_981_option_type_expr =
+    _V_MulRet_string_V_string _V_mret_1051_option_type_expr =
         compiler__Parser_tmp_expr(p);
-    string option_type = _V_mret_981_option_type_expr.var_0;
-    string expr = _V_mret_981_option_type_expr.var_1;
+    string option_type = _V_mret_1051_option_type_expr.var_0;
+    string expr = _V_mret_1051_option_type_expr.var_1;
     if (!string_starts_with(option_type, tos3("Option_"))) {
       compiler__Parser_error(p,
                              tos3("`if x := opt() {` syntax requires a "
