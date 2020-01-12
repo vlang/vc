@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "607656d"
+#define V_COMMIT_HASH "2678f92"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b6c0b22"
+#define V_COMMIT_HASH "607656d"
 #endif
 #include <inttypes.h>
 
@@ -2046,6 +2046,7 @@ string os__join(string base, varg_string *dirs);
 string os__cachedir();
 string os__tmpdir();
 void os__chmod(string path, int mode);
+string os__resource_abs_path(string path);
 array_string os__init_os_args_wide(int argc, byteptr *argv);
 Option_array_string os__ls(string path);
 Option_os__File os__open(string path);
@@ -7353,6 +7354,15 @@ string os__tmpdir() {
   return path;
 }
 void os__chmod(string path, int mode) { chmod((char *)path.str, mode); }
+string os__resource_abs_path(string path) {
+  string base_path = os__realpath(filepath__dir(os__executable()));
+  string vresource = os__getenv(tos3("V_RESOURCE_PATH"));
+  if (vresource.len != 0) {
+    base_path = vresource;
+  };
+  return os__realpath(
+      filepath__join(base_path, &(varg_string){.len = 1, .args = {path}}));
+}
 array_string os__init_os_args_wide(int argc, byteptr *argv) {
   array_string args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});

@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "607656d"
+#define V_COMMIT_HASH "2678f92"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b6c0b22"
+#define V_COMMIT_HASH "607656d"
 #endif
 #include <inttypes.h>
 
@@ -1943,6 +1943,7 @@ string os__join(string base, varg_string *dirs);
 string os__cachedir();
 string os__tmpdir();
 void os__chmod(string path, int mode);
+string os__resource_abs_path(string path);
 array_string os__init_os_args(int argc, byteptr *argv);
 string os__get_error_msg(int code);
 Option_array_string os__ls(string path);
@@ -7344,6 +7345,15 @@ string os__tmpdir() {
   return path;
 }
 void os__chmod(string path, int mode) { chmod((char *)path.str, mode); }
+string os__resource_abs_path(string path) {
+  string base_path = os__realpath(filepath__dir(os__executable()));
+  string vresource = os__getenv(tos3("V_RESOURCE_PATH"));
+  if (vresource.len != 0) {
+    base_path = vresource;
+  };
+  return os__realpath(
+      filepath__join(base_path, &(varg_string){.len = 1, .args = {path}}));
+}
 array_string os__init_os_args(int argc, byteptr *argv) {
   array_string args = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
@@ -7393,22 +7403,6 @@ Option_array_string os__ls(string path) {
 }
 Option_os__File os__open(string path) {
   os__File file = (os__File){.cfile = 0, .fd = 0, .opened = 0};
-#ifdef __linux__
-#ifndef __BIONIC__
-  int fd = syscall(os__sys_open, (char *)path.str, 511);
-  if (fd == -1) {
-    return v_error(_STR("failed to open file \"%.*s\"", path.len, path.str));
-  };
-  os__File tmp6 = OPTION_CAST(os__File)((os__File){
-      .fd = fd,
-      .opened = 1,
-      .cfile = 0,
-  });
-  return opt_ok(&tmp6, sizeof(os__File));
-#endif
-  ;
-#endif
-  ;
   byte *cpath = path.str;
   file = (os__File){
       .cfile = fopen(((charptr)(cpath)), "rb"),
@@ -7418,29 +7412,12 @@ Option_os__File os__open(string path) {
   if (isnil(file.cfile)) {
     return v_error(_STR("failed to open file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp7 = OPTION_CAST(os__File)(file);
-  return opt_ok(&tmp7, sizeof(os__File));
+  os__File tmp6 = OPTION_CAST(os__File)(file);
+  return opt_ok(&tmp6, sizeof(os__File));
 }
 Option_os__File os__create(string path) {
   int fd = 0;
   os__File file = (os__File){.cfile = 0, .fd = 0, .opened = 0};
-#ifdef __linux__
-#ifndef __BIONIC__
-  fd = syscall(os__sys_creat, (char *)path.str, 511);
-  if (fd == -1) {
-    return v_error(_STR("failed to create file \"%.*s\"", path.len, path.str));
-  };
-  file = (os__File){
-      .fd = fd,
-      .opened = 1,
-      .cfile = 0,
-  };
-  os__File tmp8 = OPTION_CAST(os__File)(file);
-  return opt_ok(&tmp8, sizeof(os__File));
-#endif
-  ;
-#endif
-  ;
   file = (os__File){
       .cfile = fopen(((charptr)(path.str)), "wb"),
       .opened = 1,
@@ -7449,23 +7426,14 @@ Option_os__File os__create(string path) {
   if (isnil(file.cfile)) {
     return v_error(_STR("failed to create file \"%.*s\"", path.len, path.str));
   };
-  os__File tmp9 = OPTION_CAST(os__File)(file);
-  return opt_ok(&tmp9, sizeof(os__File));
+  os__File tmp7 = OPTION_CAST(os__File)(file);
+  return opt_ok(&tmp7, sizeof(os__File));
 }
 void os__File_write(os__File *f, string s) {
   if (!f->opened) {
 
     return;
   };
-#ifdef __linux__
-#ifndef __BIONIC__
-  syscall(os__sys_write, f->fd, (char *)s.str, s.len);
-
-  return;
-#endif
-  ;
-#endif
-  ;
   fputs((char *)s.str, f->cfile);
 }
 void os__File_writeln(os__File *f, string s) {
@@ -7473,43 +7441,21 @@ void os__File_writeln(os__File *f, string s) {
 
     return;
   };
-#ifdef __linux__
-#ifndef __BIONIC__
-  string snl = string_add(s, tos3("\n"));
-  syscall(os__sys_write, f->fd, (char *)snl.str, snl.len);
-
-  return;
-#endif
-  ;
-#endif
-  ;
   fputs((char *)s.str, f->cfile);
   fputs("\n", f->cfile);
 }
 Option_bool os__mkdir(string path) {
   if (string_eq(path, tos3("."))) {
-    bool tmp10 = OPTION_CAST(bool)(1);
-    return opt_ok(&tmp10, sizeof(bool));
+    bool tmp8 = OPTION_CAST(bool)(1);
+    return opt_ok(&tmp8, sizeof(bool));
   };
   string apath = os__realpath(path);
-#ifdef __linux__
-#ifndef __BIONIC__
-  int ret = syscall(os__sys_mkdir, (char *)apath.str, 511);
-  if (ret == -1) {
-    return v_error(os__get_error_msg(errno));
-  };
-  bool tmp11 = OPTION_CAST(bool)(1);
-  return opt_ok(&tmp11, sizeof(bool));
-#endif
-  ;
-#endif
-  ;
   int r = mkdir((char *)apath.str, 511);
   if (r == -1) {
     return v_error(os__get_error_msg(errno));
   };
-  bool tmp12 = OPTION_CAST(bool)(1);
-  return opt_ok(&tmp12, sizeof(bool));
+  bool tmp9 = OPTION_CAST(bool)(1);
+  return opt_ok(&tmp9, sizeof(bool));
 }
 Option_os__Result os__exec(string cmd) {
   string pcmd = _STR("%.*s 2>&1", cmd.len, cmd.str);
@@ -7525,28 +7471,19 @@ Option_os__Result os__exec(string cmd) {
   };
   res = string_trim_space(res);
   int exit_code = os__vpclose(f);
-  os__Result tmp13 = OPTION_CAST(os__Result)(
+  os__Result tmp10 = OPTION_CAST(os__Result)(
       (os__Result){.output = res, .exit_code = exit_code});
-  return opt_ok(&tmp13, sizeof(os__Result));
+  return opt_ok(&tmp10, sizeof(os__Result));
 }
 Option_bool os__symlink(string origin, string target) {
   int res = symlink((char *)origin.str, (char *)target.str);
   if (res == 0) {
-    bool tmp14 = OPTION_CAST(bool)(1);
-    return opt_ok(&tmp14, sizeof(bool));
+    bool tmp11 = OPTION_CAST(bool)(1);
+    return opt_ok(&tmp11, sizeof(bool));
   };
   return v_error(os__get_error_msg(errno));
 }
 void os__File_write_bytes(os__File *f, void *data, int size) {
-#ifdef __linux__
-#ifndef __BIONIC__
-  syscall(os__sys_write, f->fd, data, 1);
-
-  return;
-#endif
-  ;
-#endif
-  ;
   fwrite(data, 1, size, f->cfile);
 }
 void os__File_close(os__File *f) {
@@ -7555,15 +7492,6 @@ void os__File_close(os__File *f) {
     return;
   };
   f->opened = 0;
-#ifdef __linux__
-#ifndef __BIONIC__
-  syscall(os__sys_close, f->fd);
-
-  return;
-#endif
-  ;
-#endif
-  ;
   fflush(f->cfile);
   fclose(f->cfile);
 }
