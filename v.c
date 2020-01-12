@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e159347"
+#define V_COMMIT_HASH "4c7df98"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2678f92"
+#define V_COMMIT_HASH "e159347"
 #endif
 #include <inttypes.h>
 
@@ -25646,8 +25646,8 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ_) {
   string typ = typ_;
   compiler__Type t = compiler__Table_find_type(&/* ? */ *p->table, typ);
   if (!t.is_public && string_ne(t.mod, p->mod)) {
-    compiler__Parser_warn(
-        p, _STR("type `%.*s` is private", t.name.len, t.name.str));
+    compiler__Parser_error(
+        p, _STR("struct `%.*s` is private", t.name.len, t.name.str));
   };
   if (compiler__Parser_peek(&/* ? */ *p) == compiler__compiler__TokenKind_lt) {
     compiler__Parser_next(p);
