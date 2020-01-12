@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9b5e998"
+#define V_COMMIT_HASH "6733b12"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e72dfc3"
+#define V_COMMIT_HASH "9b5e998"
 #endif
 #include <inttypes.h>
 
@@ -7023,7 +7023,7 @@ string os__user_os() {
 #ifdef __DragonFly__
 #endif
   ;
-#ifdef __BIONIC__
+#ifdef __ANDROID__
 #endif
   ;
 #ifdef __sun
@@ -14896,7 +14896,7 @@ string compiler__os_name_to_ifdef(string name) {
   } else if (string_eq(tmp36, tos3("msvc"))) {
     return tos3("_MSC_VER");
   } else if (string_eq(tmp36, tos3("android"))) {
-    return tos3("__BIONIC__");
+    return tos3("__ANDROID__");
   } else if (string_eq(tmp36, tos3("js"))) {
     return tos3("_VJS");
   } else if (string_eq(tmp36, tos3("solaris"))) {

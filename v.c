@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9b5e998"
+#define V_COMMIT_HASH "6733b12"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e72dfc3"
+#define V_COMMIT_HASH "9b5e998"
 #endif
 #include <inttypes.h>
 
@@ -3910,7 +3910,7 @@ bool print_backtrace_skipping_top_frames_linux(int skipframes) {
   return 0;
 #endif
   ;
-#ifndef __BIONIC__
+#ifndef __ANDROID__
 #ifdef __GLIBC__
   byte *buffer[100];
   int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
@@ -6953,7 +6953,7 @@ string os__user_os() {
   return tos3("dragonfly");
 #endif
   ;
-#ifdef __BIONIC__
+#ifdef __ANDROID__
   return tos3("android");
 #endif
   ;
@@ -13656,7 +13656,7 @@ void compiler__V_cc(compiler__V *v) {
           tos3("-Wno-missing-braces"), tos3("-Wno-unused-label")});
   if (v->pref->fast) {
 #ifdef __linux__
-#ifndef __BIONIC__
+#ifndef __ANDROID__
     string tcc_3rd = _STR("%.*s/thirdparty/tcc/bin/tcc", vdir.len, vdir.str);
     string tcc_path = tos3("/var/tmp/tcc/bin/tcc");
     if (os__exists(tcc_3rd) && !os__exists(tcc_path)) {
@@ -14798,7 +14798,7 @@ string compiler__os_name_to_ifdef(string name) {
   } else if (string_eq(tmp36, tos3("msvc"))) {
     return tos3("_MSC_VER");
   } else if (string_eq(tmp36, tos3("android"))) {
-    return tos3("__BIONIC__");
+    return tos3("__ANDROID__");
   } else if (string_eq(tmp36, tos3("js"))) {
     return tos3("_VJS");
   } else if (string_eq(tmp36, tos3("solaris"))) {
