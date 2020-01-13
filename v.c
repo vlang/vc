@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4c55d36"
+#define V_COMMIT_HASH "cb3ac33"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8ea0c08"
+#define V_COMMIT_HASH "4c55d36"
 #endif
 #include <inttypes.h>
 
@@ -30557,10 +30557,10 @@ void main__main() {
   bool is_verbose = (_IN(string, (tos3("-verbose")), os__args)) ||
                     (_IN(string, (tos3("--verbose")), os__args));
   array_string args = compiler__env_vflags_and_os_args();
-  _V_MulRet_array_string_V_string _V_mret_74_options_command =
+  _V_MulRet_array_string_V_string _V_mret_76_options_command =
       compiler__get_v_options_and_main_command(args);
-  array_string options = _V_mret_74_options_command.var_0;
-  string command = _V_mret_74_options_command.var_1;
+  array_string options = _V_mret_76_options_command.var_0;
+  string command = _V_mret_76_options_command.var_1;
   if (is_verbose) {
     string tmp1 = array_string_str(args);
 
@@ -31039,11 +31039,11 @@ void init() {
       EMPTY_ARRAY_OF_ELEMS(string, 4){tos3("run"), tos3("build"),
                                       tos3("version"), tos3("doc")});
   main__simple_tools = new_array_from_c_array(
-      9, 9, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 9){
+      10, 10, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 10){
           tos3("fmt"), tos3("up"), tos3("create"), tos3("test"),
           tos3("test-fmt"), tos3("test-compiler"), tos3("build-tools"),
-          tos3("build-examples"), tos3("build-vbinaries")});
+          tos3("bin2v"), tos3("build-examples"), tos3("build-vbinaries")});
   builtin__init();
 }
 
