@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2741c0b"
+#define V_COMMIT_HASH "2637497"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2c8848f"
+#define V_COMMIT_HASH "2741c0b"
 #endif
 #include <inttypes.h>
 
@@ -8151,13 +8151,12 @@ time__calculate_date_from_offset(int day_offset_) {
     };
   };
   int estimated_month = day_offset / 31;
-  while (day_offset >
+  while (day_offset >=
          (*(int *)array_get(time__days_before, estimated_month + 1))) {
 
     estimated_month++;
   };
-  while (day_offset <=
-         (*(int *)array_get(time__days_before, estimated_month))) {
+  while (day_offset < (*(int *)array_get(time__days_before, estimated_month))) {
 
     if (estimated_month == 0) {
       break;
