@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fcc10d6"
+#define V_COMMIT_HASH "e87e5e3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cb3ac33"
+#define V_COMMIT_HASH "fcc10d6"
 #endif
 #include <inttypes.h>
 
@@ -22863,6 +22863,20 @@ void compiler__create_symlink() {
                             link_path.len, link_path.str));
   if (ret == 0) {
     printf("Symlink \"%.*s\" has been created\n", link_path.len, link_path.str);
+  } else if (os__system(tos3("uname -o | grep [A/a]ndroid")) == 0) {
+    printf("Failed to create symlink \"%.*s\". Trying again with Termux path "
+           "for Android.\n",
+           link_path.len, link_path.str);
+    link_path = tos3("/data/data/com.termux/files/usr/bin/v");
+    ret = os__system(_STR("ln -sf %.*s %.*s", vexe.len, vexe.str, link_path.len,
+                          link_path.str));
+    if (ret == 0) {
+      printf("Symlink \"%.*s\" has been created\n", link_path.len,
+             link_path.str);
+    } else {
+      printf("Failed to create symlink \"%.*s\". Try again with sudo.\n",
+             link_path.len, link_path.str);
+    };
   } else {
     printf("Failed to create symlink \"%.*s\". Try again with sudo.\n",
            link_path.len, link_path.str);
