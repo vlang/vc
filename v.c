@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2c8848f"
+#define V_COMMIT_HASH "2741c0b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6b3f546"
+#define V_COMMIT_HASH "2c8848f"
 #endif
 #include <inttypes.h>
 
@@ -1752,8 +1752,11 @@ string string_replace_each(string s, array_string vals);
 bool string_bool(string s);
 int v_string_int(string s);
 i64 string_i64(string s);
+i8 string_i8(string s);
+i16 string_i16(string s);
 f32 string_f32(string s);
 f64 string_f64(string s);
+u16 string_u16(string s);
 u32 string_u32(string s);
 u64 string_u64(string s);
 bool string_eq(string s, string a);
@@ -4588,8 +4591,17 @@ int v_string_int(string s) {
   return ((int)(strconv__common_parse_int(s, 0, 32, 0, 0)));
 }
 i64 string_i64(string s) { return strconv__common_parse_int(s, 0, 64, 0, 0); }
+i8 string_i8(string s) {
+  return ((i8)(strconv__common_parse_int(s, 0, 8, 0, 0)));
+}
+i16 string_i16(string s) {
+  return ((i16)(strconv__common_parse_int(s, 0, 16, 0, 0)));
+}
 f32 string_f32(string s) { return ((f32)(strconv__atof64(s))); }
 f64 string_f64(string s) { return strconv__atof64(s); }
+u16 string_u16(string s) {
+  return ((u16)(strconv__common_parse_uint(s, 0, 16, 0, 0)));
+}
 u32 string_u32(string s) {
   return ((u32)(strconv__common_parse_uint(s, 0, 32, 0, 0)));
 }
