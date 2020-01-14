@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0b235cc"
+#define V_COMMIT_HASH "6b3f546"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "25e7cee"
+#define V_COMMIT_HASH "0b235cc"
 #endif
 #include <inttypes.h>
 
@@ -17390,6 +17390,18 @@ string compiler__Parser_factor(compiler__Parser *p) {
         compiler__compiler__TokenKind_str) {
       return compiler__Parser_map_init(p);
     };
+    compiler__Token peek2 =
+        (*(compiler__Token *)array_get(p->tokens, p->token_idx + 1));
+    if (compiler__Parser_peek(&/* ? */ *p) ==
+            compiler__compiler__TokenKind_name &&
+        peek2.tok == compiler__compiler__TokenKind_colon) {
+      if (!string_ends_with(p->expected_type, tos3("Config"))) {
+        compiler__Parser_error(
+            p, tos3("short struct initialization syntax only works with "
+                    "structs that end with `Config`"));
+      };
+      return compiler__Parser_struct_init(p, p->expected_type);
+    };
     return compiler__Parser_assoc(p);
   } else if (tmp33 == compiler__compiler__TokenKind_key_if) {
     typ = compiler__Parser_if_statement(p, 1, 0);
@@ -20299,7 +20311,9 @@ bool compiler__Parser_gen_struct_init(compiler__Parser *p, string typ,
     array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 1,
               &(string[]){tos3("")});
   };
-  compiler__Parser_next(p);
+  if (p->tok != compiler__compiler__TokenKind_lcbr) {
+    compiler__Parser_next(p);
+  };
   compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
   bool ptr = string_contains(typ, tos3("*"));
   if (!ptr) {
@@ -25720,7 +25734,7 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ_) {
       string type_param = compiler__Parser_check_name(p);
       if ((_IN_MAP((type_param), p->generic_dispatch.inst))) {
         string tmp15 = tos3("");
-        bool tmp16 = map_get(/*struct.v : 355*/ p->generic_dispatch.inst,
+        bool tmp16 = map_get(/*struct.v : 356*/ p->generic_dispatch.inst,
                              type_param, &tmp15);
 
         if (!tmp16)
@@ -25922,7 +25936,7 @@ void compiler__Parser_dispatch_generic_struct(compiler__Parser *p,
   if ((_IN_MAP((t->name), p->table->generic_struct_params))) {
     int i = 0;
     array_string tmp31 = new_array(0, 1, sizeof(string));
-    bool tmp32 = map_get(/*struct.v : 509*/ p->table->generic_struct_params,
+    bool tmp32 = map_get(/*struct.v : 510*/ p->table->generic_struct_params,
                          t->name, &tmp31);
 
     array_string tmp30 = tmp31;
