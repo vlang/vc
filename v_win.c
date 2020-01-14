@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "25e7cee"
+#define V_COMMIT_HASH "0b235cc"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e87e5e3"
+#define V_COMMIT_HASH "25e7cee"
 #endif
 #include <inttypes.h>
 
@@ -20433,6 +20433,9 @@ string compiler__type_default(string typ) {
   if (string_contains(typ, tos3("__"))) {
     return tos3("{0}");
   };
+  if (string_ends_with(typ, tos3("Fn"))) {
+    return tos3("0");
+  };
   string tmp38 = typ;
 
   if (string_eq(tmp38, tos3("bool"))) {
@@ -26621,6 +26624,9 @@ bool compiler__Parser_check_types2(compiler__Parser *p, string got_,
   if (string_starts_with(got, tos3("varg_"))) {
     got = string_substr2(got, 5, -1, true);
   };
+  if (string_eq(got, tos3("int")) && string_ends_with(expected, tos3("Fn"))) {
+    return 1;
+  };
   if (string_eq(got, tos3("int")) && string_eq(expected, tos3("f32"))) {
     return 1;
   };
@@ -26786,7 +26792,7 @@ bool compiler__Table_is_interface(compiler__Table *table, string name) {
     return 0;
   };
   compiler__Type tmp69 = {0};
-  bool tmp70 = map_get(/*table.v : 795*/ table->typesmap, name, &tmp69);
+  bool tmp70 = map_get(/*table.v : 799*/ table->typesmap, name, &tmp69);
 
   compiler__Type t = tmp69;
   return t.cat == compiler__compiler__TypeCategory_interface_;
@@ -26970,11 +26976,11 @@ string compiler__Parser_identify_typo(compiler__Parser *p, string name) {
   if (string_ne(n, tos3(""))) {
     output = string_add(output, _STR("\n  * const: `%.*s`", n.len, n.str));
   };
-  _V_MulRet_string_V_string _V_mret_3910_typ_type_cat =
+  _V_MulRet_string_V_string _V_mret_3925_typ_type_cat =
       compiler__Table_find_misspelled_type(&/* ? */ *p->table, name, p,
                                            min_match);
-  string typ = _V_mret_3910_typ_type_cat.var_0;
-  string type_cat = _V_mret_3910_typ_type_cat.var_1;
+  string typ = _V_mret_3925_typ_type_cat.var_0;
+  string type_cat = _V_mret_3925_typ_type_cat.var_1;
   if (typ.len > 0) {
     output = string_add(output, _STR("\n  * %.*s: `%.*s`", type_cat.len,
                                      type_cat.str, typ.len, typ.str));
