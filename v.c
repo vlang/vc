@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9f31390"
+#define V_COMMIT_HASH "502ee8a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4838dda"
+#define V_COMMIT_HASH "9f31390"
 #endif
 #include <inttypes.h>
 
@@ -22868,18 +22868,34 @@ void compiler__create_symlink() {
   ;
   string vexe = compiler__vexe_path();
   string link_path = tos3("/usr/local/bin/v");
-  int ret = os__system(_STR("ln -sf %.*s %.*s", vexe.len, vexe.str,
-                            link_path.len, link_path.str));
-  if (ret == 0) {
+  Option_os__Result tmp105 = os__exec(_STR(
+      "ln -sf %.*s %.*s", vexe.len, vexe.str, link_path.len, link_path.str));
+  os__Result ret;
+  if (!tmp105.ok) {
+    string err = tmp105.error;
+    int errcode = tmp105.ecode;
+    v_panic(err);
+  }
+  ret = *(os__Result *)tmp105.data;
+  ;
+  if (ret.exit_code == 0) {
     printf("Symlink \"%.*s\" has been created\n", link_path.len, link_path.str);
-  } else if (os__system(tos3("uname -o | grep [A/a]ndroid")) == 0) {
+  } else if (os__system(tos3("uname -o | grep -q \'[A/a]ndroid\'")) == 0) {
     printf("Failed to create symlink \"%.*s\". Trying again with Termux path "
            "for Android.\n",
            link_path.len, link_path.str);
     link_path = tos3("/data/data/com.termux/files/usr/bin/v");
-    ret = os__system(_STR("ln -sf %.*s %.*s", vexe.len, vexe.str, link_path.len,
-                          link_path.str));
-    if (ret == 0) {
+    Option_os__Result tmp106 = os__exec(_STR(
+        "ln -sf %.*s %.*s", vexe.len, vexe.str, link_path.len, link_path.str));
+    os__Result ret;
+    if (!tmp106.ok) {
+      string err = tmp106.error;
+      int errcode = tmp106.ecode;
+      v_panic(err);
+    }
+    ret = *(os__Result *)tmp106.data;
+    ;
+    if (ret.exit_code == 0) {
       printf("Symlink \"%.*s\" has been created\n", link_path.len,
              link_path.str);
     } else {
@@ -22915,35 +22931,35 @@ string compiler__cescaped_path(string s) {
   return string_replace(s, tos3("\\"), tos3("\\\\"));
 }
 compiler__OS compiler__os_from_string(string os) {
-  string tmp105 = os;
+  string tmp107 = os;
 
-  if (string_eq(tmp105, tos3("linux"))) {
+  if (string_eq(tmp107, tos3("linux"))) {
     return compiler__compiler__OS_linux;
-  } else if (string_eq(tmp105, tos3("windows"))) {
+  } else if (string_eq(tmp107, tos3("windows"))) {
     return compiler__compiler__OS_windows;
-  } else if (string_eq(tmp105, tos3("mac"))) {
+  } else if (string_eq(tmp107, tos3("mac"))) {
     return compiler__compiler__OS_mac;
-  } else if (string_eq(tmp105, tos3("macos"))) {
+  } else if (string_eq(tmp107, tos3("macos"))) {
     return compiler__compiler__OS_mac;
-  } else if (string_eq(tmp105, tos3("freebsd"))) {
+  } else if (string_eq(tmp107, tos3("freebsd"))) {
     return compiler__compiler__OS_freebsd;
-  } else if (string_eq(tmp105, tos3("openbsd"))) {
+  } else if (string_eq(tmp107, tos3("openbsd"))) {
     return compiler__compiler__OS_openbsd;
-  } else if (string_eq(tmp105, tos3("netbsd"))) {
+  } else if (string_eq(tmp107, tos3("netbsd"))) {
     return compiler__compiler__OS_netbsd;
-  } else if (string_eq(tmp105, tos3("dragonfly"))) {
+  } else if (string_eq(tmp107, tos3("dragonfly"))) {
     return compiler__compiler__OS_dragonfly;
-  } else if (string_eq(tmp105, tos3("js"))) {
+  } else if (string_eq(tmp107, tos3("js"))) {
     return compiler__compiler__OS_js;
-  } else if (string_eq(tmp105, tos3("solaris"))) {
+  } else if (string_eq(tmp107, tos3("solaris"))) {
     return compiler__compiler__OS_solaris;
-  } else if (string_eq(tmp105, tos3("android"))) {
+  } else if (string_eq(tmp107, tos3("android"))) {
     return compiler__compiler__OS_android;
-  } else if (string_eq(tmp105, tos3("msvc"))) {
+  } else if (string_eq(tmp107, tos3("msvc"))) {
     compiler__verror(tos3("use the flag `-cc msvc` to build using msvc"));
-  } else if (string_eq(tmp105, tos3("haiku"))) {
+  } else if (string_eq(tmp107, tos3("haiku"))) {
     return compiler__compiler__OS_haiku;
-  } else if (string_eq(tmp105, tos3("linux_or_macos"))) {
+  } else if (string_eq(tmp107, tos3("linux_or_macos"))) {
     return compiler__compiler__OS_linux;
   } else // default:
   {
@@ -22966,7 +22982,7 @@ compiler__V *compiler__new_v_compiler_with_args(array_string args) {
   string vexe = compiler__vexe_path();
   array_string allargs = new_array_from_c_array(
       1, 1, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 1){vexe});
-  _PUSH_MANY(&allargs, (/*typ = array_string   tmp_typ=string*/ args), tmp106,
+  _PUSH_MANY(&allargs, (/*typ = array_string   tmp_typ=string*/ args), tmp108,
              array_string);
   os__setenv(tos3("VOSARGS"), array_string_join(allargs, tos3(" ")), 1);
   return compiler__new_v(allargs);
