@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d6448ee"
+#define V_COMMIT_HASH "1e98a22"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "25fabac"
+#define V_COMMIT_HASH "d6448ee"
 #endif
 #include <inttypes.h>
 
@@ -2388,7 +2388,8 @@ void compiler__Parser_gen_array_filter(compiler__Parser *p, string str_typ,
                                        int method_ph);
 string compiler__Parser_gen_array_map(compiler__Parser *p, string str_typ,
                                       int method_ph);
-void compiler__Parser_comptime_if_block(compiler__Parser *p, string name);
+void compiler__Parser_comptime_if_block(compiler__Parser *p, string name,
+                                        bool not);
 void compiler__Parser_gen_enum_flag_methods(compiler__Parser *p,
                                             compiler__Type *typ);
 void compiler__DepSet_add(compiler__DepSet *dset, string item);
@@ -15343,6 +15344,7 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
     string name = compiler__Parser_check_name(p);
     ;
     if ((_IN(string, (name), compiler__supported_platforms))) {
+      compiler__OS os = compiler__os_from_string(name);
       string ifdef_name = compiler__os_name_to_ifdef(name);
       if (string_eq(name, tos3("mac"))) {
         compiler__Parser_warn(p, tos3("use `macos` instead of `mac`"));
@@ -15365,7 +15367,6 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
         };
       };
       compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
-      compiler__OS os = compiler__os_from_string(name);
       if (((!not&&os != p->os) || (not&&os == p->os)) &&
           !string_contains(name, tos3("_or_")) && !p->scanner->is_fmt &&
           !p->pref->output_cross_c) {
@@ -15397,36 +15398,46 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
         compiler__Parser_genln(p, tos3("#endif"));
       };
     } else if (string_eq(name, tos3("x64"))) {
-      compiler__Parser_comptime_if_block(p, tos3("TARGET_IS_64BIT"));
+      compiler__Parser_comptime_if_block(p, tos3("TARGET_IS_64BIT"), not);
     } else if (string_eq(name, tos3("x32"))) {
-      compiler__Parser_comptime_if_block(p, tos3("TARGET_IS_32BIT"));
+      compiler__Parser_comptime_if_block(p, tos3("TARGET_IS_32BIT"), not);
     } else if (string_eq(name, tos3("big_endian"))) {
-      compiler__Parser_comptime_if_block(p, tos3("TARGET_ORDER_IS_BIG"));
+      compiler__Parser_comptime_if_block(p, tos3("TARGET_ORDER_IS_BIG"), not);
     } else if (string_eq(name, tos3("little_endian"))) {
-      compiler__Parser_comptime_if_block(p, tos3("TARGET_ORDER_IS_LITTLE"));
+      compiler__Parser_comptime_if_block(p, tos3("TARGET_ORDER_IS_LITTLE"),
+                                         not);
     } else if (string_eq(name, tos3("debug"))) {
-      compiler__Parser_comptime_if_block(p, tos3("VDEBUG"));
+      compiler__Parser_comptime_if_block(p, tos3("VDEBUG"), not);
     } else if (string_eq(name, tos3("prealloc"))) {
-      compiler__Parser_comptime_if_block(p, tos3("VPREALLOC"));
+      compiler__Parser_comptime_if_block(p, tos3("VPREALLOC"), not);
     } else if (string_eq(name, tos3("tinyc"))) {
-      compiler__Parser_comptime_if_block(p, tos3("__TINYC__"));
+      compiler__Parser_comptime_if_block(p, tos3("__TINYC__"), not);
     } else if (string_eq(name, tos3("glibc"))) {
-      compiler__Parser_comptime_if_block(p, tos3("__GLIBC__"));
+      compiler__Parser_comptime_if_block(p, tos3("__GLIBC__"), not);
     } else if (string_eq(name, tos3("mingw"))) {
-      compiler__Parser_comptime_if_block(p, tos3("__MINGW32__"));
+      compiler__Parser_comptime_if_block(p, tos3("__MINGW32__"), not);
     } else if (string_eq(name, tos3("msvc"))) {
-      compiler__Parser_comptime_if_block(p, tos3("_MSC_VER"));
+      compiler__Parser_comptime_if_block(p, tos3("_MSC_VER"), not);
     } else if (string_eq(name, tos3("clang"))) {
-      compiler__Parser_comptime_if_block(p, tos3("__clang__"));
+      compiler__Parser_comptime_if_block(p, tos3("__clang__"), not);
     } else if (p->v->compile_defines_all.len > 0 &&
                (_IN(string, (name), p->v->compile_defines_all))) {
+      if (p->tok == compiler__compiler__TokenKind_question) {
+        compiler__Parser_next(p);
+      };
       compiler__Parser_comptime_if_block(
-          p, _STR("CUSTOM_DEFINE_%.*s", name.len, name.str));
+          p, _STR("CUSTOM_DEFINE_%.*s", name.len, name.str), not);
     } else {
-      println(tos3("Supported platforms:"));
-      println(array_string_str(compiler__supported_platforms));
-      compiler__Parser_error(
-          p, _STR("unknown platform `%.*s`", name.len, name.str));
+      if (p->tok == compiler__compiler__TokenKind_question) {
+        compiler__Parser_next(p);
+        compiler__Parser_comptime_if_block(
+            p, _STR("CUSTOM_DEFINE_%.*s", name.len, name.str), not);
+      } else {
+        println(tos3("Supported platforms:"));
+        println(array_string_str(compiler__supported_platforms));
+        compiler__Parser_error(
+            p, _STR("unknown platform `%.*s`", name.len, name.str));
+      };
     };
     bool if_returns = p->returns;
     p->returns = 0;
@@ -15466,8 +15477,8 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_dollar);
     compiler__Parser_check(p, compiler__compiler__TokenKind_name);
     compiler__Parser_check(p, compiler__compiler__TokenKind_assign);
-    _V_MulRet_string_V_string _V_mret_735___val = compiler__Parser_tmp_expr(p);
-    string val = _V_mret_735___val.var_1;
+    _V_MulRet_string_V_string _V_mret_801___val = compiler__Parser_tmp_expr(p);
+    string val = _V_mret_801___val.var_1;
     compiler__Parser_check(p, compiler__compiler__TokenKind_rcbr);
   } else if (p->tok == compiler__compiler__TokenKind_name &&
              string_eq(p->lit, tos3("vweb"))) {
@@ -15922,10 +15933,10 @@ string compiler__Parser_gen_array_map(compiler__Parser *p, string str_typ,
   string tmp = compiler__Parser_get_tmp(p);
   string tmp_elm = compiler__Parser_get_tmp(p);
   string a = p->expr_var.name;
-  _V_MulRet_string_V_string _V_mret_2258_map_type_expr =
+  _V_MulRet_string_V_string _V_mret_2324_map_type_expr =
       compiler__Parser_tmp_expr(p);
-  string map_type = _V_mret_2258_map_type_expr.var_0;
-  string expr = _V_mret_2258_map_type_expr.var_1;
+  string map_type = _V_mret_2324_map_type_expr.var_0;
+  string expr = _V_mret_2324_map_type_expr.var_1;
   compiler__CGen_set_placeholder(
       p->cgen, method_ph,
       string_add(_STR("\narray %.*s = new_array(0, %.*s .len, ", tmp.len,
@@ -15945,8 +15956,13 @@ string compiler__Parser_gen_array_map(compiler__Parser *p, string str_typ,
   compiler__Parser_close_scope(p);
   return string_add(tos3("array_"), compiler__stringify_pointer(map_type));
 }
-void compiler__Parser_comptime_if_block(compiler__Parser *p, string name) {
-  compiler__Parser_genln(p, _STR("#ifdef %.*s", name.len, name.str));
+void compiler__Parser_comptime_if_block(compiler__Parser *p, string name,
+                                        bool not) {
+  if (not) {
+    compiler__Parser_genln(p, _STR("#ifndef %.*s", name.len, name.str));
+  } else {
+    compiler__Parser_genln(p, _STR("#ifdef %.*s", name.len, name.str));
+  };
   compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
   compiler__Parser_statements_no_rcbr(p);
   if (!(p->tok == compiler__compiler__TokenKind_dollar &&
@@ -18790,7 +18806,7 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f,
                                          tos3("& /*111*/ (array[]){"));
           compiler__Parser_gen(p, tos3("}[0] "));
         } else if (exp_ptr && string_eq(expected, string_add(got, tos3("*")))) {
-#ifdef __TINYC__
+#ifndef __TINYC__
           string expr = string_substr2(p->cgen->cur_line, ph, -1, true);
           if (string_contains(expr, tos3("("))) {
             compiler__CGen_set_placeholder(
