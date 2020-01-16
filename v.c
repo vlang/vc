@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1e98a22"
+#define V_COMMIT_HASH "756c6d2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d6448ee"
+#define V_COMMIT_HASH "1e98a22"
 #endif
 #include <inttypes.h>
 
@@ -15067,7 +15067,8 @@ void compiler__Parser_error_with_token_index(compiler__Parser *p, string s,
       p, s,
       compiler__Scanner_get_scanner_pos_of_token(
           &/* ? */ *p->scanner,
-          &/*114*/ (*(compiler__Token *)array_get(p->tokens, tokenindex))));
+          &/*113 e="compiler__Token*" g="compiler__Token"*/ (compiler__Token[]){
+              (*(compiler__Token *)array_get(p->tokens, tokenindex))}[0]));
 }
 void compiler__Parser_warn_with_token_index(compiler__Parser *p, string s,
                                             int tokenindex) {
@@ -15075,7 +15076,8 @@ void compiler__Parser_warn_with_token_index(compiler__Parser *p, string s,
       p, s,
       compiler__Scanner_get_scanner_pos_of_token(
           &/* ? */ *p->scanner,
-          &/*114*/ (*(compiler__Token *)array_get(p->tokens, tokenindex))));
+          &/*113 e="compiler__Token*" g="compiler__Token"*/ (compiler__Token[]){
+              (*(compiler__Token *)array_get(p->tokens, tokenindex))}[0]));
 }
 void compiler__Parser_error_with_position(compiler__Parser *p, string s,
                                           compiler__ScannerPos sp) {
@@ -18100,7 +18102,8 @@ void compiler__Parser_check_unused_and_mut_vars(compiler__Parser *p) {
     };
     if (!var.is_used && !p->pref->is_repl && !var.is_arg &&
         !p->pref->translated && string_ne(var.name, tos3("tmpl_res")) &&
-        string_ne(p->mod, tos3("vweb")) && string_ne(var.name, tos3("it"))) {
+        string_ne(p->mod, tos3("vweb")) && string_ne(var.name, tos3("it")) &&
+        !p->cur_fn.is_unsafe) {
       compiler__Parser_production_error_with_token_index(
           p, _STR("`%.*s` declared and not used", var.name.len, var.name.str),
           var.token_idx);
@@ -18108,9 +18111,6 @@ void compiler__Parser_check_unused_and_mut_vars(compiler__Parser *p) {
     if (!var.is_changed && var.is_mut && !p->pref->is_repl &&
         !p->pref->translated && string_ne(var.typ, tos3("T*")) &&
         string_ne(p->mod, tos3("ui")) && string_ne(var.typ, tos3("App*"))) {
-      compiler__Parser_warn_or_error(
-          p, _STR("`%.*s` is declared as mutable, but it was never changed",
-                  var.name.len, var.name.str));
     };
   };
 }
@@ -18857,10 +18857,10 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f,
       };
     };
   };
-  _V_MulRet_string_V_array_string _V_mret_6249_varg_type_varg_values =
+  _V_MulRet_string_V_array_string _V_mret_6245_varg_type_varg_values =
       compiler__Parser_fn_call_vargs(p, *f);
-  string varg_type = _V_mret_6249_varg_type_varg_values.var_0;
-  array_string varg_values = _V_mret_6249_varg_type_varg_values.var_1;
+  string varg_type = _V_mret_6245_varg_type_varg_values.var_0;
+  array_string varg_values = _V_mret_6245_varg_type_varg_values.var_1;
   if (f->is_variadic) {
     _PUSH(&saved_args, (/*typ = array_string   tmp_typ=string*/ varg_type),
           tmp84, string);
@@ -19129,10 +19129,10 @@ compiler__Parser_fn_call_vargs(compiler__Parser *p, compiler__Fn f) {
     if (p->tok == compiler__compiler__TokenKind_comma) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
     };
-    _V_MulRet_string_V_string _V_mret_7196_varg_type_varg_value =
+    _V_MulRet_string_V_string _V_mret_7192_varg_type_varg_value =
         compiler__Parser_tmp_expr(p);
-    string varg_type = _V_mret_7196_varg_type_varg_value.var_0;
-    string varg_value = _V_mret_7196_varg_type_varg_value.var_1;
+    string varg_type = _V_mret_7192_varg_type_varg_value.var_0;
+    string varg_value = _V_mret_7192_varg_type_varg_value.var_1;
     if (string_starts_with(varg_type, tos3("varg_")) &&
         (values.len > 0 || p->tok == compiler__compiler__TokenKind_comma)) {
       compiler__Parser_error(
@@ -23816,7 +23816,7 @@ void compiler__build_thirdparty_obj_file_with_msvc(
   string obj_path = _STR("%.*sbj", path.len, path.str);
   obj_path = os__realpath(obj_path);
   if (os__exists(obj_path)) {
-    printf("%.*s already build.\n", obj_path.len, obj_path.str);
+    printf("%.*s already built.\n", obj_path.len, obj_path.str);
 
     return;
   };
