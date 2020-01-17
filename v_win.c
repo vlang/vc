@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2cd24ea"
+#define V_COMMIT_HASH "3d57d3b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "436603a"
+#define V_COMMIT_HASH "2cd24ea"
 #endif
 #include <inttypes.h>
 
@@ -14090,15 +14090,15 @@ start:;
       println(res.output);
     } else {
       if (res.output.len < 30) {
-        /*opt*/ printf("%d\n", res.output.len);
+        println(res.output);
       } else {
         int max = 50;
-        int n = ((res.output.len > 50) ? (50) : (res.output.len));
+        int n = ((res.output.len > max) ? (max) : (res.output.len));
         string partial_output = string_trim_right(
             string_substr2(res.output, res.output.len - n, -1, true),
             tos3("\r\n"));
         print(partial_output);
-        if (n < 50) {
+        if (n < max) {
           println(
               tos3("...\n(Use `v -cg` to print the entire error message)\n"));
         };
