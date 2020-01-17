@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ccf6134"
+#define V_COMMIT_HASH "436603a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "62481e8"
+#define V_COMMIT_HASH "ccf6134"
 #endif
 #include <inttypes.h>
 
@@ -318,10 +318,10 @@ int g_test_fails = 0;
        "     It very significantly speeds up secondary compilations.\n\n  "    \
        "-obf              Obfuscate the resulting binary.\n  -compress       " \
        "  Compress the resulting binary.\n  -                 Shorthand for "  \
-       "`v runrepl`.\n\nOptions for debugging/troubleshooting v programs:\n  " \
-       "-g                Generate debugging information in the backtraces. "  \
-       "Add *V* line numbers to the generated executable.\n  -cg             " \
-       "  Same as -g, but add *C* line numbers to the generated executable "   \
+       "`v repl`.\n\nOptions for debugging/troubleshooting v programs:\n  -g " \
+       "               Generate debugging information in the backtraces. Add " \
+       "*V* line numbers to the generated executable.\n  -cg               "   \
+       "Same as -g, but add *C* line numbers to the generated executable "     \
        "instead of *V* line numbers.\n  -keep_c           Do NOT remove the "  \
        "generated .tmp.c files after compilation.\n                    It is " \
        "useful when using debuggers like gdb/visual studio, when given after " \
@@ -337,7 +337,7 @@ int g_test_fails = 0;
        "is rapid and features/bugfixes are added constantly.\n  run <file.v> " \
        "     Build and execute the V program in file.v. You can add "          \
        "arguments for the V program *after* the file name.\n  build <module> " \
-       "   Compile a module into an object file.\n  runrepl           Run "    \
+       "   Compile a module into an object file.\n  repl              Run "    \
        "the V REPL. If V is running in a tty terminal, the REPL is "           \
        "interactive, otherwise it just reads from stdin.\n  symlink          " \
        " Useful on Unix systems. Symlinks the current V executable to "        \
@@ -14090,7 +14090,9 @@ start:;
       println(res.output);
     } else {
       string partial_output =
-          string_trim_right(string_limit(res.output, 200), tos3("\r\n"));
+          string_trim_right(string_substr2(res.output, res.output.len - 200,
+                                           res.output.len, false),
+                            tos3("\r\n"));
       print(partial_output);
       if (res.output.len > partial_output.len) {
         println(tos3("...\n(Use `v -g` to print the entire error message)\n"));
@@ -14160,9 +14162,9 @@ void compiler__V_cc_windows_cross(compiler__V *c) {
       printf("`%.*s` not found\n", libs.len, libs.str);
       v_exit(1);
     };
-    array_string tmp35 = c->table->imports;
-    for (int tmp36 = 0; tmp36 < tmp35.len; tmp36++) {
-      string imp = ((string *)tmp35.data)[tmp36];
+    array_string tmp37 = c->table->imports;
+    for (int tmp38 = 0; tmp38 < tmp37.len; tmp38++) {
+      string imp = ((string *)tmp37.data)[tmp38];
 
       libs = string_add(
           libs, _STR(" \"%.*s/vlib/%.*s.o\"", compiler__v_modules_path.len,
@@ -14193,9 +14195,9 @@ void compiler__V_cc_windows_cross(compiler__V *c) {
   println(tos3("Done!"));
 }
 void compiler__V_build_thirdparty_obj_files(compiler__V *c) {
-  array_compiler__CFlag tmp37 = compiler__V_get_os_cflags(&/* ? */ *c);
-  for (int tmp38 = 0; tmp38 < tmp37.len; tmp38++) {
-    compiler__CFlag flag = ((compiler__CFlag *)tmp37.data)[tmp38];
+  array_compiler__CFlag tmp39 = compiler__V_get_os_cflags(&/* ? */ *c);
+  for (int tmp40 = 0; tmp40 < tmp39.len; tmp40++) {
+    compiler__CFlag flag = ((compiler__CFlag *)tmp39.data)[tmp40];
 
     if (string_ends_with(flag.value, tos3(".o"))) {
       array_compiler__CFlag rest_of_module_flags =
@@ -14230,7 +14232,7 @@ string compiler__find_c_compiler_thirdparty_options() {
   ;
   if ((_IN(string, (tos3("-m32")), fullargs))) {
     _PUSH(&cflags, (/*typ = array_string   tmp_typ=string*/ tos3("-m32")),
-          tmp39, string);
+          tmp41, string);
   };
   return array_string_join(cflags, tos3(" "));
 }
@@ -14240,28 +14242,28 @@ compiler__parse_defines(array_string defines) {
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   array_string compile_defines_all = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  array_string tmp40 = defines;
-  for (int tmp41 = 0; tmp41 < tmp40.len; tmp41++) {
-    string dfn = ((string *)tmp40.data)[tmp41];
+  array_string tmp42 = defines;
+  for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
+    string dfn = ((string *)tmp42.data)[tmp43];
 
     array_string dfn_parts = string_split(dfn, tos3("="));
     if (dfn_parts.len == 1) {
       _PUSH(&compile_defines, (/*typ = array_string   tmp_typ=string*/ dfn),
-            tmp42, string);
+            tmp44, string);
       _PUSH(&compile_defines_all, (/*typ = array_string   tmp_typ=string*/ dfn),
-            tmp43, string);
+            tmp45, string);
       continue;
     };
     if (dfn_parts.len == 2) {
       _PUSH(&compile_defines_all,
             (/*typ = array_string   tmp_typ=string*/ (
                 *(string *)array_get(dfn_parts, 0))),
-            tmp44, string);
+            tmp46, string);
       if (string_eq((*(string *)array_get(dfn_parts, 1)), tos3("1"))) {
         _PUSH(&compile_defines,
               (/*typ = array_string   tmp_typ=string*/ (
                   *(string *)array_get(dfn_parts, 0))),
-              tmp49, string);
+              tmp51, string);
       };
     };
   };
@@ -30721,10 +30723,10 @@ void main__main() {
   bool is_verbose = (_IN(string, (tos3("-verbose")), os__args)) ||
                     (_IN(string, (tos3("--verbose")), os__args));
   array_string args = compiler__env_vflags_and_os_args();
-  _V_MulRet_array_string_V_string _V_mret_76_options_command =
+  _V_MulRet_array_string_V_string _V_mret_78_options_command =
       compiler__get_v_options_and_main_command(args);
-  array_string options = _V_mret_76_options_command.var_0;
-  string command = _V_mret_76_options_command.var_1;
+  array_string options = _V_mret_78_options_command.var_0;
+  string command = _V_mret_78_options_command.var_1;
   if (is_verbose) {
     string tmp1 = array_string_str(args);
 
@@ -30814,6 +30816,8 @@ void main__v_command(string command, array_string args) {
   } else if (string_eq(tmp5, tos3("symlink"))) {
     compiler__create_symlink();
   } else if (string_eq(tmp5, tos3("runrepl"))) {
+    eprintln(
+        tos3("`v runrepl` has been deprecated. Please use `v repl` instead."));
     compiler__launch_tool(tos3("vrepl"), tos3("runrepl"));
   } else if (string_eq(tmp5, tos3("doc"))) {
     string vexe = os__executable();
@@ -31254,11 +31258,12 @@ void init() {
       EMPTY_ARRAY_OF_ELEMS(string, 4){tos3("run"), tos3("build"),
                                       tos3("version"), tos3("doc")});
   main__simple_tools = new_array_from_c_array(
-      10, 10, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 10){
+      11, 11, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 11){
           tos3("fmt"), tos3("up"), tos3("create"), tos3("test"),
-          tos3("test-fmt"), tos3("test-compiler"), tos3("build-tools"),
-          tos3("bin2v"), tos3("build-examples"), tos3("build-vbinaries")});
+          tos3("test-fmt"), tos3("test-compiler"), tos3("bin2v"), tos3("repl"),
+          tos3("build-tools"), tos3("build-examples"),
+          tos3("build-vbinaries")});
   builtin__init();
 }
 
