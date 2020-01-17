@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "436603a"
+#define V_COMMIT_HASH "2cd24ea"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ccf6134"
+#define V_COMMIT_HASH "436603a"
 #endif
 #include <inttypes.h>
 
@@ -13981,15 +13981,19 @@ start:;
     if (v->pref->is_debug) {
       println(res.output);
     } else {
-      string partial_output =
-          string_trim_right(string_substr2(res.output, res.output.len - 200,
-                                           res.output.len, false),
-                            tos3("\r\n"));
-      print(partial_output);
-      if (res.output.len > partial_output.len) {
-        println(tos3("...\n(Use `v -g` to print the entire error message)\n"));
+      if (res.output.len < 30) {
+        /*opt*/ printf("%d\n", res.output.len);
       } else {
-        println(tos3(""));
+        int max = 50;
+        int n = ((res.output.len > 50) ? (50) : (res.output.len));
+        string partial_output = string_trim_right(
+            string_substr2(res.output, res.output.len - n, -1, true),
+            tos3("\r\n"));
+        print(partial_output);
+        if (n < 50) {
+          println(
+              tos3("...\n(Use `v -cg` to print the entire error message)\n"));
+        };
       };
     };
     compiler__verror(
