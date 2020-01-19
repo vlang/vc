@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6e98229"
+#define V_COMMIT_HASH "cf1fd6e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b1602c7"
+#define V_COMMIT_HASH "6e98229"
 #endif
 #include <inttypes.h>
 
@@ -3464,19 +3464,21 @@ array new_array_from_c_array_no_alloc(int len, int cap, int elm_size,
   return arr;
 }
 void array_ensure_cap(array *a, int required) {
-  if (required > a->cap) {
-    int cap = ((a->cap == 0) ? (2) : (a->cap * 2));
-    while (required > cap && 1) {
+  if (required <= a->cap) {
 
-      cap *= 2;
-    };
-    if (a->cap == 0) {
-      a->data = v_calloc(cap * a->element_size);
-    } else {
-      a->data = realloc(a->data, cap * a->element_size);
-    };
-    a->cap = cap;
+    return;
   };
+  int cap = ((a->cap == 0) ? (2) : (a->cap * 2));
+  while (required > cap) {
+
+    cap *= 2;
+  };
+  if (a->cap == 0) {
+    a->data = v_calloc(cap * a->element_size);
+  } else {
+    a->data = realloc(a->data, cap * a->element_size);
+  };
+  a->cap = cap;
 }
 array array_repeat(array a, int nr_repeats) {
   if (nr_repeats < 0) {
@@ -3609,9 +3611,16 @@ void array_push(array *a, void *val) {
   a->len++;
 }
 void array_push_many(array *a, void *val, int size) {
-  array_ensure_cap(a, a->len + size);
-  memcpy((byte *)a->data + a->element_size * a->len, val,
-         a->element_size * size);
+  if (a->data == val) {
+    array copy = array_clone(*a);
+    array_ensure_cap(a, a->len + size);
+    memcpy((byte *)a->data + a->element_size * a->len, copy.data,
+           a->element_size * size);
+  } else {
+    array_ensure_cap(a, a->len + size);
+    memcpy((byte *)a->data + a->element_size * a->len, val,
+           a->element_size * size);
+  };
   a->len += size;
 }
 array array_reverse(array a) {
