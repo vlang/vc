@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d1664dc"
+#define V_COMMIT_HASH "9b3ac7e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bfaf2a4"
+#define V_COMMIT_HASH "d1664dc"
 #endif
 #include <inttypes.h>
 
@@ -31307,8 +31307,9 @@ void main__v_command(string command, array_string args) {
     println(txt);
   } else // default:
   {
-    v_panic(_STR("v %.*s: unknown command\nRun \"v help\" for usage.",
-                 command.len, command.str));
+    eprintln(_STR("v %.*s: unknown command\nRun \"v help\" for usage.",
+                  command.len, command.str));
+    v_exit(1);
   };
   v_exit(0);
 }
