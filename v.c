@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "bfaf2a4"
+#define V_COMMIT_HASH "d1664dc"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "990e44c"
+#define V_COMMIT_HASH "bfaf2a4"
 #endif
 #include <inttypes.h>
 
