@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9b3ac7e"
+#define V_COMMIT_HASH "84438c0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d1664dc"
+#define V_COMMIT_HASH "9b3ac7e"
 #endif
 #include <inttypes.h>
 
@@ -2104,6 +2104,7 @@ string time__Time_get_fmt_date_str(time__Time t,
 string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr,
                               time__FormatTime fmt_time,
                               time__FormatDate fmt_date);
+string time__Time_str(time__Time t);
 time__Time time__unix(int abs);
 static inline _V_MulRet_int_V_int_V_int
 time__calculate_date_from_offset(int day_offset_);
@@ -8126,6 +8127,7 @@ string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr,
     };
   };
 }
+string time__Time_str(time__Time t) { return time__Time_format_ss(t); }
 time__Time time__unix(int abs) {
   int day_offset = abs / time__seconds_per_day;
   if (abs % time__seconds_per_day < 0) {

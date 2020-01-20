@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9b3ac7e"
+#define V_COMMIT_HASH "84438c0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d1664dc"
+#define V_COMMIT_HASH "9b3ac7e"
 #endif
 #include <inttypes.h>
 
@@ -1998,6 +1998,7 @@ string time__Time_get_fmt_date_str(time__Time t,
 string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr,
                               time__FormatTime fmt_time,
                               time__FormatDate fmt_date);
+string time__Time_str(time__Time t);
 time__Time time__convert_ctime(struct /*TM*/ tm t);
 time__Time time__unix(int abs);
 static inline _V_MulRet_int_V_int_V_int
@@ -7996,6 +7997,7 @@ string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr,
     };
   };
 }
+string time__Time_str(time__Time t) { return time__Time_format_ss(t); }
 time__Time time__convert_ctime(struct /*TM*/ tm t) {
   return time__Time_add_seconds((time__Time){.year = t.tm_year + 1900,
                                              .month = t.tm_mon + 1,
