@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "43ba676"
+#define V_COMMIT_HASH "0502a54"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "136c469"
+#define V_COMMIT_HASH "43ba676"
 #endif
 #include <inttypes.h>
 
@@ -3517,83 +3517,84 @@ array_string compiler__reserved_type_param_names;
 #define compiler__compiler__TokenKind_semicolon 21
 #define compiler__compiler__TokenKind_colon 22
 #define compiler__compiler__TokenKind_arrow 23
-#define compiler__compiler__TokenKind_amp 24
-#define compiler__compiler__TokenKind_hash 25
-#define compiler__compiler__TokenKind_dollar 26
-#define compiler__compiler__TokenKind_str_dollar 27
-#define compiler__compiler__TokenKind_left_shift 28
-#define compiler__compiler__TokenKind_righ_shift 29
-#define compiler__compiler__TokenKind_assign 30
-#define compiler__compiler__TokenKind_decl_assign 31
-#define compiler__compiler__TokenKind_plus_assign 32
-#define compiler__compiler__TokenKind_minus_assign 33
-#define compiler__compiler__TokenKind_div_assign 34
-#define compiler__compiler__TokenKind_mult_assign 35
-#define compiler__compiler__TokenKind_xor_assign 36
-#define compiler__compiler__TokenKind_mod_assign 37
-#define compiler__compiler__TokenKind_or_assign 38
-#define compiler__compiler__TokenKind_and_assign 39
-#define compiler__compiler__TokenKind_righ_shift_assign 40
-#define compiler__compiler__TokenKind_left_shift_assign 41
-#define compiler__compiler__TokenKind_lcbr 42
-#define compiler__compiler__TokenKind_rcbr 43
-#define compiler__compiler__TokenKind_lpar 44
-#define compiler__compiler__TokenKind_rpar 45
-#define compiler__compiler__TokenKind_lsbr 46
-#define compiler__compiler__TokenKind_rsbr 47
-#define compiler__compiler__TokenKind_eq 48
-#define compiler__compiler__TokenKind_ne 49
-#define compiler__compiler__TokenKind_gt 50
-#define compiler__compiler__TokenKind_lt 51
-#define compiler__compiler__TokenKind_ge 52
-#define compiler__compiler__TokenKind_le 53
-#define compiler__compiler__TokenKind_line_comment 54
-#define compiler__compiler__TokenKind_mline_comment 55
-#define compiler__compiler__TokenKind_nl 56
-#define compiler__compiler__TokenKind_dot 57
-#define compiler__compiler__TokenKind_dotdot 58
-#define compiler__compiler__TokenKind_ellipsis 59
-#define compiler__compiler__TokenKind_keyword_beg 60
-#define compiler__compiler__TokenKind_key_as 61
-#define compiler__compiler__TokenKind_key_asm 62
-#define compiler__compiler__TokenKind_key_assert 63
-#define compiler__compiler__TokenKind_key_atomic 64
-#define compiler__compiler__TokenKind_key_break 65
-#define compiler__compiler__TokenKind_key_const 66
-#define compiler__compiler__TokenKind_key_continue 67
-#define compiler__compiler__TokenKind_key_defer 68
-#define compiler__compiler__TokenKind_key_else 69
-#define compiler__compiler__TokenKind_key_embed 70
-#define compiler__compiler__TokenKind_key_enum 71
-#define compiler__compiler__TokenKind_key_false 72
-#define compiler__compiler__TokenKind_key_for 73
-#define compiler__compiler__TokenKind_key_fn 74
-#define compiler__compiler__TokenKind_key_global 75
-#define compiler__compiler__TokenKind_key_go 76
-#define compiler__compiler__TokenKind_key_goto 77
-#define compiler__compiler__TokenKind_key_if 78
-#define compiler__compiler__TokenKind_key_import 79
-#define compiler__compiler__TokenKind_key_import_const 80
-#define compiler__compiler__TokenKind_key_in 81
-#define compiler__compiler__TokenKind_key_interface 82
-#define compiler__compiler__TokenKind_key_match 83
-#define compiler__compiler__TokenKind_key_module 84
-#define compiler__compiler__TokenKind_key_mut 85
-#define compiler__compiler__TokenKind_key_none 86
-#define compiler__compiler__TokenKind_key_return 87
-#define compiler__compiler__TokenKind_key_select 88
-#define compiler__compiler__TokenKind_key_sizeof 89
-#define compiler__compiler__TokenKind_key_offsetof 90
-#define compiler__compiler__TokenKind_key_struct 91
-#define compiler__compiler__TokenKind_key_switch 92
-#define compiler__compiler__TokenKind_key_true 93
-#define compiler__compiler__TokenKind_key_type 94
-#define compiler__compiler__TokenKind_key_orelse 95
-#define compiler__compiler__TokenKind_key_union 96
-#define compiler__compiler__TokenKind_key_pub 97
-#define compiler__compiler__TokenKind_key_static 98
-#define compiler__compiler__TokenKind_key_unsafe 99
-#define compiler__compiler__TokenKind_keyword_end 100
+#define compiler__compiler__TokenKind_left_arrow 24
+#define compiler__compiler__TokenKind_amp 25
+#define compiler__compiler__TokenKind_hash 26
+#define compiler__compiler__TokenKind_dollar 27
+#define compiler__compiler__TokenKind_str_dollar 28
+#define compiler__compiler__TokenKind_left_shift 29
+#define compiler__compiler__TokenKind_righ_shift 30
+#define compiler__compiler__TokenKind_assign 31
+#define compiler__compiler__TokenKind_decl_assign 32
+#define compiler__compiler__TokenKind_plus_assign 33
+#define compiler__compiler__TokenKind_minus_assign 34
+#define compiler__compiler__TokenKind_div_assign 35
+#define compiler__compiler__TokenKind_mult_assign 36
+#define compiler__compiler__TokenKind_xor_assign 37
+#define compiler__compiler__TokenKind_mod_assign 38
+#define compiler__compiler__TokenKind_or_assign 39
+#define compiler__compiler__TokenKind_and_assign 40
+#define compiler__compiler__TokenKind_righ_shift_assign 41
+#define compiler__compiler__TokenKind_left_shift_assign 42
+#define compiler__compiler__TokenKind_lcbr 43
+#define compiler__compiler__TokenKind_rcbr 44
+#define compiler__compiler__TokenKind_lpar 45
+#define compiler__compiler__TokenKind_rpar 46
+#define compiler__compiler__TokenKind_lsbr 47
+#define compiler__compiler__TokenKind_rsbr 48
+#define compiler__compiler__TokenKind_eq 49
+#define compiler__compiler__TokenKind_ne 50
+#define compiler__compiler__TokenKind_gt 51
+#define compiler__compiler__TokenKind_lt 52
+#define compiler__compiler__TokenKind_ge 53
+#define compiler__compiler__TokenKind_le 54
+#define compiler__compiler__TokenKind_line_comment 55
+#define compiler__compiler__TokenKind_mline_comment 56
+#define compiler__compiler__TokenKind_nl 57
+#define compiler__compiler__TokenKind_dot 58
+#define compiler__compiler__TokenKind_dotdot 59
+#define compiler__compiler__TokenKind_ellipsis 60
+#define compiler__compiler__TokenKind_keyword_beg 61
+#define compiler__compiler__TokenKind_key_as 62
+#define compiler__compiler__TokenKind_key_asm 63
+#define compiler__compiler__TokenKind_key_assert 64
+#define compiler__compiler__TokenKind_key_atomic 65
+#define compiler__compiler__TokenKind_key_break 66
+#define compiler__compiler__TokenKind_key_const 67
+#define compiler__compiler__TokenKind_key_continue 68
+#define compiler__compiler__TokenKind_key_defer 69
+#define compiler__compiler__TokenKind_key_else 70
+#define compiler__compiler__TokenKind_key_embed 71
+#define compiler__compiler__TokenKind_key_enum 72
+#define compiler__compiler__TokenKind_key_false 73
+#define compiler__compiler__TokenKind_key_for 74
+#define compiler__compiler__TokenKind_key_fn 75
+#define compiler__compiler__TokenKind_key_global 76
+#define compiler__compiler__TokenKind_key_go 77
+#define compiler__compiler__TokenKind_key_goto 78
+#define compiler__compiler__TokenKind_key_if 79
+#define compiler__compiler__TokenKind_key_import 80
+#define compiler__compiler__TokenKind_key_import_const 81
+#define compiler__compiler__TokenKind_key_in 82
+#define compiler__compiler__TokenKind_key_interface 83
+#define compiler__compiler__TokenKind_key_match 84
+#define compiler__compiler__TokenKind_key_module 85
+#define compiler__compiler__TokenKind_key_mut 86
+#define compiler__compiler__TokenKind_key_none 87
+#define compiler__compiler__TokenKind_key_return 88
+#define compiler__compiler__TokenKind_key_select 89
+#define compiler__compiler__TokenKind_key_sizeof 90
+#define compiler__compiler__TokenKind_key_offsetof 91
+#define compiler__compiler__TokenKind_key_struct 92
+#define compiler__compiler__TokenKind_key_switch 93
+#define compiler__compiler__TokenKind_key_true 94
+#define compiler__compiler__TokenKind_key_type 95
+#define compiler__compiler__TokenKind_key_orelse 96
+#define compiler__compiler__TokenKind_key_union 97
+#define compiler__compiler__TokenKind_key_pub 98
+#define compiler__compiler__TokenKind_key_static 99
+#define compiler__compiler__TokenKind_key_unsafe 100
+#define compiler__compiler__TokenKind_keyword_end 101
 array_string compiler__TokenStr;
 map_int compiler__KEYWORDS;
 array_compiler__TokenKind compiler__AssignTokens;
@@ -10799,8 +10800,8 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
   ;
   p->builtin_mod = string_eq(p->mod, tos3("builtin"));
   p->can_chash =
-      (string_eq(p->mod, tos3("ui")) || string_eq(p->mod, tos3("uiold")) ||
-       string_eq(p->mod, tos3("darwin")) ||
+      (string_eq(p->mod, tos3("gg2")) || string_eq(p->mod, tos3("ui")) ||
+       string_eq(p->mod, tos3("uiold")) || string_eq(p->mod, tos3("darwin")) ||
        string_eq(p->mod, tos3("clipboard")) ||
        string_eq(p->mod, tos3("webview")));
   string fq_mod =
@@ -10895,7 +10896,7 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
     } else if (tmp18 == compiler__compiler__TokenKind_key_global) {
       if (!p->pref->translated && !p->pref->is_live && !p->builtin_mod &&
           !p->pref->building_v && string_ne(p->mod, tos3("ui")) &&
-          string_ne(p->mod, tos3("uiold")) &&
+          string_ne(p->mod, tos3("gg2")) && string_ne(p->mod, tos3("uiold")) &&
           !string_contains(os__getwd(), tos3("/volt")) &&
           !p->pref->enable_globals) {
         compiler__Parser_error(
@@ -10912,9 +10913,9 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
       if (p->tok == compiler__compiler__TokenKind_assign) {
         compiler__Parser_next(p);
         g = string_add(g, tos3(" = "));
-        _V_MulRet_string_V_string _V_mret_2354___expr =
+        _V_MulRet_string_V_string _V_mret_2362___expr =
             compiler__Parser_tmp_expr(p);
-        string expr = _V_mret_2354___expr.var_1;
+        string expr = _V_mret_2362___expr.var_1;
         g = string_add(g, expr);
       };
       g = string_add(g, tos3("; // global"));
@@ -11376,7 +11377,7 @@ string compiler__Parser_check_string(compiler__Parser *p) {
 void compiler__Parser_check_not_reserved(compiler__Parser *p) {
   bool tmp42 = 0;
   bool tmp43 =
-      map_get(/*aparser.v : 969*/ compiler__reserved_types, p->lit, &tmp42);
+      map_get(/*aparser.v : 968*/ compiler__reserved_types, p->lit, &tmp42);
 
   if (tmp42) {
     compiler__Parser_error(
@@ -11575,7 +11576,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
   map_string ti = p->generic_dispatch.inst;
   if ((_IN(string, (p->lit), map_keys(&/* ? */ ti)))) {
     string tmp45 = tos3("");
-    bool tmp46 = map_get(/*aparser.v : 1157*/ ti, p->lit, &tmp45);
+    bool tmp46 = map_get(/*aparser.v : 1156*/ ti, p->lit, &tmp45);
 
     if (!tmp46)
       tmp45 = tos((byte *)"", 0);
@@ -11619,11 +11620,11 @@ string compiler__Parser_get_type(compiler__Parser *p) {
       if (string_eq(t.name, tos3("")) && !p->pref->translated &&
           !compiler__Parser_first_pass(&/* ? */ *p) &&
           !string_starts_with(typ, tos3("["))) {
-        _V_MulRet_string_V_string _V_mret_5180_t_suggest_tc_suggest =
+        _V_MulRet_string_V_string _V_mret_5188_t_suggest_tc_suggest =
             compiler__Table_find_misspelled_type(&/* ? */ *p->table, typ, p,
                                                  0.50);
-        string t_suggest = _V_mret_5180_t_suggest_tc_suggest.var_0;
-        string tc_suggest = _V_mret_5180_t_suggest_tc_suggest.var_1;
+        string t_suggest = _V_mret_5188_t_suggest_tc_suggest.var_0;
+        string tc_suggest = _V_mret_5188_t_suggest_tc_suggest.var_1;
         if (t_suggest.len > 0) {
           t_suggest = _STR(". did you mean: (%.*s) `%.*s`", tc_suggest.len,
                            tc_suggest.str, t_suggest.len, t_suggest.str);
@@ -11636,7 +11637,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
                                                  tos3("/tmp/gen_vc/v/vlib/"
                                                       "compiler/aparser.v")),
                                       tos3(":")),
-                           tos3("1203")),
+                           tos3("1202")),
                        tos3(")")))
                  : (tos3("")));
         compiler__Parser_error(p, _STR("unknown type `%.*s`%.*s %.*s", typ.len,
@@ -11658,7 +11659,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
       string type_param = compiler__Parser_check_name(p);
       if ((_IN_MAP((type_param), p->generic_dispatch.inst))) {
         string tmp47 = tos3("");
-        bool tmp48 = map_get(/*aparser.v : 1219*/ p->generic_dispatch.inst,
+        bool tmp48 = map_get(/*aparser.v : 1218*/ p->generic_dispatch.inst,
                              type_param, &tmp47);
 
         if (!tmp48)
@@ -11993,9 +11994,9 @@ void compiler__Parser_assign_statement(compiler__Parser *p, compiler__Var v,
   string expr_type = compiler__Parser_bool_expression(p);
   p->is_var_decl = 0;
   if (string_eq(expr_type, tos3("void"))) {
-    _V_MulRet_bool_V_string _V_mret_6998___fn_name =
+    _V_MulRet_bool_V_string _V_mret_7006___fn_name =
         compiler__Parser_is_expr_fn_call(&/* ? */ *p, expr_tok + 1);
-    string fn_name = _V_mret_6998___fn_name.var_1;
+    string fn_name = _V_mret_7006___fn_name.var_1;
     compiler__Parser_error_with_token_index(
         p,
         _STR("%.*s() %.*s", fn_name.len, fn_name.str,
@@ -12174,9 +12175,9 @@ void compiler__Parser_var_decl(compiler__Parser *p) {
            : ((*(string *)array_get(var_names, 0))));
   string t = compiler__Parser_gen_var_decl(p, p->var_decl_name, is_static);
   if (string_eq(t, tos3("void"))) {
-    _V_MulRet_bool_V_string _V_mret_7870___fn_name =
+    _V_MulRet_bool_V_string _V_mret_7878___fn_name =
         compiler__Parser_is_expr_fn_call(&/* ? */ *p, expr_tok + 1);
-    string fn_name = _V_mret_7870___fn_name.var_1;
+    string fn_name = _V_mret_7878___fn_name.var_1;
     compiler__Parser_error_with_token_index(
         p,
         _STR("%.*s() %.*s", fn_name.len, fn_name.str,
@@ -13106,10 +13107,10 @@ string compiler__Parser_map_init(compiler__Parser *p) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_str);
       compiler__Parser_check(p, compiler__compiler__TokenKind_colon);
       ;
-      _V_MulRet_string_V_string _V_mret_12029_t_val_expr =
+      _V_MulRet_string_V_string _V_mret_12037_t_val_expr =
           compiler__Parser_tmp_expr(p);
-      string t = _V_mret_12029_t_val_expr.var_0;
-      string val_expr = _V_mret_12029_t_val_expr.var_1;
+      string t = _V_mret_12037_t_val_expr.var_0;
+      string val_expr = _V_mret_12037_t_val_expr.var_1;
       if (i == 0) {
         val_type = t;
       };
@@ -13410,10 +13411,10 @@ void compiler__Parser_return_st(compiler__Parser *p) {
     while (p->tok == compiler__compiler__TokenKind_comma) {
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-      _V_MulRet_string_V_string _V_mret_13495_typ_expr =
+      _V_MulRet_string_V_string _V_mret_13503_typ_expr =
           compiler__Parser_tmp_expr(p);
-      string typ = _V_mret_13495_typ_expr.var_0;
-      string expr = _V_mret_13495_typ_expr.var_1;
+      string typ = _V_mret_13503_typ_expr.var_0;
+      string expr = _V_mret_13503_typ_expr.var_1;
       _PUSH(&types, (/*typ = array_string   tmp_typ=string*/ typ), tmp160,
             string);
       _PUSH(&mr_values,
@@ -13588,10 +13589,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
     string typ = compiler__Parser_get_type(p);
     compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-    _V_MulRet_string_V_string _V_mret_14280_styp_expr =
+    _V_MulRet_string_V_string _V_mret_14288_styp_expr =
         compiler__Parser_tmp_expr(p);
-    string styp = _V_mret_14280_styp_expr.var_0;
-    string expr = _V_mret_14280_styp_expr.var_1;
+    string styp = _V_mret_14288_styp_expr.var_0;
+    string expr = _V_mret_14288_styp_expr.var_1;
     compiler__Parser_check_types(p, styp, tos3("string"));
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
     string tmp = compiler__Parser_get_tmp(p);
@@ -13628,10 +13629,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     return opt_type;
   } else if (string_eq(op, tos3("encode"))) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
-    _V_MulRet_string_V_string _V_mret_14460_typ_expr =
+    _V_MulRet_string_V_string _V_mret_14468_typ_expr =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_14460_typ_expr.var_0;
-    string expr = _V_mret_14460_typ_expr.var_1;
+    string typ = _V_mret_14468_typ_expr.var_0;
+    string expr = _V_mret_14468_typ_expr.var_1;
     compiler__Type T = compiler__Table_find_type(&/* ? */ *p->table, typ);
     compiler__Parser_gen_json_for_type(p, T);
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
@@ -19829,16 +19830,18 @@ void compiler__Parser_for_st(compiler__Parser *p) {
                              .is_public = 0});
     };
   } else if (compiler__Parser_peek(&/* ? */ *p) ==
-             compiler__compiler__TokenKind_key_in) {
+                 compiler__compiler__TokenKind_key_in ||
+             compiler__Parser_peek(&/* ? */ *p) ==
+                 compiler__compiler__TokenKind_left_arrow) {
     string val = compiler__Parser_check_name(p);
     ;
-    compiler__Parser_check(p, compiler__compiler__TokenKind_key_in);
+    compiler__Parser_next(p);
     ;
     string tmp = compiler__Parser_get_tmp(p);
-    _V_MulRet_string_V_string _V_mret_639_typ_expr =
+    _V_MulRet_string_V_string _V_mret_646_typ_expr =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_639_typ_expr.var_0;
-    string expr = _V_mret_639_typ_expr.var_1;
+    string typ = _V_mret_646_typ_expr.var_0;
+    string expr = _V_mret_646_typ_expr.var_1;
     bool is_range = p->tok == compiler__compiler__TokenKind_dotdot;
     bool is_variadic_arg = string_starts_with(typ, tos3("varg_"));
     string range_end = tos3("");
@@ -19848,10 +19851,10 @@ void compiler__Parser_for_st(compiler__Parser *p) {
       if (p->pref->x64) {
         to = v_string_int(p->lit);
       };
-      _V_MulRet_string_V_string _V_mret_703_range_typ_range_expr =
+      _V_MulRet_string_V_string _V_mret_710_range_typ_range_expr =
           compiler__Parser_tmp_expr(p);
-      string range_typ = _V_mret_703_range_typ_range_expr.var_0;
-      string range_expr = _V_mret_703_range_typ_range_expr.var_1;
+      string range_typ = _V_mret_710_range_typ_range_expr.var_0;
+      string range_expr = _V_mret_710_range_typ_range_expr.var_1;
       compiler__Parser_check_types(p, range_typ, tos3("int"));
       range_end = range_expr;
       if (p->pref->x64) {
@@ -25107,6 +25110,11 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_left_shift,
                                 tos3(""));
+    } else if (nextc == '-') {
+      s->pos++;
+      println(tos3("GOT ARR"));
+      return compiler__scan_res(compiler__compiler__TokenKind_left_arrow,
+                                tos3(""));
     } else {
       return compiler__scan_res(compiler__compiler__TokenKind_lt, tos3(""));
     };
@@ -26939,6 +26947,10 @@ bool compiler__Parser_check_types2(compiler__Parser *p, string got_,
        string_ends_with(expected, tos3("Fn")))) {
     return 1;
   };
+  if (string_starts_with(got, tos3("fn ")) &&
+      string_starts_with(expected, tos3("fn "))) {
+    return 1;
+  };
   if (string_eq(expected, tos3("void*")) && string_eq(got, tos3("int"))) {
     return 1;
   };
@@ -27036,7 +27048,7 @@ bool compiler__Table_is_interface(compiler__Table *table, string name) {
     return 0;
   };
   compiler__Type tmp69 = {0};
-  bool tmp70 = map_get(/*table.v : 799*/ table->typesmap, name, &tmp69);
+  bool tmp70 = map_get(/*table.v : 802*/ table->typesmap, name, &tmp69);
 
   compiler__Type t = tmp69;
   return t.cat == compiler__compiler__TypeCategory_interface_;
@@ -27220,11 +27232,11 @@ string compiler__Parser_identify_typo(compiler__Parser *p, string name) {
   if (string_ne(n, tos3(""))) {
     output = string_add(output, _STR("\n  * const: `%.*s`", n.len, n.str));
   };
-  _V_MulRet_string_V_string _V_mret_3925_typ_type_cat =
+  _V_MulRet_string_V_string _V_mret_3943_typ_type_cat =
       compiler__Table_find_misspelled_type(&/* ? */ *p->table, name, p,
                                            min_match);
-  string typ = _V_mret_3925_typ_type_cat.var_0;
-  string type_cat = _V_mret_3925_typ_type_cat.var_1;
+  string typ = _V_mret_3943_typ_type_cat.var_0;
+  string type_cat = _V_mret_3943_typ_type_cat.var_1;
   if (typ.len > 0) {
     output = string_add(output, _STR("\n  * %.*s: `%.*s`", type_cat.len,
                                      type_cat.str, typ.len, typ.str));
@@ -27643,7 +27655,7 @@ array_string compiler__build_token_str() {
 }
 compiler__TokenKind compiler__key_to_token(string key) {
   int tmp3 = 0;
-  bool tmp4 = map_get(/*token.v : 251*/ compiler__KEYWORDS, key, &tmp3);
+  bool tmp4 = map_get(/*token.v : 252*/ compiler__KEYWORDS, key, &tmp3);
 
   compiler__TokenKind a = ((compiler__TokenKind)(tmp3));
   return a;
