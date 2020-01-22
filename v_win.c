@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0502a54"
+#define V_COMMIT_HASH "325691b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "43ba676"
+#define V_COMMIT_HASH "0502a54"
 #endif
 #include <inttypes.h>
 
@@ -26948,7 +26948,8 @@ bool compiler__Parser_check_types2(compiler__Parser *p, string got_,
     return 1;
   };
   if (string_starts_with(got, tos3("fn ")) &&
-      string_starts_with(expected, tos3("fn "))) {
+      string_starts_with(expected, tos3("fn ")) &&
+      string_eq(p->mod, tos3("gg2"))) {
     return 1;
   };
   if (string_eq(expected, tos3("void*")) && string_eq(got, tos3("int"))) {
@@ -27232,11 +27233,11 @@ string compiler__Parser_identify_typo(compiler__Parser *p, string name) {
   if (string_ne(n, tos3(""))) {
     output = string_add(output, _STR("\n  * const: `%.*s`", n.len, n.str));
   };
-  _V_MulRet_string_V_string _V_mret_3943_typ_type_cat =
+  _V_MulRet_string_V_string _V_mret_3949_typ_type_cat =
       compiler__Table_find_misspelled_type(&/* ? */ *p->table, name, p,
                                            min_match);
-  string typ = _V_mret_3943_typ_type_cat.var_0;
-  string type_cat = _V_mret_3943_typ_type_cat.var_1;
+  string typ = _V_mret_3949_typ_type_cat.var_0;
+  string type_cat = _V_mret_3949_typ_type_cat.var_1;
   if (typ.len > 0) {
     output = string_add(output, _STR("\n  * %.*s: `%.*s`", type_cat.len,
                                      type_cat.str, typ.len, typ.str));
