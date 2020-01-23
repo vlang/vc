@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7b18e5d"
+#define V_COMMIT_HASH "dd61a22"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c8c43a2"
+#define V_COMMIT_HASH "7b18e5d"
 #endif
 #include <inttypes.h>
 
@@ -17668,6 +17668,10 @@ start:;
     };
     int ret2 = os__system(
         _STR("upx --lzma -qqq %.*s", v->out_name.len, v->out_name.str));
+    if (ret2 != 0) {
+      ret2 =
+          os__system(_STR("upx -qqq %.*s", v->out_name.len, v->out_name.str));
+    };
     if (ret2 != 0) {
       println(tos3("upx failed"));
 #ifdef __APPLE__
