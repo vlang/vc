@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "da9b639"
+#define V_COMMIT_HASH "543e8dc"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5c6032d"
+#define V_COMMIT_HASH "da9b639"
 #endif
 #include <inttypes.h>
 
@@ -9525,7 +9525,7 @@ string v_dot_scanner__Scanner_ident_dec_number(v_dot_scanner__Scanner *s) {
   int start_pos = s->pos;
   while (s->pos < s->text.len &&
          (byte_is_digit(string_at(s->text, s->pos)) ||
-          string_at(s->text, s->pos) != v_dot_scanner__num_sep)) {
+          string_at(s->text, s->pos) == v_dot_scanner__num_sep)) {
 
     s->pos++;
   };
