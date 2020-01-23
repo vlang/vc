@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5c6032d"
+#define V_COMMIT_HASH "da9b639"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a6e1a74"
+#define V_COMMIT_HASH "5c6032d"
 #endif
 #include <inttypes.h>
 
@@ -271,12 +271,14 @@ int g_test_fails = 0;
 #define v_dot_scanner__double_quote '"'
 #define v_dot_scanner__error_context_before 2
 #define v_dot_scanner__error_context_after 2
+#define v_dot_scanner__num_sep '_'
 #define compiler__max_module_depth 5
 #define compiler__MaxLocalVars 50
 #define compiler__single_quote '\''
 #define compiler__double_quote '"'
 #define compiler__error_context_before 2
 #define compiler__error_context_after 2
+#define compiler__num_sep '_'
 #define compiler__NrTokens 141
 #define compiler__help_text                                                    \
   tos3("Usage: v [options/commands] [file.v | directory]\n\n   When V is run " \
@@ -1842,6 +1844,7 @@ void v_ustring_free(ustring u);
 bool byte_is_digit(byte c);
 bool byte_is_hex_digit(byte c);
 bool byte_is_oct_digit(byte c);
+bool byte_is_bin_digit(byte c);
 bool byte_is_letter(byte c);
 void v_string_free(string s);
 string string_all_before(string s, string dot);
@@ -2166,6 +2169,8 @@ v_dot_token__Token v_dot_scanner__Scanner_scan_res(v_dot_scanner__Scanner *s,
                                                    v_dot_token__Kind tok_kind,
                                                    string lit);
 string v_dot_scanner__Scanner_ident_name(v_dot_scanner__Scanner *s);
+string v_dot_scanner__filter_num_sep(byte *txt, int start, int end);
+string v_dot_scanner__Scanner_ident_bin_number(v_dot_scanner__Scanner *s);
 string v_dot_scanner__Scanner_ident_hex_number(v_dot_scanner__Scanner *s);
 string v_dot_scanner__Scanner_ident_oct_number(v_dot_scanner__Scanner *s);
 string v_dot_scanner__Scanner_ident_dec_number(v_dot_scanner__Scanner *s);
@@ -2644,6 +2649,8 @@ compiler__Scanner *compiler__new_scanner_file(string file_path);
 compiler__Scanner *compiler__new_scanner(string text);
 compiler__ScanRes compiler__scan_res(compiler__TokenKind tok, string lit);
 string compiler__Scanner_ident_name(compiler__Scanner *s);
+string compiler__filter_num_sep(byte *txt, int start, int end);
+string compiler__Scanner_ident_bin_number(compiler__Scanner *s);
 string compiler__Scanner_ident_hex_number(compiler__Scanner *s);
 string compiler__Scanner_ident_oct_number(compiler__Scanner *s);
 string compiler__Scanner_ident_dec_number(compiler__Scanner *s);
@@ -5411,6 +5418,7 @@ bool byte_is_hex_digit(byte c) {
   return byte_is_digit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
 }
 bool byte_is_oct_digit(byte c) { return c >= '0' && c <= '7'; }
+bool byte_is_bin_digit(byte c) { return c == '0' || c == '1'; }
 bool byte_is_letter(byte c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
@@ -9443,6 +9451,38 @@ string v_dot_scanner__Scanner_ident_name(v_dot_scanner__Scanner *s) {
   s->pos--;
   return name;
 }
+string v_dot_scanner__filter_num_sep(byte *txt, int start, int end) {
+  byte *b = v_malloc(end - start + 1);
+  int i = start;
+  int i1 = 0;
+  while (i < end) {
+
+    if (txt[/*ptr!*/ i] /*rbyte 0*/ != v_dot_scanner__num_sep) {
+      b[/*ptr!*/ i1] /*rbyte 1*/ = txt[/*ptr!*/ i] /*rbyte 0*/;
+      i1++;
+    };
+    i++;
+  };
+  b[/*ptr!*/ i1] /*rbyte 1*/ = 0;
+  return (string){b, i1};
+}
+string v_dot_scanner__Scanner_ident_bin_number(v_dot_scanner__Scanner *s) {
+  int start_pos = s->pos;
+  s->pos += 2;
+  while (1) {
+    if (s->pos >= s->text.len) {
+      break;
+    };
+    byte c = string_at(s->text, s->pos);
+    if (!byte_is_bin_digit(c) && c != v_dot_scanner__num_sep) {
+      break;
+    };
+    s->pos++;
+  };
+  string number = v_dot_scanner__filter_num_sep(s->text.str, start_pos, s->pos);
+  s->pos--;
+  return number;
+}
 string v_dot_scanner__Scanner_ident_hex_number(v_dot_scanner__Scanner *s) {
   int start_pos = s->pos;
   s->pos += 2;
@@ -9451,12 +9491,12 @@ string v_dot_scanner__Scanner_ident_hex_number(v_dot_scanner__Scanner *s) {
       break;
     };
     byte c = string_at(s->text, s->pos);
-    if (!byte_is_hex_digit(c)) {
+    if (!byte_is_hex_digit(c) && c != v_dot_scanner__num_sep) {
       break;
     };
     s->pos++;
   };
-  string number = string_substr2(s->text, start_pos, s->pos, false);
+  string number = v_dot_scanner__filter_num_sep(s->text.str, start_pos, s->pos);
   s->pos--;
   return number;
 }
@@ -9468,7 +9508,7 @@ string v_dot_scanner__Scanner_ident_oct_number(v_dot_scanner__Scanner *s) {
     };
     byte c = string_at(s->text, s->pos);
     if (byte_is_digit(c)) {
-      if (!byte_is_oct_digit(c)) {
+      if (!byte_is_oct_digit(c) && c != v_dot_scanner__num_sep) {
         v_dot_scanner__Scanner_error(&/* ? */ *s,
                                      tos3("malformed octal constant"));
       };
@@ -9477,18 +9517,21 @@ string v_dot_scanner__Scanner_ident_oct_number(v_dot_scanner__Scanner *s) {
     };
     s->pos++;
   };
-  string number = string_substr2(s->text, start_pos, s->pos, false);
+  string number = v_dot_scanner__filter_num_sep(s->text.str, start_pos, s->pos);
   s->pos--;
   return number;
 }
 string v_dot_scanner__Scanner_ident_dec_number(v_dot_scanner__Scanner *s) {
   int start_pos = s->pos;
-  while (s->pos < s->text.len && byte_is_digit(string_at(s->text, s->pos))) {
+  while (s->pos < s->text.len &&
+         (byte_is_digit(string_at(s->text, s->pos)) ||
+          string_at(s->text, s->pos) != v_dot_scanner__num_sep)) {
 
     s->pos++;
   };
   if (v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3(".."), s->pos)) {
-    string number = string_substr2(s->text, start_pos, s->pos, false);
+    string number =
+        v_dot_scanner__filter_num_sep(s->text.str, start_pos, s->pos);
     s->pos--;
     return number;
   };
@@ -9526,11 +9569,14 @@ string v_dot_scanner__Scanner_ident_dec_number(v_dot_scanner__Scanner *s) {
                                    tos3("too many decimal points in number"));
     };
   };
-  string number = string_substr2(s->text, start_pos, s->pos, false);
+  string number = v_dot_scanner__filter_num_sep(s->text.str, start_pos, s->pos);
   s->pos--;
   return number;
 }
 string v_dot_scanner__Scanner_ident_number(v_dot_scanner__Scanner *s) {
+  if (v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("0b"), s->pos)) {
+    return v_dot_scanner__Scanner_ident_bin_number(s);
+  };
   if (v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("0x"), s->pos)) {
     return v_dot_scanner__Scanner_ident_hex_number(s);
   };
@@ -9637,9 +9683,9 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_rpar, tos3(""));
   };
-  byte tmp48 = c;
+  byte tmp44 = c;
 
-  if (tmp48 == '+') {
+  if (tmp44 == '+') {
     if (nextc == '+') {
       s->pos++;
       return v_dot_scanner__Scanner_scan_res(
@@ -9651,7 +9697,7 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
     };
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_plus, tos3(""));
-  } else if (tmp48 == '-') {
+  } else if (tmp44 == '-') {
     if (nextc == '-') {
       s->pos++;
       return v_dot_scanner__Scanner_scan_res(
@@ -9663,7 +9709,7 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
     };
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_minus, tos3(""));
-  } else if (tmp48 == '*') {
+  } else if (tmp44 == '*') {
     if (nextc == '=') {
       s->pos++;
       return v_dot_scanner__Scanner_scan_res(
@@ -9671,7 +9717,7 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
     };
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_mul, tos3(""));
-  } else if (tmp48 == '^') {
+  } else if (tmp44 == '^') {
     if (nextc == '=') {
       s->pos++;
       return v_dot_scanner__Scanner_scan_res(
@@ -9679,7 +9725,7 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
     };
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_xor, tos3(""));
-  } else if (tmp48 == '%') {
+  } else if (tmp44 == '%') {
     if (nextc == '=') {
       s->pos++;
       return v_dot_scanner__Scanner_scan_res(
@@ -9687,37 +9733,37 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
     };
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_mod, tos3(""));
-  } else if (tmp48 == '?') {
+  } else if (tmp44 == '?') {
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_question, tos3(""));
-  } else if ((tmp48 == v_dot_scanner__single_quote) ||
-             (tmp48 == v_dot_scanner__double_quote)) {
+  } else if ((tmp44 == v_dot_scanner__single_quote) ||
+             (tmp44 == v_dot_scanner__double_quote)) {
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_str,
         v_dot_scanner__Scanner_ident_string(s));
-  } else if (tmp48 == '`') {
+  } else if (tmp44 == '`') {
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_chartoken,
         v_dot_scanner__Scanner_ident_char(s));
-  } else if (tmp48 == '(') {
+  } else if (tmp44 == '(') {
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_lpar, tos3(""));
-  } else if (tmp48 == ')') {
+  } else if (tmp44 == ')') {
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_rpar, tos3(""));
-  } else if (tmp48 == '[') {
+  } else if (tmp44 == '[') {
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_lsbr, tos3(""));
-  } else if (tmp48 == ']') {
+  } else if (tmp44 == ']') {
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_rsbr, tos3(""));
-  } else if (tmp48 == '{') {
+  } else if (tmp44 == '{') {
     if (s->inside_string) {
       return v_dot_scanner__Scanner_scan(s);
     };
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_lcbr, tos3(""));
-  } else if (tmp48 == '$') {
+  } else if (tmp44 == '$') {
     if (s->inside_string) {
       return v_dot_scanner__Scanner_scan_res(
           &/* ? */ *s, v_dot_token__v_dot_token__Kind_str_dollar, tos3(""));
@@ -9725,7 +9771,7 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
       return v_dot_scanner__Scanner_scan_res(
           &/* ? */ *s, v_dot_token__v_dot_token__Kind_dollar, tos3(""));
     };
-  } else if (tmp48 == '}') {
+  } else if (tmp44 == '}') {
     if (s->inside_string) {
       s->pos++;
       if (string_at(s->text, s->pos) == s->quote) {
@@ -9740,7 +9786,7 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
       return v_dot_scanner__Scanner_scan_res(
           &/* ? */ *s, v_dot_token__v_dot_token__Kind_rcbr, tos3(""));
     };
-  } else if (tmp48 == '&') {
+  } else if (tmp44 == '&') {
     if (nextc == '=') {
       s->pos++;
       return v_dot_scanner__Scanner_scan_res(
@@ -9753,7 +9799,7 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
     };
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_amp, tos3(""));
-  } else if (tmp48 == '|') {
+  } else if (tmp44 == '|') {
     if (nextc == '|') {
       s->pos++;
       return v_dot_scanner__Scanner_scan_res(
@@ -9766,10 +9812,10 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
     };
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_pipe, tos3(""));
-  } else if (tmp48 == ',') {
+  } else if (tmp44 == ',') {
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_comma, tos3(""));
-  } else if (tmp48 == '@') {
+  } else if (tmp44 == '@') {
     s->pos++;
     string name = v_dot_scanner__Scanner_ident_name(s);
     if (string_eq(name, tos3("FN"))) {
@@ -9803,7 +9849,7 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
     };
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_name, name);
-  } else if (tmp48 == '.') {
+  } else if (tmp44 == '.') {
     if (nextc == '.') {
       s->pos++;
       if (string_at(s->text, s->pos + 1) == '.') {
@@ -9816,7 +9862,7 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
     };
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_dot, tos3(""));
-  } else if (tmp48 == '#') {
+  } else if (tmp44 == '#') {
     int start = s->pos + 1;
     v_dot_scanner__Scanner_ignore_line(s);
     if (nextc == '!') {
@@ -9828,7 +9874,7 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
     return v_dot_scanner__Scanner_scan_res(&/* ? */ *s,
                                            v_dot_token__v_dot_token__Kind_hash,
                                            string_trim_space(hash));
-  } else if (tmp48 == '>') {
+  } else if (tmp44 == '>') {
     if (nextc == '=') {
       s->pos++;
       return v_dot_scanner__Scanner_scan_res(
@@ -9847,7 +9893,7 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
       return v_dot_scanner__Scanner_scan_res(
           &/* ? */ *s, v_dot_token__v_dot_token__Kind_gt, tos3(""));
     };
-  } else if (tmp48 == 0xE2) {
+  } else if (tmp44 == 0xE2) {
     if (nextc == 0x89 && string_at(s->text, s->pos + 2) == 0xA0) {
       s->pos += 2;
       return v_dot_scanner__Scanner_scan_res(
@@ -9861,7 +9907,7 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
       return v_dot_scanner__Scanner_scan_res(
           &/* ? */ *s, v_dot_token__v_dot_token__Kind_ge, tos3(""));
     };
-  } else if (tmp48 == '<') {
+  } else if (tmp44 == '<') {
     if (nextc == '=') {
       s->pos++;
       return v_dot_scanner__Scanner_scan_res(
@@ -9880,7 +9926,7 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
       return v_dot_scanner__Scanner_scan_res(
           &/* ? */ *s, v_dot_token__v_dot_token__Kind_lt, tos3(""));
     };
-  } else if (tmp48 == '=') {
+  } else if (tmp44 == '=') {
     if (nextc == '=') {
       s->pos++;
       return v_dot_scanner__Scanner_scan_res(
@@ -9893,7 +9939,7 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
       return v_dot_scanner__Scanner_scan_res(
           &/* ? */ *s, v_dot_token__v_dot_token__Kind_assign, tos3(""));
     };
-  } else if (tmp48 == ':') {
+  } else if (tmp44 == ':') {
     if (nextc == '=') {
       s->pos++;
       return v_dot_scanner__Scanner_scan_res(
@@ -9902,10 +9948,10 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
       return v_dot_scanner__Scanner_scan_res(
           &/* ? */ *s, v_dot_token__v_dot_token__Kind_colon, tos3(""));
     };
-  } else if (tmp48 == ';') {
+  } else if (tmp44 == ';') {
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_semicolon, tos3(""));
-  } else if (tmp48 == '!') {
+  } else if (tmp44 == '!') {
     if (nextc == '=') {
       s->pos++;
       return v_dot_scanner__Scanner_scan_res(
@@ -9914,10 +9960,10 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
       return v_dot_scanner__Scanner_scan_res(
           &/* ? */ *s, v_dot_token__v_dot_token__Kind_not, tos3(""));
     };
-  } else if (tmp48 == '~') {
+  } else if (tmp44 == '~') {
     return v_dot_scanner__Scanner_scan_res(
         &/* ? */ *s, v_dot_token__v_dot_token__Kind_bit_not, tos3(""));
-  } else if (tmp48 == '/') {
+  } else if (tmp44 == '/') {
     if (nextc == '=') {
       s->pos++;
       return v_dot_scanner__Scanner_scan_res(
@@ -10120,10 +10166,10 @@ bool v_dot_scanner__Scanner_expect(v_dot_scanner__Scanner *s, string want,
   if (end_pos < 0 || end_pos > s->text.len) {
     return 0;
   };
-  int tmp101 = start_pos;
+  int tmp97 = start_pos;
   ;
-  for (int tmp102 = tmp101; tmp102 < end_pos; tmp102++) {
-    int pos = tmp102;
+  for (int tmp98 = tmp97; tmp98 < end_pos; tmp98++) {
+    int pos = tmp98;
 
     if (string_at(s->text, pos) != string_at(want, pos - start_pos)) {
       return 0;
@@ -10166,7 +10212,7 @@ void v_dot_scanner__Scanner_eat_to_end_of_line(v_dot_scanner__Scanner *s) {
 void v_dot_scanner__Scanner_inc_line_number(v_dot_scanner__Scanner *s) {
   s->last_nl_pos = s->pos;
   s->line_nr++;
-  _PUSH(&s->line_ends, (/*typ = array_int   tmp_typ=int*/ s->pos), tmp109, int);
+  _PUSH(&s->line_ends, (/*typ = array_int   tmp_typ=int*/ s->pos), tmp105, int);
   if (s->line_nr > s->nr_lines) {
     s->nr_lines = s->line_nr;
   };
@@ -10190,10 +10236,10 @@ static inline bool v_dot_scanner__is_nl(byte c) {
   return c == '\r' || c == '\n';
 }
 bool v_dot_scanner__contains_capital(string s) {
-  string tmp116 = s;
+  string tmp112 = s;
   ;
-  for (int tmp117 = 0; tmp117 < tmp116.len; tmp117++) {
-    byte c = tmp116.str[tmp117];
+  for (int tmp113 = 0; tmp113 < tmp112.len; tmp113++) {
+    byte c = tmp112.str[tmp113];
 
     if (c >= 'A' && c <= 'Z') {
       return 1;
@@ -10205,10 +10251,10 @@ bool v_dot_scanner__good_type_name(string s) {
   if (s.len < 4) {
     return 1;
   };
-  int tmp118 = 2;
+  int tmp114 = 2;
   ;
-  for (int tmp119 = tmp118; tmp119 < s.len; tmp119++) {
-    int i = tmp119;
+  for (int tmp115 = tmp114; tmp115 < s.len; tmp115++) {
+    int i = tmp115;
 
     if (byte_is_capital(string_at(s, i)) &&
         byte_is_capital(string_at(s, i - 1)) &&
@@ -24661,6 +24707,38 @@ string compiler__Scanner_ident_name(compiler__Scanner *s) {
   s->pos--;
   return name;
 }
+string compiler__filter_num_sep(byte *txt, int start, int end) {
+  byte *b = v_malloc(end - start + 1);
+  int i = start;
+  int i1 = 0;
+  while (i < end) {
+
+    if (txt[/*ptr!*/ i] /*rbyte 0*/ != compiler__num_sep) {
+      b[/*ptr!*/ i1] /*rbyte 1*/ = txt[/*ptr!*/ i] /*rbyte 0*/;
+      i1++;
+    };
+    i++;
+  };
+  b[/*ptr!*/ i1] /*rbyte 1*/ = 0;
+  return (string){b, i1};
+}
+string compiler__Scanner_ident_bin_number(compiler__Scanner *s) {
+  int start_pos = s->pos;
+  s->pos += 2;
+  while (1) {
+    if (s->pos >= s->text.len) {
+      break;
+    };
+    byte c = string_at(s->text, s->pos);
+    if (!byte_is_bin_digit(c) && c != compiler__num_sep) {
+      break;
+    };
+    s->pos++;
+  };
+  string number = compiler__filter_num_sep(s->text.str, start_pos, s->pos);
+  s->pos--;
+  return number;
+}
 string compiler__Scanner_ident_hex_number(compiler__Scanner *s) {
   int start_pos = s->pos;
   s->pos += 2;
@@ -24669,12 +24747,12 @@ string compiler__Scanner_ident_hex_number(compiler__Scanner *s) {
       break;
     };
     byte c = string_at(s->text, s->pos);
-    if (!byte_is_hex_digit(c)) {
+    if (!byte_is_hex_digit(c) && c != compiler__num_sep) {
       break;
     };
     s->pos++;
   };
-  string number = string_substr2(s->text, start_pos, s->pos, false);
+  string number = compiler__filter_num_sep(s->text.str, start_pos, s->pos);
   s->pos--;
   return number;
 }
@@ -24686,7 +24764,7 @@ string compiler__Scanner_ident_oct_number(compiler__Scanner *s) {
     };
     byte c = string_at(s->text, s->pos);
     if (byte_is_digit(c)) {
-      if (!byte_is_oct_digit(c)) {
+      if (!byte_is_oct_digit(c) && c != compiler__num_sep) {
         compiler__Scanner_error(&/* ? */ *s, tos3("malformed octal constant"));
       };
     } else {
@@ -24694,18 +24772,20 @@ string compiler__Scanner_ident_oct_number(compiler__Scanner *s) {
     };
     s->pos++;
   };
-  string number = string_substr2(s->text, start_pos, s->pos, false);
+  string number = compiler__filter_num_sep(s->text.str, start_pos, s->pos);
   s->pos--;
   return number;
 }
 string compiler__Scanner_ident_dec_number(compiler__Scanner *s) {
   int start_pos = s->pos;
-  while (s->pos < s->text.len && byte_is_digit(string_at(s->text, s->pos))) {
+  while (s->pos < s->text.len &&
+         (byte_is_digit(string_at(s->text, s->pos)) ||
+          string_at(s->text, s->pos) == compiler__num_sep)) {
 
     s->pos++;
   };
   if (compiler__Scanner_expect(&/* ? */ *s, tos3(".."), s->pos)) {
-    string number = string_substr2(s->text, start_pos, s->pos, false);
+    string number = compiler__filter_num_sep(s->text.str, start_pos, s->pos);
     s->pos--;
     return number;
   };
@@ -24742,11 +24822,14 @@ string compiler__Scanner_ident_dec_number(compiler__Scanner *s) {
                               tos3("too many decimal points in number"));
     };
   };
-  string number = string_substr2(s->text, start_pos, s->pos, false);
+  string number = compiler__filter_num_sep(s->text.str, start_pos, s->pos);
   s->pos--;
   return number;
 }
 string compiler__Scanner_ident_number(compiler__Scanner *s) {
+  if (compiler__Scanner_expect(&/* ? */ *s, tos3("0b"), s->pos)) {
+    return compiler__Scanner_ident_bin_number(s);
+  };
   if (compiler__Scanner_expect(&/* ? */ *s, tos3("0x"), s->pos)) {
     return compiler__Scanner_ident_hex_number(s);
   };
@@ -24845,9 +24928,9 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
     };
     return compiler__scan_res(compiler__compiler__TokenKind_rpar, tos3(""));
   };
-  byte tmp48 = c;
+  byte tmp44 = c;
 
-  if (tmp48 == '+') {
+  if (tmp44 == '+') {
     if (nextc == '+') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_inc, tos3(""));
@@ -24857,7 +24940,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
                                 tos3(""));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_plus, tos3(""));
-  } else if (tmp48 == '-') {
+  } else if (tmp44 == '-') {
     if (nextc == '-') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_dec, tos3(""));
@@ -24867,57 +24950,57 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
                                 tos3(""));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_minus, tos3(""));
-  } else if (tmp48 == '*') {
+  } else if (tmp44 == '*') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_mult_assign,
                                 tos3(""));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_mul, tos3(""));
-  } else if (tmp48 == '^') {
+  } else if (tmp44 == '^') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_xor_assign,
                                 tos3(""));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_xor, tos3(""));
-  } else if (tmp48 == '%') {
+  } else if (tmp44 == '%') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_mod_assign,
                                 tos3(""));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_mod, tos3(""));
-  } else if (tmp48 == '?') {
+  } else if (tmp44 == '?') {
     return compiler__scan_res(compiler__compiler__TokenKind_question, tos3(""));
-  } else if ((tmp48 == compiler__single_quote) ||
-             (tmp48 == compiler__double_quote)) {
+  } else if ((tmp44 == compiler__single_quote) ||
+             (tmp44 == compiler__double_quote)) {
     return compiler__scan_res(compiler__compiler__TokenKind_str,
                               compiler__Scanner_ident_string(s));
-  } else if (tmp48 == '`') {
+  } else if (tmp44 == '`') {
     return compiler__scan_res(compiler__compiler__TokenKind_chartoken,
                               compiler__Scanner_ident_char(s));
-  } else if (tmp48 == '(') {
+  } else if (tmp44 == '(') {
     return compiler__scan_res(compiler__compiler__TokenKind_lpar, tos3(""));
-  } else if (tmp48 == ')') {
+  } else if (tmp44 == ')') {
     return compiler__scan_res(compiler__compiler__TokenKind_rpar, tos3(""));
-  } else if (tmp48 == '[') {
+  } else if (tmp44 == '[') {
     return compiler__scan_res(compiler__compiler__TokenKind_lsbr, tos3(""));
-  } else if (tmp48 == ']') {
+  } else if (tmp44 == ']') {
     return compiler__scan_res(compiler__compiler__TokenKind_rsbr, tos3(""));
-  } else if (tmp48 == '{') {
+  } else if (tmp44 == '{') {
     if (s->inside_string) {
       return compiler__Scanner_scan(s);
     };
     return compiler__scan_res(compiler__compiler__TokenKind_lcbr, tos3(""));
-  } else if (tmp48 == '$') {
+  } else if (tmp44 == '$') {
     if (s->inside_string) {
       return compiler__scan_res(compiler__compiler__TokenKind_str_dollar,
                                 tos3(""));
     } else {
       return compiler__scan_res(compiler__compiler__TokenKind_dollar, tos3(""));
     };
-  } else if (tmp48 == '}') {
+  } else if (tmp44 == '}') {
     if (s->inside_string) {
       s->pos++;
       if (string_at(s->text, s->pos) == s->quote) {
@@ -24929,7 +25012,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
     } else {
       return compiler__scan_res(compiler__compiler__TokenKind_rcbr, tos3(""));
     };
-  } else if (tmp48 == '&') {
+  } else if (tmp44 == '&') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_and_assign,
@@ -24940,7 +25023,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
       return compiler__scan_res(compiler__compiler__TokenKind_and, tos3(""));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_amp, tos3(""));
-  } else if (tmp48 == '|') {
+  } else if (tmp44 == '|') {
     if (nextc == '|') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_logical_or,
@@ -24952,9 +25035,9 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
                                 tos3(""));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_pipe, tos3(""));
-  } else if (tmp48 == ',') {
+  } else if (tmp44 == ',') {
     return compiler__scan_res(compiler__compiler__TokenKind_comma, tos3(""));
-  } else if (tmp48 == '@') {
+  } else if (tmp44 == '@') {
     s->pos++;
     string name = compiler__Scanner_ident_name(s);
     if (string_eq(name, tos3("FN"))) {
@@ -24984,7 +25067,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
           tos3("@ must be used before keywords (e.g. `@type string`)"));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_name, name);
-  } else if (tmp48 == '.') {
+  } else if (tmp44 == '.') {
     if (nextc == '.') {
       s->pos++;
       if (string_at(s->text, s->pos + 1) == '.') {
@@ -24995,7 +25078,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
       return compiler__scan_res(compiler__compiler__TokenKind_dotdot, tos3(""));
     };
     return compiler__scan_res(compiler__compiler__TokenKind_dot, tos3(""));
-  } else if (tmp48 == '#') {
+  } else if (tmp44 == '#') {
     int start = s->pos + 1;
     compiler__Scanner_ignore_line(s);
     if (nextc == '!') {
@@ -25006,7 +25089,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
     string hash = string_substr2(s->text, start, s->pos, false);
     return compiler__scan_res(compiler__compiler__TokenKind_hash,
                               string_trim_space(hash));
-  } else if (tmp48 == '>') {
+  } else if (tmp44 == '>') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_ge, tos3(""));
@@ -25022,7 +25105,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
     } else {
       return compiler__scan_res(compiler__compiler__TokenKind_gt, tos3(""));
     };
-  } else if (tmp48 == 0xE2) {
+  } else if (tmp44 == 0xE2) {
     if (nextc == 0x89 && string_at(s->text, s->pos + 2) == 0xA0) {
       s->pos += 2;
       return compiler__scan_res(compiler__compiler__TokenKind_ne, tos3(""));
@@ -25033,7 +25116,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
       s->pos += 2;
       return compiler__scan_res(compiler__compiler__TokenKind_ge, tos3(""));
     };
-  } else if (tmp48 == '<') {
+  } else if (tmp44 == '<') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_le, tos3(""));
@@ -25054,7 +25137,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
     } else {
       return compiler__scan_res(compiler__compiler__TokenKind_lt, tos3(""));
     };
-  } else if (tmp48 == '=') {
+  } else if (tmp44 == '=') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_eq, tos3(""));
@@ -25064,7 +25147,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
     } else {
       return compiler__scan_res(compiler__compiler__TokenKind_assign, tos3(""));
     };
-  } else if (tmp48 == ':') {
+  } else if (tmp44 == ':') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_decl_assign,
@@ -25072,19 +25155,19 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
     } else {
       return compiler__scan_res(compiler__compiler__TokenKind_colon, tos3(""));
     };
-  } else if (tmp48 == ';') {
+  } else if (tmp44 == ';') {
     return compiler__scan_res(compiler__compiler__TokenKind_semicolon,
                               tos3(""));
-  } else if (tmp48 == '!') {
+  } else if (tmp44 == '!') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_ne, tos3(""));
     } else {
       return compiler__scan_res(compiler__compiler__TokenKind_not, tos3(""));
     };
-  } else if (tmp48 == '~') {
+  } else if (tmp44 == '~') {
     return compiler__scan_res(compiler__compiler__TokenKind_bit_not, tos3(""));
-  } else if (tmp48 == '/') {
+  } else if (tmp44 == '/') {
     if (nextc == '=') {
       s->pos++;
       return compiler__scan_res(compiler__compiler__TokenKind_div_assign,
@@ -25278,10 +25361,10 @@ bool compiler__Scanner_expect(compiler__Scanner *s, string want,
   if (end_pos < 0 || end_pos > s->text.len) {
     return 0;
   };
-  int tmp101 = start_pos;
+  int tmp97 = start_pos;
   ;
-  for (int tmp102 = tmp101; tmp102 < end_pos; tmp102++) {
-    int pos = tmp102;
+  for (int tmp98 = tmp97; tmp98 < end_pos; tmp98++) {
+    int pos = tmp98;
 
     if (string_at(s->text, pos) != string_at(want, pos - start_pos)) {
       return 0;
@@ -25324,7 +25407,7 @@ void compiler__Scanner_eat_to_end_of_line(compiler__Scanner *s) {
 void compiler__Scanner_inc_line_number(compiler__Scanner *s) {
   s->last_nl_pos = s->pos;
   s->line_nr++;
-  _PUSH(&s->line_ends, (/*typ = array_int   tmp_typ=int*/ s->pos), tmp109, int);
+  _PUSH(&s->line_ends, (/*typ = array_int   tmp_typ=int*/ s->pos), tmp105, int);
   if (s->line_nr > s->nlines) {
     s->nlines = s->line_nr;
   };
@@ -25344,10 +25427,10 @@ string compiler__Scanner_line(compiler__Scanner s, int n) {
 bool compiler__is_name_char(byte c) { return c == '_' || byte_is_letter(c); }
 static inline bool compiler__is_nl(byte c) { return c == '\r' || c == '\n'; }
 bool compiler__contains_capital(string s) {
-  string tmp116 = s;
+  string tmp112 = s;
   ;
-  for (int tmp117 = 0; tmp117 < tmp116.len; tmp117++) {
-    byte c = tmp116.str[tmp117];
+  for (int tmp113 = 0; tmp113 < tmp112.len; tmp113++) {
+    byte c = tmp112.str[tmp113];
 
     if (c >= 'A' && c <= 'Z') {
       return 1;
@@ -25359,10 +25442,10 @@ bool compiler__good_type_name(string s) {
   if (s.len < 4) {
     return 1;
   };
-  int tmp118 = 2;
+  int tmp114 = 2;
   ;
-  for (int tmp119 = tmp118; tmp119 < s.len; tmp119++) {
-    int i = tmp119;
+  for (int tmp115 = tmp114; tmp115 < s.len; tmp115++) {
+    int i = tmp115;
 
     if (byte_is_capital(string_at(s, i)) &&
         byte_is_capital(string_at(s, i - 1)) &&
