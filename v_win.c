@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "df2d3a2"
+#define V_COMMIT_HASH "7d79709"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f556467"
+#define V_COMMIT_HASH "df2d3a2"
 #endif
 #include <inttypes.h>
 
@@ -196,6 +196,7 @@ void reload_so();
 
 int g_test_oks = 0;
 int g_test_fails = 0;
+#define builtin__degree 6
 #define builtin__CP_UTF8 65001
 #define strconv__DIGITS 18
 #define strconv__FSM_A 0
@@ -220,6 +221,9 @@ int g_test_fails = 0;
 #define strconv__NINE '9'
 #define strconv__int_size 32
 #define time__seconds_per_minute 60
+#define v_dot_token__nr_tokens 141
+#define v_dot_token__lowest_prec 0
+#define v_dot_token__highest_prec 8
 #define v_dot_types__void_type_idx 1
 #define v_dot_types__voidptr_type_idx 2
 #define v_dot_types__charptr_type_idx 3
@@ -237,9 +241,6 @@ int g_test_fails = 0;
 #define v_dot_types__char_type_idx 15
 #define v_dot_types__byte_type_idx 16
 #define v_dot_types__bool_type_idx 17
-#define v_dot_token__nr_tokens 141
-#define v_dot_token__lowest_prec 0
-#define v_dot_token__highest_prec 8
 #define os__SUCCESS 0
 #define os__ERROR_INSUFFICIENT_BUFFER 130
 #define os__FILE_SHARE_READ 1
@@ -414,6 +415,10 @@ typedef struct varg_string varg_string;
 typedef struct time__Time time__Time;
 typedef Option Option_int;
 typedef struct _V_MulRet_int_V_int_V_int _V_MulRet_int_V_int_V_int;
+typedef struct v_dot_token__Position v_dot_token__Position;
+typedef struct v_dot_token__Token v_dot_token__Token;
+typedef array array_v_dot_token__Kind;
+typedef array array_v_dot_token__Precedence;
 typedef struct {
   void *obj;
   int typ;
@@ -430,10 +435,6 @@ typedef struct v_dot_types__Map v_dot_types__Map;
 typedef struct v_dot_types__MultiReturn v_dot_types__MultiReturn;
 typedef array array_v_dot_types__TypeIdent;
 typedef struct v_dot_types__Variadic v_dot_types__Variadic;
-typedef struct v_dot_token__Position v_dot_token__Position;
-typedef struct v_dot_token__Token v_dot_token__Token;
-typedef array array_v_dot_token__Kind;
-typedef array array_v_dot_token__Precedence;
 typedef struct os__File os__File;
 typedef struct os__FileInfo os__FileInfo;
 typedef Option Option_array_byte;
@@ -625,9 +626,9 @@ typedef int time__FormatTime;
 typedef int time__FormatDate;
 typedef int time__FormatDelimiter;
 typedef Option Option_int;
-typedef int v_dot_types__Kind;
 typedef int v_dot_token__Kind;
 typedef int v_dot_token__Precedence;
+typedef int v_dot_types__Kind;
 typedef Option Option_array_byte;
 typedef Option Option_string;
 typedef Option Option_bool;
@@ -692,7 +693,7 @@ struct array {
 };
 
 struct map {
-  int element_size;
+  int value_bytes;
   mapnode *root;
   int size;
 };
@@ -730,18 +731,18 @@ struct compiler__MsvcResult {
   string shared_include_path;
 };
 
+struct compiler__VsInstallation {
+  string include_path;
+  string lib_path;
+  string exe_path;
+};
+
 struct compiler__WindowsKit {
   string um_lib_path;
   string ucrt_lib_path;
   string um_include_path;
   string ucrt_include_path;
   string shared_include_path;
-};
-
-struct compiler__VsInstallation {
-  string include_path;
-  string lib_path;
-  string exe_path;
 };
 
 struct v_dot_ast__FloatLiteral {
@@ -788,28 +789,6 @@ struct SymbolInfo {
   byte f_name;
 };
 
-struct _V_MulRet_u32_V_u32_V_u32 {
-  u32 var_0;
-  u32 var_1;
-  u32 var_2;
-};
-
-struct _V_MulRet_int_V_int_V_int {
-  int var_0;
-  int var_1;
-  int var_2;
-};
-
-struct _V_MulRet_int_V_bool {
-  int var_0;
-  bool var_1;
-};
-
-struct _V_MulRet_bool_V_string {
-  bool var_0;
-  string var_1;
-};
-
 struct _V_MulRet_array_string_V_array_string {
   array_string var_0;
   array_string var_1;
@@ -820,6 +799,22 @@ struct _V_MulRet_array_string_V_string {
   string var_1;
 };
 
+struct _V_MulRet_bool_V_string {
+  bool var_0;
+  string var_1;
+};
+
+struct _V_MulRet_int_V_bool {
+  int var_0;
+  bool var_1;
+};
+
+struct _V_MulRet_int_V_int_V_int {
+  int var_0;
+  int var_1;
+  int var_2;
+};
+
 struct _V_MulRet_int_V_string {
   int var_0;
   string var_1;
@@ -828,6 +823,12 @@ struct _V_MulRet_int_V_string {
 struct _V_MulRet_string_V_array_string {
   string var_0;
   array_string var_1;
+};
+
+struct _V_MulRet_u32_V_u32_V_u32 {
+  u32 var_0;
+  u32 var_1;
+  u32 var_2;
 };
 
 struct benchmark__Benchmark {
@@ -845,23 +846,14 @@ struct benchmark__Benchmark {
   string bfail;
 };
 
-struct compiler__IndexConfig {
-  bool is_map;
-  bool is_str;
-  bool is_ptr;
-  bool is_arr;
-  bool is_arr0;
-  bool is_slice;
+struct compiler__DepGraph {
+  bool acyclic;
+  array_compiler__DepGraphNode nodes;
 };
 
 struct compiler__DepGraphNode {
   string name;
   array_string deps;
-};
-
-struct compiler__DepGraph {
-  bool acyclic;
-  array_compiler__DepGraphNode nodes;
 };
 
 struct compiler__Fn {
@@ -897,9 +889,13 @@ struct compiler__ImportTable {
   map_int import_tok_idx;
 };
 
-struct compiler__OrderedDepMap {
-  array_string keys;
-  map_array_string data;
+struct compiler__IndexConfig {
+  bool is_map;
+  bool is_str;
+  bool is_ptr;
+  bool is_arr;
+  bool is_arr0;
+  bool is_slice;
 };
 
 struct compiler__MsvcStringFlags {
@@ -912,6 +908,11 @@ struct compiler__MsvcStringFlags {
 struct compiler__Name {
   compiler__NameCategory cat;
   int idx;
+};
+
+struct compiler__OrderedDepMap {
+  array_string keys;
+  map_array_string data;
 };
 
 struct compiler__ParserState {
@@ -931,50 +932,6 @@ struct compiler__ParserState {
   compiler__TokenKind prev_tok;
   compiler__TokenKind prev_tok2;
   string lit;
-};
-
-struct compiler__Table {
-  map_compiler__Type typesmap;
-  array_compiler__Var consts;
-  map_compiler__Fn fns;
-  map_int obf_ids;
-  array_string modules;
-  array_string imports;
-  array_compiler__CFlag cflags;
-  int fn_cnt;
-  bool obfuscate;
-  array_compiler__VargAccess varg_access;
-  map_int max_field_len;
-  map_array_string generic_struct_params;
-  map_array_string tuple_variants;
-  array_string sum_types;
-};
-
-struct compiler__Scanner {
-  string file_path;
-  string text;
-  int pos;
-  int line_nr;
-  int last_nl_pos;
-  bool inside_string;
-  bool inter_start;
-  bool inter_end;
-  bool debug;
-  string line_comment;
-  bool started;
-  array_string fmt_lines;
-  int fmt_indent;
-  bool fmt_line_empty;
-  compiler__TokenKind prev_tok;
-  string fn_name;
-  bool print_line_on_error;
-  bool print_colored_error;
-  bool print_rel_paths_on_error;
-  byte quote;
-  array_int line_ends;
-  int nlines;
-  bool is_vh;
-  bool is_fmt;
 };
 
 struct compiler__Preferences {
@@ -1021,15 +978,54 @@ struct compiler__ScanRes {
   string lit;
 };
 
+struct compiler__Scanner {
+  string file_path;
+  string text;
+  int pos;
+  int line_nr;
+  int last_nl_pos;
+  bool inside_string;
+  bool inter_start;
+  bool inter_end;
+  bool debug;
+  string line_comment;
+  bool started;
+  array_string fmt_lines;
+  int fmt_indent;
+  bool fmt_line_empty;
+  compiler__TokenKind prev_tok;
+  string fn_name;
+  bool print_line_on_error;
+  bool print_colored_error;
+  bool print_rel_paths_on_error;
+  byte quote;
+  array_int line_ends;
+  int nlines;
+  bool is_vh;
+  bool is_fmt;
+};
+
 struct compiler__ScannerPos {
   int pos;
   int line_nr;
   int last_nl_pos;
 };
 
-struct compiler__TypeInst {
-  map_string inst;
-  bool done;
+struct compiler__Table {
+  map_compiler__Type typesmap;
+  array_compiler__Var consts;
+  map_compiler__Fn fns;
+  map_int obf_ids;
+  array_string modules;
+  array_string imports;
+  array_compiler__CFlag cflags;
+  int fn_cnt;
+  bool obfuscate;
+  array_compiler__VargAccess varg_access;
+  map_int max_field_len;
+  map_array_string generic_struct_params;
+  map_array_string tuple_variants;
+  array_string sum_types;
 };
 
 struct compiler__Token {
@@ -1040,10 +1036,9 @@ struct compiler__Token {
   int pos;
 };
 
-struct compiler__VargAccess {
-  string fn_name;
-  int tok_idx;
-  int index;
+struct compiler__TypeInst {
+  map_string inst;
+  bool done;
 };
 
 struct compiler__Var {
@@ -1074,12 +1069,17 @@ struct compiler__Var {
   bool is_public;
 };
 
+struct compiler__VargAccess {
+  string fn_name;
+  int tok_idx;
+  int index;
+};
+
 struct mapnode {
-  mapnode *left;
-  mapnode *right;
-  bool is_empty;
-  string key;
-  void *val;
+  string keys[11];
+  voidptr values[11];
+  voidptr *children;
+  int size;
 };
 
 struct os__File {
@@ -1093,11 +1093,6 @@ struct os__FileInfo {
   int size;
 };
 
-struct os__Result {
-  int exit_code;
-  string output;
-};
-
 struct os__Filetime {
   u32 dwLowDateTime;
   u32 dwHighDateTime;
@@ -1108,6 +1103,17 @@ struct os__ProcessInformation {
   void *hThread;
   u32 dwProcessId;
   u32 dwThreadId;
+};
+
+struct os__Result {
+  int exit_code;
+  string output;
+};
+
+struct os__SecurityAttributes {
+  u32 nLength;
+  void *lpSecurityDescriptor;
+  bool bInheritHandle;
 };
 
 struct os__StartupInfo {
@@ -1129,12 +1135,6 @@ struct os__StartupInfo {
   void *hStdInput;
   void *hStdOutput;
   void *hStdError;
-};
-
-struct os__SecurityAttributes {
-  u32 nLength;
-  void *lpSecurityDescriptor;
-  bool bInheritHandle;
 };
 
 struct strconv__PrepNumber {
@@ -1165,34 +1165,8 @@ struct ustring {
   int len;
 };
 
-struct v_dot_types__Array {
-  v_dot_types__Kind elem_type_kind;
-  int elem_type_idx;
-  bool elem_is_ptr;
-  int nr_dims;
-};
-
-struct v_dot_token__Position {
-  int line_nr;
-};
-
 struct v_dot_ast__BoolLiteral {
   bool val;
-};
-
-struct v_dot_ast__IntegerLiteral {
-  int val;
-};
-
-struct v_dot_ast__ForStmt {
-  v_dot_ast__Expr cond;
-  array_v_dot_ast__Stmt stmts;
-};
-
-struct v_dot_ast__ForInStmt {
-  string var;
-  v_dot_ast__Expr cond;
-  array_v_dot_ast__Stmt stmts;
 };
 
 struct v_dot_ast__ForCStmt {
@@ -1202,9 +1176,24 @@ struct v_dot_ast__ForCStmt {
   array_v_dot_ast__Stmt stmts;
 };
 
+struct v_dot_ast__ForInStmt {
+  string var;
+  v_dot_ast__Expr cond;
+  array_v_dot_ast__Stmt stmts;
+};
+
+struct v_dot_ast__ForStmt {
+  v_dot_ast__Expr cond;
+  array_v_dot_ast__Stmt stmts;
+};
+
 struct v_dot_ast__IndexExpr {
   v_dot_ast__Expr left;
   v_dot_ast__Expr index;
+};
+
+struct v_dot_ast__IntegerLiteral {
+  int val;
 };
 
 struct v_dot_ast__Module {
@@ -1228,13 +1217,9 @@ struct v_dot_ast__UnaryExpr {
   v_dot_ast__Expr left;
 };
 
-struct v_dot_table__Table {
-  array_v_dot_table__Type types;
-  map_int type_idxs;
-  array_v_dot_table__Var local_vars;
-  map_v_dot_table__Fn fns;
-  int tmp_cnt;
-  array_string imports;
+struct v_dot_builder__Builder {
+  v_dot_table__Table *table;
+  v_dot_checker__Checker checker;
 };
 
 struct v_dot_gen_dot_x64__Gen {
@@ -1248,11 +1233,6 @@ struct v_dot_gen_dot_x64__Gen {
   i64 main_fn_addr;
   i64 code_start_pos;
   map_i64 fn_addr;
-};
-
-struct v_dot_builder__Builder {
-  v_dot_table__Table *table;
-  v_dot_checker__Checker checker;
 };
 
 struct v_dot_gen_dot_x64__SectionConfig {
@@ -1291,6 +1271,15 @@ struct v_dot_scanner__Scanner {
   bool is_fmt;
 };
 
+struct v_dot_table__Table {
+  array_v_dot_table__Type types;
+  map_int type_idxs;
+  array_v_dot_table__Var local_vars;
+  map_v_dot_table__Fn fns;
+  int tmp_cnt;
+  array_string imports;
+};
+
 struct v_dot_table__Type {
   int parent_idx;
   v_dot_types__TypeInfo info;
@@ -1299,10 +1288,21 @@ struct v_dot_table__Type {
   array_v_dot_table__Fn methods;
 };
 
+struct v_dot_token__Position {
+  int line_nr;
+};
+
 struct v_dot_token__Token {
   v_dot_token__Kind kind;
   string lit;
   int line_nr;
+};
+
+struct v_dot_types__Array {
+  v_dot_types__Kind elem_type_kind;
+  int elem_type_idx;
+  bool elem_is_ptr;
+  int nr_dims;
 };
 
 struct v_dot_types__ArrayFixed {
@@ -1311,17 +1311,6 @@ struct v_dot_types__ArrayFixed {
   bool elem_is_ptr;
   int nr_dims;
   int size;
-};
-
-struct v_dot_types__TypeIdent {
-  int idx;
-  v_dot_types__Kind kind;
-  string name;
-  int nr_muls;
-};
-
-struct v_dot_types__Struct {
-  array_v_dot_types__Field fields;
 };
 
 struct v_dot_types__Map {
@@ -1336,14 +1325,25 @@ struct v_dot_types__MultiReturn {
   array_v_dot_types__TypeIdent tis;
 };
 
-struct varg_string {
-  int len;
-  string args[3];
+struct v_dot_types__Struct {
+  array_v_dot_types__Field fields;
+};
+
+struct v_dot_types__TypeIdent {
+  int idx;
+  v_dot_types__Kind kind;
+  string name;
+  int nr_muls;
 };
 
 struct varg_int {
   int len;
   int args[0];
+};
+
+struct varg_string {
+  int len;
+  string args[3];
 };
 
 struct SymbolInfoContainer {
@@ -1359,6 +1359,37 @@ struct _V_MulRet_int_V_strconv__PrepNumber {
 struct _V_MulRet_v_dot_ast__Expr_V_v_dot_types__TypeIdent {
   v_dot_ast__Expr var_0;
   v_dot_types__TypeIdent var_1;
+};
+
+struct compiler__CGen {
+  os__File out;
+  string out_path;
+  array_string thread_fns;
+  bool is_user;
+  array_string lines;
+  array_string lines_extra;
+  array_string typedefs;
+  array_string type_aliases;
+  array_string includes;
+  array_string thread_args;
+  array_string consts;
+  array_string const_defines;
+  array_string fns;
+  array_string so_fns;
+  array_string consts_init;
+  compiler__Pass pass;
+  bool nogen;
+  array_string prev_tmps;
+  string tmp_line;
+  string cur_line;
+  string prev_line;
+  bool is_tmp;
+  string fn_main;
+  string stash;
+  string file;
+  int line;
+  bool line_directives;
+  int cut_pos;
 };
 
 struct compiler__Parser {
@@ -1425,35 +1456,25 @@ struct compiler__Parser {
   string mod;
 };
 
-struct compiler__CGen {
-  os__File out;
-  string out_path;
-  array_string thread_fns;
-  bool is_user;
-  array_string lines;
-  array_string lines_extra;
-  array_string typedefs;
-  array_string type_aliases;
-  array_string includes;
-  array_string thread_args;
-  array_string consts;
-  array_string const_defines;
-  array_string fns;
-  array_string so_fns;
-  array_string consts_init;
-  compiler__Pass pass;
-  bool nogen;
-  array_string prev_tmps;
-  string tmp_line;
-  string cur_line;
-  string prev_line;
-  bool is_tmp;
-  string fn_main;
-  string stash;
-  string file;
-  int line;
-  bool line_directives;
-  int cut_pos;
+struct compiler__Type {
+  string mod;
+  string name;
+  compiler__TypeCategory cat;
+  bool is_public;
+  array_compiler__Var fields;
+  array_compiler__Fn methods;
+  string parent;
+  compiler__Fn func;
+  bool is_c;
+  array_string enum_vals;
+  array_string gen_types;
+  array_string default_vals;
+  int parser_idx;
+  int decl_tok_idx;
+  bool is_placeholder;
+  bool gen_str;
+  bool is_flag;
+  bool is_generic;
 };
 
 struct compiler__V {
@@ -1482,27 +1503,6 @@ struct compiler__V {
   string v_fmt_file_result;
 };
 
-struct compiler__Type {
-  string mod;
-  string name;
-  compiler__TypeCategory cat;
-  bool is_public;
-  array_compiler__Var fields;
-  array_compiler__Fn methods;
-  string parent;
-  compiler__Fn func;
-  bool is_c;
-  array_string enum_vals;
-  array_string gen_types;
-  array_string default_vals;
-  int parser_idx;
-  int decl_tok_idx;
-  bool is_placeholder;
-  bool gen_str;
-  bool is_flag;
-  bool is_generic;
-};
-
 struct compiler__VhGen {
   int i;
   strings__Builder consts;
@@ -1527,21 +1527,15 @@ struct os__Win32finddata {
   u16 wFinderFlags;
 };
 
-struct v_dot_types__Field {
-  string name;
-  v_dot_types__TypeIdent ti;
-};
-
 struct v_dot_ast__Arg {
   v_dot_types__TypeIdent ti;
   string name;
 };
 
-struct v_dot_ast__BinaryExpr {
-  v_dot_token__Kind op;
+struct v_dot_ast__ArrayInit {
   v_dot_token__Position pos;
-  v_dot_ast__Expr left;
-  v_dot_ast__Expr right;
+  array_v_dot_ast__Expr exprs;
+  v_dot_types__TypeIdent ti;
 };
 
 struct v_dot_ast__AssignExpr {
@@ -1551,10 +1545,11 @@ struct v_dot_ast__AssignExpr {
   v_dot_ast__Expr val;
 };
 
-struct v_dot_ast__ArrayInit {
+struct v_dot_ast__BinaryExpr {
+  v_dot_token__Kind op;
   v_dot_token__Position pos;
-  array_v_dot_ast__Expr exprs;
-  v_dot_types__TypeIdent ti;
+  v_dot_ast__Expr left;
+  v_dot_ast__Expr right;
 };
 
 struct v_dot_ast__CallExpr {
@@ -1579,17 +1574,6 @@ struct v_dot_ast__File {
   array_v_dot_ast__Stmt stmts;
 };
 
-struct v_dot_ast__Import {
-  v_dot_token__Position pos;
-  string mod;
-  string alias;
-};
-
-struct v_dot_ast__IdentVar {
-  v_dot_ast__Expr expr;
-  v_dot_types__TypeIdent ti;
-};
-
 struct v_dot_ast__Ident {
   string name;
   v_dot_token__Kind tok_kind;
@@ -1597,6 +1581,11 @@ struct v_dot_ast__Ident {
   string value;
   v_dot_ast__IdentKind kind;
   v_dot_ast__IdentInfo info;
+};
+
+struct v_dot_ast__IdentVar {
+  v_dot_ast__Expr expr;
+  v_dot_types__TypeIdent ti;
 };
 
 struct v_dot_ast__IfExpr {
@@ -1608,10 +1597,10 @@ struct v_dot_ast__IfExpr {
   v_dot_ast__Expr left;
 };
 
-struct v_dot_ast__SelectorExpr {
+struct v_dot_ast__Import {
   v_dot_token__Position pos;
-  v_dot_ast__Expr expr;
-  string field;
+  string mod;
+  string alias;
 };
 
 struct v_dot_ast__MethodCallExpr {
@@ -1631,6 +1620,12 @@ struct v_dot_ast__ReturnStmt {
   v_dot_token__Kind tok_kind;
   v_dot_token__Position pos;
   array_v_dot_ast__Expr results;
+};
+
+struct v_dot_ast__SelectorExpr {
+  v_dot_token__Position pos;
+  v_dot_ast__Expr expr;
+  string field;
 };
 
 struct v_dot_ast__StructDecl {
@@ -1653,12 +1648,6 @@ struct v_dot_ast__VarDecl {
   bool is_mut;
   v_dot_types__TypeIdent ti;
   v_dot_token__Position pos;
-};
-
-struct v_dot_table__Fn {
-  string name;
-  array_v_dot_table__Var args;
-  v_dot_types__TypeIdent return_ti;
 };
 
 struct v_dot_gen__Gen {
@@ -1684,10 +1673,21 @@ struct v_dot_parser__Parser {
   bool inside_if;
 };
 
+struct v_dot_table__Fn {
+  string name;
+  array_v_dot_table__Var args;
+  v_dot_types__TypeIdent return_ti;
+};
+
 struct v_dot_table__Var {
   string name;
   bool is_mut;
   v_dot_ast__Expr expr;
+  v_dot_types__TypeIdent ti;
+};
+
+struct v_dot_types__Field {
+  string name;
   v_dot_types__TypeIdent ti;
 };
 
@@ -1833,22 +1833,27 @@ string rune_str(rune c);
 string byte_str(byte c);
 bool byte_is_capital(byte c);
 array_byte array_byte_clone(array_byte b);
-map new_map(int cap, int elm_size);
-map new_map_init(int cap, int elm_size, string *keys, void *vals);
-mapnode *new_node(string key, void *val, int element_size);
-void map_insert(map *m, mapnode *n, string key, void *val);
-bool mapnode_find(mapnode *n, string key, void *out, int element_size);
-bool mapnode_find2(mapnode *n, string key, int element_size);
-void map_set(map *m, string key, void *val);
-int preorder_keys(mapnode *node, array_string *keys, int key_i);
-array_string map_keys(map *m);
+map new_map(int n, int value_bytes);
+map new_map_init(int n, int value_bytes, string *keys, void *values);
+mapnode *new_node();
+void map_set(map *m, string key, void *value);
+void mapnode_split_child(mapnode *n, int child_index, mapnode *y);
 bool map_get(map m, string key, void *out);
-void v_mapnode_delete(mapnode *n, string key, int element_size);
-void v_map_delete(map *m, string key);
 bool map_exists(map m, string key);
-void map_print(map m);
+int mapnode_find_key(mapnode n, string k);
+bool mapnode_remove_key(mapnode *n, string k);
+void mapnode_remove_from_leaf(mapnode *n, int idx);
+void mapnode_remove_from_non_leaf(mapnode *n, int idx);
+void mapnode_fill(mapnode *n, int idx);
+void mapnode_borrow_from_prev(mapnode *n, int idx);
+void mapnode_borrow_from_next(mapnode *n, int idx);
+void mapnode_merge(mapnode *n, int idx);
+void v_map_delete(map *m, string key);
+int mapnode_subkeys(mapnode n, array_string *keys, int at);
+array_string map_keys(map *m);
 void v_mapnode_free(mapnode *n);
 void v_map_free(map *m);
+void map_print(map m);
 string map_string_str(map_string m);
 Option opt_ok(void *data, int size);
 Option opt_none();
@@ -2053,15 +2058,6 @@ array_string os_dot_cmdline__before(array_string args, array_string what);
 array_string os_dot_cmdline__after(array_string args, array_string what);
 array_string os_dot_cmdline__only_non_options(array_string args);
 array_string os_dot_cmdline__only_options(array_string args);
-static inline v_dot_types__TypeIdent
-v_dot_types__new_ti(v_dot_types__Kind kind, string name, int idx, int nr_muls);
-static inline bool v_dot_types__TypeIdent_is_ptr(v_dot_types__TypeIdent *ti);
-static inline bool v_dot_types__TypeIdent_is_int(v_dot_types__TypeIdent *ti);
-static inline bool v_dot_types__TypeIdent_is_float(v_dot_types__TypeIdent *ti);
-static inline bool v_dot_types__TypeIdent_is_number(v_dot_types__TypeIdent *ti);
-string v_dot_types__TypeIdent_str(v_dot_types__TypeIdent *ti);
-string v_dot_types__Kind_str(v_dot_types__Kind k);
-string array_v_dot_types__Kind_str(array_v_dot_types__Kind kinds);
 static inline v_dot_token__Position
 v_dot_token__Token_position(v_dot_token__Token *tok);
 map_int v_dot_token__build_keys();
@@ -2082,6 +2078,15 @@ bool v_dot_token__Token_is_left_assoc(v_dot_token__Token tok);
 bool v_dot_token__Token_is_right_assoc(v_dot_token__Token tok);
 bool v_dot_token__Kind_is_relational(v_dot_token__Kind tok);
 bool v_dot_token__Kind_is_infix(v_dot_token__Kind kind);
+static inline v_dot_types__TypeIdent
+v_dot_types__new_ti(v_dot_types__Kind kind, string name, int idx, int nr_muls);
+static inline bool v_dot_types__TypeIdent_is_ptr(v_dot_types__TypeIdent *ti);
+static inline bool v_dot_types__TypeIdent_is_int(v_dot_types__TypeIdent *ti);
+static inline bool v_dot_types__TypeIdent_is_float(v_dot_types__TypeIdent *ti);
+static inline bool v_dot_types__TypeIdent_is_number(v_dot_types__TypeIdent *ti);
+string v_dot_types__TypeIdent_str(v_dot_types__TypeIdent *ti);
+string v_dot_types__Kind_str(v_dot_types__Kind k);
+string array_v_dot_types__Kind_str(array_v_dot_types__Kind kinds);
 bool os__File_is_opened(os__File f);
 array_byte os__File_read_bytes(os__File *f, int size);
 array_byte os__File_read_bytes_at(os__File *f, int size, int pos);
@@ -3158,6 +3163,9 @@ int builtin__SYMOPT_LOAD_LINES;
 int builtin__SYMOPT_INCLUDE_32BIT_MODULES;
 int builtin__SYMOPT_ALLOW_ZERO_ADDRESS;
 int builtin__SYMOPT_DEBUG;
+int builtin__mid_index;
+int builtin__max_size;
+int builtin__children_bytes;
 array_int g_ustring_runes; // global
 u64 strconv__DOUBLE_PLUS_ZERO;
 u64 strconv__DOUBLE_MINUS_ZERO;
@@ -3195,44 +3203,6 @@ array_int time__days_before;
 #define time__time__FormatDelimiter_hyphen 1
 #define time__time__FormatDelimiter_slash 2
 #define time__time__FormatDelimiter_space 3
-#define v_dot_types__v_dot_types__Kind_placeholder 0
-#define v_dot_types__v_dot_types__Kind_void 1
-#define v_dot_types__v_dot_types__Kind_voidptr 2
-#define v_dot_types__v_dot_types__Kind_charptr 3
-#define v_dot_types__v_dot_types__Kind_byteptr 4
-#define v_dot_types__v_dot_types__Kind_i8 5
-#define v_dot_types__v_dot_types__Kind_i16 6
-#define v_dot_types__v_dot_types__Kind_int 7
-#define v_dot_types__v_dot_types__Kind_i64 8
-#define v_dot_types__v_dot_types__Kind_u16 9
-#define v_dot_types__v_dot_types__Kind_u32 10
-#define v_dot_types__v_dot_types__Kind_u64 11
-#define v_dot_types__v_dot_types__Kind_f32 12
-#define v_dot_types__v_dot_types__Kind_f64 13
-#define v_dot_types__v_dot_types__Kind_string 14
-#define v_dot_types__v_dot_types__Kind_char 15
-#define v_dot_types__v_dot_types__Kind_byte 16
-#define v_dot_types__v_dot_types__Kind_bool 17
-#define v_dot_types__v_dot_types__Kind_const_ 18
-#define v_dot_types__v_dot_types__Kind_enum_ 19
-#define v_dot_types__v_dot_types__Kind_struct_ 20
-#define v_dot_types__v_dot_types__Kind_array 21
-#define v_dot_types__v_dot_types__Kind_array_fixed 22
-#define v_dot_types__v_dot_types__Kind_map 23
-#define v_dot_types__v_dot_types__Kind_multi_return 24
-#define v_dot_types__v_dot_types__Kind_variadic 25
-#define v_dot_types__v_dot_types__Kind_unresolved 26
-#define SumType_Array 1       // DEF2
-#define SumType_ArrayFixed 2  // DEF2
-#define SumType_Map 3         // DEF2
-#define SumType_Struct 4      // DEF2
-#define SumType_MultiReturn 5 // DEF2
-#define SumType_Variadic 6    // DEF2
-v_dot_types__TypeIdent v_dot_types__unresolved_ti;
-v_dot_types__TypeIdent v_dot_types__void_ti;
-v_dot_types__TypeIdent v_dot_types__int_ti;
-v_dot_types__TypeIdent v_dot_types__string_ti;
-v_dot_types__TypeIdent v_dot_types__bool_ti;
 #define v_dot_token__v_dot_token__Kind_eof 0
 #define v_dot_token__v_dot_token__Kind_name 1
 #define v_dot_token__v_dot_token__Kind_number 2
@@ -3349,6 +3319,44 @@ map_int v_dot_token__keywords;
 #define v_dot_token__v_dot_token__Precedence_call 9
 #define v_dot_token__v_dot_token__Precedence_index 10
 array_v_dot_token__Precedence v_dot_token__precedences;
+#define v_dot_types__v_dot_types__Kind_placeholder 0
+#define v_dot_types__v_dot_types__Kind_void 1
+#define v_dot_types__v_dot_types__Kind_voidptr 2
+#define v_dot_types__v_dot_types__Kind_charptr 3
+#define v_dot_types__v_dot_types__Kind_byteptr 4
+#define v_dot_types__v_dot_types__Kind_i8 5
+#define v_dot_types__v_dot_types__Kind_i16 6
+#define v_dot_types__v_dot_types__Kind_int 7
+#define v_dot_types__v_dot_types__Kind_i64 8
+#define v_dot_types__v_dot_types__Kind_u16 9
+#define v_dot_types__v_dot_types__Kind_u32 10
+#define v_dot_types__v_dot_types__Kind_u64 11
+#define v_dot_types__v_dot_types__Kind_f32 12
+#define v_dot_types__v_dot_types__Kind_f64 13
+#define v_dot_types__v_dot_types__Kind_string 14
+#define v_dot_types__v_dot_types__Kind_char 15
+#define v_dot_types__v_dot_types__Kind_byte 16
+#define v_dot_types__v_dot_types__Kind_bool 17
+#define v_dot_types__v_dot_types__Kind_const_ 18
+#define v_dot_types__v_dot_types__Kind_enum_ 19
+#define v_dot_types__v_dot_types__Kind_struct_ 20
+#define v_dot_types__v_dot_types__Kind_array 21
+#define v_dot_types__v_dot_types__Kind_array_fixed 22
+#define v_dot_types__v_dot_types__Kind_map 23
+#define v_dot_types__v_dot_types__Kind_multi_return 24
+#define v_dot_types__v_dot_types__Kind_variadic 25
+#define v_dot_types__v_dot_types__Kind_unresolved 26
+#define SumType_Array 1       // DEF2
+#define SumType_ArrayFixed 2  // DEF2
+#define SumType_Map 3         // DEF2
+#define SumType_Struct 4      // DEF2
+#define SumType_MultiReturn 5 // DEF2
+#define SumType_Variadic 6    // DEF2
+v_dot_types__TypeIdent v_dot_types__unresolved_ti;
+v_dot_types__TypeIdent v_dot_types__void_ti;
+v_dot_types__TypeIdent v_dot_types__int_ti;
+v_dot_types__TypeIdent v_dot_types__string_ti;
+v_dot_types__TypeIdent v_dot_types__bool_ti;
 int os__S_IFMT;
 int os__S_IFDIR;
 int os__S_IFLNK;
@@ -4406,190 +4414,428 @@ array_byte array_byte_clone(array_byte b) {
   };
   return res;
 }
-map new_map(int cap, int elm_size) {
-  map res = (map){.element_size = elm_size, .root = 0, .size = 0};
-  return res;
+map new_map(int n, int value_bytes) {
+  return (map){.value_bytes = value_bytes, .root = new_node(), .size = 0};
 }
-map new_map_init(int cap, int elm_size, string *keys, void *vals) {
-  map res = (map){.element_size = elm_size, .root = 0, .size = 0};
+map new_map_init(int n, int value_bytes, string *keys, void *values) {
+  map out = new_map(n, value_bytes);
   int tmp1 = 0;
   ;
-  for (int tmp2 = tmp1; tmp2 < cap; tmp2++) {
+  for (int tmp2 = tmp1; tmp2 < n; tmp2++) {
     int i = tmp2;
 
-    map_set(&/* ? */ res, keys[/*ptr!*/ i] /*rstring 0*/,
-            (byte *)vals + i * elm_size);
+    map_set(&/* ? */ out, keys[/*ptr!*/ i] /*rstring 0*/,
+            (byte *)values + i * value_bytes);
   };
-  return res;
+  return out;
 }
-mapnode *new_node(string key, void *val, int element_size) {
-  mapnode *new_e = (mapnode *)memdup(
+mapnode *new_node() {
+  return (mapnode *)memdup(
       &(mapnode){
-          .key = key,
-          .val = v_malloc(element_size),
-          .left = 0,
-          .right = 0,
-          .is_empty = 0,
+          .children = 0,
+          .size = 0,
       },
       sizeof(mapnode));
-  memcpy(new_e->val, val, element_size);
-  return new_e;
 }
-void map_insert(map *m, mapnode *n, string key, void *val) {
-  if (string_eq(n->key, key)) {
-    memcpy(n->val, val, m->element_size);
-    if (n->is_empty) {
+void map_set(map *m, string key, void *value) {
+  mapnode *node = m->root;
+  int child_index = 0;
+  mapnode *parent = ((mapnode *)(0));
+  while (1) {
+    if (node->size == builtin__max_size) {
+      if (isnil(parent)) {
+        parent = new_node();
+        m->root = parent;
+      };
+      mapnode_split_child(parent, child_index, node);
+      if (string_eq(key, parent->keys[child_index] /*rstring 1*/)) {
+        memcpy(parent->values[child_index] /*rvoidptr 1*/, value,
+               m->value_bytes);
+
+        return;
+      };
+      node = ((string_lt(key, parent->keys[child_index] /*rstring 1*/))
+                  ? (((mapnode *)(parent->children
+                                      [/*ptr!*/ child_index] /*rvoidptr 1*/)))
+                  : (((mapnode *)(parent->children[/*ptr!*/ child_index +
+                                                   1] /*rvoidptr 1*/))));
+    };
+    int i = 0;
+    while (i < node->size && string_gt(key, node->keys[i] /*rstring 1*/)) {
+
+      i++;
+    };
+    if (i != node->size && string_eq(key, node->keys[i] /*rstring 1*/)) {
+      memcpy(node->values[i] /*rvoidptr 1*/, value, m->value_bytes);
+
+      return;
+    };
+    if (isnil(node->children)) {
+      int j = node->size - 1;
+      while (j >= 0 && string_lt(key, node->keys[j] /*rstring 1*/)) {
+
+        node->keys[j + 1] /*rstring 1*/ = node->keys[j] /*rstring 1*/;
+        node->values[j + 1] /*rvoidptr 1*/ = node->values[j] /*rvoidptr 1*/;
+        j--;
+      };
+      node->keys[j + 1] /*rstring 1*/ = key;
+      node->values[j + 1] /*rvoidptr 1*/ = v_malloc(m->value_bytes);
+      memcpy(node->values[j + 1] /*rvoidptr 1*/, value, m->value_bytes);
+      node->size++;
       m->size++;
-      n->is_empty = 0;
-    };
 
-    return;
-  };
-  if (string_gt(n->key, key)) {
-    if (n->left == 0) {
-      n->left = new_node(key, val, m->element_size);
-      m->size++;
-    } else {
-      map_insert(m, n->left, key, val);
+      return;
     };
-
-    return;
-  };
-  if (n->right == 0) {
-    n->right = new_node(key, val, m->element_size);
-    m->size++;
-  } else {
-    map_insert(m, n->right, key, val);
+    parent = node;
+    child_index = i;
+    node = ((mapnode *)(node->children[/*ptr!*/ child_index] /*rvoidptr 1*/));
   };
 }
-bool mapnode_find(mapnode *n, string key, void *out, int element_size) {
-  if (string_eq(n->key, key)) {
-    memcpy(out, n->val, element_size);
+void mapnode_split_child(mapnode *n, int child_index, mapnode *y) {
+  mapnode *z = new_node();
+  z->size = builtin__mid_index;
+  y->size = builtin__mid_index;
+  for (int j = builtin__mid_index - 1; j >= 0; j--) {
+
+    z->keys[j] /*rstring 1*/ = y->keys[j + builtin__degree] /*rstring 1*/;
+    z->values[j] /*rvoidptr 1*/ = y->values[j + builtin__degree] /*rvoidptr 1*/;
+  };
+  if (!isnil(y->children)) {
+    z->children = ((voidptr *)(v_malloc(builtin__children_bytes)));
+    for (int j = builtin__degree - 1; j >= 0; j--) {
+
+      z->children[/*ptr!*/ j] /*rvoidptr 1*/ =
+          y->children[/*ptr!*/ j + builtin__degree] /*rvoidptr 1*/;
+    };
+  };
+  if (isnil(n->children)) {
+    n->children = ((voidptr *)(v_malloc(builtin__children_bytes)));
+  };
+  n->children[/*ptr!*/ n->size + 1] /*rvoidptr 1*/ =
+      n->children[/*ptr!*/ n->size] /*rvoidptr 1*/;
+  for (int j = n->size; j > child_index; j--) {
+
+    n->keys[j] /*rstring 1*/ = n->keys[j - 1] /*rstring 1*/;
+    n->values[j] /*rvoidptr 1*/ = n->values[j - 1] /*rvoidptr 1*/;
+    n->children[/*ptr!*/ j] /*rvoidptr 1*/ =
+        n->children[/*ptr!*/ j - 1] /*rvoidptr 1*/;
+  };
+  n->keys[child_index] /*rstring 1*/ =
+      y->keys[builtin__mid_index] /*rstring 1*/;
+  n->values[child_index] /*rvoidptr 1*/ =
+      y->values[builtin__mid_index] /*rvoidptr 1*/;
+  n->children[/*ptr!*/ child_index] /*rvoidptr 1*/ = ((voidptr)(y));
+  n->children[/*ptr!*/ child_index + 1] /*rvoidptr 1*/ = ((voidptr)(z));
+  n->size++;
+}
+bool map_get(map m, string key, void *out) {
+  mapnode *node = m.root;
+  while (1) {
+    int i = node->size - 1;
+    while (i >= 0 && string_lt(key, node->keys[i] /*rstring 1*/)) {
+
+      i--;
+    };
+    if (i != -1 && string_eq(key, node->keys[i] /*rstring 1*/)) {
+      memcpy(out, node->values[i] /*rvoidptr 1*/, m.value_bytes);
+      return 1;
+    };
+    if (isnil(node->children)) {
+      break;
+    };
+    node = ((mapnode *)(node->children[/*ptr!*/ i + 1] /*rvoidptr 1*/));
+  };
+  return 0;
+}
+bool map_exists(map m, string key) {
+  if (isnil(m.root)) {
+    return 0;
+  };
+  mapnode *node = m.root;
+  while (1) {
+    int i = node->size - 1;
+    while (i >= 0 && string_lt(key, node->keys[i] /*rstring 1*/)) {
+
+      i--;
+    };
+    if (i != -1 && string_eq(key, node->keys[i] /*rstring 1*/)) {
+      return 1;
+    };
+    if (isnil(node->children)) {
+      break;
+    };
+    node = ((mapnode *)(node->children[/*ptr!*/ i + 1] /*rvoidptr 1*/));
+  };
+  return 0;
+}
+int mapnode_find_key(mapnode n, string k) {
+  int idx = 0;
+  while (idx < n.size && string_lt(n.keys[idx] /*rstring 0*/, k)) {
+
+    idx++;
+  };
+  return idx;
+}
+bool mapnode_remove_key(mapnode *n, string k) {
+  int idx = mapnode_find_key(*n, k);
+  if (idx < n->size && string_eq(n->keys[idx] /*rstring 1*/, k)) {
+    if (isnil(n->children)) {
+      mapnode_remove_from_leaf(n, idx);
+    } else {
+      mapnode_remove_from_non_leaf(n, idx);
+    };
     return 1;
-  } else if (string_gt(n->key, key)) {
-    if (n->left == 0) {
-      return 0;
-    } else {
-      return mapnode_find(&/* ? */ *n->left, key, out, element_size);
-    };
   } else {
-    if (n->right == 0) {
+    if (isnil(n->children)) {
       return 0;
+    };
+    bool flag = ((idx == n->size) ? (1) : (0));
+    if ((((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/)))->size <
+        builtin__degree) {
+      mapnode_fill(n, idx);
+    };
+    if (flag && idx > n->size) {
+      return mapnode_remove_key(
+          (((mapnode *)(n->children[/*ptr!*/ idx - 1] /*rvoidptr 1*/))), k);
     } else {
-      return mapnode_find(&/* ? */ *n->right, key, out, element_size);
+      return mapnode_remove_key(
+          (((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/))), k);
     };
   };
 }
-bool mapnode_find2(mapnode *n, string key, int element_size) {
-  if (string_eq(n->key, key) && !n->is_empty) {
-    return 1;
-  } else if (string_gt(n->key, key)) {
-    if (isnil(n->left)) {
-      return 0;
-    } else {
-      return mapnode_find2(&/* ? */ *n->left, key, element_size);
+void mapnode_remove_from_leaf(mapnode *n, int idx) {
+  for (int i = idx + 1; i < n->size; i++) {
+
+    n->keys[i - 1] /*rstring 1*/ = n->keys[i] /*rstring 1*/;
+    n->values[i - 1] /*rvoidptr 1*/ = n->values[i] /*rvoidptr 1*/;
+  };
+  n->size--;
+}
+void mapnode_remove_from_non_leaf(mapnode *n, int idx) {
+  string k = n->keys[idx] /*rstring 1*/;
+  if (((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/))->size >=
+      builtin__degree) {
+    mapnode *current = ((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/));
+    while (!isnil(current->children)) {
+
+      current = ((
+          mapnode *)(current->children[/*ptr!*/ current->size] /*rvoidptr 1*/));
     };
+    string predecessor = current->keys[current->size - 1] /*rstring 1*/;
+    n->keys[idx] /*rstring 1*/ = predecessor;
+    n->values[idx] /*rvoidptr 1*/ =
+        current->values[current->size - 1] /*rvoidptr 1*/;
+    mapnode_remove_key(
+        (((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/))), predecessor);
+  } else if (((mapnode *)(n->children[/*ptr!*/ idx + 1] /*rvoidptr 1*/))
+                 ->size >= builtin__degree) {
+    mapnode *current =
+        ((mapnode *)(n->children[/*ptr!*/ idx + 1] /*rvoidptr 1*/));
+    while (!isnil(current->children)) {
+
+      current = ((mapnode *)(current->children[/*ptr!*/ 0] /*rvoidptr 1*/));
+    };
+    string successor = current->keys[0] /*rstring 1*/;
+    n->keys[idx] /*rstring 1*/ = successor;
+    n->values[idx] /*rvoidptr 1*/ = current->values[0] /*rvoidptr 1*/;
+    mapnode_remove_key(
+        (((mapnode *)(n->children[/*ptr!*/ idx + 1] /*rvoidptr 1*/))),
+        successor);
   } else {
-    if (isnil(n->right)) {
-      return 0;
-    } else {
-      return mapnode_find2(&/* ? */ *n->right, key, element_size);
-    };
+    mapnode_merge(n, idx);
+    mapnode_remove_key(
+        (((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/))), k);
   };
 }
-void map_set(map *m, string key, void *val) {
-  if (isnil(m->root)) {
-    m->root = new_node(key, val, m->element_size);
-    m->size++;
+void mapnode_fill(mapnode *n, int idx) {
+  if (idx != 0 &&
+      ((mapnode *)(n->children[/*ptr!*/ idx - 1] /*rvoidptr 1*/))->size >=
+          builtin__degree) {
+    mapnode_borrow_from_prev(n, idx);
+  } else if (idx != n->size &&
+             ((mapnode *)(n->children[/*ptr!*/ idx + 1] /*rvoidptr 1*/))
+                     ->size >= builtin__degree) {
+    mapnode_borrow_from_next(n, idx);
+  } else if (idx != n->size) {
+    mapnode_merge(n, idx);
+  } else {
+    mapnode_merge(n, idx - 1);
+  };
+}
+void mapnode_borrow_from_prev(mapnode *n, int idx) {
+  mapnode *child = ((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/));
+  mapnode *sibling =
+      ((mapnode *)(n->children[/*ptr!*/ idx - 1] /*rvoidptr 1*/));
+  for (int i = child->size - 1; i >= 0; i--) {
+
+    child->keys[i + 1] /*rstring 1*/ = child->keys[i] /*rstring 1*/;
+    child->values[i + 1] /*rvoidptr 1*/ = child->values[i] /*rvoidptr 1*/;
+  };
+  if (!isnil(child->children)) {
+    for (int i = child->size; i >= 0; i--) {
+
+      child->children[/*ptr!*/ i + 1] /*rvoidptr 1*/ =
+          child->children[/*ptr!*/ i] /*rvoidptr 1*/;
+    };
+  };
+  child->keys[0] /*rstring 1*/ = n->keys[idx - 1] /*rstring 1*/;
+  child->values[0] /*rvoidptr 1*/ = n->values[idx - 1] /*rvoidptr 1*/;
+  if (!isnil(child->children)) {
+    child->children[/*ptr!*/ 0] /*rvoidptr 1*/ =
+        sibling->children[/*ptr!*/ sibling->size] /*rvoidptr 1*/;
+  };
+  n->keys[idx - 1] /*rstring 1*/ =
+      sibling->keys[sibling->size - 1] /*rstring 1*/;
+  n->values[idx - 1] /*rvoidptr 1*/ =
+      sibling->values[sibling->size - 1] /*rvoidptr 1*/;
+  child->size++;
+  sibling->size--;
+}
+void mapnode_borrow_from_next(mapnode *n, int idx) {
+  mapnode *child = ((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/));
+  mapnode *sibling =
+      ((mapnode *)(n->children[/*ptr!*/ idx + 1] /*rvoidptr 1*/));
+  child->keys[child->size] /*rstring 1*/ = n->keys[idx] /*rstring 1*/;
+  child->values[child->size] /*rvoidptr 1*/ = n->values[idx] /*rvoidptr 1*/;
+  if (!isnil(child->children)) {
+    child->children[/*ptr!*/ child->size + 1] /*rvoidptr 1*/ =
+        sibling->children[/*ptr!*/ 0] /*rvoidptr 1*/;
+  };
+  n->keys[idx] /*rstring 1*/ = sibling->keys[0] /*rstring 1*/;
+  n->values[idx] /*rvoidptr 1*/ = sibling->values[0] /*rvoidptr 1*/;
+  for (int i = 1; i < sibling->size; i++) {
+
+    sibling->keys[i - 1] /*rstring 1*/ = sibling->keys[i] /*rstring 1*/;
+    sibling->values[i - 1] /*rvoidptr 1*/ = sibling->values[i] /*rvoidptr 1*/;
+  };
+  if (!isnil(sibling->children)) {
+    for (int i = 1; i <= sibling->size; i++) {
+
+      sibling->children[/*ptr!*/ i - 1] /*rvoidptr 1*/ =
+          sibling->children[/*ptr!*/ i] /*rvoidptr 1*/;
+    };
+  };
+  child->size++;
+  sibling->size--;
+}
+void mapnode_merge(mapnode *n, int idx) {
+  mapnode *child = ((mapnode *)(n->children[/*ptr!*/ idx] /*rvoidptr 1*/));
+  mapnode *sibling =
+      ((mapnode *)(n->children[/*ptr!*/ idx + 1] /*rvoidptr 1*/));
+  child->keys[builtin__mid_index] /*rstring 1*/ = n->keys[idx] /*rstring 1*/;
+  child->values[builtin__mid_index] /*rvoidptr 1*/ =
+      n->values[idx] /*rvoidptr 1*/;
+  for (int i = 0; i < sibling->size; i++) {
+
+    child->keys[i + builtin__degree] /*rstring 1*/ =
+        sibling->keys[i] /*rstring 0*/;
+    child->values[i + builtin__degree] /*rvoidptr 1*/ =
+        sibling->values[i] /*rvoidptr 0*/;
+  };
+  if (!isnil(child->children)) {
+    for (int i = 0; i <= sibling->size; i++) {
+
+      child->children[/*ptr!*/ i + builtin__degree] /*rvoidptr 1*/ =
+          sibling->children[/*ptr!*/ i] /*rvoidptr 0*/;
+    };
+  };
+  for (int i = idx + 1; i < n->size; i++) {
+
+    n->keys[i - 1] /*rstring 1*/ = n->keys[i] /*rstring 1*/;
+    n->values[i - 1] /*rvoidptr 1*/ = n->values[i] /*rvoidptr 1*/;
+  };
+  for (int i = idx + 2; i <= n->size; i++) {
+
+    n->children[/*ptr!*/ i - 1] /*rvoidptr 1*/ =
+        n->children[/*ptr!*/ i] /*rvoidptr 1*/;
+  };
+  child->size += sibling->size + 1;
+  n->size--;
+}
+void v_map_delete(map *m, string key) {
+  if (m->root->size == 0) {
 
     return;
   };
-  map_insert(m, m->root, key, val);
+  bool removed = mapnode_remove_key(m->root, key);
+  if (removed) {
+    m->size--;
+  };
+  if (m->root->size == 0) {
+    if (isnil(m->root->children)) {
+
+      return;
+    } else {
+      m->root = ((mapnode *)(m->root->children[/*ptr!*/ 0] /*rvoidptr 1*/));
+    };
+  };
 }
-int preorder_keys(mapnode *node, array_string *keys, int key_i) {
-  int i = key_i;
-  if (!node->is_empty) {
-    array_set(keys, i, &(string[]){node->key});
-    i++;
+int mapnode_subkeys(mapnode n, array_string *keys, int at) {
+  int position = at;
+  if (!isnil(n.children)) {
+    int tmp3 = 0;
+    ;
+    for (int tmp4 = tmp3; tmp4 < n.size; tmp4++) {
+      int i = tmp4;
+
+      mapnode *child = ((mapnode *)(n.children[/*ptr!*/ i] /*rvoidptr 0*/));
+      position += mapnode_subkeys(*child, keys, position);
+      array_set(keys, position, &(string[]){n.keys[i] /*rstring 0*/});
+      position++;
+    };
+    mapnode *child = ((mapnode *)(n.children[/*ptr!*/ n.size] /*rvoidptr 0*/));
+    position += mapnode_subkeys(*child, keys, position);
+  } else {
+    int tmp5 = 0;
+    ;
+    for (int tmp6 = tmp5; tmp6 < n.size; tmp6++) {
+      int i = tmp6;
+
+      array_set(keys, position + i, &(string[]){n.keys[i] /*rstring 0*/});
+    };
+    position += n.size;
   };
-  if (!isnil(node->left)) {
-    i = preorder_keys(node->left, keys, i);
-  };
-  if (!isnil(node->right)) {
-    i = preorder_keys(node->right, keys, i);
-  };
-  return i;
+  return position - at;
 }
 array_string map_keys(map *m) {
   array_string keys = array_repeat(
       new_array_from_c_array(1, 1, sizeof(string),
                              EMPTY_ARRAY_OF_ELEMS(string, 1){tos3("")}),
       m->size);
-  if (isnil(m->root)) {
+  if (isnil(m->root) || m->root->size == 0) {
     return keys;
   };
-  preorder_keys(m->root, &/*111*/ (array[]){keys}[0], 0);
+  mapnode_subkeys(*m->root, &/*111*/ (array[]){keys}[0], 0);
   return keys;
 }
-bool map_get(map m, string key, void *out) {
-  if (m.root == 0) {
-    return 0;
-  };
-  return mapnode_find(&/* ? */ *m.root, key, out, m.element_size);
-}
-void v_mapnode_delete(mapnode *n, string key, int element_size) {
-  if (string_eq(n->key, key)) {
-    memset(n->val, 0, element_size);
-    n->is_empty = 1;
+void v_mapnode_free(mapnode *n) {
+  int i = 0;
+  if (isnil(n->children)) {
+    i = 0;
+    while (i < n->size) {
 
-    return;
-  } else if (string_gt(n->key, key)) {
-    if (isnil(n->left)) {
-
-      return;
-    } else {
-      v_mapnode_delete(n->left, key, element_size);
+      i++;
     };
   } else {
-    if (isnil(n->right)) {
+    i = 0;
+    while (i < n->size) {
 
-      return;
-    } else {
-      v_mapnode_delete(n->right, key, element_size);
+      v_mapnode_free(((mapnode *)(n->children[/*ptr!*/ i] /*rvoidptr 1*/)));
+      i++;
     };
+    v_mapnode_free(((mapnode *)(n->children[/*ptr!*/ i] /*rvoidptr 1*/)));
   };
-}
-void v_map_delete(map *m, string key) {
-  if (map_exists(*m, key)) {
-    v_mapnode_delete(m->root, key, m->element_size);
-    m->size--;
-  };
-}
-bool map_exists(map m, string key) {
-  return !isnil(m.root) && mapnode_find2(&/* ? */ *m.root, key, m.element_size);
-}
-void map_print(map m) {
-  println(tos3("<<<<<<<<"));
-  println(tos3(">>>>>>>>>>"));
-}
-void v_mapnode_free(mapnode *n) {
-  if (n->val != 0) {
-    v_free(n->val);
-  };
-  if (n->left != 0) {
-    v_mapnode_free(n->left);
-  };
-  if (n->right != 0) {
-    v_mapnode_free(n->right);
-  };
-  v_free(n);
 }
 void v_map_free(map *m) {
-  if (m->root == 0) {
+  if (isnil(m->root)) {
 
     return;
   };
   v_mapnode_free(m->root);
+}
+void map_print(map m) {
+  println(tos3("<<<<<<<<"));
+  println(tos3(">>>>>>>>>>"));
 }
 string map_string_str(map_string m) {
   if (m.size == 0) {
@@ -4597,12 +4843,12 @@ string map_string_str(map_string m) {
   };
   strings__Builder sb = strings__new_builder(50);
   strings__Builder_writeln(&/* ? */ sb, tos3("{"));
-  map_string tmp3 = m;
-  array_string keys_tmp3 = map_keys(&tmp3);
-  for (int l = 0; l < keys_tmp3.len; l++) {
-    string key = ((string *)keys_tmp3.data)[l];
+  map_string tmp7 = m;
+  array_string keys_tmp7 = map_keys(&tmp7);
+  for (int l = 0; l < keys_tmp7.len; l++) {
+    string key = ((string *)keys_tmp7.data)[l];
     string val = tos3("");
-    map_get(tmp3, key, &val);
+    map_get(tmp7, key, &val);
 
     strings__Builder_writeln(
         &/* ? */ sb,
@@ -4907,6 +5153,7 @@ array_string string_split_nth(string s, string delim, int nth) {
     return res;
   };
   int start = 0;
+  int nth_1 = nth - 1;
   while (i <= s.len) {
 
     bool is_delim = s.str[i] /*rbyte 0*/ == delim.str[0] /*rbyte 0*/;
@@ -4917,10 +5164,6 @@ array_string string_split_nth(string s, string delim, int nth) {
           is_delim && s.str[i + j] /*rbyte 0*/ == delim.str[j] /*rbyte 0*/;
       j++;
     };
-    bool was_last = nth > 0 && res.len == nth;
-    if (was_last) {
-      break;
-    };
     bool last = i == s.len - 1;
     if (is_delim || last) {
       if (!is_delim && last) {
@@ -4930,13 +5173,20 @@ array_string string_split_nth(string s, string delim, int nth) {
       if (string_starts_with(val, delim)) {
         val = string_right(val, delim.len);
       };
-      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ val), tmp24, string);
+      bool was_last = nth > 0 && res.len == nth_1;
+      if (was_last) {
+        _PUSH(&res,
+              (/*typ = array_string   tmp_typ=string*/ string_right(s, start)),
+              tmp24, string);
+        break;
+      };
+      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ val), tmp25, string);
       start = i + delim.len;
     };
     i++;
   };
   if (string_ends_with(s, delim) && (nth < 1 || res.len < nth)) {
-    _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ tos3("")), tmp25,
+    _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ tos3("")), tmp26,
           string);
   };
   return res;
@@ -4956,7 +5206,7 @@ array_string string_split_into_lines(string s) {
         i++;
       };
       string line = string_substr(s, start, i);
-      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ line), tmp26,
+      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ line), tmp27,
             string);
       start = i + 1;
     };
@@ -5024,8 +5274,8 @@ Option_int string_index(string s, string p) {
       j++;
     };
     if (j == p.len) {
-      int tmp27 = OPTION_CAST(int)(i);
-      return opt_ok(&tmp27, sizeof(int));
+      int tmp28 = OPTION_CAST(int)(i);
+      return opt_ok(&tmp28, sizeof(int));
     };
     i++;
   };
@@ -5068,19 +5318,19 @@ int string_index_kmp(string s, string p) {
   return -1;
 }
 int string_index_any(string s, string chars) {
-  string tmp32 = chars;
+  string tmp33 = chars;
   ;
-  for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
-    byte c = tmp32.str[tmp33];
+  for (int tmp34 = 0; tmp34 < tmp33.len; tmp34++) {
+    byte c = tmp33.str[tmp34];
 
-    Option_int tmp34 = string_index(s, byte_str(c));
+    Option_int tmp35 = string_index(s, byte_str(c));
     int index;
-    if (!tmp34.ok) {
-      string err = tmp34.error;
-      int errcode = tmp34.ecode;
+    if (!tmp35.ok) {
+      string err = tmp35.error;
+      int errcode = tmp35.ecode;
       continue;
     }
-    index = *(int *)tmp34.data;
+    index = *(int *)tmp35.data;
     ;
     return index;
   };
@@ -5099,8 +5349,8 @@ Option_int string_last_index(string s, string p) {
       j++;
     };
     if (j == p.len) {
-      int tmp35 = OPTION_CAST(int)(i);
-      return opt_ok(&tmp35, sizeof(int));
+      int tmp36 = OPTION_CAST(int)(i);
+      return opt_ok(&tmp36, sizeof(int));
     };
     i--;
   };
@@ -5172,31 +5422,16 @@ int string_count(string s, string substr) {
   return 0;
 }
 bool string_contains(string s, string p) {
-  Option_int tmp36 = string_index(s, p);
-  if (!tmp36.ok) {
-    string err = tmp36.error;
-    int errcode = tmp36.ecode;
+  Option_int tmp37 = string_index(s, p);
+  if (!tmp37.ok) {
+    string err = tmp37.error;
+    int errcode = tmp37.ecode;
     return 0;
   };
   return 1;
 }
 bool string_starts_with(string s, string p) {
-  Option_int tmp37 = string_index(s, p);
-  int idx;
-  if (!tmp37.ok) {
-    string err = tmp37.error;
-    int errcode = tmp37.ecode;
-    return 0;
-  }
-  idx = *(int *)tmp37.data;
-  ;
-  return idx == 0;
-}
-bool string_ends_with(string s, string p) {
-  if (p.len > s.len) {
-    return 0;
-  };
-  Option_int tmp38 = string_last_index(s, p);
+  Option_int tmp38 = string_index(s, p);
   int idx;
   if (!tmp38.ok) {
     string err = tmp38.error;
@@ -5204,6 +5439,21 @@ bool string_ends_with(string s, string p) {
     return 0;
   }
   idx = *(int *)tmp38.data;
+  ;
+  return idx == 0;
+}
+bool string_ends_with(string s, string p) {
+  if (p.len > s.len) {
+    return 0;
+  };
+  Option_int tmp39 = string_last_index(s, p);
+  int idx;
+  if (!tmp39.ok) {
+    string err = tmp39.error;
+    int errcode = tmp39.ecode;
+    return 0;
+  }
+  idx = *(int *)tmp39.data;
   ;
   return idx == s.len - p.len;
 }
@@ -5233,43 +5483,43 @@ string string_title(string s) {
   array_string words = string_split(s, tos3(" "));
   array_string tit = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  array_string tmp39 = words;
-  for (int tmp40 = 0; tmp40 < tmp39.len; tmp40++) {
-    string word = ((string *)tmp39.data)[tmp40];
+  array_string tmp40 = words;
+  for (int tmp41 = 0; tmp41 < tmp40.len; tmp41++) {
+    string word = ((string *)tmp40.data)[tmp41];
 
     _PUSH(&tit,
           (/*typ = array_string   tmp_typ=string*/ string_capitalize(word)),
-          tmp41, string);
+          tmp42, string);
   };
   string title = array_string_join(tit, tos3(" "));
   return title;
 }
 string string_find_between(string s, string start, string end) {
-  Option_int tmp42 = string_index(s, start);
+  Option_int tmp43 = string_index(s, start);
   int start_pos;
-  if (!tmp42.ok) {
-    string err = tmp42.error;
-    int errcode = tmp42.ecode;
-    return tos3("");
-  }
-  start_pos = *(int *)tmp42.data;
-  ;
-  string val = string_right(s, start_pos + start.len);
-  Option_int tmp43 = string_index(val, end);
-  int end_pos;
   if (!tmp43.ok) {
     string err = tmp43.error;
     int errcode = tmp43.ecode;
+    return tos3("");
+  }
+  start_pos = *(int *)tmp43.data;
+  ;
+  string val = string_right(s, start_pos + start.len);
+  Option_int tmp44 = string_index(val, end);
+  int end_pos;
+  if (!tmp44.ok) {
+    string err = tmp44.error;
+    int errcode = tmp44.ecode;
     return val;
   }
-  end_pos = *(int *)tmp43.data;
+  end_pos = *(int *)tmp44.data;
   ;
   return string_left(val, end_pos);
 }
 bool array_string_contains(array_string ar, string val) {
-  array_string tmp44 = ar;
-  for (int tmp45 = 0; tmp45 < tmp44.len; tmp45++) {
-    string s = ((string *)tmp44.data)[tmp45];
+  array_string tmp45 = ar;
+  for (int tmp46 = 0; tmp46 < tmp45.len; tmp46++) {
+    string s = ((string *)tmp45.data)[tmp46];
 
     if (string_eq(s, val)) {
       return 1;
@@ -5278,9 +5528,9 @@ bool array_string_contains(array_string ar, string val) {
   return 0;
 }
 bool array_int_contains(array_int ar, int val) {
-  array_int tmp46 = ar;
-  for (int i = 0; i < tmp46.len; i++) {
-    int s = ((int *)tmp46.data)[i];
+  array_int tmp47 = ar;
+  for (int i = 0; i < tmp47.len; i++) {
+    int s = ((int *)tmp47.data)[i];
 
     if (s == val) {
       return 1;
@@ -5387,7 +5637,7 @@ ustring string_ustring(string s) {
   for (int i = 0; i < s.len; i++) {
 
     int char_len = utf8_char_len(s.str[/*ptr!*/ i] /*rbyte 0*/);
-    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ i), tmp47, int);
+    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ i), tmp48, int);
     i += char_len - 1;
     res.len++;
   };
@@ -5433,7 +5683,7 @@ ustring ustring_add(ustring u, ustring a) {
   for (int i = 0; i < u.s.len; i++) {
 
     int char_len = utf8_char_len(u.s.str[/*ptr!*/ i] /*rbyte 0*/);
-    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp48, int);
+    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp49, int);
     i += char_len - 1;
     j += char_len;
     res.len++;
@@ -5441,7 +5691,7 @@ ustring ustring_add(ustring u, ustring a) {
   for (int i = 0; i < a.s.len; i++) {
 
     int char_len = utf8_char_len(a.s.str[/*ptr!*/ i] /*rbyte 0*/);
-    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp49, int);
+    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp50, int);
     i += char_len - 1;
     j += char_len;
     res.len++;
@@ -5540,19 +5790,7 @@ bool byte_is_letter(byte c) {
 }
 void v_string_free(string s) { v_free(s.str); }
 string string_all_before(string s, string dot) {
-  Option_int tmp54 = string_index(s, dot);
-  int pos;
-  if (!tmp54.ok) {
-    string err = tmp54.error;
-    int errcode = tmp54.ecode;
-    return s;
-  }
-  pos = *(int *)tmp54.data;
-  ;
-  return string_left(s, pos);
-}
-string string_all_before_last(string s, string dot) {
-  Option_int tmp55 = string_last_index(s, dot);
+  Option_int tmp55 = string_index(s, dot);
   int pos;
   if (!tmp55.ok) {
     string err = tmp55.error;
@@ -5563,7 +5801,7 @@ string string_all_before_last(string s, string dot) {
   ;
   return string_left(s, pos);
 }
-string string_all_after(string s, string dot) {
+string string_all_before_last(string s, string dot) {
   Option_int tmp56 = string_last_index(s, dot);
   int pos;
   if (!tmp56.ok) {
@@ -5573,6 +5811,18 @@ string string_all_after(string s, string dot) {
   }
   pos = *(int *)tmp56.data;
   ;
+  return string_left(s, pos);
+}
+string string_all_after(string s, string dot) {
+  Option_int tmp57 = string_last_index(s, dot);
+  int pos;
+  if (!tmp57.ok) {
+    string err = tmp57.error;
+    int errcode = tmp57.ecode;
+    return s;
+  }
+  pos = *(int *)tmp57.data;
+  ;
   return string_right(s, pos + dot.len);
 }
 string array_string_join(array_string a, string del) {
@@ -5580,9 +5830,9 @@ string array_string_join(array_string a, string del) {
     return tos3("");
   };
   int len = 0;
-  array_string tmp57 = a;
-  for (int i = 0; i < tmp57.len; i++) {
-    string val = ((string *)tmp57.data)[i];
+  array_string tmp58 = a;
+  for (int i = 0; i < tmp58.len; i++) {
+    string val = ((string *)tmp58.data)[i];
 
     len += val.len + del.len;
   };
@@ -5591,9 +5841,9 @@ string array_string_join(array_string a, string del) {
   res.len = len;
   res.str = v_malloc(res.len + 1);
   int idx = 0;
-  array_string tmp58 = a;
-  for (int i = 0; i < tmp58.len; i++) {
-    string val = ((string *)tmp58.data)[i];
+  array_string tmp59 = a;
+  for (int i = 0; i < tmp59.len; i++) {
+    string val = ((string *)tmp59.data)[i];
 
     for (int j = 0; j < val.len; j++) {
 
@@ -5640,10 +5890,10 @@ bool byte_is_white(byte c) {
 int string_hash(string s) {
   int h = 0;
   if (h == 0 && s.len > 0) {
-    string tmp59 = s;
+    string tmp60 = s;
     ;
-    for (int tmp60 = 0; tmp60 < tmp59.len; tmp60++) {
-      byte c = tmp59.str[tmp60];
+    for (int tmp61 = 0; tmp61 < tmp60.len; tmp61++) {
+      byte c = tmp60.str[tmp61];
 
       h = h * 31 + ((int)(c));
     };
@@ -5667,15 +5917,15 @@ string string_repeat(string s, int count) {
     return s;
   };
   byte *ret = v_malloc(s.len * count + 1);
-  int tmp61 = 0;
+  int tmp62 = 0;
   ;
-  for (int tmp62 = tmp61; tmp62 < count; tmp62++) {
-    int i = tmp62;
+  for (int tmp63 = tmp62; tmp63 < count; tmp63++) {
+    int i = tmp63;
 
-    int tmp63 = 0;
+    int tmp64 = 0;
     ;
-    for (int tmp64 = tmp63; tmp64 < s.len; tmp64++) {
-      int j = tmp64;
+    for (int tmp65 = tmp64; tmp65 < s.len; tmp65++) {
+      int j = tmp65;
 
       ret[/*ptr!*/ i * s.len + j] /*rbyte 1*/ = s.str[j] /*rbyte 0*/;
     };
@@ -7153,141 +7403,6 @@ array_string os_dot_cmdline__only_options(array_string args) {
   }
   return tmp14;
 }
-static inline v_dot_types__TypeIdent
-v_dot_types__new_ti(v_dot_types__Kind kind, string name, int idx, int nr_muls) {
-  return (v_dot_types__TypeIdent){
-      .idx = idx, .kind = kind, .name = name, .nr_muls = nr_muls};
-}
-static inline bool v_dot_types__TypeIdent_is_ptr(v_dot_types__TypeIdent *ti) {
-  return ti->nr_muls > 0;
-}
-static inline bool v_dot_types__TypeIdent_is_int(v_dot_types__TypeIdent *ti) {
-  return (ti->kind == v_dot_types__v_dot_types__Kind_i8 ||
-          ti->kind == v_dot_types__v_dot_types__Kind_i16 ||
-          ti->kind == v_dot_types__v_dot_types__Kind_int ||
-          ti->kind == v_dot_types__v_dot_types__Kind_i64 ||
-          ti->kind == v_dot_types__v_dot_types__Kind_byte ||
-          ti->kind == v_dot_types__v_dot_types__Kind_u16 ||
-          ti->kind == v_dot_types__v_dot_types__Kind_u32 ||
-          ti->kind == v_dot_types__v_dot_types__Kind_u64);
-}
-static inline bool v_dot_types__TypeIdent_is_float(v_dot_types__TypeIdent *ti) {
-  return (ti->kind == v_dot_types__v_dot_types__Kind_f32 ||
-          ti->kind == v_dot_types__v_dot_types__Kind_f64);
-}
-static inline bool
-v_dot_types__TypeIdent_is_number(v_dot_types__TypeIdent *ti) {
-  return v_dot_types__TypeIdent_is_int(&/* ? */ *ti) ||
-         v_dot_types__TypeIdent_is_float(&/* ? */ *ti);
-}
-string v_dot_types__TypeIdent_str(v_dot_types__TypeIdent *ti) {
-  string muls = tos3("");
-  int tmp1 = 0;
-  ;
-  for (int tmp2 = tmp1; tmp2 < ti->nr_muls; tmp2++) {
-
-    muls = string_add(muls, tos3("&"));
-  };
-  return _STR("%.*s%d", muls.len, muls.str, ti->idx);
-}
-string v_dot_types__Kind_str(v_dot_types__Kind k) {
-  v_dot_types__Kind tmp3 = k;
-
-  string
-      k_str =
-          ((tmp3 == v_dot_types__v_dot_types__Kind_unresolved)
-               ? (tos3("unresolved"))
-               : (
-                     (tmp3 == v_dot_types__v_dot_types__Kind_placeholder)
-                         ? (tos3("placeholder"))
-                         : (
-                               (tmp3 == v_dot_types__v_dot_types__Kind_void)
-                                   ? (tos3("void"))
-                                   : ((tmp3 ==
-                                       v_dot_types__v_dot_types__Kind_voidptr)
-                                          ? (tos3("voidptr"))
-                                          : ((tmp3 ==
-                                              v_dot_types__v_dot_types__Kind_charptr)
-                                                 ? (tos3("charptr"))
-                                                 : (
-                                                       (tmp3 == v_dot_types__v_dot_types__Kind_byteptr) ? (tos3("byteptr"))
-                                                                                                        : (
-                                                                                                              (tmp3 == v_dot_types__v_dot_types__Kind_struct_) ? (tos3("struct"))
-                                                                                                                                                               : (
-                                                                                                                                                                     (tmp3 == v_dot_types__v_dot_types__Kind_int) ? (tos3("int"))
-                                                                                                                                                                                                                  : (
-                                                                                                                                                                                                                        (tmp3 == v_dot_types__v_dot_types__Kind_i8) ? (tos3(
-                                                                                                                                                                                                                                                                          "i8"))
-                                                                                                                                                                                                                                                                    : (
-                                                                                                                                                                                                                                                                          (
-                                                                                                                                                                                                                                                                              tmp3 ==
-                                                                                                                                                                                                                                                                              v_dot_types__v_dot_types__Kind_i16)
-                                                                                                                                                                                                                                                                              ? (tos3(
-                                                                                                                                                                                                                                                                                    "i16"))
-                                                                                                                                                                                                                                                                              : (
-                                                                                                                                                                                                                                                                                    (
-                                                                                                                                                                                                                                                                                        tmp3 ==
-                                                                                                                                                                                                                                                                                        v_dot_types__v_dot_types__Kind_i64)
-                                                                                                                                                                                                                                                                                        ? (tos3(
-                                                                                                                                                                                                                                                                                              "i64"))
-                                                                                                                                                                                                                                                                                        : (
-                                                                                                                                                                                                                                                                                              (
-                                                                                                                                                                                                                                                                                                  tmp3 ==
-                                                                                                                                                                                                                                                                                                  v_dot_types__v_dot_types__Kind_byte)
-                                                                                                                                                                                                                                                                                                  ? (tos3(
-                                                                                                                                                                                                                                                                                                        "byte"))
-                                                                                                                                                                                                                                                                                                  : ((tmp3 == v_dot_types__v_dot_types__Kind_u16) ? (tos3("u18"))
-                                                                                                                                                                                                                                                                                                                                                  : ((tmp3 == v_dot_types__v_dot_types__Kind_f32) ? (tos3(
-                                                                                                                                                                                                                                                                                                                                                                                                        "f32"))
-                                                                                                                                                                                                                                                                                                                                                                                                  : (
-                                                                                                                                                                                                                                                                                                                                                                                                        (
-                                                                                                                                                                                                                                                                                                                                                                                                            tmp3 ==
-                                                                                                                                                                                                                                                                                                                                                                                                            v_dot_types__v_dot_types__Kind_f64)
-                                                                                                                                                                                                                                                                                                                                                                                                            ? (tos3(
-                                                                                                                                                                                                                                                                                                                                                                                                                  "f64"))
-                                                                                                                                                                                                                                                                                                                                                                                                            : ((tmp3 ==
-                                                                                                                                                                                                                                                                                                                                                                                                                v_dot_types__v_dot_types__Kind_string)
-                                                                                                                                                                                                                                                                                                                                                                                                                   ? (tos3(
-                                                                                                                                                                                                                                                                                                                                                                                                                         "string"))
-                                                                                                                                                                                                                                                                                                                                                                                                                   : ((tmp3 ==
-                                                                                                                                                                                                                                                                                                                                                                                                                       v_dot_types__v_dot_types__Kind_char)
-                                                                                                                                                                                                                                                                                                                                                                                                                          ? (tos3(
-                                                                                                                                                                                                                                                                                                                                                                                                                                "char"))
-                                                                                                                                                                                                                                                                                                                                                                                                                          : ((tmp3 == v_dot_types__v_dot_types__Kind_bool) ? (tos3(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 "bool"))
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                           : ((tmp3 ==
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                               v_dot_types__v_dot_types__Kind_array)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ? (tos3(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "array"))
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  : ((tmp3 == v_dot_types__v_dot_types__Kind_array_fixed) ? (tos3(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "array_fixed"))
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          : ((tmp3 == v_dot_types__v_dot_types__Kind_map) ? (tos3(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "map"))
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          : ((tmp3 ==
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              v_dot_types__v_dot_types__Kind_multi_return)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ? (tos3(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       "multi_return"))
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 : (
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       (tmp3 == v_dot_types__v_dot_types__Kind_variadic)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ? (tos3(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 "variadic"))
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           : (tos3(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 "unknown")))))))))))))))))))))))));
-  return k_str;
-}
-string array_v_dot_types__Kind_str(array_v_dot_types__Kind kinds) {
-  string kinds_str = tos3("");
-  array_v_dot_types__Kind tmp4 = kinds;
-  for (int i = 0; i < tmp4.len; i++) {
-    v_dot_types__Kind k = ((v_dot_types__Kind *)tmp4.data)[i];
-
-    kinds_str = string_add(kinds_str, v_dot_types__Kind_str(k));
-    if (i < kinds.len - 1) {
-      kinds_str = string_add(kinds_str, tos3("_"));
-    };
-  };
-  return kinds_str;
-}
 static inline v_dot_token__Position
 v_dot_token__Token_position(v_dot_token__Token *tok) {
   return (v_dot_token__Position){.line_nr = tok->line_nr};
@@ -7746,6 +7861,141 @@ bool v_dot_token__Kind_is_infix(v_dot_token__Kind kind) {
           kind == v_dot_token__v_dot_token__Kind_logical_or ||
           kind == v_dot_token__v_dot_token__Kind_and ||
           kind == v_dot_token__v_dot_token__Kind_dot);
+}
+static inline v_dot_types__TypeIdent
+v_dot_types__new_ti(v_dot_types__Kind kind, string name, int idx, int nr_muls) {
+  return (v_dot_types__TypeIdent){
+      .idx = idx, .kind = kind, .name = name, .nr_muls = nr_muls};
+}
+static inline bool v_dot_types__TypeIdent_is_ptr(v_dot_types__TypeIdent *ti) {
+  return ti->nr_muls > 0;
+}
+static inline bool v_dot_types__TypeIdent_is_int(v_dot_types__TypeIdent *ti) {
+  return (ti->kind == v_dot_types__v_dot_types__Kind_i8 ||
+          ti->kind == v_dot_types__v_dot_types__Kind_i16 ||
+          ti->kind == v_dot_types__v_dot_types__Kind_int ||
+          ti->kind == v_dot_types__v_dot_types__Kind_i64 ||
+          ti->kind == v_dot_types__v_dot_types__Kind_byte ||
+          ti->kind == v_dot_types__v_dot_types__Kind_u16 ||
+          ti->kind == v_dot_types__v_dot_types__Kind_u32 ||
+          ti->kind == v_dot_types__v_dot_types__Kind_u64);
+}
+static inline bool v_dot_types__TypeIdent_is_float(v_dot_types__TypeIdent *ti) {
+  return (ti->kind == v_dot_types__v_dot_types__Kind_f32 ||
+          ti->kind == v_dot_types__v_dot_types__Kind_f64);
+}
+static inline bool
+v_dot_types__TypeIdent_is_number(v_dot_types__TypeIdent *ti) {
+  return v_dot_types__TypeIdent_is_int(&/* ? */ *ti) ||
+         v_dot_types__TypeIdent_is_float(&/* ? */ *ti);
+}
+string v_dot_types__TypeIdent_str(v_dot_types__TypeIdent *ti) {
+  string muls = tos3("");
+  int tmp1 = 0;
+  ;
+  for (int tmp2 = tmp1; tmp2 < ti->nr_muls; tmp2++) {
+
+    muls = string_add(muls, tos3("&"));
+  };
+  return _STR("%.*s%d", muls.len, muls.str, ti->idx);
+}
+string v_dot_types__Kind_str(v_dot_types__Kind k) {
+  v_dot_types__Kind tmp3 = k;
+
+  string
+      k_str =
+          ((tmp3 == v_dot_types__v_dot_types__Kind_unresolved)
+               ? (tos3("unresolved"))
+               : (
+                     (tmp3 == v_dot_types__v_dot_types__Kind_placeholder)
+                         ? (tos3("placeholder"))
+                         : (
+                               (tmp3 == v_dot_types__v_dot_types__Kind_void)
+                                   ? (tos3("void"))
+                                   : ((tmp3 ==
+                                       v_dot_types__v_dot_types__Kind_voidptr)
+                                          ? (tos3("voidptr"))
+                                          : ((tmp3 ==
+                                              v_dot_types__v_dot_types__Kind_charptr)
+                                                 ? (tos3("charptr"))
+                                                 : (
+                                                       (tmp3 == v_dot_types__v_dot_types__Kind_byteptr) ? (tos3("byteptr"))
+                                                                                                        : (
+                                                                                                              (tmp3 == v_dot_types__v_dot_types__Kind_struct_) ? (tos3("struct"))
+                                                                                                                                                               : (
+                                                                                                                                                                     (tmp3 == v_dot_types__v_dot_types__Kind_int) ? (tos3("int"))
+                                                                                                                                                                                                                  : (
+                                                                                                                                                                                                                        (tmp3 == v_dot_types__v_dot_types__Kind_i8) ? (tos3(
+                                                                                                                                                                                                                                                                          "i8"))
+                                                                                                                                                                                                                                                                    : (
+                                                                                                                                                                                                                                                                          (
+                                                                                                                                                                                                                                                                              tmp3 ==
+                                                                                                                                                                                                                                                                              v_dot_types__v_dot_types__Kind_i16)
+                                                                                                                                                                                                                                                                              ? (tos3(
+                                                                                                                                                                                                                                                                                    "i16"))
+                                                                                                                                                                                                                                                                              : (
+                                                                                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                                                                        tmp3 ==
+                                                                                                                                                                                                                                                                                        v_dot_types__v_dot_types__Kind_i64)
+                                                                                                                                                                                                                                                                                        ? (tos3(
+                                                                                                                                                                                                                                                                                              "i64"))
+                                                                                                                                                                                                                                                                                        : (
+                                                                                                                                                                                                                                                                                              (
+                                                                                                                                                                                                                                                                                                  tmp3 ==
+                                                                                                                                                                                                                                                                                                  v_dot_types__v_dot_types__Kind_byte)
+                                                                                                                                                                                                                                                                                                  ? (tos3(
+                                                                                                                                                                                                                                                                                                        "byte"))
+                                                                                                                                                                                                                                                                                                  : ((tmp3 == v_dot_types__v_dot_types__Kind_u16) ? (tos3("u18"))
+                                                                                                                                                                                                                                                                                                                                                  : ((tmp3 == v_dot_types__v_dot_types__Kind_f32) ? (tos3(
+                                                                                                                                                                                                                                                                                                                                                                                                        "f32"))
+                                                                                                                                                                                                                                                                                                                                                                                                  : (
+                                                                                                                                                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                                                                                                                                                            tmp3 ==
+                                                                                                                                                                                                                                                                                                                                                                                                            v_dot_types__v_dot_types__Kind_f64)
+                                                                                                                                                                                                                                                                                                                                                                                                            ? (tos3(
+                                                                                                                                                                                                                                                                                                                                                                                                                  "f64"))
+                                                                                                                                                                                                                                                                                                                                                                                                            : ((tmp3 ==
+                                                                                                                                                                                                                                                                                                                                                                                                                v_dot_types__v_dot_types__Kind_string)
+                                                                                                                                                                                                                                                                                                                                                                                                                   ? (tos3(
+                                                                                                                                                                                                                                                                                                                                                                                                                         "string"))
+                                                                                                                                                                                                                                                                                                                                                                                                                   : ((tmp3 ==
+                                                                                                                                                                                                                                                                                                                                                                                                                       v_dot_types__v_dot_types__Kind_char)
+                                                                                                                                                                                                                                                                                                                                                                                                                          ? (tos3(
+                                                                                                                                                                                                                                                                                                                                                                                                                                "char"))
+                                                                                                                                                                                                                                                                                                                                                                                                                          : ((tmp3 == v_dot_types__v_dot_types__Kind_bool) ? (tos3(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 "bool"))
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                           : ((tmp3 ==
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                               v_dot_types__v_dot_types__Kind_array)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ? (tos3(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "array"))
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  : ((tmp3 == v_dot_types__v_dot_types__Kind_array_fixed) ? (tos3(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "array_fixed"))
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          : ((tmp3 == v_dot_types__v_dot_types__Kind_map) ? (tos3(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "map"))
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          : ((tmp3 ==
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              v_dot_types__v_dot_types__Kind_multi_return)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ? (tos3(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       "multi_return"))
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 : (
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       (tmp3 == v_dot_types__v_dot_types__Kind_variadic)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ? (tos3(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 "variadic"))
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           : (tos3(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 "unknown")))))))))))))))))))))))));
+  return k_str;
+}
+string array_v_dot_types__Kind_str(array_v_dot_types__Kind kinds) {
+  string kinds_str = tos3("");
+  array_v_dot_types__Kind tmp4 = kinds;
+  for (int i = 0; i < tmp4.len; i++) {
+    v_dot_types__Kind k = ((v_dot_types__Kind *)tmp4.data)[i];
+
+    kinds_str = string_add(kinds_str, v_dot_types__Kind_str(k));
+    if (i < kinds.len - 1) {
+      kinds_str = string_add(kinds_str, tos3("_"));
+    };
+  };
+  return kinds_str;
 }
 bool os__File_is_opened(os__File f) { return f.opened; }
 array_byte os__File_read_bytes(os__File *f, int size) {
@@ -31692,6 +31942,9 @@ void init() {
   builtin__SYMOPT_INCLUDE_32BIT_MODULES = 0x00002000;
   builtin__SYMOPT_ALLOW_ZERO_ADDRESS = 0x01000000;
   builtin__SYMOPT_DEBUG = 0x80000000;
+  builtin__mid_index = builtin__degree - 1;
+  builtin__max_size = 2 * builtin__degree - 1;
+  builtin__children_bytes = sizeof(void *) * (builtin__max_size + 1);
   strconv__DOUBLE_PLUS_ZERO = ((u64)(0x0000000000000000));
   strconv__DOUBLE_MINUS_ZERO = 0x8000000000000000;
   strconv__DOUBLE_PLUS_INFINITY = 0x7FF0000000000000;
@@ -31729,20 +31982,6 @@ void init() {
           31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30,
           31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31,
       });
-  v_dot_types__unresolved_ti = v_dot_types__new_ti(
-      v_dot_types__v_dot_types__Kind_unresolved, tos3("unresolved"), 0, 0);
-  v_dot_types__void_ti =
-      v_dot_types__new_ti(v_dot_types__v_dot_types__Kind_void, tos3("void"),
-                          v_dot_types__void_type_idx, 0);
-  v_dot_types__int_ti =
-      v_dot_types__new_ti(v_dot_types__v_dot_types__Kind_int, tos3("int"),
-                          v_dot_types__int_type_idx, 0);
-  v_dot_types__string_ti =
-      v_dot_types__new_ti(v_dot_types__v_dot_types__Kind_string, tos3("string"),
-                          v_dot_types__string_type_idx, 0);
-  v_dot_types__bool_ti =
-      v_dot_types__new_ti(v_dot_types__v_dot_types__Kind_bool, tos3("bool"),
-                          v_dot_types__bool_type_idx, 0);
   v_dot_token__assign_tokens = new_array_from_c_array(
       11, 11, sizeof(v_dot_token__Kind),
       EMPTY_ARRAY_OF_ELEMS(v_dot_token__Kind, 11){
@@ -31760,6 +31999,20 @@ void init() {
   v_dot_token__token_str = v_dot_token__build_token_str();
   v_dot_token__keywords = v_dot_token__build_keys();
   v_dot_token__precedences = v_dot_token__build_precedences();
+  v_dot_types__unresolved_ti = v_dot_types__new_ti(
+      v_dot_types__v_dot_types__Kind_unresolved, tos3("unresolved"), 0, 0);
+  v_dot_types__void_ti =
+      v_dot_types__new_ti(v_dot_types__v_dot_types__Kind_void, tos3("void"),
+                          v_dot_types__void_type_idx, 0);
+  v_dot_types__int_ti =
+      v_dot_types__new_ti(v_dot_types__v_dot_types__Kind_int, tos3("int"),
+                          v_dot_types__int_type_idx, 0);
+  v_dot_types__string_ti =
+      v_dot_types__new_ti(v_dot_types__v_dot_types__Kind_string, tos3("string"),
+                          v_dot_types__string_type_idx, 0);
+  v_dot_types__bool_ti =
+      v_dot_types__new_ti(v_dot_types__v_dot_types__Kind_bool, tos3("bool"),
+                          v_dot_types__bool_type_idx, 0);
   os__S_IFMT = 0xF000;
   os__S_IFDIR = 0x4000;
   os__S_IFLNK = 0xa000;
