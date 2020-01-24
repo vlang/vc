@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2897bac"
+#define V_COMMIT_HASH "f556467"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "dd61a22"
+#define V_COMMIT_HASH "2897bac"
 #endif
 #include <inttypes.h>
 
@@ -20898,8 +20898,10 @@ string compiler__Parser_factor(compiler__Parser *p) {
     compiler__Token peek2 =
         (*(compiler__Token *)array_get(p->tokens, p->token_idx + 1));
     if (compiler__Parser_peek(&/* ? */ *p) ==
-            compiler__compiler__TokenKind_name &&
-        peek2.tok == compiler__compiler__TokenKind_colon) {
+            compiler__compiler__TokenKind_rcbr ||
+        (compiler__Parser_peek(&/* ? */ *p) ==
+             compiler__compiler__TokenKind_name &&
+         peek2.tok == compiler__compiler__TokenKind_colon)) {
       if (!string_ends_with(p->expected_type, tos3("Config"))) {
         compiler__Parser_error(
             p, tos3("short struct initialization syntax only works with "
@@ -23868,10 +23870,18 @@ bool compiler__Parser_gen_struct_init(compiler__Parser *p, string typ,
     array_set(&/*q*/ p->cgen->lines, p->cgen->lines.len - 1,
               &(string[]){tos3("")});
   };
+  bool is_config = 0;
   if (p->tok != compiler__compiler__TokenKind_lcbr) {
     compiler__Parser_next(p);
+  } else {
+    is_config = 1;
   };
   compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
+  if (is_config && p->tok == compiler__compiler__TokenKind_rcbr) {
+    compiler__Parser_check(p, compiler__compiler__TokenKind_rcbr);
+    compiler__Parser_gen(p, _STR("(%.*s) {}", typ.len, typ.str));
+    return 1;
+  };
   bool ptr = string_contains(typ, tos3("*"));
   if (!ptr) {
     if (p->is_c_struct_init) {
