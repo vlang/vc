@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7d79709"
+#define V_COMMIT_HASH "71b50ae"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "df2d3a2"
+#define V_COMMIT_HASH "7d79709"
 #endif
 #include <inttypes.h>
 
@@ -24216,7 +24216,8 @@ bool compiler__Parser_gen_struct_init(compiler__Parser *p, string typ,
   compiler__Parser_check(p, compiler__compiler__TokenKind_lcbr);
   if (is_config && p->tok == compiler__compiler__TokenKind_rcbr) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_rcbr);
-    compiler__Parser_gen(p, _STR("(%.*s) {}", typ.len, typ.str));
+    compiler__Parser_gen(
+        p, _STR("(%.*s) {EMPTY_STRUCT_INITIALIZATION}", typ.len, typ.str));
     return 1;
   };
   bool ptr = string_contains(typ, tos3("*"));
