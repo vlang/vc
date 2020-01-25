@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "71b50ae"
+#define V_COMMIT_HASH "222fc4b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7d79709"
+#define V_COMMIT_HASH "71b50ae"
 #endif
 #include <inttypes.h>
 
@@ -29788,7 +29788,8 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ_) {
       };
       string field_typ = field.typ;
       if (!p->builtin_mod && string_ends_with(field_typ, tos3("*")) &&
-          string_ne(p->mod, tos3("os")) && string_ne(p->mod, tos3("ui"))) {
+          !p->is_c_struct_init && string_ne(p->mod, tos3("os")) &&
+          string_ne(p->mod, tos3("ui"))) {
         compiler__Parser_warn(
             p, _STR("reference field `%.*s.%.*s` must be initialized", typ.len,
                     typ.str, field.name.len, field.name.str));
