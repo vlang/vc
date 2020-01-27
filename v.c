@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8986633"
+#define V_COMMIT_HASH "08d3401"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cce0b24"
+#define V_COMMIT_HASH "8986633"
 #endif
 #include <inttypes.h>
 
@@ -1630,6 +1630,7 @@ void array_sort_with_compare(array *a, void *compare);
 void array_insert(array *a, int i, void *val);
 void array_prepend(array *a, void *val);
 void v_array_delete(array *a, int i);
+void array_clear(array *a);
 void *array_get(array a, int i);
 void *array_first(array a);
 void *array_last(array a);
@@ -3579,6 +3580,7 @@ void v_array_delete(array *a, int i) {
           (a->len - i) * size);
   a->len--;
 }
+void array_clear(array *a) { a->len = 0; }
 void *array_get(array a, int i) {
   if (i < 0 || i >= a.len) {
     v_panic(
