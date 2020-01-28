@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "78c96fe"
+#define V_COMMIT_HASH "9ac0c54"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "08d3401"
+#define V_COMMIT_HASH "78c96fe"
 #endif
 #include <inttypes.h>
 
@@ -9418,11 +9418,15 @@ string term__h_divider(string divider) {
   return string_substr2(result, 0, cols, false);
 }
 _V_MulRet_int_V_int term__get_terminal_size() {
+  if (is_atty(1) <= 0 || string_eq(os__getenv(tos3("TERM")), tos3("dumb"))) {
+    return (_V_MulRet_int_V_int){.var_0 = 80, .var_1 = 25};
+  };
   struct /*c struct init*/
 
       winsize w;
   ioctl(0, TIOCGWINSZ, &w);
-  return (_V_MulRet_int_V_int){.var_0 = w.ws_col, .var_1 = w.ws_row};
+  return (_V_MulRet_int_V_int){.var_0 = ((int)(w.ws_col)),
+                               .var_1 = ((int)(w.ws_row))};
 }
 string vweb_dot_tmpl__compile_template(string path) {
   Option_string tmp1 = os__read_file(path);
