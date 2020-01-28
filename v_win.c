@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "08d3401"
+#define V_COMMIT_HASH "78c96fe"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8986633"
+#define V_COMMIT_HASH "08d3401"
 #endif
 #include <inttypes.h>
 
@@ -516,6 +516,7 @@ typedef struct v_dot_ast__ForCStmt v_dot_ast__ForCStmt;
 typedef struct v_dot_ast__ReturnStmt v_dot_ast__ReturnStmt;
 typedef struct v_dot_ast__AssignExpr v_dot_ast__AssignExpr;
 typedef struct v_dot_ast__ArrayInit v_dot_ast__ArrayInit;
+typedef struct _V_MulRet_int_V_int _V_MulRet_int_V_int;
 typedef struct v_dot_table__Table v_dot_table__Table;
 typedef array array_v_dot_table__Type;
 typedef array array_v_dot_table__Var;
@@ -807,6 +808,11 @@ struct _V_MulRet_bool_V_string {
 struct _V_MulRet_int_V_bool {
   int var_0;
   bool var_1;
+};
+
+struct _V_MulRet_int_V_int {
+  int var_0;
+  int var_1;
 };
 
 struct _V_MulRet_int_V_int_V_int {
@@ -2179,7 +2185,6 @@ bool term__can_show_color_on_stderr();
 bool term__supports_escape_sequences(int fd);
 string term__ok_message(string s);
 string term__fail_message(string s);
-string term__h_divider();
 string term__format(string msg, string open, string close);
 string term__format_rgb(int r, int g, int b, string msg, string open,
                         string close);
@@ -2245,6 +2250,8 @@ void term__erase_line_tobeg();
 void term__erase_line_clear();
 void term__show_cursor();
 void term__hide_cursor();
+string term__h_divider(string divider);
+_V_MulRet_int_V_int term__get_terminal_size();
 string vweb_dot_tmpl__compile_template(string path);
 string v_dot_table__Type_str(v_dot_table__Type t);
 v_dot_table__Table *v_dot_table__new_table();
@@ -9337,22 +9344,6 @@ string term__ok_message(string s) {
 string term__fail_message(string s) {
   return ((term__can_show_color_on_stdout()) ? (term__red(s)) : (s));
 }
-string term__h_divider() {
-  int cols = 76;
-  Option_os__Result tmp1 = os__exec(tos3("stty size"));
-
-  if (tmp1.ok) {
-    os__Result term_size = *(os__Result *)tmp1.data;
-    if (term_size.exit_code == 0) {
-      int term_cols = v_string_int(
-          (*(string *)array_get(string_split(term_size.output, tos3(" ")), 1)));
-      if (term_cols > 0) {
-        cols = term_cols;
-      };
-    };
-  };
-  return string_repeat(tos3("-"), cols);
-}
 string term__format(string msg, string open, string close) {
   return string_add(
       string_add(
@@ -9549,6 +9540,19 @@ void term__erase_line_tobeg() { term__erase_line(tos3("1")); }
 void term__erase_line_clear() { term__erase_line(tos3("2")); }
 void term__show_cursor() { print(tos3("\x1b[?25h")); }
 void term__hide_cursor() { print(tos3("\x1b[?25l")); }
+string term__h_divider(string divider) {
+  int cols = 76;
+  _V_MulRet_int_V_int _V_mret_20_term_cols__ = term__get_terminal_size();
+  int term_cols = _V_mret_20_term_cols__.var_0;
+  if (term_cols > 0) {
+    cols = term_cols;
+  };
+  string result = string_repeat(divider, 1 + (cols / divider.len));
+  return string_substr2(result, 0, cols, false);
+}
+_V_MulRet_int_V_int term__get_terminal_size() {
+  return (_V_MulRet_int_V_int){.var_0 = 80, .var_1 = 25};
+}
 string vweb_dot_tmpl__compile_template(string path) {
   Option_string tmp1 = os__read_file(path);
   string html;
