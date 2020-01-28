@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5a25341"
+#define V_COMMIT_HASH "5c00851"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9ac0c54"
+#define V_COMMIT_HASH "5a25341"
 #endif
 #include <inttypes.h>
 
@@ -1742,6 +1742,7 @@ string u64_str(u64 nn);
 string bool_str(bool b);
 string int_hex(int n);
 string i64_hex(i64 n);
+string u64_hex(u64 n);
 bool array_byte_contains(array_byte a, byte val);
 string rune_str(rune c);
 string byte_str(byte c);
@@ -4273,6 +4274,12 @@ string int_hex(int n) {
 }
 string i64_hex(i64 n) {
   int len = ((n >= ((i64)(0))) ? (i64_str(n).len + 3) : (19));
+  byte *hex = v_malloc(len);
+  int count = ((int)(sprintf(((charptr)(hex)), "0x%" PRIx64, n)));
+  return tos(hex, count);
+}
+string u64_hex(u64 n) {
+  int len = ((n >= ((u64)(0))) ? (u64_str(n).len + 3) : (19));
   byte *hex = v_malloc(len);
   int count = ((int)(sprintf(((charptr)(hex)), "0x%" PRIx64, n)));
   return tos(hex, count);
