@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a14a5fb"
+#define V_COMMIT_HASH "ed55778"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0f1b0f7"
+#define V_COMMIT_HASH "a14a5fb"
 #endif
 #include <inttypes.h>
 
@@ -271,6 +271,8 @@ int g_test_fails = 0;
 #define os__W_OK 2
 #define os__R_OK 4
 #define os__MAX_ERROR_CODE 15841
+#define term__default_columns_size 80
+#define term__default_rows_size 25
 #define vweb_dot_tmpl__STR_START tos3("sb.write(\'")
 #define vweb_dot_tmpl__STR_END tos3("\' ) ")
 #define v_dot_gen_dot_x64__mag1 'E'
@@ -2181,11 +2183,6 @@ void os__File_write_bytes(os__File *f, void *data, int size);
 void os__File_close(os__File *f);
 string v_dot_ast__Expr_str(v_dot_ast__Expr x);
 string v_dot_ast__Stmt_str(v_dot_ast__Stmt node);
-bool term__can_show_color_on_stdout();
-bool term__can_show_color_on_stderr();
-bool term__supports_escape_sequences(int fd);
-string term__ok_message(string s);
-string term__fail_message(string s);
 string term__format(string msg, string open, string close);
 string term__format_rgb(int r, int g, int b, string msg, string open,
                         string close);
@@ -2251,7 +2248,12 @@ void term__erase_line_tobeg();
 void term__erase_line_clear();
 void term__show_cursor();
 void term__hide_cursor();
+bool term__can_show_color_on_stdout();
+bool term__can_show_color_on_stderr();
+string term__ok_message(string s);
+string term__fail_message(string s);
 string term__h_divider(string divider);
+bool term__supports_escape_sequences(int fd);
 _V_MulRet_int_V_int term__get_terminal_size();
 string vweb_dot_tmpl__compile_template(string path);
 string v_dot_table__Type_str(v_dot_table__Type t);
@@ -9330,27 +9332,6 @@ string v_dot_ast__Stmt_str(v_dot_ast__Stmt node) {
     return tos3("[unhandled stmt str]");
   };
 }
-bool term__can_show_color_on_stdout() {
-  return term__supports_escape_sequences(1);
-}
-bool term__can_show_color_on_stderr() {
-  return term__supports_escape_sequences(2);
-}
-bool term__supports_escape_sequences(int fd) {
-#ifdef _WIN32
-  return (is_atty(fd) & 0x0004) > 0 &&
-         string_ne(os__getenv(tos3("TERM")), tos3("dumb"));
-#else
-  return is_atty(fd) > 0 && string_ne(os__getenv(tos3("TERM")), tos3("dumb"));
-#endif
-  ;
-}
-string term__ok_message(string s) {
-  return ((term__can_show_color_on_stdout()) ? (term__green(s)) : (s));
-}
-string term__fail_message(string s) {
-  return ((term__can_show_color_on_stdout()) ? (term__red(s)) : (s));
-}
 string term__format(string msg, string open, string close) {
   return string_add(
       string_add(
@@ -9547,15 +9528,32 @@ void term__erase_line_tobeg() { term__erase_line(tos3("1")); }
 void term__erase_line_clear() { term__erase_line(tos3("2")); }
 void term__show_cursor() { print(tos3("\x1b[?25h")); }
 void term__hide_cursor() { print(tos3("\x1b[?25l")); }
+bool term__can_show_color_on_stdout() {
+  return term__supports_escape_sequences(1);
+}
+bool term__can_show_color_on_stderr() {
+  return term__supports_escape_sequences(2);
+}
+string term__ok_message(string s) {
+  return ((term__can_show_color_on_stdout()) ? (term__green(s)) : (s));
+}
+string term__fail_message(string s) {
+  return ((term__can_show_color_on_stdout()) ? (term__red(s)) : (s));
+}
 string term__h_divider(string divider) {
-  int cols = 76;
-  _V_MulRet_int_V_int _V_mret_20_term_cols__ = term__get_terminal_size();
-  int term_cols = _V_mret_20_term_cols__.var_0;
-  if (term_cols > 0) {
-    cols = term_cols;
-  };
+  _V_MulRet_int_V_int _V_mret_103_cols__ = term__get_terminal_size();
+  int cols = _V_mret_103_cols__.var_0;
   string result = string_repeat(divider, 1 + (cols / divider.len));
   return string_substr2(result, 0, cols, false);
+}
+bool term__supports_escape_sequences(int fd) {
+#ifdef _WIN32
+  return (is_atty(fd) & 0x0004) > 0 &&
+         string_ne(os__getenv(tos3("TERM")), tos3("dumb"));
+#else
+  return is_atty(fd) > 0 && string_ne(os__getenv(tos3("TERM")), tos3("dumb"));
+#endif
+  ;
 }
 _V_MulRet_int_V_int term__get_terminal_size() {
   if (is_atty(1) > 0 && string_ne(os__getenv(tos3("TERM")), tos3("dumb"))) {
@@ -9567,7 +9565,8 @@ _V_MulRet_int_V_int term__get_terminal_size() {
       return (_V_MulRet_int_V_int){.var_0 = columns, .var_1 = rows};
     };
   };
-  return (_V_MulRet_int_V_int){.var_0 = 80, .var_1 = 25};
+  return (_V_MulRet_int_V_int){.var_0 = term__default_columns_size,
+                               .var_1 = term__default_rows_size};
 }
 string vweb_dot_tmpl__compile_template(string path) {
   Option_string tmp1 = os__read_file(path);
