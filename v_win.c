@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ed55778"
+#define V_COMMIT_HASH "80d936a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a14a5fb"
+#define V_COMMIT_HASH "ed55778"
 #endif
 #include <inttypes.h>
 
@@ -17324,22 +17324,24 @@ void compiler__Parser_attribute(compiler__Parser *p) {
   };
   compiler__Parser_check(p, compiler__compiler__TokenKind_rsbr);
   ;
+  bool is_pub = p->tok == compiler__compiler__TokenKind_key_pub;
+  compiler__TokenKind peek = compiler__Parser_peek(&/* ? */ *p);
   if (p->tok == compiler__compiler__TokenKind_key_fn ||
-      (p->tok == compiler__compiler__TokenKind_key_pub &&
-       compiler__Parser_peek(&/* ? */ *p) ==
-           compiler__compiler__TokenKind_key_fn)) {
+      (is_pub && peek == compiler__compiler__TokenKind_key_fn)) {
     compiler__Parser_fn_decl(p);
     p->attr = tos3("");
 
     return;
-  } else if (p->tok == compiler__compiler__TokenKind_key_struct) {
+  } else if (p->tok == compiler__compiler__TokenKind_key_struct ||
+             (is_pub && peek == compiler__compiler__TokenKind_key_struct)) {
     compiler__Parser_struct_decl(
         p, new_array_from_c_array(0, 0, sizeof(string),
                                   EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)}));
     p->attr = tos3("");
 
     return;
-  } else if (p->tok == compiler__compiler__TokenKind_key_enum) {
+  } else if (p->tok == compiler__compiler__TokenKind_key_enum ||
+             (is_pub && peek == compiler__compiler__TokenKind_key_enum)) {
     compiler__Parser_enum_decl(p, 0);
     p->attr = tos3("");
 
