@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "aa625bc"
+#define V_COMMIT_HASH "5f76bd0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c90b53b"
+#define V_COMMIT_HASH "aa625bc"
 #endif
 #include <inttypes.h>
 
@@ -32304,7 +32304,7 @@ void init() {
                      .comptime_define = tos3(""),
                      .is_used = 0};
   compiler__dot_ptr = tos3("->");
-  compiler__Version = tos3("0.1.24");
+  compiler__Version = tos3("0.1.25");
   compiler__supported_platforms = new_array_from_c_array(
       13, 13, sizeof(string),
       EMPTY_ARRAY_OF_ELEMS(string, 13){
