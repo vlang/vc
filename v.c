@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "05374e1"
+#define V_COMMIT_HASH "4ca2833"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "696926a"
+#define V_COMMIT_HASH "05374e1"
 #endif
 #include <inttypes.h>
 
@@ -14945,24 +14945,6 @@ string compiler__Parser_get_type(compiler__Parser *p) {
   bool mul = 0;
   int nr_muls = 0;
   string typ = tos3("");
-  if (p->tok == compiler__compiler__TokenKind_lpar) {
-    compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
-    array_string types = new_array_from_c_array(
-        0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-    while (1) {
-      _PUSH(&types,
-            (/*typ = array_string   tmp_typ=string*/ compiler__Parser_get_type(
-                p)),
-            tmp44, string);
-      if (p->tok != compiler__compiler__TokenKind_comma) {
-        break;
-      };
-      compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-    };
-    compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
-    typ = compiler__Parser_register_multi_return_stuct(p, types);
-    return typ;
-  };
   if (p->tok == compiler__compiler__TokenKind_key_fn) {
     compiler__Fn f =
         (compiler__Fn){.name = tos3("_"),
@@ -15027,11 +15009,34 @@ string compiler__Parser_get_type(compiler__Parser *p) {
     compiler__Table_register_type(p->table, fn_typ);
     return compiler__Fn_typ_str(&/* ? */ f);
   };
-  int arr_level = 0;
   bool is_question = p->tok == compiler__compiler__TokenKind_question;
   if (is_question) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_question);
   };
+  if (p->tok == compiler__compiler__TokenKind_lpar) {
+    compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
+    array_string types = new_array_from_c_array(
+        0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+    while (1) {
+      _PUSH(&types,
+            (/*typ = array_string   tmp_typ=string*/ compiler__Parser_get_type(
+                p)),
+            tmp44, string);
+      if (p->tok != compiler__compiler__TokenKind_comma) {
+        break;
+      };
+      compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
+    };
+    compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
+    typ = compiler__Parser_register_multi_return_stuct(p, types);
+    if (is_question) {
+      typ = compiler__stringify_pointer(typ);
+      typ = _STR("Option_%.*s", typ.len, typ.str);
+      compiler__Table_register_type_with_parent(p->table, typ, tos3("Option"));
+    };
+    return typ;
+  };
+  int arr_level = 0;
   while (p->tok == compiler__compiler__TokenKind_lsbr) {
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_lsbr);
@@ -15076,7 +15081,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
   map_string ti = p->generic_dispatch.inst;
   if ((_IN(string, (p->lit), map_keys(&/* ? */ ti)))) {
     string tmp45 = tos3("");
-    bool tmp46 = map_get(/*aparser.v : 1157*/ ti, p->lit, &tmp45);
+    bool tmp46 = map_get(/*aparser.v : 1164*/ ti, p->lit, &tmp45);
 
     if (!tmp46)
       tmp45 = tos((byte *)"", 0);
@@ -15120,11 +15125,11 @@ string compiler__Parser_get_type(compiler__Parser *p) {
       if (string_eq(t.name, tos3("")) && !p->pref->translated &&
           !compiler__Parser_first_pass(&/* ? */ *p) &&
           !string_starts_with(typ, tos3("["))) {
-        _V_MulRet_string_V_string _V_mret_5192_t_suggest_tc_suggest =
+        _V_MulRet_string_V_string _V_mret_5218_t_suggest_tc_suggest =
             compiler__Table_find_misspelled_type(&/* ? */ *p->table, typ, p,
                                                  0.50);
-        string t_suggest = _V_mret_5192_t_suggest_tc_suggest.var_0;
-        string tc_suggest = _V_mret_5192_t_suggest_tc_suggest.var_1;
+        string t_suggest = _V_mret_5218_t_suggest_tc_suggest.var_0;
+        string tc_suggest = _V_mret_5218_t_suggest_tc_suggest.var_1;
         if (t_suggest.len > 0) {
           t_suggest = _STR(". did you mean: (%.*s) `%.*s`", tc_suggest.len,
                            tc_suggest.str, t_suggest.len, t_suggest.str);
@@ -15137,7 +15142,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
                                                  tos3("/tmp/gen_vc/v/vlib/"
                                                       "compiler/aparser.v")),
                                       tos3(":")),
-                           tos3("1203")),
+                           tos3("1210")),
                        tos3(")")))
                  : (tos3("")));
         compiler__Parser_error(p, _STR("unknown type `%.*s`%.*s %.*s", typ.len,
@@ -15159,7 +15164,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
       string type_param = compiler__Parser_check_name(p);
       if ((_IN_MAP((type_param), p->generic_dispatch.inst))) {
         string tmp47 = tos3("");
-        bool tmp48 = map_get(/*aparser.v : 1219*/ p->generic_dispatch.inst,
+        bool tmp48 = map_get(/*aparser.v : 1226*/ p->generic_dispatch.inst,
                              type_param, &tmp47);
 
         if (!tmp48)
@@ -15501,9 +15506,9 @@ void compiler__Parser_assign_statement(compiler__Parser *p, compiler__Var v,
   string expr_type = compiler__Parser_bool_expression(p);
   p->is_var_decl = 0;
   if (string_eq(expr_type, tos3("void"))) {
-    _V_MulRet_bool_V_string _V_mret_7048___fn_name =
+    _V_MulRet_bool_V_string _V_mret_7074___fn_name =
         compiler__Parser_is_expr_fn_call(&/* ? */ *p, expr_tok + 1);
-    string fn_name = _V_mret_7048___fn_name.var_1;
+    string fn_name = _V_mret_7074___fn_name.var_1;
     compiler__Parser_error_with_token_index(
         p,
         _STR("%.*s() %.*s", fn_name.len, fn_name.str,
@@ -15682,9 +15687,9 @@ void compiler__Parser_var_decl(compiler__Parser *p) {
            : ((*(string *)array_get(var_names, 0))));
   string t = compiler__Parser_gen_var_decl(p, p->var_decl_name, is_static);
   if (string_eq(t, tos3("void"))) {
-    _V_MulRet_bool_V_string _V_mret_7920___fn_name =
+    _V_MulRet_bool_V_string _V_mret_7946___fn_name =
         compiler__Parser_is_expr_fn_call(&/* ? */ *p, expr_tok + 1);
-    string fn_name = _V_mret_7920___fn_name.var_1;
+    string fn_name = _V_mret_7946___fn_name.var_1;
     compiler__Parser_error_with_token_index(
         p,
         _STR("%.*s() %.*s", fn_name.len, fn_name.str,
@@ -16614,10 +16619,10 @@ string compiler__Parser_map_init(compiler__Parser *p) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_str);
       compiler__Parser_check(p, compiler__compiler__TokenKind_colon);
       ;
-      _V_MulRet_string_V_string _V_mret_12079_t_val_expr =
+      _V_MulRet_string_V_string _V_mret_12105_t_val_expr =
           compiler__Parser_tmp_expr(p);
-      string t = _V_mret_12079_t_val_expr.var_0;
-      string val_expr = _V_mret_12079_t_val_expr.var_1;
+      string t = _V_mret_12105_t_val_expr.var_0;
+      string val_expr = _V_mret_12105_t_val_expr.var_1;
       if (i == 0) {
         val_type = t;
       };
@@ -16907,6 +16912,7 @@ void compiler__Parser_return_st(compiler__Parser *p) {
     bool is_none = p->tok == compiler__compiler__TokenKind_key_none;
     p->expected_type = p->cur_fn.typ;
     string expr_type = compiler__Parser_bool_expression(p);
+    string expr_type_chk = expr_type;
     array_string types = new_array_from_c_array(
         0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
     array_string mr_values = new_array_from_c_array(
@@ -16918,10 +16924,10 @@ void compiler__Parser_return_st(compiler__Parser *p) {
     while (p->tok == compiler__compiler__TokenKind_comma) {
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-      _V_MulRet_string_V_string _V_mret_13545_typ_expr =
+      _V_MulRet_string_V_string _V_mret_13575_typ_expr =
           compiler__Parser_tmp_expr(p);
-      string typ = _V_mret_13545_typ_expr.var_0;
-      string expr = _V_mret_13545_typ_expr.var_1;
+      string typ = _V_mret_13575_typ_expr.var_0;
+      string expr = _V_mret_13575_typ_expr.var_1;
       _PUSH(&types, (/*typ = array_string   tmp_typ=string*/ typ), tmp160,
             string);
       _PUSH(&mr_values,
@@ -16930,16 +16936,20 @@ void compiler__Parser_return_st(compiler__Parser *p) {
     };
     string cur_fn_typ_chk = p->cur_fn.typ;
     if (types.len > 1) {
-      expr_type = array_string_join(types, tos3(","));
+      string mr_type = ((string_starts_with(p->cur_fn.typ, tos3("Option_")))
+                            ? (string_substr2(p->cur_fn.typ, 7, -1, true))
+                            : (p->cur_fn.typ));
+      expr_type = mr_type;
+      expr_type_chk = array_string_join(types, tos3(","));
       cur_fn_typ_chk = string_replace(
           string_replace(
               string_replace(cur_fn_typ_chk, tos3("_V_MulRet_"), tos3("")),
               tos3("_PTR_"), tos3("*")),
           tos3("_V_"), tos3(","));
       string ret_fields = tos3("");
-      array_string tmp162 = mr_values;
-      for (int ret_val_idx = 0; ret_val_idx < tmp162.len; ret_val_idx++) {
-        string ret_val = ((string *)tmp162.data)[ret_val_idx];
+      array_string tmp164 = mr_values;
+      for (int ret_val_idx = 0; ret_val_idx < tmp164.len; ret_val_idx++) {
+        string ret_val = ((string *)tmp164.data)[ret_val_idx];
 
         if (ret_val_idx > 0) {
           ret_fields = string_add(ret_fields, tos3(","));
@@ -16947,9 +16957,9 @@ void compiler__Parser_return_st(compiler__Parser *p) {
         ret_fields = string_add(ret_fields, _STR(".var_%d=%.*s", ret_val_idx,
                                                  ret_val.len, ret_val.str));
       };
-      compiler__CGen_resetln(p->cgen, _STR("(%.*s){%.*s}", p->cur_fn.typ.len,
-                                           p->cur_fn.typ.str, ret_fields.len,
-                                           ret_fields.str));
+      compiler__CGen_resetln(p->cgen,
+                             _STR("(%.*s){%.*s}", mr_type.len, mr_type.str,
+                                  ret_fields.len, ret_fields.str));
     };
     p->inside_return_expr = 0;
     if (string_ends_with(p->cur_fn.typ,
@@ -16987,7 +16997,7 @@ void compiler__Parser_return_st(compiler__Parser *p) {
         compiler__Parser_genln(p, _STR("return %.*s;", tmp.len, tmp.str));
       };
     };
-    compiler__Parser_check_types(p, expr_type, cur_fn_typ_chk);
+    compiler__Parser_check_types(p, expr_type_chk, cur_fn_typ_chk);
   } else {
     if (p->tok == compiler__compiler__TokenKind_name ||
         p->tok == compiler__compiler__TokenKind_number ||
@@ -17009,9 +17019,9 @@ void compiler__Parser_return_st(compiler__Parser *p) {
 }
 string compiler__Parser_get_deferred_text(compiler__Parser *p) {
   string deferred_text = tos3("");
-  array_string tmp167 = p->cur_fn.defer_text;
-  for (int tmp168 = 0; tmp168 < tmp167.len; tmp168++) {
-    string text = ((string *)tmp167.data)[tmp168];
+  array_string tmp169 = p->cur_fn.defer_text;
+  for (int tmp170 = 0; tmp170 < tmp169.len; tmp170++) {
+    string text = ((string *)tmp169.data)[tmp170];
 
     if (string_ne(text, tos3(""))) {
       deferred_text = string_add(text, deferred_text);
@@ -17031,45 +17041,45 @@ void compiler__Parser_go_statement(compiler__Parser *p) {
   int gotoken_idx = compiler__Parser_cur_tok_index(&/* ? */ *p);
   if (compiler__Parser_peek(&/* ? */ *p) == compiler__compiler__TokenKind_dot) {
     string var_name = p->lit;
-    Option_compiler__Var tmp169 =
+    Option_compiler__Var tmp171 =
         compiler__Parser_find_var(&/* ? */ *p, var_name);
     compiler__Var v;
-    if (!tmp169.ok) {
-      string err = tmp169.error;
-      int errcode = tmp169.ecode;
+    if (!tmp171.ok) {
+      string err = tmp171.error;
+      int errcode = tmp171.ecode;
 
       return;
     }
-    v = *(compiler__Var *)tmp169.data;
+    v = *(compiler__Var *)tmp171.data;
     ;
     compiler__Parser_mark_var_used(p, v);
     gotoken_idx = compiler__Parser_cur_tok_index(&/* ? */ *p);
     compiler__Parser_next(p);
     compiler__Parser_check(p, compiler__compiler__TokenKind_dot);
     compiler__Type typ = compiler__Table_find_type(&/* ? */ *p->table, v.typ);
-    Option_compiler__Fn tmp170 =
+    Option_compiler__Fn tmp172 =
         compiler__Table_find_method(&/* ? */ *p->table, &/*114*/ typ, p->lit);
     compiler__Fn method;
-    if (!tmp170.ok) {
-      string err = tmp170.error;
-      int errcode = tmp170.ecode;
+    if (!tmp172.ok) {
+      string err = tmp172.error;
+      int errcode = tmp172.ecode;
       compiler__Parser_error_with_token_index(
           p, _STR("go method missing %.*s", var_name.len, var_name.str),
           gotoken_idx);
 
       return;
     }
-    method = *(compiler__Fn *)tmp170.data;
+    method = *(compiler__Fn *)tmp172.data;
     ;
     compiler__Parser_async_fn_call(p, method, 0, var_name, v.typ);
   } else {
     string f_name = p->lit;
-    Option_compiler__Fn tmp171 = compiler__Table_find_fn(
+    Option_compiler__Fn tmp173 = compiler__Table_find_fn(
         &/* ? */ *p->table, compiler__Parser_prepend_mod(&/* ? */ *p, f_name));
     compiler__Fn f;
-    if (!tmp171.ok) {
-      string err = tmp171.error;
-      int errcode = tmp171.ecode;
+    if (!tmp173.ok) {
+      string err = tmp173.error;
+      int errcode = tmp173.ecode;
       println(compiler__Table_debug_fns(&/* ? */ *p->table));
       compiler__Parser_error_with_token_index(
           p, _STR("can not find function %.*s", f_name.len, f_name.str),
@@ -17077,7 +17087,7 @@ void compiler__Parser_go_statement(compiler__Parser *p) {
 
       return;
     }
-    f = *(compiler__Fn *)tmp171.data;
+    f = *(compiler__Fn *)tmp173.data;
     ;
     if (string_eq(f.name, tos3("println")) ||
         string_eq(f.name, tos3("print"))) {
@@ -17096,19 +17106,19 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
     string typ = compiler__Parser_get_type(p);
     compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-    _V_MulRet_string_V_string _V_mret_14330_styp_expr =
+    _V_MulRet_string_V_string _V_mret_14391_styp_expr =
         compiler__Parser_tmp_expr(p);
-    string styp = _V_mret_14330_styp_expr.var_0;
-    string expr = _V_mret_14330_styp_expr.var_1;
+    string styp = _V_mret_14391_styp_expr.var_0;
+    string expr = _V_mret_14391_styp_expr.var_1;
     compiler__Parser_check_types(p, styp, tos3("string"));
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
     string tmp = compiler__Parser_get_tmp(p);
     string cjson_tmp = compiler__Parser_get_tmp(p);
     string decl = _STR("%.*s %.*s; ", typ.len, typ.str, tmp.len, tmp.str);
     compiler__Type T = compiler__Table_find_type(&/* ? */ *p->table, typ);
-    array_compiler__Var tmp172 = T.fields;
-    for (int tmp173 = 0; tmp173 < tmp172.len; tmp173++) {
-      compiler__Var field = ((compiler__Var *)tmp172.data)[tmp173];
+    array_compiler__Var tmp174 = T.fields;
+    for (int tmp175 = 0; tmp175 < tmp174.len; tmp175++) {
+      compiler__Var field = ((compiler__Var *)tmp174.data)[tmp175];
 
       string def_val = compiler__type_default(field.typ);
       if (string_ne(def_val, tos3(""))) {
@@ -17131,15 +17141,15 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     _PUSH(&p->cgen->typedefs,
           (/*typ = array_string   tmp_typ=string*/ _STR(
               "typedef Option %.*s;", opt_type.len, opt_type.str)),
-          tmp174, string);
+          tmp176, string);
     compiler__Table_register_builtin(p->table, opt_type);
     return opt_type;
   } else if (string_eq(op, tos3("encode"))) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
-    _V_MulRet_string_V_string _V_mret_14510_typ_expr =
+    _V_MulRet_string_V_string _V_mret_14571_typ_expr =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_14510_typ_expr.var_0;
-    string expr = _V_mret_14510_typ_expr.var_1;
+    string typ = _V_mret_14571_typ_expr.var_0;
+    string expr = _V_mret_14571_typ_expr.var_1;
     compiler__Type T = compiler__Table_find_type(&/* ? */ *p->table, typ);
     compiler__Parser_gen_json_for_type(p, T);
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
@@ -17211,15 +17221,15 @@ void compiler__Parser_defer_st(compiler__Parser *p) {
 }
 void compiler__Parser_check_and_register_used_imported_type(compiler__Parser *p,
                                                             string typ_name) {
-  Option_int tmp179 = string_index(typ_name, tos3("__"));
+  Option_int tmp181 = string_index(typ_name, tos3("__"));
   int us_idx;
-  if (!tmp179.ok) {
-    string err = tmp179.error;
-    int errcode = tmp179.ecode;
+  if (!tmp181.ok) {
+    string err = tmp181.error;
+    int errcode = tmp181.ecode;
 
     return;
   }
-  us_idx = *(int *)tmp179.data;
+  us_idx = *(int *)tmp181.data;
   ;
   string arg_mod = string_substr2(typ_name, 0, us_idx, false);
   if (string_contains(arg_mod, tos3("_dot_"))) {
@@ -17236,12 +17246,12 @@ void compiler__Parser_check_unused_imports(compiler__Parser *p) {
     return;
   };
   string output = tos3("");
-  map_string tmp182 = p->import_table.imports;
-  array_string keys_tmp182 = map_keys(&tmp182);
-  for (int l = 0; l < keys_tmp182.len; l++) {
-    string alias = ((string *)keys_tmp182.data)[l];
+  map_string tmp184 = p->import_table.imports;
+  array_string keys_tmp184 = map_keys(&tmp184);
+  for (int l = 0; l < keys_tmp184.len; l++) {
+    string alias = ((string *)keys_tmp184.data)[l];
     string mod = tos3("");
-    map_get(tmp182, alias, &mod);
+    map_get(tmp184, alias, &mod);
 
     if (!compiler__ImportTable_is_used_import(&/* ? */ p->import_table,
                                               alias)) {
@@ -17392,8 +17402,9 @@ void compiler__V_cc(compiler__V *v) {
   bool ends_with_c = string_ends_with(v->out_name, tos3(".c"));
   bool ends_with_js = string_ends_with(v->out_name, tos3(".js"));
   if (v->pref->is_pretty_c && !ends_with_js) {
-    Option_os__Result tmp2 = os__exec(
-        _STR("clang-format -i \"%.*s\"", v->out_name_c.len, v->out_name_c.str));
+    Option_os__Result tmp2 =
+        os__exec(_STR("clang-format -i -style=file \"%.*s\"", v->out_name_c.len,
+                      v->out_name_c.str));
     os__Result format_result;
     if (!tmp2.ok) {
       string err = tmp2.error;
@@ -24354,41 +24365,6 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
   int nr_muls = 0;
   string typ = tos3("");
   compiler__TypeCategory cat = compiler__compiler__TypeCategory_struct_;
-  if (p->tok == compiler__compiler__TokenKind_lpar) {
-    compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
-    array_string types = new_array_from_c_array(
-        0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-    while (1) {
-      _PUSH(&types,
-            (/*typ = array_string   tmp_typ=string*/ compiler__Parser_get_type(
-                p)),
-            tmp1, string);
-      if (p->tok != compiler__compiler__TokenKind_comma) {
-        break;
-      };
-      compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-      ;
-    };
-    compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
-    typ = compiler__Parser_register_multi_return_stuct(p, types);
-    return (compiler__Type){.name = typ,
-                            .mod = p->mod,
-                            .cat = cat,
-                            .is_public = 0,
-                            .fields = new_array(0, 1, sizeof(compiler__Var)),
-                            .methods = new_array(0, 1, sizeof(compiler__Fn)),
-                            .parent = tos3(""),
-                            .is_c = 0,
-                            .enum_vals = new_array(0, 1, sizeof(string)),
-                            .gen_types = new_array(0, 1, sizeof(string)),
-                            .default_vals = new_array(0, 1, sizeof(string)),
-                            .parser_idx = 0,
-                            .decl_tok_idx = 0,
-                            .is_placeholder = 0,
-                            .gen_str = 0,
-                            .is_flag = 0,
-                            .is_generic = 0};
-  };
   if (p->tok == compiler__compiler__TokenKind_key_fn) {
     compiler__Fn f =
         (compiler__Fn){.name = tos3("_"),
@@ -24454,11 +24430,51 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
     compiler__Table_register_type(p->table, fn_typ);
     return fn_typ;
   };
-  int arr_level = 0;
   bool is_question = p->tok == compiler__compiler__TokenKind_question;
   if (is_question) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_question);
   };
+  if (p->tok == compiler__compiler__TokenKind_lpar) {
+    compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
+    array_string types = new_array_from_c_array(
+        0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+    while (1) {
+      _PUSH(&types,
+            (/*typ = array_string   tmp_typ=string*/ compiler__Parser_get_type(
+                p)),
+            tmp1, string);
+      if (p->tok != compiler__compiler__TokenKind_comma) {
+        break;
+      };
+      compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
+      ;
+    };
+    compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
+    typ = compiler__Parser_register_multi_return_stuct(p, types);
+    if (is_question) {
+      typ = compiler__stringify_pointer(typ);
+      typ = _STR("Option_%.*s", typ.len, typ.str);
+      compiler__Table_register_type_with_parent(p->table, typ, tos3("Option"));
+    };
+    return (compiler__Type){.name = typ,
+                            .mod = p->mod,
+                            .cat = cat,
+                            .is_public = 0,
+                            .fields = new_array(0, 1, sizeof(compiler__Var)),
+                            .methods = new_array(0, 1, sizeof(compiler__Fn)),
+                            .parent = tos3(""),
+                            .is_c = 0,
+                            .enum_vals = new_array(0, 1, sizeof(string)),
+                            .gen_types = new_array(0, 1, sizeof(string)),
+                            .default_vals = new_array(0, 1, sizeof(string)),
+                            .parser_idx = 0,
+                            .decl_tok_idx = 0,
+                            .is_placeholder = 0,
+                            .gen_str = 0,
+                            .is_flag = 0,
+                            .is_generic = 0};
+  };
+  int arr_level = 0;
   while (p->tok == compiler__compiler__TokenKind_lsbr) {
 
     compiler__Parser_check(p, compiler__compiler__TokenKind_lsbr);
@@ -24523,7 +24539,7 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
   map_string ti = p->generic_dispatch.inst;
   if ((_IN(string, (p->lit), map_keys(&/* ? */ ti)))) {
     string tmp2 = tos3("");
-    bool tmp3 = map_get(/*get_type.v : 130*/ ti, p->lit, &tmp2);
+    bool tmp3 = map_get(/*get_type.v : 137*/ ti, p->lit, &tmp2);
 
     if (!tmp3)
       tmp2 = tos((byte *)"", 0);
@@ -24566,11 +24582,11 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
       if (string_eq(t.name, tos3("")) && !p->pref->translated &&
           !compiler__Parser_first_pass(&/* ? */ *p) &&
           !string_starts_with(typ, tos3("["))) {
-        _V_MulRet_string_V_string _V_mret_782_t_suggest_tc_suggest =
+        _V_MulRet_string_V_string _V_mret_808_t_suggest_tc_suggest =
             compiler__Table_find_misspelled_type(&/* ? */ *p->table, typ, p,
                                                  0.50);
-        string t_suggest = _V_mret_782_t_suggest_tc_suggest.var_0;
-        string tc_suggest = _V_mret_782_t_suggest_tc_suggest.var_1;
+        string t_suggest = _V_mret_808_t_suggest_tc_suggest.var_0;
+        string tc_suggest = _V_mret_808_t_suggest_tc_suggest.var_1;
         if (t_suggest.len > 0) {
           t_suggest = _STR(". did you mean: (%.*s) `%.*s`", tc_suggest.len,
                            tc_suggest.str, t_suggest.len, t_suggest.str);
@@ -24583,7 +24599,7 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
                                                  tos3("/tmp/gen_vc/v/vlib/"
                                                       "compiler/get_type.v")),
                                       tos3(":")),
-                           tos3("178")),
+                           tos3("185")),
                        tos3(")")))
                  : (tos3("")));
         compiler__Parser_error(p, _STR("unknown type `%.*s`%.*s %.*s", typ.len,
