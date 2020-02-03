@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "50b704c"
+#define V_COMMIT_HASH "1ac7a95"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "34e9eb3"
+#define V_COMMIT_HASH "50b704c"
 #endif
 #include <inttypes.h>
 
@@ -1857,6 +1857,8 @@ int array_string_index(array_string a, string v);
 int array_int_index(array_int a, int v);
 int array_byte_index(array_byte a, byte v);
 int array_char_index(array_char a, char v);
+int array_int_reduce(array_int a, int (*iter)(int accum, int curr /*FFF*/),
+                     int accum_start);
 bool array_int_eq(array_int a, array_int a2);
 bool array_i64_eq(array_i64 a, array_i64 a2);
 bool array_string_eq(array_string a, array_string a2);
@@ -4087,6 +4089,16 @@ int array_char_index(array_char a, char v) {
     };
   };
   return -1;
+}
+int array_int_reduce(array_int a, int (*iter)(int accum, int curr /*FFF*/),
+                     int accum_start) {
+  int _accum = 0;
+  _accum = accum_start;
+  for (int i = 0; i < a.len; i++) {
+
+    _accum = iter(_accum, (*(int *)array_get(a, i)));
+  };
+  return _accum;
 }
 bool array_int_eq(array_int a, array_int a2) { return array_eq_T_int(a, a2); }
 bool array_i64_eq(array_i64 a, array_i64 a2) { return array_eq_T_i64(a, a2); }
