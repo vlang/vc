@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7165327"
+#define V_COMMIT_HASH "da21b50"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4fc5294"
+#define V_COMMIT_HASH "7165327"
 #endif
 #include <inttypes.h>
 
@@ -9691,16 +9691,17 @@ Option_os__Result os__exec(string cmd) {
   if (isnil(f)) {
     return v_error(_STR("exec(\"%.*s\") failed", cmd.len, cmd.str));
   };
-  byte buf[1000] = {0};
-  string res = tos3("");
-  while (fgets(((charptr)(buf)), 1000, f) != 0) {
+  byte buf[4096] = {0};
+  strings__Builder res = strings__new_builder(1024);
+  while (fgets(((charptr)(buf)), 4096, f) != 0) {
 
-    res = string_add(res, tos(buf, vstrlen(buf)));
+    strings__Builder_write_bytes(&/* ? */ res, buf, vstrlen(buf));
   };
-  res = string_trim_space(res);
+  string soutput = string_trim_space(strings__Builder_str(&/* ? */ res));
+  strings__Builder_free(&/* ? */ res);
   int exit_code = os__vpclose(f);
   os__Result tmp10 = OPTION_CAST(os__Result)(
-      (os__Result){.output = res, .exit_code = exit_code});
+      (os__Result){.output = soutput, .exit_code = exit_code});
   return opt_ok(&tmp10, sizeof(os__Result));
 }
 Option_bool os__symlink(string origin, string target) {

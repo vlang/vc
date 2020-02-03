@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7165327"
+#define V_COMMIT_HASH "da21b50"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4fc5294"
+#define V_COMMIT_HASH "7165327"
 #endif
 #include <inttypes.h>
 
@@ -9815,25 +9815,26 @@ Option_os__Result os__exec(string cmd) {
   };
   CloseHandle(child_stdin);
   CloseHandle(child_stdout_write);
-  byte buf[1000] = {0};
+  byte buf[4096] = {0};
   u32 bytes_read = ((u32)(0));
-  string read_data = tos3("");
+  strings__Builder read_data = strings__new_builder(1024);
   while (1) {
     bool readfile_result =
         ReadFile(child_stdout_read, buf, 1000, ((voidptr)(&bytes_read)), 0);
-    read_data = string_add(read_data, tos(buf, ((int)(bytes_read))));
+    strings__Builder_write_bytes(&/* ? */ read_data, buf, ((int)(bytes_read)));
     if (readfile_result == 0 || ((int)(bytes_read)) == 0) {
       break;
     };
   };
-  read_data = string_trim_space(read_data);
+  string soutput = string_trim_space(strings__Builder_str(&/* ? */ read_data));
+  strings__Builder_free(&/* ? */ read_data);
   u32 exit_code = ((u32)(0));
   WaitForSingleObject(proc_info.hProcess, INFINITE);
   GetExitCodeProcess(proc_info.hProcess, ((voidptr)(&exit_code)));
   CloseHandle(proc_info.hProcess);
   CloseHandle(proc_info.hThread);
   os__Result tmp11 = OPTION_CAST(os__Result)(
-      (os__Result){.output = read_data, .exit_code = ((int)(exit_code))});
+      (os__Result){.output = soutput, .exit_code = ((int)(exit_code))});
   return opt_ok(&tmp11, sizeof(os__Result));
 }
 Option_bool os__symlink(string origin, string target) {
