@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b1bf2e0"
+#define V_COMMIT_HASH "21b6dac"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "01f45f0"
+#define V_COMMIT_HASH "b1bf2e0"
 #endif
 #include <inttypes.h>
 
@@ -417,6 +417,7 @@ typedef struct varg_string varg_string;
 typedef struct time__Time time__Time;
 typedef Option Option_int;
 typedef struct _V_MulRet_int_V_int_V_int _V_MulRet_int_V_int_V_int;
+typedef struct v_dot_pref__Preferences v_dot_pref__Preferences;
 typedef struct {
   void *obj;
   int typ;
@@ -451,7 +452,6 @@ typedef struct v_dot_token__Position v_dot_token__Position;
 typedef struct v_dot_token__Token v_dot_token__Token;
 typedef array array_v_dot_token__Kind;
 typedef array array_v_dot_token__Precedence;
-typedef struct v_dot_pref__Preferences v_dot_pref__Preferences;
 typedef struct os__File os__File;
 typedef struct os__FileInfo os__FileInfo;
 typedef Option Option_array_byte;
@@ -555,7 +555,6 @@ typedef struct _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type
     _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type;
 typedef struct v_dot_builder__Builder v_dot_builder__Builder;
 typedef Option Option_string;
-typedef struct v_dot_builder__Preferences v_dot_builder__Preferences;
 typedef struct compiler__Parser compiler__Parser;
 typedef array array_compiler__Token;
 typedef array array_compiler__Var;
@@ -588,7 +587,6 @@ typedef struct _V_MulRet_string_V_array_string _V_MulRet_string_V_array_string;
 typedef array array_compiler__Fn;
 typedef struct compiler__V compiler__V;
 typedef array array_compiler__Parser;
-typedef struct compiler__Preferences compiler__Preferences;
 typedef Option Option_int;
 typedef struct compiler__VhGen compiler__VhGen;
 typedef struct compiler__ImportTable compiler__ImportTable;
@@ -629,6 +627,8 @@ typedef int time__FormatTime;
 typedef int time__FormatDate;
 typedef int time__FormatDelimiter;
 typedef Option Option_int;
+typedef int v_dot_pref__BuildMode;
+typedef int v_dot_pref__OS;
 typedef int v_dot_table__Kind;
 typedef Option Option_v_dot_table__Var;
 typedef Option Option_v_dot_table__Fn;
@@ -638,7 +638,6 @@ typedef Option Option_v_dot_table__Field;
 typedef Option Option_v_dot_table__Type;
 typedef int v_dot_token__Kind;
 typedef int v_dot_token__Precedence;
-typedef int v_dot_pref__BuildMode;
 typedef Option Option_array_byte;
 typedef Option Option_string;
 typedef Option Option_bool;
@@ -659,14 +658,12 @@ typedef int v_dot_gen_dot_x64__SectionType;
 typedef int v_dot_gen_dot_x64__Register;
 typedef int v_dot_gen_dot_x64__Size;
 typedef Option Option_string;
-typedef int v_dot_builder__OS;
 typedef int compiler__IndexType;
 typedef Option Option_bool;
 typedef map map_compiler__DepGraphNode;
 typedef Option Option_compiler__Var;
 typedef Option Option_compiler__Var;
 typedef Option Option_compiler__Var;
-typedef int compiler__BuildMode;
 typedef int compiler__Pass;
 typedef Option Option_int;
 typedef Option Option_string;
@@ -922,46 +919,6 @@ struct compiler__ParserState {
   string lit;
 };
 
-struct compiler__Preferences {
-  compiler__BuildMode build_mode;
-  bool is_test;
-  bool is_script;
-  bool is_live;
-  bool is_solive;
-  bool is_so;
-  bool is_prof;
-  bool translated;
-  bool is_prod;
-  bool is_verbose;
-  bool obfuscate;
-  bool is_repl;
-  bool is_run;
-  bool show_c_cmd;
-  bool sanitize;
-  bool is_debug;
-  bool is_vlines;
-  bool is_keep_c;
-  bool is_pretty_c;
-  bool is_cache;
-  bool is_stats;
-  bool no_auto_free;
-  string cflags;
-  string ccompiler;
-  bool building_v;
-  bool autofree;
-  bool compress;
-  bool fast;
-  bool enable_globals;
-  bool is_bare;
-  string user_mod_path;
-  string vlib_path;
-  string vpath;
-  bool x64;
-  bool output_cross_c;
-  bool prealloc;
-  bool v2;
-};
-
 struct compiler__ScanRes {
   compiler__TokenKind tok;
   string lit;
@@ -1168,16 +1125,15 @@ struct v_dot_ast__RangeExpr {
   v_dot_ast__Expr high;
 };
 
-struct v_dot_builder__Preferences {
-  string vpath;
-  string vlib_path;
-  string compile_dir;
-  string mod_path;
-  string user_mod_path;
+struct v_dot_builder__Builder {
+  v_dot_pref__Preferences *pref;
+  v_dot_table__Table *table;
+  v_dot_checker__Checker checker;
+  v_dot_pref__OS os;
+  string compiled_dir;
+  string module_path;
   array_string module_search_paths;
-  v_dot_builder__OS os;
-  bool is_test;
-  bool is_verbose;
+  array_v_dot_ast__File parsed_files;
 };
 
 struct v_dot_gen_dot_x64__Gen {
@@ -1387,7 +1343,7 @@ struct compiler__Parser {
   string file_platform;
   string file_pcguard;
   compiler__V *v;
-  compiler__Preferences *pref;
+  v_dot_pref__Preferences *pref;
   compiler__Scanner *scanner;
   array_compiler__Token tokens;
   int token_idx;
@@ -1400,7 +1356,7 @@ struct compiler__Parser {
   compiler__Table *table;
   compiler__ImportTable import_table;
   compiler__Pass pass;
-  v_dot_builder__OS os;
+  v_dot_pref__OS os;
   bool inside_const;
   compiler__Var expr_var;
   bool has_immutable_field;
@@ -1467,14 +1423,14 @@ struct compiler__Type {
 };
 
 struct compiler__V {
-  v_dot_builder__OS os;
+  v_dot_pref__OS os;
   string out_name_c;
   array_string files;
   string dir;
   string compiled_dir;
   compiler__Table *table;
   compiler__CGen *cgen;
-  compiler__Preferences *pref;
+  v_dot_pref__Preferences *pref;
   string lang_dir;
   string out_name;
   string vroot;
@@ -1644,13 +1600,6 @@ struct v_dot_ast__VarDecl {
   bool is_mut;
   v_dot_table__Type typ;
   v_dot_token__Position pos;
-};
-
-struct v_dot_builder__Builder {
-  v_dot_table__Table *table;
-  v_dot_checker__Checker checker;
-  v_dot_builder__Preferences prefs;
-  array_v_dot_ast__File parsed_files;
 };
 
 struct v_dot_gen__Gen {
@@ -2543,20 +2492,18 @@ v_dot_ast__VarDecl v_dot_parser__Parser_var_decl(v_dot_parser__Parser *p);
 v_dot_ast__GlobalDecl v_dot_parser__Parser_global_decl(v_dot_parser__Parser *p);
 void v_dot_parser__verror(string s);
 v_dot_builder__Builder
-v_dot_builder__new_builder(v_dot_builder__Preferences prefs);
+v_dot_builder__new_builder(v_dot_pref__Preferences *pref);
 string v_dot_builder__Builder_gen_c(v_dot_builder__Builder *b,
                                     array_string v_files);
 void v_dot_builder__Builder_build_c(v_dot_builder__Builder *b,
                                     array_string v_files, string out_file);
 void v_dot_builder__Builder_build_x64(v_dot_builder__Builder *b,
                                       array_string v_files, string out_file);
-void v_dot_builder__Builder_parse_module_files(v_dot_builder__Builder *b);
 void v_dot_builder__Builder_parse_imports(v_dot_builder__Builder *b);
 array_string v_dot_builder__Builder_v_files_from_dir(v_dot_builder__Builder *b,
                                                      string dir);
 void v_dot_builder__verror(string err);
 void v_dot_builder__Builder_log(v_dot_builder__Builder *b, string s);
-void v_dot_builder__Builder_set_module_search_paths(v_dot_builder__Builder *b);
 static inline string v_dot_builder__module_path(string mod);
 Option_string v_dot_builder__Builder_find_module_path(v_dot_builder__Builder *b,
                                                       string mod);
@@ -2937,7 +2884,7 @@ int compiler__V_parse(compiler__V *v, string file, compiler__Pass pass);
 void compiler__V_compile(compiler__V *v);
 void compiler__V_compile2(compiler__V *v);
 void compiler__V_compile_x64(compiler__V *v);
-v_dot_builder__Preferences compiler__V_v2_prefs(compiler__V *v);
+v_dot_builder__Builder compiler__V_new_v2(compiler__V *v);
 void compiler__V_generate_init(compiler__V *v);
 void compiler__V_generate_main(compiler__V *v);
 void compiler__V_gen_main_start(compiler__V *v, bool add_os_args);
@@ -2959,7 +2906,7 @@ string compiler__vexe_path();
 void compiler__verror(string s);
 string compiler__vhash();
 string compiler__cescaped_path(string s);
-v_dot_builder__OS compiler__os_from_string(string os);
+v_dot_pref__OS compiler__os_from_string(string os);
 void compiler__set_vroot_folder(string vroot_path);
 compiler__V *compiler__new_v_compiler_with_args(array_string args);
 void compiler__generate_vh(string mod);
@@ -3233,6 +3180,19 @@ array_int time__days_before;
 #define time__time__FormatDelimiter_hyphen 1
 #define time__time__FormatDelimiter_slash 2
 #define time__time__FormatDelimiter_space 3
+#define v_dot_pref__v_dot_pref__BuildMode_default_mode 0
+#define v_dot_pref__v_dot_pref__BuildMode_build_module 1
+#define v_dot_pref__v_dot_pref__OS_mac 0
+#define v_dot_pref__v_dot_pref__OS_linux 1
+#define v_dot_pref__v_dot_pref__OS_windows 2
+#define v_dot_pref__v_dot_pref__OS_freebsd 3
+#define v_dot_pref__v_dot_pref__OS_openbsd 4
+#define v_dot_pref__v_dot_pref__OS_netbsd 5
+#define v_dot_pref__v_dot_pref__OS_dragonfly 6
+#define v_dot_pref__v_dot_pref__OS_js 7
+#define v_dot_pref__v_dot_pref__OS_android 8
+#define v_dot_pref__v_dot_pref__OS_solaris 9
+#define v_dot_pref__v_dot_pref__OS_haiku 10
 #define SumType_Array 1       // DEF2
 #define SumType_ArrayFixed 2  // DEF2
 #define SumType_Map 3         // DEF2
@@ -3387,8 +3347,6 @@ map_int v_dot_token__keywords;
 #define v_dot_token__v_dot_token__Precedence_call 9
 #define v_dot_token__v_dot_token__Precedence_index 10
 array_v_dot_token__Precedence v_dot_token__precedences;
-#define v_dot_pref__v_dot_pref__BuildMode_default_mode 0
-#define v_dot_pref__v_dot_pref__BuildMode_build_module 1
 int os__S_IFMT;
 int os__S_IFDIR;
 int os__S_IFLNK;
@@ -3459,17 +3417,6 @@ int v_dot_gen_dot_x64__segment_start;
 string benchmark__BOK;
 string benchmark__BFAIL;
 bool v_dot_parser__colored_output;
-#define v_dot_builder__v_dot_builder__OS_mac 0
-#define v_dot_builder__v_dot_builder__OS_linux 1
-#define v_dot_builder__v_dot_builder__OS_windows 2
-#define v_dot_builder__v_dot_builder__OS_freebsd 3
-#define v_dot_builder__v_dot_builder__OS_openbsd 4
-#define v_dot_builder__v_dot_builder__OS_netbsd 5
-#define v_dot_builder__v_dot_builder__OS_dragonfly 6
-#define v_dot_builder__v_dot_builder__OS_js 7
-#define v_dot_builder__v_dot_builder__OS_android 8
-#define v_dot_builder__v_dot_builder__OS_solaris 9
-#define v_dot_builder__v_dot_builder__OS_haiku 10
 map_bool compiler__reserved_types;
 #define compiler__compiler__IndexType_noindex 0
 #define compiler__compiler__IndexType_str 1
@@ -3491,8 +3438,6 @@ compiler__Fn compiler__EmptyFn;
 compiler__Fn compiler__MainFn;
 string compiler__dot_ptr;
 string compiler__Version;
-#define compiler__compiler__BuildMode_default_mode 0
-#define compiler__compiler__BuildMode_build_module 1
 array_string compiler__supported_platforms;
 #define compiler__compiler__Pass_imports 0
 #define compiler__compiler__Pass_decl 1
@@ -13897,7 +13842,6 @@ v_dot_ast__Stmt v_dot_parser__Parser_for_statement(v_dot_parser__Parser *p) {
     int start = v_string_int(p->tok.lit);
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_number);
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_dotdot);
-    int end = v_string_int(p->tok.lit);
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_number);
     array_v_dot_ast__Stmt stmts = v_dot_parser__Parser_parse_block(p);
     return /*SUM TYPE CAST2*/ (v_dot_ast__Stmt){
@@ -13908,10 +13852,9 @@ v_dot_ast__Stmt v_dot_parser__Parser_for_statement(v_dot_parser__Parser *p) {
                       sizeof(v_dot_ast__ForStmt)),
         .typ = SumType_ForStmt};
   };
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2996_cond_ti =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2985_cond__ =
       v_dot_parser__Parser_expr(p, 0);
-  v_dot_ast__Expr cond = _V_mret_2996_cond_ti.var_0;
-  v_dot_table__Type ti = _V_mret_2996_cond_ti.var_1;
+  v_dot_ast__Expr cond = _V_mret_2985_cond__.var_0;
   array_v_dot_ast__Stmt stmts = v_dot_parser__Parser_parse_block(p);
   return /*SUM TYPE CAST2*/ (v_dot_ast__Stmt){
       .obj = memdup(&(v_dot_ast__ForStmt[]){(v_dot_ast__ForStmt){
@@ -13926,9 +13869,9 @@ v_dot_parser__Parser_if_expr(v_dot_parser__Parser *p) {
   p->inside_if = 1;
   v_dot_ast__Expr node = (v_dot_ast__Expr){EMPTY_STRUCT_INITIALIZATION};
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_key_if);
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3074_cond__ =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3063_cond__ =
       v_dot_parser__Parser_expr(p, 0);
-  v_dot_ast__Expr cond = _V_mret_3074_cond__.var_0;
+  v_dot_ast__Expr cond = _V_mret_3063_cond__.var_0;
   p->inside_if = 0;
   array_v_dot_ast__Stmt stmts = v_dot_parser__Parser_parse_block(p);
   array_v_dot_ast__Stmt else_stmts = new_array_from_c_array(
@@ -13997,10 +13940,10 @@ v_dot_parser__Parser_array_init(v_dot_parser__Parser *p) {
       EMPTY_ARRAY_OF_ELEMS(v_dot_ast__Expr, 0){TCCSKIP(0)});
   for (int i = 0; p->tok.kind != v_dot_token__v_dot_token__Kind_rsbr; i++) {
 
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3373_expr_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3362_expr_typ =
         v_dot_parser__Parser_expr(p, 0);
-    v_dot_ast__Expr expr = _V_mret_3373_expr_typ.var_0;
-    v_dot_table__Type typ = _V_mret_3373_expr_typ.var_1;
+    v_dot_ast__Expr expr = _V_mret_3362_expr_typ.var_0;
+    v_dot_table__Type typ = _V_mret_3362_expr_typ.var_1;
     _PUSH(&exprs,
           (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
           tmp22, v_dot_ast__Expr);
@@ -14011,10 +13954,10 @@ v_dot_parser__Parser_array_init(v_dot_parser__Parser *p) {
       v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_comma);
     };
   };
-  _V_MulRet_int_V_string _V_mret_3414_type_idx_type_name =
+  _V_MulRet_int_V_string _V_mret_3403_type_idx_type_name =
       v_dot_table__Table_find_or_register_array(p->table, &/*114*/ val_type, 1);
-  int type_idx = _V_mret_3414_type_idx_type_name.var_0;
-  string type_name = _V_mret_3414_type_idx_type_name.var_1;
+  int type_idx = _V_mret_3403_type_idx_type_name.var_0;
+  string type_name = _V_mret_3403_type_idx_type_name.var_1;
   v_dot_table__Type array_ti = v_dot_table__new_type(
       v_dot_table__v_dot_table__Kind_array, type_name, type_idx, 0);
   v_dot_ast__Expr node = (v_dot_ast__Expr){EMPTY_STRUCT_INITIALIZATION};
@@ -14111,10 +14054,10 @@ v_dot_ast__ConstDecl v_dot_parser__Parser_const_decl(v_dot_parser__Parser *p) {
     string name = v_dot_parser__Parser_check_name(p);
     printf("const: %.*s\n", name.len, name.str);
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_assign);
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3856_expr_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3845_expr_typ =
         v_dot_parser__Parser_expr(p, 0);
-    v_dot_ast__Expr expr = _V_mret_3856_expr_typ.var_0;
-    v_dot_table__Type typ = _V_mret_3856_expr_typ.var_1;
+    v_dot_ast__Expr expr = _V_mret_3845_expr_typ.var_0;
+    v_dot_table__Type typ = _V_mret_3845_expr_typ.var_1;
     _PUSH(&fields,
           (/*typ = array_v_dot_ast__Field   tmp_typ=v_dot_ast__Field*/ (
               v_dot_ast__Field){.name = name, .typ = typ}),
@@ -14198,9 +14141,9 @@ v_dot_ast__Return v_dot_parser__Parser_return_stmt(v_dot_parser__Parser *p) {
         .exprs = new_array(0, 1, sizeof(v_dot_ast__Expr))};
   };
   while (1) {
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_4182_expr__ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_4171_expr__ =
         v_dot_parser__Parser_expr(p, 0);
-    v_dot_ast__Expr expr = _V_mret_4182_expr__.var_0;
+    v_dot_ast__Expr expr = _V_mret_4171_expr__.var_0;
     _PUSH(&exprs,
           (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
           tmp29, v_dot_ast__Expr);
@@ -14226,10 +14169,10 @@ v_dot_ast__VarDecl v_dot_parser__Parser_var_decl(v_dot_parser__Parser *p) {
   };
   string name = p->tok.lit;
   v_dot_parser__Parser_read_first_token(p);
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_4316_expr_typ =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_4305_expr_typ =
       v_dot_parser__Parser_expr(p, v_dot_token__lowest_prec);
-  v_dot_ast__Expr expr = _V_mret_4316_expr_typ.var_0;
-  v_dot_table__Type typ = _V_mret_4316_expr_typ.var_1;
+  v_dot_ast__Expr expr = _V_mret_4305_expr_typ.var_0;
+  v_dot_table__Type typ = _V_mret_4305_expr_typ.var_1;
   Option_v_dot_table__Var tmp30 =
       v_dot_table__Table_find_var(&/* ? */ *p->table, name);
 
@@ -14284,15 +14227,16 @@ void v_dot_parser__verror(string s) {
   v_exit(1);
 }
 v_dot_builder__Builder
-v_dot_builder__new_builder(v_dot_builder__Preferences prefs) {
+v_dot_builder__new_builder(v_dot_pref__Preferences *pref) {
   v_dot_table__Table *table = v_dot_table__new_table();
-  v_dot_builder__Builder b = (v_dot_builder__Builder){
-      .prefs = prefs,
+  return (v_dot_builder__Builder){
+      .pref = pref,
       .table = table,
       .checker = v_dot_checker__new_checker(table),
+      .compiled_dir = tos3(""),
+      .module_path = tos3(""),
+      .module_search_paths = new_array(0, 1, sizeof(string)),
       .parsed_files = new_array(0, 1, sizeof(v_dot_ast__File))};
-  v_dot_builder__Builder_set_module_search_paths(&/* ? */ b);
-  return b;
 }
 string v_dot_builder__Builder_gen_c(v_dot_builder__Builder *b,
                                     array_string v_files) {
@@ -14316,7 +14260,6 @@ void v_dot_builder__Builder_build_x64(v_dot_builder__Builder *b,
   v_dot_gen_dot_x64__gen(b->parsed_files, out_file);
   printf("x64 GEN: %lldms\n", time__ticks() - ticks);
 }
-void v_dot_builder__Builder_parse_module_files(v_dot_builder__Builder *b) {}
 void v_dot_builder__Builder_parse_imports(v_dot_builder__Builder *b) {
   array_string done_imports = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
@@ -14397,7 +14340,7 @@ array_string v_dot_builder__Builder_v_files_from_dir(v_dot_builder__Builder *b,
   }
   files = *(array_string *)tmp11.data;
   ;
-  if (b->prefs.is_verbose) {
+  if (b->pref->is_verbose) {
     printf("v_files_from_dir (\"%.*s\")\n", dir.len, dir.str);
   };
   array_string_sort(&/* ? */ files);
@@ -14414,29 +14357,29 @@ array_string v_dot_builder__Builder_v_files_from_dir(v_dot_builder__Builder *b,
     };
     if ((string_ends_with(file, tos3("_win.v")) ||
          string_ends_with(file, tos3("_windows.v"))) &&
-        b->prefs.os != v_dot_builder__v_dot_builder__OS_windows) {
+        b->os != v_dot_pref__v_dot_pref__OS_windows) {
       continue;
     };
     if ((string_ends_with(file, tos3("_lin.v")) ||
          string_ends_with(file, tos3("_linux.v"))) &&
-        b->prefs.os != v_dot_builder__v_dot_builder__OS_linux) {
+        b->os != v_dot_pref__v_dot_pref__OS_linux) {
       continue;
     };
     if ((string_ends_with(file, tos3("_mac.v")) ||
          string_ends_with(file, tos3("_darwin.v"))) &&
-        b->prefs.os != v_dot_builder__v_dot_builder__OS_mac) {
+        b->os != v_dot_pref__v_dot_pref__OS_mac) {
       continue;
     };
     if (string_ends_with(file, tos3("_nix.v")) &&
-        b->prefs.os == v_dot_builder__v_dot_builder__OS_windows) {
+        b->os == v_dot_pref__v_dot_pref__OS_windows) {
       continue;
     };
     if (string_ends_with(file, tos3("_js.v")) &&
-        b->prefs.os != v_dot_builder__v_dot_builder__OS_js) {
+        b->os != v_dot_pref__v_dot_pref__OS_js) {
       continue;
     };
     if (string_ends_with(file, tos3("_c.v")) &&
-        b->prefs.os == v_dot_builder__v_dot_builder__OS_js) {
+        b->os == v_dot_pref__v_dot_pref__OS_js) {
       continue;
     };
     _PUSH(&res,
@@ -14450,45 +14393,8 @@ void v_dot_builder__verror(string err) {
   v_panic(_STR("v error: %.*s", err.len, err.str));
 }
 void v_dot_builder__Builder_log(v_dot_builder__Builder *b, string s) {
-  if (b->prefs.is_verbose) {
+  if (b->pref->is_verbose) {
     println(s);
-  };
-}
-void v_dot_builder__Builder_set_module_search_paths(v_dot_builder__Builder *b) {
-  string msearch_path =
-      ((b->prefs.vpath.len > 0) ? (b->prefs.vpath) : (b->prefs.mod_path));
-  b->prefs.module_search_paths = new_array_from_c_array(
-      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  if (b->prefs.is_test) {
-    _PUSH(&b->prefs.module_search_paths,
-          (/*typ = array_string   tmp_typ=string*/ filepath__basedir(
-              b->prefs.compile_dir)),
-          tmp1, string);
-  };
-  _PUSH(&b->prefs.module_search_paths,
-        (/*typ = array_string   tmp_typ=string*/ b->prefs.compile_dir), tmp2,
-        string);
-  _PUSH(&b->prefs.module_search_paths,
-        (/*typ = array_string   tmp_typ=string*/ filepath__join(
-            b->prefs.compile_dir,
-            &(varg_string){.len = 1, .args = {tos3("modules")}})),
-        tmp3, string);
-  _PUSH(&b->prefs.module_search_paths,
-        (/*typ = array_string   tmp_typ=string*/ b->prefs.vlib_path), tmp4,
-        string);
-  _PUSH(&b->prefs.module_search_paths,
-        (/*typ = array_string   tmp_typ=string*/ msearch_path), tmp5, string);
-  if (b->prefs.user_mod_path.len > 0) {
-    _PUSH(&b->prefs.module_search_paths,
-          (/*typ = array_string   tmp_typ=string*/ b->prefs.user_mod_path),
-          tmp6, string);
-  };
-  if (b->prefs.is_verbose) {
-    string tmp7 = array_string_str(b->prefs.module_search_paths);
-
-    v_dot_builder__Builder_log(
-        &/* ? */ *b,
-        _STR("b.prefs.module_search_paths: %.*s ", tmp7.len, tmp7.str));
   };
 }
 static inline string v_dot_builder__module_path(string mod) {
@@ -14497,22 +14403,22 @@ static inline string v_dot_builder__module_path(string mod) {
 Option_string v_dot_builder__Builder_find_module_path(v_dot_builder__Builder *b,
                                                       string mod) {
   string mod_path = v_dot_builder__module_path(mod);
-  array_string tmp8 = b->prefs.module_search_paths;
-  for (int tmp9 = 0; tmp9 < tmp8.len; tmp9++) {
-    string search_path = ((string *)tmp8.data)[tmp9];
+  array_string tmp1 = b->module_search_paths;
+  for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+    string search_path = ((string *)tmp1.data)[tmp2];
 
     string try_path = filepath__join(
         search_path, &(varg_string){.len = 1, .args = {mod_path}});
-    if (b->prefs.is_verbose) {
+    if (b->pref->is_verbose) {
       printf("  >> trying to find %.*s in %.*s ..\n", mod.len, mod.str,
              try_path.len, try_path.str);
     };
     if (os__is_dir(try_path)) {
-      if (b->prefs.is_verbose) {
+      if (b->pref->is_verbose) {
         printf("  << found %.*s .\n", try_path.len, try_path.str);
       };
-      string tmp10 = OPTION_CAST(string)(try_path);
-      return opt_ok(&tmp10, sizeof(string));
+      string tmp3 = OPTION_CAST(string)(try_path);
+      return opt_ok(&tmp3, sizeof(string));
     };
   };
   return v_error(_STR("module \"%.*s\" not found", mod.len, mod.str));
@@ -14926,7 +14832,7 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
   };
   ;
   p->cgen->nogen = 0;
-  if (p->pref->build_mode == compiler__compiler__BuildMode_build_module &&
+  if (p->pref->build_mode == v_dot_pref__v_dot_pref__BuildMode_build_module &&
       string_ne(p->mod, p->v->mod)) {
     p->cgen->nogen = 1;
   };
@@ -14938,7 +14844,7 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
        string_eq(p->mod, tos3("clipboard")) ||
        string_eq(p->mod, tos3("webview")));
   string fq_mod =
-      ((p->pref->build_mode == compiler__compiler__BuildMode_build_module &&
+      ((p->pref->build_mode == v_dot_pref__v_dot_pref__BuildMode_build_module &&
         string_ends_with(p->v->mod, p->mod))
            ? (p->v->mod)
            : (compiler__Table_qualify_module(&/* ? */ *p->table, p->mod,
@@ -15046,9 +14952,9 @@ void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
       if (p->tok == compiler__compiler__TokenKind_assign) {
         compiler__Parser_next(p);
         g = string_add(g, tos3(" = "));
-        _V_MulRet_string_V_string _V_mret_2371___expr =
+        _V_MulRet_string_V_string _V_mret_2373___expr =
             compiler__Parser_tmp_expr(p);
-        string expr = _V_mret_2371___expr.var_1;
+        string expr = _V_mret_2373___expr.var_1;
         g = string_add(g, expr);
       };
       g = string_add(g, tos3("; // global"));
@@ -15248,7 +15154,7 @@ void compiler__Parser_const_decl(compiler__Parser *p) {
       };
     };
     if (p->pass == compiler__compiler__Pass_main && p->cgen->nogen &&
-        p->pref->build_mode == compiler__compiler__BuildMode_build_module) {
+        p->pref->build_mode == v_dot_pref__v_dot_pref__BuildMode_build_module) {
       _PUSH(
           &p->cgen->consts,
           (/*typ = array_string   tmp_typ=string*/ string_add(
@@ -15258,7 +15164,8 @@ void compiler__Parser_const_decl(compiler__Parser *p) {
           tmp30, string);
     };
     if (p->pass == compiler__compiler__Pass_main && !p->cgen->nogen) {
-      if (p->pref->build_mode != compiler__compiler__BuildMode_build_module &&
+      if (p->pref->build_mode !=
+              v_dot_pref__v_dot_pref__BuildMode_build_module &&
           compiler__is_compile_time_const(p->cgen->cur_line)) {
         _PUSH(&p->cgen->const_defines,
               (/*typ = array_string   tmp_typ=string*/ _STR(
@@ -15758,11 +15665,11 @@ string compiler__Parser_get_type(compiler__Parser *p) {
       if (string_eq(t.name, tos3("")) && !p->pref->translated &&
           !compiler__Parser_first_pass(&/* ? */ *p) &&
           !string_starts_with(typ, tos3("["))) {
-        _V_MulRet_string_V_string _V_mret_5223_t_suggest_tc_suggest =
+        _V_MulRet_string_V_string _V_mret_5225_t_suggest_tc_suggest =
             compiler__Table_find_misspelled_type(&/* ? */ *p->table, typ, p,
                                                  0.50);
-        string t_suggest = _V_mret_5223_t_suggest_tc_suggest.var_0;
-        string tc_suggest = _V_mret_5223_t_suggest_tc_suggest.var_1;
+        string t_suggest = _V_mret_5225_t_suggest_tc_suggest.var_0;
+        string tc_suggest = _V_mret_5225_t_suggest_tc_suggest.var_1;
         if (t_suggest.len > 0) {
           t_suggest = _STR(". did you mean: (%.*s) `%.*s`", tc_suggest.len,
                            tc_suggest.str, t_suggest.len, t_suggest.str);
@@ -16139,9 +16046,9 @@ void compiler__Parser_assign_statement(compiler__Parser *p, compiler__Var v,
   string expr_type = compiler__Parser_bool_expression(p);
   p->is_var_decl = 0;
   if (string_eq(expr_type, tos3("void"))) {
-    _V_MulRet_bool_V_string _V_mret_7079___fn_name =
+    _V_MulRet_bool_V_string _V_mret_7081___fn_name =
         compiler__Parser_is_expr_fn_call(&/* ? */ *p, expr_tok + 1);
-    string fn_name = _V_mret_7079___fn_name.var_1;
+    string fn_name = _V_mret_7081___fn_name.var_1;
     compiler__Parser_error_with_token_index(
         p,
         _STR("%.*s() %.*s", fn_name.len, fn_name.str,
@@ -16320,9 +16227,9 @@ void compiler__Parser_var_decl(compiler__Parser *p) {
            : ((*(string *)array_get(var_names, 0))));
   string t = compiler__Parser_gen_var_decl(p, p->var_decl_name, is_static);
   if (string_eq(t, tos3("void"))) {
-    _V_MulRet_bool_V_string _V_mret_7951___fn_name =
+    _V_MulRet_bool_V_string _V_mret_7953___fn_name =
         compiler__Parser_is_expr_fn_call(&/* ? */ *p, expr_tok + 1);
-    string fn_name = _V_mret_7951___fn_name.var_1;
+    string fn_name = _V_mret_7953___fn_name.var_1;
     compiler__Parser_error_with_token_index(
         p,
         _STR("%.*s() %.*s", fn_name.len, fn_name.str,
@@ -17252,10 +17159,10 @@ string compiler__Parser_map_init(compiler__Parser *p) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_str);
       compiler__Parser_check(p, compiler__compiler__TokenKind_colon);
       ;
-      _V_MulRet_string_V_string _V_mret_12110_t_val_expr =
+      _V_MulRet_string_V_string _V_mret_12112_t_val_expr =
           compiler__Parser_tmp_expr(p);
-      string t = _V_mret_12110_t_val_expr.var_0;
-      string val_expr = _V_mret_12110_t_val_expr.var_1;
+      string t = _V_mret_12112_t_val_expr.var_0;
+      string val_expr = _V_mret_12112_t_val_expr.var_1;
       if (i == 0) {
         val_type = t;
       };
@@ -17557,10 +17464,10 @@ void compiler__Parser_return_st(compiler__Parser *p) {
     while (p->tok == compiler__compiler__TokenKind_comma) {
 
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-      _V_MulRet_string_V_string _V_mret_13580_typ_expr =
+      _V_MulRet_string_V_string _V_mret_13582_typ_expr =
           compiler__Parser_tmp_expr(p);
-      string typ = _V_mret_13580_typ_expr.var_0;
-      string expr = _V_mret_13580_typ_expr.var_1;
+      string typ = _V_mret_13582_typ_expr.var_0;
+      string expr = _V_mret_13582_typ_expr.var_1;
       _PUSH(&types, (/*typ = array_string   tmp_typ=string*/ typ), tmp160,
             string);
       _PUSH(&mr_values,
@@ -17739,10 +17646,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
     string typ = compiler__Parser_get_type(p);
     compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
-    _V_MulRet_string_V_string _V_mret_14396_styp_expr =
+    _V_MulRet_string_V_string _V_mret_14398_styp_expr =
         compiler__Parser_tmp_expr(p);
-    string styp = _V_mret_14396_styp_expr.var_0;
-    string expr = _V_mret_14396_styp_expr.var_1;
+    string styp = _V_mret_14398_styp_expr.var_0;
+    string expr = _V_mret_14398_styp_expr.var_1;
     compiler__Parser_check_types(p, styp, tos3("string"));
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
     string tmp = compiler__Parser_get_tmp(p);
@@ -17779,10 +17686,10 @@ string compiler__Parser_js_decode(compiler__Parser *p) {
     return opt_type;
   } else if (string_eq(op, tos3("encode"))) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
-    _V_MulRet_string_V_string _V_mret_14576_typ_expr =
+    _V_MulRet_string_V_string _V_mret_14578_typ_expr =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_14576_typ_expr.var_0;
-    string expr = _V_mret_14576_typ_expr.var_1;
+    string typ = _V_mret_14578_typ_expr.var_0;
+    string expr = _V_mret_14578_typ_expr.var_1;
     compiler__Type T = compiler__Table_find_type(&/* ? */ *p->table, typ);
     compiler__Parser_gen_json_for_type(p, T);
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
@@ -18090,7 +17997,7 @@ void compiler__V_cc(compiler__V *v) {
     };
     v_exit(0);
   };
-  if (v->os == v_dot_builder__v_dot_builder__OS_windows) {
+  if (v->os == v_dot_pref__v_dot_pref__OS_windows) {
 #ifndef _WIN32
     compiler__V_cc_windows_cross(v);
 
@@ -18135,7 +18042,7 @@ void compiler__V_cc(compiler__V *v) {
     ;
   };
   if (!v->pref->is_so &&
-      v->pref->build_mode != compiler__compiler__BuildMode_build_module &&
+      v->pref->build_mode != v_dot_pref__v_dot_pref__BuildMode_build_module &&
       string_eq(os__user_os(), tos3("windows")) &&
       !string_ends_with(v->out_name, tos3(".exe"))) {
     v->out_name = string_add(v->out_name, tos3(".exe"));
@@ -18154,7 +18061,7 @@ void compiler__V_cc(compiler__V *v) {
               "-fno-stack-protector -static -ffreestanding -nostdlib")),
           tmp6, string);
   };
-  if (v->pref->build_mode == compiler__compiler__BuildMode_build_module) {
+  if (v->pref->build_mode == v_dot_pref__v_dot_pref__BuildMode_build_module) {
     string out_dir =
         ((string_starts_with(v->dir, tos3("vlib")))
              ? (_STR("%.*s%.*scache%.*s%.*s", compiler__v_modules_path.len,
@@ -18219,7 +18126,7 @@ void compiler__V_cc(compiler__V *v) {
           tmp10, string);
   };
   if (string_ne(v->pref->ccompiler, tos3("msvc")) &&
-      v->os != v_dot_builder__v_dot_builder__OS_freebsd) {
+      v->os != v_dot_pref__v_dot_pref__OS_freebsd) {
     _PUSH(&a,
           (/*typ = array_string   tmp_typ=string*/ tos3(
               "-Werror=implicit-function-declaration")),
@@ -18233,7 +18140,7 @@ void compiler__V_cc(compiler__V *v) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ f), tmp14, string);
   };
   string libs = tos3("");
-  if (v->pref->build_mode == compiler__compiler__BuildMode_build_module) {
+  if (v->pref->build_mode == v_dot_pref__v_dot_pref__BuildMode_build_module) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-c")), tmp15,
           string);
   } else if (v->pref->is_cache) {
@@ -18319,7 +18226,7 @@ void compiler__V_cc(compiler__V *v) {
     compiler__verror(
         _STR("\'%.*s\' is a directory", v->out_name.len, v->out_name.str));
   };
-  if (v->os == v_dot_builder__v_dot_builder__OS_mac) {
+  if (v->os == v_dot_pref__v_dot_pref__OS_mac) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-x objective-c")),
           tmp24, string);
   };
@@ -18327,17 +18234,17 @@ void compiler__V_cc(compiler__V *v) {
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "\"%.*s\"", v->out_name_c.len, v->out_name_c.str)),
         tmp25, string);
-  if (v->os == v_dot_builder__v_dot_builder__OS_mac) {
+  if (v->os == v_dot_pref__v_dot_pref__OS_mac) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-x none")), tmp26,
           string);
   };
-  if (v->os == v_dot_builder__v_dot_builder__OS_mac) {
+  if (v->os == v_dot_pref__v_dot_pref__OS_mac) {
     _PUSH(&a,
           (/*typ = array_string   tmp_typ=string*/ tos3(
               "-mmacosx-version-min=10.7")),
           tmp27, string);
   };
-  if (v->os == v_dot_builder__v_dot_builder__OS_windows) {
+  if (v->os == v_dot_pref__v_dot_pref__OS_windows) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-municode")),
           tmp28, string);
   };
@@ -18352,26 +18259,26 @@ void compiler__V_cc(compiler__V *v) {
         tmp30, string);
   _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ libs), tmp31, string);
   if (!v->pref->is_bare &&
-      v->pref->build_mode != compiler__compiler__BuildMode_build_module &&
-      (v->os == v_dot_builder__v_dot_builder__OS_linux ||
-       v->os == v_dot_builder__v_dot_builder__OS_freebsd ||
-       v->os == v_dot_builder__v_dot_builder__OS_openbsd ||
-       v->os == v_dot_builder__v_dot_builder__OS_netbsd ||
-       v->os == v_dot_builder__v_dot_builder__OS_dragonfly ||
-       v->os == v_dot_builder__v_dot_builder__OS_solaris ||
-       v->os == v_dot_builder__v_dot_builder__OS_haiku)) {
+      v->pref->build_mode != v_dot_pref__v_dot_pref__BuildMode_build_module &&
+      (v->os == v_dot_pref__v_dot_pref__OS_linux ||
+       v->os == v_dot_pref__v_dot_pref__OS_freebsd ||
+       v->os == v_dot_pref__v_dot_pref__OS_openbsd ||
+       v->os == v_dot_pref__v_dot_pref__OS_netbsd ||
+       v->os == v_dot_pref__v_dot_pref__OS_dragonfly ||
+       v->os == v_dot_pref__v_dot_pref__OS_solaris ||
+       v->os == v_dot_pref__v_dot_pref__OS_haiku)) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-lm -lpthread ")),
           tmp32, string);
-    if (v->os == v_dot_builder__v_dot_builder__OS_linux) {
+    if (v->os == v_dot_pref__v_dot_pref__OS_linux) {
       _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3(" -ldl ")), tmp33,
             string);
     };
-    if (v->os == v_dot_builder__v_dot_builder__OS_freebsd) {
+    if (v->os == v_dot_pref__v_dot_pref__OS_freebsd) {
       _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3(" -lexecinfo ")),
             tmp34, string);
     };
   };
-  if (!v->pref->is_bare && v->os == v_dot_builder__v_dot_builder__OS_js &&
+  if (!v->pref->is_bare && v->os == v_dot_pref__v_dot_pref__OS_js &&
       string_eq(os__user_os(), tos3("linux"))) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-lm")), tmp35,
           string);
@@ -18501,7 +18408,8 @@ void compiler__V_cc_windows_cross(compiler__V *c) {
                  ? (array_compiler__CFlag_c_options_before_target_msvc(cflags))
                  : (array_compiler__CFlag_c_options_before_target(cflags))));
   string libs = tos3("");
-  if (0 && c->pref->build_mode == compiler__compiler__BuildMode_default_mode) {
+  if (0 &&
+      c->pref->build_mode == v_dot_pref__v_dot_pref__BuildMode_default_mode) {
     libs = _STR("\"%.*s/vlib/builtin.o\"", compiler__v_modules_path.len,
                 compiler__v_modules_path.str);
     if (!os__exists(libs)) {
@@ -18659,13 +18567,13 @@ array_compiler__CFlag compiler__V_get_os_cflags(compiler__V *v) {
 
     if (string_eq(flag.os, tos3("")) ||
         (string_eq(flag.os, tos3("linux")) &&
-         v->os == v_dot_builder__v_dot_builder__OS_linux) ||
+         v->os == v_dot_pref__v_dot_pref__OS_linux) ||
         (string_eq(flag.os, tos3("darwin")) &&
-         v->os == v_dot_builder__v_dot_builder__OS_mac) ||
+         v->os == v_dot_pref__v_dot_pref__OS_mac) ||
         (string_eq(flag.os, tos3("freebsd")) &&
-         v->os == v_dot_builder__v_dot_builder__OS_freebsd) ||
+         v->os == v_dot_pref__v_dot_pref__OS_freebsd) ||
         (string_eq(flag.os, tos3("windows")) &&
-         v->os == v_dot_builder__v_dot_builder__OS_windows)) {
+         v->os == v_dot_pref__v_dot_pref__OS_windows)) {
       _PUSH(&flags,
             (/*typ = array_compiler__CFlag   tmp_typ=compiler__CFlag*/ flag),
             tmp4, compiler__CFlag);
@@ -19798,7 +19706,7 @@ void compiler__Parser_comp_time(compiler__Parser *p) {
     string name = compiler__Parser_check_name(p);
     ;
     if ((_IN(string, (name), compiler__supported_platforms))) {
-      v_dot_builder__OS os = compiler__os_from_string(name);
+      v_dot_pref__OS os = compiler__os_from_string(name);
       string ifdef_name = compiler__os_name_to_ifdef(name);
       if (string_eq(name, tos3("mac"))) {
         compiler__Parser_warn(p, tos3("use `macos` instead of `mac`"));
@@ -22671,7 +22579,7 @@ void compiler__Parser_async_fn_call(compiler__Parser *p, compiler__Fn f,
   fn_name = compiler__Table_fn_gen_name(p->table, &/*114*/ f);
   string wrapper_name = _STR("%.*s_thread_wrapper", fn_name.len, fn_name.str);
   string wrapper_type = tos3("void*");
-  if (p->os == v_dot_builder__v_dot_builder__OS_windows) {
+  if (p->os == v_dot_pref__v_dot_pref__OS_windows) {
     wrapper_type = tos3("DWORD WINAPI");
   };
   string wrapper_text =
@@ -22683,7 +22591,7 @@ void compiler__Parser_async_fn_call(compiler__Parser *p, compiler__Fn f,
                                     arg_struct);
   int tmp_nr = compiler__Parser_get_tmp_counter(p);
   thread_name = _STR("_thread%d", tmp_nr);
-  if (p->os != v_dot_builder__v_dot_builder__OS_windows) {
+  if (p->os != v_dot_pref__v_dot_pref__OS_windows) {
     compiler__Parser_genln(
         p, _STR("pthread_t %.*s;", thread_name.len, thread_name.str));
   };
@@ -22692,7 +22600,7 @@ void compiler__Parser_async_fn_call(compiler__Parser *p, compiler__Fn f,
   if (f.args.len > 0) {
     parg = _STR(" %.*s", tmp_struct.len, tmp_struct.str);
   };
-  if (p->os == v_dot_builder__v_dot_builder__OS_windows) {
+  if (p->os == v_dot_pref__v_dot_pref__OS_windows) {
     compiler__Parser_genln(
         p, _STR(" CreateThread(0,0, (LPTHREAD_START_ROUTINE)%.*s, %.*s, 0,0);",
                 wrapper_name.len, wrapper_name.str, parg.len, parg.str));
@@ -25942,12 +25850,12 @@ compiler__V_generate_hotcode_reloading_compiler_flags(compiler__V *v) {
   array_string a = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   if (v->pref->is_live || v->pref->is_so) {
-    if ((v->os == v_dot_builder__v_dot_builder__OS_linux ||
+    if ((v->os == v_dot_pref__v_dot_pref__OS_linux ||
          string_eq(os__user_os(), tos3("linux")))) {
       _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("-rdynamic")),
             tmp1, string);
     };
-    if ((v->os == v_dot_builder__v_dot_builder__OS_mac ||
+    if ((v->os == v_dot_pref__v_dot_pref__OS_mac ||
          string_eq(os__user_os(), tos3("mac")))) {
       _PUSH(&a,
             (/*typ = array_string   tmp_typ=string*/ tos3("-flat_namespace")),
@@ -25958,7 +25866,7 @@ compiler__V_generate_hotcode_reloading_compiler_flags(compiler__V *v) {
 }
 void compiler__V_generate_hotcode_reloading_declarations(compiler__V *v) {
   compiler__CGen *cgen = v->cgen;
-  if (v->os != v_dot_builder__v_dot_builder__OS_windows) {
+  if (v->os != v_dot_pref__v_dot_pref__OS_windows) {
     if (v->pref->is_so) {
       compiler__CGen_genln(cgen, tos3("pthread_mutex_t live_fn_mutex;"));
     };
@@ -25990,7 +25898,7 @@ void compiler__V_generate_hotcode_reloading_main_caller(compiler__V *v) {
   compiler__CGen_genln(cgen, tos3(""));
   string file_base =
       string_replace(filepath__filename(v->dir), tos3(".v"), tos3(""));
-  if (v->os != v_dot_builder__v_dot_builder__OS_windows) {
+  if (v->os != v_dot_pref__v_dot_pref__OS_windows) {
     string so_name = string_add(file_base, tos3(".so"));
     compiler__CGen_genln(cgen, _STR("  char *live_library_name = \"%.*s\";",
                                     so_name.len, so_name.str));
@@ -26050,7 +25958,7 @@ void compiler__V_generate_hot_reload_code(compiler__V *v) {
                    "	fflush(stderr);\n		fprintf(stderr,\">> "
                    "live_fn_mutex: %p | %s\\n\", &live_fn_mutex, s);\n	"
                    "	fflush(stderr);\n	}\n}\n"));
-    if (v->os != v_dot_builder__v_dot_builder__OS_windows) {
+    if (v->os != v_dot_pref__v_dot_pref__OS_windows) {
       compiler__CGen_genln(
           cgen,
           tos3("\nvoid* live_lib=0;\nint load_so(byteptr path) {\n	char "
@@ -26162,7 +26070,7 @@ Option_int compiler__V_get_file_parser_index(compiler__V *v, string file) {
   string file_path = ((filepath__is_abs(file)) ? (file) : (os__realpath(file)));
   if ((_IN_MAP((file_path), v->file_parser_idx))) {
     int tmp2 = 0;
-    bool tmp3 = map_get(/*main.v : 164*/ v->file_parser_idx, file_path, &tmp2);
+    bool tmp3 = map_get(/*main.v : 103*/ v->file_parser_idx, file_path, &tmp2);
 
     int tmp4 = OPTION_CAST(int)(tmp2);
     return opt_ok(&tmp4, sizeof(int));
@@ -26220,7 +26128,7 @@ void compiler__V_compile(compiler__V *v) {
   if (v->pref->prealloc) {
     compiler__CGen_genln(cgen, tos3("#define VPREALLOC (1)"));
   };
-  if (v->os == v_dot_builder__v_dot_builder__OS_js) {
+  if (v->os == v_dot_pref__v_dot_pref__OS_js) {
     compiler__CGen_genln(cgen, tos3("#define _VJS (1) "));
   };
   string v_hash = compiler__vhash();
@@ -26272,12 +26180,12 @@ void compiler__V_compile(compiler__V *v) {
   ;
   compiler__V_generate_hotcode_reloading_declarations(&/* ? */ *v);
   bool imports_json = (_IN(string, (tos3("json")), v->table->imports));
-  if (v->pref->build_mode == compiler__compiler__BuildMode_default_mode) {
+  if (v->pref->build_mode == v_dot_pref__v_dot_pref__BuildMode_default_mode) {
     if (imports_json) {
       compiler__CGen_genln(cgen, tos3("#include \"cJSON.h\""));
     };
   };
-  if (v->pref->build_mode == compiler__compiler__BuildMode_default_mode) {
+  if (v->pref->build_mode == v_dot_pref__v_dot_pref__BuildMode_default_mode) {
 #ifndef _VJS
     compiler__CGen_genln(cgen, tos3("int g_test_oks = 0;"));
     compiler__CGen_genln(cgen, tos3("int g_test_fails = 0;"));
@@ -26292,7 +26200,7 @@ void compiler__V_compile(compiler__V *v) {
   if ((_IN(string, (tos3("-debug_alloc")), os__args))) {
     compiler__CGen_genln(cgen, tos3("#define DEBUG_ALLOC 1"));
   };
-  if (v->pref->is_live && v->os != v_dot_builder__v_dot_builder__OS_windows) {
+  if (v->pref->is_live && v->os != v_dot_pref__v_dot_pref__OS_windows) {
     _PUSH(&cgen->includes,
           (/*typ = array_string   tmp_typ=string*/ tos3("#include <dlfcn.h>")),
           tmp12, string);
@@ -26315,7 +26223,7 @@ void compiler__V_compile(compiler__V *v) {
   strings__Builder_free(&/* ? */ v->vgen_buf);
   vgen_parser.is_vgen = 1;
   compiler__Parser_parse(&/* ? */ vgen_parser, compiler__compiler__Pass_main);
-  if (v->pref->build_mode == compiler__compiler__BuildMode_build_module) {
+  if (v->pref->build_mode == v_dot_pref__v_dot_pref__BuildMode_build_module) {
     compiler__generate_vh(v->dir);
   };
   strings__Builder def = strings__new_builder(10000);
@@ -26387,8 +26295,7 @@ void compiler__V_compile2(compiler__V *v) {
     println(tos3("all .v files:"));
     println(array_string_str(v->files));
   };
-  v_dot_builder__Builder b =
-      v_dot_builder__new_builder(compiler__V_v2_prefs(&/* ? */ *v));
+  v_dot_builder__Builder b = compiler__V_new_v2(&/* ? */ *v);
   v_dot_builder__Builder_build_c(&/* ? */ b, v->files, v->out_name);
   compiler__V_cc(v);
 }
@@ -26401,22 +26308,23 @@ void compiler__V_compile_x64(compiler__V *v) {
   ;
   _PUSH(&v->files, (/*typ = array_string   tmp_typ=string*/ v->dir), tmp16,
         string);
-  v_dot_builder__Builder b =
-      v_dot_builder__new_builder(compiler__V_v2_prefs(&/* ? */ *v));
+  compiler__V_set_module_lookup_paths(v);
+  v_dot_builder__Builder b = compiler__V_new_v2(&/* ? */ *v);
   v_dot_builder__Builder_build_x64(&/* ? */ b, v->files, v->out_name);
 }
-v_dot_builder__Preferences compiler__V_v2_prefs(compiler__V *v) {
-  return (v_dot_builder__Preferences){
+v_dot_builder__Builder compiler__V_new_v2(compiler__V *v) {
+  v_dot_builder__Builder b = v_dot_builder__new_builder(v->pref);
+  b = (v_dot_builder__Builder){
       .os = v->os,
-      .vpath = v->pref->vpath,
-      .vlib_path = v->pref->vlib_path,
-      .mod_path = compiler__v_modules_path,
-      .compile_dir = v->compiled_dir,
-      .user_mod_path = v->pref->user_mod_path,
-      .is_test = v->pref->is_test,
-      .is_verbose = v->pref->is_verbose,
-      .module_search_paths = new_array(0, 1, sizeof(string)),
+      .module_path = compiler__v_modules_path,
+      .compiled_dir = v->compiled_dir,
+      .module_search_paths = v->module_lookup_paths,
+      .pref = b.pref,
+      .table = b.table,
+      .checker = b.checker,
+      .parsed_files = b.parsed_files,
   };
+  return b;
 }
 void compiler__V_generate_init(compiler__V *v) {
 #ifdef _VJS
@@ -26424,7 +26332,7 @@ void compiler__V_generate_init(compiler__V *v) {
   return;
 #endif
   ;
-  if (v->pref->build_mode == compiler__compiler__BuildMode_build_module) {
+  if (v->pref->build_mode == v_dot_pref__v_dot_pref__BuildMode_build_module) {
     bool nogen = v->cgen->nogen;
     v->cgen->nogen = 0;
     string consts_init_body = array_string_join_lines(v->cgen->consts_init);
@@ -26436,7 +26344,7 @@ void compiler__V_generate_init(compiler__V *v) {
                       consts_init_body.len, consts_init_body.str));
     v->cgen->nogen = nogen;
   };
-  if (v->pref->build_mode == compiler__compiler__BuildMode_default_mode) {
+  if (v->pref->build_mode == v_dot_pref__v_dot_pref__BuildMode_default_mode) {
     string call_mod_init = tos3("");
     string call_mod_init_consts = tos3("");
     if ((_IN(string, (tos3("builtin")), v->cached_mods))) {
@@ -26524,7 +26432,7 @@ void compiler__V_generate_main(compiler__V *v) {
           tmp19, string);
     compiler__CGen_genln(cgen, tos3(""));
   };
-  if (v->pref->build_mode != compiler__compiler__BuildMode_build_module) {
+  if (v->pref->build_mode != v_dot_pref__v_dot_pref__BuildMode_build_module) {
     if (!compiler__Table_main_exists(&/* ? */ *v->table) && !v->pref->is_test) {
       if ((v->pref->is_script &&
            string_ne(string_trim_space(cgen->fn_main), tos3(""))) ||
@@ -26589,7 +26497,7 @@ void compiler__V_generate_main(compiler__V *v) {
   };
 }
 void compiler__V_gen_main_start(compiler__V *v, bool add_os_args) {
-  if (v->os == v_dot_builder__v_dot_builder__OS_windows) {
+  if (v->os == v_dot_pref__v_dot_pref__OS_windows) {
     if ((_IN(string, (tos3("glfw")), v->table->imports))) {
       compiler__CGen_genln(
           v->cgen, tos3("int WINAPI wWinMain(HINSTANCE instance, HINSTANCE "
@@ -26619,7 +26527,7 @@ void compiler__V_gen_main_start(compiler__V *v, bool add_os_args) {
   };
   compiler__CGen_genln(v->cgen, tos3("  init();"));
   if (add_os_args && (_IN(string, (tos3("os")), v->table->imports))) {
-    if (v->os == v_dot_builder__v_dot_builder__OS_windows) {
+    if (v->os == v_dot_pref__v_dot_pref__OS_windows) {
       compiler__CGen_genln(
           v->cgen, tos3("  os__args = os__init_os_args_wide(argc, argv);"));
     } else {
@@ -26720,29 +26628,29 @@ array_string compiler__V_v_files_from_dir(compiler__V *v, string dir) {
     };
     if ((string_ends_with(file, tos3("_win.v")) ||
          string_ends_with(file, tos3("_windows.v"))) &&
-        v->os != v_dot_builder__v_dot_builder__OS_windows) {
+        v->os != v_dot_pref__v_dot_pref__OS_windows) {
       continue;
     };
     if ((string_ends_with(file, tos3("_lin.v")) ||
          string_ends_with(file, tos3("_linux.v"))) &&
-        v->os != v_dot_builder__v_dot_builder__OS_linux) {
+        v->os != v_dot_pref__v_dot_pref__OS_linux) {
       continue;
     };
     if ((string_ends_with(file, tos3("_mac.v")) ||
          string_ends_with(file, tos3("_darwin.v"))) &&
-        v->os != v_dot_builder__v_dot_builder__OS_mac) {
+        v->os != v_dot_pref__v_dot_pref__OS_mac) {
       continue;
     };
     if (string_ends_with(file, tos3("_nix.v")) &&
-        v->os == v_dot_builder__v_dot_builder__OS_windows) {
+        v->os == v_dot_pref__v_dot_pref__OS_windows) {
       continue;
     };
     if (string_ends_with(file, tos3("_js.v")) &&
-        v->os != v_dot_builder__v_dot_builder__OS_js) {
+        v->os != v_dot_pref__v_dot_pref__OS_js) {
       continue;
     };
     if (string_ends_with(file, tos3("_c.v")) &&
-        v->os == v_dot_builder__v_dot_builder__OS_js) {
+        v->os == v_dot_pref__v_dot_pref__OS_js) {
       continue;
     };
     if (v->compile_defines_all.len > 0 && string_contains(file, tos3("_d_"))) {
@@ -26835,7 +26743,7 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
       continue;
     };
     if (string_ne(v->pref->vpath, tos3("")) &&
-        v->pref->build_mode != compiler__compiler__BuildMode_build_module &&
+        v->pref->build_mode != v_dot_pref__v_dot_pref__BuildMode_build_module &&
         !string_contains(mod, tos3("vweb"))) {
       string mod_path = string_replace(mod, tos3("."), os__path_separator);
       string vh_path =
@@ -27146,11 +27054,12 @@ compiler__V *compiler__new_v(array_string args) {
   if (args.len < 2) {
     dir = tos3("");
   };
-  compiler__BuildMode build_mode = compiler__compiler__BuildMode_default_mode;
+  v_dot_pref__BuildMode build_mode =
+      v_dot_pref__v_dot_pref__BuildMode_default_mode;
   string mod = tos3("");
   string joined_args = array_string_join(args, tos3(" "));
   if (string_contains(joined_args, tos3("build module "))) {
-    build_mode = compiler__compiler__BuildMode_build_module;
+    build_mode = v_dot_pref__v_dot_pref__BuildMode_build_module;
     os__chdir(vroot);
     string mod_path =
         ((string_contains(dir, tos3("vlib")))
@@ -27203,42 +27112,42 @@ compiler__V *compiler__new_v(array_string args) {
       };
     };
   };
-  v_dot_builder__OS _os = v_dot_builder__v_dot_builder__OS_mac;
+  v_dot_pref__OS _os = v_dot_pref__v_dot_pref__OS_mac;
   if (string_eq(target_os, tos3(""))) {
 #ifdef __linux__
-    _os = v_dot_builder__v_dot_builder__OS_linux;
+    _os = v_dot_pref__v_dot_pref__OS_linux;
 #endif
     ;
 #ifdef __APPLE__
-    _os = v_dot_builder__v_dot_builder__OS_mac;
+    _os = v_dot_pref__v_dot_pref__OS_mac;
 #endif
     ;
 #ifdef _WIN32
-    _os = v_dot_builder__v_dot_builder__OS_windows;
+    _os = v_dot_pref__v_dot_pref__OS_windows;
 #endif
     ;
 #ifdef __FreeBSD__
-    _os = v_dot_builder__v_dot_builder__OS_freebsd;
+    _os = v_dot_pref__v_dot_pref__OS_freebsd;
 #endif
     ;
 #ifdef __OpenBSD__
-    _os = v_dot_builder__v_dot_builder__OS_openbsd;
+    _os = v_dot_pref__v_dot_pref__OS_openbsd;
 #endif
     ;
 #ifdef __NetBSD__
-    _os = v_dot_builder__v_dot_builder__OS_netbsd;
+    _os = v_dot_pref__v_dot_pref__OS_netbsd;
 #endif
     ;
 #ifdef __DragonFly__
-    _os = v_dot_builder__v_dot_builder__OS_dragonfly;
+    _os = v_dot_pref__v_dot_pref__OS_dragonfly;
 #endif
     ;
 #ifdef __sun
-    _os = v_dot_builder__v_dot_builder__OS_solaris;
+    _os = v_dot_pref__v_dot_pref__OS_solaris;
 #endif
     ;
 #ifdef __haiku__
-    _os = v_dot_builder__v_dot_builder__OS_haiku;
+    _os = v_dot_pref__v_dot_pref__OS_haiku;
 #endif
     ;
   } else {
@@ -27259,12 +27168,12 @@ compiler__V *compiler__new_v(array_string args) {
       os_dot_cmdline__many_values(args, tos3("-cflags")), tos3(" "));
   array_string defines = os_dot_cmdline__many_values(args, tos3("-d"));
   _V_MulRet_array_string_V_array_string
-      _V_mret_4791_compile_defines_compile_defines_all =
+      _V_mret_4691_compile_defines_compile_defines_all =
           compiler__parse_defines(defines);
   array_string compile_defines =
-      _V_mret_4791_compile_defines_compile_defines_all.var_0;
+      _V_mret_4691_compile_defines_compile_defines_all.var_0;
   array_string compile_defines_all =
-      _V_mret_4791_compile_defines_compile_defines_all.var_1;
+      _V_mret_4691_compile_defines_compile_defines_all.var_1;
   string rdir = os__realpath(dir);
   string rdir_name = filepath__filename(rdir);
   if ((_IN(string, (tos3("-bare")), args))) {
@@ -27272,8 +27181,8 @@ compiler__V *compiler__new_v(array_string args) {
   };
   bool obfuscate = (_IN(string, (tos3("-obf")), args));
   bool is_repl = (_IN(string, (tos3("-repl")), args));
-  compiler__Preferences *pref = (compiler__Preferences *)memdup(
-      &(compiler__Preferences){
+  v_dot_pref__Preferences *pref = (v_dot_pref__Preferences *)memdup(
+      &(v_dot_pref__Preferences){
           .is_test = is_test,
           .is_script = is_script,
           .is_so = (_IN(string, (tos3("-shared")), args)),
@@ -27319,7 +27228,7 @@ compiler__V *compiler__new_v(array_string args) {
           .v2 = (_IN(string, (tos3("-v2")), args)),
           .no_auto_free = 0,
       },
-      sizeof(compiler__Preferences));
+      sizeof(v_dot_pref__Preferences));
   if (pref->is_verbose || pref->is_debug) {
     printf("C compiler=%.*s\n", pref->ccompiler.len, pref->ccompiler.str);
   };
@@ -27468,42 +27377,42 @@ string compiler__vhash() {
 string compiler__cescaped_path(string s) {
   return string_replace(s, tos3("\\"), tos3("\\\\"));
 }
-v_dot_builder__OS compiler__os_from_string(string os) {
+v_dot_pref__OS compiler__os_from_string(string os) {
   string tmp107 = os;
 
   if (string_eq(tmp107, tos3("linux"))) {
-    return v_dot_builder__v_dot_builder__OS_linux;
+    return v_dot_pref__v_dot_pref__OS_linux;
   } else if (string_eq(tmp107, tos3("windows"))) {
-    return v_dot_builder__v_dot_builder__OS_windows;
+    return v_dot_pref__v_dot_pref__OS_windows;
   } else if (string_eq(tmp107, tos3("mac"))) {
-    return v_dot_builder__v_dot_builder__OS_mac;
+    return v_dot_pref__v_dot_pref__OS_mac;
   } else if (string_eq(tmp107, tos3("macos"))) {
-    return v_dot_builder__v_dot_builder__OS_mac;
+    return v_dot_pref__v_dot_pref__OS_mac;
   } else if (string_eq(tmp107, tos3("freebsd"))) {
-    return v_dot_builder__v_dot_builder__OS_freebsd;
+    return v_dot_pref__v_dot_pref__OS_freebsd;
   } else if (string_eq(tmp107, tos3("openbsd"))) {
-    return v_dot_builder__v_dot_builder__OS_openbsd;
+    return v_dot_pref__v_dot_pref__OS_openbsd;
   } else if (string_eq(tmp107, tos3("netbsd"))) {
-    return v_dot_builder__v_dot_builder__OS_netbsd;
+    return v_dot_pref__v_dot_pref__OS_netbsd;
   } else if (string_eq(tmp107, tos3("dragonfly"))) {
-    return v_dot_builder__v_dot_builder__OS_dragonfly;
+    return v_dot_pref__v_dot_pref__OS_dragonfly;
   } else if (string_eq(tmp107, tos3("js"))) {
-    return v_dot_builder__v_dot_builder__OS_js;
+    return v_dot_pref__v_dot_pref__OS_js;
   } else if (string_eq(tmp107, tos3("solaris"))) {
-    return v_dot_builder__v_dot_builder__OS_solaris;
+    return v_dot_pref__v_dot_pref__OS_solaris;
   } else if (string_eq(tmp107, tos3("android"))) {
-    return v_dot_builder__v_dot_builder__OS_android;
+    return v_dot_pref__v_dot_pref__OS_android;
   } else if (string_eq(tmp107, tos3("msvc"))) {
     compiler__verror(tos3("use the flag `-cc msvc` to build using msvc"));
   } else if (string_eq(tmp107, tos3("haiku"))) {
-    return v_dot_builder__v_dot_builder__OS_haiku;
+    return v_dot_pref__v_dot_pref__OS_haiku;
   } else if (string_eq(tmp107, tos3("linux_or_macos"))) {
-    return v_dot_builder__v_dot_builder__OS_linux;
+    return v_dot_pref__v_dot_pref__OS_linux;
   } else // default:
   {
     v_panic(_STR("bad os %.*s", os.len, os.str));
   };
-  return v_dot_builder__v_dot_builder__OS_linux;
+  return v_dot_pref__v_dot_pref__OS_linux;
 }
 void compiler__set_vroot_folder(string vroot_path) {
   string vname = ((string_eq(os__user_os(), tos3("windows"))) ? (tos3("v.exe"))
@@ -28211,11 +28120,11 @@ void compiler__V_cc_msvc(compiler__V *v) {
     v->out_name = string_add(v->out_name, tos3(".exe"));
   };
   v->out_name = os__realpath(v->out_name);
-  if (v->pref->build_mode == compiler__compiler__BuildMode_build_module) {
+  if (v->pref->build_mode == v_dot_pref__v_dot_pref__BuildMode_build_module) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/c")), tmp27,
           string);
   } else if (v->pref->build_mode ==
-             compiler__compiler__BuildMode_default_mode) {
+             v_dot_pref__v_dot_pref__BuildMode_default_mode) {
   };
   if (v->pref->sanitize) {
     println(tos3("Sanitize not supported on msvc."));
@@ -29816,7 +29725,7 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
     if ((p->calling_c && compiler__Parser_peek(&/* ? */ *p) !=
                              compiler__compiler__TokenKind_dot) ||
         is_cstr || (p->pref->translated && string_eq(p->mod, tos3("main")))) {
-      if (p->os == v_dot_builder__v_dot_builder__OS_windows &&
+      if (p->os == v_dot_pref__v_dot_pref__OS_windows &&
           string_eq(p->mod, tos3("ui"))) {
         compiler__Parser_gen(p, _STR("L\"%.*s\"", f.len, f.str));
       } else {
