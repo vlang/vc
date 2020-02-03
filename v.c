@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "34e9eb3"
+#define V_COMMIT_HASH "50b704c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d918903"
+#define V_COMMIT_HASH "34e9eb3"
 #endif
 #include <inttypes.h>
 
@@ -25324,9 +25324,14 @@ string compiler__stringify_pointer(string typ) {
 string compiler__Parser_match_statement(compiler__Parser *p, bool is_expr) {
   compiler__Parser_check(p, compiler__compiler__TokenKind_key_match);
   ;
-  _V_MulRet_string_V_string _V_mret_36_typ_expr = compiler__Parser_tmp_expr(p);
-  string typ = _V_mret_36_typ_expr.var_0;
-  string expr = _V_mret_36_typ_expr.var_1;
+  bool is_mut = p->tok == compiler__compiler__TokenKind_key_mut;
+  if (is_mut) {
+    compiler__Parser_next(p);
+    ;
+  };
+  _V_MulRet_string_V_string _V_mret_58_typ_expr = compiler__Parser_tmp_expr(p);
+  string typ = _V_mret_58_typ_expr.var_0;
+  string expr = _V_mret_58_typ_expr.var_1;
   if (string_starts_with(typ, tos3("array_"))) {
     compiler__Parser_error(p, tos3("arrays cannot be compared"));
   };
@@ -25448,7 +25453,7 @@ string compiler__Parser_match_statement(compiler__Parser *p, bool is_expr) {
         compiler__Parser_register_var(
             p, (compiler__Var){.name = tos3("it"),
                                .typ = string_add(sum_child_type, tos3("*")),
-                               .is_mut = 1,
+                               .is_mut = is_mut,
                                .ptr = 1,
                                .idx = 0,
                                .is_arg = 0,
@@ -25580,10 +25585,10 @@ string compiler__Parser_if_statement(compiler__Parser *p, bool is_expr,
     compiler__Parser_check(p, compiler__compiler__TokenKind_decl_assign);
     ;
     p->is_var_decl = 1;
-    _V_MulRet_string_V_string _V_mret_1059_option_type_expr =
+    _V_MulRet_string_V_string _V_mret_1081_option_type_expr =
         compiler__Parser_tmp_expr(p);
-    string option_type = _V_mret_1059_option_type_expr.var_0;
-    string expr = _V_mret_1059_option_type_expr.var_1;
+    string option_type = _V_mret_1081_option_type_expr.var_0;
+    string expr = _V_mret_1081_option_type_expr.var_1;
     if (!string_starts_with(option_type, tos3("Option_"))) {
       compiler__Parser_error(p,
                              tos3("`if x := opt() {` syntax requires a "
