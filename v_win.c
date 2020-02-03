@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6489b48"
+#define V_COMMIT_HASH "40fd918"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e5f5117"
+#define V_COMMIT_HASH "6489b48"
 #endif
 #include <inttypes.h>
 
@@ -12449,11 +12449,8 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
   } else if (tmp5.typ == SumType_VarDecl) {
     v_dot_ast__VarDecl *it = (v_dot_ast__VarDecl *)tmp5.obj;
     v_dot_table__Type typ = it->typ;
-    if (typ.kind == v_dot_table__v_dot_table__Kind_unresolved) {
-      typ = v_dot_checker__Checker_expr(&/* ? */ g->checker, it->expr);
-    };
-    v_dot_gen__Gen_write(g, _STR("%.*s %.*s = ", typ.name.len, typ.name.str,
-                                 it->name.len, it->name.str));
+    v_dot_gen__Gen_write(g, _STR("%.*s %.*s = ", it->typ.name.len,
+                                 it->typ.name.str, it->name.len, it->name.str));
     v_dot_gen__Gen_expr(g, it->expr);
     v_dot_gen__Gen_writeln(g, tos3(";"));
   } else if (tmp5.typ == SumType_ForStmt) {
