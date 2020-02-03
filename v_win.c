@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "40fd918"
+#define V_COMMIT_HASH "01f45f0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6489b48"
+#define V_COMMIT_HASH "40fd918"
 #endif
 #include <inttypes.h>
 
@@ -1753,7 +1753,6 @@ struct v_dot_gen__Gen {
   strings__Builder out;
   strings__Builder definitions;
   v_dot_table__Table *table;
-  v_dot_checker__Checker checker;
   v_dot_ast__FnDecl *fn_decl;
 };
 
@@ -12332,12 +12331,10 @@ string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark *b, string s,
 i64 benchmark__now() { return time__ticks(); }
 string v_dot_gen__cgen(array_v_dot_ast__File files, v_dot_table__Table *table) {
   println(tos3("start cgen"));
-  v_dot_gen__Gen g =
-      (v_dot_gen__Gen){.out = strings__new_builder(100),
-                       .definitions = strings__new_builder(100),
-                       .table = table,
-                       .checker = v_dot_checker__new_checker(table),
-                       .fn_decl = 0};
+  v_dot_gen__Gen g = (v_dot_gen__Gen){.out = strings__new_builder(100),
+                                      .definitions = strings__new_builder(100),
+                                      .table = table,
+                                      .fn_decl = 0};
   array_v_dot_ast__File tmp1 = files;
   for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
     v_dot_ast__File file = ((v_dot_ast__File *)tmp1.data)[tmp2];
@@ -12448,7 +12445,6 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
     v_dot_gen__Gen_writeln(g, tos3(";"));
   } else if (tmp5.typ == SumType_VarDecl) {
     v_dot_ast__VarDecl *it = (v_dot_ast__VarDecl *)tmp5.obj;
-    v_dot_table__Type typ = it->typ;
     v_dot_gen__Gen_write(g, _STR("%.*s %.*s = ", it->typ.name.len,
                                  it->typ.name.str, it->name.len, it->name.str));
     v_dot_gen__Gen_expr(g, it->expr);
