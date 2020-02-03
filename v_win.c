@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1ac7a95"
+#define V_COMMIT_HASH "60a4f66"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "50b704c"
+#define V_COMMIT_HASH "1ac7a95"
 #endif
 #include <inttypes.h>
 
@@ -12357,7 +12357,7 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
     };
   } else if (tmp5.typ == SumType_FnDecl) {
     v_dot_ast__FnDecl *it = (v_dot_ast__FnDecl *)tmp5.obj;
-    g->fn_decl = &it;
+    g->fn_decl = it;
     bool is_main = string_eq(it->name, tos3("main"));
     if (is_main) {
       v_dot_gen__Gen_write(g, _STR("int %.*s(", it->name.len, it->name.str));
@@ -12405,6 +12405,9 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
     v_dot_ast__Return *it = (v_dot_ast__Return *)tmp5.obj;
     v_dot_gen__Gen_write(g, tos3("return"));
     if (it->exprs.len > 1) {
+      println(tos3("MULT RET"));
+      /*opt*/ printf("%d\n", g->fn_decl->ti.idx);
+      println(g->fn_decl->ti.name);
       v_dot_table__Type ti =
           v_dot_table__Table_refresh_ti(&/* ? */ *g->table, g->fn_decl->ti);
       v_dot_gen__Gen_write(g, _STR(" (%.*s){", ti.name.len, ti.name.str));
