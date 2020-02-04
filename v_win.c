@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "85e4e4c"
+#define V_COMMIT_HASH "21b5472"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "83f0c22"
+#define V_COMMIT_HASH "85e4e4c"
 #endif
 #include <inttypes.h>
 
@@ -2115,6 +2115,7 @@ time__calculate_date_from_offset(int day_offset_);
 static inline _V_MulRet_int_V_int_V_int
 time__calculate_time_from_offset(int second_offset_);
 time__Time time__convert_ctime(struct /*TM*/ tm t);
+static inline int time__make_unix_time(struct /*TM*/ tm t);
 array_string os_dot_cmdline__many_values(array_string args, string optname);
 string os_dot_cmdline__option(array_string args, string param, string def);
 array_string os_dot_cmdline__before(array_string args, array_string what);
@@ -7100,7 +7101,7 @@ int time__Time_calc_unix(time__Time *t) {
                                     .tm_mday = t->day,
                                     .tm_mon = t->month - 1,
                                     .tm_year = t->year - 1900};
-  return mktime(&tt);
+  return time__make_unix_time(tt);
 }
 time__Time time__Time_add_seconds(time__Time t, int seconds) {
   return time__unix(t.v_unix + seconds);
@@ -7408,7 +7409,10 @@ time__Time time__convert_ctime(struct /*TM*/ tm t) {
                       .hour = t.tm_hour,
                       .minute = t.tm_min,
                       .second = t.tm_sec,
-                      .v_unix = mktime(&t)};
+                      .v_unix = time__make_unix_time(t)};
+}
+static inline int time__make_unix_time(struct /*TM*/ tm t) {
+  return mktime(&t) - _timezone;
 }
 array_string os_dot_cmdline__many_values(array_string args, string optname) {
   array_string flags = new_array_from_c_array(

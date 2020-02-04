@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "85e4e4c"
+#define V_COMMIT_HASH "21b5472"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "83f0c22"
+#define V_COMMIT_HASH "85e4e4c"
 #endif
 #include <inttypes.h>
 
@@ -2017,6 +2017,7 @@ string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr,
                               time__FormatDate fmt_date);
 string time__Time_str(time__Time t);
 time__Time time__convert_ctime(struct /*TM*/ tm t);
+static inline int time__make_unix_time(struct /*TM*/ tm t);
 time__Time time__unix(int abs);
 static inline _V_MulRet_int_V_int_V_int
 time__calculate_date_from_offset(int day_offset_);
@@ -6993,7 +6994,7 @@ int time__Time_calc_unix(time__Time *t) {
                                     .tm_mon = t->month - 1,
                                     .tm_year = t->year - 1900,
                                     .tm_gmtoff = 0};
-  return mktime(&tt);
+  return time__make_unix_time(tt);
 }
 time__Time time__Time_add_seconds(time__Time t, int seconds) {
   return time__unix(t.v_unix + seconds);
@@ -7198,14 +7199,16 @@ string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr,
 }
 string time__Time_str(time__Time t) { return time__Time_format_ss(t); }
 time__Time time__convert_ctime(struct /*TM*/ tm t) {
-  return time__Time_add_seconds((time__Time){.year = t.tm_year + 1900,
-                                             .month = t.tm_mon + 1,
-                                             .day = t.tm_mday,
-                                             .hour = t.tm_hour,
-                                             .minute = t.tm_min,
-                                             .second = t.tm_sec,
-                                             .v_unix = mktime(&t)},
-                                t.tm_gmtoff);
+  return (time__Time){.year = t.tm_year + 1900,
+                      .month = t.tm_mon + 1,
+                      .day = t.tm_mday,
+                      .hour = t.tm_hour,
+                      .minute = t.tm_min,
+                      .second = t.tm_sec,
+                      .v_unix = time__make_unix_time(t)};
+}
+static inline int time__make_unix_time(struct /*TM*/ tm t) {
+  return mktime(&t) + t.tm_gmtoff;
 }
 time__Time time__unix(int abs) {
   int day_offset = abs / time__seconds_per_day;
