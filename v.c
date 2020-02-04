@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4d69583"
+#define V_COMMIT_HASH "c7f07cd"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "75eebb5"
+#define V_COMMIT_HASH "4d69583"
 #endif
 #include <inttypes.h>
 
@@ -1110,11 +1110,6 @@ struct v_dot_ast__Module {
   v_dot_ast__Expr expr;
 };
 
-struct v_dot_ast__PostfixExpr {
-  v_dot_token__Kind op;
-  v_dot_ast__Expr expr;
-};
-
 struct v_dot_ast__PrefixExpr {
   v_dot_token__Kind op;
   v_dot_ast__Expr right;
@@ -1560,6 +1555,12 @@ struct v_dot_ast__MethodCallExpr {
   v_dot_ast__Expr expr;
   string name;
   array_v_dot_ast__Expr args;
+};
+
+struct v_dot_ast__PostfixExpr {
+  v_dot_token__Kind op;
+  v_dot_ast__Expr expr;
+  v_dot_token__Position pos;
 };
 
 struct v_dot_ast__Return {
@@ -2291,6 +2292,9 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
                                  v_dot_ast__Stmt node);
 v_dot_table__Type v_dot_checker__Checker_expr(v_dot_checker__Checker *c,
                                               v_dot_ast__Expr node);
+v_dot_table__Type
+v_dot_checker__Checker_postfix_expr(v_dot_checker__Checker *c,
+                                    v_dot_ast__PostfixExpr node);
 v_dot_table__Type v_dot_checker__Checker_index_expr(v_dot_checker__Checker *c,
                                                     v_dot_ast__IndexExpr node);
 void v_dot_checker__Checker_error(v_dot_checker__Checker *c, string s,
@@ -10552,7 +10556,7 @@ v_dot_table__Type v_dot_checker__Checker_expr(v_dot_checker__Checker *c,
     return v_dot_table__int_type;
   } else if (tmp34.typ == SumType_PostfixExpr) {
     v_dot_ast__PostfixExpr *it = (v_dot_ast__PostfixExpr *)tmp34.obj;
-    return v_dot_checker__Checker_expr(&/* ? */ *c, it->expr);
+    return v_dot_checker__Checker_postfix_expr(&/* ? */ *c, *it);
   } else if (tmp34.typ == SumType_StringLiteral) {
     v_dot_ast__StringLiteral *it = (v_dot_ast__StringLiteral *)tmp34.obj;
     return v_dot_table__string_type;
@@ -10621,6 +10625,20 @@ v_dot_table__Type v_dot_checker__Checker_expr(v_dot_checker__Checker *c,
   {
   };
   return v_dot_table__void_type;
+}
+v_dot_table__Type
+v_dot_checker__Checker_postfix_expr(v_dot_checker__Checker *c,
+                                    v_dot_ast__PostfixExpr node) {
+  v_dot_table__Type typ = v_dot_checker__Checker_expr(&/* ? */ *c, node.expr);
+  if (typ.kind != v_dot_table__v_dot_table__Kind_int) {
+    v_dot_checker__Checker_error(
+        &/* ? */ *c,
+        _STR("invalid operation: %.*s (non-numeric type `%.*s`)",
+             v_dot_token__Kind_str(node.op).len,
+             v_dot_token__Kind_str(node.op).str, typ.name.len, typ.name.str),
+        node.pos);
+  };
+  return typ;
 }
 v_dot_table__Type v_dot_checker__Checker_index_expr(v_dot_checker__Checker *c,
                                                     v_dot_ast__IndexExpr node) {
@@ -13671,7 +13689,9 @@ v_dot_parser__Parser_expr(v_dot_parser__Parser *p, int precedence) {
                 p->tok.kind == v_dot_token__v_dot_token__Kind_dec)) {
       node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
           .obj = memdup(&(v_dot_ast__PostfixExpr[]){(v_dot_ast__PostfixExpr){
-                            .op = p->tok.kind, .expr = node}},
+                            .op = p->tok.kind,
+                            .expr = node,
+                        }},
                         sizeof(v_dot_ast__PostfixExpr)),
           .typ = SumType_PostfixExpr};
       v_dot_parser__Parser_next(p);
