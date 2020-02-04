@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b6a62cf"
+#define V_COMMIT_HASH "75eebb5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "da8c7eb"
+#define V_COMMIT_HASH "b6a62cf"
 #endif
 #include <inttypes.h>
 
@@ -6126,18 +6126,25 @@ int strings__levenshtein_distance(string a, string b) {
       array_repeat(new_array_from_c_array(1, 1, sizeof(int),
                                           EMPTY_ARRAY_OF_ELEMS(int, 1){0}),
                    b.len + 1);
-  string tmp1 = a;
+  int tmp1 = 0;
   ;
-  for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-    byte ca = tmp1.str[tmp2];
+  for (int tmp2 = tmp1; tmp2 < f.len; tmp2++) {
+    int j = tmp2;
+
+    array_set(&/*q*/ f, j, &(int[]){j});
+  };
+  string tmp3 = a;
+  ;
+  for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
+    byte ca = tmp3.str[tmp4];
 
     int j = 1;
     int fj1 = (*(int *)array_get(f, 0));
     (*(int *)array_get(f, 0))++;
-    string tmp7 = b;
+    string tmp9 = b;
     ;
-    for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
-      byte cb = tmp7.str[tmp8];
+    for (int tmp10 = 0; tmp10 < tmp9.len; tmp10++) {
+      byte cb = tmp9.str[tmp10];
 
       int mn =
           (((*(int *)array_get(f, j)) + 1 <= (*(int *)array_get(f, j - 1)) + 1)
@@ -6176,20 +6183,20 @@ f32 strings__dice_coefficient(string s1, string s2) {
   for (int i = 0; i < a.len - 1; i++) {
 
     string bigram = string_substr2(a, i, i + 2, false);
-    int tmp23 = 0;
-    bool tmp24 = map_get(/*similarity.v : 52*/ first_bigrams, bigram, &tmp23);
+    int tmp25 = 0;
+    bool tmp26 = map_get(/*similarity.v : 55*/ first_bigrams, bigram, &tmp25);
 
-    int q = (((_IN_MAP((bigram), first_bigrams))) ? (tmp23 + 1) : (1));
+    int q = (((_IN_MAP((bigram), first_bigrams))) ? (tmp25 + 1) : (1));
     map_set(&first_bigrams, bigram, &(int[]){q});
   };
   int intersection_size = 0;
   for (int i = 0; i < b.len - 1; i++) {
 
     string bigram = string_substr2(b, i, i + 2, false);
-    int tmp27 = 0;
-    bool tmp28 = map_get(/*similarity.v : 58*/ first_bigrams, bigram, &tmp27);
+    int tmp29 = 0;
+    bool tmp30 = map_get(/*similarity.v : 61*/ first_bigrams, bigram, &tmp29);
 
-    int count = (((_IN_MAP((bigram), first_bigrams))) ? (tmp27) : (0));
+    int count = (((_IN_MAP((bigram), first_bigrams))) ? (tmp29) : (0));
     if (count > 0) {
       map_set(&first_bigrams, bigram, &(int[]){count - 1});
       intersection_size++;
