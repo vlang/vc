@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1db07f5"
+#define V_COMMIT_HASH "1618596"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2b433cd"
+#define V_COMMIT_HASH "1db07f5"
 #endif
 #include <inttypes.h>
 
@@ -4109,9 +4109,9 @@ bool print_backtrace_skipping_top_frames_nix(int xskipframes) {
 bool print_backtrace_skipping_top_frames_mac(int skipframes) {
 #ifdef __APPLE__
   byte *buffer[100];
-  int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
-  backtrace_symbols_fd(((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)),
-                       nr_ptrs - skipframes, 1);
+  int nr_ptrs = backtrace(buffer, 100);
+  backtrace_symbols_fd(&buffer[skipframes] /*rbyte* 0*/, nr_ptrs - skipframes,
+                       1);
 #endif
   ;
   return 1;
@@ -4119,9 +4119,9 @@ bool print_backtrace_skipping_top_frames_mac(int skipframes) {
 bool print_backtrace_skipping_top_frames_freebsd(int skipframes) {
 #ifdef __FreeBSD__
   byte *buffer[100];
-  int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
-  backtrace_symbols_fd(((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)),
-                       nr_ptrs - skipframes, 1);
+  int nr_ptrs = backtrace(buffer, 100);
+  backtrace_symbols_fd(&buffer[skipframes] /*rbyte* 0*/, nr_ptrs - skipframes,
+                       1);
 #endif
   ;
   return 1;
@@ -4137,12 +4137,12 @@ bool print_backtrace_skipping_top_frames_linux(int skipframes) {
 #ifndef __ANDROID__
 #ifdef __GLIBC__
   byte *buffer[100];
-  int nr_ptrs = backtrace(((voidptr *)(buffer)), 100);
+  int nr_ptrs = backtrace(buffer, 100);
   int nr_actual_frames = nr_ptrs - skipframes;
   array_string sframes = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  byteptr *csymbols = backtrace_symbols(
-      ((voidptr *)(&buffer[skipframes] /*rbyte* 0*/)), nr_actual_frames);
+  byteptr *csymbols =
+      backtrace_symbols(&buffer[skipframes] /*rbyte* 0*/, nr_actual_frames);
   int tmp1 = 0;
   ;
   for (int tmp2 = tmp1; tmp2 < nr_actual_frames; tmp2++) {
@@ -4170,12 +4170,12 @@ bool print_backtrace_skipping_top_frames_linux(int skipframes) {
     };
     byte buf[1000] = {0};
     string output = tos3("");
-    while (fgets(((voidptr)(buf)), 1000, f) != 0) {
+    while (fgets(buf, 1000, f) != 0) {
 
       output = string_add(output, tos(buf, vstrlen(buf)));
     };
     output = string_add(string_trim_space(output), tos3(":"));
-    if (0 != pclose(f)) {
+    if (pclose(f) != 0) {
       println(sframe);
       continue;
     };
@@ -5196,7 +5196,7 @@ array_string string_split_into_lines(string s) {
   for (int i = 0; i < s.len; i++) {
 
     bool last = i == s.len - 1;
-    if (((int)(s.str[i] /*rbyte 0*/)) == 10 || last) {
+    if (s.str[i] /*rbyte 0*/ == 10 || last) {
       if (last) {
         i++;
       };
@@ -8675,12 +8675,14 @@ Option_string os__read_file(string path) {
   fseek(fp, 0, SEEK_END);
   int fsize = ftell(fp);
   rewind(fp);
-  byte *str = v_malloc(fsize + 1);
+  byte *str = ((byte *)(0));
+  { str = v_malloc(fsize + 1); };
   fread((char *)str, fsize, 1, fp);
-  fclose(fp);
   str[/*ptr!*/ fsize] /*rbyte 1*/ = 0;
   string tmp6 = OPTION_CAST(string)((tos((byte *)str, fsize)));
+  { fclose(fp); }
   return opt_ok(&tmp6, sizeof(string));
+  { fclose(fp); }
 }
 int os__file_size(string path) {
   struct /*c struct init*/
@@ -8973,9 +8975,9 @@ int os__vpclose(void *f) {
 #ifdef _WIN32
   return _pclose(f);
 #else
-  _V_MulRet_int_V_bool _V_mret_1675_ret__ =
+  _V_MulRet_int_V_bool _V_mret_1688_ret__ =
       os__posix_wait4_to_exit_status(pclose(f));
-  int ret = _V_mret_1675_ret__.var_0;
+  int ret = _V_mret_1688_ret__.var_0;
   return ret;
 #endif
   ;
@@ -8996,10 +8998,10 @@ int os__system(string cmd) {
     os__print_c_errno();
   };
 #ifndef _WIN32
-  _V_MulRet_int_V_bool _V_mret_1794_pret_is_signaled =
+  _V_MulRet_int_V_bool _V_mret_1807_pret_is_signaled =
       os__posix_wait4_to_exit_status(ret);
-  int pret = _V_mret_1794_pret_is_signaled.var_0;
-  bool is_signaled = _V_mret_1794_pret_is_signaled.var_1;
+  int pret = _V_mret_1807_pret_is_signaled.var_0;
+  bool is_signaled = _V_mret_1807_pret_is_signaled.var_1;
   if (is_signaled) {
     println(string_add(string_add(_STR("Terminated by signal %2d (", ret),
                                   os__sigint_to_signal_name(pret)),
@@ -9254,13 +9256,27 @@ string os__get_raw_line() {
   };
   return (tos((byte *)buf, offset));
 #else
-  size_t max = ((size_t)(256));
-  charptr buf = ((charptr)(v_malloc(((int)(max)))));
+  size_t max = ((size_t)(0));
+  byteptr buf = ((byteptr)(0));
   int nr_chars = getline(&buf, &max, stdin);
-  if (nr_chars == 0) {
-    return tos3("");
+  if (nr_chars == 0 || nr_chars == -1) {
+    string tmp43 = tos3("");
+    {
+      { v_free(buf); };
+    }
+    return tmp43;
+    ;
   };
-  return (tos((byte *)((byteptr)(buf)), nr_chars));
+  string res = tos_clone(buf);
+  string tmp44 = res;
+  {
+    { v_free(buf); };
+  }
+  return tmp44;
+  ;
+  {
+    { v_free(buf); };
+  }
 #endif
   ;
 }
@@ -9274,7 +9290,7 @@ array_string os__get_lines() {
       break;
     };
     line = string_trim_space(line);
-    _PUSH(&inputstr, (/*typ = array_string   tmp_typ=string*/ line), tmp43,
+    _PUSH(&inputstr, (/*typ = array_string   tmp_typ=string*/ line), tmp45,
           string);
   };
   return inputstr;
@@ -9353,15 +9369,15 @@ string os__home_dir() {
   return home;
 }
 void os__write_file(string path, string text) {
-  Option_os__File tmp44 = os__create(path);
+  Option_os__File tmp46 = os__create(path);
   os__File f;
-  if (!tmp44.ok) {
-    string err = tmp44.error;
-    int errcode = tmp44.ecode;
+  if (!tmp46.ok) {
+    string err = tmp46.error;
+    int errcode = tmp46.ecode;
 
     return;
   }
-  f = *(os__File *)tmp44.data;
+  f = *(os__File *)tmp46.data;
   ;
   os__File_write(&/* ? */ f, text);
   os__File_close(&/* ? */ f);
@@ -9554,23 +9570,23 @@ array_string os__walk_ext(string path, string ext) {
     return new_array_from_c_array(0, 0, sizeof(string),
                                   EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   };
-  Option_array_string tmp57 = os__ls(path);
+  Option_array_string tmp59 = os__ls(path);
   array_string files;
-  if (!tmp57.ok) {
-    string err = tmp57.error;
-    int errcode = tmp57.ecode;
+  if (!tmp59.ok) {
+    string err = tmp59.error;
+    int errcode = tmp59.ecode;
     v_panic(err);
   }
-  files = *(array_string *)tmp57.data;
+  files = *(array_string *)tmp59.data;
   ;
   array_string res = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   string separator =
       ((string_ends_with(path, os__path_separator)) ? (tos3(""))
                                                     : (os__path_separator));
-  array_string tmp58 = files;
-  for (int i = 0; i < tmp58.len; i++) {
-    string file = ((string *)tmp58.data)[i];
+  array_string tmp60 = files;
+  for (int i = 0; i < tmp60.len; i++) {
+    string file = ((string *)tmp60.data)[i];
 
     if (string_starts_with(file, tos3("."))) {
       continue;
@@ -9579,9 +9595,9 @@ array_string os__walk_ext(string path, string ext) {
     if (os__is_dir(p) && !os__is_link(p)) {
       _PUSH_MANY(&res,
                  (/*typ = array_string   tmp_typ=string*/ os__walk_ext(p, ext)),
-                 tmp59, array_string);
+                 tmp61, array_string);
     } else if (string_ends_with(file, ext)) {
-      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp60, string);
+      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp62, string);
     };
   };
   return res;
@@ -9591,18 +9607,18 @@ void os__walk(string path, void (*fnc)(string path /*FFF*/)) {
 
     return;
   };
-  Option_array_string tmp61 = os__ls(path);
+  Option_array_string tmp63 = os__ls(path);
   array_string files;
-  if (!tmp61.ok) {
-    string err = tmp61.error;
-    int errcode = tmp61.ecode;
+  if (!tmp63.ok) {
+    string err = tmp63.error;
+    int errcode = tmp63.ecode;
     v_panic(err);
   }
-  files = *(array_string *)tmp61.data;
+  files = *(array_string *)tmp63.data;
   ;
-  array_string tmp62 = files;
-  for (int tmp63 = 0; tmp63 < tmp62.len; tmp63++) {
-    string file = ((string *)tmp62.data)[tmp63];
+  array_string tmp64 = files;
+  for (int tmp65 = 0; tmp65 < tmp64.len; tmp65++) {
+    string file = ((string *)tmp64.data)[tmp65];
 
     string p = string_add(string_add(path, os__path_separator), file);
     if (os__is_dir(p) && !os__is_link(p)) {
@@ -9652,16 +9668,16 @@ void os__mkdir_all(string path) {
   string p =
       ((string_starts_with(path, os__path_separator)) ? (os__path_separator)
                                                       : (tos3("")));
-  array_string tmp64 = string_split(path, os__path_separator);
-  for (int tmp65 = 0; tmp65 < tmp64.len; tmp65++) {
-    string subdir = ((string *)tmp64.data)[tmp65];
+  array_string tmp66 = string_split(path, os__path_separator);
+  for (int tmp67 = 0; tmp67 < tmp66.len; tmp67++) {
+    string subdir = ((string *)tmp66.data)[tmp67];
 
     p = string_add(p, string_add(subdir, os__path_separator));
     if (!os__is_dir(p)) {
-      Option_bool tmp66 = os__mkdir(p);
-      if (!tmp66.ok) {
-        string err = tmp66.error;
-        int errcode = tmp66.ecode;
+      Option_bool tmp68 = os__mkdir(p);
+      if (!tmp68.ok) {
+        string err = tmp68.error;
+        int errcode = tmp68.ecode;
         v_panic(err);
       };
     };
@@ -9681,10 +9697,10 @@ string os__cachedir() {
   ;
   string cdir = string_add(os__home_dir(), tos3(".cache"));
   if (!os__is_dir(cdir) && !os__is_link(cdir)) {
-    Option_bool tmp67 = os__mkdir(cdir);
-    if (!tmp67.ok) {
-      string err = tmp67.error;
-      int errcode = tmp67.ecode;
+    Option_bool tmp69 = os__mkdir(cdir);
+    if (!tmp69.ok) {
+      string err = tmp69.error;
+      int errcode = tmp69.ecode;
       v_panic(err);
     };
   };
