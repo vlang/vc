@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c595c9e"
+#define V_COMMIT_HASH "a61c9c6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ac5c4e3"
+#define V_COMMIT_HASH "c595c9e"
 #endif
 #include <inttypes.h>
 
@@ -2114,13 +2114,13 @@ string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr,
                               time__FormatTime fmt_time,
                               time__FormatDate fmt_date);
 string time__Time_str(time__Time t);
+time__Time time__convert_ctime(struct /*TM*/ tm t);
 time__Time time__unix(int abs);
 static inline _V_MulRet_int_V_int_V_int
 time__calculate_date_from_offset(int day_offset_);
 static inline _V_MulRet_int_V_int_V_int
 time__calculate_time_from_offset(int second_offset_);
-time__Time time__convert_ctime(struct /*TM*/ tm t);
-static inline int time__make_unix_time(struct /*TM*/ tm t);
+int time__make_unix_time(struct /*TM*/ tm t);
 array_string os_dot_cmdline__many_values(array_string args, string optname);
 string os_dot_cmdline__option(array_string args, string param, string def);
 array_string os_dot_cmdline__before(array_string args, array_string what);
@@ -3737,16 +3737,17 @@ array_string compiler__reserved_type_param_names;
 #define compiler__compiler__TokenKind_key_select 89
 #define compiler__compiler__TokenKind_key_sizeof 90
 #define compiler__compiler__TokenKind_key_offsetof 91
-#define compiler__compiler__TokenKind_key_struct 92
-#define compiler__compiler__TokenKind_key_switch 93
-#define compiler__compiler__TokenKind_key_true 94
-#define compiler__compiler__TokenKind_key_type 95
-#define compiler__compiler__TokenKind_key_orelse 96
-#define compiler__compiler__TokenKind_key_union 97
-#define compiler__compiler__TokenKind_key_pub 98
-#define compiler__compiler__TokenKind_key_static 99
-#define compiler__compiler__TokenKind_key_unsafe 100
-#define compiler__compiler__TokenKind_keyword_end 101
+#define compiler__compiler__TokenKind_key_nameof 92
+#define compiler__compiler__TokenKind_key_struct 93
+#define compiler__compiler__TokenKind_key_switch 94
+#define compiler__compiler__TokenKind_key_true 95
+#define compiler__compiler__TokenKind_key_type 96
+#define compiler__compiler__TokenKind_key_orelse 97
+#define compiler__compiler__TokenKind_key_union 98
+#define compiler__compiler__TokenKind_key_pub 99
+#define compiler__compiler__TokenKind_key_static 100
+#define compiler__compiler__TokenKind_key_unsafe 101
+#define compiler__compiler__TokenKind_keyword_end 102
 array_string compiler__TokenStr;
 map_int compiler__KEYWORDS;
 array_compiler__TokenKind compiler__AssignTokens;
@@ -7312,6 +7313,15 @@ string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr,
   };
 }
 string time__Time_str(time__Time t) { return time__Time_format_ss(t); }
+time__Time time__convert_ctime(struct /*TM*/ tm t) {
+  return (time__Time){.year = t.tm_year + 1900,
+                      .month = t.tm_mon + 1,
+                      .day = t.tm_mday,
+                      .hour = t.tm_hour,
+                      .minute = t.tm_min,
+                      .second = t.tm_sec,
+                      .v_unix = time__make_unix_time(t)};
+}
 time__Time time__unix(int abs) {
   int day_offset = abs / time__seconds_per_day;
   if (abs % time__seconds_per_day < 0) {
@@ -7409,18 +7419,7 @@ time__calculate_time_from_offset(int second_offset_) {
   return (_V_MulRet_int_V_int_V_int){
       .var_0 = hour, .var_1 = min, .var_2 = second_offset};
 }
-time__Time time__convert_ctime(struct /*TM*/ tm t) {
-  return (time__Time){.year = t.tm_year + 1900,
-                      .month = t.tm_mon + 1,
-                      .day = t.tm_mday,
-                      .hour = t.tm_hour,
-                      .minute = t.tm_min,
-                      .second = t.tm_sec,
-                      .v_unix = time__make_unix_time(t)};
-}
-static inline int time__make_unix_time(struct /*TM*/ tm t) {
-  return mktime(&t) - _timezone;
-}
+int time__make_unix_time(struct /*TM*/ tm t) { return (int)(_mkgmtime(&t)); }
 array_string os_dot_cmdline__many_values(array_string args, string optname) {
   array_string flags = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
@@ -22021,6 +22020,14 @@ string compiler__Parser_factor(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
     compiler__Parser_gen(p, _STR("%.*s)", sizeof_typ.len, sizeof_typ.str));
     return tos3("int");
+  } else if (tmp33 == compiler__compiler__TokenKind_key_nameof) {
+    compiler__Parser_next(p);
+    compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
+    string nameof_typ = compiler__Parser_get_type(p);
+    compiler__Parser_check(p, compiler__compiler__TokenKind_rpar);
+    compiler__Parser_gen(
+        p, _STR("tos3(\"%.*s\")", nameof_typ.len, nameof_typ.str));
+    return tos3("string");
   } else if (tmp33 == compiler__compiler__TokenKind_key_offsetof) {
     compiler__Parser_next(p);
     compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
@@ -32241,11 +32248,13 @@ array_string compiler__build_token_str() {
             &(string[]){tos3("none")});
   array_set(&/*q*/ s, compiler__compiler__TokenKind_key_offsetof,
             &(string[]){tos3("__offsetof")});
+  array_set(&/*q*/ s, compiler__compiler__TokenKind_key_nameof,
+            &(string[]){tos3("nameof")});
   return s;
 }
 compiler__TokenKind compiler__key_to_token(string key) {
   int tmp3 = 0;
-  bool tmp4 = map_get(/*token.v : 252*/ compiler__KEYWORDS, key, &tmp3);
+  bool tmp4 = map_get(/*token.v : 254*/ compiler__KEYWORDS, key, &tmp3);
 
   compiler__TokenKind a = ((compiler__TokenKind)(tmp3));
   return a;
