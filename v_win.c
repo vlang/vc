@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "91e181b"
+#define V_COMMIT_HASH "6c36134"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1618596"
+#define V_COMMIT_HASH "91e181b"
 #endif
 #include <inttypes.h>
 
@@ -10294,7 +10294,8 @@ string vweb_dot_tmpl__compile_template(string path) {
   html = *(string *)tmp1.data;
   ;
   string header = tos3("");
-  if (os__exists(tos3("header.html"))) {
+  if (os__exists(tos3("header.html")) &&
+      string_contains(html, tos3("@header"))) {
     Option_string tmp2 = os__read_file(tos3("header.html"));
     string h;
     if (!tmp2.ok) {
