@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1618596"
+#define V_COMMIT_HASH "91e181b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1db07f5"
+#define V_COMMIT_HASH "1618596"
 #endif
 #include <inttypes.h>
 
@@ -415,6 +415,8 @@ typedef struct _V_MulRet_int_V_strconv__PrepNumber
 typedef struct varg_string varg_string;
 
 typedef struct time__Time time__Time;
+typedef Option Option_time__Time;
+typedef Option Option_time__Time;
 typedef Option Option_int;
 typedef struct _V_MulRet_int_V_int_V_int _V_MulRet_int_V_int_V_int;
 typedef struct v_dot_pref__Preferences v_dot_pref__Preferences;
@@ -631,6 +633,8 @@ typedef Option Option_int;
 typedef int time__FormatTime;
 typedef int time__FormatDate;
 typedef int time__FormatDelimiter;
+typedef Option Option_time__Time;
+typedef Option Option_time__Time;
 typedef Option Option_int;
 typedef int v_dot_pref__BuildMode;
 typedef int v_dot_pref__OS;
@@ -2093,8 +2097,8 @@ string time__Time_ddmmy(time__Time t);
 string time__Time_md(time__Time t);
 string time__Time_clean(time__Time t);
 string time__Time_clean12(time__Time t);
-time__Time time__parse(string s);
-time__Time time__parse_iso(string s);
+Option_time__Time time__parse(string s);
+Option_time__Time time__parse_iso(string s);
 time__Time time__new_time(time__Time t);
 int time__Time_calc_unix(time__Time *t);
 time__Time time__Time_add_seconds(time__Time t, int seconds);
@@ -7028,63 +7032,50 @@ string time__Time_clean12(time__Time t) {
   };
   return time__Time_format(t);
 }
-time__Time time__parse(string s) {
+Option_time__Time time__parse(string s) {
   Option_int tmp3 = string_index(s, tos3(" "));
   int pos;
   if (!tmp3.ok) {
     string err = tmp3.error;
     int errcode = tmp3.ecode;
-    println(tos3("bad time format"));
-    return time__now();
+    return v_error(_STR("Invalid time format: %.*s", s.len, s.str));
   }
   pos = *(int *)tmp3.data;
   ;
   string symd = string_substr2(s, 0, pos, false);
   array_string ymd = string_split(symd, tos3("-"));
   if (ymd.len != 3) {
-    println(tos3("bad time format"));
-    return time__now();
+    return v_error(_STR("Invalid time format: %.*s", s.len, s.str));
   };
   string shms = string_substr2(s, pos, -1, true);
   array_string hms = string_split(shms, tos3(":"));
   string hour = string_substr2((*(string *)array_get(hms, 0)), 1, -1, true);
   string minute = (*(string *)array_get(hms, 1));
   string second = (*(string *)array_get(hms, 2));
-  return time__new_time(
+  time__Time tmp22 = OPTION_CAST(time__Time)(time__new_time(
       (time__Time){.year = v_string_int((*(string *)array_get(ymd, 0))),
                    .month = v_string_int((*(string *)array_get(ymd, 1))),
                    .day = v_string_int((*(string *)array_get(ymd, 2))),
                    .hour = v_string_int(hour),
                    .minute = v_string_int(minute),
                    .second = v_string_int(second),
-                   .v_unix = 0});
+                   .v_unix = 0}));
+  return opt_ok(&tmp22, sizeof(time__Time));
 }
-time__Time time__parse_iso(string s) {
+Option_time__Time time__parse_iso(string s) {
   array_string fields = string_split(s, tos3(" "));
   if (fields.len < 5) {
-    return (time__Time){.year = 0,
-                        .month = 0,
-                        .day = 0,
-                        .hour = 0,
-                        .minute = 0,
-                        .second = 0,
-                        .v_unix = 0};
+    return v_error(_STR("Invalid time format: %.*s", s.len, s.str));
   };
-  Option_int tmp24 =
+  Option_int tmp25 =
       string_index(time__months_string, (*(string *)array_get(fields, 2)));
   int pos;
-  if (!tmp24.ok) {
-    string err = tmp24.error;
-    int errcode = tmp24.ecode;
-    return (time__Time){.year = 0,
-                        .month = 0,
-                        .day = 0,
-                        .hour = 0,
-                        .minute = 0,
-                        .second = 0,
-                        .v_unix = 0};
+  if (!tmp25.ok) {
+    string err = tmp25.error;
+    int errcode = tmp25.ecode;
+    return v_error(_STR("Invalid time format: %.*s", s.len, s.str));
   }
-  pos = *(int *)tmp24.data;
+  pos = *(int *)tmp25.data;
   ;
   int mm = pos / 3 + 1;
   byte *tmstr = v_malloc(s.len * 2);
@@ -7092,7 +7083,17 @@ time__Time time__parse_iso(string s) {
                       (char *)(*(string *)array_get(fields, 3)).str, mm,
                       (char *)(*(string *)array_get(fields, 1)).str,
                       (char *)(*(string *)array_get(fields, 4)).str);
-  return time__parse(tos(tmstr, count));
+  Option_time__Time tmp32 = time__parse(tos(tmstr, count));
+  time__Time t;
+  if (!tmp32.ok) {
+    string err = tmp32.error;
+    int errcode = tmp32.ecode;
+    return v_error(_STR("Invalid time format: %.*s", s.len, s.str));
+  }
+  t = *(time__Time *)tmp32.data;
+  ;
+  time__Time tmp33 = OPTION_CAST(time__Time)(t);
+  return opt_ok(&tmp33, sizeof(time__Time));
 }
 time__Time time__new_time(time__Time t) {
   return (time__Time){.year = t.year,
@@ -7212,8 +7213,8 @@ Option_int time__days_in_month(int month, int year) {
   };
   int extra = ((month == 2 && time__is_leap_year(year)) ? (1) : (0));
   int res = (*(int *)array_get(time__month_days, month - 1)) + extra;
-  int tmp37 = OPTION_CAST(int)(res);
-  return opt_ok(&tmp37, sizeof(int));
+  int tmp40 = OPTION_CAST(int)(res);
+  return opt_ok(&tmp40, sizeof(int));
 }
 string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time) {
   if (fmt_time == time__time__FormatTime_no_time) {
@@ -7222,17 +7223,17 @@ string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time) {
   string tp = ((t.hour > 11) ? (tos3("p.m.")) : (tos3("a.m.")));
   int hour =
       ((t.hour > 12) ? (t.hour - 12) : (((t.hour == 0) ? (12) : (t.hour))));
-  time__FormatTime tmp38 = fmt_time;
+  time__FormatTime tmp41 = fmt_time;
 
   return (
-      (tmp38 == time__time__FormatTime_hhmm12)
+      (tmp41 == time__time__FormatTime_hhmm12)
           ? (_STR("%d:%02d %.*s", hour, t.minute, tp.len, tp.str))
-          : ((tmp38 == time__time__FormatTime_hhmm24)
+          : ((tmp41 == time__time__FormatTime_hhmm24)
                  ? (_STR("%02d:%02d", t.hour, t.minute))
-                 : ((tmp38 == time__time__FormatTime_hhmmss12)
+                 : ((tmp41 == time__time__FormatTime_hhmmss12)
                         ? (_STR("%d:%02d:%02d %.*s", hour, t.minute, t.second,
                                 tp.len, tp.str))
-                        : ((tmp38 == time__time__FormatTime_hhmmss24)
+                        : ((tmp41 == time__time__FormatTime_hhmmss24)
                                ? (_STR("%02d:%02d:%02d", t.hour, t.minute,
                                        t.second))
                                : (_STR("unknown enumeration %d", fmt_time))))));
@@ -7246,34 +7247,34 @@ string time__Time_get_fmt_date_str(time__Time t,
   string month =
       _STR("%.*s", time__Time_smonth(t).len, time__Time_smonth(t).str);
   string year = string_substr2(int_str(t.year), 2, -1, true);
-  time__FormatDate tmp41 = fmt_date;
+  time__FormatDate tmp44 = fmt_date;
 
-  time__FormatDelimiter tmp42 = fmt_dlmtr;
+  time__FormatDelimiter tmp45 = fmt_dlmtr;
 
   return string_replace(
-      ((tmp41 == time__time__FormatDate_ddmmyy)
+      ((tmp44 == time__time__FormatDate_ddmmyy)
            ? (_STR("%02d|%02d|%.*s", t.day, t.month, year.len, year.str))
-           : ((tmp41 == time__time__FormatDate_ddmmyyyy)
+           : ((tmp44 == time__time__FormatDate_ddmmyyyy)
                   ? (_STR("%02d|%02d|%d", t.day, t.month, t.year))
-                  : ((tmp41 == time__time__FormatDate_mmddyy)
+                  : ((tmp44 == time__time__FormatDate_mmddyy)
                          ? (_STR("%02d|%02d|%.*s", t.month, t.day, year.len,
                                  year.str))
-                         : ((tmp41 == time__time__FormatDate_mmddyyyy)
+                         : ((tmp44 == time__time__FormatDate_mmddyyyy)
                                 ? (_STR("%02d|%02d|%d", t.month, t.day, t.year))
-                                : ((tmp41 == time__time__FormatDate_mmmd)
+                                : ((tmp44 == time__time__FormatDate_mmmd)
                                        ? (_STR("%.*s|%d", month.len, month.str,
                                                t.day))
-                                       : ((tmp41 ==
+                                       : ((tmp44 ==
                                            time__time__FormatDate_mmmdd)
                                               ? (_STR("%.*s|%02d", month.len,
                                                       month.str, t.day))
-                                              : ((tmp41 ==
+                                              : ((tmp44 ==
                                                   time__time__FormatDate_mmmddyyyy)
                                                      ? (_STR("%.*s|%02d|%d",
                                                              month.len,
                                                              month.str, t.day,
                                                              t.year))
-                                                     : ((tmp41 ==
+                                                     : ((tmp44 ==
                                                          time__time__FormatDate_yyyymmdd)
                                                             ? (_STR("%d|%02d|%"
                                                                     "02d",
@@ -7286,13 +7287,13 @@ string time__Time_get_fmt_date_str(time__Time t,
                                                                   "%d",
                                                                   fmt_date)))))))))),
       tos3("|"),
-      ((tmp42 == time__time__FormatDelimiter_dot)
+      ((tmp45 == time__time__FormatDelimiter_dot)
            ? (tos3("."))
-           : ((tmp42 == time__time__FormatDelimiter_hyphen)
+           : ((tmp45 == time__time__FormatDelimiter_hyphen)
                   ? (tos3("-"))
-                  : ((tmp42 == time__time__FormatDelimiter_slash)
+                  : ((tmp45 == time__time__FormatDelimiter_slash)
                          ? (tos3("/"))
-                         : ((tmp42 == time__time__FormatDelimiter_space)
+                         : ((tmp45 == time__time__FormatDelimiter_space)
                                 ? (tos3(" "))
                                 : (_STR("unknown enumeration %d",
                                         fmt_dlmtr)))))));
