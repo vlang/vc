@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c8dcbcb"
+#define V_COMMIT_HASH "0510bc7"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "27719de"
+#define V_COMMIT_HASH "c8dcbcb"
 #endif
 #include <inttypes.h>
 
@@ -4310,7 +4310,7 @@ string int_str(int nn) {
   while (n > 0) {
 
     int d = n % 10;
-    buf[/*ptr!*/ max - len - 1] /*rbyte 1*/ = (int)(d + '0');
+    buf[/*ptr!*/ max - len - 1] /*rbyte 1*/ = d + ((int)('0'));
     len++;
     n = n / 10;
   };
