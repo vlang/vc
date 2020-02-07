@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b23854b"
+#define V_COMMIT_HASH "18a3961"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bb60b30"
+#define V_COMMIT_HASH "b23854b"
 #endif
 #include <inttypes.h>
 
@@ -4032,7 +4032,7 @@ string array_byte_hex(array_byte b) {
 
     ptr += sprintf((charptr)(ptr), "%02x", (*(byte *)array_get(b, i)));
   };
-  return (tos2((byte *)hex));
+  return /*!!!*/ tos2((byte *)hex);
 }
 int copy(array_byte dst, array_byte src) {
   if (dst.len > 0 && src.len > 0) {
