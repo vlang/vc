@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9e9bdc3"
+#define V_COMMIT_HASH "e01c76c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ea9961a"
+#define V_COMMIT_HASH "9e9bdc3"
 #endif
 #include <inttypes.h>
 
@@ -14942,6 +14942,7 @@ v_dot_parser__Parser_add_unresolved(v_dot_parser__Parser *p, string key,
 
     idx = tmp37;
   } else {
+    map_set(&p->table->unresolved_idxs, key, &(int[]){idx});
     _PUSH(&p->unresolved,
           (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
           tmp39, v_dot_ast__Expr);
