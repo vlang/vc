@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a2d2586"
+#define V_COMMIT_HASH "4bb5d7d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c2f22a4"
+#define V_COMMIT_HASH "a2d2586"
 #endif
 #include <inttypes.h>
 
@@ -27306,8 +27306,9 @@ void compiler__V_generate_main(compiler__V *v) {
             cgen, _STR("%.*s;", cgen->fn_main.len, cgen->fn_main.str));
         compiler__V_gen_main_end(v, tos3("return 0"));
       } else if (string_eq(v->v_fmt_file, tos3("")) && !v->pref->is_repl) {
-        compiler__verror(
-            tos3("function `main` is not declared in the main module"));
+        compiler__verror(tos3("function `main` is not declared in the main "
+                              "module\nPlease add: \nfn main(){\n}\n... to "
+                              "your main program .v file, and try again."));
       };
     } else if (v->pref->is_test) {
       if (compiler__Table_main_exists(&/* ? */ *v->table)) {
