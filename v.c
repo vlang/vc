@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "94537c5"
+#define V_COMMIT_HASH "9845fd1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "179fb13"
+#define V_COMMIT_HASH "94537c5"
 #endif
 #include <inttypes.h>
 
@@ -30345,7 +30345,8 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
   if (compiler__Parser_peek(&/* ? */ *p) !=
           compiler__compiler__TokenKind_str_dollar ||
       is_raw) {
-    string f = ((is_raw) ? (compiler__cescaped_path(str))
+    string f = ((is_raw) ? (string_replace(compiler__cescaped_path(str),
+                                           tos3("\""), tos3("\\\"")))
                          : (compiler__format_str(str)));
     if ((p->calling_c && compiler__Parser_peek(&/* ? */ *p) !=
                              compiler__compiler__TokenKind_dot) ||
@@ -30394,10 +30395,10 @@ void compiler__Parser_string_expr(compiler__Parser *p) {
       ;
       complex_inter = 1;
     };
-    _V_MulRet_string_V_string _V_mret_338_typ_val_ =
+    _V_MulRet_string_V_string _V_mret_345_typ_val_ =
         compiler__Parser_tmp_expr(p);
-    string typ = _V_mret_338_typ_val_.var_0;
-    string val_ = _V_mret_338_typ_val_.var_1;
+    string typ = _V_mret_345_typ_val_.var_0;
+    string val_ = _V_mret_345_typ_val_.var_1;
     string val = string_trim_space(val_);
     args = string_add(args, _STR(", %.*s", val.len, val.str));
     if (string_eq(typ, tos3("string"))) {
