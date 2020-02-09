@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "179fb13"
+#define V_COMMIT_HASH "94537c5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3f5e4c5"
+#define V_COMMIT_HASH "179fb13"
 #endif
 #include <inttypes.h>
 
@@ -471,7 +471,7 @@ typedef struct varg_int varg_int;
 typedef Option Option_os__File;
 typedef struct _V_MulRet_int_V_bool _V_MulRet_int_V_bool;
 typedef struct os__Result os__Result;
-typedef void *HANDLE; // type alias name="HANDLE" parent=`void*`
+typedef void *os__HANDLE; // type alias name="os__HANDLE" parent=`void*`
 typedef struct os__Filetime os__Filetime;
 typedef struct os__Win32finddata os__Win32finddata;
 typedef struct os__ProcessInformation os__ProcessInformation;
@@ -605,7 +605,8 @@ typedef struct compiler__VhGen compiler__VhGen;
 typedef struct compiler__ImportTable compiler__ImportTable;
 typedef Option Option_string;
 typedef struct compiler__MsvcResult compiler__MsvcResult;
-typedef void *RegKey; // type alias name="RegKey" parent=`void*`
+typedef void
+    *compiler__RegKey; // type alias name="compiler__RegKey" parent=`void*`
 typedef Option Option_string;
 typedef struct compiler__WindowsKit compiler__WindowsKit;
 typedef Option Option_compiler__WindowsKit;
@@ -2332,8 +2333,8 @@ Option_os__File os__create(string path);
 void os__File_write(os__File *f, string s);
 void os__File_writeln(os__File *f, string s);
 Option_bool os__mkdir(string path);
-HANDLE os__get_file_handle(string path);
-Option_string os__get_module_filename(HANDLE handle);
+os__HANDLE os__get_file_handle(string path);
+Option_string os__get_module_filename(os__HANDLE handle);
 void *os__ptr_win_get_error_msg(u32 code);
 string os__get_error_msg(int code);
 Option_os__Result os__exec(string cmd);
@@ -3109,7 +3110,7 @@ void compiler__V_set_module_lookup_paths(compiler__V *v);
 Option_string compiler__V_find_module_path(compiler__V *v, string mod);
 static inline string compiler__mod_gen_name(string mod);
 static inline string compiler__mod_gen_name_rev(string mod);
-Option_string compiler__find_windows_kit_internal(RegKey key,
+Option_string compiler__find_windows_kit_internal(compiler__RegKey key,
                                                   array_string versions);
 Option_compiler__WindowsKit compiler__find_windows_kit_root(string host_arch);
 Option_compiler__VsInstallation compiler__find_vs(string vswhere_dir,
@@ -3671,7 +3672,7 @@ array_string compiler__supported_platforms;
 #define compiler__compiler__Pass_decl 1
 #define compiler__compiler__Pass_main 2
 string compiler__v_modules_path;
-RegKey compiler__HKEY_LOCAL_MACHINE;
+compiler__RegKey compiler__HKEY_LOCAL_MACHINE;
 int compiler__KEY_QUERY_VALUE;
 int compiler__KEY_WOW64_32KEY;
 int compiler__KEY_ENUMERATE_SUB_KEYS;
@@ -9936,16 +9937,16 @@ Option_bool os__mkdir(string path) {
   bool tmp8 = OPTION_CAST(bool)(1);
   return opt_ok(&tmp8, sizeof(bool));
 }
-HANDLE os__get_file_handle(string path) {
+os__HANDLE os__get_file_handle(string path) {
   string mode = tos3("rb");
   void *_fd = _wfopen(string_to_wide(path), string_to_wide(mode));
   if (_fd == 0) {
-    return ((HANDLE)(os__INVALID_HANDLE_VALUE));
+    return ((os__HANDLE)(os__INVALID_HANDLE_VALUE));
   };
-  HANDLE _handle = ((HANDLE)(_get_osfhandle(_fileno(_fd))));
+  os__HANDLE _handle = ((os__HANDLE)(_get_osfhandle(_fileno(_fd))));
   return _handle;
 }
-Option_string os__get_module_filename(HANDLE handle) {
+Option_string os__get_module_filename(os__HANDLE handle) {
   int sz = 4096;
   u16 *buf = ((u16 *)(v_malloc(4096)));
   while (1) {
@@ -16342,10 +16343,10 @@ void compiler__Parser_type_decl(compiler__Parser *p) {
                        .gen_str = 0,
                        .is_flag = 0,
                        .is_generic = 0};
+  if (!p->builtin_mod && string_ne(p->mod, tos3("main"))) {
+    name = compiler__Parser_prepend_mod(&/* ? */ *p, name);
+  };
   if (is_sum) {
-    if (!p->builtin_mod && string_ne(p->mod, tos3("main"))) {
-      name = compiler__Parser_prepend_mod(&/* ? */ *p, name);
-    };
     int idx = 0;
     bool done = 0;
     while (1) {
@@ -28548,7 +28549,7 @@ static inline string compiler__mod_gen_name(string mod) {
 static inline string compiler__mod_gen_name_rev(string mod) {
   return string_replace(mod, tos3("_dot_"), tos3("."));
 }
-Option_string compiler__find_windows_kit_internal(RegKey key,
+Option_string compiler__find_windows_kit_internal(compiler__RegKey key,
                                                   array_string versions) {
 #ifdef _WIN32
   array_string tmp1 = versions;
@@ -28584,7 +28585,7 @@ Option_string compiler__find_windows_kit_internal(RegKey key,
 }
 Option_compiler__WindowsKit compiler__find_windows_kit_root(string host_arch) {
 #ifdef _WIN32
-  RegKey root_key = ((RegKey)(0));
+  compiler__RegKey root_key = ((compiler__RegKey)(0));
   void *rc =
       RegOpenKeyEx(compiler__HKEY_LOCAL_MACHINE,
                    string_to_wide(tos3(
@@ -33886,7 +33887,7 @@ void init() {
           tos3("android"), tos3("js"), tos3("solaris"), tos3("haiku"),
           tos3("linux_or_macos")});
   compiler__v_modules_path = v_dot_pref__default_module_path;
-  compiler__HKEY_LOCAL_MACHINE = ((RegKey)(0x80000002));
+  compiler__HKEY_LOCAL_MACHINE = ((compiler__RegKey)(0x80000002));
   compiler__KEY_QUERY_VALUE = (0x0001);
   compiler__KEY_WOW64_32KEY = (0x0200);
   compiler__KEY_ENUMERATE_SUB_KEYS = (0x0008);
