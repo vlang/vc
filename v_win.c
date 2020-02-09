@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4bb5d7d"
+#define V_COMMIT_HASH "1eeee40"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a2d2586"
+#define V_COMMIT_HASH "4bb5d7d"
 #endif
 #include <inttypes.h>
 
@@ -5345,14 +5345,21 @@ array_string string_split_into_lines(string s) {
   int start = 0;
   for (int i = 0; i < s.len; i++) {
 
-    bool last = i == s.len - 1;
-    if (s.str[i] /*rbyte 0*/ == 10 || last) {
-      if (last) {
+    bool is_lf = s.str[i] /*rbyte 0*/ == '\n';
+    bool is_crlf = i != s.len - 1 && s.str[i] /*rbyte 0*/ == '\r' &&
+                   s.str[i + 1] /*rbyte 0*/ == '\n';
+    bool is_eol = is_lf || is_crlf;
+    bool is_last = ((is_crlf) ? (i == s.len - 2) : (i == s.len - 1));
+    if (is_eol || is_last) {
+      if (is_last && !is_eol) {
         i++;
       };
       string line = string_substr(s, start, i);
       _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ line), tmp27,
             string);
+      if (is_crlf) {
+        i++;
+      };
       start = i + 1;
     };
   };
