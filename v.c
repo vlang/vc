@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e274c5c"
+#define V_COMMIT_HASH "7dc040b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9845fd1"
+#define V_COMMIT_HASH "e274c5c"
 #endif
 #include <inttypes.h>
 
@@ -19155,7 +19155,15 @@ void compiler__V_cc(compiler__V *v) {
     if (debug_mode) {
       debug_options = tos3("-g -O0 -no-pie");
     };
-    optimization_options = tos3("-O3 -flto");
+    optimization_options = tos3("-O3");
+    bool have_flto = 1;
+#ifdef __OpenBSD__
+    have_flto = 0;
+#endif
+    ;
+    if (have_flto) {
+      optimization_options = string_add(optimization_options, tos3(" -flto"));
+    };
   };
   if (string_contains(v->pref->ccompiler, tos3("gcc")) ||
       string_eq(guessed_compiler, tos3("gcc"))) {
