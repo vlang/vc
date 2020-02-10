@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7dc040b"
+#define V_COMMIT_HASH "3f6ccd3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e274c5c"
+#define V_COMMIT_HASH "7dc040b"
 #endif
 #include <inttypes.h>
 
@@ -10959,45 +10959,43 @@ v_dot_checker__Checker_call_expr(v_dot_checker__Checker *c,
 
   if (tmp24.ok) {
     v_dot_table__Fn f = *(v_dot_table__Fn *)tmp24.data;
-    if (!f.is_c) {
-      if (call_expr.args.len < f.args.len) {
-        v_dot_checker__Checker_error(&/* ? */ *c,
-                                     _STR("too few arguments in call to `%.*s`",
-                                          fn_name.len, fn_name.str),
-                                     call_expr.pos);
-      } else if (!f.is_variadic && call_expr.args.len > f.args.len) {
+    if (f.is_c) {
+      return f.return_type;
+    };
+    if (call_expr.args.len < f.args.len) {
+      v_dot_checker__Checker_error(
+          &/* ? */ *c,
+          _STR("too few arguments in call to `%.*s`", fn_name.len, fn_name.str),
+          call_expr.pos);
+    } else if (!f.is_variadic && call_expr.args.len > f.args.len) {
+      v_dot_checker__Checker_error(
+          &/* ? */ *c,
+          _STR("too many arguments in call to `%.*s` (%d instead of %d)",
+               fn_name.len, fn_name.str, call_expr.args.len, f.args.len),
+          call_expr.pos);
+    };
+    array_v_dot_ast__Expr tmp25 = call_expr.args;
+    for (int i = 0; i < tmp25.len; i++) {
+      v_dot_ast__Expr arg_expr = ((v_dot_ast__Expr *)tmp25.data)[i];
+
+      v_dot_table__Var arg =
+          ((f.is_variadic && i >= f.args.len - 1)
+               ? ((*(v_dot_table__Var *)array_get(f.args, f.args.len - 1)))
+               : ((*(v_dot_table__Var *)array_get(f.args, i))));
+      v_dot_table__Type typ =
+          v_dot_checker__Checker_expr(&/* ? */ *c, arg_expr);
+      v_dot_table__TypeSymbol *typ_sym =
+          v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, typ);
+      v_dot_table__TypeSymbol *arg_typ_sym =
+          v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, arg.typ);
+      if (!v_dot_table__Table_check(&/* ? */ *c->table, typ, arg.typ)) {
         v_dot_checker__Checker_error(
             &/* ? */ *c,
-            _STR("too many arguments in call to `%.*s` (%d instead of %d)",
-                 fn_name.len, fn_name.str, call_expr.args.len, f.args.len),
+            _STR("!cannot use type `%.*s` as type `%.*s` in argument %d to "
+                 "`%.*s`",
+                 typ_sym->name.len, typ_sym->name.str, arg_typ_sym->name.len,
+                 arg_typ_sym->name.str, i + 1, fn_name.len, fn_name.str),
             call_expr.pos);
-      };
-    };
-    if (!f.is_c) {
-      array_v_dot_ast__Expr tmp25 = call_expr.args;
-      for (int i = 0; i < tmp25.len; i++) {
-        v_dot_ast__Expr arg_expr = ((v_dot_ast__Expr *)tmp25.data)[i];
-
-        v_dot_table__Var arg =
-            ((f.is_variadic && i >= f.args.len - 1)
-                 ? ((*(v_dot_table__Var *)array_get(f.args, f.args.len - 1)))
-                 : ((*(v_dot_table__Var *)array_get(f.args, i))));
-        v_dot_table__Type typ =
-            v_dot_checker__Checker_expr(&/* ? */ *c, arg_expr);
-        v_dot_table__TypeSymbol *typ_sym =
-            v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, typ);
-        v_dot_table__TypeSymbol *arg_typ_sym =
-            v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, arg.typ);
-        if (!f.is_c &&
-            !v_dot_table__Table_check(&/* ? */ *c->table, typ, arg.typ)) {
-          v_dot_checker__Checker_error(
-              &/* ? */ *c,
-              _STR("!cannot use type `%.*s` as type `%.*s` in argument %d to "
-                   "`%.*s`",
-                   typ_sym->name.len, typ_sym->name.str, arg_typ_sym->name.len,
-                   arg_typ_sym->name.str, i + 1, fn_name.len, fn_name.str),
-              call_expr.pos);
-        };
       };
     };
     return f.return_type;
@@ -33230,7 +33228,7 @@ compiler__V *main__new_v(array_string args) {
           .cflags = cflags,
           .ccompiler = ccompiler,
           .building_v = !is_repl && (string_eq(rdir_name, tos3("compiler")) ||
-                                     string_eq(rdir_name, tos3("v.v")) ||
+                                     string_eq(rdir_name, tos3("v")) ||
                                      string_eq(rdir_name, tos3("vfmt.v")) ||
                                      string_eq(rdir_name, tos3("cmd/v")) ||
                                      string_contains(dir, tos3("vlib"))),
