@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d5f90ef"
+#define V_COMMIT_HASH "d51c159"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bf5ed5e"
+#define V_COMMIT_HASH "d5f90ef"
 #endif
 #include <inttypes.h>
 
@@ -9848,7 +9848,7 @@ int os__wait() {
   pid = wait(0);
 #endif
   ;
-#ifndef _WIN32
+#ifdef _WIN32
   v_panic(tos3("os.wait not supported in windows"));
 #endif
   ;
