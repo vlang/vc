@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3f6ccd3"
+#define V_COMMIT_HASH "bf5ed5e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7dc040b"
+#define V_COMMIT_HASH "3f6ccd3"
 #endif
 #include <inttypes.h>
 
@@ -534,12 +534,14 @@ typedef struct v_dot_ast__ForInStmt v_dot_ast__ForInStmt;
 typedef struct v_dot_ast__ForCStmt v_dot_ast__ForCStmt;
 typedef struct v_dot_ast__ReturnStmt v_dot_ast__ReturnStmt;
 typedef struct v_dot_ast__HashStmt v_dot_ast__HashStmt;
+typedef struct v_dot_ast__Lambda v_dot_ast__Lambda;
 typedef struct v_dot_ast__AssignStmt v_dot_ast__AssignStmt;
 typedef array array_v_dot_ast__Ident;
 typedef struct v_dot_ast__Attr v_dot_ast__Attr;
 typedef struct v_dot_ast__AssignExpr v_dot_ast__AssignExpr;
 typedef struct v_dot_ast__ArrayInit v_dot_ast__ArrayInit;
 typedef struct v_dot_ast__RangeExpr v_dot_ast__RangeExpr;
+typedef struct v_dot_ast__CastExpr v_dot_ast__CastExpr;
 typedef struct v_dot_pref__Preferences v_dot_pref__Preferences;
 typedef struct _V_MulRet_int_V_int _V_MulRet_int_V_int;
 typedef struct v_dot_checker__Checker v_dot_checker__Checker;
@@ -771,6 +773,10 @@ struct v_dot_ast__FloatLiteral {
 };
 
 struct v_dot_ast__HashStmt {
+  string name;
+};
+
+struct v_dot_ast__Lambda {
   string name;
 };
 
@@ -1099,6 +1105,11 @@ struct v_dot_ast__AssignStmt {
 
 struct v_dot_ast__BoolLiteral {
   bool val;
+};
+
+struct v_dot_ast__CastExpr {
+  v_dot_table__Type typ;
+  v_dot_ast__Expr expr;
 };
 
 struct v_dot_ast__CompIf {
@@ -2547,6 +2558,8 @@ _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type
 v_dot_parser__Parser_prefix_expr(v_dot_parser__Parser *p);
 v_dot_ast__Expr v_dot_parser__Parser_index_expr(v_dot_parser__Parser *p,
                                                 v_dot_ast__Expr left);
+void v_dot_parser__Parser_filter(v_dot_parser__Parser *p,
+                                 v_dot_table__Type typ);
 _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type
 v_dot_parser__Parser_dot_expr(v_dot_parser__Parser *p, v_dot_ast__Expr left,
                               v_dot_table__Type left_type);
@@ -3457,6 +3470,7 @@ string os__path_separator;
 #define SumType_IndexExpr 17      // DEF2
 #define SumType_RangeExpr 18      // DEF2
 #define SumType_MatchExpr 19      // DEF2
+#define SumType_CastExpr 20       // DEF2
 #define SumType_VarDecl 1         // DEF2
 #define SumType_GlobalDecl 2      // DEF2
 #define SumType_FnDecl 3          // DEF2
@@ -7672,6 +7686,13 @@ void v_dot_table__Table_register_builtin_type_symbols(v_dot_table__Table *t) {
              .kind = v_dot_table__v_dot_table__Kind_map,
              .name = tos3("map"),
              .methods = new_array(0, 1, sizeof(v_dot_table__Fn))});
+  v_dot_table__Table_register_type_symbol(
+      t, (v_dot_table__TypeSymbol){
+             .parent = &(*(v_dot_table__TypeSymbol *)array_get(
+                 t->types, v_dot_table__map_type_idx)),
+             .kind = v_dot_table__v_dot_table__Kind_struct_,
+             .name = tos3("map_string"),
+             .methods = new_array(0, 1, sizeof(v_dot_table__Fn))});
 }
 static inline bool v_dot_table__TypeSymbol_is_int(v_dot_table__TypeSymbol *t) {
   return (t->kind == v_dot_table__v_dot_table__Kind_i8 ||
@@ -7694,85 +7715,85 @@ v_dot_table__TypeSymbol_is_number(v_dot_table__TypeSymbol *t) {
          v_dot_table__TypeSymbol_is_float(&/* ? */ *t);
 }
 string v_dot_table__Kind_str(v_dot_table__Kind k) {
-  v_dot_table__Kind tmp5 = k;
+  v_dot_table__Kind tmp7 = k;
 
   string
       k_str =
-          ((tmp5 == v_dot_table__v_dot_table__Kind_unresolved)
+          ((tmp7 == v_dot_table__v_dot_table__Kind_unresolved)
                ? (tos3("unresolved"))
                : (
-                     (tmp5 == v_dot_table__v_dot_table__Kind_placeholder)
+                     (tmp7 == v_dot_table__v_dot_table__Kind_placeholder)
                          ? (tos3("placeholder"))
                          : (
-                               (tmp5 == v_dot_table__v_dot_table__Kind_void)
+                               (tmp7 == v_dot_table__v_dot_table__Kind_void)
                                    ? (tos3("void"))
-                                   : ((tmp5 ==
+                                   : ((tmp7 ==
                                        v_dot_table__v_dot_table__Kind_voidptr)
                                           ? (tos3("voidptr"))
-                                          : ((tmp5 ==
+                                          : ((tmp7 ==
                                               v_dot_table__v_dot_table__Kind_charptr)
                                                  ? (tos3("charptr"))
                                                  : (
-                                                       (tmp5 == v_dot_table__v_dot_table__Kind_byteptr) ? (tos3("byteptr"))
+                                                       (tmp7 == v_dot_table__v_dot_table__Kind_byteptr) ? (tos3("byteptr"))
                                                                                                         : (
-                                                                                                              (tmp5 == v_dot_table__v_dot_table__Kind_struct_) ? (tos3("struct"))
+                                                                                                              (tmp7 == v_dot_table__v_dot_table__Kind_struct_) ? (tos3("struct"))
                                                                                                                                                                : (
-                                                                                                                                                                     (tmp5 == v_dot_table__v_dot_table__Kind_int) ? (tos3("int"))
+                                                                                                                                                                     (tmp7 == v_dot_table__v_dot_table__Kind_int) ? (tos3("int"))
                                                                                                                                                                                                                   : (
-                                                                                                                                                                                                                        (tmp5 == v_dot_table__v_dot_table__Kind_i8) ? (tos3(
+                                                                                                                                                                                                                        (tmp7 == v_dot_table__v_dot_table__Kind_i8) ? (tos3(
                                                                                                                                                                                                                                                                           "i8"))
                                                                                                                                                                                                                                                                     : (
                                                                                                                                                                                                                                                                           (
-                                                                                                                                                                                                                                                                              tmp5 ==
+                                                                                                                                                                                                                                                                              tmp7 ==
                                                                                                                                                                                                                                                                               v_dot_table__v_dot_table__Kind_i16)
                                                                                                                                                                                                                                                                               ? (tos3(
                                                                                                                                                                                                                                                                                     "i16"))
                                                                                                                                                                                                                                                                               : (
                                                                                                                                                                                                                                                                                     (
-                                                                                                                                                                                                                                                                                        tmp5 ==
+                                                                                                                                                                                                                                                                                        tmp7 ==
                                                                                                                                                                                                                                                                                         v_dot_table__v_dot_table__Kind_i64)
                                                                                                                                                                                                                                                                                         ? (tos3(
                                                                                                                                                                                                                                                                                               "i64"))
                                                                                                                                                                                                                                                                                         : (
                                                                                                                                                                                                                                                                                               (
-                                                                                                                                                                                                                                                                                                  tmp5 ==
+                                                                                                                                                                                                                                                                                                  tmp7 ==
                                                                                                                                                                                                                                                                                                   v_dot_table__v_dot_table__Kind_byte)
                                                                                                                                                                                                                                                                                                   ? (tos3(
                                                                                                                                                                                                                                                                                                         "byte"))
-                                                                                                                                                                                                                                                                                                  : ((tmp5 == v_dot_table__v_dot_table__Kind_u16) ? (tos3("u16"))
-                                                                                                                                                                                                                                                                                                                                                  : ((tmp5 == v_dot_table__v_dot_table__Kind_u32) ? (tos3(
+                                                                                                                                                                                                                                                                                                  : ((tmp7 == v_dot_table__v_dot_table__Kind_u16) ? (tos3("u16"))
+                                                                                                                                                                                                                                                                                                                                                  : ((tmp7 == v_dot_table__v_dot_table__Kind_u32) ? (tos3(
                                                                                                                                                                                                                                                                                                                                                                                                         "u32"))
                                                                                                                                                                                                                                                                                                                                                                                                   : (
                                                                                                                                                                                                                                                                                                                                                                                                         (
-                                                                                                                                                                                                                                                                                                                                                                                                            tmp5 ==
+                                                                                                                                                                                                                                                                                                                                                                                                            tmp7 ==
                                                                                                                                                                                                                                                                                                                                                                                                             v_dot_table__v_dot_table__Kind_u64)
                                                                                                                                                                                                                                                                                                                                                                                                             ? (tos3(
                                                                                                                                                                                                                                                                                                                                                                                                                   "u64"))
-                                                                                                                                                                                                                                                                                                                                                                                                            : ((tmp5 ==
+                                                                                                                                                                                                                                                                                                                                                                                                            : ((tmp7 ==
                                                                                                                                                                                                                                                                                                                                                                                                                 v_dot_table__v_dot_table__Kind_f32)
                                                                                                                                                                                                                                                                                                                                                                                                                    ? (tos3(
                                                                                                                                                                                                                                                                                                                                                                                                                          "f32"))
-                                                                                                                                                                                                                                                                                                                                                                                                                   : ((tmp5 ==
+                                                                                                                                                                                                                                                                                                                                                                                                                   : ((tmp7 ==
                                                                                                                                                                                                                                                                                                                                                                                                                        v_dot_table__v_dot_table__Kind_f64)
                                                                                                                                                                                                                                                                                                                                                                                                                           ? (tos3(
                                                                                                                                                                                                                                                                                                                                                                                                                                 "f64"))
-                                                                                                                                                                                                                                                                                                                                                                                                                          : ((tmp5 == v_dot_table__v_dot_table__Kind_string) ? (tos3(
+                                                                                                                                                                                                                                                                                                                                                                                                                          : ((tmp7 == v_dot_table__v_dot_table__Kind_string) ? (tos3(
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "string"))
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                             : ((tmp5 == v_dot_table__v_dot_table__Kind_char) ? (tos3(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                             : ((tmp7 == v_dot_table__v_dot_table__Kind_char) ? (tos3(
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     "char"))
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              : ((tmp5 == v_dot_table__v_dot_table__Kind_bool) ? (tos3(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              : ((tmp7 == v_dot_table__v_dot_table__Kind_bool) ? (tos3(
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "bool"))
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               : ((tmp5 == v_dot_table__v_dot_table__Kind_array) ? (tos3(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               : ((tmp7 == v_dot_table__v_dot_table__Kind_array) ? (tos3(
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "array"))
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 : ((tmp5 == v_dot_table__v_dot_table__Kind_array_fixed) ? (tos3(
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 : ((tmp7 == v_dot_table__v_dot_table__Kind_array_fixed) ? (tos3(
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "array_fixed"))
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         : ((tmp5 ==
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         : ((tmp7 ==
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              v_dot_table__v_dot_table__Kind_map)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ? (
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       tos3("map"))
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 : (
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       (
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          tmp5 ==
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          tmp7 ==
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           v_dot_table__v_dot_table__Kind_multi_return)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ? (tos3(
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 "multi_return"))
@@ -7782,9 +7803,9 @@ string v_dot_table__Kind_str(v_dot_table__Kind k) {
 }
 string array_v_dot_table__Kind_str(array_v_dot_table__Kind kinds) {
   string kinds_str = tos3("");
-  array_v_dot_table__Kind tmp6 = kinds;
-  for (int i = 0; i < tmp6.len; i++) {
-    v_dot_table__Kind k = ((v_dot_table__Kind *)tmp6.data)[i];
+  array_v_dot_table__Kind tmp8 = kinds;
+  for (int i = 0; i < tmp8.len; i++) {
+    v_dot_table__Kind k = ((v_dot_table__Kind *)tmp8.data)[i];
 
     kinds_str = string_add(kinds_str, v_dot_table__Kind_str(k));
     if (i < kinds.len - 1) {
@@ -8098,16 +8119,21 @@ v_dot_table__Table_register_builtin_type_symbol(v_dot_table__Table *t,
   int existing_idx = tmp42;
   if (existing_idx > 0) {
     if (existing_idx >= v_dot_table__string_type_idx) {
-      v_dot_table__TypeSymbol existing_type =
-          (*(v_dot_table__TypeSymbol *)array_get(t->types, existing_idx));
-      array_set(&/*q*/ t->types, existing_idx,
-                &(v_dot_table__TypeSymbol[]){(v_dot_table__TypeSymbol){
-                    .kind = existing_type.kind,
-                    .parent = typ.parent,
-                    .info = typ.info,
-                    .name = typ.name,
-                    .methods = typ.methods,
-                }});
+      if (existing_idx == v_dot_table__string_type_idx) {
+        v_dot_table__TypeSymbol *existing_type =
+            &(*(v_dot_table__TypeSymbol *)array_get(t->types, existing_idx));
+        array_set(&/*q*/ t->types, existing_idx,
+                  &(v_dot_table__TypeSymbol[]){(v_dot_table__TypeSymbol){
+                      .kind = existing_type->kind,
+                      .parent = typ.parent,
+                      .info = typ.info,
+                      .name = typ.name,
+                      .methods = typ.methods,
+                  }});
+      } else {
+        array_set(&/*q*/ t->types, existing_idx,
+                  &(v_dot_table__TypeSymbol[]){typ});
+      };
     };
     return existing_idx;
   };
@@ -8117,7 +8143,7 @@ static inline int
 v_dot_table__Table_register_type_symbol(v_dot_table__Table *t,
                                         v_dot_table__TypeSymbol typ) {
   int tmp46 = 0;
-  bool tmp47 = map_get(/*table.v : 330*/ t->type_idxs, typ.name, &tmp46);
+  bool tmp47 = map_get(/*table.v : 334*/ t->type_idxs, typ.name, &tmp46);
 
   int existing_idx = tmp46;
   if (existing_idx > 0) {
@@ -8173,7 +8199,7 @@ int v_dot_table__Table_find_or_register_map(v_dot_table__Table *t,
       v_dot_table__Table_get_type_symbol(&/* ? */ *t, value_type);
   string name = v_dot_table__map_name(key_type_sym, val_type_sym);
   int tmp53 = 0;
-  bool tmp54 = map_get(/*table.v : 370*/ t->type_idxs, name, &tmp53);
+  bool tmp54 = map_get(/*table.v : 374*/ t->type_idxs, name, &tmp53);
 
   int existing_idx = tmp53;
   if (existing_idx > 0) {
@@ -8201,7 +8227,7 @@ int v_dot_table__Table_find_or_register_array(v_dot_table__Table *t,
       v_dot_table__Table_get_type_symbol(&/* ? */ *t, elem_type);
   string name = v_dot_table__array_name(elem_type_sym, nr_dims);
   int tmp57 = 0;
-  bool tmp58 = map_get(/*table.v : 391*/ t->type_idxs, name, &tmp57);
+  bool tmp58 = map_get(/*table.v : 395*/ t->type_idxs, name, &tmp57);
 
   int existing_idx = tmp57;
   if (existing_idx > 0) {
@@ -8229,7 +8255,7 @@ int v_dot_table__Table_find_or_register_array_fixed(v_dot_table__Table *t,
       v_dot_table__Table_get_type_symbol(&/* ? */ *t, elem_type);
   string name = v_dot_table__array_fixed_name(elem_type_sym, size, nr_dims);
   int tmp61 = 0;
-  bool tmp62 = map_get(/*table.v : 412*/ t->type_idxs, name, &tmp61);
+  bool tmp62 = map_get(/*table.v : 416*/ t->type_idxs, name, &tmp61);
 
   int existing_idx = tmp61;
   if (existing_idx > 0) {
@@ -8263,7 +8289,7 @@ int v_dot_table__Table_find_or_register_multi_return(
         name, _STR("_%.*s", mr_type_sym->name.len, mr_type_sym->name.str));
   };
   int tmp65 = 0;
-  bool tmp66 = map_get(/*table.v : 437*/ t->type_idxs, name, &tmp65);
+  bool tmp66 = map_get(/*table.v : 441*/ t->type_idxs, name, &tmp65);
 
   int existing_idx = tmp65;
   if (existing_idx > 0) {
@@ -8319,6 +8345,14 @@ bool v_dot_table__Table_check(v_dot_table__Table *t, v_dot_table__Type got,
   if (v_dot_table__TypeSymbol_is_int(&/* ? */ *got_type_sym) &&
       v_dot_table__TypeSymbol_is_int(&/* ? */ *exp_type_sym)) {
     return 1;
+  };
+  if (got_type_sym->kind == v_dot_table__v_dot_table__Kind_array_fixed &&
+      exp_type_sym->kind == v_dot_table__v_dot_table__Kind_byteptr) {
+    v_dot_table__ArrayFixed info =
+        *(v_dot_table__ArrayFixed *)got_type_sym->info.obj;
+    if (v_dot_table__type_idx(info.elem_type) == v_dot_table__byte_type_idx) {
+      return 1;
+    };
   };
   if (got_idx != exp_idx) {
     return 0;
@@ -11174,6 +11208,9 @@ v_dot_table__Type v_dot_checker__Checker_expr(v_dot_checker__Checker *c,
         v_dot_checker__Checker_stmt(&/* ? */ *c, stmt);
       };
     };
+  } else if (tmp50.typ == SumType_CastExpr) {
+    v_dot_ast__CastExpr *it = (v_dot_ast__CastExpr *)tmp50.obj;
+    return it->typ;
   } else // default:
   {
   };
@@ -13540,15 +13577,15 @@ v_dot_table__Type v_dot_parser__Parser_parse_array_type(v_dot_parser__Parser *p,
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_lsbr);
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_number) {
     int size = v_string_int(p->tok.lit);
-    v_dot_table__Type elem_ti = v_dot_parser__Parser_parse_type(p);
+    v_dot_table__Type elem_type = v_dot_parser__Parser_parse_type(p);
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rsbr);
     v_dot_parser__Parser_check_name(p);
-    int idx = v_dot_table__Table_find_or_register_array_fixed(p->table, elem_ti,
-                                                              size, 1);
+    int idx = v_dot_table__Table_find_or_register_array_fixed(
+        p->table, elem_type, size, 1);
     return v_dot_table__new_type_ptr(idx, nr_muls);
   };
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rsbr);
-  v_dot_table__Type elem_ti = v_dot_parser__Parser_parse_type(p);
+  v_dot_table__Type elem_type = v_dot_parser__Parser_parse_type(p);
   int nr_dims = 1;
   while (p->tok.kind == v_dot_token__v_dot_token__Kind_lsbr) {
 
@@ -13557,7 +13594,7 @@ v_dot_table__Type v_dot_parser__Parser_parse_array_type(v_dot_parser__Parser *p,
     nr_dims++;
   };
   int idx =
-      v_dot_table__Table_find_or_register_array(p->table, elem_ti, nr_dims);
+      v_dot_table__Table_find_or_register_array(p->table, elem_type, nr_dims);
   return v_dot_table__new_type_ptr(idx, nr_muls);
 }
 v_dot_table__Type v_dot_parser__Parser_parse_map_type(v_dot_parser__Parser *p,
@@ -14320,27 +14357,32 @@ v_dot_parser__Parser_name_expr(v_dot_parser__Parser *p) {
   };
   if (p->peek_tok.kind == v_dot_token__v_dot_token__Kind_lpar) {
     string name = p->tok.lit;
-    if ((_IN(string, (name), v_dot_table__builtin_type_names))) {
-      int par_d = 0;
-      while (1) {
-        if (p->tok.kind == v_dot_token__v_dot_token__Kind_lpar) {
-          par_d++;
-        };
-        if (p->tok.kind == v_dot_token__v_dot_token__Kind_rpar) {
-          par_d--;
-          if (par_d == 0) {
-            v_dot_parser__Parser_next(p);
-            break;
-          };
-        };
-        v_dot_parser__Parser_next(p);
+    if ((_IN_MAP((name), p->table->type_idxs))) {
+      v_dot_table__Type to_typ = v_dot_parser__Parser_parse_type(p);
+      v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_lpar);
+      v_dot_ast__Expr expr = (v_dot_ast__Expr){EMPTY_STRUCT_INITIALIZATION};
+      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_1918_expr__ =
+          v_dot_parser__Parser_expr(p, 0);
+      expr = _V_mret_1918_expr__.var_0;
+      if (v_dot_table__type_idx(to_typ) == v_dot_table__string_type_idx &&
+          p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
+        v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_comma);
+        v_dot_parser__Parser_expr(p, 0);
       };
+      v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rpar);
+      node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
+          .obj = memdup(&(v_dot_ast__CastExpr[]){(v_dot_ast__CastExpr){
+                            .typ = to_typ, .expr = expr}},
+                        sizeof(v_dot_ast__CastExpr)),
+          .typ = SumType_CastExpr};
+      return (_V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type){.var_0 = node,
+                                                             .var_1 = to_typ};
     } else {
       printf("calling %.*s\n", p->tok.lit.len, p->tok.lit.str);
-      _V_MulRet_v_dot_ast__CallExpr_V_v_dot_table__Type _V_mret_1958_x_ti2 =
+      _V_MulRet_v_dot_ast__CallExpr_V_v_dot_table__Type _V_mret_2001_x_ti2 =
           v_dot_parser__Parser_call_expr(p);
-      v_dot_ast__CallExpr x = _V_mret_1958_x_ti2.var_0;
-      v_dot_table__Type ti2 = _V_mret_1958_x_ti2.var_1;
+      v_dot_ast__CallExpr x = _V_mret_2001_x_ti2.var_0;
+      v_dot_table__Type ti2 = _V_mret_2001_x_ti2.var_1;
       node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
           .obj =
               memdup(&(v_dot_ast__CallExpr[]){x}, sizeof(v_dot_ast__CallExpr)),
@@ -14368,9 +14410,9 @@ v_dot_parser__Parser_name_expr(v_dot_parser__Parser *p) {
       _PUSH(&field_names, (/*typ = array_string   tmp_typ=string*/ field_name),
             tmp18, string);
       v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_colon);
-      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2096_expr__ =
+      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2139_expr__ =
           v_dot_parser__Parser_expr(p, 0);
-      v_dot_ast__Expr expr = _V_mret_2096_expr__.var_0;
+      v_dot_ast__Expr expr = _V_mret_2139_expr__.var_0;
       _PUSH(&exprs,
             (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
             tmp19, v_dot_ast__Expr);
@@ -14390,10 +14432,10 @@ v_dot_parser__Parser_name_expr(v_dot_parser__Parser *p) {
         .value = tos3(""),
         .is_c = 0,
     };
-    _V_MulRet_v_dot_ast__Ident_V_v_dot_table__Type _V_mret_2153_ident_typ =
+    _V_MulRet_v_dot_ast__Ident_V_v_dot_table__Type _V_mret_2196_ident_typ =
         v_dot_parser__Parser_parse_ident(p, is_c);
-    ident = _V_mret_2153_ident_typ.var_0;
-    typ = _V_mret_2153_ident_typ.var_1;
+    ident = _V_mret_2196_ident_typ.var_0;
+    typ = _V_mret_2196_ident_typ.var_1;
     node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
         .obj = memdup(&(v_dot_ast__Ident[]){ident}, sizeof(v_dot_ast__Ident)),
         .typ = SumType_Ident};
@@ -14408,15 +14450,15 @@ v_dot_parser__Parser_expr(v_dot_parser__Parser *p, int precedence) {
   v_dot_token__Kind tmp20 = p->tok.kind;
 
   if (tmp20 == v_dot_token__v_dot_token__Kind_name) {
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2218_node_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2261_node_typ =
         v_dot_parser__Parser_name_expr(p);
-    node = _V_mret_2218_node_typ.var_0;
-    typ = _V_mret_2218_node_typ.var_1;
+    node = _V_mret_2261_node_typ.var_0;
+    typ = _V_mret_2261_node_typ.var_1;
   } else if (tmp20 == v_dot_token__v_dot_token__Kind_str) {
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2231_node_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2274_node_typ =
         v_dot_parser__Parser_string_expr(p);
-    node = _V_mret_2231_node_typ.var_0;
-    typ = _V_mret_2231_node_typ.var_1;
+    node = _V_mret_2274_node_typ.var_0;
+    typ = _V_mret_2274_node_typ.var_1;
   } else if (tmp20 == v_dot_token__v_dot_token__Kind_chartoken) {
     typ = v_dot_table__byte_type;
     node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
@@ -14430,10 +14472,10 @@ v_dot_parser__Parser_expr(v_dot_parser__Parser *p, int precedence) {
              (tmp20 == v_dot_token__v_dot_token__Kind_mul) ||
              (tmp20 == v_dot_token__v_dot_token__Kind_not) ||
              (tmp20 == v_dot_token__v_dot_token__Kind_bit_not)) {
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2284_node_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2327_node_typ =
         v_dot_parser__Parser_prefix_expr(p);
-    node = _V_mret_2284_node_typ.var_0;
-    typ = _V_mret_2284_node_typ.var_1;
+    node = _V_mret_2327_node_typ.var_0;
+    typ = _V_mret_2327_node_typ.var_1;
   } else if ((tmp20 == v_dot_token__v_dot_token__Kind_key_true) ||
              (tmp20 == v_dot_token__v_dot_token__Kind_key_false)) {
     node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
@@ -14447,27 +14489,27 @@ v_dot_parser__Parser_expr(v_dot_parser__Parser *p, int precedence) {
   } else if (tmp20 == v_dot_token__v_dot_token__Kind_key_match) {
     return v_dot_parser__Parser_match_expr(p);
   } else if (tmp20 == v_dot_token__v_dot_token__Kind_number) {
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2341_node_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2384_node_typ =
         v_dot_parser__Parser_parse_number_literal(p);
-    node = _V_mret_2341_node_typ.var_0;
-    typ = _V_mret_2341_node_typ.var_1;
+    node = _V_mret_2384_node_typ.var_0;
+    typ = _V_mret_2384_node_typ.var_1;
   } else if (tmp20 == v_dot_token__v_dot_token__Kind_lpar) {
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_lpar);
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2361_node_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2404_node_typ =
         v_dot_parser__Parser_expr(p, 0);
-    node = _V_mret_2361_node_typ.var_0;
-    typ = _V_mret_2361_node_typ.var_1;
+    node = _V_mret_2404_node_typ.var_0;
+    typ = _V_mret_2404_node_typ.var_1;
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rpar);
   } else if (tmp20 == v_dot_token__v_dot_token__Kind_key_if) {
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2382_node_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2425_node_typ =
         v_dot_parser__Parser_if_expr(p);
-    node = _V_mret_2382_node_typ.var_0;
-    typ = _V_mret_2382_node_typ.var_1;
+    node = _V_mret_2425_node_typ.var_0;
+    typ = _V_mret_2425_node_typ.var_1;
   } else if (tmp20 == v_dot_token__v_dot_token__Kind_lsbr) {
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2395_node_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2438_node_typ =
         v_dot_parser__Parser_array_init(p);
-    node = _V_mret_2395_node_typ.var_0;
-    typ = _V_mret_2395_node_typ.var_1;
+    node = _V_mret_2438_node_typ.var_0;
+    typ = _V_mret_2438_node_typ.var_1;
   } else if (tmp20 == v_dot_token__v_dot_token__Kind_key_none) {
     v_dot_parser__Parser_next(p);
   } else if (tmp20 == v_dot_token__v_dot_token__Kind_key_sizeof) {
@@ -14493,20 +14535,20 @@ v_dot_parser__Parser_expr(v_dot_parser__Parser *p, int precedence) {
               sizeof(v_dot_ast__AssignExpr)),
           .typ = SumType_AssignExpr};
     } else if (p->tok.kind == v_dot_token__v_dot_token__Kind_dot) {
-      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2508_node_typ =
+      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2551_node_typ =
           v_dot_parser__Parser_dot_expr(p, node, typ);
-      node = _V_mret_2508_node_typ.var_0;
-      typ = _V_mret_2508_node_typ.var_1;
+      node = _V_mret_2551_node_typ.var_0;
+      typ = _V_mret_2551_node_typ.var_1;
     } else if (p->tok.kind == v_dot_token__v_dot_token__Kind_lsbr) {
       node = v_dot_parser__Parser_index_expr(p, node);
     } else if (p->tok.kind == v_dot_token__v_dot_token__Kind_key_as) {
       v_dot_parser__Parser_next(p);
       typ = v_dot_parser__Parser_parse_type(p);
     } else if (v_dot_token__Kind_is_infix(p->tok.kind)) {
-      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2577_node_typ =
+      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2620_node_typ =
           v_dot_parser__Parser_infix_expr(p, node);
-      node = _V_mret_2577_node_typ.var_0;
-      typ = _V_mret_2577_node_typ.var_1;
+      node = _V_mret_2620_node_typ.var_0;
+      typ = _V_mret_2620_node_typ.var_1;
     } else if ((p->tok.kind == v_dot_token__v_dot_token__Kind_inc ||
                 p->tok.kind == v_dot_token__v_dot_token__Kind_dec)) {
       node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
@@ -14531,10 +14573,10 @@ _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type
 v_dot_parser__Parser_prefix_expr(v_dot_parser__Parser *p) {
   v_dot_token__Kind op = p->tok.kind;
   v_dot_parser__Parser_next(p);
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2675_right_typ =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2718_right_typ =
       v_dot_parser__Parser_expr(p, 1);
-  v_dot_ast__Expr right = _V_mret_2675_right_typ.var_0;
-  v_dot_table__Type typ = _V_mret_2675_right_typ.var_1;
+  v_dot_ast__Expr right = _V_mret_2718_right_typ.var_0;
+  v_dot_table__Type typ = _V_mret_2718_right_typ.var_1;
   v_dot_ast__Expr expr = (v_dot_ast__Expr){EMPTY_STRUCT_INITIALIZATION};
   expr = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
       .obj = memdup(&(v_dot_ast__PrefixExpr[]){(v_dot_ast__PrefixExpr){
@@ -14552,9 +14594,9 @@ v_dot_ast__Expr v_dot_parser__Parser_index_expr(v_dot_parser__Parser *p,
       p->peek_tok.kind == v_dot_token__v_dot_token__Kind_dotdot) {
     index_expr = v_dot_parser__Parser_range_expr(p, left);
   } else {
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2771_index_expr__ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2814_index_expr__ =
         v_dot_parser__Parser_expr(p, 0);
-    index_expr = _V_mret_2771_index_expr__.var_0;
+    index_expr = _V_mret_2814_index_expr__.var_0;
   };
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rsbr);
   v_dot_ast__Expr node = (v_dot_ast__Expr){EMPTY_STRUCT_INITIALIZATION};
@@ -14567,11 +14609,27 @@ v_dot_ast__Expr v_dot_parser__Parser_index_expr(v_dot_parser__Parser *p,
       .typ = SumType_IndexExpr};
   return node;
 }
+void v_dot_parser__Parser_filter(v_dot_parser__Parser *p,
+                                 v_dot_table__Type typ) {
+  v_dot_table__Table_register_var(p->table, (v_dot_table__Var){
+                                                .name = tos3("it"),
+                                                .typ = typ,
+                                                .idx = 0,
+                                                .is_mut = 0,
+                                                .is_const = 0,
+                                                .is_global = 0,
+                                                .scope_level = 0,
+                                            });
+}
 _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type
 v_dot_parser__Parser_dot_expr(v_dot_parser__Parser *p, v_dot_ast__Expr left,
                               v_dot_table__Type left_type) {
   v_dot_parser__Parser_next(p);
   string field_name = v_dot_parser__Parser_check_name(p);
+  if (string_eq(field_name, tos3("filter"))) {
+    v_dot_table__Table_open_scope(p->table);
+    v_dot_parser__Parser_filter(p, left_type);
+  };
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_lpar) {
     v_dot_parser__Parser_next(p);
     array_v_dot_ast__Expr args = v_dot_parser__Parser_call_args(p);
@@ -14618,6 +14676,9 @@ v_dot_parser__Parser_dot_expr(v_dot_parser__Parser *p, v_dot_ast__Expr left,
       .obj = memdup(&(v_dot_ast__SelectorExpr[]){sel_expr},
                     sizeof(v_dot_ast__SelectorExpr)),
       .typ = SumType_SelectorExpr};
+  if (string_eq(field_name, tos3("filter"))) {
+    v_dot_table__Table_close_scope(p->table);
+  };
   return (_V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type){.var_0 = node,
                                                          .var_1 = typ};
 }
@@ -14626,10 +14687,10 @@ v_dot_parser__Parser_infix_expr(v_dot_parser__Parser *p, v_dot_ast__Expr left) {
   v_dot_token__Kind op = p->tok.kind;
   int precedence = v_dot_token__Token_precedence(p->tok);
   v_dot_parser__Parser_next(p);
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3071_right_typ =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3179_right_typ =
       v_dot_parser__Parser_expr(p, precedence);
-  v_dot_ast__Expr right = _V_mret_3071_right_typ.var_0;
-  v_dot_table__Type typ = _V_mret_3071_right_typ.var_1;
+  v_dot_ast__Expr right = _V_mret_3179_right_typ.var_0;
+  v_dot_table__Type typ = _V_mret_3179_right_typ.var_1;
   if (v_dot_token__Kind_is_relational(op)) {
     typ = v_dot_table__bool_type;
   };
@@ -14682,10 +14743,10 @@ v_dot_ast__Stmt v_dot_parser__Parser_for_statement(v_dot_parser__Parser *p) {
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_semicolon);
     if (p->tok.kind != v_dot_token__v_dot_token__Kind_semicolon) {
       v_dot_table__Type typ = v_dot_table__void_type;
-      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3332_cond_typ =
+      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3440_cond_typ =
           v_dot_parser__Parser_expr(p, 0);
-      cond = _V_mret_3332_cond_typ.var_0;
-      typ = _V_mret_3332_cond_typ.var_1;
+      cond = _V_mret_3440_cond_typ.var_0;
+      typ = _V_mret_3440_cond_typ.var_1;
     };
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_semicolon);
     if (p->tok.kind != v_dot_token__v_dot_token__Kind_lcbr) {
@@ -14717,15 +14778,30 @@ v_dot_ast__Stmt v_dot_parser__Parser_for_statement(v_dot_parser__Parser *p) {
                                       });
     };
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_key_in);
-    int start = v_string_int(p->tok.lit);
-    v_dot_parser__Parser_expr(p, 0);
+    v_dot_table__Type elem_type = v_dot_table__void_type;
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3594___arr_typ =
+        v_dot_parser__Parser_expr(p, 0);
+    v_dot_table__Type arr_typ = _V_mret_3594___arr_typ.var_1;
+    v_dot_table__TypeSymbol *arr_typ_sym =
+        v_dot_table__Table_get_type_symbol(&/* ? */ *p->table, arr_typ);
+    v_dot_table__TypeInfo tmp21 = arr_typ_sym->info;
+
+    if (tmp21.typ == SumType_Array) {
+      v_dot_table__Array *it = (v_dot_table__Array *)tmp21.obj;
+      elem_type = it->elem_type;
+    } else if (tmp21.typ == SumType_Map) {
+      v_dot_table__Map *it = (v_dot_table__Map *)tmp21.obj;
+      elem_type = it->value_type;
+    } else // default:
+    {
+    };
     if (p->tok.kind == v_dot_token__v_dot_token__Kind_dotdot) {
       v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_dotdot);
       v_dot_parser__Parser_expr(p, 0);
     };
     v_dot_table__Table_register_var(p->table, (v_dot_table__Var){
                                                   .name = var_name,
-                                                  .typ = v_dot_table__int_type,
+                                                  .typ = elem_type,
                                                   .idx = 0,
                                                   .is_mut = 0,
                                                   .is_const = 0,
@@ -14742,9 +14818,9 @@ v_dot_ast__Stmt v_dot_parser__Parser_for_statement(v_dot_parser__Parser *p) {
                       sizeof(v_dot_ast__ForStmt)),
         .typ = SumType_ForStmt};
   };
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3574_cond__ =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3718_cond__ =
       v_dot_parser__Parser_expr(p, 0);
-  v_dot_ast__Expr cond = _V_mret_3574_cond__.var_0;
+  v_dot_ast__Expr cond = _V_mret_3718_cond__.var_0;
   array_v_dot_ast__Stmt stmts = v_dot_parser__Parser_parse_block(p);
   v_dot_table__Table_close_scope(p->table);
   return /*SUM TYPE CAST2*/ (v_dot_ast__Stmt){
@@ -14760,9 +14836,9 @@ v_dot_parser__Parser_if_expr(v_dot_parser__Parser *p) {
   p->inside_if = 1;
   v_dot_ast__Expr node = (v_dot_ast__Expr){EMPTY_STRUCT_INITIALIZATION};
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_key_if);
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3659_cond__ =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3803_cond__ =
       v_dot_parser__Parser_expr(p, 0);
-  v_dot_ast__Expr cond = _V_mret_3659_cond__.var_0;
+  v_dot_ast__Expr cond = _V_mret_3803_cond__.var_0;
   p->inside_if = 0;
   array_v_dot_ast__Stmt stmts = v_dot_parser__Parser_parse_block(p);
   array_v_dot_ast__Stmt else_stmts = new_array_from_c_array(
@@ -14778,11 +14854,11 @@ v_dot_parser__Parser_if_expr(v_dot_parser__Parser *p) {
   };
   v_dot_table__Type typ = v_dot_table__void_type;
   if (stmts.len > 0) {
-    v_dot_ast__Stmt tmp23 =
+    v_dot_ast__Stmt tmp24 =
         (*(v_dot_ast__Stmt *)array_get(stmts, stmts.len - 1));
 
-    if (tmp23.typ == SumType_ExprStmt) {
-      v_dot_ast__ExprStmt *it = (v_dot_ast__ExprStmt *)tmp23.obj;
+    if (tmp24.typ == SumType_ExprStmt) {
+      v_dot_ast__ExprStmt *it = (v_dot_ast__ExprStmt *)tmp24.obj;
       v_dot_table__TypeSymbol *type_sym =
           v_dot_table__Table_get_type_symbol(&/* ? */ *p->table, it->typ);
       v_dot_parser__Parser_warn(
@@ -14842,30 +14918,52 @@ v_dot_parser__Parser_array_init(v_dot_parser__Parser *p) {
   array_v_dot_ast__Expr exprs = new_array_from_c_array(
       0, 0, sizeof(v_dot_ast__Expr),
       EMPTY_ARRAY_OF_ELEMS(v_dot_ast__Expr, 0){TCCSKIP(0)});
-  for (int i = 0; p->tok.kind != v_dot_token__v_dot_token__Kind_rsbr; i++) {
+  bool is_fixed = 0;
+  int fixed_size = 0;
+  if (p->tok.kind == v_dot_token__v_dot_token__Kind_rsbr) {
+    v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rsbr);
+    if (p->tok.kind == v_dot_token__v_dot_token__Kind_name) {
+      val_type = v_dot_parser__Parser_parse_type(p);
+    } else {
+    };
+  } else {
+    for (int i = 0; p->tok.kind != v_dot_token__v_dot_token__Kind_rsbr; i++) {
 
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_4019_expr_typ =
-        v_dot_parser__Parser_expr(p, 0);
-    v_dot_ast__Expr expr = _V_mret_4019_expr_typ.var_0;
-    v_dot_table__Type typ = _V_mret_4019_expr_typ.var_1;
-    _PUSH(&exprs,
-          (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
-          tmp24, v_dot_ast__Expr);
-    if (i == 0) {
-      val_type = typ;
+      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_4212_expr_typ =
+          v_dot_parser__Parser_expr(p, 0);
+      v_dot_ast__Expr expr = _V_mret_4212_expr_typ.var_0;
+      v_dot_table__Type typ = _V_mret_4212_expr_typ.var_1;
+      _PUSH(&exprs,
+            (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
+            tmp25, v_dot_ast__Expr);
+      if (i == 0) {
+        val_type = typ;
+      };
+      if (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
+        v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_comma);
+      };
     };
-    if (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
-      v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_comma);
+    int line_nr = p->tok.line_nr;
+    v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rsbr);
+    if (exprs.len == 1 && p->tok.kind == v_dot_token__v_dot_token__Kind_name &&
+        p->tok.line_nr == line_nr) {
+      is_fixed = 1;
+      val_type = v_dot_parser__Parser_parse_type(p);
+      v_dot_ast__Expr tmp28 = (*(v_dot_ast__Expr *)array_get(exprs, 0));
+
+      if (tmp28.typ == SumType_IntegerLiteral) {
+        v_dot_ast__IntegerLiteral *it = (v_dot_ast__IntegerLiteral *)tmp28.obj;
+        fixed_size = it->val;
+      } else // default:
+      {
+      };
+      v_dot_parser__Parser_warn(&/* ? */ *p, tos3("fixed size array"));
     };
   };
-  int line_nr = p->tok.line_nr;
-  v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rsbr);
-  if (exprs.len <= 1 && p->tok.kind == v_dot_token__v_dot_token__Kind_name &&
-      p->tok.line_nr == line_nr) {
-    v_dot_parser__Parser_check_name(p);
-    v_dot_parser__Parser_warn(&/* ? */ *p, tos3("fixed size array"));
-  };
-  int idx = v_dot_table__Table_find_or_register_array(p->table, val_type, 1);
+  int idx = ((is_fixed) ? (v_dot_table__Table_find_or_register_array_fixed(
+                              p->table, val_type, fixed_size, 1))
+                        : (v_dot_table__Table_find_or_register_array(
+                              p->table, val_type, 1)));
   v_dot_table__Type array_type = v_dot_table__new_type(idx);
   node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
       .obj = memdup(&(v_dot_ast__ArrayInit[]){(v_dot_ast__ArrayInit){
@@ -14933,14 +15031,14 @@ v_dot_parser__Parser_import_stmt(v_dot_parser__Parser *p) {
       _PUSH(&imports,
             (/*typ = array_v_dot_ast__Import   tmp_typ=v_dot_ast__Import*/
              v_dot_parser__Parser_parse_import(p)),
-            tmp25, v_dot_ast__Import);
+            tmp29, v_dot_ast__Import);
     };
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rpar);
   } else {
     _PUSH(&imports,
           (/*typ = array_v_dot_ast__Import   tmp_typ=v_dot_ast__Import*/
            v_dot_parser__Parser_parse_import(p)),
-          tmp26, v_dot_ast__Import);
+          tmp30, v_dot_ast__Import);
   };
   return imports;
 }
@@ -14958,17 +15056,17 @@ v_dot_ast__ConstDecl v_dot_parser__Parser_const_decl(v_dot_parser__Parser *p) {
     string name = v_dot_parser__Parser_check_name(p);
     printf("const: %.*s\n", name.len, name.str);
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_assign);
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_4516_expr_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_4754_expr_typ =
         v_dot_parser__Parser_expr(p, 0);
-    v_dot_ast__Expr expr = _V_mret_4516_expr_typ.var_0;
-    v_dot_table__Type typ = _V_mret_4516_expr_typ.var_1;
+    v_dot_ast__Expr expr = _V_mret_4754_expr_typ.var_0;
+    v_dot_table__Type typ = _V_mret_4754_expr_typ.var_1;
     _PUSH(&fields,
           (/*typ = array_v_dot_ast__Field   tmp_typ=v_dot_ast__Field*/ (
               v_dot_ast__Field){.name = name, .typ = typ}),
-          tmp27, v_dot_ast__Field);
+          tmp31, v_dot_ast__Field);
     _PUSH(&exprs,
           (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
-          tmp28, v_dot_ast__Expr);
+          tmp32, v_dot_ast__Expr);
     v_dot_table__Table_register_const(p->table, (v_dot_table__Var){
                                                     .name = name,
                                                     .typ = typ,
@@ -15018,11 +15116,11 @@ v_dot_parser__Parser_struct_decl(v_dot_parser__Parser *p) {
     _PUSH(&ast_fields,
           (/*typ = array_v_dot_ast__Field   tmp_typ=v_dot_ast__Field*/ (
               v_dot_ast__Field){.name = field_name, .typ = typ}),
-          tmp29, v_dot_ast__Field);
+          tmp33, v_dot_ast__Field);
     _PUSH(&fields,
           (/*typ = array_v_dot_table__Field   tmp_typ=v_dot_table__Field*/ (
               v_dot_table__Field){.name = field_name, .typ = typ}),
-          tmp30, v_dot_table__Field);
+          tmp34, v_dot_table__Field);
   };
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rcbr);
   v_dot_table__TypeSymbol t = (v_dot_table__TypeSymbol){
@@ -15066,12 +15164,12 @@ v_dot_ast__Return v_dot_parser__Parser_return_stmt(v_dot_parser__Parser *p) {
         .exprs = new_array(0, 1, sizeof(v_dot_ast__Expr))};
   };
   while (1) {
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_4966_expr__ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_5204_expr__ =
         v_dot_parser__Parser_expr(p, 0);
-    v_dot_ast__Expr expr = _V_mret_4966_expr__.var_0;
+    v_dot_ast__Expr expr = _V_mret_5204_expr__.var_0;
     _PUSH(&exprs,
           (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
-          tmp31, v_dot_ast__Expr);
+          tmp35, v_dot_ast__Expr);
     if (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
       v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_comma);
     } else {
@@ -15090,12 +15188,12 @@ v_dot_parser__Parser_assign_stmt(v_dot_parser__Parser *p) {
       0, 0, sizeof(v_dot_ast__Ident),
       EMPTY_ARRAY_OF_ELEMS(v_dot_ast__Ident, 0){TCCSKIP(0)});
   while (1) {
-    _V_MulRet_v_dot_ast__Ident_V_v_dot_table__Type _V_mret_5053_ident__ =
+    _V_MulRet_v_dot_ast__Ident_V_v_dot_table__Type _V_mret_5291_ident__ =
         v_dot_parser__Parser_parse_ident(p, 0);
-    v_dot_ast__Ident ident = _V_mret_5053_ident__.var_0;
+    v_dot_ast__Ident ident = _V_mret_5291_ident__.var_0;
     _PUSH(&idents,
           (/*typ = array_v_dot_ast__Ident   tmp_typ=v_dot_ast__Ident*/ ident),
-          tmp32, v_dot_ast__Ident);
+          tmp36, v_dot_ast__Ident);
     if (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
       v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_comma);
     } else {
@@ -15103,9 +15201,9 @@ v_dot_parser__Parser_assign_stmt(v_dot_parser__Parser *p) {
     };
   };
   v_dot_parser__Parser_next(p);
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_5094_expr__ =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_5332_expr__ =
       v_dot_parser__Parser_expr(p, 0);
-  v_dot_ast__Expr expr = _V_mret_5094_expr__.var_0;
+  v_dot_ast__Expr expr = _V_mret_5332_expr__.var_0;
   return (v_dot_ast__AssignStmt){
       .left = idents,
       .right = new_array_from_c_array(
@@ -15123,15 +15221,15 @@ v_dot_ast__VarDecl v_dot_parser__Parser_var_decl(v_dot_parser__Parser *p) {
   };
   string name = v_dot_parser__Parser_check_name(p);
   v_dot_parser__Parser_next(p);
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_5190_expr_typ =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_5428_expr_typ =
       v_dot_parser__Parser_expr(p, 0);
-  v_dot_ast__Expr expr = _V_mret_5190_expr_typ.var_0;
-  v_dot_table__Type typ = _V_mret_5190_expr_typ.var_1;
-  Option_v_dot_table__Var tmp33 =
+  v_dot_ast__Expr expr = _V_mret_5428_expr_typ.var_0;
+  v_dot_table__Type typ = _V_mret_5428_expr_typ.var_1;
+  Option_v_dot_table__Var tmp37 =
       v_dot_table__Table_find_var(&/* ? */ *p->table, name);
 
-  if (tmp33.ok) {
-    v_dot_table__Var _ = *(v_dot_table__Var *)tmp33.data;
+  if (tmp37.ok) {
+    v_dot_table__Var _ = *(v_dot_table__Var *)tmp37.data;
     v_dot_parser__Parser_error(
         &/* ? */ *p, _STR("redefinition of `%.*s`", name.len, name.str));
   };
@@ -15187,10 +15285,10 @@ v_dot_parser__Parser_global_decl(v_dot_parser__Parser *p) {
 _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type
 v_dot_parser__Parser_match_expr(v_dot_parser__Parser *p) {
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_key_match);
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_5505_cond_typ =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_5743_cond_typ =
       v_dot_parser__Parser_expr(p, 0);
-  v_dot_ast__Expr cond = _V_mret_5505_cond_typ.var_0;
-  v_dot_table__Type typ = _V_mret_5505_cond_typ.var_1;
+  v_dot_ast__Expr cond = _V_mret_5743_cond_typ.var_0;
+  v_dot_table__Type typ = _V_mret_5743_cond_typ.var_1;
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_lcbr);
   array_v_dot_ast__StmtBlock blocks = new_array_from_c_array(
       0, 0, sizeof(v_dot_ast__StmtBlock),
@@ -15199,19 +15297,19 @@ v_dot_parser__Parser_match_expr(v_dot_parser__Parser *p) {
       0, 0, sizeof(v_dot_ast__Expr),
       EMPTY_ARRAY_OF_ELEMS(v_dot_ast__Expr, 0){TCCSKIP(0)});
   while (1) {
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_5540_match_expr__ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_5778_match_expr__ =
         v_dot_parser__Parser_expr(p, 0);
-    v_dot_ast__Expr match_expr = _V_mret_5540_match_expr__.var_0;
+    v_dot_ast__Expr match_expr = _V_mret_5778_match_expr__.var_0;
     _PUSH(
         &match_exprs,
         (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ match_expr),
-        tmp34, v_dot_ast__Expr);
+        tmp38, v_dot_ast__Expr);
     v_dot_parser__Parser_warn(&/* ? */ *p, tos3("match block"));
     _PUSH(&blocks,
           (/*typ = array_v_dot_ast__StmtBlock   tmp_typ=v_dot_ast__StmtBlock*/ (
               v_dot_ast__StmtBlock){.stmts =
                                         v_dot_parser__Parser_parse_block(p)}),
-          tmp35, v_dot_ast__StmtBlock);
+          tmp39, v_dot_ast__StmtBlock);
     if (p->tok.kind == v_dot_token__v_dot_token__Kind_key_else) {
       v_dot_parser__Parser_next(p);
       _PUSH(
@@ -15219,7 +15317,7 @@ v_dot_parser__Parser_match_expr(v_dot_parser__Parser *p) {
           (/*typ = array_v_dot_ast__StmtBlock   tmp_typ=v_dot_ast__StmtBlock*/ (
               v_dot_ast__StmtBlock){.stmts =
                                         v_dot_parser__Parser_parse_block(p)}),
-          tmp36, v_dot_ast__StmtBlock);
+          tmp40, v_dot_ast__StmtBlock);
     };
     if (p->tok.kind == v_dot_token__v_dot_token__Kind_rcbr) {
       break;
@@ -15244,16 +15342,16 @@ v_dot_table__Type v_dot_parser__Parser_add_unresolved(v_dot_parser__Parser *p,
                                                       v_dot_ast__Expr expr) {
   int idx = p->unresolved_offset + p->unresolved.len;
   if ((_IN_MAP((key), p->table->unresolved_idxs))) {
-    int tmp37 = 0;
-    bool tmp38 =
-        map_get(/*parser.v : 1253*/ p->table->unresolved_idxs, key, &tmp37);
+    int tmp41 = 0;
+    bool tmp42 =
+        map_get(/*parser.v : 1308*/ p->table->unresolved_idxs, key, &tmp41);
 
-    idx = tmp37;
+    idx = tmp41;
   } else {
     map_set(&p->table->unresolved_idxs, key, &(int[]){idx});
     _PUSH(&p->unresolved,
           (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
-          tmp39, v_dot_ast__Expr);
+          tmp43, v_dot_ast__Expr);
   };
   return v_dot_table__new_type((-idx) - 1);
 }
