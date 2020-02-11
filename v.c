@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d25a0e3"
+#define V_COMMIT_HASH "2838d12"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9610821"
+#define V_COMMIT_HASH "d25a0e3"
 #endif
 #include <inttypes.h>
 
@@ -561,6 +561,8 @@ typedef struct v_dot_gen__Gen v_dot_gen__Gen;
 typedef struct v_dot_gen__JsGen v_dot_gen__JsGen;
 typedef struct _V_MulRet_v_dot_ast__CallExpr_V_v_dot_table__Type
     _V_MulRet_v_dot_ast__CallExpr_V_v_dot_table__Type;
+typedef struct _V_MulRet_array_v_dot_ast__Arg_V_bool
+    _V_MulRet_array_v_dot_ast__Arg_V_bool;
 typedef struct v_dot_parser__Parser v_dot_parser__Parser;
 typedef struct _V_MulRet_v_dot_ast__Ident_V_v_dot_table__Type
     _V_MulRet_v_dot_ast__Ident_V_v_dot_table__Type;
@@ -807,6 +809,11 @@ struct _V_MulRet_array_string_V_array_string {
 struct _V_MulRet_array_string_V_string {
   array_string var_0;
   string var_1;
+};
+
+struct _V_MulRet_array_v_dot_ast__Arg_V_bool {
+  array_v_dot_ast__Arg var_0;
+  bool var_1;
 };
 
 struct _V_MulRet_bool_V_string {
@@ -2546,6 +2553,8 @@ _V_MulRet_v_dot_ast__CallExpr_V_v_dot_table__Type
 v_dot_parser__Parser_call_expr(v_dot_parser__Parser *p);
 array_v_dot_ast__Expr v_dot_parser__Parser_call_args(v_dot_parser__Parser *p);
 v_dot_ast__FnDecl v_dot_parser__Parser_fn_decl(v_dot_parser__Parser *p);
+_V_MulRet_array_v_dot_ast__Arg_V_bool
+v_dot_parser__Parser_fn_args(v_dot_parser__Parser *p);
 v_dot_table__Type v_dot_parser__Parser_parse_array_type(v_dot_parser__Parser *p,
                                                         int nr_muls);
 v_dot_table__Type v_dot_parser__Parser_parse_map_type(v_dot_parser__Parser *p,
@@ -13466,113 +13475,31 @@ v_dot_ast__FnDecl v_dot_parser__Parser_fn_decl(v_dot_parser__Parser *p) {
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_gt);
   };
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_lpar);
-  bool is_variadic = 0;
   array_v_dot_table__Var args = new_array_from_c_array(
       0, 0, sizeof(v_dot_table__Var),
       EMPTY_ARRAY_OF_ELEMS(v_dot_table__Var, 0){TCCSKIP(0)});
-  array_v_dot_ast__Arg ast_args = new_array_from_c_array(
-      0, 0, sizeof(v_dot_ast__Arg),
-      EMPTY_ARRAY_OF_ELEMS(v_dot_ast__Arg, 0){TCCSKIP(0)});
-  bool types_only =
-      (p->tok.kind == v_dot_token__v_dot_token__Kind_amp) ||
-      (p->peek_tok.kind == v_dot_token__v_dot_token__Kind_comma &&
-       v_dot_table__Table_known_type(&/* ? */ *p->table, p->tok.lit)) ||
-      p->peek_tok.kind == v_dot_token__v_dot_token__Kind_rpar;
-  if (types_only) {
-    v_dot_parser__Parser_warn(&/* ? */ *p, tos3("types only"));
-    int arg_no = 1;
-    while (p->tok.kind != v_dot_token__v_dot_token__Kind_rpar) {
+  _V_MulRet_array_v_dot_ast__Arg_V_bool _V_mret_474_ast_args_is_variadic =
+      v_dot_parser__Parser_fn_args(p);
+  array_v_dot_ast__Arg ast_args = _V_mret_474_ast_args_is_variadic.var_0;
+  bool is_variadic = _V_mret_474_ast_args_is_variadic.var_1;
+  array_v_dot_ast__Arg tmp3 = ast_args;
+  for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
+    v_dot_ast__Arg ast_arg = ((v_dot_ast__Arg *)tmp3.data)[tmp4];
 
-      string arg_name = _STR("arg_%d", arg_no);
-      if (p->tok.kind == v_dot_token__v_dot_token__Kind_ellipsis) {
-        v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_ellipsis);
-        is_variadic = 1;
-      };
-      v_dot_table__Type arg_type = v_dot_parser__Parser_parse_type(p);
-      if (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
-        if (is_variadic) {
-          v_dot_parser__Parser_error(
-              &/* ? */ *p,
-              _STR("cannot use ...(variadic) with non-final parameter no %d",
-                   arg_no));
-        };
-        v_dot_parser__Parser_next(p);
-      };
-      v_dot_table__Var arg = (v_dot_table__Var){
-          .name = arg_name,
-          .typ = arg_type,
-          .idx = 0,
-          .is_mut = 0,
-          .is_const = 0,
-          .is_global = 0,
-          .scope_level = 0,
-      };
-      _PUSH(&args,
-            (/*typ = array_v_dot_table__Var   tmp_typ=v_dot_table__Var*/ arg),
-            tmp3, v_dot_table__Var);
-      _PUSH(&ast_args,
-            (/*typ = array_v_dot_ast__Arg   tmp_typ=v_dot_ast__Arg*/ (
-                v_dot_ast__Arg){.name = arg_name, .typ = arg_type}),
-            tmp4, v_dot_ast__Arg);
+    v_dot_table__Var var = (v_dot_table__Var){
+        .name = ast_arg.name,
+        .typ = ast_arg.typ,
+        .idx = 0,
+        .is_mut = 0,
+        .is_const = 0,
+        .is_global = 0,
+        .scope_level = 0,
     };
-    arg_no++;
-  } else {
-    while (p->tok.kind != v_dot_token__v_dot_token__Kind_rpar) {
-
-      array_string arg_names = new_array_from_c_array(
-          1, 1, sizeof(string),
-          EMPTY_ARRAY_OF_ELEMS(string, 1){v_dot_parser__Parser_check_name(p)});
-      while (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
-
-        v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_comma);
-        _PUSH(&arg_names,
-              (/*typ = array_string   tmp_typ=string*/
-               v_dot_parser__Parser_check_name(p)),
-              tmp5, string);
-      };
-      if (p->tok.kind == v_dot_token__v_dot_token__Kind_key_mut) {
-        v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_key_mut);
-      };
-      if (p->tok.kind == v_dot_token__v_dot_token__Kind_ellipsis) {
-        v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_ellipsis);
-        is_variadic = 1;
-      };
-      v_dot_table__Type typ = v_dot_parser__Parser_parse_type(p);
-      array_string tmp6 = arg_names;
-      for (int tmp7 = 0; tmp7 < tmp6.len; tmp7++) {
-        string arg_name = ((string *)tmp6.data)[tmp7];
-
-        v_dot_table__Var arg = (v_dot_table__Var){
-            .name = arg_name,
-            .typ = typ,
-            .idx = 0,
-            .is_mut = 0,
-            .is_const = 0,
-            .is_global = 0,
-            .scope_level = 0,
-        };
-        _PUSH(&args,
-              (/*typ = array_v_dot_table__Var   tmp_typ=v_dot_table__Var*/ arg),
-              tmp8, v_dot_table__Var);
-        v_dot_table__Table_register_var(p->table, arg);
-        _PUSH(&ast_args,
-              (/*typ = array_v_dot_ast__Arg   tmp_typ=v_dot_ast__Arg*/ (
-                  v_dot_ast__Arg){.name = arg_name, .typ = typ}),
-              tmp9, v_dot_ast__Arg);
-        if (is_variadic &&
-            p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
-          v_dot_parser__Parser_error(
-              &/* ? */ *p,
-              _STR("cannot use ...(variadic) with non-final parameter %.*s",
-                   arg_name.len, arg_name.str));
-        };
-      };
-      if (p->tok.kind != v_dot_token__v_dot_token__Kind_rpar) {
-        v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_comma);
-      };
-    };
+    _PUSH(&args,
+          (/*typ = array_v_dot_table__Var   tmp_typ=v_dot_table__Var*/ var),
+          tmp5, v_dot_table__Var);
+    v_dot_table__Table_register_var(p->table, var);
   };
-  v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rpar);
   v_dot_table__Type typ = v_dot_table__void_type;
   if ((p->tok.kind == v_dot_token__v_dot_token__Kind_name ||
        p->tok.kind == v_dot_token__v_dot_token__Kind_lpar ||
@@ -13580,10 +13507,8 @@ v_dot_ast__FnDecl v_dot_parser__Parser_fn_decl(v_dot_parser__Parser *p) {
        p->tok.kind == v_dot_token__v_dot_token__Kind_lsbr ||
        p->tok.kind == v_dot_token__v_dot_token__Kind_question)) {
     typ = v_dot_parser__Parser_parse_type(p);
-    p->return_type = typ;
-  } else {
-    p->return_type = typ;
   };
+  p->return_type = typ;
   if (is_method) {
     v_dot_table__TypeSymbol *type_sym =
         v_dot_table__Table_get_type_symbol(&/* ? */ *p->table, rec_type);
@@ -13619,6 +13544,90 @@ v_dot_ast__FnDecl v_dot_parser__Parser_fn_decl(v_dot_parser__Parser *p) {
       .is_pub = is_pub,
       .is_variadic = is_variadic,
       .receiver = (v_dot_ast__Field){.name = rec_name, .typ = rec_type}};
+}
+_V_MulRet_array_v_dot_ast__Arg_V_bool
+v_dot_parser__Parser_fn_args(v_dot_parser__Parser *p) {
+  array_v_dot_ast__Arg args = new_array_from_c_array(
+      0, 0, sizeof(v_dot_ast__Arg),
+      EMPTY_ARRAY_OF_ELEMS(v_dot_ast__Arg, 0){TCCSKIP(0)});
+  bool is_variadic = 0;
+  bool types_only =
+      (p->tok.kind == v_dot_token__v_dot_token__Kind_amp) ||
+      (p->peek_tok.kind == v_dot_token__v_dot_token__Kind_comma &&
+       v_dot_table__Table_known_type(&/* ? */ *p->table, p->tok.lit)) ||
+      p->peek_tok.kind == v_dot_token__v_dot_token__Kind_rpar;
+  if (types_only) {
+    v_dot_parser__Parser_warn(&/* ? */ *p, tos3("types only"));
+    int arg_no = 1;
+    while (p->tok.kind != v_dot_token__v_dot_token__Kind_rpar) {
+
+      string arg_name = _STR("arg_%d", arg_no);
+      if (p->tok.kind == v_dot_token__v_dot_token__Kind_ellipsis) {
+        v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_ellipsis);
+        is_variadic = 1;
+      };
+      v_dot_table__Type arg_type = v_dot_parser__Parser_parse_type(p);
+      if (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
+        if (is_variadic) {
+          v_dot_parser__Parser_error(
+              &/* ? */ *p,
+              _STR("cannot use ...(variadic) with non-final parameter no %d",
+                   arg_no));
+        };
+        v_dot_parser__Parser_next(p);
+      };
+      _PUSH(&args,
+            (/*typ = array_v_dot_ast__Arg   tmp_typ=v_dot_ast__Arg*/ (
+                v_dot_ast__Arg){.name = arg_name, .typ = arg_type}),
+            tmp6, v_dot_ast__Arg);
+    };
+    arg_no++;
+  } else {
+    while (p->tok.kind != v_dot_token__v_dot_token__Kind_rpar) {
+
+      array_string arg_names = new_array_from_c_array(
+          1, 1, sizeof(string),
+          EMPTY_ARRAY_OF_ELEMS(string, 1){v_dot_parser__Parser_check_name(p)});
+      while (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
+
+        v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_comma);
+        _PUSH(&arg_names,
+              (/*typ = array_string   tmp_typ=string*/
+               v_dot_parser__Parser_check_name(p)),
+              tmp7, string);
+      };
+      if (p->tok.kind == v_dot_token__v_dot_token__Kind_key_mut) {
+        v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_key_mut);
+      };
+      if (p->tok.kind == v_dot_token__v_dot_token__Kind_ellipsis) {
+        v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_ellipsis);
+        is_variadic = 1;
+      };
+      v_dot_table__Type typ = v_dot_parser__Parser_parse_type(p);
+      array_string tmp8 = arg_names;
+      for (int tmp9 = 0; tmp9 < tmp8.len; tmp9++) {
+        string arg_name = ((string *)tmp8.data)[tmp9];
+
+        _PUSH(&args,
+              (/*typ = array_v_dot_ast__Arg   tmp_typ=v_dot_ast__Arg*/ (
+                  v_dot_ast__Arg){.name = arg_name, .typ = typ}),
+              tmp10, v_dot_ast__Arg);
+        if (is_variadic &&
+            p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
+          v_dot_parser__Parser_error(
+              &/* ? */ *p,
+              _STR("cannot use ...(variadic) with non-final parameter %.*s",
+                   arg_name.len, arg_name.str));
+        };
+      };
+      if (p->tok.kind != v_dot_token__v_dot_token__Kind_rpar) {
+        v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_comma);
+      };
+    };
+  };
+  v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rpar);
+  return (_V_MulRet_array_v_dot_ast__Arg_V_bool){.var_0 = args,
+                                                 .var_1 = is_variadic};
 }
 v_dot_table__Type v_dot_parser__Parser_parse_array_type(v_dot_parser__Parser *p,
                                                         int nr_muls) {
