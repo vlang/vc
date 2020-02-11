@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2d7c80b"
+#define V_COMMIT_HASH "f7b80c3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a21e3d7"
+#define V_COMMIT_HASH "2d7c80b"
 #endif
 #include <inttypes.h>
 
@@ -13741,9 +13741,9 @@ v_dot_table__Type v_dot_parser__Parser_parse_array_type(v_dot_parser__Parser *p,
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_lsbr);
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_number) {
     int size = v_string_int(p->tok.lit);
-    v_dot_table__Type elem_type = v_dot_parser__Parser_parse_type(p);
+    v_dot_parser__Parser_next(p);
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rsbr);
-    v_dot_parser__Parser_check_name(p);
+    v_dot_table__Type elem_type = v_dot_parser__Parser_parse_type(p);
     int idx = v_dot_table__Table_find_or_register_array_fixed(
         p->table, elem_type, size, 1);
     return v_dot_table__new_type_ptr(idx, nr_muls);
