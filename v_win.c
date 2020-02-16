@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e272a10"
+#define V_COMMIT_HASH "277c55f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9eeb3df"
+#define V_COMMIT_HASH "e272a10"
 #endif
 #include <inttypes.h>
 
@@ -220,6 +220,84 @@ int g_test_fails = 0;
 #define strconv__ZERO '0'
 #define strconv__NINE '9'
 #define strconv__int_size 32
+#define internal_dot_help__verbose_help_text                                   \
+  tos3("Usage: v [options/commands] [file.v | directory]\n\n   When V is run " \
+       "without any arguments, it is run in REPL mode.\n\n   When given a .v " \
+       "file, it will be compiled. The executable will have the\n   same "     \
+       "name as the input .v file: `v foo.v` produces `./foo` on *nix "        \
+       "systems,\n  `foo.exe` on Windows.\n\n   You can use -o to specify a "  \
+       "different output executable\'s name.\n\n   When given a directory, "   \
+       "all .v files contained in it will be compiled as\n   part of a "       \
+       "single main module.\n\n   By default the executable will have the "    \
+       "same name as the directory.\n\n   To compile all V files in current "  \
+       "directory, run `v .`\n\n   Any file ending in _test.v, will be "       \
+       "treated as a test.\n   It will be compiled and run, evaluating the "   \
+       "assert statements in every\n   function named test_xxx.\n\n   You "    \
+       "can put common options inside an environment variable named VFLAGS, "  \
+       "so that\n   you don\'t have to repeat them.\n\n   You can set it "     \
+       "like this: `export VFLAGS=\"-cc clang -debug\"` on *nix,\n   `set "    \
+       "VFLAGS=-cc msvc` on Windows.\n\n   V respects the TMPDIR environment " \
+       "variable, and will put .tmp.c files in TMPDIR/v/ .\n   If you have "   \
+       "not set it, a suitable platform specific folder (like /tmp) will be "  \
+       "used.\n\nOptions/commands:\n  -h, help          Display this "         \
+       "information.\n  -o <file>         Write output to <file>.\n  -o "      \
+       "<file>.c       Produce C source without compiling it.\n  -o "          \
+       "<file>.js      Produce JavaScript source.\n  -prod             Build " \
+       "an optimized executable.\n  -v, version       Display compiler "       \
+       "version and git hash of the compiler source.\n  -verbose          "    \
+       "Produce a verbose log about what the compiler is doing, where it "     \
+       "seeks for files and so on.\n  -live             Enable hot code "      \
+       "reloading (required by functions marked with [live]).\n  -os <OS>    " \
+       "      Produce an executable for the selected OS.\n                   " \
+       " OS can be linux, mac, windows, msvc.\n                    Use msvc "  \
+       "if you want to use the MSVC compiler on Windows.\n  -shared          " \
+       " Build a shared library.\n  -stats            Show additional stats "  \
+       "when compiling/running tests. Try `v -stats test .`\n\n  -cache      " \
+       "      Turn on usage of the precompiled module cache.\n               " \
+       "     It very significantly speeds up secondary compilations.\n\n  "    \
+       "-obf              Obfuscate the resulting binary.\n  -compress       " \
+       "  Compress the resulting binary.\n  -                 Shorthand for "  \
+       "`v repl`.\n\nOptions for debugging/troubleshooting v programs:\n  -g " \
+       "               Generate debugging information in the backtraces. Add " \
+       "*V* line numbers to the generated executable.\n  -cg               "   \
+       "Same as -g, but add *C* line numbers to the generated executable "     \
+       "instead of *V* line numbers.\n  -keep_c           Do NOT remove the "  \
+       "generated .tmp.c files after compilation.\n                    It is " \
+       "useful when using debuggers like gdb/visual studio, when given after " \
+       "`-g` / `-cg`.\n  -pretty_c         Run clang-format over the "         \
+       "generated C file, so that it looks nicer. Requires you to have "       \
+       "clang-format.\n  -show_c_cmd       Print the full C compilation "      \
+       "command and how much time it took. See also `-verbose`.\n  -cc "       \
+       "<ccompiler>   Specify which C compiler you want to use as a C "        \
+       "backend.\n                    The C backend compiler should be able "  \
+       "to handle C99 compatible C code.\n                    Common C "       \
+       "compilers are gcc, clang, tcc, icc, cl...\n  -cflags <flags>   Pass "  \
+       "additional C flags to the C backend compiler.\n                    "   \
+       "Example: -cflags `sdl2-config --cflags`\n\nCommands:\n  up           " \
+       "     Update V. Run `v up` at least once per day, since V development " \
+       "is rapid and features/bugfixes are added constantly.\n  run <file.v> " \
+       "     Build and execute the V program in file.v. You can add "          \
+       "arguments for the V program *after* the file name.\n  build <module> " \
+       "   Compile a module into an object file.\n  repl              Run "    \
+       "the V REPL. If V is running in a tty terminal, the REPL is "           \
+       "interactive, otherwise it just reads from stdin.\n  symlink          " \
+       " Useful on Unix systems. Symlinks the current V executable to "        \
+       "/usr/local/bin/v, so that V is globally available.\n  test-compiler  " \
+       "   Run all V test files, and compile all V examples.\n  test folder/ " \
+       "     Run all V test files located in the folder and its subfolders. "  \
+       "You can also pass individual _test.v files too.\n  fmt               " \
+       "Run vfmt to format the source code. [wip]\n  doc               Run "   \
+       "vdoc over the source code and produce documentation.\n  translate    " \
+       "     Translates C to V. [wip, will be available in V 0.3]\n  create  " \
+       "          Create a new v project interactively. Answer the "           \
+       "questions, and run it with `v run projectname`\n\nV package "          \
+       "management commands:\n  search  keywords  Search the "                 \
+       "https://vpm.vlang.io/ module repository for matching modules and "     \
+       "shows their details.\n  install <module>  Install a user module from " \
+       "https://vpm.vlang.io/.\n  update  [module]  Updates an already "       \
+       "installed module, or ALL installed modules at once, when no module "   \
+       "name is given.\n  remove  [module]  Removes an installed module, or "  \
+       "ALL installed modules at once, when no module name is given.\n")
 #define time__seconds_per_minute 60
 #define v_dot_table__void_type_idx 1
 #define v_dot_table__voidptr_type_idx 2
@@ -302,84 +380,6 @@ int g_test_fails = 0;
 #define compiler__error_context_after 2
 #define compiler__num_sep '_'
 #define compiler__NrTokens 141
-#define main__verbose_help_text                                                \
-  tos3("Usage: v [options/commands] [file.v | directory]\n\n   When V is run " \
-       "without any arguments, it is run in REPL mode.\n\n   When given a .v " \
-       "file, it will be compiled. The executable will have the\n   same "     \
-       "name as the input .v file: `v foo.v` produces `./foo` on *nix "        \
-       "systems,\n  `foo.exe` on Windows.\n\n   You can use -o to specify a "  \
-       "different output executable\'s name.\n\n   When given a directory, "   \
-       "all .v files contained in it will be compiled as\n   part of a "       \
-       "single main module.\n\n   By default the executable will have the "    \
-       "same name as the directory.\n\n   To compile all V files in current "  \
-       "directory, run `v .`\n\n   Any file ending in _test.v, will be "       \
-       "treated as a test.\n   It will be compiled and run, evaluating the "   \
-       "assert statements in every\n   function named test_xxx.\n\n   You "    \
-       "can put common options inside an environment variable named VFLAGS, "  \
-       "so that\n   you don\'t have to repeat them.\n\n   You can set it "     \
-       "like this: `export VFLAGS=\"-cc clang -debug\"` on *nix,\n   `set "    \
-       "VFLAGS=-cc msvc` on Windows.\n\n   V respects the TMPDIR environment " \
-       "variable, and will put .tmp.c files in TMPDIR/v/ .\n   If you have "   \
-       "not set it, a suitable platform specific folder (like /tmp) will be "  \
-       "used.\n\nOptions/commands:\n  -h, help          Display this "         \
-       "information.\n  -o <file>         Write output to <file>.\n  -o "      \
-       "<file>.c       Produce C source without compiling it.\n  -o "          \
-       "<file>.js      Produce JavaScript source.\n  -prod             Build " \
-       "an optimized executable.\n  -v, version       Display compiler "       \
-       "version and git hash of the compiler source.\n  -verbose          "    \
-       "Produce a verbose log about what the compiler is doing, where it "     \
-       "seeks for files and so on.\n  -live             Enable hot code "      \
-       "reloading (required by functions marked with [live]).\n  -os <OS>    " \
-       "      Produce an executable for the selected OS.\n                   " \
-       " OS can be linux, mac, windows, msvc.\n                    Use msvc "  \
-       "if you want to use the MSVC compiler on Windows.\n  -shared          " \
-       " Build a shared library.\n  -stats            Show additional stats "  \
-       "when compiling/running tests. Try `v -stats test .`\n\n  -cache      " \
-       "      Turn on usage of the precompiled module cache.\n               " \
-       "     It very significantly speeds up secondary compilations.\n\n  "    \
-       "-obf              Obfuscate the resulting binary.\n  -compress       " \
-       "  Compress the resulting binary.\n  -                 Shorthand for "  \
-       "`v repl`.\n\nOptions for debugging/troubleshooting v programs:\n  -g " \
-       "               Generate debugging information in the backtraces. Add " \
-       "*V* line numbers to the generated executable.\n  -cg               "   \
-       "Same as -g, but add *C* line numbers to the generated executable "     \
-       "instead of *V* line numbers.\n  -keep_c           Do NOT remove the "  \
-       "generated .tmp.c files after compilation.\n                    It is " \
-       "useful when using debuggers like gdb/visual studio, when given after " \
-       "`-g` / `-cg`.\n  -pretty_c         Run clang-format over the "         \
-       "generated C file, so that it looks nicer. Requires you to have "       \
-       "clang-format.\n  -show_c_cmd       Print the full C compilation "      \
-       "command and how much time it took. See also `-verbose`.\n  -cc "       \
-       "<ccompiler>   Specify which C compiler you want to use as a C "        \
-       "backend.\n                    The C backend compiler should be able "  \
-       "to handle C99 compatible C code.\n                    Common C "       \
-       "compilers are gcc, clang, tcc, icc, cl...\n  -cflags <flags>   Pass "  \
-       "additional C flags to the C backend compiler.\n                    "   \
-       "Example: -cflags `sdl2-config --cflags`\n\nCommands:\n  up           " \
-       "     Update V. Run `v up` at least once per day, since V development " \
-       "is rapid and features/bugfixes are added constantly.\n  run <file.v> " \
-       "     Build and execute the V program in file.v. You can add "          \
-       "arguments for the V program *after* the file name.\n  build <module> " \
-       "   Compile a module into an object file.\n  repl              Run "    \
-       "the V REPL. If V is running in a tty terminal, the REPL is "           \
-       "interactive, otherwise it just reads from stdin.\n  symlink          " \
-       " Useful on Unix systems. Symlinks the current V executable to "        \
-       "/usr/local/bin/v, so that V is globally available.\n  test-compiler  " \
-       "   Run all V test files, and compile all V examples.\n  test folder/ " \
-       "     Run all V test files located in the folder and its subfolders. "  \
-       "You can also pass individual _test.v files too.\n  fmt               " \
-       "Run vfmt to format the source code. [wip]\n  doc               Run "   \
-       "vdoc over the source code and produce documentation.\n  translate    " \
-       "     Translates C to V. [wip, will be available in V 0.3]\n  create  " \
-       "          Create a new v project interactively. Answer the "           \
-       "questions, and run it with `v run projectname`\n\nV package "          \
-       "management commands:\n  search  keywords  Search the "                 \
-       "https://vpm.vlang.io/ module repository for matching modules and "     \
-       "shows their details.\n  install <module>  Install a user module from " \
-       "https://vpm.vlang.io/.\n  update  [module]  Updates an already "       \
-       "installed module, or ALL installed modules at once, when no module "   \
-       "name is given.\n  remove  [module]  Removes an installed module, or "  \
-       "ALL installed modules at once, when no module name is given.\n")
 #ifdef _WIN32
 #include <dbghelp.h>
 #endif
@@ -3435,6 +3435,7 @@ u64 strconv__DOUBLE_MINUS_INFINITY;
 u32 strconv__TEN;
 u64 strconv__max_u64;
 string filepath__path_separator;
+string internal_dot_help__help_text;
 string time__days_string;
 array_int time__month_days;
 string time__months_string;
@@ -3937,7 +3938,6 @@ array_string compiler__TokenStr;
 map_int compiler__KEYWORDS;
 array_compiler__TokenKind compiler__AssignTokens;
 array_string main__list_of_flags;
-string main__help_text;
 array_string main__simple_cmd;
 
 array new_array(int mylen, int cap, int elm_size) {
@@ -34119,10 +34119,10 @@ void main__create_symlink() {
 }
 void main__main() {
   array_string arg = main__join_flags_and_argument();
-  _V_MulRet_string_V_array_string _V_mret_50_command_option =
+  _V_MulRet_string_V_array_string _V_mret_53_command_option =
       main__get_basic_command_and_option(arg);
-  string command = _V_mret_50_command_option.var_0;
-  array_string option = _V_mret_50_command_option.var_1;
+  string command = _V_mret_53_command_option.var_0;
+  array_string option = _V_mret_53_command_option.var_1;
   bool is_verbose = (_IN(string, (tos3("-verbose")), arg)) ||
                     (_IN(string, (tos3("--verbose")), arg));
   if ((_IN(string, (tos3("-v")), option)) ||
@@ -34138,9 +34138,9 @@ void main__main() {
       (_IN(string, (tos3("--help")), option)) ||
       string_eq(command, tos3("help"))) {
     if (is_verbose) {
-      println(main__verbose_help_text);
+      println(internal_dot_help__verbose_help_text);
     } else {
-      println(main__help_text);
+      println(internal_dot_help__help_text);
     };
 
     return;
@@ -34232,6 +34232,32 @@ void init() {
   strconv__TEN = ((u32)(10));
   strconv__max_u64 = ((u64)(UINT64_MAX));
   filepath__path_separator = tos3("\\");
+  internal_dot_help__help_text = tos3(
+      "V is a tool for managing V source code.\n\nUsage:\n   v [options] "
+      "[command] [arguments]\n\nExamples:\n   v hello.v         compile the "
+      "file `hello.v` and output it as `hello` or `hello.exe`\n   v run "
+      "hello.v     same as above but also run the produced executable "
+      "immediately after compilation\n\nThe commands are:\n   build            "
+      " build V code in the provided path (default)\n   create            "
+      "setup the file structure for a V project\n   doc               "
+      "generates the documentation for a V module (coming soon in 0.3)\n   fmt "
+      "              format the V code provided\n   repl              run the "
+      "REPL\n   run               compile and run a V program\n   symlink      "
+      "     create a symbolic link for V\n   translate         translate C "
+      "code to V (coming soon in 0.3)\n   up                run the V "
+      "self-updater\n   version           prints the version text and "
+      "exits\n\n   install           installs a module from VPM\n   remove     "
+      "       removes a module that was installed from VPM\n   search          "
+      "  searches for a module from VPM\n   update            updates an "
+      "installed module from VPM\n\n   bin2v             embed a binary file "
+      "as a constant and output it in a V file\n   build-examples    test if "
+      "all examples can be built\n   build-tools       test if all tools can "
+      "be built\n   build-vbinaries   test if V can be built with different "
+      "configuration\n   test              run all test files in the provided "
+      "directory\n   test-fmt          test if all files in the current "
+      "directory is formatted properly\n   test-compiler     run the V "
+      "self-test suite to make sure V is working properly\n\nFor a "
+      "comprehensive list of options, please refer to `v help --verbose`.");
   time__days_string = tos3("MonTueWedThuFriSatSun");
   time__month_days = new_array_from_c_array(
       12, 12, sizeof(int),
@@ -34634,13 +34660,6 @@ void init() {
       5, 5, sizeof(string),
       EMPTY_ARRAY_OF_ELEMS(string, 5){tos3("-o"), tos3("-os"), tos3("-cc"),
                                       tos3("-cflags"), tos3("-d")});
-  main__help_text = tos3(
-      "Usage: v [options/commands] [file.v | directory]\n\n   To run V in REPL "
-      "mode, run V without any arguments.\n   To compile a directory/file, "
-      "pass it as the only argument.\n\n   To run a directory/file, use `v run "
-      "[file.v | directory]`. V will compile and run it for you.\n   \n   This "
-      "help message is only intended to be a quick start guide. For a "
-      "comprehensive help message, use `v help --verbose`.");
   main__simple_cmd = new_array_from_c_array(
       11, 11, sizeof(string),
       EMPTY_ARRAY_OF_ELEMS(string, 11){

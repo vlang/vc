@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e272a10"
+#define V_COMMIT_HASH "277c55f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9eeb3df"
+#define V_COMMIT_HASH "e272a10"
 #endif
 #include <inttypes.h>
 
@@ -220,84 +220,7 @@ int g_test_fails = 0;
 #define strconv__ZERO '0'
 #define strconv__NINE '9'
 #define strconv__int_size 32
-#define time__seconds_per_minute 60
-#define v_dot_table__void_type_idx 1
-#define v_dot_table__voidptr_type_idx 2
-#define v_dot_table__byteptr_type_idx 3
-#define v_dot_table__charptr_type_idx 4
-#define v_dot_table__i8_type_idx 5
-#define v_dot_table__i16_type_idx 6
-#define v_dot_table__int_type_idx 7
-#define v_dot_table__i64_type_idx 8
-#define v_dot_table__byte_type_idx 9
-#define v_dot_table__u16_type_idx 10
-#define v_dot_table__u32_type_idx 11
-#define v_dot_table__u64_type_idx 12
-#define v_dot_table__f32_type_idx 13
-#define v_dot_table__f64_type_idx 14
-#define v_dot_table__char_type_idx 15
-#define v_dot_table__bool_type_idx 16
-#define v_dot_table__string_type_idx 17
-#define v_dot_table__array_type_idx 18
-#define v_dot_table__map_type_idx 19
-#define v_dot_token__nr_tokens 141
-#define v_dot_token__lowest_prec 0
-#define v_dot_token__highest_prec 8
-#define os__O_RDONLY 000000000
-#define os__O_WRONLY 000000001
-#define os__O_RDWR 000000002
-#define os__O_CREATE 000000100
-#define os__O_EXCL 000000200
-#define os__O_NOCTTY 000000400
-#define os__O_TRUNC 000001000
-#define os__O_APPEND 000002000
-#define os__O_NONBLOCK 000004000
-#define os__O_SYNC 000010000
-#define os__MAX_PATH 4096
-#define os__F_OK 0
-#define os__X_OK 1
-#define os__W_OK 2
-#define os__R_OK 4
-#define os__PROT_READ 1
-#define os__PROT_WRITE 2
-#define os__sys_write 1
-#define os__sys_open 2
-#define os__sys_close 3
-#define os__sys_mkdir 83
-#define os__sys_creat 85
-#define os__stdin_value 0
-#define os__stdout_value 1
-#define os__stderr_value 2
-#define term__default_columns_size 80
-#define term__default_rows_size 25
-#define vweb_dot_tmpl__STR_START tos3("sb.write(\'")
-#define vweb_dot_tmpl__STR_END tos3("\' ) ")
-#define v_dot_gen_dot_x64__mag1 'E'
-#define v_dot_gen_dot_x64__mag2 'L'
-#define v_dot_gen_dot_x64__mag3 'F'
-#define v_dot_gen_dot_x64__ei_class 4
-#define v_dot_gen_dot_x64__elfclass64 2
-#define v_dot_gen_dot_x64__elfdata2lsb 1
-#define v_dot_gen_dot_x64__ev_current 1
-#define v_dot_gen_dot_x64__elf_osabi 0
-#define v_dot_gen_dot_x64__et_rel 1
-#define v_dot_gen_dot_x64__et_exec 2
-#define v_dot_gen_dot_x64__et_dyn 3
-#define v_dot_gen_dot_x64__sht_null 0
-#define v_dot_scanner__single_quote '\''
-#define v_dot_scanner__double_quote '"'
-#define v_dot_scanner__error_context_before 2
-#define v_dot_scanner__error_context_after 2
-#define v_dot_scanner__num_sep '_'
-#define compiler__max_module_depth 5
-#define compiler__MaxLocalVars 50
-#define compiler__single_quote '\''
-#define compiler__double_quote '"'
-#define compiler__error_context_before 2
-#define compiler__error_context_after 2
-#define compiler__num_sep '_'
-#define compiler__NrTokens 141
-#define main__verbose_help_text                                                \
+#define internal_dot_help__verbose_help_text                                   \
   tos3("Usage: v [options/commands] [file.v | directory]\n\n   When V is run " \
        "without any arguments, it is run in REPL mode.\n\n   When given a .v " \
        "file, it will be compiled. The executable will have the\n   same "     \
@@ -375,6 +298,83 @@ int g_test_fails = 0;
        "installed module, or ALL installed modules at once, when no module "   \
        "name is given.\n  remove  [module]  Removes an installed module, or "  \
        "ALL installed modules at once, when no module name is given.\n")
+#define time__seconds_per_minute 60
+#define v_dot_table__void_type_idx 1
+#define v_dot_table__voidptr_type_idx 2
+#define v_dot_table__byteptr_type_idx 3
+#define v_dot_table__charptr_type_idx 4
+#define v_dot_table__i8_type_idx 5
+#define v_dot_table__i16_type_idx 6
+#define v_dot_table__int_type_idx 7
+#define v_dot_table__i64_type_idx 8
+#define v_dot_table__byte_type_idx 9
+#define v_dot_table__u16_type_idx 10
+#define v_dot_table__u32_type_idx 11
+#define v_dot_table__u64_type_idx 12
+#define v_dot_table__f32_type_idx 13
+#define v_dot_table__f64_type_idx 14
+#define v_dot_table__char_type_idx 15
+#define v_dot_table__bool_type_idx 16
+#define v_dot_table__string_type_idx 17
+#define v_dot_table__array_type_idx 18
+#define v_dot_table__map_type_idx 19
+#define v_dot_token__nr_tokens 141
+#define v_dot_token__lowest_prec 0
+#define v_dot_token__highest_prec 8
+#define os__O_RDONLY 000000000
+#define os__O_WRONLY 000000001
+#define os__O_RDWR 000000002
+#define os__O_CREATE 000000100
+#define os__O_EXCL 000000200
+#define os__O_NOCTTY 000000400
+#define os__O_TRUNC 000001000
+#define os__O_APPEND 000002000
+#define os__O_NONBLOCK 000004000
+#define os__O_SYNC 000010000
+#define os__MAX_PATH 4096
+#define os__F_OK 0
+#define os__X_OK 1
+#define os__W_OK 2
+#define os__R_OK 4
+#define os__PROT_READ 1
+#define os__PROT_WRITE 2
+#define os__sys_write 1
+#define os__sys_open 2
+#define os__sys_close 3
+#define os__sys_mkdir 83
+#define os__sys_creat 85
+#define os__stdin_value 0
+#define os__stdout_value 1
+#define os__stderr_value 2
+#define term__default_columns_size 80
+#define term__default_rows_size 25
+#define vweb_dot_tmpl__STR_START tos3("sb.write(\'")
+#define vweb_dot_tmpl__STR_END tos3("\' ) ")
+#define v_dot_gen_dot_x64__mag1 'E'
+#define v_dot_gen_dot_x64__mag2 'L'
+#define v_dot_gen_dot_x64__mag3 'F'
+#define v_dot_gen_dot_x64__ei_class 4
+#define v_dot_gen_dot_x64__elfclass64 2
+#define v_dot_gen_dot_x64__elfdata2lsb 1
+#define v_dot_gen_dot_x64__ev_current 1
+#define v_dot_gen_dot_x64__elf_osabi 0
+#define v_dot_gen_dot_x64__et_rel 1
+#define v_dot_gen_dot_x64__et_exec 2
+#define v_dot_gen_dot_x64__et_dyn 3
+#define v_dot_gen_dot_x64__sht_null 0
+#define v_dot_scanner__single_quote '\''
+#define v_dot_scanner__double_quote '"'
+#define v_dot_scanner__error_context_before 2
+#define v_dot_scanner__error_context_after 2
+#define v_dot_scanner__num_sep '_'
+#define compiler__max_module_depth 5
+#define compiler__MaxLocalVars 50
+#define compiler__single_quote '\''
+#define compiler__double_quote '"'
+#define compiler__error_context_before 2
+#define compiler__error_context_after 2
+#define compiler__num_sep '_'
+#define compiler__NrTokens 141
 #include <errno.h>
 #include <float.h>
 #include <sys/stat.h> // #include <signal.h>
@@ -3332,6 +3332,7 @@ u64 strconv__DOUBLE_MINUS_INFINITY;
 u32 strconv__TEN;
 u64 strconv__max_u64;
 string filepath__path_separator;
+string internal_dot_help__help_text;
 string time__days_string;
 array_int time__month_days;
 string time__months_string;
@@ -3786,7 +3787,6 @@ array_string compiler__TokenStr;
 map_int compiler__KEYWORDS;
 array_compiler__TokenKind compiler__AssignTokens;
 array_string main__list_of_flags;
-string main__help_text;
 array_string main__simple_cmd;
 
 array new_array(int mylen, int cap, int elm_size) {
@@ -34066,10 +34066,10 @@ void main__create_symlink() {
 }
 void main__main() {
   array_string arg = main__join_flags_and_argument();
-  _V_MulRet_string_V_array_string _V_mret_50_command_option =
+  _V_MulRet_string_V_array_string _V_mret_53_command_option =
       main__get_basic_command_and_option(arg);
-  string command = _V_mret_50_command_option.var_0;
-  array_string option = _V_mret_50_command_option.var_1;
+  string command = _V_mret_53_command_option.var_0;
+  array_string option = _V_mret_53_command_option.var_1;
   bool is_verbose = (_IN(string, (tos3("-verbose")), arg)) ||
                     (_IN(string, (tos3("--verbose")), arg));
   if ((_IN(string, (tos3("-v")), option)) ||
@@ -34085,9 +34085,9 @@ void main__main() {
       (_IN(string, (tos3("--help")), option)) ||
       string_eq(command, tos3("help"))) {
     if (is_verbose) {
-      println(main__verbose_help_text);
+      println(internal_dot_help__verbose_help_text);
     } else {
-      println(main__help_text);
+      println(internal_dot_help__help_text);
     };
 
     return;
@@ -34172,6 +34172,32 @@ void init() {
   strconv__TEN = ((u32)(10));
   strconv__max_u64 = ((u64)(UINT64_MAX));
   filepath__path_separator = tos3("/");
+  internal_dot_help__help_text = tos3(
+      "V is a tool for managing V source code.\n\nUsage:\n   v [options] "
+      "[command] [arguments]\n\nExamples:\n   v hello.v         compile the "
+      "file `hello.v` and output it as `hello` or `hello.exe`\n   v run "
+      "hello.v     same as above but also run the produced executable "
+      "immediately after compilation\n\nThe commands are:\n   build            "
+      " build V code in the provided path (default)\n   create            "
+      "setup the file structure for a V project\n   doc               "
+      "generates the documentation for a V module (coming soon in 0.3)\n   fmt "
+      "              format the V code provided\n   repl              run the "
+      "REPL\n   run               compile and run a V program\n   symlink      "
+      "     create a symbolic link for V\n   translate         translate C "
+      "code to V (coming soon in 0.3)\n   up                run the V "
+      "self-updater\n   version           prints the version text and "
+      "exits\n\n   install           installs a module from VPM\n   remove     "
+      "       removes a module that was installed from VPM\n   search          "
+      "  searches for a module from VPM\n   update            updates an "
+      "installed module from VPM\n\n   bin2v             embed a binary file "
+      "as a constant and output it in a V file\n   build-examples    test if "
+      "all examples can be built\n   build-tools       test if all tools can "
+      "be built\n   build-vbinaries   test if V can be built with different "
+      "configuration\n   test              run all test files in the provided "
+      "directory\n   test-fmt          test if all files in the current "
+      "directory is formatted properly\n   test-compiler     run the V "
+      "self-test suite to make sure V is working properly\n\nFor a "
+      "comprehensive list of options, please refer to `v help --verbose`.");
   time__days_string = tos3("MonTueWedThuFriSatSun");
   time__month_days = new_array_from_c_array(
       12, 12, sizeof(int),
@@ -34526,13 +34552,6 @@ void init() {
       5, 5, sizeof(string),
       EMPTY_ARRAY_OF_ELEMS(string, 5){tos3("-o"), tos3("-os"), tos3("-cc"),
                                       tos3("-cflags"), tos3("-d")});
-  main__help_text = tos3(
-      "Usage: v [options/commands] [file.v | directory]\n\n   To run V in REPL "
-      "mode, run V without any arguments.\n   To compile a directory/file, "
-      "pass it as the only argument.\n\n   To run a directory/file, use `v run "
-      "[file.v | directory]`. V will compile and run it for you.\n   \n   This "
-      "help message is only intended to be a quick start guide. For a "
-      "comprehensive help message, use `v help --verbose`.");
   main__simple_cmd = new_array_from_c_array(
       11, 11, sizeof(string),
       EMPTY_ARRAY_OF_ELEMS(string, 11){
