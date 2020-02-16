@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9eeb3df"
+#define V_COMMIT_HASH "e272a10"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6d8ad58"
+#define V_COMMIT_HASH "9eeb3df"
 #endif
 #include <inttypes.h>
 
@@ -2077,10 +2077,12 @@ i64 strconv__common_parse_int(string _s, int base, int _bit_size,
 i64 strconv__parse_int(string _s, int base, int _bit_size);
 int strconv__atoi(string s);
 bool strconv__underscore_ok(string s);
-array_string os_dot_cmdline__many_values(array_string args, string optname);
+array_string os_dot_cmdline__options(array_string args, string param);
 string os_dot_cmdline__option(array_string args, string param, string def);
-array_string os_dot_cmdline__before(array_string args, array_string what);
-array_string os_dot_cmdline__after(array_string args, array_string what);
+array_string os_dot_cmdline__options_before(array_string args,
+                                            array_string what);
+array_string os_dot_cmdline__options_after(array_string args,
+                                           array_string what);
 array_string os_dot_cmdline__only_non_options(array_string args);
 array_string os_dot_cmdline__only_options(array_string args);
 string filepath__ext(string path);
@@ -6997,18 +6999,18 @@ bool strconv__underscore_ok(string s) {
   };
   return saw != '_';
 }
-array_string os_dot_cmdline__many_values(array_string args, string optname) {
+array_string os_dot_cmdline__options(array_string args, string param) {
   array_string flags = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   array_string tmp1 = args;
-  for (int ci = 0; ci < tmp1.len; ci++) {
-    string cv = ((string *)tmp1.data)[ci];
+  for (int i = 0; i < tmp1.len; i++) {
+    string v = ((string *)tmp1.data)[i];
 
-    if (string_eq(cv, optname)) {
-      if (ci + 1 < args.len) {
+    if (string_eq(v, param)) {
+      if (i + 1 < args.len) {
         _PUSH(&flags,
               (/*typ = array_string   tmp_typ=string*/ (
-                  *(string *)array_get(args, ci + 1))),
+                  *(string *)array_get(args, i + 1))),
               tmp2, string);
       };
     };
@@ -7029,7 +7031,8 @@ string os_dot_cmdline__option(array_string args, string param, string def) {
   };
   return def;
 }
-array_string os_dot_cmdline__before(array_string args, array_string what) {
+array_string os_dot_cmdline__options_before(array_string args,
+                                            array_string what) {
   bool found = 0;
   array_string args_before = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
@@ -7046,7 +7049,8 @@ array_string os_dot_cmdline__before(array_string args, array_string what) {
   };
   return args_before;
 }
-array_string os_dot_cmdline__after(array_string args, array_string what) {
+array_string os_dot_cmdline__options_after(array_string args,
+                                           array_string what) {
   bool found = 0;
   array_string args_after = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
@@ -33590,7 +33594,7 @@ void main__run_compiled_executable_and_exit(compiler__V *v, array_string args) {
   };
   string cmd = _STR("\"%.*s\"", v->pref->out_name.len, v->pref->out_name.str);
   array_string args_after_no_options =
-      os_dot_cmdline__only_non_options(os_dot_cmdline__after(
+      os_dot_cmdline__only_non_options(os_dot_cmdline__options_after(
           args, new_array_from_c_array(2, 2, sizeof(string),
                                        EMPTY_ARRAY_OF_ELEMS(string, 2){
                                            tos3("run"), tos3("test")})));
@@ -33646,7 +33650,7 @@ compiler__V *main__new_v(array_string args) {
   string dir = *(string *)array_last(args);
   if ((_IN(string, (tos3("run")), args))) {
     array_string args_after_run =
-        os_dot_cmdline__only_non_options(os_dot_cmdline__after(
+        os_dot_cmdline__only_non_options(os_dot_cmdline__options_after(
             args, new_array_from_c_array(
                       1, 1, sizeof(string),
                       EMPTY_ARRAY_OF_ELEMS(string, 1){tos3("run")})));
@@ -33706,8 +33710,8 @@ compiler__V *main__new_v(array_string args) {
     };
   };
   string cflags = array_string_join(
-      os_dot_cmdline__many_values(args, tos3("-cflags")), tos3(" "));
-  array_string defines = os_dot_cmdline__many_values(args, tos3("-d"));
+      os_dot_cmdline__options(args, tos3("-cflags")), tos3(" "));
+  array_string defines = os_dot_cmdline__options(args, tos3("-d"));
   _V_MulRet_array_string_V_array_string
       _V_mret_510_compile_defines_compile_defines_all =
           main__parse_defines(defines);
@@ -33810,7 +33814,7 @@ compiler__V *main__new_v(array_string args) {
   return compiler__new_v(pref);
 }
 string main__find_c_compiler_thirdparty_options(array_string args) {
-  array_string cflags = os_dot_cmdline__many_values(args, tos3("-cflags"));
+  array_string cflags = os_dot_cmdline__options(args, tos3("-cflags"));
 #ifndef _WIN32
   _PUSH(&cflags, (/*typ = array_string   tmp_typ=string*/ tos3("-fPIC")), tmp10,
         string);
