@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "277c55f"
+#define V_COMMIT_HASH "195f3f4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e272a10"
+#define V_COMMIT_HASH "277c55f"
 #endif
 #include <inttypes.h>
 
@@ -189,6 +189,25 @@ typedef int bool;
 #define DEFAULT_LE(a, b) (a <= b)
 #define DEFAULT_GT(a, b) (a > b)
 #define DEFAULT_GE(a, b) (a >= b)
+
+// NB: macro_fXX_eq and macro_fXX_ne are NOT used
+// in the generated C code. They are here just for
+// completeness/testing.
+
+#define macro_f64_eq(a, b) (a == b)
+#define macro_f64_ne(a, b) (a != b)
+#define macro_f64_lt(a, b) (a < b)
+#define macro_f64_le(a, b) (a <= b)
+#define macro_f64_gt(a, b) (a > b)
+#define macro_f64_ge(a, b) (a >= b)
+
+#define macro_f32_eq(a, b) (a == b)
+#define macro_f32_ne(a, b) (a != b)
+#define macro_f32_lt(a, b) (a < b)
+#define macro_f32_le(a, b) (a <= b)
+#define macro_f32_gt(a, b) (a > b)
+#define macro_f32_ge(a, b) (a >= b)
+
 //================================== GLOBALS =================================*/
 byte g_str_buf[1024];
 int load_so(byteptr);
@@ -1864,10 +1883,10 @@ string f64_str(f64 d);
 string f32_str(f32 d);
 string f64_strsci(f64 x, int digit_num);
 string f64_strlong(f64 x);
-f32 f32_abs(f32 a);
-f64 f64_abs(f64 a);
-bool f64_eq(f64 a, f64 b);
-bool f32_eq(f32 a, f32 b);
+static inline f32 f32_abs(f32 a);
+static inline f64 f64_abs(f64 a);
+static inline bool f64_eq(f64 a, f64 b);
+static inline bool f32_eq(f32 a, f32 b);
 bool f64_eqbit(f64 a, f64 b);
 bool f32_eqbit(f32 a, f32 b);
 bool f64_ne(f64 a, f64 b);
@@ -3855,10 +3874,13 @@ void array_sort_with_compare(array *a, void *compare) {
   qsort(a->data, a->len, a->element_size, compare);
 }
 void array_insert(array *a, int i, void *val) {
+#ifndef CUSTOM_DEFINE_no_bounds_checking
   if (i < 0 || i > a->len) {
     v_panic(_STR("array.insert: index out of range (i == %d, a.len == %d)", i,
                  a->len));
   };
+#endif
+  ;
   array_ensure_cap(a, a->len + 1);
   int size = a->element_size;
   memmove((byte *)a->data + (i + 1) * size, (byte *)a->data + i * size,
@@ -3868,10 +3890,13 @@ void array_insert(array *a, int i, void *val) {
 }
 void array_prepend(array *a, void *val) { array_insert(a, 0, val); }
 void v_array_delete(array *a, int i) {
+#ifndef CUSTOM_DEFINE_no_bounds_checking
   if (i < 0 || i >= a->len) {
     v_panic(_STR("array.delete: index out of range (i == %d, a.len == %d)", i,
                  a->len));
   };
+#endif
+  ;
   int size = a->element_size;
   memmove((byte *)a->data + i * size, (byte *)a->data + (i + 1) * size,
           (a->len - i) * size);
@@ -3879,26 +3904,36 @@ void v_array_delete(array *a, int i) {
 }
 void array_clear(array *a) { a->len = 0; }
 void *array_get(array a, int i) {
+#ifndef CUSTOM_DEFINE_no_bounds_checking
   if (i < 0 || i >= a.len) {
     v_panic(
         _STR("array.get: index out of range (i == %d, a.len == %d)", i, a.len));
   };
+#endif
+  ;
   return (byte *)a.data + i * a.element_size;
 }
 void *array_first(array a) {
+#ifndef CUSTOM_DEFINE_no_bounds_checking
   if (a.len == 0) {
     v_panic(tos3("array.first: array is empty"));
   };
+#endif
+  ;
   return (byte *)a.data + 0;
 }
 void *array_last(array a) {
+#ifndef CUSTOM_DEFINE_no_bounds_checking
   if (a.len == 0) {
     v_panic(tos3("array.last: array is empty"));
   };
+#endif
+  ;
   return (byte *)a.data + (a.len - 1) * a.element_size;
 }
 array array_slice(array a, int start, int _end) {
   int end = _end;
+#ifndef CUSTOM_DEFINE_no_bounds_checking
   if (start > end) {
     v_panic(_STR("array.slice: invalid slice index (%d > %d)", start, end));
   };
@@ -3909,6 +3944,8 @@ array array_slice(array a, int start, int _end) {
   if (start < 0) {
     v_panic(_STR("array.slice: slice bounds out of range (%d < 0)", start));
   };
+#endif
+  ;
   int l = end - start;
   array res = (array){.element_size = a.element_size,
                       .data = (byte *)a.data + start * a.element_size,
@@ -3934,6 +3971,7 @@ array array_clone(array a) {
 }
 array array_slice_clone(array a, int start, int _end) {
   int end = _end;
+#ifndef CUSTOM_DEFINE_no_bounds_checking
   if (start > end) {
     v_panic(_STR("array.slice: invalid slice index (%d > %d)", start, end));
   };
@@ -3944,6 +3982,8 @@ array array_slice_clone(array a, int start, int _end) {
   if (start < 0) {
     v_panic(_STR("array.slice: slice bounds out of range (%d < 0)", start));
   };
+#endif
+  ;
   int l = end - start;
   array res = (array){.element_size = a.element_size,
                       .data = (byte *)a.data + start * a.element_size,
@@ -3952,10 +3992,13 @@ array array_slice_clone(array a, int start, int _end) {
   return array_clone(res);
 }
 void array_set(array *a, int i, void *val) {
+#ifndef CUSTOM_DEFINE_no_bounds_checking
   if (i < 0 || i >= a->len) {
     v_panic(_STR("array.set: index out of range (i == %d, a.len == %d)", i,
                  a->len));
   };
+#endif
+  ;
   memcpy((byte *)a->data + a->element_size * i, val, a->element_size);
 }
 void array_push(array *a, void *val) {
@@ -4120,19 +4163,19 @@ int compare_i64(i64 *a, i64 *b) {
   return 0;
 }
 int compare_f64(f64 *a, f64 *b) {
-  if (f64_lt(*a, *b)) {
+  if (macro_f64_lt(*a, *b)) {
     return -1;
   };
-  if (f64_gt(*a, *b)) {
+  if (macro_f64_gt(*a, *b)) {
     return 1;
   };
   return 0;
 }
 int compare_f32(f32 *a, f32 *b) {
-  if (f32_lt(*a, *b)) {
+  if (macro_f32_lt(*a, *b)) {
     return -1;
   };
-  if (f32_gt(*a, *b)) {
+  if (macro_f32_gt(*a, *b)) {
     return 1;
   };
   return 0;
@@ -4424,10 +4467,14 @@ string f64_strlong(f64 x) {
   string tmpstr = tos(buf, vstrlen(buf));
   return tmpstr;
 }
-f32 f32_abs(f32 a) { return ((a < 0) ? (-a) : (a)); }
-f64 f64_abs(f64 a) { return ((a < 0) ? (-a) : (a)); }
-bool f64_eq(f64 a, f64 b) { return f64_abs(a - b) <= DBL_EPSILON; }
-bool f32_eq(f32 a, f32 b) { return f32_abs(a - b) <= FLT_EPSILON; }
+static inline f32 f32_abs(f32 a) { return ((a < 0) ? (-a) : (a)); }
+static inline f64 f64_abs(f64 a) { return ((a < 0) ? (-a) : (a)); }
+static inline bool f64_eq(f64 a, f64 b) {
+  return f64_abs(a - b) <= DBL_EPSILON;
+}
+static inline bool f32_eq(f32 a, f32 b) {
+  return f32_abs(a - b) <= FLT_EPSILON;
+}
 bool f64_eqbit(f64 a, f64 b) { return DEFAULT_EQUAL(a, b); }
 bool f32_eqbit(f32 a, f32 b) { return DEFAULT_EQUAL(a, b); }
 bool f64_ne(f64 a, f64 b) { return !f64_eq(a, b); }
@@ -5432,9 +5479,12 @@ string string_substr2(string s, int start, int _end, bool end_max) {
   return string_substr(s, start, end);
 }
 string string_substr(string s, int start, int end) {
+#ifndef CUSTOM_DEFINE_no_bounds_checking
   if (start > end || start > s.len || end > s.len || start < 0 || end < 0) {
     v_panic(_STR("substr(%d, %d) out of bounds (len=%d)", start, end, s.len));
   };
+#endif
+  ;
   int len = end - start;
   string res = (string){.len = len, .str = v_malloc(len + 1)};
   for (int i = 0; i < len; i++) {
@@ -5948,10 +5998,13 @@ int ustring_count(ustring u, ustring substr) {
   return 0;
 }
 string ustring_substr(ustring u, int _start, int _end) {
+#ifndef CUSTOM_DEFINE_no_bounds_checking
   if (_start > _end || _start > u.len || _end > u.len || _start < 0 ||
       _end < 0) {
     v_panic(_STR("substr(%d, %d) out of bounds (len=%d)", _start, _end, u.len));
   };
+#endif
+  ;
   int end =
       ((_end >= u.len) ? (u.s.len) : ((*(int *)array_get(u.runes, _end))));
   return string_substr(u.s, (*(int *)array_get(u.runes, _start)), end);
@@ -5969,15 +6022,21 @@ string ustring_right(ustring u, int pos) {
   return ustring_substr(u, pos, u.len);
 }
 byte string_at(string s, int idx) {
+#ifndef CUSTOM_DEFINE_no_bounds_checking
   if (idx < 0 || idx >= s.len) {
     v_panic(_STR("string index out of range: %d / %d", idx, s.len));
   };
+#endif
+  ;
   return s.str[/*ptr!*/ idx] /*rbyte 0*/;
 }
 string ustring_at(ustring u, int idx) {
+#ifndef CUSTOM_DEFINE_no_bounds_checking
   if (idx < 0 || idx >= u.len) {
     v_panic(_STR("string index out of range: %d / %d", idx, u.runes.len));
   };
+#endif
+  ;
   return ustring_substr(u, idx, idx + 1);
 }
 void v_ustring_free(ustring u) { v_array_free(u.runes); }
@@ -22644,16 +22703,16 @@ string compiler__Parser_bterm(compiler__Parser *p) {
             p->cgen, ph, _STR("%.*s_ne(", expr_type.len, expr_type.str));
       } else if (tmp7 == compiler__compiler__TokenKind_le) {
         compiler__CGen_set_placeholder(
-            p->cgen, ph, _STR("%.*s_le(", expr_type.len, expr_type.str));
+            p->cgen, ph, _STR("macro_%.*s_le(", expr_type.len, expr_type.str));
       } else if (tmp7 == compiler__compiler__TokenKind_ge) {
         compiler__CGen_set_placeholder(
-            p->cgen, ph, _STR("%.*s_ge(", expr_type.len, expr_type.str));
+            p->cgen, ph, _STR("macro_%.*s_ge(", expr_type.len, expr_type.str));
       } else if (tmp7 == compiler__compiler__TokenKind_gt) {
         compiler__CGen_set_placeholder(
-            p->cgen, ph, _STR("%.*s_gt(", expr_type.len, expr_type.str));
+            p->cgen, ph, _STR("macro_%.*s_gt(", expr_type.len, expr_type.str));
       } else if (tmp7 == compiler__compiler__TokenKind_lt) {
         compiler__CGen_set_placeholder(
-            p->cgen, ph, _STR("%.*s_lt(", expr_type.len, expr_type.str));
+            p->cgen, ph, _STR("macro_%.*s_lt(", expr_type.len, expr_type.str));
       } else // default:
       {
       };
@@ -22701,7 +22760,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
   if ((_IN(string, (name), map_keys(&/* ? */ p->generic_dispatch.inst)))) {
     string tmp10 = tos3("");
     bool tmp11 =
-        map_get(/*expression.v : 286*/ p->generic_dispatch.inst, name, &tmp10);
+        map_get(/*expression.v : 290*/ p->generic_dispatch.inst, name, &tmp10);
 
     if (!tmp11)
       tmp10 = tos((byte *)"", 0);
@@ -22852,7 +22911,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
           };
         };
         array_string tmp17 = new_array(0, 1, sizeof(string));
-        bool tmp18 = map_get(/*expression.v : 432*/ p->table->tuple_variants,
+        bool tmp18 = map_get(/*expression.v : 436*/ p->table->tuple_variants,
                              enum_type.name, &tmp17);
 
         array_string q = tmp17;
@@ -25420,12 +25479,12 @@ string compiler__Parser_find_misspelled_local_var(compiler__Parser *p,
       continue;
     };
     f32 c = strings__dice_coefficient(var.name, n);
-    if (f32_gt(c, closest)) {
+    if (macro_f32_gt(c, closest)) {
       closest = c;
       closest_var = var.name;
     };
   };
-  return ((f32_ge(closest, min_match)) ? (closest_var) : (tos3("")));
+  return ((macro_f32_ge(closest, min_match)) ? (closest_var) : (tos3("")));
 }
 bool array_compiler__Fn_contains(array_compiler__Fn fns, compiler__Fn f) {
   array_compiler__Fn tmp165 = fns;
@@ -32881,13 +32940,13 @@ string compiler__Table_find_misspelled_fn(compiler__Table *table, string name,
       continue;
     };
     f32 c = compiler__typo_compare_name_mod(name, f.name, f.mod);
-    if (f32_gt(c, closest)) {
+    if (macro_f32_gt(c, closest)) {
       closest = c;
       closest_fn = compiler__mod_gen_name_rev(
           string_replace(f.name, tos3("__"), tos3(".")));
     };
   };
-  return ((f32_ge(closest, min_match)) ? (closest_fn) : (tos3("")));
+  return ((macro_f32_ge(closest, min_match)) ? (closest_fn) : (tos3("")));
 }
 string compiler__Table_find_misspelled_imported_mod(compiler__Table *table,
                                                     string name,
@@ -32906,7 +32965,7 @@ string compiler__Table_find_misspelled_imported_mod(compiler__Table *table,
     map_get(tmp98, alias, &mod);
 
     f32 c = compiler__typo_compare_name_mod(n1, alias, tos3(""));
-    if (f32_gt(c, closest)) {
+    if (macro_f32_gt(c, closest)) {
       closest = c;
       closest_mod =
           ((string_eq(alias, mod))
@@ -32914,7 +32973,7 @@ string compiler__Table_find_misspelled_imported_mod(compiler__Table *table,
                : (_STR("%.*s (%.*s)", alias.len, alias.str, mod.len, mod.str)));
     };
   };
-  return ((f32_ge(closest, min_match)) ? (closest_mod) : (tos3("")));
+  return ((macro_f32_ge(closest, min_match)) ? (closest_mod) : (tos3("")));
 }
 string compiler__Table_find_misspelled_const(compiler__Table *table,
                                              string name, compiler__Parser *p,
@@ -32930,13 +32989,13 @@ string compiler__Table_find_misspelled_const(compiler__Table *table,
       continue;
     };
     f32 c = compiler__typo_compare_name_mod(name, cnst.name, cnst.mod);
-    if (f32_gt(c, closest)) {
+    if (macro_f32_gt(c, closest)) {
       closest = c;
       closest_const = compiler__mod_gen_name_rev(
           string_replace(cnst.name, tos3("__"), tos3(".")));
     };
   };
-  return ((f32_ge(closest, min_match)) ? (closest_const) : (tos3("")));
+  return ((macro_f32_ge(closest, min_match)) ? (closest_const) : (tos3("")));
 }
 _V_MulRet_string_V_string
 compiler__Table_find_misspelled_type(compiler__Table *table, string name,
@@ -32956,14 +33015,14 @@ compiler__Table_find_misspelled_type(compiler__Table *table, string name,
       continue;
     };
     f32 c = compiler__typo_compare_name_mod(name, typ.name, typ.mod);
-    if (f32_gt(c, closest)) {
+    if (macro_f32_gt(c, closest)) {
       closest = c;
       closest_type = compiler__mod_gen_name_rev(
           string_replace(typ.name, tos3("__"), tos3(".")));
       type_cat = compiler__type_cat_str(typ.cat);
     };
   };
-  if (f32_ge(closest, min_match)) {
+  if (macro_f32_ge(closest, min_match)) {
     return (_V_MulRet_string_V_string){.var_0 = closest_type,
                                        .var_1 = type_cat};
   };
@@ -34400,8 +34459,16 @@ void init() {
       "val)\n#define DEFAULT_EQUAL(a, b) (a == b)\n#define "
       "DEFAULT_NOT_EQUAL(a, b) (a != b)\n#define DEFAULT_LT(a, b) (a < "
       "b)\n#define DEFAULT_LE(a, b) (a <= b)\n#define DEFAULT_GT(a, b) (a > "
-      "b)\n#define DEFAULT_GE(a, b) (a >= "
-      "b)\n//================================== GLOBALS "
+      "b)\n#define DEFAULT_GE(a, b) (a >= b)\n\n// NB: macro_fXX_eq and "
+      "macro_fXX_ne are NOT used \n// in the generated C code. They are here "
+      "just for \n// completeness/testing.\n\n#define macro_f64_eq(a, b) (a == "
+      "b)\n#define macro_f64_ne(a, b) (a != b)\n#define macro_f64_lt(a, b) (a "
+      "<  b)\n#define macro_f64_le(a, b) (a <= b)\n#define macro_f64_gt(a, b) "
+      "(a >  b)\n#define macro_f64_ge(a, b) (a >= b)\n\n#define "
+      "macro_f32_eq(a, b) (a == b)\n#define macro_f32_ne(a, b) (a != "
+      "b)\n#define macro_f32_lt(a, b) (a <  b)\n#define macro_f32_le(a, b) (a "
+      "<= b)\n#define macro_f32_gt(a, b) (a >  b)\n#define macro_f32_ge(a, b) "
+      "(a >= b)\n\n//================================== GLOBALS "
       "=================================*/\nbyte g_str_buf[1024];\nint "
       "load_so(byteptr);\nvoid reload_so();\n\n",
       compiler__c_common_macros.len, compiler__c_common_macros.str);
