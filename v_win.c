@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6079025"
+#define V_COMMIT_HASH "a2838ae"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "44e8770"
+#define V_COMMIT_HASH "6079025"
 #endif
 #include <inttypes.h>
 
@@ -1921,6 +1921,7 @@ void array_insert(array *a, int i, void *val);
 void array_prepend(array *a, void *val);
 void v_array_delete(array *a, int i);
 void array_clear(array *a);
+void array_trim(array *a, int index);
 void *array_get(array a, int i);
 void *array_first(array a);
 void *array_last(array a);
@@ -3462,7 +3463,7 @@ u64 strconv__DOUBLE_PLUS_INFINITY;
 u64 strconv__DOUBLE_MINUS_INFINITY;
 u32 strconv__TEN;
 u64 strconv__max_u64;
-string filepath__path_separator;
+string filepath__separator;
 string internal_dot_help__help_text;
 string time__days_string;
 array_int time__month_days;
@@ -4067,6 +4068,11 @@ void v_array_delete(array *a, int i) {
   a->len--;
 }
 void array_clear(array *a) { a->len = 0; }
+void array_trim(array *a, int index) {
+  if (index < a->len) {
+    a->len = index;
+  };
+}
 void *array_get(array a, int i) {
 #ifndef CUSTOM_DEFINE_no_bounds_checking
   if (i < 0 || i >= a.len) {
@@ -7301,10 +7307,10 @@ string filepath__join(string base, varg_string *dirs) {
 
     _PUSH(&result, (/*typ = array_string   tmp_typ=string*/ d), tmp15, string);
   };
-  return array_string_join(result, filepath__path_separator);
+  return array_string_join(result, filepath__separator);
 }
 string filepath__dir(string path) {
-  Option_int tmp16 = string_last_index(path, filepath__path_separator);
+  Option_int tmp16 = string_last_index(path, filepath__separator);
   int pos;
   if (!tmp16.ok) {
     string err = tmp16.error;
@@ -7316,7 +7322,7 @@ string filepath__dir(string path) {
   return string_substr2(path, 0, pos, false);
 }
 string filepath__basedir(string path) {
-  Option_int tmp19 = string_last_index(path, filepath__path_separator);
+  Option_int tmp19 = string_last_index(path, filepath__separator);
   int pos;
   if (!tmp19.ok) {
     string err = tmp19.error;
@@ -7328,7 +7334,7 @@ string filepath__basedir(string path) {
   return string_substr2(path, 0, pos, false);
 }
 string filepath__filename(string path) {
-  return string_all_after(path, filepath__path_separator);
+  return string_all_after(path, filepath__separator);
 }
 string time__Time_format(time__Time t) {
   return time__Time_get_fmt_str(t, time__time__FormatDelimiter_hyphen,
@@ -9832,7 +9838,7 @@ string os__home_dir() {
   home = string_add(home, homepath);
 #endif
   ;
-  home = string_add(home, os__path_separator);
+  home = string_add(home, filepath__separator);
   return home;
 }
 void os__write_file(string path, string text) {
@@ -9998,8 +10004,8 @@ array_string os__walk_ext(string path, string ext) {
   array_string res = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   string separator =
-      ((string_ends_with(path, os__path_separator)) ? (tos3(""))
-                                                    : (os__path_separator));
+      ((string_ends_with(path, filepath__separator)) ? (tos3(""))
+                                                     : (filepath__separator));
   array_string tmp49 = files;
   for (int i = 0; i < tmp49.len; i++) {
     string file = ((string *)tmp49.data)[i];
@@ -10036,7 +10042,7 @@ void os__walk(string path, void (*f)(string path /*FFF*/)) {
   for (int tmp54 = 0; tmp54 < tmp53.len; tmp54++) {
     string file = ((string *)tmp53.data)[tmp54];
 
-    string p = string_add(string_add(path, os__path_separator), file);
+    string p = string_add(string_add(path, filepath__separator), file);
     if (os__is_dir(p) && !os__is_link(p)) {
       os__walk(p, f);
     } else if (os__exists(p)) {
@@ -10080,13 +10086,13 @@ void os__log(string s) { println(string_add(tos3("os.log: "), s)); }
 void os__flush_stdout() { fflush(stdout); }
 void os__mkdir_all(string path) {
   string p =
-      ((string_starts_with(path, os__path_separator)) ? (os__path_separator)
-                                                      : (tos3("")));
-  array_string tmp55 = string_split(path, os__path_separator);
+      ((string_starts_with(path, filepath__separator)) ? (filepath__separator)
+                                                       : (tos3("")));
+  array_string tmp55 = string_split(path, filepath__separator);
   for (int tmp56 = 0; tmp56 < tmp55.len; tmp56++) {
     string subdir = ((string *)tmp55.data)[tmp56];
 
-    p = string_add(p, string_add(subdir, os__path_separator));
+    p = string_add(p, string_add(subdir, filepath__separator));
     if (!os__is_dir(p)) {
       Option_bool tmp57 = os__mkdir(p);
       if (!tmp57.ok) {
@@ -11492,7 +11498,7 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
       v_dot_table__Type typ = v_dot_checker__Checker_expr(c, expr);
       v_dot_table__Var tmp36 = {0};
       bool tmp37 =
-          map_get(/*checker.v : 253*/ c->table->consts, field.name, &tmp36);
+          map_get(/*checker.v : 254*/ c->table->consts, field.name, &tmp36);
 
       v_dot_table__Var xconst = tmp36;
       xconst.typ = typ;
@@ -11626,7 +11632,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl tmp44 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
     _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl
-        _V_mret_2077_var_scope_var;
+        _V_mret_2078_var_scope_var;
     if (!tmp44.ok) {
       string err = tmp44.error;
       int errcode = tmp44.ecode;
@@ -11638,11 +11644,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_2077_var_scope_var =
+    _V_mret_2078_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl *)tmp44.data;
     ;
-    var_scope = _V_mret_2077_var_scope_var.var_0;
-    var = _V_mret_2077_var_scope_var.var_1;
+    var_scope = _V_mret_2078_var_scope_var.var_0;
+    var = _V_mret_2078_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
@@ -11822,7 +11828,7 @@ void v_dot_checker__Checker_error(v_dot_checker__Checker *c, string s,
                                   v_dot_token__Position pos) {
   print_backtrace();
   string path = c->file_name;
-  string workdir = string_add(os__getwd(), os__path_separator);
+  string workdir = string_add(os__getwd(), filepath__separator);
   if (string_starts_with(path, workdir)) {
     path = string_replace(path, workdir, tos3(""));
   };
@@ -13083,7 +13089,7 @@ void v_dot_scanner__Scanner_debug_tokens(v_dot_scanner__Scanner *s) {
   s->pos = 0;
   s->started = 0;
   s->debug = 1;
-  string fname = string_all_after(s->file_path, os__path_separator);
+  string fname = string_all_after(s->file_path, filepath__separator);
   printf("\n===DEBUG TOKENS %.*s===\n", fname.len, fname.str);
   while (1) {
     v_dot_token__Token tok = v_dot_scanner__Scanner_scan(s);
@@ -14822,9 +14828,9 @@ v_dot_ast__Stmt v_dot_parser__Parser_stmt(v_dot_parser__Parser *p) {
               sizeof(v_dot_ast__GotoLabel)),
           .typ = SumType_GotoLabel};
     };
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_1242_expr__ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_1243_expr__ =
         v_dot_parser__Parser_expr(p, 0);
-    v_dot_ast__Expr expr = _V_mret_1242_expr__.var_0;
+    v_dot_ast__Expr expr = _V_mret_1243_expr__.var_0;
     return /*SUM TYPE CAST2*/ (v_dot_ast__Stmt){
         .obj = memdup(&(v_dot_ast__ExprStmt[]){(v_dot_ast__ExprStmt){
                           .expr = expr,
@@ -14837,9 +14843,9 @@ v_dot_ast__AssignExpr v_dot_parser__Parser_assign_expr(v_dot_parser__Parser *p,
                                                        v_dot_ast__Expr left) {
   v_dot_token__Kind op = p->tok.kind;
   v_dot_parser__Parser_next(p);
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_1294_val__ =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_1295_val__ =
       v_dot_parser__Parser_expr(p, 0);
-  v_dot_ast__Expr val = _V_mret_1294_val__.var_0;
+  v_dot_ast__Expr val = _V_mret_1295_val__.var_0;
   v_dot_ast__AssignExpr node = (v_dot_ast__AssignExpr){
       .left = left,
       .val = val,
@@ -14856,7 +14862,7 @@ v_dot_ast__Attr v_dot_parser__Parser_attr(v_dot_parser__Parser *p) {
 void v_dot_parser__Parser_error(v_dot_parser__Parser *p, string s) {
   print_backtrace();
   string path = p->file_name;
-  string workdir = string_add(os__getwd(), os__path_separator);
+  string workdir = string_add(os__getwd(), filepath__separator);
   if (string_starts_with(path, workdir)) {
     path = string_replace(path, workdir, tos3(""));
   };
@@ -14966,9 +14972,9 @@ v_dot_parser__Parser_struct_init(v_dot_parser__Parser *p) {
       p->expected_type = field.typ;
     };
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_colon);
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_1864_expr__ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_1865_expr__ =
         v_dot_parser__Parser_expr(p, 0);
-    v_dot_ast__Expr expr = _V_mret_1864_expr__.var_0;
+    v_dot_ast__Expr expr = _V_mret_1865_expr__.var_0;
     _PUSH(&exprs,
           (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
           tmp16, v_dot_ast__Expr);
@@ -15015,9 +15021,9 @@ v_dot_parser__Parser_name_expr(v_dot_parser__Parser *p) {
       v_dot_table__Type to_typ = v_dot_parser__Parser_parse_type(p);
       v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_lpar);
       v_dot_ast__Expr expr = (v_dot_ast__Expr){EMPTY_STRUCT_INITIALIZATION};
-      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2109_expr__ =
+      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2110_expr__ =
           v_dot_parser__Parser_expr(p, 0);
-      expr = _V_mret_2109_expr__.var_0;
+      expr = _V_mret_2110_expr__.var_0;
       if (p->tok.kind == v_dot_token__v_dot_token__Kind_comma &&
           v_dot_table__type_idx(to_typ) == v_dot_table__string_type_idx) {
         v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_comma);
@@ -15069,20 +15075,20 @@ v_dot_parser__Parser_expr(v_dot_parser__Parser *p, int precedence) {
   v_dot_token__Kind tmp21 = p->tok.kind;
 
   if (tmp21 == v_dot_token__v_dot_token__Kind_name) {
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2352_node_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2353_node_typ =
         v_dot_parser__Parser_name_expr(p);
-    node = _V_mret_2352_node_typ.var_0;
-    typ = _V_mret_2352_node_typ.var_1;
+    node = _V_mret_2353_node_typ.var_0;
+    typ = _V_mret_2353_node_typ.var_1;
   } else if (tmp21 == v_dot_token__v_dot_token__Kind_str) {
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2365_node_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2366_node_typ =
         v_dot_parser__Parser_string_expr(p);
-    node = _V_mret_2365_node_typ.var_0;
-    typ = _V_mret_2365_node_typ.var_1;
+    node = _V_mret_2366_node_typ.var_0;
+    typ = _V_mret_2366_node_typ.var_1;
   } else if (tmp21 == v_dot_token__v_dot_token__Kind_dot) {
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2378_node_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2379_node_typ =
         v_dot_parser__Parser_enum_val(p);
-    node = _V_mret_2378_node_typ.var_0;
-    typ = _V_mret_2378_node_typ.var_1;
+    node = _V_mret_2379_node_typ.var_0;
+    typ = _V_mret_2379_node_typ.var_1;
   } else if (tmp21 == v_dot_token__v_dot_token__Kind_chartoken) {
     typ = v_dot_table__byte_type;
     node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
@@ -15096,10 +15102,10 @@ v_dot_parser__Parser_expr(v_dot_parser__Parser *p, int precedence) {
              (tmp21 == v_dot_token__v_dot_token__Kind_mul) ||
              (tmp21 == v_dot_token__v_dot_token__Kind_not) ||
              (tmp21 == v_dot_token__v_dot_token__Kind_bit_not)) {
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2431_node_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2432_node_typ =
         v_dot_parser__Parser_prefix_expr(p);
-    node = _V_mret_2431_node_typ.var_0;
-    typ = _V_mret_2431_node_typ.var_1;
+    node = _V_mret_2432_node_typ.var_0;
+    typ = _V_mret_2432_node_typ.var_1;
   } else if ((tmp21 == v_dot_token__v_dot_token__Kind_key_true) ||
              (tmp21 == v_dot_token__v_dot_token__Kind_key_false)) {
     node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
@@ -15113,16 +15119,16 @@ v_dot_parser__Parser_expr(v_dot_parser__Parser *p, int precedence) {
   } else if (tmp21 == v_dot_token__v_dot_token__Kind_key_match) {
     node = v_dot_parser__Parser_match_expr(p);
   } else if (tmp21 == v_dot_token__v_dot_token__Kind_number) {
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2489_node_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2490_node_typ =
         v_dot_parser__Parser_parse_number_literal(p);
-    node = _V_mret_2489_node_typ.var_0;
-    typ = _V_mret_2489_node_typ.var_1;
+    node = _V_mret_2490_node_typ.var_0;
+    typ = _V_mret_2490_node_typ.var_1;
   } else if (tmp21 == v_dot_token__v_dot_token__Kind_lpar) {
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_lpar);
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2509_node_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2510_node_typ =
         v_dot_parser__Parser_expr(p, 0);
-    node = _V_mret_2509_node_typ.var_0;
-    typ = _V_mret_2509_node_typ.var_1;
+    node = _V_mret_2510_node_typ.var_0;
+    typ = _V_mret_2510_node_typ.var_1;
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rpar);
   } else if (tmp21 == v_dot_token__v_dot_token__Kind_key_if) {
     node = v_dot_parser__Parser_if_expr(p);
@@ -15194,10 +15200,10 @@ v_dot_parser__Parser_expr(v_dot_parser__Parser *p, int precedence) {
       v_dot_parser__Parser_next(p);
       typ = v_dot_parser__Parser_parse_type(p);
     } else if (v_dot_token__Kind_is_infix(p->tok.kind)) {
-      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2868_node_typ =
+      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2869_node_typ =
           v_dot_parser__Parser_infix_expr(p, node);
-      node = _V_mret_2868_node_typ.var_0;
-      typ = _V_mret_2868_node_typ.var_1;
+      node = _V_mret_2869_node_typ.var_0;
+      typ = _V_mret_2869_node_typ.var_1;
     } else if ((p->tok.kind == v_dot_token__v_dot_token__Kind_inc ||
                 p->tok.kind == v_dot_token__v_dot_token__Kind_dec)) {
       node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
@@ -15222,10 +15228,10 @@ _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type
 v_dot_parser__Parser_prefix_expr(v_dot_parser__Parser *p) {
   v_dot_token__Kind op = p->tok.kind;
   v_dot_parser__Parser_next(p);
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2966_right_typ =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_2967_right_typ =
       v_dot_parser__Parser_expr(p, 1);
-  v_dot_ast__Expr right = _V_mret_2966_right_typ.var_0;
-  v_dot_table__Type typ = _V_mret_2966_right_typ.var_1;
+  v_dot_ast__Expr right = _V_mret_2967_right_typ.var_0;
+  v_dot_table__Type typ = _V_mret_2967_right_typ.var_1;
   v_dot_ast__Expr expr = (v_dot_ast__Expr){EMPTY_STRUCT_INITIALIZATION};
   expr = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
       .obj = memdup(&(v_dot_ast__PrefixExpr[]){(v_dot_ast__PrefixExpr){
@@ -15240,9 +15246,9 @@ v_dot_ast__IndexExpr v_dot_parser__Parser_index_expr(v_dot_parser__Parser *p,
   v_dot_parser__Parser_next(p);
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_dotdot) {
     v_dot_parser__Parser_next(p);
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3039_high__ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3040_high__ =
         v_dot_parser__Parser_expr(p, 0);
-    v_dot_ast__Expr high = _V_mret_3039_high__.var_0;
+    v_dot_ast__Expr high = _V_mret_3040_high__.var_0;
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rsbr);
     return (v_dot_ast__IndexExpr){
         .left = left,
@@ -15255,16 +15261,16 @@ v_dot_ast__IndexExpr v_dot_parser__Parser_index_expr(v_dot_parser__Parser *p,
                 sizeof(v_dot_ast__RangeExpr)),
             .typ = SumType_RangeExpr}};
   };
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3092_expr__ =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3093_expr__ =
       v_dot_parser__Parser_expr(p, 0);
-  v_dot_ast__Expr expr = _V_mret_3092_expr__.var_0;
+  v_dot_ast__Expr expr = _V_mret_3093_expr__.var_0;
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_dotdot) {
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_dotdot);
     v_dot_ast__Expr high = (v_dot_ast__Expr){EMPTY_STRUCT_INITIALIZATION};
     if (p->tok.kind != v_dot_token__v_dot_token__Kind_rsbr) {
-      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3137_high__ =
+      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3138_high__ =
           v_dot_parser__Parser_expr(p, 0);
-      high = _V_mret_3137_high__.var_0;
+      high = _V_mret_3138_high__.var_0;
     };
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rsbr);
     return (v_dot_ast__IndexExpr){
@@ -15341,10 +15347,10 @@ v_dot_parser__Parser_infix_expr(v_dot_parser__Parser *p, v_dot_ast__Expr left) {
   v_dot_parser__Parser_next(p);
   v_dot_table__Type typ = (v_dot_table__Type){EMPTY_STRUCT_INITIALIZATION};
   v_dot_ast__Expr right = (v_dot_ast__Expr){EMPTY_STRUCT_INITIALIZATION};
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3503_right_typ =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3504_right_typ =
       v_dot_parser__Parser_expr(p, precedence);
-  right = _V_mret_3503_right_typ.var_0;
-  typ = _V_mret_3503_right_typ.var_1;
+  right = _V_mret_3504_right_typ.var_0;
+  typ = _V_mret_3504_right_typ.var_1;
   if (v_dot_token__Kind_is_relational(op)) {
     typ = v_dot_table__bool_type;
   };
@@ -15411,10 +15417,10 @@ v_dot_ast__Stmt v_dot_parser__Parser_for_statement(v_dot_parser__Parser *p) {
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_semicolon);
     if (p->tok.kind != v_dot_token__v_dot_token__Kind_semicolon) {
       v_dot_table__Type typ = v_dot_table__void_type;
-      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3832_cond_typ =
+      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3833_cond_typ =
           v_dot_parser__Parser_expr(p, 0);
-      cond = _V_mret_3832_cond_typ.var_0;
-      typ = _V_mret_3832_cond_typ.var_1;
+      cond = _V_mret_3833_cond_typ.var_0;
+      typ = _V_mret_3833_cond_typ.var_1;
     };
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_semicolon);
     if (p->tok.kind != v_dot_token__v_dot_token__Kind_lcbr) {
@@ -15443,9 +15449,9 @@ v_dot_ast__Stmt v_dot_parser__Parser_for_statement(v_dot_parser__Parser *p) {
     };
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_key_in);
     v_dot_table__Type elem_type = v_dot_table__void_type;
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3987___arr_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_3988___arr_typ =
         v_dot_parser__Parser_expr(p, 0);
-    v_dot_table__Type arr_typ = _V_mret_3987___arr_typ.var_1;
+    v_dot_table__Type arr_typ = _V_mret_3988___arr_typ.var_1;
     if (v_dot_table__type_idx(arr_typ) == v_dot_table__string_type_idx) {
       elem_type = v_dot_table__byte_type;
     } else {
@@ -15484,9 +15490,9 @@ v_dot_ast__Stmt v_dot_parser__Parser_for_statement(v_dot_parser__Parser *p) {
                       sizeof(v_dot_ast__ForStmt)),
         .typ = SumType_ForStmt};
   };
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_4141_cond__ =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_4142_cond__ =
       v_dot_parser__Parser_expr(p, 0);
-  v_dot_ast__Expr cond = _V_mret_4141_cond__.var_0;
+  v_dot_ast__Expr cond = _V_mret_4142_cond__.var_0;
   array_v_dot_ast__Stmt stmts = v_dot_parser__Parser_parse_block(p);
   v_dot_parser__Parser_close_scope(p);
   v_dot_table__Table_close_scope(p->table);
@@ -15508,9 +15514,9 @@ v_dot_ast__Expr v_dot_parser__Parser_if_expr(v_dot_parser__Parser *p) {
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_decl_assign);
     v_dot_parser__Parser_expr(p, 0);
   } else {
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_4264_cond__ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_4265_cond__ =
         v_dot_parser__Parser_expr(p, 0);
-    cond = _V_mret_4264_cond__.var_0;
+    cond = _V_mret_4265_cond__.var_0;
   };
   p->inside_if = 0;
   array_v_dot_ast__Stmt stmts = v_dot_parser__Parser_parse_block(p);
@@ -15589,10 +15595,10 @@ v_dot_ast__Expr v_dot_parser__Parser_array_init(v_dot_parser__Parser *p) {
   } else {
     for (int i = 0; p->tok.kind != v_dot_token__v_dot_token__Kind_rsbr; i++) {
 
-      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_4646_expr_typ =
+      _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_4647_expr_typ =
           v_dot_parser__Parser_expr(p, 0);
-      v_dot_ast__Expr expr = _V_mret_4646_expr_typ.var_0;
-      v_dot_table__Type typ = _V_mret_4646_expr_typ.var_1;
+      v_dot_ast__Expr expr = _V_mret_4647_expr_typ.var_0;
+      v_dot_table__Type typ = _V_mret_4647_expr_typ.var_1;
       _PUSH(&exprs,
             (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
             tmp23, v_dot_ast__Expr);
@@ -15714,10 +15720,10 @@ v_dot_ast__ConstDecl v_dot_parser__Parser_const_decl(v_dot_parser__Parser *p) {
     string name = v_dot_parser__Parser_check_name(p);
     printf("const: %.*s\n", name.len, name.str);
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_assign);
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_5163_expr_typ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_5164_expr_typ =
         v_dot_parser__Parser_expr(p, 0);
-    v_dot_ast__Expr expr = _V_mret_5163_expr_typ.var_0;
-    v_dot_table__Type typ = _V_mret_5163_expr_typ.var_1;
+    v_dot_ast__Expr expr = _V_mret_5164_expr_typ.var_0;
+    v_dot_table__Type typ = _V_mret_5164_expr_typ.var_1;
     _PUSH(&fields,
           (/*typ = array_v_dot_ast__Field   tmp_typ=v_dot_ast__Field*/ (
               v_dot_ast__Field){.name = name, .typ = typ}),
@@ -15828,9 +15834,9 @@ v_dot_ast__Return v_dot_parser__Parser_return_stmt(v_dot_parser__Parser *p) {
         .exprs = new_array(0, 1, sizeof(v_dot_ast__Expr))};
   };
   while (1) {
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_5650_expr__ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_5651_expr__ =
         v_dot_parser__Parser_expr(p, 0);
-    v_dot_ast__Expr expr = _V_mret_5650_expr__.var_0;
+    v_dot_ast__Expr expr = _V_mret_5651_expr__.var_0;
     _PUSH(&exprs,
           (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
           tmp31, v_dot_ast__Expr);
@@ -15863,9 +15869,9 @@ v_dot_parser__Parser_assign_stmt(v_dot_parser__Parser *p) {
     };
   };
   v_dot_parser__Parser_next(p);
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_5776_expr__ =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_5777_expr__ =
       v_dot_parser__Parser_expr(p, 0);
-  v_dot_ast__Expr expr = _V_mret_5776_expr__.var_0;
+  v_dot_ast__Expr expr = _V_mret_5777_expr__.var_0;
   return (v_dot_ast__AssignStmt){
       .left = idents,
       .right = new_array_from_c_array(
@@ -15887,9 +15893,9 @@ v_dot_ast__VarDecl v_dot_parser__Parser_var_decl(v_dot_parser__Parser *p) {
     v_dot_parser__Parser_check_name(p);
   };
   v_dot_parser__Parser_next(p);
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_5895_expr__ =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_5896_expr__ =
       v_dot_parser__Parser_expr(p, 0);
-  v_dot_ast__Expr expr = _V_mret_5895_expr__.var_0;
+  v_dot_ast__Expr expr = _V_mret_5896_expr__.var_0;
   Option_v_dot_ast__VarDecl tmp33 =
       v_dot_ast__Scope_find_var(&/* ? */ *p->scope, name);
 
@@ -15940,9 +15946,9 @@ v_dot_ast__Expr v_dot_parser__Parser_match_expr(v_dot_parser__Parser *p) {
   if (is_mut) {
     v_dot_parser__Parser_next(p);
   };
-  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_6183_cond__ =
+  _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_6184_cond__ =
       v_dot_parser__Parser_expr(p, 0);
-  v_dot_ast__Expr cond = _V_mret_6183_cond__.var_0;
+  v_dot_ast__Expr cond = _V_mret_6184_cond__.var_0;
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_lcbr);
   array_v_dot_ast__StmtBlock blocks = new_array_from_c_array(
       0, 0, sizeof(v_dot_ast__StmtBlock),
@@ -15962,8 +15968,8 @@ v_dot_ast__Expr v_dot_parser__Parser_match_expr(v_dot_parser__Parser *p) {
     } else {
       while (1) {
         _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type
-            _V_mret_6285_match_expr__ = v_dot_parser__Parser_expr(p, 0);
-        v_dot_ast__Expr match_expr = _V_mret_6285_match_expr__.var_0;
+            _V_mret_6286_match_expr__ = v_dot_parser__Parser_expr(p, 0);
+        v_dot_ast__Expr match_expr = _V_mret_6286_match_expr__.var_0;
         _PUSH(&match_exprs,
               (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/
                match_expr),
@@ -16254,7 +16260,7 @@ void v_dot_builder__Builder_log(v_dot_builder__Builder *b, string s) {
   };
 }
 static inline string v_dot_builder__module_path(string mod) {
-  return string_replace(mod, tos3("."), os__path_separator);
+  return string_replace(mod, tos3("."), filepath__separator);
 }
 Option_string v_dot_builder__Builder_find_module_path(v_dot_builder__Builder *b,
                                                       string mod) {
@@ -16346,7 +16352,7 @@ compiler__Parser compiler__V_new_parser_from_file(compiler__V *v, string path) {
   p = (compiler__Parser){
       .file_path = path,
       .file_path_dir = filepath__dir(path),
-      .file_name = string_all_after(path, os__path_separator),
+      .file_name = string_all_after(path, filepath__separator),
       .file_platform = path_platform,
       .file_pcguard = path_pcguard,
       .is_vh = string_ends_with(path, tos3(".vh")),
@@ -19910,15 +19916,15 @@ void compiler__V_cc(compiler__V *v) {
     string out_dir =
         ((string_starts_with(v->pref->path, tos3("vlib")))
              ? (_STR("%.*s%.*scache%.*s%.*s", compiler__v_modules_path.len,
-                     compiler__v_modules_path.str, os__path_separator.len,
-                     os__path_separator.str, os__path_separator.len,
-                     os__path_separator.str, v->pref->path.len,
+                     compiler__v_modules_path.str, filepath__separator.len,
+                     filepath__separator.str, filepath__separator.len,
+                     filepath__separator.str, v->pref->path.len,
                      v->pref->path.str))
              : (_STR("%.*s%.*s%.*s", compiler__v_modules_path.len,
-                     compiler__v_modules_path.str, os__path_separator.len,
-                     os__path_separator.str, v->pref->path.len,
+                     compiler__v_modules_path.str, filepath__separator.len,
+                     filepath__separator.str, v->pref->path.len,
                      v->pref->path.str)));
-    string pdir = string_all_before_last(out_dir, os__path_separator);
+    string pdir = string_all_before_last(out_dir, filepath__separator);
     if (!os__is_dir(pdir)) {
       os__mkdir_all(pdir);
     };
@@ -20013,7 +20019,7 @@ void compiler__V_cc(compiler__V *v) {
       printf("%.*s not found... building module builtin\n", builtin_o_path.len,
              builtin_o_path.str);
       os__system(_STR("%.*s build module vlib%.*sbuiltin", vexe.len, vexe.str,
-                      os__path_separator.len, os__path_separator.str));
+                      filepath__separator.len, filepath__separator.str));
     };
     array_string tmp16 = v->table->imports;
     for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
@@ -20025,13 +20031,13 @@ void compiler__V_cc(compiler__V *v) {
       if (string_eq(imp, tos3("webview"))) {
         continue;
       };
-      string imp_path = string_replace(imp, tos3("."), os__path_separator);
+      string imp_path = string_replace(imp, tos3("."), filepath__separator);
       string path =
           _STR("%.*s%.*scache%.*svlib%.*s%.*s.o", compiler__v_modules_path.len,
-               compiler__v_modules_path.str, os__path_separator.len,
-               os__path_separator.str, os__path_separator.len,
-               os__path_separator.str, os__path_separator.len,
-               os__path_separator.str, imp_path.len, imp_path.str);
+               compiler__v_modules_path.str, filepath__separator.len,
+               filepath__separator.str, filepath__separator.len,
+               filepath__separator.str, filepath__separator.len,
+               filepath__separator.str, imp_path.len, imp_path.str);
       if (os__exists(path)) {
         libs = string_add(libs, string_add(tos3(" "), path));
       } else {
@@ -20056,7 +20062,7 @@ void compiler__V_cc(compiler__V *v) {
           };
         } else {
           os__system(_STR("%.*s build module vlib%.*s%.*s", vexe.len, vexe.str,
-                          os__path_separator.len, os__path_separator.str,
+                          filepath__separator.len, filepath__separator.str,
                           imp_path.len, imp_path.str));
         };
       };
@@ -20923,7 +20929,7 @@ void compiler__V_build_thirdparty_obj_file(compiler__V *v, string path,
           string_add(
               string_add(tos3("\""),
                          os__realpath(string_add(
-                             string_add(parent, os__path_separator), file))),
+                             string_add(parent, filepath__separator), file))),
               tos3("\" ")));
     };
   };
@@ -21344,7 +21350,7 @@ string compiler__Scanner_get_error_filepath(compiler__Scanner *s) {
                                         ? (0)
                                         : (s->print_rel_paths_on_error)));
   if (use_relative_paths) {
-    string workdir = string_add(os__getwd(), os__path_separator);
+    string workdir = string_add(os__getwd(), filepath__separator);
     if (string_starts_with(s->file_path, workdir)) {
       return string_replace(s->file_path, workdir, tos3(""));
     };
@@ -28524,12 +28530,12 @@ void compiler__V_add_v_files_to_compile(compiler__V *v) {
     if (string_ne(v->pref->vpath, tos3("")) &&
         v->pref->build_mode != v_dot_pref__v_dot_pref__BuildMode_build_module &&
         !string_contains(mod, tos3("vweb"))) {
-      string mod_path = string_replace(mod, tos3("."), os__path_separator);
+      string mod_path = string_replace(mod, tos3("."), filepath__separator);
       string vh_path =
           _STR("%.*s%.*svlib%.*s%.*s.vh", compiler__v_modules_path.len,
-               compiler__v_modules_path.str, os__path_separator.len,
-               os__path_separator.str, os__path_separator.len,
-               os__path_separator.str, mod_path.len, mod_path.str);
+               compiler__v_modules_path.str, filepath__separator.len,
+               filepath__separator.str, filepath__separator.len,
+               filepath__separator.str, mod_path.len, mod_path.str);
       if (v->pref->is_cache && os__exists(vh_path)) {
         eprintln(_STR("using cached module `%.*s`: %.*s", mod.len, mod.str,
                       vh_path.len, vh_path.str));
@@ -28845,7 +28851,7 @@ void compiler__set_vroot_folder(string vroot_path) {
                  new_array_from_c_array(
                      2, 2, sizeof(string),
                      EMPTY_ARRAY_OF_ELEMS(string, 2){vroot_path, vname}),
-                 os__path_separator)),
+                 filepath__separator)),
              1);
 }
 void compiler__generate_vh(string mod) {
@@ -28857,11 +28863,11 @@ void compiler__generate_vh(string mod) {
   string dir =
       ((string_starts_with(mod, tos3("vlib")))
            ? (_STR("%.*s%.*s%.*s", compiler__v_modules_path.len,
-                   compiler__v_modules_path.str, os__path_separator.len,
-                   os__path_separator.str, mod.len, mod.str))
+                   compiler__v_modules_path.str, filepath__separator.len,
+                   filepath__separator.str, mod.len, mod.str))
            : (mod));
   string path = string_add(dir, tos3(".vh"));
-  string pdir = string_all_before_last(dir, os__path_separator);
+  string pdir = string_all_before_last(dir, filepath__separator);
   if (!os__is_dir(pdir)) {
     os__mkdir_all(pdir);
   };
@@ -28893,12 +28899,12 @@ void compiler__generate_vh(string mod) {
         !string_ends_with(it, tos3("_windows.v")) &&
         !string_ends_with(it, tos3("_win.v")) &&
         !string_ends_with(it, tos3("_lin.v")) &&
-        !string_contains(it, _STR("%.*sexamples", os__path_separator.len,
-                                  os__path_separator.str)) &&
+        !string_contains(it, _STR("%.*sexamples", filepath__separator.len,
+                                  filepath__separator.str)) &&
         !string_contains(it, tos3("_js.v")) &&
         !string_contains(it, tos3("_bare.v")) &&
-        !string_contains(
-            it, _STR("%.*sjs", os__path_separator.len, os__path_separator.str)))
+        !string_contains(it, _STR("%.*sjs", filepath__separator.len,
+                                  filepath__separator.str)))
       array_push(&tmp2, &it);
   }
   array_string filtered = tmp2;
@@ -29084,7 +29090,7 @@ string compiler__Table_qualify_module(compiler__Table *table, string mod,
 
     if (string_contains(m, tos3(".")) && string_contains(m, mod)) {
       array_string m_parts = string_split(m, tos3("."));
-      string m_path = array_string_join(m_parts, os__path_separator);
+      string m_path = array_string_join(m_parts, filepath__separator);
       if (string_eq(mod, (*(string *)array_get(m_parts, m_parts.len - 1))) &&
           string_contains(file_path, m_path)) {
         return m;
@@ -29252,7 +29258,7 @@ array_string compiler__DepGraph_imports(compiler__DepGraph *graph) {
   return mods;
 }
 static inline string compiler__V_module_path(compiler__V *v, string mod) {
-  return string_replace(mod, tos3("."), os__path_separator);
+  return string_replace(mod, tos3("."), filepath__separator);
 }
 void compiler__V_set_module_lookup_paths(compiler__V *v) {
   string mlookup_path = ((v->pref->vpath.len > 0) ? (v->pref->vpath)
@@ -29516,7 +29522,7 @@ Option_compiler__MsvcResult compiler__find_msvc() {
   compiler__MsvcResult tmp18 =
       OPTION_CAST(compiler__MsvcResult)((compiler__MsvcResult){
           .full_cl_exe_path = os__realpath(string_add(
-              string_add(vs.exe_path, os__path_separator), tos3("cl.exe"))),
+              string_add(vs.exe_path, filepath__separator), tos3("cl.exe"))),
           .exe_path = vs.exe_path,
           .um_lib_path = wk.um_lib_path,
           .ucrt_lib_path = wk.ucrt_lib_path,
@@ -29733,7 +29739,7 @@ void compiler__build_thirdparty_obj_file_with_msvc(
           string_add(
               string_add(tos3("\""),
                          os__realpath(string_add(
-                             string_add(parent, os__path_separator), file))),
+                             string_add(parent, filepath__separator), file))),
               tos3("\" ")));
     };
   };
@@ -29808,7 +29814,7 @@ array_compiler__CFlag_msvc_string_flags(array_compiler__CFlag cflags) {
             tmp58, string);
       _PUSH(&lib_paths,
             (/*typ = array_string   tmp_typ=string*/ string_add(
-                string_add(flag.value, os__path_separator), tos3("msvc"))),
+                string_add(flag.value, filepath__separator), tos3("msvc"))),
             tmp59, string);
     } else if (string_ends_with(flag.value, tos3(".o"))) {
       _PUSH(&other_flags,
@@ -31082,7 +31088,7 @@ void compiler__Scanner_debug_tokens(compiler__Scanner *s) {
   s->pos = 0;
   s->started = 0;
   s->debug = 1;
-  string fname = string_all_after(s->file_path, os__path_separator);
+  string fname = string_all_after(s->file_path, filepath__separator);
   printf("\n===DEBUG TOKENS %.*s===\n", fname.len, fname.str);
   while (1) {
     compiler__ScanRes res = compiler__Scanner_scan(s);
@@ -33780,8 +33786,8 @@ compiler__V *main__new_v(array_string args) {
     };
     Option_bool tmp2 =
         os__mkdir(_STR("%.*s%.*scache", compiler__v_modules_path.len,
-                       compiler__v_modules_path.str, os__path_separator.len,
-                       os__path_separator.str));
+                       compiler__v_modules_path.str, filepath__separator.len,
+                       filepath__separator.str));
     if (!tmp2.ok) {
       string err = tmp2.error;
       int errcode = tmp2.ecode;
@@ -33816,11 +33822,11 @@ compiler__V *main__new_v(array_string args) {
     println(tos3("use `v -o v cmd/v` instead of `v -o v v.v`"));
     v_exit(1);
   };
-  if (string_ends_with(dir, os__path_separator)) {
-    dir = string_all_before_last(dir, os__path_separator);
+  if (string_ends_with(dir, filepath__separator)) {
+    dir = string_all_before_last(dir, filepath__separator);
   };
-  if (string_starts_with(
-          dir, _STR(".%.*s", os__path_separator.len, os__path_separator.str))) {
+  if (string_starts_with(dir, _STR(".%.*s", filepath__separator.len,
+                                   filepath__separator.str))) {
     dir = string_substr2(dir, 2, -1, true);
   };
   if (args.len < 2) {
@@ -33836,22 +33842,22 @@ compiler__V *main__new_v(array_string args) {
     string mod_path =
         ((string_contains(dir, tos3("vlib")))
              ? (string_all_after(dir,
-                                 string_add(tos3("vlib"), os__path_separator)))
+                                 string_add(tos3("vlib"), filepath__separator)))
              : (((string_starts_with(dir, tos3(".\\")) ||
                   string_starts_with(dir, tos3("./")))
                      ? (string_substr2(dir, 2, -1, true))
-                     : (((string_starts_with(dir, os__path_separator))
-                             ? (string_all_after(dir, os__path_separator))
+                     : (((string_starts_with(dir, filepath__separator))
+                             ? (string_all_after(dir, filepath__separator))
                              : (dir))))));
-    mod = string_replace(mod_path, os__path_separator, tos3("."));
+    mod = string_replace(mod_path, filepath__separator, tos3("."));
     printf("Building module \"%.*s\" (dir=\"%.*s\")...\n", mod.len, mod.str,
            dir.len, dir.str);
     if (!string_ends_with(out_name, tos3(".c"))) {
       out_name = mod;
     };
   };
-  if (string_contains(out_name, os__path_separator)) {
-    string d = string_all_before_last(out_name, os__path_separator);
+  if (string_contains(out_name, filepath__separator)) {
+    string d = string_all_before_last(out_name, filepath__separator);
     if (!os__is_dir(d)) {
       printf("creating a new directory \"%.*s\"\n", d.len, d.str);
       Option_bool tmp9 = os__mkdir(d);
@@ -33951,7 +33957,7 @@ compiler__V *main__new_v(array_string args) {
   ;
   v_dot_pref__Preferences_fill_with_defaults(pref);
   if (!os__is_dir(pref->vlib_path) ||
-      !os__is_dir(string_add(string_add(pref->vlib_path, os__path_separator),
+      !os__is_dir(string_add(string_add(pref->vlib_path, filepath__separator),
                              tos3("builtin")))) {
     println(tos3("vlib not found. It should be next to the V executable."));
     println(tos3("Go to https://vlang.io to install V."));
@@ -34329,7 +34335,7 @@ void init() {
   strconv__DOUBLE_MINUS_INFINITY = 0xFFF0000000000000;
   strconv__TEN = ((u32)(10));
   strconv__max_u64 = ((u64)(UINT64_MAX));
-  filepath__path_separator = tos3("\\");
+  filepath__separator = tos3("\\");
   internal_dot_help__help_text = tos3(
       "V is a tool for managing V source code.\n\nUsage:\n   v [options] "
       "[command] [arguments]\n\nExamples:\n   v hello.v         compile the "
