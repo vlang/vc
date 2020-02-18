@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2ea2fed"
+#define V_COMMIT_HASH "2e1dbd9"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a2838ae"
+#define V_COMMIT_HASH "2ea2fed"
 #endif
 #include <inttypes.h>
 
@@ -9842,21 +9842,12 @@ string os__user_os() {
   return tos3("unknown");
 }
 string os__home_dir() {
-  string home = os__getenv(tos3("HOME"));
 #ifdef _WIN32
-  home = os__getenv(tos3("HOMEDRIVE"));
-  if (home.len == 0) {
-    home = os__getenv(tos3("SYSTEMDRIVE"));
-  };
-  string homepath = os__getenv(tos3("HOMEPATH"));
-  if (homepath.len == 0) {
-    homepath = string_add(tos3("\\Users\\"), os__getenv(tos3("USERNAME")));
-  };
-  home = string_add(home, homepath);
+  return string_add(os__getenv(tos3("USERPROFILE")), filepath__separator);
+#else
+  return string_add(os__getenv(tos3("HOME")), filepath__separator);
 #endif
   ;
-  home = string_add(home, filepath__separator);
-  return home;
 }
 void os__write_file(string path, string text) {
   Option_os__File tmp45 = os__create(path);
