@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "31c1483"
+#define V_COMMIT_HASH "c314ab7"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "480af3f"
+#define V_COMMIT_HASH "31c1483"
 #endif
 #include <inttypes.h>
 
@@ -1880,6 +1880,7 @@ int array_byte_index(array_byte a, byte v);
 int array_char_index(array_char a, char v);
 int array_int_reduce(array_int a, int (*iter)(int accum, int curr /*FFF*/),
                      int accum_start);
+bool array_string_eq(array_string a1, array_string a2);
 int compare_i64(i64 *a, i64 *b);
 int compare_f64(f64 *a, f64 *b);
 int compare_f32(f32 *a, f32 *b);
@@ -4177,6 +4178,19 @@ int array_int_reduce(array_int a, int (*iter)(int accum, int curr /*FFF*/),
                      int accum_start) {
   int _accum = 0;
   return _accum;
+}
+bool array_string_eq(array_string a1, array_string a2) {
+  if (a1.len != a2.len) {
+    return 0;
+  };
+  for (int i = 0; i < a1.len; i++) {
+
+    if (string_ne((*(string *)array_get(a1, i)),
+                  (*(string *)array_get(a2, i)))) {
+      return 0;
+    };
+  };
+  return 1;
 }
 int compare_i64(i64 *a, i64 *b) {
   if (*a < *b) {
