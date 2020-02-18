@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "39c4842"
+#define V_COMMIT_HASH "19520cc"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c314ab7"
+#define V_COMMIT_HASH "39c4842"
 #endif
 #include <inttypes.h>
 
@@ -1242,12 +1242,6 @@ struct v_dot_ast__ForCStmt {
   array_v_dot_ast__Stmt stmts;
 };
 
-struct v_dot_ast__ForInStmt {
-  string var;
-  v_dot_ast__Expr cond;
-  array_v_dot_ast__Stmt stmts;
-};
-
 struct v_dot_ast__GlobalDecl {
   string name;
   v_dot_ast__Expr expr;
@@ -1689,6 +1683,13 @@ struct v_dot_ast__FnDecl {
   v_dot_ast__Field receiver;
   bool is_method;
   bool rec_mut;
+};
+
+struct v_dot_ast__ForInStmt {
+  string var;
+  v_dot_ast__Expr cond;
+  array_v_dot_ast__Stmt stmts;
+  v_dot_token__Position pos;
 };
 
 struct v_dot_ast__ForStmt {
@@ -8488,6 +8489,10 @@ bool v_dot_table__Table_check(v_dot_table__Table *t, v_dot_table__Type got,
     if (v_dot_table__type_idx(info.elem_type) == v_dot_table__byte_type_idx) {
       return 1;
     };
+  };
+  if (string_eq(exp_type_sym->name, tos3("array")) ||
+      string_eq(got_type_sym->name, tos3("array"))) {
+    return 1;
   };
   if (got_idx != exp_idx) {
     return 0;
@@ -15298,12 +15303,13 @@ v_dot_ast__Stmt v_dot_parser__Parser_for_statement(v_dot_parser__Parser *p) {
     array_v_dot_ast__Stmt stmts = v_dot_parser__Parser_parse_block(p);
     v_dot_parser__Parser_close_scope(p);
     return /*SUM TYPE CAST2*/ (v_dot_ast__Stmt){
-        .obj = memdup(&(v_dot_ast__ForStmt[]){(v_dot_ast__ForStmt){
+        .obj = memdup(&(v_dot_ast__ForInStmt[]){(v_dot_ast__ForInStmt){
                           .stmts = stmts,
                           .pos = v_dot_token__Token_position(&/* ? */ p->tok),
+                          .var = tos3(""),
                       }},
-                      sizeof(v_dot_ast__ForStmt)),
-        .typ = SumType_ForStmt};
+                      sizeof(v_dot_ast__ForInStmt)),
+        .typ = SumType_ForInStmt};
   };
   _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_4089_cond__ =
       v_dot_parser__Parser_expr(p, 0);
