@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "67756c5"
+#define V_COMMIT_HASH "4de8d3a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "392eb1f"
+#define V_COMMIT_HASH "67756c5"
 #endif
 #include <inttypes.h>
 
@@ -23411,11 +23411,6 @@ string compiler__Parser_factor(compiler__Parser *p) {
         (compiler__Parser_peek(&/* ? */ *p) ==
              compiler__compiler__TokenKind_name &&
          peek2.tok == compiler__compiler__TokenKind_colon)) {
-      if (!string_ends_with(p->expected_type, tos3("Config"))) {
-        compiler__Parser_error(
-            p, tos3("short struct initialization syntax only works with "
-                    "structs that end with `Config`"));
-      };
       return compiler__Parser_struct_init(p, p->expected_type);
     };
     return compiler__Parser_assoc(p);
