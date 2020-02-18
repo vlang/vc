@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ed01ab7"
+#define V_COMMIT_HASH "392eb1f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ecb0af3"
+#define V_COMMIT_HASH "ed01ab7"
 #endif
 #include <inttypes.h>
 
@@ -19504,7 +19504,9 @@ static inline void compiler__Parser_skip_block(compiler__Parser *p,
 void compiler__todo_remove() {}
 void compiler__Parser_check_if_parser_is_stuck(compiler__Parser *p,
                                                u64 parsing_cycle,
-                                               i64 parsing_start_ticks) {}
+                                               i64 parsing_start_ticks) {
+  compiler__Parser_warn(p, tos3("todo..."));
+}
 void compiler__Parser_inline_asm(compiler__Parser *p) {
   if (!p->inside_unsafe) {
     compiler__Parser_error(p, tos3("asm() needs to be run inside `unsafe {}`"));
