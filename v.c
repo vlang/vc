@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "092c09d"
+#define V_COMMIT_HASH "31b74f0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "391da0b"
+#define V_COMMIT_HASH "092c09d"
 #endif
 #include <inttypes.h>
 
@@ -16003,8 +16003,9 @@ string v_dot_doc__doc(string mod, v_dot_table__Table *table) {
                        .stmts = new_array(0, 1, sizeof(v_dot_ast__Stmt))};
   string mods_path =
       string_add(filepath__dir(v_dot_doc__vexe_path()), tos3("/vlib"));
-  string path =
-      filepath__join(mods_path, &(varg_string){.len = 1, .args = {mod}});
+  string path = string_replace(
+      filepath__join(mods_path, &(varg_string){.len = 1, .args = {mod}}),
+      tos3("."), filepath__separator);
   if (!os__exists(path)) {
     printf("module \"%.*s\" not found\n", mod.len, mod.str);
     println(path);
