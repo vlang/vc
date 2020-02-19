@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "082acfa"
+#define V_COMMIT_HASH "478c48c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bc11419"
+#define V_COMMIT_HASH "082acfa"
 #endif
 #include <inttypes.h>
 
@@ -12827,24 +12827,31 @@ v_dot_table__Type v_dot_checker__Checker_index_expr(v_dot_checker__Checker *c,
   };
   v_dot_table__TypeSymbol *typ_sym =
       v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, typ);
-  if (typ_sym->kind == v_dot_table__v_dot_table__Kind_array) {
-    if (is_range) {
-    } else {
-      v_dot_table__Type index_type = v_dot_checker__Checker_expr(c, node.index);
-      if (v_dot_table__type_idx(index_type) != v_dot_table__int_type_idx) {
-        v_dot_table__TypeSymbol *index_type_sym =
-            v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, index_type);
-        v_dot_checker__Checker_error(&/* ? */ *c,
-                                     _STR("non-integer index (type `%.*s`)",
-                                          index_type_sym->name.len,
-                                          index_type_sym->name.str),
-                                     node.pos);
-      };
+  if (!is_range) {
+    v_dot_table__Type index_type = v_dot_checker__Checker_expr(c, node.index);
+    if (v_dot_table__type_idx(index_type) != v_dot_table__int_type_idx) {
+      v_dot_table__TypeSymbol *index_type_sym =
+          v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, index_type);
+      v_dot_checker__Checker_error(&/* ? */ *c,
+                                   _STR("non-integer index (type `%.*s`)",
+                                        index_type_sym->name.len,
+                                        index_type_sym->name.str),
+                                   node.pos);
+    };
+    if (typ_sym->kind == v_dot_table__v_dot_table__Kind_array) {
       v_dot_table__Array info = *(v_dot_table__Array *)typ_sym->info.obj;
       return info.elem_type;
     };
-  } else {
-    typ = v_dot_table__int_type;
+    if (typ_sym->kind == v_dot_table__v_dot_table__Kind_array_fixed) {
+      v_dot_table__ArrayFixed info =
+          *(v_dot_table__ArrayFixed *)typ_sym->info.obj;
+      return info.elem_type;
+    } else if (typ_sym->kind == v_dot_table__v_dot_table__Kind_map) {
+      v_dot_table__Map info = *(v_dot_table__Map *)typ_sym->info.obj;
+      return info.value_type;
+    } else {
+      typ = v_dot_table__int_type;
+    };
   };
   return typ;
 }
