@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e4179c0"
+#define V_COMMIT_HASH "391da0b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "478c48c"
+#define V_COMMIT_HASH "e4179c0"
 #endif
 #include <inttypes.h>
 
@@ -5837,31 +5837,28 @@ bool string_contains(string s, string p) {
   return 1;
 }
 bool string_starts_with(string s, string p) {
-  Option_int tmp38 = string_index(s, p);
-  int idx;
-  if (!tmp38.ok) {
-    string err = tmp38.error;
-    int errcode = tmp38.ecode;
+  if (p.len > s.len) {
     return 0;
-  }
-  idx = *(int *)tmp38.data;
-  ;
-  return idx == 0;
+  };
+  for (int i = 0; i < p.len; i++) {
+
+    if (s.str[i] /*rbyte 0*/ != p.str[i] /*rbyte 0*/) {
+      return 0;
+    };
+  };
+  return 1;
 }
 bool string_ends_with(string s, string p) {
   if (p.len > s.len) {
     return 0;
   };
-  Option_int tmp39 = string_last_index(s, p);
-  int idx;
-  if (!tmp39.ok) {
-    string err = tmp39.error;
-    int errcode = tmp39.ecode;
-    return 0;
-  }
-  idx = *(int *)tmp39.data;
-  ;
-  return idx == s.len - p.len;
+  for (int i = 0; i < p.len; i++) {
+
+    if (p.str[i] /*rbyte 0*/ != s.str[s.len - p.len + i] /*rbyte 0*/) {
+      return 0;
+    };
+  };
+  return 1;
 }
 string string_to_lower(string s) {
   byte *b = v_malloc(s.len + 1);
@@ -5889,43 +5886,43 @@ string string_title(string s) {
   array_string words = string_split(s, tos3(" "));
   array_string tit = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  array_string tmp40 = words;
-  for (int tmp41 = 0; tmp41 < tmp40.len; tmp41++) {
-    string word = ((string *)tmp40.data)[tmp41];
+  array_string tmp38 = words;
+  for (int tmp39 = 0; tmp39 < tmp38.len; tmp39++) {
+    string word = ((string *)tmp38.data)[tmp39];
 
     _PUSH(&tit,
           (/*typ = array_string   tmp_typ=string*/ string_capitalize(word)),
-          tmp42, string);
+          tmp40, string);
   };
   string title = array_string_join(tit, tos3(" "));
   return title;
 }
 string string_find_between(string s, string start, string end) {
-  Option_int tmp43 = string_index(s, start);
+  Option_int tmp41 = string_index(s, start);
   int start_pos;
-  if (!tmp43.ok) {
-    string err = tmp43.error;
-    int errcode = tmp43.ecode;
+  if (!tmp41.ok) {
+    string err = tmp41.error;
+    int errcode = tmp41.ecode;
     return tos3("");
   }
-  start_pos = *(int *)tmp43.data;
+  start_pos = *(int *)tmp41.data;
   ;
   string val = string_right(s, start_pos + start.len);
-  Option_int tmp44 = string_index(val, end);
+  Option_int tmp42 = string_index(val, end);
   int end_pos;
-  if (!tmp44.ok) {
-    string err = tmp44.error;
-    int errcode = tmp44.ecode;
+  if (!tmp42.ok) {
+    string err = tmp42.error;
+    int errcode = tmp42.ecode;
     return val;
   }
-  end_pos = *(int *)tmp44.data;
+  end_pos = *(int *)tmp42.data;
   ;
   return string_left(val, end_pos);
 }
 bool array_string_contains(array_string ar, string val) {
-  array_string tmp45 = ar;
-  for (int tmp46 = 0; tmp46 < tmp45.len; tmp46++) {
-    string s = ((string *)tmp45.data)[tmp46];
+  array_string tmp43 = ar;
+  for (int tmp44 = 0; tmp44 < tmp43.len; tmp44++) {
+    string s = ((string *)tmp43.data)[tmp44];
 
     if (string_eq(s, val)) {
       return 1;
@@ -5934,9 +5931,9 @@ bool array_string_contains(array_string ar, string val) {
   return 0;
 }
 bool array_int_contains(array_int ar, int val) {
-  array_int tmp47 = ar;
-  for (int i = 0; i < tmp47.len; i++) {
-    int s = ((int *)tmp47.data)[i];
+  array_int tmp45 = ar;
+  for (int i = 0; i < tmp45.len; i++) {
+    int s = ((int *)tmp45.data)[i];
 
     if (s == val) {
       return 1;
@@ -6043,7 +6040,7 @@ ustring string_ustring(string s) {
   for (int i = 0; i < s.len; i++) {
 
     int char_len = utf8_char_len(s.str[/*ptr!*/ i] /*rbyte 0*/);
-    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ i), tmp48, int);
+    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ i), tmp46, int);
     i += char_len - 1;
     res.len++;
   };
@@ -6089,7 +6086,7 @@ ustring ustring_add(ustring u, ustring a) {
   for (int i = 0; i < u.s.len; i++) {
 
     int char_len = utf8_char_len(u.s.str[/*ptr!*/ i] /*rbyte 0*/);
-    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp49, int);
+    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp47, int);
     i += char_len - 1;
     j += char_len;
     res.len++;
@@ -6097,7 +6094,7 @@ ustring ustring_add(ustring u, ustring a) {
   for (int i = 0; i < a.s.len; i++) {
 
     int char_len = utf8_char_len(a.s.str[/*ptr!*/ i] /*rbyte 0*/);
-    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp50, int);
+    _PUSH(&res.runes, (/*typ = array_int   tmp_typ=int*/ j), tmp48, int);
     i += char_len - 1;
     j += char_len;
     res.len++;
@@ -6205,7 +6202,31 @@ bool byte_is_letter(byte c) {
 }
 void v_string_free(string s) { v_free(s.str); }
 string string_all_before(string s, string dot) {
-  Option_int tmp55 = string_index(s, dot);
+  Option_int tmp53 = string_index(s, dot);
+  int pos;
+  if (!tmp53.ok) {
+    string err = tmp53.error;
+    int errcode = tmp53.ecode;
+    return s;
+  }
+  pos = *(int *)tmp53.data;
+  ;
+  return string_left(s, pos);
+}
+string string_all_before_last(string s, string dot) {
+  Option_int tmp54 = string_last_index(s, dot);
+  int pos;
+  if (!tmp54.ok) {
+    string err = tmp54.error;
+    int errcode = tmp54.ecode;
+    return s;
+  }
+  pos = *(int *)tmp54.data;
+  ;
+  return string_left(s, pos);
+}
+string string_all_after(string s, string dot) {
+  Option_int tmp55 = string_last_index(s, dot);
   int pos;
   if (!tmp55.ok) {
     string err = tmp55.error;
@@ -6213,30 +6234,6 @@ string string_all_before(string s, string dot) {
     return s;
   }
   pos = *(int *)tmp55.data;
-  ;
-  return string_left(s, pos);
-}
-string string_all_before_last(string s, string dot) {
-  Option_int tmp56 = string_last_index(s, dot);
-  int pos;
-  if (!tmp56.ok) {
-    string err = tmp56.error;
-    int errcode = tmp56.ecode;
-    return s;
-  }
-  pos = *(int *)tmp56.data;
-  ;
-  return string_left(s, pos);
-}
-string string_all_after(string s, string dot) {
-  Option_int tmp57 = string_last_index(s, dot);
-  int pos;
-  if (!tmp57.ok) {
-    string err = tmp57.error;
-    int errcode = tmp57.ecode;
-    return s;
-  }
-  pos = *(int *)tmp57.data;
   ;
   return string_right(s, pos + dot.len);
 }
@@ -6246,9 +6243,9 @@ string array_string_join(array_string a, string del) {
     return tos3("");
   };
   int len = 0;
-  array_string tmp58 = a;
-  for (int i = 0; i < tmp58.len; i++) {
-    string val = ((string *)tmp58.data)[i];
+  array_string tmp56 = a;
+  for (int i = 0; i < tmp56.len; i++) {
+    string val = ((string *)tmp56.data)[i];
 
     len += val.len + del.len;
   };
@@ -6257,9 +6254,9 @@ string array_string_join(array_string a, string del) {
   res.len = len;
   res.str = v_malloc(res.len + 1);
   int idx = 0;
-  array_string tmp59 = a;
-  for (int i = 0; i < tmp59.len; i++) {
-    string val = ((string *)tmp59.data)[i];
+  array_string tmp57 = a;
+  for (int i = 0; i < tmp57.len; i++) {
+    string val = ((string *)tmp57.data)[i];
 
     for (int j = 0; j < val.len; j++) {
 
@@ -6306,10 +6303,10 @@ bool byte_is_white(byte c) {
 int string_hash(string s) {
   int h = 0;
   if (h == 0 && s.len > 0) {
-    string tmp60 = s;
+    string tmp58 = s;
     ;
-    for (int tmp61 = 0; tmp61 < tmp60.len; tmp61++) {
-      byte c = tmp60.str[tmp61];
+    for (int tmp59 = 0; tmp59 < tmp58.len; tmp59++) {
+      byte c = tmp58.str[tmp59];
 
       h = h * 31 + ((int)(c));
     };
@@ -6333,15 +6330,15 @@ string string_repeat(string s, int count) {
     return s;
   };
   byte *ret = v_malloc(s.len * count + 1);
-  int tmp62 = 0;
+  int tmp60 = 0;
   ;
-  for (int tmp63 = tmp62; tmp63 < count; tmp63++) {
-    int i = tmp63;
+  for (int tmp61 = tmp60; tmp61 < count; tmp61++) {
+    int i = tmp61;
 
-    int tmp64 = 0;
+    int tmp62 = 0;
     ;
-    for (int tmp65 = tmp64; tmp65 < s.len; tmp65++) {
-      int j = tmp65;
+    for (int tmp63 = tmp62; tmp63 < s.len; tmp63++) {
+      int j = tmp63;
 
       ret[/*ptr!*/ i * s.len + j] /*rbyte 1*/ = s.str[j] /*rbyte 0*/;
     };
