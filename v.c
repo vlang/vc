@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e30bd04"
+#define V_COMMIT_HASH "92e3e48"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ec3d67c"
+#define V_COMMIT_HASH "e30bd04"
 #endif
 #include <inttypes.h>
 
@@ -10383,6 +10383,11 @@ bool v_dot_table__Table_check(v_dot_table__Table *t, v_dot_table__Type got,
       string_eq(got_type_sym->name, tos3("array"))) {
     return 1;
   };
+  if (got_type_sym->kind == v_dot_table__v_dot_table__Kind_array &&
+      string_eq(got_type_sym->name, tos3("array_void")) &&
+      exp_type_sym->kind == v_dot_table__v_dot_table__Kind_array) {
+    return 1;
+  };
   if (got_idx != exp_idx) {
     return 0;
   };
@@ -14384,6 +14389,10 @@ v_dot_checker__Checker_infix_expr(v_dot_checker__Checker *c,
         infix_expr.op == v_dot_token__v_dot_token__Kind_left_shift) {
       return v_dot_table__void_type;
     };
+    if (right->kind == v_dot_table__v_dot_table__Kind_array &&
+        infix_expr.op == v_dot_token__v_dot_token__Kind_key_in) {
+      return v_dot_table__bool_type;
+    };
     v_dot_checker__Checker_error(
         c,
         _STR("infix expr: cannot use `%.*s` (right) as `%.*s`", right->name.len,
@@ -14662,7 +14671,7 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
       v_dot_table__Type typ = v_dot_checker__Checker_expr(c, expr);
       v_dot_table__Var tmp40 = {0};
       bool tmp41 =
-          map_get(/*checker.v : 268*/ c->table->consts, field.name, &tmp40);
+          map_get(/*checker.v : 272*/ c->table->consts, field.name, &tmp40);
 
       v_dot_table__Var xconst = tmp40;
       xconst.typ = typ;
@@ -14806,7 +14815,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl tmp48 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
     _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl
-        _V_mret_2162_var_scope_var;
+        _V_mret_2182_var_scope_var;
     if (!tmp48.ok) {
       string err = tmp48.error;
       int errcode = tmp48.ecode;
@@ -14818,11 +14827,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_2162_var_scope_var =
+    _V_mret_2182_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl *)tmp48.data;
     ;
-    var_scope = _V_mret_2162_var_scope_var.var_0;
-    var = _V_mret_2162_var_scope_var.var_1;
+    var_scope = _V_mret_2182_var_scope_var.var_0;
+    var = _V_mret_2182_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
