@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f91bded"
+#define V_COMMIT_HASH "9b271d1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "83faa8b"
+#define V_COMMIT_HASH "f91bded"
 #endif
 #include <inttypes.h>
 
@@ -10359,11 +10359,9 @@ string v_dot_table__Table_qualify_module(v_dot_table__Table *table, string mod,
   for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
     string m = ((string *)tmp1.data)[tmp2];
 
-    printf("TABLE IMPORT: %.*s\n", m.len, m.str);
     if (string_contains(m, tos3(".")) && string_contains(m, mod)) {
       array_string m_parts = string_split(m, tos3("."));
       string m_path = array_string_join(m_parts, os__path_separator);
-      printf("IMPORT B: %.*s - %.*s\n", m.len, m.str, m_path.len, m_path.str);
       if (string_eq(mod, (*(string *)array_get(m_parts, m_parts.len - 1))) &&
           string_contains(file_path, m_path)) {
         return m;
