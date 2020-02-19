@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "83bfd08"
+#define V_COMMIT_HASH "042bce4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9b271d1"
+#define V_COMMIT_HASH "83bfd08"
 #endif
 #include <inttypes.h>
 
@@ -13446,13 +13446,15 @@ v_dot_ast__FnDecl v_dot_parser__Parser_fn_decl(v_dot_parser__Parser *p) {
       v_dot_parser__Parser_error(&/* ? */ *p, tos3("expected Struct"));
     };
   } else {
-    v_dot_table__Table_register_fn(
-        p->table, (v_dot_table__Fn){.name = v_dot_parser__Parser_prepend_mod(
-                                        &/* ? */ *p, name),
-                                    .args = args,
-                                    .return_type = typ,
-                                    .is_variadic = is_variadic,
-                                    .is_c = is_c});
+    if (!is_c) {
+      name = v_dot_parser__Parser_prepend_mod(&/* ? */ *p, name);
+    };
+    v_dot_table__Table_register_fn(p->table,
+                                   (v_dot_table__Fn){.name = name,
+                                                     .args = args,
+                                                     .return_type = typ,
+                                                     .is_variadic = is_variadic,
+                                                     .is_c = is_c});
   };
   array_v_dot_ast__Stmt stmts = new_array_from_c_array(
       0, 0, sizeof(v_dot_ast__Stmt),
