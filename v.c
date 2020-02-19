@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "31b74f0"
+#define V_COMMIT_HASH "d91945c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "092c09d"
+#define V_COMMIT_HASH "31b74f0"
 #endif
 #include <inttypes.h>
 
@@ -23406,9 +23406,9 @@ string compiler__Parser_term(compiler__Parser *p) {
       line_nr != p->scanner->line_nr) {
     return typ;
   };
-  while (p->tok == compiler__compiler__TokenKind_mul ||
-         p->tok == compiler__compiler__TokenKind_div ||
-         p->tok == compiler__compiler__TokenKind_mod) {
+  while ((p->tok == compiler__compiler__TokenKind_mul ||
+          p->tok == compiler__compiler__TokenKind_div ||
+          p->tok == compiler__compiler__TokenKind_mod)) {
 
     compiler__TokenKind tok = p->tok;
     bool is_mul = tok == compiler__compiler__TokenKind_mul;
@@ -26186,8 +26186,8 @@ string compiler__Parser_gen_handle_option_or_else(compiler__Parser *p,
                                 typ.len, typ.str, tmp.len, tmp.str));
   };
   if (!p->returns && string_ne(last_typ, typ) && is_assign &&
-      p->prev_tok2 != compiler__compiler__TokenKind_key_continue &&
-      p->prev_tok2 != compiler__compiler__TokenKind_key_break) {
+      !((p->prev_tok2 == compiler__compiler__TokenKind_key_continue ||
+         p->prev_tok2 == compiler__compiler__TokenKind_key_break))) {
     compiler__Parser_error_with_token_index(
         p,
         tos3("`or` block must provide a default value or "
@@ -26351,14 +26351,16 @@ string compiler__Table_fn_gen_name(compiler__Table *table, compiler__Fn *f) {
       (_IN(string, (f->name), compiler__c_reserved))) {
     return _STR("v_%.*s", name.len, name.str);
   };
-  if (table->obfuscate && !f->is_c && string_ne(f->name, tos3("main")) &&
-      string_ne(f->name, tos3("WinMain")) &&
-      string_ne(f->name, tos3("main__main")) &&
-      string_ne(f->name, tos3("gg__vec2")) &&
-      string_ne(f->name, tos3("build_token_str")) &&
-      string_ne(f->name, tos3("build_keys")) &&
-      string_ne(f->mod, tos3("builtin")) && string_ne(f->mod, tos3("darwin")) &&
-      string_ne(f->mod, tos3("os")) && string_ne(f->mod, tos3("json")) &&
+  if (table->obfuscate && !f->is_c &&
+      !((string_eq(f->name, tos3("main")) ||
+         string_eq(f->name, tos3("WinMain")) ||
+         string_eq(f->name, tos3("main__main")) ||
+         string_eq(f->name, tos3("gg__vec2")) ||
+         string_eq(f->name, tos3("build_token_str")) ||
+         string_eq(f->name, tos3("build_keys")))) &&
+      !((string_eq(f->mod, tos3("builtin")) ||
+         string_eq(f->mod, tos3("darwin")) || string_eq(f->mod, tos3("os")) ||
+         string_eq(f->mod, tos3("json")))) &&
       !string_ends_with(f->name, tos3("_init")) &&
       !string_contains(f->name, tos3("window_proc")) &&
       !string_ends_with(name, tos3("_str")) &&
@@ -26637,11 +26639,12 @@ void compiler__Parser_cast(compiler__Parser *p, string typ) {
                                typ.len, typ.str, expr_typ.len, expr_typ.str));
   };
   bool casting_voidptr_to_value =
-      string_eq(expr_typ, tos3("void*")) && string_ne(typ, tos3("int")) &&
-      string_ne(typ, tos3("byteptr")) && !string_ends_with(typ, tos3("*"));
+      string_eq(expr_typ, tos3("void*")) &&
+      !((string_eq(typ, tos3("int")) || string_eq(typ, tos3("byteptr")))) &&
+      !string_ends_with(typ, tos3("*"));
   p->expected_type = tos3("");
-  bool is_byteptr = string_eq(expr_typ, tos3("byte*")) ||
-                    string_eq(expr_typ, tos3("byteptr"));
+  bool is_byteptr = (string_eq(expr_typ, tos3("byte*")) ||
+                     string_eq(expr_typ, tos3("byteptr")));
   bool is_bytearr = string_eq(expr_typ, tos3("array_byte"));
   if (string_eq(typ, tos3("string"))) {
     if (is_byteptr || is_bytearr) {
@@ -26681,15 +26684,14 @@ void compiler__Parser_cast(compiler__Parser *p, string typ) {
                                    _STR("(%.*s)(", typ.len, typ.str));
   } else {
     if (string_eq(typ, tos3("bool"))) {
-      if (compiler__is_number_type(expr_typ) ||
-          compiler__is_float_type(expr_typ)) {
+      if (compiler__is_number_type(expr_typ)) {
         compiler__Parser_error(p, tos3("cannot cast a number to `bool`"));
       };
       compiler__Parser_error(
           p, _STR("cannot cast `%.*s` to `bool`", expr_typ.len, expr_typ.str));
     };
     if (string_eq(expr_typ, tos3("string"))) {
-      if (compiler__is_number_type(typ) || compiler__is_float_type(typ)) {
+      if (compiler__is_number_type(typ)) {
         compiler__Parser_error(
             p, _STR("cannot cast `string` to `%.*s`, use `%.*s.%.*s()` instead",
                     typ.len, typ.str, expr_typ.len, expr_typ.str, typ.len,
