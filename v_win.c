@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5d53737"
+#define V_COMMIT_HASH "ab8d883"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e35f8e9"
+#define V_COMMIT_HASH "5d53737"
 #endif
 #include <inttypes.h>
 
@@ -212,6 +212,158 @@ typedef int bool;
 byte g_str_buf[1024];
 int load_so(byteptr);
 void reload_so();
+
+// ============== wyhash ==============
+//	Author: Wang Yi <godspeed_china@yeah.net>
+#ifndef wyhash_version_4
+#define wyhash_version_4
+#include <stdint.h>
+#include <string.h>
+#if defined(_MSC_VER) && defined(_M_X64)
+#include <intrin.h>
+#pragma intrinsic(_umul128)
+#endif
+const uint64_t _wyp0 = 0xa0761d6478bd642full, _wyp1 = 0xe7037ed1a0b428dbull,
+               _wyp2 = 0x8ebc6af09c88c6e3ull, _wyp3 = 0x589965cc75374cc3ull,
+               _wyp4 = 0x1d8e4e27c47d124full;
+static inline uint64_t _wyrotr(uint64_t v, unsigned k) {
+  return (v >> k) | (v << (64 - k));
+}
+static inline uint64_t _wymum(uint64_t A, uint64_t B) {
+#ifdef WYHASH32
+  uint64_t hh = (A >> 32) * (B >> 32), hl = (A >> 32) * (unsigned)B,
+           lh = (unsigned)A * (B >> 32),
+           ll = (uint64_t)(unsigned)A * (unsigned)B;
+  return _wyrotr(hl, 32) ^ _wyrotr(lh, 32) ^ hh ^ ll;
+#else
+#ifdef __SIZEOF_INT128__
+  __uint128_t r = A;
+  r *= B;
+  return (r >> 64) ^ r;
+#elif defined(_MSC_VER) && defined(_M_X64)
+  A = _umul128(A, B, &B);
+  return A ^ B;
+#else
+  uint64_t ha = A >> 32, hb = B >> 32, la = (uint32_t)A, lb = (uint32_t)B, hi,
+           lo;
+  uint64_t rh = ha * hb, rm0 = ha * lb, rm1 = hb * la, rl = la * lb,
+           t = rl + (rm0 << 32), c = t < rl;
+  lo = t + (rm1 << 32);
+  c += lo < t;
+  hi = rh + (rm0 >> 32) + (rm1 >> 32) + c;
+  return hi ^ lo;
+#endif
+#endif
+}
+#ifndef WYHASH_LITTLE_ENDIAN
+#if defined(_WIN32) || defined(__LITTLE_ENDIAN__) ||                           \
+    (defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+#define WYHASH_LITTLE_ENDIAN 1
+#elif defined(__BIG_ENDIAN__) ||                                               \
+    (defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+#define WYHASH_LITTLE_ENDIAN 0
+#endif
+#endif
+#if (WYHASH_LITTLE_ENDIAN) || defined(__TINYC__)
+static inline uint64_t _wyr8(const uint8_t *p) {
+  uint64_t v;
+  memcpy(&v, p, 8);
+  return v;
+}
+static inline uint64_t _wyr4(const uint8_t *p) {
+  unsigned v;
+  memcpy(&v, p, 4);
+  return v;
+}
+#else
+#if defined(__GNUC__) || defined(__INTEL_COMPILER)
+static inline uint64_t _wyr8(const uint8_t *p) {
+  uint64_t v;
+  memcpy(&v, p, 8);
+  return __builtin_bswap64(v);
+}
+static inline uint64_t _wyr4(const uint8_t *p) {
+  unsigned v;
+  memcpy(&v, p, 4);
+  return __builtin_bswap32(v);
+}
+#elif defined(_MSC_VER)
+static inline uint64_t _wyr8(const uint8_t *p) {
+  uint64_t v;
+  memcpy(&v, p, 8);
+  return _byteswap_uint64(v);
+}
+static inline uint64_t _wyr4(const uint8_t *p) {
+  unsigned v;
+  memcpy(&v, p, 4);
+  return _byteswap_ulong(v);
+}
+#endif
+#endif
+static inline uint64_t _wyr3(const uint8_t *p, unsigned k) {
+  return (((uint64_t)p[0]) << 16) | (((uint64_t)p[k >> 1]) << 8) | p[k - 1];
+}
+static inline uint64_t wyhash(const void *key, uint64_t len, uint64_t seed) {
+  const uint8_t *p = (const uint8_t *)key;
+  uint64_t i = len & 63;
+#if defined(__GNUC__) || defined(__INTEL_COMPILER)
+#define _like_(x) __builtin_expect(x, 1)
+#define _unlike_(x) __builtin_expect(x, 0)
+#else
+#define _like_(x) (x)
+#define _unlike_(x) (x)
+#endif
+  if (_unlike_(!i)) {
+  } else if (_unlike_(i < 4))
+    seed = _wymum(_wyr3(p, i) ^ seed ^ _wyp0, seed ^ _wyp1);
+  else if (_like_(i <= 8))
+    seed = _wymum(_wyr4(p) ^ seed ^ _wyp0, _wyr4(p + i - 4) ^ seed ^ _wyp1);
+  else if (_like_(i <= 16))
+    seed = _wymum(_wyr8(p) ^ seed ^ _wyp0, _wyr8(p + i - 8) ^ seed ^ _wyp1);
+  else if (_like_(i <= 24))
+    seed = _wymum(_wyr8(p) ^ seed ^ _wyp0, _wyr8(p + 8) ^ seed ^ _wyp1) ^
+           _wymum(_wyr8(p + i - 8) ^ seed ^ _wyp2, seed ^ _wyp3);
+  else if (_like_(i <= 32))
+    seed =
+        _wymum(_wyr8(p) ^ seed ^ _wyp0, _wyr8(p + 8) ^ seed ^ _wyp1) ^
+        _wymum(_wyr8(p + 16) ^ seed ^ _wyp2, _wyr8(p + i - 8) ^ seed ^ _wyp3);
+  else {
+    seed = _wymum(_wyr8(p) ^ seed ^ _wyp0, _wyr8(p + 8) ^ seed ^ _wyp1) ^
+           _wymum(_wyr8(p + 16) ^ seed ^ _wyp2, _wyr8(p + 24) ^ seed ^ _wyp3) ^
+           _wymum(_wyr8(p + i - 32) ^ seed ^ _wyp1,
+                  _wyr8(p + i - 24) ^ seed ^ _wyp2) ^
+           _wymum(_wyr8(p + i - 16) ^ seed ^ _wyp3,
+                  _wyr8(p + i - 8) ^ seed ^ _wyp0);
+  }
+  if (_like_(i == len))
+    return _wymum(seed, len ^ _wyp4);
+  uint64_t see1 = seed, see2 = seed, see3 = seed;
+  for (p += i, i = len - i; _like_(i >= 64); i -= 64, p += 64) {
+    seed = _wymum(_wyr8(p) ^ seed ^ _wyp0, _wyr8(p + 8) ^ seed ^ _wyp1);
+    see1 = _wymum(_wyr8(p + 16) ^ see1 ^ _wyp2, _wyr8(p + 24) ^ see1 ^ _wyp3);
+    see2 = _wymum(_wyr8(p + 32) ^ see2 ^ _wyp1, _wyr8(p + 40) ^ see2 ^ _wyp2);
+    see3 = _wymum(_wyr8(p + 48) ^ see3 ^ _wyp3, _wyr8(p + 56) ^ see3 ^ _wyp0);
+  }
+  return _wymum(seed ^ see1 ^ see2, see3 ^ len ^ _wyp4);
+}
+static inline uint64_t wyhash64(uint64_t A, uint64_t B) {
+  return _wymum(_wymum(A ^ _wyp0, B ^ _wyp1), _wyp2);
+}
+static inline uint64_t wyrand(uint64_t *seed) {
+  *seed += _wyp0;
+  return _wymum(*seed ^ _wyp1, *seed);
+}
+static inline double wy2u01(uint64_t r) {
+  const double _wynorm = 1.0 / (1ull << 52);
+  return (r >> 11) * _wynorm;
+}
+static inline double wy2gau(uint64_t r) {
+  const double _wynorm = 1.0 / (1ull << 20);
+  return ((r & 0x1fffff) + ((r >> 21) & 0x1fffff) + ((r >> 42) & 0x1fffff)) *
+             _wynorm -
+         3.0;
+}
+#endif
 
 int g_test_oks = 0;
 int g_test_fails = 0;
@@ -34857,42 +35009,15 @@ void init() {
       "<= b)\n#define macro_f32_gt(a, b) (a >  b)\n#define macro_f32_ge(a, b) "
       "(a >= b)\n\n//================================== GLOBALS "
       "=================================*/\nbyte g_str_buf[1024];\nint "
-      "load_so(byteptr);\nvoid reload_so();\n\n",
-      compiler__c_common_macros.len, compiler__c_common_macros.str);
-  compiler__js_headers = tos3(
-      "\n\nvar array_string = function() {}\nvar array_byte = function() "
-      "{}\nvar array_int = function() {}\nvar byte = function() {}\nvar double "
-      "= function() {}\nvar int = function() {}\nvar f64 = function() {}\nvar "
-      "f32 = function() {}\nvar i64 = function() {}\nvar i32 = function() "
-      "{}\nvar i16 = function() {}\nvar u64 = function() {}\nvar u32 = "
-      "function() {}\nvar u16 = function() {}\nvar i8 = function() {}\nvar "
-      "bool = function() {}\nvar rune = function() {}\nvar map_string = "
-      "function() {}\nvar map_int = function() {}\n\n");
-  compiler__c_builtin_types = tos3(
-      "\n\n//#include <inttypes.h>  // int64_t etc\n//#include <stdint.h>  // "
-      "int64_t etc\n\n//================================== TYPEDEFS "
-      "================================*/\n\ntypedef int64_t i64;\ntypedef "
-      "int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef "
-      "uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef "
-      "uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef "
-      "unsigned char* byteptr;\ntypedef int* intptr;\ntypedef void* "
-      "voidptr;\ntypedef char* charptr;\ntypedef struct array array;\ntypedef "
-      "struct map map;\ntypedef array array_string;\ntypedef array "
-      "array_int;\ntypedef array array_byte;\ntypedef array "
-      "array_f32;\ntypedef array array_f64;\ntypedef array array_u16;\ntypedef "
-      "array array_u32;\ntypedef array array_u64;\ntypedef map "
-      "map_int;\ntypedef map map_string;\n#ifndef bool\n	typedef int "
-      "bool;\n	#define true 1\n	#define false 0\n#endif\n");
-  compiler__bare_c_headers = _STR(
-      "\n\n%.*s\n\n#ifndef exit\n#define exit(rc) sys_exit(rc)\nvoid sys_exit "
-      "(int);\n#endif\n\n// ============== wyhash ==============\n//	"
-      "Author: Wang Yi <godspeed_china@yeah.net>\n#ifndef "
-      "wyhash_version_4\n#define wyhash_version_4\n#include	"
-      "<stdint.h>\n#include	<string.h>\n#if defined(_MSC_VER) && "
-      "defined(_M_X64)\n#include <intrin.h>\n#pragma	"
-      "intrinsic(_umul128)\n#endif\nconst	uint64_t	"
-      "_wyp0=0xa0761d6478bd642full,	_wyp1=0xe7037ed1a0b428dbull,	"
-      "_wyp2=0x8ebc6af09c88c6e3ull,	_wyp3=0x589965cc75374cc3ull,	"
+      "load_so(byteptr);\nvoid reload_so();\n\n// ============== wyhash "
+      "==============\n//	Author: Wang Yi "
+      "<godspeed_china@yeah.net>\n#ifndef wyhash_version_4\n#define "
+      "wyhash_version_4\n#include	<stdint.h>\n#include	"
+      "<string.h>\n#if defined(_MSC_VER) && defined(_M_X64)\n#include "
+      "<intrin.h>\n#pragma	intrinsic(_umul128)\n#endif\nconst	"
+      "uint64_t	_wyp0=0xa0761d6478bd642full,	"
+      "_wyp1=0xe7037ed1a0b428dbull,	_wyp2=0x8ebc6af09c88c6e3ull,	"
+      "_wyp3=0x589965cc75374cc3ull,	"
       "_wyp4=0x1d8e4e27c47d124full;\nstatic	inline	uint64_t	"
       "_wyrotr(uint64_t v, unsigned k) {	return	"
       "(v>>k)|(v<<(64-k));	}\nstatic	inline	uint64_t	"
@@ -34976,8 +35101,36 @@ void init() {
       "}\nstatic	inline	double	wy2gau(uint64_t	r) {	const	"
       "double	_wynorm=1.0/(1ull<<20);	return	"
       "((r&0x1fffff)+((r>>21)&0x1fffff)+((r>>42)&0x1fffff))*_wynorm-3.0;"
-      "	}\n#endif\n",
+      "	}\n#endif\n\n",
       compiler__c_common_macros.len, compiler__c_common_macros.str);
+  compiler__js_headers = tos3(
+      "\n\nvar array_string = function() {}\nvar array_byte = function() "
+      "{}\nvar array_int = function() {}\nvar byte = function() {}\nvar double "
+      "= function() {}\nvar int = function() {}\nvar f64 = function() {}\nvar "
+      "f32 = function() {}\nvar i64 = function() {}\nvar i32 = function() "
+      "{}\nvar i16 = function() {}\nvar u64 = function() {}\nvar u32 = "
+      "function() {}\nvar u16 = function() {}\nvar i8 = function() {}\nvar "
+      "bool = function() {}\nvar rune = function() {}\nvar map_string = "
+      "function() {}\nvar map_int = function() {}\n\n");
+  compiler__c_builtin_types = tos3(
+      "\n\n//#include <inttypes.h>  // int64_t etc\n//#include <stdint.h>  // "
+      "int64_t etc\n\n//================================== TYPEDEFS "
+      "================================*/\n\ntypedef int64_t i64;\ntypedef "
+      "int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef "
+      "uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef "
+      "uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef "
+      "unsigned char* byteptr;\ntypedef int* intptr;\ntypedef void* "
+      "voidptr;\ntypedef char* charptr;\ntypedef struct array array;\ntypedef "
+      "struct map map;\ntypedef array array_string;\ntypedef array "
+      "array_int;\ntypedef array array_byte;\ntypedef array "
+      "array_f32;\ntypedef array array_f64;\ntypedef array array_u16;\ntypedef "
+      "array array_u32;\ntypedef array array_u64;\ntypedef map "
+      "map_int;\ntypedef map map_string;\n#ifndef bool\n	typedef int "
+      "bool;\n	#define true 1\n	#define false 0\n#endif\n");
+  compiler__bare_c_headers =
+      _STR("\n\n%.*s\n\n#ifndef exit\n#define exit(rc) sys_exit(rc)\nvoid "
+           "sys_exit (int);\n#endif\n\n",
+           compiler__c_common_macros.len, compiler__c_common_macros.str);
   compiler__warn_match_arrow =
       string_add(tos3("=> is no longer needed in match statements, use\n"),
                  tos3("match foo {\n	1 { bar }\n	2 { baz }\n	else { "
