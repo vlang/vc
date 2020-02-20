@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7705281"
+#define V_COMMIT_HASH "c85ccad"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ab8d883"
+#define V_COMMIT_HASH "7705281"
 #endif
 #include <inttypes.h>
 
@@ -6055,7 +6055,7 @@ string string_substr(string s, int start, int end) {
   return res;
 }
 int string_index_old(string s, string p) {
-  if (p.len > s.len) {
+  if (p.len > s.len || p.len == 0) {
     return -1;
   };
   int i = 0;
@@ -6074,7 +6074,7 @@ int string_index_old(string s, string p) {
   return -1;
 }
 Option_int string_index(string s, string p) {
-  if (p.len > s.len) {
+  if (p.len > s.len || p.len == 0) {
     return opt_none();
   };
   int i = 0;
@@ -6149,7 +6149,7 @@ int string_index_any(string s, string chars) {
   return -1;
 }
 Option_int string_last_index(string s, string p) {
-  if (p.len > s.len) {
+  if (p.len > s.len || p.len == 0) {
     return opt_none();
   };
   int i = s.len - p.len;
@@ -6352,7 +6352,7 @@ bool array_int_contains(array_int ar, int val) {
 }
 bool byte_is_space(byte c) {
   return (c == ' ' || c == '\n' || c == '\t' || c == '\v' || c == '\f' ||
-          c == '\r');
+          c == '\r' || c == 0x85 || c == 0xa0);
 }
 string string_trim_space(string s) {
   return string_trim(s, tos3(" \n\t\v\f\r"));
@@ -6688,8 +6688,8 @@ string array_string_join_lines(array_string s) {
   return array_string_join(s, tos3("\n"));
 }
 string string_reverse(string s) {
-  if (s.len == 0) {
-    return tos3("");
+  if (s.len == 0 || s.len == 1) {
+    return s;
   };
   string res = (string){.len = s.len, .str = v_malloc(s.len)};
   for (int i = s.len - 1; i >= 0; i--) {
@@ -6706,8 +6706,9 @@ string string_limit(string s, int max) {
   return ustring_substr(u, 0, max);
 }
 bool byte_is_white(byte c) {
-  int i = ((int)(c));
-  return i == 10 || i == 32 || i == 9 || i == 13 || c == '\r';
+  v_panic(tos3("Use `string.is_space` instead of `string.is_white"));
+  return false;
+  ;
 }
 int string_hash(string s) {
   int h = 0;
@@ -11629,7 +11630,7 @@ string v_dot_scanner__Scanner_ident_number(v_dot_scanner__Scanner *s) {
   return v_dot_scanner__Scanner_ident_dec_number(s);
 }
 void v_dot_scanner__Scanner_skip_whitespace(v_dot_scanner__Scanner *s) {
-  while (s->pos < s->text.len && byte_is_white(string_at(s->text, s->pos))) {
+  while (s->pos < s->text.len && byte_is_space(string_at(s->text, s->pos))) {
 
     if (v_dot_scanner__is_nl(string_at(s->text, s->pos)) && s->is_vh) {
 
@@ -31346,7 +31347,7 @@ string compiler__Scanner_ident_number(compiler__Scanner *s) {
   return compiler__Scanner_ident_dec_number(s);
 }
 void compiler__Scanner_skip_whitespace(compiler__Scanner *s) {
-  while (s->pos < s->text.len && byte_is_white(string_at(s->text, s->pos))) {
+  while (s->pos < s->text.len && byte_is_space(string_at(s->text, s->pos))) {
 
     if (compiler__is_nl(string_at(s->text, s->pos)) && s->is_vh) {
 
