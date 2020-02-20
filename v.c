@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0074976"
+#define V_COMMIT_HASH "c099cd8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8be0719"
+#define V_COMMIT_HASH "0074976"
 #endif
 #include <inttypes.h>
 
@@ -319,8 +319,6 @@ int g_test_fails = 0;
        "ALL installed modules at once, when no module name is given.\n")
 #define time__seconds_per_minute 60
 #define v_dot_token__nr_tokens 141
-#define v_dot_token__lowest_prec 0
-#define v_dot_token__highest_prec 8
 #define os__O_RDONLY 000000000
 #define os__O_WRONLY 000000001
 #define os__O_RDWR 000000002
@@ -3537,13 +3535,13 @@ array_string v_dot_token__token_str;
 map_int v_dot_token__keywords;
 #define v_dot_token__v_dot_token__Precedence_lowest 0
 #define v_dot_token__v_dot_token__Precedence_cond 1
-#define v_dot_token__v_dot_token__Precedence_assign 2
-#define v_dot_token__v_dot_token__Precedence_eq 3
-#define v_dot_token__v_dot_token__Precedence_less_greater 4
+#define v_dot_token__v_dot_token__Precedence_in_as 2
+#define v_dot_token__v_dot_token__Precedence_assign 3
+#define v_dot_token__v_dot_token__Precedence_eq 4
 #define v_dot_token__v_dot_token__Precedence_sum 5
 #define v_dot_token__v_dot_token__Precedence_product 6
-#define v_dot_token__v_dot_token__Precedence_mod 7
-#define v_dot_token__v_dot_token__Precedence_prefix 8
+#define v_dot_token__v_dot_token__Precedence_prefix 7
+#define v_dot_token__v_dot_token__Precedence_postfix 8
 #define v_dot_token__v_dot_token__Precedence_call 9
 #define v_dot_token__v_dot_token__Precedence_index 10
 array_v_dot_token__Precedence v_dot_token__precedences;
@@ -8027,18 +8025,18 @@ array_v_dot_token__Precedence v_dot_token__build_precedences() {
   array_set(
       &/*q*/ p, v_dot_token__v_dot_token__Kind_ne,
       &(v_dot_token__Precedence[]){v_dot_token__v_dot_token__Precedence_eq});
-  array_set(&/*q*/ p, v_dot_token__v_dot_token__Kind_lt,
-            &(v_dot_token__Precedence[]){
-                v_dot_token__v_dot_token__Precedence_less_greater});
-  array_set(&/*q*/ p, v_dot_token__v_dot_token__Kind_gt,
-            &(v_dot_token__Precedence[]){
-                v_dot_token__v_dot_token__Precedence_less_greater});
-  array_set(&/*q*/ p, v_dot_token__v_dot_token__Kind_le,
-            &(v_dot_token__Precedence[]){
-                v_dot_token__v_dot_token__Precedence_less_greater});
-  array_set(&/*q*/ p, v_dot_token__v_dot_token__Kind_ge,
-            &(v_dot_token__Precedence[]){
-                v_dot_token__v_dot_token__Precedence_less_greater});
+  array_set(
+      &/*q*/ p, v_dot_token__v_dot_token__Kind_lt,
+      &(v_dot_token__Precedence[]){v_dot_token__v_dot_token__Precedence_eq});
+  array_set(
+      &/*q*/ p, v_dot_token__v_dot_token__Kind_gt,
+      &(v_dot_token__Precedence[]){v_dot_token__v_dot_token__Precedence_eq});
+  array_set(
+      &/*q*/ p, v_dot_token__v_dot_token__Kind_le,
+      &(v_dot_token__Precedence[]){v_dot_token__v_dot_token__Precedence_eq});
+  array_set(
+      &/*q*/ p, v_dot_token__v_dot_token__Kind_ge,
+      &(v_dot_token__Precedence[]){v_dot_token__v_dot_token__Precedence_eq});
   array_set(
       &/*q*/ p, v_dot_token__v_dot_token__Kind_plus,
       &(v_dot_token__Precedence[]){v_dot_token__v_dot_token__Precedence_sum});
@@ -8063,9 +8061,9 @@ array_v_dot_token__Precedence v_dot_token__build_precedences() {
   array_set(&/*q*/ p, v_dot_token__v_dot_token__Kind_mult_assign,
             &(v_dot_token__Precedence[]){
                 v_dot_token__v_dot_token__Precedence_product});
-  array_set(
-      &/*q*/ p, v_dot_token__v_dot_token__Kind_mod,
-      &(v_dot_token__Precedence[]){v_dot_token__v_dot_token__Precedence_mod});
+  array_set(&/*q*/ p, v_dot_token__v_dot_token__Kind_mod,
+            &(v_dot_token__Precedence[]){
+                v_dot_token__v_dot_token__Precedence_product});
   array_set(
       &/*q*/ p, v_dot_token__v_dot_token__Kind_and,
       &(v_dot_token__Precedence[]){v_dot_token__v_dot_token__Precedence_cond});
@@ -8087,35 +8085,32 @@ int v_dot_token__Token_precedence(v_dot_token__Token tok) {
   v_dot_token__Kind tmp9 = tok.kind;
 
   if (tmp9 == v_dot_token__v_dot_token__Kind_lsbr) {
-    return 9;
+    return ((int)(v_dot_token__v_dot_token__Precedence_index));
   } else if (tmp9 == v_dot_token__v_dot_token__Kind_dot) {
-    return 8;
+    return ((int)(v_dot_token__v_dot_token__Precedence_call));
   } else if ((tmp9 == v_dot_token__v_dot_token__Kind_inc) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_dec)) {
-    return 7;
+    return ((int)(v_dot_token__v_dot_token__Precedence_postfix));
   } else if ((tmp9 == v_dot_token__v_dot_token__Kind_mul) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_div) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_mod) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_left_shift) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_right_shift) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_amp)) {
-    return 6;
+    return ((int)(v_dot_token__v_dot_token__Precedence_product));
   } else if ((tmp9 == v_dot_token__v_dot_token__Kind_plus) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_minus) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_pipe) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_xor)) {
-    return 5;
+    return ((int)(v_dot_token__v_dot_token__Precedence_sum));
   } else if ((tmp9 == v_dot_token__v_dot_token__Kind_eq) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_ne) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_lt) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_le) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_gt) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_ge)) {
-    return 4;
-  } else if (tmp9 == v_dot_token__v_dot_token__Kind_and) {
-    return 3;
-  } else if ((tmp9 == v_dot_token__v_dot_token__Kind_logical_or) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_assign) ||
+    return ((int)(v_dot_token__v_dot_token__Precedence_eq));
+  } else if ((tmp9 == v_dot_token__v_dot_token__Kind_assign) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_plus_assign) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_minus_assign) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_div_assign) ||
@@ -8124,13 +8119,16 @@ int v_dot_token__Token_precedence(v_dot_token__Token tok) {
              (tmp9 == v_dot_token__v_dot_token__Kind_left_shift_assign) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_righ_shift_assign) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_mult_assign)) {
-    return 2;
+    return ((int)(v_dot_token__v_dot_token__Precedence_assign));
   } else if ((tmp9 == v_dot_token__v_dot_token__Kind_key_in) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_key_as)) {
-    return 1;
+    return ((int)(v_dot_token__v_dot_token__Precedence_in_as));
+  } else if ((tmp9 == v_dot_token__v_dot_token__Kind_logical_or) ||
+             (tmp9 == v_dot_token__v_dot_token__Kind_and)) {
+    return ((int)(v_dot_token__v_dot_token__Precedence_cond));
   } else // default:
   {
-    return v_dot_token__lowest_prec;
+    return ((int)(v_dot_token__v_dot_token__Precedence_lowest));
   };
 }
 bool v_dot_token__Token_is_scalar(v_dot_token__Token tok) {
@@ -14679,7 +14677,7 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
       v_dot_table__Type typ = v_dot_checker__Checker_expr(c, expr);
       v_dot_table__Var tmp41 = {0};
       bool tmp42 =
-          map_get(/*checker.v : 284*/ c->table->consts, field.name, &tmp41);
+          map_get(/*checker.v : 285*/ c->table->consts, field.name, &tmp41);
 
       v_dot_table__Var xconst = tmp41;
       xconst.typ = typ;
