@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "20d900a"
+#define V_COMMIT_HASH "72bbec8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6f7c103"
+#define V_COMMIT_HASH "20d900a"
 #endif
 #include <inttypes.h>
 
@@ -14473,7 +14473,7 @@ v_dot_checker__Checker_call_expr(v_dot_checker__Checker *c,
     if (!v_dot_table__Table_check(&/* ? */ *c->table, typ, arg.typ)) {
       if (arg_typ_sym->kind == v_dot_table__v_dot_table__Kind_string &&
           v_dot_table__TypeSymbol_has_method(&/* ? */ *typ_sym, tos3("str"))) {
-        break;
+        continue;
       };
       v_dot_checker__Checker_error(
           c,
