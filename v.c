@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fcd97f5"
+#define V_COMMIT_HASH "8be0719"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "05329d6"
+#define V_COMMIT_HASH "fcd97f5"
 #endif
 #include <inttypes.h>
 
@@ -2746,7 +2746,6 @@ void v_dot_doc__Doc_writeln(v_dot_doc__Doc *d, string s);
 void v_dot_doc__Doc_write_fn_node(v_dot_doc__Doc *d, v_dot_ast__FnDecl f);
 void v_dot_doc__Doc_print_fns(v_dot_doc__Doc *d);
 void v_dot_doc__Doc_print_methods(v_dot_doc__Doc *d);
-string v_dot_doc__vexe_path();
 v_dot_builder__Builder
 v_dot_builder__new_builder(v_dot_pref__Preferences *pref);
 string v_dot_builder__Builder_gen_c(v_dot_builder__Builder *b,
@@ -3149,7 +3148,6 @@ array_string compiler__V_get_user_files(compiler__V *v);
 array_string compiler__V_get_imported_module_files(compiler__V *v, string mod);
 void compiler__V_parse_lib_imports(compiler__V *v);
 void compiler__V_log(compiler__V *v, string s);
-string compiler__vexe_path();
 void compiler__verror(string s);
 string compiler__vhash();
 string compiler__cescaped_path(string s);
@@ -3380,7 +3378,6 @@ _V_MulRet_string_V_array_string
 main__get_basic_command_and_option(array_string args);
 array_string main__non_empty(array_string arg);
 array_string main__join_flags_and_argument();
-string main__vexe_path();
 void main__launch_tool(bool is_verbose, string tname, string cmdname);
 string main__path_of_executable(string path);
 void main__create_symlink();
@@ -5794,6 +5791,9 @@ string string_to_upper(string s) {
   return tos(b, s.len);
 }
 string string_capitalize(string s) {
+  if (s.len == 0) {
+    return tos3("");
+  };
   string sl = string_to_lower(s);
   string cap = string_add(string_to_upper(byte_str(sl.str[0] /*rbyte 0*/)),
                           string_right(sl, 1));
@@ -16045,7 +16045,7 @@ string v_dot_doc__doc(string mod, v_dot_table__Table *table) {
                        .mod = mod,
                        .stmts = new_array(0, 1, sizeof(v_dot_ast__Stmt))};
   string mods_path =
-      string_add(filepath__dir(v_dot_doc__vexe_path()), tos3("/vlib"));
+      string_add(filepath__dir(v_dot_pref__vexe_path()), tos3("/vlib"));
   string path = string_replace(
       filepath__join(mods_path, &(varg_string){.len = 1, .args = {mod}}),
       tos3("."), filepath__separator);
@@ -16127,15 +16127,6 @@ void v_dot_doc__Doc_print_methods(v_dot_doc__Doc *d) {
     {
     };
   };
-}
-string v_dot_doc__vexe_path() {
-  string vexe = os__getenv(tos3("VEXE"));
-  if (string_ne(tos3(""), vexe)) {
-    return vexe;
-  };
-  string real_vexe_path = os__realpath(os__executable());
-  os__setenv(tos3("VEXE"), real_vexe_path, 1);
-  return real_vexe_path;
 }
 v_dot_builder__Builder
 v_dot_builder__new_builder(v_dot_pref__Preferences *pref) {
@@ -19879,7 +19870,7 @@ void compiler__V_cc(compiler__V *v) {
     return;
   };
   compiler__V_build_thirdparty_obj_files(&/* ? */ *v);
-  string vexe = compiler__vexe_path();
+  string vexe = v_dot_pref__vexe_path();
   string vdir = filepath__dir(vexe);
   bool ends_with_c = string_ends_with(v->pref->out_name, tos3(".c"));
   bool ends_with_js = string_ends_with(v->pref->out_name, tos3(".js"));
@@ -28734,7 +28725,7 @@ array_string compiler__V_get_user_files(compiler__V *v) {
   compiler__V_log(&/* ? */ *v, _STR("get_v_files(%.*s)", dir.len, dir.str));
   array_string user_files = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  string vroot = filepath__dir(compiler__vexe_path());
+  string vroot = filepath__dir(v_dot_pref__vexe_path());
   string preludes_path = filepath__join(
       vroot,
       &(varg_string){.len = 3,
@@ -28926,15 +28917,6 @@ void compiler__V_log(compiler__V *v, string s) {
   };
   println(s);
 }
-string compiler__vexe_path() {
-  string vexe = os__getenv(tos3("VEXE"));
-  if (string_ne(tos3(""), vexe)) {
-    return vexe;
-  };
-  string real_vexe_path = os__realpath(os__executable());
-  os__setenv(tos3("VEXE"), real_vexe_path, 1);
-  return real_vexe_path;
-}
 void compiler__verror(string s) {
   printf("V error: %.*s\n", s.len, s.str);
   os__flush_stdout();
@@ -29000,7 +28982,7 @@ void compiler__set_vroot_folder(string vroot_path) {
 void compiler__generate_vh(string mod) {
   printf("\n\n\n\nGenerating a V header file for module `%.*s`\n", mod.len,
          mod.str);
-  string vexe = compiler__vexe_path();
+  string vexe = v_dot_pref__vexe_path();
   string full_mod_path = filepath__join(
       filepath__dir(vexe), &(varg_string){.len = 1, .args = {mod}});
   string dir =
@@ -33956,7 +33938,7 @@ compiler__V *main__new_v(array_string args) {
       v_panic(err);
     };
   };
-  string vroot = filepath__dir(main__vexe_path());
+  string vroot = filepath__dir(v_dot_pref__vexe_path());
   string user_mod_path =
       os_dot_cmdline__option(args, tos3("-user_mod_path"), tos3(""));
   string vlib_path = os_dot_cmdline__option(args, tos3("-vlib-path"), tos3(""));
@@ -34034,12 +34016,12 @@ compiler__V *main__new_v(array_string args) {
       os_dot_cmdline__options(args, tos3("-cflags")), tos3(" "));
   array_string defines = os_dot_cmdline__options(args, tos3("-d"));
   _V_MulRet_array_string_V_array_string
-      _V_mret_510_compile_defines_compile_defines_all =
+      _V_mret_512_compile_defines_compile_defines_all =
           main__parse_defines(defines);
   array_string compile_defines =
-      _V_mret_510_compile_defines_compile_defines_all.var_0;
+      _V_mret_512_compile_defines_compile_defines_all.var_0;
   array_string compile_defines_all =
-      _V_mret_510_compile_defines_compile_defines_all.var_1;
+      _V_mret_512_compile_defines_compile_defines_all.var_1;
   string rdir = os__realpath(dir);
   string rdir_name = filepath__filename(rdir);
   if ((_IN(string, (tos3("-bare")), args))) {
@@ -34049,7 +34031,7 @@ compiler__V *main__new_v(array_string args) {
   };
   bool is_repl = (_IN(string, (tos3("-repl")), args));
   string ccompiler = os_dot_cmdline__option(args, tos3("-cc"), tos3(""));
-  v_dot_pref__Preferences *pref = (v_dot_pref__Preferences *)memdup(
+  v_dot_pref__Preferences *prefs = (v_dot_pref__Preferences *)memdup(
       &(v_dot_pref__Preferences){
           .os = v_dot_pref__os_from_string(target_os),
           .is_so = (_IN(string, (tos3("-shared")), args)),
@@ -34106,33 +34088,34 @@ compiler__V *main__new_v(array_string args) {
           .third_party_option = tos3(""),
       },
       sizeof(v_dot_pref__Preferences));
-  if (pref->is_verbose || pref->is_debug) {
-    printf("C compiler=%.*s\n", pref->ccompiler.len, pref->ccompiler.str);
+  if (prefs->is_verbose || prefs->is_debug) {
+    printf("C compiler=%.*s\n", prefs->ccompiler.len, prefs->ccompiler.str);
   };
 #ifndef __linux__
-  if (pref->is_bare && !string_ends_with(out_name, tos3(".c"))) {
+  if (prefs->is_bare && !string_ends_with(out_name, tos3(".c"))) {
     println(tos3("V error: -freestanding only works on Linux for now"));
     os__flush_stdout();
     v_exit(1);
   };
 #endif
   ;
-  v_dot_pref__Preferences_fill_with_defaults(pref);
-  if (!os__is_dir(pref->vlib_path) ||
-      !os__is_dir(string_add(string_add(pref->vlib_path, filepath__separator),
+  v_dot_pref__Preferences_fill_with_defaults(prefs);
+  if (!os__is_dir(prefs->vlib_path) ||
+      !os__is_dir(string_add(string_add(prefs->vlib_path, filepath__separator),
                              tos3("builtin")))) {
     println(tos3("vlib not found. It should be next to the V executable."));
     println(tos3("Go to https://vlang.io to install V."));
     printf("(os.executable=%.*s vlib_path=%.*s vexe_path=%.*s\n",
-           os__executable().len, os__executable().str, pref->vlib_path.len,
-           pref->vlib_path.str, main__vexe_path().len, main__vexe_path().str);
+           os__executable().len, os__executable().str, prefs->vlib_path.len,
+           prefs->vlib_path.str, v_dot_pref__vexe_path().len,
+           v_dot_pref__vexe_path().str);
     v_exit(1);
   };
-  if (pref->is_script && !os__exists(dir)) {
+  if (prefs->is_script && !os__exists(dir)) {
     printf("`%.*s` does not exist\n", dir.len, dir.str);
     v_exit(1);
   };
-  return compiler__new_v(pref);
+  return compiler__new_v(prefs);
 }
 string main__find_c_compiler_thirdparty_options(array_string args) {
   array_string cflags = os_dot_cmdline__options(args, tos3("-cflags"));
@@ -34250,17 +34233,8 @@ array_string main__join_flags_and_argument() {
   };
   return main__non_empty(os__args);
 }
-string main__vexe_path() {
-  string vexe = os__getenv(tos3("VEXE"));
-  if (string_ne(vexe, tos3(""))) {
-    return vexe;
-  };
-  string real_vexe_path = os__realpath(os__executable());
-  os__setenv(tos3("VEXE"), real_vexe_path, 1);
-  return real_vexe_path;
-}
 void main__launch_tool(bool is_verbose, string tname, string cmdname) {
-  string vexe = main__vexe_path();
+  string vexe = v_dot_pref__vexe_path();
   string vroot = filepath__dir(vexe);
   compiler__set_vroot_folder(vroot);
   int tname_index = array_string_index(os__args, cmdname);
@@ -34351,7 +34325,7 @@ void main__create_symlink() {
   return;
 #endif
   ;
-  string vexe = main__vexe_path();
+  string vexe = v_dot_pref__vexe_path();
   string link_path = tos3("/usr/local/bin/v");
   Option_os__Result tmp1 = os__exec(_STR("ln -sf %.*s %.*s", vexe.len, vexe.str,
                                          link_path.len, link_path.str));
