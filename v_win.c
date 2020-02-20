@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8be0719"
+#define V_COMMIT_HASH "0074976"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fcd97f5"
+#define V_COMMIT_HASH "8be0719"
 #endif
 #include <inttypes.h>
 
@@ -14416,6 +14416,9 @@ void v_dot_checker__Checker_check(v_dot_checker__Checker *c,
 
     v_dot_checker__Checker_stmt(c, stmt);
   };
+  if (c->nr_errors > 0) {
+    v_exit(1);
+  };
 }
 void v_dot_checker__Checker_check_files(v_dot_checker__Checker *c,
                                         array_v_dot_ast__File ast_files) {
@@ -14806,7 +14809,7 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
       v_dot_table__Type typ = v_dot_checker__Checker_expr(c, expr);
       v_dot_table__Var tmp41 = {0};
       bool tmp42 =
-          map_get(/*checker.v : 283*/ c->table->consts, field.name, &tmp41);
+          map_get(/*checker.v : 284*/ c->table->consts, field.name, &tmp41);
 
       v_dot_table__Var xconst = tmp41;
       xconst.typ = typ;
@@ -14950,7 +14953,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl tmp49 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
     _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl
-        _V_mret_2233_var_scope_var;
+        _V_mret_2245_var_scope_var;
     if (!tmp49.ok) {
       string err = tmp49.error;
       int errcode = tmp49.ecode;
@@ -14962,11 +14965,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_2233_var_scope_var =
+    _V_mret_2245_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl *)tmp49.data;
     ;
-    var_scope = _V_mret_2233_var_scope_var.var_0;
-    var = _V_mret_2233_var_scope_var.var_1;
+    var_scope = _V_mret_2245_var_scope_var.var_0;
+    var = _V_mret_2245_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
