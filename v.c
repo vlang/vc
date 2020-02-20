@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "aab1045"
+#define V_COMMIT_HASH "05329d6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d2cb5ad"
+#define V_COMMIT_HASH "aab1045"
 #endif
 #include <inttypes.h>
 
@@ -3382,6 +3382,7 @@ array_string main__non_empty(array_string arg);
 array_string main__join_flags_and_argument();
 string main__vexe_path();
 void main__launch_tool(bool is_verbose, string tname, string cmdname);
+string main__path_of_executable(string path);
 void main__create_symlink();
 void main__main();
 string array_v_dot_table__Type_str();
@@ -34237,8 +34238,8 @@ void main__launch_tool(bool is_verbose, string tname, string cmdname) {
       array_clone(array_slice2(os__args, 1, tname_index, false));
   string tool_args =
       array_string_join(array_slice2(os__args, 1, -1, true), tos3(" "));
-  string tool_exe = os__realpath(
-      _STR("%.*s/cmd/tools/%.*s", vroot.len, vroot.str, tname.len, tname.str));
+  string tool_exe = main__path_of_executable(os__realpath(
+      _STR("%.*s/cmd/tools/%.*s", vroot.len, vroot.str, tname.len, tname.str)));
   string tool_source = os__realpath(_STR("%.*s/cmd/tools/%.*s.v", vroot.len,
                                          vroot.str, tname.len, tname.str));
   string tool_command = _STR("\"%.*s\" %.*s", tool_exe.len, tool_exe.str,
@@ -34303,6 +34304,13 @@ void main__launch_tool(bool is_verbose, string tname, string cmdname) {
                   tool_command.len, tool_command.str));
   };
   v_exit(os__system(tool_command));
+}
+string main__path_of_executable(string path) {
+#ifdef _WIN32
+  return string_add(path, tos3(".exe"));
+#endif
+  ;
+  return path;
 }
 void main__create_symlink() {
 #ifdef _WIN32
