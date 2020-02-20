@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "72bbec8"
+#define V_COMMIT_HASH "296e736"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "20d900a"
+#define V_COMMIT_HASH "72bbec8"
 #endif
 #include <inttypes.h>
 
@@ -10157,8 +10157,6 @@ v_dot_table__Table_register_type_symbol(v_dot_table__Table *t,
     v_dot_table__Kind tmp45 = ex_type.kind;
 
     if (tmp45 == v_dot_table__v_dot_table__Kind_placeholder) {
-      printf("overriding type placeholder `%.*s`\n", typ.name.len,
-             typ.name.str);
       array_set(&/*q*/ t->types, existing_idx,
                 &(v_dot_table__TypeSymbol[]){(v_dot_table__TypeSymbol){
                     .methods = ex_type.methods,
@@ -13583,7 +13581,7 @@ v_dot_parser__Parser_enum_val(v_dot_parser__Parser *p) {
                     sizeof(v_dot_ast__EnumVal)),
       .typ = SumType_EnumVal};
   return (_V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type){
-      .var_0 = node, .var_1 = v_dot_table__bool_type};
+      .var_0 = node, .var_1 = v_dot_table__int_type};
 }
 v_dot_ast__Stmt v_dot_parser__Parser_for_statement(v_dot_parser__Parser *p) {
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_key_for);
@@ -14475,6 +14473,10 @@ v_dot_checker__Checker_call_expr(v_dot_checker__Checker *c,
           v_dot_table__TypeSymbol_has_method(&/* ? */ *typ_sym, tos3("str"))) {
         continue;
       };
+      if (typ_sym->kind == v_dot_table__v_dot_table__Kind_void &&
+          arg_typ_sym->kind == v_dot_table__v_dot_table__Kind_string) {
+        continue;
+      };
       v_dot_checker__Checker_error(
           c,
           _STR(
@@ -14543,6 +14545,9 @@ v_dot_checker__Checker_selector_expr(v_dot_checker__Checker *c,
     };
   };
   if (typ_sym->kind != v_dot_table__v_dot_table__Kind_struct_) {
+    if (string_eq(field_name, tos3("default_mode"))) {
+      return v_dot_table__bool_type;
+    };
     v_dot_checker__Checker_error(
         c, _STR("`%.*s` is not a struct", typ_sym->name.len, typ_sym->name.str),
         selector_expr.pos);
@@ -14681,7 +14686,7 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
       v_dot_table__Type typ = v_dot_checker__Checker_expr(c, expr);
       v_dot_table__Var tmp41 = {0};
       bool tmp42 =
-          map_get(/*checker.v : 289*/ c->table->consts, field.name, &tmp41);
+          map_get(/*checker.v : 298*/ c->table->consts, field.name, &tmp41);
 
       v_dot_table__Var xconst = tmp41;
       xconst.typ = typ;
@@ -14825,7 +14830,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl tmp49 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
     _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl
-        _V_mret_2262_var_scope_var;
+        _V_mret_2289_var_scope_var;
     if (!tmp49.ok) {
       string err = tmp49.error;
       int errcode = tmp49.ecode;
@@ -14837,11 +14842,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_2262_var_scope_var =
+    _V_mret_2289_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl *)tmp49.data;
     ;
-    var_scope = _V_mret_2262_var_scope_var.var_0;
-    var = _V_mret_2262_var_scope_var.var_1;
+    var_scope = _V_mret_2289_var_scope_var.var_0;
+    var = _V_mret_2289_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
@@ -33955,7 +33960,7 @@ compiler__V *main__new_v(array_string args) {
     v_exit(1);
   };
   string out_name = os_dot_cmdline__option(args, tos3("-o"), tos3(""));
-  string dir = *(string *)array_last(args);
+  string dir = (*(string *)array_get(args, args.len - 1));
   if ((_IN(string, (tos3("run")), args))) {
     array_string args_after_run =
         os_dot_cmdline__only_non_options(os_dot_cmdline__options_after(
@@ -34009,10 +34014,10 @@ compiler__V *main__new_v(array_string args) {
     string d = string_all_before_last(out_name, filepath__separator);
     if (!os__is_dir(d)) {
       printf("creating a new directory \"%.*s\"\n", d.len, d.str);
-      Option_bool tmp9 = os__mkdir(d);
-      if (!tmp9.ok) {
-        string err = tmp9.error;
-        int errcode = tmp9.ecode;
+      Option_bool tmp11 = os__mkdir(d);
+      if (!tmp11.ok) {
+        string err = tmp11.error;
+        int errcode = tmp11.ecode;
         v_panic(err);
       };
     };
@@ -34021,12 +34026,12 @@ compiler__V *main__new_v(array_string args) {
       os_dot_cmdline__options(args, tos3("-cflags")), tos3(" "));
   array_string defines = os_dot_cmdline__options(args, tos3("-d"));
   _V_MulRet_array_string_V_array_string
-      _V_mret_512_compile_defines_compile_defines_all =
+      _V_mret_515_compile_defines_compile_defines_all =
           main__parse_defines(defines);
   array_string compile_defines =
-      _V_mret_512_compile_defines_compile_defines_all.var_0;
+      _V_mret_515_compile_defines_compile_defines_all.var_0;
   array_string compile_defines_all =
-      _V_mret_512_compile_defines_compile_defines_all.var_1;
+      _V_mret_515_compile_defines_compile_defines_all.var_1;
   string rdir = os__realpath(dir);
   string rdir_name = filepath__filename(rdir);
   if ((_IN(string, (tos3("-bare")), args))) {
@@ -34125,13 +34130,13 @@ compiler__V *main__new_v(array_string args) {
 string main__find_c_compiler_thirdparty_options(array_string args) {
   array_string cflags = os_dot_cmdline__options(args, tos3("-cflags"));
 #ifndef _WIN32
-  _PUSH(&cflags, (/*typ = array_string   tmp_typ=string*/ tos3("-fPIC")), tmp10,
+  _PUSH(&cflags, (/*typ = array_string   tmp_typ=string*/ tos3("-fPIC")), tmp12,
         string);
 #endif
   ;
   if ((_IN(string, (tos3("-m32")), args))) {
     _PUSH(&cflags, (/*typ = array_string   tmp_typ=string*/ tos3("-m32")),
-          tmp11, string);
+          tmp13, string);
   };
   return array_string_join(cflags, tos3(" "));
 }
@@ -34141,28 +34146,28 @@ main__parse_defines(array_string defines) {
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   array_string compile_defines_all = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  array_string tmp12 = defines;
-  for (int tmp13 = 0; tmp13 < tmp12.len; tmp13++) {
-    string dfn = ((string *)tmp12.data)[tmp13];
+  array_string tmp14 = defines;
+  for (int tmp15 = 0; tmp15 < tmp14.len; tmp15++) {
+    string dfn = ((string *)tmp14.data)[tmp15];
 
     array_string dfn_parts = string_split(dfn, tos3("="));
     if (dfn_parts.len == 1) {
       _PUSH(&compile_defines, (/*typ = array_string   tmp_typ=string*/ dfn),
-            tmp14, string);
+            tmp16, string);
       _PUSH(&compile_defines_all, (/*typ = array_string   tmp_typ=string*/ dfn),
-            tmp15, string);
+            tmp17, string);
       continue;
     };
     if (dfn_parts.len == 2) {
       _PUSH(&compile_defines_all,
             (/*typ = array_string   tmp_typ=string*/ (
                 *(string *)array_get(dfn_parts, 0))),
-            tmp16, string);
+            tmp18, string);
       if (string_eq((*(string *)array_get(dfn_parts, 1)), tos3("1"))) {
         _PUSH(&compile_defines,
               (/*typ = array_string   tmp_typ=string*/ (
                   *(string *)array_get(dfn_parts, 0))),
-              tmp21, string);
+              tmp23, string);
       };
     };
   };
