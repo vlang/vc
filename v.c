@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e56bf42"
+#define V_COMMIT_HASH "8677a59"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c85ccad"
+#define V_COMMIT_HASH "e56bf42"
 #endif
 #include <inttypes.h>
 
@@ -9393,20 +9393,16 @@ void os__print_c_errno() {
   printf("errno=%d err=%.*s\n", e, se.len, se.str);
 }
 string os__ext(string path) {
-  println(tos3("Use filepath.ext"));
-  return filepath__ext(path);
+  v_panic(tos3("Use `filepath.ext` instead of `os.ext`"));
 }
 string os__dir(string path) {
-  println(tos3("Use filepath.dir"));
-  return filepath__dir(path);
+  v_panic(tos3("Use `filepath.dir` instead of `os.dir`"));
 }
 string os__basedir(string path) {
-  println(tos3("Use filepath.basedir"));
-  return filepath__basedir(path);
+  v_panic(tos3("Use `filepath.basedir` instead of `os.basedir`"));
 }
 string os__filename(string path) {
-  println(tos3("Use filepath.filename"));
-  return filepath__filename(path);
+  v_panic(tos3("Use `filepath.filename` instead of `os.filename`"));
 }
 string os__get_line() {
   string str = os__get_raw_line();
@@ -9660,7 +9656,7 @@ string os__executable() {
   return (*(string *)array_get(os__args, 0));
 }
 bool os__dir_exists(string path) {
-  v_panic(tos3("use os.is_dir()"));
+  v_panic(tos3("Use `os.is_dir` instead of `os.dir_exists`"));
   return false;
   ;
 }
@@ -29573,7 +29569,7 @@ void compiler__V_parse_lib_imports(compiler__V *v) {
                    (*(compiler__Parser *)array_get(v->parsers, pidx))
                        .file_path.str,
                    mod.len, mod.str, file.len, file.str, p_mod.len, p_mod.str),
-              1);
+              0);
         };
       };
       _PUSH(&done_imports, (/*typ = array_string   tmp_typ=string*/ mod), tmp84,
