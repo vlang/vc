@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8677a59"
+#define V_COMMIT_HASH "8bb8b7d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e56bf42"
+#define V_COMMIT_HASH "8677a59"
 #endif
 #include <inttypes.h>
 
@@ -878,6 +878,7 @@ typedef Option Option_v_dot_table__Fn;
 typedef Option Option_v_dot_table__Field;
 typedef Option Option_v_dot_table__Field;
 typedef Option Option_v_dot_table__TypeSymbol;
+typedef int v_dot_table__TypeExtra;
 typedef int v_dot_ast__IdentKind;
 typedef Option Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl;
 typedef Option Option_v_dot_ast__VarDecl;
@@ -2687,9 +2688,16 @@ bool v_dot_table__Table_check(v_dot_table__Table *t, v_dot_table__Type got,
                               v_dot_table__Type expected);
 static inline int v_dot_table__type_idx(v_dot_table__Type t);
 static inline int v_dot_table__type_nr_muls(v_dot_table__Type t);
+static inline v_dot_table__TypeExtra
+v_dot_table__type_extra(v_dot_table__Type t);
 static inline bool v_dot_table__type_is_ptr(v_dot_table__Type t);
+static inline v_dot_table__Type
+v_dot_table__type_set_nr_muls(v_dot_table__Type t, int nr_muls);
 static inline v_dot_table__Type v_dot_table__type_to_ptr(v_dot_table__Type t);
 static inline v_dot_table__Type v_dot_table__type_deref(v_dot_table__Type t);
+static inline bool v_dot_table__type_is_optional(v_dot_table__Type t);
+static inline v_dot_table__Type
+v_dot_table__type_to_optional(v_dot_table__Type t);
 static inline v_dot_table__Type v_dot_table__new_type(int idx);
 static inline v_dot_table__Type v_dot_table__new_type_ptr(int idx, int nr_muls);
 string term__format(string msg, string open, string close);
@@ -2859,6 +2867,8 @@ v_dot_table__Type
 v_dot_parser__Parser_parse_multi_return_type(v_dot_parser__Parser *p);
 v_dot_table__Type v_dot_parser__Parser_parse_fn_type(v_dot_parser__Parser *p);
 v_dot_table__Type v_dot_parser__Parser_parse_type(v_dot_parser__Parser *p);
+v_dot_table__Type v_dot_parser__Parser_parse_any_type(v_dot_parser__Parser *p,
+                                                      int nr_muls);
 v_dot_ast__Stmt v_dot_parser__parse_stmt(string text, v_dot_table__Table *table,
                                          v_dot_ast__Scope *scope);
 v_dot_ast__File v_dot_parser__parse_file(string path,
@@ -3966,6 +3976,8 @@ array_string v_dot_table__builtin_type_names;
 #define v_dot_table__v_dot_table__Kind_multi_return 23
 #define v_dot_table__v_dot_table__Kind_sum_type 24
 #define v_dot_table__v_dot_table__Kind_alias 25
+#define v_dot_table__v_dot_table__TypeExtra_unset 0
+#define v_dot_table__v_dot_table__TypeExtra_optional 1
 v_dot_table__Type v_dot_table__void_type;
 v_dot_table__Type v_dot_table__voidptr_type;
 v_dot_table__Type v_dot_table__byteptr_type;
@@ -11140,41 +11152,67 @@ bool v_dot_table__Table_check(v_dot_table__Table *t, v_dot_table__Type got,
   return 1;
 }
 static inline int v_dot_table__type_idx(v_dot_table__Type t) {
-  return ((i16)(((int)(t)) >> 16)) & 0xffffffff;
+  return ((u16)(t)) & 0xffff;
 }
 static inline int v_dot_table__type_nr_muls(v_dot_table__Type t) {
-  return ((i16)(((int)(t)) & 0xffffffff));
+  return (((int)(t)) >> 16) & 0xff;
+}
+static inline v_dot_table__TypeExtra
+v_dot_table__type_extra(v_dot_table__Type t) {
+  return ((((int)(t)) >> 24) & 0xff);
 }
 static inline bool v_dot_table__type_is_ptr(v_dot_table__Type t) {
   return v_dot_table__type_nr_muls(t) > 0;
 }
+static inline v_dot_table__Type
+v_dot_table__type_set_nr_muls(v_dot_table__Type t, int nr_muls) {
+  if (nr_muls < 0 || nr_muls > 255) {
+    v_panic(tos3("typ_set_nr_muls: nr_muls must be between 0 & 255"));
+  };
+  return (((int)(v_dot_table__type_extra(t))) << 24) | (nr_muls << 16) |
+         ((u16)(v_dot_table__type_idx(t)));
+}
 static inline v_dot_table__Type v_dot_table__type_to_ptr(v_dot_table__Type t) {
-  return v_dot_table__type_idx(t) << ((i16)(16)) |
-         (v_dot_table__type_nr_muls(t) + 1);
+  int nr_muls = v_dot_table__type_nr_muls(t);
+  if (nr_muls == 255) {
+    v_panic(tos3("type_to_pre: nr_muls is already at max of 255"));
+  };
+  return (((int)(v_dot_table__type_extra(t))) << 24) | ((nr_muls + 1) << 16) |
+         ((u16)(v_dot_table__type_idx(t)));
 }
 static inline v_dot_table__Type v_dot_table__type_deref(v_dot_table__Type t) {
-  int idx = v_dot_table__type_idx(t);
   int nr_muls = v_dot_table__type_nr_muls(t);
   if (nr_muls == 0) {
-    v_panic(_STR("deref: %d is not a pointer", idx));
+    v_panic(_STR("deref: type `%d` is not a pointer", t));
   };
-  return idx << ((i16)(16)) | (nr_muls + -1);
+  return (((int)(v_dot_table__type_extra(t))) << 24) | ((nr_muls - 1) << 16) |
+         ((u16)(v_dot_table__type_idx(t)));
+}
+static inline bool v_dot_table__type_is_optional(v_dot_table__Type t) {
+  return v_dot_table__type_extra(t) ==
+         v_dot_table__v_dot_table__TypeExtra_optional;
+}
+static inline v_dot_table__Type
+v_dot_table__type_to_optional(v_dot_table__Type t) {
+  return (((int)(v_dot_table__v_dot_table__TypeExtra_optional)) << 24) |
+         (v_dot_table__type_nr_muls(t) << 16) |
+         ((u16)(v_dot_table__type_idx(t)));
 }
 static inline v_dot_table__Type v_dot_table__new_type(int idx) {
-  if (idx > 32767 || idx < -32767) {
-    v_panic(tos3("new_type_id: idx must be between -32767 & 32767"));
+  if (idx < 1 || idx > 65536) {
+    v_panic(tos3("new_type_id: idx must be between 1 & 65536"));
   };
-  return idx << ((i16)(16));
+  return ((u16)(idx));
 }
 static inline v_dot_table__Type v_dot_table__new_type_ptr(int idx,
                                                           int nr_muls) {
-  if (idx > 32767 || idx < -32767) {
-    v_panic(tos3("typ_ptr: idx must be between -32767 & 32767"));
+  if (idx < 1 || idx > 65536) {
+    v_panic(tos3("typ_ptr: idx must be between 1 & 65536"));
   };
-  if (nr_muls > 32767 || nr_muls < -0) {
-    v_panic(tos3("typ_ptr: nr_muls must be between 0 & 32767"));
+  if (nr_muls < 0 || nr_muls > 255) {
+    v_panic(tos3("typ_ptr: nr_muls must be between 0 & 255"));
   };
-  return idx << ((i16)(16)) | nr_muls;
+  return (nr_muls << 16) | ((u16)(idx));
 }
 string term__format(string msg, string open, string close) {
   return string_add(
@@ -13178,9 +13216,17 @@ v_dot_table__Type v_dot_parser__Parser_parse_type(v_dot_parser__Parser *p) {
     v_dot_parser__Parser_next(p);
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_dot);
   };
-  if (p->tok.kind == v_dot_token__v_dot_token__Kind_question) {
-    v_dot_parser__Parser_next(p);
+  v_dot_table__Type typ = v_dot_parser__Parser_parse_any_type(p, nr_muls);
+  if (is_optional) {
+    typ = v_dot_table__type_to_optional(typ);
   };
+  if (nr_muls > 0) {
+    typ = v_dot_table__type_set_nr_muls(typ, nr_muls);
+  };
+  return typ;
+}
+v_dot_table__Type v_dot_parser__Parser_parse_any_type(v_dot_parser__Parser *p,
+                                                      int nr_muls) {
   string name = p->tok.lit;
   if (p->peek_tok.kind == v_dot_token__v_dot_token__Kind_dot) {
     if (!v_dot_parser__Parser_known_import(&/* ? */ *p, name)) {
@@ -13192,7 +13238,7 @@ v_dot_table__Type v_dot_parser__Parser_parse_type(v_dot_parser__Parser *p) {
     v_dot_parser__Parser_next(p);
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_dot);
     string tmp2 = tos3("");
-    bool tmp3 = map_get(/*parse_type.v : 110*/ p->imports, name, &tmp2);
+    bool tmp3 = map_get(/*parse_type.v : 121*/ p->imports, name, &tmp2);
 
     if (!tmp3)
       tmp2 = tos((byte *)"", 0);
