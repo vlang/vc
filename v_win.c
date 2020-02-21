@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d075be7"
+#define V_COMMIT_HASH "9e6773c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "15a2927"
+#define V_COMMIT_HASH "d075be7"
 #endif
 #include <inttypes.h>
 
@@ -10679,7 +10679,11 @@ string v_dot_table__Table_type_to_str(v_dot_table__Table *table,
                                       v_dot_table__Type t) {
   v_dot_table__TypeSymbol *sym =
       v_dot_table__Table_get_type_symbol(&/* ? */ *table, t);
-  return string_replace(sym->name, tos3("array_"), tos3("[]"));
+  string res = string_replace(sym->name, tos3("array_"), tos3("[]"));
+  if (v_dot_table__type_is_optional(t)) {
+    res = string_add(tos3("?"), res);
+  };
+  return res;
 }
 string v_dot_table__Table_qualify_module(v_dot_table__Table *table, string mod,
                                          string file_path) {
