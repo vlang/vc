@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "527377d"
+#define V_COMMIT_HASH "6dac2ed"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8bb8b7d"
+#define V_COMMIT_HASH "527377d"
 #endif
 #include <inttypes.h>
 
@@ -2612,6 +2612,7 @@ static inline v_dot_table__Type
 v_dot_table__type_to_optional(v_dot_table__Type t);
 static inline v_dot_table__Type v_dot_table__new_type(int idx);
 static inline v_dot_table__Type v_dot_table__new_type_ptr(int idx, int nr_muls);
+bool v_dot_table__is_number(v_dot_table__Type typ);
 string term__format(string msg, string open, string close);
 string term__format_rgb(int r, int g, int b, string msg, string open,
                         string close);
@@ -3835,6 +3836,7 @@ array_string v_dot_table__builtin_type_names;
 #define v_dot_table__v_dot_table__Kind_alias 25
 #define v_dot_table__v_dot_table__TypeExtra_unset 0
 #define v_dot_table__v_dot_table__TypeExtra_optional 1
+array_int v_dot_table__number_idxs;
 v_dot_table__Type v_dot_table__void_type;
 v_dot_table__Type v_dot_table__voidptr_type;
 v_dot_table__Type v_dot_table__byteptr_type;
@@ -11092,6 +11094,12 @@ static inline v_dot_table__Type v_dot_table__new_type_ptr(int idx,
   };
   return (nr_muls << 16) | ((u16)(idx));
 }
+bool v_dot_table__is_number(v_dot_table__Type typ) {
+  int idx = v_dot_table__type_idx(typ);
+  return (idx == v_dot_table__int_type_idx ||
+          idx == v_dot_table__byte_type_idx ||
+          idx == v_dot_table__u64_type_idx);
+}
 string term__format(string msg, string open, string close) {
   return string_add(
       string_add(
@@ -16243,7 +16251,7 @@ v_dot_table__Type
 v_dot_checker__Checker_postfix_expr(v_dot_checker__Checker *c,
                                     v_dot_ast__PostfixExpr node) {
   v_dot_table__Type typ = v_dot_checker__Checker_expr(c, node.expr);
-  if (v_dot_table__type_idx(typ) != v_dot_table__int_type_idx) {
+  if (!v_dot_table__is_number(typ)) {
     v_dot_table__TypeSymbol *typ_sym =
         v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, typ);
     v_dot_checker__Checker_error(
@@ -16270,7 +16278,8 @@ v_dot_table__Type v_dot_checker__Checker_index_expr(v_dot_checker__Checker *c,
   };
   if (!is_range) {
     v_dot_table__Type index_type = v_dot_checker__Checker_expr(c, node.index);
-    if (v_dot_table__type_idx(index_type) != v_dot_table__int_type_idx) {
+    if (!((_IN(int, (v_dot_table__type_idx(index_type)),
+               v_dot_table__number_idxs)))) {
       v_dot_table__TypeSymbol *index_type_sym =
           v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, index_type);
       v_dot_checker__Checker_error(c,
@@ -35323,6 +35332,11 @@ void init() {
           tos3("f64"),  tos3("string"),  tos3("char"),    tos3("byte"),
           tos3("bool"), tos3("none"),    tos3("array"),   tos3("array_fixed"),
           tos3("map"),  tos3("struct"),  tos3("mapnode"), tos3("ustring")});
+  v_dot_table__number_idxs = new_array_from_c_array(
+      3, 3, sizeof(int),
+      EMPTY_ARRAY_OF_ELEMS(int, 3){v_dot_table__int_type_idx,
+                                   v_dot_table__byte_type_idx,
+                                   v_dot_table__u64_type_idx});
   v_dot_table__void_type = v_dot_table__new_type(v_dot_table__void_type_idx);
   v_dot_table__voidptr_type =
       v_dot_table__new_type(v_dot_table__voidptr_type_idx);
