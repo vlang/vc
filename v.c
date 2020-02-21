@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4c95e59"
+#define V_COMMIT_HASH "9be87d0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9e6773c"
+#define V_COMMIT_HASH "4c95e59"
 #endif
 #include <inttypes.h>
 
@@ -10551,6 +10551,14 @@ string v_dot_table__Table_type_to_str(v_dot_table__Table *table,
   v_dot_table__TypeSymbol *sym =
       v_dot_table__Table_get_type_symbol(&/* ? */ *table, t);
   string res = string_replace(sym->name, tos3("array_"), tos3("[]"));
+  if (string_contains(res, tos3("."))) {
+    array_string vals = string_split(res, tos3("."));
+    if (vals.len > 2) {
+      res = string_add(
+          string_add((*(string *)array_get(vals, vals.len - 2)), tos3(".")),
+          (*(string *)array_get(vals, vals.len - 1)));
+    };
+  };
   if (v_dot_table__type_is_optional(t)) {
     res = string_add(tos3("?"), res);
   };
@@ -18520,7 +18528,7 @@ void compiler__Parser_gen(compiler__Parser *p, string s) {
 string compiler__Parser_statement(compiler__Parser *p, bool add_semi) {
   p->expected_type = tos3("");
   if (p->returns) {
-    compiler__Parser_error(p, tos3("unreachable code"));
+    compiler__Parser_warn_or_error(p, tos3("unreachable code"));
   };
   p->cgen->is_tmp = 0;
   compiler__TokenKind tok = p->tok;
