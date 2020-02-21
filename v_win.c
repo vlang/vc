@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9e6773c"
+#define V_COMMIT_HASH "4c95e59"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d075be7"
+#define V_COMMIT_HASH "9e6773c"
 #endif
 #include <inttypes.h>
 
@@ -10682,6 +10682,10 @@ string v_dot_table__Table_type_to_str(v_dot_table__Table *table,
   string res = string_replace(sym->name, tos3("array_"), tos3("[]"));
   if (v_dot_table__type_is_optional(t)) {
     res = string_add(tos3("?"), res);
+  };
+  int nr_muls = v_dot_table__type_nr_muls(t);
+  if (nr_muls > 0) {
+    res = string_add(strings__repeat('&', nr_muls), res);
   };
   return res;
 }
