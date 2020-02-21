@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "728aeb8"
+#define V_COMMIT_HASH "e9931e6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b309e7d"
+#define V_COMMIT_HASH "728aeb8"
 #endif
 #include <inttypes.h>
 
@@ -18199,7 +18199,7 @@ string compiler__Parser_check_string(compiler__Parser *p) {
 void compiler__Parser_check_not_reserved(compiler__Parser *p) {
   bool tmp42 = 0;
   bool tmp43 =
-      map_get(/*aparser.v : 977*/ compiler__reserved_types, p->lit, &tmp42);
+      map_get(/*aparser.v : 975*/ compiler__reserved_types, p->lit, &tmp42);
 
   if (tmp42) {
     compiler__Parser_error(
@@ -18403,7 +18403,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
   map_string ti = p->generic_dispatch.inst;
   if ((_IN(string, (p->lit), map_keys(&/* ? */ ti)))) {
     string tmp45 = tos3("");
-    bool tmp46 = map_get(/*aparser.v : 1172*/ ti, p->lit, &tmp45);
+    bool tmp46 = map_get(/*aparser.v : 1168*/ ti, p->lit, &tmp45);
 
     if (!tmp46)
       tmp45 = tos((byte *)"", 0);
@@ -18461,10 +18461,10 @@ string compiler__Parser_get_type(compiler__Parser *p) {
                  ? (string_add(
                        string_add(
                            string_add(string_add(tos3("("),
-                                                 tos3("/tmp/gen_vc/v/vlib/"
+                                                 tos3("/Users/alex/code/v/vlib/"
                                                       "compiler/aparser.v")),
                                       tos3(":")),
-                           tos3("1218")),
+                           tos3("1236")),
                        tos3(")")))
                  : (tos3("")));
         compiler__Parser_error(p, _STR("unknown type `%.*s`%.*s %.*s", typ.len,
@@ -18486,7 +18486,7 @@ string compiler__Parser_get_type(compiler__Parser *p) {
       string type_param = compiler__Parser_check_name(p);
       if ((_IN_MAP((type_param), p->generic_dispatch.inst))) {
         string tmp47 = tos3("");
-        bool tmp48 = map_get(/*aparser.v : 1234*/ p->generic_dispatch.inst,
+        bool tmp48 = map_get(/*aparser.v : 1230*/ p->generic_dispatch.inst,
                              type_param, &tmp47);
 
         if (!tmp48)
