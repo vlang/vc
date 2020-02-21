@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6d0a599"
+#define V_COMMIT_HASH "b309e7d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6dac2ed"
+#define V_COMMIT_HASH "6d0a599"
 #endif
 #include <inttypes.h>
 
@@ -2637,6 +2637,8 @@ static inline bool
 v_dot_table__TypeSymbol_is_number(v_dot_table__TypeSymbol *t);
 string v_dot_table__Kind_str(v_dot_table__Kind k);
 string array_v_dot_table__Kind_str(array_v_dot_table__Kind kinds);
+string v_dot_table__Table_type_to_str(v_dot_table__Table *table,
+                                      v_dot_table__Type t);
 string v_dot_table__Table_qualify_module(v_dot_table__Table *table, string mod,
                                          string file_path);
 v_dot_table__Table *v_dot_table__new_table();
@@ -10673,6 +10675,12 @@ string array_v_dot_table__Kind_str(array_v_dot_table__Kind kinds) {
   };
   return kinds_str;
 }
+string v_dot_table__Table_type_to_str(v_dot_table__Table *table,
+                                      v_dot_table__Type t) {
+  v_dot_table__TypeSymbol *sym =
+      v_dot_table__Table_get_type_symbol(&/* ? */ *table, t);
+  return string_replace(sym->name, tos3("array_"), tos3("[]"));
+}
 string v_dot_table__Table_qualify_module(v_dot_table__Table *table, string mod,
                                          string file_path) {
   array_string tmp1 = table->imports;
@@ -12851,10 +12859,9 @@ string v_dot_ast__FnDecl_str(v_dot_ast__FnDecl *node, v_dot_table__Table *t) {
         (*(v_dot_ast__Arg *)array_get(node->args, i + 1)).typ != arg.typ;
     strings__Builder_write(&/* ? */ f, arg.name);
     if (should_add_type) {
-      v_dot_table__TypeSymbol *arg_typ_sym =
-          v_dot_table__Table_get_type_symbol(&/* ? */ *t, arg.typ);
-      strings__Builder_write(&/* ? */ f, _STR(" %.*s", arg_typ_sym->name.len,
-                                              arg_typ_sym->name.str));
+      strings__Builder_write(
+          &/* ? */ f, string_add(tos3(" "), v_dot_table__Table_type_to_str(
+                                                &/* ? */ *t, arg.typ)));
     };
     if (!is_last_arg) {
       strings__Builder_write(&/* ? */ f, tos3(", "));
@@ -12862,9 +12869,9 @@ string v_dot_ast__FnDecl_str(v_dot_ast__FnDecl *node, v_dot_table__Table *t) {
   };
   strings__Builder_write(&/* ? */ f, tos3(")"));
   if (node->typ != v_dot_table__void_type) {
-    v_dot_table__TypeSymbol *sym =
-        v_dot_table__Table_get_type_symbol(&/* ? */ *t, node->typ);
-    strings__Builder_write(&/* ? */ f, string_add(tos3(" "), sym->name));
+    strings__Builder_write(&/* ? */ f,
+                           string_add(tos3(" "), v_dot_table__Table_type_to_str(
+                                                     &/* ? */ *t, node->typ)));
   };
   return strings__Builder_str(&/* ? */ f);
 }
@@ -16929,7 +16936,9 @@ string v_dot_doc__doc(string mod, v_dot_table__Table *table) {
     if (!string_ends_with(file, tos3(".v"))) {
       continue;
     };
-    if (string_ends_with(file, tos3("_test.v"))) {
+    if (string_ends_with(file, tos3("_test.v")) ||
+        string_ends_with(file, tos3("_windows.v")) ||
+        string_ends_with(file, tos3("_macos.v"))) {
       continue;
     };
     v_dot_ast__File file_ast = v_dot_parser__parse_file(
