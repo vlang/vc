@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9be87d0"
+#define V_COMMIT_HASH "b325320"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4c95e59"
+#define V_COMMIT_HASH "9be87d0"
 #endif
 #include <inttypes.h>
 
@@ -9771,7 +9771,8 @@ array_string os__walk_ext(string path, string ext) {
   if (!tmp59.ok) {
     string err = tmp59.error;
     int errcode = tmp59.ecode;
-    v_panic(err);
+    return new_array_from_c_array(0, 0, sizeof(string),
+                                  EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   }
   files = *(array_string *)tmp59.data;
   ;
@@ -9808,7 +9809,8 @@ void os__walk(string path, void (*f)(string path /*FFF*/)) {
   if (!tmp63.ok) {
     string err = tmp63.error;
     int errcode = tmp63.ecode;
-    v_panic(err);
+
+    return;
   }
   files = *(array_string *)tmp63.data;
   ;
@@ -9880,8 +9882,7 @@ void os__mkdir_all(string path) {
   };
 }
 string os__join(string base, varg_string *dirs) {
-  println(tos3("use filepath.join"));
-  return filepath__join(base, dirs);
+  v_panic(tos3("Use `filepath.join` instead of `os.join`"));
 }
 string os__cachedir() {
 #ifndef _WIN32
