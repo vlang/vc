@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "72f8046"
+#define V_COMMIT_HASH "6f57732"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3c3ca1e"
+#define V_COMMIT_HASH "72f8046"
 #endif
 #include <inttypes.h>
 
@@ -15937,7 +15937,7 @@ v_dot_table__Type v_dot_checker__Checker_check_method_call_expr(
                                     method_call_expr.name.len,
                                     method_call_expr.name.str),
                                method_call_expr.pos);
-  v_exit(1);
+  return v_dot_table__void_type;
 }
 v_dot_table__Type
 v_dot_checker__Checker_selector_expr(v_dot_checker__Checker *c,
@@ -15978,7 +15978,7 @@ v_dot_checker__Checker_selector_expr(v_dot_checker__Checker *c,
                                       field_name.len, field_name.str),
                                  selector_expr.pos);
   };
-  v_exit(0);
+  return v_dot_table__void_type;
 }
 void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
                                         v_dot_ast__Return return_stmt) {
