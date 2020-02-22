@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3c3ca1e"
+#define V_COMMIT_HASH "72f8046"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "15c288b"
+#define V_COMMIT_HASH "3c3ca1e"
 #endif
 #include <inttypes.h>
 
@@ -9439,28 +9439,30 @@ string os__get_line() {
 }
 string os__get_raw_line() {
 #ifdef _WIN32
-  int max_line_chars = 256;
-  byte *buf = v_malloc(max_line_chars * 2);
-  void *h_input = GetStdHandle(os__STD_INPUT_HANDLE);
-  int bytes_read = 0;
-  if (is_atty(0) > 0) {
-    ReadConsole(h_input, (char *)buf, max_line_chars * 2, &bytes_read, 0);
-    return string_from_wide2(((u16 *)(buf)), bytes_read);
-  };
-  int offset = 0;
-  while (1) {
-    byte *pos = (byte *)buf + offset;
-    bool res = ReadFile(h_input, (char *)pos, 1, &bytes_read, 0);
-    if (!res || bytes_read == 0) {
-      break;
+  {
+    int max_line_chars = 256;
+    byte *buf = v_malloc(max_line_chars * 2);
+    void *h_input = GetStdHandle(os__STD_INPUT_HANDLE);
+    int bytes_read = 0;
+    if (is_atty(0) > 0) {
+      ReadConsole(h_input, (char *)buf, max_line_chars * 2, &bytes_read, 0);
+      return string_from_wide2(((u16 *)(buf)), bytes_read);
     };
-    if (*pos == '\n' || *pos == '\r') {
+    int offset = 0;
+    while (1) {
+      byte *pos = (byte *)buf + offset;
+      bool res = ReadFile(h_input, (char *)pos, 1, &bytes_read, 0);
+      if (!res || bytes_read == 0) {
+        break;
+      };
+      if (*pos == '\n' || *pos == '\r') {
+        offset++;
+        break;
+      };
       offset++;
-      break;
     };
-    offset++;
+    return (tos((byte *)buf, offset));
   };
-  return (tos((byte *)buf, offset));
 #else
   size_t max = ((size_t)(0));
   byteptr buf = ((byteptr)(0));
@@ -30195,32 +30197,34 @@ static inline string compiler__mod_gen_name_rev(string mod) {
 Option_string compiler__find_windows_kit_internal(compiler__RegKey key,
                                                   array_string versions) {
 #ifdef _WIN32
-  array_string tmp1 = versions;
-  for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-    string version = ((string *)tmp1.data)[tmp2];
+  {
+    array_string tmp1 = versions;
+    for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+      string version = ((string *)tmp1.data)[tmp2];
 
-    int required_bytes = 0;
-    void *result =
-        RegQueryValueEx(key, string_to_wide(version), 0, 0, 0, &required_bytes);
-    int length = required_bytes / 2;
-    if (result != 0) {
-      continue;
+      int required_bytes = 0;
+      void *result = RegQueryValueEx(key, string_to_wide(version), 0, 0, 0,
+                                     &required_bytes);
+      int length = required_bytes / 2;
+      if (result != 0) {
+        continue;
+      };
+      int alloc_length = (required_bytes + 2);
+      u16 *value = ((u16 *)(v_malloc(alloc_length)));
+      if (isnil(value)) {
+        continue;
+      };
+      void *result2 = RegQueryValueEx(key, string_to_wide(version), 0, 0, value,
+                                      &alloc_length);
+      if (result2 != 0) {
+        continue;
+      };
+      if ((value[/*ptr!*/ length - 1] /*ru16 1*/ != ((u16)(0)))) {
+        value[/*ptr!*/ length] /*ru16 1*/ = ((u16)(0));
+      };
+      string tmp3 = OPTION_CAST(string)(string_from_wide(value));
+      return opt_ok(&tmp3, sizeof(string));
     };
-    int alloc_length = (required_bytes + 2);
-    u16 *value = ((u16 *)(v_malloc(alloc_length)));
-    if (isnil(value)) {
-      continue;
-    };
-    void *result2 = RegQueryValueEx(key, string_to_wide(version), 0, 0, value,
-                                    &alloc_length);
-    if (result2 != 0) {
-      continue;
-    };
-    if ((value[/*ptr!*/ length - 1] /*ru16 1*/ != ((u16)(0)))) {
-      value[/*ptr!*/ length] /*ru16 1*/ = ((u16)(0));
-    };
-    string tmp3 = OPTION_CAST(string)(string_from_wide(value));
-    return opt_ok(&tmp3, sizeof(string));
   };
 #endif
   ;
