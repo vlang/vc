@@ -1,3 +1,4 @@
+#define V_COMMIT_HASH "f6c2b3a"
 #ifndef V_COMMIT_HASH
 #define V_COMMIT_HASH "adb1d3f"
 #endif
@@ -583,7 +584,6 @@ typedef array array_char;
 typedef struct SymbolInfo SymbolInfo;
 typedef struct SymbolInfoContainer SymbolInfoContainer;
 typedef struct Line64 Line64;
-typedef struct Error Error;
 typedef struct map map;
 typedef struct KeyValue KeyValue;
 typedef struct Option Option;
@@ -653,6 +653,7 @@ typedef array array_v_dot_table__Type;
 typedef array array_v_dot_table__Kind;
 typedef struct v_dot_table__Struct v_dot_table__Struct;
 typedef array array_v_dot_table__Field;
+typedef struct v_dot_table__Enum v_dot_table__Enum;
 typedef struct v_dot_table__Alias v_dot_table__Alias;
 typedef struct v_dot_table__Field v_dot_table__Field;
 typedef struct v_dot_table__Array v_dot_table__Array;
@@ -1156,11 +1157,6 @@ struct compiler__VargAccess {
   int index;
 };
 
-struct Error {
-  int code;
-  string message;
-};
-
 struct strings__Builder {
   array_byte buf;
   int len;
@@ -1273,6 +1269,10 @@ struct v_dot_ast__Scope {
 struct _V_MulRet_int_V_int {
   int var_0;
   int var_1;
+};
+
+struct v_dot_table__Enum {
+  array_v_dot_table__Field vals;
 };
 
 struct v_dot_ast__ForCStmt {
@@ -2228,8 +2228,6 @@ int backtrace(void *a, int b);
 byteptr *backtrace_symbols(void *, int);
 void backtrace_symbols_fd(void *, int, int);
 int proc_pidpath(int, void *, int);
-Error new_error(string message);
-Error new_error_with_code(string message, int code);
 string f64_str(f64 d);
 string f32_str(f32 d);
 string f64_strsci(f64 x, int digit_num);
@@ -3986,8 +3984,9 @@ string v_dot_pref__default_module_path;
 #define SumType_Struct 4      // DEF2
 #define SumType_MultiReturn 5 // DEF2
 #define SumType_Alias 6       // DEF2
+#define SumType_Enum 7        // DEF2
 const char *__SumTypeNames__v_dot_table__TypeInfo[] = {
-    "Array", "ArrayFixed", "Map", "Struct", "MultiReturn", "Alias",
+    "Array", "ArrayFixed", "Map", "Struct", "MultiReturn", "Alias", "Enum",
 };
 array_string v_dot_table__builtin_type_names;
 #define v_dot_table__v_dot_table__Kind_placeholder 0
@@ -4016,6 +4015,7 @@ array_string v_dot_table__builtin_type_names;
 #define v_dot_table__v_dot_table__Kind_multi_return 23
 #define v_dot_table__v_dot_table__Kind_sum_type 24
 #define v_dot_table__v_dot_table__Kind_alias 25
+#define v_dot_table__v_dot_table__Kind_enum_ 26
 #define v_dot_table__v_dot_table__TypeExtra_unset 0
 #define v_dot_table__v_dot_table__TypeExtra_optional 1
 array_int v_dot_table__number_idxs;
@@ -4948,15 +4948,6 @@ int backtrace(void *a, int b);
 byteptr *backtrace_symbols(void *, int);
 void backtrace_symbols_fd(void *, int, int);
 int proc_pidpath(int, void *, int);
-Error new_error(string message) {
-  return (Error){
-      .message = message,
-      .code = 0,
-  };
-}
-Error new_error_with_code(string message, int code) {
-  return (Error){.code = code, .message = message};
-}
 string f64_str(f64 d) {
   byte *buf = v_malloc(sizeof(double) * 5 + 1);
   sprintf(((charptr)(buf)), "%f", d);
@@ -15381,6 +15372,19 @@ v_dot_ast__EnumDecl v_dot_parser__Parser_enum_decl(v_dot_parser__Parser *p) {
     };
   };
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rcbr);
+  v_dot_table__Table_register_type_symbol(
+      p->table,
+      (v_dot_table__TypeSymbol){
+          .kind = v_dot_table__v_dot_table__Kind_enum_,
+          .name = name,
+          .info = /*SUM TYPE CAST2*/ (
+              v_dot_table__TypeInfo){.obj = memdup(
+                                         &(v_dot_table__Enum[]){
+                                             (v_dot_table__Enum){.vals = vals}},
+                                         sizeof(v_dot_table__Enum)),
+                                     .typ = SumType_Enum},
+          .parent_idx = 0,
+          .methods = new_array(0, 1, sizeof(v_dot_table__Fn))});
   return (v_dot_ast__EnumDecl){.name = name, .is_pub = is_pub, .vals = vals};
 }
 v_dot_ast__TypeDecl v_dot_parser__Parser_type_decl(v_dot_parser__Parser *p) {
@@ -15479,7 +15483,7 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
     };
   } else if (tmp5.typ == SumType_EnumDecl) {
     v_dot_ast__EnumDecl *it = (v_dot_ast__EnumDecl *)tmp5.obj;
-    v_dot_gen__Gen_writeln(g, _STR("enum %.*s {", it->name.len, it->name.str));
+    v_dot_gen__Gen_writeln(g, tos3("typedef enum {"));
     array_string tmp9 = it->vals;
     for (int i = 0; i < tmp9.len; i++) {
       string val = ((string *)tmp9.data)[i];
@@ -15487,7 +15491,7 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
       v_dot_gen__Gen_writeln(g, _STR("\t%.*s_%.*s, // %d", it->name.len,
                                      it->name.str, val.len, val.str, i));
     };
-    v_dot_gen__Gen_writeln(g, tos3("}"));
+    v_dot_gen__Gen_writeln(g, _STR("} %.*s;", it->name.len, it->name.str));
   } else if (tmp5.typ == SumType_Import) {
     v_dot_ast__Import *it = (v_dot_ast__Import *)tmp5.obj;
   } else if (tmp5.typ == SumType_FnDecl) {
@@ -28303,9 +28307,10 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
                  ? (string_add(
                        string_add(
                            string_add(
-                               string_add(tos3("("),
-                                          tos3("/mnt/storage/homes/kastro/dev/"
-                                               "v/vlib/compiler/get_type.v")),
+                               string_add(
+                                   tos3("("),
+                                   tos3("/mnt/storage/homes/kastro/dev/gen_vc/"
+                                        "workdir/v/vlib/compiler/get_type.v")),
                                tos3(":")),
                            tos3("185")),
                        tos3(")")))
