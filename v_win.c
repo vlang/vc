@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c51f464"
+#define V_COMMIT_HASH "bb6098e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "59d6a67"
+#define V_COMMIT_HASH "c51f464"
 #endif
 #include <inttypes.h>
 
@@ -17034,7 +17034,7 @@ v_dot_ast__TypeDecl v_dot_parser__Parser_type_decl(v_dot_parser__Parser *p) {
       is_sum = 1;
     };
   } else {
-    v_dot_parser__Parser_check_name(p);
+    v_dot_parser__Parser_parse_type(p);
   };
   v_dot_table__Table_register_type_symbol(
       p->table,
