@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "857cbfb"
+#define V_COMMIT_HASH "9d61f4f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c26016b"
+#define V_COMMIT_HASH "857cbfb"
 #endif
 #include <inttypes.h>
 
@@ -3005,6 +3005,8 @@ void benchmark__Benchmark_ok(benchmark__Benchmark *b);
 void benchmark__Benchmark_fail_many(benchmark__Benchmark *b, int n);
 void benchmark__Benchmark_ok_many(benchmark__Benchmark *b, int n);
 void benchmark__Benchmark_neither_fail_nor_ok(benchmark__Benchmark *b);
+benchmark__Benchmark benchmark__start();
+i64 benchmark__Benchmark_measure(benchmark__Benchmark *b, string label);
 string benchmark__Benchmark_step_message_with_label(benchmark__Benchmark *b,
                                                     string label, string msg);
 string benchmark__Benchmark_step_message(benchmark__Benchmark *b, string msg);
@@ -4182,6 +4184,7 @@ v_dot_table__Type v_dot_table__none_type;
 bool v_dot_scanner__is_fmt;
 string benchmark__BOK;
 string benchmark__BFAIL;
+string benchmark__BSPENT;
 //// SUMTYPE:  v.ast | parent: v_dot_ast__Expr | name:
 #define SumType_v_dot_ast__Expr_InfixExpr 1       // DEF2
 #define SumType_v_dot_ast__Expr_IfExpr 2          // DEF2
@@ -14224,6 +14227,19 @@ void benchmark__Benchmark_ok_many(benchmark__Benchmark *b, int n) {
 }
 void benchmark__Benchmark_neither_fail_nor_ok(benchmark__Benchmark *b) {
   b->step_end_time = benchmark__now();
+}
+benchmark__Benchmark benchmark__start() {
+  benchmark__Benchmark b = benchmark__new_benchmark();
+  benchmark__Benchmark_step(&/* ? */ b);
+  return b;
+}
+i64 benchmark__Benchmark_measure(benchmark__Benchmark *b, string label) {
+  benchmark__Benchmark_ok(b);
+  i64 res = b->step_end_time - b->step_start_time;
+  println(benchmark__Benchmark_step_message_with_label(
+      &/* ? */ *b, benchmark__BSPENT, _STR("in %.*s", label.len, label.str)));
+  benchmark__Benchmark_step(b);
+  return res;
 }
 string benchmark__Benchmark_step_message_with_label(benchmark__Benchmark *b,
                                                     string label, string msg) {
@@ -38362,6 +38378,7 @@ void init() {
       string_contains(os__getenv(tos3("VEXE")), tos3("vfmt"));
   benchmark__BOK = term__ok_message(tos3("OK"));
   benchmark__BFAIL = term__fail_message(tos3("FAIL"));
+  benchmark__BSPENT = term__ok_message(tos3("SPENT"));
   v_dot_parser__colored_output = term__can_show_color_on_stderr();
   v_dot_gen_dot_x64__mag0 = 0x7f;
   v_dot_gen_dot_x64__e_machine = 0x3e;
