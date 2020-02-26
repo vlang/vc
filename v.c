@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c4e83fa"
+#define V_COMMIT_HASH "39429f7"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bc3d1ea"
+#define V_COMMIT_HASH "c4e83fa"
 #endif
 #include <inttypes.h>
 
@@ -483,8 +483,46 @@ int g_test_fails = 0;
        "installed module, or ALL installed modules at once, when no module "   \
        "name is given.\n  remove  [module]  Removes an installed module, or "  \
        "ALL installed modules at once, when no module name is given.\n")
+#define math__bias 1023
+#define math__e 2.71828182845904523536028747135266249775724709369995957496696763
+#define math__pi                                                               \
+  3.14159265358979323846264338327950288419716939937510582097494459
+#define math__phi                                                              \
+  1.61803398874989484820458683436563811772030917980576286213544862
+#define math__tau                                                              \
+  6.28318530717958647692528676655900576839433879875021164194988918
+#define math__sqrt2                                                            \
+  1.41421356237309504880168872420969807856967187537694807317667974
+#define math__sqrt_e                                                           \
+  1.64872127070012814684865078781416357165377610071014801157507931
+#define math__sqrt_pi                                                          \
+  1.77245385090551602729816748334114518279754945612238712821380779
+#define math__sqrt_tau                                                         \
+  2.50662827463100050241576528481104525300698674060993831662992357
+#define math__sqrt_phi                                                         \
+  1.27201964951406896425242246173749149171560804184009624861664038
+#define math__ln2                                                              \
+  0.693147180559945309417232121458176568075500134360255254120680009
+#define math__ln10                                                             \
+  2.30258509299404568401799145468436420760110148862877297603332790
+#define math__max_i8 127
+#define math__max_i16 32767
+#define math__max_i32 2147483647
+#define math__max_i64 UINT64_C(9223372036854775807)
+#define math__max_u8 255
+#define math__max_u16 65535
+#define math__max_u32 4294967295
+#define math__max_u64 UINT64_C(18446744073709551615)
+#define math_dot_bits__max_u32 4294967295
+#define math_dot_bits__max_u64 UINT64_C(18446744073709551615)
 #define time__seconds_per_minute 60
 #define v_dot_token__nr_tokens 141
+#define strconv_dot_ftoa__maxexp32 255
+#define strconv_dot_ftoa__maxexp64 2047
+#define strconv_dot_ftoa__pow5_num_bits_32 61
+#define strconv_dot_ftoa__pow5_inv_num_bits_32 59
+#define strconv_dot_ftoa__pow5_num_bits_64 121
+#define strconv_dot_ftoa__pow5_inv_num_bits_64 122
 #define os__O_RDONLY 0
 #define os__O_WRONLY 1
 #define os__O_RDWR 2
@@ -562,6 +600,7 @@ int g_test_fails = 0;
 #define compiler__NrTokens 141
 #include <errno.h>
 #include <float.h>
+#include <math.h>
 #include <sys/stat.h> // #include <signal.h>
 #include <time.h>
 #ifndef _WIN32
@@ -594,12 +633,15 @@ typedef array array_RepIndex;
 typedef Option Option_int;
 typedef Option Option_int;
 typedef struct strings__Builder strings__Builder;
+typedef union strconv__Float64u strconv__Float64u;
 typedef struct _V_MulRet_u32_V_u32_V_u32 _V_MulRet_u32_V_u32_V_u32;
 typedef struct strconv__PrepNumber strconv__PrepNumber;
 typedef struct _V_MulRet_int_V_strconv__PrepNumber
     _V_MulRet_int_V_strconv__PrepNumber;
 typedef struct varg_string varg_string;
 
+typedef struct _V_MulRet_u32_V_u32 _V_MulRet_u32_V_u32;
+typedef struct _V_MulRet_u64_V_u64 _V_MulRet_u64_V_u64;
 typedef Option Option_time__Time;
 typedef Option Option_time__Time;
 typedef struct time__Time time__Time;
@@ -609,6 +651,17 @@ typedef struct v_dot_token__Position v_dot_token__Position;
 typedef struct v_dot_token__Token v_dot_token__Token;
 typedef array array_v_dot_token__Kind;
 typedef array array_v_dot_token__Precedence;
+typedef struct strconv_dot_ftoa__Dec32 strconv_dot_ftoa__Dec32;
+typedef union strconv_dot_ftoa__Uf32 strconv_dot_ftoa__Uf32;
+typedef struct _V_MulRet_strconv_dot_ftoa__Dec32_V_bool
+    _V_MulRet_strconv_dot_ftoa__Dec32_V_bool;
+typedef struct strconv_dot_ftoa__Uint128 strconv_dot_ftoa__Uint128;
+typedef struct strconv_dot_ftoa__Dec64 strconv_dot_ftoa__Dec64;
+typedef union strconv_dot_ftoa__Uf64 strconv_dot_ftoa__Uf64;
+typedef struct _V_MulRet_strconv_dot_ftoa__Dec64_V_bool
+    _V_MulRet_strconv_dot_ftoa__Dec64_V_bool;
+typedef array array_u64;
+typedef array array_strconv_dot_ftoa__Uint128;
 typedef struct os__File os__File;
 typedef struct os__FileInfo os__FileInfo;
 typedef Option Option_array_byte;
@@ -1086,6 +1139,11 @@ struct mapnode {
   int size;
 };
 
+union strconv_dot_ftoa__Uf32 {
+  f32 f;
+  u32 u;
+};
+
 struct benchmark__Benchmark {
   i64 bench_start_time;
   i64 bench_end_time;
@@ -1202,6 +1260,11 @@ struct v_dot_ast__Field {
   v_dot_table__Type typ;
 };
 
+union strconv_dot_ftoa__Uf64 {
+  f64 f;
+  u64 u;
+};
+
 struct compiler__ScannerPos {
   int pos;
   int line_nr;
@@ -1235,11 +1298,21 @@ struct v_dot_table__Enum {
   array_string vals;
 };
 
+struct _V_MulRet_u64_V_u64 {
+  u64 var_0;
+  u64 var_1;
+};
+
 struct v_dot_ast__ForCStmt {
   v_dot_ast__Stmt init;
   v_dot_ast__Expr cond;
   v_dot_ast__Stmt inc;
   array_v_dot_ast__Stmt stmts;
+};
+
+struct _V_MulRet_u32_V_u32 {
+  u32 var_0;
+  u32 var_1;
 };
 
 struct v_dot_ast__Module {
@@ -1252,6 +1325,11 @@ struct os__File {
   void *cfile;
   int fd;
   bool opened;
+};
+
+struct strconv_dot_ftoa__Dec64 {
+  u64 m;
+  int e;
 };
 
 struct v_dot_table__Array {
@@ -1368,6 +1446,11 @@ struct v_dot_ast__CompIf {
   array_v_dot_ast__Stmt else_stmts;
 };
 
+union strconv__Float64u {
+  f64 f;
+  u64 u;
+};
+
 struct v_dot_table__Table {
   array_v_dot_table__TypeSymbol types;
   map_int type_idxs;
@@ -1385,6 +1468,11 @@ struct v_dot_ast__PrefixExpr {
 struct varg_int {
   int len;
   int args[0];
+};
+
+struct strconv_dot_ftoa__Dec32 {
+  u32 m;
+  int e;
 };
 
 struct v_dot_ast__BoolLiteral {
@@ -1556,6 +1644,11 @@ struct v_dot_ast__StructType {
   array_v_dot_ast__Field fields;
 };
 
+struct strconv_dot_ftoa__Uint128 {
+  u64 lo;
+  u64 hi;
+};
+
 struct compiler__Fn {
   string name;
   string mod;
@@ -1711,6 +1804,11 @@ struct v_dot_ast__FnDecl {
   v_dot_ast__Field receiver;
   bool is_method;
   bool rec_mut;
+};
+
+struct _V_MulRet_strconv_dot_ftoa__Dec32_V_bool {
+  strconv_dot_ftoa__Dec32 var_0;
+  bool var_1;
 };
 
 struct v_dot_ast__StructDecl {
@@ -1878,6 +1976,11 @@ struct v_dot_ast__StructInit {
   v_dot_table__Type typ;
   array_string fields;
   array_v_dot_ast__Expr exprs;
+};
+
+struct _V_MulRet_strconv_dot_ftoa__Dec64_V_bool {
+  strconv_dot_ftoa__Dec64 var_0;
+  bool var_1;
 };
 
 struct v_dot_ast__AssignExpr {
@@ -2137,10 +2240,12 @@ int backtrace(void *a, int b);
 byteptr *backtrace_symbols(void *, int);
 void backtrace_symbols_fd(void *, int, int);
 int proc_pidpath(int, void *, int);
-string f64_str(f64 d);
-string f32_str(f32 d);
-string f64_strsci(f64 x, int digit_num);
-string f64_strlong(f64 x);
+static inline string f64_str(f64 d);
+static inline string f64_strsci(f64 x, int digit_num);
+static inline string f64_strlong(f64 x);
+static inline string f32_str(f32 d);
+static inline string f32_strsci(f32 x, int digit_num);
+static inline string f32_strlong(f32 x);
 static inline f32 f32_abs(f32 a);
 static inline f64 f64_abs(f64 a);
 static inline bool f64_eq(f64 a, f64 b);
@@ -2393,6 +2498,91 @@ string filepath__join(string base, varg_string *dirs);
 string filepath__dir(string path);
 string filepath__basedir(string path);
 string filepath__filename(string path);
+f64 math__inf(int sign);
+f64 math__nan();
+bool math__is_nan(f64 f);
+bool math__is_inf(f64 f, int sign);
+f64 math__abs(f64 a);
+f64 math__acos(f64 a);
+f64 math__asin(f64 a);
+f64 math__atan(f64 a);
+f64 math__atan2(f64 a, f64 b);
+f64 math__cbrt(f64 a);
+f64 math__ceil(f64 a);
+f64 math__cos(f64 a);
+f64 math__cosh(f64 a);
+f64 math__degrees(f64 radians);
+f64 math__exp(f64 a);
+array_int math__digits(int _n, int base);
+f64 math__erf(f64 a);
+f64 math__erfc(f64 a);
+f64 math__exp2(f64 a);
+f64 math__floor(f64 a);
+f64 math__fmod(f64 a, f64 b);
+f64 math__gamma(f64 a);
+i64 math__gcd(i64 a_, i64 b_);
+f64 math__hypot(f64 a, f64 b);
+i64 math__lcm(i64 a, i64 b);
+f64 math__log(f64 a);
+f64 math__log2(f64 a);
+f64 math__log10(f64 a);
+f64 math__log_gamma(f64 a);
+f64 math__log_n(f64 a, f64 b);
+f64 math__max(f64 a, f64 b);
+f64 math__min(f64 a, f64 b);
+f64 math__pow(f64 a, f64 b);
+f64 math__radians(f64 degrees);
+f64 math__round(f64 f);
+f64 math__sin(f64 a);
+f64 math__sinh(f64 a);
+f64 math__sqrt(f64 a);
+f32 math__sqrtf(f32 a);
+f64 math__tan(f64 a);
+f64 math__tanh(f64 a);
+f64 math__trunc(f64 a);
+f64 math__aprox_sin(f64 a);
+f64 math__aprox_cos(f64 a);
+u32 math__f32_bits(f32 f);
+f32 math__f32_from_bits(u32 b);
+u64 math__f64_bits(f64 f);
+f64 math__f64_from_bits(u64 b);
+int math_dot_bits__leading_zeros_8(byte x);
+int math_dot_bits__leading_zeros_16(u16 x);
+int math_dot_bits__leading_zeros_32(u32 x);
+int math_dot_bits__leading_zeros_64(u64 x);
+int math_dot_bits__trailing_zeros_8(byte x);
+int math_dot_bits__trailing_zeros_16(u16 x);
+int math_dot_bits__trailing_zeros_32(u32 x);
+int math_dot_bits__trailing_zeros_64(u64 x);
+int math_dot_bits__ones_count_8(byte x);
+int math_dot_bits__ones_count_16(u16 x);
+int math_dot_bits__ones_count_32(u32 x);
+int math_dot_bits__ones_count_64(u64 x);
+static inline byte math_dot_bits__rotate_left_8(byte x, int k);
+static inline u16 math_dot_bits__rotate_left_16(u16 x, int k);
+static inline u32 math_dot_bits__rotate_left_32(u32 x, int k);
+static inline u64 math_dot_bits__rotate_left_64(u64 x, int k);
+static inline byte math_dot_bits__reverse_8(byte x);
+static inline u16 math_dot_bits__reverse_16(u16 x);
+static inline u32 math_dot_bits__reverse_32(u32 x);
+static inline u64 math_dot_bits__reverse_64(u64 x);
+static inline u16 math_dot_bits__reverse_bytes_16(u16 x);
+static inline u32 math_dot_bits__reverse_bytes_32(u32 x);
+static inline u64 math_dot_bits__reverse_bytes_64(u64 x);
+int math_dot_bits__len_8(byte x);
+int math_dot_bits__len_16(u16 x);
+int math_dot_bits__len_32(u32 x);
+int math_dot_bits__len_64(u64 x);
+_V_MulRet_u32_V_u32 math_dot_bits__add_32(u32 x, u32 y, u32 carry);
+_V_MulRet_u64_V_u64 math_dot_bits__add_64(u64 x, u64 y, u64 carry);
+_V_MulRet_u32_V_u32 math_dot_bits__sub_32(u32 x, u32 y, u32 borrow);
+_V_MulRet_u64_V_u64 math_dot_bits__sub_64(u64 x, u64 y, u64 borrow);
+_V_MulRet_u32_V_u32 math_dot_bits__mul_32(u32 x, u32 y);
+_V_MulRet_u64_V_u64 math_dot_bits__mul_64(u64 x, u64 y);
+_V_MulRet_u32_V_u32 math_dot_bits__div_32(u32 hi, u32 lo, u32 y);
+_V_MulRet_u64_V_u64 math_dot_bits__div_64(u64 hi, u64 lo, u64 y1);
+u32 math_dot_bits__rem_32(u32 hi, u32 lo, u32 y);
+u64 math_dot_bits__rem_64(u64 hi, u64 lo, u64 y);
 string time__Time_format(time__Time t);
 string time__Time_format_ss(time__Time t);
 string time__Time_hhmm(time__Time t);
@@ -2456,6 +2646,47 @@ bool v_dot_token__Token_is_unary(v_dot_token__Token tok);
 bool v_dot_token__Kind_is_relational(v_dot_token__Kind tok);
 bool v_dot_token__Kind_is_start_of_type(v_dot_token__Kind k);
 bool v_dot_token__Kind_is_infix(v_dot_token__Kind kind);
+string strconv_dot_ftoa__Dec32_get_string_32(strconv_dot_ftoa__Dec32 d,
+                                             bool neg, int n_digit);
+_V_MulRet_strconv_dot_ftoa__Dec32_V_bool
+strconv_dot_ftoa__f32_to_decimal_exact_int(u32 i_mant, u32 exp);
+strconv_dot_ftoa__Dec32 strconv_dot_ftoa__f32_to_decimal(u32 mant, u32 exp);
+string strconv_dot_ftoa__f32_to_str(f32 f, int n_digit);
+string strconv_dot_ftoa__Dec64_get_string_64(strconv_dot_ftoa__Dec64 d,
+                                             bool neg, int n_digit);
+_V_MulRet_strconv_dot_ftoa__Dec64_V_bool
+strconv_dot_ftoa__f64_to_decimal_exact_int(u64 i_mant, u64 exp);
+strconv_dot_ftoa__Dec64 strconv_dot_ftoa__f64_to_decimal(u64 mant, u64 exp);
+string strconv_dot_ftoa__f64_to_str(f64 f, int n_digit);
+static inline string strconv_dot_ftoa__ftoa_64(f64 f);
+static inline string strconv_dot_ftoa__ftoa_long_64(f64 f);
+static inline string strconv_dot_ftoa__ftoa_32(f32 f);
+static inline string strconv_dot_ftoa__ftoa_long_32(f32 f);
+void strconv_dot_ftoa__assert1(bool t, string msg);
+static inline int strconv_dot_ftoa__bool_to_int(bool b);
+static inline u32 strconv_dot_ftoa__bool_to_u32(bool b);
+static inline u64 strconv_dot_ftoa__bool_to_u64(bool b);
+string strconv_dot_ftoa__get_string_special(bool neg, bool expZero,
+                                            bool mantZero);
+int strconv_dot_ftoa__decimal_len_32(u32 u);
+u32 strconv_dot_ftoa__mul_shift_32(u32 m, u64 mul, int ishift);
+u32 strconv_dot_ftoa__mul_pow5_invdiv_pow2(u32 m, u32 q, int j);
+u32 strconv_dot_ftoa__mul_pow5_div_pow2(u32 m, u32 i, int j);
+u32 strconv_dot_ftoa__pow5_factor_32(u32 i_v);
+bool strconv_dot_ftoa__multiple_of_power_of_five_32(u32 v, u32 p);
+bool strconv_dot_ftoa__multiple_of_power_of_two_32(u32 v, u32 p);
+u32 strconv_dot_ftoa__log10_pow2(int e);
+u32 strconv_dot_ftoa__log10_pow5(int e);
+int strconv_dot_ftoa__pow5_bits(int e);
+int strconv_dot_ftoa__decimal_len_64(u64 u);
+u64 strconv_dot_ftoa__shift_right_128(strconv_dot_ftoa__Uint128 v, int shift);
+u64 strconv_dot_ftoa__mul_shift_64(u64 m, strconv_dot_ftoa__Uint128 mul,
+                                   int shift);
+u32 strconv_dot_ftoa__pow5_factor_64(u64 v_i);
+bool strconv_dot_ftoa__multiple_of_power_of_five_64(u64 v, u32 p);
+bool strconv_dot_ftoa__multiple_of_power_of_two_64(u64 v, u32 p);
+string strconv_dot_ftoa__f32_to_str_l(f64 f);
+string strconv_dot_ftoa__f64_to_str_l(f64 f);
 bool os__File_is_opened(os__File f);
 array_byte os__File_read_bytes(os__File *f, int size);
 array_byte os__File_read_bytes_at(os__File *f, int size, int pos);
@@ -3657,6 +3888,41 @@ u32 strconv__TEN;
 u64 strconv__max_u64;
 string filepath__separator;
 string internal_dot_help__help_text;
+u64 math__uvnan;
+u64 math__uvinf;
+u64 math__uvneginf;
+u64 math__uvone;
+int math__mask;
+int math__shift;
+u64 math__sign_mask;
+u64 math__frac_mask;
+f32 math__log2_e;
+f32 math__log10_e;
+f32 math__max_f32;
+f32 math__smallest_non_zero_f32;
+f32 math__max_f64;
+f32 math__smallest_non_zero_f64;
+int math__min_i8;
+int math__min_i16;
+int math__min_i32;
+u64 math__min_i64;
+u32 math_dot_bits__de_bruijn32;
+array_byte math_dot_bits__de_bruijn32tab;
+u64 math_dot_bits__de_bruijn64;
+array_byte math_dot_bits__de_bruijn64tab;
+u64 math_dot_bits__m0;
+u64 math_dot_bits__m1;
+u64 math_dot_bits__m2;
+u64 math_dot_bits__m3;
+u64 math_dot_bits__m4;
+u64 math_dot_bits__two32;
+u64 math_dot_bits__mask32;
+string math_dot_bits__overflow_error;
+string math_dot_bits__divide_error;
+array_byte math_dot_bits__ntz_8_tab;
+array_byte math_dot_bits__pop_8_tab;
+array_byte math_dot_bits__rev_8_tab;
+array_byte math_dot_bits__len_8_tab;
 string time__days_string;
 array_int time__month_days;
 string time__months_string;
@@ -3802,6 +4068,17 @@ map_int v_dot_token__keywords;
 #define v_dot_token__v_dot_token__Precedence_call 9
 #define v_dot_token__v_dot_token__Precedence_index 10
 array_v_dot_token__Precedence v_dot_token__precedences;
+u32 strconv_dot_ftoa__mantbits32;
+u32 strconv_dot_ftoa__expbits32;
+u32 strconv_dot_ftoa__bias32;
+u32 strconv_dot_ftoa__mantbits64;
+u32 strconv_dot_ftoa__expbits64;
+u32 strconv_dot_ftoa__bias64;
+array_u64 strconv_dot_ftoa__powers_of_10;
+array_u64 strconv_dot_ftoa__pow5_split_32;
+array_u64 strconv_dot_ftoa__pow5_inv_split_32;
+array_strconv_dot_ftoa__Uint128 strconv_dot_ftoa__pow5_split_64;
+array_strconv_dot_ftoa__Uint128 strconv_dot_ftoa__pow5_inv_split_64;
 int os__S_IFMT;
 int os__S_IFDIR;
 int os__S_IFLNK;
@@ -4843,29 +5120,31 @@ int backtrace(void *a, int b);
 byteptr *backtrace_symbols(void *, int);
 void backtrace_symbols_fd(void *, int, int);
 int proc_pidpath(int, void *, int);
-string f64_str(f64 d) {
-  byte *buf = v_malloc(sizeof(double) * 5 + 1);
-  sprintf(((charptr)(buf)), "%f", d);
-  return tos(buf, vstrlen(buf));
+static inline string f64_str(f64 d) { return strconv_dot_ftoa__ftoa_64(d); }
+static inline string f64_strsci(f64 x, int digit_num) {
+  int n_digit = digit_num;
+  if (n_digit < 1) {
+    n_digit = 1;
+  } else if (n_digit > 17) {
+    n_digit = 17;
+  };
+  return strconv_dot_ftoa__f64_to_str(x, n_digit);
 }
-string f32_str(f32 d) {
-  byte *buf = v_malloc(sizeof(double) * 5 + 1);
-  sprintf((char *)(buf), "%f", d);
-  return tos(buf, vstrlen(buf));
+static inline string f64_strlong(f64 x) {
+  return strconv_dot_ftoa__f64_to_str_l(x);
 }
-string f64_strsci(f64 x, int digit_num) {
-  byte *buf = v_malloc(digit_num * 2 + 2);
-  string conf_str =
-      string_add(string_add(tos3("%0."), int_str(digit_num)), tos3("e"));
-  sprintf((char *)(buf), (char *)(conf_str.str), x);
-  string tmpstr = tos(buf, vstrlen(buf));
-  return tmpstr;
+static inline string f32_str(f32 d) { return strconv_dot_ftoa__ftoa_32(d); }
+static inline string f32_strsci(f32 x, int digit_num) {
+  int n_digit = digit_num;
+  if (n_digit < 1) {
+    n_digit = 1;
+  } else if (n_digit > 8) {
+    n_digit = 8;
+  };
+  return strconv_dot_ftoa__f32_to_str(x, n_digit);
 }
-string f64_strlong(f64 x) {
-  byte *buf = v_malloc(18 + 32);
-  sprintf((char *)(buf), "%0.30lf", x);
-  string tmpstr = tos(buf, vstrlen(buf));
-  return tmpstr;
+static inline string f32_strlong(f32 x) {
+  return strconv_dot_ftoa__f32_to_str_l(x);
 }
 static inline f32 f32_abs(f32 a) { return ((a < 0) ? (-a) : (a)); }
 static inline f64 f64_abs(f64 a) { return ((a < 0) ? (-a) : (a)); }
@@ -7592,34 +7871,34 @@ u64 strconv__converter(strconv__PrepNumber *pn) {
   s2 = ((u32)(0));
   while (pn->exponent > 0) {
 
-    _V_MulRet_u32_V_u32_V_u32 _V_mret_1313_q2_q1_q0 =
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1328_q2_q1_q0 =
         strconv__lsl96(s2, s1, s0);
-    q2 = _V_mret_1313_q2_q1_q0.var_0;
-    q1 = _V_mret_1313_q2_q1_q0.var_1;
-    q0 = _V_mret_1313_q2_q1_q0.var_2;
-    _V_MulRet_u32_V_u32_V_u32 _V_mret_1327_r2_r1_r0 =
+    q2 = _V_mret_1328_q2_q1_q0.var_0;
+    q1 = _V_mret_1328_q2_q1_q0.var_1;
+    q0 = _V_mret_1328_q2_q1_q0.var_2;
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1342_r2_r1_r0 =
         strconv__lsl96(q2, q1, q0);
-    r2 = _V_mret_1327_r2_r1_r0.var_0;
-    r1 = _V_mret_1327_r2_r1_r0.var_1;
-    r0 = _V_mret_1327_r2_r1_r0.var_2;
-    _V_MulRet_u32_V_u32_V_u32 _V_mret_1341_s2_s1_s0 =
+    r2 = _V_mret_1342_r2_r1_r0.var_0;
+    r1 = _V_mret_1342_r2_r1_r0.var_1;
+    r0 = _V_mret_1342_r2_r1_r0.var_2;
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1356_s2_s1_s0 =
         strconv__lsl96(r2, r1, r0);
-    s2 = _V_mret_1341_s2_s1_s0.var_0;
-    s1 = _V_mret_1341_s2_s1_s0.var_1;
-    s0 = _V_mret_1341_s2_s1_s0.var_2;
-    _V_MulRet_u32_V_u32_V_u32 _V_mret_1355_s2_s1_s0 =
+    s2 = _V_mret_1356_s2_s1_s0.var_0;
+    s1 = _V_mret_1356_s2_s1_s0.var_1;
+    s0 = _V_mret_1356_s2_s1_s0.var_2;
+    _V_MulRet_u32_V_u32_V_u32 _V_mret_1370_s2_s1_s0 =
         strconv__add96(s2, s1, s0, q2, q1, q0);
-    s2 = _V_mret_1355_s2_s1_s0.var_0;
-    s1 = _V_mret_1355_s2_s1_s0.var_1;
-    s0 = _V_mret_1355_s2_s1_s0.var_2;
+    s2 = _V_mret_1370_s2_s1_s0.var_0;
+    s1 = _V_mret_1370_s2_s1_s0.var_1;
+    s0 = _V_mret_1370_s2_s1_s0.var_2;
     pn->exponent--;
     while ((s2 & mask28) != 0) {
 
-      _V_MulRet_u32_V_u32_V_u32 _V_mret_1388_q2_q1_q0 =
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1403_q2_q1_q0 =
           strconv__lsr96(s2, s1, s0);
-      q2 = _V_mret_1388_q2_q1_q0.var_0;
-      q1 = _V_mret_1388_q2_q1_q0.var_1;
-      q0 = _V_mret_1388_q2_q1_q0.var_2;
+      q2 = _V_mret_1403_q2_q1_q0.var_0;
+      q1 = _V_mret_1403_q2_q1_q0.var_1;
+      q0 = _V_mret_1403_q2_q1_q0.var_2;
       binexp++;
       s2 = q2;
       s1 = q1;
@@ -7630,11 +7909,11 @@ u64 strconv__converter(strconv__PrepNumber *pn) {
 
     while (!((s2 & (((u32)(1)) << 31)) != 0)) {
 
-      _V_MulRet_u32_V_u32_V_u32 _V_mret_1441_q2_q1_q0 =
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1456_q2_q1_q0 =
           strconv__lsl96(s2, s1, s0);
-      q2 = _V_mret_1441_q2_q1_q0.var_0;
-      q1 = _V_mret_1441_q2_q1_q0.var_1;
-      q0 = _V_mret_1441_q2_q1_q0.var_2;
+      q2 = _V_mret_1456_q2_q1_q0.var_0;
+      q1 = _V_mret_1456_q2_q1_q0.var_1;
+      q0 = _V_mret_1456_q2_q1_q0.var_2;
       binexp--;
       s2 = q2;
       s1 = q1;
@@ -7660,11 +7939,11 @@ u64 strconv__converter(strconv__PrepNumber *pn) {
   if (s2 != 0 || s1 != 0 || s0 != 0) {
     while ((s2 & mask28) == 0) {
 
-      _V_MulRet_u32_V_u32_V_u32 _V_mret_1618_q2_q1_q0 =
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1633_q2_q1_q0 =
           strconv__lsl96(s2, s1, s0);
-      q2 = _V_mret_1618_q2_q1_q0.var_0;
-      q1 = _V_mret_1618_q2_q1_q0.var_1;
-      q0 = _V_mret_1618_q2_q1_q0.var_2;
+      q2 = _V_mret_1633_q2_q1_q0.var_0;
+      q1 = _V_mret_1633_q2_q1_q0.var_1;
+      q0 = _V_mret_1633_q2_q1_q0.var_2;
       binexp--;
       s2 = q2;
       s1 = q1;
@@ -7676,28 +7955,28 @@ u64 strconv__converter(strconv__PrepNumber *pn) {
   u32 check_round_mask = ((u32)(0xFFFFFFFF)) << ((u32)(nbit));
   if ((s1 & check_round_bit) != 0) {
     if ((s1 & ~check_round_mask) != 0) {
-      _V_MulRet_u32_V_u32_V_u32 _V_mret_1689_s2_s1_s0 =
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1704_s2_s1_s0 =
           strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
-      s2 = _V_mret_1689_s2_s1_s0.var_0;
-      s1 = _V_mret_1689_s2_s1_s0.var_1;
-      s0 = _V_mret_1689_s2_s1_s0.var_2;
+      s2 = _V_mret_1704_s2_s1_s0.var_0;
+      s1 = _V_mret_1704_s2_s1_s0.var_1;
+      s0 = _V_mret_1704_s2_s1_s0.var_2;
     } else {
       if ((s1 & (check_round_bit << ((u32)(1)))) != 0) {
-        _V_MulRet_u32_V_u32_V_u32 _V_mret_1728_s2_s1_s0 =
+        _V_MulRet_u32_V_u32_V_u32 _V_mret_1743_s2_s1_s0 =
             strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
-        s2 = _V_mret_1728_s2_s1_s0.var_0;
-        s1 = _V_mret_1728_s2_s1_s0.var_1;
-        s0 = _V_mret_1728_s2_s1_s0.var_2;
+        s2 = _V_mret_1743_s2_s1_s0.var_0;
+        s1 = _V_mret_1743_s2_s1_s0.var_1;
+        s0 = _V_mret_1743_s2_s1_s0.var_2;
       };
     };
     s1 = s1 & check_round_mask;
     s0 = ((u32)(0));
     if ((s2 & (mask28 << ((u32)(1)))) != 0) {
-      _V_MulRet_u32_V_u32_V_u32 _V_mret_1775_q2_q1_q0 =
+      _V_MulRet_u32_V_u32_V_u32 _V_mret_1790_q2_q1_q0 =
           strconv__lsr96(s2, s1, s0);
-      q2 = _V_mret_1775_q2_q1_q0.var_0;
-      q1 = _V_mret_1775_q2_q1_q0.var_1;
-      q0 = _V_mret_1775_q2_q1_q0.var_2;
+      q2 = _V_mret_1790_q2_q1_q0.var_0;
+      q1 = _V_mret_1790_q2_q1_q0.var_1;
+      q0 = _V_mret_1790_q2_q1_q0.var_2;
       binexp--;
       s2 = q2;
       s1 = q1;
@@ -7733,29 +8012,27 @@ f64 strconv__atof64(string s) {
   strconv__PrepNumber pn = (strconv__PrepNumber){
       .negative = 0, .exponent = 0, .mantissa = ((u64)(0))};
   int res_parsing = 0;
-  f64 result = ((f64)(0));
-  result = ((f64)(0.0));
-  u64 *res_ptr = ((u64 *)(&result));
-  _V_MulRet_int_V_strconv__PrepNumber _V_mret_1962_res_parsing_pn =
+  strconv__Float64u res = (strconv__Float64u){.f = 0.0, .u = ((u64)(0))};
+  _V_MulRet_int_V_strconv__PrepNumber _V_mret_1961_res_parsing_pn =
       strconv__parser(string_add(s, tos3(" ")));
-  res_parsing = _V_mret_1962_res_parsing_pn.var_0;
-  pn = _V_mret_1962_res_parsing_pn.var_1;
+  res_parsing = _V_mret_1961_res_parsing_pn.var_0;
+  pn = _V_mret_1961_res_parsing_pn.var_1;
   int tmp30 = res_parsing;
 
   if (tmp30 == strconv__PARSER_OK) {
-    *res_ptr = strconv__converter(&/*114*/ pn);
+    res.u = strconv__converter(&/*114*/ pn);
   } else if (tmp30 == strconv__PARSER_PZERO) {
-    *res_ptr = strconv__DOUBLE_PLUS_ZERO;
+    res.u = strconv__DOUBLE_PLUS_ZERO;
   } else if (tmp30 == strconv__PARSER_MZERO) {
-    *res_ptr = strconv__DOUBLE_MINUS_ZERO;
+    res.u = strconv__DOUBLE_MINUS_ZERO;
   } else if (tmp30 == strconv__PARSER_PINF) {
-    *res_ptr = strconv__DOUBLE_PLUS_INFINITY;
+    res.u = strconv__DOUBLE_PLUS_INFINITY;
   } else if (tmp30 == strconv__PARSER_MINF) {
-    *res_ptr = strconv__DOUBLE_MINUS_INFINITY;
+    res.u = strconv__DOUBLE_MINUS_INFINITY;
   } else // default:
   {
   };
-  return result;
+  return res.f;
 }
 byte strconv__byte_to_lower(byte c) { return c | ('x' - 'X'); }
 u64 strconv__common_parse_uint(string s, int _base, int _bit_size,
@@ -8100,6 +8377,425 @@ string filepath__basedir(string path) {
 }
 string filepath__filename(string path) {
   return string_all_after(path, filepath__separator);
+}
+f64 math__inf(int sign) {
+  u64 v = ((sign >= 0) ? (math__uvinf) : (math__uvneginf));
+  return math__f64_from_bits(v);
+}
+f64 math__nan() { return math__f64_from_bits(math__uvnan); }
+bool math__is_nan(f64 f) { return f64_ne(f, f); }
+bool math__is_inf(f64 f, int sign) {
+  return (sign >= 0 && macro_f64_gt(f, math__max_f64)) ||
+         (sign <= 0 && macro_f64_lt(f, -math__max_f64));
+}
+f64 math__abs(f64 a) { return fabs(a); }
+f64 math__acos(f64 a) { return acos(a); }
+f64 math__asin(f64 a) { return asin(a); }
+f64 math__atan(f64 a) { return atan(a); }
+f64 math__atan2(f64 a, f64 b) { return atan2(a, b); }
+f64 math__cbrt(f64 a) { return cbrt(a); }
+f64 math__ceil(f64 a) { return ceil(a); }
+f64 math__cos(f64 a) { return cos(a); }
+f64 math__cosh(f64 a) { return cosh(a); }
+f64 math__degrees(f64 radians) { return radians * (180.0 / math__pi); }
+f64 math__exp(f64 a) { return exp(a); }
+array_int math__digits(int _n, int base) {
+  if (base < 2) {
+    v_panic(_STR("digits: Cannot find digits of n with base %d", base));
+  };
+  int n = _n;
+  int sign = 1;
+  if (n < 0) {
+    sign = -1;
+    n = -n;
+  };
+  array_int res = new_array_from_c_array(
+      0, 0, sizeof(int), EMPTY_ARRAY_OF_ELEMS(int, 0){TCCSKIP(0)});
+  while (n != 0) {
+
+    _PUSH(&res, (/*typ = array_int   tmp_typ=int*/ (n % base) * sign), tmp1,
+          int);
+    n /= base;
+  };
+  return res;
+}
+f64 math__erf(f64 a) { return erf(a); }
+f64 math__erfc(f64 a) { return erfc(a); }
+f64 math__exp2(f64 a) { return exp2(a); }
+f64 math__floor(f64 a) { return floor(a); }
+f64 math__fmod(f64 a, f64 b) { return fmod(a, b); }
+f64 math__gamma(f64 a) { return tgamma(a); }
+i64 math__gcd(i64 a_, i64 b_) {
+  i64 a = a_;
+  i64 b = b_;
+  if (a < 0) {
+    a = -a;
+  };
+  if (b < 0) {
+    b = -b;
+  };
+  while (b != 0) {
+
+    a %= b;
+    if (a == 0) {
+      return b;
+    };
+    b %= a;
+  };
+  return a;
+}
+f64 math__hypot(f64 a, f64 b) { return hypot(a, b); }
+i64 math__lcm(i64 a, i64 b) {
+  if (a == 0) {
+    return a;
+  };
+  i64 res = a * (b / math__gcd(b, a));
+  if (res < 0) {
+    return -res;
+  };
+  return res;
+}
+f64 math__log(f64 a) { return log(a); }
+f64 math__log2(f64 a) { return log2(a); }
+f64 math__log10(f64 a) { return log10(a); }
+f64 math__log_gamma(f64 a) { return lgamma(a); }
+f64 math__log_n(f64 a, f64 b) { return log(a) / log(b); }
+f64 math__max(f64 a, f64 b) {
+  if (macro_f64_gt(a, b)) {
+    return a;
+  };
+  return b;
+}
+f64 math__min(f64 a, f64 b) {
+  if (macro_f64_lt(a, b)) {
+    return a;
+  };
+  return b;
+}
+f64 math__pow(f64 a, f64 b) { return pow(a, b); }
+f64 math__radians(f64 degrees) { return degrees * (math__pi / 180.0); }
+f64 math__round(f64 f) { return round(f); }
+f64 math__sin(f64 a) { return sin(a); }
+f64 math__sinh(f64 a) { return sinh(a); }
+f64 math__sqrt(f64 a) { return sqrt(a); }
+f32 math__sqrtf(f32 a) { return sqrtf(a); }
+f64 math__tan(f64 a) { return tan(a); }
+f64 math__tanh(f64 a) { return tanh(a); }
+f64 math__trunc(f64 a) { return trunc(a); }
+f64 math__aprox_sin(f64 a) {
+  f32 a0 = 1.91059300966915117e-31;
+  f32 a1 = 1.00086760103908896;
+  f32 a2 = -1.21276126894734565e-2;
+  f32 a3 = -1.38078780785773762e-1;
+  f32 a4 = -2.67353392911981221e-2;
+  f32 a5 = 2.08026600266304389e-2;
+  f32 a6 = -3.03996055049204407e-3;
+  f32 a7 = 1.38235642404333740e-4;
+  return a0 +
+         a * (a1 +
+              a * (a2 + a * (a3 + a * (a4 + a * (a5 + a * (a6 + a * a7))))));
+}
+f64 math__aprox_cos(f64 a) {
+  f32 a0 = 9.9995999154986614e-1;
+  f32 a1 = 1.2548995793001028e-3;
+  f32 a2 = -5.0648546280678015e-1;
+  f32 a3 = 1.2942246466519995e-2;
+  f32 a4 = 2.8668384702547972e-2;
+  f32 a5 = 7.3726485210586547e-3;
+  f32 a6 = -3.8510875386947414e-3;
+  f32 a7 = 4.7196604604366623e-4;
+  f32 a8 = -1.8776444013090451e-5;
+  return a0 +
+         a * (a1 +
+              a * (a2 +
+                   a * (a3 +
+                        a * (a4 + a * (a5 + a * (a6 + a * (a7 + a * a8)))))));
+}
+u32 math__f32_bits(f32 f) {
+  u32 *p = ((u32 *)(&f));
+  return *p;
+}
+f32 math__f32_from_bits(u32 b) {
+  f32 *p = ((f32 *)(&b));
+  return *p;
+}
+u64 math__f64_bits(f64 f) {
+  u64 *p = ((u64 *)(&f));
+  return *p;
+}
+f64 math__f64_from_bits(u64 b) {
+  f64 *p = ((f64 *)(&b));
+  return *p;
+}
+int math_dot_bits__leading_zeros_8(byte x) {
+  return 8 - math_dot_bits__len_8(x);
+}
+int math_dot_bits__leading_zeros_16(u16 x) {
+  return 16 - math_dot_bits__len_16(x);
+}
+int math_dot_bits__leading_zeros_32(u32 x) {
+  return 32 - math_dot_bits__len_32(x);
+}
+int math_dot_bits__leading_zeros_64(u64 x) {
+  return 64 - math_dot_bits__len_64(x);
+}
+int math_dot_bits__trailing_zeros_8(byte x) {
+  return ((int)((*(byte *)array_get(math_dot_bits__ntz_8_tab, x))));
+}
+int math_dot_bits__trailing_zeros_16(u16 x) {
+  if (x == 0) {
+    return 16;
+  };
+  return ((int)((*(byte *)array_get(
+      math_dot_bits__de_bruijn32tab,
+      ((u32)(x & -x)) * math_dot_bits__de_bruijn32 >> (32 - 5)))));
+}
+int math_dot_bits__trailing_zeros_32(u32 x) {
+  if (x == 0) {
+    return 32;
+  };
+  return ((int)((
+      *(byte *)array_get(math_dot_bits__de_bruijn32tab,
+                         (x & -x) * math_dot_bits__de_bruijn32 >> (32 - 5)))));
+}
+int math_dot_bits__trailing_zeros_64(u64 x) {
+  if (x == 0) {
+    return 64;
+  };
+  return ((int)((
+      *(byte *)array_get(math_dot_bits__de_bruijn64tab,
+                         (x & -x) * math_dot_bits__de_bruijn64 >> (64 - 6)))));
+}
+int math_dot_bits__ones_count_8(byte x) {
+  return ((int)((*(byte *)array_get(math_dot_bits__pop_8_tab, x))));
+}
+int math_dot_bits__ones_count_16(u16 x) {
+  return (
+      (int)((*(byte *)array_get(math_dot_bits__pop_8_tab, x >> 8)) +
+            (*(byte *)array_get(math_dot_bits__pop_8_tab, x & ((u16)(0xff))))));
+}
+int math_dot_bits__ones_count_32(u32 x) {
+  return (
+      (int)((*(byte *)array_get(math_dot_bits__pop_8_tab, x >> 24)) +
+            (*(byte *)array_get(math_dot_bits__pop_8_tab, x >> 16 & 0xff)) +
+            (*(byte *)array_get(math_dot_bits__pop_8_tab, x >> 8 & 0xff)) +
+            (*(byte *)array_get(math_dot_bits__pop_8_tab, x & ((u32)(0xff))))));
+}
+int math_dot_bits__ones_count_64(u64 x) {
+  u64 y = (x >> ((u64)(1)) & (math_dot_bits__m0 & math_dot_bits__max_u64)) +
+          (x & (math_dot_bits__m0 & math_dot_bits__max_u64));
+  y = (y >> ((u64)(2)) & (math_dot_bits__m1 & math_dot_bits__max_u64)) +
+      (y & (math_dot_bits__m1 & math_dot_bits__max_u64));
+  y = ((y >> 4) + y) & (math_dot_bits__m2 & math_dot_bits__max_u64);
+  y += y >> 8;
+  y += y >> 16;
+  y += y >> 32;
+  return ((int)(y)) & ((1 << 7) - 1);
+}
+static inline byte math_dot_bits__rotate_left_8(byte x, int k) {
+  byte n = ((byte)(8));
+  byte s = ((byte)(k)) & (n - ((byte)(1)));
+  return ((x << s) | (x >> (n - s)));
+}
+static inline u16 math_dot_bits__rotate_left_16(u16 x, int k) {
+  u16 n = ((u16)(16));
+  u16 s = ((u16)(k)) & (n - ((u16)(1)));
+  return ((x << s) | (x >> (n - s)));
+}
+static inline u32 math_dot_bits__rotate_left_32(u32 x, int k) {
+  u32 n = ((u32)(32));
+  u32 s = ((u32)(k)) & (n - ((u32)(1)));
+  return ((x << s) | (x >> (n - s)));
+}
+static inline u64 math_dot_bits__rotate_left_64(u64 x, int k) {
+  u64 n = ((u64)(64));
+  u64 s = ((u64)(k)) & (n - ((u64)(1)));
+  return ((x << s) | (x >> (n - s)));
+}
+static inline byte math_dot_bits__reverse_8(byte x) {
+  return (*(byte *)array_get(math_dot_bits__rev_8_tab, x));
+}
+static inline u16 math_dot_bits__reverse_16(u16 x) {
+  return ((u16)((*(byte *)array_get(math_dot_bits__rev_8_tab, x >> 8)))) |
+         (((u16)((
+              *(byte *)array_get(math_dot_bits__rev_8_tab, x & ((u16)(0xff))))))
+          << 8);
+}
+static inline u32 math_dot_bits__reverse_32(u32 x) {
+  u32 y = (x >> ((u32)(1)) & (math_dot_bits__m0 & math_dot_bits__max_u32) |
+           ((x & (math_dot_bits__m0 & math_dot_bits__max_u32)) << 1));
+  y = (y >> ((u32)(2)) & (math_dot_bits__m1 & math_dot_bits__max_u32) |
+       ((y & (math_dot_bits__m1 & math_dot_bits__max_u32)) << ((u32)(2))));
+  y = (y >> ((u32)(4)) & (math_dot_bits__m2 & math_dot_bits__max_u32) |
+       ((y & (math_dot_bits__m2 & math_dot_bits__max_u32)) << ((u32)(4))));
+  return math_dot_bits__reverse_bytes_32(y);
+}
+static inline u64 math_dot_bits__reverse_64(u64 x) {
+  u64 y = (x >> ((u64)(1)) & (math_dot_bits__m0 & math_dot_bits__max_u64) |
+           ((x & (math_dot_bits__m0 & math_dot_bits__max_u64)) << 1));
+  y = (y >> ((u64)(2)) & (math_dot_bits__m1 & math_dot_bits__max_u64) |
+       ((y & (math_dot_bits__m1 & math_dot_bits__max_u64)) << 2));
+  y = (y >> ((u64)(4)) & (math_dot_bits__m2 & math_dot_bits__max_u64) |
+       ((y & (math_dot_bits__m2 & math_dot_bits__max_u64)) << 4));
+  return math_dot_bits__reverse_bytes_64(y);
+}
+static inline u16 math_dot_bits__reverse_bytes_16(u16 x) {
+  return (x >> 8) | (x << 8);
+}
+static inline u32 math_dot_bits__reverse_bytes_32(u32 x) {
+  u32 y = (x >> ((u32)(8)) & (math_dot_bits__m3 & math_dot_bits__max_u32) |
+           ((x & (math_dot_bits__m3 & math_dot_bits__max_u32)) << ((u32)(8))));
+  return (y >> 16) | (y << 16);
+}
+static inline u64 math_dot_bits__reverse_bytes_64(u64 x) {
+  u64 y = (x >> ((u64)(8)) & (math_dot_bits__m3 & math_dot_bits__max_u64) |
+           ((x & (math_dot_bits__m3 & math_dot_bits__max_u64)) << ((u64)(8))));
+  y = (y >> ((u64)(16)) & (math_dot_bits__m4 & math_dot_bits__max_u64) |
+       ((y & (math_dot_bits__m4 & math_dot_bits__max_u64)) << ((u64)(16))));
+  return (y >> 32) | (y << 32);
+}
+int math_dot_bits__len_8(byte x) {
+  return ((int)((*(byte *)array_get(math_dot_bits__len_8_tab, x))));
+}
+int math_dot_bits__len_16(u16 x) {
+  u16 y = x;
+  int n = 0;
+  if (y >= 1 << 8) {
+    y >>= 8;
+    n = 8;
+  };
+  return n + ((int)((*(byte *)array_get(math_dot_bits__len_8_tab, y))));
+}
+int math_dot_bits__len_32(u32 x) {
+  u32 y = x;
+  int n = 0;
+  if (y >= 1 << 16) {
+    y >>= 16;
+    n = 16;
+  };
+  if (y >= 1 << 8) {
+    y >>= 8;
+    n += 8;
+  };
+  return n + ((int)((*(byte *)array_get(math_dot_bits__len_8_tab, y))));
+}
+int math_dot_bits__len_64(u64 x) {
+  u64 y = x;
+  int n = 0;
+  if (y >= ((u64)(1)) << ((u64)(32))) {
+    y >>= 32;
+    n = 32;
+  };
+  if (y >= ((u64)(1)) << ((u64)(16))) {
+    y >>= 16;
+    n += 16;
+  };
+  if (y >= ((u64)(1)) << ((u64)(8))) {
+    y >>= 8;
+    n += 8;
+  };
+  return n + ((int)((*(byte *)array_get(math_dot_bits__len_8_tab, y))));
+}
+_V_MulRet_u32_V_u32 math_dot_bits__add_32(u32 x, u32 y, u32 carry) {
+  u64 sum64 = ((u64)(x)) + ((u64)(y)) + ((u64)(carry));
+  u32 sum = ((u32)(sum64));
+  u32 carry_out = ((u32)(sum64 >> 32));
+  return (_V_MulRet_u32_V_u32){.var_0 = sum, .var_1 = carry_out};
+}
+_V_MulRet_u64_V_u64 math_dot_bits__add_64(u64 x, u64 y, u64 carry) {
+  u64 sum = x + y + carry;
+  u64 carry_out = ((x & y) | ((x | y) & ~sum)) >> 63;
+  return (_V_MulRet_u64_V_u64){.var_0 = sum, .var_1 = carry_out};
+}
+_V_MulRet_u32_V_u32 math_dot_bits__sub_32(u32 x, u32 y, u32 borrow) {
+  u32 diff = x - y - borrow;
+  u32 borrow_out = ((~x & y) | (~(x ^ y) & diff)) >> 31;
+  return (_V_MulRet_u32_V_u32){.var_0 = diff, .var_1 = borrow_out};
+}
+_V_MulRet_u64_V_u64 math_dot_bits__sub_64(u64 x, u64 y, u64 borrow) {
+  u64 diff = x - y - borrow;
+  u64 borrow_out = ((~x & y) | (~(x ^ y) & diff)) >> 63;
+  return (_V_MulRet_u64_V_u64){.var_0 = diff, .var_1 = borrow_out};
+}
+_V_MulRet_u32_V_u32 math_dot_bits__mul_32(u32 x, u32 y) {
+  u64 tmp = ((u64)(x)) * ((u64)(y));
+  u32 hi = ((u32)(tmp >> 32));
+  u32 lo = ((u32)(tmp));
+  return (_V_MulRet_u32_V_u32){.var_0 = hi, .var_1 = lo};
+}
+_V_MulRet_u64_V_u64 math_dot_bits__mul_64(u64 x, u64 y) {
+  u64 x0 = x & math_dot_bits__mask32;
+  u64 x1 = x >> 32;
+  u64 y0 = y & math_dot_bits__mask32;
+  u64 y1 = y >> 32;
+  u64 w0 = x0 * y0;
+  u64 t = x1 * y0 + (w0 >> 32);
+  u64 w1 = t & math_dot_bits__mask32;
+  u64 w2 = t >> 32;
+  w1 += x0 * y1;
+  u64 hi = x1 * y1 + w2 + (w1 >> 32);
+  u64 lo = x * y;
+  return (_V_MulRet_u64_V_u64){.var_0 = hi, .var_1 = lo};
+}
+_V_MulRet_u32_V_u32 math_dot_bits__div_32(u32 hi, u32 lo, u32 y) {
+  if (y != 0 && y <= hi) {
+    v_panic(math_dot_bits__overflow_error);
+  };
+  u64 z = (((u64)(hi)) << 32) | ((u64)(lo));
+  u32 quo = ((u32)(z / ((u64)(y))));
+  u32 rem = ((u32)(z % ((u64)(y))));
+  return (_V_MulRet_u32_V_u32){.var_0 = quo, .var_1 = rem};
+}
+_V_MulRet_u64_V_u64 math_dot_bits__div_64(u64 hi, u64 lo, u64 y1) {
+  u64 y = y1;
+  if (y == 0) {
+    v_panic(math_dot_bits__overflow_error);
+  };
+  if (y <= hi) {
+    v_panic(math_dot_bits__overflow_error);
+  };
+  u32 s = ((u32)(math_dot_bits__leading_zeros_64(y)));
+  y <<= s;
+  u64 yn1 = y >> 32;
+  u64 yn0 = y & math_dot_bits__mask32;
+  u64 un32 = (hi << s) | (lo >> (64 - s));
+  u64 un10 = lo << s;
+  u64 un1 = un10 >> 32;
+  u64 un0 = un10 & math_dot_bits__mask32;
+  u64 q1 = un32 / yn1;
+  u64 rhat = un32 - q1 * yn1;
+  while (q1 >= math_dot_bits__two32 ||
+         q1 * yn0 > math_dot_bits__two32 * rhat + un1) {
+
+    q1--;
+    rhat += yn1;
+    if (rhat >= math_dot_bits__two32) {
+      break;
+    };
+  };
+  u64 un21 = un32 * math_dot_bits__two32 + un1 - q1 * y;
+  u64 q0 = un21 / yn1;
+  rhat = un21 - q0 * yn1;
+  while (q0 >= math_dot_bits__two32 ||
+         q0 * yn0 > math_dot_bits__two32 * rhat + un0) {
+
+    q0--;
+    rhat += yn1;
+    if (rhat >= math_dot_bits__two32) {
+      break;
+    };
+  };
+  return (_V_MulRet_u64_V_u64){
+      .var_0 = q1 * math_dot_bits__two32 + q0,
+      .var_1 = (un21 * math_dot_bits__two32 + un0 - q0 * y) >> s};
+}
+u32 math_dot_bits__rem_32(u32 hi, u32 lo, u32 y) {
+  return ((u32)((((u64)(hi)) << 32 | ((u64)(lo))) % ((u64)(y))));
+}
+u64 math_dot_bits__rem_64(u64 hi, u64 lo, u64 y) {
+  _V_MulRet_u64_V_u64 _V_mret_2252___rem = math_dot_bits__div_64(hi % y, lo, y);
+  u64 rem = _V_mret_2252___rem.var_1;
+  return rem;
 }
 string time__Time_format(time__Time t) {
   return time__Time_get_fmt_str(t, time__time__FormatDelimiter_hyphen,
@@ -9005,6 +9701,773 @@ bool v_dot_token__Kind_is_infix(v_dot_token__Kind kind) {
           kind == v_dot_token__v_dot_token__Kind_amp ||
           kind == v_dot_token__v_dot_token__Kind_left_shift ||
           kind == v_dot_token__v_dot_token__Kind_right_shift);
+}
+string strconv_dot_ftoa__Dec32_get_string_32(strconv_dot_ftoa__Dec32 d,
+                                             bool neg, int n_digit) {
+  u32 out = d.m;
+  int out_len = strconv_dot_ftoa__decimal_len_32(out);
+  array_byte buf = array_repeat(
+      new_array_from_c_array(1, 1, sizeof(byte),
+                             EMPTY_ARRAY_OF_ELEMS(byte, 1){((byte)(0))}),
+      out_len + 5 + 1 + 1);
+  int i = 0;
+  if (n_digit > 0 && out_len > n_digit) {
+    out_len = n_digit + 1;
+  };
+  if (neg) {
+    array_set(&/*q*/ buf, i, &(byte[]){'-'});
+    i++;
+  };
+  int disp = 0;
+  if (out_len <= 1) {
+    disp = 1;
+  };
+  int y = i + out_len;
+  int x = 0;
+  while (x < (out_len - disp - 1)) {
+
+    array_set(&/*q*/ buf, y - x, &(byte[]){'0' + ((byte)(out % 10))});
+    out /= 10;
+    i++;
+    x++;
+  };
+  if (out_len >= 1) {
+    array_set(&/*q*/ buf, y - x, &(byte[]){'.'});
+    x++;
+    i++;
+  };
+  if (y - x >= 0) {
+    array_set(&/*q*/ buf, y - x, &(byte[]){'0' + ((byte)(out % 10))});
+    i++;
+  };
+  array_set(&/*q*/ buf, i, &(byte[]){'e'});
+  i++;
+  int exp = d.e + out_len - 1;
+  if (exp < 0) {
+    array_set(&/*q*/ buf, i, &(byte[]){'-'});
+    i++;
+    exp = -exp;
+  } else {
+    array_set(&/*q*/ buf, i, &(byte[]){'+'});
+    i++;
+  };
+  int d1 = exp % 10;
+  int d0 = exp / 10;
+  array_set(&/*q*/ buf, i, &(byte[]){'0' + ((byte)(d0))});
+  i++;
+  array_set(&/*q*/ buf, i, &(byte[]){'0' + ((byte)(d1))});
+  i++;
+  array_set(&/*q*/ buf, i, &(byte[]){0});
+  return tos(((byteptr)(&(*(byte *)array_get(buf, 0)))), i);
+}
+_V_MulRet_strconv_dot_ftoa__Dec32_V_bool
+strconv_dot_ftoa__f32_to_decimal_exact_int(u32 i_mant, u32 exp) {
+  strconv_dot_ftoa__Dec32 d =
+      (strconv_dot_ftoa__Dec32){.m = ((u32)(0)), .e = 0};
+  u32 e = exp - strconv_dot_ftoa__bias32;
+  if (e > strconv_dot_ftoa__mantbits32) {
+    return (_V_MulRet_strconv_dot_ftoa__Dec32_V_bool){.var_0 = d, .var_1 = 0};
+  };
+  u32 shift = strconv_dot_ftoa__mantbits32 - e;
+  u32 mant = i_mant | 0x00800000;
+  d.m = mant >> shift;
+  if ((d.m << shift) != mant) {
+    return (_V_MulRet_strconv_dot_ftoa__Dec32_V_bool){.var_0 = d, .var_1 = 0};
+  };
+  while ((d.m % 10) == 0) {
+
+    d.m /= 10;
+    d.e++;
+  };
+  return (_V_MulRet_strconv_dot_ftoa__Dec32_V_bool){.var_0 = d, .var_1 = 1};
+}
+strconv_dot_ftoa__Dec32 strconv_dot_ftoa__f32_to_decimal(u32 mant, u32 exp) {
+  int e2 = 0;
+  u32 m2 = ((u32)(0));
+  if (exp == 0) {
+    e2 = 1 - strconv_dot_ftoa__bias32 - strconv_dot_ftoa__mantbits32 - 2;
+    m2 = mant;
+  } else {
+    e2 = ((int)(exp)) - strconv_dot_ftoa__bias32 -
+         strconv_dot_ftoa__mantbits32 - 2;
+    m2 = (((u32)(1)) << strconv_dot_ftoa__mantbits32) | mant;
+  };
+  bool even = (m2 & 1) == 0;
+  bool accept_bounds = even;
+  u32 mv = ((u32)(4 * m2));
+  u32 mp = ((u32)(4 * m2 + 2));
+  u32 mm_shift = strconv_dot_ftoa__bool_to_u32(mant != 0 || exp <= 1);
+  u32 mm = ((u32)(4 * m2 - 1 - mm_shift));
+  u32 vr = ((u32)(0));
+  u32 vp = ((u32)(0));
+  u32 vm = ((u32)(0));
+  int e10 = 0;
+  bool vm_is_trailing_zeros = 0;
+  bool vr_is_trailing_zeros = 0;
+  byte last_removed_digit = ((byte)(0));
+  if (e2 >= 0) {
+    u32 q = strconv_dot_ftoa__log10_pow2(e2);
+    e10 = ((int)(q));
+    int k = strconv_dot_ftoa__pow5_inv_num_bits_32 +
+            strconv_dot_ftoa__pow5_bits(((int)(q))) - 1;
+    int i = -e2 + ((int)(q)) + k;
+    vr = strconv_dot_ftoa__mul_pow5_invdiv_pow2(mv, q, i);
+    vp = strconv_dot_ftoa__mul_pow5_invdiv_pow2(mp, q, i);
+    vm = strconv_dot_ftoa__mul_pow5_invdiv_pow2(mm, q, i);
+    if (q != 0 && (vp - 1) / 10 <= vm / 10) {
+      int l = strconv_dot_ftoa__pow5_inv_num_bits_32 +
+              strconv_dot_ftoa__pow5_bits(((int)(q - 1))) - 1;
+      last_removed_digit = ((byte)(strconv_dot_ftoa__mul_pow5_invdiv_pow2(
+                                       mv, q - 1, -e2 + ((int)(q - 1)) + l) %
+                                   10));
+    };
+    if (q <= 9) {
+      if (mv % 5 == 0) {
+        vr_is_trailing_zeros =
+            strconv_dot_ftoa__multiple_of_power_of_five_32(mv, q);
+      } else if (accept_bounds) {
+        vm_is_trailing_zeros =
+            strconv_dot_ftoa__multiple_of_power_of_five_32(mm, q);
+      } else if (strconv_dot_ftoa__multiple_of_power_of_five_32(mp, q)) {
+        vp--;
+      };
+    };
+  } else {
+    u32 q = strconv_dot_ftoa__log10_pow5(-e2);
+    e10 = ((int)(q)) + e2;
+    int i = -e2 - ((int)(q));
+    int k = strconv_dot_ftoa__pow5_bits(i) - strconv_dot_ftoa__pow5_num_bits_32;
+    int j = ((int)(q)) - k;
+    vr = strconv_dot_ftoa__mul_pow5_div_pow2(mv, ((u32)(i)), j);
+    vp = strconv_dot_ftoa__mul_pow5_div_pow2(mp, ((u32)(i)), j);
+    vm = strconv_dot_ftoa__mul_pow5_div_pow2(mm, ((u32)(i)), j);
+    if (q != 0 && ((vp - 1) / 10) <= vm / 10) {
+      j = ((int)(q)) - 1 -
+          (strconv_dot_ftoa__pow5_bits(i + 1) -
+           strconv_dot_ftoa__pow5_num_bits_32);
+      last_removed_digit = ((byte)(
+          strconv_dot_ftoa__mul_pow5_div_pow2(mv, ((u32)(i + 1)), j) % 10));
+    };
+    if (q <= 1) {
+      vr_is_trailing_zeros = 1;
+      if (accept_bounds) {
+        vm_is_trailing_zeros = mm_shift == 1;
+      } else {
+        vp--;
+      };
+    } else if (q < 31) {
+      vr_is_trailing_zeros =
+          strconv_dot_ftoa__multiple_of_power_of_two_32(mv, q - 1);
+    };
+  };
+  int removed = 0;
+  u32 out = ((u32)(0));
+  if (vm_is_trailing_zeros || vr_is_trailing_zeros) {
+    while (vp / 10 > vm / 10) {
+
+      vm_is_trailing_zeros = vm_is_trailing_zeros && (vm % 10) == 0;
+      vr_is_trailing_zeros = vr_is_trailing_zeros && (last_removed_digit == 0);
+      last_removed_digit = ((byte)(vr % 10));
+      vr /= 10;
+      vp /= 10;
+      vm /= 10;
+      removed++;
+    };
+    if (vm_is_trailing_zeros) {
+      while (vm % 10 == 0) {
+
+        vr_is_trailing_zeros =
+            vr_is_trailing_zeros && (last_removed_digit == 0);
+        last_removed_digit = ((byte)(vr % 10));
+        vr /= 10;
+        vp /= 10;
+        vm /= 10;
+        removed++;
+      };
+    };
+    if (vr_is_trailing_zeros && (last_removed_digit == 5) && (vr % 2) == 0) {
+      last_removed_digit = 4;
+    };
+    out = vr;
+    if ((vr == vm && (!accept_bounds || !vm_is_trailing_zeros)) ||
+        last_removed_digit >= 5) {
+      out++;
+    };
+  } else {
+    while (vp / 10 > vm / 10) {
+
+      last_removed_digit = ((byte)(vr % 10));
+      vr /= 10;
+      vp /= 10;
+      vm /= 10;
+      removed++;
+    };
+    out =
+        vr + strconv_dot_ftoa__bool_to_u32(vr == vm || last_removed_digit >= 5);
+  };
+  return (strconv_dot_ftoa__Dec32){.m = out, .e = e10 + removed};
+}
+string strconv_dot_ftoa__f32_to_str(f32 f, int n_digit) {
+  strconv_dot_ftoa__Uf32 u1 = (strconv_dot_ftoa__Uf32){.f = ((f32)(0)), .u = 0};
+  u1.f = f;
+  u32 u = u1.u;
+  bool neg =
+      (u >> (strconv_dot_ftoa__mantbits32 + strconv_dot_ftoa__expbits32)) != 0;
+  u32 mant = u & ((((u32)(1)) << strconv_dot_ftoa__mantbits32) - ((u32)(1)));
+  u32 exp = (u >> strconv_dot_ftoa__mantbits32) &
+            ((((u32)(1)) << strconv_dot_ftoa__expbits32) - ((u32)(1)));
+  if ((exp == strconv_dot_ftoa__maxexp32) || (exp == 0 && mant == 0)) {
+    return strconv_dot_ftoa__get_string_special(neg, exp == 0, mant == 0);
+  };
+  _V_MulRet_strconv_dot_ftoa__Dec32_V_bool _V_mret_1290_d_ok =
+      strconv_dot_ftoa__f32_to_decimal_exact_int(mant, exp);
+  strconv_dot_ftoa__Dec32 d = _V_mret_1290_d_ok.var_0;
+  bool ok = _V_mret_1290_d_ok.var_1;
+  if (!ok) {
+    d = strconv_dot_ftoa__f32_to_decimal(mant, exp);
+  };
+  return strconv_dot_ftoa__Dec32_get_string_32(d, neg, n_digit);
+}
+string strconv_dot_ftoa__Dec64_get_string_64(strconv_dot_ftoa__Dec64 d,
+                                             bool neg, int n_digit) {
+  u64 out = d.m;
+  int out_len = strconv_dot_ftoa__decimal_len_64(out);
+  array_byte buf = array_repeat(
+      new_array_from_c_array(1, 1, sizeof(byte),
+                             EMPTY_ARRAY_OF_ELEMS(byte, 1){((byte)(0))}),
+      out_len + 6 + 1 + 1);
+  int i = 0;
+  if (n_digit > 0 && out_len > n_digit) {
+    out_len = n_digit + 1;
+  };
+  if (neg) {
+    array_set(&/*q*/ buf, i, &(byte[]){'-'});
+    i++;
+  };
+  int disp = 0;
+  if (out_len <= 1) {
+    disp = 1;
+  };
+  int y = i + out_len;
+  int x = 0;
+  while (x < (out_len - disp - 1)) {
+
+    array_set(&/*q*/ buf, y - x, &(byte[]){'0' + ((byte)(out % 10))});
+    out /= 10;
+    i++;
+    x++;
+  };
+  if (out_len >= 1) {
+    array_set(&/*q*/ buf, y - x, &(byte[]){'.'});
+    x++;
+    i++;
+  };
+  if (y - x >= 0) {
+    array_set(&/*q*/ buf, y - x, &(byte[]){'0' + ((byte)(out % 10))});
+    i++;
+  };
+  array_set(&/*q*/ buf, i, &(byte[]){'e'});
+  i++;
+  int exp = d.e + out_len - 1;
+  if (exp < 0) {
+    array_set(&/*q*/ buf, i, &(byte[]){'-'});
+    i++;
+    exp = -exp;
+  } else {
+    array_set(&/*q*/ buf, i, &(byte[]){'+'});
+    i++;
+  };
+  int d2 = exp % 10;
+  exp /= 10;
+  int d1 = exp % 10;
+  int d0 = exp / 10;
+  if (d0 > 0) {
+    array_set(&/*q*/ buf, i, &(byte[]){'0' + ((byte)(d0))});
+    i++;
+  };
+  array_set(&/*q*/ buf, i, &(byte[]){'0' + ((byte)(d1))});
+  i++;
+  array_set(&/*q*/ buf, i, &(byte[]){'0' + ((byte)(d2))});
+  i++;
+  array_set(&/*q*/ buf, i, &(byte[]){0});
+  return tos(((byteptr)(&(*(byte *)array_get(buf, 0)))), i);
+}
+_V_MulRet_strconv_dot_ftoa__Dec64_V_bool
+strconv_dot_ftoa__f64_to_decimal_exact_int(u64 i_mant, u64 exp) {
+  strconv_dot_ftoa__Dec64 d =
+      (strconv_dot_ftoa__Dec64){.m = ((u64)(0)), .e = 0};
+  u64 e = exp - strconv_dot_ftoa__bias64;
+  if (e > strconv_dot_ftoa__mantbits64) {
+    return (_V_MulRet_strconv_dot_ftoa__Dec64_V_bool){.var_0 = d, .var_1 = 0};
+  };
+  u32 shift = strconv_dot_ftoa__mantbits64 - e;
+  u64 mant = i_mant | 0x0010000000000000;
+  d.m = mant >> shift;
+  if ((d.m << shift) != mant) {
+    return (_V_MulRet_strconv_dot_ftoa__Dec64_V_bool){.var_0 = d, .var_1 = 0};
+  };
+  while ((d.m % 10) == 0) {
+
+    d.m /= 10;
+    d.e++;
+  };
+  return (_V_MulRet_strconv_dot_ftoa__Dec64_V_bool){.var_0 = d, .var_1 = 1};
+}
+strconv_dot_ftoa__Dec64 strconv_dot_ftoa__f64_to_decimal(u64 mant, u64 exp) {
+  int e2 = 0;
+  u64 m2 = ((u64)(0));
+  if (exp == 0) {
+    e2 = 1 - strconv_dot_ftoa__bias64 - strconv_dot_ftoa__mantbits64 - 2;
+    m2 = mant;
+  } else {
+    e2 = ((int)(exp)) - strconv_dot_ftoa__bias64 -
+         strconv_dot_ftoa__mantbits64 - 2;
+    m2 = (((u64)(1)) << strconv_dot_ftoa__mantbits64) | mant;
+  };
+  bool even = (m2 & 1) == 0;
+  bool accept_bounds = even;
+  u64 mv = ((u64)(4 * m2));
+  u64 mm_shift = strconv_dot_ftoa__bool_to_u64(mant != 0 || exp <= 1);
+  u64 vr = ((u64)(0));
+  u64 vp = ((u64)(0));
+  u64 vm = ((u64)(0));
+  int e10 = 0;
+  bool vm_is_trailing_zeros = 0;
+  bool vr_is_trailing_zeros = 0;
+  if (e2 >= 0) {
+    u32 q = strconv_dot_ftoa__log10_pow2(e2) -
+            strconv_dot_ftoa__bool_to_u32(e2 > 3);
+    e10 = ((int)(q));
+    int k = strconv_dot_ftoa__pow5_inv_num_bits_64 +
+            strconv_dot_ftoa__pow5_bits(((int)(q))) - 1;
+    int i = -e2 + ((int)(q)) + k;
+    strconv_dot_ftoa__Uint128 mul = (*(strconv_dot_ftoa__Uint128 *)array_get(
+        strconv_dot_ftoa__pow5_inv_split_64, q));
+    vr = strconv_dot_ftoa__mul_shift_64(((u64)(4)) * m2, mul, i);
+    vp = strconv_dot_ftoa__mul_shift_64(((u64)(4)) * m2 + ((u64)(2)), mul, i);
+    vm = strconv_dot_ftoa__mul_shift_64(((u64)(4)) * m2 - ((u64)(1)) - mm_shift,
+                                        mul, i);
+    if (q <= 21) {
+      if (mv % 5 == 0) {
+        vr_is_trailing_zeros =
+            strconv_dot_ftoa__multiple_of_power_of_five_64(mv, q);
+      } else if (accept_bounds) {
+        vm_is_trailing_zeros = strconv_dot_ftoa__multiple_of_power_of_five_64(
+            mv - 1 - mm_shift, q);
+      } else if (strconv_dot_ftoa__multiple_of_power_of_five_64(mv + 2, q)) {
+        vp--;
+      };
+    };
+  } else {
+    u32 q = strconv_dot_ftoa__log10_pow5(-e2) -
+            strconv_dot_ftoa__bool_to_u32(-e2 > 1);
+    e10 = ((int)(q)) + e2;
+    int i = -e2 - ((int)(q));
+    int k = strconv_dot_ftoa__pow5_bits(i) - strconv_dot_ftoa__pow5_num_bits_64;
+    int j = ((int)(q)) - k;
+    strconv_dot_ftoa__Uint128 mul = (*(strconv_dot_ftoa__Uint128 *)array_get(
+        strconv_dot_ftoa__pow5_split_64, i));
+    vr = strconv_dot_ftoa__mul_shift_64(((u64)(4)) * m2, mul, j);
+    vp = strconv_dot_ftoa__mul_shift_64(((u64)(4)) * m2 + ((u64)(2)), mul, j);
+    vm = strconv_dot_ftoa__mul_shift_64(((u64)(4)) * m2 - ((u64)(1)) - mm_shift,
+                                        mul, j);
+    if (q <= 1) {
+      vr_is_trailing_zeros = 1;
+      if (accept_bounds) {
+        vm_is_trailing_zeros = (mm_shift == 1);
+      } else {
+        vp--;
+      };
+    } else if (q < 63) {
+      vr_is_trailing_zeros =
+          strconv_dot_ftoa__multiple_of_power_of_two_64(mv, q - 1);
+    };
+  };
+  int removed = 0;
+  byte last_removed_digit = ((byte)(0));
+  u64 out = ((u64)(0));
+  if (vm_is_trailing_zeros || vr_is_trailing_zeros) {
+    while (1) {
+      u64 vp_div_10 = vp / 10;
+      u64 vm_div_10 = vm / 10;
+      if (vp_div_10 <= vm_div_10) {
+        break;
+      };
+      u64 vm_mod_10 = vm % 10;
+      u64 vr_div_10 = vr / 10;
+      u64 vr_mod_10 = vr % 10;
+      vm_is_trailing_zeros = vm_is_trailing_zeros && vm_mod_10 == 0;
+      vr_is_trailing_zeros = vr_is_trailing_zeros && (last_removed_digit == 0);
+      last_removed_digit = ((byte)(vr_mod_10));
+      vr = vr_div_10;
+      vp = vp_div_10;
+      vm = vm_div_10;
+      removed++;
+    };
+    if (vm_is_trailing_zeros) {
+      while (1) {
+        u64 vm_div_10 = vm / 10;
+        u64 vm_mod_10 = vm % 10;
+        if (vm_mod_10 != 0) {
+          break;
+        };
+        u64 vp_div_10 = vp / 10;
+        u64 vr_div_10 = vr / 10;
+        u64 vr_mod_10 = vr % 10;
+        vr_is_trailing_zeros =
+            vr_is_trailing_zeros && (last_removed_digit == 0);
+        last_removed_digit = ((byte)(vr_mod_10));
+        vr = vr_div_10;
+        vp = vp_div_10;
+        vm = vm_div_10;
+        removed++;
+      };
+    };
+    if (vr_is_trailing_zeros && (last_removed_digit == 5) && (vr % 2) == 0) {
+      last_removed_digit = 4;
+    };
+    out = vr;
+    if ((vr == vm && (!accept_bounds || !vm_is_trailing_zeros)) ||
+        last_removed_digit >= 5) {
+      out++;
+    };
+  } else {
+    bool round_up = 0;
+    while (vp / 100 > vm / 100) {
+
+      round_up = (vr % 100) >= 50;
+      vr /= 100;
+      vp /= 100;
+      vm /= 100;
+      removed += 2;
+    };
+    while (vp / 10 > vm / 10) {
+
+      round_up = (vr % 10) >= 5;
+      vr /= 10;
+      vp /= 10;
+      vm /= 10;
+      removed++;
+    };
+    out = vr + strconv_dot_ftoa__bool_to_u64(vr == vm || round_up);
+  };
+  return (strconv_dot_ftoa__Dec64){.m = out, .e = e10 + removed};
+}
+string strconv_dot_ftoa__f64_to_str(f64 f, int n_digit) {
+  strconv_dot_ftoa__Uf64 u1 = (strconv_dot_ftoa__Uf64){.f = ((f64)(0)), .u = 0};
+  u1.f = f;
+  u64 u = u1.u;
+  bool neg =
+      (u >> (strconv_dot_ftoa__mantbits64 + strconv_dot_ftoa__expbits64)) != 0;
+  u64 mant = u & ((((u64)(1)) << strconv_dot_ftoa__mantbits64) - ((u64)(1)));
+  u64 exp = (u >> strconv_dot_ftoa__mantbits64) &
+            ((((u64)(1)) << strconv_dot_ftoa__expbits64) - ((u64)(1)));
+  if ((exp == strconv_dot_ftoa__maxexp64) || (exp == 0 && mant == 0)) {
+    return strconv_dot_ftoa__get_string_special(neg, exp == 0, mant == 0);
+  };
+  _V_MulRet_strconv_dot_ftoa__Dec64_V_bool _V_mret_1353_d_ok =
+      strconv_dot_ftoa__f64_to_decimal_exact_int(mant, exp);
+  strconv_dot_ftoa__Dec64 d = _V_mret_1353_d_ok.var_0;
+  bool ok = _V_mret_1353_d_ok.var_1;
+  if (!ok) {
+    d = strconv_dot_ftoa__f64_to_decimal(mant, exp);
+  };
+  return strconv_dot_ftoa__Dec64_get_string_64(d, neg, n_digit);
+}
+static inline string strconv_dot_ftoa__ftoa_64(f64 f) {
+  return strconv_dot_ftoa__f64_to_str(f, 17);
+}
+static inline string strconv_dot_ftoa__ftoa_long_64(f64 f) {
+  return strconv_dot_ftoa__f64_to_str_l(f);
+}
+static inline string strconv_dot_ftoa__ftoa_32(f32 f) {
+  return strconv_dot_ftoa__f32_to_str(f, 8);
+}
+static inline string strconv_dot_ftoa__ftoa_long_32(f32 f) {
+  return strconv_dot_ftoa__f32_to_str_l(f);
+}
+void strconv_dot_ftoa__assert1(bool t, string msg) {
+  if (!t) {
+    v_panic(msg);
+  };
+}
+static inline int strconv_dot_ftoa__bool_to_int(bool b) {
+  if (b) {
+    return 1;
+  };
+  return 0;
+}
+static inline u32 strconv_dot_ftoa__bool_to_u32(bool b) {
+  if (b) {
+    return ((u32)(1));
+  };
+  return ((u32)(0));
+}
+static inline u64 strconv_dot_ftoa__bool_to_u64(bool b) {
+  if (b) {
+    return ((u64)(1));
+  };
+  return ((u64)(0));
+}
+string strconv_dot_ftoa__get_string_special(bool neg, bool expZero,
+                                            bool mantZero) {
+  if (!mantZero) {
+    return tos3("nan");
+  };
+  if (!expZero) {
+    if (neg) {
+      return tos3("-inf");
+    } else {
+      return tos3("+inf");
+    };
+  };
+  if (neg) {
+    return tos3("-0e+00");
+  };
+  return tos3("0e+00");
+}
+int strconv_dot_ftoa__decimal_len_32(u32 u) {
+  strconv_dot_ftoa__assert1(u < 1000000000, tos3("too big"));
+  if (u >= 100000000) {
+    return 9;
+  } else if (u >= 10000000) {
+    return 8;
+  } else if (u >= 1000000) {
+    return 7;
+  } else if (u >= 100000) {
+    return 6;
+  } else if (u >= 10000) {
+    return 5;
+  } else if (u >= 1000) {
+    return 4;
+  } else if (u >= 100) {
+    return 3;
+  } else if (u >= 10) {
+    return 2;
+  };
+  return 1;
+}
+u32 strconv_dot_ftoa__mul_shift_32(u32 m, u64 mul, int ishift) {
+  bool tmp1 = ishift > 32;
+
+  /// sline: ""
+  if (!tmp1) {
+    g_test_fails++;
+    eprintln(
+        tos3("/mnt/storage/homes/kastro/dev/gen_vc/workdir/v/vlib/strconv/ftoa/"
+             "utilities.v:100: FAILED: strconv_dot_ftoa__mul_shift_32()"));
+    eprintln(tos3("Source: "));
+    v_panic(tos3("An assertion failed."));
+    exit(1);
+  } else {
+    g_test_oks++;
+  }
+
+  ;
+  _V_MulRet_u64_V_u64 _V_mret_259_hi_lo =
+      math_dot_bits__mul_64(((u64)(m)), mul);
+  u64 hi = _V_mret_259_hi_lo.var_0;
+  u64 lo = _V_mret_259_hi_lo.var_1;
+  u64 shifted_sum = (lo >> ((u64)(ishift))) + (hi << ((u64)(64 - ishift)));
+  strconv_dot_ftoa__assert1(shifted_sum <= math__max_u32,
+                            tos3("shiftedSum <= math.max_u32"));
+  return ((u32)(shifted_sum));
+}
+u32 strconv_dot_ftoa__mul_pow5_invdiv_pow2(u32 m, u32 q, int j) {
+  return strconv_dot_ftoa__mul_shift_32(
+      m, (*(u64 *)array_get(strconv_dot_ftoa__pow5_inv_split_32, q)), j);
+}
+u32 strconv_dot_ftoa__mul_pow5_div_pow2(u32 m, u32 i, int j) {
+  return strconv_dot_ftoa__mul_shift_32(
+      m, (*(u64 *)array_get(strconv_dot_ftoa__pow5_split_32, i)), j);
+}
+u32 strconv_dot_ftoa__pow5_factor_32(u32 i_v) {
+  u32 v = i_v;
+  for (u32 n = ((u32)(0));; n++) {
+
+    u32 q = v / 5;
+    u32 r = v % 5;
+    if (r != 0) {
+      return n;
+    };
+    v = q;
+  };
+  return v;
+}
+bool strconv_dot_ftoa__multiple_of_power_of_five_32(u32 v, u32 p) {
+  return strconv_dot_ftoa__pow5_factor_32(v) >= p;
+}
+bool strconv_dot_ftoa__multiple_of_power_of_two_32(u32 v, u32 p) {
+  return math_dot_bits__trailing_zeros_32(v) >= p;
+}
+u32 strconv_dot_ftoa__log10_pow2(int e) {
+  strconv_dot_ftoa__assert1(e >= 0, tos3("e >= 0"));
+  strconv_dot_ftoa__assert1(e <= 1650, tos3("e <= 1650"));
+  return (((u32)(e)) * 78913) >> 18;
+}
+u32 strconv_dot_ftoa__log10_pow5(int e) {
+  strconv_dot_ftoa__assert1(e >= 0, tos3("e >= 0"));
+  strconv_dot_ftoa__assert1(e <= 2620, tos3("e <= 2620"));
+  return (((u32)(e)) * 732923) >> 20;
+}
+int strconv_dot_ftoa__pow5_bits(int e) {
+  strconv_dot_ftoa__assert1(e >= 0, tos3("e >= 0"));
+  strconv_dot_ftoa__assert1(e <= 3528, tos3("e <= 3528"));
+  return ((int)(((((u32)(e)) * 1217359) >> 19) + 1));
+}
+int strconv_dot_ftoa__decimal_len_64(u64 u) {
+  int log2 = 64 - math_dot_bits__leading_zeros_64(u) - 1;
+  int t = (log2 + 1) * 1233 >> 12;
+  return t -
+         strconv_dot_ftoa__bool_to_int(
+             u < (*(u64 *)array_get(strconv_dot_ftoa__powers_of_10, t))) +
+         1;
+}
+u64 strconv_dot_ftoa__shift_right_128(strconv_dot_ftoa__Uint128 v, int shift) {
+  strconv_dot_ftoa__assert1(shift < 64, tos3("shift < 64"));
+  return (v.hi << ((u64)(64 - shift))) | (v.lo >> ((u32)(shift)));
+}
+u64 strconv_dot_ftoa__mul_shift_64(u64 m, strconv_dot_ftoa__Uint128 mul,
+                                   int shift) {
+  _V_MulRet_u64_V_u64 _V_mret_673_hihi_hilo = math_dot_bits__mul_64(m, mul.hi);
+  u64 hihi = _V_mret_673_hihi_hilo.var_0;
+  u64 hilo = _V_mret_673_hihi_hilo.var_1;
+  _V_MulRet_u64_V_u64 _V_mret_687_lohi__ = math_dot_bits__mul_64(m, mul.lo);
+  u64 lohi = _V_mret_687_lohi__.var_0;
+  strconv_dot_ftoa__Uint128 sum =
+      (strconv_dot_ftoa__Uint128){.hi = hihi, .lo = lohi + hilo};
+  if (sum.lo < lohi) {
+    sum.hi++;
+  };
+  return strconv_dot_ftoa__shift_right_128(sum, shift - 64);
+}
+u32 strconv_dot_ftoa__pow5_factor_64(u64 v_i) {
+  u64 v = v_i;
+  for (u32 n = ((u32)(0));; n++) {
+
+    u64 q = v / 5;
+    u64 r = v % 5;
+    if (r != 0) {
+      return n;
+    };
+    v = q;
+  };
+  return ((u32)(0));
+}
+bool strconv_dot_ftoa__multiple_of_power_of_five_64(u64 v, u32 p) {
+  return strconv_dot_ftoa__pow5_factor_64(v) >= p;
+}
+bool strconv_dot_ftoa__multiple_of_power_of_two_64(u64 v, u32 p) {
+  return ((u32)(math_dot_bits__trailing_zeros_64(v))) >= p;
+}
+string strconv_dot_ftoa__f32_to_str_l(f64 f) {
+  return strconv_dot_ftoa__f64_to_str_l(((f32)(f)));
+}
+string strconv_dot_ftoa__f64_to_str_l(f64 f) {
+  string s = strconv_dot_ftoa__f64_to_str(f, 18);
+  if (s.len > 2 && (string_at(s, 0) == 'N' || string_at(s, 1) == 'i')) {
+    return s;
+  };
+  bool m_sgn_flag = 0;
+  int sgn = 1;
+  byte b[18] = {0};
+  int d_pos = 1;
+  int i = 0;
+  int i1 = 0;
+  int exp = 0;
+  int exp_sgn = 1;
+  string tmp12 = s;
+  ;
+  for (int tmp13 = 0; tmp13 < tmp12.len; tmp13++) {
+    byte c = tmp12.str[tmp13];
+
+    if (c == '-') {
+      sgn = -1;
+      i++;
+    } else if (c == '+') {
+      sgn = 1;
+      i++;
+    } else if (c >= '0' && c <= '9') {
+      b[i1++] /*rbyte 1*/ = c;
+      i++;
+    } else if (c == '.') {
+      if (sgn > 0) {
+        d_pos = i;
+      } else {
+        d_pos = i - 1;
+      };
+      i++;
+    } else if (c == 'e') {
+      i++;
+      break;
+    } else {
+      return tos3("Float conversion error!!");
+    };
+  };
+  b[i1] /*rbyte 1*/ = 0;
+  if (string_at(s, i) == '-') {
+    exp_sgn = -1;
+    i++;
+  } else if (string_at(s, i) == '+') {
+    exp_sgn = 1;
+    i++;
+  };
+  string tmp18 = string_substr2(s, i, -1, true);
+  ;
+  for (int tmp21 = 0; tmp21 < tmp18.len; tmp21++) {
+    byte c = tmp18.str[tmp21];
+
+    exp = exp * 10 + ((int)(c - '0'));
+  };
+  array_byte res =
+      array_repeat(new_array_from_c_array(1, 1, sizeof(byte),
+                                          EMPTY_ARRAY_OF_ELEMS(byte, 1){'0'}),
+                   exp + 32);
+  int r_i = 0;
+  if (sgn == 1) {
+    if (m_sgn_flag) {
+      array_set(&/*q*/ res, r_i++, &(byte[]){'+'});
+    };
+  } else {
+    array_set(&/*q*/ res, r_i++, &(byte[]){'-'});
+  };
+  i = 0;
+  if (exp_sgn >= 0) {
+    while (b[i] /*rbyte 1*/ != 0) {
+
+      array_set(&/*q*/ res, r_i++, &(byte[]){b[i] /*rbyte 1*/});
+      i++;
+      if (i >= d_pos && exp >= 0) {
+        if (exp == 0) {
+          array_set(&/*q*/ res, r_i++, &(byte[]){'.'});
+        };
+        exp--;
+      };
+    };
+    while (exp >= 0) {
+
+      array_set(&/*q*/ res, r_i++, &(byte[]){'0'});
+      exp--;
+    };
+  } else {
+    bool dot_p = 1;
+    while (exp > 0) {
+
+      array_set(&/*q*/ res, r_i++, &(byte[]){'0'});
+      exp--;
+      if (dot_p) {
+        array_set(&/*q*/ res, r_i++, &(byte[]){'.'});
+        dot_p = 0;
+      };
+    };
+    while (b[i] /*rbyte 1*/ != 0) {
+
+      array_set(&/*q*/ res, r_i++, &(byte[]){b[i] /*rbyte 1*/});
+      i++;
+    };
+  };
+  array_set(&/*q*/ res, r_i, &(byte[]){0});
+  return tos(&(*(byte *)array_get(res, 0)), r_i);
 }
 bool os__File_is_opened(os__File f) { return f.opened; }
 array_byte os__File_read_bytes(os__File *f, int size) {
@@ -35875,6 +37338,170 @@ void init() {
       "self-test suite to make sure V is working properly\n\n   setup-freetype "
       "   setup thirdparty freetype on Windows\n\nFor a comprehensive list of "
       "options, please refer to `v help --verbose`.");
+  math__uvnan = 0x7FF8000000000001;
+  math__uvinf = 0x7FF0000000000000;
+  math__uvneginf = 0xFFF0000000000000;
+  math__uvone = 0x3FF0000000000000;
+  math__mask = 0x7FF;
+  math__shift = 64 - 11 - 1;
+  math__sign_mask = (((u64)(1)) << 63);
+  math__frac_mask = ((((u64)(1)) << ((u64)(math__shift))) - ((u64)(1)));
+  math__log2_e = 1.0 / math__ln2;
+  math__log10_e = 1.0 / math__ln10;
+  math__max_f32 = 3.40282346638528859811704183484516925440e+38;
+  math__smallest_non_zero_f32 = 1.401298464324817070923729583289916131280e-45;
+  math__max_f64 = 1.797693134862315708145274237317043567981e+308;
+  math__smallest_non_zero_f64 = 4.940656458412465441765687928682213723651e-324;
+  math__min_i8 = -128;
+  math__min_i16 = -32768;
+  math__min_i32 = -2147483648;
+  math__min_i64 = -9223372036854775807 - 1;
+  math_dot_bits__de_bruijn32 = ((u32)(0x077CB531));
+  math_dot_bits__de_bruijn32tab = new_array_from_c_array(
+      32, 32, sizeof(byte),
+      EMPTY_ARRAY_OF_ELEMS(byte, 32){
+          ((byte)(0)), 1,  28, 2,  29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4,  8,
+          31,          27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6,  11, 5,  10, 9,
+      });
+  math_dot_bits__de_bruijn64 = (0x03f79d71b4ca8b09);
+  math_dot_bits__de_bruijn64tab = new_array_from_c_array(
+      64, 64, sizeof(byte),
+      EMPTY_ARRAY_OF_ELEMS(byte, 64){
+          ((byte)(0)), 1,  56, 2,  57, 49, 28, 3,  61, 58, 42, 50, 38,
+          29,          17, 4,  62, 47, 59, 36, 45, 43, 51, 22, 53, 39,
+          33,          30, 24, 18, 12, 5,  63, 55, 48, 27, 60, 41, 37,
+          16,          46, 35, 44, 21, 52, 32, 23, 11, 54, 26, 40, 15,
+          34,          20, 31, 10, 25, 14, 19, 9,  13, 8,  7,  6,
+      });
+  math_dot_bits__m0 = 0x5555555555555555;
+  math_dot_bits__m1 = 0x3333333333333333;
+  math_dot_bits__m2 = 0x0f0f0f0f0f0f0f0f;
+  math_dot_bits__m3 = 0x00ff00ff00ff00ff;
+  math_dot_bits__m4 = 0x0000ffff0000ffff;
+  math_dot_bits__two32 = 0x100000000;
+  math_dot_bits__mask32 = math_dot_bits__two32 - 1;
+  math_dot_bits__overflow_error = tos3("Overflow Error");
+  math_dot_bits__divide_error = tos3("Divide Error");
+  math_dot_bits__ntz_8_tab = new_array_from_c_array(
+      256, 256, sizeof(byte),
+      EMPTY_ARRAY_OF_ELEMS(byte, 256){
+          ((byte)(0x08)), 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00,
+          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00,
+          0x02,           0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00,
+          0x01,           0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
+          0x03,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00,
+          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00,
+          0x02,           0x00, 0x01, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x00,
+          0x01,           0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
+          0x04,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00,
+          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00,
+          0x02,           0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00,
+          0x01,           0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
+          0x03,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x07, 0x00,
+          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00,
+          0x02,           0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00,
+          0x01,           0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
+          0x05,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00,
+          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00,
+          0x02,           0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00,
+          0x01,           0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
+          0x03,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00,
+          0x01,           0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00,
+          0x02,           0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00,
+          0x01,           0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00,
+          0x04,           0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00,
+          0x01,           0x00, 0x02, 0x00, 0x01, 0x00,
+      });
+  math_dot_bits__pop_8_tab = new_array_from_c_array(
+      256, 256, sizeof(byte),
+      EMPTY_ARRAY_OF_ELEMS(byte, 256){
+          ((byte)(0x00)), 0x01, 0x01, 0x02, 0x01, 0x02, 0x02, 0x03, 0x01, 0x02,
+          0x02,           0x03, 0x02, 0x03, 0x03, 0x04, 0x01, 0x02, 0x02, 0x03,
+          0x02,           0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04,
+          0x04,           0x05, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04,
+          0x02,           0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x02, 0x03,
+          0x03,           0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05,
+          0x04,           0x05, 0x05, 0x06, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03,
+          0x03,           0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05,
+          0x02,           0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04,
+          0x04,           0x05, 0x04, 0x05, 0x05, 0x06, 0x02, 0x03, 0x03, 0x04,
+          0x03,           0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05,
+          0x05,           0x06, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06,
+          0x04,           0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x01, 0x02,
+          0x02,           0x03, 0x02, 0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04,
+          0x03,           0x04, 0x04, 0x05, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04,
+          0x04,           0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06,
+          0x02,           0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04,
+          0x04,           0x05, 0x04, 0x05, 0x05, 0x06, 0x03, 0x04, 0x04, 0x05,
+          0x04,           0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06,
+          0x06,           0x07, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05,
+          0x03,           0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x03, 0x04,
+          0x04,           0x05, 0x04, 0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06,
+          0x05,           0x06, 0x06, 0x07, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05,
+          0x05,           0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07,
+          0x04,           0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x05, 0x06,
+          0x06,           0x07, 0x06, 0x07, 0x07, 0x08,
+      });
+  math_dot_bits__rev_8_tab = new_array_from_c_array(
+      256, 256, sizeof(byte),
+      EMPTY_ARRAY_OF_ELEMS(byte, 256){
+          ((byte)(0x00)), 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0, 0x10, 0x90,
+          0x50,           0xd0, 0x30, 0xb0, 0x70, 0xf0, 0x08, 0x88, 0x48, 0xc8,
+          0x28,           0xa8, 0x68, 0xe8, 0x18, 0x98, 0x58, 0xd8, 0x38, 0xb8,
+          0x78,           0xf8, 0x04, 0x84, 0x44, 0xc4, 0x24, 0xa4, 0x64, 0xe4,
+          0x14,           0x94, 0x54, 0xd4, 0x34, 0xb4, 0x74, 0xf4, 0x0c, 0x8c,
+          0x4c,           0xcc, 0x2c, 0xac, 0x6c, 0xec, 0x1c, 0x9c, 0x5c, 0xdc,
+          0x3c,           0xbc, 0x7c, 0xfc, 0x02, 0x82, 0x42, 0xc2, 0x22, 0xa2,
+          0x62,           0xe2, 0x12, 0x92, 0x52, 0xd2, 0x32, 0xb2, 0x72, 0xf2,
+          0x0a,           0x8a, 0x4a, 0xca, 0x2a, 0xaa, 0x6a, 0xea, 0x1a, 0x9a,
+          0x5a,           0xda, 0x3a, 0xba, 0x7a, 0xfa, 0x06, 0x86, 0x46, 0xc6,
+          0x26,           0xa6, 0x66, 0xe6, 0x16, 0x96, 0x56, 0xd6, 0x36, 0xb6,
+          0x76,           0xf6, 0x0e, 0x8e, 0x4e, 0xce, 0x2e, 0xae, 0x6e, 0xee,
+          0x1e,           0x9e, 0x5e, 0xde, 0x3e, 0xbe, 0x7e, 0xfe, 0x01, 0x81,
+          0x41,           0xc1, 0x21, 0xa1, 0x61, 0xe1, 0x11, 0x91, 0x51, 0xd1,
+          0x31,           0xb1, 0x71, 0xf1, 0x09, 0x89, 0x49, 0xc9, 0x29, 0xa9,
+          0x69,           0xe9, 0x19, 0x99, 0x59, 0xd9, 0x39, 0xb9, 0x79, 0xf9,
+          0x05,           0x85, 0x45, 0xc5, 0x25, 0xa5, 0x65, 0xe5, 0x15, 0x95,
+          0x55,           0xd5, 0x35, 0xb5, 0x75, 0xf5, 0x0d, 0x8d, 0x4d, 0xcd,
+          0x2d,           0xad, 0x6d, 0xed, 0x1d, 0x9d, 0x5d, 0xdd, 0x3d, 0xbd,
+          0x7d,           0xfd, 0x03, 0x83, 0x43, 0xc3, 0x23, 0xa3, 0x63, 0xe3,
+          0x13,           0x93, 0x53, 0xd3, 0x33, 0xb3, 0x73, 0xf3, 0x0b, 0x8b,
+          0x4b,           0xcb, 0x2b, 0xab, 0x6b, 0xeb, 0x1b, 0x9b, 0x5b, 0xdb,
+          0x3b,           0xbb, 0x7b, 0xfb, 0x07, 0x87, 0x47, 0xc7, 0x27, 0xa7,
+          0x67,           0xe7, 0x17, 0x97, 0x57, 0xd7, 0x37, 0xb7, 0x77, 0xf7,
+          0x0f,           0x8f, 0x4f, 0xcf, 0x2f, 0xaf, 0x6f, 0xef, 0x1f, 0x9f,
+          0x5f,           0xdf, 0x3f, 0xbf, 0x7f, 0xff,
+      });
+  math_dot_bits__len_8_tab = new_array_from_c_array(
+      256, 256, sizeof(byte),
+      EMPTY_ARRAY_OF_ELEMS(byte, 256){
+          ((byte)(0x00)), 0x01, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03, 0x04, 0x04,
+          0x04,           0x04, 0x04, 0x04, 0x04, 0x04, 0x05, 0x05, 0x05, 0x05,
+          0x05,           0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05,
+          0x05,           0x05, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
+          0x06,           0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
+          0x06,           0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
+          0x06,           0x06, 0x06, 0x06, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+          0x07,           0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+          0x08,           0x08, 0x08, 0x08, 0x08, 0x08,
+      });
   time__days_string = tos3("MonTueWedThuFriSatSun");
   time__month_days = new_array_from_c_array(
       12, 12, sizeof(int),
@@ -35922,6 +37549,678 @@ void init() {
   v_dot_token__token_str = v_dot_token__build_token_str();
   v_dot_token__keywords = v_dot_token__build_keys();
   v_dot_token__precedences = v_dot_token__build_precedences();
+  strconv_dot_ftoa__mantbits32 = ((u32)(23));
+  strconv_dot_ftoa__expbits32 = ((u32)(8));
+  strconv_dot_ftoa__bias32 = ((u32)(127));
+  strconv_dot_ftoa__mantbits64 = ((u32)(52));
+  strconv_dot_ftoa__expbits64 = ((u32)(11));
+  strconv_dot_ftoa__bias64 = ((u32)(1023));
+  strconv_dot_ftoa__powers_of_10 = new_array_from_c_array(
+      18, 18, sizeof(u64),
+      EMPTY_ARRAY_OF_ELEMS(u64, 18){
+          ((u64)(1e0)), ((u64)(1e1)), ((u64)(1e2)), ((u64)(1e3)), ((u64)(1e4)),
+          ((u64)(1e5)), ((u64)(1e6)), ((u64)(1e7)), ((u64)(1e8)), ((u64)(1e9)),
+          ((u64)(1e10)), ((u64)(1e11)), ((u64)(1e12)), ((u64)(1e13)),
+          ((u64)(1e14)), ((u64)(1e15)), ((u64)(1e16)), ((u64)(1e17))});
+  strconv_dot_ftoa__pow5_split_32 = new_array_from_c_array(
+      47, 47, sizeof(u64),
+      EMPTY_ARRAY_OF_ELEMS(u64, 47){
+          1152921504606846976, 1441151880758558720, 1801439850948198400,
+          2251799813685248000, 1407374883553280000, 1759218604441600000,
+          2199023255552000000, 1374389534720000000, 1717986918400000000,
+          2147483648000000000, 1342177280000000000, 1677721600000000000,
+          2097152000000000000, 1310720000000000000, 1638400000000000000,
+          2048000000000000000, 1280000000000000000, 1600000000000000000,
+          2000000000000000000, 1250000000000000000, 1562500000000000000,
+          1953125000000000000, 1220703125000000000, 1525878906250000000,
+          1907348632812500000, 1192092895507812500, 1490116119384765625,
+          1862645149230957031, 1164153218269348144, 1455191522836685180,
+          1818989403545856475, 2273736754432320594, 1421085471520200371,
+          1776356839400250464, 2220446049250313080, 1387778780781445675,
+          1734723475976807094, 2168404344971008868, 1355252715606880542,
+          1694065894508600678, 2117582368135750847, 1323488980084844279,
+          1654361225106055349, 2067951531382569187, 1292469707114105741,
+          1615587133892632177, 2019483917365790221});
+  strconv_dot_ftoa__pow5_inv_split_32 = new_array_from_c_array(
+      31, 31, sizeof(u64),
+      EMPTY_ARRAY_OF_ELEMS(u64, 31){
+          576460752303423489, 461168601842738791, 368934881474191033,
+          295147905179352826, 472236648286964522, 377789318629571618,
+          302231454903657294, 483570327845851670, 386856262276681336,
+          309485009821345069, 495176015714152110, 396140812571321688,
+          316912650057057351, 507060240091291761, 405648192073033409,
+          324518553658426727, 519229685853482763, 415383748682786211,
+          332306998946228969, 531691198313966350, 425352958651173080,
+          340282366920938464, 544451787073501542, 435561429658801234,
+          348449143727040987, 557518629963265579, 446014903970612463,
+          356811923176489971, 570899077082383953, 456719261665907162,
+          365375409332725730});
+  strconv_dot_ftoa__pow5_split_64 = new_array_from_c_array(
+      326, 326, sizeof(strconv_dot_ftoa__Uint128),
+      EMPTY_ARRAY_OF_ELEMS(strconv_dot_ftoa__Uint128, 326){
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 72057594037927936},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 90071992547409920},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 112589990684262400},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 140737488355328000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 87960930222080000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 109951162777600000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 137438953472000000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 85899345920000000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 107374182400000000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 134217728000000000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 83886080000000000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 104857600000000000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 131072000000000000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 81920000000000000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 102400000000000000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 128000000000000000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 80000000000000000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 100000000000000000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 125000000000000000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 78125000000000000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 97656250000000000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 122070312500000000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 76293945312500000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 95367431640625000},
+          (strconv_dot_ftoa__Uint128){((u64)(0)), 119209289550781250},
+          (strconv_dot_ftoa__Uint128){4611686018427387904, 74505805969238281},
+          (strconv_dot_ftoa__Uint128){10376293541461622784, 93132257461547851},
+          (strconv_dot_ftoa__Uint128){8358680908399640576, 116415321826934814},
+          (strconv_dot_ftoa__Uint128){612489549322387456, 72759576141834259},
+          (strconv_dot_ftoa__Uint128){14600669991935148032, 90949470177292823},
+          (strconv_dot_ftoa__Uint128){13639151471491547136, 113686837721616029},
+          (strconv_dot_ftoa__Uint128){3213881284082270208, 142108547152020037},
+          (strconv_dot_ftoa__Uint128){4314518811765112832, 88817841970012523},
+          (strconv_dot_ftoa__Uint128){781462496279003136, 111022302462515654},
+          (strconv_dot_ftoa__Uint128){10200200157203529728, 138777878078144567},
+          (strconv_dot_ftoa__Uint128){13292654125893287936, 86736173798840354},
+          (strconv_dot_ftoa__Uint128){7392445620511834112, 108420217248550443},
+          (strconv_dot_ftoa__Uint128){4628871007212404736, 135525271560688054},
+          (strconv_dot_ftoa__Uint128){16728102434789916672, 84703294725430033},
+          (strconv_dot_ftoa__Uint128){7075069988205232128, 105879118406787542},
+          (strconv_dot_ftoa__Uint128){18067209522111315968, 132348898008484427},
+          (strconv_dot_ftoa__Uint128){8986162942105878528, 82718061255302767},
+          (strconv_dot_ftoa__Uint128){6621017659204960256, 103397576569128459},
+          (strconv_dot_ftoa__Uint128){3664586055578812416, 129246970711410574},
+          (strconv_dot_ftoa__Uint128){16125424340018921472, 80779356694631608},
+          (strconv_dot_ftoa__Uint128){1710036351314100224, 100974195868289511},
+          (strconv_dot_ftoa__Uint128){15972603494424788992, 126217744835361888},
+          (strconv_dot_ftoa__Uint128){9982877184015493120, 78886090522101180},
+          (strconv_dot_ftoa__Uint128){12478596480019366400, 98607613152626475},
+          (strconv_dot_ftoa__Uint128){10986559581596820096, 123259516440783094},
+          (strconv_dot_ftoa__Uint128){2254913720070624656, 77037197775489434},
+          (strconv_dot_ftoa__Uint128){12042014186943056628, 96296497219361792},
+          (strconv_dot_ftoa__Uint128){15052517733678820785, 120370621524202240},
+          (strconv_dot_ftoa__Uint128){9407823583549262990, 75231638452626400},
+          (strconv_dot_ftoa__Uint128){11759779479436578738, 94039548065783000},
+          (strconv_dot_ftoa__Uint128){14699724349295723422, 117549435082228750},
+          (strconv_dot_ftoa__Uint128){4575641699882439235, 73468396926392969},
+          (strconv_dot_ftoa__Uint128){10331238143280436948, 91835496157991211},
+          (strconv_dot_ftoa__Uint128){8302361660673158281, 114794370197489014},
+          (strconv_dot_ftoa__Uint128){1154580038986672043, 143492962746861268},
+          (strconv_dot_ftoa__Uint128){9944984561221445835, 89683101716788292},
+          (strconv_dot_ftoa__Uint128){12431230701526807293, 112103877145985365},
+          (strconv_dot_ftoa__Uint128){1703980321626345405, 140129846432481707},
+          (strconv_dot_ftoa__Uint128){17205888765512323542, 87581154020301066},
+          (strconv_dot_ftoa__Uint128){12283988920035628619, 109476442525376333},
+          (strconv_dot_ftoa__Uint128){1519928094762372062, 136845553156720417},
+          (strconv_dot_ftoa__Uint128){12479170105294952299, 85528470722950260},
+          (strconv_dot_ftoa__Uint128){15598962631618690374, 106910588403687825},
+          (strconv_dot_ftoa__Uint128){5663645234241199255, 133638235504609782},
+          (strconv_dot_ftoa__Uint128){17374836326682913246, 83523897190381113},
+          (strconv_dot_ftoa__Uint128){7883487353071477846, 104404871487976392},
+          (strconv_dot_ftoa__Uint128){9854359191339347308, 130506089359970490},
+          (strconv_dot_ftoa__Uint128){10770660513014479971, 81566305849981556},
+          (strconv_dot_ftoa__Uint128){13463325641268099964, 101957882312476945},
+          (strconv_dot_ftoa__Uint128){2994098996302961243, 127447352890596182},
+          (strconv_dot_ftoa__Uint128){15706369927971514489, 79654595556622613},
+          (strconv_dot_ftoa__Uint128){5797904354682229399, 99568244445778267},
+          (strconv_dot_ftoa__Uint128){2635694424925398845, 124460305557222834},
+          (strconv_dot_ftoa__Uint128){6258995034005762182, 77787690973264271},
+          (strconv_dot_ftoa__Uint128){3212057774079814824, 97234613716580339},
+          (strconv_dot_ftoa__Uint128){17850130272881932242, 121543267145725423},
+          (strconv_dot_ftoa__Uint128){18073860448192289507, 75964541966078389},
+          (strconv_dot_ftoa__Uint128){8757267504958198172, 94955677457597987},
+          (strconv_dot_ftoa__Uint128){6334898362770359811, 118694596821997484},
+          (strconv_dot_ftoa__Uint128){13182683513586250689, 74184123013748427},
+          (strconv_dot_ftoa__Uint128){11866668373555425458, 92730153767185534},
+          (strconv_dot_ftoa__Uint128){5609963430089506015, 115912692208981918},
+          (strconv_dot_ftoa__Uint128){17341285199088104971, 72445432630613698},
+          (strconv_dot_ftoa__Uint128){12453234462005355406, 90556790788267123},
+          (strconv_dot_ftoa__Uint128){10954857059079306353, 113195988485333904},
+          (strconv_dot_ftoa__Uint128){13693571323849132942, 141494985606667380},
+          (strconv_dot_ftoa__Uint128){17781854114260483896, 88434366004167112},
+          (strconv_dot_ftoa__Uint128){3780573569116053255, 110542957505208891},
+          (strconv_dot_ftoa__Uint128){114030942967678664, 138178696881511114},
+          (strconv_dot_ftoa__Uint128){4682955357782187069, 86361685550944446},
+          (strconv_dot_ftoa__Uint128){15077066234082509644, 107952106938680557},
+          (strconv_dot_ftoa__Uint128){5011274737320973344, 134940133673350697},
+          (strconv_dot_ftoa__Uint128){14661261756894078100, 84337583545844185},
+          (strconv_dot_ftoa__Uint128){4491519140835433913, 105421979432305232},
+          (strconv_dot_ftoa__Uint128){5614398926044292391, 131777474290381540},
+          (strconv_dot_ftoa__Uint128){12732371365632458552, 82360921431488462},
+          (strconv_dot_ftoa__Uint128){6692092170185797382, 102951151789360578},
+          (strconv_dot_ftoa__Uint128){17588487249587022536, 128688939736700722},
+          (strconv_dot_ftoa__Uint128){15604490549419276989, 80430587335437951},
+          (strconv_dot_ftoa__Uint128){14893927168346708332, 100538234169297439},
+          (strconv_dot_ftoa__Uint128){14005722942005997511, 125672792711621799},
+          (strconv_dot_ftoa__Uint128){15671105866394830300, 78545495444763624},
+          (strconv_dot_ftoa__Uint128){1142138259283986260, 98181869305954531},
+          (strconv_dot_ftoa__Uint128){15262730879387146537, 122727336632443163},
+          (strconv_dot_ftoa__Uint128){7233363790403272633, 76704585395276977},
+          (strconv_dot_ftoa__Uint128){13653390756431478696, 95880731744096221},
+          (strconv_dot_ftoa__Uint128){3231680390257184658, 119850914680120277},
+          (strconv_dot_ftoa__Uint128){4325643253124434363, 74906821675075173},
+          (strconv_dot_ftoa__Uint128){10018740084832930858, 93633527093843966},
+          (strconv_dot_ftoa__Uint128){3300053069186387764, 117041908867304958},
+          (strconv_dot_ftoa__Uint128){15897591223523656064, 73151193042065598},
+          (strconv_dot_ftoa__Uint128){10648616992549794273, 91438991302581998},
+          (strconv_dot_ftoa__Uint128){4087399203832467033, 114298739128227498},
+          (strconv_dot_ftoa__Uint128){14332621041645359599, 142873423910284372},
+          (strconv_dot_ftoa__Uint128){18181260187883125557, 89295889943927732},
+          (strconv_dot_ftoa__Uint128){4279831161144355331, 111619862429909666},
+          (strconv_dot_ftoa__Uint128){14573160988285219972, 139524828037387082},
+          (strconv_dot_ftoa__Uint128){13719911636105650386, 87203017523366926},
+          (strconv_dot_ftoa__Uint128){7926517508277287175, 109003771904208658},
+          (strconv_dot_ftoa__Uint128){684774848491833161, 136254714880260823},
+          (strconv_dot_ftoa__Uint128){7345513307948477581, 85159196800163014},
+          (strconv_dot_ftoa__Uint128){18405263671790372785, 106448996000203767},
+          (strconv_dot_ftoa__Uint128){18394893571310578077, 133061245000254709},
+          (strconv_dot_ftoa__Uint128){13802651491282805250, 83163278125159193},
+          (strconv_dot_ftoa__Uint128){3418256308821342851, 103954097656448992},
+          (strconv_dot_ftoa__Uint128){4272820386026678563, 129942622070561240},
+          (strconv_dot_ftoa__Uint128){2670512741266674102, 81214138794100775},
+          (strconv_dot_ftoa__Uint128){17173198981865506339, 101517673492625968},
+          (strconv_dot_ftoa__Uint128){3019754653622331308, 126897091865782461},
+          (strconv_dot_ftoa__Uint128){4193189667727651020, 79310682416114038},
+          (strconv_dot_ftoa__Uint128){14464859121514339583, 99138353020142547},
+          (strconv_dot_ftoa__Uint128){13469387883465536574, 123922941275178184},
+          (strconv_dot_ftoa__Uint128){8418367427165960359, 77451838296986365},
+          (strconv_dot_ftoa__Uint128){15134645302384838353, 96814797871232956},
+          (strconv_dot_ftoa__Uint128){471562554271496325, 121018497339041196},
+          (strconv_dot_ftoa__Uint128){9518098633274461011, 75636560836900747},
+          (strconv_dot_ftoa__Uint128){7285937273165688360, 94545701046125934},
+          (strconv_dot_ftoa__Uint128){18330793628311886258, 118182126307657417},
+          (strconv_dot_ftoa__Uint128){4539216990053847055, 73863828942285886},
+          (strconv_dot_ftoa__Uint128){14897393274422084627, 92329786177857357},
+          (strconv_dot_ftoa__Uint128){4786683537745442072, 115412232722321697},
+          (strconv_dot_ftoa__Uint128){14520892257159371055, 72132645451451060},
+          (strconv_dot_ftoa__Uint128){18151115321449213818, 90165806814313825},
+          (strconv_dot_ftoa__Uint128){8853836096529353561, 112707258517892282},
+          (strconv_dot_ftoa__Uint128){1843923083806916143, 140884073147365353},
+          (strconv_dot_ftoa__Uint128){12681666973447792349, 88052545717103345},
+          (strconv_dot_ftoa__Uint128){2017025661527576725, 110065682146379182},
+          (strconv_dot_ftoa__Uint128){11744654113764246714, 137582102682973977},
+          (strconv_dot_ftoa__Uint128){422879793461572340, 85988814176858736},
+          (strconv_dot_ftoa__Uint128){528599741826965425, 107486017721073420},
+          (strconv_dot_ftoa__Uint128){660749677283706782, 134357522151341775},
+          (strconv_dot_ftoa__Uint128){7330497575943398595, 83973451344588609},
+          (strconv_dot_ftoa__Uint128){13774807988356636147, 104966814180735761},
+          (strconv_dot_ftoa__Uint128){3383451930163631472, 131208517725919702},
+          (strconv_dot_ftoa__Uint128){15949715511634433382, 82005323578699813},
+          (strconv_dot_ftoa__Uint128){6102086334260878016, 102506654473374767},
+          (strconv_dot_ftoa__Uint128){3015921899398709616, 128133318091718459},
+          (strconv_dot_ftoa__Uint128){18025852251620051174, 80083323807324036},
+          (strconv_dot_ftoa__Uint128){4085571240815512351, 100104154759155046},
+          (strconv_dot_ftoa__Uint128){14330336087874166247, 125130193448943807},
+          (strconv_dot_ftoa__Uint128){15873989082562435760, 78206370905589879},
+          (strconv_dot_ftoa__Uint128){15230800334775656796, 97757963631987349},
+          (strconv_dot_ftoa__Uint128){5203442363187407284, 122197454539984187},
+          (strconv_dot_ftoa__Uint128){946308467778435600, 76373409087490117},
+          (strconv_dot_ftoa__Uint128){5794571603150432404, 95466761359362646},
+          (strconv_dot_ftoa__Uint128){16466586540792816313, 119333451699203307},
+          (strconv_dot_ftoa__Uint128){7985773578781816244, 74583407312002067},
+          (strconv_dot_ftoa__Uint128){5370530955049882401, 93229259140002584},
+          (strconv_dot_ftoa__Uint128){6713163693812353001, 116536573925003230},
+          (strconv_dot_ftoa__Uint128){18030785363914884337, 72835358703127018},
+          (strconv_dot_ftoa__Uint128){13315109668038829614, 91044198378908773},
+          (strconv_dot_ftoa__Uint128){2808829029766373305, 113805247973635967},
+          (strconv_dot_ftoa__Uint128){17346094342490130344, 142256559967044958},
+          (strconv_dot_ftoa__Uint128){6229622945628943561, 88910349979403099},
+          (strconv_dot_ftoa__Uint128){3175342663608791547, 111137937474253874},
+          (strconv_dot_ftoa__Uint128){13192550366365765242, 138922421842817342},
+          (strconv_dot_ftoa__Uint128){3633657960551215372, 86826513651760839},
+          (strconv_dot_ftoa__Uint128){18377130505971182927, 108533142064701048},
+          (strconv_dot_ftoa__Uint128){4524669058754427043, 135666427580876311},
+          (strconv_dot_ftoa__Uint128){9745447189362598758, 84791517238047694},
+          (strconv_dot_ftoa__Uint128){2958436949848472639, 105989396547559618},
+          (strconv_dot_ftoa__Uint128){12921418224165366607, 132486745684449522},
+          (strconv_dot_ftoa__Uint128){12687572408530742033, 82804216052780951},
+          (strconv_dot_ftoa__Uint128){11247779492236039638, 103505270065976189},
+          (strconv_dot_ftoa__Uint128){224666310012885835, 129381587582470237},
+          (strconv_dot_ftoa__Uint128){2446259452971747599, 80863492239043898},
+          (strconv_dot_ftoa__Uint128){12281196353069460307, 101079365298804872},
+          (strconv_dot_ftoa__Uint128){15351495441336825384, 126349206623506090},
+          (strconv_dot_ftoa__Uint128){14206370669262903769, 78968254139691306},
+          (strconv_dot_ftoa__Uint128){8534591299723853903, 98710317674614133},
+          (strconv_dot_ftoa__Uint128){15279925143082205283, 123387897093267666},
+          (strconv_dot_ftoa__Uint128){14161639232853766206, 77117435683292291},
+          (strconv_dot_ftoa__Uint128){13090363022639819853, 96396794604115364},
+          (strconv_dot_ftoa__Uint128){16362953778299774816, 120495993255144205},
+          (strconv_dot_ftoa__Uint128){12532689120651053212, 75309995784465128},
+          (strconv_dot_ftoa__Uint128){15665861400813816515, 94137494730581410},
+          (strconv_dot_ftoa__Uint128){10358954714162494836, 117671868413226763},
+          (strconv_dot_ftoa__Uint128){4168503687137865320, 73544917758266727},
+          (strconv_dot_ftoa__Uint128){598943590494943747, 91931147197833409},
+          (strconv_dot_ftoa__Uint128){5360365506546067587, 114913933997291761},
+          (strconv_dot_ftoa__Uint128){11312142901609972388, 143642417496614701},
+          (strconv_dot_ftoa__Uint128){9375932322719926695, 89776510935384188},
+          (strconv_dot_ftoa__Uint128){11719915403399908368, 112220638669230235},
+          (strconv_dot_ftoa__Uint128){10038208235822497557, 140275798336537794},
+          (strconv_dot_ftoa__Uint128){10885566165816448877, 87672373960336121},
+          (strconv_dot_ftoa__Uint128){18218643725697949000, 109590467450420151},
+          (strconv_dot_ftoa__Uint128){18161618638695048346, 136988084313025189},
+          (strconv_dot_ftoa__Uint128){13656854658398099168, 85617552695640743},
+          (strconv_dot_ftoa__Uint128){12459382304570236056, 107021940869550929},
+          (strconv_dot_ftoa__Uint128){1739169825430631358, 133777426086938662},
+          (strconv_dot_ftoa__Uint128){14922039196176308311, 83610891304336663},
+          (strconv_dot_ftoa__Uint128){14040862976792997485, 104513614130420829},
+          (strconv_dot_ftoa__Uint128){3716020665709083144, 130642017663026037},
+          (strconv_dot_ftoa__Uint128){4628355925281870917, 81651261039391273},
+          (strconv_dot_ftoa__Uint128){10397130925029726550, 102064076299239091},
+          (strconv_dot_ftoa__Uint128){8384727637859770284, 127580095374048864},
+          (strconv_dot_ftoa__Uint128){5240454773662356427, 79737559608780540},
+          (strconv_dot_ftoa__Uint128){6550568467077945534, 99671949510975675},
+          (strconv_dot_ftoa__Uint128){3576524565420044014, 124589936888719594},
+          (strconv_dot_ftoa__Uint128){6847013871814915412, 77868710555449746},
+          (strconv_dot_ftoa__Uint128){17782139376623420074, 97335888194312182},
+          (strconv_dot_ftoa__Uint128){13004302183924499284, 121669860242890228},
+          (strconv_dot_ftoa__Uint128){17351060901807587860, 76043662651806392},
+          (strconv_dot_ftoa__Uint128){3242082053549933210, 95054578314757991},
+          (strconv_dot_ftoa__Uint128){17887660622219580224, 118818222893447488},
+          (strconv_dot_ftoa__Uint128){11179787888887237640, 74261389308404680},
+          (strconv_dot_ftoa__Uint128){13974734861109047050, 92826736635505850},
+          (strconv_dot_ftoa__Uint128){8245046539531533005, 116033420794382313},
+          (strconv_dot_ftoa__Uint128){16682369133275677888, 72520887996488945},
+          (strconv_dot_ftoa__Uint128){7017903361312433648, 90651109995611182},
+          (strconv_dot_ftoa__Uint128){17995751238495317868, 113313887494513977},
+          (strconv_dot_ftoa__Uint128){8659630992836983623, 141642359368142472},
+          (strconv_dot_ftoa__Uint128){5412269370523114764, 88526474605089045},
+          (strconv_dot_ftoa__Uint128){11377022731581281359, 110658093256361306},
+          (strconv_dot_ftoa__Uint128){4997906377621825891, 138322616570451633},
+          (strconv_dot_ftoa__Uint128){14652906532082110942, 86451635356532270},
+          (strconv_dot_ftoa__Uint128){9092761128247862869, 108064544195665338},
+          (strconv_dot_ftoa__Uint128){2142579373455052779, 135080680244581673},
+          (strconv_dot_ftoa__Uint128){12868327154477877747, 84425425152863545},
+          (strconv_dot_ftoa__Uint128){2250350887815183471, 105531781441079432},
+          (strconv_dot_ftoa__Uint128){2812938609768979339, 131914726801349290},
+          (strconv_dot_ftoa__Uint128){6369772649532999991, 82446704250843306},
+          (strconv_dot_ftoa__Uint128){17185587848771025797, 103058380313554132},
+          (strconv_dot_ftoa__Uint128){3035240737254230630, 128822975391942666},
+          (strconv_dot_ftoa__Uint128){6508711479211282048, 80514359619964166},
+          (strconv_dot_ftoa__Uint128){17359261385868878368, 100642949524955207},
+          (strconv_dot_ftoa__Uint128){17087390713908710056, 125803686906194009},
+          (strconv_dot_ftoa__Uint128){3762090168551861929, 78627304316371256},
+          (strconv_dot_ftoa__Uint128){4702612710689827411, 98284130395464070},
+          (strconv_dot_ftoa__Uint128){15101637925217060072, 122855162994330087},
+          (strconv_dot_ftoa__Uint128){16356052730901744401, 76784476871456304},
+          (strconv_dot_ftoa__Uint128){1998321839917628885, 95980596089320381},
+          (strconv_dot_ftoa__Uint128){7109588318324424010, 119975745111650476},
+          (strconv_dot_ftoa__Uint128){13666864735807540814, 74984840694781547},
+          (strconv_dot_ftoa__Uint128){12471894901332038114, 93731050868476934},
+          (strconv_dot_ftoa__Uint128){6366496589810271835, 117163813585596168},
+          (strconv_dot_ftoa__Uint128){3979060368631419896, 73227383490997605},
+          (strconv_dot_ftoa__Uint128){9585511479216662775, 91534229363747006},
+          (strconv_dot_ftoa__Uint128){2758517312166052660, 114417786704683758},
+          (strconv_dot_ftoa__Uint128){12671518677062341634, 143022233380854697},
+          (strconv_dot_ftoa__Uint128){1002170145522881665, 89388895863034186},
+          (strconv_dot_ftoa__Uint128){10476084718758377889, 111736119828792732},
+          (strconv_dot_ftoa__Uint128){13095105898447972362, 139670149785990915},
+          (strconv_dot_ftoa__Uint128){5878598177316288774, 87293843616244322},
+          (strconv_dot_ftoa__Uint128){16571619758500136775, 109117304520305402},
+          (strconv_dot_ftoa__Uint128){11491152661270395161, 136396630650381753},
+          (strconv_dot_ftoa__Uint128){264441385652915120, 85247894156488596},
+          (strconv_dot_ftoa__Uint128){330551732066143900, 106559867695610745},
+          (strconv_dot_ftoa__Uint128){5024875683510067779, 133199834619513431},
+          (strconv_dot_ftoa__Uint128){10058076329834874218, 83249896637195894},
+          (strconv_dot_ftoa__Uint128){3349223375438816964, 104062370796494868},
+          (strconv_dot_ftoa__Uint128){4186529219298521205, 130077963495618585},
+          (strconv_dot_ftoa__Uint128){14145795808130045513, 81298727184761615},
+          (strconv_dot_ftoa__Uint128){13070558741735168987, 101623408980952019},
+          (strconv_dot_ftoa__Uint128){11726512408741573330, 127029261226190024},
+          (strconv_dot_ftoa__Uint128){7329070255463483331, 79393288266368765},
+          (strconv_dot_ftoa__Uint128){13773023837756742068, 99241610332960956},
+          (strconv_dot_ftoa__Uint128){17216279797195927585, 124052012916201195},
+          (strconv_dot_ftoa__Uint128){8454331864033760789, 77532508072625747},
+          (strconv_dot_ftoa__Uint128){5956228811614813082, 96915635090782184},
+          (strconv_dot_ftoa__Uint128){7445286014518516353, 121144543863477730},
+          (strconv_dot_ftoa__Uint128){9264989777501460624, 75715339914673581},
+          (strconv_dot_ftoa__Uint128){16192923240304213684, 94644174893341976},
+          (strconv_dot_ftoa__Uint128){1794409976670715490, 118305218616677471},
+          (strconv_dot_ftoa__Uint128){8039035263060279037, 73940761635423419},
+          (strconv_dot_ftoa__Uint128){5437108060397960892, 92425952044279274},
+          (strconv_dot_ftoa__Uint128){16019757112352226923, 115532440055349092},
+          (strconv_dot_ftoa__Uint128){788976158365366019, 72207775034593183},
+          (strconv_dot_ftoa__Uint128){14821278253238871236, 90259718793241478},
+          (strconv_dot_ftoa__Uint128){9303225779693813237, 112824648491551848},
+          (strconv_dot_ftoa__Uint128){11629032224617266546, 141030810614439810},
+          (strconv_dot_ftoa__Uint128){11879831158813179495, 88144256634024881},
+          (strconv_dot_ftoa__Uint128){1014730893234310657, 110180320792531102},
+          (strconv_dot_ftoa__Uint128){10491785653397664129, 137725400990663877},
+          (strconv_dot_ftoa__Uint128){8863209042587234033, 86078375619164923},
+          (strconv_dot_ftoa__Uint128){6467325284806654637, 107597969523956154},
+          (strconv_dot_ftoa__Uint128){17307528642863094104, 134497461904945192},
+          (strconv_dot_ftoa__Uint128){10817205401789433815, 84060913690590745},
+          (strconv_dot_ftoa__Uint128){18133192770664180173, 105076142113238431},
+          (strconv_dot_ftoa__Uint128){18054804944902837312, 131345177641548039},
+          (strconv_dot_ftoa__Uint128){18201782118205355176, 82090736025967524},
+          (strconv_dot_ftoa__Uint128){4305483574047142354, 102613420032459406},
+          (strconv_dot_ftoa__Uint128){14605226504413703751, 128266775040574257},
+          (strconv_dot_ftoa__Uint128){2210737537617482988, 80166734400358911},
+          (strconv_dot_ftoa__Uint128){16598479977304017447, 100208418000448638},
+          (strconv_dot_ftoa__Uint128){11524727934775246001, 125260522500560798},
+          (strconv_dot_ftoa__Uint128){2591268940807140847, 78287826562850499},
+          (strconv_dot_ftoa__Uint128){17074144231291089770, 97859783203563123},
+          (strconv_dot_ftoa__Uint128){16730994270686474309, 122324729004453904},
+          (strconv_dot_ftoa__Uint128){10456871419179046443, 76452955627783690},
+          (strconv_dot_ftoa__Uint128){3847717237119032246, 95566194534729613},
+          (strconv_dot_ftoa__Uint128){9421332564826178211, 119457743168412016},
+          (strconv_dot_ftoa__Uint128){5888332853016361382, 74661089480257510},
+          (strconv_dot_ftoa__Uint128){16583788103125227536, 93326361850321887},
+          (strconv_dot_ftoa__Uint128){16118049110479146516, 116657952312902359},
+          (strconv_dot_ftoa__Uint128){16991309721690548428, 72911220195563974},
+          (strconv_dot_ftoa__Uint128){12015765115258409727, 91139025244454968},
+          (strconv_dot_ftoa__Uint128){15019706394073012159, 113923781555568710},
+          (strconv_dot_ftoa__Uint128){9551260955736489391, 142404726944460888},
+          (strconv_dot_ftoa__Uint128){5969538097335305869, 89002954340288055},
+          (strconv_dot_ftoa__Uint128){2850236603241744433,
+                                      111253692925360069}});
+  strconv_dot_ftoa__pow5_inv_split_64 = new_array_from_c_array(
+      292, 292, sizeof(strconv_dot_ftoa__Uint128),
+      EMPTY_ARRAY_OF_ELEMS(strconv_dot_ftoa__Uint128, 292){
+          (strconv_dot_ftoa__Uint128){((u64)(1)), 288230376151711744},
+          (strconv_dot_ftoa__Uint128){3689348814741910324, 230584300921369395},
+          (strconv_dot_ftoa__Uint128){2951479051793528259, 184467440737095516},
+          (strconv_dot_ftoa__Uint128){17118578500402463900, 147573952589676412},
+          (strconv_dot_ftoa__Uint128){12632330341676300947, 236118324143482260},
+          (strconv_dot_ftoa__Uint128){10105864273341040758, 188894659314785808},
+          (strconv_dot_ftoa__Uint128){15463389048156653253, 151115727451828646},
+          (strconv_dot_ftoa__Uint128){17362724847566824558, 241785163922925834},
+          (strconv_dot_ftoa__Uint128){17579528692795369969, 193428131138340667},
+          (strconv_dot_ftoa__Uint128){6684925324752475329, 154742504910672534},
+          (strconv_dot_ftoa__Uint128){18074578149087781173, 247588007857076054},
+          (strconv_dot_ftoa__Uint128){18149011334012135262, 198070406285660843},
+          (strconv_dot_ftoa__Uint128){3451162622983977240, 158456325028528675},
+          (strconv_dot_ftoa__Uint128){5521860196774363583, 253530120045645880},
+          (strconv_dot_ftoa__Uint128){4417488157419490867, 202824096036516704},
+          (strconv_dot_ftoa__Uint128){7223339340677503017, 162259276829213363},
+          (strconv_dot_ftoa__Uint128){7867994130342094503, 259614842926741381},
+          (strconv_dot_ftoa__Uint128){2605046489531765280, 207691874341393105},
+          (strconv_dot_ftoa__Uint128){2084037191625412224, 166153499473114484},
+          (strconv_dot_ftoa__Uint128){10713157136084480204, 265845599156983174},
+          (strconv_dot_ftoa__Uint128){12259874523609494487, 212676479325586539},
+          (strconv_dot_ftoa__Uint128){13497248433629505913, 170141183460469231},
+          (strconv_dot_ftoa__Uint128){14216899864323388813, 272225893536750770},
+          (strconv_dot_ftoa__Uint128){11373519891458711051, 217780714829400616},
+          (strconv_dot_ftoa__Uint128){5409467098425058518, 174224571863520493},
+          (strconv_dot_ftoa__Uint128){4965798542738183305, 278759314981632789},
+          (strconv_dot_ftoa__Uint128){7661987648932456967, 223007451985306231},
+          (strconv_dot_ftoa__Uint128){2440241304404055250, 178405961588244985},
+          (strconv_dot_ftoa__Uint128){3904386087046488400, 285449538541191976},
+          (strconv_dot_ftoa__Uint128){17880904128604832013, 228359630832953580},
+          (strconv_dot_ftoa__Uint128){14304723302883865611, 182687704666362864},
+          (strconv_dot_ftoa__Uint128){15133127457049002812, 146150163733090291},
+          (strconv_dot_ftoa__Uint128){16834306301794583852, 233840261972944466},
+          (strconv_dot_ftoa__Uint128){9778096226693756759, 187072209578355573},
+          (strconv_dot_ftoa__Uint128){15201174610838826053, 149657767662684458},
+          (strconv_dot_ftoa__Uint128){2185786488890659746, 239452428260295134},
+          (strconv_dot_ftoa__Uint128){5437978005854438120, 191561942608236107},
+          (strconv_dot_ftoa__Uint128){15418428848909281466, 153249554086588885},
+          (strconv_dot_ftoa__Uint128){6222742084545298729, 245199286538542217},
+          (strconv_dot_ftoa__Uint128){16046240111861969953, 196159429230833773},
+          (strconv_dot_ftoa__Uint128){1768945645263844993, 156927543384667019},
+          (strconv_dot_ftoa__Uint128){10209010661905972635, 251084069415467230},
+          (strconv_dot_ftoa__Uint128){8167208529524778108, 200867255532373784},
+          (strconv_dot_ftoa__Uint128){10223115638361732810, 160693804425899027},
+          (strconv_dot_ftoa__Uint128){1599589762411131202, 257110087081438444},
+          (strconv_dot_ftoa__Uint128){4969020624670815285, 205688069665150755},
+          (strconv_dot_ftoa__Uint128){3975216499736652228, 164550455732120604},
+          (strconv_dot_ftoa__Uint128){13739044029062464211, 263280729171392966},
+          (strconv_dot_ftoa__Uint128){7301886408508061046, 210624583337114373},
+          (strconv_dot_ftoa__Uint128){13220206756290269483, 168499666669691498},
+          (strconv_dot_ftoa__Uint128){17462981995322520850, 269599466671506397},
+          (strconv_dot_ftoa__Uint128){6591687966774196033, 215679573337205118},
+          (strconv_dot_ftoa__Uint128){12652048002903177473, 172543658669764094},
+          (strconv_dot_ftoa__Uint128){9175230360419352987, 276069853871622551},
+          (strconv_dot_ftoa__Uint128){3650835473593572067, 220855883097298041},
+          (strconv_dot_ftoa__Uint128){17678063637842498946, 176684706477838432},
+          (strconv_dot_ftoa__Uint128){13527506561580357021, 282695530364541492},
+          (strconv_dot_ftoa__Uint128){3443307619780464970, 226156424291633194},
+          (strconv_dot_ftoa__Uint128){6443994910566282300, 180925139433306555},
+          (strconv_dot_ftoa__Uint128){5155195928453025840, 144740111546645244},
+          (strconv_dot_ftoa__Uint128){15627011115008661990, 231584178474632390},
+          (strconv_dot_ftoa__Uint128){12501608892006929592, 185267342779705912},
+          (strconv_dot_ftoa__Uint128){2622589484121723027, 148213874223764730},
+          (strconv_dot_ftoa__Uint128){4196143174594756843, 237142198758023568},
+          (strconv_dot_ftoa__Uint128){10735612169159626121, 189713759006418854},
+          (strconv_dot_ftoa__Uint128){12277838550069611220, 151771007205135083},
+          (strconv_dot_ftoa__Uint128){15955192865369467629, 242833611528216133},
+          (strconv_dot_ftoa__Uint128){1696107848069843133, 194266889222572907},
+          (strconv_dot_ftoa__Uint128){12424932722681605476, 155413511378058325},
+          (strconv_dot_ftoa__Uint128){1433148282581017146, 248661618204893321},
+          (strconv_dot_ftoa__Uint128){15903913885032455010, 198929294563914656},
+          (strconv_dot_ftoa__Uint128){9033782293284053685, 159143435651131725},
+          (strconv_dot_ftoa__Uint128){14454051669254485895, 254629497041810760},
+          (strconv_dot_ftoa__Uint128){11563241335403588716, 203703597633448608},
+          (strconv_dot_ftoa__Uint128){16629290697806691620, 162962878106758886},
+          (strconv_dot_ftoa__Uint128){781423413297334329, 260740604970814219},
+          (strconv_dot_ftoa__Uint128){4314487545379777786, 208592483976651375},
+          (strconv_dot_ftoa__Uint128){3451590036303822229, 166873987181321100},
+          (strconv_dot_ftoa__Uint128){5522544058086115566, 266998379490113760},
+          (strconv_dot_ftoa__Uint128){4418035246468892453, 213598703592091008},
+          (strconv_dot_ftoa__Uint128){10913125826658934609, 170878962873672806},
+          (strconv_dot_ftoa__Uint128){10082303693170474728, 273406340597876490},
+          (strconv_dot_ftoa__Uint128){8065842954536379782, 218725072478301192},
+          (strconv_dot_ftoa__Uint128){17520720807854834795, 174980057982640953},
+          (strconv_dot_ftoa__Uint128){5897060404116273733, 279968092772225526},
+          (strconv_dot_ftoa__Uint128){1028299508551108663, 223974474217780421},
+          (strconv_dot_ftoa__Uint128){15580034865808528224, 179179579374224336},
+          (strconv_dot_ftoa__Uint128){17549358155809824511, 286687326998758938},
+          (strconv_dot_ftoa__Uint128){2971440080422128639, 229349861599007151},
+          (strconv_dot_ftoa__Uint128){17134547323305344204, 183479889279205720},
+          (strconv_dot_ftoa__Uint128){13707637858644275364, 146783911423364576},
+          (strconv_dot_ftoa__Uint128){14553522944347019935, 234854258277383322},
+          (strconv_dot_ftoa__Uint128){4264120725993795302, 187883406621906658},
+          (strconv_dot_ftoa__Uint128){10789994210278856888, 150306725297525326},
+          (strconv_dot_ftoa__Uint128){9885293106962350374, 240490760476040522},
+          (strconv_dot_ftoa__Uint128){529536856086059653, 192392608380832418},
+          (strconv_dot_ftoa__Uint128){7802327114352668369, 153914086704665934},
+          (strconv_dot_ftoa__Uint128){1415676938738538420, 246262538727465495},
+          (strconv_dot_ftoa__Uint128){1132541550990830736, 197010030981972396},
+          (strconv_dot_ftoa__Uint128){15663428499760305882, 157608024785577916},
+          (strconv_dot_ftoa__Uint128){17682787970132668764, 252172839656924666},
+          (strconv_dot_ftoa__Uint128){10456881561364224688, 201738271725539733},
+          (strconv_dot_ftoa__Uint128){15744202878575200397, 161390617380431786},
+          (strconv_dot_ftoa__Uint128){17812026976236499989, 258224987808690858},
+          (strconv_dot_ftoa__Uint128){3181575136763469022, 206579990246952687},
+          (strconv_dot_ftoa__Uint128){13613306553636506187, 165263992197562149},
+          (strconv_dot_ftoa__Uint128){10713244041592678929, 264422387516099439},
+          (strconv_dot_ftoa__Uint128){12259944048016053467, 211537910012879551},
+          (strconv_dot_ftoa__Uint128){6118606423670932450, 169230328010303641},
+          (strconv_dot_ftoa__Uint128){2411072648389671274, 270768524816485826},
+          (strconv_dot_ftoa__Uint128){16686253377679378312, 216614819853188660},
+          (strconv_dot_ftoa__Uint128){13349002702143502650, 173291855882550928},
+          (strconv_dot_ftoa__Uint128){17669055508687693916, 277266969412081485},
+          (strconv_dot_ftoa__Uint128){14135244406950155133, 221813575529665188},
+          (strconv_dot_ftoa__Uint128){240149081334393137, 177450860423732151},
+          (strconv_dot_ftoa__Uint128){11452284974360759988, 283921376677971441},
+          (strconv_dot_ftoa__Uint128){5472479164746697667, 227137101342377153},
+          (strconv_dot_ftoa__Uint128){11756680961281178780, 181709681073901722},
+          (strconv_dot_ftoa__Uint128){2026647139541122378, 145367744859121378},
+          (strconv_dot_ftoa__Uint128){18000030682233437097, 232588391774594204},
+          (strconv_dot_ftoa__Uint128){18089373360528660001, 186070713419675363},
+          (strconv_dot_ftoa__Uint128){3403452244197197031, 148856570735740291},
+          (strconv_dot_ftoa__Uint128){16513570034941246220, 238170513177184465},
+          (strconv_dot_ftoa__Uint128){13210856027952996976, 190536410541747572},
+          (strconv_dot_ftoa__Uint128){3189987192878576934, 152429128433398058},
+          (strconv_dot_ftoa__Uint128){1414630693863812771, 243886605493436893},
+          (strconv_dot_ftoa__Uint128){8510402184574870864, 195109284394749514},
+          (strconv_dot_ftoa__Uint128){10497670562401807014, 156087427515799611},
+          (strconv_dot_ftoa__Uint128){9417575270359070576, 249739884025279378},
+          (strconv_dot_ftoa__Uint128){14912757845771077107, 199791907220223502},
+          (strconv_dot_ftoa__Uint128){4551508647133041040, 159833525776178802},
+          (strconv_dot_ftoa__Uint128){10971762650154775986, 255733641241886083},
+          (strconv_dot_ftoa__Uint128){16156107749607641435, 204586912993508866},
+          (strconv_dot_ftoa__Uint128){9235537384944202825, 163669530394807093},
+          (strconv_dot_ftoa__Uint128){11087511001168814197, 261871248631691349},
+          (strconv_dot_ftoa__Uint128){12559357615676961681, 209496998905353079},
+          (strconv_dot_ftoa__Uint128){13736834907283479668, 167597599124282463},
+          (strconv_dot_ftoa__Uint128){18289587036911657145, 268156158598851941},
+          (strconv_dot_ftoa__Uint128){10942320814787415393, 214524926879081553},
+          (strconv_dot_ftoa__Uint128){16132554281313752961, 171619941503265242},
+          (strconv_dot_ftoa__Uint128){11054691591134363444, 274591906405224388},
+          (strconv_dot_ftoa__Uint128){16222450902391311402, 219673525124179510},
+          (strconv_dot_ftoa__Uint128){12977960721913049122, 175738820099343608},
+          (strconv_dot_ftoa__Uint128){17075388340318968271, 281182112158949773},
+          (strconv_dot_ftoa__Uint128){2592264228029443648, 224945689727159819},
+          (strconv_dot_ftoa__Uint128){5763160197165465241, 179956551781727855},
+          (strconv_dot_ftoa__Uint128){9221056315464744386, 287930482850764568},
+          (strconv_dot_ftoa__Uint128){14755542681855616155, 230344386280611654},
+          (strconv_dot_ftoa__Uint128){15493782960226403247, 184275509024489323},
+          (strconv_dot_ftoa__Uint128){1326979923955391628, 147420407219591459},
+          (strconv_dot_ftoa__Uint128){9501865507812447252, 235872651551346334},
+          (strconv_dot_ftoa__Uint128){11290841220991868125, 188698121241077067},
+          (strconv_dot_ftoa__Uint128){1653975347309673853, 150958496992861654},
+          (strconv_dot_ftoa__Uint128){10025058185179298811, 241533595188578646},
+          (strconv_dot_ftoa__Uint128){4330697733401528726, 193226876150862917},
+          (strconv_dot_ftoa__Uint128){14532604630946953951, 154581500920690333},
+          (strconv_dot_ftoa__Uint128){1116074521063664381, 247330401473104534},
+          (strconv_dot_ftoa__Uint128){4582208431592841828, 197864321178483627},
+          (strconv_dot_ftoa__Uint128){14733813189500004432, 158291456942786901},
+          (strconv_dot_ftoa__Uint128){16195403473716186445, 253266331108459042},
+          (strconv_dot_ftoa__Uint128){5577625149489128510, 202613064886767234},
+          (strconv_dot_ftoa__Uint128){8151448934333213131, 162090451909413787},
+          (strconv_dot_ftoa__Uint128){16731667109675051333, 259344723055062059},
+          (strconv_dot_ftoa__Uint128){17074682502481951390, 207475778444049647},
+          (strconv_dot_ftoa__Uint128){6281048372501740465, 165980622755239718},
+          (strconv_dot_ftoa__Uint128){6360328581260874421, 265568996408383549},
+          (strconv_dot_ftoa__Uint128){8777611679750609860, 212455197126706839},
+          (strconv_dot_ftoa__Uint128){10711438158542398211, 169964157701365471},
+          (strconv_dot_ftoa__Uint128){9759603424184016492, 271942652322184754},
+          (strconv_dot_ftoa__Uint128){11497031554089123517, 217554121857747803},
+          (strconv_dot_ftoa__Uint128){16576322872755119460, 174043297486198242},
+          (strconv_dot_ftoa__Uint128){11764721337440549842, 278469275977917188},
+          (strconv_dot_ftoa__Uint128){16790474699436260520, 222775420782333750},
+          (strconv_dot_ftoa__Uint128){13432379759549008416, 178220336625867000},
+          (strconv_dot_ftoa__Uint128){3045063541568861850, 285152538601387201},
+          (strconv_dot_ftoa__Uint128){17193446092222730773, 228122030881109760},
+          (strconv_dot_ftoa__Uint128){13754756873778184618, 182497624704887808},
+          (strconv_dot_ftoa__Uint128){18382503128506368341, 145998099763910246},
+          (strconv_dot_ftoa__Uint128){3586563302416817083, 233596959622256395},
+          (strconv_dot_ftoa__Uint128){2869250641933453667, 186877567697805116},
+          (strconv_dot_ftoa__Uint128){17052795772514404226, 149502054158244092},
+          (strconv_dot_ftoa__Uint128){12527077977055405469, 239203286653190548},
+          (strconv_dot_ftoa__Uint128){17400360011128145022, 191362629322552438},
+          (strconv_dot_ftoa__Uint128){2852241564676785048, 153090103458041951},
+          (strconv_dot_ftoa__Uint128){15631632947708587046, 244944165532867121},
+          (strconv_dot_ftoa__Uint128){8815957543424959314, 195955332426293697},
+          (strconv_dot_ftoa__Uint128){18120812478965698421, 156764265941034957},
+          (strconv_dot_ftoa__Uint128){14235904707377476180, 250822825505655932},
+          (strconv_dot_ftoa__Uint128){4010026136418160298, 200658260404524746},
+          (strconv_dot_ftoa__Uint128){17965416168102169531, 160526608323619796},
+          (strconv_dot_ftoa__Uint128){2919224165770098987, 256842573317791675},
+          (strconv_dot_ftoa__Uint128){2335379332616079190, 205474058654233340},
+          (strconv_dot_ftoa__Uint128){1868303466092863352, 164379246923386672},
+          (strconv_dot_ftoa__Uint128){6678634360490491686, 263006795077418675},
+          (strconv_dot_ftoa__Uint128){5342907488392393349, 210405436061934940},
+          (strconv_dot_ftoa__Uint128){4274325990713914679, 168324348849547952},
+          (strconv_dot_ftoa__Uint128){10528270399884173809, 269318958159276723},
+          (strconv_dot_ftoa__Uint128){15801313949391159694, 215455166527421378},
+          (strconv_dot_ftoa__Uint128){1573004715287196786, 172364133221937103},
+          (strconv_dot_ftoa__Uint128){17274202803427156150, 275782613155099364},
+          (strconv_dot_ftoa__Uint128){17508711057483635243, 220626090524079491},
+          (strconv_dot_ftoa__Uint128){10317620031244997871, 176500872419263593},
+          (strconv_dot_ftoa__Uint128){12818843235250086271, 282401395870821749},
+          (strconv_dot_ftoa__Uint128){13944423402941979340, 225921116696657399},
+          (strconv_dot_ftoa__Uint128){14844887537095493795, 180736893357325919},
+          (strconv_dot_ftoa__Uint128){15565258844418305359, 144589514685860735},
+          (strconv_dot_ftoa__Uint128){6457670077359736959, 231343223497377177},
+          (strconv_dot_ftoa__Uint128){16234182506113520537, 185074578797901741},
+          (strconv_dot_ftoa__Uint128){9297997190148906106, 148059663038321393},
+          (strconv_dot_ftoa__Uint128){11187446689496339446, 236895460861314229},
+          (strconv_dot_ftoa__Uint128){12639306166338981880, 189516368689051383},
+          (strconv_dot_ftoa__Uint128){17490142562555006151, 151613094951241106},
+          (strconv_dot_ftoa__Uint128){2158786396894637579, 242580951921985771},
+          (strconv_dot_ftoa__Uint128){16484424376483351356, 194064761537588616},
+          (strconv_dot_ftoa__Uint128){9498190686444770762, 155251809230070893},
+          (strconv_dot_ftoa__Uint128){11507756283569722895, 248402894768113429},
+          (strconv_dot_ftoa__Uint128){12895553841597688639, 198722315814490743},
+          (strconv_dot_ftoa__Uint128){17695140702761971558, 158977852651592594},
+          (strconv_dot_ftoa__Uint128){17244178680193423523, 254364564242548151},
+          (strconv_dot_ftoa__Uint128){10105994129412828495, 203491651394038521},
+          (strconv_dot_ftoa__Uint128){4395446488788352473, 162793321115230817},
+          (strconv_dot_ftoa__Uint128){10722063196803274280, 260469313784369307},
+          (strconv_dot_ftoa__Uint128){1198952927958798777, 208375451027495446},
+          (strconv_dot_ftoa__Uint128){15716557601334680315, 166700360821996356},
+          (strconv_dot_ftoa__Uint128){17767794532651667857, 266720577315194170},
+          (strconv_dot_ftoa__Uint128){14214235626121334286, 213376461852155336},
+          (strconv_dot_ftoa__Uint128){7682039686155157106, 170701169481724269},
+          (strconv_dot_ftoa__Uint128){1223217053622520399, 273121871170758831},
+          (strconv_dot_ftoa__Uint128){15735968901865657612, 218497496936607064},
+          (strconv_dot_ftoa__Uint128){16278123936234436413, 174797997549285651},
+          (strconv_dot_ftoa__Uint128){219556594781725998, 279676796078857043},
+          (strconv_dot_ftoa__Uint128){7554342905309201445, 223741436863085634},
+          (strconv_dot_ftoa__Uint128){9732823138989271479, 178993149490468507},
+          (strconv_dot_ftoa__Uint128){815121763415193074, 286389039184749612},
+          (strconv_dot_ftoa__Uint128){11720143854957885429, 229111231347799689},
+          (strconv_dot_ftoa__Uint128){13065463898708218666, 183288985078239751},
+          (strconv_dot_ftoa__Uint128){6763022304224664610, 146631188062591801},
+          (strconv_dot_ftoa__Uint128){3442138057275642729, 234609900900146882},
+          (strconv_dot_ftoa__Uint128){13821756890046245153, 187687920720117505},
+          (strconv_dot_ftoa__Uint128){11057405512036996122, 150150336576094004},
+          (strconv_dot_ftoa__Uint128){6623802375033462826, 240240538521750407},
+          (strconv_dot_ftoa__Uint128){16367088344252501231, 192192430817400325},
+          (strconv_dot_ftoa__Uint128){13093670675402000985, 153753944653920260},
+          (strconv_dot_ftoa__Uint128){2503129006933649959, 246006311446272417},
+          (strconv_dot_ftoa__Uint128){13070549649772650937, 196805049157017933},
+          (strconv_dot_ftoa__Uint128){17835137349301941396, 157444039325614346},
+          (strconv_dot_ftoa__Uint128){2710778055689733971, 251910462920982955},
+          (strconv_dot_ftoa__Uint128){2168622444551787177, 201528370336786364},
+          (strconv_dot_ftoa__Uint128){5424246770383340065, 161222696269429091},
+          (strconv_dot_ftoa__Uint128){1300097203129523457, 257956314031086546},
+          (strconv_dot_ftoa__Uint128){15797473021471260058, 206365051224869236},
+          (strconv_dot_ftoa__Uint128){8948629602435097724, 165092040979895389},
+          (strconv_dot_ftoa__Uint128){3249760919670425388, 264147265567832623},
+          (strconv_dot_ftoa__Uint128){9978506365220160957, 211317812454266098},
+          (strconv_dot_ftoa__Uint128){15361502721659949412, 169054249963412878},
+          (strconv_dot_ftoa__Uint128){2442311466204457120, 270486799941460606},
+          (strconv_dot_ftoa__Uint128){16711244431931206989, 216389439953168484},
+          (strconv_dot_ftoa__Uint128){17058344360286875914, 173111551962534787},
+          (strconv_dot_ftoa__Uint128){12535955717491360170, 276978483140055660},
+          (strconv_dot_ftoa__Uint128){10028764573993088136, 221582786512044528},
+          (strconv_dot_ftoa__Uint128){15401709288678291155, 177266229209635622},
+          (strconv_dot_ftoa__Uint128){9885339602917624555, 283625966735416996},
+          (strconv_dot_ftoa__Uint128){4218922867592189321, 226900773388333597},
+          (strconv_dot_ftoa__Uint128){14443184738299482427, 181520618710666877},
+          (strconv_dot_ftoa__Uint128){4175850161155765295, 145216494968533502},
+          (strconv_dot_ftoa__Uint128){10370709072591134795, 232346391949653603},
+          (strconv_dot_ftoa__Uint128){15675264887556728482, 185877113559722882},
+          (strconv_dot_ftoa__Uint128){5161514280561562140, 148701690847778306},
+          (strconv_dot_ftoa__Uint128){879725219414678777, 237922705356445290},
+          (strconv_dot_ftoa__Uint128){703780175531743021, 190338164285156232},
+          (strconv_dot_ftoa__Uint128){11631070584651125387, 152270531428124985},
+          (strconv_dot_ftoa__Uint128){162968861732249003, 243632850284999977},
+          (strconv_dot_ftoa__Uint128){11198421533611530172, 194906280227999981},
+          (strconv_dot_ftoa__Uint128){5269388412147313814, 155925024182399985},
+          (strconv_dot_ftoa__Uint128){8431021459435702103, 249480038691839976},
+          (strconv_dot_ftoa__Uint128){3055468352806651359, 199584030953471981},
+          (strconv_dot_ftoa__Uint128){17201769941212962380, 159667224762777584},
+          (strconv_dot_ftoa__Uint128){16454785461715008838, 255467559620444135},
+          (strconv_dot_ftoa__Uint128){13163828369372007071, 204374047696355308},
+          (strconv_dot_ftoa__Uint128){17909760324981426303, 163499238157084246},
+          (strconv_dot_ftoa__Uint128){2830174816776909822, 261598781051334795},
+          (strconv_dot_ftoa__Uint128){2264139853421527858, 209279024841067836},
+          (strconv_dot_ftoa__Uint128){16568707141704863579, 167423219872854268},
+          (strconv_dot_ftoa__Uint128){4373838538276319787, 267877151796566830},
+          (strconv_dot_ftoa__Uint128){3499070830621055830, 214301721437253464},
+          (strconv_dot_ftoa__Uint128){6488605479238754987, 171441377149802771},
+          (strconv_dot_ftoa__Uint128){3003071137298187333, 274306203439684434},
+          (strconv_dot_ftoa__Uint128){6091805724580460189, 219444962751747547},
+          (strconv_dot_ftoa__Uint128){15941491023890099121, 175555970201398037},
+          (strconv_dot_ftoa__Uint128){10748990379256517301, 280889552322236860},
+          (strconv_dot_ftoa__Uint128){8599192303405213841, 224711641857789488},
+          (strconv_dot_ftoa__Uint128){14258051472207991719,
+                                      179769313486231590}});
   os__S_IFMT = 0xF000;
   os__S_IFDIR = 0x4000;
   os__S_IFLNK = 0xa000;
