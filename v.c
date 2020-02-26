@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7a72167"
+#define V_COMMIT_HASH "c26016b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "39429f7"
+#define V_COMMIT_HASH "7a72167"
 #endif
 #include <inttypes.h>
 
@@ -2511,6 +2511,7 @@ f64 math__atan2(f64 a, f64 b);
 f64 math__cbrt(f64 a);
 f64 math__ceil(f64 a);
 f64 math__cos(f64 a);
+f32 math__cosf(f32 a);
 f64 math__cosh(f64 a);
 f64 math__degrees(f64 radians);
 f64 math__exp(f64 a);
@@ -2532,13 +2533,16 @@ f64 math__log_n(f64 a, f64 b);
 f64 math__max(f64 a, f64 b);
 f64 math__min(f64 a, f64 b);
 f64 math__pow(f64 a, f64 b);
+f32 math__powf(f32 a, f32 b);
 f64 math__radians(f64 degrees);
 f64 math__round(f64 f);
 f64 math__sin(f64 a);
+f32 math__sinf(f32 a);
 f64 math__sinh(f64 a);
 f64 math__sqrt(f64 a);
 f32 math__sqrtf(f32 a);
 f64 math__tan(f64 a);
+f32 math__tanf(f32 a);
 f64 math__tanh(f64 a);
 f64 math__trunc(f64 a);
 f64 math__aprox_sin(f64 a);
@@ -8421,6 +8425,7 @@ f64 math__atan2(f64 a, f64 b) { return atan2(a, b); }
 f64 math__cbrt(f64 a) { return cbrt(a); }
 f64 math__ceil(f64 a) { return ceil(a); }
 f64 math__cos(f64 a) { return cos(a); }
+f32 math__cosf(f32 a) { return cosf(a); }
 f64 math__cosh(f64 a) { return cosh(a); }
 f64 math__degrees(f64 radians) { return radians * (180.0 / math__pi); }
 f64 math__exp(f64 a) { return exp(a); }
@@ -8498,13 +8503,16 @@ f64 math__min(f64 a, f64 b) {
   return b;
 }
 f64 math__pow(f64 a, f64 b) { return pow(a, b); }
+f32 math__powf(f32 a, f32 b) { return powf(a, b); }
 f64 math__radians(f64 degrees) { return degrees * (math__pi / 180.0); }
 f64 math__round(f64 f) { return round(f); }
 f64 math__sin(f64 a) { return sin(a); }
+f32 math__sinf(f32 a) { return sinf(a); }
 f64 math__sinh(f64 a) { return sinh(a); }
 f64 math__sqrt(f64 a) { return sqrt(a); }
 f32 math__sqrtf(f32 a) { return sqrtf(a); }
 f64 math__tan(f64 a) { return tan(a); }
+f32 math__tanf(f32 a) { return tanf(a); }
 f64 math__tanh(f64 a) { return tanh(a); }
 f64 math__trunc(f64 a) { return trunc(a); }
 f64 math__aprox_sin(f64 a) {
