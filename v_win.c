@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "394d64b"
+#define V_COMMIT_HASH "59d6a67"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "46ec400"
+#define V_COMMIT_HASH "394d64b"
 #endif
 #include <inttypes.h>
 
@@ -18949,7 +18949,7 @@ string v_dot_doc__doc(string mod, v_dot_table__Table *table) {
   v_dot_doc__Doc_print_fns(&/* ? */ d);
   strings__Builder_writeln(&/* ? */ d.out, tos3(""));
   v_dot_doc__Doc_print_methods(&/* ? */ d);
-  return strings__Builder_str(&/* ? */ d.out);
+  return string_trim_space(strings__Builder_str(&/* ? */ d.out));
 }
 string v_dot_doc__Doc_get_fn_node(v_dot_doc__Doc *d, v_dot_ast__FnDecl f) {
   return string_replace(v_dot_ast__FnDecl_str(&/* ? */ f, d->table),
