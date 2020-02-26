@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "70f085b"
+#define V_COMMIT_HASH "46ec400"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9d61f4f"
+#define V_COMMIT_HASH "70f085b"
 #endif
 #include <inttypes.h>
 
@@ -3333,8 +3333,7 @@ void v_dot_gen_dot_x64__Gen_expr(v_dot_gen_dot_x64__Gen *g,
                                  v_dot_ast__Expr node);
 void v_dot_gen_dot_x64__verror(string s);
 string v_dot_doc__doc(string mod, v_dot_table__Table *table);
-void v_dot_doc__Doc_writeln(v_dot_doc__Doc *d, string s);
-void v_dot_doc__Doc_write_fn_node(v_dot_doc__Doc *d, v_dot_ast__FnDecl f);
+string v_dot_doc__Doc_get_fn_node(v_dot_doc__Doc *d, v_dot_ast__FnDecl f);
 void v_dot_doc__Doc_print_fns(v_dot_doc__Doc *d);
 void v_dot_doc__Doc_print_methods(v_dot_doc__Doc *d);
 v_dot_builder__Builder
@@ -18936,19 +18935,17 @@ string v_dot_doc__doc(string mod, v_dot_table__Table *table) {
         tmp4, array_v_dot_ast__Stmt);
   };
   v_dot_doc__Doc_print_fns(&/* ? */ d);
-  v_dot_doc__Doc_writeln(&/* ? */ d, tos3(""));
+  strings__Builder_writeln(&/* ? */ d.out, tos3(""));
   v_dot_doc__Doc_print_methods(&/* ? */ d);
   return strings__Builder_str(&/* ? */ d.out);
 }
-void v_dot_doc__Doc_writeln(v_dot_doc__Doc *d, string s) {
-  strings__Builder_writeln(&/* ? */ d->out, s);
-}
-void v_dot_doc__Doc_write_fn_node(v_dot_doc__Doc *d, v_dot_ast__FnDecl f) {
-  v_dot_doc__Doc_writeln(
-      d, string_replace(v_dot_ast__FnDecl_str(&/* ? */ f, d->table),
-                        string_add(d->mod, tos3(".")), tos3("")));
+string v_dot_doc__Doc_get_fn_node(v_dot_doc__Doc *d, v_dot_ast__FnDecl f) {
+  return string_replace(v_dot_ast__FnDecl_str(&/* ? */ f, d->table),
+                        string_add(d->mod, tos3(".")), tos3(""));
 }
 void v_dot_doc__Doc_print_fns(v_dot_doc__Doc *d) {
+  array_string fn_names = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   array_v_dot_ast__Stmt tmp5 = d->stmts;
   for (int tmp6 = 0; tmp6 < tmp5.len; tmp6++) {
     v_dot_ast__Stmt stmt = ((v_dot_ast__Stmt *)tmp5.data)[tmp6];
@@ -18958,28 +18955,48 @@ void v_dot_doc__Doc_print_fns(v_dot_doc__Doc *d) {
     if (tmp7.typ == SumType_v_dot_ast__Stmt_FnDecl) {
       v_dot_ast__FnDecl *it = (v_dot_ast__FnDecl *)tmp7.obj;
       if (it->is_pub && !it->is_method) {
-        v_dot_doc__Doc_write_fn_node(d, *it);
+        string name = v_dot_doc__Doc_get_fn_node(&/* ? */ *d, *it);
+        _PUSH(&fn_names, (/*typ = array_string   tmp_typ=string*/ name), tmp8,
+              string);
       };
     } else // default:
     {
     };
   };
+  array_string_sort(&/* ? */ fn_names);
+  array_string tmp9 = fn_names;
+  for (int tmp10 = 0; tmp10 < tmp9.len; tmp10++) {
+    string s = ((string *)tmp9.data)[tmp10];
+
+    strings__Builder_writeln(&/* ? */ d->out, s);
+  };
 }
 void v_dot_doc__Doc_print_methods(v_dot_doc__Doc *d) {
-  array_v_dot_ast__Stmt tmp8 = d->stmts;
-  for (int tmp9 = 0; tmp9 < tmp8.len; tmp9++) {
-    v_dot_ast__Stmt stmt = ((v_dot_ast__Stmt *)tmp8.data)[tmp9];
+  array_string fn_names = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+  array_v_dot_ast__Stmt tmp11 = d->stmts;
+  for (int tmp12 = 0; tmp12 < tmp11.len; tmp12++) {
+    v_dot_ast__Stmt stmt = ((v_dot_ast__Stmt *)tmp11.data)[tmp12];
 
-    v_dot_ast__Stmt tmp10 = stmt;
+    v_dot_ast__Stmt tmp13 = stmt;
 
-    if (tmp10.typ == SumType_v_dot_ast__Stmt_FnDecl) {
-      v_dot_ast__FnDecl *it = (v_dot_ast__FnDecl *)tmp10.obj;
+    if (tmp13.typ == SumType_v_dot_ast__Stmt_FnDecl) {
+      v_dot_ast__FnDecl *it = (v_dot_ast__FnDecl *)tmp13.obj;
       if (it->is_pub && it->is_method) {
-        v_dot_doc__Doc_write_fn_node(d, *it);
+        string name = v_dot_doc__Doc_get_fn_node(&/* ? */ *d, *it);
+        _PUSH(&fn_names, (/*typ = array_string   tmp_typ=string*/ name), tmp14,
+              string);
       };
     } else // default:
     {
     };
+  };
+  array_string_sort(&/* ? */ fn_names);
+  array_string tmp15 = fn_names;
+  for (int tmp16 = 0; tmp16 < tmp15.len; tmp16++) {
+    string s = ((string *)tmp15.data)[tmp16];
+
+    strings__Builder_writeln(&/* ? */ d->out, s);
   };
 }
 v_dot_builder__Builder
