@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "39429f7"
+#define V_COMMIT_HASH "7a72167"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c4e83fa"
+#define V_COMMIT_HASH "39429f7"
 #endif
 #include <inttypes.h>
 
@@ -2451,6 +2451,7 @@ int strings__levenshtein_distance(string a, string b);
 f32 strings__levenshtein_distance_percentage(string a, string b);
 f32 strings__dice_coefficient(string s1, string s2);
 string strings__repeat(byte c, int n);
+string strings__repeat_string(string s, int n);
 u64 hash_dot_wyhash__rand_u64(u64 *seed);
 static inline u64 hash_dot_wyhash__wyhash_c(byte *key, u64 len, u64 seed);
 static inline u64 hash_dot_wyhash__sum64_string(string key, u64 seed);
@@ -7509,12 +7510,36 @@ string strings__repeat(byte c, int n) {
   if (n <= 0) {
     return tos3("");
   };
-  array_byte arr =
-      array_repeat(new_array_from_c_array(1, 1, sizeof(byte),
-                                          EMPTY_ARRAY_OF_ELEMS(byte, 1){c}),
-                   n + 1);
-  array_set(&/*q*/ arr, n, &(byte[]){'\0'});
-  return (tos((byte *)arr.data, n));
+  byte *bytes = ((byte *)(0));
+  { bytes = v_malloc(n + 1); };
+  memset((char *)bytes, c, n);
+  bytes[/*ptr!*/ n] /*rbyte 1*/ = '0';
+  return (tos((byte *)bytes, n));
+}
+string strings__repeat_string(string s, int n) {
+  if (n <= 0 || s.len == 0) {
+    return tos3("");
+  };
+  int slen = s.len;
+  int blen = slen * n;
+  byte *bytes = ((byte *)(0));
+  { bytes = v_malloc(blen + 1); };
+  int tmp1 = 0;
+  ;
+  for (int tmp2 = tmp1; tmp2 < n; tmp2++) {
+    int bi = tmp2;
+
+    int bislen = bi * slen;
+    int tmp3 = 0;
+    ;
+    for (int tmp4 = tmp3; tmp4 < slen; tmp4++) {
+      int si = tmp4;
+
+      bytes[/*ptr!*/ bislen + si] /*rbyte 1*/ = string_at(s, si);
+    };
+  };
+  bytes[/*ptr!*/ blen] /*rbyte 1*/ = '0';
+  return (tos((byte *)bytes, blen));
 }
 u64 hash_dot_wyhash__rand_u64(u64 *seed) {
   u64 *seed0 = seed;
