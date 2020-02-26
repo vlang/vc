@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "bb6098e"
+#define V_COMMIT_HASH "a5db9c3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c51f464"
+#define V_COMMIT_HASH "bb6098e"
 #endif
 #include <inttypes.h>
 
@@ -2723,6 +2723,7 @@ Option_array_string os__read_lines(string path);
 Option_array_ustring os__read_ulines(string path);
 Option_os__File os__open_append(string path);
 Option_os__File os__open_file(string path, string mode, varg_int *options);
+void os__File_write_bytes_at(os__File *f, void *data, int size, int pos);
 void os__File_flush(os__File *f);
 void *os__vpopen(string path);
 _V_MulRet_int_V_bool os__posix_wait4_to_exit_status(int waitret);
@@ -10824,6 +10825,11 @@ Option_os__File os__open_file(string path, string mode, varg_int *options) {
       OPTION_CAST(os__File)((os__File){.cfile = cfile, .fd = fd, .opened = 1});
   return opt_ok(&tmp32, sizeof(os__File));
 }
+void os__File_write_bytes_at(os__File *f, void *data, int size, int pos) {
+  fseek(f->cfile, pos, SEEK_SET);
+  fwrite(data, 1, size, f->cfile);
+  fseek(f->cfile, 0, SEEK_END);
+}
 void os__File_flush(os__File *f) {
   if (!f->opened) {
 
@@ -10870,9 +10876,9 @@ int os__vpclose(void *f) {
 #ifdef _WIN32
   return _pclose(f);
 #else
-  _V_MulRet_int_V_bool _V_mret_1688_ret__ =
+  _V_MulRet_int_V_bool _V_mret_1749_ret__ =
       os__posix_wait4_to_exit_status(pclose(f));
-  int ret = _V_mret_1688_ret__.var_0;
+  int ret = _V_mret_1749_ret__.var_0;
   return ret;
 #endif
   ;
@@ -10893,10 +10899,10 @@ int os__system(string cmd) {
     os__print_c_errno();
   };
 #ifndef _WIN32
-  _V_MulRet_int_V_bool _V_mret_1807_pret_is_signaled =
+  _V_MulRet_int_V_bool _V_mret_1868_pret_is_signaled =
       os__posix_wait4_to_exit_status(ret);
-  int pret = _V_mret_1807_pret_is_signaled.var_0;
-  bool is_signaled = _V_mret_1807_pret_is_signaled.var_1;
+  int pret = _V_mret_1868_pret_is_signaled.var_0;
+  bool is_signaled = _V_mret_1868_pret_is_signaled.var_1;
   if (is_signaled) {
     println(string_add(string_add(_STR("Terminated by signal %2d (", ret),
                                   os__sigint_to_signal_name(pret)),
