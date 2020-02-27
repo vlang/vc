@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "237d83b"
+#define V_COMMIT_HASH "1c915c3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cfbd8ab"
+#define V_COMMIT_HASH "237d83b"
 #endif
 #include <inttypes.h>
 
@@ -16876,7 +16876,7 @@ v_dot_parser__Parser_assign_stmt(v_dot_parser__Parser *p) {
   for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
     v_dot_ast__Ident ident = ((v_dot_ast__Ident *)tmp42.data)[tmp43];
 
-    if (is_decl && ident.kind == v_dot_ast__v_dot_ast__IdentKind_blank_ident) {
+    if (is_decl && ident.kind != v_dot_ast__v_dot_ast__IdentKind_blank_ident) {
       if (v_dot_ast__Scope_known_var(&/* ? */ *p->scope, ident.name)) {
         v_dot_parser__Parser_error(
             &/* ? */ *p,
