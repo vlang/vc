@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a5db9c3"
+#define V_COMMIT_HASH "06fc8a8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bb6098e"
+#define V_COMMIT_HASH "a5db9c3"
 #endif
 #include <inttypes.h>
 
@@ -14834,6 +14834,9 @@ bool v_dot_parser__Parser_known_import(v_dot_parser__Parser *p, string mod) {
   return (_IN_MAP((mod), p->imports));
 }
 string v_dot_parser__Parser_prepend_mod(v_dot_parser__Parser *p, string name) {
+  if (string_ne(p->expr_mod, tos3(""))) {
+    return string_add(string_add(p->expr_mod, tos3(".")), name);
+  };
   if (p->builtin_mod || string_eq(p->mod, tos3("main"))) {
     return name;
   };
