@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ccf4f61"
+#define V_COMMIT_HASH "10e15e5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6a198df"
+#define V_COMMIT_HASH "ccf4f61"
 #endif
 #include <inttypes.h>
 
@@ -37517,6 +37517,9 @@ void main__launch_tool(bool is_verbose, string tname, string cmdname) {
   } else {
     if (os__file_last_mod_unix(tool_exe) <= os__file_last_mod_unix(vexe)) {
       should_compile = 1;
+      if (string_eq(tname, tos3("vself")) || string_eq(tname, tos3("vup"))) {
+        should_compile = 0;
+      };
     };
     if (os__file_last_mod_unix(tool_exe) <=
         os__file_last_mod_unix(tool_source)) {
