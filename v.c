@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "10e15e5"
+#define V_COMMIT_HASH "ee9cfe2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ccf4f61"
+#define V_COMMIT_HASH "10e15e5"
 #endif
 #include <inttypes.h>
 
@@ -4062,7 +4062,7 @@ array_int time__days_before;
 #define v_dot_token__v_dot_token__Kind_mod_assign 37
 #define v_dot_token__v_dot_token__Kind_or_assign 38
 #define v_dot_token__v_dot_token__Kind_and_assign 39
-#define v_dot_token__v_dot_token__Kind_righ_shift_assign 40
+#define v_dot_token__v_dot_token__Kind_right_shift_assign 40
 #define v_dot_token__v_dot_token__Kind_left_shift_assign 41
 #define v_dot_token__v_dot_token__Kind_lcbr 42
 #define v_dot_token__v_dot_token__Kind_rcbr 43
@@ -9461,7 +9461,7 @@ array_string v_dot_token__build_token_str() {
             &(string[]){tos3("|=")});
   array_set(&/*q*/ s, v_dot_token__v_dot_token__Kind_and_assign,
             &(string[]){tos3("&=")});
-  array_set(&/*q*/ s, v_dot_token__v_dot_token__Kind_righ_shift_assign,
+  array_set(&/*q*/ s, v_dot_token__v_dot_token__Kind_right_shift_assign,
             &(string[]){tos3(">>=")});
   array_set(&/*q*/ s, v_dot_token__v_dot_token__Kind_left_shift_assign,
             &(string[]){tos3("<<=")});
@@ -9743,7 +9743,7 @@ int v_dot_token__Token_precedence(v_dot_token__Token tok) {
              (tmp9 == v_dot_token__v_dot_token__Kind_mod_assign) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_or_assign) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_left_shift_assign) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_righ_shift_assign) ||
+             (tmp9 == v_dot_token__v_dot_token__Kind_right_shift_assign) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_mult_assign)) {
     return ((int)(v_dot_token__v_dot_token__Precedence_assign));
   } else if ((tmp9 == v_dot_token__v_dot_token__Kind_key_in) ||
@@ -13819,7 +13819,7 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
       if (s->pos + 2 < s->text.len && string_at(s->text, s->pos + 2) == '=') {
         s->pos += 2;
         return v_dot_scanner__Scanner_scan_res(
-            &/* ? */ *s, v_dot_token__v_dot_token__Kind_righ_shift_assign,
+            &/* ? */ *s, v_dot_token__v_dot_token__Kind_right_shift_assign,
             tos3(""));
       };
       s->pos++;
@@ -37923,7 +37923,7 @@ void init() {
           v_dot_token__v_dot_token__Kind_mod_assign,
           v_dot_token__v_dot_token__Kind_or_assign,
           v_dot_token__v_dot_token__Kind_and_assign,
-          v_dot_token__v_dot_token__Kind_righ_shift_assign,
+          v_dot_token__v_dot_token__Kind_right_shift_assign,
           v_dot_token__v_dot_token__Kind_left_shift_assign});
   v_dot_token__token_str = v_dot_token__build_token_str();
   v_dot_token__keywords = v_dot_token__build_keys();
