@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f5fdbfd"
+#define V_COMMIT_HASH "8c43644"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8720536"
+#define V_COMMIT_HASH "f5fdbfd"
 #endif
 #include <inttypes.h>
 
@@ -462,27 +462,28 @@ int g_test_fails = 0;
        "is rapid and features/bugfixes are added constantly.\n  run <file.v> " \
        "     Build and execute the V program in file.v. You can add "          \
        "arguments for the V program *after* the file name.\n  build <module> " \
-       "   Compile a module into an object file.\n  repl              Run "    \
-       "the V REPL. If V is running in a tty terminal, the REPL is "           \
-       "interactive, otherwise it just reads from stdin.\n  symlink          " \
-       " Useful on Unix systems. Symlinks the current V executable to "        \
-       "/usr/local/bin/v, so that V is globally available.\n  test-compiler  " \
-       "   Run all V test files, and compile all V examples.\n  test folder/ " \
-       "     Run all V test files located in the folder and its subfolders. "  \
-       "You can also pass individual _test.v files too.\n  fmt               " \
-       "Run vfmt to format the source code. [wip]\n  doc               Run "   \
-       "vdoc over the source code and produce documentation.\n  translate    " \
-       "     Translates C to V. [wip, will be available in V 0.3]\n  create  " \
-       "          Create a new v project interactively. Answer the "           \
-       "questions, and run it with `v run projectname`\n  setup-freetype    "  \
-       "Setup thirdparty freetype on Windows.\n\nV package management "        \
-       "commands:\n  search  keywords  Search the https://vpm.vlang.io/ "      \
-       "module repository for matching modules and shows their details.\n  "   \
-       "install <module>  Install a user module from "                         \
-       "https://vpm.vlang.io/.\n  update  [module]  Updates an already "       \
-       "installed module, or ALL installed modules at once, when no module "   \
-       "name is given.\n  remove  [module]  Removes an installed module, or "  \
-       "ALL installed modules at once, when no module name is given.\n")
+       "   Compile a module into an object file.\n  self              "        \
+       "Self-compile V from local source files.\n  repl              Run the " \
+       "V REPL. If V is running in a tty terminal, the REPL is interactive, "  \
+       "otherwise it just reads from stdin.\n  symlink           Useful on "   \
+       "Unix systems. Symlinks the current V executable to /usr/local/bin/v, " \
+       "so that V is globally available.\n  test-compiler     Run all V test " \
+       "files, and compile all V examples.\n  test folder/      Run all V "    \
+       "test files located in the folder and its subfolders. You can also "    \
+       "pass individual _test.v files too.\n  fmt               Run vfmt to "  \
+       "format the source code. [wip]\n  doc               Run vdoc over the " \
+       "source code and produce documentation.\n  translate         "          \
+       "Translates C to V. [wip, will be available in V 0.3]\n  create       " \
+       "     Create a new v project interactively. Answer the questions, and " \
+       "run it with `v run projectname`\n  setup-freetype    Setup "           \
+       "thirdparty freetype on Windows.\n\nV package management commands:\n  " \
+       "search  keywords  Search the https://vpm.vlang.io/ module repository " \
+       "for matching modules and shows their details.\n  install <module>  "   \
+       "Install a user module from https://vpm.vlang.io/.\n  update  "         \
+       "[module]  Updates an already installed module, or ALL installed "      \
+       "modules at once, when no module name is given.\n  remove  [module]  "  \
+       "Removes an installed module, or ALL installed modules at once, when "  \
+       "no module name is given.\n")
 #define math__bias 1023
 #define math__e 2.71828182845904523536028747135266249775724709369995957496696763
 #define math__pi                                                               \
@@ -37508,10 +37509,10 @@ void main__create_symlink() {
 }
 void main__main() {
   array_string arg = main__join_flags_and_argument();
-  _V_MulRet_string_V_array_string _V_mret_61_command_option =
+  _V_MulRet_string_V_array_string _V_mret_63_command_option =
       main__get_basic_command_and_option(arg);
-  string command = _V_mret_61_command_option.var_0;
-  array_string option = _V_mret_61_command_option.var_1;
+  string command = _V_mret_63_command_option.var_0;
+  array_string option = _V_mret_63_command_option.var_1;
   bool is_verbose = (_IN(string, (tos3("-verbose")), arg)) ||
                     (_IN(string, (tos3("--verbose")), arg));
   if ((_IN(string, (tos3("-v")), option)) ||
@@ -37642,20 +37643,21 @@ void init() {
       "REPL\n   run               compile and run a V program\n   symlink      "
       "     create a symbolic link for V\n   translate         translate C "
       "code to V (coming soon in 0.3)\n   up                run the V "
-      "self-updater\n   version           prints the version text and "
-      "exits\n\n   install           installs a module from VPM\n   remove     "
-      "       removes a module that was installed from VPM\n   search          "
-      "  searches for a module from VPM\n   update            updates an "
-      "installed module from VPM\n\n   bin2v             embed a binary file "
-      "as a constant and output it in a V file\n   build-examples    test if "
-      "all examples can be built\n   build-tools       test if all tools can "
-      "be built\n   build-vbinaries   test if V can be built with different "
-      "configuration\n   test              run all test files in the provided "
-      "directory\n   test-fmt          test if all files in the current "
-      "directory is formatted properly\n   test-compiler     run the V "
-      "self-test suite to make sure V is working properly\n\n   setup-freetype "
-      "   setup thirdparty freetype on Windows\n\nFor a comprehensive list of "
-      "options, please refer to `v help --verbose`.");
+      "self-updater\n   self              run the V self-compiler\n   version  "
+      "         prints the version text and exits\n\n   install           "
+      "installs a module from VPM\n   remove            removes a module that "
+      "was installed from VPM\n   search            searches for a module from "
+      "VPM\n   update            updates an installed module from VPM\n\n   "
+      "bin2v             embed a binary file as a constant and output it in a "
+      "V file\n   build-examples    test if all examples can be built\n   "
+      "build-tools       test if all tools can be built\n   build-vbinaries   "
+      "test if V can be built with different configuration\n   test            "
+      "  run all test files in the provided directory\n   test-fmt          "
+      "test if all files in the current directory is formatted properly\n   "
+      "test-compiler     run the V self-test suite to make sure V is working "
+      "properly\n\n   setup-freetype    setup thirdparty freetype on "
+      "Windows\n\nFor a comprehensive list of options, please refer to `v help "
+      "--verbose`.");
   math__uvnan = 0x7FF8000000000001;
   math__uvinf = 0x7FF0000000000000;
   math__uvneginf = 0xFFF0000000000000;
@@ -38970,9 +38972,9 @@ void init() {
       EMPTY_ARRAY_OF_ELEMS(string, 5){tos3("-o"), tos3("-os"), tos3("-cc"),
                                       tos3("-cflags"), tos3("-d")});
   main__simple_cmd = new_array_from_c_array(
-      12, 12, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 12){
-          tos3("fmt"), tos3("up"), tos3("create"), tos3("test"),
+      13, 13, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 13){
+          tos3("fmt"), tos3("up"), tos3("self"), tos3("create"), tos3("test"),
           tos3("test-fmt"), tos3("test-compiler"), tos3("bin2v"), tos3("repl"),
           tos3("build-tools"), tos3("build-examples"), tos3("build-vbinaries"),
           tos3("setup-freetype")});
