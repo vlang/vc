@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8e013d2"
+#define V_COMMIT_HASH "236b7b1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "eb80acc"
+#define V_COMMIT_HASH "8e013d2"
 #endif
 #include <inttypes.h>
 
@@ -18142,6 +18142,7 @@ void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
   v_dot_table__Type expected_type = return_stmt.expected_type;
   v_dot_table__TypeSymbol *expected_type_sym =
       v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, expected_type);
+  bool exp_is_optional = v_dot_table__type_is_optional(expected_type);
   array_v_dot_table__Type expected_types = new_array_from_c_array(
       1, 1, sizeof(v_dot_table__Type),
       EMPTY_ARRAY_OF_ELEMS(v_dot_table__Type, 1){expected_type});
@@ -18170,6 +18171,9 @@ void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
           v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, got_typ);
       v_dot_table__TypeSymbol *exp_typ_sym =
           v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, exp_typ);
+      if (string_eq(got_typ_sym->name, tos3("Option")) && exp_is_optional) {
+        continue;
+      };
       v_dot_checker__Checker_error(
           c,
           _STR("cannot use `%.*s` as type `%.*s` in return argument",
@@ -18285,7 +18289,7 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
       v_dot_table__Type typ = v_dot_checker__Checker_expr(c, expr);
       v_dot_table__Var tmp54 = {0};
       bool tmp55 =
-          map_get(/*checker.v : 364*/ c->table->consts, field.name, &tmp54);
+          map_get(/*checker.v : 368*/ c->table->consts, field.name, &tmp54);
 
       v_dot_table__Var xconst = tmp54;
       xconst.typ = typ;
@@ -18436,7 +18440,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl tmp62 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
     _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl
-        _V_mret_2567_var_scope_var;
+        _V_mret_2586_var_scope_var;
     if (!tmp62.ok) {
       string err = tmp62.error;
       int errcode = tmp62.ecode;
@@ -18448,11 +18452,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_2567_var_scope_var =
+    _V_mret_2586_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl *)tmp62.data;
     ;
-    var_scope = _V_mret_2567_var_scope_var.var_0;
-    var = _V_mret_2567_var_scope_var.var_1;
+    var_scope = _V_mret_2586_var_scope_var.var_0;
+    var = _V_mret_2586_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
