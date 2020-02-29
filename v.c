@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ee05b51"
+#define V_COMMIT_HASH "4e88c22"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a15dcbf"
+#define V_COMMIT_HASH "ee05b51"
 #endif
 #include <inttypes.h>
 
@@ -17952,7 +17952,8 @@ v_dot_checker__Checker_infix_expr(v_dot_checker__Checker *c,
         infix_expr.op == v_dot_token__v_dot_token__Kind_left_shift) {
       return v_dot_table__void_type;
     };
-    if (right->kind == v_dot_table__v_dot_table__Kind_array &&
+    if ((right->kind == v_dot_table__v_dot_table__Kind_array ||
+         right->kind == v_dot_table__v_dot_table__Kind_map) &&
         infix_expr.op == v_dot_token__v_dot_token__Kind_key_in) {
       return v_dot_table__bool_type;
     };
@@ -18478,6 +18479,9 @@ v_dot_table__Type v_dot_checker__Checker_expr(v_dot_checker__Checker *c,
   } else if (tmp62.typ == SumType_v_dot_ast__Expr_None) {
     v_dot_ast__None *it = (v_dot_ast__None *)tmp62.obj;
     return v_dot_table__none_type;
+  } else if (tmp62.typ == SumType_v_dot_ast__Expr_IfGuardExpr) {
+    v_dot_ast__IfGuardExpr *it = (v_dot_ast__IfGuardExpr *)tmp62.obj;
+    return v_dot_table__bool_type;
   } else // default:
   {
   };
@@ -18512,7 +18516,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl tmp66 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
     _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl
-        _V_mret_2746_var_scope_var;
+        _V_mret_2760_var_scope_var;
     if (!tmp66.ok) {
       string err = tmp66.error;
       int errcode = tmp66.ecode;
@@ -18524,11 +18528,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_2746_var_scope_var =
+    _V_mret_2760_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl *)tmp66.data;
     ;
-    var_scope = _V_mret_2746_var_scope_var.var_0;
-    var = _V_mret_2746_var_scope_var.var_1;
+    var_scope = _V_mret_2760_var_scope_var.var_0;
+    var = _V_mret_2760_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
@@ -18691,19 +18695,24 @@ v_dot_table__Type v_dot_checker__Checker_index_expr(v_dot_checker__Checker *c,
   {
   };
   if (!is_range) {
-    v_dot_table__Type index_type = v_dot_checker__Checker_expr(c, node.index);
-    if (!((_IN(int, (v_dot_table__type_idx(index_type)),
-               v_dot_table__number_idxs)))) {
-      v_dot_table__TypeSymbol *index_type_sym =
-          v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, index_type);
-      v_dot_checker__Checker_error(c,
-                                   _STR("non-integer index (type `%.*s`)",
-                                        index_type_sym->name.len,
-                                        index_type_sym->name.str),
-                                   node.pos);
-    };
     v_dot_table__TypeSymbol *typ_sym =
         v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, typ);
+    v_dot_table__Type index_type = v_dot_checker__Checker_expr(c, node.index);
+    if (typ_sym->kind == v_dot_table__v_dot_table__Kind_array &&
+        !((_IN(int, (v_dot_table__type_idx(index_type)),
+               v_dot_table__number_idxs)))) {
+      v_dot_checker__Checker_error(c,
+                                   _STR("non-integer index (type `%.*s`)",
+                                        typ_sym->name.len, typ_sym->name.str),
+                                   node.pos);
+    } else if (typ_sym->kind == v_dot_table__v_dot_table__Kind_map &&
+               v_dot_table__type_idx(index_type) !=
+                   v_dot_table__string_type_idx) {
+      v_dot_checker__Checker_error(c,
+                                   _STR("non-string map index (type `%.*s`)",
+                                        typ_sym->name.len, typ_sym->name.str),
+                                   node.pos);
+    };
     if (typ_sym->kind == v_dot_table__v_dot_table__Kind_array) {
       v_dot_table__Array info = *(v_dot_table__Array *)typ_sym->info.obj;
       return info.elem_type;
