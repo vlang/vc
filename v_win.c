@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "27ce389"
+#define V_COMMIT_HASH "a15dcbf"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "85f67a3"
+#define V_COMMIT_HASH "27ce389"
 #endif
 #include <inttypes.h>
 
@@ -2319,6 +2319,7 @@ struct v_dot_checker__Checker {
   int nr_errors;
   array_string errors;
   v_dot_table__Type expected_type;
+  v_dot_table__Type fn_return_type;
 };
 
 struct compiler__TypeNode {
@@ -18044,6 +18045,7 @@ v_dot_checker__Checker_check_struct_init(v_dot_checker__Checker *c,
                  typ_sym->name.str),
             struct_init.pos);
       };
+      c->expected_type = field.typ;
       v_dot_table__Type expr_type = v_dot_checker__Checker_expr(c, expr);
       v_dot_table__TypeSymbol *expr_type_sym =
           v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, expr_type);
@@ -18068,6 +18070,7 @@ v_dot_table__Type
 v_dot_checker__Checker_infix_expr(v_dot_checker__Checker *c,
                                   v_dot_ast__InfixExpr infix_expr) {
   v_dot_table__Type left_type = v_dot_checker__Checker_expr(c, infix_expr.left);
+  c->expected_type = left_type;
   v_dot_table__Type right_type =
       v_dot_checker__Checker_expr(c, infix_expr.right);
   if (!v_dot_table__Table_check(&/* ? */ *c->table, right_type, left_type)) {
@@ -18289,6 +18292,7 @@ void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
   array_v_dot_table__Type got_types = new_array_from_c_array(
       0, 0, sizeof(v_dot_table__Type),
       EMPTY_ARRAY_OF_ELEMS(v_dot_table__Type, 0){TCCSKIP(0)});
+  c->expected_type = c->fn_return_type;
   if (return_stmt.exprs.len == 0) {
 
     return;
@@ -18430,6 +18434,7 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
 
   if (tmp48.typ == SumType_v_dot_ast__Stmt_FnDecl) {
     v_dot_ast__FnDecl *it = (v_dot_ast__FnDecl *)tmp48.obj;
+    c->fn_return_type = it->typ;
     array_v_dot_ast__Stmt tmp49 = it->stmts;
     for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
       v_dot_ast__Stmt stmt = ((v_dot_ast__Stmt *)tmp49.data)[tmp50];
@@ -18452,7 +18457,7 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
       v_dot_table__Type typ = v_dot_checker__Checker_expr(c, expr);
       v_dot_table__Var tmp54 = {0};
       bool tmp55 =
-          map_get(/*checker.v : 385*/ c->table->consts, field.name, &tmp54);
+          map_get(/*checker.v : 390*/ c->table->consts, field.name, &tmp54);
 
       v_dot_table__Var xconst = tmp54;
       xconst.typ = typ;
@@ -18628,7 +18633,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl tmp64 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
     _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl
-        _V_mret_2687_var_scope_var;
+        _V_mret_2717_var_scope_var;
     if (!tmp64.ok) {
       string err = tmp64.error;
       int errcode = tmp64.ecode;
@@ -18640,11 +18645,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_2687_var_scope_var =
+    _V_mret_2717_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl *)tmp64.data;
     ;
-    var_scope = _V_mret_2687_var_scope_var.var_0;
-    var = _V_mret_2687_var_scope_var.var_1;
+    var_scope = _V_mret_2717_var_scope_var.var_0;
+    var = _V_mret_2717_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
@@ -18717,6 +18722,7 @@ v_dot_checker__Checker_match_expr(v_dot_checker__Checker *c,
     if (i < node->match_exprs.len) {
       v_dot_ast__Expr match_expr =
           (*(v_dot_ast__Expr *)array_get(node->match_exprs, i));
+      c->expected_type = node->typ;
       v_dot_checker__Checker_expr(c, match_expr);
     };
     array_v_dot_ast__Stmt tmp70 = block.stmts;
@@ -18852,6 +18858,9 @@ v_dot_table__Type v_dot_checker__Checker_enum_val(v_dot_checker__Checker *c,
                                                          node.enum_name)));
   v_dot_table__TypeSymbol *typ = v_dot_table__Table_get_type_symbol(
       &/* ? */ *c->table, ((v_dot_table__Type)(typ_idx)));
+  if (typ->kind != v_dot_table__v_dot_table__Kind_enum_) {
+    v_dot_checker__Checker_error(c, tos3("not an enum"), node.pos);
+  };
   v_dot_table__Enum info = v_dot_table__TypeSymbol_enum_info(&/* ? */ *typ);
   if (!((_IN(string, (node.val), info.vals)))) {
     v_dot_checker__Checker_error(
