@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4e88c22"
+#define V_COMMIT_HASH "cbffbf3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ee05b51"
+#define V_COMMIT_HASH "4e88c22"
 #endif
 #include <inttypes.h>
 
@@ -4957,6 +4957,9 @@ void array_push_many(array *a, void *val, int size) {
   a->len += size;
 }
 array array_reverse(array a) {
+  if (a.len < 2) {
+    return a;
+  };
   array arr = (array){.len = a.len,
                       .cap = a.cap,
                       .element_size = a.element_size,
