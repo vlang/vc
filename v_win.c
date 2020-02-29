@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "236b7b1"
+#define V_COMMIT_HASH "71b5b0d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8e013d2"
+#define V_COMMIT_HASH "236b7b1"
 #endif
 #include <inttypes.h>
 
@@ -14770,14 +14770,21 @@ v_dot_ast__CallExpr v_dot_parser__Parser_call_expr(v_dot_parser__Parser *p,
                                                    bool is_c, string mod) {
   v_dot_token__Token tok = p->tok;
   string name = v_dot_parser__Parser_check_name(p);
+  array_string v_fns_called_with_c_prefix =
+      new_array_from_c_array(3, 3, sizeof(string),
+                             EMPTY_ARRAY_OF_ELEMS(string, 3){
+                                 tos3("exit"), tos3("calloc"), tos3("free")});
   string fn_name =
-      ((mod.len > 0) ? (_STR("%.*s.%.*s", mod.len, mod.str, name.len, name.str))
-                     : (name));
+      ((is_c && !((_IN(string, (name), v_fns_called_with_c_prefix))))
+           ? (_STR("C.%.*s", name.len, name.str))
+           : (((mod.len > 0)
+                   ? (_STR("%.*s.%.*s", mod.len, mod.str, name.len, name.str))
+                   : (name))));
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_lpar);
-  _V_MulRet_array_v_dot_ast__Expr_V_array_bool _V_mret_75_args_muts =
+  _V_MulRet_array_v_dot_ast__Expr_V_array_bool _V_mret_100_args_muts =
       v_dot_parser__Parser_call_args(p);
-  array_v_dot_ast__Expr args = _V_mret_75_args_muts.var_0;
-  array_bool muts = _V_mret_75_args_muts.var_1;
+  array_v_dot_ast__Expr args = _V_mret_100_args_muts.var_0;
+  array_bool muts = _V_mret_100_args_muts.var_1;
   v_dot_ast__CallExpr node =
       (v_dot_ast__CallExpr){.name = fn_name,
                             .args = args,
@@ -14805,9 +14812,9 @@ v_dot_parser__Parser_call_args(v_dot_parser__Parser *p) {
     } else {
       _PUSH(&muts, (/*typ = array_bool   tmp_typ=bool*/ 0), tmp2, bool);
     };
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_207_e__ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_232_e__ =
         v_dot_parser__Parser_expr(p, 0);
-    v_dot_ast__Expr e = _V_mret_207_e__.var_0;
+    v_dot_ast__Expr e = _V_mret_232_e__.var_0;
     _PUSH(&args, (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ e),
           tmp3, v_dot_ast__Expr);
     if (p->tok.kind != v_dot_token__v_dot_token__Kind_rpar) {
@@ -14864,10 +14871,10 @@ v_dot_ast__FnDecl v_dot_parser__Parser_fn_decl(v_dot_parser__Parser *p) {
   array_v_dot_table__Var args = new_array_from_c_array(
       0, 0, sizeof(v_dot_table__Var),
       EMPTY_ARRAY_OF_ELEMS(v_dot_table__Var, 0){TCCSKIP(0)});
-  _V_MulRet_array_v_dot_ast__Arg_V_bool _V_mret_482_ast_args_is_variadic =
+  _V_MulRet_array_v_dot_ast__Arg_V_bool _V_mret_507_ast_args_is_variadic =
       v_dot_parser__Parser_fn_args(p);
-  array_v_dot_ast__Arg ast_args = _V_mret_482_ast_args_is_variadic.var_0;
-  bool is_variadic = _V_mret_482_ast_args_is_variadic.var_1;
+  array_v_dot_ast__Arg ast_args = _V_mret_507_ast_args_is_variadic.var_0;
+  bool is_variadic = _V_mret_507_ast_args_is_variadic.var_1;
   array_v_dot_ast__Arg tmp4 = ast_args;
   for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
     v_dot_ast__Arg ast_arg = ((v_dot_ast__Arg *)tmp4.data)[tmp5];
@@ -14910,7 +14917,9 @@ v_dot_ast__FnDecl v_dot_parser__Parser_fn_decl(v_dot_parser__Parser *p) {
       v_dot_parser__Parser_error(&/* ? */ *p, tos3("expected Struct"));
     };
   } else {
-    if (!is_c) {
+    if (is_c) {
+      name = _STR("C.%.*s", name.len, name.str);
+    } else {
       name = v_dot_parser__Parser_prepend_mod(&/* ? */ *p, name);
     };
     v_dot_table__Table_register_fn(p->table,
