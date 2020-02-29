@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "efff66a"
+#define V_COMMIT_HASH "6c85e28"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d4b0de2"
+#define V_COMMIT_HASH "efff66a"
 #endif
 #include <inttypes.h>
 
@@ -2254,6 +2254,7 @@ struct v_dot_ast__CallExpr {
   array_v_dot_ast__Expr args;
   bool is_c;
   array_bool muts;
+  v_dot_ast__OrExpr or_block;
 };
 
 struct v_dot_ast__Ident {
@@ -14754,12 +14755,19 @@ string v_dot_ast__FnDecl_str(v_dot_ast__FnDecl *node, v_dot_table__Table *t) {
     bool is_last_arg = i == node->args.len - 1;
     bool should_add_type =
         is_last_arg ||
-        (*(v_dot_ast__Arg *)array_get(node->args, i + 1)).typ != arg.typ;
+        (*(v_dot_ast__Arg *)array_get(node->args, i + 1)).typ != arg.typ ||
+        (node->is_variadic && i == node->args.len - 2);
     strings__Builder_write(&/* ? */ f, arg.name);
     if (should_add_type) {
-      strings__Builder_write(
-          &/* ? */ f, string_add(tos3(" "), v_dot_table__Table_type_to_str(
-                                                &/* ? */ *t, arg.typ)));
+      if (node->is_variadic && is_last_arg) {
+        strings__Builder_write(
+            &/* ? */ f, string_add(tos3(" ..."), v_dot_table__Table_type_to_str(
+                                                     &/* ? */ *t, arg.typ)));
+      } else {
+        strings__Builder_write(
+            &/* ? */ f, string_add(tos3(" "), v_dot_table__Table_type_to_str(
+                                                  &/* ? */ *t, arg.typ)));
+      };
     };
     if (!is_last_arg) {
       strings__Builder_write(&/* ? */ f, tos3(", "));
@@ -14849,16 +14857,20 @@ v_dot_ast__CallExpr v_dot_parser__Parser_call_expr(v_dot_parser__Parser *p,
       v_dot_parser__Parser_call_args(p);
   array_v_dot_ast__Expr args = _V_mret_84_args_muts.var_0;
   array_bool muts = _V_mret_84_args_muts.var_1;
+  array_v_dot_ast__Stmt or_stmts = new_array_from_c_array(
+      0, 0, sizeof(v_dot_ast__Stmt),
+      EMPTY_ARRAY_OF_ELEMS(v_dot_ast__Stmt, 0){TCCSKIP(0)});
+  if (p->tok.kind == v_dot_token__v_dot_token__Kind_key_orelse) {
+    v_dot_parser__Parser_next(p);
+    or_stmts = v_dot_parser__Parser_parse_block(p);
+  };
   v_dot_ast__CallExpr node =
       (v_dot_ast__CallExpr){.name = fn_name,
                             .args = args,
                             .muts = muts,
                             .pos = v_dot_token__Token_position(&/* ? */ tok),
-                            .is_c = is_c};
-  if (p->tok.kind == v_dot_token__v_dot_token__Kind_key_orelse) {
-    v_dot_parser__Parser_next(p);
-    v_dot_parser__Parser_parse_block(p);
-  };
+                            .is_c = is_c,
+                            .or_block = (v_dot_ast__OrExpr){.stmts = or_stmts}};
   return node;
 }
 _V_MulRet_array_v_dot_ast__Expr_V_array_bool
@@ -14876,9 +14888,9 @@ v_dot_parser__Parser_call_args(v_dot_parser__Parser *p) {
     } else {
       _PUSH(&muts, (/*typ = array_bool   tmp_typ=bool*/ 0), tmp2, bool);
     };
-    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_216_e__ =
+    _V_MulRet_v_dot_ast__Expr_V_v_dot_table__Type _V_mret_236_e__ =
         v_dot_parser__Parser_expr(p, 0);
-    v_dot_ast__Expr e = _V_mret_216_e__.var_0;
+    v_dot_ast__Expr e = _V_mret_236_e__.var_0;
     _PUSH(&args, (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ e),
           tmp3, v_dot_ast__Expr);
     if (p->tok.kind != v_dot_token__v_dot_token__Kind_rpar) {
@@ -14935,10 +14947,10 @@ v_dot_ast__FnDecl v_dot_parser__Parser_fn_decl(v_dot_parser__Parser *p) {
   array_v_dot_table__Var args = new_array_from_c_array(
       0, 0, sizeof(v_dot_table__Var),
       EMPTY_ARRAY_OF_ELEMS(v_dot_table__Var, 0){TCCSKIP(0)});
-  _V_MulRet_array_v_dot_ast__Arg_V_bool _V_mret_491_ast_args_is_variadic =
+  _V_MulRet_array_v_dot_ast__Arg_V_bool _V_mret_511_ast_args_is_variadic =
       v_dot_parser__Parser_fn_args(p);
-  array_v_dot_ast__Arg ast_args = _V_mret_491_ast_args_is_variadic.var_0;
-  bool is_variadic = _V_mret_491_ast_args_is_variadic.var_1;
+  array_v_dot_ast__Arg ast_args = _V_mret_511_ast_args_is_variadic.var_0;
+  bool is_variadic = _V_mret_511_ast_args_is_variadic.var_1;
   array_v_dot_ast__Arg tmp4 = ast_args;
   for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
     v_dot_ast__Arg ast_arg = ((v_dot_ast__Arg *)tmp4.data)[tmp5];
