@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f921ea2"
+#define V_COMMIT_HASH "d05bdad"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "38de6c9"
+#define V_COMMIT_HASH "f921ea2"
 #endif
 #include <inttypes.h>
 
@@ -9938,6 +9938,7 @@ int v_dot_token__Token_precedence(v_dot_token__Token tok) {
              (tmp9 == v_dot_token__v_dot_token__Kind_div_assign) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_mod_assign) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_or_assign) ||
+             (tmp9 == v_dot_token__v_dot_token__Kind_and_assign) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_left_shift_assign) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_right_shift_assign) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_mult_assign)) {
