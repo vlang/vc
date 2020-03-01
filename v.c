@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a707ffc"
+#define V_COMMIT_HASH "38de6c9"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1066ec5"
+#define V_COMMIT_HASH "a707ffc"
 #endif
 #include <inttypes.h>
 
@@ -590,7 +590,7 @@ int g_test_fails = 0;
 #define v_dot_scanner__error_context_before 2
 #define v_dot_scanner__error_context_after 2
 #define v_dot_scanner__num_sep '_'
-#define v_dot_checker__max_nr_errors 150
+#define v_dot_checker__max_nr_errors 350
 #define v_dot_gen_dot_x64__mag1 'E'
 #define v_dot_gen_dot_x64__mag2 'L'
 #define v_dot_gen_dot_x64__mag3 'F'
@@ -17348,13 +17348,12 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
     } else {
       v_dot_table__TypeSymbol *type_sym =
           v_dot_table__Table_get_type_symbol(&/* ? */ *g->table, it->typ);
+      string name = string_replace(it->name, tos3("."), tos3("__"));
       v_dot_gen__Gen_write(g, _STR("%.*s %.*s(", type_sym->name.len,
-                                   type_sym->name.str, it->name.len,
-                                   it->name.str));
+                                   type_sym->name.str, name.len, name.str));
       strings__Builder_write(&/* ? */ g->definitions,
                              _STR("%.*s %.*s(", type_sym->name.len,
-                                  type_sym->name.str, it->name.len,
-                                  it->name.str));
+                                  type_sym->name.str, name.len, name.str));
     };
     array_v_dot_ast__Arg tmp10 = it->args;
     for (int i = 0; i < tmp10.len; i++) {
@@ -17562,14 +17561,16 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
     v_dot_gen__Gen_write(g, tos3("}"));
   } else if (tmp23.typ == SumType_v_dot_ast__Expr_CallExpr) {
     v_dot_ast__CallExpr *it = (v_dot_ast__CallExpr *)tmp23.obj;
-    v_dot_gen__Gen_write(g, _STR("%.*s(", it->name.len, it->name.str));
+    string name = string_replace(it->name, tos3("."), tos3("__"));
+    v_dot_gen__Gen_write(g, _STR("%.*s(", name.len, name.str));
     v_dot_gen__Gen_call_args(g, it->args);
     v_dot_gen__Gen_write(g, tos3(")"));
   } else if (tmp23.typ == SumType_v_dot_ast__Expr_MethodCallExpr) {
     v_dot_ast__MethodCallExpr *it = (v_dot_ast__MethodCallExpr *)tmp23.obj;
     string typ = tos3("TODO");
+    string name = string_replace(it->name, tos3("."), tos3("__"));
     v_dot_gen__Gen_write(
-        g, _STR("%.*s_%.*s(", typ.len, typ.str, it->name.len, it->name.str));
+        g, _STR("%.*s_%.*s(", typ.len, typ.str, name.len, name.str));
     v_dot_gen__Gen_expr(g, it->expr);
     if (it->args.len > 0) {
       v_dot_gen__Gen_write(g, tos3(", "));
@@ -19629,9 +19630,9 @@ static inline string v_dot_builder__module_path(string mod) {
 Option_string v_dot_builder__Builder_find_module_path(v_dot_builder__Builder *b,
                                                       string mod) {
   string mod_path = v_dot_builder__module_path(mod);
-  array_string tmp1 = b->module_search_paths;
-  for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-    string search_path = ((string *)tmp1.data)[tmp2];
+  array_string tmp15 = b->module_search_paths;
+  for (int tmp16 = 0; tmp16 < tmp15.len; tmp16++) {
+    string search_path = ((string *)tmp15.data)[tmp16];
 
     string try_path = filepath__join(
         search_path, &(varg_string){.len = 1, .args = {mod_path}});
@@ -19643,8 +19644,8 @@ Option_string v_dot_builder__Builder_find_module_path(v_dot_builder__Builder *b,
       if (b->pref->is_verbose) {
         printf("  << found %.*s .\n", try_path.len, try_path.str);
       };
-      string tmp3 = OPTION_CAST(string)(try_path);
-      return opt_ok(&tmp3, sizeof(string));
+      string tmp17 = OPTION_CAST(string)(try_path);
+      return opt_ok(&tmp17, sizeof(string));
     };
   };
   return v_error(_STR("module \"%.*s\" not found", mod.len, mod.str));
