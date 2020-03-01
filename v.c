@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "00dcaf0"
+#define V_COMMIT_HASH "9978fb3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cbffbf3"
+#define V_COMMIT_HASH "00dcaf0"
 #endif
 #include <inttypes.h>
 
@@ -18828,8 +18828,8 @@ v_dot_table__Type v_dot_checker__Checker_map_init(v_dot_checker__Checker *c,
           node.pos);
     };
   };
-  return v_dot_table__Table_find_or_register_map(c->table, key0_type,
-                                                 val0_type);
+  return v_dot_table__new_type(
+      v_dot_table__Table_find_or_register_map(c->table, key0_type, val0_type));
 }
 void v_dot_checker__Checker_print_unhandled_nodes(v_dot_checker__Checker *c) {
   if (c->unhandled_exprs.len > 0) {
