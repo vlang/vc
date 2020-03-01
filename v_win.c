@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7a499b3"
+#define V_COMMIT_HASH "becd871"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9978fb3"
+#define V_COMMIT_HASH "7a499b3"
 #endif
 #include <inttypes.h>
 
@@ -5546,13 +5546,13 @@ string int_hex(int n) {
 string i64_hex(i64 n) {
   int len = ((n >= 0) ? (i64_str(n).len + 3) : (19));
   byte *hex = v_malloc(len);
-  int count = sprintf((char *)hex, "0x%x", n);
+  int count = sprintf(((charptr)(hex)), "0x%" PRIx64, n);
   return tos(hex, count);
 }
 string u64_hex(u64 n) {
-  int len = ((n >= 0) ? (u64_str(n).len + 3) : (19));
+  int len = ((n > 0) ? (u64_str(n).len + 3) : (19));
   byte *hex = v_malloc(len);
-  int count = sprintf((char *)(hex), "0x%lx", n);
+  int count = sprintf(((charptr)(hex)), "0x%" PRIx64, n);
   return tos(hex, count);
 }
 bool array_byte_contains(array_byte a, byte val) {
@@ -5695,10 +5695,7 @@ void map_rehash(map *m, u32 old_range_cap) {
   byte *memory = v_calloc(probe_hash_bytes + key_value_bytes);
   KeyValue *new_key_values = ((KeyValue *)(memory));
   u32 *new_probe_hash = ((u32 *)((byte *)memory + key_value_bytes));
-  int tmp3 = 0;
-  ;
-  for (int tmp4 = tmp3; tmp4 < (old_range_cap + 1); tmp4++) {
-    int i = tmp4;
+  for (u32 i = ((u32)(0)); i < old_range_cap + 1; i++) {
 
     if (m->probe_hash[/*ptr!*/ i] /*ru32 1*/ != 0) {
       KeyValue kv = m->key_values[/*ptr!*/ i] /*rKeyValue 1*/;
@@ -5744,10 +5741,7 @@ void map_cached_rehash(map *m, u32 old_range_cap) {
   byte *memory = v_calloc(probe_hash_bytes + key_value_bytes);
   u32 *new_probe_hash = ((u32 *)((byte *)memory + key_value_bytes));
   KeyValue *new_key_values = ((KeyValue *)(memory));
-  int tmp5 = 0;
-  ;
-  for (int tmp6 = tmp5; tmp6 < (old_range_cap + 1); tmp6++) {
-    int i = tmp6;
+  for (u32 i = ((u32)(0)); i < old_range_cap + 1; i++) {
 
     if (m->probe_hash[/*ptr!*/ i] /*ru32 1*/ != 0) {
       KeyValue kv = m->key_values[/*ptr!*/ i] /*rKeyValue 1*/;
@@ -5878,10 +5872,7 @@ array_string map_keys(map *m) {
     return keys;
   };
   int j = 0;
-  int tmp7 = 0;
-  ;
-  for (int tmp8 = tmp7; tmp8 < (m->range_cap + 1); tmp8++) {
-    int i = tmp8;
+  for (u32 i = ((u32)(0)); i < m->range_cap + 1; i++) {
 
     if (m->probe_hash[/*ptr!*/ i] /*ru32 0*/ != 0) {
       array_set(&/*q*/ keys, j,
@@ -5910,12 +5901,12 @@ string map_string_str(map_string m) {
   };
   strings__Builder sb = strings__new_builder(50);
   strings__Builder_writeln(&/* ? */ sb, tos3("{"));
-  map_string tmp9 = m;
-  array_string keys_tmp9 = map_keys(&tmp9);
-  for (int l = 0; l < keys_tmp9.len; l++) {
-    string key = ((string *)keys_tmp9.data)[l];
+  map_string tmp3 = m;
+  array_string keys_tmp3 = map_keys(&tmp3);
+  for (int l = 0; l < keys_tmp3.len; l++) {
+    string key = ((string *)keys_tmp3.data)[l];
     string val = tos3("");
-    map_get(tmp9, key, &val);
+    map_get(tmp3, key, &val);
 
     strings__Builder_writeln(
         &/* ? */ sb,
@@ -8914,20 +8905,20 @@ static inline u16 math_dot_bits__reverse_16(u16 x) {
           << 8);
 }
 static inline u32 math_dot_bits__reverse_32(u32 x) {
-  u32 y = (x >> ((u32)(1)) & (math_dot_bits__m0 & math_dot_bits__max_u32) |
+  u32 y = ((x >> ((u32)(1)) & (math_dot_bits__m0 & math_dot_bits__max_u32)) |
            ((x & (math_dot_bits__m0 & math_dot_bits__max_u32)) << 1));
-  y = (y >> ((u32)(2)) & (math_dot_bits__m1 & math_dot_bits__max_u32) |
+  y = ((y >> ((u32)(2)) & (math_dot_bits__m1 & math_dot_bits__max_u32)) |
        ((y & (math_dot_bits__m1 & math_dot_bits__max_u32)) << ((u32)(2))));
-  y = (y >> ((u32)(4)) & (math_dot_bits__m2 & math_dot_bits__max_u32) |
+  y = ((y >> ((u32)(4)) & (math_dot_bits__m2 & math_dot_bits__max_u32)) |
        ((y & (math_dot_bits__m2 & math_dot_bits__max_u32)) << ((u32)(4))));
   return math_dot_bits__reverse_bytes_32(y);
 }
 static inline u64 math_dot_bits__reverse_64(u64 x) {
-  u64 y = (x >> ((u64)(1)) & (math_dot_bits__m0 & math_dot_bits__max_u64) |
+  u64 y = ((x >> ((u64)(1)) & (math_dot_bits__m0 & math_dot_bits__max_u64)) |
            ((x & (math_dot_bits__m0 & math_dot_bits__max_u64)) << 1));
-  y = (y >> ((u64)(2)) & (math_dot_bits__m1 & math_dot_bits__max_u64) |
+  y = ((y >> ((u64)(2)) & (math_dot_bits__m1 & math_dot_bits__max_u64)) |
        ((y & (math_dot_bits__m1 & math_dot_bits__max_u64)) << 2));
-  y = (y >> ((u64)(4)) & (math_dot_bits__m2 & math_dot_bits__max_u64) |
+  y = ((y >> ((u64)(4)) & (math_dot_bits__m2 & math_dot_bits__max_u64)) |
        ((y & (math_dot_bits__m2 & math_dot_bits__max_u64)) << 4));
   return math_dot_bits__reverse_bytes_64(y);
 }
@@ -8935,14 +8926,14 @@ static inline u16 math_dot_bits__reverse_bytes_16(u16 x) {
   return (x >> 8) | (x << 8);
 }
 static inline u32 math_dot_bits__reverse_bytes_32(u32 x) {
-  u32 y = (x >> ((u32)(8)) & (math_dot_bits__m3 & math_dot_bits__max_u32) |
+  u32 y = ((x >> ((u32)(8)) & (math_dot_bits__m3 & math_dot_bits__max_u32)) |
            ((x & (math_dot_bits__m3 & math_dot_bits__max_u32)) << ((u32)(8))));
   return (y >> 16) | (y << 16);
 }
 static inline u64 math_dot_bits__reverse_bytes_64(u64 x) {
-  u64 y = (x >> ((u64)(8)) & (math_dot_bits__m3 & math_dot_bits__max_u64) |
+  u64 y = ((x >> ((u64)(8)) & (math_dot_bits__m3 & math_dot_bits__max_u64)) |
            ((x & (math_dot_bits__m3 & math_dot_bits__max_u64)) << ((u64)(8))));
-  y = (y >> ((u64)(16)) & (math_dot_bits__m4 & math_dot_bits__max_u64) |
+  y = ((y >> ((u64)(16)) & (math_dot_bits__m4 & math_dot_bits__max_u64)) |
        ((y & (math_dot_bits__m4 & math_dot_bits__max_u64)) << ((u64)(16))));
   return (y >> 32) | (y << 32);
 }
@@ -9085,8 +9076,8 @@ u32 math_dot_bits__rem_32(u32 hi, u32 lo, u32 y) {
   return ((u32)((((u64)(hi)) << 32 | ((u64)(lo))) % ((u64)(y))));
 }
 u64 math_dot_bits__rem_64(u64 hi, u64 lo, u64 y) {
-  _V_MulRet_u64_V_u64 _V_mret_2252___rem = math_dot_bits__div_64(hi % y, lo, y);
-  u64 rem = _V_mret_2252___rem.var_1;
+  _V_MulRet_u64_V_u64 _V_mret_2270___rem = math_dot_bits__div_64(hi % y, lo, y);
+  u64 rem = _V_mret_2270___rem.var_1;
   return rem;
 }
 string time__Time_format(time__Time t) {
@@ -10589,7 +10580,7 @@ bool strconv_dot_ftoa__multiple_of_power_of_five_32(u32 v, u32 p) {
   return strconv_dot_ftoa__pow5_factor_32(v) >= p;
 }
 bool strconv_dot_ftoa__multiple_of_power_of_two_32(u32 v, u32 p) {
-  return math_dot_bits__trailing_zeros_32(v) >= p;
+  return ((u32)(math_dot_bits__trailing_zeros_32(v))) >= p;
 }
 u32 strconv_dot_ftoa__log10_pow2(int e) {
   strconv_dot_ftoa__assert1(e >= 0, tos3("e >= 0"));
@@ -10620,11 +10611,11 @@ u64 strconv_dot_ftoa__shift_right_128(strconv_dot_ftoa__Uint128 v, int shift) {
 }
 u64 strconv_dot_ftoa__mul_shift_64(u64 m, strconv_dot_ftoa__Uint128 mul,
                                    int shift) {
-  _V_MulRet_u64_V_u64 _V_mret_673_hihi_hilo = math_dot_bits__mul_64(m, mul.hi);
-  u64 hihi = _V_mret_673_hihi_hilo.var_0;
-  u64 hilo = _V_mret_673_hihi_hilo.var_1;
-  _V_MulRet_u64_V_u64 _V_mret_687_lohi__ = math_dot_bits__mul_64(m, mul.lo);
-  u64 lohi = _V_mret_687_lohi__.var_0;
+  _V_MulRet_u64_V_u64 _V_mret_676_hihi_hilo = math_dot_bits__mul_64(m, mul.hi);
+  u64 hihi = _V_mret_676_hihi_hilo.var_0;
+  u64 hilo = _V_mret_676_hihi_hilo.var_1;
+  _V_MulRet_u64_V_u64 _V_mret_690_lohi__ = math_dot_bits__mul_64(m, mul.lo);
+  u64 lohi = _V_mret_690_lohi__.var_0;
   strconv_dot_ftoa__Uint128 sum =
       (strconv_dot_ftoa__Uint128){.hi = hihi, .lo = lohi + hilo};
   if (sum.lo < lohi) {
