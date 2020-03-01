@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "38de6c9"
+#define V_COMMIT_HASH "f921ea2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a707ffc"
+#define V_COMMIT_HASH "38de6c9"
 #endif
 #include <inttypes.h>
 
@@ -17451,9 +17451,10 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
 
       v_dot_table__TypeSymbol *field_type_sym =
           v_dot_table__Table_get_type_symbol(&/* ? */ *g->table, field.typ);
-      v_dot_gen__Gen_write(g, _STR("%.*s %.*s = ", field_type_sym->name.len,
-                                   field_type_sym->name.str, field.name.len,
-                                   field.name.str));
+      string name = string_replace(field.name, tos3("."), tos3("__"));
+      v_dot_gen__Gen_write(g,
+                           _STR("%.*s %.*s = ", field_type_sym->name.len,
+                                field_type_sym->name.str, name.len, name.str));
       v_dot_gen__Gen_expr(g, (*(v_dot_ast__Expr *)array_get(it->exprs, i)));
       v_dot_gen__Gen_writeln(g, tos3(";"));
     };
@@ -17711,7 +17712,8 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
     v_dot_gen__Gen_write(g, tos3(")"));
   } else if (tmp23.typ == SumType_v_dot_ast__Expr_Ident) {
     v_dot_ast__Ident *it = (v_dot_ast__Ident *)tmp23.obj;
-    v_dot_gen__Gen_write(g, _STR("%.*s", it->name.len, it->name.str));
+    string name = string_replace(it->name, tos3("."), tos3("__"));
+    v_dot_gen__Gen_write(g, name);
   } else if (tmp23.typ == SumType_v_dot_ast__Expr_SelectorExpr) {
     v_dot_ast__SelectorExpr *it = (v_dot_ast__SelectorExpr *)tmp23.obj;
     v_dot_gen__Gen_expr(g, it->expr);
