@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "becd871"
+#define V_COMMIT_HASH "d7a8b1b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7a499b3"
+#define V_COMMIT_HASH "becd871"
 #endif
 #include <inttypes.h>
 
@@ -18080,6 +18080,7 @@ v_dot_checker__Checker_call_expr(v_dot_checker__Checker *c,
         ((f.is_variadic && i >= f.args.len - 1)
              ? ((*(v_dot_table__Var *)array_get(f.args, f.args.len - 1)))
              : ((*(v_dot_table__Var *)array_get(f.args, i))));
+    c->expected_type = arg.typ;
     v_dot_table__Type typ = v_dot_checker__Checker_expr(c, arg_expr);
     v_dot_table__TypeSymbol *typ_sym =
         v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, typ);
@@ -18349,7 +18350,7 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
       v_dot_table__Type typ = v_dot_checker__Checker_expr(c, expr);
       v_dot_table__Var tmp52 = {0};
       bool tmp53 =
-          map_get(/*checker.v : 387*/ c->table->consts, field.name, &tmp52);
+          map_get(/*checker.v : 388*/ c->table->consts, field.name, &tmp52);
 
       v_dot_table__Var xconst = tmp52;
       xconst.typ = typ;
@@ -18559,7 +18560,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl tmp67 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
     _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl
-        _V_mret_2830_var_scope_var;
+        _V_mret_2837_var_scope_var;
     if (!tmp67.ok) {
       string err = tmp67.error;
       int errcode = tmp67.ecode;
@@ -18571,11 +18572,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_2830_var_scope_var =
+    _V_mret_2837_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl *)tmp67.data;
     ;
-    var_scope = _V_mret_2830_var_scope_var.var_0;
-    var = _V_mret_2830_var_scope_var.var_1;
+    var_scope = _V_mret_2837_var_scope_var.var_0;
+    var = _V_mret_2837_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
@@ -30130,11 +30131,11 @@ void compiler__Parser_cast(compiler__Parser *p, string typ) {
           p, _STR("cannot cast `bool` to `%.*s`", typ.len, typ.str));
     };
     if (string_ne(typ, expr_typ) && (_IN_MAP((typ), p->table->sum_types))) {
-      compiler__Type T = compiler__Table_find_type(&/* ? */ *p->table, typ);
-      if ((_IN(string, (expr_typ), T.ctype_names))) {
+      compiler__Type tt = compiler__Table_find_type(&/* ? */ *p->table, typ);
+      if ((_IN(string, (expr_typ), tt.ctype_names))) {
         compiler__CGen_set_placeholder(p->cgen, pos, tos3("("));
       } else {
-        string tmp36 = array_string_str(T.ctype_names);
+        string tmp36 = array_string_str(tt.ctype_names);
 
         compiler__Parser_warn(p, _STR("only %.*s  can be casted to `%.*s`",
                                       tmp36.len, tmp36.str, typ.len, typ.str));
