@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2700fd7"
+#define V_COMMIT_HASH "1066ec5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1ab830d"
+#define V_COMMIT_HASH "2700fd7"
 #endif
 #include <inttypes.h>
 
@@ -5457,13 +5457,13 @@ string int_hex(int n) {
 string i64_hex(i64 n) {
   int len = ((n >= 0) ? (i64_str(n).len + 3) : (19));
   byte *hex = v_malloc(len);
-  int count = sprintf(((charptr)(hex)), "0x%llx", n);
+  int count = sprintf(((charptr)(hex)), V64_PRINTFORMAT, n);
   return tos(hex, count);
 }
 string u64_hex(u64 n) {
   int len = ((n > 0) ? (u64_str(n).len + 3) : (19));
   byte *hex = v_malloc(len);
-  int count = sprintf(((charptr)(hex)), "0x%llx", n);
+  int count = sprintf(((charptr)(hex)), V64_PRINTFORMAT, n);
   return tos(hex, count);
 }
 bool array_byte_contains(array_byte a, byte val) {
@@ -25183,11 +25183,24 @@ void compiler__Parser_chash(compiler__Parser *p) {
         flag = string_replace(flag, tos3("@VROOT"),
                               vmod_file_location.vmod_folder);
       };
-      Option_bool tmp5 = compiler__Table_parse_cflag(
+      array_string tmp5 = new_array_from_c_array(
+          4, 4, sizeof(string),
+          EMPTY_ARRAY_OF_ELEMS(string, 4){tos3("@VMOD"), tos3("@VMODULE"),
+                                          tos3("@VPATH"), tos3("@VLIB_PATH")});
+      for (int tmp6 = 0; tmp6 < tmp5.len; tmp6++) {
+        string deprecated = ((string *)tmp5.data)[tmp6];
+
+        if (string_contains(flag, deprecated)) {
+          compiler__Parser_error(
+              p, _STR("%.*s had been deprecated, use @VROOT instead.",
+                      deprecated.len, deprecated.str));
+        };
+      };
+      Option_bool tmp7 = compiler__Table_parse_cflag(
           p->table, flag, p->mod, p->v->pref->compile_defines_all);
-      if (!tmp5.ok) {
-        string err = tmp5.error;
-        int errcode = tmp5.ecode;
+      if (!tmp7.ok) {
+        string err = tmp7.error;
+        int errcode = tmp7.ecode;
         compiler__Parser_error_with_token_index(
             p, err, compiler__Parser_cur_tok_index(&/* ? */ *p) - 1);
 
@@ -25204,27 +25217,27 @@ void compiler__Parser_chash(compiler__Parser *p) {
               (/*typ = array_string   tmp_typ=string*/ _STR(
                   "%.*s\n#%.*s\n#endif", p->file_pcguard.len,
                   p->file_pcguard.str, hash.len, hash.str)),
-              tmp6, string);
+              tmp8, string);
 
         return;
       };
       _PUSH(&p->cgen->includes,
             (/*typ = array_string   tmp_typ=string*/ _STR("#%.*s", hash.len,
                                                           hash.str)),
-            tmp7, string);
+            tmp9, string);
 
       return;
     };
   } else if (string_contains(hash, tos3("embed"))) {
-    Option_int tmp8 = string_index(hash, tos3("embed"));
+    Option_int tmp10 = string_index(hash, tos3("embed"));
     int pos;
-    if (!tmp8.ok) {
-      string err = tmp8.error;
-      int errcode = tmp8.ecode;
+    if (!tmp10.ok) {
+      string err = tmp10.error;
+      int errcode = tmp10.ecode;
 
       return;
     }
-    pos = *(int *)tmp8.data;
+    pos = *(int *)tmp10.data;
     ;
     string file = string_substr2(hash, pos + 5, -1, true);
     compiler__Parser_genln(p, _STR("#include %.*s", file.len, file.str));
@@ -25233,7 +25246,7 @@ void compiler__Parser_chash(compiler__Parser *p) {
       _PUSH(&p->cgen->includes,
             (/*typ = array_string   tmp_typ=string*/ _STR("#%.*s", hash.len,
                                                           hash.str)),
-            tmp11, string);
+            tmp13, string);
     };
   } else if (string_eq(hash, tos3("-js"))) {
 #ifdef _VJS
@@ -25267,9 +25280,9 @@ void compiler__Parser_comptime_method_call(compiler__Parser *p,
   compiler__Parser_check(p, compiler__compiler__TokenKind_dollar);
   string var = compiler__Parser_check_name(p);
   int j = 0;
-  array_compiler__Fn tmp12 = typ.methods;
-  for (int tmp13 = 0; tmp13 < tmp12.len; tmp13++) {
-    compiler__Fn method = ((compiler__Fn *)tmp12.data)[tmp13];
+  array_compiler__Fn tmp14 = typ.methods;
+  for (int tmp15 = 0; tmp15 < tmp14.len; tmp15++) {
+    compiler__Fn method = ((compiler__Fn *)tmp14.data)[tmp15];
 
     if (string_ne(method.typ, tos3("void"))) {
       continue;
@@ -25385,7 +25398,7 @@ void compiler__Parser_gen_array_str(compiler__Parser *p, compiler__Type typ) {
   _PUSH(&p->cgen->fns,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "string %.*s_str();", typ.name.len, typ.name.str)),
-        tmp18, string);
+        tmp20, string);
 }
 void compiler__Parser_gen_struct_str(compiler__Parser *p, compiler__Type typ) {
   compiler__Parser_add_method(
@@ -25445,9 +25458,9 @@ void compiler__Parser_gen_struct_str(compiler__Parser *p, compiler__Type typ) {
                            _STR("pub fn (a %.*s) str() string {\nreturn",
                                 typ.name.len, typ.name.str));
   strings__Builder_writeln(&/* ? */ sb, tos3("'{"));
-  array_compiler__Var tmp19 = typ.fields;
-  for (int tmp20 = 0; tmp20 < tmp19.len; tmp20++) {
-    compiler__Var field = ((compiler__Var *)tmp19.data)[tmp20];
+  array_compiler__Var tmp21 = typ.fields;
+  for (int tmp22 = 0; tmp22 < tmp21.len; tmp22++) {
+    compiler__Var field = ((compiler__Var *)tmp21.data)[tmp22];
 
     strings__Builder_writeln(
         &/* ? */ sb,
@@ -25461,7 +25474,7 @@ void compiler__Parser_gen_struct_str(compiler__Parser *p, compiler__Type typ) {
   _PUSH(&p->cgen->fns,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "string %.*s_str();", typ.name.len, typ.name.str)),
-        tmp21, string);
+        tmp23, string);
 }
 void compiler__Parser_gen_varg_str(compiler__Parser *p, compiler__Type typ) {
   string elm_type = string_substr2(typ.name, 5, -1, true);
@@ -25484,7 +25497,7 @@ void compiler__Parser_gen_varg_str(compiler__Parser *p, compiler__Type typ) {
   _PUSH(&p->cgen->fns,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "string %.*s_str();", typ.name.len, typ.name.str)),
-        tmp24, string);
+        tmp26, string);
 }
 void compiler__Parser_gen_array_filter(compiler__Parser *p, string str_typ,
                                        int method_ph) {
@@ -25576,10 +25589,10 @@ string compiler__Parser_gen_array_map(compiler__Parser *p, string str_typ,
   string tmp = compiler__Parser_get_tmp(p);
   string tmp_elm = compiler__Parser_get_tmp(p);
   string a = p->expr_var.name;
-  _V_MulRet_string_V_string _V_mret_2348_map_type_expr =
+  _V_MulRet_string_V_string _V_mret_2380_map_type_expr =
       compiler__Parser_tmp_expr(p);
-  string map_type = _V_mret_2348_map_type_expr.var_0;
-  string expr = _V_mret_2348_map_type_expr.var_1;
+  string map_type = _V_mret_2380_map_type_expr.var_0;
+  string expr = _V_mret_2380_map_type_expr.var_1;
   compiler__CGen_set_placeholder(
       p->cgen, method_ph,
       string_add(_STR("\narray %.*s = new_array(0, %.*s .len, ", tmp.len,
@@ -25616,12 +25629,12 @@ void compiler__Parser_comptime_if_block(compiler__Parser *p, string name,
 }
 void compiler__Parser_gen_enum_flag_methods(compiler__Parser *p,
                                             compiler__Type *typ) {
-  array_string tmp29 = new_array_from_c_array(
+  array_string tmp31 = new_array_from_c_array(
       4, 4, sizeof(string),
       EMPTY_ARRAY_OF_ELEMS(string, 4){tos3("set"), tos3("clear"),
                                       tos3("toggle"), tos3("has")});
-  for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
-    string method = ((string *)tmp29.data)[tmp30];
+  for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
+    string method = ((string *)tmp31.data)[tmp32];
 
     _PUSH(&typ->methods,
           (/*typ = array_compiler__Fn   tmp_typ=compiler__Fn*/ (compiler__Fn){
@@ -25702,7 +25715,7 @@ void compiler__Parser_gen_enum_flag_methods(compiler__Parser *p,
               .fn_name_token_idx = 0,
               .comptime_define = tos3(""),
               .is_used = 0}),
-          tmp31, compiler__Fn);
+          tmp33, compiler__Fn);
   };
   strings__Builder_writeln(
       &/* ? */ p->v->vgen_buf,
@@ -25719,24 +25732,24 @@ void compiler__Parser_gen_enum_flag_methods(compiler__Parser *p,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "void %.*s_set(%.*s *e, %.*s flag);", typ->name.len, typ->name.str,
             typ->name.len, typ->name.str, typ->name.len, typ->name.str)),
-        tmp32, string);
+        tmp34, string);
   _PUSH(
       &p->cgen->fns,
       (/*typ = array_string   tmp_typ=string*/ _STR(
           "void %.*s_clear(%.*s *e, %.*s flag);", typ->name.len, typ->name.str,
           typ->name.len, typ->name.str, typ->name.len, typ->name.str)),
-      tmp33, string);
+      tmp35, string);
   _PUSH(
       &p->cgen->fns,
       (/*typ = array_string   tmp_typ=string*/ _STR(
           "void %.*s_toggle(%.*s *e, %.*s flag);", typ->name.len, typ->name.str,
           typ->name.len, typ->name.str, typ->name.len, typ->name.str)),
-      tmp34, string);
+      tmp36, string);
   _PUSH(&p->cgen->fns,
         (/*typ = array_string   tmp_typ=string*/ _STR(
             "bool %.*s_has(%.*s *e, %.*s flag);", typ->name.len, typ->name.str,
             typ->name.len, typ->name.str, typ->name.len, typ->name.str)),
-        tmp35, string);
+        tmp37, string);
 }
 void compiler__OrderedDepMap_set(compiler__OrderedDepMap *o, string name,
                                  array_string deps) {
@@ -32858,10 +32871,27 @@ void compiler__V_set_module_lookup_paths(compiler__V *v) {
 }
 Option_string compiler__Parser_find_module_path(compiler__Parser *p,
                                                 string mod) {
+  compiler__ModFileAndFolder vmod_file_location =
+      compiler__ModFileCacher_get(p->v->mod_file_cacher, p->file_path_dir);
+  array_string module_lookup_paths = new_array_from_c_array(
+      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
+  if (vmod_file_location.vmod_file.len != 0) {
+    if (!(_IN(string, (vmod_file_location.vmod_folder),
+              p->v->module_lookup_paths))) {
+      _PUSH(&module_lookup_paths,
+            (/*typ = array_string   tmp_typ=string*/ vmod_file_location
+                 .vmod_folder),
+            tmp32, string);
+    };
+  };
+  _PUSH_MANY(
+      &module_lookup_paths,
+      (/*typ = array_string   tmp_typ=string*/ p->v->module_lookup_paths),
+      tmp33, array_string);
   string mod_path = compiler__V_module_path(&/* ? */ *p->v, mod);
-  array_string tmp32 = p->v->module_lookup_paths;
-  for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
-    string lookup_path = ((string *)tmp32.data)[tmp33];
+  array_string tmp34 = module_lookup_paths;
+  for (int tmp35 = 0; tmp35 < tmp34.len; tmp35++) {
+    string lookup_path = ((string *)tmp34.data)[tmp35];
 
     string try_path = filepath__join(
         lookup_path, &(varg_string){.len = 1, .args = {mod_path}});
@@ -32873,14 +32903,14 @@ Option_string compiler__Parser_find_module_path(compiler__Parser *p,
       if (p->v->pref->is_verbose) {
         printf("  << found %.*s .\n", try_path.len, try_path.str);
       };
-      string tmp34 = OPTION_CAST(string)(try_path);
-      return opt_ok(&tmp34, sizeof(string));
+      string tmp36 = OPTION_CAST(string)(try_path);
+      return opt_ok(&tmp36, sizeof(string));
     };
   };
-  string tmp35 = array_string_str(p->v->module_lookup_paths);
+  string tmp37 = array_string_str(module_lookup_paths);
 
   return v_error(_STR("module \"%.*s\" not found in %.*s ", mod.len, mod.str,
-                      tmp35.len, tmp35.str));
+                      tmp37.len, tmp37.str));
 }
 static inline string compiler__mod_gen_name(string mod) {
   return string_replace(mod, tos3("."), tos3("_dot_"));
@@ -37215,11 +37245,6 @@ compiler__ModFileCacher_traverse(compiler__ModFileCacher *mcache,
       1, 1, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 1){cfolder});
   int levels = 0;
   while (1) {
-#ifdef VDEBUG
-    eprintln(_STR("pdir2vmod mfolder: %-32s | cfolder: %-20s | levels: %d",
-                  mfolder.str, cfolder.str, levels));
-#endif
-    ;
     if (levels > 255) {
       break;
     };
@@ -37228,7 +37253,7 @@ compiler__ModFileCacher_traverse(compiler__ModFileCacher *mcache,
     };
     if ((_IN_MAP((cfolder), mcache->cache))) {
       compiler__ModFileAndFolder tmp7 = {0};
-      bool tmp8 = map_get(/*v_mod_cache.v : 92*/ mcache->cache, cfolder, &tmp7);
+      bool tmp8 = map_get(/*v_mod_cache.v : 89*/ mcache->cache, cfolder, &tmp7);
 
       compiler__ModFileAndFolder res = tmp7;
       if (res.vmod_file.len == 0) {
@@ -37250,13 +37275,6 @@ compiler__ModFileCacher_traverse(compiler__ModFileCacher *mcache,
           .vmod_file = filepath__join(
               cfolder, &(varg_string){.len = 1, .args = {tos3("v.mod")}}),
           .vmod_folder = cfolder};
-#ifdef VDEBUG
-      eprintln(tos3("FOUND v.mod:"));
-      eprintln(_STR(" ModFileAndFolder{ vmod_file: %.*s , vmod_folder: %.*s } ",
-                    res.vmod_file.len, res.vmod_file.str, res.vmod_folder.len,
-                    res.vmod_folder.str));
-#endif
-      ;
       return (_V_MulRet_array_string_V_compiler__ModFileAndFolder){
           .var_0 = folders_so_far, .var_1 = res};
     };
@@ -37315,7 +37333,7 @@ array_string compiler__ModFileCacher_get_files(compiler__ModFileCacher *mcache,
   if ((_IN_MAP((cfolder), mcache->folder_files))) {
     array_string tmp16 = new_array(0, 1, sizeof(string));
     bool tmp17 =
-        map_get(/*v_mod_cache.v : 148*/ mcache->folder_files, cfolder, &tmp16);
+        map_get(/*v_mod_cache.v : 141*/ mcache->folder_files, cfolder, &tmp16);
 
     return tmp16;
   };
