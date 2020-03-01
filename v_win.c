@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1ab830d"
+#define V_COMMIT_HASH "2700fd7"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "82b0024"
+#define V_COMMIT_HASH "1ab830d"
 #endif
 #include <inttypes.h>
 
@@ -135,6 +135,18 @@ typedef int bool;
 #endif
 
 #define OPTION_CAST(x) (x)
+
+#ifndef V64_PRINTFORMAT
+#ifdef PRIx64
+#define V64_PRINTFORMAT "0x%" PRIx64
+#elif defined(__WIN32__)
+#define V64_PRINTFORMAT "0x%I64x"
+#elif defined(__LINUX__) && defined(__LP64__)
+#define V64_PRINTFORMAT "0x%lx"
+#else
+#define V64_PRINTFORMAT "0x%llx"
+#endif
+#endif
 
 #ifdef _WIN32
 #define WINVER 0x0600
@@ -39343,7 +39355,12 @@ void init() {
       "EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef "
       "TCCSKIP\n#define TCCSKIP(x)\n#endif\n\n// for __offset_of\n#ifndef "
       "__offsetof\n#define __offsetof(s,memb) \\\n    ((size_t)((char *)&((s "
-      "*)0)->memb - (char *)0))\n#endif\n\n#define OPTION_CAST(x) (x)\n");
+      "*)0)->memb - (char *)0))\n#endif\n\n#define OPTION_CAST(x) "
+      "(x)\n\n#ifndef V64_PRINTFORMAT\n#ifdef PRIx64\n#define V64_PRINTFORMAT "
+      "\"0x%\"PRIx64\n#elif defined(__WIN32__)\n#define V64_PRINTFORMAT "
+      "\"0x%I64x\"\n#elif defined(__LINUX__) && defined(__LP64__)\n#define "
+      "V64_PRINTFORMAT \"0x%lx\"\n#else\n#define V64_PRINTFORMAT "
+      "\"0x%llx\"\n#endif\n#endif\n\n");
   compiler__c_headers = _STR(
       "\n\n//#include <inttypes.h>  // int64_t etc\n#include <stdio.h>  // "
       "TODO remove all these includes, define all function signatures and "
