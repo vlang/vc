@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5b08f30"
+#define V_COMMIT_HASH "8497d63"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "16528b1"
+#define V_COMMIT_HASH "5b08f30"
 #endif
 #include <inttypes.h>
 
@@ -12887,6 +12887,7 @@ bool v_dot_table__Table_check(v_dot_table__Table *t, v_dot_table__Type got,
       v_dot_table__Table_get_type_symbol(&/* ? */ *t, expected);
   int got_idx = v_dot_table__type_idx(got);
   int exp_idx = v_dot_table__type_idx(expected);
+  bool exp_is_ptr = v_dot_table__type_is_ptr(expected);
   if (got_type_sym->kind == v_dot_table__v_dot_table__Kind_none_) {
     return 1;
   };
@@ -12904,6 +12905,9 @@ bool v_dot_table__Table_check(v_dot_table__Table *t, v_dot_table__Type got,
   };
   if (v_dot_table__TypeSymbol_is_int(&/* ? */ *got_type_sym) &&
       v_dot_table__TypeSymbol_is_int(&/* ? */ *exp_type_sym)) {
+    return 1;
+  };
+  if (exp_is_ptr && got_idx == v_dot_table__int_type_idx) {
     return 1;
   };
   if ((v_dot_table__TypeSymbol_is_int(&/* ? */ *got_type_sym) &&
