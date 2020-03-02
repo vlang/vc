@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b333d02"
+#define V_COMMIT_HASH "a118c72"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d05bdad"
+#define V_COMMIT_HASH "b333d02"
 #endif
 #include <inttypes.h>
 
@@ -3390,7 +3390,7 @@ v_dot_table__Type v_dot_checker__Checker_index_expr(v_dot_checker__Checker *c,
 v_dot_table__Type v_dot_checker__Checker_enum_val(v_dot_checker__Checker *c,
                                                   v_dot_ast__EnumVal node);
 v_dot_table__Type v_dot_checker__Checker_map_init(v_dot_checker__Checker *c,
-                                                  v_dot_ast__MapInit node);
+                                                  v_dot_ast__MapInit *node);
 void v_dot_checker__Checker_print_unhandled_nodes(v_dot_checker__Checker *c);
 void v_dot_checker__Checker_error(v_dot_checker__Checker *c, string s,
                                   v_dot_token__Position pos);
@@ -18658,7 +18658,7 @@ v_dot_table__Type v_dot_checker__Checker_expr(v_dot_checker__Checker *c,
     return v_dot_table__int_type;
   } else if (tmp66.typ == SumType_v_dot_ast__Expr_MapInit) {
     v_dot_ast__MapInit *it = (v_dot_ast__MapInit *)tmp66.obj;
-    return v_dot_checker__Checker_map_init(c, *it);
+    return v_dot_checker__Checker_map_init(c, it);
   } else if (tmp66.typ == SumType_v_dot_ast__Expr_MatchExpr) {
     v_dot_ast__MatchExpr *it = (v_dot_ast__MatchExpr *)tmp66.obj;
     return v_dot_checker__Checker_match_expr(c, it);
@@ -18723,7 +18723,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl tmp70 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
     _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl
-        _V_mret_2838_var_scope_var;
+        _V_mret_2839_var_scope_var;
     if (!tmp70.ok) {
       string err = tmp70.error;
       int errcode = tmp70.ecode;
@@ -18735,11 +18735,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_2838_var_scope_var =
+    _V_mret_2839_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl *)tmp70.data;
     ;
-    var_scope = _V_mret_2838_var_scope_var.var_0;
-    var = _V_mret_2838_var_scope_var.var_1;
+    var_scope = _V_mret_2839_var_scope_var.var_0;
+    var = _V_mret_2839_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
@@ -18968,19 +18968,19 @@ v_dot_table__Type v_dot_checker__Checker_enum_val(v_dot_checker__Checker *c,
   return typ_idx;
 }
 v_dot_table__Type v_dot_checker__Checker_map_init(v_dot_checker__Checker *c,
-                                                  v_dot_ast__MapInit node) {
+                                                  v_dot_ast__MapInit *node) {
   v_dot_table__Type key0_type = v_dot_checker__Checker_expr(
-      c, (*(v_dot_ast__Expr *)array_get(node.keys, 0)));
+      c, (*(v_dot_ast__Expr *)array_get(node->keys, 0)));
   v_dot_table__Type val0_type = v_dot_checker__Checker_expr(
-      c, (*(v_dot_ast__Expr *)array_get(node.vals, 0)));
-  array_v_dot_ast__Expr tmp90 = node.keys;
+      c, (*(v_dot_ast__Expr *)array_get(node->vals, 0)));
+  array_v_dot_ast__Expr tmp90 = node->keys;
   for (int i = 0; i < tmp90.len; i++) {
     v_dot_ast__Expr key = ((v_dot_ast__Expr *)tmp90.data)[i];
 
     if (i == 0) {
       continue;
     };
-    v_dot_ast__Expr val = (*(v_dot_ast__Expr *)array_get(node.vals, i));
+    v_dot_ast__Expr val = (*(v_dot_ast__Expr *)array_get(node->vals, i));
     v_dot_table__Type key_type = v_dot_checker__Checker_expr(c, key);
     v_dot_table__Type val_type = v_dot_checker__Checker_expr(c, val);
     if (!v_dot_table__Table_check(&/* ? */ *c->table, key_type, key0_type)) {
@@ -18992,7 +18992,7 @@ v_dot_table__Type v_dot_checker__Checker_map_init(v_dot_checker__Checker *c,
           c,
           _STR("map init: cannot use `%.*s` as `%p` for map key",
                key_type_sym->name.len, key_type_sym->name.str, key0_type_sym),
-          node.pos);
+          node->pos);
     };
     if (!v_dot_table__Table_check(&/* ? */ *c->table, val_type, val0_type)) {
       v_dot_table__TypeSymbol *val0_type_sym =
@@ -19003,11 +19003,13 @@ v_dot_table__Type v_dot_checker__Checker_map_init(v_dot_checker__Checker *c,
           c,
           _STR("map init: cannot use `%.*s` as `%p` for map value",
                val_type_sym->name.len, val_type_sym->name.str, val0_type_sym),
-          node.pos);
+          node->pos);
     };
   };
-  return v_dot_table__new_type(
+  v_dot_table__Type map_type = v_dot_table__new_type(
       v_dot_table__Table_find_or_register_map(c->table, key0_type, val0_type));
+  node->typ = map_type;
+  return map_type;
 }
 void v_dot_checker__Checker_print_unhandled_nodes(v_dot_checker__Checker *c) {
   if (c->unhandled_exprs.len > 0) {
