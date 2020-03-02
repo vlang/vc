@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "cca5c55"
+#define V_COMMIT_HASH "78c885d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8497d63"
+#define V_COMMIT_HASH "cca5c55"
 #endif
 #include <inttypes.h>
 
@@ -24757,34 +24757,43 @@ string compiler__V_interface_table(compiler__V *v) {
     };
     string interface_name = t.name;
     string methods = tos3("");
+    string generated_casting_functions = tos3("");
     strings__Builder_writeln(&/* ? */ sb,
                              _STR("// NR methods = %d", t.gen_types.len));
     array_string tmp59 = t.gen_types;
     for (int i = 0; i < tmp59.len; i++) {
       string gen_type = ((string *)tmp59.data)[i];
 
-      string gen_concrete_type_name =
-          string_replace(gen_type, tos3("*"), tos3(""));
+      string ptr_ctype = string_replace(gen_type, tos3("*"), tos3("_ptr"));
+      string cctype = string_replace(gen_type, tos3("*"), tos3(""));
+      string interface_index_name =
+          _STR("_%.*s_%.*s_index", interface_name.len, interface_name.str,
+               ptr_ctype.len, ptr_ctype.str);
+      generated_casting_functions = string_add(
+          generated_casting_functions,
+          _STR("\n%.*s I_%.*s_to_%.*s(%.*s x) {\n  return (%.*s){\n           "
+               "._object = (void*) memdup(&x, sizeof(%.*s)),\n           "
+               "._interface_idx = %.*s };\n}\n",
+               interface_name.len, interface_name.str, cctype.len, cctype.str,
+               interface_name.len, interface_name.str, cctype.len, cctype.str,
+               interface_name.len, interface_name.str, cctype.len, cctype.str,
+               interface_index_name.len, interface_index_name.str));
       methods = string_add(methods, tos3("{\n"));
       array_compiler__Fn tmp60 = t.methods;
       for (int j = 0; j < tmp60.len; j++) {
         compiler__Fn method = ((compiler__Fn *)tmp60.data)[j];
 
-        methods = string_add(methods, _STR(" (void*)    %.*s_%.*s",
-                                           gen_concrete_type_name.len,
-                                           gen_concrete_type_name.str,
-                                           method.name.len, method.name.str));
+        methods = string_add(methods, _STR(" (void*)    %.*s_%.*s", cctype.len,
+                                           cctype.str, method.name.len,
+                                           method.name.str));
         if (j < t.methods.len - 1) {
           methods = string_add(methods, tos3(", \n"));
         };
       };
       methods = string_add(methods, tos3("\n},\n\n"));
-      string concrete_type_name =
-          string_replace(gen_type, tos3("*"), tos3("_ptr"));
-      strings__Builder_writeln(
-          &/* ? */ sb, _STR("int _%.*s_%.*s_index = %d;", interface_name.len,
-                            interface_name.str, concrete_type_name.len,
-                            concrete_type_name.str, i));
+      strings__Builder_writeln(&/* ? */ sb,
+                               _STR("int %.*s = %d;", interface_index_name.len,
+                                    interface_index_name.str, i));
     };
     if (t.gen_types.len > 0) {
       strings__Builder_writeln(
@@ -24799,7 +24808,12 @@ string compiler__V_interface_table(compiler__V *v) {
                                        interface_name.len, interface_name.str),
                                   tos3("{ {NULL} }; ")));
     };
-    continue;
+    if (generated_casting_functions.len > 0) {
+      strings__Builder_writeln(
+          &/* ? */ sb, _STR("// Casting functions for interface \"%.*s\" :",
+                            interface_name.len, interface_name.str));
+      strings__Builder_writeln(&/* ? */ sb, generated_casting_functions);
+    };
   };
   return strings__Builder_str(&/* ? */ sb);
 }
@@ -28534,16 +28548,14 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f,
     if (string_ends_with(arg.typ, tos3("er")) || string_at(arg.typ, 0) == 'I') {
       compiler__Type t = compiler__Table_find_type(&/* ? */ *p->table, arg.typ);
       if (t.cat == compiler__compiler__TypeCategory_interface_) {
-        if (!f->is_method) {
-          string concrete_type_name =
-              string_replace(typ, tos3("*"), tos3("_ptr"));
+        string concrete_type_name =
+            string_replace(typ, tos3("*"), tos3("_ptr"));
+        if (!string_ends_with(concrete_type_name, tos3("_ptr"))) {
           compiler__CGen_set_placeholder(
               p->cgen, ph,
-              _STR("(%.*s) { ._object = &", arg.typ.len, arg.typ.str));
-          compiler__Parser_gen(p, _STR(", ._interface_idx = _%.*s_%.*s_index} ",
-                                       arg.typ.len, arg.typ.str,
-                                       concrete_type_name.len,
-                                       concrete_type_name.str));
+              _STR("I_%.*s_to_%.*s(", concrete_type_name.len,
+                   concrete_type_name.str, arg.typ.len, arg.typ.str));
+          compiler__Parser_gen(p, tos3(")"));
         };
         compiler__Table_add_gen_type(p->table, arg.typ, typ);
       };
@@ -28728,10 +28740,10 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f,
       };
     };
   };
-  _V_MulRet_string_V_array_string _V_mret_6273_varg_type_varg_values =
+  _V_MulRet_string_V_array_string _V_mret_6271_varg_type_varg_values =
       compiler__Parser_fn_call_vargs(p, *f);
-  string varg_type = _V_mret_6273_varg_type_varg_values.var_0;
-  array_string varg_values = _V_mret_6273_varg_type_varg_values.var_1;
+  string varg_type = _V_mret_6271_varg_type_varg_values.var_0;
+  array_string varg_values = _V_mret_6271_varg_type_varg_values.var_1;
   if (f->is_variadic) {
     _PUSH(&saved_args, (/*typ = array_string   tmp_typ=string*/ varg_type),
           tmp84, string);
@@ -28803,21 +28815,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp98 = tos3("");
-    bool tmp99 = map_get(/*fn.v : 1359*/ r.inst, tp, &tmp98);
+    bool tmp99 = map_get(/*fn.v : 1365*/ r.inst, tp, &tmp98);
 
     if (!tmp99)
       tmp98 = tos((byte *)"", 0);
 
     if (string_ne(tmp98, tos3(""))) {
       string tmp100 = tos3("");
-      bool tmp101 = map_get(/*fn.v : 1360*/ r.inst, tp, &tmp100);
+      bool tmp101 = map_get(/*fn.v : 1366*/ r.inst, tp, &tmp100);
 
       if (!tmp101)
         tmp100 = tos((byte *)"", 0);
 
       if (string_ne(tmp100, ti)) {
         string tmp102 = tos3("");
-        bool tmp103 = map_get(/*fn.v : 1361*/ r.inst, tp, &tmp102);
+        bool tmp103 = map_get(/*fn.v : 1367*/ r.inst, tp, &tmp102);
 
         if (!tmp103)
           tmp102 = tos((byte *)"", 0);
@@ -28835,7 +28847,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp104 = tos3("");
-  bool tmp105 = map_get(/*fn.v : 1372*/ r.inst, f->typ, &tmp104);
+  bool tmp105 = map_get(/*fn.v : 1378*/ r.inst, f->typ, &tmp104);
 
   if (!tmp105)
     tmp104 = tos((byte *)"", 0);
@@ -28848,7 +28860,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp106.data)[tmp107];
 
     string tmp108 = tos3("");
-    bool tmp109 = map_get(/*fn.v : 1376*/ r.inst, tp, &tmp108);
+    bool tmp109 = map_get(/*fn.v : 1382*/ r.inst, tp, &tmp108);
 
     if (!tmp109)
       tmp108 = tos((byte *)"", 0);
@@ -28873,7 +28885,7 @@ string compiler__replace_generic_type(string gen_type, compiler__TypeInst *ti) {
   };
   if ((_IN_MAP((typ), ti->inst))) {
     string tmp112 = tos3("");
-    bool tmp113 = map_get(/*fn.v : 1391*/ ti->inst, typ, &tmp112);
+    bool tmp113 = map_get(/*fn.v : 1397*/ ti->inst, typ, &tmp112);
 
     if (!tmp113)
       tmp112 = tos((byte *)"", 0);
@@ -28927,7 +28939,7 @@ void compiler__replace_generic_type_params(compiler__Fn *f,
   if (string_ends_with(f->typ, tos3("_T"))) {
     string par = (*(string *)array_get(map_keys(&/* ? */ ti->inst), 0));
     string tmp125 = tos3("");
-    bool tmp126 = map_get(/*fn.v : 1424*/ ti->inst, par, &tmp125);
+    bool tmp126 = map_get(/*fn.v : 1430*/ ti->inst, par, &tmp125);
 
     if (!tmp126)
       tmp125 = tos((byte *)"", 0);
@@ -29001,10 +29013,10 @@ compiler__Parser_fn_call_vargs(compiler__Parser *p, compiler__Fn f) {
     if (p->tok == compiler__compiler__TokenKind_comma) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
     };
-    _V_MulRet_string_V_string _V_mret_7220_varg_type_varg_value =
+    _V_MulRet_string_V_string _V_mret_7218_varg_type_varg_value =
         compiler__Parser_tmp_expr(p);
-    string varg_type = _V_mret_7220_varg_type_varg_value.var_0;
-    string varg_value = _V_mret_7220_varg_type_varg_value.var_1;
+    string varg_type = _V_mret_7218_varg_type_varg_value.var_0;
+    string varg_value = _V_mret_7218_varg_type_varg_value.var_1;
     if (string_starts_with(varg_type, tos3("varg_")) &&
         (values.len > 0 || p->tok == compiler__compiler__TokenKind_comma)) {
       compiler__Parser_error(
@@ -29130,7 +29142,7 @@ void compiler__rename_generic_fn_instance(compiler__Fn *f,
     string k = ((string *)tmp146.data)[tmp147];
 
     string tmp148 = tos3("");
-    bool tmp149 = map_get(/*fn.v : 1528*/ ti->inst, k, &tmp148);
+    bool tmp149 = map_get(/*fn.v : 1534*/ ti->inst, k, &tmp148);
 
     if (!tmp149)
       tmp148 = tos((byte *)"", 0);
