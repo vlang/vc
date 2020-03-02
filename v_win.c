@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "22ffe33"
+#define V_COMMIT_HASH "8ac0739"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "156e36c"
+#define V_COMMIT_HASH "22ffe33"
 #endif
 #include <inttypes.h>
 
@@ -684,6 +684,7 @@ typedef Option Option_string;
 typedef Option Option_bool;
 typedef Option Option_bool;
 typedef Option Option_bool;
+typedef Option Option_bool;
 typedef Option Option_array_string;
 typedef array array_ustring;
 typedef Option Option_array_ustring;
@@ -952,6 +953,7 @@ typedef int v_dot_token__Kind;
 typedef int v_dot_token__Precedence;
 typedef Option Option_array_byte;
 typedef Option Option_string;
+typedef Option Option_bool;
 typedef Option Option_bool;
 typedef Option Option_bool;
 typedef Option Option_bool;
@@ -2906,6 +2908,7 @@ int os__file_size(string path);
 void os__mv(string old, string new);
 Option_bool os__cp(string old, string new);
 Option_bool os__cp_r(string osource_path, string odest_path, bool overwrite);
+Option_bool os__cp_all(string osource_path, string odest_path, bool overwrite);
 Option_bool os__mv_by_cp(string source, string target);
 FILE *os__vfopen(string path, string mode);
 Option_array_string os__read_lines(string path);
@@ -10885,6 +10888,9 @@ Option_bool os__cp(string old, string new) {
   ;
 }
 Option_bool os__cp_r(string osource_path, string odest_path, bool overwrite) {
+  v_panic(tos3("Use `os.cp_all` instead of `os.cp_r`"));
+}
+Option_bool os__cp_all(string osource_path, string odest_path, bool overwrite) {
   string source_path = os__realpath(osource_path);
   string dest_path = os__realpath(odest_path);
   if (!os__exists(source_path)) {
@@ -10942,7 +10948,7 @@ Option_bool os__cp_r(string osource_path, string odest_path, bool overwrite) {
         v_panic(err);
       };
     };
-    Option_bool tmp15 = os__cp_r(sp, dp, overwrite);
+    Option_bool tmp15 = os__cp_all(sp, dp, overwrite);
     if (!tmp15.ok) {
       string err = tmp15.error;
       int errcode = tmp15.ecode;
@@ -11139,9 +11145,9 @@ int os__vpclose(void *f) {
 #ifdef _WIN32
   return _pclose(f);
 #else
-  _V_MulRet_int_V_bool _V_mret_1749_ret__ =
+  _V_MulRet_int_V_bool _V_mret_1772_ret__ =
       os__posix_wait4_to_exit_status(pclose(f));
-  int ret = _V_mret_1749_ret__.var_0;
+  int ret = _V_mret_1772_ret__.var_0;
   return ret;
 #endif
   ;
