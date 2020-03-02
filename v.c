@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "895a171"
+#define V_COMMIT_HASH "ea10f44"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8ac0739"
+#define V_COMMIT_HASH "895a171"
 #endif
 #include <inttypes.h>
 
@@ -2871,6 +2871,7 @@ int os__wait();
 int os__file_last_mod_unix(string path);
 void os__log(string s);
 void os__flush_stdout();
+void os__flush();
 void os__mkdir_all(string path);
 string os__join(string base, varg_string *dirs);
 string os__cachedir();
@@ -11702,7 +11703,10 @@ int os__file_last_mod_unix(string path) {
   return attr.st_mtime;
 }
 void os__log(string s) { println(string_add(tos3("os.log: "), s)); }
-void os__flush_stdout() { fflush(stdout); }
+void os__flush_stdout() {
+  v_panic(tos3("Use `os.flush` instead of `os.flush_stdout`"));
+}
+void os__flush() { fflush(stdout); }
 void os__mkdir_all(string path) {
   string p =
       ((string_starts_with(path, filepath__separator)) ? (filepath__separator)
@@ -14419,7 +14423,7 @@ void v_dot_scanner__Scanner_error(v_dot_scanner__Scanner *s, string msg) {
 }
 void v_dot_scanner__verror(string s) {
   printf("V error: %.*s\n", s.len, s.str);
-  os__flush_stdout();
+  os__flush();
   v_exit(1);
 }
 string v_dot_scanner__vhash() {
@@ -32579,7 +32583,7 @@ void compiler__V_log(compiler__V *v, string s) {
 }
 void compiler__verror(string s) {
   printf("V error: %.*s\n", s.len, s.str);
-  os__flush_stdout();
+  os__flush();
   v_exit(1);
 }
 string compiler__vhash() {
@@ -37916,7 +37920,7 @@ compiler__V *main__new_v(array_string args) {
   string target_os = os_dot_cmdline__option(args, tos3("-os"), tos3(""));
   if (string_eq(target_os, tos3("msvc"))) {
     println(tos3("V error: use the flag `-cc msvc` to build using msvc"));
-    os__flush_stdout();
+    os__flush();
     v_exit(1);
   };
   string out_name = os_dot_cmdline__option(args, tos3("-o"), tos3(""));
@@ -37996,7 +38000,7 @@ compiler__V *main__new_v(array_string args) {
   string rdir_name = filepath__filename(rdir);
   if ((_IN(string, (tos3("-bare")), args))) {
     println(tos3("V error: use -freestanding instead of -bare"));
-    os__flush_stdout();
+    os__flush();
     v_exit(1);
   };
   bool is_repl = (_IN(string, (tos3("-repl")), args));
@@ -38064,7 +38068,7 @@ compiler__V *main__new_v(array_string args) {
 #ifndef __linux__
   if (prefs->is_bare && !string_ends_with(out_name, tos3(".c"))) {
     println(tos3("V error: -freestanding only works on Linux for now"));
-    os__flush_stdout();
+    os__flush();
     v_exit(1);
   };
 #endif
