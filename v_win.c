@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b65fad9"
+#define V_COMMIT_HASH "a8f0715"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a118c72"
+#define V_COMMIT_HASH "b65fad9"
 #endif
 #include <inttypes.h>
 
@@ -725,6 +725,7 @@ typedef struct v_dot_table__Field v_dot_table__Field;
 typedef struct v_dot_table__Array v_dot_table__Array;
 typedef struct v_dot_table__ArrayFixed v_dot_table__ArrayFixed;
 typedef struct v_dot_table__Map v_dot_table__Map;
+typedef struct v_dot_table__SumType v_dot_table__SumType;
 typedef struct v_dot_table__Table v_dot_table__Table;
 typedef array array_v_dot_table__TypeSymbol;
 typedef map map_v_dot_table__Fn;
@@ -1764,6 +1765,10 @@ struct v_dot_table__Fn {
 
 struct v_dot_ast__StructType {
   array_v_dot_ast__Field fields;
+};
+
+struct v_dot_table__SumType {
+  array_v_dot_table__Type variants;
 };
 
 struct strconv_dot_ftoa__Uint128 {
@@ -3056,6 +3061,8 @@ int v_dot_table__Table_find_or_register_multi_return(
 int v_dot_table__Table_add_placeholder_type(v_dot_table__Table *t, string name);
 bool v_dot_table__Table_check(v_dot_table__Table *t, v_dot_table__Type got,
                               v_dot_table__Type expected);
+bool array_v_dot_table__Type_contains(array_v_dot_table__Type types,
+                                      v_dot_table__Type typ);
 static inline int v_dot_table__type_idx(v_dot_table__Type t);
 static inline int v_dot_table__type_nr_muls(v_dot_table__Type t);
 static inline bool v_dot_table__type_is_ptr(v_dot_table__Type t);
@@ -4419,8 +4426,10 @@ string v_dot_pref__default_module_path;
 #define SumType_v_dot_table__TypeInfo_MultiReturn 5 // DEF2
 #define SumType_v_dot_table__TypeInfo_Alias 6       // DEF2
 #define SumType_v_dot_table__TypeInfo_Enum 7        // DEF2
+#define SumType_v_dot_table__TypeInfo_SumType 8     // DEF2
 const char *__SumTypeNames__v_dot_table__TypeInfo[] = {
-    "Array", "ArrayFixed", "Map", "Struct", "MultiReturn", "Alias", "Enum",
+    "Array",       "ArrayFixed", "Map",  "Struct",
+    "MultiReturn", "Alias",      "Enum", "SumType",
 };
 array_string v_dot_table__builtin_type_names;
 #define v_dot_table__v_dot_table__Kind_placeholder 0
@@ -13047,10 +13056,35 @@ bool v_dot_table__Table_check(v_dot_table__Table *t, v_dot_table__Type got,
       exp_type_sym->kind == v_dot_table__v_dot_table__Kind_array) {
     return 1;
   };
+  if (got_type_sym->kind == v_dot_table__v_dot_table__Kind_sum_type) {
+    v_dot_table__SumType sum_info =
+        *(v_dot_table__SumType *)got_type_sym->info.obj;
+    if ((_IN(v_dot_table__Type, (expected), sum_info.variants))) {
+      return 1;
+    };
+  } else if (exp_type_sym->kind == v_dot_table__v_dot_table__Kind_sum_type) {
+    v_dot_table__SumType sum_info =
+        *(v_dot_table__SumType *)exp_type_sym->info.obj;
+    if ((_IN(v_dot_table__Type, (got), sum_info.variants))) {
+      return 1;
+    };
+  };
   if (got_idx != exp_idx) {
     return 0;
   };
   return 1;
+}
+bool array_v_dot_table__Type_contains(array_v_dot_table__Type types,
+                                      v_dot_table__Type typ) {
+  array_v_dot_table__Type tmp1 = types;
+  for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+    v_dot_table__Type t = ((v_dot_table__Type *)tmp1.data)[tmp2];
+
+    if (((int)(typ)) == ((int)(t))) {
+      return 1;
+    };
+  };
+  return 0;
 }
 static inline int v_dot_table__type_idx(v_dot_table__Type t) {
   return ((u16)(t)) & 0xffff;
@@ -17371,10 +17405,17 @@ v_dot_ast__TypeDecl v_dot_parser__Parser_type_decl(v_dot_parser__Parser *p) {
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_key_type);
   string name = v_dot_parser__Parser_check_name(p);
   bool is_sum = 0;
+  array_v_dot_table__Type sum_variants = new_array_from_c_array(
+      0, 0, sizeof(v_dot_table__Type),
+      EMPTY_ARRAY_OF_ELEMS(v_dot_table__Type, 0){TCCSKIP(0)});
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_assign) {
     v_dot_parser__Parser_next(p);
     while (1) {
-      v_dot_parser__Parser_check_name(p);
+      v_dot_table__Type variant_type = v_dot_parser__Parser_parse_type(p);
+      _PUSH(&sum_variants,
+            (/*typ = array_v_dot_table__Type   tmp_typ=v_dot_table__Type*/
+             variant_type),
+            tmp56, v_dot_table__Type);
       if (p->tok.kind != v_dot_token__v_dot_token__Kind_pipe) {
         break;
       };
@@ -17384,20 +17425,37 @@ v_dot_ast__TypeDecl v_dot_parser__Parser_type_decl(v_dot_parser__Parser *p) {
   } else {
     v_dot_parser__Parser_parse_type(p);
   };
-  v_dot_table__Table_register_type_symbol(
-      p->table,
-      (v_dot_table__TypeSymbol){
-          .kind = v_dot_table__v_dot_table__Kind_sum_type,
-          .name = name,
-          .info = /*SUM TYPE CAST2*/ (
-              v_dot_table__TypeInfo){.obj = memdup(&(v_dot_table__Alias[]){(
-                                                       v_dot_table__Alias){
-                                                       .foo = tos3("")}},
-                                                   sizeof(v_dot_table__Alias)),
-                                     .typ =
-                                         SumType_v_dot_table__TypeInfo_Alias},
-          .parent_idx = 0,
-          .methods = new_array(0, 1, sizeof(v_dot_table__Fn))});
+  if (is_sum) {
+    v_dot_table__Table_register_type_symbol(
+        p->table,
+        (v_dot_table__TypeSymbol){
+            .kind = v_dot_table__v_dot_table__Kind_sum_type,
+            .name = v_dot_parser__Parser_prepend_mod(&/* ? */ *p, name),
+            .info = /*SUM TYPE CAST2*/
+            (v_dot_table__TypeInfo){
+                .obj = memdup(&(v_dot_table__SumType[]){(v_dot_table__SumType){
+                                  .variants = sum_variants}},
+                              sizeof(v_dot_table__SumType)),
+                .typ = SumType_v_dot_table__TypeInfo_SumType},
+            .parent_idx = 0,
+            .methods = new_array(0, 1, sizeof(v_dot_table__Fn))});
+  } else {
+    v_dot_table__Table_register_type_symbol(
+        p->table,
+        (v_dot_table__TypeSymbol){
+            .kind = v_dot_table__v_dot_table__Kind_alias,
+            .name = v_dot_parser__Parser_prepend_mod(&/* ? */ *p, name),
+            .info = /*SUM TYPE CAST2*/ (
+                v_dot_table__TypeInfo){.obj =
+                                           memdup(&(v_dot_table__Alias[]){(
+                                                      v_dot_table__Alias){
+                                                      .foo = tos3("")}},
+                                                  sizeof(v_dot_table__Alias)),
+                                       .typ =
+                                           SumType_v_dot_table__TypeInfo_Alias},
+            .parent_idx = 0,
+            .methods = new_array(0, 1, sizeof(v_dot_table__Fn))});
+  };
   return (v_dot_ast__TypeDecl){.name = name, .is_pub = 0};
 }
 void v_dot_parser__verror(string s) {
