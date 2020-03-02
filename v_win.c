@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f57a651"
+#define V_COMMIT_HASH "16528b1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a8f0715"
+#define V_COMMIT_HASH "f57a651"
 #endif
 #include <inttypes.h>
 
@@ -13037,6 +13037,12 @@ bool v_dot_table__Table_check(v_dot_table__Table *t, v_dot_table__Type got,
       v_dot_table__TypeSymbol_is_int(&/* ? */ *exp_type_sym)) {
     return 1;
   };
+  if ((v_dot_table__TypeSymbol_is_int(&/* ? */ *got_type_sym) &&
+       exp_type_sym->kind == v_dot_table__v_dot_table__Kind_enum_) ||
+      (v_dot_table__TypeSymbol_is_int(&/* ? */ *exp_type_sym) &&
+       got_type_sym->kind == v_dot_table__v_dot_table__Kind_enum_)) {
+    return 1;
+  };
   if (v_dot_table__TypeSymbol_is_number(&/* ? */ *got_type_sym) &&
       v_dot_table__TypeSymbol_is_number(&/* ? */ *exp_type_sym)) {
     return 1;
@@ -19005,9 +19011,12 @@ v_dot_table__Type v_dot_checker__Checker_index_expr(v_dot_checker__Checker *c,
     v_dot_table__TypeSymbol *typ_sym =
         v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, typ);
     v_dot_table__Type index_type = v_dot_checker__Checker_expr(c, node.index);
+    v_dot_table__TypeSymbol *index_type_sym =
+        v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, index_type);
     if (typ_sym->kind == v_dot_table__v_dot_table__Kind_array &&
-        !((_IN(int, (v_dot_table__type_idx(index_type)),
-               v_dot_table__number_idxs)))) {
+        (!((_IN(int, (v_dot_table__type_idx(index_type)),
+                v_dot_table__number_idxs))) &&
+         index_type_sym->kind != v_dot_table__v_dot_table__Kind_enum_)) {
       v_dot_checker__Checker_error(c,
                                    _STR("non-integer index (type `%.*s`)",
                                         typ_sym->name.len, typ_sym->name.str),
