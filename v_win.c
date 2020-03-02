@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8373ece"
+#define V_COMMIT_HASH "07a2233"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "78c885d"
+#define V_COMMIT_HASH "8373ece"
 #endif
 #include <inttypes.h>
 
@@ -12892,7 +12892,7 @@ int v_dot_table__Table_find_or_register_map(v_dot_table__Table *t,
                                             v_dot_table__Type value_type) {
   string name = v_dot_table__Table_map_name(&/* ? */ *t, key_type, value_type);
   int tmp48 = 0;
-  bool tmp49 = map_get(/*table.v : 282*/ t->type_idxs, name, &tmp48);
+  bool tmp49 = map_get(/*table.v : 277*/ t->type_idxs, name, &tmp48);
 
   int existing_idx = tmp48;
   if (existing_idx > 0) {
@@ -12917,7 +12917,7 @@ int v_dot_table__Table_find_or_register_array(v_dot_table__Table *t,
                                               int nr_dims) {
   string name = v_dot_table__Table_array_name(&/* ? */ *t, elem_type, nr_dims);
   int tmp50 = 0;
-  bool tmp51 = map_get(/*table.v : 302*/ t->type_idxs, name, &tmp50);
+  bool tmp51 = map_get(/*table.v : 297*/ t->type_idxs, name, &tmp50);
 
   int existing_idx = tmp50;
   if (existing_idx > 0) {
@@ -12943,7 +12943,7 @@ int v_dot_table__Table_find_or_register_array_fixed(v_dot_table__Table *t,
   string name = v_dot_table__Table_array_fixed_name(&/* ? */ *t, elem_type,
                                                     size, nr_dims);
   int tmp52 = 0;
-  bool tmp53 = map_get(/*table.v : 322*/ t->type_idxs, name, &tmp52);
+  bool tmp53 = map_get(/*table.v : 317*/ t->type_idxs, name, &tmp52);
 
   int existing_idx = tmp52;
   if (existing_idx > 0) {
@@ -12978,7 +12978,7 @@ int v_dot_table__Table_find_or_register_multi_return(
         name, _STR("_%.*s", mr_type_sym->name.len, mr_type_sym->name.str));
   };
   int tmp56 = 0;
-  bool tmp57 = map_get(/*table.v : 346*/ t->type_idxs, name, &tmp56);
+  bool tmp57 = map_get(/*table.v : 341*/ t->type_idxs, name, &tmp56);
 
   int existing_idx = tmp56;
   if (existing_idx > 0) {
@@ -17578,6 +17578,13 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
       v_dot_table__TypeSymbol *type_sym =
           v_dot_table__Table_get_type_symbol(&/* ? */ *g->table, it->typ);
       string name = string_replace(it->name, tos3("."), tos3("__"));
+      if (it->is_method) {
+        name = string_add(string_add(v_dot_table__Table_get_type_symbol(
+                                         &/* ? */ *g->table, it->receiver.typ)
+                                         ->name,
+                                     tos3("_")),
+                          name);
+      };
       v_dot_gen__Gen_write(g, _STR("%.*s %.*s(", type_sym->name.len,
                                    type_sym->name.str, name.len, name.str));
       strings__Builder_write(&/* ? */ g->definitions,
@@ -18339,6 +18346,9 @@ v_dot_checker__Checker_call_expr(v_dot_checker__Checker *c,
              fn_name.len, fn_name.str, call_expr.args.len, f.args.len),
         call_expr.pos);
   };
+  if (string_eq(fn_name, tos3("println"))) {
+    return f.return_type;
+  };
   array_v_dot_ast__Expr tmp23 = call_expr.args;
   for (int i = 0; i < tmp23.len; i++) {
     v_dot_ast__Expr arg_expr = ((v_dot_ast__Expr *)tmp23.data)[i];
@@ -18492,7 +18502,7 @@ void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
   };
   int tmp41 = 0;
   bool tmp42 =
-      map_get(/*checker.v : 318*/ c->table->type_idxs, tos3("Option"), &tmp41);
+      map_get(/*checker.v : 322*/ c->table->type_idxs, tos3("Option"), &tmp41);
 
   if (exp_is_optional &&
       (v_dot_table__type_idx((*(v_dot_table__Type *)array_get(got_types, 0))) ==
@@ -18626,7 +18636,7 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
       v_dot_table__Type typ = v_dot_checker__Checker_expr(c, expr);
       v_dot_table__Var tmp57 = {0};
       bool tmp58 =
-          map_get(/*checker.v : 401*/ c->table->consts, field.name, &tmp57);
+          map_get(/*checker.v : 405*/ c->table->consts, field.name, &tmp57);
 
       v_dot_table__Var xconst = tmp57;
       xconst.typ = typ;
@@ -18835,7 +18845,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl tmp71 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
     _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl
-        _V_mret_2882_var_scope_var;
+        _V_mret_2892_var_scope_var;
     if (!tmp71.ok) {
       string err = tmp71.error;
       int errcode = tmp71.ecode;
@@ -18847,11 +18857,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_2882_var_scope_var =
+    _V_mret_2892_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl *)tmp71.data;
     ;
-    var_scope = _V_mret_2882_var_scope_var.var_0;
-    var = _V_mret_2882_var_scope_var.var_1;
+    var_scope = _V_mret_2892_var_scope_var.var_0;
+    var = _V_mret_2892_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
@@ -19515,7 +19525,7 @@ void v_dot_gen_dot_x64__Gen_call_fn(v_dot_gen_dot_x64__Gen *g, string name) {
     return;
   };
   i64 tmp30 = 0;
-  bool tmp31 = map_get(/*gen.v : 307*/ g->fn_addr, name, &tmp30);
+  bool tmp31 = map_get(/*gen.v : 310*/ g->fn_addr, name, &tmp30);
 
   i64 addr = tmp30;
   v_dot_gen_dot_x64__Gen_call(g, ((int)(addr)));
