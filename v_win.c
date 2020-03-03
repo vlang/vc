@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3f67ba0"
+#define V_COMMIT_HASH "448ed41"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "af31597"
+#define V_COMMIT_HASH "3f67ba0"
 #endif
 #include <inttypes.h>
 
@@ -2934,6 +2934,7 @@ bool os__file_exists(string _path);
 void os__rm(string path);
 void os__rmdir(string path);
 void os__rmdir_recursive(string path);
+void os__rmdir_all(string path);
 bool os__is_dir_empty(string path);
 void os__print_c_errno();
 string os__ext(string path);
@@ -11302,6 +11303,9 @@ void os__rmdir(string path) {
   ;
 }
 void os__rmdir_recursive(string path) {
+  v_panic(tos3("Use `os.rmdir_all` instead of `os.rmdir_recursive`"));
+}
+void os__rmdir_all(string path) {
   Option_array_string tmp38 = os__ls(path);
   array_string items;
   if (!tmp38.ok) {
@@ -11318,7 +11322,7 @@ void os__rmdir_recursive(string path) {
 
     if (os__is_dir(
             filepath__join(path, &(varg_string){.len = 1, .args = {item}}))) {
-      os__rmdir_recursive(
+      os__rmdir_all(
           filepath__join(path, &(varg_string){.len = 1, .args = {item}}));
     };
     os__rm(filepath__join(path, &(varg_string){.len = 1, .args = {item}}));
