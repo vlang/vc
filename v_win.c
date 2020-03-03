@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ea10f44"
+#define V_COMMIT_HASH "9099626"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "895a171"
+#define V_COMMIT_HASH "ea10f44"
 #endif
 #include <inttypes.h>
 
@@ -3593,6 +3593,8 @@ void compiler__V_cc(compiler__V *v);
 void compiler__V_cc_windows_cross(compiler__V *c);
 void compiler__V_build_thirdparty_obj_files(compiler__V *c);
 string compiler__missing_compiler_info();
+array_string compiler__error_context_lines(string text, string keyword,
+                                           int before, int after);
 string compiler__CFlag_str(compiler__CFlag *c);
 array_compiler__CFlag compiler__V_get_os_cflags(compiler__V *v);
 array_compiler__CFlag compiler__V_get_rest_of_module_cflags(compiler__V *v,
@@ -23952,7 +23954,10 @@ start:;
           compiler__missing_compiler_info()));
     };
     if (v->pref->is_debug) {
-      println(res.output);
+      string eword = tos3("error:");
+      string khighlight =
+          ((term__can_show_color_on_stdout()) ? (term__red(eword)) : (eword));
+      println(string_replace(res.output, eword, khighlight));
       compiler__verror(_STR(
           "\n==================\nC error. This should never happen.\n\nV "
           "compiler version: V %.*s %.*s\nHost OS: %.*s\nTarget OS: %.*s\n\nIf "
@@ -23971,10 +23976,15 @@ start:;
       if (res.output.len < 30) {
         println(res.output);
       } else {
-        string q =
-            string_limit(string_all_after(res.output, tos3("error: ")), 150);
+        array_string elines =
+            compiler__error_context_lines(res.output, tos3("error:"), 1, 12);
         println(tos3("=================="));
-        println(q);
+        array_string tmp36 = elines;
+        for (int tmp37 = 0; tmp37 < tmp36.len; tmp37++) {
+          string eline = ((string *)tmp36.data)[tmp37];
+
+          println(eline);
+        };
         println(tos3("..."));
         println(tos3("=================="));
         println(tos3("(Use `v -cg` to print the entire error message)\n"));
@@ -24053,9 +24063,9 @@ void compiler__V_cc_windows_cross(compiler__V *c) {
       printf("`%.*s` not found\n", libs.len, libs.str);
       v_exit(1);
     };
-    array_string tmp36 = c->table->imports;
-    for (int tmp37 = 0; tmp37 < tmp36.len; tmp37++) {
-      string imp = ((string *)tmp36.data)[tmp37];
+    array_string tmp38 = c->table->imports;
+    for (int tmp39 = 0; tmp39 < tmp38.len; tmp39++) {
+      string imp = ((string *)tmp38.data)[tmp39];
 
       libs = string_add(
           libs, _STR(" \"%.*s/vlib/%.*s.o\"", compiler__v_modules_path.len,
@@ -24086,9 +24096,9 @@ void compiler__V_cc_windows_cross(compiler__V *c) {
   println(tos3("Done!"));
 }
 void compiler__V_build_thirdparty_obj_files(compiler__V *c) {
-  array_compiler__CFlag tmp38 = compiler__V_get_os_cflags(&/* ? */ *c);
-  for (int tmp39 = 0; tmp39 < tmp38.len; tmp39++) {
-    compiler__CFlag flag = ((compiler__CFlag *)tmp38.data)[tmp39];
+  array_compiler__CFlag tmp40 = compiler__V_get_os_cflags(&/* ? */ *c);
+  for (int tmp41 = 0; tmp41 < tmp40.len; tmp41++) {
+    compiler__CFlag flag = ((compiler__CFlag *)tmp40.data)[tmp41];
 
     if (string_ends_with(flag.value, tos3(".o"))) {
       array_compiler__CFlag rest_of_module_flags =
@@ -24117,6 +24127,29 @@ string compiler__missing_compiler_info() {
 #endif
   ;
   return tos3("");
+}
+array_string compiler__error_context_lines(string text, string keyword,
+                                           int before, int after) {
+  string khighlight =
+      ((term__can_show_color_on_stdout()) ? (term__red(keyword)) : (keyword));
+  int eline_idx = 0;
+  array_string lines = string_split_into_lines(text);
+  array_string tmp42 = lines;
+  for (int idx = 0; idx < tmp42.len; idx++) {
+    string eline = ((string *)tmp42.data)[idx];
+
+    if (string_contains(eline, keyword)) {
+      array_set(&/*q*/ lines, idx,
+                &(string[]){string_replace((*(string *)array_get(lines, idx)),
+                                           keyword, khighlight)});
+      if (eline_idx == 0) {
+        eline_idx = idx;
+      };
+    };
+  };
+  int idx_s = ((eline_idx - before >= 0) ? (eline_idx - before) : (0));
+  int idx_e = ((idx_s + after < lines.len) ? (idx_s + after) : (lines.len));
+  return array_slice2(lines, idx_s, idx_e, false);
 }
 string compiler__CFlag_str(compiler__CFlag *c) {
   return _STR(
