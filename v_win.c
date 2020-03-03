@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c633dd0"
+#define V_COMMIT_HASH "0c67b3c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "448ed41"
+#define V_COMMIT_HASH "c633dd0"
 #endif
 #include <inttypes.h>
 
@@ -18739,7 +18739,6 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
     it->typ = typ;
   } else // default:
   {
-    println(tos3("checker.stmt(): unhandled node"));
   };
 }
 void v_dot_checker__Checker_stmts(v_dot_checker__Checker *c,
@@ -18895,7 +18894,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl tmp71 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
     _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl
-        _V_mret_2901_var_scope_var;
+        _V_mret_2897_var_scope_var;
     if (!tmp71.ok) {
       string err = tmp71.error;
       int errcode = tmp71.ecode;
@@ -18907,11 +18906,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_2901_var_scope_var =
+    _V_mret_2897_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl *)tmp71.data;
     ;
-    var_scope = _V_mret_2901_var_scope_var.var_0;
-    var = _V_mret_2901_var_scope_var.var_1;
+    var_scope = _V_mret_2897_var_scope_var.var_0;
+    var = _V_mret_2897_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
@@ -18977,6 +18976,7 @@ v_dot_table__Type
 v_dot_checker__Checker_match_expr(v_dot_checker__Checker *c,
                                   v_dot_ast__MatchExpr *node) {
   v_dot_table__Type t = v_dot_checker__Checker_expr(c, node->cond);
+  v_dot_table__Type ret_type = v_dot_table__void_type;
   array_v_dot_ast__StmtBlock tmp74 = node->blocks;
   for (int i = 0; i < tmp74.len; i++) {
     v_dot_ast__StmtBlock block = ((v_dot_ast__StmtBlock *)tmp74.data)[i];
@@ -18998,13 +18998,14 @@ v_dot_checker__Checker_match_expr(v_dot_checker__Checker *c,
 
       if (tmp79.typ == SumType_v_dot_ast__Stmt_ExprStmt) {
         v_dot_ast__ExprStmt *it = (v_dot_ast__ExprStmt *)tmp79.obj;
+        ret_type = v_dot_checker__Checker_expr(c, it->expr);
       } else // default:
       {
       };
     };
   };
   node->typ = t;
-  return t;
+  return ret_type;
 }
 v_dot_table__Type v_dot_checker__Checker_if_expr(v_dot_checker__Checker *c,
                                                  v_dot_ast__IfExpr *node) {
