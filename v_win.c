@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "136aa76"
+#define V_COMMIT_HASH "b7e2af8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cd8a5d1"
+#define V_COMMIT_HASH "136aa76"
 #endif
 #include <inttypes.h>
 
@@ -634,6 +634,7 @@ typedef array array_bool;
 typedef array array_byte;
 typedef array array_int;
 typedef array array_char;
+typedef array array_voidptr;
 typedef struct SymbolInfo SymbolInfo;
 typedef struct SymbolInfoContainer SymbolInfoContainer;
 typedef struct Line64 Line64;
@@ -935,6 +936,7 @@ typedef struct _V_MulRet_array_string_V_compiler__ModFileAndFolder
     _V_MulRet_array_string_V_compiler__ModFileAndFolder;
 typedef struct _V_MulRet_array_string_V_array_string
     _V_MulRet_array_string_V_array_string;
+typedef array array_ptr_void;
 typedef Option Option_int;
 typedef Option Option_int;
 typedef Option Option_time__Time;
@@ -2408,6 +2410,7 @@ bool array_string_eq(array_string a1, array_string a2);
 int compare_i64(i64 *a, i64 *b);
 int compare_f64(f64 *a, f64 *b);
 int compare_f32(f32 *a, f32 *b);
+array_voidptr array_pointers(array a);
 void builtin__init();
 void v_exit(int code);
 bool isnil(void *v);
@@ -3204,6 +3207,7 @@ void v_dot_scanner__verror(string s);
 string v_dot_scanner__vhash();
 string v_dot_scanner__cescaped_path(string s);
 benchmark__Benchmark benchmark__new_benchmark();
+benchmark__Benchmark *benchmark__new_benchmark_pointer();
 void benchmark__Benchmark_set_total_expected_steps(benchmark__Benchmark *b,
                                                    int n);
 void benchmark__Benchmark_stop(benchmark__Benchmark *b);
@@ -5193,6 +5197,21 @@ int compare_f32(f32 *a, f32 *b) {
     return 1;
   };
   return 0;
+}
+array_voidptr array_pointers(array a) {
+  array_ptr_void res = new_array_from_c_array(
+      0, 0, sizeof(void *), EMPTY_ARRAY_OF_ELEMS(void *, 0){TCCSKIP(0)});
+  int tmp45 = 0;
+  ;
+  for (int tmp46 = tmp45; tmp46 < a.len; tmp46++) {
+    int i = tmp46;
+
+    _PUSH(&res,
+          (/*typ = array_ptr_void   tmp_typ=void**/ (byte *)a.data +
+           i * a.element_size),
+          tmp47, void *);
+  };
+  return res;
 }
 void builtin__init() {
 #ifdef _WIN32
@@ -11270,7 +11289,7 @@ bool os__is_readable(string path) {
   ;
 }
 bool os__file_exists(string _path) {
-  v_panic(tos3("use os.exists(path) instead of os.file_exists(path)"));
+  v_panic(tos3("Use `os.exists` instead of `os.file_exists`"));
   return false;
   ;
 }
@@ -14577,6 +14596,22 @@ benchmark__Benchmark benchmark__new_benchmark() {
                                 .cstep = 0,
                                 .bok = tos3(""),
                                 .bfail = tos3("")};
+}
+benchmark__Benchmark *benchmark__new_benchmark_pointer() {
+  return (benchmark__Benchmark *)memdup(
+      &(benchmark__Benchmark){.bench_start_time = benchmark__now(),
+                              .verbose = 1,
+                              .bench_end_time = 0,
+                              .step_start_time = 0,
+                              .step_end_time = 0,
+                              .ntotal = 0,
+                              .nok = 0,
+                              .nfail = 0,
+                              .nexpected_steps = 0,
+                              .cstep = 0,
+                              .bok = tos3(""),
+                              .bfail = tos3("")},
+      sizeof(benchmark__Benchmark));
 }
 void benchmark__Benchmark_set_total_expected_steps(benchmark__Benchmark *b,
                                                    int n) {
