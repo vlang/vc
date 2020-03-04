@@ -1,13 +1,14 @@
-#define V_COMMIT_HASH "3745394"
+#define V_COMMIT_HASH "f27f832"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8458ea4"
+#define V_COMMIT_HASH "3745394"
 #endif
 #include <inttypes.h>
 
 //#include <inttypes.h>  // int64_t etc
 //#include <stdint.h>  // int64_t etc
 
-//================================== TYPEDEFS ================================*/
+//================================== 1TYPEDEFS
+//================================*/
 
 typedef int64_t i64;
 typedef int16_t i16;
@@ -1881,6 +1882,7 @@ struct v_dot_ast__FnDecl {
   v_dot_ast__Field receiver;
   bool is_method;
   bool rec_mut;
+  bool is_c;
 };
 
 struct _V_MulRet_strconv_dot_ftoa__Dec32_V_bool {
@@ -2041,6 +2043,7 @@ struct compiler__Parser {
 
 struct v_dot_gen__Gen {
   strings__Builder out;
+  strings__Builder typedefs;
   strings__Builder definitions;
   v_dot_table__Table *table;
   v_dot_ast__FnDecl *fn_decl;
@@ -2323,6 +2326,7 @@ void print(string s);
 void looo();
 byte *v_malloc(int n);
 byte *v_calloc(int n);
+byte *vcalloc(int n);
 void v_free(void *ptr);
 void *memdup(void *src, int sz);
 void v_ptr_free(void *ptr);
@@ -3235,6 +3239,7 @@ v_dot_ast__EnumDecl v_dot_parser__Parser_enum_decl(v_dot_parser__Parser *p);
 v_dot_ast__TypeDecl v_dot_parser__Parser_type_decl(v_dot_parser__Parser *p);
 void v_dot_parser__verror(string s);
 string v_dot_gen__cgen(array_v_dot_ast__File files, v_dot_table__Table *table);
+void v_dot_gen__Gen_init(v_dot_gen__Gen *g);
 void v_dot_gen__Gen_save(v_dot_gen__Gen *g);
 void v_dot_gen__Gen_write(v_dot_gen__Gen *g, string s);
 void v_dot_gen__Gen_writeln(v_dot_gen__Gen *g, string s);
@@ -4431,6 +4436,10 @@ const char *__SumTypeNames__v_dot_ast__IdentInfo[] = {
 #define v_dot_ast__v_dot_ast__IdentKind_constant 3
 #define v_dot_ast__v_dot_ast__IdentKind_function 4
 bool v_dot_parser__colored_output;
+string v_dot_gen__c_common_macros;
+string v_dot_gen__c_headers;
+string v_dot_gen__c_builtin_types;
+string v_dot_gen__bare_c_headers;
 int v_dot_gen_dot_x64__mag0;
 int v_dot_gen_dot_x64__e_machine;
 int v_dot_gen_dot_x64__shn_xindex;
@@ -4624,7 +4633,7 @@ array new_array(int mylen, int cap, int elm_size) {
   array arr = (array){.len = mylen,
                       .cap = cap_,
                       .element_size = elm_size,
-                      .data = v_calloc(cap_ * elm_size)};
+                      .data = vcalloc(cap_ * elm_size)};
   return arr;
 }
 array make(int len, int cap, int elm_size) {
@@ -4635,7 +4644,7 @@ array new_array_from_c_array(int len, int cap, int elm_size, void *c_array) {
   array arr = (array){.len = len,
                       .cap = cap,
                       .element_size = elm_size,
-                      .data = v_calloc(cap_ * elm_size)};
+                      .data = vcalloc(cap_ * elm_size)};
   memcpy(arr.data, c_array, len * elm_size);
   return arr;
 }
@@ -4656,7 +4665,7 @@ void array_ensure_cap(array *a, int required) {
     cap *= 2;
   };
   if (a->cap == 0) {
-    a->data = v_calloc(cap * a->element_size);
+    a->data = vcalloc(cap * a->element_size);
   } else {
     a->data = realloc(a->data, cap * a->element_size);
   };
@@ -4673,7 +4682,7 @@ array array_repeat(array a, int count) {
   array arr = (array){.len = count * a.len,
                       .cap = count * a.len,
                       .element_size = a.element_size,
-                      .data = v_calloc(size)};
+                      .data = vcalloc(size)};
   int tmp1 = 0;
   ;
   for (int tmp2 = tmp1; tmp2 < count; tmp2++) {
@@ -4784,7 +4793,7 @@ array array_clone(array a) {
   array arr = (array){.len = a.len,
                       .cap = a.cap,
                       .element_size = a.element_size,
-                      .data = v_calloc(size)};
+                      .data = vcalloc(size)};
   memcpy(arr.data, a.data, a.cap * a.element_size);
   return arr;
 }
@@ -4845,7 +4854,7 @@ array array_reverse(array a) {
   array arr = (array){.len = a.len,
                       .cap = a.cap,
                       .element_size = a.element_size,
-                      .data = v_calloc(a.cap * a.element_size)};
+                      .data = vcalloc(a.cap * a.element_size)};
   int tmp3 = 0;
   ;
   for (int tmp4 = tmp3; tmp4 < a.len; tmp4++) {
@@ -5155,7 +5164,8 @@ byte *v_malloc(int n) {
 #endif
   ;
 }
-byte *v_calloc(int n) {
+byte *v_calloc(int n) { return calloc(n, 1); }
+byte *vcalloc(int n) {
   if (n <= 0) {
     v_panic(tos3("calloc(<=0)"));
   };
@@ -5364,7 +5374,7 @@ string int_str(int nn) {
     return tos3("0");
   };
   int max = 16;
-  byte *buf = v_calloc(max + 1);
+  byte *buf = vcalloc(max + 1);
   int len = 0;
   bool is_neg = 0;
   if (n < 0) {
@@ -5521,7 +5531,7 @@ array_byte array_byte_clone(array_byte b) {
 map new_map(int n, int value_bytes) {
   int probe_hash_bytes = sizeof(u32) * builtin__init_capicity;
   int key_value_bytes = sizeof(KeyValue) * builtin__init_capicity;
-  byte *memory = v_calloc(key_value_bytes + probe_hash_bytes);
+  byte *memory = vcalloc(key_value_bytes + probe_hash_bytes);
   return (map){.value_bytes = value_bytes,
                .range_cap = builtin__init_range_cap,
                .shift = builtin__init_log_capicity,
@@ -5609,7 +5619,7 @@ void map_expand(map *m) {
 void map_rehash(map *m, u32 old_range_cap) {
   int probe_hash_bytes = sizeof(u32) * (m->range_cap + 1);
   int key_value_bytes = sizeof(KeyValue) * (m->range_cap + 1);
-  byte *memory = v_calloc(probe_hash_bytes + key_value_bytes);
+  byte *memory = vcalloc(probe_hash_bytes + key_value_bytes);
   KeyValue *new_key_values = ((KeyValue *)(memory));
   u32 *new_probe_hash = ((u32 *)((byte *)memory + key_value_bytes));
   for (u32 i = ((u32)(0)); i < old_range_cap + 1; i++) {
@@ -5655,7 +5665,7 @@ void map_rehash(map *m, u32 old_range_cap) {
 void map_cached_rehash(map *m, u32 old_range_cap) {
   int probe_hash_bytes = sizeof(u32) * (m->range_cap + 1);
   int key_value_bytes = sizeof(KeyValue) * (m->range_cap + 1);
-  byte *memory = v_calloc(probe_hash_bytes + key_value_bytes);
+  byte *memory = vcalloc(probe_hash_bytes + key_value_bytes);
   u32 *new_probe_hash = ((u32 *)((byte *)memory + key_value_bytes));
   KeyValue *new_key_values = ((KeyValue *)(memory));
   for (u32 i = ((u32)(0)); i < old_range_cap + 1; i++) {
@@ -11430,7 +11440,7 @@ void os__on_segfault(void *f) {
 }
 string os__executable() {
 #ifdef __linux__
-  byte *result = v_calloc(os__MAX_PATH);
+  byte *result = vcalloc(os__MAX_PATH);
   int count = readlink("/proc/self/exe", (char *)result, os__MAX_PATH);
   if (count < 0) {
     eprintln(tos3(
@@ -11442,13 +11452,13 @@ string os__executable() {
   ;
 #ifdef _WIN32
   int max = 512;
-  u16 *result = ((u16 *)(v_calloc(max * 2)));
+  u16 *result = ((u16 *)(vcalloc(max * 2)));
   int len = GetModuleFileName(0, result, max);
   return string_from_wide2(result, len);
 #endif
   ;
 #ifdef __APPLE__
-  byte *result = v_calloc(os__MAX_PATH);
+  byte *result = vcalloc(os__MAX_PATH);
   int pid = getpid();
   int ret = proc_pidpath(pid, (char *)result, os__MAX_PATH);
   if (ret <= 0) {
@@ -11461,7 +11471,7 @@ string os__executable() {
 #endif
   ;
 #ifdef __FreeBSD__
-  byte *result = v_calloc(os__MAX_PATH);
+  byte *result = vcalloc(os__MAX_PATH);
   array_int mib = new_array_from_c_array(
       4, 4, sizeof(int), EMPTY_ARRAY_OF_ELEMS(int, 4){1, 14, 12, -1});
   int size = os__MAX_PATH;
@@ -11480,7 +11490,7 @@ string os__executable() {
 #endif
   ;
 #ifdef __NetBSD__
-  byte *result = v_calloc(os__MAX_PATH);
+  byte *result = vcalloc(os__MAX_PATH);
   int count = readlink("/proc/curproc/exe", (char *)result, os__MAX_PATH);
   if (count < 0) {
     eprintln(tos3(
@@ -11491,7 +11501,7 @@ string os__executable() {
 #endif
   ;
 #ifdef __DragonFly__
-  byte *result = v_calloc(os__MAX_PATH);
+  byte *result = vcalloc(os__MAX_PATH);
   int count = readlink("/proc/curproc/file", (char *)result, os__MAX_PATH);
   if (count < 0) {
     eprintln(tos3("os.executable() failed at reading /proc/curproc/file to get "
@@ -11555,13 +11565,13 @@ void os__chdir(string path) {
 string os__getwd() {
 #ifdef _WIN32
   int max = 512;
-  u16 *buf = ((u16 *)(v_calloc(max * 2)));
+  u16 *buf = ((u16 *)(vcalloc(max * 2)));
   if (_wgetcwd(buf, max) == 0) {
     return tos3("");
   };
   return string_from_wide(buf);
 #else
-  byte *buf = v_calloc(512);
+  byte *buf = vcalloc(512);
   if (getcwd((char *)buf, 512) == 0) {
     return tos3("");
   };
@@ -11570,7 +11580,7 @@ string os__getwd() {
   ;
 }
 string os__realpath(string fpath) {
-  byte *fullpath = v_calloc(os__MAX_PATH);
+  byte *fullpath = vcalloc(os__MAX_PATH);
   charptr ret = ((charptr)(0));
 #ifdef _WIN32
   ret = _fullpath((char *)fullpath, (char *)fpath.str, os__MAX_PATH);
@@ -15014,7 +15024,8 @@ v_dot_ast__FnDecl v_dot_parser__Parser_fn_decl(v_dot_parser__Parser *p) {
       .is_variadic = is_variadic,
       .receiver = (v_dot_ast__Field){.name = rec_name, .typ = rec_type},
       .is_method = is_method,
-      .rec_mut = rec_mut};
+      .rec_mut = rec_mut,
+      .is_c = is_c};
 }
 _V_MulRet_array_v_dot_ast__Arg_V_bool
 v_dot_parser__Parser_fn_args(v_dot_parser__Parser *p) {
@@ -17387,20 +17398,31 @@ void v_dot_parser__verror(string s) {
   v_exit(1);
 }
 string v_dot_gen__cgen(array_v_dot_ast__File files, v_dot_table__Table *table) {
-  println(tos3("start cgen"));
+  println(tos3("start cgen2"));
   v_dot_gen__Gen g = (v_dot_gen__Gen){.out = strings__new_builder(100),
+                                      .typedefs = strings__new_builder(100),
                                       .definitions = strings__new_builder(100),
                                       .table = table,
                                       .fn_decl = 0,
                                       .tmp_count = 0};
+  v_dot_gen__Gen_init(&/* ? */ g);
   array_v_dot_ast__File tmp1 = files;
   for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
     v_dot_ast__File file = ((v_dot_ast__File *)tmp1.data)[tmp2];
 
     v_dot_gen__Gen_stmts(&/* ? */ g, file.stmts);
   };
-  return string_add(strings__Builder_str(&/* ? */ g.definitions),
+  return string_add(string_add(strings__Builder_str(&/* ? */ g.typedefs),
+                               strings__Builder_str(&/* ? */ g.definitions)),
                     strings__Builder_str(&/* ? */ g.out));
+}
+void v_dot_gen__Gen_init(v_dot_gen__Gen *g) {
+  strings__Builder_writeln(&/* ? */ g->definitions,
+                           tos3("// Generated by the V compiler"));
+  strings__Builder_writeln(&/* ? */ g->definitions,
+                           tos3("#include <inttypes.h>"));
+  strings__Builder_writeln(&/* ? */ g->definitions, v_dot_gen__c_builtin_types);
+  strings__Builder_writeln(&/* ? */ g->definitions, v_dot_gen__c_headers);
 }
 void v_dot_gen__Gen_save(v_dot_gen__Gen *g) {}
 void v_dot_gen__Gen_write(v_dot_gen__Gen *g, string s) {
@@ -17486,6 +17508,10 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
     };
   } else if (tmp5.typ == SumType_v_dot_ast__Stmt_FnDecl) {
     v_dot_ast__FnDecl *it = (v_dot_ast__FnDecl *)tmp5.obj;
+    if (it->is_c) {
+
+      return;
+    };
     v_dot_gen__Gen_reset_tmp_count(g);
     g->fn_decl = it;
     bool is_main = string_eq(it->name, tos3("main"));
@@ -17623,6 +17649,10 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
                                      field.name.str));
     };
     v_dot_gen__Gen_writeln(g, _STR("} %.*s;", it->name.len, it->name.str));
+    string name = string_replace(it->name, tos3("."), tos3("__"));
+    strings__Builder_writeln(&/* ? */ g->typedefs,
+                             _STR("typedef struct %.*s %.*s;", name.len,
+                                  name.str, name.len, name.str));
   } else if (tmp5.typ == SumType_v_dot_ast__Stmt_TypeDecl) {
     v_dot_ast__TypeDecl *it = (v_dot_ast__TypeDecl *)tmp5.obj;
     v_dot_gen__Gen_writeln(g, tos3("// type"));
@@ -19747,7 +19777,17 @@ string v_dot_builder__Builder_gen_c(v_dot_builder__Builder *b,
 void v_dot_builder__Builder_build_c(v_dot_builder__Builder *b,
                                     array_string v_files, string out_file) {
   printf("build_c(%.*s)\n", out_file.len, out_file.str);
-  os__write_file(out_file, v_dot_builder__Builder_gen_c(b, v_files));
+  Option_os__File tmp1 = os__create(out_file);
+  os__File f;
+  if (!tmp1.ok) {
+    string err = tmp1.error;
+    int errcode = tmp1.ecode;
+    v_panic(err);
+  }
+  f = *(os__File *)tmp1.data;
+  ;
+  os__File_writeln(&/* ? */ f, v_dot_builder__Builder_gen_c(b, v_files));
+  os__File_close(&/* ? */ f);
 }
 void v_dot_builder__Builder_build_x64(v_dot_builder__Builder *b,
                                       array_string v_files, string out_file) {
@@ -19769,31 +19809,31 @@ void v_dot_builder__Builder_build_x64(v_dot_builder__Builder *b,
 void v_dot_builder__Builder_parse_imports(v_dot_builder__Builder *b) {
   array_string done_imports = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  int tmp1 = 0;
+  int tmp2 = 0;
   ;
-  for (int tmp2 = tmp1; tmp2 < b->parsed_files.len; tmp2++) {
-    int i = tmp2;
+  for (int tmp3 = tmp2; tmp3 < b->parsed_files.len; tmp3++) {
+    int i = tmp3;
 
     v_dot_ast__File ast_file =
         (*(v_dot_ast__File *)array_get(b->parsed_files, i));
-    array_v_dot_ast__Import tmp5 = ast_file.imports;
-    for (int _ = 0; _ < tmp5.len; _++) {
-      v_dot_ast__Import imp = ((v_dot_ast__Import *)tmp5.data)[_];
+    array_v_dot_ast__Import tmp6 = ast_file.imports;
+    for (int _ = 0; _ < tmp6.len; _++) {
+      v_dot_ast__Import imp = ((v_dot_ast__Import *)tmp6.data)[_];
 
       string mod = imp.mod;
       if ((_IN(string, (mod), done_imports))) {
         continue;
       };
-      Option_string tmp6 =
+      Option_string tmp7 =
           v_dot_builder__Builder_find_module_path(&/* ? */ *b, mod);
       string import_path;
-      if (!tmp6.ok) {
-        string err = tmp6.error;
-        int errcode = tmp6.ecode;
+      if (!tmp7.ok) {
+        string err = tmp7.error;
+        int errcode = tmp7.ecode;
         v_panic(_STR("cannot import module \"%.*s\" (not found)", mod.len,
                      mod.str));
       }
-      import_path = *(string *)tmp6.data;
+      import_path = *(string *)tmp7.data;
       ;
       array_string v_files =
           v_dot_builder__Builder_v_files_from_dir(&/* ? */ *b, import_path);
@@ -19803,9 +19843,9 @@ void v_dot_builder__Builder_parse_imports(v_dot_builder__Builder *b) {
       };
       array_v_dot_ast__File parsed_files =
           v_dot_parser__parse_files(v_files, b->table);
-      array_v_dot_ast__File tmp7 = parsed_files;
-      for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
-        v_dot_ast__File file = ((v_dot_ast__File *)tmp7.data)[tmp8];
+      array_v_dot_ast__File tmp8 = parsed_files;
+      for (int tmp9 = 0; tmp9 < tmp8.len; tmp9++) {
+        v_dot_ast__File file = ((v_dot_ast__File *)tmp8.data)[tmp9];
 
         if (string_ne(file.mod.name, mod)) {
           v_panic(_STR("bad module definition: %.*s imports module \"%.*s\" "
@@ -19818,8 +19858,8 @@ void v_dot_builder__Builder_parse_imports(v_dot_builder__Builder *b) {
       _PUSH_MANY(&b->parsed_files,
                  (/*typ = array_v_dot_ast__File   tmp_typ=v_dot_ast__File*/
                   parsed_files),
-                 tmp9, array_v_dot_ast__File);
-      _PUSH(&done_imports, (/*typ = array_string   tmp_typ=string*/ mod), tmp10,
+                 tmp10, array_v_dot_ast__File);
+      _PUSH(&done_imports, (/*typ = array_string   tmp_typ=string*/ mod), tmp11,
             string);
     };
   };
@@ -19837,22 +19877,22 @@ array_string v_dot_builder__Builder_v_files_from_dir(v_dot_builder__Builder *b,
   } else if (!os__is_dir(dir)) {
     v_dot_builder__verror(_STR("%.*s isn't a directory", dir.len, dir.str));
   };
-  Option_array_string tmp11 = os__ls(dir);
+  Option_array_string tmp12 = os__ls(dir);
   array_string files;
-  if (!tmp11.ok) {
-    string err = tmp11.error;
-    int errcode = tmp11.ecode;
+  if (!tmp12.ok) {
+    string err = tmp12.error;
+    int errcode = tmp12.ecode;
     v_panic(err);
   }
-  files = *(array_string *)tmp11.data;
+  files = *(array_string *)tmp12.data;
   ;
   if (b->pref->is_verbose) {
     printf("v_files_from_dir (\"%.*s\")\n", dir.len, dir.str);
   };
   array_string_sort(&/* ? */ files);
-  array_string tmp12 = files;
-  for (int tmp13 = 0; tmp13 < tmp12.len; tmp13++) {
-    string file = ((string *)tmp12.data)[tmp13];
+  array_string tmp13 = files;
+  for (int tmp14 = 0; tmp14 < tmp13.len; tmp14++) {
+    string file = ((string *)tmp13.data)[tmp14];
 
     if (!string_ends_with(file, tos3(".v")) &&
         !string_ends_with(file, tos3(".vh"))) {
@@ -19891,7 +19931,7 @@ array_string v_dot_builder__Builder_v_files_from_dir(v_dot_builder__Builder *b,
     _PUSH(&res,
           (/*typ = array_string   tmp_typ=string*/ filepath__join(
               dir, &(varg_string){.len = 1, .args = {file}})),
-          tmp14, string);
+          tmp15, string);
   };
   return res;
 }
@@ -19909,9 +19949,9 @@ static inline string v_dot_builder__module_path(string mod) {
 Option_string v_dot_builder__Builder_find_module_path(v_dot_builder__Builder *b,
                                                       string mod) {
   string mod_path = v_dot_builder__module_path(mod);
-  array_string tmp15 = b->module_search_paths;
-  for (int tmp16 = 0; tmp16 < tmp15.len; tmp16++) {
-    string search_path = ((string *)tmp15.data)[tmp16];
+  array_string tmp16 = b->module_search_paths;
+  for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
+    string search_path = ((string *)tmp16.data)[tmp17];
 
     string try_path = filepath__join(
         search_path, &(varg_string){.len = 1, .args = {mod_path}});
@@ -19923,8 +19963,8 @@ Option_string v_dot_builder__Builder_find_module_path(v_dot_builder__Builder *b,
       if (b->pref->is_verbose) {
         printf("  << found %.*s .\n", try_path.len, try_path.str);
       };
-      string tmp17 = OPTION_CAST(string)(try_path);
-      return opt_ok(&tmp17, sizeof(string));
+      string tmp18 = OPTION_CAST(string)(try_path);
+      return opt_ok(&tmp18, sizeof(string));
     };
   };
   return v_error(_STR("module \"%.*s\" not found", mod.len, mod.str));
@@ -36192,7 +36232,7 @@ bool compiler__Table_known_type(compiler__Table *table, string typ_) {
     typ = string_replace(typ, tos3("*"), tos3(""));
   };
   compiler__Type tmp11 = {0};
-  bool tmp12 = map_get(/*table.v : 344*/ table->typesmap, typ, &tmp11);
+  bool tmp12 = map_get(/*table.v : 346*/ table->typesmap, typ, &tmp11);
 
   compiler__Type t = tmp11;
   return t.name.len > 0 && !t.is_placeholder;
@@ -36203,7 +36243,7 @@ bool compiler__Table_known_type_fast(compiler__Table *table,
 }
 Option_compiler__Fn compiler__Table_find_fn(compiler__Table *t, string name) {
   compiler__Fn tmp13 = {0};
-  bool tmp14 = map_get(/*table.v : 353*/ t->fns, name, &tmp13);
+  bool tmp14 = map_get(/*table.v : 355*/ t->fns, name, &tmp13);
 
   compiler__Fn f = tmp13;
   if (f.name.str != 0) {
@@ -36216,7 +36256,7 @@ Option_compiler__Fn compiler__Table_find_fn_is_script(compiler__Table *t,
                                                       string name,
                                                       bool is_script) {
   compiler__Fn tmp16 = {0};
-  bool tmp17 = map_get(/*table.v : 362*/ t->fns, name, &tmp16);
+  bool tmp17 = map_get(/*table.v : 364*/ t->fns, name, &tmp16);
 
   compiler__Fn f = tmp16;
   if (f.name.str != 0) {
@@ -36227,7 +36267,7 @@ Option_compiler__Fn compiler__Table_find_fn_is_script(compiler__Table *t,
     printf("trying replace %.*s\n", name.len, name.str);
     compiler__Fn tmp19 = {0};
     bool tmp20 =
-        map_get(/*table.v : 370*/ t->fns,
+        map_get(/*table.v : 372*/ t->fns,
                 string_replace(name, tos3("main__"), tos3("os__")), &tmp19);
 
     f = tmp19;
@@ -36356,7 +36396,7 @@ void compiler__Table_add_field(compiler__Table *table, string type_name,
     compiler__verror(tos3("add_field: empty type"));
   };
   compiler__Type tmp24 = {0};
-  bool tmp25 = map_get(/*table.v : 447*/ table->typesmap, type_name, &tmp24);
+  bool tmp25 = map_get(/*table.v : 449*/ table->typesmap, type_name, &tmp24);
 
   compiler__Type t = tmp24;
   _PUSH(&t.fields,
@@ -36392,7 +36432,7 @@ void compiler__Table_add_field(compiler__Table *table, string type_name,
 void compiler__Table_add_default_val(compiler__Table *table, int idx,
                                      string type_name, string val_expr) {
   compiler__Type tmp27 = {0};
-  bool tmp28 = map_get(/*table.v : 461*/ table->typesmap, type_name, &tmp27);
+  bool tmp28 = map_get(/*table.v : 463*/ table->typesmap, type_name, &tmp27);
 
   compiler__Type t = tmp27;
   if (t.default_vals.len == 0) {
@@ -36478,7 +36518,7 @@ void compiler__Parser_add_method(compiler__Parser *p, string type_name,
     compiler__verror(tos3("add_method: empty type"));
   };
   compiler__Type tmp40 = {0};
-  bool tmp41 = map_get(/*table.v : 522*/ p->table->typesmap, type_name, &tmp40);
+  bool tmp41 = map_get(/*table.v : 524*/ p->table->typesmap, type_name, &tmp40);
 
   compiler__Type t = tmp40;
   if (string_ne(f.name, tos3("str")) && (_IN(compiler__Fn, (f), t.methods))) {
@@ -36514,7 +36554,7 @@ Option_compiler__Fn compiler__Table_find_method(compiler__Table *table,
                                                 compiler__Type *typ,
                                                 string name) {
   compiler__Type tmp45 = {0};
-  bool tmp46 = map_get(/*table.v : 545*/ table->typesmap, typ->name, &tmp45);
+  bool tmp46 = map_get(/*table.v : 547*/ table->typesmap, typ->name, &tmp45);
 
   compiler__Type t = tmp45;
   array_compiler__Fn tmp47 = t.methods;
@@ -36557,7 +36597,7 @@ Option_compiler__Fn compiler__Type_find_method(compiler__Type *t, string name) {
 void compiler__Table_add_gen_type(compiler__Table *table, string type_name,
                                   string gen_type) {
   compiler__Type tmp56 = {0};
-  bool tmp57 = map_get(/*table.v : 575*/ table->typesmap, type_name, &tmp56);
+  bool tmp57 = map_get(/*table.v : 577*/ table->typesmap, type_name, &tmp56);
 
   compiler__Type t = tmp56;
   if ((_IN(string, (gen_type), t.gen_types))) {
@@ -36601,7 +36641,7 @@ compiler__Type compiler__Table_find_type(compiler__Table *t, string name_) {
                             .ctype_names = new_array(0, 1, sizeof(string))};
   };
   compiler__Type tmp59 = {0};
-  bool tmp60 = map_get(/*table.v : 601*/ t->typesmap, name, &tmp59);
+  bool tmp60 = map_get(/*table.v : 603*/ t->typesmap, name, &tmp59);
 
   return tmp59;
 }
@@ -36734,7 +36774,7 @@ bool compiler__Parser_check_types2(compiler__Parser *p, string got_,
     if ((_IN_MAP((expected), p->table->sum_types))) {
       array_string tmp67 = new_array(0, 1, sizeof(string));
       bool tmp68 =
-          map_get(/*table.v : 749*/ p->table->sum_types, expected, &tmp67);
+          map_get(/*table.v : 751*/ p->table->sum_types, expected, &tmp67);
 
       if ((_IN(string, (got), tmp67))) {
         return 1;
@@ -36805,7 +36845,7 @@ bool compiler__Table_is_interface(compiler__Table *table, string name) {
     return 0;
   };
   compiler__Type tmp71 = {0};
-  bool tmp72 = map_get(/*table.v : 809*/ table->typesmap, name, &tmp71);
+  bool tmp72 = map_get(/*table.v : 811*/ table->typesmap, name, &tmp71);
 
   compiler__Type t = tmp71;
   return t.cat == compiler__compiler__TypeCategory_interface_;
@@ -37016,11 +37056,11 @@ string compiler__Parser_identify_typo(compiler__Parser *p, string name) {
   if (string_ne(n, tos3(""))) {
     output = string_add(output, _STR("\n  * const: `%.*s`", n.len, n.str));
   };
-  _V_MulRet_string_V_string _V_mret_4120_typ_type_cat =
+  _V_MulRet_string_V_string _V_mret_4118_typ_type_cat =
       compiler__Table_find_misspelled_type(&/* ? */ *p->table, name, p,
                                            min_match);
-  string typ = _V_mret_4120_typ_type_cat.var_0;
-  string type_cat = _V_mret_4120_typ_type_cat.var_1;
+  string typ = _V_mret_4118_typ_type_cat.var_0;
+  string type_cat = _V_mret_4118_typ_type_cat.var_1;
   if (typ.len > 0) {
     output = string_add(output, _STR("\n  * %.*s: `%.*s`", type_cat.len,
                                      type_cat.str, typ.len, typ.str));
@@ -39546,6 +39586,203 @@ void init() {
   benchmark__BFAIL = term__fail_message(tos3("FAIL"));
   benchmark__BSPENT = term__ok_message(tos3("SPENT"));
   v_dot_parser__colored_output = term__can_show_color_on_stderr();
+  v_dot_gen__c_common_macros = tos3(
+      "\n\n#define EMPTY_STRUCT_DECLARATION\n#define "
+      "EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an "
+      "array needs to be specified, but GCC crashes if it is...\n#define "
+      "EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#ifdef "
+      "__TINYC__\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
+      "EMPTY_STRUCT_INITIALIZATION\n#define EMPTY_STRUCT_DECLARATION char "
+      "_dummy\n#define EMPTY_STRUCT_INITIALIZATION 0\n#undef "
+      "EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef "
+      "TCCSKIP\n#define TCCSKIP(x)\n#endif\n\n// for __offset_of\n#ifndef "
+      "__offsetof\n#define __offsetof(s,memb) \\\n    ((size_t)((char *)&((s "
+      "*)0)->memb - (char *)0))\n#endif\n\n#define OPTION_CAST(x) "
+      "(x)\n\n#ifndef V64_PRINTFORMAT\n#ifdef PRIx64\n#define V64_PRINTFORMAT "
+      "\"0x%\"PRIx64\n#elif defined(__WIN32__)\n#define V64_PRINTFORMAT "
+      "\"0x%I64x\"\n#elif defined(__LINUX__) && defined(__LP64__)\n#define "
+      "V64_PRINTFORMAT \"0x%lx\"\n#else\n#define V64_PRINTFORMAT "
+      "\"0x%llx\"\n#endif\n#endif\n\n");
+  v_dot_gen__c_headers = _STR(
+      "\n\n// c_headers\n#include <stdio.h>  // TODO remove all these "
+      "includes, define all function signatures and types manually\n#include "
+      "<stdlib.h>\n\n//#include \"fns.h\"\n#include <signal.h>\n#include "
+      "<stdarg.h> // for va_list\n#include <string.h> // memcpy\n\n#if "
+      "INTPTR_MAX == INT32_MAX\n    #define TARGET_IS_32BIT 1\n#elif "
+      "INTPTR_MAX == INT64_MAX\n    #define TARGET_IS_64BIT 1\n#else\n    "
+      "#error \"The environment is not 32 or 64-bit.\"\n#endif\n\n#if "
+      "defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || "
+      "defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || "
+      "defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) "
+      "|| defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || "
+      "defined(__MIBSEB__)\n    #define TARGET_ORDER_IS_BIG\n#elif "
+      "defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || "
+      "defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || "
+      "defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || "
+      "defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || "
+      "defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || "
+      "defined(_M_X64) || defined(_M_IX86)\n    #define "
+      "TARGET_ORDER_IS_LITTLE\n#else\n    #error \"Unknown architecture "
+      "endianness\"\n#endif\n\n#ifndef _WIN32\n#include <ctype.h>\n#include "
+      "<locale.h> // tolower\n#include <sys/time.h>\n#include <unistd.h> // "
+      "sleep\n#endif\n\n#if defined(__CYGWIN__) && !defined(_WIN32)\n#error "
+      "Cygwin is not supported, please use MinGW or Visual "
+      "Studio.\n#endif\n\n\n#ifdef __linux__\n#include <sys/types.h>\n#include "
+      "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef "
+      "__FreeBSD__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait "
+      "uses wait on nix\n#endif\n\n#ifdef __DragonFly__\n#include "
+      "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
+      "nix\n#endif\n\n#ifdef __OpenBSD__\n#include <sys/types.h>\n#include "
+      "<sys/resource.h>\n#include <sys/wait.h> // os__wait uses wait on "
+      "nix\n#endif\n\n#ifdef __NetBSD__\n#include <sys/wait.h> // os__wait "
+      "uses wait on nix\n#endif\n\n%.*s\n\n#ifdef _WIN32\n#define WINVER "
+      "0x0600\n#ifdef _WIN32_WINNT\n#undef _WIN32_WINNT\n#endif\n#define "
+      "_WIN32_WINNT 0x0600\n#define WIN32_LEAN_AND_MEAN\n#define "
+      "_UNICODE\n#define UNICODE\n#include <windows.h>\n\n#include <io.h> // "
+      "_waccess\n#include <direct.h> // _wgetcwd\n//#include "
+      "<WinSock2.h>\n#ifdef _MSC_VER\n\n// On MSVC these are the same (as long "
+      "as /volatile:ms is passed)\n#define _Atomic volatile\n\n// MSVC cannot "
+      "parse some things properly\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
+      "OPTION_CAST\n\n#define EMPTY_STRUCT_DECLARATION int "
+      "____dummy_variable\n#define OPTION_CAST(x)\n\n#include "
+      "<dbghelp.h>\n#pragma comment(lib, "
+      "\"Dbghelp.lib\")\n\n#endif\n\n#else\n#include "
+      "<pthread.h>\n#endif\n\n\n//============================== HELPER C "
+      "MACROS =============================*/\n#define _PUSH(arr, val, tmp, "
+      "tmp_typ) {tmp_typ tmp = (val); array_push(arr, &tmp);}\n#define "
+      "_PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); "
+      "array_push_many(arr, tmp.data, tmp.len);}\n#define _IN(typ, val, arr) "
+      "array_##typ##_contains(arr, val)\n#define _IN_MAP(val, m) map_exists(m, "
+      "val)\n#define DEFAULT_EQUAL(a, b) (a == b)\n#define "
+      "DEFAULT_NOT_EQUAL(a, b) (a != b)\n#define DEFAULT_LT(a, b) (a < "
+      "b)\n#define DEFAULT_LE(a, b) (a <= b)\n#define DEFAULT_GT(a, b) (a > "
+      "b)\n#define DEFAULT_GE(a, b) (a >= b)\n\n// NB: macro_fXX_eq and "
+      "macro_fXX_ne are NOT used\n// in the generated C code. They are here "
+      "just for\n// completeness/testing.\n\n#define macro_f64_eq(a, b) (a == "
+      "b)\n#define macro_f64_ne(a, b) (a != b)\n#define macro_f64_lt(a, b) (a "
+      "<  b)\n#define macro_f64_le(a, b) (a <= b)\n#define macro_f64_gt(a, b) "
+      "(a >  b)\n#define macro_f64_ge(a, b) (a >= b)\n\n#define "
+      "macro_f32_eq(a, b) (a == b)\n#define macro_f32_ne(a, b) (a != "
+      "b)\n#define macro_f32_lt(a, b) (a <  b)\n#define macro_f32_le(a, b) (a "
+      "<= b)\n#define macro_f32_gt(a, b) (a >  b)\n#define macro_f32_ge(a, b) "
+      "(a >= b)\n\n//================================== GLOBALS "
+      "=================================*/\nbyte g_str_buf[1024];\nint "
+      "load_so(byteptr);\nvoid reload_so();\n\n// ============== wyhash "
+      "==============\n//	Author: Wang Yi "
+      "<godspeed_china@yeah.net>\n#ifndef wyhash_version_4\n#define "
+      "wyhash_version_4\n#include	<stdint.h>\n#include	"
+      "<string.h>\n#if defined(_MSC_VER) && defined(_M_X64)\n#include "
+      "<intrin.h>\n#pragma	intrinsic(_umul128)\n#endif\nconst	"
+      "uint64_t	_wyp0=0xa0761d6478bd642full,	"
+      "_wyp1=0xe7037ed1a0b428dbull,	_wyp2=0x8ebc6af09c88c6e3ull,	"
+      "_wyp3=0x589965cc75374cc3ull,	"
+      "_wyp4=0x1d8e4e27c47d124full;\nstatic	inline	uint64_t	"
+      "_wyrotr(uint64_t v, unsigned k) {	return	"
+      "(v>>k)|(v<<(64-k));	}\nstatic	inline	uint64_t	"
+      "_wymum(uint64_t	A,	uint64_t	B) {\n#ifdef	"
+      "WYHASH32\n	uint64_t    hh=(A>>32)*(B>>32), "
+      "hl=(A>>32)*(unsigned)B, lh=(unsigned)A*(B>>32), "
+      "ll=(uint64_t)(unsigned)A*(unsigned)B;\n	return  "
+      "_wyrotr(hl,32)^_wyrotr(lh,32)^hh^ll;\n#else\n	#ifdef "
+      "__SIZEOF_INT128__\n		__uint128_t	r=A;	r*=B;	"
+      "return	(r>>64)^r;\n	#elif	defined(_MSC_VER) && "
+      "defined(_M_X64)\n		A=_umul128(A, B, &B);	return	"
+      "A^B;\n	#else\n		uint64_t	ha=A>>32,	"
+      "hb=B>>32,	la=(uint32_t)A,	lb=(uint32_t)B,	hi, lo;\n	"
+      "	uint64_t	rh=ha*hb,	rm0=ha*lb,	rm1=hb*la,	"
+      "rl=la*lb,	t=rl+(rm0<<32),	c=t<rl;\n		"
+      "lo=t+(rm1<<32);	c+=lo<t;hi=rh+(rm0>>32)+(rm1>>32)+c;	return "
+      "hi^lo;\n	#endif\n#endif\n}\n#ifndef WYHASH_LITTLE_ENDIAN\n	"
+      "#if	defined(_WIN32) || defined(__LITTLE_ENDIAN__) || "
+      "(defined(__BYTE_ORDER__) && __BYTE_ORDER__ == "
+      "__ORDER_LITTLE_ENDIAN__)\n		#define WYHASH_LITTLE_ENDIAN "
+      "1\n	#elif	defined(__BIG_ENDIAN__) || (defined(__BYTE_ORDER__) && "
+      "__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)\n		#define "
+      "WYHASH_LITTLE_ENDIAN 0\n	#endif\n#endif\n#if(WYHASH_LITTLE_ENDIAN) || "
+      "defined(__TINYC__)\nstatic	inline	uint64_t	"
+      "_wyr8(const	uint8_t	*p)	{	uint64_t	v;	"
+      "memcpy(&v,  p,  8);	return  v;	}\nstatic	inline	"
+      "uint64_t	_wyr4(const	uint8_t	*p)	{	unsigned	"
+      "v;	memcpy(&v,  p,  4);	return  v;	}\n#else\n	#if "
+      "defined(__GNUC__) || defined(__INTEL_COMPILER)\nstatic	inline	"
+      "uint64_t	_wyr8(const	uint8_t	*p)	{	uint64_t	"
+      "v;	memcpy(&v,  p,  8);	return   __builtin_bswap64(v);	"
+      "}\nstatic	inline	uint64_t	_wyr4(const	uint8_t	"
+      "*p)	{	unsigned	v;	memcpy(&v,  p,  4);	return "
+      "  __builtin_bswap32(v);	}\n	#elif	"
+      "defined(_MSC_VER)\nstatic	inline	uint64_t	"
+      "_wyr8(const	uint8_t	*p)	{	uint64_t	v;	"
+      "memcpy(&v,  p,  8);	return  _byteswap_uint64(v);}\nstatic	"
+      "inline	uint64_t	_wyr4(const	uint8_t	*p)	{	"
+      "unsigned	v;	memcpy(&v,  p,  4);	return  "
+      "_byteswap_ulong(v);	}\n	#endif\n#endif\nstatic	inline	"
+      "uint64_t	_wyr3(const	uint8_t	*p,	unsigned	k) {	"
+      "return	(((uint64_t)p[0])<<16)|(((uint64_t)p[k>>1])<<8)|p[k-1];	"
+      "}\nstatic	inline	uint64_t	wyhash(const void* key,	"
+      "uint64_t	len,	uint64_t	seed) {\n	const	uint8_t	"
+      "*p=(const	uint8_t*)key;	uint64_t	i=len&63;\n	#if "
+      "defined(__GNUC__) || defined(__INTEL_COMPILER)\n		#define	"
+      "_like_(x)	__builtin_expect(x,1)\n		#define	"
+      "_unlike_(x)	__builtin_expect(x,0)\n	#else\n		#define "
+      "_like_(x)  (x)\n		#define _unlike_(x)  (x)\n	"
+      "#endif\n	if(_unlike_(!i)) {	}\n	else	"
+      "if(_unlike_(i<4))	"
+      "seed=_wymum(_wyr3(p,i)^seed^_wyp0,seed^_wyp1);\n	else	"
+      "if(_like_(i<=8))	"
+      "seed=_wymum(_wyr4(p)^seed^_wyp0,_wyr4(p+i-4)^seed^_wyp1);\n	"
+      "else	if(_like_(i<=16))	"
+      "seed=_wymum(_wyr8(p)^seed^_wyp0,_wyr8(p+i-8)^seed^_wyp1);\n	"
+      "else	if(_like_(i<=24))	"
+      "seed=_wymum(_wyr8(p)^seed^_wyp0,_wyr8(p+8)^seed^_wyp1)^_wymum(_wyr8(p+i-"
+      "8)^seed^_wyp2,seed^_wyp3);\n	else	if(_like_(i<=32))	"
+      "seed=_wymum(_wyr8(p)^seed^_wyp0,_wyr8(p+8)^seed^_wyp1)^_wymum(_wyr8(p+"
+      "16)^seed^_wyp2,_wyr8(p+i-8)^seed^_wyp3);\n	else{	"
+      "seed=_wymum(_wyr8(p)^seed^_wyp0,_wyr8(p+8)^seed^_wyp1)^_wymum(_wyr8(p+"
+      "16)^seed^_wyp2,_wyr8(p+24)^seed^_wyp3)^_wymum(_wyr8(p+i-32)^seed^_wyp1,_"
+      "wyr8(p+i-24)^seed^_wyp2)^_wymum(_wyr8(p+i-16)^seed^_wyp3,_wyr8(p+i-8)^"
+      "seed^_wyp0);	}\n	if(_like_(i==len))	return	"
+      "_wymum(seed,len^_wyp4);\n	uint64_t	see1=seed,	"
+      "see2=seed,	see3=seed;\n	for(p+=i,i=len-i;	_like_(i>=64); "
+      "i-=64,p+=64) {\n		"
+      "seed=_wymum(_wyr8(p)^seed^_wyp0,_wyr8(p+8)^seed^_wyp1);		"
+      "see1=_wymum(_wyr8(p+16)^see1^_wyp2,_wyr8(p+24)^see1^_wyp3);\n	"
+      "	see2=_wymum(_wyr8(p+32)^see2^_wyp1,_wyr8(p+40)^see2^_wyp2);	"
+      "see3=_wymum(_wyr8(p+48)^see3^_wyp3,_wyr8(p+56)^see3^_wyp0);\n	"
+      "}\n	return	"
+      "_wymum(seed^see1^see2,see3^len^_wyp4);\n}\nstatic	inline	"
+      "uint64_t	wyhash64(uint64_t	A, uint64_t	B) {	return	"
+      "_wymum(_wymum(A^_wyp0,	B^_wyp1),	_wyp2);	}\nstatic	"
+      "inline	uint64_t	wyrand(uint64_t	*seed) {	"
+      "*seed+=_wyp0;	return	_wymum(*seed^_wyp1,*seed);	"
+      "}\nstatic	inline	double	wy2u01(uint64_t	r) {	const	"
+      "double	_wynorm=1.0/(1ull<<52);	return	(r>>11)*_wynorm;	"
+      "}\nstatic	inline	double	wy2gau(uint64_t	r) {	const	"
+      "double	_wynorm=1.0/(1ull<<20);	return	"
+      "((r&0x1fffff)+((r>>21)&0x1fffff)+((r>>42)&0x1fffff))*_wynorm-3.0;"
+      "	}\nstatic inline uint64_t fastest_hash(const void *key, size_t len, "
+      "uint64_t seed) {\n  const uint8_t *p = (const uint8_t *)key;\n  return "
+      "_like_(len >= 4) ? (_wyr4(p) + _wyr4(p + len - 4)) * (_wyr4(p + (len >> "
+      "1) - 2) ^ seed) : (_like_(len) ? _wyr3(p, len) * (_wyp0 ^ seed) : "
+      "seed);\n}\n#endif\n\n",
+      v_dot_gen__c_common_macros.len, v_dot_gen__c_common_macros.str);
+  v_dot_gen__c_builtin_types = tos3(
+      "\n\n//================================== builtin types "
+      "================================*/\n\ntypedef int64_t i64;\ntypedef "
+      "int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef "
+      "uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef "
+      "uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef "
+      "unsigned char* byteptr;\ntypedef int* intptr;\ntypedef void* "
+      "voidptr;\ntypedef char* charptr;\ntypedef struct array array;\ntypedef "
+      "struct map map;\ntypedef array array_string;\ntypedef array "
+      "array_int;\ntypedef array array_byte;\ntypedef array "
+      "array_f32;\ntypedef array array_f64;\ntypedef array array_u16;\ntypedef "
+      "array array_u32;\ntypedef array array_u64;\ntypedef map "
+      "map_int;\ntypedef map map_string;\n#ifndef bool\n	typedef int "
+      "bool;\n	#define true 1\n	#define false 0\n#endif\n");
+  v_dot_gen__bare_c_headers =
+      _STR("\n\n%.*s\n\n#ifndef exit\n#define exit(rc) sys_exit(rc)\nvoid "
+           "sys_exit (int);\n#endif\n\n",
+           v_dot_gen__c_common_macros.len, v_dot_gen__c_common_macros.str);
   v_dot_gen_dot_x64__mag0 = 0x7f;
   v_dot_gen_dot_x64__e_machine = 0x3e;
   v_dot_gen_dot_x64__shn_xindex = 0xffff;
@@ -39777,7 +40014,7 @@ void init() {
       "function() {}\nvar map_int = function() {}\n\n");
   compiler__c_builtin_types = tos3(
       "\n\n//#include <inttypes.h>  // int64_t etc\n//#include <stdint.h>  // "
-      "int64_t etc\n\n//================================== TYPEDEFS "
+      "int64_t etc\n\n//================================== 1TYPEDEFS "
       "================================*/\n\ntypedef int64_t i64;\ntypedef "
       "int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef "
       "uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef "
@@ -39870,16 +40107,16 @@ void init() {
   compiler__KEY_WOW64_32KEY = (0x0200);
   compiler__KEY_ENUMERATE_SUB_KEYS = (0x0008);
   compiler__c_reserved = new_array_from_c_array(
-      31, 31, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 31){
-          tos3("delete"), tos3("exit"),     tos3("unix"),     tos3("error"),
-          tos3("malloc"), tos3("calloc"),   tos3("free"),     tos3("panic"),
-          tos3("auto"),   tos3("char"),     tos3("default"),  tos3("do"),
-          tos3("double"), tos3("extern"),   tos3("float"),    tos3("inline"),
-          tos3("int"),    tos3("long"),     tos3("register"), tos3("restrict"),
-          tos3("short"),  tos3("signed"),   tos3("sizeof"),   tos3("static"),
-          tos3("switch"), tos3("typedef"),  tos3("union"),    tos3("unsigned"),
-          tos3("void"),   tos3("volatile"), tos3("while"),
+      30, 30, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 30){
+          tos3("delete"),   tos3("exit"),     tos3("unix"),     tos3("error"),
+          tos3("malloc"),   tos3("free"),     tos3("panic"),    tos3("auto"),
+          tos3("char"),     tos3("default"),  tos3("do"),       tos3("double"),
+          tos3("extern"),   tos3("float"),    tos3("inline"),   tos3("int"),
+          tos3("long"),     tos3("register"), tos3("restrict"), tos3("short"),
+          tos3("signed"),   tos3("sizeof"),   tos3("static"),   tos3("switch"),
+          tos3("typedef"),  tos3("union"),    tos3("unsigned"), tos3("void"),
+          tos3("volatile"), tos3("while"),
       });
   compiler__integer_types = new_array_from_c_array(
       9, 9, sizeof(string),
