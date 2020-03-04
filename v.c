@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d501ea0"
+#define V_COMMIT_HASH "ed763df"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bac6fc6"
+#define V_COMMIT_HASH "d501ea0"
 #endif
 #include <inttypes.h>
 
@@ -2245,8 +2245,6 @@ struct v_dot_checker__Checker {
   array_string errors;
   v_dot_table__Type expected_type;
   v_dot_table__Type fn_return_type;
-  array_string unhandled_exprs;
-  array_string unhandled_stmts;
 };
 
 struct compiler__TypeNode {
@@ -3304,7 +3302,6 @@ v_dot_table__Type v_dot_checker__Checker_enum_val(v_dot_checker__Checker *c,
                                                   v_dot_ast__EnumVal node);
 v_dot_table__Type v_dot_checker__Checker_map_init(v_dot_checker__Checker *c,
                                                   v_dot_ast__MapInit *node);
-void v_dot_checker__Checker_print_unhandled_nodes(v_dot_checker__Checker *c);
 void v_dot_checker__Checker_error(v_dot_checker__Checker *c, string s,
                                   v_dot_token__Position pos);
 void v_dot_gen_dot_x64__Gen_generate_elf_header(v_dot_gen_dot_x64__Gen *g);
@@ -18042,8 +18039,7 @@ v_dot_checker__Checker v_dot_checker__new_checker(v_dot_table__Table *table) {
       .table = table,
       .nr_errors = 0,
       .errors = new_array(0, 1, sizeof(string)),
-      .unhandled_exprs = new_array(0, 1, sizeof(string)),
-      .unhandled_stmts = new_array(0, 1, sizeof(string))};
+  };
 }
 void v_dot_checker__Checker_check(v_dot_checker__Checker *c,
                                   v_dot_ast__File ast_file) {
@@ -18097,7 +18093,6 @@ void v_dot_checker__Checker_check_files(v_dot_checker__Checker *c,
 
     v_dot_checker__Checker_check(c, file);
   };
-  v_dot_checker__Checker_print_unhandled_nodes(&/* ? */ *c);
 }
 v_dot_table__Type
 v_dot_checker__Checker_check_struct_init(v_dot_checker__Checker *c,
@@ -18452,7 +18447,7 @@ void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
   };
   int tmp41 = 0;
   bool tmp42 =
-      map_get(/*checker.v : 327*/ c->table->type_idxs, tos3("Option"), &tmp41);
+      map_get(/*checker.v : 320*/ c->table->type_idxs, tos3("Option"), &tmp41);
 
   if (exp_is_optional &&
       (v_dot_table__type_idx((*(v_dot_table__Type *)array_get(got_types, 0))) ==
@@ -18603,7 +18598,7 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
       v_dot_table__Type typ = v_dot_checker__Checker_expr(c, expr);
       v_dot_table__Var tmp60 = {0};
       bool tmp61 =
-          map_get(/*checker.v : 427*/ c->table->consts, field.name, &tmp60);
+          map_get(/*checker.v : 419*/ c->table->consts, field.name, &tmp60);
 
       v_dot_table__Var xconst = tmp60;
       xconst.typ = typ;
@@ -18814,7 +18809,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl tmp74 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
     _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl
-        _V_mret_3013_var_scope_var;
+        _V_mret_3000_var_scope_var;
     if (!tmp74.ok) {
       string err = tmp74.error;
       int errcode = tmp74.ecode;
@@ -18826,11 +18821,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_3013_var_scope_var =
+    _V_mret_3000_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl *)tmp74.data;
     ;
-    var_scope = _V_mret_3013_var_scope_var.var_0;
-    var = _V_mret_3013_var_scope_var.var_1;
+    var_scope = _V_mret_3000_var_scope_var.var_0;
+    var = _V_mret_3000_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
@@ -19113,20 +19108,6 @@ v_dot_table__Type v_dot_checker__Checker_map_init(v_dot_checker__Checker *c,
   node->typ = map_type;
   return map_type;
 }
-void v_dot_checker__Checker_print_unhandled_nodes(v_dot_checker__Checker *c) {
-  if (c->unhandled_exprs.len > 0) {
-    eprintln(string_add(
-        string_add(tos3(" # unhandled Expr nodes:\n\t * "),
-                   array_string_join(c->unhandled_exprs, tos3(", "))),
-        tos3("\n")));
-  };
-  if (c->unhandled_stmts.len > 0) {
-    eprintln(string_add(
-        string_add(tos3(" # unhandled Stmt nodes:\n\t * "),
-                   array_string_join(c->unhandled_stmts, tos3(", "))),
-        tos3("\n")));
-  };
-}
 void v_dot_checker__Checker_error(v_dot_checker__Checker *c, string s,
                                   v_dot_token__Position pos) {
   c->nr_errors++;
@@ -19144,7 +19125,6 @@ void v_dot_checker__Checker_error(v_dot_checker__Checker *c, string s,
   eprintln(final_msg_line);
   println(tos3("\n\n"));
   if (c->nr_errors >= v_dot_checker__max_nr_errors) {
-    v_dot_checker__Checker_print_unhandled_nodes(&/* ? */ *c);
     v_exit(1);
   };
 }
