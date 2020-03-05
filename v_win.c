@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "04d5dd8"
+#define V_COMMIT_HASH "7008b1a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a8e4525"
+#define V_COMMIT_HASH "04d5dd8"
 #endif
 #include <inttypes.h>
 
@@ -2301,11 +2301,11 @@ struct v_dot_ast__CallExpr {
 };
 
 struct v_dot_ast__Ident {
-  string name;
   string value;
   bool is_c;
   v_dot_token__Kind tok_kind;
   v_dot_token__Position pos;
+  string name;
   v_dot_ast__IdentKind kind;
   v_dot_ast__IdentInfo info;
 };
@@ -16505,9 +16505,9 @@ v_dot_ast__Expr v_dot_parser__Parser_name_expr(v_dot_parser__Parser *p) {
         .typ = SumType_v_dot_ast__Expr_EnumVal};
   } else {
     v_dot_ast__Ident ident = (v_dot_ast__Ident){
-        .name = tos3(""),
         .value = tos3(""),
         .is_c = 0,
+        .name = tos3(""),
     };
     ident = v_dot_parser__Parser_parse_ident(p, is_c);
     node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
@@ -19457,6 +19457,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
 
     if (tmp75.ok) {
       v_dot_table__Var constant = *(v_dot_table__Var *)tmp75.data;
+      ident->name = name;
       ident->kind = v_dot_ast__v_dot_ast__IdentKind_constant;
       ident->info = /*SUM TYPE CAST2*/ (v_dot_ast__IdentInfo){
           .obj = memdup(&(v_dot_ast__IdentVar[]){(v_dot_ast__IdentVar){
@@ -19470,6 +19471,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
 
     if (tmp76.ok) {
       v_dot_table__Fn func = *(v_dot_table__Fn *)tmp76.data;
+      ident->name = name;
       ident->kind = v_dot_ast__v_dot_ast__IdentKind_function;
       ident->info = /*SUM TYPE CAST2*/ (v_dot_ast__IdentInfo){
           .obj = memdup(&(v_dot_ast__IdentFunc[]){(v_dot_ast__IdentFunc){
