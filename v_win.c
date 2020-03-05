@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "38a54b0"
+#define V_COMMIT_HASH "272eaaa"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9921897"
+#define V_COMMIT_HASH "38a54b0"
 #endif
 #include <inttypes.h>
 
@@ -2018,14 +2018,12 @@ struct v_dot_parser__Parser {
   v_dot_token__Token tok;
   v_dot_token__Token peek_tok;
   v_dot_table__Table *table;
-  v_dot_table__Type return_type;
   bool is_c;
   bool inside_if;
   v_dot_pref__Preferences *pref;
   bool builtin_mod;
   string mod;
   string expr_mod;
-  v_dot_table__Type expected_type;
   v_dot_ast__Scope *scope;
   map_string imports;
   array_v_dot_ast__Import ast_imports;
@@ -2175,7 +2173,6 @@ struct v_dot_ast__AssignExpr {
 
 struct v_dot_ast__Return {
   v_dot_token__Position pos;
-  v_dot_table__Type expected_type;
   array_v_dot_ast__Expr exprs;
 };
 
@@ -15138,7 +15135,6 @@ v_dot_ast__FnDecl v_dot_parser__Parser_fn_decl(v_dot_parser__Parser *p) {
   if (v_dot_token__Kind_is_start_of_type(p->tok.kind)) {
     typ = v_dot_parser__Parser_parse_type(p);
   };
-  p->return_type = typ;
   if (is_method) {
     v_dot_table__TypeSymbol *type_sym =
         v_dot_table__Table_get_type_symbol(&/* ? */ *p->table, rec_type);
@@ -16115,8 +16111,6 @@ v_dot_ast__StructInit
 v_dot_parser__Parser_struct_init(v_dot_parser__Parser *p) {
   v_dot_table__Type typ = v_dot_parser__Parser_parse_type(p);
   p->expr_mod = tos3("");
-  v_dot_table__TypeSymbol *sym =
-      v_dot_table__Table_get_type_symbol(&/* ? */ *p->table, typ);
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_lcbr);
   array_string field_names = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
@@ -16124,15 +16118,6 @@ v_dot_parser__Parser_struct_init(v_dot_parser__Parser *p) {
       0, 0, sizeof(v_dot_ast__Expr),
       EMPTY_ARRAY_OF_ELEMS(v_dot_ast__Expr, 0){TCCSKIP(0)});
   int i = 0;
-  bool is_struct = 0;
-  v_dot_table__TypeInfo tmp14 = sym->info;
-
-  if (tmp14.typ == SumType_v_dot_table__TypeInfo_Struct) {
-    v_dot_table__Struct *it = (v_dot_table__Struct *)tmp14.obj;
-    is_struct = 1;
-  } else // default:
-  {
-  };
   bool is_short_syntax =
       !(p->peek_tok.kind == v_dot_token__v_dot_token__Kind_colon ||
         p->tok.kind == v_dot_token__v_dot_token__Kind_rcbr);
@@ -16143,38 +16128,18 @@ v_dot_parser__Parser_struct_init(v_dot_parser__Parser *p) {
       v_dot_ast__Expr expr = v_dot_parser__Parser_expr(p, 0);
       _PUSH(&exprs,
             (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
-            tmp15, v_dot_ast__Expr);
+            tmp14, v_dot_ast__Expr);
     } else {
       field_name = v_dot_parser__Parser_check_name(p);
       _PUSH(&field_names, (/*typ = array_string   tmp_typ=string*/ field_name),
-            tmp16, string);
-    };
-    if (is_struct) {
-      v_dot_table__Struct info = *(v_dot_table__Struct *)sym->info.obj;
-      if (is_short_syntax) {
-      } else {
-        Option_v_dot_table__Field tmp17 =
-            v_dot_table__TypeSymbol_find_field(&/* ? */ *sym, field_name);
-        v_dot_table__Field field;
-        if (!tmp17.ok) {
-          string err = tmp17.error;
-          int errcode = tmp17.ecode;
-          v_dot_parser__Parser_error(
-              &/* ? */ *p, _STR("field `%.*s.%.*s` not found", sym->name.len,
-                                sym->name.str, field_name.len, field_name.str));
-          continue;
-        }
-        field = *(v_dot_table__Field *)tmp17.data;
-        ;
-        p->expected_type = field.typ;
-      };
+            tmp15, string);
     };
     if (!is_short_syntax) {
       v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_colon);
       v_dot_ast__Expr expr = v_dot_parser__Parser_expr(p, 0);
       _PUSH(&exprs,
             (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
-            tmp18, v_dot_ast__Expr);
+            tmp16, v_dot_ast__Expr);
     };
     i++;
     if (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
@@ -16209,13 +16174,13 @@ v_dot_ast__Expr v_dot_parser__Parser_name_expr(v_dot_parser__Parser *p) {
     if (is_c) {
       mod = tos3("C");
     } else {
-      string tmp19 = tos3("");
-      bool tmp20 = map_get(/*parser.v : 565*/ p->imports, p->tok.lit, &tmp19);
+      string tmp17 = tos3("");
+      bool tmp18 = map_get(/*parser.v : 540*/ p->imports, p->tok.lit, &tmp17);
 
-      if (!tmp20)
-        tmp19 = tos((byte *)"", 0);
+      if (!tmp18)
+        tmp17 = tos((byte *)"", 0);
 
-      mod = tmp19;
+      mod = tmp17;
     };
     v_dot_parser__Parser_next(p);
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_dot);
@@ -16301,18 +16266,18 @@ v_dot_ast__Expr v_dot_parser__Parser_expr(v_dot_parser__Parser *p,
                                           int precedence) {
   v_dot_table__Type typ = v_dot_table__void_type;
   v_dot_ast__Expr node = (v_dot_ast__Expr){EMPTY_STRUCT_INITIALIZATION};
-  v_dot_token__Kind tmp27 = p->tok.kind;
+  v_dot_token__Kind tmp25 = p->tok.kind;
 
-  if (tmp27 == v_dot_token__v_dot_token__Kind_name) {
+  if (tmp25 == v_dot_token__v_dot_token__Kind_name) {
     node = v_dot_parser__Parser_name_expr(p);
-  } else if (tmp27 == v_dot_token__v_dot_token__Kind_str) {
+  } else if (tmp25 == v_dot_token__v_dot_token__Kind_str) {
     node = v_dot_parser__Parser_string_expr(p);
-  } else if (tmp27 == v_dot_token__v_dot_token__Kind_dot) {
+  } else if (tmp25 == v_dot_token__v_dot_token__Kind_dot) {
     node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
         .obj = memdup(&(v_dot_ast__EnumVal[]){v_dot_parser__Parser_enum_val(p)},
                       sizeof(v_dot_ast__EnumVal)),
         .typ = SumType_v_dot_ast__Expr_EnumVal};
-  } else if (tmp27 == v_dot_token__v_dot_token__Kind_chartoken) {
+  } else if (tmp25 == v_dot_token__v_dot_token__Kind_chartoken) {
     typ = v_dot_table__byte_type;
     node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
         .obj = memdup(&(v_dot_ast__CharLiteral[]){(v_dot_ast__CharLiteral){
@@ -16320,18 +16285,18 @@ v_dot_ast__Expr v_dot_parser__Parser_expr(v_dot_parser__Parser *p,
                       sizeof(v_dot_ast__CharLiteral)),
         .typ = SumType_v_dot_ast__Expr_CharLiteral};
     v_dot_parser__Parser_next(p);
-  } else if ((tmp27 == v_dot_token__v_dot_token__Kind_minus) ||
-             (tmp27 == v_dot_token__v_dot_token__Kind_amp) ||
-             (tmp27 == v_dot_token__v_dot_token__Kind_mul) ||
-             (tmp27 == v_dot_token__v_dot_token__Kind_not) ||
-             (tmp27 == v_dot_token__v_dot_token__Kind_bit_not)) {
+  } else if ((tmp25 == v_dot_token__v_dot_token__Kind_minus) ||
+             (tmp25 == v_dot_token__v_dot_token__Kind_amp) ||
+             (tmp25 == v_dot_token__v_dot_token__Kind_mul) ||
+             (tmp25 == v_dot_token__v_dot_token__Kind_not) ||
+             (tmp25 == v_dot_token__v_dot_token__Kind_bit_not)) {
     node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
         .obj = memdup(
             &(v_dot_ast__PrefixExpr[]){v_dot_parser__Parser_prefix_expr(p)},
             sizeof(v_dot_ast__PrefixExpr)),
         .typ = SumType_v_dot_ast__Expr_PrefixExpr};
-  } else if ((tmp27 == v_dot_token__v_dot_token__Kind_key_true) ||
-             (tmp27 == v_dot_token__v_dot_token__Kind_key_false)) {
+  } else if ((tmp25 == v_dot_token__v_dot_token__Kind_key_true) ||
+             (tmp25 == v_dot_token__v_dot_token__Kind_key_false)) {
     node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
         .obj = memdup(
             &(v_dot_ast__BoolLiteral[]){(v_dot_ast__BoolLiteral){
@@ -16340,15 +16305,15 @@ v_dot_ast__Expr v_dot_parser__Parser_expr(v_dot_parser__Parser *p,
         .typ = SumType_v_dot_ast__Expr_BoolLiteral};
     typ = v_dot_table__bool_type;
     v_dot_parser__Parser_next(p);
-  } else if (tmp27 == v_dot_token__v_dot_token__Kind_key_match) {
+  } else if (tmp25 == v_dot_token__v_dot_token__Kind_key_match) {
     node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
         .obj = memdup(
             &(v_dot_ast__MatchExpr[]){v_dot_parser__Parser_match_expr(p)},
             sizeof(v_dot_ast__MatchExpr)),
         .typ = SumType_v_dot_ast__Expr_MatchExpr};
-  } else if (tmp27 == v_dot_token__v_dot_token__Kind_number) {
+  } else if (tmp25 == v_dot_token__v_dot_token__Kind_number) {
     node = v_dot_parser__Parser_parse_number_literal(p);
-  } else if (tmp27 == v_dot_token__v_dot_token__Kind_lpar) {
+  } else if (tmp25 == v_dot_token__v_dot_token__Kind_lpar) {
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_lpar);
     node = v_dot_parser__Parser_expr(p, 0);
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rpar);
@@ -16357,22 +16322,22 @@ v_dot_ast__Expr v_dot_parser__Parser_expr(v_dot_parser__Parser *p,
             memdup(&(v_dot_ast__ParExpr[]){(v_dot_ast__ParExpr){.expr = node}},
                    sizeof(v_dot_ast__ParExpr)),
         .typ = SumType_v_dot_ast__Expr_ParExpr};
-  } else if (tmp27 == v_dot_token__v_dot_token__Kind_key_if) {
+  } else if (tmp25 == v_dot_token__v_dot_token__Kind_key_if) {
     node = v_dot_parser__Parser_if_expr(p);
-  } else if (tmp27 == v_dot_token__v_dot_token__Kind_lsbr) {
+  } else if (tmp25 == v_dot_token__v_dot_token__Kind_lsbr) {
     node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
         .obj = memdup(
             &(v_dot_ast__ArrayInit[]){v_dot_parser__Parser_array_init(p)},
             sizeof(v_dot_ast__ArrayInit)),
         .typ = SumType_v_dot_ast__Expr_ArrayInit};
-  } else if (tmp27 == v_dot_token__v_dot_token__Kind_key_none) {
+  } else if (tmp25 == v_dot_token__v_dot_token__Kind_key_none) {
     v_dot_parser__Parser_next(p);
     typ = v_dot_table__none_type;
     node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
         .obj = memdup(&(v_dot_ast__None[]){(v_dot_ast__None){.foo = 0}},
                       sizeof(v_dot_ast__None)),
         .typ = SumType_v_dot_ast__Expr_None};
-  } else if (tmp27 == v_dot_token__v_dot_token__Kind_key_sizeof) {
+  } else if (tmp25 == v_dot_token__v_dot_token__Kind_key_sizeof) {
     v_dot_parser__Parser_next(p);
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_lpar);
     if (string_eq(p->tok.lit, tos3("C"))) {
@@ -16390,7 +16355,7 @@ v_dot_ast__Expr v_dot_parser__Parser_expr(v_dot_parser__Parser *p,
             sizeof(v_dot_ast__SizeOf)),
         .typ = SumType_v_dot_ast__Expr_SizeOf};
     typ = v_dot_table__int_type;
-  } else if (tmp27 == v_dot_token__v_dot_token__Kind_lcbr) {
+  } else if (tmp25 == v_dot_token__v_dot_token__Kind_lcbr) {
     v_dot_parser__Parser_next(p);
     if (p->tok.kind == v_dot_token__v_dot_token__Kind_str) {
       array_v_dot_ast__Expr keys = new_array_from_c_array(
@@ -16405,12 +16370,12 @@ v_dot_ast__Expr v_dot_parser__Parser_expr(v_dot_parser__Parser *p,
         v_dot_ast__Expr key = v_dot_parser__Parser_expr(p, 0);
         _PUSH(&keys,
               (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ key),
-              tmp28, v_dot_ast__Expr);
+              tmp26, v_dot_ast__Expr);
         v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_colon);
         v_dot_ast__Expr val = v_dot_parser__Parser_expr(p, 0);
         _PUSH(&vals,
               (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ val),
-              tmp29, v_dot_ast__Expr);
+              tmp27, v_dot_ast__Expr);
         if (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
           v_dot_parser__Parser_next(p);
         };
@@ -16435,12 +16400,12 @@ v_dot_ast__Expr v_dot_parser__Parser_expr(v_dot_parser__Parser *p,
         _PUSH(&fields,
               (/*typ = array_string   tmp_typ=string*/
                v_dot_parser__Parser_check_name(p)),
-              tmp30, string);
+              tmp28, string);
         v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_colon);
         v_dot_ast__Expr expr = v_dot_parser__Parser_expr(p, 0);
         _PUSH(&vals,
               (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
-              tmp31, v_dot_ast__Expr);
+              tmp29, v_dot_ast__Expr);
         if (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
           v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_comma);
         };
@@ -16506,6 +16471,15 @@ v_dot_ast__Expr v_dot_parser__Parser_expr(v_dot_parser__Parser *p,
           .typ = SumType_v_dot_ast__Expr_InfixExpr};
     } else if (v_dot_token__Kind_is_infix(p->tok.kind)) {
       node = v_dot_parser__Parser_infix_expr(p, node);
+      v_dot_ast__Expr tmp30 = node;
+
+      if (tmp30.typ == SumType_v_dot_ast__Expr_PrefixExpr) {
+        v_dot_ast__PrefixExpr *it = (v_dot_ast__PrefixExpr *)tmp30.obj;
+        println(tos3("IS PREFIX"));
+        return node;
+      } else // default:
+      {
+      };
     } else if ((p->tok.kind == v_dot_token__v_dot_token__Kind_inc ||
                 p->tok.kind == v_dot_token__v_dot_token__Kind_dec)) {
       node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
@@ -16593,10 +16567,10 @@ v_dot_ast__Expr v_dot_parser__Parser_dot_expr(v_dot_parser__Parser *p,
   };
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_lpar) {
     v_dot_parser__Parser_next(p);
-    _V_MulRet_array_v_dot_ast__Expr_V_array_bool _V_mret_3878_args_muts =
+    _V_MulRet_array_v_dot_ast__Expr_V_array_bool _V_mret_3804_args_muts =
         v_dot_parser__Parser_call_args(p);
-    array_v_dot_ast__Expr args = _V_mret_3878_args_muts.var_0;
-    array_bool muts = _V_mret_3878_args_muts.var_1;
+    array_v_dot_ast__Expr args = _V_mret_3804_args_muts.var_0;
+    array_bool muts = _V_mret_3804_args_muts.var_1;
     array_v_dot_ast__Stmt or_stmts = new_array_from_c_array(
         0, 0, sizeof(v_dot_ast__Stmt),
         EMPTY_ARRAY_OF_ELEMS(v_dot_ast__Stmt, 0){TCCSKIP(0)});
@@ -16636,6 +16610,15 @@ v_dot_ast__Expr v_dot_parser__Parser_infix_expr(v_dot_parser__Parser *p,
   int precedence = v_dot_token__Token_precedence(p->tok);
   v_dot_token__Position pos = v_dot_token__Token_position(&/* ? */ p->tok);
   v_dot_parser__Parser_next(p);
+  if (op == v_dot_token__v_dot_token__Kind_mul &&
+      (p->peek_tok.kind == v_dot_token__v_dot_token__Kind_assign ||
+       p->peek_tok.kind == v_dot_token__v_dot_token__Kind_decl_assign)) {
+    return /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
+        .obj = memdup(&(v_dot_ast__PrefixExpr[]){(v_dot_ast__PrefixExpr){
+                          .op = op, .right = v_dot_parser__Parser_expr(p, 0)}},
+                      sizeof(v_dot_ast__PrefixExpr)),
+        .typ = SumType_v_dot_ast__Expr_PrefixExpr};
+  };
   v_dot_ast__Expr right = (v_dot_ast__Expr){EMPTY_STRUCT_INITIALIZATION};
   right = v_dot_parser__Parser_expr(p, precedence);
   v_dot_ast__Expr expr = (v_dot_ast__Expr){EMPTY_STRUCT_INITIALIZATION};
@@ -16873,7 +16856,7 @@ v_dot_ast__ArrayInit v_dot_parser__Parser_array_init(v_dot_parser__Parser *p) {
       v_dot_ast__Expr expr = v_dot_parser__Parser_expr(p, 0);
       _PUSH(&exprs,
             (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
-            tmp32, v_dot_ast__Expr);
+            tmp31, v_dot_ast__Expr);
       if (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
         v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_comma);
       };
@@ -16944,7 +16927,7 @@ v_dot_ast__Import v_dot_parser__Parser_parse_import(v_dot_parser__Parser *p) {
   };
   map_set(&p->imports, mod_alias, &(string[]){mod_name});
   _PUSH(&p->table->imports, (/*typ = array_string   tmp_typ=string*/ mod_name),
-        tmp33, string);
+        tmp32, string);
   return (v_dot_ast__Import){.mod = mod_name,
                              .alias = mod_alias,
                              .pos =
@@ -16963,14 +16946,14 @@ v_dot_parser__Parser_import_stmt(v_dot_parser__Parser *p) {
       _PUSH(&imports,
             (/*typ = array_v_dot_ast__Import   tmp_typ=v_dot_ast__Import*/
              v_dot_parser__Parser_parse_import(p)),
-            tmp34, v_dot_ast__Import);
+            tmp33, v_dot_ast__Import);
     };
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rpar);
   } else {
     _PUSH(&imports,
           (/*typ = array_v_dot_ast__Import   tmp_typ=v_dot_ast__Import*/
            v_dot_parser__Parser_parse_import(p)),
-          tmp35, v_dot_ast__Import);
+          tmp34, v_dot_ast__Import);
   };
   return imports;
 }
@@ -16998,10 +16981,10 @@ v_dot_ast__ConstDecl v_dot_parser__Parser_const_decl(v_dot_parser__Parser *p) {
               v_dot_ast__Field){
               .name = name,
           }),
-          tmp36, v_dot_ast__Field);
+          tmp35, v_dot_ast__Field);
     _PUSH(&exprs,
           (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
-          tmp37, v_dot_ast__Expr);
+          tmp36, v_dot_ast__Expr);
   };
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rpar);
   return (v_dot_ast__ConstDecl){
@@ -17060,11 +17043,11 @@ v_dot_parser__Parser_struct_decl(v_dot_parser__Parser *p) {
     _PUSH(&ast_fields,
           (/*typ = array_v_dot_ast__Field   tmp_typ=v_dot_ast__Field*/ (
               v_dot_ast__Field){.name = field_name, .typ = typ}),
-          tmp38, v_dot_ast__Field);
+          tmp37, v_dot_ast__Field);
     _PUSH(&fields,
           (/*typ = array_v_dot_table__Field   tmp_typ=v_dot_table__Field*/ (
               v_dot_table__Field){.name = field_name, .typ = typ}),
-          tmp39, v_dot_table__Field);
+          tmp38, v_dot_table__Field);
   };
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rcbr);
   if (is_c) {
@@ -17111,7 +17094,7 @@ v_dot_ast__Return v_dot_parser__Parser_return_stmt(v_dot_parser__Parser *p) {
   array_v_dot_ast__Expr exprs = new_array_from_c_array(
       0, 0, sizeof(v_dot_ast__Expr),
       EMPTY_ARRAY_OF_ELEMS(v_dot_ast__Expr, 0){TCCSKIP(0)});
-  if (v_dot_table__type_idx(p->return_type) == v_dot_table__void_type_idx) {
+  if (p->tok.kind == v_dot_token__v_dot_token__Kind_rcbr) {
     return (v_dot_ast__Return){
         .pos = v_dot_token__Token_position(&/* ? */ p->tok),
         .exprs = new_array(0, 1, sizeof(v_dot_ast__Expr))};
@@ -17120,17 +17103,15 @@ v_dot_ast__Return v_dot_parser__Parser_return_stmt(v_dot_parser__Parser *p) {
     v_dot_ast__Expr expr = v_dot_parser__Parser_expr(p, 0);
     _PUSH(&exprs,
           (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
-          tmp40, v_dot_ast__Expr);
+          tmp39, v_dot_ast__Expr);
     if (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
       v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_comma);
     } else {
       break;
     };
   };
-  v_dot_ast__Return stmt =
-      (v_dot_ast__Return){.expected_type = p->return_type,
-                          .exprs = exprs,
-                          .pos = v_dot_token__Token_position(&/* ? */ p->tok)};
+  v_dot_ast__Return stmt = (v_dot_ast__Return){
+      .exprs = exprs, .pos = v_dot_token__Token_position(&/* ? */ p->tok)};
   return stmt;
 }
 array_v_dot_ast__Ident
@@ -17157,7 +17138,7 @@ v_dot_parser__Parser_parse_assign_lhs(v_dot_parser__Parser *p) {
         .typ = SumType_v_dot_ast__IdentInfo_IdentVar};
     _PUSH(&idents,
           (/*typ = array_v_dot_ast__Ident   tmp_typ=v_dot_ast__Ident*/ ident),
-          tmp41, v_dot_ast__Ident);
+          tmp40, v_dot_ast__Ident);
     if (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
       v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_comma);
     } else {
@@ -17175,7 +17156,7 @@ v_dot_parser__Parser_parse_assign_rhs(v_dot_parser__Parser *p) {
     v_dot_ast__Expr expr = v_dot_parser__Parser_expr(p, 0);
     _PUSH(&exprs,
           (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
-          tmp42, v_dot_ast__Expr);
+          tmp41, v_dot_ast__Expr);
     if (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
       v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_comma);
     } else {
@@ -17225,9 +17206,9 @@ v_dot_parser__Parser_var_decl_and_assign_stmt(v_dot_parser__Parser *p) {
                       sizeof(v_dot_ast__VarDecl)),
         .typ = SumType_v_dot_ast__Stmt_VarDecl};
   };
-  array_v_dot_ast__Ident tmp47 = idents;
-  for (int tmp48 = 0; tmp48 < tmp47.len; tmp48++) {
-    v_dot_ast__Ident ident = ((v_dot_ast__Ident *)tmp47.data)[tmp48];
+  array_v_dot_ast__Ident tmp46 = idents;
+  for (int tmp47 = 0; tmp47 < tmp46.len; tmp47++) {
+    v_dot_ast__Ident ident = ((v_dot_ast__Ident *)tmp46.data)[tmp47];
 
     if (is_decl && ident.kind != v_dot_ast__v_dot_ast__IdentKind_blank_ident) {
       if (v_dot_ast__Scope_known_var(&/* ? */ *p->scope, ident.name)) {
@@ -17308,7 +17289,7 @@ v_dot_ast__MatchExpr v_dot_parser__Parser_match_expr(v_dot_parser__Parser *p) {
                      memdup(&(v_dot_ast__Type[]){(v_dot_ast__Type){.typ = typ}},
                             sizeof(v_dot_ast__Type)),
                  .typ = SumType_v_dot_ast__Expr_Type}),
-            tmp51, v_dot_ast__Expr);
+            tmp50, v_dot_ast__Expr);
       v_dot_ast__Scope_register_var(p->scope, (v_dot_ast__VarDecl){
                                                   .name = tos3("it"),
                                                   .typ = typ,
@@ -17320,7 +17301,7 @@ v_dot_ast__MatchExpr v_dot_parser__Parser_match_expr(v_dot_parser__Parser *p) {
         v_dot_ast__Expr expr = v_dot_parser__Parser_expr(p, 0);
         _PUSH(&exprs,
               (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
-              tmp52, v_dot_ast__Expr);
+              tmp51, v_dot_ast__Expr);
         if (p->tok.kind != v_dot_token__v_dot_token__Kind_comma) {
           break;
         };
@@ -17335,7 +17316,7 @@ v_dot_ast__MatchExpr v_dot_parser__Parser_match_expr(v_dot_parser__Parser *p) {
              .exprs = exprs,
              .stmts = stmts,
          }),
-        tmp53, v_dot_ast__MatchBranch);
+        tmp52, v_dot_ast__MatchBranch);
     v_dot_parser__Parser_close_scope(p);
     if (p->tok.kind == v_dot_token__v_dot_token__Kind_rcbr) {
       break;
@@ -17361,7 +17342,7 @@ v_dot_ast__EnumDecl v_dot_parser__Parser_enum_decl(v_dot_parser__Parser *p) {
          p->tok.kind != v_dot_token__v_dot_token__Kind_rcbr) {
 
     string val = v_dot_parser__Parser_check_name(p);
-    _PUSH(&vals, (/*typ = array_string   tmp_typ=string*/ val), tmp54, string);
+    _PUSH(&vals, (/*typ = array_string   tmp_typ=string*/ val), tmp53, string);
     if (p->tok.kind == v_dot_token__v_dot_token__Kind_assign) {
       v_dot_parser__Parser_next(p);
       v_dot_parser__Parser_expr(p, 0);
@@ -17400,7 +17381,7 @@ v_dot_ast__TypeDecl v_dot_parser__Parser_type_decl(v_dot_parser__Parser *p) {
       _PUSH(&sum_variants,
             (/*typ = array_v_dot_table__Type   tmp_typ=v_dot_table__Type*/
              variant_type),
-            tmp55, v_dot_table__Type);
+            tmp54, v_dot_table__Type);
       if (p->tok.kind != v_dot_token__v_dot_token__Kind_pipe) {
         break;
       };
@@ -18615,24 +18596,12 @@ v_dot_checker__Checker_selector_expr(v_dot_checker__Checker *c,
 }
 void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
                                         v_dot_ast__Return return_stmt) {
-  array_v_dot_table__Type got_types = new_array_from_c_array(
-      0, 0, sizeof(v_dot_table__Type),
-      EMPTY_ARRAY_OF_ELEMS(v_dot_table__Type, 0){TCCSKIP(0)});
   c->expected_type = c->fn_return_type;
   if (return_stmt.exprs.len == 0) {
 
     return;
   };
-  array_v_dot_ast__Expr tmp36 = return_stmt.exprs;
-  for (int tmp37 = 0; tmp37 < tmp36.len; tmp37++) {
-    v_dot_ast__Expr expr = ((v_dot_ast__Expr *)tmp36.data)[tmp37];
-
-    v_dot_table__Type typ = v_dot_checker__Checker_expr(c, expr);
-    _PUSH(&got_types,
-          (/*typ = array_v_dot_table__Type   tmp_typ=v_dot_table__Type*/ typ),
-          tmp38, v_dot_table__Type);
-  };
-  v_dot_table__Type expected_type = return_stmt.expected_type;
+  v_dot_table__Type expected_type = c->fn_return_type;
   v_dot_table__TypeSymbol *expected_type_sym =
       v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, expected_type);
   bool exp_is_optional = v_dot_table__type_is_optional(expected_type);
@@ -18643,6 +18612,18 @@ void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
     v_dot_table__MultiReturn mr_info =
         *(v_dot_table__MultiReturn *)expected_type_sym->info.obj;
     expected_types = mr_info.types;
+  };
+  array_v_dot_table__Type got_types = new_array_from_c_array(
+      0, 0, sizeof(v_dot_table__Type),
+      EMPTY_ARRAY_OF_ELEMS(v_dot_table__Type, 0){TCCSKIP(0)});
+  array_v_dot_ast__Expr tmp36 = return_stmt.exprs;
+  for (int tmp37 = 0; tmp37 < tmp36.len; tmp37++) {
+    v_dot_ast__Expr expr = ((v_dot_ast__Expr *)tmp36.data)[tmp37];
+
+    v_dot_table__Type typ = v_dot_checker__Checker_expr(c, expr);
+    _PUSH(&got_types,
+          (/*typ = array_v_dot_table__Type   tmp_typ=v_dot_table__Type*/ typ),
+          tmp38, v_dot_table__Type);
   };
   int tmp41 = 0;
   bool tmp42 =
