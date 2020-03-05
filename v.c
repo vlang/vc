@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4161cfc"
+#define V_COMMIT_HASH "484320e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b7e2af8"
+#define V_COMMIT_HASH "4161cfc"
 #endif
 #include <inttypes.h>
 
@@ -17604,6 +17604,17 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
           &/* ? */ g->definitions,
           _STR("%.*s %.*s(", type_name.len, type_name.str, name.len, name.str));
     };
+    if (it->is_method) {
+      v_dot_table__TypeSymbol *sym = v_dot_table__Table_get_type_symbol(
+          &/* ? */ *g->table, it->receiver.typ);
+      string styp = string_replace(sym->name, tos3("."), tos3("__"));
+      v_dot_gen__Gen_write(g,
+                           _STR("%.*s %.*s", styp.len, styp.str,
+                                it->receiver.name.len, it->receiver.name.str));
+      if (it->args.len > 0) {
+        v_dot_gen__Gen_write(g, tos3(", "));
+      };
+    };
     bool no_names = it->args.len > 0 &&
                     string_eq((*(v_dot_ast__Arg *)array_get(it->args, 0)).name,
                               tos3("arg_1"));
@@ -17616,8 +17627,8 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
       string arg_type_name =
           string_replace(arg_type_sym->name, tos3("."), tos3("__"));
       if (i == it->args.len - 1 && it->is_variadic) {
-        arg_type_name = _STR("variadic_%.*s", arg_type_sym->name.len,
-                             arg_type_sym->name.str);
+        arg_type_name =
+            _STR("variadic_%.*s", arg_type_name.len, arg_type_name.str);
       };
       if (no_names) {
         v_dot_gen__Gen_write(g, arg_type_name);
@@ -17750,9 +17761,9 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
     v_dot_ast__VarDecl *it = (v_dot_ast__VarDecl *)tmp8.obj;
     v_dot_table__TypeSymbol *type_sym =
         v_dot_table__Table_get_type_symbol(&/* ? */ *g->table, it->typ);
-    v_dot_gen__Gen_write(g,
-                         _STR("%.*s %.*s = ", type_sym->name.len,
-                              type_sym->name.str, it->name.len, it->name.str));
+    string styp = string_replace(type_sym->name, tos3("."), tos3("__"));
+    v_dot_gen__Gen_write(g, _STR("%.*s %.*s = ", styp.len, styp.str,
+                                 it->name.len, it->name.str));
     v_dot_gen__Gen_expr(g, it->expr);
     v_dot_gen__Gen_writeln(g, tos3(";"));
   } else // default:
@@ -23868,10 +23879,13 @@ void compiler__V_cc(compiler__V *v) {
   if (debug_mode) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ debug_options), tmp8,
           string);
+#ifdef __APPLE__
     _PUSH(
         &a,
         (/*typ = array_string   tmp_typ=string*/ tos3(" -ferror-limit=5000 ")),
         tmp9, string);
+#endif
+    ;
   };
   if (v->pref->is_prod) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ optimization_options),
