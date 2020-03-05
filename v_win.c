@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6de44db"
+#define V_COMMIT_HASH "9921897"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ee6a8a4"
+#define V_COMMIT_HASH "6de44db"
 #endif
 #include <inttypes.h>
 
@@ -16731,7 +16731,6 @@ v_dot_ast__Stmt v_dot_parser__Parser_for_statement(v_dot_parser__Parser *p) {
     };
     v_dot_ast__Scope_register_var(p->scope, (v_dot_ast__VarDecl){
                                                 .name = var_name,
-                                                .expr = cond,
                                                 .name2 = tos3(""),
                                                 .is_mut = 0,
                                             });
