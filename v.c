@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "484320e"
+#define V_COMMIT_HASH "bcaf72e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4161cfc"
+#define V_COMMIT_HASH "484320e"
 #endif
 #include <inttypes.h>
 
@@ -17611,8 +17611,13 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
       v_dot_gen__Gen_write(g,
                            _STR("%.*s %.*s", styp.len, styp.str,
                                 it->receiver.name.len, it->receiver.name.str));
+      strings__Builder_write(&/* ? */ g->definitions,
+                             _STR("%.*s %.*s", styp.len, styp.str,
+                                  it->receiver.name.len,
+                                  it->receiver.name.str));
       if (it->args.len > 0) {
         v_dot_gen__Gen_write(g, tos3(", "));
+        strings__Builder_write(&/* ? */ g->definitions, tos3(", "));
       };
     };
     bool no_names = it->args.len > 0 &&
