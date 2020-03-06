@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "24dbfbc"
+#define V_COMMIT_HASH "7f6b986"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "49f3ce0"
+#define V_COMMIT_HASH "24dbfbc"
 #endif
 #include <inttypes.h>
 
@@ -17688,7 +17688,7 @@ void v_dot_gen__Gen_init(v_dot_gen__Gen *g) {
   v_dot_gen__Gen_write_sorted_types(g);
   v_dot_gen__Gen_write_multi_return_types(g);
   strings__Builder_writeln(&/* ? */ g->definitions,
-                           tos3("// end of definitions"));
+                           tos3("// end of definitions #endif"));
 }
 void v_dot_gen__Gen_write_multi_return_types(v_dot_gen__Gen *g) {
   strings__Builder_writeln(&/* ? */ g->definitions,
