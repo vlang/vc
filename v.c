@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "89cbe76"
+#define V_COMMIT_HASH "db22bc5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6b6031a"
+#define V_COMMIT_HASH "89cbe76"
 #endif
 #include <inttypes.h>
 
@@ -3317,7 +3317,7 @@ void v_dot_checker__Checker_assign_expr(v_dot_checker__Checker *c,
                                         v_dot_ast__AssignExpr assign_expr);
 v_dot_table__Type
 v_dot_checker__Checker_call_expr(v_dot_checker__Checker *c,
-                                 v_dot_ast__CallExpr call_expr);
+                                 v_dot_ast__CallExpr *call_expr);
 v_dot_table__Type v_dot_checker__Checker_method_call_expr(
     v_dot_checker__Checker *c, v_dot_ast__MethodCallExpr *method_call_expr);
 v_dot_table__Type
@@ -18700,8 +18700,8 @@ void v_dot_checker__Checker_assign_expr(v_dot_checker__Checker *c,
 }
 v_dot_table__Type
 v_dot_checker__Checker_call_expr(v_dot_checker__Checker *c,
-                                 v_dot_ast__CallExpr call_expr) {
-  string fn_name = call_expr.name;
+                                 v_dot_ast__CallExpr *call_expr) {
+  string fn_name = call_expr->name;
   if (string_eq(fn_name, tos3("typeof"))) {
     return v_dot_table__string_type;
   };
@@ -18721,13 +18721,14 @@ v_dot_checker__Checker_call_expr(v_dot_checker__Checker *c,
   if (!string_contains(fn_name, tos3(".")) &&
       !((string_eq(c->file.mod.name, tos3("builtin")) ||
          string_eq(c->file.mod.name, tos3("main"))))) {
-    Option_v_dot_table__Fn tmp21 = v_dot_table__Table_find_fn(
-        &/* ? */ *c->table,
-        _STR("%.*s.%.*s", c->file.mod.name.len, c->file.mod.name.str,
-             fn_name.len, fn_name.str));
+    string name_prefixed = _STR("%.*s.%.*s", c->file.mod.name.len,
+                                c->file.mod.name.str, fn_name.len, fn_name.str);
+    Option_v_dot_table__Fn tmp21 =
+        v_dot_table__Table_find_fn(&/* ? */ *c->table, name_prefixed);
 
     if (tmp21.ok) {
       v_dot_table__Fn f1 = *(v_dot_table__Fn *)tmp21.data;
+      call_expr->name = name_prefixed;
       found = 1;
       f = f1;
     };
@@ -18744,27 +18745,27 @@ v_dot_checker__Checker_call_expr(v_dot_checker__Checker *c,
   };
   if (!found) {
     v_dot_checker__Checker_error(
-        c, _STR("unknown fn: %.*s", fn_name.len, fn_name.str), call_expr.pos);
+        c, _STR("unknown fn: %.*s", fn_name.len, fn_name.str), call_expr->pos);
   };
-  if (f.is_c || call_expr.is_c) {
+  if (f.is_c || call_expr->is_c) {
     return f.return_type;
   };
-  if (call_expr.args.len < f.args.len) {
+  if (call_expr->args.len < f.args.len) {
     v_dot_checker__Checker_error(
         c,
         _STR("too few arguments in call to `%.*s`", fn_name.len, fn_name.str),
-        call_expr.pos);
-  } else if (!f.is_variadic && call_expr.args.len > f.args.len) {
+        call_expr->pos);
+  } else if (!f.is_variadic && call_expr->args.len > f.args.len) {
     v_dot_checker__Checker_error(
         c,
         _STR("too many arguments in call to `%.*s` (%d instead of %d)",
-             fn_name.len, fn_name.str, call_expr.args.len, f.args.len),
-        call_expr.pos);
+             fn_name.len, fn_name.str, call_expr->args.len, f.args.len),
+        call_expr->pos);
   };
   if (string_eq(fn_name, tos3("println"))) {
     return f.return_type;
   };
-  array_v_dot_ast__Expr tmp23 = call_expr.args;
+  array_v_dot_ast__Expr tmp23 = call_expr->args;
   for (int i = 0; i < tmp23.len; i++) {
     v_dot_ast__Expr arg_expr = ((v_dot_ast__Expr *)tmp23.data)[i];
 
@@ -18798,7 +18799,7 @@ v_dot_checker__Checker_call_expr(v_dot_checker__Checker *c,
               v_dot_table__TypeSymbol_str(&/* ? */ *arg_typ_sym).len,
               v_dot_table__TypeSymbol_str(&/* ? */ *arg_typ_sym).str, i + 1,
               fn_name.len, fn_name.str),
-          call_expr.pos);
+          call_expr->pos);
     };
   };
   return f.return_type;
@@ -18975,7 +18976,7 @@ void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
   };
   int tmp52 = 0;
   bool tmp53 =
-      map_get(/*checker.v : 347*/ c->table->type_idxs, tos3("Option"), &tmp52);
+      map_get(/*checker.v : 349*/ c->table->type_idxs, tos3("Option"), &tmp52);
 
   if (exp_is_optional &&
       (v_dot_table__type_idx((*(v_dot_table__Type *)array_get(got_types, 0))) ==
@@ -19256,7 +19257,7 @@ v_dot_table__Type v_dot_checker__Checker_expr(v_dot_checker__Checker *c,
     return it->typ;
   } else if (tmp81.typ == SumType_v_dot_ast__Expr_CallExpr) {
     v_dot_ast__CallExpr *it = (v_dot_ast__CallExpr *)tmp81.obj;
-    return v_dot_checker__Checker_call_expr(c, *it);
+    return v_dot_checker__Checker_call_expr(c, it);
   } else if (tmp81.typ == SumType_v_dot_ast__Expr_CharLiteral) {
     v_dot_ast__CharLiteral *it = (v_dot_ast__CharLiteral *)tmp81.obj;
     return v_dot_table__byte_type;
@@ -19354,7 +19355,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl tmp85 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
     _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl
-        _V_mret_3221_var_scope_var;
+        _V_mret_3231_var_scope_var;
     if (!tmp85.ok) {
       string err = tmp85.error;
       int errcode = tmp85.ecode;
@@ -19366,11 +19367,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_3221_var_scope_var =
+    _V_mret_3231_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl *)tmp85.data;
     ;
-    var_scope = _V_mret_3221_var_scope_var.var_0;
-    var = _V_mret_3221_var_scope_var.var_1;
+    var_scope = _V_mret_3231_var_scope_var.var_0;
+    var = _V_mret_3231_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
