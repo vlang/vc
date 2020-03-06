@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "db22bc5"
+#define V_COMMIT_HASH "ed9075b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "89cbe76"
+#define V_COMMIT_HASH "db22bc5"
 #endif
 #include <inttypes.h>
 
@@ -20174,8 +20174,12 @@ string v_dot_doc__doc(string mod, v_dot_table__Table *table) {
   return string_trim_space(strings__Builder_str(&/* ? */ d.out));
 }
 string v_dot_doc__Doc_get_fn_node(v_dot_doc__Doc *d, v_dot_ast__FnDecl f) {
-  return string_replace(v_dot_ast__FnDecl_str(&/* ? */ f, d->table),
-                        string_add(d->mod, tos3(".")), tos3(""));
+  return string_replace_each(
+      v_dot_ast__FnDecl_str(&/* ? */ f, d->table),
+      new_array_from_c_array(
+          4, 4, sizeof(string),
+          EMPTY_ARRAY_OF_ELEMS(string, 4){string_add(d->mod, tos3(".")),
+                                          tos3(""), tos3("pub "), tos3("")}));
 }
 void v_dot_doc__Doc_print_fns(v_dot_doc__Doc *d) {
   array_string fn_signatures =
