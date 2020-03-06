@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fb785b8"
+#define V_COMMIT_HASH "3de3b38"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9126996"
+#define V_COMMIT_HASH "fb785b8"
 #endif
 #include <inttypes.h>
 
@@ -19057,6 +19057,11 @@ v_dot_checker__Checker_array_init(v_dot_checker__Checker *c,
     return array_init->typ;
   };
   if (array_init->exprs.len == 0) {
+    v_dot_table__TypeSymbol *type_sym = v_dot_table__Table_get_type_symbol(
+        &/* ? */ *c->table, c->expected_type);
+    v_dot_table__Array array_info =
+        v_dot_table__TypeSymbol_array_info(&/* ? */ *type_sym);
+    array_init->elem_type = array_info.elem_type;
     return c->expected_type;
   };
   if (array_init->exprs.len > 0 &&
@@ -19084,6 +19089,7 @@ v_dot_checker__Checker_array_init(v_dot_checker__Checker *c,
     };
     int idx = v_dot_table__Table_find_or_register_array(c->table, elem_type, 1);
     array_init->typ = v_dot_table__new_type(idx);
+    array_init->elem_type = elem_type;
   } else if (array_init->exprs.len == 1 &&
              array_init->elem_type != v_dot_table__void_type) {
     int fixed_size = 1;
@@ -19343,7 +19349,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl tmp85 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
     _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl
-        _V_mret_3182_var_scope_var;
+        _V_mret_3213_var_scope_var;
     if (!tmp85.ok) {
       string err = tmp85.error;
       int errcode = tmp85.ecode;
@@ -19355,11 +19361,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_3182_var_scope_var =
+    _V_mret_3213_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl *)tmp85.data;
     ;
-    var_scope = _V_mret_3182_var_scope_var.var_0;
-    var = _V_mret_3182_var_scope_var.var_1;
+    var_scope = _V_mret_3213_var_scope_var.var_0;
+    var = _V_mret_3213_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
