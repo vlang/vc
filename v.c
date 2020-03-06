@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6b6031a"
+#define V_COMMIT_HASH "89cbe76"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3de3b38"
+#define V_COMMIT_HASH "6b6031a"
 #endif
 #include <inttypes.h>
 
@@ -19252,6 +19252,7 @@ v_dot_table__Type v_dot_checker__Checker_expr(v_dot_checker__Checker *c,
     return v_dot_table__bool_type;
   } else if (tmp81.typ == SumType_v_dot_ast__Expr_CastExpr) {
     v_dot_ast__CastExpr *it = (v_dot_ast__CastExpr *)tmp81.obj;
+    v_dot_checker__Checker_expr(c, it->expr);
     return it->typ;
   } else if (tmp81.typ == SumType_v_dot_ast__Expr_CallExpr) {
     v_dot_ast__CallExpr *it = (v_dot_ast__CallExpr *)tmp81.obj;
@@ -19353,7 +19354,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl tmp85 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
     _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl
-        _V_mret_3213_var_scope_var;
+        _V_mret_3221_var_scope_var;
     if (!tmp85.ok) {
       string err = tmp85.error;
       int errcode = tmp85.ecode;
@@ -19365,11 +19366,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_3213_var_scope_var =
+    _V_mret_3221_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__VarDecl *)tmp85.data;
     ;
-    var_scope = _V_mret_3213_var_scope_var.var_0;
-    var = _V_mret_3213_var_scope_var.var_1;
+    var_scope = _V_mret_3221_var_scope_var.var_0;
+    var = _V_mret_3221_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
