@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3de3b38"
+#define V_COMMIT_HASH "6b6031a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fb785b8"
+#define V_COMMIT_HASH "3de3b38"
 #endif
 #include <inttypes.h>
 
@@ -16300,7 +16300,7 @@ v_dot_ast__Expr v_dot_parser__Parser_name_expr(v_dot_parser__Parser *p) {
       mod = tos3("C");
     } else {
       string tmp17 = tos3("");
-      bool tmp18 = map_get(/*parser.v : 543*/ p->imports, p->tok.lit, &tmp17);
+      bool tmp18 = map_get(/*parser.v : 544*/ p->imports, p->tok.lit, &tmp17);
 
       if (!tmp18)
         tmp17 = tos((byte *)"", 0);
@@ -17402,6 +17402,10 @@ v_dot_ast__MatchExpr v_dot_parser__Parser_match_expr(v_dot_parser__Parser *p) {
                                                   .name2 = tos3(""),
                                                   .is_mut = 0,
                                               });
+      if (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
+        v_dot_parser__Parser_next(p);
+        v_dot_parser__Parser_parse_type(p);
+      };
     } else {
       while (1) {
         v_dot_ast__Expr expr = v_dot_parser__Parser_expr(p, 0);
@@ -18090,8 +18094,8 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
     v_dot_ast__StructInit *it = (v_dot_ast__StructInit *)tmp25.obj;
     v_dot_table__TypeSymbol *type_sym =
         v_dot_table__Table_get_type_symbol(&/* ? */ *g->table, it->typ);
-    v_dot_gen__Gen_writeln(
-        g, _STR("(%.*s){", type_sym->name.len, type_sym->name.str));
+    string styp = v_dot_gen__Gen_typ(&/* ? */ *g, type_sym->name);
+    v_dot_gen__Gen_writeln(g, _STR("(%.*s){", styp.len, styp.str));
     array_string tmp41 = it->fields;
     for (int i = 0; i < tmp41.len; i++) {
       string field = ((string *)tmp41.data)[i];
