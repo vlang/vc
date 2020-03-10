@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "568d859"
+#define V_COMMIT_HASH "1143320"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8ff86db"
+#define V_COMMIT_HASH "568d859"
 #endif
 #include <inttypes.h>
 
@@ -3614,6 +3614,8 @@ array_string v_dot_doc__Doc_get_fn_signatures(v_dot_doc__Doc d,
                                               v_dot_doc__FilterFn filter_fn);
 bool v_dot_doc__is_pub_method(v_dot_ast__FnDecl node);
 bool v_dot_doc__is_pub_function(v_dot_ast__FnDecl node);
+void v_dot_doc__Doc_print_enums(v_dot_doc__Doc *d);
+void v_dot_doc__Doc_print_structs(v_dot_doc__Doc *d);
 v_dot_builder__Builder
 v_dot_builder__new_builder(v_dot_pref__Preferences *pref);
 string v_dot_builder__Builder_gen_c(v_dot_builder__Builder *b,
@@ -21126,6 +21128,12 @@ string v_dot_doc__doc(string mod, v_dot_table__Table *table) {
              .stmts),
         tmp4, array_v_dot_ast__Stmt);
   };
+  if (d.stmts.len == 0) {
+    println(tos3("nothing here"));
+    v_exit(1);
+  };
+  v_dot_doc__Doc_print_structs(&/* ? */ d);
+  v_dot_doc__Doc_print_enums(&/* ? */ d);
   v_dot_doc__Doc_print_fns(&/* ? */ d);
   strings__Builder_writeln(&/* ? */ d.out, tos3(""));
   v_dot_doc__Doc_print_methods(&/* ? */ d);
@@ -21190,6 +21198,55 @@ bool v_dot_doc__is_pub_method(v_dot_ast__FnDecl node) {
 }
 bool v_dot_doc__is_pub_function(v_dot_ast__FnDecl node) {
   return node.is_pub && !node.is_method && !node.is_deprecated;
+}
+void v_dot_doc__Doc_print_enums(v_dot_doc__Doc *d) {
+  array_v_dot_table__TypeSymbol tmp11 = d->table->types;
+  for (int tmp12 = 0; tmp12 < tmp11.len; tmp12++) {
+    v_dot_table__TypeSymbol typ =
+        ((v_dot_table__TypeSymbol *)tmp11.data)[tmp12];
+
+    if (typ.kind != v_dot_table__v_dot_table__Kind_enum_) {
+      continue;
+    };
+    strings__Builder_writeln(&/* ? */ d->out,
+                             _STR("enum %.*s {", typ.name.len, typ.name.str));
+    v_dot_table__Enum info = *(v_dot_table__Enum *)typ.info.obj;
+    array_string tmp13 = info.vals;
+    for (int tmp14 = 0; tmp14 < tmp13.len; tmp14++) {
+      string val = ((string *)tmp13.data)[tmp14];
+
+      strings__Builder_writeln(&/* ? */ d->out,
+                               _STR("\t%.*s", val.len, val.str));
+    };
+    strings__Builder_writeln(&/* ? */ d->out, tos3("}"));
+  };
+}
+void v_dot_doc__Doc_print_structs(v_dot_doc__Doc *d) {
+  array_v_dot_table__TypeSymbol tmp15 = d->table->types;
+  for (int tmp16 = 0; tmp16 < tmp15.len; tmp16++) {
+    v_dot_table__TypeSymbol typ =
+        ((v_dot_table__TypeSymbol *)tmp15.data)[tmp16];
+
+    if (typ.kind != v_dot_table__v_dot_table__Kind_struct_ ||
+        !string_starts_with(typ.name, string_add(d->mod, tos3(".")))) {
+      continue;
+    };
+    string name = string_after(typ.name, tos3("."));
+    strings__Builder_writeln(&/* ? */ d->out,
+                             _STR("struct %.*s {", name.len, name.str));
+    v_dot_table__Struct info = *(v_dot_table__Struct *)typ.info.obj;
+    array_v_dot_table__Field tmp17 = info.fields;
+    for (int tmp18 = 0; tmp18 < tmp17.len; tmp18++) {
+      v_dot_table__Field field = ((v_dot_table__Field *)tmp17.data)[tmp18];
+
+      v_dot_table__TypeSymbol *sym =
+          v_dot_table__Table_get_type_symbol(&/* ? */ *d->table, field.typ);
+      strings__Builder_writeln(
+          &/* ? */ d->out, _STR("\t%.*s %.*s", field.name.len, field.name.str,
+                                sym->name.len, sym->name.str));
+    };
+    strings__Builder_writeln(&/* ? */ d->out, tos3("}\n"));
+  };
 }
 v_dot_builder__Builder
 v_dot_builder__new_builder(v_dot_pref__Preferences *pref) {
