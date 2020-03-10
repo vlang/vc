@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "de55a26"
+#define V_COMMIT_HASH "630913d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1143320"
+#define V_COMMIT_HASH "de55a26"
 #endif
 #include <inttypes.h>
 
@@ -2565,17 +2565,18 @@ bool f32_ge(f32 a, f32 b);
 bool f64_gebit(f64 a, f64 b);
 bool f32_gebit(f32 a, f32 b);
 string ptr_str(void *ptr);
-string int_str(int nn);
+static inline string int_str_l(int nn, int max);
 string i8_str(i8 n);
 string i16_str(i16 n);
 string u16_str(u16 n);
+string int_str(int n);
 string u32_str(u32 nn);
 string i64_str(i64 nn);
 string u64_str(u64 nn);
 string bool_str(bool b);
-string int_hex(int n);
-string i64_hex(i64 n);
-string u64_hex(u64 n);
+string int_hex(int nn);
+string u64_hex(u64 nn);
+string i64_hex(i64 nn);
 bool array_byte_contains(array_byte a, byte val);
 string rune_str(rune c);
 string byte_str(byte c);
@@ -4330,6 +4331,7 @@ int builtin__SYMOPT_LOAD_LINES;
 int builtin__SYMOPT_INCLUDE_32BIT_MODULES;
 int builtin__SYMOPT_ALLOW_ZERO_ADDRESS;
 int builtin__SYMOPT_DEBUG;
+string builtin__digit_pairs;
 int builtin__init_capicity;
 int builtin__init_range_cap;
 u32 builtin__hash_mask;
@@ -5296,15 +5298,18 @@ string array_bool_str(array_bool a) {
 }
 string array_byte_hex(array_byte b) {
   byte *hex = v_malloc(b.len * 2 + 1);
-  byte *ptr = &hex[/*ptr!*/ 0] /*rbyte 1*/;
-  int tmp15 = 0;
-  ;
-  for (int tmp16 = tmp15; tmp16 < b.len; tmp16++) {
-    int i = tmp16;
+  int dst_i = 0;
+  array_byte tmp15 = b;
+  for (int tmp16 = 0; tmp16 < tmp15.len; tmp16++) {
+    byte i = ((byte *)tmp15.data)[tmp16];
 
-    ptr += sprintf((char *)ptr, "%02x", (*(byte *)array_get(b, i)));
+    byte n0 = i >> 4;
+    hex[/*ptr!*/ dst_i++] /*rbyte 1*/ = ((n0 < 10) ? (n0 + '0') : (n0 + 87));
+    byte n1 = i & 0xF;
+    hex[/*ptr!*/ dst_i++] /*rbyte 1*/ = ((n1 < 10) ? (n1 + '0') : (n1 + 87));
   };
-  return (tos2((byte *)hex));
+  hex[/*ptr!*/ dst_i] /*rbyte 1*/ = '\0';
+  return tos(hex, dst_i);
 }
 int copy(array_byte dst, array_byte src) {
   if (dst.len > 0 && src.len > 0) {
@@ -5330,10 +5335,10 @@ void array_int_sort(array_int *a) {
       a, &/*112 e="void*" g="fn (int*,int*) int" */ compare_ints);
 }
 int array_string_index(array_string a, string v) {
-  int tmp21 = 0;
+  int tmp19 = 0;
   ;
-  for (int tmp22 = tmp21; tmp22 < a.len; tmp22++) {
-    int i = tmp22;
+  for (int tmp20 = tmp19; tmp20 < a.len; tmp20++) {
+    int i = tmp20;
 
     if (string_eq((*(string *)array_get(a, i)), v)) {
       return i;
@@ -5342,10 +5347,10 @@ int array_string_index(array_string a, string v) {
   return -1;
 }
 int array_int_index(array_int a, int v) {
-  int tmp25 = 0;
+  int tmp23 = 0;
   ;
-  for (int tmp26 = tmp25; tmp26 < a.len; tmp26++) {
-    int i = tmp26;
+  for (int tmp24 = tmp23; tmp24 < a.len; tmp24++) {
+    int i = tmp24;
 
     if ((*(int *)array_get(a, i)) == v) {
       return i;
@@ -5354,10 +5359,10 @@ int array_int_index(array_int a, int v) {
   return -1;
 }
 int array_byte_index(array_byte a, byte v) {
-  int tmp29 = 0;
+  int tmp27 = 0;
   ;
-  for (int tmp30 = tmp29; tmp30 < a.len; tmp30++) {
-    int i = tmp30;
+  for (int tmp28 = tmp27; tmp28 < a.len; tmp28++) {
+    int i = tmp28;
 
     if ((*(byte *)array_get(a, i)) == v) {
       return i;
@@ -5366,10 +5371,10 @@ int array_byte_index(array_byte a, byte v) {
   return -1;
 }
 int array_char_index(array_char a, char v) {
-  int tmp33 = 0;
+  int tmp31 = 0;
   ;
-  for (int tmp34 = tmp33; tmp34 < a.len; tmp34++) {
-    int i = tmp34;
+  for (int tmp32 = tmp31; tmp32 < a.len; tmp32++) {
+    int i = tmp32;
 
     if ((*(char *)array_get(a, i)) == v) {
       return i;
@@ -5380,9 +5385,9 @@ int array_char_index(array_char a, char v) {
 int array_int_reduce(array_int a, int (*iter)(int accum, int curr /*FFF*/),
                      int accum_start) {
   int _accum = accum_start;
-  array_int tmp37 = a;
-  for (int tmp38 = 0; tmp38 < tmp37.len; tmp38++) {
-    int i = ((int *)tmp37.data)[tmp38];
+  array_int tmp35 = a;
+  for (int tmp36 = 0; tmp36 < tmp35.len; tmp36++) {
+    int i = ((int *)tmp35.data)[tmp36];
 
     _accum = iter(_accum, i);
   };
@@ -5392,10 +5397,10 @@ bool array_string_eq(array_string a1, array_string a2) {
   if (a1.len != a2.len) {
     return 0;
   };
-  int tmp39 = 0;
+  int tmp37 = 0;
   ;
-  for (int tmp40 = tmp39; tmp40 < a1.len; tmp40++) {
-    int i = tmp40;
+  for (int tmp38 = tmp37; tmp38 < a1.len; tmp38++) {
+    int i = tmp38;
 
     if (string_ne((*(string *)array_get(a1, i)),
                   (*(string *)array_get(a2, i)))) {
@@ -5434,15 +5439,15 @@ int compare_f32(f32 *a, f32 *b) {
 array_voidptr array_pointers(array a) {
   array_ptr_void res = new_array_from_c_array(
       0, 0, sizeof(void *), EMPTY_ARRAY_OF_ELEMS(void *, 0){TCCSKIP(0)});
-  int tmp45 = 0;
+  int tmp43 = 0;
   ;
-  for (int tmp46 = tmp45; tmp46 < a.len; tmp46++) {
-    int i = tmp46;
+  for (int tmp44 = tmp43; tmp44 < a.len; tmp44++) {
+    int i = tmp44;
 
     _PUSH(&res,
           (/*typ = array_ptr_void   tmp_typ=void**/ (byte *)a.data +
            i * a.element_size),
-          tmp47, void *);
+          tmp45, void *);
   };
   return res;
 }
@@ -5724,99 +5729,129 @@ bool f32_ge(f32 a, f32 b) { return !f32_lt(a, b); }
 bool f64_gebit(f64 a, f64 b) { return DEFAULT_GE(a, b); }
 bool f32_gebit(f32 a, f32 b) { return DEFAULT_GE(a, b); }
 string ptr_str(void *ptr) {
-  byte *buf = v_malloc(sizeof(double) * 5 + 1);
-  sprintf((char *)(buf), "%p", ptr);
-  return tos(buf, vstrlen(buf));
+  string buf1 = u64_hex(((u64)(ptr)));
+  return buf1;
 }
-string int_str(int nn) {
+static inline string int_str_l(int nn, int max) {
   int n = nn;
+  int d = 0;
   if (n == 0) {
     return tos3("0");
   };
-  int max = 16;
-  byte *buf = vcalloc(max + 1);
-  int len = 0;
+  byte *buf = v_malloc(max + 1);
   bool is_neg = 0;
   if (n < 0) {
     n = -n;
     is_neg = 1;
   };
+  int index = max;
+  buf[/*ptr!*/ index--] /*rbyte 1*/ = '\0';
   while (n > 0) {
 
-    int d = n % 10;
-    buf[/*ptr!*/ max - len - 1] /*rbyte 1*/ = d + ((int)('0'));
-    len++;
-    n = n / 10;
+    int n1 = n / 100;
+    d = ((n - (n1 * 100)) << 1);
+    n = n1;
+    buf[/*ptr!*/ index--] /*rbyte 1*/ =
+        builtin__digit_pairs.str[d++] /*rbyte 0*/;
+    buf[/*ptr!*/ index--] /*rbyte 1*/ = builtin__digit_pairs.str[d] /*rbyte 0*/;
+  };
+  index++;
+  if (d < 20) {
+    index++;
   };
   if (is_neg) {
-    buf[/*ptr!*/ max - len - 1] /*rbyte 1*/ = '-';
-    len++;
+    index--;
+    buf[/*ptr!*/ index] /*rbyte 1*/ = '-';
   };
-  buf[/*ptr!*/ max] /*rbyte 1*/ = '\0';
-  return tos((byte *)(byte *)buf + max - len, len);
+  return tos((byte *)buf + index, (max - index));
 }
-string i8_str(i8 n) { return int_str(((int)(n))); }
-string i16_str(i16 n) { return int_str(((int)(n))); }
-string u16_str(u16 n) { return int_str(((int)(n))); }
+string i8_str(i8 n) { return int_str_l(((int)(n)), 5); }
+string i16_str(i16 n) { return int_str_l(((int)(n)), 7); }
+string u16_str(u16 n) { return int_str_l(((int)(n)), 7); }
+string int_str(int n) { return int_str_l(n, 12); }
 string u32_str(u32 nn) {
   u32 n = nn;
+  u32 d = ((u32)(0));
   if (n == 0) {
     return tos3("0");
   };
-  int max = 16;
-  byte *buf = v_malloc(max);
-  int len = 0;
+  int max = 12;
+  byte *buf = v_malloc(max + 1);
+  int index = max;
+  buf[/*ptr!*/ index--] /*rbyte 1*/ = '\0';
   while (n > 0) {
 
-    u32 d = n % 10;
-    buf[/*ptr!*/ max - len - 1] /*rbyte 1*/ = d + ((u32)('0'));
-    len++;
-    n = n / 10;
+    u32 n1 = n / ((u32)(100));
+    d = ((n - (n1 * ((u32)(100)))) << ((u32)(1)));
+    n = n1;
+    buf[/*ptr!*/ index--] /*rbyte 1*/ =
+        builtin__digit_pairs.str[d++] /*rbyte 0*/;
+    buf[/*ptr!*/ index--] /*rbyte 1*/ = builtin__digit_pairs.str[d] /*rbyte 0*/;
   };
-  return tos((byte *)(byte *)buf + max - len, len);
+  index++;
+  if (d < ((u32)(20))) {
+    index++;
+  };
+  return tos((byte *)buf + index, (max - index));
 }
 string i64_str(i64 nn) {
   i64 n = nn;
+  i64 d = ((i64)(0));
   if (n == 0) {
     return tos3("0");
   };
-  int max = 32;
-  byte *buf = v_malloc(max);
-  int len = 0;
+  int max = 20;
+  byte *buf = vcalloc(max + 1);
   bool is_neg = 0;
   if (n < 0) {
     n = -n;
     is_neg = 1;
   };
+  int index = max;
+  buf[/*ptr!*/ index--] /*rbyte 1*/ = '\0';
   while (n > 0) {
 
-    i64 d = n % 10;
-    buf[/*ptr!*/ max - len - 1] /*rbyte 1*/ = d + ((int)('0'));
-    len++;
-    n /= 10;
+    i64 n1 = n / ((i64)(100));
+    d = ((n - (n1 * ((i64)(100)))) << ((i64)(1)));
+    n = n1;
+    buf[/*ptr!*/ index--] /*rbyte 1*/ =
+        builtin__digit_pairs.str[d++] /*rbyte 0*/;
+    buf[/*ptr!*/ index--] /*rbyte 1*/ = builtin__digit_pairs.str[d] /*rbyte 0*/;
+  };
+  index++;
+  if (d < ((i64)(20))) {
+    index++;
   };
   if (is_neg) {
-    buf[/*ptr!*/ max - len - 1] /*rbyte 1*/ = '-';
-    len++;
+    index--;
+    buf[/*ptr!*/ index] /*rbyte 1*/ = '-';
   };
-  return tos((byte *)(byte *)buf + max - len, len);
+  return tos((byte *)buf + index, (max - index));
 }
 string u64_str(u64 nn) {
   u64 n = nn;
+  int d = 0;
   if (n == 0) {
     return tos3("0");
   };
-  int max = 32;
-  byte *buf = v_malloc(max);
-  int len = 0;
+  int max = 20;
+  byte *buf = vcalloc(max + 1);
+  int index = max;
+  buf[/*ptr!*/ index--] /*rbyte 1*/ = '\0';
   while (n > 0) {
 
-    u64 d = n % 10;
-    buf[/*ptr!*/ max - len - 1] /*rbyte 1*/ = d + ((u64)('0'));
-    len++;
-    n = n / (10);
+    u64 n1 = n / 100;
+    d = ((n - (n1 * 100)) << 1);
+    n = n1;
+    buf[/*ptr!*/ index--] /*rbyte 1*/ =
+        builtin__digit_pairs.str[d++] /*rbyte 0*/;
+    buf[/*ptr!*/ index--] /*rbyte 1*/ = builtin__digit_pairs.str[d] /*rbyte 0*/;
   };
-  return tos((byte *)(byte *)buf + max - len, len);
+  index++;
+  if (d < 20) {
+    index++;
+  };
+  return tos((byte *)buf + index, (max - index));
 }
 string bool_str(bool b) {
   if (b) {
@@ -5824,23 +5859,39 @@ string bool_str(bool b) {
   };
   return tos3("false");
 }
-string int_hex(int n) {
-  int len = ((n >= 0) ? (int_str(n).len + 3) : (11));
-  byte *hex = v_malloc(len);
-  int count = sprintf((char *)(hex), "0x%x", n);
-  return tos(hex, count);
+string int_hex(int nn) {
+  u32 n = ((u32)(nn));
+  int max = 10;
+  byte *buf = v_malloc(max + 1);
+  int index = max;
+  buf[/*ptr!*/ index--] /*rbyte 1*/ = '\0';
+  while (n > 0) {
+
+    u32 d = n & 0xF;
+    n = n >> 4;
+    buf[/*ptr!*/ index--] /*rbyte 1*/ = ((d < 10) ? (d + '0') : (d + 87));
+  };
+  index++;
+  return tos((byte *)buf + index, (max - index));
 }
-string i64_hex(i64 n) {
-  int len = ((n >= 0) ? (i64_str(n).len + 3) : (19));
-  byte *hex = v_malloc(len);
-  int count = sprintf(((charptr)(hex)), V64_PRINTFORMAT, n);
-  return tos(hex, count);
+string u64_hex(u64 nn) {
+  u64 n = nn;
+  int max = 18;
+  byte *buf = v_malloc(max + 1);
+  int index = max;
+  buf[/*ptr!*/ index--] /*rbyte 1*/ = '\0';
+  while (n > 0) {
+
+    u64 d = n & 0xF;
+    n = n >> 4;
+    buf[/*ptr!*/ index--] /*rbyte 1*/ = ((d < 10) ? (d + '0') : (d + 87));
+  };
+  index++;
+  return tos((byte *)buf + index, (max - index));
 }
-string u64_hex(u64 n) {
-  int len = ((n > 0) ? (u64_str(n).len + 3) : (19));
-  byte *hex = v_malloc(len);
-  int count = sprintf(((charptr)(hex)), V64_PRINTFORMAT, n);
-  return tos(hex, count);
+string i64_hex(i64 nn) {
+  u64 n = ((u64)(nn));
+  return u64_hex(n);
 }
 bool array_byte_contains(array_byte a, byte val) {
   array_byte tmp1 = a;
@@ -40791,6 +40842,10 @@ void init() {
   builtin__SYMOPT_INCLUDE_32BIT_MODULES = 0x00002000;
   builtin__SYMOPT_ALLOW_ZERO_ADDRESS = 0x01000000;
   builtin__SYMOPT_DEBUG = 0x80000000;
+  builtin__digit_pairs = tos3(
+      "001020304050607080900111213141516171819102122232425262728292031323334353"
+      "637383930414243444546474849405152535455565758595061626364656667686960717"
+      "27374757677787970818283848586878889809192939495969798999");
   builtin__init_capicity = 1 << builtin__init_log_capicity;
   builtin__init_range_cap = builtin__init_capicity - 1;
   builtin__hash_mask = ((u32)(0x00FFFFFF));
