@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "333dac4"
+#define V_COMMIT_HASH "bc184a9"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "57b1b12"
+#define V_COMMIT_HASH "333dac4"
 #endif
 #include <inttypes.h>
 
@@ -19944,9 +19944,9 @@ void v_dot_checker__Checker_assign_stmt(v_dot_checker__Checker *c,
 
       v_dot_ast__Ident ident =
           (*(v_dot_ast__Ident *)array_get(assign_stmt->left, i));
-      v_dot_ast__IdentVar var_info = v_dot_ast__Ident_var_info(&/* ? */ ident);
       v_dot_table__Type val_type =
           (*(v_dot_table__Type *)array_get(mr_info.types, i));
+      v_dot_ast__IdentVar var_info = v_dot_ast__Ident_var_info(&/* ? */ ident);
       var_info.typ = val_type;
       ident.info = /*SUM TYPE CAST2*/ (v_dot_ast__IdentInfo){
           .obj = memdup(&(v_dot_ast__IdentVar[]){var_info},
@@ -20011,16 +20011,15 @@ void v_dot_checker__Checker_assign_stmt(v_dot_checker__Checker *c,
                    var_type_sym->name.len, var_type_sym->name.str),
               assign_stmt->pos);
         };
-      } else {
-        v_dot_ast__IdentVar ident_var_info =
-            v_dot_ast__Ident_var_info(&/* ? */ ident);
-        ident_var_info.typ = val_type;
-        ident.info = /*SUM TYPE CAST2*/ (v_dot_ast__IdentInfo){
-            .obj = memdup(&(v_dot_ast__IdentVar[]){ident_var_info},
-                          sizeof(v_dot_ast__IdentVar)),
-            .typ = SumType_v_dot_ast__IdentInfo_IdentVar};
-        array_set(&/*q*/ assign_stmt->left, i, &(v_dot_ast__Ident[]){ident});
       };
+      v_dot_ast__IdentVar ident_var_info =
+          v_dot_ast__Ident_var_info(&/* ? */ ident);
+      ident_var_info.typ = val_type;
+      ident.info = /*SUM TYPE CAST2*/ (v_dot_ast__IdentInfo){
+          .obj = memdup(&(v_dot_ast__IdentVar[]){ident_var_info},
+                        sizeof(v_dot_ast__IdentVar)),
+          .typ = SumType_v_dot_ast__IdentInfo_IdentVar};
+      array_set(&/*q*/ assign_stmt->left, i, &(v_dot_ast__Ident[]){ident});
       v_dot_ast__Scope_override_var(scope, (v_dot_ast__Var){
                                                .name = ident.name,
                                                .typ = val_type,
@@ -20304,7 +20303,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     };
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp94 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
-    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_3550_var_scope_var;
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_3547_var_scope_var;
     if (!tmp94.ok) {
       string err = tmp94.error;
       int errcode = tmp94.ecode;
@@ -20316,11 +20315,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_3550_var_scope_var =
+    _V_mret_3547_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp94.data;
     ;
-    var_scope = _V_mret_3550_var_scope_var.var_0;
-    var = _V_mret_3550_var_scope_var.var_1;
+    var_scope = _V_mret_3547_var_scope_var.var_0;
+    var = _V_mret_3547_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
