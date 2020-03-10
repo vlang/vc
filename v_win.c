@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "324a48b"
+#define V_COMMIT_HASH "8ff86db"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bc184a9"
+#define V_COMMIT_HASH "324a48b"
 #endif
 #include <inttypes.h>
 
@@ -3052,7 +3052,7 @@ bool os__is_link(string path);
 void os__chdir(string path);
 string os__getwd();
 string os__realpath(string fpath);
-bool os__is_abs(string path);
+bool os__is_abs_path(string path);
 string os__join_path(string base, varg_string *dirs);
 array_string os__walk_ext(string path, string ext);
 void os__walk(string path, void (*f)(string path /*FFF*/));
@@ -12044,7 +12044,7 @@ string os__realpath(string fpath) {
   ;
   return (tos2((byte *)fullpath));
 }
-bool os__is_abs(string path) {
+bool os__is_abs_path(string path) {
 #ifdef _WIN32
   return string_at(path, 0) == '/' ||
          (byte_is_letter(string_at(path, 0)) && string_at(path, 1) == ':');
@@ -33294,13 +33294,13 @@ int compiler__V_add_parser(compiler__V *v, compiler__Parser parser) {
         (/*typ = array_compiler__Parser   tmp_typ=compiler__Parser*/ parser),
         tmp1, compiler__Parser);
   string file_path =
-      ((os__is_abs(parser.file_path)) ? (parser.file_path)
-                                      : (os__realpath(parser.file_path)));
+      ((os__is_abs_path(parser.file_path)) ? (parser.file_path)
+                                           : (os__realpath(parser.file_path)));
   map_set(&v->file_parser_idx, file_path, &(int[]){pidx});
   return pidx;
 }
 Option_int compiler__V_get_file_parser_index(compiler__V *v, string file) {
-  string file_path = ((os__is_abs(file)) ? (file) : (os__realpath(file)));
+  string file_path = ((os__is_abs_path(file)) ? (file) : (os__realpath(file)));
   if ((_IN_MAP((file_path), v->file_parser_idx))) {
     int tmp2 = 0;
     bool tmp3 = map_get(/*main.v : 116*/ v->file_parser_idx, file_path, &tmp2);
