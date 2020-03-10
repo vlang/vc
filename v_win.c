@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "877b474"
+#define V_COMMIT_HASH "2f0bb11"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c9d30f7"
+#define V_COMMIT_HASH "877b474"
 #endif
 #include <inttypes.h>
 
@@ -2992,6 +2992,10 @@ bool strconv_dot_ftoa__multiple_of_power_of_five_64(u64 v, u32 p);
 bool strconv_dot_ftoa__multiple_of_power_of_two_64(u64 v, u32 p);
 string strconv_dot_ftoa__f32_to_str_l(f64 f);
 string strconv_dot_ftoa__f64_to_str_l(f64 f);
+string os__getenv(string key);
+int os__setenv(string name, string value, bool overwrite);
+int os__unsetenv(string name);
+map_string os__environ();
 bool os__File_is_opened(os__File f);
 array_byte os__File_read_bytes(os__File *f, int size);
 array_byte os__File_read_bytes_at(os__File *f, int size, int pos);
@@ -3016,9 +3020,6 @@ string os__posix_get_error_msg(int code);
 int os__vpclose(void *f);
 int os__system(string cmd);
 string os__sigint_to_signal_name(int si);
-string os__getenv(string key);
-int os__setenv(string name, string value, bool overwrite);
-int os__unsetenv(string name);
 bool os__exists(string path);
 bool os__is_executable(string path);
 bool os__is_writable(string path);
@@ -3492,6 +3493,7 @@ void v_dot_gen__Gen_write_types(v_dot_gen__Gen *g,
 array_v_dot_table__TypeSymbol
 v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
                             array_v_dot_table__TypeSymbol types);
+string v_dot_gen__op_to_fn_name(string name);
 string v_dot_gen__jsgen(v_dot_ast__File program, v_dot_table__Table *table);
 void v_dot_gen__JsGen_save(v_dot_gen__JsGen *g);
 void v_dot_gen__JsGen_write(v_dot_gen__JsGen *g, string s);
@@ -11165,6 +11167,73 @@ string strconv_dot_ftoa__f64_to_str_l(f64 f) {
   array_set(&/*q*/ res, r_i, &(byte[]){0});
   return tos(&(*(byte *)array_get(res, 0)), r_i);
 }
+string os__getenv(string key) {
+#ifdef _WIN32
+  void *s = _wgetenv(string_to_wide(key));
+  if (s == 0) {
+    return tos3("");
+  };
+  return string_from_wide(s);
+#else
+  char *s = getenv((char *)key.str);
+  if (s == 0) {
+    return tos3("");
+  };
+  return cstring_to_vstring(((byteptr)(s)));
+#endif
+  ;
+}
+int os__setenv(string name, string value, bool overwrite) {
+#ifdef _WIN32
+  string format = _STR("%.*s=%.*s", name.len, name.str, value.len, value.str);
+  if (overwrite) {
+    return _putenv((char *)format.str);
+  };
+  return -1;
+#else
+  return setenv((char *)name.str, (char *)value.str, overwrite);
+#endif
+  ;
+}
+int os__unsetenv(string name) {
+#ifdef _WIN32
+  string format = _STR("%.*s=", name.len, name.str);
+  return _putenv((char *)format.str);
+#else
+  return unsetenv((char *)name.str);
+#endif
+  ;
+}
+map_string os__environ() {
+  map_string res = new_map(1, sizeof(string));
+#ifdef _WIN32
+  u16 *estrings = GetEnvironmentStringsW();
+  string eline = tos3("");
+  for (u16 *c = estrings; *c != 0; c = (u16 *)(u16 *)c + eline.len + 1) {
+
+    eline = string_from_wide(c);
+    int eq_index = string_index_byte(eline, '=');
+    if (eq_index > 0) {
+      map_set(&res, string_substr2(eline, 0, eq_index, false),
+              &(string[]){string_substr2(eline, eq_index + 1, -1, true)});
+    };
+  };
+  FreeEnvironmentStringsW(estrings);
+#else
+  byteptr *e = ((byteptr *)(environ));
+  for (int i = 0; !isnil(e[/*ptr!*/ i] /*rbyteptr 0*/); i++) {
+
+    string eline = cstring_to_vstring(e[/*ptr!*/ i] /*rbyteptr 0*/);
+    int eq_index = string_index_byte(eline, '=');
+    if (eq_index > 0) {
+      map_set(&res, string_substr2(eline, 0, eq_index, false),
+              &(string[]){string_substr2(eline, eq_index + 1, -1, true)});
+    };
+  };
+#endif
+  ;
+  return res;
+}
 bool os__File_is_opened(os__File f) { return f.opened; }
 array_byte os__File_read_bytes(os__File *f, int size) {
   return os__File_read_bytes_at(&/* ? */ *f, size, 0);
@@ -11513,9 +11582,9 @@ int os__vpclose(void *f) {
 #ifdef _WIN32
   return _pclose(f);
 #else
-  _V_MulRet_int_V_bool _V_mret_1770_ret__ =
+  _V_MulRet_int_V_bool _V_mret_1761_ret__ =
       os__posix_wait4_to_exit_status(pclose(f));
-  int ret = _V_mret_1770_ret__.var_0;
+  int ret = _V_mret_1761_ret__.var_0;
   return ret;
 #endif
   ;
@@ -11572,43 +11641,6 @@ string os__sigint_to_signal_name(int si) {
 #endif
   ;
   return tos3("unknown");
-}
-string os__getenv(string key) {
-#ifdef _WIN32
-  void *s = _wgetenv(string_to_wide(key));
-  if (s == 0) {
-    return tos3("");
-  };
-  return string_from_wide(s);
-#else
-  char *s = getenv((char *)key.str);
-  if (s == 0) {
-    return tos3("");
-  };
-  return cstring_to_vstring(((byteptr)(s)));
-#endif
-  ;
-}
-int os__setenv(string name, string value, bool overwrite) {
-#ifdef _WIN32
-  string format = _STR("%.*s=%.*s", name.len, name.str, value.len, value.str);
-  if (overwrite) {
-    return _putenv((char *)format.str);
-  };
-  return -1;
-#else
-  return setenv((char *)name.str, (char *)value.str, overwrite);
-#endif
-  ;
-}
-int os__unsetenv(string name) {
-#ifdef _WIN32
-  string format = _STR("%.*s=", name.len, name.str);
-  return _putenv((char *)format.str);
-#else
-  return unsetenv((char *)name.str);
-#endif
-  ;
 }
 bool os__exists(string path) {
 #ifdef _WIN32
@@ -15814,6 +15846,14 @@ v_dot_ast__FnDecl v_dot_parser__Parser_fn_decl(v_dot_parser__Parser *p) {
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_name) {
     name = v_dot_parser__Parser_check_name(p);
   };
+  if ((p->tok.kind == v_dot_token__v_dot_token__Kind_plus ||
+       p->tok.kind == v_dot_token__v_dot_token__Kind_minus ||
+       p->tok.kind == v_dot_token__v_dot_token__Kind_mul ||
+       p->tok.kind == v_dot_token__v_dot_token__Kind_div ||
+       p->tok.kind == v_dot_token__v_dot_token__Kind_mod)) {
+    name = v_dot_token__Kind_str(p->tok.kind);
+    v_dot_parser__Parser_next(p);
+  };
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_lt) {
     v_dot_parser__Parser_next(p);
     v_dot_parser__Parser_next(p);
@@ -15822,10 +15862,10 @@ v_dot_ast__FnDecl v_dot_parser__Parser_fn_decl(v_dot_parser__Parser *p) {
   array_v_dot_table__Var args = new_array_from_c_array(
       0, 0, sizeof(v_dot_table__Var),
       EMPTY_ARRAY_OF_ELEMS(v_dot_table__Var, 0){TCCSKIP(0)});
-  _V_MulRet_array_v_dot_ast__Arg_V_bool _V_mret_511_ast_args_is_variadic =
+  _V_MulRet_array_v_dot_ast__Arg_V_bool _V_mret_552_ast_args_is_variadic =
       v_dot_parser__Parser_fn_args(p);
-  array_v_dot_ast__Arg ast_args = _V_mret_511_ast_args_is_variadic.var_0;
-  bool is_variadic = _V_mret_511_ast_args_is_variadic.var_1;
+  array_v_dot_ast__Arg ast_args = _V_mret_552_ast_args_is_variadic.var_0;
+  bool is_variadic = _V_mret_552_ast_args_is_variadic.var_1;
   array_v_dot_ast__Arg tmp4 = ast_args;
   for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
     v_dot_ast__Arg ast_arg = ((v_dot_ast__Arg *)tmp4.data)[tmp5];
@@ -18498,6 +18538,9 @@ void v_dot_gen__Gen_gen_fn_decl(v_dot_gen__Gen *g, v_dot_ast__FnDecl it) {
                         name);
     };
     name = string_replace(name, tos3("."), tos3("__"));
+    if (string_starts_with(name, tos3("_op_"))) {
+      name = v_dot_gen__op_to_fn_name(name);
+    };
     string type_name = v_dot_gen__Gen_typ(&/* ? */ *g, it.typ);
     v_dot_gen__Gen_write(g, _STR("%.*s %.*s(", type_name.len, type_name.str,
                                  name.len, name.str));
@@ -19027,7 +19070,7 @@ void v_dot_gen__Gen_write_sorted_types(v_dot_gen__Gen *g) {
 
     int tmp71 = 0;
     bool tmp72 =
-        map_get(/*cgen.v : 870*/ g->table->type_idxs, builtin_name, &tmp71);
+        map_get(/*cgen.v : 873*/ g->table->type_idxs, builtin_name, &tmp71);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -19156,7 +19199,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp95 = 0;
     bool tmp96 =
-        map_get(/*cgen.v : 947*/ g->table->type_idxs, node.name, &tmp95);
+        map_get(/*cgen.v : 950*/ g->table->type_idxs, node.name, &tmp95);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -19165,6 +19208,22 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
           tmp94, v_dot_table__TypeSymbol);
   };
   return types_sorted;
+}
+string v_dot_gen__op_to_fn_name(string name) {
+  string tmp99 = name;
+
+  return ((string_eq(tmp99, tos3("+")))
+              ? (tos3("_op_plus"))
+              : ((string_eq(tmp99, tos3("-")))
+                     ? (tos3("_op_minus"))
+                     : ((string_eq(tmp99, tos3("*")))
+                            ? (tos3("_op_mul"))
+                            : ((string_eq(tmp99, tos3("/")))
+                                   ? (tos3("_op_div"))
+                                   : ((string_eq(tmp99, tos3("%")))
+                                          ? (tos3("_op_mod"))
+                                          : (_STR("bad op %.*s", name.len,
+                                                  name.str)))))));
 }
 string v_dot_gen__jsgen(v_dot_ast__File program, v_dot_table__Table *table) {
   v_dot_gen__JsGen g =
