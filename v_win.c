@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "75db3e4"
+#define V_COMMIT_HASH "a2ff24c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9e14850"
+#define V_COMMIT_HASH "75db3e4"
 #endif
 #include <inttypes.h>
 
@@ -19995,7 +19995,16 @@ v_dot_table__Type
 v_dot_checker__Checker_selector_expr(v_dot_checker__Checker *c,
                                      v_dot_ast__SelectorExpr *selector_expr) {
   v_dot_table__Type typ = v_dot_checker__Checker_expr(c, selector_expr->expr);
+  if (typ == v_dot_table__void_type_idx) {
+    v_dot_checker__Checker_error(c, tos3("unknown selector expression"),
+                                 selector_expr->pos);
+    return v_dot_table__void_type;
+  };
   selector_expr->expr_type = typ;
+  if (string_eq(selector_expr->field, tos3("size"))) {
+    printf("sel expr line_nr=%d typ=%d\n", selector_expr->pos.line_nr,
+           selector_expr->expr_type);
+  };
   v_dot_table__TypeSymbol *typ_sym =
       v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, typ);
   string field_name = selector_expr->field;
@@ -20068,7 +20077,7 @@ void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
   };
   int tmp57 = 0;
   bool tmp58 =
-      map_get(/*checker.v : 363*/ c->table->type_idxs, tos3("Option"), &tmp57);
+      map_get(/*checker.v : 367*/ c->table->type_idxs, tos3("Option"), &tmp57);
 
   if (exp_is_optional &&
       (v_dot_table__type_idx((*(v_dot_table__Type *)array_get(got_types, 0))) ==
@@ -20486,7 +20495,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     };
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp96 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
-    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_3576_var_scope_var;
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_3622_var_scope_var;
     if (!tmp96.ok) {
       string err = tmp96.error;
       int errcode = tmp96.ecode;
@@ -20498,11 +20507,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_3576_var_scope_var =
+    _V_mret_3622_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp96.data;
     ;
-    var_scope = _V_mret_3576_var_scope_var.var_0;
-    var = _V_mret_3576_var_scope_var.var_1;
+    var_scope = _V_mret_3622_var_scope_var.var_0;
+    var = _V_mret_3622_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
