@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7513dab"
+#define V_COMMIT_HASH "7309be5"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cd0b81f"
+#define V_COMMIT_HASH "7513dab"
 #endif
 #include <inttypes.h>
 
@@ -13210,7 +13210,7 @@ v_dot_table__Table_type_find_method(v_dot_table__Table *t,
       v_dot_table__Fn tmp19 = OPTION_CAST(v_dot_table__Fn)(method);
       return opt_ok(&tmp19, sizeof(v_dot_table__Fn));
     };
-    if (s->parent_idx == 0) {
+    if (ts->parent_idx == 0) {
       break;
     };
     ts = &(*(v_dot_table__TypeSymbol *)array_get(t->types, ts->parent_idx));
@@ -13242,7 +13242,7 @@ v_dot_table__Table_struct_find_field(v_dot_table__Table *t,
       v_dot_table__Field tmp24 = OPTION_CAST(v_dot_table__Field)(field);
       return opt_ok(&tmp24, sizeof(v_dot_table__Field));
     };
-    if (s->parent_idx == 0) {
+    if (ts->parent_idx == 0) {
       break;
     };
     ts = &(*(v_dot_table__TypeSymbol *)array_get(t->types, ts->parent_idx));
