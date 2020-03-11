@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a182b5c"
+#define V_COMMIT_HASH "bcdb897"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e0c85f8"
+#define V_COMMIT_HASH "a182b5c"
 #endif
 #include <inttypes.h>
 
@@ -19094,7 +19094,9 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
            string_eq(it->name, tos3("sort_with_compare")) ||
            string_eq(it->name, tos3("free")) ||
            string_eq(it->name, tos3("push_many")) ||
-           string_eq(it->name, tos3("trim")))) {
+           string_eq(it->name, tos3("trim")) ||
+           string_eq(it->name, tos3("first")) ||
+           string_eq(it->name, tos3("clone")))) {
         receiver_name = tos3("array");
       };
     };
