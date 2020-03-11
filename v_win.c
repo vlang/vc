@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "630913d"
+#define V_COMMIT_HASH "0839645"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "de55a26"
+#define V_COMMIT_HASH "630913d"
 #endif
 #include <inttypes.h>
 
@@ -7997,6 +7997,7 @@ void strings__Builder_write(strings__Builder *b, string s) {
 }
 void strings__Builder_go_back(strings__Builder *b, int n) {
   array_trim(&/* ? */ b->buf, b->buf.len - n);
+  b->len -= n;
 }
 void strings__Builder_writeln(strings__Builder *b, string s) {
   array_push_many(&/* ? */ b->buf, s.str, s.len);
@@ -15701,6 +15702,9 @@ string v_dot_ast__FnDecl_str(v_dot_ast__FnDecl *node, v_dot_table__Table *t) {
   for (int i = 0; i < tmp1.len; i++) {
     v_dot_ast__Arg arg = ((v_dot_ast__Arg *)tmp1.data)[i];
 
+    if (node->is_method && i == 0) {
+      continue;
+    };
     bool is_last_arg = i == node->args.len - 1;
     bool should_add_type =
         is_last_arg ||
@@ -18573,18 +18577,21 @@ void v_dot_gen__Gen_gen_assign_stmt(v_dot_gen__Gen *g,
     for (int i = 0; i < tmp29.len; i++) {
       v_dot_ast__Ident ident = ((v_dot_ast__Ident *)tmp29.data)[i];
 
+      if (ident.kind == v_dot_ast__v_dot_ast__IdentKind_blank_ident) {
+        continue;
+      };
       v_dot_ast__IdentVar ident_var_info =
           v_dot_ast__Ident_var_info(&/* ? */ ident);
       string styp = v_dot_gen__Gen_typ(&/* ? */ *g, ident_var_info.typ);
-      if (ident.kind == v_dot_ast__v_dot_ast__IdentKind_blank_ident) {
-        v_dot_gen__Gen_writeln(g, _STR("{ %.*s _ = %.*s.arg%d};", styp.len,
-                                       styp.str, mr_var_name.len,
-                                       mr_var_name.str, i));
-      } else {
-        v_dot_gen__Gen_writeln(g, _STR("%.*s %.*s = %.*s.arg%d;", styp.len,
-                                       styp.str, ident.name.len, ident.name.str,
-                                       mr_var_name.len, mr_var_name.str, i));
+      if (assign_stmt.op == v_dot_token__v_dot_token__Kind_decl_assign) {
+        v_dot_gen__Gen_write(g, _STR("%.*s ", styp.len, styp.str));
       };
+      v_dot_gen__Gen_expr(g, /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
+                              .obj = memdup(&(v_dot_ast__Ident[]){ident},
+                                            sizeof(v_dot_ast__Ident)),
+                              .typ = SumType_v_dot_ast__Expr_Ident});
+      v_dot_gen__Gen_writeln(
+          g, _STR(" = %.*s.arg%d;", mr_var_name.len, mr_var_name.str, i));
     };
   } else {
     array_v_dot_ast__Ident tmp30 = assign_stmt.left;
@@ -18613,8 +18620,14 @@ void v_dot_gen__Gen_gen_assign_stmt(v_dot_gen__Gen *g,
           v_dot_gen__Gen_write(g, tos3("}"));
         };
       } else {
-        v_dot_gen__Gen_write(g, _STR("%.*s %.*s = ", styp.len, styp.str,
-                                     ident.name.len, ident.name.str));
+        if (assign_stmt.op == v_dot_token__v_dot_token__Kind_decl_assign) {
+          v_dot_gen__Gen_write(g, _STR("%.*s ", styp.len, styp.str));
+        };
+        v_dot_gen__Gen_expr(g, /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
+                                .obj = memdup(&(v_dot_ast__Ident[]){ident},
+                                              sizeof(v_dot_ast__Ident)),
+                                .typ = SumType_v_dot_ast__Expr_Ident});
+        v_dot_gen__Gen_write(g, tos3(" = "));
         v_dot_gen__Gen_expr(g, val);
       };
       v_dot_gen__Gen_writeln(g, tos3(";"));
@@ -19201,7 +19214,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp75 = 0;
     bool tmp76 =
-        map_get(/*cgen.v : 949*/ g->table->type_idxs, builtin_name, &tmp75);
+        map_get(/*cgen.v : 955*/ g->table->type_idxs, builtin_name, &tmp75);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -19335,7 +19348,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp99 = 0;
     bool tmp100 =
-        map_get(/*cgen.v : 1034*/ g->table->type_idxs, node.name, &tmp99);
+        map_get(/*cgen.v : 1040*/ g->table->type_idxs, node.name, &tmp99);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
