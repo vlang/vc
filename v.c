@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b9955ae"
+#define V_COMMIT_HASH "9e14850"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7342dfd"
+#define V_COMMIT_HASH "b9955ae"
 #endif
 #include <inttypes.h>
 
@@ -13019,7 +13019,12 @@ string v_dot_table__Table_type_to_str(v_dot_table__Table *table,
     res = string_add(res, tos3(")"));
     return res;
   };
-  string res = string_replace(sym->name, tos3("array_"), tos3("[]"));
+  string res = sym->name;
+  if (sym->kind == v_dot_table__v_dot_table__Kind_array) {
+    res = string_replace(res, tos3("array_"), tos3("[]"));
+  } else if (sym->kind == v_dot_table__v_dot_table__Kind_map) {
+    res = string_replace(res, tos3("map_string_"), tos3("map[string]"));
+  };
   if (string_contains(res, tos3("."))) {
     array_string vals = string_split(res, tos3("."));
     if (vals.len > 2) {
