@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7342dfd"
+#define V_COMMIT_HASH "b9955ae"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "22e558a"
+#define V_COMMIT_HASH "7342dfd"
 #endif
 #include <inttypes.h>
 
@@ -18749,8 +18749,8 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
     v_dot_gen__Gen_write(g, tos3("/* as */"));
   } else if (tmp39.typ == SumType_v_dot_ast__Expr_AssignExpr) {
     v_dot_ast__AssignExpr *it = (v_dot_ast__AssignExpr *)tmp39.obj;
-    v_dot_gen__Gen_expr(g, it->left);
     g->is_assign_expr = 1;
+    v_dot_gen__Gen_expr(g, it->left);
     if (!g->is_array_set) {
       v_dot_gen__Gen_write(g, _STR(" %.*s ", v_dot_token__Kind_str(it->op).len,
                                    v_dot_token__Kind_str(it->op).str));
