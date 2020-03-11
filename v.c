@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9e14850"
+#define V_COMMIT_HASH "75db3e4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b9955ae"
+#define V_COMMIT_HASH "9e14850"
 #endif
 #include <inttypes.h>
 
@@ -18924,6 +18924,10 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
     } else {
       v_dot_gen__Gen_write(g, tos3("."));
     };
+    if (it->expr_type == 0) {
+      v_dot_gen__verror(_STR("cgen: SelectorExpr typ=0 field=%.*s",
+                             it->field.len, it->field.str));
+    };
     v_dot_gen__Gen_write(g, it->field);
   } else if (tmp39.typ == SumType_v_dot_ast__Expr_Type) {
     v_dot_ast__Type *it = (v_dot_ast__Type *)tmp39.obj;
@@ -19120,7 +19124,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp77 = 0;
     bool tmp78 =
-        map_get(/*cgen.v : 979*/ g->table->type_idxs, builtin_name, &tmp77);
+        map_get(/*cgen.v : 981*/ g->table->type_idxs, builtin_name, &tmp77);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -19254,7 +19258,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp101 = 0;
     bool tmp102 =
-        map_get(/*cgen.v : 1064*/ g->table->type_idxs, node.name, &tmp101);
+        map_get(/*cgen.v : 1066*/ g->table->type_idxs, node.name, &tmp101);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -19935,7 +19939,7 @@ void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
   };
   int tmp57 = 0;
   bool tmp58 =
-      map_get(/*checker.v : 361*/ c->table->type_idxs, tos3("Option"), &tmp57);
+      map_get(/*checker.v : 363*/ c->table->type_idxs, tos3("Option"), &tmp57);
 
   if (exp_is_optional &&
       (v_dot_table__type_idx((*(v_dot_table__Type *)array_get(got_types, 0))) ==
@@ -20587,6 +20591,8 @@ v_dot_checker__Checker_index_expr(v_dot_checker__Checker *c,
         return v_dot_table__type_to_ptr(v_dot_table__byte_type);
       };
       return v_dot_table__byte_type;
+    } else if (v_dot_table__type_is_ptr(typ)) {
+      return v_dot_table__type_deref(typ);
     };
   };
   return typ;
