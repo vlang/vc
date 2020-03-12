@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "99398ba"
+#define V_COMMIT_HASH "b750f1d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bb5034f"
+#define V_COMMIT_HASH "99398ba"
 #endif
 #include <inttypes.h>
 
@@ -642,6 +642,7 @@ typedef array array_char;
 typedef array array_voidptr;
 typedef struct map map;
 typedef struct KeyValue KeyValue;
+typedef struct DenseArray DenseArray;
 typedef struct Option Option;
 typedef struct SortedMap SortedMap;
 typedef struct mapnode mapnode;
@@ -1056,6 +1057,17 @@ struct array {
   int element_size;
 };
 
+struct KeyValue {
+  string key;
+  void *value;
+};
+
+struct DenseArray {
+  KeyValue *data;
+  u32 cap;
+  u32 size;
+};
+
 struct map {
   int value_bytes;
   u32 range_cap;
@@ -1137,11 +1149,6 @@ struct compiler__WindowsKit {
 
 struct v_dot_ast__GotoStmt {
   string name;
-};
-
-struct KeyValue {
-  string key;
-  void *value;
 };
 
 struct v_dot_ast__CharLiteral {
@@ -26721,8 +26728,9 @@ string compiler__V_type_definitions(compiler__V *v) {
       0, 0, sizeof(compiler__Type),
       EMPTY_ARRAY_OF_ELEMS(compiler__Type, 0){TCCSKIP(0)});
   array_string builtins = new_array_from_c_array(
-      4, 4, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 4){tos3("string"), tos3("array"),
+      6, 6, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 6){tos3("string"), tos3("array"),
+                                      tos3("KeyValue"), tos3("DenseArray"),
                                       tos3("map"), tos3("Option")});
   array_string tmp38 = builtins;
   for (int tmp39 = 0; tmp39 < tmp38.len; tmp39++) {
