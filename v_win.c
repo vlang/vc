@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "853bb4c"
+#define V_COMMIT_HASH "92d6eec"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "dfaba54"
+#define V_COMMIT_HASH "853bb4c"
 #endif
 #include <inttypes.h>
 
@@ -2373,6 +2373,7 @@ struct v_dot_ast__MethodCallExpr {
   v_dot_table__Type receiver_type;
   v_dot_table__Type return_type;
   array_v_dot_table__Type arg_types;
+  array_v_dot_table__Type expr_types;
 };
 
 struct v_dot_ast__File {
@@ -2388,6 +2389,7 @@ struct v_dot_ast__CallExpr {
   string name;
   array_v_dot_ast__Expr args;
   array_v_dot_table__Type arg_types;
+  array_v_dot_table__Type expr_types;
   bool is_c;
   array_bool muts;
   v_dot_ast__OrExpr or_block;
@@ -2454,6 +2456,7 @@ struct v_dot_checker__Checker {
   array_string errors;
   v_dot_table__Type expected_type;
   v_dot_table__Type fn_return_type;
+  bool is_amp;
 };
 
 struct compiler__TypeNode {
@@ -3516,7 +3519,8 @@ void v_dot_gen__Gen_index_expr(v_dot_gen__Gen *g, v_dot_ast__IndexExpr node);
 void v_dot_gen__Gen_const_decl(v_dot_gen__Gen *g, v_dot_ast__ConstDecl node);
 void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g, array_v_dot_ast__Expr args,
                               array_bool muts,
-                              array_v_dot_table__Type arg_types);
+                              array_v_dot_table__Type arg_types,
+                              array_v_dot_table__Type expr_types);
 void v_dot_gen__verror(string s);
 void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g);
 void v_dot_gen__Gen_write_sorted_types(v_dot_gen__Gen *g);
@@ -15940,6 +15944,7 @@ v_dot_ast__CallExpr v_dot_parser__Parser_call_expr(v_dot_parser__Parser *p,
       .is_c = is_c,
       .or_block = (v_dot_ast__OrExpr){.stmts = or_stmts},
       .arg_types = new_array(0, 1, sizeof(v_dot_table__Type)),
+      .expr_types = new_array(0, 1, sizeof(v_dot_table__Type)),
   };
   return node;
 }
@@ -17558,7 +17563,8 @@ v_dot_ast__Expr v_dot_parser__Parser_dot_expr(v_dot_parser__Parser *p,
         .muts = muts,
         .pos = pos,
         .or_block = (v_dot_ast__OrExpr){.stmts = or_stmts},
-        .arg_types = new_array(0, 1, sizeof(v_dot_table__Type))};
+        .arg_types = new_array(0, 1, sizeof(v_dot_table__Type)),
+        .expr_types = new_array(0, 1, sizeof(v_dot_table__Type))};
     v_dot_ast__Expr node = (v_dot_ast__Expr){EMPTY_STRUCT_INITIALIZATION};
     node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
         .obj = memdup(&(v_dot_ast__MethodCallExpr[]){mcall_expr},
@@ -18952,7 +18958,8 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
       v_dot_gen__Gen_expr(g, (*(v_dot_ast__Expr *)array_get(it->args, 0)));
       v_dot_gen__Gen_write(g, tos3("))"));
     } else {
-      v_dot_gen__Gen_call_args(g, it->args, it->muts, it->arg_types);
+      v_dot_gen__Gen_call_args(g, it->args, it->muts, it->arg_types,
+                               it->expr_types);
       v_dot_gen__Gen_write(g, tos3(")"));
     };
     g->is_c_call = 0;
@@ -19169,12 +19176,16 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
     if (v_dot_table__type_is_ptr(it->receiver_type) &&
         !v_dot_table__type_is_ptr(it->expr_type)) {
       v_dot_gen__Gen_write(g, tos3("&"));
+    } else if (!v_dot_table__type_is_ptr(it->receiver_type) &&
+               v_dot_table__type_is_ptr(it->expr_type)) {
+      v_dot_gen__Gen_write(g, tos3("/*rec*/*"));
     };
     v_dot_gen__Gen_expr(g, it->expr);
     if (it->args.len > 0) {
       v_dot_gen__Gen_write(g, tos3(", "));
     };
-    v_dot_gen__Gen_call_args(g, it->args, it->muts, it->arg_types);
+    v_dot_gen__Gen_call_args(g, it->args, it->muts, it->arg_types,
+                             it->expr_types);
     v_dot_gen__Gen_write(g, tos3(")"));
   } else if (tmp43.typ == SumType_v_dot_ast__Expr_None) {
     v_dot_ast__None *it = (v_dot_ast__None *)tmp43.obj;
@@ -19414,18 +19425,26 @@ void v_dot_gen__Gen_const_decl(v_dot_gen__Gen *g, v_dot_ast__ConstDecl node) {
 }
 void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g, array_v_dot_ast__Expr args,
                               array_bool muts,
-                              array_v_dot_table__Type arg_types) {
+                              array_v_dot_table__Type arg_types,
+                              array_v_dot_table__Type expr_types) {
   array_v_dot_ast__Expr tmp81 = args;
   for (int i = 0; i < tmp81.len; i++) {
     v_dot_ast__Expr expr = ((v_dot_ast__Expr *)tmp81.data)[i];
 
     if (arg_types.len > 0) {
       bool arg_is_ptr = v_dot_table__type_is_ptr(
-          (*(v_dot_table__Type *)array_get(arg_types, i)));
+                            (*(v_dot_table__Type *)array_get(arg_types, i))) ||
+                        (*(v_dot_table__Type *)array_get(arg_types, i)) ==
+                            v_dot_table__voidptr_type_idx;
+      bool expr_is_ptr = i < expr_types.len &&
+                         v_dot_table__type_is_ptr(
+                             (*(v_dot_table__Type *)array_get(expr_types, i)));
       if ((*(bool *)array_get(muts, i)) && !arg_is_ptr) {
         v_dot_gen__Gen_write(g, tos3("&/*mut*/"));
-      } else if (arg_is_ptr) {
+      } else if (arg_is_ptr && !expr_is_ptr) {
         v_dot_gen__Gen_write(g, tos3("&/*q*/"));
+      } else if (!arg_is_ptr && expr_is_ptr) {
+        v_dot_gen__Gen_write(g, tos3("*/*d*/"));
       };
     };
     v_dot_gen__Gen_expr(g, expr);
@@ -19439,19 +19458,19 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
   array_v_dot_table__TypeSymbol builtin_types = new_array_from_c_array(
       0, 0, sizeof(v_dot_table__TypeSymbol),
       EMPTY_ARRAY_OF_ELEMS(v_dot_table__TypeSymbol, 0){TCCSKIP(0)});
-  array_string tmp86 = v_dot_gen__builtins;
-  for (int tmp87 = 0; tmp87 < tmp86.len; tmp87++) {
-    string builtin_name = ((string *)tmp86.data)[tmp87];
+  array_string tmp90 = v_dot_gen__builtins;
+  for (int tmp91 = 0; tmp91 < tmp90.len; tmp91++) {
+    string builtin_name = ((string *)tmp90.data)[tmp91];
 
-    int tmp89 = 0;
-    bool tmp90 =
-        map_get(/*cgen.v : 1054*/ g->table->type_idxs, builtin_name, &tmp89);
+    int tmp93 = 0;
+    bool tmp94 =
+        map_get(/*cgen.v : 1064*/ g->table->type_idxs, builtin_name, &tmp93);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
               tmp_typ=v_dot_table__TypeSymbol*/
-           (*(v_dot_table__TypeSymbol *)array_get(g->table->types, tmp89))),
-          tmp88, v_dot_table__TypeSymbol);
+           (*(v_dot_table__TypeSymbol *)array_get(g->table->types, tmp93))),
+          tmp92, v_dot_table__TypeSymbol);
   };
   v_dot_gen__Gen_write_types(g, builtin_types);
 }
@@ -19459,17 +19478,17 @@ void v_dot_gen__Gen_write_sorted_types(v_dot_gen__Gen *g) {
   array_v_dot_table__TypeSymbol types = new_array_from_c_array(
       0, 0, sizeof(v_dot_table__TypeSymbol),
       EMPTY_ARRAY_OF_ELEMS(v_dot_table__TypeSymbol, 0){TCCSKIP(0)});
-  array_v_dot_table__TypeSymbol tmp93 = g->table->types;
-  for (int tmp94 = 0; tmp94 < tmp93.len; tmp94++) {
+  array_v_dot_table__TypeSymbol tmp97 = g->table->types;
+  for (int tmp98 = 0; tmp98 < tmp97.len; tmp98++) {
     v_dot_table__TypeSymbol typ =
-        ((v_dot_table__TypeSymbol *)tmp93.data)[tmp94];
+        ((v_dot_table__TypeSymbol *)tmp97.data)[tmp98];
 
     if (!((_IN(string, (typ.name), v_dot_gen__builtins)))) {
       _PUSH(&types,
             (/*typ = array_v_dot_table__TypeSymbol
                 tmp_typ=v_dot_table__TypeSymbol*/
              typ),
-            tmp95, v_dot_table__TypeSymbol);
+            tmp99, v_dot_table__TypeSymbol);
     };
   };
   array_v_dot_table__TypeSymbol types_sorted =
@@ -19481,22 +19500,22 @@ void v_dot_gen__Gen_write_sorted_types(v_dot_gen__Gen *g) {
 }
 void v_dot_gen__Gen_write_types(v_dot_gen__Gen *g,
                                 array_v_dot_table__TypeSymbol types) {
-  array_v_dot_table__TypeSymbol tmp96 = types;
-  for (int tmp97 = 0; tmp97 < tmp96.len; tmp97++) {
+  array_v_dot_table__TypeSymbol tmp100 = types;
+  for (int tmp101 = 0; tmp101 < tmp100.len; tmp101++) {
     v_dot_table__TypeSymbol typ =
-        ((v_dot_table__TypeSymbol *)tmp96.data)[tmp97];
+        ((v_dot_table__TypeSymbol *)tmp100.data)[tmp101];
 
-    v_dot_table__TypeInfo tmp98 = typ.info;
+    v_dot_table__TypeInfo tmp102 = typ.info;
 
-    if (tmp98.typ == SumType_v_dot_table__TypeInfo_Struct) {
-      v_dot_table__Struct *it = (v_dot_table__Struct *)tmp98.obj;
+    if (tmp102.typ == SumType_v_dot_table__TypeInfo_Struct) {
+      v_dot_table__Struct *it = (v_dot_table__Struct *)tmp102.obj;
       v_dot_table__Struct info = *(v_dot_table__Struct *)typ.info.obj;
       string name = string_replace(typ.name, tos3("."), tos3("__"));
       strings__Builder_writeln(&/* ? */ g->definitions,
                                _STR("struct %.*s {", name.len, name.str));
-      array_v_dot_table__Field tmp99 = info.fields;
-      for (int tmp100 = 0; tmp100 < tmp99.len; tmp100++) {
-        v_dot_table__Field field = ((v_dot_table__Field *)tmp99.data)[tmp100];
+      array_v_dot_table__Field tmp103 = info.fields;
+      for (int tmp104 = 0; tmp104 < tmp103.len; tmp104++) {
+        v_dot_table__Field field = ((v_dot_table__Field *)tmp103.data)[tmp104];
 
         string type_name = v_dot_gen__Gen_typ(&/* ? */ *g, field.typ);
         strings__Builder_writeln(&/* ? */ g->definitions,
@@ -19516,29 +19535,29 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
   v_dot_depgraph__DepGraph *dep_graph = v_dot_depgraph__new_dep_graph();
   array_string type_names = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-  array_v_dot_table__TypeSymbol tmp101 = types;
-  for (int tmp102 = 0; tmp102 < tmp101.len; tmp102++) {
+  array_v_dot_table__TypeSymbol tmp105 = types;
+  for (int tmp106 = 0; tmp106 < tmp105.len; tmp106++) {
     v_dot_table__TypeSymbol typ =
-        ((v_dot_table__TypeSymbol *)tmp101.data)[tmp102];
+        ((v_dot_table__TypeSymbol *)tmp105.data)[tmp106];
 
     _PUSH(&type_names, (/*typ = array_string   tmp_typ=string*/ typ.name),
-          tmp103, string);
+          tmp107, string);
   };
-  array_v_dot_table__TypeSymbol tmp104 = types;
-  for (int tmp105 = 0; tmp105 < tmp104.len; tmp105++) {
+  array_v_dot_table__TypeSymbol tmp108 = types;
+  for (int tmp109 = 0; tmp109 < tmp108.len; tmp109++) {
     v_dot_table__TypeSymbol t =
-        ((v_dot_table__TypeSymbol *)tmp104.data)[tmp105];
+        ((v_dot_table__TypeSymbol *)tmp108.data)[tmp109];
 
     array_string field_deps = new_array_from_c_array(
         0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
-    v_dot_table__TypeInfo tmp106 = t.info;
+    v_dot_table__TypeInfo tmp110 = t.info;
 
-    if (tmp106.typ == SumType_v_dot_table__TypeInfo_Struct) {
-      v_dot_table__Struct *it = (v_dot_table__Struct *)tmp106.obj;
+    if (tmp110.typ == SumType_v_dot_table__TypeInfo_Struct) {
+      v_dot_table__Struct *it = (v_dot_table__Struct *)tmp110.obj;
       v_dot_table__Struct info = *(v_dot_table__Struct *)t.info.obj;
-      array_v_dot_table__Field tmp107 = info.fields;
-      for (int tmp108 = 0; tmp108 < tmp107.len; tmp108++) {
-        v_dot_table__Field field = ((v_dot_table__Field *)tmp107.data)[tmp108];
+      array_v_dot_table__Field tmp111 = info.fields;
+      for (int tmp112 = 0; tmp112 < tmp111.len; tmp112++) {
+        v_dot_table__Field field = ((v_dot_table__Field *)tmp111.data)[tmp112];
 
         string dep =
             v_dot_table__Table_get_type_symbol(&/* ? */ *g->table, field.typ)
@@ -19549,7 +19568,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
           continue;
         };
         _PUSH(&field_deps, (/*typ = array_string   tmp_typ=string*/ dep),
-              tmp109, string);
+              tmp113, string);
       };
     } else // default:
     {
@@ -19573,35 +19592,35 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
   array_v_dot_table__TypeSymbol types_sorted = new_array_from_c_array(
       0, 0, sizeof(v_dot_table__TypeSymbol),
       EMPTY_ARRAY_OF_ELEMS(v_dot_table__TypeSymbol, 0){TCCSKIP(0)});
-  array_v_dot_depgraph__DepGraphNode tmp110 = dep_graph_sorted->nodes;
-  for (int tmp111 = 0; tmp111 < tmp110.len; tmp111++) {
+  array_v_dot_depgraph__DepGraphNode tmp114 = dep_graph_sorted->nodes;
+  for (int tmp115 = 0; tmp115 < tmp114.len; tmp115++) {
     v_dot_depgraph__DepGraphNode node =
-        ((v_dot_depgraph__DepGraphNode *)tmp110.data)[tmp111];
+        ((v_dot_depgraph__DepGraphNode *)tmp114.data)[tmp115];
 
-    int tmp113 = 0;
-    bool tmp114 =
-        map_get(/*cgen.v : 1139*/ g->table->type_idxs, node.name, &tmp113);
+    int tmp117 = 0;
+    bool tmp118 =
+        map_get(/*cgen.v : 1149*/ g->table->type_idxs, node.name, &tmp117);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
               tmp_typ=v_dot_table__TypeSymbol*/
-           (*(v_dot_table__TypeSymbol *)array_get(g->table->types, tmp113))),
-          tmp112, v_dot_table__TypeSymbol);
+           (*(v_dot_table__TypeSymbol *)array_get(g->table->types, tmp117))),
+          tmp116, v_dot_table__TypeSymbol);
   };
   return types_sorted;
 }
 string v_dot_gen__op_to_fn_name(string name) {
-  string tmp117 = name;
+  string tmp121 = name;
 
-  return ((string_eq(tmp117, tos3("+")))
+  return ((string_eq(tmp121, tos3("+")))
               ? (tos3("_op_plus"))
-              : ((string_eq(tmp117, tos3("-")))
+              : ((string_eq(tmp121, tos3("-")))
                      ? (tos3("_op_minus"))
-                     : ((string_eq(tmp117, tos3("*")))
+                     : ((string_eq(tmp121, tos3("*")))
                             ? (tos3("_op_mul"))
-                            : ((string_eq(tmp117, tos3("/")))
+                            : ((string_eq(tmp121, tos3("/")))
                                    ? (tos3("_op_div"))
-                                   : ((string_eq(tmp117, tos3("%")))
+                                   : ((string_eq(tmp121, tos3("%")))
                                           ? (tos3("_op_mod"))
                                           : (_STR("bad op %.*s", name.len,
                                                   name.str)))))));
@@ -19788,11 +19807,10 @@ void v_dot_gen__JsGen_expr(v_dot_gen__JsGen *g, v_dot_ast__Expr node) {
   };
 }
 v_dot_checker__Checker v_dot_checker__new_checker(v_dot_table__Table *table) {
-  return (v_dot_checker__Checker){
-      .table = table,
-      .nr_errors = 0,
-      .errors = new_array(0, 1, sizeof(string)),
-  };
+  return (v_dot_checker__Checker){.table = table,
+                                  .nr_errors = 0,
+                                  .errors = new_array(0, 1, sizeof(string)),
+                                  .is_amp = 0};
 }
 void v_dot_checker__Checker_check(v_dot_checker__Checker *c,
                                   v_dot_ast__File ast_file) {
@@ -19861,6 +19879,9 @@ v_dot_checker__Checker_check_struct_init(v_dot_checker__Checker *c,
   } else if (tmp12 == v_dot_table__v_dot_table__Kind_struct_) {
     v_dot_table__Struct info = *(v_dot_table__Struct *)typ_sym->info.obj;
     if (struct_init.fields.len == 0) {
+      if (c->is_amp) {
+        return v_dot_table__type_to_ptr(struct_init.typ);
+      };
       return struct_init.typ;
     };
     if (struct_init.exprs.len > info.fields.len) {
@@ -19910,6 +19931,10 @@ v_dot_checker__Checker_check_struct_init(v_dot_checker__Checker *c,
     };
   } else // default:
   {
+  };
+  if (c->is_amp) {
+    println(tos3("XAXAXAX"));
+    return v_dot_table__type_to_ptr(struct_init.typ);
   };
   return struct_init.typ;
 }
@@ -20077,6 +20102,9 @@ v_dot_checker__Checker_call_expr(v_dot_checker__Checker *c,
   array_v_dot_table__Type arg_types = new_array_from_c_array(
       0, 0, sizeof(v_dot_table__Type),
       EMPTY_ARRAY_OF_ELEMS(v_dot_table__Type, 0){TCCSKIP(0)});
+  array_v_dot_table__Type expr_types = new_array_from_c_array(
+      0, 0, sizeof(v_dot_table__Type),
+      EMPTY_ARRAY_OF_ELEMS(v_dot_table__Type, 0){TCCSKIP(0)});
   array_v_dot_ast__Expr tmp28 = call_expr->args;
   for (int i = 0; i < tmp28.len; i++) {
     v_dot_ast__Expr arg_expr = ((v_dot_ast__Expr *)tmp28.data)[i];
@@ -20087,9 +20115,13 @@ v_dot_checker__Checker_call_expr(v_dot_checker__Checker *c,
              : ((*(v_dot_table__Var *)array_get(f.args, i))));
     c->expected_type = arg.typ;
     v_dot_table__Type typ = v_dot_checker__Checker_expr(c, arg_expr);
-    _PUSH(&arg_types,
+    _PUSH(&expr_types,
           (/*typ = array_v_dot_table__Type   tmp_typ=v_dot_table__Type*/ typ),
           tmp33, v_dot_table__Type);
+    _PUSH(
+        &arg_types,
+        (/*typ = array_v_dot_table__Type   tmp_typ=v_dot_table__Type*/ arg.typ),
+        tmp34, v_dot_table__Type);
     v_dot_table__TypeSymbol *typ_sym =
         v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, typ);
     v_dot_table__TypeSymbol *arg_typ_sym =
@@ -20118,6 +20150,7 @@ v_dot_checker__Checker_call_expr(v_dot_checker__Checker *c,
     };
   };
   call_expr->arg_types = arg_types;
+  call_expr->expr_types = expr_types;
   return f.return_type;
 }
 v_dot_table__Type v_dot_checker__Checker_method_call_expr(
@@ -20129,6 +20162,9 @@ v_dot_table__Type v_dot_checker__Checker_method_call_expr(
       v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, typ);
   string name = method_call_expr->name;
   array_v_dot_table__Type arg_types = new_array_from_c_array(
+      0, 0, sizeof(v_dot_table__Type),
+      EMPTY_ARRAY_OF_ELEMS(v_dot_table__Type, 0){TCCSKIP(0)});
+  array_v_dot_table__Type expr_types = new_array_from_c_array(
       0, 0, sizeof(v_dot_table__Type),
       EMPTY_ARRAY_OF_ELEMS(v_dot_table__Type, 0){TCCSKIP(0)});
   if (typ_sym->kind == v_dot_table__v_dot_table__Kind_array &&
@@ -20156,11 +20192,11 @@ v_dot_table__Type v_dot_checker__Checker_method_call_expr(
     method_call_expr->return_type = info.elem_type;
     return info.elem_type;
   };
-  Option_v_dot_table__Fn tmp36 =
+  Option_v_dot_table__Fn tmp37 =
       v_dot_table__Table_type_find_method(&/* ? */ *c->table, typ_sym, name);
 
-  if (tmp36.ok) {
-    v_dot_table__Fn method = *(v_dot_table__Fn *)tmp36.data;
+  if (tmp37.ok) {
+    v_dot_table__Fn method = *(v_dot_table__Fn *)tmp37.data;
     if (method_call_expr->args.len < method.args.len - 1) {
       v_dot_checker__Checker_error(
           c,
@@ -20176,22 +20212,26 @@ v_dot_table__Type v_dot_checker__Checker_method_call_expr(
                method_call_expr->args.len, method.args.len),
           method_call_expr->pos);
     };
-    array_v_dot_ast__Expr tmp37 = method_call_expr->args;
-    for (int i = 0; i < tmp37.len; i++) {
-      v_dot_ast__Expr arg_expr = ((v_dot_ast__Expr *)tmp37.data)[i];
+    array_v_dot_ast__Expr tmp38 = method_call_expr->args;
+    for (int i = 0; i < tmp38.len; i++) {
+      v_dot_ast__Expr arg_expr = ((v_dot_ast__Expr *)tmp38.data)[i];
 
       c->expected_type =
           (*(v_dot_table__Var *)array_get(method.args, i + 1)).typ;
       _PUSH(&arg_types,
             (/*typ = array_v_dot_table__Type   tmp_typ=v_dot_table__Type*/ c
                  ->expected_type),
-            tmp40, v_dot_table__Type);
-      v_dot_checker__Checker_expr(c, arg_expr);
+            tmp41, v_dot_table__Type);
+      _PUSH(&expr_types,
+            (/*typ = array_v_dot_table__Type   tmp_typ=v_dot_table__Type*/
+             v_dot_checker__Checker_expr(c, arg_expr)),
+            tmp42, v_dot_table__Type);
     };
     method_call_expr->receiver_type =
         (*(v_dot_table__Var *)array_get(method.args, 0)).typ;
     method_call_expr->return_type = method.return_type;
     method_call_expr->arg_types = arg_types;
+    method_call_expr->expr_types = expr_types;
     return method.return_type;
   };
   v_dot_checker__Checker_error(c,
@@ -20219,11 +20259,11 @@ v_dot_checker__Checker_selector_expr(v_dot_checker__Checker *c,
       return v_dot_table__int_type;
     };
   };
-  Option_v_dot_table__Field tmp43 = v_dot_table__Table_struct_find_field(
+  Option_v_dot_table__Field tmp45 = v_dot_table__Table_struct_find_field(
       &/* ? */ *c->table, typ_sym, field_name);
 
-  if (tmp43.ok) {
-    v_dot_table__Field field = *(v_dot_table__Field *)tmp43.data;
+  if (tmp45.ok) {
+    v_dot_table__Field field = *(v_dot_table__Field *)tmp45.data;
     return field.typ;
   };
   if (typ_sym->kind != v_dot_table__v_dot_table__Kind_struct_) {
@@ -20261,24 +20301,24 @@ void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
   array_v_dot_table__Type got_types = new_array_from_c_array(
       0, 0, sizeof(v_dot_table__Type),
       EMPTY_ARRAY_OF_ELEMS(v_dot_table__Type, 0){TCCSKIP(0)});
-  array_v_dot_ast__Expr tmp44 = return_stmt.exprs;
-  for (int tmp45 = 0; tmp45 < tmp44.len; tmp45++) {
-    v_dot_ast__Expr expr = ((v_dot_ast__Expr *)tmp44.data)[tmp45];
+  array_v_dot_ast__Expr tmp46 = return_stmt.exprs;
+  for (int tmp47 = 0; tmp47 < tmp46.len; tmp47++) {
+    v_dot_ast__Expr expr = ((v_dot_ast__Expr *)tmp46.data)[tmp47];
 
     v_dot_table__Type typ = v_dot_checker__Checker_expr(c, expr);
     _PUSH(&got_types,
           (/*typ = array_v_dot_table__Type   tmp_typ=v_dot_table__Type*/ typ),
-          tmp46, v_dot_table__Type);
+          tmp48, v_dot_table__Type);
   };
-  int tmp49 = 0;
-  bool tmp50 =
-      map_get(/*checker.v : 368*/ c->table->type_idxs, tos3("Option"), &tmp49);
+  int tmp51 = 0;
+  bool tmp52 =
+      map_get(/*checker.v : 381*/ c->table->type_idxs, tos3("Option"), &tmp51);
 
   if (exp_is_optional &&
       (v_dot_table__type_idx((*(v_dot_table__Type *)array_get(got_types, 0))) ==
            v_dot_table__none_type_idx ||
        v_dot_table__type_idx((*(v_dot_table__Type *)array_get(got_types, 0))) ==
-           tmp49)) {
+           tmp51)) {
 
     return;
   };
@@ -20292,9 +20332,9 @@ void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
              array_v_dot_table__Type_str(got_types).str),
         return_stmt.pos);
   };
-  array_v_dot_table__Type tmp51 = expected_types;
-  for (int i = 0; i < tmp51.len; i++) {
-    v_dot_table__Type exp_typ = ((v_dot_table__Type *)tmp51.data)[i];
+  array_v_dot_table__Type tmp53 = expected_types;
+  for (int i = 0; i < tmp53.len; i++) {
+    v_dot_table__Type exp_typ = ((v_dot_table__Type *)tmp53.data)[i];
 
     v_dot_table__Type got_typ = (*(v_dot_table__Type *)array_get(got_types, i));
     if (!v_dot_table__Table_check(&/* ? */ *c->table, got_typ, exp_typ)) {
@@ -20326,8 +20366,8 @@ void v_dot_checker__Checker_assign_stmt(v_dot_checker__Checker *c,
     };
     v_dot_ast__Scope *scope = v_dot_ast__Scope_innermost(
         &/* ? */ *c->file.scope, assign_stmt->pos.pos);
-    array_v_dot_ast__Ident tmp56 = assign_stmt->left;
-    for (int i = 0; i < tmp56.len; i++) {
+    array_v_dot_ast__Ident tmp58 = assign_stmt->left;
+    for (int i = 0; i < tmp58.len; i++) {
 
       v_dot_ast__Ident ident =
           (*(v_dot_ast__Ident *)array_get(assign_stmt->left, i));
@@ -20373,8 +20413,8 @@ void v_dot_checker__Checker_assign_stmt(v_dot_checker__Checker *c,
     };
     v_dot_ast__Scope *scope = v_dot_ast__Scope_innermost(
         &/* ? */ *c->file.scope, assign_stmt->pos.pos);
-    array_v_dot_ast__Ident tmp63 = assign_stmt->left;
-    for (int i = 0; i < tmp63.len; i++) {
+    array_v_dot_ast__Ident tmp65 = assign_stmt->left;
+    for (int i = 0; i < tmp65.len; i++) {
 
       v_dot_ast__Ident ident =
           (*(v_dot_ast__Ident *)array_get(assign_stmt->left, i));
@@ -20432,9 +20472,9 @@ v_dot_checker__Checker_array_init(v_dot_checker__Checker *c,
   };
   if (array_init->exprs.len > 0 &&
       array_init->elem_type == v_dot_table__void_type) {
-    array_v_dot_ast__Expr tmp68 = array_init->exprs;
-    for (int i = 0; i < tmp68.len; i++) {
-      v_dot_ast__Expr expr = ((v_dot_ast__Expr *)tmp68.data)[i];
+    array_v_dot_ast__Expr tmp70 = array_init->exprs;
+    for (int i = 0; i < tmp70.len; i++) {
+      v_dot_ast__Expr expr = ((v_dot_ast__Expr *)tmp70.data)[i];
 
       v_dot_checker__Checker_expr(c, expr);
       v_dot_table__Type typ = v_dot_checker__Checker_expr(c, expr);
@@ -20459,11 +20499,11 @@ v_dot_checker__Checker_array_init(v_dot_checker__Checker *c,
   } else if (array_init->exprs.len == 1 &&
              array_init->elem_type != v_dot_table__void_type) {
     int fixed_size = 1;
-    v_dot_ast__Expr tmp71 =
+    v_dot_ast__Expr tmp73 =
         (*(v_dot_ast__Expr *)array_get(array_init->exprs, 0));
 
-    if (tmp71.typ == SumType_v_dot_ast__Expr_IntegerLiteral) {
-      v_dot_ast__IntegerLiteral *it = (v_dot_ast__IntegerLiteral *)tmp71.obj;
+    if (tmp73.typ == SumType_v_dot_ast__Expr_IntegerLiteral) {
+      v_dot_ast__IntegerLiteral *it = (v_dot_ast__IntegerLiteral *)tmp73.obj;
       fixed_size = it->val;
     } else // default:
     {
@@ -20479,16 +20519,16 @@ v_dot_checker__Checker_array_init(v_dot_checker__Checker *c,
 }
 void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
                                  v_dot_ast__Stmt node) {
-  v_dot_ast__Stmt tmp72 = node;
+  v_dot_ast__Stmt tmp74 = node;
 
-  if (tmp72.typ == SumType_v_dot_ast__Stmt_AssignStmt) {
-    v_dot_ast__AssignStmt *it = (v_dot_ast__AssignStmt *)tmp72.obj;
+  if (tmp74.typ == SumType_v_dot_ast__Stmt_AssignStmt) {
+    v_dot_ast__AssignStmt *it = (v_dot_ast__AssignStmt *)tmp74.obj;
     v_dot_checker__Checker_assign_stmt(c, it);
-  } else if (tmp72.typ == SumType_v_dot_ast__Stmt_ConstDecl) {
-    v_dot_ast__ConstDecl *it = (v_dot_ast__ConstDecl *)tmp72.obj;
-    array_v_dot_ast__Expr tmp73 = it->exprs;
-    for (int i = 0; i < tmp73.len; i++) {
-      v_dot_ast__Expr expr = ((v_dot_ast__Expr *)tmp73.data)[i];
+  } else if (tmp74.typ == SumType_v_dot_ast__Stmt_ConstDecl) {
+    v_dot_ast__ConstDecl *it = (v_dot_ast__ConstDecl *)tmp74.obj;
+    array_v_dot_ast__Expr tmp75 = it->exprs;
+    for (int i = 0; i < tmp75.len; i++) {
+      v_dot_ast__Expr expr = ((v_dot_ast__Expr *)tmp75.data)[i];
 
       v_dot_ast__Field field = (*(v_dot_ast__Field *)array_get(it->fields, i));
       v_dot_table__Type typ = v_dot_checker__Checker_expr(c, expr);
@@ -20504,57 +20544,57 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
       field.typ = typ;
       array_set(&/*q*/ it->fields, i, &(v_dot_ast__Field[]){field});
     };
-  } else if (tmp72.typ == SumType_v_dot_ast__Stmt_ExprStmt) {
-    v_dot_ast__ExprStmt *it = (v_dot_ast__ExprStmt *)tmp72.obj;
+  } else if (tmp74.typ == SumType_v_dot_ast__Stmt_ExprStmt) {
+    v_dot_ast__ExprStmt *it = (v_dot_ast__ExprStmt *)tmp74.obj;
     v_dot_checker__Checker_expr(c, it->expr);
-  } else if (tmp72.typ == SumType_v_dot_ast__Stmt_FnDecl) {
-    v_dot_ast__FnDecl *it = (v_dot_ast__FnDecl *)tmp72.obj;
+  } else if (tmp74.typ == SumType_v_dot_ast__Stmt_FnDecl) {
+    v_dot_ast__FnDecl *it = (v_dot_ast__FnDecl *)tmp74.obj;
     c->fn_return_type = it->return_type;
-    array_v_dot_ast__Stmt tmp76 = it->stmts;
-    for (int tmp77 = 0; tmp77 < tmp76.len; tmp77++) {
-      v_dot_ast__Stmt stmt = ((v_dot_ast__Stmt *)tmp76.data)[tmp77];
-
-      v_dot_checker__Checker_stmt(c, stmt);
-    };
-  } else if (tmp72.typ == SumType_v_dot_ast__Stmt_ForStmt) {
-    v_dot_ast__ForStmt *it = (v_dot_ast__ForStmt *)tmp72.obj;
-    v_dot_table__Type typ = v_dot_checker__Checker_expr(c, it->cond);
-    if (!it->is_inf &&
-        v_dot_table__type_idx(typ) != v_dot_table__bool_type_idx) {
-      v_dot_checker__Checker_error(c, tos3("non-bool used as for condition"),
-                                   it->pos);
-    };
     array_v_dot_ast__Stmt tmp78 = it->stmts;
     for (int tmp79 = 0; tmp79 < tmp78.len; tmp79++) {
       v_dot_ast__Stmt stmt = ((v_dot_ast__Stmt *)tmp78.data)[tmp79];
 
       v_dot_checker__Checker_stmt(c, stmt);
     };
-  } else if (tmp72.typ == SumType_v_dot_ast__Stmt_ForCStmt) {
-    v_dot_ast__ForCStmt *it = (v_dot_ast__ForCStmt *)tmp72.obj;
-    v_dot_checker__Checker_stmt(c, it->init);
-    v_dot_checker__Checker_expr(c, it->cond);
-    v_dot_checker__Checker_expr(c, it->inc);
+  } else if (tmp74.typ == SumType_v_dot_ast__Stmt_ForStmt) {
+    v_dot_ast__ForStmt *it = (v_dot_ast__ForStmt *)tmp74.obj;
+    v_dot_table__Type typ = v_dot_checker__Checker_expr(c, it->cond);
+    if (!it->is_inf &&
+        v_dot_table__type_idx(typ) != v_dot_table__bool_type_idx) {
+      v_dot_checker__Checker_error(c, tos3("non-bool used as for condition"),
+                                   it->pos);
+    };
     array_v_dot_ast__Stmt tmp80 = it->stmts;
     for (int tmp81 = 0; tmp81 < tmp80.len; tmp81++) {
       v_dot_ast__Stmt stmt = ((v_dot_ast__Stmt *)tmp80.data)[tmp81];
 
       v_dot_checker__Checker_stmt(c, stmt);
     };
-  } else if (tmp72.typ == SumType_v_dot_ast__Stmt_ForInStmt) {
-    v_dot_ast__ForInStmt *it = (v_dot_ast__ForInStmt *)tmp72.obj;
+  } else if (tmp74.typ == SumType_v_dot_ast__Stmt_ForCStmt) {
+    v_dot_ast__ForCStmt *it = (v_dot_ast__ForCStmt *)tmp74.obj;
+    v_dot_checker__Checker_stmt(c, it->init);
     v_dot_checker__Checker_expr(c, it->cond);
-    v_dot_checker__Checker_expr(c, it->high);
-  } else if (tmp72.typ == SumType_v_dot_ast__Stmt_Import) {
-    v_dot_ast__Import *it = (v_dot_ast__Import *)tmp72.obj;
-  } else if (tmp72.typ == SumType_v_dot_ast__Stmt_Return) {
-    v_dot_ast__Return *it = (v_dot_ast__Return *)tmp72.obj;
-    v_dot_checker__Checker_return_stmt(c, *it);
-  } else if (tmp72.typ == SumType_v_dot_ast__Stmt_UnsafeStmt) {
-    v_dot_ast__UnsafeStmt *it = (v_dot_ast__UnsafeStmt *)tmp72.obj;
+    v_dot_checker__Checker_expr(c, it->inc);
     array_v_dot_ast__Stmt tmp82 = it->stmts;
     for (int tmp83 = 0; tmp83 < tmp82.len; tmp83++) {
       v_dot_ast__Stmt stmt = ((v_dot_ast__Stmt *)tmp82.data)[tmp83];
+
+      v_dot_checker__Checker_stmt(c, stmt);
+    };
+  } else if (tmp74.typ == SumType_v_dot_ast__Stmt_ForInStmt) {
+    v_dot_ast__ForInStmt *it = (v_dot_ast__ForInStmt *)tmp74.obj;
+    v_dot_checker__Checker_expr(c, it->cond);
+    v_dot_checker__Checker_expr(c, it->high);
+  } else if (tmp74.typ == SumType_v_dot_ast__Stmt_Import) {
+    v_dot_ast__Import *it = (v_dot_ast__Import *)tmp74.obj;
+  } else if (tmp74.typ == SumType_v_dot_ast__Stmt_Return) {
+    v_dot_ast__Return *it = (v_dot_ast__Return *)tmp74.obj;
+    v_dot_checker__Checker_return_stmt(c, *it);
+  } else if (tmp74.typ == SumType_v_dot_ast__Stmt_UnsafeStmt) {
+    v_dot_ast__UnsafeStmt *it = (v_dot_ast__UnsafeStmt *)tmp74.obj;
+    array_v_dot_ast__Stmt tmp84 = it->stmts;
+    for (int tmp85 = 0; tmp85 < tmp84.len; tmp85++) {
+      v_dot_ast__Stmt stmt = ((v_dot_ast__Stmt *)tmp84.data)[tmp85];
 
       v_dot_checker__Checker_stmt(c, stmt);
     };
@@ -20564,116 +20604,121 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
 }
 void v_dot_checker__Checker_stmts(v_dot_checker__Checker *c,
                                   array_v_dot_ast__Stmt stmts) {
-  array_v_dot_ast__Stmt tmp84 = stmts;
-  for (int tmp85 = 0; tmp85 < tmp84.len; tmp85++) {
-    v_dot_ast__Stmt stmt = ((v_dot_ast__Stmt *)tmp84.data)[tmp85];
+  array_v_dot_ast__Stmt tmp86 = stmts;
+  for (int tmp87 = 0; tmp87 < tmp86.len; tmp87++) {
+    v_dot_ast__Stmt stmt = ((v_dot_ast__Stmt *)tmp86.data)[tmp87];
 
     v_dot_checker__Checker_stmt(c, stmt);
   };
 }
 v_dot_table__Type v_dot_checker__Checker_expr(v_dot_checker__Checker *c,
                                               v_dot_ast__Expr node) {
-  v_dot_ast__Expr tmp86 = node;
+  v_dot_ast__Expr tmp88 = node;
 
-  if (tmp86.typ == SumType_v_dot_ast__Expr_ArrayInit) {
-    v_dot_ast__ArrayInit *it = (v_dot_ast__ArrayInit *)tmp86.obj;
+  if (tmp88.typ == SumType_v_dot_ast__Expr_ArrayInit) {
+    v_dot_ast__ArrayInit *it = (v_dot_ast__ArrayInit *)tmp88.obj;
     return v_dot_checker__Checker_array_init(c, it);
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_AsCast) {
-    v_dot_ast__AsCast *it = (v_dot_ast__AsCast *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_AsCast) {
+    v_dot_ast__AsCast *it = (v_dot_ast__AsCast *)tmp88.obj;
     return it->typ;
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_AssignExpr) {
-    v_dot_ast__AssignExpr *it = (v_dot_ast__AssignExpr *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_AssignExpr) {
+    v_dot_ast__AssignExpr *it = (v_dot_ast__AssignExpr *)tmp88.obj;
     v_dot_checker__Checker_assign_expr(c, *it);
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_Assoc) {
-    v_dot_ast__Assoc *it = (v_dot_ast__Assoc *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_Assoc) {
+    v_dot_ast__Assoc *it = (v_dot_ast__Assoc *)tmp88.obj;
     v_dot_ast__Scope *scope =
         v_dot_ast__Scope_innermost(&/* ? */ *c->file.scope, it->pos.pos);
-    Option_v_dot_ast__Var tmp87 =
+    Option_v_dot_ast__Var tmp89 =
         v_dot_ast__Scope_find_var(&/* ? */ *scope, it->var_name);
     v_dot_ast__Var var;
-    if (!tmp87.ok) {
-      string err = tmp87.error;
-      int errcode = tmp87.ecode;
+    if (!tmp89.ok) {
+      string err = tmp89.error;
+      int errcode = tmp89.ecode;
       v_panic(err);
     }
-    var = *(v_dot_ast__Var *)tmp87.data;
+    var = *(v_dot_ast__Var *)tmp89.data;
     ;
     return var.typ;
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_BoolLiteral) {
-    v_dot_ast__BoolLiteral *it = (v_dot_ast__BoolLiteral *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_BoolLiteral) {
+    v_dot_ast__BoolLiteral *it = (v_dot_ast__BoolLiteral *)tmp88.obj;
     return v_dot_table__bool_type;
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_CastExpr) {
-    v_dot_ast__CastExpr *it = (v_dot_ast__CastExpr *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_CastExpr) {
+    v_dot_ast__CastExpr *it = (v_dot_ast__CastExpr *)tmp88.obj;
     it->expr_type = v_dot_checker__Checker_expr(c, it->expr);
     if (it->has_arg) {
       v_dot_checker__Checker_expr(c, it->arg);
     };
     return it->typ;
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_CallExpr) {
-    v_dot_ast__CallExpr *it = (v_dot_ast__CallExpr *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_CallExpr) {
+    v_dot_ast__CallExpr *it = (v_dot_ast__CallExpr *)tmp88.obj;
     return v_dot_checker__Checker_call_expr(c, it);
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_CharLiteral) {
-    v_dot_ast__CharLiteral *it = (v_dot_ast__CharLiteral *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_CharLiteral) {
+    v_dot_ast__CharLiteral *it = (v_dot_ast__CharLiteral *)tmp88.obj;
     return v_dot_table__byte_type;
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_EnumVal) {
-    v_dot_ast__EnumVal *it = (v_dot_ast__EnumVal *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_EnumVal) {
+    v_dot_ast__EnumVal *it = (v_dot_ast__EnumVal *)tmp88.obj;
     return v_dot_checker__Checker_enum_val(c, *it);
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_FloatLiteral) {
-    v_dot_ast__FloatLiteral *it = (v_dot_ast__FloatLiteral *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_FloatLiteral) {
+    v_dot_ast__FloatLiteral *it = (v_dot_ast__FloatLiteral *)tmp88.obj;
     return v_dot_table__f64_type;
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_Ident) {
-    v_dot_ast__Ident *it = (v_dot_ast__Ident *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_Ident) {
+    v_dot_ast__Ident *it = (v_dot_ast__Ident *)tmp88.obj;
     return v_dot_checker__Checker_ident(c, it);
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_IfExpr) {
-    v_dot_ast__IfExpr *it = (v_dot_ast__IfExpr *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_IfExpr) {
+    v_dot_ast__IfExpr *it = (v_dot_ast__IfExpr *)tmp88.obj;
     return v_dot_checker__Checker_if_expr(c, it);
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_IfGuardExpr) {
-    v_dot_ast__IfGuardExpr *it = (v_dot_ast__IfGuardExpr *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_IfGuardExpr) {
+    v_dot_ast__IfGuardExpr *it = (v_dot_ast__IfGuardExpr *)tmp88.obj;
     return v_dot_table__bool_type;
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_IndexExpr) {
-    v_dot_ast__IndexExpr *it = (v_dot_ast__IndexExpr *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_IndexExpr) {
+    v_dot_ast__IndexExpr *it = (v_dot_ast__IndexExpr *)tmp88.obj;
     return v_dot_checker__Checker_index_expr(c, it);
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_InfixExpr) {
-    v_dot_ast__InfixExpr *it = (v_dot_ast__InfixExpr *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_InfixExpr) {
+    v_dot_ast__InfixExpr *it = (v_dot_ast__InfixExpr *)tmp88.obj;
     return v_dot_checker__Checker_infix_expr(c, it);
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_IntegerLiteral) {
-    v_dot_ast__IntegerLiteral *it = (v_dot_ast__IntegerLiteral *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_IntegerLiteral) {
+    v_dot_ast__IntegerLiteral *it = (v_dot_ast__IntegerLiteral *)tmp88.obj;
     return v_dot_table__int_type;
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_MapInit) {
-    v_dot_ast__MapInit *it = (v_dot_ast__MapInit *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_MapInit) {
+    v_dot_ast__MapInit *it = (v_dot_ast__MapInit *)tmp88.obj;
     return v_dot_checker__Checker_map_init(c, it);
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_MatchExpr) {
-    v_dot_ast__MatchExpr *it = (v_dot_ast__MatchExpr *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_MatchExpr) {
+    v_dot_ast__MatchExpr *it = (v_dot_ast__MatchExpr *)tmp88.obj;
     return v_dot_checker__Checker_match_expr(c, it);
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_MethodCallExpr) {
-    v_dot_ast__MethodCallExpr *it = (v_dot_ast__MethodCallExpr *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_MethodCallExpr) {
+    v_dot_ast__MethodCallExpr *it = (v_dot_ast__MethodCallExpr *)tmp88.obj;
     return v_dot_checker__Checker_method_call_expr(c, it);
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_PostfixExpr) {
-    v_dot_ast__PostfixExpr *it = (v_dot_ast__PostfixExpr *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_PostfixExpr) {
+    v_dot_ast__PostfixExpr *it = (v_dot_ast__PostfixExpr *)tmp88.obj;
     return v_dot_checker__Checker_postfix_expr(c, *it);
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_PrefixExpr) {
-    v_dot_ast__PrefixExpr *it = (v_dot_ast__PrefixExpr *)tmp86.obj;
-    return v_dot_checker__Checker_expr(c, it->right);
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_None) {
-    v_dot_ast__None *it = (v_dot_ast__None *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_PrefixExpr) {
+    v_dot_ast__PrefixExpr *it = (v_dot_ast__PrefixExpr *)tmp88.obj;
+    if (it->op == v_dot_token__v_dot_token__Kind_amp) {
+      c->is_amp = 1;
+    };
+    v_dot_table__Type res = v_dot_checker__Checker_expr(c, it->right);
+    c->is_amp = 0;
+    return res;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_None) {
+    v_dot_ast__None *it = (v_dot_ast__None *)tmp88.obj;
     return v_dot_table__none_type;
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_ParExpr) {
-    v_dot_ast__ParExpr *it = (v_dot_ast__ParExpr *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_ParExpr) {
+    v_dot_ast__ParExpr *it = (v_dot_ast__ParExpr *)tmp88.obj;
     return v_dot_checker__Checker_expr(c, it->expr);
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_SelectorExpr) {
-    v_dot_ast__SelectorExpr *it = (v_dot_ast__SelectorExpr *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_SelectorExpr) {
+    v_dot_ast__SelectorExpr *it = (v_dot_ast__SelectorExpr *)tmp88.obj;
     return v_dot_checker__Checker_selector_expr(c, it);
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_SizeOf) {
-    v_dot_ast__SizeOf *it = (v_dot_ast__SizeOf *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_SizeOf) {
+    v_dot_ast__SizeOf *it = (v_dot_ast__SizeOf *)tmp88.obj;
     return v_dot_table__int_type;
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_StringLiteral) {
-    v_dot_ast__StringLiteral *it = (v_dot_ast__StringLiteral *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_StringLiteral) {
+    v_dot_ast__StringLiteral *it = (v_dot_ast__StringLiteral *)tmp88.obj;
     return v_dot_table__string_type;
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_StructInit) {
-    v_dot_ast__StructInit *it = (v_dot_ast__StructInit *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_StructInit) {
+    v_dot_ast__StructInit *it = (v_dot_ast__StructInit *)tmp88.obj;
     return v_dot_checker__Checker_check_struct_init(c, *it);
-  } else if (tmp86.typ == SumType_v_dot_ast__Expr_Type) {
-    v_dot_ast__Type *it = (v_dot_ast__Type *)tmp86.obj;
+  } else if (tmp88.typ == SumType_v_dot_ast__Expr_Type) {
+    v_dot_ast__Type *it = (v_dot_ast__Type *)tmp88.obj;
     return it->typ;
   } else // default:
   {
@@ -20695,12 +20740,12 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
         .name = tos3(""),
         .is_mut = 0,
     };
-    Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp88 =
+    Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp90 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
-    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_3694_var_scope_var;
-    if (!tmp88.ok) {
-      string err = tmp88.error;
-      int errcode = tmp88.ecode;
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_3785_var_scope_var;
+    if (!tmp90.ok) {
+      string err = tmp90.error;
+      int errcode = tmp90.ecode;
       found = 0;
       v_dot_checker__Checker_error(c,
                                    _STR("not found: %.*s - POS: %d",
@@ -20709,11 +20754,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_3694_var_scope_var =
-        *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp88.data;
+    _V_mret_3785_var_scope_var =
+        *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp90.data;
     ;
-    var_scope = _V_mret_3694_var_scope_var.var_0;
-    var = _V_mret_3694_var_scope_var.var_1;
+    var_scope = _V_mret_3785_var_scope_var.var_0;
+    var = _V_mret_3785_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
@@ -20743,11 +20788,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
       name = _STR("%.*s.%.*s", c->file.mod.name.len, c->file.mod.name.str,
                   ident->name.len, ident->name.str);
     };
-    Option_v_dot_table__Var tmp89 =
+    Option_v_dot_table__Var tmp91 =
         v_dot_table__Table_find_const(&/* ? */ *c->table, name);
 
-    if (tmp89.ok) {
-      v_dot_table__Var constant = *(v_dot_table__Var *)tmp89.data;
+    if (tmp91.ok) {
+      v_dot_table__Var constant = *(v_dot_table__Var *)tmp91.data;
       ident->name = name;
       ident->kind = v_dot_ast__v_dot_ast__IdentKind_constant;
       ident->info = /*SUM TYPE CAST2*/ (v_dot_ast__IdentInfo){
@@ -20757,11 +20802,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
           .typ = SumType_v_dot_ast__IdentInfo_IdentVar};
       return constant.typ;
     };
-    Option_v_dot_table__Fn tmp90 =
+    Option_v_dot_table__Fn tmp92 =
         v_dot_table__Table_find_fn(&/* ? */ *c->table, name);
 
-    if (tmp90.ok) {
-      v_dot_table__Fn func = *(v_dot_table__Fn *)tmp90.data;
+    if (tmp92.ok) {
+      v_dot_table__Fn func = *(v_dot_table__Fn *)tmp92.data;
       int fn_type = v_dot_table__Table_find_or_register_fn_type(c->table, func);
       ident->name = name;
       ident->kind = v_dot_ast__v_dot_ast__IdentKind_function;
@@ -20787,14 +20832,14 @@ v_dot_checker__Checker_match_expr(v_dot_checker__Checker *c,
   };
   c->expected_type = expr_type;
   v_dot_table__Type ret_type = v_dot_table__void_type;
-  array_v_dot_ast__MatchBranch tmp91 = node->branches;
-  for (int tmp92 = 0; tmp92 < tmp91.len; tmp92++) {
+  array_v_dot_ast__MatchBranch tmp93 = node->branches;
+  for (int tmp94 = 0; tmp94 < tmp93.len; tmp94++) {
     v_dot_ast__MatchBranch branch =
-        ((v_dot_ast__MatchBranch *)tmp91.data)[tmp92];
+        ((v_dot_ast__MatchBranch *)tmp93.data)[tmp94];
 
-    array_v_dot_ast__Expr tmp93 = branch.exprs;
-    for (int tmp94 = 0; tmp94 < tmp93.len; tmp94++) {
-      v_dot_ast__Expr expr = ((v_dot_ast__Expr *)tmp93.data)[tmp94];
+    array_v_dot_ast__Expr tmp95 = branch.exprs;
+    for (int tmp96 = 0; tmp96 < tmp95.len; tmp96++) {
+      v_dot_ast__Expr expr = ((v_dot_ast__Expr *)tmp95.data)[tmp96];
 
       c->expected_type = expr_type;
       v_dot_table__Type typ = v_dot_checker__Checker_expr(c, expr);
@@ -20805,11 +20850,11 @@ v_dot_checker__Checker_match_expr(v_dot_checker__Checker *c,
     };
     v_dot_checker__Checker_stmts(c, branch.stmts);
     if (branch.stmts.len > 0) {
-      v_dot_ast__Stmt tmp97 =
+      v_dot_ast__Stmt tmp99 =
           (*(v_dot_ast__Stmt *)array_get(branch.stmts, branch.stmts.len - 1));
 
-      if (tmp97.typ == SumType_v_dot_ast__Stmt_ExprStmt) {
-        v_dot_ast__ExprStmt *it = (v_dot_ast__ExprStmt *)tmp97.obj;
+      if (tmp99.typ == SumType_v_dot_ast__Stmt_ExprStmt) {
+        v_dot_ast__ExprStmt *it = (v_dot_ast__ExprStmt *)tmp99.obj;
         ret_type = v_dot_checker__Checker_expr(c, it->expr);
       } else // default:
       {
@@ -20831,26 +20876,26 @@ v_dot_table__Type v_dot_checker__Checker_if_expr(v_dot_checker__Checker *c,
                                       typ_sym->name.len, typ_sym->name.str),
                                  node->pos);
   };
-  array_v_dot_ast__Stmt tmp98 = node->stmts;
-  for (int i = 0; i < tmp98.len; i++) {
-    v_dot_ast__Stmt stmt = ((v_dot_ast__Stmt *)tmp98.data)[i];
+  array_v_dot_ast__Stmt tmp100 = node->stmts;
+  for (int i = 0; i < tmp100.len; i++) {
+    v_dot_ast__Stmt stmt = ((v_dot_ast__Stmt *)tmp100.data)[i];
 
     v_dot_checker__Checker_stmt(c, stmt);
   };
   if (node->else_stmts.len > 0) {
-    array_v_dot_ast__Stmt tmp99 = node->else_stmts;
-    for (int tmp100 = 0; tmp100 < tmp99.len; tmp100++) {
-      v_dot_ast__Stmt stmt = ((v_dot_ast__Stmt *)tmp99.data)[tmp100];
+    array_v_dot_ast__Stmt tmp101 = node->else_stmts;
+    for (int tmp102 = 0; tmp102 < tmp101.len; tmp102++) {
+      v_dot_ast__Stmt stmt = ((v_dot_ast__Stmt *)tmp101.data)[tmp102];
 
       v_dot_checker__Checker_stmt(c, stmt);
     };
   };
   if (node->stmts.len > 0) {
-    v_dot_ast__Stmt tmp103 =
+    v_dot_ast__Stmt tmp105 =
         (*(v_dot_ast__Stmt *)array_get(node->stmts, node->stmts.len - 1));
 
-    if (tmp103.typ == SumType_v_dot_ast__Stmt_ExprStmt) {
-      v_dot_ast__ExprStmt *it = (v_dot_ast__ExprStmt *)tmp103.obj;
+    if (tmp105.typ == SumType_v_dot_ast__Stmt_ExprStmt) {
+      v_dot_ast__ExprStmt *it = (v_dot_ast__ExprStmt *)tmp105.obj;
       v_dot_table__Type t = v_dot_checker__Checker_expr(c, it->expr);
       node->typ = t;
       return t;
@@ -20883,10 +20928,10 @@ v_dot_checker__Checker_index_expr(v_dot_checker__Checker *c,
                                   v_dot_ast__IndexExpr *node) {
   v_dot_table__Type typ = v_dot_checker__Checker_expr(c, node->left);
   bool is_range = 0;
-  v_dot_ast__Expr tmp104 = node->index;
+  v_dot_ast__Expr tmp106 = node->index;
 
-  if (tmp104.typ == SumType_v_dot_ast__Expr_RangeExpr) {
-    v_dot_ast__RangeExpr *it = (v_dot_ast__RangeExpr *)tmp104.obj;
+  if (tmp106.typ == SumType_v_dot_ast__Expr_RangeExpr) {
+    v_dot_ast__RangeExpr *it = (v_dot_ast__RangeExpr *)tmp106.obj;
     is_range = 1;
   } else // default:
   {
@@ -20928,9 +20973,6 @@ v_dot_checker__Checker_index_expr(v_dot_checker__Checker *c,
       return info.value_type;
     } else if ((typ_sym->kind == v_dot_table__v_dot_table__Kind_byteptr ||
                 typ_sym->kind == v_dot_table__v_dot_table__Kind_string)) {
-      if (typ_sym->kind == v_dot_table__v_dot_table__Kind_byteptr) {
-        return v_dot_table__type_to_ptr(v_dot_table__byte_type);
-      };
       return v_dot_table__byte_type;
     } else if (v_dot_table__type_is_ptr(typ)) {
       return v_dot_table__type_deref(typ);
@@ -20979,9 +21021,9 @@ v_dot_table__Type v_dot_checker__Checker_map_init(v_dot_checker__Checker *c,
       c, (*(v_dot_ast__Expr *)array_get(node->keys, 0)));
   v_dot_table__Type val0_type = v_dot_checker__Checker_expr(
       c, (*(v_dot_ast__Expr *)array_get(node->vals, 0)));
-  array_v_dot_ast__Expr tmp109 = node->keys;
-  for (int i = 0; i < tmp109.len; i++) {
-    v_dot_ast__Expr key = ((v_dot_ast__Expr *)tmp109.data)[i];
+  array_v_dot_ast__Expr tmp111 = node->keys;
+  for (int i = 0; i < tmp111.len; i++) {
+    v_dot_ast__Expr key = ((v_dot_ast__Expr *)tmp111.data)[i];
 
     if (i == 0) {
       continue;
@@ -21032,7 +21074,7 @@ void v_dot_checker__Checker_error(v_dot_checker__Checker *c, string s,
       _STR("%.*s:%d: checker error #%d: %.*s", path.len, path.str, pos.line_nr,
            c->nr_errors, s.len, s.str);
   _PUSH(&c->errors, (/*typ = array_string   tmp_typ=string*/ final_msg_line),
-        tmp112, string);
+        tmp114, string);
   eprintln(final_msg_line);
   println(tos3("\n\n"));
   if (c->nr_errors >= v_dot_checker__max_nr_errors) {
