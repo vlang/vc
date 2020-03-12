@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "92d6eec"
+#define V_COMMIT_HASH "d2cf689"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "853bb4c"
+#define V_COMMIT_HASH "92d6eec"
 #endif
 #include <inttypes.h>
 
@@ -18902,21 +18902,25 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
     v_dot_ast__ArrayInit *it = (v_dot_ast__ArrayInit *)tmp43.obj;
     v_dot_table__TypeSymbol *type_sym =
         v_dot_table__Table_get_type_symbol(&/* ? */ *g->table, it->typ);
-    v_dot_table__TypeSymbol *elem_sym =
-        v_dot_table__Table_get_type_symbol(&/* ? */ *g->table, it->elem_type);
-    v_dot_gen__Gen_write(
-        g, _STR("new_array_from_c_array(%d, %d, sizeof(%.*s), ", it->exprs.len,
-                it->exprs.len, type_sym->name.len, type_sym->name.str));
-    v_dot_gen__Gen_writeln(
-        g, _STR("(%.*s[]){\t", elem_sym->name.len, elem_sym->name.str));
-    array_v_dot_ast__Expr tmp44 = it->exprs;
-    for (int tmp45 = 0; tmp45 < tmp44.len; tmp45++) {
-      v_dot_ast__Expr expr = ((v_dot_ast__Expr *)tmp44.data)[tmp45];
+    if (type_sym->kind != v_dot_table__v_dot_table__Kind_array_fixed) {
+      v_dot_table__TypeSymbol *elem_sym =
+          v_dot_table__Table_get_type_symbol(&/* ? */ *g->table, it->elem_type);
+      v_dot_gen__Gen_write(g,
+                           _STR("new_array_from_c_array(%d, %d, sizeof(%.*s), ",
+                                it->exprs.len, it->exprs.len,
+                                type_sym->name.len, type_sym->name.str));
+      v_dot_gen__Gen_writeln(
+          g, _STR("(%.*s[]){\t", elem_sym->name.len, elem_sym->name.str));
+      array_v_dot_ast__Expr tmp44 = it->exprs;
+      for (int tmp45 = 0; tmp45 < tmp44.len; tmp45++) {
+        v_dot_ast__Expr expr = ((v_dot_ast__Expr *)tmp44.data)[tmp45];
 
-      v_dot_gen__Gen_expr(g, expr);
-      v_dot_gen__Gen_write(g, tos3(", "));
+        v_dot_gen__Gen_expr(g, expr);
+        v_dot_gen__Gen_write(g, tos3(", "));
+      };
+      v_dot_gen__Gen_write(g, tos3("\n})"));
+    } else {
     };
-    v_dot_gen__Gen_write(g, tos3("\n})"));
   } else if (tmp43.typ == SumType_v_dot_ast__Expr_AsCast) {
     v_dot_ast__AsCast *it = (v_dot_ast__AsCast *)tmp43.obj;
     v_dot_gen__Gen_write(g, tos3("/* as */"));
@@ -19464,7 +19468,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp93 = 0;
     bool tmp94 =
-        map_get(/*cgen.v : 1064*/ g->table->type_idxs, builtin_name, &tmp93);
+        map_get(/*cgen.v : 1067*/ g->table->type_idxs, builtin_name, &tmp93);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -19599,7 +19603,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp117 = 0;
     bool tmp118 =
-        map_get(/*cgen.v : 1149*/ g->table->type_idxs, node.name, &tmp117);
+        map_get(/*cgen.v : 1152*/ g->table->type_idxs, node.name, &tmp117);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
