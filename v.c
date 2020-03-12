@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0792119"
+#define V_COMMIT_HASH "26b9987"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5978110"
+#define V_COMMIT_HASH "0792119"
 #endif
 #include <inttypes.h>
 
@@ -26064,7 +26064,10 @@ array_compiler__CFlag compiler__V_get_os_cflags(compiler__V *v) {
         (string_eq(flag.os, tos3("freebsd")) &&
          v->pref->os == v_dot_pref__v_dot_pref__OS_freebsd) ||
         (string_eq(flag.os, tos3("windows")) &&
-         v->pref->os == v_dot_pref__v_dot_pref__OS_windows)) {
+         v->pref->os == v_dot_pref__v_dot_pref__OS_windows) ||
+        (string_eq(flag.os, tos3("mingw")) &&
+         v->pref->os == v_dot_pref__v_dot_pref__OS_windows &&
+         string_ne(v->pref->ccompiler, tos3("msvc")))) {
       _PUSH(&flags,
             (/*typ = array_compiler__CFlag   tmp_typ=compiler__CFlag*/ flag),
             tmp4, compiler__CFlag);
@@ -26147,10 +26150,11 @@ Option_bool compiler__Table_parse_cflag(compiler__Table *table, string cflag,
     return opt_ok(&tmp11, sizeof(bool));
   };
   string fos = tos3("");
-  array_string allowed_os_overrides = new_array_from_c_array(
-      4, 4, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 4){tos3("linux"), tos3("darwin"),
-                                      tos3("freebsd"), tos3("windows")});
+  array_string allowed_os_overrides =
+      new_array_from_c_array(5, 5, sizeof(string),
+                             EMPTY_ARRAY_OF_ELEMS(string, 5){
+                                 tos3("linux"), tos3("darwin"), tos3("freebsd"),
+                                 tos3("windows"), tos3("mingw")});
   _PUSH_MANY(&allowed_os_overrides,
              (/*typ = array_string   tmp_typ=string*/ ctimedefines), tmp12,
              array_string);
@@ -30883,13 +30887,15 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f,
         compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
         ;
         compiler__Parser_gen(p, tos3(","));
+      } else if (p->tok != compiler__compiler__TokenKind_comma) {
+        compiler__Parser_gen(p, tos3(","));
       };
     };
   };
-  _V_MulRet_string_V_array_string _V_mret_6316_varg_type_varg_values =
+  _V_MulRet_string_V_array_string _V_mret_6332_varg_type_varg_values =
       compiler__Parser_fn_call_vargs(p, *f);
-  string varg_type = _V_mret_6316_varg_type_varg_values.var_0;
-  array_string varg_values = _V_mret_6316_varg_type_varg_values.var_1;
+  string varg_type = _V_mret_6332_varg_type_varg_values.var_0;
+  array_string varg_values = _V_mret_6332_varg_type_varg_values.var_1;
   if (f->is_variadic) {
     _PUSH(&saved_args, (/*typ = array_string   tmp_typ=string*/ varg_type),
           tmp84, string);
@@ -30961,21 +30967,21 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
       ti = string_substr2(ti, 6, -1, true);
     };
     string tmp98 = tos3("");
-    bool tmp99 = map_get(/*fn.v : 1370*/ r.inst, tp, &tmp98);
+    bool tmp99 = map_get(/*fn.v : 1372*/ r.inst, tp, &tmp98);
 
     if (!tmp99)
       tmp98 = tos((byte *)"", 0);
 
     if (string_ne(tmp98, tos3(""))) {
       string tmp100 = tos3("");
-      bool tmp101 = map_get(/*fn.v : 1371*/ r.inst, tp, &tmp100);
+      bool tmp101 = map_get(/*fn.v : 1373*/ r.inst, tp, &tmp100);
 
       if (!tmp101)
         tmp100 = tos((byte *)"", 0);
 
       if (string_ne(tmp100, ti)) {
         string tmp102 = tos3("");
-        bool tmp103 = map_get(/*fn.v : 1372*/ r.inst, tp, &tmp102);
+        bool tmp103 = map_get(/*fn.v : 1374*/ r.inst, tp, &tmp102);
 
         if (!tmp103)
           tmp102 = tos((byte *)"", 0);
@@ -30993,7 +30999,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     };
   };
   string tmp104 = tos3("");
-  bool tmp105 = map_get(/*fn.v : 1383*/ r.inst, f->typ, &tmp104);
+  bool tmp105 = map_get(/*fn.v : 1385*/ r.inst, f->typ, &tmp104);
 
   if (!tmp105)
     tmp104 = tos((byte *)"", 0);
@@ -31006,7 +31012,7 @@ compiler__TypeInst compiler__Parser_extract_type_inst(compiler__Parser *p,
     string tp = ((string *)tmp106.data)[tmp107];
 
     string tmp108 = tos3("");
-    bool tmp109 = map_get(/*fn.v : 1387*/ r.inst, tp, &tmp108);
+    bool tmp109 = map_get(/*fn.v : 1389*/ r.inst, tp, &tmp108);
 
     if (!tmp109)
       tmp108 = tos((byte *)"", 0);
@@ -31031,7 +31037,7 @@ string compiler__replace_generic_type(string gen_type, compiler__TypeInst *ti) {
   };
   if ((_IN_MAP((typ), ti->inst))) {
     string tmp112 = tos3("");
-    bool tmp113 = map_get(/*fn.v : 1402*/ ti->inst, typ, &tmp112);
+    bool tmp113 = map_get(/*fn.v : 1404*/ ti->inst, typ, &tmp112);
 
     if (!tmp113)
       tmp112 = tos((byte *)"", 0);
@@ -31085,7 +31091,7 @@ void compiler__replace_generic_type_params(compiler__Fn *f,
   if (string_ends_with(f->typ, tos3("_T"))) {
     string par = (*(string *)array_get(map_keys(&/* ? */ ti->inst), 0));
     string tmp125 = tos3("");
-    bool tmp126 = map_get(/*fn.v : 1435*/ ti->inst, par, &tmp125);
+    bool tmp126 = map_get(/*fn.v : 1437*/ ti->inst, par, &tmp125);
 
     if (!tmp126)
       tmp125 = tos((byte *)"", 0);
@@ -31159,10 +31165,10 @@ compiler__Parser_fn_call_vargs(compiler__Parser *p, compiler__Fn f) {
     if (p->tok == compiler__compiler__TokenKind_comma) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
     };
-    _V_MulRet_string_V_string _V_mret_7263_varg_type_varg_value =
+    _V_MulRet_string_V_string _V_mret_7279_varg_type_varg_value =
         compiler__Parser_tmp_expr(p);
-    string varg_type = _V_mret_7263_varg_type_varg_value.var_0;
-    string varg_value = _V_mret_7263_varg_type_varg_value.var_1;
+    string varg_type = _V_mret_7279_varg_type_varg_value.var_0;
+    string varg_value = _V_mret_7279_varg_type_varg_value.var_1;
     if (string_starts_with(varg_type, tos3("varg_")) &&
         (values.len > 0 || p->tok == compiler__compiler__TokenKind_comma)) {
       compiler__Parser_error(
@@ -31211,7 +31217,14 @@ compiler__Parser_fn_call_vargs(compiler__Parser *p, compiler__Fn f) {
           va.tok_idx);
     };
   };
-  if (!f.is_method && f.args.len > 1) {
+  if (types.len == 0) {
+    return (_V_MulRet_string_V_array_string){
+        .var_0 = last_arg.typ,
+        .var_1 = new_array_from_c_array(
+            0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)})};
+  };
+  int insert_comma_after_arg = ((f.is_method) ? (2) : (1));
+  if (f.args.len > insert_comma_after_arg) {
     compiler__CGen_gen(p->cgen, tos3(","));
   };
   return (_V_MulRet_string_V_array_string){
@@ -31222,9 +31235,16 @@ void compiler__Parser_fn_gen_caller_vargs(compiler__Parser *p, compiler__Fn *f,
                                           array_string values) {
   bool is_varg = string_starts_with(varg_type, tos3("varg_"));
   if (is_varg) {
-    compiler__CGen_gen(p->cgen,
-                       _STR("%.*s", (*(string *)array_get(values, 0)).len,
-                            (*(string *)array_get(values, 0)).str));
+    if (values.len == 0) {
+      string vargs_struct =
+          compiler__Parser_register_vargs_stuct(p, varg_type, 1);
+      compiler__CGen_gen(
+          p->cgen, _STR("&(%.*s){.len=0}", vargs_struct.len, vargs_struct.str));
+    } else {
+      compiler__CGen_gen(p->cgen,
+                         _STR("%.*s", (*(string *)array_get(values, 0)).len,
+                              (*(string *)array_get(values, 0)).str));
+    };
   } else {
     string vargs_struct =
         compiler__Parser_register_vargs_stuct(p, varg_type, values.len);
@@ -31288,7 +31308,7 @@ void compiler__rename_generic_fn_instance(compiler__Fn *f,
     string k = ((string *)tmp146.data)[tmp147];
 
     string tmp148 = tos3("");
-    bool tmp149 = map_get(/*fn.v : 1539*/ ti->inst, k, &tmp148);
+    bool tmp149 = map_get(/*fn.v : 1554*/ ti->inst, k, &tmp148);
 
     if (!tmp149)
       tmp148 = tos((byte *)"", 0);
