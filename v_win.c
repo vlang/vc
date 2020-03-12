@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "35dd785"
+#define V_COMMIT_HASH "b43ac27"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "26b9987"
+#define V_COMMIT_HASH "35dd785"
 #endif
 #include <inttypes.h>
 
@@ -42327,10 +42327,10 @@ void init() {
   benchmark__BSPENT = term__ok_message(tos3("SPENT"));
   v_dot_parser__colored_output = term__can_show_color_on_stderr();
   v_dot_gen__builtins = new_array_from_c_array(
-      5, 5, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 5){tos3("string"), tos3("array"),
-                                      tos3("KeyValue"), tos3("map"),
-                                      tos3("Option")});
+      6, 6, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 6){tos3("string"), tos3("array"),
+                                      tos3("KeyValue"), tos3("DenseArray"),
+                                      tos3("map"), tos3("Option")});
   v_dot_gen__c_common_macros = tos3(
       "\n\n#define EMPTY_STRUCT_DECLARATION\n#define "
       "EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an "
