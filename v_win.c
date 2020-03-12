@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b750f1d"
+#define V_COMMIT_HASH "5978110"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "99398ba"
+#define V_COMMIT_HASH "b750f1d"
 #endif
 #include <inttypes.h>
 
@@ -19241,8 +19241,8 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
         it->val,
         new_array_from_c_array(6, 6, sizeof(string),
                                EMPTY_ARRAY_OF_ELEMS(string, 6){
-                                   tos3("\""), tos3("\\\""), tos3("\n"),
-                                   tos3("\\n"), tos3("\r\n"), tos3("\\n")}));
+                                   tos3("\""), tos3("\\\""), tos3("\r\n"),
+                                   tos3("\\n"), tos3("\n"), tos3("\\n")}));
     if (g->is_c_call) {
       v_dot_gen__Gen_write(g,
                            _STR("\"%.*s\"", escaped_val.len, escaped_val.str));
@@ -24760,11 +24760,10 @@ void compiler__Parser_char_expr(compiler__Parser *p) {
 }
 string compiler__format_str(string _str) {
   return string_replace_each(
-      _str,
-      new_array_from_c_array(6, 6, sizeof(string),
-                             EMPTY_ARRAY_OF_ELEMS(string, 6){
-                                 tos3("\""), tos3("\\\""), tos3("\n"),
-                                 tos3("\\n"), tos3("\r\n"), tos3("\\n")}));
+      _str, new_array_from_c_array(6, 6, sizeof(string),
+                                   EMPTY_ARRAY_OF_ELEMS(string, 6){
+                                       tos3("\""), tos3("\\\""), tos3("\r\n"),
+                                       tos3("\\n"), tos3("\n"), tos3("\\n")}));
 }
 string compiler__Parser_map_init(compiler__Parser *p) {
   string keys_gen = tos3("");
