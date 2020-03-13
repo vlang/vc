@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b173cea"
+#define V_COMMIT_HASH "e667e72"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9bcb7d1"
+#define V_COMMIT_HASH "b173cea"
 #endif
 #include <inttypes.h>
 
@@ -41196,7 +41196,7 @@ void main__main() {
   if (!tmp1.ok) {
     string err = tmp1.error;
     int errcode = tmp1.ecode;
-    println(tos3("V Error: An error has occured while parsing flags: "));
+    println(tos3("V Error: An error has occurred while parsing flags: "));
     println(err);
     v_exit(1);
   }
