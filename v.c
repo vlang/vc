@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "973b5c2"
+#define V_COMMIT_HASH "920ab79"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e667e72"
+#define V_COMMIT_HASH "973b5c2"
 #endif
 #include <inttypes.h>
 
@@ -19506,6 +19506,12 @@ v_dot_checker__Checker_index_expr(v_dot_checker__Checker *c,
   if (tmp106.typ == SumType_v_dot_ast__Expr_RangeExpr) {
     v_dot_ast__RangeExpr *it = (v_dot_ast__RangeExpr *)tmp106.obj;
     is_range = 1;
+    if (it->has_low) {
+      v_dot_checker__Checker_expr(c, it->low);
+    };
+    if (it->has_high) {
+      v_dot_checker__Checker_expr(c, it->high);
+    };
   } else // default:
   {
   };
