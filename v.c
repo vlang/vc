@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c2ffd02"
+#define V_COMMIT_HASH "19f9c18"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "920ab79"
+#define V_COMMIT_HASH "c2ffd02"
 #endif
 #include <inttypes.h>
 
@@ -623,6 +623,7 @@ typedef struct varg_int varg_int;
 typedef Option Option_os__File;
 typedef struct _V_MulRet_int_V_bool _V_MulRet_int_V_bool;
 typedef struct os__Result os__Result;
+typedef Option Option_string;
 typedef struct varg_string varg_string;
 
 typedef Option Option_array_string;
@@ -904,6 +905,7 @@ typedef Option Option_array_string;
 typedef Option Option_array_ustring;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
+typedef Option Option_string;
 typedef Option Option_array_string;
 typedef Option Option_os__File;
 typedef Option Option_os__File;
@@ -2912,6 +2914,8 @@ void os__write_file(string path, string text);
 void os__clear();
 void os__on_segfault(void *f);
 string os__executable();
+string os__executable_fallback();
+Option_string os__find_abs_path_of_executable(string exepath);
 bool os__dir_exists(string path);
 bool os__is_dir(string path);
 bool os__is_link(string path);
@@ -12010,7 +12014,7 @@ string os__executable() {
   if (count < 0) {
     eprintln(tos3(
         "os.executable() failed at reading /proc/self/exe to get exe path"));
-    return (*(string *)array_get(os__args, 0));
+    return os__executable_fallback();
   };
   return (tos2((byte *)result));
 #endif
@@ -12030,7 +12034,7 @@ string os__executable() {
     eprintln(_STR("os.executable() failed at calling proc_pidpath with pid: %d "
                   ". proc_pidpath returned %d ",
                   pid, ret));
-    return (*(string *)array_get(os__args, 0));
+    return os__executable_fallback();
   };
   return (tos2((byte *)result));
 #endif
@@ -12045,7 +12049,6 @@ string os__executable() {
 #endif
   ;
 #ifdef __OpenBSD__
-  return (*(string *)array_get(os__args, 0));
 #endif
   ;
 #ifdef __sun
@@ -12060,7 +12063,7 @@ string os__executable() {
   if (count < 0) {
     eprintln(tos3(
         "os.executable() failed at reading /proc/curproc/exe to get exe path"));
-    return (*(string *)array_get(os__args, 0));
+    return os__executable_fallback();
   };
   return (tos((byte *)result, count));
 #endif
@@ -12071,12 +12074,65 @@ string os__executable() {
   if (count < 0) {
     eprintln(tos3("os.executable() failed at reading /proc/curproc/file to get "
                   "exe path"));
-    return (*(string *)array_get(os__args, 0));
+    return os__executable_fallback();
   };
   return (tos((byte *)result, count));
 #endif
   ;
-  return (*(string *)array_get(os__args, 0));
+  return os__executable_fallback();
+}
+string os__executable_fallback() {
+  string exepath = (*(string *)array_get(os__args, 0));
+  if (!os__is_abs_path(exepath)) {
+    if (string_contains(exepath, os__path_separator)) {
+      exepath = os__join_path(os__wd_at_startup,
+                              &(varg_string){.len = 1, .args = {exepath}});
+    } else {
+      Option_string tmp56 = os__find_abs_path_of_executable(exepath);
+      string foundpath;
+      if (!tmp56.ok) {
+        string err = tmp56.error;
+        int errcode = tmp56.ecode;
+      }
+      if (tmp56.ok) {
+        foundpath = *(string *)tmp56.data;
+      } else {
+        foundpath = tos3("");
+      };
+      if (foundpath.len > 0) {
+        exepath = foundpath;
+      };
+    };
+  };
+  exepath = os__realpath(exepath);
+  return exepath;
+}
+Option_string os__find_abs_path_of_executable(string exepath) {
+  if (os__is_abs_path(exepath)) {
+    string tmp57 = OPTION_CAST(string)(exepath);
+    return opt_ok(&tmp57, sizeof(string));
+  };
+  string res = tos3("");
+  string env_path_delimiter =
+      ((string_eq(os__user_os(), tos3("windows"))) ? (tos3(";")) : (tos3(":")));
+  array_string paths =
+      string_split(os__getenv(tos3("PATH")), env_path_delimiter);
+  array_string tmp58 = paths;
+  for (int tmp59 = 0; tmp59 < tmp58.len; tmp59++) {
+    string p = ((string *)tmp58.data)[tmp59];
+
+    string found_abs_path =
+        os__join_path(p, &(varg_string){.len = 1, .args = {exepath}});
+    if (os__exists(found_abs_path) && os__is_executable(found_abs_path)) {
+      res = found_abs_path;
+      break;
+    };
+  };
+  if (res.len > 0) {
+    string tmp60 = OPTION_CAST(string)(res);
+    return opt_ok(&tmp60, sizeof(string));
+  };
+  return v_error(tos3("failed to find executable"));
 }
 bool os__dir_exists(string path) {
   v_panic(tos3("Use `os.is_dir` instead of `os.dir_exists`"));
@@ -12175,11 +12231,11 @@ string os__join_path(string base, varg_string *dirs) {
   _PUSH(&result,
         (/*typ = array_string   tmp_typ=string*/ string_trim_right(
             base, tos3("\\/"))),
-        tmp74, string);
-  for (int tmp76 = 0; tmp76 < dirs->len; tmp76++) {
-    string d = ((string *)dirs->args)[tmp76];
+        tmp69, string);
+  for (int tmp71 = 0; tmp71 < dirs->len; tmp71++) {
+    string d = ((string *)dirs->args)[tmp71];
 
-    _PUSH(&result, (/*typ = array_string   tmp_typ=string*/ d), tmp77, string);
+    _PUSH(&result, (/*typ = array_string   tmp_typ=string*/ d), tmp72, string);
   };
   return array_string_join(result, os__path_separator);
 }
@@ -12188,24 +12244,24 @@ array_string os__walk_ext(string path, string ext) {
     return new_array_from_c_array(0, 0, sizeof(string),
                                   EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   };
-  Option_array_string tmp78 = os__ls(path);
+  Option_array_string tmp73 = os__ls(path);
   array_string files;
-  if (!tmp78.ok) {
-    string err = tmp78.error;
-    int errcode = tmp78.ecode;
+  if (!tmp73.ok) {
+    string err = tmp73.error;
+    int errcode = tmp73.ecode;
     return new_array_from_c_array(0, 0, sizeof(string),
                                   EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   }
-  files = *(array_string *)tmp78.data;
+  files = *(array_string *)tmp73.data;
   ;
   array_string res = new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   string separator =
       ((string_ends_with(path, os__path_separator)) ? (tos3(""))
                                                     : (os__path_separator));
-  array_string tmp79 = files;
-  for (int i = 0; i < tmp79.len; i++) {
-    string file = ((string *)tmp79.data)[i];
+  array_string tmp74 = files;
+  for (int i = 0; i < tmp74.len; i++) {
+    string file = ((string *)tmp74.data)[i];
 
     if (string_starts_with(file, tos3("."))) {
       continue;
@@ -12214,9 +12270,9 @@ array_string os__walk_ext(string path, string ext) {
     if (os__is_dir(p) && !os__is_link(p)) {
       _PUSH_MANY(&res,
                  (/*typ = array_string   tmp_typ=string*/ os__walk_ext(p, ext)),
-                 tmp80, array_string);
+                 tmp75, array_string);
     } else if (string_ends_with(file, ext)) {
-      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp81, string);
+      _PUSH(&res, (/*typ = array_string   tmp_typ=string*/ p), tmp76, string);
     };
   };
   return res;
@@ -12226,19 +12282,19 @@ void os__walk(string path, void (*f)(string path /*FFF*/)) {
 
     return;
   };
-  Option_array_string tmp82 = os__ls(path);
+  Option_array_string tmp77 = os__ls(path);
   array_string files;
-  if (!tmp82.ok) {
-    string err = tmp82.error;
-    int errcode = tmp82.ecode;
+  if (!tmp77.ok) {
+    string err = tmp77.error;
+    int errcode = tmp77.ecode;
 
     return;
   }
-  files = *(array_string *)tmp82.data;
+  files = *(array_string *)tmp77.data;
   ;
-  array_string tmp83 = files;
-  for (int tmp84 = 0; tmp84 < tmp83.len; tmp84++) {
-    string file = ((string *)tmp83.data)[tmp84];
+  array_string tmp78 = files;
+  for (int tmp79 = 0; tmp79 < tmp78.len; tmp79++) {
+    string file = ((string *)tmp78.data)[tmp79];
 
     string p = string_add(string_add(path, os__path_separator), file);
     if (os__is_dir(p) && !os__is_link(p)) {
@@ -12291,16 +12347,16 @@ void os__mkdir_all(string path) {
   string p =
       ((string_starts_with(path, os__path_separator)) ? (os__path_separator)
                                                       : (tos3("")));
-  array_string tmp85 = string_split(path, os__path_separator);
-  for (int tmp86 = 0; tmp86 < tmp85.len; tmp86++) {
-    string subdir = ((string *)tmp85.data)[tmp86];
+  array_string tmp80 = string_split(path, os__path_separator);
+  for (int tmp81 = 0; tmp81 < tmp80.len; tmp81++) {
+    string subdir = ((string *)tmp80.data)[tmp81];
 
     p = string_add(p, string_add(subdir, os__path_separator));
     if (!os__is_dir(p)) {
-      Option_bool tmp87 = os__mkdir(p);
-      if (!tmp87.ok) {
-        string err = tmp87.error;
-        int errcode = tmp87.ecode;
+      Option_bool tmp82 = os__mkdir(p);
+      if (!tmp82.ok) {
+        string err = tmp82.error;
+        int errcode = tmp82.ecode;
         v_panic(err);
       };
     };
@@ -12316,10 +12372,10 @@ string os__cache_dir() {
   ;
   string cdir = string_add(os__home_dir(), tos3(".cache"));
   if (!os__is_dir(cdir) && !os__is_link(cdir)) {
-    Option_bool tmp88 = os__mkdir(cdir);
-    if (!tmp88.ok) {
-      string err = tmp88.error;
-      int errcode = tmp88.ecode;
+    Option_bool tmp83 = os__mkdir(cdir);
+    if (!tmp83.ok) {
+      string err = tmp83.error;
+      int errcode = tmp83.ecode;
       v_panic(err);
     };
   };
@@ -13251,7 +13307,7 @@ string v_dot_table__Fn_signature(v_dot_table__Fn *f) {
 Option_v_dot_table__Fn v_dot_table__Table_find_fn(v_dot_table__Table *t,
                                                   string name) {
   v_dot_table__Fn tmp2 = {0};
-  bool tmp3 = map_get(/*table.v : 88*/ t->fns, name, &tmp2);
+  bool tmp3 = map_get(/*table.v : 85*/ t->fns, name, &tmp2);
 
   v_dot_table__Fn f = tmp2;
   if (f.name.str != 0) {
@@ -13263,7 +13319,7 @@ Option_v_dot_table__Fn v_dot_table__Table_find_fn(v_dot_table__Table *t,
 Option_v_dot_table__Var v_dot_table__Table_find_const(v_dot_table__Table *t,
                                                       string name) {
   v_dot_table__Var tmp5 = {0};
-  bool tmp6 = map_get(/*table.v : 97*/ t->consts, name, &tmp5);
+  bool tmp6 = map_get(/*table.v : 94*/ t->consts, name, &tmp5);
 
   v_dot_table__Var f = tmp5;
   if (f.name.str != 0) {
@@ -13404,14 +13460,14 @@ v_dot_table__Table_struct_find_field(v_dot_table__Table *t,
 static inline int v_dot_table__Table_find_type_idx(v_dot_table__Table *t,
                                                    string name) {
   int tmp28 = 0;
-  bool tmp29 = map_get(/*table.v : 201*/ t->type_idxs, name, &tmp28);
+  bool tmp29 = map_get(/*table.v : 198*/ t->type_idxs, name, &tmp28);
 
   return tmp28;
 }
 static inline Option_v_dot_table__TypeSymbol
 v_dot_table__Table_find_type(v_dot_table__Table *t, string name) {
   int tmp30 = 0;
-  bool tmp31 = map_get(/*table.v : 206*/ t->type_idxs, name, &tmp30);
+  bool tmp31 = map_get(/*table.v : 203*/ t->type_idxs, name, &tmp30);
 
   int idx = tmp30;
   if (idx > 0) {
@@ -13436,7 +13492,7 @@ static inline int
 v_dot_table__Table_register_builtin_type_symbol(v_dot_table__Table *t,
                                                 v_dot_table__TypeSymbol typ) {
   int tmp37 = 0;
-  bool tmp38 = map_get(/*table.v : 229*/ t->type_idxs, typ.name, &tmp37);
+  bool tmp38 = map_get(/*table.v : 226*/ t->type_idxs, typ.name, &tmp37);
 
   int existing_idx = tmp37;
   if (existing_idx > 0) {
@@ -13465,7 +13521,7 @@ static inline int
 v_dot_table__Table_register_type_symbol(v_dot_table__Table *t,
                                         v_dot_table__TypeSymbol typ) {
   int tmp41 = 0;
-  bool tmp42 = map_get(/*table.v : 251*/ t->type_idxs, typ.name, &tmp41);
+  bool tmp42 = map_get(/*table.v : 248*/ t->type_idxs, typ.name, &tmp41);
 
   int existing_idx = tmp41;
   if (existing_idx > 0) {
@@ -13552,7 +13608,7 @@ int v_dot_table__Table_find_or_register_map(v_dot_table__Table *t,
                                             v_dot_table__Type value_type) {
   string name = v_dot_table__Table_map_name(&/* ? */ *t, key_type, value_type);
   int tmp48 = 0;
-  bool tmp49 = map_get(/*table.v : 310*/ t->type_idxs, name, &tmp48);
+  bool tmp49 = map_get(/*table.v : 307*/ t->type_idxs, name, &tmp48);
 
   int existing_idx = tmp48;
   if (existing_idx > 0) {
@@ -13577,7 +13633,7 @@ int v_dot_table__Table_find_or_register_array(v_dot_table__Table *t,
                                               int nr_dims) {
   string name = v_dot_table__Table_array_name(&/* ? */ *t, elem_type, nr_dims);
   int tmp50 = 0;
-  bool tmp51 = map_get(/*table.v : 330*/ t->type_idxs, name, &tmp50);
+  bool tmp51 = map_get(/*table.v : 327*/ t->type_idxs, name, &tmp50);
 
   int existing_idx = tmp50;
   if (existing_idx > 0) {
@@ -13603,7 +13659,7 @@ int v_dot_table__Table_find_or_register_array_fixed(v_dot_table__Table *t,
   string name = v_dot_table__Table_array_fixed_name(&/* ? */ *t, elem_type,
                                                     size, nr_dims);
   int tmp52 = 0;
-  bool tmp53 = map_get(/*table.v : 350*/ t->type_idxs, name, &tmp52);
+  bool tmp53 = map_get(/*table.v : 347*/ t->type_idxs, name, &tmp52);
 
   int existing_idx = tmp52;
   if (existing_idx > 0) {
@@ -13638,7 +13694,7 @@ int v_dot_table__Table_find_or_register_multi_return(
         name, _STR("_%.*s", mr_type_sym->name.len, mr_type_sym->name.str));
   };
   int tmp56 = 0;
-  bool tmp57 = map_get(/*table.v : 374*/ t->type_idxs, name, &tmp56);
+  bool tmp57 = map_get(/*table.v : 371*/ t->type_idxs, name, &tmp56);
 
   int existing_idx = tmp56;
   if (existing_idx > 0) {
