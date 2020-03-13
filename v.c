@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4b4c474"
+#define V_COMMIT_HASH "9bcb7d1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b43ac27"
+#define V_COMMIT_HASH "4b4c474"
 #endif
 #include <inttypes.h>
 
@@ -5607,6 +5607,9 @@ bool print_backtrace_skipping_top_frames_linux(int skipframes) {
          string_eq(output, tos3("??:?:")))) {
       output = tos3("");
     };
+    output = string_replace(output, tos3(" (discriminator"), tos3(": (d."));
+    printf("%-46s | %14s | %.*s\n", output.str, addr.str, beforeaddr.len,
+           beforeaddr.str);
   };
   return 1;
 #else
