@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "19f9c18"
+#define V_COMMIT_HASH "424bd1c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c2ffd02"
+#define V_COMMIT_HASH "19f9c18"
 #endif
 #include <inttypes.h>
 
@@ -37329,7 +37329,9 @@ string compiler__Scanner_line(compiler__Scanner s, int n) {
   };
   return string_trim_left(string_trim_right(res, tos3("\r\n")), tos3("\r\n"));
 }
-bool compiler__is_name_char(byte c) { return c == '_' || byte_is_letter(c); }
+bool compiler__is_name_char(byte c) {
+  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+}
 static inline bool compiler__is_nl(byte c) { return c == '\r' || c == '\n'; }
 bool compiler__contains_capital(string s) {
   string tmp114 = s;
