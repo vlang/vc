@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "920ab79"
+#define V_COMMIT_HASH "c2ffd02"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "973b5c2"
+#define V_COMMIT_HASH "920ab79"
 #endif
 #include <inttypes.h>
 
@@ -422,87 +422,6 @@ int g_test_fails = 0;
 #define strconv__ZERO '0'
 #define strconv__NINE '9'
 #define strconv__int_size 32
-#define internal_dot_help__verbose_help_text                                   \
-  tos3(                                                                        \
-      "Usage: v [options/commands] [file.v | directory]\n\n   When V is run "  \
-      "without any arguments, it is run in REPL mode.\n\n   When given a .v "  \
-      "file, it will be compiled. The executable will have the\n   same name " \
-      "as the input .v file: `v foo.v` produces `./foo` on *nix systems,\n  "  \
-      "`foo.exe` on Windows.\n\n   You can use -o to specify a different "     \
-      "output executable\'s name.\n\n   When given a directory, all .v files " \
-      "contained in it will be compiled as\n   part of a single main "         \
-      "module.\n\n   By default the executable will have the same name as "    \
-      "the directory.\n\n   To compile all V files in current directory, run " \
-      "`v .`\n\n   Any file ending in _test.v, will be treated as a test.\n  " \
-      " It will be compiled and run, evaluating the assert statements in "     \
-      "every\n   function named test_xxx.\n\n   You can put common options "   \
-      "inside an environment variable named VFLAGS, so that\n   you don\'t "   \
-      "have to repeat them.\n\n   You can set it like this: `export "          \
-      "VFLAGS=\"-cc clang -debug\"` on *nix,\n   `set VFLAGS=-cc msvc` on "    \
-      "Windows.\n\n   V respects the TMPDIR environment variable, and will "   \
-      "put .tmp.c files in TMPDIR/v/ .\n   If you have not set it, a "         \
-      "suitable platform specific folder (like /tmp) will be "                 \
-      "used.\n\nOptions/commands:\n  -h, help          Display this "          \
-      "information.\n  -o <file>         Write output to <file>.\n  -o "       \
-      "<file>.c       Produce C source without compiling it.\n  -o <file>.js " \
-      "     Produce JavaScript source.\n  -prod             Build an "         \
-      "optimized executable.\n  -version          Display compiler version "   \
-      "and git hash of the compiler source.\n  -verbose <level>  Produce a "   \
-      "verbose log about what the compiler is doing, where it seeks for "      \
-      "files and so on.\n  -v                Shorthand for `-verbose 1`\n  "   \
-      "-live             Enable hot code reloading (required by functions "    \
-      "marked with [live]).\n  -os <OS>          Produce an executable for "   \
-      "the selected OS.\n                    OS can be linux, mac, windows, "  \
-      "msvc.\n                    Use msvc if you want to use the MSVC "       \
-      "compiler on Windows.\n  -shared           Build a shared library.\n  "  \
-      "-stats            Show additional stats when compiling/running tests. " \
-      "Try `v -stats test .`\n\n  -cache            Turn on usage of the "     \
-      "precompiled module cache.\n                    It very significantly "  \
-      "speeds up secondary compilations.\n\n  -obf              Obfuscate "    \
-      "the resulting binary.\n  -compress         Compress the resulting "     \
-      "binary.\n  -                 Shorthand for `v repl`.\n\nOptions for "   \
-      "debugging/troubleshooting v programs:\n  -g                Generate "   \
-      "debugging information in the backtraces. Add *V* line numbers to the "  \
-      "generated executable.\n  -cg               Same as -g, but add *C* "    \
-      "line numbers to the generated executable instead of *V* line "          \
-      "numbers.\n  -csource keep     Do NOT remove the generated .tmp.c "      \
-      "files after compilation.\n                    It is useful when using " \
-      "debuggers like gdb/visual studio, when given after `-g` / `-cg`.\n  "   \
-      "-csource prettify Run clang-format over the generated C file, so that " \
-      "it looks nicer. Requires you to have clang-format.\n  -show_c_cmd     " \
-      "  Print the full C compilation command and how much time it took. See " \
-      "also `-verbose`.\n  -cc <ccompiler>   Specify which C compiler you "    \
-      "want to use as a C backend.\n                    The C backend "        \
-      "compiler should be able to handle C99 compatible C code.\n            " \
-      "        Common C compilers are gcc, clang, tcc, icc, cl...\n  -cflags " \
-      "<flags>   Pass additional C flags to the C backend compiler.\n        " \
-      "            Example: -cflags `sdl2-config --cflags`\n\nCommands:\n  "   \
-      "up                Update V. Run `v up` at least once per day, since V " \
-      "development is rapid and features/bugfixes are added constantly.\n  "   \
-      "run <file.v>      Build and execute the V program in file.v. You can "  \
-      "add arguments for the V program *after* the file name.\n  build "       \
-      "<module>    Compile a module into an object file.\n  self             " \
-      " Self-compile V from local source files.\n  repl              Run the " \
-      "V REPL. If V is running in a tty terminal, the REPL is interactive, "   \
-      "otherwise it just reads from stdin.\n  symlink           Useful on "    \
-      "Unix systems. Symlinks the current V executable to /usr/local/bin/v, "  \
-      "so that V is globally available.\n  test-compiler     Run all V test "  \
-      "files, and compile all V examples.\n  test folder/      Run all V "     \
-      "test files located in the folder and its subfolders. You can also "     \
-      "pass individual _test.v files too.\n  fmt               Run vfmt to "   \
-      "format the source code. [wip]\n  doc               Run vdoc over the "  \
-      "source code and produce documentation.\n  translate         "           \
-      "Translates C to V. [wip, will be available in V 0.3]\n  create        " \
-      "    Create a new v project interactively. Answer the questions, and "   \
-      "run it with `v run projectname`\n  setup-freetype    Setup thirdparty " \
-      "freetype on Windows.\n\nV package management commands:\n  search  "     \
-      "keywords  Search the https://vpm.vlang.io/ module repository for "      \
-      "matching modules and shows their details.\n  install <module>  "        \
-      "Install a user module from https://vpm.vlang.io/.\n  update  [module] " \
-      " Updates an already installed module, or ALL installed modules at "     \
-      "once, when no module name is given.\n  remove  [module]  Removes an "   \
-      "installed module, or ALL installed modules at once, when no module "    \
-      "name is given.\n")
 #define math__bias 1023
 #define math__e 2.71828182845904523536028747135266249775724709369995957496696763
 #define math__pi                                                               \
@@ -1371,7 +1290,7 @@ struct os__Result {
 
 struct varg_string {
   int len;
-  string args[3];
+  string args[5];
 };
 
 struct os__Filetime {
@@ -3386,6 +3305,7 @@ Option_array_string internal_dot_flag__parse_main_cmd(
     void (*callback)(string, internal_dot_flag__Instance *,
                      internal_dot_flag__MainCmdPreferences * /*FFF*/),
     internal_dot_flag__MainCmdPreferences *obj);
+void internal_dot_help__print_and_exit(string topic);
 benchmark__Benchmark benchmark__new_benchmark();
 benchmark__Benchmark *benchmark__new_benchmark_pointer();
 void benchmark__Benchmark_set_total_expected_steps(benchmark__Benchmark *b,
@@ -4356,6 +4276,7 @@ string main__path_of_executable(string path);
 void main__create_symlink();
 void main__main();
 void main__print_version_and_exit();
+void main__invoke_help_and_exit(array_string remaining);
 static inline void
 main__disallow_unknown_flags(internal_dot_flag__MainCmdPreferences prefs);
 string array_v_dot_table__Type_str();
@@ -4395,7 +4316,6 @@ u64 strconv__DOUBLE_PLUS_INFINITY;
 u64 strconv__DOUBLE_MINUS_INFINITY;
 u32 strconv__TEN;
 u64 strconv__max_u64;
-string internal_dot_help__help_text;
 u64 math__uvnan;
 u64 math__uvinf;
 u64 math__uvneginf;
@@ -4744,6 +4664,7 @@ array_string internal_dot_flag__falsey;
 #define internal_dot_flag__internal_dot_flag__MainCmdAction_unspecified 0
 #define internal_dot_flag__internal_dot_flag__MainCmdAction_version 1
 #define internal_dot_flag__internal_dot_flag__MainCmdAction_help 2
+string internal_dot_help__unknown_topic;
 string benchmark__BOK;
 string benchmark__BFAIL;
 string benchmark__BSPENT;
@@ -15559,6 +15480,38 @@ Option_array_string internal_dot_flag__parse_main_cmd(
   ;
   array_string tmp4 = OPTION_CAST(array_string)(tmp);
   return opt_ok(&tmp4, sizeof(array_string));
+}
+void internal_dot_help__print_and_exit(string topic) {
+  string vexe = v_dot_pref__vexe_path();
+  string vroot = os__dir(vexe);
+  string tmp1 = topic;
+  ;
+  for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+    byte b = tmp1.str[tmp2];
+
+    if ((b >= 'a' && b <= 'z') || b == '-' || (b >= '0' && b <= '9')) {
+      continue;
+    };
+    println(internal_dot_help__unknown_topic);
+    v_exit(1);
+  };
+  string target_topic = os__join_path(
+      vroot, &(varg_string){.len = 5,
+                            .args = {tos3("cmd"), tos3("v"), tos3("internal"),
+                                     tos3("help"),
+                                     _STR("%.*s.txt", topic.len, topic.str)}});
+  Option_string tmp3 = os__read_file(target_topic);
+  string content;
+  if (!tmp3.ok) {
+    string err = tmp3.error;
+    int errcode = tmp3.ecode;
+    println(internal_dot_help__unknown_topic);
+    v_exit(1);
+  }
+  content = *(string *)tmp3.data;
+  ;
+  println(content);
+  v_exit(0);
 }
 benchmark__Benchmark benchmark__new_benchmark() {
   return (benchmark__Benchmark){.bench_start_time = benchmark__now(),
@@ -40424,7 +40377,8 @@ internal_dot_compile__parse_arguments(array_string args) {
     remaining = array_slice2(remaining, 1, -1, true);
   } else if (string_eq(tmp10, tos3("build"))) {
     remaining = array_slice2(remaining, 1, -1, true);
-    if (string_eq((*(string *)array_get(remaining, 0)), tos3("module"))) {
+    if (remaining.len > 0 &&
+        string_eq((*(string *)array_get(remaining, 0)), tos3("module"))) {
       remaining = array_slice2(remaining, 1, -1, true);
       println(tos3("V error: Module compilation is not ready yet."));
       v_exit(1);
@@ -40603,7 +40557,8 @@ void internal_dot_compile__parse_options(string flag,
     prefs->is_prof = internal_dot_flag__Instance_bool(f);
   } else if (string_eq(tmp21, tos3("translated"))) {
     prefs->translated = internal_dot_flag__Instance_bool(f);
-  } else if (string_eq(tmp21, tos3("backend"))) {
+  } else if ((string_eq(tmp21, tos3("b"))) ||
+             (string_eq(tmp21, tos3("backend")))) {
     Option_string tmp29 = internal_dot_flag__Instance_string(f);
     if (!tmp29.ok) {
       string err = tmp29.error;
@@ -41240,8 +41195,7 @@ void main__main() {
   if (values.len == 0 &&
       prefs.action ==
           internal_dot_flag__internal_dot_flag__MainCmdAction_help) {
-    println(tos3("Use `v help` for usage information."));
-    v_exit(1);
+    main__invoke_help_and_exit(values);
   };
   if (values.len == 0 ||
       string_eq((*(string *)array_get(values, 0)), tos3("-")) ||
@@ -41294,16 +41248,7 @@ void main__main() {
     return;
   } else if (string_eq(tmp9, tos3("help"))) {
     main__disallow_unknown_flags(prefs);
-    if (v_dot_pref__VerboseLevel_is_higher_or_equal(
-            prefs.verbosity, v_dot_pref__v_dot_pref__VerboseLevel_level_one)) {
-      println(internal_dot_help__verbose_help_text);
-    } else {
-      println(internal_dot_help__help_text);
-    };
-    if (values.len > 1) {
-      println(tos3("Note: Actual help module is coming soon. Feel free to ask "
-                   "on the official channels for clarification."));
-    };
+    main__invoke_help_and_exit(values);
 
     return;
   } else if (string_eq(tmp9, tos3("version"))) {
@@ -41330,6 +41275,20 @@ void main__print_version_and_exit() {
   printf("V %.*s %.*s\n", compiler__Version.len, compiler__Version.str,
          version_hash.len, version_hash.str);
   v_exit(0);
+}
+void main__invoke_help_and_exit(array_string remaining) {
+  int tmp12 = remaining.len;
+
+  if ((tmp12 == 0) || (tmp12 == 1)) {
+    internal_dot_help__print_and_exit(tos3("default"));
+  } else if (tmp12 == 2) {
+    internal_dot_help__print_and_exit((*(string *)array_get(remaining, 1)));
+  } else // default:
+  {
+  };
+  println(tos3("V Error: Expected only one help topic to be provided."));
+  println(tos3("For usage information, use `v help`."));
+  v_exit(1);
 }
 static inline void
 main__disallow_unknown_flags(internal_dot_flag__MainCmdPreferences prefs) {
@@ -41399,34 +41358,6 @@ void init() {
   strconv__DOUBLE_MINUS_INFINITY = 0xFFF0000000000000;
   strconv__TEN = ((u32)(10));
   strconv__max_u64 = ((u64)(UINT64_MAX));
-  internal_dot_help__help_text = tos3(
-      "V is a tool for managing V source code.\n\nUsage:\n   v [options] "
-      "[command] [arguments]\n\nExamples:\n   v hello.v         compile the "
-      "file `hello.v` and output it as `hello` or `hello.exe`\n   v run "
-      "hello.v     same as above but also run the produced executable "
-      "immediately after compilation\n\nThe commands are:\n   build            "
-      " build V code in the provided path (default)\n   create            "
-      "setup the file structure for a V project\n   doc               "
-      "generates the documentation for a V module (coming soon in 0.3)\n   fmt "
-      "              format the V code provided\n   repl              run the "
-      "REPL\n   run               compile and run a V program\n   symlink      "
-      "     create a symbolic link for V\n   translate         translate C "
-      "code to V (coming soon in 0.3)\n   up                run the V "
-      "self-updater\n   self              run the V self-compiler\n   version  "
-      "         prints the version text and exits\n\n   install           "
-      "installs a module from VPM\n   remove            removes a module that "
-      "was installed from VPM\n   search            searches for a module from "
-      "VPM\n   update            updates an installed module from VPM\n\n   "
-      "bin2v             embed a binary file as a constant and output it in a "
-      "V file\n   build-examples    test if all examples can be built\n   "
-      "build-tools       test if all tools can be built\n   build-vbinaries   "
-      "test if V can be built with different configuration\n   test            "
-      "  run all test files in the provided directory\n   test-fmt          "
-      "test if all files in the current directory is formatted properly\n   "
-      "test-compiler     run the V self-test suite to make sure V is working "
-      "properly\n\n   setup-freetype    setup thirdparty freetype on "
-      "Windows\n\nFor a comprehensive list of options, please refer to `v -v "
-      "help`.");
   math__uvnan = 0x7FF8000000000001;
   math__uvinf = 0x7FF0000000000000;
   math__uvneginf = 0xFFF0000000000000;
@@ -42422,6 +42353,9 @@ void init() {
                              EMPTY_ARRAY_OF_ELEMS(string, 6){
                                  tos3("0"), tos3("f"), tos3("F"), tos3("false"),
                                  tos3("FALSE"), tos3("False")});
+  internal_dot_help__unknown_topic =
+      tos3("V Error: Unknown help topic provided. Use `v help` for usage "
+           "information.");
   benchmark__BOK = term__ok_message(tos3("OK"));
   benchmark__BFAIL = term__fail_message(tos3("FAIL"));
   benchmark__BSPENT = term__ok_message(tos3("SPENT"));
