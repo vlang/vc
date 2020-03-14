@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e8c9f60"
+#define V_COMMIT_HASH "6752fed"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "424bd1c"
+#define V_COMMIT_HASH "e8c9f60"
 #endif
 #include <inttypes.h>
 
@@ -16254,8 +16254,8 @@ v_dot_parser__Parser_fn_args(v_dot_parser__Parser *p) {
                 v_dot_ast__Arg){
                 .name = arg_name, .is_mut = is_mut, .typ = arg_type}),
             tmp9, v_dot_ast__Arg);
+      arg_no++;
     };
-    arg_no++;
   } else {
     while (p->tok.kind != v_dot_token__v_dot_token__Kind_rpar) {
 
