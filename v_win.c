@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a0e97e0"
+#define V_COMMIT_HASH "c546e88"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8a8f50a"
+#define V_COMMIT_HASH "a0e97e0"
 #endif
 #include <inttypes.h>
 
@@ -41390,7 +41390,11 @@ void main__main() {
   };
   string tmp9 = command;
 
-  if (string_eq(tmp9, tos3("translate"))) {
+  if ((string_eq(tmp9, tos3("create"))) || (string_eq(tmp9, tos3("init")))) {
+    main__launch_tool(prefs.verbosity, tos3("vcreate"));
+
+    return;
+  } else if (string_eq(tmp9, tos3("translate"))) {
     println(tos3("Translating C to V will be available in V 0.3"));
 
     return;
@@ -43127,10 +43131,10 @@ void init() {
           tos3("arch"), tos3("csource"), tos3("cf"), tos3("cflags"),
           tos3("path")});
   main__simple_cmd = new_array_from_c_array(
-      13, 13, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 13){
-          tos3("fmt"), tos3("up"), tos3("self"), tos3("create"), tos3("test"),
-          tos3("test-fmt"), tos3("test-compiler"), tos3("bin2v"), tos3("repl"),
+      12, 12, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 12){
+          tos3("fmt"), tos3("up"), tos3("self"), tos3("test"), tos3("test-fmt"),
+          tos3("test-compiler"), tos3("bin2v"), tos3("repl"),
           tos3("build-tools"), tos3("build-examples"), tos3("build-vbinaries"),
           tos3("setup-freetype")});
   builtin__init();
