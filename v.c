@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "cfeafb9"
+#define V_COMMIT_HASH "3e05939"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a121dfd"
+#define V_COMMIT_HASH "cfeafb9"
 #endif
 #include <inttypes.h>
 
@@ -2050,6 +2050,7 @@ struct v_dot_ast__EnumVal {
   string val;
   string mod;
   v_dot_token__Position pos;
+  v_dot_table__Type typ;
 };
 
 struct v_dot_ast__AssignExpr {
@@ -3386,7 +3387,7 @@ v_dot_checker__Checker_postfix_expr(v_dot_checker__Checker *c,
 v_dot_table__Type v_dot_checker__Checker_index_expr(v_dot_checker__Checker *c,
                                                     v_dot_ast__IndexExpr *node);
 v_dot_table__Type v_dot_checker__Checker_enum_val(v_dot_checker__Checker *c,
-                                                  v_dot_ast__EnumVal node);
+                                                  v_dot_ast__EnumVal *node);
 v_dot_table__Type v_dot_checker__Checker_map_init(v_dot_checker__Checker *c,
                                                   v_dot_ast__MapInit *node);
 void v_dot_checker__Checker_error(v_dot_checker__Checker *c, string s,
@@ -17155,7 +17156,8 @@ v_dot_ast__Expr v_dot_parser__Parser_name_expr(v_dot_parser__Parser *p) {
                           .enum_name = enum_name,
                           .val = val,
                           .pos = v_dot_token__Token_position(&/* ? */ p->tok),
-                          .mod = mod}},
+                          .mod = mod,
+                      }},
                       sizeof(v_dot_ast__EnumVal)),
         .typ = SumType_v_dot_ast__Expr_EnumVal};
   } else {
@@ -19162,7 +19164,7 @@ v_dot_table__Type v_dot_checker__Checker_expr(v_dot_checker__Checker *c,
     return v_dot_table__byte_type;
   } else if (tmp94.typ == SumType_v_dot_ast__Expr_EnumVal) {
     v_dot_ast__EnumVal *it = (v_dot_ast__EnumVal *)tmp94.obj;
-    return v_dot_checker__Checker_enum_val(c, *it);
+    return v_dot_checker__Checker_enum_val(c, it);
   } else if (tmp94.typ == SumType_v_dot_ast__Expr_FloatLiteral) {
     v_dot_ast__FloatLiteral *it = (v_dot_ast__FloatLiteral *)tmp94.obj;
     return v_dot_table__f64_type;
@@ -19247,7 +19249,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     };
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp96 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
-    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_3782_var_scope_var;
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_3783_var_scope_var;
     if (!tmp96.ok) {
       string err = tmp96.error;
       int errcode = tmp96.ecode;
@@ -19259,11 +19261,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_3782_var_scope_var =
+    _V_mret_3783_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp96.data;
     ;
-    var_scope = _V_mret_3782_var_scope_var.var_0;
-    var = _V_mret_3782_var_scope_var.var_1;
+    var_scope = _V_mret_3783_var_scope_var.var_0;
+    var = _V_mret_3783_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
@@ -19499,31 +19501,33 @@ v_dot_checker__Checker_index_expr(v_dot_checker__Checker *c,
   return typ;
 }
 v_dot_table__Type v_dot_checker__Checker_enum_val(v_dot_checker__Checker *c,
-                                                  v_dot_ast__EnumVal node) {
-  int typ_idx = ((string_eq(node.enum_name, tos3("")))
+                                                  v_dot_ast__EnumVal *node) {
+  int typ_idx = ((string_eq(node->enum_name, tos3("")))
                      ? (c->expected_type)
                      : (v_dot_table__Table_find_type_idx(&/* ? */ *c->table,
-                                                         node.enum_name)));
+                                                         node->enum_name)));
   if (typ_idx == 0) {
     v_dot_checker__Checker_error(c,
                                  _STR("not an enum (name=%.*s) (type_idx=0)",
-                                      node.enum_name.len, node.enum_name.str),
-                                 node.pos);
+                                      node->enum_name.len, node->enum_name.str),
+                                 node->pos);
   };
-  v_dot_table__TypeSymbol *typ = v_dot_table__Table_get_type_symbol(
-      &/* ? */ *c->table, ((v_dot_table__Type)(typ_idx)));
-  if (typ->kind != v_dot_table__v_dot_table__Kind_enum_) {
-    v_dot_checker__Checker_error(c, tos3("not an enum"), node.pos);
+  v_dot_table__Type typ = ((v_dot_table__Type)(typ_idx));
+  v_dot_table__TypeSymbol *typ_sym =
+      v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, typ);
+  if (typ_sym->kind != v_dot_table__v_dot_table__Kind_enum_) {
+    v_dot_checker__Checker_error(c, tos3("not an enum"), node->pos);
   };
-  v_dot_table__Enum info = v_dot_table__TypeSymbol_enum_info(&/* ? */ *typ);
-  if (!((_IN(string, (node.val), info.vals)))) {
+  v_dot_table__Enum info = v_dot_table__TypeSymbol_enum_info(&/* ? */ *typ_sym);
+  if (!((_IN(string, (node->val), info.vals)))) {
     v_dot_checker__Checker_error(
         c,
-        _STR("enum `%.*s` does not have a value `%.*s`", typ->name.len,
-             typ->name.str, node.val.len, node.val.str),
-        node.pos);
+        _STR("enum `%.*s` does not have a value `%.*s`", typ_sym->name.len,
+             typ_sym->name.str, node->val.len, node->val.str),
+        node->pos);
   };
-  return typ_idx;
+  node->typ = typ;
+  return typ;
 }
 v_dot_table__Type v_dot_checker__Checker_map_init(v_dot_checker__Checker *c,
                                                   v_dot_ast__MapInit *node) {
@@ -20231,9 +20235,8 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
     v_dot_gen__Gen_write(g, _STR("'%.*s'", it->val.len, it->val.str));
   } else if (tmp42.typ == SumType_v_dot_ast__Expr_EnumVal) {
     v_dot_ast__EnumVal *it = (v_dot_ast__EnumVal *)tmp42.obj;
-    string enum_name = string_replace(it->enum_name, tos3("."), tos3("__"));
-    v_dot_gen__Gen_write(g, _STR("%.*s_%.*s", enum_name.len, enum_name.str,
-                                 it->val.len, it->val.str));
+    v_dot_gen__Gen_write(g, v_dot_gen__Gen_typ(g, it->typ));
+    v_dot_gen__Gen_write(g, _STR("_%.*s", it->val.len, it->val.str));
   } else if (tmp42.typ == SumType_v_dot_ast__Expr_FloatLiteral) {
     v_dot_ast__FloatLiteral *it = (v_dot_ast__FloatLiteral *)tmp42.obj;
     v_dot_gen__Gen_write(g, it->val);
