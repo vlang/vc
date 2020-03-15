@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2d5c7c8"
+#define V_COMMIT_HASH "8e2537a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3e05939"
+#define V_COMMIT_HASH "2d5c7c8"
 #endif
 #include <inttypes.h>
 
@@ -20183,12 +20183,13 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
     if (type_sym->kind != v_dot_table__v_dot_table__Kind_array_fixed) {
       v_dot_table__TypeSymbol *elem_sym =
           v_dot_table__Table_get_type_symbol(&/* ? */ *g->table, it->elem_type);
+      string elem_type_str = v_dot_gen__Gen_typ(g, it->elem_type);
       v_dot_gen__Gen_write(g,
                            _STR("new_array_from_c_array(%d, %d, sizeof(%.*s), ",
-                                it->exprs.len, it->exprs.len,
-                                type_sym->name.len, type_sym->name.str));
+                                it->exprs.len, it->exprs.len, elem_type_str.len,
+                                elem_type_str.str));
       v_dot_gen__Gen_writeln(
-          g, _STR("(%.*s[]){\t", elem_sym->name.len, elem_sym->name.str));
+          g, _STR("(%.*s[]){\t", elem_type_str.len, elem_type_str.str));
       array_v_dot_ast__Expr tmp43 = it->exprs;
       for (int tmp44 = 0; tmp44 < tmp43.len; tmp44++) {
         v_dot_ast__Expr expr = ((v_dot_ast__Expr *)tmp43.data)[tmp44];
@@ -20377,8 +20378,9 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
     if (type_sym->kind != v_dot_table__v_dot_table__Kind_void) {
       tmp = v_dot_gen__Gen_new_tmp_var(g);
     };
-    v_dot_gen__Gen_write(g, _STR("%.*s %.*s = ", type_sym->name.len,
-                                 type_sym->name.str, tmp.len, tmp.str));
+    string styp = v_dot_gen__Gen_typ(g, it->expr_type);
+    v_dot_gen__Gen_write(
+        g, _STR("%.*s %.*s = ", styp.len, styp.str, tmp.len, tmp.str));
     v_dot_gen__Gen_expr(g, it->cond);
     v_dot_gen__Gen_writeln(g, tos3(";"));
     array_v_dot_ast__MatchBranch tmp61 = it->branches;
@@ -20840,7 +20842,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp95 = 0;
       bool tmp96 =
-          map_get(/*cgen.v : 1186*/ g->varaidic_args, type_str, &tmp95);
+          map_get(/*cgen.v : 1188*/ g->varaidic_args, type_str, &tmp95);
 
       if (len > tmp95) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -20896,7 +20898,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp106 = 0;
     bool tmp107 =
-        map_get(/*cgen.v : 1241*/ g->table->type_idxs, builtin_name, &tmp106);
+        map_get(/*cgen.v : 1243*/ g->table->type_idxs, builtin_name, &tmp106);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -21054,7 +21056,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp131 = 0;
     bool tmp132 =
-        map_get(/*cgen.v : 1344*/ g->table->type_idxs, node.name, &tmp131);
+        map_get(/*cgen.v : 1346*/ g->table->type_idxs, node.name, &tmp131);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -37687,8 +37689,10 @@ void compiler__Parser_struct_decl(compiler__Parser *p,
     };
   };
   if (name.len == 1 && !p->pref->building_v && !p->pref->is_repl) {
-    compiler__Parser_warn(
-        p, tos3("struct names must have more than one character"));
+    compiler__Parser_warn(p, _STR("struct names must have more than one "
+                                  "character (\"%.*s\", len=%d, %d)",
+                                  name.len, name.str, name.len,
+                                  p->pref->building_v));
   };
   if (!is_c && !compiler__good_type_name(name)) {
     compiler__Parser_error(p, tos3("bad struct name, e.g. use `HttpRequest` "
@@ -37901,10 +37905,10 @@ void compiler__Parser_struct_decl(compiler__Parser *p,
     };
     if (p->tok == compiler__compiler__TokenKind_assign) {
       compiler__Parser_next(p);
-      _V_MulRet_string_V_string _V_mret_1326_def_val_type_expr =
+      _V_MulRet_string_V_string _V_mret_1341_def_val_type_expr =
           compiler__Parser_tmp_expr(p);
-      string def_val_type = _V_mret_1326_def_val_type_expr.var_0;
-      string expr = _V_mret_1326_def_val_type_expr.var_1;
+      string def_val_type = _V_mret_1341_def_val_type_expr.var_0;
+      string expr = _V_mret_1341_def_val_type_expr.var_1;
       if (string_ne(def_val_type, field_type)) {
         compiler__Parser_error(p, _STR("expected `%.*s` but got `%.*s`",
                                        field_type.len, field_type.str,
