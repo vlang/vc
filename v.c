@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3e05939"
+#define V_COMMIT_HASH "2d5c7c8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cfeafb9"
+#define V_COMMIT_HASH "3e05939"
 #endif
 #include <inttypes.h>
 
@@ -573,6 +573,8 @@ typedef struct RepIndex RepIndex;
 typedef array array_RepIndex;
 typedef Option Option_int;
 typedef Option Option_int;
+typedef struct varg_byte varg_byte;
+
 typedef struct strings__Builder strings__Builder;
 typedef union strconv__Float64u strconv__Float64u;
 typedef struct _V_MulRet_u32_V_u32_V_u32 _V_MulRet_u32_V_u32_V_u32;
@@ -1124,6 +1126,11 @@ struct ustring {
 struct RepIndex {
   int idx;
   int val_idx;
+};
+
+struct varg_byte {
+  int len;
+  byte args[0];
 };
 
 struct strings__Builder {
@@ -2581,6 +2588,7 @@ bool byte_is_white(byte c);
 int string_hash(string s);
 array_byte string_bytes(string s);
 string string_repeat(string s, int count);
+string string_strip_margin(string s, varg_byte *del);
 int utf8_char_len(byte b);
 string utf32_to_str(u32 code);
 string utf32_to_str_no_malloc(u32 code, void *buf);
@@ -7766,6 +7774,55 @@ string string_repeat(string s, int count) {
     };
   };
   ret[/*ptr!*/ s.len * count] /*rbyte 1*/ = 0;
+  return (tos2((byte *)ret));
+}
+string string_strip_margin(string s, varg_byte *del) {
+  byte sep = '|';
+  if (del->len >= 1) {
+    for (int tmp97 = 0; tmp97 < del->len; tmp97++) {
+      byte d = ((byte *)del->args)[tmp97];
+
+      if (!byte_is_space(d)) {
+        sep = d;
+      } else {
+        eprintln(tos3(
+            "Warning: `strip_margin` cannot use white-space as a delimiter"));
+        eprintln(tos3("    Defaulting to `|`"));
+      };
+      break;
+    };
+    if (del->len == 1) {
+      eprintln(
+          tos3("Warning: `strip_margin` only uses the first argument given"));
+    };
+  };
+  byte *ret = v_malloc(s.len + 1);
+  int count = 0;
+  for (int i = 0; i < s.len; i++) {
+
+    if (((s.str[i] /*rbyte 0*/ == '\n' || s.str[i] /*rbyte 0*/ == '\r'))) {
+#ifdef _WIN32
+      ret[/*ptr!*/ count] /*rbyte 1*/ = '\r';
+      ret[/*ptr!*/ count + 1] /*rbyte 1*/ = '\n';
+      count += 2;
+#else
+      ret[/*ptr!*/ count] /*rbyte 1*/ = s.str[i] /*rbyte 0*/;
+      count++;
+#endif
+      ;
+      while (s.str[i] /*rbyte 0*/ != sep) {
+
+        i++;
+        if (i >= s.len) {
+          break;
+        };
+      };
+    } else {
+      ret[/*ptr!*/ count] /*rbyte 1*/ = s.str[i] /*rbyte 0*/;
+      count++;
+    };
+  };
+  ret[/*ptr!*/ count] /*rbyte 1*/ = 0;
   return (tos2((byte *)ret));
 }
 int utf8_char_len(byte b) {
