@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8e2537a"
+#define V_COMMIT_HASH "8d19ba9"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2d5c7c8"
+#define V_COMMIT_HASH "8e2537a"
 #endif
 #include <inttypes.h>
 
@@ -7782,16 +7782,16 @@ string string_strip_margin(string s, varg_byte *del) {
     for (int tmp97 = 0; tmp97 < del->len; tmp97++) {
       byte d = ((byte *)del->args)[tmp97];
 
-      if (!byte_is_space(d)) {
-        sep = d;
-      } else {
+      if (byte_is_space(d)) {
         eprintln(tos3(
             "Warning: `strip_margin` cannot use white-space as a delimiter"));
         eprintln(tos3("    Defaulting to `|`"));
+      } else {
+        sep = d;
       };
       break;
     };
-    if (del->len == 1) {
+    if (del->len != 1) {
       eprintln(
           tos3("Warning: `strip_margin` only uses the first argument given"));
     };
