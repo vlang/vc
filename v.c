@@ -113,6 +113,11 @@ extern char **environ;
 #include <sys/wait.h> // os__wait uses wait on nix
 #endif
 
+#ifdef __sun
+#include <sys/types.h>
+#include <sys/wait.h> // os__wait uses wait on nix
+#endif
+
 #define EMPTY_STRUCT_DECLARATION
 #define EMPTY_STRUCT_INITIALIZATION 0
 // Due to a tcc bug, the length of an array needs to be specified, but GCC
@@ -42588,7 +42593,9 @@ void init() {
       "os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n#include "
       "<sys/types.h>\n#include <sys/resource.h>\n#include <sys/wait.h> // "
       "os__wait uses wait on nix\n#endif\n\n#ifdef __NetBSD__\n#include "
-      "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n%.*s\n\n#ifdef "
+      "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n\n\n#ifdef __linux__\n#include "
+      "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
+      "nix\n#endif\n\n%.*s\n\n#ifdef "
       "_WIN32\n#define WINVER 0x0600\n#ifdef _WIN32_WINNT\n#undef "
       "_WIN32_WINNT\n#endif\n#define _WIN32_WINNT 0x0600\n#define "
       "WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define UNICODE\n#include "
@@ -42828,7 +42835,9 @@ void init() {
       "os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n#include "
       "<sys/types.h>\n#include <sys/resource.h>\n#include <sys/wait.h> // "
       "os__wait uses wait on nix\n#endif\n\n#ifdef __NetBSD__\n#include "
-      "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n%.*s\n\n#ifdef "
+      "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n\n\n#ifdef __linux__\n#include "
+      "<sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on "
+      "nix\n#endif\n\n%.*s\n\n#ifdef "
       "_WIN32\n#define WINVER 0x0600\n#ifdef _WIN32_WINNT\n#undef "
       "_WIN32_WINNT\n#endif\n#define _WIN32_WINNT 0x0600\n#define "
       "WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define UNICODE\n#include "
