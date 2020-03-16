@@ -9488,8 +9488,12 @@ int time__Time_calc_unix(time__Time *t) {
                                     .tm_hour = t->hour,
                                     .tm_mday = t->day,
                                     .tm_mon = t->month - 1,
-                                    .tm_year = t->year - 1900,
-                                    .tm_gmtoff = 0};
+                                    .tm_year = t->year - 1900
+#ifndef __sun
+                                    ,
+                                    .tm_gmtoff = 0
+#endif
+                                    };
   return time__make_unix_time(tt);
 }
 time__Time time__Time_add_seconds(time__Time t, int seconds) {
