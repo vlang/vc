@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ac0b235"
+#define V_COMMIT_HASH "66adf7a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "37504c4"
+#define V_COMMIT_HASH "ac0b235"
 #endif
 #include <inttypes.h>
 
@@ -18249,11 +18249,12 @@ v_dot_ast__MatchExpr v_dot_parser__Parser_match_expr(v_dot_parser__Parser *p) {
                             sizeof(v_dot_ast__Type)),
                  .typ = SumType_v_dot_ast__Expr_Type}),
             tmp46, v_dot_ast__Expr);
-      v_dot_ast__Scope_register_var(p->scope, (v_dot_ast__Var){
-                                                  .name = tos3("it"),
-                                                  .typ = typ,
-                                                  .is_mut = 0,
-                                              });
+      v_dot_ast__Scope_register_var(p->scope,
+                                    (v_dot_ast__Var){
+                                        .name = tos3("it"),
+                                        .typ = v_dot_table__type_to_ptr(typ),
+                                        .is_mut = 0,
+                                    });
       if (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
         v_dot_parser__Parser_next(p);
         v_dot_parser__Parser_parse_type(p);
@@ -20677,9 +20678,9 @@ void v_dot_gen__Gen_match_expr(v_dot_gen__Gen *g, v_dot_ast__MatchExpr node) {
       if (tmp74.typ == SumType_v_dot_ast__Expr_Type) {
         v_dot_ast__Type *it = (v_dot_ast__Type *)tmp74.obj;
         string it_type = v_dot_gen__Gen_typ(g, it->typ);
-        v_dot_gen__Gen_writeln(g, _STR("%.*s* it = (%.*s*)tmp3.obj; // ST it",
+        v_dot_gen__Gen_writeln(g, _STR("%.*s* it = (%.*s*)%.*s.obj; // ST it",
                                        it_type.len, it_type.str, it_type.len,
-                                       it_type.str));
+                                       it_type.str, tmp.len, tmp.str));
       } else // default:
       {
         v_dot_gen__verror(tos3("match sum type"));
