@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5ae04dc"
+#define V_COMMIT_HASH "cff6f4a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "93920a4"
+#define V_COMMIT_HASH "5ae04dc"
 #endif
 #include <inttypes.h>
 
@@ -7852,15 +7852,14 @@ string string_strip_margin(string s, varg_byte *del) {
   for (int i = 0; i < s.len; i++) {
 
     if (((s.str[i] /*rbyte 0*/ == '\n' || s.str[i] /*rbyte 0*/ == '\r'))) {
-#ifdef _WIN32
-      ret[/*ptr!*/ count] /*rbyte 1*/ = '\r';
-      ret[/*ptr!*/ count + 1] /*rbyte 1*/ = '\n';
-      count += 2;
-#else
       ret[/*ptr!*/ count] /*rbyte 1*/ = s.str[i] /*rbyte 0*/;
       count++;
-#endif
-      ;
+      if (s.str[i] /*rbyte 0*/ == '\r' && i < s.len - 1 &&
+          s.str[i + 1] /*rbyte 0*/ == '\n') {
+        ret[/*ptr!*/ count] /*rbyte 1*/ = s.str[i + 1] /*rbyte 0*/;
+        count++;
+        i++;
+      };
       while (s.str[i] /*rbyte 0*/ != sep) {
 
         i++;
