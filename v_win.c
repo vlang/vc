@@ -1,3 +1,4 @@
+#define V_COMMIT_HASH "5581b2b"
 #ifndef V_COMMIT_HASH
 #define V_COMMIT_HASH "66adf7a"
 #endif
@@ -562,7 +563,6 @@ typedef array array_voidptr;
 typedef struct SymbolInfo SymbolInfo;
 typedef struct SymbolInfoContainer SymbolInfoContainer;
 typedef struct Line64 Line64;
-typedef struct Error Error;
 typedef struct KeyValue KeyValue;
 typedef struct DenseArray DenseArray;
 typedef struct map map;
@@ -1140,11 +1140,6 @@ struct Line64 {
   u32 f_line_number;
   byte *f_file_name;
   u64 f_address;
-};
-
-struct Error {
-  int code;
-  string message;
 };
 
 struct SortedMap {
@@ -2511,8 +2506,6 @@ int backtrace(void *a, int b);
 byteptr *backtrace_symbols(void *, int);
 void backtrace_symbols_fd(void *, int, int);
 int proc_pidpath(int, void *, int);
-Error new_error(string message);
-Error new_error_with_code(string message, int code);
 static inline string f64_str(f64 d);
 static inline string f64_strsci(f64 x, int digit_num);
 static inline string f64_strlong(f64 x);
@@ -5702,15 +5695,6 @@ int backtrace(void *a, int b);
 byteptr *backtrace_symbols(void *, int);
 void backtrace_symbols_fd(void *, int, int);
 int proc_pidpath(int, void *, int);
-Error new_error(string message) {
-  return (Error){
-      .message = message,
-      .code = 0,
-  };
-}
-Error new_error_with_code(string message, int code) {
-  return (Error){.code = code, .message = message};
-}
 static inline string f64_str(f64 d) { return strconv_dot_ftoa__ftoa_64(d); }
 static inline string f64_strsci(f64 x, int digit_num) {
   int n_digit = digit_num;
@@ -11182,8 +11166,8 @@ u32 strconv_dot_ftoa__mul_shift_32(u32 m, u64 mul, int ishift) {
   /// sline: ""
   if (!tmp1) {
     g_test_fails++;
-    eprintln(tos3("/mnt/storage/homes/kastro/dev/v/vlib/strconv/ftoa/"
-                  "utilities.v:100: FAILED: strconv_dot_ftoa__mul_shift_32()"));
+    eprintln(tos3("/tmp/gen_vc/v/vlib/strconv/ftoa/utilities.v:100: FAILED: "
+                  "strconv_dot_ftoa__mul_shift_32()"));
     eprintln(tos3("Source: "));
     v_panic(tos3("An assertion failed."));
     exit(1);
@@ -33375,11 +33359,10 @@ compiler__Type compiler__Parser_get_type2(compiler__Parser *p) {
             ((p->pref->is_debug)
                  ? (string_add(
                        string_add(
-                           string_add(
-                               string_add(tos3("("),
-                                          tos3("/mnt/storage/homes/kastro/dev/"
-                                               "v/vlib/compiler/get_type.v")),
-                               tos3(":")),
+                           string_add(string_add(tos3("("),
+                                                 tos3("/tmp/gen_vc/v/vlib/"
+                                                      "compiler/get_type.v")),
+                                      tos3(":")),
                            tos3("185")),
                        tos3(")")))
                  : (tos3("")));
