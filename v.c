@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "cff6f4a"
+#define V_COMMIT_HASH "e2eb0f1"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5ae04dc"
+#define V_COMMIT_HASH "cff6f4a"
 #endif
 #include <inttypes.h>
 
@@ -1028,6 +1028,10 @@ struct compiler__MsvcResult {
   string shared_include_path;
 };
 
+struct v_dot_ast__IntegerLiteral {
+  string val;
+};
+
 struct v_dot_ast__HashStmt {
   string val;
 };
@@ -1183,10 +1187,6 @@ struct benchmark__Benchmark {
 struct v_dot_table__Field {
   string name;
   v_dot_table__Type typ;
-};
-
-struct v_dot_ast__IntegerLiteral {
-  int val;
 };
 
 struct v_dot_ast__AliasTypeDecl {
@@ -15839,10 +15839,10 @@ string v_dot_ast__Expr_str(v_dot_ast__Expr x) {
         v_dot_ast__Expr_str(it->right).str);
   } else if (tmp4.typ == SumType_v_dot_ast__Expr_IntegerLiteral) {
     v_dot_ast__IntegerLiteral *it = (v_dot_ast__IntegerLiteral *)tmp4.obj;
-    return int_str(it->val);
-  } else if (tmp4.typ == SumType_v_dot_ast__Expr_IntegerLiteral) {
-    v_dot_ast__IntegerLiteral *it = (v_dot_ast__IntegerLiteral *)tmp4.obj;
-    return _STR("\"%d\"", it->val);
+    return it->val;
+  } else if (tmp4.typ == SumType_v_dot_ast__Expr_StringLiteral) {
+    v_dot_ast__StringLiteral *it = (v_dot_ast__StringLiteral *)tmp4.obj;
+    return _STR("\"%.*s\"", it->val.len, it->val.str);
   } else // default:
   {
     return tos3("");
@@ -17837,7 +17837,7 @@ v_dot_parser__Parser_parse_number_literal(v_dot_parser__Parser *p) {
   } else {
     node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
         .obj = memdup(&(v_dot_ast__IntegerLiteral[]){(
-                          v_dot_ast__IntegerLiteral){.val = v_string_int(lit)}},
+                          v_dot_ast__IntegerLiteral){.val = lit}},
                       sizeof(v_dot_ast__IntegerLiteral)),
         .typ = SumType_v_dot_ast__Expr_IntegerLiteral};
   };
@@ -19158,7 +19158,7 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
     v_dot_gen__Gen_infix_expr(g, *it);
   } else if (tmp50.typ == SumType_v_dot_ast__Expr_IntegerLiteral) {
     v_dot_ast__IntegerLiteral *it = (v_dot_ast__IntegerLiteral *)tmp50.obj;
-    v_dot_gen__Gen_write(g, int_str(it->val));
+    v_dot_gen__Gen_write(g, int_str(v_string_int(it->val)));
   } else if (tmp50.typ == SumType_v_dot_ast__Expr_MatchExpr) {
     v_dot_ast__MatchExpr *it = (v_dot_ast__MatchExpr *)tmp50.obj;
     v_dot_gen__Gen_match_expr(g, *it);
@@ -20023,7 +20023,7 @@ void v_dot_gen__JsGen_expr(v_dot_gen__JsGen *g, v_dot_ast__Expr node) {
 
   if (tmp16.typ == SumType_v_dot_ast__Expr_IntegerLiteral) {
     v_dot_ast__IntegerLiteral *it = (v_dot_ast__IntegerLiteral *)tmp16.obj;
-    v_dot_gen__JsGen_write(g, int_str(it->val));
+    v_dot_gen__JsGen_write(g, it->val);
   } else if (tmp16.typ == SumType_v_dot_ast__Expr_FloatLiteral) {
     v_dot_ast__FloatLiteral *it = (v_dot_ast__FloatLiteral *)tmp16.obj;
     v_dot_gen__JsGen_write(g, it->val);
@@ -20785,7 +20785,7 @@ v_dot_checker__Checker_array_init(v_dot_checker__Checker *c,
 
     if (tmp83.typ == SumType_v_dot_ast__Expr_IntegerLiteral) {
       v_dot_ast__IntegerLiteral *it = (v_dot_ast__IntegerLiteral *)tmp83.obj;
-      fixed_size = it->val;
+      fixed_size = v_string_int(it->val);
     } else // default:
     {
       v_dot_checker__Checker_error(c, tos3("expecting `int` for fixed size"),
@@ -21021,7 +21021,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     };
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp100 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
-    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_3820_var_scope_var;
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_3824_var_scope_var;
     if (!tmp100.ok) {
       string err = tmp100.error;
       int errcode = tmp100.ecode;
@@ -21033,11 +21033,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_3820_var_scope_var =
+    _V_mret_3824_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp100.data;
     ;
-    var_scope = _V_mret_3820_var_scope_var.var_0;
-    var = _V_mret_3820_var_scope_var.var_1;
+    var_scope = _V_mret_3824_var_scope_var.var_0;
+    var = _V_mret_3824_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
