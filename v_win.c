@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e2eb0f1"
+#define V_COMMIT_HASH "f5e44fb"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cff6f4a"
+#define V_COMMIT_HASH "e2eb0f1"
 #endif
 #include <inttypes.h>
 
@@ -27177,27 +27177,55 @@ string compiler__V_platform_postfix_to_ifdefguard(compiler__V *v, string name) {
                   ? (tos3("#ifdef _WIN32"))
                   : ((string_eq(tmp37, tos3("_nix.v")))
                          ? (tos3("#ifndef _WIN32"))
-                         : (((string_eq(tmp37, tos3("_lin.v"))) ||
-                             (string_eq(tmp37, tos3("_linux.v"))))
-                                ? (tos3("#ifdef __linux__"))
-                                : (((string_eq(tmp37, tos3("_mac.v"))) ||
-                                    (string_eq(tmp37, tos3("_darwin.v"))))
-                                       ? (tos3("#ifdef __APPLE__"))
-                                       : (((string_eq(tmp37, tos3("_bsd.v"))) ||
+                         : ((string_eq(tmp37, tos3("_qnx.v")))
+                                ? (tos3("#ifndef __QNX__"))
+                                : (((string_eq(tmp37, tos3("_lin.v"))) ||
+                                    (string_eq(tmp37, tos3("_linux.v"))))
+                                       ? (tos3("#ifdef __linux__"))
+                                       : (((string_eq(tmp37, tos3("_mac.v"))) ||
                                            (string_eq(tmp37,
-                                                      tos3("_freebsd.v "))))
-                                              ? (tos3("#ifdef __FreeBSD__"))
+                                                      tos3("_darwin.v"))))
+                                              ? (tos3("#ifdef __APPLE__"))
                                               : ((string_eq(tmp37,
-                                                            tos3("_solaris.v")))
-                                                     ? (tos3("#ifdef __sun"))
+                                                            tos3("_freebsd.v")))
+                                                     ? (tos3("#ifdef "
+                                                             "__FreeBSD__"))
                                                      : ((string_eq(
                                                             tmp37,
-                                                            tos3("_haiku.v")))
-                                                            ? (tos3(
-                                                                  "#ifdef "
-                                                                  "__haiku__"))
-                                                            : (tos3(
-                                                                  ""))))))))));
+                                                            tos3("_openbsd.v")))
+                                                            ? (tos3("#ifdef "
+                                                                    "__OpenBSD_"
+                                                                    "_"))
+                                                            : ((string_eq(
+                                                                   tmp37,
+                                                                   tos3("_netbs"
+                                                                        "d.v")))
+                                                                   ? (tos3(
+                                                                         "#ifde"
+                                                                         "f "
+                                                                         "__"
+                                                                         "NetBS"
+                                                                         "D__"))
+                                                                   : ((string_eq(
+                                                                          tmp37,
+                                                                          tos3(
+                                                                              "_bsd.v")))
+                                                                          ? (tos3(
+                                                                                "#ifdef __FreeBSD__ || __NetBSD__ || __OpenBSD__"))
+                                                                          : ((string_eq(
+                                                                                 tmp37,
+                                                                                 tos3(
+                                                                                     "_solaris.v")))
+                                                                                 ? (tos3(
+                                                                                       "#ifdef __sun"))
+                                                                                 : ((string_eq(
+                                                                                        tmp37,
+                                                                                        tos3(
+                                                                                            "_haiku.v")))
+                                                                                        ? (tos3(
+                                                                                              "#ifdef __haiku__"))
+                                                                                        : (tos3(
+                                                                                              ""))))))))))))));
   if (string_eq(s, tos3(""))) {
     compiler__verror(_STR("bad platform_postfix \"%.*s\"", name.len, name.str));
   };
@@ -27220,7 +27248,7 @@ string compiler__V_type_definitions(compiler__V *v) {
     string builtin = ((string *)tmp38.data)[tmp39];
 
     compiler__Type tmp40 = {0};
-    bool tmp41 = map_get(/*cgen.v : 406*/ v->table->typesmap, builtin, &tmp40);
+    bool tmp41 = map_get(/*cgen.v : 418*/ v->table->typesmap, builtin, &tmp40);
 
     compiler__Type typ = tmp40;
     _PUSH(&builtin_types,
