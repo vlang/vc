@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "04184f1"
+#define V_COMMIT_HASH "d81d804"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c4f6125"
+#define V_COMMIT_HASH "04184f1"
 #endif
 #include <inttypes.h>
 
@@ -110,6 +110,11 @@ extern char **environ;
 #endif
 
 #ifdef __NetBSD__
+#include <sys/wait.h> // os__wait uses wait on nix
+#endif
+
+#ifdef __sun
+#include <sys/types.h>
 #include <sys/wait.h> // os__wait uses wait on nix
 #endif
 
@@ -42917,18 +42922,19 @@ void init() {
       "os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n#include "
       "<sys/types.h>\n#include <sys/resource.h>\n#include <sys/wait.h> // "
       "os__wait uses wait on nix\n#endif\n\n#ifdef __NetBSD__\n#include "
-      "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n%.*s\n\n#ifdef "
-      "_WIN32\n#define WINVER 0x0600\n#ifdef _WIN32_WINNT\n#undef "
-      "_WIN32_WINNT\n#endif\n#define _WIN32_WINNT 0x0600\n#define "
-      "WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define UNICODE\n#include "
-      "<windows.h>\n\n#include <io.h> // _waccess\n#include <direct.h> // "
-      "_wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n\n// On MSVC these "
-      "are the same (as long as /volatile:ms is passed)\n#define _Atomic "
-      "volatile\n\n// MSVC cannot parse some things properly\n#undef "
-      "EMPTY_STRUCT_DECLARATION\n#undef OPTION_CAST\n\n#define "
-      "EMPTY_STRUCT_DECLARATION int ____dummy_variable\n#define "
-      "OPTION_CAST(x)\n\n#include <dbghelp.h>\n#pragma comment(lib, "
-      "\"Dbghelp.lib\")\n\nextern wchar_t "
+      "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef "
+      "__sun\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses "
+      "wait on nix\n#endif\n\n%.*s\n\n#ifdef _WIN32\n#define WINVER "
+      "0x0600\n#ifdef _WIN32_WINNT\n#undef _WIN32_WINNT\n#endif\n#define "
+      "_WIN32_WINNT 0x0600\n#define WIN32_LEAN_AND_MEAN\n#define "
+      "_UNICODE\n#define UNICODE\n#include <windows.h>\n\n#include <io.h> // "
+      "_waccess\n#include <direct.h> // _wgetcwd\n//#include "
+      "<WinSock2.h>\n#ifdef _MSC_VER\n\n// On MSVC these are the same (as long "
+      "as /volatile:ms is passed)\n#define _Atomic volatile\n\n// MSVC cannot "
+      "parse some things properly\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
+      "OPTION_CAST\n\n#define EMPTY_STRUCT_DECLARATION int "
+      "____dummy_variable\n#define OPTION_CAST(x)\n\n#include "
+      "<dbghelp.h>\n#pragma comment(lib, \"Dbghelp.lib\")\n\nextern wchar_t "
       "**_wenviron;\n\n#endif\n\n#else\n#include "
       "<pthread.h>\n#endif\n\n\n//============================== HELPER C "
       "MACROS =============================*/\n#define _PUSH(arr, val, tmp, "
@@ -43157,18 +43163,19 @@ void init() {
       "os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n#include "
       "<sys/types.h>\n#include <sys/resource.h>\n#include <sys/wait.h> // "
       "os__wait uses wait on nix\n#endif\n\n#ifdef __NetBSD__\n#include "
-      "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n%.*s\n\n#ifdef "
-      "_WIN32\n#define WINVER 0x0600\n#ifdef _WIN32_WINNT\n#undef "
-      "_WIN32_WINNT\n#endif\n#define _WIN32_WINNT 0x0600\n#define "
-      "WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define UNICODE\n#include "
-      "<windows.h>\n\n#include <io.h> // _waccess\n#include <direct.h> // "
-      "_wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n\n// On MSVC these "
-      "are the same (as long as /volatile:ms is passed)\n#define _Atomic "
-      "volatile\n\n// MSVC cannot parse some things properly\n#undef "
-      "EMPTY_STRUCT_DECLARATION\n#undef OPTION_CAST\n\n#define "
-      "EMPTY_STRUCT_DECLARATION int ____dummy_variable\n#define "
-      "OPTION_CAST(x)\n\n#include <dbghelp.h>\n#pragma comment(lib, "
-      "\"Dbghelp.lib\")\n\nextern wchar_t "
+      "<sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef "
+      "__sun\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses "
+      "wait on nix\n#endif\n\n%.*s\n\n#ifdef _WIN32\n#define WINVER "
+      "0x0600\n#ifdef _WIN32_WINNT\n#undef _WIN32_WINNT\n#endif\n#define "
+      "_WIN32_WINNT 0x0600\n#define WIN32_LEAN_AND_MEAN\n#define "
+      "_UNICODE\n#define UNICODE\n#include <windows.h>\n\n#include <io.h> // "
+      "_waccess\n#include <direct.h> // _wgetcwd\n//#include "
+      "<WinSock2.h>\n#ifdef _MSC_VER\n\n// On MSVC these are the same (as long "
+      "as /volatile:ms is passed)\n#define _Atomic volatile\n\n// MSVC cannot "
+      "parse some things properly\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
+      "OPTION_CAST\n\n#define EMPTY_STRUCT_DECLARATION int "
+      "____dummy_variable\n#define OPTION_CAST(x)\n\n#include "
+      "<dbghelp.h>\n#pragma comment(lib, \"Dbghelp.lib\")\n\nextern wchar_t "
       "**_wenviron;\n\n#endif\n\n#else\n#include "
       "<pthread.h>\n#endif\n\n\n//============================== HELPER C "
       "MACROS =============================*/\n#define _PUSH(arr, val, tmp, "
