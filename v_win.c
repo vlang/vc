@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "256a93e"
+#define V_COMMIT_HASH "af289da"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5fc057d"
+#define V_COMMIT_HASH "256a93e"
 #endif
 #include <inttypes.h>
 
@@ -1971,7 +1971,7 @@ struct v_dot_ast__MatchExpr {
   v_dot_token__Position pos;
   bool is_expr;
   v_dot_table__Type return_type;
-  v_dot_table__Type expr_type;
+  v_dot_table__Type cond_type;
   bool is_sum_type;
 };
 
@@ -19518,7 +19518,7 @@ void v_dot_gen__Gen_infix_expr(v_dot_gen__Gen *g, v_dot_ast__InfixExpr node) {
   };
 }
 void v_dot_gen__Gen_match_expr(v_dot_gen__Gen *g, v_dot_ast__MatchExpr node) {
-  if (node.expr_type == 0) {
+  if (node.cond_type == 0) {
     v_dot_gen__Gen_writeln(g, tos3("// match 0"));
 
     return;
@@ -19528,7 +19528,7 @@ void v_dot_gen__Gen_match_expr(v_dot_gen__Gen *g, v_dot_ast__MatchExpr node) {
     g->inside_ternary = 1;
   };
   v_dot_table__TypeSymbol *type_sym =
-      v_dot_table__Table_get_type_symbol(&/* ? */ *g->table, node.expr_type);
+      v_dot_table__Table_get_type_symbol(&/* ? */ *g->table, node.cond_type);
   string tmp = tos3("");
   if (type_sym->kind != v_dot_table__v_dot_table__Kind_void) {
     tmp = v_dot_gen__Gen_new_tmp_var(g);
@@ -19818,7 +19818,8 @@ void v_dot_gen__Gen_return_statement(v_dot_gen__Gen *g, v_dot_ast__Return it) {
     if (v_dot_table__type_is_optional(g->fn_decl->return_type)) {
       bool is_none = 0;
       bool is_error = 0;
-      v_dot_ast__Expr tmp85 = (*(v_dot_ast__Expr *)array_get(it.exprs, 0));
+      v_dot_ast__Expr expr0 = (*(v_dot_ast__Expr *)array_get(it.exprs, 0));
+      v_dot_ast__Expr tmp85 = expr0;
 
       if (tmp85.typ == SumType_v_dot_ast__Expr_None) {
         v_dot_ast__None *it = (v_dot_ast__None *)tmp85.obj;
@@ -19894,7 +19895,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp102 = 0;
       bool tmp103 =
-          map_get(/*cgen.v : 1343*/ g->varaidic_args, type_str, &tmp102);
+          map_get(/*cgen.v : 1344*/ g->varaidic_args, type_str, &tmp102);
 
       if (len > tmp102) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -19950,7 +19951,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp113 = 0;
     bool tmp114 =
-        map_get(/*cgen.v : 1398*/ g->table->type_idxs, builtin_name, &tmp113);
+        map_get(/*cgen.v : 1399*/ g->table->type_idxs, builtin_name, &tmp113);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -20110,7 +20111,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp137 = 0;
     bool tmp138 =
-        map_get(/*cgen.v : 1502*/ g->table->type_idxs, node.name, &tmp137);
+        map_get(/*cgen.v : 1503*/ g->table->type_idxs, node.name, &tmp137);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -21355,11 +21356,11 @@ v_dot_table__Type
 v_dot_checker__Checker_match_expr(v_dot_checker__Checker *c,
                                   v_dot_ast__MatchExpr *node) {
   node->is_expr = c->expected_type != v_dot_table__void_type;
-  v_dot_table__Type expr_type = v_dot_checker__Checker_expr(c, node->cond);
-  if (expr_type == 0) {
-    v_dot_checker__Checker_error(c, tos3("match 0 expr type"), node->pos);
+  v_dot_table__Type cond_type = v_dot_checker__Checker_expr(c, node->cond);
+  if (cond_type == 0) {
+    v_dot_checker__Checker_error(c, tos3("match 0 cond type"), node->pos);
   };
-  c->expected_type = expr_type;
+  c->expected_type = cond_type;
   v_dot_table__Type ret_type = v_dot_table__void_type;
   array_v_dot_ast__MatchBranch tmp103 = node->branches;
   for (int tmp104 = 0; tmp104 < tmp103.len; tmp104++) {
@@ -21370,7 +21371,7 @@ v_dot_checker__Checker_match_expr(v_dot_checker__Checker *c,
     for (int tmp106 = 0; tmp106 < tmp105.len; tmp106++) {
       v_dot_ast__Expr expr = ((v_dot_ast__Expr *)tmp105.data)[tmp106];
 
-      c->expected_type = expr_type;
+      c->expected_type = cond_type;
       v_dot_table__Type typ = v_dot_checker__Checker_expr(c, expr);
       v_dot_table__TypeSymbol *typ_sym =
           v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, typ);
@@ -21391,7 +21392,7 @@ v_dot_checker__Checker_match_expr(v_dot_checker__Checker *c,
     };
   };
   node->return_type = ret_type;
-  node->expr_type = expr_type;
+  node->cond_type = cond_type;
   return ret_type;
 }
 v_dot_table__Type v_dot_checker__Checker_if_expr(v_dot_checker__Checker *c,
