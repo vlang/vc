@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9137858"
+#define V_COMMIT_HASH "e37fed4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "af289da"
+#define V_COMMIT_HASH "9137858"
 #endif
 #include <inttypes.h>
 
@@ -41359,12 +41359,7 @@ void main__parse_flags(string flag, internal_dot_flag__Instance *f,
                2, 2, sizeof(string),
                EMPTY_ARRAY_OF_ELEMS(string, 2){tos3("h"), tos3("help")}));
     prefs->action = internal_dot_flag__internal_dot_flag__MainCmdAction_help;
-  } else if ((string_eq(tmp8, tos3("v"))) ||
-             (string_eq(tmp8, tos3("version")))) {
-    internal_dot_flag__Instance_is_equivalent_to(
-        f, new_array_from_c_array(
-               2, 2, sizeof(string),
-               EMPTY_ARRAY_OF_ELEMS(string, 2){tos3("v"), tos3("version")}));
+  } else if (string_eq(tmp8, tos3("version"))) {
     prefs->action = internal_dot_flag__internal_dot_flag__MainCmdAction_version;
   } else if ((string_eq(tmp8, tos3("-version"))) ||
              (string_eq(tmp8, tos3("-help")))) {
