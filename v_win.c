@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ca0bae0"
+#define V_COMMIT_HASH "c3d7c57"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f41cf74"
+#define V_COMMIT_HASH "ca0bae0"
 #endif
 #include <inttypes.h>
 
@@ -18658,7 +18658,7 @@ string v_dot_gen__Gen_typ(v_dot_gen__Gen *g, v_dot_table__Type t) {
     styp = string_substr2(styp, 3, -1, true);
   };
   if ((string_eq(styp, tos3("stat")) || string_eq(styp, tos3("dirent*")) ||
-       string_eq(styp, tos3("tm")))) {
+       string_eq(styp, tos3("tm")) || string_eq(styp, tos3("tm*")))) {
     styp = _STR("struct %.*s", styp.len, styp.str);
   };
   if (v_dot_table__type_is_optional(t)) {
@@ -18847,7 +18847,8 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
   } else if (tmp22.typ == SumType_v_dot_ast__Stmt_ExprStmt) {
     v_dot_ast__ExprStmt *it = (v_dot_ast__ExprStmt *)tmp22.obj;
     v_dot_gen__Gen_expr(g, it->expr);
-    v_dot_ast__Expr tmp23 = it->expr;
+    v_dot_ast__Expr expr = it->expr;
+    v_dot_ast__Expr tmp23 = expr;
 
     if (tmp23.typ == SumType_v_dot_ast__Expr_IfExpr) {
       v_dot_ast__IfExpr *it = (v_dot_ast__IfExpr *)tmp23.obj;
@@ -19955,7 +19956,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp100 = 0;
       bool tmp101 =
-          map_get(/*cgen.v : 1355*/ g->varaidic_args, type_str, &tmp100);
+          map_get(/*cgen.v : 1356*/ g->varaidic_args, type_str, &tmp100);
 
       if (len > tmp100) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -20011,7 +20012,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp111 = 0;
     bool tmp112 =
-        map_get(/*cgen.v : 1410*/ g->table->type_idxs, builtin_name, &tmp111);
+        map_get(/*cgen.v : 1411*/ g->table->type_idxs, builtin_name, &tmp111);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -20076,6 +20077,11 @@ void v_dot_gen__Gen_write_types(v_dot_gen__Gen *g,
       strings__Builder_writeln(
           &/* ? */ g->typedefs,
           _STR("#define _type_idx_%.*s %d", name.len, name.str, i));
+    } else if (tmp119.typ == SumType_v_dot_table__TypeInfo_Alias) {
+      v_dot_table__Alias *it = (v_dot_table__Alias *)tmp119.obj;
+      strings__Builder_writeln(
+          &/* ? */ g->typedefs,
+          _STR("#define _type_idx_%.*s %d", name.len, name.str, i));
     } else if (tmp119.typ == SumType_v_dot_table__TypeInfo_Enum) {
       v_dot_table__Enum *it = (v_dot_table__Enum *)tmp119.obj;
       strings__Builder_writeln(&/* ? */ g->definitions, tos3("typedef enum {"));
@@ -20091,6 +20097,9 @@ void v_dot_gen__Gen_write_types(v_dot_gen__Gen *g,
                                _STR("} %.*s;\n", name.len, name.str));
     } else if (tmp119.typ == SumType_v_dot_table__TypeInfo_SumType) {
       v_dot_table__SumType *it = (v_dot_table__SumType *)tmp119.obj;
+      strings__Builder_writeln(
+          &/* ? */ g->typedefs,
+          _STR("#define _type_idx_%.*s %d", name.len, name.str, i));
       strings__Builder_writeln(&/* ? */ g->definitions, tos3("// Sum type"));
       strings__Builder_writeln(&/* ? */ g->definitions,
                                _STR("\n				typedef struct "
@@ -20171,7 +20180,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp135 = 0;
     bool tmp136 =
-        map_get(/*cgen.v : 1514*/ g->table->type_idxs, node.name, &tmp135);
+        map_get(/*cgen.v : 1520*/ g->table->type_idxs, node.name, &tmp135);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
