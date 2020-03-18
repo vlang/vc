@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f41cf74"
+#define V_COMMIT_HASH "ca0bae0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fe6707b"
+#define V_COMMIT_HASH "f41cf74"
 #endif
 #include <inttypes.h>
 
@@ -5273,7 +5273,7 @@ array array_reverse(array a) {
     int i = tmp4;
 
     memcpy((byte *)arr.data + i * arr.element_size,
-           &a.data[/*ptr!*/ a.len - 1 - i] /*rvoid 0*/, arr.element_size);
+           &(*(array *)array_get(a, a.len - 1 - i)), arr.element_size);
   };
   return arr;
 }
@@ -5281,10 +5281,10 @@ void v_array_free(array a) { free(a.data); }
 string array_string_str(array_string a) {
   strings__Builder sb = strings__new_builder(a.len * 3);
   strings__Builder_write(&/* ? */ sb, tos3("["));
-  int tmp5 = 0;
+  int tmp7 = 0;
   ;
-  for (int tmp6 = tmp5; tmp6 < a.len; tmp6++) {
-    int i = tmp6;
+  for (int tmp8 = tmp7; tmp8 < a.len; tmp8++) {
+    int i = tmp8;
 
     string val = (*(string *)array_get(a, i));
     strings__Builder_write(&/* ? */ sb, tos3("\""));
@@ -5300,10 +5300,10 @@ string array_string_str(array_string a) {
 string array_int_str(array_int a) {
   strings__Builder sb = strings__new_builder(a.len * 13);
   strings__Builder_write(&/* ? */ sb, tos3("["));
-  int tmp9 = 0;
+  int tmp11 = 0;
   ;
-  for (int tmp10 = tmp9; tmp10 < a.len; tmp10++) {
-    int i = tmp10;
+  for (int tmp12 = tmp11; tmp12 < a.len; tmp12++) {
+    int i = tmp12;
 
     strings__Builder_write(&/* ? */ sb, int_str((*(int *)array_get(a, i))));
     if (i < a.len - 1) {
@@ -5316,10 +5316,10 @@ string array_int_str(array_int a) {
 string array_bool_str(array_bool a) {
   strings__Builder sb = strings__new_builder(a.len * 3);
   strings__Builder_write(&/* ? */ sb, tos3("["));
-  int tmp13 = 0;
+  int tmp15 = 0;
   ;
-  for (int tmp14 = tmp13; tmp14 < a.len; tmp14++) {
-    int i = tmp14;
+  for (int tmp16 = tmp15; tmp16 < a.len; tmp16++) {
+    int i = tmp16;
 
     bool val = (*(bool *)array_get(a, i));
     if (val) {
@@ -5337,9 +5337,9 @@ string array_bool_str(array_bool a) {
 string array_byte_hex(array_byte b) {
   byte *hex = v_malloc(b.len * 2 + 1);
   int dst_i = 0;
-  array_byte tmp17 = b;
-  for (int tmp18 = 0; tmp18 < tmp17.len; tmp18++) {
-    byte i = ((byte *)tmp17.data)[tmp18];
+  array_byte tmp19 = b;
+  for (int tmp20 = 0; tmp20 < tmp19.len; tmp20++) {
+    byte i = ((byte *)tmp19.data)[tmp20];
 
     byte n0 = i >> 4;
     hex[/*ptr!*/ dst_i++] /*rbyte 1*/ = ((n0 < 10) ? (n0 + '0') : (n0 + 87));
@@ -5373,10 +5373,10 @@ void array_int_sort(array_int *a) {
       a, &/*112 e="void*" g="fn (int*,int*) int" */ compare_ints);
 }
 int array_string_index(array_string a, string v) {
-  int tmp21 = 0;
+  int tmp23 = 0;
   ;
-  for (int tmp22 = tmp21; tmp22 < a.len; tmp22++) {
-    int i = tmp22;
+  for (int tmp24 = tmp23; tmp24 < a.len; tmp24++) {
+    int i = tmp24;
 
     if (string_eq((*(string *)array_get(a, i)), v)) {
       return i;
@@ -5385,10 +5385,10 @@ int array_string_index(array_string a, string v) {
   return -1;
 }
 int array_int_index(array_int a, int v) {
-  int tmp25 = 0;
+  int tmp27 = 0;
   ;
-  for (int tmp26 = tmp25; tmp26 < a.len; tmp26++) {
-    int i = tmp26;
+  for (int tmp28 = tmp27; tmp28 < a.len; tmp28++) {
+    int i = tmp28;
 
     if ((*(int *)array_get(a, i)) == v) {
       return i;
@@ -5397,10 +5397,10 @@ int array_int_index(array_int a, int v) {
   return -1;
 }
 int array_byte_index(array_byte a, byte v) {
-  int tmp29 = 0;
+  int tmp31 = 0;
   ;
-  for (int tmp30 = tmp29; tmp30 < a.len; tmp30++) {
-    int i = tmp30;
+  for (int tmp32 = tmp31; tmp32 < a.len; tmp32++) {
+    int i = tmp32;
 
     if ((*(byte *)array_get(a, i)) == v) {
       return i;
@@ -5409,10 +5409,10 @@ int array_byte_index(array_byte a, byte v) {
   return -1;
 }
 int array_char_index(array_char a, char v) {
-  int tmp33 = 0;
+  int tmp35 = 0;
   ;
-  for (int tmp34 = tmp33; tmp34 < a.len; tmp34++) {
-    int i = tmp34;
+  for (int tmp36 = tmp35; tmp36 < a.len; tmp36++) {
+    int i = tmp36;
 
     if ((*(char *)array_get(a, i)) == v) {
       return i;
@@ -5423,9 +5423,9 @@ int array_char_index(array_char a, char v) {
 int array_int_reduce(array_int a, int (*iter)(int accum, int curr /*FFF*/),
                      int accum_start) {
   int _accum = accum_start;
-  array_int tmp37 = a;
-  for (int tmp38 = 0; tmp38 < tmp37.len; tmp38++) {
-    int i = ((int *)tmp37.data)[tmp38];
+  array_int tmp39 = a;
+  for (int tmp40 = 0; tmp40 < tmp39.len; tmp40++) {
+    int i = ((int *)tmp39.data)[tmp40];
 
     _accum = iter(_accum, i);
   };
@@ -5435,10 +5435,10 @@ bool array_string_eq(array_string a1, array_string a2) {
   if (a1.len != a2.len) {
     return 0;
   };
-  int tmp39 = 0;
+  int tmp41 = 0;
   ;
-  for (int tmp40 = tmp39; tmp40 < a1.len; tmp40++) {
-    int i = tmp40;
+  for (int tmp42 = tmp41; tmp42 < a1.len; tmp42++) {
+    int i = tmp42;
 
     if (string_ne((*(string *)array_get(a1, i)),
                   (*(string *)array_get(a2, i)))) {
@@ -5477,15 +5477,15 @@ int compare_f32(f32 *a, f32 *b) {
 array_voidptr array_pointers(array a) {
   array_ptr_void res = new_array_from_c_array(
       0, 0, sizeof(void *), EMPTY_ARRAY_OF_ELEMS(void *, 0){TCCSKIP(0)});
-  int tmp45 = 0;
+  int tmp47 = 0;
   ;
-  for (int tmp46 = tmp45; tmp46 < a.len; tmp46++) {
-    int i = tmp46;
+  for (int tmp48 = tmp47; tmp48 < a.len; tmp48++) {
+    int i = tmp48;
 
     _PUSH(&res,
           (/*typ = array_ptr_void   tmp_typ=void**/ (byte *)a.data +
            i * a.element_size),
-          tmp47, void *);
+          tmp49, void *);
   };
   return res;
 }
