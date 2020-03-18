@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "126ef0f"
+#define V_COMMIT_HASH "5fc057d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a011b89"
+#define V_COMMIT_HASH "126ef0f"
 #endif
 #include <inttypes.h>
 
@@ -16076,13 +16076,11 @@ v_dot_ast__CallExpr v_dot_parser__Parser_call_expr(v_dot_parser__Parser *p,
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_key_orelse) {
     v_dot_parser__Parser_next(p);
     v_dot_parser__Parser_open_scope(p);
-    v_dot_ast__Scope_register_var(
-        p->scope,
-        (v_dot_ast__Var){
-            .name = tos3("err"),
-            .typ = v_dot_table__type_to_optional(v_dot_table__string_type),
-            .is_mut = 0,
-        });
+    v_dot_ast__Scope_register_var(p->scope, (v_dot_ast__Var){
+                                                .name = tos3("err"),
+                                                .typ = v_dot_table__string_type,
+                                                .is_mut = 0,
+                                            });
     or_stmts = v_dot_parser__Parser_parse_block_no_scope(p);
     v_dot_parser__Parser_close_scope(p);
   };
@@ -16174,10 +16172,10 @@ v_dot_ast__FnDecl v_dot_parser__Parser_fn_decl(v_dot_parser__Parser *p) {
     v_dot_parser__Parser_next(p);
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_gt);
   };
-  _V_MulRet_array_v_dot_table__Arg_V_bool _V_mret_570_args2_is_variadic =
+  _V_MulRet_array_v_dot_table__Arg_V_bool _V_mret_565_args2_is_variadic =
       v_dot_parser__Parser_fn_args(p);
-  array_v_dot_table__Arg args2 = _V_mret_570_args2_is_variadic.var_0;
-  bool is_variadic = _V_mret_570_args2_is_variadic.var_1;
+  array_v_dot_table__Arg args2 = _V_mret_565_args2_is_variadic.var_0;
+  bool is_variadic = _V_mret_565_args2_is_variadic.var_1;
   _PUSH_MANY(
       &args,
       (/*typ = array_v_dot_table__Arg   tmp_typ=v_dot_table__Arg*/ args2), tmp3,
@@ -17681,13 +17679,12 @@ v_dot_ast__Expr v_dot_parser__Parser_dot_expr(v_dot_parser__Parser *p,
     if (p->tok.kind == v_dot_token__v_dot_token__Kind_key_orelse) {
       v_dot_parser__Parser_next(p);
       v_dot_parser__Parser_open_scope(p);
-      v_dot_ast__Scope_register_var(
-          p->scope,
-          (v_dot_ast__Var){
-              .name = tos3("err"),
-              .typ = v_dot_table__type_to_optional(v_dot_table__string_type),
-              .is_mut = 0,
-          });
+      v_dot_ast__Scope_register_var(p->scope,
+                                    (v_dot_ast__Var){
+                                        .name = tos3("err"),
+                                        .typ = v_dot_table__string_type,
+                                        .is_mut = 0,
+                                    });
       or_stmts = v_dot_parser__Parser_parse_block_no_scope(p);
       v_dot_parser__Parser_close_scope(p);
     };
@@ -18918,8 +18915,10 @@ void v_dot_gen__Gen_expr_with_cast(v_dot_gen__Gen *g,
             g, _STR("/* sum type cast */ (%.*s) {.obj = memdup(&(%.*s[]) {",
                     exp_styp.len, exp_styp.str, got_styp.len, got_styp.str));
         v_dot_gen__Gen_expr(g, expr);
-        v_dot_gen__Gen_writeln(g, _STR("}, sizeof(%.*s)), .typ = %d};",
-                                       got_styp.len, got_styp.str, got_idx));
+        v_dot_gen__Gen_write(g, _STR("}, sizeof(%.*s)), .typ = %d}",
+                                     got_styp.len, got_styp.str, got_idx));
+
+        return;
       };
     };
   };
@@ -19900,7 +19899,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp104 = 0;
       bool tmp105 =
-          map_get(/*cgen.v : 1344*/ g->varaidic_args, type_str, &tmp104);
+          map_get(/*cgen.v : 1345*/ g->varaidic_args, type_str, &tmp104);
 
       if (len > tmp104) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -19956,7 +19955,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp115 = 0;
     bool tmp116 =
-        map_get(/*cgen.v : 1399*/ g->table->type_idxs, builtin_name, &tmp115);
+        map_get(/*cgen.v : 1400*/ g->table->type_idxs, builtin_name, &tmp115);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -20116,7 +20115,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp139 = 0;
     bool tmp140 =
-        map_get(/*cgen.v : 1503*/ g->table->type_idxs, node.name, &tmp139);
+        map_get(/*cgen.v : 1504*/ g->table->type_idxs, node.name, &tmp139);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
