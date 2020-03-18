@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "af289da"
+#define V_COMMIT_HASH "9137858"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "256a93e"
+#define V_COMMIT_HASH "af289da"
 #endif
 #include <inttypes.h>
 
@@ -21127,6 +21127,7 @@ void v_dot_checker__Checker_stmts(v_dot_checker__Checker *c,
 
     v_dot_checker__Checker_stmt(c, stmt);
   };
+  c->expected_type = v_dot_table__void_type;
 }
 v_dot_table__Type v_dot_checker__Checker_expr(v_dot_checker__Checker *c,
                                               v_dot_ast__Expr node) {
@@ -21260,7 +21261,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     };
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp100 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
-    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_3891_var_scope_var;
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_3898_var_scope_var;
     if (!tmp100.ok) {
       string err = tmp100.error;
       int errcode = tmp100.ecode;
@@ -21272,11 +21273,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_3891_var_scope_var =
+    _V_mret_3898_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp100.data;
     ;
-    var_scope = _V_mret_3891_var_scope_var.var_0;
-    var = _V_mret_3891_var_scope_var.var_1;
+    var_scope = _V_mret_3898_var_scope_var.var_0;
+    var = _V_mret_3898_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
@@ -21410,21 +21411,16 @@ v_dot_table__Type v_dot_checker__Checker_if_expr(v_dot_checker__Checker *c,
                                       typ_sym->name.len, typ_sym->name.str),
                                  node->pos);
   };
-  array_v_dot_ast__Stmt tmp110 = node->stmts;
-  for (int i = 0; i < tmp110.len; i++) {
-    v_dot_ast__Stmt stmt = ((v_dot_ast__Stmt *)tmp110.data)[i];
-
-    v_dot_checker__Checker_stmt(c, stmt);
-  };
+  v_dot_checker__Checker_stmts(c, node->stmts);
   if (node->else_stmts.len > 0) {
     v_dot_checker__Checker_stmts(c, node->else_stmts);
   };
   if (node->stmts.len > 0) {
-    v_dot_ast__Stmt tmp113 =
+    v_dot_ast__Stmt tmp112 =
         (*(v_dot_ast__Stmt *)array_get(node->stmts, node->stmts.len - 1));
 
-    if (tmp113.typ == SumType_v_dot_ast__Stmt_ExprStmt) {
-      v_dot_ast__ExprStmt *it = (v_dot_ast__ExprStmt *)tmp113.obj;
+    if (tmp112.typ == SumType_v_dot_ast__Stmt_ExprStmt) {
+      v_dot_ast__ExprStmt *it = (v_dot_ast__ExprStmt *)tmp112.obj;
       v_dot_table__Type t = v_dot_checker__Checker_expr(c, it->expr);
       node->typ = t;
       return t;
@@ -21457,10 +21453,10 @@ v_dot_checker__Checker_index_expr(v_dot_checker__Checker *c,
                                   v_dot_ast__IndexExpr *node) {
   v_dot_table__Type typ = v_dot_checker__Checker_expr(c, node->left);
   bool is_range = 0;
-  v_dot_ast__Expr tmp114 = node->index;
+  v_dot_ast__Expr tmp113 = node->index;
 
-  if (tmp114.typ == SumType_v_dot_ast__Expr_RangeExpr) {
-    v_dot_ast__RangeExpr *it = (v_dot_ast__RangeExpr *)tmp114.obj;
+  if (tmp113.typ == SumType_v_dot_ast__Expr_RangeExpr) {
+    v_dot_ast__RangeExpr *it = (v_dot_ast__RangeExpr *)tmp113.obj;
     is_range = 1;
     if (it->has_low) {
       v_dot_checker__Checker_expr(c, it->low);
@@ -21558,9 +21554,9 @@ v_dot_table__Type v_dot_checker__Checker_map_init(v_dot_checker__Checker *c,
       c, (*(v_dot_ast__Expr *)array_get(node->keys, 0)));
   v_dot_table__Type val0_type = v_dot_checker__Checker_expr(
       c, (*(v_dot_ast__Expr *)array_get(node->vals, 0)));
-  array_v_dot_ast__Expr tmp119 = node->keys;
-  for (int i = 0; i < tmp119.len; i++) {
-    v_dot_ast__Expr key = ((v_dot_ast__Expr *)tmp119.data)[i];
+  array_v_dot_ast__Expr tmp118 = node->keys;
+  for (int i = 0; i < tmp118.len; i++) {
+    v_dot_ast__Expr key = ((v_dot_ast__Expr *)tmp118.data)[i];
 
     if (i == 0) {
       continue;
@@ -21611,7 +21607,7 @@ void v_dot_checker__Checker_error(v_dot_checker__Checker *c, string s,
       _STR("%.*s:%d: checker error #%d: %.*s", path.len, path.str, pos.line_nr,
            c->nr_errors, s.len, s.str);
   _PUSH(&c->errors, (/*typ = array_string   tmp_typ=string*/ final_msg_line),
-        tmp122, string);
+        tmp121, string);
   eprintln(final_msg_line);
   println(tos3("\n\n"));
   if (c->nr_errors >= v_dot_checker__max_nr_errors) {
