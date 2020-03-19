@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "dd96421"
+#define V_COMMIT_HASH "0fbb056"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0f08a92"
+#define V_COMMIT_HASH "dd96421"
 #endif
 #include <inttypes.h>
 
@@ -3979,6 +3979,7 @@ string compiler__vhash();
 string compiler__cescaped_path(string s);
 v_dot_pref__OS compiler__os_from_string(string os);
 void compiler__set_vroot_folder(string vroot_path);
+void compiler__V_generate_str_definitions(compiler__V *v);
 string compiler__Table_qualify_module(compiler__Table *table, string mod,
                                       string file_path);
 compiler__ImportTable compiler__new_import_table();
@@ -4213,10 +4214,9 @@ void internal_dot_compile__check_for_common_mistake(array_string args,
 void internal_dot_compile__compile(string command, array_string args);
 void internal_dot_compile__run_compiled_executable_and_exit(
     compiler__V *v, array_string remaining_args);
-static inline void
-internal_dot_compile__parse_c_options(string flag,
-                                      internal_dot_flag__Instance *f,
-                                      v_dot_pref__Preferences *prefs);
+void internal_dot_compile__parse_c_options(string flag,
+                                           internal_dot_flag__Instance *f,
+                                           v_dot_pref__Preferences *prefs);
 static inline void internal_dot_compile__parse_js_options(
     string flag, internal_dot_flag__Instance f, v_dot_pref__Preferences prefs);
 _V_MulRet_v_dot_pref__Preferences_V_array_string
@@ -4905,7 +4905,8 @@ array_string compiler__TokenStr;
 map_int compiler__KEYWORDS;
 array_compiler__TokenKind compiler__AssignTokens;
 array_string compiler__MOD_FILE_STOP_PATHS;
-array_string main__list_of_flags;
+array_string main__list_of_flags_that_allow_duplicates;
+array_string main__list_of_flags_with_param;
 array_string main__simple_cmd;
 
 array new_array(int mylen, int cap, int elm_size) {
@@ -15508,10 +15509,9 @@ Option_array_string internal_dot_flag__parse_pref(
                                     .current_flag = tos3(""),
                                     .equal_val = tos3(""),
                                     .encountered = new_map(1, sizeof(bool))};
-  internal_dot_flag__void_cb casted_callback =
-      *(((internal_dot_flag__void_cb *)(&callback)));
   Option_array_string tmp1 = internal_dot_flag__Instance_parse_impl(
-      &/* ? */ p, args, ((voidptr)(obj)), casted_callback);
+      &/* ? */ p, args, ((voidptr)(obj)),
+      ((internal_dot_flag__void_cb)(callback)));
   array_string tmp;
   if (!tmp1.ok) {
     string err = tmp1.error;
@@ -15534,10 +15534,9 @@ Option_array_string internal_dot_flag__parse_main_cmd(
                                     .current_flag = tos3(""),
                                     .equal_val = tos3(""),
                                     .encountered = new_map(1, sizeof(bool))};
-  internal_dot_flag__void_cb casted_callback =
-      *(((internal_dot_flag__void_cb *)(&callback)));
   Option_array_string tmp3 = internal_dot_flag__Instance_parse_impl(
-      &/* ? */ p, args, ((voidptr)(obj)), casted_callback);
+      &/* ? */ p, args, ((voidptr)(obj)),
+      ((internal_dot_flag__void_cb)(callback)));
   array_string tmp;
   if (!tmp3.ok) {
     string err = tmp3.error;
@@ -34498,13 +34497,16 @@ void compiler__V_generate_hot_reload_code(compiler__V *v) {
       println(cmd_compile_shared_library);
     };
     i64 ticks = time__ticks();
-    os__system(cmd_compile_shared_library);
+    int so_compilation_result = os__system(cmd_compile_shared_library);
     if (v_dot_pref__VerboseLevel_is_higher_or_equal(
             v->pref->verbosity,
             v_dot_pref__v_dot_pref__VerboseLevel_level_two)) {
       i64 diff = time__ticks() - ticks;
       printf("compiling shared library took %lld ms\n", diff);
       println(tos3("=========\n"));
+    };
+    if (so_compilation_result != 0) {
+      v_exit(1);
     };
     compiler__CGen_genln(
         cgen, tos3("\n\nvoid lfnmutex_print(char *s){\n	if(0){\n	"
@@ -34580,9 +34582,7 @@ void compiler__V_generate_hot_reload_code(compiler__V *v) {
              "		lfnmutex_print(\"reload_so locking...\");\n	"
              "		pthread_mutex_lock(&live_fn_mutex);\n		"
              "	lfnmutex_print(\"reload_so locked\");\n\n		"
-             "	live_lib = 0; // hack: force skipping dlclose/1, the code may "
-             "be still used...\n			"
-             "load_so(new_so_name);\n			#ifndef "
+             "	load_so(new_so_name);\n			#ifndef "
              "_WIN32\n			unlink(new_so_name); // removing the "
              ".so file from the filesystem after dlopen-ing it is safe, since "
              "it will still be mapped in memory.\n			"
@@ -34994,24 +34994,9 @@ void compiler__V_generate_init(compiler__V *v) {
                call_mod_init_consts.len, call_mod_init_consts.str,
                consts_init_body.len, consts_init_body.str, call_mod_init.len,
                call_mod_init.str));
-      compiler__CGen_genln(
-          v->cgen,
-          tos3(
-              "\nstring _STR(const char *fmt, ...) {\n	va_list "
-              "argptr;\n	va_start(argptr, fmt);\n	size_t len = "
-              "vsnprintf(0, 0, fmt, argptr) + 1;\n	"
-              "va_end(argptr);\n	byte* buf = malloc(len);\n	"
-              "va_start(argptr, fmt);\n	vsprintf((char *)buf, fmt, "
-              "argptr);\n	va_end(argptr);\n#ifdef DEBUG_ALLOC\n	"
-              "puts(\"_STR:\");\n	puts(buf);\n#endif\n	return "
-              "tos2(buf);\n}\n\nstring _STR_TMP(const char *fmt, ...) "
-              "{\n	va_list argptr;\n	va_start(argptr, "
-              "fmt);\n	//size_t len = vsnprintf(0, 0, fmt, argptr) + "
-              "1;\n	va_end(argptr);\n	va_start(argptr, "
-              "fmt);\n	vsprintf((char *)g_str_buf, fmt, argptr);\n	"
-              "va_end(argptr);\n#ifdef DEBUG_ALLOC\n	"
-              "//puts(\"_STR_TMP:\");\n	//puts(g_str_buf);\n#endif\n	return "
-              "tos2(g_str_buf);\n}\n\n"));
+    };
+    if (!v->pref->is_bare) {
+      compiler__V_generate_str_definitions(v);
     };
   };
 }
@@ -35636,6 +35621,24 @@ void compiler__set_vroot_folder(string vroot_path) {
                      EMPTY_ARRAY_OF_ELEMS(string, 2){vroot_path, vname}),
                  os__path_separator)),
              1);
+}
+void compiler__V_generate_str_definitions(compiler__V *v) {
+  compiler__CGen_genln(
+      v->cgen,
+      tos3("\nstring _STR(const char *fmt, ...) {\n	va_list "
+           "argptr;\n	va_start(argptr, fmt);\n	size_t len = "
+           "vsnprintf(0, 0, fmt, argptr) + 1;\n	va_end(argptr);\n	byte* "
+           "buf = malloc(len);\n	va_start(argptr, fmt);\n	"
+           "vsprintf((char *)buf, fmt, argptr);\n	"
+           "va_end(argptr);\n#ifdef DEBUG_ALLOC\n	"
+           "puts(\"_STR:\");\n	puts(buf);\n#endif\n	return "
+           "tos2(buf);\n}\n\nstring _STR_TMP(const char *fmt, ...) {\n	"
+           "va_list argptr;\n	va_start(argptr, fmt);\n	//size_t len = "
+           "vsnprintf(0, 0, fmt, argptr) + 1;\n	va_end(argptr);\n	"
+           "va_start(argptr, fmt);\n	vsprintf((char *)g_str_buf, fmt, "
+           "argptr);\n	va_end(argptr);\n#ifdef DEBUG_ALLOC\n	"
+           "//puts(\"_STR_TMP:\");\n	//puts(g_str_buf);\n#endif\n	return "
+           "tos2(g_str_buf);\n}\n\n"));
 }
 string compiler__Table_qualify_module(compiler__Table *table, string mod,
                                       string file_path) {
@@ -40683,10 +40686,9 @@ void internal_dot_compile__run_compiled_executable_and_exit(
   };
   v_exit(0);
 }
-static inline void
-internal_dot_compile__parse_c_options(string flag,
-                                      internal_dot_flag__Instance *f,
-                                      v_dot_pref__Preferences *prefs) {
+void internal_dot_compile__parse_c_options(string flag,
+                                           internal_dot_flag__Instance *f,
+                                           v_dot_pref__Preferences *prefs) {
   string tmp1 = flag;
 
   if ((string_eq(tmp1, tos3("cc"))) || (string_eq(tmp1, tos3("compiler")))) {
@@ -40705,6 +40707,7 @@ internal_dot_compile__parse_c_options(string flag,
     tmp = *(string *)tmp2.data;
     ;
     prefs->ccompiler = tmp;
+    internal_dot_flag__Instance_allow_duplicate(f);
   } else if ((string_eq(tmp1, tos3("cg"))) ||
              (string_eq(tmp1, tos3("cdebug")))) {
     internal_dot_flag__Instance_is_equivalent_to(
@@ -40851,6 +40854,8 @@ internal_dot_compile__parse_arguments(array_string args) {
     int errcode = tmp7.ecode;
     println(tos3("V error: Error while parsing flags."));
     println(err);
+    println(tos3("Args:"));
+    println(array_string_str(args));
     v_exit(1);
   }
   remaining = *(array_string *)tmp7.data;
@@ -41484,8 +41489,11 @@ void main__parse_flags(string flag, internal_dot_flag__Instance *f,
     v_exit(1);
   } else // default:
   {
+    if ((_IN(string, (flag), main__list_of_flags_that_allow_duplicates))) {
+      internal_dot_flag__Instance_allow_duplicate(f);
+    };
     prefs->unknown_flag = _STR("-%.*s", flag.len, flag.str);
-    if (!((_IN(string, (flag), main__list_of_flags)))) {
+    if (!((_IN(string, (flag), main__list_of_flags_with_param)))) {
 
       return;
     };
@@ -43377,7 +43385,11 @@ void init() {
       4, 4, sizeof(string),
       EMPTY_ARRAY_OF_ELEMS(string, 4){tos3(".git"), tos3(".hg"), tos3(".svn"),
                                       tos3(".v.mod.stop")});
-  main__list_of_flags = new_array_from_c_array(
+  main__list_of_flags_that_allow_duplicates = new_array_from_c_array(
+      5, 5, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 5){tos3("cc"), tos3("d"), tos3("define"),
+                                      tos3("cf"), tos3("cflags")});
+  main__list_of_flags_with_param = new_array_from_c_array(
       14, 14, sizeof(string),
       EMPTY_ARRAY_OF_ELEMS(string, 14){
           tos3("o"), tos3("output"), tos3("d"), tos3("define"), tos3("b"),
