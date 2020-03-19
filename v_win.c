@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "28309da"
+#define V_COMMIT_HASH "3e70e5f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3dc3b11"
+#define V_COMMIT_HASH "28309da"
 #endif
 #include <inttypes.h>
 
@@ -18825,11 +18825,19 @@ v_dot_checker__Checker_infix_expr(v_dot_checker__Checker *c,
   v_dot_table__Type right_type =
       v_dot_checker__Checker_expr(c, infix_expr->right);
   infix_expr->right_type = right_type;
+  v_dot_table__TypeSymbol *right =
+      v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, right_type);
+  if (infix_expr->op == v_dot_token__v_dot_token__Kind_key_in &&
+      !((right->kind == v_dot_table__v_dot_table__Kind_array ||
+         right->kind == v_dot_table__v_dot_table__Kind_map ||
+         right->kind == v_dot_table__v_dot_table__Kind_string))) {
+    v_dot_checker__Checker_error(
+        c, tos3("infix expr: `in` can only be used with array/map/string."),
+        infix_expr->pos);
+  };
   if (!v_dot_table__Table_check(&/* ? */ *c->table, right_type, left_type)) {
     v_dot_table__TypeSymbol *left =
         v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, left_type);
-    v_dot_table__TypeSymbol *right =
-        v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, right_type);
     if (left->kind == v_dot_table__v_dot_table__Kind_array &&
         infix_expr->op == v_dot_token__v_dot_token__Kind_left_shift) {
       return v_dot_table__void_type;
@@ -19182,7 +19190,7 @@ void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
   return_stmt->types = got_types;
   int tmp57 = 0;
   bool tmp58 =
-      map_get(/*checker.v : 379*/ c->table->type_idxs, tos3("Option"), &tmp57);
+      map_get(/*checker.v : 382*/ c->table->type_idxs, tos3("Option"), &tmp57);
 
   if (exp_is_optional &&
       (v_dot_table__type_idx((*(v_dot_table__Type *)array_get(got_types, 0))) ==
@@ -19670,7 +19678,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     };
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp93 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
-    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4170_var_scope_var;
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4207_var_scope_var;
     if (!tmp93.ok) {
       string err = tmp93.error;
       int errcode = tmp93.ecode;
@@ -19682,11 +19690,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_4170_var_scope_var =
+    _V_mret_4207_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp93.data;
     ;
-    var_scope = _V_mret_4170_var_scope_var.var_0;
-    var = _V_mret_4170_var_scope_var.var_1;
+    var_scope = _V_mret_4207_var_scope_var.var_0;
+    var = _V_mret_4207_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
@@ -20954,12 +20962,28 @@ void v_dot_gen__Gen_infix_expr(v_dot_gen__Gen *g, v_dot_ast__InfixExpr node) {
     v_dot_gen__Gen_expr(g, node.right);
     v_dot_gen__Gen_write(g, tos3(")"));
   } else if (node.op == v_dot_token__v_dot_token__Kind_key_in) {
-    string styp = v_dot_gen__Gen_typ(g, node.left_type);
-    v_dot_gen__Gen_write(g, _STR("_IN(%.*s, ", styp.len, styp.str));
-    v_dot_gen__Gen_expr(g, node.left);
-    v_dot_gen__Gen_write(g, tos3(", "));
-    v_dot_gen__Gen_expr(g, node.right);
-    v_dot_gen__Gen_write(g, tos3(")"));
+    v_dot_table__TypeSymbol *right_sym =
+        v_dot_table__Table_get_type_symbol(&/* ? */ *g->table, node.right_type);
+    if (right_sym->kind == v_dot_table__v_dot_table__Kind_array) {
+      string styp = v_dot_gen__Gen_typ(g, node.left_type);
+      v_dot_gen__Gen_write(g, _STR("_IN(%.*s, ", styp.len, styp.str));
+      v_dot_gen__Gen_expr(g, node.left);
+      v_dot_gen__Gen_write(g, tos3(", "));
+      v_dot_gen__Gen_expr(g, node.right);
+      v_dot_gen__Gen_write(g, tos3(")"));
+    } else if (right_sym->kind == v_dot_table__v_dot_table__Kind_map) {
+      v_dot_gen__Gen_write(g, tos3("_IN_MAP("));
+      v_dot_gen__Gen_expr(g, node.left);
+      v_dot_gen__Gen_write(g, tos3(", "));
+      v_dot_gen__Gen_expr(g, node.right);
+      v_dot_gen__Gen_write(g, tos3(")"));
+    } else if (right_sym->kind == v_dot_table__v_dot_table__Kind_string) {
+      v_dot_gen__Gen_write(g, tos3("string_contains("));
+      v_dot_gen__Gen_expr(g, node.right);
+      v_dot_gen__Gen_write(g, tos3(", "));
+      v_dot_gen__Gen_expr(g, node.left);
+      v_dot_gen__Gen_write(g, tos3(")"));
+    };
   } else if (node.op == v_dot_token__v_dot_token__Kind_left_shift &&
              v_dot_table__Table_get_type_symbol(&/* ? */ *g->table,
                                                 node.left_type)
@@ -21414,7 +21438,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp105 = 0;
       bool tmp106 =
-          map_get(/*cgen.v : 1381*/ g->varaidic_args, type_str, &tmp105);
+          map_get(/*cgen.v : 1398*/ g->varaidic_args, type_str, &tmp105);
 
       if (len > tmp105) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -21470,7 +21494,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp116 = 0;
     bool tmp117 =
-        map_get(/*cgen.v : 1436*/ g->table->type_idxs, builtin_name, &tmp116);
+        map_get(/*cgen.v : 1453*/ g->table->type_idxs, builtin_name, &tmp116);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -21638,7 +21662,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp140 = 0;
     bool tmp141 =
-        map_get(/*cgen.v : 1545*/ g->table->type_idxs, node.name, &tmp140);
+        map_get(/*cgen.v : 1562*/ g->table->type_idxs, node.name, &tmp140);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
