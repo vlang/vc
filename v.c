@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "74616d2"
+#define V_COMMIT_HASH "97fbbac"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b2f05e5"
+#define V_COMMIT_HASH "74616d2"
 #endif
 #include <inttypes.h>
 
@@ -19850,7 +19850,7 @@ v_dot_checker__Checker_index_expr(v_dot_checker__Checker *c,
 v_dot_table__Type v_dot_checker__Checker_enum_val(v_dot_checker__Checker *c,
                                                   v_dot_ast__EnumVal *node) {
   int typ_idx = ((string_eq(node->enum_name, tos3("")))
-                     ? (c->expected_type)
+                     ? (v_dot_table__type_idx(c->expected_type))
                      : (v_dot_table__Table_find_type_idx(&/* ? */ *c->table,
                                                          node->enum_name)));
   if (typ_idx == 0) {
@@ -19859,7 +19859,7 @@ v_dot_table__Type v_dot_checker__Checker_enum_val(v_dot_checker__Checker *c,
                                       node->enum_name.len, node->enum_name.str),
                                  node->pos);
   };
-  v_dot_table__Type typ = ((v_dot_table__Type)(typ_idx));
+  v_dot_table__Type typ = v_dot_table__new_type(typ_idx);
   v_dot_table__TypeSymbol *typ_sym =
       v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, typ);
   if (typ_sym->kind != v_dot_table__v_dot_table__Kind_enum_) {
