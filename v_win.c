@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5824d28"
+#define V_COMMIT_HASH "f798a09"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bd05485"
+#define V_COMMIT_HASH "5824d28"
 #endif
 #include <inttypes.h>
 
@@ -4393,12 +4393,12 @@ int math__mask;
 int math__shift;
 u64 math__sign_mask;
 u64 math__frac_mask;
-f32 math__log2_e;
-f32 math__log10_e;
-f32 math__max_f32;
-f32 math__smallest_non_zero_f32;
-f32 math__max_f64;
-f32 math__smallest_non_zero_f64;
+f64 math__log2_e;
+f64 math__log10_e;
+f64 math__max_f32;
+f64 math__smallest_non_zero_f32;
+f64 math__max_f64;
+f64 math__smallest_non_zero_f64;
 int math__min_i8;
 int math__min_i16;
 int math__min_i32;
@@ -9098,28 +9098,28 @@ f32 math__tanf(f32 a) { return tanf(a); }
 f64 math__tanh(f64 a) { return tanh(a); }
 f64 math__trunc(f64 a) { return trunc(a); }
 f64 math__aprox_sin(f64 a) {
-  f32 a0 = 1.91059300966915117e-31;
-  f32 a1 = 1.00086760103908896;
-  f32 a2 = -1.21276126894734565e-2;
-  f32 a3 = -1.38078780785773762e-1;
-  f32 a4 = -2.67353392911981221e-2;
-  f32 a5 = 2.08026600266304389e-2;
-  f32 a6 = -3.03996055049204407e-3;
-  f32 a7 = 1.38235642404333740e-4;
+  f64 a0 = 1.91059300966915117e-31;
+  f64 a1 = 1.00086760103908896;
+  f64 a2 = -1.21276126894734565e-2;
+  f64 a3 = -1.38078780785773762e-1;
+  f64 a4 = -2.67353392911981221e-2;
+  f64 a5 = 2.08026600266304389e-2;
+  f64 a6 = -3.03996055049204407e-3;
+  f64 a7 = 1.38235642404333740e-4;
   return a0 +
          a * (a1 +
               a * (a2 + a * (a3 + a * (a4 + a * (a5 + a * (a6 + a * a7))))));
 }
 f64 math__aprox_cos(f64 a) {
-  f32 a0 = 9.9995999154986614e-1;
-  f32 a1 = 1.2548995793001028e-3;
-  f32 a2 = -5.0648546280678015e-1;
-  f32 a3 = 1.2942246466519995e-2;
-  f32 a4 = 2.8668384702547972e-2;
-  f32 a5 = 7.3726485210586547e-3;
-  f32 a6 = -3.8510875386947414e-3;
-  f32 a7 = 4.7196604604366623e-4;
-  f32 a8 = -1.8776444013090451e-5;
+  f64 a0 = 9.9995999154986614e-1;
+  f64 a1 = 1.2548995793001028e-3;
+  f64 a2 = -5.0648546280678015e-1;
+  f64 a3 = 1.2942246466519995e-2;
+  f64 a4 = 2.8668384702547972e-2;
+  f64 a5 = 7.3726485210586547e-3;
+  f64 a6 = -3.8510875386947414e-3;
+  f64 a7 = 4.7196604604366623e-4;
+  f64 a8 = -1.8776444013090451e-5;
   return a0 +
          a * (a1 +
               a * (a2 +
@@ -30023,18 +30023,15 @@ string compiler__Parser_factor(compiler__Parser *p) {
     compiler__Parser_check(p, compiler__compiler__TokenKind_key_none);
     return p->expected_type;
   } else if (tmp37 == compiler__compiler__TokenKind_number) {
-    typ = tos3("int");
     if ((string_contains(p->lit, tos3(".")) ||
-         (string_contains(p->lit, tos3("e")) ||
-          string_contains(p->lit, tos3("E")))) &&
-        !(string_at(p->lit, 0) == '0' &&
-          (string_at(p->lit, 1) == 'x' || string_at(p->lit, 1) == 'X'))) {
-      typ = tos3("f32");
+         string_contains(p->lit, tos3("e")) ||
+         string_contains(p->lit, tos3("E"))) &&
+        !((string_eq(string_substr2(p->lit, 0, 2, false), tos3("0x")) ||
+           string_eq(string_substr2(p->lit, 0, 2, false), tos3("0X"))))) {
+      typ = tos3("f64");
     } else {
       u64 v_u64 = string_u64(p->lit);
-      if (((u64)(((u32)(v_u64)))) < v_u64) {
-        typ = tos3("u64");
-      };
+      typ = ((((u64)(((u32)(v_u64)))) < v_u64) ? (tos3("u64")) : (tos3("int")));
     };
     if (string_ne(p->expected_type, tos3("")) &&
         !compiler__is_valid_int_const(p->lit, p->expected_type)) {
@@ -39759,7 +39756,7 @@ string compiler__Parser_identify_typo(compiler__Parser *p, string name) {
   };
   string name_dotted =
       compiler__mod_gen_name_rev(string_replace(name, tos3("__"), tos3(".")));
-  f32 min_match = 0.50;
+  f64 min_match = 0.50;
   string output = tos3("");
   string n = compiler__Table_find_misspelled_imported_mod(
       &/* ? */ *p->table, name_dotted, p, min_match);
@@ -40764,12 +40761,21 @@ void internal_dot_compile__run_compiled_executable_and_exit(
            v->pref->out_name.str);
   };
   string cmd = _STR("\"%.*s\"", v->pref->out_name.len, v->pref->out_name.str);
-  if (remaining_args.len > 1) {
-    cmd = string_add(
-        cmd,
-        string_add(tos3(" "),
-                   array_string_join(array_slice2(remaining_args, 1, -1, true),
-                                     tos3(" "))));
+  int tmp1 = 1;
+  ;
+  for (int tmp2 = tmp1; tmp2 < remaining_args.len; tmp2++) {
+    int i = tmp2;
+
+    if (string_index_byte((*(string *)array_get(remaining_args, i)), ' ') > 0) {
+      cmd = string_add(
+          cmd, string_add(string_add(tos3(" \""),
+                                     (*(string *)array_get(remaining_args, i))),
+                          tos3("\"")));
+    } else {
+      cmd = string_add(
+          cmd,
+          string_add(tos3(" "), (*(string *)array_get(remaining_args, i))));
+    };
   };
   if (v_dot_pref__VerboseLevel_is_higher_or_equal(
           v->pref->verbosity, v_dot_pref__v_dot_pref__VerboseLevel_level_two)) {
