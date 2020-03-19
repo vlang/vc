@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3e70e5f"
+#define V_COMMIT_HASH "013fd5a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "28309da"
+#define V_COMMIT_HASH "3e70e5f"
 #endif
 #include <inttypes.h>
 
@@ -17607,6 +17607,7 @@ v_dot_ast__Expr v_dot_parser__Parser_expr(v_dot_parser__Parser *p,
       }
       var = *(v_dot_ast__Var *)tmp28.data;
       ;
+      printf("assoc var %.*s typ=%d\n", name.len, name.str, var.typ);
       array_string fields = new_array_from_c_array(
           0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
       array_v_dot_ast__Expr vals = new_array_from_c_array(
@@ -20821,6 +20822,7 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
          string_eq(it->name, tos3("push_many")) ||
          string_eq(it->name, tos3("trim")) ||
          string_eq(it->name, tos3("first")) ||
+         string_eq(it->name, tos3("last")) ||
          string_eq(it->name, tos3("clone")))) {
       receiver_name = tos3("array");
     };
@@ -21391,11 +21393,11 @@ void v_dot_gen__Gen_const_decl(v_dot_gen__Gen *g, v_dot_ast__ConstDecl node) {
   };
 }
 void v_dot_gen__Gen_assoc(v_dot_gen__Gen *g, v_dot_ast__Assoc node) {
+  v_dot_gen__Gen_writeln(g, tos3("// assoc"));
   if (node.typ == 0) {
 
     return;
   };
-  v_dot_gen__Gen_writeln(g, tos3("// assoc"));
   string styp = v_dot_gen__Gen_typ(g, node.typ);
   v_dot_gen__Gen_writeln(g, _STR("(%.*s){", styp.len, styp.str));
   array_string tmp99 = node.fields;
@@ -21438,7 +21440,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp105 = 0;
       bool tmp106 =
-          map_get(/*cgen.v : 1398*/ g->varaidic_args, type_str, &tmp105);
+          map_get(/*cgen.v : 1400*/ g->varaidic_args, type_str, &tmp105);
 
       if (len > tmp105) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -21494,7 +21496,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp116 = 0;
     bool tmp117 =
-        map_get(/*cgen.v : 1453*/ g->table->type_idxs, builtin_name, &tmp116);
+        map_get(/*cgen.v : 1455*/ g->table->type_idxs, builtin_name, &tmp116);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -21662,7 +21664,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp140 = 0;
     bool tmp141 =
-        map_get(/*cgen.v : 1562*/ g->table->type_idxs, node.name, &tmp140);
+        map_get(/*cgen.v : 1564*/ g->table->type_idxs, node.name, &tmp140);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
