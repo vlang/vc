@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0f08a92"
+#define V_COMMIT_HASH "dd96421"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "79077b0"
+#define V_COMMIT_HASH "0f08a92"
 #endif
 #include <inttypes.h>
 
@@ -855,7 +855,6 @@ typedef array array_compiler__Fn;
 typedef struct compiler__V compiler__V;
 typedef array array_compiler__Parser;
 typedef Option Option_int;
-typedef struct compiler__VhGen compiler__VhGen;
 typedef struct compiler__ImportTable compiler__ImportTable;
 typedef Option Option_string;
 typedef struct compiler__MsvcResult compiler__MsvcResult;
@@ -2303,14 +2302,6 @@ struct compiler__CGen {
   int line;
   bool line_directives;
   int cut_pos;
-};
-
-struct compiler__VhGen {
-  int i;
-  strings__Builder consts;
-  strings__Builder fns;
-  strings__Builder types;
-  array_compiler__Token tokens;
 };
 
 struct compiler__Type {
@@ -3988,11 +3979,6 @@ string compiler__vhash();
 string compiler__cescaped_path(string s);
 v_dot_pref__OS compiler__os_from_string(string os);
 void compiler__set_vroot_folder(string vroot_path);
-void compiler__generate_vh(string mod);
-void compiler__VhGen_generate_fn(compiler__VhGen *g);
-void compiler__VhGen_generate_alias(compiler__VhGen *g);
-void compiler__VhGen_generate_const(compiler__VhGen *g);
-void compiler__VhGen_generate_type(compiler__VhGen *g);
 string compiler__Table_qualify_module(compiler__Table *table, string mod,
                                       string file_path);
 compiler__ImportTable compiler__new_import_table();
@@ -34827,7 +34813,6 @@ void compiler__V_compile(compiler__V *v) {
   vgen_parser.is_vgen = 1;
   compiler__Parser_parse(&/* ? */ vgen_parser, compiler__compiler__Pass_main);
   if (v->pref->build_mode == v_dot_pref__v_dot_pref__BuildMode_build_module) {
-    compiler__generate_vh(v->pref->path);
   };
   strings__Builder def = strings__new_builder(10000);
   strings__Builder_writeln(&/* ? */ def,
@@ -35651,228 +35636,6 @@ void compiler__set_vroot_folder(string vroot_path) {
                      EMPTY_ARRAY_OF_ELEMS(string, 2){vroot_path, vname}),
                  os__path_separator)),
              1);
-}
-void compiler__generate_vh(string mod) {
-  printf("\n\n\n\nGenerating a V header file for module `%.*s`\n", mod.len,
-         mod.str);
-  string vexe = v_dot_pref__vexe_path();
-  string full_mod_path =
-      os__join_path(os__dir(vexe), &(varg_string){.len = 1, .args = {mod}});
-  string dir =
-      ((string_starts_with(mod, tos3("vlib")))
-           ? (_STR("%.*s%.*s%.*s", compiler__v_modules_path.len,
-                   compiler__v_modules_path.str, os__path_separator.len,
-                   os__path_separator.str, mod.len, mod.str))
-           : (mod));
-  string path = string_add(dir, tos3(".vh"));
-  string pdir = string_all_before_last(dir, os__path_separator);
-  if (!os__is_dir(pdir)) {
-    os__mkdir_all(pdir);
-  };
-  Option_os__File tmp1 = os__create(path);
-  os__File out;
-  if (!tmp1.ok) {
-    string err = tmp1.error;
-    int errcode = tmp1.ecode;
-    v_panic(err);
-  }
-  out = *(os__File *)tmp1.data;
-  ;
-  string mod_path = string_replace(mod, tos3("\\"), tos3("/"));
-  os__File_writeln(&/* ? */ out,
-                   _STR("// %.*s module header\n", mod_path.len, mod_path.str));
-  string mod_def = ((string_contains(mod_path, tos3("/")))
-                        ? (string_all_after(mod_path, tos3("/")))
-                        : (mod_path));
-  os__File_writeln(&/* ? */ out,
-                   _STR("module %.*s\n", mod_def.len, mod_def.str));
-  println(full_mod_path);
-  array_string vfiles = os__walk_ext(full_mod_path, tos3(".v"));
-
-  array_string tmp2 = new_array(0, vfiles.len, sizeof(string));
-  for (int i = 0; i < vfiles.len; i++) {
-    string it = ((string *)vfiles.data)[i];
-    if (string_ends_with(it, tos3(".v")) &&
-        !string_ends_with(it, tos3("test.v")) &&
-        !string_ends_with(it, tos3("_windows.v")) &&
-        !string_ends_with(it, tos3("_win.v")) &&
-        !string_ends_with(it, tos3("_lin.v")) &&
-        !string_contains(it, _STR("%.*sexamples", os__path_separator.len,
-                                  os__path_separator.str)) &&
-        !string_contains(it, tos3("_js.v")) &&
-        !string_contains(it, tos3("_bare.v")) &&
-        !string_contains(
-            it, _STR("%.*sjs", os__path_separator.len, os__path_separator.str)))
-      array_push(&tmp2, &it);
-  }
-  array_string filtered = tmp2;
-  v_dot_pref__Preferences *pref = (v_dot_pref__Preferences *)memdup(
-      &(v_dot_pref__Preferences){
-          .path = tos3("foo.v"),
-          .is_test = 0,
-          .is_script = 0,
-          .is_live = 0,
-          .is_solive = 0,
-          .is_so = 0,
-          .is_prof = 0,
-          .translated = 0,
-          .is_prod = 0,
-          .obfuscate = 0,
-          .is_repl = 0,
-          .is_run = 0,
-          .sanitize = 0,
-          .is_debug = 0,
-          .is_vlines = 0,
-          .is_keep_c = 0,
-          .is_pretty_c = 0,
-          .is_cache = 0,
-          .is_stats = 0,
-          .no_auto_free = 0,
-          .cflags = tos3(""),
-          .ccompiler = tos3(""),
-          .third_party_option = tos3(""),
-          .building_v = 0,
-          .autofree = 0,
-          .compress = 0,
-          .fast = 0,
-          .enable_globals = 0,
-          .is_bare = 0,
-          .lookup_path = new_array(0, 1, sizeof(string)),
-          .output_cross_c = 0,
-          .prealloc = 0,
-          .vroot = tos3(""),
-          .out_name = tos3(""),
-          .compile_defines = new_array(0, 1, sizeof(string)),
-          .compile_defines_all = new_array(0, 1, sizeof(string)),
-          .mod = tos3("")},
-      sizeof(v_dot_pref__Preferences));
-  v_dot_pref__Preferences_fill_with_defaults(pref);
-  compiler__V *v = compiler__new_v(pref);
-  compiler__VhGen g =
-      (compiler__VhGen){.consts = strings__new_builder(1000),
-                        .fns = strings__new_builder(1000),
-                        .types = strings__new_builder(1000),
-                        .i = 0,
-                        .tokens = new_array(0, 1, sizeof(compiler__Token))};
-  array_string tmp3 = filtered;
-  for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
-    string file = ((string *)tmp3.data)[tmp4];
-
-    compiler__Parser p = compiler__V_new_parser_from_file(v, file);
-    p.scanner->is_vh = 1;
-    compiler__Parser_parse(&/* ? */ p, compiler__compiler__Pass_decl);
-    g.tokens = p.tokens;
-    g.i = 0;
-    for (; g.i < p.tokens.len; g.i++) {
-
-      if (!compiler__TokenKind_is_decl(
-              (*(compiler__Token *)array_get(p.tokens, g.i)).tok)) {
-        continue;
-      };
-      compiler__TokenKind tmp9 =
-          (*(compiler__Token *)array_get(g.tokens, g.i)).tok;
-
-      if (tmp9 == compiler__compiler__TokenKind_key_fn) {
-        compiler__VhGen_generate_fn(&/* ? */ g);
-      } else if (tmp9 == compiler__compiler__TokenKind_key_const) {
-        compiler__VhGen_generate_const(&/* ? */ g);
-      } else if (tmp9 == compiler__compiler__TokenKind_key_struct) {
-        compiler__VhGen_generate_type(&/* ? */ g);
-      } else if (tmp9 == compiler__compiler__TokenKind_key_type) {
-        compiler__VhGen_generate_alias(&/* ? */ g);
-      } else // default:
-      {
-      };
-    };
-  };
-  string result = string_add(
-      string_add(strings__Builder_str(&/* ? */ g.types),
-                 strings__Builder_str(&/* ? */ g.consts)),
-      string_replace(string_replace(strings__Builder_str(&/* ? */ g.fns),
-                                    tos3("\n\n\n"), tos3("\n")),
-                     tos3("\n\n"), tos3("\n")));
-  os__File_writeln(
-      &/* ? */ out,
-      string_replace(string_replace(result, tos3("[ ] "), tos3("[]")),
-                     tos3("? "), tos3("?")));
-  os__File_close(&/* ? */ out);
-}
-void compiler__VhGen_generate_fn(compiler__VhGen *g) {
-  if (g->i >= g->tokens.len - 2) {
-
-    return;
-  };
-  compiler__Token next = (*(compiler__Token *)array_get(g->tokens, g->i + 1));
-  if (g->i > 0 && (*(compiler__Token *)array_get(g->tokens, g->i - 1)).tok !=
-                      compiler__compiler__TokenKind_key_pub) {
-  };
-  if (next.tok == compiler__compiler__TokenKind_name &&
-      string_eq(next.lit, tos3("C"))) {
-
-    return;
-  };
-  compiler__Token tok = (*(compiler__Token *)array_get(g->tokens, g->i));
-  while (g->i < g->tokens.len - 1 &&
-         tok.tok != compiler__compiler__TokenKind_lcbr) {
-
-    next = (*(compiler__Token *)array_get(g->tokens, g->i + 1));
-    strings__Builder_write(&/* ? */ g->fns, compiler__Token_str(tok));
-    if (tok.tok != compiler__compiler__TokenKind_lpar &&
-        !((next.tok == compiler__compiler__TokenKind_comma ||
-           next.tok == compiler__compiler__TokenKind_rpar))) {
-      strings__Builder_write(&/* ? */ g->fns, tos3(" "));
-    };
-    g->i++;
-    tok = (*(compiler__Token *)array_get(g->tokens, g->i));
-  };
-  strings__Builder_writeln(&/* ? */ g->fns, tos3(""));
-}
-void compiler__VhGen_generate_alias(compiler__VhGen *g) {
-  compiler__Token tok = (*(compiler__Token *)array_get(g->tokens, g->i));
-  while (g->i < g->tokens.len - 1) {
-
-    strings__Builder_write(&/* ? */ g->types, compiler__Token_str(tok));
-    strings__Builder_write(&/* ? */ g->types, tos3(" "));
-    if (tok.line_nr !=
-        (*(compiler__Token *)array_get(g->tokens, g->i + 1)).line_nr) {
-      break;
-    };
-    g->i++;
-    tok = (*(compiler__Token *)array_get(g->tokens, g->i));
-  };
-  strings__Builder_writeln(&/* ? */ g->types, tos3("\n"));
-}
-void compiler__VhGen_generate_const(compiler__VhGen *g) {
-  compiler__Token tok = (*(compiler__Token *)array_get(g->tokens, g->i));
-  while (g->i < g->tokens.len &&
-         tok.tok != compiler__compiler__TokenKind_rpar) {
-
-    strings__Builder_write(&/* ? */ g->consts, compiler__Token_str(tok));
-    strings__Builder_write(&/* ? */ g->consts, tos3(" "));
-    if ((*(compiler__Token *)array_get(g->tokens, g->i + 2)).tok ==
-        compiler__compiler__TokenKind_assign) {
-      strings__Builder_write(&/* ? */ g->consts, tos3("\n\t"));
-    };
-    g->i++;
-    tok = (*(compiler__Token *)array_get(g->tokens, g->i));
-  };
-  strings__Builder_writeln(&/* ? */ g->consts, tos3("\n)"));
-}
-void compiler__VhGen_generate_type(compiler__VhGen *g) {
-  compiler__Token tok = (*(compiler__Token *)array_get(g->tokens, g->i));
-  while (g->i < g->tokens.len &&
-         tok.tok != compiler__compiler__TokenKind_rcbr) {
-
-    strings__Builder_write(&/* ? */ g->types, compiler__Token_str(tok));
-    strings__Builder_write(&/* ? */ g->types, tos3(" "));
-    if ((*(compiler__Token *)array_get(g->tokens, g->i + 1)).line_nr !=
-        (*(compiler__Token *)array_get(g->tokens, g->i)).line_nr) {
-      strings__Builder_write(&/* ? */ g->types, tos3("\n\t"));
-    };
-    g->i++;
-    tok = (*(compiler__Token *)array_get(g->tokens, g->i));
-  };
-  strings__Builder_writeln(&/* ? */ g->types, tos3("\n}"));
 }
 string compiler__Table_qualify_module(compiler__Table *table, string mod,
                                       string file_path) {
