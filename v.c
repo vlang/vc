@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "216c7a1"
+#define V_COMMIT_HASH "010f3ef"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0fbb056"
+#define V_COMMIT_HASH "216c7a1"
 #endif
 #include <inttypes.h>
 
@@ -2957,7 +2957,7 @@ void os__print_c_errno();
 string os__ext(string path);
 string os__dir(string path);
 string os__base_dir(string path);
-string os__filename(string path);
+string os__file_name(string path);
 string os__get_line();
 string os__get_raw_line();
 array_string os__get_lines();
@@ -11466,7 +11466,7 @@ Option_bool os__cp_all(string osource_path, string odest_path, bool overwrite) {
     string adjasted_path =
         ((os__is_dir(dest_path))
              ? (os__join_path(dest_path, &(varg_string){.len = 1,
-                                                        .args = {os__filename(
+                                                        .args = {os__file_name(
                                                             source_path)}}))
              : (dest_path));
     if (os__exists(adjasted_path)) {
@@ -11940,7 +11940,7 @@ string os__base_dir(string path) {
   ;
   return string_substr2(path, 0, posx, false);
 }
-string os__filename(string path) {
+string os__file_name(string path) {
   return string_all_after(path, os__path_separator);
 }
 string os__get_line() {
@@ -12667,7 +12667,7 @@ void v_dot_pref__Preferences_fill_with_defaults(v_dot_pref__Preferences *p) {
   };
   string rpath = os__realpath(p->path);
   if (string_eq(p->out_name, tos3(""))) {
-    string filename = string_trim_space(os__filename(rpath));
+    string filename = string_trim_space(os__file_name(rpath));
     string base = string_all_before_last(filename, tos3("."));
     if (string_eq(base, tos3(""))) {
       base = filename;
@@ -12684,7 +12684,7 @@ void v_dot_pref__Preferences_fill_with_defaults(v_dot_pref__Preferences *p) {
       p->out_name = tos3("v2");
     };
   };
-  string rpath_name = os__filename(rpath);
+  string rpath_name = os__file_name(rpath);
   p->building_v = !p->is_repl && (string_eq(rpath_name, tos3("v")) ||
                                   string_eq(rpath_name, tos3("vfmt.v")));
   if (p->os == v_dot_pref__v_dot_pref__OS__auto) {
@@ -25394,7 +25394,7 @@ string compiler__Parser_index_expr(compiler__Parser *p, string typ_,
   return typ;
 }
 bool compiler__Parser_fileis(compiler__Parser *p, string s) {
-  return string_contains(os__filename(p->scanner->file_path), s);
+  return string_contains(os__file_name(p->scanner->file_path), s);
 }
 string compiler__Parser_indot_expr(compiler__Parser *p) {
   int ph = compiler__CGen_add_placeholder(&/* ? */ *p->cgen);
@@ -34495,7 +34495,7 @@ void compiler__V_generate_hotcode_reloading_main_caller(compiler__V *v) {
   compiler__CGen *cgen = v->cgen;
   compiler__CGen_genln(cgen, tos3(""));
   string file_base =
-      string_replace(os__filename(v->pref->path), tos3(".v"), tos3(""));
+      string_replace(os__file_name(v->pref->path), tos3(".v"), tos3(""));
   if (v->pref->os != v_dot_pref__v_dot_pref__OS_windows) {
     string so_name = string_add(file_base, tos3(".so"));
     compiler__CGen_genln(cgen, _STR("  char *live_library_name = \"%.*s\";",
@@ -34524,7 +34524,8 @@ void compiler__V_generate_hot_reload_code(compiler__V *v) {
   compiler__CGen *cgen = v->cgen;
   if (v->pref->is_live) {
     string file = os__realpath(v->pref->path);
-    string file_base = string_replace(os__filename(file), tos3(".v"), tos3(""));
+    string file_base =
+        string_replace(os__file_name(file), tos3(".v"), tos3(""));
     string so_name = string_add(file_base, tos3(".so"));
     string vexe = (*(string *)array_get(os__args, 0));
     if (string_eq(os__user_os(), tos3("windows"))) {
@@ -40631,7 +40632,7 @@ string compiler__get_vtmp_filename(string base_file_name, string postfix) {
   return os__realpath(os__join_path(
       vtmp, &(varg_string){
                 .len = 1,
-                .args = {string_add(os__filename(os__realpath(base_file_name)),
+                .args = {string_add(os__file_name(os__realpath(base_file_name)),
                                     postfix)}}));
 }
 void internal_dot_compile__check_for_common_mistake(
