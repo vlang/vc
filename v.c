@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b7a0369"
+#define V_COMMIT_HASH "f37b9d9"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "010f3ef"
+#define V_COMMIT_HASH "b7a0369"
 #endif
 #include <inttypes.h>
 
@@ -20764,6 +20764,12 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
          string_eq(it->name, tos3("last")) ||
          string_eq(it->name, tos3("clone")))) {
       receiver_name = tos3("array");
+      if ((string_eq(it->name, tos3("last")) ||
+           string_eq(it->name, tos3("first")))) {
+        string return_type_str = v_dot_gen__Gen_typ(g, it->return_type);
+        v_dot_gen__Gen_write(
+            g, _STR("*(%.*s*)", return_type_str.len, return_type_str.str));
+      };
     };
     string name =
         string_replace(_STR("%.*s_%.*s", receiver_name.len, receiver_name.str,
@@ -21428,7 +21434,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp114 = 0;
       bool tmp115 =
-          map_get(/*cgen.v : 1448*/ g->varaidic_args, type_str, &tmp114);
+          map_get(/*cgen.v : 1452*/ g->varaidic_args, type_str, &tmp114);
 
       if (len > tmp114) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -21484,7 +21490,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp125 = 0;
     bool tmp126 =
-        map_get(/*cgen.v : 1503*/ g->table->type_idxs, builtin_name, &tmp125);
+        map_get(/*cgen.v : 1507*/ g->table->type_idxs, builtin_name, &tmp125);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -21652,7 +21658,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp149 = 0;
     bool tmp150 =
-        map_get(/*cgen.v : 1612*/ g->table->type_idxs, node.name, &tmp149);
+        map_get(/*cgen.v : 1616*/ g->table->type_idxs, node.name, &tmp149);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
