@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "bd05485"
+#define V_COMMIT_HASH "5824d28"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c3d7c57"
+#define V_COMMIT_HASH "bd05485"
 #endif
 #include <inttypes.h>
 
@@ -6111,12 +6111,12 @@ void map_set(map *m, string key, void *value) {
   if (macro_f32_gt(load_factor, m->max_load_factor)) {
     map_expand(m);
   };
-  _V_MulRet_u64_V_u32 _V_mret_837_index_meta = map_key_to_index(*m, key);
-  u64 index = _V_mret_837_index_meta.var_0;
-  u32 meta = _V_mret_837_index_meta.var_1;
-  _V_MulRet_u64_V_u32 _V_mret_847_index_meta = meta_less(m->metas, index, meta);
-  index = _V_mret_847_index_meta.var_0;
-  meta = _V_mret_847_index_meta.var_1;
+  _V_MulRet_u64_V_u32 _V_mret_841_index_meta = map_key_to_index(*m, key);
+  u64 index = _V_mret_841_index_meta.var_0;
+  u32 meta = _V_mret_841_index_meta.var_1;
+  _V_MulRet_u64_V_u32 _V_mret_851_index_meta = meta_less(m->metas, index, meta);
+  index = _V_mret_851_index_meta.var_0;
+  meta = _V_mret_851_index_meta.var_1;
   while (meta == m->metas[/*ptr!*/ index] /*ru32 1*/) {
 
     u32 kv_index = m->metas[/*ptr!*/ index + 1] /*ru32 1*/;
@@ -6158,13 +6158,13 @@ void map_rehash(map *m) {
       continue;
     };
     KeyValue kv = m->key_values.data[/*ptr!*/ i] /*rKeyValue 1*/;
-    _V_MulRet_u64_V_u32 _V_mret_1164_index_meta = map_key_to_index(*m, kv.key);
-    u64 index = _V_mret_1164_index_meta.var_0;
-    u32 meta = _V_mret_1164_index_meta.var_1;
-    _V_MulRet_u64_V_u32 _V_mret_1176_index_meta =
+    _V_MulRet_u64_V_u32 _V_mret_1168_index_meta = map_key_to_index(*m, kv.key);
+    u64 index = _V_mret_1168_index_meta.var_0;
+    u32 meta = _V_mret_1168_index_meta.var_1;
+    _V_MulRet_u64_V_u32 _V_mret_1180_index_meta =
         meta_less(m->metas, index, meta);
-    index = _V_mret_1176_index_meta.var_0;
-    meta = _V_mret_1176_index_meta.var_1;
+    index = _V_mret_1180_index_meta.var_0;
+    meta = _V_mret_1180_index_meta.var_1;
     m->metas = map_meta_greater(m, m->metas, index, meta, i);
   };
 }
@@ -6182,10 +6182,10 @@ void map_cached_rehash(map *m, u32 old_cap) {
     int old_index = (i - old_probe_count) & (m->cap >> 1);
     u64 index = ((u64)(old_index)) | (old_meta << m->shift) & m->cap;
     u32 meta = (old_meta & builtin__hash_mask) | builtin__probe_inc;
-    _V_MulRet_u64_V_u32 _V_mret_1346_index_meta =
+    _V_MulRet_u64_V_u32 _V_mret_1350_index_meta =
         meta_less(new_meta, index, meta);
-    index = _V_mret_1346_index_meta.var_0;
-    meta = _V_mret_1346_index_meta.var_1;
+    index = _V_mret_1350_index_meta.var_0;
+    meta = _V_mret_1350_index_meta.var_1;
     u32 kv_index = m->metas[/*ptr!*/ i + 1] /*ru32 1*/;
     new_meta = map_meta_greater(m, new_meta, index, meta, kv_index);
   };
@@ -6193,12 +6193,12 @@ void map_cached_rehash(map *m, u32 old_cap) {
   m->metas = new_meta;
 }
 static inline bool map_get(map m, string key, void *out) {
-  _V_MulRet_u64_V_u32 _V_mret_1418_index_meta = map_key_to_index(m, key);
-  u64 index = _V_mret_1418_index_meta.var_0;
-  u32 meta = _V_mret_1418_index_meta.var_1;
-  _V_MulRet_u64_V_u32 _V_mret_1428_index_meta = meta_less(m.metas, index, meta);
-  index = _V_mret_1428_index_meta.var_0;
-  meta = _V_mret_1428_index_meta.var_1;
+  _V_MulRet_u64_V_u32 _V_mret_1422_index_meta = map_key_to_index(m, key);
+  u64 index = _V_mret_1422_index_meta.var_0;
+  u32 meta = _V_mret_1422_index_meta.var_1;
+  _V_MulRet_u64_V_u32 _V_mret_1432_index_meta = meta_less(m.metas, index, meta);
+  index = _V_mret_1432_index_meta.var_0;
+  meta = _V_mret_1432_index_meta.var_1;
   while (meta == m.metas[/*ptr!*/ index] /*ru32 0*/) {
 
     u32 kv_index = m.metas[/*ptr!*/ index + 1] /*ru32 0*/;
@@ -6214,12 +6214,12 @@ static inline bool map_get(map m, string key, void *out) {
   return 0;
 }
 static inline void *map_get2(map m, string key) {
-  _V_MulRet_u64_V_u32 _V_mret_1527_index_meta = map_key_to_index(m, key);
-  u64 index = _V_mret_1527_index_meta.var_0;
-  u32 meta = _V_mret_1527_index_meta.var_1;
-  _V_MulRet_u64_V_u32 _V_mret_1537_index_meta = meta_less(m.metas, index, meta);
-  index = _V_mret_1537_index_meta.var_0;
-  meta = _V_mret_1537_index_meta.var_1;
+  _V_MulRet_u64_V_u32 _V_mret_1531_index_meta = map_key_to_index(m, key);
+  u64 index = _V_mret_1531_index_meta.var_0;
+  u32 meta = _V_mret_1531_index_meta.var_1;
+  _V_MulRet_u64_V_u32 _V_mret_1541_index_meta = meta_less(m.metas, index, meta);
+  index = _V_mret_1541_index_meta.var_0;
+  meta = _V_mret_1541_index_meta.var_1;
   while (meta == m.metas[/*ptr!*/ index] /*ru32 0*/) {
 
     u32 kv_index = m.metas[/*ptr!*/ index + 1] /*ru32 0*/;
@@ -6240,12 +6240,12 @@ static inline bool map_exists(map m, string key) {
   if (m.value_bytes == 0) {
     return 0;
   };
-  _V_MulRet_u64_V_u32 _V_mret_1657_index_meta = map_key_to_index(m, key);
-  u64 index = _V_mret_1657_index_meta.var_0;
-  u32 meta = _V_mret_1657_index_meta.var_1;
-  _V_MulRet_u64_V_u32 _V_mret_1667_index_meta = meta_less(m.metas, index, meta);
-  index = _V_mret_1667_index_meta.var_0;
-  meta = _V_mret_1667_index_meta.var_1;
+  _V_MulRet_u64_V_u32 _V_mret_1661_index_meta = map_key_to_index(m, key);
+  u64 index = _V_mret_1661_index_meta.var_0;
+  u32 meta = _V_mret_1661_index_meta.var_1;
+  _V_MulRet_u64_V_u32 _V_mret_1671_index_meta = meta_less(m.metas, index, meta);
+  index = _V_mret_1671_index_meta.var_0;
+  meta = _V_mret_1671_index_meta.var_1;
   while (meta == m.metas[/*ptr!*/ index] /*ru32 0*/) {
 
     u32 kv_index = m.metas[/*ptr!*/ index + 1] /*ru32 0*/;
@@ -6259,13 +6259,13 @@ static inline bool map_exists(map m, string key) {
   return 0;
 }
 void v_map_delete(map *m, string key) {
-  _V_MulRet_u64_V_u32 _V_mret_1743_index_meta = map_key_to_index(*m, key);
-  u64 index = _V_mret_1743_index_meta.var_0;
-  u32 meta = _V_mret_1743_index_meta.var_1;
-  _V_MulRet_u64_V_u32 _V_mret_1753_index_meta =
+  _V_MulRet_u64_V_u32 _V_mret_1747_index_meta = map_key_to_index(*m, key);
+  u64 index = _V_mret_1747_index_meta.var_0;
+  u32 meta = _V_mret_1747_index_meta.var_1;
+  _V_MulRet_u64_V_u32 _V_mret_1757_index_meta =
       meta_less(m->metas, index, meta);
-  index = _V_mret_1753_index_meta.var_0;
-  meta = _V_mret_1753_index_meta.var_1;
+  index = _V_mret_1757_index_meta.var_0;
+  meta = _V_mret_1757_index_meta.var_1;
   while (meta == m->metas[/*ptr!*/ index] /*ru32 1*/) {
 
     u32 kv_index = m->metas[/*ptr!*/ index + 1] /*ru32 1*/;
@@ -35342,8 +35342,9 @@ array_string compiler__V_get_user_files(compiler__V *v) {
           string);
     dir = os__base_dir(single_test_v_file);
   };
-  if (string_ends_with(dir, tos3(".v")) ||
-      string_ends_with(dir, tos3(".vsh"))) {
+  bool is_real_file = os__exists(dir) && !os__is_dir(dir);
+  if (is_real_file && (string_ends_with(dir, tos3(".v")) ||
+                       string_ends_with(dir, tos3(".vsh")))) {
     string single_v_file = dir;
     _PUSH(&user_files, (/*typ = array_string   tmp_typ=string*/ single_v_file),
           tmp54, string);
