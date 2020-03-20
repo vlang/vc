@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0f1f724"
+#define V_COMMIT_HASH "b4561fa"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ec003ff"
+#define V_COMMIT_HASH "0f1f724"
 #endif
 #include <inttypes.h>
 
@@ -14370,9 +14370,8 @@ bool term__supports_escape_sequences(int fd) {
 }
 _V_MulRet_int_V_int term__get_terminal_size() {
   if (is_atty(1) > 0 && string_ne(os__getenv(tos3("TERM")), tos3("dumb"))) {
-    struct /*c struct init*/
-
-        CONSOLE_SCREEN_BUFFER_INFO info;
+    CONSOLE_SCREEN_BUFFER_INFO info =
+        (CONSOLE_SCREEN_BUFFER_INFO){EMPTY_STRUCT_INITIALIZATION};
     if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info)) {
       int columns = ((int)(info.srWindow.Right - info.srWindow.Left + 1));
       int rows = ((int)(info.srWindow.Bottom - info.srWindow.Top + 1));
