@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5a7f683"
+#define V_COMMIT_HASH "f89f83d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6b57115"
+#define V_COMMIT_HASH "5a7f683"
 #endif
 #include <inttypes.h>
 
@@ -9584,8 +9584,7 @@ int time__Time_calc_unix(time__Time *t) {
                                     .tm_hour = t->hour,
                                     .tm_mday = t->day,
                                     .tm_mon = t->month - 1,
-                                    .tm_year = t->year - 1900,
-                                    .tm_gmtoff = 0};
+                                    .tm_year = t->year - 1900};
   return time__make_unix_time(tt);
 }
 time__Time time__Time_add_seconds(time__Time t, int seconds) {
@@ -27076,7 +27075,9 @@ array_compiler__CFlag compiler__V_get_os_cflags(compiler__V *v) {
          v->pref->os == v_dot_pref__v_dot_pref__OS_windows) ||
         (string_eq(flag.os, tos3("mingw")) &&
          v->pref->os == v_dot_pref__v_dot_pref__OS_windows &&
-         string_ne(v->pref->ccompiler, tos3("msvc")))) {
+         string_ne(v->pref->ccompiler, tos3("msvc"))) ||
+        (string_eq(flag.os, tos3("solaris")) &&
+         v->pref->os == v_dot_pref__v_dot_pref__OS_solaris)) {
       _PUSH(&flags,
             (/*typ = array_compiler__CFlag   tmp_typ=compiler__CFlag*/ flag),
             tmp4, compiler__CFlag);
@@ -27160,11 +27161,11 @@ Option_bool compiler__Table_parse_cflag(compiler__Table *table, string cflag,
     return opt_ok(&tmp11, sizeof(bool));
   };
   string fos = tos3("");
-  array_string allowed_os_overrides =
-      new_array_from_c_array(5, 5, sizeof(string),
-                             EMPTY_ARRAY_OF_ELEMS(string, 5){
-                                 tos3("linux"), tos3("darwin"), tos3("freebsd"),
-                                 tos3("windows"), tos3("mingw")});
+  array_string allowed_os_overrides = new_array_from_c_array(
+      6, 6, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 6){tos3("linux"), tos3("darwin"),
+                                      tos3("freebsd"), tos3("windows"),
+                                      tos3("mingw"), tos3("solaris")});
   _PUSH_MANY(&allowed_os_overrides,
              (/*typ = array_string   tmp_typ=string*/ ctimedefines), tmp12,
              array_string);
