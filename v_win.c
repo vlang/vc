@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a331abf"
+#define V_COMMIT_HASH "2f27758"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c993489"
+#define V_COMMIT_HASH "a331abf"
 #endif
 #include <inttypes.h>
 
@@ -3069,7 +3069,7 @@ bool os__is_dir(string path);
 bool os__is_link(string path);
 void os__chdir(string path);
 string os__getwd();
-string os__realpath(string fpath);
+string os__real_path(string fpath);
 bool os__is_abs_path(string path);
 string os__join_path(string base, varg_string *dirs);
 array_string os__walk_ext(string path, string ext);
@@ -11557,8 +11557,8 @@ Option_bool os__cp_r(string osource_path, string odest_path, bool overwrite) {
   v_panic(tos3("Use `os.cp_all` instead of `os.cp_r`"));
 }
 Option_bool os__cp_all(string osource_path, string odest_path, bool overwrite) {
-  string source_path = os__realpath(osource_path);
-  string dest_path = os__realpath(odest_path);
+  string source_path = os__real_path(osource_path);
+  string dest_path = os__real_path(odest_path);
   if (!os__exists(source_path)) {
     return v_error(tos3("Source path doesn\'t exist"));
   };
@@ -11879,7 +11879,7 @@ bool os__exists(string path) {
 }
 bool os__is_executable(string path) {
 #ifdef _WIN32
-  string p = os__realpath(path);
+  string p = os__real_path(path);
   return (os__exists(p) && string_ends_with(p, tos3(".exe")));
 #else
   return access((char *)path.str, os__X_OK) != -1;
@@ -12209,7 +12209,7 @@ string os__executable_fallback() {
       };
     };
   };
-  exepath = os__realpath(exepath);
+  exepath = os__real_path(exepath);
   return exepath;
 }
 Option_string os__find_abs_path_of_executable(string exepath) {
@@ -12305,7 +12305,7 @@ string os__getwd() {
 #endif
   ;
 }
-string os__realpath(string fpath) {
+string os__real_path(string fpath) {
   byte *fullpath = vcalloc(os__MAX_PATH);
   charptr ret = ((charptr)(0));
 #ifdef _WIN32
@@ -12504,12 +12504,12 @@ string os__temp_dir() {
 }
 void os__chmod(string path, int mode) { chmod((char *)path.str, mode); }
 string os__resource_abs_path(string path) {
-  string base_path = os__realpath(os__dir(os__executable()));
+  string base_path = os__real_path(os__dir(os__executable()));
   string vresource = os__getenv(tos3("V_RESOURCE_PATH"));
   if (vresource.len != 0) {
     base_path = vresource;
   };
-  return os__realpath(
+  return os__real_path(
       os__join_path(base_path, &(varg_string){.len = 1, .args = {path}}));
 }
 array_string os__init_os_args_wide(int argc, byteptr *argv) {
@@ -12609,7 +12609,7 @@ Option_bool os__mkdir(string path) {
     bool tmp9 = OPTION_CAST(bool)(1);
     return opt_ok(&tmp9, sizeof(bool));
   };
-  string apath = os__realpath(path);
+  string apath = os__real_path(path);
   if (!CreateDirectory(string_to_wide(apath), 0)) {
     return v_error(string_add(
         _STR("mkdir failed for \"%.*s\", because CreateDirectory returned ",
@@ -12798,7 +12798,7 @@ void v_dot_pref__Preferences_fill_with_defaults(v_dot_pref__Preferences *p) {
                   string_replace(path, tos3("@vlib"), vlib_path),
                   tos3("@vmodules"), v_dot_pref__default_module_path)});
   };
-  string rpath = os__realpath(p->path);
+  string rpath = os__real_path(p->path);
   if (string_eq(p->out_name, tos3(""))) {
     string filename = string_trim_space(os__file_name(rpath));
     string base = string_all_before_last(filename, tos3("."));
@@ -12848,7 +12848,7 @@ string v_dot_pref__vexe_path() {
   if (string_ne(vexe, tos3(""))) {
     return vexe;
   };
-  string real_vexe_path = os__realpath(os__executable());
+  string real_vexe_path = os__real_path(os__executable());
   os__setenv(tos3("VEXE"), real_vexe_path, 1);
   return real_vexe_path;
 }
@@ -15018,7 +15018,7 @@ v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
     if (string_eq(name, tos3("FILE"))) {
       return v_dot_scanner__Scanner_scan_res(
           &/* ? */ *s, v_dot_token__v_dot_token__Kind_string,
-          v_dot_scanner__cescaped_path(os__realpath(s->file_path)));
+          v_dot_scanner__cescaped_path(os__real_path(s->file_path)));
     };
     if (string_eq(name, tos3("LINE"))) {
       return v_dot_scanner__Scanner_scan_res(
@@ -21597,7 +21597,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp112 = 0;
       bool tmp113 =
-          map_get(/*cgen.v : 1477*/ g->varaidic_args, type_str, &tmp112);
+          map_get(/*cgen.v : 1474*/ g->varaidic_args, type_str, &tmp112);
 
       if (len > tmp112) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -21653,7 +21653,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp123 = 0;
     bool tmp124 =
-        map_get(/*cgen.v : 1532*/ g->table->type_idxs, builtin_name, &tmp123);
+        map_get(/*cgen.v : 1529*/ g->table->type_idxs, builtin_name, &tmp123);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -21821,7 +21821,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp147 = 0;
     bool tmp148 =
-        map_get(/*cgen.v : 1641*/ g->table->type_idxs, node.name, &tmp147);
+        map_get(/*cgen.v : 1638*/ g->table->type_idxs, node.name, &tmp147);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -23001,7 +23001,7 @@ compiler__Parser compiler__V_new_parser_from_file(compiler__V *v, string path) {
   };
   compiler__Parser p =
       compiler__V_new_parser(v, compiler__new_scanner_file(path));
-  string path_dir = os__realpath(os__dir(path));
+  string path_dir = os__real_path(os__dir(path));
   p = (compiler__Parser){
       .file_path = path,
       .file_path_dir = path_dir,
@@ -23329,7 +23329,7 @@ void compiler__Parser_statements_from_text(compiler__Parser *p, string text,
 }
 void compiler__Parser_parse(compiler__Parser *p, compiler__Pass pass) {
   p->cgen->line = 0;
-  p->cgen->file = compiler__cescaped_path(os__realpath(p->file_path));
+  p->cgen->file = compiler__cescaped_path(os__real_path(p->file_path));
   p->pass = pass;
   p->token_idx = 0;
   compiler__Parser_next(p);
@@ -27192,7 +27192,8 @@ string compiler__CFlag_format(compiler__CFlag *cf) {
   };
   if (string_eq(cf->name, tos3("-I")) || string_eq(cf->name, tos3("-L")) ||
       string_ends_with(value, tos3(".o"))) {
-    value = string_add(string_add(tos3("\""), os__realpath(value)), tos3("\""));
+    value =
+        string_add(string_add(tos3("\""), os__real_path(value)), tos3("\""));
   };
   return string_trim_space(
       _STR("%.*s %.*s", cf->name.len, cf->name.str, value.len, value.str));
@@ -27666,7 +27667,7 @@ void compiler__CGen_add_to_main(compiler__CGen *g, string s) {
 }
 void compiler__V_build_thirdparty_obj_file(compiler__V *v, string path,
                                            array_compiler__CFlag moduleflags) {
-  string obj_path = os__realpath(path);
+  string obj_path = os__real_path(path);
   if (os__exists(obj_path)) {
 
     return;
@@ -27692,7 +27693,7 @@ void compiler__V_build_thirdparty_obj_file(compiler__V *v, string path,
           cfiles,
           string_add(
               string_add(tos3("\""),
-                         os__realpath(string_add(
+                         os__real_path(string_add(
                              string_add(parent, os__path_separator), file))),
               tos3("\" ")));
     };
@@ -28163,7 +28164,7 @@ string compiler__Scanner_get_error_filepath(compiler__Scanner *s) {
     };
     return s->file_path;
   };
-  return os__realpath(s->file_path);
+  return os__real_path(s->file_path);
 }
 bool compiler__Scanner_is_color_output_on(compiler__Scanner *s) {
   return s->print_colored_error && term__can_show_color_on_stderr();
@@ -34693,7 +34694,7 @@ void compiler__V_generate_hotcode_reloading_main_caller(compiler__V *v) {
 void compiler__V_generate_hot_reload_code(compiler__V *v) {
   compiler__CGen *cgen = v->cgen;
   if (v->pref->is_live) {
-    string file = os__realpath(v->pref->path);
+    string file = os__real_path(v->pref->path);
     string file_base =
         string_replace(os__file_name(file), tos3(".v"), tos3(""));
     string so_name = string_add(file_base, tos3(".so"));
@@ -34825,7 +34826,7 @@ void compiler__V_generate_hot_reload_code(compiler__V *v) {
   };
 }
 compiler__V *compiler__new_v(v_dot_pref__Preferences *pref) {
-  string rdir = os__realpath(pref->path);
+  string rdir = os__real_path(pref->path);
   string out_name_c =
       compiler__get_vtmp_filename(pref->out_name, tos3(".tmp.c"));
   if (pref->is_so) {
@@ -34865,12 +34866,12 @@ int compiler__V_add_parser(compiler__V *v, compiler__Parser parser) {
         tmp1, compiler__Parser);
   string file_path =
       ((os__is_abs_path(parser.file_path)) ? (parser.file_path)
-                                           : (os__realpath(parser.file_path)));
+                                           : (os__real_path(parser.file_path)));
   map_set(&v->file_parser_idx, file_path, &(int[]){pidx});
   return pidx;
 }
 Option_int compiler__V_get_file_parser_index(compiler__V *v, string file) {
-  string file_path = ((os__is_abs_path(file)) ? (file) : (os__realpath(file)));
+  string file_path = ((os__is_abs_path(file)) ? (file) : (os__real_path(file)));
   if ((_IN_MAP((file_path), v->file_parser_idx))) {
     int tmp2 = 0;
     bool tmp3 = map_get(/*main.v : 116*/ v->file_parser_idx, file_path, &tmp2);
@@ -35227,8 +35228,8 @@ void compiler__V_generate_main(compiler__V *v) {
     _PUSH(&cgen->lines,
           (/*typ = array_string   tmp_typ=string*/ _STR(
               "#line %d \"%.*s\"", lines_so_far,
-              compiler__cescaped_path(os__realpath(cgen->out_path)).len,
-              compiler__cescaped_path(os__realpath(cgen->out_path)).str)),
+              compiler__cescaped_path(os__real_path(cgen->out_path)).len,
+              compiler__cescaped_path(os__real_path(cgen->out_path)).str)),
           tmp21, string);
     compiler__CGen_genln(cgen, tos3(""));
   };
@@ -35614,7 +35615,7 @@ array_string compiler__V_get_user_files(compiler__V *v) {
     };
   };
   if (is_internal_module_test) {
-    string single_test_v_file = os__realpath(dir);
+    string single_test_v_file = os__real_path(dir);
     if (v_dot_pref__VerboseLevel_is_higher_or_equal(
             v->pref->verbosity,
             v_dot_pref__v_dot_pref__VerboseLevel_level_two)) {
@@ -35821,7 +35822,7 @@ void compiler__set_vroot_folder(string vroot_path) {
   string vname = ((string_eq(os__user_os(), tos3("windows"))) ? (tos3("v.exe"))
                                                               : (tos3("v")));
   os__setenv(tos3("VEXE"),
-             os__realpath(array_string_join(
+             os__real_path(array_string_join(
                  new_array_from_c_array(
                      2, 2, sizeof(string),
                      EMPTY_ARRAY_OF_ELEMS(string, 2){vroot_path, vname}),
@@ -36304,7 +36305,7 @@ Option_compiler__MsvcResult compiler__find_msvc() {
   ;
   compiler__MsvcResult tmp18 =
       OPTION_CAST(compiler__MsvcResult)((compiler__MsvcResult){
-          .full_cl_exe_path = os__realpath(string_add(
+          .full_cl_exe_path = os__real_path(string_add(
               string_add(vs.exe_path, os__path_separator), tos3("cl.exe"))),
           .exe_path = vs.exe_path,
           .um_lib_path = wk.um_lib_path,
@@ -36337,7 +36338,7 @@ void compiler__V_cc_msvc(compiler__V *v) {
   }
   r = *(compiler__MsvcResult *)tmp19.data;
   ;
-  string out_name_obj = os__realpath(string_add(v->out_name_c, tos3(".obj")));
+  string out_name_obj = os__real_path(string_add(v->out_name_c, tos3(".obj")));
   array_string a = new_array_from_c_array(
       4, 4, sizeof(string),
       EMPTY_ARRAY_OF_ELEMS(string, 4){
@@ -36367,7 +36368,7 @@ void compiler__V_cc_msvc(compiler__V *v) {
   } else if (!string_ends_with(v->pref->out_name, tos3(".exe"))) {
     v->pref->out_name = string_add(v->pref->out_name, tos3(".exe"));
   };
-  v->pref->out_name = os__realpath(v->pref->out_name);
+  v->pref->out_name = os__real_path(v->pref->out_name);
   if (v->pref->build_mode == v_dot_pref__v_dot_pref__BuildMode_build_module) {
     _PUSH(&a, (/*typ = array_string   tmp_typ=string*/ tos3("/c")), tmp27,
           string);
@@ -36379,7 +36380,7 @@ void compiler__V_cc_msvc(compiler__V *v) {
   };
   _PUSH(&a,
         (/*typ = array_string   tmp_typ=string*/ string_add(
-            string_add(tos3("\""), os__realpath(v->out_name_c)), tos3("\""))),
+            string_add(tos3("\""), os__real_path(v->out_name_c)), tos3("\""))),
         tmp28, string);
   array_string real_libs = new_array_from_c_array(
       3, 3, sizeof(string),
@@ -36494,7 +36495,7 @@ void compiler__build_thirdparty_obj_file_with_msvc(
   msvc = *(compiler__MsvcResult *)tmp49.data;
   ;
   string obj_path = _STR("%.*sbj", path.len, path.str);
-  obj_path = os__realpath(obj_path);
+  obj_path = os__real_path(obj_path);
   if (os__exists(obj_path)) {
     printf("%.*s already built.\n", obj_path.len, obj_path.str);
 
@@ -36522,7 +36523,7 @@ void compiler__build_thirdparty_obj_file_with_msvc(
           cfiles,
           string_add(
               string_add(tos3("\""),
-                         os__realpath(string_add(
+                         os__real_path(string_add(
                              string_add(parent, os__path_separator), file))),
               tos3("\" ")));
     };
@@ -36618,7 +36619,7 @@ array_compiler__CFlag_msvc_string_flags(array_compiler__CFlag cflags) {
 
     _PUSH(&lpaths,
           (/*typ = array_string   tmp_typ=string*/ string_add(
-              string_add(tos3("/LIBPATH:\""), os__realpath(l)), tos3("\""))),
+              string_add(tos3("/LIBPATH:\""), os__real_path(l)), tos3("\""))),
           tmp64, string);
   };
   return (compiler__MsvcStringFlags){.real_libs = real_libs,
@@ -37622,7 +37623,7 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
     if (string_eq(name, tos3("FILE"))) {
       return compiler__scan_res(
           compiler__compiler__TokenKind_string,
-          compiler__cescaped_path(os__realpath(s->file_path)));
+          compiler__cescaped_path(os__real_path(s->file_path)));
     };
     if (string_eq(name, tos3("LINE"))) {
       return compiler__scan_res(compiler__compiler__TokenKind_string,
@@ -40772,11 +40773,11 @@ string compiler__get_vtmp_folder() {
 }
 string compiler__get_vtmp_filename(string base_file_name, string postfix) {
   string vtmp = compiler__get_vtmp_folder();
-  return os__realpath(os__join_path(
+  return os__real_path(os__join_path(
       vtmp, &(varg_string){
                 .len = 1,
-                .args = {string_add(os__file_name(os__realpath(base_file_name)),
-                                    postfix)}}));
+                .args = {string_add(
+                    os__file_name(os__real_path(base_file_name)), postfix)}}));
 }
 void internal_dot_compile__check_for_common_mistake(
     array_string args, v_dot_pref__Preferences *p) {
@@ -41709,11 +41710,11 @@ void main__launch_tool(v_dot_pref__VerboseLevel verbosity, string tool_name) {
   string tool_args =
       array_string_join(array_slice2(os__args, 1, -1, true), tos3(" "));
   string tool_exe = main__path_of_executable(
-      os__realpath(_STR("%.*s/cmd/tools/%.*s", vroot.len, vroot.str,
-                        tool_name.len, tool_name.str)));
+      os__real_path(_STR("%.*s/cmd/tools/%.*s", vroot.len, vroot.str,
+                         tool_name.len, tool_name.str)));
   string tool_source =
-      os__realpath(_STR("%.*s/cmd/tools/%.*s.v", vroot.len, vroot.str,
-                        tool_name.len, tool_name.str));
+      os__real_path(_STR("%.*s/cmd/tools/%.*s.v", vroot.len, vroot.str,
+                         tool_name.len, tool_name.str));
   string tool_command = _STR("\"%.*s\" %.*s", tool_exe.len, tool_exe.str,
                              tool_args.len, tool_args.str);
   if (v_dot_pref__VerboseLevel_is_higher_or_equal(
