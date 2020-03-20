@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1fb2c3f"
+#define V_COMMIT_HASH "ed50fef"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "525639b"
+#define V_COMMIT_HASH "1fb2c3f"
 #endif
 #include <inttypes.h>
 
@@ -21531,6 +21531,9 @@ void v_dot_gen__Gen_assoc(v_dot_gen__Gen *g, v_dot_ast__Assoc node) {
   for (int tmp114 = 0; tmp114 < tmp113.len; tmp114++) {
     v_dot_table__Field field = ((v_dot_table__Field *)tmp113.data)[tmp114];
 
+    if ((_IN(string, (field.name), node.fields))) {
+      continue;
+    };
     v_dot_gen__Gen_writeln(g, _STR("\t.%.*s = %.*s.%.*s,", field.name.len,
                                    field.name.str, node.var_name.len,
                                    node.var_name.str, field.name.len,
@@ -21556,7 +21559,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp116 = 0;
       bool tmp117 =
-          map_get(/*cgen.v : 1461*/ g->varaidic_args, type_str, &tmp116);
+          map_get(/*cgen.v : 1464*/ g->varaidic_args, type_str, &tmp116);
 
       if (len > tmp116) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -21612,7 +21615,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp127 = 0;
     bool tmp128 =
-        map_get(/*cgen.v : 1516*/ g->table->type_idxs, builtin_name, &tmp127);
+        map_get(/*cgen.v : 1519*/ g->table->type_idxs, builtin_name, &tmp127);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -21780,7 +21783,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp151 = 0;
     bool tmp152 =
-        map_get(/*cgen.v : 1625*/ g->table->type_idxs, node.name, &tmp151);
+        map_get(/*cgen.v : 1628*/ g->table->type_idxs, node.name, &tmp151);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
