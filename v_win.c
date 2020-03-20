@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "6b57115"
+#define V_COMMIT_HASH "5a7f683"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "078f498"
+#define V_COMMIT_HASH "6b57115"
 #endif
 #include <inttypes.h>
 
@@ -15634,8 +15634,7 @@ Option_array_string internal_dot_flag__parse_pref(
                                     .equal_val = tos3(""),
                                     .encountered = new_map(1, sizeof(bool))};
   Option_array_string tmp1 = internal_dot_flag__Instance_parse_impl(
-      &/* ? */ p, args, ((voidptr)(obj)),
-      ((internal_dot_flag__void_cb)(callback)));
+      &/* ? */ p, args, obj, ((internal_dot_flag__void_cb)(callback)));
   array_string tmp;
   if (!tmp1.ok) {
     string err = tmp1.error;
@@ -15659,8 +15658,7 @@ Option_array_string internal_dot_flag__parse_main_cmd(
                                     .equal_val = tos3(""),
                                     .encountered = new_map(1, sizeof(bool))};
   Option_array_string tmp3 = internal_dot_flag__Instance_parse_impl(
-      &/* ? */ p, args, ((voidptr)(obj)),
-      ((internal_dot_flag__void_cb)(callback)));
+      &/* ? */ p, args, obj, ((internal_dot_flag__void_cb)(callback)));
   array_string tmp;
   if (!tmp3.ok) {
     string err = tmp3.error;
@@ -30873,7 +30871,8 @@ void compiler__Parser_fn_decl(compiler__Parser *p) {
   };
   if (p->tok == compiler__compiler__TokenKind_lt) {
     if (p->generic_dispatch.inst.size > 0) {
-      compiler__rename_generic_fn_instance(&/*114*/ f, &p->generic_dispatch);
+      compiler__rename_generic_fn_instance(&/*114*/ f,
+                                           &/*114*/ p->generic_dispatch);
     } else {
       f.is_generic = 1;
     };
@@ -31996,10 +31995,10 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f,
       };
     };
   };
-  _V_MulRet_string_V_array_string _V_mret_6377_varg_type_varg_values =
+  _V_MulRet_string_V_array_string _V_mret_6376_varg_type_varg_values =
       compiler__Parser_fn_call_vargs(p, *f);
-  string varg_type = _V_mret_6377_varg_type_varg_values.var_0;
-  array_string varg_values = _V_mret_6377_varg_type_varg_values.var_1;
+  string varg_type = _V_mret_6376_varg_type_varg_values.var_0;
+  array_string varg_values = _V_mret_6376_varg_type_varg_values.var_1;
   if (f->is_variadic) {
     _PUSH(&saved_args, (/*typ = array_string   tmp_typ=string*/ varg_type),
           tmp84, string);
@@ -32269,10 +32268,10 @@ compiler__Parser_fn_call_vargs(compiler__Parser *p, compiler__Fn f) {
     if (p->tok == compiler__compiler__TokenKind_comma) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
     };
-    _V_MulRet_string_V_string _V_mret_7323_varg_type_varg_value =
+    _V_MulRet_string_V_string _V_mret_7322_varg_type_varg_value =
         compiler__Parser_tmp_expr(p);
-    string varg_type = _V_mret_7323_varg_type_varg_value.var_0;
-    string varg_value = _V_mret_7323_varg_type_varg_value.var_1;
+    string varg_type = _V_mret_7322_varg_type_varg_value.var_0;
+    string varg_value = _V_mret_7322_varg_type_varg_value.var_1;
     if (string_starts_with(varg_type, tos3("varg_")) &&
         (values.len > 0 || p->tok == compiler__compiler__TokenKind_comma)) {
       compiler__Parser_error(
@@ -41800,8 +41799,8 @@ string main__path_of_executable(string path) {
 void main__main() {
   internal_dot_flag__MainCmdPreferences prefs =
       (internal_dot_flag__MainCmdPreferences){.unknown_flag = tos3("")};
-  Option_array_string tmp1 =
-      internal_dot_flag__parse_main_cmd(os__args, main__parse_flags, &prefs);
+  Option_array_string tmp1 = internal_dot_flag__parse_main_cmd(
+      os__args, main__parse_flags, &/*114*/ prefs);
   array_string values;
   if (!tmp1.ok) {
     string err = tmp1.error;
