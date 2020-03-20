@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "078f498"
+#define V_COMMIT_HASH "6b57115"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4fac09b"
+#define V_COMMIT_HASH "078f498"
 #endif
 #include <inttypes.h>
 
@@ -4266,7 +4266,6 @@ static inline void
 main__disallow_unknown_flags(internal_dot_flag__MainCmdPreferences prefs);
 void main__create_symlink();
 string array_v_dot_table__Type_str();
-string internal_dot_flag__MainCmdPreferences_str();
 
 byte *g_m2_buf;     // global
 byte *g_m2_ptr;     // global
@@ -20685,10 +20684,9 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
     if (string_eq(name, tos3("println")) &&
         (*(v_dot_ast__CallArg *)array_get(it->args, 0)).typ !=
             v_dot_table__string_type_idx) {
-      v_dot_table__TypeSymbol *sym = v_dot_table__Table_get_type_symbol(
-          &/* ? */ *g->table,
-          (*(v_dot_ast__CallArg *)array_get(it->args, 0)).typ);
-      v_dot_gen__Gen_write(g, _STR("%.*s_str(", sym->name.len, sym->name.str));
+      string styp = v_dot_gen__Gen_typ(
+          g, (*(v_dot_ast__CallArg *)array_get(it->args, 0)).typ);
+      v_dot_gen__Gen_write(g, _STR("%.*s_str(", styp.len, styp.str));
       v_dot_gen__Gen_expr(g,
                           (*(v_dot_ast__CallArg *)array_get(it->args, 0)).expr);
       v_dot_gen__Gen_write(g, tos3("))"));
@@ -21496,7 +21494,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp113 = 0;
       bool tmp114 =
-          map_get(/*cgen.v : 1481*/ g->varaidic_args, type_str, &tmp113);
+          map_get(/*cgen.v : 1482*/ g->varaidic_args, type_str, &tmp113);
 
       if (len > tmp113) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -21552,7 +21550,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp124 = 0;
     bool tmp125 =
-        map_get(/*cgen.v : 1536*/ g->table->type_idxs, builtin_name, &tmp124);
+        map_get(/*cgen.v : 1537*/ g->table->type_idxs, builtin_name, &tmp124);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -21720,7 +21718,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp148 = 0;
     bool tmp149 =
-        map_get(/*cgen.v : 1645*/ g->table->type_idxs, node.name, &tmp148);
+        map_get(/*cgen.v : 1646*/ g->table->type_idxs, node.name, &tmp148);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -31957,7 +31955,7 @@ void compiler__Parser_fn_call_args(compiler__Parser *p, compiler__Fn *f,
   if (f->is_generic && !p->scanner->is_fmt) {
     compiler__TypeInst type_map =
         compiler__Parser_extract_type_inst(p, f, saved_args);
-    compiler__Parser_dispatch_generic_fn_instance(p, f, &type_map);
+    compiler__Parser_dispatch_generic_fn_instance(p, f, &/*114*/ type_map);
   };
   if (f->is_variadic) {
     compiler__Parser_fn_gen_caller_vargs(p, f, varg_type, varg_values);
@@ -32212,10 +32210,10 @@ compiler__Parser_fn_call_vargs(compiler__Parser *p, compiler__Fn f) {
     if (p->tok == compiler__compiler__TokenKind_comma) {
       compiler__Parser_check(p, compiler__compiler__TokenKind_comma);
     };
-    _V_MulRet_string_V_string _V_mret_7324_varg_type_varg_value =
+    _V_MulRet_string_V_string _V_mret_7323_varg_type_varg_value =
         compiler__Parser_tmp_expr(p);
-    string varg_type = _V_mret_7324_varg_type_varg_value.var_0;
-    string varg_value = _V_mret_7324_varg_type_varg_value.var_1;
+    string varg_type = _V_mret_7323_varg_type_varg_value.var_0;
+    string varg_value = _V_mret_7323_varg_type_varg_value.var_1;
     if (string_starts_with(varg_type, tos3("varg_")) &&
         (values.len > 0 || p->tok == compiler__compiler__TokenKind_comma)) {
       compiler__Parser_error(
@@ -38553,7 +38551,7 @@ string compiler__Parser_struct_init(compiler__Parser *p, string typ_) {
     t = compiler__Table_find_type(&/* ? */ *p->table, t.name);
     typ = t.name;
   };
-  if (compiler__Parser_gen_struct_init(p, typ, &t)) {
+  if (compiler__Parser_gen_struct_init(p, typ, &/*114*/ t)) {
     return typ;
   };
   bool ptr = string_contains(typ, tos3("*"));
@@ -40792,7 +40790,7 @@ void internal_dot_compile__compile(string command, array_string args) {
       internal_dot_compile__parse_arguments(args);
   v_dot_pref__Preferences prefs = _V_mret_30_prefs_remaining.var_0;
   array_string remaining = _V_mret_30_prefs_remaining.var_1;
-  internal_dot_compile__check_for_common_mistake(args, &prefs);
+  internal_dot_compile__check_for_common_mistake(args, &/*114*/ prefs);
   compiler__V *v = compiler__new_v(&/*114*/ prefs);
   if (v_dot_pref__VerboseLevel_is_higher_or_equal(
           v->pref->verbosity, v_dot_pref__v_dot_pref__VerboseLevel_level_two)) {
@@ -41019,7 +41017,7 @@ internal_dot_compile__parse_arguments(array_string args) {
     p.backend = v_dot_pref__v_dot_pref__Backend_c;
   };
   Option_array_string tmp7 = internal_dot_flag__parse_pref(
-      args, internal_dot_compile__parse_options, &p);
+      args, internal_dot_compile__parse_options, &/*114*/ p);
   array_string remaining;
   if (!tmp7.ok) {
     string err = tmp7.error;
@@ -41790,7 +41788,6 @@ void main__main() {
   if (v_dot_pref__VerboseLevel_is_higher_or_equal(
           prefs.verbosity, v_dot_pref__v_dot_pref__VerboseLevel_level_three)) {
     println(tos3("Parsed preferences: "));
-    println(internal_dot_flag__MainCmdPreferences_str(prefs));
     string tmp2 = array_string_str(values);
 
     printf("Remaining: %.*s \n", tmp2.len, tmp2.str);
@@ -41980,12 +41977,6 @@ string array_v_dot_table__Type_str(array_v_dot_table__Type a) {
   };
   strings__Builder_write(&/* ? */ sb, tos3("]"));
   return strings__Builder_str(&/* ? */ sb);
-}
-string internal_dot_flag__MainCmdPreferences_str(
-    internal_dot_flag__MainCmdPreferences a) {
-  return _STR("MainCmdPreferences {\n	verbosity: %d\n	action: %d\n	"
-              "unknown_flag: %.*s\n}",
-              a.verbosity, a.action, a.unknown_flag.len, a.unknown_flag.str);
 }
 void init() {
 #if VPREALLOC
