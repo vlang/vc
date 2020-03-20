@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f89f83d"
+#define V_COMMIT_HASH "8077a75"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5a7f683"
+#define V_COMMIT_HASH "f89f83d"
 #endif
 #include <inttypes.h>
 
@@ -13723,11 +13723,11 @@ v_dot_table__Table_register_builtin_type_symbol(v_dot_table__Table *t,
   if (existing_idx > 0) {
     if (existing_idx >= v_dot_table__string_type_idx) {
       if (existing_idx == v_dot_table__string_type_idx) {
-        v_dot_table__TypeSymbol *existing_type =
-            &(*(v_dot_table__TypeSymbol *)array_get(t->types, existing_idx));
+        v_dot_table__TypeSymbol existing_type =
+            (*(v_dot_table__TypeSymbol *)array_get(t->types, existing_idx));
         array_set(&/*q*/ t->types, existing_idx,
                   &(v_dot_table__TypeSymbol[]){(v_dot_table__TypeSymbol){
-                      .kind = existing_type->kind,
+                      .kind = existing_type.kind,
                       .parent_idx = typ.parent_idx,
                       .info = typ.info,
                       .name = typ.name,
@@ -18553,13 +18553,13 @@ v_dot_ast__MatchExpr v_dot_parser__Parser_match_expr(v_dot_parser__Parser *p) {
                (byte_is_capital(string_at(p->tok.lit, 0)) ||
                 p->peek_tok.kind == v_dot_token__v_dot_token__Kind_dot)) {
       v_dot_table__Type typ = v_dot_parser__Parser_parse_type(p);
+      v_dot_ast__Type x = (v_dot_ast__Type){.typ = typ};
+      v_dot_ast__Expr expr = (v_dot_ast__Expr){EMPTY_STRUCT_INITIALIZATION};
+      expr = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
+          .obj = memdup(&(v_dot_ast__Type[]){x}, sizeof(v_dot_ast__Type)),
+          .typ = SumType_v_dot_ast__Expr_Type};
       _PUSH(&exprs,
-            (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/
-             /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
-                 .obj =
-                     memdup(&(v_dot_ast__Type[]){(v_dot_ast__Type){.typ = typ}},
-                            sizeof(v_dot_ast__Type)),
-                 .typ = SumType_v_dot_ast__Expr_Type}),
+            (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/ expr),
             tmp49, v_dot_ast__Expr);
       v_dot_ast__Scope_register_var(p->scope,
                                     (v_dot_ast__Var){
