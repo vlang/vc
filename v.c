@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8077a75"
+#define V_COMMIT_HASH "4b36098"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f89f83d"
+#define V_COMMIT_HASH "8077a75"
 #endif
 #include <inttypes.h>
 
@@ -9420,9 +9420,7 @@ string time__Time_get_fmt_date_str(time__Time t,
   string year = string_substr2(int_str(t.year), 2, -1, true);
   time__FormatDate tmp4 = fmt_date;
 
-  time__FormatDelimiter tmp5 = fmt_dlmtr;
-
-  return string_replace(
+  string res =
       ((tmp4 == time__time__FormatDate_ddmmyy)
            ? (_STR("%02d|%02d|%.*s", t.day, t.month, year.len, year.str))
            : ((tmp4 == time__time__FormatDate_ddmmyyyy)
@@ -9455,8 +9453,11 @@ string time__Time_get_fmt_date_str(time__Time t,
                                                                   "unknown "
                                                                   "enumeration "
                                                                   "%d",
-                                                                  fmt_date)))))))))),
-      tos3("|"),
+                                                                  fmt_date))))))))));
+  time__FormatDelimiter tmp5 = fmt_dlmtr;
+
+  res = string_replace(
+      res, tos3("|"),
       ((tmp5 == time__time__FormatDelimiter_dot)
            ? (tos3("."))
            : ((tmp5 == time__time__FormatDelimiter_hyphen)
@@ -9467,6 +9468,7 @@ string time__Time_get_fmt_date_str(time__Time t,
                                 ? (tos3(" "))
                                 : (_STR("unknown enumeration %d",
                                         fmt_dlmtr)))))));
+  return res;
 }
 string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr,
                               time__FormatTime fmt_time,
@@ -27380,7 +27382,7 @@ compiler__CGen *compiler__new_cgen(string out_name_c) {
   }
   out = *(os__File *)tmp1.data;
   ;
-  compiler__CGen *gen = (compiler__CGen *)memdup(
+  return (compiler__CGen *)memdup(
       &(compiler__CGen){.out_path = path,
                         .out = out,
                         .lines = make(0, 1000, sizeof(string)),
@@ -27409,7 +27411,6 @@ compiler__CGen *compiler__new_cgen(string out_name_c) {
                         .line_directives = 0,
                         .cut_pos = 0},
       sizeof(compiler__CGen));
-  return gen;
 }
 void compiler__CGen_genln(compiler__CGen *g, string s) {
   if (g->nogen || g->pass != compiler__compiler__Pass_main) {
@@ -36216,9 +36217,10 @@ Option_compiler__VsInstallation compiler__find_vs(string vswhere_dir,
   }
   version = *(string *)tmp12.data;
   ;
+  string version2 = version;
   string v = ((string_ends_with(version, tos3("\n")))
-                  ? (string_substr2(version, 0, version.len - 2, false))
-                  : (version));
+                  ? (string_substr2(version2, 0, version.len - 2, false))
+                  : (version2));
   string lib_path =
       _STR("%.*s\\VC\\Tools\\MSVC\\%.*s\\lib\\%.*s", res.output.len,
            res.output.str, v.len, v.str, host_arch.len, host_arch.str);
@@ -41003,6 +41005,7 @@ internal_dot_compile__parse_arguments(array_string args) {
   if (backend.len == 1) {
     Option_v_dot_pref__Backend tmp4 =
         v_dot_pref__backend_from_string((*(string *)array_get(backend, 0)));
+    v_dot_pref__Backend x;
     if (!tmp4.ok) {
       string err = tmp4.error;
       int errcode = tmp4.ecode;
@@ -41011,14 +41014,15 @@ internal_dot_compile__parse_arguments(array_string args) {
              (*(string *)array_get(backend, 0)).str);
       v_exit(1);
     }
-    p.backend = *(v_dot_pref__Backend *)tmp4.data;
+    x = *(v_dot_pref__Backend *)tmp4.data;
     ;
+    p.backend = x;
   } else {
     p.backend = v_dot_pref__v_dot_pref__Backend_c;
   };
   Option_array_string tmp7 = internal_dot_flag__parse_pref(
       args, internal_dot_compile__parse_options, &/*114*/ p);
-  array_string remaining;
+  array_string remaining2;
   if (!tmp7.ok) {
     string err = tmp7.error;
     int errcode = tmp7.ecode;
@@ -41028,8 +41032,9 @@ internal_dot_compile__parse_arguments(array_string args) {
     println(array_string_str(args));
     v_exit(1);
   }
-  remaining = *(array_string *)tmp7.data;
+  remaining2 = *(array_string *)tmp7.data;
   ;
+  array_string remaining = remaining2;
   string tmp10 = (*(string *)array_get(remaining, 0));
 
   if (string_eq(tmp10, tos3("run"))) {
