@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7b1b647"
+#define V_COMMIT_HASH "cc75fe4"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7ad1441"
+#define V_COMMIT_HASH "7b1b647"
 #endif
 #include <inttypes.h>
 
@@ -5659,6 +5659,9 @@ byte *vcalloc(int n) {
 }
 void v_free(void *ptr) { free(ptr); }
 void *memdup(void *src, int sz) {
+  if (sz == 0) {
+    return vcalloc(1);
+  };
   byte *mem = v_malloc(sz);
   return memcpy((char *)mem, src, sz);
 }
