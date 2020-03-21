@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f7042e9"
+#define V_COMMIT_HASH "9d80d26"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f962d92"
+#define V_COMMIT_HASH "f7042e9"
 #endif
 #include <inttypes.h>
 
@@ -43352,7 +43352,7 @@ void init() {
       "<= b)\n#define macro_f32_gt(a, b) (a >  b)\n#define macro_f32_ge(a, b) "
       "(a >= b)\n\n//================================== GLOBALS "
       "=================================*/\nbyte g_str_buf[1024];\nint "
-      "load_so(byteptr);\nvoid reload_so();\nvoid _init();\n\n// "
+      "load_so(byteptr);\nvoid reload_so();\nvoid _vinit();\n\n// "
       "============== wyhash ==============\n//	Author: Wang Yi\n#ifndef "
       "wyhash_version_4\n#define wyhash_version_4\n#include	"
       "<stdint.h>\n#include	<string.h>\n#if defined(_MSC_VER) && "
