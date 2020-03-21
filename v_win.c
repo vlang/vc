@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fc43294"
+#define V_COMMIT_HASH "421f5b6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9d80d26"
+#define V_COMMIT_HASH "fc43294"
 #endif
 #include <inttypes.h>
 
@@ -5847,7 +5847,8 @@ static inline string int_str_l(int nn, int max) {
     index--;
     buf[/*ptr!*/ index] /*rbyte 1*/ = '-';
   };
-  return tos((byte *)buf + index, (max - index));
+  memmove((char *)buf, (char *)(byte *)buf + index, (max - index) + 1);
+  return tos(buf, (max - index));
 }
 string i8_str(i8 n) { return int_str_l(((int)(n)), 5); }
 string i16_str(i16 n) { return int_str_l(((int)(n)), 7); }
@@ -5876,7 +5877,8 @@ string u32_str(u32 nn) {
   if (d < ((u32)(20))) {
     index++;
   };
-  return tos((byte *)buf + index, (max - index));
+  memmove((char *)buf, (char *)(byte *)buf + index, (max - index) + 1);
+  return tos(buf, (max - index));
 }
 string i64_str(i64 nn) {
   i64 n = nn;
@@ -5910,7 +5912,8 @@ string i64_str(i64 nn) {
     index--;
     buf[/*ptr!*/ index] /*rbyte 1*/ = '-';
   };
-  return tos((byte *)buf + index, (max - index));
+  memmove((char *)buf, (char *)(byte *)buf + index, (max - index) + 1);
+  return tos(buf, (max - index));
 }
 string u64_str(u64 nn) {
   u64 n = nn;
@@ -5935,7 +5938,8 @@ string u64_str(u64 nn) {
   if (d < 20) {
     index++;
   };
-  return tos((byte *)buf + index, (max - index));
+  memmove((char *)buf, (char *)(byte *)buf + index, (max - index) + 1);
+  return tos(buf, (max - index));
 }
 string bool_str(bool b) {
   if (b) {
@@ -5971,7 +5975,8 @@ string u64_hex(u64 nn) {
     buf[/*ptr!*/ index--] /*rbyte 1*/ = ((d < 10) ? (d + '0') : (d + 87));
   };
   index++;
-  return tos((byte *)buf + index, (max - index));
+  memmove((char *)buf, (char *)(byte *)buf + index, (max - index) + 1);
+  return tos(buf, (max - index));
 }
 string i64_hex(i64 nn) {
   u64 n = ((u64)(nn));
