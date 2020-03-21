@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e5f6a09"
+#define V_COMMIT_HASH "3e80e22"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "efbf114"
+#define V_COMMIT_HASH "e5f6a09"
 #endif
 #include <inttypes.h>
 
@@ -20678,9 +20678,9 @@ void v_dot_gen__Gen_gen_fn_decl(v_dot_gen__Gen *g, v_dot_ast__FnDecl it) {
     map_v_dot_ast__Var tmp40 = scope->vars;
     array_string keys_tmp40 = map_keys(&tmp40);
     for (int l = 0; l < keys_tmp40.len; l++) {
-      string i = ((string *)keys_tmp40.data)[l];
+      string _ = ((string *)keys_tmp40.data)[l];
       v_dot_ast__Var var = {0};
-      map_get(tmp40, i, &var);
+      map_get(tmp40, _, &var);
 
       v_dot_table__TypeSymbol *sym =
           v_dot_table__Table_get_type_symbol(&/* ? */ *g->table, var.typ);
@@ -22017,8 +22017,6 @@ void v_dot_gen__Gen_call_expr(v_dot_gen__Gen *g, v_dot_ast__CallExpr it) {
     g->is_c_call = 1;
     name = string_substr2(name, 3, -1, true);
   };
-  array_string tmps = new_array_from_c_array(
-      0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
   if (is_print && (*(v_dot_ast__CallArg *)array_get(it.args, 0)).typ !=
                       v_dot_table__string_type_idx) {
     string styp = v_dot_gen__Gen_typ(
