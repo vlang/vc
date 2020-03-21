@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "eb8d649"
+#define V_COMMIT_HASH "f962d92"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cc75fe4"
+#define V_COMMIT_HASH "eb8d649"
 #endif
 #include <inttypes.h>
 
@@ -20647,7 +20647,7 @@ void v_dot_gen__Gen_gen_fn_decl(v_dot_gen__Gen *g, v_dot_ast__FnDecl it) {
     strings__Builder_writeln(&/* ? */ g->definitions, tos3(");"));
   };
   if (is_main) {
-    v_dot_gen__Gen_writeln(g, tos3("_init();"));
+    v_dot_gen__Gen_writeln(g, tos3("_vinit();"));
     v_dot_gen__Gen_writeln(
         g, tos3("os__args = os__init_os_args(argc, (byteptr*)argv);"));
   };
@@ -21680,7 +21680,7 @@ static inline void v_dot_gen__Gen_ref_or_deref_arg(v_dot_gen__Gen *g,
 }
 void v_dot_gen__verror(string s) { printf("cgen error: %.*s\n", s.len, s.str); }
 void v_dot_gen__Gen_write_init_function(v_dot_gen__Gen *g) {
-  v_dot_gen__Gen_writeln(g, tos3("void _init() {"));
+  v_dot_gen__Gen_writeln(g, tos3("void _vinit() {"));
   v_dot_gen__Gen_writeln(g, strings__Builder_str(&/* ? */ g->inits));
   v_dot_gen__Gen_writeln(g, tos3("}"));
 }
