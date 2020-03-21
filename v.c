@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5f61fbc"
+#define V_COMMIT_HASH "c93f515"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c21e976"
+#define V_COMMIT_HASH "5f61fbc"
 #endif
 #include <inttypes.h>
 
@@ -3508,6 +3508,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g, array_v_dot_ast__CallArg args);
 static inline void v_dot_gen__Gen_ref_or_deref_arg(v_dot_gen__Gen *g,
                                                    v_dot_ast__CallArg arg);
 void v_dot_gen__verror(string s);
+void v_dot_gen__Gen_write_str_definitions(v_dot_gen__Gen *g);
 void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g);
 void v_dot_gen__Gen_write_sorted_types(v_dot_gen__Gen *g);
 void v_dot_gen__Gen_write_types(v_dot_gen__Gen *g,
@@ -20078,6 +20079,7 @@ string v_dot_gen__cgen(array_v_dot_ast__File files, v_dot_table__Table *table) {
     v_dot_gen__Gen_stmts(&/* ? */ g, file.stmts);
   };
   v_dot_gen__Gen_write_variadic_types(&/* ? */ g);
+  v_dot_gen__Gen_write_str_definitions(&/* ? */ g);
   return string_add(string_add(strings__Builder_str(&/* ? */ g.typedefs),
                                strings__Builder_str(&/* ? */ g.definitions)),
                     strings__Builder_str(&/* ? */ g.out));
@@ -20089,6 +20091,10 @@ void v_dot_gen__Gen_init(v_dot_gen__Gen *g) {
                            tos3("#include <inttypes.h>"));
   strings__Builder_writeln(&/* ? */ g->definitions, v_dot_gen__c_builtin_types);
   strings__Builder_writeln(&/* ? */ g->definitions, v_dot_gen__c_headers);
+  strings__Builder_writeln(&/* ? */ g->definitions,
+                           tos3("\nstring _STR(const char*, ...);\n"));
+  strings__Builder_writeln(&/* ? */ g->definitions,
+                           tos3("\nstring _STR_TMP(const char*, ...);\n"));
   v_dot_gen__Gen_write_builtin_types(g);
   v_dot_gen__Gen_write_typedef_types(g);
   v_dot_gen__Gen_write_sorted_types(g);
@@ -21553,7 +21559,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp113 = 0;
       bool tmp114 =
-          map_get(/*cgen.v : 1488*/ g->varaidic_args, type_str, &tmp113);
+          map_get(/*cgen.v : 1491*/ g->varaidic_args, type_str, &tmp113);
 
       if (len > tmp113) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -21599,6 +21605,24 @@ static inline void v_dot_gen__Gen_ref_or_deref_arg(v_dot_gen__Gen *g,
   };
 }
 void v_dot_gen__verror(string s) { printf("cgen error: %.*s\n", s.len, s.str); }
+void v_dot_gen__Gen_write_str_definitions(v_dot_gen__Gen *g) {
+  v_dot_gen__Gen_writeln(
+      g,
+      tos3("\nstring _STR(const char *fmt, ...) {\n	va_list "
+           "argptr;\n	va_start(argptr, fmt);\n	size_t len = "
+           "vsnprintf(0, 0, fmt, argptr) + 1;\n	va_end(argptr);\n	byte* "
+           "buf = malloc(len);\n	va_start(argptr, fmt);\n	"
+           "vsprintf((char *)buf, fmt, argptr);\n	"
+           "va_end(argptr);\n#ifdef DEBUG_ALLOC\n	"
+           "puts(\"_STR:\");\n	puts(buf);\n#endif\n	return "
+           "tos2(buf);\n}\n\nstring _STR_TMP(const char *fmt, ...) {\n	"
+           "va_list argptr;\n	va_start(argptr, fmt);\n	//size_t len = "
+           "vsnprintf(0, 0, fmt, argptr) + 1;\n	va_end(argptr);\n	"
+           "va_start(argptr, fmt);\n	vsprintf((char *)g_str_buf, fmt, "
+           "argptr);\n	va_end(argptr);\n#ifdef DEBUG_ALLOC\n	"
+           "//puts(\"_STR_TMP:\");\n	//puts(g_str_buf);\n#endif\n	return "
+           "tos2(g_str_buf);\n}\n\n"));
+}
 void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
   array_v_dot_table__TypeSymbol builtin_types = new_array_from_c_array(
       0, 0, sizeof(v_dot_table__TypeSymbol),
@@ -21609,7 +21633,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp124 = 0;
     bool tmp125 =
-        map_get(/*cgen.v : 1543*/ g->table->type_idxs, builtin_name, &tmp124);
+        map_get(/*cgen.v : 1583*/ g->table->type_idxs, builtin_name, &tmp124);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -21777,7 +21801,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp148 = 0;
     bool tmp149 =
-        map_get(/*cgen.v : 1652*/ g->table->type_idxs, node.name, &tmp148);
+        map_get(/*cgen.v : 1692*/ g->table->type_idxs, node.name, &tmp148);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -21794,7 +21818,12 @@ void v_dot_gen__Gen_string_inter_literal(v_dot_gen__Gen *g,
   for (int i = 0; i < tmp152.len; i++) {
     string val = ((string *)tmp152.data)[i];
 
-    v_dot_gen__Gen_write(g, val);
+    string escaped_val = string_replace_each(
+        val, new_array_from_c_array(6, 6, sizeof(string),
+                                    EMPTY_ARRAY_OF_ELEMS(string, 6){
+                                        tos3("\""), tos3("\\\""), tos3("\r\n"),
+                                        tos3("\\n"), tos3("\n"), tos3("\\n")}));
+    v_dot_gen__Gen_write(g, escaped_val);
     if (i >= node.exprs.len) {
       continue;
     };
