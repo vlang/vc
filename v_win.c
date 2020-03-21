@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c12985d"
+#define V_COMMIT_HASH "b2d1f55"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ba08805"
+#define V_COMMIT_HASH "c12985d"
 #endif
 #include <inttypes.h>
 
@@ -13755,7 +13755,7 @@ v_dot_table__Table_get_type_symbol(v_dot_table__Table *t,
     return &(*(v_dot_table__TypeSymbol *)array_get(t->types, idx));
   };
   v_panic(_STR(
-      "get_type_symbol: invalid type (typ=%d idx=%d). This should neer happen",
+      "get_type_symbol: invalid type (typ=%d idx=%d). This should never happen",
       typ, idx));
 }
 static inline int
@@ -21732,7 +21732,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp110 = 0;
       bool tmp111 =
-          map_get(/*cgen.v : 1509*/ g->varaidic_args, type_str, &tmp110);
+          map_get(/*cgen.v : 1510*/ g->varaidic_args, type_str, &tmp110);
 
       if (len > tmp110) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -21812,7 +21812,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp121 = 0;
     bool tmp122 =
-        map_get(/*cgen.v : 1607*/ g->table->type_idxs, builtin_name, &tmp121);
+        map_get(/*cgen.v : 1608*/ g->table->type_idxs, builtin_name, &tmp121);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -21980,7 +21980,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp145 = 0;
     bool tmp146 =
-        map_get(/*cgen.v : 1716*/ g->table->type_idxs, node.name, &tmp145);
+        map_get(/*cgen.v : 1717*/ g->table->type_idxs, node.name, &tmp145);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
