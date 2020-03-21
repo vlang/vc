@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e57804e"
+#define V_COMMIT_HASH "ba08805"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c93f515"
+#define V_COMMIT_HASH "e57804e"
 #endif
 #include <inttypes.h>
 
@@ -467,6 +467,9 @@ int g_test_fails = 0;
 #define strconv_dot_ftoa__pow5_inv_num_bits_32 59
 #define strconv_dot_ftoa__pow5_num_bits_64 121
 #define strconv_dot_ftoa__pow5_inv_num_bits_64 122
+#define os__S_IXUSR 0100
+#define os__S_IXGRP 0010
+#define os__S_IXOTH 0001
 #define os__O_RDONLY 0
 #define os__O_WRONLY 1
 #define os__O_RDWR 2
@@ -1023,7 +1026,7 @@ struct map {
 };
 
 struct Option {
-  byte data[300];
+  byte data[400];
   string error;
   int ecode;
   bool ok;
@@ -1460,6 +1463,7 @@ struct benchmark__Benchmark {
   int ntotal;
   int nok;
   int nfail;
+  int nskip;
   bool verbose;
   int nexpected_steps;
   int cstep;
@@ -3298,6 +3302,7 @@ void benchmark__Benchmark_stop(benchmark__Benchmark *b);
 void benchmark__Benchmark_step(benchmark__Benchmark *b);
 void benchmark__Benchmark_fail(benchmark__Benchmark *b);
 void benchmark__Benchmark_ok(benchmark__Benchmark *b);
+void benchmark__Benchmark_skip(benchmark__Benchmark *b);
 void benchmark__Benchmark_fail_many(benchmark__Benchmark *b, int n);
 void benchmark__Benchmark_ok_many(benchmark__Benchmark *b, int n);
 void benchmark__Benchmark_neither_fail_nor_ok(benchmark__Benchmark *b);
@@ -3309,6 +3314,8 @@ string benchmark__Benchmark_step_message(benchmark__Benchmark *b, string msg);
 string benchmark__Benchmark_step_message_ok(benchmark__Benchmark *b,
                                             string msg);
 string benchmark__Benchmark_step_message_fail(benchmark__Benchmark *b,
+                                              string msg);
+string benchmark__Benchmark_step_message_skip(benchmark__Benchmark *b,
                                               string msg);
 string benchmark__Benchmark_total_message(benchmark__Benchmark *b, string msg);
 i64 benchmark__Benchmark_total_duration(benchmark__Benchmark *b);
@@ -4611,6 +4618,7 @@ array_string internal_dot_flag__falsey;
 string internal_dot_help__unknown_topic;
 string benchmark__BOK;
 string benchmark__BFAIL;
+string benchmark__BSKIP;
 string benchmark__BSPENT;
 //// SUMTYPE:  v.ast | parent: v_dot_ast__TypeDecl | name:
 #define SumType_v_dot_ast__TypeDecl_AliasTypeDecl 1 // DEF2
@@ -6289,9 +6297,9 @@ string map_string_str(map_string m) {
   return strings__Builder_str(&/* ? */ sb);
 }
 Option opt_ok(void *data, int size) {
-  if (size >= 300) {
+  if (size >= 400) {
     v_panic(
-        _STR("option size too big: %d (max is 300), this is a temporary limit",
+        _STR("option size too big: %d (max is 400), this is a temporary limit",
              size));
   };
   Option res = (Option){.ok = 1, .error = tos3(""), .ecode = 0, .is_none = 0};
@@ -11858,10 +11866,20 @@ bool os__is_executable(string path) {
 #ifdef _WIN32
   string p = os__real_path(path);
   return (os__exists(p) && string_ends_with(p, tos3(".exe")));
-#else
-  return access((char *)path.str, os__X_OK) != -1;
 #endif
   ;
+#ifdef __sun
+  struct /*c struct init*/
+
+      stat statbuf;
+  if (stat((char *)path.str, &statbuf) != 0) {
+    return 0;
+  };
+  return (((int)(statbuf.st_mode)) &
+          (os__S_IXUSR | os__S_IXGRP | os__S_IXOTH)) != 0;
+#endif
+  ;
+  return access((char *)path.str, os__X_OK) != -1;
 }
 bool os__is_writable(string path) {
 #ifdef _WIN32
@@ -15632,6 +15650,7 @@ benchmark__Benchmark benchmark__new_benchmark() {
                                 .ntotal = 0,
                                 .nok = 0,
                                 .nfail = 0,
+                                .nskip = 0,
                                 .nexpected_steps = 0,
                                 .cstep = 0,
                                 .bok = tos3(""),
@@ -15647,6 +15666,7 @@ benchmark__Benchmark *benchmark__new_benchmark_pointer() {
                               .ntotal = 0,
                               .nok = 0,
                               .nfail = 0,
+                              .nskip = 0,
                               .nexpected_steps = 0,
                               .cstep = 0,
                               .bok = tos3(""),
@@ -15673,6 +15693,11 @@ void benchmark__Benchmark_ok(benchmark__Benchmark *b) {
   b->step_end_time = benchmark__now();
   b->ntotal++;
   b->nok++;
+}
+void benchmark__Benchmark_skip(benchmark__Benchmark *b) {
+  b->step_end_time = benchmark__now();
+  b->ntotal++;
+  b->nskip++;
 }
 void benchmark__Benchmark_fail_many(benchmark__Benchmark *b, int n) {
   b->step_end_time = benchmark__now();
@@ -15738,17 +15763,28 @@ string benchmark__Benchmark_step_message_fail(benchmark__Benchmark *b,
   return benchmark__Benchmark_step_message_with_label(&/* ? */ *b,
                                                       benchmark__BFAIL, msg);
 }
+string benchmark__Benchmark_step_message_skip(benchmark__Benchmark *b,
+                                              string msg) {
+  return benchmark__Benchmark_step_message_with_label(&/* ? */ *b,
+                                                      benchmark__BSKIP, msg);
+}
 string benchmark__Benchmark_total_message(benchmark__Benchmark *b, string msg) {
   string tmsg = string_add(
       string_add(
           string_add(
               string_add(
-                  string_add(_STR("%.*s\n                 ok, fail, total = ",
-                                  msg.len, msg.str),
-                             term__ok_message(_STR("%5d", b->nok))),
+                  string_add(
+                      string_add(
+                          string_add(_STR("%.*s\n                 ok, fail, "
+                                          "skip, total = ",
+                                          msg.len, msg.str),
+                                     term__ok_message(_STR("%5d", b->nok))),
+                          tos3(", ")),
+                      ((b->nfail > 0)
+                           ? (term__fail_message(_STR("%5d", b->nfail)))
+                           : (_STR("%5d", b->nfail)))),
                   tos3(", ")),
-              ((b->nfail > 0) ? (term__fail_message(_STR("%5d", b->nfail)))
-                              : (_STR("%5d", b->nfail)))),
+              _STR("%5d", b->nskip)),
           tos3(", ")),
       _STR("%5d", b->ntotal));
   if (b->verbose) {
@@ -35518,6 +35554,18 @@ array_string compiler__V_v_files_from_dir(compiler__V *v, string dir) {
         v->pref->os == v_dot_pref__v_dot_pref__OS_windows) {
       continue;
     };
+    if (string_ends_with(file, tos3("_android.v")) &&
+        v->pref->os != v_dot_pref__v_dot_pref__OS_android) {
+      continue;
+    };
+    if (string_ends_with(file, tos3("_freebsd.v")) &&
+        v->pref->os != v_dot_pref__v_dot_pref__OS_freebsd) {
+      continue;
+    };
+    if (string_ends_with(file, tos3("_solaris.v")) &&
+        v->pref->os != v_dot_pref__v_dot_pref__OS_solaris) {
+      continue;
+    };
     if (string_ends_with(file, tos3("_js.v")) &&
         v->pref->os != v_dot_pref__v_dot_pref__OS_js) {
       continue;
@@ -43102,8 +43150,9 @@ void init() {
   internal_dot_help__unknown_topic =
       tos3("V Error: Unknown help topic provided. Use `v help` for usage "
            "information.");
-  benchmark__BOK = term__ok_message(tos3("OK"));
+  benchmark__BOK = term__ok_message(tos3("OK  "));
   benchmark__BFAIL = term__fail_message(tos3("FAIL"));
+  benchmark__BSKIP = term__fail_message(tos3("SKIP"));
   benchmark__BSPENT = term__ok_message(tos3("SPENT"));
   v_dot_parser__colored_output = term__can_show_color_on_stderr();
   v_dot_gen__builtins = new_array_from_c_array(
