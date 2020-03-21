@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7e139b5"
+#define V_COMMIT_HASH "c21e976"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b4561fa"
+#define V_COMMIT_HASH "7e139b5"
 #endif
 #include <inttypes.h>
 
@@ -9630,10 +9630,10 @@ Option_time__Time time__parse_rfc2822(string s) {
   int mm = pos / 3 + 1;
   byteptr tmstr = ((byteptr)(0));
   { tmstr = v_malloc(s.len * 2); };
-  int count = sprintf(((charptr)(tmstr)), "%s-%02d-%s %s",
-                      (char *)(*(string *)array_get(fields, 3)).str, mm,
-                      (char *)(*(string *)array_get(fields, 1)).str,
-                      (char *)(*(string *)array_get(fields, 4)).str);
+  int count = snprintf(((charptr)(tmstr)), (s.len * 2), "%s-%02d-%s %s",
+                       (char *)(*(string *)array_get(fields, 3)).str, mm,
+                       (char *)(*(string *)array_get(fields, 1)).str,
+                       (char *)(*(string *)array_get(fields, 4)).str);
   Option_time__Time tmp30 = time__parse(tos(tmstr, count));
   time__Time t;
   if (!tmp30.ok) {
@@ -34744,20 +34744,24 @@ void compiler__V_generate_hot_reload_code(compiler__V *v) {
       v_exit(1);
     };
     compiler__CGen_genln(
-        cgen, tos3("\n\nvoid lfnmutex_print(char *s){\n	if(0){\n	"
-                   "	fflush(stderr);\n		fprintf(stderr,\">> "
-                   "live_fn_mutex: %p | %s\\n\", &live_fn_mutex, s);\n	"
-                   "	fflush(stderr);\n	}\n}\n"));
+        cgen,
+        tos3("\n\nvoid lfnmutex_print(char *s){\n#if 0\n	"
+             "fflush(stderr);\n	fprintf(stderr,\">> live_fn_mutex: %p | "
+             "%s\\n\", &live_fn_mutex, s);\n	fflush(stderr);\n#endif\n}\n"));
     if (v->pref->os != v_dot_pref__v_dot_pref__OS_windows) {
       compiler__CGen_genln(
           cgen,
-          tos3("\nvoid* live_lib=0;\nint load_so(byteptr path) {\n	char "
-               "cpath[1024];\n	sprintf(cpath,\"./%s\", path);\n	"
-               "//printf(\"load_so %s\\n\", cpath);\n	if (live_lib) "
-               "dlclose(live_lib);\n	live_lib = dlopen(cpath, "
-               "RTLD_LAZY);\n	if (!live_lib) {\n		puts(\"open "
-               "failed\");\n		exit(1);\n		return "
-               "0;\n	}\n"));
+          tos3("\n#define _POSIX_C_SOURCE 1\n#include <limits.h>\n#ifndef "
+               "PATH_MAX\n#define PATH_MAX 1024\n#endif\n\nvoid* live_lib = "
+               "0;\n\nint load_so(byteptr path) {\n	char cpath[PATH_MAX] = "
+               "{0};\n	int res = snprintf(cpath, sizeof (cpath), \"./%s\", "
+               "path);\n	if (res >= sizeof (cpath)) {\n		"
+               "fprintf (stderr, \"path is too long\");\n		return "
+               "0;\n	}\n	//printf(\"load_so %s\\n\", cpath);\n	if "
+               "(live_lib) dlclose(live_lib);\n	live_lib = dlopen(cpath, "
+               "RTLD_LAZY);\n	if (!live_lib) {\n		"
+               "fprintf(stderr, \"open failed\");\n		"
+               "exit(1);\n		return 0;\n	}\n"));
       array_string tmp5 = cgen->so_fns;
       for (int tmp6 = 0; tmp6 < tmp5.len; tmp6++) {
         string so_fn = ((string *)tmp5.data)[tmp6];
@@ -34768,16 +34772,21 @@ void compiler__V_generate_hot_reload_code(compiler__V *v) {
       };
     } else {
       compiler__CGen_genln(
-          cgen, tos3("\nvoid pthread_mutex_lock(HANDLE *m) {\n	"
-                     "WaitForSingleObject(*m, INFINITE);\n}\n\nvoid "
-                     "pthread_mutex_unlock(HANDLE *m) {\n	"
-                     "ReleaseMutex(*m);\n}\n\nvoid* live_lib=0;\nint "
-                     "load_so(byteptr path) {\n	char cpath[1024];\n	"
-                     "sprintf(cpath, \"./%s\", path);\n	if (live_lib) "
-                     "FreeLibrary(live_lib);\n	live_lib = "
-                     "LoadLibraryA(cpath);\n	if (!live_lib) {\n	"
-                     "	puts(\"open failed\");\n		"
-                     "exit(1);\n		return 0;\n	}\n"));
+          cgen,
+          tos3(
+              "\n\n#ifndef PATH_MAX\n#define PATH_MAX 1024\n#endif\n\nvoid "
+              "pthread_mutex_lock(HANDLE *m) {\n	"
+              "WaitForSingleObject(*m, INFINITE);\n}\n\nvoid "
+              "pthread_mutex_unlock(HANDLE *m) {\n	"
+              "ReleaseMutex(*m);\n}\n\nvoid* live_lib = NULL;\nint "
+              "load_so(byteptr path) {\n	char cpath[PATH_MAX];\n	int "
+              "res = snprintf(cpath, sizeof (cpath), \"./%s\", path);\n	if "
+              "(res >= sizeof(cpath)) {\n		puts(\"path is too "
+              "long\\n\");\n		exit(1);\n		return "
+              "0;\n	}\n	if (live_lib) FreeLibrary(live_lib);\n	"
+              "live_lib = LoadLibraryA(cpath);\n	if (!live_lib) "
+              "{\n		puts(\"open failed\\n\");\n		"
+              "exit(1);\n		return 0;\n	}\n"));
       array_string tmp7 = cgen->so_fns;
       for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
         string so_fn = ((string *)tmp7.data)[tmp8];
@@ -34790,34 +34799,36 @@ void compiler__V_generate_hot_reload_code(compiler__V *v) {
     compiler__CGen_genln(
         cgen,
         _STR("return 1;\n}\n\nint _live_reloads = 0;\nvoid reload_so() "
-             "{\n	char new_so_base[1024];\n	char "
-             "new_so_name[1024];\n	char compile_cmd[1024];\n	int "
-             "last = os__file_last_mod_unix(tos2(\"%.*s\"));\n	while (1) "
-             "{\n		// TODO use inotify\n		int now = "
+             "{\n	char new_so_base[PATH_MAX] = {0};\n	char "
+             "new_so_name[PATH_MAX] = {0};\n	char compile_cmd[PATH_MAX] = "
+             "{0};\n	int last = "
+             "os__file_last_mod_unix(tos2(\"%.*s\"));\n	while (1) {\n	"
+             "	// TODO use inotify\n		int now = "
              "os__file_last_mod_unix(tos2(\"%.*s\"));\n		if (now != "
              "last) {\n			last = now;\n			"
              "_live_reloads++;\n\n			//v -o bounce -shared "
-             "bounce.v\n			sprintf(new_so_base, "
-             "\".tmp.%%d.%.*s\", _live_reloads);\n			#ifdef "
-             "_WIN32\n			// We have to make this directory "
-             "becuase windows WILL NOT\n			// do it for "
-             "us\n			"
+             "bounce.v\n			snprintf(new_so_base, sizeof "
+             "(new_so_base), \".tmp.%%d.%.*s\", _live_reloads);\n	"
+             "		#ifdef _WIN32\n			// We have to make "
+             "this directory becuase windows WILL NOT\n			// do "
+             "it for us\n			"
              "os__mkdir(string_all_before_last(tos2(new_so_base), "
              "tos2(\"/\")));\n			#endif\n		"
-             "	#ifdef _MSC_VER\n			sprintf(new_so_name, "
-             "\"%%s.dll\", new_so_base);\n			#else\n	"
-             "		sprintf(new_so_name, \"%%s.so\", "
-             "new_so_base);\n			#endif\n		"
-             "	sprintf(compile_cmd, \"%.*s %.*s -o %%s -solive -shared "
-             "%.*s\", new_so_base);\n			"
+             "	#ifdef _MSC_VER\n			snprintf(new_so_name, "
+             "sizeof (new_so_name), \"%%s.dll\", new_so_base);\n	"
+             "		#else\n			snprintf(new_so_name, sizeof "
+             "(new_so_name), \"%%s.so\", new_so_base);\n		"
+             "	#endif\n			snprintf(compile_cmd, sizeof "
+             "(compile_cmd), \"%.*s %.*s -o %%s -solive -shared %.*s\", "
+             "new_so_base);\n			"
              "os__system(tos2(compile_cmd));\n\n			if( "
              "!os__exists(tos2(new_so_name)) ) {\n			"
-             "	fprintf(stderr, \"Errors while compiling %.*s\\n\");\n	"
-             "			continue;\n			}\n\n	"
-             "		lfnmutex_print(\"reload_so locking...\");\n	"
-             "		pthread_mutex_lock(&live_fn_mutex);\n		"
-             "	lfnmutex_print(\"reload_so locked\");\n\n		"
-             "	load_so(new_so_name);\n			#ifndef "
+             "	puts(\"Errors while compiling %.*s\\n\");\n		"
+             "		continue;\n			}\n\n		"
+             "	lfnmutex_print(\"reload_so locking...\");\n		"
+             "	pthread_mutex_lock(&live_fn_mutex);\n			"
+             "lfnmutex_print(\"reload_so locked\");\n\n			"
+             "load_so(new_so_name);\n			#ifndef "
              "_WIN32\n			unlink(new_so_name); // removing the "
              ".so file from the filesystem after dlopen-ing it is safe, since "
              "it will still be mapped in memory.\n			"
