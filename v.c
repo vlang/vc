@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "cc75fe4"
+#define V_COMMIT_HASH "eb8d649"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7b1b647"
+#define V_COMMIT_HASH "cc75fe4"
 #endif
 #include <inttypes.h>
 
@@ -19145,6 +19145,7 @@ v_dot_table__Type v_dot_checker__Checker_method_call_expr(
   };
   if ((typ_sym->kind == v_dot_table__v_dot_table__Kind_map) &&
       string_eq(name, tos3("str"))) {
+    method_call_expr->receiver_type = typ;
     method_call_expr->return_type = v_dot_table__string_type;
     return v_dot_table__string_type;
   };
@@ -19227,7 +19228,7 @@ void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
   return_stmt->types = got_types;
   int tmp59 = 0;
   bool tmp60 =
-      map_get(/*checker.v : 391*/ c->table->type_idxs, tos3("Option"), &tmp59);
+      map_get(/*checker.v : 392*/ c->table->type_idxs, tos3("Option"), &tmp59);
 
   if (exp_is_optional &&
       (v_dot_table__type_idx((*(v_dot_table__Type *)array_get(got_types, 0))) ==
@@ -19736,7 +19737,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     };
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp101 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
-    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4326_var_scope_var;
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4331_var_scope_var;
     if (!tmp101.ok) {
       string err = tmp101.error;
       int errcode = tmp101.ecode;
@@ -19748,11 +19749,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_4326_var_scope_var =
+    _V_mret_4331_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp101.data;
     ;
-    var_scope = _V_mret_4326_var_scope_var.var_0;
-    var = _V_mret_4326_var_scope_var.var_1;
+    var_scope = _V_mret_4331_var_scope_var.var_0;
+    var = _V_mret_4331_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
