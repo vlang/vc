@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "8d8907b"
+#define V_COMMIT_HASH "c2ce06e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cf8776a"
+#define V_COMMIT_HASH "8d8907b"
 #endif
 #include <inttypes.h>
 
@@ -2058,7 +2058,7 @@ struct v_dot_ast__MatchBranch {
 };
 
 struct v_dot_ast__CompIf {
-  v_dot_ast__Expr cond;
+  string val;
   array_v_dot_ast__Stmt stmts;
   v_dot_token__Position pos;
   array_v_dot_ast__Stmt else_stmts;
@@ -3534,6 +3534,7 @@ void v_dot_gen__Gen_call_expr(v_dot_gen__Gen *g, v_dot_ast__CallExpr it);
 void v_dot_gen__Gen_in_optimization(v_dot_gen__Gen *g, v_dot_ast__Expr left,
                                     v_dot_ast__ArrayInit right);
 string v_dot_gen__op_to_fn_name(string name);
+string v_dot_gen__comp_if_to_ifdef(string name);
 string v_dot_gen__jsgen(v_dot_ast__File program, v_dot_table__Table *table);
 void v_dot_gen__JsGen_save(v_dot_gen__JsGen *g);
 void v_dot_gen__JsGen_write(v_dot_gen__JsGen *g, string s);
@@ -16115,13 +16116,14 @@ v_dot_ast__CompIf v_dot_parser__Parser_comp_if(v_dot_parser__Parser *p) {
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_not) {
     v_dot_parser__Parser_next(p);
   };
-  v_dot_parser__Parser_check_name(p);
+  string val = v_dot_parser__Parser_check_name(p);
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_question) {
     v_dot_parser__Parser_next(p);
   };
   v_dot_ast__CompIf node = (v_dot_ast__CompIf){
       .stmts = v_dot_parser__Parser_parse_block(p),
       .pos = pos,
+      .val = val,
       .else_stmts = new_array(0, 1, sizeof(v_dot_ast__Stmt))};
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_dollar &&
       p->peek_tok.kind == v_dot_token__v_dot_token__Kind_key_else) {
@@ -19465,7 +19467,6 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
     c->expected_type = v_dot_table__void_type;
   } else if (tmp88.typ == SumType_v_dot_ast__Stmt_CompIf) {
     v_dot_ast__CompIf *it = (v_dot_ast__CompIf *)tmp88.obj;
-    v_dot_checker__Checker_expr(c, it->cond);
     v_dot_checker__Checker_stmts(c, it->stmts);
   } else if (tmp88.typ == SumType_v_dot_ast__Stmt_ConstDecl) {
     v_dot_ast__ConstDecl *it = (v_dot_ast__ConstDecl *)tmp88.obj;
@@ -19756,7 +19757,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     };
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp103 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
-    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4389_var_scope_var;
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4381_var_scope_var;
     if (!tmp103.ok) {
       string err = tmp103.error;
       int errcode = tmp103.ecode;
@@ -19768,11 +19769,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_4389_var_scope_var =
+    _V_mret_4381_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp103.data;
     ;
-    var_scope = _V_mret_4389_var_scope_var.var_0;
-    var = _V_mret_4389_var_scope_var.var_1;
+    var_scope = _V_mret_4381_var_scope_var.var_0;
+    var = _V_mret_4381_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
@@ -20389,10 +20390,11 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
     v_dot_gen__Gen_const_decl(g, *it);
   } else if (tmp26.typ == SumType_v_dot_ast__Stmt_CompIf) {
     v_dot_ast__CompIf *it = (v_dot_ast__CompIf *)tmp26.obj;
-    v_dot_gen__Gen_writeln(g, tos3("//#ifdef "));
-    v_dot_gen__Gen_expr(g, it->cond);
+    v_dot_gen__Gen_writeln(
+        g, string_add(tos3("\n#ifdef "), v_dot_gen__comp_if_to_ifdef(it->val)));
+    v_dot_gen__Gen_writeln(g, _STR("// #if %.*s", it->val.len, it->val.str));
     v_dot_gen__Gen_stmts(g, it->stmts);
-    v_dot_gen__Gen_writeln(g, tos3("//#endif"));
+    v_dot_gen__Gen_writeln(g, tos3("#endif"));
   } else if (tmp26.typ == SumType_v_dot_ast__Stmt_DeferStmt) {
     v_dot_ast__DeferStmt *it = (v_dot_ast__DeferStmt *)tmp26.obj;
     v_dot_gen__Gen_writeln(g, tos3("// defer"));
@@ -21702,7 +21704,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp107 = 0;
       bool tmp108 =
-          map_get(/*cgen.v : 1569*/ g->varaidic_args, type_str, &tmp107);
+          map_get(/*cgen.v : 1570*/ g->varaidic_args, type_str, &tmp107);
 
       if (len > tmp107) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -21791,7 +21793,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp118 = 0;
     bool tmp119 =
-        map_get(/*cgen.v : 1676*/ g->table->type_idxs, builtin_name, &tmp118);
+        map_get(/*cgen.v : 1677*/ g->table->type_idxs, builtin_name, &tmp118);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -21962,7 +21964,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp142 = 0;
     bool tmp143 =
-        map_get(/*cgen.v : 1786*/ g->table->type_idxs, node.name, &tmp142);
+        map_get(/*cgen.v : 1787*/ g->table->type_idxs, node.name, &tmp142);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22131,6 +22133,49 @@ string v_dot_gen__op_to_fn_name(string name) {
                                           ? (tos3("_op_mod"))
                                           : (_STR("bad op %.*s", name.len,
                                                   name.str)))))));
+}
+string v_dot_gen__comp_if_to_ifdef(string name) {
+  string tmp170 = name;
+
+  if (string_eq(tmp170, tos3("windows"))) {
+    return tos3("_WIN32");
+  } else if (string_eq(tmp170, tos3("mac"))) {
+    return tos3("__APPLE__");
+  } else if (string_eq(tmp170, tos3("macos"))) {
+    return tos3("__APPLE__");
+  } else if (string_eq(tmp170, tos3("linux"))) {
+    return tos3("__linux__");
+  } else if (string_eq(tmp170, tos3("freebsd"))) {
+    return tos3("__FreeBSD__");
+  } else if (string_eq(tmp170, tos3("openbsd"))) {
+    return tos3("__OpenBSD__");
+  } else if (string_eq(tmp170, tos3("netbsd"))) {
+    return tos3("__NetBSD__");
+  } else if (string_eq(tmp170, tos3("dragonfly"))) {
+    return tos3("__DragonFly__");
+  } else if (string_eq(tmp170, tos3("msvc"))) {
+    return tos3("_MSC_VER");
+  } else if (string_eq(tmp170, tos3("android"))) {
+    return tos3("__ANDROID__");
+  } else if (string_eq(tmp170, tos3("js"))) {
+    return tos3("_VJS");
+  } else if (string_eq(tmp170, tos3("solaris"))) {
+    return tos3("__sun");
+  } else if (string_eq(tmp170, tos3("haiku"))) {
+    return tos3("__haiku__");
+  } else if (string_eq(tmp170, tos3("tinyc"))) {
+    return tos3("tinyc");
+  } else if (string_eq(tmp170, tos3("debug"))) {
+    return tos3("_VDEBUG");
+  } else if (string_eq(tmp170, tos3("linux_or_macos"))) {
+    return tos3("");
+  } else if (string_eq(tmp170, tos3("no_bounds_checking"))) {
+    return tos3("NO_BOUNDS_CHECK");
+  } else // default:
+  {
+    v_dot_gen__verror(_STR("bad os ifdef name \"%.*s\"", name.len, name.str));
+  };
+  return tos3("");
 }
 string v_dot_gen__jsgen(v_dot_ast__File program, v_dot_table__Table *table) {
   v_dot_gen__JsGen g =
