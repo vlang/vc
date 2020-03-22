@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e78b976"
+#define V_COMMIT_HASH "2efc379"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b69ebd7"
+#define V_COMMIT_HASH "e78b976"
 #endif
 #include <inttypes.h>
 
@@ -2914,7 +2914,7 @@ Option_time__Time time__parse_rfc2822(string s);
 time__Time time__now();
 string time__Time_smonth(time__Time t);
 time__Time time__new_time(time__Time t);
-int time__Time_calc_unix(time__Time *t);
+int time__Time_unix_time(time__Time *t);
 time__Time time__Time_add_seconds(time__Time t, int seconds);
 time__Time time__Time_add_days(time__Time t, int days);
 int time__since(time__Time t);
@@ -9714,9 +9714,9 @@ time__Time time__new_time(time__Time t) {
                       .hour = t.hour,
                       .minute = t.minute,
                       .second = t.second,
-                      .v_unix = time__Time_calc_unix(&/* ? */ t)};
+                      .v_unix = time__Time_unix_time(&/* ? */ t)};
 }
-int time__Time_calc_unix(time__Time *t) {
+int time__Time_unix_time(time__Time *t) {
   if (t->v_unix != 0) {
     return t->v_unix;
   }
