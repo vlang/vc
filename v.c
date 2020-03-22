@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "99de98f"
+#define V_COMMIT_HASH "b69ebd7"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "076bc2b"
+#define V_COMMIT_HASH "99de98f"
 #endif
 #include <inttypes.h>
 
@@ -12681,7 +12681,6 @@ Option_os__Result os__exec(string cmd) {
     strings__Builder_write_bytes(&/* ? */ res, buf, vstrlen(buf));
   };
   string soutput = string_trim_space(strings__Builder_str(&/* ? */ res));
-  strings__Builder_free(&/* ? */ res);
   int exit_code = os__vpclose(f);
   os__Result tmp10 = OPTION_CAST(os__Result)(
       (os__Result){.output = soutput, .exit_code = exit_code});
@@ -20166,9 +20165,10 @@ string v_dot_gen__cgen(array_v_dot_ast__File files, v_dot_table__Table *table) {
     v_dot_ast__File file = ((v_dot_ast__File *)tmp1.data)[tmp2];
 
     g.file = file;
-    if (string_eq(g.file.path, tos3("")) ||
-        string_ends_with(g.file.path, tos3(".vv")) ||
-        string_contains(g.file.path, tos3("/vlib/"))) {
+    bool building_v = string_contains(g.file.path, tos3("/vlib/")) ||
+                      string_contains(g.file.path, tos3("cmd/v"));
+    bool is_test = string_ends_with(g.file.path, tos3(".vv"));
+    if (string_eq(g.file.path, tos3("")) || is_test || building_v) {
       g.autofree = 0;
     } else {
       g.autofree = 1;
@@ -20220,8 +20220,8 @@ string v_dot_gen__Gen_typ(v_dot_gen__Gen *g, v_dot_table__Type t) {
   };
   if ((string_eq(styp, tos3("stat")) || string_eq(styp, tos3("dirent*")) ||
        string_eq(styp, tos3("tm")) || string_eq(styp, tos3("tm*")) ||
-       string_eq(styp, tos3("winsize")) ||
-       string_eq(styp, tos3("sigaction")))) {
+       string_eq(styp, tos3("winsize")) || string_eq(styp, tos3("sigaction")) ||
+       string_eq(styp, tos3("timeval")))) {
     styp = _STR("struct %.*s", styp.len, styp.str);
   };
   if (v_dot_table__type_is_optional(t)) {
@@ -21746,7 +21746,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp107 = 0;
       bool tmp108 =
-          map_get(/*cgen.v : 1587*/ g->varaidic_args, type_str, &tmp107);
+          map_get(/*cgen.v : 1589*/ g->varaidic_args, type_str, &tmp107);
 
       if (len > tmp107) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -21835,7 +21835,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp118 = 0;
     bool tmp119 =
-        map_get(/*cgen.v : 1694*/ g->table->type_idxs, builtin_name, &tmp118);
+        map_get(/*cgen.v : 1696*/ g->table->type_idxs, builtin_name, &tmp118);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -21995,7 +21995,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp143 = 0;
     bool tmp144 =
-        map_get(/*cgen.v : 1798*/ g->table->type_idxs, node.name, &tmp143);
+        map_get(/*cgen.v : 1800*/ g->table->type_idxs, node.name, &tmp143);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
