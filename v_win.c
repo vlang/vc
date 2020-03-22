@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a02395f"
+#define V_COMMIT_HASH "c50c681"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "85e411b"
+#define V_COMMIT_HASH "a02395f"
 #endif
 #include <inttypes.h>
 
@@ -11588,7 +11588,7 @@ Option_bool os__cp(string old, string new) {
         ((int)(result)));
   };
 #else
-  os__system(_STR("cp %.*s %.*s", old.len, old.str, new.len, new.str));
+  os__system(_STR("cp \"%.*s\" \"%.*s\"", old.len, old.str, new.len, new.str));
   bool tmp8 = OPTION_CAST(bool)(1);
   return opt_ok(&tmp8, sizeof(bool));
 #endif
