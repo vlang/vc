@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ab3f6d9"
+#define V_COMMIT_HASH "7b689d8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "53a9329"
+#define V_COMMIT_HASH "ab3f6d9"
 #endif
 #include <inttypes.h>
 
@@ -1597,12 +1597,6 @@ struct v_dot_ast__PrefixExpr {
   v_dot_ast__Expr right;
 };
 
-struct v_dot_ast__CompIf {
-  v_dot_ast__Expr cond;
-  array_v_dot_ast__Stmt stmts;
-  array_v_dot_ast__Stmt else_stmts;
-};
-
 struct v_dot_ast__EnumDecl {
   string name;
   bool is_pub;
@@ -2151,6 +2145,13 @@ struct v_dot_ast__MatchBranch {
   array_v_dot_ast__Expr exprs;
   array_v_dot_ast__Stmt stmts;
   v_dot_token__Position pos;
+};
+
+struct v_dot_ast__CompIf {
+  v_dot_ast__Expr cond;
+  array_v_dot_ast__Stmt stmts;
+  v_dot_token__Position pos;
+  array_v_dot_ast__Stmt else_stmts;
 };
 
 struct v_dot_ast__ForStmt {
@@ -16213,6 +16214,7 @@ string v_dot_ast__Stmt_str(v_dot_ast__Stmt node) {
   };
 }
 v_dot_ast__CompIf v_dot_parser__Parser_comp_if(v_dot_parser__Parser *p) {
+  v_dot_token__Position pos = v_dot_token__Token_position(&/* ? */ p->tok);
   v_dot_parser__Parser_next(p);
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_key_if);
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_not) {
@@ -16224,6 +16226,7 @@ v_dot_ast__CompIf v_dot_parser__Parser_comp_if(v_dot_parser__Parser *p) {
   };
   v_dot_ast__CompIf node = (v_dot_ast__CompIf){
       .stmts = v_dot_parser__Parser_parse_block(p),
+      .pos = pos,
       .else_stmts = new_array(0, 1, sizeof(v_dot_ast__Stmt))};
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_dollar &&
       p->peek_tok.kind == v_dot_token__v_dot_token__Kind_key_else) {
@@ -21765,7 +21768,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp105 = 0;
       bool tmp106 =
-          map_get(/*cgen.v : 1541*/ g->varaidic_args, type_str, &tmp105);
+          map_get(/*cgen.v : 1542*/ g->varaidic_args, type_str, &tmp105);
 
       if (len > tmp105) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -21854,7 +21857,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp116 = 0;
     bool tmp117 =
-        map_get(/*cgen.v : 1648*/ g->table->type_idxs, builtin_name, &tmp116);
+        map_get(/*cgen.v : 1649*/ g->table->type_idxs, builtin_name, &tmp116);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22025,7 +22028,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp140 = 0;
     bool tmp141 =
-        map_get(/*cgen.v : 1758*/ g->table->type_idxs, node.name, &tmp140);
+        map_get(/*cgen.v : 1759*/ g->table->type_idxs, node.name, &tmp140);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
