@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "2738a0c"
+#define V_COMMIT_HASH "ce73ced"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0609756"
+#define V_COMMIT_HASH "2738a0c"
 #endif
 #include <inttypes.h>
 
@@ -2061,6 +2061,7 @@ struct v_dot_ast__CompIf {
   string val;
   array_v_dot_ast__Stmt stmts;
   v_dot_token__Position pos;
+  bool has_else;
   array_v_dot_ast__Stmt else_stmts;
 };
 
@@ -16117,11 +16118,13 @@ v_dot_ast__CompIf v_dot_parser__Parser_comp_if(v_dot_parser__Parser *p) {
       .stmts = v_dot_parser__Parser_parse_block(p),
       .pos = pos,
       .val = val,
+      .has_else = 0,
       .else_stmts = new_array(0, 1, sizeof(v_dot_ast__Stmt))};
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_dollar &&
       p->peek_tok.kind == v_dot_token__v_dot_token__Kind_key_else) {
     v_dot_parser__Parser_next(p);
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_key_else);
+    node.has_else = 1;
     node.else_stmts = v_dot_parser__Parser_parse_block(p);
   };
   return node;
@@ -20388,6 +20391,10 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
         g, string_add(tos3("\n#ifdef "), v_dot_gen__comp_if_to_ifdef(it->val)));
     v_dot_gen__Gen_writeln(g, _STR("// #if %.*s", it->val.len, it->val.str));
     v_dot_gen__Gen_stmts(g, it->stmts);
+    if (it->has_else) {
+      v_dot_gen__Gen_writeln(g, tos3("#else"));
+      v_dot_gen__Gen_stmts(g, it->else_stmts);
+    };
     v_dot_gen__Gen_writeln(g, tos3("#endif"));
   } else if (tmp26.typ == SumType_v_dot_ast__Stmt_DeferStmt) {
     v_dot_ast__DeferStmt *it = (v_dot_ast__DeferStmt *)tmp26.obj;
@@ -21710,7 +21717,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp107 = 0;
       bool tmp108 =
-          map_get(/*cgen.v : 1579*/ g->varaidic_args, type_str, &tmp107);
+          map_get(/*cgen.v : 1581*/ g->varaidic_args, type_str, &tmp107);
 
       if (len > tmp107) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -21799,7 +21806,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp118 = 0;
     bool tmp119 =
-        map_get(/*cgen.v : 1686*/ g->table->type_idxs, builtin_name, &tmp118);
+        map_get(/*cgen.v : 1688*/ g->table->type_idxs, builtin_name, &tmp118);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -21959,7 +21966,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp143 = 0;
     bool tmp144 =
-        map_get(/*cgen.v : 1791*/ g->table->type_idxs, node.name, &tmp143);
+        map_get(/*cgen.v : 1792*/ g->table->type_idxs, node.name, &tmp143);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22164,6 +22171,8 @@ string v_dot_gen__comp_if_to_ifdef(string name) {
     return tos3("_VDEBUG");
   } else if (string_eq(tmp171, tos3("linux_or_macos"))) {
     return tos3("");
+  } else if (string_eq(tmp171, tos3("mingw"))) {
+    return tos3("__MINGW32__");
   } else if (string_eq(tmp171, tos3("no_bounds_checking"))) {
     return tos3("NO_BOUNDS_CHECK");
   } else // default:
