@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0609756"
+#define V_COMMIT_HASH "2738a0c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c2ce06e"
+#define V_COMMIT_HASH "0609756"
 #endif
 #include <inttypes.h>
 
@@ -12164,14 +12164,7 @@ void os__on_segfault(void *f) {
 #endif
   ;
 #ifdef __APPLE__
-  struct /*c struct init*/
-
-      sigaction sa;
-  memset(&sa, 0, sizeof(sigaction));
-  sigemptyset(&sa.sa_mask);
-  sa.sa_sigaction = f;
-  sa.sa_flags = SA_SIGINFO;
-  sigaction(SIGSEGV, &sa, 0);
+  printf("TODO");
 #endif
   ;
 }
@@ -20204,7 +20197,8 @@ string v_dot_gen__Gen_typ(v_dot_gen__Gen *g, v_dot_table__Type t) {
   };
   if ((string_eq(styp, tos3("stat")) || string_eq(styp, tos3("dirent*")) ||
        string_eq(styp, tos3("tm")) || string_eq(styp, tos3("tm*")) ||
-       string_eq(styp, tos3("winsize")))) {
+       string_eq(styp, tos3("winsize")) ||
+       string_eq(styp, tos3("sigaction")))) {
     styp = _STR("struct %.*s", styp.len, styp.str);
   };
   if (v_dot_table__type_is_optional(t)) {
@@ -20676,7 +20670,7 @@ void v_dot_gen__Gen_gen_assign_stmt(v_dot_gen__Gen *g,
   };
 }
 void v_dot_gen__Gen_gen_fn_decl(v_dot_gen__Gen *g, v_dot_ast__FnDecl it) {
-  if (it.is_c || string_eq(it.name, tos3("malloc")) || it.no_body) {
+  if (it.is_c || string_eq(it.name, tos3("malloc"))) {
 
     return;
   };
@@ -20712,6 +20706,12 @@ void v_dot_gen__Gen_gen_fn_decl(v_dot_gen__Gen *g, v_dot_ast__FnDecl it) {
         _STR("%.*s %.*s(", type_name.len, type_name.str, name.len, name.str));
   };
   v_dot_gen__Gen_fn_args(g, it.args, it.is_variadic);
+  if (it.no_body) {
+    strings__Builder_writeln(&/* ? */ g->definitions, tos3(");"));
+    v_dot_gen__Gen_writeln(g, tos3(");"));
+
+    return;
+  };
   v_dot_gen__Gen_writeln(g, tos3(") { "));
   if (!is_main) {
     strings__Builder_writeln(&/* ? */ g->definitions, tos3(");"));
@@ -21710,7 +21710,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp107 = 0;
       bool tmp108 =
-          map_get(/*cgen.v : 1572*/ g->varaidic_args, type_str, &tmp107);
+          map_get(/*cgen.v : 1579*/ g->varaidic_args, type_str, &tmp107);
 
       if (len > tmp107) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -21799,7 +21799,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp118 = 0;
     bool tmp119 =
-        map_get(/*cgen.v : 1679*/ g->table->type_idxs, builtin_name, &tmp118);
+        map_get(/*cgen.v : 1686*/ g->table->type_idxs, builtin_name, &tmp118);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -21959,7 +21959,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp143 = 0;
     bool tmp144 =
-        map_get(/*cgen.v : 1784*/ g->table->type_idxs, node.name, &tmp143);
+        map_get(/*cgen.v : 1791*/ g->table->type_idxs, node.name, &tmp143);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -43453,14 +43453,14 @@ void init() {
       "(a >= b)\n\n//================================== GLOBALS "
       "=================================*/\nbyte g_str_buf[1024];\nint "
       "load_so(byteptr);\nvoid reload_so();\nvoid _vinit();\nvoid "
-      "_vcleanup();\n\n// ============== wyhash ==============\n//	"
-      "Author: Wang Yi\n#ifndef wyhash_version_4\n#define "
-      "wyhash_version_4\n#include	<stdint.h>\n#include	"
-      "<string.h>\n#if defined(_MSC_VER) && defined(_M_X64)\n#include "
-      "<intrin.h>\n#pragma	intrinsic(_umul128)\n#endif\nconst	"
-      "uint64_t	_wyp0=0xa0761d6478bd642full,	"
-      "_wyp1=0xe7037ed1a0b428dbull,	_wyp2=0x8ebc6af09c88c6e3ull,	"
-      "_wyp3=0x589965cc75374cc3ull,	"
+      "_vcleanup();\n#define sigaction_size sizeof(sigaction);\n\n// "
+      "============== wyhash ==============\n//	Author: Wang Yi\n#ifndef "
+      "wyhash_version_4\n#define wyhash_version_4\n#include	"
+      "<stdint.h>\n#include	<string.h>\n#if defined(_MSC_VER) && "
+      "defined(_M_X64)\n#include <intrin.h>\n#pragma	"
+      "intrinsic(_umul128)\n#endif\nconst	uint64_t	"
+      "_wyp0=0xa0761d6478bd642full,	_wyp1=0xe7037ed1a0b428dbull,	"
+      "_wyp2=0x8ebc6af09c88c6e3ull,	_wyp3=0x589965cc75374cc3ull,	"
       "_wyp4=0x1d8e4e27c47d124full;\nstatic	inline	uint64_t	"
       "_wyrotr(uint64_t v, unsigned k) {	return	"
       "(v>>k)|(v<<(64-k));	}\nstatic	inline	uint64_t	"
@@ -43565,7 +43565,7 @@ void init() {
       "map_int;\ntypedef map map_string;\ntypedef byte array_fixed_byte_300 "
       "[300];\ntypedef byte array_fixed_byte_400 [400];\n#ifndef bool\n	"
       "typedef int bool;\n	#define true 1\n	#define false "
-      "0\n#endif\n");
+      "0\n#endif\n\n");
   v_dot_gen__bare_c_headers =
       _STR("\n\n%.*s\n\n#ifndef exit\n#define exit(rc) sys_exit(rc)\nvoid "
            "sys_exit (int);\n#endif\n\n",
