@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c50c681"
+#define V_COMMIT_HASH "1ad4177"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a02395f"
+#define V_COMMIT_HASH "c50c681"
 #endif
 #include <inttypes.h>
 
@@ -20776,7 +20776,7 @@ void v_dot_gen__Gen_gen_fn_decl(v_dot_gen__Gen *g, v_dot_ast__FnDecl it) {
 
     v_dot_gen__Gen_stmt(g, stmt);
   };
-  if (g->autofree && 0) {
+  if (g->autofree) {
     v_dot_ast__Scope *scope =
         v_dot_ast__Scope_innermost(&/* ? */ *g->file.scope, it.pos.pos - 1);
     map_v_dot_ast__Var tmp40 = scope->vars;
@@ -20793,7 +20793,6 @@ void v_dot_gen__Gen_gen_fn_decl(v_dot_gen__Gen *g, v_dot_ast__FnDecl it) {
         v_dot_gen__Gen_writeln(g, _STR("array_free(%.*s); // autofree",
                                        var.name.len, var.name.str));
       };
-      println(var.name);
     };
   };
   if (is_main) {
