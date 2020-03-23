@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c808430"
+#define V_COMMIT_HASH "e13bbd8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4867803"
+#define V_COMMIT_HASH "c808430"
 #endif
 #include <inttypes.h>
 
@@ -20818,18 +20818,27 @@ void v_dot_gen__Gen_fn_args(v_dot_gen__Gen *g, array_v_dot_table__Arg args,
     if (arg_type_sym->kind == v_dot_table__v_dot_table__Kind_function) {
       v_dot_table__FnType info = *(v_dot_table__FnType *)arg_type_sym->info.obj;
       v_dot_table__Fn func = info.func;
-      v_dot_gen__Gen_write(g, _STR("%.*s (*%.*s)(",
-                                   v_dot_gen__Gen_typ(g, func.return_type).len,
-                                   v_dot_gen__Gen_typ(g, func.return_type).str,
-                                   arg.name.len, arg.name.str));
-      strings__Builder_write(&/* ? */ g->definitions,
+      if (!info.is_anon) {
+        v_dot_gen__Gen_write(
+            g, string_add(string_add(arg_type_name, tos3(" ")), arg.name));
+        strings__Builder_write(
+            &/* ? */ g->definitions,
+            string_add(string_add(arg_type_name, tos3(" ")), arg.name));
+      } else {
+        v_dot_gen__Gen_write(g,
                              _STR("%.*s (*%.*s)(",
                                   v_dot_gen__Gen_typ(g, func.return_type).len,
                                   v_dot_gen__Gen_typ(g, func.return_type).str,
                                   arg.name.len, arg.name.str));
-      v_dot_gen__Gen_fn_args(g, func.args, func.is_variadic);
-      v_dot_gen__Gen_write(g, tos3(")"));
-      strings__Builder_write(&/* ? */ g->definitions, tos3(")"));
+        strings__Builder_write(&/* ? */ g->definitions,
+                               _STR("%.*s (*%.*s)(",
+                                    v_dot_gen__Gen_typ(g, func.return_type).len,
+                                    v_dot_gen__Gen_typ(g, func.return_type).str,
+                                    arg.name.len, arg.name.str));
+        v_dot_gen__Gen_fn_args(g, func.args, func.is_variadic);
+        v_dot_gen__Gen_write(g, tos3(")"));
+        strings__Builder_write(&/* ? */ g->definitions, tos3(")"));
+      };
     } else if (no_names) {
       v_dot_gen__Gen_write(g, arg_type_name);
       strings__Builder_write(&/* ? */ g->definitions, arg_type_name);
@@ -21787,7 +21796,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp110 = 0;
       bool tmp111 =
-          map_get(/*cgen.v : 1628*/ g->varaidic_args, type_str, &tmp110);
+          map_get(/*cgen.v : 1634*/ g->varaidic_args, type_str, &tmp110);
 
       if (len > tmp110) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -21878,7 +21887,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp121 = 0;
     bool tmp122 =
-        map_get(/*cgen.v : 1735*/ g->table->type_idxs, builtin_name, &tmp121);
+        map_get(/*cgen.v : 1741*/ g->table->type_idxs, builtin_name, &tmp121);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22039,7 +22048,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp146 = 0;
     bool tmp147 =
-        map_get(/*cgen.v : 1840*/ g->table->type_idxs, node.name, &tmp146);
+        map_get(/*cgen.v : 1846*/ g->table->type_idxs, node.name, &tmp146);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22266,6 +22275,15 @@ string v_dot_gen__Gen_type_default(v_dot_gen__Gen *g, v_dot_table__Type typ) {
   if (sym->kind == v_dot_table__v_dot_table__Kind_array) {
     string elem_type = tos3("int");
     return _STR("new_array(0, 1, sizeof(%.*s))", elem_type.len, elem_type.str);
+  };
+  if (sym->kind == v_dot_table__v_dot_table__Kind_map) {
+    v_dot_table__TypeSymbol *value_sym = v_dot_table__Table_get_type_symbol(
+        &/* ? */ *g->table,
+        v_dot_table__TypeSymbol_map_info(&/* ? */ *sym).value_type);
+    string value_typ_str =
+        string_replace(value_sym->name, tos3("."), tos3("__"));
+    return _STR("new_map(1, sizeof(%.*s))", value_typ_str.len,
+                value_typ_str.str);
   };
   if (v_dot_table__type_is_ptr(typ)) {
     return tos3("0");
