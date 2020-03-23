@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ae2d001"
+#define V_COMMIT_HASH "9c536f2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2e29e09"
+#define V_COMMIT_HASH "ae2d001"
 #endif
 #include <inttypes.h>
 
@@ -34051,7 +34051,7 @@ void compiler__Parser_cast(compiler__Parser *p, string typ) {
   compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
   p->expected_type = typ;
   string expr_typ = compiler__Parser_bool_expression(p);
-  if (string_eq(expr_typ, typ)) {
+  if (string_eq(expr_typ, typ) && string_ne(typ, tos3("u64"))) {
     compiler__Parser_warn(p,
                           _STR("casting `%.*s` to `%.*s` is not needed",
                                typ.len, typ.str, expr_typ.len, expr_typ.str));
