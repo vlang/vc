@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9c536f2"
+#define V_COMMIT_HASH "efe21fe"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ae2d001"
+#define V_COMMIT_HASH "9c536f2"
 #endif
 #include <inttypes.h>
 
@@ -20904,12 +20904,12 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
                                      it->exprs.len, it->exprs.len,
                                      elem_type_str.len, elem_type_str.str));
       } else {
+        int len = it->exprs.len;
         v_dot_gen__Gen_write(
-            g,
-            _STR("new_array_from_c_array(%d, %d, sizeof(%.*s), ", it->exprs.len,
-                 it->exprs.len, elem_type_str.len, elem_type_str.str));
-        v_dot_gen__Gen_writeln(
-            g, _STR("(%.*s[]){\t", elem_type_str.len, elem_type_str.str));
+            g, _STR("new_array_from_c_array(%d, %d, sizeof(%.*s), ", len, len,
+                    elem_type_str.len, elem_type_str.str));
+        v_dot_gen__Gen_writeln(g, _STR("(%.*s[%d]){\t", elem_type_str.len,
+                                       elem_type_str.str, len));
         array_v_dot_ast__Expr tmp49 = it->exprs;
         for (int tmp50 = 0; tmp50 < tmp49.len; tmp50++) {
           v_dot_ast__Expr expr = ((v_dot_ast__Expr *)tmp49.data)[tmp50];
@@ -21829,7 +21829,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp110 = 0;
       bool tmp111 =
-          map_get(/*cgen.v : 1642*/ g->varaidic_args, type_str, &tmp110);
+          map_get(/*cgen.v : 1643*/ g->varaidic_args, type_str, &tmp110);
 
       if (len > tmp110) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -21920,7 +21920,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp121 = 0;
     bool tmp122 =
-        map_get(/*cgen.v : 1749*/ g->table->type_idxs, builtin_name, &tmp121);
+        map_get(/*cgen.v : 1750*/ g->table->type_idxs, builtin_name, &tmp121);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22081,7 +22081,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp146 = 0;
     bool tmp147 =
-        map_get(/*cgen.v : 1854*/ g->table->type_idxs, node.name, &tmp146);
+        map_get(/*cgen.v : 1855*/ g->table->type_idxs, node.name, &tmp146);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
