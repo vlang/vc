@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4867803"
+#define V_COMMIT_HASH "c808430"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a5bd986"
+#define V_COMMIT_HASH "4867803"
 #endif
 #include <inttypes.h>
 
@@ -21688,7 +21688,6 @@ void v_dot_gen__Gen_struct_init(v_dot_gen__Gen *g, v_dot_ast__StructInit it) {
     is_struct = 1;
     info = *(v_dot_table__Struct *)sym->info.obj;
   };
-  /*opt*/ printf("%d\n", info.fields.len);
   string styp = v_dot_gen__Gen_typ(g, it.typ);
   if (g->is_amp) {
     strings__Builder_go_back(&/* ? */ g->out, 1);
@@ -22274,37 +22273,15 @@ string v_dot_gen__Gen_type_default(v_dot_gen__Gen *g, v_dot_table__Type typ) {
   if (sym->kind == v_dot_table__v_dot_table__Kind_struct_) {
     return tos3("{0}");
   };
+  int idx = ((int)(typ));
+  if (idx >= 1 && idx <= 17) {
+    return tos3("0");
+  };
   string tmp175 = sym->name;
 
-  if (string_eq(tmp175, tos3("bool"))) {
-    return tos3("0");
-  } else if (string_eq(tmp175, tos3("string"))) {
+  if (string_eq(tmp175, tos3("string"))) {
     return tos3("tos3(\"\")");
-  } else if (string_eq(tmp175, tos3("i8"))) {
-    return tos3("0");
-  } else if (string_eq(tmp175, tos3("i16"))) {
-    return tos3("0");
-  } else if (string_eq(tmp175, tos3("i64"))) {
-    return tos3("0");
-  } else if (string_eq(tmp175, tos3("u16"))) {
-    return tos3("0");
-  } else if (string_eq(tmp175, tos3("u32"))) {
-    return tos3("0");
-  } else if (string_eq(tmp175, tos3("u64"))) {
-    return tos3("0");
-  } else if (string_eq(tmp175, tos3("byte"))) {
-    return tos3("0");
-  } else if (string_eq(tmp175, tos3("int"))) {
-    return tos3("0");
   } else if (string_eq(tmp175, tos3("rune"))) {
-    return tos3("0");
-  } else if (string_eq(tmp175, tos3("f32"))) {
-    return tos3("0.0");
-  } else if (string_eq(tmp175, tos3("f64"))) {
-    return tos3("0.0");
-  } else if (string_eq(tmp175, tos3("byteptr"))) {
-    return tos3("0");
-  } else if (string_eq(tmp175, tos3("voidptr"))) {
     return tos3("0");
   } else // default:
   {
