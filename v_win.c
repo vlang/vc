@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "89af7e7"
+#define V_COMMIT_HASH "a5bd986"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2efc379"
+#define V_COMMIT_HASH "89af7e7"
 #endif
 #include <inttypes.h>
 
@@ -21905,12 +21905,14 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
 static inline void v_dot_gen__Gen_ref_or_deref_arg(v_dot_gen__Gen *g,
                                                    v_dot_ast__CallArg arg) {
   bool arg_is_ptr = v_dot_table__type_is_ptr(arg.expected_type) ||
-                    arg.expected_type == v_dot_table__voidptr_type_idx;
-  bool expr_is_ptr = v_dot_table__type_is_ptr(arg.typ);
+                    (_IN(int, (v_dot_table__type_idx(arg.expected_type)),
+                         v_dot_table__pointer_type_idxs));
+  bool expr_is_ptr = v_dot_table__type_is_ptr(arg.typ) ||
+                     (_IN(int, (v_dot_table__type_idx(arg.typ)),
+                          v_dot_table__pointer_type_idxs));
   if (arg.is_mut && !arg_is_ptr) {
     v_dot_gen__Gen_write(g, tos3("&/*mut*/"));
-  } else if (arg_is_ptr && !expr_is_ptr &&
-             arg.typ != v_dot_table__byteptr_type) {
+  } else if (arg_is_ptr && !expr_is_ptr) {
     v_dot_gen__Gen_write(g, tos3("&/*q*/"));
   } else if (!arg_is_ptr && expr_is_ptr) {
     v_dot_gen__Gen_write(g, tos3("*/*d*/"));
