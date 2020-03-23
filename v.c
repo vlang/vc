@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "80676cf"
+#define V_COMMIT_HASH "2e29e09"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e13bbd8"
+#define V_COMMIT_HASH "80676cf"
 #endif
 #include <inttypes.h>
 
@@ -2524,6 +2524,7 @@ void map_rehash(map *m);
 void map_cached_rehash(map *m, u32 old_cap);
 bool map_get(map m, string key, void *out);
 void *map_get2(map m, string key);
+void *map_get3(map m, string key, void *zero);
 bool map_exists(map m, string key);
 void v_map_delete(map *m, string key);
 array_string map_keys(map *m);
@@ -6197,16 +6198,41 @@ void *map_get2(map m, string key) {
   };
   return ((voidptr)(0));
 }
+void *map_get3(map m, string key, void *zero) {
+  _V_MulRet_u32_V_u32 _V_mret_1633_index_meta = map_key_to_index(m, key);
+  u32 index = _V_mret_1633_index_meta.var_0;
+  u32 meta = _V_mret_1633_index_meta.var_1;
+  _V_MulRet_u32_V_u32 _V_mret_1643_index_meta = meta_less(m.metas, index, meta);
+  index = _V_mret_1643_index_meta.var_0;
+  meta = _V_mret_1643_index_meta.var_1;
+  while (meta == m.metas[/*ptr!*/ index] /*ru32 0*/) {
+
+    u32 kv_index = m.metas[/*ptr!*/ index + 1] /*ru32 0*/;
+    if (string_eq(key,
+                  m.key_values.data[/*ptr!*/ kv_index] /*rKeyValue 0*/.key)) {
+      byte *out = v_malloc(m.value_bytes);
+      memcpy((char *)out,
+             m.key_values.data[/*ptr!*/ kv_index] /*rKeyValue 0*/.value,
+             m.value_bytes);
+      return out;
+    };
+    index += 2;
+    meta += builtin__probe_inc;
+  };
+  byte *out = v_malloc(m.value_bytes);
+  memcpy((char *)out, zero, m.value_bytes);
+  return out;
+}
 bool map_exists(map m, string key) {
   if (m.value_bytes == 0) {
     return 0;
   };
-  _V_MulRet_u32_V_u32 _V_mret_1640_index_meta = map_key_to_index(m, key);
-  u32 index = _V_mret_1640_index_meta.var_0;
-  u32 meta = _V_mret_1640_index_meta.var_1;
-  _V_MulRet_u32_V_u32 _V_mret_1650_index_meta = meta_less(m.metas, index, meta);
-  index = _V_mret_1650_index_meta.var_0;
-  meta = _V_mret_1650_index_meta.var_1;
+  _V_MulRet_u32_V_u32 _V_mret_1777_index_meta = map_key_to_index(m, key);
+  u32 index = _V_mret_1777_index_meta.var_0;
+  u32 meta = _V_mret_1777_index_meta.var_1;
+  _V_MulRet_u32_V_u32 _V_mret_1787_index_meta = meta_less(m.metas, index, meta);
+  index = _V_mret_1787_index_meta.var_0;
+  meta = _V_mret_1787_index_meta.var_1;
   while (meta == m.metas[/*ptr!*/ index] /*ru32 0*/) {
 
     u32 kv_index = m.metas[/*ptr!*/ index + 1] /*ru32 0*/;
@@ -6220,13 +6246,13 @@ bool map_exists(map m, string key) {
   return 0;
 }
 void v_map_delete(map *m, string key) {
-  _V_MulRet_u32_V_u32 _V_mret_1726_index_meta = map_key_to_index(*m, key);
-  u32 index = _V_mret_1726_index_meta.var_0;
-  u32 meta = _V_mret_1726_index_meta.var_1;
-  _V_MulRet_u32_V_u32 _V_mret_1736_index_meta =
+  _V_MulRet_u32_V_u32 _V_mret_1863_index_meta = map_key_to_index(*m, key);
+  u32 index = _V_mret_1863_index_meta.var_0;
+  u32 meta = _V_mret_1863_index_meta.var_1;
+  _V_MulRet_u32_V_u32 _V_mret_1873_index_meta =
       meta_less(m->metas, index, meta);
-  index = _V_mret_1736_index_meta.var_0;
-  meta = _V_mret_1736_index_meta.var_1;
+  index = _V_mret_1873_index_meta.var_0;
+  meta = _V_mret_1873_index_meta.var_1;
   while (meta == m->metas[/*ptr!*/ index] /*ru32 1*/) {
 
     u32 kv_index = m->metas[/*ptr!*/ index + 1] /*ru32 1*/;
@@ -21554,12 +21580,14 @@ void v_dot_gen__Gen_index_expr(v_dot_gen__Gen *g, v_dot_ast__IndexExpr node) {
         v_dot_gen__Gen_write(
             g, _STR(", &(%.*s[]) { ", elem_type_str.len, elem_type_str.str));
       } else {
-        v_dot_gen__Gen_write(g, _STR("(*(%.*s*)map_get2(", elem_type_str.len,
+        string zero = v_dot_gen__Gen_type_default(&/* ? */ *g, info.value_type);
+        v_dot_gen__Gen_write(g, _STR("(*(%.*s*)map_get3(", elem_type_str.len,
                                      elem_type_str.str));
         v_dot_gen__Gen_expr(g, node.left);
         v_dot_gen__Gen_write(g, tos3(", "));
         v_dot_gen__Gen_expr(g, node.index);
-        v_dot_gen__Gen_write(g, tos3("))"));
+        v_dot_gen__Gen_write(g, _STR(", &(%.*s[]){ %.*s }))", elem_type_str.len,
+                                     elem_type_str.str, zero.len, zero.str));
       };
     } else if (sym->kind == v_dot_table__v_dot_table__Kind_string &&
                !v_dot_table__type_is_ptr(node.container_type)) {
@@ -21796,7 +21824,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp110 = 0;
       bool tmp111 =
-          map_get(/*cgen.v : 1634*/ g->varaidic_args, type_str, &tmp110);
+          map_get(/*cgen.v : 1642*/ g->varaidic_args, type_str, &tmp110);
 
       if (len > tmp110) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -21887,7 +21915,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp121 = 0;
     bool tmp122 =
-        map_get(/*cgen.v : 1741*/ g->table->type_idxs, builtin_name, &tmp121);
+        map_get(/*cgen.v : 1749*/ g->table->type_idxs, builtin_name, &tmp121);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22048,7 +22076,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp146 = 0;
     bool tmp147 =
-        map_get(/*cgen.v : 1846*/ g->table->type_idxs, node.name, &tmp146);
+        map_get(/*cgen.v : 1854*/ g->table->type_idxs, node.name, &tmp146);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
