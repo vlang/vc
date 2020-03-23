@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e13bbd8"
+#define V_COMMIT_HASH "80676cf"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c808430"
+#define V_COMMIT_HASH "e13bbd8"
 #endif
 #include <inttypes.h>
 
@@ -21719,7 +21719,7 @@ void v_dot_gen__Gen_struct_init(v_dot_gen__Gen *g, v_dot_ast__StructInit it) {
         g, (*(v_dot_ast__Expr *)array_get(it.exprs, i)),
         (*(v_dot_table__Type *)array_get(it.expr_types, i)),
         (*(v_dot_table__Type *)array_get(it.expected_types, i)));
-    v_dot_gen__Gen_writeln(g, tos3(", "));
+    v_dot_gen__Gen_writeln(g, tos3(","));
   };
   if (is_struct) {
     array_v_dot_table__Field tmp102 = info.fields;
@@ -21735,7 +21735,7 @@ void v_dot_gen__Gen_struct_init(v_dot_gen__Gen *g, v_dot_ast__StructInit it) {
                                      field_name.str, zero.len, zero.str));
     };
   };
-  if (it.fields.len == 0) {
+  if (it.fields.len == 0 && info.fields.len == 0) {
     v_dot_gen__Gen_write(g, tos3("0"));
   };
   v_dot_gen__Gen_write(g, tos3("}"));
