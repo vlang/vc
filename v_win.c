@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4d33623"
+#define V_COMMIT_HASH "5d976d8"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "32c8eb6"
+#define V_COMMIT_HASH "4d33623"
 #endif
 #include <inttypes.h>
 
@@ -1043,10 +1043,6 @@ struct v_dot_ast__FloatLiteral {
   string val;
 };
 
-struct v_dot_ast__StringLiteral {
-  string val;
-};
-
 struct v_dot_ast__CharLiteral {
   string val;
 };
@@ -1539,6 +1535,12 @@ struct v_dot_ast__Block {
 struct v_dot_ast__ExprStmt {
   v_dot_ast__Expr expr;
   v_dot_table__Type typ;
+};
+
+struct v_dot_ast__StringLiteral {
+  string val;
+  bool is_raw;
+  bool is_c;
 };
 
 struct v_dot_ast__StringInterLiteral {
@@ -17517,6 +17519,10 @@ v_dot_ast__Expr v_dot_parser__Parser_name_expr(v_dot_parser__Parser *p) {
                       sizeof(v_dot_ast__MapInit)),
         .typ = SumType_v_dot_ast__Expr_MapInit};
   };
+  if (string_eq(p->tok.lit, tos3("r")) &&
+      p->peek_tok.kind == v_dot_token__v_dot_token__Kind_string) {
+    return v_dot_parser__Parser_string_expr(p);
+  };
   bool known_var = v_dot_ast__Scope_known_var(&/* ? */ *p->scope, p->tok.lit);
   if (p->peek_tok.kind == v_dot_token__v_dot_token__Kind_dot && !known_var &&
       (is_c || v_dot_parser__Parser_known_import(&/* ? */ *p, p->tok.lit) ||
@@ -17525,7 +17531,7 @@ v_dot_ast__Expr v_dot_parser__Parser_name_expr(v_dot_parser__Parser *p) {
       mod = tos3("C");
     } else {
       string tmp17 = tos3("");
-      bool tmp18 = map_get(/*parser.v : 604*/ p->imports, p->tok.lit, &tmp17);
+      bool tmp18 = map_get(/*parser.v : 609*/ p->imports, p->tok.lit, &tmp17);
 
       if (!tmp18)
         tmp17 = tos((byte *)"", 0);
@@ -18230,12 +18236,19 @@ v_dot_ast__IfExpr v_dot_parser__Parser_if_expr(v_dot_parser__Parser *p) {
   };
 }
 v_dot_ast__Expr v_dot_parser__Parser_string_expr(v_dot_parser__Parser *p) {
+  bool is_raw = p->tok.kind == v_dot_token__v_dot_token__Kind_name &&
+                string_eq(p->tok.lit, tos3("r"));
+  bool is_cstr = p->tok.kind == v_dot_token__v_dot_token__Kind_name &&
+                 string_eq(p->tok.lit, tos3("c"));
+  if (is_raw || is_cstr) {
+    v_dot_parser__Parser_next(p);
+  };
   v_dot_ast__Expr node = (v_dot_ast__Expr){EMPTY_STRUCT_INITIALIZATION};
   string val = p->tok.lit;
   node = /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
-      .obj = memdup(
-          &(v_dot_ast__StringLiteral[]){(v_dot_ast__StringLiteral){.val = val}},
-          sizeof(v_dot_ast__StringLiteral)),
+      .obj = memdup(&(v_dot_ast__StringLiteral[]){(v_dot_ast__StringLiteral){
+                        .val = val, .is_raw = is_raw, .is_c = is_cstr}},
+                    sizeof(v_dot_ast__StringLiteral)),
       .typ = SumType_v_dot_ast__Expr_StringLiteral};
   if (p->peek_tok.kind != v_dot_token__v_dot_token__Kind_str_dollar) {
     v_dot_parser__Parser_next(p);
@@ -19730,7 +19743,7 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
         v_dot_table__TypeSymbol *typ_sym =
             v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, typ);
         v_dot_checker__Checker_error(c,
-                                     _STR("for in: cannot index %.*s",
+                                     _STR("for in: cannot index `%.*s`",
                                           typ_sym->name.len, typ_sym->name.str),
                                      it->pos);
       };
