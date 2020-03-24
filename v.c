@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "0433e24"
+#define V_COMMIT_HASH "309a905"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "efe21fe"
+#define V_COMMIT_HASH "0433e24"
 #endif
 #include <inttypes.h>
 
@@ -2076,7 +2076,9 @@ struct v_dot_ast__ForInStmt {
   v_dot_ast__Expr high;
   array_v_dot_ast__Stmt stmts;
   v_dot_token__Position pos;
-  v_dot_table__Type element_type;
+  v_dot_table__Type key_type;
+  v_dot_table__Type val_type;
+  v_dot_table__Type cond_type;
   v_dot_table__Kind kind;
 };
 
@@ -19577,6 +19579,7 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
             ((tmp92 == v_dot_table__v_dot_table__Kind_map)
                  ? (v_dot_table__TypeSymbol_map_info(&/* ? */ *sym).key_type)
                  : (v_dot_table__int_type));
+        it->key_type = key_type;
         v_dot_ast__Scope_override_var(scope, (v_dot_ast__Var){
                                                  .name = it->key_var,
                                                  .typ = key_type,
@@ -19593,8 +19596,9 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
                                           typ_sym->name.len, typ_sym->name.str),
                                      it->pos);
       };
+      it->cond_type = typ;
       it->kind = sym->kind;
-      it->element_type = value_type;
+      it->val_type = value_type;
       v_dot_ast__Scope_override_var(scope, (v_dot_ast__Var){
                                                .name = it->val_var,
                                                .typ = value_type,
@@ -19807,7 +19811,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     };
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp103 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
-    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4401_var_scope_var;
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4411_var_scope_var;
     if (!tmp103.ok) {
       string err = tmp103.error;
       int errcode = tmp103.ecode;
@@ -19819,11 +19823,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_4401_var_scope_var =
+    _V_mret_4411_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp103.data;
     ;
-    var_scope = _V_mret_4401_var_scope_var.var_0;
-    var = _V_mret_4401_var_scope_var.var_1;
+    var_scope = _V_mret_4411_var_scope_var.var_0;
+    var = _V_mret_4411_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
@@ -20523,12 +20527,45 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
           g, _STR("for (int %.*s = 0; %.*s < ", i.len, i.str, i.len, i.str));
       v_dot_gen__Gen_expr(g, it->cond);
       v_dot_gen__Gen_writeln(g, _STR(".len; %.*s++) {", i.len, i.str));
-      string styp = v_dot_gen__Gen_typ(g, it->element_type);
+      string styp = v_dot_gen__Gen_typ(g, it->val_type);
       v_dot_gen__Gen_write(g, _STR("%.*s %.*s = ((%.*s*)", styp.len, styp.str,
                                    it->val_var.len, it->val_var.str, styp.len,
                                    styp.str));
       v_dot_gen__Gen_expr(g, it->cond);
       v_dot_gen__Gen_writeln(g, _STR(".data)[%.*s];", i.len, i.str));
+      v_dot_gen__Gen_stmts(g, it->stmts);
+      v_dot_gen__Gen_writeln(g, tos3("}"));
+    } else if (it->kind == v_dot_table__v_dot_table__Kind_map) {
+      v_dot_gen__Gen_writeln(g, tos3("// FOR IN"));
+      string key_styp = v_dot_gen__Gen_typ(g, it->key_type);
+      string val_styp = v_dot_gen__Gen_typ(g, it->val_type);
+      string keys_tmp =
+          string_add(tos3("keys_"), v_dot_gen__Gen_new_tmp_var(g));
+      string idx = v_dot_gen__Gen_new_tmp_var(g);
+      string key =
+          ((string_eq(it->key_var, tos3(""))) ? (v_dot_gen__Gen_new_tmp_var(g))
+                                              : (it->key_var));
+      v_dot_gen__Gen_write(g, _STR("array_%.*s %.*s = map_keys(&", key_styp.len,
+                                   key_styp.str, keys_tmp.len, keys_tmp.str));
+      v_dot_gen__Gen_expr(g, it->cond);
+      v_dot_gen__Gen_writeln(g, tos3(");"));
+      v_dot_gen__Gen_writeln(
+          g, _STR("for (int %.*s = 0; %.*s < %.*s.len; %.*s++) {", idx.len,
+                  idx.str, idx.len, idx.str, keys_tmp.len, keys_tmp.str,
+                  idx.len, idx.str));
+      v_dot_gen__Gen_writeln(
+          g, _STR("%.*s %.*s = ((%.*s*)%.*s.data)[%.*s];", key_styp.len,
+                  key_styp.str, key.len, key.str, key_styp.len, key_styp.str,
+                  keys_tmp.len, keys_tmp.str, idx.len, idx.str));
+      string zero = v_dot_gen__Gen_type_default(&/* ? */ *g, it->val_type);
+      v_dot_gen__Gen_write(g,
+                           _STR("%.*s %.*s = (*(%.*s*)map_get3(", val_styp.len,
+                                val_styp.str, it->val_var.len, it->val_var.str,
+                                val_styp.len, val_styp.str));
+      v_dot_gen__Gen_expr(g, it->cond);
+      v_dot_gen__Gen_writeln(g, _STR(", %.*s, &(%.*s[]){ %.*s }));", key.len,
+                                     key.str, val_styp.len, val_styp.str,
+                                     zero.len, zero.str));
       v_dot_gen__Gen_stmts(g, it->stmts);
       v_dot_gen__Gen_writeln(g, tos3("}"));
     };
@@ -21829,7 +21866,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string type_str = int_str(((int)(arg.expected_type)));
       int tmp110 = 0;
       bool tmp111 =
-          map_get(/*cgen.v : 1643*/ g->varaidic_args, type_str, &tmp110);
+          map_get(/*cgen.v : 1663*/ g->varaidic_args, type_str, &tmp110);
 
       if (len > tmp110) {
         map_set(&g->varaidic_args, type_str, &(int[]){len});
@@ -21920,7 +21957,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp121 = 0;
     bool tmp122 =
-        map_get(/*cgen.v : 1750*/ g->table->type_idxs, builtin_name, &tmp121);
+        map_get(/*cgen.v : 1770*/ g->table->type_idxs, builtin_name, &tmp121);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22081,7 +22118,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp146 = 0;
     bool tmp147 =
-        map_get(/*cgen.v : 1855*/ g->table->type_idxs, node.name, &tmp146);
+        map_get(/*cgen.v : 1875*/ g->table->type_idxs, node.name, &tmp146);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
