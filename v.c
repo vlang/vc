@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f101e9b"
+#define V_COMMIT_HASH "9a8bd3f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3d2fafa"
+#define V_COMMIT_HASH "f101e9b"
 #endif
 #include <inttypes.h>
 
@@ -16330,7 +16330,7 @@ v_dot_ast__FnDecl v_dot_parser__Parser_fn_decl(v_dot_parser__Parser *p) {
         type_sym, (v_dot_table__Fn){.name = name,
                                     .args = args,
                                     .return_type = return_type,
-                                    .is_variadic = 0,
+                                    .is_variadic = is_variadic,
                                     .is_c = 0});
   } else {
     if (is_c) {
@@ -19168,19 +19168,23 @@ v_dot_table__Type v_dot_checker__Checker_method_call_expr(
 
   if (tmp43.ok) {
     v_dot_table__Fn method = *(v_dot_table__Fn *)tmp43.data;
-    if (method_call_expr->args.len < method.args.len - 1) {
+    int no_args = method.args.len - 1;
+    int min_required_args =
+        method.args.len -
+        ((method.is_variadic && method.args.len > 1) ? (2) : (1));
+    if (method_call_expr->args.len < min_required_args) {
       v_dot_checker__Checker_error(
           c,
-          _STR("too few arguments in call to `%.*s.%.*s`", typ_sym->name.len,
-               typ_sym->name.str, name.len, name.str),
+          _STR("too few arguments in call to `%.*s.%.*s` (%d instead of %d)",
+               typ_sym->name.len, typ_sym->name.str, name.len, name.str,
+               method_call_expr->args.len, min_required_args),
           method_call_expr->pos);
-    } else if (!method.is_variadic &&
-               method_call_expr->args.len > method.args.len + 1) {
+    } else if (!method.is_variadic && method_call_expr->args.len > no_args) {
       v_dot_checker__Checker_error(
           c,
           _STR("too many arguments in call to `%.*s.%.*s` (%d instead of %d)",
                typ_sym->name.len, typ_sym->name.str, name.len, name.str,
-               method_call_expr->args.len, method.args.len),
+               method_call_expr->args.len, no_args),
           method_call_expr->pos);
     };
     array_v_dot_ast__CallArg tmp44 = method_call_expr->args;
@@ -19202,7 +19206,7 @@ v_dot_table__Type v_dot_checker__Checker_method_call_expr(
   if ((typ_sym->kind == v_dot_table__v_dot_table__Kind_map) &&
       string_eq(name, tos3("str"))) {
     int tmp53 = 0;
-    bool tmp54 = map_get(/*checker.v : 329*/ c->table->type_idxs,
+    bool tmp54 = map_get(/*checker.v : 331*/ c->table->type_idxs,
                          tos3("map_string"), &tmp53);
 
     method_call_expr->receiver_type = v_dot_table__new_type(tmp53);
@@ -19297,7 +19301,7 @@ void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
   return_stmt->types = got_types;
   int tmp61 = 0;
   bool tmp62 =
-      map_get(/*checker.v : 390*/ c->table->type_idxs, tos3("Option"), &tmp61);
+      map_get(/*checker.v : 392*/ c->table->type_idxs, tos3("Option"), &tmp61);
 
   if (exp_is_optional &&
       (v_dot_table__type_idx((*(v_dot_table__Type *)array_get(got_types, 0))) ==
@@ -19818,7 +19822,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     };
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp103 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
-    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4411_var_scope_var;
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4441_var_scope_var;
     if (!tmp103.ok) {
       string err = tmp103.error;
       int errcode = tmp103.ecode;
@@ -19830,11 +19834,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_4411_var_scope_var =
+    _V_mret_4441_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp103.data;
     ;
-    var_scope = _V_mret_4411_var_scope_var.var_0;
-    var = _V_mret_4411_var_scope_var.var_1;
+    var_scope = _V_mret_4441_var_scope_var.var_0;
+    var = _V_mret_4441_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
