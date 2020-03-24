@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a3046b6"
+#define V_COMMIT_HASH "b495e78"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cc9537d"
+#define V_COMMIT_HASH "a3046b6"
 #endif
 #include <inttypes.h>
 
@@ -5778,8 +5778,9 @@ static inline string int_str_l(int nn, int max) {
     d = ((n - (n1 * 100)) << 1);
     n = n1;
     buf[/*ptr!*/ index--] /*rbyte 1*/ =
-        builtin__digit_pairs.str[d++] /*rbyte 0*/;
-    buf[/*ptr!*/ index--] /*rbyte 1*/ = builtin__digit_pairs.str[d] /*rbyte 0*/;
+        builtin__digit_pairs.str[/*ptr!*/ d++] /*rbyte 0*/;
+    buf[/*ptr!*/ index--] /*rbyte 1*/ =
+        builtin__digit_pairs.str[/*ptr!*/ d] /*rbyte 0*/;
   };
   index++;
   if (d < 20) {
@@ -22478,6 +22479,7 @@ string v_dot_gen__Gen_type_default(v_dot_gen__Gen *g, v_dot_table__Type typ) {
 }
 void v_dot_gen__Gen_write_tests_main(v_dot_gen__Gen *g) {
   v_dot_gen__Gen_writeln(g, tos3("int main() {"));
+  v_dot_gen__Gen_writeln(g, tos3("\t_vinit();"));
   map_v_dot_table__Fn tmp176 = g->table->fns;
   array_string keys_tmp176 = map_keys(&tmp176);
   for (int l = 0; l < keys_tmp176.len; l++) {
@@ -22488,7 +22490,7 @@ void v_dot_gen__Gen_write_tests_main(v_dot_gen__Gen *g) {
     if (!string_starts_with(f.name, tos3("test_"))) {
       continue;
     };
-    v_dot_gen__Gen_writeln(g, _STR("%.*s();", f.name.len, f.name.str));
+    v_dot_gen__Gen_writeln(g, _STR("\t%.*s();", f.name.len, f.name.str));
   };
   v_dot_gen__Gen_writeln(g, tos3("return 0; }"));
 }
