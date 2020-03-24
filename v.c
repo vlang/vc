@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "efe21fe"
+#define V_COMMIT_HASH "0433e24"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9c536f2"
+#define V_COMMIT_HASH "efe21fe"
 #endif
 #include <inttypes.h>
 
@@ -22306,17 +22306,22 @@ string v_dot_gen__Gen_type_default(v_dot_gen__Gen *g, v_dot_table__Type typ) {
   v_dot_table__TypeSymbol *sym =
       v_dot_table__Table_get_type_symbol(&/* ? */ *g->table, typ);
   if (sym->kind == v_dot_table__v_dot_table__Kind_array) {
-    string elem_type = tos3("int");
-    return _STR("new_array(0, 1, sizeof(%.*s))", elem_type.len, elem_type.str);
+    v_dot_table__TypeSymbol *elem_sym = v_dot_table__Table_get_type_symbol(
+        &/* ? */ *g->table,
+        v_dot_table__TypeSymbol_array_info(&/* ? */ *sym).elem_type);
+    string elem_type_str =
+        string_replace(elem_sym->name, tos3("."), tos3("__"));
+    return _STR("new_array(0, 1, sizeof(%.*s))", elem_type_str.len,
+                elem_type_str.str);
   };
   if (sym->kind == v_dot_table__v_dot_table__Kind_map) {
     v_dot_table__TypeSymbol *value_sym = v_dot_table__Table_get_type_symbol(
         &/* ? */ *g->table,
         v_dot_table__TypeSymbol_map_info(&/* ? */ *sym).value_type);
-    string value_typ_str =
+    string value_type_str =
         string_replace(value_sym->name, tos3("."), tos3("__"));
-    return _STR("new_map(1, sizeof(%.*s))", value_typ_str.len,
-                value_typ_str.str);
+    return _STR("new_map(1, sizeof(%.*s))", value_type_str.len,
+                value_type_str.str);
   };
   if (v_dot_table__type_is_ptr(typ)) {
     return tos3("0");
