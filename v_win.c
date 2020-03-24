@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "cc9537d"
+#define V_COMMIT_HASH "a3046b6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "437bba5"
+#define V_COMMIT_HASH "cc9537d"
 #endif
 #include <inttypes.h>
 
@@ -21023,10 +21023,10 @@ void v_dot_gen__Gen_gen_fn_decl(v_dot_gen__Gen *g, v_dot_ast__FnDecl it) {
     v_dot_gen__Gen_writeln(g, tos3("_vinit();"));
     if (g->autofree) {
       v_dot_gen__Gen_writeln(
-          g, tos3("free(os__args.data); // empty, inited in _vinit()"));
+          g, tos3("free(_const_os__args.data); // empty, inited in _vinit()"));
     };
     v_dot_gen__Gen_writeln(
-        g, tos3("os__args = os__init_os_args(argc, (byteptr*)argv);"));
+        g, tos3("_const_os__args = os__init_os_args(argc, (byteptr*)argv);"));
   };
   v_dot_gen__Gen_stmts(g, it.stmts);
   if (g->autofree) {
