@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "7aff0cb"
+#define V_COMMIT_HASH "e012966"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d98bb44"
+#define V_COMMIT_HASH "7aff0cb"
 #endif
 #include <inttypes.h>
 
@@ -720,6 +720,8 @@ typedef struct {
 } v_dot_ast__Stmt;
 
 typedef struct v_dot_ast__Type v_dot_ast__Type;
+typedef struct v_dot_ast__Block v_dot_ast__Block;
+typedef array array_v_dot_ast__Stmt;
 typedef struct v_dot_ast__ExprStmt v_dot_ast__ExprStmt;
 typedef struct v_dot_ast__IntegerLiteral v_dot_ast__IntegerLiteral;
 typedef struct v_dot_ast__FloatLiteral v_dot_ast__FloatLiteral;
@@ -737,7 +739,6 @@ typedef struct v_dot_ast__StructDecl v_dot_ast__StructDecl;
 typedef struct v_dot_ast__StructInit v_dot_ast__StructInit;
 typedef struct v_dot_ast__Import v_dot_ast__Import;
 typedef struct v_dot_ast__FnDecl v_dot_ast__FnDecl;
-typedef array array_v_dot_ast__Stmt;
 typedef struct v_dot_ast__BranchStmt v_dot_ast__BranchStmt;
 typedef struct v_dot_ast__CallExpr v_dot_ast__CallExpr;
 typedef array array_v_dot_ast__CallArg;
@@ -1529,6 +1530,10 @@ struct benchmark__Benchmark {
 
 struct v_dot_ast__Type {
   v_dot_table__Type typ;
+};
+
+struct v_dot_ast__Block {
+  array_v_dot_ast__Stmt stmts;
 };
 
 struct v_dot_ast__ExprStmt {
@@ -4883,6 +4888,7 @@ const char *__SumTypeNames__v_dot_ast__Expr[] = {
 #define SumType_v_dot_ast__Stmt_AssertStmt 24       // DEF2
 #define SumType_v_dot_ast__Stmt_UnsafeStmt 25       // DEF2
 #define SumType_v_dot_ast__Stmt_GoStmt 26           // DEF2
+#define SumType_v_dot_ast__Stmt_Block 27            // DEF2
 const char *__SumTypeNames__v_dot_ast__Stmt[] = {
     "v_dot_ast__Stmt", "GlobalDecl", "FnDecl",      "Return",
     "Module",          "Import",     "ExprStmt",    "ForStmt",
@@ -4890,7 +4896,7 @@ const char *__SumTypeNames__v_dot_ast__Stmt[] = {
     "ConstDecl",       "Attr",       "BranchStmt",  "HashStmt",
     "AssignStmt",      "EnumDecl",   "TypeDecl",    "DeferStmt",
     "GotoLabel",       "GotoStmt",   "LineComment", "MultiLineComment",
-    "AssertStmt",      "UnsafeStmt", "GoStmt",
+    "AssertStmt",      "UnsafeStmt", "GoStmt",      "Block",
 };
 //// SUMTYPE:  v.ast | parent: v_dot_ast__IdentInfo | name:
 #define SumType_v_dot_ast__IdentInfo_IdentFn 1  // DEF2
@@ -17241,7 +17247,13 @@ v_dot_parser__Parser_line_comment(v_dot_parser__Parser *p) {
 v_dot_ast__Stmt v_dot_parser__Parser_stmt(v_dot_parser__Parser *p) {
   v_dot_token__Kind tmp12 = p->tok.kind;
 
-  if (tmp12 == v_dot_token__v_dot_token__Kind_key_assert) {
+  if (tmp12 == v_dot_token__v_dot_token__Kind_lcbr) {
+    array_v_dot_ast__Stmt stmts = v_dot_parser__Parser_parse_block(p);
+    return /*SUM TYPE CAST2*/ (v_dot_ast__Stmt){
+        .obj = memdup(&(v_dot_ast__Block[]){(v_dot_ast__Block){.stmts = stmts}},
+                      sizeof(v_dot_ast__Block)),
+        .typ = SumType_v_dot_ast__Stmt_Block};
+  } else if (tmp12 == v_dot_token__v_dot_token__Kind_key_assert) {
     v_dot_parser__Parser_next(p);
     v_dot_ast__Expr expr = v_dot_parser__Parser_expr(p, 0);
     return /*SUM TYPE CAST2*/ (v_dot_ast__Stmt){
@@ -17513,7 +17525,7 @@ v_dot_ast__Expr v_dot_parser__Parser_name_expr(v_dot_parser__Parser *p) {
       mod = tos3("C");
     } else {
       string tmp17 = tos3("");
-      bool tmp18 = map_get(/*parser.v : 598*/ p->imports, p->tok.lit, &tmp17);
+      bool tmp18 = map_get(/*parser.v : 604*/ p->imports, p->tok.lit, &tmp17);
 
       if (!tmp18)
         tmp17 = tos((byte *)"", 0);
