@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "437bba5"
+#define V_COMMIT_HASH "cc9537d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2a7bc63"
+#define V_COMMIT_HASH "437bba5"
 #endif
 #include <inttypes.h>
 
@@ -20266,7 +20266,7 @@ string v_dot_gen__cgen(array_v_dot_ast__File files, v_dot_table__Table *table) {
                       string_contains(g.file.path, tos3("cmd/v"));
     bool is_test = string_ends_with(g.file.path, tos3(".vv")) ||
                    string_ends_with(g.file.path, tos3("_test.v"));
-    if (is_test) {
+    if (string_ends_with(g.file.path, tos3("_test.v"))) {
       g.is_test = is_test;
     };
     if (string_eq(g.file.path, tos3("")) || is_test || building_v) {
