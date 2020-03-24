@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "32c8eb6"
+#define V_COMMIT_HASH "4d33623"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e012966"
+#define V_COMMIT_HASH "32c8eb6"
 #endif
 #include <inttypes.h>
 
@@ -18180,7 +18180,8 @@ v_dot_ast__ArrayInit v_dot_parser__Parser_array_init(v_dot_parser__Parser *p) {
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_rsbr) {
     int line_nr = p->tok.line_nr;
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rsbr);
-    if (p->tok.kind == v_dot_token__v_dot_token__Kind_name &&
+    if ((p->tok.kind == v_dot_token__v_dot_token__Kind_name ||
+         p->tok.kind == v_dot_token__v_dot_token__Kind_amp) &&
         p->tok.line_nr == line_nr) {
       elem_type = v_dot_parser__Parser_parse_type(p);
       int idx =
@@ -18200,7 +18201,9 @@ v_dot_ast__ArrayInit v_dot_parser__Parser_array_init(v_dot_parser__Parser *p) {
     };
     int line_nr = p->tok.line_nr;
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rsbr);
-    if (exprs.len == 1 && p->tok.kind == v_dot_token__v_dot_token__Kind_name &&
+    if (exprs.len == 1 &&
+        (p->tok.kind == v_dot_token__v_dot_token__Kind_name ||
+         p->tok.kind == v_dot_token__v_dot_token__Kind_amp) &&
         p->tok.line_nr == line_nr) {
       elem_type = v_dot_parser__Parser_parse_type(p);
     };
