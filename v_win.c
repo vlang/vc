@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d98bb44"
+#define V_COMMIT_HASH "7aff0cb"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9a8bd3f"
+#define V_COMMIT_HASH "d98bb44"
 #endif
 #include <inttypes.h>
 
@@ -20921,7 +20921,7 @@ void v_dot_gen__Gen_gen_assign_stmt(v_dot_gen__Gen *g,
   };
 }
 void v_dot_gen__Gen_gen_fn_decl(v_dot_gen__Gen *g, v_dot_ast__FnDecl it) {
-  if (it.is_c || string_eq(it.name, tos3("malloc"))) {
+  if (it.is_c) {
 
     return;
   };
@@ -22006,7 +22006,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string varg_type_str = int_str(((int)(arg.expected_type)));
       int tmp110 = 0;
       bool tmp111 =
-          map_get(/*cgen.v : 1676*/ g->variadic_args, varg_type_str, &tmp110);
+          map_get(/*cgen.v : 1675*/ g->variadic_args, varg_type_str, &tmp110);
 
       if (len > tmp110) {
         map_set(&g->variadic_args, varg_type_str, &(int[]){len});
@@ -22097,7 +22097,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp121 = 0;
     bool tmp122 =
-        map_get(/*cgen.v : 1784*/ g->table->type_idxs, builtin_name, &tmp121);
+        map_get(/*cgen.v : 1783*/ g->table->type_idxs, builtin_name, &tmp121);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22258,7 +22258,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp146 = 0;
     bool tmp147 =
-        map_get(/*cgen.v : 1889*/ g->table->type_idxs, node.name, &tmp146);
+        map_get(/*cgen.v : 1888*/ g->table->type_idxs, node.name, &tmp146);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22464,6 +22464,8 @@ string v_dot_gen__comp_if_to_ifdef(string name) {
     return tos3("__MINGW32__");
   } else if (string_eq(tmp174, tos3("glibc"))) {
     return tos3("__GLIBC__");
+  } else if (string_eq(tmp174, tos3("prealloc"))) {
+    return tos3("VPREALLOC");
   } else if (string_eq(tmp174, tos3("no_bounds_checking"))) {
     return tos3("NO_BOUNDS_CHECK");
   } else // default:
@@ -44322,16 +44324,16 @@ void init() {
   benchmark__BSPENT = term__ok_message(tos3("SPENT"));
   v_dot_parser__colored_output = term__can_show_color_on_stderr();
   v_dot_gen__c_reserved = new_array_from_c_array(
-      30, 30, sizeof(string),
-      EMPTY_ARRAY_OF_ELEMS(string, 30){
-          tos3("delete"),   tos3("exit"),     tos3("unix"),     tos3("error"),
-          tos3("calloc"),   tos3("free"),     tos3("panic"),    tos3("auto"),
-          tos3("char"),     tos3("default"),  tos3("do"),       tos3("double"),
-          tos3("extern"),   tos3("float"),    tos3("inline"),   tos3("int"),
-          tos3("long"),     tos3("register"), tos3("restrict"), tos3("short"),
-          tos3("signed"),   tos3("sizeof"),   tos3("static"),   tos3("switch"),
-          tos3("typedef"),  tos3("union"),    tos3("unsigned"), tos3("void"),
-          tos3("volatile"), tos3("while"),
+      31, 31, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 31){
+          tos3("delete"), tos3("exit"),     tos3("unix"),     tos3("error"),
+          tos3("calloc"), tos3("malloc"),   tos3("free"),     tos3("panic"),
+          tos3("auto"),   tos3("char"),     tos3("default"),  tos3("do"),
+          tos3("double"), tos3("extern"),   tos3("float"),    tos3("inline"),
+          tos3("int"),    tos3("long"),     tos3("register"), tos3("restrict"),
+          tos3("short"),  tos3("signed"),   tos3("sizeof"),   tos3("static"),
+          tos3("switch"), tos3("typedef"),  tos3("union"),    tos3("unsigned"),
+          tos3("void"),   tos3("volatile"), tos3("while"),
       });
   v_dot_gen__tabs = new_array_from_c_array(
       9, 9, sizeof(string),
