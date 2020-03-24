@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3d2fafa"
+#define V_COMMIT_HASH "f101e9b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "309a905"
+#define V_COMMIT_HASH "3d2fafa"
 #endif
 #include <inttypes.h>
 
@@ -7173,7 +7173,8 @@ int string_index_old(string s, string p) {
   while (i < s.len) {
 
     int j = 0;
-    while (j < p.len && s.str[i + j] /*rbyte 0*/ == p.str[j] /*rbyte 0*/) {
+    while (j < p.len &&
+           s.str[/*ptr!*/ i + j] /*rbyte 0*/ == p.str[/*ptr!*/ j] /*rbyte 0*/) {
 
       j++;
     };
@@ -7192,7 +7193,8 @@ Option_int string_index(string s, string p) {
   while (i < s.len) {
 
     int j = 0;
-    while (j < p.len && s.str[i + j] /*rbyte 0*/ == p.str[j] /*rbyte 0*/) {
+    while (j < p.len &&
+           s.str[/*ptr!*/ i + j] /*rbyte 0*/ == p.str[/*ptr!*/ j] /*rbyte 0*/) {
 
       j++;
     };
@@ -7215,11 +7217,12 @@ int string_index_kmp(string s, string p) {
   int j = 0;
   for (int i = 1; i < p.len; i++) {
 
-    while (p.str[j] /*rbyte 0*/ != p.str[i] /*rbyte 0*/ && j > 0) {
+    while (p.str[/*ptr!*/ j] /*rbyte 0*/ != p.str[/*ptr!*/ i] /*rbyte 0*/ &&
+           j > 0) {
 
       j = (*(int *)array_get(prefix, j - 1));
     };
-    if (p.str[j] /*rbyte 0*/ == p.str[i] /*rbyte 0*/) {
+    if (p.str[/*ptr!*/ j] /*rbyte 0*/ == p.str[/*ptr!*/ i] /*rbyte 0*/) {
       j++;
     };
     array_set(&/*q*/ prefix, i, &(int[]){j});
@@ -7230,11 +7233,12 @@ int string_index_kmp(string s, string p) {
   for (int tmp48 = tmp47; tmp48 < s.len; tmp48++) {
     int i = tmp48;
 
-    while (p.str[j] /*rbyte 0*/ != s.str[i] /*rbyte 0*/ && j > 0) {
+    while (p.str[/*ptr!*/ j] /*rbyte 0*/ != s.str[/*ptr!*/ i] /*rbyte 0*/ &&
+           j > 0) {
 
       j = (*(int *)array_get(prefix, j - 1));
     };
-    if (p.str[j] /*rbyte 0*/ == s.str[i] /*rbyte 0*/) {
+    if (p.str[/*ptr!*/ j] /*rbyte 0*/ == s.str[/*ptr!*/ i] /*rbyte 0*/) {
       j++;
     };
     if (j == p.len) {
@@ -7270,7 +7274,8 @@ Option_int string_last_index(string s, string p) {
   while (i >= 0) {
 
     int j = 0;
-    while (j < p.len && s.str[i + j] /*rbyte 0*/ == p.str[j] /*rbyte 0*/) {
+    while (j < p.len &&
+           s.str[/*ptr!*/ i + j] /*rbyte 0*/ == p.str[/*ptr!*/ j] /*rbyte 0*/) {
 
       j++;
     };
@@ -7298,7 +7303,8 @@ int string_index_after(string s, string p, int start) {
 
     int j = 0;
     int ii = i;
-    while (j < p.len && s.str[ii] /*rbyte 0*/ == p.str[j] /*rbyte 0*/) {
+    while (j < p.len &&
+           s.str[/*ptr!*/ ii] /*rbyte 0*/ == p.str[/*ptr!*/ j] /*rbyte 0*/) {
 
       j++;
       ii++;
@@ -7316,7 +7322,7 @@ int string_index_byte(string s, byte c) {
   for (int tmp56 = tmp55; tmp56 < s.len; tmp56++) {
     int i = tmp56;
 
-    if (s.str[i] /*rbyte 0*/ == c) {
+    if (s.str[/*ptr!*/ i] /*rbyte 0*/ == c) {
       return i;
     };
   };
@@ -7325,7 +7331,7 @@ int string_index_byte(string s, byte c) {
 int string_last_index_byte(string s, byte c) {
   for (int i = s.len - 1; i >= 0; i--) {
 
-    if (s.str[i] /*rbyte 0*/ == c) {
+    if (s.str[/*ptr!*/ i] /*rbyte 0*/ == c) {
       return i;
     };
   };
@@ -7368,7 +7374,7 @@ bool string_starts_with(string s, string p) {
   for (int tmp59 = tmp58; tmp59 < p.len; tmp59++) {
     int i = tmp59;
 
-    if (s.str[i] /*rbyte 0*/ != p.str[i] /*rbyte 0*/) {
+    if (s.str[/*ptr!*/ i] /*rbyte 0*/ != p.str[/*ptr!*/ i] /*rbyte 0*/) {
       return 0;
     };
   };
@@ -12352,7 +12358,8 @@ bool os__is_dir(string path) {
   if (stat((char *)path.str, &statbuf) != 0) {
     return 0;
   };
-  return (((int)(statbuf.st_mode)) & os__S_IFMT) == os__S_IFDIR;
+  int val = ((int)(statbuf.st_mode)) & os__S_IFMT;
+  return val == os__S_IFDIR;
 #endif
   ;
 }
@@ -23334,7 +23341,7 @@ array_string v_dot_builder__Builder_v_files_from_dir(v_dot_builder__Builder *b,
     };
     v_dot_builder__verror(_STR("%.*s doesn't exist", dir.len, dir.str));
   } else if (!os__is_dir(dir)) {
-    v_dot_builder__verror(_STR("%.*s isn't a directory", dir.len, dir.str));
+    v_dot_builder__verror(_STR("%.*s isn't a directory!", dir.len, dir.str));
   };
   Option_array_string tmp12 = os__ls(dir);
   array_string files;
@@ -34057,7 +34064,7 @@ void compiler__Parser_cast(compiler__Parser *p, string typ) {
   compiler__Parser_check(p, compiler__compiler__TokenKind_lpar);
   p->expected_type = typ;
   string expr_typ = compiler__Parser_bool_expression(p);
-  if (string_eq(expr_typ, typ) && string_ne(typ, tos3("u64"))) {
+  if (string_eq(expr_typ, typ)) {
     compiler__Parser_warn(p,
                           _STR("casting `%.*s` to `%.*s` is not needed",
                                typ.len, typ.str, expr_typ.len, expr_typ.str));
@@ -35935,7 +35942,7 @@ array_string compiler__V_v_files_from_dir(compiler__V *v, string dir) {
     };
     compiler__verror(_STR("%.*s doesn't exist", dir.len, dir.str));
   } else if (!os__is_dir(dir)) {
-    compiler__verror(_STR("%.*s isn't a directory", dir.len, dir.str));
+    compiler__verror(_STR("%.*s isn't a directory!", dir.len, dir.str));
   };
   Option_array_string tmp24 = os__ls(dir);
   array_string files;
@@ -36631,6 +36638,12 @@ void compiler__V_set_module_lookup_paths(compiler__V *v) {
   _PUSH(&v->module_lookup_paths,
         (/*typ = array_string   tmp_typ=string*/ v->compiled_dir), tmp26,
         string);
+  string x = os__join_path(v->compiled_dir,
+                           &(varg_string){.len = 1, .args = {tos3("modules")}});
+  if (v_dot_pref__VerboseLevel_is_higher_or_equal(
+          v->pref->verbosity, v_dot_pref__v_dot_pref__VerboseLevel_level_two)) {
+    printf("x: \"%.*s\"\n", x.len, x.str);
+  };
   _PUSH(&v->module_lookup_paths,
         (/*typ = array_string   tmp_typ=string*/ os__join_path(
             v->compiled_dir,
@@ -36641,10 +36654,8 @@ void compiler__V_set_module_lookup_paths(compiler__V *v) {
              tmp28, array_string);
   if (v_dot_pref__VerboseLevel_is_higher_or_equal(
           v->pref->verbosity, v_dot_pref__v_dot_pref__VerboseLevel_level_two)) {
-    string tmp29 = array_string_str(v->module_lookup_paths);
-
-    compiler__V_log(&/* ? */ *v,
-                    _STR("v.module_lookup_paths: %.*s ", tmp29.len, tmp29.str));
+    compiler__V_log(&/* ? */ *v, tos3("v.module_lookup_paths"));
+    println(array_string_str(v->module_lookup_paths));
   };
 }
 Option_string compiler__Parser_find_module_path(compiler__Parser *p,
@@ -36659,17 +36670,17 @@ Option_string compiler__Parser_find_module_path(compiler__Parser *p,
       _PUSH(&module_lookup_paths,
             (/*typ = array_string   tmp_typ=string*/ vmod_file_location
                  .vmod_folder),
-            tmp30, string);
+            tmp29, string);
     };
   };
   _PUSH_MANY(
       &module_lookup_paths,
       (/*typ = array_string   tmp_typ=string*/ p->v->module_lookup_paths),
-      tmp31, array_string);
+      tmp30, array_string);
   string mod_path = compiler__V_module_path(&/* ? */ *p->v, mod);
-  array_string tmp32 = module_lookup_paths;
-  for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
-    string lookup_path = ((string *)tmp32.data)[tmp33];
+  array_string tmp31 = module_lookup_paths;
+  for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
+    string lookup_path = ((string *)tmp31.data)[tmp32];
 
     string try_path = os__join_path(
         lookup_path, &(varg_string){.len = 1, .args = {mod_path}});
@@ -36685,14 +36696,14 @@ Option_string compiler__Parser_find_module_path(compiler__Parser *p,
               v_dot_pref__v_dot_pref__VerboseLevel_level_three)) {
         printf("  << found %.*s .\n", try_path.len, try_path.str);
       };
-      string tmp34 = OPTION_CAST(string)(try_path);
-      return opt_ok(&tmp34, sizeof(string));
+      string tmp33 = OPTION_CAST(string)(try_path);
+      return opt_ok(&tmp33, sizeof(string));
     };
   };
-  string tmp35 = array_string_str(module_lookup_paths);
+  string tmp34 = array_string_str(module_lookup_paths);
 
   return v_error(_STR("module \"%.*s\" not found in %.*s ", mod.len, mod.str,
-                      tmp35.len, tmp35.str));
+                      tmp34.len, tmp34.str));
 }
 static inline string compiler__mod_gen_name(string mod) {
   return string_replace(mod, tos3("."), tos3("_dot_"));
