@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "aa0643f"
+#define V_COMMIT_HASH "456750a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "60fbcee"
+#define V_COMMIT_HASH "aa0643f"
 #endif
 #include <inttypes.h>
 
@@ -19688,6 +19688,9 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
     v_dot_ast__AssignStmt *it = (v_dot_ast__AssignStmt *)tmp88.obj;
     v_dot_checker__Checker_assign_stmt(c, it);
     c->expected_type = v_dot_table__void_type;
+  } else if (tmp88.typ == SumType_v_dot_ast__Stmt_Block) {
+    v_dot_ast__Block *it = (v_dot_ast__Block *)tmp88.obj;
+    v_dot_checker__Checker_stmts(c, it->stmts);
   } else if (tmp88.typ == SumType_v_dot_ast__Stmt_CompIf) {
     v_dot_ast__CompIf *it = (v_dot_ast__CompIf *)tmp88.obj;
     v_dot_checker__Checker_stmts(c, it->stmts);
@@ -19985,7 +19988,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     };
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp103 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
-    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4449_var_scope_var;
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4462_var_scope_var;
     if (!tmp103.ok) {
       string err = tmp103.error;
       int errcode = tmp103.ecode;
@@ -19997,11 +20000,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_4449_var_scope_var =
+    _V_mret_4462_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp103.data;
     ;
-    var_scope = _V_mret_4449_var_scope_var.var_0;
-    var = _V_mret_4449_var_scope_var.var_1;
+    var_scope = _V_mret_4462_var_scope_var.var_0;
+    var = _V_mret_4462_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
@@ -20621,6 +20624,11 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
   } else if (tmp26.typ == SumType_v_dot_ast__Stmt_Attr) {
     v_dot_ast__Attr *it = (v_dot_ast__Attr *)tmp26.obj;
     v_dot_gen__Gen_writeln(g, _STR("//[%.*s]", it->name.len, it->name.str));
+  } else if (tmp26.typ == SumType_v_dot_ast__Stmt_Block) {
+    v_dot_ast__Block *it = (v_dot_ast__Block *)tmp26.obj;
+    v_dot_gen__Gen_writeln(g, tos3("{"));
+    v_dot_gen__Gen_stmts(g, it->stmts);
+    v_dot_gen__Gen_writeln(g, tos3("}"));
   } else if (tmp26.typ == SumType_v_dot_ast__Stmt_BranchStmt) {
     v_dot_ast__BranchStmt *it = (v_dot_ast__BranchStmt *)tmp26.obj;
     v_dot_gen__Gen_write(g, v_dot_token__Kind_str(it->tok.kind));
@@ -21361,7 +21369,8 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
          string_eq(it->name, tos3("trim")) ||
          string_eq(it->name, tos3("first")) ||
          string_eq(it->name, tos3("last")) ||
-         string_eq(it->name, tos3("clone")))) {
+         string_eq(it->name, tos3("clone")) ||
+         string_eq(it->name, tos3("reverse")))) {
       receiver_name = tos3("array");
       if ((string_eq(it->name, tos3("last")) ||
            string_eq(it->name, tos3("first")))) {
@@ -22091,7 +22100,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string varg_type_str = int_str(((int)(arg.expected_type)));
       int tmp111 = 0;
       bool tmp112 =
-          map_get(/*cgen.v : 1705*/ g->variadic_args, varg_type_str, &tmp111);
+          map_get(/*cgen.v : 1710*/ g->variadic_args, varg_type_str, &tmp111);
 
       if (len > tmp111) {
         map_set(&g->variadic_args, varg_type_str, &(int[]){len});
@@ -22186,7 +22195,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp122 = 0;
     bool tmp123 =
-        map_get(/*cgen.v : 1813*/ g->table->type_idxs, builtin_name, &tmp122);
+        map_get(/*cgen.v : 1818*/ g->table->type_idxs, builtin_name, &tmp122);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22347,7 +22356,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp147 = 0;
     bool tmp148 =
-        map_get(/*cgen.v : 1918*/ g->table->type_idxs, node.name, &tmp147);
+        map_get(/*cgen.v : 1923*/ g->table->type_idxs, node.name, &tmp147);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
