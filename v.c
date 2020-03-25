@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "26fab9b"
+#define V_COMMIT_HASH "3b4e014"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "41a089e"
+#define V_COMMIT_HASH "26fab9b"
 #endif
 #include <inttypes.h>
 
@@ -11577,20 +11577,20 @@ Option_bool os__cp_all(string osource_path, string odest_path, bool overwrite) {
     return v_error(tos3("Source path doesn\'t exist"));
   };
   if (!os__is_dir(source_path)) {
-    string adjasted_path =
+    string adjusted_path =
         ((os__is_dir(dest_path))
              ? (os__join_path(dest_path, &(varg_string){.len = 1,
                                                         .args = {os__file_name(
                                                             source_path)}}))
              : (dest_path));
-    if (os__exists(adjasted_path)) {
+    if (os__exists(adjusted_path)) {
       if (overwrite) {
-        os__rm(adjasted_path);
+        os__rm(adjusted_path);
       } else {
         return v_error(tos3("Destination file path already exist"));
       };
     };
-    Option_bool tmp9 = os__cp(source_path, adjasted_path);
+    Option_bool tmp9 = os__cp(source_path, adjusted_path);
     if (!tmp9.ok) {
       string err = tmp9.error;
       int errcode = tmp9.ecode;
@@ -20687,6 +20687,9 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
   } else if (tmp26.typ == SumType_v_dot_ast__Stmt_GotoLabel) {
     v_dot_ast__GotoLabel *it = (v_dot_ast__GotoLabel *)tmp26.obj;
     v_dot_gen__Gen_writeln(g, _STR("%.*s:", it->name.len, it->name.str));
+  } else if (tmp26.typ == SumType_v_dot_ast__Stmt_GotoStmt) {
+    v_dot_ast__GotoStmt *it = (v_dot_ast__GotoStmt *)tmp26.obj;
+    v_dot_gen__Gen_writeln(g, _STR("goto %.*s;", it->name.len, it->name.str));
   } else if (tmp26.typ == SumType_v_dot_ast__Stmt_HashStmt) {
     v_dot_ast__HashStmt *it = (v_dot_ast__HashStmt *)tmp26.obj;
     string typ = string_all_before(it->val, tos3(" "));
@@ -21996,7 +21999,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string varg_type_str = int_str(((int)(arg.expected_type)));
       int tmp111 = 0;
       bool tmp112 =
-          map_get(/*cgen.v : 1719*/ g->variadic_args, varg_type_str, &tmp111);
+          map_get(/*cgen.v : 1722*/ g->variadic_args, varg_type_str, &tmp111);
 
       if (len > tmp111) {
         map_set(&g->variadic_args, varg_type_str, &(int[]){len});
@@ -22107,7 +22110,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp122 = 0;
     bool tmp123 =
-        map_get(/*cgen.v : 1844*/ g->table->type_idxs, builtin_name, &tmp122);
+        map_get(/*cgen.v : 1847*/ g->table->type_idxs, builtin_name, &tmp122);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22268,7 +22271,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp147 = 0;
     bool tmp148 =
-        map_get(/*cgen.v : 1949*/ g->table->type_idxs, node.name, &tmp147);
+        map_get(/*cgen.v : 1952*/ g->table->type_idxs, node.name, &tmp147);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22398,6 +22401,10 @@ void v_dot_gen__Gen_call_expr(v_dot_gen__Gen *g, v_dot_ast__CallExpr it) {
     v_dot_gen__Gen_writeln(g, tos3(";"));
     v_dot_gen__Gen_writeln(
         g, _STR("if (!%.*s.ok) {", g->expr_var_name.len, g->expr_var_name.str));
+    v_dot_gen__Gen_writeln(g, _STR("string err = %.*s.v_error;",
+                                   g->expr_var_name.len, g->expr_var_name.str));
+    v_dot_gen__Gen_writeln(g, _STR("int errcode = %.*s.ecode;",
+                                   g->expr_var_name.len, g->expr_var_name.str));
     v_dot_gen__Gen_stmts(g, it.or_block.stmts);
     v_dot_gen__Gen_writeln(g, tos3("}"));
   };
