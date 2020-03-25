@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "b495e78"
+#define V_COMMIT_HASH "8ba4696"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a3046b6"
+#define V_COMMIT_HASH "b495e78"
 #endif
 #include <inttypes.h>
 
@@ -19178,8 +19178,9 @@ v_dot_table__Type v_dot_checker__Checker_method_call_expr(
   v_dot_checker__Checker_stmts(c, method_call_expr->or_block.stmts);
   if (typ_sym->kind == v_dot_table__v_dot_table__Kind_array &&
       (string_eq(name, tos3("filter")) || string_eq(name, tos3("clone")) ||
-       string_eq(name, tos3("repeat")))) {
-    if (string_eq(name, tos3("filter"))) {
+       string_eq(name, tos3("repeat")) || string_eq(name, tos3("reverse")) ||
+       string_eq(name, tos3("map")))) {
+    if ((string_eq(name, tos3("filter")) || string_eq(name, tos3("map")))) {
       v_dot_table__Array array_info = *(v_dot_table__Array *)typ_sym->info.obj;
       v_dot_ast__Scope *scope = v_dot_ast__Scope_innermost(
           &/* ? */ *c->file.scope, method_call_expr->pos.pos);
@@ -19869,7 +19870,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     };
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp103 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
-    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4441_var_scope_var;
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4449_var_scope_var;
     if (!tmp103.ok) {
       string err = tmp103.error;
       int errcode = tmp103.ecode;
@@ -19881,11 +19882,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_4441_var_scope_var =
+    _V_mret_4449_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp103.data;
     ;
-    var_scope = _V_mret_4441_var_scope_var.var_0;
-    var = _V_mret_4441_var_scope_var.var_1;
+    var_scope = _V_mret_4449_var_scope_var.var_0;
+    var = _V_mret_4449_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
