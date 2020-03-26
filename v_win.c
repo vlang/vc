@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9185de3"
+#define V_COMMIT_HASH "8de027c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f0334b2"
+#define V_COMMIT_HASH "9185de3"
 #endif
 #include <inttypes.h>
 
@@ -603,14 +603,15 @@ typedef struct v_dot_depgraph__OrderedDepMap v_dot_depgraph__OrderedDepMap;
 typedef map map_array_string;
 typedef struct strconv_dot_ftoa__Dec32 strconv_dot_ftoa__Dec32;
 typedef union strconv_dot_ftoa__Uf32 strconv_dot_ftoa__Uf32;
+typedef array array_u32;
 typedef struct _V_MulRet_strconv_dot_ftoa__Dec32_V_bool
     _V_MulRet_strconv_dot_ftoa__Dec32_V_bool;
 typedef struct strconv_dot_ftoa__Uint128 strconv_dot_ftoa__Uint128;
 typedef struct strconv_dot_ftoa__Dec64 strconv_dot_ftoa__Dec64;
 typedef union strconv_dot_ftoa__Uf64 strconv_dot_ftoa__Uf64;
+typedef array array_u64;
 typedef struct _V_MulRet_strconv_dot_ftoa__Dec64_V_bool
     _V_MulRet_strconv_dot_ftoa__Dec64_V_bool;
-typedef array array_u64;
 typedef array array_strconv_dot_ftoa__Uint128;
 typedef struct os__File os__File;
 typedef struct os__FileInfo os__FileInfo;
@@ -2994,13 +2995,13 @@ v_dot_depgraph__DepGraph_last_node(v_dot_depgraph__DepGraph *graph);
 string v_dot_depgraph__DepGraph_display(v_dot_depgraph__DepGraph *graph);
 string v_dot_depgraph__DepGraph_display_cycles(v_dot_depgraph__DepGraph *graph);
 string strconv_dot_ftoa__Dec32_get_string_32(strconv_dot_ftoa__Dec32 d,
-                                             bool neg, int n_digit);
+                                             bool neg, int i_n_digit);
 _V_MulRet_strconv_dot_ftoa__Dec32_V_bool
 strconv_dot_ftoa__f32_to_decimal_exact_int(u32 i_mant, u32 exp);
 strconv_dot_ftoa__Dec32 strconv_dot_ftoa__f32_to_decimal(u32 mant, u32 exp);
 string strconv_dot_ftoa__f32_to_str(f32 f, int n_digit);
 string strconv_dot_ftoa__Dec64_get_string_64(strconv_dot_ftoa__Dec64 d,
-                                             bool neg, int n_digit);
+                                             bool neg, int i_n_digit);
 _V_MulRet_strconv_dot_ftoa__Dec64_V_bool
 strconv_dot_ftoa__f64_to_decimal_exact_int(u64 i_mant, u64 exp);
 strconv_dot_ftoa__Dec64 strconv_dot_ftoa__f64_to_decimal(u64 mant, u64 exp);
@@ -4625,9 +4626,11 @@ map_int v_dot_token__keywords;
 #define v_dot_token__v_dot_token__Precedence_call 9
 #define v_dot_token__v_dot_token__Precedence_index 10
 array_v_dot_token__Precedence v_dot_token__precedences;
+array_u32 strconv_dot_ftoa__ten_pow_table_32;
 u32 strconv_dot_ftoa__mantbits32;
 u32 strconv_dot_ftoa__expbits32;
 u32 strconv_dot_ftoa__bias32;
+array_u64 strconv_dot_ftoa__ten_pow_table_64;
 u32 strconv_dot_ftoa__mantbits64;
 u32 strconv_dot_ftoa__expbits64;
 u32 strconv_dot_ftoa__bias64;
@@ -10745,17 +10748,16 @@ v_dot_depgraph__DepGraph_display_cycles(v_dot_depgraph__DepGraph *graph) {
   return out;
 }
 string strconv_dot_ftoa__Dec32_get_string_32(strconv_dot_ftoa__Dec32 d,
-                                             bool neg, int n_digit) {
+                                             bool neg, int i_n_digit) {
+  int n_digit = i_n_digit + 1;
   u32 out = d.m;
   int out_len = strconv_dot_ftoa__decimal_len_32(out);
+  int out_len_original = out_len;
   array_byte buf = array_repeat(
       new_array_from_c_array(1, 1, sizeof(byte),
                              EMPTY_ARRAY_OF_ELEMS(byte, 1){((byte)(0))}),
       out_len + 5 + 1 + 1);
   int i = 0;
-  if (n_digit > 0 && out_len > n_digit) {
-    out_len = n_digit + 1;
-  };
   if (neg) {
     array_set(&/*q*/ buf, i, &(byte[]){'-'});
     i++;
@@ -10763,6 +10765,14 @@ string strconv_dot_ftoa__Dec32_get_string_32(strconv_dot_ftoa__Dec32 d,
   int disp = 0;
   if (out_len <= 1) {
     disp = 1;
+  };
+  if (n_digit < out_len) {
+    out += (*(u32 *)array_get(strconv_dot_ftoa__ten_pow_table_32,
+                              out_len - n_digit)) +
+           1;
+    out /= (*(u32 *)array_get(strconv_dot_ftoa__ten_pow_table_32,
+                              out_len - n_digit));
+    out_len = n_digit;
   };
   int y = i + out_len;
   int x = 0;
@@ -10784,7 +10794,7 @@ string strconv_dot_ftoa__Dec32_get_string_32(strconv_dot_ftoa__Dec32 d,
   };
   array_set(&/*q*/ buf, i, &(byte[]){'e'});
   i++;
-  int exp = d.e + out_len - 1;
+  int exp = d.e + out_len_original - 1;
   if (exp < 0) {
     array_set(&/*q*/ buf, i, &(byte[]){'-'});
     i++;
@@ -10961,27 +10971,26 @@ string strconv_dot_ftoa__f32_to_str(f32 f, int n_digit) {
   if ((exp == strconv_dot_ftoa__maxexp32) || (exp == 0 && mant == 0)) {
     return strconv_dot_ftoa__get_string_special(neg, exp == 0, mant == 0);
   };
-  _V_MulRet_strconv_dot_ftoa__Dec32_V_bool _V_mret_1289_d_ok =
+  _V_MulRet_strconv_dot_ftoa__Dec32_V_bool _V_mret_1376_d_ok =
       strconv_dot_ftoa__f32_to_decimal_exact_int(mant, exp);
-  strconv_dot_ftoa__Dec32 d = _V_mret_1289_d_ok.var_0;
-  bool ok = _V_mret_1289_d_ok.var_1;
+  strconv_dot_ftoa__Dec32 d = _V_mret_1376_d_ok.var_0;
+  bool ok = _V_mret_1376_d_ok.var_1;
   if (!ok) {
     d = strconv_dot_ftoa__f32_to_decimal(mant, exp);
   };
   return strconv_dot_ftoa__Dec32_get_string_32(d, neg, n_digit);
 }
 string strconv_dot_ftoa__Dec64_get_string_64(strconv_dot_ftoa__Dec64 d,
-                                             bool neg, int n_digit) {
+                                             bool neg, int i_n_digit) {
+  int n_digit = i_n_digit + 1;
   u64 out = d.m;
   int out_len = strconv_dot_ftoa__decimal_len_64(out);
+  int out_len_original = out_len;
   array_byte buf = array_repeat(
       new_array_from_c_array(1, 1, sizeof(byte),
                              EMPTY_ARRAY_OF_ELEMS(byte, 1){((byte)(0))}),
       out_len + 6 + 1 + 1);
   int i = 0;
-  if (n_digit > 0 && out_len > n_digit) {
-    out_len = n_digit + 1;
-  };
   if (neg) {
     array_set(&/*q*/ buf, i, &(byte[]){'-'});
     i++;
@@ -10989,6 +10998,14 @@ string strconv_dot_ftoa__Dec64_get_string_64(strconv_dot_ftoa__Dec64 d,
   int disp = 0;
   if (out_len <= 1) {
     disp = 1;
+  };
+  if (n_digit < out_len) {
+    out += (*(u64 *)array_get(strconv_dot_ftoa__ten_pow_table_64,
+                              out_len - n_digit)) +
+           1;
+    out /= (*(u64 *)array_get(strconv_dot_ftoa__ten_pow_table_64,
+                              out_len - n_digit));
+    out_len = n_digit;
   };
   int y = i + out_len;
   int x = 0;
@@ -11010,7 +11027,7 @@ string strconv_dot_ftoa__Dec64_get_string_64(strconv_dot_ftoa__Dec64 d,
   };
   array_set(&/*q*/ buf, i, &(byte[]){'e'});
   i++;
-  int exp = d.e + out_len - 1;
+  int exp = d.e + out_len_original - 1;
   if (exp < 0) {
     array_set(&/*q*/ buf, i, &(byte[]){'-'});
     i++;
@@ -11207,10 +11224,10 @@ string strconv_dot_ftoa__f64_to_str(f64 f, int n_digit) {
   if ((exp == strconv_dot_ftoa__maxexp64) || (exp == 0 && mant == 0)) {
     return strconv_dot_ftoa__get_string_special(neg, exp == 0, mant == 0);
   };
-  _V_MulRet_strconv_dot_ftoa__Dec64_V_bool _V_mret_1356_d_ok =
+  _V_MulRet_strconv_dot_ftoa__Dec64_V_bool _V_mret_1483_d_ok =
       strconv_dot_ftoa__f64_to_decimal_exact_int(mant, exp);
-  strconv_dot_ftoa__Dec64 d = _V_mret_1356_d_ok.var_0;
-  bool ok = _V_mret_1356_d_ok.var_1;
+  strconv_dot_ftoa__Dec64 d = _V_mret_1483_d_ok.var_0;
+  bool ok = _V_mret_1483_d_ok.var_1;
   if (!ok) {
     d = strconv_dot_ftoa__f64_to_decimal(mant, exp);
   };
@@ -11406,7 +11423,7 @@ string strconv_dot_ftoa__f32_to_str_l(f64 f) {
 }
 string strconv_dot_ftoa__f64_to_str_l(f64 f) {
   string s = strconv_dot_ftoa__f64_to_str(f, 18);
-  if (s.len > 2 && (string_at(s, 0) == 'N' || string_at(s, 1) == 'i')) {
+  if (s.len > 2 && (string_at(s, 0) == 'n' || string_at(s, 1) == 'i')) {
     return s;
   };
   bool m_sgn_flag = 0;
@@ -43293,9 +43310,49 @@ void init() {
   v_dot_token__token_str = v_dot_token__build_token_str();
   v_dot_token__keywords = v_dot_token__build_keys();
   v_dot_token__precedences = v_dot_token__build_precedences();
+  strconv_dot_ftoa__ten_pow_table_32 =
+      new_array_from_c_array(12, 12, sizeof(u32),
+                             EMPTY_ARRAY_OF_ELEMS(u32, 12){
+                                 ((u32)(1)),
+                                 ((u32)(10)),
+                                 ((u32)(100)),
+                                 ((u32)(1000)),
+                                 ((u32)(10000)),
+                                 ((u32)(100000)),
+                                 ((u32)(1000000)),
+                                 ((u32)(10000000)),
+                                 ((u32)(100000000)),
+                                 ((u32)(1000000000)),
+                                 ((u32)(10000000000)),
+                                 ((u32)(100000000000)),
+                             });
   strconv_dot_ftoa__mantbits32 = ((u32)(23));
   strconv_dot_ftoa__expbits32 = ((u32)(8));
   strconv_dot_ftoa__bias32 = ((u32)(127));
+  strconv_dot_ftoa__ten_pow_table_64 =
+      new_array_from_c_array(20, 20, sizeof(u64),
+                             EMPTY_ARRAY_OF_ELEMS(u64, 20){
+                                 ((u64)(1)),
+                                 ((u64)(10)),
+                                 ((u64)(100)),
+                                 ((u64)(1000)),
+                                 ((u64)(10000)),
+                                 ((u64)(100000)),
+                                 ((u64)(1000000)),
+                                 ((u64)(10000000)),
+                                 ((u64)(100000000)),
+                                 ((u64)(1000000000)),
+                                 ((u64)(10000000000)),
+                                 ((u64)(100000000000)),
+                                 ((u64)(1000000000000)),
+                                 ((u64)(10000000000000)),
+                                 ((u64)(100000000000000)),
+                                 ((u64)(1000000000000000)),
+                                 ((u64)(10000000000000000)),
+                                 ((u64)(100000000000000000)),
+                                 ((u64)(1000000000000000000)),
+                                 ((u64)(10000000000000000000)),
+                             });
   strconv_dot_ftoa__mantbits64 = ((u32)(52));
   strconv_dot_ftoa__expbits64 = ((u32)(11));
   strconv_dot_ftoa__bias64 = ((u32)(1023));
