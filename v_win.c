@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f0334b2"
+#define V_COMMIT_HASH "9185de3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f489c89"
+#define V_COMMIT_HASH "f0334b2"
 #endif
 #include <inttypes.h>
 
@@ -21963,9 +21963,7 @@ void v_dot_gen__Gen_index_expr(v_dot_gen__Gen *g, v_dot_ast__IndexExpr node) {
       };
       if (g->is_assign_expr && !is_selector) {
         g->is_array_set = 1;
-        v_dot_gen__Gen_write(g, _STR("/*S %.*s */array_set(&",
-                                     v_dot_token__Kind_str(g->assign_op).len,
-                                     v_dot_token__Kind_str(g->assign_op).str));
+        v_dot_gen__Gen_write(g, tos3("array_set(&"));
         v_dot_gen__Gen_expr(g, node.left);
         v_dot_gen__Gen_write(g, tos3(", "));
         v_dot_gen__Gen_expr(g, node.index);
