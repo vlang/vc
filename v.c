@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ec4be80"
+#define V_COMMIT_HASH "1f3428f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d8bcd13"
+#define V_COMMIT_HASH "ec4be80"
 #endif
 #include <inttypes.h>
 
@@ -19578,7 +19578,10 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
                                  v_dot_ast__Stmt node) {
   v_dot_ast__Stmt tmp88 = node;
 
-  if (tmp88.typ == SumType_v_dot_ast__Stmt_AssignStmt) {
+  if (tmp88.typ == SumType_v_dot_ast__Stmt_AssertStmt) {
+    v_dot_ast__AssertStmt *it = (v_dot_ast__AssertStmt *)tmp88.obj;
+    v_dot_checker__Checker_expr(c, it->expr);
+  } else if (tmp88.typ == SumType_v_dot_ast__Stmt_AssignStmt) {
     v_dot_ast__AssignStmt *it = (v_dot_ast__AssignStmt *)tmp88.obj;
     v_dot_checker__Checker_assign_stmt(c, it);
     c->expected_type = v_dot_table__void_type;
@@ -19882,7 +19885,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     };
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp103 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
-    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4462_var_scope_var;
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4475_var_scope_var;
     if (!tmp103.ok) {
       string err = tmp103.error;
       int errcode = tmp103.ecode;
@@ -19894,11 +19897,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_4462_var_scope_var =
+    _V_mret_4475_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp103.data;
     ;
-    var_scope = _V_mret_4462_var_scope_var.var_0;
-    var = _V_mret_4462_var_scope_var.var_1;
+    var_scope = _V_mret_4475_var_scope_var.var_0;
+    var = _V_mret_4475_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
@@ -20510,12 +20513,24 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
   g->stmt_start_pos = g->out.len;
   v_dot_ast__Stmt tmp26 = node;
 
-  if (tmp26.typ == SumType_v_dot_ast__Stmt_AssignStmt) {
-    v_dot_ast__AssignStmt *it = (v_dot_ast__AssignStmt *)tmp26.obj;
-    v_dot_gen__Gen_gen_assign_stmt(g, *it);
-  } else if (tmp26.typ == SumType_v_dot_ast__Stmt_AssertStmt) {
+  if (tmp26.typ == SumType_v_dot_ast__Stmt_AssertStmt) {
     v_dot_ast__AssertStmt *it = (v_dot_ast__AssertStmt *)tmp26.obj;
     v_dot_gen__Gen_writeln(g, tos3("// assert"));
+    v_dot_gen__Gen_write(g, tos3("if (!("));
+    v_dot_gen__Gen_expr(g, it->expr);
+    v_dot_gen__Gen_writeln(g, tos3(")) {"));
+    v_dot_gen__Gen_writeln(g, tos3("g_test_fails++;"));
+    v_dot_gen__Gen_writeln(g, tos3("puts(\"FAILED assertion\");"));
+    v_dot_gen__Gen_writeln(g, _STR("puts(\"function: %.*s\");",
+                                   g->fn_decl->name.len, g->fn_decl->name.str));
+    v_dot_gen__Gen_writeln(g, tos3("} else {"));
+    v_dot_gen__Gen_writeln(g, tos3("g_test_oks++;"));
+    v_dot_gen__Gen_writeln(g, _STR("puts(\"OK %.*s\");", g->fn_decl->name.len,
+                                   g->fn_decl->name.str));
+    v_dot_gen__Gen_writeln(g, tos3("}"));
+  } else if (tmp26.typ == SumType_v_dot_ast__Stmt_AssignStmt) {
+    v_dot_ast__AssignStmt *it = (v_dot_ast__AssignStmt *)tmp26.obj;
+    v_dot_gen__Gen_gen_assign_stmt(g, *it);
   } else if (tmp26.typ == SumType_v_dot_ast__Stmt_Attr) {
     v_dot_ast__Attr *it = (v_dot_ast__Attr *)tmp26.obj;
     v_dot_gen__Gen_writeln(g, _STR("//[%.*s]", it->name.len, it->name.str));
@@ -22006,7 +22021,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string varg_type_str = int_str(((int)(arg.expected_type)));
       int tmp111 = 0;
       bool tmp112 =
-          map_get(/*cgen.v : 1725*/ g->variadic_args, varg_type_str, &tmp111);
+          map_get(/*cgen.v : 1734*/ g->variadic_args, varg_type_str, &tmp111);
 
       if (len > tmp111) {
         map_set(&g->variadic_args, varg_type_str, &(int[]){len});
@@ -22120,7 +22135,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp122 = 0;
     bool tmp123 =
-        map_get(/*cgen.v : 1853*/ g->table->type_idxs, builtin_name, &tmp122);
+        map_get(/*cgen.v : 1862*/ g->table->type_idxs, builtin_name, &tmp122);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22281,7 +22296,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp147 = 0;
     bool tmp148 =
-        map_get(/*cgen.v : 1958*/ g->table->type_idxs, node.name, &tmp147);
+        map_get(/*cgen.v : 1967*/ g->table->type_idxs, node.name, &tmp147);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -44539,9 +44554,10 @@ void init() {
       "<= b)\n#define macro_f32_gt(a, b) (a >  b)\n#define macro_f32_ge(a, b) "
       "(a >= b)\n\n//================================== GLOBALS "
       "=================================*/\nbyte g_str_buf[1024];\nint "
-      "load_so(byteptr);\nvoid reload_so();\nvoid _vinit();\nvoid "
-      "_vcleanup();\n#define sigaction_size sizeof(sigaction);\n\n// "
-      "============== wyhash ==============\n//	Author: Wang Yi\n#ifndef "
+      "g_test_fails = 0;\nint g_test_oks = 0;\nint load_so(byteptr);\nvoid "
+      "reload_so();\nvoid _vinit();\nvoid _vcleanup();\n#define sigaction_size "
+      "sizeof(sigaction);\n\n// ============== wyhash "
+      "==============\n//	Author: Wang Yi\n#ifndef "
       "wyhash_version_4\n#define wyhash_version_4\n#include	"
       "<stdint.h>\n#include	<string.h>\n#if defined(_MSC_VER) && "
       "defined(_M_X64)\n#include <intrin.h>\n#pragma	"
