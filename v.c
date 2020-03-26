@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9c5de77"
+#define V_COMMIT_HASH "b288bf2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1d0f3ab"
+#define V_COMMIT_HASH "9c5de77"
 #endif
 #include <inttypes.h>
 
@@ -3548,6 +3548,8 @@ void v_dot_gen__Gen_gen_filter(v_dot_gen__Gen *g,
                                v_dot_ast__MethodCallExpr node);
 void v_dot_gen__Gen_insert_before(v_dot_gen__Gen *g, string s);
 void v_dot_gen__Gen_call_expr(v_dot_gen__Gen *g, v_dot_ast__CallExpr it);
+void v_dot_gen__Gen_or_block(v_dot_gen__Gen *g, array_v_dot_ast__Stmt stmts,
+                             v_dot_table__Type return_type);
 void v_dot_gen__Gen_in_optimization(v_dot_gen__Gen *g, v_dot_ast__Expr left,
                                     v_dot_ast__ArrayInit right);
 string v_dot_gen__op_to_fn_name(string name);
@@ -21356,6 +21358,9 @@ void v_dot_gen__Gen_expr(v_dot_gen__Gen *g, v_dot_ast__Expr node) {
     };
     v_dot_gen__Gen_call_args(g, it->args, it->exp_arg_types);
     v_dot_gen__Gen_write(g, tos3(")"));
+    if (it->or_block.stmts.len > 0) {
+      v_dot_gen__Gen_or_block(g, it->or_block.stmts, it->return_type);
+    };
   } else if (tmp49.typ == SumType_v_dot_ast__Expr_None) {
     v_dot_ast__None *it = (v_dot_ast__None *)tmp49.obj;
     v_dot_gen__Gen_write(g, tos3("opt_none()"));
@@ -22086,7 +22091,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g, array_v_dot_ast__CallArg args,
     string varg_type_str = int_str(((int)(varg_type)));
     int tmp120 = 0;
     bool tmp121 =
-        map_get(/*cgen.v : 1757*/ g->variadic_args, varg_type_str, &tmp120);
+        map_get(/*cgen.v : 1760*/ g->variadic_args, varg_type_str, &tmp120);
 
     if (len > tmp120) {
       map_set(&g->variadic_args, varg_type_str, &(int[]){len});
@@ -22184,7 +22189,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp129 = 0;
     bool tmp130 =
-        map_get(/*cgen.v : 1866*/ g->table->type_idxs, builtin_name, &tmp129);
+        map_get(/*cgen.v : 1869*/ g->table->type_idxs, builtin_name, &tmp129);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22345,7 +22350,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp154 = 0;
     bool tmp155 =
-        map_get(/*cgen.v : 1971*/ g->table->type_idxs, node.name, &tmp154);
+        map_get(/*cgen.v : 1974*/ g->table->type_idxs, node.name, &tmp154);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22478,25 +22483,29 @@ void v_dot_gen__Gen_call_expr(v_dot_gen__Gen *g, v_dot_ast__CallExpr it) {
     v_dot_gen__Gen_write(g, tos3(")"));
   };
   if (it.or_block.stmts.len > 0) {
-    string var_name = ((string_ne(g->expr_var_name, tos3("")))
-                           ? (g->expr_var_name)
-                           : (v_dot_gen__Gen_new_tmp_var(g)));
-    if (string_eq(g->expr_var_name, tos3(""))) {
-      string styp = v_dot_gen__Gen_typ(g, it.return_type);
-      v_dot_gen__Gen_insert_before(g, _STR("%.*s %.*s = ", styp.len, styp.str,
-                                           var_name.len, var_name.str));
-    };
-    v_dot_gen__Gen_writeln(g, tos3(";"));
-    v_dot_gen__Gen_writeln(g,
-                           _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
-    v_dot_gen__Gen_writeln(
-        g, _STR("string err = %.*s.v_error;", var_name.len, var_name.str));
-    v_dot_gen__Gen_writeln(
-        g, _STR("int errcode = %.*s.ecode;", var_name.len, var_name.str));
-    v_dot_gen__Gen_stmts(g, it.or_block.stmts);
-    v_dot_gen__Gen_writeln(g, tos3("}"));
+    v_dot_gen__Gen_or_block(g, it.or_block.stmts, it.return_type);
   };
   g->is_c_call = 0;
+}
+void v_dot_gen__Gen_or_block(v_dot_gen__Gen *g, array_v_dot_ast__Stmt stmts,
+                             v_dot_table__Type return_type) {
+  string var_name = ((string_ne(g->expr_var_name, tos3("")))
+                         ? (g->expr_var_name)
+                         : (v_dot_gen__Gen_new_tmp_var(g)));
+  if (string_eq(g->expr_var_name, tos3(""))) {
+    string styp = v_dot_gen__Gen_typ(g, return_type);
+    v_dot_gen__Gen_insert_before(g, _STR("%.*s %.*s = ", styp.len, styp.str,
+                                         var_name.len, var_name.str));
+  };
+  v_dot_gen__Gen_writeln(g, tos3(";"));
+  v_dot_gen__Gen_writeln(g,
+                         _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
+  v_dot_gen__Gen_writeln(
+      g, _STR("string err = %.*s.v_error;", var_name.len, var_name.str));
+  v_dot_gen__Gen_writeln(
+      g, _STR("int errcode = %.*s.ecode;", var_name.len, var_name.str));
+  v_dot_gen__Gen_stmts(g, stmts);
+  v_dot_gen__Gen_writeln(g, tos3("}"));
 }
 void v_dot_gen__Gen_in_optimization(v_dot_gen__Gen *g, v_dot_ast__Expr left,
                                     v_dot_ast__ArrayInit right) {
