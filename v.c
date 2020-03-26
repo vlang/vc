@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f452518"
+#define V_COMMIT_HASH "fc86269"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f2c9592"
+#define V_COMMIT_HASH "f452518"
 #endif
 #include <inttypes.h>
 
@@ -19287,13 +19287,18 @@ v_dot_table__Type v_dot_checker__Checker_method_call_expr(
     method_call_expr->return_type = method.return_type;
     return method.return_type;
   };
-  if ((typ_sym->kind == v_dot_table__v_dot_table__Kind_map) &&
+  if (typ_sym->kind == v_dot_table__v_dot_table__Kind_map &&
       string_eq(name, tos3("str"))) {
     int tmp57 = 0;
-    bool tmp58 = map_get(/*checker.v : 342*/ c->table->type_idxs,
+    bool tmp58 = map_get(/*checker.v : 344*/ c->table->type_idxs,
                          tos3("map_string"), &tmp57);
 
     method_call_expr->receiver_type = v_dot_table__new_type(tmp57);
+    method_call_expr->return_type = v_dot_table__string_type;
+    return v_dot_table__string_type;
+  };
+  if (typ_sym->kind == v_dot_table__v_dot_table__Kind_array &&
+      string_eq(name, tos3("str"))) {
     method_call_expr->return_type = v_dot_table__string_type;
     return v_dot_table__string_type;
   };
@@ -19385,7 +19390,7 @@ void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
   return_stmt->types = got_types;
   int tmp65 = 0;
   bool tmp66 =
-      map_get(/*checker.v : 403*/ c->table->type_idxs, tos3("Option"), &tmp65);
+      map_get(/*checker.v : 410*/ c->table->type_idxs, tos3("Option"), &tmp65);
 
   if (exp_is_optional &&
       (v_dot_table__type_idx((*(v_dot_table__Type *)array_get(got_types, 0))) ==
@@ -19912,7 +19917,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     };
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp107 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
-    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4539_var_scope_var;
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4561_var_scope_var;
     if (!tmp107.ok) {
       string err = tmp107.error;
       int errcode = tmp107.ecode;
@@ -19924,11 +19929,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_4539_var_scope_var =
+    _V_mret_4561_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp107.data;
     ;
-    var_scope = _V_mret_4539_var_scope_var.var_0;
-    var = _V_mret_4539_var_scope_var.var_1;
+    var_scope = _V_mret_4561_var_scope_var.var_0;
+    var = _V_mret_4561_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
