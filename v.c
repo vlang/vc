@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "1d0f3ab"
+#define V_COMMIT_HASH "9c5de77"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b1d15af"
+#define V_COMMIT_HASH "1d0f3ab"
 #endif
 #include <inttypes.h>
 
@@ -2986,7 +2986,7 @@ void os__rmdir_recursive(string path);
 void os__rmdir_all(string path);
 bool os__is_dir_empty(string path);
 void os__print_c_errno();
-string os__ext(string path);
+string os__file_ext(string path);
 string os__dir(string path);
 string os__base_dir(string path);
 string os__file_name(string path);
@@ -12033,7 +12033,7 @@ void os__print_c_errno() {
   string se = tos_clone(((byteptr)(strerror(errno))));
   printf("errno=%d err=%.*s\n", e, se.len, se.str);
 }
-string os__ext(string path) {
+string os__file_ext(string path) {
   Option_int tmp41 = string_last_index(path, tos3("."));
   int pos;
   if (!tmp41.ok) {
