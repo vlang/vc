@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fc86269"
+#define V_COMMIT_HASH "b1d15af"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f452518"
+#define V_COMMIT_HASH "fc86269"
 #endif
 #include <inttypes.h>
 
@@ -19316,7 +19316,7 @@ v_dot_table__Type v_dot_checker__Checker_method_call_expr(
   if (typ_sym->kind == v_dot_table__v_dot_table__Kind_array &&
       (string_eq(name, tos3("filter")) || string_eq(name, tos3("clone")) ||
        string_eq(name, tos3("repeat")) || string_eq(name, tos3("reverse")) ||
-       string_eq(name, tos3("map")))) {
+       string_eq(name, tos3("map")) || string_eq(name, tos3("slice")))) {
     if ((string_eq(name, tos3("filter")) || string_eq(name, tos3("map")))) {
       v_dot_table__Array array_info = *(v_dot_table__Array *)typ_sym->info.obj;
       v_dot_ast__Scope *scope = v_dot_ast__Scope_innermost(
@@ -20029,7 +20029,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     };
     Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp107 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
-    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4561_var_scope_var;
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4563_var_scope_var;
     if (!tmp107.ok) {
       string err = tmp107.error;
       int errcode = tmp107.ecode;
@@ -20041,11 +20041,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    _V_mret_4561_var_scope_var =
+    _V_mret_4563_var_scope_var =
         *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp107.data;
     ;
-    var_scope = _V_mret_4561_var_scope_var.var_0;
-    var = _V_mret_4561_var_scope_var.var_1;
+    var_scope = _V_mret_4563_var_scope_var.var_0;
+    var = _V_mret_4563_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
