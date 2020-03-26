@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "d8bcd13"
+#define V_COMMIT_HASH "ec4be80"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d548432"
+#define V_COMMIT_HASH "d8bcd13"
 #endif
 #include <inttypes.h>
 
@@ -3643,6 +3643,7 @@ string v_dot_gen__comp_if_to_ifdef(string name);
 static inline string v_dot_gen__c_name(string name_);
 string v_dot_gen__Gen_type_default(v_dot_gen__Gen *g, v_dot_table__Type typ);
 void v_dot_gen__Gen_write_tests_main(v_dot_gen__Gen *g);
+bool v_dot_gen__Gen_is_importing_os(v_dot_gen__Gen *g);
 string v_dot_gen__jsgen(v_dot_ast__File program, v_dot_table__Table *table);
 void v_dot_gen__JsGen_save(v_dot_gen__JsGen *g);
 void v_dot_gen__JsGen_write(v_dot_gen__JsGen *g, string s);
@@ -21045,12 +21046,15 @@ void v_dot_gen__Gen_gen_fn_decl(v_dot_gen__Gen *g, v_dot_ast__FnDecl it) {
   };
   if (is_main) {
     v_dot_gen__Gen_writeln(g, tos3("_vinit();"));
-    if (g->autofree) {
+    if (v_dot_gen__Gen_is_importing_os(&/* ? */ *g)) {
+      if (g->autofree) {
+        v_dot_gen__Gen_writeln(
+            g,
+            tos3("free(_const_os__args.data); // empty, inited in _vinit()"));
+      };
       v_dot_gen__Gen_writeln(
-          g, tos3("free(_const_os__args.data); // empty, inited in _vinit()"));
+          g, tos3("_const_os__args = os__init_os_args(argc, (byteptr*)argv);"));
     };
-    v_dot_gen__Gen_writeln(
-        g, tos3("_const_os__args = os__init_os_args(argc, (byteptr*)argv);"));
   };
   v_dot_gen__Gen_stmts(g, it.stmts);
   if (g->autofree) {
@@ -22114,7 +22118,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g,
       string varg_type_str = int_str(((int)(arg.expected_type)));
       int tmp111 = 0;
       bool tmp112 =
-          map_get(/*cgen.v : 1723*/ g->variadic_args, varg_type_str, &tmp111);
+          map_get(/*cgen.v : 1725*/ g->variadic_args, varg_type_str, &tmp111);
 
       if (len > tmp111) {
         map_set(&g->variadic_args, varg_type_str, &(int[]){len});
@@ -22191,7 +22195,10 @@ void v_dot_gen__Gen_write_init_function(v_dot_gen__Gen *g) {
   if (g->autofree) {
     v_dot_gen__Gen_writeln(g, tos3("void _vcleanup() {"));
     v_dot_gen__Gen_writeln(g, tos3("puts(\"cleaning up...\");"));
-    v_dot_gen__Gen_writeln(g, tos3("free(_const_os__args.data);"));
+    if (v_dot_gen__Gen_is_importing_os(&/* ? */ *g)) {
+      v_dot_gen__Gen_writeln(g, tos3("free(_const_os__args.data);"));
+      v_dot_gen__Gen_writeln(g, tos3("string_free(_const_os__wd_at_startup);"));
+    };
     v_dot_gen__Gen_writeln(
         g, tos3("free(_const_strconv__ftoa__powers_of_10.data);"));
     v_dot_gen__Gen_writeln(g, tos3("}"));
@@ -22225,7 +22232,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp122 = 0;
     bool tmp123 =
-        map_get(/*cgen.v : 1848*/ g->table->type_idxs, builtin_name, &tmp122);
+        map_get(/*cgen.v : 1853*/ g->table->type_idxs, builtin_name, &tmp122);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22386,7 +22393,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp147 = 0;
     bool tmp148 =
-        map_get(/*cgen.v : 1953*/ g->table->type_idxs, node.name, &tmp147);
+        map_get(/*cgen.v : 1958*/ g->table->type_idxs, node.name, &tmp147);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22694,6 +22701,9 @@ void v_dot_gen__Gen_write_tests_main(v_dot_gen__Gen *g) {
     v_dot_gen__Gen_writeln(g, _STR("\t%.*s();", f.name.len, f.name.str));
   };
   v_dot_gen__Gen_writeln(g, tos3("return 0; }"));
+}
+bool v_dot_gen__Gen_is_importing_os(v_dot_gen__Gen *g) {
+  return (_IN(string, (tos3("os")), g->table->imports));
 }
 string v_dot_gen__jsgen(v_dot_ast__File program, v_dot_table__Table *table) {
   v_dot_gen__JsGen g =
