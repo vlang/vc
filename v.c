@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ed42b86"
+#define V_COMMIT_HASH "fd8bb2c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bee8972"
+#define V_COMMIT_HASH "ed42b86"
 #endif
 #include <inttypes.h>
 
@@ -19312,7 +19312,7 @@ v_dot_table__Type v_dot_checker__Checker_method_call_expr(
   if (typ_sym->kind == v_dot_table__v_dot_table__Kind_map &&
       string_eq(name, tos3("str"))) {
     int tmp61 = 0;
-    bool tmp62 = map_get(/*checker.v : 341*/ c->table->type_idxs,
+    bool tmp62 = map_get(/*checker.v : 342*/ c->table->type_idxs,
                          tos3("map_string"), &tmp61);
 
     method_call_expr->receiver_type = v_dot_table__new_type(tmp61);
@@ -19321,6 +19321,7 @@ v_dot_table__Type v_dot_checker__Checker_method_call_expr(
   };
   if (typ_sym->kind == v_dot_table__v_dot_table__Kind_array &&
       string_eq(name, tos3("str"))) {
+    method_call_expr->receiver_type = typ;
     method_call_expr->return_type = v_dot_table__string_type;
     return v_dot_table__string_type;
   };
@@ -19412,7 +19413,7 @@ void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
   return_stmt->types = got_types;
   int tmp69 = 0;
   bool tmp70 =
-      map_get(/*checker.v : 407*/ c->table->type_idxs, tos3("Option"), &tmp69);
+      map_get(/*checker.v : 408*/ c->table->type_idxs, tos3("Option"), &tmp69);
 
   if (exp_is_optional &&
       (v_dot_table__type_idx((*(v_dot_table__Type *)array_get(got_types, 0))) ==
