@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "883a105"
+#define V_COMMIT_HASH "db59c62"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7ce7151"
+#define V_COMMIT_HASH "883a105"
 #endif
 #include <inttypes.h>
 
@@ -3297,8 +3297,6 @@ Option_f32 internal_dot_flag__Instance_f32(internal_dot_flag__Instance *p);
 Option_f64 internal_dot_flag__Instance_f64(internal_dot_flag__Instance *p);
 Option_i64 internal_dot_flag__Instance_i64(internal_dot_flag__Instance *p);
 bool internal_dot_flag__Instance_bool(internal_dot_flag__Instance *p);
-void internal_dot_flag__Instance_allow_duplicate(
-    internal_dot_flag__Instance *p);
 void internal_dot_flag__Instance_is_equivalent_to(
     internal_dot_flag__Instance *p, array_string flags);
 Option_array_string internal_dot_flag__parse_pref(
@@ -3367,6 +3365,7 @@ v_dot_parser__Parser_call_args(v_dot_parser__Parser *p);
 v_dot_ast__FnDecl v_dot_parser__Parser_fn_decl(v_dot_parser__Parser *p);
 _V_MulRet_array_v_dot_table__Arg_V_bool
 v_dot_parser__Parser_fn_args(v_dot_parser__Parser *p);
+bool v_dot_parser__Parser_fileis(v_dot_parser__Parser *p, string s);
 bool v_dot_parser__Parser_known_import(v_dot_parser__Parser *p, string mod);
 string v_dot_parser__Parser_prepend_mod(v_dot_parser__Parser *p, string name);
 v_dot_table__Type
@@ -15541,54 +15540,60 @@ internal_dot_flag__Instance_parse_impl(internal_dot_flag__Instance *p,
       p->equal_val = tos3("");
       flag_name = string_substr2(next, 1, -1, true);
     };
-    bool tmp16 = 0;
-    bool tmp17 = map_get(/*flag.v : 46*/ p->encountered, flag_name, &tmp16);
-
-    if (tmp16) {
-      return v_error(
-          _STR("Duplicate flag: -%.*s", flag_name.len, flag_name.str));
-    };
     map_set(&p->encountered, flag_name, &(bool[]){1});
     p->current_flag = flag_name;
     callback(flag_name, p, value);
   };
-  array_string tmp18 = OPTION_CAST(array_string)(new_array_from_c_array(
+  array_string tmp16 = OPTION_CAST(array_string)(new_array_from_c_array(
       0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)}));
-  return opt_ok(&tmp18, sizeof(array_string));
+  return opt_ok(&tmp16, sizeof(array_string));
 }
 Option_string
 internal_dot_flag__Instance_string(internal_dot_flag__Instance *p) {
   if (string_ne(p->equal_val, tos3(""))) {
-    string tmp19 = OPTION_CAST(string)(p->equal_val);
-    return opt_ok(&tmp19, sizeof(string));
+    string tmp17 = OPTION_CAST(string)(p->equal_val);
+    return opt_ok(&tmp17, sizeof(string));
   };
   p->current_pos++;
   if (p->current_pos >= p->args.len) {
     return v_error(tos3("out of arguments"));
   };
-  string tmp22 =
+  string tmp20 =
       OPTION_CAST(string)((*(string *)array_get(p->args, p->current_pos)));
-  return opt_ok(&tmp22, sizeof(string));
+  return opt_ok(&tmp20, sizeof(string));
 }
 Option_int internal_dot_flag__Instance_int(internal_dot_flag__Instance *p) {
-  Option_string tmp23 = internal_dot_flag__Instance_string(p);
+  Option_string tmp21 = internal_dot_flag__Instance_string(p);
   string val;
-  if (!tmp23.ok) {
-    string err = tmp23.error;
-    int errcode = tmp23.ecode;
+  if (!tmp21.ok) {
+    string err = tmp21.error;
+    int errcode = tmp21.ecode;
     return v_error(err);
   }
-  val = *(string *)tmp23.data;
+  val = *(string *)tmp21.data;
   ;
   if (!byte_is_digit(string_at(val, 0))) {
     return v_error(
         _STR("an integer number was expected, but \"%.*s\" was found instead.",
              val.len, val.str));
   };
-  int tmp26 = OPTION_CAST(int)(v_string_int(val));
-  return opt_ok(&tmp26, sizeof(int));
+  int tmp24 = OPTION_CAST(int)(v_string_int(val));
+  return opt_ok(&tmp24, sizeof(int));
 }
 Option_f32 internal_dot_flag__Instance_f32(internal_dot_flag__Instance *p) {
+  Option_string tmp25 = internal_dot_flag__Instance_string(p);
+  string val;
+  if (!tmp25.ok) {
+    string err = tmp25.error;
+    int errcode = tmp25.ecode;
+    return v_error(err);
+  }
+  val = *(string *)tmp25.data;
+  ;
+  f32 tmp26 = OPTION_CAST(f32)(string_f32(val));
+  return opt_ok(&tmp26, sizeof(f32));
+}
+Option_f64 internal_dot_flag__Instance_f64(internal_dot_flag__Instance *p) {
   Option_string tmp27 = internal_dot_flag__Instance_string(p);
   string val;
   if (!tmp27.ok) {
@@ -15598,10 +15603,10 @@ Option_f32 internal_dot_flag__Instance_f32(internal_dot_flag__Instance *p) {
   }
   val = *(string *)tmp27.data;
   ;
-  f32 tmp28 = OPTION_CAST(f32)(string_f32(val));
-  return opt_ok(&tmp28, sizeof(f32));
+  f64 tmp28 = OPTION_CAST(f64)(string_f64(val));
+  return opt_ok(&tmp28, sizeof(f64));
 }
-Option_f64 internal_dot_flag__Instance_f64(internal_dot_flag__Instance *p) {
+Option_i64 internal_dot_flag__Instance_i64(internal_dot_flag__Instance *p) {
   Option_string tmp29 = internal_dot_flag__Instance_string(p);
   string val;
   if (!tmp29.ok) {
@@ -15611,31 +15616,18 @@ Option_f64 internal_dot_flag__Instance_f64(internal_dot_flag__Instance *p) {
   }
   val = *(string *)tmp29.data;
   ;
-  f64 tmp30 = OPTION_CAST(f64)(string_f64(val));
-  return opt_ok(&tmp30, sizeof(f64));
+  i64 tmp30 = OPTION_CAST(i64)(string_i64(val));
+  return opt_ok(&tmp30, sizeof(i64));
 }
-Option_i64 internal_dot_flag__Instance_i64(internal_dot_flag__Instance *p) {
+bool internal_dot_flag__Instance_bool(internal_dot_flag__Instance *p) {
   Option_string tmp31 = internal_dot_flag__Instance_string(p);
   string val;
   if (!tmp31.ok) {
     string err = tmp31.error;
     int errcode = tmp31.ecode;
-    return v_error(err);
-  }
-  val = *(string *)tmp31.data;
-  ;
-  i64 tmp32 = OPTION_CAST(i64)(string_i64(val));
-  return opt_ok(&tmp32, sizeof(i64));
-}
-bool internal_dot_flag__Instance_bool(internal_dot_flag__Instance *p) {
-  Option_string tmp33 = internal_dot_flag__Instance_string(p);
-  string val;
-  if (!tmp33.ok) {
-    string err = tmp33.error;
-    int errcode = tmp33.ecode;
     return 1;
   }
-  val = *(string *)tmp33.data;
+  val = *(string *)tmp31.data;
   ;
   if ((_IN(string, (val), internal_dot_flag__truthy))) {
     return 1;
@@ -15646,15 +15638,11 @@ bool internal_dot_flag__Instance_bool(internal_dot_flag__Instance *p) {
   p->current_pos--;
   return 1;
 }
-void internal_dot_flag__Instance_allow_duplicate(
-    internal_dot_flag__Instance *p) {
-  map_set(&p->encountered, p->current_flag, &(bool[]){0});
-}
 void internal_dot_flag__Instance_is_equivalent_to(
     internal_dot_flag__Instance *p, array_string flags) {
-  array_string tmp34 = flags;
-  for (int tmp35 = 0; tmp35 < tmp34.len; tmp35++) {
-    string v = ((string *)tmp34.data)[tmp35];
+  array_string tmp32 = flags;
+  for (int tmp33 = 0; tmp33 < tmp32.len; tmp33++) {
+    string v = ((string *)tmp32.data)[tmp33];
 
     map_set(&p->encountered, v, &(bool[]){1});
   };
@@ -16504,6 +16492,9 @@ v_dot_parser__Parser_fn_args(v_dot_parser__Parser *p) {
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rpar);
   return (_V_MulRet_array_v_dot_table__Arg_V_bool){.var_0 = args,
                                                    .var_1 = is_variadic};
+}
+bool v_dot_parser__Parser_fileis(v_dot_parser__Parser *p, string s) {
+  return string_contains(p->file_name, s);
 }
 bool v_dot_parser__Parser_known_import(v_dot_parser__Parser *p, string mod) {
   return (_IN_MAP((mod), p->imports));
@@ -17455,7 +17446,7 @@ v_dot_ast__Expr v_dot_parser__Parser_name_expr(v_dot_parser__Parser *p) {
       mod = tos3("C");
     } else {
       string tmp17 = tos3("");
-      bool tmp18 = map_get(/*parser.v : 611*/ p->imports, p->tok.lit, &tmp17);
+      bool tmp18 = map_get(/*parser.v : 612*/ p->imports, p->tok.lit, &tmp17);
 
       if (!tmp18)
         tmp17 = tos((byte *)"", 0);
@@ -18440,6 +18431,9 @@ v_dot_parser__Parser_struct_decl(v_dot_parser__Parser *p) {
       v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_key_mut);
       v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_colon);
       mut_pos = fields.len;
+    } else if (p->tok.kind == v_dot_token__v_dot_token__Kind_key_global) {
+      v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_key_global);
+      v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_colon);
     };
     string field_name = v_dot_parser__Parser_check_name(p);
     v_dot_table__Type typ = v_dot_parser__Parser_parse_type(p);
@@ -41975,7 +41969,6 @@ void internal_dot_compile__parse_c_options(string flag,
     tmp = *(string *)tmp2.data;
     ;
     prefs->ccompiler = tmp;
-    internal_dot_flag__Instance_allow_duplicate(f);
   } else if ((string_eq(tmp1, tos3("cg"))) ||
              (string_eq(tmp1, tos3("cdebug")))) {
     internal_dot_flag__Instance_is_equivalent_to(
@@ -42019,7 +42012,6 @@ void internal_dot_compile__parse_c_options(string flag,
     prefs->sanitize = internal_dot_flag__Instance_bool(f);
   } else if ((string_eq(tmp1, tos3("cf"))) ||
              (string_eq(tmp1, tos3("cflags")))) {
-    internal_dot_flag__Instance_allow_duplicate(f);
     Option_string tmp5 = internal_dot_flag__Instance_string(f);
     string cflag;
     if (!tmp5.ok) {
@@ -42197,7 +42189,6 @@ void internal_dot_compile__parse_options(string flag,
     prefs->out_name = tmp;
   } else if ((string_eq(tmp21, tos3("d"))) ||
              (string_eq(tmp21, tos3("define")))) {
-    internal_dot_flag__Instance_allow_duplicate(f);
     Option_string tmp24 = internal_dot_flag__Instance_string(f);
     string define;
     if (!tmp24.ok) {
@@ -42222,7 +42213,6 @@ void internal_dot_compile__parse_options(string flag,
     };
   } else if ((string_eq(tmp21, tos3("e"))) ||
              (string_eq(tmp21, tos3("experiments")))) {
-    internal_dot_flag__Instance_allow_duplicate(f);
     Option_string tmp25 = internal_dot_flag__Instance_string(f);
     string to_enable;
     if (!tmp25.ok) {
@@ -42760,9 +42750,6 @@ void main__parse_flags(string flag, internal_dot_flag__Instance *f,
     v_exit(1);
   } else // default:
   {
-    if ((_IN(string, (flag), main__list_of_flags_that_allow_duplicates))) {
-      internal_dot_flag__Instance_allow_duplicate(f);
-    };
     prefs->unknown_flag = _STR("-%.*s", flag.len, flag.str);
     if (!((_IN(string, (flag), main__list_of_flags_with_param)))) {
 
