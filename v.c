@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3a691dc"
+#define V_COMMIT_HASH "1a75120"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cb74731"
+#define V_COMMIT_HASH "3a691dc"
 #endif
 #include <inttypes.h>
 
@@ -2183,6 +2183,7 @@ struct v_dot_parser__Parser {
   map_string imports;
   array_v_dot_ast__Import ast_imports;
   bool is_amp;
+  bool returns;
 };
 
 struct v_dot_gen__JsGen {
@@ -3358,6 +3359,7 @@ string v_dot_ast__FnDecl_str(v_dot_ast__FnDecl *node, v_dot_table__Table *t);
 string v_dot_ast__Expr_str(v_dot_ast__Expr x);
 string v_dot_ast__Stmt_str(v_dot_ast__Stmt node);
 v_dot_ast__CompIf v_dot_parser__Parser_comp_if(v_dot_parser__Parser *p);
+v_dot_pref__OS v_dot_parser__os_from_string(string os);
 v_dot_ast__CallExpr v_dot_parser__Parser_call_expr(v_dot_parser__Parser *p,
                                                    bool is_c, string mod);
 array_v_dot_ast__CallArg
@@ -3382,9 +3384,11 @@ v_dot_ast__Stmt v_dot_parser__parse_stmt(string text, v_dot_table__Table *table,
                                          v_dot_ast__Scope *scope);
 v_dot_ast__File
 v_dot_parser__parse_file(string path, v_dot_table__Table *table,
-                         v_dot_scanner__CommentsMode comments_mode);
+                         v_dot_scanner__CommentsMode comments_mode,
+                         v_dot_pref__Preferences *pref);
 array_v_dot_ast__File v_dot_parser__parse_files(array_string paths,
-                                                v_dot_table__Table *table);
+                                                v_dot_table__Table *table,
+                                                v_dot_pref__Preferences *pref);
 void v_dot_parser__Parser_init_parse_fns(v_dot_parser__Parser *p);
 void v_dot_parser__Parser_read_first_token(v_dot_parser__Parser *p);
 void v_dot_parser__Parser_open_scope(v_dot_parser__Parser *p);
@@ -3565,6 +3569,7 @@ static inline string v_dot_gen__c_name(string name_);
 string v_dot_gen__Gen_type_default(v_dot_gen__Gen *g, v_dot_table__Type typ);
 void v_dot_gen__Gen_write_tests_main(v_dot_gen__Gen *g);
 bool v_dot_gen__Gen_is_importing_os(v_dot_gen__Gen *g);
+void v_dot_gen__Gen_comp_if(v_dot_gen__Gen *g, v_dot_ast__CompIf it);
 string v_dot_gen__jsgen(v_dot_ast__File program, v_dot_table__Table *table);
 void v_dot_gen__JsGen_save(v_dot_gen__JsGen *g);
 void v_dot_gen__JsGen_write(v_dot_gen__JsGen *g, string s);
@@ -4791,6 +4796,7 @@ const char *__SumTypeNames__v_dot_ast__IdentInfo[] = {
 #define v_dot_ast__v_dot_ast__IdentKind_variable 2
 #define v_dot_ast__v_dot_ast__IdentKind_constant 3
 #define v_dot_ast__v_dot_ast__IdentKind_function 4
+array_string v_dot_parser__supported_platforms;
 bool v_dot_parser__colored_output;
 array_string v_dot_gen__c_reserved;
 array_string v_dot_gen__tabs;
@@ -16198,14 +16204,51 @@ v_dot_ast__CompIf v_dot_parser__Parser_comp_if(v_dot_parser__Parser *p) {
     v_dot_parser__Parser_next(p);
   };
   string val = v_dot_parser__Parser_check_name(p);
+  array_v_dot_ast__Stmt stmts = new_array_from_c_array(
+      0, 0, sizeof(v_dot_ast__Stmt),
+      EMPTY_ARRAY_OF_ELEMS(v_dot_ast__Stmt, 0){TCCSKIP(0)});
+  bool skip_os = 0;
+  if ((_IN(string, (val), v_dot_parser__supported_platforms))) {
+    v_dot_pref__OS os = v_dot_parser__os_from_string(val);
+    if (((!is_not && os != p->pref->os) || (is_not && os == p->pref->os)) &&
+        !p->pref->output_cross_c) {
+      skip_os = 1;
+      v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_lcbr);
+      v_dot_parser__Parser_warn(&/* ? */ *p,
+                                _STR("SKIPPING %.*s os=%d p.pref.os=%d",
+                                     val.len, val.str, os, p->pref->os));
+      int stack = 1;
+      while (1) {
+        if (p->tok.kind == v_dot_token__v_dot_token__Kind_key_return) {
+          p->returns = 1;
+        };
+        if (p->tok.kind == v_dot_token__v_dot_token__Kind_lcbr) {
+          stack++;
+        } else if (p->tok.kind == v_dot_token__v_dot_token__Kind_rcbr) {
+          stack--;
+        };
+        if (p->tok.kind == v_dot_token__v_dot_token__Kind_eof) {
+          break;
+        };
+        if (stack <= 0 && p->tok.kind == v_dot_token__v_dot_token__Kind_rcbr) {
+          v_dot_parser__Parser_next(p);
+          break;
+        };
+        v_dot_parser__Parser_next(p);
+      };
+    };
+  };
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_question) {
     v_dot_parser__Parser_next(p);
   };
+  if (!skip_os) {
+    stmts = v_dot_parser__Parser_parse_block(p);
+  };
   v_dot_ast__CompIf node = (v_dot_ast__CompIf){
       .is_not = is_not,
-      .stmts = v_dot_parser__Parser_parse_block(p),
       .pos = pos,
       .val = val,
+      .stmts = stmts,
       .has_else = 0,
       .else_stmts = new_array(0, 1, sizeof(v_dot_ast__Stmt))};
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_dollar &&
@@ -16216,6 +16259,43 @@ v_dot_ast__CompIf v_dot_parser__Parser_comp_if(v_dot_parser__Parser *p) {
     node.else_stmts = v_dot_parser__Parser_parse_block(p);
   };
   return node;
+}
+v_dot_pref__OS v_dot_parser__os_from_string(string os) {
+  string tmp1 = os;
+
+  if (string_eq(tmp1, tos3("linux"))) {
+    return v_dot_pref__v_dot_pref__OS_linux;
+  } else if (string_eq(tmp1, tos3("windows"))) {
+    return v_dot_pref__v_dot_pref__OS_windows;
+  } else if (string_eq(tmp1, tos3("mac"))) {
+    return v_dot_pref__v_dot_pref__OS_mac;
+  } else if (string_eq(tmp1, tos3("macos"))) {
+    return v_dot_pref__v_dot_pref__OS_mac;
+  } else if (string_eq(tmp1, tos3("freebsd"))) {
+    return v_dot_pref__v_dot_pref__OS_freebsd;
+  } else if (string_eq(tmp1, tos3("openbsd"))) {
+    return v_dot_pref__v_dot_pref__OS_openbsd;
+  } else if (string_eq(tmp1, tos3("netbsd"))) {
+    return v_dot_pref__v_dot_pref__OS_netbsd;
+  } else if (string_eq(tmp1, tos3("dragonfly"))) {
+    return v_dot_pref__v_dot_pref__OS_dragonfly;
+  } else if (string_eq(tmp1, tos3("js"))) {
+    return v_dot_pref__v_dot_pref__OS_js;
+  } else if (string_eq(tmp1, tos3("solaris"))) {
+    return v_dot_pref__v_dot_pref__OS_solaris;
+  } else if (string_eq(tmp1, tos3("android"))) {
+    return v_dot_pref__v_dot_pref__OS_android;
+  } else if (string_eq(tmp1, tos3("msvc"))) {
+    v_dot_parser__verror(tos3("use the flag `-cc msvc` to build using msvc"));
+  } else if (string_eq(tmp1, tos3("haiku"))) {
+    return v_dot_pref__v_dot_pref__OS_haiku;
+  } else if (string_eq(tmp1, tos3("linux_or_macos"))) {
+    return v_dot_pref__v_dot_pref__OS_linux;
+  } else // default:
+  {
+    v_panic(_STR("bad os %.*s", os.len, os.str));
+  };
+  return v_dot_pref__v_dot_pref__OS_linux;
 }
 v_dot_ast__CallExpr v_dot_parser__Parser_call_expr(v_dot_parser__Parser *p,
                                                    bool is_c, string mod) {
@@ -16828,14 +16908,16 @@ v_dot_ast__Stmt v_dot_parser__parse_stmt(string text, v_dot_table__Table *table,
       .expr_mod = tos3(""),
       .imports = new_map(1, sizeof(string)),
       .ast_imports = new_array(0, 1, sizeof(v_dot_ast__Import)),
-      .is_amp = 0};
+      .is_amp = 0,
+      .returns = 0};
   v_dot_parser__Parser_init_parse_fns(&/* ? */ p);
   v_dot_parser__Parser_read_first_token(&/* ? */ p);
   return v_dot_parser__Parser_stmt(&/* ? */ p);
 }
 v_dot_ast__File
 v_dot_parser__parse_file(string path, v_dot_table__Table *table,
-                         v_dot_scanner__CommentsMode comments_mode) {
+                         v_dot_scanner__CommentsMode comments_mode,
+                         v_dot_pref__Preferences *pref) {
   array_v_dot_ast__Stmt stmts = new_array_from_c_array(
       0, 0, sizeof(v_dot_ast__Stmt),
       EMPTY_ARRAY_OF_ELEMS(v_dot_ast__Stmt, 0){TCCSKIP(0)});
@@ -16843,46 +16925,7 @@ v_dot_parser__parse_file(string path, v_dot_table__Table *table,
       .scanner = v_dot_scanner__new_scanner_file(path, comments_mode),
       .table = table,
       .file_name = path,
-      .pref = (v_dot_pref__Preferences *)memdup(
-          &(v_dot_pref__Preferences){
-              .is_test = 0,
-              .is_script = 0,
-              .is_live = 0,
-              .is_solive = 0,
-              .is_so = 0,
-              .is_prof = 0,
-              .translated = 0,
-              .is_prod = 0,
-              .obfuscate = 0,
-              .is_repl = 0,
-              .is_run = 0,
-              .sanitize = 0,
-              .is_debug = 0,
-              .is_vlines = 0,
-              .is_keep_c = 0,
-              .is_pretty_c = 0,
-              .is_cache = 0,
-              .is_stats = 0,
-              .no_auto_free = 0,
-              .cflags = tos3(""),
-              .ccompiler = tos3(""),
-              .third_party_option = tos3(""),
-              .building_v = 0,
-              .autofree = 0,
-              .compress = 0,
-              .fast = 0,
-              .enable_globals = 0,
-              .is_bare = 0,
-              .lookup_path = new_array(0, 1, sizeof(string)),
-              .output_cross_c = 0,
-              .prealloc = 0,
-              .vroot = tos3(""),
-              .out_name = tos3(""),
-              .path = tos3(""),
-              .compile_defines = new_array(0, 1, sizeof(string)),
-              .compile_defines_all = new_array(0, 1, sizeof(string)),
-              .mod = tos3("")},
-          sizeof(v_dot_pref__Preferences)),
+      .pref = pref,
       .scope = (v_dot_ast__Scope *)memdup(
           &(v_dot_ast__Scope){.start_pos = 0,
                               .parent = 0,
@@ -16899,7 +16942,8 @@ v_dot_parser__parse_file(string path, v_dot_table__Table *table,
       .expr_mod = tos3(""),
       .imports = new_map(1, sizeof(string)),
       .ast_imports = new_array(0, 1, sizeof(v_dot_ast__Import)),
-      .is_amp = 0};
+      .is_amp = 0,
+      .returns = 0};
   v_dot_parser__Parser_read_first_token(&/* ? */ p);
   v_dot_ast__Module module_decl =
       ((p.tok.kind == v_dot_token__v_dot_token__Kind_key_module)
@@ -16927,7 +16971,8 @@ v_dot_parser__parse_file(string path, v_dot_table__Table *table,
                            .scope = p.scope};
 }
 array_v_dot_ast__File v_dot_parser__parse_files(array_string paths,
-                                                v_dot_table__Table *table) {
+                                                v_dot_table__Table *table,
+                                                v_dot_pref__Preferences *pref) {
   array_v_dot_ast__File files = new_array_from_c_array(
       0, 0, sizeof(v_dot_ast__File),
       EMPTY_ARRAY_OF_ELEMS(v_dot_ast__File, 0){TCCSKIP(0)});
@@ -16939,7 +16984,7 @@ array_v_dot_ast__File v_dot_parser__parse_files(array_string paths,
           (/*typ = array_v_dot_ast__File   tmp_typ=v_dot_ast__File*/
            v_dot_parser__parse_file(
                path, table,
-               v_dot_scanner__v_dot_scanner__CommentsMode_skip_comments)),
+               v_dot_scanner__v_dot_scanner__CommentsMode_skip_comments, pref)),
           tmp4, v_dot_ast__File);
   };
   return files;
@@ -17447,7 +17492,7 @@ v_dot_ast__Expr v_dot_parser__Parser_name_expr(v_dot_parser__Parser *p) {
       mod = tos3("C");
     } else {
       string tmp17 = tos3("");
-      bool tmp18 = map_get(/*parser.v : 612*/ p->imports, p->tok.lit, &tmp17);
+      bool tmp18 = map_get(/*parser.v : 613*/ p->imports, p->tok.lit, &tmp17);
 
       if (!tmp18)
         tmp17 = tos((byte *)"", 0);
@@ -20596,27 +20641,7 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
     v_dot_gen__Gen_const_decl(g, *it);
   } else if (tmp26.typ == SumType_v_dot_ast__Stmt_CompIf) {
     v_dot_ast__CompIf *it = (v_dot_ast__CompIf *)tmp26.obj;
-    string ifdef = v_dot_gen__comp_if_to_ifdef(it->val);
-    if (it->is_not) {
-      v_dot_gen__Gen_writeln(g, string_add(tos3("\n#ifndef "), ifdef));
-      v_dot_gen__Gen_writeln(g,
-                             _STR("// #if not %.*s", it->val.len, it->val.str));
-    } else {
-      v_dot_gen__Gen_writeln(g, string_add(tos3("\n#ifdef "), ifdef));
-      v_dot_gen__Gen_writeln(g, _STR("// #if %.*s", it->val.len, it->val.str));
-    };
-    g->defer_ifdef = ((it->is_not) ? (string_add(tos3("#ifndef "), ifdef))
-                                   : (string_add(tos3("#ifdef "), ifdef)));
-    v_dot_gen__Gen_stmts(g, it->stmts);
-    g->defer_ifdef = tos3("");
-    if (it->has_else) {
-      v_dot_gen__Gen_writeln(g, tos3("#else"));
-      g->defer_ifdef = ((it->is_not) ? (string_add(tos3("#ifdef "), ifdef))
-                                     : (string_add(tos3("#ifndef "), ifdef)));
-      v_dot_gen__Gen_stmts(g, it->else_stmts);
-      g->defer_ifdef = tos3("");
-    };
-    v_dot_gen__Gen_writeln(g, tos3("#endif"));
+    v_dot_gen__Gen_comp_if(g, *it);
   } else if (tmp26.typ == SumType_v_dot_ast__Stmt_DeferStmt) {
     v_dot_ast__DeferStmt *it = (v_dot_ast__DeferStmt *)tmp26.obj;
     v_dot_ast__DeferStmt defer_stmt = *it;
@@ -22226,7 +22251,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g, array_v_dot_ast__CallArg args,
     string varg_type_str = int_str(((int)(varg_type)));
     int tmp129 = 0;
     bool tmp130 =
-        map_get(/*cgen.v : 1867*/ g->variadic_args, varg_type_str, &tmp129);
+        map_get(/*cgen.v : 1846*/ g->variadic_args, varg_type_str, &tmp129);
 
     if (len > tmp129) {
       map_set(&g->variadic_args, varg_type_str, &(int[]){len});
@@ -22324,7 +22349,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp138 = 0;
     bool tmp139 =
-        map_get(/*cgen.v : 1976*/ g->table->type_idxs, builtin_name, &tmp138);
+        map_get(/*cgen.v : 1955*/ g->table->type_idxs, builtin_name, &tmp138);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22485,7 +22510,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp163 = 0;
     bool tmp164 =
-        map_get(/*cgen.v : 2081*/ g->table->type_idxs, node.name, &tmp163);
+        map_get(/*cgen.v : 2060*/ g->table->type_idxs, node.name, &tmp163);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22852,6 +22877,28 @@ void v_dot_gen__Gen_write_tests_main(v_dot_gen__Gen *g) {
 }
 bool v_dot_gen__Gen_is_importing_os(v_dot_gen__Gen *g) {
   return (_IN(string, (tos3("os")), g->table->imports));
+}
+void v_dot_gen__Gen_comp_if(v_dot_gen__Gen *g, v_dot_ast__CompIf it) {
+  string ifdef = v_dot_gen__comp_if_to_ifdef(it.val);
+  if (it.is_not) {
+    v_dot_gen__Gen_writeln(g, string_add(tos3("\n#ifndef "), ifdef));
+    v_dot_gen__Gen_writeln(g, _STR("// #if not %.*s", it.val.len, it.val.str));
+  } else {
+    v_dot_gen__Gen_writeln(g, string_add(tos3("\n#ifdef "), ifdef));
+    v_dot_gen__Gen_writeln(g, _STR("// #if %.*s", it.val.len, it.val.str));
+  };
+  g->defer_ifdef = ((it.is_not) ? (string_add(tos3("#ifndef "), ifdef))
+                                : (string_add(tos3("#ifdef "), ifdef)));
+  v_dot_gen__Gen_stmts(g, it.stmts);
+  g->defer_ifdef = tos3("");
+  if (it.has_else) {
+    v_dot_gen__Gen_writeln(g, tos3("#else"));
+    g->defer_ifdef = ((it.is_not) ? (string_add(tos3("#ifdef "), ifdef))
+                                  : (string_add(tos3("#ifndef "), ifdef)));
+    v_dot_gen__Gen_stmts(g, it.else_stmts);
+    g->defer_ifdef = tos3("");
+  };
+  v_dot_gen__Gen_writeln(g, tos3("#endif"));
 }
 string v_dot_gen__jsgen(v_dot_ast__File program, v_dot_table__Table *table) {
   v_dot_gen__JsGen g =
@@ -23520,7 +23567,47 @@ string v_dot_doc__doc(string mod, v_dot_table__Table *table) {
     };
     v_dot_ast__File file_ast = v_dot_parser__parse_file(
         os__join_path(path, &(varg_string){.len = 1, .args = {file}}), table,
-        v_dot_scanner__v_dot_scanner__CommentsMode_skip_comments);
+        v_dot_scanner__v_dot_scanner__CommentsMode_skip_comments,
+        (v_dot_pref__Preferences *)memdup(
+            &(v_dot_pref__Preferences){
+                .is_test = 0,
+                .is_script = 0,
+                .is_live = 0,
+                .is_solive = 0,
+                .is_so = 0,
+                .is_prof = 0,
+                .translated = 0,
+                .is_prod = 0,
+                .obfuscate = 0,
+                .is_repl = 0,
+                .is_run = 0,
+                .sanitize = 0,
+                .is_debug = 0,
+                .is_vlines = 0,
+                .is_keep_c = 0,
+                .is_pretty_c = 0,
+                .is_cache = 0,
+                .is_stats = 0,
+                .no_auto_free = 0,
+                .cflags = tos3(""),
+                .ccompiler = tos3(""),
+                .third_party_option = tos3(""),
+                .building_v = 0,
+                .autofree = 0,
+                .compress = 0,
+                .fast = 0,
+                .enable_globals = 0,
+                .is_bare = 0,
+                .lookup_path = new_array(0, 1, sizeof(string)),
+                .output_cross_c = 0,
+                .prealloc = 0,
+                .vroot = tos3(""),
+                .out_name = tos3(""),
+                .path = tos3(""),
+                .compile_defines = new_array(0, 1, sizeof(string)),
+                .compile_defines_all = new_array(0, 1, sizeof(string)),
+                .mod = tos3("")},
+            sizeof(v_dot_pref__Preferences)));
     _PUSH_MANY(
         &d.stmts,
         (/*typ = array_v_dot_ast__Stmt   tmp_typ=v_dot_ast__Stmt*/ file_ast
@@ -23662,7 +23749,7 @@ v_dot_builder__new_builder(v_dot_pref__Preferences *pref) {
 string v_dot_builder__Builder_gen_c(v_dot_builder__Builder *b,
                                     array_string v_files) {
   i64 t0 = time__ticks();
-  b->parsed_files = v_dot_parser__parse_files(v_files, b->table);
+  b->parsed_files = v_dot_parser__parse_files(v_files, b->table, b->pref);
   v_dot_builder__Builder_parse_imports(b);
   i64 t1 = time__ticks();
   i64 parse_time = t1 - t0;
@@ -23699,7 +23786,7 @@ void v_dot_builder__Builder_build_c(v_dot_builder__Builder *b,
 void v_dot_builder__Builder_build_x64(v_dot_builder__Builder *b,
                                       array_string v_files, string out_file) {
   i64 t0 = time__ticks();
-  b->parsed_files = v_dot_parser__parse_files(v_files, b->table);
+  b->parsed_files = v_dot_parser__parse_files(v_files, b->table, b->pref);
   v_dot_builder__Builder_parse_imports(b);
   i64 t1 = time__ticks();
   i64 parse_time = t1 - t0;
@@ -23749,7 +23836,7 @@ void v_dot_builder__Builder_parse_imports(v_dot_builder__Builder *b) {
                      mod.len, mod.str, import_path.len, import_path.str));
       };
       array_v_dot_ast__File parsed_files =
-          v_dot_parser__parse_files(v_files, b->table);
+          v_dot_parser__parse_files(v_files, b->table, b->pref);
       array_v_dot_ast__File tmp8 = parsed_files;
       for (int tmp9 = 0; tmp9 < tmp8.len; tmp9++) {
         v_dot_ast__File file = ((v_dot_ast__File *)tmp8.data)[tmp9];
@@ -44725,6 +44812,13 @@ void init() {
   benchmark__BFAIL = term__fail_message(tos3("FAIL"));
   benchmark__BSKIP = term__fail_message(tos3("SKIP"));
   benchmark__BSPENT = term__ok_message(tos3("SPENT"));
+  v_dot_parser__supported_platforms = new_array_from_c_array(
+      13, 13, sizeof(string),
+      EMPTY_ARRAY_OF_ELEMS(string, 13){
+          tos3("windows"), tos3("mac"), tos3("macos"), tos3("linux"),
+          tos3("freebsd"), tos3("openbsd"), tos3("netbsd"), tos3("dragonfly"),
+          tos3("android"), tos3("js"), tos3("solaris"), tos3("haiku"),
+          tos3("linux_or_macos")});
   v_dot_parser__colored_output = term__can_show_color_on_stderr();
   v_dot_gen__c_reserved = new_array_from_c_array(
       31, 31, sizeof(string),
