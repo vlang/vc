@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fd8bb2c"
+#define V_COMMIT_HASH "7fdce50"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ed42b86"
+#define V_COMMIT_HASH "fd8bb2c"
 #endif
 #include <inttypes.h>
 
@@ -3602,6 +3602,7 @@ string v_dot_gen__Gen_new_tmp_var(v_dot_gen__Gen *g);
 void v_dot_gen__Gen_reset_tmp_count(v_dot_gen__Gen *g);
 void v_dot_gen__Gen_stmts(v_dot_gen__Gen *g, array_v_dot_ast__Stmt stmts);
 void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node);
+void v_dot_gen__Gen_write_defer_stmts(v_dot_gen__Gen *g);
 void v_dot_gen__Gen_for_in(v_dot_gen__Gen *g, v_dot_ast__ForInStmt it);
 void v_dot_gen__Gen_expr_with_cast(v_dot_gen__Gen *g, v_dot_ast__Expr expr,
                                    v_dot_table__Type got_type,
@@ -20810,20 +20811,7 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
   } else if (tmp26.typ == SumType_v_dot_ast__Stmt_Return) {
     v_dot_ast__Return *it = (v_dot_ast__Return *)tmp26.obj;
     if (g->defer_stmts.len > 0) {
-      array_v_dot_ast__DeferStmt tmp29 = g->defer_stmts;
-      for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
-        v_dot_ast__DeferStmt defer_stmt =
-            ((v_dot_ast__DeferStmt *)tmp29.data)[tmp30];
-
-        v_dot_gen__Gen_writeln(g, tos3("// defer"));
-        if (defer_stmt.ifdef.len > 0) {
-          v_dot_gen__Gen_writeln(g, defer_stmt.ifdef);
-          v_dot_gen__Gen_stmts(g, defer_stmt.stmts);
-          v_dot_gen__Gen_writeln(g, tos3("#endif"));
-        } else {
-          v_dot_gen__Gen_stmts(g, defer_stmt.stmts);
-        };
-      };
+      v_dot_gen__Gen_write_defer_stmts(g);
     };
     v_dot_gen__Gen_return_statement(g, *it);
   } else if (tmp26.typ == SumType_v_dot_ast__Stmt_StructDecl) {
@@ -20847,6 +20835,22 @@ void v_dot_gen__Gen_stmt(v_dot_gen__Gen *g, v_dot_ast__Stmt node) {
     v_dot_gen__verror(
         string_add(tos3("cgen.stmt(): unhandled node "),
                    tos3(__SumTypeNames__v_dot_ast__Stmt[node.typ])));
+  };
+}
+void v_dot_gen__Gen_write_defer_stmts(v_dot_gen__Gen *g) {
+  array_v_dot_ast__DeferStmt tmp29 = g->defer_stmts;
+  for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
+    v_dot_ast__DeferStmt defer_stmt =
+        ((v_dot_ast__DeferStmt *)tmp29.data)[tmp30];
+
+    v_dot_gen__Gen_writeln(g, tos3("// defer"));
+    if (defer_stmt.ifdef.len > 0) {
+      v_dot_gen__Gen_writeln(g, defer_stmt.ifdef);
+      v_dot_gen__Gen_stmts(g, defer_stmt.stmts);
+      v_dot_gen__Gen_writeln(g, tos3("#endif"));
+    } else {
+      v_dot_gen__Gen_stmts(g, defer_stmt.stmts);
+    };
   };
 }
 void v_dot_gen__Gen_for_in(v_dot_gen__Gen *g, v_dot_ast__ForInStmt it) {
@@ -21205,6 +21209,9 @@ void v_dot_gen__Gen_gen_fn_decl(v_dot_gen__Gen *g, v_dot_ast__FnDecl it) {
       v_dot_gen__verror(tos3("test files cannot have function `main`"));
     };
     v_dot_gen__Gen_writeln(g, tos3("return 0;"));
+  };
+  if (g->defer_stmts.len > 0) {
+    v_dot_gen__Gen_write_defer_stmts(g);
   };
   v_dot_gen__Gen_writeln(g, tos3("}"));
   g->defer_stmts = new_array_from_c_array(
@@ -22331,7 +22338,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g, array_v_dot_ast__CallArg args,
     string varg_type_str = int_str(((int)(varg_type)));
     int tmp129 = 0;
     bool tmp130 =
-        map_get(/*cgen.v : 1860*/ g->variadic_args, varg_type_str, &tmp129);
+        map_get(/*cgen.v : 1867*/ g->variadic_args, varg_type_str, &tmp129);
 
     if (len > tmp129) {
       map_set(&g->variadic_args, varg_type_str, &(int[]){len});
@@ -22429,7 +22436,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp138 = 0;
     bool tmp139 =
-        map_get(/*cgen.v : 1969*/ g->table->type_idxs, builtin_name, &tmp138);
+        map_get(/*cgen.v : 1976*/ g->table->type_idxs, builtin_name, &tmp138);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22590,7 +22597,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp163 = 0;
     bool tmp164 =
-        map_get(/*cgen.v : 2074*/ g->table->type_idxs, node.name, &tmp163);
+        map_get(/*cgen.v : 2081*/ g->table->type_idxs, node.name, &tmp163);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
