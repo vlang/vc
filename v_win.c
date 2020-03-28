@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4541f29"
+#define V_COMMIT_HASH "cedf185"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "479d5d6"
+#define V_COMMIT_HASH "4541f29"
 #endif
 #include <inttypes.h>
 
@@ -5777,9 +5777,9 @@ bool print_backtrace_skipping_top_frames_msvc(int skipframes) {
              lineinfo.str);
     } else {
       int cerr = ((int)(GetLastError()));
-      if ((cerr == 87)) {
+      if (cerr == 87) {
         printf("SymFromAddr failure: %d = The parameter is incorrect)\n", cerr);
-      } else if ((cerr == 487)) {
+      } else if (cerr == 487) {
         printf("SymFromAddr failure: %d = Attempt to access invalid address "
                "(Verify that you have the .pdb file in the right folder.)\n",
                cerr);
@@ -12699,7 +12699,7 @@ Option_array_string os__ls(string path) {
     _PUSH(&dir_files, (/*typ = array_string   tmp_typ=string*/ first_filename),
           tmp4, string);
   };
-  while (FindNextFile(h_find_files, ((voidptr)(&find_file_data)))) {
+  while (FindNextFile(h_find_files, ((voidptr)(&find_file_data))) > 0) {
 
     string filename = string_from_wide(((u16 *)(find_file_data.cFileName)));
     if (string_ne(filename, tos3(".")) && string_ne(filename, tos3(".."))) {
@@ -37324,7 +37324,7 @@ Option_string compiler__find_windows_kit_internal(compiler__RegKey key,
       if (result2 != 0) {
         continue;
       };
-      if ((value[/*ptr!*/ length - 1] /*ru16 1*/ != ((u16)(0)))) {
+      if (value[/*ptr!*/ length - 1] /*ru16 1*/ != ((u16)(0))) {
         value[/*ptr!*/ length] /*ru16 1*/ = ((u16)(0));
       };
       string tmp3 = OPTION_CAST(string)(string_from_wide(value));

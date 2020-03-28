@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "4541f29"
+#define V_COMMIT_HASH "cedf185"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "479d5d6"
+#define V_COMMIT_HASH "4541f29"
 #endif
 #include <inttypes.h>
 
@@ -37278,7 +37278,7 @@ Option_string compiler__find_windows_kit_internal(compiler__RegKey key,
       if (result2 != 0) {
         continue;
       };
-      if ((value[/*ptr!*/ length - 1] /*ru16 1*/ != ((u16)(0)))) {
+      if (value[/*ptr!*/ length - 1] /*ru16 1*/ != ((u16)(0))) {
         value[/*ptr!*/ length] /*ru16 1*/ = ((u16)(0));
       };
       string tmp3 = OPTION_CAST(string)(string_from_wide(value));
