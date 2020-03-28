@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "718819e"
+#define V_COMMIT_HASH "831be43"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9fb218d"
+#define V_COMMIT_HASH "718819e"
 #endif
 #include <inttypes.h>
 
@@ -1595,11 +1595,6 @@ struct v_dot_ast__IdentVar {
   bool is_optional;
 };
 
-struct v_dot_ast__PrefixExpr {
-  v_dot_token__Kind op;
-  v_dot_ast__Expr right;
-};
-
 struct v_dot_ast__EnumDecl {
   string name;
   bool is_pub;
@@ -2105,6 +2100,12 @@ struct v_dot_ast__InfixExpr {
 struct v_dot_ast__PostfixExpr {
   v_dot_token__Kind op;
   v_dot_ast__Expr expr;
+  v_dot_token__Position pos;
+};
+
+struct v_dot_ast__PrefixExpr {
+  v_dot_token__Kind op;
+  v_dot_ast__Expr right;
   v_dot_token__Position pos;
 };
 
@@ -17616,7 +17617,7 @@ v_dot_ast__Expr v_dot_parser__Parser_name_expr(v_dot_parser__Parser *p) {
       mod = tos3("C");
     } else {
       string tmp17 = tos3("");
-      bool tmp18 = map_get(/*parser.v : 613*/ p->imports, p->tok.lit, &tmp17);
+      bool tmp18 = map_get(/*parser.v : 614*/ p->imports, p->tok.lit, &tmp17);
 
       if (!tmp18)
         tmp17 = tos((byte *)"", 0);
@@ -17970,6 +17971,7 @@ v_dot_ast__Expr v_dot_parser__Parser_expr(v_dot_parser__Parser *p,
 }
 v_dot_ast__PrefixExpr
 v_dot_parser__Parser_prefix_expr(v_dot_parser__Parser *p) {
+  v_dot_token__Position pos = v_dot_token__Token_position(&/* ? */ p->tok);
   v_dot_token__Kind op = p->tok.kind;
   if (op == v_dot_token__v_dot_token__Kind_amp) {
     p->is_amp = 1;
@@ -17977,7 +17979,7 @@ v_dot_parser__Parser_prefix_expr(v_dot_parser__Parser *p) {
   v_dot_parser__Parser_next(p);
   v_dot_ast__Expr right = v_dot_parser__Parser_expr(p, 1);
   p->is_amp = 0;
-  return (v_dot_ast__PrefixExpr){.op = op, .right = right};
+  return (v_dot_ast__PrefixExpr){.op = op, .right = right, .pos = pos};
 }
 v_dot_ast__IndexExpr v_dot_parser__Parser_index_expr(v_dot_parser__Parser *p,
                                                      v_dot_ast__Expr left) {
@@ -20033,6 +20035,11 @@ v_dot_table__Type v_dot_checker__Checker_expr(v_dot_checker__Checker *c,
     if (it->op == v_dot_token__v_dot_token__Kind_mul &&
         v_dot_table__type_is_ptr(right_type)) {
       return v_dot_table__type_deref(right_type);
+    };
+    if (it->op == v_dot_token__v_dot_token__Kind_not &&
+        right_type != v_dot_table__bool_type_idx) {
+      v_dot_checker__Checker_error(
+          c, tos3("! operator can only be used with bool types"), it->pos);
     };
     return right_type;
   } else if (tmp103.typ == SumType_v_dot_ast__Expr_None) {
