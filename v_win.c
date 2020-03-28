@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "831be43"
+#define V_COMMIT_HASH "837bffd"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "718819e"
+#define V_COMMIT_HASH "831be43"
 #endif
 #include <inttypes.h>
 
@@ -16805,10 +16805,15 @@ v_dot_table__Type v_dot_parser__Parser_parse_type(v_dot_parser__Parser *p) {
     is_optional = 1;
   };
   int nr_muls = 0;
-  while (p->tok.kind == v_dot_token__v_dot_token__Kind_amp) {
+  while ((p->tok.kind == v_dot_token__v_dot_token__Kind_and ||
+          p->tok.kind == v_dot_token__v_dot_token__Kind_amp)) {
 
-    v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_amp);
-    nr_muls++;
+    if (p->tok.kind == v_dot_token__v_dot_token__Kind_and) {
+      nr_muls += 2;
+    } else {
+      nr_muls++;
+    };
+    v_dot_parser__Parser_next(p);
   };
   if (p->tok.kind == v_dot_token__v_dot_token__Kind_key_mut) {
     nr_muls++;
@@ -16844,7 +16849,7 @@ v_dot_table__Type v_dot_parser__Parser_parse_any_type(v_dot_parser__Parser *p,
     v_dot_parser__Parser_next(p);
     v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_dot);
     string tmp2 = tos3("");
-    bool tmp3 = map_get(/*parse_type.v : 134*/ p->imports, name, &tmp2);
+    bool tmp3 = map_get(/*parse_type.v : 139*/ p->imports, name, &tmp2);
 
     if (!tmp3)
       tmp2 = tos((byte *)"", 0);
@@ -21266,9 +21271,6 @@ void v_dot_gen__Gen_free_scope_vars(v_dot_gen__Gen *g, int pos) {
     v_dot_ast__Var var = {0};
     map_get(tmp47, _, &var);
 
-    if (var.typ == 0) {
-      continue;
-    };
     v_dot_table__TypeSymbol *sym =
         v_dot_table__Table_get_type_symbol(&/* ? */ *g->table, var.typ);
     if (sym->kind == v_dot_table__v_dot_table__Kind_array &&
