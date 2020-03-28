@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "fa02130"
+#define V_COMMIT_HASH "715d4f6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a9724fd"
+#define V_COMMIT_HASH "fa02130"
 #endif
 #include <inttypes.h>
 
@@ -2783,6 +2783,7 @@ f64 math__tanh(f64 a);
 f64 math__trunc(f64 a);
 f64 math__aprox_sin(f64 a);
 f64 math__aprox_cos(f64 a);
+f64 math__copysign(f64 x, f64 y);
 u32 math__f32_bits(f32 f);
 f32 math__f32_from_bits(u32 b);
 u64 math__f64_bits(f64 f);
@@ -9177,6 +9178,10 @@ f64 math__aprox_cos(f64 a) {
               a * (a2 +
                    a * (a3 +
                         a * (a4 + a * (a5 + a * (a6 + a * (a7 + a * a8)))))));
+}
+f64 math__copysign(f64 x, f64 y) {
+  return math__f64_from_bits((math__f64_bits(x) & ~math__sign_mask) |
+                             (math__f64_bits(y) & math__sign_mask));
 }
 u32 math__f32_bits(f32 f) {
   u32 *p = ((u32 *)(&f));
