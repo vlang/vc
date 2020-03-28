@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9fb218d"
+#define V_COMMIT_HASH "718819e"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cedf185"
+#define V_COMMIT_HASH "9fb218d"
 #endif
 #include <inttypes.h>
 
@@ -3351,6 +3351,8 @@ Option_v_dot_ast__Var v_dot_ast__Scope_find_var(v_dot_ast__Scope *s,
 bool v_dot_ast__Scope_known_var(v_dot_ast__Scope *s, string name);
 void v_dot_ast__Scope_register_var(v_dot_ast__Scope *s, v_dot_ast__Var var);
 void v_dot_ast__Scope_override_var(v_dot_ast__Scope *s, v_dot_ast__Var var);
+void v_dot_ast__Scope_update_var_type(v_dot_ast__Scope *s, string name,
+                                      v_dot_table__Type typ);
 v_dot_ast__Scope *v_dot_ast__Scope_outermost(v_dot_ast__Scope *s);
 v_dot_ast__Scope *v_dot_ast__Scope_innermost(v_dot_ast__Scope *s, int pos);
 static inline bool v_dot_ast__Scope_contains(v_dot_ast__Scope *s, int pos);
@@ -6261,20 +6263,18 @@ void *map_get3(map m, string key, void *zero) {
     index += 2;
     meta += builtin__probe_inc;
   };
-  byte *out = v_malloc(m.value_bytes);
-  memcpy((char *)out, zero, m.value_bytes);
-  return out;
+  return zero;
 }
 bool map_exists(map m, string key) {
   if (m.value_bytes == 0) {
     return 0;
   };
-  _V_MulRet_u32_V_u32 _V_mret_1777_index_meta = map_key_to_index(m, key);
-  u32 index = _V_mret_1777_index_meta.var_0;
-  u32 meta = _V_mret_1777_index_meta.var_1;
-  _V_MulRet_u32_V_u32 _V_mret_1787_index_meta = meta_less(m.metas, index, meta);
-  index = _V_mret_1787_index_meta.var_0;
-  meta = _V_mret_1787_index_meta.var_1;
+  _V_MulRet_u32_V_u32 _V_mret_1757_index_meta = map_key_to_index(m, key);
+  u32 index = _V_mret_1757_index_meta.var_0;
+  u32 meta = _V_mret_1757_index_meta.var_1;
+  _V_MulRet_u32_V_u32 _V_mret_1767_index_meta = meta_less(m.metas, index, meta);
+  index = _V_mret_1767_index_meta.var_0;
+  meta = _V_mret_1767_index_meta.var_1;
   while (meta == m.metas[/*ptr!*/ index] /*ru32 0*/) {
 
     u32 kv_index = m.metas[/*ptr!*/ index + 1] /*ru32 0*/;
@@ -6288,13 +6288,13 @@ bool map_exists(map m, string key) {
   return 0;
 }
 void v_map_delete(map *m, string key) {
-  _V_MulRet_u32_V_u32 _V_mret_1863_index_meta = map_key_to_index(*m, key);
-  u32 index = _V_mret_1863_index_meta.var_0;
-  u32 meta = _V_mret_1863_index_meta.var_1;
-  _V_MulRet_u32_V_u32 _V_mret_1873_index_meta =
+  _V_MulRet_u32_V_u32 _V_mret_1843_index_meta = map_key_to_index(*m, key);
+  u32 index = _V_mret_1843_index_meta.var_0;
+  u32 meta = _V_mret_1843_index_meta.var_1;
+  _V_MulRet_u32_V_u32 _V_mret_1853_index_meta =
       meta_less(m->metas, index, meta);
-  index = _V_mret_1873_index_meta.var_0;
-  meta = _V_mret_1873_index_meta.var_1;
+  index = _V_mret_1853_index_meta.var_0;
+  meta = _V_mret_1853_index_meta.var_1;
   while (meta == m->metas[/*ptr!*/ index] /*ru32 1*/) {
 
     u32 kv_index = m->metas[/*ptr!*/ index + 1] /*ru32 1*/;
@@ -15946,7 +15946,7 @@ Option_v_dot_ast__ScopeVar
 v_dot_ast__Scope_find_scope_and_var(v_dot_ast__Scope *s, string name) {
   if ((_IN_MAP((name), s->vars))) {
     v_dot_ast__Var tmp1 = {0};
-    bool tmp2 = map_get(/*scope.v : 33*/ s->vars, name, &tmp1);
+    bool tmp2 = map_get(/*scope.v : 34*/ s->vars, name, &tmp1);
 
     v_dot_ast__ScopeVar tmp3 =
         OPTION_CAST(v_dot_ast__ScopeVar)((v_dot_ast__ScopeVar){s, tmp1});
@@ -15956,7 +15956,7 @@ v_dot_ast__Scope_find_scope_and_var(v_dot_ast__Scope *s, string name) {
 
     if ((_IN_MAP((name), sc->vars))) {
       v_dot_ast__Var tmp4 = {0};
-      bool tmp5 = map_get(/*scope.v : 38*/ sc->vars, name, &tmp4);
+      bool tmp5 = map_get(/*scope.v : 39*/ sc->vars, name, &tmp4);
 
       v_dot_ast__ScopeVar tmp6 =
           OPTION_CAST(v_dot_ast__ScopeVar)((v_dot_ast__ScopeVar){sc, tmp4});
@@ -15969,7 +15969,7 @@ Option_v_dot_ast__Var v_dot_ast__Scope_find_var(v_dot_ast__Scope *s,
                                                 string name) {
   if ((_IN_MAP((name), s->vars))) {
     v_dot_ast__Var tmp7 = {0};
-    bool tmp8 = map_get(/*scope.v : 47*/ s->vars, name, &tmp7);
+    bool tmp8 = map_get(/*scope.v : 48*/ s->vars, name, &tmp7);
 
     v_dot_ast__Var tmp9 = OPTION_CAST(v_dot_ast__Var)(tmp7);
     return opt_ok(&tmp9, sizeof(v_dot_ast__Var));
@@ -15978,7 +15978,7 @@ Option_v_dot_ast__Var v_dot_ast__Scope_find_var(v_dot_ast__Scope *s,
 
     if ((_IN_MAP((name), sc->vars))) {
       v_dot_ast__Var tmp10 = {0};
-      bool tmp11 = map_get(/*scope.v : 51*/ sc->vars, name, &tmp10);
+      bool tmp11 = map_get(/*scope.v : 52*/ sc->vars, name, &tmp10);
 
       v_dot_ast__Var tmp12 = OPTION_CAST(v_dot_ast__Var)(tmp10);
       return opt_ok(&tmp12, sizeof(v_dot_ast__Var));
@@ -16008,6 +16008,19 @@ void v_dot_ast__Scope_register_var(v_dot_ast__Scope *s, v_dot_ast__Var var) {
 }
 void v_dot_ast__Scope_override_var(v_dot_ast__Scope *s, v_dot_ast__Var var) {
   map_set(&s->vars, var.name, &(v_dot_ast__Var[]){var});
+}
+void v_dot_ast__Scope_update_var_type(v_dot_ast__Scope *s, string name,
+                                      v_dot_table__Type typ) {
+  v_dot_ast__Var tmp15 = {0};
+  bool tmp16 = map_get(/*scope.v : 79*/ s->vars, name, &tmp15);
+
+  v_dot_ast__Var x = tmp15;
+  if (x.typ == typ) {
+
+    return;
+  };
+  x.typ = typ;
+  map_set(&s->vars, name, &(v_dot_ast__Var[]){x});
 }
 v_dot_ast__Scope *v_dot_ast__Scope_outermost(v_dot_ast__Scope *s) {
   v_dot_ast__Scope *sc = s;
@@ -16048,27 +16061,27 @@ static inline bool v_dot_ast__Scope_contains(v_dot_ast__Scope *s, int pos) {
 string v_dot_ast__Scope_show(v_dot_ast__Scope *sc, int level) {
   string out = tos3("");
   string indent = tos3("");
-  int tmp17 = 0;
+  int tmp19 = 0;
   ;
-  for (int tmp18 = tmp17; tmp18 < level * 4; tmp18++) {
+  for (int tmp20 = tmp19; tmp20 < level * 4; tmp20++) {
 
     indent = string_add(indent, tos3(" "));
   };
   out = string_add(out, _STR("%.*s# %d - %d\n", indent.len, indent.str,
                              sc->start_pos, sc->end_pos));
-  map_v_dot_ast__Var tmp19 = sc->vars;
-  array_string keys_tmp19 = map_keys(&tmp19);
-  for (int l = 0; l < keys_tmp19.len; l++) {
-    string _ = ((string *)keys_tmp19.data)[l];
+  map_v_dot_ast__Var tmp21 = sc->vars;
+  array_string keys_tmp21 = map_keys(&tmp21);
+  for (int l = 0; l < keys_tmp21.len; l++) {
+    string _ = ((string *)keys_tmp21.data)[l];
     v_dot_ast__Var var = {0};
-    map_get(tmp19, _, &var);
+    map_get(tmp21, _, &var);
 
     out = string_add(out, _STR("%.*s  * %.*s - %d\n", indent.len, indent.str,
                                var.name.len, var.name.str, var.typ));
   };
-  array_ptr_v_dot_ast__Scope tmp20 = sc->children;
-  for (int tmp21 = 0; tmp21 < tmp20.len; tmp21++) {
-    v_dot_ast__Scope *child = ((v_dot_ast__Scope **)tmp20.data)[tmp21];
+  array_ptr_v_dot_ast__Scope tmp22 = sc->children;
+  for (int tmp23 = 0; tmp23 < tmp22.len; tmp23++) {
+    v_dot_ast__Scope *child = ((v_dot_ast__Scope **)tmp22.data)[tmp23];
 
     out = string_add(out, v_dot_ast__Scope_show(&/* ? */ *child, level + 1));
   };
@@ -19272,11 +19285,7 @@ v_dot_table__Type v_dot_checker__Checker_method_call_expr(
       v_dot_table__Array array_info = *(v_dot_table__Array *)typ_sym->info.obj;
       v_dot_ast__Scope *scope = v_dot_ast__Scope_innermost(
           &/* ? */ *c->file.scope, method_call_expr->pos.pos);
-      v_dot_ast__Scope_override_var(scope, (v_dot_ast__Var){
-                                               .name = tos3("it"),
-                                               .typ = array_info.elem_type,
-                                               .is_mut = 0,
-                                           });
+      v_dot_ast__Scope_update_var_type(scope, tos3("it"), array_info.elem_type);
     };
     array_v_dot_ast__CallArg tmp45 = method_call_expr->args;
     for (int i = 0; i < tmp45.len; i++) {
@@ -19357,7 +19366,7 @@ v_dot_table__Type v_dot_checker__Checker_method_call_expr(
   if (typ_sym->kind == v_dot_table__v_dot_table__Kind_map &&
       string_eq(name, tos3("str"))) {
     int tmp61 = 0;
-    bool tmp62 = map_get(/*checker.v : 342*/ c->table->type_idxs,
+    bool tmp62 = map_get(/*checker.v : 339*/ c->table->type_idxs,
                          tos3("map_string"), &tmp61);
 
     method_call_expr->receiver_type = v_dot_table__new_type(tmp61);
@@ -19458,7 +19467,7 @@ void v_dot_checker__Checker_return_stmt(v_dot_checker__Checker *c,
   return_stmt->types = got_types;
   int tmp69 = 0;
   bool tmp70 =
-      map_get(/*checker.v : 408*/ c->table->type_idxs, tos3("Option"), &tmp69);
+      map_get(/*checker.v : 405*/ c->table->type_idxs, tos3("Option"), &tmp69);
 
   if (exp_is_optional &&
       (v_dot_table__type_idx((*(v_dot_table__Type *)array_get(got_types, 0))) ==
@@ -19548,12 +19557,9 @@ void v_dot_checker__Checker_assign_stmt(v_dot_checker__Checker *c,
             (/*typ = array_v_dot_table__Type   tmp_typ=v_dot_table__Type*/
              val_type),
             tmp82, v_dot_table__Type);
-      v_dot_ast__Scope_override_var(
-          scope, (v_dot_ast__Var){
-                     .name = ident.name,
-                     .typ = (*(v_dot_table__Type *)array_get(mr_info.types, i)),
-                     .is_mut = 0,
-                 });
+      v_dot_ast__Scope_update_var_type(
+          scope, ident.name,
+          (*(v_dot_table__Type *)array_get(mr_info.types, i)));
     };
   } else {
     if (assign_stmt->left.len != assign_stmt->right.len) {
@@ -19604,11 +19610,7 @@ void v_dot_checker__Checker_assign_stmt(v_dot_checker__Checker *c,
                         sizeof(v_dot_ast__IdentVar)),
           .typ = SumType_v_dot_ast__IdentInfo_IdentVar};
       array_set(&/*q*/ assign_stmt->left, i, &(v_dot_ast__Ident[]){ident});
-      v_dot_ast__Scope_override_var(scope, (v_dot_ast__Var){
-                                               .name = ident.name,
-                                               .typ = val_type,
-                                               .is_mut = 0,
-                                           });
+      v_dot_ast__Scope_update_var_type(scope, ident.name, val_type);
     };
   };
   c->expected_type = v_dot_table__void_type;
@@ -19757,11 +19759,7 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
                  ? (v_dot_table__TypeSymbol_map_info(&/* ? */ *sym).key_type)
                  : (v_dot_table__int_type));
         it->key_type = key_type;
-        v_dot_ast__Scope_override_var(scope, (v_dot_ast__Var){
-                                                 .name = it->key_var,
-                                                 .typ = key_type,
-                                                 .is_mut = 0,
-                                             });
+        v_dot_ast__Scope_update_var_type(scope, it->key_var, key_type);
       };
       v_dot_table__Type value_type =
           v_dot_table__Table_value_type(&/* ? */ *c->table, typ);
@@ -19776,11 +19774,7 @@ void v_dot_checker__Checker_stmt(v_dot_checker__Checker *c,
       it->cond_type = typ;
       it->kind = sym->kind;
       it->val_type = value_type;
-      v_dot_ast__Scope_override_var(scope, (v_dot_ast__Var){
-                                               .name = it->val_var,
-                                               .typ = value_type,
-                                               .is_mut = 0,
-                                           });
+      v_dot_ast__Scope_update_var_type(scope, it->val_var, value_type);
     };
     v_dot_checker__Checker_stmts(c, it->stmts);
   } else if (tmp96.typ == SumType_v_dot_ast__Stmt_Import) {
@@ -20008,8 +20002,7 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
         typ = v_dot_checker__Checker_expr(c, var.expr);
-        var.typ = typ;
-        v_dot_ast__Scope_override_var(var_scope, var);
+        v_dot_ast__Scope_update_var_type(var_scope, var.name, typ);
       };
       ident->kind = v_dot_ast__v_dot_ast__IdentKind_variable;
       ident->info = /*SUM TYPE CAST2*/ (v_dot_ast__IdentInfo){
