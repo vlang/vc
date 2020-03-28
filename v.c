@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "715d4f6"
+#define V_COMMIT_HASH "e09447d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fa02130"
+#define V_COMMIT_HASH "715d4f6"
 #endif
 #include <inttypes.h>
 
@@ -684,7 +684,6 @@ typedef Option Option_v_dot_table__Fn;
 typedef Option Option_v_dot_table__Field;
 typedef Option Option_v_dot_table__TypeSymbol;
 typedef struct _V_MulRet_int_V_int _V_MulRet_int_V_int;
-typedef struct v_dot_scanner__Scanner v_dot_scanner__Scanner;
 typedef struct internal_dot_flag__Instance internal_dot_flag__Instance;
 typedef map map_bool;
 typedef Option Option_array_string;
@@ -808,6 +807,7 @@ typedef map map_v_dot_ast__Var;
 typedef struct v_dot_ast__ScopeVar v_dot_ast__ScopeVar;
 typedef Option Option_v_dot_ast__ScopeVar;
 typedef Option Option_v_dot_ast__Var;
+typedef struct v_dot_scanner__Scanner v_dot_scanner__Scanner;
 typedef struct _V_MulRet_array_v_dot_table__Arg_V_bool
     _V_MulRet_array_v_dot_table__Arg_V_bool;
 typedef struct v_dot_parser__Parser v_dot_parser__Parser;
@@ -943,7 +943,6 @@ typedef Option Option_v_dot_table__Field;
 typedef Option Option_v_dot_table__Fn;
 typedef Option Option_v_dot_table__Field;
 typedef Option Option_v_dot_table__TypeSymbol;
-typedef int v_dot_scanner__CommentsMode;
 typedef Option Option_array_string;
 typedef Option Option_string;
 typedef Option Option_int;
@@ -956,6 +955,7 @@ typedef Option Option_array_string;
 typedef int v_dot_ast__IdentKind;
 typedef Option Option_v_dot_ast__ScopeVar;
 typedef Option Option_v_dot_ast__Var;
+typedef int v_dot_scanner__CommentsMode;
 typedef int v_dot_gen_dot_x64__SectionType;
 typedef int v_dot_gen_dot_x64__Register;
 typedef int v_dot_gen_dot_x64__Size;
@@ -1402,30 +1402,6 @@ struct _V_MulRet_int_V_int {
   int var_1;
 };
 
-struct v_dot_scanner__Scanner {
-  string file_path;
-  string text;
-  int pos;
-  int line_nr;
-  int last_nl_pos;
-  bool inside_string;
-  bool inter_start;
-  bool inter_end;
-  bool debug;
-  string line_comment;
-  bool started;
-  string fn_name;
-  bool print_line_on_error;
-  bool print_colored_error;
-  bool print_rel_paths_on_error;
-  byte quote;
-  array_int line_ends;
-  int nr_lines;
-  bool is_vh;
-  bool is_fmt;
-  v_dot_scanner__CommentsMode comments_mode;
-};
-
 struct internal_dot_flag__Instance {
   array_string args;
   string current_flag;
@@ -1616,6 +1592,30 @@ struct v_dot_ast__Scope {
   int start_pos;
   int end_pos;
   map_v_dot_ast__Var vars;
+};
+
+struct v_dot_scanner__Scanner {
+  string file_path;
+  string text;
+  int pos;
+  int line_nr;
+  int last_nl_pos;
+  bool inside_string;
+  bool inter_start;
+  bool inter_end;
+  bool debug;
+  string line_comment;
+  bool started;
+  string fn_name;
+  bool print_line_on_error;
+  bool print_colored_error;
+  bool print_rel_paths_on_error;
+  byte quote;
+  array_int line_ends;
+  int nr_lines;
+  bool is_vh;
+  bool is_fmt;
+  v_dot_scanner__CommentsMode comments_mode;
 };
 
 struct _V_MulRet_array_v_dot_table__Arg_V_bool {
@@ -3251,46 +3251,6 @@ string term__header(string text, string divider);
 bool term__supports_escape_sequences(int fd);
 _V_MulRet_int_V_int term__get_terminal_size();
 string vweb_dot_tmpl__compile_template(string path);
-v_dot_scanner__Scanner *
-v_dot_scanner__new_scanner_file(string file_path,
-                                v_dot_scanner__CommentsMode comments_mode);
-v_dot_scanner__Scanner *
-v_dot_scanner__new_scanner(string text,
-                           v_dot_scanner__CommentsMode comments_mode);
-v_dot_token__Token v_dot_scanner__Scanner_scan_res(v_dot_scanner__Scanner *s,
-                                                   v_dot_token__Kind tok_kind,
-                                                   string lit);
-string v_dot_scanner__Scanner_ident_name(v_dot_scanner__Scanner *s);
-string v_dot_scanner__filter_num_sep(byte *txt, int start, int end);
-string v_dot_scanner__Scanner_ident_bin_number(v_dot_scanner__Scanner *s);
-string v_dot_scanner__Scanner_ident_hex_number(v_dot_scanner__Scanner *s);
-string v_dot_scanner__Scanner_ident_oct_number(v_dot_scanner__Scanner *s);
-string v_dot_scanner__Scanner_ident_dec_number(v_dot_scanner__Scanner *s);
-string v_dot_scanner__Scanner_ident_number(v_dot_scanner__Scanner *s);
-void v_dot_scanner__Scanner_skip_whitespace(v_dot_scanner__Scanner *s);
-v_dot_token__Token
-v_dot_scanner__Scanner_end_of_file(v_dot_scanner__Scanner *s);
-v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s);
-int v_dot_scanner__Scanner_current_column(v_dot_scanner__Scanner *s);
-int v_dot_scanner__Scanner_count_symbol_before(v_dot_scanner__Scanner s, int p,
-                                               byte sym);
-string v_dot_scanner__Scanner_ident_string(v_dot_scanner__Scanner *s);
-string v_dot_scanner__Scanner_ident_char(v_dot_scanner__Scanner *s);
-bool v_dot_scanner__Scanner_expect(v_dot_scanner__Scanner *s, string want,
-                                   int start_pos);
-void v_dot_scanner__Scanner_debug_tokens(v_dot_scanner__Scanner *s);
-void v_dot_scanner__Scanner_ignore_line(v_dot_scanner__Scanner *s);
-void v_dot_scanner__Scanner_eat_to_end_of_line(v_dot_scanner__Scanner *s);
-void v_dot_scanner__Scanner_inc_line_number(v_dot_scanner__Scanner *s);
-string v_dot_scanner__Scanner_line(v_dot_scanner__Scanner s, int n);
-bool v_dot_scanner__is_name_char(byte c);
-static inline bool v_dot_scanner__is_nl(byte c);
-bool v_dot_scanner__contains_capital(string s);
-bool v_dot_scanner__good_type_name(string s);
-void v_dot_scanner__Scanner_error(v_dot_scanner__Scanner *s, string msg);
-void v_dot_scanner__verror(string s);
-string v_dot_scanner__vhash();
-string v_dot_scanner__cescaped_path(string s);
 Option_array_string
 internal_dot_flag__Instance_parse_impl(internal_dot_flag__Instance *p,
                                        array_string args, void *value,
@@ -3364,6 +3324,46 @@ string v_dot_ast__Scope_str(v_dot_ast__Scope *sc);
 string v_dot_ast__FnDecl_str(v_dot_ast__FnDecl *node, v_dot_table__Table *t);
 string v_dot_ast__Expr_str(v_dot_ast__Expr x);
 string v_dot_ast__Stmt_str(v_dot_ast__Stmt node);
+v_dot_scanner__Scanner *
+v_dot_scanner__new_scanner_file(string file_path,
+                                v_dot_scanner__CommentsMode comments_mode);
+v_dot_scanner__Scanner *
+v_dot_scanner__new_scanner(string text,
+                           v_dot_scanner__CommentsMode comments_mode);
+v_dot_token__Token v_dot_scanner__Scanner_scan_res(v_dot_scanner__Scanner *s,
+                                                   v_dot_token__Kind tok_kind,
+                                                   string lit);
+string v_dot_scanner__Scanner_ident_name(v_dot_scanner__Scanner *s);
+string v_dot_scanner__filter_num_sep(byte *txt, int start, int end);
+string v_dot_scanner__Scanner_ident_bin_number(v_dot_scanner__Scanner *s);
+string v_dot_scanner__Scanner_ident_hex_number(v_dot_scanner__Scanner *s);
+string v_dot_scanner__Scanner_ident_oct_number(v_dot_scanner__Scanner *s);
+string v_dot_scanner__Scanner_ident_dec_number(v_dot_scanner__Scanner *s);
+string v_dot_scanner__Scanner_ident_number(v_dot_scanner__Scanner *s);
+void v_dot_scanner__Scanner_skip_whitespace(v_dot_scanner__Scanner *s);
+v_dot_token__Token
+v_dot_scanner__Scanner_end_of_file(v_dot_scanner__Scanner *s);
+v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s);
+int v_dot_scanner__Scanner_current_column(v_dot_scanner__Scanner *s);
+int v_dot_scanner__Scanner_count_symbol_before(v_dot_scanner__Scanner s, int p,
+                                               byte sym);
+string v_dot_scanner__Scanner_ident_string(v_dot_scanner__Scanner *s);
+string v_dot_scanner__Scanner_ident_char(v_dot_scanner__Scanner *s);
+bool v_dot_scanner__Scanner_expect(v_dot_scanner__Scanner *s, string want,
+                                   int start_pos);
+void v_dot_scanner__Scanner_debug_tokens(v_dot_scanner__Scanner *s);
+void v_dot_scanner__Scanner_ignore_line(v_dot_scanner__Scanner *s);
+void v_dot_scanner__Scanner_eat_to_end_of_line(v_dot_scanner__Scanner *s);
+void v_dot_scanner__Scanner_inc_line_number(v_dot_scanner__Scanner *s);
+string v_dot_scanner__Scanner_line(v_dot_scanner__Scanner s, int n);
+bool v_dot_scanner__is_name_char(byte c);
+static inline bool v_dot_scanner__is_nl(byte c);
+bool v_dot_scanner__contains_capital(string s);
+bool v_dot_scanner__good_type_name(string s);
+void v_dot_scanner__Scanner_error(v_dot_scanner__Scanner *s, string msg);
+void v_dot_scanner__verror(string s);
+string v_dot_scanner__vhash();
+string v_dot_scanner__cescaped_path(string s);
 v_dot_ast__CompIf v_dot_parser__Parser_comp_if(v_dot_parser__Parser *p);
 v_dot_pref__OS v_dot_parser__os_from_string(string os);
 v_dot_ast__CallExpr v_dot_parser__Parser_call_expr(v_dot_parser__Parser *p,
@@ -4661,9 +4661,6 @@ array_string v_dot_table__builtin_type_names;
 #define v_dot_table__v_dot_table__Kind_alias 25
 #define v_dot_table__v_dot_table__Kind_enum_ 26
 #define v_dot_table__v_dot_table__Kind_function 27
-#define v_dot_scanner__v_dot_scanner__CommentsMode_skip_comments 0
-#define v_dot_scanner__v_dot_scanner__CommentsMode_parse_comments 1
-bool v_dot_scanner__is_fmt;
 array_string internal_dot_flag__truthy;
 array_string internal_dot_flag__falsey;
 #define internal_dot_flag__internal_dot_flag__MainCmdAction_unspecified 0
@@ -4804,6 +4801,9 @@ const char *__SumTypeNames__v_dot_ast__IdentInfo[] = {
 #define v_dot_ast__v_dot_ast__IdentKind_variable 2
 #define v_dot_ast__v_dot_ast__IdentKind_constant 3
 #define v_dot_ast__v_dot_ast__IdentKind_function 4
+#define v_dot_scanner__v_dot_scanner__CommentsMode_skip_comments 0
+#define v_dot_scanner__v_dot_scanner__CommentsMode_parse_comments 1
+bool v_dot_scanner__is_fmt;
 array_string v_dot_parser__supported_platforms;
 v_dot_pref__OS v_dot_parser__todo_delete_me;
 bool v_dot_parser__colored_output;
@@ -14538,997 +14538,6 @@ string vweb_dot_tmpl__compile_template(string path) {
   strings__Builder_writeln(&/* ? */ s, tos3("tmpl_res := sb.str() }"));
   return strings__Builder_str(&/* ? */ s);
 }
-v_dot_scanner__Scanner *
-v_dot_scanner__new_scanner_file(string file_path,
-                                v_dot_scanner__CommentsMode comments_mode) {
-  if (!os__exists(file_path)) {
-    v_dot_scanner__verror(
-        _STR("%.*s doesn't exist", file_path.len, file_path.str));
-  };
-  Option_string tmp1 = os__read_file(file_path);
-  string raw_text;
-  if (!tmp1.ok) {
-    string err = tmp1.error;
-    int errcode = tmp1.ecode;
-    v_dot_scanner__verror(
-        _STR("scanner: failed to open %.*s", file_path.len, file_path.str));
-    return 0;
-  }
-  raw_text = *(string *)tmp1.data;
-  ;
-  if (raw_text.len >= 3) {
-    byte *c_text = raw_text.str;
-    if (c_text[/*ptr!*/ 0] /*rbyte 0*/ == 0xEF &&
-        c_text[/*ptr!*/ 1] /*rbyte 0*/ == 0xBB &&
-        c_text[/*ptr!*/ 2] /*rbyte 0*/ == 0xBF) {
-      int offset_from_begin = 3;
-      raw_text = tos(&/*114*/ c_text[/*ptr!*/ offset_from_begin] /*rbyte 0*/,
-                     vstrlen(c_text) - offset_from_begin);
-    };
-  };
-  v_dot_scanner__Scanner *s =
-      v_dot_scanner__new_scanner(raw_text, comments_mode);
-  s->file_path = file_path;
-  return s;
-}
-v_dot_scanner__Scanner *
-v_dot_scanner__new_scanner(string text,
-                           v_dot_scanner__CommentsMode comments_mode) {
-  return (v_dot_scanner__Scanner *)memdup(
-      &(v_dot_scanner__Scanner){
-          .text = text,
-          .print_line_on_error = 1,
-          .print_colored_error = 1,
-          .print_rel_paths_on_error = 1,
-          .is_fmt = v_dot_scanner__is_fmt,
-          .comments_mode = comments_mode,
-          .file_path = tos3(""),
-          .pos = 0,
-          .line_nr = 0,
-          .last_nl_pos = 0,
-          .inside_string = 0,
-          .inter_start = 0,
-          .inter_end = 0,
-          .debug = 0,
-          .line_comment = tos3(""),
-          .started = 0,
-          .fn_name = tos3(""),
-          .quote = 0,
-          .line_ends = new_array(0, 1, sizeof(int)),
-          .nr_lines = 0,
-          .is_vh = 0,
-      },
-      sizeof(v_dot_scanner__Scanner));
-}
-v_dot_token__Token v_dot_scanner__Scanner_scan_res(v_dot_scanner__Scanner *s,
-                                                   v_dot_token__Kind tok_kind,
-                                                   string lit) {
-  return (v_dot_token__Token){
-      .kind = tok_kind, .lit = lit, .line_nr = s->line_nr + 1, .pos = s->pos};
-}
-string v_dot_scanner__Scanner_ident_name(v_dot_scanner__Scanner *s) {
-  int start = s->pos;
-  s->pos++;
-  while (s->pos < s->text.len &&
-         (v_dot_scanner__is_name_char(string_at(s->text, s->pos)) ||
-          byte_is_digit(string_at(s->text, s->pos)))) {
-
-    s->pos++;
-  };
-  string name = string_substr2(s->text, start, s->pos, false);
-  s->pos--;
-  return name;
-}
-string v_dot_scanner__filter_num_sep(byte *txt, int start, int end) {
-  {
-    byte *b = v_malloc(end - start + 1);
-    int i = start;
-    int i1 = 0;
-    while (i < end) {
-
-      if (txt[/*ptr!*/ i] /*rbyte 0*/ != v_dot_scanner__num_sep) {
-        b[/*ptr!*/ i1] /*rbyte 1*/ = txt[/*ptr!*/ i] /*rbyte 0*/;
-        i1++;
-      };
-      i++;
-    };
-    b[/*ptr!*/ i1] /*rbyte 1*/ = 0;
-    return (string){.str = b, .len = i1};
-  };
-}
-string v_dot_scanner__Scanner_ident_bin_number(v_dot_scanner__Scanner *s) {
-  bool has_wrong_digit = 0;
-  byte first_wrong_digit = '\0';
-  int start_pos = s->pos;
-  s->pos += 2;
-  while (s->pos < s->text.len) {
-
-    byte c = string_at(s->text, s->pos);
-    if (!byte_is_bin_digit(c) && c != v_dot_scanner__num_sep) {
-      if ((!byte_is_digit(c) && !byte_is_letter(c)) || s->inside_string) {
-        break;
-      } else if (!has_wrong_digit) {
-        has_wrong_digit = 1;
-        first_wrong_digit = c;
-      };
-    };
-    s->pos++;
-  };
-  if (start_pos + 2 == s->pos) {
-    v_dot_scanner__Scanner_error(
-        &/* ? */ *s, tos3("number part of this binary is not provided"));
-  } else if (has_wrong_digit) {
-    v_dot_scanner__Scanner_error(
-        &/* ? */ *s,
-        _STR("this binary number has unsuitable digit `%.*s`",
-             byte_str(first_wrong_digit).len, byte_str(first_wrong_digit).str));
-  };
-  string number = v_dot_scanner__filter_num_sep(s->text.str, start_pos, s->pos);
-  s->pos--;
-  return number;
-}
-string v_dot_scanner__Scanner_ident_hex_number(v_dot_scanner__Scanner *s) {
-  bool has_wrong_digit = 0;
-  byte first_wrong_digit = '\0';
-  int start_pos = s->pos;
-  s->pos += 2;
-  while (s->pos < s->text.len) {
-
-    byte c = string_at(s->text, s->pos);
-    if (!byte_is_hex_digit(c) && c != v_dot_scanner__num_sep) {
-      if (!byte_is_letter(c) || s->inside_string) {
-        break;
-      } else if (!has_wrong_digit) {
-        has_wrong_digit = 1;
-        first_wrong_digit = c;
-      };
-    };
-    s->pos++;
-  };
-  if (start_pos + 2 == s->pos) {
-    v_dot_scanner__Scanner_error(
-        &/* ? */ *s, tos3("number part of this hexadecimal is not provided"));
-  } else if (has_wrong_digit) {
-    v_dot_scanner__Scanner_error(
-        &/* ? */ *s,
-        _STR("this hexadecimal number has unsuitable digit `%.*s`",
-             byte_str(first_wrong_digit).len, byte_str(first_wrong_digit).str));
-  };
-  string number = v_dot_scanner__filter_num_sep(s->text.str, start_pos, s->pos);
-  s->pos--;
-  return number;
-}
-string v_dot_scanner__Scanner_ident_oct_number(v_dot_scanner__Scanner *s) {
-  bool has_wrong_digit = 0;
-  byte first_wrong_digit = '\0';
-  int start_pos = s->pos;
-  s->pos += 2;
-  while (s->pos < s->text.len) {
-
-    byte c = string_at(s->text, s->pos);
-    if (!byte_is_oct_digit(c) && c != v_dot_scanner__num_sep) {
-      if ((!byte_is_digit(c) && !byte_is_letter(c)) || s->inside_string) {
-        break;
-      } else if (!has_wrong_digit) {
-        has_wrong_digit = 1;
-        first_wrong_digit = c;
-      };
-    };
-    s->pos++;
-  };
-  if (start_pos + 2 == s->pos) {
-    v_dot_scanner__Scanner_error(
-        &/* ? */ *s, tos3("number part of this octal is not provided"));
-  } else if (has_wrong_digit) {
-    v_dot_scanner__Scanner_error(
-        &/* ? */ *s,
-        _STR("this octal number has unsuitable digit `%.*s`",
-             byte_str(first_wrong_digit).len, byte_str(first_wrong_digit).str));
-  };
-  string number = v_dot_scanner__filter_num_sep(s->text.str, start_pos, s->pos);
-  s->pos--;
-  return number;
-}
-string v_dot_scanner__Scanner_ident_dec_number(v_dot_scanner__Scanner *s) {
-  bool has_wrong_digit = 0;
-  byte first_wrong_digit = '\0';
-  int start_pos = s->pos;
-  while (s->pos < s->text.len) {
-
-    byte c = string_at(s->text, s->pos);
-    if (!byte_is_digit(c) && c != v_dot_scanner__num_sep) {
-      if (!byte_is_letter(c) || (c == 'e' || c == 'E') || s->inside_string) {
-        break;
-      } else if (!has_wrong_digit) {
-        has_wrong_digit = 1;
-        first_wrong_digit = c;
-      };
-    };
-    s->pos++;
-  };
-  if (v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3(".."), s->pos)) {
-    string number =
-        v_dot_scanner__filter_num_sep(s->text.str, start_pos, s->pos);
-    s->pos--;
-    return number;
-  };
-  if (s->pos < s->text.len && string_at(s->text, s->pos) == '.') {
-    s->pos++;
-    while (s->pos < s->text.len) {
-
-      byte c = string_at(s->text, s->pos);
-      if (!byte_is_digit(c)) {
-        if (!byte_is_letter(c) || (c == 'e' || c == 'E') || s->inside_string) {
-          break;
-        } else if (!has_wrong_digit) {
-          has_wrong_digit = 1;
-          first_wrong_digit = c;
-        };
-      };
-      s->pos++;
-    };
-  };
-  bool has_exponential_part = 0;
-  if (v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("e"), s->pos) ||
-      v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("E"), s->pos)) {
-    s->pos++;
-    int exp_start_pos = s->pos;
-    if (s->pos < s->text.len && (string_at(s->text, s->pos) == '-' ||
-                                 string_at(s->text, s->pos) == '+')) {
-      s->pos++;
-    };
-    while (s->pos < s->text.len) {
-
-      byte c = string_at(s->text, s->pos);
-      if (!byte_is_digit(c)) {
-        if (!byte_is_letter(c) || s->inside_string) {
-          break;
-        } else if (!has_wrong_digit) {
-          has_wrong_digit = 1;
-          first_wrong_digit = c;
-        };
-      };
-      s->pos++;
-    };
-    if (exp_start_pos == s->pos) {
-      v_dot_scanner__Scanner_error(&/* ? */ *s, tos3("exponent has no digits"));
-    };
-    has_exponential_part = 1;
-  };
-  if (s->pos < s->text.len && string_at(s->text, s->pos) == '.') {
-    if (has_exponential_part) {
-      v_dot_scanner__Scanner_error(&/* ? */ *s,
-                                   tos3("exponential part should be integer"));
-    } else {
-      v_dot_scanner__Scanner_error(&/* ? */ *s,
-                                   tos3("too many decimal points in number"));
-    };
-  };
-  if (has_wrong_digit) {
-    v_dot_scanner__Scanner_error(&/* ? */ *s,
-                                 _STR("this number has unsuitable digit `%.*s`",
-                                      byte_str(first_wrong_digit).len,
-                                      byte_str(first_wrong_digit).str));
-  };
-  string number = v_dot_scanner__filter_num_sep(s->text.str, start_pos, s->pos);
-  s->pos--;
-  return number;
-}
-string v_dot_scanner__Scanner_ident_number(v_dot_scanner__Scanner *s) {
-  if (v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("0b"), s->pos)) {
-    return v_dot_scanner__Scanner_ident_bin_number(s);
-  } else if (v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("0x"), s->pos)) {
-    return v_dot_scanner__Scanner_ident_hex_number(s);
-  } else if (v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("0o"), s->pos)) {
-    return v_dot_scanner__Scanner_ident_oct_number(s);
-  } else {
-    return v_dot_scanner__Scanner_ident_dec_number(s);
-  };
-}
-void v_dot_scanner__Scanner_skip_whitespace(v_dot_scanner__Scanner *s) {
-  while (s->pos < s->text.len && byte_is_space(string_at(s->text, s->pos))) {
-
-    if (v_dot_scanner__is_nl(string_at(s->text, s->pos)) && s->is_vh) {
-
-      return;
-    };
-    if (v_dot_scanner__is_nl(string_at(s->text, s->pos)) &&
-        !v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("\r\n"), s->pos - 1)) {
-      v_dot_scanner__Scanner_inc_line_number(s);
-    };
-    s->pos++;
-  };
-}
-v_dot_token__Token
-v_dot_scanner__Scanner_end_of_file(v_dot_scanner__Scanner *s) {
-  s->pos = s->text.len;
-  v_dot_scanner__Scanner_inc_line_number(s);
-  return v_dot_scanner__Scanner_scan_res(
-      &/* ? */ *s, v_dot_token__v_dot_token__Kind_eof, tos3(""));
-}
-v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
-  if (s->started) {
-    s->pos++;
-  };
-  s->started = 1;
-  if (s->pos >= s->text.len) {
-    return v_dot_scanner__Scanner_end_of_file(s);
-  };
-  if (!s->inside_string) {
-    v_dot_scanner__Scanner_skip_whitespace(s);
-  };
-  if (s->inter_end) {
-    if (string_at(s->text, s->pos) == s->quote) {
-      s->inter_end = 0;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_string, tos3(""));
-    };
-    s->inter_end = 0;
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_string,
-        v_dot_scanner__Scanner_ident_string(s));
-  };
-  v_dot_scanner__Scanner_skip_whitespace(s);
-  if (s->pos >= s->text.len) {
-    return v_dot_scanner__Scanner_end_of_file(s);
-  };
-  byte c = string_at(s->text, s->pos);
-  byte nextc = '\0';
-  if (s->pos + 1 < s->text.len) {
-    nextc = string_at(s->text, s->pos + 1);
-  };
-  if (v_dot_scanner__is_name_char(c)) {
-    string name = v_dot_scanner__Scanner_ident_name(s);
-    byte next_char =
-        ((s->pos + 1 < s->text.len) ? (string_at(s->text, s->pos + 1))
-                                    : ('\0'));
-    if (v_dot_token__is_key(name)) {
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__key_to_token(name), tos3(""));
-    };
-    if (s->inside_string) {
-      if (next_char == s->quote) {
-        s->inter_end = 1;
-        s->inter_start = 0;
-        s->inside_string = 0;
-      };
-    };
-    if (s->inter_start && next_char != '.' && next_char != '(') {
-      s->inter_end = 1;
-      s->inter_start = 0;
-    };
-    if (s->pos == 0 && next_char == ' ') {
-      s->pos++;
-    };
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_name, name);
-  } else if (byte_is_digit(c) || (c == '.' && byte_is_digit(nextc))) {
-    if (!s->inside_string) {
-      int start_pos = s->pos;
-      while (start_pos < s->text.len && string_at(s->text, start_pos) == '0') {
-
-        start_pos++;
-      };
-      int prefix_zero_num = start_pos - s->pos;
-      if (start_pos == s->text.len ||
-          (c == '0' && !byte_is_digit(string_at(s->text, start_pos)))) {
-        prefix_zero_num--;
-      };
-      s->pos += prefix_zero_num;
-    };
-    string num = v_dot_scanner__Scanner_ident_number(s);
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_number, num);
-  };
-  if (c == ')' && s->inter_start) {
-    s->inter_end = 1;
-    s->inter_start = 0;
-    byte next_char =
-        ((s->pos + 1 < s->text.len) ? (string_at(s->text, s->pos + 1))
-                                    : ('\0'));
-    if (next_char == s->quote) {
-      s->inside_string = 0;
-    };
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_rpar, tos3(""));
-  };
-  byte tmp46 = c;
-
-  if (tmp46 == '+') {
-    if (nextc == '+') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_inc, tos3(""));
-    } else if (nextc == '=') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_plus_assign, tos3(""));
-    };
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_plus, tos3(""));
-  } else if (tmp46 == '-') {
-    if (nextc == '-') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_dec, tos3(""));
-    } else if (nextc == '=') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_minus_assign, tos3(""));
-    };
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_minus, tos3(""));
-  } else if (tmp46 == '*') {
-    if (nextc == '=') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_mult_assign, tos3(""));
-    };
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_mul, tos3(""));
-  } else if (tmp46 == '^') {
-    if (nextc == '=') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_xor_assign, tos3(""));
-    };
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_xor, tos3(""));
-  } else if (tmp46 == '%') {
-    if (nextc == '=') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_mod_assign, tos3(""));
-    };
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_mod, tos3(""));
-  } else if (tmp46 == '?') {
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_question, tos3(""));
-  } else if ((tmp46 == v_dot_scanner__single_quote) ||
-             (tmp46 == v_dot_scanner__double_quote)) {
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_string,
-        v_dot_scanner__Scanner_ident_string(s));
-  } else if (tmp46 == '`') {
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_chartoken,
-        v_dot_scanner__Scanner_ident_char(s));
-  } else if (tmp46 == '(') {
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_lpar, tos3(""));
-  } else if (tmp46 == ')') {
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_rpar, tos3(""));
-  } else if (tmp46 == '[') {
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_lsbr, tos3(""));
-  } else if (tmp46 == ']') {
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_rsbr, tos3(""));
-  } else if (tmp46 == '{') {
-    if (s->inside_string) {
-      return v_dot_scanner__Scanner_scan(s);
-    };
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_lcbr, tos3(""));
-  } else if (tmp46 == '$') {
-    if (s->inside_string) {
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_str_dollar, tos3(""));
-    } else {
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_dollar, tos3(""));
-    };
-  } else if (tmp46 == '}') {
-    if (s->inside_string) {
-      s->pos++;
-      if (string_at(s->text, s->pos) == s->quote) {
-        s->inside_string = 0;
-        return v_dot_scanner__Scanner_scan_res(
-            &/* ? */ *s, v_dot_token__v_dot_token__Kind_string, tos3(""));
-      };
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_string,
-          v_dot_scanner__Scanner_ident_string(s));
-    } else {
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_rcbr, tos3(""));
-    };
-  } else if (tmp46 == '&') {
-    if (nextc == '=') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_and_assign, tos3(""));
-    };
-    if (nextc == '&') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_and, tos3(""));
-    };
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_amp, tos3(""));
-  } else if (tmp46 == '|') {
-    if (nextc == '|') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_logical_or, tos3(""));
-    };
-    if (nextc == '=') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_or_assign, tos3(""));
-    };
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_pipe, tos3(""));
-  } else if (tmp46 == ',') {
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_comma, tos3(""));
-  } else if (tmp46 == '@') {
-    s->pos++;
-    string name = v_dot_scanner__Scanner_ident_name(s);
-    if (string_eq(name, tos3("FN"))) {
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_string, s->fn_name);
-    };
-    if (string_eq(name, tos3("FILE"))) {
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_string,
-          v_dot_scanner__cescaped_path(os__real_path(s->file_path)));
-    };
-    if (string_eq(name, tos3("LINE"))) {
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_string,
-          int_str((s->line_nr + 1)));
-    };
-    if (string_eq(name, tos3("COLUMN"))) {
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_string,
-          int_str((v_dot_scanner__Scanner_current_column(&/* ? */ *s))));
-    };
-    if (string_eq(name, tos3("VHASH"))) {
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_string,
-          v_dot_scanner__vhash());
-    };
-    if (!v_dot_token__is_key(name)) {
-      v_dot_scanner__Scanner_error(
-          &/* ? */ *s,
-          tos3("@ must be used before keywords (e.g. `@type string`)"));
-    };
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_name, name);
-  } else if (tmp46 == '.') {
-    if (nextc == '.') {
-      s->pos++;
-      if (string_at(s->text, s->pos + 1) == '.') {
-        s->pos++;
-        return v_dot_scanner__Scanner_scan_res(
-            &/* ? */ *s, v_dot_token__v_dot_token__Kind_ellipsis, tos3(""));
-      };
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_dotdot, tos3(""));
-    };
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_dot, tos3(""));
-  } else if (tmp46 == '#') {
-    int start = s->pos + 1;
-    v_dot_scanner__Scanner_ignore_line(s);
-    if (nextc == '!') {
-      s->line_comment =
-          string_trim_space(string_substr2(s->text, start + 1, s->pos, false));
-      return v_dot_scanner__Scanner_scan(s);
-    };
-    string hash = string_substr2(s->text, start, s->pos, false);
-    return v_dot_scanner__Scanner_scan_res(&/* ? */ *s,
-                                           v_dot_token__v_dot_token__Kind_hash,
-                                           string_trim_space(hash));
-  } else if (tmp46 == '>') {
-    if (nextc == '=') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_ge, tos3(""));
-    } else if (nextc == '>') {
-      if (s->pos + 2 < s->text.len && string_at(s->text, s->pos + 2) == '=') {
-        s->pos += 2;
-        return v_dot_scanner__Scanner_scan_res(
-            &/* ? */ *s, v_dot_token__v_dot_token__Kind_right_shift_assign,
-            tos3(""));
-      };
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_right_shift, tos3(""));
-    } else {
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_gt, tos3(""));
-    };
-  } else if (tmp46 == 0xE2) {
-    if (nextc == 0x89 && string_at(s->text, s->pos + 2) == 0xA0) {
-      s->pos += 2;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_ne, tos3(""));
-    } else if (nextc == 0x89 && string_at(s->text, s->pos + 2) == 0xBD) {
-      s->pos += 2;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_le, tos3(""));
-    } else if (nextc == 0xA9 && string_at(s->text, s->pos + 2) == 0xBE) {
-      s->pos += 2;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_ge, tos3(""));
-    };
-  } else if (tmp46 == '<') {
-    if (nextc == '=') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_le, tos3(""));
-    } else if (nextc == '<') {
-      if (s->pos + 2 < s->text.len && string_at(s->text, s->pos + 2) == '=') {
-        s->pos += 2;
-        return v_dot_scanner__Scanner_scan_res(
-            &/* ? */ *s, v_dot_token__v_dot_token__Kind_left_shift_assign,
-            tos3(""));
-      };
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_left_shift, tos3(""));
-    } else {
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_lt, tos3(""));
-    };
-  } else if (tmp46 == '=') {
-    if (nextc == '=') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_eq, tos3(""));
-    } else if (nextc == '>') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_arrow, tos3(""));
-    } else {
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_assign, tos3(""));
-    };
-  } else if (tmp46 == ':') {
-    if (nextc == '=') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_decl_assign, tos3(""));
-    } else {
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_colon, tos3(""));
-    };
-  } else if (tmp46 == ';') {
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_semicolon, tos3(""));
-  } else if (tmp46 == '!') {
-    if (nextc == '=') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_ne, tos3(""));
-    } else {
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_not, tos3(""));
-    };
-  } else if (tmp46 == '~') {
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_bit_not, tos3(""));
-  } else if (tmp46 == '/') {
-    if (nextc == '=') {
-      s->pos++;
-      return v_dot_scanner__Scanner_scan_res(
-          &/* ? */ *s, v_dot_token__v_dot_token__Kind_div_assign, tos3(""));
-    };
-    if (nextc == '/') {
-      int start = s->pos + 1;
-      v_dot_scanner__Scanner_ignore_line(s);
-      s->line_comment = string_substr2(s->text, start + 1, s->pos, false);
-      string comment = string_trim_space(s->line_comment);
-      if (s->comments_mode ==
-          v_dot_scanner__v_dot_scanner__CommentsMode_parse_comments) {
-        s->pos--;
-        return v_dot_scanner__Scanner_scan_res(
-            &/* ? */ *s, v_dot_token__v_dot_token__Kind_line_comment, comment);
-      };
-      return v_dot_scanner__Scanner_scan(s);
-    };
-    if (nextc == '*') {
-      int start = s->pos + 2;
-      int nest_count = 1;
-      while (nest_count > 0) {
-
-        s->pos++;
-        if (s->pos >= s->text.len) {
-          s->line_nr--;
-          v_dot_scanner__Scanner_error(&/* ? */ *s,
-                                       tos3("comment not terminated"));
-        };
-        if (string_at(s->text, s->pos) == '\n') {
-          v_dot_scanner__Scanner_inc_line_number(s);
-          continue;
-        };
-        if (v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("/*"), s->pos)) {
-          nest_count++;
-          continue;
-        };
-        if (v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("*/"), s->pos)) {
-          nest_count--;
-        };
-      };
-      s->pos++;
-      if (s->comments_mode ==
-          v_dot_scanner__v_dot_scanner__CommentsMode_parse_comments) {
-        string comment = string_trim_space(
-            string_substr2(s->text, start, (s->pos - 1), false));
-        return v_dot_scanner__Scanner_scan_res(
-            &/* ? */ *s, v_dot_token__v_dot_token__Kind_mline_comment, comment);
-      };
-      return v_dot_scanner__Scanner_scan(s);
-    };
-    return v_dot_scanner__Scanner_scan_res(
-        &/* ? */ *s, v_dot_token__v_dot_token__Kind_div, tos3(""));
-  } else // default:
-  {
-  };
-#ifdef _WIN32
-  if (c == '\0') {
-    return v_dot_scanner__Scanner_end_of_file(s);
-  };
-#endif
-  ;
-  v_dot_scanner__Scanner_error(
-      &/* ? */ *s,
-      _STR("invalid character `%.*s`", byte_str(c).len, byte_str(c).str));
-  return v_dot_scanner__Scanner_end_of_file(s);
-}
-int v_dot_scanner__Scanner_current_column(v_dot_scanner__Scanner *s) {
-  return s->pos - s->last_nl_pos;
-}
-int v_dot_scanner__Scanner_count_symbol_before(v_dot_scanner__Scanner s, int p,
-                                               byte sym) {
-  int count = 0;
-  for (int i = p; i >= 0; i--) {
-
-    if (string_at(s.text, i) != sym) {
-      break;
-    };
-    count++;
-  };
-  return count;
-}
-string v_dot_scanner__Scanner_ident_string(v_dot_scanner__Scanner *s) {
-  byte q = string_at(s->text, s->pos);
-  bool is_quote =
-      q == v_dot_scanner__single_quote || q == v_dot_scanner__double_quote;
-  bool is_raw = is_quote && string_at(s->text, s->pos - 1) == 'r';
-  if (is_quote && !s->inside_string) {
-    s->quote = q;
-  };
-  int start = s->pos;
-  s->inside_string = 0;
-  byte slash = '\\';
-  while (1) {
-    s->pos++;
-    if (s->pos >= s->text.len) {
-      break;
-    };
-    byte c = string_at(s->text, s->pos);
-    byte prevc = string_at(s->text, s->pos - 1);
-    if (c == s->quote &&
-        (prevc != slash ||
-         (prevc == slash && string_at(s->text, s->pos - 2) == slash))) {
-      break;
-    };
-    if (c == '\n') {
-      v_dot_scanner__Scanner_inc_line_number(s);
-    };
-    if (c == '0' && s->pos > 2 && string_at(s->text, s->pos - 1) == slash) {
-      if (s->pos < s->text.len - 1 &&
-          byte_is_digit(string_at(s->text, s->pos + 1))) {
-      } else {
-        v_dot_scanner__Scanner_error(&/* ? */ *s,
-                                     tos3("0 character in a string literal"));
-      };
-    };
-    if (c == '0' && s->pos > 5 &&
-        v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("\\x0"), s->pos - 3)) {
-      v_dot_scanner__Scanner_error(&/* ? */ *s,
-                                   tos3("0 character in a string literal"));
-    };
-    if (c == '{' && prevc == '$' && !is_raw && !s->is_fmt &&
-        v_dot_scanner__Scanner_count_symbol_before(*s, s->pos - 2, slash) % 2 ==
-            0) {
-      s->inside_string = 1;
-      s->pos -= 2;
-      break;
-    };
-    if (v_dot_scanner__is_name_char(c) && prevc == '$' && !s->is_fmt &&
-        !is_raw &&
-        v_dot_scanner__Scanner_count_symbol_before(*s, s->pos - 2, slash) % 2 ==
-            0) {
-      s->inside_string = 1;
-      s->inter_start = 1;
-      s->pos -= 2;
-      break;
-    };
-  };
-  string lit = tos3("");
-  if (string_at(s->text, start) == s->quote) {
-    start++;
-  };
-  int end = s->pos;
-  if (s->inside_string) {
-    end++;
-  };
-  if (start > s->pos) {
-  } else {
-    lit = string_substr2(s->text, start, end, false);
-  };
-  return lit;
-}
-string v_dot_scanner__Scanner_ident_char(v_dot_scanner__Scanner *s) {
-  int start = s->pos;
-  byte slash = '\\';
-  int len = 0;
-  while (1) {
-    s->pos++;
-    if (s->pos >= s->text.len) {
-      break;
-    };
-    if (string_at(s->text, s->pos) != slash) {
-      len++;
-    };
-    bool double_slash =
-        v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("\\\\"), s->pos - 2);
-    if (string_at(s->text, s->pos) == '`' &&
-        (string_at(s->text, s->pos - 1) != slash || double_slash)) {
-      if (double_slash) {
-        len++;
-      };
-      break;
-    };
-  };
-  len--;
-  string c = string_substr2(s->text, start + 1, s->pos, false);
-  if (len != 1) {
-    ustring u = string_ustring(c);
-    if (u.len != 1) {
-      v_dot_scanner__Scanner_error(
-          &/* ? */ *s,
-          string_add(
-              tos3("invalid character literal (more than one character)\n"),
-              tos3("use quotes for strings, backticks for characters")));
-    };
-  };
-  if (string_eq(c, tos3("\\`"))) {
-    return tos3("`");
-  };
-  return ((string_eq(c, tos3("\'"))) ? (string_add(tos3("\\"), c)) : (c));
-}
-bool v_dot_scanner__Scanner_expect(v_dot_scanner__Scanner *s, string want,
-                                   int start_pos) {
-  int end_pos = start_pos + want.len;
-  if (start_pos < 0 || start_pos >= s->text.len) {
-    return 0;
-  };
-  if (end_pos < 0 || end_pos > s->text.len) {
-    return 0;
-  };
-  int tmp99 = start_pos;
-  ;
-  for (int tmp100 = tmp99; tmp100 < end_pos; tmp100++) {
-    int pos = tmp100;
-
-    if (string_at(s->text, pos) != string_at(want, pos - start_pos)) {
-      return 0;
-    };
-  };
-  return 1;
-}
-void v_dot_scanner__Scanner_debug_tokens(v_dot_scanner__Scanner *s) {
-  s->pos = 0;
-  s->started = 0;
-  s->debug = 1;
-  string fname = string_all_after(s->file_path, os__path_separator);
-  printf("\n===DEBUG TOKENS %.*s===\n", fname.len, fname.str);
-  while (1) {
-    v_dot_token__Token tok = v_dot_scanner__Scanner_scan(s);
-    v_dot_token__Kind tok_kind = tok.kind;
-    string lit = tok.lit;
-    print(v_dot_token__Kind_str(tok_kind));
-    if (string_ne(lit, tos3(""))) {
-      printf(" `%.*s`\n", lit.len, lit.str);
-    } else {
-      println(tos3(""));
-    };
-    if (tok_kind == v_dot_token__v_dot_token__Kind_eof) {
-      println(tos3("============ END OF DEBUG TOKENS =================="));
-      break;
-    };
-  };
-}
-void v_dot_scanner__Scanner_ignore_line(v_dot_scanner__Scanner *s) {
-  v_dot_scanner__Scanner_eat_to_end_of_line(s);
-  v_dot_scanner__Scanner_inc_line_number(s);
-}
-void v_dot_scanner__Scanner_eat_to_end_of_line(v_dot_scanner__Scanner *s) {
-  while (s->pos < s->text.len && string_at(s->text, s->pos) != '\n') {
-
-    s->pos++;
-  };
-}
-void v_dot_scanner__Scanner_inc_line_number(v_dot_scanner__Scanner *s) {
-  s->last_nl_pos = s->pos;
-  s->line_nr++;
-  _PUSH(&s->line_ends, (/*typ = array_int   tmp_typ=int*/ s->pos), tmp107, int);
-  if (s->line_nr > s->nr_lines) {
-    s->nr_lines = s->line_nr;
-  };
-}
-string v_dot_scanner__Scanner_line(v_dot_scanner__Scanner s, int n) {
-  string res = tos3("");
-  if (n >= 0 && n < s.line_ends.len) {
-    int nline_start =
-        ((n == 0) ? (0) : ((*(int *)array_get(s.line_ends, n - 1))));
-    int nline_end = (*(int *)array_get(s.line_ends, n));
-    if (nline_start <= nline_end) {
-      res = string_substr2(s.text, nline_start, nline_end, false);
-    };
-  };
-  return string_trim_left(string_trim_right(res, tos3("\r\n")), tos3("\r\n"));
-}
-bool v_dot_scanner__is_name_char(byte c) {
-  return c == '_' || byte_is_letter(c);
-}
-static inline bool v_dot_scanner__is_nl(byte c) {
-  return c == '\r' || c == '\n';
-}
-bool v_dot_scanner__contains_capital(string s) {
-  string tmp114 = s;
-  ;
-  for (int tmp115 = 0; tmp115 < tmp114.len; tmp115++) {
-    byte c = tmp114.str[tmp115];
-
-    if (c >= 'A' && c <= 'Z') {
-      return 1;
-    };
-  };
-  return 0;
-}
-bool v_dot_scanner__good_type_name(string s) {
-  if (s.len < 4) {
-    return 1;
-  };
-  int tmp116 = 2;
-  ;
-  for (int tmp117 = tmp116; tmp117 < s.len; tmp117++) {
-    int i = tmp117;
-
-    if (byte_is_capital(string_at(s, i)) &&
-        byte_is_capital(string_at(s, i - 1)) &&
-        byte_is_capital(string_at(s, i - 2))) {
-      return 0;
-    };
-  };
-  return 1;
-}
-void v_dot_scanner__Scanner_error(v_dot_scanner__Scanner *s, string msg) {
-  printf("%d : %.*s\n", s->line_nr, msg.len, msg.str);
-  v_exit(1);
-}
-void v_dot_scanner__verror(string s) {
-  printf("V error: %.*s\n", s.len, s.str);
-  os__flush();
-  v_exit(1);
-}
-string v_dot_scanner__vhash() {
-  byte buf[50] = {0};
-  buf[0] /*rbyte 1*/ = 0;
-  snprintf(((charptr)(buf)), 50, "%s", V_COMMIT_HASH);
-  return tos_clone(buf);
-}
-string v_dot_scanner__cescaped_path(string s) {
-  return string_replace(s, tos3("\\"), tos3("\\\\"));
-}
 Option_array_string
 internal_dot_flag__Instance_parse_impl(internal_dot_flag__Instance *p,
                                        array_string args, void *value,
@@ -16218,6 +15227,1003 @@ string v_dot_ast__Stmt_str(v_dot_ast__Stmt node) {
   {
     return tos3("[unhandled stmt str]");
   };
+}
+v_dot_scanner__Scanner *
+v_dot_scanner__new_scanner_file(string file_path,
+                                v_dot_scanner__CommentsMode comments_mode) {
+  if (!os__exists(file_path)) {
+    v_dot_scanner__verror(
+        _STR("%.*s doesn't exist", file_path.len, file_path.str));
+  };
+  Option_string tmp1 = os__read_file(file_path);
+  string raw_text;
+  if (!tmp1.ok) {
+    string err = tmp1.error;
+    int errcode = tmp1.ecode;
+    v_dot_scanner__verror(
+        _STR("scanner: failed to open %.*s", file_path.len, file_path.str));
+    return 0;
+  }
+  raw_text = *(string *)tmp1.data;
+  ;
+  if (raw_text.len >= 3) {
+    byte *c_text = raw_text.str;
+    if (c_text[/*ptr!*/ 0] /*rbyte 0*/ == 0xEF &&
+        c_text[/*ptr!*/ 1] /*rbyte 0*/ == 0xBB &&
+        c_text[/*ptr!*/ 2] /*rbyte 0*/ == 0xBF) {
+      int offset_from_begin = 3;
+      raw_text = tos(&/*114*/ c_text[/*ptr!*/ offset_from_begin] /*rbyte 0*/,
+                     vstrlen(c_text) - offset_from_begin);
+    };
+  };
+  v_dot_scanner__Scanner *s =
+      v_dot_scanner__new_scanner(raw_text, comments_mode);
+  s->file_path = file_path;
+  return s;
+}
+v_dot_scanner__Scanner *
+v_dot_scanner__new_scanner(string text,
+                           v_dot_scanner__CommentsMode comments_mode) {
+  return (v_dot_scanner__Scanner *)memdup(
+      &(v_dot_scanner__Scanner){
+          .text = text,
+          .print_line_on_error = 1,
+          .print_colored_error = 1,
+          .print_rel_paths_on_error = 1,
+          .is_fmt = v_dot_scanner__is_fmt,
+          .comments_mode = comments_mode,
+          .file_path = tos3(""),
+          .pos = 0,
+          .line_nr = 0,
+          .last_nl_pos = 0,
+          .inside_string = 0,
+          .inter_start = 0,
+          .inter_end = 0,
+          .debug = 0,
+          .line_comment = tos3(""),
+          .started = 0,
+          .fn_name = tos3(""),
+          .quote = 0,
+          .line_ends = new_array(0, 1, sizeof(int)),
+          .nr_lines = 0,
+          .is_vh = 0,
+      },
+      sizeof(v_dot_scanner__Scanner));
+}
+v_dot_token__Token v_dot_scanner__Scanner_scan_res(v_dot_scanner__Scanner *s,
+                                                   v_dot_token__Kind tok_kind,
+                                                   string lit) {
+  return (v_dot_token__Token){
+      .kind = tok_kind, .lit = lit, .line_nr = s->line_nr + 1, .pos = s->pos};
+}
+string v_dot_scanner__Scanner_ident_name(v_dot_scanner__Scanner *s) {
+  int start = s->pos;
+  s->pos++;
+  while (s->pos < s->text.len &&
+         (v_dot_scanner__is_name_char(string_at(s->text, s->pos)) ||
+          byte_is_digit(string_at(s->text, s->pos)))) {
+
+    s->pos++;
+  };
+  string name = string_substr2(s->text, start, s->pos, false);
+  s->pos--;
+  return name;
+}
+string v_dot_scanner__filter_num_sep(byte *txt, int start, int end) {
+  {
+    byte *b = v_malloc(end - start + 1);
+    int i = start;
+    int i1 = 0;
+    while (i < end) {
+
+      if (txt[/*ptr!*/ i] /*rbyte 0*/ != v_dot_scanner__num_sep) {
+        b[/*ptr!*/ i1] /*rbyte 1*/ = txt[/*ptr!*/ i] /*rbyte 0*/;
+        i1++;
+      };
+      i++;
+    };
+    b[/*ptr!*/ i1] /*rbyte 1*/ = 0;
+    return (string){.str = b, .len = i1};
+  };
+}
+string v_dot_scanner__Scanner_ident_bin_number(v_dot_scanner__Scanner *s) {
+  bool has_wrong_digit = 0;
+  byte first_wrong_digit = '\0';
+  int start_pos = s->pos;
+  s->pos += 2;
+  while (s->pos < s->text.len) {
+
+    byte c = string_at(s->text, s->pos);
+    if (!byte_is_bin_digit(c) && c != v_dot_scanner__num_sep) {
+      if ((!byte_is_digit(c) && !byte_is_letter(c)) || s->inside_string) {
+        break;
+      } else if (!has_wrong_digit) {
+        has_wrong_digit = 1;
+        first_wrong_digit = c;
+      };
+    };
+    s->pos++;
+  };
+  if (start_pos + 2 == s->pos) {
+    v_dot_scanner__Scanner_error(
+        &/* ? */ *s, tos3("number part of this binary is not provided"));
+  } else if (has_wrong_digit) {
+    v_dot_scanner__Scanner_error(
+        &/* ? */ *s,
+        _STR("this binary number has unsuitable digit `%.*s`",
+             byte_str(first_wrong_digit).len, byte_str(first_wrong_digit).str));
+  };
+  string number = v_dot_scanner__filter_num_sep(s->text.str, start_pos, s->pos);
+  s->pos--;
+  return number;
+}
+string v_dot_scanner__Scanner_ident_hex_number(v_dot_scanner__Scanner *s) {
+  bool has_wrong_digit = 0;
+  byte first_wrong_digit = '\0';
+  int start_pos = s->pos;
+  s->pos += 2;
+  while (s->pos < s->text.len) {
+
+    byte c = string_at(s->text, s->pos);
+    if (!byte_is_hex_digit(c) && c != v_dot_scanner__num_sep) {
+      if (!byte_is_letter(c) || s->inside_string) {
+        break;
+      } else if (!has_wrong_digit) {
+        has_wrong_digit = 1;
+        first_wrong_digit = c;
+      };
+    };
+    s->pos++;
+  };
+  if (start_pos + 2 == s->pos) {
+    v_dot_scanner__Scanner_error(
+        &/* ? */ *s, tos3("number part of this hexadecimal is not provided"));
+  } else if (has_wrong_digit) {
+    v_dot_scanner__Scanner_error(
+        &/* ? */ *s,
+        _STR("this hexadecimal number has unsuitable digit `%.*s`",
+             byte_str(first_wrong_digit).len, byte_str(first_wrong_digit).str));
+  };
+  string number = v_dot_scanner__filter_num_sep(s->text.str, start_pos, s->pos);
+  s->pos--;
+  return number;
+}
+string v_dot_scanner__Scanner_ident_oct_number(v_dot_scanner__Scanner *s) {
+  bool has_wrong_digit = 0;
+  byte first_wrong_digit = '\0';
+  int start_pos = s->pos;
+  s->pos += 2;
+  while (s->pos < s->text.len) {
+
+    byte c = string_at(s->text, s->pos);
+    if (!byte_is_oct_digit(c) && c != v_dot_scanner__num_sep) {
+      if ((!byte_is_digit(c) && !byte_is_letter(c)) || s->inside_string) {
+        break;
+      } else if (!has_wrong_digit) {
+        has_wrong_digit = 1;
+        first_wrong_digit = c;
+      };
+    };
+    s->pos++;
+  };
+  if (start_pos + 2 == s->pos) {
+    v_dot_scanner__Scanner_error(
+        &/* ? */ *s, tos3("number part of this octal is not provided"));
+  } else if (has_wrong_digit) {
+    v_dot_scanner__Scanner_error(
+        &/* ? */ *s,
+        _STR("this octal number has unsuitable digit `%.*s`",
+             byte_str(first_wrong_digit).len, byte_str(first_wrong_digit).str));
+  };
+  string number = v_dot_scanner__filter_num_sep(s->text.str, start_pos, s->pos);
+  s->pos--;
+  return number;
+}
+string v_dot_scanner__Scanner_ident_dec_number(v_dot_scanner__Scanner *s) {
+  bool has_wrong_digit = 0;
+  byte first_wrong_digit = '\0';
+  int start_pos = s->pos;
+  while (s->pos < s->text.len) {
+
+    byte c = string_at(s->text, s->pos);
+    if (!byte_is_digit(c) && c != v_dot_scanner__num_sep) {
+      if (!byte_is_letter(c) || (c == 'e' || c == 'E') || s->inside_string) {
+        break;
+      } else if (!has_wrong_digit) {
+        has_wrong_digit = 1;
+        first_wrong_digit = c;
+      };
+    };
+    s->pos++;
+  };
+  if (v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3(".."), s->pos)) {
+    string number =
+        v_dot_scanner__filter_num_sep(s->text.str, start_pos, s->pos);
+    s->pos--;
+    return number;
+  };
+  if (s->pos < s->text.len && string_at(s->text, s->pos) == '.') {
+    s->pos++;
+    while (s->pos < s->text.len) {
+
+      byte c = string_at(s->text, s->pos);
+      if (!byte_is_digit(c)) {
+        if (!byte_is_letter(c) || (c == 'e' || c == 'E') || s->inside_string) {
+          break;
+        } else if (!has_wrong_digit) {
+          has_wrong_digit = 1;
+          first_wrong_digit = c;
+        };
+      };
+      s->pos++;
+    };
+  };
+  bool has_exponential_part = 0;
+  if (v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("e"), s->pos) ||
+      v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("E"), s->pos)) {
+    s->pos++;
+    int exp_start_pos = s->pos;
+    if (s->pos < s->text.len && (string_at(s->text, s->pos) == '-' ||
+                                 string_at(s->text, s->pos) == '+')) {
+      s->pos++;
+    };
+    while (s->pos < s->text.len) {
+
+      byte c = string_at(s->text, s->pos);
+      if (!byte_is_digit(c)) {
+        if (!byte_is_letter(c) || s->inside_string) {
+          break;
+        } else if (!has_wrong_digit) {
+          has_wrong_digit = 1;
+          first_wrong_digit = c;
+        };
+      };
+      s->pos++;
+    };
+    if (exp_start_pos == s->pos) {
+      v_dot_scanner__Scanner_error(&/* ? */ *s, tos3("exponent has no digits"));
+    };
+    has_exponential_part = 1;
+  };
+  if (s->pos < s->text.len && string_at(s->text, s->pos) == '.') {
+    if (has_exponential_part) {
+      v_dot_scanner__Scanner_error(&/* ? */ *s,
+                                   tos3("exponential part should be integer"));
+    } else {
+      v_dot_scanner__Scanner_error(&/* ? */ *s,
+                                   tos3("too many decimal points in number"));
+    };
+  };
+  if (has_wrong_digit) {
+    v_dot_scanner__Scanner_error(&/* ? */ *s,
+                                 _STR("this number has unsuitable digit `%.*s`",
+                                      byte_str(first_wrong_digit).len,
+                                      byte_str(first_wrong_digit).str));
+  };
+  string number = v_dot_scanner__filter_num_sep(s->text.str, start_pos, s->pos);
+  s->pos--;
+  return number;
+}
+string v_dot_scanner__Scanner_ident_number(v_dot_scanner__Scanner *s) {
+  if (v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("0b"), s->pos)) {
+    return v_dot_scanner__Scanner_ident_bin_number(s);
+  } else if (v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("0x"), s->pos)) {
+    return v_dot_scanner__Scanner_ident_hex_number(s);
+  } else if (v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("0o"), s->pos)) {
+    return v_dot_scanner__Scanner_ident_oct_number(s);
+  } else {
+    return v_dot_scanner__Scanner_ident_dec_number(s);
+  };
+}
+void v_dot_scanner__Scanner_skip_whitespace(v_dot_scanner__Scanner *s) {
+  while (s->pos < s->text.len && byte_is_space(string_at(s->text, s->pos))) {
+
+    if (v_dot_scanner__is_nl(string_at(s->text, s->pos)) && s->is_vh) {
+
+      return;
+    };
+    if (v_dot_scanner__is_nl(string_at(s->text, s->pos)) &&
+        !v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("\r\n"), s->pos - 1)) {
+      v_dot_scanner__Scanner_inc_line_number(s);
+    };
+    s->pos++;
+  };
+}
+v_dot_token__Token
+v_dot_scanner__Scanner_end_of_file(v_dot_scanner__Scanner *s) {
+  s->pos = s->text.len;
+  v_dot_scanner__Scanner_inc_line_number(s);
+  return v_dot_scanner__Scanner_scan_res(
+      &/* ? */ *s, v_dot_token__v_dot_token__Kind_eof, tos3(""));
+}
+v_dot_token__Token v_dot_scanner__Scanner_scan(v_dot_scanner__Scanner *s) {
+  if (s->started) {
+    s->pos++;
+  };
+  s->started = 1;
+  if (s->pos >= s->text.len) {
+    return v_dot_scanner__Scanner_end_of_file(s);
+  };
+  if (!s->inside_string) {
+    v_dot_scanner__Scanner_skip_whitespace(s);
+  };
+  if (s->inter_end) {
+    if (string_at(s->text, s->pos) == s->quote) {
+      s->inter_end = 0;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_string, tos3(""));
+    };
+    s->inter_end = 0;
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_string,
+        v_dot_scanner__Scanner_ident_string(s));
+  };
+  v_dot_scanner__Scanner_skip_whitespace(s);
+  if (s->pos >= s->text.len) {
+    return v_dot_scanner__Scanner_end_of_file(s);
+  };
+  byte c = string_at(s->text, s->pos);
+  byte nextc = '\0';
+  if (s->pos + 1 < s->text.len) {
+    nextc = string_at(s->text, s->pos + 1);
+  };
+  if (v_dot_scanner__is_name_char(c)) {
+    string name = v_dot_scanner__Scanner_ident_name(s);
+    byte next_char =
+        ((s->pos + 1 < s->text.len) ? (string_at(s->text, s->pos + 1))
+                                    : ('\0'));
+    if (v_dot_token__is_key(name)) {
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__key_to_token(name), tos3(""));
+    };
+    if (s->inside_string) {
+      if (next_char == s->quote) {
+        s->inter_end = 1;
+        s->inter_start = 0;
+        s->inside_string = 0;
+      };
+    };
+    if (s->inter_start && next_char != '.' && next_char != '(') {
+      s->inter_end = 1;
+      s->inter_start = 0;
+    };
+    if (s->pos == 0 && next_char == ' ') {
+      s->pos++;
+    };
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_name, name);
+  } else if (byte_is_digit(c) || (c == '.' && byte_is_digit(nextc))) {
+    if (!s->inside_string) {
+      int start_pos = s->pos;
+      while (start_pos < s->text.len && string_at(s->text, start_pos) == '0') {
+
+        start_pos++;
+      };
+      int prefix_zero_num = start_pos - s->pos;
+      if (start_pos == s->text.len ||
+          (c == '0' && !byte_is_digit(string_at(s->text, start_pos)))) {
+        prefix_zero_num--;
+      };
+      s->pos += prefix_zero_num;
+    };
+    string num = v_dot_scanner__Scanner_ident_number(s);
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_number, num);
+  };
+  if (c == ')' && s->inter_start) {
+    s->inter_end = 1;
+    s->inter_start = 0;
+    byte next_char =
+        ((s->pos + 1 < s->text.len) ? (string_at(s->text, s->pos + 1))
+                                    : ('\0'));
+    if (next_char == s->quote) {
+      s->inside_string = 0;
+    };
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_rpar, tos3(""));
+  };
+  byte tmp46 = c;
+
+  if (tmp46 == '+') {
+    if (nextc == '+') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_inc, tos3(""));
+    } else if (nextc == '=') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_plus_assign, tos3(""));
+    };
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_plus, tos3(""));
+  } else if (tmp46 == '-') {
+    if (nextc == '-') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_dec, tos3(""));
+    } else if (nextc == '=') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_minus_assign, tos3(""));
+    };
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_minus, tos3(""));
+  } else if (tmp46 == '*') {
+    if (nextc == '=') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_mult_assign, tos3(""));
+    };
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_mul, tos3(""));
+  } else if (tmp46 == '^') {
+    if (nextc == '=') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_xor_assign, tos3(""));
+    };
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_xor, tos3(""));
+  } else if (tmp46 == '%') {
+    if (nextc == '=') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_mod_assign, tos3(""));
+    };
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_mod, tos3(""));
+  } else if (tmp46 == '?') {
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_question, tos3(""));
+  } else if ((tmp46 == v_dot_scanner__single_quote) ||
+             (tmp46 == v_dot_scanner__double_quote)) {
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_string,
+        v_dot_scanner__Scanner_ident_string(s));
+  } else if (tmp46 == '`') {
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_chartoken,
+        v_dot_scanner__Scanner_ident_char(s));
+  } else if (tmp46 == '(') {
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_lpar, tos3(""));
+  } else if (tmp46 == ')') {
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_rpar, tos3(""));
+  } else if (tmp46 == '[') {
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_lsbr, tos3(""));
+  } else if (tmp46 == ']') {
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_rsbr, tos3(""));
+  } else if (tmp46 == '{') {
+    if (s->inside_string) {
+      return v_dot_scanner__Scanner_scan(s);
+    };
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_lcbr, tos3(""));
+  } else if (tmp46 == '$') {
+    if (s->inside_string) {
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_str_dollar, tos3(""));
+    } else {
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_dollar, tos3(""));
+    };
+  } else if (tmp46 == '}') {
+    if (s->inside_string) {
+      s->pos++;
+      if (string_at(s->text, s->pos) == s->quote) {
+        s->inside_string = 0;
+        return v_dot_scanner__Scanner_scan_res(
+            &/* ? */ *s, v_dot_token__v_dot_token__Kind_string, tos3(""));
+      };
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_string,
+          v_dot_scanner__Scanner_ident_string(s));
+    } else {
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_rcbr, tos3(""));
+    };
+  } else if (tmp46 == '&') {
+    if (nextc == '=') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_and_assign, tos3(""));
+    };
+    if (nextc == '&') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_and, tos3(""));
+    };
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_amp, tos3(""));
+  } else if (tmp46 == '|') {
+    if (nextc == '|') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_logical_or, tos3(""));
+    };
+    if (nextc == '=') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_or_assign, tos3(""));
+    };
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_pipe, tos3(""));
+  } else if (tmp46 == ',') {
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_comma, tos3(""));
+  } else if (tmp46 == '@') {
+    s->pos++;
+    string name = v_dot_scanner__Scanner_ident_name(s);
+    if (string_eq(name, tos3("FN"))) {
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_string, s->fn_name);
+    };
+    if (string_eq(name, tos3("VEXE"))) {
+      string vexe = v_dot_pref__vexe_path();
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_string,
+          v_dot_scanner__cescaped_path(vexe));
+    };
+    if (string_eq(name, tos3("FILE"))) {
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_string,
+          v_dot_scanner__cescaped_path(os__real_path(s->file_path)));
+    };
+    if (string_eq(name, tos3("LINE"))) {
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_string,
+          int_str((s->line_nr + 1)));
+    };
+    if (string_eq(name, tos3("COLUMN"))) {
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_string,
+          int_str((v_dot_scanner__Scanner_current_column(&/* ? */ *s))));
+    };
+    if (string_eq(name, tos3("VHASH"))) {
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_string,
+          v_dot_scanner__vhash());
+    };
+    if (!v_dot_token__is_key(name)) {
+      v_dot_scanner__Scanner_error(
+          &/* ? */ *s,
+          tos3("@ must be used before keywords (e.g. `@type string`)"));
+    };
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_name, name);
+  } else if (tmp46 == '.') {
+    if (nextc == '.') {
+      s->pos++;
+      if (string_at(s->text, s->pos + 1) == '.') {
+        s->pos++;
+        return v_dot_scanner__Scanner_scan_res(
+            &/* ? */ *s, v_dot_token__v_dot_token__Kind_ellipsis, tos3(""));
+      };
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_dotdot, tos3(""));
+    };
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_dot, tos3(""));
+  } else if (tmp46 == '#') {
+    int start = s->pos + 1;
+    v_dot_scanner__Scanner_ignore_line(s);
+    if (nextc == '!') {
+      s->line_comment =
+          string_trim_space(string_substr2(s->text, start + 1, s->pos, false));
+      return v_dot_scanner__Scanner_scan(s);
+    };
+    string hash = string_substr2(s->text, start, s->pos, false);
+    return v_dot_scanner__Scanner_scan_res(&/* ? */ *s,
+                                           v_dot_token__v_dot_token__Kind_hash,
+                                           string_trim_space(hash));
+  } else if (tmp46 == '>') {
+    if (nextc == '=') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_ge, tos3(""));
+    } else if (nextc == '>') {
+      if (s->pos + 2 < s->text.len && string_at(s->text, s->pos + 2) == '=') {
+        s->pos += 2;
+        return v_dot_scanner__Scanner_scan_res(
+            &/* ? */ *s, v_dot_token__v_dot_token__Kind_right_shift_assign,
+            tos3(""));
+      };
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_right_shift, tos3(""));
+    } else {
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_gt, tos3(""));
+    };
+  } else if (tmp46 == 0xE2) {
+    if (nextc == 0x89 && string_at(s->text, s->pos + 2) == 0xA0) {
+      s->pos += 2;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_ne, tos3(""));
+    } else if (nextc == 0x89 && string_at(s->text, s->pos + 2) == 0xBD) {
+      s->pos += 2;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_le, tos3(""));
+    } else if (nextc == 0xA9 && string_at(s->text, s->pos + 2) == 0xBE) {
+      s->pos += 2;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_ge, tos3(""));
+    };
+  } else if (tmp46 == '<') {
+    if (nextc == '=') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_le, tos3(""));
+    } else if (nextc == '<') {
+      if (s->pos + 2 < s->text.len && string_at(s->text, s->pos + 2) == '=') {
+        s->pos += 2;
+        return v_dot_scanner__Scanner_scan_res(
+            &/* ? */ *s, v_dot_token__v_dot_token__Kind_left_shift_assign,
+            tos3(""));
+      };
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_left_shift, tos3(""));
+    } else {
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_lt, tos3(""));
+    };
+  } else if (tmp46 == '=') {
+    if (nextc == '=') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_eq, tos3(""));
+    } else if (nextc == '>') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_arrow, tos3(""));
+    } else {
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_assign, tos3(""));
+    };
+  } else if (tmp46 == ':') {
+    if (nextc == '=') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_decl_assign, tos3(""));
+    } else {
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_colon, tos3(""));
+    };
+  } else if (tmp46 == ';') {
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_semicolon, tos3(""));
+  } else if (tmp46 == '!') {
+    if (nextc == '=') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_ne, tos3(""));
+    } else {
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_not, tos3(""));
+    };
+  } else if (tmp46 == '~') {
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_bit_not, tos3(""));
+  } else if (tmp46 == '/') {
+    if (nextc == '=') {
+      s->pos++;
+      return v_dot_scanner__Scanner_scan_res(
+          &/* ? */ *s, v_dot_token__v_dot_token__Kind_div_assign, tos3(""));
+    };
+    if (nextc == '/') {
+      int start = s->pos + 1;
+      v_dot_scanner__Scanner_ignore_line(s);
+      s->line_comment = string_substr2(s->text, start + 1, s->pos, false);
+      string comment = string_trim_space(s->line_comment);
+      if (s->comments_mode ==
+          v_dot_scanner__v_dot_scanner__CommentsMode_parse_comments) {
+        s->pos--;
+        return v_dot_scanner__Scanner_scan_res(
+            &/* ? */ *s, v_dot_token__v_dot_token__Kind_line_comment, comment);
+      };
+      return v_dot_scanner__Scanner_scan(s);
+    };
+    if (nextc == '*') {
+      int start = s->pos + 2;
+      int nest_count = 1;
+      while (nest_count > 0) {
+
+        s->pos++;
+        if (s->pos >= s->text.len) {
+          s->line_nr--;
+          v_dot_scanner__Scanner_error(&/* ? */ *s,
+                                       tos3("comment not terminated"));
+        };
+        if (string_at(s->text, s->pos) == '\n') {
+          v_dot_scanner__Scanner_inc_line_number(s);
+          continue;
+        };
+        if (v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("/*"), s->pos)) {
+          nest_count++;
+          continue;
+        };
+        if (v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("*/"), s->pos)) {
+          nest_count--;
+        };
+      };
+      s->pos++;
+      if (s->comments_mode ==
+          v_dot_scanner__v_dot_scanner__CommentsMode_parse_comments) {
+        string comment = string_trim_space(
+            string_substr2(s->text, start, (s->pos - 1), false));
+        return v_dot_scanner__Scanner_scan_res(
+            &/* ? */ *s, v_dot_token__v_dot_token__Kind_mline_comment, comment);
+      };
+      return v_dot_scanner__Scanner_scan(s);
+    };
+    return v_dot_scanner__Scanner_scan_res(
+        &/* ? */ *s, v_dot_token__v_dot_token__Kind_div, tos3(""));
+  } else // default:
+  {
+  };
+#ifdef _WIN32
+  if (c == '\0') {
+    return v_dot_scanner__Scanner_end_of_file(s);
+  };
+#endif
+  ;
+  v_dot_scanner__Scanner_error(
+      &/* ? */ *s,
+      _STR("invalid character `%.*s`", byte_str(c).len, byte_str(c).str));
+  return v_dot_scanner__Scanner_end_of_file(s);
+}
+int v_dot_scanner__Scanner_current_column(v_dot_scanner__Scanner *s) {
+  return s->pos - s->last_nl_pos;
+}
+int v_dot_scanner__Scanner_count_symbol_before(v_dot_scanner__Scanner s, int p,
+                                               byte sym) {
+  int count = 0;
+  for (int i = p; i >= 0; i--) {
+
+    if (string_at(s.text, i) != sym) {
+      break;
+    };
+    count++;
+  };
+  return count;
+}
+string v_dot_scanner__Scanner_ident_string(v_dot_scanner__Scanner *s) {
+  byte q = string_at(s->text, s->pos);
+  bool is_quote =
+      q == v_dot_scanner__single_quote || q == v_dot_scanner__double_quote;
+  bool is_raw = is_quote && string_at(s->text, s->pos - 1) == 'r';
+  if (is_quote && !s->inside_string) {
+    s->quote = q;
+  };
+  int start = s->pos;
+  s->inside_string = 0;
+  byte slash = '\\';
+  while (1) {
+    s->pos++;
+    if (s->pos >= s->text.len) {
+      break;
+    };
+    byte c = string_at(s->text, s->pos);
+    byte prevc = string_at(s->text, s->pos - 1);
+    if (c == s->quote &&
+        (prevc != slash ||
+         (prevc == slash && string_at(s->text, s->pos - 2) == slash))) {
+      break;
+    };
+    if (c == '\n') {
+      v_dot_scanner__Scanner_inc_line_number(s);
+    };
+    if (c == '0' && s->pos > 2 && string_at(s->text, s->pos - 1) == slash) {
+      if (s->pos < s->text.len - 1 &&
+          byte_is_digit(string_at(s->text, s->pos + 1))) {
+      } else {
+        v_dot_scanner__Scanner_error(&/* ? */ *s,
+                                     tos3("0 character in a string literal"));
+      };
+    };
+    if (c == '0' && s->pos > 5 &&
+        v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("\\x0"), s->pos - 3)) {
+      v_dot_scanner__Scanner_error(&/* ? */ *s,
+                                   tos3("0 character in a string literal"));
+    };
+    if (c == '{' && prevc == '$' && !is_raw && !s->is_fmt &&
+        v_dot_scanner__Scanner_count_symbol_before(*s, s->pos - 2, slash) % 2 ==
+            0) {
+      s->inside_string = 1;
+      s->pos -= 2;
+      break;
+    };
+    if (v_dot_scanner__is_name_char(c) && prevc == '$' && !s->is_fmt &&
+        !is_raw &&
+        v_dot_scanner__Scanner_count_symbol_before(*s, s->pos - 2, slash) % 2 ==
+            0) {
+      s->inside_string = 1;
+      s->inter_start = 1;
+      s->pos -= 2;
+      break;
+    };
+  };
+  string lit = tos3("");
+  if (string_at(s->text, start) == s->quote) {
+    start++;
+  };
+  int end = s->pos;
+  if (s->inside_string) {
+    end++;
+  };
+  if (start > s->pos) {
+  } else {
+    lit = string_substr2(s->text, start, end, false);
+  };
+  return lit;
+}
+string v_dot_scanner__Scanner_ident_char(v_dot_scanner__Scanner *s) {
+  int start = s->pos;
+  byte slash = '\\';
+  int len = 0;
+  while (1) {
+    s->pos++;
+    if (s->pos >= s->text.len) {
+      break;
+    };
+    if (string_at(s->text, s->pos) != slash) {
+      len++;
+    };
+    bool double_slash =
+        v_dot_scanner__Scanner_expect(&/* ? */ *s, tos3("\\\\"), s->pos - 2);
+    if (string_at(s->text, s->pos) == '`' &&
+        (string_at(s->text, s->pos - 1) != slash || double_slash)) {
+      if (double_slash) {
+        len++;
+      };
+      break;
+    };
+  };
+  len--;
+  string c = string_substr2(s->text, start + 1, s->pos, false);
+  if (len != 1) {
+    ustring u = string_ustring(c);
+    if (u.len != 1) {
+      v_dot_scanner__Scanner_error(
+          &/* ? */ *s,
+          string_add(
+              tos3("invalid character literal (more than one character)\n"),
+              tos3("use quotes for strings, backticks for characters")));
+    };
+  };
+  if (string_eq(c, tos3("\\`"))) {
+    return tos3("`");
+  };
+  return ((string_eq(c, tos3("\'"))) ? (string_add(tos3("\\"), c)) : (c));
+}
+bool v_dot_scanner__Scanner_expect(v_dot_scanner__Scanner *s, string want,
+                                   int start_pos) {
+  int end_pos = start_pos + want.len;
+  if (start_pos < 0 || start_pos >= s->text.len) {
+    return 0;
+  };
+  if (end_pos < 0 || end_pos > s->text.len) {
+    return 0;
+  };
+  int tmp99 = start_pos;
+  ;
+  for (int tmp100 = tmp99; tmp100 < end_pos; tmp100++) {
+    int pos = tmp100;
+
+    if (string_at(s->text, pos) != string_at(want, pos - start_pos)) {
+      return 0;
+    };
+  };
+  return 1;
+}
+void v_dot_scanner__Scanner_debug_tokens(v_dot_scanner__Scanner *s) {
+  s->pos = 0;
+  s->started = 0;
+  s->debug = 1;
+  string fname = string_all_after(s->file_path, os__path_separator);
+  printf("\n===DEBUG TOKENS %.*s===\n", fname.len, fname.str);
+  while (1) {
+    v_dot_token__Token tok = v_dot_scanner__Scanner_scan(s);
+    v_dot_token__Kind tok_kind = tok.kind;
+    string lit = tok.lit;
+    print(v_dot_token__Kind_str(tok_kind));
+    if (string_ne(lit, tos3(""))) {
+      printf(" `%.*s`\n", lit.len, lit.str);
+    } else {
+      println(tos3(""));
+    };
+    if (tok_kind == v_dot_token__v_dot_token__Kind_eof) {
+      println(tos3("============ END OF DEBUG TOKENS =================="));
+      break;
+    };
+  };
+}
+void v_dot_scanner__Scanner_ignore_line(v_dot_scanner__Scanner *s) {
+  v_dot_scanner__Scanner_eat_to_end_of_line(s);
+  v_dot_scanner__Scanner_inc_line_number(s);
+}
+void v_dot_scanner__Scanner_eat_to_end_of_line(v_dot_scanner__Scanner *s) {
+  while (s->pos < s->text.len && string_at(s->text, s->pos) != '\n') {
+
+    s->pos++;
+  };
+}
+void v_dot_scanner__Scanner_inc_line_number(v_dot_scanner__Scanner *s) {
+  s->last_nl_pos = s->pos;
+  s->line_nr++;
+  _PUSH(&s->line_ends, (/*typ = array_int   tmp_typ=int*/ s->pos), tmp107, int);
+  if (s->line_nr > s->nr_lines) {
+    s->nr_lines = s->line_nr;
+  };
+}
+string v_dot_scanner__Scanner_line(v_dot_scanner__Scanner s, int n) {
+  string res = tos3("");
+  if (n >= 0 && n < s.line_ends.len) {
+    int nline_start =
+        ((n == 0) ? (0) : ((*(int *)array_get(s.line_ends, n - 1))));
+    int nline_end = (*(int *)array_get(s.line_ends, n));
+    if (nline_start <= nline_end) {
+      res = string_substr2(s.text, nline_start, nline_end, false);
+    };
+  };
+  return string_trim_left(string_trim_right(res, tos3("\r\n")), tos3("\r\n"));
+}
+bool v_dot_scanner__is_name_char(byte c) {
+  return c == '_' || byte_is_letter(c);
+}
+static inline bool v_dot_scanner__is_nl(byte c) {
+  return c == '\r' || c == '\n';
+}
+bool v_dot_scanner__contains_capital(string s) {
+  string tmp114 = s;
+  ;
+  for (int tmp115 = 0; tmp115 < tmp114.len; tmp115++) {
+    byte c = tmp114.str[tmp115];
+
+    if (c >= 'A' && c <= 'Z') {
+      return 1;
+    };
+  };
+  return 0;
+}
+bool v_dot_scanner__good_type_name(string s) {
+  if (s.len < 4) {
+    return 1;
+  };
+  int tmp116 = 2;
+  ;
+  for (int tmp117 = tmp116; tmp117 < s.len; tmp117++) {
+    int i = tmp117;
+
+    if (byte_is_capital(string_at(s, i)) &&
+        byte_is_capital(string_at(s, i - 1)) &&
+        byte_is_capital(string_at(s, i - 2))) {
+      return 0;
+    };
+  };
+  return 1;
+}
+void v_dot_scanner__Scanner_error(v_dot_scanner__Scanner *s, string msg) {
+  printf("%d : %.*s\n", s->line_nr, msg.len, msg.str);
+  v_exit(1);
+}
+void v_dot_scanner__verror(string s) {
+  printf("V error: %.*s\n", s.len, s.str);
+  os__flush();
+  v_exit(1);
+}
+string v_dot_scanner__vhash() {
+  byte buf[50] = {0};
+  buf[0] /*rbyte 1*/ = 0;
+  snprintf(((charptr)(buf)), 50, "%s", V_COMMIT_HASH);
+  return tos_clone(buf);
+}
+string v_dot_scanner__cescaped_path(string s) {
+  return string_replace(s, tos3("\\"), tos3("\\\\"));
 }
 v_dot_ast__CompIf v_dot_parser__Parser_comp_if(v_dot_parser__Parser *p) {
   v_dot_token__Position pos = v_dot_token__Token_position(&/* ? */ p->tok);
@@ -38832,6 +38838,11 @@ compiler__ScanRes compiler__Scanner_scan(compiler__Scanner *s) {
       return compiler__scan_res(compiler__compiler__TokenKind_string,
                                 s->fn_name);
     };
+    if (string_eq(name, tos3("VEXE"))) {
+      string vexe = v_dot_pref__vexe_path();
+      return compiler__scan_res(compiler__compiler__TokenKind_string,
+                                compiler__cescaped_path(vexe));
+    };
     if (string_eq(name, tos3("FILE"))) {
       return compiler__scan_res(
           compiler__compiler__TokenKind_string,
@@ -44870,8 +44881,6 @@ void init() {
           tos3("bool"),  tos3("none"),    tos3("array"),   tos3("array_fixed"),
           tos3("map"),   tos3("struct"),  tos3("mapnode"), tos3("ustring"),
           tos3("size_t")});
-  v_dot_scanner__is_fmt =
-      string_contains(os__getenv(tos3("VEXE")), tos3("vfmt"));
   internal_dot_flag__truthy =
       new_array_from_c_array(6, 6, sizeof(string),
                              EMPTY_ARRAY_OF_ELEMS(string, 6){
@@ -44889,6 +44898,8 @@ void init() {
   benchmark__BFAIL = term__fail_message(tos3("FAIL"));
   benchmark__BSKIP = term__fail_message(tos3("SKIP"));
   benchmark__BSPENT = term__ok_message(tos3("SPENT"));
+  v_dot_scanner__is_fmt =
+      string_contains(os__getenv(tos3("VEXE")), tos3("vfmt"));
   v_dot_parser__supported_platforms = new_array_from_c_array(
       13, 13, sizeof(string),
       EMPTY_ARRAY_OF_ELEMS(string, 13){
