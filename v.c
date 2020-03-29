@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "ec025f2"
+#define V_COMMIT_HASH "7785583"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c9eed0b"
+#define V_COMMIT_HASH "ec025f2"
 #endif
 #include <inttypes.h>
 
@@ -555,12 +555,6 @@ int g_test_fails = 0;
 #endif
 #ifndef _WIN32
 #include <sys/ioctl.h>
-#endif
-#ifndef _WIN32
-#include <unistd.h> // ioctl
-#endif
-#ifndef _WIN32
-#include <sys/termios.h> // TIOCGWINSZ
 #endif
 typedef struct array array;
 typedef array array_string;
@@ -14422,8 +14416,6 @@ bool term__supports_escape_sequences(int fd) {
 #endif
   ;
 }
-#ifdef __sun
-#endif
 _V_MulRet_int_V_int term__get_terminal_size() {
   if (is_atty(1) <= 0 || string_eq(os__getenv(tos3("TERM")), tos3("dumb"))) {
     return (_V_MulRet_int_V_int){.var_0 = term__default_columns_size,
