@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "c9eed0b"
+#define V_COMMIT_HASH "ec025f2"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e09447d"
+#define V_COMMIT_HASH "c9eed0b"
 #endif
 #include <inttypes.h>
 
@@ -24893,7 +24893,7 @@ void compiler__Parser_const_decl(compiler__Parser *p) {
 
     if (tmp26.ok) {
       compiler__Var my_const = *(compiler__Var *)tmp26.data;
-      if (string_eq(my_const.typ, tos3("void"))) {
+      if (string_eq(my_const.typ, tos3("unresolved"))) {
         array_compiler__Var tmp27 = p->v->table->consts;
         for (int i = 0; i < tmp27.len; i++) {
           compiler__Var v = ((compiler__Var *)tmp27.data)[i];
@@ -31222,7 +31222,7 @@ string compiler__Parser_name_expr(compiler__Parser *p) {
     int errcode = tmp25.ecode;
     if (compiler__Parser_first_pass(&/* ? */ *p)) {
       compiler__Parser_next(p);
-      return tos3("void");
+      return tos3("unresolved");
     };
     compiler__Parser_undefined_error(p, name, orig_name);
     return tos3("");
@@ -31462,7 +31462,7 @@ void compiler__Parser_handle_operator(compiler__Parser *p, string op,
         p->cgen, ph,
         _STR("%.*s_%.*s(", typ.len, typ.str, cpostfix.len, cpostfix.str));
     compiler__Parser_gen(p, tos3(")"));
-  } else {
+  } else if (string_ne(typ, tos3("unresolved"))) {
     compiler__Parser_error(p, _STR("operator %.*s not defined on `%.*s`",
                                    op.len, op.str, typ.len, typ.str));
   };
