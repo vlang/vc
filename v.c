@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e09447d"
+#define V_COMMIT_HASH "c9eed0b"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "715d4f6"
+#define V_COMMIT_HASH "e09447d"
 #endif
 #include <inttypes.h>
 
@@ -20504,10 +20504,7 @@ string v_dot_gen__Gen_typ(v_dot_gen__Gen *g, v_dot_table__Type t) {
   int nr_muls = v_dot_table__type_nr_muls(t);
   v_dot_table__TypeSymbol *sym =
       v_dot_table__Table_get_type_symbol(&/* ? */ *g->table, t);
-  string styp = string_replace_each(
-      sym->name, new_array_from_c_array(
-                     2, 2, sizeof(string),
-                     EMPTY_ARRAY_OF_ELEMS(string, 2){tos3("."), tos3("__")}));
+  string styp = string_replace(sym->name, tos3("."), tos3("__"));
   if (nr_muls > 0) {
     styp = string_add(styp, strings__repeat('*', nr_muls));
   };
