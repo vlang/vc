@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f98cc9c"
+#define V_COMMIT_HASH "43f7224"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9d630df"
+#define V_COMMIT_HASH "f98cc9c"
 #endif
 #include <inttypes.h>
 
@@ -20393,8 +20393,8 @@ v_dot_checker__Checker_index_expr(v_dot_checker__Checker *c,
         v_dot_table__Table_get_type_symbol(&/* ? */ *c->table, index_type);
     if ((typ_sym->kind == v_dot_table__v_dot_table__Kind_array ||
          typ_sym->kind == v_dot_table__v_dot_table__Kind_array_fixed) &&
-        !(v_dot_table__is_number(index_type) &&
-          index_type_sym->kind != v_dot_table__v_dot_table__Kind_enum_)) {
+        !(v_dot_table__is_number(index_type) ||
+          index_type_sym->kind == v_dot_table__v_dot_table__Kind_enum_)) {
       v_dot_checker__Checker_error(
           c,
           _STR("non-integer index `%.*s` (array type `%.*s`)",
