@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3b621c0"
+#define V_COMMIT_HASH "f58875a"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "71ca553"
+#define V_COMMIT_HASH "3b621c0"
 #endif
 #include <inttypes.h>
 
@@ -41098,18 +41098,24 @@ string compiler__Table_cgen_name_type_pair(compiler__Table *table, string name,
   return _STR("%.*s %.*s", typ.len, typ.str, name.len, name.str);
 }
 bool compiler__is_valid_int_const(string val, string typ) {
-  int x = v_string_int(val);
   string tmp86 = typ;
 
-  return ((string_eq(tmp86, tos3("char")))
-              ? (0 <= x && x <= 255)
-              : ((string_eq(tmp86, tos3("byte")))
-                     ? (0 <= x && x <= 255)
-                     : ((string_eq(tmp86, tos3("u16")))
-                            ? (0 <= x && x <= 65535)
-                            : ((string_eq(tmp86, tos3("i8")))
-                                   ? (-128 <= x && x <= 127)
-                                   : (1)))));
+  if (string_eq(tmp86, tos3("char"))) {
+    int x = v_string_int(val);
+    return 0 <= x && x <= 255;
+  } else if (string_eq(tmp86, tos3("byte"))) {
+    int x = v_string_int(val);
+    return 0 <= x && x <= 255;
+  } else if (string_eq(tmp86, tos3("u16"))) {
+    u16 x = string_u16(val);
+    return 0 <= x && x <= 65535;
+  } else if (string_eq(tmp86, tos3("i8"))) {
+    i8 x = string_i8(val);
+    return -128 <= x && x <= 127;
+  } else // default:
+  {
+    return 1;
+  };
 }
 string compiler__Parser_typ_to_fmt(compiler__Parser *p, string typ, int level) {
   compiler__Type t = compiler__Table_find_type(&/* ? */ *p->table, typ);
@@ -41213,11 +41219,11 @@ string compiler__Parser_identify_typo(compiler__Parser *p, string name) {
   if (string_ne(n, tos3(""))) {
     output = string_add(output, _STR("\n  * const: `%.*s`", n.len, n.str));
   };
-  _V_MulRet_string_V_string _V_mret_4167_typ_type_cat =
+  _V_MulRet_string_V_string _V_mret_4192_typ_type_cat =
       compiler__Table_find_misspelled_type(&/* ? */ *p->table, name, p,
                                            min_match);
-  string typ = _V_mret_4167_typ_type_cat.var_0;
-  string type_cat = _V_mret_4167_typ_type_cat.var_1;
+  string typ = _V_mret_4192_typ_type_cat.var_0;
+  string type_cat = _V_mret_4192_typ_type_cat.var_1;
   if (typ.len > 0) {
     output = string_add(output, _STR("\n  * %.*s: `%.*s`", type_cat.len,
                                      type_cat.str, typ.len, typ.str));
