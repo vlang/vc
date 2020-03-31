@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "a3bd19c"
+#define V_COMMIT_HASH "050ec5d"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2b563bc"
+#define V_COMMIT_HASH "a3bd19c"
 #endif
 #include <inttypes.h>
 
@@ -15314,7 +15314,7 @@ string v_dot_scanner__filter_num_sep(byte *txt, int start, int end) {
       i++;
     };
     b[/*ptr!*/ i1] /*rbyte 1*/ = 0;
-    return (string){.str = b, .len = i1};
+    return (tos((byte *)b, i1));
   };
 }
 string v_dot_scanner__Scanner_ident_bin_number(v_dot_scanner__Scanner *s) {
@@ -17604,7 +17604,8 @@ v_dot_ast__Expr v_dot_parser__Parser_name_expr(v_dot_parser__Parser *p) {
     };
   } else if (p->peek_tok.kind == v_dot_token__v_dot_token__Kind_lcbr &&
              (byte_is_capital(string_at(p->tok.lit, 0)) || is_c ||
-              (_IN(string, (p->tok.lit), v_dot_table__builtin_type_names))) &&
+              (p->builtin_mod &&
+               (_IN(string, (p->tok.lit), v_dot_table__builtin_type_names)))) &&
              (p->tok.lit.len == 1 ||
               !byte_is_capital(string_at(p->tok.lit, p->tok.lit.len - 1)))) {
     return /*SUM TYPE CAST2*/ (v_dot_ast__Expr){
@@ -17796,7 +17797,6 @@ v_dot_ast__Expr v_dot_parser__Parser_expr(v_dot_parser__Parser *p,
       }
       var = *(v_dot_ast__Var *)tmp28.data;
       ;
-      printf("assoc var %.*s typ=%d\n", name.len, name.str, var.typ);
       array_string fields = new_array_from_c_array(
           0, 0, sizeof(string), EMPTY_ARRAY_OF_ELEMS(string, 0){TCCSKIP(0)});
       array_v_dot_ast__Expr vals = new_array_from_c_array(
@@ -38693,7 +38693,7 @@ string compiler__filter_num_sep(byte *txt, int start, int end) {
       i++;
     };
     b[/*ptr!*/ i1] /*rbyte 1*/ = 0;
-    return (string){.str = b, .len = i1};
+    return (tos((byte *)b, i1));
   };
 }
 string compiler__Scanner_ident_bin_number(compiler__Scanner *s) {
