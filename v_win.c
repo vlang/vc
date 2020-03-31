@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "956bf23"
+#define V_COMMIT_HASH "d048bf6"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9b9c1cc"
+#define V_COMMIT_HASH "956bf23"
 #endif
 #include <inttypes.h>
 
@@ -590,6 +590,7 @@ typedef struct _V_MulRet_u64_V_u64 _V_MulRet_u64_V_u64;
 typedef Option Option_time__Time;
 typedef Option Option_time__Time;
 typedef struct time__Time time__Time;
+typedef void *time__time_t; // type alias name="time__time_t" parent=`void*`
 typedef Option Option_int;
 typedef struct _V_MulRet_int_V_int_V_int _V_MulRet_int_V_int_V_int;
 typedef struct v_dot_token__Position v_dot_token__Position;
@@ -9758,7 +9759,7 @@ Option_time__Time time__parse_rfc2822(string s) {
   return opt_ok(&tmp31, sizeof(time__Time));
 }
 time__Time time__now() {
-  time_t t = time(0);
+  time__time_t t = time(0);
   struct /*C.Foo(0)*/
 
       tm *now = 0;
@@ -20640,12 +20641,9 @@ string v_dot_gen__Gen_typ(v_dot_gen__Gen *g, v_dot_table__Type t) {
   };
   if (string_starts_with(styp, tos3("C__"))) {
     styp = string_substr2(styp, 3, -1, true);
-  };
-  if ((string_eq(styp, tos3("stat")) || string_eq(styp, tos3("dirent*")) ||
-       string_eq(styp, tos3("tm")) || string_eq(styp, tos3("tm*")) ||
-       string_eq(styp, tos3("winsize")) || string_eq(styp, tos3("sigaction")) ||
-       string_eq(styp, tos3("timeval")))) {
-    styp = _STR("struct %.*s", styp.len, styp.str);
+    if (sym->kind == v_dot_table__v_dot_table__Kind_struct_) {
+      styp = _STR("struct %.*s", styp.len, styp.str);
+    };
   };
   if (v_dot_table__type_is_optional(t)) {
     styp = string_add(tos3("Option_"), styp);
@@ -22506,7 +22504,7 @@ void v_dot_gen__Gen_call_args(v_dot_gen__Gen *g, array_v_dot_ast__CallArg args,
     string varg_type_str = int_str(((int)(varg_type)));
     int tmp134 = 0;
     bool tmp135 =
-        map_get(/*cgen.v : 1902*/ g->variadic_args, varg_type_str, &tmp134);
+        map_get(/*cgen.v : 1901*/ g->variadic_args, varg_type_str, &tmp134);
 
     if (len > tmp134) {
       map_set(&g->variadic_args, varg_type_str, &(int[]){len});
@@ -22604,7 +22602,7 @@ void v_dot_gen__Gen_write_builtin_types(v_dot_gen__Gen *g) {
 
     int tmp143 = 0;
     bool tmp144 =
-        map_get(/*cgen.v : 2011*/ g->table->type_idxs, builtin_name, &tmp143);
+        map_get(/*cgen.v : 2010*/ g->table->type_idxs, builtin_name, &tmp143);
 
     _PUSH(&builtin_types,
           (/*typ = array_v_dot_table__TypeSymbol
@@ -22765,7 +22763,7 @@ v_dot_gen__Gen_sort_structs(v_dot_gen__Gen *g,
 
     int tmp168 = 0;
     bool tmp169 =
-        map_get(/*cgen.v : 2116*/ g->table->type_idxs, node.name, &tmp168);
+        map_get(/*cgen.v : 2115*/ g->table->type_idxs, node.name, &tmp168);
 
     _PUSH(&types_sorted,
           (/*typ = array_v_dot_table__TypeSymbol
