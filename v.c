@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "f58875a"
+#define V_COMMIT_HASH "f8169fe"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3b621c0"
+#define V_COMMIT_HASH "f58875a"
 #endif
 #include <inttypes.h>
 
@@ -44907,13 +44907,13 @@ void init() {
   v_dot_pref__default_module_path =
       string_add(os__home_dir(), tos3(".vmodules"));
   v_dot_table__number_type_idxs = new_array_from_c_array(
-      9, 9, sizeof(int),
-      EMPTY_ARRAY_OF_ELEMS(int, 9){
-          v_dot_table__int_type_idx, v_dot_table__byte_type_idx,
-          v_dot_table__u16_type_idx, v_dot_table__i16_type_idx,
-          v_dot_table__i64_type_idx, v_dot_table__u32_type_idx,
-          v_dot_table__u64_type_idx, v_dot_table__f32_type_idx,
-          v_dot_table__f64_type_idx});
+      10, 10, sizeof(int),
+      EMPTY_ARRAY_OF_ELEMS(int, 10){
+          v_dot_table__i8_type_idx, v_dot_table__i16_type_idx,
+          v_dot_table__int_type_idx, v_dot_table__i64_type_idx,
+          v_dot_table__byte_type_idx, v_dot_table__u16_type_idx,
+          v_dot_table__u32_type_idx, v_dot_table__u64_type_idx,
+          v_dot_table__f32_type_idx, v_dot_table__f64_type_idx});
   v_dot_table__pointer_type_idxs = new_array_from_c_array(
       3, 3, sizeof(int),
       EMPTY_ARRAY_OF_ELEMS(int, 3){v_dot_table__voidptr_type_idx,
