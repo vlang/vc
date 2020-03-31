@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "71ca553"
+#define V_COMMIT_HASH "3b621c0"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "87c0155"
+#define V_COMMIT_HASH "71ca553"
 #endif
 #include <inttypes.h>
 
@@ -797,8 +797,9 @@ typedef struct v_dot_ast__None v_dot_ast__None;
 typedef struct v_dot_ast__Scope v_dot_ast__Scope;
 typedef array array_ptr_v_dot_ast__Scope;
 typedef map map_v_dot_ast__Var;
-typedef struct v_dot_ast__ScopeVar v_dot_ast__ScopeVar;
-typedef Option Option_v_dot_ast__ScopeVar;
+typedef struct _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var;
+typedef Option Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var;
 typedef Option Option_v_dot_ast__Var;
 typedef struct v_dot_scanner__Scanner v_dot_scanner__Scanner;
 typedef struct _V_MulRet_array_v_dot_table__Arg_V_bool
@@ -946,7 +947,7 @@ typedef Option Option_array_string;
 typedef int internal_dot_flag__MainCmdAction;
 typedef Option Option_array_string;
 typedef int v_dot_ast__IdentKind;
-typedef Option Option_v_dot_ast__ScopeVar;
+typedef Option Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var;
 typedef Option Option_v_dot_ast__Var;
 typedef int v_dot_scanner__CommentsMode;
 typedef int v_dot_gen_dot_x64__SectionType;
@@ -2326,9 +2327,9 @@ struct _V_MulRet_v_dot_pref__Preferences_V_array_string {
   array_string var_1;
 };
 
-struct v_dot_ast__ScopeVar {
-  v_dot_ast__Scope *scope;
-  v_dot_ast__Var var;
+struct _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var {
+  v_dot_ast__Scope *var_0;
+  v_dot_ast__Var var_1;
 };
 
 struct v_dot_checker__Checker {
@@ -3292,7 +3293,7 @@ v_dot_ast__IdentVar v_dot_ast__Ident_var_info(v_dot_ast__Ident *i);
 static inline bool v_dot_ast__expr_is_blank_ident(v_dot_ast__Expr expr);
 static inline bool v_dot_ast__expr_is_call(v_dot_ast__Expr expr);
 v_dot_ast__Scope *v_dot_ast__new_scope(v_dot_ast__Scope *parent, int start_pos);
-Option_v_dot_ast__ScopeVar
+Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var
 v_dot_ast__Scope_find_scope_and_var(v_dot_ast__Scope *s, string name);
 Option_v_dot_ast__Var v_dot_ast__Scope_find_var(v_dot_ast__Scope *s,
                                                 string name);
@@ -14917,25 +14918,31 @@ v_dot_ast__Scope *v_dot_ast__new_scope(v_dot_ast__Scope *parent,
                           .vars = new_map(1, sizeof(v_dot_ast__Var))},
       sizeof(v_dot_ast__Scope));
 }
-Option_v_dot_ast__ScopeVar
+Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var
 v_dot_ast__Scope_find_scope_and_var(v_dot_ast__Scope *s, string name) {
   if ((_IN_MAP((name), s->vars))) {
     v_dot_ast__Var tmp1 = {0};
-    bool tmp2 = map_get(/*scope.v : 34*/ s->vars, name, &tmp1);
+    bool tmp2 = map_get(/*scope.v : 26*/ s->vars, name, &tmp1);
 
-    v_dot_ast__ScopeVar tmp3 =
-        OPTION_CAST(v_dot_ast__ScopeVar)((v_dot_ast__ScopeVar){s, tmp1});
-    return opt_ok(&tmp3, sizeof(v_dot_ast__ScopeVar));
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp3 =
+        OPTION_CAST(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var)(
+            (_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var){.var_0 = s,
+                                                               .var_1 = tmp1});
+    return opt_ok(&tmp3,
+                  sizeof(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var));
   };
   for (v_dot_ast__Scope *sc = s; !isnil(sc->parent); sc = sc->parent) {
 
     if ((_IN_MAP((name), sc->vars))) {
       v_dot_ast__Var tmp4 = {0};
-      bool tmp5 = map_get(/*scope.v : 39*/ sc->vars, name, &tmp4);
+      bool tmp5 = map_get(/*scope.v : 30*/ sc->vars, name, &tmp4);
 
-      v_dot_ast__ScopeVar tmp6 =
-          OPTION_CAST(v_dot_ast__ScopeVar)((v_dot_ast__ScopeVar){sc, tmp4});
-      return opt_ok(&tmp6, sizeof(v_dot_ast__ScopeVar));
+      _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp6 =
+          OPTION_CAST(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var)(
+              (_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var){
+                  .var_0 = sc, .var_1 = tmp4});
+      return opt_ok(&tmp6,
+                    sizeof(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var));
     };
   };
   return opt_none();
@@ -14944,7 +14951,7 @@ Option_v_dot_ast__Var v_dot_ast__Scope_find_var(v_dot_ast__Scope *s,
                                                 string name) {
   if ((_IN_MAP((name), s->vars))) {
     v_dot_ast__Var tmp7 = {0};
-    bool tmp8 = map_get(/*scope.v : 48*/ s->vars, name, &tmp7);
+    bool tmp8 = map_get(/*scope.v : 38*/ s->vars, name, &tmp7);
 
     v_dot_ast__Var tmp9 = OPTION_CAST(v_dot_ast__Var)(tmp7);
     return opt_ok(&tmp9, sizeof(v_dot_ast__Var));
@@ -14953,7 +14960,7 @@ Option_v_dot_ast__Var v_dot_ast__Scope_find_var(v_dot_ast__Scope *s,
 
     if ((_IN_MAP((name), sc->vars))) {
       v_dot_ast__Var tmp10 = {0};
-      bool tmp11 = map_get(/*scope.v : 52*/ sc->vars, name, &tmp10);
+      bool tmp11 = map_get(/*scope.v : 42*/ sc->vars, name, &tmp10);
 
       v_dot_ast__Var tmp12 = OPTION_CAST(v_dot_ast__Var)(tmp10);
       return opt_ok(&tmp12, sizeof(v_dot_ast__Var));
@@ -14987,7 +14994,7 @@ void v_dot_ast__Scope_override_var(v_dot_ast__Scope *s, v_dot_ast__Var var) {
 void v_dot_ast__Scope_update_var_type(v_dot_ast__Scope *s, string name,
                                       v_dot_table__Type typ) {
   v_dot_ast__Var tmp15 = {0};
-  bool tmp16 = map_get(/*scope.v : 79*/ s->vars, name, &tmp15);
+  bool tmp16 = map_get(/*scope.v : 69*/ s->vars, name, &tmp15);
 
   v_dot_ast__Var x = tmp15;
   if (x.typ == typ) {
@@ -19979,14 +19986,9 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
     v_dot_ast__Scope *start_scope =
         v_dot_ast__Scope_innermost(&/* ? */ *c->file.scope, ident->pos.pos);
     bool found = 1;
-    v_dot_ast__Scope *var_scope = ((v_dot_ast__Scope *)(0));
-    v_dot_ast__Var var = (v_dot_ast__Var){
-        .name = tos3(""),
-        .is_mut = 0,
-    };
-    Option_v_dot_ast__ScopeVar tmp112 =
+    Option__V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var tmp112 =
         v_dot_ast__Scope_find_scope_and_var(&/* ? */ *start_scope, ident->name);
-    v_dot_ast__ScopeVar mr;
+    _V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var _V_mret_4578_var_scope_var;
     if (!tmp112.ok) {
       string err = tmp112.error;
       int errcode = tmp112.ecode;
@@ -19998,10 +20000,11 @@ v_dot_table__Type v_dot_checker__Checker_ident(v_dot_checker__Checker *c,
                                    ident->pos);
       v_panic(tos3(""));
     }
-    mr = *(v_dot_ast__ScopeVar *)tmp112.data;
+    _V_mret_4578_var_scope_var =
+        *(_V_MulRet_v_dot_ast__Scope_PTR__V_v_dot_ast__Var *)tmp112.data;
     ;
-    var_scope = mr.scope;
-    var = mr.var;
+    v_dot_ast__Scope *var_scope = _V_mret_4578_var_scope_var.var_0;
+    v_dot_ast__Var var = _V_mret_4578_var_scope_var.var_1;
     if (found) {
       v_dot_table__Type typ = var.typ;
       if (typ == 0) {
