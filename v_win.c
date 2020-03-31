@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "9d630df"
+#define V_COMMIT_HASH "f98cc9c"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d048bf6"
+#define V_COMMIT_HASH "9d630df"
 #endif
 #include <inttypes.h>
 
@@ -22157,10 +22157,10 @@ void v_dot_gen__Gen_index_expr(v_dot_gen__Gen *g, v_dot_ast__IndexExpr node) {
       v_dot_gen__Gen_write(g, tos3("array_slice("));
       v_dot_gen__Gen_expr(g, node.left);
     } else if (sym->kind == v_dot_table__v_dot_table__Kind_array_fixed) {
-      v_dot_gen__Gen_write(g,
-                           tos3("array_slice(new_array_from_c_array(sizeof("));
+      v_dot_gen__Gen_write(
+          g, tos3("array_slice(new_array_from_c_array(_ARR_LEN("));
       v_dot_gen__Gen_expr(g, node.left);
-      v_dot_gen__Gen_write(g, tos3("), sizeof("));
+      v_dot_gen__Gen_write(g, tos3("), _ARR_LEN("));
       v_dot_gen__Gen_expr(g, node.left);
       v_dot_gen__Gen_write(g, tos3("), sizeof("));
       v_dot_gen__Gen_expr(g, node.left);
@@ -45312,7 +45312,7 @@ void init() {
       "=================================*/\nbyte g_str_buf[1024];\nint "
       "load_so(byteptr);\nvoid reload_so();\nvoid _vinit();\nvoid "
       "_vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define "
-      "_ARR_LEN(a) ( (sizeof(a)) / (sizeof((a)[0])) );\n\n// ============== "
+      "_ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\n// ============== "
       "wyhash ==============\n//	Author: Wang Yi\n#ifndef "
       "wyhash_version_4\n#define wyhash_version_4\n#include	"
       "<stdint.h>\n#include	<string.h>\n#if defined(_MSC_VER) && "
