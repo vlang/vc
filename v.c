@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5a0bfa0"
+#define V_COMMIT_HASH "bd8d51f"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3dae1cc"
+#define V_COMMIT_HASH "5a0bfa0"
 #endif
 #include <inttypes.h>
 
@@ -10021,8 +10021,11 @@ v_dot_token__Token_position(v_dot_token__Token *tok) {
 }
 map_int v_dot_token__build_keys() {
   map_int res = new_map(1, sizeof(int));
-  for (int t = ((int)(v_dot_token__v_dot_token__Kind_keyword_beg)) + 1;
-       t < ((int)(v_dot_token__v_dot_token__Kind_keyword_end)); t++) {
+  int tmp1 = ((int)(v_dot_token__v_dot_token__Kind_keyword_beg)) + 1;
+  ;
+  for (int tmp2 = tmp1;
+       tmp2 < ((int)(v_dot_token__v_dot_token__Kind_keyword_end)); tmp2++) {
+    int t = tmp2;
 
     string key = (*(string *)array_get(v_dot_token__token_str, t));
     map_set(&res, key, &(int[]){t});
@@ -10034,10 +10037,6 @@ array_string v_dot_token__build_token_str() {
       new_array_from_c_array(1, 1, sizeof(string),
                              EMPTY_ARRAY_OF_ELEMS(string, 1){tos3("")}),
       v_dot_token__nr_tokens);
-  array_set(&/*q*/ s, v_dot_token__v_dot_token__Kind_keyword_beg,
-            &(string[]){tos3("")});
-  array_set(&/*q*/ s, v_dot_token__v_dot_token__Kind_keyword_end,
-            &(string[]){tos3("")});
   array_set(&/*q*/ s, v_dot_token__v_dot_token__Kind_eof,
             &(string[]){tos3("eof")});
   array_set(&/*q*/ s, v_dot_token__v_dot_token__Kind_name,
@@ -10239,10 +10238,10 @@ array_string v_dot_token__build_token_str() {
   return s;
 }
 v_dot_token__Kind v_dot_token__key_to_token(string key) {
-  int tmp3 = 0;
-  bool tmp4 = map_get(/*token.v : 258*/ v_dot_token__keywords, key, &tmp3);
+  int tmp5 = 0;
+  bool tmp6 = map_get(/*token.v : 256*/ v_dot_token__keywords, key, &tmp5);
 
-  v_dot_token__Kind a = ((v_dot_token__Kind)(tmp3));
+  v_dot_token__Kind a = ((v_dot_token__Kind)(tmp5));
   return a;
 }
 bool v_dot_token__is_key(string key) {
@@ -10264,9 +10263,9 @@ bool v_dot_token__Kind_is_assign(v_dot_token__Kind t) {
 }
 bool array_v_dot_token__Kind_contains(array_v_dot_token__Kind t,
                                       v_dot_token__Kind val) {
-  array_v_dot_token__Kind tmp5 = t;
-  for (int tmp6 = 0; tmp6 < tmp5.len; tmp6++) {
-    v_dot_token__Kind tt = ((v_dot_token__Kind *)tmp5.data)[tmp6];
+  array_v_dot_token__Kind tmp7 = t;
+  for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
+    v_dot_token__Kind tt = ((v_dot_token__Kind *)tmp7.data)[tmp8];
 
     if (tt == val) {
       return 1;
@@ -10275,15 +10274,6 @@ bool array_v_dot_token__Kind_contains(array_v_dot_token__Kind t,
   return 0;
 }
 string v_dot_token__Kind_str(v_dot_token__Kind t) {
-  if (t == v_dot_token__v_dot_token__Kind_number) {
-    return tos3("number");
-  };
-  if (t == v_dot_token__v_dot_token__Kind_chartoken) {
-    return tos3("char");
-  };
-  if (t == v_dot_token__v_dot_token__Kind_string) {
-    return tos3("str");
-  };
   return (*(string *)array_get(v_dot_token__token_str, ((int)(t))));
 }
 string v_dot_token__Token_str(v_dot_token__Token t) {
@@ -10361,51 +10351,51 @@ array_v_dot_token__Precedence v_dot_token__build_precedences() {
   return p;
 }
 int v_dot_token__Token_precedence(v_dot_token__Token tok) {
-  v_dot_token__Kind tmp9 = tok.kind;
+  v_dot_token__Kind tmp11 = tok.kind;
 
-  if (tmp9 == v_dot_token__v_dot_token__Kind_lsbr) {
+  if (tmp11 == v_dot_token__v_dot_token__Kind_lsbr) {
     return ((int)(v_dot_token__v_dot_token__Precedence_index));
-  } else if (tmp9 == v_dot_token__v_dot_token__Kind_dot) {
+  } else if (tmp11 == v_dot_token__v_dot_token__Kind_dot) {
     return ((int)(v_dot_token__v_dot_token__Precedence_call));
-  } else if ((tmp9 == v_dot_token__v_dot_token__Kind_inc) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_dec)) {
+  } else if ((tmp11 == v_dot_token__v_dot_token__Kind_inc) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_dec)) {
     return ((int)(v_dot_token__v_dot_token__Precedence_postfix));
-  } else if ((tmp9 == v_dot_token__v_dot_token__Kind_mul) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_div) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_mod) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_left_shift) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_right_shift) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_amp)) {
+  } else if ((tmp11 == v_dot_token__v_dot_token__Kind_mul) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_div) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_mod) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_left_shift) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_right_shift) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_amp)) {
     return ((int)(v_dot_token__v_dot_token__Precedence_product));
-  } else if ((tmp9 == v_dot_token__v_dot_token__Kind_plus) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_minus) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_pipe) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_xor)) {
+  } else if ((tmp11 == v_dot_token__v_dot_token__Kind_plus) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_minus) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_pipe) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_xor)) {
     return ((int)(v_dot_token__v_dot_token__Precedence_sum));
-  } else if ((tmp9 == v_dot_token__v_dot_token__Kind_eq) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_ne) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_lt) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_le) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_gt) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_ge)) {
+  } else if ((tmp11 == v_dot_token__v_dot_token__Kind_eq) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_ne) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_lt) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_le) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_gt) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_ge)) {
     return ((int)(v_dot_token__v_dot_token__Precedence_eq));
-  } else if ((tmp9 == v_dot_token__v_dot_token__Kind_assign) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_plus_assign) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_minus_assign) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_div_assign) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_mod_assign) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_or_assign) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_and_assign) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_left_shift_assign) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_right_shift_assign) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_mult_assign) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_xor_assign)) {
+  } else if ((tmp11 == v_dot_token__v_dot_token__Kind_assign) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_plus_assign) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_minus_assign) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_div_assign) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_mod_assign) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_or_assign) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_and_assign) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_left_shift_assign) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_right_shift_assign) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_mult_assign) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_xor_assign)) {
     return ((int)(v_dot_token__v_dot_token__Precedence_assign));
-  } else if ((tmp9 == v_dot_token__v_dot_token__Kind_key_in) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_key_as)) {
+  } else if ((tmp11 == v_dot_token__v_dot_token__Kind_key_in) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_key_as)) {
     return ((int)(v_dot_token__v_dot_token__Precedence_in_as));
-  } else if ((tmp9 == v_dot_token__v_dot_token__Kind_logical_or) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_and)) {
+  } else if ((tmp11 == v_dot_token__v_dot_token__Kind_logical_or) ||
+             (tmp11 == v_dot_token__v_dot_token__Kind_and)) {
     return ((int)(v_dot_token__v_dot_token__Precedence_cond));
   } else // default:
   {
