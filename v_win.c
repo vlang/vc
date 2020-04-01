@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "e3713de"
+#define V_COMMIT_HASH "3ef6436"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bd8d51f"
+#define V_COMMIT_HASH "e3713de"
 #endif
 #include <inttypes.h>
 
@@ -17664,7 +17664,7 @@ v_dot_ast__Expr v_dot_parser__Parser_name_expr(v_dot_parser__Parser *p) {
       mod = tos3("C");
     } else {
       string tmp17 = tos3("");
-      bool tmp18 = map_get(/*parser.v : 617*/ p->imports, p->tok.lit, &tmp17);
+      bool tmp18 = map_get(/*parser.v : 618*/ p->imports, p->tok.lit, &tmp17);
 
       if (!tmp18)
         tmp17 = tos((byte *)"", 0);
