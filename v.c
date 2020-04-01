@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "3e129ce"
+#define V_COMMIT_HASH "7fd81d3"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7bbcc48"
+#define V_COMMIT_HASH "3e129ce"
 #endif
 #include <inttypes.h>
 
@@ -10240,7 +10240,7 @@ array_string v_dot_token__build_token_str() {
 }
 v_dot_token__Kind v_dot_token__key_to_token(string key) {
   int tmp3 = 0;
-  bool tmp4 = map_get(/*token.v : 259*/ v_dot_token__keywords, key, &tmp3);
+  bool tmp4 = map_get(/*token.v : 258*/ v_dot_token__keywords, key, &tmp3);
 
   v_dot_token__Kind a = ((v_dot_token__Kind)(tmp3));
   return a;
@@ -10398,7 +10398,8 @@ int v_dot_token__Token_precedence(v_dot_token__Token tok) {
              (tmp9 == v_dot_token__v_dot_token__Kind_and_assign) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_left_shift_assign) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_right_shift_assign) ||
-             (tmp9 == v_dot_token__v_dot_token__Kind_mult_assign)) {
+             (tmp9 == v_dot_token__v_dot_token__Kind_mult_assign) ||
+             (tmp9 == v_dot_token__v_dot_token__Kind_xor_assign)) {
     return ((int)(v_dot_token__v_dot_token__Precedence_assign));
   } else if ((tmp9 == v_dot_token__v_dot_token__Kind_key_in) ||
              (tmp9 == v_dot_token__v_dot_token__Kind_key_as)) {
