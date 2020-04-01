@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "56a9196"
+#define V_COMMIT_HASH "4883220"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5b99007"
+#define V_COMMIT_HASH "56a9196"
 #endif
 #include <inttypes.h>
 
@@ -16534,7 +16534,8 @@ v_dot_parser__Parser_fn_args(v_dot_parser__Parser *p) {
       EMPTY_ARRAY_OF_ELEMS(v_dot_table__Arg, 0){TCCSKIP(0)});
   bool is_variadic = 0;
   bool types_only =
-      (p->tok.kind == v_dot_token__v_dot_token__Kind_amp) ||
+      (p->tok.kind == v_dot_token__v_dot_token__Kind_amp ||
+       p->tok.kind == v_dot_token__v_dot_token__Kind_and) ||
       (p->peek_tok.kind == v_dot_token__v_dot_token__Kind_comma &&
        v_dot_table__Table_known_type(&/* ? */ *p->table, p->tok.lit)) ||
       p->peek_tok.kind == v_dot_token__v_dot_token__Kind_rpar;
@@ -17899,7 +17900,6 @@ v_dot_ast__Expr v_dot_parser__Parser_expr(v_dot_parser__Parser *p,
                      sizeof(v_dot_ast__PostfixExpr)),
           .typ = SumType_v_dot_ast__Expr_PostfixExpr};
       v_dot_parser__Parser_next(p);
-      return node;
     } else {
       return node;
     };
