@@ -1,6 +1,6 @@
-#define V_COMMIT_HASH "5b99007"
+#define V_COMMIT_HASH "56a9196"
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "050ec5d"
+#define V_COMMIT_HASH "5b99007"
 #endif
 #include <inttypes.h>
 
@@ -454,7 +454,6 @@ int g_test_fails = 0;
 #define math__max_u8 255
 #define math__max_u16 65535
 #define time__seconds_per_minute 60
-#define v_dot_token__nr_tokens 141
 #define strconv_dot_ftoa__maxexp32 255
 #define strconv_dot_ftoa__maxexp64 2047
 #define strconv_dot_ftoa__pow5_num_bits_32 61
@@ -3355,7 +3354,7 @@ void v_dot_scanner__Scanner_ignore_line(v_dot_scanner__Scanner *s);
 void v_dot_scanner__Scanner_eat_to_end_of_line(v_dot_scanner__Scanner *s);
 void v_dot_scanner__Scanner_inc_line_number(v_dot_scanner__Scanner *s);
 string v_dot_scanner__Scanner_line(v_dot_scanner__Scanner s, int n);
-bool v_dot_scanner__is_name_char(byte c);
+static inline bool v_dot_scanner__is_name_char(byte c);
 static inline bool v_dot_scanner__is_nl(byte c);
 bool v_dot_scanner__contains_capital(string s);
 bool v_dot_scanner__good_type_name(string s);
@@ -4543,7 +4542,9 @@ array_int time__days_before;
 #define v_dot_token__v_dot_token__Kind_key_static 99
 #define v_dot_token__v_dot_token__Kind_key_unsafe 100
 #define v_dot_token__v_dot_token__Kind_keyword_end 101
+#define v_dot_token__v_dot_token__Kind__end_ 102
 array_v_dot_token__Kind v_dot_token__assign_tokens;
+int v_dot_token__nr_tokens;
 array_string v_dot_token__token_str;
 map_int v_dot_token__keywords;
 #define v_dot_token__v_dot_token__Precedence_lowest 0
@@ -10238,7 +10239,7 @@ array_string v_dot_token__build_token_str() {
 }
 v_dot_token__Kind v_dot_token__key_to_token(string key) {
   int tmp3 = 0;
-  bool tmp4 = map_get(/*token.v : 257*/ v_dot_token__keywords, key, &tmp3);
+  bool tmp4 = map_get(/*token.v : 259*/ v_dot_token__keywords, key, &tmp3);
 
   v_dot_token__Kind a = ((v_dot_token__Kind)(tmp3));
   return a;
@@ -16189,8 +16190,8 @@ string v_dot_scanner__Scanner_line(v_dot_scanner__Scanner s, int n) {
   };
   return string_trim_left(string_trim_right(res, tos3("\r\n")), tos3("\r\n"));
 }
-bool v_dot_scanner__is_name_char(byte c) {
-  return c == '_' || byte_is_letter(c);
+static inline bool v_dot_scanner__is_name_char(byte c) {
+  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 }
 static inline bool v_dot_scanner__is_nl(byte c) {
   return c == '\r' || c == '\n';
@@ -17551,7 +17552,7 @@ v_dot_ast__Expr v_dot_parser__Parser_name_expr(v_dot_parser__Parser *p) {
       mod = tos3("C");
     } else {
       string tmp17 = tos3("");
-      bool tmp18 = map_get(/*parser.v : 617*/ p->imports, p->tok.lit, &tmp17);
+      bool tmp18 = map_get(/*parser.v : 616*/ p->imports, p->tok.lit, &tmp17);
 
       if (!tmp18)
         tmp17 = tos((byte *)"", 0);
@@ -18888,6 +18889,9 @@ v_dot_ast__EnumDecl v_dot_parser__Parser_enum_decl(v_dot_parser__Parser *p) {
             (/*typ = array_v_dot_ast__Expr   tmp_typ=v_dot_ast__Expr*/
              v_dot_parser__Parser_expr(p, 0)),
             tmp61, v_dot_ast__Expr);
+    };
+    if (p->tok.kind == v_dot_token__v_dot_token__Kind_comma) {
+      v_dot_parser__Parser_next(p);
     };
   };
   v_dot_parser__Parser_check(p, v_dot_token__v_dot_token__Kind_rcbr);
@@ -43845,6 +43849,7 @@ void init() {
           v_dot_token__v_dot_token__Kind_and_assign,
           v_dot_token__v_dot_token__Kind_right_shift_assign,
           v_dot_token__v_dot_token__Kind_left_shift_assign});
+  v_dot_token__nr_tokens = ((int)(v_dot_token__v_dot_token__Kind__end_));
   v_dot_token__token_str = v_dot_token__build_token_str();
   v_dot_token__keywords = v_dot_token__build_keys();
   v_dot_token__precedences = v_dot_token__build_precedences();
