@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f087e81"
+#define V_COMMIT_HASH "40fd924"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d5b2eb3"
+#define V_COMMIT_HASH "f087e81"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "f087e81"
+#define V_CURRENT_COMMIT_HASH "40fd924"
 #endif
 
 typedef struct array array;
@@ -1079,6 +1079,51 @@ struct internal__flag__MainCmdPreferences {
   string unknown_flag;
 };
 
+struct v__pref__Preferences {
+  v__pref__OS os;
+  v__pref__Backend backend;
+  v__pref__BuildMode build_mode;
+  v__pref__VerboseLevel verbosity;
+  bool is_verbose;
+  bool is_test;
+  bool is_script;
+  bool is_live;
+  bool is_solive;
+  bool is_so;
+  bool is_prof;
+  bool translated;
+  bool is_prod;
+  bool obfuscate;
+  bool is_repl;
+  bool is_run;
+  bool sanitize;
+  bool is_debug;
+  bool is_vlines;
+  bool is_keep_c;
+  bool is_pretty_c;
+  bool is_cache;
+  bool is_stats;
+  bool no_auto_free;
+  string cflags;
+  string ccompiler;
+  string third_party_option;
+  bool building_v;
+  bool autofree;
+  bool compress;
+  bool fast;
+  bool enable_globals;
+  bool is_bare;
+  array_string lookup_path;
+  bool output_cross_c;
+  bool prealloc;
+  string vroot;
+  string out_name;
+  string path;
+  array_string compile_defines;
+  array_string compile_defines_all;
+  string mod;
+};
+
 struct strings__Builder {
   array_byte buf;
   int len;
@@ -1119,50 +1164,6 @@ struct strconv__PrepNumber {
   bool negative;
   int exponent;
   u64 mantissa;
-};
-
-struct v__pref__Preferences {
-  v__pref__OS os;
-  v__pref__Backend backend;
-  v__pref__BuildMode build_mode;
-  v__pref__VerboseLevel verbosity;
-  bool is_test;
-  bool is_script;
-  bool is_live;
-  bool is_solive;
-  bool is_so;
-  bool is_prof;
-  bool translated;
-  bool is_prod;
-  bool obfuscate;
-  bool is_repl;
-  bool is_run;
-  bool sanitize;
-  bool is_debug;
-  bool is_vlines;
-  bool is_keep_c;
-  bool is_pretty_c;
-  bool is_cache;
-  bool is_stats;
-  bool no_auto_free;
-  string cflags;
-  string ccompiler;
-  string third_party_option;
-  bool building_v;
-  bool autofree;
-  bool compress;
-  bool fast;
-  bool enable_globals;
-  bool is_bare;
-  array_string lookup_path;
-  bool output_cross_c;
-  bool prealloc;
-  string vroot;
-  string out_name;
-  string path;
-  array_string compile_defines;
-  array_string compile_defines_all;
-  string mod;
 };
 
 struct os__File {
@@ -2398,12 +2399,12 @@ void parse_flags(string flag, internal__flag__Instance *f,
                  internal__flag__MainCmdPreferences *prefs);
 typedef Option Option_string;
 void set_vroot_folder(string vroot_path);
-void launch_tool(v__pref__VerboseLevel verbosity, string tool_name);
+void launch_tool(bool is_verbose, string tool_name);
 typedef Option Option_os__Result;
 string path_of_executable(string path);
 array_string _const_simple_cmd; // inited later
 typedef Option Option_array_string;
-void print_version_and_exit();
+v__pref__Preferences *parse_args(array_string args);
 void invoke_help_and_exit(array_string remaining);
 void disallow_unknown_flags(internal__flag__MainCmdPreferences prefs);
 void create_symlink();
@@ -2884,6 +2885,12 @@ array_string internal__compile__add_if_found_string(array_string args,
                                                     string deprecated);
 string _const_internal__help__unknown_topic; // inited later
 void internal__help__print_and_exit(string topic);
+array_string os__cmdline__options(array_string args, string param);
+string os__cmdline__option(array_string args, string param, string def);
+array_string os__cmdline__options_before(array_string args, array_string what);
+array_string os__cmdline__options_after(array_string args, array_string what);
+array_string os__cmdline__only_non_options(array_string args);
+array_string os__cmdline__only_options(array_string args);
 bool array_v__table__Type_contains(array_v__table__Type types,
                                    v__table__Type typ);
 int v__table__type_idx(v__table__Type t);
@@ -3395,12 +3402,6 @@ bool v__builder__ModFileCacher_check_for_stop(v__builder__ModFileCacher *mcache,
 array_string
 v__builder__ModFileCacher_get_files(v__builder__ModFileCacher *mcache,
                                     string cfolder);
-array_string os__cmdline__options(array_string args, string param);
-string os__cmdline__option(array_string args, string param, string def);
-array_string os__cmdline__options_before(array_string args, array_string what);
-array_string os__cmdline__options_after(array_string args, array_string what);
-array_string os__cmdline__only_non_options(array_string args);
-array_string os__cmdline__only_options(array_string args);
 array_string _const_v__parser__supported_platforms; // inited later
 v__ast__CompIf v__parser__Parser_comp_if(v__parser__Parser *p);
 v__pref__OS _const_v__parser__todo_delete_me; // inited later
@@ -7325,7 +7326,7 @@ void set_vroot_folder(string vroot_path) {
              true);
 }
 
-void launch_tool(v__pref__VerboseLevel verbosity, string tool_name) {
+void launch_tool(bool is_verbose, string tool_name) {
   string vexe = v__pref__vexe_path();
   string vroot = os__dir(vexe);
   set_vroot_folder(vroot);
@@ -7339,8 +7340,7 @@ void launch_tool(v__pref__VerboseLevel verbosity, string tool_name) {
                          tool_name.len, tool_name.str));
   string tool_command = _STR("\"%.*s\" %.*s", tool_exe.len, tool_exe.str,
                              tool_args.len, tool_args.str);
-  if (v__pref__VerboseLevel_is_higher_or_equal(
-          verbosity, v__pref__VerboseLevel_level_two)) {
+  if (is_verbose) {
     eprintln(_STR("launch_tool vexe        : %.*s", vroot.len, vroot.str));
     eprintln(_STR("launch_tool vroot       : %.*s", vroot.len, vroot.str));
     eprintln(
@@ -7364,8 +7364,7 @@ void launch_tool(v__pref__VerboseLevel verbosity, string tool_name) {
       should_compile = true;
     }
   }
-  if (v__pref__VerboseLevel_is_higher_or_equal(
-          verbosity, v__pref__VerboseLevel_level_two)) {
+  if (is_verbose) {
     eprintln(_STR("launch_tool should_compile: %d", should_compile));
   }
   if (should_compile) {
@@ -7376,8 +7375,7 @@ void launch_tool(v__pref__VerboseLevel verbosity, string tool_name) {
     compilation_command =
         string_add(compilation_command,
                    _STR("\"%.*s\"", tool_source.len, tool_source.str));
-    if (v__pref__VerboseLevel_is_higher_or_equal(
-            verbosity, v__pref__VerboseLevel_level_three)) {
+    if (is_verbose) {
       eprintln(_STR("Compiling %.*s with: \"%.*s\"", tool_name.len,
                     tool_name.str, compilation_command.len,
                     compilation_command.str));
@@ -7395,8 +7393,7 @@ void launch_tool(v__pref__VerboseLevel verbosity, string tool_name) {
                      /*opt*/ (*(os__Result *)tool_compilation.data).output));
     }
   }
-  if (v__pref__VerboseLevel_is_higher_or_equal(
-          verbosity, v__pref__VerboseLevel_level_three)) {
+  if (is_verbose) {
     eprintln(_STR("launch_tool running tool command: %.*s ...",
                   tool_command.len, tool_command.str));
   }
@@ -7415,6 +7412,26 @@ string path_of_executable(string path) {
 int wmain(int argc, wchar_t *argv[], wchar_t *envp[]) {
   _vinit();
   _const_os__args = os__init_os_args_wide(argc, argv);
+  array_string args = array_slice(_const_os__args, 1, _const_os__args.len);
+  if (args.len == 0 ||
+      (string_eq((*(string *)array_get(args, 0)), tos3("-")) ||
+       string_eq((*(string *)array_get(args, 0)), tos3("repl")))) {
+    println(tos3(
+        "For usage information, quit V REPL using `exit` and use `v help`"));
+    launch_tool(false, tos3("vrepl"));
+    return 0;
+  }
+  if (args.len > 0 &&
+      ((string_eq((*(string *)array_get(args, 0)), tos3("version")) ||
+        string_eq((*(string *)array_get(args, 0)), tos3("-V")) ||
+        string_eq((*(string *)array_get(args, 0)), tos3("-version")) ||
+        string_eq((*(string *)array_get(args, 0)), tos3("--version"))) ||
+       (string_eq((*(string *)array_get(args, 0)), tos3("-v")) &&
+        args.len == 1))) {
+    println(v__util__full_v_version());
+    return 0;
+  }
+  v__pref__Preferences *prefs2 = parse_args(args);
   internal__flag__MainCmdPreferences prefs =
       (internal__flag__MainCmdPreferences){
           .verbosity = {0},
@@ -7430,52 +7447,27 @@ int wmain(int argc, wchar_t *argv[], wchar_t *envp[]) {
     println(err);
     v_exit(1);
   };
-  if (v__pref__VerboseLevel_is_higher_or_equal(
-          prefs.verbosity, v__pref__VerboseLevel_level_two)) {
+  if (prefs2->is_verbose) {
     println(v__util__full_v_version());
   }
-  if (v__pref__VerboseLevel_is_higher_or_equal(
-          prefs.verbosity, v__pref__VerboseLevel_level_three)) {
+  if (prefs2->is_verbose) {
     println(tos3("Parsed preferences: "));
     println(_STR("Remaining: %d", /*opt*/ (*(array_string *)values.data)));
-  }
-  if (prefs.verbosity == v__pref__VerboseLevel_level_one &&
-      /*opt*/ (*(array_string *)values.data).len == 0) {
-    println(tos3("`v -v` now runs V with verbose mode set to level one which "
-                 "doesn't do anything."));
-    println(tos3("Did you mean `v -version` instead?"));
-    v_exit(1);
-  }
-  if (prefs.action == internal__flag__MainCmdAction_version) {
-    disallow_unknown_flags(prefs);
-    print_version_and_exit();
   }
   if (/*opt*/ (*(array_string *)values.data).len == 0 &&
       prefs.action == internal__flag__MainCmdAction_help) {
     invoke_help_and_exit(/*opt*/ (*(array_string *)values.data));
   }
-  if (/*opt*/ (*(array_string *)values.data).len == 0 ||
-      string_eq(
-          (*(string *)array_get(/*opt*/ (*(array_string *)values.data), 0)),
-          tos3("-")) ||
-      string_eq(
-          (*(string *)array_get(/*opt*/ (*(array_string *)values.data), 0)),
-          tos3("repl"))) {
-    if (/*opt*/ (*(array_string *)values.data).len == 0) {
-      println(tos3("Running REPL as no arguments are provided."));
-      println(tos3(
-          "For usage information, quit V REPL using `exit` and use `v help`."));
-    }
-    launch_tool(prefs.verbosity, tos3("vrepl"));
-  }
   string command =
-      (*(string *)array_get(/*opt*/ (*(array_string *)values.data), 0));
+      (/*opt*/ (*(array_string *)values.data).len > 0
+           ? (*(string *)array_get(/*opt*/ (*(array_string *)values.data), 0))
+           : tos3(""));
   if (_IN(string, command, _const_simple_cmd)) {
-    launch_tool(prefs.verbosity, string_add(tos3("v"), command));
+    launch_tool(prefs2->is_verbose, string_add(tos3("v"), command));
     return 0;
   }
   if (string_eq(command, tos3("create")) || string_eq(command, tos3("init"))) {
-    launch_tool(prefs.verbosity, tos3("vcreate"));
+    launch_tool(prefs2->is_verbose, tos3("vcreate"));
     return 0;
   } else if (string_eq(command, tos3("translate"))) {
     println(tos3("Translating C to V will be available in V 0.3"));
@@ -7484,7 +7476,7 @@ int wmain(int argc, wchar_t *argv[], wchar_t *envp[]) {
              string_eq(command, tos3("install")) ||
              string_eq(command, tos3("update")) ||
              string_eq(command, tos3("remove"))) {
-    launch_tool(prefs.verbosity, tos3("vpm"));
+    launch_tool(prefs2->is_verbose, tos3("vpm"));
     return 0;
   } else if (string_eq(command, tos3("get"))) {
     println(
@@ -7510,10 +7502,6 @@ int wmain(int argc, wchar_t *argv[], wchar_t *envp[]) {
     disallow_unknown_flags(prefs);
     invoke_help_and_exit(/*opt*/ (*(array_string *)values.data));
     return 0;
-  } else if (string_eq(command, tos3("version"))) {
-    disallow_unknown_flags(prefs);
-    print_version_and_exit();
-    return 0;
   } else {
   };
   if (string_eq(command, tos3("run")) || string_eq(command, tos3("build")) ||
@@ -7528,9 +7516,64 @@ int wmain(int argc, wchar_t *argv[], wchar_t *envp[]) {
   return 0;
 }
 
-void print_version_and_exit() {
-  println(v__util__full_v_version());
-  v_exit(0);
+v__pref__Preferences *parse_args(array_string args) {
+  v__pref__Preferences *res = (v__pref__Preferences *)memdup(
+      &(v__pref__Preferences){
+          .os = {0},
+          .backend = {0},
+          .build_mode = {0},
+          .verbosity = {0},
+          .is_verbose = 0,
+          .is_test = 0,
+          .is_script = 0,
+          .is_live = 0,
+          .is_solive = 0,
+          .is_so = 0,
+          .is_prof = 0,
+          .translated = 0,
+          .is_prod = 0,
+          .obfuscate = 0,
+          .is_repl = 0,
+          .is_run = 0,
+          .sanitize = 0,
+          .is_debug = 0,
+          .is_vlines = 0,
+          .is_keep_c = 0,
+          .is_pretty_c = 0,
+          .is_cache = 0,
+          .is_stats = 0,
+          .no_auto_free = 0,
+          .cflags = tos3(""),
+          .ccompiler = tos3(""),
+          .third_party_option = tos3(""),
+          .building_v = 0,
+          .autofree = 0,
+          .compress = 0,
+          .fast = 0,
+          .enable_globals = 0,
+          .is_bare = 0,
+          .lookup_path = new_array(0, 1, sizeof(string)),
+          .output_cross_c = 0,
+          .prealloc = 0,
+          .vroot = tos3(""),
+          .out_name = tos3(""),
+          .path = tos3(""),
+          .compile_defines = new_array(0, 1, sizeof(string)),
+          .compile_defines_all = new_array(0, 1, sizeof(string)),
+          .mod = tos3(""),
+      },
+      sizeof(v__pref__Preferences));
+  // FOR IN
+  for (int i = 0; i < args.len; i++) {
+    string arg = ((string *)args.data)[i];
+    if (string_eq(arg, tos3("-v"))) {
+      res->is_verbose = true;
+    } else if (string_eq(arg, tos3("-cg"))) {
+      res->ccompiler = os__cmdline__option(args, tos3("-cc"), tos3("cc"));
+    } else {
+    };
+  }
+  return res;
 }
 
 void invoke_help_and_exit(array_string remaining) {
@@ -12533,6 +12576,7 @@ internal__compile__parse_arguments(array_string args) {
       .backend = {0},
       .build_mode = {0},
       .verbosity = {0},
+      .is_verbose = 0,
       .is_test = 0,
       .is_script = 0,
       .is_live = 0,
@@ -13666,6 +13710,90 @@ void internal__help__print_and_exit(string topic) {
   };
   println(/*opt*/ (*(string *)content.data));
   v_exit(0);
+}
+
+array_string os__cmdline__options(array_string args, string param) {
+  array_string flags = new_array(0, 0, sizeof(string));
+  // FOR IN
+  for (int i = 0; i < args.len; i++) {
+    string v = ((string *)args.data)[i];
+    if (string_eq(v, param)) {
+      if (i + 1 < args.len) {
+        _PUSH(&flags, ((*(string *)array_get(args, i + 1))), tmp3, string);
+      }
+    }
+  }
+  return flags;
+}
+
+string os__cmdline__option(array_string args, string param, string def) {
+  bool found = false;
+  // FOR IN
+  for (int tmp1 = 0; tmp1 < args.len; tmp1++) {
+    string arg = ((string *)args.data)[tmp1];
+    if (found) {
+      return arg;
+    } else if (string_eq(param, arg)) {
+      found = true;
+    }
+  }
+  return def;
+}
+
+array_string os__cmdline__options_before(array_string args, array_string what) {
+  bool found = false;
+  array_string args_before = new_array(0, 0, sizeof(string));
+  // FOR IN
+  for (int tmp1 = 0; tmp1 < args.len; tmp1++) {
+    string a = ((string *)args.data)[tmp1];
+    if (_IN(string, a, what)) {
+      found = true;
+      break;
+    }
+    _PUSH(&args_before, (a), tmp3, string);
+  }
+  return args_before;
+}
+
+array_string os__cmdline__options_after(array_string args, array_string what) {
+  bool found = false;
+  array_string args_after = new_array(0, 0, sizeof(string));
+  // FOR IN
+  for (int tmp1 = 0; tmp1 < args.len; tmp1++) {
+    string a = ((string *)args.data)[tmp1];
+    if (_IN(string, a, what)) {
+      found = true;
+      continue;
+    }
+    if (found) {
+      _PUSH(&args_after, (a), tmp4, string);
+    }
+  }
+  return args_after;
+}
+
+array_string os__cmdline__only_non_options(array_string args) {
+
+  int tmp1_len = args.len;
+  array_string tmp1 = new_array(0, tmp1_len, sizeof(string));
+  for (int i = 0; i < tmp1_len; i++) {
+    string it = ((string *)args.data)[i];
+    if (!string_starts_with(it, tos3("-")))
+      array_push(&tmp1, &it);
+  }
+  return tmp1;
+}
+
+array_string os__cmdline__only_options(array_string args) {
+
+  int tmp1_len = args.len;
+  array_string tmp1 = new_array(0, tmp1_len, sizeof(string));
+  for (int i = 0; i < tmp1_len; i++) {
+    string it = ((string *)args.data)[i];
+    if (string_starts_with(it, tos3("-")))
+      array_push(&tmp1, &it);
+  }
+  return tmp1;
 }
 
 // TypeDecl
@@ -14844,6 +14972,7 @@ string v__doc__doc(string mod, v__table__Table *table) {
                 .backend = {0},
                 .build_mode = {0},
                 .verbosity = {0},
+                .is_verbose = 0,
                 .is_test = 0,
                 .is_script = 0,
                 .is_live = 0,
@@ -17043,90 +17172,6 @@ v__builder__ModFileCacher_get_files(v__builder__ModFileCacher *mcache,
   return /*opt*/ (*(array_string *)files.data);
 }
 
-array_string os__cmdline__options(array_string args, string param) {
-  array_string flags = new_array(0, 0, sizeof(string));
-  // FOR IN
-  for (int i = 0; i < args.len; i++) {
-    string v = ((string *)args.data)[i];
-    if (string_eq(v, param)) {
-      if (i + 1 < args.len) {
-        _PUSH(&flags, ((*(string *)array_get(args, i + 1))), tmp3, string);
-      }
-    }
-  }
-  return flags;
-}
-
-string os__cmdline__option(array_string args, string param, string def) {
-  bool found = false;
-  // FOR IN
-  for (int tmp1 = 0; tmp1 < args.len; tmp1++) {
-    string arg = ((string *)args.data)[tmp1];
-    if (found) {
-      return arg;
-    } else if (string_eq(param, arg)) {
-      found = true;
-    }
-  }
-  return def;
-}
-
-array_string os__cmdline__options_before(array_string args, array_string what) {
-  bool found = false;
-  array_string args_before = new_array(0, 0, sizeof(string));
-  // FOR IN
-  for (int tmp1 = 0; tmp1 < args.len; tmp1++) {
-    string a = ((string *)args.data)[tmp1];
-    if (_IN(string, a, what)) {
-      found = true;
-      break;
-    }
-    _PUSH(&args_before, (a), tmp3, string);
-  }
-  return args_before;
-}
-
-array_string os__cmdline__options_after(array_string args, array_string what) {
-  bool found = false;
-  array_string args_after = new_array(0, 0, sizeof(string));
-  // FOR IN
-  for (int tmp1 = 0; tmp1 < args.len; tmp1++) {
-    string a = ((string *)args.data)[tmp1];
-    if (_IN(string, a, what)) {
-      found = true;
-      continue;
-    }
-    if (found) {
-      _PUSH(&args_after, (a), tmp4, string);
-    }
-  }
-  return args_after;
-}
-
-array_string os__cmdline__only_non_options(array_string args) {
-
-  int tmp1_len = args.len;
-  array_string tmp1 = new_array(0, tmp1_len, sizeof(string));
-  for (int i = 0; i < tmp1_len; i++) {
-    string it = ((string *)args.data)[i];
-    if (!string_starts_with(it, tos3("-")))
-      array_push(&tmp1, &it);
-  }
-  return tmp1;
-}
-
-array_string os__cmdline__only_options(array_string args) {
-
-  int tmp1_len = args.len;
-  array_string tmp1 = new_array(0, tmp1_len, sizeof(string));
-  for (int i = 0; i < tmp1_len; i++) {
-    string it = ((string *)args.data)[i];
-    if (string_starts_with(it, tos3("-")))
-      array_push(&tmp1, &it);
-  }
-  return tmp1;
-}
-
 v__ast__CompIf v__parser__Parser_comp_if(v__parser__Parser *p) {
   v__token__Position pos = v__token__Token_position(&p->tok);
   v__parser__Parser_next(p);
@@ -17771,6 +17816,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table *table,
               .backend = {0},
               .build_mode = {0},
               .verbosity = {0},
+              .is_verbose = 0,
               .is_test = 0,
               .is_script = 0,
               .is_live = 0,
@@ -19678,11 +19724,13 @@ v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser *p) {
   v__parser__Parser_check(p, v__token__Kind_lcbr);
   array_v__ast__MatchBranch branches =
       new_array(0, 0, sizeof(v__ast__MatchBranch));
+  bool have_final_else = false;
   while (1) {
     array_v__ast__Expr exprs = new_array(0, 0, sizeof(v__ast__Expr));
     v__token__Position branch_pos = v__token__Token_position(&p->tok);
     v__parser__Parser_open_scope(p);
     if (p->tok.kind == v__token__Kind_key_else) {
+      have_final_else = true;
       v__parser__Parser_next(p);
     } else if (p->tok.kind == v__token__Kind_name &&
                (_IN(string, p->tok.lit, _const_v__table__builtin_type_names) ||
@@ -19732,6 +19780,9 @@ v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser *p) {
     if (p->tok.kind == v__token__Kind_rcbr) {
       break;
     }
+  }
+  if (!have_final_else) {
+    v__parser__Parser_error(p, tos3("match must be exhaustive"));
   }
   v__parser__Parser_check(p, v__token__Kind_rcbr);
   return (v__ast__MatchExpr){
