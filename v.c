@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "01aa2b8"
+#define V_COMMIT_HASH "d5b2eb3"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d4df916"
+#define V_COMMIT_HASH "01aa2b8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "01aa2b8"
+#define V_CURRENT_COMMIT_HASH "d5b2eb3"
 #endif
 
 typedef struct array array;
@@ -14738,11 +14738,8 @@ string v__util__vhash() {
 string v__util__full_hash() {
   string build_hash = v__util__vhash();
   string current_hash = v__util__githash(false);
-  string final_hash = (string_eq(build_hash, current_hash)
-                           ? build_hash
-                           : _STR("%.*s.%.*s", build_hash.len, build_hash.str,
-                                  current_hash.len, current_hash.str));
-  return final_hash;
+  return _STR("%.*s.%.*s", build_hash.len, build_hash.str, current_hash.len,
+              current_hash.str);
 }
 
 string v__util__full_v_version() {
@@ -14790,7 +14787,10 @@ string v__util__githash(bool should_get_from_filesystem) {
     }
     break;
   }
-  return tos3("unknown");
+  array_fixed_byte_50 buf = {0};
+  buf[0] = 0;
+  snprintf(((charptr)(buf)), 50, "%s", V_CURRENT_COMMIT_HASH);
+  return tos_clone(&/*qq*/ buf);
 }
 
 f64 math__inf(int sign) {
