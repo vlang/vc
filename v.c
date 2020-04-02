@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "561b7a0"
+#define V_COMMIT_HASH "dac3041"
 typedef struct array array;
 typedef struct KeyValue KeyValue;
 typedef struct DenseArray DenseArray;
@@ -3525,7 +3525,7 @@ int v__gen__x64__Gen_gen_loop_start(v__gen__x64__Gen *g, int from);
 void v__gen__x64__Gen_gen_loop_end(v__gen__x64__Gen *g, int to, int label);
 void v__gen__x64__Gen_save_main_fn_addr(v__gen__x64__Gen *g);
 void v__gen__x64__Gen_gen_print_from_expr(v__gen__x64__Gen *g,
-                                          v__ast__Expr expr);
+                                          v__ast__Expr expr, bool newline);
 void v__gen__x64__Gen_gen_print(v__gen__x64__Gen *g, string s);
 void v__gen__x64__Gen_gen_exit(v__gen__x64__Gen *g);
 void v__gen__x64__Gen_mov(v__gen__x64__Gen *g, v__gen__x64__Register reg,
@@ -20528,7 +20528,8 @@ v__table__Type v__checker__Checker_call_expr(v__checker__Checker *c,
           call_expr->pos);
       return f.return_type;
     }
-    if (string_eq(fn_name, tos3("println"))) {
+    if (string_eq(fn_name, tos3("println")) ||
+        string_eq(fn_name, tos3("print"))) {
       c->expected_type = _const_v__table__string_type;
       (*(v__ast__CallArg *)array_get(call_expr->args, 0)).typ =
           v__checker__Checker_expr(
@@ -21156,11 +21157,11 @@ v__table__Type v__checker__Checker_ident(v__checker__Checker *c,
     /*assign_stmt*/ v__ast__Scope *start_scope =
         v__ast__Scope_innermost(c->file.scope, ident->pos.pos);
     /*assign_stmt*/ bool found = true;
-    Option_multi_return_v__ast__Scope_v__ast__Var mr_23641 =
+    Option_multi_return_v__ast__Scope_v__ast__Var mr_23663 =
         v__ast__Scope_find_scope_and_var(start_scope, ident->name);
-    if (!mr_23641.ok) {
-      string err = mr_23641.v_error;
-      int errcode = mr_23641.ecode;
+    if (!mr_23663.ok) {
+      string err = mr_23663.v_error;
+      int errcode = mr_23663.ecode;
       found = false;
       v__checker__Checker_error(c,
                                 _STR("not found: %.*s - POS: %d",
@@ -21170,9 +21171,9 @@ v__table__Type v__checker__Checker_ident(v__checker__Checker *c,
       v_panic(tos3(""));
     };
     v__ast__Scope *var_scope =
-        (*(multi_return_v__ast__Scope_v__ast__Var *)mr_23641.data).arg0;
+        (*(multi_return_v__ast__Scope_v__ast__Var *)mr_23663.data).arg0;
     v__ast__Var var =
-        (*(multi_return_v__ast__Scope_v__ast__Var *)mr_23641.data).arg1;
+        (*(multi_return_v__ast__Scope_v__ast__Var *)mr_23663.data).arg1;
     if (found) {
       /*assign_stmt*/ v__table__Type typ = var.typ;
       if (typ == 0) {
@@ -23967,7 +23968,10 @@ void v__gen__Gen_method_call(v__gen__Gen *g, v__ast__CallExpr node) {
 
 void v__gen__Gen_fn_call(v__gen__Gen *g, v__ast__CallExpr node) {
   /*assign_stmt*/ string name = node.name;
-  /*assign_stmt*/ bool is_print = string_eq(name, tos3("println"));
+  /*assign_stmt*/ bool is_print =
+      string_eq(name, tos3("println")) || string_eq(name, tos3("print"));
+  /*assign_stmt*/ string print_method =
+      (string_eq(name, tos3("println")) ? tos3("println") : tos3("print"));
   if (node.is_c) {
     g->is_c_call = true;
     name =
@@ -23987,7 +23991,7 @@ void v__gen__Gen_fn_call(v__gen__Gen *g, v__ast__CallExpr node) {
       if (v__table__type_is_ptr(typ)) {
         styp = string_replace(styp, tos3("*"), tos3(""));
       }
-      _PUSH(&g->str_types, (typ), tmp5, int);
+      _PUSH(&g->str_types, (typ), tmp6, int);
       strings__Builder_writeln(
           &g->definitions,
           _STR("string %.*s_str(%.*s x) { return tos3(\"TODO_str\"); }",
@@ -23998,16 +24002,19 @@ void v__gen__Gen_fn_call(v__gen__Gen *g, v__ast__CallExpr node) {
       v__gen__Gen_write(g, _STR("string %.*s = %.*s_str(", tmp.len, tmp.str,
                                 styp.len, styp.str));
       v__gen__Gen_expr(g, (*(v__ast__CallArg *)array_get(node.args, 0)).expr);
-      v__gen__Gen_writeln(
-          g, _STR("); println(%.*s); string_free(%.*s); //MEM2 %.*s", tmp.len,
-                  tmp.str, tmp.len, tmp.str, styp.len, styp.str));
+      v__gen__Gen_writeln(g,
+                          _STR("); %.*s(%.*s); string_free(%.*s); //MEM2 %.*s",
+                               print_method.len, print_method.str, tmp.len,
+                               tmp.str, tmp.len, tmp.str, styp.len, styp.str));
     } else if (sym->kind == v__table__Kind_enum_) {
-      v__gen__Gen_write(g, tos3("println(tos3(\""));
+      v__gen__Gen_write(
+          g, _STR("%.*s(tos3(\"", print_method.len, print_method.str));
       v__gen__Gen_enum_expr(g,
                             (*(v__ast__CallArg *)array_get(node.args, 0)).expr);
       v__gen__Gen_write(g, tos3("\"))"));
     } else {
-      v__gen__Gen_write(g, _STR("println(%.*s_str(", styp.len, styp.str));
+      v__gen__Gen_write(g, _STR("%.*s(%.*s_str(", print_method.len,
+                                print_method.str, styp.len, styp.str));
       if (v__table__type_is_ptr(typ)) {
         v__gen__Gen_write(g, tos3("*"));
       }
@@ -24210,7 +24217,9 @@ void v__gen__Gen_write_tests_main(v__gen__Gen *g) {
     v__gen__Gen_writeln(g, tos3("\tBenchedTests_end_testing(&bt);"));
   }
   v__gen__Gen_writeln(g, tos3(""));
-  v__gen__Gen_writeln(g, tos3("\t_vcleanup();"));
+  if (g->autofree) {
+    v__gen__Gen_writeln(g, tos3("\t_vcleanup();"));
+  }
   v__gen__Gen_writeln(g, tos3("\treturn g_test_fails > 0;"));
   v__gen__Gen_writeln(g, tos3("}"));
 }
@@ -24741,10 +24750,14 @@ void v__gen__x64__Gen_save_main_fn_addr(v__gen__x64__Gen *g) {
 }
 
 void v__gen__x64__Gen_gen_print_from_expr(v__gen__x64__Gen *g,
-                                          v__ast__Expr expr) {
+                                          v__ast__Expr expr, bool newline) {
   if (expr.typ == 206 /* v.ast.StringLiteral */) {
     v__ast__StringLiteral *it = (v__ast__StringLiteral *)expr.obj; // ST it
-    v__gen__x64__Gen_gen_print(g, it->val);
+    if (newline) {
+      v__gen__x64__Gen_gen_print(g, string_add(it->val, tos3("\n")));
+    } else {
+      v__gen__x64__Gen_gen_print(g, it->val);
+    }
   } else {
   };
 }
@@ -24863,7 +24876,8 @@ void v__gen__x64__Gen_expr(v__gen__x64__Gen *g, v__ast__Expr node) {
         string_eq(it->name, tos3("print"))) {
       /*assign_stmt*/ v__ast__Expr expr =
           (*(v__ast__CallArg *)array_get(it->args, 0)).expr;
-      v__gen__x64__Gen_gen_print_from_expr(g, expr);
+      v__gen__x64__Gen_gen_print_from_expr(
+          g, expr, string_eq(it->name, tos3("println")));
     }
   } else if (node.typ == 208 /* v.ast.ArrayInit */) {
     v__ast__ArrayInit *it = (v__ast__ArrayInit *)node.obj; // ST it
