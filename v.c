@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "86ea886"
+#define V_COMMIT_HASH "4981c5a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "12b8dc2"
+#define V_COMMIT_HASH "86ea886"
 #endif
 
 typedef struct array array;
@@ -17815,13 +17815,18 @@ v__ast__Stmt v__parser__Parser_top_stmt(v__parser__Parser *p) {
                         sizeof(v__ast__FnDecl)),
           .typ = 126 /* v.ast.FnDecl */};
     } else if (p->peek_tok.kind == v__token__Kind_key_struct ||
-               p->peek_tok.kind == v__token__Kind_key_union ||
-               p->peek_tok.kind == v__token__Kind_key_interface) {
+               p->peek_tok.kind == v__token__Kind_key_union) {
       return /* sum type cast */ (v__ast__Stmt){
           .obj =
               memdup(&(v__ast__StructDecl[]){v__parser__Parser_struct_decl(p)},
                      sizeof(v__ast__StructDecl)),
           .typ = 213 /* v.ast.StructDecl */};
+    } else if (p->peek_tok.kind == v__token__Kind_key_interface) {
+      return /* sum type cast */ (v__ast__Stmt){
+          .obj = memdup(
+              &(v__ast__InterfaceDecl[]){v__parser__Parser_interface_decl(p)},
+              sizeof(v__ast__InterfaceDecl)),
+          .typ = 214 /* v.ast.InterfaceDecl */};
     } else if (p->peek_tok.kind == v__token__Kind_key_enum) {
       return /* sum type cast */ (v__ast__Stmt){
           .obj = memdup(&(v__ast__EnumDecl[]){v__parser__Parser_enum_decl(p)},
