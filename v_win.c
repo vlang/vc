@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "1e99968"
+#define V_COMMIT_HASH "461a5b2"
 typedef struct array array;
 typedef struct SymbolInfo SymbolInfo;
 typedef struct SymbolInfoContainer SymbolInfoContainer;
@@ -22986,6 +22986,19 @@ void v__gen__Gen_expr(v__gen__Gen *g, v__ast__Expr node) {
     v__gen__Gen_write(g, _STR("sizeof(%.*s)", styp.len, styp.str));
   } else if (node.typ == 224 /* v.ast.StringLiteral */) {
     v__ast__StringLiteral *it = (v__ast__StringLiteral *)node.obj; // ST it
+    if (it->is_raw) {
+      /*assign_stmt*/ string escaped_val = string_replace_each(
+          it->val, new_array_from_c_array(4, 4, sizeof(string),
+                                          (string[4]){
+                                              tos3("\""),
+                                              tos3("\\\""),
+                                              tos3("\\"),
+                                              tos3("\\\\"),
+                                          }));
+      v__gen__Gen_write(
+          g, _STR("tos3(\"%.*s\")", escaped_val.len, escaped_val.str));
+      return;
+    }
     /*assign_stmt*/ string escaped_val = string_replace_each(
         it->val, new_array_from_c_array(6, 6, sizeof(string),
                                         (string[6]){
