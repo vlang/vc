@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8c050ef"
+#define V_COMMIT_HASH "83289d7"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "40fd924"
+#define V_COMMIT_HASH "8c050ef"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8c050ef"
+#define V_CURRENT_COMMIT_HASH "83289d7"
 #endif
 
 typedef struct array array;
@@ -2210,6 +2210,11 @@ string u32_str(u32 nn);
 string i64_str(i64 nn);
 string u64_str(u64 nn);
 string bool_str(bool b);
+string byte_hex(byte nn);
+string i8_hex(i8 nn);
+string u16_hex(u16 nn);
+string i16_hex(i16 nn);
+string u32_hex(u32 nn);
 string int_hex(int nn);
 string u64_hex(u64 nn);
 string i64_hex(i64 nn);
@@ -5019,8 +5024,51 @@ string bool_str(bool b) {
   return tos3("false");
 }
 
-string int_hex(int nn) {
-  u32 n = ((u32)(nn));
+string byte_hex(byte nn) {
+  if (nn == 0) {
+    return tos3("0");
+  }
+  byte n = nn;
+  int max = 2;
+  byteptr buf = v_malloc(max + 1);
+  int index = max;
+  buf[index--] = '\0';
+  while (n > 0) {
+    byte d = (n & 0xF);
+    n = n >> 4;
+    buf[index--] = (d < 10 ? d + '0' : d + 87);
+  }
+  index++;
+  return tos(buf + index, (max - index));
+}
+
+string i8_hex(i8 nn) { return byte_hex(((byte)(nn))); }
+
+string u16_hex(u16 nn) {
+  if (nn == 0) {
+    return tos3("0");
+  }
+  u16 n = nn;
+  int max = 5;
+  byteptr buf = v_malloc(max + 1);
+  int index = max;
+  buf[index--] = '\0';
+  while (n > 0) {
+    u16 d = (n & 0xF);
+    n = n >> 4;
+    buf[index--] = (d < 10 ? d + '0' : d + 87);
+  }
+  index++;
+  return tos(buf + index, (max - index));
+}
+
+string i16_hex(i16 nn) { return u16_hex(((u16)(nn))); }
+
+string u32_hex(u32 nn) {
+  if (nn == 0) {
+    return tos3("0");
+  }
+  u32 n = nn;
   int max = 10;
   byteptr buf = v_malloc(max + 1);
   int index = max;
@@ -5034,7 +5082,12 @@ string int_hex(int nn) {
   return tos(buf + index, (max - index));
 }
 
+string int_hex(int nn) { return u32_hex(((u32)(nn))); }
+
 string u64_hex(u64 nn) {
+  if (nn == 0) {
+    return tos3("0");
+  }
   u64 n = nn;
   int max = 18;
   byteptr buf = v_malloc(max + 1);
@@ -5050,10 +5103,7 @@ string u64_hex(u64 nn) {
   return tos(buf, (max - index));
 }
 
-string i64_hex(i64 nn) {
-  u64 n = ((u64)(nn));
-  return u64_hex(n);
-}
+string i64_hex(i64 nn) { return u64_hex(((u64)(nn))); }
 
 bool array_byte_contains(array_byte a, byte val) {
   // FOR IN
