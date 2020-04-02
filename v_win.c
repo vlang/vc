@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5b53b3d"
+#define V_COMMIT_HASH "be32796"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1178bfa"
+#define V_COMMIT_HASH "5b53b3d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5b53b3d"
+#define V_CURRENT_COMMIT_HASH "be32796"
 #endif
 
 typedef struct array array;
@@ -8364,16 +8364,9 @@ int strconv__ftoa__decimal_len_32(u32 u) {
 }
 
 u32 strconv__ftoa__mul_shift_32(u32 m, u64 mul, int ishift) {
-  // assert
-  if (ishift > 32) {
-  } else {
-    eprintln(_STR("/tmp/gen_vc/v/vlib/strconv/ftoa/utilities.v:100: FAIL: fn "
-                  "strconv.ftoa.mul_shift_32(): assert (ishift > 32)"));
-    exit(1);
-  }
-  multi_return_u64_u64 mr_2322 = math__bits__mul_64(((u64)(m)), mul);
-  u64 hi = mr_2322.arg0;
-  u64 lo = mr_2322.arg1;
+  multi_return_u64_u64 mr_2329 = math__bits__mul_64(((u64)(m)), mul);
+  u64 hi = mr_2329.arg0;
+  u64 lo = mr_2329.arg1;
   u64 shifted_sum = (lo >> ((u64)(ishift))) + (hi << ((u64)(64 - ishift)));
   strconv__ftoa__assert1(shifted_sum <= _const_math__max_u32,
                          tos3("shiftedSum <= math.max_u32"));
@@ -8444,11 +8437,11 @@ u64 strconv__ftoa__shift_right_128(strconv__ftoa__Uint128 v, int shift) {
 }
 
 u64 strconv__ftoa__mul_shift_64(u64 m, strconv__ftoa__Uint128 mul, int shift) {
-  multi_return_u64_u64 mr_5015 = math__bits__mul_64(m, mul.hi);
-  u64 hihi = mr_5015.arg0;
-  u64 hilo = mr_5015.arg1;
-  multi_return_u64_u64 mr_5053 = math__bits__mul_64(m, mul.lo);
-  u64 lohi = mr_5053.arg0;
+  multi_return_u64_u64 mr_5021 = math__bits__mul_64(m, mul.hi);
+  u64 hihi = mr_5021.arg0;
+  u64 hilo = mr_5021.arg1;
+  multi_return_u64_u64 mr_5059 = math__bits__mul_64(m, mul.lo);
+  u64 lohi = mr_5059.arg0;
   strconv__ftoa__Uint128 sum = (strconv__ftoa__Uint128){
       .hi = hihi,
       .lo = lohi + hilo,
