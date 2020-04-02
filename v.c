@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ed05dc8"
+#define V_COMMIT_HASH "d4df916"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "be32796"
+#define V_COMMIT_HASH "ed05dc8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ed05dc8"
+#define V_CURRENT_COMMIT_HASH "d4df916"
 #endif
 
 typedef struct array array;
@@ -3942,8 +3942,8 @@ array array_repeat(array a, int count) {
   };
   for (int tmp3 = 0; tmp3 < count; tmp3++) {
     int i = tmp3;
-    memcpy(arr.data + i * a.len * a.element_size, a.data,
-           a.len * a.element_size);
+    memcpy(((byteptr)(arr.data)) + i * a.len * a.element_size,
+           ((byteptr)(a.data)), a.len * a.element_size);
   }
   return arr;
 }
@@ -3963,8 +3963,9 @@ void array_insert(array *a, int i, voidptr val) {
 #endif
   array_ensure_cap(a, a->len + 1);
   int size = a->element_size;
-  memmove(a->data + (i + 1) * size, a->data + i * size, (a->len - i) * size);
-  memcpy(a->data + i * size, val, size);
+  memmove(((byteptr)(a->data)) + (i + 1) * size,
+          ((byteptr)(a->data)) + i * size, (a->len - i) * size);
+  memcpy(((byteptr)(a->data)) + i * size, val, size);
   a->len++;
 }
 
@@ -3980,7 +3981,8 @@ void array_delete(array *a, int i) {
   }
 #endif
   int size = a->element_size;
-  memmove(a->data + i * size, a->data + (i + 1) * size, (a->len - i) * size);
+  memmove(((byteptr)(a->data)) + i * size,
+          ((byteptr)(a->data)) + (i + 1) * size, (a->len - i) * size);
   a->len--;
 }
 
