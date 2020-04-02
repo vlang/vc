@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "97fbc3d"
+#define V_COMMIT_HASH "561b7a0"
 typedef struct array array;
 typedef struct KeyValue KeyValue;
 typedef struct DenseArray DenseArray;
@@ -3425,6 +3425,7 @@ void v__gen__Gen_fn_args(v__gen__Gen *g, array_v__table__Arg args,
                          bool is_variadic);
 void v__gen__Gen_expr(v__gen__Gen *g, v__ast__Expr node);
 void v__gen__Gen_typeof_expr(v__gen__Gen *g, v__ast__TypeOf node);
+void v__gen__Gen_enum_expr(v__gen__Gen *g, v__ast__Expr node);
 void v__gen__Gen_assign_expr(v__gen__Gen *g, v__ast__AssignExpr node);
 void v__gen__Gen_infix_expr(v__gen__Gen *g, v__ast__InfixExpr node);
 void v__gen__Gen_match_expr(v__gen__Gen *g, v__ast__MatchExpr node);
@@ -22786,6 +22787,18 @@ void v__gen__Gen_typeof_expr(v__gen__Gen *g, v__ast__TypeOf node) {
   }
 }
 
+void v__gen__Gen_enum_expr(v__gen__Gen *g, v__ast__Expr node) {
+  if (node.typ == 185 /* v.ast.EnumVal */) {
+    v__ast__EnumVal *it = (v__ast__EnumVal *)node.obj; // ST it
+    v__gen__Gen_write(g, _STR("%.*s", string_capitalize(it->val).len,
+                              string_capitalize(it->val).str));
+  } else {
+    println(term__red(
+        string_add(tos3("cgen.enum_expr(): bad node "),
+                   tos3(/* v.ast.Expr */ v_typeof_sumtype_176((node).typ)))));
+  };
+}
+
 void v__gen__Gen_assign_expr(v__gen__Gen *g, v__ast__AssignExpr node) {
   /*assign_stmt*/ bool is_call = false;
   /*assign_stmt*/ array_v__ast__Stmt or_stmts =
@@ -23989,9 +24002,10 @@ void v__gen__Gen_fn_call(v__gen__Gen *g, v__ast__CallExpr node) {
           g, _STR("); println(%.*s); string_free(%.*s); //MEM2 %.*s", tmp.len,
                   tmp.str, tmp.len, tmp.str, styp.len, styp.str));
     } else if (sym->kind == v__table__Kind_enum_) {
-      v__gen__Gen_write(g, tos3("println(int_str("));
-      v__gen__Gen_expr(g, (*(v__ast__CallArg *)array_get(node.args, 0)).expr);
-      v__gen__Gen_write(g, tos3("))"));
+      v__gen__Gen_write(g, tos3("println(tos3(\""));
+      v__gen__Gen_enum_expr(g,
+                            (*(v__ast__CallArg *)array_get(node.args, 0)).expr);
+      v__gen__Gen_write(g, tos3("\"))"));
     } else {
       v__gen__Gen_write(g, _STR("println(%.*s_str(", styp.len, styp.str));
       if (v__table__type_is_ptr(typ)) {
