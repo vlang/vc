@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "2fc7090"
+#define V_COMMIT_HASH "ce771c7"
 typedef struct array array;
 typedef struct SymbolInfo SymbolInfo;
 typedef struct SymbolInfoContainer SymbolInfoContainer;
