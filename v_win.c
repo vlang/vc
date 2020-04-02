@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "7b83a33"
+#define V_COMMIT_HASH "683aa75"
 typedef struct array array;
 typedef struct SymbolInfo SymbolInfo;
 typedef struct SymbolInfoContainer SymbolInfoContainer;
@@ -24117,9 +24117,7 @@ void v__gen__Gen_string_inter_literal(v__gen__Gen *g,
 
 void v__gen__Gen_gen_filter(v__gen__Gen *g, v__ast__CallExpr node) {
   /*assign_stmt*/ string tmp = v__gen__Gen_new_tmp_var(g);
-  /*assign_stmt*/ array_byte buf =
-      array_slice(g->out.buf, g->stmt_start_pos, g->out.buf.len);
-  /*assign_stmt*/ string s = tos2(array_clone(&buf).data);
+  /*assign_stmt*/ string s = strings__Builder_after(&g->out, g->stmt_start_pos);
   strings__Builder_go_back(&g->out, s.len);
   /*assign_stmt*/ v__table__TypeSymbol *sym =
       v__table__Table_get_type_symbol(g->table, node.return_type);
