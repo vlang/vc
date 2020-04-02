@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d4df916"
+#define V_COMMIT_HASH "01aa2b8"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ed05dc8"
+#define V_COMMIT_HASH "d4df916"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d4df916"
+#define V_CURRENT_COMMIT_HASH "01aa2b8"
 #endif
 
 typedef struct array array;
@@ -4159,7 +4159,7 @@ voidptr array_get(array a, int i) {
         _STR("array.get: index out of range (i == %d, a.len == %d)", i, a.len));
   }
 #endif
-  return a.data + i * a.element_size;
+  return ((byteptr)(a.data)) + i * a.element_size;
 }
 
 voidptr array_first(array a) {
@@ -4170,7 +4170,7 @@ voidptr array_first(array a) {
     v_panic(tos3("array.first: array is empty"));
   }
 #endif
-  return a.data + 0;
+  return a.data;
 }
 
 voidptr array_last(array a) {
@@ -4181,7 +4181,7 @@ voidptr array_last(array a) {
     v_panic(tos3("array.last: array is empty"));
   }
 #endif
-  return a.data + (a.len - 1) * a.element_size;
+  return ((byteptr)(a.data)) + (a.len - 1) * a.element_size;
 }
 
 array array_slice(array a, int start, int _end) {
@@ -4203,7 +4203,7 @@ array array_slice(array a, int start, int _end) {
   int l = end - start;
   array res = (array){
       .element_size = a.element_size,
-      .data = a.data + start * a.element_size,
+      .data = ((byteptr)(a.data)) + start * a.element_size,
       .len = l,
       .cap = l,
   };
@@ -4226,7 +4226,7 @@ array array_clone(array *a) {
       .element_size = a->element_size,
       .data = vcalloc(size),
   };
-  memcpy(arr.data, a->data, a->cap * a->element_size);
+  memcpy(((byteptr)(arr.data)), a->data, a->cap * a->element_size);
   return arr;
 }
 
@@ -4249,7 +4249,7 @@ array array_slice_clone(array *a, int start, int _end) {
   int l = end - start;
   array res = (array){
       .element_size = a->element_size,
-      .data = a->data + start * a->element_size,
+      .data = ((byteptr)(a->data)) + start * a->element_size,
       .len = l,
       .cap = l,
   };
@@ -4265,12 +4265,12 @@ void array_set(array *a, int i, voidptr val) {
                  a->len));
   }
 #endif
-  memcpy(a->data + a->element_size * i, val, a->element_size);
+  memcpy(((byteptr)(a->data)) + a->element_size * i, val, a->element_size);
 }
 
 void array_push(array *a, voidptr val) {
   array_ensure_cap(a, a->len + 1);
-  memcpy(a->data + a->element_size * a->len, val, a->element_size);
+  memcpy(((byteptr)(a->data)) + a->element_size * a->len, val, a->element_size);
   a->len++;
 }
 
@@ -4278,11 +4278,12 @@ void array_push_many(array *a3, voidptr val, int size) {
   if (a3->data == val) {
     array copy = array_clone(a3);
     array_ensure_cap(a3, a3->len + size);
-    memcpy(a3->data + a3->element_size * a3->len, copy.data,
+    memcpy(((byteptr)(a3->data)) + a3->element_size * a3->len, copy.data,
            a3->element_size * size);
   } else {
     array_ensure_cap(a3, a3->len + size);
-    memcpy(a3->data + a3->element_size * a3->len, val, a3->element_size * size);
+    memcpy(((byteptr)(a3->data)) + a3->element_size * a3->len, val,
+           a3->element_size * size);
   }
   a3->len += size;
 }
@@ -4299,8 +4300,9 @@ array array_reverse(array a) {
   };
   for (int tmp2 = 0; tmp2 < a.len; tmp2++) {
     int i = tmp2;
-    memcpy(arr.data + i * arr.element_size,
-           a.data + (a.len - 1 - i) * arr.element_size, arr.element_size);
+    memcpy(((byteptr)(arr.data)) + i * arr.element_size,
+           ((byteptr)(a.data)) + (a.len - 1 - i) * arr.element_size,
+           arr.element_size);
   }
   return arr;
 }
@@ -4381,7 +4383,8 @@ int copy(array_byte dst, array_byte src) {
   if (dst.len > 0 && src.len > 0) {
     int min = 0;
     min = (dst.len < src.len ? dst.len : src.len);
-    memcpy(dst.data, array_slice(src, 0, min).data, dst.element_size * min);
+    memcpy(((byteptr)(dst.data)), array_slice(src, 0, min).data,
+           dst.element_size * min);
     return min;
   }
   return 0;
@@ -4500,7 +4503,7 @@ array_voidptr array_pointers(array a) {
   array_voidptr res = new_array(0, 0, sizeof(voidptr));
   for (int tmp1 = 0; tmp1 < a.len; tmp1++) {
     int i = tmp1;
-    _PUSH(&res, (a.data + i * a.element_size), tmp2, voidptr);
+    _PUSH(&res, (((byteptr)(a.data)) + i * a.element_size), tmp2, voidptr);
   }
   return res;
 }
@@ -4714,17 +4717,16 @@ bool print_backtrace_skipping_top_frames_msvc(int skipframes) {
   int frames =
       ((int)(CaptureStackBackTrace(skipframes + 1, 100, backtraces, 0)));
   for (int i = 0; i < frames; i++) {
-    voidptr s =
-        *((voidptr)(((u64)(backtraces)) + ((u64)(i * sizeof(voidptr)))));
-    int symfa_ok = SymFromAddr(handle, *s, &offset, si);
+    voidptr s = ((voidptr)(((u64)(backtraces)) + ((u64)(i * sizeof(voidptr)))));
+    int symfa_ok = SymFromAddr(handle, s, &offset, si);
     if (symfa_ok == 1) {
       int nframe = frames - i - 1;
       string lineinfo = tos3("");
-      int symglfa_ok = SymGetLineFromAddr64(handle, *s, &offset, &sline64);
+      int symglfa_ok = SymGetLineFromAddr64(handle, s, &offset, &sline64);
       if (symglfa_ok == 1) {
         lineinfo = _STR(" %d:%d", sline64.f_file_name, sline64.f_line_number);
       } else {
-        lineinfo = _STR(" ?? : address= %d", s);
+        lineinfo = _STR(" ?? : address= %d", &s);
       }
       string sfunc = tos3(fname);
       println(_STR("%-2d: %-25s  %.*s", nframe, sfunc.str, lineinfo.len,
@@ -5159,7 +5161,7 @@ map new_map_init(int n, int value_bytes, string *keys, voidptr values) {
   map out = new_map(n, value_bytes);
   for (int tmp1 = 0; tmp1 < n; tmp1++) {
     int i = tmp1;
-    map_set(&out, keys[i], values + i * value_bytes);
+    map_set(&out, keys[i], ((byteptr)(values)) + i * value_bytes);
   }
   return out;
 }
@@ -5222,12 +5224,12 @@ void map_set(map *m, string key, voidptr value) {
   if (load_factor > _const_max_load_factor) {
     map_expand(m);
   }
-  multi_return_u32_u32 mr_7093 = map_key_to_index(/*rec*/ *m, key);
-  u32 index = mr_7093.arg0;
-  u32 meta = mr_7093.arg1;
-  multi_return_u32_u32 mr_7127 = meta_less(m->metas, index, meta);
-  index = mr_7127.arg0;
-  meta = mr_7127.arg1;
+  multi_return_u32_u32 mr_7102 = map_key_to_index(/*rec*/ *m, key);
+  u32 index = mr_7102.arg0;
+  u32 meta = mr_7102.arg1;
+  multi_return_u32_u32 mr_7136 = meta_less(m->metas, index, meta);
+  index = mr_7136.arg0;
+  meta = mr_7136.arg1;
   while (meta == m->metas[index]) {
     u32 kv_index = m->metas[index + 1];
     if (string_eq(key, m->key_values.data[kv_index].key)) {
@@ -5269,12 +5271,12 @@ void map_rehash(map *m) {
       continue;
     }
     KeyValue kv = m->key_values.data[i];
-    multi_return_u32_u32 mr_8273 = map_key_to_index(/*rec*/ *m, kv.key);
-    u32 index = mr_8273.arg0;
-    u32 meta = mr_8273.arg1;
-    multi_return_u32_u32 mr_8311 = meta_less(m->metas, index, meta);
-    index = mr_8311.arg0;
-    meta = mr_8311.arg1;
+    multi_return_u32_u32 mr_8282 = map_key_to_index(/*rec*/ *m, kv.key);
+    u32 index = mr_8282.arg0;
+    u32 meta = mr_8282.arg1;
+    multi_return_u32_u32 mr_8320 = meta_less(m->metas, index, meta);
+    index = mr_8320.arg0;
+    meta = mr_8320.arg1;
     m->metas = map_meta_greater(m, m->metas, index, meta, i);
   }
 }
@@ -5292,9 +5294,9 @@ void map_cached_rehash(map *m, u32 old_cap) {
     u32 old_index = ((i - old_probe_count) & (m->cap >> 1));
     u32 index = ((old_index | (old_meta << m->shift)) & m->cap);
     u32 meta = ((old_meta & _const_hash_mask)) | _const_probe_inc;
-    multi_return_u32_u32 mr_8898 = meta_less(new_meta, index, meta);
-    index = mr_8898.arg0;
-    meta = mr_8898.arg1;
+    multi_return_u32_u32 mr_8907 = meta_less(new_meta, index, meta);
+    index = mr_8907.arg0;
+    meta = mr_8907.arg1;
     u32 kv_index = m->metas[i + 1];
     new_meta = map_meta_greater(m, new_meta, index, meta, kv_index);
   }
@@ -5303,12 +5305,12 @@ void map_cached_rehash(map *m, u32 old_cap) {
 }
 
 bool map_get(map m, string key, voidptr out) {
-  multi_return_u32_u32 mr_9145 = map_key_to_index(m, key);
-  u32 index = mr_9145.arg0;
-  u32 meta = mr_9145.arg1;
-  multi_return_u32_u32 mr_9179 = meta_less(m.metas, index, meta);
-  index = mr_9179.arg0;
-  meta = mr_9179.arg1;
+  multi_return_u32_u32 mr_9154 = map_key_to_index(m, key);
+  u32 index = mr_9154.arg0;
+  u32 meta = mr_9154.arg1;
+  multi_return_u32_u32 mr_9188 = meta_less(m.metas, index, meta);
+  index = mr_9188.arg0;
+  meta = mr_9188.arg1;
   while (meta == m.metas[index]) {
     u32 kv_index = m.metas[index + 1];
     if (string_eq(key, m.key_values.data[kv_index].key)) {
@@ -5322,12 +5324,12 @@ bool map_get(map m, string key, voidptr out) {
 }
 
 voidptr map_get2(map m, string key) {
-  multi_return_u32_u32 mr_9520 = map_key_to_index(m, key);
-  u32 index = mr_9520.arg0;
-  u32 meta = mr_9520.arg1;
-  multi_return_u32_u32 mr_9554 = meta_less(m.metas, index, meta);
-  index = mr_9554.arg0;
-  meta = mr_9554.arg1;
+  multi_return_u32_u32 mr_9529 = map_key_to_index(m, key);
+  u32 index = mr_9529.arg0;
+  u32 meta = mr_9529.arg1;
+  multi_return_u32_u32 mr_9563 = meta_less(m.metas, index, meta);
+  index = mr_9563.arg0;
+  meta = mr_9563.arg1;
   while (meta == m.metas[index]) {
     u32 kv_index = m.metas[index + 1];
     if (string_eq(key, m.key_values.data[kv_index].key)) {
@@ -5342,12 +5344,12 @@ voidptr map_get2(map m, string key) {
 }
 
 voidptr map_get3(map m, string key, voidptr zero) {
-  multi_return_u32_u32 mr_9945 = map_key_to_index(m, key);
-  u32 index = mr_9945.arg0;
-  u32 meta = mr_9945.arg1;
-  multi_return_u32_u32 mr_9979 = meta_less(m.metas, index, meta);
-  index = mr_9979.arg0;
-  meta = mr_9979.arg1;
+  multi_return_u32_u32 mr_9954 = map_key_to_index(m, key);
+  u32 index = mr_9954.arg0;
+  u32 meta = mr_9954.arg1;
+  multi_return_u32_u32 mr_9988 = meta_less(m.metas, index, meta);
+  index = mr_9988.arg0;
+  meta = mr_9988.arg1;
   while (meta == m.metas[index]) {
     u32 kv_index = m.metas[index + 1];
     if (string_eq(key, m.key_values.data[kv_index].key)) {
@@ -5365,12 +5367,12 @@ bool map_exists(map m, string key) {
   if (m.value_bytes == 0) {
     return false;
   }
-  multi_return_u32_u32 mr_10413 = map_key_to_index(m, key);
-  u32 index = mr_10413.arg0;
-  u32 meta = mr_10413.arg1;
-  multi_return_u32_u32 mr_10447 = meta_less(m.metas, index, meta);
-  index = mr_10447.arg0;
-  meta = mr_10447.arg1;
+  multi_return_u32_u32 mr_10422 = map_key_to_index(m, key);
+  u32 index = mr_10422.arg0;
+  u32 meta = mr_10422.arg1;
+  multi_return_u32_u32 mr_10456 = meta_less(m.metas, index, meta);
+  index = mr_10456.arg0;
+  meta = mr_10456.arg1;
   while (meta == m.metas[index]) {
     u32 kv_index = m.metas[index + 1];
     if (string_eq(key, m.key_values.data[kv_index].key)) {
@@ -5383,12 +5385,12 @@ bool map_exists(map m, string key) {
 }
 
 void map_delete(map *m, string key) {
-  multi_return_u32_u32 mr_10723 = map_key_to_index(/*rec*/ *m, key);
-  u32 index = mr_10723.arg0;
-  u32 meta = mr_10723.arg1;
-  multi_return_u32_u32 mr_10757 = meta_less(m->metas, index, meta);
-  index = mr_10757.arg0;
-  meta = mr_10757.arg1;
+  multi_return_u32_u32 mr_10732 = map_key_to_index(/*rec*/ *m, key);
+  u32 index = mr_10732.arg0;
+  u32 meta = mr_10732.arg1;
+  multi_return_u32_u32 mr_10766 = meta_less(m->metas, index, meta);
+  index = mr_10766.arg0;
+  meta = mr_10766.arg1;
   while (meta == m->metas[index]) {
     u32 kv_index = m->metas[index + 1];
     if (string_eq(key, m->key_values.data[kv_index].key)) {
@@ -5512,7 +5514,7 @@ SortedMap new_sorted_map_init(int n, int value_bytes, string *keys,
   SortedMap out = new_sorted_map(n, value_bytes);
   for (int tmp1 = 0; tmp1 < n; tmp1++) {
     int i = tmp1;
-    SortedMap_set(&out, keys[i], values + i * value_bytes);
+    SortedMap_set(&out, keys[i], ((byteptr)(values)) + i * value_bytes);
   }
   return out;
 }
