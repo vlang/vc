@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "40fd924"
+#define V_COMMIT_HASH "8c050ef"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f087e81"
+#define V_COMMIT_HASH "40fd924"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "40fd924"
+#define V_CURRENT_COMMIT_HASH "8c050ef"
 #endif
 
 typedef struct array array;

@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "40fd924"
+#define V_COMMIT_HASH "8c050ef"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f087e81"
+#define V_COMMIT_HASH "40fd924"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "40fd924"
+#define V_CURRENT_COMMIT_HASH "8c050ef"
 #endif
 
 typedef struct array array;
@@ -4718,12 +4718,13 @@ bool print_backtrace_skipping_top_frames_msvc(int skipframes) {
   int frames =
       ((int)(CaptureStackBackTrace(skipframes + 1, 100, backtraces, 0)));
   for (int i = 0; i < frames; i++) {
-    voidptr s = ((voidptr)(((u64)(backtraces)) + ((u64)(i * sizeof(voidptr)))));
-    int symfa_ok = SymFromAddr(handle, s, &offset, si);
+    u64 tmp = ((u64)(backtraces)) + ((u64)(i * sizeof(voidptr)));
+    voidptr *s = ((voidptr *)(tmp));
+    int symfa_ok = SymFromAddr(handle, *s, &offset, si);
     if (symfa_ok == 1) {
       int nframe = frames - i - 1;
       string lineinfo = tos3("");
-      int symglfa_ok = SymGetLineFromAddr64(handle, s, &offset, &sline64);
+      int symglfa_ok = SymGetLineFromAddr64(handle, *s, &offset, &sline64);
       if (symglfa_ok == 1) {
         lineinfo = _STR(" %d:%d", sline64.f_file_name, sline64.f_line_number);
       } else {
