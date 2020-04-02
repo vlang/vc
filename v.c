@@ -1,7 +1,11 @@
-#define V_COMMIT_HASH "d9c7253"
+#define V_COMMIT_HASH "1178bfa"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1fe2933"
+#define V_COMMIT_HASH "d9c7253"
+#endif
+
+#ifndef V_CURRENT_COMMIT_HASH
+#define V_CURRENT_COMMIT_HASH "1178bfa"
 #endif
 
 typedef struct array array;
@@ -1526,9 +1530,9 @@ struct v__depgraph__OrderedDepMap {
 
 typedef byteptr array_fixed_byteptr_100[100];
 typedef byte array_fixed_byte_1000[1000];
-typedef byte array_fixed_byte_50[50];
 typedef byte array_fixed_byte_26[26];
 typedef byte array_fixed_byte_4096[4096];
+typedef byte array_fixed_byte_50[50];
 struct mapnode {
   array_fixed_string_11 keys;
   array_fixed_voidptr_11 values;
@@ -2294,10 +2298,8 @@ void launch_tool(v__pref__VerboseLevel verbosity, string tool_name);
 typedef Option Option_os__Result;
 string path_of_executable(string path);
 array_string _const_simple_cmd; // inited later
-string _const_v_version;        // inited later
 typedef Option Option_array_string;
 void print_version_and_exit();
-string vhash();
 void invoke_help_and_exit(array_string remaining);
 void disallow_unknown_flags(internal__flag__MainCmdPreferences prefs);
 void create_symlink();
@@ -2619,7 +2621,6 @@ typedef Option Option_v__pref__Backend;
 Option_v__pref__Backend v__pref__backend_from_string(string s);
 bool v__pref__VerboseLevel_is_higher_or_equal(v__pref__VerboseLevel v,
                                               v__pref__VerboseLevel other);
-string _const_internal__compile__v_version;      // inited later
 string _const_internal__compile__v_modules_path; // inited later
 void internal__compile__todo();
 bool internal__compile__V_no_cc_installed(internal__compile__V *v);
@@ -2632,7 +2633,6 @@ void internal__compile__V_build_thirdparty_obj_file(
 string internal__compile__missing_compiler_info();
 array_string internal__compile__error_context_lines(string text, string keyword,
                                                     int before, int after);
-string internal__compile__vhash();
 string internal__compile__CFlag_str(internal__compile__CFlag *c);
 array_internal__compile__CFlag
 internal__compile__V_get_os_cflags(internal__compile__V *v);
@@ -2883,6 +2883,11 @@ bool v__doc__is_pub_method(v__ast__FnDecl node);
 bool v__doc__is_pub_function(v__ast__FnDecl node);
 void v__doc__Doc_print_enums(v__doc__Doc *d);
 void v__doc__Doc_print_structs(v__doc__Doc *d);
+string _const_v__util__v_version; // inited later
+string v__util__vhash();
+string v__util__full_hash();
+string v__util__full_v_version();
+string v__util__githash(bool should_get_from_filesystem);
 u64 _const_math__uvnan;     // inited later
 u64 _const_math__uvinf;     // inited later
 u64 _const_math__uvneginf;  // inited later
@@ -3398,6 +3403,7 @@ array_string _const_v__gen__c_reserved; // inited later
 array_string _const_v__gen__tabs;       // inited later
 string v__gen__cgen(array_v__ast__File files, v__table__Table *table,
                     v__pref__Preferences *pref);
+string v__gen__Gen_hashes(v__gen__Gen *g);
 void v__gen__Gen_init(v__gen__Gen *g);
 void v__gen__Gen_write_typeof_functions(v__gen__Gen *g);
 string v__gen__Gen_typ(v__gen__Gen *g, v__table__Type t);
@@ -3471,11 +3477,12 @@ void v__gen__Gen_write_tests_main(v__gen__Gen *g);
 array_string v__gen__Gen_get_all_test_function_names(v__gen__Gen *g);
 bool v__gen__Gen_is_importing_os(v__gen__Gen *g);
 void v__gen__Gen_comp_if(v__gen__Gen *g, v__ast__CompIf it);
-string _const_v__gen__c_commit_hash_default; // inited later
-string _const_v__gen__c_common_macros;       // inited later
-string _const_v__gen__c_headers;             // inited later
-string _const_v__gen__c_builtin_types;       // inited later
-string _const_v__gen__bare_c_headers;        // inited later
+string _const_v__gen__c_commit_hash_default;         // inited later
+string _const_v__gen__c_current_commit_hash_default; // inited later
+string _const_v__gen__c_common_macros;               // inited later
+string _const_v__gen__c_headers;                     // inited later
+string _const_v__gen__c_builtin_types;               // inited later
+string _const_v__gen__bare_c_headers;                // inited later
 string v__gen__jsgen(v__ast__File program, v__table__Table *table);
 void v__gen__JsGen_save(v__gen__JsGen *g);
 void v__gen__JsGen_write(v__gen__JsGen *g, string s);
@@ -3584,7 +3591,6 @@ bool v__scanner__contains_capital(string s);
 bool v__scanner__good_type_name(string s);
 void v__scanner__Scanner_error(v__scanner__Scanner *s, string msg);
 void v__scanner__verror(string s);
-string v__scanner__vhash();
 string v__scanner__cescaped_path(string s);
 v__token__Position v__token__Token_position(v__token__Token *tok);
 array_v__token__Kind _const_v__token__assign_tokens; // inited later
@@ -7296,8 +7302,7 @@ int main(int argc, char **argv) {
   };
   if (v__pref__VerboseLevel_is_higher_or_equal(
           prefs.verbosity, v__pref__VerboseLevel_level_two)) {
-    println(_STR("V %.*s %.*s", _const_v_version.len, _const_v_version.str,
-                 vhash().len, vhash().str));
+    println(v__util__full_v_version());
   }
   if (v__pref__VerboseLevel_is_higher_or_equal(
           prefs.verbosity, v__pref__VerboseLevel_level_three)) {
@@ -7394,17 +7399,8 @@ int main(int argc, char **argv) {
 }
 
 void print_version_and_exit() {
-  string version_hash = vhash();
-  println(_STR("V %.*s %.*s", _const_v_version.len, _const_v_version.str,
-               version_hash.len, version_hash.str));
+  println(v__util__full_v_version());
   v_exit(0);
-}
-
-string vhash() {
-  array_fixed_byte_50 buf = {0};
-  buf[0] = 0;
-  snprintf(((charptr)(buf)), 50, "%s", V_COMMIT_HASH);
-  return tos_clone(&/*qq*/ buf);
 }
 
 void invoke_help_and_exit(array_string remaining) {
@@ -11343,15 +11339,13 @@ start:
                              khighlight));
       internal__compile__verror(_STR(
           "\n==================\nC error. This should never happen.\n\nV "
-          "compiler version: V %.*s %.*s\nHost OS: %.*s\nTarget OS: %.*s\n\nIf "
-          "you were not working with C interop and are not sure about what's "
+          "compiler version: %.*s\nHost OS: %.*s\nTarget OS: %.*s\n\nIf you "
+          "were not working with C interop and are not sure about what's "
           "happening,\nplease put the whole output in a pastebin and contact "
           "us through the following ways with a link to the pastebin:\n- Raise "
           "an issue on GitHub: https://github.com/vlang/v/issues/new/choose\n- "
           "Ask a question in #help on Discord: https://discord.gg/vlang",
-          _const_internal__compile__v_version.len,
-          _const_internal__compile__v_version.str,
-          internal__compile__vhash().len, internal__compile__vhash().str,
+          v__util__full_v_version().len, v__util__full_v_version().str,
           v__pref__OS_str(v__pref__get_host_os()).len,
           v__pref__OS_str(v__pref__get_host_os()).str,
           v__pref__OS_str(v->pref->os).len, v__pref__OS_str(v->pref->os).str));
@@ -11551,13 +11545,6 @@ array_string internal__compile__error_context_lines(string text, string keyword,
   int idx_s = (eline_idx - before >= 0 ? eline_idx - before : 0);
   int idx_e = (idx_s + after < lines.len ? idx_s + after : lines.len);
   return array_slice(lines, idx_s, idx_e);
-}
-
-string internal__compile__vhash() {
-  array_fixed_byte_50 buf = {0};
-  buf[0] = 0;
-  snprintf(((charptr)(buf)), 50, "%s", V_COMMIT_HASH);
-  return tos_clone(&/*qq*/ buf);
 }
 
 string internal__compile__CFlag_str(internal__compile__CFlag *c) {
@@ -14740,6 +14727,71 @@ void v__doc__Doc_print_structs(v__doc__Doc *d) {
     }
     strings__Builder_writeln(&d->out, tos3("}\n"));
   }
+}
+
+string v__util__vhash() {
+  array_fixed_byte_50 buf = {0};
+  buf[0] = 0;
+  snprintf(((charptr)(buf)), 50, "%s", V_COMMIT_HASH);
+  return tos_clone(&/*qq*/ buf);
+}
+
+string v__util__full_hash() {
+  string build_hash = v__util__vhash();
+  string current_hash = v__util__githash(false);
+  string final_hash = (string_eq(build_hash, current_hash)
+                           ? build_hash
+                           : _STR("%.*s.%.*s", build_hash.len, build_hash.str,
+                                  current_hash.len, current_hash.str));
+  return final_hash;
+}
+
+string v__util__full_v_version() {
+  return _STR("V %.*s %.*s", _const_v__util__v_version.len,
+              _const_v__util__v_version.str, v__util__full_hash().len,
+              v__util__full_hash().str);
+}
+
+string v__util__githash(bool should_get_from_filesystem) {
+  while (1) {
+    if (should_get_from_filesystem) {
+      string vexe = os__getenv(tos3("VEXE"));
+      string vroot = os__dir(vexe);
+      string git_head_file = os__join_path(
+          vroot, (varg_string){.len = 2, .args = {tos3(".git"), tos3("HEAD")}});
+      if (!os__exists(git_head_file)) {
+        break;
+      }
+      Option_string head_content = os__read_file(git_head_file);
+      if (!head_content.ok) {
+        string err = head_content.v_error;
+        int errcode = head_content.ecode;
+        break;
+      };
+      string gcbranch_rel_path = string_trim_space(string_replace(
+          /*opt*/ (*(string *)head_content.data), tos3("ref: "), tos3("")));
+      string gcbranch_file = os__join_path(
+          vroot,
+          (varg_string){.len = 2, .args = {tos3(".git"), gcbranch_rel_path}});
+      if (!os__exists(gcbranch_file)) {
+        break;
+      }
+      Option_string current_branch_hash = os__read_file(gcbranch_file);
+      if (!current_branch_hash.ok) {
+        string err = current_branch_hash.v_error;
+        int errcode = current_branch_hash.ecode;
+        break;
+      };
+      int desired_hash_length = 7;
+      if (/*opt*/ (*(string *)current_branch_hash.data).len >
+          desired_hash_length) {
+        return string_substr(/*opt*/ (*(string *)current_branch_hash.data), 0,
+                             desired_hash_length);
+      }
+    }
+    break;
+  }
+  return tos3("unknown");
 }
 
 f64 math__inf(int sign) {
@@ -21390,10 +21442,19 @@ string v__gen__cgen(array_v__ast__File files, v__table__Table *table,
   if (g.is_test) {
     v__gen__Gen_write_tests_main(&g);
   }
-  return string_add(string_add(string_add(_const_v__gen__c_commit_hash_default,
+  return string_add(string_add(string_add(v__gen__Gen_hashes(&g),
                                           strings__Builder_str(&g.typedefs)),
                                strings__Builder_str(&g.definitions)),
                     strings__Builder_str(&g.out));
+}
+
+string v__gen__Gen_hashes(v__gen__Gen *g) {
+  string res = string_replace(_const_v__gen__c_commit_hash_default, tos3("@@@"),
+                              v__util__vhash());
+  res = string_add(
+      res, string_replace(_const_v__gen__c_current_commit_hash_default,
+                          tos3("@@@"), v__util__githash(g->pref->building_v)));
+  return res;
 }
 
 void v__gen__Gen_init(v__gen__Gen *g) {
@@ -25157,7 +25218,7 @@ v__token__Token v__scanner__Scanner_scan(v__scanner__Scanner *s) {
     }
     if (string_eq(name, tos3("VHASH"))) {
       return v__scanner__Scanner_new_token(s, v__token__Kind_string,
-                                           v__scanner__vhash());
+                                           v__util__vhash());
     }
     if (!v__token__is_key(name)) {
       v__scanner__Scanner_error(
@@ -25560,13 +25621,6 @@ void v__scanner__verror(string s) {
   println(_STR("V error: %.*s", s.len, s.str));
   os__flush();
   v_exit(1);
-}
-
-string v__scanner__vhash() {
-  array_fixed_byte_50 buf = {0};
-  buf[0] = 0;
-  snprintf(((charptr)(buf)), 50, "%s", V_COMMIT_HASH);
-  return tos_clone(&/*qq*/ buf);
 }
 
 string v__scanner__cescaped_path(string s) {
@@ -26138,7 +26192,6 @@ void _vinit() {
                                                  tos3("build-vbinaries"),
                                                  tos3("setup-freetype"),
                                              });
-  _const_v_version = tos3("0.1.26");
   _const_strconv__ftoa__ten_pow_table_32 =
       new_array_from_c_array(12, 12, sizeof(u32),
                              (u32[12]){
@@ -28828,7 +28881,6 @@ void _vinit() {
   _const_os__stderr_value = 2;
   _const_v__pref__default_module_path =
       string_add(os__home_dir(), tos3(".vmodules"));
-  _const_internal__compile__v_version = tos3("0.1.26");
   _const_internal__compile__v_modules_path =
       _const_v__pref__default_module_path;
   _const_internal__compile__HKEY_LOCAL_MACHINE =
@@ -28921,6 +28973,7 @@ void _vinit() {
           tos3("map"),    tos3("struct"),  tos3("mapnode"), tos3("ustring"),
           tos3("size_t"),
       });
+  _const_v__util__v_version = tos3("0.1.26");
   _const_math__uvnan = ((u64)(0x7FF8000000000001));
   _const_math__uvinf = ((u64)(0x7FF0000000000000));
   _const_math__uvneginf = ((u64)(0xFFF0000000000000));
@@ -29230,9 +29283,11 @@ void _vinit() {
                                                        tos3("map"),
                                                        tos3("Option"),
                                                    });
-  _const_v__gen__c_commit_hash_default = _STR(
-      "\n#ifndef V_COMMIT_HASH\n#define V_COMMIT_HASH \"%.*s\"\n#endif\n\n",
-      vhash().len, vhash().str);
+  _const_v__gen__c_commit_hash_default = tos3(
+      "\n#ifndef V_COMMIT_HASH\n#define V_COMMIT_HASH \"@@@\"\n#endif\n\n");
+  _const_v__gen__c_current_commit_hash_default =
+      tos3("\n#ifndef V_CURRENT_COMMIT_HASH\n#define V_CURRENT_COMMIT_HASH "
+           "\"@@@\"\n#endif\n\n");
   _const_v__gen__c_common_macros = tos3(
       "\n#define EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION "
       "0\n// Due to a tcc bug, the length of an array needs to be specified, "
