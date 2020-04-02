@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "683aa75"
+#define V_COMMIT_HASH "fcea7f6"
 typedef struct array array;
 typedef struct KeyValue KeyValue;
 typedef struct DenseArray DenseArray;
