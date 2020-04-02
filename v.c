@@ -1,4 +1,9 @@
-#define V_COMMIT_HASH "d57b1ca"
+#define V_COMMIT_HASH "12b8dc2"
+
+#ifndef V_COMMIT_HASH
+#define V_COMMIT_HASH "TODO"
+#endif
+
 typedef struct array array;
 typedef struct KeyValue KeyValue;
 typedef struct DenseArray DenseArray;
@@ -558,8 +563,6 @@ extern char **environ;
 #define V64_PRINTFORMAT "0x%llx"
 #endif
 #endif
-
-#define V_COMMIT_HASH "TODO"
 
 #ifdef _WIN32
 #define WINVER 0x0600
@@ -3468,10 +3471,11 @@ void v__gen__Gen_write_tests_main(v__gen__Gen *g);
 array_string v__gen__Gen_get_all_test_function_names(v__gen__Gen *g);
 bool v__gen__Gen_is_importing_os(v__gen__Gen *g);
 void v__gen__Gen_comp_if(v__gen__Gen *g, v__ast__CompIf it);
-string _const_v__gen__c_common_macros; // inited later
-string _const_v__gen__c_headers;       // inited later
-string _const_v__gen__c_builtin_types; // inited later
-string _const_v__gen__bare_c_headers;  // inited later
+string _const_v__gen__c_commit_hash_default; // inited later
+string _const_v__gen__c_common_macros;       // inited later
+string _const_v__gen__c_headers;             // inited later
+string _const_v__gen__c_builtin_types;       // inited later
+string _const_v__gen__bare_c_headers;        // inited later
 string v__gen__jsgen(v__ast__File program, v__table__Table *table);
 void v__gen__JsGen_save(v__gen__JsGen *g);
 void v__gen__JsGen_write(v__gen__JsGen *g, string s);
@@ -21610,7 +21614,8 @@ string v__gen__cgen(array_v__ast__File files, v__table__Table *table,
   if (g.is_test) {
     v__gen__Gen_write_tests_main(&g);
   }
-  return string_add(string_add(strings__Builder_str(&g.typedefs),
+  return string_add(string_add(string_add(_const_v__gen__c_commit_hash_default,
+                                          strings__Builder_str(&g.typedefs)),
                                strings__Builder_str(&g.definitions)),
                     strings__Builder_str(&g.out));
 }
@@ -29532,23 +29537,26 @@ void _vinit() {
                                                        tos3("map"),
                                                        tos3("Option"),
                                                    });
+  _const_v__gen__c_commit_hash_default = _STR(
+      "\n#ifndef V_COMMIT_HASH\n#define V_COMMIT_HASH \"%.*s\"\n#endif\n\n",
+      vhash().len, vhash().str);
   _const_v__gen__c_common_macros = tos3(
-      "\n\n#define EMPTY_STRUCT_DECLARATION\n#define "
-      "EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an "
-      "array needs to be specified, but GCC crashes if it is...\n#define "
-      "EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#ifdef "
-      "__TINYC__\n#undef EMPTY_STRUCT_DECLARATION\n#undef "
-      "EMPTY_STRUCT_INITIALIZATION\n#define EMPTY_STRUCT_DECLARATION char "
-      "_dummy\n#define EMPTY_STRUCT_INITIALIZATION 0\n#undef "
-      "EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef "
-      "TCCSKIP\n#define TCCSKIP(x)\n#endif\n\n// for __offset_of\n#ifndef "
-      "__offsetof\n#define __offsetof(s,memb) \\\n    ((size_t)((char *)&((s "
-      "*)0)->memb - (char *)0))\n#endif\n\n#define OPTION_CAST(x) "
-      "(x)\n\n#ifndef V64_PRINTFORMAT\n#ifdef PRIx64\n#define V64_PRINTFORMAT "
+      "\n#define EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION "
+      "0\n// Due to a tcc bug, the length of an array needs to be specified, "
+      "but GCC crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) "
+      "(x[])\n#define TCCSKIP(x) x\n\n#ifdef __TINYC__\n#undef "
+      "EMPTY_STRUCT_DECLARATION\n#undef EMPTY_STRUCT_INITIALIZATION\n#define "
+      "EMPTY_STRUCT_DECLARATION char _dummy\n#define "
+      "EMPTY_STRUCT_INITIALIZATION 0\n#undef EMPTY_ARRAY_OF_ELEMS\n#define "
+      "EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef TCCSKIP\n#define "
+      "TCCSKIP(x)\n#endif\n\n// for __offset_of\n#ifndef __offsetof\n#define "
+      "__offsetof(s,memb) \\\n    ((size_t)((char *)&((s *)0)->memb - (char "
+      "*)0))\n#endif\n\n#define OPTION_CAST(x) (x)\n\n#ifndef "
+      "V64_PRINTFORMAT\n#ifdef PRIx64\n#define V64_PRINTFORMAT "
       "\"0x%\"PRIx64\n#elif defined(__WIN32__)\n#define V64_PRINTFORMAT "
       "\"0x%I64x\"\n#elif defined(__LINUX__) && defined(__LP64__)\n#define "
       "V64_PRINTFORMAT \"0x%lx\"\n#else\n#define V64_PRINTFORMAT "
-      "\"0x%llx\"\n#endif\n#endif\n\n#define V_COMMIT_HASH \"TODO\"\n\n");
+      "\"0x%llx\"\n#endif\n#endif\n\n");
   _const_v__gen__c_headers = _STR(
       "\n\n// c_headers\n#include <stdio.h>  // TODO remove all these "
       "includes, define all function signatures and types manually\n#include "
