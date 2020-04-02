@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "1fe2933"
+#define V_COMMIT_HASH "d9c7253"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4981c5a"
+#define V_COMMIT_HASH "1fe2933"
 #endif
 
 typedef struct array array;
@@ -10812,8 +10812,9 @@ Option_array_string os__ls(string path) {
 }
 
 Option_os__File os__open(string path) {
+  string mode = tos3("rb");
   os__File file = (os__File){
-      .cfile = _wfopen(string_to_wide(path), string_to_wide("rb")),
+      .cfile = _wfopen(string_to_wide(path), string_to_wide(mode)),
       .opened = true,
       .fd = 0,
   };
@@ -10824,8 +10825,9 @@ Option_os__File os__open(string path) {
 }
 
 Option_os__File os__create(string path) {
+  string mode = tos3("wb");
   os__File file = (os__File){
-      .cfile = _wfopen(string_to_wide(path), string_to_wide("wb")),
+      .cfile = _wfopen(string_to_wide(path), string_to_wide(mode)),
       .opened = true,
       .fd = 0,
   };
@@ -13003,9 +13005,9 @@ internal__compile__find_windows_kit_root(string host_arch) {
 #ifdef _WIN32
   // #if windows
   internal__compile__RegKey root_key = ((internal__compile__RegKey)(0));
+  string path = tos3("SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots");
   voidptr rc = RegOpenKeyEx(
-      _const_internal__compile__HKEY_LOCAL_MACHINE,
-      string_to_wide("SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots"), 0,
+      _const_internal__compile__HKEY_LOCAL_MACHINE, string_to_wide(path), 0,
       _const_internal__compile__KEY_QUERY_VALUE |
           _const_internal__compile__KEY_WOW64_32KEY |
           _const_internal__compile__KEY_ENUMERATE_SUB_KEYS,
