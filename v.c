@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1178bfa"
+#define V_COMMIT_HASH "5b53b3d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d9c7253"
+#define V_COMMIT_HASH "1178bfa"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "1178bfa"
+#define V_CURRENT_COMMIT_HASH "5b53b3d"
 #endif
 
 typedef struct array array;
@@ -12702,7 +12702,8 @@ internal__compile__find_windows_kit_internal(internal__compile__RegKey key,
     if (value[length - 1] != ((u16)(0))) {
       value[length] = ((u16)(0));
     }
-    return string_from_wide(value);
+    string res = string_from_wide(value);
+    return opt_ok(&(string[]){res}, sizeof(string));
   }
 #endif
   return v_error(tos3("windows kit not found"));
@@ -18341,22 +18342,30 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser *p, int precedence) {
   } else if (p->tok.kind == v__token__Kind_key_sizeof) {
     v__parser__Parser_next(p);
     v__parser__Parser_check(p, v__token__Kind_lpar);
-    if (string_eq(p->tok.lit, tos3("C"))) {
-      v__parser__Parser_next(p);
-      v__parser__Parser_check(p, v__token__Kind_dot);
-    }
     if (p->tok.kind == v__token__Kind_amp) {
       v__parser__Parser_next(p);
     }
-    v__table__Type sizeof_type = v__parser__Parser_parse_type(p);
+    if (string_eq(p->tok.lit, tos3("C"))) {
+      v__parser__Parser_next(p);
+      v__parser__Parser_check(p, v__token__Kind_dot);
+      node = /* sum type cast */ (v__ast__Expr){
+          .obj = memdup(&(v__ast__SizeOf[]){(v__ast__SizeOf){
+                            .type_name = v__parser__Parser_check_name(p),
+                            .typ = {0},
+                        }},
+                        sizeof(v__ast__SizeOf)),
+          .typ = 190 /* v.ast.SizeOf */};
+    } else {
+      v__table__Type sizeof_type = v__parser__Parser_parse_type(p);
+      node = /* sum type cast */ (v__ast__Expr){
+          .obj = memdup(&(v__ast__SizeOf[]){(v__ast__SizeOf){
+                            .typ = sizeof_type,
+                            .type_name = tos3(""),
+                        }},
+                        sizeof(v__ast__SizeOf)),
+          .typ = 190 /* v.ast.SizeOf */};
+    }
     v__parser__Parser_check(p, v__token__Kind_rpar);
-    node = /* sum type cast */ (v__ast__Expr){
-        .obj = memdup(&(v__ast__SizeOf[]){(v__ast__SizeOf){
-                          .typ = sizeof_type,
-                          .type_name = tos3(""),
-                      }},
-                      sizeof(v__ast__SizeOf)),
-        .typ = 190 /* v.ast.SizeOf */};
   } else if (p->tok.kind == v__token__Kind_key_typeof) {
     v__parser__Parser_next(p);
     v__parser__Parser_check(p, v__token__Kind_lpar);
@@ -22524,8 +22533,13 @@ void v__gen__Gen_expr(v__gen__Gen *g, v__ast__Expr node) {
     g->is_amp = false;
   } else if (node.typ == 190 /* v.ast.SizeOf */) {
     v__ast__SizeOf *it = (v__ast__SizeOf *)node.obj; // ST it
-    string styp = v__gen__Gen_typ(g, it->typ);
-    v__gen__Gen_write(g, _STR("sizeof(%.*s)", styp.len, styp.str));
+    if (string_ne(it->type_name, tos3(""))) {
+      v__gen__Gen_write(
+          g, _STR("sizeof(%.*s)", it->type_name.len, it->type_name.str));
+    } else {
+      string styp = v__gen__Gen_typ(g, it->typ);
+      v__gen__Gen_write(g, _STR("sizeof(%.*s)", styp.len, styp.str));
+    }
   } else if (node.typ == 206 /* v.ast.StringLiteral */) {
     v__ast__StringLiteral *it = (v__ast__StringLiteral *)node.obj; // ST it
     if (it->is_raw) {
