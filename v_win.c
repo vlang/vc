@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "12b8dc2"
+#define V_COMMIT_HASH "86ea886"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "TODO"
+#define V_COMMIT_HASH "12b8dc2"
 #endif
 
 typedef struct array array;
@@ -1360,16 +1360,16 @@ struct v__scanner__Scanner {
   int pos;
   int line_nr;
   int last_nl_pos;
-  bool inside_string;
-  bool inter_start;
-  bool inter_end;
-  bool debug;
+  bool is_inside_string;
+  bool is_inter_start;
+  bool is_inter_end;
+  bool is_debug;
   string line_comment;
-  bool started;
+  bool is_started;
   string fn_name;
-  bool print_line_on_error;
-  bool print_colored_error;
-  bool print_rel_paths_on_error;
+  bool is_print_line_on_error;
+  bool is_print_colored_error;
+  bool is_print_rel_paths_on_error;
   byte quote;
   array_int line_ends;
   int nr_lines;
@@ -25219,21 +25219,21 @@ v__scanner__new_scanner(string text, v__scanner__CommentsMode comments_mode) {
   return (v__scanner__Scanner *)memdup(
       &(v__scanner__Scanner){
           .text = text,
-          .print_line_on_error = true,
-          .print_colored_error = true,
-          .print_rel_paths_on_error = true,
+          .is_print_line_on_error = true,
+          .is_print_colored_error = true,
+          .is_print_rel_paths_on_error = true,
           .is_fmt = _const_v__scanner__is_fmt,
           .comments_mode = comments_mode,
           .file_path = tos3(""),
           .pos = 0,
           .line_nr = 0,
           .last_nl_pos = 0,
-          .inside_string = 0,
-          .inter_start = 0,
-          .inter_end = 0,
-          .debug = 0,
+          .is_inside_string = 0,
+          .is_inter_start = 0,
+          .is_inter_end = 0,
+          .is_debug = 0,
           .line_comment = tos3(""),
-          .started = 0,
+          .is_started = 0,
           .fn_name = tos3(""),
           .quote = 0,
           .line_ends = new_array(0, 1, sizeof(int)),
@@ -25290,7 +25290,7 @@ string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner *s) {
   while (s->pos < s->text.len) {
     /*assign_stmt*/ byte c = string_at(s->text, s->pos);
     if (!byte_is_bin_digit(c) && c != _const_v__scanner__num_sep) {
-      if ((!byte_is_digit(c) && !byte_is_letter(c)) || s->inside_string) {
+      if ((!byte_is_digit(c) && !byte_is_letter(c)) || s->is_inside_string) {
         break;
       } else if (!has_wrong_digit) {
         has_wrong_digit = true;
@@ -25322,7 +25322,7 @@ string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner *s) {
   while (s->pos < s->text.len) {
     /*assign_stmt*/ byte c = string_at(s->text, s->pos);
     if (!byte_is_hex_digit(c) && c != _const_v__scanner__num_sep) {
-      if (!byte_is_letter(c) || s->inside_string) {
+      if (!byte_is_letter(c) || s->is_inside_string) {
         break;
       } else if (!has_wrong_digit) {
         has_wrong_digit = true;
@@ -25354,7 +25354,7 @@ string v__scanner__Scanner_ident_oct_number(v__scanner__Scanner *s) {
   while (s->pos < s->text.len) {
     /*assign_stmt*/ byte c = string_at(s->text, s->pos);
     if (!byte_is_oct_digit(c) && c != _const_v__scanner__num_sep) {
-      if ((!byte_is_digit(c) && !byte_is_letter(c)) || s->inside_string) {
+      if ((!byte_is_digit(c) && !byte_is_letter(c)) || s->is_inside_string) {
         break;
       } else if (!has_wrong_digit) {
         has_wrong_digit = true;
@@ -25386,7 +25386,7 @@ string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner *s) {
   while (s->pos < s->text.len) {
     /*assign_stmt*/ byte c = string_at(s->text, s->pos);
     if (!byte_is_digit(c) && c != _const_v__scanner__num_sep) {
-      if (!byte_is_letter(c) || (c == 'e' || c == 'E') || s->inside_string) {
+      if (!byte_is_letter(c) || (c == 'e' || c == 'E') || s->is_inside_string) {
         break;
       } else if (!has_wrong_digit) {
         has_wrong_digit = true;
@@ -25409,7 +25409,7 @@ string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner *s) {
           /*assign_stmt*/ byte c = string_at(s->text, s->pos);
           if (!byte_is_digit(c)) {
             if (!byte_is_letter(c) || (c == 'e' || c == 'E') ||
-                s->inside_string) {
+                s->is_inside_string) {
               if (c == '.' && s->pos + 1 < s->text.len &&
                   !byte_is_digit(string_at(s->text, s->pos + 1)) &&
                   string_at(s->text, s->pos + 1) != ')') {
@@ -25443,7 +25443,7 @@ string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner *s) {
     while (s->pos < s->text.len) {
       /*assign_stmt*/ byte c = string_at(s->text, s->pos);
       if (!byte_is_digit(c)) {
-        if (!byte_is_letter(c) || s->inside_string) {
+        if (!byte_is_letter(c) || s->is_inside_string) {
           if (c == '.' && s->pos + 1 < s->text.len &&
               !byte_is_digit(string_at(s->text, s->pos + 1)) &&
               string_at(s->text, s->pos + 1) != ')') {
@@ -25513,22 +25513,22 @@ v__token__Token v__scanner__Scanner_end_of_file(v__scanner__Scanner *s) {
 }
 
 v__token__Token v__scanner__Scanner_scan(v__scanner__Scanner *s) {
-  if (s->started) {
+  if (s->is_started) {
     s->pos++;
   }
-  s->started = true;
+  s->is_started = true;
   if (s->pos >= s->text.len) {
     return v__scanner__Scanner_end_of_file(s);
   }
-  if (!s->inside_string) {
+  if (!s->is_inside_string) {
     v__scanner__Scanner_skip_whitespace(s);
   }
-  if (s->inter_end) {
+  if (s->is_inter_end) {
     if (string_at(s->text, s->pos) == s->quote) {
-      s->inter_end = false;
+      s->is_inter_end = false;
       return v__scanner__Scanner_new_token(s, v__token__Kind_string, tos3(""));
     }
-    s->inter_end = false;
+    s->is_inter_end = false;
     return v__scanner__Scanner_new_token(s, v__token__Kind_string,
                                          v__scanner__Scanner_ident_string(s));
   }
@@ -25549,23 +25549,23 @@ v__token__Token v__scanner__Scanner_scan(v__scanner__Scanner *s) {
       return v__scanner__Scanner_new_token(s, v__token__key_to_token(name),
                                            tos3(""));
     }
-    if (s->inside_string) {
+    if (s->is_inside_string) {
       if (next_char == s->quote) {
-        s->inter_end = true;
-        s->inter_start = false;
-        s->inside_string = false;
+        s->is_inter_end = true;
+        s->is_inter_start = false;
+        s->is_inside_string = false;
       }
     }
-    if (s->inter_start && next_char != '.' && next_char != '(') {
-      s->inter_end = true;
-      s->inter_start = false;
+    if (s->is_inter_start && next_char != '.' && next_char != '(') {
+      s->is_inter_end = true;
+      s->is_inter_start = false;
     }
     if (s->pos == 0 && next_char == ' ') {
       s->pos++;
     }
     return v__scanner__Scanner_new_token(s, v__token__Kind_name, name);
   } else if (byte_is_digit(c) || (c == '.' && byte_is_digit(nextc))) {
-    if (!s->inside_string) {
+    if (!s->is_inside_string) {
       /*assign_stmt*/ int start_pos = s->pos;
       while (start_pos < s->text.len && string_at(s->text, start_pos) == '0') {
         start_pos++;
@@ -25580,13 +25580,13 @@ v__token__Token v__scanner__Scanner_scan(v__scanner__Scanner *s) {
     /*assign_stmt*/ string num = v__scanner__Scanner_ident_number(s);
     return v__scanner__Scanner_new_token(s, v__token__Kind_number, num);
   }
-  if (c == ')' && s->inter_start) {
-    s->inter_end = true;
-    s->inter_start = false;
+  if (c == ')' && s->is_inter_start) {
+    s->is_inter_end = true;
+    s->is_inter_start = false;
     /*assign_stmt*/ byte next_char =
         (s->pos + 1 < s->text.len ? string_at(s->text, s->pos + 1) : '\0');
     if (next_char == s->quote) {
-      s->inside_string = false;
+      s->is_inside_string = false;
     }
     return v__scanner__Scanner_new_token(s, v__token__Kind_rpar, tos3(""));
   }
@@ -25649,22 +25649,22 @@ v__token__Token v__scanner__Scanner_scan(v__scanner__Scanner *s) {
   } else if (c == ']') {
     return v__scanner__Scanner_new_token(s, v__token__Kind_rsbr, tos3(""));
   } else if (c == '{') {
-    if (s->inside_string) {
+    if (s->is_inside_string) {
       return v__scanner__Scanner_scan(s);
     }
     return v__scanner__Scanner_new_token(s, v__token__Kind_lcbr, tos3(""));
   } else if (c == '$') {
-    if (s->inside_string) {
+    if (s->is_inside_string) {
       return v__scanner__Scanner_new_token(s, v__token__Kind_str_dollar,
                                            tos3(""));
     } else {
       return v__scanner__Scanner_new_token(s, v__token__Kind_dollar, tos3(""));
     }
   } else if (c == '}') {
-    if (s->inside_string) {
+    if (s->is_inside_string) {
       s->pos++;
       if (string_at(s->text, s->pos) == s->quote) {
-        s->inside_string = false;
+        s->is_inside_string = false;
         return v__scanner__Scanner_new_token(s, v__token__Kind_string,
                                              tos3(""));
       }
@@ -25912,11 +25912,11 @@ string v__scanner__Scanner_ident_string(v__scanner__Scanner *s) {
                                   q == _const_v__scanner__double_quote;
   /*assign_stmt*/ bool is_raw =
       is_quote && string_at(s->text, s->pos - 1) == 'r';
-  if (is_quote && !s->inside_string) {
+  if (is_quote && !s->is_inside_string) {
     s->quote = q;
   }
   /*assign_stmt*/ int start = s->pos;
-  s->inside_string = false;
+  s->is_inside_string = false;
   /*assign_stmt*/ byte slash = '\\';
   while (1) {
     s->pos++;
@@ -25948,7 +25948,7 @@ string v__scanner__Scanner_ident_string(v__scanner__Scanner *s) {
         v__scanner__Scanner_count_symbol_before(/*rec*/ *s, s->pos - 2, slash) %
                 2 ==
             0) {
-      s->inside_string = true;
+      s->is_inside_string = true;
       s->pos -= 2;
       break;
     }
@@ -25956,8 +25956,8 @@ string v__scanner__Scanner_ident_string(v__scanner__Scanner *s) {
         v__scanner__Scanner_count_symbol_before(/*rec*/ *s, s->pos - 2, slash) %
                 2 ==
             0) {
-      s->inside_string = true;
-      s->inter_start = true;
+      s->is_inside_string = true;
+      s->is_inter_start = true;
       s->pos -= 2;
       break;
     }
@@ -25967,7 +25967,7 @@ string v__scanner__Scanner_ident_string(v__scanner__Scanner *s) {
     start++;
   }
   /*assign_stmt*/ int end = s->pos;
-  if (s->inside_string) {
+  if (s->is_inside_string) {
     end++;
   }
   if (start > s->pos) {
@@ -26036,8 +26036,8 @@ bool v__scanner__Scanner_expect(v__scanner__Scanner *s, string want,
 
 void v__scanner__Scanner_debug_tokens(v__scanner__Scanner *s) {
   s->pos = 0;
-  s->started = false;
-  s->debug = true;
+  s->is_started = false;
+  s->is_debug = true;
   /*assign_stmt*/ string fname =
       string_all_after(s->file_path, _const_os__path_separator);
   println(_STR("\n===DEBUG TOKENS %.*s===", fname.len, fname.str));
