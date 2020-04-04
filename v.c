@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b056754"
+#define V_COMMIT_HASH "4540195"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "abd0686"
+#define V_COMMIT_HASH "b056754"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b056754"
+#define V_CURRENT_COMMIT_HASH "4540195"
 #endif
 
 typedef struct array array;
@@ -1824,6 +1824,7 @@ struct v__gen__Gen {
 	strings__Builder definitions;
 	strings__Builder inits;
 	strings__Builder gowrappers;
+	strings__Builder stringliterals;
 	v__table__Table* table;
 	v__pref__Preferences* pref;
 	v__ast__File file;
@@ -2045,7 +2046,7 @@ bool f32_ge(f32 a, f32 b);
 bool f64_gebit(f64 a, f64 b);
 bool f32_gebit(f32 a, f32 b);
 string ptr_str(voidptr ptr);
-string _const_digit_pairs; // inited later
+string _const_digit_pairs; // a string literal, inited later
 string int_str_l(int nn, int max);
 string i8_str(i8 n);
 string i16_str(i16 n);
@@ -2068,13 +2069,13 @@ string rune_str(rune c);
 string byte_str(byte c);
 bool byte_is_capital(byte c);
 array_byte array_byte_clone(array_byte b);
-int _const_hashbits; // inited later
-int _const_cached_hashbits; // inited later
-int _const_init_log_capicity; // inited later
+#define _const_hashbits 24
+#define _const_cached_hashbits 16
+#define _const_init_log_capicity 5
 int _const_init_capicity; // inited later
 f64 _const_max_load_factor; // inited later
 int _const_init_cap; // inited later
-int _const_extra_metas_inc; // inited later
+#define _const_extra_metas_inc 4
 u32 _const_hash_mask; // inited later
 u32 _const_probe_inc; // inited later
 DenseArray new_dense_array();
@@ -2100,7 +2101,7 @@ Option opt_ok(voidptr data, int size);
 Option opt_none();
 Option v_error(string s);
 Option error_with_code(string s, int code);
-int _const_degree; // inited later
+#define _const_degree 6
 int _const_mid_index; // inited later
 int _const_max_size; // inited later
 int _const_children_bytes; // inited later
@@ -2234,7 +2235,7 @@ int utf8_char_len(byte b);
 string utf32_to_str(u32 code);
 string utf32_to_str_no_malloc(u32 code, voidptr buf);
 int string_utf32_code(string _rune);
-int _const_CP_UTF8; // inited later
+#define _const_CP_UTF8 65001
 u16* string_to_wide(string _str);
 string string_from_wide(u16* _wstr);
 string string_from_wide2(u16* _wstr, int len);
@@ -2269,7 +2270,7 @@ array_u32 _const_strconv__ftoa__ten_pow_table_32; // inited later
 u32 _const_strconv__ftoa__mantbits32; // inited later
 u32 _const_strconv__ftoa__expbits32; // inited later
 u32 _const_strconv__ftoa__bias32; // inited later
-int _const_strconv__ftoa__maxexp32; // inited later
+#define _const_strconv__ftoa__maxexp32 255
 string strconv__ftoa__Dec32_get_string_32(strconv__ftoa__Dec32 d, bool neg, int i_n_digit);
 multi_return_strconv__ftoa__Dec32_bool strconv__ftoa__f32_to_decimal_exact_int(u32 i_mant, u32 exp);
 strconv__ftoa__Dec32 strconv__ftoa__f32_to_decimal(u32 mant, u32 exp);
@@ -2278,7 +2279,7 @@ array_u64 _const_strconv__ftoa__ten_pow_table_64; // inited later
 u32 _const_strconv__ftoa__mantbits64; // inited later
 u32 _const_strconv__ftoa__expbits64; // inited later
 u32 _const_strconv__ftoa__bias64; // inited later
-int _const_strconv__ftoa__maxexp64; // inited later
+#define _const_strconv__ftoa__maxexp64 2047
 string strconv__ftoa__Dec64_get_string_64(strconv__ftoa__Dec64 d, bool neg, int i_n_digit);
 multi_return_strconv__ftoa__Dec64_bool strconv__ftoa__f64_to_decimal_exact_int(u64 i_mant, u64 exp);
 strconv__ftoa__Dec64 strconv__ftoa__f64_to_decimal(u64 mant, u64 exp);
@@ -2287,10 +2288,10 @@ string strconv__ftoa__ftoa_64(f64 f);
 string strconv__ftoa__ftoa_long_64(f64 f);
 string strconv__ftoa__ftoa_32(f32 f);
 string strconv__ftoa__ftoa_long_32(f32 f);
-int _const_strconv__ftoa__pow5_num_bits_32; // inited later
-int _const_strconv__ftoa__pow5_inv_num_bits_32; // inited later
-int _const_strconv__ftoa__pow5_num_bits_64; // inited later
-int _const_strconv__ftoa__pow5_inv_num_bits_64; // inited later
+#define _const_strconv__ftoa__pow5_num_bits_32 61
+#define _const_strconv__ftoa__pow5_inv_num_bits_32 59
+#define _const_strconv__ftoa__pow5_num_bits_64 121
+#define _const_strconv__ftoa__pow5_inv_num_bits_64 122
 array_u64 _const_strconv__ftoa__powers_of_10; // inited later
 array_u64 _const_strconv__ftoa__pow5_split_32; // inited later
 array_u64 _const_strconv__ftoa__pow5_inv_split_32; // inited later
@@ -2338,26 +2339,26 @@ multi_return_u32_u32_u32 strconv__lsr96(u32 s2, u32 s1, u32 s0);
 multi_return_u32_u32_u32 strconv__lsl96(u32 s2, u32 s1, u32 s0);
 multi_return_u32_u32_u32 strconv__add96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1, u32 d0);
 multi_return_u32_u32_u32 strconv__sub96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1, u32 d0);
-int _const_strconv__DIGITS; // inited later
+#define _const_strconv__DIGITS 18
 u64 _const_strconv__DOUBLE_PLUS_ZERO; // inited later
 u64 _const_strconv__DOUBLE_MINUS_ZERO; // inited later
 u64 _const_strconv__DOUBLE_PLUS_INFINITY; // inited later
 u64 _const_strconv__DOUBLE_MINUS_INFINITY; // inited later
-int _const_strconv__fsm_a; // inited later
-int _const_strconv__fsm_b; // inited later
-int _const_strconv__fsm_c; // inited later
-int _const_strconv__fsm_d; // inited later
-int _const_strconv__fsm_e; // inited later
-int _const_strconv__fsm_f; // inited later
-int _const_strconv__fsm_g; // inited later
-int _const_strconv__fsm_h; // inited later
-int _const_strconv__fsm_i; // inited later
-int _const_strconv__FSM_STOP; // inited later
-int _const_strconv__parser_ok; // inited later
-int _const_strconv__parser_pzero; // inited later
-int _const_strconv__parser_mzero; // inited later
-int _const_strconv__parser_pinf; // inited later
-int _const_strconv__parser_minf; // inited later
+#define _const_strconv__fsm_a 0
+#define _const_strconv__fsm_b 1
+#define _const_strconv__fsm_c 2
+#define _const_strconv__fsm_d 3
+#define _const_strconv__fsm_e 4
+#define _const_strconv__fsm_f 5
+#define _const_strconv__fsm_g 6
+#define _const_strconv__fsm_h 7
+#define _const_strconv__fsm_i 8
+#define _const_strconv__FSM_STOP 9
+#define _const_strconv__parser_ok 0
+#define _const_strconv__parser_pzero 1
+#define _const_strconv__parser_mzero 2
+#define _const_strconv__parser_pinf 3
+#define _const_strconv__parser_minf 4
 #define _const_strconv__DPOINT '.'
 #define _const_strconv__PLUS '+'
 #define _const_strconv__MINUS '-'
@@ -2370,7 +2371,7 @@ bool strconv__is_exp(byte x);
 multi_return_int_strconv__PrepNumber strconv__parser(string s);
 u64 strconv__converter(strconv__PrepNumber* pn);
 f64 strconv__atof64(string s);
-int _const_strconv__int_size; // inited later
+#define _const_strconv__int_size 32
 u64 _const_strconv__max_u64; // inited later
 byte strconv__byte_to_lower(byte c);
 u64 strconv__common_parse_uint(string s, int _base, int _bit_size, bool error_on_non_digit, bool error_on_high_digit);
@@ -2395,25 +2396,25 @@ bool internal__flag__Instance_bool(internal__flag__Instance* p);
 void internal__flag__Instance_is_equivalent_to(internal__flag__Instance* p, array_string flags);
 Option_array_string internal__flag__parse_pref(array_string args, void (*callback)(string, internal__flag__Instance*, v__pref__Preferences*), v__pref__Preferences* obj);
 Option_array_string internal__flag__parse_main_cmd(array_string args, void (*callback)(string, internal__flag__Instance*, internal__flag__MainCmdPreferences*), internal__flag__MainCmdPreferences* obj);
-int _const_os__S_IFMT; // inited later
-int _const_os__S_IFDIR; // inited later
-int _const_os__S_IFLNK; // inited later
-int _const_os__S_IXUSR; // inited later
-int _const_os__S_IXGRP; // inited later
-int _const_os__S_IXOTH; // inited later
+#define _const_os__S_IFMT 0xF000
+#define _const_os__S_IFDIR 0x4000
+#define _const_os__S_IFLNK 0xa000
+#define _const_os__S_IXUSR 0100
+#define _const_os__S_IXGRP 0010
+#define _const_os__S_IXOTH 0001
 int _const_os__STD_INPUT_HANDLE; // inited later
 int _const_os__STD_OUTPUT_HANDLE; // inited later
 int _const_os__STD_ERROR_HANDLE; // inited later
-int _const_os__O_RDONLY; // inited later
-int _const_os__O_WRONLY; // inited later
-int _const_os__O_RDWR; // inited later
-int _const_os__O_CREATE; // inited later
-int _const_os__O_EXCL; // inited later
-int _const_os__O_NOCTTY; // inited later
-int _const_os__O_TRUNC; // inited later
-int _const_os__O_APPEND; // inited later
-int _const_os__O_NONBLOCK; // inited later
-int _const_os__O_SYNC; // inited later
+#define _const_os__O_RDONLY 0
+#define _const_os__O_WRONLY 1
+#define _const_os__O_RDWR 2
+#define _const_os__O_CREATE 100
+#define _const_os__O_EXCL 200
+#define _const_os__O_NOCTTY 400
+#define _const_os__O_TRUNC 1000
+#define _const_os__O_APPEND 2000
+#define _const_os__O_NONBLOCK 4000
+#define _const_os__O_SYNC 10000
 string os__getenv(string key);
 int os__setenv(string name, string value, bool overwrite);
 int os__unsetenv(string name);
@@ -2421,7 +2422,7 @@ map_string_string os__environ();
 #include <sys/stat.h> // #include <signal.h>
 #include <errno.h>
 array_string _const_os__args; // inited later
-int _const_os__MAX_PATH; // inited later
+#define _const_os__MAX_PATH 4096
 bool os__File_is_opened(os__File f);
 array_byte os__File_read_bytes(os__File* f, int size);
 array_byte os__File_read_bytes_at(os__File* f, int size, int pos);
@@ -2450,10 +2451,10 @@ string os__posix_get_error_msg(int code);
 int os__vpclose(voidptr f);
 int os__system(string cmd);
 string os__sigint_to_signal_name(int si);
-int _const_os__F_OK; // inited later
-int _const_os__X_OK; // inited later
-int _const_os__W_OK; // inited later
-int _const_os__R_OK; // inited later
+#define _const_os__F_OK 0
+#define _const_os__X_OK 1
+#define _const_os__W_OK 2
+#define _const_os__R_OK 4
 bool os__exists(string path);
 bool os__is_executable(string path);
 bool os__is_writable(string path);
@@ -2504,22 +2505,22 @@ string os__temp_dir();
 void os__chmod(string path, int mode);
 string _const_os__wd_at_startup; // inited later
 string os__resource_abs_path(string path);
-int _const_os__PROT_READ; // inited later
-int _const_os__PROT_WRITE; // inited later
-int _const_os__MAP_PRIVATE; // inited later
-int _const_os__MAP_ANONYMOUS; // inited later
-int _const_os__sys_write; // inited later
-int _const_os__sys_open; // inited later
-int _const_os__sys_close; // inited later
-int _const_os__sys_mkdir; // inited later
-int _const_os__sys_creat; // inited later
+#define _const_os__PROT_READ 1
+#define _const_os__PROT_WRITE 2
+#define _const_os__MAP_PRIVATE 0x02
+#define _const_os__MAP_ANONYMOUS 0x20
+#define _const_os__sys_write 1
+#define _const_os__sys_open 2
+#define _const_os__sys_close 3
+#define _const_os__sys_mkdir 83
+#define _const_os__sys_creat 85
 #include <dirent.h>
 #include <unistd.h>
 #include <fcntl.h>
-string _const_os__path_separator; // inited later
-int _const_os__stdin_value; // inited later
-int _const_os__stdout_value; // inited later
-int _const_os__stderr_value; // inited later
+string _const_os__path_separator; // a string literal, inited later
+#define _const_os__stdin_value 0
+#define _const_os__stdout_value 1
+#define _const_os__stderr_value 2
 array_string os__init_os_args(int argc, byteptr* argv);
 Option_array_string os__ls(string path);
 Option_os__File os__open(string path);
@@ -2595,7 +2596,7 @@ internal__compile__MsvcStringFlags array_internal__compile__CFlag_msvc_string_fl
 void internal__compile__parse_and_output_new_format(array_string args);
 array_internal__compile__Deprecated internal__compile__add_if_found_deprecated(array_string args, string deprecated, string alt);
 array_string internal__compile__add_if_found_string(array_string args, string deprecated);
-string _const_internal__help__unknown_topic; // inited later
+string _const_internal__help__unknown_topic; // a string literal, inited later
 void internal__help__print_and_exit(string topic);
 array_string os__cmdline__options(array_string args, string param);
 string os__cmdline__option(array_string args, string param, string def);
@@ -2616,26 +2617,26 @@ bool v__table__type_is(v__table__Type t, v__table__TypeFlag flag);
 v__table__Type v__table__new_type(int idx);
 v__table__Type v__table__new_type_ptr(int idx, int nr_muls);
 bool v__table__is_number(v__table__Type typ);
-int _const_v__table__void_type_idx; // inited later
-int _const_v__table__voidptr_type_idx; // inited later
-int _const_v__table__byteptr_type_idx; // inited later
-int _const_v__table__charptr_type_idx; // inited later
-int _const_v__table__i8_type_idx; // inited later
-int _const_v__table__i16_type_idx; // inited later
-int _const_v__table__int_type_idx; // inited later
-int _const_v__table__i64_type_idx; // inited later
-int _const_v__table__byte_type_idx; // inited later
-int _const_v__table__u16_type_idx; // inited later
-int _const_v__table__u32_type_idx; // inited later
-int _const_v__table__u64_type_idx; // inited later
-int _const_v__table__f32_type_idx; // inited later
-int _const_v__table__f64_type_idx; // inited later
-int _const_v__table__char_type_idx; // inited later
-int _const_v__table__bool_type_idx; // inited later
-int _const_v__table__none_type_idx; // inited later
-int _const_v__table__string_type_idx; // inited later
-int _const_v__table__array_type_idx; // inited later
-int _const_v__table__map_type_idx; // inited later
+#define _const_v__table__void_type_idx 1
+#define _const_v__table__voidptr_type_idx 2
+#define _const_v__table__byteptr_type_idx 3
+#define _const_v__table__charptr_type_idx 4
+#define _const_v__table__i8_type_idx 5
+#define _const_v__table__i16_type_idx 6
+#define _const_v__table__int_type_idx 7
+#define _const_v__table__i64_type_idx 8
+#define _const_v__table__byte_type_idx 9
+#define _const_v__table__u16_type_idx 10
+#define _const_v__table__u32_type_idx 11
+#define _const_v__table__u64_type_idx 12
+#define _const_v__table__f32_type_idx 13
+#define _const_v__table__f64_type_idx 14
+#define _const_v__table__char_type_idx 15
+#define _const_v__table__bool_type_idx 16
+#define _const_v__table__none_type_idx 17
+#define _const_v__table__string_type_idx 18
+#define _const_v__table__array_type_idx 19
+#define _const_v__table__map_type_idx 20
 array_int _const_v__table__number_type_idxs; // inited later
 array_int _const_v__table__pointer_type_idxs; // inited later
 v__table__Type _const_v__table__void_type; // inited later
@@ -2728,14 +2729,14 @@ string v__pref__OS_str(v__pref__OS o);
 v__pref__OS v__pref__get_host_os();
 Option_v__pref__Backend v__pref__backend_from_string(string s);
 bool v__pref__VerboseLevel_is_higher_or_equal(v__pref__VerboseLevel v, v__pref__VerboseLevel other);
-int _const_v__util__error_context_before; // inited later
-int _const_v__util__error_context_after; // inited later
+#define _const_v__util__error_context_before 2
+#define _const_v__util__error_context_after 2
 v__util__EManager* _const_v__util__emanager; // inited later
 void v__util__EManager_set_support_color(v__util__EManager* e, bool b);
 v__util__EManager* v__util__new_error_manager();
 string v__util__formated_error(string kind, string emsg, string filepath, v__token__Position pos);
 void v__util__verror(string kind, string s);
-string _const_v__util__v_version; // inited later
+string _const_v__util__v_version; // a string literal, inited later
 string v__util__vhash();
 string v__util__full_hash();
 string v__util__full_v_version();
@@ -2787,8 +2788,8 @@ multi_return_u32_u32 math__bits__sub_32(u32 x, u32 y, u32 borrow);
 multi_return_u64_u64 math__bits__sub_64(u64 x, u64 y, u64 borrow);
 u64 _const_math__bits__two32; // inited later
 u64 _const_math__bits__mask32; // inited later
-string _const_math__bits__overflow_error; // inited later
-string _const_math__bits__divide_error; // inited later
+string _const_math__bits__overflow_error; // a string literal, inited later
+string _const_math__bits__divide_error; // a string literal, inited later
 multi_return_u32_u32 math__bits__mul_32(u32 x, u32 y);
 multi_return_u64_u64 math__bits__mul_64(u64 x, u64 y);
 multi_return_u32_u32 math__bits__div_32(u32 hi, u32 lo, u32 y);
@@ -2816,11 +2817,11 @@ typedef Option Option_time__Time;
 Option_time__Time time__parse(string s);
 Option_time__Time time__parse_rfc2822(string s);
 #include <time.h>
-string _const_time__days_string; // inited later
+string _const_time__days_string; // a string literal, inited later
 array_int _const_time__month_days; // inited later
-string _const_time__months_string; // inited later
+string _const_time__months_string; // a string literal, inited later
 i64 _const_time__absolute_zero_year; // inited later
-int _const_time__seconds_per_minute; // inited later
+#define _const_time__seconds_per_minute 60
 int _const_time__seconds_per_hour; // inited later
 int _const_time__seconds_per_day; // inited later
 int _const_time__seconds_per_week; // inited later
@@ -2915,8 +2916,8 @@ void term__erase_line_tobeg();
 void term__erase_line_clear();
 void term__show_cursor();
 void term__hide_cursor();
-int _const_term__default_columns_size; // inited later
-int _const_term__default_rows_size; // inited later
+#define _const_term__default_columns_size 80
+#define _const_term__default_rows_size 25
 bool term__can_show_color_on_stdout();
 bool term__can_show_color_on_stderr();
 string term__ok_message(string s);
@@ -3088,7 +3089,7 @@ bool v__token__Token_is_unary(v__token__Token tok);
 bool v__token__Kind_is_relational(v__token__Kind tok);
 bool v__token__Kind_is_start_of_type(v__token__Kind k);
 bool v__token__Kind_is_infix(v__token__Kind kind);
-int _const_v__checker__max_nr_errors; // inited later
+#define _const_v__checker__max_nr_errors 300
 v__checker__Checker v__checker__new_checker(v__table__Table* table, v__pref__Preferences* pref);
 void v__checker__Checker_check(v__checker__Checker* c, v__ast__File ast_file);
 array_string v__checker__Checker_check2(v__checker__Checker* c, v__ast__File ast_file);
@@ -3119,6 +3120,7 @@ array_string _const_v__gen__tabs; // inited later
 string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__Preferences* pref);
 string v__gen__Gen_hashes(v__gen__Gen* g);
 void v__gen__Gen_init(v__gen__Gen* g);
+void v__gen__Gen_finish(v__gen__Gen* g);
 void v__gen__Gen_write_typeof_functions(v__gen__Gen* g);
 string v__gen__Gen_typ(v__gen__Gen* g, v__table__Type t);
 void v__gen__Gen_write_typedef_types(v__gen__Gen* g);
@@ -3151,6 +3153,7 @@ void v__gen__Gen_if_expr(v__gen__Gen* g, v__ast__IfExpr node);
 void v__gen__Gen_index_expr(v__gen__Gen* g, v__ast__IndexExpr node);
 void v__gen__Gen_return_statement(v__gen__Gen* g, v__ast__Return node);
 void v__gen__Gen_const_decl(v__gen__Gen* g, v__ast__ConstDecl node);
+void v__gen__Gen_const_decl_simple_define(v__gen__Gen* g, string name, string val);
 void v__gen__Gen_struct_init(v__gen__Gen* g, v__ast__StructInit it);
 void v__gen__Gen_assoc(v__gen__Gen* g, v__ast__Assoc node);
 void v__gen__Gen_call_args(v__gen__Gen* g, array_v__ast__CallArg args, array_v__table__Type expected_types);
@@ -3182,11 +3185,11 @@ void v__gen__Gen_comp_if(v__gen__Gen* g, v__ast__CompIf it);
 void v__gen__Gen_go_stmt(v__gen__Gen* g, v__ast__GoStmt node);
 void v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__TypeSymbol sym, string styp);
 string v__gen__type_to_fmt(v__table__Type typ);
-string _const_v__gen__c_commit_hash_default; // inited later
-string _const_v__gen__c_current_commit_hash_default; // inited later
-string _const_v__gen__c_common_macros; // inited later
+string _const_v__gen__c_commit_hash_default; // a string literal, inited later
+string _const_v__gen__c_current_commit_hash_default; // a string literal, inited later
+string _const_v__gen__c_common_macros; // a string literal, inited later
 string _const_v__gen__c_headers; // inited later
-string _const_v__gen__c_builtin_types; // inited later
+string _const_v__gen__c_builtin_types; // a string literal, inited later
 string _const_v__gen__bare_c_headers; // inited later
 string v__gen__jsgen(v__ast__File program, v__table__Table* table);
 void v__gen__JsGen_save(v__gen__JsGen* g);
@@ -3195,22 +3198,22 @@ void v__gen__JsGen_writeln(v__gen__JsGen* g, string s);
 void v__gen__JsGen_stmts(v__gen__JsGen* g, array_v__ast__Stmt stmts);
 void v__gen__JsGen_stmt(v__gen__JsGen* g, v__ast__Stmt node);
 void v__gen__JsGen_expr(v__gen__JsGen* g, v__ast__Expr node);
-int _const_v__gen__x64__mag0; // inited later
+#define _const_v__gen__x64__mag0 0x7f
 #define _const_v__gen__x64__mag1 'E'
 #define _const_v__gen__x64__mag2 'L'
 #define _const_v__gen__x64__mag3 'F'
-int _const_v__gen__x64__ei_class; // inited later
-int _const_v__gen__x64__elfclass64; // inited later
-int _const_v__gen__x64__elfdata2lsb; // inited later
-int _const_v__gen__x64__ev_current; // inited later
-int _const_v__gen__x64__elf_osabi; // inited later
-int _const_v__gen__x64__et_rel; // inited later
-int _const_v__gen__x64__et_exec; // inited later
-int _const_v__gen__x64__et_dyn; // inited later
-int _const_v__gen__x64__e_machine; // inited later
-int _const_v__gen__x64__shn_xindex; // inited later
-int _const_v__gen__x64__sht_null; // inited later
-int _const_v__gen__x64__segment_start; // inited later
+#define _const_v__gen__x64__ei_class 4
+#define _const_v__gen__x64__elfclass64 2
+#define _const_v__gen__x64__elfdata2lsb 1
+#define _const_v__gen__x64__ev_current 1
+#define _const_v__gen__x64__elf_osabi 0
+#define _const_v__gen__x64__et_rel 1
+#define _const_v__gen__x64__et_exec 2
+#define _const_v__gen__x64__et_dyn 3
+#define _const_v__gen__x64__e_machine 0x3e
+#define _const_v__gen__x64__shn_xindex 0xffff
+#define _const_v__gen__x64__sht_null 0
+#define _const_v__gen__x64__segment_start 0x400000
 void v__gen__x64__Gen_generate_elf_header(v__gen__x64__Gen* g);
 void v__gen__x64__Gen_generate_elf_footer(v__gen__x64__Gen* g);
 void v__gen__x64__Gen_section_header(v__gen__x64__Gen* g, v__gen__x64__SectionConfig c);
@@ -3309,6 +3312,25 @@ struct varg_int {
 	int len;
 	int args[0];
 };
+
+
+// >> string literal consts
+void vinit_string_literals(){
+	_const_digit_pairs = tos3("00102030405060708090011121314151617181910212223242526272829203132333435363738393041424344454647484940515253545556575859506162636465666768696071727374757677787970818283848586878889809192939495969798999");
+	_const_os__path_separator = tos3("/");
+	_const_internal__help__unknown_topic = tos3("V Error: Unknown help topic provided. Use `v help` for usage information.");
+	_const_v__util__v_version = tos3("0.1.26");
+	_const_math__bits__overflow_error = tos3("Overflow Error");
+	_const_math__bits__divide_error = tos3("Divide Error");
+	_const_time__days_string = tos3("MonTueWedThuFriSatSun");
+	_const_time__months_string = tos3("JanFebMarAprMayJunJulAugSepOctNovDec");
+	_const_v__gen__c_commit_hash_default = tos3("\n#ifndef V_COMMIT_HASH\n#define V_COMMIT_HASH \"@@@\"\n#endif\n\n");
+	_const_v__gen__c_current_commit_hash_default = tos3("\n#ifndef V_CURRENT_COMMIT_HASH\n#define V_CURRENT_COMMIT_HASH \"@@@\"\n#endif\n\n");
+	_const_v__gen__c_common_macros = tos3("\n#define EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an array needs to be specified, but GCC crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#ifdef __TINYC__\n#undef EMPTY_STRUCT_DECLARATION\n#undef EMPTY_STRUCT_INITIALIZATION\n#define EMPTY_STRUCT_DECLARATION char _dummy\n#define EMPTY_STRUCT_INITIALIZATION 0\n#undef EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef TCCSKIP\n#define TCCSKIP(x)\n#endif\n\n// for __offset_of\n#ifndef __offsetof\n#define __offsetof(s,memb) \\\n    ((size_t)((char *)&((s *)0)->memb - (char *)0))\n#endif\n\n#define OPTION_CAST(x) (x)\n\n#ifndef V64_PRINTFORMAT\n#ifdef PRIx64\n#define V64_PRINTFORMAT \"0x%\"PRIx64\n#elif defined(__WIN32__)\n#define V64_PRINTFORMAT \"0x%I64x\"\n#elif defined(__LINUX__) && defined(__LP64__)\n#define V64_PRINTFORMAT \"0x%lx\"\n#else\n#define V64_PRINTFORMAT \"0x%llx\"\n#endif\n#endif\n\n");
+	_const_v__gen__c_builtin_types = tos3("\n\n//================================== builtin types ================================*/\n\ntypedef int64_t i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef unsigned char* byteptr;\ntypedef int* intptr;\ntypedef void* voidptr;\ntypedef char* charptr;\ntypedef struct array array;\ntypedef struct map map;\ntypedef array array_string;\ntypedef array array_int;\ntypedef array array_byte;\ntypedef array array_f32;\ntypedef array array_f64;\ntypedef array array_u16;\ntypedef array array_u32;\ntypedef array array_u64;\ntypedef map map_int;\ntypedef map map_string;\ntypedef byte array_fixed_byte_300 [300];\ntypedef byte array_fixed_byte_400 [400];\n#ifndef bool\n	typedef int bool;\n	#define true 1\n	#define false 0\n#endif\n\n");
+}
+// << string literal consts
+
 
 // >> typeof() support for sum types
 char * v_typeof_sumtype_104(int sidx) { /* v.table.TypeInfo */ 
@@ -3425,6 +3447,7 @@ char * v_typeof_sumtype_237(int sidx) { /* v.ast.IdentInfo */
 	}
 }
 // << typeof() support for sum types
+
 
 string _STR(const char *fmt, ...) {
 	va_list argptr;
@@ -19580,6 +19603,7 @@ string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__P
 		.typedefs = strings__new_builder(100),
 		.definitions = strings__new_builder(100),
 		.gowrappers = strings__new_builder(100),
+		.stringliterals = strings__new_builder(100),
 		.inits = strings__new_builder(100),
 		.table = table,
 		.pref = pref,
@@ -19633,7 +19657,8 @@ string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__P
 	if (g.is_test) {
 		v__gen__Gen_write_tests_main(&g);
 	}
-	return string_add(string_add(string_add(string_add(v__gen__Gen_hashes(&g), strings__Builder_str(&g.typedefs)), strings__Builder_str(&g.definitions)), strings__Builder_str(&g.gowrappers)), strings__Builder_str(&g.out));
+	v__gen__Gen_finish(&g);
+	return string_add(string_add(string_add(string_add(string_add(v__gen__Gen_hashes(&g), strings__Builder_str(&g.typedefs)), strings__Builder_str(&g.definitions)), strings__Builder_str(&g.gowrappers)), strings__Builder_str(&g.stringliterals)), strings__Builder_str(&g.out));
 }
 
 string v__gen__Gen_hashes(v__gen__Gen* g) { 
@@ -19656,9 +19681,19 @@ void v__gen__Gen_init(v__gen__Gen* g) {
 	v__gen__Gen_write_sorted_types(g);
 	v__gen__Gen_write_multi_return_types(g);
 	strings__Builder_writeln(&g->definitions, tos3("// end of definitions #endif"));
+	strings__Builder_writeln(&g->stringliterals, tos3(""));
+	strings__Builder_writeln(&g->stringliterals, tos3("// >> string literal consts"));
+	strings__Builder_writeln(&g->stringliterals, tos3("void vinit_string_literals(){"));
+}
+
+void v__gen__Gen_finish(v__gen__Gen* g) { 
+	strings__Builder_writeln(&g->stringliterals, tos3("}"));
+	strings__Builder_writeln(&g->stringliterals, tos3("// << string literal consts"));
+	strings__Builder_writeln(&g->stringliterals, tos3(""));
 }
 
 void v__gen__Gen_write_typeof_functions(v__gen__Gen* g) { 
+	v__gen__Gen_writeln(g, tos3(""));
 	v__gen__Gen_writeln(g, tos3("// >> typeof() support for sum types"));
 	// FOR IN
 	for (int tmp1 = 0; tmp1 < g->table->types.
@@ -19681,6 +19716,7 @@ void v__gen__Gen_write_typeof_functions(v__gen__Gen* g) {
 		}
 	}
 	v__gen__Gen_writeln(g, tos3("// << typeof() support for sum types"));
+	v__gen__Gen_writeln(g, tos3(""));
 }
 
 string v__gen__Gen_typ(v__gen__Gen* g, v__table__Type t) { 
@@ -21240,18 +21276,29 @@ void v__gen__Gen_const_decl(v__gen__Gen* g, v__ast__ConstDecl node) {
 		strings__Builder_go_back(&g->out, val.len);
 		if (field.expr.typ == 188 /* v.ast.CharLiteral */) {
 			v__ast__CharLiteral* it = (v__ast__CharLiteral*)field.expr.obj; // ST it
-			strings__Builder_write(&g->definitions, _STR("#define _const_%.*s ", name.len, name.str));
-			strings__Builder_writeln(&g->definitions, val);
+			v__gen__Gen_const_decl_simple_define(g, name, val);
+		}
+		else if (field.expr.typ == 211 /* v.ast.IntegerLiteral */) {
+			v__ast__IntegerLiteral* it = (v__ast__IntegerLiteral*)field.expr.obj; // ST it
+			v__gen__Gen_const_decl_simple_define(g, name, val);
+		}
+		else if (field.expr.typ == 207 /* v.ast.StringLiteral */) {
+			v__ast__StringLiteral* it = (v__ast__StringLiteral*)field.expr.obj; // ST it
+			strings__Builder_writeln(&g->definitions, _STR("string _const_%.*s; // a string literal, inited later", name.len, name.str));
+			strings__Builder_writeln(&g->stringliterals, _STR("\t_const_%.*s = %.*s;", name.len, name.str, val.len, val.str));
 		}
 		else {
 			string styp = v__gen__Gen_typ(g, field.typ);
 			strings__Builder_writeln(&g->definitions, _STR("%.*s _const_%.*s; // inited later", styp.len, styp.str, name.len, name.str));
-			strings__Builder_write(&g->inits, _STR("_const_%.*s = ", name.len, name.str));
-			strings__Builder_write(&g->inits, val);
-			strings__Builder_writeln(&g->inits, tos3(";"));
+			strings__Builder_writeln(&g->inits, _STR("\t_const_%.*s = %.*s;", name.len, name.str, val.len, val.str));
 		}
 		;
 	}
+}
+
+void v__gen__Gen_const_decl_simple_define(v__gen__Gen* g, string name, string val) { 
+	strings__Builder_write(&g->definitions, _STR("#define _const_%.*s ", name.len, name.str));
+	strings__Builder_writeln(&g->definitions, val);
 }
 
 void v__gen__Gen_struct_init(v__gen__Gen* g, v__ast__StructInit it) { 
@@ -21418,6 +21465,7 @@ void v__gen__verror(string s) {
 
 void v__gen__Gen_write_init_function(v__gen__Gen* g) { 
 	v__gen__Gen_writeln(g, tos3("void _vinit() {"));
+	v__gen__Gen_writeln(g, tos3("\tvinit_string_literals();"));
 	v__gen__Gen_writeln(g, strings__Builder_str(&g->inits));
 	v__gen__Gen_writeln(g, tos3("}"));
 	if (g->autofree) {
@@ -23776,58 +23824,46 @@ string v__depgraph__DepGraph_display_cycles(v__depgraph__DepGraph* graph) {
 }
 
 void _vinit() {
-_const_digit_pairs = tos3("00102030405060708090011121314151617181910212223242526272829203132333435363738393041424344454647484940515253545556575859506162636465666768696071727374757677787970818283848586878889809192939495969798999");
-_const_hashbits = 24;
-_const_cached_hashbits = 16;
-_const_init_log_capicity = 5;
-_const_init_capicity = 1 << _const_init_log_capicity;
-_const_max_load_factor = 0.8;
-_const_init_cap = _const_init_capicity - 2;
-_const_extra_metas_inc = 4;
-_const_hash_mask = ((u32)(0x00FFFFFF));
-_const_probe_inc = ((u32)(0x01000000));
-_const_degree = 6;
-_const_mid_index = _const_degree - 1;
-_const_max_size = 2 * _const_degree - 1;
-_const_children_bytes = sizeof(voidptr) * (_const_max_size + 1);
-_const_CP_UTF8 = 65001;
-_const_list_of_flags_that_allow_duplicates = new_array_from_c_array(5, 5, sizeof(string), (string[5]){	
+	vinit_string_literals();
+	_const_init_capicity = 1 << _const_init_log_capicity;
+	_const_max_load_factor = 0.8;
+	_const_init_cap = _const_init_capicity - 2;
+	_const_hash_mask = ((u32)(0x00FFFFFF));
+	_const_probe_inc = ((u32)(0x01000000));
+	_const_mid_index = _const_degree - 1;
+	_const_max_size = 2 * _const_degree - 1;
+	_const_children_bytes = sizeof(voidptr) * (_const_max_size + 1);
+	_const_list_of_flags_that_allow_duplicates = new_array_from_c_array(5, 5, sizeof(string), (string[5]){	
 tos3("cc"), tos3("d"), tos3("define"), tos3("cf"), tos3("cflags"), 
 });
-_const_list_of_flags_with_param = new_array_from_c_array(14, 14, sizeof(string), (string[14]){	
+	_const_list_of_flags_with_param = new_array_from_c_array(14, 14, sizeof(string), (string[14]){	
 tos3("o"), tos3("output"), tos3("d"), tos3("define"), tos3("b"), tos3("backend"), tos3("cc"), tos3("os"), tos3("target-os"), tos3("arch"), tos3("csource"), tos3("cf"), tos3("cflags"), tos3("path"), 
 });
-_const_simple_cmd = new_array_from_c_array(12, 12, sizeof(string), (string[12]){	
+	_const_simple_cmd = new_array_from_c_array(12, 12, sizeof(string), (string[12]){	
 tos3("fmt"), tos3("up"), tos3("self"), tos3("test"), tos3("test-fmt"), tos3("test-compiler"), tos3("bin2v"), tos3("repl"), tos3("build-tools"), tos3("build-examples"), tos3("build-vbinaries"), tos3("setup-freetype"), 
 });
-_const_strconv__ftoa__ten_pow_table_32 = new_array_from_c_array(12, 12, sizeof(u32), (u32[12]){	
+	_const_strconv__ftoa__ten_pow_table_32 = new_array_from_c_array(12, 12, sizeof(u32), (u32[12]){	
 ((u32)(1)), ((u32)(10)), ((u32)(100)), ((u32)(1000)), ((u32)(10000)), ((u32)(100000)), ((u32)(1000000)), ((u32)(10000000)), ((u32)(100000000)), ((u32)(1000000000)), ((u32)(10000000000)), ((u32)(100000000000)), 
 });
-_const_strconv__ftoa__mantbits32 = ((u32)(23));
-_const_strconv__ftoa__expbits32 = ((u32)(8));
-_const_strconv__ftoa__bias32 = ((u32)(127));
-_const_strconv__ftoa__maxexp32 = 255;
-_const_strconv__ftoa__ten_pow_table_64 = new_array_from_c_array(20, 20, sizeof(u64), (u64[20]){	
+	_const_strconv__ftoa__mantbits32 = ((u32)(23));
+	_const_strconv__ftoa__expbits32 = ((u32)(8));
+	_const_strconv__ftoa__bias32 = ((u32)(127));
+	_const_strconv__ftoa__ten_pow_table_64 = new_array_from_c_array(20, 20, sizeof(u64), (u64[20]){	
 ((u64)(1)), ((u64)(10)), ((u64)(100)), ((u64)(1000)), ((u64)(10000)), ((u64)(100000)), ((u64)(1000000)), ((u64)(10000000)), ((u64)(100000000)), ((u64)(1000000000)), ((u64)(10000000000)), ((u64)(100000000000)), ((u64)(1000000000000)), ((u64)(10000000000000)), ((u64)(100000000000000)), ((u64)(1000000000000000)), ((u64)(10000000000000000)), ((u64)(100000000000000000)), ((u64)(1000000000000000000)), ((u64)(10000000000000000000)), 
 });
-_const_strconv__ftoa__mantbits64 = ((u32)(52));
-_const_strconv__ftoa__expbits64 = ((u32)(11));
-_const_strconv__ftoa__bias64 = ((u32)(1023));
-_const_strconv__ftoa__maxexp64 = 2047;
-_const_strconv__ftoa__pow5_num_bits_32 = 61;
-_const_strconv__ftoa__pow5_inv_num_bits_32 = 59;
-_const_strconv__ftoa__pow5_num_bits_64 = 121;
-_const_strconv__ftoa__pow5_inv_num_bits_64 = 122;
-_const_strconv__ftoa__powers_of_10 = new_array_from_c_array(18, 18, sizeof(u64), (u64[18]){	
+	_const_strconv__ftoa__mantbits64 = ((u32)(52));
+	_const_strconv__ftoa__expbits64 = ((u32)(11));
+	_const_strconv__ftoa__bias64 = ((u32)(1023));
+	_const_strconv__ftoa__powers_of_10 = new_array_from_c_array(18, 18, sizeof(u64), (u64[18]){	
 ((u64)(1e0)), ((u64)(1e1)), ((u64)(1e2)), ((u64)(1e3)), ((u64)(1e4)), ((u64)(1e5)), ((u64)(1e6)), ((u64)(1e7)), ((u64)(1e8)), ((u64)(1e9)), ((u64)(1e10)), ((u64)(1e11)), ((u64)(1e12)), ((u64)(1e13)), ((u64)(1e14)), ((u64)(1e15)), ((u64)(1e16)), ((u64)(1e17)), 
 });
-_const_strconv__ftoa__pow5_split_32 = new_array_from_c_array(47, 47, sizeof(u64), (u64[47]){	
+	_const_strconv__ftoa__pow5_split_32 = new_array_from_c_array(47, 47, sizeof(u64), (u64[47]){	
 ((u64)(1152921504606846976)), ((u64)(1441151880758558720)), ((u64)(1801439850948198400)), ((u64)(2251799813685248000)), ((u64)(1407374883553280000)), ((u64)(1759218604441600000)), ((u64)(2199023255552000000)), ((u64)(1374389534720000000)), ((u64)(1717986918400000000)), ((u64)(2147483648000000000)), ((u64)(1342177280000000000)), ((u64)(1677721600000000000)), ((u64)(2097152000000000000)), ((u64)(1310720000000000000)), ((u64)(1638400000000000000)), ((u64)(2048000000000000000)), ((u64)(1280000000000000000)), ((u64)(1600000000000000000)), ((u64)(2000000000000000000)), ((u64)(1250000000000000000)), ((u64)(1562500000000000000)), ((u64)(1953125000000000000)), ((u64)(1220703125000000000)), ((u64)(1525878906250000000)), ((u64)(1907348632812500000)), ((u64)(1192092895507812500)), ((u64)(1490116119384765625)), ((u64)(1862645149230957031)), ((u64)(1164153218269348144)), ((u64)(1455191522836685180)), ((u64)(1818989403545856475)), ((u64)(2273736754432320594)), ((u64)(1421085471520200371)), ((u64)(1776356839400250464)), ((u64)(2220446049250313080)), ((u64)(1387778780781445675)), ((u64)(1734723475976807094)), ((u64)(2168404344971008868)), ((u64)(1355252715606880542)), ((u64)(1694065894508600678)), ((u64)(2117582368135750847)), ((u64)(1323488980084844279)), ((u64)(1654361225106055349)), ((u64)(2067951531382569187)), ((u64)(1292469707114105741)), ((u64)(1615587133892632177)), ((u64)(2019483917365790221)), 
 });
-_const_strconv__ftoa__pow5_inv_split_32 = new_array_from_c_array(31, 31, sizeof(u64), (u64[31]){	
+	_const_strconv__ftoa__pow5_inv_split_32 = new_array_from_c_array(31, 31, sizeof(u64), (u64[31]){	
 ((u64)(576460752303423489)), ((u64)(461168601842738791)), ((u64)(368934881474191033)), ((u64)(295147905179352826)), ((u64)(472236648286964522)), ((u64)(377789318629571618)), ((u64)(302231454903657294)), ((u64)(483570327845851670)), ((u64)(386856262276681336)), ((u64)(309485009821345069)), ((u64)(495176015714152110)), ((u64)(396140812571321688)), ((u64)(316912650057057351)), ((u64)(507060240091291761)), ((u64)(405648192073033409)), ((u64)(324518553658426727)), ((u64)(519229685853482763)), ((u64)(415383748682786211)), ((u64)(332306998946228969)), ((u64)(531691198313966350)), ((u64)(425352958651173080)), ((u64)(340282366920938464)), ((u64)(544451787073501542)), ((u64)(435561429658801234)), ((u64)(348449143727040987)), ((u64)(557518629963265579)), ((u64)(446014903970612463)), ((u64)(356811923176489971)), ((u64)(570899077082383953)), ((u64)(456719261665907162)), ((u64)(365375409332725730)), 
 });
-_const_strconv__ftoa__pow5_split_64 = new_array_from_c_array(326, 326, sizeof(strconv__ftoa__Uint128), (strconv__ftoa__Uint128[326]){	
+	_const_strconv__ftoa__pow5_split_64 = new_array_from_c_array(326, 326, sizeof(strconv__ftoa__Uint128), (strconv__ftoa__Uint128[326]){	
 (strconv__ftoa__Uint128){
 	.lo = ((u64)(0x0000000000000000)),
 	.hi = ((u64)(0x0100000000000000)),
@@ -24808,7 +24844,7 @@ _const_strconv__ftoa__pow5_split_64 = new_array_from_c_array(326, 326, sizeof(st
 	.hi = ((u64)(0x018b40a4eec437c5)),
 }, 
 });
-_const_strconv__ftoa__pow5_inv_split_64 = new_array_from_c_array(292, 292, sizeof(strconv__ftoa__Uint128), (strconv__ftoa__Uint128[292]){	
+	_const_strconv__ftoa__pow5_inv_split_64 = new_array_from_c_array(292, 292, sizeof(strconv__ftoa__Uint128), (strconv__ftoa__Uint128[292]){	
 (strconv__ftoa__Uint128){
 	.lo = ((u64)(0x0000000000000001)),
 	.hi = ((u64)(0x0400000000000000)),
@@ -25687,235 +25723,135 @@ _const_strconv__ftoa__pow5_inv_split_64 = new_array_from_c_array(292, 292, sizeo
 	.hi = ((u64)(0x027eab3cf7dcd826)),
 }, 
 });
-_const_hash__wyhash__wyp0 = ((u64)(0xa0761d6478bd642f));
-_const_hash__wyhash__wyp1 = ((u64)(0xe7037ed1a0b428db));
-_const_hash__wyhash__wyp2 = ((u64)(0x8ebc6af09c88c6e3));
-_const_hash__wyhash__wyp3 = ((u64)(0x589965cc75374cc3));
-_const_hash__wyhash__wyp4 = ((u64)(0x1d8e4e27c47d124f));
-_const_strconv__DIGITS = 18;
-_const_strconv__DOUBLE_PLUS_ZERO = ((u64)(0x0000000000000000));
-_const_strconv__DOUBLE_MINUS_ZERO = ((u64)(0x8000000000000000));
-_const_strconv__DOUBLE_PLUS_INFINITY = ((u64)(0x7FF0000000000000));
-_const_strconv__DOUBLE_MINUS_INFINITY = ((u64)(0xFFF0000000000000));
-_const_strconv__fsm_a = 0;
-_const_strconv__fsm_b = 1;
-_const_strconv__fsm_c = 2;
-_const_strconv__fsm_d = 3;
-_const_strconv__fsm_e = 4;
-_const_strconv__fsm_f = 5;
-_const_strconv__fsm_g = 6;
-_const_strconv__fsm_h = 7;
-_const_strconv__fsm_i = 8;
-_const_strconv__FSM_STOP = 9;
-_const_strconv__parser_ok = 0;
-_const_strconv__parser_pzero = 1;
-_const_strconv__parser_mzero = 2;
-_const_strconv__parser_pinf = 3;
-_const_strconv__parser_minf = 4;
-_const_strconv__TEN = ((u32)(10));
-_const_strconv__int_size = 32;
-_const_strconv__max_u64 = ((u64)(UINT64_MAX));
-_const_internal__flag__truthy = new_array_from_c_array(6, 6, sizeof(string), (string[6]){	
+	_const_hash__wyhash__wyp0 = ((u64)(0xa0761d6478bd642f));
+	_const_hash__wyhash__wyp1 = ((u64)(0xe7037ed1a0b428db));
+	_const_hash__wyhash__wyp2 = ((u64)(0x8ebc6af09c88c6e3));
+	_const_hash__wyhash__wyp3 = ((u64)(0x589965cc75374cc3));
+	_const_hash__wyhash__wyp4 = ((u64)(0x1d8e4e27c47d124f));
+	_const_strconv__DOUBLE_PLUS_ZERO = ((u64)(0x0000000000000000));
+	_const_strconv__DOUBLE_MINUS_ZERO = ((u64)(0x8000000000000000));
+	_const_strconv__DOUBLE_PLUS_INFINITY = ((u64)(0x7FF0000000000000));
+	_const_strconv__DOUBLE_MINUS_INFINITY = ((u64)(0xFFF0000000000000));
+	_const_strconv__TEN = ((u32)(10));
+	_const_strconv__max_u64 = ((u64)(UINT64_MAX));
+	_const_internal__flag__truthy = new_array_from_c_array(6, 6, sizeof(string), (string[6]){	
 tos3("1"), tos3("t"), tos3("T"), tos3("true"), tos3("TRUE"), tos3("True"), 
 });
-_const_internal__flag__falsey = new_array_from_c_array(6, 6, sizeof(string), (string[6]){	
+	_const_internal__flag__falsey = new_array_from_c_array(6, 6, sizeof(string), (string[6]){	
 tos3("0"), tos3("f"), tos3("F"), tos3("false"), tos3("FALSE"), tos3("False"), 
 });
-_const_os__S_IFMT = 0xF000;
-_const_os__S_IFDIR = 0x4000;
-_const_os__S_IFLNK = 0xa000;
-_const_os__S_IXUSR = 0100;
-_const_os__S_IXGRP = 0010;
-_const_os__S_IXOTH = 0001;
-_const_os__STD_INPUT_HANDLE = -10;
-_const_os__STD_OUTPUT_HANDLE = -11;
-_const_os__STD_ERROR_HANDLE = -12;
-_const_os__O_RDONLY = 0;
-_const_os__O_WRONLY = 1;
-_const_os__O_RDWR = 2;
-_const_os__O_CREATE = 100;
-_const_os__O_EXCL = 200;
-_const_os__O_NOCTTY = 400;
-_const_os__O_TRUNC = 1000;
-_const_os__O_APPEND = 2000;
-_const_os__O_NONBLOCK = 4000;
-_const_os__O_SYNC = 10000;
-_const_os__args = new_array(0, 0, sizeof(string));
-_const_os__MAX_PATH = 4096;
-_const_os__F_OK = 0;
-_const_os__X_OK = 1;
-_const_os__W_OK = 2;
-_const_os__R_OK = 4;
-_const_os__wd_at_startup = os__getwd();
-_const_os__PROT_READ = 1;
-_const_os__PROT_WRITE = 2;
-_const_os__MAP_PRIVATE = 0x02;
-_const_os__MAP_ANONYMOUS = 0x20;
-_const_os__sys_write = 1;
-_const_os__sys_open = 2;
-_const_os__sys_close = 3;
-_const_os__sys_mkdir = 83;
-_const_os__sys_creat = 85;
-_const_os__path_separator = tos3("/");
-_const_os__stdin_value = 0;
-_const_os__stdout_value = 1;
-_const_os__stderr_value = 2;
-_const_internal__compile__HKEY_LOCAL_MACHINE = ((internal__compile__RegKey)(0x80000002));
-_const_internal__compile__KEY_QUERY_VALUE = (0x0001);
-_const_internal__compile__KEY_WOW64_32KEY = (0x0200);
-_const_internal__compile__KEY_ENUMERATE_SUB_KEYS = (0x0008);
-_const_internal__help__unknown_topic = tos3("V Error: Unknown help topic provided. Use `v help` for usage information.");
-_const_v__table__void_type_idx = 1;
-_const_v__table__voidptr_type_idx = 2;
-_const_v__table__byteptr_type_idx = 3;
-_const_v__table__charptr_type_idx = 4;
-_const_v__table__i8_type_idx = 5;
-_const_v__table__i16_type_idx = 6;
-_const_v__table__int_type_idx = 7;
-_const_v__table__i64_type_idx = 8;
-_const_v__table__byte_type_idx = 9;
-_const_v__table__u16_type_idx = 10;
-_const_v__table__u32_type_idx = 11;
-_const_v__table__u64_type_idx = 12;
-_const_v__table__f32_type_idx = 13;
-_const_v__table__f64_type_idx = 14;
-_const_v__table__char_type_idx = 15;
-_const_v__table__bool_type_idx = 16;
-_const_v__table__none_type_idx = 17;
-_const_v__table__string_type_idx = 18;
-_const_v__table__array_type_idx = 19;
-_const_v__table__map_type_idx = 20;
-_const_v__table__number_type_idxs = new_array_from_c_array(10, 10, sizeof(int), (int[10]){	
+	_const_os__STD_INPUT_HANDLE = -10;
+	_const_os__STD_OUTPUT_HANDLE = -11;
+	_const_os__STD_ERROR_HANDLE = -12;
+	_const_os__args = new_array(0, 0, sizeof(string));
+	_const_os__wd_at_startup = os__getwd();
+	_const_internal__compile__HKEY_LOCAL_MACHINE = ((internal__compile__RegKey)(0x80000002));
+	_const_internal__compile__KEY_QUERY_VALUE = (0x0001);
+	_const_internal__compile__KEY_WOW64_32KEY = (0x0200);
+	_const_internal__compile__KEY_ENUMERATE_SUB_KEYS = (0x0008);
+	_const_v__table__number_type_idxs = new_array_from_c_array(10, 10, sizeof(int), (int[10]){	
 _const_v__table__i8_type_idx, _const_v__table__i16_type_idx, _const_v__table__int_type_idx, _const_v__table__i64_type_idx, _const_v__table__byte_type_idx, _const_v__table__u16_type_idx, _const_v__table__u32_type_idx, _const_v__table__u64_type_idx, _const_v__table__f32_type_idx, _const_v__table__f64_type_idx, 
 });
-_const_v__table__pointer_type_idxs = new_array_from_c_array(3, 3, sizeof(int), (int[3]){	
+	_const_v__table__pointer_type_idxs = new_array_from_c_array(3, 3, sizeof(int), (int[3]){	
 _const_v__table__voidptr_type_idx, _const_v__table__byteptr_type_idx, _const_v__table__charptr_type_idx, 
 });
-_const_v__table__void_type = v__table__new_type(_const_v__table__void_type_idx);
-_const_v__table__voidptr_type = v__table__new_type(_const_v__table__voidptr_type_idx);
-_const_v__table__byteptr_type = v__table__new_type(_const_v__table__byteptr_type_idx);
-_const_v__table__charptr_type = v__table__new_type(_const_v__table__charptr_type_idx);
-_const_v__table__i8_type = v__table__new_type(_const_v__table__i8_type_idx);
-_const_v__table__int_type = v__table__new_type(_const_v__table__int_type_idx);
-_const_v__table__i16_type = v__table__new_type(_const_v__table__i16_type_idx);
-_const_v__table__i64_type = v__table__new_type(_const_v__table__i64_type_idx);
-_const_v__table__byte_type = v__table__new_type(_const_v__table__byte_type_idx);
-_const_v__table__u16_type = v__table__new_type(_const_v__table__u16_type_idx);
-_const_v__table__u32_type = v__table__new_type(_const_v__table__u32_type_idx);
-_const_v__table__u64_type = v__table__new_type(_const_v__table__u64_type_idx);
-_const_v__table__f32_type = v__table__new_type(_const_v__table__f32_type_idx);
-_const_v__table__f64_type = v__table__new_type(_const_v__table__f64_type_idx);
-_const_v__table__char_type = v__table__new_type(_const_v__table__char_type_idx);
-_const_v__table__bool_type = v__table__new_type(_const_v__table__bool_type_idx);
-_const_v__table__none_type = v__table__new_type(_const_v__table__none_type_idx);
-_const_v__table__string_type = v__table__new_type(_const_v__table__string_type_idx);
-_const_v__table__array_type = v__table__new_type(_const_v__table__array_type_idx);
-_const_v__table__map_type = v__table__new_type(_const_v__table__map_type_idx);
-_const_v__table__builtin_type_names = new_array_from_c_array(25, 25, sizeof(string), (string[25]){	
+	_const_v__table__void_type = v__table__new_type(_const_v__table__void_type_idx);
+	_const_v__table__voidptr_type = v__table__new_type(_const_v__table__voidptr_type_idx);
+	_const_v__table__byteptr_type = v__table__new_type(_const_v__table__byteptr_type_idx);
+	_const_v__table__charptr_type = v__table__new_type(_const_v__table__charptr_type_idx);
+	_const_v__table__i8_type = v__table__new_type(_const_v__table__i8_type_idx);
+	_const_v__table__int_type = v__table__new_type(_const_v__table__int_type_idx);
+	_const_v__table__i16_type = v__table__new_type(_const_v__table__i16_type_idx);
+	_const_v__table__i64_type = v__table__new_type(_const_v__table__i64_type_idx);
+	_const_v__table__byte_type = v__table__new_type(_const_v__table__byte_type_idx);
+	_const_v__table__u16_type = v__table__new_type(_const_v__table__u16_type_idx);
+	_const_v__table__u32_type = v__table__new_type(_const_v__table__u32_type_idx);
+	_const_v__table__u64_type = v__table__new_type(_const_v__table__u64_type_idx);
+	_const_v__table__f32_type = v__table__new_type(_const_v__table__f32_type_idx);
+	_const_v__table__f64_type = v__table__new_type(_const_v__table__f64_type_idx);
+	_const_v__table__char_type = v__table__new_type(_const_v__table__char_type_idx);
+	_const_v__table__bool_type = v__table__new_type(_const_v__table__bool_type_idx);
+	_const_v__table__none_type = v__table__new_type(_const_v__table__none_type_idx);
+	_const_v__table__string_type = v__table__new_type(_const_v__table__string_type_idx);
+	_const_v__table__array_type = v__table__new_type(_const_v__table__array_type_idx);
+	_const_v__table__map_type = v__table__new_type(_const_v__table__map_type_idx);
+	_const_v__table__builtin_type_names = new_array_from_c_array(25, 25, sizeof(string), (string[25]){	
 tos3("void"), tos3("voidptr"), tos3("charptr"), tos3("byteptr"), tos3("i8"), tos3("i16"), tos3("int"), tos3("i64"), tos3("u16"), tos3("u32"), tos3("u64"), tos3("f32"), tos3("f64"), tos3("string"), tos3("char"), tos3("byte"), tos3("bool"), tos3("none"), tos3("array"), tos3("array_fixed"), tos3("map"), tos3("struct"), tos3("mapnode"), tos3("ustring"), tos3("size_t"), 
 });
-_const_v__pref__default_module_path = v__pref__mpath();
-_const_v__util__error_context_before = 2;
-_const_v__util__error_context_after = 2;
-_const_v__util__emanager = v__util__new_error_manager();
-_const_v__util__v_version = tos3("0.1.26");
-_const_math__bits__de_bruijn32 = ((u32)(0x077CB531));
-_const_math__bits__de_bruijn32tab = new_array_from_c_array(32, 32, sizeof(byte), (byte[32]){	
+	_const_v__pref__default_module_path = v__pref__mpath();
+	_const_v__util__emanager = v__util__new_error_manager();
+	_const_math__bits__de_bruijn32 = ((u32)(0x077CB531));
+	_const_math__bits__de_bruijn32tab = new_array_from_c_array(32, 32, sizeof(byte), (byte[32]){	
 ((byte)(0)), 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9, 
 });
-_const_math__bits__de_bruijn64 = ((u64)(0x03f79d71b4ca8b09));
-_const_math__bits__de_bruijn64tab = new_array_from_c_array(64, 64, sizeof(byte), (byte[64]){	
+	_const_math__bits__de_bruijn64 = ((u64)(0x03f79d71b4ca8b09));
+	_const_math__bits__de_bruijn64tab = new_array_from_c_array(64, 64, sizeof(byte), (byte[64]){	
 ((byte)(0)), 1, 56, 2, 57, 49, 28, 3, 61, 58, 42, 50, 38, 29, 17, 4, 62, 47, 59, 36, 45, 43, 51, 22, 53, 39, 33, 30, 24, 18, 12, 5, 63, 55, 48, 27, 60, 41, 37, 16, 46, 35, 44, 21, 52, 32, 23, 11, 54, 26, 40, 15, 34, 20, 31, 10, 25, 14, 19, 9, 13, 8, 7, 6, 
 });
-_const_math__bits__m0 = ((u64)(0x5555555555555555));
-_const_math__bits__m1 = ((u64)(0x3333333333333333));
-_const_math__bits__m2 = ((u64)(0x0f0f0f0f0f0f0f0f));
-_const_math__bits__m3 = ((u64)(0x00ff00ff00ff00ff));
-_const_math__bits__m4 = ((u64)(0x0000ffff0000ffff));
-_const_math__bits__max_u32 = ((u32)(4294967295));
-_const_math__bits__max_u64 = ((u64)(18446744073709551615));
-_const_math__bits__two32 = ((u64)(0x100000000));
-_const_math__bits__mask32 = _const_math__bits__two32 - 1;
-_const_math__bits__overflow_error = tos3("Overflow Error");
-_const_math__bits__divide_error = tos3("Divide Error");
-_const_math__bits__ntz_8_tab = new_array_from_c_array(256, 256, sizeof(byte), (byte[256]){	
+	_const_math__bits__m0 = ((u64)(0x5555555555555555));
+	_const_math__bits__m1 = ((u64)(0x3333333333333333));
+	_const_math__bits__m2 = ((u64)(0x0f0f0f0f0f0f0f0f));
+	_const_math__bits__m3 = ((u64)(0x00ff00ff00ff00ff));
+	_const_math__bits__m4 = ((u64)(0x0000ffff0000ffff));
+	_const_math__bits__max_u32 = ((u32)(4294967295));
+	_const_math__bits__max_u64 = ((u64)(18446744073709551615));
+	_const_math__bits__two32 = ((u64)(0x100000000));
+	_const_math__bits__mask32 = _const_math__bits__two32 - 1;
+	_const_math__bits__ntz_8_tab = new_array_from_c_array(256, 256, sizeof(byte), (byte[256]){	
 ((byte)(0x08)), 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x07, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 
 });
-_const_math__bits__pop_8_tab = new_array_from_c_array(256, 256, sizeof(byte), (byte[256]){	
+	_const_math__bits__pop_8_tab = new_array_from_c_array(256, 256, sizeof(byte), (byte[256]){	
 ((byte)(0x00)), 0x01, 0x01, 0x02, 0x01, 0x02, 0x02, 0x03, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x05, 0x06, 0x06, 0x07, 0x06, 0x07, 0x07, 0x08, 
 });
-_const_math__bits__rev_8_tab = new_array_from_c_array(256, 256, sizeof(byte), (byte[256]){	
+	_const_math__bits__rev_8_tab = new_array_from_c_array(256, 256, sizeof(byte), (byte[256]){	
 ((byte)(0x00)), 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0, 0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0, 0x08, 0x88, 0x48, 0xc8, 0x28, 0xa8, 0x68, 0xe8, 0x18, 0x98, 0x58, 0xd8, 0x38, 0xb8, 0x78, 0xf8, 0x04, 0x84, 0x44, 0xc4, 0x24, 0xa4, 0x64, 0xe4, 0x14, 0x94, 0x54, 0xd4, 0x34, 0xb4, 0x74, 0xf4, 0x0c, 0x8c, 0x4c, 0xcc, 0x2c, 0xac, 0x6c, 0xec, 0x1c, 0x9c, 0x5c, 0xdc, 0x3c, 0xbc, 0x7c, 0xfc, 0x02, 0x82, 0x42, 0xc2, 0x22, 0xa2, 0x62, 0xe2, 0x12, 0x92, 0x52, 0xd2, 0x32, 0xb2, 0x72, 0xf2, 0x0a, 0x8a, 0x4a, 0xca, 0x2a, 0xaa, 0x6a, 0xea, 0x1a, 0x9a, 0x5a, 0xda, 0x3a, 0xba, 0x7a, 0xfa, 0x06, 0x86, 0x46, 0xc6, 0x26, 0xa6, 0x66, 0xe6, 0x16, 0x96, 0x56, 0xd6, 0x36, 0xb6, 0x76, 0xf6, 0x0e, 0x8e, 0x4e, 0xce, 0x2e, 0xae, 0x6e, 0xee, 0x1e, 0x9e, 0x5e, 0xde, 0x3e, 0xbe, 0x7e, 0xfe, 0x01, 0x81, 0x41, 0xc1, 0x21, 0xa1, 0x61, 0xe1, 0x11, 0x91, 0x51, 0xd1, 0x31, 0xb1, 0x71, 0xf1, 0x09, 0x89, 0x49, 0xc9, 0x29, 0xa9, 0x69, 0xe9, 0x19, 0x99, 0x59, 0xd9, 0x39, 0xb9, 0x79, 0xf9, 0x05, 0x85, 0x45, 0xc5, 0x25, 0xa5, 0x65, 0xe5, 0x15, 0x95, 0x55, 0xd5, 0x35, 0xb5, 0x75, 0xf5, 0x0d, 0x8d, 0x4d, 0xcd, 0x2d, 0xad, 0x6d, 0xed, 0x1d, 0x9d, 0x5d, 0xdd, 0x3d, 0xbd, 0x7d, 0xfd, 0x03, 0x83, 0x43, 0xc3, 0x23, 0xa3, 0x63, 0xe3, 0x13, 0x93, 0x53, 0xd3, 0x33, 0xb3, 0x73, 0xf3, 0x0b, 0x8b, 0x4b, 0xcb, 0x2b, 0xab, 0x6b, 0xeb, 0x1b, 0x9b, 0x5b, 0xdb, 0x3b, 0xbb, 0x7b, 0xfb, 0x07, 0x87, 0x47, 0xc7, 0x27, 0xa7, 0x67, 0xe7, 0x17, 0x97, 0x57, 0xd7, 0x37, 0xb7, 0x77, 0xf7, 0x0f, 0x8f, 0x4f, 0xcf, 0x2f, 0xaf, 0x6f, 0xef, 0x1f, 0x9f, 0x5f, 0xdf, 0x3f, 0xbf, 0x7f, 0xff, 
 });
-_const_math__bits__len_8_tab = new_array_from_c_array(256, 256, sizeof(byte), (byte[256]){	
+	_const_math__bits__len_8_tab = new_array_from_c_array(256, 256, sizeof(byte), (byte[256]){	
 ((byte)(0x00)), 0x01, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 
 });
-_const_time__days_string = tos3("MonTueWedThuFriSatSun");
-_const_time__month_days = new_array_from_c_array(12, 12, sizeof(int), (int[12]){	
+	_const_time__month_days = new_array_from_c_array(12, 12, sizeof(int), (int[12]){	
 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 
 });
-_const_time__months_string = tos3("JanFebMarAprMayJunJulAugSepOctNovDec");
-_const_time__absolute_zero_year = ((i64)(-292277022399));
-_const_time__seconds_per_minute = 60;
-_const_time__seconds_per_hour = 60 * _const_time__seconds_per_minute;
-_const_time__seconds_per_day = 24 * _const_time__seconds_per_hour;
-_const_time__seconds_per_week = 7 * _const_time__seconds_per_day;
-_const_time__days_per_400_years = 365 * 400 + 97;
-_const_time__days_per_100_years = 365 * 100 + 24;
-_const_time__days_per_4_years = 365 * 4 + 1;
-_const_time__days_before = new_array_from_c_array(13, 13, sizeof(int), (int[13]){	
+	_const_time__absolute_zero_year = ((i64)(-292277022399));
+	_const_time__seconds_per_hour = 60 * _const_time__seconds_per_minute;
+	_const_time__seconds_per_day = 24 * _const_time__seconds_per_hour;
+	_const_time__seconds_per_week = 7 * _const_time__seconds_per_day;
+	_const_time__days_per_400_years = 365 * 400 + 97;
+	_const_time__days_per_100_years = 365 * 100 + 24;
+	_const_time__days_per_4_years = 365 * 4 + 1;
+	_const_time__days_before = new_array_from_c_array(13, 13, sizeof(int), (int[13]){	
 0, 31, 31 + 28, 31 + 28 + 31, 31 + 28 + 31 + 30, 31 + 28 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31, 
 });
-_const_term__default_columns_size = 80;
-_const_term__default_rows_size = 25;
-_const_benchmark__BOK = term__ok_message(tos3("OK  "));
-_const_benchmark__BFAIL = term__fail_message(tos3("FAIL"));
-_const_benchmark__BSKIP = term__fail_message(tos3("SKIP"));
-_const_benchmark__BSPENT = term__ok_message(tos3("SPENT"));
-_const_v__builder__MOD_FILE_STOP_PATHS = new_array_from_c_array(4, 4, sizeof(string), (string[4]){	
+	_const_benchmark__BOK = term__ok_message(tos3("OK  "));
+	_const_benchmark__BFAIL = term__fail_message(tos3("FAIL"));
+	_const_benchmark__BSKIP = term__fail_message(tos3("SKIP"));
+	_const_benchmark__BSPENT = term__ok_message(tos3("SPENT"));
+	_const_v__builder__MOD_FILE_STOP_PATHS = new_array_from_c_array(4, 4, sizeof(string), (string[4]){	
 tos3(".git"), tos3(".hg"), tos3(".svn"), tos3(".v.mod.stop"), 
 });
-_const_v__parser__supported_platforms = new_array_from_c_array(13, 13, sizeof(string), (string[13]){	
+	_const_v__parser__supported_platforms = new_array_from_c_array(13, 13, sizeof(string), (string[13]){	
 tos3("windows"), tos3("mac"), tos3("macos"), tos3("linux"), tos3("freebsd"), tos3("openbsd"), tos3("netbsd"), tos3("dragonfly"), tos3("android"), tos3("js"), tos3("solaris"), tos3("haiku"), tos3("linux_or_macos"), 
 });
-_const_v__parser__todo_delete_me = v__pref__OS_linux;
-_const_v__token__assign_tokens = new_array_from_c_array(11, 11, sizeof(v__token__Kind), (v__token__Kind[11]){	
+	_const_v__parser__todo_delete_me = v__pref__OS_linux;
+	_const_v__token__assign_tokens = new_array_from_c_array(11, 11, sizeof(v__token__Kind), (v__token__Kind[11]){	
 v__token__Kind_assign, v__token__Kind_plus_assign, v__token__Kind_minus_assign, v__token__Kind_mult_assign, v__token__Kind_div_assign, v__token__Kind_xor_assign, v__token__Kind_mod_assign, v__token__Kind_or_assign, v__token__Kind_and_assign, v__token__Kind_right_shift_assign, v__token__Kind_left_shift_assign, 
 });
-_const_v__token__nr_tokens = ((int)(v__token__Kind__end_));
-_const_v__token__token_str = v__token__build_token_str();
-_const_v__token__keywords = v__token__build_keys();
-_const_v__token__precedences = v__token__build_precedences();
-_const_v__checker__max_nr_errors = 300;
-_const_v__gen__c_reserved = new_array_from_c_array(31, 31, sizeof(string), (string[31]){	
+	_const_v__token__nr_tokens = ((int)(v__token__Kind__end_));
+	_const_v__token__token_str = v__token__build_token_str();
+	_const_v__token__keywords = v__token__build_keys();
+	_const_v__token__precedences = v__token__build_precedences();
+	_const_v__gen__c_reserved = new_array_from_c_array(31, 31, sizeof(string), (string[31]){	
 tos3("delete"), tos3("exit"), tos3("unix"), tos3("error"), tos3("calloc"), tos3("malloc"), tos3("free"), tos3("panic"), tos3("auto"), tos3("char"), tos3("default"), tos3("do"), tos3("double"), tos3("extern"), tos3("float"), tos3("inline"), tos3("int"), tos3("long"), tos3("register"), tos3("restrict"), tos3("short"), tos3("signed"), tos3("sizeof"), tos3("static"), tos3("switch"), tos3("typedef"), tos3("union"), tos3("unsigned"), tos3("void"), tos3("volatile"), tos3("while"), 
 });
-_const_v__gen__tabs = new_array_from_c_array(9, 9, sizeof(string), (string[9]){	
+	_const_v__gen__tabs = new_array_from_c_array(9, 9, sizeof(string), (string[9]){	
 tos3(""), tos3("\t"), tos3("\t\t"), tos3("\t\t\t"), tos3("\t\t\t\t"), tos3("\t\t\t\t\t"), tos3("\t\t\t\t\t\t"), tos3("\t\t\t\t\t\t\t"), tos3("\t\t\t\t\t\t\t\t"), 
 });
-_const_v__gen__builtins = new_array_from_c_array(6, 6, sizeof(string), (string[6]){	
+	_const_v__gen__builtins = new_array_from_c_array(6, 6, sizeof(string), (string[6]){	
 tos3("string"), tos3("array"), tos3("KeyValue"), tos3("DenseArray"), tos3("map"), tos3("Option"), 
 });
-_const_v__gen__c_commit_hash_default = tos3("\n#ifndef V_COMMIT_HASH\n#define V_COMMIT_HASH \"@@@\"\n#endif\n\n");
-_const_v__gen__c_current_commit_hash_default = tos3("\n#ifndef V_CURRENT_COMMIT_HASH\n#define V_CURRENT_COMMIT_HASH \"@@@\"\n#endif\n\n");
-_const_v__gen__c_common_macros = tos3("\n#define EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an array needs to be specified, but GCC crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#ifdef __TINYC__\n#undef EMPTY_STRUCT_DECLARATION\n#undef EMPTY_STRUCT_INITIALIZATION\n#define EMPTY_STRUCT_DECLARATION char _dummy\n#define EMPTY_STRUCT_INITIALIZATION 0\n#undef EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef TCCSKIP\n#define TCCSKIP(x)\n#endif\n\n// for __offset_of\n#ifndef __offsetof\n#define __offsetof(s,memb) \\\n    ((size_t)((char *)&((s *)0)->memb - (char *)0))\n#endif\n\n#define OPTION_CAST(x) (x)\n\n#ifndef V64_PRINTFORMAT\n#ifdef PRIx64\n#define V64_PRINTFORMAT \"0x%\"PRIx64\n#elif defined(__WIN32__)\n#define V64_PRINTFORMAT \"0x%I64x\"\n#elif defined(__LINUX__) && defined(__LP64__)\n#define V64_PRINTFORMAT \"0x%lx\"\n#else\n#define V64_PRINTFORMAT \"0x%llx\"\n#endif\n#endif\n\n");
-_const_v__gen__c_headers = _STR("\n\n// c_headers\n#include <stdio.h>  // TODO remove all these includes, define all function signatures and types manually\n#include <stdlib.h>\n#include <float.h>\n\n//#include \"fns.h\"\n#include <signal.h>\n#include <stdarg.h> // for va_list\n#include <string.h> // memcpy\n\n#if INTPTR_MAX == INT32_MAX\n    #define TARGET_IS_32BIT 1\n#elif INTPTR_MAX == INT64_MAX\n    #define TARGET_IS_64BIT 1\n#else\n    #error \"The environment is not 32 or 64-bit.\"\n#endif\n\n#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) || defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || defined(__MIBSEB__)\n    #define TARGET_ORDER_IS_BIG\n#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || defined(_M_X64) || defined(_M_IX86)\n    #define TARGET_ORDER_IS_LITTLE\n#else\n    #error \"Unknown architecture endianness\"\n#endif\n\n#ifndef _WIN32\n#include <ctype.h>\n#include <locale.h> // tolower\n#include <sys/time.h>\n#include <unistd.h> // sleep\nextern char **environ;\n#endif\n\n#if defined(__CYGWIN__) && !defined(_WIN32)\n#error Cygwin is not supported, please use MinGW or Visual Studio.\n#endif\n\n\n#ifdef __linux__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __FreeBSD__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __DragonFly__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n#include <sys/types.h>\n#include <sys/resource.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __NetBSD__\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __sun\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n%.*s\n\n#ifdef _WIN32\n#define WINVER 0x0600\n#ifdef _WIN32_WINNT\n#undef _WIN32_WINNT\n#endif\n#define _WIN32_WINNT 0x0600\n#define WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define UNICODE\n#include <windows.h>\n\n#include <io.h> // _waccess\n#include <direct.h> // _wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n\n// On MSVC these are the same (as long as /volatile:ms is passed)\n#define _Atomic volatile\n\n// MSVC cannot parse some things properly\n#undef EMPTY_STRUCT_DECLARATION\n#undef OPTION_CAST\n\n#define EMPTY_STRUCT_DECLARATION int ____dummy_variable\n#define OPTION_CAST(x)\n\n#include <dbghelp.h>\n#pragma comment(lib, \"Dbghelp.lib\")\n\nextern wchar_t **_wenviron;\n\n#endif\n\n#else\n#include <pthread.h>\n#endif\n\n\n//============================== HELPER C MACROS =============================*/\n#define _PUSH(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); array_push(arr, &tmp);}\n#define _PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); array_push_many(arr, tmp.data, tmp.len);}\n#define _IN(typ, val, arr) array_##typ##_contains(arr, val)\n#define _IN_MAP(val, m) map_exists(m, val)\n#define DEFAULT_EQUAL(a, b) (a == b)\n#define DEFAULT_NOT_EQUAL(a, b) (a != b)\n#define DEFAULT_LT(a, b) (a < b)\n#define DEFAULT_LE(a, b) (a <= b)\n#define DEFAULT_GT(a, b) (a > b)\n#define DEFAULT_GE(a, b) (a >= b)\n\n// NB: macro_fXX_eq and macro_fXX_ne are NOT used\n// in the generated C code. They are here just for\n// completeness/testing.\n\n#define macro_f64_eq(a, b) (a == b)\n#define macro_f64_ne(a, b) (a != b)\n#define macro_f64_lt(a, b) (a <  b)\n#define macro_f64_le(a, b) (a <= b)\n#define macro_f64_gt(a, b) (a >  b)\n#define macro_f64_ge(a, b) (a >= b)\n\n#define macro_f32_eq(a, b) (a == b)\n#define macro_f32_ne(a, b) (a != b)\n#define macro_f32_lt(a, b) (a <  b)\n#define macro_f32_le(a, b) (a <= b)\n#define macro_f32_gt(a, b) (a >  b)\n#define macro_f32_ge(a, b) (a >= b)\n\n//================================== GLOBALS =================================*/\nbyte g_str_buf[1024];\nint load_so(byteptr);\nvoid reload_so();\nvoid _vinit();\nvoid _vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\n// ============== wyhash ==============\n//	Author: Wang Yi\n#ifndef wyhash_version_4\n#define wyhash_version_4\n#include	<stdint.h>\n#include	<string.h>\n#if defined(_MSC_VER) && defined(_M_X64)\n#include <intrin.h>\n#pragma	intrinsic(_umul128)\n#endif\nconst	uint64_t	_wyp0=0xa0761d6478bd642full,	_wyp1=0xe7037ed1a0b428dbull,	_wyp2=0x8ebc6af09c88c6e3ull,	_wyp3=0x589965cc75374cc3ull,	_wyp4=0x1d8e4e27c47d124full;\nstatic	inline	uint64_t	_wyrotr(uint64_t v, unsigned k) {	return	(v>>k)|(v<<(64-k));	}\nstatic	inline	uint64_t	_wymum(uint64_t	A,	uint64_t	B) {\n#ifdef	WYHASH32\n	uint64_t    hh=(A>>32)*(B>>32), hl=(A>>32)*(unsigned)B, lh=(unsigned)A*(B>>32), ll=(uint64_t)(unsigned)A*(unsigned)B;\n	return  _wyrotr(hl,32)^_wyrotr(lh,32)^hh^ll;\n#else\n	#ifdef __SIZEOF_INT128__\n		__uint128_t	r=A;	r*=B;	return	(r>>64)^r;\n	#elif	defined(_MSC_VER) && defined(_M_X64)\n		A=_umul128(A, B, &B);	return	A^B;\n	#else\n		uint64_t	ha=A>>32,	hb=B>>32,	la=(uint32_t)A,	lb=(uint32_t)B,	hi, lo;\n		uint64_t	rh=ha*hb,	rm0=ha*lb,	rm1=hb*la,	rl=la*lb,	t=rl+(rm0<<32),	c=t<rl;\n		lo=t+(rm1<<32);	c+=lo<t;hi=rh+(rm0>>32)+(rm1>>32)+c;	return hi^lo;\n	#endif\n#endif\n}\n#ifndef WYHASH_LITTLE_ENDIAN\n	#if	defined(_WIN32) || defined(__LITTLE_ENDIAN__) || (defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)\n		#define WYHASH_LITTLE_ENDIAN 1\n	#elif	defined(__BIG_ENDIAN__) || (defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)\n		#define WYHASH_LITTLE_ENDIAN 0\n	#endif\n#endif\n#if(WYHASH_LITTLE_ENDIAN) || defined(__TINYC__)\nstatic	inline	uint64_t	_wyr8(const	uint8_t	*p)	{	uint64_t	v;	memcpy(&v,  p,  8);	return  v;	}\nstatic	inline	uint64_t	_wyr4(const	uint8_t	*p)	{	unsigned	v;	memcpy(&v,  p,  4);	return  v;	}\n#else\n	#if defined(__GNUC__) || defined(__INTEL_COMPILER)\nstatic	inline	uint64_t	_wyr8(const	uint8_t	*p)	{	uint64_t	v;	memcpy(&v,  p,  8);	return   __builtin_bswap64(v);	}\nstatic	inline	uint64_t	_wyr4(const	uint8_t	*p)	{	unsigned	v;	memcpy(&v,  p,  4);	return   __builtin_bswap32(v);	}\n	#elif	defined(_MSC_VER)\nstatic	inline	uint64_t	_wyr8(const	uint8_t	*p)	{	uint64_t	v;	memcpy(&v,  p,  8);	return  _byteswap_uint64(v);}\nstatic	inline	uint64_t	_wyr4(const	uint8_t	*p)	{	unsigned	v;	memcpy(&v,  p,  4);	return  _byteswap_ulong(v);	}\n	#endif\n#endif\nstatic	inline	uint64_t	_wyr3(const	uint8_t	*p,	unsigned	k) {	return	(((uint64_t)p[0])<<16)|(((uint64_t)p[k>>1])<<8)|p[k-1];	}\nstatic	inline	uint64_t	wyhash(const void* key,	uint64_t	len,	uint64_t	seed) {\n	const	uint8_t	*p=(const	uint8_t*)key;	uint64_t	i=len&63;\n	#if defined(__GNUC__) || defined(__INTEL_COMPILER)\n		#define	_like_(x)	__builtin_expect(x,1)\n		#define	_unlike_(x)	__builtin_expect(x,0)\n	#else\n		#define _like_(x)  (x)\n		#define _unlike_(x)  (x)\n	#endif\n	if(_unlike_(!i)) {	}\n	else	if(_unlike_(i<4))	seed=_wymum(_wyr3(p,i)^seed^_wyp0,seed^_wyp1);\n	else	if(_like_(i<=8))	seed=_wymum(_wyr4(p)^seed^_wyp0,_wyr4(p+i-4)^seed^_wyp1);\n	else	if(_like_(i<=16))	seed=_wymum(_wyr8(p)^seed^_wyp0,_wyr8(p+i-8)^seed^_wyp1);\n	else	if(_like_(i<=24))	seed=_wymum(_wyr8(p)^seed^_wyp0,_wyr8(p+8)^seed^_wyp1)^_wymum(_wyr8(p+i-8)^seed^_wyp2,seed^_wyp3);\n	else	if(_like_(i<=32))	seed=_wymum(_wyr8(p)^seed^_wyp0,_wyr8(p+8)^seed^_wyp1)^_wymum(_wyr8(p+16)^seed^_wyp2,_wyr8(p+i-8)^seed^_wyp3);\n	else{	seed=_wymum(_wyr8(p)^seed^_wyp0,_wyr8(p+8)^seed^_wyp1)^_wymum(_wyr8(p+16)^seed^_wyp2,_wyr8(p+24)^seed^_wyp3)^_wymum(_wyr8(p+i-32)^seed^_wyp1,_wyr8(p+i-24)^seed^_wyp2)^_wymum(_wyr8(p+i-16)^seed^_wyp3,_wyr8(p+i-8)^seed^_wyp0);	}\n	if(_like_(i==len))	return	_wymum(seed,len^_wyp4);\n	uint64_t	see1=seed,	see2=seed,	see3=seed;\n	for(p+=i,i=len-i;	_like_(i>=64); i-=64,p+=64) {\n		seed=_wymum(_wyr8(p)^seed^_wyp0,_wyr8(p+8)^seed^_wyp1);		see1=_wymum(_wyr8(p+16)^see1^_wyp2,_wyr8(p+24)^see1^_wyp3);\n		see2=_wymum(_wyr8(p+32)^see2^_wyp1,_wyr8(p+40)^see2^_wyp2);	see3=_wymum(_wyr8(p+48)^see3^_wyp3,_wyr8(p+56)^see3^_wyp0);\n	}\n	return	_wymum(seed^see1^see2,see3^len^_wyp4);\n}\nstatic	inline	uint64_t	wyhash64(uint64_t	A, uint64_t	B) {	return	_wymum(_wymum(A^_wyp0,	B^_wyp1),	_wyp2);	}\nstatic	inline	uint64_t	wyrand(uint64_t	*seed) {	*seed+=_wyp0;	return	_wymum(*seed^_wyp1,*seed);	}\nstatic	inline	double	wy2u01(uint64_t	r) {	const	double	_wynorm=1.0/(1ull<<52);	return	(r>>11)*_wynorm;	}\nstatic	inline	double	wy2gau(uint64_t	r) {	const	double	_wynorm=1.0/(1ull<<20);	return	((r&0x1fffff)+((r>>21)&0x1fffff)+((r>>42)&0x1fffff))*_wynorm-3.0;	}\nstatic inline uint64_t fastest_hash(const void *key, size_t len, uint64_t seed) {\n  const uint8_t *p = (const uint8_t *)key;\n  return _like_(len >= 4) ? (_wyr4(p) + _wyr4(p + len - 4)) * (_wyr4(p + (len >> 1) - 2) ^ seed) : (_like_(len) ? _wyr3(p, len) * (_wyp0 ^ seed) : seed);\n}\n#endif\n\n", _const_v__gen__c_common_macros.len, _const_v__gen__c_common_macros.str);
-_const_v__gen__c_builtin_types = tos3("\n\n//================================== builtin types ================================*/\n\ntypedef int64_t i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef unsigned char* byteptr;\ntypedef int* intptr;\ntypedef void* voidptr;\ntypedef char* charptr;\ntypedef struct array array;\ntypedef struct map map;\ntypedef array array_string;\ntypedef array array_int;\ntypedef array array_byte;\ntypedef array array_f32;\ntypedef array array_f64;\ntypedef array array_u16;\ntypedef array array_u32;\ntypedef array array_u64;\ntypedef map map_int;\ntypedef map map_string;\ntypedef byte array_fixed_byte_300 [300];\ntypedef byte array_fixed_byte_400 [400];\n#ifndef bool\n	typedef int bool;\n	#define true 1\n	#define false 0\n#endif\n\n");
-_const_v__gen__bare_c_headers = _STR("\n\n%.*s\n\n#ifndef exit\n#define exit(rc) sys_exit(rc)\nvoid sys_exit (int);\n#endif\n\n", _const_v__gen__c_common_macros.len, _const_v__gen__c_common_macros.str);
-_const_v__gen__x64__mag0 = 0x7f;
-_const_v__gen__x64__ei_class = 4;
-_const_v__gen__x64__elfclass64 = 2;
-_const_v__gen__x64__elfdata2lsb = 1;
-_const_v__gen__x64__ev_current = 1;
-_const_v__gen__x64__elf_osabi = 0;
-_const_v__gen__x64__et_rel = 1;
-_const_v__gen__x64__et_exec = 2;
-_const_v__gen__x64__et_dyn = 3;
-_const_v__gen__x64__e_machine = 0x3e;
-_const_v__gen__x64__shn_xindex = 0xffff;
-_const_v__gen__x64__sht_null = 0;
-_const_v__gen__x64__segment_start = 0x400000;
-_const_v__scanner__is_fmt = string_contains(os__getenv(tos3("VEXE")), tos3("vfmt"));
+	_const_v__gen__c_headers = _STR("\n\n// c_headers\n#include <stdio.h>  // TODO remove all these includes, define all function signatures and types manually\n#include <stdlib.h>\n#include <float.h>\n\n//#include \"fns.h\"\n#include <signal.h>\n#include <stdarg.h> // for va_list\n#include <string.h> // memcpy\n\n#if INTPTR_MAX == INT32_MAX\n    #define TARGET_IS_32BIT 1\n#elif INTPTR_MAX == INT64_MAX\n    #define TARGET_IS_64BIT 1\n#else\n    #error \"The environment is not 32 or 64-bit.\"\n#endif\n\n#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) || defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || defined(__MIBSEB__)\n    #define TARGET_ORDER_IS_BIG\n#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || defined(_M_X64) || defined(_M_IX86)\n    #define TARGET_ORDER_IS_LITTLE\n#else\n    #error \"Unknown architecture endianness\"\n#endif\n\n#ifndef _WIN32\n#include <ctype.h>\n#include <locale.h> // tolower\n#include <sys/time.h>\n#include <unistd.h> // sleep\nextern char **environ;\n#endif\n\n#if defined(__CYGWIN__) && !defined(_WIN32)\n#error Cygwin is not supported, please use MinGW or Visual Studio.\n#endif\n\n\n#ifdef __linux__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __FreeBSD__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __DragonFly__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n#include <sys/types.h>\n#include <sys/resource.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __NetBSD__\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __sun\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n%.*s\n\n#ifdef _WIN32\n#define WINVER 0x0600\n#ifdef _WIN32_WINNT\n#undef _WIN32_WINNT\n#endif\n#define _WIN32_WINNT 0x0600\n#define WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define UNICODE\n#include <windows.h>\n\n#include <io.h> // _waccess\n#include <direct.h> // _wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n\n// On MSVC these are the same (as long as /volatile:ms is passed)\n#define _Atomic volatile\n\n// MSVC cannot parse some things properly\n#undef EMPTY_STRUCT_DECLARATION\n#undef OPTION_CAST\n\n#define EMPTY_STRUCT_DECLARATION int ____dummy_variable\n#define OPTION_CAST(x)\n\n#include <dbghelp.h>\n#pragma comment(lib, \"Dbghelp.lib\")\n\nextern wchar_t **_wenviron;\n\n#endif\n\n#else\n#include <pthread.h>\n#endif\n\n\n//============================== HELPER C MACROS =============================*/\n#define _PUSH(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); array_push(arr, &tmp);}\n#define _PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); array_push_many(arr, tmp.data, tmp.len);}\n#define _IN(typ, val, arr) array_##typ##_contains(arr, val)\n#define _IN_MAP(val, m) map_exists(m, val)\n#define DEFAULT_EQUAL(a, b) (a == b)\n#define DEFAULT_NOT_EQUAL(a, b) (a != b)\n#define DEFAULT_LT(a, b) (a < b)\n#define DEFAULT_LE(a, b) (a <= b)\n#define DEFAULT_GT(a, b) (a > b)\n#define DEFAULT_GE(a, b) (a >= b)\n\n// NB: macro_fXX_eq and macro_fXX_ne are NOT used\n// in the generated C code. They are here just for\n// completeness/testing.\n\n#define macro_f64_eq(a, b) (a == b)\n#define macro_f64_ne(a, b) (a != b)\n#define macro_f64_lt(a, b) (a <  b)\n#define macro_f64_le(a, b) (a <= b)\n#define macro_f64_gt(a, b) (a >  b)\n#define macro_f64_ge(a, b) (a >= b)\n\n#define macro_f32_eq(a, b) (a == b)\n#define macro_f32_ne(a, b) (a != b)\n#define macro_f32_lt(a, b) (a <  b)\n#define macro_f32_le(a, b) (a <= b)\n#define macro_f32_gt(a, b) (a >  b)\n#define macro_f32_ge(a, b) (a >= b)\n\n//================================== GLOBALS =================================*/\nbyte g_str_buf[1024];\nint load_so(byteptr);\nvoid reload_so();\nvoid _vinit();\nvoid _vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\n// ============== wyhash ==============\n//	Author: Wang Yi\n#ifndef wyhash_version_4\n#define wyhash_version_4\n#include	<stdint.h>\n#include	<string.h>\n#if defined(_MSC_VER) && defined(_M_X64)\n#include <intrin.h>\n#pragma	intrinsic(_umul128)\n#endif\nconst	uint64_t	_wyp0=0xa0761d6478bd642full,	_wyp1=0xe7037ed1a0b428dbull,	_wyp2=0x8ebc6af09c88c6e3ull,	_wyp3=0x589965cc75374cc3ull,	_wyp4=0x1d8e4e27c47d124full;\nstatic	inline	uint64_t	_wyrotr(uint64_t v, unsigned k) {	return	(v>>k)|(v<<(64-k));	}\nstatic	inline	uint64_t	_wymum(uint64_t	A,	uint64_t	B) {\n#ifdef	WYHASH32\n	uint64_t    hh=(A>>32)*(B>>32), hl=(A>>32)*(unsigned)B, lh=(unsigned)A*(B>>32), ll=(uint64_t)(unsigned)A*(unsigned)B;\n	return  _wyrotr(hl,32)^_wyrotr(lh,32)^hh^ll;\n#else\n	#ifdef __SIZEOF_INT128__\n		__uint128_t	r=A;	r*=B;	return	(r>>64)^r;\n	#elif	defined(_MSC_VER) && defined(_M_X64)\n		A=_umul128(A, B, &B);	return	A^B;\n	#else\n		uint64_t	ha=A>>32,	hb=B>>32,	la=(uint32_t)A,	lb=(uint32_t)B,	hi, lo;\n		uint64_t	rh=ha*hb,	rm0=ha*lb,	rm1=hb*la,	rl=la*lb,	t=rl+(rm0<<32),	c=t<rl;\n		lo=t+(rm1<<32);	c+=lo<t;hi=rh+(rm0>>32)+(rm1>>32)+c;	return hi^lo;\n	#endif\n#endif\n}\n#ifndef WYHASH_LITTLE_ENDIAN\n	#if	defined(_WIN32) || defined(__LITTLE_ENDIAN__) || (defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)\n		#define WYHASH_LITTLE_ENDIAN 1\n	#elif	defined(__BIG_ENDIAN__) || (defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)\n		#define WYHASH_LITTLE_ENDIAN 0\n	#endif\n#endif\n#if(WYHASH_LITTLE_ENDIAN) || defined(__TINYC__)\nstatic	inline	uint64_t	_wyr8(const	uint8_t	*p)	{	uint64_t	v;	memcpy(&v,  p,  8);	return  v;	}\nstatic	inline	uint64_t	_wyr4(const	uint8_t	*p)	{	unsigned	v;	memcpy(&v,  p,  4);	return  v;	}\n#else\n	#if defined(__GNUC__) || defined(__INTEL_COMPILER)\nstatic	inline	uint64_t	_wyr8(const	uint8_t	*p)	{	uint64_t	v;	memcpy(&v,  p,  8);	return   __builtin_bswap64(v);	}\nstatic	inline	uint64_t	_wyr4(const	uint8_t	*p)	{	unsigned	v;	memcpy(&v,  p,  4);	return   __builtin_bswap32(v);	}\n	#elif	defined(_MSC_VER)\nstatic	inline	uint64_t	_wyr8(const	uint8_t	*p)	{	uint64_t	v;	memcpy(&v,  p,  8);	return  _byteswap_uint64(v);}\nstatic	inline	uint64_t	_wyr4(const	uint8_t	*p)	{	unsigned	v;	memcpy(&v,  p,  4);	return  _byteswap_ulong(v);	}\n	#endif\n#endif\nstatic	inline	uint64_t	_wyr3(const	uint8_t	*p,	unsigned	k) {	return	(((uint64_t)p[0])<<16)|(((uint64_t)p[k>>1])<<8)|p[k-1];	}\nstatic	inline	uint64_t	wyhash(const void* key,	uint64_t	len,	uint64_t	seed) {\n	const	uint8_t	*p=(const	uint8_t*)key;	uint64_t	i=len&63;\n	#if defined(__GNUC__) || defined(__INTEL_COMPILER)\n		#define	_like_(x)	__builtin_expect(x,1)\n		#define	_unlike_(x)	__builtin_expect(x,0)\n	#else\n		#define _like_(x)  (x)\n		#define _unlike_(x)  (x)\n	#endif\n	if(_unlike_(!i)) {	}\n	else	if(_unlike_(i<4))	seed=_wymum(_wyr3(p,i)^seed^_wyp0,seed^_wyp1);\n	else	if(_like_(i<=8))	seed=_wymum(_wyr4(p)^seed^_wyp0,_wyr4(p+i-4)^seed^_wyp1);\n	else	if(_like_(i<=16))	seed=_wymum(_wyr8(p)^seed^_wyp0,_wyr8(p+i-8)^seed^_wyp1);\n	else	if(_like_(i<=24))	seed=_wymum(_wyr8(p)^seed^_wyp0,_wyr8(p+8)^seed^_wyp1)^_wymum(_wyr8(p+i-8)^seed^_wyp2,seed^_wyp3);\n	else	if(_like_(i<=32))	seed=_wymum(_wyr8(p)^seed^_wyp0,_wyr8(p+8)^seed^_wyp1)^_wymum(_wyr8(p+16)^seed^_wyp2,_wyr8(p+i-8)^seed^_wyp3);\n	else{	seed=_wymum(_wyr8(p)^seed^_wyp0,_wyr8(p+8)^seed^_wyp1)^_wymum(_wyr8(p+16)^seed^_wyp2,_wyr8(p+24)^seed^_wyp3)^_wymum(_wyr8(p+i-32)^seed^_wyp1,_wyr8(p+i-24)^seed^_wyp2)^_wymum(_wyr8(p+i-16)^seed^_wyp3,_wyr8(p+i-8)^seed^_wyp0);	}\n	if(_like_(i==len))	return	_wymum(seed,len^_wyp4);\n	uint64_t	see1=seed,	see2=seed,	see3=seed;\n	for(p+=i,i=len-i;	_like_(i>=64); i-=64,p+=64) {\n		seed=_wymum(_wyr8(p)^seed^_wyp0,_wyr8(p+8)^seed^_wyp1);		see1=_wymum(_wyr8(p+16)^see1^_wyp2,_wyr8(p+24)^see1^_wyp3);\n		see2=_wymum(_wyr8(p+32)^see2^_wyp1,_wyr8(p+40)^see2^_wyp2);	see3=_wymum(_wyr8(p+48)^see3^_wyp3,_wyr8(p+56)^see3^_wyp0);\n	}\n	return	_wymum(seed^see1^see2,see3^len^_wyp4);\n}\nstatic	inline	uint64_t	wyhash64(uint64_t	A, uint64_t	B) {	return	_wymum(_wymum(A^_wyp0,	B^_wyp1),	_wyp2);	}\nstatic	inline	uint64_t	wyrand(uint64_t	*seed) {	*seed+=_wyp0;	return	_wymum(*seed^_wyp1,*seed);	}\nstatic	inline	double	wy2u01(uint64_t	r) {	const	double	_wynorm=1.0/(1ull<<52);	return	(r>>11)*_wynorm;	}\nstatic	inline	double	wy2gau(uint64_t	r) {	const	double	_wynorm=1.0/(1ull<<20);	return	((r&0x1fffff)+((r>>21)&0x1fffff)+((r>>42)&0x1fffff))*_wynorm-3.0;	}\nstatic inline uint64_t fastest_hash(const void *key, size_t len, uint64_t seed) {\n  const uint8_t *p = (const uint8_t *)key;\n  return _like_(len >= 4) ? (_wyr4(p) + _wyr4(p + len - 4)) * (_wyr4(p + (len >> 1) - 2) ^ seed) : (_like_(len) ? _wyr3(p, len) * (_wyp0 ^ seed) : seed);\n}\n#endif\n\n", _const_v__gen__c_common_macros.len, _const_v__gen__c_common_macros.str);
+	_const_v__gen__bare_c_headers = _STR("\n\n%.*s\n\n#ifndef exit\n#define exit(rc) sys_exit(rc)\nvoid sys_exit (int);\n#endif\n\n", _const_v__gen__c_common_macros.len, _const_v__gen__c_common_macros.str);
+	_const_v__scanner__is_fmt = string_contains(os__getenv(tos3("VEXE")), tos3("vfmt"));
 
 }
 
