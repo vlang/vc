@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8f06d60"
+#define V_COMMIT_HASH "abd0686"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "33b0344"
+#define V_COMMIT_HASH "8f06d60"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8f06d60"
+#define V_CURRENT_COMMIT_HASH "abd0686"
 #endif
 
 typedef struct array array;
@@ -21248,7 +21248,8 @@ void v__gen__Gen_struct_init(v__gen__Gen* g, v__ast__StructInit it) {
 		info = /* as */ *(v__table__Struct*)sym->info.obj;
 	}
 	string styp = v__gen__Gen_typ(g, it.typ);
-	if (g->is_amp) {
+	bool is_amp = g->is_amp;
+	if (is_amp) {
 		strings__Builder_go_back(&g->out, 1);
 		v__gen__Gen_write(g, _STR("(%.*s*)memdup(&(%.*s){", styp.len, styp.str, styp.len, styp.str));
 	} else {
@@ -21290,7 +21291,7 @@ void v__gen__Gen_struct_init(v__gen__Gen* g, v__ast__StructInit it) {
 		v__gen__Gen_write(g, tos3("0"));
 	}
 	v__gen__Gen_write(g, tos3("}"));
-	if (g->is_amp) {
+	if (is_amp) {
 		v__gen__Gen_write(g, _STR(", sizeof(%.*s))", styp.len, styp.str));
 	}
 }
