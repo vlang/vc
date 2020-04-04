@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4bade9b"
+#define V_COMMIT_HASH "d562760"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "83289d7"
+#define V_COMMIT_HASH "4bade9b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4bade9b"
+#define V_CURRENT_COMMIT_HASH "d562760"
 #endif
 
 typedef struct array array;
@@ -3301,7 +3301,7 @@ array_int _const_time__days_before;  // inited later
 time__Time time__now();
 string time__Time_smonth(time__Time t);
 time__Time time__new_time(time__Time t);
-int time__Time_unix_time(time__Time *t);
+int time__Time_unix_time(time__Time t);
 time__Time time__Time_add_seconds(time__Time t, int seconds);
 time__Time time__Time_add_days(time__Time t, int days);
 int time__since(time__Time t);
@@ -16174,21 +16174,21 @@ time__Time time__new_time(time__Time t) {
       .hour = t.hour,
       .minute = t.minute,
       .second = t.second,
-      .v_unix = time__Time_unix_time(&t),
+      .v_unix = time__Time_unix_time(t),
   };
 }
 
-int time__Time_unix_time(time__Time *t) {
-  if (t->v_unix != 0) {
-    return t->v_unix;
+int time__Time_unix_time(time__Time t) {
+  if (t.v_unix != 0) {
+    return t.v_unix;
   }
   struct tm tt = (struct tm){
-      .tm_sec = t->second,
-      .tm_min = t->minute,
-      .tm_hour = t->hour,
-      .tm_mday = t->day,
-      .tm_mon = t->month - 1,
-      .tm_year = t->year - 1900,
+      .tm_sec = t.second,
+      .tm_min = t.minute,
+      .tm_hour = t.hour,
+      .tm_mday = t.day,
+      .tm_mon = t.month - 1,
+      .tm_year = t.year - 1900,
   };
   return time__make_unix_time(tt);
 }
@@ -24440,21 +24440,25 @@ void v__gen__Gen_call_args(v__gen__Gen *g, array_v__ast__CallArg args,
     string struct_name =
         string_add(tos3("varg_"), string_replace(v__gen__Gen_typ(g, varg_type),
                                                  tos3("*"), tos3("_ptr")));
-    int len = args.len - arg_no;
+    int variadic_count = args.len - arg_no;
     string varg_type_str = int_str(((int)(varg_type)));
-    if (len >
+    if (variadic_count >
         (*(int *)map_get3(g->variadic_args, varg_type_str, &(int[]){0}))) {
-      map_set(&g->variadic_args, varg_type_str, &(int[]){len});
+      map_set(&g->variadic_args, varg_type_str, &(int[]){variadic_count});
     }
     v__gen__Gen_write(g, _STR("(%.*s){.len=%d,.args={", struct_name.len,
-                              struct_name.str, len));
-    for (int tmp7 = arg_no; tmp7 < args.len; tmp7++) {
-      int j = tmp7;
-      v__gen__Gen_ref_or_deref_arg(g, (*(v__ast__CallArg *)array_get(args, j)),
-                                   varg_type);
-      if (j < args.len - 1) {
-        v__gen__Gen_write(g, tos3(", "));
+                              struct_name.str, variadic_count));
+    if (variadic_count > 0) {
+      for (int tmp8 = arg_no; tmp8 < args.len; tmp8++) {
+        int j = tmp8;
+        v__gen__Gen_ref_or_deref_arg(
+            g, (*(v__ast__CallArg *)array_get(args, j)), varg_type);
+        if (j < args.len - 1) {
+          v__gen__Gen_write(g, tos3(", "));
+        }
       }
+    } else {
+      v__gen__Gen_write(g, tos3("0"));
     }
     v__gen__Gen_write(g, tos3("}}"));
   }
