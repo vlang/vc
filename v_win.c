@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f748390"
+#define V_COMMIT_HASH "4c87034"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "95a1bd8"
+#define V_COMMIT_HASH "f748390"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "f748390"
+#define V_CURRENT_COMMIT_HASH "4c87034"
 #endif
 
 typedef struct array array;
@@ -3116,98 +3116,6 @@ string v__util__githash(bool should_get_from_filesystem);
 void v__util__set_vroot_folder(string vroot_path);
 void v__util__launch_tool(bool is_verbose, string tool_name);
 string v__util__path_of_executable(string path);
-u64 _const_math__uvnan;     // inited later
-u64 _const_math__uvinf;     // inited later
-u64 _const_math__uvneginf;  // inited later
-u64 _const_math__uvone;     // inited later
-int _const_math__mask;      // inited later
-int _const_math__shift;     // inited later
-int _const_math__bias;      // inited later
-u64 _const_math__sign_mask; // inited later
-u64 _const_math__frac_mask; // inited later
-f64 math__inf(int sign);
-f64 math__nan();
-bool math__is_nan(f64 f);
-bool math__is_inf(f64 f, int sign);
-f64 _const_math__e;                     // inited later
-f64 _const_math__pi;                    // inited later
-f64 _const_math__phi;                   // inited later
-f64 _const_math__tau;                   // inited later
-f64 _const_math__sqrt2;                 // inited later
-f64 _const_math__sqrt_e;                // inited later
-f64 _const_math__sqrt_pi;               // inited later
-f64 _const_math__sqrt_tau;              // inited later
-f64 _const_math__sqrt_phi;              // inited later
-f64 _const_math__ln2;                   // inited later
-f64 _const_math__log2_e;                // inited later
-f64 _const_math__ln10;                  // inited later
-f64 _const_math__log10_e;               // inited later
-f64 _const_math__max_f32;               // inited later
-f64 _const_math__smallest_non_zero_f32; // inited later
-f64 _const_math__max_f64;               // inited later
-f64 _const_math__smallest_non_zero_f64; // inited later
-int _const_math__max_i8;                // inited later
-int _const_math__min_i8;                // inited later
-int _const_math__max_i16;               // inited later
-int _const_math__min_i16;               // inited later
-int _const_math__max_i32;               // inited later
-int _const_math__min_i32;               // inited later
-i64 _const_math__min_i64;               // inited later
-i64 _const_math__max_i64;               // inited later
-int _const_math__max_u8;                // inited later
-int _const_math__max_u16;               // inited later
-u32 _const_math__max_u32;               // inited later
-u64 _const_math__max_u64;               // inited later
-#include <math.h>
-f64 math__abs(f64 a);
-f64 math__acos(f64 a);
-f64 math__asin(f64 a);
-f64 math__atan(f64 a);
-f64 math__atan2(f64 a, f64 b);
-f64 math__cbrt(f64 a);
-f64 math__ceil(f64 a);
-f64 math__cos(f64 a);
-f32 math__cosf(f32 a);
-f64 math__cosh(f64 a);
-f64 math__degrees(f64 radians);
-f64 math__exp(f64 a);
-array_int math__digits(int _n, int base);
-f64 math__erf(f64 a);
-f64 math__erfc(f64 a);
-f64 math__exp2(f64 a);
-f64 math__floor(f64 a);
-f64 math__fmod(f64 a, f64 b);
-f64 math__gamma(f64 a);
-i64 math__gcd(i64 a_, i64 b_);
-f64 math__hypot(f64 a, f64 b);
-i64 math__lcm(i64 a, i64 b);
-f64 math__log(f64 a);
-f64 math__log2(f64 a);
-f64 math__log10(f64 a);
-f64 math__log_gamma(f64 a);
-f64 math__log_n(f64 a, f64 b);
-f64 math__max(f64 a, f64 b);
-f64 math__min(f64 a, f64 b);
-f64 math__pow(f64 a, f64 b);
-f32 math__powf(f32 a, f32 b);
-f64 math__radians(f64 degrees);
-f64 math__round(f64 f);
-f64 math__sin(f64 a);
-f32 math__sinf(f32 a);
-f64 math__sinh(f64 a);
-f64 math__sqrt(f64 a);
-f32 math__sqrtf(f32 a);
-f64 math__tan(f64 a);
-f32 math__tanf(f32 a);
-f64 math__tanh(f64 a);
-f64 math__trunc(f64 a);
-f64 math__aprox_sin(f64 a);
-f64 math__aprox_cos(f64 a);
-f64 math__copysign(f64 x, f64 y);
-u32 math__f32_bits(f32 f);
-f32 math__f32_from_bits(u32 b);
-u64 math__f64_bits(f64 f);
-f64 math__f64_from_bits(u64 b);
 u32 _const_math__bits__de_bruijn32;           // inited later
 array_byte _const_math__bits__de_bruijn32tab; // inited later
 u64 _const_math__bits__de_bruijn64;           // inited later
@@ -8395,11 +8303,11 @@ int strconv__ftoa__decimal_len_32(u32 u) {
 }
 
 u32 strconv__ftoa__mul_shift_32(u32 m, u64 mul, int ishift) {
-  multi_return_u64_u64 mr_2329 = math__bits__mul_64(((u64)(m)), mul);
-  u64 hi = mr_2329.arg0;
-  u64 lo = mr_2329.arg1;
+  multi_return_u64_u64 mr_2331 = math__bits__mul_64(((u64)(m)), mul);
+  u64 hi = mr_2331.arg0;
+  u64 lo = mr_2331.arg1;
   u64 shifted_sum = (lo >> ((u64)(ishift))) + (hi << ((u64)(64 - ishift)));
-  strconv__ftoa__assert1(shifted_sum <= _const_math__max_u32,
+  strconv__ftoa__assert1(shifted_sum <= 2147483647,
                          tos3("shiftedSum <= math.max_u32"));
   return ((u32)(shifted_sum));
 }
@@ -15364,212 +15272,6 @@ string v__util__path_of_executable(string path) {
   return string_add(path, tos3(".exe"));
 #endif
   return path;
-}
-
-f64 math__inf(int sign) {
-  u64 v = (sign >= 0 ? _const_math__uvinf : _const_math__uvneginf);
-  return math__f64_from_bits(v);
-}
-
-f64 math__nan() { return math__f64_from_bits(_const_math__uvnan); }
-
-bool math__is_nan(f64 f) { return f != f; }
-
-bool math__is_inf(f64 f, int sign) {
-  return (sign >= 0 && f > _const_math__max_f64) ||
-         (sign <= 0 && f < -_const_math__max_f64);
-}
-
-f64 math__abs(f64 a) { return fabs(a); }
-
-f64 math__acos(f64 a) { return acos(a); }
-
-f64 math__asin(f64 a) { return asin(a); }
-
-f64 math__atan(f64 a) { return atan(a); }
-
-f64 math__atan2(f64 a, f64 b) { return atan2(a, b); }
-
-f64 math__cbrt(f64 a) { return cbrt(a); }
-
-f64 math__ceil(f64 a) { return ceil(a); }
-
-f64 math__cos(f64 a) { return cos(a); }
-
-f32 math__cosf(f32 a) { return cosf(a); }
-
-f64 math__cosh(f64 a) { return cosh(a); }
-
-f64 math__degrees(f64 radians) { return radians * (180.0 / _const_math__pi); }
-
-f64 math__exp(f64 a) { return exp(a); }
-
-array_int math__digits(int _n, int base) {
-  if (base < 2) {
-    v_panic(_STR("digits: Cannot find digits of n with base %d", base));
-  }
-  int n = _n;
-  int sign = 1;
-  if (n < 0) {
-    sign = -1;
-    n = -n;
-  }
-  array_int res = new_array(0, 0, sizeof(int));
-  while (n != 0) {
-    _PUSH(&res, ((n % base) * sign), tmp3, int);
-    n /= base;
-  }
-  return res;
-}
-
-f64 math__erf(f64 a) { return erf(a); }
-
-f64 math__erfc(f64 a) { return erfc(a); }
-
-f64 math__exp2(f64 a) { return exp2(a); }
-
-f64 math__floor(f64 a) { return floor(a); }
-
-f64 math__fmod(f64 a, f64 b) { return fmod(a, b); }
-
-f64 math__gamma(f64 a) { return tgamma(a); }
-
-i64 math__gcd(i64 a_, i64 b_) {
-  i64 a = a_;
-  i64 b = b_;
-  if (a < 0) {
-    a = -a;
-  }
-  if (b < 0) {
-    b = -b;
-  }
-  while (b != 0) {
-    a %= b;
-    if (a == 0) {
-      return b;
-    }
-    b %= a;
-  }
-  return a;
-}
-
-f64 math__hypot(f64 a, f64 b) { return hypot(a, b); }
-
-i64 math__lcm(i64 a, i64 b) {
-  if (a == 0) {
-    return a;
-  }
-  i64 res = a * (b / math__gcd(b, a));
-  if (res < 0) {
-    return -res;
-  }
-  return res;
-}
-
-f64 math__log(f64 a) { return log(a); }
-
-f64 math__log2(f64 a) { return log2(a); }
-
-f64 math__log10(f64 a) { return log10(a); }
-
-f64 math__log_gamma(f64 a) { return lgamma(a); }
-
-f64 math__log_n(f64 a, f64 b) { return log(a) / log(b); }
-
-f64 math__max(f64 a, f64 b) {
-  if (a > b) {
-    return a;
-  }
-  return b;
-}
-
-f64 math__min(f64 a, f64 b) {
-  if (a < b) {
-    return a;
-  }
-  return b;
-}
-
-f64 math__pow(f64 a, f64 b) { return pow(a, b); }
-
-f32 math__powf(f32 a, f32 b) { return powf(a, b); }
-
-f64 math__radians(f64 degrees) { return degrees * (_const_math__pi / 180.0); }
-
-f64 math__round(f64 f) { return round(f); }
-
-f64 math__sin(f64 a) { return sin(a); }
-
-f32 math__sinf(f32 a) { return sinf(a); }
-
-f64 math__sinh(f64 a) { return sinh(a); }
-
-f64 math__sqrt(f64 a) { return sqrt(a); }
-
-f32 math__sqrtf(f32 a) { return sqrtf(a); }
-
-f64 math__tan(f64 a) { return tan(a); }
-
-f32 math__tanf(f32 a) { return tanf(a); }
-
-f64 math__tanh(f64 a) { return tanh(a); }
-
-f64 math__trunc(f64 a) { return trunc(a); }
-
-f64 math__aprox_sin(f64 a) {
-  f64 a0 = 1.91059300966915117e-31;
-  f64 a1 = 1.00086760103908896;
-  f64 a2 = -1.21276126894734565e-2;
-  f64 a3 = -1.38078780785773762e-1;
-  f64 a4 = -2.67353392911981221e-2;
-  f64 a5 = 2.08026600266304389e-2;
-  f64 a6 = -3.03996055049204407e-3;
-  f64 a7 = 1.38235642404333740e-4;
-  return a0 +
-         a * (a1 +
-              a * (a2 + a * (a3 + a * (a4 + a * (a5 + a * (a6 + a * a7))))));
-}
-
-f64 math__aprox_cos(f64 a) {
-  f64 a0 = 9.9995999154986614e-1;
-  f64 a1 = 1.2548995793001028e-3;
-  f64 a2 = -5.0648546280678015e-1;
-  f64 a3 = 1.2942246466519995e-2;
-  f64 a4 = 2.8668384702547972e-2;
-  f64 a5 = 7.3726485210586547e-3;
-  f64 a6 = -3.8510875386947414e-3;
-  f64 a7 = 4.7196604604366623e-4;
-  f64 a8 = -1.8776444013090451e-5;
-  return a0 +
-         a * (a1 +
-              a * (a2 +
-                   a * (a3 +
-                        a * (a4 + a * (a5 + a * (a6 + a * (a7 + a * a8)))))));
-}
-
-f64 math__copysign(f64 x, f64 y) {
-  return math__f64_from_bits((((math__f64_bits(x) & ~_const_math__sign_mask)) |
-                              ((math__f64_bits(y) & _const_math__sign_mask))));
-}
-
-u32 math__f32_bits(f32 f) {
-  u32 *p = ((u32 *)(&f));
-  return *p;
-}
-
-f32 math__f32_from_bits(u32 b) {
-  f32 *p = ((f32 *)(&b));
-  return *p;
-}
-
-u64 math__f64_bits(f64 f) {
-  u64 *p = ((u64 *)(&f));
-  return *p;
-}
-
-f64 math__f64_from_bits(u64 b) {
-  f64 *p = ((f64 *)(&b));
-  return *p;
 }
 
 int math__bits__leading_zeros_8(byte x) { return 8 - math__bits__len_8(x); }
@@ -29973,58 +29675,6 @@ void _vinit() {
   _const_v__util__error_context_after = 2;
   _const_v__util__emanager = v__util__new_error_manager();
   _const_v__util__v_version = tos3("0.1.26");
-  _const_math__uvnan = ((u64)(0x7FF8000000000001));
-  _const_math__uvinf = ((u64)(0x7FF0000000000000));
-  _const_math__uvneginf = ((u64)(0xFFF0000000000000));
-  _const_math__uvone = ((u64)(0x3FF0000000000000));
-  _const_math__mask = 0x7FF;
-  _const_math__shift = 64 - 11 - 1;
-  _const_math__bias = 1023;
-  _const_math__sign_mask = (((u64)(1)) << 63);
-  _const_math__frac_mask =
-      ((((u64)(1)) << ((u64)(_const_math__shift))) - ((u64)(1)));
-  _const_math__e =
-      2.71828182845904523536028747135266249775724709369995957496696763;
-  _const_math__pi =
-      3.14159265358979323846264338327950288419716939937510582097494459;
-  _const_math__phi =
-      1.61803398874989484820458683436563811772030917980576286213544862;
-  _const_math__tau =
-      6.28318530717958647692528676655900576839433879875021164194988918;
-  _const_math__sqrt2 =
-      1.41421356237309504880168872420969807856967187537694807317667974;
-  _const_math__sqrt_e =
-      1.64872127070012814684865078781416357165377610071014801157507931;
-  _const_math__sqrt_pi =
-      1.77245385090551602729816748334114518279754945612238712821380779;
-  _const_math__sqrt_tau =
-      2.50662827463100050241576528481104525300698674060993831662992357;
-  _const_math__sqrt_phi =
-      1.27201964951406896425242246173749149171560804184009624861664038;
-  _const_math__ln2 =
-      0.693147180559945309417232121458176568075500134360255254120680009;
-  _const_math__log2_e = 1.0 / _const_math__ln2;
-  _const_math__ln10 =
-      2.30258509299404568401799145468436420760110148862877297603332790;
-  _const_math__log10_e = 1.0 / _const_math__ln10;
-  _const_math__max_f32 = 3.40282346638528859811704183484516925440e+38;
-  _const_math__smallest_non_zero_f32 =
-      1.401298464324817070923729583289916131280e-45;
-  _const_math__max_f64 = 1.797693134862315708145274237317043567981e+308;
-  _const_math__smallest_non_zero_f64 =
-      4.940656458412465441765687928682213723651e-324;
-  _const_math__max_i8 = 127;
-  _const_math__min_i8 = -128;
-  _const_math__max_i16 = 32767;
-  _const_math__min_i16 = -32768;
-  _const_math__max_i32 = 2147483647;
-  _const_math__min_i32 = -2147483648;
-  _const_math__min_i64 = ((i64)(-9223372036854775807 - 1));
-  _const_math__max_i64 = ((i64)(9223372036854775807));
-  _const_math__max_u8 = 255;
-  _const_math__max_u16 = 65535;
-  _const_math__max_u32 = ((u32)(4294967295));
-  _const_math__max_u64 = ((u64)(18446744073709551615));
   _const_math__bits__de_bruijn32 = ((u32)(0x077CB531));
   _const_math__bits__de_bruijn32tab = new_array_from_c_array(
       32, 32, sizeof(byte),
