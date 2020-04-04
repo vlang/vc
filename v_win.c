@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "abd0686"
+#define V_COMMIT_HASH "b056754"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8f06d60"
+#define V_COMMIT_HASH "abd0686"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "abd0686"
+#define V_CURRENT_COMMIT_HASH "b056754"
 #endif
 
 typedef struct array array;
@@ -15740,6 +15740,13 @@ v__ast__CallExpr v__parser__Parser_call_expr(v__parser__Parser* p, bool is_c, st
 			.is_mut = 0,
 			.pos = {0},
 		}}, sizeof(v__ast__Var)), .typ = 168 /* v.ast.Var */});
+		v__ast__Scope_register(p->scope, tos3("errcode"), /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){
+			.name = tos3("errcode"),
+			.typ = _const_v__table__int_type,
+			.expr = {0},
+			.is_mut = 0,
+			.pos = {0},
+		}}, sizeof(v__ast__Var)), .typ = 168 /* v.ast.Var */});
 		or_stmts = v__parser__Parser_parse_block_no_scope(p);
 		v__parser__Parser_close_scope(p);
 	}
@@ -15831,9 +15838,9 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool mr_2578 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_2578.arg0;
-	bool is_variadic = mr_2578.arg1;
+	multi_return_array_v__table__Arg_bool mr_2664 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_2664.arg0;
+	bool is_variadic = mr_2664.arg1;
 	_PUSH_MANY(&args, (args2), tmp9, array_v__table__Arg);
 	// FOR IN
 	for (int tmp10 = 0; tmp10 < args.
@@ -17105,6 +17112,13 @@ v__ast__Expr v__parser__Parser_dot_expr(v__parser__Parser* p, v__ast__Expr left)
 		if (p->tok.kind == v__token__Kind_key_orelse) {
 			v__parser__Parser_next(p);
 			v__parser__Parser_open_scope(p);
+			v__ast__Scope_register(p->scope, tos3("errcode"), /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){
+				.name = tos3("errcode"),
+				.typ = _const_v__table__int_type,
+				.expr = {0},
+				.is_mut = 0,
+				.pos = {0},
+			}}, sizeof(v__ast__Var)), .typ = 168 /* v.ast.Var */});
 			v__ast__Scope_register(p->scope, tos3("err"), /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){
 				.name = tos3("err"),
 				.typ = _const_v__table__string_type,
@@ -19503,6 +19517,10 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 		return _const_v__table__string_type;
 	}
 	else {
+		string tnode = tos3( /* v.ast.Expr */ v_typeof_sumtype_192( (node).typ ));
+		if (string_ne(tnode, tos3("unknown v.ast.Expr"))) {
+			println(_STR("checker.expr(): unhandled node with typeof(`%.*s`)", tnode.len, tnode.str));
+		}
 	}
 	;
 	return _const_v__table__void_type;
