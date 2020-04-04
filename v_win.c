@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "440f1cf"
+#define V_COMMIT_HASH "95a1bd8"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4c6db7a"
+#define V_COMMIT_HASH "440f1cf"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "440f1cf"
+#define V_CURRENT_COMMIT_HASH "95a1bd8"
 #endif
 
 typedef struct array array;
@@ -1271,6 +1271,7 @@ struct v__table__Map {
 
 struct v__table__Struct {
   array_v__table__Field fields;
+  bool is_typedef;
 };
 
 struct v__table__MultiReturn {
@@ -19668,6 +19669,7 @@ v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser *p) {
     v__parser__Parser_next(p);
     v__parser__Parser_next(p);
   }
+  bool is_typedef = string_eq(p->attr, tos3("typedef"));
   string name = v__parser__Parser_check_name(p);
   array_v__ast__Expr default_exprs = new_array(0, 0, sizeof(v__ast__Expr));
   v__parser__Parser_check(p, v__token__Kind_lcbr);
@@ -19729,6 +19731,7 @@ v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser *p) {
           v__table__TypeInfo){.obj = memdup(
                                   &(v__table__Struct[]){(v__table__Struct){
                                       .fields = fields,
+                                      .is_typedef = is_typedef,
                                   }},
                                   sizeof(v__table__Struct)),
                               .typ = 111 /* v.table.Struct */},
@@ -22571,7 +22574,10 @@ string v__gen__Gen_typ(v__gen__Gen *g, v__table__Type t) {
   if (string_starts_with(styp, tos3("C__"))) {
     styp = string_substr(styp, 3, styp.len);
     if (sym->kind == v__table__Kind_struct_) {
-      styp = _STR("struct %.*s", styp.len, styp.str);
+      v__table__Struct info = /* as */ *(v__table__Struct *)sym->info.obj;
+      if (!info.is_typedef) {
+        styp = _STR("struct %.*s", styp.len, styp.str);
+      }
     }
   }
   if (v__table__type_is(t, v__table__TypeFlag_optional)) {
@@ -22579,7 +22585,7 @@ string v__gen__Gen_typ(v__gen__Gen *g, v__table__Type t) {
     if (!(_IN(string, styp, g->optionals))) {
       strings__Builder_writeln(
           &g->definitions, _STR("typedef Option %.*s;", styp.len, styp.str));
-      _PUSH(&g->optionals, (styp), tmp6, string);
+      _PUSH(&g->optionals, (styp), tmp7, string);
     }
   }
   return styp;
@@ -24308,6 +24314,7 @@ void v__gen__Gen_const_decl(v__gen__Gen *g, v__ast__ConstDecl node) {
 void v__gen__Gen_struct_init(v__gen__Gen *g, v__ast__StructInit it) {
   v__table__Struct info = (v__table__Struct){
       .fields = new_array(0, 1, sizeof(v__table__Field)),
+      .is_typedef = 0,
   };
   bool is_struct = false;
   v__table__TypeSymbol *sym = v__table__Table_get_type_symbol(g->table, it.typ);
