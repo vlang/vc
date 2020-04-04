@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c0d4503"
+#define V_COMMIT_HASH "d1f653f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d562760"
+#define V_COMMIT_HASH "c0d4503"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c0d4503"
+#define V_CURRENT_COMMIT_HASH "d1f653f"
 #endif
 
 typedef struct array array;
@@ -18456,7 +18456,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser *p) {
              (byte_is_capital(string_at(p->tok.lit, 0)) || is_c ||
               (p->builtin_mod &&
                _IN(string, p->tok.lit, _const_v__table__builtin_type_names))) &&
-             (p->tok.lit.len == 1 ||
+             ((p->tok.lit.len == 1 || p->tok.lit.len == 2) ||
               !byte_is_capital(string_at(p->tok.lit, p->tok.lit.len - 1))) &&
              !p->inside_match_case) {
     return /* sum type cast */ (v__ast__Expr){
