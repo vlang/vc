@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "4540195"
+#define V_COMMIT_HASH "774fb7e"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b056754"
+#define V_COMMIT_HASH "4540195"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4540195"
+#define V_CURRENT_COMMIT_HASH "774fb7e"
 #endif
 
 typedef struct array array;
@@ -18114,6 +18114,10 @@ string v__ast__Expr_str(v__ast__Expr x) {
 	else if (x.typ == 207 /* v.ast.StringLiteral */) {
 		v__ast__StringLiteral* it = (v__ast__StringLiteral*)x.obj; // ST it
 		return _STR("\"%.*s\"", it->val.len, it->val.str);
+	}
+	else if (x.typ == 189 /* v.ast.BoolLiteral */) {
+		v__ast__BoolLiteral* it = (v__ast__BoolLiteral*)x.obj; // ST it
+		return bool_str(it->val);
 	}
 	else if (x.typ == 190 /* v.ast.ParExpr */) {
 		v__ast__ParExpr* it = (v__ast__ParExpr*)x.obj; // ST it
