@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b8f1152"
+#define V_COMMIT_HASH "e600fed"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4c87034"
+#define V_COMMIT_HASH "b8f1152"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b8f1152"
+#define V_CURRENT_COMMIT_HASH "e600fed"
 #endif
 
 typedef struct array array;
@@ -7156,9 +7156,9 @@ void parse_flags(string flag, internal__flag__Instance *f,
   };
 }
 
-int main(int __argc, char **__argv) {
+int main(int ___argc, char **___argv) {
   _vinit();
-  _const_os__args = os__init_os_args(__argc, (byteptr *)__argv);
+  _const_os__args = os__init_os_args(___argc, (byteptr *)___argv);
   array_string args = array_slice(_const_os__args, 1, _const_os__args.len);
   if (args.len == 0 ||
       (string_eq((*(string *)array_get(args, 0)), tos3("-")) ||
@@ -22645,9 +22645,10 @@ void v__gen__Gen_gen_fn_decl(v__gen__Gen *g, v__ast__FnDecl it) {
     if (g->pref->os == v__pref__OS_windows) {
       v__gen__Gen_write(
           g,
-          tos3("int wmain(int __argc, wchar_t *__argv[], wchar_t *__envp[]"));
+          tos3(
+              "int wmain(int ___argc, wchar_t *___argv[], wchar_t *___envp[]"));
     } else {
-      v__gen__Gen_write(g, _STR("int %.*s(int __argc, char** __argv",
+      v__gen__Gen_write(g, _STR("int %.*s(int ___argc, char** ___argv",
                                 it.name.len, it.name.str));
     }
   } else {
@@ -22695,11 +22696,11 @@ void v__gen__Gen_gen_fn_decl(v__gen__Gen *g, v__ast__FnDecl it) {
       if (g->pref->os == v__pref__OS_windows) {
         v__gen__Gen_writeln(
             g,
-            tos3("_const_os__args = os__init_os_args_wide(__argc, __argv);"));
+            tos3("_const_os__args = os__init_os_args_wide(___argc, ___argv);"));
       } else {
         v__gen__Gen_writeln(g,
-                            tos3("_const_os__args = os__init_os_args(__argc, "
-                                 "(byteptr*)__argv);"));
+                            tos3("_const_os__args = os__init_os_args(___argc, "
+                                 "(byteptr*)___argv);"));
       }
     }
   }
