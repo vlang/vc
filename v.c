@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "133842b"
+#define V_COMMIT_HASH "4c6db7a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b4e5e36"
+#define V_COMMIT_HASH "133842b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "133842b"
+#define V_CURRENT_COMMIT_HASH "4c6db7a"
 #endif
 
 typedef struct array array;
@@ -21444,8 +21444,7 @@ void v__checker__Checker_stmt(v__checker__Checker *c, v__ast__Stmt node) {
       (*(v__ast__ConstField *)array_get(it->fields, i)).typ = typ;
       // FOR IN
       for (int tmp6 = 0; tmp6 < c->const_deps.len; tmp6++) {
-        string cd = ((string *)c->const_deps.data)[tmp6];
-        // FOR IN
+        string cd = ((string *)c->const_deps.data)[tmp6]; // FOR IN
         for (int j = 0; j < it->fields.len; j++) {
           v__ast__ConstField f = ((v__ast__ConstField *)it->fields.data)[j];
           if (j != i && _IN(string, cd, field_names) && string_eq(cd, f.name) &&
@@ -21881,8 +21880,7 @@ v__table__Type v__checker__Checker_match_expr(v__checker__Checker *c,
   // FOR IN
   for (int tmp2 = 0; tmp2 < node->branches.len; tmp2++) {
     v__ast__MatchBranch branch =
-        ((v__ast__MatchBranch *)node->branches.data)[tmp2];
-    // FOR IN
+        ((v__ast__MatchBranch *)node->branches.data)[tmp2]; // FOR IN
     for (int tmp3 = 0; tmp3 < branch.exprs.len; tmp3++) {
       v__ast__Expr expr = ((v__ast__Expr *)branch.exprs.data)[tmp3];
       c->expected_type = cond_type;
@@ -22648,12 +22646,23 @@ void v__gen__Gen_for_in(v__gen__Gen *g, v__ast__ForInStmt it) {
     v__gen__Gen_write(
         g, _STR("for (int %.*s = 0; %.*s < ", i.len, i.str, i.len, i.str));
     v__gen__Gen_expr(g, it.cond);
-    v__gen__Gen_writeln(g, _STR(".len; %.*s++) {", i.len, i.str));
+    bool cond_type_is_ptr = v__table__type_is_ptr(it.cond_type);
+    if (cond_type_is_ptr) {
+      v__gen__Gen_writeln(g, tos3("->"));
+    } else {
+      v__gen__Gen_writeln(g, tos3("."));
+    }
+    v__gen__Gen_write(g, _STR("len; %.*s++) {", i.len, i.str));
     v__gen__Gen_write(g,
                       _STR("\t%.*s %.*s = ((%.*s*)", styp.len, styp.str,
                            it.val_var.len, it.val_var.str, styp.len, styp.str));
     v__gen__Gen_expr(g, it.cond);
-    v__gen__Gen_writeln(g, _STR(".data)[%.*s];", i.len, i.str));
+    if (cond_type_is_ptr) {
+      v__gen__Gen_writeln(g, tos3("->"));
+    } else {
+      v__gen__Gen_writeln(g, tos3("."));
+    }
+    v__gen__Gen_write(g, _STR("data)[%.*s];", i.len, i.str));
     v__gen__Gen_stmts(g, it.stmts);
     v__gen__Gen_writeln(g, tos3("}"));
   } else if (it.kind == v__table__Kind_map) {
@@ -23867,6 +23876,9 @@ void v__gen__Gen_index_expr(v__gen__Gen *g, v__ast__IndexExpr node) {
         if ((g->assign_op == v__token__Kind_mult_assign)) {
           v__gen__Gen_write(g, _STR("*(%.*s*)array_get(", elem_type_str.len,
                                     elem_type_str.str));
+          if (left_is_ptr) {
+            v__gen__Gen_write(g, tos3("*"));
+          }
           v__gen__Gen_expr(g, node.left);
           v__gen__Gen_write(g, tos3(", "));
           v__gen__Gen_expr(g, node.index);
@@ -23878,6 +23890,9 @@ void v__gen__Gen_index_expr(v__gen__Gen *g, v__ast__IndexExpr node) {
       } else {
         v__gen__Gen_write(g, _STR("(*(%.*s*)array_get(", elem_type_str.len,
                                   elem_type_str.str));
+        if (left_is_ptr) {
+          v__gen__Gen_write(g, tos3("*"));
+        }
         v__gen__Gen_expr(g, node.left);
         v__gen__Gen_write(g, tos3(", "));
         v__gen__Gen_expr(g, node.index);
@@ -25340,8 +25355,7 @@ void v__gen__x64__gen(array_v__ast__File files, string out_name) {
   v__gen__x64__Gen_generate_elf_header(&g);
   // FOR IN
   for (int tmp1 = 0; tmp1 < files.len; tmp1++) {
-    v__ast__File file = ((v__ast__File *)files.data)[tmp1];
-    // FOR IN
+    v__ast__File file = ((v__ast__File *)files.data)[tmp1]; // FOR IN
     for (int tmp2 = 0; tmp2 < file.stmts.len; tmp2++) {
       v__ast__Stmt stmt = ((v__ast__Stmt *)file.stmts.data)[tmp2];
       v__gen__x64__Gen_stmt(&g, stmt);
@@ -26735,8 +26749,7 @@ string v__depgraph__DepGraph_display(v__depgraph__DepGraph *graph) {
   // FOR IN
   for (int tmp1 = 0; tmp1 < graph->nodes.len; tmp1++) {
     v__depgraph__DepGraphNode node =
-        ((v__depgraph__DepGraphNode *)graph->nodes.data)[tmp1];
-    // FOR IN
+        ((v__depgraph__DepGraphNode *)graph->nodes.data)[tmp1]; // FOR IN
     for (int tmp2 = 0; tmp2 < node.deps.len; tmp2++) {
       string dep = ((string *)node.deps.data)[tmp2];
       out = string_add(out, _STR(" * %.*s -> %.*s\n", node.name.len,
@@ -26759,8 +26772,7 @@ string v__depgraph__DepGraph_display_cycles(v__depgraph__DepGraph *graph) {
   // FOR IN
   for (int tmp2 = 0; tmp2 < graph->nodes.len; tmp2++) {
     v__depgraph__DepGraphNode node =
-        ((v__depgraph__DepGraphNode *)graph->nodes.data)[tmp2];
-    // FOR IN
+        ((v__depgraph__DepGraphNode *)graph->nodes.data)[tmp2]; // FOR IN
     for (int tmp3 = 0; tmp3 < node.deps.len; tmp3++) {
       string dep = ((string *)node.deps.data)[tmp3];
       if (!(_IN_MAP(dep, node_names))) {
