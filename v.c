@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "e077cce"
+#define V_COMMIT_HASH "45fdbc4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "98086d7"
+#define V_COMMIT_HASH "e077cce"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "e077cce"
+#define V_CURRENT_COMMIT_HASH "45fdbc4"
 #endif
 
 typedef struct array array;
@@ -18209,6 +18209,30 @@ string v__ast__Expr_str(v__ast__Expr x) {
 	else if (x.typ == 210 /* v.ast.StringLiteral */) {
 		v__ast__StringLiteral* it = (v__ast__StringLiteral*)x.obj; // ST it
 		return _STR("\"%.*s\"", it->val.len, it->val.str);
+	}
+	else if (x.typ == 211 /* v.ast.StringInterLiteral */) {
+		v__ast__StringInterLiteral* it = (v__ast__StringInterLiteral*)x.obj; // ST it
+		array_string res = new_array(0, 0, sizeof(string));
+		_PUSH(&res, (tos3("'")), tmp2, string);
+		// FOR IN
+		for (int i = 0; i < it->vals.
+		len; i++) {	string val = ((string*)it->vals.
+		data)[i];_PUSH(&res, (val), tmp3, string);
+			if (i >= it->exprs.len) {
+				continue;
+			}
+			_PUSH(&res, (tos3("$")), tmp5, string);
+			if ((*(string*)array_get(it->expr_fmts, i)).len > 0) {
+				_PUSH(&res, (tos3("{")), tmp7, string);
+				_PUSH(&res, (v__ast__Expr_str((*(v__ast__Expr*)array_get(it->exprs, i)))), tmp8, string);
+				_PUSH(&res, ((*(string*)array_get(it->expr_fmts, i))), tmp9, string);
+				_PUSH(&res, (tos3("}")), tmp10, string);
+			} else {
+				_PUSH(&res, (v__ast__Expr_str((*(v__ast__Expr*)array_get(it->exprs, i)))), tmp11, string);
+			}
+		}
+		_PUSH(&res, (tos3("'")), tmp12, string);
+		return array_string_join(res, tos3(""));
 	}
 	else if (x.typ == 192 /* v.ast.BoolLiteral */) {
 		v__ast__BoolLiteral* it = (v__ast__BoolLiteral*)x.obj; // ST it
