@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4c6db7a"
+#define V_COMMIT_HASH "440f1cf"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "133842b"
+#define V_COMMIT_HASH "4c6db7a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4c6db7a"
+#define V_CURRENT_COMMIT_HASH "440f1cf"
 #endif
 
 typedef struct array array;
@@ -2305,8 +2305,6 @@ void map_set(map *m, string key, voidptr value);
 void map_expand(map *m);
 void map_rehash(map *m);
 void map_cached_rehash(map *m, u32 old_cap);
-bool map_get(map m, string key, voidptr out);
-voidptr map_get2(map m, string key);
 voidptr map_get3(map m, string key, voidptr zero);
 bool map_exists(map m, string key);
 void map_delete(map *m, string key);
@@ -5435,52 +5433,13 @@ void map_cached_rehash(map *m, u32 old_cap) {
   m->metas = new_meta;
 }
 
-bool map_get(map m, string key, voidptr out) {
-  multi_return_u32_u32 mr_9154 = map_key_to_index(m, key);
-  u32 index = mr_9154.arg0;
-  u32 meta = mr_9154.arg1;
-  multi_return_u32_u32 mr_9188 = meta_less(m.metas, index, meta);
-  index = mr_9188.arg0;
-  meta = mr_9188.arg1;
-  while (meta == m.metas[index]) {
-    u32 kv_index = m.metas[index + 1];
-    if (string_eq(key, m.key_values.data[kv_index].key)) {
-      memcpy(out, m.key_values.data[kv_index].value, m.value_bytes);
-      return true;
-    }
-    index += 2;
-    meta += _const_probe_inc;
-  }
-  return false;
-}
-
-voidptr map_get2(map m, string key) {
-  multi_return_u32_u32 mr_9529 = map_key_to_index(m, key);
-  u32 index = mr_9529.arg0;
-  u32 meta = mr_9529.arg1;
-  multi_return_u32_u32 mr_9563 = meta_less(m.metas, index, meta);
-  index = mr_9563.arg0;
-  meta = mr_9563.arg1;
-  while (meta == m.metas[index]) {
-    u32 kv_index = m.metas[index + 1];
-    if (string_eq(key, m.key_values.data[kv_index].key)) {
-      byteptr out = v_malloc(m.value_bytes);
-      memcpy(out, m.key_values.data[kv_index].value, m.value_bytes);
-      return out;
-    }
-    index += 2;
-    meta += _const_probe_inc;
-  }
-  return ((voidptr)(0));
-}
-
 voidptr map_get3(map m, string key, voidptr zero) {
-  multi_return_u32_u32 mr_9954 = map_key_to_index(m, key);
-  u32 index = mr_9954.arg0;
-  u32 meta = mr_9954.arg1;
-  multi_return_u32_u32 mr_9988 = meta_less(m.metas, index, meta);
-  index = mr_9988.arg0;
-  meta = mr_9988.arg1;
+  multi_return_u32_u32 mr_9159 = map_key_to_index(m, key);
+  u32 index = mr_9159.arg0;
+  u32 meta = mr_9159.arg1;
+  multi_return_u32_u32 mr_9193 = meta_less(m.metas, index, meta);
+  index = mr_9193.arg0;
+  meta = mr_9193.arg1;
   while (meta == m.metas[index]) {
     u32 kv_index = m.metas[index + 1];
     if (string_eq(key, m.key_values.data[kv_index].key)) {
@@ -5498,12 +5457,12 @@ bool map_exists(map m, string key) {
   if (m.value_bytes == 0) {
     return false;
   }
-  multi_return_u32_u32 mr_10422 = map_key_to_index(m, key);
-  u32 index = mr_10422.arg0;
-  u32 meta = mr_10422.arg1;
-  multi_return_u32_u32 mr_10456 = meta_less(m.metas, index, meta);
-  index = mr_10456.arg0;
-  meta = mr_10456.arg1;
+  multi_return_u32_u32 mr_9627 = map_key_to_index(m, key);
+  u32 index = mr_9627.arg0;
+  u32 meta = mr_9627.arg1;
+  multi_return_u32_u32 mr_9661 = meta_less(m.metas, index, meta);
+  index = mr_9661.arg0;
+  meta = mr_9661.arg1;
   while (meta == m.metas[index]) {
     u32 kv_index = m.metas[index + 1];
     if (string_eq(key, m.key_values.data[kv_index].key)) {
@@ -5516,12 +5475,12 @@ bool map_exists(map m, string key) {
 }
 
 void map_delete(map *m, string key) {
-  multi_return_u32_u32 mr_10732 = map_key_to_index(/*rec*/ *m, key);
-  u32 index = mr_10732.arg0;
-  u32 meta = mr_10732.arg1;
-  multi_return_u32_u32 mr_10766 = meta_less(m->metas, index, meta);
-  index = mr_10766.arg0;
-  meta = mr_10766.arg1;
+  multi_return_u32_u32 mr_9937 = map_key_to_index(/*rec*/ *m, key);
+  u32 index = mr_9937.arg0;
+  u32 meta = mr_9937.arg1;
+  multi_return_u32_u32 mr_9971 = meta_less(m->metas, index, meta);
+  index = mr_9971.arg0;
+  meta = mr_9971.arg1;
   while (meta == m->metas[index]) {
     u32 kv_index = m->metas[index + 1];
     if (string_eq(key, m->key_values.data[kv_index].key)) {
@@ -15222,9 +15181,9 @@ string v__util__formated_error(string kind, string emsg, string filepath,
   string position =
       _STR("%.*s:%d:%d:", path.len, path.str, pos.line_nr + 1, column);
   string source_context = tos3("");
-  string final_position = (_const_v__util__emanager->support_color
-                               ? term__bold(term__white(position))
-                               : position);
+  string final_position =
+      (_const_v__util__emanager->support_color ? term__bold(position)
+                                               : position);
   string final_kind = kind;
   if (_const_v__util__emanager->support_color) {
     final_kind = (string_contains(kind, tos3("error"))
@@ -17612,6 +17571,10 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser *p) {
   string name = tos3("");
   if (p->tok.kind == v__token__Kind_name) {
     name = v__parser__Parser_check_name(p);
+    if (!is_c && !p->pref->translated && v__scanner__contains_capital(name)) {
+      v__parser__Parser_error(p, tos3("function names cannot contain uppercase "
+                                      "letters, use snake_case instead"));
+    }
   }
   if ((p->tok.kind == v__token__Kind_plus ||
        p->tok.kind == v__token__Kind_minus ||
@@ -17625,13 +17588,13 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser *p) {
     v__parser__Parser_next(p);
     v__parser__Parser_check(p, v__token__Kind_gt);
   }
-  multi_return_array_v__table__Arg_bool mr_2408 = v__parser__Parser_fn_args(p);
-  array_v__table__Arg args2 = mr_2408.arg0;
-  bool is_variadic = mr_2408.arg1;
-  _PUSH_MANY(&args, (args2), tmp8, array_v__table__Arg);
+  multi_return_array_v__table__Arg_bool mr_2578 = v__parser__Parser_fn_args(p);
+  array_v__table__Arg args2 = mr_2578.arg0;
+  bool is_variadic = mr_2578.arg1;
+  _PUSH_MANY(&args, (args2), tmp9, array_v__table__Arg);
   // FOR IN
-  for (int tmp9 = 0; tmp9 < args.len; tmp9++) {
-    v__table__Arg arg = ((v__table__Arg *)args.data)[tmp9];
+  for (int tmp10 = 0; tmp10 < args.len; tmp10++) {
+    v__table__Arg arg = ((v__table__Arg *)args.data)[tmp10];
     v__ast__Scope_register(
         p->scope, arg.name, /* sum type cast */
         (v__ast__ScopeObject){.obj = memdup(&(v__ast__Var[]){(v__ast__Var){
