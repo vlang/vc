@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4c87034"
+#define V_COMMIT_HASH "b8f1152"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f748390"
+#define V_COMMIT_HASH "4c87034"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4c87034"
+#define V_CURRENT_COMMIT_HASH "b8f1152"
 #endif
 
 typedef struct array array;
@@ -19880,6 +19880,9 @@ string v__ast__FnDecl_str(v__ast__FnDecl *node, v__table__Table *t) {
                     node->receiver.name.str, m.len, m.str, name.len, name.str);
   }
   string name = string_after(node->name, tos3("."));
+  if (node->is_c) {
+    name = _STR("C.%.*s", name.len, name.str);
+  }
   strings__Builder_write(
       &f, _STR("fn %.*s%.*s(", receiver.len, receiver.str, name.len, name.str));
   // FOR IN
@@ -21019,11 +21022,10 @@ v__table__Type v__checker__Checker_array_init(v__checker__Checker *c,
     v__table__TypeSymbol *type_sym =
         v__table__Table_get_type_symbol(c->table, c->expected_type);
     if (type_sym->kind != v__table__Kind_array) {
-      v__checker__Checker_error(
-          c,
-          tos3("array_init: cannot use `[]` with non array. (maybe: `[]Type` "
-               "instead of `[]`)"),
-          array_init->pos);
+      v__checker__Checker_error(c,
+                                tos3("array_init: no type specified (maybe: "
+                                     "`[]Type` instead of `[]`)"),
+                                array_init->pos);
       return _const_v__table__void_type;
     }
     v__table__Array array_info = v__table__TypeSymbol_array_info(type_sym);
