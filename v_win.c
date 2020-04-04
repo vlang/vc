@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d1f653f"
+#define V_COMMIT_HASH "b4e5e36"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c0d4503"
+#define V_COMMIT_HASH "d1f653f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d1f653f"
+#define V_CURRENT_COMMIT_HASH "b4e5e36"
 #endif
 
 typedef struct array array;
@@ -21651,6 +21651,14 @@ v__table__Type v__checker__Checker_array_init(v__checker__Checker *c,
   if (array_init->exprs.len == 0) {
     v__table__TypeSymbol *type_sym =
         v__table__Table_get_type_symbol(c->table, c->expected_type);
+    if (type_sym->kind != v__table__Kind_array) {
+      v__checker__Checker_error(
+          c,
+          tos3("array_init: cannot use `[]` with non array. (maybe: `[]Type` "
+               "instead of `[]`)"),
+          array_init->pos);
+      return _const_v__table__void_type;
+    }
     v__table__Array array_info = v__table__TypeSymbol_array_info(type_sym);
     array_init->elem_type = array_info.elem_type;
     return c->expected_type;
@@ -22048,28 +22056,37 @@ v__table__Type v__checker__Checker_ident(v__checker__Checker *c,
         v__ast__Scope_innermost(c->file.scope, ident->pos.pos);
     bool tmp7;
     { /* if guard */
-      Option_v__ast__Var var = v__ast__Scope_find_var(start_scope, ident->name);
-      if ((tmp7 = var.ok)) {
-        v__table__Type typ = /*opt*/ (*(v__ast__Var *)var.data).typ;
-        if (typ == 0) {
-          typ = v__checker__Checker_expr(
-              c, /*opt*/ (*(v__ast__Var *)var.data).expr);
-        }
-        bool is_optional = v__table__type_is(typ, v__table__TypeFlag_optional);
-        ident->kind = v__ast__IdentKind_variable;
-        ident->info = /* sum type cast */ (v__ast__IdentInfo){
-            .obj = memdup(&(v__ast__IdentVar[]){(v__ast__IdentVar){
-                              .typ = typ,
-                              .is_optional = is_optional,
-                              .is_mut = 0,
-                              .is_static = 0,
-                          }},
-                          sizeof(v__ast__IdentVar)),
-            .typ = 234 /* v.ast.IdentVar */};
-        if (is_optional) {
-          return v__table__type_set(typ, v__table__TypeFlag_unset);
-        }
-        return typ;
+      Option_v__ast__ScopeObject obj =
+          v__ast__Scope_find(start_scope, ident->name);
+      if ((tmp7 = obj.ok)) {
+        if (/*opt*/ (*(v__ast__ScopeObject *)obj.data).typ ==
+            168 /* v.ast.Var */) {
+          v__ast__Var *it =
+              (v__ast__Var *)/*opt*/ (*(v__ast__ScopeObject *)obj.data)
+                  .obj; // ST it
+          v__table__Type typ = it->typ;
+          if (typ == 0) {
+            typ = v__checker__Checker_expr(c, it->expr);
+          }
+          bool is_optional =
+              v__table__type_is(typ, v__table__TypeFlag_optional);
+          ident->kind = v__ast__IdentKind_variable;
+          ident->info = /* sum type cast */ (v__ast__IdentInfo){
+              .obj = memdup(&(v__ast__IdentVar[]){(v__ast__IdentVar){
+                                .typ = typ,
+                                .is_optional = is_optional,
+                                .is_mut = 0,
+                                .is_static = 0,
+                            }},
+                            sizeof(v__ast__IdentVar)),
+              .typ = 234 /* v.ast.IdentVar */};
+          it->typ = typ;
+          if (is_optional) {
+            return v__table__type_set(typ, v__table__TypeFlag_unset);
+          }
+          return typ;
+        } else {
+        };
       }
     }
     string name = ident->name;
@@ -22079,11 +22096,11 @@ v__table__Type v__checker__Checker_ident(v__checker__Checker *c,
       name = _STR("%.*s.%.*s", ident->mod.len, ident->mod.str, ident->name.len,
                   ident->name.str);
     }
-    bool tmp11;
+    bool tmp12;
     { /* if guard */
       Option_v__ast__ScopeObject obj =
           v__ast__Scope_find(c->file.global_scope, name);
-      if ((tmp11 = obj.ok)) {
+      if ((tmp12 = obj.ok)) {
         if (/*opt*/ (*(v__ast__ScopeObject *)obj.data).typ ==
             237 /* v.ast.GlobalDecl */) {
           v__ast__GlobalDecl *it =
@@ -22126,10 +22143,10 @@ v__table__Type v__checker__Checker_ident(v__checker__Checker *c,
         };
       }
     }
-    bool tmp14;
+    bool tmp15;
     { /* if guard */
       Option_v__table__Fn func = v__table__Table_find_fn(c->table, name);
-      if ((tmp14 = func.ok)) {
+      if ((tmp15 = func.ok)) {
         v__table__Type fn_type =
             v__table__new_type(v__table__Table_find_or_register_fn_type(
                 c->table, /*opt*/ (*(v__table__Fn *)func.data), true));
