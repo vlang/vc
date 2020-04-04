@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "95a1bd8"
+#define V_COMMIT_HASH "f748390"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "440f1cf"
+#define V_COMMIT_HASH "95a1bd8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "95a1bd8"
+#define V_CURRENT_COMMIT_HASH "f748390"
 #endif
 
 typedef struct array array;
@@ -4533,13 +4533,13 @@ int array_char_index(array_char a, char v) {
 
 int array_int_reduce(array_int a, int (*iter)(int accum, int curr),
                      int accum_start) {
-  int _accum = accum_start;
+  int accum_ = accum_start;
   // FOR IN
   for (int tmp1 = 0; tmp1 < a.len; tmp1++) {
     int i = ((int *)a.data)[tmp1];
-    _accum = iter(_accum, i);
+    accum_ = iter(accum_, i);
   }
-  return _accum;
+  return accum_;
 }
 
 bool array_string_eq(array_string a1, array_string a2) {
@@ -7404,9 +7404,9 @@ void parse_flags(string flag, internal__flag__Instance *f,
   };
 }
 
-int wmain(int argc, wchar_t *argv[], wchar_t *envp[]) {
+int wmain(int __argc, wchar_t *__argv[], wchar_t *__envp[]) {
   _vinit();
-  _const_os__args = os__init_os_args_wide(argc, argv);
+  _const_os__args = os__init_os_args_wide(__argc, __argv);
   array_string args = array_slice(_const_os__args, 1, _const_os__args.len);
   if (args.len == 0 ||
       (string_eq((*(string *)array_get(args, 0)), tos3("-")) ||
@@ -19883,6 +19883,10 @@ v__ast__Stmt v__parser__Parser_assign_stmt(v__parser__Parser *p) {
           p, _STR("unknown variable `%.*s`", ident.name.len, ident.name.str));
     }
     if (is_decl && ident.kind != v__ast__IdentKind_blank_ident) {
+      if (string_starts_with(ident.name, tos3("__"))) {
+        v__parser__Parser_error(p,
+                                tos3("variable names cannot start with `__`"));
+      }
       if (v__ast__Scope_known_var(p->scope, ident.name)) {
         v__parser__Parser_error(
             p, _STR("redefinition of `%.*s`", ident.name.len, ident.name.str));
@@ -23241,10 +23245,11 @@ void v__gen__Gen_gen_fn_decl(v__gen__Gen *g, v__ast__FnDecl it) {
   if (is_main) {
     if (g->pref->os == v__pref__OS_windows) {
       v__gen__Gen_write(
-          g, tos3("int wmain(int argc, wchar_t *argv[], wchar_t *envp[]"));
+          g,
+          tos3("int wmain(int __argc, wchar_t *__argv[], wchar_t *__envp[]"));
     } else {
-      v__gen__Gen_write(
-          g, _STR("int %.*s(int argc, char** argv", it.name.len, it.name.str));
+      v__gen__Gen_write(g, _STR("int %.*s(int __argc, char** __argv",
+                                it.name.len, it.name.str));
     }
   } else {
     string name = it.name;
@@ -23290,11 +23295,12 @@ void v__gen__Gen_gen_fn_decl(v__gen__Gen *g, v__ast__FnDecl it) {
       }
       if (g->pref->os == v__pref__OS_windows) {
         v__gen__Gen_writeln(
-            g, tos3("_const_os__args = os__init_os_args_wide(argc, argv);"));
-      } else {
-        v__gen__Gen_writeln(
             g,
-            tos3("_const_os__args = os__init_os_args(argc, (byteptr*)argv);"));
+            tos3("_const_os__args = os__init_os_args_wide(__argc, __argv);"));
+      } else {
+        v__gen__Gen_writeln(g,
+                            tos3("_const_os__args = os__init_os_args(__argc, "
+                                 "(byteptr*)__argv);"));
       }
     }
   }
