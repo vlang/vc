@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "206c1f4"
+#define V_COMMIT_HASH "781c20a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f139e98"
+#define V_COMMIT_HASH "206c1f4"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "206c1f4"
+#define V_CURRENT_COMMIT_HASH "781c20a"
 #endif
 
 typedef struct array array;
@@ -2166,7 +2166,7 @@ int is_atty(int fd);
 #define _const_SYMOPT_INCLUDE_32BIT_MODULES 0x00002000
 #define _const_SYMOPT_ALLOW_ZERO_ADDRESS 0x01000000
 #define _const_SYMOPT_DEBUG 0x80000000
-void init();
+void builtin_init();
 bool print_backtrace_skipping_top_frames_msvc(int skipframes);
 bool print_backtrace_skipping_top_frames_mingw(int skipframes);
 bool print_backtrace_skipping_top_frames_nix(int skipframes);
@@ -4348,7 +4348,7 @@ int is_atty(int fd) {
 
 
 
-void init() { 
+void builtin_init() { 
 	if (is_atty(1) > 0) {
 		SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), (ENABLE_PROCESSED_OUTPUT | 0x0004));
 		setbuf(stdout, 0);
@@ -20846,15 +20846,21 @@ void v__gen__Gen_gen_assert_stmt(v__gen__Gen* g, v__ast__AssertStmt a) {
 	v__gen__Gen_writeln(g, tos3("// assert"));
 	v__gen__Gen_write(g, tos3("if( "));
 	v__gen__Gen_expr(g, a.expr);
-	string s_assertion = string_replace(v__ast__Expr_str(a.expr), tos3("\""), tos3("\'"));
 	v__gen__Gen_write(g, tos3(" )"));
+	string s_assertion = string_replace(v__ast__Expr_str(a.expr), tos3("\""), tos3("\'"));
+	string mod_path = g->file.path;
+	
+#ifdef _WIN32
+	// #if windows
+		mod_path = string_replace(g->file.path, tos3("\\"), tos3("\\\\"));
+	#endif
 	if (g->is_test) {
 		v__gen__Gen_writeln(g, tos3("{"));
 		v__gen__Gen_writeln(g, tos3("	g_test_oks++;"));
-		v__gen__Gen_writeln(g, _STR("	cb_assertion_ok( _STR(\"%.*s\"), %d, _STR(\"assert %.*s\"), _STR(\"%.*s()\") );", g->file.path.len, g->file.path.str, a.pos.line_nr, s_assertion.len, s_assertion.str, g->fn_decl->name.len, g->fn_decl->name.str));
+		v__gen__Gen_writeln(g, _STR("	cb_assertion_ok( _STR(\"%.*s\"), %d, _STR(\"assert %.*s\"), _STR(\"%.*s()\") );", mod_path.len, mod_path.str, a.pos.line_nr, s_assertion.len, s_assertion.str, g->fn_decl->name.len, g->fn_decl->name.str));
 		v__gen__Gen_writeln(g, tos3("}else{"));
 		v__gen__Gen_writeln(g, tos3("	g_test_fails++;"));
-		v__gen__Gen_writeln(g, _STR("	cb_assertion_failed( _STR(\"%.*s\"), %d, _STR(\"assert %.*s\"), _STR(\"%.*s()\") );", g->file.path.len, g->file.path.str, a.pos.line_nr, s_assertion.len, s_assertion.str, g->fn_decl->name.len, g->fn_decl->name.str));
+		v__gen__Gen_writeln(g, _STR("	cb_assertion_failed( _STR(\"%.*s\"), %d, _STR(\"assert %.*s\"), _STR(\"%.*s()\") );", mod_path.len, mod_path.str, a.pos.line_nr, s_assertion.len, s_assertion.str, g->fn_decl->name.len, g->fn_decl->name.str));
 		v__gen__Gen_writeln(g, tos3("	exit(1);"));
 		v__gen__Gen_writeln(g, tos3("	// TODO"));
 		v__gen__Gen_writeln(g, tos3("	// Maybe print all vars in a test function if it fails?"));
@@ -20862,7 +20868,7 @@ void v__gen__Gen_gen_assert_stmt(v__gen__Gen* g, v__ast__AssertStmt a) {
 		return;
 	}
 	v__gen__Gen_writeln(g, tos3("{}else{"));
-	v__gen__Gen_writeln(g, _STR("	eprintln(_STR(\"%.*s:%d: FAIL: fn %.*s(): assert %.*s\"));", g->file.path.len, g->file.path.str, a.pos.line_nr, g->fn_decl->name.len, g->fn_decl->name.str, s_assertion.len, s_assertion.str));
+	v__gen__Gen_writeln(g, _STR("	eprintln(_STR(\"%.*s:%d: FAIL: fn %.*s(): assert %.*s\"));", mod_path.len, mod_path.str, a.pos.line_nr, g->fn_decl->name.len, g->fn_decl->name.str, s_assertion.len, s_assertion.str));
 	v__gen__Gen_writeln(g, tos3("	exit(1);"));
 	v__gen__Gen_writeln(g, tos3("}"));
 }
@@ -22160,6 +22166,7 @@ void v__gen__verror(string s) {
 
 void v__gen__Gen_write_init_function(v__gen__Gen* g) { 
 	v__gen__Gen_writeln(g, tos3("void _vinit() {"));
+	v__gen__Gen_writeln(g, tos3("\tbuiltin_init();"));
 	v__gen__Gen_writeln(g, tos3("\tvinit_string_literals();"));
 	v__gen__Gen_writeln(g, strings__Builder_str(&g->inits));
 	v__gen__Gen_writeln(g, tos3("}"));
@@ -22492,9 +22499,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_63206 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_63206.arg0;
-	string type_of_last_expression = mr_63206.arg1;
+	multi_return_string_string mr_63320 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_63320.arg0;
+	string type_of_last_expression = mr_63320.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN
@@ -24587,6 +24594,7 @@ string v__depgraph__DepGraph_display_cycles(v__depgraph__DepGraph* graph) {
 }
 
 void _vinit() {
+	builtin_init();
 	vinit_string_literals();
 	_const_init_capicity = 1 << _const_init_log_capicity;
 	_const_max_load_factor = 0.8;
