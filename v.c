@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "f139e98"
+#define V_COMMIT_HASH "206c1f4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "901f69e"
+#define V_COMMIT_HASH "f139e98"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "f139e98"
+#define V_CURRENT_COMMIT_HASH "206c1f4"
 #endif
 
 typedef struct array array;
@@ -2494,6 +2494,7 @@ string os__sigint_to_signal_name(int si);
 #define _const_os__R_OK 4
 bool os__exists(string path);
 bool os__is_executable(string path);
+Option_bool os__is_writable_folder(string folder);
 bool os__is_writable(string path);
 bool os__is_readable(string path);
 bool os__file_exists(string _path);
@@ -3352,7 +3353,7 @@ struct varg_string {
 
 struct varg_int {
 	int len;
-	int args[0];
+	int args[1];
 };
 
 
@@ -9694,6 +9695,27 @@ bool os__is_executable(string path) {
 		return ((((int)(statbuf.st_mode)) & (((_const_os__S_IXUSR | _const_os__S_IXGRP) | _const_os__S_IXOTH)))) != 0;
 	#endif
 	return access(path.str, _const_os__X_OK) != -1;
+}
+
+Option_bool os__is_writable_folder(string folder) { 
+	if (!os__exists(folder)) {
+		return v_error(_STR("`%.*s` does not exist", folder.len, folder.str));
+	}
+	if (!os__is_dir(folder)) {
+		return v_error(tos3("`folder` is not a folder"));
+	}
+	string tmp_perm_check = os__join_path(folder, (varg_string){.len=1,.args={tos3("tmp_perm_check")}});
+	Option_os__File f = os__open_file(tmp_perm_check, tos3("w+"), (varg_int){.len=1,.args={0700}});
+	if (!f.ok) {
+		string err = f.v_error;
+		int errcode = f.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
+		return v_error(_STR("cannot write to folder `%.*s`: %.*s", folder.len, folder.str, err.len, err.str));
+	};
+	os__File_close(&/*opt*/(*(os__File*)f.data));
+	os__rm(tmp_perm_check);
+	return opt_ok(& (bool []) { true }, sizeof(bool));
 }
 
 bool os__is_writable(string path) { 
