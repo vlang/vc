@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "781c20a"
+#define V_COMMIT_HASH "df45932"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "206c1f4"
+#define V_COMMIT_HASH "781c20a"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "781c20a"
+#define V_CURRENT_COMMIT_HASH "df45932"
 #endif
 
 typedef struct array array;
@@ -1581,6 +1581,7 @@ struct v__ast__Comment {
 	bool is_multi;
 	int line_nr;
 	v__token__Position pos;
+	bool same_line;
 };
 
 struct v__ast__AssertStmt {
@@ -3156,8 +3157,6 @@ void v__checker__Checker_error(v__checker__Checker* c, string s, v__token__Posit
 void v__checker__Checker_warn_or_error(v__checker__Checker* c, string s, v__token__Position pos, bool warn);
 array_string _const_v__gen__c_reserved; // inited later
 array_string _const_v__gen__tabs; // inited later
-void v__gen__foo(array_v__ast__File file);
-void v__gen__foo2(array_int file);
 string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__Preferences* pref);
 string v__gen__Gen_hashes(v__gen__Gen* g);
 void v__gen__Gen_init(v__gen__Gen* g);
@@ -16622,6 +16621,7 @@ v__ast__Comment v__parser__Parser_comment(v__parser__Parser* p) {
 		.pos = pos,
 		.is_multi = 0,
 		.line_nr = 0,
+		.same_line = 0,
 	};
 }
 
@@ -17733,6 +17733,7 @@ v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
 			.is_multi = 0,
 			.line_nr = 0,
 			.pos = {0},
+			.same_line = 0,
 		};
 		if (p->tok.kind == v__token__Kind_comment) {
 			comment = v__parser__Parser_comment(p);
@@ -20001,12 +20002,6 @@ void v__checker__Checker_warn_or_error(v__checker__Checker* c, string s, v__toke
 	}
 }
 
-void v__gen__foo(array_v__ast__File file) { 
-}
-
-void v__gen__foo2(array_int file) { 
-}
-
 string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__Preferences* pref) { 
 	v__gen__Gen g = (v__gen__Gen){
 		.out = strings__new_builder(100),
@@ -22214,9 +22209,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_63320 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_63320.arg0;
-	string type_of_last_expression = mr_63320.arg1;
+	multi_return_string_string mr_63274 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_63274.arg0;
+	string type_of_last_expression = mr_63274.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN
@@ -23873,6 +23868,16 @@ v__token__Token v__scanner__Scanner_scan(v__scanner__Scanner* s) {
 			s->line_comment = string_substr(s->text, start + 1, s->pos);
 			string comment = string_trim_space(s->line_comment);
 			if (s->comments_mode == v__scanner__CommentsMode_parse_comments) {
+				bool is_separate_line_comment = true;
+				for (int j = start - 2;
+				string_at(s->text, j) != '\n'; j--) {
+					if (!((string_at(s->text, j) == '\t' || string_at(s->text, j) == ' '))) {
+						is_separate_line_comment = false;
+					}
+				}
+				if (is_separate_line_comment) {
+					comment = string_add(tos3("|"), comment);
+				}
 				s->pos--;
 				s->line_nr--;
 				return v__scanner__Scanner_new_token(s, v__token__Kind_comment, comment);
