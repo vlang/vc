@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "de701cc"
+#define V_COMMIT_HASH "35fab2b"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0869b23"
+#define V_COMMIT_HASH "de701cc"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "de701cc"
+#define V_CURRENT_COMMIT_HASH "35fab2b"
 #endif
 
 typedef struct array array;
@@ -22190,12 +22190,16 @@ void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__TypeSymbol types) {
 			v__table__Struct* it = (v__table__Struct*)typ.info.obj; // ST it
 			v__table__Struct info = /* as */ *(v__table__Struct*)typ.info.obj;
 			strings__Builder_writeln(&g->definitions, _STR("struct %.*s {", name.len, name.str));
-			// FOR IN
-			for (int tmp4 = 0; tmp4 < info.fields.
-			len; tmp4++) {	v__table__Field field = ((v__table__Field*)info.fields.
-			data)[tmp4];string type_name = v__gen__Gen_typ(g, field.typ);
-				string field_name = v__gen__c_name(field.name);
-				strings__Builder_writeln(&g->definitions, _STR("\t%.*s %.*s;", type_name.len, type_name.str, field_name.len, field_name.str));
+			if (info.fields.len > 0) {
+				// FOR IN
+				for (int tmp5 = 0; tmp5 < info.fields.
+				len; tmp5++) {	v__table__Field field = ((v__table__Field*)info.fields.
+				data)[tmp5];string type_name = v__gen__Gen_typ(g, field.typ);
+					string field_name = v__gen__c_name(field.name);
+					strings__Builder_writeln(&g->definitions, _STR("\t%.*s %.*s;", type_name.len, type_name.str, field_name.len, field_name.str));
+				}
+			} else {
+				strings__Builder_writeln(&g->definitions, tos3("EMPTY_STRUCT_DECLARATION;"));
 			}
 			strings__Builder_writeln(&g->definitions, tos3("};\n"));
 		}
@@ -22463,9 +22467,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_63097 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_63097.arg0;
-	string type_of_last_expression = mr_63097.arg1;
+	multi_return_string_string mr_63206 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_63206.arg0;
+	string type_of_last_expression = mr_63206.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN
