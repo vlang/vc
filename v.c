@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "901f69e"
+#define V_COMMIT_HASH "f139e98"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "48dfa6e"
+#define V_COMMIT_HASH "901f69e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "901f69e"
+#define V_CURRENT_COMMIT_HASH "f139e98"
 #endif
 
 typedef struct array array;
@@ -14063,10 +14063,10 @@ void v__util__launch_tool(bool is_verbose, string tool_name) {
 	string tool_source = os__real_path(_STR("%.*s/cmd/tools/%.*s.v", vroot.len, vroot.str, tool_name.len, tool_name.str));
 	string tool_command = _STR("\"%.*s\" %.*s", tool_exe.len, tool_exe.str, tool_args.len, tool_args.str);
 	if (is_verbose) {
-		eprintln(_STR("launch_tool vexe        : %.*s", vroot.len, vroot.str));
-		eprintln(_STR("launch_tool vroot       : %.*s", vroot.len, vroot.str));
-		eprintln(_STR("launch_tool tool_args   : %.*s", tool_args.len, tool_args.str));
-		eprintln(_STR("launch_tool tool_command: %.*s", tool_command.len, tool_command.str));
+		println(_STR("launch_tool vexe        : %.*s", vroot.len, vroot.str));
+		println(_STR("launch_tool vroot       : %.*s", vroot.len, vroot.str));
+		println(_STR("launch_tool tool_args   : %.*s", tool_args.len, tool_args.str));
+		println(_STR("launch_tool tool_command: %.*s", tool_command.len, tool_command.str));
 	}
 	bool should_compile = false;
 	if (!os__exists(tool_exe)) {
@@ -14083,13 +14083,13 @@ void v__util__launch_tool(bool is_verbose, string tool_name) {
 		}
 	}
 	if (is_verbose) {
-		eprintln(_STR("launch_tool should_compile: %d", should_compile));
+		println(_STR("launch_tool should_compile: %d", should_compile));
 	}
 	if (should_compile) {
 		string compilation_command = _STR("\"%.*s\" ", vexe.len, vexe.str);
 		compilation_command = string_add(compilation_command, _STR("\"%.*s\"", tool_source.len, tool_source.str));
 		if (is_verbose) {
-			eprintln(_STR("Compiling %.*s with: \"%.*s\"", tool_name.len, tool_name.str, compilation_command.len, compilation_command.str));
+			println(_STR("Compiling %.*s with: \"%.*s\"", tool_name.len, tool_name.str, compilation_command.len, compilation_command.str));
 		}
 		Option_os__Result tool_compilation = os__exec(compilation_command);
 		if (!tool_compilation.ok) {
@@ -14105,7 +14105,7 @@ void v__util__launch_tool(bool is_verbose, string tool_name) {
 		}
 	}
 	if (is_verbose) {
-		eprintln(_STR("launch_tool running tool command: %.*s ...", tool_command.len, tool_command.str));
+		println(_STR("launch_tool running tool command: %.*s ...", tool_command.len, tool_command.str));
 	}
 	v_exit(os__system(tool_command));
 }
