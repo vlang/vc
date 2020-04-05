@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "97db4c0"
+#define V_COMMIT_HASH "2a06263"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "45fdbc4"
+#define V_COMMIT_HASH "97db4c0"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "97db4c0"
+#define V_CURRENT_COMMIT_HASH "2a06263"
 #endif
 
 typedef struct array array;
@@ -12802,6 +12802,9 @@ string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 		if (vals.len > 2) {
 			res = string_add(string_add((*(string*)array_get(vals, vals.len - 2)), tos3(".")), (*(string*)array_get(vals, vals.len - 1)));
 		}
+		if (sym->kind == v__table__Kind_array) {
+			res = string_add(tos3("[]"), res);
+		}
 	}
 	if (v__table__type_is(t, v__table__TypeFlag_optional)) {
 		res = string_add(tos3("?"), res);
@@ -16083,7 +16086,6 @@ v__table__Type v__parser__Parser_parse_any_type(v__parser__Parser* p, bool is_c,
 
 v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__Scope* scope) { 
 	v__scanner__Scanner* s = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments);
-	int a = 324;
 	v__parser__Parser p = (v__parser__Parser){
 		.scanner = s,
 		.table = table,
