@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "0869b23"
+#define V_COMMIT_HASH "de701cc"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "75518e5"
+#define V_COMMIT_HASH "0869b23"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "0869b23"
+#define V_CURRENT_COMMIT_HASH "de701cc"
 #endif
 
 typedef struct array array;
@@ -1347,12 +1347,6 @@ struct v__token__Token {
 	int pos;
 };
 
-struct v__ast__Comment {
-	string text;
-	bool is_multi;
-	int line_nr;
-};
-
 struct v__ast__Module {
 	string name;
 	string path;
@@ -1699,6 +1693,13 @@ struct v__ast__Import {
 	string alias;
 };
 
+struct v__ast__Comment {
+	string text;
+	bool is_multi;
+	int line_nr;
+	v__token__Position pos;
+};
+
 struct v__ast__AssertStmt {
 	v__ast__Expr expr;
 	v__token__Position pos;
@@ -1875,14 +1876,6 @@ struct v__ast__StructDecl {
 	bool is_c;
 };
 
-struct v__ast__StructField {
-	string name;
-	v__token__Position pos;
-	v__ast__Comment comment;
-	v__ast__Expr default_expr;
-	v__table__Type typ;
-};
-
 struct v__ast__Return {
 	v__token__Position pos;
 	array_v__ast__Expr exprs;
@@ -1968,6 +1961,14 @@ struct v__checker__Checker {
 	string const_decl;
 	array_string const_deps;
 	v__pref__Preferences* pref;
+};
+
+struct v__ast__StructField {
+	string name;
+	v__token__Position pos;
+	v__ast__Comment comment;
+	v__ast__Expr default_expr;
+	v__table__Type typ;
 };
 
 struct v__gen__Gen {
@@ -16873,10 +16874,12 @@ v__ast__Comment v__parser__Parser_check_comment(v__parser__Parser* p) {
 }
 
 v__ast__Comment v__parser__Parser_comment(v__parser__Parser* p) { 
+	v__token__Position pos = v__token__Token_position(&p->tok);
 	string text = p->tok.lit;
 	v__parser__Parser_next(p);
 	return (v__ast__Comment){
 		.text = text,
+		.pos = pos,
 		.is_multi = 0,
 		.line_nr = 0,
 	};
@@ -17070,29 +17073,25 @@ v__ast__StructInit v__parser__Parser_struct_init(v__parser__Parser* p, bool shor
 	int i = 0;
 	bool is_short_syntax = !(p->peek_tok.kind == v__token__Kind_colon || p->tok.kind == v__token__Kind_rcbr);
 	while (p->tok.kind != v__token__Kind_rcbr) {
-		if (p->tok.kind == v__token__Kind_comment) {
-			v__parser__Parser_comment(p);
-		}
+		v__parser__Parser_check_comment(p);
 		string field_name = tos3("");
 		if (is_short_syntax) {
 			v__ast__Expr expr = v__parser__Parser_expr(p, 0);
-			_PUSH(&exprs, (expr), tmp5, v__ast__Expr);
+			_PUSH(&exprs, (expr), tmp4, v__ast__Expr);
 		} else {
 			field_name = v__parser__Parser_check_name(p);
-			_PUSH(&field_names, (field_name), tmp6, string);
+			_PUSH(&field_names, (field_name), tmp5, string);
 		}
 		if (!is_short_syntax) {
 			v__parser__Parser_check(p, v__token__Kind_colon);
 			v__ast__Expr expr = v__parser__Parser_expr(p, 0);
-			_PUSH(&exprs, (expr), tmp8, v__ast__Expr);
+			_PUSH(&exprs, (expr), tmp7, v__ast__Expr);
 		}
 		i++;
 		if (p->tok.kind == v__token__Kind_comma) {
 			v__parser__Parser_check(p, v__token__Kind_comma);
 		}
-		if (p->tok.kind == v__token__Kind_comment) {
-			v__parser__Parser_comment(p);
-		}
+		v__parser__Parser_check_comment(p);
 	}
 	v__ast__StructInit node = (v__ast__StructInit){
 		.typ = typ,
@@ -17816,9 +17815,6 @@ v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser* p) {
 			if (p->tok.kind == v__token__Kind_comma) {
 				v__parser__Parser_check(p, v__token__Kind_comma);
 			}
-			if (p->tok.kind == v__token__Kind_comment) {
-				v__parser__Parser_comment(p);
-			}
 		}
 		int line_nr = p->tok.line_nr;
 		v__parser__Parser_check(p, v__token__Kind_rsbr);
@@ -17996,6 +17992,7 @@ v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
 			.text = tos3(""),
 			.is_multi = 0,
 			.line_nr = 0,
+			.pos = {0},
 		};
 		if (p->tok.kind == v__token__Kind_comment) {
 			comment = v__parser__Parser_comment(p);
