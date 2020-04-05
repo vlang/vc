@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5e76d53"
+#define V_COMMIT_HASH "fde88a2"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "05fbe5a"
+#define V_COMMIT_HASH "5e76d53"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5e76d53"
+#define V_CURRENT_COMMIT_HASH "fde88a2"
 #endif
 
 typedef struct array array;
@@ -7246,9 +7246,9 @@ _const_os__args = os__init_os_args_wide(___argc, ___argv);
 		println(v__util__full_v_version());
 		return 0;
 	}
-	multi_return_v__pref__Preferences_string mr_996 = parse_args(args);
-	v__pref__Preferences* prefs2 = mr_996.arg0;
-	string command = mr_996.arg1;
+	multi_return_v__pref__Preferences_string mr_1010 = parse_args(args);
+	v__pref__Preferences* prefs2 = mr_1010.arg0;
+	string command = mr_1010.arg1;
 	if (prefs2->is_verbose) {
 		println(v__util__full_v_version());
 	}
@@ -24576,8 +24576,8 @@ tos3("cc"), tos3("d"), tos3("define"), tos3("cf"), tos3("cflags"),
 	_const_list_of_flags_with_param = new_array_from_c_array(14, 14, sizeof(string), (string[14]){	
 tos3("o"), tos3("output"), tos3("d"), tos3("define"), tos3("b"), tos3("backend"), tos3("cc"), tos3("os"), tos3("target-os"), tos3("arch"), tos3("csource"), tos3("cf"), tos3("cflags"), tos3("path"), 
 });
-	_const_simple_cmd = new_array_from_c_array(12, 12, sizeof(string), (string[12]){	
-tos3("fmt"), tos3("up"), tos3("self"), tos3("test"), tos3("test-fmt"), tos3("test-compiler"), tos3("bin2v"), tos3("repl"), tos3("build-tools"), tos3("build-examples"), tos3("build-vbinaries"), tos3("setup-freetype"), 
+	_const_simple_cmd = new_array_from_c_array(13, 13, sizeof(string), (string[13]){	
+tos3("fmt"), tos3("up"), tos3("self"), tos3("test"), tos3("test-fmt"), tos3("test-compiler"), tos3("test-fixed"), tos3("bin2v"), tos3("repl"), tos3("build-tools"), tos3("build-examples"), tos3("build-vbinaries"), tos3("setup-freetype"), 
 });
 	_const_strconv__ftoa__ten_pow_table_32 = new_array_from_c_array(12, 12, sizeof(u32), (u32[12]){	
 ((u32)(1)), ((u32)(10)), ((u32)(100)), ((u32)(1000)), ((u32)(10000)), ((u32)(100000)), ((u32)(1000000)), ((u32)(10000000)), ((u32)(100000000)), ((u32)(1000000000)), ((u32)(10000000000)), ((u32)(100000000000)), 
