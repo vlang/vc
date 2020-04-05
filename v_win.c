@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "05fbe5a"
+#define V_COMMIT_HASH "5e76d53"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2a06263"
+#define V_COMMIT_HASH "05fbe5a"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "05fbe5a"
+#define V_CURRENT_COMMIT_HASH "5e76d53"
 #endif
 
 typedef struct array array;
@@ -2089,6 +2089,11 @@ typedef struct {
 	v__ast__Scope* arg1;
 } multi_return_v__ast__ScopeObject_v__ast__Scope;
 
+typedef struct {
+	string arg0;
+	string arg1;
+} multi_return_string_string;
+
 // end of definitions #endif
 array new_array(int mylen, int cap, int elm_size);
 array make(int len, int cap, int elm_size);
@@ -3386,6 +3391,8 @@ void v__gen__Gen_call_expr(v__gen__Gen* g, v__ast__CallExpr node);
 void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node);
 void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node);
 void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt stmts, v__table__Type return_type);
+multi_return_string_string v__gen__Gen_type_of_last_statement(v__gen__Gen* g, array_v__ast__Stmt stmts);
+string v__gen__Gen_type_of_call_expr(v__gen__Gen* g, v__ast__Expr node);
 void v__gen__Gen_in_optimization(v__gen__Gen* g, v__ast__Expr left, v__ast__ArrayInit right);
 string v__gen__op_to_fn_name(string name);
 string v__gen__comp_if_to_ifdef(string name);
@@ -5802,8 +5809,10 @@ string cstring_to_vstring(byteptr cstr) {
 string string_replace_once(string s, string rep, string with) { 
 	Option_int index = string_index(s, rep);
 	if (!index.ok) {
-	string err = index.v_error;
-	int errcode = index.ecode;
+		string err = index.v_error;
+		int errcode = index.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return s;
 	};
 	return string_add(string_add(string_substr(s, 0, /*opt*/(*(int*)index.data)), with), string_substr(s, /*opt*/(*(int*)index.data) + rep.len, s.len));
@@ -6228,8 +6237,10 @@ int string_index_any(string s, string chars) {
 	byte c = chars.str[tmp1];
 		Option_int index = string_index(s, byte_str(c));
 		if (!index.ok) {
-		string err = index.v_error;
-		int errcode = index.ecode;
+			string err = index.v_error;
+			int errcode = index.ecode;
+			// last_type: v.ast.BranchStmt
+			// last_expr_result_type: 
 			continue;
 		};
 		return /*opt*/(*(int*)index.data);
@@ -6325,8 +6336,10 @@ int string_count(string s, string substr) {
 bool string_contains(string s, string p) { 
 	Option_int tmp1 = string_index(s, p);
 	if (!tmp1.ok) {
-	string err = tmp1.v_error;
-	int errcode = tmp1.ecode;
+		string err = tmp1.v_error;
+		int errcode = tmp1.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return false;
 	};
 	return true;
@@ -6400,15 +6413,19 @@ string string_title(string s) {
 string string_find_between(string s, string start, string end) { 
 	Option_int start_pos = string_index(s, start);
 	if (!start_pos.ok) {
-	string err = start_pos.v_error;
-	int errcode = start_pos.ecode;
+		string err = start_pos.v_error;
+		int errcode = start_pos.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return tos3("");
 	};
 	string val = string_right(s, /*opt*/(*(int*)start_pos.data) + start.len);
 	Option_int end_pos = string_index(val, end);
 	if (!end_pos.ok) {
-	string err = end_pos.v_error;
-	int errcode = end_pos.ecode;
+		string err = end_pos.v_error;
+		int errcode = end_pos.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return val;
 	};
 	return string_left(val, /*opt*/(*(int*)end_pos.data));
@@ -6753,8 +6770,10 @@ void string_free(string s) {
 string string_all_before(string s, string dot) { 
 	Option_int pos = string_index(s, dot);
 	if (!pos.ok) {
-	string err = pos.v_error;
-	int errcode = pos.ecode;
+		string err = pos.v_error;
+		int errcode = pos.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return s;
 	};
 	return string_left(s, /*opt*/(*(int*)pos.data));
@@ -6763,8 +6782,10 @@ string string_all_before(string s, string dot) {
 string string_all_before_last(string s, string dot) { 
 	Option_int pos = string_last_index(s, dot);
 	if (!pos.ok) {
-	string err = pos.v_error;
-	int errcode = pos.ecode;
+		string err = pos.v_error;
+		int errcode = pos.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return s;
 	};
 	return string_left(s, /*opt*/(*(int*)pos.data));
@@ -6773,8 +6794,10 @@ string string_all_before_last(string s, string dot) {
 string string_all_after(string s, string dot) { 
 	Option_int pos = string_last_index(s, dot);
 	if (!pos.ok) {
-	string err = pos.v_error;
-	int errcode = pos.ecode;
+		string err = pos.v_error;
+		int errcode = pos.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return s;
 	};
 	return string_right(s, /*opt*/(*(int*)pos.data) + dot.len);
@@ -7152,8 +7175,11 @@ void parse_flags(string flag, internal__flag__Instance* f, internal__flag__MainC
 }));
 		Option_int level = internal__flag__Instance_int(f);
 		if (!level.ok) {
-		string err = level.v_error;
-		int errcode = level.ecode;
+			string err = level.v_error;
+			int errcode = level.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			println(tos3("V error: Expected `0`, `1`, `2` or `3` as argument to `-verbose` to specify verbosity level."));
 			v_exit(1);
 		};
@@ -7194,8 +7220,11 @@ void parse_flags(string flag, internal__flag__Instance* f, internal__flag__MainC
 		}
 		Option_string tmp4 = internal__flag__Instance_string(f);
 		if (!tmp4.ok) {
-		string err = tmp4.v_error;
-		int errcode = tmp4.ecode;
+			string err = tmp4.v_error;
+			int errcode = tmp4.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			println(_STR("V error: Error parsing flag. Expected value for `-%.*s`.", flag.len, flag.str));
 			v_exit(1);
 		};
@@ -7388,8 +7417,11 @@ void create_symlink() {
 	string link_path = tos3("/usr/local/bin/v");
 	Option_os__Result ret = os__exec(_STR("ln -sf %.*s %.*s", vexe.len, vexe.str, link_path.len, link_path.str));
 	if (!ret.ok) {
-	string err = ret.v_error;
-	int errcode = ret.ecode;
+		string err = ret.v_error;
+		int errcode = ret.ecode;
+		 // typeof it_expr_type: v.ast.CallExpr
+		// last_type: v.ast.ExprStmt
+		// last_expr_result_type: void
 		v_panic(err);
 	};
 	if (/*opt*/(*(os__Result*)ret.data).exit_code == 0) {
@@ -7399,8 +7431,11 @@ void create_symlink() {
 		link_path = tos3("/data/data/com.termux/files/usr/bin/v");
 		Option_os__Result tmp2 =ret = os__exec(_STR("ln -sf %.*s %.*s", vexe.len, vexe.str, link_path.len, link_path.str));
 		if (!tmp2.ok) {
-		string err = tmp2.v_error;
-		int errcode = tmp2.ecode;
+			string err = tmp2.v_error;
+			int errcode = tmp2.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			v_panic(err);
 		};
 		if (/*opt*/(*(os__Result*)ret.data).exit_code == 0) {
@@ -9032,8 +9067,10 @@ Option_string internal__flag__Instance_string(internal__flag__Instance* p) {
 Option_int internal__flag__Instance_int(internal__flag__Instance* p) { 
 	Option_string val = internal__flag__Instance_string(p);
 	if (!val.ok) {
-	string err = val.v_error;
-	int errcode = val.ecode;
+		string err = val.v_error;
+		int errcode = val.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return v_error(err);
 	};
 	if (!byte_is_digit(string_at(/*opt*/(*(string*)val.data), 0))) {
@@ -9045,8 +9082,10 @@ Option_int internal__flag__Instance_int(internal__flag__Instance* p) {
 Option_f32 internal__flag__Instance_f32(internal__flag__Instance* p) { 
 	Option_string val = internal__flag__Instance_string(p);
 	if (!val.ok) {
-	string err = val.v_error;
-	int errcode = val.ecode;
+		string err = val.v_error;
+		int errcode = val.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return v_error(err);
 	};
 	return opt_ok(& (f32 []) { string_f32(/*opt*/(*(string*)val.data)) }, sizeof(f32));
@@ -9055,8 +9094,10 @@ Option_f32 internal__flag__Instance_f32(internal__flag__Instance* p) {
 Option_f64 internal__flag__Instance_f64(internal__flag__Instance* p) { 
 	Option_string val = internal__flag__Instance_string(p);
 	if (!val.ok) {
-	string err = val.v_error;
-	int errcode = val.ecode;
+		string err = val.v_error;
+		int errcode = val.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return v_error(err);
 	};
 	return opt_ok(& (f64 []) { string_f64(/*opt*/(*(string*)val.data)) }, sizeof(f64));
@@ -9065,8 +9106,10 @@ Option_f64 internal__flag__Instance_f64(internal__flag__Instance* p) {
 Option_i64 internal__flag__Instance_i64(internal__flag__Instance* p) { 
 	Option_string val = internal__flag__Instance_string(p);
 	if (!val.ok) {
-	string err = val.v_error;
-	int errcode = val.ecode;
+		string err = val.v_error;
+		int errcode = val.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return v_error(err);
 	};
 	return opt_ok(& (i64 []) { string_i64(/*opt*/(*(string*)val.data)) }, sizeof(i64));
@@ -9075,8 +9118,10 @@ Option_i64 internal__flag__Instance_i64(internal__flag__Instance* p) {
 bool internal__flag__Instance_bool(internal__flag__Instance* p) { 
 	Option_string val = internal__flag__Instance_string(p);
 	if (!val.ok) {
-	string err = val.v_error;
-	int errcode = val.ecode;
+		string err = val.v_error;
+		int errcode = val.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return true;
 	};
 	if (_IN(string, /*opt*/(*(string*)val.data), _const_internal__flag__truthy)) {
@@ -9108,8 +9153,10 @@ Option_array_string internal__flag__parse_pref(array_string args, void (*callbac
 	};
 	Option_array_string tmp = internal__flag__Instance_parse_impl(&p, args, obj, ((internal__flag__void_cb)(callback)));
 	if (!tmp.ok) {
-	string err = tmp.v_error;
-	int errcode = tmp.ecode;
+		string err = tmp.v_error;
+		int errcode = tmp.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return v_error(err);
 	};
 	return opt_ok(& (array_string []) { /*opt*/(*(array_string*)tmp.data) }, sizeof(array_string));
@@ -9125,8 +9172,10 @@ Option_array_string internal__flag__parse_main_cmd(array_string args, void (*cal
 	};
 	Option_array_string tmp = internal__flag__Instance_parse_impl(&p, args, obj, ((internal__flag__void_cb)(callback)));
 	if (!tmp.ok) {
-	string err = tmp.v_error;
-	int errcode = tmp.ecode;
+		string err = tmp.v_error;
+		int errcode = tmp.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return v_error(err);
 	};
 	return opt_ok(& (array_string []) { /*opt*/(*(array_string*)tmp.data) }, sizeof(array_string));
@@ -9405,8 +9454,10 @@ Option_bool os__cp_all(string osource_path, string odest_path, bool overwrite) {
 		}
 		Option_bool tmp6 = os__cp(source_path, adjusted_path);
 		if (!tmp6.ok) {
-		string err = tmp6.v_error;
-		int errcode = tmp6.ecode;
+			string err = tmp6.v_error;
+			int errcode = tmp6.ecode;
+			// last_type: v.ast.Return
+			// last_expr_result_type: 
 			return v_error(err);
 		};
 		return opt_ok(& (bool []) { true }, sizeof(bool));
@@ -9416,8 +9467,10 @@ Option_bool os__cp_all(string osource_path, string odest_path, bool overwrite) {
 	}
 	Option_array_string files = os__ls(source_path);
 	if (!files.ok) {
-	string err = files.v_error;
-	int errcode = files.ecode;
+		string err = files.v_error;
+		int errcode = files.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return v_error(err);
 	};
 	// FOR IN
@@ -9428,15 +9481,21 @@ Option_bool os__cp_all(string osource_path, string odest_path, bool overwrite) {
 		if (os__is_dir(sp)) {
 			Option_bool tmp10 = os__mkdir(dp);
 			if (!tmp10.ok) {
-			string err = tmp10.v_error;
-			int errcode = tmp10.ecode;
+				string err = tmp10.v_error;
+				int errcode = tmp10.ecode;
+				 // typeof it_expr_type: v.ast.CallExpr
+				// last_type: v.ast.ExprStmt
+				// last_expr_result_type: void
 				v_panic(err);
 			};
 		}
 		Option_bool tmp11 = os__cp_all(sp, dp, overwrite);
 		if (!tmp11.ok) {
-		string err = tmp11.v_error;
-		int errcode = tmp11.ecode;
+			string err = tmp11.v_error;
+			int errcode = tmp11.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			os__rmdir(dp);
 			v_panic(err);
 		};
@@ -9447,8 +9506,10 @@ Option_bool os__cp_all(string osource_path, string odest_path, bool overwrite) {
 Option_bool os__mv_by_cp(string source, string target) { 
 	Option_bool tmp1 = os__cp(source, target);
 	if (!tmp1.ok) {
-	string err = tmp1.v_error;
-	int errcode = tmp1.ecode;
+		string err = tmp1.v_error;
+		int errcode = tmp1.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return v_error(err);
 	};
 	os__rm(source);
@@ -9468,8 +9529,10 @@ FILE* os__vfopen(string path, string mode) {
 Option_array_string os__read_lines(string path) { 
 	Option_string buf = os__read_file(path);
 	if (!buf.ok) {
-	string err = buf.v_error;
-	int errcode = buf.ecode;
+		string err = buf.v_error;
+		int errcode = buf.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return v_error(err);
 	};
 	return opt_ok(& (array_string []) { string_split_into_lines(/*opt*/(*(string*)buf.data)) }, sizeof(array_string));
@@ -9478,8 +9541,10 @@ Option_array_string os__read_lines(string path) {
 Option_array_ustring os__read_ulines(string path) { 
 	Option_array_string lines = os__read_lines(path);
 	if (!lines.ok) {
-	string err = lines.v_error;
-	int errcode = lines.ecode;
+		string err = lines.v_error;
+		int errcode = lines.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return v_error(err);
 	};
 	array_ustring ulines = new_array(0, 0, sizeof(ustring));
@@ -9843,8 +9908,10 @@ void os__rmdir_recursive(string path) {
 void os__rmdir_all(string path) { 
 	Option_array_string items = os__ls(path);
 	if (!items.ok) {
-	string err = items.v_error;
-	int errcode = items.ecode;
+		string err = items.v_error;
+		int errcode = items.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return;
 	};
 	// FOR IN
@@ -9861,8 +9928,10 @@ void os__rmdir_all(string path) {
 bool os__is_dir_empty(string path) { 
 	Option_array_string items = os__ls(path);
 	if (!items.ok) {
-	string err = items.v_error;
-	int errcode = items.ecode;
+		string err = items.v_error;
+		int errcode = items.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return true;
 	};
 	return /*opt*/(*(array_string*)items.data).len == 0;
@@ -9877,8 +9946,10 @@ void os__print_c_errno() {
 string os__file_ext(string path) { 
 	Option_int pos = string_last_index(path, tos3("."));
 	if (!pos.ok) {
-	string err = pos.v_error;
-	int errcode = pos.ecode;
+		string err = pos.v_error;
+		int errcode = pos.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return tos3("");
 	};
 	return string_substr(path, /*opt*/(*(int*)pos.data), path.len);
@@ -9887,8 +9958,10 @@ string os__file_ext(string path) {
 string os__dir(string path) { 
 	Option_int pos = string_last_index(path, _const_os__path_separator);
 	if (!pos.ok) {
-	string err = pos.v_error;
-	int errcode = pos.ecode;
+		string err = pos.v_error;
+		int errcode = pos.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return tos3(".");
 	};
 	return string_substr(path, 0, /*opt*/(*(int*)pos.data));
@@ -9897,8 +9970,10 @@ string os__dir(string path) {
 string os__base_dir(string path) { 
 	Option_int posx = string_last_index(path, _const_os__path_separator);
 	if (!posx.ok) {
-	string err = posx.v_error;
-	int errcode = posx.ecode;
+		string err = posx.v_error;
+		int errcode = posx.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return path;
 	};
 	return string_substr(path, 0, /*opt*/(*(int*)posx.data));
@@ -10051,8 +10126,10 @@ string os__home_dir() {
 void os__write_file(string path, string text) { 
 	Option_os__File f = os__create(path);
 	if (!f.ok) {
-	string err = f.v_error;
-	int errcode = f.ecode;
+		string err = f.v_error;
+		int errcode = f.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return;
 	};
 	os__File_write(&/*opt*/(*(os__File*)f.data), text);
@@ -10172,9 +10249,11 @@ string os__executable_fallback() {
 		} else {
 			Option_string foundpath = os__find_abs_path_of_executable(exepath);
 			if (!foundpath.ok) {
-			string err = foundpath.v_error;
-			int errcode = foundpath.ecode;
-				tos3("");
+				string err = foundpath.v_error;
+				int errcode = foundpath.ecode;
+				// last_type: v.ast.ExprStmt
+				// last_expr_result_type: v.ast.StringLiteral
+				*(string*) foundpath.data = tos3("");
 			};
 			if (/*opt*/(*(string*)foundpath.data).len > 0) {
 				exepath = /*opt*/(*(string*)foundpath.data);
@@ -10331,8 +10410,10 @@ array_string os__walk_ext(string path, string ext) {
 	}
 	Option_array_string files = os__ls(path);
 	if (!files.ok) {
-	string err = files.v_error;
-	int errcode = files.ecode;
+		string err = files.v_error;
+		int errcode = files.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return new_array(0, 0, sizeof(string));
 	};
 	array_string res = new_array(0, 0, sizeof(string));
@@ -10359,8 +10440,10 @@ void os__walk(string path, void (*f)(string path)) {
 	}
 	Option_array_string files = os__ls(path);
 	if (!files.ok) {
-	string err = files.v_error;
-	int errcode = files.ecode;
+		string err = files.v_error;
+		int errcode = files.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return;
 	};
 	// FOR IN
@@ -10444,8 +10527,11 @@ void os__mkdir_all(string path) {
 		if (!os__is_dir(p)) {
 			Option_bool tmp4 = os__mkdir(p);
 			if (!tmp4.ok) {
-			string err = tmp4.v_error;
-			int errcode = tmp4.ecode;
+				string err = tmp4.v_error;
+				int errcode = tmp4.ecode;
+				 // typeof it_expr_type: v.ast.CallExpr
+				// last_type: v.ast.ExprStmt
+				// last_expr_result_type: void
 				v_panic(err);
 			};
 		}
@@ -10465,8 +10551,11 @@ string os__cache_dir() {
 	if (!os__is_dir(cdir) && !os__is_link(cdir)) {
 		Option_bool tmp3 = os__mkdir(cdir);
 		if (!tmp3.ok) {
-		string err = tmp3.v_error;
-		int errcode = tmp3.ecode;
+			string err = tmp3.v_error;
+			int errcode = tmp3.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			v_panic(err);
 		};
 	}
@@ -10768,8 +10857,10 @@ bool internal__compile__V_no_cc_installed(internal__compile__V* v) {
 	// #if windows
 		Option_os__Result tmp1 = os__exec(_STR("%.*s -v", v->pref->ccompiler.len, v->pref->ccompiler.str));
 		if (!tmp1.ok) {
-		string err = tmp1.v_error;
-		int errcode = tmp1.ecode;
+			string err = tmp1.v_error;
+			int errcode = tmp1.ecode;
+			// last_type: v.ast.Return
+			// last_expr_result_type: 
 			if (v__pref__VerboseLevel_is_higher_or_equal(v->pref->verbosity, v__pref__VerboseLevel_level_one)) {
 				println(tos3("C compiler not found, trying to build with msvc..."));
 			}
@@ -10791,13 +10882,15 @@ void internal__compile__V_cc(internal__compile__V* v) {
 	if (v->pref->is_pretty_c && !ends_with_js) {
 		Option_os__Result format_result = os__exec(_STR("clang-format -i -style=file \"%.*s\"", v->out_name_c.len, v->out_name_c.str));
 		if (!format_result.ok) {
-		string err = format_result.v_error;
-		int errcode = format_result.ecode;
+			string err = format_result.v_error;
+			int errcode = format_result.ecode;
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: v.ast.StructInit
 			eprintln(tos3("clang-format not found"));
-			(os__Result){
-				.exit_code = -1,
-				.output = tos3(""),
-			};
+			*(os__Result*) format_result.data = (os__Result){
+			.exit_code = -1,
+			.output = tos3(""),
+		};
 		};
 		if (/*opt*/(*(os__Result*)format_result.data).exit_code > 0) {
 			eprintln(_STR("clang-format failed to format %.*s", v->out_name_c.len, v->out_name_c.str));
@@ -10829,8 +10922,11 @@ void internal__compile__V_cc(internal__compile__V* v) {
 		#endif
 		Option_bool tmp9 = os__mv_by_cp(v->out_name_c, v->pref->out_name);
 		if (!tmp9.ok) {
-		string err = tmp9.v_error;
-		int errcode = tmp9.ecode;
+			string err = tmp9.v_error;
+			int errcode = tmp9.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			v_panic(err);
 		};
 		v_exit(0);
@@ -11008,8 +11104,10 @@ void internal__compile__V_cc(internal__compile__V* v) {
 	i64 ticks = time__ticks();
 	Option_os__Result res = os__exec(cmd);
 	if (!res.ok) {
-	string err = res.v_error;
-	int errcode = res.ecode;
+		string err = res.v_error;
+		int errcode = res.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		println(tos3("C compilation failed."));
 		internal__compile__verror(err);
 		return;
@@ -11120,8 +11218,11 @@ void internal__compile__V_build_thirdparty_obj_file(internal__compile__V* v, str
 	string parent = os__dir(obj_path);
 	Option_array_string files = os__ls(parent);
 	if (!files.ok) {
-	string err = files.v_error;
-	int errcode = files.ecode;
+		string err = files.v_error;
+		int errcode = files.ecode;
+		 // typeof it_expr_type: v.ast.CallExpr
+		// last_type: v.ast.ExprStmt
+		// last_expr_result_type: void
 		v_panic(err);
 	};
 	string cfiles = tos3("");
@@ -11137,8 +11238,10 @@ void internal__compile__V_build_thirdparty_obj_file(internal__compile__V* v, str
 	string cmd = _STR("%.*s %.*s %.*s -c -o \"%.*s\" %.*s %.*s ", v->pref->ccompiler.len, v->pref->ccompiler.str, v->pref->third_party_option.len, v->pref->third_party_option.str, btarget.len, btarget.str, obj_path.len, obj_path.str, cfiles.len, cfiles.str, atarget.len, atarget.str);
 	Option_os__Result res = os__exec(cmd);
 	if (!res.ok) {
-	string err = res.v_error;
-	int errcode = res.ecode;
+		string err = res.v_error;
+		int errcode = res.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		println(_STR("failed thirdparty object build cmd: %.*s", cmd.len, cmd.str));
 		internal__compile__verror(err);
 		return;
@@ -11352,8 +11455,11 @@ string internal__compile__get_vtmp_folder() {
 	if (!os__is_dir(vtmp)) {
 		Option_bool tmp2 = os__mkdir(vtmp);
 		if (!tmp2.ok) {
-		string err = tmp2.v_error;
-		int errcode = tmp2.ecode;
+			string err = tmp2.v_error;
+			int errcode = tmp2.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			v_panic(err);
 		};
 	}
@@ -11516,8 +11622,11 @@ array_string internal__compile__V_get_user_files(internal__compile__V* v) {
 	if (is_test) {
 		Option_string tcontent = os__read_file(dir);
 		if (!tcontent.ok) {
-		string err = tcontent.v_error;
-		int errcode = tcontent.ecode;
+			string err = tcontent.v_error;
+			int errcode = tcontent.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			v_panic(_STR("%.*s does not exist", dir.len, dir.str));
 		};
 		array_string slines = string_split_into_lines(string_trim_space(/*opt*/(*(string*)tcontent.data)));
@@ -11593,8 +11702,11 @@ array_string internal__compile__V_v_files_from_dir(internal__compile__V* v, stri
 	}
 	Option_array_string files = os__ls(dir);
 	if (!files.ok) {
-	string err = files.v_error;
-	int errcode = files.ecode;
+		string err = files.v_error;
+		int errcode = files.ecode;
+		 // typeof it_expr_type: v.ast.CallExpr
+		// last_type: v.ast.ExprStmt
+		// last_expr_result_type: void
 		v_panic(err);
 	};
 	if (v__pref__VerboseLevel_is_higher_or_equal(v->pref->verbosity, v__pref__VerboseLevel_level_three)) {
@@ -11668,8 +11780,11 @@ void internal__compile__parse_c_options(string flag, internal__flag__Instance* f
 }));
 		Option_string tmp = internal__flag__Instance_string(f);
 		if (!tmp.ok) {
-		string err = tmp.v_error;
-		int errcode = tmp.ecode;
+			string err = tmp.v_error;
+			int errcode = tmp.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			println(_STR("V error: Expected argument after `-%.*s`.", flag.len, flag.str));
 			v_exit(1);
 		};
@@ -11690,8 +11805,11 @@ void internal__compile__parse_c_options(string flag, internal__flag__Instance* f
 	else if (string_eq(flag, tos3("csource"))) {
 		Option_string operation = internal__flag__Instance_string(f);
 		if (!operation.ok) {
-		string err = operation.v_error;
-		int errcode = operation.ecode;
+			string err = operation.v_error;
+			int errcode = operation.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			println(tos3("V error: Expected argument after `-csource`."));
 			v_exit(1);
 		};
@@ -11717,8 +11835,11 @@ void internal__compile__parse_c_options(string flag, internal__flag__Instance* f
 	else if (string_eq(flag, tos3("cf")) || string_eq(flag, tos3("cflags"))) {
 		Option_string cflag = internal__flag__Instance_string(f);
 		if (!cflag.ok) {
-		string err = cflag.v_error;
-		int errcode = cflag.ecode;
+			string err = cflag.v_error;
+			int errcode = cflag.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			println(_STR("V error: Expected argument after `-%.*s`.", flag.len, flag.str));
 			v_exit(1);
 		};
@@ -11798,8 +11919,11 @@ multi_return_v__pref__Preferences_array_string internal__compile__parse_argument
 	if (backend.len == 1) {
 		Option_v__pref__Backend x = v__pref__backend_from_string((*(string*)array_get(backend, 0)));
 		if (!x.ok) {
-		string err = x.v_error;
-		int errcode = x.ecode;
+			string err = x.v_error;
+			int errcode = x.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			println(_STR("V error: Unknown backend %.*s provided.", (*(string*)array_get(backend, 0)).len, (*(string*)array_get(backend, 0)).str));
 			v_exit(1);
 		};
@@ -11809,8 +11933,11 @@ multi_return_v__pref__Preferences_array_string internal__compile__parse_argument
 	}
 	Option_array_string remaining2 = internal__flag__parse_pref(args, internal__compile__parse_options, &/*qq*/p);
 	if (!remaining2.ok) {
-	string err = remaining2.v_error;
-	int errcode = remaining2.ecode;
+		string err = remaining2.v_error;
+		int errcode = remaining2.ecode;
+		 // typeof it_expr_type: v.ast.CallExpr
+		// last_type: v.ast.ExprStmt
+		// last_expr_result_type: void
 		println(tos3("V error: Error while parsing flags."));
 		println(err);
 		println(tos3("Args:"));
@@ -11863,8 +11990,11 @@ void internal__compile__parse_options(string flag, internal__flag__Instance* f, 
 	else if (string_eq(flag, tos3("path"))) {
 		Option_string path_str = internal__flag__Instance_string(f);
 		if (!path_str.ok) {
-		string err = path_str.v_error;
-		int errcode = path_str.ecode;
+			string err = path_str.v_error;
+			int errcode = path_str.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			println(tos3("V error: Expected argument for `-path`."));
 			v_exit(1);
 		};
@@ -11876,8 +12006,11 @@ void internal__compile__parse_options(string flag, internal__flag__Instance* f, 
 }));
 		Option_string tmp = internal__flag__Instance_string(f);
 		if (!tmp.ok) {
-		string err = tmp.v_error;
-		int errcode = tmp.ecode;
+			string err = tmp.v_error;
+			int errcode = tmp.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			println(_STR("V error: Expected argument for `-%.*s`.", flag.len, flag.str));
 			v_exit(1);
 		};
@@ -11886,8 +12019,11 @@ void internal__compile__parse_options(string flag, internal__flag__Instance* f, 
 	else if (string_eq(flag, tos3("d")) || string_eq(flag, tos3("define"))) {
 		Option_string define = internal__flag__Instance_string(f);
 		if (!define.ok) {
-		string err = define.v_error;
-		int errcode = define.ecode;
+			string err = define.v_error;
+			int errcode = define.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			println(_STR("V error: Expected argument for `-%.*s`.", flag.len, flag.str));
 			v_exit(1);
 		};
@@ -11905,8 +12041,11 @@ void internal__compile__parse_options(string flag, internal__flag__Instance* f, 
 	else if (string_eq(flag, tos3("e")) || string_eq(flag, tos3("experiments"))) {
 		Option_string to_enable = internal__flag__Instance_string(f);
 		if (!to_enable.ok) {
-		string err = to_enable.v_error;
-		int errcode = to_enable.ecode;
+			string err = to_enable.v_error;
+			int errcode = to_enable.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			println(_STR("V error: Expected argument for `-%.*s`.", flag.len, flag.str));
 			v_exit(1);
 		};
@@ -11946,8 +12085,11 @@ void internal__compile__parse_options(string flag, internal__flag__Instance* f, 
 }));
 		Option_int level = internal__flag__Instance_int(f);
 		if (!level.ok) {
-		string err = level.v_error;
-		int errcode = level.ecode;
+			string err = level.v_error;
+			int errcode = level.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			println(tos3("V error: Expected `0`, `1`, `2` or `3` as argument to `-verbose` to specify verbosity level."));
 			v_exit(1);
 		};
@@ -11992,8 +12134,10 @@ void internal__compile__parse_options(string flag, internal__flag__Instance* f, 
 	else if (string_eq(flag, tos3("b")) || string_eq(flag, tos3("backend"))) {
 		Option_string tmp5 = internal__flag__Instance_string(f);
 		if (!tmp5.ok) {
-		string err = tmp5.v_error;
-		int errcode = tmp5.ecode;
+			string err = tmp5.v_error;
+			int errcode = tmp5.ecode;
+			// last_type: v.ast.Return
+			// last_expr_result_type: 
 			return;
 		};
 	}
@@ -12058,8 +12202,11 @@ void internal__compile__parse_executable_options(string flag, internal__flag__In
 }));
 		Option_string target_os = internal__flag__Instance_string(f);
 		if (!target_os.ok) {
-		string err = target_os.v_error;
-		int errcode = target_os.ecode;
+			string err = target_os.v_error;
+			int errcode = target_os.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			println(_STR("V error: Expected argument after `-%.*s`.", flag.len, flag.str));
 			v_exit(1);
 		};
@@ -12069,8 +12216,11 @@ void internal__compile__parse_executable_options(string flag, internal__flag__In
 		}
 		Option_v__pref__OS tmp = v__pref__os_from_string(/*opt*/(*(string*)target_os.data));
 		if (!tmp.ok) {
-		string err = tmp.v_error;
-		int errcode = tmp.ecode;
+			string err = tmp.v_error;
+			int errcode = tmp.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			println(_STR("V error: Unknown operating system target `%.*s`.", /*opt*/(*(string*)target_os.data).len, /*opt*/(*(string*)target_os.data).str));
 			v_exit(1);
 		};
@@ -12079,8 +12229,11 @@ void internal__compile__parse_executable_options(string flag, internal__flag__In
 	else if (string_eq(flag, tos3("arch"))) {
 		Option_string target_arch = internal__flag__Instance_string(f);
 		if (!target_arch.ok) {
-		string err = target_arch.v_error;
-		int errcode = target_arch.ecode;
+			string err = target_arch.v_error;
+			int errcode = target_arch.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			println(tos3("V error: Expected argument after `-arch`."));
 			v_exit(1);
 		};
@@ -12191,8 +12344,10 @@ Option_internal__compile__WindowsKit internal__compile__find_windows_kit_root(st
 		tos3("KitsRoot10"), tos3("KitsRoot81"), 
 }));
 		if (!kit_root.ok) {
-		string err = kit_root.v_error;
-		int errcode = kit_root.ecode;
+			string err = kit_root.v_error;
+			int errcode = kit_root.ecode;
+			// last_type: v.ast.Return
+			// last_expr_result_type: 
 			// defer
 			#ifdef _WIN32
 				RegCloseKey(root_key);
@@ -12202,8 +12357,11 @@ Option_internal__compile__WindowsKit internal__compile__find_windows_kit_root(st
 		string kit_lib = string_add(/*opt*/(*(string*)kit_root.data), tos3("Lib"));
 		Option_array_string files = os__ls(kit_lib);
 		if (!files.ok) {
-		string err = files.v_error;
-		int errcode = files.ecode;
+			string err = files.v_error;
+			int errcode = files.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			v_panic(err);
 		};
 		string highest_path = tos3("");
@@ -12251,14 +12409,18 @@ Option_internal__compile__VsInstallation internal__compile__find_vs(string vswhe
 	#endif
 	Option_os__Result res = os__exec(_STR("\"%.*s\\Microsoft Visual Studio\\Installer\\vswhere.exe\" -latest -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath", vswhere_dir.len, vswhere_dir.str));
 	if (!res.ok) {
-	string err = res.v_error;
-	int errcode = res.ecode;
+		string err = res.v_error;
+		int errcode = res.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return v_error(err);
 	};
 	Option_string version = os__read_file(_STR("%.*s\\VC\\Auxiliary\\Build\\Microsoft.VCToolsVersion.default.txt", /*opt*/(*(os__Result*)res.data).output.len, /*opt*/(*(os__Result*)res.data).output.str));
 	if (!version.ok) {
-	string err = version.v_error;
-	int errcode = version.ecode;
+		string err = version.v_error;
+		int errcode = version.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		println(tos3("Unable to find msvc version"));
 		return v_error(tos3("Unable to find vs installation"));
 	};
@@ -12287,14 +12449,18 @@ Option_internal__compile__MsvcResult internal__compile__find_msvc() {
 		string host_arch = (string_eq(processor_architecture, tos3("x86")) ? tos3("X86") : tos3("X64"));
 		Option_internal__compile__WindowsKit wk = internal__compile__find_windows_kit_root(host_arch);
 		if (!wk.ok) {
-		string err = wk.v_error;
-		int errcode = wk.ecode;
+			string err = wk.v_error;
+			int errcode = wk.ecode;
+			// last_type: v.ast.Return
+			// last_expr_result_type: 
 			return v_error(tos3("Unable to find windows sdk"));
 		};
 		Option_internal__compile__VsInstallation vs = internal__compile__find_vs(vswhere_dir, host_arch);
 		if (!vs.ok) {
-		string err = vs.v_error;
-		int errcode = vs.ecode;
+			string err = vs.v_error;
+			int errcode = vs.ecode;
+			// last_type: v.ast.Return
+			// last_expr_result_type: 
 			return v_error(tos3("Unable to find visual studio"));
 		};
 		return opt_ok(& (internal__compile__MsvcResult []) { (internal__compile__MsvcResult){
@@ -12317,8 +12483,10 @@ Option_internal__compile__MsvcResult internal__compile__find_msvc() {
 void internal__compile__V_cc_msvc(internal__compile__V* v) { 
 	Option_internal__compile__MsvcResult r = internal__compile__find_msvc();
 	if (!r.ok) {
-	string err = r.v_error;
-	int errcode = r.ecode;
+		string err = r.v_error;
+		int errcode = r.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		if (!v->pref->is_keep_c && string_ne(v->out_name_c, tos3("v.c")) && string_ne(v->out_name_c, tos3("v_macos.c"))) {
 			os__rm(v->out_name_c);
 		}
@@ -12392,8 +12560,10 @@ void internal__compile__V_cc_msvc(internal__compile__V* v) {
 	}
 	Option_os__Result res = os__exec(cmd);
 	if (!res.ok) {
-	string err = res.v_error;
-	int errcode = res.ecode;
+		string err = res.v_error;
+		int errcode = res.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		println(err);
 		internal__compile__verror(tos3("msvc error"));
 		return;
@@ -12410,8 +12580,10 @@ void internal__compile__V_cc_msvc(internal__compile__V* v) {
 void internal__compile__build_thirdparty_obj_file_with_msvc(string path, array_internal__compile__CFlag moduleflags) { 
 	Option_internal__compile__MsvcResult msvc = internal__compile__find_msvc();
 	if (!msvc.ok) {
-	string err = msvc.v_error;
-	int errcode = msvc.ecode;
+		string err = msvc.v_error;
+		int errcode = msvc.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		println(tos3("Could not find visual studio"));
 		return;
 	};
@@ -12425,8 +12597,11 @@ void internal__compile__build_thirdparty_obj_file_with_msvc(string path, array_i
 	string parent = os__dir(obj_path);
 	Option_array_string files = os__ls(parent);
 	if (!files.ok) {
-	string err = files.v_error;
-	int errcode = files.ecode;
+		string err = files.v_error;
+		int errcode = files.ecode;
+		 // typeof it_expr_type: v.ast.CallExpr
+		// last_type: v.ast.ExprStmt
+		// last_expr_result_type: void
 		v_panic(err);
 	};
 	string cfiles = tos3("");
@@ -12444,8 +12619,10 @@ void internal__compile__build_thirdparty_obj_file_with_msvc(string path, array_i
 	println(_STR("thirdparty cmd line: %.*s", cmd.len, cmd.str));
 	Option_os__Result res = os__exec(cmd);
 	if (!res.ok) {
-	string err = res.v_error;
-	int errcode = res.ecode;
+		string err = res.v_error;
+		int errcode = res.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		println(_STR("msvc: failed thirdparty object build cmd: %.*s", cmd.len, cmd.str));
 		internal__compile__verror(err);
 		return;
@@ -12598,8 +12775,11 @@ void internal__help__print_and_exit(string topic) {
 	string target_topic = os__join_path(vroot, (varg_string){.len=5,.args={tos3("cmd"), tos3("v"), tos3("internal"), tos3("help"), _STR("%.*s.txt", topic.len, topic.str)}});
 	Option_string content = os__read_file(target_topic);
 	if (!content.ok) {
-	string err = content.v_error;
-	int errcode = content.ecode;
+		string err = content.v_error;
+		int errcode = content.ecode;
+		 // typeof it_expr_type: v.ast.CallExpr
+		// last_type: v.ast.ExprStmt
+		// last_expr_result_type: void
 		println(_const_internal__help__unknown_topic);
 		v_exit(1);
 	};
@@ -13142,8 +13322,10 @@ void v__table__TypeSymbol_register_method(v__table__TypeSymbol* t, v__table__Fn 
 bool v__table__TypeSymbol_has_method(v__table__TypeSymbol* t, string name) { 
 	Option_v__table__Fn tmp1 = v__table__TypeSymbol_find_method(t, name);
 	if (!tmp1.ok) {
-	string err = tmp1.v_error;
-	int errcode = tmp1.ecode;
+		string err = tmp1.v_error;
+		int errcode = tmp1.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return false;
 	};
 	return true;
@@ -13163,8 +13345,10 @@ Option_v__table__Fn v__table__TypeSymbol_find_method(v__table__TypeSymbol* t, st
 bool v__table__TypeSymbol_has_field(v__table__TypeSymbol* s, string name) { 
 	Option_v__table__Field tmp1 = v__table__TypeSymbol_find_field(s, name);
 	if (!tmp1.ok) {
-	string err = tmp1.v_error;
-	int errcode = tmp1.ecode;
+		string err = tmp1.v_error;
+		int errcode = tmp1.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return false;
 	};
 	return true;
@@ -13317,8 +13501,10 @@ int v__table__Table_register_type_symbol(v__table__Table* t, v__table__TypeSymbo
 bool v__table__Table_known_type(v__table__Table* t, string name) { 
 	Option_v__table__TypeSymbol tmp1 =v__table__Table_find_type(t, name);
 	if (!tmp1.ok) {
-	string err = tmp1.v_error;
-	int errcode = tmp1.ecode;
+		string err = tmp1.v_error;
+		int errcode = tmp1.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return false;
 	};
 	return true;
@@ -13580,8 +13766,11 @@ string v__doc__doc(string mod, v__table__Table* table) {
 	}
 	Option_array_string files = os__ls(path);
 	if (!files.ok) {
-	string err = files.v_error;
-	int errcode = files.ecode;
+		string err = files.v_error;
+		int errcode = files.ecode;
+		 // typeof it_expr_type: v.ast.CallExpr
+		// last_type: v.ast.ExprStmt
+		// last_expr_result_type: void
 		v_panic(err);
 	};
 	// FOR IN
@@ -14105,8 +14294,10 @@ string v__util__githash(bool should_get_from_filesystem) {
 			}
 			Option_string head_content = os__read_file(git_head_file);
 			if (!head_content.ok) {
-			string err = head_content.v_error;
-			int errcode = head_content.ecode;
+				string err = head_content.v_error;
+				int errcode = head_content.ecode;
+				// last_type: v.ast.BranchStmt
+				// last_expr_result_type: 
 				break;
 			};
 			string gcbranch_rel_path = string_trim_space(string_replace(/*opt*/(*(string*)head_content.data), tos3("ref: "), tos3("")));
@@ -14116,8 +14307,10 @@ string v__util__githash(bool should_get_from_filesystem) {
 			}
 			Option_string current_branch_hash = os__read_file(gcbranch_file);
 			if (!current_branch_hash.ok) {
-			string err = current_branch_hash.v_error;
-			int errcode = current_branch_hash.ecode;
+				string err = current_branch_hash.v_error;
+				int errcode = current_branch_hash.ecode;
+				// last_type: v.ast.BranchStmt
+				// last_expr_result_type: 
 				break;
 			};
 			int desired_hash_length = 7;
@@ -14177,8 +14370,11 @@ void v__util__launch_tool(bool is_verbose, string tool_name) {
 		}
 		Option_os__Result tool_compilation = os__exec(compilation_command);
 		if (!tool_compilation.ok) {
-		string err = tool_compilation.v_error;
-		int errcode = tool_compilation.ecode;
+			string err = tool_compilation.v_error;
+			int errcode = tool_compilation.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			v_panic(err);
 		};
 		if (/*opt*/(*(os__Result*)tool_compilation.data).exit_code != 0) {
@@ -14579,8 +14775,10 @@ string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, tim
 Option_time__Time time__parse(string s) { 
 	Option_int pos = string_index(s, tos3(" "));
 	if (!pos.ok) {
-	string err = pos.v_error;
-	int errcode = pos.ecode;
+		string err = pos.v_error;
+		int errcode = pos.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return v_error(_STR("Invalid time format: %.*s", s.len, s.str));
 	};
 	string symd = string_substr(s, 0, /*opt*/(*(int*)pos.data));
@@ -14612,8 +14810,10 @@ Option_time__Time time__parse_rfc2822(string s) {
 	}
 	Option_int pos = string_index(_const_time__months_string, (*(string*)array_get(fields, 2)));
 	if (!pos.ok) {
-	string err = pos.v_error;
-	int errcode = pos.ecode;
+		string err = pos.v_error;
+		int errcode = pos.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return v_error(_STR("Invalid time format: %.*s", s.len, s.str));
 	};
 	int mm = /*opt*/(*(int*)pos.data) / 3 + 1;
@@ -14622,8 +14822,10 @@ Option_time__Time time__parse_rfc2822(string s) {
 	int count = snprintf(((charptr)(tmstr)), (s.len * 2), "%s-%02d-%s %s", (*(string*)array_get(fields, 3)).str, mm, (*(string*)array_get(fields, 1)).str, (*(string*)array_get(fields, 4)).str);
 	Option_time__Time t = time__parse(tos(tmstr, count));
 	if (!t.ok) {
-	string err = t.v_error;
-	int errcode = t.ecode;
+		string err = t.v_error;
+		int errcode = t.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return v_error(_STR("Invalid time format: %.*s", s.len, s.str));
 	};
 	return opt_ok(& (time__Time []) { /*opt*/(*(time__Time*)t.data) }, sizeof(time__Time));
@@ -15424,8 +15626,11 @@ void v__builder__Builder_build_c(v__builder__Builder* b, array_string v_files, s
 	v__builder__Builder_info(b, _STR("build_c(%.*s)", out_file.len, out_file.str));
 	Option_os__File f = os__create(out_file);
 	if (!f.ok) {
-	string err = f.v_error;
-	int errcode = f.ecode;
+		string err = f.v_error;
+		int errcode = f.ecode;
+		 // typeof it_expr_type: v.ast.CallExpr
+		// last_type: v.ast.ExprStmt
+		// last_expr_result_type: void
 		v_panic(err);
 	};
 	os__File_writeln(&/*opt*/(*(os__File*)f.data), v__builder__Builder_gen_c(b, v_files));
@@ -15463,8 +15668,11 @@ void v__builder__Builder_parse_imports(v__builder__Builder* b) {
 			}
 			Option_string import_path = v__builder__Builder_find_module_path(b, mod);
 			if (!import_path.ok) {
-			string err = import_path.v_error;
-			int errcode = import_path.ecode;
+				string err = import_path.v_error;
+				int errcode = import_path.ecode;
+				 // typeof it_expr_type: v.ast.CallExpr
+				// last_type: v.ast.ExprStmt
+				// last_expr_result_type: void
 				v_panic(_STR("cannot import module \"%.*s\" (not found)", mod.len, mod.str));
 			};
 			array_string v_files = v__builder__Builder_v_files_from_dir(b, /*opt*/(*(string*)import_path.data));
@@ -15498,8 +15706,11 @@ array_string v__builder__Builder_v_files_from_dir(v__builder__Builder* b, string
 	}
 	Option_array_string files = os__ls(dir);
 	if (!files.ok) {
-	string err = files.v_error;
-	int errcode = files.ecode;
+		string err = files.v_error;
+		int errcode = files.ecode;
+		 // typeof it_expr_type: v.ast.CallExpr
+		// last_type: v.ast.ExprStmt
+		// last_expr_result_type: void
 		v_panic(err);
 	};
 	if (v__pref__VerboseLevel_is_higher_or_equal(b->pref->verbosity, v__pref__VerboseLevel_level_one)) {
@@ -15733,8 +15944,10 @@ array_string v__builder__ModFileCacher_get_files(v__builder__ModFileCacher* mcac
 	}
 	Option_array_string files = os__ls(cfolder);
 	if (!files.ok) {
-	string err = files.v_error;
-	int errcode = files.ecode;
+		string err = files.v_error;
+		int errcode = files.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		return new_array(0, 0, sizeof(string));
 	};
 	map_set(&mcache->folder_files, cfolder, &(array_string[]) { /*opt*/(*(array_string*)files.data) });
@@ -18227,8 +18440,10 @@ v__ast__Assoc v__parser__Parser_assoc(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	Option_v__ast__Var var = v__ast__Scope_find_var(p->scope, var_name);
 	if (!var.ok) {
-	string err = var.v_error;
-	int errcode = var.ecode;
+		string err = var.v_error;
+		int errcode = var.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		v__parser__Parser_error(p, _STR("unknown variable `%.*s`", var_name.len, var_name.str));
 		return (v__ast__Assoc){
 			.var_name = tos3(""),
@@ -19567,8 +19782,11 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 		v__ast__Scope* scope = v__ast__Scope_innermost(c->file.scope, it->pos.pos);
 		Option_v__ast__Var var = v__ast__Scope_find_var(scope, it->var_name);
 		if (!var.ok) {
-		string err = var.v_error;
-		int errcode = var.ecode;
+			string err = var.v_error;
+			int errcode = var.ecode;
+			 // typeof it_expr_type: v.ast.CallExpr
+			// last_type: v.ast.ExprStmt
+			// last_expr_result_type: void
 			v_panic(err);
 		};
 		// FOR IN
@@ -22242,12 +22460,70 @@ void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 }
 
 void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt stmts, v__table__Type return_type) { 
+	string mr_styp = v__gen__Gen_typ(g, return_type);
+	string mr_styp2 = string_substr(mr_styp, 7, mr_styp.len);
 	v__gen__Gen_writeln(g, tos3(";"));
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
-	v__gen__Gen_writeln(g, _STR("string err = %.*s.v_error;", var_name.len, var_name.str));
-	v__gen__Gen_writeln(g, _STR("int errcode = %.*s.ecode;", var_name.len, var_name.str));
-	v__gen__Gen_stmts(g, stmts);
+	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
+	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
+	multi_return_string_string mr_63097 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_63097.arg0;
+	string type_of_last_expression = mr_63097.arg1;
+	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
+		g->indent++;
+		// FOR IN
+		for (int i = 0; i < stmts.
+		len; i++) {	v__ast__Stmt stmt = ((v__ast__Stmt*)stmts.
+		data)[i];if (i == stmts.len - 1) {
+				g->indent--;
+				v__gen__Gen_write(g, _STR("\t*(%.*s*) %.*s.data = ", mr_styp2.len, mr_styp2.str, var_name.len, var_name.str));
+			}
+			v__gen__Gen_stmt(g, stmt);
+		}
+	} else {
+		v__gen__Gen_stmts(g, stmts);
+	}
 	v__gen__Gen_write(g, tos3("}"));
+}
+
+multi_return_string_string v__gen__Gen_type_of_last_statement(v__gen__Gen* g, array_v__ast__Stmt stmts) { 
+	string last_type = tos3("");
+	string last_expr_result_type = tos3("");
+	if (stmts.len > 0) {
+		v__ast__Stmt last_stmt = (*(v__ast__Stmt*)array_get(stmts, stmts.len - 1));
+		last_type = tos3( /* v.ast.Stmt */ v_typeof_sumtype_136( (last_stmt).typ ));
+		if (string_eq(last_type, tos3("v.ast.ExprStmt"))) {
+			if (last_stmt.typ == 194 /* v.ast.ExprStmt */) {
+				v__ast__ExprStmt* it = (v__ast__ExprStmt*)last_stmt.obj; // ST it
+				string it_expr_type = tos3( /* v.ast.Expr */ v_typeof_sumtype_195( (it->expr).typ ));
+				if (string_eq(it_expr_type, tos3("v.ast.CallExpr"))) {
+					v__gen__Gen_writeln(g, _STR("\t // typeof it_expr_type: %.*s", it_expr_type.len, it_expr_type.str));
+					last_expr_result_type = v__gen__Gen_type_of_call_expr(g, it->expr);
+				} else {
+					last_expr_result_type = it_expr_type;
+				}
+			}
+			else {
+				last_expr_result_type = last_type;
+			}
+			;
+		}
+	}
+	v__gen__Gen_writeln(g, _STR("\t// last_type: %.*s", last_type.len, last_type.str));
+	v__gen__Gen_writeln(g, _STR("\t// last_expr_result_type: %.*s", last_expr_result_type.len, last_expr_result_type.str));
+	return (multi_return_string_string){.arg0=last_type,.arg1=last_expr_result_type};
+}
+
+string v__gen__Gen_type_of_call_expr(v__gen__Gen* g, v__ast__Expr node) { 
+	if (node.typ == 170 /* v.ast.CallExpr */) {
+		v__ast__CallExpr* it = (v__ast__CallExpr*)node.obj; // ST it
+		return v__gen__Gen_typ(g, it->return_type);
+	}
+	else {
+		return tos3( /* v.ast.Expr */ v_typeof_sumtype_195( (node).typ ));
+	}
+	;
+	return tos3("");
 }
 
 void v__gen__Gen_in_optimization(v__gen__Gen* g, v__ast__Expr left, v__ast__ArrayInit right) { 
@@ -22869,8 +23145,11 @@ void v__gen__x64__Gen_generate_elf_footer(v__gen__x64__Gen* g) {
 	v__gen__x64__Gen_write64_at(g, ((int)(g->main_fn_addr - g->code_start_pos)) - 5, g->code_start_pos + 1);
 	Option_os__File f = os__create(g->out_name);
 	if (!f.ok) {
-	string err = f.v_error;
-	int errcode = f.ecode;
+		string err = f.v_error;
+		int errcode = f.ecode;
+		 // typeof it_expr_type: v.ast.CallExpr
+		// last_type: v.ast.ExprStmt
+		// last_expr_result_type: void
 		v_panic(err);
 	};
 	os__chmod(g->out_name, 0775);
@@ -23251,8 +23530,10 @@ v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__
 	}
 	Option_string raw_text = os__read_file(file_path);
 	if (!raw_text.ok) {
-	string err = raw_text.v_error;
-	int errcode = raw_text.ecode;
+		string err = raw_text.v_error;
+		int errcode = raw_text.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
 		v__scanner__verror(_STR("scanner: failed to open %.*s", file_path.len, file_path.str));
 		return 0;
 	};
