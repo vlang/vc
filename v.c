@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "35fab2b"
+#define V_COMMIT_HASH "44a271d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "de701cc"
+#define V_COMMIT_HASH "35fab2b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "35fab2b"
+#define V_CURRENT_COMMIT_HASH "44a271d"
 #endif
 
 typedef struct array array;
@@ -13996,6 +13996,9 @@ string v__util__vhash() {
 string v__util__full_hash() { 
 	string build_hash = v__util__vhash();
 	string current_hash = v__util__githash(false);
+	if (string_eq(build_hash, current_hash)) {
+		return build_hash;
+	}
 	return _STR("%.*s.%.*s", build_hash.len, build_hash.str, current_hash.len, current_hash.str);
 }
 
