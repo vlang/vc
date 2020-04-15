@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "f34352f"
+#define V_COMMIT_HASH "4dd8796"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "efaec8b"
+#define V_COMMIT_HASH "f34352f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "f34352f"
+#define V_CURRENT_COMMIT_HASH "4dd8796"
 #endif
 
 typedef struct array array;
@@ -22762,7 +22762,7 @@ void v__gen__Gen_index_expr(v__gen__Gen* g, v__ast__IndexExpr node) {
 		} else if (sym->kind == v__table__Kind_map) {
 			v__table__Map info = /* as */ *(v__table__Map*)sym->info.obj;
 			string elem_type_str = v__gen__Gen_typ(g, info.value_type);
-			if (g->is_assign_lhs) {
+			if (g->is_assign_lhs && !g->is_array_set) {
 				g->is_array_set = true;
 				v__gen__Gen_write(g, tos3("map_set("));
 				if (!left_is_ptr) {
@@ -23332,9 +23332,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_60514 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_60514.arg0;
-	string type_of_last_expression = mr_60514.arg1;
+	multi_return_string_string mr_60533 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_60533.arg0;
+	string type_of_last_expression = mr_60533.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
