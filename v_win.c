@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "6a186e8"
+#define V_COMMIT_HASH "92129d7"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a3ab5df"
+#define V_COMMIT_HASH "6a186e8"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "6a186e8"
+#define V_CURRENT_COMMIT_HASH "92129d7"
 #endif
 
 typedef struct array array;
@@ -20315,22 +20315,25 @@ v__table__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Ma
 		v__checker__Checker_error(c, tos3("match 0 cond type"), node->pos);
 	}
 	v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(c->table, cond_type);
+	if (type_sym->kind != v__table__Kind_sum_type) {
+		node->is_sum_type = false;
+	}
 	map_string_int all_possible_left_subtypes = new_map_1(sizeof(int));
 	map_string_int all_possible_left_enum_vals = new_map_1(sizeof(int));
 	if (type_sym->info.typ == 97 /* v.table.SumType */) {
 		v__table__SumType* it = (v__table__SumType*)type_sym->info.obj; // ST it
 		// FOR IN array
-		array tmp3 = it->variants;
-		for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
-			v__table__Type v = ((v__table__Type*)tmp3.data)[tmp4];
+		array tmp4 = it->variants;
+		for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
+			v__table__Type v = ((v__table__Type*)tmp4.data)[tmp5];
 			map_set(&all_possible_left_subtypes, int_str(((int)(v))), &(int[]) { 0 });
 		}
 	}else if (type_sym->info.typ == 96 /* v.table.Enum */) {
 		v__table__Enum* it = (v__table__Enum*)type_sym->info.obj; // ST it
 		// FOR IN array
-		array tmp5 = it->vals;
-		for (int tmp6 = 0; tmp6 < tmp5.len; tmp6++) {
-			string v = ((string*)tmp5.data)[tmp6];
+		array tmp6 = it->vals;
+		for (int tmp7 = 0; tmp7 < tmp6.len; tmp7++) {
+			string v = ((string*)tmp6.data)[tmp7];
 			map_set(&all_possible_left_enum_vals, v, &(int[]) { 0 });
 		}
 	}else {
@@ -20338,9 +20341,9 @@ v__table__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Ma
 	bool has_else = (*(v__ast__MatchBranch*)array_get(node->branches, node->branches.len - 1)).is_else;
 	if (!has_else) {
 		// FOR IN array
-		array tmp8 = node->branches;
-		for (int i = 0; i < tmp8.len; i++) {
-			v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp8.data)[i];
+		array tmp9 = node->branches;
+		for (int i = 0; i < tmp9.len; i++) {
+			v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp9.data)[i];
 			if (branch.is_else && i != node->branches.len - 1) {
 				v__checker__Checker_error(c, tos3("`else` must be the last branch of `match`"), branch.pos);
 				has_else = true;
@@ -20350,14 +20353,14 @@ v__table__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Ma
 		if (!has_else) {
 			int used_values_count = 0;
 			// FOR IN array
-			array tmp11 = node->branches;
-			for (int bi = 0; bi < tmp11.len; bi++) {
-				v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp11.data)[bi];
+			array tmp12 = node->branches;
+			for (int bi = 0; bi < tmp12.len; bi++) {
+				v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp12.data)[bi];
 				used_values_count += branch.exprs.len;
 				// FOR IN array
-				array tmp12 = branch.exprs;
-				for (int bi_ei = 0; bi_ei < tmp12.len; bi_ei++) {
-					v__ast__Expr bexpr = ((v__ast__Expr*)tmp12.data)[bi_ei];
+				array tmp13 = branch.exprs;
+				for (int bi_ei = 0; bi_ei < tmp13.len; bi_ei++) {
+					v__ast__Expr bexpr = ((v__ast__Expr*)tmp13.data)[bi_ei];
 					if (bexpr.typ == 173 /* v.ast.Type */) {
 						v__ast__Type* it = (v__ast__Type*)bexpr.obj; // ST it
 						int tidx = v__table__type_idx(it->typ);
@@ -20376,13 +20379,13 @@ v__table__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Ma
 			if (type_sym->info.typ == 97 /* v.table.SumType */) {
 				v__table__SumType* it = (v__table__SumType*)type_sym->info.obj; // ST it
 				// FOR IN map
-				array_string keys_tmp15 = map_keys(&all_possible_left_subtypes);
-				for (int tmp16 = 0; tmp16 < keys_tmp15.len; tmp16++) {
-					string k = ((string*)keys_tmp15.data)[tmp16];
+				array_string keys_tmp16 = map_keys(&all_possible_left_subtypes);
+				for (int tmp17 = 0; tmp17 < keys_tmp16.len; tmp17++) {
+					string k = ((string*)keys_tmp16.data)[tmp17];
 					int v = (*(int*)map_get3(all_possible_left_subtypes, k, &(int[]){ 0 }));
 					if (v == 0) {
 						err = true;
-						_PUSH(&unhandled, (string_add(string_add(tos3("`"), v__table__Table_type_to_str(c->table, v__table__new_type(string_int(k)))), tos3("`"))), tmp18, string);
+						_PUSH(&unhandled, (string_add(string_add(tos3("`"), v__table__Table_type_to_str(c->table, v__table__new_type(string_int(k)))), tos3("`"))), tmp19, string);
 					}
 					if (v > 1) {
 						err = true;
@@ -20393,13 +20396,13 @@ v__table__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Ma
 			}else if (type_sym->info.typ == 96 /* v.table.Enum */) {
 				v__table__Enum* it = (v__table__Enum*)type_sym->info.obj; // ST it
 				// FOR IN map
-				array_string keys_tmp20 = map_keys(&all_possible_left_enum_vals);
-				for (int tmp21 = 0; tmp21 < keys_tmp20.len; tmp21++) {
-					string k = ((string*)keys_tmp20.data)[tmp21];
+				array_string keys_tmp21 = map_keys(&all_possible_left_enum_vals);
+				for (int tmp22 = 0; tmp22 < keys_tmp21.len; tmp22++) {
+					string k = ((string*)keys_tmp21.data)[tmp22];
 					int v = (*(int*)map_get3(all_possible_left_enum_vals, k, &(int[]){ 0 }));
 					if (v == 0) {
 						err = true;
-						_PUSH(&unhandled, (_STR("`.%.*s`", k.len, k.str)), tmp23, string);
+						_PUSH(&unhandled, (_STR("`.%.*s`", k.len, k.str)), tmp24, string);
 					}
 					if (v > 1) {
 						err = true;
@@ -20421,13 +20424,13 @@ v__table__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Ma
 	c->expected_type = cond_type;
 	v__table__Type ret_type = _const_v__table__void_type;
 	// FOR IN array
-	array tmp27 = node->branches;
-	for (int tmp28 = 0; tmp28 < tmp27.len; tmp28++) {
-		v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp27.data)[tmp28];
+	array tmp28 = node->branches;
+	for (int tmp29 = 0; tmp29 < tmp28.len; tmp29++) {
+		v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp28.data)[tmp29];
 		// FOR IN array
-		array tmp29 = branch.exprs;
-		for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
-			v__ast__Expr expr = ((v__ast__Expr*)tmp29.data)[tmp30];
+		array tmp30 = branch.exprs;
+		for (int tmp31 = 0; tmp31 < tmp30.len; tmp31++) {
+			v__ast__Expr expr = ((v__ast__Expr*)tmp30.data)[tmp31];
 			c->expected_type = cond_type;
 			v__table__Type typ = v__checker__Checker_expr(c, expr);
 			v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, typ);
