@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "da28bc7"
+#define V_COMMIT_HASH "fde83af"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4dd8796"
+#define V_COMMIT_HASH "da28bc7"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "da28bc7"
+#define V_CURRENT_COMMIT_HASH "fde83af"
 #endif
 
 typedef struct array array;
@@ -18850,6 +18850,17 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 		call_expr->return_type = _const_v__table__string_type;
 		return _const_v__table__string_type;
 	}
+	bool tmp15;
+	{ /* if guard */ Option_v__table__Field field = v__table__Table_struct_find_field(c->table, left_type_sym, method_name);
+	if ((tmp15 = field.ok)) {
+		v__table__TypeSymbol* field_type_sym = v__table__Table_get_type_symbol(c->table, /*opt*/(*(v__table__Field*)field.data).typ);
+		if (field_type_sym->kind == v__table__Kind_function) {
+			call_expr->is_method = false;
+			v__table__FnType info = /* as */ *(v__table__FnType*)field_type_sym->info.obj;
+			call_expr->return_type = info.func.return_type;
+			return info.func.return_type;
+		}
+	}}
 	v__checker__Checker_error(c, _STR("unknown method: %.*s.%.*s", left_type_sym->name.len, left_type_sym->name.str, method_name.len, method_name.str), call_expr->pos);
 	return _const_v__table__void_type;
 }
@@ -23729,6 +23740,14 @@ void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node) {
 }
 
 void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
+	if (node.left_type != 0) {
+		v__gen__Gen_expr(g, node.left);
+		if (v__table__type_is_ptr(node.left_type)) {
+			v__gen__Gen_write(g, tos3("->"));
+		} else {
+			v__gen__Gen_write(g, tos3("."));
+		}
+	}
 	string name = node.name;
 	bool is_print = string_eq(name, tos3("println")) || string_eq(name, tos3("print"));
 	string print_method = (string_eq(name, tos3("println")) ?  ( tos3("println") )  :  ( tos3("print") ) );
