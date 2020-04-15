@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "4b3c44c"
+#define V_COMMIT_HASH "8e8f543"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "92129d7"
+#define V_COMMIT_HASH "4b3c44c"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4b3c44c"
+#define V_CURRENT_COMMIT_HASH "8e8f543"
 #endif
 
 typedef struct array array;
