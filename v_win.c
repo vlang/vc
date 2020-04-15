@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "caed4aa"
+#define V_COMMIT_HASH "93b942d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c049128"
+#define V_COMMIT_HASH "caed4aa"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "caed4aa"
+#define V_CURRENT_COMMIT_HASH "93b942d"
 #endif
 
 typedef struct array array;
@@ -1947,6 +1947,7 @@ struct v__parser__Parser {
 	array_v__ast__Import ast_imports;
 	bool is_amp;
 	bool returns;
+	bool inside_match;
 	bool inside_match_case;
 	bool is_stmt_ident;
 };
@@ -15731,6 +15732,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.ast_imports = new_array(0, 1, sizeof(v__ast__Import)),
 		.is_amp = 0,
 		.returns = 0,
+		.inside_match = 0,
 		.inside_match_case = 0,
 		.is_stmt_ident = 0,
 	};
@@ -15768,6 +15770,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* table, v__scann
 		.ast_imports = new_array(0, 1, sizeof(v__ast__Import)),
 		.is_amp = 0,
 		.returns = 0,
+		.inside_match = 0,
 		.inside_match_case = 0,
 		.is_stmt_ident = 0,
 	};
@@ -16258,7 +16261,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 			v__ast__CallExpr x = v__parser__Parser_call_expr(p, is_c, mod);
 			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__CallExpr[]) {x}, sizeof(v__ast__CallExpr)), .typ = 152 /* v.ast.CallExpr */};
 		}
-	} else if (p->peek_tok.kind == v__token__Kind_lcbr && (byte_is_capital(string_at(p->tok.lit, 0)) || is_c || (p->builtin_mod && _IN(string, p->tok.lit, _const_v__table__builtin_type_names))) && !p->inside_match_case && !p->inside_if && !p->inside_for) {
+	} else if (p->peek_tok.kind == v__token__Kind_lcbr && (byte_is_capital(string_at(p->tok.lit, 0)) || is_c || (p->builtin_mod && _IN(string, p->tok.lit, _const_v__table__builtin_type_names))) && !p->inside_match && !p->inside_match_case && !p->inside_if && !p->inside_for) {
 		return /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__StructInit[]) {v__parser__Parser_struct_init(p, false)}, sizeof(v__ast__StructInit)), .typ = 154 /* v.ast.StructInit */};
 	} else if (p->peek_tok.kind == v__token__Kind_dot && (byte_is_capital(string_at(p->tok.lit, 0)) && !known_var)) {
 		string enum_name = v__parser__Parser_check_name(p);
@@ -17444,6 +17447,7 @@ v__ast__GlobalDecl v__parser__Parser_global_decl(v__parser__Parser* p) {
 
 v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser* p) {
 	v__token__Position match_first_pos = v__token__Token_position(&p->tok);
+	p->inside_match = true;
 	v__parser__Parser_check(p, v__token__Kind_key_match);
 	bool is_mut = (p->tok.kind == v__token__Kind_key_mut || p->tok.kind == v__token__Kind_key_var);
 	bool is_sum_type = false;
@@ -17451,6 +17455,7 @@ v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 	}
 	v__ast__Expr cond = v__parser__Parser_expr(p, 0);
+	p->inside_match = false;
 	v__parser__Parser_check(p, v__token__Kind_lcbr);
 	array_v__ast__MatchBranch branches = new_array(0, 0, sizeof(v__ast__MatchBranch));
 	while (1) {
