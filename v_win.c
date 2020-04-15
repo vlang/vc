@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "c049128"
+#define V_COMMIT_HASH "caed4aa"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fde83af"
+#define V_COMMIT_HASH "c049128"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c049128"
+#define V_CURRENT_COMMIT_HASH "caed4aa"
 #endif
 
 typedef struct array array;
@@ -7539,13 +7539,12 @@ multi_return_v__pref__Preferences_string parse_args(array_string args) {
 		res->path = command;
 	} else if (string_eq(command, tos3("run"))) {
 		res->is_run = true;
-		if (command_pos + 1 < args.len) {
-			res->path = (*(string*)array_get(args, command_pos + 1));
-			res->run_args = array_slice(args, command_pos + 2, args.len);
-		} else {
+		if (command_pos > args.len) {
 			eprintln(tos3("v run: no v files listed"));
 			v_exit(1);
 		}
+		res->path = (*(string*)array_get(args, command_pos + 1));
+		res->run_args = array_slice(args, command_pos + 2, args.len);
 	}
 	if (string_eq(command, tos3("build-module"))) {
 		res->build_mode = v__pref__BuildMode_build_module;
