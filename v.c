@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "332d52f"
+#define V_COMMIT_HASH "54a0299"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c3ddaf1"
+#define V_COMMIT_HASH "332d52f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "332d52f"
+#define V_CURRENT_COMMIT_HASH "54a0299"
 #endif
 
 typedef struct array array;
@@ -23171,7 +23171,7 @@ void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInterLiteral
 		} else if (((*(v__table__Type*)array_get(node.expr_types, i)) == _const_v__table__string_type || (*(v__table__Type*)array_get(node.expr_types, i)) == _const_v__table__bool_type) || (sym->kind == v__table__Kind_enum_ || sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed)) {
 			v__gen__Gen_write(g, tos3("%.*s"));
 		} else if (((*(v__table__Type*)array_get(node.expr_types, i)) == _const_v__table__f32_type || (*(v__table__Type*)array_get(node.expr_types, i)) == _const_v__table__f64_type)) {
-			v__gen__Gen_write(g, tos3("%f"));
+			v__gen__Gen_write(g, tos3("%g"));
 		} else {
 			v__gen__Gen_write(g, tos3("%d"));
 		}
