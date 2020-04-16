@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "7bfc3ef"
+#define V_COMMIT_HASH "8bb11d9"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "051cc73"
+#define V_COMMIT_HASH "7bfc3ef"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "7bfc3ef"
+#define V_CURRENT_COMMIT_HASH "8bb11d9"
 #endif
 
 
@@ -23384,6 +23384,8 @@ void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInterLiteral
 			v__gen__Gen_write(g, tos3("%.*s"));
 		} else if (((*(v__table__Type*)array_get(node.expr_types, i)) == _const_v__table__f32_type || (*(v__table__Type*)array_get(node.expr_types, i)) == _const_v__table__f64_type)) {
 			v__gen__Gen_write(g, tos3("%g"));
+		} else if (sym->kind == v__table__Kind_struct_ && !v__table__TypeSymbol_has_method(sym, tos3("str"))) {
+			v__gen__Gen_write(g, tos3("%.*s"));
 		} else {
 			v__gen__Gen_write(g, tos3("%d"));
 		}
@@ -23446,6 +23448,16 @@ void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInterLiteral
 				v__gen__Gen_write(g, _STR("%.*s_str(", styp.len, styp.str));
 				v__gen__Gen_expr(g, expr);
 				v__gen__Gen_write(g, tos3(").str"));
+			} else if (sym->kind == v__table__Kind_struct_ && !v__table__TypeSymbol_has_method(sym, tos3("str"))) {
+				string styp = v__gen__Gen_typ(g, (*(v__table__Type*)array_get(node.expr_types, i)));
+				v__gen__Gen_gen_str_for_type(g, */*d*/sym, styp);
+				v__gen__Gen_write(g, _STR("%.*s_str(", styp.len, styp.str));
+				v__gen__Gen_expr(g, expr);
+				v__gen__Gen_write(g, tos3(",0)"));
+				v__gen__Gen_write(g, tos3(".len, "));
+				v__gen__Gen_write(g, _STR("%.*s_str(", styp.len, styp.str));
+				v__gen__Gen_expr(g, expr);
+				v__gen__Gen_write(g, tos3(",0).str"));
 			} else {
 				v__gen__Gen_expr(g, expr);
 			}
@@ -23498,9 +23510,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_61540 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_61540.arg0;
-	string type_of_last_expression = mr_61540.arg1;
+	multi_return_string_string mr_61908 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_61908.arg0;
+	string type_of_last_expression = mr_61908.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -23973,7 +23985,7 @@ void v__gen__Gen_gen_str_for_struct(v__gen__Gen* g, v__table__Struct info, strin
 		for (int i = 0; i < tmp6.len; i++) {
 			v__table__Field field = ((v__table__Field*)tmp6.data)[i];
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, field.typ);
-			if (sym->kind == v__table__Kind_struct_) {
+			if ((sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed)) {
 				string field_styp = v__gen__Gen_typ(g, field.typ);
 				string second_str_param = (v__table__TypeSymbol_has_method(sym, tos3("str")) ?  ( tos3("") )  :  ( tos3(", indent_count + 1") ) );
 				strings__Builder_write(&g->definitions, _STR("indents.len, indents.str, %.*s_str(it.%.*s%.*s).len, %.*s_str(it.%.*s%.*s).str", field_styp.len, field_styp.str, field.name.len, field.name.str, second_str_param.len, second_str_param.str, field_styp.len, field_styp.str, field.name.len, field.name.str, second_str_param.len, second_str_param.str));
@@ -23995,7 +24007,7 @@ void v__gen__Gen_gen_str_for_struct(v__gen__Gen* g, v__table__Struct info, strin
 
 string v__gen__Gen_type_to_fmt(v__gen__Gen g, v__table__Type typ) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g.table, typ);
-	if (sym->kind == v__table__Kind_struct_) {
+	if ((sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed)) {
 		return tos3("%.*s");
 	} else if (typ == _const_v__table__string_type) {
 		return tos3("\'%.*s\'");
