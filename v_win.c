@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "54a0299"
+#define V_COMMIT_HASH "04db2d0"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "332d52f"
+#define V_COMMIT_HASH "54a0299"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "54a0299"
+#define V_CURRENT_COMMIT_HASH "04db2d0"
 #endif
 
 typedef struct array array;
@@ -3404,6 +3404,7 @@ v__checker__Checker v__checker__new_checker(v__table__Table* table, v__pref__Pre
 void v__checker__Checker_check(v__checker__Checker* c, v__ast__File ast_file);
 array_v__scanner__Error v__checker__Checker_check2(v__checker__Checker* c, v__ast__File ast_file);
 void v__checker__Checker_check_files(v__checker__Checker* c, array_v__ast__File ast_files);
+void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl decl);
 v__table__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__StructInit* struct_init);
 v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__InfixExpr* infix_expr);
 void v__checker__Checker_assign_expr(v__checker__Checker* c, v__ast__AssignExpr* assign_expr);
@@ -16457,7 +16458,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 			v__ast__CallExpr x = v__parser__Parser_call_expr(p, is_c, is_js, mod);
 			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__CallExpr[]) {x}, sizeof(v__ast__CallExpr)), .typ = 152 /* v.ast.CallExpr */};
 		}
-	} else if (p->peek_tok.kind == v__token__Kind_lcbr && (byte_is_capital(string_at(p->tok.lit, 0)) || is_c || is_js || (p->builtin_mod && _IN(string, p->tok.lit, _const_v__table__builtin_type_names))) && !p->inside_match && !p->inside_match_case && !p->inside_if && !p->inside_for) {
+	} else if (p->peek_tok.kind == v__token__Kind_lcbr && !p->inside_match && !p->inside_match_case && !p->inside_if && !p->inside_for) {
 		return /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__StructInit[]) {v__parser__Parser_struct_init(p, false)}, sizeof(v__ast__StructInit)), .typ = 154 /* v.ast.StructInit */};
 	} else if (p->peek_tok.kind == v__token__Kind_dot && (byte_is_capital(string_at(p->tok.lit, 0)) && !known_var)) {
 		string enum_name = v__parser__Parser_check_name(p);
@@ -17330,6 +17331,7 @@ v__ast__ConstDecl v__parser__Parser_const_decl(v__parser__Parser* p) {
 }
 
 v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
+	v__token__Position first_pos = v__token__Token_position(&p->tok);
 	bool is_pub = p->tok.kind == v__token__Kind_key_pub;
 	if (is_pub) {
 		v__parser__Parser_next(p);
@@ -17357,6 +17359,11 @@ v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
 	int mut_pos = -1;
 	int pub_pos = -1;
 	int pub_mut_pos = -1;
+	v__token__Position last_pos = (v__token__Position){
+		.line_nr = 0,
+		.pos = 0,
+		.len = 0,
+	};
 	if (!no_body) {
 		v__parser__Parser_check(p, v__token__Kind_lcbr);
 		while (p->tok.kind != v__token__Kind_rcbr) {
@@ -17429,6 +17436,7 @@ v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
 				.attr = tos3(""),
 			}), tmp14, v__table__Field);
 		}
+		last_pos = v__token__Token_position(&p->tok);
 		v__parser__Parser_check(p, v__token__Kind_rcbr);
 	}
 	if (is_c) {
@@ -17459,11 +17467,16 @@ v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
 		v__parser__Parser_error(p, _STR("cannot register type `%.*s`, another type with this name exists", name.len, name.str));
 	}
 	p->expr_mod = tos3("");
+	v__token__Position pos = (v__token__Position){
+		.line_nr = first_pos.line_nr,
+		.pos = first_pos.pos,
+		.len = last_pos.pos - first_pos.pos + last_pos.len,
+	};
 	return (v__ast__StructDecl){
 		.name = name,
 		.is_pub = is_pub,
 		.fields = ast_fields,
-		.pos = v__token__Token_position(&p->tok),
+		.pos = pos,
 		.mut_pos = mut_pos,
 		.pub_pos = pub_pos,
 		.pub_mut_pos = pub_mut_pos,
@@ -19107,6 +19120,20 @@ void v__checker__Checker_check_files(v__checker__Checker* c, array_v__ast__File 
 	v_exit(1);
 }
 
+void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl decl) {
+	array_string splitted_full_name = string_split(decl.name, tos3("."));
+	bool is_builtin = string_eq((*(string*)array_get(splitted_full_name, 0)), tos3("builtin"));
+	string name = *(string*)array_last(splitted_full_name);
+	if (!byte_is_capital(string_at(name, 0)) && !decl.is_c && !is_builtin && !_IN(string, name, _const_v__table__builtin_type_names)) {
+		v__token__Position pos = (v__token__Position){
+			.line_nr = decl.pos.line_nr,
+			.pos = decl.pos.pos + 7,
+			.len = name.len,
+		};
+		v__checker__Checker_error(c, tos3("struct name must begin with capital letter"), pos);
+	}
+}
+
 v__table__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__StructInit* struct_init) {
 	if (struct_init->typ == _const_v__table__void_type) {
 		if (c->expected_type == _const_v__table__void_type) {
@@ -19115,11 +19142,11 @@ v__table__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__S
 		}
 		struct_init->typ = c->expected_type;
 	}
-	v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, struct_init->typ);
-	if (typ_sym->kind == v__table__Kind_placeholder) {
-		v__checker__Checker_error(c, _STR("unknown struct: %.*s", typ_sym->name.len, typ_sym->name.str), struct_init->pos);
-	}else if (typ_sym->kind == v__table__Kind_struct_ || typ_sym->kind == v__table__Kind_string || typ_sym->kind == v__table__Kind_array) {
-		v__table__Struct info = /* as */ *(v__table__Struct*)typ_sym->info.obj;
+	v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(c->table, struct_init->typ);
+	if (type_sym->kind == v__table__Kind_placeholder) {
+		v__checker__Checker_error(c, _STR("unknown struct: %.*s", type_sym->name.len, type_sym->name.str), struct_init->pos);
+	}else if (type_sym->kind == v__table__Kind_struct_ || type_sym->kind == v__table__Kind_string || type_sym->kind == v__table__Kind_array) {
+		v__table__Struct info = /* as */ *(v__table__Struct*)type_sym->info.obj;
 		bool is_short_syntax = struct_init->fields.len == 0;
 		if (struct_init->exprs.len > info.fields.len) {
 			v__checker__Checker_error(c, tos3("too many fields"), struct_init->pos);
@@ -19159,7 +19186,7 @@ v__table__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__S
 					}
 				}
 				if (!found_field) {
-					v__checker__Checker_error(c, _STR("struct init: no such field `%.*s` for struct `%.*s`", field_name.len, field_name.str, typ_sym->name.len, typ_sym->name.str), struct_init->pos);
+					v__checker__Checker_error(c, _STR("struct init: no such field `%.*s` for struct `%.*s`", field_name.len, field_name.str, type_sym->name.len, type_sym->name.str), struct_init->pos);
 					continue;
 				}
 			}
@@ -19181,7 +19208,7 @@ v__table__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__S
 				continue;
 			}
 			if (v__table__type_is_ptr(field.typ)) {
-				v__checker__Checker_warn(c, _STR("reference field `%.*s.%.*s` must be initialized", typ_sym->name.len, typ_sym->name.str, field.name.len, field.name.str), struct_init->pos);
+				v__checker__Checker_warn(c, _STR("reference field `%.*s.%.*s` must be initialized", type_sym->name.len, type_sym->name.str, field.name.len, field.name.str), struct_init->pos);
 			}
 		}
 	}else {
@@ -19955,6 +19982,9 @@ void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) {
 		v__ast__Return* it = (v__ast__Return*)node.obj; // ST it
 		c->returns = true;
 		v__checker__Checker_return_stmt(c, it);
+	}else if (node.typ == 183 /* v.ast.StructDecl */) {
+		v__ast__StructDecl* it = (v__ast__StructDecl*)node.obj; // ST it
+		v__checker__Checker_struct_decl(c, */*d*/it);
 	}else if (node.typ == 198 /* v.ast.UnsafeStmt */) {
 		v__ast__UnsafeStmt* it = (v__ast__UnsafeStmt*)node.obj; // ST it
 		v__checker__Checker_stmts(c, it->stmts);
