@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "e05f103"
+#define V_COMMIT_HASH "af224b4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1318c27"
+#define V_COMMIT_HASH "e05f103"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "e05f103"
+#define V_CURRENT_COMMIT_HASH "af224b4"
 #endif
 
 
@@ -302,27 +302,28 @@ typedef enum {
 	v__token__Kind_key_import_const, // 80
 	v__token__Kind_key_in, // 81
 	v__token__Kind_key_interface, // 82
-	v__token__Kind_key_match, // 83
-	v__token__Kind_key_module, // 84
-	v__token__Kind_key_mut, // 85
-	v__token__Kind_key_none, // 86
-	v__token__Kind_key_return, // 87
-	v__token__Kind_key_select, // 88
-	v__token__Kind_key_sizeof, // 89
-	v__token__Kind_key_offsetof, // 90
-	v__token__Kind_key_struct, // 91
-	v__token__Kind_key_switch, // 92
-	v__token__Kind_key_true, // 93
-	v__token__Kind_key_type, // 94
-	v__token__Kind_key_typeof, // 95
-	v__token__Kind_key_orelse, // 96
-	v__token__Kind_key_union, // 97
-	v__token__Kind_key_pub, // 98
-	v__token__Kind_key_static, // 99
-	v__token__Kind_key_unsafe, // 100
-	v__token__Kind_key_var, // 101
-	v__token__Kind_keyword_end, // 102
-	v__token__Kind__end_, // 103
+	v__token__Kind_key_is, // 83
+	v__token__Kind_key_match, // 84
+	v__token__Kind_key_module, // 85
+	v__token__Kind_key_mut, // 86
+	v__token__Kind_key_none, // 87
+	v__token__Kind_key_return, // 88
+	v__token__Kind_key_select, // 89
+	v__token__Kind_key_sizeof, // 90
+	v__token__Kind_key_offsetof, // 91
+	v__token__Kind_key_struct, // 92
+	v__token__Kind_key_switch, // 93
+	v__token__Kind_key_true, // 94
+	v__token__Kind_key_type, // 95
+	v__token__Kind_key_typeof, // 96
+	v__token__Kind_key_orelse, // 97
+	v__token__Kind_key_union, // 98
+	v__token__Kind_key_pub, // 99
+	v__token__Kind_key_static, // 100
+	v__token__Kind_key_unsafe, // 101
+	v__token__Kind_key_var, // 102
+	v__token__Kind_keyword_end, // 103
+	v__token__Kind__end_, // 104
 } v__token__Kind;
 
 typedef enum {
@@ -1878,6 +1879,7 @@ struct v__parser__Parser {
 	bool inside_match;
 	bool inside_match_case;
 	bool is_stmt_ident;
+	bool inside_is;
 };
 
 struct v__scanner__Warning {
@@ -3382,6 +3384,7 @@ array_string v__gen__Gen_get_all_test_function_names(v__gen__Gen g);
 bool v__gen__Gen_is_importing_os(v__gen__Gen g);
 void v__gen__Gen_comp_if(v__gen__Gen* g, v__ast__CompIf it);
 void v__gen__Gen_go_stmt(v__gen__Gen* g, v__ast__GoStmt node);
+void v__gen__Gen_is_expr(v__gen__Gen* g, v__ast__InfixExpr node);
 void v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__TypeSymbol sym, string styp);
 void v__gen__Gen_gen_str_default(v__gen__Gen* g, v__table__TypeSymbol sym, string styp);
 void v__gen__Gen_gen_str_for_enum(v__gen__Gen* g, v__table__Enum info, string styp);
@@ -7449,7 +7452,12 @@ multi_return_v__pref__Preferences_string parse_args(array_string args) {
 		}else if (string_eq(arg, tos3("-cg"))) {
 			res->is_debug = true;
 		}else if (string_eq(arg, tos3("-live"))) {
+			res->is_live = true;
+		}else if (string_eq(arg, tos3("-solive"))) {
 			res->is_solive = true;
+			res->is_so = true;
+		}else if (string_eq(arg, tos3("-shared"))) {
+			res->is_so = true;
 		}else if (string_eq(arg, tos3("-autofree"))) {
 			res->autofree = true;
 		}else if (string_eq(arg, tos3("-compress"))) {
@@ -15745,6 +15753,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.inside_match = 0,
 		.inside_match_case = 0,
 		.is_stmt_ident = 0,
+		.inside_is = 0,
 	};
 	v__parser__Parser_init_parse_fns(&p);
 	v__parser__Parser_read_first_token(&p);
@@ -15784,6 +15793,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* table, v__scann
 		.inside_match = 0,
 		.inside_match_case = 0,
 		.is_stmt_ident = 0,
+		.inside_is = 0,
 	};
 	v__parser__Parser_read_first_token(&p);
 	while (p.tok.kind == v__token__Kind_comment) {
@@ -16206,6 +16216,11 @@ v__ast__StructInit v__parser__Parser_struct_init(v__parser__Parser* p, bool shor
 v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 	v__ast__Expr node = (v__ast__Expr){
 	0};
+	if (p->inside_is) {
+		return /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Type[]) {(v__ast__Type){
+			.typ = v__parser__Parser_parse_type(p),
+		}}, sizeof(v__ast__Type)), .typ = 161 /* v.ast.Type */};
+	}
 	bool is_c = string_eq(p->tok.lit, tos3("C"));
 	bool is_js = string_eq(p->tok.lit, tos3("JS"));
 	string mod = tos3("");
@@ -16630,7 +16645,11 @@ v__ast__Expr v__parser__Parser_infix_expr(v__parser__Parser* p, v__ast__Expr lef
 	v__parser__Parser_next(p);
 	v__ast__Expr right = (v__ast__Expr){
 	0};
+	if (op == v__token__Kind_key_is) {
+		p->inside_is = true;
+	}
 	right = v__parser__Parser_expr(p, precedence);
+	p->inside_is = false;
 	v__ast__Expr expr = (v__ast__Expr){
 	0};
 	expr = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__InfixExpr[]) {(v__ast__InfixExpr){
@@ -18185,6 +18204,7 @@ array_string v__token__build_token_str() {
 	array_set(&s, v__token__Kind_key_select, &(string[]) { tos3("select") });
 	array_set(&s, v__token__Kind_key_none, &(string[]) { tos3("none") });
 	array_set(&s, v__token__Kind_key_offsetof, &(string[]) { tos3("__offsetof") });
+	array_set(&s, v__token__Kind_key_is, &(string[]) { tos3("is") });
 	array_set(&s, v__token__Kind_key_var, &(string[]) { tos3("var") });
 	return s;
 }
@@ -18268,7 +18288,7 @@ int v__token__Token_precedence(v__token__Token tok) {
 		return ((int)(v__token__Precedence_eq));
 	}else if (tok.kind == v__token__Kind_assign || tok.kind == v__token__Kind_plus_assign || tok.kind == v__token__Kind_minus_assign || tok.kind == v__token__Kind_div_assign || tok.kind == v__token__Kind_mod_assign || tok.kind == v__token__Kind_or_assign || tok.kind == v__token__Kind_and_assign || tok.kind == v__token__Kind_left_shift_assign || tok.kind == v__token__Kind_right_shift_assign || tok.kind == v__token__Kind_mult_assign || tok.kind == v__token__Kind_xor_assign) {
 		return ((int)(v__token__Precedence_assign));
-	}else if (tok.kind == v__token__Kind_key_in || tok.kind == v__token__Kind_not_in || tok.kind == v__token__Kind_key_as) {
+	}else if (tok.kind == v__token__Kind_key_in || tok.kind == v__token__Kind_not_in || tok.kind == v__token__Kind_key_as || tok.kind == v__token__Kind_key_is) {
 		return ((int)(v__token__Precedence_in_as));
 	}else if (tok.kind == v__token__Kind_logical_or || tok.kind == v__token__Kind_and) {
 		return ((int)(v__token__Precedence_cond));
@@ -18294,7 +18314,7 @@ bool v__token__Kind_is_start_of_type(v__token__Kind k) {
 }
 
 bool v__token__Kind_is_infix(v__token__Kind kind) {
-	return (kind == v__token__Kind_plus || kind == v__token__Kind_minus || kind == v__token__Kind_mod || kind == v__token__Kind_mul || kind == v__token__Kind_div || kind == v__token__Kind_eq || kind == v__token__Kind_ne || kind == v__token__Kind_gt || kind == v__token__Kind_lt || kind == v__token__Kind_key_in || kind == v__token__Kind_key_as || kind == v__token__Kind_ge || kind == v__token__Kind_le || kind == v__token__Kind_logical_or || kind == v__token__Kind_xor || kind == v__token__Kind_not_in || kind == v__token__Kind_and || kind == v__token__Kind_dot || kind == v__token__Kind_pipe || kind == v__token__Kind_amp || kind == v__token__Kind_left_shift || kind == v__token__Kind_right_shift);
+	return (kind == v__token__Kind_plus || kind == v__token__Kind_minus || kind == v__token__Kind_mod || kind == v__token__Kind_mul || kind == v__token__Kind_div || kind == v__token__Kind_eq || kind == v__token__Kind_ne || kind == v__token__Kind_gt || kind == v__token__Kind_lt || kind == v__token__Kind_key_in || kind == v__token__Kind_key_as || kind == v__token__Kind_ge || kind == v__token__Kind_le || kind == v__token__Kind_logical_or || kind == v__token__Kind_xor || kind == v__token__Kind_not_in || kind == v__token__Kind_key_is || kind == v__token__Kind_and || kind == v__token__Kind_dot || kind == v__token__Kind_pipe || kind == v__token__Kind_amp || kind == v__token__Kind_left_shift || kind == v__token__Kind_right_shift);
 }
 
 string time__Time_format(time__Time t) {
@@ -18905,29 +18925,37 @@ array_v__scanner__Error v__checker__Checker_check2(v__checker__Checker* c, v__as
 }
 
 void v__checker__Checker_check_files(v__checker__Checker* c, array_v__ast__File ast_files) {
+	map_string_int all_mods = new_map_1(sizeof(int));
 	// FOR IN array
 	array tmp1 = ast_files;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
 		v__ast__File file = ((v__ast__File*)tmp1.data)[tmp2];
 		v__checker__Checker_check(c, file);
+		map_set(&all_mods, file.mod.name, &(int[]) { (*(int*)map_get3(all_mods, file.mod.name, &(int[]){ 0 })) + 1 });
 	}
 	if (c->pref->build_mode == v__pref__BuildMode_build_module || c->pref->is_test) {
 		return;
 	}
-	if (ast_files.len > 1 && string_eq((*(v__ast__File*)array_get(ast_files, 0)).mod.name, tos3("builtin"))) {
+	if (c->pref->is_so) {
 		return;
 	}
-	// FOR IN map
-	array_string keys_tmp5 = map_keys(&c->table->fns);
-	for (int tmp6 = 0; tmp6 < keys_tmp5.len; tmp6++) {
-		string i = ((string*)keys_tmp5.data)[tmp6];
-		v__table__Fn f = (*(v__table__Fn*)map_get3(c->table->fns, i, &(v__table__Fn[]){ {0} }));
-		if (string_eq(f.name, tos3("main"))) {
-			return;
+	if ((*(int*)map_get3(all_mods, tos3("main"), &(int[]){ 0 })) > 0) {
+		// FOR IN map
+		array_string keys_tmp6 = map_keys(&c->table->fns);
+		for (int tmp7 = 0; tmp7 < keys_tmp6.len; tmp7++) {
+			string i = ((string*)keys_tmp6.data)[tmp7];
+			v__table__Fn f = (*(v__table__Fn*)map_get3(c->table->fns, i, &(v__table__Fn[]){ {0} }));
+			if (string_eq(f.name, tos3("main"))) {
+				return;
+			}
 		}
+		v__checker__Checker_error(c, tos3("function `main` is undeclared in the main module"), (v__token__Position){
+			.line_nr = 0,
+			.pos = 0,
+			.len = 0,
+		});
+		v_exit(1);
 	}
-	eprintln(tos3("function `main` is undeclared in the main module"));
-	v_exit(1);
 }
 
 void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl decl) {
@@ -19031,6 +19059,9 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 	v__table__Type left_type = v__checker__Checker_expr(c, infix_expr->left);
 	infix_expr->left_type = left_type;
 	c->expected_type = left_type;
+	if (infix_expr->op == v__token__Kind_key_is) {
+		return _const_v__table__bool_type;
+	}
 	v__table__Type right_type = v__checker__Checker_expr(c, infix_expr->right);
 	infix_expr->right_type = right_type;
 	v__table__TypeSymbol* right = v__table__Table_get_type_symbol(c->table, right_type);
@@ -20454,6 +20485,9 @@ void v__checker__Checker_warn(v__checker__Checker* c, string s, v__token__Positi
 }
 
 void v__checker__Checker_error(v__checker__Checker* c, string message, v__token__Position pos) {
+	if (c->pref->is_verbose) {
+		print_backtrace();
+	}
 	v__checker__Checker_warn_or_error(c, message, pos, false);
 }
 
@@ -22459,6 +22493,10 @@ void v__gen__Gen_assign_expr(v__gen__Gen* g, v__ast__AssignExpr node) {
 
 void v__gen__Gen_infix_expr(v__gen__Gen* g, v__ast__InfixExpr node) {
 	v__table__TypeSymbol* left_sym = v__table__Table_get_type_symbol(g->table, node.left_type);
+	if (node.op == v__token__Kind_key_is) {
+		v__gen__Gen_is_expr(g, node);
+		return;
+	}
 	v__table__TypeSymbol* right_sym = v__table__Table_get_type_symbol(g->table, node.right_type);
 	if (node.left_type == _const_v__table__string_type_idx && node.op != v__token__Kind_key_in && node.op != v__token__Kind_not_in) {
 		string fn_name = (node.op == v__token__Kind_plus) ?  ( tos3("string_add(") )  : (node.op == v__token__Kind_eq) ?  ( tos3("string_eq(") )  : (node.op == v__token__Kind_ne) ?  ( tos3("string_ne(") )  : (node.op == v__token__Kind_lt) ?  ( tos3("string_lt(") )  : (node.op == v__token__Kind_le) ?  ( tos3("string_le(") )  : (node.op == v__token__Kind_gt) ?  ( tos3("string_gt(") )  : (node.op == v__token__Kind_ge) ?  ( tos3("string_ge(") )  :  ( tos3("/*node error*/") ) ;
@@ -23425,9 +23463,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_61055 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_61055.arg0;
-	string type_of_last_expression = mr_61055.arg1;
+	multi_return_string_string mr_61100 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_61100.arg0;
+	string type_of_last_expression = mr_61100.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -23801,6 +23839,12 @@ void v__gen__Gen_go_stmt(v__gen__Gen* g, v__ast__GoStmt node) {
 		_PUSH(&g->threaded_fns, (name), tmp13, string);
 	}else {
 	};
+}
+
+void v__gen__Gen_is_expr(v__gen__Gen* g, v__ast__InfixExpr node) {
+	v__gen__Gen_expr(g, node.left);
+	v__gen__Gen_write(g, tos3(".typ == "));
+	v__gen__Gen_expr(g, node.right);
 }
 
 void v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__TypeSymbol sym, string styp) {
