@@ -1,12 +1,11 @@
-#define V_COMMIT_HASH "af224b4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e05f103"
+#define V_COMMIT_HASH "93b942d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "af224b4"
+#define V_CURRENT_COMMIT_HASH "714ff50"
 #endif
 
 
@@ -2655,15 +2654,13 @@ string os__temp_dir();
 void os__chmod(string path, int mode);
 string _const_os__wd_at_startup; // inited later
 string os__resource_abs_path(string path);
-#define _const_os__PROT_READ 1
-#define _const_os__PROT_WRITE 2
-#define _const_os__MAP_PRIVATE 0x02
-#define _const_os__MAP_ANONYMOUS 0x20
-#define _const_os__sys_write 1
-#define _const_os__sys_open 2
-#define _const_os__sys_close 3
-#define _const_os__sys_mkdir 83
-#define _const_os__sys_creat 85
+#define _const_os__sys_write 4
+#define _const_os__sys_open 5
+#define _const_os__sys_close 6
+#define _const_os__sys_mkdir 136
+#define _const_os__sys_creat 8
+#define _const_os__sys_open_nocancel 398
+#define _const_os__sys_stat64 338
 string _const_os__path_separator; // a string literal, inited later
 #define _const_os__stdin_value 0
 #define _const_os__stdout_value 1
@@ -3002,6 +2999,7 @@ v__table__Type v__parser__Parser_parse_array_type(v__parser__Parser* p);
 v__table__Type v__parser__Parser_parse_map_type(v__parser__Parser* p);
 v__table__Type v__parser__Parser_parse_multi_return_type(v__parser__Parser* p);
 v__table__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name);
+v__table__Type v__parser__Parser_parse_type_with_mut(v__parser__Parser* p, bool is_mut);
 v__table__Type v__parser__Parser_parse_type(v__parser__Parser* p);
 v__table__Type v__parser__Parser_parse_any_type(v__parser__Parser* p, bool is_c, bool is_js, bool is_ptr);
 v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__Scope* scope);
@@ -12739,7 +12737,7 @@ void v__builder__Builder_resolve_deps(v__builder__Builder* b) {
 	v__depgraph__DepGraph* graph = v__builder__Builder_import_graph(b);
 	v__depgraph__DepGraph* deps_resolved = v__depgraph__DepGraph_resolve(graph);
 	if (!deps_resolved->acyclic) {
-		eprintln(string_add(tos3("import cycle detected between the following modules: \n"), v__depgraph__DepGraph_display_cycles(deps_resolved)));
+		eprintln(string_add(tos3("warning: import cycle detected between the following modules: \n"), v__depgraph__DepGraph_display_cycles(deps_resolved)));
 		return;
 	}
 	if (b->pref->is_verbose) {
@@ -14816,11 +14814,11 @@ string v__ast__FnDecl_str(v__ast__FnDecl* node, v__table__Table* t) {
 	string receiver = tos3("");
 	if (node->is_method) {
 		string styp = v__table__Table_type_to_str(t, node->receiver.typ);
-		string m = (node->rec_mut ?  ( tos3("mut ") )  :  ( tos3("") ) );
+		string m = (node->rec_mut ?  ( tos3("var ") )  :  ( tos3("") ) );
 		if (node->rec_mut) {
 			styp = string_substr(styp, 1, styp.len);
 		}
-		receiver = _STR("(%.*s %.*s%.*s) ", node->receiver.name.len, node->receiver.name.str, m.len, m.str, styp.len, styp.str);
+		receiver = _STR("(%.*s%.*s %.*s) ", m.len, m.str, node->receiver.name.len, node->receiver.name.str, styp.len, styp.str);
 	}
 	string name = string_after(node->name, tos3("."));
 	if (node->is_c) {
@@ -15245,7 +15243,7 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 			rec_mut = p->tok.kind == v__token__Kind_key_mut;
 		}
 		bool is_amp = p->peek_tok.kind == v__token__Kind_amp;
-		rec_type = v__parser__Parser_parse_type(p);
+		rec_type = v__parser__Parser_parse_type_with_mut(p, rec_mut);
 		if (is_amp && rec_mut) {
 			v__parser__Parser_error(p, tos3("use `(f mut Foo)` or `(f &Foo)` instead of `(f mut &Foo)`"));
 		}
@@ -15276,9 +15274,9 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool mr_3505 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_3505.arg0;
-	bool is_variadic = mr_3505.arg1;
+	multi_return_array_v__table__Arg_bool mr_3516 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_3516.arg0;
+	bool is_variadic = mr_3516.arg1;
 	_PUSH_MANY(&args, (args2), tmp13, array_v__table__Arg);
 	// FOR IN array
 	array tmp14 = args;
@@ -15510,9 +15508,9 @@ v__table__Type v__parser__Parser_parse_multi_return_type(v__parser__Parser* p) {
 v__table__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name) {
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	int line_nr = p->tok.line_nr;
-	multi_return_array_v__table__Arg_bool mr_1785 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_1785.arg0;
-	bool is_variadic = mr_1785.arg1;
+	multi_return_array_v__table__Arg_bool mr_1780 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_1780.arg0;
+	bool is_variadic = mr_1780.arg1;
 	v__table__Type return_type = _const_v__table__void_type;
 	if (p->tok.line_nr == line_nr && v__token__Kind_is_start_of_type(p->tok.kind)) {
 		return_type = v__parser__Parser_parse_type(p);
@@ -15528,6 +15526,14 @@ v__table__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name
 	};
 	int idx = v__table__Table_find_or_register_fn_type(p->table, func, false);
 	return v__table__new_type(idx);
+}
+
+v__table__Type v__parser__Parser_parse_type_with_mut(v__parser__Parser* p, bool is_mut) {
+	v__table__Type typ = v__parser__Parser_parse_type(p);
+	if (is_mut) {
+		return v__table__type_set_nr_muls(typ, 1);
+	}
+	return typ;
 }
 
 v__table__Type v__parser__Parser_parse_type(v__parser__Parser* p) {
@@ -16217,6 +16223,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 	v__ast__Expr node = (v__ast__Expr){
 	0};
 	if (p->inside_is) {
+		p->inside_is = false;
 		return /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Type[]) {(v__ast__Type){
 			.typ = v__parser__Parser_parse_type(p),
 		}}, sizeof(v__ast__Type)), .typ = 161 /* v.ast.Type */};
@@ -16649,7 +16656,6 @@ v__ast__Expr v__parser__Parser_infix_expr(v__parser__Parser* p, v__ast__Expr lef
 		p->inside_is = true;
 	}
 	right = v__parser__Parser_expr(p, precedence);
-	p->inside_is = false;
 	v__ast__Expr expr = (v__ast__Expr){
 	0};
 	expr = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__InfixExpr[]) {(v__ast__InfixExpr){
