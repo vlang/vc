@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "aed8370"
+#define V_COMMIT_HASH "dee6434"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "182108f"
+#define V_COMMIT_HASH "aed8370"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "aed8370"
+#define V_CURRENT_COMMIT_HASH "dee6434"
 #endif
 
 
@@ -2358,7 +2358,7 @@ array_byte array_byte_clone(array_byte b);
 #define _const_max_cached_hashbits 16
 #define _const_init_log_capicity 5
 int _const_init_capicity; // inited later
-f64 _const_max_load_factor; // inited later
+#define _const_max_load_factor 0.8
 int _const_init_cap; // inited later
 #define _const_extra_metas_inc 4
 u32 _const_hash_mask; // inited later
@@ -3578,6 +3578,7 @@ void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node);
 void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node);
 void v__gen__Gen_call_args(v__gen__Gen* g, array_v__ast__CallArg args, array_v__table__Type expected_types);
 void v__gen__Gen_ref_or_deref_arg(v__gen__Gen* g, v__ast__CallArg arg, v__table__Type expected_type);
+bool v__gen__Gen_is_gui_app(v__gen__Gen* g);
 void v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Type typ);
 string v__gen__js_enc_name(string typ);
 string v__gen__js_dec_name(string typ);
@@ -3652,7 +3653,7 @@ string v__gen__js__JsDoc_gen_fn(v__gen__js__JsDoc* d, v__ast__FnDecl it);
 #define _const_v__gen__x64__et_rel 1
 #define _const_v__gen__x64__et_exec 2
 #define _const_v__gen__x64__et_dyn 3
-f64 _const_v__gen__x64__e_machine; // inited later
+#define _const_v__gen__x64__e_machine 0x3e
 #define _const_v__gen__x64__shn_xindex 0xffff
 #define _const_v__gen__x64__sht_null 0
 #define _const_v__gen__x64__segment_start 0x400000
@@ -7482,10 +7483,11 @@ int utf8_getchar() {
 	}
 }
 
-int wmain(int ___argc, wchar_t *___argv[], wchar_t *___envp[]) {
+int wmain(int ___argc, wchar_t* ___argv[], wchar_t* ___envp[]
+) {
 	_vinit();
 	_const_os__args = os__init_os_args_wide(___argc, ___argv);
-	array_string args = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
+	array_string args = array_slice(_const_os__args, 1, _const_os__args.len);
 	if (args.len == 0 || (string_eq((*(string*)array_get(args, 0)), tos3("-")) || string_eq((*(string*)array_get(args, 0)), tos3("repl")))) {
 		if (args.len == 0) {
 			println(tos3("For usage information, quit V REPL using `exit` and use `v help`"));
@@ -7493,14 +7495,14 @@ int wmain(int ___argc, wchar_t *___argv[], wchar_t *___envp[]) {
 		v__util__launch_tool(false, tos3("vrepl"));
 		return 0;
 	}
-	array_string os_args = array_slice(_const_os__args, 1, _const_os__args.len);
-	if (os_args.len > 0 && ((string_eq((*(string*)array_get(os_args, 0)), tos3("version")) || string_eq((*(string*)array_get(os_args, 0)), tos3("-V")) || string_eq((*(string*)array_get(os_args, 0)), tos3("-version")) || string_eq((*(string*)array_get(os_args, 0)), tos3("--version"))) || (string_eq((*(string*)array_get(os_args, 0)), tos3("-v")) && os_args.len == 1))) {
+	if (args.len > 0 && ((string_eq((*(string*)array_get(args, 0)), tos3("version")) || string_eq((*(string*)array_get(args, 0)), tos3("-V")) || string_eq((*(string*)array_get(args, 0)), tos3("-version")) || string_eq((*(string*)array_get(args, 0)), tos3("--version"))) || (string_eq((*(string*)array_get(args, 0)), tos3("-v")) && args.len == 1))) {
 		println(v__util__full_v_version());
 		return 0;
 	}
-	multi_return_v__pref__Preferences_string mr_1420 = parse_args(args);
-	v__pref__Preferences* prefs = mr_1420.arg0;
-	string command = mr_1420.arg1;
+	array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
+	multi_return_v__pref__Preferences_string mr_1415 = parse_args(args_and_flags);
+	v__pref__Preferences* prefs = mr_1415.arg0;
+	string command = mr_1415.arg1;
 	if (prefs->is_verbose) {
 		println(_STR("command = \"%.*s\"", command.len, command.str));
 		println(v__util__full_v_version());
@@ -7535,9 +7537,6 @@ int wmain(int ___argc, wchar_t *___argv[], wchar_t *___envp[]) {
 		}
 		v__table__Table* table = v__table__new_table();
 		println(v__doc__doc((*(string*)array_get(args, 1)), table));
-		return 0;
-	}else if (string_eq(command, tos3("help"))) {
-		invoke_help_and_exit(args);
 		return 0;
 	}else {
 	};
@@ -23296,6 +23295,9 @@ void v__gen__Gen_const_decl(v__gen__Gen* g, v__ast__ConstDecl node) {
 		if (field.expr.typ == 150 /* v.ast.CharLiteral */) {
 			v__ast__CharLiteral* it = (v__ast__CharLiteral*)field.expr.obj; // ST it
 			v__gen__Gen_const_decl_simple_define(g, name, val);
+		}else if (field.expr.typ == 151 /* v.ast.FloatLiteral */) {
+			v__ast__FloatLiteral* it = (v__ast__FloatLiteral*)field.expr.obj; // ST it
+			v__gen__Gen_const_decl_simple_define(g, name, val);
 		}else if (field.expr.typ == 149 /* v.ast.IntegerLiteral */) {
 			v__ast__IntegerLiteral* it = (v__ast__IntegerLiteral*)field.expr.obj; // ST it
 			v__gen__Gen_const_decl_simple_define(g, name, val);
@@ -23748,9 +23750,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_61100 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_61100.arg0;
-	string type_of_last_expression = mr_61100.arg1;
+	multi_return_string_string mr_61169 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_61169.arg0;
+	string type_of_last_expression = mr_61169.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -24265,7 +24267,11 @@ void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 	bool is_main = string_eq(it.name, tos3("main"));
 	if (is_main) {
 		if (g->pref->os == v__pref__OS_windows) {
-			v__gen__Gen_write(g, tos3("int wmain(int ___argc, wchar_t *___argv[], wchar_t *___envp[]"));
+			if (v__gen__Gen_is_gui_app(g)) {
+				v__gen__Gen_writeln(g, tos3("int WINAPI wWinMain(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line, int show_cmd"));
+			} else {
+				v__gen__Gen_writeln(g, tos3("int wmain(int ___argc, wchar_t* ___argv[], wchar_t* ___envp[]"));
+			}
 		} else {
 			v__gen__Gen_write(g, _STR("int %.*s(int ___argc, char** ___argv", it.name.len, it.name.str));
 		}
@@ -24298,6 +24304,13 @@ void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 		strings__Builder_writeln(&g->definitions, tos3(");"));
 	}
 	if (is_main) {
+		if (g->pref->os == v__pref__OS_windows && v__gen__Gen_is_gui_app(g)) {
+			v__gen__Gen_writeln(g, tos3("\ttypedef LPWSTR*(WINAPI *cmd_line_to_argv)(LPCWSTR, int*);"));
+			v__gen__Gen_writeln(g, tos3("\tHMODULE shell32_module = LoadLibrary(L\"shell32.dll\");"));
+			v__gen__Gen_writeln(g, tos3("\tcmd_line_to_argv CommandLineToArgvW = (cmd_line_to_argv)GetProcAddress(shell32_module, \"CommandLineToArgvW\");"));
+			v__gen__Gen_writeln(g, tos3("\tint ___argc;"));
+			v__gen__Gen_writeln(g, tos3("\twchar_t** ___argv = CommandLineToArgvW(cmd_line, &___argc);"));
+		}
 		v__gen__Gen_writeln(g, tos3("\t_vinit();"));
 		if (v__gen__Gen_is_importing_os(/*rec*/*g)) {
 			if (g->autofree) {
@@ -24582,6 +24595,23 @@ void v__gen__Gen_ref_or_deref_arg(v__gen__Gen* g, v__ast__CallArg arg, v__table_
 		v__gen__Gen_write(g, tos3("*/*d*/"));
 	}
 	v__gen__Gen_expr_with_cast(g, arg.expr, arg.typ, expected_type);
+}
+
+bool v__gen__Gen_is_gui_app(v__gen__Gen* g) {
+	
+#ifdef _WIN32
+	// #if windows
+		// FOR IN array
+		array tmp1 = g->table->cflags;
+		for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+			v__builder__CFlag cf = ((v__builder__CFlag*)tmp1.data)[tmp2];
+			if (string_eq(cf.value, tos3("gdi32"))) {
+				return true;
+			}
+		}
+	
+#endif
+	return false;
 }
 
 void v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Type typ) {
@@ -26454,7 +26484,6 @@ void _vinit() {
 	builtin_init();
 	vinit_string_literals();
 	_const_init_capicity = 1 << _const_init_log_capicity;
-	_const_max_load_factor = 0.8;
 	_const_init_cap = _const_init_capicity - 2;
 	_const_hash_mask = ((u32)(0x00FFFFFF));
 	_const_probe_inc = ((u32)(0x01000000));
@@ -28489,7 +28518,6 @@ void _vinit() {
 	_const_v__gen__js__tabs = new_array_from_c_array(9, 9, sizeof(string), (string[9]){
 		tos3(""), tos3("\t"), tos3("\t\t"), tos3("\t\t\t"), tos3("\t\t\t\t"), tos3("\t\t\t\t\t"), tos3("\t\t\t\t\t\t"), tos3("\t\t\t\t\t\t\t"), tos3("\t\t\t\t\t\t\t\t"), 
 });
-	_const_v__gen__x64__e_machine = 0x3e;
 	_const_benchmark__BOK = term__ok_message(tos3("OK  "));
 	_const_benchmark__BFAIL = term__fail_message(tos3("FAIL"));
 	_const_benchmark__BSKIP = term__warn_message(tos3("SKIP"));
