@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "182108f"
+#define V_COMMIT_HASH "aed8370"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "93b942d"
+#define V_COMMIT_HASH "182108f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "182108f"
+#define V_CURRENT_COMMIT_HASH "aed8370"
 #endif
 
 
