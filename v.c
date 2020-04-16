@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "dee6434"
+#define V_COMMIT_HASH "051cc73"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "aed8370"
+#define V_COMMIT_HASH "dee6434"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "dee6434"
+#define V_CURRENT_COMMIT_HASH "051cc73"
 #endif
 
 
@@ -2777,6 +2777,7 @@ Option_v__table__Field v__table__Table_struct_find_field(v__table__Table* t, v__
 int v__table__Table_find_type_idx(v__table__Table* t, string name);
 Option_v__table__TypeSymbol v__table__Table_find_type(v__table__Table* t, string name);
 v__table__TypeSymbol* v__table__Table_get_type_symbol(v__table__Table* t, v__table__Type typ);
+string v__table__Table_get_type_name(v__table__Table* t, v__table__Type typ);
 int v__table__Table_register_builtin_type_symbol(v__table__Table* t, v__table__TypeSymbol typ);
 int v__table__Table_register_type_symbol(v__table__Table* t, v__table__TypeSymbol typ);
 bool v__table__Table_known_type(v__table__Table* t, string name);
@@ -11603,6 +11604,12 @@ v__table__TypeSymbol* v__table__Table_get_type_symbol(v__table__Table* t, v__tab
 		return &(*(v__table__TypeSymbol*)array_get(t->types, idx));
 	}
 	v_panic(_STR("get_type_symbol: invalid type (typ=%d idx=%d). This should never happen", typ, idx));
+}
+
+inline
+string v__table__Table_get_type_name(v__table__Table* t, v__table__Type typ) {
+	v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(t, typ);
+	return typ_sym->name;
 }
 
 inline
@@ -22413,8 +22420,26 @@ void v__gen__Gen_typeof_expr(v__gen__Gen* g, v__ast__TypeOf node) {
 		v__gen__Gen_write(g, tos3(").typ ))"));
 	} else if (sym->kind == v__table__Kind_array_fixed) {
 		v__table__ArrayFixed fixed_info = /* as */ *(v__table__ArrayFixed*)sym->info.obj;
-		v__table__TypeSymbol* elem_sym = v__table__Table_get_type_symbol(g->table, fixed_info.elem_type);
-		v__gen__Gen_write(g, _STR("tos3(\"[%d]%.*s\")", fixed_info.size, elem_sym->name.len, elem_sym->name.str));
+		string typ_name = v__table__Table_get_type_name(g->table, fixed_info.elem_type);
+		v__gen__Gen_write(g, _STR("tos3(\"[%d]%.*s\")", fixed_info.size, typ_name.len, typ_name.str));
+	} else if (sym->kind == v__table__Kind_function) {
+		v__table__FnType info = /* as */ *(v__table__FnType*)sym->info.obj;
+		v__table__Fn fn_info = info.func;
+		string repr = tos3("fn (");
+		// FOR IN array
+		array tmp2 = fn_info.args;
+		for (int i = 0; i < tmp2.len; i++) {
+			v__table__Arg arg = ((v__table__Arg*)tmp2.data)[i];
+			if (i > 0) {
+				repr = string_add(repr, tos3(", "));
+			}
+			repr = string_add(repr, v__table__Table_get_type_name(g->table, arg.typ));
+		}
+		repr = string_add(repr, tos3(")"));
+		if (fn_info.return_type != _const_v__table__void_type) {
+			repr = string_add(repr, _STR(" %.*s", v__table__Table_get_type_name(g->table, fn_info.return_type).len, v__table__Table_get_type_name(g->table, fn_info.return_type).str));
+		}
+		v__gen__Gen_write(g, _STR("tos3(\"%.*s\")", repr.len, repr.str));
 	} else {
 		v__gen__Gen_write(g, _STR("tos3(\"%.*s\")", sym->name.len, sym->name.str));
 	}
@@ -23473,9 +23498,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_61169 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_61169.arg0;
-	string type_of_last_expression = mr_61169.arg1;
+	multi_return_string_string mr_61540 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_61540.arg0;
+	string type_of_last_expression = mr_61540.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
