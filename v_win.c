@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "554d87f"
+#define V_COMMIT_HASH "19723c9"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "04db2d0"
+#define V_COMMIT_HASH "554d87f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "554d87f"
+#define V_CURRENT_COMMIT_HASH "19723c9"
 #endif
 
 
@@ -3441,6 +3441,7 @@ v__table__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__Ar
 Option_int v__checker__const_int_value(v__ast__ConstField cfield);
 Option_v__ast__IntegerLiteral v__checker__is_const_integer(v__ast__ConstField cfield);
 void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node);
+bool v__checker__is_call_expr(v__ast__Expr expr);
 void v__checker__Checker_stmts(v__checker__Checker* c, array_v__ast__Stmt stmts);
 v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr node);
 v__token__Position v__checker__expr_pos(v__ast__Expr node);
@@ -16150,8 +16151,7 @@ void v__parser__Parser_next(v__parser__Parser* p) {
 
 void v__parser__Parser_check(v__parser__Parser* p, v__token__Kind expected) {
 	if (p->tok.kind != expected) {
-		string s = _STR("unexpected `%.*s`, expecting `%.*s`", v__token__Kind_str(p->tok.kind).len, v__token__Kind_str(p->tok.kind).str, v__token__Kind_str(expected).len, v__token__Kind_str(expected).str);
-		v__parser__Parser_error(p, s);
+		v__parser__Parser_error(p, _STR("unexpected `%.*s`, expecting `%.*s`", v__token__Kind_str(p->tok.kind).len, v__token__Kind_str(p->tok.kind).str, v__token__Kind_str(expected).len, v__token__Kind_str(expected).str));
 	}
 	v__parser__Parser_next(p);
 }
@@ -16298,7 +16298,6 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p) {
 		if (expr.typ == 153 /* v.ast.CallExpr */) {
 			v__ast__CallExpr* it = (v__ast__CallExpr*)expr.obj; // ST it
 		}else {
-			v__parser__Parser_error(p, tos3("expression in `go` must be a function call"));
 		};
 		return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__GoStmt[]) {(v__ast__GoStmt){
 			.call_expr = expr,
@@ -17691,9 +17690,6 @@ v__ast__Stmt v__parser__Parser_assign_stmt(v__parser__Parser* p) {
 			v__parser__Parser_error(p, _STR("unknown variable `%.*s`", ident.name.len, ident.name.str));
 		}
 		if (is_decl && ident.kind != v__ast__IdentKind_blank_ident) {
-			if (string_starts_with(ident.name, tos3("__"))) {
-				v__parser__Parser_error(p, tos3("variable names cannot start with `__`"));
-			}
 			if (v__ast__Scope_known_var(p->scope, ident.name)) {
 				v__parser__Parser_error(p, _STR("redefinition of `%.*s`", ident.name.len, ident.name.str));
 			}
@@ -19760,8 +19756,13 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 	array tmp1 = assign_stmt->left;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
 		v__ast__Ident ident = ((v__ast__Ident*)tmp1.data)[tmp2];
-		if (assign_stmt->op == v__token__Kind_decl_assign && v__scanner__contains_capital(ident.name)) {
+		bool is_decl = assign_stmt->op == v__token__Kind_decl_assign;
+		if (is_decl && v__scanner__contains_capital(ident.name)) {
 			v__checker__Checker_error(c, tos3("variable names cannot contain uppercase letters, use snake_case instead"), ident.pos);
+		} else if (is_decl && ident.kind != v__ast__IdentKind_blank_ident) {
+			if (string_starts_with(ident.name, tos3("__"))) {
+				v__checker__Checker_error(c, tos3("variable names cannot start with `__`"), ident.pos);
+			}
 		}
 	}
 	if (assign_stmt->left.len > assign_stmt->right.len) {
@@ -19782,9 +19783,9 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 		}
 		v__ast__Scope* scope = v__ast__Scope_innermost(c->file.scope, assign_stmt->pos.pos);
 		// FOR IN array
-		array tmp8 = assign_stmt->left;
-		for (int i = 0; i < tmp8.len; i++) {
-			v__ast__Ident _ = ((v__ast__Ident*)tmp8.data)[i];
+		array tmp9 = assign_stmt->left;
+		for (int i = 0; i < tmp9.len; i++) {
+			v__ast__Ident _ = ((v__ast__Ident*)tmp9.data)[i];
 			v__ast__Ident ident = (*(v__ast__Ident*)array_get(assign_stmt->left, i));
 			v__ast__IdentVar ident_var_info = v__ast__Ident_var_info(&ident);
 			if (i >= mr_info.types.len) {
@@ -19793,7 +19794,7 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 			v__table__Type val_type = (*(v__table__Type*)array_get(mr_info.types, i));
 			if (assign_stmt->op == v__token__Kind_assign) {
 				v__table__Type var_type = v__checker__Checker_expr(c, /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Ident[]) {ident}, sizeof(v__ast__Ident)), .typ = 152 /* v.ast.Ident */});
-				_PUSH(&assign_stmt->left_types, (var_type), tmp11, v__table__Type);
+				_PUSH(&assign_stmt->left_types, (var_type), tmp12, v__table__Type);
 				if (!v__table__Table_check(c->table, val_type, var_type)) {
 					v__table__TypeSymbol* val_type_sym = v__table__Table_get_type_symbol(c->table, val_type);
 					v__table__TypeSymbol* var_type_sym = v__table__Table_get_type_symbol(c->table, var_type);
@@ -19803,7 +19804,7 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 			ident_var_info.typ = val_type;
 			ident.info = /* sum type cast */ (v__ast__IdentInfo) {.obj = memdup(&(v__ast__IdentVar[]) {ident_var_info}, sizeof(v__ast__IdentVar)), .typ = 216 /* v.ast.IdentVar */};
 			(*(v__ast__Ident*)array_get(assign_stmt->left, i)) = ident;
-			_PUSH(&assign_stmt->right_types, (val_type), tmp13, v__table__Type);
+			_PUSH(&assign_stmt->right_types, (val_type), tmp14, v__table__Type);
 			v__ast__Scope_update_var_type(scope, ident.name, val_type);
 		}
 		v__checker__Checker_check_expr_opt_call(c, (*(v__ast__Expr*)array_get(assign_stmt->right, 0)), right_type, true);
@@ -19813,9 +19814,9 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 		}
 		v__ast__Scope* scope = v__ast__Scope_innermost(c->file.scope, assign_stmt->pos.pos);
 		// FOR IN array
-		array tmp15 = assign_stmt->left;
-		for (int i = 0; i < tmp15.len; i++) {
-			v__ast__Ident _ = ((v__ast__Ident*)tmp15.data)[i];
+		array tmp16 = assign_stmt->left;
+		for (int i = 0; i < tmp16.len; i++) {
+			v__ast__Ident _ = ((v__ast__Ident*)tmp16.data)[i];
 			v__ast__Ident ident = (*(v__ast__Ident*)array_get(assign_stmt->left, i));
 			if (assign_stmt->op == v__token__Kind_decl_assign) {
 				c->var_decl_name = ident.name;
@@ -19824,7 +19825,7 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 			v__table__Type val_type = v__checker__Checker_expr(c, (*(v__ast__Expr*)array_get(assign_stmt->right, i)));
 			if (assign_stmt->op == v__token__Kind_assign) {
 				v__table__Type var_type = v__checker__Checker_expr(c, /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Ident[]) {ident}, sizeof(v__ast__Ident)), .typ = 152 /* v.ast.Ident */});
-				_PUSH(&assign_stmt->left_types, (var_type), tmp18, v__table__Type);
+				_PUSH(&assign_stmt->left_types, (var_type), tmp19, v__table__Type);
 				if (!v__table__Table_check(c->table, val_type, var_type)) {
 					v__table__TypeSymbol* val_type_sym = v__table__Table_get_type_symbol(c->table, val_type);
 					v__table__TypeSymbol* var_type_sym = v__table__Table_get_type_symbol(c->table, var_type);
@@ -19834,7 +19835,7 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 			ident_var_info.typ = val_type;
 			ident.info = /* sum type cast */ (v__ast__IdentInfo) {.obj = memdup(&(v__ast__IdentVar[]) {ident_var_info}, sizeof(v__ast__IdentVar)), .typ = 216 /* v.ast.IdentVar */};
 			(*(v__ast__Ident*)array_get(assign_stmt->left, i)) = ident;
-			_PUSH(&assign_stmt->right_types, (val_type), tmp20, v__table__Type);
+			_PUSH(&assign_stmt->right_types, (val_type), tmp21, v__table__Type);
 			v__ast__Scope_update_var_type(scope, ident.name, val_type);
 			v__checker__Checker_check_expr_opt_call(c, (*(v__ast__Expr*)array_get(assign_stmt->right, i)), val_type, true);
 		}
@@ -20065,6 +20066,10 @@ void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) {
 		c->in_for_count--;
 	}else if (node.typ == 200 /* v.ast.GoStmt */) {
 		v__ast__GoStmt* it = (v__ast__GoStmt*)node.obj; // ST it
+		if (!v__checker__is_call_expr(it->call_expr)) {
+			v__checker__Checker_error(c, tos3("expression in `go` must be a function call"), v__checker__expr_pos(it->call_expr));
+			1;
+		}
 		v__checker__Checker_expr(c, it->call_expr);
 	}else if (node.typ == 181 /* v.ast.Import */) {
 		v__ast__Import* it = (v__ast__Import*)node.obj; // ST it
@@ -20080,6 +20085,10 @@ void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) {
 		v__checker__Checker_stmts(c, it->stmts);
 	}else {
 	};
+}
+
+bool v__checker__is_call_expr(v__ast__Expr expr) {
+	return (expr.typ == 153 /* v.ast.CallExpr */) ?  ( true )  :  ( false ) ;
 }
 
 void v__checker__Checker_stmts(v__checker__Checker* c, array_v__ast__Stmt stmts) {
