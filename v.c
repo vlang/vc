@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5e4c5f1"
+#define V_COMMIT_HASH "a680db4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e1a2a4f"
+#define V_COMMIT_HASH "5e4c5f1"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5e4c5f1"
+#define V_CURRENT_COMMIT_HASH "a680db4"
 #endif
 
 typedef struct array array;
@@ -16577,7 +16577,7 @@ v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 			.cond = {0},
 		}}, sizeof(v__ast__ForStmt)), .typ = 169 /* v.ast.ForStmt */};
 	} else if ((p->tok.kind == v__token__Kind_key_mut || p->tok.kind == v__token__Kind_key_var)) {
-		v__parser__Parser_error(p, tos3("`mut` is not required in for loops"));
+		v__parser__Parser_error(p, tos3("`mut` is not needed in for loops"));
 	} else if ((p->peek_tok.kind == v__token__Kind_decl_assign || p->peek_tok.kind == v__token__Kind_assign || p->peek_tok.kind == v__token__Kind_semicolon) || p->tok.kind == v__token__Kind_semicolon) {
 		v__ast__Stmt init = (v__ast__Stmt){
 		0};
@@ -17022,7 +17022,10 @@ v__ast__ConstDecl v__parser__Parser_const_decl(v__parser__Parser* p) {
 	}
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_const);
-	v__parser__Parser_check(p, v__token__Kind_lpar);
+	if (p->tok.kind != v__token__Kind_lpar) {
+		v__parser__Parser_error(p, tos3("consts must be grouped, e.g.\nconst (\n\ta = 1\n)"));
+	}
+	v__parser__Parser_next(p);
 	array_v__ast__ConstField fields = __new_array(0, 0, sizeof(v__ast__ConstField));
 	while (p->tok.kind != v__token__Kind_rpar) {
 		if (p->tok.kind == v__token__Kind_comment) {
@@ -17038,7 +17041,7 @@ v__ast__ConstDecl v__parser__Parser_const_decl(v__parser__Parser* p) {
 			.is_pub = 0,
 			.typ = {0},
 		};
-		_PUSH(&fields, (field), tmp3, v__ast__ConstField);
+		_PUSH(&fields, (field), tmp4, v__ast__ConstField);
 		v__ast__Scope_register(p->global_scope, field.name, /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__ConstField[]) {field}, sizeof(v__ast__ConstField)), .typ = 189 /* v.ast.ConstField */});
 	}
 	v__parser__Parser_check(p, v__token__Kind_rpar);
