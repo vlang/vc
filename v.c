@@ -1,3 +1,4 @@
+#define V_COMMIT_HASH "182108f"
 
 #ifndef V_COMMIT_HASH
 #define V_COMMIT_HASH "93b942d"
@@ -5,7 +6,7 @@
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "714ff50"
+#define V_CURRENT_COMMIT_HASH "182108f"
 #endif
 
 
@@ -2654,13 +2655,15 @@ string os__temp_dir();
 void os__chmod(string path, int mode);
 string _const_os__wd_at_startup; // inited later
 string os__resource_abs_path(string path);
-#define _const_os__sys_write 4
-#define _const_os__sys_open 5
-#define _const_os__sys_close 6
-#define _const_os__sys_mkdir 136
-#define _const_os__sys_creat 8
-#define _const_os__sys_open_nocancel 398
-#define _const_os__sys_stat64 338
+#define _const_os__PROT_READ 1
+#define _const_os__PROT_WRITE 2
+#define _const_os__MAP_PRIVATE 0x02
+#define _const_os__MAP_ANONYMOUS 0x20
+#define _const_os__sys_write 1
+#define _const_os__sys_open 2
+#define _const_os__sys_close 3
+#define _const_os__sys_mkdir 83
+#define _const_os__sys_creat 85
 string _const_os__path_separator; // a string literal, inited later
 #define _const_os__stdin_value 0
 #define _const_os__stdout_value 1
