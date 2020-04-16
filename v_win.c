@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "a680db4"
+#define V_COMMIT_HASH "c3ddaf1"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5e4c5f1"
+#define V_COMMIT_HASH "a680db4"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "a680db4"
+#define V_CURRENT_COMMIT_HASH "c3ddaf1"
 #endif
 
 typedef struct array array;
@@ -22663,17 +22663,17 @@ void v__gen__Gen_infix_expr(v__gen__Gen* g, v__ast__InfixExpr node) {
 		v__table__Array info = /* as */ *(v__table__Array*)sym->info.obj;
 		if (right_sym->kind == v__table__Kind_array && info.elem_type != node.right_type) {
 			v__gen__Gen_write(g, tos3("_PUSH_MANY(&"));
-			v__gen__Gen_expr_with_cast(g, node.left, node.right_type, node.left_type);
+			v__gen__Gen_expr(g, node.left);
 			v__gen__Gen_write(g, tos3(", ("));
-			v__gen__Gen_expr(g, node.right);
+			v__gen__Gen_expr_with_cast(g, node.right, node.right_type, node.left_type);
 			string styp = v__gen__Gen_typ(g, node.left_type);
 			v__gen__Gen_write(g, _STR("), %.*s, %.*s)", tmp.len, tmp.str, styp.len, styp.str));
 		} else {
 			string elem_type_str = v__gen__Gen_typ(g, info.elem_type);
 			v__gen__Gen_write(g, tos3("_PUSH(&"));
-			v__gen__Gen_expr_with_cast(g, node.left, node.right_type, info.elem_type);
+			v__gen__Gen_expr(g, node.left);
 			v__gen__Gen_write(g, tos3(", ("));
-			v__gen__Gen_expr(g, node.right);
+			v__gen__Gen_expr_with_cast(g, node.right, node.right_type, info.elem_type);
 			v__gen__Gen_write(g, _STR("), %.*s, %.*s)", tmp.len, tmp.str, elem_type_str.len, elem_type_str.str));
 		}
 	} else if ((node.left_type == node.right_type) && (node.left_type == _const_v__table__f32_type_idx || node.left_type == _const_v__table__f64_type_idx) && (node.op == v__token__Kind_eq || node.op == v__token__Kind_ne)) {
