@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "402e55d"
+#define V_COMMIT_HASH "420ecaf"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8bb11d9"
+#define V_COMMIT_HASH "402e55d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "402e55d"
+#define V_CURRENT_COMMIT_HASH "420ecaf"
 #endif
 
 
@@ -3399,6 +3399,7 @@ void v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__TypeSymbol sym, stri
 void v__gen__Gen_gen_str_default(v__gen__Gen* g, v__table__TypeSymbol sym, string styp);
 void v__gen__Gen_gen_str_for_enum(v__gen__Gen* g, v__table__Enum info, string styp);
 void v__gen__Gen_gen_str_for_struct(v__gen__Gen* g, v__table__Struct info, string styp);
+void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, string styp);
 string v__gen__Gen_type_to_fmt(v__gen__Gen g, v__table__Type typ);
 string _const_v__gen__c_commit_hash_default; // a string literal, inited later
 string _const_v__gen__c_current_commit_hash_default; // a string literal, inited later
@@ -23460,6 +23461,7 @@ void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInterLiteral
 				}
 			} else if ((sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed)) {
 				string styp = v__gen__Gen_typ(g, (*(v__table__Type*)array_get(node.expr_types, i)));
+				v__gen__Gen_gen_str_for_type(g, */*d*/sym, styp);
 				v__gen__Gen_write(g, _STR("%.*s_str(", styp.len, styp.str));
 				v__gen__Gen_expr(g, expr);
 				v__gen__Gen_write(g, tos3(")"));
@@ -23529,9 +23531,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_61901 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_61901.arg0;
-	string type_of_last_expression = mr_61901.arg1;
+	multi_return_string_string mr_61902 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_61902.arg0;
+	string type_of_last_expression = mr_61902.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -23921,6 +23923,9 @@ void v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__TypeSymbol sym, stri
 	if (sym.info.typ == 82 /* v.table.Alias */) {
 		v__table__Alias* it = (v__table__Alias*)sym.info.obj; // ST it
 		v__gen__Gen_gen_str_default(g, sym, styp);
+	}else if (sym.info.typ == 77 /* v.table.Array */) {
+		v__table__Array* it = (v__table__Array*)sym.info.obj; // ST it
+		v__gen__Gen_gen_str_for_array(g, */*d*/it, styp);
 	}else if (sym.info.typ == 83 /* v.table.Enum */) {
 		v__table__Enum* it = (v__table__Enum*)sym.info.obj; // ST it
 		v__gen__Gen_gen_str_for_enum(g, */*d*/it, styp);
@@ -24022,6 +24027,28 @@ void v__gen__Gen_gen_str_for_struct(v__gen__Gen* g, v__table__Struct info, strin
 		}
 	}
 	strings__Builder_writeln(&g->definitions, tos3(", indents.len, indents.str);\n}"));
+}
+
+void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, string styp) {
+	string s = string_replace(styp, tos3("."), tos3("__"));
+	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
+	if (sym->kind == v__table__Kind_struct_ && !v__table__TypeSymbol_has_method(sym, tos3("str"))) {
+		string field_styp = v__gen__Gen_typ(g, info.elem_type);
+		v__gen__Gen_gen_str_for_type(g, */*d*/sym, field_styp);
+		strings__Builder_write(&g->definitions, _STR("string %.*s_str(%.*s a) {\n", s.len, s.str, styp.len, styp.str));
+		strings__Builder_write(&g->definitions, tos3("\tstrings__Builder sb = strings__new_builder(a.len * 10);\n"));
+		strings__Builder_write(&g->definitions, tos3("\tstrings__Builder_write(&sb, tos3(\"[\"));\n"));
+		strings__Builder_write(&g->definitions, tos3("\tfor (int i = 0; i < a.len; i++) {\n"));
+		strings__Builder_write(&g->definitions, _STR("\t\t%.*s it = (*(%.*s*)array_get(a, i));\n", field_styp.len, field_styp.str, field_styp.len, field_styp.str));
+		strings__Builder_write(&g->definitions, tos3("\t\tif (i != a.len-1) {\n"));
+		strings__Builder_write(&g->definitions, _STR("\t\t\tstrings__Builder_write(&sb, %.*s_str(it,0));\n", field_styp.len, field_styp.str));
+		strings__Builder_write(&g->definitions, tos3("\t\t\tstrings__Builder_write(&sb, tos3(\", \"));\n"));
+		strings__Builder_write(&g->definitions, tos3("\t\t} else {\n"));
+		strings__Builder_write(&g->definitions, _STR("\t\t\tstrings__Builder_write(&sb, %.*s_str(it,0));\n\t\t}\n\t}\n", field_styp.len, field_styp.str));
+		strings__Builder_write(&g->definitions, tos3("\tstrings__Builder_write(&sb, tos3(\"]\"));\n"));
+		strings__Builder_write(&g->definitions, tos3("\treturn strings__Builder_str(&sb);\n"));
+		strings__Builder_write(&g->definitions, tos3("}\n"));
+	}
 }
 
 string v__gen__Gen_type_to_fmt(v__gen__Gen g, v__table__Type typ) {
