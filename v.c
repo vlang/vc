@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ed8855c"
+#define V_COMMIT_HASH "b53fb36"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4a556f7"
+#define V_COMMIT_HASH "ed8855c"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ed8855c"
+#define V_CURRENT_COMMIT_HASH "b53fb36"
 #endif
 
 
@@ -3043,14 +3043,10 @@ void v__parser__Parser_warn(v__parser__Parser* p, string s);
 void v__parser__Parser_error_with_pos(v__parser__Parser* p, string s, v__token__Position pos);
 void v__parser__Parser_warn_with_pos(v__parser__Parser* p, string s, v__token__Position pos);
 v__ast__Ident v__parser__Parser_parse_ident(v__parser__Parser* p, bool is_c, bool is_js);
-v__ast__StructInit v__parser__Parser_struct_init(v__parser__Parser* p, bool short_syntax);
 v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p);
-v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence);
-v__ast__PrefixExpr v__parser__Parser_prefix_expr(v__parser__Parser* p);
 v__ast__IndexExpr v__parser__Parser_index_expr(v__parser__Parser* p, v__ast__Expr left);
 void v__parser__Parser_filter(v__parser__Parser* p);
 v__ast__Expr v__parser__Parser_dot_expr(v__parser__Parser* p, v__ast__Expr left);
-v__ast__Expr v__parser__Parser_infix_expr(v__parser__Parser* p, v__ast__Expr left);
 v__ast__EnumVal v__parser__Parser_enum_val(v__parser__Parser* p);
 v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p);
 v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p);
@@ -3062,8 +3058,6 @@ v__ast__Module v__parser__Parser_module_decl(v__parser__Parser* p);
 v__ast__Import v__parser__Parser_parse_import(v__parser__Parser* p);
 array_v__ast__Import v__parser__Parser_import_stmt(v__parser__Parser* p);
 v__ast__ConstDecl v__parser__Parser_const_decl(v__parser__Parser* p);
-v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p);
-v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser* p);
 v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p);
 array_v__ast__Ident v__parser__Parser_parse_assign_lhs(v__parser__Parser* p);
 array_v__ast__Expr v__parser__Parser_parse_assign_rhs(v__parser__Parser* p);
@@ -3075,6 +3069,12 @@ v__ast__TypeDecl v__parser__Parser_type_decl(v__parser__Parser* p);
 v__ast__Assoc v__parser__Parser_assoc(v__parser__Parser* p);
 v__ast__Expr v__parser__Parser_new_true_expr(v__parser__Parser* p);
 void v__parser__verror(string s);
+v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence);
+v__ast__Expr v__parser__Parser_infix_expr(v__parser__Parser* p, v__ast__Expr left);
+v__ast__PrefixExpr v__parser__Parser_prefix_expr(v__parser__Parser* p);
+v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p);
+v__ast__StructInit v__parser__Parser_struct_init(v__parser__Parser* p, bool short_syntax);
+v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser* p);
 string term__format(string msg, string open, string close);
 string term__format_rgb(int r, int g, int b, string msg, string open, string close);
 string term__rgb(int r, int g, int b, string msg);
@@ -16307,70 +16307,6 @@ v__ast__Ident v__parser__Parser_parse_ident(v__parser__Parser* p, bool is_c, boo
 	return ident;
 }
 
-v__ast__StructInit v__parser__Parser_struct_init(v__parser__Parser* p, bool short_syntax) {
-	v__token__Position first_pos = v__token__Token_position(&p->tok);
-	v__table__Type typ = (short_syntax ?  ( _const_v__table__void_type )  :  ( v__parser__Parser_parse_type(p) ) );
-	p->expr_mod = tos3("");
-	if (!short_syntax) {
-		v__parser__Parser_check(p, v__token__Kind_lcbr);
-	}
-	array_v__ast__StructInitField fields = __new_array(0, 0, sizeof(v__ast__StructInitField));
-	int i = 0;
-	bool is_short_syntax = p->peek_tok.kind != v__token__Kind_colon && p->tok.kind != v__token__Kind_rcbr;
-	while (p->tok.kind != v__token__Kind_rcbr) {
-		v__parser__Parser_check_comment(p);
-		string field_name = tos3("");
-		if (is_short_syntax) {
-			v__ast__Expr expr = v__parser__Parser_expr(p, 0);
-			_PUSH(&fields, ((v__ast__StructInitField){
-				.expr = expr,
-				.pos = v__ast__Expr_position(expr),
-				.name = tos3(""),
-				.typ = {0},
-				.expected_type = {0},
-			}), tmp4, v__ast__StructInitField);
-		} else {
-			v__token__Position first_field_pos = v__token__Token_position(&p->tok);
-			field_name = v__parser__Parser_check_name(p);
-			v__parser__Parser_check(p, v__token__Kind_colon);
-			v__ast__Expr expr = v__parser__Parser_expr(p, 0);
-			v__token__Position last_field_pos = v__ast__Expr_position(expr);
-			v__token__Position field_pos = (v__token__Position){
-				.line_nr = first_field_pos.line_nr,
-				.pos = first_field_pos.pos,
-				.len = last_field_pos.pos - first_field_pos.pos + last_field_pos.len,
-			};
-			_PUSH(&fields, ((v__ast__StructInitField){
-				.name = field_name,
-				.expr = expr,
-				.pos = field_pos,
-				.typ = {0},
-				.expected_type = {0},
-			}), tmp5, v__ast__StructInitField);
-		}
-		i++;
-		if (p->tok.kind == v__token__Kind_comma) {
-			v__parser__Parser_check(p, v__token__Kind_comma);
-		}
-		v__parser__Parser_check_comment(p);
-	}
-	v__token__Position last_pos = v__token__Token_position(&p->tok);
-	if (!short_syntax) {
-		v__parser__Parser_check(p, v__token__Kind_rcbr);
-	}
-	v__ast__StructInit node = (v__ast__StructInit){
-		.typ = typ,
-		.fields = fields,
-		.pos = (v__token__Position){
-		.line_nr = first_pos.line_nr,
-		.pos = first_pos.pos,
-		.len = last_pos.pos - first_pos.pos + last_pos.len,
-	},
-		.is_short = is_short_syntax,
-	};
-	return node;
-}
-
 v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 	v__ast__Expr node = (v__ast__Expr){
 	0};
@@ -16486,165 +16422,6 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 	}
 	p->expr_mod = tos3("");
 	return node;
-}
-
-v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
-	v__table__Type typ = _const_v__table__void_type;
-	v__ast__Expr node = (v__ast__Expr){
-	0};
-	bool is_stmt_ident = p->is_stmt_ident;
-	p->is_stmt_ident = false;
-	if (p->tok.kind == v__token__Kind_name) {
-		node = v__parser__Parser_name_expr(p);
-		p->is_stmt_ident = is_stmt_ident;
-	}else if (p->tok.kind == v__token__Kind_string) {
-		node = v__parser__Parser_string_expr(p);
-	}else if (p->tok.kind == v__token__Kind_dot) {
-		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__EnumVal[]) {v__parser__Parser_enum_val(p)}, sizeof(v__ast__EnumVal)), .typ = 152 /* v.ast.EnumVal */};
-	}else if (p->tok.kind == v__token__Kind_chartoken) {
-		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__CharLiteral[]) {(v__ast__CharLiteral){
-			.val = p->tok.lit,
-		}}, sizeof(v__ast__CharLiteral)), .typ = 137 /* v.ast.CharLiteral */};
-		v__parser__Parser_next(p);
-	}else if (p->tok.kind == v__token__Kind_minus || p->tok.kind == v__token__Kind_amp || p->tok.kind == v__token__Kind_mul || p->tok.kind == v__token__Kind_not || p->tok.kind == v__token__Kind_bit_not) {
-		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__PrefixExpr[]) {v__parser__Parser_prefix_expr(p)}, sizeof(v__ast__PrefixExpr)), .typ = 147 /* v.ast.PrefixExpr */};
-	}else if (p->tok.kind == v__token__Kind_key_true || p->tok.kind == v__token__Kind_key_false) {
-		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__BoolLiteral[]) {(v__ast__BoolLiteral){
-			.val = p->tok.kind == v__token__Kind_key_true,
-		}}, sizeof(v__ast__BoolLiteral)), .typ = 141 /* v.ast.BoolLiteral */};
-		v__parser__Parser_next(p);
-	}else if (p->tok.kind == v__token__Kind_key_match) {
-		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__MatchExpr[]) {v__parser__Parser_match_expr(p)}, sizeof(v__ast__MatchExpr)), .typ = 150 /* v.ast.MatchExpr */};
-	}else if (p->tok.kind == v__token__Kind_number) {
-		node = v__parser__Parser_parse_number_literal(p);
-	}else if (p->tok.kind == v__token__Kind_lpar) {
-		v__parser__Parser_check(p, v__token__Kind_lpar);
-		node = v__parser__Parser_expr(p, 0);
-		v__parser__Parser_check(p, v__token__Kind_rpar);
-		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__ParExpr[]) {(v__ast__ParExpr){
-			.expr = node,
-		}}, sizeof(v__ast__ParExpr)), .typ = 158 /* v.ast.ParExpr */};
-	}else if (p->tok.kind == v__token__Kind_key_if) {
-		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__IfExpr[]) {v__parser__Parser_if_expr(p)}, sizeof(v__ast__IfExpr)), .typ = 134 /* v.ast.IfExpr */};
-	}else if (p->tok.kind == v__token__Kind_lsbr) {
-		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__ArrayInit[]) {v__parser__Parser_array_init(p)}, sizeof(v__ast__ArrayInit)), .typ = 143 /* v.ast.ArrayInit */};
-	}else if (p->tok.kind == v__token__Kind_key_none) {
-		v__parser__Parser_next(p);
-		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__None[]) {(v__ast__None){
-			.foo = 0,
-		}}, sizeof(v__ast__None)), .typ = 155 /* v.ast.None */};
-	}else if (p->tok.kind == v__token__Kind_key_sizeof) {
-		v__parser__Parser_next(p);
-		v__parser__Parser_check(p, v__token__Kind_lpar);
-		if (string_eq(p->tok.lit, tos3("C"))) {
-			v__parser__Parser_next(p);
-			v__parser__Parser_check(p, v__token__Kind_dot);
-			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__SizeOf[]) {(v__ast__SizeOf){
-				.type_name = v__parser__Parser_check_name(p),
-				.typ = {0},
-			}}, sizeof(v__ast__SizeOf)), .typ = 154 /* v.ast.SizeOf */};
-		} else {
-			v__table__Type sizeof_type = v__parser__Parser_parse_type(p);
-			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__SizeOf[]) {(v__ast__SizeOf){
-				.typ = sizeof_type,
-				.type_name = tos3(""),
-			}}, sizeof(v__ast__SizeOf)), .typ = 154 /* v.ast.SizeOf */};
-		}
-		v__parser__Parser_check(p, v__token__Kind_rpar);
-	}else if (p->tok.kind == v__token__Kind_key_typeof) {
-		v__parser__Parser_next(p);
-		v__parser__Parser_check(p, v__token__Kind_lpar);
-		v__ast__Expr expr = v__parser__Parser_expr(p, 0);
-		v__parser__Parser_check(p, v__token__Kind_rpar);
-		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__TypeOf[]) {(v__ast__TypeOf){
-			.expr = expr,
-			.expr_type = {0},
-		}}, sizeof(v__ast__TypeOf)), .typ = 163 /* v.ast.TypeOf */};
-	}else if (p->tok.kind == v__token__Kind_lcbr) {
-		v__parser__Parser_next(p);
-		if (p->tok.kind == v__token__Kind_string) {
-			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__MapInit[]) {v__parser__Parser_map_init(p)}, sizeof(v__ast__MapInit)), .typ = 156 /* v.ast.MapInit */};
-		} else {
-			if (p->peek_tok.kind == v__token__Kind_pipe) {
-				node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Assoc[]) {v__parser__Parser_assoc(p)}, sizeof(v__ast__Assoc)), .typ = 153 /* v.ast.Assoc */};
-			} else if (p->peek_tok.kind == v__token__Kind_colon || p->tok.kind == v__token__Kind_rcbr) {
-				node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__StructInit[]) {v__parser__Parser_struct_init(p, true)}, sizeof(v__ast__StructInit)), .typ = 142 /* v.ast.StructInit */};
-			} else if (p->tok.kind == v__token__Kind_name) {
-				v__parser__Parser_next(p);
-				string lit = (string_ne(p->tok.lit, tos3("")) ?  ( p->tok.lit )  :  ( v__token__Kind_str(p->tok.kind) ) );
-				v__parser__Parser_error(p, _STR("unexpected ‘%.*s‘, expecting ‘:‘", lit.len, lit.str));
-			} else {
-				v__parser__Parser_error(p, _STR("unexpected ‘%.*s‘, expecting struct key", p->tok.lit.len, p->tok.lit.str));
-			}
-		}
-		v__parser__Parser_check(p, v__token__Kind_rcbr);
-	}else {
-		if (p->tok.kind == v__token__Kind_comment) {
-			println(p->tok.lit);
-		}
-		v__parser__Parser_error(p, _STR("expr(): bad token `%.*s`", v__token__Kind_str(p->tok.kind).len, v__token__Kind_str(p->tok.kind).str));
-	};
-	while (precedence < v__token__Token_precedence(p->tok)) {
-		if (v__token__Kind_is_assign(p->tok.kind)) {
-			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__AssignExpr[]) {v__parser__Parser_assign_expr(p, node)}, sizeof(v__ast__AssignExpr)), .typ = 146 /* v.ast.AssignExpr */};
-		} else if (p->tok.kind == v__token__Kind_dot) {
-			node = v__parser__Parser_dot_expr(p, node);
-			p->is_stmt_ident = is_stmt_ident;
-		} else if (p->tok.kind == v__token__Kind_lsbr) {
-			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__IndexExpr[]) {v__parser__Parser_index_expr(p, node)}, sizeof(v__ast__IndexExpr)), .typ = 148 /* v.ast.IndexExpr */};
-		} else if (p->tok.kind == v__token__Kind_key_as) {
-			v__token__Position pos = v__token__Token_position(&p->tok);
-			v__parser__Parser_next(p);
-			typ = v__parser__Parser_parse_type(p);
-			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__AsCast[]) {(v__ast__AsCast){
-				.expr = node,
-				.typ = typ,
-				.pos = pos,
-				.expr_type = {0},
-			}}, sizeof(v__ast__AsCast)), .typ = 162 /* v.ast.AsCast */};
-		} else if (p->tok.kind == v__token__Kind_left_shift && p->is_stmt_ident) {
-			v__token__Token tok = p->tok;
-			v__token__Position pos = v__token__Token_position(&tok);
-			v__parser__Parser_next(p);
-			v__ast__Expr right = v__parser__Parser_expr(p, precedence - 1);
-			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__InfixExpr[]) {(v__ast__InfixExpr){
-				.left = node,
-				.right = right,
-				.op = tok.kind,
-				.pos = pos,
-				.left_type = {0},
-				.right_type = {0},
-			}}, sizeof(v__ast__InfixExpr)), .typ = 133 /* v.ast.InfixExpr */};
-		} else if (v__token__Kind_is_infix(p->tok.kind)) {
-			node = v__parser__Parser_infix_expr(p, node);
-		} else if ((p->tok.kind == v__token__Kind_inc || p->tok.kind == v__token__Kind_dec)) {
-			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__PostfixExpr[]) {(v__ast__PostfixExpr){
-				.op = p->tok.kind,
-				.expr = node,
-				.pos = v__token__Token_position(&p->tok),
-			}}, sizeof(v__ast__PostfixExpr)), .typ = 145 /* v.ast.PostfixExpr */};
-			v__parser__Parser_next(p);
-		} else {
-			return node;
-		}
-	}
-	return node;
-}
-
-v__ast__PrefixExpr v__parser__Parser_prefix_expr(v__parser__Parser* p) {
-	v__token__Position pos = v__token__Token_position(&p->tok);
-	v__token__Kind op = p->tok.kind;
-	if (op == v__token__Kind_amp) {
-		p->is_amp = true;
-	}
-	v__parser__Parser_next(p);
-	v__ast__Expr right = v__parser__Parser_expr(p, v__token__Precedence_prefix);
-	p->is_amp = false;
-	return (v__ast__PrefixExpr){
-		.op = op,
-		.right = right,
-		.pos = pos,
-	};
 }
 
 v__ast__IndexExpr v__parser__Parser_index_expr(v__parser__Parser* p, v__ast__Expr left) {
@@ -16795,30 +16572,6 @@ v__ast__Expr v__parser__Parser_dot_expr(v__parser__Parser* p, v__ast__Expr left)
 		v__parser__Parser_close_scope(p);
 	}
 	return node;
-}
-
-v__ast__Expr v__parser__Parser_infix_expr(v__parser__Parser* p, v__ast__Expr left) {
-	v__token__Kind op = p->tok.kind;
-	int precedence = v__token__Token_precedence(p->tok);
-	v__token__Position pos = v__token__Token_position(&p->tok);
-	v__parser__Parser_next(p);
-	v__ast__Expr right = (v__ast__Expr){
-	0};
-	if (op == v__token__Kind_key_is) {
-		p->inside_is = true;
-	}
-	right = v__parser__Parser_expr(p, precedence);
-	v__ast__Expr expr = (v__ast__Expr){
-	0};
-	expr = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__InfixExpr[]) {(v__ast__InfixExpr){
-		.left = left,
-		.right = right,
-		.op = op,
-		.pos = pos,
-		.left_type = {0},
-		.right_type = {0},
-	}}, sizeof(v__ast__InfixExpr)), .typ = 133 /* v.ast.InfixExpr */};
-	return expr;
 }
 
 v__ast__EnumVal v__parser__Parser_enum_val(v__parser__Parser* p) {
@@ -17324,188 +17077,6 @@ v__ast__ConstDecl v__parser__Parser_const_decl(v__parser__Parser* p) {
 	};
 }
 
-v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
-	v__token__Position first_pos = v__token__Token_position(&p->tok);
-	bool is_pub = p->tok.kind == v__token__Kind_key_pub;
-	if (is_pub) {
-		v__parser__Parser_next(p);
-	}
-	bool is_union = p->tok.kind == v__token__Kind_key_union;
-	if (p->tok.kind == v__token__Kind_key_struct) {
-		v__parser__Parser_check(p, v__token__Kind_key_struct);
-	} else {
-		v__parser__Parser_check(p, v__token__Kind_key_union);
-	}
-	bool is_c = string_eq(p->tok.lit, tos3("C")) && p->peek_tok.kind == v__token__Kind_dot;
-	bool is_js = string_eq(p->tok.lit, tos3("JS")) && p->peek_tok.kind == v__token__Kind_dot;
-	if (is_c) {
-		v__parser__Parser_next(p);
-		v__parser__Parser_next(p);
-	}
-	bool is_typedef = string_eq(p->attr, tos3("typedef"));
-	bool no_body = p->peek_tok.kind != v__token__Kind_lcbr;
-	if (!is_c && !is_js && no_body) {
-		v__parser__Parser_error(p, _STR("`%.*s` lacks body", p->tok.lit.len, p->tok.lit.str));
-	}
-	string name = v__parser__Parser_check_name(p);
-	array_v__ast__StructField ast_fields = __new_array(0, 0, sizeof(v__ast__StructField));
-	array_v__table__Field fields = __new_array(0, 0, sizeof(v__table__Field));
-	int mut_pos = -1;
-	int pub_pos = -1;
-	int pub_mut_pos = -1;
-	v__token__Position last_pos = (v__token__Position){
-		.line_nr = 0,
-		.pos = 0,
-		.len = 0,
-	};
-	if (!no_body) {
-		v__parser__Parser_check(p, v__token__Kind_lcbr);
-		while (p->tok.kind != v__token__Kind_rcbr) {
-			v__ast__Comment comment = (v__ast__Comment){
-				.text = tos3(""),
-				.is_multi = 0,
-				.line_nr = 0,
-				.pos = {0},
-			};
-			if (p->tok.kind == v__token__Kind_comment) {
-				comment = v__parser__Parser_comment(p);
-			}
-			if (p->tok.kind == v__token__Kind_key_pub) {
-				v__parser__Parser_check(p, v__token__Kind_key_pub);
-				if (p->tok.kind == v__token__Kind_key_mut) {
-					v__parser__Parser_check(p, v__token__Kind_key_mut);
-					pub_mut_pos = fields.len;
-				} else {
-					pub_pos = fields.len;
-				}
-				v__parser__Parser_check(p, v__token__Kind_colon);
-			} else if (p->tok.kind == v__token__Kind_key_mut) {
-				v__parser__Parser_check(p, v__token__Kind_key_mut);
-				v__parser__Parser_check(p, v__token__Kind_colon);
-				mut_pos = fields.len;
-			} else if (p->tok.kind == v__token__Kind_key_global) {
-				v__parser__Parser_check(p, v__token__Kind_key_global);
-				v__parser__Parser_check(p, v__token__Kind_colon);
-			}
-			string field_name = v__parser__Parser_check_name(p);
-			v__token__Position field_pos = v__token__Token_position(&p->tok);
-			v__table__Type typ = v__parser__Parser_parse_type(p);
-			v__ast__Expr default_expr = (v__ast__Expr){
-			0};
-			bool has_default_expr = false;
-			if (p->tok.kind == v__token__Kind_assign) {
-				v__parser__Parser_next(p);
-				default_expr = v__parser__Parser_expr(p, 0);
-				if (default_expr.typ == 152 /* v.ast.EnumVal */) {
-					v__ast__EnumVal* it = (v__ast__EnumVal*)default_expr.obj; // ST it
-					it->typ = typ;
-				}else {
-				};
-				has_default_expr = true;
-			}
-			v__ast__Attr attr = (v__ast__Attr){
-				.name = tos3(""),
-			};
-			if (p->tok.kind == v__token__Kind_lsbr) {
-				attr = v__parser__Parser_attribute(p);
-			}
-			if (p->tok.kind == v__token__Kind_comment) {
-				comment = v__parser__Parser_comment(p);
-			}
-			_PUSH(&ast_fields, ((v__ast__StructField){
-				.name = field_name,
-				.pos = field_pos,
-				.typ = typ,
-				.comment = comment,
-				.default_expr = default_expr,
-				.has_default_expr = has_default_expr,
-				.attr = attr.name,
-			}), tmp13, v__ast__StructField);
-			_PUSH(&fields, ((v__table__Field){
-				.name = field_name,
-				.typ = typ,
-				.default_expr = default_expr,
-				.has_default_expr = has_default_expr,
-				.default_val = tos3(""),
-				.attr = tos3(""),
-			}), tmp14, v__table__Field);
-		}
-		last_pos = v__token__Token_position(&p->tok);
-		v__parser__Parser_check(p, v__token__Kind_rcbr);
-	}
-	if (is_c) {
-		name = _STR("C.%.*s", name.len, name.str);
-	} else if (is_js) {
-		name = _STR("JS.%.*s", name.len, name.str);
-	} else {
-		name = v__parser__Parser_prepend_mod(p, name);
-	}
-	v__table__TypeSymbol t = (v__table__TypeSymbol){
-		.kind = v__table__Kind_struct_,
-		.name = name,
-		.info = /* sum type cast */ (v__table__TypeInfo) {.obj = memdup(&(v__table__Struct[]) {(v__table__Struct){
-		.fields = fields,
-		.is_typedef = is_typedef,
-		.is_union = is_union,
-	}}, sizeof(v__table__Struct)), .typ = 80 /* v.table.Struct */},
-		.mod = p->mod,
-		.parent_idx = 0,
-		.methods = new_array(0, 1, sizeof(v__table__Fn)),
-	};
-	int ret = 0;
-	if (p->builtin_mod && _IN(string, t.name, _const_v__table__builtin_type_names)) {
-		ret = v__table__Table_register_builtin_type_symbol(p->table, t);
-	} else {
-		ret = v__table__Table_register_type_symbol(p->table, t);
-	}
-	if (ret == -1) {
-		v__parser__Parser_error(p, _STR("cannot register type `%.*s`, another type with this name exists", name.len, name.str));
-	}
-	p->expr_mod = tos3("");
-	v__token__Position pos = (v__token__Position){
-		.line_nr = first_pos.line_nr,
-		.pos = first_pos.pos,
-		.len = last_pos.pos - first_pos.pos + last_pos.len,
-	};
-	return (v__ast__StructDecl){
-		.name = name,
-		.is_pub = is_pub,
-		.fields = ast_fields,
-		.pos = pos,
-		.mut_pos = mut_pos,
-		.pub_pos = pub_pos,
-		.pub_mut_pos = pub_mut_pos,
-		.is_c = is_c,
-		.is_js = is_js,
-		.is_union = is_union,
-	};
-}
-
-v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser* p) {
-	bool is_pub = p->tok.kind == v__token__Kind_key_pub;
-	if (is_pub) {
-		v__parser__Parser_next(p);
-	}
-	v__parser__Parser_next(p);
-	string interface_name = v__parser__Parser_check_name(p);
-	v__parser__Parser_check(p, v__token__Kind_lcbr);
-	array_string field_names = __new_array(0, 0, sizeof(string));
-	while (p->tok.kind != v__token__Kind_rcbr && p->tok.kind != v__token__Kind_eof) {
-		int line_nr = p->tok.line_nr;
-		string name = v__parser__Parser_check_name(p);
-		_PUSH(&field_names, (name), tmp2, string);
-		v__parser__Parser_fn_args(p);
-		if (p->tok.kind == v__token__Kind_name && p->tok.line_nr == line_nr) {
-			v__parser__Parser_parse_type(p);
-		}
-	}
-	v__parser__Parser_check(p, v__token__Kind_rcbr);
-	return (v__ast__InterfaceDecl){
-		.name = interface_name,
-		.field_names = field_names,
-	};
-}
-
 v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 	v__token__Position first_pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_next(p);
@@ -17920,6 +17491,435 @@ v__ast__Expr v__parser__Parser_new_true_expr(v__parser__Parser* p) {
 
 void v__parser__verror(string s) {
 	v__util__verror(tos3("parser error"), s);
+}
+
+v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
+	v__table__Type typ = _const_v__table__void_type;
+	v__ast__Expr node = (v__ast__Expr){
+	0};
+	bool is_stmt_ident = p->is_stmt_ident;
+	p->is_stmt_ident = false;
+	if (p->tok.kind == v__token__Kind_name) {
+		node = v__parser__Parser_name_expr(p);
+		p->is_stmt_ident = is_stmt_ident;
+	}else if (p->tok.kind == v__token__Kind_string) {
+		node = v__parser__Parser_string_expr(p);
+	}else if (p->tok.kind == v__token__Kind_dot) {
+		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__EnumVal[]) {v__parser__Parser_enum_val(p)}, sizeof(v__ast__EnumVal)), .typ = 152 /* v.ast.EnumVal */};
+	}else if (p->tok.kind == v__token__Kind_chartoken) {
+		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__CharLiteral[]) {(v__ast__CharLiteral){
+			.val = p->tok.lit,
+		}}, sizeof(v__ast__CharLiteral)), .typ = 137 /* v.ast.CharLiteral */};
+		v__parser__Parser_next(p);
+	}else if (p->tok.kind == v__token__Kind_minus || p->tok.kind == v__token__Kind_amp || p->tok.kind == v__token__Kind_mul || p->tok.kind == v__token__Kind_not || p->tok.kind == v__token__Kind_bit_not) {
+		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__PrefixExpr[]) {v__parser__Parser_prefix_expr(p)}, sizeof(v__ast__PrefixExpr)), .typ = 147 /* v.ast.PrefixExpr */};
+	}else if (p->tok.kind == v__token__Kind_key_true || p->tok.kind == v__token__Kind_key_false) {
+		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__BoolLiteral[]) {(v__ast__BoolLiteral){
+			.val = p->tok.kind == v__token__Kind_key_true,
+		}}, sizeof(v__ast__BoolLiteral)), .typ = 141 /* v.ast.BoolLiteral */};
+		v__parser__Parser_next(p);
+	}else if (p->tok.kind == v__token__Kind_key_match) {
+		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__MatchExpr[]) {v__parser__Parser_match_expr(p)}, sizeof(v__ast__MatchExpr)), .typ = 150 /* v.ast.MatchExpr */};
+	}else if (p->tok.kind == v__token__Kind_number) {
+		node = v__parser__Parser_parse_number_literal(p);
+	}else if (p->tok.kind == v__token__Kind_lpar) {
+		v__parser__Parser_check(p, v__token__Kind_lpar);
+		node = v__parser__Parser_expr(p, 0);
+		v__parser__Parser_check(p, v__token__Kind_rpar);
+		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__ParExpr[]) {(v__ast__ParExpr){
+			.expr = node,
+		}}, sizeof(v__ast__ParExpr)), .typ = 158 /* v.ast.ParExpr */};
+	}else if (p->tok.kind == v__token__Kind_key_if) {
+		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__IfExpr[]) {v__parser__Parser_if_expr(p)}, sizeof(v__ast__IfExpr)), .typ = 134 /* v.ast.IfExpr */};
+	}else if (p->tok.kind == v__token__Kind_lsbr) {
+		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__ArrayInit[]) {v__parser__Parser_array_init(p)}, sizeof(v__ast__ArrayInit)), .typ = 143 /* v.ast.ArrayInit */};
+	}else if (p->tok.kind == v__token__Kind_key_none) {
+		v__parser__Parser_next(p);
+		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__None[]) {(v__ast__None){
+			.foo = 0,
+		}}, sizeof(v__ast__None)), .typ = 155 /* v.ast.None */};
+	}else if (p->tok.kind == v__token__Kind_key_sizeof) {
+		v__parser__Parser_next(p);
+		v__parser__Parser_check(p, v__token__Kind_lpar);
+		if (string_eq(p->tok.lit, tos3("C"))) {
+			v__parser__Parser_next(p);
+			v__parser__Parser_check(p, v__token__Kind_dot);
+			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__SizeOf[]) {(v__ast__SizeOf){
+				.type_name = v__parser__Parser_check_name(p),
+				.typ = {0},
+			}}, sizeof(v__ast__SizeOf)), .typ = 154 /* v.ast.SizeOf */};
+		} else {
+			v__table__Type sizeof_type = v__parser__Parser_parse_type(p);
+			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__SizeOf[]) {(v__ast__SizeOf){
+				.typ = sizeof_type,
+				.type_name = tos3(""),
+			}}, sizeof(v__ast__SizeOf)), .typ = 154 /* v.ast.SizeOf */};
+		}
+		v__parser__Parser_check(p, v__token__Kind_rpar);
+	}else if (p->tok.kind == v__token__Kind_key_typeof) {
+		v__parser__Parser_next(p);
+		v__parser__Parser_check(p, v__token__Kind_lpar);
+		v__ast__Expr expr = v__parser__Parser_expr(p, 0);
+		v__parser__Parser_check(p, v__token__Kind_rpar);
+		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__TypeOf[]) {(v__ast__TypeOf){
+			.expr = expr,
+			.expr_type = {0},
+		}}, sizeof(v__ast__TypeOf)), .typ = 163 /* v.ast.TypeOf */};
+	}else if (p->tok.kind == v__token__Kind_lcbr) {
+		v__parser__Parser_next(p);
+		if (p->tok.kind == v__token__Kind_string) {
+			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__MapInit[]) {v__parser__Parser_map_init(p)}, sizeof(v__ast__MapInit)), .typ = 156 /* v.ast.MapInit */};
+		} else {
+			if (p->peek_tok.kind == v__token__Kind_pipe) {
+				node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Assoc[]) {v__parser__Parser_assoc(p)}, sizeof(v__ast__Assoc)), .typ = 153 /* v.ast.Assoc */};
+			} else if (p->peek_tok.kind == v__token__Kind_colon || p->tok.kind == v__token__Kind_rcbr) {
+				node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__StructInit[]) {v__parser__Parser_struct_init(p, true)}, sizeof(v__ast__StructInit)), .typ = 142 /* v.ast.StructInit */};
+			} else if (p->tok.kind == v__token__Kind_name) {
+				v__parser__Parser_next(p);
+				string lit = (string_ne(p->tok.lit, tos3("")) ?  ( p->tok.lit )  :  ( v__token__Kind_str(p->tok.kind) ) );
+				v__parser__Parser_error(p, _STR("unexpected ‘%.*s‘, expecting ‘:‘", lit.len, lit.str));
+			} else {
+				v__parser__Parser_error(p, _STR("unexpected ‘%.*s‘, expecting struct key", p->tok.lit.len, p->tok.lit.str));
+			}
+		}
+		v__parser__Parser_check(p, v__token__Kind_rcbr);
+	}else {
+		if (p->tok.kind == v__token__Kind_comment) {
+			println(p->tok.lit);
+		}
+		v__parser__Parser_error(p, _STR("expr(): bad token `%.*s`", v__token__Kind_str(p->tok.kind).len, v__token__Kind_str(p->tok.kind).str));
+	};
+	while (precedence < v__token__Token_precedence(p->tok)) {
+		if (v__token__Kind_is_assign(p->tok.kind)) {
+			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__AssignExpr[]) {v__parser__Parser_assign_expr(p, node)}, sizeof(v__ast__AssignExpr)), .typ = 146 /* v.ast.AssignExpr */};
+		} else if (p->tok.kind == v__token__Kind_dot) {
+			node = v__parser__Parser_dot_expr(p, node);
+			p->is_stmt_ident = is_stmt_ident;
+		} else if (p->tok.kind == v__token__Kind_lsbr) {
+			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__IndexExpr[]) {v__parser__Parser_index_expr(p, node)}, sizeof(v__ast__IndexExpr)), .typ = 148 /* v.ast.IndexExpr */};
+		} else if (p->tok.kind == v__token__Kind_key_as) {
+			v__token__Position pos = v__token__Token_position(&p->tok);
+			v__parser__Parser_next(p);
+			typ = v__parser__Parser_parse_type(p);
+			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__AsCast[]) {(v__ast__AsCast){
+				.expr = node,
+				.typ = typ,
+				.pos = pos,
+				.expr_type = {0},
+			}}, sizeof(v__ast__AsCast)), .typ = 162 /* v.ast.AsCast */};
+		} else if (p->tok.kind == v__token__Kind_left_shift && p->is_stmt_ident) {
+			v__token__Token tok = p->tok;
+			v__token__Position pos = v__token__Token_position(&tok);
+			v__parser__Parser_next(p);
+			v__ast__Expr right = v__parser__Parser_expr(p, precedence - 1);
+			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__InfixExpr[]) {(v__ast__InfixExpr){
+				.left = node,
+				.right = right,
+				.op = tok.kind,
+				.pos = pos,
+				.left_type = {0},
+				.right_type = {0},
+			}}, sizeof(v__ast__InfixExpr)), .typ = 133 /* v.ast.InfixExpr */};
+		} else if (v__token__Kind_is_infix(p->tok.kind)) {
+			node = v__parser__Parser_infix_expr(p, node);
+		} else if ((p->tok.kind == v__token__Kind_inc || p->tok.kind == v__token__Kind_dec)) {
+			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__PostfixExpr[]) {(v__ast__PostfixExpr){
+				.op = p->tok.kind,
+				.expr = node,
+				.pos = v__token__Token_position(&p->tok),
+			}}, sizeof(v__ast__PostfixExpr)), .typ = 145 /* v.ast.PostfixExpr */};
+			v__parser__Parser_next(p);
+		} else {
+			return node;
+		}
+	}
+	return node;
+}
+
+v__ast__Expr v__parser__Parser_infix_expr(v__parser__Parser* p, v__ast__Expr left) {
+	v__token__Kind op = p->tok.kind;
+	int precedence = v__token__Token_precedence(p->tok);
+	v__token__Position pos = v__token__Token_position(&p->tok);
+	v__parser__Parser_next(p);
+	v__ast__Expr right = (v__ast__Expr){
+	0};
+	if (op == v__token__Kind_key_is) {
+		p->inside_is = true;
+	}
+	right = v__parser__Parser_expr(p, precedence);
+	v__ast__Expr expr = (v__ast__Expr){
+	0};
+	expr = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__InfixExpr[]) {(v__ast__InfixExpr){
+		.left = left,
+		.right = right,
+		.op = op,
+		.pos = pos,
+		.left_type = {0},
+		.right_type = {0},
+	}}, sizeof(v__ast__InfixExpr)), .typ = 133 /* v.ast.InfixExpr */};
+	return expr;
+}
+
+v__ast__PrefixExpr v__parser__Parser_prefix_expr(v__parser__Parser* p) {
+	v__token__Position pos = v__token__Token_position(&p->tok);
+	v__token__Kind op = p->tok.kind;
+	if (op == v__token__Kind_amp) {
+		p->is_amp = true;
+	}
+	v__parser__Parser_next(p);
+	v__ast__Expr right = v__parser__Parser_expr(p, v__token__Precedence_prefix);
+	p->is_amp = false;
+	return (v__ast__PrefixExpr){
+		.op = op,
+		.right = right,
+		.pos = pos,
+	};
+}
+
+v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
+	v__token__Position first_pos = v__token__Token_position(&p->tok);
+	bool is_pub = p->tok.kind == v__token__Kind_key_pub;
+	if (is_pub) {
+		v__parser__Parser_next(p);
+	}
+	bool is_union = p->tok.kind == v__token__Kind_key_union;
+	if (p->tok.kind == v__token__Kind_key_struct) {
+		v__parser__Parser_check(p, v__token__Kind_key_struct);
+	} else {
+		v__parser__Parser_check(p, v__token__Kind_key_union);
+	}
+	bool is_c = string_eq(p->tok.lit, tos3("C")) && p->peek_tok.kind == v__token__Kind_dot;
+	bool is_js = string_eq(p->tok.lit, tos3("JS")) && p->peek_tok.kind == v__token__Kind_dot;
+	if (is_c) {
+		v__parser__Parser_next(p);
+		v__parser__Parser_next(p);
+	}
+	bool is_typedef = string_eq(p->attr, tos3("typedef"));
+	bool no_body = p->peek_tok.kind != v__token__Kind_lcbr;
+	if (!is_c && !is_js && no_body) {
+		v__parser__Parser_error(p, _STR("`%.*s` lacks body", p->tok.lit.len, p->tok.lit.str));
+	}
+	string name = v__parser__Parser_check_name(p);
+	array_v__ast__StructField ast_fields = __new_array(0, 0, sizeof(v__ast__StructField));
+	array_v__table__Field fields = __new_array(0, 0, sizeof(v__table__Field));
+	int mut_pos = -1;
+	int pub_pos = -1;
+	int pub_mut_pos = -1;
+	v__token__Position last_pos = (v__token__Position){
+		.line_nr = 0,
+		.pos = 0,
+		.len = 0,
+	};
+	if (!no_body) {
+		v__parser__Parser_check(p, v__token__Kind_lcbr);
+		while (p->tok.kind != v__token__Kind_rcbr) {
+			v__ast__Comment comment = (v__ast__Comment){
+				.text = tos3(""),
+				.is_multi = 0,
+				.line_nr = 0,
+				.pos = {0},
+			};
+			if (p->tok.kind == v__token__Kind_comment) {
+				comment = v__parser__Parser_comment(p);
+			}
+			if (p->tok.kind == v__token__Kind_key_pub) {
+				v__parser__Parser_check(p, v__token__Kind_key_pub);
+				if (p->tok.kind == v__token__Kind_key_mut) {
+					v__parser__Parser_check(p, v__token__Kind_key_mut);
+					pub_mut_pos = fields.len;
+				} else {
+					pub_pos = fields.len;
+				}
+				v__parser__Parser_check(p, v__token__Kind_colon);
+			} else if (p->tok.kind == v__token__Kind_key_mut) {
+				v__parser__Parser_check(p, v__token__Kind_key_mut);
+				v__parser__Parser_check(p, v__token__Kind_colon);
+				mut_pos = fields.len;
+			} else if (p->tok.kind == v__token__Kind_key_global) {
+				v__parser__Parser_check(p, v__token__Kind_key_global);
+				v__parser__Parser_check(p, v__token__Kind_colon);
+			}
+			string field_name = v__parser__Parser_check_name(p);
+			v__token__Position field_pos = v__token__Token_position(&p->tok);
+			v__table__Type typ = v__parser__Parser_parse_type(p);
+			v__ast__Expr default_expr = (v__ast__Expr){
+			0};
+			bool has_default_expr = false;
+			if (p->tok.kind == v__token__Kind_assign) {
+				v__parser__Parser_next(p);
+				default_expr = v__parser__Parser_expr(p, 0);
+				if (default_expr.typ == 152 /* v.ast.EnumVal */) {
+					v__ast__EnumVal* it = (v__ast__EnumVal*)default_expr.obj; // ST it
+					it->typ = typ;
+				}else {
+				};
+				has_default_expr = true;
+			}
+			v__ast__Attr attr = (v__ast__Attr){
+				.name = tos3(""),
+			};
+			if (p->tok.kind == v__token__Kind_lsbr) {
+				attr = v__parser__Parser_attribute(p);
+			}
+			if (p->tok.kind == v__token__Kind_comment) {
+				comment = v__parser__Parser_comment(p);
+			}
+			_PUSH(&ast_fields, ((v__ast__StructField){
+				.name = field_name,
+				.pos = field_pos,
+				.typ = typ,
+				.comment = comment,
+				.default_expr = default_expr,
+				.has_default_expr = has_default_expr,
+				.attr = attr.name,
+			}), tmp13, v__ast__StructField);
+			_PUSH(&fields, ((v__table__Field){
+				.name = field_name,
+				.typ = typ,
+				.default_expr = default_expr,
+				.has_default_expr = has_default_expr,
+				.default_val = tos3(""),
+				.attr = tos3(""),
+			}), tmp14, v__table__Field);
+		}
+		last_pos = v__token__Token_position(&p->tok);
+		v__parser__Parser_check(p, v__token__Kind_rcbr);
+	}
+	if (is_c) {
+		name = _STR("C.%.*s", name.len, name.str);
+	} else if (is_js) {
+		name = _STR("JS.%.*s", name.len, name.str);
+	} else {
+		name = v__parser__Parser_prepend_mod(p, name);
+	}
+	v__table__TypeSymbol t = (v__table__TypeSymbol){
+		.kind = v__table__Kind_struct_,
+		.name = name,
+		.info = /* sum type cast */ (v__table__TypeInfo) {.obj = memdup(&(v__table__Struct[]) {(v__table__Struct){
+		.fields = fields,
+		.is_typedef = is_typedef,
+		.is_union = is_union,
+	}}, sizeof(v__table__Struct)), .typ = 80 /* v.table.Struct */},
+		.mod = p->mod,
+		.parent_idx = 0,
+		.methods = new_array(0, 1, sizeof(v__table__Fn)),
+	};
+	int ret = 0;
+	if (p->builtin_mod && _IN(string, t.name, _const_v__table__builtin_type_names)) {
+		ret = v__table__Table_register_builtin_type_symbol(p->table, t);
+	} else {
+		ret = v__table__Table_register_type_symbol(p->table, t);
+	}
+	if (ret == -1) {
+		v__parser__Parser_error(p, _STR("cannot register type `%.*s`, another type with this name exists", name.len, name.str));
+	}
+	p->expr_mod = tos3("");
+	v__token__Position pos = (v__token__Position){
+		.line_nr = first_pos.line_nr,
+		.pos = first_pos.pos,
+		.len = last_pos.pos - first_pos.pos + last_pos.len,
+	};
+	return (v__ast__StructDecl){
+		.name = name,
+		.is_pub = is_pub,
+		.fields = ast_fields,
+		.pos = pos,
+		.mut_pos = mut_pos,
+		.pub_pos = pub_pos,
+		.pub_mut_pos = pub_mut_pos,
+		.is_c = is_c,
+		.is_js = is_js,
+		.is_union = is_union,
+	};
+}
+
+v__ast__StructInit v__parser__Parser_struct_init(v__parser__Parser* p, bool short_syntax) {
+	v__token__Position first_pos = v__token__Token_position(&p->tok);
+	v__table__Type typ = (short_syntax ?  ( _const_v__table__void_type )  :  ( v__parser__Parser_parse_type(p) ) );
+	p->expr_mod = tos3("");
+	if (!short_syntax) {
+		v__parser__Parser_check(p, v__token__Kind_lcbr);
+	}
+	array_v__ast__StructInitField fields = __new_array(0, 0, sizeof(v__ast__StructInitField));
+	int i = 0;
+	bool is_short_syntax = p->peek_tok.kind != v__token__Kind_colon && p->tok.kind != v__token__Kind_rcbr;
+	while (p->tok.kind != v__token__Kind_rcbr) {
+		v__parser__Parser_check_comment(p);
+		string field_name = tos3("");
+		if (is_short_syntax) {
+			v__ast__Expr expr = v__parser__Parser_expr(p, 0);
+			_PUSH(&fields, ((v__ast__StructInitField){
+				.expr = expr,
+				.pos = v__ast__Expr_position(expr),
+				.name = tos3(""),
+				.typ = {0},
+				.expected_type = {0},
+			}), tmp4, v__ast__StructInitField);
+		} else {
+			v__token__Position first_field_pos = v__token__Token_position(&p->tok);
+			field_name = v__parser__Parser_check_name(p);
+			v__parser__Parser_check(p, v__token__Kind_colon);
+			v__ast__Expr expr = v__parser__Parser_expr(p, 0);
+			v__token__Position last_field_pos = v__ast__Expr_position(expr);
+			v__token__Position field_pos = (v__token__Position){
+				.line_nr = first_field_pos.line_nr,
+				.pos = first_field_pos.pos,
+				.len = last_field_pos.pos - first_field_pos.pos + last_field_pos.len,
+			};
+			_PUSH(&fields, ((v__ast__StructInitField){
+				.name = field_name,
+				.expr = expr,
+				.pos = field_pos,
+				.typ = {0},
+				.expected_type = {0},
+			}), tmp5, v__ast__StructInitField);
+		}
+		i++;
+		if (p->tok.kind == v__token__Kind_comma) {
+			v__parser__Parser_check(p, v__token__Kind_comma);
+		}
+		v__parser__Parser_check_comment(p);
+	}
+	v__token__Position last_pos = v__token__Token_position(&p->tok);
+	if (!short_syntax) {
+		v__parser__Parser_check(p, v__token__Kind_rcbr);
+	}
+	v__ast__StructInit node = (v__ast__StructInit){
+		.typ = typ,
+		.fields = fields,
+		.pos = (v__token__Position){
+		.line_nr = first_pos.line_nr,
+		.pos = first_pos.pos,
+		.len = last_pos.pos - first_pos.pos + last_pos.len,
+	},
+		.is_short = is_short_syntax,
+	};
+	return node;
+}
+
+v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser* p) {
+	bool is_pub = p->tok.kind == v__token__Kind_key_pub;
+	if (is_pub) {
+		v__parser__Parser_next(p);
+	}
+	v__parser__Parser_next(p);
+	string interface_name = v__parser__Parser_check_name(p);
+	v__parser__Parser_check(p, v__token__Kind_lcbr);
+	array_string field_names = __new_array(0, 0, sizeof(string));
+	while (p->tok.kind != v__token__Kind_rcbr && p->tok.kind != v__token__Kind_eof) {
+		int line_nr = p->tok.line_nr;
+		string name = v__parser__Parser_check_name(p);
+		_PUSH(&field_names, (name), tmp2, string);
+		v__parser__Parser_fn_args(p);
+		if (p->tok.kind == v__token__Kind_name && p->tok.line_nr == line_nr) {
+			v__parser__Parser_parse_type(p);
+		}
+	}
+	v__parser__Parser_check(p, v__token__Kind_rcbr);
+	return (v__ast__InterfaceDecl){
+		.name = interface_name,
+		.field_names = field_names,
+	};
 }
 
 string term__format(string msg, string open, string close) {
