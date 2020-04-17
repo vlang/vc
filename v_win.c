@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "73073cd"
+#define V_COMMIT_HASH "f2be3d7"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fe249ab"
+#define V_COMMIT_HASH "73073cd"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "73073cd"
+#define V_CURRENT_COMMIT_HASH "f2be3d7"
 #endif
 
 
@@ -1393,10 +1393,6 @@ struct v__ast__ConcatExpr {
 	array_v__ast__Expr vals;
 };
 
-struct v__ast__Type {
-	v__table__Type typ;
-};
-
 struct v__ast__TypeOf {
 	v__ast__Expr expr;
 	v__table__Type expr_type;
@@ -1804,6 +1800,11 @@ struct v__ast__MapInit {
 	v__table__Type typ;
 	v__table__Type key_type;
 	v__table__Type value_type;
+};
+
+struct v__ast__Type {
+	v__table__Type typ;
+	v__token__Position pos;
 };
 
 struct v__ast__AsCast {
@@ -16370,6 +16371,7 @@ v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser* p) {
 			v__table__Type typ = v__parser__Parser_parse_type(p);
 			v__ast__Type x = (v__ast__Type){
 				.typ = typ,
+				.pos = {0},
 			};
 			v__ast__Expr expr = (v__ast__Expr){
 			0};
@@ -17178,8 +17180,10 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 	0};
 	if (p->inside_is) {
 		p->inside_is = false;
+		v__token__Position type_pos = v__token__Token_position(&p->tok);
 		return /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Type[]) {(v__ast__Type){
 			.typ = v__parser__Parser_parse_type(p),
+			.pos = type_pos,
 		}}, sizeof(v__ast__Type)), .typ = 174 /* v.ast.Type */};
 	}
 	bool is_c = string_eq(p->tok.lit, tos3("C"));
@@ -19605,6 +19609,11 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 	infix_expr->left_type = left_type;
 	c->expected_type = left_type;
 	if (infix_expr->op == v__token__Kind_key_is) {
+		v__ast__Type type_expr = /* as */ *(v__ast__Type*)infix_expr->right.obj;
+		v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, type_expr.typ);
+		if (typ_sym->kind == v__table__Kind_placeholder) {
+			v__checker__Checker_error(c, _STR("is: type `%.*s` does not exist", typ_sym->name.len, typ_sym->name.str), type_expr.pos);
+		}
 		return _const_v__table__bool_type;
 	}
 	v__table__Type right_type = v__checker__Checker_expr(c, infix_expr->right);
