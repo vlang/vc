@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "c27a10b"
+#define V_COMMIT_HASH "c4b7d7c"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "59baef8"
+#define V_COMMIT_HASH "c27a10b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c27a10b"
+#define V_CURRENT_COMMIT_HASH "c4b7d7c"
 #endif
 
 
@@ -16042,12 +16042,27 @@ v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser* p) {
 				v__parser__Parser_parse_type(p);
 			}
 			is_sum_type = true;
+			string var_name = tos3("");
+			if (cond.typ == 139 /* v.ast.Ident */) {
+				v__ast__Ident* it = (v__ast__Ident*)cond.obj; // ST it
+				var_name = it->name;
+			}else {
+			};
+			if (string_ne(var_name, tos3(""))) {
+				v__ast__Scope_register(p->scope, var_name, /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){
+					.name = var_name,
+					.typ = v__table__type_to_ptr(typ),
+					.expr = {0},
+					.is_mut = 0,
+					.pos = {0},
+				}}, sizeof(v__ast__Var)), .typ = 191 /* v.ast.Var */});
+			}
 		} else {
 			while (1) {
 				p->inside_match_case = true;
 				v__ast__Expr expr = v__parser__Parser_expr(p, 0);
 				p->inside_match_case = false;
-				_PUSH(&exprs, (expr), tmp5, v__ast__Expr);
+				_PUSH(&exprs, (expr), tmp7, v__ast__Expr);
 				if (p->tok.kind != v__token__Kind_comma) {
 					break;
 				}
@@ -16067,7 +16082,7 @@ v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser* p) {
 			.pos = pos,
 			.comment = comment,
 			.is_else = is_else,
-		}), tmp7, v__ast__MatchBranch);
+		}), tmp9, v__ast__MatchBranch);
 		v__parser__Parser_close_scope(p);
 		if (p->tok.kind == v__token__Kind_rcbr) {
 			break;
