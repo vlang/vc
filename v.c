@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "420ecaf"
+#define V_COMMIT_HASH "af30bf9"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "402e55d"
+#define V_COMMIT_HASH "420ecaf"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "420ecaf"
+#define V_CURRENT_COMMIT_HASH "af30bf9"
 #endif
 
 
@@ -17463,11 +17463,12 @@ v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser* p) {
 }
 
 v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
+	v__token__Position first_pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_next(p);
 	array_v__ast__Expr exprs = __new_array(0, 0, sizeof(v__ast__Expr));
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){
-			.pos = v__token__Token_position(&p->tok),
+			.pos = first_pos,
 			.exprs = new_array(0, 1, sizeof(v__ast__Expr)),
 			.types = new_array(0, 1, sizeof(v__table__Type)),
 		};
@@ -17481,12 +17482,16 @@ v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 			break;
 		}
 	}
-	v__ast__Return stmt = (v__ast__Return){
+	v__token__Position last_pos = v__ast__Expr_position(*(v__ast__Expr*)array_last(exprs));
+	return (v__ast__Return){
 		.exprs = exprs,
-		.pos = v__token__Token_position(&p->tok),
+		.pos = (v__token__Position){
+		.line_nr = first_pos.line_nr,
+		.pos = first_pos.pos,
+		.len = last_pos.pos - first_pos.pos + last_pos.len,
+	},
 		.types = new_array(0, 1, sizeof(v__table__Type)),
 	};
-	return stmt;
 }
 
 array_v__ast__Ident v__parser__Parser_parse_assign_lhs(v__parser__Parser* p) {
@@ -19598,7 +19603,8 @@ void v__checker__Checker_return_stmt(v__checker__Checker* c, v__ast__Return* ret
 		if (!v__table__Table_check(c->table, got_typ, exp_typ)) {
 			v__table__TypeSymbol* got_typ_sym = v__table__Table_get_type_symbol(c->table, got_typ);
 			v__table__TypeSymbol* exp_typ_sym = v__table__Table_get_type_symbol(c->table, exp_typ);
-			v__checker__Checker_error(c, _STR("cannot use `%.*s` as type `%.*s` in return argument", got_typ_sym->name.len, got_typ_sym->name.str, exp_typ_sym->name.len, exp_typ_sym->name.str), return_stmt->pos);
+			v__token__Position pos = v__ast__Expr_position((*(v__ast__Expr*)array_get(return_stmt->exprs, i)));
+			v__checker__Checker_error(c, _STR("cannot use `%.*s` as type `%.*s` in return argument", got_typ_sym->name.len, got_typ_sym->name.str, exp_typ_sym->name.len, exp_typ_sym->name.str), pos);
 		}
 	}
 }
@@ -25935,9 +25941,9 @@ void v__gen__x64__Gen_expr(v__gen__x64__Gen* g, v__ast__Expr node) {
 		v__ast__StructInit* it = (v__ast__StructInit*)node.obj; // ST it
 	}else if (node.typ == 140 /* v.ast.CallExpr */) {
 		v__ast__CallExpr* it = (v__ast__CallExpr*)node.obj; // ST it
-		if (string_eq(it->name, tos3("println")) || string_eq(it->name, tos3("print"))) {
+		if ((string_eq(it->name, tos3("println")) || string_eq(it->name, tos3("print")) || string_eq(it->name, tos3("eprintln")) || string_eq(it->name, tos3("eprint")))) {
 			v__ast__Expr expr = (*(v__ast__CallArg*)array_get(it->args, 0)).expr;
-			v__gen__x64__Gen_gen_print_from_expr(g, expr, string_eq(it->name, tos3("println")));
+			v__gen__x64__Gen_gen_print_from_expr(g, expr, (string_eq(it->name, tos3("println")) || string_eq(it->name, tos3("eprintln"))));
 		}
 	}else if (node.typ == 143 /* v.ast.ArrayInit */) {
 		v__ast__ArrayInit* it = (v__ast__ArrayInit*)node.obj; // ST it
