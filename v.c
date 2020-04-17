@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "c4b7d7c"
+#define V_COMMIT_HASH "67cd90d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c27a10b"
+#define V_COMMIT_HASH "c4b7d7c"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c4b7d7c"
+#define V_CURRENT_COMMIT_HASH "67cd90d"
 #endif
 
 
@@ -17173,7 +17173,7 @@ v__ast__Expr v__parser__Parser_parse_number_literal(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__ast__Expr node = (v__ast__Expr){
 	0};
-	if (string_index_any(lit, tos3(".eE")) >= 0) {
+	if (string_index_any(lit, tos3(".eE")) >= 0 && !(string_eq(string_substr(lit, 0, 2), tos3("0x")) || string_eq(string_substr(lit, 0, 2), tos3("0X")) || string_eq(string_substr(lit, 0, 2), tos3("0o")) || string_eq(string_substr(lit, 0, 2), tos3("0O")) || string_eq(string_substr(lit, 0, 2), tos3("0b")) || string_eq(string_substr(lit, 0, 2), tos3("0B")))) {
 		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__FloatLiteral[]) {(v__ast__FloatLiteral){
 			.val = lit,
 		}}, sizeof(v__ast__FloatLiteral)), .typ = 138 /* v.ast.FloatLiteral */};
@@ -19130,6 +19130,14 @@ void v__checker__Checker_check_files(v__checker__Checker* c, array_v__ast__File 
 			string i = ((string*)keys_tmp6.data)[tmp7];
 			v__table__Fn f = (*(v__table__Fn*)map_get3(c->table->fns, i, &(v__table__Fn[]){ {0} }));
 			if (string_eq(f.name, tos3("main"))) {
+				if (f.is_pub) {
+					v__checker__Checker_error(c, tos3("function `main` cannot be declared public"), (v__token__Position){
+						.line_nr = 0,
+						.pos = 0,
+						.len = 0,
+					});
+					v_exit(1);
+				}
 				return;
 			}
 		}
