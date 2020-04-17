@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "f2be3d7"
+#define V_COMMIT_HASH "5374899"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "73073cd"
+#define V_COMMIT_HASH "f2be3d7"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "f2be3d7"
+#define V_CURRENT_COMMIT_HASH "5374899"
 #endif
 
 
@@ -448,6 +448,7 @@ typedef Option Option_v__ast__ScopeObject;
 typedef Option Option_v__ast__Var;
 typedef Option Option_v__ast__ConstField;
 typedef Option Option_time__Time;
+typedef Option Option_v__ast__FnDecl;
 typedef Option Option_v__ast__IntegerLiteral;
 
 // V cheaders:
@@ -1873,6 +1874,7 @@ struct v__parser__Parser {
 	string file_name;
 	string file_name_dir;
 	v__token__Token tok;
+	v__token__Token prev_tok;
 	v__token__Token peek_tok;
 	v__table__Table* table;
 	bool is_c;
@@ -3277,6 +3279,7 @@ v__checker__Checker v__checker__new_checker(v__table__Table* table, v__pref__Pre
 void v__checker__Checker_check(v__checker__Checker* c, v__ast__File ast_file);
 array_v__scanner__Error v__checker__Checker_check2(v__checker__Checker* c, v__ast__File ast_file);
 void v__checker__Checker_check_files(v__checker__Checker* c, array_v__ast__File ast_files);
+Option_v__ast__FnDecl v__checker__get_main_fn_decl(v__ast__File file);
 void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl decl);
 v__table__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__StructInit* struct_init);
 v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__InfixExpr* infix_expr);
@@ -16491,6 +16494,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.file_name = tos3(""),
 		.file_name_dir = tos3(""),
 		.tok = {0},
+		.prev_tok = {0},
 		.peek_tok = {0},
 		.is_c = 0,
 		.is_js = 0,
@@ -16531,6 +16535,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* table, v__scann
 	}, sizeof(v__ast__Scope)),
 		.global_scope = global_scope,
 		.tok = {0},
+		.prev_tok = {0},
 		.peek_tok = {0},
 		.is_c = 0,
 		.is_js = 0,
@@ -16638,6 +16643,7 @@ array_v__ast__Stmt v__parser__Parser_parse_block_no_scope(v__parser__Parser* p) 
 }
 
 void v__parser__Parser_next(v__parser__Parser* p) {
+	p->prev_tok = p->tok;
 	p->tok = p->peek_tok;
 	p->peek_tok = v__scanner__Scanner_scan(p->scanner);
 }
@@ -16928,7 +16934,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 			.value_type = {0},
 		}}, sizeof(v__ast__MapInit)), .typ = 156 /* v.ast.MapInit */};
 	}
-	if ((string_eq(p->tok.lit, tos3("r")) || string_eq(p->tok.lit, tos3("c")) || string_eq(p->tok.lit, tos3("js"))) && p->peek_tok.kind == v__token__Kind_string) {
+	if ((string_eq(p->tok.lit, tos3("r")) || string_eq(p->tok.lit, tos3("c")) || string_eq(p->tok.lit, tos3("js"))) && p->peek_tok.kind == v__token__Kind_string && p->prev_tok.kind != v__token__Kind_str_dollar) {
 		return v__parser__Parser_string_expr(p);
 	}
 	bool known_var = v__ast__Scope_known_var(p->scope, p->tok.lit);
@@ -19185,13 +19191,22 @@ array_v__scanner__Error v__checker__Checker_check2(v__checker__Checker* c, v__as
 }
 
 void v__checker__Checker_check_files(v__checker__Checker* c, array_v__ast__File ast_files) {
-	map_string_int all_mods = new_map_1(sizeof(int));
+	bool has_main_fn = false;
 	// FOR IN array
 	array tmp1 = ast_files;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
 		v__ast__File file = ((v__ast__File*)tmp1.data)[tmp2];
 		v__checker__Checker_check(c, file);
-		map_set(&all_mods, file.mod.name, &(int[]) { (*(int*)map_get3(all_mods, file.mod.name, &(int[]){ 0 })) + 1 });
+		if (string_eq(file.mod.name, tos3("main"))) {
+			bool tmp4;
+			{ /* if guard */ Option_v__ast__FnDecl fn_decl = v__checker__get_main_fn_decl(file);
+			if ((tmp4 = fn_decl.ok)) {
+				has_main_fn = true;
+				if (/*opt*/(*(v__ast__FnDecl*)fn_decl.data).is_pub) {
+					v__checker__Checker_error(c, tos3("function `main` cannot be declared public"), /*opt*/(*(v__ast__FnDecl*)fn_decl.data).pos);
+				}
+			}}
+		}
 	}
 	if (c->pref->build_mode == v__pref__BuildMode_build_module || c->pref->is_test) {
 		return;
@@ -19199,31 +19214,28 @@ void v__checker__Checker_check_files(v__checker__Checker* c, array_v__ast__File 
 	if (c->pref->is_so) {
 		return;
 	}
-	if ((*(int*)map_get3(all_mods, tos3("main"), &(int[]){ 0 })) > 0) {
-		// FOR IN map
-		array_string keys_tmp6 = map_keys(&c->table->fns);
-		for (int tmp7 = 0; tmp7 < keys_tmp6.len; tmp7++) {
-			string i = ((string*)keys_tmp6.data)[tmp7];
-			v__table__Fn f = (*(v__table__Fn*)map_get3(c->table->fns, i, &(v__table__Fn[]){ {0} }));
-			if (string_eq(f.name, tos3("main"))) {
-				if (f.is_pub) {
-					v__checker__Checker_error(c, tos3("function `main` cannot be declared public"), (v__token__Position){
-						.line_nr = 0,
-						.pos = 0,
-						.len = 0,
-					});
-					v_exit(1);
-				}
-				return;
-			}
-		}
-		v__checker__Checker_error(c, tos3("function `main` is undeclared in the main module"), (v__token__Position){
+	if (!has_main_fn) {
+		v__checker__Checker_error(c, tos3("function `main` must be declared in the main module"), (v__token__Position){
 			.line_nr = 0,
 			.pos = 0,
 			.len = 0,
 		});
-		v_exit(1);
 	}
+}
+
+Option_v__ast__FnDecl v__checker__get_main_fn_decl(v__ast__File file) {
+	// FOR IN array
+	array tmp1 = file.stmts;
+	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+		v__ast__Stmt stmt = ((v__ast__Stmt*)tmp1.data)[tmp2];
+		if (stmt.typ == 108 /* v.ast.FnDecl */) {
+			v__ast__FnDecl fn_decl = /* as */ *(v__ast__FnDecl*)stmt.obj;
+			if (string_eq(fn_decl.name, tos3("main"))) {
+				return /*:)v.ast.FnDecl*/opt_ok(&(v__ast__FnDecl[]) { fn_decl }, sizeof(v__ast__FnDecl));
+			}
+		}
+	}
+	return opt_none();
 }
 
 void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl decl) {
