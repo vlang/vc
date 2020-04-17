@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "515da90"
+#define V_COMMIT_HASH "3e324be"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "67cd90d"
+#define V_COMMIT_HASH "515da90"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "515da90"
+#define V_CURRENT_COMMIT_HASH "3e324be"
 #endif
 
 
@@ -2870,7 +2870,7 @@ string v__scanner__Reporter_str(v__scanner__Reporter it) {
 void v__builder__verror(string s);
 string v__builder__Builder_gen_c(v__builder__Builder* b, array_string v_files);
 void v__builder__Builder_build_c(v__builder__Builder* b, array_string v_files, string out_file);
-void v__builder__Builder_compile_c(v__builder__Builder* b, array_string files, v__pref__Preferences* pref);
+void v__builder__Builder_compile_c(v__builder__Builder* b);
 void v__builder__todo();
 bool v__builder__Builder_no_cc_installed(v__builder__Builder* v);
 void v__builder__Builder_cc(v__builder__Builder* v);
@@ -2904,7 +2904,7 @@ array_string v__builder__Builder_get_builtin_files(v__builder__Builder v);
 array_string v__builder__Builder_get_user_files(v__builder__Builder v);
 string v__builder__Builder_gen_js(v__builder__Builder* b, array_string v_files);
 void v__builder__Builder_build_js(v__builder__Builder* b, array_string v_files, string out_file);
-void v__builder__Builder_compile_js(v__builder__Builder* b, array_string files, v__pref__Preferences* pref);
+void v__builder__Builder_compile_js(v__builder__Builder* b);
 array_string v__builder__Builder_generate_hotcode_reloading_compiler_flags(v__builder__Builder* v);
 void v__builder__Builder_generate_hotcode_reloading_declarations(v__builder__Builder* v);
 void v__builder__Builder_generate_hotcode_reloading_main_caller(v__builder__Builder* v);
@@ -2921,7 +2921,7 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v);
 void v__builder__build_thirdparty_obj_file_with_msvc(string path, array_v__builder__CFlag moduleflags);
 v__builder__MsvcStringFlags array_v__builder__CFlag_msvc_string_flags(array_v__builder__CFlag cflags);
 void v__builder__Builder_build_x64(v__builder__Builder* b, array_string v_files, string out_file);
-void v__builder__Builder_compile_x64(v__builder__Builder* b, array_string files, v__pref__Preferences* pref);
+void v__builder__Builder_compile_x64(v__builder__Builder* b);
 u32 _const_math__bits__de_bruijn32; // inited later
 array_byte _const_math__bits__de_bruijn32tab; // inited later
 u64 _const_math__bits__de_bruijn64; // inited later
@@ -13046,24 +13046,23 @@ void v__builder__Builder_build_c(v__builder__Builder* b, array_string v_files, s
 	os__File_close(&/*opt*/(*(os__File*)f.data));
 }
 
-void v__builder__Builder_compile_c(v__builder__Builder* b, array_string files, v__pref__Preferences* pref) {
-	if (string_ne(os__user_os(), tos3("windows")) && string_eq(pref->ccompiler, tos3("msvc"))) {
+void v__builder__Builder_compile_c(v__builder__Builder* b) {
+	if (string_ne(os__user_os(), tos3("windows")) && string_eq(b->pref->ccompiler, tos3("msvc"))) {
 		v__builder__verror(_STR("Cannot build with msvc on %.*s", os__user_os().len, os__user_os().str));
 	}
-	if (pref->is_verbose) {
+	if (b->pref->is_verbose) {
 		println(tos3("all .v files before:"));
-		println(array_string_str(files));
 	}
-	_PUSH_MANY(&files, (v__builder__Builder_get_builtin_files(/*rec*/*b)), tmp3, array_string);
-	_PUSH_MANY(&files, (v__builder__Builder_get_user_files(/*rec*/*b)), tmp4, array_string);
+	array_string files = v__builder__Builder_get_builtin_files(/*rec*/*b);
+	_PUSH_MANY(&files, (v__builder__Builder_get_user_files(/*rec*/*b)), tmp3, array_string);
 	v__builder__Builder_set_module_lookup_paths(b);
-	if (pref->is_verbose) {
+	if (b->pref->is_verbose) {
 		println(tos3("all .v files:"));
 		println(array_string_str(files));
 	}
-	string out_name_c = v__builder__get_vtmp_filename(pref->out_name, tos3(".tmp.c"));
-	if (pref->is_so) {
-		out_name_c = v__builder__get_vtmp_filename(pref->out_name, tos3(".tmp.so.c"));
+	string out_name_c = v__builder__get_vtmp_filename(b->pref->out_name, tos3(".tmp.c"));
+	if (b->pref->is_so) {
+		out_name_c = v__builder__get_vtmp_filename(b->pref->out_name, tos3(".tmp.so.c"));
 	}
 	v__builder__Builder_build_c(b, files, out_name_c);
 	v__builder__Builder_cc(b);
@@ -13686,13 +13685,12 @@ void v__builder__compile(string command, v__pref__Preferences* pref) {
 		println(tos3("builder.compile() pref:"));
 	}
 	benchmark__Benchmark tmark = benchmark__new_benchmark();
-	array_string files = __new_array(0, 0, sizeof(string));
 	if (pref->backend == v__pref__Backend_c) {
-		v__builder__Builder_compile_c(&b, files, pref);
+		v__builder__Builder_compile_c(&b);
 	}else if (pref->backend == v__pref__Backend_js) {
-		v__builder__Builder_compile_js(&b, files, pref);
+		v__builder__Builder_compile_js(&b);
 	}else if (pref->backend == v__pref__Backend_x64) {
-		v__builder__Builder_compile_x64(&b, files, pref);
+		v__builder__Builder_compile_x64(&b);
 	}else {
 		eprintln(_STR("backend not implemented `%.*s`", v__pref__Backend_str(pref->backend).len, v__pref__Backend_str(pref->backend).str));
 		v_exit(1);
@@ -13851,13 +13849,7 @@ array_string v__builder__Builder_get_user_files(v__builder__Builder v) {
 		if (v.pref->is_verbose) {
 			v__builder__Builder_log(v, _STR("> add all .v files from directory \"%.*s\" ...", dir.len, dir.str));
 		}
-		array_string files = v__builder__Builder_v_files_from_dir(v, dir);
-		// FOR IN array
-		array tmp22 = files;
-		for (int tmp23 = 0; tmp23 < tmp22.len; tmp23++) {
-			string file = ((string*)tmp22.data)[tmp23];
-			_PUSH(&user_files, (file), tmp24, string);
-		}
+		_PUSH_MANY(&user_files, (v__builder__Builder_v_files_from_dir(v, dir)), tmp22, array_string);
 	}
 	if (user_files.len == 0) {
 		println(tos3("No input .v files"));
@@ -13906,14 +13898,14 @@ void v__builder__Builder_build_js(v__builder__Builder* b, array_string v_files, 
 	os__File_close(&/*opt*/(*(os__File*)f.data));
 }
 
-void v__builder__Builder_compile_js(v__builder__Builder* b, array_string files, v__pref__Preferences* pref) {
-	_PUSH_MANY(&files, (v__builder__Builder_get_user_files(/*rec*/*b)), tmp1, array_string);
+void v__builder__Builder_compile_js(v__builder__Builder* b) {
+	array_string files = v__builder__Builder_get_user_files(/*rec*/*b);
 	v__builder__Builder_set_module_lookup_paths(b);
-	if (pref->is_verbose) {
+	if (b->pref->is_verbose) {
 		println(tos3("all .v files:"));
 		println(array_string_str(files));
 	}
-	v__builder__Builder_build_js(b, files, string_add(pref->out_name, tos3(".js")));
+	v__builder__Builder_build_js(b, files, string_add(b->pref->out_name, tos3(".js")));
 }
 
 array_string v__builder__Builder_generate_hotcode_reloading_compiler_flags(v__builder__Builder* v) {
@@ -14363,10 +14355,12 @@ void v__builder__Builder_build_x64(v__builder__Builder* b, array_string v_files,
 	v__builder__Builder_info(/*rec*/*b, _STR("x64 GEN: %dms", gen_time));
 }
 
-void v__builder__Builder_compile_x64(v__builder__Builder* b, array_string files, v__pref__Preferences* pref) {
-	_PUSH(&files, (pref->path), tmp1, string);
+void v__builder__Builder_compile_x64(v__builder__Builder* b) {
+	array_string files = new_array_from_c_array(1, 1, sizeof(string), (string[1]){
+		b->pref->path, 
+});
 	v__builder__Builder_set_module_lookup_paths(b);
-	v__builder__Builder_build_x64(b, files, pref->out_name);
+	v__builder__Builder_build_x64(b, files, b->pref->out_name);
 }
 
 int math__bits__leading_zeros_8(byte x) {
