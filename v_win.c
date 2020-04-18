@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "3d61420"
+#define V_COMMIT_HASH "de9f302"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a18201f"
+#define V_COMMIT_HASH "3d61420"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "3d61420"
+#define V_CURRENT_COMMIT_HASH "de9f302"
 #endif
 
 
@@ -11659,7 +11659,7 @@ Option_bool v__table__Table_parse_cflag(v__table__Table* table, string cflg, str
 	string flag_orig = string_trim_space(cflg);
 	string flag = flag_orig;
 	if (string_eq(flag, tos3(""))) {
-		return /*:)bool*/opt_ok(&(bool[]) { true }, sizeof(bool));
+		return opt_none();
 	}
 	string fos = tos3("");
 	array_string allowed_os_overrides = new_array_from_c_array(6, 6, sizeof(string), (string[6]){
