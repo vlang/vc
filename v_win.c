@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "392986b"
+#define V_COMMIT_HASH "b0e498b"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3cc7009"
+#define V_COMMIT_HASH "392986b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "392986b"
+#define V_CURRENT_COMMIT_HASH "b0e498b"
 #endif
 
 
@@ -1070,8 +1070,7 @@ struct v__pref__Preferences {
 	bool is_test;
 	bool is_script;
 	bool is_live;
-	bool is_solive;
-	bool is_so;
+	bool is_shared;
 	bool is_prof;
 	bool translated;
 	bool is_prod;
@@ -3084,7 +3083,6 @@ array_string v__builder__Builder_get_user_files(v__builder__Builder v);
 string v__builder__Builder_gen_js(v__builder__Builder* b, array_string v_files);
 void v__builder__Builder_build_js(v__builder__Builder* b, array_string v_files, string out_file);
 void v__builder__Builder_compile_js(v__builder__Builder* b);
-array_string v__builder__Builder_generate_hotcode_reloading_compiler_flags(v__builder__Builder* v);
 void v__builder__Builder_generate_hotcode_reloading_declarations(v__builder__Builder* v);
 void v__builder__Builder_generate_hotcode_reloading_main_caller(v__builder__Builder* v);
 void v__builder__Builder_generate_hot_reload_code(v__builder__Builder* v);
@@ -7589,8 +7587,7 @@ multi_return_v__pref__Preferences_string parse_args(array_string args) {
 		.is_test = 0,
 		.is_script = 0,
 		.is_live = 0,
-		.is_solive = 0,
-		.is_so = 0,
+		.is_shared = 0,
 		.is_prof = 0,
 		.translated = 0,
 		.is_prod = 0,
@@ -7636,11 +7633,11 @@ multi_return_v__pref__Preferences_string parse_args(array_string args) {
 			res->is_debug = true;
 		}else if (string_eq(arg, tos3("-live"))) {
 			res->is_live = true;
-		}else if (string_eq(arg, tos3("-solive"))) {
-			res->is_solive = true;
-			res->is_so = true;
+		}else if (string_eq(arg, tos3("-sharedlive"))) {
+			res->is_live = true;
+			res->is_shared = true;
 		}else if (string_eq(arg, tos3("-shared"))) {
-			res->is_so = true;
+			res->is_shared = true;
 		}else if (string_eq(arg, tos3("-autofree"))) {
 			res->autofree = true;
 		}else if (string_eq(arg, tos3("-compress"))) {
@@ -12301,8 +12298,7 @@ string v__doc__doc(string mod, v__table__Table* table) {
 			.is_test = 0,
 			.is_script = 0,
 			.is_live = 0,
-			.is_solive = 0,
-			.is_so = 0,
+			.is_shared = 0,
 			.is_prof = 0,
 			.translated = 0,
 			.is_prod = 0,
@@ -12463,8 +12459,7 @@ v__pref__Preferences v__pref__new_preferences() {
 		.is_test = 0,
 		.is_script = 0,
 		.is_live = 0,
-		.is_solive = 0,
-		.is_so = 0,
+		.is_shared = 0,
 		.is_prof = 0,
 		.translated = 0,
 		.is_prod = 0,
@@ -13351,7 +13346,7 @@ void v__builder__Builder_compile_c(v__builder__Builder* b) {
 		println(array_string_str(files));
 	}
 	string out_name_c = v__builder__get_vtmp_filename(b->pref->out_name, tos3(".tmp.c"));
-	if (b->pref->is_so) {
+	if (b->pref->is_shared) {
 		out_name_c = v__builder__get_vtmp_filename(b->pref->out_name, tos3(".tmp.so.c"));
 	}
 	v__builder__Builder_build_c(b, files, out_name_c);
@@ -13473,11 +13468,11 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 		
 #endif
 	}
-	if (!v->pref->is_so && v->pref->build_mode != v__pref__BuildMode_build_module && string_eq(os__user_os(), tos3("windows")) && !string_ends_with(v->pref->out_name, tos3(".exe"))) {
+	if (!v->pref->is_shared && v->pref->build_mode != v__pref__BuildMode_build_module && string_eq(os__user_os(), tos3("windows")) && !string_ends_with(v->pref->out_name, tos3(".exe"))) {
 		v->pref->out_name = string_add(v->pref->out_name, tos3(".exe"));
 	}
 	v__builder__Builder_log(/*rec*/*v, _STR("cc() isprod=%.*s outname=%.*s", v->pref->is_prod ? 4 : 5, v->pref->is_prod ? "true" : "false", v->pref->out_name.len, v->pref->out_name.str));
-	if (v->pref->is_so) {
+	if (v->pref->is_shared) {
 		_PUSH(&a, (tos3("-shared -fPIC ")), tmp17, string);
 		v->pref->out_name = string_add(v->pref->out_name, tos3(".so"));
 	}
@@ -13555,74 +13550,76 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 	if (string_ne(v->pref->ccompiler, tos3("msvc")) && v->pref->os != v__pref__OS_freebsd) {
 		_PUSH(&a, (tos3("-Werror=implicit-function-declaration")), tmp41, string);
 	}
-	// FOR IN array
-	array tmp42 = v__builder__Builder_generate_hotcode_reloading_compiler_flags(v);
-	for (int tmp43 = 0; tmp43 < tmp42.len; tmp43++) {
-		string f = ((string*)tmp42.data)[tmp43];
-		_PUSH(&a, (f), tmp44, string);
+	if (v->pref->is_shared || v->pref->is_live) {
+		if (v->pref->os == v__pref__OS_linux || string_eq(os__user_os(), tos3("linux"))) {
+			_PUSH(&a, (tos3("-rdynamic")), tmp44, string);
+		}
+		if (v->pref->os == v__pref__OS_mac || string_eq(os__user_os(), tos3("mac"))) {
+			_PUSH(&a, (tos3("-flat_namespace")), tmp46, string);
+		}
 	}
 	string libs = tos3("");
 	if (v->pref->build_mode == v__pref__BuildMode_build_module) {
-		_PUSH(&a, (tos3("-c")), tmp46, string);
+		_PUSH(&a, (tos3("-c")), tmp48, string);
 	} else if (v->pref->is_cache) {
 	}
 	if (v->pref->sanitize) {
-		_PUSH(&a, (tos3("-fsanitize=leak")), tmp48, string);
+		_PUSH(&a, (tos3("-fsanitize=leak")), tmp50, string);
 	}
-	_PUSH(&a, (_STR("-o \"%.*s\"", v->pref->out_name.len, v->pref->out_name.str)), tmp49, string);
+	_PUSH(&a, (_STR("-o \"%.*s\"", v->pref->out_name.len, v->pref->out_name.str)), tmp51, string);
 	if (os__is_dir(v->pref->out_name)) {
 		v__builder__verror(_STR("\'%.*s\' is a directory", v->pref->out_name.len, v->pref->out_name.str));
 	}
 	if (v->pref->os == v__pref__OS_mac) {
-		_PUSH(&a, (tos3("-x objective-c")), tmp52, string);
+		_PUSH(&a, (tos3("-x objective-c")), tmp54, string);
 	}
-	_PUSH(&a, (_STR("\"%.*s\"", v->out_name_c.len, v->out_name_c.str)), tmp53, string);
+	_PUSH(&a, (_STR("\"%.*s\"", v->out_name_c.len, v->out_name_c.str)), tmp55, string);
 	if (v->pref->os == v__pref__OS_mac) {
-		_PUSH(&a, (tos3("-x none")), tmp55, string);
+		_PUSH(&a, (tos3("-x none")), tmp57, string);
 	}
 	if (v->pref->os == v__pref__OS_mac) {
-		_PUSH(&a, (tos3("-mmacosx-version-min=10.7")), tmp57, string);
+		_PUSH(&a, (tos3("-mmacosx-version-min=10.7")), tmp59, string);
 	}
 	if (v->pref->os == v__pref__OS_windows) {
-		_PUSH(&a, (tos3("-municode")), tmp59, string);
+		_PUSH(&a, (tos3("-municode")), tmp61, string);
 	}
 	array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(v);
-	_PUSH(&a, (array_v__cflag__CFlag_c_options_only_object_files(cflags)), tmp60, string);
-	_PUSH(&a, (array_v__cflag__CFlag_c_options_without_object_files(cflags)), tmp61, string);
-	_PUSH(&a, (libs), tmp62, string);
+	_PUSH(&a, (array_v__cflag__CFlag_c_options_only_object_files(cflags)), tmp62, string);
+	_PUSH(&a, (array_v__cflag__CFlag_c_options_without_object_files(cflags)), tmp63, string);
+	_PUSH(&a, (libs), tmp64, string);
 	if (v->pref->is_cache) {
 		array_string cached_files = new_array_from_c_array(2, 2, sizeof(string), (string[2]){
 		tos3("builtin.o"), tos3("math.o"), 
 });
 		// FOR IN array
-		array tmp64 = cached_files;
-		for (int tmp65 = 0; tmp65 < tmp64.len; tmp65++) {
-			string cfile = ((string*)tmp64.data)[tmp65];
+		array tmp66 = cached_files;
+		for (int tmp67 = 0; tmp67 < tmp66.len; tmp67++) {
+			string cfile = ((string*)tmp66.data)[tmp67];
 			string ofile = os__join_path(_const_v__pref__default_module_path, (varg_string){.len=3,.args={tos3("cache"), tos3("vlib"), cfile}});
 			if (os__exists(ofile)) {
-				_PUSH(&a, (ofile), tmp67, string);
+				_PUSH(&a, (ofile), tmp69, string);
 			}
 		}
 		if (!is_cc_tcc) {
 			
 #ifdef __linux__
 			// #if linux
-				_PUSH(&a, (tos3("-Xlinker -z -Xlinker muldefs")), tmp69, string);
+				_PUSH(&a, (tos3("-Xlinker -z -Xlinker muldefs")), tmp71, string);
 			
 #endif
 		}
 	}
 	if (!v->pref->is_bare && v->pref->build_mode != v__pref__BuildMode_build_module && (v->pref->os == v__pref__OS_linux || v->pref->os == v__pref__OS_freebsd || v->pref->os == v__pref__OS_openbsd || v->pref->os == v__pref__OS_netbsd || v->pref->os == v__pref__OS_dragonfly || v->pref->os == v__pref__OS_solaris || v->pref->os == v__pref__OS_haiku)) {
-		_PUSH(&a, (tos3("-lm -lpthread ")), tmp71, string);
+		_PUSH(&a, (tos3("-lm -lpthread ")), tmp73, string);
 		if (v->pref->os == v__pref__OS_linux) {
-			_PUSH(&a, (tos3(" -ldl ")), tmp73, string);
+			_PUSH(&a, (tos3(" -ldl ")), tmp75, string);
 		}
 		if (v->pref->os == v__pref__OS_freebsd) {
-			_PUSH(&a, (tos3(" -lexecinfo ")), tmp75, string);
+			_PUSH(&a, (tos3(" -lexecinfo ")), tmp77, string);
 		}
 	}
 	if (!v->pref->is_bare && v->pref->os == v__pref__OS_js && string_eq(os__user_os(), tos3("linux"))) {
-		_PUSH(&a, (tos3("-lm")), tmp77, string);
+		_PUSH(&a, (tos3("-lm")), tmp79, string);
 	}
 	string args = array_string_join(a, tos3(" "));
 	start:
@@ -13668,9 +13665,9 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 				array_string elines = v__builder__error_context_lines(/*opt*/(*(os__Result*)res.data).output, tos3("error:"), 1, 12);
 				println(tos3("=================="));
 				// FOR IN array
-				array tmp85 = elines;
-				for (int tmp86 = 0; tmp86 < tmp85.len; tmp86++) {
-					string eline = ((string*)tmp85.data)[tmp86];
+				array tmp87 = elines;
+				for (int tmp88 = 0; tmp88 < tmp87.len; tmp88++) {
+					string eline = ((string*)tmp87.data)[tmp88];
 					println(eline);
 				}
 				println(tos3("..."));
@@ -14005,7 +14002,7 @@ array_string v__builder__Builder_get_user_files(v__builder__Builder v) {
 	if (v.pref->is_live) {
 		_PUSH(&user_files, (os__join_path(preludes_path, (varg_string){.len=1,.args={tos3("live_main.v")}})), tmp2, string);
 	}
-	if (v.pref->is_solive) {
+	if (v.pref->is_live && v.pref->is_shared) {
 		_PUSH(&user_files, (os__join_path(preludes_path, (varg_string){.len=1,.args={tos3("live_shared.v")}})), tmp4, string);
 	}
 	if (v.pref->is_test) {
@@ -14120,19 +14117,6 @@ void v__builder__Builder_compile_js(v__builder__Builder* b) {
 		println(array_string_str(files));
 	}
 	v__builder__Builder_build_js(b, files, string_add(b->pref->out_name, tos3(".js")));
-}
-
-array_string v__builder__Builder_generate_hotcode_reloading_compiler_flags(v__builder__Builder* v) {
-	array_string a = __new_array(0, 0, sizeof(string));
-	if (v->pref->is_live || v->pref->is_so) {
-		if (v->pref->os == v__pref__OS_linux || string_eq(os__user_os(), tos3("linux"))) {
-			_PUSH(&a, (tos3("-rdynamic")), tmp3, string);
-		}
-		if (v->pref->os == v__pref__OS_mac || string_eq(os__user_os(), tos3("mac"))) {
-			_PUSH(&a, (tos3("-flat_namespace")), tmp5, string);
-		}
-	}
-	return a;
 }
 
 void v__builder__Builder_generate_hotcode_reloading_declarations(v__builder__Builder* v) {
@@ -14374,7 +14358,7 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 		_PUSH(&a, (tos3("/Zi")), tmp7, string);
 		_PUSH(&a, (tos3("/MDd")), tmp8, string);
 	}
-	if (v->pref->is_so) {
+	if (v->pref->is_shared) {
 		if (!string_ends_with(v->pref->out_name, tos3(".dll"))) {
 			v->pref->out_name = string_add(v->pref->out_name, tos3(".dll"));
 		}
@@ -16723,8 +16707,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.is_test = 0,
 		.is_script = 0,
 		.is_live = 0,
-		.is_solive = 0,
-		.is_so = 0,
+		.is_shared = 0,
 		.is_prof = 0,
 		.translated = 0,
 		.is_prod = 0,
@@ -19490,7 +19473,7 @@ void v__checker__Checker_check_files(v__checker__Checker* c, array_v__ast__File 
 	if (c->pref->build_mode == v__pref__BuildMode_build_module || c->pref->is_test) {
 		return;
 	}
-	if (c->pref->is_so) {
+	if (c->pref->is_shared) {
 		return;
 	}
 	if (!has_main_fn) {
@@ -21196,7 +21179,6 @@ string v__scanner__Scanner_ident_oct_number(v__scanner__Scanner* s) {
 string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 	bool has_wrong_digit = false;
 	byte first_wrong_digit = '\0';
-	bool call_method = false;
 	int start_pos = s->pos;
 	while (s->pos < s->text.len) {
 		byte c = string_at(s->text, s->pos);
@@ -21210,11 +21192,9 @@ string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 		}
 		s->pos++;
 	}
-	if (v__scanner__Scanner_expect(s, tos3(".."), s->pos)) {
-		string number = v__scanner__filter_num_sep(s->text.str, start_pos, s->pos);
-		s->pos--;
-		return number;
-	}
+	bool call_method = false;
+	bool is_range = false;
+	bool is_float_without_fraction = false;
 	if (s->pos < s->text.len && string_at(s->text, s->pos) == '.') {
 		s->pos++;
 		if (s->pos < s->text.len) {
@@ -21223,7 +21203,7 @@ string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 					byte c = string_at(s->text, s->pos);
 					if (!byte_is_digit(c)) {
 						if (!byte_is_letter(c) || (c == 'e' || c == 'E') || s->is_inside_string) {
-							if (c == '.' && s->pos + 1 < s->text.len && !byte_is_digit(string_at(s->text, s->pos + 1)) && string_at(s->text, s->pos + 1) != ')') {
+							if (c == '.' && s->pos + 1 < s->text.len && byte_is_letter(string_at(s->text, s->pos + 1))) {
 								call_method = true;
 							}
 							break;
@@ -21234,16 +21214,23 @@ string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 					}
 					s->pos++;
 				}
-			} else if (!((string_at(s->text, s->pos) == ')' || string_at(s->text, s->pos) == 'e' || string_at(s->text, s->pos) == 'E'))) {
+			} else if (string_at(s->text, s->pos) == '.') {
+				is_range = true;
+				s->pos--;
+			} else if ((string_at(s->text, s->pos) == 'e' || string_at(s->text, s->pos) == 'E')) {
+			} else if (byte_is_letter(string_at(s->text, s->pos))) {
 				call_method = true;
+				s->pos--;
+			} else if (string_at(s->text, s->pos) != ')') {
+				is_float_without_fraction = true;
 				s->pos--;
 			}
 		}
 	}
-	bool has_exponential_part = false;
-	if (v__scanner__Scanner_expect(s, tos3("e"), s->pos) || v__scanner__Scanner_expect(s, tos3("E"), s->pos)) {
+	bool has_exp = false;
+	if (s->pos < s->text.len && (string_at(s->text, s->pos) == 'e' || string_at(s->text, s->pos) == 'E')) {
+		has_exp = true;
 		s->pos++;
-		int exp_start_pos = s->pos;
 		if (s->pos < s->text.len && (string_at(s->text, s->pos) == '-' || string_at(s->text, s->pos) == '+')) {
 			s->pos++;
 		}
@@ -21251,7 +21238,7 @@ string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 			byte c = string_at(s->text, s->pos);
 			if (!byte_is_digit(c)) {
 				if (!byte_is_letter(c) || s->is_inside_string) {
-					if (c == '.' && s->pos + 1 < s->text.len && !byte_is_digit(string_at(s->text, s->pos + 1)) && string_at(s->text, s->pos + 1) != ')') {
+					if (c == '.' && s->pos + 1 < s->text.len && byte_is_letter(string_at(s->text, s->pos + 1))) {
 						call_method = true;
 					}
 					break;
@@ -21262,20 +21249,17 @@ string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 			}
 			s->pos++;
 		}
-		if (exp_start_pos == s->pos) {
-			v__scanner__Scanner_error(s, tos3("exponent has no digits"));
-		}
-		has_exponential_part = true;
 	}
-	if (s->pos < s->text.len && string_at(s->text, s->pos) == '.' && !call_method) {
-		if (has_exponential_part) {
+	if (has_wrong_digit) {
+		v__scanner__Scanner_error(s, _STR("this number has unsuitable digit `%.*s`", byte_str(first_wrong_digit).len, byte_str(first_wrong_digit).str));
+	} else if ((string_at(s->text, s->pos - 1) == 'e' || string_at(s->text, s->pos - 1) == 'E')) {
+		v__scanner__Scanner_error(s, tos3("exponent has no digits"));
+	} else if (s->pos < s->text.len && string_at(s->text, s->pos) == '.' && !is_range && !is_float_without_fraction && !call_method) {
+		if (has_exp) {
 			v__scanner__Scanner_error(s, tos3("exponential part should be integer"));
 		} else {
 			v__scanner__Scanner_error(s, tos3("too many decimal points in number"));
 		}
-	}
-	if (has_wrong_digit) {
-		v__scanner__Scanner_error(s, _STR("this number has unsuitable digit `%.*s`", byte_str(first_wrong_digit).len, byte_str(first_wrong_digit).str));
 	}
 	string number = v__scanner__filter_num_sep(s->text.str, start_pos, s->pos);
 	s->pos--;
