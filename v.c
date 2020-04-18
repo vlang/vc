@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "eb923b4"
+#define V_COMMIT_HASH "3cc7009"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5374899"
+#define V_COMMIT_HASH "eb923b4"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "eb923b4"
+#define V_CURRENT_COMMIT_HASH "3cc7009"
 #endif
 
 
@@ -126,7 +126,6 @@ typedef enum {
 typedef struct v__pref__Preferences v__pref__Preferences;
 typedef struct v__util__EManager v__util__EManager;
 typedef struct v__builder__Builder v__builder__Builder;
-typedef struct v__builder__CFlag v__builder__CFlag;
 typedef struct v__builder__MsvcResult v__builder__MsvcResult;
 typedef struct v__builder__WindowsKit v__builder__WindowsKit;
 typedef struct v__builder__VsInstallation v__builder__VsInstallation;
@@ -217,6 +216,7 @@ typedef struct v__ast__Comment v__ast__Comment;
 typedef struct v__ast__ConcatExpr v__ast__ConcatExpr;
 typedef struct v__ast__None v__ast__None;
 typedef struct v__ast__Scope v__ast__Scope;
+typedef struct v__cflag__CFlag v__cflag__CFlag;
 typedef struct v__parser__Parser v__parser__Parser;
 typedef struct v__token__Position v__token__Position;
 typedef struct v__token__Token v__token__Token;
@@ -883,7 +883,7 @@ typedef array array_v__table__Kind;
 typedef array array_v__table__Field;
 typedef array array_v__table__TypeSymbol;
 typedef map map_string_v__table__Fn;
-typedef array array_v__builder__CFlag;
+typedef array array_v__cflag__CFlag;
 typedef array array_v__table__Arg;
 typedef array array_v__ast__Stmt;
 typedef bool (*v__doc__FilterFn)(v__ast__FnDecl);
@@ -938,7 +938,7 @@ int typ;
 void* obj;
 int typ;
 } v__ast__Expr;
-struct v__builder__CFlag {
+struct v__cflag__CFlag {
 	string mod;
 	string os;
 	string name;
@@ -1219,7 +1219,7 @@ struct v__table__Table {
 	map_string_v__table__Fn fns;
 	array_string imports;
 	array_string modules;
-	array_v__builder__CFlag cflags;
+	array_v__cflag__CFlag cflags;
 };
 
 struct v__table__Field {
@@ -2784,8 +2784,8 @@ bool v__table__TypeSymbol_is_number(v__table__TypeSymbol* t);
 string v__table__Kind_str(v__table__Kind k);
 string array_v__table__Kind_str(array_v__table__Kind kinds);
 string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t);
-bool v__table__Table_has_cflag(v__table__Table* table, v__builder__CFlag cflag);
-Option_bool v__table__Table_parse_cflag(v__table__Table* table, string cflag, string mod, array_string ctimedefines);
+bool v__table__Table_has_cflag(v__table__Table* table, v__cflag__CFlag flag);
+Option_bool v__table__Table_parse_cflag(v__table__Table* table, string cflg, string mod, array_string ctimedefines);
 v__table__Table* v__table__new_table();
 string v__table__Fn_signature(v__table__Fn* f);
 Option_v__table__Fn v__table__Table_find_fn(v__table__Table* t, string name);
@@ -2889,19 +2889,11 @@ bool v__builder__Builder_no_cc_installed(v__builder__Builder* v);
 void v__builder__Builder_cc(v__builder__Builder* v);
 void v__builder__Builder_cc_windows_cross(v__builder__Builder* c);
 void v__builder__Builder_build_thirdparty_obj_files(v__builder__Builder* c);
-void v__builder__Builder_build_thirdparty_obj_file(v__builder__Builder* v, string path, array_v__builder__CFlag moduleflags);
+void v__builder__Builder_build_thirdparty_obj_file(v__builder__Builder* v, string path, array_v__cflag__CFlag moduleflags);
 string v__builder__missing_compiler_info();
 array_string v__builder__error_context_lines(string text, string keyword, int before, int after);
-string v__builder__CFlag_str(v__builder__CFlag* c);
-array_v__builder__CFlag v__builder__Builder_get_os_cflags(v__builder__Builder* v);
-array_v__builder__CFlag v__builder__Builder_get_rest_of_module_cflags(v__builder__Builder* v, v__builder__CFlag* c);
-string v__builder__CFlag_format(v__builder__CFlag* cf);
-string array_v__builder__CFlag_c_options_before_target_msvc(array_v__builder__CFlag cflags);
-string array_v__builder__CFlag_c_options_after_target_msvc(array_v__builder__CFlag cflags);
-string array_v__builder__CFlag_c_options_before_target(array_v__builder__CFlag cflags);
-string array_v__builder__CFlag_c_options_after_target(array_v__builder__CFlag cflags);
-string array_v__builder__CFlag_c_options_without_object_files(array_v__builder__CFlag cflags);
-string array_v__builder__CFlag_c_options_only_object_files(array_v__builder__CFlag cflags);
+array_v__cflag__CFlag v__builder__Builder_get_os_cflags(v__builder__Builder* v);
+array_v__cflag__CFlag v__builder__Builder_get_rest_of_module_cflags(v__builder__Builder* v, v__cflag__CFlag* c);
 string v__builder__get_vtmp_folder();
 string v__builder__get_vtmp_filename(string base_file_name, string postfix);
 void v__builder__compile(string command, v__pref__Preferences* pref);
@@ -2931,8 +2923,8 @@ Option_v__builder__WindowsKit v__builder__find_windows_kit_root(string host_arch
 Option_v__builder__VsInstallation v__builder__find_vs(string vswhere_dir, string host_arch);
 Option_v__builder__MsvcResult v__builder__find_msvc();
 void v__builder__Builder_cc_msvc(v__builder__Builder* v);
-void v__builder__build_thirdparty_obj_file_with_msvc(string path, array_v__builder__CFlag moduleflags);
-v__builder__MsvcStringFlags array_v__builder__CFlag_msvc_string_flags(array_v__builder__CFlag cflags);
+void v__builder__build_thirdparty_obj_file_with_msvc(string path, array_v__cflag__CFlag moduleflags);
+v__builder__MsvcStringFlags array_v__cflag__CFlag_msvc_string_flags(array_v__cflag__CFlag cflags);
 void v__builder__Builder_build_x64(v__builder__Builder* b, array_string v_files, string out_file);
 void v__builder__Builder_compile_x64(v__builder__Builder* b);
 u32 _const_math__bits__de_bruijn32; // inited later
@@ -3014,6 +3006,14 @@ string v__ast__Expr_str(v__ast__Expr x);
 string v__ast__CallArg_str(v__ast__CallArg a);
 string v__ast__args2str(array_v__ast__CallArg args);
 string v__ast__Stmt_str(v__ast__Stmt node);
+string v__cflag__CFlag_str(v__cflag__CFlag* c);
+string v__cflag__CFlag_format(v__cflag__CFlag* cf);
+string array_v__cflag__CFlag_c_options_before_target_msvc(array_v__cflag__CFlag cflags);
+string array_v__cflag__CFlag_c_options_after_target_msvc(array_v__cflag__CFlag cflags);
+string array_v__cflag__CFlag_c_options_before_target(array_v__cflag__CFlag cflags);
+string array_v__cflag__CFlag_c_options_after_target(array_v__cflag__CFlag cflags);
+string array_v__cflag__CFlag_c_options_without_object_files(array_v__cflag__CFlag cflags);
+string array_v__cflag__CFlag_c_options_only_object_files(array_v__cflag__CFlag cflags);
 v__ast__Stmt v__parser__Parser_assign_stmt(v__parser__Parser* p);
 v__ast__AssignExpr v__parser__Parser_assign_expr(v__parser__Parser* p, v__ast__Expr left);
 array_v__ast__Ident v__parser__Parser_parse_assign_lhs(v__parser__Parser* p);
@@ -11370,23 +11370,23 @@ string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 	return res;
 }
 
-bool v__table__Table_has_cflag(v__table__Table* table, v__builder__CFlag cflag) {
+bool v__table__Table_has_cflag(v__table__Table* table, v__cflag__CFlag flag) {
 	// FOR IN array
 	array tmp1 = table->cflags;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-		v__builder__CFlag cf = ((v__builder__CFlag*)tmp1.data)[tmp2];
-		if (string_eq(cf.os, cflag.os) && string_eq(cf.name, cflag.name) && string_eq(cf.value, cflag.value)) {
+		v__cflag__CFlag cf = ((v__cflag__CFlag*)tmp1.data)[tmp2];
+		if (string_eq(cf.os, flag.os) && string_eq(cf.name, flag.name) && string_eq(cf.value, flag.value)) {
 			return true;
 		}
 	}
 	return false;
 }
 
-Option_bool v__table__Table_parse_cflag(v__table__Table* table, string cflag, string mod, array_string ctimedefines) {
+Option_bool v__table__Table_parse_cflag(v__table__Table* table, string cflg, string mod, array_string ctimedefines) {
 	array_string allowed_flags = new_array_from_c_array(8, 8, sizeof(string), (string[8]){
 		tos3("framework"), tos3("library"), tos3("Wa"), tos3("Wl"), tos3("Wp"), tos3("I"), tos3("l"), tos3("L"), 
 });
-	string flag_orig = string_trim_space(cflag);
+	string flag_orig = string_trim_space(cflg);
 	string flag = flag_orig;
 	if (string_eq(flag, tos3(""))) {
 		return /*:)bool*/opt_ok(&(bool[]) { true }, sizeof(bool));
@@ -11464,14 +11464,14 @@ Option_bool v__table__Table_parse_cflag(v__table__Table* table, string cflag, st
 			string hint = (string_eq(name, tos3("-l")) ?  ( tos3("library name") )  :  ( tos3("path") ) );
 			return v_error(_STR("bad #flag `%.*s`: missing %.*s after `%.*s`", flag_orig.len, flag_orig.str, hint.len, hint.str, name.len, name.str));
 		}
-		v__builder__CFlag cf = (v__builder__CFlag){
+		v__cflag__CFlag cf = (v__cflag__CFlag){
 			.mod = mod,
 			.os = fos,
 			.name = name,
 			.value = value,
 		};
 		if (!v__table__Table_has_cflag(table, cf)) {
-			_PUSH(&table->cflags, (cf), tmp18, v__builder__CFlag);
+			_PUSH(&table->cflags, (cf), tmp18, v__cflag__CFlag);
 		}
 		if (/*opt*/(*(int*)index.data) == -1) {
 			break;
@@ -11486,7 +11486,7 @@ v__table__Table* v__table__new_table() {
 		.fns = new_map_1(sizeof(v__table__Fn)),
 		.imports = new_array(0, 1, sizeof(string)),
 		.modules = new_array(0, 1, sizeof(string)),
-		.cflags = new_array(0, 1, sizeof(v__builder__CFlag)),
+		.cflags = new_array(0, 1, sizeof(v__cflag__CFlag)),
 	}, sizeof(v__table__Table));
 	v__table__Table_register_builtin_type_symbols(t);
 	return t;
@@ -13313,9 +13313,9 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 	if (v->pref->os == v__pref__OS_windows) {
 		_PUSH(&a, (tos3("-municode")), tmp59, string);
 	}
-	array_v__builder__CFlag cflags = v__builder__Builder_get_os_cflags(v);
-	_PUSH(&a, (array_v__builder__CFlag_c_options_only_object_files(cflags)), tmp60, string);
-	_PUSH(&a, (array_v__builder__CFlag_c_options_without_object_files(cflags)), tmp61, string);
+	array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(v);
+	_PUSH(&a, (array_v__cflag__CFlag_c_options_only_object_files(cflags)), tmp60, string);
+	_PUSH(&a, (array_v__cflag__CFlag_c_options_without_object_files(cflags)), tmp61, string);
 	_PUSH(&a, (libs), tmp62, string);
 	if (v->pref->is_cache) {
 		array_string cached_files = new_array_from_c_array(2, 2, sizeof(string), (string[2]){
@@ -13462,9 +13462,9 @@ void v__builder__Builder_build_thirdparty_obj_files(v__builder__Builder* c) {
 	// FOR IN array
 	array tmp1 = v__builder__Builder_get_os_cflags(c);
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-		v__builder__CFlag flag = ((v__builder__CFlag*)tmp1.data)[tmp2];
+		v__cflag__CFlag flag = ((v__cflag__CFlag*)tmp1.data)[tmp2];
 		if (string_ends_with(flag.value, tos3(".o"))) {
-			array_v__builder__CFlag rest_of_module_flags = v__builder__Builder_get_rest_of_module_cflags(c, &/*qq*/flag);
+			array_v__cflag__CFlag rest_of_module_flags = v__builder__Builder_get_rest_of_module_cflags(c, &/*qq*/flag);
 			if (string_eq(c->pref->ccompiler, tos3("msvc")) || v__builder__Builder_no_cc_installed(c)) {
 				v__builder__build_thirdparty_obj_file_with_msvc(flag.value, rest_of_module_flags);
 			} else {
@@ -13474,7 +13474,7 @@ void v__builder__Builder_build_thirdparty_obj_files(v__builder__Builder* c) {
 	}
 }
 
-void v__builder__Builder_build_thirdparty_obj_file(v__builder__Builder* v, string path, array_v__builder__CFlag moduleflags) {
+void v__builder__Builder_build_thirdparty_obj_file(v__builder__Builder* v, string path, array_v__cflag__CFlag moduleflags) {
 	string obj_path = os__real_path(path);
 	if (os__exists(obj_path)) {
 		return;
@@ -13499,8 +13499,8 @@ void v__builder__Builder_build_thirdparty_obj_file(v__builder__Builder* v, strin
 			cfiles = string_add(cfiles, string_add(string_add(tos3("\""), os__real_path(string_add(string_add(parent, _const_os__path_separator), file))), tos3("\" ")));
 		}
 	}
-	string btarget = array_v__builder__CFlag_c_options_before_target(moduleflags);
-	string atarget = array_v__builder__CFlag_c_options_after_target(moduleflags);
+	string btarget = array_v__cflag__CFlag_c_options_before_target(moduleflags);
+	string atarget = array_v__cflag__CFlag_c_options_after_target(moduleflags);
 	string cmd = _STR("%.*s %.*s %.*s -c -o \"%.*s\" %.*s %.*s ", v->pref->ccompiler.len, v->pref->ccompiler.str, v->pref->third_party_option.len, v->pref->third_party_option.str, btarget.len, btarget.str, obj_path.len, obj_path.str, cfiles.len, cfiles.str, atarget.len, atarget.str);
 	Option_os__Result res = os__exec(cmd);
 	if (!res.ok) {
@@ -13562,12 +13562,8 @@ array_string v__builder__error_context_lines(string text, string keyword, int be
 	return array_slice(lines, idx_s, idx_e);
 }
 
-string v__builder__CFlag_str(v__builder__CFlag* c) {
-	return _STR("CFlag{ name: \"%.*s\" value: \"%.*s\" mod: \"%.*s\" os: \"%.*s\" }", c->name.len, c->name.str, c->value.len, c->value.str, c->mod.len, c->mod.str, c->os.len, c->os.str);
-}
-
-array_v__builder__CFlag v__builder__Builder_get_os_cflags(v__builder__Builder* v) {
-	array_v__builder__CFlag flags = __new_array(0, 0, sizeof(v__builder__CFlag));
+array_v__cflag__CFlag v__builder__Builder_get_os_cflags(v__builder__Builder* v) {
+	array_v__cflag__CFlag flags = __new_array(0, 0, sizeof(v__cflag__CFlag));
 	array_string ctimedefines = __new_array(0, 0, sizeof(string));
 	if (v->pref->compile_defines.len > 0) {
 		_PUSH_MANY(&ctimedefines, (v->pref->compile_defines), tmp2, array_string);
@@ -13575,104 +13571,32 @@ array_v__builder__CFlag v__builder__Builder_get_os_cflags(v__builder__Builder* v
 	// FOR IN array
 	array tmp3 = v->table->cflags;
 	for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
-		v__builder__CFlag flag = ((v__builder__CFlag*)tmp3.data)[tmp4];
+		v__cflag__CFlag flag = ((v__cflag__CFlag*)tmp3.data)[tmp4];
 		if (string_eq(flag.os, tos3("")) || (string_eq(flag.os, tos3("linux")) && v->pref->os == v__pref__OS_linux) || (string_eq(flag.os, tos3("darwin")) && v->pref->os == v__pref__OS_mac) || (string_eq(flag.os, tos3("freebsd")) && v->pref->os == v__pref__OS_freebsd) || (string_eq(flag.os, tos3("windows")) && v->pref->os == v__pref__OS_windows) || (string_eq(flag.os, tos3("mingw")) && v->pref->os == v__pref__OS_windows && string_ne(v->pref->ccompiler, tos3("msvc"))) || (string_eq(flag.os, tos3("solaris")) && v->pref->os == v__pref__OS_solaris)) {
-			_PUSH(&flags, (flag), tmp6, v__builder__CFlag);
+			_PUSH(&flags, (flag), tmp6, v__cflag__CFlag);
 		}
 		if (_IN(string, flag.os, ctimedefines)) {
-			_PUSH(&flags, (flag), tmp8, v__builder__CFlag);
+			_PUSH(&flags, (flag), tmp8, v__cflag__CFlag);
 		}
 	}
 	return flags;
 }
 
-array_v__builder__CFlag v__builder__Builder_get_rest_of_module_cflags(v__builder__Builder* v, v__builder__CFlag* c) {
-	array_v__builder__CFlag flags = __new_array(0, 0, sizeof(v__builder__CFlag));
-	array_v__builder__CFlag cflags = v__builder__Builder_get_os_cflags(v);
+array_v__cflag__CFlag v__builder__Builder_get_rest_of_module_cflags(v__builder__Builder* v, v__cflag__CFlag* c) {
+	array_v__cflag__CFlag flags = __new_array(0, 0, sizeof(v__cflag__CFlag));
+	array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(v);
 	// FOR IN array
 	array tmp1 = cflags;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-		v__builder__CFlag flag = ((v__builder__CFlag*)tmp1.data)[tmp2];
+		v__cflag__CFlag flag = ((v__cflag__CFlag*)tmp1.data)[tmp2];
 		if (string_eq(c->mod, flag.mod)) {
 			if (string_eq(c->name, flag.name) && string_eq(c->value, flag.value) && string_eq(c->os, flag.os)) {
 				continue;
 			}
-			_PUSH(&flags, (flag), tmp5, v__builder__CFlag);
+			_PUSH(&flags, (flag), tmp5, v__cflag__CFlag);
 		}
 	}
 	return flags;
-}
-
-string v__builder__CFlag_format(v__builder__CFlag* cf) {
-	string value = cf->value;
-	if ((string_eq(cf->name, tos3("-l")) || string_eq(cf->name, tos3("-Wa")) || string_eq(cf->name, tos3("-Wl")) || string_eq(cf->name, tos3("-Wp"))) && value.len > 0) {
-		return string_trim_space(_STR("%.*s%.*s", cf->name.len, cf->name.str, value.len, value.str));
-	}
-	if (string_eq(cf->name, tos3("-I")) || string_eq(cf->name, tos3("-L")) || string_ends_with(value, tos3(".o"))) {
-		value = string_add(string_add(tos3("\""), os__real_path(value)), tos3("\""));
-	}
-	return string_trim_space(_STR("%.*s %.*s", cf->name.len, cf->name.str, value.len, value.str));
-}
-
-string array_v__builder__CFlag_c_options_before_target_msvc(array_v__builder__CFlag cflags) {
-	return tos3("");
-}
-
-string array_v__builder__CFlag_c_options_after_target_msvc(array_v__builder__CFlag cflags) {
-	return tos3("");
-}
-
-string array_v__builder__CFlag_c_options_before_target(array_v__builder__CFlag cflags) {
-	array_string args = __new_array(0, 0, sizeof(string));
-	// FOR IN array
-	array tmp1 = cflags;
-	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-		v__builder__CFlag flag = ((v__builder__CFlag*)tmp1.data)[tmp2];
-		if (string_ne(flag.name, tos3("-l"))) {
-			_PUSH(&args, (v__builder__CFlag_format(&flag)), tmp4, string);
-		}
-	}
-	return array_string_join(args, tos3(" "));
-}
-
-string array_v__builder__CFlag_c_options_after_target(array_v__builder__CFlag cflags) {
-	array_string args = __new_array(0, 0, sizeof(string));
-	// FOR IN array
-	array tmp1 = cflags;
-	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-		v__builder__CFlag flag = ((v__builder__CFlag*)tmp1.data)[tmp2];
-		if (string_eq(flag.name, tos3("-l"))) {
-			_PUSH(&args, (v__builder__CFlag_format(&flag)), tmp4, string);
-		}
-	}
-	return array_string_join(args, tos3(" "));
-}
-
-string array_v__builder__CFlag_c_options_without_object_files(array_v__builder__CFlag cflags) {
-	array_string args = __new_array(0, 0, sizeof(string));
-	// FOR IN array
-	array tmp1 = cflags;
-	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-		v__builder__CFlag flag = ((v__builder__CFlag*)tmp1.data)[tmp2];
-		if (string_ends_with(flag.value, tos3(".o")) || string_ends_with(flag.value, tos3(".obj"))) {
-			continue;
-		}
-		_PUSH(&args, (v__builder__CFlag_format(&flag)), tmp4, string);
-	}
-	return array_string_join(args, tos3(" "));
-}
-
-string array_v__builder__CFlag_c_options_only_object_files(array_v__builder__CFlag cflags) {
-	array_string args = __new_array(0, 0, sizeof(string));
-	// FOR IN array
-	array tmp1 = cflags;
-	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-		v__builder__CFlag flag = ((v__builder__CFlag*)tmp1.data)[tmp2];
-		if (string_ends_with(flag.value, tos3(".o")) || string_ends_with(flag.value, tos3(".obj"))) {
-			_PUSH(&args, (v__builder__CFlag_format(&flag)), tmp4, string);
-		}
-	}
-	return array_string_join(args, tos3(" "));
 }
 
 string v__builder__get_vtmp_folder() {
@@ -14197,7 +14121,7 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 	array_string real_libs = new_array_from_c_array(3, 3, sizeof(string), (string[3]){
 		tos3("kernel32.lib"), tos3("user32.lib"), tos3("advapi32.lib"), 
 });
-	v__builder__MsvcStringFlags sflags = array_v__builder__CFlag_msvc_string_flags(v__builder__Builder_get_os_cflags(v));
+	v__builder__MsvcStringFlags sflags = array_v__cflag__CFlag_msvc_string_flags(v__builder__Builder_get_os_cflags(v));
 	_PUSH_MANY(&real_libs, (sflags.real_libs), tmp16, array_string);
 	array_string inc_paths = sflags.inc_paths;
 	array_string lib_paths = sflags.lib_paths;
@@ -14248,7 +14172,7 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 	os__rm(out_name_obj);
 }
 
-void v__builder__build_thirdparty_obj_file_with_msvc(string path, array_v__builder__CFlag moduleflags) {
+void v__builder__build_thirdparty_obj_file_with_msvc(string path, array_v__cflag__CFlag moduleflags) {
 	Option_v__builder__MsvcResult msvc = v__builder__find_msvc();
 	if (!msvc.ok) {
 		string err = msvc.v_error;
@@ -14285,8 +14209,8 @@ void v__builder__build_thirdparty_obj_file_with_msvc(string path, array_v__build
 		}
 	}
 	string include_string = _STR("-I \"%.*s\" -I \"%.*s\" -I \"%.*s\" -I \"%.*s\"", /*opt*/(*(v__builder__MsvcResult*)msvc.data).ucrt_include_path.len, /*opt*/(*(v__builder__MsvcResult*)msvc.data).ucrt_include_path.str, /*opt*/(*(v__builder__MsvcResult*)msvc.data).vs_include_path.len, /*opt*/(*(v__builder__MsvcResult*)msvc.data).vs_include_path.str, /*opt*/(*(v__builder__MsvcResult*)msvc.data).um_include_path.len, /*opt*/(*(v__builder__MsvcResult*)msvc.data).um_include_path.str, /*opt*/(*(v__builder__MsvcResult*)msvc.data).shared_include_path.len, /*opt*/(*(v__builder__MsvcResult*)msvc.data).shared_include_path.str);
-	string btarget = array_v__builder__CFlag_c_options_before_target_msvc(moduleflags);
-	string atarget = array_v__builder__CFlag_c_options_after_target_msvc(moduleflags);
+	string btarget = array_v__cflag__CFlag_c_options_before_target_msvc(moduleflags);
+	string atarget = array_v__cflag__CFlag_c_options_after_target_msvc(moduleflags);
 	string cmd = _STR("\"%.*s\" /volatile:ms /Zi /DNDEBUG %.*s /c %.*s %.*s %.*s /Fo\"%.*s\"", /*opt*/(*(v__builder__MsvcResult*)msvc.data).full_cl_exe_path.len, /*opt*/(*(v__builder__MsvcResult*)msvc.data).full_cl_exe_path.str, include_string.len, include_string.str, btarget.len, btarget.str, cfiles.len, cfiles.str, atarget.len, atarget.str, obj_path.len, obj_path.str);
 	println(_STR("thirdparty cmd line: %.*s", cmd.len, cmd.str));
 	Option_os__Result res = os__exec(cmd);
@@ -14307,7 +14231,7 @@ void v__builder__build_thirdparty_obj_file_with_msvc(string path, array_v__build
 	println(/*opt*/(*(os__Result*)res.data).output);
 }
 
-v__builder__MsvcStringFlags array_v__builder__CFlag_msvc_string_flags(array_v__builder__CFlag cflags) {
+v__builder__MsvcStringFlags array_v__cflag__CFlag_msvc_string_flags(array_v__cflag__CFlag cflags) {
 	array_string real_libs = __new_array(0, 0, sizeof(string));
 	array_string inc_paths = __new_array(0, 0, sizeof(string));
 	array_string lib_paths = __new_array(0, 0, sizeof(string));
@@ -14315,7 +14239,7 @@ v__builder__MsvcStringFlags array_v__builder__CFlag_msvc_string_flags(array_v__b
 	// FOR IN array
 	array tmp1 = cflags;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-		v__builder__CFlag flag = ((v__builder__CFlag*)tmp1.data)[tmp2];
+		v__cflag__CFlag flag = ((v__cflag__CFlag*)tmp1.data)[tmp2];
 		if (string_eq(flag.name, tos3("-l"))) {
 			if (string_ends_with(flag.value, tos3(".dll"))) {
 				v__builder__verror(_STR("MSVC cannot link against a dll (`#flag -l %.*s`)", flag.value.len, flag.value.str));
@@ -14323,7 +14247,7 @@ v__builder__MsvcStringFlags array_v__builder__CFlag_msvc_string_flags(array_v__b
 			string lib_lib = string_add(flag.value, tos3(".lib"));
 			_PUSH(&real_libs, (lib_lib), tmp5, string);
 		} else if (string_eq(flag.name, tos3("-I"))) {
-			_PUSH(&inc_paths, (v__builder__CFlag_format(&flag)), tmp6, string);
+			_PUSH(&inc_paths, (v__cflag__CFlag_format(&flag)), tmp6, string);
 		} else if (string_eq(flag.name, tos3("-L"))) {
 			_PUSH(&lib_paths, (flag.value), tmp7, string);
 			_PUSH(&lib_paths, (string_add(string_add(flag.value, _const_os__path_separator), tos3("msvc"))), tmp8, string);
@@ -15135,6 +15059,82 @@ string v__ast__Stmt_str(v__ast__Stmt node) {
 	}else {
 		return _STR("[unhandled stmt str type: %.*s ]", tos3( /* v.ast.Stmt */ v_typeof_sumtype_105( (node).typ )).len, tos3( /* v.ast.Stmt */ v_typeof_sumtype_105( (node).typ )).str);
 	};
+}
+
+string v__cflag__CFlag_str(v__cflag__CFlag* c) {
+	return _STR("CFlag{ name: \"%.*s\" value: \"%.*s\" mod: \"%.*s\" os: \"%.*s\" }", c->name.len, c->name.str, c->value.len, c->value.str, c->mod.len, c->mod.str, c->os.len, c->os.str);
+}
+
+string v__cflag__CFlag_format(v__cflag__CFlag* cf) {
+	string value = cf->value;
+	if ((string_eq(cf->name, tos3("-l")) || string_eq(cf->name, tos3("-Wa")) || string_eq(cf->name, tos3("-Wl")) || string_eq(cf->name, tos3("-Wp"))) && value.len > 0) {
+		return string_trim_space(_STR("%.*s%.*s", cf->name.len, cf->name.str, value.len, value.str));
+	}
+	if (string_eq(cf->name, tos3("-I")) || string_eq(cf->name, tos3("-L")) || string_ends_with(value, tos3(".o"))) {
+		value = string_add(string_add(tos3("\""), os__real_path(value)), tos3("\""));
+	}
+	return string_trim_space(_STR("%.*s %.*s", cf->name.len, cf->name.str, value.len, value.str));
+}
+
+string array_v__cflag__CFlag_c_options_before_target_msvc(array_v__cflag__CFlag cflags) {
+	return tos3("");
+}
+
+string array_v__cflag__CFlag_c_options_after_target_msvc(array_v__cflag__CFlag cflags) {
+	return tos3("");
+}
+
+string array_v__cflag__CFlag_c_options_before_target(array_v__cflag__CFlag cflags) {
+	array_string args = __new_array(0, 0, sizeof(string));
+	// FOR IN array
+	array tmp1 = cflags;
+	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+		v__cflag__CFlag flag = ((v__cflag__CFlag*)tmp1.data)[tmp2];
+		if (string_ne(flag.name, tos3("-l"))) {
+			_PUSH(&args, (v__cflag__CFlag_format(&flag)), tmp4, string);
+		}
+	}
+	return array_string_join(args, tos3(" "));
+}
+
+string array_v__cflag__CFlag_c_options_after_target(array_v__cflag__CFlag cflags) {
+	array_string args = __new_array(0, 0, sizeof(string));
+	// FOR IN array
+	array tmp1 = cflags;
+	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+		v__cflag__CFlag flag = ((v__cflag__CFlag*)tmp1.data)[tmp2];
+		if (string_eq(flag.name, tos3("-l"))) {
+			_PUSH(&args, (v__cflag__CFlag_format(&flag)), tmp4, string);
+		}
+	}
+	return array_string_join(args, tos3(" "));
+}
+
+string array_v__cflag__CFlag_c_options_without_object_files(array_v__cflag__CFlag cflags) {
+	array_string args = __new_array(0, 0, sizeof(string));
+	// FOR IN array
+	array tmp1 = cflags;
+	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+		v__cflag__CFlag flag = ((v__cflag__CFlag*)tmp1.data)[tmp2];
+		if (string_ends_with(flag.value, tos3(".o")) || string_ends_with(flag.value, tos3(".obj"))) {
+			continue;
+		}
+		_PUSH(&args, (v__cflag__CFlag_format(&flag)), tmp4, string);
+	}
+	return array_string_join(args, tos3(" "));
+}
+
+string array_v__cflag__CFlag_c_options_only_object_files(array_v__cflag__CFlag cflags) {
+	array_string args = __new_array(0, 0, sizeof(string));
+	// FOR IN array
+	array tmp1 = cflags;
+	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+		v__cflag__CFlag flag = ((v__cflag__CFlag*)tmp1.data)[tmp2];
+		if (string_ends_with(flag.value, tos3(".o")) || string_ends_with(flag.value, tos3(".obj"))) {
+			_PUSH(&args, (v__cflag__CFlag_format(&flag)), tmp4, string);
+		}
+	}
+	return array_string_join(args, tos3(" "));
 }
 
 v__ast__Stmt v__parser__Parser_assign_stmt(v__parser__Parser* p) {
@@ -24618,7 +24618,7 @@ bool v__gen__Gen_is_gui_app(v__gen__Gen* g) {
 		// FOR IN array
 		array tmp1 = g->table->cflags;
 		for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-			v__builder__CFlag cf = ((v__builder__CFlag*)tmp1.data)[tmp2];
+			v__cflag__CFlag cf = ((v__cflag__CFlag*)tmp1.data)[tmp2];
 			if (string_eq(cf.value, tos3("gdi32"))) {
 				return true;
 			}
