@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5374899"
+#define V_COMMIT_HASH "eb923b4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f2be3d7"
+#define V_COMMIT_HASH "5374899"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5374899"
+#define V_CURRENT_COMMIT_HASH "eb923b4"
 #endif
 
 
@@ -1565,6 +1565,7 @@ struct benchmark__Benchmark {
 	bool verbose;
 	int nexpected_steps;
 	int cstep;
+	bool no_cstep;
 	string bok;
 	string bfail;
 };
@@ -3751,6 +3752,7 @@ string _const_benchmark__BFAIL; // inited later
 string _const_benchmark__BSKIP; // inited later
 string _const_benchmark__BSPENT; // inited later
 benchmark__Benchmark benchmark__new_benchmark();
+benchmark__Benchmark benchmark__new_benchmark_no_cstep();
 benchmark__Benchmark* benchmark__new_benchmark_pointer();
 void benchmark__Benchmark_set_total_expected_steps(benchmark__Benchmark* b, int n);
 void benchmark__Benchmark_stop(benchmark__Benchmark* b);
@@ -26626,6 +26628,26 @@ benchmark__Benchmark benchmark__new_benchmark() {
 		.nskip = 0,
 		.nexpected_steps = 0,
 		.cstep = 0,
+		.no_cstep = 0,
+		.bok = tos3(""),
+		.bfail = tos3(""),
+	};
+}
+
+benchmark__Benchmark benchmark__new_benchmark_no_cstep() {
+	return (benchmark__Benchmark){
+		.bench_start_time = benchmark__now(),
+		.verbose = true,
+		.no_cstep = true,
+		.bench_end_time = 0,
+		.step_start_time = 0,
+		.step_end_time = 0,
+		.ntotal = 0,
+		.nok = 0,
+		.nfail = 0,
+		.nskip = 0,
+		.nexpected_steps = 0,
+		.cstep = 0,
 		.bok = tos3(""),
 		.bfail = tos3(""),
 	};
@@ -26643,6 +26665,7 @@ benchmark__Benchmark* benchmark__new_benchmark_pointer() {
 		.nskip = 0,
 		.nexpected_steps = 0,
 		.cstep = 0,
+		.no_cstep = 0,
 		.bok = tos3(""),
 		.bfail = tos3(""),
 	}, sizeof(benchmark__Benchmark));
@@ -26658,7 +26681,9 @@ void benchmark__Benchmark_stop(benchmark__Benchmark* b) {
 
 void benchmark__Benchmark_step(benchmark__Benchmark* b) {
 	b->step_start_time = benchmark__now();
-	b->cstep++;
+	if (!b->no_cstep) {
+		b->cstep++;
+	}
 }
 
 void benchmark__Benchmark_fail(benchmark__Benchmark* b) {
@@ -26714,13 +26739,13 @@ string benchmark__Benchmark_step_message_with_label(benchmark__Benchmark* b, str
 	if (b->nexpected_steps > 0) {
 		string sprogress = tos3("");
 		if (b->nexpected_steps < 10) {
-			sprogress = _STR("%1d/%1d", b->cstep, b->nexpected_steps);
+			sprogress = (b->no_cstep ?  ( _STR("TMP1/%1d", b->nexpected_steps) )  :  ( _STR("%1d/%1d", b->cstep, b->nexpected_steps) ) );
 		}
 		if (b->nexpected_steps >= 10 && b->nexpected_steps < 100) {
-			sprogress = _STR("%2d/%2d", b->cstep, b->nexpected_steps);
+			sprogress = (b->no_cstep ?  ( _STR("TMP2/%2d", b->nexpected_steps) )  :  ( _STR("%2d/%2d", b->cstep, b->nexpected_steps) ) );
 		}
 		if (b->nexpected_steps >= 100 && b->nexpected_steps < 1000) {
-			sprogress = _STR("%3d/%3d", b->cstep, b->nexpected_steps);
+			sprogress = (b->no_cstep ?  ( _STR("TMP3/%3d", b->nexpected_steps) )  :  ( _STR("%3d/%3d", b->cstep, b->nexpected_steps) ) );
 		}
 		timed_line = benchmark__Benchmark_tdiff_in_ms(b, _STR("[%.*s] %.*s", sprogress.len, sprogress.str, msg.len, msg.str), b->step_start_time, b->step_end_time);
 	} else {
