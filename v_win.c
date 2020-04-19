@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5edd9cd"
+#define V_COMMIT_HASH "be3bd52"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6c59b30"
+#define V_COMMIT_HASH "5edd9cd"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5edd9cd"
+#define V_CURRENT_COMMIT_HASH "be3bd52"
 #endif
 
 
@@ -20448,6 +20448,16 @@ void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) {
 		c->in_for_count++;
 		v__table__Type typ = v__checker__Checker_expr(c, it->cond);
 		if (it->is_range) {
+			v__table__Type high_type = v__checker__Checker_expr(c, it->high);
+			if (_IN(v__table__Type, typ, _const_v__table__integer_type_idxs) && !_IN(v__table__Type, high_type, _const_v__table__integer_type_idxs)) {
+				v__checker__Checker_error(c, tos3("range types do not match"), v__ast__Expr_position(it->cond));
+			} else if (_IN(v__table__Type, typ, _const_v__table__float_type_idxs) || _IN(v__table__Type, high_type, _const_v__table__float_type_idxs)) {
+				v__checker__Checker_error(c, tos3("range type can not be float"), v__ast__Expr_position(it->cond));
+			} else if (typ == _const_v__table__bool_type_idx || high_type == _const_v__table__bool_type_idx) {
+				v__checker__Checker_error(c, tos3("range type can not be bool"), v__ast__Expr_position(it->cond));
+			} else if (typ == _const_v__table__string_type_idx || high_type == _const_v__table__string_type_idx) {
+				v__checker__Checker_error(c, tos3("range type can not be string"), v__ast__Expr_position(it->cond));
+			}
 			v__checker__Checker_expr(c, it->high);
 		} else {
 			v__ast__Scope* scope = v__ast__Scope_innermost(c->file.scope, it->pos.pos);
