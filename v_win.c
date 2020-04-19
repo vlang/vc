@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "3b00132"
+#define V_COMMIT_HASH "6c59b30"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4de16e9"
+#define V_COMMIT_HASH "3b00132"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "3b00132"
+#define V_CURRENT_COMMIT_HASH "6c59b30"
 #endif
 
 
@@ -19710,6 +19710,8 @@ void v__checker__Checker_assign_expr(v__checker__Checker* c, v__ast__AssignExpr*
 	assign_expr->left_type = left_type;
 	v__table__Type right_type = v__checker__Checker_expr(c, assign_expr->val);
 	assign_expr->right_type = right_type;
+	v__table__TypeSymbol* right = v__table__Table_get_type_symbol(c->table, right_type);
+	v__table__TypeSymbol* left = v__table__Table_get_type_symbol(c->table, left_type);
 	if (v__ast__expr_is_blank_ident(assign_expr->left)) {
 		return;
 	}
@@ -19729,6 +19731,31 @@ void v__checker__Checker_assign_expr(v__checker__Checker* c, v__ast__AssignExpr*
 		v__table__TypeSymbol* left_type_sym = v__table__Table_get_type_symbol(c->table, left_type);
 		v__table__TypeSymbol* right_type_sym = v__table__Table_get_type_symbol(c->table, right_type);
 		v__checker__Checker_error(c, _STR("cannot assign `%.*s` to variable `%.*s` of type `%.*s`", right_type_sym->name.len, right_type_sym->name.str, v__ast__Expr_str(assign_expr->left).len, v__ast__Expr_str(assign_expr->left).str, left_type_sym->name.len, left_type_sym->name.str), v__ast__Expr_position(assign_expr->val));
+	} else if (assign_expr->op == v__token__Kind_plus_assign) {
+		bool no_str_related_err = left_type == _const_v__table__string_type && right_type == _const_v__table__string_type;
+		bool no_ptr_related_err = (v__table__TypeSymbol_is_pointer(left) || v__table__TypeSymbol_is_int(left)) && (v__table__TypeSymbol_is_pointer(right) || v__table__TypeSymbol_is_int(right));
+		bool no_num_related_err = v__table__TypeSymbol_is_number(left) && v__table__TypeSymbol_is_number(right);
+		if (!no_str_related_err && !no_ptr_related_err && !no_num_related_err) {
+			v__checker__Checker_error(c, _STR("operator += not defined on left type `%.*s` and right type `%.*s`", left->name.len, left->name.str, right->name.len, right->name.str), assign_expr->pos);
+		}
+	} else if (assign_expr->op == v__token__Kind_minus_assign) {
+		bool no_ptr_related_err = (v__table__TypeSymbol_is_pointer(left) || v__table__TypeSymbol_is_int(left)) && (v__table__TypeSymbol_is_pointer(right) || v__table__TypeSymbol_is_int(right));
+		bool no_num_related_err = v__table__TypeSymbol_is_number(left) && v__table__TypeSymbol_is_number(right);
+		if (!no_ptr_related_err && !no_num_related_err) {
+			v__checker__Checker_error(c, _STR("operator -= not defined on left type `%.*s` and right type `%.*s`", left->name.len, left->name.str, right->name.len, right->name.str), assign_expr->pos);
+		}
+	} else if ((assign_expr->op == v__token__Kind_mult_assign || assign_expr->op == v__token__Kind_div_assign)) {
+		if (!v__table__TypeSymbol_is_number(left)) {
+			v__checker__Checker_error(c, _STR("operator %.*s not defined on left type `%.*s`", v__token__Kind_str(assign_expr->op).len, v__token__Kind_str(assign_expr->op).str, left->name.len, left->name.str), assign_expr->pos);
+		} else if (!v__table__TypeSymbol_is_number(right)) {
+			v__checker__Checker_error(c, _STR("operator %.*s not defined on right type `%.*s`", v__token__Kind_str(assign_expr->op).len, v__token__Kind_str(assign_expr->op).str, right->name.len, right->name.str), assign_expr->pos);
+		}
+	} else if ((assign_expr->op == v__token__Kind_and_assign || assign_expr->op == v__token__Kind_or_assign || assign_expr->op == v__token__Kind_xor_assign || assign_expr->op == v__token__Kind_mod_assign || assign_expr->op == v__token__Kind_left_shift_assign || assign_expr->op == v__token__Kind_right_shift_assign)) {
+		if (!v__table__TypeSymbol_is_int(left)) {
+			v__checker__Checker_error(c, _STR("operator %.*s not defined on left type `%.*s`", v__token__Kind_str(assign_expr->op).len, v__token__Kind_str(assign_expr->op).str, left->name.len, left->name.str), assign_expr->pos);
+		} else if (!v__table__TypeSymbol_is_int(right)) {
+			v__checker__Checker_error(c, _STR("operator %.*s not defined on right type `%.*s`", v__token__Kind_str(assign_expr->op).len, v__token__Kind_str(assign_expr->op).str, right->name.len, right->name.str), assign_expr->pos);
+		}
 	}
 	v__checker__Checker_check_expr_opt_call(c, assign_expr->val, right_type, true);
 }
