@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "be0a879"
+#define V_COMMIT_HASH "3ee858c"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "57c142b"
+#define V_COMMIT_HASH "be0a879"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "be0a879"
+#define V_CURRENT_COMMIT_HASH "3ee858c"
 #endif
 
 
@@ -8031,8 +8031,8 @@ string strconv__ftoa__Dec32_get_string_32(strconv__ftoa__Dec32 d, bool neg, int 
 
 multi_return_strconv__ftoa__Dec32_bool strconv__ftoa__f32_to_decimal_exact_int(u32 i_mant, u32 exp) {
 	strconv__ftoa__Dec32 d = (strconv__ftoa__Dec32){
-	0,
-	0,
+		.m = 0,
+		.e = 0,
 	};
 	u32 e = exp - _const_strconv__ftoa__bias32;
 	if (e > _const_strconv__ftoa__mantbits32) {
@@ -8166,7 +8166,7 @@ strconv__ftoa__Dec32 strconv__ftoa__f32_to_decimal(u32 mant, u32 exp) {
 
 string strconv__ftoa__f32_to_str(f32 f, int n_digit) {
 	strconv__ftoa__Uf32 u1 = (strconv__ftoa__Uf32){
-	0,
+		.f = 0,
 		.u = 0,
 	};
 	u1.f = f;
@@ -8254,8 +8254,8 @@ string strconv__ftoa__Dec64_get_string_64(strconv__ftoa__Dec64 d, bool neg, int 
 
 multi_return_strconv__ftoa__Dec64_bool strconv__ftoa__f64_to_decimal_exact_int(u64 i_mant, u64 exp) {
 	strconv__ftoa__Dec64 d = (strconv__ftoa__Dec64){
-	0,
-	0,
+		.m = 0,
+		.e = 0,
 	};
 	u64 e = exp - _const_strconv__ftoa__bias64;
 	if (e > _const_strconv__ftoa__mantbits64) {
@@ -8405,7 +8405,7 @@ strconv__ftoa__Dec64 strconv__ftoa__f64_to_decimal(u64 mant, u64 exp) {
 
 string strconv__ftoa__f64_to_str(f64 f, int n_digit) {
 	strconv__ftoa__Uf64 u1 = (strconv__ftoa__Uf64){
-	0,
+		.f = 0,
 		.u = 0,
 	};
 	u1.f = f;
@@ -23719,13 +23719,13 @@ void v__gen__Gen_struct_init(v__gen__Gen* g, v__ast__StructInit struct_init) {
 				continue;
 			}
 			string field_name = v__gen__c_name(field.name);
+			v__gen__Gen_write(g, _STR("\t.%.*s = ", field_name.len, field_name.str));
 			if (field.has_default_expr) {
 				v__gen__Gen_expr(g, field.default_expr);
-				v__gen__Gen_writeln(g, tos3(","));
 			} else {
-				string zero = v__gen__Gen_type_default(/*rec*/*g, field.typ);
-				v__gen__Gen_writeln(g, _STR("\t.%.*s = %.*s,", field_name.len, field_name.str, zero.len, zero.str));
+				v__gen__Gen_write(g, v__gen__Gen_type_default(/*rec*/*g, field.typ));
 			}
+			v__gen__Gen_writeln(g, tos3(","));
 		}
 	}
 	if (struct_init.fields.len == 0 && info.fields.len == 0) {
@@ -24108,9 +24108,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_62621 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_62621.arg0;
-	string type_of_last_expression = mr_62621.arg1;
+	multi_return_string_string mr_62609 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_62609.arg0;
+	string type_of_last_expression = mr_62609.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
