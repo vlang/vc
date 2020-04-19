@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "57c142b"
+#define V_COMMIT_HASH "be0a879"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "de9f302"
+#define V_COMMIT_HASH "57c142b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "57c142b"
+#define V_CURRENT_COMMIT_HASH "be0a879"
 #endif
 
 
@@ -381,6 +381,7 @@ typedef enum {
 	time__FormatDelimiter_space, // 3
 } time__FormatDelimiter;
 
+typedef struct time__Timer time__Timer;
 typedef struct v__vmod__ModFileAndFolder v__vmod__ModFileAndFolder;
 typedef struct v__vmod__ModFileCacher v__vmod__ModFileCacher;
 typedef struct v__checker__Checker v__checker__Checker;
@@ -1486,6 +1487,12 @@ struct time__Time {
 	u64 v_unix;
 };
 
+struct time__Timer {
+	i64 pause_start;
+	i64 start_ticks;
+	i64 end_ticks;
+};
+
 struct v__vmod__ModFileCacher {
 	map_string_v__vmod__ModFileAndFolder cache;
 	map_string_array_string folder_files;
@@ -1525,23 +1532,6 @@ struct v__depgraph__DepGraphNode {
 struct v__depgraph__OrderedDepMap {
 	array_string keys;
 	map_string_array_string data;
-};
-
-struct benchmark__Benchmark {
-	i64 bench_start_time;
-	i64 bench_end_time;
-	i64 step_start_time;
-	i64 step_end_time;
-	int ntotal;
-	int nok;
-	int nfail;
-	int nskip;
-	bool verbose;
-	int nexpected_steps;
-	int cstep;
-	bool no_cstep;
-	string bok;
-	string bfail;
 };
 
 typedef voidptr array_fixed_voidptr_100 [100];
@@ -2022,6 +2012,21 @@ struct v__gen__js__JsDoc {
 	v__gen__js__JsGen* gen;
 	strings__Builder out;
 	bool empty_line;
+};
+
+struct benchmark__Benchmark {
+	time__Timer bench_timer;
+	time__Timer step_timer;
+	int ntotal;
+	int nok;
+	int nfail;
+	int nskip;
+	bool verbose;
+	int nexpected_steps;
+	int cstep;
+	bool no_cstep;
+	string bok;
+	string bfail;
 };
 
 struct SymbolInfoContainer {
@@ -3437,6 +3442,12 @@ Option_int time__days_in_month(int month, int year);
 string time__Time_str(time__Time t);
 time__Time time__convert_ctime(struct tm t);
 int time__make_unix_time(struct tm t);
+void time__Timer_start(time__Timer* t);
+void time__Timer_restart(time__Timer* t);
+void time__Timer_pause(time__Timer* t);
+void time__Timer_stop(time__Timer* t);
+i64 time__Timer_elapsed(time__Timer t);
+time__Timer time__new_timer();
 time__Time time__unix(int abs);
 multi_return_int_int_int time__calculate_date_from_offset(int day_offset_);
 multi_return_int_int_int time__calculate_time_from_offset(int second_offset_);
@@ -3775,8 +3786,7 @@ string benchmark__Benchmark_step_message_fail(benchmark__Benchmark* b, string ms
 string benchmark__Benchmark_step_message_skip(benchmark__Benchmark* b, string msg);
 string benchmark__Benchmark_total_message(benchmark__Benchmark* b, string msg);
 i64 benchmark__Benchmark_total_duration(benchmark__Benchmark* b);
-string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark* b, string s, i64 sticks, i64 eticks);
-i64 benchmark__now();
+string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark* b, string s, i64 tdiff);
 // variadic structs
 struct varg_string {
 	int len;
@@ -19183,6 +19193,48 @@ int time__make_unix_time(struct tm t) {
 	return ((int)(_mkgmtime(&t)));
 }
 
+void time__Timer_start(time__Timer* t) {
+	if (t->pause_start == 0) {
+		t->start_ticks = time__ticks();
+	} else {
+		t->start_ticks += time__ticks() - t->pause_start;
+	}
+	t->end_ticks = 0;
+	t->pause_start = 0;
+}
+
+void time__Timer_restart(time__Timer* t) {
+	t->end_ticks = 0;
+	t->pause_start = 0;
+	t->start_ticks = time__ticks();
+}
+
+void time__Timer_pause(time__Timer* t) {
+	t->pause_start = time__ticks();
+	t->end_ticks = t->pause_start;
+}
+
+void time__Timer_stop(time__Timer* t) {
+	t->end_ticks = time__ticks();
+	t->pause_start = 0;
+}
+
+i64 time__Timer_elapsed(time__Timer t) {
+	if (t.end_ticks == 0) {
+		return time__ticks() - t.start_ticks;
+	} else {
+		return t.end_ticks - t.start_ticks;
+	}
+}
+
+time__Timer time__new_timer() {
+	return (time__Timer){
+		.start_ticks = time__ticks(),
+		.pause_start = 0,
+		.end_ticks = 0,
+	};
+}
+
 time__Time time__unix(int abs) {
 	int day_offset = abs / _const_time__seconds_per_day;
 	if (abs % _const_time__seconds_per_day < 0) {
@@ -26657,11 +26709,9 @@ string v__depgraph__DepGraph_display_cycles(v__depgraph__DepGraph* graph) {
 
 benchmark__Benchmark benchmark__new_benchmark() {
 	return (benchmark__Benchmark){
-		.bench_start_time = benchmark__now(),
+		.bench_timer = time__new_timer(),
 		.verbose = true,
-		.bench_end_time = 0,
-		.step_start_time = 0,
-		.step_end_time = 0,
+		.step_timer = {0},
 		.ntotal = 0,
 		.nok = 0,
 		.nfail = 0,
@@ -26676,12 +26726,10 @@ benchmark__Benchmark benchmark__new_benchmark() {
 
 benchmark__Benchmark benchmark__new_benchmark_no_cstep() {
 	return (benchmark__Benchmark){
-		.bench_start_time = benchmark__now(),
+		.bench_timer = time__new_timer(),
 		.verbose = true,
 		.no_cstep = true,
-		.bench_end_time = 0,
-		.step_start_time = 0,
-		.step_end_time = 0,
+		.step_timer = {0},
 		.ntotal = 0,
 		.nok = 0,
 		.nfail = 0,
@@ -26694,11 +26742,9 @@ benchmark__Benchmark benchmark__new_benchmark_no_cstep() {
 }
 
 benchmark__Benchmark* benchmark__new_benchmark_pointer() {
-	return (benchmark__Benchmark*)memdup(&(benchmark__Benchmark){	.bench_start_time = benchmark__now(),
+	return (benchmark__Benchmark*)memdup(&(benchmark__Benchmark){	.bench_timer = time__new_timer(),
 		.verbose = true,
-		.bench_end_time = 0,
-		.step_start_time = 0,
-		.step_end_time = 0,
+		.step_timer = {0},
 		.ntotal = 0,
 		.nok = 0,
 		.nfail = 0,
@@ -26716,48 +26762,48 @@ void benchmark__Benchmark_set_total_expected_steps(benchmark__Benchmark* b, int 
 }
 
 void benchmark__Benchmark_stop(benchmark__Benchmark* b) {
-	b->bench_end_time = benchmark__now();
+	time__Timer_stop(&b->bench_timer);
 }
 
 void benchmark__Benchmark_step(benchmark__Benchmark* b) {
-	b->step_start_time = benchmark__now();
+	time__Timer_restart(&b->step_timer);
 	if (!b->no_cstep) {
 		b->cstep++;
 	}
 }
 
 void benchmark__Benchmark_fail(benchmark__Benchmark* b) {
-	b->step_end_time = benchmark__now();
+	time__Timer_stop(&b->step_timer);
 	b->ntotal++;
 	b->nfail++;
 }
 
 void benchmark__Benchmark_ok(benchmark__Benchmark* b) {
-	b->step_end_time = benchmark__now();
+	time__Timer_stop(&b->step_timer);
 	b->ntotal++;
 	b->nok++;
 }
 
 void benchmark__Benchmark_skip(benchmark__Benchmark* b) {
-	b->step_end_time = benchmark__now();
+	time__Timer_stop(&b->step_timer);
 	b->ntotal++;
 	b->nskip++;
 }
 
 void benchmark__Benchmark_fail_many(benchmark__Benchmark* b, int n) {
-	b->step_end_time = benchmark__now();
+	time__Timer_stop(&b->step_timer);
 	b->ntotal += n;
 	b->nfail += n;
 }
 
 void benchmark__Benchmark_ok_many(benchmark__Benchmark* b, int n) {
-	b->step_end_time = benchmark__now();
+	time__Timer_stop(&b->step_timer);
 	b->ntotal += n;
 	b->nok += n;
 }
 
 void benchmark__Benchmark_neither_fail_nor_ok(benchmark__Benchmark* b) {
-	b->step_end_time = benchmark__now();
+	time__Timer_stop(&b->step_timer);
 }
 
 benchmark__Benchmark benchmark__start() {
@@ -26768,7 +26814,7 @@ benchmark__Benchmark benchmark__start() {
 
 i64 benchmark__Benchmark_measure(benchmark__Benchmark* b, string label) {
 	benchmark__Benchmark_ok(b);
-	i64 res = b->step_end_time - b->step_start_time;
+	i64 res = time__Timer_elapsed(b->step_timer);
 	println(benchmark__Benchmark_step_message_with_label(b, _const_benchmark__BSPENT, _STR("in %.*s", label.len, label.str)));
 	benchmark__Benchmark_step(b);
 	return res;
@@ -26787,9 +26833,9 @@ string benchmark__Benchmark_step_message_with_label(benchmark__Benchmark* b, str
 		if (b->nexpected_steps >= 100 && b->nexpected_steps < 1000) {
 			sprogress = (b->no_cstep ?  ( _STR("TMP3/%3d", b->nexpected_steps) )  :  ( _STR("%3d/%3d", b->cstep, b->nexpected_steps) ) );
 		}
-		timed_line = benchmark__Benchmark_tdiff_in_ms(b, _STR("[%.*s] %.*s", sprogress.len, sprogress.str, msg.len, msg.str), b->step_start_time, b->step_end_time);
+		timed_line = benchmark__Benchmark_tdiff_in_ms(b, _STR("[%.*s] %.*s", sprogress.len, sprogress.str, msg.len, msg.str), time__Timer_elapsed(b->step_timer));
 	} else {
-		timed_line = benchmark__Benchmark_tdiff_in_ms(b, msg, b->step_start_time, b->step_end_time);
+		timed_line = benchmark__Benchmark_tdiff_in_ms(b, msg, time__Timer_elapsed(b->step_timer));
 	}
 	return _STR("%-5s%.*s", label.str, timed_line.len, timed_line.str);
 }
@@ -26815,23 +26861,18 @@ string benchmark__Benchmark_total_message(benchmark__Benchmark* b, string msg) {
 	if (b->verbose) {
 		tmsg = _STR("<=== total time spent %.*s", tmsg.len, tmsg.str);
 	}
-	return string_add(tos3("  "), benchmark__Benchmark_tdiff_in_ms(b, tmsg, b->bench_start_time, b->bench_end_time));
+	return string_add(tos3("  "), benchmark__Benchmark_tdiff_in_ms(b, tmsg, time__Timer_elapsed(b->bench_timer)));
 }
 
 i64 benchmark__Benchmark_total_duration(benchmark__Benchmark* b) {
-	return (b->bench_end_time - b->bench_start_time);
+	return time__Timer_elapsed(b->bench_timer);
 }
 
-string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark* b, string s, i64 sticks, i64 eticks) {
+string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark* b, string s, i64 tdiff) {
 	if (b->verbose) {
-		i64 tdiff = (eticks - sticks);
 		return _STR("%6d ms %.*s", tdiff, s.len, s.str);
 	}
 	return s;
-}
-
-i64 benchmark__now() {
-	return time__ticks();
 }
 
 void _vinit() {
