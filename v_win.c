@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "6c59b30"
+#define V_COMMIT_HASH "5edd9cd"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3b00132"
+#define V_COMMIT_HASH "6c59b30"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "6c59b30"
+#define V_CURRENT_COMMIT_HASH "5edd9cd"
 #endif
 
 
@@ -19684,6 +19684,12 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 		if (!((right->kind == v__table__Kind_array || right->kind == v__table__Kind_map || right->kind == v__table__Kind_string))) {
 			v__checker__Checker_error(c, tos3("`in` can only be used with an array/map/string."), infix_expr->pos);
 		}
+		if (right->kind == v__table__Kind_array) {
+			v__table__TypeSymbol* right_sym = v__table__Table_get_type_symbol(c->table, v__table__TypeSymbol_array_info(right).elem_type);
+			if (left->kind != v__table__Kind_alias && left->kind != right_sym->kind) {
+				v__checker__Checker_error(c, tos3("the data type on the left of `in` does not match the array item type."), infix_expr->pos);
+			}
+		}
 		return _const_v__table__bool_type;
 	}
 	if (!v__table__Table_check(c->table, right_type, left_type)) {
@@ -19691,6 +19697,13 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 			return _const_v__table__void_type;
 		}
 		v__checker__Checker_error(c, _STR("infix expr: cannot use `%.*s` (right expression) as `%.*s`", right->name.len, right->name.str, left->name.len, left->name.str), infix_expr->pos);
+	}
+	if ((infix_expr->op == v__token__Kind_amp || infix_expr->op == v__token__Kind_pipe || infix_expr->op == v__token__Kind_xor)) {
+		if (!v__table__TypeSymbol_is_int(left)) {
+			v__checker__Checker_error(c, _STR("operator %.*s not defined on left type `%.*s`", v__token__Kind_str(infix_expr->op).len, v__token__Kind_str(infix_expr->op).str, left->name.len, left->name.str), infix_expr->pos);
+		} else if (!v__table__TypeSymbol_is_int(right)) {
+			v__checker__Checker_error(c, _STR("operator %.*s not defined on right type `%.*s`", v__token__Kind_str(infix_expr->op).len, v__token__Kind_str(infix_expr->op).str, right->name.len, right->name.str), infix_expr->pos);
+		}
 	}
 	if (left_type == _const_v__table__bool_type && !((infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_ne || infix_expr->op == v__token__Kind_logical_or || infix_expr->op == v__token__Kind_and))) {
 		v__checker__Checker_error(c, tos3("bool types only have the following operators defined: `==`, `!=`, `||`, and `&&`"), infix_expr->pos);
@@ -20126,6 +20139,12 @@ void v__checker__Checker_enum_decl(v__checker__Checker* c, v__ast__EnumDecl decl
 			}else if (field.expr.typ == 159 /* v.ast.PrefixExpr */) {
 				v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)field.expr.obj; // ST it
 			}else {
+				if (field.expr.typ == 151 /* v.ast.Ident */) {
+					v__ast__Ident expr = /* as */ *(v__ast__Ident*)field.expr.obj;
+					if (expr.is_c) {
+						continue;
+					}
+				}
 				v__token__Position pos = v__ast__Expr_position(field.expr);
 				if (pos.pos == 0) {
 					pos = field.pos;
