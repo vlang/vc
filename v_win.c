@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "27e0474"
+#define V_COMMIT_HASH "4de16e9"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3ee858c"
+#define V_COMMIT_HASH "27e0474"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "27e0474"
+#define V_CURRENT_COMMIT_HASH "4de16e9"
 #endif
 
 
@@ -16097,7 +16097,7 @@ v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 			.cond = {0},
 		}}, sizeof(v__ast__ForStmt)), .typ = 183 /* v.ast.ForStmt */};
 	} else if ((p->tok.kind == v__token__Kind_key_mut || p->tok.kind == v__token__Kind_key_var)) {
-		v__parser__Parser_error(p, tos3("`mut` is not needed in for loops"));
+		v__parser__Parser_error(p, tos3("`var` is not needed in for loops"));
 	} else if ((p->peek_tok.kind == v__token__Kind_decl_assign || p->peek_tok.kind == v__token__Kind_assign || p->peek_tok.kind == v__token__Kind_semicolon) || p->tok.kind == v__token__Kind_semicolon) {
 		v__ast__Stmt init = (v__ast__Stmt){
 		0};
@@ -19720,7 +19720,7 @@ void v__checker__Checker_assign_expr(v__checker__Checker* c, v__ast__AssignExpr*
 		{ /* if guard */ Option_v__ast__Var v = v__ast__Scope_find_var(scope, it->name);
 		if ((tmp3 = v.ok)) {
 			if (!/*opt*/(*(v__ast__Var*)v.data).is_mut) {
-				v__checker__Checker_error(c, _STR("`%.*s` is immutable, declare it with `mut`", it->name.len, it->name.str), assign_expr->pos);
+				v__checker__Checker_error(c, _STR("`%.*s` is immutable, declare it with `var` to assign to it", it->name.len, it->name.str), assign_expr->pos);
 			}
 		}}
 	}else {
