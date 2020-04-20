@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "10677c2"
+#define V_COMMIT_HASH "67a76ce"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "871c29e"
+#define V_COMMIT_HASH "10677c2"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "10677c2"
+#define V_CURRENT_COMMIT_HASH "67a76ce"
 #endif
 
 
@@ -418,9 +418,10 @@ typedef enum {
 	v__gen__x64__Register_rax, // 2
 	v__gen__x64__Register_rdi, // 3
 	v__gen__x64__Register_rsi, // 4
-	v__gen__x64__Register_edx, // 5
-	v__gen__x64__Register_rdx, // 6
-	v__gen__x64__Register_r12, // 7
+	v__gen__x64__Register_rbp, // 5
+	v__gen__x64__Register_edx, // 6
+	v__gen__x64__Register_rdx, // 7
+	v__gen__x64__Register_r12, // 8
 } v__gen__x64__Register;
 
 typedef enum {
@@ -3719,6 +3720,7 @@ string v__gen__x64__Register_str(v__gen__x64__Register it) {
 		case v__gen__x64__Register_rax: return tos3("rax");
 		case v__gen__x64__Register_rdi: return tos3("rdi");
 		case v__gen__x64__Register_rsi: return tos3("rsi");
+		case v__gen__x64__Register_rbp: return tos3("rbp");
 		case v__gen__x64__Register_edx: return tos3("edx");
 		case v__gen__x64__Register_rdx: return tos3("rdx");
 		case v__gen__x64__Register_r12: return tos3("r12");
@@ -3733,6 +3735,7 @@ void v__gen__x64__Gen_mov64(v__gen__x64__Gen* g, v__gen__x64__Register reg, i64 
 void v__gen__x64__Gen_call(v__gen__x64__Gen* g, int addr);
 void v__gen__x64__Gen_syscall(v__gen__x64__Gen* g);
 void v__gen__x64__Gen_ret(v__gen__x64__Gen* g);
+void v__gen__x64__Gen_push(v__gen__x64__Gen* g, v__gen__x64__Register reg);
 int v__gen__x64__Gen_gen_loop_start(v__gen__x64__Gen* g, int from);
 void v__gen__x64__Gen_gen_loop_end(v__gen__x64__Gen* g, int to, int label);
 void v__gen__x64__Gen_save_main_fn_addr(v__gen__x64__Gen* g);
@@ -26389,6 +26392,13 @@ void v__gen__x64__Gen_syscall(v__gen__x64__Gen* g) {
 
 void v__gen__x64__Gen_ret(v__gen__x64__Gen* g) {
 	v__gen__x64__Gen_write8(g, 0xc3);
+}
+
+void v__gen__x64__Gen_push(v__gen__x64__Gen* g, v__gen__x64__Register reg) {
+	if (reg == v__gen__x64__Register_rbp) {
+		v__gen__x64__Gen_write8(g, 0x55);
+	}else {
+	};
 }
 
 int v__gen__x64__Gen_gen_loop_start(v__gen__x64__Gen* g, int from) {
