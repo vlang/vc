@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "07f69fa"
+#define V_COMMIT_HASH "717e26b"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "78cbb77"
+#define V_COMMIT_HASH "07f69fa"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "07f69fa"
+#define V_CURRENT_COMMIT_HASH "717e26b"
 #endif
 
 
@@ -981,14 +981,6 @@ struct v__builder__VsInstallation {
 void* obj;
 int typ;
 } v__ast__TypeDecl;
-struct v__ast__CharLiteral {
-	string val;
-};
-
-struct v__ast__FloatLiteral {
-	string val;
-};
-
 struct v__ast__Attr {
 	string name;
 };
@@ -1268,10 +1260,6 @@ struct v__builder__MsvcStringFlags {
 	array_string inc_paths;
 	array_string lib_paths;
 	array_string other_flags;
-};
-
-struct v__ast__BoolLiteral {
-	bool val;
 };
 
 struct v__ast__RangeExpr {
@@ -1567,6 +1555,16 @@ struct v__ast__IntegerLiteral {
 	v__token__Position pos;
 };
 
+struct v__ast__CharLiteral {
+	string val;
+	v__token__Position pos;
+};
+
+struct v__ast__FloatLiteral {
+	string val;
+	v__token__Position pos;
+};
+
 struct v__ast__Ident {
 	string value;
 	bool is_c;
@@ -1594,6 +1592,11 @@ struct v__ast__CallExpr {
 	v__table__Type left_type;
 	v__table__Type receiver_type;
 	v__table__Type return_type;
+};
+
+struct v__ast__BoolLiteral {
+	bool val;
+	v__token__Position pos;
 };
 
 struct v__ast__StructInit {
@@ -14574,11 +14577,20 @@ v__token__Position v__ast__Expr_position(v__ast__Expr expr) {
 	}else if (expr.typ == 152 /* v.ast.Assoc */) {
 		v__ast__Assoc* it = (v__ast__Assoc*)expr.obj; // ST it
 		return it->pos;
+	}else if (expr.typ == 140 /* v.ast.BoolLiteral */) {
+		v__ast__BoolLiteral* it = (v__ast__BoolLiteral*)expr.obj; // ST it
+		return it->pos;
 	}else if (expr.typ == 139 /* v.ast.CallExpr */) {
 		v__ast__CallExpr* it = (v__ast__CallExpr*)expr.obj; // ST it
 		return it->pos;
+	}else if (expr.typ == 136 /* v.ast.CharLiteral */) {
+		v__ast__CharLiteral* it = (v__ast__CharLiteral*)expr.obj; // ST it
+		return it->pos;
 	}else if (expr.typ == 151 /* v.ast.EnumVal */) {
 		v__ast__EnumVal* it = (v__ast__EnumVal*)expr.obj; // ST it
+		return it->pos;
+	}else if (expr.typ == 137 /* v.ast.FloatLiteral */) {
+		v__ast__FloatLiteral* it = (v__ast__FloatLiteral*)expr.obj; // ST it
 		return it->pos;
 	}else if (expr.typ == 133 /* v.ast.IfExpr */) {
 		v__ast__IfExpr* it = (v__ast__IfExpr*)expr.obj; // ST it
@@ -17203,6 +17215,7 @@ v__ast__Expr v__parser__Parser_parse_number_literal(v__parser__Parser* p) {
 	if (string_index_any(lit, tos3(".eE")) >= 0 && !(string_eq(string_substr(lit, 0, 2), tos3("0x")) || string_eq(string_substr(lit, 0, 2), tos3("0X")) || string_eq(string_substr(lit, 0, 2), tos3("0o")) || string_eq(string_substr(lit, 0, 2), tos3("0O")) || string_eq(string_substr(lit, 0, 2), tos3("0b")) || string_eq(string_substr(lit, 0, 2), tos3("0B")))) {
 		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__FloatLiteral[]) {(v__ast__FloatLiteral){
 			.val = lit,
+			.pos = pos,
 		}}, sizeof(v__ast__FloatLiteral)), .typ = 137 /* v.ast.FloatLiteral */};
 	} else {
 		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__IntegerLiteral[]) {(v__ast__IntegerLiteral){
@@ -17534,6 +17547,7 @@ v__ast__Assoc v__parser__Parser_assoc(v__parser__Parser* p) {
 v__ast__Expr v__parser__Parser_new_true_expr(v__parser__Parser* p) {
 	return /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__BoolLiteral[]) {(v__ast__BoolLiteral){
 		.val = true,
+		.pos = v__token__Token_position(&p->tok),
 	}}, sizeof(v__ast__BoolLiteral)), .typ = 140 /* v.ast.BoolLiteral */};
 }
 
@@ -17557,6 +17571,7 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 	}else if (p->tok.kind == v__token__Kind_chartoken) {
 		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__CharLiteral[]) {(v__ast__CharLiteral){
 			.val = p->tok.lit,
+			.pos = v__token__Token_position(&p->tok),
 		}}, sizeof(v__ast__CharLiteral)), .typ = 136 /* v.ast.CharLiteral */};
 		v__parser__Parser_next(p);
 	}else if (p->tok.kind == v__token__Kind_minus || p->tok.kind == v__token__Kind_amp || p->tok.kind == v__token__Kind_mul || p->tok.kind == v__token__Kind_not || p->tok.kind == v__token__Kind_bit_not) {
@@ -17564,6 +17579,7 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 	}else if (p->tok.kind == v__token__Kind_key_true || p->tok.kind == v__token__Kind_key_false) {
 		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__BoolLiteral[]) {(v__ast__BoolLiteral){
 			.val = p->tok.kind == v__token__Kind_key_true,
+			.pos = v__token__Token_position(&p->tok),
 		}}, sizeof(v__ast__BoolLiteral)), .typ = 140 /* v.ast.BoolLiteral */};
 		v__parser__Parser_next(p);
 	}else if (p->tok.kind == v__token__Kind_key_match) {
@@ -19394,10 +19410,6 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 	v__table__TypeSymbol* right = v__table__Table_get_type_symbol(c->table, right_type);
 	v__table__TypeSymbol* left = v__table__Table_get_type_symbol(c->table, left_type);
 	if (infix_expr->op == v__token__Kind_left_shift) {
-		if (left->kind != v__table__Kind_array && !v__table__TypeSymbol_is_int(left)) {
-			v__checker__Checker_error(c, _STR("cannot shift type %.*s into %.*s", right->name.len, right->name.str, left->name.len, left->name.str), v__ast__Expr_position(infix_expr->right));
-			return _const_v__table__void_type;
-		}
 		if (left->kind == v__table__Kind_array) {
 			if (v__table__Table_check(c->table, v__table__Table_value_type(c->table, left_type), right_type)) {
 				return _const_v__table__void_type;
@@ -19406,6 +19418,12 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 				return _const_v__table__void_type;
 			}
 			v__checker__Checker_error(c, _STR("cannot shift type %.*s into %.*s", right->name.len, right->name.str, left->name.len, left->name.str), v__ast__Expr_position(infix_expr->right));
+			return _const_v__table__void_type;
+		} else if (!v__table__TypeSymbol_is_int(left)) {
+			v__checker__Checker_error(c, _STR("cannot shift type %.*s into non-integer type %.*s", right->name.len, right->name.str, left->name.len, left->name.str), v__ast__Expr_position(infix_expr->left));
+			return _const_v__table__void_type;
+		} else if (!v__table__TypeSymbol_is_int(right)) {
+			v__checker__Checker_error(c, _STR("cannot shift non-integer type %.*s into type %.*s", right->name.len, right->name.str, left->name.len, left->name.str), v__ast__Expr_position(infix_expr->right));
 			return _const_v__table__void_type;
 		}
 	}
@@ -19421,23 +19439,30 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 		}
 		return _const_v__table__bool_type;
 	}
-	if (!v__table__Table_check(c->table, right_type, left_type)) {
-		if (left_type == _const_v__table__void_type || right_type == _const_v__table__void_type) {
-			return _const_v__table__void_type;
-		}
-		v__checker__Checker_error(c, _STR("infix expr: cannot use `%.*s` (right expression) as `%.*s`", right->name.len, right->name.str, left->name.len, left->name.str), infix_expr->pos);
-	}
 	if ((infix_expr->op == v__token__Kind_amp || infix_expr->op == v__token__Kind_pipe || infix_expr->op == v__token__Kind_xor)) {
 		if (!v__table__TypeSymbol_is_int(left)) {
-			v__checker__Checker_error(c, _STR("operator %.*s not defined on left type `%.*s`", v__token__Kind_str(infix_expr->op).len, v__token__Kind_str(infix_expr->op).str, left->name.len, left->name.str), infix_expr->pos);
+			v__checker__Checker_error(c, _STR("left type of `%.*s` cannot be non-integer type %.*s", v__token__Kind_str(infix_expr->op).len, v__token__Kind_str(infix_expr->op).str, left->name.len, left->name.str), v__ast__Expr_position(infix_expr->left));
 		} else if (!v__table__TypeSymbol_is_int(right)) {
-			v__checker__Checker_error(c, _STR("operator %.*s not defined on right type `%.*s`", v__token__Kind_str(infix_expr->op).len, v__token__Kind_str(infix_expr->op).str, right->name.len, right->name.str), infix_expr->pos);
+			v__checker__Checker_error(c, _STR("right type of `%.*s` cannot be non-integer type %.*s", v__token__Kind_str(infix_expr->op).len, v__token__Kind_str(infix_expr->op).str, right->name.len, right->name.str), v__ast__Expr_position(infix_expr->right));
+		}
+	}
+	if (infix_expr->op == v__token__Kind_mod) {
+		if (v__table__TypeSymbol_is_int(left) && !v__table__TypeSymbol_is_int(right)) {
+			v__checker__Checker_error(c, _STR("right type of `%.*s` cannot be non-integer type %.*s", v__token__Kind_str(infix_expr->op).len, v__token__Kind_str(infix_expr->op).str, right->name.len, right->name.str), v__ast__Expr_position(infix_expr->right));
+		} else if (!v__table__TypeSymbol_is_int(left) && v__table__TypeSymbol_is_int(right)) {
+			v__checker__Checker_error(c, _STR("left type of `%.*s` cannot be non-integer type %.*s", v__token__Kind_str(infix_expr->op).len, v__token__Kind_str(infix_expr->op).str, left->name.len, left->name.str), v__ast__Expr_position(infix_expr->left));
 		}
 	}
 	if (left_type == _const_v__table__bool_type && !((infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_ne || infix_expr->op == v__token__Kind_logical_or || infix_expr->op == v__token__Kind_and))) {
 		v__checker__Checker_error(c, tos3("bool types only have the following operators defined: `==`, `!=`, `||`, and `&&`"), infix_expr->pos);
 	} else if (left_type == _const_v__table__string_type && !((infix_expr->op == v__token__Kind_plus || infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_ne || infix_expr->op == v__token__Kind_lt || infix_expr->op == v__token__Kind_gt || infix_expr->op == v__token__Kind_le || infix_expr->op == v__token__Kind_ge))) {
 		v__checker__Checker_error(c, tos3("string types only have the following operators defined: `==`, `!=`, `<`, `>`, `<=`, `>=`, and `&&`"), infix_expr->pos);
+	}
+	if (!v__table__Table_check(c->table, right_type, left_type)) {
+		if (left_type == _const_v__table__void_type || right_type == _const_v__table__void_type) {
+			return _const_v__table__void_type;
+		}
+		v__checker__Checker_error(c, _STR("infix expr: cannot use `%.*s` (right expression) as `%.*s`", right->name.len, right->name.str, left->name.len, left->name.str), infix_expr->pos);
 	}
 	if (v__token__Kind_is_relational(infix_expr->op)) {
 		return _const_v__table__bool_type;
