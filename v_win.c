@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "19a5436"
+#define V_COMMIT_HASH "c1fc768"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "be3bd52"
+#define V_COMMIT_HASH "19a5436"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "19a5436"
+#define V_CURRENT_COMMIT_HASH "c1fc768"
 #endif
 
 
@@ -3681,7 +3681,7 @@ void v__gen__js__JsDoc_reset(v__gen__js__JsDoc* d);
 string v__gen__js__JsDoc_gen_typ(v__gen__js__JsDoc* d, string typ, string name);
 string v__gen__js__JsDoc_gen_ctor(v__gen__js__JsDoc* d, array_v__ast__StructField fields);
 string v__gen__js__JsDoc_gen_fn(v__gen__js__JsDoc* d, v__ast__FnDecl it);
-#define _const_v__gen__x64__mag0 0x7f
+byte _const_v__gen__x64__mag0; // inited later
 #define _const_v__gen__x64__mag1 'E'
 #define _const_v__gen__x64__mag2 'L'
 #define _const_v__gen__x64__mag3 'F'
@@ -3697,6 +3697,7 @@ string v__gen__js__JsDoc_gen_fn(v__gen__js__JsDoc* d, v__ast__FnDecl it);
 #define _const_v__gen__x64__shn_xindex 0xffff
 #define _const_v__gen__x64__sht_null 0
 #define _const_v__gen__x64__segment_start 0x400000
+#define _const_v__gen__x64__PLACEHOLDER 0
 void v__gen__x64__Gen_generate_elf_header(v__gen__x64__Gen* g);
 void v__gen__x64__Gen_generate_elf_footer(v__gen__x64__Gen* g);
 void v__gen__x64__Gen_section_header(v__gen__x64__Gen* g, v__gen__x64__SectionConfig c);
@@ -3708,6 +3709,7 @@ void v__gen__x64__Gen_write16(v__gen__x64__Gen* g, int n);
 void v__gen__x64__Gen_write32(v__gen__x64__Gen* g, int n);
 void v__gen__x64__Gen_write64(v__gen__x64__Gen* g, i64 n);
 void v__gen__x64__Gen_write64_at(v__gen__x64__Gen* g, i64 n, i64 at);
+void v__gen__x64__Gen_write32_at(v__gen__x64__Gen* g, i64 at, int n);
 void v__gen__x64__Gen_write_string(v__gen__x64__Gen* g, string s);
 void v__gen__x64__Gen_inc(v__gen__x64__Gen* g, v__gen__x64__Register reg);
 string v__gen__x64__Register_str(v__gen__x64__Register it) {
@@ -7485,9 +7487,9 @@ int wmain(int ___argc, wchar_t* ___argv[], wchar_t* ___envp[]
 		return 0;
 	}
 	array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_1415 = parse_args(args_and_flags);
-	v__pref__Preferences* prefs = mr_1415.arg0;
-	string command = mr_1415.arg1;
+	multi_return_v__pref__Preferences_string mr_1385 = parse_args(args_and_flags);
+	v__pref__Preferences* prefs = mr_1385.arg0;
+	string command = mr_1385.arg1;
 	if (prefs->is_verbose) {
 		println(_STR("command = \"%.*s\"", command.len, command.str));
 		println(v__util__full_v_version());
@@ -7613,6 +7615,8 @@ multi_return_v__pref__Preferences_string parse_args(array_string args) {
 			res->is_cache = true;
 		}else if (string_eq(arg, tos3("-keepc"))) {
 			res->is_keep_c = true;
+		}else if (string_eq(arg, tos3("-x64"))) {
+			res->backend = v__pref__Backend_x64;
 		}else if (string_eq(arg, tos3("-os"))) {
 			string target_os = os__cmdline__option(args, tos3("-os"), tos3(""));
 			Option_v__pref__OS tmp = v__pref__os_from_string(target_os);
@@ -17901,6 +17905,9 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 			}
 		}
 		v__parser__Parser_check(p, v__token__Kind_rcbr);
+	}else if (p->tok.kind == v__token__Kind_key_fn) {
+		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__AnonFn[]) {v__parser__Parser_anon_fn(p)}, sizeof(v__ast__AnonFn)), .typ = 177 /* v.ast.AnonFn */};
+		return node;
 	}else {
 		if (p->tok.kind == v__token__Kind_comment) {
 			println(p->tok.lit);
@@ -19923,7 +19930,7 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 		}}
 	}
 	if (!found) {
-		v__checker__Checker_error(c, _STR("unknown fn: %.*s", fn_name.len, fn_name.str), call_expr->pos);
+		v__checker__Checker_error(c, _STR("unknown function: %.*s", fn_name.len, fn_name.str), call_expr->pos);
 		return _const_v__table__void_type;
 	}
 	call_expr->return_type = f.return_type;
@@ -24103,9 +24110,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_62521 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_62521.arg0;
-	string type_of_last_expression = mr_62521.arg1;
+	multi_return_string_string mr_62941 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_62941.arg0;
+	string type_of_last_expression = mr_62941.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -26166,13 +26173,10 @@ void v__gen__x64__Gen_generate_elf_header(v__gen__x64__Gen* g) {
 	v__gen__x64__Gen_write64(g, 0);
 	v__gen__x64__Gen_write64(g, 0x1000);
 	g->code_start_pos = g->buf.len;
-	v__gen__x64__Gen_call(g, 0);
+	v__gen__x64__Gen_call(g, _const_v__gen__x64__PLACEHOLDER);
 }
 
 void v__gen__x64__Gen_generate_elf_footer(v__gen__x64__Gen* g) {
-	v__gen__x64__Gen_mov(g, v__gen__x64__Register_edi, 0);
-	v__gen__x64__Gen_mov(g, v__gen__x64__Register_eax, 60);
-	v__gen__x64__Gen_syscall(g);
 	// FOR IN array
 	array tmp1 = g->strings;
 	for (int i = 0; i < tmp1.len; i++) {
@@ -26184,7 +26188,7 @@ void v__gen__x64__Gen_generate_elf_footer(v__gen__x64__Gen* g) {
 	int file_size = g->buf.len;
 	v__gen__x64__Gen_write64_at(g, file_size, g->file_size_pos);
 	v__gen__x64__Gen_write64_at(g, file_size, g->file_size_pos + 8);
-	v__gen__x64__Gen_write64_at(g, ((int)(g->main_fn_addr - g->code_start_pos)) - 5, g->code_start_pos + 1);
+	v__gen__x64__Gen_write32_at(g, g->code_start_pos + 1, ((int)(g->main_fn_addr - g->code_start_pos)) - 5);
 	Option_os__File f = os__create(g->out_name);
 	if (!f.ok) {
 		string err = f.v_error;
@@ -26287,6 +26291,13 @@ void v__gen__x64__Gen_write64_at(v__gen__x64__Gen* g, i64 n, i64 at) {
 	(*(byte*)array_get(g->buf, at + 5)) = ((byte)(n >> 40));
 	(*(byte*)array_get(g->buf, at + 6)) = ((byte)(n >> 48));
 	(*(byte*)array_get(g->buf, at + 7)) = ((byte)(n >> 56));
+}
+
+void v__gen__x64__Gen_write32_at(v__gen__x64__Gen* g, i64 at, int n) {
+	(*(byte*)array_get(g->buf, at)) = ((byte)(n));
+	(*(byte*)array_get(g->buf, at + 1)) = ((byte)(n >> 8));
+	(*(byte*)array_get(g->buf, at + 2)) = ((byte)(n >> 16));
+	(*(byte*)array_get(g->buf, at + 3)) = ((byte)(n >> 24));
 }
 
 void v__gen__x64__Gen_write_string(v__gen__x64__Gen* g, string s) {
@@ -26402,7 +26413,7 @@ void v__gen__x64__Gen_gen_print_from_expr(v__gen__x64__Gen* g, v__ast__Expr expr
 }
 
 void v__gen__x64__Gen_gen_print(v__gen__x64__Gen* g, string s) {
-	array_push(&g->strings, &(string[]){ string_add(s, tos3("\n")) });
+	array_push(&g->strings, &(string[]){ s });
 	v__gen__x64__Gen_mov(g, v__gen__x64__Register_eax, 1);
 	v__gen__x64__Gen_mov(g, v__gen__x64__Register_edi, 1);
 	int str_pos = g->buf.len + 2;
@@ -26481,7 +26492,6 @@ void v__gen__x64__Gen_stmt(v__gen__x64__Gen* g, v__ast__Stmt node) {
 			println(tos3("end of main: gen exit"));
 			v__gen__x64__Gen_gen_exit(g);
 		}
-		v__gen__x64__Gen_ret(g);
 	}else if (node.typ == 179 /* v.ast.Return */) {
 		v__ast__Return* it = (v__ast__Return*)node.obj; // ST it
 	}else if (node.typ == 192 /* v.ast.AssignStmt */) {
@@ -26494,7 +26504,7 @@ void v__gen__x64__Gen_stmt(v__gen__x64__Gen* g, v__ast__Stmt node) {
 		v__ast__ExprStmt* it = (v__ast__ExprStmt*)node.obj; // ST it
 		v__gen__x64__Gen_expr(g, it->expr);
 	}else {
-		v__gen__x64__verror(tos3("x64.stmt(): bad node"));
+		println(tos3("x64.stmt(): bad node"));
 	};
 }
 
@@ -28914,6 +28924,7 @@ void _vinit() {
 	_const_v__gen__js__tabs = new_array_from_c_array(9, 9, sizeof(string), (string[9]){
 		tos3(""), tos3("\t"), tos3("\t\t"), tos3("\t\t\t"), tos3("\t\t\t\t"), tos3("\t\t\t\t\t"), tos3("\t\t\t\t\t\t"), tos3("\t\t\t\t\t\t\t"), tos3("\t\t\t\t\t\t\t\t"), 
 });
+	_const_v__gen__x64__mag0 = ((byte)(0x7f));
 	_const_benchmark__BOK = term__ok_message(tos3("OK  "));
 	_const_benchmark__BFAIL = term__fail_message(tos3("FAIL"));
 	_const_benchmark__BSKIP = term__warn_message(tos3("SKIP"));
