@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b1459ad"
+#define V_COMMIT_HASH "871c29e"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9c0d973"
+#define V_COMMIT_HASH "b1459ad"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b1459ad"
+#define V_CURRENT_COMMIT_HASH "871c29e"
 #endif
 
 
@@ -312,31 +312,30 @@ typedef enum {
 	v__token__Kind_key_goto, // 77
 	v__token__Kind_key_if, // 78
 	v__token__Kind_key_import, // 79
-	v__token__Kind_key_import_const, // 80
-	v__token__Kind_key_in, // 81
-	v__token__Kind_key_interface, // 82
-	v__token__Kind_key_is, // 83
-	v__token__Kind_key_match, // 84
-	v__token__Kind_key_module, // 85
-	v__token__Kind_key_mut, // 86
-	v__token__Kind_key_none, // 87
-	v__token__Kind_key_return, // 88
-	v__token__Kind_key_select, // 89
-	v__token__Kind_key_sizeof, // 90
-	v__token__Kind_key_offsetof, // 91
-	v__token__Kind_key_struct, // 92
-	v__token__Kind_key_switch, // 93
-	v__token__Kind_key_true, // 94
-	v__token__Kind_key_type, // 95
-	v__token__Kind_key_typeof, // 96
-	v__token__Kind_key_orelse, // 97
-	v__token__Kind_key_union, // 98
-	v__token__Kind_key_pub, // 99
-	v__token__Kind_key_static, // 100
-	v__token__Kind_key_unsafe, // 101
-	v__token__Kind_key_var, // 102
-	v__token__Kind_keyword_end, // 103
-	v__token__Kind__end_, // 104
+	v__token__Kind_key_in, // 80
+	v__token__Kind_key_interface, // 81
+	v__token__Kind_key_is, // 82
+	v__token__Kind_key_match, // 83
+	v__token__Kind_key_module, // 84
+	v__token__Kind_key_mut, // 85
+	v__token__Kind_key_none, // 86
+	v__token__Kind_key_return, // 87
+	v__token__Kind_key_select, // 88
+	v__token__Kind_key_sizeof, // 89
+	v__token__Kind_key_offsetof, // 90
+	v__token__Kind_key_struct, // 91
+	v__token__Kind_key_switch, // 92
+	v__token__Kind_key_true, // 93
+	v__token__Kind_key_type, // 94
+	v__token__Kind_key_typeof, // 95
+	v__token__Kind_key_orelse, // 96
+	v__token__Kind_key_union, // 97
+	v__token__Kind_key_pub, // 98
+	v__token__Kind_key_static, // 99
+	v__token__Kind_key_unsafe, // 100
+	v__token__Kind_key_var, // 101
+	v__token__Kind_keyword_end, // 102
+	v__token__Kind__end_, // 103
 } v__token__Kind;
 
 typedef enum {
@@ -18682,7 +18681,6 @@ array_string v__token__build_token_str() {
 	array_set(&s, v__token__Kind_key_enum, &(string[]) { tos3("enum") });
 	array_set(&s, v__token__Kind_key_interface, &(string[]) { tos3("interface") });
 	array_set(&s, v__token__Kind_key_pub, &(string[]) { tos3("pub") });
-	array_set(&s, v__token__Kind_key_import_const, &(string[]) { tos3("import_const") });
 	array_set(&s, v__token__Kind_key_in, &(string[]) { tos3("in") });
 	array_set(&s, v__token__Kind_key_atomic, &(string[]) { tos3("atomic") });
 	array_set(&s, v__token__Kind_key_orelse, &(string[]) { tos3("or") });
@@ -18710,7 +18708,7 @@ bool v__token__is_key(string key) {
 }
 
 bool v__token__is_decl(v__token__Kind t) {
-	return (t == v__token__Kind_key_enum || t == v__token__Kind_key_interface || t == v__token__Kind_key_fn || t == v__token__Kind_key_struct || t == v__token__Kind_key_type || t == v__token__Kind_key_const || t == v__token__Kind_key_import_const || t == v__token__Kind_key_pub || t == v__token__Kind_eof);
+	return (t == v__token__Kind_key_enum || t == v__token__Kind_key_interface || t == v__token__Kind_key_fn || t == v__token__Kind_key_struct || t == v__token__Kind_key_type || t == v__token__Kind_key_const || t == v__token__Kind_key_pub || t == v__token__Kind_eof);
 }
 
 bool v__token__Kind_is_assign(v__token__Kind t) {
@@ -26179,6 +26177,7 @@ void v__gen__x64__Gen_generate_elf_header(v__gen__x64__Gen* g) {
 	v__gen__x64__Gen_write64(g, 0);
 	v__gen__x64__Gen_write64(g, 0);
 	v__gen__x64__Gen_write64(g, 0x1000);
+	println(_STR("code_start_pos = %.*s", int_hex(g->buf.len).len, int_hex(g->buf.len).str));
 	g->code_start_pos = g->buf.len;
 	v__gen__x64__Gen_call(g, _const_v__gen__x64__PLACEHOLDER);
 }
@@ -26377,9 +26376,10 @@ void v__gen__x64__Gen_mov64(v__gen__x64__Gen* g, v__gen__x64__Register reg, i64 
 }
 
 void v__gen__x64__Gen_call(v__gen__x64__Gen* g, int addr) {
-	println(_STR("call addr=%d rel_addr=%d pos=%d", addr, addr, g->buf.len));
+	int rel = 0xffffffff - (g->buf.len + 5 - addr - 1);
+	println(_STR("call addr=%.*s rel_addr=%.*s pos=%d", int_hex(addr).len, int_hex(addr).str, int_hex(rel).len, int_hex(rel).str, g->buf.len));
 	v__gen__x64__Gen_write8(g, 0xe8);
-	v__gen__x64__Gen_write32(g, addr);
+	v__gen__x64__Gen_write32(g, rel);
 }
 
 void v__gen__x64__Gen_syscall(v__gen__x64__Gen* g) {
@@ -26467,10 +26467,13 @@ void v__gen__x64__Gen_writeln(v__gen__x64__Gen* g, string s) {
 }
 
 void v__gen__x64__Gen_call_fn(v__gen__x64__Gen* g, string name) {
+	println(_STR("call fn %.*s", name.len, name.str));
 	if (!string_contains(name, tos3("__"))) {
-		return;
 	}
 	i64 addr = (*(i64*)map_get3(g->fn_addr, name, &(i64[]){ 0 }));
+	if (addr == 0) {
+		v__gen__x64__verror(_STR("fn addr of `%.*s` = 0", name.len, name.str));
+	}
 	v__gen__x64__Gen_call(g, ((int)(addr)));
 	println(_STR("call %.*s %d", name.len, name.str, addr));
 }
@@ -26481,8 +26484,11 @@ void v__gen__x64__Gen_stmt(v__gen__x64__Gen* g, v__ast__Stmt node) {
 	}else if (node.typ == 120 /* v.ast.FnDecl */) {
 		v__ast__FnDecl* it = (v__ast__FnDecl*)node.obj; // ST it
 		bool is_main = string_eq(it->name, tos3("main"));
+		println(_STR("saving addr %.*s %.*s", it->name.len, it->name.str, int_hex(g->buf.len).len, int_hex(g->buf.len).str));
 		if (is_main) {
 			v__gen__x64__Gen_save_main_fn_addr(g);
+		} else {
+			v__gen__x64__Gen_register_function_address(g, it->name);
 		}
 		// FOR IN array
 		array tmp3 = it->args;
@@ -26499,8 +26505,11 @@ void v__gen__x64__Gen_stmt(v__gen__x64__Gen* g, v__ast__Stmt node) {
 			println(tos3("end of main: gen exit"));
 			v__gen__x64__Gen_gen_exit(g);
 		}
+		v__gen__x64__Gen_ret(g);
 	}else if (node.typ == 179 /* v.ast.Return */) {
 		v__ast__Return* it = (v__ast__Return*)node.obj; // ST it
+		v__gen__x64__Gen_gen_exit(g);
+		v__gen__x64__Gen_ret(g);
 	}else if (node.typ == 192 /* v.ast.AssignStmt */) {
 		v__ast__AssignStmt* it = (v__ast__AssignStmt*)node.obj; // ST it
 	}else if (node.typ == 183 /* v.ast.ForStmt */) {
@@ -26533,7 +26542,9 @@ void v__gen__x64__Gen_expr(v__gen__x64__Gen* g, v__ast__Expr node) {
 		if ((string_eq(it->name, tos3("println")) || string_eq(it->name, tos3("print")) || string_eq(it->name, tos3("eprintln")) || string_eq(it->name, tos3("eprint")))) {
 			v__ast__Expr expr = (*(v__ast__CallArg*)array_get(it->args, 0)).expr;
 			v__gen__x64__Gen_gen_print_from_expr(g, expr, (string_eq(it->name, tos3("println")) || string_eq(it->name, tos3("eprintln"))));
+			return;
 		}
+		v__gen__x64__Gen_call_fn(g, it->name);
 	}else if (node.typ == 155 /* v.ast.ArrayInit */) {
 		v__ast__ArrayInit* it = (v__ast__ArrayInit*)node.obj; // ST it
 	}else if (node.typ == 151 /* v.ast.Ident */) {
