@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "dbbb27e"
+#define V_COMMIT_HASH "9c0d973"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7a03b18"
+#define V_COMMIT_HASH "dbbb27e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "dbbb27e"
+#define V_CURRENT_COMMIT_HASH "9c0d973"
 #endif
 
 
@@ -2182,7 +2182,6 @@ byteptr g_m2_buf; // global
 byteptr g_m2_ptr; // global
 void v_exit(int code);
 bool isnil(voidptr v);
-void print_backtrace_skipping_top_frames(int skipframes);
 void print_backtrace();
 void panic_debug(int line_no, string file, string mod, string fn_name, string s);
 void v_panic(string s);
@@ -2201,9 +2200,7 @@ void v_ptr_free(voidptr ptr);
 int is_atty(int fd);
 void builtin_init();
 void println(string s);
-bool print_backtrace_skipping_top_frames_msvc(int skipframes);
-bool print_backtrace_skipping_top_frames_mingw(int skipframes);
-bool print_backtrace_skipping_top_frames_nix(int xskipframes);
+bool print_backtrace_skipping_top_frames(int xskipframes);
 bool print_backtrace_skipping_top_frames_mac(int skipframes);
 bool print_backtrace_skipping_top_frames_freebsd(int skipframes);
 bool print_backtrace_skipping_top_frames_linux(int skipframes);
@@ -4253,36 +4250,6 @@ bool isnil(voidptr v) {
 	return v == 0;
 }
 
-void print_backtrace_skipping_top_frames(int skipframes) {
-	
-#ifdef _WIN32
-	// #if windows
-		
-#ifdef _MSC_VER
-		// #if msvc
-			if (print_backtrace_skipping_top_frames_msvc(skipframes)) {
-				return;
-			}
-		
-#endif
-		
-#ifdef __MINGW32__
-		// #if mingw
-			if (print_backtrace_skipping_top_frames_mingw(skipframes)) {
-				return;
-			}
-		
-#endif
-	
-#else
-		if (print_backtrace_skipping_top_frames_nix(skipframes)) {
-			return;
-		}
-	
-#endif
-	println(tos3("print_backtrace_skipping_top_frames is not implemented on this platform for now...\n"));
-}
-
 void print_backtrace() {
 	print_backtrace_skipping_top_frames(2);
 }
@@ -4435,17 +4402,7 @@ void println(string s) {
 	printf("%.*s\n", s.len, s.str);
 }
 
-bool print_backtrace_skipping_top_frames_msvc(int skipframes) {
-	println(tos3("not implemented, see builtin_windows.v"));
-	return false;
-}
-
-bool print_backtrace_skipping_top_frames_mingw(int skipframes) {
-	println(tos3("not implemented, see builtin_windows.v"));
-	return false;
-}
-
-bool print_backtrace_skipping_top_frames_nix(int xskipframes) {
+bool print_backtrace_skipping_top_frames(int xskipframes) {
 	int skipframes = xskipframes + 2;
 	
 #ifdef __APPLE__
@@ -4477,6 +4434,7 @@ bool print_backtrace_skipping_top_frames_nix(int xskipframes) {
 		return print_backtrace_skipping_top_frames_freebsd(skipframes);
 	
 #endif
+	println(tos3("print_backtrace_skipping_top_frames is not implemented"));
 	return false;
 }
 
@@ -14592,6 +14550,9 @@ v__token__Position v__ast__Expr_position(v__ast__Expr expr) {
 	}else if (expr.typ == 137 /* v.ast.FloatLiteral */) {
 		v__ast__FloatLiteral* it = (v__ast__FloatLiteral*)expr.obj; // ST it
 		return it->pos;
+	}else if (expr.typ == 138 /* v.ast.Ident */) {
+		v__ast__Ident* it = (v__ast__Ident*)expr.obj; // ST it
+		return it->pos;
 	}else if (expr.typ == 133 /* v.ast.IfExpr */) {
 		v__ast__IfExpr* it = (v__ast__IfExpr*)expr.obj; // ST it
 		return it->pos;
@@ -15146,8 +15107,8 @@ v__ast__Stmt v__parser__Parser_assign_stmt(v__parser__Parser* p) {
 
 v__ast__AssignExpr v__parser__Parser_assign_expr(v__parser__Parser* p, v__ast__Expr left) {
 	v__token__Kind op = p->tok.kind;
-	v__parser__Parser_next(p);
 	v__token__Position pos = v__token__Token_position(&p->tok);
+	v__parser__Parser_next(p);
 	v__ast__Expr val = v__parser__Parser_expr(p, 0);
 	if (left.typ == 147 /* v.ast.IndexExpr */) {
 		v__ast__IndexExpr* it = (v__ast__IndexExpr*)left.obj; // ST it
@@ -19494,35 +19455,37 @@ void v__checker__Checker_assign_expr(v__checker__Checker* c, v__ast__AssignExpr*
 		}}
 	}else {
 	};
+	if (assign_expr->op == v__token__Kind_assign) {
+	}else if (assign_expr->op == v__token__Kind_plus_assign) {
+		if (!v__table__TypeSymbol_is_number(left) && left_type != _const_v__table__string_type && !v__table__TypeSymbol_is_pointer(left)) {
+			v__checker__Checker_error(c, _STR("operator += not defined on left operand type `%.*s`", left->name.len, left->name.str), v__ast__Expr_position(assign_expr->left));
+		} else if (!v__table__TypeSymbol_is_number(right) && right_type != _const_v__table__string_type && !v__table__TypeSymbol_is_pointer(right)) {
+			v__checker__Checker_error(c, _STR("operator += not defined on right operand type `%.*s`", right->name.len, right->name.str), v__ast__Expr_position(assign_expr->val));
+		}
+	}else if (assign_expr->op == v__token__Kind_minus_assign) {
+		if (!v__table__TypeSymbol_is_number(left) && !v__table__TypeSymbol_is_pointer(left)) {
+			v__checker__Checker_error(c, _STR("operator -= not defined on left operand type `%.*s`", left->name.len, left->name.str), v__ast__Expr_position(assign_expr->left));
+		} else if (!v__table__TypeSymbol_is_number(right) && !v__table__TypeSymbol_is_pointer(right)) {
+			v__checker__Checker_error(c, _STR("operator -= not defined on right operand type `%.*s`", right->name.len, right->name.str), v__ast__Expr_position(assign_expr->val));
+		}
+	}else if (assign_expr->op == v__token__Kind_mult_assign || assign_expr->op == v__token__Kind_div_assign) {
+		if (!v__table__TypeSymbol_is_number(left)) {
+			v__checker__Checker_error(c, _STR("operator %.*s not defined on left operand type `%.*s`", v__token__Kind_str(assign_expr->op).len, v__token__Kind_str(assign_expr->op).str, left->name.len, left->name.str), v__ast__Expr_position(assign_expr->left));
+		} else if (!v__table__TypeSymbol_is_number(right)) {
+			v__checker__Checker_error(c, _STR("operator %.*s not defined on right operand type `%.*s`", v__token__Kind_str(assign_expr->op).len, v__token__Kind_str(assign_expr->op).str, right->name.len, right->name.str), v__ast__Expr_position(assign_expr->val));
+		}
+	}else if (assign_expr->op == v__token__Kind_and_assign || assign_expr->op == v__token__Kind_or_assign || assign_expr->op == v__token__Kind_xor_assign || assign_expr->op == v__token__Kind_mod_assign || assign_expr->op == v__token__Kind_left_shift_assign || assign_expr->op == v__token__Kind_right_shift_assign) {
+		if (!v__table__TypeSymbol_is_int(left)) {
+			v__checker__Checker_error(c, _STR("operator %.*s not defined on left operand type `%.*s`", v__token__Kind_str(assign_expr->op).len, v__token__Kind_str(assign_expr->op).str, left->name.len, left->name.str), v__ast__Expr_position(assign_expr->left));
+		} else if (!v__table__TypeSymbol_is_int(right)) {
+			v__checker__Checker_error(c, _STR("operator %.*s not defined on right operand type `%.*s`", v__token__Kind_str(assign_expr->op).len, v__token__Kind_str(assign_expr->op).str, right->name.len, right->name.str), v__ast__Expr_position(assign_expr->val));
+		}
+	}else {
+	};
 	if (!v__table__Table_check(c->table, right_type, left_type)) {
 		v__table__TypeSymbol* left_type_sym = v__table__Table_get_type_symbol(c->table, left_type);
 		v__table__TypeSymbol* right_type_sym = v__table__Table_get_type_symbol(c->table, right_type);
 		v__checker__Checker_error(c, _STR("cannot assign `%.*s` to variable `%.*s` of type `%.*s`", right_type_sym->name.len, right_type_sym->name.str, v__ast__Expr_str(assign_expr->left).len, v__ast__Expr_str(assign_expr->left).str, left_type_sym->name.len, left_type_sym->name.str), v__ast__Expr_position(assign_expr->val));
-	} else if (assign_expr->op == v__token__Kind_plus_assign) {
-		bool no_str_related_err = left_type == _const_v__table__string_type && right_type == _const_v__table__string_type;
-		bool no_ptr_related_err = (v__table__TypeSymbol_is_pointer(left) || v__table__TypeSymbol_is_int(left)) && (v__table__TypeSymbol_is_pointer(right) || v__table__TypeSymbol_is_int(right));
-		bool no_num_related_err = v__table__TypeSymbol_is_number(left) && v__table__TypeSymbol_is_number(right);
-		if (!no_str_related_err && !no_ptr_related_err && !no_num_related_err) {
-			v__checker__Checker_error(c, _STR("operator += not defined on left type `%.*s` and right type `%.*s`", left->name.len, left->name.str, right->name.len, right->name.str), assign_expr->pos);
-		}
-	} else if (assign_expr->op == v__token__Kind_minus_assign) {
-		bool no_ptr_related_err = (v__table__TypeSymbol_is_pointer(left) || v__table__TypeSymbol_is_int(left)) && (v__table__TypeSymbol_is_pointer(right) || v__table__TypeSymbol_is_int(right));
-		bool no_num_related_err = v__table__TypeSymbol_is_number(left) && v__table__TypeSymbol_is_number(right);
-		if (!no_ptr_related_err && !no_num_related_err) {
-			v__checker__Checker_error(c, _STR("operator -= not defined on left type `%.*s` and right type `%.*s`", left->name.len, left->name.str, right->name.len, right->name.str), assign_expr->pos);
-		}
-	} else if ((assign_expr->op == v__token__Kind_mult_assign || assign_expr->op == v__token__Kind_div_assign)) {
-		if (!v__table__TypeSymbol_is_number(left)) {
-			v__checker__Checker_error(c, _STR("operator %.*s not defined on left type `%.*s`", v__token__Kind_str(assign_expr->op).len, v__token__Kind_str(assign_expr->op).str, left->name.len, left->name.str), assign_expr->pos);
-		} else if (!v__table__TypeSymbol_is_number(right)) {
-			v__checker__Checker_error(c, _STR("operator %.*s not defined on right type `%.*s`", v__token__Kind_str(assign_expr->op).len, v__token__Kind_str(assign_expr->op).str, right->name.len, right->name.str), assign_expr->pos);
-		}
-	} else if ((assign_expr->op == v__token__Kind_and_assign || assign_expr->op == v__token__Kind_or_assign || assign_expr->op == v__token__Kind_xor_assign || assign_expr->op == v__token__Kind_mod_assign || assign_expr->op == v__token__Kind_left_shift_assign || assign_expr->op == v__token__Kind_right_shift_assign)) {
-		if (!v__table__TypeSymbol_is_int(left)) {
-			v__checker__Checker_error(c, _STR("operator %.*s not defined on left type `%.*s`", v__token__Kind_str(assign_expr->op).len, v__token__Kind_str(assign_expr->op).str, left->name.len, left->name.str), assign_expr->pos);
-		} else if (!v__table__TypeSymbol_is_int(right)) {
-			v__checker__Checker_error(c, _STR("operator %.*s not defined on right type `%.*s`", v__token__Kind_str(assign_expr->op).len, v__token__Kind_str(assign_expr->op).str, right->name.len, right->name.str), assign_expr->pos);
-		}
 	}
 	v__checker__Checker_check_expr_opt_call(c, assign_expr->val, right_type, true);
 }
