@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "77679d9"
+#define V_COMMIT_HASH "ab38605"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9278a0c"
+#define V_COMMIT_HASH "77679d9"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "77679d9"
+#define V_CURRENT_COMMIT_HASH "ab38605"
 #endif
 
 
@@ -3757,6 +3757,7 @@ void v__gen__x64__Gen_ret(v__gen__x64__Gen* g);
 void v__gen__x64__Gen_push(v__gen__x64__Gen* g, v__gen__x64__Register reg);
 void v__gen__x64__Gen_pop(v__gen__x64__Gen* g, v__gen__x64__Register reg);
 void v__gen__x64__Gen_sub32(v__gen__x64__Gen* g, v__gen__x64__Register reg, int val);
+void v__gen__x64__Gen_leave(v__gen__x64__Gen* g);
 int v__gen__x64__Gen_gen_loop_start(v__gen__x64__Gen* g, int from);
 void v__gen__x64__Gen_gen_loop_end(v__gen__x64__Gen* g, int to, int label);
 void v__gen__x64__Gen_save_main_fn_addr(v__gen__x64__Gen* g);
@@ -26425,6 +26426,11 @@ void v__gen__x64__Gen_sub32(v__gen__x64__Gen* g, v__gen__x64__Register reg, int 
 	v__gen__x64__Gen_write8(g, 0x48);
 	v__gen__x64__Gen_write8(g, 0x81);
 	v__gen__x64__Gen_write8(g, 0xe8 + reg);
+	v__gen__x64__Gen_write32(g, val);
+}
+
+void v__gen__x64__Gen_leave(v__gen__x64__Gen* g) {
+	v__gen__x64__Gen_write8(g, 0xc9);
 }
 
 int v__gen__x64__Gen_gen_loop_start(v__gen__x64__Gen* g, int from) {
