@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "be40de3"
+#define V_COMMIT_HASH "9278a0c"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "abf5942"
+#define V_COMMIT_HASH "be40de3"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "be40de3"
+#define V_CURRENT_COMMIT_HASH "9278a0c"
 #endif
 
 
@@ -3707,6 +3707,7 @@ byte _const_v__gen__x64__mag0; // inited later
 #define _const_v__gen__x64__sht_null 0
 #define _const_v__gen__x64__segment_start 0x400000
 #define _const_v__gen__x64__PLACEHOLDER 0
+#define _const_v__gen__x64__SEVENS 0x77777777
 void v__gen__x64__Gen_generate_elf_header(v__gen__x64__Gen* g);
 void v__gen__x64__Gen_generate_elf_footer(v__gen__x64__Gen* g);
 void v__gen__x64__Gen_section_header(v__gen__x64__Gen* g, v__gen__x64__SectionConfig c);
@@ -3755,6 +3756,7 @@ void v__gen__x64__Gen_syscall(v__gen__x64__Gen* g);
 void v__gen__x64__Gen_ret(v__gen__x64__Gen* g);
 void v__gen__x64__Gen_push(v__gen__x64__Gen* g, v__gen__x64__Register reg);
 void v__gen__x64__Gen_pop(v__gen__x64__Gen* g, v__gen__x64__Register reg);
+void v__gen__x64__Gen_sub32(v__gen__x64__Gen* g, v__gen__x64__Register reg, int val);
 int v__gen__x64__Gen_gen_loop_start(v__gen__x64__Gen* g, int from);
 void v__gen__x64__Gen_gen_loop_end(v__gen__x64__Gen* g, int to, int label);
 void v__gen__x64__Gen_save_main_fn_addr(v__gen__x64__Gen* g);
@@ -26419,6 +26421,12 @@ void v__gen__x64__Gen_pop(v__gen__x64__Gen* g, v__gen__x64__Register reg) {
 	v__gen__x64__Gen_write8(g, 0x58 + reg);
 }
 
+void v__gen__x64__Gen_sub32(v__gen__x64__Gen* g, v__gen__x64__Register reg, int val) {
+	v__gen__x64__Gen_write8(g, 0x48);
+	v__gen__x64__Gen_write8(g, 0x81);
+	v__gen__x64__Gen_write8(g, 0xe8 + reg);
+}
+
 int v__gen__x64__Gen_gen_loop_start(v__gen__x64__Gen* g, int from) {
 	v__gen__x64__Gen_mov(g, v__gen__x64__Register_r12, from);
 	int label = g->buf.len;
@@ -26580,6 +26588,7 @@ void v__gen__x64__Gen_fn_decl(v__gen__x64__Gen* g, v__ast__FnDecl it) {
 	} else {
 		v__gen__x64__Gen_register_function_address(g, it.name);
 		v__gen__x64__Gen_push(g, v__gen__x64__Register_rbp);
+		v__gen__x64__Gen_sub32(g, v__gen__x64__Register_rsp, 0x10);
 	}
 	// FOR IN array
 	array tmp2 = it.args;
