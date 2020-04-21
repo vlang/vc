@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "2597816"
+#define V_COMMIT_HASH "9d10700"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ab38605"
+#define V_COMMIT_HASH "2597816"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "2597816"
+#define V_CURRENT_COMMIT_HASH "9d10700"
 #endif
 
 
@@ -26540,8 +26540,10 @@ void v__gen__x64__Gen_stmt(v__gen__x64__Gen* g, v__ast__Stmt node) {
 		v__gen__x64__Gen_ret(g);
 	}else if (node.typ == 184 /* v.ast.StructDecl */) {
 		v__ast__StructDecl* it = (v__ast__StructDecl*)node.obj; // ST it
+	}else if (node.typ == 180 /* v.ast.Module */) {
+		v__ast__Module* it = (v__ast__Module*)node.obj; // ST it
 	}else {
-		println(tos3("x64.stmt(): bad node"));
+		println(string_add(tos3("x64.stmt(): bad node: "), tos3( /* v.ast.Stmt */ v_typeof_sumtype_117( (node).typ ))));
 	};
 }
 
