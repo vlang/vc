@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "071059e"
+#define V_COMMIT_HASH "baf3bf6"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "777c4bd"
+#define V_COMMIT_HASH "071059e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "071059e"
+#define V_CURRENT_COMMIT_HASH "baf3bf6"
 #endif
 
 
@@ -3589,6 +3589,7 @@ void v__gen__x64__Gen_gen_print_from_expr(v__gen__x64__Gen* g, v__ast__Expr expr
 void v__gen__x64__Gen_gen_print(v__gen__x64__Gen* g, string s);
 void v__gen__x64__Gen_gen_exit(v__gen__x64__Gen* g);
 void v__gen__x64__Gen_mov(v__gen__x64__Gen* g, v__gen__x64__Register reg, int val);
+void v__gen__x64__Gen_mov_rbp_rsp(v__gen__x64__Gen* g);
 void v__gen__x64__Gen_register_function_address(v__gen__x64__Gen* g, string name);
 void v__gen__x64__Gen_write(v__gen__x64__Gen* g, string s);
 void v__gen__x64__Gen_writeln(v__gen__x64__Gen* g, string s);
@@ -26200,6 +26201,12 @@ void v__gen__x64__Gen_mov(v__gen__x64__Gen* g, v__gen__x64__Register reg, int va
 	v__gen__x64__Gen_write32(g, val);
 }
 
+void v__gen__x64__Gen_mov_rbp_rsp(v__gen__x64__Gen* g) {
+	v__gen__x64__Gen_write8(g, 0x48);
+	v__gen__x64__Gen_write8(g, 0x89);
+	v__gen__x64__Gen_write8(g, 0xe5);
+}
+
 void v__gen__x64__Gen_register_function_address(v__gen__x64__Gen* g, string name) {
 	i64 addr = v__gen__x64__Gen_pos(g);
 	map_set(&g->fn_addr, name, &(i64[]) { addr });
@@ -26243,8 +26250,6 @@ void v__gen__x64__Gen_stmt(v__gen__x64__Gen* g, v__ast__Stmt node) {
 		v__gen__x64__Gen_ret(g);
 	}else if (node.typ == 171 /* v.ast.StructDecl */) {
 		v__ast__StructDecl* it = (v__ast__StructDecl*)node.obj; // ST it
-	}else if (node.typ == 167 /* v.ast.Module */) {
-		v__ast__Module* it = (v__ast__Module*)node.obj; // ST it
 	}else {
 		println(string_add(tos3("x64.stmt(): bad node: "), tos3( /* v.ast.Stmt */ v_typeof_sumtype_104( (node).typ ))));
 	};
@@ -26299,6 +26304,7 @@ void v__gen__x64__Gen_fn_decl(v__gen__x64__Gen* g, v__ast__FnDecl it) {
 	} else {
 		v__gen__x64__Gen_register_function_address(g, it.name);
 		v__gen__x64__Gen_push(g, v__gen__x64__Register_rbp);
+		v__gen__x64__Gen_mov_rbp_rsp(g);
 	}
 	// FOR IN array
 	array tmp2 = it.args;
@@ -26316,7 +26322,7 @@ void v__gen__x64__Gen_fn_decl(v__gen__x64__Gen* g, v__ast__FnDecl it) {
 		v__gen__x64__Gen_gen_exit(g);
 	}
 	if (!is_main) {
-		v__gen__x64__Gen_pop(g, v__gen__x64__Register_rbp);
+		v__gen__x64__Gen_leave(g);
 	}
 	v__gen__x64__Gen_ret(g);
 }
