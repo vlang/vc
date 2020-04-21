@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "7c1d6b6"
+#define V_COMMIT_HASH "a8dc0cc"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "baf3bf6"
+#define V_COMMIT_HASH "7c1d6b6"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "7c1d6b6"
+#define V_CURRENT_COMMIT_HASH "a8dc0cc"
 #endif
 
 
@@ -19752,9 +19752,20 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 	}
 	if (infix_expr->op == v__token__Kind_mod) {
 		if (v__table__TypeSymbol_is_int(left) && !v__table__TypeSymbol_is_int(right)) {
-			v__checker__Checker_error(c, _STR("right type of `%.*s` cannot be non-integer type %.*s", v__token__Kind_str(infix_expr->op).len, v__token__Kind_str(infix_expr->op).str, right->name.len, right->name.str), v__ast__Expr_position(infix_expr->right));
+			v__checker__Checker_error(c, _STR("mismatched types `%.*s` and `%.*s`", left->name.len, left->name.str, right->name.len, right->name.str), v__ast__Expr_position(infix_expr->right));
 		} else if (!v__table__TypeSymbol_is_int(left) && v__table__TypeSymbol_is_int(right)) {
-			v__checker__Checker_error(c, _STR("left type of `%.*s` cannot be non-integer type %.*s", v__token__Kind_str(infix_expr->op).len, v__token__Kind_str(infix_expr->op).str, left->name.len, left->name.str), v__ast__Expr_position(infix_expr->left));
+			v__checker__Checker_error(c, _STR("mismatched types `%.*s` and `%.*s`", left->name.len, left->name.str, right->name.len, right->name.str), v__ast__Expr_position(infix_expr->left));
+		} else if ((left->kind == v__table__Kind_f32 || left->kind == v__table__Kind_f64 || left->kind == v__table__Kind_string || left->kind == v__table__Kind_array || left->kind == v__table__Kind_array_fixed || left->kind == v__table__Kind_map || left->kind == v__table__Kind_struct_) && !v__table__TypeSymbol_has_method(left, v__token__Kind_str(infix_expr->op))) {
+			v__checker__Checker_error(c, _STR("mismatched types `%.*s` and `%.*s`", left->name.len, left->name.str, right->name.len, right->name.str), v__ast__Expr_position(infix_expr->left));
+		} else if ((right->kind == v__table__Kind_f32 || right->kind == v__table__Kind_f64 || right->kind == v__table__Kind_string || right->kind == v__table__Kind_array || right->kind == v__table__Kind_array_fixed || right->kind == v__table__Kind_map || right->kind == v__table__Kind_struct_) && !v__table__TypeSymbol_has_method(right, v__token__Kind_str(infix_expr->op))) {
+			v__checker__Checker_error(c, _STR("mismatched types `%.*s` and `%.*s`", left->name.len, left->name.str, right->name.len, right->name.str), v__ast__Expr_position(infix_expr->right));
+		}
+	}
+	if ((infix_expr->op == v__token__Kind_plus || infix_expr->op == v__token__Kind_minus || infix_expr->op == v__token__Kind_mul || infix_expr->op == v__token__Kind_div)) {
+		if ((left->kind == v__table__Kind_array || left->kind == v__table__Kind_array_fixed || left->kind == v__table__Kind_map || left->kind == v__table__Kind_struct_) && !v__table__TypeSymbol_has_method(left, v__token__Kind_str(infix_expr->op))) {
+			v__checker__Checker_error(c, _STR("mismatched types `%.*s` and `%.*s`", left->name.len, left->name.str, right->name.len, right->name.str), v__ast__Expr_position(infix_expr->left));
+		} else if ((right->kind == v__table__Kind_array || right->kind == v__table__Kind_array_fixed || right->kind == v__table__Kind_map || right->kind == v__table__Kind_struct_) && !v__table__TypeSymbol_has_method(right, v__token__Kind_str(infix_expr->op))) {
+			v__checker__Checker_error(c, _STR("mismatched types `%.*s` and `%.*s`", left->name.len, left->name.str, right->name.len, right->name.str), v__ast__Expr_position(infix_expr->right));
 		}
 	}
 	if (left_type == _const_v__table__bool_type && !((infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_ne || infix_expr->op == v__token__Kind_logical_or || infix_expr->op == v__token__Kind_and))) {
