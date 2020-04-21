@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b9c0d2d"
+#define V_COMMIT_HASH "34fd148"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bc4a576"
+#define V_COMMIT_HASH "b9c0d2d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b9c0d2d"
+#define V_CURRENT_COMMIT_HASH "34fd148"
 #endif
 
 
@@ -2596,19 +2596,21 @@ u32 _const_strconv__ftoa__mantbits32; // inited later
 u32 _const_strconv__ftoa__expbits32; // inited later
 u32 _const_strconv__ftoa__bias32; // inited later
 #define _const_strconv__ftoa__maxexp32 255
-string strconv__ftoa__Dec32_get_string_32(strconv__ftoa__Dec32 d, bool neg, int i_n_digit);
+string strconv__ftoa__Dec32_get_string_32(strconv__ftoa__Dec32 d, bool neg, int i_n_digit, int i_pad_digit);
 multi_return_strconv__ftoa__Dec32_bool strconv__ftoa__f32_to_decimal_exact_int(u32 i_mant, u32 exp);
 strconv__ftoa__Dec32 strconv__ftoa__f32_to_decimal(u32 mant, u32 exp);
 string strconv__ftoa__f32_to_str(f32 f, int n_digit);
+string strconv__ftoa__f32_to_str_pad(f32 f, int n_digit);
 array_u64 _const_strconv__ftoa__ten_pow_table_64; // inited later
 u32 _const_strconv__ftoa__mantbits64; // inited later
 u32 _const_strconv__ftoa__expbits64; // inited later
 u32 _const_strconv__ftoa__bias64; // inited later
 #define _const_strconv__ftoa__maxexp64 2047
-string strconv__ftoa__Dec64_get_string_64(strconv__ftoa__Dec64 d, bool neg, int i_n_digit);
+string strconv__ftoa__Dec64_get_string_64(strconv__ftoa__Dec64 d, bool neg, int i_n_digit, int i_pad_digit);
 multi_return_strconv__ftoa__Dec64_bool strconv__ftoa__f64_to_decimal_exact_int(u64 i_mant, u64 exp);
 strconv__ftoa__Dec64 strconv__ftoa__f64_to_decimal(u64 mant, u64 exp);
 string strconv__ftoa__f64_to_str(f64 f, int n_digit);
+string strconv__ftoa__f64_to_str_pad(f64 f, int n_digit);
 string strconv__ftoa__ftoa_64(f64 f);
 string strconv__ftoa__ftoa_long_64(f64 f);
 string strconv__ftoa__ftoa_32(f32 f);
@@ -7941,11 +7943,16 @@ string strings__repeat_string(string s, int n) {
 	return tos(bytes, blen);
 }
 
-string strconv__ftoa__Dec32_get_string_32(strconv__ftoa__Dec32 d, bool neg, int i_n_digit) {
+string strconv__ftoa__Dec32_get_string_32(strconv__ftoa__Dec32 d, bool neg, int i_n_digit, int i_pad_digit) {
 	int n_digit = i_n_digit + 1;
+	int pad_digit = i_pad_digit + 1;
 	u32 out = d.m;
 	int out_len = strconv__ftoa__decimal_len_32(out);
 	int out_len_original = out_len;
+	int fw_zeros = 0;
+	if (pad_digit > out_len) {
+		fw_zeros = pad_digit - out_len;
+	}
 	array_byte buf = array_repeat(new_array_from_c_array(1, 1, sizeof(byte), (byte[1]){
 		((byte)(0)), 
 }), out_len + 5 + 1 + 1);
@@ -7959,7 +7966,7 @@ string strconv__ftoa__Dec32_get_string_32(strconv__ftoa__Dec32 d, bool neg, int 
 		disp = 1;
 	}
 	if (n_digit < out_len) {
-		out += (*(u32*)array_get(_const_strconv__ftoa__ten_pow_table_32, out_len - n_digit)) + 1;
+		out += (*(u32*)array_get(_const_strconv__ftoa__ten_pow_table_32, out_len - n_digit - 1)) * 5;
 		out /= (*(u32*)array_get(_const_strconv__ftoa__ten_pow_table_32, out_len - n_digit));
 		out_len = n_digit;
 	}
@@ -7979,6 +7986,10 @@ string strconv__ftoa__Dec32_get_string_32(strconv__ftoa__Dec32 d, bool neg, int 
 	if (y - x >= 0) {
 		array_set(&buf, y - x, &(byte[]) { '0' + ((byte)(out % 10)) });
 		i++;
+	}
+	while (fw_zeros > 0) {
+		array_set(&buf, i++, &(byte[]) { '0' });
+		fw_zeros--;
 	}
 	array_set(&buf, i, &(byte[]) { 'e' });
 	i++;
@@ -8149,23 +8160,50 @@ string strconv__ftoa__f32_to_str(f32 f, int n_digit) {
 	if ((exp == _const_strconv__ftoa__maxexp32) || (exp == 0 && mant == 0)) {
 		return strconv__ftoa__get_string_special(neg, exp == 0, mant == 0);
 	}
-	multi_return_strconv__ftoa__Dec32_bool mr_8266 = strconv__ftoa__f32_to_decimal_exact_int(mant, exp);
-	strconv__ftoa__Dec32 d = mr_8266.arg0;
-	bool ok = mr_8266.arg1;
+	multi_return_strconv__ftoa__Dec32_bool mr_8459 = strconv__ftoa__f32_to_decimal_exact_int(mant, exp);
+	strconv__ftoa__Dec32 d = mr_8459.arg0;
+	bool ok = mr_8459.arg1;
 	if (!ok) {
 		d = strconv__ftoa__f32_to_decimal(mant, exp);
 	}
-	return strconv__ftoa__Dec32_get_string_32(d, neg, n_digit);
+	return strconv__ftoa__Dec32_get_string_32(d, neg, n_digit, 0);
 }
 
-string strconv__ftoa__Dec64_get_string_64(strconv__ftoa__Dec64 d, bool neg, int i_n_digit) {
+string strconv__ftoa__f32_to_str_pad(f32 f, int n_digit) {
+	strconv__ftoa__Uf32 u1 = (strconv__ftoa__Uf32){
+		.f = 0,
+		.u = 0,
+	};
+	u1.f = f;
+	u32 u = u1.u;
+	bool neg = (u >> (_const_strconv__ftoa__mantbits32 + _const_strconv__ftoa__expbits32)) != 0;
+	u32 mant = (u & ((((u32)(1)) << _const_strconv__ftoa__mantbits32) - ((u32)(1))));
+	u32 exp = ((u >> _const_strconv__ftoa__mantbits32) & ((((u32)(1)) << _const_strconv__ftoa__expbits32) - ((u32)(1))));
+	if ((exp == _const_strconv__ftoa__maxexp32) || (exp == 0 && mant == 0)) {
+		return strconv__ftoa__get_string_special(neg, exp == 0, mant == 0);
+	}
+	multi_return_strconv__ftoa__Dec32_bool mr_9167 = strconv__ftoa__f32_to_decimal_exact_int(mant, exp);
+	strconv__ftoa__Dec32 d = mr_9167.arg0;
+	bool ok = mr_9167.arg1;
+	if (!ok) {
+		d = strconv__ftoa__f32_to_decimal(mant, exp);
+	}
+	return strconv__ftoa__Dec32_get_string_32(d, neg, n_digit, n_digit);
+}
+
+string strconv__ftoa__Dec64_get_string_64(strconv__ftoa__Dec64 d, bool neg, int i_n_digit, int i_pad_digit) {
 	int n_digit = i_n_digit + 1;
+	int pad_digit = i_pad_digit + 1;
 	u64 out = d.m;
 	int out_len = strconv__ftoa__decimal_len_64(out);
 	int out_len_original = out_len;
+	int fw_zeros = 0;
+	if (pad_digit > out_len) {
+		fw_zeros = pad_digit - out_len;
+	}
 	array_byte buf = array_repeat(new_array_from_c_array(1, 1, sizeof(byte), (byte[1]){
 		((byte)(0)), 
-}), out_len + 6 + 1 + 1);
+}), out_len + 6 + 1 + 1 + fw_zeros);
 	int i = 0;
 	if (neg) {
 		array_set(&buf, i, &(byte[]) { '-' });
@@ -8176,7 +8214,7 @@ string strconv__ftoa__Dec64_get_string_64(strconv__ftoa__Dec64 d, bool neg, int 
 		disp = 1;
 	}
 	if (n_digit < out_len) {
-		out += (*(u64*)array_get(_const_strconv__ftoa__ten_pow_table_64, out_len - n_digit)) + 1;
+		out += (*(u64*)array_get(_const_strconv__ftoa__ten_pow_table_64, out_len - n_digit - 1)) * 5;
 		out /= (*(u64*)array_get(_const_strconv__ftoa__ten_pow_table_64, out_len - n_digit));
 		out_len = n_digit;
 	}
@@ -8196,6 +8234,10 @@ string strconv__ftoa__Dec64_get_string_64(strconv__ftoa__Dec64 d, bool neg, int 
 	if (y - x >= 0) {
 		array_set(&buf, y - x, &(byte[]) { '0' + ((byte)(out % 10)) });
 		i++;
+	}
+	while (fw_zeros > 0) {
+		array_set(&buf, i++, &(byte[]) { '0' });
+		fw_zeros--;
 	}
 	array_set(&buf, i, &(byte[]) { 'e' });
 	i++;
@@ -8388,13 +8430,35 @@ string strconv__ftoa__f64_to_str(f64 f, int n_digit) {
 	if ((exp == _const_strconv__ftoa__maxexp64) || (exp == 0 && mant == 0)) {
 		return strconv__ftoa__get_string_special(neg, exp == 0, mant == 0);
 	}
-	multi_return_strconv__ftoa__Dec64_bool mr_9648 = strconv__ftoa__f64_to_decimal_exact_int(mant, exp);
-	strconv__ftoa__Dec64 d = mr_9648.arg0;
-	bool ok = mr_9648.arg1;
+	multi_return_strconv__ftoa__Dec64_bool mr_9904 = strconv__ftoa__f64_to_decimal_exact_int(mant, exp);
+	strconv__ftoa__Dec64 d = mr_9904.arg0;
+	bool ok = mr_9904.arg1;
 	if (!ok) {
 		d = strconv__ftoa__f64_to_decimal(mant, exp);
 	}
-	return strconv__ftoa__Dec64_get_string_64(d, neg, n_digit);
+	return strconv__ftoa__Dec64_get_string_64(d, neg, n_digit, 0);
+}
+
+string strconv__ftoa__f64_to_str_pad(f64 f, int n_digit) {
+	strconv__ftoa__Uf64 u1 = (strconv__ftoa__Uf64){
+		.f = 0,
+		.u = 0,
+	};
+	u1.f = f;
+	u64 u = u1.u;
+	bool neg = (u >> (_const_strconv__ftoa__mantbits64 + _const_strconv__ftoa__expbits64)) != 0;
+	u64 mant = (u & ((((u64)(1)) << _const_strconv__ftoa__mantbits64) - ((u64)(1))));
+	u64 exp = ((u >> _const_strconv__ftoa__mantbits64) & ((((u64)(1)) << _const_strconv__ftoa__expbits64) - ((u64)(1))));
+	if ((exp == _const_strconv__ftoa__maxexp64) || (exp == 0 && mant == 0)) {
+		return strconv__ftoa__get_string_special(neg, exp == 0, mant == 0);
+	}
+	multi_return_strconv__ftoa__Dec64_bool mr_10640 = strconv__ftoa__f64_to_decimal_exact_int(mant, exp);
+	strconv__ftoa__Dec64 d = mr_10640.arg0;
+	bool ok = mr_10640.arg1;
+	if (!ok) {
+		d = strconv__ftoa__f64_to_decimal(mant, exp);
+	}
+	return strconv__ftoa__Dec64_get_string_64(d, neg, n_digit, n_digit);
 }
 
 inline
