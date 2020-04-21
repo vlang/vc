@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ee2e83f"
+#define V_COMMIT_HASH "abf5942"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1bf094f"
+#define V_COMMIT_HASH "ee2e83f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ee2e83f"
+#define V_CURRENT_COMMIT_HASH "abf5942"
 #endif
 
 
@@ -879,11 +879,9 @@ typedef array array_string;
 typedef array array_byte;
 typedef array array_int;
 typedef array array_char;
-typedef int (*anon_fn_7_7_7)(int,int);
 typedef array array_voidptr;
 typedef array array_RepIndex;
 typedef array array_ustring;
-typedef void (*anon_fn_18_1)(string);
 typedef int v__table__Type;
 typedef array array_v__table__Fn;
 typedef array array_v__table__Type;
@@ -2826,7 +2824,7 @@ int v__table__Table_find_or_register_map(v__table__Table* t, v__table__Type key_
 int v__table__Table_find_or_register_array(v__table__Table* t, v__table__Type elem_type, int nr_dims);
 int v__table__Table_find_or_register_array_fixed(v__table__Table* t, v__table__Type elem_type, int size, int nr_dims);
 int v__table__Table_find_or_register_multi_return(v__table__Table* t, array_v__table__Type mr_typs);
-int v__table__Table_find_or_register_fn_type(v__table__Table* t, v__table__Fn f, bool has_decl);
+int v__table__Table_find_or_register_fn_type(v__table__Table* t, v__table__Fn f, bool is_anon, bool has_decl);
 int v__table__Table_add_placeholder_type(v__table__Table* t, string name);
 v__table__Type v__table__Table_value_type(v__table__Table* t, v__table__Type typ);
 bool v__table__Table_check(v__table__Table* t, v__table__Type got, v__table__Type expected);
@@ -11782,14 +11780,13 @@ int v__table__Table_find_or_register_multi_return(v__table__Table* t, array_v__t
 	return v__table__Table_register_type_symbol(t, mr_type);
 }
 
-int v__table__Table_find_or_register_fn_type(v__table__Table* t, v__table__Fn f, bool has_decl) {
-	bool is_anon = f.name.len == 0;
-	string name = (is_anon ?  ( _STR("anon_fn_%.*s", v__table__Fn_signature(&f).len, v__table__Fn_signature(&f).str) )  :  ( f.name ) );
+int v__table__Table_find_or_register_fn_type(v__table__Table* t, v__table__Fn f, bool is_anon, bool has_decl) {
+	string name = (f.name.len == 0 ?  ( _STR("anon_fn_%.*s", v__table__Fn_signature(&f).len, v__table__Fn_signature(&f).str) )  :  ( f.name ) );
 	return v__table__Table_register_type_symbol(t, (v__table__TypeSymbol){
 		.kind = v__table__Kind_function,
 		.name = name,
 		.info = /* sum type cast */ (v__table__TypeInfo) {.obj = memdup(&(v__table__FnType[]) {(v__table__FnType){
-		.is_anon = is_anon,
+		.is_anon = f.name.len == 0 || is_anon,
 		.has_decl = has_decl,
 		.func = f,
 	}}, sizeof(v__table__FnType)), .typ = 84 /* v.table.FnType */},
@@ -15667,11 +15664,10 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 
 v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
-	v__parser__Parser_open_scope(p);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
-	multi_return_array_v__table__Arg_bool mr_5260 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_5260.arg0;
-	bool is_variadic = mr_5260.arg1;
+	multi_return_array_v__table__Arg_bool mr_5263 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_5263.arg0;
+	bool is_variadic = mr_5263.arg1;
 	// FOR IN array
 	array tmp1 = args;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
@@ -15693,7 +15689,6 @@ v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_lcbr) {
 		stmts = v__parser__Parser_parse_block(p);
 	}
-	v__parser__Parser_close_scope(p);
 	v__table__Fn func = (v__table__Fn){
 		.args = args,
 		.is_variadic = is_variadic,
@@ -15705,9 +15700,10 @@ v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 		.is_pub = 0,
 		.mod = tos3(""),
 	};
-	int idx = v__table__Table_find_or_register_fn_type(p->table, func, false);
+	string name = _STR("anon_%d_%.*s", p->tok.pos, v__table__Fn_signature(&func).len, v__table__Fn_signature(&func).str);
+	func.name = name;
+	int idx = v__table__Table_find_or_register_fn_type(p->table, func, true, false);
 	v__table__Type typ = v__table__new_type(idx);
-	string name = v__table__Table_get_type_name(p->table, typ);
 	return (v__ast__AnonFn){
 		.decl = (v__ast__FnDecl){
 		.name = name,
@@ -16220,7 +16216,7 @@ v__table__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name
 		.is_pub = 0,
 		.mod = tos3(""),
 	};
-	int idx = v__table__Table_find_or_register_fn_type(p->table, func, false);
+	int idx = v__table__Table_find_or_register_fn_type(p->table, func, false, false);
 	return v__table__new_type(idx);
 }
 
@@ -20406,6 +20402,7 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 		return _const_v__table__string_type;
 	}else if (node.typ == 164 /* v.ast.AnonFn */) {
 		v__ast__AnonFn* it = (v__ast__AnonFn*)node.obj; // ST it
+		v__checker__Checker_stmts(c, it->decl.stmts);
 		return it->typ;
 	}else {
 		string tnode = tos3( /* v.ast.Expr */ v_typeof_sumtype_96( (node).typ ));
@@ -20510,7 +20507,7 @@ v__table__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* 
 		bool tmp16;
 		{ /* if guard */ Option_v__table__Fn func = v__table__Table_find_fn(c->table, name);
 		if ((tmp16 = func.ok)) {
-			v__table__Type fn_type = v__table__new_type(v__table__Table_find_or_register_fn_type(c->table, /*opt*/(*(v__table__Fn*)func.data), true));
+			v__table__Type fn_type = v__table__new_type(v__table__Table_find_or_register_fn_type(c->table, /*opt*/(*(v__table__Fn*)func.data), false, true));
 			ident->name = name;
 			ident->kind = v__ast__IdentKind_function;
 			ident->info = /* sum type cast */ (v__ast__IdentInfo) {.obj = memdup(&(v__ast__IdentFn[]) {(v__ast__IdentFn){
@@ -21921,7 +21918,7 @@ void v__gen__Gen_write_typedef_types(v__gen__Gen* g) {
 		}else if (typ.kind == v__table__Kind_function) {
 			v__table__FnType info = /* as */ *(v__table__FnType*)typ.info.obj;
 			v__table__Fn func = info.func;
-			if (!info.has_decl) {
+			if (!info.has_decl && !info.is_anon) {
 				string fn_name = (func.is_c ?  ( string_replace(func.name, tos3("."), tos3("__")) )  : info.is_anon ?  ( typ.name )  :  ( v__gen__c_name(func.name) ) );
 				strings__Builder_write(&g->definitions, _STR("typedef %.*s (*%.*s)(", v__gen__Gen_typ(g, func.return_type).len, v__gen__Gen_typ(g, func.return_type).str, fn_name.len, fn_name.str));
 				// FOR IN array
@@ -22407,6 +22404,17 @@ void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assign_stmt)
 				is_call = true;
 				or_stmts = it->or_block.stmts;
 				return_type = it->return_type;
+			}else if (val.typ == 164 /* v.ast.AnonFn */) {
+				v__ast__AnonFn* it = (v__ast__AnonFn*)val.obj; // ST it
+				v__gen__Gen_expr(g, /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__AnonFn[]) {*it}, sizeof(v__ast__AnonFn)), .typ = 164 /* v.ast.AnonFn */});
+				v__table__TypeSymbol* fsym = v__table__Table_get_type_symbol(g->table, it->typ);
+				string ret_styp = v__gen__Gen_typ(g, it->decl.return_type);
+				v__gen__Gen_write(g, _STR("%.*s (*%.*s) (", ret_styp.len, ret_styp.str, ident.name.len, ident.name.str));
+				int def_pos = g->definitions.len;
+				v__gen__Gen_fn_args(g, it->decl.args, it->decl.is_variadic);
+				strings__Builder_go_back(&g->definitions, g->definitions.len - def_pos);
+				v__gen__Gen_writeln(g, _STR(") = &%.*s;", fsym->name.len, fsym->name.str));
+				continue;
 			}else {
 			};
 			bool gen_or = is_call && v__table__type_is(return_type, v__table__TypeFlag_optional);
@@ -22729,27 +22737,13 @@ void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 		v__gen__Gen_typeof_expr(g, */*d*/it);
 	}else if (node.typ == 164 /* v.ast.AnonFn */) {
 		v__ast__AnonFn* it = (v__ast__AnonFn*)node.obj; // ST it
-		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, it->typ);
-		v__ast__FnDecl func = it->decl;
 		int pos = g->out.len;
-		string type_name = v__gen__Gen_typ(g, func.return_type);
-		v__gen__Gen_write(g, _STR("%.*s %.*s_impl(", type_name.len, type_name.str, sym->name.len, sym->name.str));
-		v__gen__Gen_fn_args(g, func.args, func.is_variadic);
-		v__gen__Gen_writeln(g, tos3(") {"));
-		v__gen__Gen_stmts(g, func.stmts);
-		if (g->autofree) {
-			v__gen__Gen_free_scope_vars(g, func.pos.pos - 1);
-		}
-		if (g->defer_stmts.len > 0) {
-			v__gen__Gen_write_defer_stmts(g);
-		}
-		strings__Builder_writeln(&g->out, tos3("}"));
-		g->defer_stmts = __new_array(0, 0, sizeof(v__ast__DeferStmt));
-		g->fn_decl = 0;
+		int def_pos = g->definitions.len;
+		v__gen__Gen_stmt(g, /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__FnDecl[]) {it->decl}, sizeof(v__ast__FnDecl)), .typ = 107 /* v.ast.FnDecl */});
 		string fn_body = strings__Builder_after(&g->out, pos);
+		strings__Builder_go_back(&g->definitions, g->definitions.len - def_pos);
 		strings__Builder_write(&g->definitions, fn_body);
 		strings__Builder_go_back(&g->out, fn_body.len);
-		strings__Builder_write(&g->out, _STR("&%.*s_impl", sym->name.len, sym->name.str));
 	}else {
 		println(term__red(string_add(tos3("cgen.expr(): bad node "), tos3( /* v.ast.Expr */ v_typeof_sumtype_96( (node).typ )))));
 	};
@@ -23839,9 +23833,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_62617 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_62617.arg0;
-	string type_of_last_expression = mr_62617.arg1;
+	multi_return_string_string mr_62642 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_62642.arg0;
+	string type_of_last_expression = mr_62642.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
