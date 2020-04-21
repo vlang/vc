@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "08fac28"
+#define V_COMMIT_HASH "155891a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "34fd148"
+#define V_COMMIT_HASH "08fac28"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "08fac28"
+#define V_CURRENT_COMMIT_HASH "155891a"
 #endif
 
 
@@ -216,6 +216,7 @@ typedef struct v__ast__Comment v__ast__Comment;
 typedef struct v__ast__ConcatExpr v__ast__ConcatExpr;
 typedef struct v__ast__None v__ast__None;
 typedef struct v__ast__Scope v__ast__Scope;
+typedef struct v__ast__UnusedVar v__ast__UnusedVar;
 typedef struct v__cflag__CFlag v__cflag__CFlag;
 typedef struct v__parser__Parser v__parser__Parser;
 typedef struct v__token__Position v__token__Position;
@@ -907,7 +908,9 @@ typedef array array_v__ast__MatchBranch;
 typedef array array_v__ast__Ident;
 typedef array array_v__ast__EnumField;
 typedef array array_v__ast__Scope_ptr;
+typedef map map_string_v__ast__UnusedVar;
 typedef map map_string_v__ast__ScopeObject;
+typedef array array_v__ast__UnusedVar;
 typedef array array_v__token__Kind;
 typedef array array_v__token__Precedence;
 typedef voidptr time__time_t;
@@ -1245,6 +1248,7 @@ struct v__ast__Scope {
 	array_v__ast__Scope_ptr children;
 	int start_pos;
 	int end_pos;
+	map_string_v__ast__UnusedVar unused_vars;
 	map_string_v__ast__ScopeObject objects;
 };
 
@@ -1869,6 +1873,11 @@ struct v__ast__EnumField {
 	v__token__Position pos;
 	v__ast__Expr expr;
 	bool has_expr;
+};
+
+struct v__ast__UnusedVar {
+	string name;
+	v__token__Position pos;
 };
 
 struct v__parser__Parser {
@@ -2997,6 +3006,10 @@ Option_v__ast__ConstField v__ast__Scope_find_const(v__ast__Scope* s, string name
 bool v__ast__Scope_known_var(v__ast__Scope* s, string name);
 void v__ast__Scope_update_var_type(v__ast__Scope* s, string name, v__table__Type typ);
 void v__ast__Scope_register(v__ast__Scope* s, string name, v__ast__ScopeObject obj);
+void v__ast__Scope_register_unused_var(v__ast__Scope* s, string name, v__token__Position pos);
+void v__ast__Scope_remove_unused_var(v__ast__Scope* s, string name);
+array_v__ast__UnusedVar v__ast__Scope_unused_vars(v__ast__Scope* s);
+void v__ast__Scope_clear_unused_vars(v__ast__Scope* s);
 v__ast__Scope* v__ast__Scope_outermost(v__ast__Scope* s);
 v__ast__Scope* v__ast__Scope_innermost(v__ast__Scope* s, int pos);
 bool v__ast__Scope_contains(v__ast__Scope* s, int pos);
@@ -7026,7 +7039,6 @@ string array_string_join(array_string a, string del) {
 		string val = ((string*)tmp3.data)[i];
 		for (int tmp4 = 0; tmp4 < val.len; tmp4++) {
 			int j = tmp4;
-			byte c = string_at(val, j);
 			res.str[idx] = val.str[j];
 			idx++;
 		}
@@ -7449,6 +7461,8 @@ multi_return_v__pref__Preferences_string parse_args(array_string args) {
 			res->is_debug = true;
 		}else if (string_eq(arg, tos3("-live"))) {
 			res->is_live = true;
+		}else if (string_eq(arg, tos3("-repl"))) {
+			res->is_repl = true;
 		}else if (string_eq(arg, tos3("-sharedlive"))) {
 			res->is_live = true;
 			res->is_shared = true;
@@ -12094,6 +12108,7 @@ string v__doc__doc(string mod, v__table__Table* table) {
 			.children = new_array(0, 1, sizeof(v__ast__Scope)),
 			.start_pos = 0,
 			.end_pos = 0,
+			.unused_vars = new_map_1(sizeof(v__ast__UnusedVar)),
 			.objects = new_map_1(sizeof(v__ast__ScopeObject)),
 		}, sizeof(v__ast__Scope)));
 		_PUSH_MANY(&d.stmts, (file_ast.stmts), tmp6, array_v__ast__Stmt);
@@ -12777,6 +12792,7 @@ v__builder__Builder v__builder__new_builder(v__pref__Preferences* pref) {
 		.children = new_array(0, 1, sizeof(v__ast__Scope)),
 		.start_pos = 0,
 		.end_pos = 0,
+		.unused_vars = new_map_1(sizeof(v__ast__UnusedVar)),
 		.objects = new_map_1(sizeof(v__ast__ScopeObject)),
 	}, sizeof(v__ast__Scope)),
 		.compiled_dir = compiled_dir,
@@ -13267,7 +13283,6 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 	bool is_cc_clang = string_contains(v->pref->ccompiler, tos3("clang")) || string_eq(guessed_compiler, tos3("clang"));
 	bool is_cc_tcc = string_contains(v->pref->ccompiler, tos3("tcc")) || string_eq(guessed_compiler, tos3("tcc"));
 	bool is_cc_gcc = string_contains(v->pref->ccompiler, tos3("gcc")) || string_eq(guessed_compiler, tos3("gcc"));
-	bool is_cc_msvc = string_contains(v->pref->ccompiler, tos3("msvc")) || string_eq(guessed_compiler, tos3("msvc"));
 	if (is_cc_clang) {
 		if (debug_mode) {
 			debug_options = tos3("-g -O0 -no-pie");
@@ -14724,6 +14739,7 @@ v__ast__Scope* v__ast__new_scope(v__ast__Scope* parent, int start_pos) {
 		.start_pos = start_pos,
 		.children = new_array(0, 1, sizeof(v__ast__Scope)),
 		.end_pos = 0,
+		.unused_vars = new_map_1(sizeof(v__ast__UnusedVar)),
 		.objects = new_map_1(sizeof(v__ast__ScopeObject)),
 	}, sizeof(v__ast__Scope));
 }
@@ -14819,6 +14835,37 @@ void v__ast__Scope_register(v__ast__Scope* s, string name, v__ast__ScopeObject o
 		return;
 	}}
 	map_set(&s->objects, name, &(v__ast__ScopeObject[]) { obj });
+}
+
+void v__ast__Scope_register_unused_var(v__ast__Scope* s, string name, v__token__Position pos) {
+	map_set(&s->unused_vars, name, &(v__ast__UnusedVar[]) { (v__ast__UnusedVar){
+		.name = name,
+		.pos = pos,
+	} });
+}
+
+void v__ast__Scope_remove_unused_var(v__ast__Scope* s, string name) {
+	v__ast__Scope* sc = s;
+	while (!isnil(sc)) {
+		map_delete(&sc->unused_vars, name);
+		sc = sc->parent;
+	}
+}
+
+array_v__ast__UnusedVar v__ast__Scope_unused_vars(v__ast__Scope* s) {
+	array_v__ast__UnusedVar ret = __new_array(0, 0, sizeof(v__ast__UnusedVar));
+	// FOR IN map
+	array_string keys_tmp1 = map_keys(&s->unused_vars);
+	for (int tmp2 = 0; tmp2 < keys_tmp1.len; tmp2++) {
+		string _ = ((string*)keys_tmp1.data)[tmp2];
+		v__ast__UnusedVar v = (*(v__ast__UnusedVar*)map_get3(s->unused_vars, _, &(v__ast__UnusedVar[]){ {0} }));
+		array_push(&ret, &(v__ast__UnusedVar[]){ v });
+	}
+	return ret;
+}
+
+void v__ast__Scope_clear_unused_vars(v__ast__Scope* s) {
+	s->unused_vars = new_map_1(sizeof(v__ast__UnusedVar));
 }
 
 v__ast__Scope* v__ast__Scope_outermost(v__ast__Scope* s) {
@@ -15448,6 +15495,8 @@ v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser* p) {
 #ifdef __TINYC__
 		// #if tinyc
 			int tcc_stack_bug = 12345;
+			{tcc_stack_bug;}
+			;
 		
 #endif
 		last_pos = v__token__Token_position(&p->tok);
@@ -15521,7 +15570,6 @@ v__ast__MapInit v__parser__Parser_map_init(v__parser__Parser* p) {
 
 v__ast__CallExpr v__parser__Parser_call_expr(v__parser__Parser* p, bool is_c, bool is_js, string mod) {
 	v__token__Position first_pos = v__token__Token_position(&p->tok);
-	v__token__Token tok = p->tok;
 	string name = v__parser__Parser_check_name(p);
 	string fn_name = (is_c ?  ( _STR("C.%.*s", name.len, name.str) )  : is_js ?  ( _STR("JS.%.*s", name.len, name.str) )  : mod.len > 0 ?  ( _STR("%.*s.%.*s", mod.len, mod.str, name.len, name.str) )  :  ( name ) );
 	v__parser__Parser_check(p, v__token__Kind_lpar);
@@ -15661,9 +15709,9 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool mr_3530 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_3530.arg0;
-	bool is_variadic = mr_3530.arg1;
+	multi_return_array_v__table__Arg_bool mr_3516 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_3516.arg0;
+	bool is_variadic = mr_3516.arg1;
 	_PUSH_MANY(&args, (args2), tmp13, array_v__table__Arg);
 	// FOR IN array
 	array tmp14 = args;
@@ -15755,9 +15803,9 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
-	multi_return_array_v__table__Arg_bool mr_5263 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_5263.arg0;
-	bool is_variadic = mr_5263.arg1;
+	multi_return_array_v__table__Arg_bool mr_5249 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_5249.arg0;
+	bool is_variadic = mr_5249.arg1;
 	// FOR IN array
 	array tmp1 = args;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
@@ -15928,7 +15976,6 @@ v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 		}
 		v__parser__Parser_check(p, v__token__Kind_semicolon);
 		if (p->tok.kind != v__token__Kind_semicolon) {
-			v__table__Type typ = _const_v__table__void_type;
 			cond = v__parser__Parser_expr(p, 0);
 			has_cond = true;
 		}
@@ -16518,6 +16565,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.parent = 0,
 		.children = new_array(0, 1, sizeof(v__ast__Scope)),
 		.end_pos = 0,
+		.unused_vars = new_map_1(sizeof(v__ast__UnusedVar)),
 		.objects = new_map_1(sizeof(v__ast__ScopeObject)),
 	}, sizeof(v__ast__Scope)),
 		.file_name = tos3(""),
@@ -16560,6 +16608,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* table, v__scann
 		.parent = 0,
 		.children = new_array(0, 1, sizeof(v__ast__Scope)),
 		.end_pos = 0,
+		.unused_vars = new_map_1(sizeof(v__ast__UnusedVar)),
 		.objects = new_map_1(sizeof(v__ast__ScopeObject)),
 	}, sizeof(v__ast__Scope)),
 		.global_scope = global_scope,
@@ -16639,11 +16688,25 @@ void v__parser__Parser_open_scope(v__parser__Parser* p) {
 		.start_pos = p->tok.pos,
 		.children = new_array(0, 1, sizeof(v__ast__Scope)),
 		.end_pos = 0,
+		.unused_vars = new_map_1(sizeof(v__ast__UnusedVar)),
 		.objects = new_map_1(sizeof(v__ast__ScopeObject)),
 	}, sizeof(v__ast__Scope));
 }
 
 void v__parser__Parser_close_scope(v__parser__Parser* p) {
+	if (!p->pref->is_repl) {
+		// FOR IN array
+		array tmp2 = v__ast__Scope_unused_vars(p->scope);
+		for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
+			v__ast__UnusedVar v = ((v__ast__UnusedVar*)tmp2.data)[tmp3];
+			if (p->pref->is_prod) {
+				v__parser__Parser_error_with_pos(p, _STR("Unused variable: %.*s", v.name.len, v.name.str), v.pos);
+			} else {
+				v__parser__Parser_warn_with_pos(p, _STR("Unused variable: %.*s", v.name.len, v.name.str), v.pos);
+			}
+		}
+	}
+	v__ast__Scope_clear_unused_vars(p->scope);
 	p->scope->end_pos = p->tok.pos;
 	array_push(&p->scope->parent->children, &(v__ast__Scope*[]){ p->scope });
 	p->scope = p->scope->parent;
@@ -16790,6 +16853,9 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p) {
 			.pos = assert_pos,
 		}}, sizeof(v__ast__AssertStmt)), .typ = 185 /* v.ast.AssertStmt */};
 	}else if (p->tok.kind == v__token__Kind_key_mut || p->tok.kind == v__token__Kind_key_static || p->tok.kind == v__token__Kind_key_var) {
+		if (p->peek_tok.kind == v__token__Kind_name && string_ne(p->peek_tok.lit, tos3("_")) && !string_starts_with(p->peek_tok.lit, tos3("__"))) {
+			v__ast__Scope_register_unused_var(p->scope, p->peek_tok.lit, v__token__Token_position(&p->peek_tok));
+		}
 		return v__parser__Parser_assign_stmt(p);
 	}else if (p->tok.kind == v__token__Kind_key_for) {
 		return v__parser__Parser_for_stmt(p);
@@ -16838,13 +16904,22 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p) {
 		}}, sizeof(v__ast__GotoStmt)), .typ = 183 /* v.ast.GotoStmt */};
 	}else {
 		if (p->tok.kind == v__token__Kind_name && (p->peek_tok.kind == v__token__Kind_decl_assign || p->peek_tok.kind == v__token__Kind_comma)) {
-			return v__parser__Parser_assign_stmt(p);
+			bool register_unused = p->peek_tok.kind == v__token__Kind_decl_assign;
+			string lit = p->tok.lit;
+			v__token__Position pos = v__token__Token_position(&p->tok);
+			v__ast__Stmt ret = v__parser__Parser_assign_stmt(p);
+			if (register_unused && string_ne(lit, tos3("_")) && !string_starts_with(lit, tos3("__"))) {
+				v__ast__Scope_register_unused_var(p->scope, lit, pos);
+			}
+			return ret;
 		} else if (p->tok.kind == v__token__Kind_name && p->peek_tok.kind == v__token__Kind_colon) {
 			string name = v__parser__Parser_check_name(p);
 			v__parser__Parser_check(p, v__token__Kind_colon);
 			return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__GotoLabel[]) {(v__ast__GotoLabel){
 				.name = name,
 			}}, sizeof(v__ast__GotoLabel)), .typ = 182 /* v.ast.GotoLabel */};
+		} else if (p->tok.kind == v__token__Kind_name) {
+			v__ast__Scope_remove_unused_var(p->scope, p->tok.lit);
 		}
 		v__token__Position epos = v__token__Token_position(&p->tok);
 		v__ast__Expr expr = v__parser__Parser_expr(p, 0);
@@ -17408,6 +17483,9 @@ v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 		};
 	}
 	while (1) {
+		if (p->tok.kind == v__token__Kind_name) {
+			v__ast__Scope_remove_unused_var(p->scope, p->tok.lit);
+		}
 		v__ast__Expr expr = v__parser__Parser_expr(p, 0);
 		array_push(&exprs, &(v__ast__Expr[]){ expr });
 		if (p->tok.kind == v__token__Kind_comma) {
@@ -17634,6 +17712,7 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 	bool is_stmt_ident = p->is_stmt_ident;
 	p->is_stmt_ident = false;
 	if (p->tok.kind == v__token__Kind_name) {
+		v__ast__Scope_remove_unused_var(p->scope, p->tok.lit);
 		node = v__parser__Parser_name_expr(p);
 		p->is_stmt_ident = is_stmt_ident;
 	}else if (p->tok.kind == v__token__Kind_string) {
@@ -17685,6 +17764,7 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 				.typ = {0},
 			}}, sizeof(v__ast__SizeOf)), .typ = 153 /* v.ast.SizeOf */};
 		} else {
+			v__ast__Scope_remove_unused_var(p->scope, p->tok.lit);
 			v__table__Type sizeof_type = v__parser__Parser_parse_type(p);
 			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__SizeOf[]) {(v__ast__SizeOf){
 				.typ = sizeof_type,
@@ -17707,6 +17787,7 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__MapInit[]) {v__parser__Parser_map_init(p)}, sizeof(v__ast__MapInit)), .typ = 155 /* v.ast.MapInit */};
 		} else {
 			if (p->peek_tok.kind == v__token__Kind_pipe) {
+				v__ast__Scope_remove_unused_var(p->scope, p->tok.lit);
 				node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Assoc[]) {v__parser__Parser_assoc(p)}, sizeof(v__ast__Assoc)), .typ = 152 /* v.ast.Assoc */};
 			} else if (p->peek_tok.kind == v__token__Kind_colon || p->tok.kind == v__token__Kind_rcbr) {
 				node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__StructInit[]) {v__parser__Parser_struct_init(p, true)}, sizeof(v__ast__StructInit)), .typ = 141 /* v.ast.StructInit */};
@@ -20673,8 +20754,8 @@ v__table__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Ma
 			int used_values_count = 0;
 			// FOR IN array
 			array tmp12 = node->branches;
-			for (int bi = 0; bi < tmp12.len; bi++) {
-				v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp12.data)[bi];
+			for (int _ = 0; _ < tmp12.len; _++) {
+				v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp12.data)[_];
 				used_values_count += branch.exprs.len;
 				// FOR IN array
 				array tmp13 = branch.exprs;
@@ -21831,6 +21912,10 @@ string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__P
 	if (true) {
 		int x = 10;
 		int y = 20;
+		{x;}
+		;
+		{y;}
+		;
 	} else {
 	}
 	v__gen__Gen g = (v__gen__Gen){
@@ -22640,7 +22725,6 @@ void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 		v__ast__ArrayInit* it = (v__ast__ArrayInit*)node.obj; // ST it
 		v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(g->table, it->typ);
 		if (type_sym->kind != v__table__Kind_array_fixed) {
-			v__table__TypeSymbol* elem_sym = v__table__Table_get_type_symbol(g->table, it->elem_type);
 			string elem_type_str = v__gen__Gen_typ(g, it->elem_type);
 			if (it->exprs.len == 0) {
 				v__gen__Gen_write(g, _STR("__new_array(%"PRId32", %"PRId32", sizeof(%.*s))", it->exprs.len, it->exprs.len, elem_type_str.len, elem_type_str.str));
@@ -23410,8 +23494,6 @@ void v__gen__Gen_return_statement(v__gen__Gen* g, v__ast__Return node) {
 	bool fn_return_is_optional = v__table__type_is(g->fn_decl->return_type, v__table__TypeFlag_optional);
 	if (node.exprs.len > 1) {
 		v__gen__Gen_write(g, tos3(" "));
-		v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(g->table, g->fn_decl->return_type);
-		v__table__MultiReturn mr_info = /* as */ *(v__table__MultiReturn*)typ_sym->info.obj;
 		string styp = v__gen__Gen_typ(g, g->fn_decl->return_type);
 		if (fn_return_is_optional) {
 			styp = string_substr(styp, 7, styp.len);
@@ -23534,8 +23616,8 @@ void v__gen__Gen_struct_init(v__gen__Gen* g, v__ast__StructInit struct_init) {
 	array_string inited_fields = __new_array(0, 0, sizeof(string));
 	// FOR IN array
 	array tmp3 = struct_init.fields;
-	for (int i = 0; i < tmp3.len; i++) {
-		v__ast__StructInitField field = ((v__ast__StructInitField*)tmp3.data)[i];
+	for (int _ = 0; _ < tmp3.len; _++) {
+		v__ast__StructInitField field = ((v__ast__StructInitField*)tmp3.data)[_];
 		string field_name = v__gen__c_name(field.name);
 		array_push(&inited_fields, &(string[]){ field.name });
 		v__gen__Gen_write(g, _STR("\t.%.*s = ", field_name.len, field_name.str));
@@ -23956,9 +24038,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_63775 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_63775.arg0;
-	string type_of_last_expression = mr_63775.arg1;
+	multi_return_string_string mr_63800 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_63800.arg0;
+	string type_of_last_expression = mr_63800.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -25489,7 +25571,6 @@ void v__gen__js__JsGen_gen_branch_stmt(v__gen__js__JsGen* g, v__ast__BranchStmt 
 }
 
 void v__gen__js__JsGen_gen_const_decl(v__gen__js__JsGen* g, v__ast__ConstDecl it) {
-	int old_indent = (*(int*)map_get3(g->indents, g->namespace, &(int[]){ 0 }));
 	// FOR IN array
 	array tmp1 = it.fields;
 	for (int i = 0; i < tmp1.len; i++) {
@@ -25586,7 +25667,6 @@ void v__gen__js__JsGen_gen_method_decl(v__gen__js__JsGen* g, v__ast__FnDecl it) 
 		if ((c == '+' || c == '-' || c == '*' || c == '/')) {
 			name = v__util__replace_op(name);
 		}
-		string type_name = v__gen__js__JsGen_typ(g, it.return_type);
 		v__gen__js__JsGen_writeln(g, v__gen__js__JsDoc_gen_fn(g->doc, it));
 		if (has_go) {
 			v__gen__js__JsGen_write(g, tos3("async "));
@@ -25654,7 +25734,6 @@ void v__gen__js__JsGen_gen_for_in_stmt(v__gen__js__JsGen* g, v__ast__ForInStmt i
 		v__gen__js__JsGen_writeln(g, tos3("}"));
 	} else if (it.kind == v__table__Kind_array || v__table__type_is(it.cond_type, v__table__TypeFlag_variadic)) {
 		string i = (string_eq(it.key_var, tos3("")) ?  ( v__gen__js__JsGen_new_tmp_var(g) )  :  ( it.key_var ) );
-		string styp = v__gen__js__JsGen_typ(g, it.val_type);
 		g->inside_loop = true;
 		v__gen__js__JsGen_write(g, _STR("for (let %.*s = 0; %.*s < ", i.len, i.str, i.len, i.str));
 		v__gen__js__JsGen_expr(g, it.cond);
@@ -25666,8 +25745,6 @@ void v__gen__js__JsGen_gen_for_in_stmt(v__gen__js__JsGen* g, v__ast__ForInStmt i
 		v__gen__js__JsGen_stmts(g, it.stmts);
 		v__gen__js__JsGen_writeln(g, tos3("}"));
 	} else if (it.kind == v__table__Kind_map) {
-		string key_styp = v__gen__js__JsGen_typ(g, it.key_type);
-		string val_styp = v__gen__js__JsGen_typ(g, it.val_type);
 		string key = (string_eq(it.key_var, tos3("")) ?  ( v__gen__js__JsGen_new_tmp_var(g) )  :  ( it.key_var ) );
 		v__gen__js__JsGen_write(g, _STR("for (let [%.*s, %.*s] of ", key.len, key.str, it.val_var.len, it.val_var.str));
 		v__gen__js__JsGen_expr(g, it.cond);
@@ -25702,7 +25779,6 @@ void v__gen__js__JsGen_gen_for_stmt(v__gen__js__JsGen* g, v__ast__ForStmt it) {
 }
 
 void v__gen__js__JsGen_fn_args(v__gen__js__JsGen* g, array_v__table__Arg args, bool is_variadic) {
-	bool no_names = args.len > 0 && string_eq((*(v__table__Arg*)array_get(args, 0)).name, tos3("arg_1"));
 	// FOR IN array
 	array tmp1 = args;
 	for (int i = 0; i < tmp1.len; i++) {
@@ -25748,10 +25824,6 @@ void v__gen__js__JsGen_gen_go_stmt(v__gen__js__JsGen* g, v__ast__GoStmt node) {
 }
 
 void v__gen__js__JsGen_gen_map_init_expr(v__gen__js__JsGen* g, v__ast__MapInit it) {
-	v__table__TypeSymbol* key_typ_sym = v__table__Table_get_type_symbol(g->table, it.key_type);
-	v__table__TypeSymbol* value_typ_sym = v__table__Table_get_type_symbol(g->table, it.value_type);
-	string key_typ_str = string_replace(key_typ_sym->name, tos3("."), tos3("__"));
-	string value_typ_str = string_replace(value_typ_sym->name, tos3("."), tos3("__"));
 	if (it.vals.len > 0) {
 		v__gen__js__JsGen_writeln(g, tos3("new Map(["));
 		v__gen__js__JsGen_inc_indent(g);
