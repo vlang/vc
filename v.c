@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "baf3bf6"
+#define V_COMMIT_HASH "7c1d6b6"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "071059e"
+#define V_COMMIT_HASH "baf3bf6"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "baf3bf6"
+#define V_CURRENT_COMMIT_HASH "7c1d6b6"
 #endif
 
 
@@ -30,13 +30,13 @@ typedef union strconv__ftoa__Uf64 strconv__ftoa__Uf64;
 typedef union strconv__Float64u strconv__Float64u;
 typedef struct strconv__PrepNumber strconv__PrepNumber;
 typedef enum {
-	os__FileType_regular, // 0
-	os__FileType_directory, // 1
-	os__FileType_character_device, // 2
-	os__FileType_block_device, // 3
-	os__FileType_fifo, // 4
-	os__FileType_symbolic_link, // 5
-	os__FileType_socket, // 6
+	os__FileType_regular, // 
+	os__FileType_directory, // +1
+	os__FileType_character_device, // +2
+	os__FileType_block_device, // +3
+	os__FileType_fifo, // +4
+	os__FileType_symbolic_link, // +5
+	os__FileType_socket, // +6
 } os__FileType;
 
 typedef struct os__FilePermission os__FilePermission;
@@ -46,42 +46,42 @@ typedef struct os__FileInfo os__FileInfo;
 typedef struct os__Result os__Result;
 typedef struct v__table__TypeSymbol v__table__TypeSymbol;
 typedef enum {
-	v__table__TypeFlag_unset, // 0
-	v__table__TypeFlag_optional, // 1
-	v__table__TypeFlag_variadic, // 2
+	v__table__TypeFlag_unset, // 
+	v__table__TypeFlag_optional, // +1
+	v__table__TypeFlag_variadic, // +2
 } v__table__TypeFlag;
 
 typedef struct v__table__MultiReturn v__table__MultiReturn;
 typedef struct v__table__FnType v__table__FnType;
 typedef enum {
-	v__table__Kind_placeholder, // 0
-	v__table__Kind_void, // 1
-	v__table__Kind_voidptr, // 2
-	v__table__Kind_byteptr, // 3
-	v__table__Kind_charptr, // 4
-	v__table__Kind_i8, // 5
-	v__table__Kind_i16, // 6
-	v__table__Kind_int, // 7
-	v__table__Kind_i64, // 8
-	v__table__Kind_byte, // 9
-	v__table__Kind_u16, // 10
-	v__table__Kind_u32, // 11
-	v__table__Kind_u64, // 12
-	v__table__Kind_f32, // 13
-	v__table__Kind_f64, // 14
-	v__table__Kind_char, // 15
-	v__table__Kind_bool, // 16
-	v__table__Kind_none_, // 17
-	v__table__Kind_string, // 18
-	v__table__Kind_array, // 19
-	v__table__Kind_array_fixed, // 20
-	v__table__Kind_map, // 21
-	v__table__Kind_struct_, // 22
-	v__table__Kind_multi_return, // 23
-	v__table__Kind_sum_type, // 24
-	v__table__Kind_alias, // 25
-	v__table__Kind_enum_, // 26
-	v__table__Kind_function, // 27
+	v__table__Kind_placeholder, // 
+	v__table__Kind_void, // +1
+	v__table__Kind_voidptr, // +2
+	v__table__Kind_byteptr, // +3
+	v__table__Kind_charptr, // +4
+	v__table__Kind_i8, // +5
+	v__table__Kind_i16, // +6
+	v__table__Kind_int, // +7
+	v__table__Kind_i64, // +8
+	v__table__Kind_byte, // +9
+	v__table__Kind_u16, // +10
+	v__table__Kind_u32, // +11
+	v__table__Kind_u64, // +12
+	v__table__Kind_f32, // +13
+	v__table__Kind_f64, // +14
+	v__table__Kind_char, // +15
+	v__table__Kind_bool, // +16
+	v__table__Kind_none_, // +17
+	v__table__Kind_string, // +18
+	v__table__Kind_array, // +19
+	v__table__Kind_array_fixed, // +20
+	v__table__Kind_map, // +21
+	v__table__Kind_struct_, // +22
+	v__table__Kind_multi_return, // +23
+	v__table__Kind_sum_type, // +24
+	v__table__Kind_alias, // +25
+	v__table__Kind_enum_, // +26
+	v__table__Kind_function, // +27
 } v__table__Kind;
 
 typedef struct v__table__Struct v__table__Struct;
@@ -98,29 +98,29 @@ typedef struct v__table__Arg v__table__Arg;
 typedef struct v__table__Var v__table__Var;
 typedef struct v__doc__Doc v__doc__Doc;
 typedef enum {
-	v__pref__OS__auto, // 0
-	v__pref__OS_mac, // 1
-	v__pref__OS_linux, // 2
-	v__pref__OS_windows, // 3
-	v__pref__OS_freebsd, // 4
-	v__pref__OS_openbsd, // 5
-	v__pref__OS_netbsd, // 6
-	v__pref__OS_dragonfly, // 7
-	v__pref__OS_js, // 8
-	v__pref__OS_android, // 9
-	v__pref__OS_solaris, // 10
-	v__pref__OS_haiku, // 11
+	v__pref__OS__auto, // 
+	v__pref__OS_mac, // +1
+	v__pref__OS_linux, // +2
+	v__pref__OS_windows, // +3
+	v__pref__OS_freebsd, // +4
+	v__pref__OS_openbsd, // +5
+	v__pref__OS_netbsd, // +6
+	v__pref__OS_dragonfly, // +7
+	v__pref__OS_js, // +8
+	v__pref__OS_android, // +9
+	v__pref__OS_solaris, // +10
+	v__pref__OS_haiku, // +11
 } v__pref__OS;
 
 typedef enum {
-	v__pref__BuildMode_default_mode, // 0
-	v__pref__BuildMode_build_module, // 1
+	v__pref__BuildMode_default_mode, // 
+	v__pref__BuildMode_build_module, // +1
 } v__pref__BuildMode;
 
 typedef enum {
-	v__pref__Backend_c, // 0
-	v__pref__Backend_js, // 1
-	v__pref__Backend_x64, // 2
+	v__pref__Backend_c, // 
+	v__pref__Backend_js, // +1
+	v__pref__Backend_x64, // +2
 } v__pref__Backend;
 
 typedef struct v__pref__Preferences v__pref__Preferences;
@@ -162,12 +162,12 @@ typedef struct v__ast__File v__ast__File;
 typedef struct v__ast__IdentFn v__ast__IdentFn;
 typedef struct v__ast__IdentVar v__ast__IdentVar;
 typedef enum {
-	v__ast__IdentKind_unresolved, // 0
-	v__ast__IdentKind_blank_ident, // 1
-	v__ast__IdentKind_variable, // 2
-	v__ast__IdentKind_constant, // 3
-	v__ast__IdentKind_global, // 4
-	v__ast__IdentKind_function, // 5
+	v__ast__IdentKind_unresolved, // 
+	v__ast__IdentKind_blank_ident, // +1
+	v__ast__IdentKind_variable, // +2
+	v__ast__IdentKind_constant, // +3
+	v__ast__IdentKind_global, // +4
+	v__ast__IdentKind_function, // +5
 } v__ast__IdentKind;
 
 typedef struct v__ast__Ident v__ast__Ident;
@@ -221,152 +221,152 @@ typedef struct v__parser__Parser v__parser__Parser;
 typedef struct v__token__Position v__token__Position;
 typedef struct v__token__Token v__token__Token;
 typedef enum {
-	v__token__Kind_eof, // 0
-	v__token__Kind_name, // 1
-	v__token__Kind_number, // 2
-	v__token__Kind_string, // 3
-	v__token__Kind_str_inter, // 4
-	v__token__Kind_chartoken, // 5
-	v__token__Kind_plus, // 6
-	v__token__Kind_minus, // 7
-	v__token__Kind_mul, // 8
-	v__token__Kind_div, // 9
-	v__token__Kind_mod, // 10
-	v__token__Kind_xor, // 11
-	v__token__Kind_pipe, // 12
-	v__token__Kind_inc, // 13
-	v__token__Kind_dec, // 14
-	v__token__Kind_and, // 15
-	v__token__Kind_logical_or, // 16
-	v__token__Kind_not, // 17
-	v__token__Kind_bit_not, // 18
-	v__token__Kind_question, // 19
-	v__token__Kind_comma, // 20
-	v__token__Kind_semicolon, // 21
-	v__token__Kind_colon, // 22
-	v__token__Kind_arrow, // 23
-	v__token__Kind_amp, // 24
-	v__token__Kind_hash, // 25
-	v__token__Kind_dollar, // 26
-	v__token__Kind_str_dollar, // 27
-	v__token__Kind_left_shift, // 28
-	v__token__Kind_right_shift, // 29
-	v__token__Kind_not_in, // 30
-	v__token__Kind_assign, // 31
-	v__token__Kind_decl_assign, // 32
-	v__token__Kind_plus_assign, // 33
-	v__token__Kind_minus_assign, // 34
-	v__token__Kind_div_assign, // 35
-	v__token__Kind_mult_assign, // 36
-	v__token__Kind_xor_assign, // 37
-	v__token__Kind_mod_assign, // 38
-	v__token__Kind_or_assign, // 39
-	v__token__Kind_and_assign, // 40
-	v__token__Kind_right_shift_assign, // 41
-	v__token__Kind_left_shift_assign, // 42
-	v__token__Kind_lcbr, // 43
-	v__token__Kind_rcbr, // 44
-	v__token__Kind_lpar, // 45
-	v__token__Kind_rpar, // 46
-	v__token__Kind_lsbr, // 47
-	v__token__Kind_rsbr, // 48
-	v__token__Kind_eq, // 49
-	v__token__Kind_ne, // 50
-	v__token__Kind_gt, // 51
-	v__token__Kind_lt, // 52
-	v__token__Kind_ge, // 53
-	v__token__Kind_le, // 54
-	v__token__Kind_comment, // 55
-	v__token__Kind_nl, // 56
-	v__token__Kind_dot, // 57
-	v__token__Kind_dotdot, // 58
-	v__token__Kind_ellipsis, // 59
-	v__token__Kind_keyword_beg, // 60
-	v__token__Kind_key_as, // 61
-	v__token__Kind_key_asm, // 62
-	v__token__Kind_key_assert, // 63
-	v__token__Kind_key_atomic, // 64
-	v__token__Kind_key_break, // 65
-	v__token__Kind_key_const, // 66
-	v__token__Kind_key_continue, // 67
-	v__token__Kind_key_defer, // 68
-	v__token__Kind_key_else, // 69
-	v__token__Kind_key_embed, // 70
-	v__token__Kind_key_enum, // 71
-	v__token__Kind_key_false, // 72
-	v__token__Kind_key_for, // 73
-	v__token__Kind_key_fn, // 74
-	v__token__Kind_key_global, // 75
-	v__token__Kind_key_go, // 76
-	v__token__Kind_key_goto, // 77
-	v__token__Kind_key_if, // 78
-	v__token__Kind_key_import, // 79
-	v__token__Kind_key_in, // 80
-	v__token__Kind_key_interface, // 81
-	v__token__Kind_key_is, // 82
-	v__token__Kind_key_match, // 83
-	v__token__Kind_key_module, // 84
-	v__token__Kind_key_mut, // 85
-	v__token__Kind_key_none, // 86
-	v__token__Kind_key_return, // 87
-	v__token__Kind_key_select, // 88
-	v__token__Kind_key_sizeof, // 89
-	v__token__Kind_key_offsetof, // 90
-	v__token__Kind_key_struct, // 91
-	v__token__Kind_key_switch, // 92
-	v__token__Kind_key_true, // 93
-	v__token__Kind_key_type, // 94
-	v__token__Kind_key_typeof, // 95
-	v__token__Kind_key_orelse, // 96
-	v__token__Kind_key_union, // 97
-	v__token__Kind_key_pub, // 98
-	v__token__Kind_key_static, // 99
-	v__token__Kind_key_unsafe, // 100
-	v__token__Kind_key_var, // 101
-	v__token__Kind_keyword_end, // 102
-	v__token__Kind__end_, // 103
+	v__token__Kind_eof, // 
+	v__token__Kind_name, // +1
+	v__token__Kind_number, // +2
+	v__token__Kind_string, // +3
+	v__token__Kind_str_inter, // +4
+	v__token__Kind_chartoken, // +5
+	v__token__Kind_plus, // +6
+	v__token__Kind_minus, // +7
+	v__token__Kind_mul, // +8
+	v__token__Kind_div, // +9
+	v__token__Kind_mod, // +10
+	v__token__Kind_xor, // +11
+	v__token__Kind_pipe, // +12
+	v__token__Kind_inc, // +13
+	v__token__Kind_dec, // +14
+	v__token__Kind_and, // +15
+	v__token__Kind_logical_or, // +16
+	v__token__Kind_not, // +17
+	v__token__Kind_bit_not, // +18
+	v__token__Kind_question, // +19
+	v__token__Kind_comma, // +20
+	v__token__Kind_semicolon, // +21
+	v__token__Kind_colon, // +22
+	v__token__Kind_arrow, // +23
+	v__token__Kind_amp, // +24
+	v__token__Kind_hash, // +25
+	v__token__Kind_dollar, // +26
+	v__token__Kind_str_dollar, // +27
+	v__token__Kind_left_shift, // +28
+	v__token__Kind_right_shift, // +29
+	v__token__Kind_not_in, // +30
+	v__token__Kind_assign, // +31
+	v__token__Kind_decl_assign, // +32
+	v__token__Kind_plus_assign, // +33
+	v__token__Kind_minus_assign, // +34
+	v__token__Kind_div_assign, // +35
+	v__token__Kind_mult_assign, // +36
+	v__token__Kind_xor_assign, // +37
+	v__token__Kind_mod_assign, // +38
+	v__token__Kind_or_assign, // +39
+	v__token__Kind_and_assign, // +40
+	v__token__Kind_right_shift_assign, // +41
+	v__token__Kind_left_shift_assign, // +42
+	v__token__Kind_lcbr, // +43
+	v__token__Kind_rcbr, // +44
+	v__token__Kind_lpar, // +45
+	v__token__Kind_rpar, // +46
+	v__token__Kind_lsbr, // +47
+	v__token__Kind_rsbr, // +48
+	v__token__Kind_eq, // +49
+	v__token__Kind_ne, // +50
+	v__token__Kind_gt, // +51
+	v__token__Kind_lt, // +52
+	v__token__Kind_ge, // +53
+	v__token__Kind_le, // +54
+	v__token__Kind_comment, // +55
+	v__token__Kind_nl, // +56
+	v__token__Kind_dot, // +57
+	v__token__Kind_dotdot, // +58
+	v__token__Kind_ellipsis, // +59
+	v__token__Kind_keyword_beg, // +60
+	v__token__Kind_key_as, // +61
+	v__token__Kind_key_asm, // +62
+	v__token__Kind_key_assert, // +63
+	v__token__Kind_key_atomic, // +64
+	v__token__Kind_key_break, // +65
+	v__token__Kind_key_const, // +66
+	v__token__Kind_key_continue, // +67
+	v__token__Kind_key_defer, // +68
+	v__token__Kind_key_else, // +69
+	v__token__Kind_key_embed, // +70
+	v__token__Kind_key_enum, // +71
+	v__token__Kind_key_false, // +72
+	v__token__Kind_key_for, // +73
+	v__token__Kind_key_fn, // +74
+	v__token__Kind_key_global, // +75
+	v__token__Kind_key_go, // +76
+	v__token__Kind_key_goto, // +77
+	v__token__Kind_key_if, // +78
+	v__token__Kind_key_import, // +79
+	v__token__Kind_key_in, // +80
+	v__token__Kind_key_interface, // +81
+	v__token__Kind_key_is, // +82
+	v__token__Kind_key_match, // +83
+	v__token__Kind_key_module, // +84
+	v__token__Kind_key_mut, // +85
+	v__token__Kind_key_none, // +86
+	v__token__Kind_key_return, // +87
+	v__token__Kind_key_select, // +88
+	v__token__Kind_key_sizeof, // +89
+	v__token__Kind_key_offsetof, // +90
+	v__token__Kind_key_struct, // +91
+	v__token__Kind_key_switch, // +92
+	v__token__Kind_key_true, // +93
+	v__token__Kind_key_type, // +94
+	v__token__Kind_key_typeof, // +95
+	v__token__Kind_key_orelse, // +96
+	v__token__Kind_key_union, // +97
+	v__token__Kind_key_pub, // +98
+	v__token__Kind_key_static, // +99
+	v__token__Kind_key_unsafe, // +100
+	v__token__Kind_key_var, // +101
+	v__token__Kind_keyword_end, // +102
+	v__token__Kind__end_, // +103
 } v__token__Kind;
 
 typedef enum {
-	v__token__Precedence_lowest, // 0
-	v__token__Precedence_cond, // 1
-	v__token__Precedence_in_as, // 2
-	v__token__Precedence_assign, // 3
-	v__token__Precedence_eq, // 4
-	v__token__Precedence_sum, // 5
-	v__token__Precedence_product, // 6
-	v__token__Precedence_prefix, // 7
-	v__token__Precedence_postfix, // 8
-	v__token__Precedence_call, // 9
-	v__token__Precedence_index, // 10
+	v__token__Precedence_lowest, // 
+	v__token__Precedence_cond, // +1
+	v__token__Precedence_in_as, // +2
+	v__token__Precedence_assign, // +3
+	v__token__Precedence_eq, // +4
+	v__token__Precedence_sum, // +5
+	v__token__Precedence_product, // +6
+	v__token__Precedence_prefix, // +7
+	v__token__Precedence_postfix, // +8
+	v__token__Precedence_call, // +9
+	v__token__Precedence_index, // +10
 } v__token__Precedence;
 
 typedef struct time__Time time__Time;
 typedef enum {
-	time__FormatTime_hhmm12, // 0
-	time__FormatTime_hhmm24, // 1
-	time__FormatTime_hhmmss12, // 2
-	time__FormatTime_hhmmss24, // 3
-	time__FormatTime_no_time, // 4
+	time__FormatTime_hhmm12, // 
+	time__FormatTime_hhmm24, // +1
+	time__FormatTime_hhmmss12, // +2
+	time__FormatTime_hhmmss24, // +3
+	time__FormatTime_no_time, // +4
 } time__FormatTime;
 
 typedef enum {
-	time__FormatDate_ddmmyy, // 0
-	time__FormatDate_ddmmyyyy, // 1
-	time__FormatDate_mmddyy, // 2
-	time__FormatDate_mmddyyyy, // 3
-	time__FormatDate_mmmd, // 4
-	time__FormatDate_mmmdd, // 5
-	time__FormatDate_mmmddyyyy, // 6
-	time__FormatDate_no_date, // 7
-	time__FormatDate_yyyymmdd, // 8
+	time__FormatDate_ddmmyy, // 
+	time__FormatDate_ddmmyyyy, // +1
+	time__FormatDate_mmddyy, // +2
+	time__FormatDate_mmddyyyy, // +3
+	time__FormatDate_mmmd, // +4
+	time__FormatDate_mmmdd, // +5
+	time__FormatDate_mmmddyyyy, // +6
+	time__FormatDate_no_date, // +7
+	time__FormatDate_yyyymmdd, // +8
 } time__FormatDate;
 
 typedef enum {
-	time__FormatDelimiter_dot, // 0
-	time__FormatDelimiter_hyphen, // 1
-	time__FormatDelimiter_slash, // 2
-	time__FormatDelimiter_space, // 3
+	time__FormatDelimiter_dot, // 
+	time__FormatDelimiter_hyphen, // +1
+	time__FormatDelimiter_slash, // +2
+	time__FormatDelimiter_space, // +3
 } time__FormatDelimiter;
 
 typedef struct time__Timer time__Timer;
@@ -374,17 +374,17 @@ typedef struct v__vmod__ModFileAndFolder v__vmod__ModFileAndFolder;
 typedef struct v__vmod__ModFileCacher v__vmod__ModFileCacher;
 typedef struct v__checker__Checker v__checker__Checker;
 typedef enum {
-	v__scanner__Reporter_scanner, // 0
-	v__scanner__Reporter_parser, // 1
-	v__scanner__Reporter_checker, // 2
-	v__scanner__Reporter_gen, // 3
+	v__scanner__Reporter_scanner, // 
+	v__scanner__Reporter_parser, // +1
+	v__scanner__Reporter_checker, // +2
+	v__scanner__Reporter_gen, // +3
 } v__scanner__Reporter;
 
 typedef struct v__scanner__Error v__scanner__Error;
 typedef struct v__scanner__Scanner v__scanner__Scanner;
 typedef enum {
-	v__scanner__CommentsMode_skip_comments, // 0
-	v__scanner__CommentsMode_parse_comments, // 1
+	v__scanner__CommentsMode_skip_comments, // 
+	v__scanner__CommentsMode_parse_comments, // +1
 } v__scanner__CommentsMode;
 
 typedef struct v__scanner__Warning v__scanner__Warning;
@@ -402,32 +402,32 @@ typedef enum {
 typedef struct v__gen__x64__SectionConfig v__gen__x64__SectionConfig;
 typedef struct v__gen__x64__Gen v__gen__x64__Gen;
 typedef enum {
-	v__gen__x64__Register_rax, // 0
-	v__gen__x64__Register_rcx, // 1
-	v__gen__x64__Register_rdx, // 2
-	v__gen__x64__Register_rbx, // 3
-	v__gen__x64__Register_rsp, // 4
-	v__gen__x64__Register_rbp, // 5
-	v__gen__x64__Register_rsi, // 6
-	v__gen__x64__Register_rdi, // 7
-	v__gen__x64__Register_eax, // 8
-	v__gen__x64__Register_edi, // 9
-	v__gen__x64__Register_edx, // 10
-	v__gen__x64__Register_r8, // 11
-	v__gen__x64__Register_r9, // 12
-	v__gen__x64__Register_r10, // 13
-	v__gen__x64__Register_r11, // 14
-	v__gen__x64__Register_r12, // 15
-	v__gen__x64__Register_r13, // 16
-	v__gen__x64__Register_r14, // 17
-	v__gen__x64__Register_r15, // 18
+	v__gen__x64__Register_rax, // 
+	v__gen__x64__Register_rcx, // +1
+	v__gen__x64__Register_rdx, // +2
+	v__gen__x64__Register_rbx, // +3
+	v__gen__x64__Register_rsp, // +4
+	v__gen__x64__Register_rbp, // +5
+	v__gen__x64__Register_rsi, // +6
+	v__gen__x64__Register_rdi, // +7
+	v__gen__x64__Register_eax, // +8
+	v__gen__x64__Register_edi, // +9
+	v__gen__x64__Register_edx, // +10
+	v__gen__x64__Register_r8, // +11
+	v__gen__x64__Register_r9, // +12
+	v__gen__x64__Register_r10, // +13
+	v__gen__x64__Register_r11, // +14
+	v__gen__x64__Register_r12, // +15
+	v__gen__x64__Register_r13, // +16
+	v__gen__x64__Register_r14, // +17
+	v__gen__x64__Register_r15, // +18
 } v__gen__x64__Register;
 
 typedef enum {
-	v__gen__x64__Size__8, // 0
-	v__gen__x64__Size__16, // 1
-	v__gen__x64__Size__32, // 2
-	v__gen__x64__Size__64, // 3
+	v__gen__x64__Size__8, // 
+	v__gen__x64__Size__16, // +1
+	v__gen__x64__Size__32, // +2
+	v__gen__x64__Size__64, // +3
 } v__gen__x64__Size;
 
 typedef struct v__depgraph__DepGraphNode v__depgraph__DepGraphNode;
@@ -2002,6 +2002,7 @@ struct v__gen__Gen {
 	strings__Builder inits;
 	strings__Builder gowrappers;
 	strings__Builder stringliterals;
+	strings__Builder auto_str_funcs;
 	v__table__Table* table;
 	v__pref__Preferences* pref;
 	v__ast__File file;
@@ -2883,13 +2884,7 @@ void v__builder__Builder_info(v__builder__Builder b, string s);
 string v__builder__module_path(string mod);
 Option_string v__builder__Builder_find_module_path(v__builder__Builder b, string mod, string fpath);
 void v__builder__Builder_print_errors(v__builder__Builder* b, array_v__scanner__Error errors);
-string v__scanner__Reporter_str(v__scanner__Reporter it) {
-	switch(it) {
-		case v__scanner__Reporter_scanner: return tos3("scanner");
-		case v__scanner__Reporter_parser: return tos3("parser");
-		case v__scanner__Reporter_checker: return tos3("checker");
-		case v__scanner__Reporter_gen: return tos3("gen");
-		default: return tos3("unknown enum value"); } }
+string v__scanner__Reporter_str(v__scanner__Reporter it); // auto
 void v__builder__verror(string s);
 string v__builder__Builder_gen_c(v__builder__Builder* b, array_string v_files);
 void v__builder__Builder_build_c(v__builder__Builder* b, array_string v_files, string out_file);
@@ -2907,12 +2902,7 @@ array_v__cflag__CFlag v__builder__Builder_get_rest_of_module_cflags(v__builder__
 string v__builder__get_vtmp_folder();
 string v__builder__get_vtmp_filename(string base_file_name, string postfix);
 void v__builder__compile(string command, v__pref__Preferences* pref);
-string v__pref__Backend_str(v__pref__Backend it) {
-	switch(it) {
-		case v__pref__Backend_c: return tos3("c");
-		case v__pref__Backend_js: return tos3("js");
-		case v__pref__Backend_x64: return tos3("x64");
-		default: return tos3("unknown enum value"); } }
+string v__pref__Backend_str(v__pref__Backend it); // auto
 void v__builder__Builder_run_compiled_executable_and_exit(v__builder__Builder* b);
 void v__builder__Builder_set_module_lookup_paths(v__builder__Builder* v);
 array_string v__builder__Builder_get_builtin_files(v__builder__Builder v);
@@ -3208,34 +3198,10 @@ string time__Time_md(time__Time t);
 string time__Time_clean(time__Time t);
 string time__Time_clean12(time__Time t);
 string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time);
-string time__FormatTime_str(time__FormatTime it) {
-	switch(it) {
-		case time__FormatTime_hhmm12: return tos3("hhmm12");
-		case time__FormatTime_hhmm24: return tos3("hhmm24");
-		case time__FormatTime_hhmmss12: return tos3("hhmmss12");
-		case time__FormatTime_hhmmss24: return tos3("hhmmss24");
-		case time__FormatTime_no_time: return tos3("no_time");
-		default: return tos3("unknown enum value"); } }
+string time__FormatTime_str(time__FormatTime it); // auto
 string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatDate fmt_date);
-string time__FormatDate_str(time__FormatDate it) {
-	switch(it) {
-		case time__FormatDate_ddmmyy: return tos3("ddmmyy");
-		case time__FormatDate_ddmmyyyy: return tos3("ddmmyyyy");
-		case time__FormatDate_mmddyy: return tos3("mmddyy");
-		case time__FormatDate_mmddyyyy: return tos3("mmddyyyy");
-		case time__FormatDate_mmmd: return tos3("mmmd");
-		case time__FormatDate_mmmdd: return tos3("mmmdd");
-		case time__FormatDate_mmmddyyyy: return tos3("mmmddyyyy");
-		case time__FormatDate_no_date: return tos3("no_date");
-		case time__FormatDate_yyyymmdd: return tos3("yyyymmdd");
-		default: return tos3("unknown enum value"); } }
-string time__FormatDelimiter_str(time__FormatDelimiter it) {
-	switch(it) {
-		case time__FormatDelimiter_dot: return tos3("dot");
-		case time__FormatDelimiter_hyphen: return tos3("hyphen");
-		case time__FormatDelimiter_slash: return tos3("slash");
-		case time__FormatDelimiter_space: return tos3("space");
-		default: return tos3("unknown enum value"); } }
+string time__FormatDate_str(time__FormatDate it); // auto
+string time__FormatDelimiter_str(time__FormatDelimiter it); // auto
 string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatTime fmt_time, time__FormatDate fmt_date);
 Option_time__Time time__parse(string s);
 Option_time__Time time__parse_rfc2822(string s);
@@ -3432,11 +3398,12 @@ bool v__gen__Gen_is_importing_os(v__gen__Gen g);
 void v__gen__Gen_comp_if(v__gen__Gen* g, v__ast__CompIf it);
 void v__gen__Gen_go_stmt(v__gen__Gen* g, v__ast__GoStmt node);
 void v__gen__Gen_is_expr(v__gen__Gen* g, v__ast__InfixExpr node);
-void v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__TypeSymbol sym, string styp);
-void v__gen__Gen_gen_str_default(v__gen__Gen* g, v__table__TypeSymbol sym, string styp);
-void v__gen__Gen_gen_str_for_enum(v__gen__Gen* g, v__table__Enum info, string styp);
-void v__gen__Gen_gen_str_for_struct(v__gen__Gen* g, v__table__Struct info, string styp);
-void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, string styp);
+string v__gen__styp_to_str_fn_name(string styp);
+void v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__TypeSymbol sym, string styp, string str_fn_name);
+void v__gen__Gen_gen_str_default(v__gen__Gen* g, v__table__TypeSymbol sym, string styp, string str_fn_name);
+void v__gen__Gen_gen_str_for_enum(v__gen__Gen* g, v__table__Enum info, string styp, string str_fn_name);
+void v__gen__Gen_gen_str_for_struct(v__gen__Gen* g, v__table__Struct info, string styp, string str_fn_name);
+void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, string styp, string str_fn_name);
 string v__gen__Gen_type_to_fmt(v__gen__Gen g, v__table__Type typ);
 string _const_v__gen__c_commit_hash_default; // a string literal, inited later
 string _const_v__gen__c_current_commit_hash_default; // a string literal, inited later
@@ -3546,28 +3513,7 @@ void v__gen__x64__Gen_write64_at(v__gen__x64__Gen* g, i64 n, i64 at);
 void v__gen__x64__Gen_write32_at(v__gen__x64__Gen* g, i64 at, int n);
 void v__gen__x64__Gen_write_string(v__gen__x64__Gen* g, string s);
 void v__gen__x64__Gen_inc(v__gen__x64__Gen* g, v__gen__x64__Register reg);
-string v__gen__x64__Register_str(v__gen__x64__Register it) {
-	switch(it) {
-		case v__gen__x64__Register_rax: return tos3("rax");
-		case v__gen__x64__Register_rcx: return tos3("rcx");
-		case v__gen__x64__Register_rdx: return tos3("rdx");
-		case v__gen__x64__Register_rbx: return tos3("rbx");
-		case v__gen__x64__Register_rsp: return tos3("rsp");
-		case v__gen__x64__Register_rbp: return tos3("rbp");
-		case v__gen__x64__Register_rsi: return tos3("rsi");
-		case v__gen__x64__Register_rdi: return tos3("rdi");
-		case v__gen__x64__Register_eax: return tos3("eax");
-		case v__gen__x64__Register_edi: return tos3("edi");
-		case v__gen__x64__Register_edx: return tos3("edx");
-		case v__gen__x64__Register_r8: return tos3("r8");
-		case v__gen__x64__Register_r9: return tos3("r9");
-		case v__gen__x64__Register_r10: return tos3("r10");
-		case v__gen__x64__Register_r11: return tos3("r11");
-		case v__gen__x64__Register_r12: return tos3("r12");
-		case v__gen__x64__Register_r13: return tos3("r13");
-		case v__gen__x64__Register_r14: return tos3("r14");
-		case v__gen__x64__Register_r15: return tos3("r15");
-		default: return tos3("unknown enum value"); } }
+string v__gen__x64__Register_str(v__gen__x64__Register it); // auto
 void v__gen__x64__Gen_cmp(v__gen__x64__Gen* g, v__gen__x64__Register reg, v__gen__x64__Size size, i64 val);
 i64 v__gen__x64__abs(i64 a);
 void v__gen__x64__Gen_jle(v__gen__x64__Gen* g, i64 addr);
@@ -3671,6 +3617,82 @@ void vinit_string_literals(){
 }
 // << string literal consts
 
+
+// V auto str functions:
+string v__scanner__Reporter_str(v__scanner__Reporter it) { /* gen_str_for_enum */
+	switch(it) {
+		case v__scanner__Reporter_scanner: return tos3("scanner");
+		case v__scanner__Reporter_parser: return tos3("parser");
+		case v__scanner__Reporter_checker: return tos3("checker");
+		case v__scanner__Reporter_gen: return tos3("gen");
+		default: return tos3("unknown enum value");
+	}
+}
+string v__pref__Backend_str(v__pref__Backend it) { /* gen_str_for_enum */
+	switch(it) {
+		case v__pref__Backend_c: return tos3("c");
+		case v__pref__Backend_js: return tos3("js");
+		case v__pref__Backend_x64: return tos3("x64");
+		default: return tos3("unknown enum value");
+	}
+}
+string time__FormatTime_str(time__FormatTime it) { /* gen_str_for_enum */
+	switch(it) {
+		case time__FormatTime_hhmm12: return tos3("hhmm12");
+		case time__FormatTime_hhmm24: return tos3("hhmm24");
+		case time__FormatTime_hhmmss12: return tos3("hhmmss12");
+		case time__FormatTime_hhmmss24: return tos3("hhmmss24");
+		case time__FormatTime_no_time: return tos3("no_time");
+		default: return tos3("unknown enum value");
+	}
+}
+string time__FormatDate_str(time__FormatDate it) { /* gen_str_for_enum */
+	switch(it) {
+		case time__FormatDate_ddmmyy: return tos3("ddmmyy");
+		case time__FormatDate_ddmmyyyy: return tos3("ddmmyyyy");
+		case time__FormatDate_mmddyy: return tos3("mmddyy");
+		case time__FormatDate_mmddyyyy: return tos3("mmddyyyy");
+		case time__FormatDate_mmmd: return tos3("mmmd");
+		case time__FormatDate_mmmdd: return tos3("mmmdd");
+		case time__FormatDate_mmmddyyyy: return tos3("mmmddyyyy");
+		case time__FormatDate_no_date: return tos3("no_date");
+		case time__FormatDate_yyyymmdd: return tos3("yyyymmdd");
+		default: return tos3("unknown enum value");
+	}
+}
+string time__FormatDelimiter_str(time__FormatDelimiter it) { /* gen_str_for_enum */
+	switch(it) {
+		case time__FormatDelimiter_dot: return tos3("dot");
+		case time__FormatDelimiter_hyphen: return tos3("hyphen");
+		case time__FormatDelimiter_slash: return tos3("slash");
+		case time__FormatDelimiter_space: return tos3("space");
+		default: return tos3("unknown enum value");
+	}
+}
+string v__gen__x64__Register_str(v__gen__x64__Register it) { /* gen_str_for_enum */
+	switch(it) {
+		case v__gen__x64__Register_rax: return tos3("rax");
+		case v__gen__x64__Register_rcx: return tos3("rcx");
+		case v__gen__x64__Register_rdx: return tos3("rdx");
+		case v__gen__x64__Register_rbx: return tos3("rbx");
+		case v__gen__x64__Register_rsp: return tos3("rsp");
+		case v__gen__x64__Register_rbp: return tos3("rbp");
+		case v__gen__x64__Register_rsi: return tos3("rsi");
+		case v__gen__x64__Register_rdi: return tos3("rdi");
+		case v__gen__x64__Register_eax: return tos3("eax");
+		case v__gen__x64__Register_edi: return tos3("edi");
+		case v__gen__x64__Register_edx: return tos3("edx");
+		case v__gen__x64__Register_r8: return tos3("r8");
+		case v__gen__x64__Register_r9: return tos3("r9");
+		case v__gen__x64__Register_r10: return tos3("r10");
+		case v__gen__x64__Register_r11: return tos3("r11");
+		case v__gen__x64__Register_r12: return tos3("r12");
+		case v__gen__x64__Register_r13: return tos3("r13");
+		case v__gen__x64__Register_r14: return tos3("r14");
+		case v__gen__x64__Register_r15: return tos3("r15");
+		default: return tos3("unknown enum value");
+	}
+}
 
 // V out
 
@@ -21745,6 +21767,7 @@ string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__P
 		.definitions = strings__new_builder(100),
 		.gowrappers = strings__new_builder(100),
 		.stringliterals = strings__new_builder(100),
+		.auto_str_funcs = strings__new_builder(100),
 		.inits = strings__new_builder(100),
 		.table = table,
 		.pref = pref,
@@ -21804,7 +21827,7 @@ string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__P
 		v__gen__Gen_write_tests_main(&g);
 	}
 	v__gen__Gen_finish(&g);
-	return string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(v__gen__Gen_hashes(g), tos3("\n// V typedefs:\n")), strings__Builder_str(&g.typedefs)), tos3("\n// V typedefs2:\n")), strings__Builder_str(&g.typedefs2)), tos3("\n// V cheaders:\n")), strings__Builder_str(&g.cheaders)), tos3("\n// V includes:\n")), strings__Builder_str(&g.includes)), tos3("\n// V definitions:\n")), strings__Builder_str(&g.definitions)), tos3("\n// V gowrappers:\n")), strings__Builder_str(&g.gowrappers)), tos3("\n// V stringliterals:\n")), strings__Builder_str(&g.stringliterals)), tos3("\n// V out\n")), strings__Builder_str(&g.out));
+	return string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(v__gen__Gen_hashes(g), tos3("\n// V typedefs:\n")), strings__Builder_str(&g.typedefs)), tos3("\n// V typedefs2:\n")), strings__Builder_str(&g.typedefs2)), tos3("\n// V cheaders:\n")), strings__Builder_str(&g.cheaders)), tos3("\n// V includes:\n")), strings__Builder_str(&g.includes)), tos3("\n// V definitions:\n")), strings__Builder_str(&g.definitions)), tos3("\n// V gowrappers:\n")), strings__Builder_str(&g.gowrappers)), tos3("\n// V stringliterals:\n")), strings__Builder_str(&g.stringliterals)), tos3("\n// V auto str functions:\n")), strings__Builder_str(&g.auto_str_funcs)), tos3("\n// V out\n")), strings__Builder_str(&g.out)), tos3("\n// THE END."));
 }
 
 string v__gen__Gen_hashes(v__gen__Gen g) {
@@ -22079,6 +22102,8 @@ void v__gen__Gen_stmt(v__gen__Gen* g, v__ast__Stmt node) {
 		v__ast__EnumDecl* it = (v__ast__EnumDecl*)node.obj; // ST it
 		string enum_name = string_replace(it->name, tos3("."), tos3("__"));
 		strings__Builder_writeln(&g->typedefs, tos3("typedef enum {"));
+		string cur_enum_expr = tos3("");
+		int cur_enum_offset = 0;
 		// FOR IN array
 		array tmp4 = it->fields;
 		for (int j = 0; j < tmp4.len; j++) {
@@ -22090,9 +22115,13 @@ void v__gen__Gen_stmt(v__gen__Gen* g, v__ast__Stmt node) {
 				v__gen__Gen_expr(g, field.expr);
 				string expr_str = strings__Builder_after(&g->out, pos);
 				strings__Builder_go_back(&g->out, expr_str.len);
-				strings__Builder_write(&g->typedefs, _STR("%.*s", expr_str.len, expr_str.str));
+				strings__Builder_write(&g->typedefs, expr_str);
+				cur_enum_expr = expr_str;
+				cur_enum_offset = 0;
 			}
-			strings__Builder_writeln(&g->typedefs, _STR(", // %d", j));
+			string cur_value = (cur_enum_offset > 0 ?  ( _STR("%.*s+%d", cur_enum_expr.len, cur_enum_expr.str, cur_enum_offset) )  :  ( cur_enum_expr ) );
+			strings__Builder_writeln(&g->typedefs, _STR(", // %.*s", cur_value.len, cur_value.str));
+			cur_enum_offset++;
 		}
 		strings__Builder_writeln(&g->typedefs, _STR("} %.*s;\n", enum_name.len, enum_name.str));
 	}else if (node.typ == 169 /* v.ast.ExprStmt */) {
@@ -23748,12 +23777,13 @@ void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInterLiteral
 				bool is_var = ((*(v__ast__Expr*)array_get(node.exprs, i)).typ == 143 /* v.ast.SelectorExpr */) ?  ( true )  : ((*(v__ast__Expr*)array_get(node.exprs, i)).typ == 138 /* v.ast.Ident */) ?  ( true )  :  ( false ) ;
 				if (is_var) {
 					string styp = v__gen__Gen_typ(g, (*(v__table__Type*)array_get(node.expr_types, i)));
-					v__gen__Gen_gen_str_for_type(g, */*d*/sym, styp);
-					v__gen__Gen_write(g, _STR("%.*s_str(", styp.len, styp.str));
+					string str_fn_name = v__gen__styp_to_str_fn_name(styp);
+					v__gen__Gen_gen_str_for_type(g, */*d*/sym, styp, str_fn_name);
+					v__gen__Gen_write(g, _STR("%.*s(", str_fn_name.len, str_fn_name.str));
 					v__gen__Gen_enum_expr(g, expr);
 					v__gen__Gen_write(g, tos3(")"));
 					v__gen__Gen_write(g, tos3(".len, "));
-					v__gen__Gen_write(g, _STR("%.*s_str(", styp.len, styp.str));
+					v__gen__Gen_write(g, _STR("%.*s(", str_fn_name.len, str_fn_name.str));
 					v__gen__Gen_enum_expr(g, expr);
 					v__gen__Gen_write(g, tos3(").str"));
 				} else {
@@ -23767,22 +23797,24 @@ void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInterLiteral
 				}
 			} else if ((sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed)) {
 				string styp = v__gen__Gen_typ(g, (*(v__table__Type*)array_get(node.expr_types, i)));
-				v__gen__Gen_gen_str_for_type(g, */*d*/sym, styp);
-				v__gen__Gen_write(g, _STR("%.*s_str(", styp.len, styp.str));
+				string str_fn_name = v__gen__styp_to_str_fn_name(styp);
+				v__gen__Gen_gen_str_for_type(g, */*d*/sym, styp, str_fn_name);
+				v__gen__Gen_write(g, _STR("%.*s(", str_fn_name.len, str_fn_name.str));
 				v__gen__Gen_expr(g, expr);
 				v__gen__Gen_write(g, tos3(")"));
 				v__gen__Gen_write(g, tos3(".len, "));
-				v__gen__Gen_write(g, _STR("%.*s_str(", styp.len, styp.str));
+				v__gen__Gen_write(g, _STR("%.*s(", str_fn_name.len, str_fn_name.str));
 				v__gen__Gen_expr(g, expr);
 				v__gen__Gen_write(g, tos3(").str"));
 			} else if (sym->kind == v__table__Kind_struct_ && !v__table__TypeSymbol_has_method(sym, tos3("str"))) {
 				string styp = v__gen__Gen_typ(g, (*(v__table__Type*)array_get(node.expr_types, i)));
-				v__gen__Gen_gen_str_for_type(g, */*d*/sym, styp);
-				v__gen__Gen_write(g, _STR("%.*s_str(", styp.len, styp.str));
+				string str_fn_name = v__gen__styp_to_str_fn_name(styp);
+				v__gen__Gen_gen_str_for_type(g, */*d*/sym, styp, str_fn_name);
+				v__gen__Gen_write(g, _STR("%.*s(", str_fn_name.len, str_fn_name.str));
 				v__gen__Gen_expr(g, expr);
 				v__gen__Gen_write(g, tos3(",0)"));
 				v__gen__Gen_write(g, tos3(".len, "));
-				v__gen__Gen_write(g, _STR("%.*s_str(", styp.len, styp.str));
+				v__gen__Gen_write(g, _STR("%.*s(", str_fn_name.len, str_fn_name.str));
 				v__gen__Gen_expr(g, expr);
 				v__gen__Gen_write(g, tos3(",0).str"));
 			} else {
@@ -23837,9 +23869,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_62642 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_62642.arg0;
-	string type_of_last_expression = mr_62642.arg1;
+	multi_return_string_string mr_63328 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_63328.arg0;
+	string type_of_last_expression = mr_63328.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -24221,29 +24253,35 @@ void v__gen__Gen_is_expr(v__gen__Gen* g, v__ast__InfixExpr node) {
 	v__gen__Gen_expr(g, node.right);
 }
 
-void v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__TypeSymbol sym, string styp) {
-	if (v__table__TypeSymbol_has_method(&sym, tos3("str")) || _IN(string, styp, g->str_types)) {
+string v__gen__styp_to_str_fn_name(string styp) {
+	string res = string_add(string_replace(string_replace(styp, tos3("."), tos3("__")), tos3("*"), tos3("_ptr")), tos3("_str"));
+	return res;
+}
+
+void v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__TypeSymbol sym, string styp, string str_fn_name) {
+	string already_generated_key = _STR("%.*s:%.*s", styp.len, styp.str, str_fn_name.len, str_fn_name.str);
+	if (v__table__TypeSymbol_has_method(&sym, tos3("str")) || _IN(string, already_generated_key, g->str_types)) {
 		return;
 	}
-	array_push(&g->str_types, &(string[]){ styp });
+	array_push(&g->str_types, &(string[]){ already_generated_key });
 	if (sym.info.typ == 81 /* v.table.Alias */) {
 		v__table__Alias* it = (v__table__Alias*)sym.info.obj; // ST it
-		v__gen__Gen_gen_str_default(g, sym, styp);
+		v__gen__Gen_gen_str_default(g, sym, styp, str_fn_name);
 	}else if (sym.info.typ == 76 /* v.table.Array */) {
 		v__table__Array* it = (v__table__Array*)sym.info.obj; // ST it
-		v__gen__Gen_gen_str_for_array(g, */*d*/it, styp);
+		v__gen__Gen_gen_str_for_array(g, */*d*/it, styp, str_fn_name);
 	}else if (sym.info.typ == 82 /* v.table.Enum */) {
 		v__table__Enum* it = (v__table__Enum*)sym.info.obj; // ST it
-		v__gen__Gen_gen_str_for_enum(g, */*d*/it, styp);
+		v__gen__Gen_gen_str_for_enum(g, */*d*/it, styp, str_fn_name);
 	}else if (sym.info.typ == 79 /* v.table.Struct */) {
 		v__table__Struct* it = (v__table__Struct*)sym.info.obj; // ST it
-		v__gen__Gen_gen_str_for_struct(g, */*d*/it, styp);
+		v__gen__Gen_gen_str_for_struct(g, */*d*/it, styp, str_fn_name);
 	}else {
-		v__gen__verror(_STR("could not generate string method for type \'%.*s\'", styp.len, styp.str));
+		v__gen__verror(_STR("could not generate string method %.*s for type \'%.*s\'", str_fn_name.len, str_fn_name.str, styp.len, styp.str));
 	};
 }
 
-void v__gen__Gen_gen_str_default(v__gen__Gen* g, v__table__TypeSymbol sym, string styp) {
+void v__gen__Gen_gen_str_default(v__gen__Gen* g, v__table__TypeSymbol sym, string styp, string str_fn_name) {
 	string convertor = tos3("");
 	string typename = tos3("");
 	if (_IN(int, sym.parent_idx, _const_v__table__integer_type_idxs)) {
@@ -24261,106 +24299,136 @@ void v__gen__Gen_gen_str_default(v__gen__Gen* g, v__table__TypeSymbol sym, strin
 	} else {
 		v__gen__verror(_STR("could not generate string method for type \'%.*s\'", styp.len, styp.str));
 	}
-	strings__Builder_writeln(&g->definitions, _STR("string %.*s_str(%.*s it) {", styp.len, styp.str, styp.len, styp.str));
+	strings__Builder_writeln(&g->definitions, _STR("string %.*s(%.*s it); // auto", str_fn_name.len, str_fn_name.str, styp.len, styp.str));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("string %.*s(%.*s it) {", str_fn_name.len, str_fn_name.str, styp.len, styp.str));
 	if (string_eq(convertor, tos3("bool"))) {
-		strings__Builder_writeln(&g->definitions, _STR("\tstring tmp1 = string_add(tos3(\"%.*s(\"), (%.*s)it ? tos3(\"true\") : tos3(\"false\"));", styp.len, styp.str, convertor.len, convertor.str));
+		strings__Builder_writeln(&g->auto_str_funcs, _STR("\tstring tmp1 = string_add(tos3(\"%.*s(\"), (%.*s)it ? tos3(\"true\") : tos3(\"false\"));", styp.len, styp.str, convertor.len, convertor.str));
 	} else {
-		strings__Builder_writeln(&g->definitions, _STR("\tstring tmp1 = string_add(tos3(\"%.*s(\"), tos3(%.*s_str((%.*s)it).str));", styp.len, styp.str, typename.len, typename.str, convertor.len, convertor.str));
+		strings__Builder_writeln(&g->auto_str_funcs, _STR("\tstring tmp1 = string_add(tos3(\"%.*s(\"), tos3(%.*s_str((%.*s)it).str));", styp.len, styp.str, typename.len, typename.str, convertor.len, convertor.str));
 	}
-	strings__Builder_writeln(&g->definitions, tos3("\tstring tmp2 = string_add(tmp1, tos3(\")\"));"));
-	strings__Builder_writeln(&g->definitions, tos3("\tstring_free(tmp1);"));
-	strings__Builder_writeln(&g->definitions, tos3("\treturn tmp2;"));
-	strings__Builder_writeln(&g->definitions, tos3("}"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tstring tmp2 = string_add(tmp1, tos3(\")\"));"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tstring_free(tmp1);"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\treturn tmp2;"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("}"));
 }
 
-void v__gen__Gen_gen_str_for_enum(v__gen__Gen* g, v__table__Enum info, string styp) {
+void v__gen__Gen_gen_str_for_enum(v__gen__Gen* g, v__table__Enum info, string styp, string str_fn_name) {
 	string s = string_replace(styp, tos3("."), tos3("__"));
-	strings__Builder_write(&g->definitions, _STR("string %.*s_str(%.*s it) {\n\tswitch(it) {\n", s.len, s.str, styp.len, styp.str));
+	strings__Builder_writeln(&g->definitions, _STR("string %.*s(%.*s it); // auto", str_fn_name.len, str_fn_name.str, styp.len, styp.str));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("string %.*s(%.*s it) { /* gen_str_for_enum */", str_fn_name.len, str_fn_name.str, styp.len, styp.str));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tswitch(it) {"));
 	// FOR IN array
 	array tmp1 = info.vals;
 	for (int i = 0; i < tmp1.len; i++) {
 		string val = ((string*)tmp1.data)[i];
-		strings__Builder_write(&g->definitions, _STR("\t\tcase %.*s_%.*s: return tos3(\"%.*s\");\n", s.len, s.str, val.len, val.str, val.len, val.str));
+		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tcase %.*s_%.*s: return tos3(\"%.*s\");", s.len, s.str, val.len, val.str, val.len, val.str));
 	}
-	strings__Builder_write(&g->definitions, tos3("\t\tdefault: return tos3(\"unknown enum value\"); } }\n"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tdefault: return tos3(\"unknown enum value\");"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t}"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("}"));
 }
 
-void v__gen__Gen_gen_str_for_struct(v__gen__Gen* g, v__table__Struct info, string styp) {
+void v__gen__Gen_gen_str_for_struct(v__gen__Gen* g, v__table__Struct info, string styp, string str_fn_name) {
+	map_string_string fnames2strfunc = new_map_1(sizeof(string));
 	// FOR IN array
 	array tmp1 = info.fields;
 	for (int i = 0; i < tmp1.len; i++) {
 		v__table__Field field = ((v__table__Field*)tmp1.data)[i];
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, field.typ);
-		if (sym->kind == v__table__Kind_struct_) {
+		if ((sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed || sym->kind == v__table__Kind_enum_)) {
 			string field_styp = v__gen__Gen_typ(g, field.typ);
-			v__gen__Gen_gen_str_for_type(g, */*d*/sym, field_styp);
+			string field_fn_name = v__gen__styp_to_str_fn_name(field_styp);
+			map_set(&fnames2strfunc, field_styp, &(string[]) { field_fn_name });
+			v__gen__Gen_gen_str_for_type(g, */*d*/sym, field_styp, field_fn_name);
 		}
 	}
-	string s = string_replace(styp, tos3("."), tos3("__"));
-	strings__Builder_write(&g->definitions, _STR("string %.*s_str(%.*s it, int indent_count) {\n", s.len, s.str, styp.len, styp.str));
-	strings__Builder_write(&g->definitions, tos3("\tstring indents = tos3(\"\");\n\tfor (int i = 0; i < indent_count; i++) { indents = string_add(indents, tos3(\"    \")); }\n"));
-	strings__Builder_write(&g->definitions, _STR("\treturn _STR(\"%.*s {\\n", styp.len, styp.str));
-	// FOR IN array
-	array tmp3 = info.fields;
-	for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
-		v__table__Field field = ((v__table__Field*)tmp3.data)[tmp4];
-		string fmt = v__gen__Gen_type_to_fmt(/*rec*/*g, field.typ);
-		strings__Builder_write(&g->definitions, string_add(tos3("%.*s    "), _STR("%.*s: %.*s\\n", field.name.len, field.name.str, fmt.len, fmt.str)));
+	strings__Builder_writeln(&g->definitions, _STR("string %.*s(%.*s x, int indent_count); // auto", str_fn_name.len, str_fn_name.str, styp.len, styp.str));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("string %.*s(%.*s x, int indent_count) {", str_fn_name.len, str_fn_name.str, styp.len, styp.str));
+	string clean_struct_v_type_name = string_replace(styp, tos3("__"), tos3("."));
+	if (string_ends_with(styp, tos3("*"))) {
+		string deref_typ = string_replace(styp, tos3("*"), tos3(""));
+		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t%.*s *it = x;", deref_typ.len, deref_typ.str));
+		clean_struct_v_type_name = string_add(tos3("&"), string_replace(clean_struct_v_type_name, tos3("*"), tos3("")));
+	} else {
+		string deref_typ = styp;
+		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t%.*s *it = &x;", deref_typ.len, deref_typ.str));
 	}
-	strings__Builder_write(&g->definitions, tos3("%.*s}\""));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tstring indents = tos3(\"\");"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tfor (int i = 0; i < indent_count; i++) {"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tindents = string_add(indents, tos3(\"    \"));"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t}"));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("\treturn _STR(\"%.*s {\\n\"", clean_struct_v_type_name.len, clean_struct_v_type_name.str));
+	// FOR IN array
+	array tmp4 = info.fields;
+	for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
+		v__table__Field field = ((v__table__Field*)tmp4.data)[tmp5];
+		string fmt = v__gen__Gen_type_to_fmt(/*rec*/*g, field.typ);
+		strings__Builder_writeln(&g->auto_str_funcs, string_add(tos3("\t\t\"%.*s    "), _STR("%.*s: %.*s\\n\"", field.name.len, field.name.str, fmt.len, fmt.str)));
+	}
+	strings__Builder_write(&g->auto_str_funcs, tos3("\t\t\"%.*s}\""));
 	if (info.fields.len > 0) {
-		strings__Builder_write(&g->definitions, tos3(", "));
+		strings__Builder_write(&g->auto_str_funcs, tos3(",\n\t\t"));
 		// FOR IN array
-		array tmp6 = info.fields;
-		for (int i = 0; i < tmp6.len; i++) {
-			v__table__Field field = ((v__table__Field*)tmp6.data)[i];
+		array tmp7 = info.fields;
+		for (int i = 0; i < tmp7.len; i++) {
+			v__table__Field field = ((v__table__Field*)tmp7.data)[i];
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, field.typ);
-			if ((sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed)) {
-				string field_styp = v__gen__Gen_typ(g, field.typ);
-				string second_str_param = (v__table__TypeSymbol_has_method(sym, tos3("str")) ?  ( tos3("") )  :  ( tos3(", indent_count + 1") ) );
-				strings__Builder_write(&g->definitions, _STR("indents.len, indents.str, %.*s_str(it.%.*s%.*s).len, %.*s_str(it.%.*s%.*s).str", field_styp.len, field_styp.str, field.name.len, field.name.str, second_str_param.len, second_str_param.str, field_styp.len, field_styp.str, field.name.len, field.name.str, second_str_param.len, second_str_param.str));
+			bool has_custom_str = v__table__TypeSymbol_has_method(sym, tos3("str"));
+			string second_str_param = (has_custom_str ?  ( tos3("") )  :  ( tos3(", indent_count + 1") ) );
+			string field_styp = v__gen__Gen_typ(g, field.typ);
+			string field_styp_fn_name = (has_custom_str ?  ( _STR("%.*s_str", field_styp.len, field_styp.str) )  :  ( (*(string*)map_get3(fnames2strfunc, field_styp, &(string[]){ tos3("") })) ) );
+			if (sym->kind == v__table__Kind_enum_) {
+				strings__Builder_write(&g->auto_str_funcs, tos3("indents.len, indents.str, "));
+				strings__Builder_write(&g->auto_str_funcs, _STR("%.*s( it->%.*s ).len, ", field_styp_fn_name.len, field_styp_fn_name.str, field.name.len, field.name.str));
+				strings__Builder_write(&g->auto_str_funcs, _STR("%.*s( it->%.*s ).str  ", field_styp_fn_name.len, field_styp_fn_name.str, field.name.len, field.name.str));
+			} else if ((sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed)) {
+				strings__Builder_write(&g->auto_str_funcs, tos3("indents.len, indents.str, "));
+				strings__Builder_write(&g->auto_str_funcs, _STR("%.*s( it->%.*s%.*s ).len, ", field_styp_fn_name.len, field_styp_fn_name.str, field.name.len, field.name.str, second_str_param.len, second_str_param.str));
+				strings__Builder_write(&g->auto_str_funcs, _STR("%.*s( it->%.*s%.*s ).str  ", field_styp_fn_name.len, field_styp_fn_name.str, field.name.len, field.name.str, second_str_param.len, second_str_param.str));
 			} else {
-				strings__Builder_write(&g->definitions, _STR("indents.len, indents.str, it.%.*s", field.name.len, field.name.str));
+				strings__Builder_write(&g->auto_str_funcs, _STR("indents.len, indents.str, it->%.*s", field.name.len, field.name.str));
 				if (field.typ == _const_v__table__string_type) {
-					strings__Builder_write(&g->definitions, _STR(".len, it.%.*s.str", field.name.len, field.name.str));
+					strings__Builder_write(&g->auto_str_funcs, _STR(".len, it->%.*s.str", field.name.len, field.name.str));
 				} else if (field.typ == _const_v__table__bool_type) {
-					strings__Builder_write(&g->definitions, _STR(" ? 4 : 5, it.%.*s ? \"true\" : \"false\"", field.name.len, field.name.str));
+					strings__Builder_write(&g->auto_str_funcs, _STR(" ? 4 : 5, it->%.*s ? \"true\" : \"false\"", field.name.len, field.name.str));
 				}
 			}
 			if (i < info.fields.len - 1) {
-				strings__Builder_write(&g->definitions, tos3(", "));
+				strings__Builder_write(&g->auto_str_funcs, tos3(",\n\t\t"));
 			}
 		}
 	}
-	strings__Builder_writeln(&g->definitions, tos3(", indents.len, indents.str);\n}"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3(","));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tindents.len, indents.str);"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("}"));
 }
 
-void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, string styp) {
-	string s = string_replace(styp, tos3("."), tos3("__"));
+void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, string styp, string str_fn_name) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	if (sym->kind == v__table__Kind_struct_ && !v__table__TypeSymbol_has_method(sym, tos3("str"))) {
-		v__gen__Gen_gen_str_for_type(g, */*d*/sym, field_styp);
+		v__gen__Gen_gen_str_for_type(g, */*d*/sym, field_styp, v__gen__styp_to_str_fn_name(field_styp));
 	}
-	strings__Builder_writeln(&g->definitions, _STR("string %.*s_str(%.*s a) {", s.len, s.str, styp.len, styp.str));
-	strings__Builder_writeln(&g->definitions, tos3("\tstrings__Builder sb = strings__new_builder(a.len * 10);"));
-	strings__Builder_writeln(&g->definitions, tos3("\tstrings__Builder_write(&sb, tos3(\"[\"));"));
-	strings__Builder_writeln(&g->definitions, tos3("\tfor (int i = 0; i < a.len; i++) {"));
-	strings__Builder_writeln(&g->definitions, _STR("\t\t%.*s it = (*(%.*s*)array_get(a, i));", field_styp.len, field_styp.str, field_styp.len, field_styp.str));
+	strings__Builder_writeln(&g->definitions, _STR("string %.*s(%.*s a); // auto", str_fn_name.len, str_fn_name.str, styp.len, styp.str));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("string %.*s(%.*s a) {", str_fn_name.len, str_fn_name.str, styp.len, styp.str));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tstrings__Builder sb = strings__new_builder(a.len * 10);"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tstrings__Builder_write(&sb, tos3(\"[\"));"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tfor (int i = 0; i < a.len; i++) {"));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\t%.*s it = (*(%.*s*)array_get(a, i));", field_styp.len, field_styp.str, field_styp.len, field_styp.str));
 	if (sym->kind == v__table__Kind_struct_ && !v__table__TypeSymbol_has_method(sym, tos3("str"))) {
-		strings__Builder_writeln(&g->definitions, _STR("\t\t\tstrings__Builder_write(&sb, %.*s_str(it,0));", field_styp.len, field_styp.str));
+		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\t\tstrings__Builder_write(&sb, %.*s_str(it,0));", field_styp.len, field_styp.str));
 	} else if ((sym->kind == v__table__Kind_f32 || sym->kind == v__table__Kind_f64)) {
-		strings__Builder_writeln(&g->definitions, tos3("\t\t\tstrings__Builder_write(&sb, _STR(\"%g\", it));"));
+		strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\t\tstrings__Builder_write(&sb, _STR(\"%g\", it));"));
 	} else {
-		strings__Builder_writeln(&g->definitions, _STR("\t\t\tstrings__Builder_write(&sb, %.*s_str(it));", field_styp.len, field_styp.str));
+		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\t\tstrings__Builder_write(&sb, %.*s_str(it));", field_styp.len, field_styp.str));
 	}
-	strings__Builder_writeln(&g->definitions, tos3("\t\tif (i != a.len-1) {"));
-	strings__Builder_writeln(&g->definitions, tos3("\t\t\tstrings__Builder_write(&sb, tos3(\", \"));"));
-	strings__Builder_writeln(&g->definitions, tos3("\t\t}"));
-	strings__Builder_writeln(&g->definitions, tos3("\t}"));
-	strings__Builder_writeln(&g->definitions, tos3("\tstrings__Builder_write(&sb, tos3(\"]\"));"));
-	strings__Builder_writeln(&g->definitions, tos3("\treturn strings__Builder_str(&sb);"));
-	strings__Builder_writeln(&g->definitions, tos3("}"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tif (i != a.len-1) {"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\t\tstrings__Builder_write(&sb, tos3(\", \"));"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\t}"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t}"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tstrings__Builder_write(&sb, tos3(\"]\"));"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\treturn strings__Builder_str(&sb);"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("}"));
 }
 
 string v__gen__Gen_type_to_fmt(v__gen__Gen g, v__table__Type typ) {
@@ -24370,6 +24438,8 @@ string v__gen__Gen_type_to_fmt(v__gen__Gen g, v__table__Type typ) {
 	} else if (typ == _const_v__table__string_type) {
 		return tos3("\'%.*s\'");
 	} else if (typ == _const_v__table__bool_type) {
+		return tos3("%.*s");
+	} else if (sym->kind == v__table__Kind_enum_) {
 		return tos3("%.*s");
 	} else if ((typ == _const_v__table__f32_type || typ == _const_v__table__f64_type)) {
 		return tos3("%g");
@@ -24597,10 +24667,11 @@ void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 		if (v__table__type_is_ptr(typ)) {
 			styp = string_replace(styp, tos3("*"), tos3(""));
 		}
-		v__gen__Gen_gen_str_for_type(g, */*d*/sym, styp);
+		string str_fn_name = v__gen__styp_to_str_fn_name(styp);
+		v__gen__Gen_gen_str_for_type(g, */*d*/sym, styp, str_fn_name);
 		if (g->autofree && !v__table__type_is(typ, v__table__TypeFlag_optional)) {
 			string tmp = v__gen__Gen_new_tmp_var(g);
-			v__gen__Gen_write(g, _STR("string %.*s = %.*s_str(", tmp.len, tmp.str, styp.len, styp.str));
+			v__gen__Gen_write(g, _STR("string %.*s = %.*s(", tmp.len, tmp.str, str_fn_name.len, str_fn_name.str));
 			v__gen__Gen_expr(g, (*(v__ast__CallArg*)array_get(node.args, 0)).expr);
 			v__gen__Gen_writeln(g, _STR("); %.*s(%.*s); string_free(%.*s); //MEM2 %.*s", print_method.len, print_method.str, tmp.len, tmp.str, tmp.len, tmp.str, styp.len, styp.str));
 		} else {
@@ -24608,10 +24679,11 @@ void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			bool is_var = (expr.typ == 143 /* v.ast.SelectorExpr */) ?  ( true )  : (expr.typ == 138 /* v.ast.Ident */) ?  ( true )  :  ( false ) ;
 			if (v__table__type_is_ptr(typ) && sym->kind != v__table__Kind_struct_) {
 				styp = tos3("ptr");
+				str_fn_name = tos3("ptr_str");
 			}
 			if (sym->kind == v__table__Kind_enum_) {
 				if (is_var) {
-					v__gen__Gen_write(g, _STR("%.*s(%.*s_str(", print_method.len, print_method.str, styp.len, styp.str));
+					v__gen__Gen_write(g, _STR("%.*s(%.*s(", print_method.len, print_method.str, str_fn_name.len, str_fn_name.str));
 				} else {
 					v__gen__Gen_write(g, _STR("%.*s(tos3(\"", print_method.len, print_method.str));
 				}
@@ -24623,7 +24695,7 @@ void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 					v__gen__Gen_write(g, tos3("\""));
 				}
 			} else {
-				v__gen__Gen_write(g, _STR("%.*s(%.*s_str(", print_method.len, print_method.str, styp.len, styp.str));
+				v__gen__Gen_write(g, _STR("%.*s(%.*s(", print_method.len, print_method.str, str_fn_name.len, str_fn_name.str));
 				if (v__table__type_is_ptr(typ) && sym->kind == v__table__Kind_struct_) {
 					v__gen__Gen_write(g, tos3("*"));
 				}
@@ -28717,3 +28789,4 @@ void _vinit() {
 
 }
 
+// THE END.
