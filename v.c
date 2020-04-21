@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "9278a0c"
+#define V_COMMIT_HASH "77679d9"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "be40de3"
+#define V_COMMIT_HASH "9278a0c"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "9278a0c"
+#define V_CURRENT_COMMIT_HASH "77679d9"
 #endif
 
 
@@ -26291,7 +26291,6 @@ void v__gen__x64__Gen_fn_decl(v__gen__x64__Gen* g, v__ast__FnDecl it) {
 	} else {
 		v__gen__x64__Gen_register_function_address(g, it.name);
 		v__gen__x64__Gen_push(g, v__gen__x64__Register_rbp);
-		v__gen__x64__Gen_sub32(g, v__gen__x64__Register_rsp, 0x10);
 	}
 	// FOR IN array
 	array tmp2 = it.args;
