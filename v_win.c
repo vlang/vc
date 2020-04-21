@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "cc0e0ed"
+#define V_COMMIT_HASH "1bf094f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4ea4d1c"
+#define V_COMMIT_HASH "cc0e0ed"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "cc0e0ed"
+#define V_CURRENT_COMMIT_HASH "1bf094f"
 #endif
 
 
@@ -15827,7 +15827,7 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_lpar) {
 		v__parser__Parser_next(p);
 		is_method = true;
-		rec_mut = p->tok.kind == v__token__Kind_key_var;
+		rec_mut = (p->tok.kind == v__token__Kind_key_var || p->tok.kind == v__token__Kind_key_mut);
 		if (rec_mut) {
 			v__parser__Parser_next(p);
 		}
@@ -15867,9 +15867,9 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool mr_3522 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_3522.arg0;
-	bool is_variadic = mr_3522.arg1;
+	multi_return_array_v__table__Arg_bool mr_3530 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_3530.arg0;
+	bool is_variadic = mr_3530.arg1;
 	_PUSH_MANY(&args, (args2), tmp13, array_v__table__Arg);
 	// FOR IN array
 	array tmp14 = args;
@@ -15962,9 +15962,9 @@ v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_open_scope(p);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
-	multi_return_array_v__table__Arg_bool mr_5254 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_5254.arg0;
-	bool is_variadic = mr_5254.arg1;
+	multi_return_array_v__table__Arg_bool mr_5260 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_5260.arg0;
+	bool is_variadic = mr_5260.arg1;
 	// FOR IN array
 	array tmp1 = args;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
@@ -24136,9 +24136,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_62615 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_62615.arg0;
-	string type_of_last_expression = mr_62615.arg1;
+	multi_return_string_string mr_62617 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_62617.arg0;
+	string type_of_last_expression = mr_62617.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
