@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "bc4a576"
+#define V_COMMIT_HASH "b9c0d2d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a8dc0cc"
+#define V_COMMIT_HASH "bc4a576"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "bc4a576"
+#define V_CURRENT_COMMIT_HASH "b9c0d2d"
 #endif
 
 
@@ -22747,14 +22747,14 @@ void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assign_stmt)
 				return_type = it->return_type;
 			}else if (val.typ == 177 /* v.ast.AnonFn */) {
 				v__ast__AnonFn* it = (v__ast__AnonFn*)val.obj; // ST it
-				v__gen__Gen_expr(g, /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__AnonFn[]) {*it}, sizeof(v__ast__AnonFn)), .typ = 177 /* v.ast.AnonFn */});
-				v__table__TypeSymbol* fsym = v__table__Table_get_type_symbol(g->table, it->typ);
 				string ret_styp = v__gen__Gen_typ(g, it->decl.return_type);
 				v__gen__Gen_write(g, _STR("%.*s (*%.*s) (", ret_styp.len, ret_styp.str, ident.name.len, ident.name.str));
 				int def_pos = g->definitions.len;
 				v__gen__Gen_fn_args(g, it->decl.args, it->decl.is_variadic);
 				strings__Builder_go_back(&g->definitions, g->definitions.len - def_pos);
-				v__gen__Gen_writeln(g, _STR(") = &%.*s;", fsym->name.len, fsym->name.str));
+				v__gen__Gen_write(g, tos3(") = "));
+				v__gen__Gen_expr(g, /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__AnonFn[]) {*it}, sizeof(v__ast__AnonFn)), .typ = 177 /* v.ast.AnonFn */});
+				v__gen__Gen_writeln(g, tos3(";"));
 				continue;
 			}else {
 			};
@@ -23082,9 +23082,11 @@ void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 		int def_pos = g->definitions.len;
 		v__gen__Gen_stmt(g, /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__FnDecl[]) {it->decl}, sizeof(v__ast__FnDecl)), .typ = 120 /* v.ast.FnDecl */});
 		string fn_body = strings__Builder_after(&g->out, pos);
+		strings__Builder_go_back(&g->out, fn_body.len);
 		strings__Builder_go_back(&g->definitions, g->definitions.len - def_pos);
 		strings__Builder_write(&g->definitions, fn_body);
-		strings__Builder_go_back(&g->out, fn_body.len);
+		v__table__TypeSymbol* fsym = v__table__Table_get_type_symbol(g->table, it->typ);
+		v__gen__Gen_write(g, _STR("&%.*s", fsym->name.len, fsym->name.str));
 	}else {
 		println(term__red(string_add(tos3("cgen.expr(): bad node "), tos3( /* v.ast.Expr */ v_typeof_sumtype_109( (node).typ )))));
 	};
@@ -24177,9 +24179,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_63328 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_63328.arg0;
-	string type_of_last_expression = mr_63328.arg1;
+	multi_return_string_string mr_63358 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_63358.arg0;
+	string type_of_last_expression = mr_63358.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
