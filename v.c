@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "1bf094f"
+#define V_COMMIT_HASH "ee2e83f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cc0e0ed"
+#define V_COMMIT_HASH "1bf094f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "1bf094f"
+#define V_CURRENT_COMMIT_HASH "ee2e83f"
 #endif
 
 
@@ -14816,7 +14816,7 @@ string v__ast__FnDecl_str(v__ast__FnDecl* node, v__table__Table* t) {
 	string receiver = tos3("");
 	if (node->is_method) {
 		string styp = v__table__Table_type_to_str(t, node->receiver.typ);
-		string m = (node->rec_mut ?  ( tos3("var ") )  :  ( tos3("") ) );
+		string m = (node->rec_mut ?  ( tos3("mut ") )  :  ( tos3("") ) );
 		if (node->rec_mut) {
 			styp = string_substr(styp, 1, styp.len);
 		}
