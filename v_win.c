@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "34fd148"
+#define V_COMMIT_HASH "08fac28"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b9c0d2d"
+#define V_COMMIT_HASH "34fd148"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "34fd148"
+#define V_CURRENT_COMMIT_HASH "08fac28"
 #endif
 
 
@@ -4082,7 +4082,7 @@ void array_ensure_cap(array* a, int required) {
 
 array array_repeat(array a, int count) {
 	if (count < 0) {
-		v_panic(_STR("array.repeat: count is negative: %d", count));
+		v_panic(_STR("array.repeat: count is negative: %"PRId32"", count));
 	}
 	int size = count * a.len * a.element_size;
 	if (size == 0) {
@@ -4110,7 +4110,7 @@ void array_insert(array* a, int i, voidptr val) {
 #ifndef NO_BOUNDS_CHECK
 	// #if not no_bounds_checking
 		if (i < 0 || i > a->len) {
-			v_panic(_STR("array.insert: index out of range (i == %d, a.len == %d)", i, a->len));
+			v_panic(_STR("array.insert: index out of range (i == %"PRId32", a.len == %"PRId32")", i, a->len));
 		}
 	
 #endif
@@ -4130,7 +4130,7 @@ void array_delete(array* a, int i) {
 #ifndef NO_BOUNDS_CHECK
 	// #if not no_bounds_checking
 		if (i < 0 || i >= a->len) {
-			v_panic(_STR("array.delete: index out of range (i == %d, a.len == %d)", i, a->len));
+			v_panic(_STR("array.delete: index out of range (i == %"PRId32", a.len == %"PRId32")", i, a->len));
 		}
 	
 #endif
@@ -4154,7 +4154,7 @@ voidptr array_get(array a, int i) {
 #ifndef NO_BOUNDS_CHECK
 	// #if not no_bounds_checking
 		if (i < 0 || i >= a.len) {
-			v_panic(_STR("array.get: index out of range (i == %d, a.len == %d)", i, a.len));
+			v_panic(_STR("array.get: index out of range (i == %"PRId32", a.len == %"PRId32")", i, a.len));
 		}
 	
 #endif
@@ -4191,13 +4191,13 @@ array array_slice(array a, int start, int _end) {
 #ifndef NO_BOUNDS_CHECK
 	// #if not no_bounds_checking
 		if (start > end) {
-			v_panic(_STR("array.slice: invalid slice index (%d > %d)", start, end));
+			v_panic(_STR("array.slice: invalid slice index (%"PRId32" > %"PRId32")", start, end));
 		}
 		if (end > a.len) {
-			v_panic(_STR("array.slice: slice bounds out of range (%d >= %d)", end, a.len));
+			v_panic(_STR("array.slice: slice bounds out of range (%"PRId32" >= %"PRId32")", end, a.len));
 		}
 		if (start < 0) {
-			v_panic(_STR("array.slice: slice bounds out of range (%d < 0)", start));
+			v_panic(_STR("array.slice: slice bounds out of range (%"PRId32" < 0)", start));
 		}
 	
 #endif
@@ -4237,13 +4237,13 @@ array array_slice_clone(array* a, int start, int _end) {
 #ifndef NO_BOUNDS_CHECK
 	// #if not no_bounds_checking
 		if (start > end) {
-			v_panic(_STR("array.slice: invalid slice index (%d > %d)", start, end));
+			v_panic(_STR("array.slice: invalid slice index (%"PRId32" > %"PRId32")", start, end));
 		}
 		if (end > a->len) {
-			v_panic(_STR("array.slice: slice bounds out of range (%d >= %d)", end, a->len));
+			v_panic(_STR("array.slice: slice bounds out of range (%"PRId32" >= %"PRId32")", end, a->len));
 		}
 		if (start < 0) {
-			v_panic(_STR("array.slice: slice bounds out of range (%d < 0)", start));
+			v_panic(_STR("array.slice: slice bounds out of range (%"PRId32" < 0)", start));
 		}
 	
 #endif
@@ -4262,7 +4262,7 @@ void array_set(array* a, int i, voidptr val) {
 #ifndef NO_BOUNDS_CHECK
 	// #if not no_bounds_checking
 		if (i < 0 || i >= a->len) {
-			v_panic(_STR("array.set: index out of range (i == %d, a.len == %d)", i, a->len));
+			v_panic(_STR("array.set: index out of range (i == %"PRId32", a.len == %"PRId32")", i, a->len));
 		}
 	
 #endif
@@ -4572,7 +4572,7 @@ byteptr v_malloc(int n) {
 #else
 		byteptr ptr = malloc(n);
 		if (ptr == 0) {
-			v_panic(_STR("malloc(%d) failed", n));
+			v_panic(_STR("malloc(%"PRId32") failed", n));
 		}
 		return ptr;
 	
@@ -4696,7 +4696,7 @@ bool print_backtrace_skipping_top_frames_msvc(int skipframes) {
 				string lineinfo = tos3("");
 				if (SymGetLineFromAddr64(handle, frame_addr, &offset, &sline64) == 1) {
 					string file_name = tos3(sline64.f_file_name);
-					lineinfo = _STR("%.*s:%d", file_name.len, file_name.str, sline64.f_line_number);
+					lineinfo = _STR("%.*s:%"PRIu32"", file_name.len, file_name.str, sline64.f_line_number);
 				} else {
 					addr:
 					lineinfo = _STR("?? : address = 0x%x", &frame_addr);
@@ -4706,11 +4706,11 @@ bool print_backtrace_skipping_top_frames_msvc(int skipframes) {
 			} else {
 				int cerr = ((int)(GetLastError()));
 				if (cerr == 87) {
-					println(_STR("SymFromAddr failure: %d = The parameter is incorrect)", cerr));
+					println(_STR("SymFromAddr failure: %"PRId32" = The parameter is incorrect)", cerr));
 				} else if (cerr == 487) {
-					println(_STR("SymFromAddr failure: %d = Attempt to access invalid address (Verify that you have the .pdb file in the right folder.)", cerr));
+					println(_STR("SymFromAddr failure: %"PRId32" = Attempt to access invalid address (Verify that you have the .pdb file in the right folder.)", cerr));
 				} else {
-					println(_STR("SymFromAddr failure: %d (see https://docs.microsoft.com/en-us/windows/win32/debug/system-error-codes)", cerr));
+					println(_STR("SymFromAddr failure: %"PRId32" (see https://docs.microsoft.com/en-us/windows/win32/debug/system-error-codes)", cerr));
 				}
 			}
 		}
@@ -5650,7 +5650,7 @@ string map_string_str(map_string m) {
 
 Option opt_ok(voidptr data, int size) {
 	if (size >= 400) {
-		v_panic(_STR("option size too big: %d (max is 400), this is a temporary limit", size));
+		v_panic(_STR("option size too big: %"PRId32" (max is 400), this is a temporary limit", size));
 	}
 	Option res = (Option){
 		.ok = true,
@@ -6461,7 +6461,7 @@ string string_substr(string s, int start, int end) {
 #ifndef NO_BOUNDS_CHECK
 	// #if not no_bounds_checking
 		if (start > end || start > s.len || end > s.len || start < 0 || end < 0) {
-			v_panic(_STR("substr(%d, %d) out of bounds (len=%d)", start, end, s.len));
+			v_panic(_STR("substr(%"PRId32", %"PRId32") out of bounds (len=%"PRId32")", start, end, s.len));
 		}
 	
 #endif
@@ -7061,7 +7061,7 @@ string ustring_substr(ustring u, int _start, int _end) {
 #ifndef NO_BOUNDS_CHECK
 	// #if not no_bounds_checking
 		if (_start > _end || _start > u.len || _end > u.len || _start < 0 || _end < 0) {
-			v_panic(_STR("substr(%d, %d) out of bounds (len=%d)", _start, _end, u.len));
+			v_panic(_STR("substr(%"PRId32", %"PRId32") out of bounds (len=%"PRId32")", _start, _end, u.len));
 		}
 	
 #endif
@@ -7088,7 +7088,7 @@ byte string_at(string s, int idx) {
 #ifndef NO_BOUNDS_CHECK
 	// #if not no_bounds_checking
 		if (idx < 0 || idx >= s.len) {
-			v_panic(_STR("string index out of range: %d / %d", idx, s.len));
+			v_panic(_STR("string index out of range: %"PRId32" / %"PRId32"", idx, s.len));
 		}
 	
 #endif
@@ -7100,7 +7100,7 @@ string ustring_at(ustring u, int idx) {
 #ifndef NO_BOUNDS_CHECK
 	// #if not no_bounds_checking
 		if (idx < 0 || idx >= u.len) {
-			v_panic(_STR("string index out of range: %d / %d", idx, u.runes.len));
+			v_panic(_STR("string index out of range: %"PRId32" / %"PRId32"", idx, u.runes.len));
 		}
 	
 #endif
@@ -7269,7 +7269,7 @@ array_byte string_bytes(string s) {
 
 string string_repeat(string s, int count) {
 	if (count < 0) {
-		v_panic(_STR("string.repeat: count is negative: %d", count));
+		v_panic(_STR("string.repeat: count is negative: %"PRId32"", count));
 	} else if (count == 0) {
 		return tos3("");
 	} else if (count == 1) {
@@ -10226,7 +10226,7 @@ bool os__is_dir_empty(string path) {
 void os__print_c_errno() {
 	int e = errno;
 	string se = tos_clone(((byteptr)(strerror(errno))));
-	println(_STR("errno=%d err=%.*s", e, se.len, se.str));
+	println(_STR("errno=%"PRId32" err=%.*s", e, se.len, se.str));
 }
 
 string os__file_ext(string path) {
@@ -10495,7 +10495,7 @@ string os__executable() {
 		int pid = getpid();
 		int ret = proc_pidpath(pid, result, _const_os__MAX_PATH);
 		if (ret <= 0) {
-			eprintln(_STR("os.executable() failed at calling proc_pidpath with pid: %d . proc_pidpath returned %d ", pid, ret));
+			eprintln(_STR("os.executable() failed at calling proc_pidpath with pid: %"PRId32" . proc_pidpath returned %"PRId32" ", pid, ret));
 			return os__executable_fallback();
 		}
 		return tos2(result);
@@ -11317,7 +11317,7 @@ inline
 v__table__Type v__table__type_deref(v__table__Type t) {
 	int nr_muls = ((((int)(t)) >> 16) & 0xff);
 	if (nr_muls == 0) {
-		v_panic(_STR("deref: type `%d` is not a pointer", t));
+		v_panic(_STR("deref: type `%"PRId32"` is not a pointer", t));
 	}
 	return ((((((((int)(t)) >> 24) & 0xff)) << 24) | ((nr_muls - 1) << 16)) | ((((u16)(t)) & 0xffff)));
 }
@@ -11821,12 +11821,12 @@ string v__table__Fn_signature(v__table__Fn* f) {
 	for (int i = 0; i < tmp1.len; i++) {
 		v__table__Arg arg = ((v__table__Arg*)tmp1.data)[i];
 		v__table__Type typ = v__table__type_set_nr_muls(arg.typ, 0);
-		sig = string_add(sig, _STR("%d", typ));
+		sig = string_add(sig, _STR("%"PRId32"", typ));
 		if (i < f->args.len - 1) {
 			sig = string_add(sig, tos3("_"));
 		}
 	}
-	sig = string_add(sig, _STR("_%d", f->return_type));
+	sig = string_add(sig, _STR("_%"PRId32"", f->return_type));
 	return sig;
 }
 
@@ -11980,7 +11980,7 @@ v__table__TypeSymbol* v__table__Table_get_type_symbol(v__table__Table* t, v__tab
 	if (idx > 0) {
 		return &(*(v__table__TypeSymbol*)array_get(t->types, idx));
 	}
-	v_panic(_STR("get_type_symbol: invalid type (typ=%d idx=%d). This should never happen", typ, idx));
+	v_panic(_STR("get_type_symbol: invalid type (typ=%"PRId32" idx=%"PRId32"). This should never happen", typ, idx));
 }
 
 inline
@@ -12058,13 +12058,13 @@ bool v__table__Table_known_type(v__table__Table* t, string name) {
 inline
 string v__table__Table_array_name(v__table__Table* t, v__table__Type elem_type, int nr_dims) {
 	v__table__TypeSymbol* elem_type_sym = v__table__Table_get_type_symbol(t, elem_type);
-	return string_add(string_add(_STR("array_%.*s", elem_type_sym->name.len, elem_type_sym->name.str), (v__table__type_is_ptr(elem_type) ?  ( tos3("_ptr") )  :  ( tos3("") ) )), (nr_dims > 1 ?  ( _STR("_%dd", nr_dims) )  :  ( tos3("") ) ));
+	return string_add(string_add(_STR("array_%.*s", elem_type_sym->name.len, elem_type_sym->name.str), (v__table__type_is_ptr(elem_type) ?  ( tos3("_ptr") )  :  ( tos3("") ) )), (nr_dims > 1 ?  ( _STR("_%"PRId32"d", nr_dims) )  :  ( tos3("") ) ));
 }
 
 inline
 string v__table__Table_array_fixed_name(v__table__Table* t, v__table__Type elem_type, int size, int nr_dims) {
 	v__table__TypeSymbol* elem_type_sym = v__table__Table_get_type_symbol(t, elem_type);
-	return string_add(string_add(_STR("array_fixed_%.*s_%d", elem_type_sym->name.len, elem_type_sym->name.str, size), (v__table__type_is_ptr(elem_type) ?  ( tos3("_ptr") )  :  ( tos3("") ) )), (nr_dims > 1 ?  ( _STR("_%dd", nr_dims) )  :  ( tos3("") ) ));
+	return string_add(string_add(_STR("array_fixed_%.*s_%"PRId32"", elem_type_sym->name.len, elem_type_sym->name.str, size), (v__table__type_is_ptr(elem_type) ?  ( tos3("_ptr") )  :  ( tos3("") ) )), (nr_dims > 1 ?  ( _STR("_%"PRId32"d", nr_dims) )  :  ( tos3("") ) ));
 }
 
 inline
@@ -12795,7 +12795,7 @@ string v__util__formatted_error(string kind, string emsg, string filepath, v__to
 		}
 	}
 	int column = v__util__imax(0, pos.pos - p - 1);
-	string position = _STR("%.*s:%d:%d:", path.len, path.str, pos.line_nr + 1, v__util__imax(1, column + 1));
+	string position = _STR("%.*s:%"PRId32":%"PRId32":", path.len, path.str, pos.line_nr + 1, v__util__imax(1, column + 1));
 	int bline = v__util__imax(0, pos.line_nr - _const_v__util__error_context_before);
 	int aline = v__util__imin(source_lines.len - 1, pos.line_nr + _const_v__util__error_context_after);
 	array_string clines = __new_array(0, 0, sizeof(string));
@@ -13334,7 +13334,7 @@ void v__builder__Builder_print_errors(v__builder__Builder* b, array_v__scanner__
 	array tmp1 = errors;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
 		v__scanner__Error err = ((v__scanner__Error*)tmp1.data)[tmp2];
-		string kind = (b->pref->is_verbose ?  ( _STR("%.*s error #%d:", v__scanner__Reporter_str(err.reporter).len, v__scanner__Reporter_str(err.reporter).str, b->checker.nr_errors) )  :  ( tos3("error:") ) );
+		string kind = (b->pref->is_verbose ?  ( _STR("%.*s error #%"PRId32":", v__scanner__Reporter_str(err.reporter).len, v__scanner__Reporter_str(err.reporter).str, b->checker.nr_errors) )  :  ( tos3("error:") ) );
 		string ferror = v__util__formatted_error(kind, err.message, err.file_path, err.pos);
 		eprintln(ferror);
 	}
@@ -13350,11 +13350,11 @@ string v__builder__Builder_gen_c(v__builder__Builder* b, array_string v_files) {
 	v__builder__Builder_parse_imports(b);
 	i64 t1 = time__ticks();
 	i64 parse_time = t1 - t0;
-	v__builder__Builder_info(/*rec*/*b, _STR("PARSE: %dms", parse_time));
+	v__builder__Builder_info(/*rec*/*b, _STR("PARSE: %"PRId64"ms", parse_time));
 	v__checker__Checker_check_files(&b->checker, b->parsed_files);
 	i64 t2 = time__ticks();
 	i64 check_time = t2 - t1;
-	v__builder__Builder_info(/*rec*/*b, _STR("CHECK: %dms", check_time));
+	v__builder__Builder_info(/*rec*/*b, _STR("CHECK: %"PRId64"ms", check_time));
 	if (b->checker.nr_errors > 0) {
 		v__builder__Builder_print_errors(b, b->checker.errors);
 		v_exit(1);
@@ -13362,7 +13362,7 @@ string v__builder__Builder_gen_c(v__builder__Builder* b, array_string v_files) {
 	string res = v__gen__cgen(b->parsed_files, b->table, b->pref);
 	i64 t3 = time__ticks();
 	i64 gen_time = t3 - t2;
-	v__builder__Builder_info(/*rec*/*b, _STR("C GEN: %dms", gen_time));
+	v__builder__Builder_info(/*rec*/*b, _STR("C GEN: %"PRId64"ms", gen_time));
 	return res;
 }
 
@@ -13730,7 +13730,7 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 	}
 	i64 diff = time__ticks() - ticks;
 	if (v->pref->is_verbose) {
-		println(_STR("%.*s took %d ms", v->pref->ccompiler.len, v->pref->ccompiler.str, diff));
+		println(_STR("%.*s took %"PRId64" ms", v->pref->ccompiler.len, v->pref->ccompiler.str, diff));
 		println(tos3("=========\n"));
 	}
 	if (!v->pref->is_keep_c && string_ne(v->out_name_c, tos3("v.c"))) {
@@ -14129,18 +14129,18 @@ string v__builder__Builder_gen_js(v__builder__Builder* b, array_string v_files) 
 	v__builder__Builder_parse_imports(b);
 	i64 t1 = time__ticks();
 	i64 parse_time = t1 - t0;
-	v__builder__Builder_info(/*rec*/*b, _STR("PARSE: %dms", parse_time));
+	v__builder__Builder_info(/*rec*/*b, _STR("PARSE: %"PRId64"ms", parse_time));
 	v__checker__Checker_check_files(&b->checker, b->parsed_files);
 	i64 t2 = time__ticks();
 	i64 check_time = t2 - t1;
-	v__builder__Builder_info(/*rec*/*b, _STR("CHECK: %dms", check_time));
+	v__builder__Builder_info(/*rec*/*b, _STR("CHECK: %"PRId64"ms", check_time));
 	if (b->checker.nr_errors > 0) {
 		v_exit(1);
 	}
 	string res = v__gen__js__gen(b->parsed_files, b->table, b->pref);
 	i64 t3 = time__ticks();
 	i64 gen_time = t3 - t2;
-	v__builder__Builder_info(/*rec*/*b, _STR("JS GEN: %dms", gen_time));
+	v__builder__Builder_info(/*rec*/*b, _STR("JS GEN: %"PRId64"ms", gen_time));
 	return res;
 }
 
@@ -14593,15 +14593,15 @@ void v__builder__Builder_build_x64(v__builder__Builder* b, array_string v_files,
 	v__builder__Builder_parse_imports(b);
 	i64 t1 = time__ticks();
 	i64 parse_time = t1 - t0;
-	v__builder__Builder_info(/*rec*/*b, _STR("PARSE: %dms", parse_time));
+	v__builder__Builder_info(/*rec*/*b, _STR("PARSE: %"PRId64"ms", parse_time));
 	v__checker__Checker_check_files(&b->checker, b->parsed_files);
 	i64 t2 = time__ticks();
 	i64 check_time = t2 - t1;
-	v__builder__Builder_info(/*rec*/*b, _STR("CHECK: %dms", check_time));
+	v__builder__Builder_info(/*rec*/*b, _STR("CHECK: %"PRId64"ms", check_time));
 	v__gen__x64__gen(b->parsed_files, out_file);
 	i64 t3 = time__ticks();
 	i64 gen_time = t3 - t2;
-	v__builder__Builder_info(/*rec*/*b, _STR("x64 GEN: %dms", gen_time));
+	v__builder__Builder_info(/*rec*/*b, _STR("x64 GEN: %"PRId64"ms", gen_time));
 }
 
 void v__builder__Builder_compile_x64(v__builder__Builder* b) {
@@ -15158,7 +15158,7 @@ string v__ast__Scope_show(v__ast__Scope* sc, int depth, int max_depth) {
 		int _ = tmp1;
 		indent = string_add(indent, tos3(" "));
 	}
-	out = string_add(out, _STR("%.*s# %d - %d\n", indent.len, indent.str, sc->start_pos, sc->end_pos));
+	out = string_add(out, _STR("%.*s# %"PRId32" - %"PRId32"\n", indent.len, indent.str, sc->start_pos, sc->end_pos));
 	// FOR IN map
 	array_string keys_tmp2 = map_keys(&sc->objects);
 	for (int tmp3 = 0; tmp3 < keys_tmp2.len; tmp3++) {
@@ -15166,10 +15166,10 @@ string v__ast__Scope_show(v__ast__Scope* sc, int depth, int max_depth) {
 		v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)map_get3(sc->objects, _, &(v__ast__ScopeObject[]){ {0} }));
 		if (obj.typ == 203 /* v.ast.ConstField */) {
 			v__ast__ConstField* it = (v__ast__ConstField*)obj.obj; // ST it
-			out = string_add(out, _STR("%.*s  * const: %.*s - %d\n", indent.len, indent.str, it->name.len, it->name.str, it->typ));
+			out = string_add(out, _STR("%.*s  * const: %.*s - %"PRId32"\n", indent.len, indent.str, it->name.len, it->name.str, it->typ));
 		}else if (obj.typ == 204 /* v.ast.Var */) {
 			v__ast__Var* it = (v__ast__Var*)obj.obj; // ST it
-			out = string_add(out, _STR("%.*s  * var: %.*s - %d\n", indent.len, indent.str, it->name.len, it->name.str, it->typ));
+			out = string_add(out, _STR("%.*s  * var: %.*s - %"PRId32"\n", indent.len, indent.str, it->name.len, it->name.str, it->typ));
 		}else {
 		};
 	}
@@ -15375,7 +15375,7 @@ string v__ast__Stmt_str(v__ast__Stmt node) {
 		return v__ast__Expr_str(it->expr);
 	}else if (node.typ == 120 /* v.ast.FnDecl */) {
 		v__ast__FnDecl* it = (v__ast__FnDecl*)node.obj; // ST it
-		return _STR("fn %.*s() { %d stmts }", it->name.len, it->name.str, it->stmts.len);
+		return _STR("fn %.*s() { %"PRId32" stmts }", it->name.len, it->name.str, it->stmts.len);
 	}else {
 		return _STR("[unhandled stmt str type: %.*s ]", tos3( /* v.ast.Stmt */ v_typeof_sumtype_117( (node).typ )).len, tos3( /* v.ast.Stmt */ v_typeof_sumtype_117( (node).typ )).str);
 	};
@@ -16083,7 +16083,7 @@ v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 		.is_pub = 0,
 		.mod = tos3(""),
 	};
-	string name = _STR("anon_%d_%.*s", p->tok.pos, v__table__Fn_signature(&func).len, v__table__Fn_signature(&func).str);
+	string name = _STR("anon_%"PRId32"_%.*s", p->tok.pos, v__table__Fn_signature(&func).len, v__table__Fn_signature(&func).str);
 	func.name = name;
 	int idx = v__table__Table_find_or_register_fn_type(p->table, func, true, false);
 	v__table__Type typ = v__table__new_type(idx);
@@ -16118,7 +16118,7 @@ multi_return_array_v__table__Arg_bool v__parser__Parser_fn_args(v__parser__Parse
 	if (types_only) {
 		int arg_no = 1;
 		while (p->tok.kind != v__token__Kind_rpar) {
-			string arg_name = _STR("arg_%d", arg_no);
+			string arg_name = _STR("arg_%"PRId32"", arg_no);
 			bool is_mut = p->tok.kind == v__token__Kind_key_mut;
 			if (is_mut) {
 				v__parser__Parser_check(p, v__token__Kind_key_mut);
@@ -16133,7 +16133,7 @@ multi_return_array_v__table__Arg_bool v__parser__Parser_fn_args(v__parser__Parse
 			}
 			if (p->tok.kind == v__token__Kind_comma) {
 				if (is_variadic) {
-					v__parser__Parser_error(p, _STR("cannot use ...(variadic) with non-final parameter no %d", arg_no));
+					v__parser__Parser_error(p, _STR("cannot use ...(variadic) with non-final parameter no %"PRId32"", arg_no));
 				}
 				v__parser__Parser_next(p);
 			}
@@ -18533,11 +18533,11 @@ string term__bright_yellow(string msg) {
 }
 
 void term__set_cursor_position(int x, int y) {
-	print(string_add(_STR("\x1b[%d;%d", y, x), tos3("H")));
+	print(string_add(_STR("\x1b[%"PRId32";%"PRId32"", y, x), tos3("H")));
 }
 
 void term__move(int n, string direction) {
-	print(_STR("\x1b[%d%.*s", n, direction.len, direction.str));
+	print(_STR("\x1b[%"PRId32"%.*s", n, direction.len, direction.str));
 }
 
 void term__cursor_up(int n) {
@@ -18672,7 +18672,7 @@ multi_return_int_int term__get_terminal_size() {
 }
 
 string v__token__Position_str(v__token__Position pos) {
-	return _STR("Position{ line_nr: %d, pos: %d, len: %d }", pos.line_nr, pos.pos, pos.len);
+	return _STR("Position{ line_nr: %"PRId32", pos: %"PRId32", len: %"PRId32" }", pos.line_nr, pos.pos, pos.len);
 }
 
 v__token__Position v__token__Position_extend(v__token__Position pos, v__token__Position end) {
@@ -18978,7 +18978,7 @@ string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time) {
 	}
 	string tp = (t.hour > 11 ?  ( tos3("p.m.") )  :  ( tos3("a.m.") ) );
 	int hour = (t.hour > 12 ?  ( t.hour - 12 )  : t.hour == 0 ?  ( 12 )  :  ( t.hour ) );
-	return (fmt_time == time__FormatTime_hhmm12) ?  ( _STR("%d:%02d %.*s", hour, t.minute, tp.len, tp.str) )  : (fmt_time == time__FormatTime_hhmm24) ?  ( _STR("%02d:%02d", t.hour, t.minute) )  : (fmt_time == time__FormatTime_hhmmss12) ?  ( _STR("%d:%02d:%02d %.*s", hour, t.minute, t.second, tp.len, tp.str) )  : (fmt_time == time__FormatTime_hhmmss24) ?  ( _STR("%02d:%02d:%02d", t.hour, t.minute, t.second) )  :  ( _STR("unknown enumeration %.*s", time__FormatTime_str(fmt_time).len, time__FormatTime_str(fmt_time).str) ) ;
+	return (fmt_time == time__FormatTime_hhmm12) ?  ( _STR("%"PRId32":%02d %.*s", hour, t.minute, tp.len, tp.str) )  : (fmt_time == time__FormatTime_hhmm24) ?  ( _STR("%02d:%02d", t.hour, t.minute) )  : (fmt_time == time__FormatTime_hhmmss12) ?  ( _STR("%"PRId32":%02d:%02d %.*s", hour, t.minute, t.second, tp.len, tp.str) )  : (fmt_time == time__FormatTime_hhmmss24) ?  ( _STR("%02d:%02d:%02d", t.hour, t.minute, t.second) )  :  ( _STR("unknown enumeration %.*s", time__FormatTime_str(fmt_time).len, time__FormatTime_str(fmt_time).str) ) ;
 }
 
 string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatDate fmt_date) {
@@ -18987,7 +18987,7 @@ string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr
 	}
 	string month = _STR("%.*s", time__Time_smonth(t).len, time__Time_smonth(t).str);
 	string year = string_substr(int_str(t.year), 2, int_str(t.year).len);
-	string res = (fmt_date == time__FormatDate_ddmmyy) ?  ( _STR("%02d|%02d|%.*s", t.day, t.month, year.len, year.str) )  : (fmt_date == time__FormatDate_ddmmyyyy) ?  ( _STR("%02d|%02d|%d", t.day, t.month, t.year) )  : (fmt_date == time__FormatDate_mmddyy) ?  ( _STR("%02d|%02d|%.*s", t.month, t.day, year.len, year.str) )  : (fmt_date == time__FormatDate_mmddyyyy) ?  ( _STR("%02d|%02d|%d", t.month, t.day, t.year) )  : (fmt_date == time__FormatDate_mmmd) ?  ( _STR("%.*s|%d", month.len, month.str, t.day) )  : (fmt_date == time__FormatDate_mmmdd) ?  ( _STR("%.*s|%02d", month.len, month.str, t.day) )  : (fmt_date == time__FormatDate_mmmddyyyy) ?  ( _STR("%.*s|%02d|%d", month.len, month.str, t.day, t.year) )  : (fmt_date == time__FormatDate_yyyymmdd) ?  ( _STR("%d|%02d|%02d", t.year, t.month, t.day) )  :  ( _STR("unknown enumeration %.*s", time__FormatDate_str(fmt_date).len, time__FormatDate_str(fmt_date).str) ) ;
+	string res = (fmt_date == time__FormatDate_ddmmyy) ?  ( _STR("%02d|%02d|%.*s", t.day, t.month, year.len, year.str) )  : (fmt_date == time__FormatDate_ddmmyyyy) ?  ( _STR("%02d|%02d|%"PRId32"", t.day, t.month, t.year) )  : (fmt_date == time__FormatDate_mmddyy) ?  ( _STR("%02d|%02d|%.*s", t.month, t.day, year.len, year.str) )  : (fmt_date == time__FormatDate_mmddyyyy) ?  ( _STR("%02d|%02d|%"PRId32"", t.month, t.day, t.year) )  : (fmt_date == time__FormatDate_mmmd) ?  ( _STR("%.*s|%"PRId32"", month.len, month.str, t.day) )  : (fmt_date == time__FormatDate_mmmdd) ?  ( _STR("%.*s|%02d", month.len, month.str, t.day) )  : (fmt_date == time__FormatDate_mmmddyyyy) ?  ( _STR("%.*s|%02d|%"PRId32"", month.len, month.str, t.day, t.year) )  : (fmt_date == time__FormatDate_yyyymmdd) ?  ( _STR("%"PRId32"|%02d|%02d", t.year, t.month, t.day) )  :  ( _STR("unknown enumeration %.*s", time__FormatDate_str(fmt_date).len, time__FormatDate_str(fmt_date).str) ) ;
 	res = string_replace(res, tos3("|"), (fmt_dlmtr == time__FormatDelimiter_dot) ?  ( tos3(".") )  : (fmt_dlmtr == time__FormatDelimiter_hyphen) ?  ( tos3("-") )  : (fmt_dlmtr == time__FormatDelimiter_slash) ?  ( tos3("/") )  : (fmt_dlmtr == time__FormatDelimiter_space) ?  ( tos3(" ") )  :  ( _STR("unknown enumeration %.*s", time__FormatDelimiter_str(fmt_dlmtr).len, time__FormatDelimiter_str(fmt_dlmtr).str) ) );
 	return res;
 }
@@ -19123,13 +19123,13 @@ string time__Time_relative(time__Time t) {
 		return tos3("1m");
 	}
 	if (secs < 3600) {
-		return _STR("%dm", secs / 60);
+		return _STR("%"PRIu64"m", secs / 60);
 	}
 	if (secs < 3600 * 24) {
-		return _STR("%dh", secs / 3600);
+		return _STR("%"PRIu64"h", secs / 3600);
 	}
 	if (secs < 3600 * 24 * 5) {
-		return _STR("%dd", secs / 3600 / 24);
+		return _STR("%"PRIu64"d", secs / 3600 / 24);
 	}
 	if (secs > 3600 * 24 * 10000) {
 		return tos3("");
@@ -19217,7 +19217,7 @@ bool time__is_leap_year(int year) {
 
 Option_int time__days_in_month(int month, int year) {
 	if (month > 12 || month < 1) {
-		return v_error(_STR("Invalid month: %d", month));
+		return v_error(_STR("Invalid month: %"PRId32"", month));
 	}
 	int extra = (month == 2 && time__is_leap_year(year) ?  ( 1 )  :  ( 0 ) );
 	int res = (*(int*)array_get(_const_time__month_days, month - 1)) + extra;
@@ -19955,9 +19955,9 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 		int no_args = /*opt*/(*(v__table__Fn*)method.data).args.len - 1;
 		int min_required_args = /*opt*/(*(v__table__Fn*)method.data).args.len - (/*opt*/(*(v__table__Fn*)method.data).is_variadic && /*opt*/(*(v__table__Fn*)method.data).args.len > 1 ?  ( 2 )  :  ( 1 ) );
 		if (call_expr->args.len < min_required_args) {
-			v__checker__Checker_error(c, _STR("too few arguments in call to `%.*s.%.*s` (%d instead of %d)", left_type_sym->name.len, left_type_sym->name.str, method_name.len, method_name.str, call_expr->args.len, min_required_args), call_expr->pos);
+			v__checker__Checker_error(c, _STR("too few arguments in call to `%.*s.%.*s` (%"PRId32" instead of %"PRId32")", left_type_sym->name.len, left_type_sym->name.str, method_name.len, method_name.str, call_expr->args.len, min_required_args), call_expr->pos);
 		} else if (!/*opt*/(*(v__table__Fn*)method.data).is_variadic && call_expr->args.len > no_args) {
-			v__checker__Checker_error(c, _STR("too many arguments in call to `%.*s.%.*s` (%d instead of %d)", left_type_sym->name.len, left_type_sym->name.str, method_name.len, method_name.str, call_expr->args.len, no_args), call_expr->pos);
+			v__checker__Checker_error(c, _STR("too many arguments in call to `%.*s.%.*s` (%"PRId32" instead of %"PRId32")", left_type_sym->name.len, left_type_sym->name.str, method_name.len, method_name.str, call_expr->args.len, no_args), call_expr->pos);
 			return /*opt*/(*(v__table__Fn*)method.data).return_type;
 		}
 		// FOR IN array
@@ -20073,9 +20073,9 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 	}
 	int min_required_args = (f.is_variadic ?  ( f.args.len - 1 )  :  ( f.args.len ) );
 	if (call_expr->args.len < min_required_args) {
-		v__checker__Checker_error(c, _STR("too few arguments in call to `%.*s` (%d instead of %d)", fn_name.len, fn_name.str, call_expr->args.len, min_required_args), call_expr->pos);
+		v__checker__Checker_error(c, _STR("too few arguments in call to `%.*s` (%"PRId32" instead of %"PRId32")", fn_name.len, fn_name.str, call_expr->args.len, min_required_args), call_expr->pos);
 	} else if (!f.is_variadic && call_expr->args.len > f.args.len) {
-		v__checker__Checker_error(c, _STR("too many arguments in call to `%.*s` (%d instead of %d)", fn_name.len, fn_name.str, call_expr->args.len, f.args.len), call_expr->pos);
+		v__checker__Checker_error(c, _STR("too many arguments in call to `%.*s` (%"PRId32" instead of %"PRId32")", fn_name.len, fn_name.str, call_expr->args.len, f.args.len), call_expr->pos);
 		return f.return_type;
 	}
 	if (string_eq(fn_name, tos3("println")) || string_eq(fn_name, tos3("print"))) {
@@ -20113,7 +20113,7 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 			}
 			if (typ_sym->kind == v__table__Kind_array_fixed) {
 			}
-			v__checker__Checker_error(c, _STR("cannot use type `%.*s` as type `%.*s` in argument %d to `%.*s`", v__table__TypeSymbol_str(typ_sym).len, v__table__TypeSymbol_str(typ_sym).str, v__table__TypeSymbol_str(arg_typ_sym).len, v__table__TypeSymbol_str(arg_typ_sym).str, i + 1, fn_name.len, fn_name.str), call_expr->pos);
+			v__checker__Checker_error(c, _STR("cannot use type `%.*s` as type `%.*s` in argument %"PRId32" to `%.*s`", v__table__TypeSymbol_str(typ_sym).len, v__table__TypeSymbol_str(typ_sym).str, v__table__TypeSymbol_str(arg_typ_sym).len, v__table__TypeSymbol_str(arg_typ_sym).str, i + 1, fn_name.len, fn_name.str), call_expr->pos);
 		}
 	}
 	return f.return_type;
@@ -20314,12 +20314,12 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 		v__table__Type right_type = v__checker__Checker_expr(c, (*(v__ast__Expr*)array_get(assign_stmt->right, 0)));
 		v__table__TypeSymbol* right_type_sym = v__table__Table_get_type_symbol(c->table, right_type);
 		if (right_type_sym->kind != v__table__Kind_multi_return) {
-			v__checker__Checker_error(c, _STR("expression on the right does not return multiple values, while at least %d are expected", assign_stmt->left.len), assign_stmt->pos);
+			v__checker__Checker_error(c, _STR("expression on the right does not return multiple values, while at least %"PRId32" are expected", assign_stmt->left.len), assign_stmt->pos);
 			return;
 		}
 		v__table__MultiReturn mr_info = v__table__TypeSymbol_mr_info(right_type_sym);
 		if (mr_info.types.len < assign_stmt->left.len) {
-			v__checker__Checker_error(c, _STR("right expression returns only %d values, but left one expects %d", mr_info.types.len, assign_stmt->left.len), assign_stmt->pos);
+			v__checker__Checker_error(c, _STR("right expression returns only %"PRId32" values, but left one expects %"PRId32"", mr_info.types.len, assign_stmt->left.len), assign_stmt->pos);
 		}
 		v__ast__Scope* scope = v__ast__Scope_innermost(c->file.scope, assign_stmt->pos.pos);
 		// FOR IN array
@@ -21193,12 +21193,12 @@ v__table__Type v__checker__Checker_map_init(v__checker__Checker* c, v__ast__MapI
 		if (!v__table__Table_check(c->table, key_type, key0_type)) {
 			v__table__TypeSymbol* key0_type_sym = v__table__Table_get_type_symbol(c->table, key0_type);
 			v__table__TypeSymbol* key_type_sym = v__table__Table_get_type_symbol(c->table, key_type);
-			v__checker__Checker_error(c, _STR("map init: cannot use `%.*s` as `%d` for map key", key_type_sym->name.len, key_type_sym->name.str, key0_type_sym), node->pos);
+			v__checker__Checker_error(c, _STR("map init: cannot use `%.*s` as `%"PRId32"` for map key", key_type_sym->name.len, key_type_sym->name.str, key0_type_sym), node->pos);
 		}
 		if (!v__table__Table_check(c->table, val_type, val0_type)) {
 			v__table__TypeSymbol* val0_type_sym = v__table__Table_get_type_symbol(c->table, val0_type);
 			v__table__TypeSymbol* val_type_sym = v__table__Table_get_type_symbol(c->table, val_type);
-			v__checker__Checker_error(c, _STR("map init: cannot use `%.*s` as `%d` for map value", val_type_sym->name.len, val_type_sym->name.str, val0_type_sym), node->pos);
+			v__checker__Checker_error(c, _STR("map init: cannot use `%.*s` as `%"PRId32"` for map value", val_type_sym->name.len, val_type_sym->name.str, val0_type_sym), node->pos);
 		}
 	}
 	v__table__Type map_type = v__table__new_type(v__table__Table_find_or_register_map(c->table, key0_type, val0_type));
@@ -22249,15 +22249,15 @@ void v__gen__Gen_write_typeof_functions(v__gen__Gen* g) {
 		if (typ.kind == v__table__Kind_sum_type) {
 			v__table__SumType sum_info = /* as */ *(v__table__SumType*)typ.info.obj;
 			int tidx = v__table__Table_find_type_idx(g->table, typ.name);
-			v__gen__Gen_writeln(g, _STR("char * v_typeof_sumtype_%d(int sidx) { /* %.*s */ ", tidx, typ.name.len, typ.name.str));
+			v__gen__Gen_writeln(g, _STR("char * v_typeof_sumtype_%"PRId32"(int sidx) { /* %.*s */ ", tidx, typ.name.len, typ.name.str));
 			v__gen__Gen_writeln(g, tos3("	switch(sidx) {"));
-			v__gen__Gen_writeln(g, _STR("		case %d: return \"%.*s\";", tidx, typ.name.len, typ.name.str));
+			v__gen__Gen_writeln(g, _STR("		case %"PRId32": return \"%.*s\";", tidx, typ.name.len, typ.name.str));
 			// FOR IN array
 			array tmp4 = sum_info.variants;
 			for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
 				v__table__Type v = ((v__table__Type*)tmp4.data)[tmp5];
 				v__table__TypeSymbol* subtype = v__table__Table_get_type_symbol(g->table, v);
-				v__gen__Gen_writeln(g, _STR("		case %d: return \"%.*s\";", v, subtype->name.len, subtype->name.str));
+				v__gen__Gen_writeln(g, _STR("		case %"PRId32": return \"%.*s\";", v, subtype->name.len, subtype->name.str));
 			}
 			v__gen__Gen_writeln(g, _STR("		default: return \"unknown %.*s\";", typ.name.len, typ.name.str));
 			v__gen__Gen_writeln(g, tos3("	}"));
@@ -22354,7 +22354,7 @@ void v__gen__Gen_write_multi_return_types(v__gen__Gen* g) {
 		for (int i = 0; i < tmp4.len; i++) {
 			v__table__Type mr_typ = ((v__table__Type*)tmp4.data)[i];
 			string type_name = v__gen__Gen_typ(g, mr_typ);
-			strings__Builder_writeln(&g->definitions, _STR("\t%.*s arg%d;", type_name.len, type_name.str, i));
+			strings__Builder_writeln(&g->definitions, _STR("\t%.*s arg%"PRId32";", type_name.len, type_name.str, i));
 		}
 		strings__Builder_writeln(&g->definitions, _STR("} %.*s;\n", name.len, name.str));
 	}
@@ -22374,7 +22374,7 @@ void v__gen__Gen_write_variadic_types(v__gen__Gen* g) {
 		string struct_name = string_add(tos3("varg_"), string_replace(type_name, tos3("*"), tos3("_ptr")));
 		strings__Builder_writeln(&g->definitions, _STR("struct %.*s {", struct_name.len, struct_name.str));
 		strings__Builder_writeln(&g->definitions, tos3("\tint len;"));
-		strings__Builder_writeln(&g->definitions, _STR("\t%.*s args[%d];", type_name.len, type_name.str, arg_len));
+		strings__Builder_writeln(&g->definitions, _STR("\t%.*s args[%"PRId32"];", type_name.len, type_name.str, arg_len));
 		strings__Builder_writeln(&g->definitions, tos3("};\n"));
 		strings__Builder_writeln(&g->typedefs, _STR("typedef struct %.*s %.*s;", struct_name.len, struct_name.str, struct_name.len, struct_name.str));
 	}
@@ -22401,7 +22401,7 @@ void v__gen__Gen_writeln(v__gen__Gen* g, string s) {
 
 string v__gen__Gen_new_tmp_var(v__gen__Gen* g) {
 	g->tmp_count++;
-	return _STR("tmp%d", g->tmp_count);
+	return _STR("tmp%"PRId32"", g->tmp_count);
 }
 
 void v__gen__Gen_reset_tmp_count(v__gen__Gen* g) {
@@ -22491,7 +22491,7 @@ void v__gen__Gen_stmt(v__gen__Gen* g, v__ast__Stmt node) {
 				cur_enum_expr = expr_str;
 				cur_enum_offset = 0;
 			}
-			string cur_value = (cur_enum_offset > 0 ?  ( _STR("%.*s+%d", cur_enum_expr.len, cur_enum_expr.str, cur_enum_offset) )  :  ( cur_enum_expr ) );
+			string cur_value = (cur_enum_offset > 0 ?  ( _STR("%.*s+%"PRId32"", cur_enum_expr.len, cur_enum_expr.str, cur_enum_offset) )  :  ( cur_enum_expr ) );
 			strings__Builder_writeln(&g->typedefs, _STR(", // %.*s", cur_value.len, cur_value.str));
 			cur_enum_offset++;
 		}
@@ -22707,7 +22707,7 @@ void v__gen__Gen_expr_with_cast(v__gen__Gen* g, v__ast__Expr expr, v__table__Typ
 				int got_idx = v__table__type_idx(got_type);
 				v__gen__Gen_write(g, _STR("/* sum type cast */ (%.*s) {.obj = memdup(&(%.*s[]) {", exp_styp.len, exp_styp.str, got_styp.len, got_styp.str));
 				v__gen__Gen_expr(g, expr);
-				v__gen__Gen_write(g, _STR("}, sizeof(%.*s)), .typ = %d /* %.*s */}", got_styp.len, got_styp.str, got_idx, got_sym->name.len, got_sym->name.str));
+				v__gen__Gen_write(g, _STR("}, sizeof(%.*s)), .typ = %"PRId32" /* %.*s */}", got_styp.len, got_styp.str, got_idx, got_sym->name.len, got_sym->name.str));
 				return;
 			}
 		}
@@ -22733,10 +22733,10 @@ void v__gen__Gen_gen_assert_stmt(v__gen__Gen* g, v__ast__AssertStmt a) {
 	if (g->is_test) {
 		v__gen__Gen_writeln(g, tos3("{"));
 		v__gen__Gen_writeln(g, tos3("	g_test_oks++;"));
-		v__gen__Gen_writeln(g, _STR("	cb_assertion_ok( tos3(\"%.*s\"), %d, tos3(\"assert %.*s\"), tos3(\"%.*s()\") );", mod_path.len, mod_path.str, a.pos.line_nr + 1, s_assertion.len, s_assertion.str, g->fn_decl->name.len, g->fn_decl->name.str));
+		v__gen__Gen_writeln(g, _STR("	cb_assertion_ok( tos3(\"%.*s\"), %"PRId32", tos3(\"assert %.*s\"), tos3(\"%.*s()\") );", mod_path.len, mod_path.str, a.pos.line_nr + 1, s_assertion.len, s_assertion.str, g->fn_decl->name.len, g->fn_decl->name.str));
 		v__gen__Gen_writeln(g, tos3("}else{"));
 		v__gen__Gen_writeln(g, tos3("	g_test_fails++;"));
-		v__gen__Gen_writeln(g, _STR("	cb_assertion_failed( tos3(\"%.*s\"), %d, tos3(\"assert %.*s\"), tos3(\"%.*s()\") );", mod_path.len, mod_path.str, a.pos.line_nr + 1, s_assertion.len, s_assertion.str, g->fn_decl->name.len, g->fn_decl->name.str));
+		v__gen__Gen_writeln(g, _STR("	cb_assertion_failed( tos3(\"%.*s\"), %"PRId32", tos3(\"assert %.*s\"), tos3(\"%.*s()\") );", mod_path.len, mod_path.str, a.pos.line_nr + 1, s_assertion.len, s_assertion.str, g->fn_decl->name.len, g->fn_decl->name.str));
 		v__gen__Gen_writeln(g, tos3("	exit(1);"));
 		v__gen__Gen_writeln(g, tos3("	// TODO"));
 		v__gen__Gen_writeln(g, tos3("	// Maybe print all vars in a test function if it fails?"));
@@ -22744,7 +22744,7 @@ void v__gen__Gen_gen_assert_stmt(v__gen__Gen* g, v__ast__AssertStmt a) {
 		return;
 	}
 	v__gen__Gen_writeln(g, tos3("{}else{"));
-	v__gen__Gen_writeln(g, _STR("	eprintln( tos3(\"%.*s:%d: FAIL: fn %.*s(): assert %.*s\"));", mod_path.len, mod_path.str, a.pos.line_nr + 1, g->fn_decl->name.len, g->fn_decl->name.str, s_assertion.len, s_assertion.str));
+	v__gen__Gen_writeln(g, _STR("	eprintln( tos3(\"%.*s:%"PRId32": FAIL: fn %.*s(): assert %.*s\"));", mod_path.len, mod_path.str, a.pos.line_nr + 1, g->fn_decl->name.len, g->fn_decl->name.str, s_assertion.len, s_assertion.str));
 	v__gen__Gen_writeln(g, tos3("	exit(1);"));
 	v__gen__Gen_writeln(g, tos3("}"));
 }
@@ -22763,7 +22763,7 @@ void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assign_stmt)
 		}else {
 		};
 		bool is_optional = v__table__type_is(return_type, v__table__TypeFlag_optional);
-		string mr_var_name = _STR("mr_%d", assign_stmt.pos.pos);
+		string mr_var_name = _STR("mr_%"PRId32"", assign_stmt.pos.pos);
 		string mr_styp = v__gen__Gen_typ(g, return_type);
 		v__gen__Gen_write(g, _STR("%.*s %.*s = ", mr_styp.len, mr_styp.str, mr_var_name.len, mr_var_name.str));
 		g->is_assign_rhs = true;
@@ -22788,9 +22788,9 @@ void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assign_stmt)
 			v__gen__Gen_expr(g, /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Ident[]) {ident}, sizeof(v__ast__Ident)), .typ = 151 /* v.ast.Ident */});
 			if (is_optional) {
 				string mr_styp2 = string_substr(mr_styp, 7, mr_styp.len);
-				v__gen__Gen_writeln(g, _STR(" = (*(%.*s*)%.*s.data).arg%d;", mr_styp2.len, mr_styp2.str, mr_var_name.len, mr_var_name.str, i));
+				v__gen__Gen_writeln(g, _STR(" = (*(%.*s*)%.*s.data).arg%"PRId32";", mr_styp2.len, mr_styp2.str, mr_var_name.len, mr_var_name.str, i));
 			} else {
-				v__gen__Gen_writeln(g, _STR(" = %.*s.arg%d;", mr_var_name.len, mr_var_name.str, i));
+				v__gen__Gen_writeln(g, _STR(" = %.*s.arg%"PRId32";", mr_var_name.len, mr_var_name.str, i));
 			}
 		}
 	} else {
@@ -22940,11 +22940,11 @@ void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 			v__table__TypeSymbol* elem_sym = v__table__Table_get_type_symbol(g->table, it->elem_type);
 			string elem_type_str = v__gen__Gen_typ(g, it->elem_type);
 			if (it->exprs.len == 0) {
-				v__gen__Gen_write(g, _STR("__new_array(%d, %d, sizeof(%.*s))", it->exprs.len, it->exprs.len, elem_type_str.len, elem_type_str.str));
+				v__gen__Gen_write(g, _STR("__new_array(%"PRId32", %"PRId32", sizeof(%.*s))", it->exprs.len, it->exprs.len, elem_type_str.len, elem_type_str.str));
 			} else {
 				int len = it->exprs.len;
-				v__gen__Gen_write(g, _STR("new_array_from_c_array(%d, %d, sizeof(%.*s), ", len, len, elem_type_str.len, elem_type_str.str));
-				v__gen__Gen_write(g, _STR("(%.*s[%d]){\n\t\t", elem_type_str.len, elem_type_str.str, len));
+				v__gen__Gen_write(g, _STR("new_array_from_c_array(%"PRId32", %"PRId32", sizeof(%.*s), ", len, len, elem_type_str.len, elem_type_str.str));
+				v__gen__Gen_write(g, _STR("(%.*s[%"PRId32"]){\n\t\t", elem_type_str.len, elem_type_str.str, len));
 				// FOR IN array
 				array tmp4 = it->exprs;
 				for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
@@ -23049,7 +23049,7 @@ void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 		string value_typ_str = v__gen__Gen_typ(g, it->value_type);
 		int size = it->vals.len;
 		if (size > 0) {
-			v__gen__Gen_write(g, _STR("new_map_init(%d, sizeof(%.*s), (%.*s[%d]){", size, value_typ_str.len, value_typ_str.str, key_typ_str.len, key_typ_str.str, size));
+			v__gen__Gen_write(g, _STR("new_map_init(%"PRId32", sizeof(%.*s), (%.*s[%"PRId32"]){", size, value_typ_str.len, value_typ_str.str, key_typ_str.len, key_typ_str.str, size));
 			// FOR IN array
 			array tmp14 = it->keys;
 			for (int tmp15 = 0; tmp15 < tmp14.len; tmp15++) {
@@ -23057,7 +23057,7 @@ void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 				v__gen__Gen_expr(g, expr);
 				v__gen__Gen_write(g, tos3(", "));
 			}
-			v__gen__Gen_write(g, _STR("}, (%.*s[%d]){", value_typ_str.len, value_typ_str.str, size));
+			v__gen__Gen_write(g, _STR("}, (%.*s[%"PRId32"]){", value_typ_str.len, value_typ_str.str, size));
 			// FOR IN array
 			array tmp16 = it->vals;
 			for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
@@ -23136,7 +23136,7 @@ void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 		v__ast__Type* it = (v__ast__Type*)node.obj; // ST it
 		int type_idx = v__table__type_idx(it->typ);
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, it->typ);
-		v__gen__Gen_write(g, _STR("%d /* %.*s */", type_idx, sym->name.len, sym->name.str));
+		v__gen__Gen_write(g, _STR("%"PRId32" /* %.*s */", type_idx, sym->name.len, sym->name.str));
 	}else if (node.typ == 175 /* v.ast.TypeOf */) {
 		v__ast__TypeOf* it = (v__ast__TypeOf*)node.obj; // ST it
 		v__gen__Gen_typeof_expr(g, */*d*/it);
@@ -23160,13 +23160,13 @@ void v__gen__Gen_typeof_expr(v__gen__Gen* g, v__ast__TypeOf node) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, node.expr_type);
 	if (sym->kind == v__table__Kind_sum_type) {
 		int sum_type_idx = v__table__type_idx(node.expr_type);
-		v__gen__Gen_write(g, _STR("tos3( /* %.*s */ v_typeof_sumtype_%d( (", sym->name.len, sym->name.str, sum_type_idx));
+		v__gen__Gen_write(g, _STR("tos3( /* %.*s */ v_typeof_sumtype_%"PRId32"( (", sym->name.len, sym->name.str, sum_type_idx));
 		v__gen__Gen_expr(g, node.expr);
 		v__gen__Gen_write(g, tos3(").typ ))"));
 	} else if (sym->kind == v__table__Kind_array_fixed) {
 		v__table__ArrayFixed fixed_info = /* as */ *(v__table__ArrayFixed*)sym->info.obj;
 		string typ_name = v__table__Table_get_type_name(g->table, fixed_info.elem_type);
-		v__gen__Gen_write(g, _STR("tos3(\"[%d]%.*s\")", fixed_info.size, typ_name.len, typ_name.str));
+		v__gen__Gen_write(g, _STR("tos3(\"[%"PRId32"]%.*s\")", fixed_info.size, typ_name.len, typ_name.str));
 	} else if (sym->kind == v__table__Kind_function) {
 		v__table__FnType info = /* as */ *(v__table__FnType*)sym->info.obj;
 		v__table__Fn fn_info = info.func;
@@ -23723,7 +23723,7 @@ void v__gen__Gen_return_statement(v__gen__Gen* g, v__ast__Return node) {
 		array tmp5 = node.exprs;
 		for (int i = 0; i < tmp5.len; i++) {
 			v__ast__Expr expr = ((v__ast__Expr*)tmp5.data)[i];
-			v__gen__Gen_write(g, _STR(".arg%d=", i));
+			v__gen__Gen_write(g, _STR(".arg%"PRId32"=", i));
 			v__gen__Gen_expr(g, expr);
 			if (i < node.exprs.len - 1) {
 				v__gen__Gen_write(g, tos3(","));
@@ -24115,8 +24115,18 @@ void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInterLiteral
 			v__gen__Gen_write(g, tos3("%g"));
 		} else if (sym->kind == v__table__Kind_struct_ && !v__table__TypeSymbol_has_method(sym, tos3("str"))) {
 			v__gen__Gen_write(g, tos3("%.*s"));
+		} else if ((*(v__table__Type*)array_get(node.expr_types, i)) == _const_v__table__i16_type) {
+			v__gen__Gen_write(g, tos3("%\"PRId16\""));
+		} else if ((*(v__table__Type*)array_get(node.expr_types, i)) == _const_v__table__u16_type) {
+			v__gen__Gen_write(g, tos3("%\"PRIu16\""));
+		} else if ((*(v__table__Type*)array_get(node.expr_types, i)) == _const_v__table__u32_type) {
+			v__gen__Gen_write(g, tos3("%\"PRIu32\""));
+		} else if ((*(v__table__Type*)array_get(node.expr_types, i)) == _const_v__table__i64_type) {
+			v__gen__Gen_write(g, tos3("%\"PRId64\""));
+		} else if ((*(v__table__Type*)array_get(node.expr_types, i)) == _const_v__table__u64_type) {
+			v__gen__Gen_write(g, tos3("%\"PRIu64\""));
 		} else {
-			v__gen__Gen_write(g, tos3("%d"));
+			v__gen__Gen_write(g, tos3("%\"PRId32\""));
 		}
 	}
 	v__gen__Gen_write(g, tos3("\", "));
@@ -24243,9 +24253,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_63358 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_63358.arg0;
-	string type_of_last_expression = mr_63358.arg1;
+	multi_return_string_string mr_63775 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_63775.arg0;
+	string type_of_last_expression = mr_63775.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -24443,7 +24453,7 @@ void v__gen__Gen_write_tests_main(v__gen__Gen* g) {
 	v__gen__Gen_writeln(g, tos3(""));
 	array_string all_tfuncs = v__gen__Gen_get_all_test_function_names(/*rec*/*g);
 	if (g->pref->is_stats) {
-		v__gen__Gen_writeln(g, _STR("\tBenchedTests bt = start_testing(%d, tos3(\"%.*s\"));", all_tfuncs.len, g->pref->path.len, g->pref->path.str));
+		v__gen__Gen_writeln(g, _STR("\tBenchedTests bt = start_testing(%"PRId32", tos3(\"%.*s\"));", all_tfuncs.len, g->pref->path.len, g->pref->path.str));
 	}
 	// FOR IN array
 	array tmp2 = all_tfuncs;
@@ -24570,7 +24580,7 @@ void v__gen__Gen_go_stmt(v__gen__Gen* g, v__ast__GoStmt node) {
 		array tmp4 = it->args;
 		for (int i = 0; i < tmp4.len; i++) {
 			v__ast__CallArg arg = ((v__ast__CallArg*)tmp4.data)[i];
-			v__gen__Gen_write(g, _STR("%.*s->arg%d = ", arg_tmp_var.len, arg_tmp_var.str, i + 1));
+			v__gen__Gen_write(g, _STR("%.*s->arg%"PRId32" = ", arg_tmp_var.len, arg_tmp_var.str, i + 1));
 			v__gen__Gen_expr(g, arg.expr);
 			v__gen__Gen_writeln(g, tos3(";"));
 		}
@@ -24594,7 +24604,7 @@ void v__gen__Gen_go_stmt(v__gen__Gen* g, v__ast__GoStmt node) {
 		for (int i = 0; i < tmp8.len; i++) {
 			v__ast__CallArg arg = ((v__ast__CallArg*)tmp8.data)[i];
 			string styp = v__gen__Gen_typ(g, arg.typ);
-			strings__Builder_writeln(&g->definitions, _STR("\t%.*s arg%d;", styp.len, styp.str, i + 1));
+			strings__Builder_writeln(&g->definitions, _STR("\t%.*s arg%"PRId32";", styp.len, styp.str, i + 1));
 		}
 		strings__Builder_writeln(&g->definitions, _STR("} %.*s;", wrapper_struct_name.len, wrapper_struct_name.str));
 		strings__Builder_writeln(&g->definitions, _STR("void* %.*s(%.*s *arg);", wrapper_fn_name.len, wrapper_fn_name.str, wrapper_struct_name.len, wrapper_struct_name.str));
@@ -24608,7 +24618,7 @@ void v__gen__Gen_go_stmt(v__gen__Gen* g, v__ast__GoStmt node) {
 		}
 		for (int tmp11 = 0; tmp11 < it->args.len; tmp11++) {
 			int i = tmp11;
-			strings__Builder_write(&g->gowrappers, _STR("arg->arg%d", i + 1));
+			strings__Builder_write(&g->gowrappers, _STR("arg->arg%"PRId32"", i + 1));
 			if (i < it->args.len - 1) {
 				strings__Builder_write(&g->gowrappers, tos3(", "));
 			}
@@ -25120,7 +25130,7 @@ void v__gen__Gen_call_args(v__gen__Gen* g, array_v__ast__CallArg args, array_v__
 		if (variadic_count > (*(int*)map_get3(g->variadic_args, varg_type_str, &(int[]){ 0 }))) {
 			map_set(&g->variadic_args, varg_type_str, &(int[]) { variadic_count });
 		}
-		v__gen__Gen_write(g, _STR("(%.*s){.len=%d,.args={", struct_name.len, struct_name.str, variadic_count));
+		v__gen__Gen_write(g, _STR("(%.*s){.len=%"PRId32",.args={", struct_name.len, struct_name.str, variadic_count));
 		if (variadic_count > 0) {
 			for (int tmp9 = arg_no; tmp9 < args.len; tmp9++) {
 				int j = tmp9;
@@ -25429,7 +25439,7 @@ void v__gen__js__JsGen_writeln(v__gen__js__JsGen* g, string s) {
 
 string v__gen__js__JsGen_new_tmp_var(v__gen__js__JsGen* g) {
 	g->tmp_count++;
-	return _STR("tmp%d", g->tmp_count);
+	return _STR("tmp%"PRId32"", g->tmp_count);
 }
 
 void v__gen__js__JsGen_stmts(v__gen__js__JsGen* g, array_v__ast__Stmt stmts) {
@@ -25686,16 +25696,16 @@ void v__gen__js__JsGen_gen_assert_stmt(v__gen__js__JsGen* g, v__ast__AssertStmt 
 	string mod_path = g->file.path;
 	if (g->is_test) {
 		v__gen__js__JsGen_writeln(g, tos3("	g_test_oks++;"));
-		v__gen__js__JsGen_writeln(g, _STR("	cb_assertion_ok(\"%.*s\", %d, \"assert %.*s\", \"%.*s()\" );", mod_path.len, mod_path.str, a.pos.line_nr + 1, s_assertion.len, s_assertion.str, g->fn_decl->name.len, g->fn_decl->name.str));
+		v__gen__js__JsGen_writeln(g, _STR("	cb_assertion_ok(\"%.*s\", %"PRId32", \"assert %.*s\", \"%.*s()\" );", mod_path.len, mod_path.str, a.pos.line_nr + 1, s_assertion.len, s_assertion.str, g->fn_decl->name.len, g->fn_decl->name.str));
 		v__gen__js__JsGen_writeln(g, tos3("} else {"));
 		v__gen__js__JsGen_writeln(g, tos3("	g_test_fails++;"));
-		v__gen__js__JsGen_writeln(g, _STR("	cb_assertion_failed(\"%.*s\", %d, \"assert %.*s\", \"%.*s()\" );", mod_path.len, mod_path.str, a.pos.line_nr + 1, s_assertion.len, s_assertion.str, g->fn_decl->name.len, g->fn_decl->name.str));
+		v__gen__js__JsGen_writeln(g, _STR("	cb_assertion_failed(\"%.*s\", %"PRId32", \"assert %.*s\", \"%.*s()\" );", mod_path.len, mod_path.str, a.pos.line_nr + 1, s_assertion.len, s_assertion.str, g->fn_decl->name.len, g->fn_decl->name.str));
 		v__gen__js__JsGen_writeln(g, tos3("	exit(1);"));
 		v__gen__js__JsGen_writeln(g, tos3("}"));
 		return;
 	}
 	v__gen__js__JsGen_writeln(g, tos3("} else {"));
-	v__gen__js__JsGen_writeln(g, _STR("	eprintln(\"%.*s:%d: FAIL: fn %.*s(): assert %.*s\");", mod_path.len, mod_path.str, a.pos.line_nr + 1, g->fn_decl->name.len, g->fn_decl->name.str, s_assertion.len, s_assertion.str));
+	v__gen__js__JsGen_writeln(g, _STR("	eprintln(\"%.*s:%"PRId32": FAIL: fn %.*s(): assert %.*s\");", mod_path.len, mod_path.str, a.pos.line_nr + 1, g->fn_decl->name.len, g->fn_decl->name.str, s_assertion.len, s_assertion.str));
 	v__gen__js__JsGen_writeln(g, tos3("	exit(1);"));
 	v__gen__js__JsGen_writeln(g, tos3("}"));
 }
@@ -25823,7 +25833,7 @@ void v__gen__js__JsGen_gen_enum_decl(v__gen__js__JsGen* g, v__ast__EnumDecl it) 
 			strings__Builder_go_back(&g->out, expr_str.len);
 			v__gen__js__JsGen_write(g, _STR("%.*s", expr_str.len, expr_str.str));
 		} else {
-			v__gen__js__JsGen_write(g, _STR("%d", i));
+			v__gen__js__JsGen_write(g, _STR("%"PRId32"", i));
 		}
 		v__gen__js__JsGen_writeln(g, tos3(","));
 	}
@@ -26545,7 +26555,7 @@ void v__gen__x64__Gen_mov64(v__gen__x64__Gen* g, v__gen__x64__Register reg, i64 
 
 void v__gen__x64__Gen_call(v__gen__x64__Gen* g, int addr) {
 	int rel = 0xffffffff - (g->buf.len + 5 - addr - 1);
-	println(_STR("call addr=%.*s rel_addr=%.*s pos=%d", int_hex(addr).len, int_hex(addr).str, int_hex(rel).len, int_hex(rel).str, g->buf.len));
+	println(_STR("call addr=%.*s rel_addr=%.*s pos=%"PRId32"", int_hex(addr).len, int_hex(addr).str, int_hex(rel).len, int_hex(rel).str, g->buf.len));
 	v__gen__x64__Gen_write8(g, 0xe8);
 	v__gen__x64__Gen_write32(g, rel);
 }
@@ -26673,7 +26683,7 @@ void v__gen__x64__Gen_call_fn(v__gen__x64__Gen* g, string name) {
 		v__gen__x64__verror(_STR("fn addr of `%.*s` = 0", name.len, name.str));
 	}
 	v__gen__x64__Gen_call(g, ((int)(addr)));
-	println(_STR("call %.*s %d", name.len, name.str, addr));
+	println(_STR("call %.*s %"PRId64"", name.len, name.str, addr));
 }
 
 void v__gen__x64__Gen_stmt(v__gen__x64__Gen* g, v__ast__Stmt node) {
