@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "c1e8612"
+#define V_COMMIT_HASH "c35e0e4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b288ecb"
+#define V_COMMIT_HASH "c1e8612"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c1e8612"
+#define V_CURRENT_COMMIT_HASH "c35e0e4"
 #endif
 
 
@@ -25294,7 +25294,7 @@ void v__gen__Gen_call_args(v__gen__Gen* g, array_v__ast__CallArg args, array_v__
 		}
 		arg_no++;
 	}
-	if (is_variadic && !is_forwarding_varg) {
+	if (gen_vargs) {
 		v__table__Type varg_type = (*(v__table__Type*)array_get(expected_types, expected_types.len - 1));
 		string struct_name = string_add(tos3("varg_"), string_replace(v__gen__Gen_typ(g, varg_type), tos3("*"), tos3("_ptr")));
 		int variadic_count = args.len - arg_no;
