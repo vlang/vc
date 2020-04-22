@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "830b180"
+#define V_COMMIT_HASH "80a4fbf"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3ca4f5f"
+#define V_COMMIT_HASH "830b180"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "830b180"
+#define V_CURRENT_COMMIT_HASH "80a4fbf"
 #endif
 
 
@@ -15679,13 +15679,13 @@ array_v__ast__CallArg v__parser__Parser_call_args(v__parser__Parser* p) {
 
 v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 	v__token__Position start_pos = v__token__Token_position(&p->tok);
-	v__parser__Parser_open_scope(p);
 	bool is_deprecated = string_eq(p->attr, tos3("deprecated"));
 	bool is_pub = p->tok.kind == v__token__Kind_key_pub;
 	if (is_pub) {
 		v__parser__Parser_next(p);
 	}
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
+	v__parser__Parser_open_scope(p);
 	bool is_c = p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos3("C"));
 	bool is_js = p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos3("JS"));
 	if (is_c || is_js) {
@@ -15740,9 +15740,9 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool mr_3516 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_3516.arg0;
-	bool is_variadic = mr_3516.arg1;
+	multi_return_array_v__table__Arg_bool mr_3491 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_3491.arg0;
+	bool is_variadic = mr_3491.arg1;
 	_PUSH_MANY(&args, (args2), tmp13, array_v__table__Arg);
 	// FOR IN array
 	array tmp14 = args;
@@ -15834,9 +15834,10 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
-	multi_return_array_v__table__Arg_bool mr_5249 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_5249.arg0;
-	bool is_variadic = mr_5249.arg1;
+	v__parser__Parser_open_scope(p);
+	multi_return_array_v__table__Arg_bool mr_5221 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_5221.arg0;
+	bool is_variadic = mr_5221.arg1;
 	// FOR IN array
 	array tmp1 = args;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
@@ -15858,6 +15859,7 @@ v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_lcbr) {
 		stmts = v__parser__Parser_parse_block(p);
 	}
+	v__parser__Parser_close_scope(p);
 	v__table__Fn func = (v__table__Fn){
 		.args = args,
 		.is_variadic = is_variadic,
