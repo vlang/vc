@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "54c382f"
+#define V_COMMIT_HASH "faed178"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "de182d5"
+#define V_COMMIT_HASH "54c382f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "54c382f"
+#define V_CURRENT_COMMIT_HASH "faed178"
 #endif
 
 
@@ -492,7 +492,6 @@ typedef uint32_t rune;
 typedef float f32;
 typedef double f64;
 typedef unsigned char* byteptr;
-typedef int* intptr;
 typedef void* voidptr;
 typedef char* charptr;
 typedef struct array array;
@@ -770,7 +769,7 @@ static inline void _wymix128(uint64_t A, uint64_t B, uint64_t *C, uint64_t *D){
 }
 static inline uint64_t wyhash(const void *key, uint64_t len, uint64_t seed){
 	const uint8_t *p=(const uint8_t *)key;
-	uint64_t i=len, see1=seed; 
+	uint64_t i=len, see1=seed;
 	start:
 	if(_likely_(i<=16)){
 	#ifndef	WYHASH_CONDOM
@@ -782,7 +781,7 @@ static inline uint64_t wyhash(const void *key, uint64_t len, uint64_t seed){
 			if(_likely_(i>=4))	_wymix128(_wyr4(p)^_wyp0,_wyr4(p+i-4)^_wyp1, &seed, &see1);
 			else if (_likely_(i))	_wymix128(_wyr3(p,i)^_wyp0,_wyp1, &seed, &see1);
 			else	_wymix128(_wyp0,_wyp1, &seed, &see1);
-		} 
+		}
   		else	_wymix128(_wyr8(p)^_wyp0,_wyr8(p+i-8)^_wyp1, &seed, &see1);
 	#endif
 		_wymix128(len,_wyp0, &seed, &see1);
@@ -796,18 +795,18 @@ static inline uint64_t wyhash64(uint64_t A, uint64_t B){
 	_wymix128(0,0,&A,&B);
 	return	A^B;
 }
-static inline uint64_t wyrand(uint64_t *seed){ 
+static inline uint64_t wyrand(uint64_t *seed){
 	*seed+=_wyp0;
 	uint64_t	a=0, b=0;
 	_wymix128(*seed,*seed^_wyp1,&a,&b);
 	return	a^b;
 }
-static inline double wy2u01(uint64_t r) { 
-	const double _wynorm=1.0/(1ull<<52); 
+static inline double wy2u01(uint64_t r) {
+	const double _wynorm=1.0/(1ull<<52);
 	return (r>>12)*_wynorm;
 }
-static inline double wy2gau(uint64_t r) { 
-	const double _wynorm=1.0/(1ull<<20); 
+static inline double wy2gau(uint64_t r) {
+	const double _wynorm=1.0/(1ull<<20);
 	return ((r&0x1fffff)+((r>>21)&0x1fffff)+((r>>42)&0x1fffff))*_wynorm-3.0;
 }
 #endif
@@ -3539,6 +3538,7 @@ void v__gen__Gen_init(v__gen__Gen* g);
 void v__gen__Gen_finish(v__gen__Gen* g);
 void v__gen__Gen_write_typeof_functions(v__gen__Gen* g);
 string v__gen__Gen_typ(v__gen__Gen* g, v__table__Type t);
+string v__gen__Gen_base_typ(v__gen__Gen* g, v__table__Type t);
 void v__gen__Gen_write_typedef_types(v__gen__Gen* g);
 void v__gen__Gen_write_multi_return_types(v__gen__Gen* g);
 void v__gen__Gen_write_variadic_types(v__gen__Gen* g);
@@ -3815,7 +3815,7 @@ void vinit_string_literals(){
 	_const_v__gen__c_commit_hash_default = tos3("\n#ifndef V_COMMIT_HASH\n#define V_COMMIT_HASH \"@@@\"\n#endif\n\n");
 	_const_v__gen__c_current_commit_hash_default = tos3("\n#ifndef V_CURRENT_COMMIT_HASH\n#define V_CURRENT_COMMIT_HASH \"@@@\"\n#endif\n\n");
 	_const_v__gen__c_common_macros = tos3("\n#define EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an array needs to be specified, but GCC crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#ifdef __TINYC__\n#undef EMPTY_STRUCT_DECLARATION\n#undef EMPTY_STRUCT_INITIALIZATION\n#define EMPTY_STRUCT_DECLARATION char _dummy\n#define EMPTY_STRUCT_INITIALIZATION 0\n#undef EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef TCCSKIP\n#define TCCSKIP(x)\n#include <byteswap.h>\n#endif\n\n// for __offset_of\n#ifndef __offsetof\n#define __offsetof(s,memb) \\\n    ((size_t)((char *)&((s *)0)->memb - (char *)0))\n#endif\n\n#define OPTION_CAST(x) (x)\n\n#ifndef V64_PRINTFORMAT\n#ifdef PRIx64\n#define V64_PRINTFORMAT \"0x%\"PRIx64\n#elif defined(__WIN32__)\n#define V64_PRINTFORMAT \"0x%I64x\"\n#elif defined(__linux__) && defined(__LP64__)\n#define V64_PRINTFORMAT \"0x%lx\"\n#else\n#define V64_PRINTFORMAT \"0x%llx\"\n#endif\n#endif\n\n");
-	_const_v__gen__c_builtin_types = tos3("\n\n//================================== builtin types ================================*/\n\ntypedef int64_t i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef unsigned char* byteptr;\ntypedef int* intptr;\ntypedef void* voidptr;\ntypedef char* charptr;\ntypedef struct array array;\ntypedef struct map map;\ntypedef array array_string;\ntypedef array array_int;\ntypedef array array_byte;\ntypedef array array_f32;\ntypedef array array_f64;\ntypedef array array_u16;\ntypedef array array_u32;\ntypedef array array_u64;\ntypedef map map_int;\ntypedef map map_string;\ntypedef byte array_fixed_byte_300 [300];\ntypedef byte array_fixed_byte_400 [400];\n#ifndef bool\n	typedef int bool;\n	#define true 1\n	#define false 0\n#endif\n\n");
+	_const_v__gen__c_builtin_types = tos3("\n\n//================================== builtin types ================================*/\n\ntypedef int64_t i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef unsigned char* byteptr;\ntypedef void* voidptr;\ntypedef char* charptr;\ntypedef struct array array;\ntypedef struct map map;\ntypedef array array_string;\ntypedef array array_int;\ntypedef array array_byte;\ntypedef array array_f32;\ntypedef array array_f64;\ntypedef array array_u16;\ntypedef array array_u32;\ntypedef array array_u64;\ntypedef map map_int;\ntypedef map map_string;\ntypedef byte array_fixed_byte_300 [300];\ntypedef byte array_fixed_byte_400 [400];\n#ifndef bool\n	typedef int bool;\n	#define true 1\n	#define false 0\n#endif\n\n");
 }
 // << string literal consts
 
@@ -11727,12 +11727,12 @@ string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 			res = string_add(tos3("[]"), res);
 		}
 	}
-	if (v__table__type_is(t, v__table__TypeFlag_optional)) {
-		res = string_add(tos3("?"), res);
-	}
 	int nr_muls = v__table__type_nr_muls(t);
 	if (nr_muls > 0) {
 		res = string_add(strings__repeat('&', nr_muls), res);
+	}
+	if (v__table__type_is(t, v__table__TypeFlag_optional)) {
+		res = string_add(tos3("?"), res);
 	}
 	return res;
 }
@@ -22406,6 +22406,22 @@ void v__gen__Gen_write_typeof_functions(v__gen__Gen* g) {
 }
 
 string v__gen__Gen_typ(v__gen__Gen* g, v__table__Type t) {
+	string styp = v__gen__Gen_base_typ(g, t);
+	if (v__table__type_is(t, v__table__TypeFlag_optional)) {
+		styp = string_add(tos3("Option_"), styp);
+		if (v__table__type_is_ptr(t)) {
+			styp = string_replace(styp, tos3("*"), tos3("_ptr"));
+		}
+		if (!(_IN(string, styp, g->optionals))) {
+			string x = styp;
+			strings__Builder_writeln(&g->typedefs2, _STR("typedef Option %.*s;", x.len, x.str));
+			array_push(&g->optionals, &(string[]){ styp });
+		}
+	}
+	return styp;
+}
+
+string v__gen__Gen_base_typ(v__gen__Gen* g, v__table__Type t) {
 	int nr_muls = v__table__type_nr_muls(t);
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, t);
 	string styp = string_replace(sym->name, tos3("."), tos3("__"));
@@ -22419,17 +22435,6 @@ string v__gen__Gen_typ(v__gen__Gen* g, v__table__Type t) {
 			if (!info.is_typedef) {
 				styp = _STR("struct %.*s", styp.len, styp.str);
 			}
-		}
-	}
-	if (v__table__type_is(t, v__table__TypeFlag_optional)) {
-		styp = string_add(tos3("Option_"), styp);
-		if (v__table__type_is_ptr(t)) {
-			styp = string_replace(styp, tos3("*"), tos3("_ptr"));
-		}
-		if (!(_IN(string, styp, g->optionals))) {
-			string x = styp;
-			strings__Builder_writeln(&g->typedefs2, _STR("typedef Option %.*s;", x.len, x.str));
-			array_push(&g->optionals, &(string[]){ styp });
 		}
 	}
 	return styp;
@@ -22894,11 +22899,10 @@ void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assign_stmt)
 		array_v__ast__Stmt or_stmts = __new_array(0, 0, sizeof(v__ast__Stmt));
 		v__table__Type return_type = _const_v__table__void_type;
 		if ((*(v__ast__Expr*)array_get(assign_stmt.right, 0)).typ == 152 /* v.ast.CallExpr */) {
-			v__ast__CallExpr* it = (v__ast__CallExpr*)(*(v__ast__Expr*)array_get(assign_stmt.right, 0)).obj; // ST it
-			or_stmts = it->or_block.stmts;
-			return_type = it->return_type;
-		}else {
-		};
+			v__ast__CallExpr it = /* as */ *(v__ast__CallExpr*)(*(v__ast__Expr*)array_get(assign_stmt.right, 0)).obj;
+			or_stmts = it.or_block.stmts;
+			return_type = it.return_type;
+		}
 		bool is_optional = v__table__type_is(return_type, v__table__TypeFlag_optional);
 		string mr_var_name = _STR("mr_%"PRId32"", assign_stmt.pos.pos);
 		string mr_styp = v__gen__Gen_typ(g, return_type);
@@ -22924,8 +22928,8 @@ void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assign_stmt)
 			}
 			v__gen__Gen_expr(g, /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Ident[]) {ident}, sizeof(v__ast__Ident)), .typ = 151 /* v.ast.Ident */});
 			if (is_optional) {
-				string mr_styp2 = string_substr(mr_styp, 7, mr_styp.len);
-				v__gen__Gen_writeln(g, _STR(" = (*(%.*s*)%.*s.data).arg%"PRId32";", mr_styp2.len, mr_styp2.str, mr_var_name.len, mr_var_name.str, i));
+				string mr_base_styp = v__gen__Gen_base_typ(g, return_type);
+				v__gen__Gen_writeln(g, _STR(" = (*(%.*s*)%.*s.data).arg%"PRId32";", mr_base_styp.len, mr_base_styp.str, mr_var_name.len, mr_var_name.str, i));
 			} else {
 				v__gen__Gen_writeln(g, _STR(" = %.*s.arg%"PRId32";", mr_var_name.len, mr_var_name.str, i));
 			}
@@ -22981,7 +22985,7 @@ void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assign_stmt)
 				if (is_decl) {
 					v__gen__Gen_write(g, _STR("%.*s ", styp.len, styp.str));
 				}
-				v__gen__Gen_expr(g, /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Ident[]) {ident}, sizeof(v__ast__Ident)), .typ = 151 /* v.ast.Ident */});
+				v__gen__Gen_ident(g, ident);
 				if (g->autofree && (right_sym->kind == v__table__Kind_array || right_sym->kind == v__table__Kind_string)) {
 					if (v__gen__Gen_gen_clone_assignment(g, val, */*d*/right_sym, true)) {
 						v__gen__Gen_writeln(g, tos3(";"));
@@ -23636,15 +23640,14 @@ void v__gen__Gen_ident(v__gen__Gen* g, v__ast__Ident node) {
 	}
 	string name = v__gen__c_name(node.name);
 	if (node.info.typ == 218 /* v.ast.IdentVar */) {
-		v__ast__IdentVar* it = (v__ast__IdentVar*)node.info.obj; // ST it
-		if (it->is_optional && !(g->is_assign_lhs && g->right_is_opt)) {
+		v__ast__IdentVar ident_var = /* as */ *(v__ast__IdentVar*)node.info.obj;
+		if (ident_var.is_optional && !(g->is_assign_lhs && g->right_is_opt)) {
 			v__gen__Gen_write(g, tos3("/*opt*/"));
-			string styp = string_substr(v__gen__Gen_typ(g, it->typ), 7, v__gen__Gen_typ(g, it->typ).len);
+			string styp = v__gen__Gen_base_typ(g, ident_var.typ);
 			v__gen__Gen_write(g, _STR("(*(%.*s*)%.*s.data)", styp.len, styp.str, name.len, name.str));
 			return;
 		}
-	}else {
-	};
+	}
 	v__gen__Gen_write(g, name);
 }
 
@@ -23850,20 +23853,18 @@ void v__gen__Gen_return_statement(v__gen__Gen* g, v__ast__Return node) {
 	bool fn_return_is_optional = v__table__type_is(g->fn_decl->return_type, v__table__TypeFlag_optional);
 	if (node.exprs.len > 1) {
 		v__gen__Gen_write(g, tos3(" "));
-		string styp = v__gen__Gen_typ(g, g->fn_decl->return_type);
+		string styp = tos3("");
 		if (fn_return_is_optional) {
-			styp = string_substr(styp, 7, styp.len);
-			string x = styp;
-			if (string_ends_with(x, tos3("_ptr"))) {
-				x = string_replace(x, tos3("_ptr"), tos3("*"));
-			}
-			v__gen__Gen_write(g, _STR("opt_ok(&(%.*s/*X*/[]) { ", x.len, x.str));
+			styp = v__gen__Gen_base_typ(g, g->fn_decl->return_type);
+			v__gen__Gen_write(g, _STR("opt_ok(&(%.*s/*X*/[]) { ", styp.len, styp.str));
+		} else {
+			styp = v__gen__Gen_typ(g, g->fn_decl->return_type);
 		}
 		v__gen__Gen_write(g, _STR("(%.*s){", styp.len, styp.str));
 		// FOR IN array
-		array tmp5 = node.exprs;
-		for (int i = 0; i < tmp5.len; i++) {
-			v__ast__Expr expr = ((v__ast__Expr*)tmp5.data)[i];
+		array tmp4 = node.exprs;
+		for (int i = 0; i < tmp4.len; i++) {
+			v__ast__Expr expr = ((v__ast__Expr*)tmp4.data)[i];
 			v__gen__Gen_write(g, _STR(".arg%"PRId32"=", i));
 			v__gen__Gen_expr(g, expr);
 			if (i < node.exprs.len - 1) {
@@ -23892,14 +23893,10 @@ void v__gen__Gen_return_statement(v__gen__Gen* g, v__ast__Return node) {
 			}else {
 			};
 			if (!is_none && !is_error) {
-				string styp = string_substr(v__gen__Gen_typ(g, g->fn_decl->return_type), 7, v__gen__Gen_typ(g, g->fn_decl->return_type).len);
-				string x = styp;
-				if (string_ends_with(x, tos3("_ptr"))) {
-					x = string_replace(x, tos3("_ptr"), tos3("*"));
-				}
-				v__gen__Gen_write(g, _STR("/*:)%.*s*/opt_ok(&(%.*s[]) { ", return_sym->name.len, return_sym->name.str, x.len, x.str));
+				string styp = v__gen__Gen_base_typ(g, g->fn_decl->return_type);
+				v__gen__Gen_write(g, _STR("/*:)%.*s*/opt_ok(&(%.*s[]) { ", return_sym->name.len, return_sym->name.str, styp.len, styp.str));
 				v__gen__Gen_expr(g, (*(v__ast__Expr*)array_get(node.exprs, 0)));
-				v__gen__Gen_writeln(g, _STR(" }, sizeof(%.*s));", x.len, x.str));
+				v__gen__Gen_writeln(g, _STR(" }, sizeof(%.*s));", styp.len, styp.str));
 				return;
 			}
 		}
@@ -24399,15 +24396,14 @@ void v__gen__Gen_insert_before(v__gen__Gen* g, string s) {
 }
 
 void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt stmts, v__table__Type return_type) {
-	string mr_styp = v__gen__Gen_typ(g, return_type);
-	string mr_styp2 = string_substr(mr_styp, 7, mr_styp.len);
+	string mr_styp = v__gen__Gen_base_typ(g, return_type);
 	v__gen__Gen_writeln(g, tos3(";"));
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_64581 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_64581.arg0;
-	string type_of_last_expression = mr_64581.arg1;
+	multi_return_string_string mr_64493 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_64493.arg0;
+	string type_of_last_expression = mr_64493.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -24416,7 +24412,7 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 			v__ast__Stmt stmt = ((v__ast__Stmt*)tmp2.data)[i];
 			if (i == stmts.len - 1) {
 				g->indent--;
-				v__gen__Gen_write(g, _STR("\t*(%.*s*) %.*s.data = ", mr_styp2.len, mr_styp2.str, var_name.len, var_name.str));
+				v__gen__Gen_write(g, _STR("\t*(%.*s*) %.*s.data = ", mr_styp.len, mr_styp.str, var_name.len, var_name.str));
 			}
 			v__gen__Gen_stmt(g, stmt);
 		}
@@ -29414,7 +29410,7 @@ void _vinit() {
 	_const_v__gen__builtins = new_array_from_c_array(6, 6, sizeof(string), (string[6]){
 		tos3("string"), tos3("array"), tos3("KeyValue"), tos3("DenseArray"), tos3("map"), tos3("Option"), 
 });
-	_const_v__gen__c_headers = _STR("\n\n// c_headers\n#include <stdio.h>  // TODO remove all these includes, define all function signatures and types manually\n#include <stdlib.h>\n\n//#include \"fns.h\"\n#include <signal.h>\n#include <stdarg.h> // for va_list\n#include <string.h> // memcpy\n\n#if INTPTR_MAX == INT32_MAX\n    #define TARGET_IS_32BIT 1\n#elif INTPTR_MAX == INT64_MAX\n    #define TARGET_IS_64BIT 1\n#else\n    #error \"The environment is not 32 or 64-bit.\"\n#endif\n\n#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) || defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || defined(__MIBSEB__)\n    #define TARGET_ORDER_IS_BIG\n#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || defined(_M_X64) || defined(_M_IX86)\n    #define TARGET_ORDER_IS_LITTLE\n#else\n    #error \"Unknown architecture endianness\"\n#endif\n\n#ifndef _WIN32\n#include <ctype.h>\n#include <locale.h> // tolower\n#include <sys/time.h>\n#include <unistd.h> // sleep\nextern char **environ;\n#endif\n\n#if defined(__CYGWIN__) && !defined(_WIN32)\n#error Cygwin is not supported, please use MinGW or Visual Studio.\n#endif\n\n\n#ifdef __linux__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __FreeBSD__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __DragonFly__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n#include <sys/types.h>\n#include <sys/resource.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __NetBSD__\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __sun\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n%.*s\n\n#ifdef _WIN32\n#define WINVER 0x0600\n#ifdef _WIN32_WINNT\n#undef _WIN32_WINNT\n#endif\n#define _WIN32_WINNT 0x0600\n#define WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define UNICODE\n#include <windows.h>\n\n#include <io.h> // _waccess\n#include <direct.h> // _wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n\n// On MSVC these are the same (as long as /volatile:ms is passed)\n#define _Atomic volatile\n\n// MSVC cannot parse some things properly\n#undef EMPTY_STRUCT_DECLARATION\n#undef OPTION_CAST\n\n#define EMPTY_STRUCT_DECLARATION int ____dummy_variable\n#define OPTION_CAST(x)\n\n#include <dbghelp.h>\n#pragma comment(lib, \"Dbghelp.lib\")\n\nextern wchar_t **_wenviron;\n\n#endif\n\n#else\n#include <pthread.h>\n#endif\n\n\n//============================== HELPER C MACROS =============================*/\n#define _PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); array_push_many(arr, tmp.data, tmp.len);}\n#define _IN(typ, val, arr) array_##typ##_contains(arr, val)\n#define _IN_MAP(val, m) map_exists(m, val)\n#define DEFAULT_EQUAL(a, b) (a == b)\n#define DEFAULT_NOT_EQUAL(a, b) (a != b)\n#define DEFAULT_LT(a, b) (a < b)\n#define DEFAULT_LE(a, b) (a <= b)\n#define DEFAULT_GT(a, b) (a > b)\n#define DEFAULT_GE(a, b) (a >= b)\n\n// NB: macro_fXX_eq and macro_fXX_ne are NOT used\n// in the generated C code. They are here just for\n// completeness/testing.\n\n#define macro_f64_eq(a, b) (a == b)\n#define macro_f64_ne(a, b) (a != b)\n#define macro_f64_lt(a, b) (a <  b)\n#define macro_f64_le(a, b) (a <= b)\n#define macro_f64_gt(a, b) (a >  b)\n#define macro_f64_ge(a, b) (a >= b)\n\n#define macro_f32_eq(a, b) (a == b)\n#define macro_f32_ne(a, b) (a != b)\n#define macro_f32_lt(a, b) (a <  b)\n#define macro_f32_le(a, b) (a <= b)\n#define macro_f32_gt(a, b) (a >  b)\n#define macro_f32_ge(a, b) (a >= b)\n\n//================================== GLOBALS =================================*/\nbyte g_str_buf[1024];\nint load_so(byteptr);\nvoid reload_so();\nvoid _vinit();\nvoid _vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\n// ============== wyhash ==============\n//Author: Wang Yi\n#ifndef wyhash_version_gamma\n#define wyhash_version_gamma\n#define WYHASH_CONDOM 0\n#include <stdint.h>\n#include <string.h>\n#if defined(_MSC_VER) && defined(_M_X64)\n#include <intrin.h>\n#pragma intrinsic(_umul128)\n#endif\n\n//const uint64_t _wyp0=0xa0761d6478bd642full, _wyp1=0xe7037ed1a0b428dbull;\n#define _wyp0 ((uint64_t)0xa0761d6478bd642full)\n#define _wyp1 ((uint64_t)0xe7037ed1a0b428dbull)\n\n\n#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__) || defined(__TINYC__)\n#define _likely_(x) __builtin_expect(x, 1)\n#else\n#define _likely_(x) (x)\n#endif\n\n#if defined(TARGET_ORDER_IS_LITTLE)\n#define WYHASH_LITTLE_ENDIAN 1\n#elif defined(TARGET_ORDER_IS_BIG)\n#define WYHASH_LITTLE_ENDIAN 0\n#endif\n\n#if (WYHASH_LITTLE_ENDIAN)\n  static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return v;}\n  static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return v;}\n#else\n#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__)\n  static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return __builtin_bswap64(v);}\n  static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return __builtin_bswap32(v);}\n#elif defined(_MSC_VER)\n  static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return _byteswap_uint64(v);}\n  static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return _byteswap_ulong(v);}\n#elif defined(__TINYC__)\n  static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return bswap_64(v);}\n  static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return bswap_32(v);}\n#endif\n#endif\n\nstatic inline uint64_t _wyr3(const uint8_t *p, unsigned k) { return (((uint64_t)p[0]) << 16) | (((uint64_t)p[k >> 1]) << 8) | p[k - 1];}\nstatic inline uint64_t _wyrotr(uint64_t v, unsigned k) { return (v >> k) | (v << (64 - k));}\nstatic inline void _wymix128(uint64_t A, uint64_t B, uint64_t *C, uint64_t *D){\n	A^=*C;	B^=*D;\n#ifdef UNOFFICIAL_WYHASH_32BIT\n	uint64_t hh=(A>>32)*(B>>32), hl=(A>>32)*(unsigned)B, lh=(unsigned)A*(B>>32), ll=(uint64_t)(unsigned)A*(unsigned)B;\n	*C=_wyrotr(hl,32)^hh; *D=_wyrotr(lh,32)^ll;\n#else\n#ifdef __SIZEOF_INT128__\n	__uint128_t r=A; r*=B; *C=(uint64_t)r; *D=(uint64_t)(r>>64);\n#elif defined(_MSC_VER) && defined(_M_X64)\n	A=_umul128(A,B,&B); *C=A; *D=B;\n#else\n	uint64_t ha=A>>32, hb=B>>32, la=(uint32_t)A, lb=(uint32_t)B, hi, lo;\n	uint64_t rh=ha*hb, rm0=ha*lb, rm1=hb*la, rl=la*lb, t=rl+(rm0<<32), c=t<rl;\n	lo=t+(rm1<<32); c+=lo<t; hi=rh+(rm0>>32)+(rm1>>32)+c;\n	*C=lo;	*D=hi;\n#endif\n#endif\n}\nstatic inline uint64_t wyhash(const void *key, uint64_t len, uint64_t seed){\n	const uint8_t *p=(const uint8_t *)key;\n	uint64_t i=len, see1=seed; \n	start:\n	if(_likely_(i<=16)){\n	#ifndef	WYHASH_CONDOM\n		uint64_t shift=(i<8)*((8-i)<<3);\n		//WARNING: intended reading outside buffer, trading for speed.\n		_wymix128((_wyr8(p)<<shift)^_wyp0,(_wyr8(p+i-8)>>shift)^_wyp1, &seed, &see1);\n	#else\n		if(_likely_(i<=8)){\n			if(_likely_(i>=4))	_wymix128(_wyr4(p)^_wyp0,_wyr4(p+i-4)^_wyp1, &seed, &see1);\n			else if (_likely_(i))	_wymix128(_wyr3(p,i)^_wyp0,_wyp1, &seed, &see1);\n			else	_wymix128(_wyp0,_wyp1, &seed, &see1);\n		} \n  		else	_wymix128(_wyr8(p)^_wyp0,_wyr8(p+i-8)^_wyp1, &seed, &see1);\n	#endif\n		_wymix128(len,_wyp0, &seed, &see1);\n		return	seed^see1;\n	}\n	_wymix128(_wyr8(p)^_wyp0,_wyr8(p+8)^_wyp1, &seed, &see1);\n	i-=16;	p+=16;	goto start;\n}\nstatic inline uint64_t wyhash64(uint64_t A, uint64_t B){\n	_wymix128(_wyp0,_wyp1,&A,&B);\n	_wymix128(0,0,&A,&B);\n	return	A^B;\n}\nstatic inline uint64_t wyrand(uint64_t *seed){ \n	*seed+=_wyp0;\n	uint64_t	a=0, b=0;\n	_wymix128(*seed,*seed^_wyp1,&a,&b);\n	return	a^b;\n}\nstatic inline double wy2u01(uint64_t r) { \n	const double _wynorm=1.0/(1ull<<52); \n	return (r>>12)*_wynorm;\n}\nstatic inline double wy2gau(uint64_t r) { \n	const double _wynorm=1.0/(1ull<<20); \n	return ((r&0x1fffff)+((r>>21)&0x1fffff)+((r>>42)&0x1fffff))*_wynorm-3.0;\n}\n#endif\n\n", _const_v__gen__c_common_macros.len, _const_v__gen__c_common_macros.str);
+	_const_v__gen__c_headers = _STR("\n\n// c_headers\n#include <stdio.h>  // TODO remove all these includes, define all function signatures and types manually\n#include <stdlib.h>\n\n//#include \"fns.h\"\n#include <signal.h>\n#include <stdarg.h> // for va_list\n#include <string.h> // memcpy\n\n#if INTPTR_MAX == INT32_MAX\n    #define TARGET_IS_32BIT 1\n#elif INTPTR_MAX == INT64_MAX\n    #define TARGET_IS_64BIT 1\n#else\n    #error \"The environment is not 32 or 64-bit.\"\n#endif\n\n#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) || defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || defined(__MIBSEB__)\n    #define TARGET_ORDER_IS_BIG\n#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || defined(_M_X64) || defined(_M_IX86)\n    #define TARGET_ORDER_IS_LITTLE\n#else\n    #error \"Unknown architecture endianness\"\n#endif\n\n#ifndef _WIN32\n#include <ctype.h>\n#include <locale.h> // tolower\n#include <sys/time.h>\n#include <unistd.h> // sleep\nextern char **environ;\n#endif\n\n#if defined(__CYGWIN__) && !defined(_WIN32)\n#error Cygwin is not supported, please use MinGW or Visual Studio.\n#endif\n\n\n#ifdef __linux__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __FreeBSD__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __DragonFly__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n#include <sys/types.h>\n#include <sys/resource.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __NetBSD__\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __sun\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n%.*s\n\n#ifdef _WIN32\n#define WINVER 0x0600\n#ifdef _WIN32_WINNT\n#undef _WIN32_WINNT\n#endif\n#define _WIN32_WINNT 0x0600\n#define WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define UNICODE\n#include <windows.h>\n\n#include <io.h> // _waccess\n#include <direct.h> // _wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n\n// On MSVC these are the same (as long as /volatile:ms is passed)\n#define _Atomic volatile\n\n// MSVC cannot parse some things properly\n#undef EMPTY_STRUCT_DECLARATION\n#undef OPTION_CAST\n\n#define EMPTY_STRUCT_DECLARATION int ____dummy_variable\n#define OPTION_CAST(x)\n\n#include <dbghelp.h>\n#pragma comment(lib, \"Dbghelp.lib\")\n\nextern wchar_t **_wenviron;\n\n#endif\n\n#else\n#include <pthread.h>\n#endif\n\n\n//============================== HELPER C MACROS =============================*/\n#define _PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); array_push_many(arr, tmp.data, tmp.len);}\n#define _IN(typ, val, arr) array_##typ##_contains(arr, val)\n#define _IN_MAP(val, m) map_exists(m, val)\n#define DEFAULT_EQUAL(a, b) (a == b)\n#define DEFAULT_NOT_EQUAL(a, b) (a != b)\n#define DEFAULT_LT(a, b) (a < b)\n#define DEFAULT_LE(a, b) (a <= b)\n#define DEFAULT_GT(a, b) (a > b)\n#define DEFAULT_GE(a, b) (a >= b)\n\n// NB: macro_fXX_eq and macro_fXX_ne are NOT used\n// in the generated C code. They are here just for\n// completeness/testing.\n\n#define macro_f64_eq(a, b) (a == b)\n#define macro_f64_ne(a, b) (a != b)\n#define macro_f64_lt(a, b) (a <  b)\n#define macro_f64_le(a, b) (a <= b)\n#define macro_f64_gt(a, b) (a >  b)\n#define macro_f64_ge(a, b) (a >= b)\n\n#define macro_f32_eq(a, b) (a == b)\n#define macro_f32_ne(a, b) (a != b)\n#define macro_f32_lt(a, b) (a <  b)\n#define macro_f32_le(a, b) (a <= b)\n#define macro_f32_gt(a, b) (a >  b)\n#define macro_f32_ge(a, b) (a >= b)\n\n//================================== GLOBALS =================================*/\nbyte g_str_buf[1024];\nint load_so(byteptr);\nvoid reload_so();\nvoid _vinit();\nvoid _vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\n// ============== wyhash ==============\n//Author: Wang Yi\n#ifndef wyhash_version_gamma\n#define wyhash_version_gamma\n#define WYHASH_CONDOM 0\n#include <stdint.h>\n#include <string.h>\n#if defined(_MSC_VER) && defined(_M_X64)\n#include <intrin.h>\n#pragma intrinsic(_umul128)\n#endif\n\n//const uint64_t _wyp0=0xa0761d6478bd642full, _wyp1=0xe7037ed1a0b428dbull;\n#define _wyp0 ((uint64_t)0xa0761d6478bd642full)\n#define _wyp1 ((uint64_t)0xe7037ed1a0b428dbull)\n\n\n#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__) || defined(__TINYC__)\n#define _likely_(x) __builtin_expect(x, 1)\n#else\n#define _likely_(x) (x)\n#endif\n\n#if defined(TARGET_ORDER_IS_LITTLE)\n#define WYHASH_LITTLE_ENDIAN 1\n#elif defined(TARGET_ORDER_IS_BIG)\n#define WYHASH_LITTLE_ENDIAN 0\n#endif\n\n#if (WYHASH_LITTLE_ENDIAN)\n  static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return v;}\n  static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return v;}\n#else\n#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__)\n  static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return __builtin_bswap64(v);}\n  static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return __builtin_bswap32(v);}\n#elif defined(_MSC_VER)\n  static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return _byteswap_uint64(v);}\n  static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return _byteswap_ulong(v);}\n#elif defined(__TINYC__)\n  static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return bswap_64(v);}\n  static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return bswap_32(v);}\n#endif\n#endif\n\nstatic inline uint64_t _wyr3(const uint8_t *p, unsigned k) { return (((uint64_t)p[0]) << 16) | (((uint64_t)p[k >> 1]) << 8) | p[k - 1];}\nstatic inline uint64_t _wyrotr(uint64_t v, unsigned k) { return (v >> k) | (v << (64 - k));}\nstatic inline void _wymix128(uint64_t A, uint64_t B, uint64_t *C, uint64_t *D){\n	A^=*C;	B^=*D;\n#ifdef UNOFFICIAL_WYHASH_32BIT\n	uint64_t hh=(A>>32)*(B>>32), hl=(A>>32)*(unsigned)B, lh=(unsigned)A*(B>>32), ll=(uint64_t)(unsigned)A*(unsigned)B;\n	*C=_wyrotr(hl,32)^hh; *D=_wyrotr(lh,32)^ll;\n#else\n#ifdef __SIZEOF_INT128__\n	__uint128_t r=A; r*=B; *C=(uint64_t)r; *D=(uint64_t)(r>>64);\n#elif defined(_MSC_VER) && defined(_M_X64)\n	A=_umul128(A,B,&B); *C=A; *D=B;\n#else\n	uint64_t ha=A>>32, hb=B>>32, la=(uint32_t)A, lb=(uint32_t)B, hi, lo;\n	uint64_t rh=ha*hb, rm0=ha*lb, rm1=hb*la, rl=la*lb, t=rl+(rm0<<32), c=t<rl;\n	lo=t+(rm1<<32); c+=lo<t; hi=rh+(rm0>>32)+(rm1>>32)+c;\n	*C=lo;	*D=hi;\n#endif\n#endif\n}\nstatic inline uint64_t wyhash(const void *key, uint64_t len, uint64_t seed){\n	const uint8_t *p=(const uint8_t *)key;\n	uint64_t i=len, see1=seed;\n	start:\n	if(_likely_(i<=16)){\n	#ifndef	WYHASH_CONDOM\n		uint64_t shift=(i<8)*((8-i)<<3);\n		//WARNING: intended reading outside buffer, trading for speed.\n		_wymix128((_wyr8(p)<<shift)^_wyp0,(_wyr8(p+i-8)>>shift)^_wyp1, &seed, &see1);\n	#else\n		if(_likely_(i<=8)){\n			if(_likely_(i>=4))	_wymix128(_wyr4(p)^_wyp0,_wyr4(p+i-4)^_wyp1, &seed, &see1);\n			else if (_likely_(i))	_wymix128(_wyr3(p,i)^_wyp0,_wyp1, &seed, &see1);\n			else	_wymix128(_wyp0,_wyp1, &seed, &see1);\n		}\n  		else	_wymix128(_wyr8(p)^_wyp0,_wyr8(p+i-8)^_wyp1, &seed, &see1);\n	#endif\n		_wymix128(len,_wyp0, &seed, &see1);\n		return	seed^see1;\n	}\n	_wymix128(_wyr8(p)^_wyp0,_wyr8(p+8)^_wyp1, &seed, &see1);\n	i-=16;	p+=16;	goto start;\n}\nstatic inline uint64_t wyhash64(uint64_t A, uint64_t B){\n	_wymix128(_wyp0,_wyp1,&A,&B);\n	_wymix128(0,0,&A,&B);\n	return	A^B;\n}\nstatic inline uint64_t wyrand(uint64_t *seed){\n	*seed+=_wyp0;\n	uint64_t	a=0, b=0;\n	_wymix128(*seed,*seed^_wyp1,&a,&b);\n	return	a^b;\n}\nstatic inline double wy2u01(uint64_t r) {\n	const double _wynorm=1.0/(1ull<<52);\n	return (r>>12)*_wynorm;\n}\nstatic inline double wy2gau(uint64_t r) {\n	const double _wynorm=1.0/(1ull<<20);\n	return ((r&0x1fffff)+((r>>21)&0x1fffff)+((r>>42)&0x1fffff))*_wynorm-3.0;\n}\n#endif\n\n", _const_v__gen__c_common_macros.len, _const_v__gen__c_common_macros.str);
 	_const_v__gen__bare_c_headers = _STR("\n\n%.*s\n\n#ifndef exit\n#define exit(rc) sys_exit(rc)\nvoid sys_exit (int);\n#endif\n\n", _const_v__gen__c_common_macros.len, _const_v__gen__c_common_macros.str);
 	_const_v__gen__js__js_reserved = new_array_from_c_array(14, 14, sizeof(string), (string[14]){
 		tos3("delete"), tos3("const"), tos3("let"), tos3("var"), tos3("function"), tos3("continue"), tos3("break"), tos3("switch"), tos3("for"), tos3("in"), tos3("of"), tos3("instanceof"), tos3("typeof"), tos3("do"), 
