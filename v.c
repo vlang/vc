@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "4b8ed3f"
+#define V_COMMIT_HASH "3ca4f5f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b228bd2"
+#define V_COMMIT_HASH "4b8ed3f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4b8ed3f"
+#define V_CURRENT_COMMIT_HASH "3ca4f5f"
 #endif
 
 
@@ -17102,7 +17102,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 			name = _STR("%.*s.%.*s", mod.len, mod.str, name.len, name.str);
 		}
 		string name_w_mod = v__parser__Parser_prepend_mod(p, name);
-		if ((_IN_MAP(name, p->table->type_idxs) || _IN_MAP(name_w_mod, p->table->type_idxs)) && !((string_eq(name, tos3("C.stat")) || string_eq(name, tos3("C.sigaction"))))) {
+		if (!known_var && (_IN_MAP(name, p->table->type_idxs) || _IN_MAP(name_w_mod, p->table->type_idxs)) && !((string_eq(name, tos3("C.stat")) || string_eq(name, tos3("C.sigaction"))))) {
 			v__table__Type to_typ = v__parser__Parser_parse_type(p);
 			if (p->is_amp) {
 				to_typ = v__table__type_to_ptr(to_typ);
@@ -20633,6 +20633,7 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 		return _const_v__table__string_type;
 	}else if (node.typ == 164 /* v.ast.AnonFn */) {
 		v__ast__AnonFn* it = (v__ast__AnonFn*)node.obj; // ST it
+		c->fn_return_type = it->decl.return_type;
 		v__checker__Checker_stmts(c, it->decl.stmts);
 		return it->typ;
 	}else {
