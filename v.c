@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "155891a"
+#define V_COMMIT_HASH "5c3742f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "08fac28"
+#define V_COMMIT_HASH "155891a"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "155891a"
+#define V_CURRENT_COMMIT_HASH "5c3742f"
 #endif
 
 
@@ -16004,6 +16004,12 @@ v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 			v__parser__Parser_check(p, v__token__Kind_comma);
 			key_var_name = val_var_name;
 			val_var_name = v__parser__Parser_check_name(p);
+			if (v__ast__Scope_known_var(p->scope, key_var_name)) {
+				v__parser__Parser_error(p, _STR("redefinition of `%.*s`", key_var_name.len, key_var_name.str));
+			}
+			if (v__ast__Scope_known_var(p->scope, val_var_name)) {
+				v__parser__Parser_error(p, _STR("redefinition of `%.*s`", val_var_name.len, val_var_name.str));
+			}
 			v__ast__Scope_register(p->scope, key_var_name, /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){
 				.name = key_var_name,
 				.typ = _const_v__table__int_type,
@@ -16011,8 +16017,13 @@ v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 				.is_mut = 0,
 				.pos = {0},
 			}}, sizeof(v__ast__Var)), .typ = 191 /* v.ast.Var */});
+		} else if (v__ast__Scope_known_var(p->scope, val_var_name)) {
+			v__parser__Parser_error(p, _STR("redefinition of `%.*s`", val_var_name.len, val_var_name.str));
 		}
 		v__parser__Parser_check(p, v__token__Kind_key_in);
+		if (p->tok.kind == v__token__Kind_name && (string_eq(p->tok.lit, key_var_name) || string_eq(p->tok.lit, val_var_name))) {
+			v__parser__Parser_error(p, _STR("redefinition of `%.*s`", p->tok.lit.len, p->tok.lit.str));
+		}
 		v__ast__Expr cond = v__parser__Parser_expr(p, 0);
 		v__ast__Expr high_expr = (v__ast__Expr){
 		0};
