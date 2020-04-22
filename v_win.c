@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5c3742f"
+#define V_COMMIT_HASH "b288ecb"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "155891a"
+#define V_COMMIT_HASH "5c3742f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5c3742f"
+#define V_CURRENT_COMMIT_HASH "b288ecb"
 #endif
 
 
@@ -2414,6 +2414,7 @@ u32 _const_probe_inc; // inited later
 bool fast_string_eq(string a, string b);
 DenseArray new_dense_array();
 u32 DenseArray_push(DenseArray* d, KeyValue kv);
+voidptr DenseArray_get(DenseArray d, int i);
 void DenseArray_zeros_to_end(DenseArray* d);
 map new_map(int n, int value_bytes);
 map new_map_1(int value_bytes);
@@ -3595,6 +3596,7 @@ void v__gen__Gen_gen_str_default(v__gen__Gen* g, v__table__TypeSymbol sym, strin
 void v__gen__Gen_gen_str_for_enum(v__gen__Gen* g, v__table__Enum info, string styp, string str_fn_name);
 void v__gen__Gen_gen_str_for_struct(v__gen__Gen* g, v__table__Struct info, string styp, string str_fn_name);
 void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, string styp, string str_fn_name);
+void v__gen__Gen_gen_str_for_map(v__gen__Gen* g, v__table__Map info, string styp, string str_fn_name);
 string v__gen__Gen_type_to_fmt(v__gen__Gen g, v__table__Type typ);
 string _const_v__gen__c_commit_hash_default; // a string literal, inited later
 string _const_v__gen__c_current_commit_hash_default; // a string literal, inited later
@@ -5371,6 +5373,18 @@ u32 DenseArray_push(DenseArray* d, KeyValue kv) {
 	return push_index;
 }
 
+voidptr DenseArray_get(DenseArray d, int i) {
+	
+#ifndef NO_BOUNDS_CHECK
+	// #if not no_bounds_checking
+		if (i < 0 || i >= d.size) {
+			v_panic(_STR("DenseArray.get: index out of range (i == %"PRId32", d.len == %"PRIu32")", i, d.size));
+		}
+	
+#endif
+	return ((byteptr)(d.data)) + i * sizeof(/*typ*/KeyValue);
+}
+
 void DenseArray_zeros_to_end(DenseArray* d) {
 	u32 count = ((u32)(0));
 	for (int tmp1 = 0; tmp1 < d->size; tmp1++) {
@@ -5469,12 +5483,12 @@ void map_set(map* m, string key, voidptr value) {
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_7842 = map_key_to_index(/*rec*/*m, key);
-	u32 index = mr_7842.arg0;
-	u32 meta = mr_7842.arg1;
-	multi_return_u32_u32 mr_7876 = map_meta_less(/*rec*/*m, index, meta);
-	index = mr_7876.arg0;
-	meta = mr_7876.arg1;
+	multi_return_u32_u32 mr_8125 = map_key_to_index(/*rec*/*m, key);
+	u32 index = mr_8125.arg0;
+	u32 meta = mr_8125.arg1;
+	multi_return_u32_u32 mr_8159 = map_meta_less(/*rec*/*m, index, meta);
+	index = mr_8159.arg0;
+	meta = mr_8159.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.data[kv_index].key)) {
@@ -5517,12 +5531,12 @@ void map_rehash(map* m) {
 			continue;
 		}
 		KeyValue kv = m->key_values.data[i];
-		multi_return_u32_u32 mr_9045 = map_key_to_index(/*rec*/*m, kv.key);
-		u32 index = mr_9045.arg0;
-		u32 meta = mr_9045.arg1;
-		multi_return_u32_u32 mr_9083 = map_meta_less(/*rec*/*m, index, meta);
-		index = mr_9083.arg0;
-		meta = mr_9083.arg1;
+		multi_return_u32_u32 mr_9328 = map_key_to_index(/*rec*/*m, kv.key);
+		u32 index = mr_9328.arg0;
+		u32 meta = mr_9328.arg1;
+		multi_return_u32_u32 mr_9366 = map_meta_less(/*rec*/*m, index, meta);
+		index = mr_9366.arg0;
+		meta = mr_9366.arg1;
 		map_meta_greater(m, index, meta, i);
 	}
 }
@@ -5541,9 +5555,9 @@ void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->cap >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->cap);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_9664 = map_meta_less(/*rec*/*m, index, meta);
-		index = mr_9664.arg0;
-		meta = mr_9664.arg1;
+		multi_return_u32_u32 mr_9947 = map_meta_less(/*rec*/*m, index, meta);
+		index = mr_9947.arg0;
+		meta = mr_9947.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -5551,12 +5565,12 @@ void map_cached_rehash(map* m, u32 old_cap) {
 }
 
 voidptr map_get3(map m, string key, voidptr zero) {
-	multi_return_u32_u32 mr_9871 = map_key_to_index(m, key);
-	u32 index = mr_9871.arg0;
-	u32 meta = mr_9871.arg1;
-	multi_return_u32_u32 mr_9905 = map_meta_less(m, index, meta);
-	index = mr_9905.arg0;
-	meta = mr_9905.arg1;
+	multi_return_u32_u32 mr_10154 = map_key_to_index(m, key);
+	u32 index = mr_10154.arg0;
+	u32 meta = mr_10154.arg1;
+	multi_return_u32_u32 mr_10188 = map_meta_less(m, index, meta);
+	index = mr_10188.arg0;
+	meta = mr_10188.arg1;
 	while (meta == m.metas[index]) {
 		u32 kv_index = m.metas[index + 1];
 		if (fast_string_eq(key, m.key_values.data[kv_index].key)) {
@@ -5571,12 +5585,12 @@ voidptr map_get3(map m, string key, voidptr zero) {
 }
 
 bool map_exists(map m, string key) {
-	multi_return_u32_u32 mr_10282 = map_key_to_index(m, key);
-	u32 index = mr_10282.arg0;
-	u32 meta = mr_10282.arg1;
-	multi_return_u32_u32 mr_10316 = map_meta_less(m, index, meta);
-	index = mr_10316.arg0;
-	meta = mr_10316.arg1;
+	multi_return_u32_u32 mr_10565 = map_key_to_index(m, key);
+	u32 index = mr_10565.arg0;
+	u32 meta = mr_10565.arg1;
+	multi_return_u32_u32 mr_10599 = map_meta_less(m, index, meta);
+	index = mr_10599.arg0;
+	meta = mr_10599.arg1;
 	while (meta == m.metas[index]) {
 		u32 kv_index = m.metas[index + 1];
 		if (fast_string_eq(key, m.key_values.data[kv_index].key)) {
@@ -5589,12 +5603,12 @@ bool map_exists(map m, string key) {
 }
 
 void map_delete(map* m, string key) {
-	multi_return_u32_u32 mr_10599 = map_key_to_index(/*rec*/*m, key);
-	u32 index = mr_10599.arg0;
-	u32 meta = mr_10599.arg1;
-	multi_return_u32_u32 mr_10633 = map_meta_less(/*rec*/*m, index, meta);
-	index = mr_10633.arg0;
-	meta = mr_10633.arg1;
+	multi_return_u32_u32 mr_10882 = map_key_to_index(/*rec*/*m, key);
+	u32 index = mr_10882.arg0;
+	u32 meta = mr_10882.arg1;
+	multi_return_u32_u32 mr_10916 = map_meta_less(/*rec*/*m, index, meta);
+	index = mr_10916.arg0;
+	meta = mr_10916.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.data[kv_index].key)) {
@@ -24206,7 +24220,7 @@ void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInterLiteral
 			v__gen__Gen_write(g, tos3("%.*s"));
 		} else if (((*(v__table__Type*)array_get(node.expr_types, i)) == _const_v__table__f32_type || (*(v__table__Type*)array_get(node.expr_types, i)) == _const_v__table__f64_type)) {
 			v__gen__Gen_write(g, tos3("%g"));
-		} else if (sym->kind == v__table__Kind_struct_ && !v__table__TypeSymbol_has_method(sym, tos3("str"))) {
+		} else if ((sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_map) && !v__table__TypeSymbol_has_method(sym, tos3("str"))) {
 			v__gen__Gen_write(g, tos3("%.*s"));
 		} else if ((*(v__table__Type*)array_get(node.expr_types, i)) == _const_v__table__i16_type) {
 			v__gen__Gen_write(g, tos3("%\"PRId16\""));
@@ -24283,6 +24297,17 @@ void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInterLiteral
 				v__gen__Gen_write(g, _STR("%.*s(", str_fn_name.len, str_fn_name.str));
 				v__gen__Gen_expr(g, expr);
 				v__gen__Gen_write(g, tos3(").str"));
+			} else if (sym->kind == v__table__Kind_map && !v__table__TypeSymbol_has_method(sym, tos3("str"))) {
+				string styp = v__gen__Gen_typ(g, (*(v__table__Type*)array_get(node.expr_types, i)));
+				string str_fn_name = v__gen__styp_to_str_fn_name(styp);
+				v__gen__Gen_gen_str_for_type(g, */*d*/sym, styp, str_fn_name);
+				v__gen__Gen_write(g, _STR("%.*s(", str_fn_name.len, str_fn_name.str));
+				v__gen__Gen_expr(g, expr);
+				v__gen__Gen_write(g, tos3(")"));
+				v__gen__Gen_write(g, tos3(".len, "));
+				v__gen__Gen_write(g, _STR("%.*s(", str_fn_name.len, str_fn_name.str));
+				v__gen__Gen_expr(g, expr);
+				v__gen__Gen_write(g, tos3(").str"));
 			} else if (sym->kind == v__table__Kind_struct_ && !v__table__TypeSymbol_has_method(sym, tos3("str"))) {
 				string styp = v__gen__Gen_typ(g, (*(v__table__Type*)array_get(node.expr_types, i)));
 				string str_fn_name = v__gen__styp_to_str_fn_name(styp);
@@ -24346,9 +24371,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_63800 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_63800.arg0;
-	string type_of_last_expression = mr_63800.arg1;
+	multi_return_string_string mr_64152 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_64152.arg0;
+	string type_of_last_expression = mr_64152.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -24753,6 +24778,9 @@ void v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__TypeSymbol sym, stri
 	}else if (sym.info.typ == 92 /* v.table.Struct */) {
 		v__table__Struct* it = (v__table__Struct*)sym.info.obj; // ST it
 		v__gen__Gen_gen_str_for_struct(g, */*d*/it, styp, str_fn_name);
+	}else if (sym.info.typ == 91 /* v.table.Map */) {
+		v__table__Map* it = (v__table__Map*)sym.info.obj; // ST it
+		v__gen__Gen_gen_str_for_map(g, */*d*/it, styp, str_fn_name);
 	}else {
 		v__gen__verror(_STR("could not generate string method %.*s for type \'%.*s\'", str_fn_name.len, str_fn_name.str, styp.len, styp.str));
 	};
@@ -24812,7 +24840,7 @@ void v__gen__Gen_gen_str_for_struct(v__gen__Gen* g, v__table__Struct info, strin
 	for (int i = 0; i < tmp1.len; i++) {
 		v__table__Field field = ((v__table__Field*)tmp1.data)[i];
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, field.typ);
-		if ((sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed || sym->kind == v__table__Kind_enum_)) {
+		if ((sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed || sym->kind == v__table__Kind_map || sym->kind == v__table__Kind_enum_)) {
 			string field_styp = v__gen__Gen_typ(g, field.typ);
 			string field_fn_name = v__gen__styp_to_str_fn_name(field_styp);
 			map_set(&fnames2strfunc, field_styp, &(string[]) { field_fn_name });
@@ -24908,9 +24936,51 @@ void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, string 
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("}"));
 }
 
+void v__gen__Gen_gen_str_for_map(v__gen__Gen* g, v__table__Map info, string styp, string str_fn_name) {
+	v__table__TypeSymbol* key_sym = v__table__Table_get_type_symbol(g->table, info.key_type);
+	string key_styp = v__gen__Gen_typ(g, info.key_type);
+	if (key_sym->kind == v__table__Kind_struct_ && !v__table__TypeSymbol_has_method(key_sym, tos3("str"))) {
+		v__gen__Gen_gen_str_for_type(g, */*d*/key_sym, key_styp, v__gen__styp_to_str_fn_name(key_styp));
+	}
+	v__table__TypeSymbol* val_sym = v__table__Table_get_type_symbol(g->table, info.value_type);
+	string val_styp = v__gen__Gen_typ(g, info.value_type);
+	if (val_sym->kind == v__table__Kind_struct_ && !v__table__TypeSymbol_has_method(val_sym, tos3("str"))) {
+		v__gen__Gen_gen_str_for_type(g, */*d*/val_sym, val_styp, v__gen__styp_to_str_fn_name(val_styp));
+	}
+	string zero = v__gen__Gen_type_default(/*rec*/*g, info.value_type);
+	strings__Builder_writeln(&g->definitions, _STR("string %.*s(%.*s m); // auto", str_fn_name.len, str_fn_name.str, styp.len, styp.str));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("string %.*s(%.*s m) { /* gen_str_for_map */", str_fn_name.len, str_fn_name.str, styp.len, styp.str));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tstrings__Builder sb = strings__new_builder(m.key_values.size*10);"));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("\tstrings__Builder_write(&sb, tos3(\"%.*s\"));", styp.len, styp.str));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tstrings__Builder_write(&sb, tos3(\"{\"));"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tfor (unsigned int i = 0; i < m.key_values.size; i++) {"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tstrings__Builder_write(&sb, (*(string*)DenseArray_get(m.key_values, i)));"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tstrings__Builder_write(&sb, tos3(\": \"));"));
+	strings__Builder_write(&g->auto_str_funcs, _STR("\t%.*s it = (*(%.*s*)map_get3(", val_styp.len, val_styp.str, val_styp.len, val_styp.str));
+	strings__Builder_write(&g->auto_str_funcs, tos3("m, (*(string*)DenseArray_get(m.key_values, i))"));
+	strings__Builder_write(&g->auto_str_funcs, tos3(", "));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR(" &(%.*s[]) { %.*s }));", val_styp.len, val_styp.str, zero.len, zero.str));
+	if (val_sym->kind == v__table__Kind_string) {
+		strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tstrings__Builder_write(&sb, it);"));
+	} else if (val_sym->kind == v__table__Kind_struct_ && !v__table__TypeSymbol_has_method(val_sym, tos3("str"))) {
+		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstrings__Builder_write(&sb, %.*s_str(it,0));", val_styp.len, val_styp.str));
+	} else if ((val_sym->kind == v__table__Kind_f32 || val_sym->kind == v__table__Kind_f64)) {
+		strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tstrings__Builder_write(&sb, _STR(\"%g\", it));"));
+	} else {
+		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstrings__Builder_write(&sb, %.*s_str(it));", val_styp.len, val_styp.str));
+	}
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tif (i != m.key_values.size-1) {"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\t\tstrings__Builder_write(&sb, tos3(\", \"));"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\t}"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t}"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tstrings__Builder_write(&sb, tos3(\"}\"));"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\treturn strings__Builder_str(&sb);"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("}"));
+}
+
 string v__gen__Gen_type_to_fmt(v__gen__Gen g, v__table__Type typ) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g.table, typ);
-	if ((sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed)) {
+	if ((sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed || sym->kind == v__table__Kind_map)) {
 		return tos3("%.*s");
 	} else if (typ == _const_v__table__string_type) {
 		return tos3("\'%.*s\'");
