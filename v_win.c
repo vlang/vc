@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b288ecb"
+#define V_COMMIT_HASH "c1e8612"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5c3742f"
+#define V_COMMIT_HASH "b288ecb"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b288ecb"
+#define V_CURRENT_COMMIT_HASH "c1e8612"
 #endif
 
 
@@ -20071,11 +20071,15 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 		for (int i = 0; i < tmp9.len; i++) {
 			v__ast__CallArg arg = ((v__ast__CallArg*)tmp9.data)[i];
 			c->expected_type = (/*opt*/(*(v__table__Fn*)method.data).is_variadic && i >= /*opt*/(*(v__table__Fn*)method.data).args.len - 1 ?  ( (*(v__table__Arg*)array_get(/*opt*/(*(v__table__Fn*)method.data).args, /*opt*/(*(v__table__Fn*)method.data).args.len - 1)).typ )  :  ( (*(v__table__Arg*)array_get(/*opt*/(*(v__table__Fn*)method.data).args, i + 1)).typ ) );
-			(*(v__ast__CallArg*)array_get(call_expr->args, i)).typ = v__checker__Checker_expr(c, arg.expr);
+			v__table__Type arg_typ = v__checker__Checker_expr(c, arg.expr);
+			(*(v__ast__CallArg*)array_get(call_expr->args, i)).typ = arg_typ;
+			if (/*opt*/(*(v__table__Fn*)method.data).is_variadic && v__table__type_is(arg_typ, v__table__TypeFlag_variadic) && call_expr->args.len - 1 > i) {
+				v__checker__Checker_error(c, tos3("when forwarding a varg variable, it must be the final argument"), call_expr->pos);
+			}
 		}
 		if (call_expr->expected_arg_types.len == 0) {
-			for (int tmp12 = 1; tmp12 < /*opt*/(*(v__table__Fn*)method.data).args.len; tmp12++) {
-				int i = tmp12;
+			for (int tmp13 = 1; tmp13 < /*opt*/(*(v__table__Fn*)method.data).args.len; tmp13++) {
+				int i = tmp13;
 				array_push(&call_expr->expected_arg_types, &(v__table__Type[]){ (*(v__table__Arg*)array_get(/*opt*/(*(v__table__Fn*)method.data).args, i)).typ });
 			}
 		}
@@ -20093,9 +20097,9 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 		call_expr->return_type = _const_v__table__string_type;
 		return _const_v__table__string_type;
 	}
-	bool tmp16;
+	bool tmp17;
 	{ /* if guard */ Option_v__table__Field field = v__table__Table_struct_find_field(c->table, left_type_sym, method_name);
-	if ((tmp16 = field.ok)) {
+	if ((tmp17 = field.ok)) {
 		v__table__TypeSymbol* field_type_sym = v__table__Table_get_type_symbol(c->table, /*opt*/(*(v__table__Field*)field.data).typ);
 		if (field_type_sym->kind == v__table__Kind_function) {
 			call_expr->is_method = false;
@@ -20207,6 +20211,9 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 		(*(v__ast__CallArg*)array_get(call_expr->args, i)).typ = typ;
 		v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, typ);
 		v__table__TypeSymbol* arg_typ_sym = v__table__Table_get_type_symbol(c->table, arg.typ);
+		if (f.is_variadic && v__table__type_is(typ, v__table__TypeFlag_variadic) && call_expr->args.len - 1 > i) {
+			v__checker__Checker_error(c, tos3("when forwarding a varg variable, it must be the final argument"), call_expr->pos);
+		}
 		if (!v__table__Table_check(c->table, typ, arg.typ)) {
 			if (arg_typ_sym->kind == v__table__Kind_string && v__table__TypeSymbol_has_method(typ_sym, tos3("str"))) {
 				continue;
@@ -25267,12 +25274,14 @@ void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 
 void v__gen__Gen_call_args(v__gen__Gen* g, array_v__ast__CallArg args, array_v__table__Type expected_types) {
 	bool is_variadic = expected_types.len > 0 && v__table__type_is((*(v__table__Type*)array_get(expected_types, expected_types.len - 1)), v__table__TypeFlag_variadic);
+	bool is_forwarding_varg = args.len > 0 && v__table__type_is((*(v__ast__CallArg*)array_get(args, args.len - 1)).typ, v__table__TypeFlag_variadic);
+	bool gen_vargs = is_variadic && !is_forwarding_varg;
 	int arg_no = 0;
 	// FOR IN array
 	array tmp1 = args;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
 		v__ast__CallArg arg = ((v__ast__CallArg*)tmp1.data)[tmp2];
-		if (is_variadic && arg_no == expected_types.len - 1) {
+		if (gen_vargs && arg_no == expected_types.len - 1) {
 			break;
 		}
 		if (arg_no < expected_types.len) {
@@ -25280,12 +25289,12 @@ void v__gen__Gen_call_args(v__gen__Gen* g, array_v__ast__CallArg args, array_v__
 		} else {
 			v__gen__Gen_expr(g, arg.expr);
 		}
-		if (arg_no < args.len - 1 || is_variadic) {
+		if (arg_no < args.len - 1 || gen_vargs) {
 			v__gen__Gen_write(g, tos3(", "));
 		}
 		arg_no++;
 	}
-	if (is_variadic) {
+	if (is_variadic && !is_forwarding_varg) {
 		v__table__Type varg_type = (*(v__table__Type*)array_get(expected_types, expected_types.len - 1));
 		string struct_name = string_add(tos3("varg_"), string_replace(v__gen__Gen_typ(g, varg_type), tos3("*"), tos3("_ptr")));
 		int variadic_count = args.len - arg_no;
