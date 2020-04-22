@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b228bd2"
+#define V_COMMIT_HASH "4b8ed3f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "aef756a"
+#define V_COMMIT_HASH "b228bd2"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b228bd2"
+#define V_CURRENT_COMMIT_HASH "4b8ed3f"
 #endif
 
 
@@ -81,15 +81,16 @@ typedef enum {
 	v__table__Kind_bool, // +16
 	v__table__Kind_none_, // +17
 	v__table__Kind_string, // +18
-	v__table__Kind_array, // +19
-	v__table__Kind_array_fixed, // +20
-	v__table__Kind_map, // +21
-	v__table__Kind_struct_, // +22
-	v__table__Kind_multi_return, // +23
-	v__table__Kind_sum_type, // +24
-	v__table__Kind_alias, // +25
-	v__table__Kind_enum_, // +26
-	v__table__Kind_function, // +27
+	v__table__Kind_ustring, // +19
+	v__table__Kind_array, // +20
+	v__table__Kind_array_fixed, // +21
+	v__table__Kind_map, // +22
+	v__table__Kind_struct_, // +23
+	v__table__Kind_multi_return, // +24
+	v__table__Kind_sum_type, // +25
+	v__table__Kind_alias, // +26
+	v__table__Kind_enum_, // +27
+	v__table__Kind_function, // +28
 } v__table__Kind;
 
 typedef struct v__table__Struct v__table__Struct;
@@ -1034,6 +1035,12 @@ struct v__vmod__ModFileAndFolder {
 	string vmod_folder;
 };
 
+struct ustring {
+	string s;
+	array_int runes;
+	int len;
+};
+
 typedef u64 array_fixed_u64_2 [2];
 typedef char array_fixed_char_254 [254];
 struct Line64 {
@@ -1052,12 +1059,6 @@ struct SortedMap {
 };
 
 typedef voidptr array_fixed_voidptr_11 [11];
-struct ustring {
-	string s;
-	array_int runes;
-	int len;
-};
-
 struct RepIndex {
 	int idx;
 	int val_idx;
@@ -2944,12 +2945,14 @@ bool v__table__is_number(v__table__Type typ);
 #define _const_v__table__bool_type_idx 16
 #define _const_v__table__none_type_idx 17
 #define _const_v__table__string_type_idx 18
-#define _const_v__table__array_type_idx 19
-#define _const_v__table__map_type_idx 20
+#define _const_v__table__ustring_type_idx 19
+#define _const_v__table__array_type_idx 20
+#define _const_v__table__map_type_idx 21
 array_int _const_v__table__integer_type_idxs; // inited later
 array_int _const_v__table__float_type_idxs; // inited later
 array_int _const_v__table__number_type_idxs; // inited later
 array_int _const_v__table__pointer_type_idxs; // inited later
+array_int _const_v__table__string_type_idxs; // inited later
 v__table__Type _const_v__table__void_type; // inited later
 v__table__Type _const_v__table__voidptr_type; // inited later
 v__table__Type _const_v__table__byteptr_type; // inited later
@@ -2968,6 +2971,7 @@ v__table__Type _const_v__table__char_type; // inited later
 v__table__Type _const_v__table__bool_type; // inited later
 v__table__Type _const_v__table__none_type; // inited later
 v__table__Type _const_v__table__string_type; // inited later
+v__table__Type _const_v__table__ustring_type; // inited later
 v__table__Type _const_v__table__array_type; // inited later
 v__table__Type _const_v__table__map_type; // inited later
 array_string _const_v__table__builtin_type_names; // inited later
@@ -11601,6 +11605,14 @@ void v__table__Table_register_builtin_type_symbols(v__table__Table* t) {
 		.mod = tos3(""),
 	});
 	v__table__Table_register_type_symbol(t, (v__table__TypeSymbol){
+		.kind = v__table__Kind_ustring,
+		.name = tos3("ustring"),
+		.parent_idx = 0,
+		.info = {0},
+		.methods = new_array(0, 1, sizeof(v__table__Fn)),
+		.mod = tos3(""),
+	});
+	v__table__Table_register_type_symbol(t, (v__table__TypeSymbol){
 		.kind = v__table__Kind_array,
 		.name = tos3("array"),
 		.parent_idx = 0,
@@ -11665,7 +11677,7 @@ bool v__table__TypeSymbol_is_number(v__table__TypeSymbol* t) {
 }
 
 string v__table__Kind_str(v__table__Kind k) {
-	string k_str = (k == v__table__Kind_placeholder) ?  ( tos3("placeholder") )  : (k == v__table__Kind_void) ?  ( tos3("void") )  : (k == v__table__Kind_voidptr) ?  ( tos3("voidptr") )  : (k == v__table__Kind_charptr) ?  ( tos3("charptr") )  : (k == v__table__Kind_byteptr) ?  ( tos3("byteptr") )  : (k == v__table__Kind_struct_) ?  ( tos3("struct") )  : (k == v__table__Kind_int) ?  ( tos3("int") )  : (k == v__table__Kind_i8) ?  ( tos3("i8") )  : (k == v__table__Kind_i16) ?  ( tos3("i16") )  : (k == v__table__Kind_i64) ?  ( tos3("i64") )  : (k == v__table__Kind_byte) ?  ( tos3("byte") )  : (k == v__table__Kind_u16) ?  ( tos3("u16") )  : (k == v__table__Kind_u32) ?  ( tos3("u32") )  : (k == v__table__Kind_u64) ?  ( tos3("u64") )  : (k == v__table__Kind_f32) ?  ( tos3("f32") )  : (k == v__table__Kind_f64) ?  ( tos3("f64") )  : (k == v__table__Kind_string) ?  ( tos3("string") )  : (k == v__table__Kind_char) ?  ( tos3("char") )  : (k == v__table__Kind_bool) ?  ( tos3("bool") )  : (k == v__table__Kind_none_) ?  ( tos3("none") )  : (k == v__table__Kind_array) ?  ( tos3("array") )  : (k == v__table__Kind_array_fixed) ?  ( tos3("array_fixed") )  : (k == v__table__Kind_map) ?  ( tos3("map") )  : (k == v__table__Kind_multi_return) ?  ( tos3("multi_return") )  : (k == v__table__Kind_sum_type) ?  ( tos3("sum_type") )  : (k == v__table__Kind_alias) ?  ( tos3("alias") )  : (k == v__table__Kind_enum_) ?  ( tos3("enum") )  :  ( tos3("unknown") ) ;
+	string k_str = (k == v__table__Kind_placeholder) ?  ( tos3("placeholder") )  : (k == v__table__Kind_void) ?  ( tos3("void") )  : (k == v__table__Kind_voidptr) ?  ( tos3("voidptr") )  : (k == v__table__Kind_charptr) ?  ( tos3("charptr") )  : (k == v__table__Kind_byteptr) ?  ( tos3("byteptr") )  : (k == v__table__Kind_struct_) ?  ( tos3("struct") )  : (k == v__table__Kind_int) ?  ( tos3("int") )  : (k == v__table__Kind_i8) ?  ( tos3("i8") )  : (k == v__table__Kind_i16) ?  ( tos3("i16") )  : (k == v__table__Kind_i64) ?  ( tos3("i64") )  : (k == v__table__Kind_byte) ?  ( tos3("byte") )  : (k == v__table__Kind_u16) ?  ( tos3("u16") )  : (k == v__table__Kind_u32) ?  ( tos3("u32") )  : (k == v__table__Kind_u64) ?  ( tos3("u64") )  : (k == v__table__Kind_f32) ?  ( tos3("f32") )  : (k == v__table__Kind_f64) ?  ( tos3("f64") )  : (k == v__table__Kind_string) ?  ( tos3("string") )  : (k == v__table__Kind_ustring) ?  ( tos3("ustring") )  : (k == v__table__Kind_char) ?  ( tos3("char") )  : (k == v__table__Kind_bool) ?  ( tos3("bool") )  : (k == v__table__Kind_none_) ?  ( tos3("none") )  : (k == v__table__Kind_array) ?  ( tos3("array") )  : (k == v__table__Kind_array_fixed) ?  ( tos3("array_fixed") )  : (k == v__table__Kind_map) ?  ( tos3("map") )  : (k == v__table__Kind_multi_return) ?  ( tos3("multi_return") )  : (k == v__table__Kind_sum_type) ?  ( tos3("sum_type") )  : (k == v__table__Kind_alias) ?  ( tos3("alias") )  : (k == v__table__Kind_enum_) ?  ( tos3("enum") )  :  ( tos3("unknown") ) ;
 	return k_str;
 }
 
@@ -23396,7 +23408,14 @@ void v__gen__Gen_infix_expr(v__gen__Gen* g, v__ast__InfixExpr node) {
 		return;
 	}
 	v__table__TypeSymbol* right_sym = v__table__Table_get_type_symbol(g->table, node.right_type);
-	if (node.left_type == _const_v__table__string_type_idx && node.op != v__token__Kind_key_in && node.op != v__token__Kind_not_in) {
+	if (node.left_type == _const_v__table__ustring_type_idx && node.op != v__token__Kind_key_in && node.op != v__token__Kind_not_in) {
+		string fn_name = (node.op == v__token__Kind_plus) ?  ( tos3("ustring_add(") )  : (node.op == v__token__Kind_eq) ?  ( tos3("ustring_eq(") )  : (node.op == v__token__Kind_ne) ?  ( tos3("ustring_ne(") )  : (node.op == v__token__Kind_lt) ?  ( tos3("ustring_lt(") )  : (node.op == v__token__Kind_le) ?  ( tos3("ustring_le(") )  : (node.op == v__token__Kind_gt) ?  ( tos3("ustring_gt(") )  : (node.op == v__token__Kind_ge) ?  ( tos3("ustring_ge(") )  :  ( tos3("/*node error*/") ) ;
+		v__gen__Gen_write(g, fn_name);
+		v__gen__Gen_expr(g, node.left);
+		v__gen__Gen_write(g, tos3(", "));
+		v__gen__Gen_expr(g, node.right);
+		v__gen__Gen_write(g, tos3(")"));
+	} else if (node.left_type == _const_v__table__string_type_idx && node.op != v__token__Kind_key_in && node.op != v__token__Kind_not_in) {
 		string fn_name = (node.op == v__token__Kind_plus) ?  ( tos3("string_add(") )  : (node.op == v__token__Kind_eq) ?  ( tos3("string_eq(") )  : (node.op == v__token__Kind_ne) ?  ( tos3("string_ne(") )  : (node.op == v__token__Kind_lt) ?  ( tos3("string_lt(") )  : (node.op == v__token__Kind_le) ?  ( tos3("string_le(") )  : (node.op == v__token__Kind_gt) ?  ( tos3("string_gt(") )  : (node.op == v__token__Kind_ge) ?  ( tos3("string_ge(") )  :  ( tos3("/*node error*/") ) ;
 		v__gen__Gen_write(g, fn_name);
 		v__gen__Gen_expr(g, node.left);
@@ -24383,9 +24402,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_64152 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_64152.arg0;
-	string type_of_last_expression = mr_64152.arg1;
+	multi_return_string_string mr_64581 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_64581.arg0;
+	string type_of_last_expression = mr_64581.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -29289,6 +29308,9 @@ void _vinit() {
 	_const_v__table__pointer_type_idxs = new_array_from_c_array(3, 3, sizeof(int), (int[3]){
 		_const_v__table__voidptr_type_idx, _const_v__table__byteptr_type_idx, _const_v__table__charptr_type_idx, 
 });
+	_const_v__table__string_type_idxs = new_array_from_c_array(2, 2, sizeof(int), (int[2]){
+		_const_v__table__string_type_idx, _const_v__table__ustring_type_idx, 
+});
 	_const_v__table__void_type = v__table__new_type(_const_v__table__void_type_idx);
 	_const_v__table__voidptr_type = v__table__new_type(_const_v__table__voidptr_type_idx);
 	_const_v__table__byteptr_type = v__table__new_type(_const_v__table__byteptr_type_idx);
@@ -29307,10 +29329,11 @@ void _vinit() {
 	_const_v__table__bool_type = v__table__new_type(_const_v__table__bool_type_idx);
 	_const_v__table__none_type = v__table__new_type(_const_v__table__none_type_idx);
 	_const_v__table__string_type = v__table__new_type(_const_v__table__string_type_idx);
+	_const_v__table__ustring_type = v__table__new_type(_const_v__table__ustring_type_idx);
 	_const_v__table__array_type = v__table__new_type(_const_v__table__array_type_idx);
 	_const_v__table__map_type = v__table__new_type(_const_v__table__map_type_idx);
 	_const_v__table__builtin_type_names = new_array_from_c_array(25, 25, sizeof(string), (string[25]){
-		tos3("void"), tos3("voidptr"), tos3("charptr"), tos3("byteptr"), tos3("i8"), tos3("i16"), tos3("int"), tos3("i64"), tos3("u16"), tos3("u32"), tos3("u64"), tos3("f32"), tos3("f64"), tos3("string"), tos3("char"), tos3("byte"), tos3("bool"), tos3("none"), tos3("array"), tos3("array_fixed"), tos3("map"), tos3("struct"), tos3("mapnode"), tos3("ustring"), tos3("size_t"), 
+		tos3("void"), tos3("voidptr"), tos3("charptr"), tos3("byteptr"), tos3("i8"), tos3("i16"), tos3("int"), tos3("i64"), tos3("u16"), tos3("u32"), tos3("u64"), tos3("f32"), tos3("f64"), tos3("string"), tos3("ustring"), tos3("char"), tos3("byte"), tos3("bool"), tos3("none"), tos3("array"), tos3("array_fixed"), tos3("map"), tos3("struct"), tos3("mapnode"), tos3("size_t"), 
 });
 	_const_v__pref__default_module_path = v__pref__mpath();
 	_const_v__util__emanager = v__util__new_error_manager();
