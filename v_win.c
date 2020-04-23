@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "7bcca82"
+#define V_COMMIT_HASH "878be4d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4f45675"
+#define V_COMMIT_HASH "7bcca82"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "7bcca82"
+#define V_CURRENT_COMMIT_HASH "878be4d"
 #endif
 
 
@@ -7706,18 +7706,22 @@ multi_return_v__pref__Preferences_string parse_args(array_string args) {
 			res->backend = v__pref__Backend_x64;
 		}else if (string_eq(arg, tos3("-os"))) {
 			string target_os = os__cmdline__option(current_args, tos3("-os"), tos3(""));
-			Option_v__pref__OS tmp = v__pref__os_from_string(target_os);
-			if (!tmp.ok) {
-				string err = tmp.v_error;
-				int errcode = tmp.ecode;
+			i++;
+			Option_v__pref__OS target_os_kind = v__pref__os_from_string(target_os);
+			if (!target_os_kind.ok) {
+				string err = target_os_kind.v_error;
+				int errcode = target_os_kind.ecode;
 				 // typeof it_expr_type: v.ast.CallExpr
 				// last_type: v.ast.ExprStmt
 				// last_expr_result_type: void
+				if (string_eq(target_os, tos3("cross"))) {
+					res->output_cross_c = true;
+					continue;
+				}
 				println(_STR("unknown operating system target `%.*s`", target_os.len, target_os.str));
 				v_exit(1);
 			};
-			res->os = /*opt*/(*(v__pref__OS*)tmp.data);
-			i++;
+			res->os = /*opt*/(*(v__pref__OS*)target_os_kind.data);
 		}else if (string_eq(arg, tos3("-cflags"))) {
 			res->cflags = os__cmdline__option(current_args, tos3("-cflags"), tos3(""));
 			i++;
@@ -7747,9 +7751,9 @@ multi_return_v__pref__Preferences_string parse_args(array_string args) {
 		}else {
 			bool should_continue = false;
 			// FOR IN array
-			array tmp3 = _const_list_of_flags_with_param;
-			for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
-				string flag_with_param = ((string*)tmp3.data)[tmp4];
+			array tmp4 = _const_list_of_flags_with_param;
+			for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
+				string flag_with_param = ((string*)tmp4.data)[tmp5];
 				if (string_eq(_STR("-%.*s", flag_with_param.len, flag_with_param.str), arg)) {
 					should_continue = true;
 					i++;
