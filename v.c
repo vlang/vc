@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ebc4137"
+#define V_COMMIT_HASH "6180b84"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1247718"
+#define V_COMMIT_HASH "ebc4137"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ebc4137"
+#define V_CURRENT_COMMIT_HASH "6180b84"
 #endif
 
 
@@ -3571,6 +3571,7 @@ void v__gen__x64__Gen_ret(v__gen__x64__Gen* g);
 void v__gen__x64__Gen_push(v__gen__x64__Gen* g, v__gen__x64__Register reg);
 void v__gen__x64__Gen_pop(v__gen__x64__Gen* g, v__gen__x64__Register reg);
 void v__gen__x64__Gen_sub32(v__gen__x64__Gen* g, v__gen__x64__Register reg, int val);
+void v__gen__x64__Gen_add(v__gen__x64__Gen* g, v__gen__x64__Register reg, int val);
 void v__gen__x64__Gen_leave(v__gen__x64__Gen* g);
 int v__gen__x64__Gen_gen_loop_start(v__gen__x64__Gen* g, int from);
 void v__gen__x64__Gen_gen_loop_end(v__gen__x64__Gen* g, int to, int label);
@@ -26316,6 +26317,13 @@ void v__gen__x64__Gen_sub32(v__gen__x64__Gen* g, v__gen__x64__Register reg, int 
 	v__gen__x64__Gen_write32(g, val);
 }
 
+void v__gen__x64__Gen_add(v__gen__x64__Gen* g, v__gen__x64__Register reg, int val) {
+	v__gen__x64__Gen_write8(g, 0x48);
+	v__gen__x64__Gen_write8(g, 0x81);
+	v__gen__x64__Gen_write8(g, 0xe8 + reg);
+	v__gen__x64__Gen_write32(g, val);
+}
+
 void v__gen__x64__Gen_leave(v__gen__x64__Gen* g) {
 	v__gen__x64__Gen_write8(g, 0xc9);
 }
@@ -26565,6 +26573,7 @@ void v__gen__x64__Gen_fn_decl(v__gen__x64__Gen* g, v__ast__FnDecl node) {
 		v__gen__x64__Gen_register_function_address(g, node.name);
 		v__gen__x64__Gen_push(g, v__gen__x64__Register_rbp);
 		v__gen__x64__Gen_mov_rbp_rsp(g);
+		v__gen__x64__Gen_sub32(g, v__gen__x64__Register_rsp, 0x20);
 	}
 	if (node.args.len > 0) {
 	}
