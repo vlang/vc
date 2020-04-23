@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "bea918b"
+#define V_COMMIT_HASH "8b5573a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7e40012"
+#define V_COMMIT_HASH "bea918b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "bea918b"
+#define V_CURRENT_COMMIT_HASH "8b5573a"
 #endif
 
 
@@ -16100,7 +16100,7 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		bool tmp19;
 		{ /* if guard */ Option_v__table__Fn _ = v__table__Table_find_fn(p->table, name);
 		if ((tmp19 = _.ok)) {
-			v__parser__Parser_error(p, _STR("redefinition of `%.*s`", name.len, name.str));
+			v__parser__Parser_error(p, _STR("redefinition of function `%.*s`", name.len, name.str));
 		}}
 		v__table__Table_register_fn(p->table, (v__table__Fn){
 			.name = name,
@@ -16149,9 +16149,9 @@ v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_5230 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_5230.arg0;
-	bool is_variadic = mr_5230.arg1;
+	multi_return_array_v__table__Arg_bool mr_5239 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_5239.arg0;
+	bool is_variadic = mr_5239.arg1;
 	// FOR IN array
 	array tmp1 = args;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
@@ -16352,10 +16352,10 @@ v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 			key_var_name = val_var_name;
 			val_var_name = v__parser__Parser_check_name(p);
 			if (v__ast__Scope_known_var(p->scope, key_var_name)) {
-				v__parser__Parser_error(p, _STR("redefinition of `%.*s`", key_var_name.len, key_var_name.str));
+				v__parser__Parser_error(p, _STR("redefinition of key iteration variable `%.*s`", key_var_name.len, key_var_name.str));
 			}
 			if (v__ast__Scope_known_var(p->scope, val_var_name)) {
-				v__parser__Parser_error(p, _STR("redefinition of `%.*s`", val_var_name.len, val_var_name.str));
+				v__parser__Parser_error(p, _STR("redefinition of value iteration variable `%.*s`", val_var_name.len, val_var_name.str));
 			}
 			v__ast__Scope_register(p->scope, key_var_name, /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){
 				.name = key_var_name,
@@ -16365,11 +16365,11 @@ v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 				.pos = {0},
 			}}, sizeof(v__ast__Var)), .typ = 205 /* v.ast.Var */});
 		} else if (v__ast__Scope_known_var(p->scope, val_var_name)) {
-			v__parser__Parser_error(p, _STR("redefinition of `%.*s`", val_var_name.len, val_var_name.str));
+			v__parser__Parser_error(p, _STR("redefinition of value iteration variable `%.*s`", val_var_name.len, val_var_name.str));
 		}
 		v__parser__Parser_check(p, v__token__Kind_key_in);
 		if (p->tok.kind == v__token__Kind_name && (string_eq(p->tok.lit, key_var_name) || string_eq(p->tok.lit, val_var_name))) {
-			v__parser__Parser_error(p, _STR("redefinition of `%.*s`", p->tok.lit.len, p->tok.lit.str));
+			v__parser__Parser_error(p, _STR("in a `for x in array` loop, the key or value iteration variable `%.*s` can not be the same as the array variable", p->tok.lit.len, p->tok.lit.str));
 		}
 		v__ast__Expr cond = v__parser__Parser_expr(p, 0);
 		v__ast__Expr high_expr = (v__ast__Expr){
