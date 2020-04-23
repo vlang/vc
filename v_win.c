@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "adb8fb1"
+#define V_COMMIT_HASH "4f45675"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1a79e54"
+#define V_COMMIT_HASH "adb8fb1"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "adb8fb1"
+#define V_CURRENT_COMMIT_HASH "4f45675"
 #endif
 
 
@@ -22493,6 +22493,9 @@ void v__gen__Gen_init(v__gen__Gen* g) {
 		}
 		strings__Builder_writeln(&g->comptime_defines, tos3(""));
 	}
+	if (g->pref->is_debug || _IN(string, tos3("debug"), g->pref->compile_defines)) {
+		strings__Builder_writeln(&g->comptime_defines, tos3("#define _VDEBUG (1)"));
+	}
 }
 
 void v__gen__Gen_finish(v__gen__Gen* g) {
@@ -24532,9 +24535,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_65221 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_65221.arg0;
-	string type_of_last_expression = mr_65221.arg1;
+	multi_return_string_string mr_65333 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_65333.arg0;
+	string type_of_last_expression = mr_65333.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
