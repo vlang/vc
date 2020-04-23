@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "f2e505d"
+#define V_COMMIT_HASH "2b4f72e"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8b5573a"
+#define V_COMMIT_HASH "f2e505d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "f2e505d"
+#define V_CURRENT_COMMIT_HASH "2b4f72e"
 #endif
 
 
@@ -17136,7 +17136,10 @@ v__ast__Stmt v__parser__Parser_top_stmt(v__parser__Parser* p) {
 		return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__InterfaceDecl[]) {v__parser__Parser_interface_decl(p)}, sizeof(v__ast__InterfaceDecl)), .typ = 203 /* v.ast.InterfaceDecl */};
 	}else if (p->tok.kind == v__token__Kind_key_import) {
 		array_v__ast__Import node = v__parser__Parser_import_stmt(p);
-		_PUSH_MANY(&p->ast_imports, (node), tmp3, array_v__ast__Import);
+		if (node.len == 0) {
+			return v__parser__Parser_top_stmt(p);
+		}
+		_PUSH_MANY(&p->ast_imports, (node), tmp4, array_v__ast__Import);
 		return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Import[]) {(*(v__ast__Import*)array_get(node, 0))}, sizeof(v__ast__Import)), .typ = 182 /* v.ast.Import */};
 	}else if (p->tok.kind == v__token__Kind_key_global) {
 		return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__GlobalDecl[]) {v__parser__Parser_global_decl(p)}, sizeof(v__ast__GlobalDecl)), .typ = 179 /* v.ast.GlobalDecl */};
