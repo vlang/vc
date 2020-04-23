@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "1247718"
+#define V_COMMIT_HASH "ebc4137"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0f4c5fb"
+#define V_COMMIT_HASH "1247718"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "1247718"
+#define V_CURRENT_COMMIT_HASH "ebc4137"
 #endif
 
 
@@ -10282,6 +10282,9 @@ string os__executable() {
 }
 
 string os__executable_fallback() {
+	if (_const_os__args.len == 0) {
+		return tos3("");
+	}
 	string exepath = (*(string*)array_get(_const_os__args, 0));
 	if (!os__is_abs_path(exepath)) {
 		if (string_contains(exepath, _const_os__path_separator)) {
