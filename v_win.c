@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "45e2108"
+#define V_COMMIT_HASH "5664cbd"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9fe0ca5"
+#define V_COMMIT_HASH "45e2108"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "45e2108"
+#define V_CURRENT_COMMIT_HASH "5664cbd"
 #endif
 
 
@@ -17884,7 +17884,11 @@ v__ast__EnumDecl v__parser__Parser_enum_decl(v__parser__Parser* p) {
 	}
 	v__parser__Parser_check(p, v__token__Kind_key_enum);
 	v__token__Position end_pos = v__token__Token_position(&p->tok);
-	string name = v__parser__Parser_prepend_mod(p, v__parser__Parser_check_name(p));
+	string enum_name = v__parser__Parser_check_name(p);
+	if (enum_name.len > 0 && !byte_is_capital(string_at(enum_name, 0))) {
+		v__parser__verror(_STR("enum name `%.*s` must begin with a capital letter", enum_name.len, enum_name.str));
+	}
+	string name = v__parser__Parser_prepend_mod(p, enum_name);
 	v__parser__Parser_check(p, v__token__Kind_lcbr);
 	array_string vals = __new_array(0, 0, sizeof(string));
 	array_v__ast__EnumField fields = __new_array(0, 0, sizeof(v__ast__EnumField));
