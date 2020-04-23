@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "1a79e54"
+#define V_COMMIT_HASH "adb8fb1"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2b4f72e"
+#define V_COMMIT_HASH "1a79e54"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "1a79e54"
+#define V_CURRENT_COMMIT_HASH "adb8fb1"
 #endif
 
 
@@ -1900,6 +1900,7 @@ struct v__ast__CompIf {
 	array_v__ast__Stmt stmts;
 	bool is_not;
 	v__token__Position pos;
+	bool is_opt;
 	bool has_else;
 	array_v__ast__Stmt else_stmts;
 };
@@ -2136,6 +2137,7 @@ struct v__gen__Gen {
 	strings__Builder gowrappers;
 	strings__Builder stringliterals;
 	strings__Builder auto_str_funcs;
+	strings__Builder comptime_defines;
 	v__table__Table* table;
 	v__pref__Preferences* pref;
 	v__ast__File file;
@@ -2596,6 +2598,7 @@ array_string _const_list_of_flags_with_param; // inited later
 multi_return_v__pref__Preferences_string parse_args(array_string args);
 void invoke_help_and_exit(array_string remaining);
 void create_symlink();
+void parse_define(v__pref__Preferences* prefs, string define);
 strings__Builder strings__new_builder(int initial_size);
 void strings__Builder_write_bytes(strings__Builder* b, byteptr bytes, int howmany);
 void strings__Builder_write_b(strings__Builder* b, byte data);
@@ -3595,7 +3598,7 @@ multi_return_string_string v__gen__Gen_type_of_last_statement(v__gen__Gen* g, ar
 string v__gen__Gen_type_of_call_expr(v__gen__Gen* g, v__ast__Expr node);
 void v__gen__Gen_in_optimization(v__gen__Gen* g, v__ast__Expr left, v__ast__ArrayInit right);
 string v__gen__op_to_fn_name(string name);
-string v__gen__comp_if_to_ifdef(string name);
+string v__gen__Gen_comp_if_to_ifdef(v__gen__Gen* g, string name, bool is_comptime_optional);
 string v__gen__c_name(string name_);
 string v__gen__Gen_type_default(v__gen__Gen g, v__table__Type typ);
 void v__gen__Gen_write_tests_main(v__gen__Gen* g);
@@ -4146,7 +4149,7 @@ void array_sort_with_compare(array* a, voidptr compare) {
 
 void array_insert(array* a, int i, voidptr val) {
 	
-#ifndef NO_BOUNDS_CHECK
+#ifndef CUSTOM_DEFINE_no_bounds_checking
 	// #if not no_bounds_checking
 		if (i < 0 || i > a->len) {
 			v_panic(_STR("array.insert: index out of range (i == %"PRId32", a.len == %"PRId32")", i, a->len));
@@ -4166,7 +4169,7 @@ void array_prepend(array* a, voidptr val) {
 
 void array_delete(array* a, int i) {
 	
-#ifndef NO_BOUNDS_CHECK
+#ifndef CUSTOM_DEFINE_no_bounds_checking
 	// #if not no_bounds_checking
 		if (i < 0 || i >= a->len) {
 			v_panic(_STR("array.delete: index out of range (i == %"PRId32", a.len == %"PRId32")", i, a->len));
@@ -4190,7 +4193,7 @@ void array_trim(array* a, int index) {
 
 voidptr array_get(array a, int i) {
 	
-#ifndef NO_BOUNDS_CHECK
+#ifndef CUSTOM_DEFINE_no_bounds_checking
 	// #if not no_bounds_checking
 		if (i < 0 || i >= a.len) {
 			v_panic(_STR("array.get: index out of range (i == %"PRId32", a.len == %"PRId32")", i, a.len));
@@ -4202,7 +4205,7 @@ voidptr array_get(array a, int i) {
 
 voidptr array_first(array a) {
 	
-#ifndef NO_BOUNDS_CHECK
+#ifndef CUSTOM_DEFINE_no_bounds_checking
 	// #if not no_bounds_checking
 		if (a.len == 0) {
 			v_panic(tos3("array.first: array is empty"));
@@ -4214,7 +4217,7 @@ voidptr array_first(array a) {
 
 voidptr array_last(array a) {
 	
-#ifndef NO_BOUNDS_CHECK
+#ifndef CUSTOM_DEFINE_no_bounds_checking
 	// #if not no_bounds_checking
 		if (a.len == 0) {
 			v_panic(tos3("array.last: array is empty"));
@@ -4227,7 +4230,7 @@ voidptr array_last(array a) {
 array array_slice(array a, int start, int _end) {
 	int end = _end;
 	
-#ifndef NO_BOUNDS_CHECK
+#ifndef CUSTOM_DEFINE_no_bounds_checking
 	// #if not no_bounds_checking
 		if (start > end) {
 			v_panic(_STR("array.slice: invalid slice index (%"PRId32" > %"PRId32")", start, end));
@@ -4273,7 +4276,7 @@ array array_clone(array* a) {
 array array_slice_clone(array* a, int start, int _end) {
 	int end = _end;
 	
-#ifndef NO_BOUNDS_CHECK
+#ifndef CUSTOM_DEFINE_no_bounds_checking
 	// #if not no_bounds_checking
 		if (start > end) {
 			v_panic(_STR("array.slice: invalid slice index (%"PRId32" > %"PRId32")", start, end));
@@ -4298,7 +4301,7 @@ array array_slice_clone(array* a, int start, int _end) {
 
 void array_set(array* a, int i, voidptr val) {
 	
-#ifndef NO_BOUNDS_CHECK
+#ifndef CUSTOM_DEFINE_no_bounds_checking
 	// #if not no_bounds_checking
 		if (i < 0 || i >= a->len) {
 			v_panic(_STR("array.set: index out of range (i == %"PRId32", a.len == %"PRId32")", i, a->len));
@@ -5399,7 +5402,7 @@ u32 DenseArray_push(DenseArray* d, KeyValue kv) {
 
 voidptr DenseArray_get(DenseArray d, int i) {
 	
-#ifndef NO_BOUNDS_CHECK
+#ifndef CUSTOM_DEFINE_no_bounds_checking
 	// #if not no_bounds_checking
 		if (i < 0 || i >= d.size) {
 			v_panic(_STR("DenseArray.get: index out of range (i == %"PRId32", d.len == %"PRIu32")", i, d.size));
@@ -6509,7 +6512,7 @@ string string_substr2(string s, int start, int _end, bool end_max) {
 
 string string_substr(string s, int start, int end) {
 	
-#ifndef NO_BOUNDS_CHECK
+#ifndef CUSTOM_DEFINE_no_bounds_checking
 	// #if not no_bounds_checking
 		if (start > end || start > s.len || end > s.len || start < 0 || end < 0) {
 			v_panic(_STR("substr(%"PRId32", %"PRId32") out of bounds (len=%"PRId32")", start, end, s.len));
@@ -7109,7 +7112,7 @@ int ustring_count(ustring u, ustring substr) {
 
 string ustring_substr(ustring u, int _start, int _end) {
 	
-#ifndef NO_BOUNDS_CHECK
+#ifndef CUSTOM_DEFINE_no_bounds_checking
 	// #if not no_bounds_checking
 		if (_start > _end || _start > u.len || _end > u.len || _start < 0 || _end < 0) {
 			v_panic(_STR("substr(%"PRId32", %"PRId32") out of bounds (len=%"PRId32")", _start, _end, u.len));
@@ -7136,7 +7139,7 @@ string ustring_right(ustring u, int pos) {
 
 byte string_at(string s, int idx) {
 	
-#ifndef NO_BOUNDS_CHECK
+#ifndef CUSTOM_DEFINE_no_bounds_checking
 	// #if not no_bounds_checking
 		if (idx < 0 || idx >= s.len) {
 			v_panic(_STR("string index out of range: %"PRId32" / %"PRId32"", idx, s.len));
@@ -7148,7 +7151,7 @@ byte string_at(string s, int idx) {
 
 string ustring_at(ustring u, int idx) {
 	
-#ifndef NO_BOUNDS_CHECK
+#ifndef CUSTOM_DEFINE_no_bounds_checking
 	// #if not no_bounds_checking
 		if (idx < 0 || idx >= u.len) {
 			v_panic(_STR("string index out of range: %"PRId32" / %"PRId32"", idx, u.runes.len));
@@ -7665,6 +7668,7 @@ multi_return_v__pref__Preferences_string parse_args(array_string args) {
 	for (int i = 0;
 	i < args.len; i++) {
 		string arg = (*(string*)array_get(args, i));
+		array_string current_args = array_slice(args, i, args.len);
 		if (string_eq(arg, tos3("-v"))) {
 			res->is_verbose = true;
 		}else if (string_eq(arg, tos3("-cg"))) {
@@ -7701,7 +7705,7 @@ multi_return_v__pref__Preferences_string parse_args(array_string args) {
 		}else if (string_eq(arg, tos3("-x64"))) {
 			res->backend = v__pref__Backend_x64;
 		}else if (string_eq(arg, tos3("-os"))) {
-			string target_os = os__cmdline__option(args, tos3("-os"), tos3(""));
+			string target_os = os__cmdline__option(current_args, tos3("-os"), tos3(""));
 			Option_v__pref__OS tmp = v__pref__os_from_string(target_os);
 			if (!tmp.ok) {
 				string err = tmp.v_error;
@@ -7715,16 +7719,22 @@ multi_return_v__pref__Preferences_string parse_args(array_string args) {
 			res->os = /*opt*/(*(v__pref__OS*)tmp.data);
 			i++;
 		}else if (string_eq(arg, tos3("-cflags"))) {
-			res->cflags = os__cmdline__option(args, tos3("-cflags"), tos3(""));
+			res->cflags = os__cmdline__option(current_args, tos3("-cflags"), tos3(""));
+			i++;
+		}else if (string_eq(arg, tos3("-define")) || string_eq(arg, tos3("-d"))) {
+			if (current_args.len > 1) {
+				string define = (*(string*)array_get(current_args, 1));
+				parse_define(res, define);
+			}
 			i++;
 		}else if (string_eq(arg, tos3("-cc"))) {
-			res->ccompiler = os__cmdline__option(args, tos3("-cc"), tos3("cc"));
+			res->ccompiler = os__cmdline__option(current_args, tos3("-cc"), tos3("cc"));
 			i++;
 		}else if (string_eq(arg, tos3("-o"))) {
-			res->out_name = os__cmdline__option(args, tos3("-o"), tos3(""));
+			res->out_name = os__cmdline__option(current_args, tos3("-o"), tos3(""));
 			i++;
 		}else if (string_eq(arg, tos3("-b"))) {
-			Option_v__pref__Backend b = v__pref__backend_from_string(os__cmdline__option(args, tos3("-b"), tos3("c")));
+			Option_v__pref__Backend b = v__pref__backend_from_string(os__cmdline__option(current_args, tos3("-b"), tos3("c")));
 			if (!b.ok) {
 				string err = b.v_error;
 				int errcode = b.ecode;
@@ -7737,9 +7747,9 @@ multi_return_v__pref__Preferences_string parse_args(array_string args) {
 		}else {
 			bool should_continue = false;
 			// FOR IN array
-			array tmp2 = _const_list_of_flags_with_param;
-			for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
-				string flag_with_param = ((string*)tmp2.data)[tmp3];
+			array tmp3 = _const_list_of_flags_with_param;
+			for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
+				string flag_with_param = ((string*)tmp3.data)[tmp4];
 				if (string_eq(_STR("-%.*s", flag_with_param.len, flag_with_param.str), arg)) {
 					should_continue = true;
 					i++;
@@ -7829,6 +7839,28 @@ void create_symlink() {
 	} else {
 		println(_STR("Failed to create symlink \"%.*s\". Try again with sudo.", link_path.len, link_path.str));
 	}
+}
+
+void parse_define(v__pref__Preferences* prefs, string define) {
+	array_string define_parts = string_split(define, tos3("="));
+	if (define_parts.len == 1) {
+		array_push(&prefs->compile_defines, &(string[]){ define });
+		array_push(&prefs->compile_defines_all, &(string[]){ define });
+		return;
+	}
+	if (define_parts.len == 2) {
+		array_push(&prefs->compile_defines_all, &(string[]){ (*(string*)array_get(define_parts, 0)) });
+		if (string_eq((*(string*)array_get(define_parts, 1)), tos3("0"))) {
+		}else if (string_eq((*(string*)array_get(define_parts, 1)), tos3("1"))) {
+			array_push(&prefs->compile_defines, &(string[]){ (*(string*)array_get(define_parts, 0)) });
+		}else {
+			println(string_add(_STR("V error: Unknown define argument value `%.*s` for %.*s.", (*(string*)array_get(define_parts, 1)).len, (*(string*)array_get(define_parts, 1)).str, (*(string*)array_get(define_parts, 0)).len, (*(string*)array_get(define_parts, 0)).str), tos3("Expected `0` or `1`.")));
+			v_exit(1);
+		};
+		return;
+	}
+	println(_STR("V error: Unknown define argument: %.*s. Expected at most one `=`.", define.len, define.str));
+	v_exit(1);
 }
 
 strings__Builder strings__new_builder(int initial_size) {
@@ -15748,14 +15780,17 @@ v__ast__CompIf v__parser__Parser_comp_if(v__parser__Parser* p) {
 			}
 		}
 	}
+	bool is_opt = false;
 	if (p->tok.kind == v__token__Kind_question) {
 		v__parser__Parser_next(p);
+		is_opt = true;
 	}
 	if (!skip_os) {
 		stmts = v__parser__Parser_parse_block(p);
 	}
 	v__ast__CompIf node = (v__ast__CompIf){
 		.is_not = is_not,
+		.is_opt = is_opt,
 		.pos = pos,
 		.val = val,
 		.stmts = stmts,
@@ -22356,6 +22391,7 @@ string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__P
 		.gowrappers = strings__new_builder(100),
 		.stringliterals = strings__new_builder(100),
 		.auto_str_funcs = strings__new_builder(100),
+		.comptime_defines = strings__new_builder(100),
 		.inits = strings__new_builder(100),
 		.table = table,
 		.pref = pref,
@@ -22415,7 +22451,7 @@ string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__P
 		v__gen__Gen_write_tests_main(&g);
 	}
 	v__gen__Gen_finish(&g);
-	return string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(v__gen__Gen_hashes(g), tos3("\n// V typedefs:\n")), strings__Builder_str(&g.typedefs)), tos3("\n// V typedefs2:\n")), strings__Builder_str(&g.typedefs2)), tos3("\n// V cheaders:\n")), strings__Builder_str(&g.cheaders)), tos3("\n// V includes:\n")), strings__Builder_str(&g.includes)), tos3("\n// V definitions:\n")), strings__Builder_str(&g.definitions)), v__gen__Gen_interface_table(&g)), tos3("\n// V gowrappers:\n")), strings__Builder_str(&g.gowrappers)), tos3("\n// V stringliterals:\n")), strings__Builder_str(&g.stringliterals)), tos3("\n// V auto str functions:\n")), strings__Builder_str(&g.auto_str_funcs)), tos3("\n// V out\n")), strings__Builder_str(&g.out)), tos3("\n// THE END."));
+	return string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(string_add(v__gen__Gen_hashes(g), strings__Builder_str(&g.comptime_defines)), tos3("\n// V typedefs:\n")), strings__Builder_str(&g.typedefs)), tos3("\n// V typedefs2:\n")), strings__Builder_str(&g.typedefs2)), tos3("\n// V cheaders:\n")), strings__Builder_str(&g.cheaders)), tos3("\n// V includes:\n")), strings__Builder_str(&g.includes)), tos3("\n// V definitions:\n")), strings__Builder_str(&g.definitions)), v__gen__Gen_interface_table(&g)), tos3("\n// V gowrappers:\n")), strings__Builder_str(&g.gowrappers)), tos3("\n// V stringliterals:\n")), strings__Builder_str(&g.stringliterals)), tos3("\n// V auto str functions:\n")), strings__Builder_str(&g.auto_str_funcs)), tos3("\n// V out\n")), strings__Builder_str(&g.out)), tos3("\n// THE END."));
 }
 
 string v__gen__Gen_hashes(v__gen__Gen g) {
@@ -22444,6 +22480,18 @@ void v__gen__Gen_init(v__gen__Gen* g) {
 	strings__Builder_writeln(&g->stringliterals, tos3("// >> string literal consts"));
 	if (g->pref->build_mode != v__pref__BuildMode_build_module) {
 		strings__Builder_writeln(&g->stringliterals, tos3("void vinit_string_literals(){"));
+	}
+	if (g->pref->compile_defines_all.len > 0) {
+		strings__Builder_writeln(&g->comptime_defines, tos3("// V compile time defines by -d or -define flags:"));
+		strings__Builder_writeln(&g->comptime_defines, string_add(tos3("//     All custom defines      : "), array_string_join(g->pref->compile_defines_all, tos3(","))));
+		strings__Builder_writeln(&g->comptime_defines, string_add(tos3("//     Turned ON custom defines: "), array_string_join(g->pref->compile_defines, tos3(","))));
+		// FOR IN array
+		array tmp4 = g->pref->compile_defines;
+		for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
+			string cdefine = ((string*)tmp4.data)[tmp5];
+			strings__Builder_writeln(&g->comptime_defines, _STR("#define CUSTOM_DEFINE_%.*s", cdefine.len, cdefine.str));
+		}
+		strings__Builder_writeln(&g->comptime_defines, tos3(""));
 	}
 }
 
@@ -24484,9 +24532,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_64575 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_64575.arg0;
-	string type_of_last_expression = mr_64575.arg1;
+	multi_return_string_string mr_65221 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_65221.arg0;
+	string type_of_last_expression = mr_65221.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -24570,7 +24618,7 @@ string v__gen__op_to_fn_name(string name) {
 	return (string_eq(name, tos3("+"))) ?  ( tos3("_op_plus") )  : (string_eq(name, tos3("-"))) ?  ( tos3("_op_minus") )  : (string_eq(name, tos3("*"))) ?  ( tos3("_op_mul") )  : (string_eq(name, tos3("/"))) ?  ( tos3("_op_div") )  : (string_eq(name, tos3("%"))) ?  ( tos3("_op_mod") )  :  ( _STR("bad op %.*s", name.len, name.str) ) ;
 }
 
-string v__gen__comp_if_to_ifdef(string name) {
+string v__gen__Gen_comp_if_to_ifdef(v__gen__Gen* g, string name, bool is_comptime_optional) {
 	if (string_eq(name, tos3("windows"))) {
 		return tos3("_WIN32");
 	}else if (string_eq(name, tos3("mac"))) {
@@ -24614,7 +24662,7 @@ string v__gen__comp_if_to_ifdef(string name) {
 	}else if (string_eq(name, tos3("prealloc"))) {
 		return tos3("VPREALLOC");
 	}else if (string_eq(name, tos3("no_bounds_checking"))) {
-		return tos3("NO_BOUNDS_CHECK");
+		return tos3("CUSTOM_DEFINE_no_bounds_checking");
 	}else if (string_eq(name, tos3("x64"))) {
 		return tos3("TARGET_IS_64BIT");
 	}else if (string_eq(name, tos3("x32"))) {
@@ -24624,6 +24672,9 @@ string v__gen__comp_if_to_ifdef(string name) {
 	}else if (string_eq(name, tos3("big_endian"))) {
 		return tos3("TARGET_ORDER_IS_BIG");
 	}else {
+		if (is_comptime_optional || g->pref->compile_defines_all.len > 0 && _IN(string, name, g->pref->compile_defines_all)) {
+			return _STR("CUSTOM_DEFINE_%.*s", name.len, name.str);
+		}
 		v__gen__verror(_STR("bad os ifdef name \"%.*s\"", name.len, name.str));
 	};
 	return tos3("");
@@ -24768,7 +24819,7 @@ bool v__gen__Gen_is_importing_os(v__gen__Gen g) {
 }
 
 void v__gen__Gen_comp_if(v__gen__Gen* g, v__ast__CompIf it) {
-	string ifdef = v__gen__comp_if_to_ifdef(it.val);
+	string ifdef = v__gen__Gen_comp_if_to_ifdef(g, it.val, it.is_opt);
 	if (it.is_not) {
 		v__gen__Gen_writeln(g, string_add(tos3("\n#ifndef "), ifdef));
 		v__gen__Gen_writeln(g, _STR("// #if not %.*s", it.val.len, it.val.str));
