@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ba85b8d"
+#define V_COMMIT_HASH "6b31ebe"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6180b84"
+#define V_COMMIT_HASH "ba85b8d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ba85b8d"
+#define V_CURRENT_COMMIT_HASH "6b31ebe"
 #endif
 
 
@@ -4553,6 +4553,11 @@ void eprintln(string s) {
 	
 #ifndef _WIN32
 	// #if not windows
+		fflush(stdout);
+		fflush(stderr);
+		fprintf(stderr, "%.*s\n", s.len, s.str);
+		fflush(stderr);
+		return;
 	
 #endif
 	println(s);
@@ -4565,6 +4570,11 @@ void eprint(string s) {
 	
 #ifndef _WIN32
 	// #if not windows
+		fflush(stdout);
+		fflush(stderr);
+		fprintf(stderr, "%.*s", s.len, s.str);
+		fflush(stderr);
+		return;
 	
 #endif
 	print(s);
@@ -7701,18 +7711,22 @@ multi_return_v__pref__Preferences_string parse_args(array_string args) {
 			res->backend = v__pref__Backend_x64;
 		}else if (string_eq(arg, tos3("-os"))) {
 			string target_os = os__cmdline__option(current_args, tos3("-os"), tos3(""));
-			Option_v__pref__OS tmp = v__pref__os_from_string(target_os);
-			if (!tmp.ok) {
-				string err = tmp.v_error;
-				int errcode = tmp.ecode;
+			i++;
+			Option_v__pref__OS target_os_kind = v__pref__os_from_string(target_os);
+			if (!target_os_kind.ok) {
+				string err = target_os_kind.v_error;
+				int errcode = target_os_kind.ecode;
 				 // typeof it_expr_type: v.ast.CallExpr
 				// last_type: v.ast.ExprStmt
 				// last_expr_result_type: void
+				if (string_eq(target_os, tos3("cross"))) {
+					res->output_cross_c = true;
+					continue;
+				}
 				println(_STR("unknown operating system target `%.*s`", target_os.len, target_os.str));
 				v_exit(1);
 			};
-			res->os = /*opt*/(*(v__pref__OS*)tmp.data);
-			i++;
+			res->os = /*opt*/(*(v__pref__OS*)target_os_kind.data);
 		}else if (string_eq(arg, tos3("-cflags"))) {
 			res->cflags = os__cmdline__option(current_args, tos3("-cflags"), tos3(""));
 			i++;
@@ -7742,9 +7756,9 @@ multi_return_v__pref__Preferences_string parse_args(array_string args) {
 		}else {
 			bool should_continue = false;
 			// FOR IN array
-			array tmp3 = _const_list_of_flags_with_param;
-			for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
-				string flag_with_param = ((string*)tmp3.data)[tmp4];
+			array tmp4 = _const_list_of_flags_with_param;
+			for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
+				string flag_with_param = ((string*)tmp4.data)[tmp5];
 				if (string_eq(_STR("-%.*s", flag_with_param.len, flag_with_param.str), arg)) {
 					should_continue = true;
 					i++;
@@ -9611,6 +9625,17 @@ os__FileMode os__inode(string path) {
 	
 #ifndef _WIN32
 	// #if not windows
+		if ((attr.st_mode & S_IFMT) == S_IFCHR) {
+			typ = os__FileType_character_device;
+		} else if ((attr.st_mode & S_IFMT) == S_IFBLK) {
+			typ = os__FileType_block_device;
+		} else if ((attr.st_mode & S_IFMT) == S_IFIFO) {
+			typ = os__FileType_fifo;
+		} else if ((attr.st_mode & S_IFMT) == S_IFLNK) {
+			typ = os__FileType_symbolic_link;
+		} else if ((attr.st_mode & S_IFMT) == S_IFSOCK) {
+			typ = os__FileType_socket;
+		}
 	
 #endif
 	
@@ -10077,6 +10102,13 @@ int os__system(string cmd) {
 	
 #ifndef _WIN32
 	// #if not windows
+		multi_return_int_bool mr_8921 = os__posix_wait4_to_exit_status(ret);
+		int pret = mr_8921.arg0;
+		bool is_signaled = mr_8921.arg1;
+		if (is_signaled) {
+			println(string_add(string_add(_STR("Terminated by signal %2d (", ret), os__sigint_to_signal_name(pret)), tos3(")")));
+		}
+		ret = pret;
 	
 #endif
 	return ret;
@@ -10110,6 +10142,28 @@ string os__sigint_to_signal_name(int si) {
 	
 #ifdef __linux__
 	// #if linux
+		if (si == 30 || si == 10 || si == 16) {
+			return tos3("SIGUSR1");
+		}else if (si == 31 || si == 12 || si == 17) {
+			return tos3("SIGUSR2");
+		}else if (si == 20 || si == 17 || si == 18) {
+			return tos3("SIGCHLD");
+		}else if (si == 19 || si == 18 || si == 25) {
+			return tos3("SIGCONT");
+		}else if (si == 17 || si == 19 || si == 23) {
+			return tos3("SIGSTOP");
+		}else if (si == 18 || si == 20 || si == 24) {
+			return tos3("SIGTSTP");
+		}else if (si == 21 || si == 21 || si == 26) {
+			return tos3("SIGTTIN");
+		}else if (si == 22 || si == 22 || si == 27) {
+			return tos3("SIGTTOU");
+		}else if (si == 5) {
+			return tos3("SIGTRAP");
+		}else if (si == 7) {
+			return tos3("SIGBUS");
+		}else {
+		};
 	
 #endif
 	return tos3("unknown");
@@ -10139,6 +10193,15 @@ bool os__is_executable(string path) {
 	
 #ifdef __sun
 	// #if solaris
+		struct stat statbuf = (struct stat){
+			.st_size = 0,
+			.st_mode = 0,
+			.st_mtime = 0,
+		};
+		if (stat(path.str, &statbuf) != 0) {
+			return false;
+		}
+		return ((((int)(statbuf.st_mode)) & (((_const_os__S_IXUSR | _const_os__S_IXGRP) | _const_os__S_IXOTH)))) != 0;
 	
 #endif
 	return access(path.str, _const_os__X_OK) != -1;
@@ -10212,6 +10275,7 @@ void os__rmdir(string path) {
 	
 #ifndef _WIN32
 	// #if not windows
+		rmdir(path.str);
 	
 #else
 		RemoveDirectory(string_to_wide(path));
@@ -10387,11 +10451,13 @@ string os__user_os() {
 	
 #ifdef __linux__
 	// #if linux
+		return tos3("linux");
 	
 #endif
 	
 #ifdef __APPLE__
 	// #if macos
+		return tos3("mac");
 	
 #endif
 	
@@ -10403,36 +10469,43 @@ string os__user_os() {
 	
 #ifdef __FreeBSD__
 	// #if freebsd
+		return tos3("freebsd");
 	
 #endif
 	
 #ifdef __OpenBSD__
 	// #if openbsd
+		return tos3("openbsd");
 	
 #endif
 	
 #ifdef __NetBSD__
 	// #if netbsd
+		return tos3("netbsd");
 	
 #endif
 	
 #ifdef __DragonFly__
 	// #if dragonfly
+		return tos3("dragonfly");
 	
 #endif
 	
 #ifdef __ANDROID__
 	// #if android
+		return tos3("android");
 	
 #endif
 	
 #ifdef __sun
 	// #if solaris
+		return tos3("solaris");
 	
 #endif
 	
 #ifdef __haiku__
 	// #if haiku
+		return tos3("haiku");
 	
 #endif
 	return tos3("unknown");
@@ -10467,6 +10540,8 @@ void os__clear() {
 	
 #ifndef _WIN32
 	// #if not windows
+		printf("\x1b[2J");
+		printf("\x1b[H");
 	
 #endif
 }
@@ -10481,6 +10556,7 @@ void os__on_segfault(voidptr f) {
 	
 #ifdef __APPLE__
 	// #if macos
+		printf("TODO");
 	
 #endif
 }
@@ -10492,6 +10568,13 @@ string os__executable() {
 	
 #ifdef __linux__
 	// #if linux
+		byteptr result = vcalloc(_const_os__MAX_PATH);
+		int count = readlink("/proc/self/exe", result, _const_os__MAX_PATH);
+		if (count < 0) {
+			eprintln(tos3("os.executable() failed at reading /proc/self/exe to get exe path"));
+			return os__executable_fallback();
+		}
+		return tos2(result);
 	
 #endif
 	
@@ -10506,11 +10589,26 @@ string os__executable() {
 	
 #ifdef __APPLE__
 	// #if macos
+		byteptr result = vcalloc(_const_os__MAX_PATH);
+		int pid = getpid();
+		int ret = proc_pidpath(pid, result, _const_os__MAX_PATH);
+		if (ret <= 0) {
+			eprintln(_STR("os.executable() failed at calling proc_pidpath with pid: %"PRId32" . proc_pidpath returned %"PRId32" ", pid, ret));
+			return os__executable_fallback();
+		}
+		return tos2(result);
 	
 #endif
 	
 #ifdef __FreeBSD__
 	// #if freebsd
+		byteptr result = vcalloc(_const_os__MAX_PATH);
+		array_int mib = new_array_from_c_array(4, 4, sizeof(int), (int[4]){
+		1, 14, 12, -1, 
+});
+		int size = _const_os__MAX_PATH;
+		sysctl(mib.data, 4, result, &size, 0, 0);
+		return tos2(result);
 	
 #endif
 	
@@ -10531,11 +10629,25 @@ string os__executable() {
 	
 #ifdef __NetBSD__
 	// #if netbsd
+		byteptr result = vcalloc(_const_os__MAX_PATH);
+		int count = readlink("/proc/curproc/exe", result, _const_os__MAX_PATH);
+		if (count < 0) {
+			eprintln(tos3("os.executable() failed at reading /proc/curproc/exe to get exe path"));
+			return os__executable_fallback();
+		}
+		return tos(result, count);
 	
 #endif
 	
 #ifdef __DragonFly__
 	// #if dragonfly
+		byteptr result = vcalloc(_const_os__MAX_PATH);
+		int count = readlink("/proc/curproc/file", result, _const_os__MAX_PATH);
+		if (count < 0) {
+			eprintln(tos3("os.executable() failed at reading /proc/curproc/file to get exe path"));
+			return os__executable_fallback();
+		}
+		return tos(result, count);
 	
 #endif
 	return os__executable_fallback();
@@ -10787,6 +10899,7 @@ int os__fork() {
 	
 #ifndef _WIN32
 	// #if not windows
+		pid = fork();
 	
 #endif
 	
@@ -10803,6 +10916,7 @@ int os__wait() {
 	
 #ifndef _WIN32
 	// #if not windows
+		pid = wait(0);
 	
 #endif
 	
@@ -10862,14 +10976,18 @@ string os__cache_dir() {
 	
 #ifndef _WIN32
 	// #if not windows
+		string xdg_cache_home = os__getenv(tos3("XDG_CACHE_HOME"));
+		if (string_ne(xdg_cache_home, tos3(""))) {
+			return xdg_cache_home;
+		}
 	
 #endif
 	string cdir = string_add(os__home_dir(), tos3(".cache"));
 	if (!os__is_dir(cdir) && !os__is_link(cdir)) {
-		Option_bool tmp2 = os__mkdir(cdir);
-		if (!tmp2.ok) {
-			string err = tmp2.v_error;
-			int errcode = tmp2.ecode;
+		Option_bool tmp3 = os__mkdir(cdir);
+		if (!tmp3.ok) {
+			string err = tmp3.v_error;
+			int errcode = tmp3.ecode;
 			 // typeof it_expr_type: v.ast.CallExpr
 			// last_type: v.ast.ExprStmt
 			// last_expr_result_type: void
@@ -12587,6 +12705,9 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		
 #ifndef _WIN32
 		// #if not windows
+			if (!string_contains(p->third_party_option, tos3("-fPIC"))) {
+				p->third_party_option = string_add(p->third_party_option, tos3(" -fPIC"));
+			}
 		
 #endif
 	}
@@ -12681,11 +12802,13 @@ v__pref__OS v__pref__get_host_os() {
 	
 #ifdef __linux__
 	// #if linux
+		return v__pref__OS_linux;
 	
 #endif
 	
 #ifdef __APPLE__
 	// #if macos
+		return v__pref__OS_mac;
 	
 #endif
 	
@@ -12697,31 +12820,37 @@ v__pref__OS v__pref__get_host_os() {
 	
 #ifdef __FreeBSD__
 	// #if freebsd
+		return v__pref__OS_freebsd;
 	
 #endif
 	
 #ifdef __OpenBSD__
 	// #if openbsd
+		return v__pref__OS_openbsd;
 	
 #endif
 	
 #ifdef __NetBSD__
 	// #if netbsd
+		return v__pref__OS_netbsd;
 	
 #endif
 	
 #ifdef __DragonFly__
 	// #if dragonfly
+		return v__pref__OS_dragonfly;
 	
 #endif
 	
 #ifdef __sun
 	// #if solaris
+		return v__pref__OS_solaris;
 	
 #endif
 	
 #ifdef __haiku__
 	// #if haiku
+		return v__pref__OS_haiku;
 	
 #endif
 	v_panic(tos3("unknown host OS"));
@@ -13460,6 +13589,8 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 		
 #ifndef _WIN32
 		// #if not windows
+			v__builder__Builder_cc_windows_cross(v);
+			return;
 		
 #endif
 	}
@@ -13479,6 +13610,20 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 		
 #ifdef __linux__
 		// #if linux
+			
+#ifndef __ANDROID__
+			// #if not android
+				string tcc_3rd = _STR("%.*s/thirdparty/tcc/bin/tcc", vdir.len, vdir.str);
+				string tcc_path = tos3("/var/tmp/tcc/bin/tcc");
+				if (os__exists(tcc_3rd) && !os__exists(tcc_path)) {
+					os__system(_STR("mv %.*s/thirdparty/tcc /var/tmp/", vdir.len, vdir.str));
+				}
+				if (string_eq(v->pref->ccompiler, tos3("cc")) && os__exists(tcc_path)) {
+					v->pref->ccompiler = tcc_path;
+					array_push(&a, &(string[]){ tos3("-m64") });
+				}
+			
+#endif
 		
 #else
 			v__builder__verror(tos3("-fast is only supported on Linux right now"));
@@ -13510,9 +13655,9 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 	string optimization_options = tos3("-O2");
 	string guessed_compiler = v->pref->ccompiler;
 	if (string_eq(guessed_compiler, tos3("cc")) && v->pref->is_prod) {
-		bool tmp21;
+		bool tmp24;
 		{ /* if guard */ Option_os__Result ccversion = os__exec(tos3("cc --version"));
-		if ((tmp21 = ccversion.ok)) {
+		if ((tmp24 = ccversion.ok)) {
 			if (/*opt*/(*(os__Result*)ccversion.data).exit_code == 0) {
 				if (string_contains(/*opt*/(*(os__Result*)ccversion.data).output, tos3("This is free software;")) && string_contains(/*opt*/(*(os__Result*)ccversion.data).output, tos3("Free Software Foundation, Inc."))) {
 					guessed_compiler = tos3("gcc");
@@ -13535,6 +13680,7 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 		
 #ifdef __OpenBSD__
 		// #if openbsd
+			have_flto = false;
 		
 #endif
 		if (have_flto) {
@@ -13552,6 +13698,7 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 		
 #ifdef __APPLE__
 		// #if macos
+			array_push(&a, &(string[]){ tos3(" -ferror-limit=5000 ") });
 		
 #endif
 	}
@@ -13606,9 +13753,9 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 		tos3("builtin.o"), tos3("math.o"), 
 });
 		// FOR IN array
-		array tmp62 = cached_files;
-		for (int tmp63 = 0; tmp63 < tmp62.len; tmp63++) {
-			string cfile = ((string*)tmp62.data)[tmp63];
+		array tmp66 = cached_files;
+		for (int tmp67 = 0; tmp67 < tmp66.len; tmp67++) {
+			string cfile = ((string*)tmp66.data)[tmp67];
 			string ofile = os__join_path(_const_v__pref__default_module_path, (varg_string){.len=3,.args={tos3("cache"), tos3("vlib"), cfile}});
 			if (os__exists(ofile)) {
 				array_push(&a, &(string[]){ ofile });
@@ -13618,6 +13765,7 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 			
 #ifdef __linux__
 			// #if linux
+				array_push(&a, &(string[]){ tos3("-Xlinker -z -Xlinker muldefs") });
 			
 #endif
 		}
@@ -13658,6 +13806,10 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 			
 #ifdef __linux__
 			// #if linux
+				if (string_contains(v->pref->ccompiler, tos3("tcc"))) {
+					v->pref->ccompiler = tos3("cc");
+					goto start;
+				}
 			
 #endif
 			v__builder__verror(string_add(string_add(string_add(string_add(string_add(string_add(tos3("C compiler error, while attempting to run: \n"), tos3("-----------------------------------------------------------\n")), _STR("%.*s\n", cmd.len, cmd.str)), tos3("-----------------------------------------------------------\n")), tos3("Probably your C compiler is missing. \n")), tos3("Please reinstall it, or make it available in your PATH.\n\n")), v__builder__missing_compiler_info()));
@@ -13674,9 +13826,9 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 				array_string elines = v__builder__error_context_lines(/*opt*/(*(os__Result*)res.data).output, tos3("error:"), 1, 12);
 				println(tos3("=================="));
 				// FOR IN array
-				array tmp81 = elines;
-				for (int tmp82 = 0; tmp82 < tmp81.len; tmp82++) {
-					string eline = ((string*)tmp81.data)[tmp82];
+				array tmp87 = elines;
+				for (int tmp88 = 0; tmp88 < tmp87.len; tmp88++) {
+					string eline = ((string*)tmp87.data)[tmp88];
 					println(eline);
 				}
 				println(tos3("..."));
@@ -13716,11 +13868,13 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 			
 #ifdef __APPLE__
 			// #if macos
+				println(tos3("install upx with `brew install upx`"));
 			
 #endif
 			
 #ifdef __linux__
 			// #if linux
+				println(string_add(tos3("install upx\n"), tos3("for example, on Debian/Ubuntu run `sudo apt install upx`")));
 			
 #endif
 			
@@ -13807,11 +13961,13 @@ string v__builder__missing_compiler_info() {
 	
 #ifdef __linux__
 	// #if linux
+		return tos3("On Debian/Ubuntu, run `sudo apt install build-essential`");
 	
 #endif
 	
 #ifdef __APPLE__
 	// #if macos
+		return tos3("Install command line XCode tools with `xcode-select --install`");
 	
 #endif
 	return tos3("");
@@ -13989,6 +14145,7 @@ array_string v__builder__Builder_get_builtin_files(v__builder__Builder v) {
 		
 #ifdef _VJS
 		// #if js
+			return v__builder__Builder_v_files_from_dir(v, os__join_path(location, (varg_string){.len=2,.args={tos3("builtin"), tos3("js")}}));
 		
 #endif
 		return v__builder__Builder_v_files_from_dir(v, os__join_path(location, (varg_string){.len=1,.args={tos3("builtin")}}));
@@ -14258,6 +14415,7 @@ Option_v__builder__VsInstallation v__builder__find_vs(string vswhere_dir, string
 	
 #ifndef _WIN32
 	// #if not windows
+		return v_error(tos3("Host OS does not support finding a Vs installation"));
 	
 #endif
 	Option_os__Result res = os__exec(_STR("\"%.*s\\Microsoft Visual Studio\\Installer\\vswhere.exe\" -latest -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath", vswhere_dir.len, vswhere_dir.str));
@@ -15610,7 +15768,7 @@ v__ast__CompIf v__parser__Parser_comp_if(v__parser__Parser* p) {
 	bool skip_os = false;
 	if (_IN(string, val, _const_v__parser__supported_platforms)) {
 		v__pref__OS os = v__parser__os_from_string(val);
-		if (((!is_not && os != p->pref->os) || (is_not && os == p->pref->os)) && !p->pref->output_cross_c) {
+		if (false && ((!is_not && os != p->pref->os) || (is_not && os == p->pref->os)) && !p->pref->output_cross_c) {
 			skip_os = true;
 			v__parser__Parser_check(p, v__token__Kind_lcbr);
 			int stack = 1;
