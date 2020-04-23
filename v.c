@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d871595"
+#define V_COMMIT_HASH "9fe0ca5"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d7ee475"
+#define V_COMMIT_HASH "d871595"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d871595"
+#define V_CURRENT_COMMIT_HASH "9fe0ca5"
 #endif
 
 
@@ -3548,7 +3548,9 @@ void v__gen__x64__Gen_write_string(v__gen__x64__Gen* g, string s);
 void v__gen__x64__Gen_inc(v__gen__x64__Gen* g, v__gen__x64__Register reg);
 string v__gen__x64__Register_str(v__gen__x64__Register it); // auto
 void v__gen__x64__Gen_cmp(v__gen__x64__Gen* g, v__gen__x64__Register reg, v__gen__x64__Size size, i64 val);
+int v__gen__x64__Gen_get_var_offset(v__gen__x64__Gen* g, string var_name);
 void v__gen__x64__Gen_cmp_var(v__gen__x64__Gen* g, string var_name, int val);
+void v__gen__x64__Gen_inc_var(v__gen__x64__Gen* g, string var_name);
 int v__gen__x64__Gen_jne(v__gen__x64__Gen* g);
 i64 v__gen__x64__abs(i64 a);
 void v__gen__x64__Gen_jle(v__gen__x64__Gen* g, i64 addr);
@@ -3579,6 +3581,7 @@ void v__gen__x64__Gen_allocate_var(v__gen__x64__Gen* g, string name, int size, i
 void v__gen__x64__Gen_assign_stmt(v__gen__x64__Gen* g, v__ast__AssignStmt node);
 void v__gen__x64__Gen_if_expr(v__gen__x64__Gen* g, v__ast__IfExpr node);
 void v__gen__x64__Gen_fn_decl(v__gen__x64__Gen* g, v__ast__FnDecl it);
+void v__gen__x64__Gen_postfix_expr(v__gen__x64__Gen* g, v__ast__PostfixExpr node);
 void v__gen__x64__verror(string s);
 void v__depgraph__OrderedDepMap_set(v__depgraph__OrderedDepMap* o, string name, array_string deps);
 void v__depgraph__OrderedDepMap_add(v__depgraph__OrderedDepMap* o, string name, array_string deps);
@@ -26534,15 +26537,27 @@ void v__gen__x64__Gen_cmp(v__gen__x64__Gen* g, v__gen__x64__Register reg, v__gen
 	v__gen__x64__Gen_write8(g, ((int)(val)));
 }
 
+int v__gen__x64__Gen_get_var_offset(v__gen__x64__Gen* g, string var_name) {
+	int offset = (*(int*)map_get3(g->var_offset, var_name, &(int[]){ 0 }));
+	if (offset == 0) {
+		v_panic(_STR("0 offset for var `%.*s`", var_name.len, var_name.str));
+	}
+	return offset;
+}
+
 void v__gen__x64__Gen_cmp_var(v__gen__x64__Gen* g, string var_name, int val) {
 	v__gen__x64__Gen_write8(g, 0x81);
 	v__gen__x64__Gen_write8(g, 0x7d);
-	int offset = (*(int*)map_get3(g->var_offset, var_name, &(int[]){ 0 }));
-	if (offset == 0) {
-		v__gen__x64__verror(_STR("cmp_var 0 offset %.*s", var_name.len, var_name.str));
-	}
+	int offset = v__gen__x64__Gen_get_var_offset(g, var_name);
 	v__gen__x64__Gen_write8(g, 0xff - offset + 1);
 	v__gen__x64__Gen_write32(g, val);
+}
+
+void v__gen__x64__Gen_inc_var(v__gen__x64__Gen* g, string var_name) {
+	v__gen__x64__Gen_write16(g, 0x4581);
+	int offset = v__gen__x64__Gen_get_var_offset(g, var_name);
+	v__gen__x64__Gen_write8(g, 0xff - offset + 1);
+	v__gen__x64__Gen_write32(g, 1);
 }
 
 int v__gen__x64__Gen_jne(v__gen__x64__Gen* g) {
@@ -26741,18 +26756,10 @@ void v__gen__x64__Gen_stmt(v__gen__x64__Gen* g, v__ast__Stmt node) {
 }
 
 void v__gen__x64__Gen_expr(v__gen__x64__Gen* g, v__ast__Expr node) {
-	if (node.typ == 146 /* v.ast.AssignExpr */) {
+	if (node.typ == 143 /* v.ast.ArrayInit */) {
+		v__ast__ArrayInit* it = (v__ast__ArrayInit*)node.obj; // ST it
+	}else if (node.typ == 146 /* v.ast.AssignExpr */) {
 		v__ast__AssignExpr* it = (v__ast__AssignExpr*)node.obj; // ST it
-	}else if (node.typ == 136 /* v.ast.IntegerLiteral */) {
-		v__ast__IntegerLiteral* it = (v__ast__IntegerLiteral*)node.obj; // ST it
-	}else if (node.typ == 138 /* v.ast.FloatLiteral */) {
-		v__ast__FloatLiteral* it = (v__ast__FloatLiteral*)node.obj; // ST it
-	}else if (node.typ == 135 /* v.ast.StringLiteral */) {
-		v__ast__StringLiteral* it = (v__ast__StringLiteral*)node.obj; // ST it
-	}else if (node.typ == 133 /* v.ast.InfixExpr */) {
-		v__ast__InfixExpr* it = (v__ast__InfixExpr*)node.obj; // ST it
-	}else if (node.typ == 142 /* v.ast.StructInit */) {
-		v__ast__StructInit* it = (v__ast__StructInit*)node.obj; // ST it
 	}else if (node.typ == 140 /* v.ast.CallExpr */) {
 		v__ast__CallExpr* it = (v__ast__CallExpr*)node.obj; // ST it
 		if ((string_eq(it->name, tos3("println")) || string_eq(it->name, tos3("print")) || string_eq(it->name, tos3("eprintln")) || string_eq(it->name, tos3("eprint")))) {
@@ -26761,15 +26768,26 @@ void v__gen__x64__Gen_expr(v__gen__x64__Gen* g, v__ast__Expr node) {
 			return;
 		}
 		v__gen__x64__Gen_call_fn(g, it->name);
-	}else if (node.typ == 143 /* v.ast.ArrayInit */) {
-		v__ast__ArrayInit* it = (v__ast__ArrayInit*)node.obj; // ST it
+	}else if (node.typ == 138 /* v.ast.FloatLiteral */) {
+		v__ast__FloatLiteral* it = (v__ast__FloatLiteral*)node.obj; // ST it
 	}else if (node.typ == 139 /* v.ast.Ident */) {
 		v__ast__Ident* it = (v__ast__Ident*)node.obj; // ST it
-	}else if (node.typ == 141 /* v.ast.BoolLiteral */) {
-		v__ast__BoolLiteral* it = (v__ast__BoolLiteral*)node.obj; // ST it
 	}else if (node.typ == 134 /* v.ast.IfExpr */) {
 		v__ast__IfExpr* it = (v__ast__IfExpr*)node.obj; // ST it
 		v__gen__x64__Gen_if_expr(g, */*d*/it);
+	}else if (node.typ == 133 /* v.ast.InfixExpr */) {
+		v__ast__InfixExpr* it = (v__ast__InfixExpr*)node.obj; // ST it
+	}else if (node.typ == 136 /* v.ast.IntegerLiteral */) {
+		v__ast__IntegerLiteral* it = (v__ast__IntegerLiteral*)node.obj; // ST it
+	}else if (node.typ == 145 /* v.ast.PostfixExpr */) {
+		v__ast__PostfixExpr* it = (v__ast__PostfixExpr*)node.obj; // ST it
+		v__gen__x64__Gen_postfix_expr(g, */*d*/it);
+	}else if (node.typ == 135 /* v.ast.StringLiteral */) {
+		v__ast__StringLiteral* it = (v__ast__StringLiteral*)node.obj; // ST it
+	}else if (node.typ == 142 /* v.ast.StructInit */) {
+		v__ast__StructInit* it = (v__ast__StructInit*)node.obj; // ST it
+	}else if (node.typ == 141 /* v.ast.BoolLiteral */) {
+		v__ast__BoolLiteral* it = (v__ast__BoolLiteral*)node.obj; // ST it
 	}else {
 	};
 }
@@ -26854,6 +26872,17 @@ void v__gen__x64__Gen_fn_decl(v__gen__x64__Gen* g, v__ast__FnDecl it) {
 		v__gen__x64__Gen_leave(g);
 	}
 	v__gen__x64__Gen_ret(g);
+}
+
+void v__gen__x64__Gen_postfix_expr(v__gen__x64__Gen* g, v__ast__PostfixExpr node) {
+	if (!(node.expr.typ == 139 /* v.ast.Ident */)) {
+		return;
+	}
+	v__ast__Ident ident = /* as */ *(v__ast__Ident*)node.expr.obj;
+	string var_name = ident.name;
+	if (node.op == v__token__Kind_inc) {
+		v__gen__x64__Gen_inc_var(g, var_name);
+	}
 }
 
 void v__gen__x64__verror(string s) {
