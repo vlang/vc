@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5664cbd"
+#define V_COMMIT_HASH "7f5e3b3"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "45e2108"
+#define V_COMMIT_HASH "5664cbd"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5664cbd"
+#define V_CURRENT_COMMIT_HASH "7f5e3b3"
 #endif
 
 
@@ -3552,11 +3552,12 @@ int v__gen__x64__Gen_get_var_offset(v__gen__x64__Gen* g, string var_name);
 void v__gen__x64__Gen_cmp_var(v__gen__x64__Gen* g, string var_name, int val);
 void v__gen__x64__Gen_inc_var(v__gen__x64__Gen* g, string var_name);
 int v__gen__x64__Gen_jne(v__gen__x64__Gen* g);
+int v__gen__x64__Gen_jge(v__gen__x64__Gen* g);
+void v__gen__x64__Gen_jmp(v__gen__x64__Gen* g, int addr);
 i64 v__gen__x64__abs(i64 a);
 void v__gen__x64__Gen_jle(v__gen__x64__Gen* g, i64 addr);
 void v__gen__x64__Gen_jl(v__gen__x64__Gen* g, i64 addr);
 int v__gen__x64__Gen_abs_to_rel_addr(v__gen__x64__Gen* g, i64 addr);
-void v__gen__x64__Gen_jmp(v__gen__x64__Gen* g, i64 addr);
 void v__gen__x64__Gen_mov64(v__gen__x64__Gen* g, v__gen__x64__Register reg, i64 val);
 void v__gen__x64__Gen_call(v__gen__x64__Gen* g, int addr);
 void v__gen__x64__Gen_syscall(v__gen__x64__Gen* g);
@@ -3580,6 +3581,7 @@ void v__gen__x64__Gen_expr(v__gen__x64__Gen* g, v__ast__Expr node);
 void v__gen__x64__Gen_allocate_var(v__gen__x64__Gen* g, string name, int size, int initial_val);
 void v__gen__x64__Gen_assign_stmt(v__gen__x64__Gen* g, v__ast__AssignStmt node);
 void v__gen__x64__Gen_if_expr(v__gen__x64__Gen* g, v__ast__IfExpr node);
+void v__gen__x64__Gen_for_stmt(v__gen__x64__Gen* g, v__ast__ForStmt node);
 void v__gen__x64__Gen_fn_decl(v__gen__x64__Gen* g, v__ast__FnDecl it);
 void v__gen__x64__Gen_postfix_expr(v__gen__x64__Gen* g, v__ast__PostfixExpr node);
 void v__gen__x64__verror(string s);
@@ -26571,6 +26573,18 @@ int v__gen__x64__Gen_jne(v__gen__x64__Gen* g) {
 	return pos;
 }
 
+int v__gen__x64__Gen_jge(v__gen__x64__Gen* g) {
+	v__gen__x64__Gen_write16(g, 0x8d0f);
+	i64 pos = v__gen__x64__Gen_pos(g);
+	v__gen__x64__Gen_write32(g, _const_v__gen__x64__PLACEHOLDER);
+	return pos;
+}
+
+void v__gen__x64__Gen_jmp(v__gen__x64__Gen* g, int addr) {
+	v__gen__x64__Gen_write8(g, 0xe9);
+	v__gen__x64__Gen_write32(g, addr);
+}
+
 i64 v__gen__x64__abs(i64 a) {
 	return (a < 0 ?  ( -a )  :  ( a ) );
 }
@@ -26589,12 +26603,6 @@ void v__gen__x64__Gen_jl(v__gen__x64__Gen* g, i64 addr) {
 
 int v__gen__x64__Gen_abs_to_rel_addr(v__gen__x64__Gen* g, i64 addr) {
 	return ((int)(v__gen__x64__abs(addr - g->buf.len))) - 1;
-}
-
-void v__gen__x64__Gen_jmp(v__gen__x64__Gen* g, i64 addr) {
-	int offset = 0xff - v__gen__x64__Gen_abs_to_rel_addr(g, addr);
-	v__gen__x64__Gen_write8(g, 0xe9);
-	v__gen__x64__Gen_write8(g, offset);
 }
 
 void v__gen__x64__Gen_mov64(v__gen__x64__Gen* g, v__gen__x64__Register reg, i64 val) {
@@ -26748,6 +26756,7 @@ void v__gen__x64__Gen_stmt(v__gen__x64__Gen* g, v__ast__Stmt node) {
 		v__gen__x64__Gen_fn_decl(g, */*d*/it);
 	}else if (node.typ == 171 /* v.ast.ForStmt */) {
 		v__ast__ForStmt* it = (v__ast__ForStmt*)node.obj; // ST it
+		v__gen__x64__Gen_for_stmt(g, */*d*/it);
 	}else if (node.typ == 167 /* v.ast.Return */) {
 		v__ast__Return* it = (v__ast__Return*)node.obj; // ST it
 		v__gen__x64__Gen_gen_exit(g);
@@ -26841,10 +26850,28 @@ void v__gen__x64__Gen_if_expr(v__gen__x64__Gen* g, v__ast__IfExpr node) {
 		v__gen__x64__Gen_cmp_var(g, it->name, string_int(lit.val));
 		jne_addr = v__gen__x64__Gen_jne(g);
 	}else {
+		v__gen__x64__verror(tos3("unhandled infix.left"));
 	};
 	v__gen__x64__Gen_stmts(g, branch.stmts);
 	println(_STR("after if g.pos=%"PRId64" jneaddr=%"PRId32"", v__gen__x64__Gen_pos(g), jne_addr));
 	v__gen__x64__Gen_write32_at(g, jne_addr, v__gen__x64__Gen_pos(g) - jne_addr - 4);
+}
+
+void v__gen__x64__Gen_for_stmt(v__gen__x64__Gen* g, v__ast__ForStmt node) {
+	v__ast__InfixExpr infix_expr = /* as */ *(v__ast__InfixExpr*)node.cond.obj;
+	int jump_addr = 0;
+	i64 start = v__gen__x64__Gen_pos(g);
+	if (infix_expr.left.typ == 139 /* v.ast.Ident */) {
+		v__ast__Ident* it = (v__ast__Ident*)infix_expr.left.obj; // ST it
+		v__ast__IntegerLiteral lit = /* as */ *(v__ast__IntegerLiteral*)infix_expr.right.obj;
+		v__gen__x64__Gen_cmp_var(g, it->name, string_int(lit.val));
+		jump_addr = v__gen__x64__Gen_jge(g);
+	}else {
+		v__gen__x64__verror(tos3("unhandled infix.left"));
+	};
+	v__gen__x64__Gen_stmts(g, node.stmts);
+	v__gen__x64__Gen_jmp(g, 0xffffffff - (v__gen__x64__Gen_pos(g) + 5 - start) + 1);
+	v__gen__x64__Gen_write32_at(g, jump_addr, v__gen__x64__Gen_pos(g) - jump_addr - 4);
 }
 
 void v__gen__x64__Gen_fn_decl(v__gen__x64__Gen* g, v__ast__FnDecl it) {
