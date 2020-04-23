@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "fb97c2e"
+#define V_COMMIT_HASH "7e40012"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d5eafe7"
+#define V_COMMIT_HASH "fb97c2e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "fb97c2e"
+#define V_CURRENT_COMMIT_HASH "7e40012"
 #endif
 
 
@@ -12862,8 +12862,8 @@ void v__builder__Builder_parse_imports(v__builder__Builder* b) {
 		v__ast__File ast_file = (*(v__ast__File*)array_get(b->parsed_files, i));
 		// FOR IN array
 		array tmp1 = ast_file.imports;
-		for (int _ = 0; _ < tmp1.len; _++) {
-			v__ast__Import imp = ((v__ast__Import*)tmp1.data)[_];
+		for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+			v__ast__Import imp = ((v__ast__Import*)tmp1.data)[tmp2];
 			string mod = imp.mod;
 			if (_IN(string, mod, done_imports)) {
 				continue;
@@ -12883,14 +12883,14 @@ void v__builder__Builder_parse_imports(v__builder__Builder* b) {
 			}
 			array_v__ast__File parsed_files = v__parser__parse_files(v_files, b->table, b->pref, b->global_scope);
 			// FOR IN array
-			array tmp4 = parsed_files;
-			for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
-				v__ast__File file = ((v__ast__File*)tmp4.data)[tmp5];
+			array tmp5 = parsed_files;
+			for (int tmp6 = 0; tmp6 < tmp5.len; tmp6++) {
+				v__ast__File file = ((v__ast__File*)tmp5.data)[tmp6];
 				if (string_ne(file.mod.name, mod)) {
 					v__builder__verror(_STR("bad module definition: %.*s imports module \"%.*s\" but %.*s is defined as module `%.*s`", ast_file.path.len, ast_file.path.str, mod.len, mod.str, file.path.len, file.path.str, file.mod.name.len, file.mod.name.str));
 				}
 			}
-			_PUSH_MANY(&b->parsed_files, (parsed_files), tmp7, array_v__ast__File);
+			_PUSH_MANY(&b->parsed_files, (parsed_files), tmp8, array_v__ast__File);
 			array_push(&done_imports, &(string[]){ mod });
 		}
 	}
@@ -12952,8 +12952,8 @@ v__depgraph__DepGraph* v__builder__Builder_import_graph(v__builder__Builder* b) 
 		}
 		// FOR IN array
 		array tmp6 = p.imports;
-		for (int _ = 0; _ < tmp6.len; _++) {
-			v__ast__Import m = ((v__ast__Import*)tmp6.data)[_];
+		for (int tmp7 = 0; tmp7 < tmp6.len; tmp7++) {
+			v__ast__Import m = ((v__ast__Import*)tmp6.data)[tmp7];
 			array_push(&deps, &(string[]){ m.mod });
 		}
 		v__depgraph__DepGraph_add(graph, p.mod.name, deps);
@@ -14880,9 +14880,12 @@ void v__ast__Scope_update_var_type(v__ast__Scope* s, string name, v__table__Type
 }
 
 void v__ast__Scope_register(v__ast__Scope* s, string name, v__ast__ScopeObject obj) {
-	bool tmp1;
+	if (string_eq(name, tos3("_"))) {
+		return;
+	}
+	bool tmp2;
 	{ /* if guard */ Option_v__ast__ScopeObject x = v__ast__Scope_find(s, name);
-	if ((tmp1 = x.ok)) {
+	if ((tmp2 = x.ok)) {
 		return;
 	}}
 	map_set(&s->objects, name, &(v__ast__ScopeObject[]) { obj });
@@ -14908,8 +14911,8 @@ array_v__ast__UnusedVar v__ast__Scope_unused_vars(v__ast__Scope* s) {
 	// FOR IN map
 	array_string keys_tmp1 = map_keys(&s->unused_vars);
 	for (int tmp2 = 0; tmp2 < keys_tmp1.len; tmp2++) {
-		string _ = ((string*)keys_tmp1.data)[tmp2];
-		v__ast__UnusedVar v = (*(v__ast__UnusedVar*)map_get3(s->unused_vars, _, &(v__ast__UnusedVar[]){ {0} }));
+		string tmp3 = ((string*)keys_tmp1.data)[tmp2];
+		v__ast__UnusedVar v = (*(v__ast__UnusedVar*)map_get3(s->unused_vars, tmp3, &(v__ast__UnusedVar[]){ {0} }));
 		array_push(&ret, &(v__ast__UnusedVar[]){ v });
 	}
 	return ret;
@@ -14960,15 +14963,14 @@ string v__ast__Scope_show(v__ast__Scope* sc, int depth, int max_depth) {
 	string out = tos3("");
 	string indent = tos3("");
 	for (int tmp1 = 0; tmp1 < depth * 4; tmp1++) {
-		int _ = tmp1;
 		indent = string_add(indent, tos3(" "));
 	}
 	out = string_add(out, _STR("%.*s# %"PRId32" - %"PRId32"\n", indent.len, indent.str, sc->start_pos, sc->end_pos));
 	// FOR IN map
 	array_string keys_tmp2 = map_keys(&sc->objects);
 	for (int tmp3 = 0; tmp3 < keys_tmp2.len; tmp3++) {
-		string _ = ((string*)keys_tmp2.data)[tmp3];
-		v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)map_get3(sc->objects, _, &(v__ast__ScopeObject[]){ {0} }));
+		string tmp4 = ((string*)keys_tmp2.data)[tmp3];
+		v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)map_get3(sc->objects, tmp4, &(v__ast__ScopeObject[]){ {0} }));
 		if (obj.typ == 191 /* v.ast.ConstField */) {
 			v__ast__ConstField* it = (v__ast__ConstField*)obj.obj; // ST it
 			out = string_add(out, _STR("%.*s  * const: %.*s - %"PRId32"\n", indent.len, indent.str, it->name.len, it->name.str, it->typ));
@@ -14980,9 +14982,8 @@ string v__ast__Scope_show(v__ast__Scope* sc, int depth, int max_depth) {
 	}
 	if (max_depth == 0 || depth < max_depth - 1) {
 		// FOR IN array
-		array tmp6 = sc->children;
-		for (int i = 0; i < tmp6.len; i++) {
-			v__ast__Scope* _ = ((v__ast__Scope**)tmp6.data)[i];
+		array tmp7 = sc->children;
+		for (int i = 0; i < tmp7.len; i++) {
 			out = string_add(out, v__ast__Scope_show((*(v__ast__Scope**)array_get(sc->children, i)), depth + 1, max_depth));
 		}
 	}
@@ -20238,7 +20239,6 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 		// FOR IN array
 		array tmp9 = assign_stmt->left;
 		for (int i = 0; i < tmp9.len; i++) {
-			v__ast__Ident _ = ((v__ast__Ident*)tmp9.data)[i];
 			v__ast__Ident ident = (*(v__ast__Ident*)array_get(assign_stmt->left, i));
 			v__ast__IdentVar ident_var_info = v__ast__Ident_var_info(&ident);
 			if (i >= mr_info.types.len) {
@@ -20269,7 +20269,6 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 		// FOR IN array
 		array tmp16 = assign_stmt->left;
 		for (int i = 0; i < tmp16.len; i++) {
-			v__ast__Ident _ = ((v__ast__Ident*)tmp16.data)[i];
 			v__ast__Ident ident = (*(v__ast__Ident*)array_get(assign_stmt->left, i));
 			if (assign_stmt->op == v__token__Kind_decl_assign) {
 				c->var_decl_name = ident.name;
@@ -20604,7 +20603,6 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 		// FOR IN array
 		array tmp4 = it->fields;
 		for (int i = 0; i < tmp4.len; i++) {
-			string _ = ((string*)tmp4.data)[i];
 			v__checker__Checker_expr(c, (*(v__ast__Expr*)array_get(it->exprs, i)));
 		}
 		it->typ = /*opt*/(*(v__ast__Var*)v.data).typ;
@@ -20884,13 +20882,13 @@ v__table__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Ma
 			int used_values_count = 0;
 			// FOR IN array
 			array tmp12 = node->branches;
-			for (int _ = 0; _ < tmp12.len; _++) {
-				v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp12.data)[_];
+			for (int tmp13 = 0; tmp13 < tmp12.len; tmp13++) {
+				v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp12.data)[tmp13];
 				used_values_count += branch.exprs.len;
 				// FOR IN array
-				array tmp13 = branch.exprs;
-				for (int bi_ei = 0; bi_ei < tmp13.len; bi_ei++) {
-					v__ast__Expr bexpr = ((v__ast__Expr*)tmp13.data)[bi_ei];
+				array tmp14 = branch.exprs;
+				for (int bi_ei = 0; bi_ei < tmp14.len; bi_ei++) {
+					v__ast__Expr bexpr = ((v__ast__Expr*)tmp14.data)[bi_ei];
 					if (bexpr.typ == 161 /* v.ast.Type */) {
 						v__ast__Type* it = (v__ast__Type*)bexpr.obj; // ST it
 						int tidx = v__table__type_idx(it->typ);
@@ -20909,9 +20907,9 @@ v__table__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Ma
 			if (type_sym->info.typ == 84 /* v.table.SumType */) {
 				v__table__SumType* it = (v__table__SumType*)type_sym->info.obj; // ST it
 				// FOR IN map
-				array_string keys_tmp16 = map_keys(&all_possible_left_subtypes);
-				for (int tmp17 = 0; tmp17 < keys_tmp16.len; tmp17++) {
-					string k = ((string*)keys_tmp16.data)[tmp17];
+				array_string keys_tmp17 = map_keys(&all_possible_left_subtypes);
+				for (int tmp18 = 0; tmp18 < keys_tmp17.len; tmp18++) {
+					string k = ((string*)keys_tmp17.data)[tmp18];
 					int v = (*(int*)map_get3(all_possible_left_subtypes, k, &(int[]){ 0 }));
 					if (v == 0) {
 						err = true;
@@ -20926,9 +20924,9 @@ v__table__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Ma
 			}else if (type_sym->info.typ == 83 /* v.table.Enum */) {
 				v__table__Enum* it = (v__table__Enum*)type_sym->info.obj; // ST it
 				// FOR IN map
-				array_string keys_tmp21 = map_keys(&all_possible_left_enum_vals);
-				for (int tmp22 = 0; tmp22 < keys_tmp21.len; tmp22++) {
-					string k = ((string*)keys_tmp21.data)[tmp22];
+				array_string keys_tmp22 = map_keys(&all_possible_left_enum_vals);
+				for (int tmp23 = 0; tmp23 < keys_tmp22.len; tmp23++) {
+					string k = ((string*)keys_tmp22.data)[tmp23];
 					int v = (*(int*)map_get3(all_possible_left_enum_vals, k, &(int[]){ 0 }));
 					if (v == 0) {
 						err = true;
@@ -20954,13 +20952,13 @@ v__table__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Ma
 	c->expected_type = cond_type;
 	v__table__Type ret_type = _const_v__table__void_type;
 	// FOR IN array
-	array tmp28 = node->branches;
-	for (int tmp29 = 0; tmp29 < tmp28.len; tmp29++) {
-		v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp28.data)[tmp29];
+	array tmp29 = node->branches;
+	for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
+		v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp29.data)[tmp30];
 		// FOR IN array
-		array tmp30 = branch.exprs;
-		for (int tmp31 = 0; tmp31 < tmp30.len; tmp31++) {
-			v__ast__Expr expr = ((v__ast__Expr*)tmp30.data)[tmp31];
+		array tmp31 = branch.exprs;
+		for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
+			v__ast__Expr expr = ((v__ast__Expr*)tmp31.data)[tmp32];
 			c->expected_type = cond_type;
 			v__table__Type typ = v__checker__Checker_expr(c, expr);
 			v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, typ);
@@ -22550,7 +22548,9 @@ void v__gen__Gen_for_in(v__gen__Gen* g, v__ast__ForInStmt it) {
 		v__gen__Gen_write(g, _STR("; %.*s < ", i.len, i.str));
 		v__gen__Gen_expr(g, it.high);
 		v__gen__Gen_writeln(g, _STR("; %.*s++) {", i.len, i.str));
-		v__gen__Gen_writeln(g, _STR("\tint %.*s = %.*s;", it.val_var.len, it.val_var.str, i.len, i.str));
+		if (string_ne(it.val_var, tos3("_"))) {
+			v__gen__Gen_writeln(g, _STR("\tint %.*s = %.*s;", it.val_var.len, it.val_var.str, i.len, i.str));
+		}
 		v__gen__Gen_stmts(g, it.stmts);
 		v__gen__Gen_writeln(g, tos3("}"));
 	} else if (it.kind == v__table__Kind_array) {
@@ -22562,16 +22562,11 @@ void v__gen__Gen_for_in(v__gen__Gen* g, v__ast__ForInStmt it) {
 		v__gen__Gen_write(g, _STR("%.*s %.*s = ", atmp_type.len, atmp_type.str, atmp.len, atmp.str));
 		v__gen__Gen_expr(g, it.cond);
 		v__gen__Gen_writeln(g, tos3(";"));
-		string i = (string_eq(it.key_var, tos3("")) ?  ( v__gen__Gen_new_tmp_var(g) )  :  ( it.key_var ) );
-		if (cond_type_is_ptr) {
-			v__gen__Gen_writeln(g, _STR("for (int %.*s = 0; %.*s < %.*s->len; %.*s++) {", i.len, i.str, i.len, i.str, atmp.len, atmp.str, i.len, i.str));
-		} else {
-			v__gen__Gen_writeln(g, _STR("for (int %.*s = 0; %.*s < %.*s.len; %.*s++) {", i.len, i.str, i.len, i.str, atmp.len, atmp.str, i.len, i.str));
-		}
-		if (cond_type_is_ptr) {
-			v__gen__Gen_writeln(g, _STR("\t%.*s %.*s = ((%.*s*)%.*s->data)[%.*s];", styp.len, styp.str, it.val_var.len, it.val_var.str, styp.len, styp.str, atmp.len, atmp.str, i.len, i.str));
-		} else {
-			v__gen__Gen_writeln(g, _STR("\t%.*s %.*s = ((%.*s*)%.*s.data)[%.*s];", styp.len, styp.str, it.val_var.len, it.val_var.str, styp.len, styp.str, atmp.len, atmp.str, i.len, i.str));
+		string i = ((string_eq(it.key_var, tos3("")) || string_eq(it.key_var, tos3("_"))) ?  ( v__gen__Gen_new_tmp_var(g) )  :  ( it.key_var ) );
+		string op_field = (cond_type_is_ptr ?  ( tos3("->") )  :  ( tos3(".") ) );
+		v__gen__Gen_writeln(g, _STR("for (int %.*s = 0; %.*s < %.*s%.*slen; %.*s++) {", i.len, i.str, i.len, i.str, atmp.len, atmp.str, op_field.len, op_field.str, i.len, i.str));
+		if (string_ne(it.val_var, tos3("_"))) {
+			v__gen__Gen_writeln(g, _STR("\t%.*s %.*s = ((%.*s*)%.*s%.*sdata)[%.*s];", styp.len, styp.str, it.val_var.len, it.val_var.str, styp.len, styp.str, atmp.len, atmp.str, op_field.len, op_field.str, i.len, i.str));
 		}
 		v__gen__Gen_stmts(g, it.stmts);
 		v__gen__Gen_writeln(g, tos3("}"));
@@ -22581,21 +22576,23 @@ void v__gen__Gen_for_in(v__gen__Gen* g, v__ast__ForInStmt it) {
 		string val_styp = v__gen__Gen_typ(g, it.val_type);
 		string keys_tmp = string_add(tos3("keys_"), v__gen__Gen_new_tmp_var(g));
 		string idx = v__gen__Gen_new_tmp_var(g);
-		string key = (string_eq(it.key_var, tos3("")) ?  ( v__gen__Gen_new_tmp_var(g) )  :  ( it.key_var ) );
+		string key = ((string_eq(it.key_var, tos3("")) || string_eq(it.key_var, tos3("_"))) ?  ( v__gen__Gen_new_tmp_var(g) )  :  ( it.key_var ) );
 		string zero = v__gen__Gen_type_default(/*rec*/*g, it.val_type);
 		v__gen__Gen_write(g, _STR("array_%.*s %.*s = map_keys(&", key_styp.len, key_styp.str, keys_tmp.len, keys_tmp.str));
 		v__gen__Gen_expr(g, it.cond);
 		v__gen__Gen_writeln(g, tos3(");"));
 		v__gen__Gen_writeln(g, _STR("for (int %.*s = 0; %.*s < %.*s.len; %.*s++) {", idx.len, idx.str, idx.len, idx.str, keys_tmp.len, keys_tmp.str, idx.len, idx.str));
 		v__gen__Gen_writeln(g, _STR("\t%.*s %.*s = ((%.*s*)%.*s.data)[%.*s];", key_styp.len, key_styp.str, key.len, key.str, key_styp.len, key_styp.str, keys_tmp.len, keys_tmp.str, idx.len, idx.str));
-		v__gen__Gen_write(g, _STR("\t%.*s %.*s = (*(%.*s*)map_get3(", val_styp.len, val_styp.str, it.val_var.len, it.val_var.str, val_styp.len, val_styp.str));
-		v__gen__Gen_expr(g, it.cond);
-		v__gen__Gen_writeln(g, _STR(", %.*s, &(%.*s[]){ %.*s }));", key.len, key.str, val_styp.len, val_styp.str, zero.len, zero.str));
+		if (string_ne(it.val_var, tos3("_"))) {
+			v__gen__Gen_write(g, _STR("\t%.*s %.*s = (*(%.*s*)map_get3(", val_styp.len, val_styp.str, it.val_var.len, it.val_var.str, val_styp.len, val_styp.str));
+			v__gen__Gen_expr(g, it.cond);
+			v__gen__Gen_writeln(g, _STR(", %.*s, &(%.*s[]){ %.*s }));", key.len, key.str, val_styp.len, val_styp.str, zero.len, zero.str));
+		}
 		v__gen__Gen_stmts(g, it.stmts);
 		v__gen__Gen_writeln(g, tos3("}"));
 	} else if (v__table__type_is(it.cond_type, v__table__TypeFlag_variadic)) {
 		v__gen__Gen_writeln(g, tos3("// FOR IN cond_type/variadic"));
-		string i = (string_eq(it.key_var, tos3("")) ?  ( v__gen__Gen_new_tmp_var(g) )  :  ( it.key_var ) );
+		string i = ((string_eq(it.key_var, tos3("")) || string_eq(it.key_var, tos3("_"))) ?  ( v__gen__Gen_new_tmp_var(g) )  :  ( it.key_var ) );
 		string styp = v__gen__Gen_typ(g, it.cond_type);
 		v__gen__Gen_write(g, _STR("for (int %.*s = 0; %.*s < ", i.len, i.str, i.len, i.str));
 		v__gen__Gen_expr(g, it.cond);
@@ -22606,13 +22603,15 @@ void v__gen__Gen_for_in(v__gen__Gen* g, v__ast__ForInStmt it) {
 		v__gen__Gen_stmts(g, it.stmts);
 		v__gen__Gen_writeln(g, tos3("}"));
 	} else if (it.kind == v__table__Kind_string) {
-		string i = (string_eq(it.key_var, tos3("")) ?  ( v__gen__Gen_new_tmp_var(g) )  :  ( it.key_var ) );
+		string i = ((string_eq(it.key_var, tos3("")) || string_eq(it.key_var, tos3("_"))) ?  ( v__gen__Gen_new_tmp_var(g) )  :  ( it.key_var ) );
 		v__gen__Gen_write(g, _STR("for (int %.*s = 0; %.*s < ", i.len, i.str, i.len, i.str));
 		v__gen__Gen_expr(g, it.cond);
 		v__gen__Gen_writeln(g, _STR(".len; %.*s++) {", i.len, i.str));
-		v__gen__Gen_write(g, _STR("byte %.*s = ", it.val_var.len, it.val_var.str));
-		v__gen__Gen_expr(g, it.cond);
-		v__gen__Gen_writeln(g, _STR(".str[%.*s];", i.len, i.str));
+		if (string_ne(it.val_var, tos3("_"))) {
+			v__gen__Gen_write(g, _STR("byte %.*s = ", it.val_var.len, it.val_var.str));
+			v__gen__Gen_expr(g, it.cond);
+			v__gen__Gen_writeln(g, _STR(".str[%.*s];", i.len, i.str));
+		}
 		v__gen__Gen_stmts(g, it.stmts);
 		v__gen__Gen_writeln(g, tos3("}"));
 	}
@@ -22827,8 +22826,8 @@ void v__gen__Gen_free_scope_vars(v__gen__Gen* g, int pos) {
 	// FOR IN map
 	array_string keys_tmp1 = map_keys(&scope->objects);
 	for (int tmp2 = 0; tmp2 < keys_tmp1.len; tmp2++) {
-		string _ = ((string*)keys_tmp1.data)[tmp2];
-		v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)map_get3(scope->objects, _, &(v__ast__ScopeObject[]){ {0} }));
+		string tmp3 = ((string*)keys_tmp1.data)[tmp2];
+		v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)map_get3(scope->objects, tmp3, &(v__ast__ScopeObject[]){ {0} }));
 		if (obj.typ == 192 /* v.ast.Var */) {
 			v__ast__Var* it = (v__ast__Var*)obj.obj; // ST it
 			v__ast__Var v = *it;
@@ -23750,8 +23749,8 @@ void v__gen__Gen_struct_init(v__gen__Gen* g, v__ast__StructInit struct_init) {
 	array_string inited_fields = __new_array(0, 0, sizeof(string));
 	// FOR IN array
 	array tmp3 = struct_init.fields;
-	for (int _ = 0; _ < tmp3.len; _++) {
-		v__ast__StructInitField field = ((v__ast__StructInitField*)tmp3.data)[_];
+	for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
+		v__ast__StructInitField field = ((v__ast__StructInitField*)tmp3.data)[tmp4];
 		string field_name = v__gen__c_name(field.name);
 		array_push(&inited_fields, &(string[]){ field.name });
 		v__gen__Gen_write(g, _STR("\t.%.*s = ", field_name.len, field_name.str));
@@ -23760,9 +23759,9 @@ void v__gen__Gen_struct_init(v__gen__Gen* g, v__ast__StructInit struct_init) {
 	}
 	if (is_struct) {
 		// FOR IN array
-		array tmp6 = info.fields;
-		for (int tmp7 = 0; tmp7 < tmp6.len; tmp7++) {
-			v__table__Field field = ((v__table__Field*)tmp6.data)[tmp7];
+		array tmp7 = info.fields;
+		for (int tmp8 = 0; tmp8 < tmp7.len; tmp8++) {
+			v__table__Field field = ((v__table__Field*)tmp7.data)[tmp8];
 			if (_IN(string, field.name, inited_fields)) {
 				continue;
 			}
@@ -24185,9 +24184,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_64554 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_64554.arg0;
-	string type_of_last_expression = mr_64554.arg1;
+	multi_return_string_string mr_64575 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_64575.arg0;
+	string type_of_last_expression = mr_64575.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -24419,8 +24418,8 @@ array_string v__gen__Gen_get_all_test_function_names(v__gen__Gen g) {
 	// FOR IN map
 	array_string keys_tmp1 = map_keys(&g.table->fns);
 	for (int tmp2 = 0; tmp2 < keys_tmp1.len; tmp2++) {
-		string _ = ((string*)keys_tmp1.data)[tmp2];
-		v__table__Fn f = (*(v__table__Fn*)map_get3(g.table->fns, _, &(v__table__Fn[]){ {0} }));
+		string tmp3 = ((string*)keys_tmp1.data)[tmp2];
+		v__table__Fn f = (*(v__table__Fn*)map_get3(g.table->fns, tmp3, &(v__table__Fn[]){ {0} }));
 		if (string_eq(f.name, tos3("testsuite_begin"))) {
 			tsuite_begin = f.name;
 			continue;
@@ -24450,15 +24449,15 @@ array_string v__gen__Gen_get_all_test_function_names(v__gen__Gen g) {
 	if (tsuite_begin.len > 0) {
 		array_push(&all_tfuncs, &(string[]){ tsuite_begin });
 	}
-	_PUSH_MANY(&all_tfuncs, (tfuncs), tmp13, array_string);
+	_PUSH_MANY(&all_tfuncs, (tfuncs), tmp14, array_string);
 	if (tsuite_end.len > 0) {
 		array_push(&all_tfuncs, &(string[]){ tsuite_end });
 	}
 	array_string all_tfuncs_c = __new_array(0, 0, sizeof(string));
 	// FOR IN array
-	array tmp16 = all_tfuncs;
-	for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
-		string f = ((string*)tmp16.data)[tmp17];
+	array tmp17 = all_tfuncs;
+	for (int tmp18 = 0; tmp18 < tmp17.len; tmp18++) {
+		string f = ((string*)tmp17.data)[tmp18];
 		array_push(&all_tfuncs_c, &(string[]){ string_replace(f, tos3("."), tos3("__")) });
 	}
 	return all_tfuncs_c;
@@ -24812,8 +24811,8 @@ string v__gen__Gen_interface_table(v__gen__Gen* v) {
 	strings__Builder sb = strings__new_builder(100);
 	// FOR IN array
 	array tmp1 = v->table->types;
-	for (int _ = 0; _ < tmp1.len; _++) {
-		v__table__TypeSymbol t = ((v__table__TypeSymbol*)tmp1.data)[_];
+	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+		v__table__TypeSymbol t = ((v__table__TypeSymbol*)tmp1.data)[tmp2];
 		if (t.kind != v__table__Kind_interface_) {
 			continue;
 		}
@@ -24823,18 +24822,18 @@ string v__gen__Gen_interface_table(v__gen__Gen* v) {
 		string generated_casting_functions = tos3("");
 		strings__Builder_writeln(&sb, _STR("// NR gen_types= %"PRId32"", info.gen_types.len));
 		// FOR IN array
-		array tmp3 = info.gen_types;
-		for (int i = 0; i < tmp3.len; i++) {
-			string gen_type = ((string*)tmp3.data)[i];
+		array tmp4 = info.gen_types;
+		for (int i = 0; i < tmp4.len; i++) {
+			string gen_type = ((string*)tmp4.data)[i];
 			string ptr_ctype = string_replace(gen_type, tos3("*"), tos3("_ptr"));
 			string cctype = string_replace(gen_type, tos3("*"), tos3(""));
 			string interface_index_name = _STR("_%.*s_%.*s_index", interface_name.len, interface_name.str, ptr_ctype.len, ptr_ctype.str);
 			generated_casting_functions = string_add(generated_casting_functions, _STR("\n%.*s I_%.*s_to_%.*s(%.*s x) {\n  return (%.*s){\n           ._object = (void*) memdup(&x, sizeof(%.*s)),\n           ._interface_idx = %.*s };\n}\n", interface_name.len, interface_name.str, cctype.len, cctype.str, interface_name.len, interface_name.str, cctype.len, cctype.str, interface_name.len, interface_name.str, cctype.len, cctype.str, interface_index_name.len, interface_index_name.str));
 			methods = string_add(methods, tos3("{\n"));
 			// FOR IN array
-			array tmp4 = t.methods;
-			for (int j = 0; j < tmp4.len; j++) {
-				v__table__Fn method = ((v__table__Fn*)tmp4.data)[j];
+			array tmp5 = t.methods;
+			for (int j = 0; j < tmp5.len; j++) {
+				v__table__Fn method = ((v__table__Fn*)tmp5.data)[j];
 				methods = string_add(methods, _STR(" (void*)    %.*s_%.*s", cctype.len, cctype.str, method.name.len, method.name.str));
 				if (j < t.methods.len - 1) {
 					methods = string_add(methods, tos3(", \n"));
@@ -26956,7 +26955,6 @@ void v__depgraph__OrderedDepMap_delete(v__depgraph__OrderedDepMap* o, string nam
 	// FOR IN array
 	array tmp2 = o->keys;
 	for (int i = 0; i < tmp2.len; i++) {
-		string _ = ((string*)tmp2.data)[i];
 		if (string_eq((*(string*)array_get(o->keys, i)), name)) {
 			array_delete(&o->keys, i);
 			break;
