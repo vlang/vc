@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d5eafe7"
+#define V_COMMIT_HASH "fb97c2e"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7f5e3b3"
+#define V_COMMIT_HASH "d5eafe7"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d5eafe7"
+#define V_CURRENT_COMMIT_HASH "fb97c2e"
 #endif
 
 
@@ -8637,6 +8637,11 @@ string strconv__ftoa__f64_to_str_l(f64 f) {
 }
 
 u64 hash__wyhash__rand_u64(u64* seed) {
+	u64* seed0 = seed;
+		u64 seed1 = *seed0;
+		seed1 += (_const_hash__wyhash__wyp0);
+		(*seed0) = seed1;
+		return hash__wyhash__wymum((seed1 ^ _const_hash__wyhash__wyp1), seed1);
 	return 0;
 }
 
