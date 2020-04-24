@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "20637ae"
+#define V_COMMIT_HASH "d689978"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c30c76c"
+#define V_COMMIT_HASH "20637ae"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "20637ae"
+#define V_CURRENT_COMMIT_HASH "d689978"
 #endif
 
 
@@ -1452,6 +1452,7 @@ struct v__gen__x64__Gen {
 	map_string_i64 fn_addr;
 	map_string_int var_offset;
 	int stack_var_pos;
+	int debug_pos;
 };
 
 struct v__gen__x64__SectionConfig {
@@ -3577,6 +3578,7 @@ int v__gen__x64__Gen_jge(v__gen__x64__Gen* g);
 void v__gen__x64__Gen_jmp(v__gen__x64__Gen* g, int addr);
 i64 v__gen__x64__abs(i64 a);
 void v__gen__x64__Gen_jle(v__gen__x64__Gen* g, i64 addr);
+void v__gen__x64__Gen_println(v__gen__x64__Gen* g, string comment);
 void v__gen__x64__Gen_jl(v__gen__x64__Gen* g, i64 addr);
 int v__gen__x64__Gen_abs_to_rel_addr(v__gen__x64__Gen* g, i64 addr);
 void v__gen__x64__Gen_mov64(v__gen__x64__Gen* g, v__gen__x64__Register reg, i64 val);
@@ -25186,6 +25188,8 @@ void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayFixed in
 		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\t\tstrings__Builder_write(&sb, %.*s_str(a[i],0));", field_styp.len, field_styp.str));
 	} else if ((sym->kind == v__table__Kind_f32 || sym->kind == v__table__Kind_f64)) {
 		strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\t\tstrings__Builder_write(&sb, _STR(\"%g\", a[i]));"));
+	} else if (sym->kind == v__table__Kind_string) {
+		strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\t\tstrings__Builder_write(&sb, _STR(\"\\\"%.*s\\\"\", a[i].len, a[i].str));"));
 	} else {
 		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\t\tstrings__Builder_write(&sb, %.*s_str(a[i]));", field_styp.len, field_styp.str));
 	}
@@ -26833,7 +26837,9 @@ void v__gen__x64__Gen_generate_elf_header(v__gen__x64__Gen* g) {
 	v__gen__x64__Gen_write64(g, 0x1000);
 	println(_STR("code_start_pos = %.*s", int_hex(g->buf.len).len, int_hex(g->buf.len).str));
 	g->code_start_pos = g->buf.len;
+	g->debug_pos = g->buf.len;
 	v__gen__x64__Gen_call(g, _const_v__gen__x64__PLACEHOLDER);
+	v__gen__x64__Gen_println(g, tos3("call fn main"));
 }
 
 void v__gen__x64__Gen_generate_elf_footer(v__gen__x64__Gen* g) {
@@ -26861,7 +26867,7 @@ void v__gen__x64__Gen_generate_elf_footer(v__gen__x64__Gen* g) {
 	os__chmod(g->out_name, 0775);
 	os__File_write_bytes(&/*opt*/(*(os__File*)f.data), g->buf.data, g->buf.len);
 	os__File_close(&/*opt*/(*(os__File*)f.data));
-	println(tos3("x64 elf binary has been successfully generated"));
+	println(tos3("\nx64 elf binary has been successfully generated"));
 }
 
 void v__gen__x64__Gen_section_header(v__gen__x64__Gen* g, v__gen__x64__SectionConfig c) {
@@ -26896,6 +26902,7 @@ void v__gen__x64__gen(array_v__ast__File files, string out_name) {
 		.fn_addr = new_map_1(sizeof(i64)),
 		.var_offset = new_map_1(sizeof(int)),
 		.stack_var_pos = 0,
+		.debug_pos = 0,
 	};
 	v__gen__x64__Gen_generate_elf_header(&g);
 	// FOR IN array
@@ -27012,6 +27019,7 @@ void v__gen__x64__Gen_cmp_var(v__gen__x64__Gen* g, string var_name, int val) {
 	int offset = v__gen__x64__Gen_get_var_offset(g, var_name);
 	v__gen__x64__Gen_write8(g, 0xff - offset + 1);
 	v__gen__x64__Gen_write32(g, val);
+	v__gen__x64__Gen_println(g, _STR("cmp var `%.*s` %"PRId32"", var_name.len, var_name.str, val));
 }
 
 void v__gen__x64__Gen_inc_var(v__gen__x64__Gen* g, string var_name) {
@@ -27019,12 +27027,14 @@ void v__gen__x64__Gen_inc_var(v__gen__x64__Gen* g, string var_name) {
 	int offset = v__gen__x64__Gen_get_var_offset(g, var_name);
 	v__gen__x64__Gen_write8(g, 0xff - offset + 1);
 	v__gen__x64__Gen_write32(g, 1);
+	v__gen__x64__Gen_println(g, _STR("inc_var `%.*s`", var_name.len, var_name.str));
 }
 
 int v__gen__x64__Gen_jne(v__gen__x64__Gen* g) {
 	v__gen__x64__Gen_write16(g, 0x850f);
 	i64 pos = v__gen__x64__Gen_pos(g);
 	v__gen__x64__Gen_write32(g, _const_v__gen__x64__PLACEHOLDER);
+	v__gen__x64__Gen_println(g, tos3("jne"));
 	return pos;
 }
 
@@ -27032,12 +27042,14 @@ int v__gen__x64__Gen_jge(v__gen__x64__Gen* g) {
 	v__gen__x64__Gen_write16(g, 0x8d0f);
 	i64 pos = v__gen__x64__Gen_pos(g);
 	v__gen__x64__Gen_write32(g, _const_v__gen__x64__PLACEHOLDER);
+	v__gen__x64__Gen_println(g, tos3("jne"));
 	return pos;
 }
 
 void v__gen__x64__Gen_jmp(v__gen__x64__Gen* g, int addr) {
 	v__gen__x64__Gen_write8(g, 0xe9);
 	v__gen__x64__Gen_write32(g, addr);
+	v__gen__x64__Gen_println(g, tos3("jmp"));
 }
 
 i64 v__gen__x64__abs(i64 a) {
@@ -27048,12 +27060,30 @@ void v__gen__x64__Gen_jle(v__gen__x64__Gen* g, i64 addr) {
 	int offset = 0xff - ((int)(v__gen__x64__abs(addr - g->buf.len))) - 1;
 	v__gen__x64__Gen_write8(g, 0x7e);
 	v__gen__x64__Gen_write8(g, offset);
+	v__gen__x64__Gen_println(g, tos3("jle"));
+}
+
+void v__gen__x64__Gen_println(v__gen__x64__Gen* g, string comment) {
+	string addr = int_hex(g->debug_pos);
+	print(term__red(string_add(string_add(strings__repeat('0', 6 - addr.len), addr), tos3("  "))));
+	for (int i = g->debug_pos;
+	i < g->buf.len; i++) {
+		string s = byte_hex((*(byte*)array_get(g->buf, i)));
+		if (s.len == 1) {
+			print(term__blue(tos3("0")));
+		}
+		print(string_add(term__blue(byte_hex((*(byte*)array_get(g->buf, i)))), tos3(" ")));
+	}
+	g->debug_pos = g->buf.len;
+	print(string_add(tos3(" "), comment));
+	println(tos3(""));
 }
 
 void v__gen__x64__Gen_jl(v__gen__x64__Gen* g, i64 addr) {
 	int offset = 0xff - ((int)(v__gen__x64__abs(addr - g->buf.len))) - 1;
 	v__gen__x64__Gen_write8(g, 0x7c);
 	v__gen__x64__Gen_write8(g, offset);
+	v__gen__x64__Gen_println(g, tos3("jl"));
 }
 
 int v__gen__x64__Gen_abs_to_rel_addr(v__gen__x64__Gen* g, i64 addr) {
@@ -27068,6 +27098,7 @@ void v__gen__x64__Gen_mov64(v__gen__x64__Gen* g, v__gen__x64__Register reg, i64 
 		println(_STR("unhandled mov %.*s", v__gen__x64__Register_str(reg).len, v__gen__x64__Register_str(reg).str));
 	};
 	v__gen__x64__Gen_write64(g, val);
+	v__gen__x64__Gen_println(g, _STR("mov64 %.*s, %"PRId64"", v__gen__x64__Register_str(reg).len, v__gen__x64__Register_str(reg).str, val));
 }
 
 void v__gen__x64__Gen_mov_from_reg(v__gen__x64__Gen* g, int var_offset, v__gen__x64__Register reg) {
@@ -27080,11 +27111,11 @@ void v__gen__x64__Gen_mov_from_reg(v__gen__x64__Gen* g, int var_offset, v__gen__
 		v__gen__x64__verror(_STR("mov_from_reg %.*s", v__gen__x64__Register_str(reg).len, v__gen__x64__Register_str(reg).str));
 	};
 	v__gen__x64__Gen_write8(g, 0xff - var_offset + 1);
+	v__gen__x64__Gen_println(g, tos3("mov from reg"));
 }
 
 void v__gen__x64__Gen_call(v__gen__x64__Gen* g, int addr) {
 	int rel = 0xffffffff - (g->buf.len + 5 - addr - 1);
-	println(_STR("call addr=%.*s rel_addr=%.*s pos=%"PRId32"", int_hex(addr).len, int_hex(addr).str, int_hex(rel).len, int_hex(rel).str, g->buf.len));
 	v__gen__x64__Gen_write8(g, 0xe8);
 	v__gen__x64__Gen_write32(g, rel);
 }
@@ -27092,10 +27123,12 @@ void v__gen__x64__Gen_call(v__gen__x64__Gen* g, int addr) {
 void v__gen__x64__Gen_syscall(v__gen__x64__Gen* g) {
 	v__gen__x64__Gen_write8(g, 0x0f);
 	v__gen__x64__Gen_write8(g, 0x05);
+	v__gen__x64__Gen_println(g, tos3("syscall"));
 }
 
 void v__gen__x64__Gen_ret(v__gen__x64__Gen* g) {
 	v__gen__x64__Gen_write8(g, 0xc3);
+	v__gen__x64__Gen_println(g, tos3("ret"));
 }
 
 void v__gen__x64__Gen_push(v__gen__x64__Gen* g, v__gen__x64__Register reg) {
@@ -27105,10 +27138,12 @@ void v__gen__x64__Gen_push(v__gen__x64__Gen* g, v__gen__x64__Register reg) {
 		v__gen__x64__Gen_write8(g, 0x41);
 		v__gen__x64__Gen_write8(g, 0x50 + reg - 8);
 	}
+	v__gen__x64__Gen_println(g, _STR("push %.*s", v__gen__x64__Register_str(reg).len, v__gen__x64__Register_str(reg).str));
 }
 
 void v__gen__x64__Gen_pop(v__gen__x64__Gen* g, v__gen__x64__Register reg) {
 	v__gen__x64__Gen_write8(g, 0x58 + reg);
+	v__gen__x64__Gen_println(g, _STR("pop %.*s", v__gen__x64__Register_str(reg).len, v__gen__x64__Register_str(reg).str));
 }
 
 void v__gen__x64__Gen_sub32(v__gen__x64__Gen* g, v__gen__x64__Register reg, int val) {
@@ -27116,6 +27151,7 @@ void v__gen__x64__Gen_sub32(v__gen__x64__Gen* g, v__gen__x64__Register reg, int 
 	v__gen__x64__Gen_write8(g, 0x81);
 	v__gen__x64__Gen_write8(g, 0xe8 + reg);
 	v__gen__x64__Gen_write32(g, val);
+	v__gen__x64__Gen_println(g, _STR("sub %.*s,0x%.*s", v__gen__x64__Register_str(reg).len, v__gen__x64__Register_str(reg).str, int_hex(val).len, int_hex(val).str));
 }
 
 void v__gen__x64__Gen_add(v__gen__x64__Gen* g, v__gen__x64__Register reg, int val) {
@@ -27123,10 +27159,12 @@ void v__gen__x64__Gen_add(v__gen__x64__Gen* g, v__gen__x64__Register reg, int va
 	v__gen__x64__Gen_write8(g, 0x81);
 	v__gen__x64__Gen_write8(g, 0xe8 + reg);
 	v__gen__x64__Gen_write32(g, val);
+	v__gen__x64__Gen_println(g, _STR("add %.*s,0x%.*s", v__gen__x64__Register_str(reg).len, v__gen__x64__Register_str(reg).str, int_hex(val).len, int_hex(val).str));
 }
 
 void v__gen__x64__Gen_leave(v__gen__x64__Gen* g) {
 	v__gen__x64__Gen_write8(g, 0xc9);
+	v__gen__x64__Gen_println(g, tos3("leave"));
 }
 
 int v__gen__x64__Gen_gen_loop_start(v__gen__x64__Gen* g, int from) {
@@ -27191,6 +27229,7 @@ void v__gen__x64__Gen_mov(v__gen__x64__Gen* g, v__gen__x64__Register reg, int va
 		v_panic(_STR("unhandled mov %.*s", v__gen__x64__Register_str(reg).len, v__gen__x64__Register_str(reg).str));
 	};
 	v__gen__x64__Gen_write32(g, val);
+	v__gen__x64__Gen_println(g, _STR("mov %.*s, %"PRId32"", v__gen__x64__Register_str(reg).len, v__gen__x64__Register_str(reg).str, val));
 }
 
 void v__gen__x64__Gen_mov_reg(v__gen__x64__Gen* g, v__gen__x64__Register a, v__gen__x64__Register b) {
@@ -27205,6 +27244,7 @@ void v__gen__x64__Gen_mov_rbp_rsp(v__gen__x64__Gen* g) {
 	v__gen__x64__Gen_write8(g, 0x48);
 	v__gen__x64__Gen_write8(g, 0x89);
 	v__gen__x64__Gen_write8(g, 0xe5);
+	v__gen__x64__Gen_println(g, tos3("mov rbp,rsp"));
 }
 
 void v__gen__x64__Gen_register_function_address(v__gen__x64__Gen* g, string name) {
@@ -27214,12 +27254,10 @@ void v__gen__x64__Gen_register_function_address(v__gen__x64__Gen* g, string name
 
 void v__gen__x64__Gen_call_fn(v__gen__x64__Gen* g, v__ast__CallExpr node) {
 	string name = node.name;
-	println(_STR("call fn %.*s", name.len, name.str));
 	i64 addr = (*(i64*)map_get3(g->fn_addr, name, &(i64[]){ 0 }));
 	if (addr == 0) {
 		v__gen__x64__verror(_STR("fn addr of `%.*s` = 0", name.len, name.str));
 	}
-	v__gen__x64__Gen_mov(g, v__gen__x64__Register_eax, 0);
 	for (int tmp2 = 0; tmp2 < node.args.len; tmp2++) {
 		int i = tmp2;
 		v__ast__Expr expr = (*(v__ast__CallArg*)array_get(node.args, i)).expr;
@@ -27230,7 +27268,7 @@ void v__gen__x64__Gen_call_fn(v__gen__x64__Gen* g, v__ast__CallExpr node) {
 		v__gen__x64__verror(tos3("more than 6 args not allowed for now"));
 	}
 	v__gen__x64__Gen_call(g, ((int)(addr)));
-	println(_STR("call %.*s %"PRId64"", name.len, name.str, addr));
+	v__gen__x64__Gen_println(g, _STR("fn call `%.*s()`", name.len, name.str));
 }
 
 void v__gen__x64__Gen_stmt(v__gen__x64__Gen* g, v__ast__Stmt node) {
@@ -27248,6 +27286,8 @@ void v__gen__x64__Gen_stmt(v__gen__x64__Gen* g, v__ast__Stmt node) {
 	}else if (node.typ == 171 /* v.ast.ForStmt */) {
 		v__ast__ForStmt* it = (v__ast__ForStmt*)node.obj; // ST it
 		v__gen__x64__Gen_for_stmt(g, */*d*/it);
+	}else if (node.typ == 168 /* v.ast.Module */) {
+		v__ast__Module* it = (v__ast__Module*)node.obj; // ST it
 	}else if (node.typ == 167 /* v.ast.Return */) {
 		v__ast__Return* it = (v__ast__Return*)node.obj; // ST it
 		v__gen__x64__Gen_gen_exit(g);
@@ -27310,11 +27350,12 @@ void v__gen__x64__Gen_allocate_var(v__gen__x64__Gen* g, string name, int size, i
 	}else {
 		v__gen__x64__verror(_STR("allocate_var: bad size %"PRId32"", size));
 	};
-	v__gen__x64__Gen_write8(g, 0xff - (g->stack_var_pos + size) + 1);
+	int n = g->stack_var_pos + size;
+	v__gen__x64__Gen_write8(g, 0xff - n + 1);
 	g->stack_var_pos += size;
 	map_set(&g->var_offset, name, &(int[]) { g->stack_var_pos });
 	v__gen__x64__Gen_write32(g, initial_val);
-	println(_STR("allocate_var(size=%"PRId32", initial_val=%"PRId32")", size, initial_val));
+	v__gen__x64__Gen_println(g, _STR("mov DWORD [rbp-0x%"PRId32"],%"PRId32" (Aallocate var `%.*s`)", n, initial_val, name.len, name.str));
 }
 
 void v__gen__x64__Gen_assign_stmt(v__gen__x64__Gen* g, v__ast__AssignStmt node) {
@@ -27324,7 +27365,6 @@ void v__gen__x64__Gen_assign_stmt(v__gen__x64__Gen* g, v__ast__AssignStmt node) 
 		v__ast__Ident ident = ((v__ast__Ident*)tmp1.data)[i];
 		if ((*(v__ast__Expr*)array_get(node.right, 0)).typ == 136 /* v.ast.IntegerLiteral */) {
 			v__ast__IntegerLiteral* it = (v__ast__IntegerLiteral*)(*(v__ast__Expr*)array_get(node.right, 0)).obj; // ST it
-			print(it->val);
 			v__gen__x64__Gen_allocate_var(g, ident.name, 4, string_int(it->val));
 		}else {
 		};
@@ -27344,7 +27384,6 @@ void v__gen__x64__Gen_if_expr(v__gen__x64__Gen* g, v__ast__IfExpr node) {
 		v__gen__x64__verror(tos3("unhandled infix.left"));
 	};
 	v__gen__x64__Gen_stmts(g, branch.stmts);
-	println(_STR("after if g.pos=%"PRId64" jneaddr=%"PRId32"", v__gen__x64__Gen_pos(g), jne_addr));
 	v__gen__x64__Gen_write32_at(g, jne_addr, v__gen__x64__Gen_pos(g) - jne_addr - 4);
 }
 
@@ -27363,24 +27402,28 @@ void v__gen__x64__Gen_for_stmt(v__gen__x64__Gen* g, v__ast__ForStmt node) {
 	v__gen__x64__Gen_stmts(g, node.stmts);
 	v__gen__x64__Gen_jmp(g, 0xffffffff - (v__gen__x64__Gen_pos(g) + 5 - start) + 1);
 	v__gen__x64__Gen_write32_at(g, jump_addr, v__gen__x64__Gen_pos(g) - jump_addr - 4);
+	v__gen__x64__Gen_println(g, tos3("jpm after for"));
 }
 
 void v__gen__x64__Gen_fn_decl(v__gen__x64__Gen* g, v__ast__FnDecl node) {
+	println(term__green(_STR("\n%.*s:", node.name.len, node.name.str)));
+	g->stack_var_pos = 0;
 	bool is_main = string_eq(node.name, tos3("main"));
-	println(_STR("saving addr %.*s %.*s", node.name.len, node.name.str, int_hex(g->buf.len).len, int_hex(g->buf.len).str));
 	if (is_main) {
 		v__gen__x64__Gen_save_main_fn_addr(g);
 	} else {
 		v__gen__x64__Gen_register_function_address(g, node.name);
-		v__gen__x64__Gen_push(g, v__gen__x64__Register_rbp);
-		v__gen__x64__Gen_mov_rbp_rsp(g);
+	}
+	v__gen__x64__Gen_push(g, v__gen__x64__Register_rbp);
+	v__gen__x64__Gen_mov_rbp_rsp(g);
+	if (!is_main) {
 		v__gen__x64__Gen_sub32(g, v__gen__x64__Register_rsp, 0x20);
 	}
 	if (node.args.len > 0) {
 	}
 	int offset = 0;
-	for (int tmp3 = 0; tmp3 < node.args.len; tmp3++) {
-		int i = tmp3;
+	for (int tmp4 = 0; tmp4 < node.args.len; tmp4++) {
+		int i = tmp4;
 		string name = (*(v__table__Arg*)array_get(node.args, i)).name;
 		v__gen__x64__Gen_allocate_var(g, name, 4, 0);
 		offset += 4;
@@ -27388,7 +27431,6 @@ void v__gen__x64__Gen_fn_decl(v__gen__x64__Gen* g, v__ast__FnDecl node) {
 	}
 	v__gen__x64__Gen_stmts(g, node.stmts);
 	if (is_main) {
-		println(tos3("end of main: gen exit"));
 		v__gen__x64__Gen_gen_exit(g);
 	}
 	if (!is_main) {
@@ -27693,28 +27735,26 @@ benchmark__Benchmark benchmark__start() {
 
 i64 benchmark__Benchmark_measure(benchmark__Benchmark* b, string label) {
 	benchmark__Benchmark_ok(b);
-	i64 res = time__Duration_milliseconds(time__StopWatch_elapsed(b->step_timer));
+	i64 res = time__Duration_microseconds(time__StopWatch_elapsed(b->step_timer));
 	println(benchmark__Benchmark_step_message_with_label(b, _const_benchmark__BSPENT, _STR("in %.*s", label.len, label.str)));
 	benchmark__Benchmark_step(b);
 	return res;
 }
 
 string benchmark__Benchmark_step_message_with_label(benchmark__Benchmark* b, string label, string msg) {
-	string timed_line = tos3("");
-	if (b->nexpected_steps > 0) {
+	string timed_line = benchmark__Benchmark_tdiff_in_ms(b, msg, time__Duration_microseconds(time__StopWatch_elapsed(b->step_timer)));
+	if (b->nexpected_steps > 1) {
 		string sprogress = tos3("");
 		if (b->nexpected_steps < 10) {
 			sprogress = (b->no_cstep ?  ( _STR("TMP1/%1d", b->nexpected_steps) )  :  ( _STR("%1d/%1d", b->cstep, b->nexpected_steps) ) );
-		}
-		if (b->nexpected_steps >= 10 && b->nexpected_steps < 100) {
+		} else if (b->nexpected_steps >= 10 && b->nexpected_steps < 100) {
 			sprogress = (b->no_cstep ?  ( _STR("TMP2/%2d", b->nexpected_steps) )  :  ( _STR("%2d/%2d", b->cstep, b->nexpected_steps) ) );
-		}
-		if (b->nexpected_steps >= 100 && b->nexpected_steps < 1000) {
+		} else if (b->nexpected_steps >= 100 && b->nexpected_steps < 1000) {
 			sprogress = (b->no_cstep ?  ( _STR("TMP3/%3d", b->nexpected_steps) )  :  ( _STR("%3d/%3d", b->cstep, b->nexpected_steps) ) );
+		} else {
+			sprogress = (b->no_cstep ?  ( _STR("TMP4/%4d", b->nexpected_steps) )  :  ( _STR("%4d/%4d", b->cstep, b->nexpected_steps) ) );
 		}
-		timed_line = benchmark__Benchmark_tdiff_in_ms(b, _STR("[%.*s] %.*s", sprogress.len, sprogress.str, msg.len, msg.str), time__Duration_milliseconds(time__StopWatch_elapsed(b->step_timer)));
-	} else {
-		timed_line = benchmark__Benchmark_tdiff_in_ms(b, msg, time__Duration_milliseconds(time__StopWatch_elapsed(b->step_timer)));
+		return _STR("%-5s [%.*s] %.*s", label.str, sprogress.len, sprogress.str, timed_line.len, timed_line.str);
 	}
 	return _STR("%-5s%.*s", label.str, timed_line.len, timed_line.str);
 }
@@ -27740,7 +27780,13 @@ string benchmark__Benchmark_total_message(benchmark__Benchmark* b, string msg) {
 	if (b->verbose) {
 		tmsg = _STR("<=== total time spent %.*s", tmsg.len, tmsg.str);
 	}
-	return string_add(tos3("  "), benchmark__Benchmark_tdiff_in_ms(b, tmsg, time__Duration_milliseconds(time__StopWatch_elapsed(b->bench_timer))));
+	string spaces = tos3("    ");
+	if (b->nexpected_steps > 1) {
+		string str_steps = _STR("%"PRId32"", b->nexpected_steps);
+		int x = 4 + str_steps.len * 2 + 5;
+		spaces = string_repeat(tos3(" "), x);
+	}
+	return string_add(spaces, benchmark__Benchmark_tdiff_in_ms(b, tmsg, time__Duration_microseconds(time__StopWatch_elapsed(b->bench_timer))));
 }
 
 i64 benchmark__Benchmark_total_duration(benchmark__Benchmark* b) {
@@ -27749,7 +27795,7 @@ i64 benchmark__Benchmark_total_duration(benchmark__Benchmark* b) {
 
 string benchmark__Benchmark_tdiff_in_ms(benchmark__Benchmark* b, string s, i64 tdiff) {
 	if (b->verbose) {
-		return _STR("%6d ms %.*s", tdiff, s.len, s.str);
+		return _STR("%9.3f ms %.*s", tdiff / 1000.0, s.len, s.str);
 	}
 	return s;
 }
