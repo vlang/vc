@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8be10ff"
+#define V_COMMIT_HASH "cc4090c"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f6f2043"
+#define V_COMMIT_HASH "8be10ff"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8be10ff"
+#define V_CURRENT_COMMIT_HASH "cc4090c"
 #endif
 
 
@@ -17225,7 +17225,7 @@ void v__parser__Parser_open_scope(v__parser__Parser* p) {
 }
 
 void v__parser__Parser_close_scope(v__parser__Parser* p) {
-	if (!p->pref->is_repl) {
+	if (!p->pref->is_repl && !_const_v__scanner__is_fmt) {
 		// FOR IN array
 		array tmp2 = v__ast__Scope_unused_vars(p->scope);
 		for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
