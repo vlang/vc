@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "aa15dec"
+#define V_COMMIT_HASH "323ca2b"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d689978"
+#define V_COMMIT_HASH "aa15dec"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "aa15dec"
+#define V_CURRENT_COMMIT_HASH "323ca2b"
 #endif
 
 
@@ -3517,6 +3517,7 @@ void v__checker__Checker_stmts(v__checker__Checker* c, array_v__ast__Stmt stmts)
 v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr node);
 v__table__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* ident);
 v__table__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__MatchExpr* node);
+void v__checker__Checker_match_exprs(v__checker__Checker* c, v__ast__MatchExpr* node, v__table__TypeSymbol type_sym);
 v__table__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExpr* node);
 v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__PostfixExpr node);
 v__table__Type v__checker__Checker_index_expr(v__checker__Checker* c, v__ast__IndexExpr* node);
@@ -15501,35 +15502,57 @@ string v__ast__FnDecl_str(v__ast__FnDecl* node, v__table__Table* t) {
 }
 
 string v__ast__Expr_str(v__ast__Expr x) {
-	if (x.typ == 152 /* v.ast.Ident */) {
-		v__ast__Ident* it = (v__ast__Ident*)x.obj; // ST it
-		return it->name;
-	}else if (x.typ == 146 /* v.ast.InfixExpr */) {
-		v__ast__InfixExpr* it = (v__ast__InfixExpr*)x.obj; // ST it
-		return _STR("%.*s %.*s %.*s", v__ast__Expr_str(it->left).len, v__ast__Expr_str(it->left).str, v__token__Kind_str(it->op).len, v__token__Kind_str(it->op).str, v__ast__Expr_str(it->right).len, v__ast__Expr_str(it->right).str);
-	}else if (x.typ == 160 /* v.ast.PrefixExpr */) {
-		v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)x.obj; // ST it
-		return string_add(v__token__Kind_str(it->op), v__ast__Expr_str(it->right));
+	if (x.typ == 154 /* v.ast.BoolLiteral */) {
+		v__ast__BoolLiteral* it = (v__ast__BoolLiteral*)x.obj; // ST it
+		return bool_str(it->val);
+	}else if (x.typ == 164 /* v.ast.CastExpr */) {
+		v__ast__CastExpr* it = (v__ast__CastExpr*)x.obj; // ST it
+		return _STR("%.*s(%.*s)", it->typname.len, it->typname.str, v__ast__Expr_str(it->expr).len, v__ast__Expr_str(it->expr).str);
+	}else if (x.typ == 153 /* v.ast.CallExpr */) {
+		v__ast__CallExpr* it = (v__ast__CallExpr*)x.obj; // ST it
+		string sargs = v__ast__args2str(it->args);
+		if (it->is_method) {
+			return _STR("%.*s.%.*s(%.*s)", v__ast__Expr_str(it->left).len, v__ast__Expr_str(it->left).str, it->name.len, it->name.str, sargs.len, sargs.str);
+		}
+		return _STR("%.*s.%.*s(%.*s)", it->mod.len, it->mod.str, it->name.len, it->name.str, sargs.len, sargs.str);
 	}else if (x.typ == 150 /* v.ast.CharLiteral */) {
 		v__ast__CharLiteral* it = (v__ast__CharLiteral*)x.obj; // ST it
 		return _STR("`%.*s`", it->val.len, it->val.str);
-	}else if (x.typ == 149 /* v.ast.IntegerLiteral */) {
-		v__ast__IntegerLiteral* it = (v__ast__IntegerLiteral*)x.obj; // ST it
-		return it->val;
+	}else if (x.typ == 165 /* v.ast.EnumVal */) {
+		v__ast__EnumVal* it = (v__ast__EnumVal*)x.obj; // ST it
+		return _STR(".%.*s", it->val.len, it->val.str);
 	}else if (x.typ == 151 /* v.ast.FloatLiteral */) {
 		v__ast__FloatLiteral* it = (v__ast__FloatLiteral*)x.obj; // ST it
 		return it->val;
-	}else if (x.typ == 148 /* v.ast.StringLiteral */) {
-		v__ast__StringLiteral* it = (v__ast__StringLiteral*)x.obj; // ST it
-		return _STR("\"%.*s\"", it->val.len, it->val.str);
+	}else if (x.typ == 152 /* v.ast.Ident */) {
+		v__ast__Ident* it = (v__ast__Ident*)x.obj; // ST it
+		return it->name;
+	}else if (x.typ == 161 /* v.ast.IndexExpr */) {
+		v__ast__IndexExpr* it = (v__ast__IndexExpr*)x.obj; // ST it
+		return _STR("%.*s[%.*s]", v__ast__Expr_str(it->left).len, v__ast__Expr_str(it->left).str, v__ast__Expr_str(it->index).len, v__ast__Expr_str(it->index).str);
+	}else if (x.typ == 149 /* v.ast.IntegerLiteral */) {
+		v__ast__IntegerLiteral* it = (v__ast__IntegerLiteral*)x.obj; // ST it
+		return it->val;
+	}else if (x.typ == 146 /* v.ast.InfixExpr */) {
+		v__ast__InfixExpr* it = (v__ast__InfixExpr*)x.obj; // ST it
+		return _STR("%.*s %.*s %.*s", v__ast__Expr_str(it->left).len, v__ast__Expr_str(it->left).str, v__token__Kind_str(it->op).len, v__token__Kind_str(it->op).str, v__ast__Expr_str(it->right).len, v__ast__Expr_str(it->right).str);
+	}else if (x.typ == 171 /* v.ast.ParExpr */) {
+		v__ast__ParExpr* it = (v__ast__ParExpr*)x.obj; // ST it
+		return v__ast__Expr_str(it->expr);
+	}else if (x.typ == 160 /* v.ast.PrefixExpr */) {
+		v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)x.obj; // ST it
+		return string_add(v__token__Kind_str(it->op), v__ast__Expr_str(it->right));
+	}else if (x.typ == 157 /* v.ast.SelectorExpr */) {
+		v__ast__SelectorExpr* it = (v__ast__SelectorExpr*)x.obj; // ST it
+		return _STR("%.*s.%.*s", v__ast__Expr_str(it->expr).len, v__ast__Expr_str(it->expr).str, it->field.len, it->field.str);
 	}else if (x.typ == 177 /* v.ast.StringInterLiteral */) {
 		v__ast__StringInterLiteral* it = (v__ast__StringInterLiteral*)x.obj; // ST it
 		array_string res = __new_array(0, 0, sizeof(string));
 		array_push(&res, &(string[]){ tos3("'") });
 		// FOR IN array
-		array tmp3 = it->vals;
-		for (int i = 0; i < tmp3.len; i++) {
-			string val = ((string*)tmp3.data)[i];
+		array tmp4 = it->vals;
+		for (int i = 0; i < tmp4.len; i++) {
+			string val = ((string*)tmp4.data)[i];
 			array_push(&res, &(string[]){ val });
 			if (i >= it->exprs.len) {
 				continue;
@@ -15546,34 +15569,12 @@ string v__ast__Expr_str(v__ast__Expr x) {
 		}
 		array_push(&res, &(string[]){ tos3("'") });
 		return array_string_join(res, tos3(""));
-	}else if (x.typ == 154 /* v.ast.BoolLiteral */) {
-		v__ast__BoolLiteral* it = (v__ast__BoolLiteral*)x.obj; // ST it
-		return bool_str(it->val);
-	}else if (x.typ == 171 /* v.ast.ParExpr */) {
-		v__ast__ParExpr* it = (v__ast__ParExpr*)x.obj; // ST it
-		return v__ast__Expr_str(it->expr);
-	}else if (x.typ == 161 /* v.ast.IndexExpr */) {
-		v__ast__IndexExpr* it = (v__ast__IndexExpr*)x.obj; // ST it
-		return _STR("%.*s[%.*s]", v__ast__Expr_str(it->left).len, v__ast__Expr_str(it->left).str, v__ast__Expr_str(it->index).len, v__ast__Expr_str(it->index).str);
-	}else if (x.typ == 164 /* v.ast.CastExpr */) {
-		v__ast__CastExpr* it = (v__ast__CastExpr*)x.obj; // ST it
-		return _STR("%.*s(%.*s)", it->typname.len, it->typname.str, v__ast__Expr_str(it->expr).len, v__ast__Expr_str(it->expr).str);
-	}else if (x.typ == 157 /* v.ast.SelectorExpr */) {
-		v__ast__SelectorExpr* it = (v__ast__SelectorExpr*)x.obj; // ST it
-		return _STR("%.*s.%.*s", v__ast__Expr_str(it->expr).len, v__ast__Expr_str(it->expr).str, it->field.len, it->field.str);
+	}else if (x.typ == 148 /* v.ast.StringLiteral */) {
+		v__ast__StringLiteral* it = (v__ast__StringLiteral*)x.obj; // ST it
+		return _STR("\"%.*s\"", it->val.len, it->val.str);
 	}else if (x.typ == 176 /* v.ast.TypeOf */) {
 		v__ast__TypeOf* it = (v__ast__TypeOf*)x.obj; // ST it
 		return _STR("typeof(%.*s)", v__ast__Expr_str(it->expr).len, v__ast__Expr_str(it->expr).str);
-	}else if (x.typ == 165 /* v.ast.EnumVal */) {
-		v__ast__EnumVal* it = (v__ast__EnumVal*)x.obj; // ST it
-		return _STR(".%.*s", it->val.len, it->val.str);
-	}else if (x.typ == 153 /* v.ast.CallExpr */) {
-		v__ast__CallExpr* it = (v__ast__CallExpr*)x.obj; // ST it
-		string sargs = v__ast__args2str(it->args);
-		if (it->is_method) {
-			return _STR("%.*s.%.*s(%.*s)", v__ast__Expr_str(it->left).len, v__ast__Expr_str(it->left).str, it->name.len, it->name.str, sargs.len, sargs.str);
-		}
-		return _STR("%.*s.%.*s(%.*s)", it->mod.len, it->mod.str, it->name.len, it->name.str, sargs.len, sargs.str);
 	}else {
 		return _STR("[unhandled expr type %.*s]", tos3( /* v.ast.Expr */ v_typeof_sumtype_110( (x).typ )).len, tos3( /* v.ast.Expr */ v_typeof_sumtype_110( (x).typ )).str);
 	};
@@ -21399,119 +21400,17 @@ v__table__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Ma
 	if (type_sym->kind != v__table__Kind_sum_type) {
 		node->is_sum_type = false;
 	}
-	map_string_int all_possible_left_subtypes = new_map_1(sizeof(int));
-	map_string_int all_possible_left_enum_vals = new_map_1(sizeof(int));
-	if (type_sym->info.typ == 97 /* v.table.SumType */) {
-		v__table__SumType* it = (v__table__SumType*)type_sym->info.obj; // ST it
-		// FOR IN array
-		array tmp4 = it->variants;
-		for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
-			v__table__Type v = ((v__table__Type*)tmp4.data)[tmp5];
-			map_set(&all_possible_left_subtypes, int_str(((int)(v))), &(int[]) { 0 });
-		}
-	}else if (type_sym->info.typ == 96 /* v.table.Enum */) {
-		v__table__Enum* it = (v__table__Enum*)type_sym->info.obj; // ST it
-		// FOR IN array
-		array tmp6 = it->vals;
-		for (int tmp7 = 0; tmp7 < tmp6.len; tmp7++) {
-			string v = ((string*)tmp6.data)[tmp7];
-			map_set(&all_possible_left_enum_vals, v, &(int[]) { 0 });
-		}
-	}else {
-	};
-	bool has_else = (*(v__ast__MatchBranch*)array_get(node->branches, node->branches.len - 1)).is_else;
-	if (!has_else) {
-		// FOR IN array
-		array tmp9 = node->branches;
-		for (int i = 0; i < tmp9.len; i++) {
-			v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp9.data)[i];
-			if (branch.is_else && i != node->branches.len - 1) {
-				v__checker__Checker_error(c, tos3("`else` must be the last branch of `match`"), branch.pos);
-				has_else = true;
-				break;
-			}
-		}
-		if (!has_else) {
-			int used_values_count = 0;
-			// FOR IN array
-			array tmp12 = node->branches;
-			for (int tmp13 = 0; tmp13 < tmp12.len; tmp13++) {
-				v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp12.data)[tmp13];
-				used_values_count += branch.exprs.len;
-				// FOR IN array
-				array tmp14 = branch.exprs;
-				for (int bi_ei = 0; bi_ei < tmp14.len; bi_ei++) {
-					v__ast__Expr bexpr = ((v__ast__Expr*)tmp14.data)[bi_ei];
-					if (bexpr.typ == 174 /* v.ast.Type */) {
-						v__ast__Type* it = (v__ast__Type*)bexpr.obj; // ST it
-						int tidx = v__table__type_idx(it->typ);
-						string stidx = int_str(tidx);
-						map_set(&all_possible_left_subtypes, stidx, &(int[]) { (*(int*)map_get3(all_possible_left_subtypes, stidx, &(int[]){ 0 })) + 1 });
-					}else if (bexpr.typ == 165 /* v.ast.EnumVal */) {
-						v__ast__EnumVal* it = (v__ast__EnumVal*)bexpr.obj; // ST it
-						map_set(&all_possible_left_enum_vals, it->val, &(int[]) { (*(int*)map_get3(all_possible_left_enum_vals, it->val, &(int[]){ 0 })) + 1 });
-					}else {
-					};
-				}
-			}
-			bool err = false;
-			string err_details = tos3("match must be exhaustive");
-			array_string unhandled = __new_array(0, 0, sizeof(string));
-			if (type_sym->info.typ == 97 /* v.table.SumType */) {
-				v__table__SumType* it = (v__table__SumType*)type_sym->info.obj; // ST it
-				// FOR IN map
-				array_string keys_tmp17 = map_keys(&all_possible_left_subtypes);
-				for (int tmp18 = 0; tmp18 < keys_tmp17.len; tmp18++) {
-					string k = ((string*)keys_tmp17.data)[tmp18];
-					int v = (*(int*)map_get3(all_possible_left_subtypes, k, &(int[]){ 0 }));
-					if (v == 0) {
-						err = true;
-						array_push(&unhandled, &(string[]){ string_add(string_add(tos3("`"), v__table__Table_type_to_str(c->table, v__table__new_type(string_int(k)))), tos3("`")) });
-					}
-					if (v > 1) {
-						err = true;
-						string multiple_type_name = string_add(string_add(tos3("`"), v__table__Table_type_to_str(c->table, v__table__new_type(string_int(k)))), tos3("`"));
-						v__checker__Checker_error(c, _STR("a match case for %.*s is handled more than once", multiple_type_name.len, multiple_type_name.str), node->pos);
-					}
-				}
-			}else if (type_sym->info.typ == 96 /* v.table.Enum */) {
-				v__table__Enum* it = (v__table__Enum*)type_sym->info.obj; // ST it
-				// FOR IN map
-				array_string keys_tmp22 = map_keys(&all_possible_left_enum_vals);
-				for (int tmp23 = 0; tmp23 < keys_tmp22.len; tmp23++) {
-					string k = ((string*)keys_tmp22.data)[tmp23];
-					int v = (*(int*)map_get3(all_possible_left_enum_vals, k, &(int[]){ 0 }));
-					if (v == 0) {
-						err = true;
-						array_push(&unhandled, &(string[]){ _STR("`.%.*s`", k.len, k.str) });
-					}
-					if (v > 1) {
-						err = true;
-						string multiple_enum_val = _STR("`.%.*s`", k.len, k.str);
-						v__checker__Checker_error(c, _STR("a match case for %.*s is handled more than once", multiple_enum_val.len, multiple_enum_val.str), node->pos);
-					}
-				}
-			}else {
-				err = true;
-			};
-			if (err) {
-				if (unhandled.len > 0) {
-					err_details = string_add(err_details, string_add(string_add(tos3(" (add match branches for: "), array_string_join(unhandled, tos3(", "))), tos3(" or an else{} branch)")));
-				}
-				v__checker__Checker_error(c, err_details, node->pos);
-			}
-		}
-	}
+	v__checker__Checker_match_exprs(c, node, */*d*/type_sym);
 	c->expected_type = cond_type;
 	v__table__Type ret_type = _const_v__table__void_type;
 	// FOR IN array
-	array tmp29 = node->branches;
-	for (int tmp30 = 0; tmp30 < tmp29.len; tmp30++) {
-		v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp29.data)[tmp30];
+	array tmp3 = node->branches;
+	for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
+		v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp3.data)[tmp4];
 		// FOR IN array
-		array tmp31 = branch.exprs;
-		for (int tmp32 = 0; tmp32 < tmp31.len; tmp32++) {
-			v__ast__Expr expr = ((v__ast__Expr*)tmp31.data)[tmp32];
+		array tmp5 = branch.exprs;
+		for (int tmp6 = 0; tmp6 < tmp5.len; tmp6++) {
+			v__ast__Expr expr = ((v__ast__Expr*)tmp5.data)[tmp6];
 			c->expected_type = cond_type;
 			v__table__Type typ = v__checker__Checker_expr(c, expr);
 			v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, typ);
@@ -21530,6 +21429,82 @@ v__table__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Ma
 	node->return_type = ret_type;
 	node->cond_type = cond_type;
 	return ret_type;
+}
+
+void v__checker__Checker_match_exprs(v__checker__Checker* c, v__ast__MatchExpr* node, v__table__TypeSymbol type_sym) {
+	map_string_int branch_exprs = new_map_1(sizeof(int));
+	// FOR IN array
+	array tmp1 = node->branches;
+	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+		v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp1.data)[tmp2];
+		// FOR IN array
+		array tmp3 = branch.exprs;
+		for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
+			v__ast__Expr expr = ((v__ast__Expr*)tmp3.data)[tmp4];
+			string key = tos3("");
+			if (expr.typ == 174 /* v.ast.Type */) {
+				v__ast__Type* it = (v__ast__Type*)expr.obj; // ST it
+				key = v__table__Table_type_to_str(c->table, it->typ);
+			}else if (expr.typ == 165 /* v.ast.EnumVal */) {
+				v__ast__EnumVal* it = (v__ast__EnumVal*)expr.obj; // ST it
+				key = it->val;
+			}else {
+				key = v__ast__Expr_str(expr);
+			};
+			int val = (_IN_MAP(key, branch_exprs) ?  ( (*(int*)map_get3(branch_exprs, key, &(int[]){ 0 })) )  :  ( 0 ) );
+			if (val == 1) {
+				v__checker__Checker_error(c, _STR("match case `%.*s` is handled more than once", key.len, key.str), branch.pos);
+			}
+			map_set(&branch_exprs, key, &(int[]) { val + 1 });
+		}
+	}
+	if (!(*(v__ast__MatchBranch*)array_get(node->branches, node->branches.len - 1)).is_else) {
+		// FOR IN array
+		array tmp9 = node->branches;
+		for (int i = 0; i < tmp9.len; i++) {
+			v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp9.data)[i];
+			if (branch.is_else && i != node->branches.len - 1) {
+				v__checker__Checker_error(c, tos3("`else` must be the last branch of `match`"), branch.pos);
+				return;
+			}
+		}
+		bool err = false;
+		string err_details = tos3("match must be exhaustive");
+		array_string unhandled = __new_array(0, 0, sizeof(string));
+		if (type_sym.info.typ == 97 /* v.table.SumType */) {
+			v__table__SumType* it = (v__table__SumType*)type_sym.info.obj; // ST it
+			// FOR IN array
+			array tmp12 = it->variants;
+			for (int tmp13 = 0; tmp13 < tmp12.len; tmp13++) {
+				v__table__Type v = ((v__table__Type*)tmp12.data)[tmp13];
+				string v_str = v__table__Table_type_to_str(c->table, v);
+				if (!_IN_MAP(v_str, branch_exprs)) {
+					err = true;
+					array_push(&unhandled, &(string[]){ _STR("`%.*s`", v_str.len, v_str.str) });
+				}
+			}
+		}else if (type_sym.info.typ == 96 /* v.table.Enum */) {
+			v__table__Enum* it = (v__table__Enum*)type_sym.info.obj; // ST it
+			// FOR IN array
+			array tmp16 = it->vals;
+			for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
+				string v = ((string*)tmp16.data)[tmp17];
+				if (!_IN_MAP(v, branch_exprs)) {
+					err = true;
+					array_push(&unhandled, &(string[]){ _STR("`.%.*s`", v.len, v.str) });
+				}
+			}
+		}else {
+			println(tos3("else"));
+			err = true;
+		};
+		if (err) {
+			if (unhandled.len > 0) {
+				err_details = string_add(err_details, string_add(string_add(tos3(" (add match branches for: "), array_string_join(unhandled, tos3(", "))), tos3(" or `else {}` at the end)")));
+			}
+			v__checker__Checker_error(c, err_details, node->pos);
+		}
+	}
 }
 
 v__table__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExpr* node) {
@@ -22922,14 +22897,7 @@ void v__gen__Gen_stmts(v__gen__Gen* g, array_v__ast__Stmt stmts) {
 
 void v__gen__Gen_stmt(v__gen__Gen* g, v__ast__Stmt node) {
 	g->stmt_start_pos = g->out.len;
-	if (node.typ == 203 /* v.ast.InterfaceDecl */) {
-		v__ast__InterfaceDecl* it = (v__ast__InterfaceDecl*)node.obj; // ST it
-		v__gen__Gen_writeln(g, tos3("//interface"));
-		v__gen__Gen_writeln(g, tos3("typedef struct {"));
-		v__gen__Gen_writeln(g, tos3("\tvoid* _object;"));
-		v__gen__Gen_writeln(g, tos3("\tint _interface_idx;"));
-		v__gen__Gen_writeln(g, _STR("} %.*s;", it->name.len, it->name.str));
-	}else if (node.typ == 199 /* v.ast.AssertStmt */) {
+	if (node.typ == 199 /* v.ast.AssertStmt */) {
 		v__ast__AssertStmt* it = (v__ast__AssertStmt*)node.obj; // ST it
 		v__gen__Gen_gen_assert_stmt(g, */*d*/it);
 	}else if (node.typ == 193 /* v.ast.AssignStmt */) {
@@ -23063,7 +23031,11 @@ void v__gen__Gen_stmt(v__gen__Gen* g, v__ast__Stmt node) {
 		v__ast__Import* it = (v__ast__Import*)node.obj; // ST it
 	}else if (node.typ == 203 /* v.ast.InterfaceDecl */) {
 		v__ast__InterfaceDecl* it = (v__ast__InterfaceDecl*)node.obj; // ST it
-		v__gen__Gen_writeln(g, tos3("// interface"));
+		v__gen__Gen_writeln(g, tos3("//interface"));
+		v__gen__Gen_writeln(g, tos3("typedef struct {"));
+		v__gen__Gen_writeln(g, tos3("\tvoid* _object;"));
+		v__gen__Gen_writeln(g, tos3("\tint _interface_idx;"));
+		v__gen__Gen_writeln(g, _STR("} %.*s;", it->name.len, it->name.str));
 	}else if (node.typ == 181 /* v.ast.Module */) {
 		v__ast__Module* it = (v__ast__Module*)node.obj; // ST it
 	}else if (node.typ == 180 /* v.ast.Return */) {
@@ -24757,9 +24729,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_65333 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_65333.arg0;
-	string type_of_last_expression = mr_65333.arg1;
+	multi_return_string_string mr_65278 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_65278.arg0;
+	string type_of_last_expression = mr_65278.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -24860,8 +24832,6 @@ string v__gen__Gen_comp_if_to_ifdef(v__gen__Gen* g, string name, bool is_comptim
 		return tos3("__NetBSD__");
 	}else if (string_eq(name, tos3("dragonfly"))) {
 		return tos3("__DragonFly__");
-	}else if (string_eq(name, tos3("msvc"))) {
-		return tos3("_MSC_VER");
 	}else if (string_eq(name, tos3("android"))) {
 		return tos3("__ANDROID__");
 	}else if (string_eq(name, tos3("solaris"))) {
