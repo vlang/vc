@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "323ca2b"
+#define V_COMMIT_HASH "c6a829c"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "aa15dec"
+#define V_COMMIT_HASH "323ca2b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "323ca2b"
+#define V_CURRENT_COMMIT_HASH "c6a829c"
 #endif
 
 
@@ -2327,6 +2327,7 @@ void map_delete(map* m, string key);
 array_string map_keys(map* m);
 void map_free(map m);
 string map_string_str(map_string m);
+string Option_str(Option o);
 Option opt_ok(voidptr data, int size);
 Option opt_none();
 Option v_error(string s);
@@ -5601,6 +5602,16 @@ string map_string_str(map_string m) {
 	strings__Builder_writeln(&sb, tos3("{"));
 	strings__Builder_writeln(&sb, tos3("}"));
 	return strings__Builder_str(&sb);
+}
+
+string Option_str(Option o) {
+	if (o.ok && !o.is_none) {
+		return string_add(string_add(tos3("Option{ data: "), array_byte_hex(array_slice(new_array_from_c_array(_ARR_LEN(o.data), _ARR_LEN(o.data), sizeof(o.data[0]), o.data), 0, 32))), tos3(" }"));
+	}
+	if (o.is_none) {
+		return tos3("Option{ none }");
+	}
+	return _STR("Option{ error: \"%.*s\" }", o.v_error.len, o.v_error.str);
 }
 
 Option opt_ok(voidptr data, int size) {
@@ -24452,6 +24463,8 @@ void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInterLiteral
 			v__gen__Gen_write(g, tos3("%\"PRId64\""));
 		} else if ((*(v__table__Type*)array_get(node.expr_types, i)) == _const_v__table__u64_type) {
 			v__gen__Gen_write(g, tos3("%\"PRIu64\""));
+		} else if (string_starts_with(v__gen__Gen_typ(g, (*(v__table__Type*)array_get(node.expr_types, i))), tos3("Option"))) {
+			v__gen__Gen_write(g, tos3("%.*s"));
 		} else {
 			v__gen__Gen_write(g, tos3("%\"PRId32\""));
 		}
@@ -24539,6 +24552,15 @@ void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInterLiteral
 				v__gen__Gen_write(g, _STR("%.*s(", str_fn_name.len, str_fn_name.str));
 				v__gen__Gen_expr(g, expr);
 				v__gen__Gen_write(g, tos3(",0).str"));
+			} else if (string_starts_with(v__gen__Gen_typ(g, (*(v__table__Type*)array_get(node.expr_types, i))), tos3("Option"))) {
+				string str_fn_name = tos3("Option_str");
+				v__gen__Gen_write(g, _STR("%.*s((Option)", str_fn_name.len, str_fn_name.str));
+				v__gen__Gen_expr(g, expr);
+				v__gen__Gen_write(g, tos3(")"));
+				v__gen__Gen_write(g, tos3(".len, "));
+				v__gen__Gen_write(g, _STR("%.*s((Option)", str_fn_name.len, str_fn_name.str));
+				v__gen__Gen_expr(g, expr);
+				v__gen__Gen_write(g, tos3(").str"));
 			} else {
 				v__gen__Gen_expr(g, expr);
 			}
@@ -24590,9 +24612,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_65278 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_65278.arg0;
-	string type_of_last_expression = mr_65278.arg1;
+	multi_return_string_string mr_65631 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_65631.arg0;
+	string type_of_last_expression = mr_65631.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
