@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "c6a829c"
+#define V_COMMIT_HASH "f6f2043"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "323ca2b"
+#define V_COMMIT_HASH "c6a829c"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c6a829c"
+#define V_CURRENT_COMMIT_HASH "f6f2043"
 #endif
 
 
@@ -24693,11 +24693,11 @@ void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInterLiteral
 				v__gen__Gen_write(g, tos3(",0).str"));
 			} else if (string_starts_with(v__gen__Gen_typ(g, (*(v__table__Type*)array_get(node.expr_types, i))), tos3("Option"))) {
 				string str_fn_name = tos3("Option_str");
-				v__gen__Gen_write(g, _STR("%.*s((Option)", str_fn_name.len, str_fn_name.str));
+				v__gen__Gen_write(g, _STR("%.*s(*(Option*)&", str_fn_name.len, str_fn_name.str));
 				v__gen__Gen_expr(g, expr);
 				v__gen__Gen_write(g, tos3(")"));
 				v__gen__Gen_write(g, tos3(".len, "));
-				v__gen__Gen_write(g, _STR("%.*s((Option)", str_fn_name.len, str_fn_name.str));
+				v__gen__Gen_write(g, _STR("%.*s(*(Option*)&", str_fn_name.len, str_fn_name.str));
 				v__gen__Gen_expr(g, expr);
 				v__gen__Gen_write(g, tos3(").str"));
 			} else {
@@ -24751,9 +24751,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_65631 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_65631.arg0;
-	string type_of_last_expression = mr_65631.arg1;
+	multi_return_string_string mr_65637 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_65637.arg0;
+	string type_of_last_expression = mr_65637.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
