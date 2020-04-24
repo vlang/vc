@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "cc4090c"
+#define V_COMMIT_HASH "fa47397"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8be10ff"
+#define V_COMMIT_HASH "cc4090c"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "cc4090c"
+#define V_CURRENT_COMMIT_HASH "fa47397"
 #endif
 
 
@@ -16476,7 +16476,7 @@ v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p) {
 	bool has_else = false;
 	while ((p->tok.kind == v__token__Kind_key_if || p->tok.kind == v__token__Kind_key_else)) {
 		p->inside_if = true;
-		v__token__Position branch_pos = v__token__Token_position(&p->tok);
+		v__token__Position start_pos = v__token__Token_position(&p->tok);
 		v__ast__Comment comment = (v__ast__Comment){
 			.text = tos3(""),
 			.is_multi = 0,
@@ -16492,9 +16492,10 @@ v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p) {
 			} else {
 				has_else = true;
 				p->inside_if = false;
+				v__token__Position end_pos = v__token__Token_position(&p->prev_tok);
 				array_push(&branches, &(v__ast__IfBranch[]){ (v__ast__IfBranch){
 					.stmts = v__parser__Parser_parse_block(p),
-					.pos = branch_pos,
+					.pos = v__token__Position_extend(start_pos, end_pos),
 					.comment = comment,
 					.cond = {0},
 				} });
@@ -16525,6 +16526,7 @@ v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p) {
 		} else {
 			cond = v__parser__Parser_expr(p, 0);
 		}
+		v__token__Position end_pos = v__token__Token_position(&p->prev_tok);
 		p->inside_if = false;
 		array_v__ast__Stmt stmts = v__parser__Parser_parse_block(p);
 		if (is_or) {
@@ -16533,7 +16535,7 @@ v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p) {
 		array_push(&branches, &(v__ast__IfBranch[]){ (v__ast__IfBranch){
 			.cond = cond,
 			.stmts = stmts,
-			.pos = branch_pos,
+			.pos = v__token__Position_extend(start_pos, end_pos),
 			.comment = (v__ast__Comment){
 			.text = tos3(""),
 			.is_multi = 0,
@@ -21389,10 +21391,8 @@ v__table__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExp
 	for (int i = 0; i < tmp2.len; i++) {
 		v__ast__IfBranch branch = ((v__ast__IfBranch*)tmp2.data)[i];
 		if (branch.cond.typ == 158 /* v.ast.ParExpr */) {
-			v__ast__ParExpr* it = (v__ast__ParExpr*)branch.cond.obj; // ST it
-			v__checker__Checker_error(c, tos3("unnecessary `()` in an if condition. use `if expr {` instead of `if (expr) {`."), node->pos);
-		}else {
-		};
+			v__checker__Checker_error(c, tos3("unnecessary `()` in an if condition. use `if expr {` instead of `if (expr) {`."), branch.pos);
+		}
 		v__table__Type typ = v__checker__Checker_expr(c, branch.cond);
 		if (i < node->branches.len - 1 || !node->has_else) {
 			v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, typ);
