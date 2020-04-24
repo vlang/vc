@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d689978"
+#define V_COMMIT_HASH "aa15dec"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "20637ae"
+#define V_COMMIT_HASH "d689978"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d689978"
+#define V_CURRENT_COMMIT_HASH "aa15dec"
 #endif
 
 
@@ -19976,6 +19976,22 @@ void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl 
 			.len = name.len,
 		};
 		v__checker__Checker_error(c, tos3("struct name must begin with capital letter"), pos);
+	}
+	// FOR IN array
+	array tmp2 = decl.fields;
+	for (int fi = 0; fi < tmp2.len; fi++) {
+		if ((*(v__ast__StructField*)array_get(decl.fields, fi)).has_default_expr) {
+			c->expected_type = (*(v__ast__StructField*)array_get(decl.fields, fi)).typ;
+			v__table__Type field_expr_type = v__checker__Checker_expr(c, (*(v__ast__StructField*)array_get(decl.fields, fi)).default_expr);
+			if (!v__table__Table_check(c->table, field_expr_type, (*(v__ast__StructField*)array_get(decl.fields, fi)).typ)) {
+				v__table__TypeSymbol* field_expr_type_sym = v__table__Table_get_type_symbol(c->table, field_expr_type);
+				v__table__TypeSymbol* field_type_sym = v__table__Table_get_type_symbol(c->table, (*(v__ast__StructField*)array_get(decl.fields, fi)).typ);
+				string field_name = (*(v__ast__StructField*)array_get(decl.fields, fi)).name;
+				string fet_name = field_expr_type_sym->name;
+				string ft_name = field_type_sym->name;
+				v__checker__Checker_error(c, string_add(_STR("default expression for field `%.*s` ", field_name.len, field_name.str), _STR("has type `%.*s`, but should be `%.*s`", fet_name.len, fet_name.str, ft_name.len, ft_name.str)), v__ast__Expr_position((*(v__ast__StructField*)array_get(decl.fields, fi)).default_expr));
+			}
+		}
 	}
 }
 
