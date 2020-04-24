@@ -1,7 +1,6 @@
-#define V_COMMIT_HASH "6b31ebe"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ba85b8d"
+#define V_COMMIT_HASH "0f4c5fb"
 #endif
 
 
@@ -2929,6 +2928,7 @@ bool array_v__table__Type_contains(array_v__table__Type types, v__table__Type ty
 int v__table__type_idx(v__table__Type t);
 int v__table__type_nr_muls(v__table__Type t);
 bool v__table__type_is_ptr(v__table__Type t);
+bool v__table__Type_is_ptr(v__table__Type t);
 v__table__Type v__table__type_set_nr_muls(v__table__Type t, int nr_muls);
 v__table__Type v__table__type_to_ptr(v__table__Type t);
 v__table__Type v__table__type_deref(v__table__Type t);
@@ -3615,6 +3615,7 @@ void v__gen__Gen_gen_str_for_enum(v__gen__Gen* g, v__table__Enum info, string st
 void v__gen__Gen_gen_str_for_struct(v__gen__Gen* g, v__table__Struct info, string styp, string str_fn_name);
 void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, string styp, string str_fn_name);
 void v__gen__Gen_gen_str_for_map(v__gen__Gen* g, v__table__Map info, string styp, string str_fn_name);
+void v__gen__Gen_gen_str_for_varg(v__gen__Gen* g, string styp, string str_fn_name);
 string v__gen__Gen_type_to_fmt(v__gen__Gen g, v__table__Type typ);
 string v__gen__Gen_interface_table(v__gen__Gen* v);
 string _const_v__gen__c_commit_hash_default; // a string literal, inited later
@@ -8850,11 +8851,6 @@ string strconv__ftoa__f64_to_str_l(f64 f) {
 }
 
 u64 hash__wyhash__rand_u64(u64* seed) {
-	u64* seed0 = seed;
-		u64 seed1 = *seed0;
-		seed1 += (_const_hash__wyhash__wyp0);
-		(*seed0) = seed1;
-		return hash__wyhash__wymum((seed1 ^ _const_hash__wyhash__wyp1), seed1);
 	return 0;
 }
 
@@ -11394,6 +11390,11 @@ int v__table__type_nr_muls(v__table__Type t) {
 
 inline
 bool v__table__type_is_ptr(v__table__Type t) {
+	return ((((int)(t)) >> 16) & 0xff) > 0;
+}
+
+inline
+bool v__table__Type_is_ptr(v__table__Type t) {
 	return ((((int)(t)) >> 16) & 0xff) > 0;
 }
 
@@ -18252,7 +18253,7 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 				.left_type = {0},
 				.right_type = {0},
 			}}, sizeof(v__ast__InfixExpr)), .typ = 146 /* v.ast.InfixExpr */};
-		} else if (v__token__Kind_is_infix(p->tok.kind)) {
+		} else if (v__token__Kind_is_infix(p->tok.kind) && !(p->tok.kind == v__token__Kind_mul && p->tok.line_nr != p->prev_tok.line_nr)) {
 			node = v__parser__Parser_infix_expr(p, node);
 		} else if ((p->tok.kind == v__token__Kind_inc || p->tok.kind == v__token__Kind_dec)) {
 			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__PostfixExpr[]) {(v__ast__PostfixExpr){
@@ -22551,7 +22552,7 @@ string v__gen__Gen_typ(v__gen__Gen* g, v__table__Type t) {
 	string styp = v__gen__Gen_base_typ(g, t);
 	if (v__table__type_is(t, v__table__TypeFlag_optional)) {
 		styp = string_add(tos3("Option_"), styp);
-		if (v__table__type_is_ptr(t)) {
+		if (v__table__Type_is_ptr(t)) {
 			styp = string_replace(styp, tos3("*"), tos3("_ptr"));
 		}
 		if (!(_IN(string, styp, g->optionals))) {
@@ -24441,7 +24442,19 @@ void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInterLiteral
 			v__gen__Gen_expr(g, expr);
 		} else {
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, (*(v__table__Type*)array_get(node.expr_types, i)));
-			if (sym->kind == v__table__Kind_enum_) {
+			if (v__table__type_is((*(v__table__Type*)array_get(node.expr_types, i)), v__table__TypeFlag_variadic)) {
+				string styp = v__gen__Gen_typ(g, (*(v__table__Type*)array_get(node.expr_types, i)));
+				string str_fn_name = v__gen__styp_to_str_fn_name(styp);
+				v__gen__Gen_gen_str_for_type(g, */*d*/sym, styp, str_fn_name);
+				v__gen__Gen_gen_str_for_varg(g, styp, str_fn_name);
+				v__gen__Gen_write(g, _STR("%.*s_varg(", str_fn_name.len, str_fn_name.str));
+				v__gen__Gen_expr(g, expr);
+				v__gen__Gen_write(g, tos3(")"));
+				v__gen__Gen_write(g, tos3(".len, "));
+				v__gen__Gen_write(g, _STR("%.*s_varg(", str_fn_name.len, str_fn_name.str));
+				v__gen__Gen_expr(g, expr);
+				v__gen__Gen_write(g, tos3(").str"));
+			} else if (sym->kind == v__table__Kind_enum_) {
 				bool is_var = ((*(v__ast__Expr*)array_get(node.exprs, i)).typ == 157 /* v.ast.SelectorExpr */) ?  ( true )  : ((*(v__ast__Expr*)array_get(node.exprs, i)).typ == 152 /* v.ast.Ident */) ?  ( true )  :  ( false ) ;
 				if (is_var) {
 					string styp = v__gen__Gen_typ(g, (*(v__table__Type*)array_get(node.expr_types, i)));
@@ -24547,9 +24560,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_65333 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_65333.arg0;
-	string type_of_last_expression = mr_65333.arg1;
+	multi_return_string_string mr_65754 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_65754.arg0;
+	string type_of_last_expression = mr_65754.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -25153,6 +25166,22 @@ void v__gen__Gen_gen_str_for_map(v__gen__Gen* g, v__table__Map info, string styp
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\t}"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t}"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tstrings__Builder_write(&sb, tos3(\"}\"));"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\treturn strings__Builder_str(&sb);"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("}"));
+}
+
+void v__gen__Gen_gen_str_for_varg(v__gen__Gen* g, string styp, string str_fn_name) {
+	strings__Builder_writeln(&g->definitions, _STR("string %.*s_varg(varg_%.*s it); // auto", str_fn_name.len, str_fn_name.str, styp.len, styp.str));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("string %.*s_varg(varg_%.*s it) {", str_fn_name.len, str_fn_name.str, styp.len, styp.str));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tstrings__Builder sb = strings__new_builder(it.len);"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tstrings__Builder_write(&sb, tos3(\"[\"));"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tfor(int i=0; i<it.len; i++) {"));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstrings__Builder_write(&sb, %.*s(it.args[i], 0));", str_fn_name.len, str_fn_name.str));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tif (i < it.len-1) {"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\t\tstrings__Builder_write(&sb, tos3(\", \"));"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\t}"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t}"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tstrings__Builder_write(&sb, tos3(\"]\"));"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("\treturn strings__Builder_str(&sb);"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("}"));
 }
