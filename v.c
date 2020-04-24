@@ -1,12 +1,11 @@
-#define V_COMMIT_HASH "6b31ebe"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ba85b8d"
+#define V_COMMIT_HASH "ebc4137"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "6b31ebe"
+#define V_CURRENT_COMMIT_HASH "6180b84"
 #endif
 
 
@@ -15475,7 +15474,7 @@ v__ast__CompIf v__parser__Parser_comp_if(v__parser__Parser* p) {
 	bool skip_os = false;
 	if (_IN(string, val, _const_v__parser__supported_platforms)) {
 		v__pref__OS os = v__parser__os_from_string(val);
-		if (false && ((!is_not && os != p->pref->os) || (is_not && os == p->pref->os)) && !p->pref->output_cross_c) {
+		if (((!is_not && os != p->pref->os) || (is_not && os == p->pref->os)) && !p->pref->output_cross_c) {
 			skip_os = true;
 			v__parser__Parser_check(p, v__token__Kind_lcbr);
 			int stack = 1;
