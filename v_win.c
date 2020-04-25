@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d54b48b"
+#define V_COMMIT_HASH "6696e1a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9229a96"
+#define V_COMMIT_HASH "d54b48b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d54b48b"
+#define V_CURRENT_COMMIT_HASH "6696e1a"
 #endif
 
 
@@ -2933,7 +2933,7 @@ bool array_v__table__Type_contains(array_v__table__Type types, v__table__Type ty
 int v__table__Type_idx(v__table__Type t);
 int v__table__Type_nr_muls(v__table__Type t);
 bool v__table__Type_is_ptr(v__table__Type t);
-v__table__Type v__table__type_set_nr_muls(v__table__Type t, int nr_muls);
+v__table__Type v__table__Type_set_nr_muls(v__table__Type t, int nr_muls);
 v__table__Type v__table__Type_to_ptr(v__table__Type t);
 v__table__Type v__table__Type_deref(v__table__Type t);
 v__table__TypeFlag v__table__Type_flag(v__table__Type t);
@@ -11502,7 +11502,7 @@ bool v__table__Type_is_ptr(v__table__Type t) {
 }
 
 inline
-v__table__Type v__table__type_set_nr_muls(v__table__Type t, int nr_muls) {
+v__table__Type v__table__Type_set_nr_muls(v__table__Type t, int nr_muls) {
 	if (nr_muls < 0 || nr_muls > 255) {
 		v_panic(tos3("typ_set_nr_muls: nr_muls must be between 0 & 255"));
 	}
@@ -12044,7 +12044,7 @@ string v__table__Fn_signature(v__table__Fn* f) {
 	array tmp1 = f->args;
 	for (int i = 0; i < tmp1.len; i++) {
 		v__table__Arg arg = ((v__table__Arg*)tmp1.data)[i];
-		v__table__Type typ = v__table__type_set_nr_muls(arg.typ, 0);
+		v__table__Type typ = v__table__Type_set_nr_muls(arg.typ, 0);
 		sig = string_add(sig, _STR("%"PRId32"", typ));
 		if (i < f->args.len - 1) {
 			sig = string_add(sig, tos3("_"));
@@ -16921,7 +16921,7 @@ v__table__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name
 v__table__Type v__parser__Parser_parse_type_with_mut(v__parser__Parser* p, bool is_mut) {
 	v__table__Type typ = v__parser__Parser_parse_type(p);
 	if (is_mut) {
-		return v__table__type_set_nr_muls(typ, 1);
+		return v__table__Type_set_nr_muls(typ, 1);
 	}
 	return typ;
 }
@@ -16956,7 +16956,7 @@ v__table__Type v__parser__Parser_parse_type(v__parser__Parser* p) {
 		typ = v__table__Type_set_flag(typ, v__table__TypeFlag_optional);
 	}
 	if (nr_muls > 0) {
-		typ = v__table__type_set_nr_muls(typ, nr_muls);
+		typ = v__table__Type_set_nr_muls(typ, nr_muls);
 	}
 	return typ;
 }
