@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "6696e1a"
+#define V_COMMIT_HASH "7177e71"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d54b48b"
+#define V_COMMIT_HASH "6696e1a"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "6696e1a"
+#define V_CURRENT_COMMIT_HASH "7177e71"
 #endif
 
 
@@ -2003,6 +2003,7 @@ struct v__parser__Parser {
 	v__token__Token tok;
 	v__token__Token prev_tok;
 	v__token__Token peek_tok;
+	v__token__Token peek_tok2;
 	v__table__Table* table;
 	bool is_c;
 	bool is_js;
@@ -17134,6 +17135,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.tok = {0},
 		.prev_tok = {0},
 		.peek_tok = {0},
+		.peek_tok2 = {0},
 		.is_c = 0,
 		.is_js = 0,
 		.inside_if = 0,
@@ -17176,6 +17178,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* table, v__scann
 		.tok = {0},
 		.prev_tok = {0},
 		.peek_tok = {0},
+		.peek_tok2 = {0},
 		.is_c = 0,
 		.is_js = 0,
 		.inside_if = 0,
@@ -17242,6 +17245,7 @@ void v__parser__Parser_init_parse_fns(v__parser__Parser* p) {
 void v__parser__Parser_read_first_token(v__parser__Parser* p) {
 	v__parser__Parser_next(p);
 	v__parser__Parser_next(p);
+	v__parser__Parser_next(p);
 }
 
 void v__parser__Parser_open_scope(v__parser__Parser* p) {
@@ -17298,7 +17302,8 @@ array_v__ast__Stmt v__parser__Parser_parse_block_no_scope(v__parser__Parser* p) 
 void v__parser__Parser_next(v__parser__Parser* p) {
 	p->prev_tok = p->tok;
 	p->tok = p->peek_tok;
-	p->peek_tok = v__scanner__Scanner_scan(p->scanner);
+	p->peek_tok = p->peek_tok2;
+	p->peek_tok2 = v__scanner__Scanner_scan(p->scanner);
 }
 
 void v__parser__Parser_check(v__parser__Parser* p, v__token__Kind expected) {
@@ -18409,6 +18414,9 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 				.right_type = {0},
 			}}, sizeof(v__ast__InfixExpr)), .typ = 146 /* v.ast.InfixExpr */};
 		} else if (v__token__Kind_is_infix(p->tok.kind)) {
+			if (p->tok.kind == v__token__Kind_mul && p->tok.line_nr != p->prev_tok.line_nr && p->peek_tok2.kind == v__token__Kind_assign) {
+				return node;
+			}
 			node = v__parser__Parser_infix_expr(p, node);
 		} else if ((p->tok.kind == v__token__Kind_inc || p->tok.kind == v__token__Kind_dec)) {
 			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__PostfixExpr[]) {(v__ast__PostfixExpr){
