@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "c73d91a"
+#define V_COMMIT_HASH "86ba164"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d86539c"
+#define V_COMMIT_HASH "c73d91a"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c73d91a"
+#define V_CURRENT_COMMIT_HASH "86ba164"
 #endif
 
 
@@ -2705,6 +2705,7 @@ string os__file_ext(string path);
 string os__dir(string path);
 string os__base_dir(string path);
 string os__file_name(string path);
+string os__input(string prompt);
 string os__get_line();
 string os__get_raw_line();
 array_string os__get_lines();
@@ -10381,6 +10382,12 @@ string os__base_dir(string path) {
 
 string os__file_name(string path) {
 	return string_all_after(path, _const_os__path_separator);
+}
+
+string os__input(string prompt) {
+	print(prompt);
+	os__flush();
+	return os__get_line();
 }
 
 string os__get_line() {
