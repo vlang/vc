@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "a924def"
+#define V_COMMIT_HASH "f1f9e42"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fa47397"
+#define V_COMMIT_HASH "a924def"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "a924def"
+#define V_CURRENT_COMMIT_HASH "f1f9e42"
 #endif
 
 
@@ -1241,6 +1241,7 @@ struct v__table__Struct {
 
 struct v__table__Interface {
 	array_string gen_types;
+	string foo;
 };
 
 struct v__table__MultiReturn {
@@ -12466,6 +12467,15 @@ bool v__table__Table_check(v__table__Table* t, v__table__Type got, v__table__Typ
 	}
 	v__table__TypeSymbol* got_type_sym = v__table__Table_get_type_symbol(t, got);
 	v__table__TypeSymbol* exp_type_sym = v__table__Table_get_type_symbol(t, expected);
+	if (exp_type_sym->kind == v__table__Kind_interface_) {
+		v__table__Interface info = /* as */ *(v__table__Interface*)got_type_sym->info.obj;
+		println(tos3("gen_types before"));
+		println(array_string_str(info.gen_types));
+		array_push(&info.gen_types, &(string[]){ got_type_sym->name });
+		println(_STR("adding gen_type %.*s", got_type_sym->name.len, got_type_sym->name.str));
+		println(array_string_str(info.gen_types));
+		return true;
+	}
 	if ((v__table__TypeSymbol_is_int(got_type_sym) && exp_type_sym->kind == v__table__Kind_enum_) || (v__table__TypeSymbol_is_int(exp_type_sym) && got_type_sym->kind == v__table__Kind_enum_)) {
 		return true;
 	}
@@ -18671,11 +18681,10 @@ v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser* p) {
 	v__table__TypeSymbol t = (v__table__TypeSymbol){
 		.kind = v__table__Kind_interface_,
 		.name = interface_name,
-		.info = /* sum type cast */ (v__table__TypeInfo) {.obj = memdup(&(v__table__Struct[]) {(v__table__Struct){
-		.fields = new_array(0, 1, sizeof(v__table__Field)),
-		.is_typedef = 0,
-		.is_union = 0,
-	}}, sizeof(v__table__Struct)), .typ = 92 /* v.table.Struct */},
+		.info = /* sum type cast */ (v__table__TypeInfo) {.obj = memdup(&(v__table__Interface[]) {(v__table__Interface){
+		.gen_types = __new_array(0, 0, sizeof(string)),
+		.foo = tos3("foo"),
+	}}, sizeof(v__table__Interface)), .typ = 93 /* v.table.Interface */},
 		.parent_idx = 0,
 		.methods = new_array(0, 1, sizeof(v__table__Fn)),
 		.mod = tos3(""),
@@ -18687,8 +18696,8 @@ v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser* p) {
 		int line_nr = p->tok.line_nr;
 		string name = v__parser__Parser_check_name(p);
 		println(name);
-		multi_return_array_v__table__Arg_bool mr_5797 = v__parser__Parser_fn_args(p);
-		array_v__table__Arg args2 = mr_5797.arg0;
+		multi_return_array_v__table__Arg_bool mr_5808 = v__parser__Parser_fn_args(p);
+		array_v__table__Arg args2 = mr_5808.arg0;
 		array_v__table__Arg args = new_array_from_c_array(1, 1, sizeof(v__table__Arg), (v__table__Arg[1]){
 		(v__table__Arg){
 			.name = tos3("x"),
@@ -24773,9 +24782,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_65605 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_65605.arg0;
-	string type_of_last_expression = mr_65605.arg1;
+	multi_return_string_string mr_65599 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_65599.arg0;
+	string type_of_last_expression = mr_65599.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -25439,6 +25448,7 @@ string v__gen__Gen_interface_table(v__gen__Gen* v) {
 			continue;
 		}
 		v__table__Interface info = /* as */ *(v__table__Interface*)t.info.obj;
+		println(array_string_str(info.gen_types));
 		string interface_name = t.name;
 		string methods = tos3("");
 		string generated_casting_functions = tos3("");
@@ -25641,7 +25651,7 @@ void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node) {
 		v__gen__Gen_expr(g, node.left);
 		v__gen__Gen_write(g, tos3("._interface_idx][1]))("));
 		v__gen__Gen_expr(g, node.left);
-		v__gen__Gen_writeln(g, tos3("._object );"));
+		v__gen__Gen_write(g, tos3("._object)"));
 		return;
 	}
 	if (typ_sym->kind == v__table__Kind_array && string_eq(node.name, tos3("filter"))) {
