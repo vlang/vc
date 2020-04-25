@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "aacc3c6"
+#define V_COMMIT_HASH "945f964"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4bcdf11"
+#define V_COMMIT_HASH "aacc3c6"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "aacc3c6"
+#define V_CURRENT_COMMIT_HASH "945f964"
 #endif
 
 
@@ -17302,11 +17302,14 @@ void v__parser__Parser_open_scope(v__parser__Parser* p) {
 }
 
 void v__parser__Parser_close_scope(v__parser__Parser* p) {
-	if (!p->pref->is_repl && !_const_v__scanner__is_fmt) {
+	if (!p->pref->is_repl && !p->scanner->is_fmt) {
 		// FOR IN array
 		array tmp2 = v__ast__Scope_unused_vars(p->scope);
 		for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
 			v__ast__UnusedVar v = ((v__ast__UnusedVar*)tmp2.data)[tmp3];
+			if (v.name.len > 0 && string_at(v.name, 0) == '_') {
+				continue;
+			}
 			if (p->pref->is_prod) {
 				v__parser__Parser_error_with_pos(p, _STR("Unused variable: %.*s", v.name.len, v.name.str), v.pos);
 			} else {
