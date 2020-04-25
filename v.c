@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "fa47397"
+#define V_COMMIT_HASH "a924def"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cc4090c"
+#define V_COMMIT_HASH "fa47397"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "fa47397"
+#define V_CURRENT_COMMIT_HASH "a924def"
 #endif
 
 
@@ -2764,6 +2764,8 @@ v__table__Type v__table__type_set(v__table__Type t, v__table__TypeFlag flag);
 bool v__table__type_is(v__table__Type t, v__table__TypeFlag flag);
 v__table__Type v__table__new_type(int idx);
 v__table__Type v__table__new_type_ptr(int idx, int nr_muls);
+bool v__table__is_float(v__table__Type typ);
+bool v__table__is_int(v__table__Type typ);
 bool v__table__is_number(v__table__Type typ);
 #define _const_v__table__void_type_idx 1
 #define _const_v__table__voidptr_type_idx 2
@@ -11384,6 +11386,17 @@ v__table__Type v__table__new_type_ptr(int idx, int nr_muls) {
 	return ((nr_muls << 16) | ((u16)(idx)));
 }
 
+inline
+bool v__table__is_float(v__table__Type typ) {
+	return _IN(int, v__table__type_idx(typ), _const_v__table__float_type_idxs);
+}
+
+inline
+bool v__table__is_int(v__table__Type typ) {
+	return _IN(int, v__table__type_idx(typ), _const_v__table__integer_type_idxs);
+}
+
+inline
 bool v__table__is_number(v__table__Type typ) {
 	return _IN(int, v__table__type_idx(typ), _const_v__table__number_type_idxs);
 }
@@ -20131,14 +20144,22 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 		}
 	}
 	if ((infix_expr->op == v__token__Kind_key_in || infix_expr->op == v__token__Kind_not_in)) {
-		if (!((right->kind == v__table__Kind_array || right->kind == v__table__Kind_map || right->kind == v__table__Kind_string))) {
-			v__checker__Checker_error(c, tos3("`in` can only be used with an array/map/string"), infix_expr->pos);
-		}
 		if (right->kind == v__table__Kind_array) {
 			v__table__TypeSymbol* right_sym = v__table__Table_get_type_symbol(c->table, v__table__TypeSymbol_array_info(right).elem_type);
-			if (left->kind != v__table__Kind_alias && left->kind != right_sym->kind) {
+			if (left->kind != right_sym->kind) {
 				v__checker__Checker_error(c, tos3("the data type on the left of `in` does not match the array item type"), infix_expr->pos);
 			}
+		} else if (right->kind == v__table__Kind_map) {
+			v__table__TypeSymbol* key_sym = v__table__Table_get_type_symbol(c->table, v__table__TypeSymbol_map_info(right).key_type);
+			if (left->kind != key_sym->kind) {
+				v__checker__Checker_error(c, tos3("the data type on the left of `in` does not match the map key type"), infix_expr->pos);
+			}
+		} else if (right->kind == v__table__Kind_string) {
+			if (left->kind != v__table__Kind_string) {
+				v__checker__Checker_error(c, tos3("the data type on the left of `in` must be a string"), infix_expr->pos);
+			}
+		} else {
+			v__checker__Checker_error(c, tos3("`in` can only be used with an array/map/string"), infix_expr->pos);
 		}
 		return _const_v__table__bool_type;
 	}
@@ -20922,15 +20943,16 @@ void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) {
 		v__ast__ForInStmt* it = (v__ast__ForInStmt*)node.obj; // ST it
 		c->in_for_count++;
 		v__table__Type typ = v__checker__Checker_expr(c, it->cond);
+		int typ_idx = v__table__type_idx(typ);
 		if (it->is_range) {
-			v__table__Type high_type = v__checker__Checker_expr(c, it->high);
-			if (_IN(v__table__Type, typ, _const_v__table__integer_type_idxs) && !_IN(v__table__Type, high_type, _const_v__table__integer_type_idxs)) {
+			int high_type_idx = v__table__type_idx(v__checker__Checker_expr(c, it->high));
+			if (_IN(int, typ_idx, _const_v__table__integer_type_idxs) && !_IN(int, high_type_idx, _const_v__table__integer_type_idxs)) {
 				v__checker__Checker_error(c, tos3("range types do not match"), v__ast__Expr_position(it->cond));
-			} else if (_IN(v__table__Type, typ, _const_v__table__float_type_idxs) || _IN(v__table__Type, high_type, _const_v__table__float_type_idxs)) {
+			} else if (_IN(int, typ_idx, _const_v__table__float_type_idxs) || _IN(int, high_type_idx, _const_v__table__float_type_idxs)) {
 				v__checker__Checker_error(c, tos3("range type can not be float"), v__ast__Expr_position(it->cond));
-			} else if (typ == _const_v__table__bool_type_idx || high_type == _const_v__table__bool_type_idx) {
+			} else if (typ_idx == _const_v__table__bool_type_idx || high_type_idx == _const_v__table__bool_type_idx) {
 				v__checker__Checker_error(c, tos3("range type can not be bool"), v__ast__Expr_position(it->cond));
-			} else if (typ == _const_v__table__string_type_idx || high_type == _const_v__table__string_type_idx) {
+			} else if (typ_idx == _const_v__table__string_type_idx || high_type_idx == _const_v__table__string_type_idx) {
 				v__checker__Checker_error(c, tos3("range type can not be string"), v__ast__Expr_position(it->cond));
 			}
 			v__checker__Checker_expr(c, it->high);
@@ -23693,7 +23715,7 @@ void v__gen__Gen_infix_expr(v__gen__Gen* g, v__ast__InfixExpr node) {
 			v__gen__Gen_expr_with_cast(g, node.right, node.right_type, info.elem_type);
 			v__gen__Gen_write(g, tos3(" })"));
 		}
-	} else if ((node.left_type == node.right_type) && (node.left_type == _const_v__table__f32_type_idx || node.left_type == _const_v__table__f64_type_idx) && (node.op == v__token__Kind_eq || node.op == v__token__Kind_ne)) {
+	} else if ((node.left_type == node.right_type) && v__table__is_float(node.left_type) && (node.op == v__token__Kind_eq || node.op == v__token__Kind_ne)) {
 		if (node.left_type == _const_v__table__f64_type_idx) {
 			if (node.op == v__token__Kind_eq) {
 				v__gen__Gen_write(g, tos3("f64_eq("));
@@ -24612,9 +24634,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_65637 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_65637.arg0;
-	string type_of_last_expression = mr_65637.arg1;
+	multi_return_string_string mr_65605 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_65605.arg0;
+	string type_of_last_expression = mr_65605.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
