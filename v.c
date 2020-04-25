@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "cd27300"
+#define V_COMMIT_HASH "a776401"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3e68e42"
+#define V_COMMIT_HASH "cd27300"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "cd27300"
+#define V_CURRENT_COMMIT_HASH "a776401"
 #endif
 
 
@@ -19919,16 +19919,16 @@ array_string v__vmod__ModFileCacher_get_files(v__vmod__ModFileCacher* mcache, st
 	if (_IN_MAP(cfolder, mcache->folder_files)) {
 		return (*(array_string*)map_get3(mcache->folder_files, cfolder, &(array_string[]){ __new_array(0, 1, sizeof(string)) }));
 	}
-	Option_array_string files = os__ls(cfolder);
-	if (!files.ok) {
-		string err = files.v_error;
-		int errcode = files.ecode;
-		// last_type: v.ast.Return
-		// last_expr_result_type: 
-		return __new_array(0, 0, sizeof(string));
-	};
-	map_set(&mcache->folder_files, cfolder, &(array_string[]) { /*opt*/(*(array_string*)files.data) });
-	return /*opt*/(*(array_string*)files.data);
+	array_string files = __new_array(0, 0, sizeof(string));
+	if (os__exists(cfolder) && os__is_dir(cfolder)) {
+		bool tmp3;
+		{ /* if guard */ Option_array_string listing = os__ls(cfolder);
+		if ((tmp3 = listing.ok)) {
+			files = /*opt*/(*(array_string*)listing.data);
+		}}
+	}
+	map_set(&mcache->folder_files, cfolder, &(array_string[]) { files });
+	return files;
 }
 
 v__checker__Checker v__checker__new_checker(v__table__Table* table, v__pref__Preferences* pref) {
