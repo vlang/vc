@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "4675656"
+#define V_COMMIT_HASH "41cc96a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "900d96c"
+#define V_COMMIT_HASH "4675656"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4675656"
+#define V_CURRENT_COMMIT_HASH "41cc96a"
 #endif
 
 
@@ -1923,6 +1923,7 @@ struct v__parser__Parser {
 	bool returns;
 	bool inside_match;
 	bool inside_match_case;
+	bool is_stmt_ident;
 	bool inside_is;
 };
 
@@ -17035,6 +17036,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.returns = 0,
 		.inside_match = 0,
 		.inside_match_case = 0,
+		.is_stmt_ident = 0,
 		.inside_is = 0,
 	};
 	v__parser__Parser_init_parse_fns(&p);
@@ -17077,6 +17079,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* table, v__scann
 		.returns = 0,
 		.inside_match = 0,
 		.inside_match_case = 0,
+		.is_stmt_ident = 0,
 		.inside_is = 0,
 	};
 	v__parser__Parser_read_first_token(&p);
@@ -17289,6 +17292,7 @@ v__ast__Comment v__parser__Parser_comment(v__parser__Parser* p) {
 }
 
 v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p) {
+	p->is_stmt_ident = p->tok.kind == v__token__Kind_name;
 	if (p->tok.kind == v__token__Kind_lcbr) {
 		array_v__ast__Stmt stmts = v__parser__Parser_parse_block(p);
 		return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Block[]) {(v__ast__Block){
@@ -18163,10 +18167,12 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 	v__table__Type typ = _const_v__table__void_type;
 	v__ast__Expr node = (v__ast__Expr){
 	0};
-	int expr_prev_tok_line_nr = p->prev_tok.line_nr;
+	bool is_stmt_ident = p->is_stmt_ident;
+	p->is_stmt_ident = false;
 	if (p->tok.kind == v__token__Kind_name) {
 		v__ast__Scope_remove_unused_var(p->scope, p->tok.lit);
 		node = v__parser__Parser_name_expr(p);
+		p->is_stmt_ident = is_stmt_ident;
 	}else if (p->tok.kind == v__token__Kind_string) {
 		node = v__parser__Parser_string_expr(p);
 	}else if (p->tok.kind == v__token__Kind_dot) {
@@ -18266,6 +18272,7 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__AssignExpr[]) {v__parser__Parser_assign_expr(p, node)}, sizeof(v__ast__AssignExpr)), .typ = 146 /* v.ast.AssignExpr */};
 		} else if (p->tok.kind == v__token__Kind_dot) {
 			node = v__parser__Parser_dot_expr(p, node);
+			p->is_stmt_ident = is_stmt_ident;
 		} else if (p->tok.kind == v__token__Kind_lsbr) {
 			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__IndexExpr[]) {v__parser__Parser_index_expr(p, node)}, sizeof(v__ast__IndexExpr)), .typ = 148 /* v.ast.IndexExpr */};
 		} else if (p->tok.kind == v__token__Kind_key_as) {
@@ -18278,7 +18285,7 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 				.pos = pos,
 				.expr_type = {0},
 			}}, sizeof(v__ast__AsCast)), .typ = 162 /* v.ast.AsCast */};
-		} else if (p->tok.kind == v__token__Kind_left_shift && p->tok.line_nr != expr_prev_tok_line_nr) {
+		} else if (p->tok.kind == v__token__Kind_left_shift && p->is_stmt_ident) {
 			v__token__Token tok = p->tok;
 			v__token__Position pos = v__token__Token_position(&tok);
 			v__parser__Parser_next(p);
