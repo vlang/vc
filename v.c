@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "7177e71"
+#define V_COMMIT_HASH "900d96c"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6696e1a"
+#define V_COMMIT_HASH "7177e71"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "7177e71"
+#define V_CURRENT_COMMIT_HASH "900d96c"
 #endif
 
 
@@ -8783,8 +8783,8 @@ string strconv__ftoa__f64_to_str_l(f64 f) {
 u64 hash__wyhash__rand_u64(u64* seed) {
 	u64* seed0 = seed;
 		u64 seed1 = *seed0;
-		seed1 += (_const_hash__wyhash__wyp0);
-		(*seed0) = seed1;
+		seed1 += _const_hash__wyhash__wyp0;
+		*seed0 = seed1;
 		return hash__wyhash__wymum((seed1 ^ _const_hash__wyhash__wyp1), seed1);
 	return 0;
 }
