@@ -1,3 +1,4 @@
+#define V_COMMIT_HASH "d72e401"
 
 #ifndef V_COMMIT_HASH
 #define V_COMMIT_HASH "4471314"
@@ -5,7 +6,7 @@
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b7e5be4"
+#define V_CURRENT_COMMIT_HASH "d72e401"
 #endif
 
 
@@ -6302,13 +6303,7 @@ bool string_eq(string s, string a) {
 	if (s.len != a.len) {
 		return false;
 	}
-	for (int tmp3 = 0; tmp3 < s.len; tmp3++) {
-		int i = tmp3;
-		if (string_at(s, i) != string_at(a, i)) {
-			return false;
-		}
-	}
-	return true;
+	return memcmp(s.str, a.str, a.len) == 0;
 }
 
 bool string_ne(string s, string a) {
