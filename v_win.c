@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "a20bef6"
+#define V_COMMIT_HASH "6a834c0"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9a19531"
+#define V_COMMIT_HASH "a20bef6"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "a20bef6"
+#define V_CURRENT_COMMIT_HASH "6a834c0"
 #endif
 
 
@@ -20459,7 +20459,7 @@ void v__checker__Checker_assign_expr(v__checker__Checker* c, v__ast__AssignExpr*
 		{ /* if guard */ Option_v__ast__Var v = v__ast__Scope_find_var(scope, it->name);
 		if ((tmp3 = v.ok)) {
 			if (!/*opt*/(*(v__ast__Var*)v.data).is_mut) {
-				v__checker__Checker_error(c, _STR("`%.*s` is immutable, declare it with `var` to assign to it", it->name.len, it->name.str), assign_expr->pos);
+				v__checker__Checker_error(c, _STR("`%.*s` is immutable, declare it with `mut` to assign to it", it->name.len, it->name.str), assign_expr->pos);
 			}
 		}}
 	}else {
