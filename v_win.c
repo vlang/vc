@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "e0f9c04"
+#define V_COMMIT_HASH "3e68e42"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "86ba164"
+#define V_COMMIT_HASH "e0f9c04"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "e0f9c04"
+#define V_CURRENT_COMMIT_HASH "3e68e42"
 #endif
 
 
@@ -3132,7 +3132,6 @@ array_v__cflag__CFlag v__builder__Builder_get_rest_of_module_cflags(v__builder__
 string v__builder__get_vtmp_folder();
 string v__builder__get_vtmp_filename(string base_file_name, string postfix);
 void v__builder__compile(string command, v__pref__Preferences* pref);
-string v__pref__Backend_str(v__pref__Backend it); // auto
 void v__builder__Builder_run_compiled_executable_and_exit(v__builder__Builder* b);
 void v__builder__Builder_set_module_lookup_paths(v__builder__Builder* v);
 array_string v__builder__Builder_get_builtin_files(v__builder__Builder v);
@@ -3435,7 +3434,6 @@ string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time);
 string time__FormatTime_str(time__FormatTime it); // auto
 string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatDate fmt_date);
 string time__FormatDate_str(time__FormatDate it); // auto
-string time__FormatDelimiter_str(time__FormatDelimiter it); // auto
 string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatTime fmt_time, time__FormatDate fmt_date);
 Option_time__Time time__parse(string s);
 Option_time__Time time__parse_rfc2822(string s);
@@ -3912,14 +3910,6 @@ string v__scanner__Reporter_str(v__scanner__Reporter it) { /* gen_str_for_enum *
 		default: return tos3("unknown enum value");
 	}
 }
-string v__pref__Backend_str(v__pref__Backend it) { /* gen_str_for_enum */
-	switch(it) {
-		case v__pref__Backend_c: return tos3("c");
-		case v__pref__Backend_js: return tos3("js");
-		case v__pref__Backend_x64: return tos3("x64");
-		default: return tos3("unknown enum value");
-	}
-}
 string time__FormatTime_str(time__FormatTime it) { /* gen_str_for_enum */
 	switch(it) {
 		case time__FormatTime_hhmm12: return tos3("hhmm12");
@@ -3941,15 +3931,6 @@ string time__FormatDate_str(time__FormatDate it) { /* gen_str_for_enum */
 		case time__FormatDate_mmmddyyyy: return tos3("mmmddyyyy");
 		case time__FormatDate_no_date: return tos3("no_date");
 		case time__FormatDate_yyyymmdd: return tos3("yyyymmdd");
-		default: return tos3("unknown enum value");
-	}
-}
-string time__FormatDelimiter_str(time__FormatDelimiter it) { /* gen_str_for_enum */
-	switch(it) {
-		case time__FormatDelimiter_dot: return tos3("dot");
-		case time__FormatDelimiter_hyphen: return tos3("hyphen");
-		case time__FormatDelimiter_slash: return tos3("slash");
-		case time__FormatDelimiter_space: return tos3("space");
 		default: return tos3("unknown enum value");
 	}
 }
@@ -12961,8 +12942,6 @@ string v__pref__OS_str(v__pref__OS o) {
 		return tos3("Solaris");
 	}else if (o == v__pref__OS_haiku) {
 		return tos3("Haiku");
-	}else {
-		v_panic(_STR("unknown OS enum type: %.*s", v__pref__OS_str(o).len, v__pref__OS_str(o).str));
 	};
 }
 
@@ -14248,9 +14227,6 @@ void v__builder__compile(string command, v__pref__Preferences* pref) {
 		v__builder__Builder_compile_js(&b);
 	}else if (pref->backend == v__pref__Backend_x64) {
 		v__builder__Builder_compile_x64(&b);
-	}else {
-		eprintln(_STR("backend not implemented `%.*s`", v__pref__Backend_str(pref->backend).len, v__pref__Backend_str(pref->backend).str));
-		v_exit(1);
 	};
 	if (pref->is_stats) {
 		benchmark__Benchmark_stop(&tmark);
@@ -19481,7 +19457,7 @@ string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr
 	string month = _STR("%.*s", time__Time_smonth(t).len, time__Time_smonth(t).str);
 	string year = string_substr(int_str(t.year), 2, int_str(t.year).len);
 	string res = (fmt_date == time__FormatDate_ddmmyy) ?  ( _STR("%02d|%02d|%.*s", t.day, t.month, year.len, year.str) )  : (fmt_date == time__FormatDate_ddmmyyyy) ?  ( _STR("%02d|%02d|%"PRId32"", t.day, t.month, t.year) )  : (fmt_date == time__FormatDate_mmddyy) ?  ( _STR("%02d|%02d|%.*s", t.month, t.day, year.len, year.str) )  : (fmt_date == time__FormatDate_mmddyyyy) ?  ( _STR("%02d|%02d|%"PRId32"", t.month, t.day, t.year) )  : (fmt_date == time__FormatDate_mmmd) ?  ( _STR("%.*s|%"PRId32"", month.len, month.str, t.day) )  : (fmt_date == time__FormatDate_mmmdd) ?  ( _STR("%.*s|%02d", month.len, month.str, t.day) )  : (fmt_date == time__FormatDate_mmmddyyyy) ?  ( _STR("%.*s|%02d|%"PRId32"", month.len, month.str, t.day, t.year) )  : (fmt_date == time__FormatDate_yyyymmdd) ?  ( _STR("%"PRId32"|%02d|%02d", t.year, t.month, t.day) )  :  ( _STR("unknown enumeration %.*s", time__FormatDate_str(fmt_date).len, time__FormatDate_str(fmt_date).str) ) ;
-	res = string_replace(res, tos3("|"), (fmt_dlmtr == time__FormatDelimiter_dot) ?  ( tos3(".") )  : (fmt_dlmtr == time__FormatDelimiter_hyphen) ?  ( tos3("-") )  : (fmt_dlmtr == time__FormatDelimiter_slash) ?  ( tos3("/") )  : (fmt_dlmtr == time__FormatDelimiter_space) ?  ( tos3(" ") )  :  ( _STR("unknown enumeration %.*s", time__FormatDelimiter_str(fmt_dlmtr).len, time__FormatDelimiter_str(fmt_dlmtr).str) ) );
+	res = string_replace(res, tos3("|"), (fmt_dlmtr == time__FormatDelimiter_dot) ?  ( tos3(".") )  : (fmt_dlmtr == time__FormatDelimiter_hyphen) ?  ( tos3("-") )  : (fmt_dlmtr == time__FormatDelimiter_slash) ?  ( tos3("/") )  :  ( tos3(" ") ) );
 	return res;
 }
 
@@ -21603,53 +21579,64 @@ void v__checker__Checker_match_exprs(v__checker__Checker* c, v__ast__MatchExpr* 
 			map_set(&branch_exprs, key, &(int[]) { val + 1 });
 		}
 	}
-	if (!(*(v__ast__MatchBranch*)array_get(node->branches, node->branches.len - 1)).is_else) {
+	bool is_exhaustive = true;
+	array_string unhandled = __new_array(0, 0, sizeof(string));
+	if (type_sym.info.typ == 98 /* v.table.SumType */) {
+		v__table__SumType* it = (v__table__SumType*)type_sym.info.obj; // ST it
 		// FOR IN array
-		array tmp9 = node->branches;
-		for (int i = 0; i < tmp9.len; i++) {
-			v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp9.data)[i];
+		array tmp9 = it->variants;
+		for (int tmp10 = 0; tmp10 < tmp9.len; tmp10++) {
+			v__table__Type v = ((v__table__Type*)tmp9.data)[tmp10];
+			string v_str = v__table__Table_type_to_str(c->table, v);
+			if (!_IN_MAP(v_str, branch_exprs)) {
+				is_exhaustive = false;
+				array_push(&unhandled, &(string[]){ _STR("`%.*s`", v_str.len, v_str.str) });
+			}
+		}
+	}else if (type_sym.info.typ == 92 /* v.table.Enum */) {
+		v__table__Enum* it = (v__table__Enum*)type_sym.info.obj; // ST it
+		// FOR IN array
+		array tmp13 = it->vals;
+		for (int tmp14 = 0; tmp14 < tmp13.len; tmp14++) {
+			string v = ((string*)tmp13.data)[tmp14];
+			if (!_IN_MAP(v, branch_exprs)) {
+				is_exhaustive = false;
+				array_push(&unhandled, &(string[]){ _STR("`.%.*s`", v.len, v.str) });
+			}
+		}
+	}else {
+		is_exhaustive = false;
+	};
+	v__ast__MatchBranch else_branch = (*(v__ast__MatchBranch*)array_get(node->branches, node->branches.len - 1));
+	bool has_else = else_branch.is_else;
+	if (!has_else) {
+		// FOR IN array
+		array tmp18 = node->branches;
+		for (int i = 0; i < tmp18.len; i++) {
+			v__ast__MatchBranch branch = ((v__ast__MatchBranch*)tmp18.data)[i];
 			if (branch.is_else && i != node->branches.len - 1) {
 				v__checker__Checker_error(c, tos3("`else` must be the last branch of `match`"), branch.pos);
-				return;
+				else_branch = branch;
+				has_else = true;
 			}
-		}
-		bool err = false;
-		string err_details = tos3("match must be exhaustive");
-		array_string unhandled = __new_array(0, 0, sizeof(string));
-		if (type_sym.info.typ == 98 /* v.table.SumType */) {
-			v__table__SumType* it = (v__table__SumType*)type_sym.info.obj; // ST it
-			// FOR IN array
-			array tmp12 = it->variants;
-			for (int tmp13 = 0; tmp13 < tmp12.len; tmp13++) {
-				v__table__Type v = ((v__table__Type*)tmp12.data)[tmp13];
-				string v_str = v__table__Table_type_to_str(c->table, v);
-				if (!_IN_MAP(v_str, branch_exprs)) {
-					err = true;
-					array_push(&unhandled, &(string[]){ _STR("`%.*s`", v_str.len, v_str.str) });
-				}
-			}
-		}else if (type_sym.info.typ == 92 /* v.table.Enum */) {
-			v__table__Enum* it = (v__table__Enum*)type_sym.info.obj; // ST it
-			// FOR IN array
-			array tmp16 = it->vals;
-			for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
-				string v = ((string*)tmp16.data)[tmp17];
-				if (!_IN_MAP(v, branch_exprs)) {
-					err = true;
-					array_push(&unhandled, &(string[]){ _STR("`.%.*s`", v.len, v.str) });
-				}
-			}
-		}else {
-			println(tos3("else"));
-			err = true;
-		};
-		if (err) {
-			if (unhandled.len > 0) {
-				err_details = string_add(err_details, string_add(string_add(tos3(" (add match branches for: "), array_string_join(unhandled, tos3(", "))), tos3(" or `else {}` at the end)")));
-			}
-			v__checker__Checker_error(c, err_details, node->pos);
 		}
 	}
+	if (is_exhaustive) {
+		if (has_else) {
+			v__checker__Checker_error(c, tos3("match expression is exhaustive, `else` is unnecessary"), else_branch.pos);
+		}
+		return;
+	}
+	if (has_else) {
+		return;
+	}
+	string err_details = tos3("match must be exhaustive");
+	if (unhandled.len > 0) {
+		err_details = string_add(err_details, string_add(string_add(tos3(" (add match branches for: "), array_string_join(unhandled, tos3(", "))), tos3(" or `else {}` at the end)")));
+	} else {
+		err_details = string_add(err_details, tos3(" (add `else {}` at the end)"));
+	}
+	v__checker__Checker_error(c, err_details, node->pos);
 }
 
 v__table__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExpr* node) {
