@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d72e401"
+#define V_COMMIT_HASH "d86539c"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4471314"
+#define V_COMMIT_HASH "d72e401"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d72e401"
+#define V_CURRENT_COMMIT_HASH "d86539c"
 #endif
 
 
@@ -20346,19 +20346,37 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 	v__table__Type left_type = v__checker__Checker_expr(c, infix_expr->left);
 	infix_expr->left_type = left_type;
 	c->expected_type = left_type;
-	if (infix_expr->op == v__token__Kind_key_is) {
-		v__ast__Type* type_expr = /* as */ (v__ast__Type*)__as_cast(infix_expr->right.obj, infix_expr->right.typ, /*expected:*/177);
-		v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, type_expr->typ);
-		if (typ_sym->kind == v__table__Kind_placeholder) {
-			v__checker__Checker_error(c, _STR("is: type `%.*s` does not exist", typ_sym->name.len, typ_sym->name.str), type_expr->pos);
-		}
-		return _const_v__table__bool_type;
-	}
 	v__table__Type right_type = v__checker__Checker_expr(c, infix_expr->right);
 	infix_expr->right_type = right_type;
 	v__table__TypeSymbol* right = v__table__Table_get_type_symbol(c->table, right_type);
 	v__table__TypeSymbol* left = v__table__Table_get_type_symbol(c->table, left_type);
-	if (infix_expr->op == v__token__Kind_left_shift) {
+	if (infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_ne || infix_expr->op == v__token__Kind_gt || infix_expr->op == v__token__Kind_lt || infix_expr->op == v__token__Kind_ge || infix_expr->op == v__token__Kind_le || infix_expr->op == v__token__Kind_and || infix_expr->op == v__token__Kind_logical_or || infix_expr->op == v__token__Kind_dot || infix_expr->op == v__token__Kind_key_as || infix_expr->op == v__token__Kind_right_shift) {
+	}else if (infix_expr->op == v__token__Kind_key_in || infix_expr->op == v__token__Kind_not_in) {
+		if (right->kind == v__table__Kind_array) {
+			v__table__TypeSymbol* right_sym = v__table__Table_get_type_symbol(c->table, v__table__TypeSymbol_array_info(right).elem_type);
+			if (left->kind != right_sym->kind) {
+				v__checker__Checker_error(c, tos3("the data type on the left of `in` does not match the array item type"), infix_expr->pos);
+			}
+		}else if (right->kind == v__table__Kind_map) {
+			v__table__TypeSymbol* key_sym = v__table__Table_get_type_symbol(c->table, v__table__TypeSymbol_map_info(right).key_type);
+			if (left->kind != key_sym->kind) {
+				v__checker__Checker_error(c, tos3("the data type on the left of `in` does not match the map key type"), infix_expr->pos);
+			}
+		}else if (right->kind == v__table__Kind_string) {
+			if (left->kind != v__table__Kind_string) {
+				v__checker__Checker_error(c, tos3("the data type on the left of `in` must be a string"), infix_expr->pos);
+			}
+		}else {
+			v__checker__Checker_error(c, tos3("`in` can only be used with an array/map/string"), infix_expr->pos);
+		};
+		return _const_v__table__bool_type;
+	}else if (infix_expr->op == v__token__Kind_plus || infix_expr->op == v__token__Kind_minus || infix_expr->op == v__token__Kind_mul || infix_expr->op == v__token__Kind_div) {
+		if ((left->kind == v__table__Kind_array || left->kind == v__table__Kind_array_fixed || left->kind == v__table__Kind_map || left->kind == v__table__Kind_struct_) && !v__table__TypeSymbol_has_method(left, v__token__Kind_str(infix_expr->op))) {
+			v__checker__Checker_error(c, _STR("mismatched types `%.*s` and `%.*s`", left->name.len, left->name.str, right->name.len, right->name.str), v__ast__Expr_position(infix_expr->left));
+		} else if ((right->kind == v__table__Kind_array || right->kind == v__table__Kind_array_fixed || right->kind == v__table__Kind_map || right->kind == v__table__Kind_struct_) && !v__table__TypeSymbol_has_method(right, v__token__Kind_str(infix_expr->op))) {
+			v__checker__Checker_error(c, _STR("mismatched types `%.*s` and `%.*s`", left->name.len, left->name.str, right->name.len, right->name.str), v__ast__Expr_position(infix_expr->right));
+		}
+	}else if (infix_expr->op == v__token__Kind_left_shift) {
 		if (left->kind == v__table__Kind_array) {
 			if (v__table__Table_check(c->table, v__table__Table_value_type(c->table, left_type), right_type)) {
 				return _const_v__table__void_type;
@@ -20375,35 +20393,20 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 			v__checker__Checker_error(c, _STR("cannot shift non-integer type %.*s into type %.*s", right->name.len, right->name.str, left->name.len, left->name.str), v__ast__Expr_position(infix_expr->right));
 			return _const_v__table__void_type;
 		}
-	}
-	if ((infix_expr->op == v__token__Kind_key_in || infix_expr->op == v__token__Kind_not_in)) {
-		if (right->kind == v__table__Kind_array) {
-			v__table__TypeSymbol* right_sym = v__table__Table_get_type_symbol(c->table, v__table__TypeSymbol_array_info(right).elem_type);
-			if (left->kind != right_sym->kind) {
-				v__checker__Checker_error(c, tos3("the data type on the left of `in` does not match the array item type"), infix_expr->pos);
-			}
-		} else if (right->kind == v__table__Kind_map) {
-			v__table__TypeSymbol* key_sym = v__table__Table_get_type_symbol(c->table, v__table__TypeSymbol_map_info(right).key_type);
-			if (left->kind != key_sym->kind) {
-				v__checker__Checker_error(c, tos3("the data type on the left of `in` does not match the map key type"), infix_expr->pos);
-			}
-		} else if (right->kind == v__table__Kind_string) {
-			if (left->kind != v__table__Kind_string) {
-				v__checker__Checker_error(c, tos3("the data type on the left of `in` must be a string"), infix_expr->pos);
-			}
-		} else {
-			v__checker__Checker_error(c, tos3("`in` can only be used with an array/map/string"), infix_expr->pos);
+	}else if (infix_expr->op == v__token__Kind_key_is) {
+		v__ast__Type* type_expr = /* as */ (v__ast__Type*)__as_cast(infix_expr->right.obj, infix_expr->right.typ, /*expected:*/177);
+		v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, type_expr->typ);
+		if (typ_sym->kind == v__table__Kind_placeholder) {
+			v__checker__Checker_error(c, _STR("is: type `%.*s` does not exist", typ_sym->name.len, typ_sym->name.str), type_expr->pos);
 		}
 		return _const_v__table__bool_type;
-	}
-	if ((infix_expr->op == v__token__Kind_amp || infix_expr->op == v__token__Kind_pipe || infix_expr->op == v__token__Kind_xor)) {
+	}else if (infix_expr->op == v__token__Kind_amp || infix_expr->op == v__token__Kind_pipe || infix_expr->op == v__token__Kind_xor) {
 		if (!v__table__TypeSymbol_is_int(left)) {
 			v__checker__Checker_error(c, _STR("left type of `%.*s` cannot be non-integer type %.*s", v__token__Kind_str(infix_expr->op).len, v__token__Kind_str(infix_expr->op).str, left->name.len, left->name.str), v__ast__Expr_position(infix_expr->left));
 		} else if (!v__table__TypeSymbol_is_int(right)) {
 			v__checker__Checker_error(c, _STR("right type of `%.*s` cannot be non-integer type %.*s", v__token__Kind_str(infix_expr->op).len, v__token__Kind_str(infix_expr->op).str, right->name.len, right->name.str), v__ast__Expr_position(infix_expr->right));
 		}
-	}
-	if (infix_expr->op == v__token__Kind_mod) {
+	}else if (infix_expr->op == v__token__Kind_mod) {
 		if (v__table__TypeSymbol_is_int(left) && !v__table__TypeSymbol_is_int(right)) {
 			v__checker__Checker_error(c, _STR("mismatched types `%.*s` and `%.*s`", left->name.len, left->name.str, right->name.len, right->name.str), v__ast__Expr_position(infix_expr->right));
 		} else if (!v__table__TypeSymbol_is_int(left) && v__table__TypeSymbol_is_int(right)) {
@@ -20413,14 +20416,8 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 		} else if ((right->kind == v__table__Kind_f32 || right->kind == v__table__Kind_f64 || right->kind == v__table__Kind_string || right->kind == v__table__Kind_array || right->kind == v__table__Kind_array_fixed || right->kind == v__table__Kind_map || right->kind == v__table__Kind_struct_) && !v__table__TypeSymbol_has_method(right, v__token__Kind_str(infix_expr->op))) {
 			v__checker__Checker_error(c, _STR("mismatched types `%.*s` and `%.*s`", left->name.len, left->name.str, right->name.len, right->name.str), v__ast__Expr_position(infix_expr->right));
 		}
-	}
-	if ((infix_expr->op == v__token__Kind_plus || infix_expr->op == v__token__Kind_minus || infix_expr->op == v__token__Kind_mul || infix_expr->op == v__token__Kind_div)) {
-		if ((left->kind == v__table__Kind_array || left->kind == v__table__Kind_array_fixed || left->kind == v__table__Kind_map || left->kind == v__table__Kind_struct_) && !v__table__TypeSymbol_has_method(left, v__token__Kind_str(infix_expr->op))) {
-			v__checker__Checker_error(c, _STR("mismatched types `%.*s` and `%.*s`", left->name.len, left->name.str, right->name.len, right->name.str), v__ast__Expr_position(infix_expr->left));
-		} else if ((right->kind == v__table__Kind_array || right->kind == v__table__Kind_array_fixed || right->kind == v__table__Kind_map || right->kind == v__table__Kind_struct_) && !v__table__TypeSymbol_has_method(right, v__token__Kind_str(infix_expr->op))) {
-			v__checker__Checker_error(c, _STR("mismatched types `%.*s` and `%.*s`", left->name.len, left->name.str, right->name.len, right->name.str), v__ast__Expr_position(infix_expr->right));
-		}
-	}
+	}else {
+	};
 	if (left_type == _const_v__table__bool_type && !((infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_ne || infix_expr->op == v__token__Kind_logical_or || infix_expr->op == v__token__Kind_and))) {
 		v__checker__Checker_error(c, tos3("bool types only have the following operators defined: `==`, `!=`, `||`, and `&&`"), infix_expr->pos);
 	} else if (left_type == _const_v__table__string_type && !((infix_expr->op == v__token__Kind_plus || infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_ne || infix_expr->op == v__token__Kind_lt || infix_expr->op == v__token__Kind_gt || infix_expr->op == v__token__Kind_le || infix_expr->op == v__token__Kind_ge))) {
@@ -20432,10 +20429,7 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 		}
 		v__checker__Checker_error(c, _STR("infix expr: cannot use `%.*s` (right expression) as `%.*s`", right->name.len, right->name.str, left->name.len, left->name.str), infix_expr->pos);
 	}
-	if (v__token__Kind_is_relational(infix_expr->op)) {
-		return _const_v__table__bool_type;
-	}
-	return left_type;
+	return (v__token__Kind_is_relational(infix_expr->op) ?  ( _const_v__table__bool_type )  :  ( left_type ) );
 }
 
 void v__checker__Checker_assign_expr(v__checker__Checker* c, v__ast__AssignExpr* assign_expr) {
