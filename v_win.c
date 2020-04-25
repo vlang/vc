@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "eecf92c"
+#define V_COMMIT_HASH "4bcdf11"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "41cc96a"
+#define V_COMMIT_HASH "eecf92c"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "eecf92c"
+#define V_CURRENT_COMMIT_HASH "4bcdf11"
 #endif
 
 
@@ -1084,6 +1084,7 @@ struct v__pref__Preferences {
 	bool is_live;
 	bool is_shared;
 	bool is_prof;
+	string profile_file;
 	bool translated;
 	bool is_prod;
 	bool obfuscate;
@@ -7738,6 +7739,7 @@ multi_return_v__pref__Preferences_string parse_args(array_string args) {
 		.is_live = 0,
 		.is_shared = 0,
 		.is_prof = 0,
+		.profile_file = tos3(""),
 		.translated = 0,
 		.is_prod = 0,
 		.obfuscate = 0,
@@ -7798,7 +7800,9 @@ multi_return_v__pref__Preferences_string parse_args(array_string args) {
 		}else if (string_eq(arg, tos3("-freestanding"))) {
 			res->is_bare = true;
 		}else if (string_eq(arg, tos3("-prof")) || string_eq(arg, tos3("-profile"))) {
+			res->profile_file = os__cmdline__option(current_args, tos3("-profile"), tos3("-"));
 			res->is_prof = true;
+			i++;
 		}else if (string_eq(arg, tos3("-prod"))) {
 			res->is_prod = true;
 		}else if (string_eq(arg, tos3("-stats"))) {
@@ -12613,6 +12617,7 @@ string v__doc__doc(string mod, v__table__Table* table) {
 			.is_live = 0,
 			.is_shared = 0,
 			.is_prof = 0,
+			.profile_file = tos3(""),
 			.translated = 0,
 			.is_prod = 0,
 			.obfuscate = 0,
@@ -12776,6 +12781,7 @@ v__pref__Preferences v__pref__new_preferences() {
 		.is_live = 0,
 		.is_shared = 0,
 		.is_prof = 0,
+		.profile_file = tos3(""),
 		.translated = 0,
 		.is_prod = 0,
 		.obfuscate = 0,
@@ -17122,6 +17128,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.is_live = 0,
 		.is_shared = 0,
 		.is_prof = 0,
+		.profile_file = tos3(""),
 		.translated = 0,
 		.is_prod = 0,
 		.obfuscate = 0,
@@ -25674,12 +25681,25 @@ void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 	if (is_main) {
 		if (g->pref->is_prof) {
 			strings__Builder_writeln(&g->pcs_declarations, tos3("void vprint_profile_stats(){"));
-			// FOR IN map
-			array_string keys_tmp24 = map_keys(&g->pcs);
-			for (int tmp25 = 0; tmp25 < keys_tmp24.len; tmp25++) {
-				string pfn_name = ((string*)keys_tmp24.data)[tmp25];
-				string pcounter_name = (*(string*)map_get3(g->pcs, pfn_name, &(string[]){ tos3("") }));
-				strings__Builder_writeln(&g->pcs_declarations, _STR("\tif (%.*s_calls) printf(\"%%llu %%f %%f %.*s \\n\", %.*s_calls, %.*s, %.*s / %.*s_calls );", pcounter_name.len, pcounter_name.str, pfn_name.len, pfn_name.str, pcounter_name.len, pcounter_name.str, pcounter_name.len, pcounter_name.str, pcounter_name.len, pcounter_name.str, pcounter_name.len, pcounter_name.str));
+			if (string_eq(g->pref->profile_file, tos3("-"))) {
+				// FOR IN map
+				array_string keys_tmp25 = map_keys(&g->pcs);
+				for (int tmp26 = 0; tmp26 < keys_tmp25.len; tmp26++) {
+					string pfn_name = ((string*)keys_tmp25.data)[tmp26];
+					string pcounter_name = (*(string*)map_get3(g->pcs, pfn_name, &(string[]){ tos3("") }));
+					strings__Builder_writeln(&g->pcs_declarations, _STR("\tif (%.*s_calls) printf(\"%%llu %%f %%f %.*s \\n\", %.*s_calls, %.*s, %.*s / %.*s_calls );", pcounter_name.len, pcounter_name.str, pfn_name.len, pfn_name.str, pcounter_name.len, pcounter_name.str, pcounter_name.len, pcounter_name.str, pcounter_name.len, pcounter_name.str, pcounter_name.len, pcounter_name.str));
+				}
+			} else {
+				strings__Builder_writeln(&g->pcs_declarations, tos3("\tFILE * fp;"));
+				strings__Builder_writeln(&g->pcs_declarations, _STR("\tfp = fopen (\"%.*s\", \"w+\");", g->pref->profile_file.len, g->pref->profile_file.str));
+				// FOR IN map
+				array_string keys_tmp27 = map_keys(&g->pcs);
+				for (int tmp28 = 0; tmp28 < keys_tmp27.len; tmp28++) {
+					string pfn_name = ((string*)keys_tmp27.data)[tmp28];
+					string pcounter_name = (*(string*)map_get3(g->pcs, pfn_name, &(string[]){ tos3("") }));
+					strings__Builder_writeln(&g->pcs_declarations, _STR("\tif (%.*s_calls) fprintf(fp, \"%%llu %%f %%f %.*s \\n\", %.*s_calls, %.*s, %.*s / %.*s_calls );", pcounter_name.len, pcounter_name.str, pfn_name.len, pfn_name.str, pcounter_name.len, pcounter_name.str, pcounter_name.len, pcounter_name.str, pcounter_name.len, pcounter_name.str, pcounter_name.len, pcounter_name.str));
+				}
+				strings__Builder_writeln(&g->pcs_declarations, tos3("\tfclose(fp);"));
 			}
 			strings__Builder_writeln(&g->pcs_declarations, tos3("}"));
 		}
