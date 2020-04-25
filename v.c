@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "86ba164"
+#define V_COMMIT_HASH "e0f9c04"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c73d91a"
+#define V_COMMIT_HASH "86ba164"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "86ba164"
+#define V_CURRENT_COMMIT_HASH "e0f9c04"
 #endif
 
 
@@ -23069,11 +23069,11 @@ void v__gen__Gen_stmt(v__gen__Gen* g, v__ast__Stmt node) {
 		v__ast__Import* it = (v__ast__Import*)node.obj; // ST it
 	}else if (node.typ == 186 /* v.ast.InterfaceDecl */) {
 		v__ast__InterfaceDecl* it = (v__ast__InterfaceDecl*)node.obj; // ST it
-		v__gen__Gen_writeln(g, tos3("//interface"));
-		v__gen__Gen_writeln(g, tos3("typedef struct {"));
-		v__gen__Gen_writeln(g, tos3("\tvoid* _object;"));
-		v__gen__Gen_writeln(g, tos3("\tint _interface_idx;"));
-		v__gen__Gen_writeln(g, _STR("} %.*s;", it->name.len, it->name.str));
+		strings__Builder_writeln(&g->definitions, tos3("//interface"));
+		strings__Builder_writeln(&g->definitions, tos3("typedef struct {"));
+		strings__Builder_writeln(&g->definitions, tos3("\tvoid* _object;"));
+		strings__Builder_writeln(&g->definitions, tos3("\tint _interface_idx;"));
+		strings__Builder_writeln(&g->definitions, _STR("} %.*s;", it->name.len, it->name.str));
 	}else if (node.typ == 187 /* v.ast.Module */) {
 		v__ast__Module* it = (v__ast__Module*)node.obj; // ST it
 	}else if (node.typ == 188 /* v.ast.Return */) {
@@ -24801,9 +24801,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_66602 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_66602.arg0;
-	string type_of_last_expression = mr_66602.arg1;
+	multi_return_string_string mr_66663 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_66663.arg0;
+	string type_of_last_expression = mr_66663.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -25775,10 +25775,23 @@ void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node) {
 	v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(g->table, node.receiver_type);
 	string receiver_name = typ_sym->name;
 	if (typ_sym->kind == v__table__Kind_interface_) {
+		int idx = -1;
+		// FOR IN array
+		array tmp3 = typ_sym->methods;
+		for (int i = 0; i < tmp3.len; i++) {
+			v__table__Fn method = ((v__table__Fn*)tmp3.data)[i];
+			if (string_eq(method.name, node.name)) {
+				idx = i;
+			}
+		}
+		if (idx == -1) {
+			v__gen__verror(tos3("method_call: cannot find interface method index"));
+		}
+		string sret_type = v__gen__Gen_typ(g, node.return_type);
 		v__gen__Gen_writeln(g, tos3("// interface method call"));
-		v__gen__Gen_write(g, _STR("((void (*)())(%.*s_name_table[", receiver_name.len, receiver_name.str));
+		v__gen__Gen_write(g, _STR("((%.*s (*)())(%.*s_name_table[", sret_type.len, sret_type.str, receiver_name.len, receiver_name.str));
 		v__gen__Gen_expr(g, node.left);
-		v__gen__Gen_write(g, tos3("._interface_idx][1]))("));
+		v__gen__Gen_write(g, _STR("._interface_idx][%"PRId32"]))(", idx));
 		v__gen__Gen_expr(g, node.left);
 		v__gen__Gen_write(g, tos3("._object)"));
 		return;
@@ -25902,15 +25915,27 @@ void v__gen__Gen_call_args(v__gen__Gen* g, array_v__ast__CallArg args, array_v__
 	int arg_no = 0;
 	// FOR IN array
 	array tmp1 = args;
-	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-		v__ast__CallArg arg = ((v__ast__CallArg*)tmp1.data)[tmp2];
+	for (int i = 0; i < tmp1.len; i++) {
+		v__ast__CallArg arg = ((v__ast__CallArg*)tmp1.data)[i];
 		if (gen_vargs && arg_no == expected_types.len - 1) {
 			break;
 		}
+		bool is_interface = false;
 		if (arg_no < expected_types.len) {
+			if ((*(v__table__Type*)array_get(expected_types, arg_no)) != 0) {
+				v__table__TypeSymbol* exp_sym = v__table__Table_get_type_symbol(g->table, (*(v__table__Type*)array_get(expected_types, arg_no)));
+				v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, arg.typ);
+				if (exp_sym->kind == v__table__Kind_interface_) {
+					v__gen__Gen_write(g, _STR("I_%.*s_to_%.*s(", sym->name.len, sym->name.str, exp_sym->name.len, exp_sym->name.str));
+					is_interface = true;
+				}
+			}
 			v__gen__Gen_ref_or_deref_arg(g, arg, (*(v__table__Type*)array_get(expected_types, arg_no)));
 		} else {
 			v__gen__Gen_expr(g, arg.expr);
+		}
+		if (is_interface) {
+			v__gen__Gen_write(g, tos3(")"));
 		}
 		if (arg_no < args.len - 1 || gen_vargs) {
 			v__gen__Gen_write(g, tos3(", "));
@@ -25927,8 +25952,8 @@ void v__gen__Gen_call_args(v__gen__Gen* g, array_v__ast__CallArg args, array_v__
 		}
 		v__gen__Gen_write(g, _STR("(%.*s){.len=%"PRId32",.args={", struct_name.len, struct_name.str, variadic_count));
 		if (variadic_count > 0) {
-			for (int tmp9 = arg_no; tmp9 < args.len; tmp9++) {
-				int j = tmp9;
+			for (int tmp11 = arg_no; tmp11 < args.len; tmp11++) {
+				int j = tmp11;
 				v__gen__Gen_ref_or_deref_arg(g, (*(v__ast__CallArg*)array_get(args, j)), varg_type);
 				if (j < args.len - 1) {
 					v__gen__Gen_write(g, tos3(", "));
