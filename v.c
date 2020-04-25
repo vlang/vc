@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "9229a96"
+#define V_COMMIT_HASH "d54b48b"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fbcdffb"
+#define V_COMMIT_HASH "9229a96"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "9229a96"
+#define V_CURRENT_COMMIT_HASH "d54b48b"
 #endif
 
 
@@ -2173,7 +2173,6 @@ typedef struct {
 
 // end of definitions #endif
 array __new_array(int mylen, int cap, int elm_size);
-array new_array(int mylen, int cap, int elm_size);
 array make(int len, int cap, int elm_size);
 array new_array_from_c_array(int len, int cap, int elm_size, voidptr c_array);
 array new_array_from_c_array_no_alloc(int len, int cap, int elm_size, voidptr c_array);
@@ -3921,17 +3920,6 @@ string _STR_TMP(const char *fmt, ...) {
 
 
 array __new_array(int mylen, int cap, int elm_size) {
-	int cap_ = (cap == 0 ?  ( 1 )  :  ( cap ) );
-	array arr = (array){
-		.len = mylen,
-		.cap = cap_,
-		.element_size = elm_size,
-		.data = vcalloc(cap_ * elm_size),
-	};
-	return arr;
-}
-
-array new_array(int mylen, int cap, int elm_size) {
 	int cap_ = (cap == 0 ?  ( 1 )  :  ( cap ) );
 	array arr = (array){
 		.len = mylen,
@@ -12316,7 +12304,7 @@ bool v__table__Table_check(v__table__Table* t, v__table__Type got, v__table__Typ
 	v__table__TypeSymbol* got_type_sym = v__table__Table_get_type_symbol(t, got);
 	v__table__TypeSymbol* exp_type_sym = v__table__Table_get_type_symbol(t, expected);
 	if (exp_type_sym->kind == v__table__Kind_interface_) {
-		v__table__Interface info = /* as */ *(v__table__Interface*)__as_cast(got_type_sym->info.obj, got_type_sym->info.typ, /*expected:*/80);
+		v__table__Interface info = /* as */ *(v__table__Interface*)__as_cast(exp_type_sym->info.obj, exp_type_sym->info.typ, /*expected:*/80);
 		println(tos3("gen_types before"));
 		println(array_string_str(info.gen_types));
 		array_push(&info.gen_types, &(string[]){ got_type_sym->name });
@@ -18579,15 +18567,15 @@ v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser* p) {
 		.methods = __new_array(0, 1, sizeof(v__table__Fn)),
 		.mod = tos3(""),
 	};
-	int typ = v__table__Table_register_type_symbol(p->table, t);
+	v__table__Type typ = v__table__new_type(v__table__Table_register_type_symbol(p->table, t));
 	v__table__TypeSymbol* ts = v__table__Table_get_type_symbol(p->table, typ);
 	array_v__ast__FnDecl methods = __new_array(0, 0, sizeof(v__ast__FnDecl));
 	while (p->tok.kind != v__token__Kind_rcbr && p->tok.kind != v__token__Kind_eof) {
 		int line_nr = p->tok.line_nr;
 		string name = v__parser__Parser_check_name(p);
 		println(name);
-		multi_return_array_v__table__Arg_bool mr_5808 = v__parser__Parser_fn_args(p);
-		array_v__table__Arg args2 = mr_5808.arg0;
+		multi_return_array_v__table__Arg_bool mr_5824 = v__parser__Parser_fn_args(p);
+		array_v__table__Arg args2 = mr_5824.arg0;
 		array_v__table__Arg args = new_array_from_c_array(1, 1, sizeof(v__table__Arg), (v__table__Arg[1]){
 		(v__table__Arg){
 			.name = tos3("x"),
