@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "6a834c0"
+#define V_COMMIT_HASH "7c080c5"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a20bef6"
+#define V_COMMIT_HASH "6a834c0"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "6a834c0"
+#define V_CURRENT_COMMIT_HASH "7c080c5"
 #endif
 
 
@@ -20966,6 +20966,9 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 			}
 			v__ast__IdentVar ident_var_info = v__ast__Ident_var_info(&ident);
 			v__table__Type val_type = v__checker__Checker_expr(c, (*(v__ast__Expr*)array_get(assign_stmt->right, i)));
+			if (val_type == _const_v__table__void_type) {
+				v__checker__Checker_error(c, tos3("expression does not return a value"), v__ast__Expr_position((*(v__ast__Expr*)array_get(assign_stmt->right, i))));
+			}
 			if (assign_stmt->op == v__token__Kind_assign) {
 				v__table__Type var_type = v__checker__Checker_expr(c, /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Ident[]) {ident}, sizeof(v__ast__Ident)), .typ = 152 /* v.ast.Ident */});
 				array_push(&assign_stmt->left_types, &(v__table__Type[]){ var_type });
