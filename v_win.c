@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d844ff1"
+#define V_COMMIT_HASH "ee31339"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b898970"
+#define V_COMMIT_HASH "d844ff1"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d844ff1"
+#define V_CURRENT_COMMIT_HASH "ee31339"
 #endif
 
 
@@ -16780,11 +16780,7 @@ v__pref__OS v__parser__os_from_string(string os) {
 
 v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser* p) {
 	v__token__Position first_pos = v__token__Token_position(&p->tok);
-	v__token__Position last_pos = (v__token__Position){
-		.line_nr = 0,
-		.pos = 0,
-		.len = 0,
-	};
+	v__token__Position last_pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_lsbr);
 	v__table__Type array_type = _const_v__table__void_type;
 	v__table__Type elem_type = _const_v__table__void_type;
@@ -16840,7 +16836,7 @@ v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser* p) {
 		}
 	}
 	if (exprs.len == 0 && p->tok.kind != v__token__Kind_lcbr && has_type) {
-		v__parser__Parser_warn(p, tos3("use `x := []Type{}` instead of `x := []Type`"));
+		v__parser__Parser_warn_with_pos(p, tos3("use `x := []Type{}` instead of `x := []Type`"), last_pos);
 	}
 	if (p->tok.kind == v__token__Kind_lcbr && exprs.len == 0) {
 		v__parser__Parser_next(p);
