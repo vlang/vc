@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b495dac"
+#define V_COMMIT_HASH "0641a31"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2705660"
+#define V_COMMIT_HASH "b495dac"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b495dac"
+#define V_CURRENT_COMMIT_HASH "0641a31"
 #endif
 
 
@@ -16912,7 +16912,7 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 				continue;
 			}
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(p->table, arg.typ);
-			if (!(sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_map || sym->kind == v__table__Kind_placeholder)) {
+			if (!(sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_map || sym->kind == v__table__Kind_placeholder) && !v__table__Type_is_ptr(arg.typ)) {
 				v__parser__Parser_error(p, string_add(tos3("mutable arguments are only allowed for arrays, maps, and structs\n"), tos3("return values instead: `fn foo(n mut int) {` => `fn foo(n int) int {`")));
 			}
 		}
@@ -17001,9 +17001,9 @@ v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_5775 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_5775.arg0;
-	bool is_variadic = mr_5775.arg1;
+	multi_return_array_v__table__Arg_bool mr_5796 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_5796.arg0;
+	bool is_variadic = mr_5796.arg1;
 	// FOR IN array
 	array tmp1 = args;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
