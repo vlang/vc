@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "41eb445"
+#define V_COMMIT_HASH "0f2f97e"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "153ac23"
+#define V_COMMIT_HASH "41eb445"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "41eb445"
+#define V_CURRENT_COMMIT_HASH "0f2f97e"
 #endif
 
 
@@ -21152,6 +21152,13 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 		}
 	}else if (infix_expr->op == v__token__Kind_left_shift) {
 		if (left->kind == v__table__Kind_array) {
+			if (infix_expr->left.typ == 160 /* v.ast.Ident */) {
+				v__ast__Ident* it = (v__ast__Ident*)infix_expr->left.obj; // ST it
+			}else if (infix_expr->left.typ == 174 /* v.ast.SelectorExpr */) {
+				v__ast__SelectorExpr* it = (v__ast__SelectorExpr*)infix_expr->left.obj; // ST it
+			}else {
+				println(_STR("typeof: %.*s", tos3( /* v.ast.Expr */ v_typeof_sumtype_112( (infix_expr->left).typ )).len, tos3( /* v.ast.Expr */ v_typeof_sumtype_112( (infix_expr->left).typ )).str));
+			};
 			if (v__table__Table_check(c->table, v__table__Table_value_type(c->table, left_type), right_type)) {
 				return _const_v__table__void_type;
 			}
