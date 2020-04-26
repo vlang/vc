@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "48f9cc1"
+#define V_COMMIT_HASH "a48080a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f7153ca"
+#define V_COMMIT_HASH "48f9cc1"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "48f9cc1"
+#define V_CURRENT_COMMIT_HASH "a48080a"
 #endif
 
 
@@ -17907,6 +17907,7 @@ array_v__ast__Import v__parser__Parser_import_stmt(v__parser__Parser* p) {
 	v__parser__Parser_check(p, v__token__Kind_key_import);
 	array_v__ast__Import imports = __new_array(0, 0, sizeof(v__ast__Import));
 	if (p->tok.kind == v__token__Kind_lpar) {
+		v__parser__Parser_warn(p, tos3("`import()` has been deprecated, use `import x` instead. run `v fmt` to handle the transition"));
 		v__parser__Parser_check(p, v__token__Kind_lpar);
 		while (p->tok.kind != v__token__Kind_rpar) {
 			array_push(&imports, &(v__ast__Import[]){ v__parser__Parser_parse_import(p) });
