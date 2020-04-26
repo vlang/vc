@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "83552a0"
+#define V_COMMIT_HASH "8223efe"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f239480"
+#define V_COMMIT_HASH "83552a0"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "83552a0"
+#define V_CURRENT_COMMIT_HASH "8223efe"
 #endif
 
 
@@ -21034,16 +21034,21 @@ void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl 
 	// FOR IN array
 	array tmp2 = decl.fields;
 	for (int fi = 0; fi < tmp2.len; fi++) {
-		if ((*(v__ast__StructField*)array_get(decl.fields, fi)).has_default_expr) {
-			c->expected_type = (*(v__ast__StructField*)array_get(decl.fields, fi)).typ;
-			v__table__Type field_expr_type = v__checker__Checker_expr(c, (*(v__ast__StructField*)array_get(decl.fields, fi)).default_expr);
-			if (!v__table__Table_check(c->table, field_expr_type, (*(v__ast__StructField*)array_get(decl.fields, fi)).typ)) {
+		v__ast__StructField field = ((v__ast__StructField*)tmp2.data)[fi];
+		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, field.typ);
+		if (sym->kind == v__table__Kind_placeholder) {
+			v__checker__Checker_error(c, _STR("unknown type `%.*s`", sym->name.len, sym->name.str), field.pos);
+		}
+		if (field.has_default_expr) {
+			c->expected_type = field.typ;
+			v__table__Type field_expr_type = v__checker__Checker_expr(c, field.default_expr);
+			if (!v__table__Table_check(c->table, field_expr_type, field.typ)) {
 				v__table__TypeSymbol* field_expr_type_sym = v__table__Table_get_type_symbol(c->table, field_expr_type);
-				v__table__TypeSymbol* field_type_sym = v__table__Table_get_type_symbol(c->table, (*(v__ast__StructField*)array_get(decl.fields, fi)).typ);
-				string field_name = (*(v__ast__StructField*)array_get(decl.fields, fi)).name;
+				v__table__TypeSymbol* field_type_sym = v__table__Table_get_type_symbol(c->table, field.typ);
+				string field_name = field.name;
 				string fet_name = field_expr_type_sym->name;
 				string ft_name = field_type_sym->name;
-				v__checker__Checker_error(c, string_add(_STR("default expression for field `%.*s` ", field_name.len, field_name.str), _STR("has type `%.*s`, but should be `%.*s`", fet_name.len, fet_name.str, ft_name.len, ft_name.str)), v__ast__Expr_position((*(v__ast__StructField*)array_get(decl.fields, fi)).default_expr));
+				v__checker__Checker_error(c, string_add(_STR("default expression for field `%.*s` ", field_name.len, field_name.str), _STR("has type `%.*s`, but should be `%.*s`", fet_name.len, fet_name.str, ft_name.len, ft_name.str)), v__ast__Expr_position(field.default_expr));
 			}
 		}
 	}
