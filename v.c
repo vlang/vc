@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "a776401"
+#define V_COMMIT_HASH "8000eb3"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cd27300"
+#define V_COMMIT_HASH "a776401"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "a776401"
+#define V_CURRENT_COMMIT_HASH "8000eb3"
 #endif
 
 
@@ -12325,11 +12325,7 @@ bool v__table__Table_check(v__table__Table* t, v__table__Type got, v__table__Typ
 	v__table__TypeSymbol* exp_type_sym = v__table__Table_get_type_symbol(t, expected);
 	if (exp_type_sym->kind == v__table__Kind_interface_) {
 		v__table__Interface* info = /* as */ (v__table__Interface*)__as_cast(exp_type_sym->info.obj, exp_type_sym->info.typ, /*expected:*/81);
-		println(tos3("gen_types before"));
-		println(array_string_str(info->gen_types));
 		array_push(&info->gen_types, &(string[]){ got_type_sym->name });
-		println(_STR("adding gen_type %.*s", got_type_sym->name.len, got_type_sym->name.str));
-		println(array_string_str(info->gen_types));
 		return true;
 	}
 	if ((v__table__TypeSymbol_is_int(got_type_sym) && exp_type_sym->kind == v__table__Kind_enum_) || (v__table__TypeSymbol_is_int(exp_type_sym) && got_type_sym->kind == v__table__Kind_enum_)) {
@@ -17176,9 +17172,6 @@ void v__parser__Parser_close_scope(v__parser__Parser* p) {
 		array tmp2 = v__ast__Scope_unused_vars(p->scope);
 		for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
 			v__ast__UnusedVar v = ((v__ast__UnusedVar*)tmp2.data)[tmp3];
-			if (v.name.len > 0 && string_at(v.name, 0) == '_') {
-				continue;
-			}
 			if (p->pref->is_prod) {
 				v__parser__Parser_error_with_pos(p, _STR("Unused variable: %.*s", v.name.len, v.name.str), v.pos);
 			} else {
