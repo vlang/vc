@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "f239480"
+#define V_COMMIT_HASH "83552a0"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cd45e9e"
+#define V_COMMIT_HASH "f239480"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "f239480"
+#define V_CURRENT_COMMIT_HASH "83552a0"
 #endif
 
 
@@ -2341,7 +2341,6 @@ typedef struct {
 
 // end of definitions #endif
 array __new_array(int mylen, int cap, int elm_size);
-array make(int len, int cap, int elm_size);
 array new_array_from_c_array(int len, int cap, int elm_size, voidptr c_array);
 array new_array_from_c_array_no_alloc(int len, int cap, int elm_size, voidptr c_array);
 void array_ensure_cap(array* a, int required);
@@ -4173,10 +4172,6 @@ array __new_array(int mylen, int cap, int elm_size) {
 		.data = vcalloc(cap_ * elm_size),
 	};
 	return arr;
-}
-
-array make(int len, int cap, int elm_size) {
-	return __new_array(len, cap, elm_size);
 }
 
 array new_array_from_c_array(int len, int cap, int elm_size, voidptr c_array) {
@@ -8009,7 +8004,7 @@ void parse_define(v__pref__Preferences* prefs, string define) {
 
 strings__Builder strings__new_builder(int initial_size) {
 	return (strings__Builder){
-		.buf = make(0, initial_size, 1),
+		.buf = __new_array(0, initial_size, sizeof(byte)),
 		.initial_size = initial_size,
 		.len = 0,
 	};
@@ -8069,7 +8064,8 @@ string strings__Builder_str(strings__Builder* b) {
 
 void strings__Builder_free(strings__Builder* b) {
 		v_free(b->buf.data);
-	b->buf = make(0, b->initial_size, 1);
+	int s = b->initial_size;
+	b->buf = __new_array(0, s, sizeof(byte));
 	b->len = 0;
 }
 
@@ -20092,8 +20088,7 @@ string v__token__Token_str(v__token__Token t) {
 }
 
 array_v__token__Precedence v__token__build_precedences() {
-	array_v__token__Precedence p = __new_array(0, 0, sizeof(v__token__Precedence));
-	p = make(100, 100, sizeof(/*typ*/v__token__Precedence));
+	array_v__token__Precedence p = __new_array(100, 100, sizeof(v__token__Precedence));
 	array_set(&p, v__token__Kind_assign, &(v__token__Precedence[]) { v__token__Precedence_assign });
 	array_set(&p, v__token__Kind_eq, &(v__token__Precedence[]) { v__token__Precedence_eq });
 	array_set(&p, v__token__Kind_ne, &(v__token__Precedence[]) { v__token__Precedence_eq });
@@ -21807,6 +21802,16 @@ v__table__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__Ar
 		return array_init->typ;
 	}
 	if (array_init->exprs.len == 0) {
+		if (array_init->has_cap) {
+			if (v__checker__Checker_expr(c, array_init->cap_expr) != _const_v__table__int_type) {
+				v__checker__Checker_error(c, tos3("array cap needs to be an int"), array_init->pos);
+			}
+		}
+		if (array_init->has_len) {
+			if (v__checker__Checker_expr(c, array_init->len_expr) != _const_v__table__int_type) {
+				v__checker__Checker_error(c, tos3("array len needs to be an int"), array_init->pos);
+			}
+		}
 		v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(c->table, c->expected_type);
 		if (type_sym->kind != v__table__Kind_array) {
 			v__checker__Checker_error(c, tos3("array_init: no type specified (maybe: `[]Type` instead of `[]`)"), array_init->pos);
@@ -21819,9 +21824,9 @@ v__table__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__Ar
 	if (array_init->exprs.len > 0 && array_init->elem_type == _const_v__table__void_type) {
 		bool expecting_interface_array = c->expected_type != 0 && v__table__Table_get_type_symbol(c->table, v__table__Table_value_type(c->table, c->expected_type))->kind == v__table__Kind_interface_;
 		// FOR IN array
-		array tmp5 = array_init->exprs;
-		for (int i = 0; i < tmp5.len; i++) {
-			v__ast__Expr expr = ((v__ast__Expr*)tmp5.data)[i];
+		array tmp9 = array_init->exprs;
+		for (int i = 0; i < tmp9.len; i++) {
+			v__ast__Expr expr = ((v__ast__Expr*)tmp9.data)[i];
 			v__table__Type typ = v__checker__Checker_expr(c, expr);
 			if (i == 0) {
 				elem_type = typ;
@@ -21852,15 +21857,15 @@ v__table__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__Ar
 		}else if ((*(v__ast__Expr*)array_get(array_init->exprs, 0)).typ == 160 /* v.ast.Ident */) {
 			v__ast__Ident* it = (v__ast__Ident*)(*(v__ast__Expr*)array_get(array_init->exprs, 0)).obj; // ST it
 			string full_const_name = (string_eq(it->mod, tos3("main")) ?  ( it->name )  :  ( string_add(string_add(it->mod, tos3(".")), it->name) ) );
-			bool tmp12;
+			bool tmp16;
 			{ /* if guard */ Option_v__ast__ConstField obj = v__ast__Scope_find_const(c->file.global_scope, full_const_name);
-			if ((tmp12 = obj.ok)) {
-				bool tmp13;
+			if ((tmp16 = obj.ok)) {
+				bool tmp17;
 				{ /* if guard */ Option_int cint = v__checker__const_int_value(/*opt*/(*(v__ast__ConstField*)obj.data));
-				if ((tmp13 = cint.ok)) {
+				if ((tmp17 = cint.ok)) {
 					fixed_size = /*opt*/(*(int*)cint.data);
 				}}
-			} if (!tmp12) { /* else */
+			} if (!tmp16) { /* else */
 				v__checker__Checker_error(c, _STR("non existant integer const %.*s while initializing the size of a static array", full_const_name.len, full_const_name.str), array_init->pos);
 			}}
 		}else {
