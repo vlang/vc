@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "a48080a"
+#define V_COMMIT_HASH "3a59f57"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "48f9cc1"
+#define V_COMMIT_HASH "a48080a"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "a48080a"
+#define V_CURRENT_COMMIT_HASH "3a59f57"
 #endif
 
 
@@ -19973,6 +19973,7 @@ array_v__scanner__Error v__checker__Checker_check2(v__checker__Checker* c, v__as
 }
 
 void v__checker__Checker_check_files(v__checker__Checker* c, array_v__ast__File ast_files) {
+	bool has_main_mod_file = false;
 	bool has_main_fn = false;
 	// FOR IN array
 	array tmp1 = ast_files;
@@ -19980,6 +19981,7 @@ void v__checker__Checker_check_files(v__checker__Checker* c, array_v__ast__File 
 		v__ast__File file = ((v__ast__File*)tmp1.data)[tmp2];
 		v__checker__Checker_check(c, file);
 		if (string_eq(file.mod.name, tos3("main"))) {
+			has_main_mod_file = true;
 			if (v__checker__Checker_check_file_in_main(c, file)) {
 				has_main_fn = true;
 			}
@@ -19991,7 +19993,7 @@ void v__checker__Checker_check_files(v__checker__Checker* c, array_v__ast__File 
 	if (c->pref->is_shared) {
 		return;
 	}
-	if (!has_main_fn) {
+	if (has_main_mod_file && !has_main_fn) {
 		v__checker__Checker_error(c, tos3("function `main` must be declared in the main module"), (v__token__Position){
 			.line_nr = 0,
 			.pos = 0,
