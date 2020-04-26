@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "9cfb1e3"
+#define V_COMMIT_HASH "3166833"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0b3412c"
+#define V_COMMIT_HASH "9cfb1e3"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "9cfb1e3"
+#define V_CURRENT_COMMIT_HASH "3166833"
 #endif
 
 
@@ -18652,7 +18652,7 @@ v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser* p) {
 			.ctdefine = tos3(""),
 			.pos = {0},
 		};
-		if (p->tok.kind == v__token__Kind_name && p->tok.line_nr == line_nr) {
+		if (v__token__Kind_is_start_of_type(p->tok.kind) && p->tok.line_nr == line_nr) {
 			method.return_type = v__parser__Parser_parse_type(p);
 		}
 		array_push(&methods, &(v__ast__FnDecl[]){ method });
