@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8223efe"
+#define V_COMMIT_HASH "50a8373"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "83552a0"
+#define V_COMMIT_HASH "8223efe"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8223efe"
+#define V_CURRENT_COMMIT_HASH "50a8373"
 #endif
 
 
@@ -20897,7 +20897,7 @@ void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl 
 	for (int fi = 0; fi < tmp2.len; fi++) {
 		v__ast__StructField field = ((v__ast__StructField*)tmp2.data)[fi];
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, field.typ);
-		if (sym->kind == v__table__Kind_placeholder) {
+		if (sym->kind == v__table__Kind_placeholder && !decl.is_c && !string_starts_with(sym->name, tos3("C."))) {
 			v__checker__Checker_error(c, _STR("unknown type `%.*s`", sym->name.len, sym->name.str), field.pos);
 		}
 		if (field.has_default_expr) {
@@ -22450,6 +22450,9 @@ v__table__Type v__checker__Checker_enum_val(v__checker__Checker* c, v__ast__Enum
 		v__checker__Checker_error(c, _STR("not an enum (name=%.*s) (type_idx=0)", node->enum_name.len, node->enum_name.str), node->pos);
 	}
 	v__table__Type typ = v__table__new_type(typ_idx);
+	if (typ == _const_v__table__void_type) {
+		v__checker__Checker_error(c, tos3("not an enum"), node->pos);
+	}
 	v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, typ);
 	if (typ_sym->kind != v__table__Kind_enum_) {
 		v__checker__Checker_error(c, tos3("not an enum"), node->pos);
