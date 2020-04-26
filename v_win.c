@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "620fc96"
+#define V_COMMIT_HASH "f7153ca"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3166833"
+#define V_COMMIT_HASH "620fc96"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "620fc96"
+#define V_CURRENT_COMMIT_HASH "f7153ca"
 #endif
 
 
@@ -3262,7 +3262,8 @@ array_v__ast__CallArg v__parser__Parser_call_args(v__parser__Parser* p);
 v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p);
 v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p);
 multi_return_array_v__table__Arg_bool v__parser__Parser_fn_args(v__parser__Parser* p);
-bool v__parser__Parser_fileis(v__parser__Parser p, string s);
+bool v__parser__Parser_fileis(v__parser__Parser* p, string s);
+void v__parser__Parser_fn_redefinition_error(v__parser__Parser* p, string name);
 v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p);
 v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p);
 v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser* p);
@@ -16327,7 +16328,7 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		bool tmp19;
 		{ /* if guard */ Option_v__table__Fn _ = v__table__Table_find_fn(p->table, name);
 		if ((tmp19 = _.ok)) {
-			v__parser__Parser_error(p, _STR("redefinition of function `%.*s`", name.len, name.str));
+			v__parser__Parser_fn_redefinition_error(p, name);
 		}}
 		v__table__Table_register_fn(p->table, (v__table__Fn){
 			.name = name,
@@ -16379,9 +16380,9 @@ v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_5355 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_5355.arg0;
-	bool is_variadic = mr_5355.arg1;
+	multi_return_array_v__table__Arg_bool mr_5341 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_5341.arg0;
+	bool is_variadic = mr_5341.arg1;
 	// FOR IN array
 	array tmp1 = args;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
@@ -16518,8 +16519,12 @@ multi_return_array_v__table__Arg_bool v__parser__Parser_fn_args(v__parser__Parse
 	return (multi_return_array_v__table__Arg_bool){.arg0=args,.arg1=is_variadic};
 }
 
-bool v__parser__Parser_fileis(v__parser__Parser p, string s) {
-	return string_contains(p.file_name, s);
+bool v__parser__Parser_fileis(v__parser__Parser* p, string s) {
+	return string_contains(p->file_name, s);
+}
+
+void v__parser__Parser_fn_redefinition_error(v__parser__Parser* p, string name) {
+	v__parser__Parser_error(p, _STR("redefinition of function `%.*s`", name.len, name.str));
 }
 
 v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
