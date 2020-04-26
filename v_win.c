@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ee31339"
+#define V_COMMIT_HASH "a56121c"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d844ff1"
+#define V_COMMIT_HASH "ee31339"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ee31339"
+#define V_CURRENT_COMMIT_HASH "a56121c"
 #endif
 
 
@@ -17046,8 +17046,8 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__ast__Scope_register(p->scope, arg.name, /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){
 			.name = arg.name,
 			.typ = arg.typ,
+			.is_mut = arg.is_mut,
 			.expr = {0},
-			.is_mut = 0,
 			.pos = {0},
 		}}, sizeof(v__ast__Var)), .typ = 208 /* v.ast.Var */});
 	}
@@ -17135,9 +17135,9 @@ v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_5349 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_5349.arg0;
-	bool is_variadic = mr_5349.arg1;
+	multi_return_array_v__table__Arg_bool mr_5371 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_5371.arg0;
+	bool is_variadic = mr_5371.arg1;
 	// FOR IN array
 	array tmp1 = args;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
@@ -21232,6 +21232,19 @@ void v__checker__Checker_assign_expr(v__checker__Checker* c, v__ast__AssignExpr*
 				v__checker__Checker_error(c, _STR("`%.*s` is immutable, declare it with `mut` to assign to it", it->name.len, it->name.str), assign_expr->pos);
 			}
 		}}
+	}else if (assign_expr->left.typ == 164 /* v.ast.IndexExpr */) {
+		v__ast__IndexExpr* it = (v__ast__IndexExpr*)assign_expr->left.obj; // ST it
+		if (it->left.typ == 161 /* v.ast.Ident */) {
+			v__ast__Ident* ident = /* as */ (v__ast__Ident*)__as_cast(it->left.obj, it->left.typ, /*expected:*/161);
+			v__ast__Scope* scope = v__ast__Scope_innermost(c->file.scope, assign_expr->pos.pos);
+			bool tmp6;
+			{ /* if guard */ Option_v__ast__Var v = v__ast__Scope_find_var(scope, ident->name);
+			if ((tmp6 = v.ok)) {
+				if (!/*opt*/(*(v__ast__Var*)v.data).is_mut) {
+					v__checker__Checker_error(c, _STR("`%.*s` is immutable, declare it with `mut` to assign to it", ident->name.len, ident->name.str), assign_expr->pos);
+				}
+			}}
+		}
 	}else {
 	};
 	if (assign_expr->op == v__token__Kind_assign) {
