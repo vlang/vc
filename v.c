@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "153ac23"
+#define V_COMMIT_HASH "41eb445"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0641a31"
+#define V_COMMIT_HASH "153ac23"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "153ac23"
+#define V_CURRENT_COMMIT_HASH "41eb445"
 #endif
 
 
@@ -16900,6 +16900,9 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 	array tmp14 = args;
 	for (int i = 0; i < tmp14.len; i++) {
 		v__table__Arg arg = ((v__table__Arg*)tmp14.data)[i];
+		if (v__ast__Scope_known_var(p->scope, arg.name)) {
+			v__parser__Parser_error(p, _STR("redefinition of parameter `%.*s`", arg.name.len, arg.name.str));
+		}
 		v__ast__Scope_register(p->scope, arg.name, /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){
 			.name = arg.name,
 			.typ = arg.typ,
@@ -16946,9 +16949,9 @@ v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		} else {
 			name = v__parser__Parser_prepend_mod(p, name);
 		}
-		bool tmp21;
+		bool tmp22;
 		{ /* if guard */ Option_v__table__Fn _ = v__table__Table_find_fn(p->table, name);
-		if ((tmp21 = _.ok)) {
+		if ((tmp22 = _.ok)) {
 			v__parser__Parser_fn_redefinition_error(p, name);
 		}}
 		v__table__Table_register_fn(p->table, (v__table__Fn){
@@ -17001,9 +17004,9 @@ v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_5796 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_5796.arg0;
-	bool is_variadic = mr_5796.arg1;
+	multi_return_array_v__table__Arg_bool mr_5887 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_5887.arg0;
+	bool is_variadic = mr_5887.arg1;
 	// FOR IN array
 	array tmp1 = args;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
