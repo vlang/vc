@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "cd45e9e"
+#define V_COMMIT_HASH "f239480"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d164744"
+#define V_COMMIT_HASH "cd45e9e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "cd45e9e"
+#define V_CURRENT_COMMIT_HASH "f239480"
 #endif
 
 
@@ -1596,6 +1596,10 @@ struct v__ast__ArrayInit {
 	bool is_fixed;
 	bool has_val;
 	string mod;
+	v__ast__Expr len_expr;
+	bool has_len;
+	bool has_cap;
+	v__ast__Expr cap_expr;
 	v__table__Type elem_type;
 	v__table__Type typ;
 };
@@ -3525,6 +3529,7 @@ void v__gen__Gen_gen_str_for_map(v__gen__Gen* g, v__table__Map info, string styp
 void v__gen__Gen_gen_str_for_varg(v__gen__Gen* g, string styp, string str_fn_name);
 string v__gen__Gen_type_to_fmt(v__gen__Gen g, v__table__Type typ);
 string v__gen__Gen_interface_table(v__gen__Gen* v);
+void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it);
 string _const_v__gen__c_commit_hash_default; // a string literal, inited later
 string _const_v__gen__c_current_commit_hash_default; // a string literal, inited later
 string _const_v__gen__c_common_macros; // a string literal, inited later
@@ -16698,15 +16703,28 @@ v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser* p) {
 	if (exprs.len == 0 && p->tok.kind != v__token__Kind_lcbr && has_type) {
 		v__parser__Parser_warn_with_pos(p, tos3("use `x := []Type{}` instead of `x := []Type`"), last_pos);
 	}
+	bool has_len = false;
+	bool has_cap = false;
+	v__ast__Expr len_expr = (v__ast__Expr){
+	0};
+	v__ast__Expr cap_expr = (v__ast__Expr){
+	0};
 	if (p->tok.kind == v__token__Kind_lcbr && exprs.len == 0) {
 		v__parser__Parser_next(p);
 		while (p->tok.kind != v__token__Kind_rcbr) {
 			string key = v__parser__Parser_check_name(p);
 			v__parser__Parser_check(p, v__token__Kind_colon);
-			if (!(string_eq(key, tos3("len")) || string_eq(key, tos3("cap")) || string_eq(key, tos3("init")))) {
-				v__parser__Parser_error(p, _STR("wrong field `%.*s`, expecting `len`, `cap`, or `init`", key.len, key.str));
-			}
-			v__parser__Parser_expr(p, 0);
+			if (string_eq(key, tos3("len"))) {
+				has_len = true;
+				len_expr = v__parser__Parser_expr(p, 0);
+			}else if (string_eq(key, tos3("cap"))) {
+				has_cap = true;
+				cap_expr = v__parser__Parser_expr(p, 0);
+			}else if (string_eq(key, tos3("default"))) {
+				v__parser__Parser_expr(p, 0);
+			}else {
+				v__parser__Parser_error(p, _STR("wrong field `%.*s`, expecting `len`, `cap`, or `default`", key.len, key.str));
+			};
 			if (p->tok.kind != v__token__Kind_rcbr) {
 				v__parser__Parser_check(p, v__token__Kind_comma);
 			}
@@ -16726,6 +16744,10 @@ v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser* p) {
 		.typ = array_type,
 		.exprs = exprs,
 		.pos = pos,
+		.has_len = has_len,
+		.len_expr = len_expr,
+		.has_cap = has_cap,
+		.cap_expr = cap_expr,
 	};
 }
 
@@ -24259,37 +24281,7 @@ void v__gen__Gen_free_scope_vars(v__gen__Gen* g, int pos) {
 void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 	if (node.typ == 136 /* v.ast.ArrayInit */) {
 		v__ast__ArrayInit* it = (v__ast__ArrayInit*)node.obj; // ST it
-		v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(g->table, it->typ);
-		if (type_sym->kind != v__table__Kind_array_fixed) {
-			string elem_type_str = v__gen__Gen_typ(g, it->elem_type);
-			if (it->exprs.len == 0) {
-				v__gen__Gen_write(g, _STR("__new_array(%"PRId32", %"PRId32", sizeof(%.*s))", it->exprs.len, it->exprs.len, elem_type_str.len, elem_type_str.str));
-			} else {
-				int len = it->exprs.len;
-				v__gen__Gen_write(g, _STR("new_array_from_c_array(%"PRId32", %"PRId32", sizeof(%.*s), ", len, len, elem_type_str.len, elem_type_str.str));
-				v__gen__Gen_write(g, _STR("(%.*s[%"PRId32"]){\n\t\t", elem_type_str.len, elem_type_str.str, len));
-				// FOR IN array
-				array tmp4 = it->exprs;
-				for (int tmp5 = 0; tmp5 < tmp4.len; tmp5++) {
-					v__ast__Expr expr = ((v__ast__Expr*)tmp4.data)[tmp5];
-					v__gen__Gen_expr(g, expr);
-					v__gen__Gen_write(g, tos3(", "));
-				}
-				v__gen__Gen_write(g, tos3("\n})"));
-			}
-		} else {
-			v__gen__Gen_write(g, tos3("{"));
-			// FOR IN array
-			array tmp6 = it->exprs;
-			for (int i = 0; i < tmp6.len; i++) {
-				v__ast__Expr expr = ((v__ast__Expr*)tmp6.data)[i];
-				v__gen__Gen_expr(g, expr);
-				if (i != it->exprs.len - 1) {
-					v__gen__Gen_write(g, tos3(", "));
-				}
-			}
-			v__gen__Gen_write(g, tos3("}"));
-		}
+		v__gen__Gen_array_init(g, */*d*/it);
 	}else if (node.typ == 137 /* v.ast.AsCast */) {
 		v__ast__AsCast* it = (v__ast__AsCast*)node.obj; // ST it
 		v__gen__Gen_as_cast(g, */*d*/it);
@@ -24379,17 +24371,17 @@ void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 		if (size > 0) {
 			v__gen__Gen_write(g, _STR("new_map_init(%"PRId32", sizeof(%.*s), (%.*s[%"PRId32"]){", size, value_typ_str.len, value_typ_str.str, key_typ_str.len, key_typ_str.str, size));
 			// FOR IN array
-			array tmp15 = it->keys;
-			for (int tmp16 = 0; tmp16 < tmp15.len; tmp16++) {
-				v__ast__Expr expr = ((v__ast__Expr*)tmp15.data)[tmp16];
+			array tmp9 = it->keys;
+			for (int tmp10 = 0; tmp10 < tmp9.len; tmp10++) {
+				v__ast__Expr expr = ((v__ast__Expr*)tmp9.data)[tmp10];
 				v__gen__Gen_expr(g, expr);
 				v__gen__Gen_write(g, tos3(", "));
 			}
 			v__gen__Gen_write(g, _STR("}, (%.*s[%"PRId32"]){", value_typ_str.len, value_typ_str.str, size));
 			// FOR IN array
-			array tmp17 = it->vals;
-			for (int tmp18 = 0; tmp18 < tmp17.len; tmp18++) {
-				v__ast__Expr expr = ((v__ast__Expr*)tmp17.data)[tmp18];
+			array tmp11 = it->vals;
+			for (int tmp12 = 0; tmp12 < tmp11.len; tmp12++) {
+				v__ast__Expr expr = ((v__ast__Expr*)tmp11.data)[tmp12];
 				v__gen__Gen_expr(g, expr);
 				v__gen__Gen_write(g, tos3(", "));
 			}
@@ -25616,9 +25608,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_66675 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_66675.arg0;
-	string type_of_last_expression = mr_66675.arg1;
+	multi_return_string_string mr_65894 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_65894.arg0;
+	string type_of_last_expression = mr_65894.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -26374,6 +26366,53 @@ string v__gen__Gen_interface_table(v__gen__Gen* v) {
 		}
 	}
 	return strings__Builder_str(&sb);
+}
+
+void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it) {
+	v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(g->table, it.typ);
+	if (type_sym->kind != v__table__Kind_array_fixed) {
+		string elem_type_str = v__gen__Gen_typ(g, it.elem_type);
+		if (it.exprs.len == 0) {
+			v__gen__Gen_write(g, tos3("__new_array("));
+			if (it.has_len) {
+				v__gen__Gen_expr(g, it.len_expr);
+				v__gen__Gen_write(g, tos3(", "));
+			} else {
+				v__gen__Gen_write(g, tos3("0, "));
+			}
+			if (it.has_cap) {
+				v__gen__Gen_expr(g, it.cap_expr);
+				v__gen__Gen_write(g, tos3(", "));
+			} else {
+				v__gen__Gen_write(g, tos3("0, "));
+			}
+			v__gen__Gen_write(g, _STR("sizeof(%.*s))", elem_type_str.len, elem_type_str.str));
+		} else {
+			int len = it.exprs.len;
+			v__gen__Gen_write(g, _STR("new_array_from_c_array(%"PRId32", %"PRId32", sizeof(%.*s), ", len, len, elem_type_str.len, elem_type_str.str));
+			v__gen__Gen_write(g, _STR("(%.*s[%"PRId32"]){\n\t\t", elem_type_str.len, elem_type_str.str, len));
+			// FOR IN array
+			array tmp5 = it.exprs;
+			for (int tmp6 = 0; tmp6 < tmp5.len; tmp6++) {
+				v__ast__Expr expr = ((v__ast__Expr*)tmp5.data)[tmp6];
+				v__gen__Gen_expr(g, expr);
+				v__gen__Gen_write(g, tos3(", "));
+			}
+			v__gen__Gen_write(g, tos3("\n})"));
+		}
+	} else {
+		v__gen__Gen_write(g, tos3("{"));
+		// FOR IN array
+		array tmp7 = it.exprs;
+		for (int i = 0; i < tmp7.len; i++) {
+			v__ast__Expr expr = ((v__ast__Expr*)tmp7.data)[i];
+			v__gen__Gen_expr(g, expr);
+			if (i != it.exprs.len - 1) {
+				v__gen__Gen_write(g, tos3(", "));
+			}
+		}
+		v__gen__Gen_write(g, tos3("}"));
+	}
 }
 
 void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
