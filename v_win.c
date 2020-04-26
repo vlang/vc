@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "2b4ac0e"
+#define V_COMMIT_HASH "541b058"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8000eb3"
+#define V_COMMIT_HASH "2b4ac0e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "2b4ac0e"
+#define V_CURRENT_COMMIT_HASH "541b058"
 #endif
 
 
@@ -13572,7 +13572,7 @@ Option_string v__builder__Builder_find_module_path(v__builder__Builder b, string
 	v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get(_const_v__vmod__mod_file_cacher, fpath);
 	string mod_path = v__builder__module_path(mod);
 	array_string module_lookup_paths = __new_array(0, 0, sizeof(string));
-	if (vmod_file_location.vmod_file.len != 0 && !(_IN(string, vmod_file_location.vmod_folder, b.module_search_paths))) {
+	if (vmod_file_location.vmod_file.len != 0 && !_IN(string, vmod_file_location.vmod_folder, b.module_search_paths)) {
 		array_push(&module_lookup_paths, &(string[]){ vmod_file_location.vmod_folder });
 	}
 	_PUSH_MANY(&module_lookup_paths, (b.module_search_paths), tmp3, array_string);
@@ -16087,7 +16087,7 @@ v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser* p) {
 		while (p->tok.kind != v__token__Kind_rcbr) {
 			string key = v__parser__Parser_check_name(p);
 			v__parser__Parser_check(p, v__token__Kind_colon);
-			if (!((string_eq(key, tos3("len")) || string_eq(key, tos3("cap")) || string_eq(key, tos3("init"))))) {
+			if (!(string_eq(key, tos3("len")) || string_eq(key, tos3("cap")) || string_eq(key, tos3("init")))) {
 				v__parser__Parser_error(p, _STR("wrong field `%.*s`, expecting `len`, `cap`, or `init`", key.len, key.str));
 			}
 			v__parser__Parser_expr(p, 0);
@@ -17009,7 +17009,7 @@ v__table__Type v__parser__Parser_parse_any_type(v__parser__Parser* p, bool is_c,
 		name = _STR("%.*s.%.*s", (*(string*)map_get3(p->imports, name, &(string[]){ tos3("") })).len, (*(string*)map_get3(p->imports, name, &(string[]){ tos3("") })).str, p->tok.lit.len, p->tok.lit.str);
 	} else if (string_ne(p->expr_mod, tos3(""))) {
 		name = string_add(string_add(p->expr_mod, tos3(".")), name);
-	} else if (!((string_eq(p->mod, tos3("builtin")) || string_eq(p->mod, tos3("main")))) && !(_IN(string, name, _const_v__table__builtin_type_names))) {
+	} else if (!(string_eq(p->mod, tos3("builtin")) || string_eq(p->mod, tos3("main"))) && !_IN(string, name, _const_v__table__builtin_type_names)) {
 		name = string_add(string_add(p->mod, tos3(".")), name);
 	}
 	if (p->tok.kind == v__token__Kind_key_fn) {
@@ -17669,7 +17669,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 			name = _STR("%.*s.%.*s", mod.len, mod.str, name.len, name.str);
 		}
 		string name_w_mod = v__parser__Parser_prepend_mod(p, name);
-		if (!known_var && (_IN_MAP(name, p->table->type_idxs) || _IN_MAP(name_w_mod, p->table->type_idxs)) && !((string_eq(name, tos3("C.stat")) || string_eq(name, tos3("C.sigaction"))))) {
+		if (!known_var && (_IN_MAP(name, p->table->type_idxs) || _IN_MAP(name_w_mod, p->table->type_idxs)) && !(string_eq(name, tos3("C.stat")) || string_eq(name, tos3("C.sigaction")))) {
 			v__table__Type to_typ = v__parser__Parser_parse_type(p);
 			if (p->is_amp) {
 				to_typ = v__table__Type_to_ptr(to_typ);
@@ -20394,9 +20394,9 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 		}
 	}else {
 	};
-	if (left_type == _const_v__table__bool_type && !((infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_ne || infix_expr->op == v__token__Kind_logical_or || infix_expr->op == v__token__Kind_and))) {
+	if (left_type == _const_v__table__bool_type && !(infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_ne || infix_expr->op == v__token__Kind_logical_or || infix_expr->op == v__token__Kind_and)) {
 		v__checker__Checker_error(c, tos3("bool types only have the following operators defined: `==`, `!=`, `||`, and `&&`"), infix_expr->pos);
-	} else if (left_type == _const_v__table__string_type && !((infix_expr->op == v__token__Kind_plus || infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_ne || infix_expr->op == v__token__Kind_lt || infix_expr->op == v__token__Kind_gt || infix_expr->op == v__token__Kind_le || infix_expr->op == v__token__Kind_ge))) {
+	} else if (left_type == _const_v__table__string_type && !(infix_expr->op == v__token__Kind_plus || infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_ne || infix_expr->op == v__token__Kind_lt || infix_expr->op == v__token__Kind_gt || infix_expr->op == v__token__Kind_le || infix_expr->op == v__token__Kind_ge)) {
 		v__checker__Checker_error(c, tos3("string types only have the following operators defined: `==`, `!=`, `<`, `>`, `<=`, `>=`, and `&&`"), infix_expr->pos);
 	}
 	if (!v__table__Table_check(c->table, right_type, left_type)) {
@@ -20591,7 +20591,7 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 		.ctdefine = tos3(""),
 	};
 	bool found = false;
-	if (!string_contains(fn_name, tos3(".")) && !((string_eq(call_expr->mod, tos3("builtin")) || string_eq(call_expr->mod, tos3("main"))))) {
+	if (!string_contains(fn_name, tos3(".")) && !(string_eq(call_expr->mod, tos3("builtin")) || string_eq(call_expr->mod, tos3("main")))) {
 		string name_prefixed = _STR("%.*s.%.*s", call_expr->mod.len, call_expr->mod.str, fn_name.len, fn_name.str);
 		bool tmp5;
 		{ /* if guard */ Option_v__table__Fn f1 = v__table__Table_find_fn(c->table, name_prefixed);
@@ -20735,7 +20735,7 @@ void v__checker__Checker_check_or_block(v__checker__Checker* c, v__ast__CallExpr
 			return;
 		}else if (last_stmt.typ == 183 /* v.ast.BranchStmt */) {
 			v__ast__BranchStmt* it = (v__ast__BranchStmt*)last_stmt.obj; // ST it
-			if (!((it->tok.kind == v__token__Kind_key_continue || it->tok.kind == v__token__Kind_key_break))) {
+			if (!(it->tok.kind == v__token__Kind_key_continue || it->tok.kind == v__token__Kind_key_break)) {
 				v__checker__Checker_error(c, tos3("only break/continue is allowed as a branch statement in the end of an `or {}` block"), v__token__Token_position(&it->tok));
 				return;
 			}
@@ -21102,7 +21102,7 @@ void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) {
 				array tmp12 = it->fields;
 				for (int j = 0; j < tmp12.len; j++) {
 					v__ast__ConstField f = ((v__ast__ConstField*)tmp12.data)[j];
-					if (j != i && _IN(string, cd, field_names) && string_eq(cd, f.name) && !(_IN(int, j, done_fields))) {
+					if (j != i && _IN(string, cd, field_names) && string_eq(cd, f.name) && !_IN(int, j, done_fields)) {
 						needs_order = true;
 						int x = (*(int*)array_get(field_order, j));
 						array_set(&field_order, j, &(int[]) { (*(int*)array_get(field_order, i)) });
@@ -21140,7 +21140,7 @@ void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) {
 		c->expected_type = _const_v__table__void_type;
 		c->fn_return_type = it->return_type;
 		v__checker__Checker_stmts(c, it->stmts);
-		if (!it->is_c && !it->is_js && !it->no_body && it->return_type != _const_v__table__void_type && !c->returns && !((string_eq(it->name, tos3("panic")) || string_eq(it->name, tos3("exit"))))) {
+		if (!it->is_c && !it->is_js && !it->no_body && it->return_type != _const_v__table__void_type && !c->returns && !(string_eq(it->name, tos3("panic")) || string_eq(it->name, tos3("exit")))) {
 			v__checker__Checker_error(c, _STR("missing return at end of function `%.*s`", it->name.len, it->name.str), it->pos);
 		}
 		c->returns = false;
@@ -21250,7 +21250,7 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 		v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(c->table, it->typ);
 		if (expr_type_sym->kind == v__table__Kind_sum_type) {
 			v__table__SumType* info = /* as */ (v__table__SumType*)__as_cast(expr_type_sym->info.obj, expr_type_sym->info.typ, /*expected:*/98);
-			if (!(_IN(v__table__Type, it->typ, info->variants))) {
+			if (!_IN(v__table__Type, it->typ, info->variants)) {
 				v__checker__Checker_error(c, _STR("cannot cast `%.*s` to `%.*s`", expr_type_sym->name.len, expr_type_sym->name.str, type_sym->name.len, type_sym->name.str), it->pos);
 			}
 		} else {
@@ -21402,7 +21402,7 @@ v__table__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* 
 	}
 	if (c->const_deps.len > 0) {
 		string name = ident->name;
-		if (!string_contains(name, tos3(".")) && !((string_eq(ident->mod, tos3("builtin")) || string_eq(ident->mod, tos3("main"))))) {
+		if (!string_contains(name, tos3(".")) && !(string_eq(ident->mod, tos3("builtin")) || string_eq(ident->mod, tos3("main")))) {
 			name = _STR("%.*s.%.*s", ident->mod.len, ident->mod.str, ident->name.len, ident->name.str);
 		}
 		if (string_eq(name, c->const_decl)) {
@@ -21451,7 +21451,7 @@ v__table__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* 
 			};
 		}}
 		string name = ident->name;
-		if (!string_contains(name, tos3(".")) && !((string_eq(ident->mod, tos3("builtin")) || string_eq(ident->mod, tos3("main"))))) {
+		if (!string_contains(name, tos3(".")) && !(string_eq(ident->mod, tos3("builtin")) || string_eq(ident->mod, tos3("main")))) {
 			name = _STR("%.*s.%.*s", ident->mod.len, ident->mod.str, ident->name.len, ident->name.str);
 		}
 		bool tmp13;
@@ -21731,7 +21731,7 @@ v__table__Type v__checker__Checker_enum_val(v__checker__Checker* c, v__ast__Enum
 		v__checker__Checker_error(c, tos3("not an enum"), node->pos);
 	}
 	v__table__Enum info = v__table__TypeSymbol_enum_info(typ_sym);
-	if (!(_IN(string, node->val, info.vals))) {
+	if (!_IN(string, node->val, info.vals)) {
 		v__checker__Checker_error(c, _STR("enum `%.*s` does not have a value `%.*s`", typ_sym->name.len, typ_sym->name.str, node->val.len, node->val.str), node->pos);
 	}
 	node->typ = typ;
@@ -21797,7 +21797,7 @@ void v__checker__Checker_warn_or_error(v__checker__Checker* c, string message, v
 		} });
 	} else {
 		c->nr_errors++;
-		if (!(_IN(int, pos.line_nr, c->error_lines))) {
+		if (!_IN(int, pos.line_nr, c->error_lines)) {
 			array_push(&c->errors, &(v__scanner__Error[]){ (v__scanner__Error){
 				.reporter = v__scanner__Reporter_checker,
 				.pos = pos,
@@ -22401,7 +22401,7 @@ v__token__Token v__scanner__Scanner_scan(v__scanner__Scanner* s) {
 				bool is_separate_line_comment = true;
 				for (int j = start - 2;
 				j >= 0 && string_at(s->text, j) != '\n'; j--) {
-					if (!((string_at(s->text, j) == '\t' || string_at(s->text, j) == ' '))) {
+					if (!(string_at(s->text, j) == '\t' || string_at(s->text, j) == ' ')) {
 						is_separate_line_comment = false;
 					}
 				}
@@ -22894,7 +22894,7 @@ string v__gen__Gen_typ(v__gen__Gen* g, v__table__Type t) {
 		if (v__table__Type_is_ptr(t)) {
 			styp = string_replace(styp, tos3("*"), tos3("_ptr"));
 		}
-		if (!(_IN(string, styp, g->optionals))) {
+		if (!_IN(string, styp, g->optionals)) {
 			string x = styp;
 			strings__Builder_writeln(&g->typedefs2, _STR("typedef Option %.*s;", x.len, x.str));
 			array_push(&g->optionals, &(string[]){ styp });
@@ -23941,7 +23941,7 @@ void v__gen__Gen_infix_expr(v__gen__Gen* g, v__ast__InfixExpr node) {
 	} else if ((node.op == v__token__Kind_eq || node.op == v__token__Kind_ne) && left_sym->kind == v__table__Kind_array && right_sym->kind == v__table__Kind_array) {
 		v__table__Type styp = v__table__Table_value_type(g->table, node.left_type);
 		string ptr_typ = (*(string*)array_get(string_split(v__gen__Gen_typ(g, node.left_type), tos3("_")), 1));
-		if (!(_IN(string, ptr_typ, g->array_fn_definitions))) {
+		if (!_IN(string, ptr_typ, g->array_fn_definitions)) {
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, v__table__TypeSymbol_array_info(left_sym).elem_type);
 			v__gen__Gen_generate_array_equality_fn(g, ptr_typ, styp, sym);
 		}
@@ -24625,7 +24625,7 @@ void v__gen__Gen_write_sorted_types(v__gen__Gen* g) {
 	array tmp1 = g->table->types;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
 		v__table__TypeSymbol typ = ((v__table__TypeSymbol*)tmp1.data)[tmp2];
-		if (!(_IN(string, typ.name, _const_v__gen__builtins))) {
+		if (!_IN(string, typ.name, _const_v__gen__builtins)) {
 			array_push(&types, &(v__table__TypeSymbol[]){ typ });
 		}
 	}
@@ -24714,7 +24714,7 @@ array_v__table__TypeSymbol v__gen__Gen_sort_structs(v__gen__Gen g, array_v__tabl
 			for (int tmp11 = 0; tmp11 < tmp10.len; tmp11++) {
 				v__table__Field field = ((v__table__Field*)tmp10.data)[tmp11];
 				string dep = v__table__Table_get_type_symbol(g.table, field.typ)->name;
-				if (!(_IN(string, dep, type_names)) || _IN(string, dep, field_deps) || v__table__Type_is_ptr(field.typ)) {
+				if (!_IN(string, dep, type_names) || _IN(string, dep, field_deps) || v__table__Type_is_ptr(field.typ)) {
 					continue;
 				}
 				array_push(&field_deps, &(string[]){ dep });
@@ -24924,9 +24924,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_66663 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_66663.arg0;
-	string type_of_last_expression = mr_66663.arg1;
+	multi_return_string_string mr_66655 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_66655.arg0;
+	string type_of_last_expression = mr_66655.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -25344,7 +25344,7 @@ string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
 	string already_generated_key = _STR("%.*s:%.*s", styp.len, styp.str, str_fn_name.len, str_fn_name.str);
-	if (!v__table__TypeSymbol_has_method(sym, tos3("str")) && !(_IN(string, already_generated_key, g->str_types))) {
+	if (!v__table__TypeSymbol_has_method(sym, tos3("str")) && !_IN(string, already_generated_key, g->str_types)) {
 		array_push(&g->str_types, &(string[]){ already_generated_key });
 		if (sym->info.typ == 89 /* v.table.Alias */) {
 			v__table__Alias* it = (v__table__Alias*)sym->info.obj; // ST it
@@ -25370,7 +25370,7 @@ string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ
 	}
 	if (v__table__Type_flag_is(typ, v__table__TypeFlag_variadic)) {
 		string varg_already_generated_key = _STR("varg_%.*s", already_generated_key.len, already_generated_key.str);
-		if (!(_IN(string, varg_already_generated_key, g->str_types))) {
+		if (!_IN(string, varg_already_generated_key, g->str_types)) {
 			v__gen__Gen_gen_str_for_varg(g, styp, str_fn_name);
 			array_push(&g->str_types, &(string[]){ varg_already_generated_key });
 		}
@@ -25834,7 +25834,7 @@ void v__gen__Gen_fn_args(v__gen__Gen* g, array_v__table__Arg args, bool is_varia
 		bool is_varg = i == args.len - 1 && is_variadic;
 		if (is_varg) {
 			string varg_type_str = int_str(((int)(arg.typ)));
-			if (!(_IN_MAP(varg_type_str, g->variadic_args))) {
+			if (!_IN_MAP(varg_type_str, g->variadic_args)) {
 				map_set(&g->variadic_args, varg_type_str, &(int[]) { 0 });
 			}
 			arg_type_name = string_add(tos3("varg_"), string_replace(v__gen__Gen_typ(g, arg.typ), tos3("*"), tos3("_ptr")));
@@ -27922,7 +27922,7 @@ void v__gen__x64__verror(string s) {
 }
 
 void v__depgraph__OrderedDepMap_set(v__depgraph__OrderedDepMap* o, string name, array_string deps) {
-	if (!(_IN_MAP(name, o->data))) {
+	if (!_IN_MAP(name, o->data)) {
 		array_push(&o->keys, &(string[]){ name });
 	}
 	map_set(&o->data, name, &(array_string[]) { deps });
@@ -27934,7 +27934,7 @@ void v__depgraph__OrderedDepMap_add(v__depgraph__OrderedDepMap* o, string name, 
 	array tmp1 = deps;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
 		string dep = ((string*)tmp1.data)[tmp2];
-		if (!(_IN(string, dep, d))) {
+		if (!_IN(string, dep, d)) {
 			array_push(&d, &(string[]){ dep });
 		}
 	}
@@ -27946,7 +27946,7 @@ array_string v__depgraph__OrderedDepMap_get(v__depgraph__OrderedDepMap* o, strin
 }
 
 void v__depgraph__OrderedDepMap_delete(v__depgraph__OrderedDepMap* o, string name) {
-	if (!(_IN_MAP(name, o->data))) {
+	if (!_IN_MAP(name, o->data)) {
 		v_panic(_STR("delete: no such key: %.*s", name.len, name.str));
 	}
 	// FOR IN array
@@ -27966,7 +27966,7 @@ void v__depgraph__OrderedDepMap_apply_diff(v__depgraph__OrderedDepMap* o, string
 	array tmp1 = (*(array_string*)map_get3(o->data, name, &(array_string[]){ __new_array(0, 1, sizeof(string)) }));
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
 		string dep = ((string*)tmp1.data)[tmp2];
-		if (!(_IN(string, dep, deps))) {
+		if (!_IN(string, dep, deps)) {
 			array_push(&diff, &(string[]){ dep });
 		}
 	}
@@ -28083,7 +28083,7 @@ string v__depgraph__DepGraph_display_cycles(v__depgraph__DepGraph* graph) {
 		array tmp5 = node.deps;
 		for (int tmp6 = 0; tmp6 < tmp5.len; tmp6++) {
 			string dep = ((string*)tmp5.data)[tmp6];
-			if (!(_IN_MAP(dep, node_names))) {
+			if (!_IN_MAP(dep, node_names)) {
 				continue;
 			}
 			v__depgraph__DepGraphNode dn = (*(v__depgraph__DepGraphNode*)map_get3(node_names, dep, &(v__depgraph__DepGraphNode[]){ {0} }));
