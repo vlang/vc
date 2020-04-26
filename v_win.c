@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "0f2f97e"
+#define V_COMMIT_HASH "7b39ab6"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "41eb445"
+#define V_COMMIT_HASH "0f2f97e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "0f2f97e"
+#define V_CURRENT_COMMIT_HASH "7b39ab6"
 #endif
 
 
@@ -6366,7 +6366,7 @@ string string_replace_each(string s, array_string vals) {
 		return s;
 	}
 	if (vals.len % 2 != 0) {
-		println(tos3("string.replace_many(): odd number of strings"));
+		println(tos3("string.replace_each(): odd number of strings"));
 		return s;
 	}
 	int new_len = s.len;
