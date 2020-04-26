@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "7b39ab6"
+#define V_COMMIT_HASH "9f4d498"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0f2f97e"
+#define V_COMMIT_HASH "7b39ab6"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "7b39ab6"
+#define V_CURRENT_COMMIT_HASH "9f4d498"
 #endif
 
 
@@ -25613,9 +25613,9 @@ void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt st
 	v__gen__Gen_writeln(g, _STR("if (!%.*s.ok) {", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s.v_error;", var_name.len, var_name.str));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s.ecode;", var_name.len, var_name.str));
-	multi_return_string_string mr_66673 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_66673.arg0;
-	string type_of_last_expression = mr_66673.arg1;
+	multi_return_string_string mr_66675 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_66675.arg0;
+	string type_of_last_expression = mr_66675.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
