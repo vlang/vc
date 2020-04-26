@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "9f4d498"
+#define V_COMMIT_HASH "d164744"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7b39ab6"
+#define V_COMMIT_HASH "9f4d498"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "9f4d498"
+#define V_CURRENT_COMMIT_HASH "d164744"
 #endif
 
 
@@ -9819,6 +9819,9 @@ string strconv__format_dec(u64 d, strconv__BF_param p) {
 string strconv__format_fl(f64 f, strconv__BF_param p) {
 	string s = tos3("");
 	string fs = strconv__f64_to_str_lnd((f >= 0.0 ?  ( f )  :  ( -f ) ), p.len1);
+	if (string_at(fs, 0) == '[') {
+		return fs;
+	}
 	if (p.rm_tail_zero) {
 		fs = strconv__remove_tail_zeros(fs);
 	}
@@ -10306,7 +10309,7 @@ string strconv__v_sprintf(string str, varg_voidptr pt) {
 				continue;
 			} else if (ch == 's') {
 				string s1 = *(((string*)(pt.args[p_index])));
-				pad_ch = '0';
+				pad_ch = ' ';
 				strings__Builder_write(&res, strconv__format_str(s1, (strconv__BF_param){
 					.pad_ch = pad_ch,
 					.len0 = len0,
