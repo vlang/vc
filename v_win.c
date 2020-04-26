@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8000eb3"
+#define V_COMMIT_HASH "2b4ac0e"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a776401"
+#define V_COMMIT_HASH "8000eb3"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8000eb3"
+#define V_CURRENT_COMMIT_HASH "2b4ac0e"
 #endif
 
 
@@ -20974,6 +20974,7 @@ v__table__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__Ar
 		return c->expected_type;
 	}
 	if (array_init->exprs.len > 0 && array_init->elem_type == _const_v__table__void_type) {
+		bool expecting_interface_array = c->expected_type != 0 && v__table__Table_get_type_symbol(c->table, v__table__Table_value_type(c->table, c->expected_type))->kind == v__table__Kind_interface_;
 		// FOR IN array
 		array tmp5 = array_init->exprs;
 		for (int i = 0; i < tmp5.len; i++) {
@@ -20982,6 +20983,9 @@ v__table__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__Ar
 			if (i == 0) {
 				elem_type = typ;
 				c->expected_type = typ;
+				continue;
+			}
+			if (expecting_interface_array) {
 				continue;
 			}
 			if (!v__table__Table_check(c->table, elem_type, typ)) {
@@ -21005,15 +21009,15 @@ v__table__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__Ar
 		}else if ((*(v__ast__Expr*)array_get(array_init->exprs, 0)).typ == 158 /* v.ast.Ident */) {
 			v__ast__Ident* it = (v__ast__Ident*)(*(v__ast__Expr*)array_get(array_init->exprs, 0)).obj; // ST it
 			string full_const_name = (string_eq(it->mod, tos3("main")) ?  ( it->name )  :  ( string_add(string_add(it->mod, tos3(".")), it->name) ) );
-			bool tmp11;
+			bool tmp12;
 			{ /* if guard */ Option_v__ast__ConstField obj = v__ast__Scope_find_const(c->file.global_scope, full_const_name);
-			if ((tmp11 = obj.ok)) {
-				bool tmp12;
+			if ((tmp12 = obj.ok)) {
+				bool tmp13;
 				{ /* if guard */ Option_int cint = v__checker__const_int_value(/*opt*/(*(v__ast__ConstField*)obj.data));
-				if ((tmp12 = cint.ok)) {
+				if ((tmp13 = cint.ok)) {
 					fixed_size = /*opt*/(*(int*)cint.data);
 				}}
-			} if (!tmp11) { /* else */
+			} if (!tmp12) { /* else */
 				v__checker__Checker_error(c, _STR("non existant integer const %.*s while initializing the size of a static array", full_const_name.len, full_const_name.str), array_init->pos);
 			}}
 		}else {
