@@ -1,12 +1,11 @@
-#define V_COMMIT_HASH "50a8373"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8223efe"
+#define V_COMMIT_HASH "50a8373"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "50a8373"
+#define V_CURRENT_COMMIT_HASH "95754f2"
 #endif
 
 
@@ -3537,7 +3536,7 @@ int time__make_unix_time(struct tm t);
 u64 time__init_win_time_freq();
 u64 time__init_win_time_start();
 u64 time__sys_mono_now();
-u64 time__mul_div(u64 val, u64 numer, u64 denom);
+u64 time__vpc_now();
 time__Time time__unix(int abs);
 multi_return_int_int_int time__calculate_date_from_offset(int day_offset_);
 multi_return_int_int_int time__calculate_time_from_offset(int second_offset_);
@@ -4196,6 +4195,7 @@ array new_array_from_c_array_no_alloc(int len, int cap, int elm_size, voidptr c_
 	return arr;
 }
 
+inline
 void array_ensure_cap(array* a, int required) {
 	if (required <= a->cap) {
 		return;
@@ -4648,7 +4648,7 @@ void v_panic(string s) {
 }
 
 void eprintln(string s) {
-	if (isnil(s.str)) {
+	if (s.str == 0) {
 		v_panic(tos3("eprintln(NIL)"));
 	}
 	
@@ -4662,7 +4662,7 @@ void eprintln(string s) {
 }
 
 void eprint(string s) {
-	if (isnil(s.str)) {
+	if (s.str == 0) {
 		v_panic(tos3("eprint(NIL)"));
 	}
 	
@@ -6462,7 +6462,7 @@ u64 string_u64(string s) {
 }
 
 bool string_eq(string s, string a) {
-	if (isnil(s.str)) {
+	if (s.str == 0) {
 		v_panic(tos3("string.eq(): nil string"));
 	}
 	if (s.len != a.len) {
@@ -7583,7 +7583,7 @@ u16* string_to_wide(string _str) {
 #ifdef _WIN32
 		int num_chars = (MultiByteToWideChar(_const_CP_UTF8, 0, _str.str, _str.len, 0, 0));
 		u16* wstr = ((u16*)(v_malloc((num_chars + 1) * 2)));
-		if (!isnil(wstr)) {
+		if (wstr != 0) {
 			MultiByteToWideChar(_const_CP_UTF8, 0, _str.str, _str.len, wstr, num_chars);
 			memset(((byte*)(wstr)) + num_chars * 2, 0, 2);
 		}
@@ -7618,7 +7618,7 @@ string string_from_wide2(u16* _wstr, int len) {
 #ifdef _WIN32
 		int num_chars = WideCharToMultiByte(_const_CP_UTF8, 0, _wstr, len, 0, 0, 0, 0);
 		byteptr str_to = v_malloc(num_chars + 1);
-		if (!isnil(str_to)) {
+		if (str_to != 0) {
 			WideCharToMultiByte(_const_CP_UTF8, 0, _wstr, len, str_to, num_chars, 0, 0);
 			memset(str_to + num_chars, 0, 1);
 		}
@@ -20560,7 +20560,6 @@ f64 time__Duration_hours(time__Duration d) {
 	return ((f64)(hr)) + ((f64)(nsec)) / (60 * 60 * 1e9);
 }
 
-//[typedef]
 
 
 
@@ -20569,33 +20568,28 @@ int time__make_unix_time(struct tm t) {
 }
 
 u64 time__init_win_time_freq() {
-	LARGE_INTEGER f = (LARGE_INTEGER){
-		.QuadPart = 0,
-	};
+	u64 f = ((u64)(0));
 	QueryPerformanceFrequency(&f);
-	return ((u64)(f.QuadPart));
+	return f;
 }
 
 u64 time__init_win_time_start() {
-	LARGE_INTEGER s = (LARGE_INTEGER){
-		.QuadPart = 0,
-	};
+	u64 s = ((u64)(0));
 	QueryPerformanceCounter(&s);
-	return ((u64)(s.QuadPart));
+	return s;
 }
 
 u64 time__sys_mono_now() {
-	LARGE_INTEGER tm = (LARGE_INTEGER){
-		.QuadPart = 0,
-	};
+	u64 tm = ((u64)(0));
 	QueryPerformanceCounter(&tm);
-	return time__mul_div(((u64)(tm.QuadPart)) - _const_time__start_time, 1000000000, _const_time__freq_time);
+	return (tm - _const_time__start_time) * 1000000000 / _const_time__freq_time;
 }
 
-u64 time__mul_div(u64 val, u64 numer, u64 denom) {
-	u64 q = val / denom;
-	u64 r = val % denom;
-	return q * numer + r * numer / denom;
+inline
+u64 time__vpc_now() {
+	u64 tm = ((u64)(0));
+	QueryPerformanceCounter(&tm);
+	return tm;
 }
 
 time__Time time__unix(int abs) {
@@ -26641,14 +26635,14 @@ void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 			v__gen__Gen_writeln(g, tos3("\tatexit(vprint_profile_stats);"));
 			v__gen__Gen_writeln(g, tos3(""));
 		}
-		if (string_eq(it.name, tos3("time.sys_mono_now"))) {
+		if (string_eq(it.name, tos3("time.vpc_now"))) {
 			g->defer_profile_code = tos3("");
 		} else {
 			string fn_profile_counter_name = _STR("vpc_%.*s", g->last_fn_c_name.len, g->last_fn_c_name.str);
 			v__gen__Gen_writeln(g, tos3(""));
-			v__gen__Gen_writeln(g, _STR("\tdouble _PROF_FN_START = time__sys_mono_now(); %.*s_calls++; // %.*s", fn_profile_counter_name.len, fn_profile_counter_name.str, it.name.len, it.name.str));
+			v__gen__Gen_writeln(g, _STR("\tdouble _PROF_FN_START = time__vpc_now(); %.*s_calls++; // %.*s", fn_profile_counter_name.len, fn_profile_counter_name.str, it.name.len, it.name.str));
 			v__gen__Gen_writeln(g, tos3(""));
-			g->defer_profile_code = _STR("\t%.*s += time__sys_mono_now() - _PROF_FN_START;", fn_profile_counter_name.len, fn_profile_counter_name.str);
+			g->defer_profile_code = _STR("\t%.*s += time__vpc_now() - _PROF_FN_START;", fn_profile_counter_name.len, fn_profile_counter_name.str);
 			strings__Builder_writeln(&g->pcs_declarations, _STR("double %.*s = 0.0; u64 %.*s_calls = 0;", fn_profile_counter_name.len, fn_profile_counter_name.str, fn_profile_counter_name.len, fn_profile_counter_name.str));
 			map_set(&g->pcs, g->last_fn_c_name, &(string[]) { fn_profile_counter_name });
 		}
@@ -26809,6 +26803,9 @@ void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node) {
 	if (typ_sym->kind == v__table__Kind_array && string_eq(node.name, tos3("filter"))) {
 		v__gen__Gen_gen_filter(g, node);
 		return;
+	}
+	if (string_eq(node.name, tos3("str")) && !v__table__TypeSymbol_has_method(typ_sym, tos3("str"))) {
+		v__gen__Gen_gen_str_for_type(g, node.receiver_type);
 	}
 	if (typ_sym->kind == v__table__Kind_array && (string_eq(node.name, tos3("repeat")) || string_eq(node.name, tos3("sort_with_compare")) || string_eq(node.name, tos3("free")) || string_eq(node.name, tos3("push_many")) || string_eq(node.name, tos3("trim")) || string_eq(node.name, tos3("first")) || string_eq(node.name, tos3("last")) || string_eq(node.name, tos3("clone")) || string_eq(node.name, tos3("reverse")) || string_eq(node.name, tos3("slice")))) {
 		receiver_name = tos3("array");
