@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "25b536d"
+#define V_COMMIT_HASH "c1f2246"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8fbbf48"
+#define V_COMMIT_HASH "25b536d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "25b536d"
+#define V_CURRENT_COMMIT_HASH "c1f2246"
 #endif
 
 
@@ -16520,7 +16520,13 @@ void v__checker__Checker_check_files(v__checker__Checker* c, array_v__ast__File 
 	if (c->pref->is_shared) {
 		return;
 	}
-	if (has_main_mod_file && !has_main_fn) {
+	if (!has_main_mod_file) {
+		v__checker__Checker_error(c, tos3("projet must include a `main` module or be a shared library (compile with `v -shared`)"), (v__token__Position){
+			.line_nr = 0,
+			.pos = 0,
+			.len = 0,
+		});
+	} else if (!has_main_fn) {
 		v__checker__Checker_error(c, tos3("function `main` must be declared in the main module"), (v__token__Position){
 			.line_nr = 0,
 			.pos = 0,
