@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "50351ed"
+#define V_COMMIT_HASH "473ffb5"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9e715b8"
+#define V_COMMIT_HASH "50351ed"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "50351ed"
+#define V_CURRENT_COMMIT_HASH "473ffb5"
 #endif
 
 
@@ -21380,12 +21380,14 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tfor (int i = 0; i < a.len; i++) {"));
 	strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\t%.*s\000 it = (*(%.*s\000*)array_get(a, i));", 3, field_styp, field_styp));
 	if (sym->kind == v__table__Kind_struct_ && !v__table__TypeSymbol_has_method(sym, tos3("str"))) {
-		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstrings__Builder_write(&sb, %.*s\000_str(it,0));", 2, field_styp));
+		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstring x = %.*s\000_str(it,0);", 2, field_styp));
 	} else if ((sym->kind == v__table__Kind_f32 || sym->kind == v__table__Kind_f64)) {
-		strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tstrings__Builder_write(&sb, _STR(\"%g\", 1, it));"));
+		strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tstring x = _STR(\"%g\", 1, it);"));
 	} else {
-		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstrings__Builder_write(&sb, %.*s\000_str(it));", 2, field_styp));
+		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstring x = %.*s\000_str(it);", 2, field_styp));
 	}
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tstrings__Builder_write(&sb, x);"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tstring_free(x);"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tif (i < a.len-1) {"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\t\tstrings__Builder_write(&sb, tos3(\", \"));"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\t}"));
