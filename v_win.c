@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ddb5a8e"
+#define V_COMMIT_HASH "ff88906"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "50a8373"
+#define V_COMMIT_HASH "ddb5a8e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ddb5a8e"
+#define V_CURRENT_COMMIT_HASH "ff88906"
 #endif
 
 
@@ -639,8 +639,7 @@ extern char **environ;
 
 // for __offset_of
 #ifndef __offsetof
-#define __offsetof(s,memb) \
-    ((size_t)((char *)&((s *)0)->memb - (char *)0))
+#define __offsetof(s,memb) ((size_t)((char *)&((s *)0)->memb - (char *)0))
 #endif
 
 #define OPTION_CAST(x) (x)
@@ -3075,8 +3074,8 @@ array_byte os__File_read_bytes_at(os__File* f, int size, int pos);
 Option_array_byte os__read_bytes(string path);
 Option_string os__read_file(string path);
 int os__file_size(string path);
-void os__mv(string old, string new);
-Option_bool os__cp(string old, string new);
+void os__mv(string old, string v_new);
+Option_bool os__cp(string old, string v_new);
 Option_bool os__cp_r(string osource_path, string odest_path, bool overwrite);
 Option_bool os__cp_all(string osource_path, string odest_path, bool overwrite);
 Option_bool os__mv_by_cp(string source, string target);
@@ -10834,14 +10833,14 @@ int os__file_size(string path) {
 	return s.st_size;
 }
 
-void os__mv(string old, string new) {
+void os__mv(string old, string v_new) {
 	
 // $if  windows {
 #ifdef _WIN32
-		_wrename(string_to_wide(old), string_to_wide(new));
+		_wrename(string_to_wide(old), string_to_wide(v_new));
 	
 #else
-		rename(((charptr)(old.str)), ((charptr)(new.str)));
+		rename(((charptr)(old.str)), ((charptr)(v_new.str)));
 	
 // } windows
 #endif
@@ -10849,22 +10848,22 @@ void os__mv(string old, string new) {
 }
 
 
-Option_bool os__cp(string old, string new) {
+Option_bool os__cp(string old, string v_new) {
 	
 // $if  windows {
 #ifdef _WIN32
 		string _old = string_replace(old, tos3("/"), tos3("\\"));
-		string _new = string_replace(new, tos3("/"), tos3("\\"));
+		string _new = string_replace(v_new, tos3("/"), tos3("\\"));
 		CopyFile(string_to_wide(_old), string_to_wide(_new), false);
 		u32 result = GetLastError();
 		if (result == 0) {
 			return /*:)bool*/opt_ok(&(bool[]) { true }, sizeof(bool));
 		} else {
-			return error_with_code(_STR("failed to copy %.*s\000 to %.*s\000", 3, old, new), ((int)(result)));
+			return error_with_code(_STR("failed to copy %.*s\000 to %.*s\000", 3, old, v_new), ((int)(result)));
 		}
 	
 #else
-		os__system(_STR("cp \"%.*s\000\" \"%.*s\000\"", 3, old, new));
+		os__system(_STR("cp \"%.*s\000\" \"%.*s\000\"", 3, old, v_new));
 		return /*:)bool*/opt_ok(&(bool[]) { true }, sizeof(bool));
 	
 // } windows
@@ -20791,9 +20790,9 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__
 	v__gen__Gen_writeln(g, _STR("if (!%.*s\000.ok) {", 2, var_name));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s\000.v_error;", 2, var_name));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s\000.ecode;", 2, var_name));
-	multi_return_string_string mr_71927 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_71927.arg0;
-	string type_of_last_expression = mr_71927.arg1;
+	multi_return_string_string mr_71932 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_71932.arg0;
+	string type_of_last_expression = mr_71932.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -32109,8 +32108,8 @@ void _vinit() {
 	_const_v__util__builtin_module_parts = new_array_from_c_array(5, 5, sizeof(string), (string[5]){
 		tos3("math.bits"), tos3("strconv"), tos3("strconv.ftoa"), tos3("hash.wyhash"), tos3("strings"), 
 });
-	_const_v__gen__c_reserved = new_array_from_c_array(31, 31, sizeof(string), (string[31]){
-		tos3("delete"), tos3("exit"), tos3("unix"), tos3("error"), tos3("calloc"), tos3("malloc"), tos3("free"), tos3("panic"), tos3("auto"), tos3("char"), tos3("default"), tos3("do"), tos3("double"), tos3("extern"), tos3("float"), tos3("inline"), tos3("int"), tos3("long"), tos3("register"), tos3("restrict"), tos3("short"), tos3("signed"), tos3("sizeof"), tos3("static"), tos3("switch"), tos3("typedef"), tos3("union"), tos3("unsigned"), tos3("void"), tos3("volatile"), tos3("while"), 
+	_const_v__gen__c_reserved = new_array_from_c_array(32, 32, sizeof(string), (string[32]){
+		tos3("delete"), tos3("exit"), tos3("unix"), tos3("error"), tos3("calloc"), tos3("malloc"), tos3("free"), tos3("panic"), tos3("auto"), tos3("char"), tos3("default"), tos3("do"), tos3("double"), tos3("extern"), tos3("float"), tos3("inline"), tos3("int"), tos3("long"), tos3("register"), tos3("restrict"), tos3("short"), tos3("signed"), tos3("sizeof"), tos3("static"), tos3("switch"), tos3("typedef"), tos3("union"), tos3("unsigned"), tos3("void"), tos3("volatile"), tos3("while"), tos3("new"), 
 });
 	_const_v__gen__tabs = new_array_from_c_array(9, 9, sizeof(string), (string[9]){
 		tos3(""), tos3("\t"), tos3("\t\t"), tos3("\t\t\t"), tos3("\t\t\t\t"), tos3("\t\t\t\t\t"), tos3("\t\t\t\t\t\t"), tos3("\t\t\t\t\t\t\t"), tos3("\t\t\t\t\t\t\t\t"), 
