@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8fbbf48"
+#define V_COMMIT_HASH "25b536d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "473ffb5"
+#define V_COMMIT_HASH "8fbbf48"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8fbbf48"
+#define V_CURRENT_COMMIT_HASH "25b536d"
 #endif
 
 
@@ -21233,7 +21233,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstring x = %.*s\000_str(it);", 2, field_styp));
 	}
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tstrings__Builder_write(&sb, x);"));
-	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tstring_free(x);"));
+	if (info.elem_type != _const_v__table__bool_type) {
+		strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tstring_free(x);"));
+	}
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tif (i < a.len-1) {"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\t\tstrings__Builder_write(&sb, tos3(\", \"));"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\t}"));
