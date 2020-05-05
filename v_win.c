@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ff88906"
+#define V_COMMIT_HASH "9e715b8"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ddb5a8e"
+#define V_COMMIT_HASH "ff88906"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ff88906"
+#define V_CURRENT_COMMIT_HASH "9e715b8"
 #endif
 
 
@@ -20785,14 +20785,15 @@ static void v__gen__Gen_insert_before(v__gen__Gen* g, string s) {
 }
 
 static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__Stmt stmts, v__table__Type return_type) {
+	string cvar_name = v__gen__c_name(var_name);
 	string mr_styp = v__gen__Gen_base_type(g, return_type);
 	v__gen__Gen_writeln(g, tos3(";"));
-	v__gen__Gen_writeln(g, _STR("if (!%.*s\000.ok) {", 2, var_name));
-	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s\000.v_error;", 2, var_name));
-	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s\000.ecode;", 2, var_name));
-	multi_return_string_string mr_71932 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_71932.arg0;
-	string type_of_last_expression = mr_71932.arg1;
+	v__gen__Gen_writeln(g, _STR("if (!%.*s\000.ok) {", 2, cvar_name));
+	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s\000.v_error;", 2, cvar_name));
+	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s\000.ecode;", 2, cvar_name));
+	multi_return_string_string mr_71966 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_71966.arg0;
+	string type_of_last_expression = mr_71966.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -20801,7 +20802,7 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__
 			v__ast__Stmt stmt = ((v__ast__Stmt*)tmp2.data)[i];
 			if (i == stmts.len - 1) {
 				g->indent--;
-				v__gen__Gen_write(g, _STR("\t*(%.*s\000*) %.*s\000.data = ", 3, mr_styp, var_name));
+				v__gen__Gen_write(g, _STR("\t*(%.*s\000*) %.*s\000.data = ", 3, mr_styp, cvar_name));
 			}
 			v__gen__Gen_stmt(g, stmt);
 		}
