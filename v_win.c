@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b4c9334"
+#define V_COMMIT_HASH "f808764"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cc66eb1"
+#define V_COMMIT_HASH "b4c9334"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b4c9334"
+#define V_CURRENT_COMMIT_HASH "f808764"
 #endif
 
 
@@ -16316,10 +16316,12 @@ string v__ast__FnDecl_str(v__ast__FnDecl* node, v__table__Table* t) {
 		}
 		bool is_last_arg = i == node->args.len - 1;
 		bool should_add_type = is_last_arg || (*(v__table__Arg*)array_get(node->args, i + 1)).typ != arg.typ || (node->is_variadic && i == node->args.len - 2);
+		if (arg.is_mut) {
+			strings__Builder_write(&f, tos3("mut "));
+		}
 		strings__Builder_write(&f, arg.name);
 		string s = v__table__Table_type_to_str(t, arg.typ);
 		if (arg.is_mut) {
-			strings__Builder_write(&f, tos3(" mut"));
 			if (string_starts_with(s, tos3("&"))) {
 				s = string_substr(s, 1, s.len);
 			}
