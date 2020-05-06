@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b5a1544"
+#define V_COMMIT_HASH "e33805b"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b0deac6"
+#define V_COMMIT_HASH "b5a1544"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b5a1544"
+#define V_CURRENT_COMMIT_HASH "e33805b"
 #endif
 
 
@@ -20584,6 +20584,8 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 --------------------------------------------------- */
 			return _const_v__table__void_type;
 		}
+		c->expected_type = _const_v__table__string_type;
+		(*(v__ast__CallArg*)array_get(call_expr->args, 1)).typ = v__checker__Checker_expr(c, (*(v__ast__CallArg*)array_get(call_expr->args, 1)).expr);
 		v__ast__Type* typ = /* as */ (v__ast__Type*)__as_cast(expr.obj, expr.typ, /*expected:*/162);
 		/* autofreeings before return:              -------
 		// other v.ast.SelectorExpr
@@ -23370,7 +23372,7 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 			v__gen__Gen_write(g, tos3("."));
 		}
 		if (it->expr_type == 0) {
-			v__gen__verror(_STR("cgen: SelectorExpr typ=0 field=%.*s\000 %.*s\000 %"PRId32"\000", 4, it->field, g->file.path, it->pos.line_nr));
+			v__gen__verror(_STR("cgen: SelectorExpr | expr_type: 0 | it.expr: `%.*s\000` | field: `%.*s\000` | file: %.*s\000 | line: %"PRId32"\000", 5, v__ast__Expr_str(it->expr), it->field, g->file.path, it->pos.line_nr));
 		}
 		v__gen__Gen_write(g, v__gen__c_name(it->field));
 	}else if (node.typ == 162 /* v.ast.Type */) {
@@ -24672,9 +24674,9 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__
 	v__gen__Gen_writeln(g, _STR("if (!%.*s\000.ok) {", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s\000.v_error;", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s\000.ecode;", 2, cvar_name));
-	multi_return_string_string mr_73237 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_73237.arg0;
-	string type_of_last_expression = mr_73237.arg1;
+	multi_return_string_string mr_73291 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_73291.arg0;
+	string type_of_last_expression = mr_73291.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
