@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b627bb9"
+#define V_COMMIT_HASH "215657e"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c653977"
+#define V_COMMIT_HASH "b627bb9"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b627bb9"
+#define V_CURRENT_COMMIT_HASH "215657e"
 #endif
 
 
@@ -3292,6 +3292,7 @@ bool v__table__TypeSymbol_is_number(v__table__TypeSymbol* t);
 string v__table__Kind_str(v__table__Kind k);
 string array_v__table__Kind_str(array_v__table__Kind kinds);
 string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t);
+string v__table__Table_fn_to_str(v__table__Table* t, v__table__Fn* func);
 bool v__table__TypeSymbol_has_method(v__table__TypeSymbol* t, string name);
 Option_v__table__Fn v__table__TypeSymbol_find_method(v__table__TypeSymbol* t, string name);
 Option_v__table__Field v__table__Struct_find_field(v__table__Struct s, string name);
@@ -3300,6 +3301,7 @@ static bool v__table__Table_has_cflag(v__table__Table* table, v__cflag__CFlag fl
 Option_bool v__table__Table_parse_cflag(v__table__Table* table, string cflg, string mod, array_string ctimedefines);
 v__table__Table* v__table__new_table();
 string v__table__Fn_signature(v__table__Fn* f);
+bool v__table__Fn_is_same_method_as(v__table__Fn* f, v__table__Fn* func);
 Option_v__table__Fn v__table__Table_find_fn(v__table__Table* t, string name);
 bool v__table__Table_known_fn(v__table__Table* t, string name);
 void v__table__Table_register_fn(v__table__Table* t, v__table__Fn new_fn);
@@ -3308,7 +3310,6 @@ bool v__table__Table_type_has_method(v__table__Table* t, v__table__TypeSymbol* s
 Option_v__table__Fn v__table__Table_type_find_method(v__table__Table* t, v__table__TypeSymbol* s, string name);
 bool v__table__Table_struct_has_field(v__table__Table* t, v__table__TypeSymbol* s, string name);
 Option_v__table__Field v__table__Table_struct_find_field(v__table__Table* t, v__table__TypeSymbol* s, string name);
-bool v__table__Table_interface_add_type(v__table__Table* t, v__table__Interface* inter, v__table__Type typ);
 int v__table__Table_find_type_idx(v__table__Table* t, string name);
 Option_v__table__TypeSymbol v__table__Table_find_type(v__table__Table* t, string name);
 v__table__TypeSymbol* v__table__Table_get_type_symbol(v__table__Table* t, v__table__Type typ);
@@ -3417,6 +3418,7 @@ static void v__checker__Checker_assign_expr(v__checker__Checker* c, v__ast__Assi
 v__table__Type v__checker__Checker_call_expr(v__checker__Checker* c, v__ast__CallExpr* call_expr);
 v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__CallExpr* call_expr);
 v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallExpr* call_expr);
+static void v__checker__Checker_type_implements(v__checker__Checker* c, v__table__Type typ, v__table__Type inter_typ, v__token__Position pos);
 void v__checker__Checker_check_expr_opt_call(v__checker__Checker* c, v__ast__Expr x, v__table__Type xtype, bool is_return_used);
 void v__checker__Checker_check_or_block(v__checker__Checker* c, v__ast__CallExpr* call_expr, v__table__Type ret_type, bool is_ret_used);
 static bool v__checker__is_expr_panic_or_exit(v__ast__Expr expr);
@@ -14304,6 +14306,27 @@ string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 	return res;
 }
 
+string v__table__Table_fn_to_str(v__table__Table* t, v__table__Fn* func) {
+	strings__Builder sb = strings__new_builder(20);
+	strings__Builder_write(&sb, _STR("%.*s\000(", 2, func->name));
+	for (int tmp1 = 1; tmp1 < func->args.len; tmp1++) {
+		int i = tmp1;
+		v__table__Arg arg = (*(v__table__Arg*)array_get(func->args, i));
+		strings__Builder_write(&sb, _STR("%.*s\000", 2, arg.name));
+		if (i == func->args.len - 1 || (*(v__table__Arg*)array_get(func->args, i + 1)).typ != arg.typ) {
+			strings__Builder_write(&sb, _STR(" %.*s\000", 2, v__table__Table_type_to_str(t, arg.typ)));
+		}
+		if (i != func->args.len - 1) {
+			strings__Builder_write(&sb, tos3(", "));
+		}
+	}
+	strings__Builder_write(&sb, tos3(")"));
+	if (func->return_type != _const_v__table__void_type) {
+		strings__Builder_write(&sb, _STR(" %.*s\000", 2, v__table__Table_type_to_str(t, func->return_type)));
+	}
+	return strings__Builder_str(&sb);
+}
+
 bool v__table__TypeSymbol_has_method(v__table__TypeSymbol* t, string name) {
 	Option_v__table__Fn tmp1 = v__table__TypeSymbol_find_method(t, name);
 	if (!tmp1.ok) {
@@ -14487,6 +14510,22 @@ string v__table__Fn_signature(v__table__Fn* f) {
 	return sig;
 }
 
+bool v__table__Fn_is_same_method_as(v__table__Fn* f, v__table__Fn* func) {
+	if (f->return_type != func->return_type) {
+		return false;
+	}
+	if (f->args.len != func->args.len) {
+		return false;
+	}
+	for (int tmp3 = 1; tmp3 < f->args.len; tmp3++) {
+		int i = tmp3;
+		if ((*(v__table__Arg*)array_get(f->args, i)).typ != (*(v__table__Arg*)array_get(func->args, i)).typ) {
+			return false;
+		}
+	}
+	return true;
+}
+
 Option_v__table__Fn v__table__Table_find_fn(v__table__Table* t, string name) {
 	v__table__Fn f = (*(v__table__Fn*)map_get3(t->fns, name, &(v__table__Fn[]){ {0} }));
 	if (f.name.str != 0) {
@@ -14566,14 +14605,6 @@ Option_v__table__Field v__table__Table_struct_find_field(v__table__Table* t, v__
 		ts = &(*(v__table__TypeSymbol*)array_get(t->types, ts->parent_idx));
 	}
 	return opt_none();
-}
-
-bool v__table__Table_interface_add_type(v__table__Table* t, v__table__Interface* inter, v__table__Type typ) {
-	v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(t, typ);
-	if (!_IN(v__table__Type, typ, inter->types) && typ_sym->kind != v__table__Kind_interface_) {
-		array_push(&inter->types, &(v__table__Type[]){ typ });
-	}
-	return true;
 }
 
 // Attr: [inline]
@@ -14879,10 +14910,6 @@ bool v__table__Table_check(v__table__Table* t, v__table__Type got, v__table__Typ
 	}
 	v__table__TypeSymbol* got_type_sym = v__table__Table_get_type_symbol(t, got);
 	v__table__TypeSymbol* exp_type_sym = v__table__Table_get_type_symbol(t, expected);
-	if (exp_type_sym->kind == v__table__Kind_interface_) {
-		v__table__Interface* info = /* as */ (v__table__Interface*)__as_cast(exp_type_sym->info.obj, exp_type_sym->info.typ, /*expected:*/84);
-		return v__table__Table_interface_add_type(t, info, got);
-	}
 	if (exp_type_sym->kind == v__table__Kind_function && got_type_sym->kind == v__table__Kind_int) {
 		return true;
 	}
@@ -14921,9 +14948,9 @@ bool v__table__Table_check(v__table__Table* t, v__table__Type got, v__table__Typ
 		v__table__FnType* exp_info = /* as */ (v__table__FnType*)__as_cast(exp_type_sym->info.obj, exp_type_sym->info.typ, /*expected:*/83);
 		if (got_info->func.args.len == exp_info->func.args.len) {
 			// FOR IN array
-			array tmp23 = got_info->func.args;
-			for (int i = 0; i < tmp23.len; i++) {
-				v__table__Arg got_arg = ((v__table__Arg*)tmp23.data)[i];
+			array tmp22 = got_info->func.args;
+			for (int i = 0; i < tmp22.len; i++) {
+				v__table__Arg got_arg = ((v__table__Arg*)tmp22.data)[i];
 				v__table__Arg exp_arg = (*(v__table__Arg*)array_get(exp_info->func.args, i));
 				if (!v__table__Table_check(t, got_arg.typ, exp_arg.typ)) {
 					return false;
@@ -16668,10 +16695,20 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 	}else if (infix_expr->op == v__token__Kind_left_shift) {
 		if (left->kind == v__table__Kind_array) {
 			v__checker__Checker_fail_if_immutable(c, infix_expr->left);
-			if (v__table__Table_check(c->table, right_type, v__table__Table_value_type(c->table, left_type))) {
+			v__table__Type left_value_type = v__table__Table_value_type(c->table, left_type);
+			v__table__TypeSymbol* left_value_sym = v__table__Table_get_type_symbol(c->table, left_value_type);
+			if (left_value_sym->kind == v__table__Kind_interface_) {
+				if (right->kind != v__table__Kind_array) {
+					v__checker__Checker_type_implements(c, right_type, left_value_type, v__ast__Expr_position(infix_expr->right));
+				} else {
+					v__checker__Checker_type_implements(c, v__table__Table_value_type(c->table, right_type), left_value_type, v__ast__Expr_position(infix_expr->right));
+				}
 				return _const_v__table__void_type;
 			}
-			if (right->kind == v__table__Kind_array && v__table__Table_check(c->table, v__table__Table_value_type(c->table, left_type), v__table__Table_value_type(c->table, right_type))) {
+			if (v__table__Table_check(c->table, right_type, left_value_type)) {
+				return _const_v__table__void_type;
+			}
+			if (right->kind == v__table__Kind_array && v__table__Table_check(c->table, left_value_type, v__table__Table_value_type(c->table, right_type))) {
 				return _const_v__table__void_type;
 			}
 			string s = string_replace(left->name, tos3("array_"), tos3("[]"));
@@ -16880,15 +16917,19 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 		for (int i = 0; i < tmp12.len; i++) {
 			v__ast__CallArg arg = ((v__ast__CallArg*)tmp12.data)[i];
 			v__table__Type exp_arg_typ = (/*opt*/(*(v__table__Fn*)method.data).is_variadic && i >= /*opt*/(*(v__table__Fn*)method.data).args.len - 1 ?  ( (*(v__table__Arg*)array_get(/*opt*/(*(v__table__Fn*)method.data).args, /*opt*/(*(v__table__Fn*)method.data).args.len - 1)).typ )  :  ( (*(v__table__Arg*)array_get(/*opt*/(*(v__table__Fn*)method.data).args, i + 1)).typ ) );
+			v__table__TypeSymbol* exp_arg_sym = v__table__Table_get_type_symbol(c->table, exp_arg_typ);
 			c->expected_type = exp_arg_typ;
 			v__table__Type got_arg_typ = v__checker__Checker_expr(c, arg.expr);
 			(*(v__ast__CallArg*)array_get(call_expr->args, i)).typ = got_arg_typ;
 			if (/*opt*/(*(v__table__Fn*)method.data).is_variadic && v__table__Type_flag_is(got_arg_typ, v__table__TypeFlag_variadic) && call_expr->args.len - 1 > i) {
 				v__checker__Checker_error(c, tos3("when forwarding a varg variable, it must be the final argument"), call_expr->pos);
 			}
+			if (exp_arg_sym->kind == v__table__Kind_interface_) {
+				v__checker__Checker_type_implements(c, got_arg_typ, exp_arg_typ, v__ast__Expr_position(arg.expr));
+				continue;
+			}
 			if (!v__table__Table_check(c->table, got_arg_typ, exp_arg_typ)) {
 				v__table__TypeSymbol* got_arg_sym = v__table__Table_get_type_symbol(c->table, got_arg_typ);
-				v__table__TypeSymbol* exp_arg_sym = v__table__Table_get_type_symbol(c->table, exp_arg_typ);
 				if (exp_arg_sym->kind == v__table__Kind_string && v__table__TypeSymbol_has_method(got_arg_sym, tos3("str"))) {
 					continue;
 				}
@@ -16896,8 +16937,8 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 			}
 		}
 		if (call_expr->expected_arg_types.len == 0) {
-			for (int tmp18 = 1; tmp18 < /*opt*/(*(v__table__Fn*)method.data).args.len; tmp18++) {
-				int i = tmp18;
+			for (int tmp19 = 1; tmp19 < /*opt*/(*(v__table__Fn*)method.data).args.len; tmp19++) {
+				int i = tmp19;
 				array_push(&call_expr->expected_arg_types, &(v__table__Type[]){ (*(v__table__Arg*)array_get(/*opt*/(*(v__table__Fn*)method.data).args, i)).typ });
 			}
 		}
@@ -16910,18 +16951,18 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 		call_expr->return_type = _const_v__table__string_type;
 		return _const_v__table__string_type;
 	}
-	bool tmp21;
+	bool tmp22;
 	{ /* if guard */ Option_v__table__Field field = v__table__Table_struct_find_field(c->table, left_type_sym, method_name);
-	if ((tmp21 = field.ok)) {
+	if ((tmp22 = field.ok)) {
 		v__table__TypeSymbol* field_type_sym = v__table__Table_get_type_symbol(c->table, /*opt*/(*(v__table__Field*)field.data).typ);
 		if (field_type_sym->kind == v__table__Kind_function) {
 			call_expr->is_method = false;
 			v__table__FnType* info = /* as */ (v__table__FnType*)__as_cast(field_type_sym->info.obj, field_type_sym->info.typ, /*expected:*/83);
 			call_expr->return_type = info->func.return_type;
 			// FOR IN array
-			array tmp23 = call_expr->args;
-			for (int tmp24 = 0; tmp24 < tmp23.len; tmp24++) {
-				v__ast__CallArg arg = ((v__ast__CallArg*)tmp23.data)[tmp24];
+			array tmp24 = call_expr->args;
+			for (int tmp25 = 0; tmp25 < tmp24.len; tmp25++) {
+				v__ast__CallArg arg = ((v__ast__CallArg*)tmp24.data)[tmp25];
 				v__checker__Checker_expr(c, arg.expr);
 			}
 			return info->func.return_type;
@@ -17059,6 +17100,10 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 		if (f.is_variadic && v__table__Type_flag_is(typ, v__table__TypeFlag_variadic) && call_expr->args.len - 1 > i) {
 			v__checker__Checker_error(c, tos3("when forwarding a varg variable, it must be the final argument"), call_expr->pos);
 		}
+		if (arg_typ_sym->kind == v__table__Kind_interface_) {
+			v__checker__Checker_type_implements(c, typ, arg.typ, v__ast__Expr_position(call_arg.expr));
+			continue;
+		}
 		if (!v__table__Table_check(c->table, typ, arg.typ)) {
 			if (arg_typ_sym->kind == v__table__Kind_string && v__table__TypeSymbol_has_method(typ_sym, tos3("str"))) {
 				continue;
@@ -17075,6 +17120,30 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 		}
 	}
 	return f.return_type;
+}
+
+static void v__checker__Checker_type_implements(v__checker__Checker* c, v__table__Type typ, v__table__Type inter_typ, v__token__Position pos) {
+	v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, typ);
+	v__table__TypeSymbol* inter_sym = v__table__Table_get_type_symbol(c->table, inter_typ);
+	string styp = v__table__Table_type_to_str(c->table, typ);
+	// FOR IN array
+	array tmp1 = inter_sym->methods;
+	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+		v__table__Fn imethod = ((v__table__Fn*)tmp1.data)[tmp2];
+		bool tmp3;
+		{ /* if guard */ Option_v__table__Fn method = v__table__TypeSymbol_find_method(typ_sym, imethod.name);
+		if ((tmp3 = method.ok)) {
+			if (!v__table__Fn_is_same_method_as(&imethod, &/*qq*//*opt*/(*(v__table__Fn*)method.data))) {
+				v__checker__Checker_error(c, _STR("`%.*s\000` incorrectly implements method `%.*s\000` of interface `%.*s\000`, expected `%.*s\000`", 5, styp, imethod.name, inter_sym->name, v__table__Table_fn_to_str(c->table, &/*qq*/imethod)), pos);
+			}
+			continue;
+		}}
+		v__checker__Checker_error(c, _STR("`%.*s\000` doesn't implement method `%.*s\000`", 3, styp, imethod.name), pos);
+	}
+	v__table__Interface* inter_info = /* as */ (v__table__Interface*)__as_cast(inter_sym->info.obj, inter_sym->info.typ, /*expected:*/84);
+	if (!_IN(v__table__Type, typ, inter_info->types) && typ_sym->kind != v__table__Kind_interface_) {
+		array_push(&inter_info->types, &(v__table__Type[]){ typ });
+	}
 }
 
 void v__checker__Checker_check_expr_opt_call(v__checker__Checker* c, v__ast__Expr x, v__table__Type xtype, bool is_return_used) {
