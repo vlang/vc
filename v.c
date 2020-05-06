@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "c653977"
+#define V_COMMIT_HASH "b627bb9"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "24aff9e"
+#define V_COMMIT_HASH "c653977"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c653977"
+#define V_CURRENT_COMMIT_HASH "b627bb9"
 #endif
 
 
@@ -15654,7 +15654,7 @@ void v__util__launch_tool(bool is_verbose, string tool_name) {
 			if (!string_contains(/*opt*/(*(os__Result*)tool_compilation.data).output, tos3("Permission denied"))) {
 				err = _STR("\n%.*s\000", 2, /*opt*/(*(os__Result*)tool_compilation.data).output);
 			}
-			eprintln(_STR("cannot compile ‘%.*s\000: %.*s\000‘", 3, tool_source, err));
+			eprintln(_STR("cannot compile `%.*s\000`: %.*s\000", 3, tool_source, err));
 			v_exit(1);
 		}
 	}
@@ -17104,7 +17104,7 @@ void v__checker__Checker_check_or_block(v__checker__Checker* c, v__ast__CallExpr
 	if (is_ret_used) {
 		if (!v__checker__Checker_is_last_or_block_stmt_valid(c, last_stmt)) {
 			string expected_type_name = v__table__Table_get_type_symbol(c->table, ret_type)->name;
-			v__checker__Checker_error(c, _STR("last statement in the `or {}` block should return ‘%.*s\000‘", 2, expected_type_name), call_expr->pos);
+			v__checker__Checker_error(c, _STR("last statement in the `or {}` block should return `%.*s\000`", 2, expected_type_name), call_expr->pos);
 			return;
 		}
 		if (last_stmt.typ == 177 /* v.ast.ExprStmt */) {
@@ -27583,9 +27583,9 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 			} else if (p->tok.kind == v__token__Kind_name) {
 				v__parser__Parser_next(p);
 				string lit = (string_ne(p->tok.lit, tos3("")) ?  ( p->tok.lit )  :  ( v__token__Kind_str(p->tok.kind) ) );
-				v__parser__Parser_error(p, _STR("unexpected ‘%.*s\000‘, expecting ‘:‘", 2, lit));
+				v__parser__Parser_error(p, _STR("unexpected `%.*s\000`, expecting `:`", 2, lit));
 			} else {
-				v__parser__Parser_error(p, _STR("unexpected ‘%.*s\000‘, expecting struct key", 2, p->tok.lit));
+				v__parser__Parser_error(p, _STR("unexpected `%.*s\000`, expecting struct key", 2, p->tok.lit));
 			}
 		}
 		v__parser__Parser_check(p, v__token__Kind_rcbr);
