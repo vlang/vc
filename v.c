@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "f808764"
+#define V_COMMIT_HASH "e87289f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b4c9334"
+#define V_COMMIT_HASH "f808764"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "f808764"
+#define V_CURRENT_COMMIT_HASH "e87289f"
 #endif
 
 
@@ -16404,7 +16404,7 @@ void v__checker__Checker_check_files(v__checker__Checker* c, array_v__ast__File 
 		return;
 	}
 	if (!has_main_mod_file) {
-		v__checker__Checker_error(c, tos3("projet must include a `main` module or be a shared library (compile with `v -shared`)"), (v__token__Position){
+		v__checker__Checker_error(c, tos3("project must include a `main` module or be a shared library (compile with `v -shared`)"), (v__token__Position){
 			.line_nr = 0,
 			.pos = 0,
 			.len = 0,
