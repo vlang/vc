@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "61e00e6"
+#define V_COMMIT_HASH "99cf520"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5bd3045"
+#define V_COMMIT_HASH "61e00e6"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "61e00e6"
+#define V_CURRENT_COMMIT_HASH "99cf520"
 #endif
 
 
@@ -25835,6 +25835,10 @@ static multi_return_array_v__table__Arg_bool v__parser__Parser_fn_args(v__parser
 		}
 	} else {
 		while (p->tok.kind != v__token__Kind_rpar) {
+			bool is_mut = p->tok.kind == v__token__Kind_key_mut;
+			if (is_mut) {
+				v__parser__Parser_next(p);
+			}
 			array_string arg_names = new_array_from_c_array(1, 1, sizeof(string), (string[1]){
 		v__parser__Parser_check_name(p), 
 });
@@ -25842,7 +25846,9 @@ static multi_return_array_v__table__Arg_bool v__parser__Parser_fn_args(v__parser
 				v__parser__Parser_check(p, v__token__Kind_comma);
 				array_push(&arg_names, &(string[]){ v__parser__Parser_check_name(p) });
 			}
-			bool is_mut = p->tok.kind == v__token__Kind_key_mut;
+			if (p->tok.kind == v__token__Kind_key_mut) {
+				is_mut = true;
+			}
 			if (p->tok.kind == v__token__Kind_ellipsis) {
 				v__parser__Parser_check(p, v__token__Kind_ellipsis);
 				is_variadic = true;
@@ -25852,9 +25858,9 @@ static multi_return_array_v__table__Arg_bool v__parser__Parser_fn_args(v__parser
 				typ = v__table__Type_set_flag(typ, v__table__TypeFlag_variadic);
 			}
 			// FOR IN array
-			array tmp11 = arg_names;
-			for (int tmp12 = 0; tmp12 < tmp11.len; tmp12++) {
-				string arg_name = ((string*)tmp11.data)[tmp12];
+			array tmp13 = arg_names;
+			for (int tmp14 = 0; tmp14 < tmp13.len; tmp14++) {
+				string arg_name = ((string*)tmp13.data)[tmp14];
 				array_push(&args, &(v__table__Arg[]){ (v__table__Arg){
 					.name = arg_name,
 					.is_mut = is_mut,
