@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5bd3045"
+#define V_COMMIT_HASH "61e00e6"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "215657e"
+#define V_COMMIT_HASH "5bd3045"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5bd3045"
+#define V_CURRENT_COMMIT_HASH "61e00e6"
 #endif
 
 
@@ -15960,6 +15960,9 @@ static v__token__Position v__ast__Expr_position(v__ast__Expr expr) {
 	}else if (expr.typ == 147 /* v.ast.AssignExpr */) {
 		v__ast__AssignExpr* it = (v__ast__AssignExpr*)expr.obj; // ST it
 		return it->pos;
+	}else if (expr.typ == 192 /* v.ast.CastExpr */) {
+		v__ast__CastExpr* it = (v__ast__CastExpr*)expr.obj; // ST it
+		return it->pos;
 	}else if (expr.typ == 213 /* v.ast.Assoc */) {
 		v__ast__Assoc* it = (v__ast__Assoc*)expr.obj; // ST it
 		return it->pos;
@@ -17940,6 +17943,11 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 	}else if (node.typ == 192 /* v.ast.CastExpr */) {
 		v__ast__CastExpr* it = (v__ast__CastExpr*)node.obj; // ST it
 		it->expr_type = v__checker__Checker_expr(c, it->expr);
+		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, it->expr_type);
+		if (it->typ == _const_v__table__string_type && !((sym->kind == v__table__Kind_byte || sym->kind == v__table__Kind_byteptr) || sym->kind == v__table__Kind_array && string_eq(sym->name, tos3("array_byte")))) {
+			string type_name = v__table__Table_type_to_str(c->table, it->expr_type);
+			v__checker__Checker_error(c, _STR("cannot cast type `%.*s\000` to string", 2, type_name), it->pos);
+		}
 		if (it->has_arg) {
 			v__checker__Checker_expr(c, it->arg);
 		}
@@ -18023,9 +18031,9 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 	}else if (node.typ == 197 /* v.ast.StringInterLiteral */) {
 		v__ast__StringInterLiteral* it = (v__ast__StringInterLiteral*)node.obj; // ST it
 		// FOR IN array
-		array tmp11 = it->exprs;
-		for (int tmp12 = 0; tmp12 < tmp11.len; tmp12++) {
-			v__ast__Expr expr = ((v__ast__Expr*)tmp11.data)[tmp12];
+		array tmp12 = it->exprs;
+		for (int tmp13 = 0; tmp13 < tmp12.len; tmp13++) {
+			v__ast__Expr expr = ((v__ast__Expr*)tmp12.data)[tmp13];
 			array_push(&it->expr_types, &(v__table__Type[]){ v__checker__Checker_expr(c, expr) });
 		}
 		return _const_v__table__string_type;
@@ -27093,7 +27101,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 				.expr = expr,
 				.arg = arg,
 				.has_arg = has_arg,
-				.pos = v__token__Token_position(&p->tok),
+				.pos = v__ast__Expr_position(expr),
 				.typname = (string){.str=""},
 				.expr_type = {0},
 			}}, sizeof(v__ast__CastExpr)), .typ = 192 /* v.ast.CastExpr */};
