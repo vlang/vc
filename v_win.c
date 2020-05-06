@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "24aff9e"
+#define V_COMMIT_HASH "c653977"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "67351c7"
+#define V_COMMIT_HASH "24aff9e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "24aff9e"
+#define V_CURRENT_COMMIT_HASH "c653977"
 #endif
 
 
@@ -21354,7 +21354,7 @@ static void v__gen__Gen_gen_str_for_struct(v__gen__Gen* g, v__table__Struct info
 			} else if (sym->kind == v__table__Kind_struct_) {
 				strings__Builder_write(&g->auto_str_funcs, tos3("indents, "));
 				strings__Builder_write(&g->auto_str_funcs, _STR("%.*s\000( it->%.*s\000%.*s\000 ) ", 4, field_styp_fn_name, field.name, second_str_param));
-			} else if ((sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed)) {
+			} else if ((sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed || sym->kind == v__table__Kind_map)) {
 				strings__Builder_write(&g->auto_str_funcs, tos3("indents, "));
 				strings__Builder_write(&g->auto_str_funcs, _STR("%.*s\000( it->%.*s\000) ", 3, field_styp_fn_name, field.name));
 			} else {
