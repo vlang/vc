@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "25db5e9"
+#define V_COMMIT_HASH "207324d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e87289f"
+#define V_COMMIT_HASH "25db5e9"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "25db5e9"
+#define V_CURRENT_COMMIT_HASH "207324d"
 #endif
 
 
@@ -4459,7 +4459,6 @@ string strings__Builder_str(strings__Builder* b) {
 
 void strings__Builder_free(strings__Builder* b) {
 		v_free(b->buf.data);
-	int s = b->initial_size;
 	b->len = 0;
 	b->str_calls = 0;
 }
