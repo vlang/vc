@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "fe4c7b0"
+#define V_COMMIT_HASH "67351c7"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c1f2246"
+#define V_COMMIT_HASH "fe4c7b0"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "fe4c7b0"
+#define V_CURRENT_COMMIT_HASH "67351c7"
 #endif
 
 
@@ -3904,7 +3904,7 @@ void vinit_string_literals(){
 	_const_time__days_string = tos3("MonTueWedThuFriSatSun");
 	_const_time__months_string = tos3("JanFebMarAprMayJunJulAugSepOctNovDec");
 	_const_help__unknown_topic = tos3("V Error: Unknown help topic provided. Use `v help` for usage information.");
-	_const_v__util__v_version = tos3("0.1.26");
+	_const_v__util__v_version = tos3("0.1.27");
 	_const_v__checker__no_pub_in_main_warning = tos3("in module main cannot be declared public");
 	_const_v__gen__c_commit_hash_default = tos3("\n#ifndef V_COMMIT_HASH\n#define V_COMMIT_HASH \"@@@\"\n#endif\n\n");
 	_const_v__gen__c_current_commit_hash_default = tos3("\n#ifndef V_CURRENT_COMMIT_HASH\n#define V_CURRENT_COMMIT_HASH \"@@@\"\n#endif\n\n");
