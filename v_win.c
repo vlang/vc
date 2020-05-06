@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b0deac6"
+#define V_COMMIT_HASH "b5a1544"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f638cae"
+#define V_COMMIT_HASH "b0deac6"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b0deac6"
+#define V_CURRENT_COMMIT_HASH "b5a1544"
 #endif
 
 
@@ -21800,43 +21800,56 @@ v__table__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* 
 		--------------------------------------------------- */
 		return info->typ;
 	} else if (ident->kind == v__ast__IdentKind_unresolved) {
+		string name = ident->name;
+		if (!string_contains(name, tos3(".")) && !(string_eq(ident->mod, tos3("builtin")) || string_eq(ident->mod, tos3("main")))) {
+			name = _STR("%.*s\000.%.*s\000", 3, ident->mod, ident->name);
+		}
 		v__ast__Scope* start_scope = v__ast__Scope_innermost(c->file.scope, ident->pos.pos);
-		bool tmp8;
+		bool tmp9;
 		{ /* if guard */ Option_v__ast__ScopeObject obj = v__ast__Scope_find(start_scope, ident->name);
-		if ((tmp8 = obj.ok)) {
+		if ((tmp9 = obj.ok)) {
 			if (/*opt*/(*(v__ast__ScopeObject*)obj.data).typ == 144 /* v.ast.Var */) {
 				v__ast__Var* it = (v__ast__Var*)/*opt*/(*(v__ast__ScopeObject*)obj.data).obj; // ST it
 				v__table__Type typ = it->typ;
 				if (typ == 0) {
 					typ = v__checker__Checker_expr(c, it->expr);
 				}
-				bool is_optional = v__table__Type_flag_is(typ, v__table__TypeFlag_optional);
-				ident->kind = v__ast__IdentKind_variable;
-				ident->info = /* sum type cast */ (v__ast__IdentInfo) {.obj = memdup(&(v__ast__IdentVar[]) {(v__ast__IdentVar){
-					.typ = typ,
-					.is_optional = is_optional,
-					.is_mut = 0,
-					.is_static = 0,
-				}}, sizeof(v__ast__IdentVar)), .typ = 151 /* v.ast.IdentVar */};
-				it->typ = typ;
-				if (is_optional) {
+				v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, typ);
+				if (sym->info.typ == 96 /* v.table.FnType */) {
+					v__table__FnType* info = /* as */ (v__table__FnType*)__as_cast(sym->info.obj, sym->info.typ, /*expected:*/96);
+					v__table__Type fn_type = v__table__new_type(v__table__Table_find_or_register_fn_type(c->table, info->func, true, true));
+					ident->kind = v__ast__IdentKind_function;
+					ident->info = /* sum type cast */ (v__ast__IdentInfo) {.obj = memdup(&(v__ast__IdentFn[]) {(v__ast__IdentFn){
+						.typ = fn_type,
+					}}, sizeof(v__ast__IdentFn)), .typ = 234 /* v.ast.IdentFn */};
 					/* autofreeings before return:              -------
 					--------------------------------------------------- */
-					return v__table__Type_set_flag(typ, v__table__TypeFlag_unset);
+					return fn_type;
+				} else {
+					bool is_optional = v__table__Type_flag_is(typ, v__table__TypeFlag_optional);
+					ident->kind = v__ast__IdentKind_variable;
+					ident->info = /* sum type cast */ (v__ast__IdentInfo) {.obj = memdup(&(v__ast__IdentVar[]) {(v__ast__IdentVar){
+						.typ = typ,
+						.is_optional = is_optional,
+						.is_mut = 0,
+						.is_static = 0,
+					}}, sizeof(v__ast__IdentVar)), .typ = 151 /* v.ast.IdentVar */};
+					it->typ = typ;
+					if (is_optional) {
+						/* autofreeings before return:              -------
+						--------------------------------------------------- */
+						return v__table__Type_set_flag(typ, v__table__TypeFlag_unset);
+					}
+					/* autofreeings before return:              -------
+					--------------------------------------------------- */
+					return typ;
 				}
-				/* autofreeings before return:              -------
-				--------------------------------------------------- */
-				return typ;
 			}else {
 			};
 		}}
-		string name = ident->name;
-		if (!string_contains(name, tos3(".")) && !(string_eq(ident->mod, tos3("builtin")) || string_eq(ident->mod, tos3("main")))) {
-			name = _STR("%.*s\000.%.*s\000", 3, ident->mod, ident->name);
-		}
-		bool tmp13;
+		bool tmp14;
 		{ /* if guard */ Option_v__ast__ScopeObject obj = v__ast__Scope_find(c->file.global_scope, name);
-		if ((tmp13 = obj.ok)) {
+		if ((tmp14 = obj.ok)) {
 			if (/*opt*/(*(v__ast__ScopeObject*)obj.data).typ == 205 /* v.ast.GlobalDecl */) {
 				v__ast__GlobalDecl* it = (v__ast__GlobalDecl*)/*opt*/(*(v__ast__ScopeObject*)obj.data).obj; // ST it
 				ident->kind = v__ast__IdentKind_global;
@@ -21870,9 +21883,9 @@ v__table__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* 
 			}else {
 			};
 		}}
-		bool tmp16;
+		bool tmp17;
 		{ /* if guard */ Option_v__table__Fn func = v__table__Table_find_fn(c->table, name);
-		if ((tmp16 = func.ok)) {
+		if ((tmp17 = func.ok)) {
 			v__table__Type fn_type = v__table__new_type(v__table__Table_find_or_register_fn_type(c->table, /*opt*/(*(v__table__Fn*)func.data), false, true));
 			ident->name = name;
 			ident->kind = v__ast__IdentKind_function;
@@ -22554,7 +22567,8 @@ void v__gen__Gen_write_typedef_types(v__gen__Gen* g) {
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, func.return_type);
 			bool is_multi = sym->kind == v__table__Kind_multi_return;
 			bool is_fn_sig = string_eq(func.name, tos3(""));
-			if (!info->has_decl && (!info->is_anon || is_fn_sig) && !is_multi) {
+			bool not_anon = !info->is_anon;
+			if (!info->has_decl && !is_multi && (not_anon || is_fn_sig)) {
 				string fn_name = (func.is_c ?  ( string_replace(func.name, tos3("."), tos3("__")) )  : info->is_anon ?  ( typ.name )  :  ( v__gen__c_name(func.name) ) );
 				strings__Builder_write(&g->definitions, _STR("typedef %.*s\000 (*%.*s\000)(", 3, v__gen__Gen_typ(g, func.return_type), fn_name));
 				// FOR IN array
@@ -23091,6 +23105,23 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 					v__gen__Gen_write(g, tos3("}"));
 				}
 				continue;
+			}else if (val.typ == 149 /* v.ast.Ident */) {
+				v__ast__Ident* it = (v__ast__Ident*)val.obj; // ST it
+				if (it->info.typ == 234 /* v.ast.IdentFn */) {
+					v__ast__IdentFn* thing = /* as */ (v__ast__IdentFn*)__as_cast(it->info.obj, it->info.typ, /*expected:*/234);
+					v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, thing->typ);
+					v__table__FnType* info = /* as */ (v__table__FnType*)__as_cast(sym->info.obj, sym->info.typ, /*expected:*/96);
+					v__table__Fn func = info->func;
+					string ret_styp = v__gen__Gen_typ(g, func.return_type);
+					v__gen__Gen_write(g, _STR("%.*s\000 (*%.*s\000) (", 3, ret_styp, ident.name));
+					int def_pos = g->definitions.len;
+					v__gen__Gen_fn_args(g, func.args, func.is_variadic);
+					strings__Builder_go_back(&g->definitions, g->definitions.len - def_pos);
+					v__gen__Gen_write(g, tos3(") = "));
+					v__gen__Gen_expr(g, /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Ident[]) {*it}, sizeof(v__ast__Ident)), .typ = 149 /* v.ast.Ident */});
+					v__gen__Gen_writeln(g, tos3(";"));
+					continue;
+				}
 			}else {
 			};
 			bool gen_or = is_call && v__table__Type_flag_is(return_type, v__table__TypeFlag_optional);
@@ -24736,9 +24767,9 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__
 	v__gen__Gen_writeln(g, _STR("if (!%.*s\000.ok) {", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s\000.v_error;", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s\000.ecode;", 2, cvar_name));
-	multi_return_string_string mr_72703 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_72703.arg0;
-	string type_of_last_expression = mr_72703.arg1;
+	multi_return_string_string mr_73237 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_73237.arg0;
+	string type_of_last_expression = mr_73237.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
