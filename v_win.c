@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "a4f931e"
+#define V_COMMIT_HASH "8d2a4d2"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "207324d"
+#define V_COMMIT_HASH "a4f931e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "a4f931e"
+#define V_CURRENT_COMMIT_HASH "8d2a4d2"
 #endif
 
 
@@ -7680,8 +7680,8 @@ static bool print_backtrace_skipping_top_frames_msvc(int skipframes) {
 			.f_name_rest = {0},
 		};
 		SymbolInfo* si = &sic.syminfo;
-		si->f_size_of_struct = sizeof(/*typ*/SymbolInfo);
-		si->f_max_name_len = sizeof(/*typ*/SymbolInfoContainer) - sizeof(/*typ*/SymbolInfo) - 1;
+		si->f_size_of_struct = sizeof(SymbolInfo);
+		si->f_max_name_len = sizeof(SymbolInfoContainer) - sizeof(SymbolInfo) - 1;
 		charptr fname = ((charptr)(&si->f_name));
 		Line64 sline64 = (Line64){
 			.f_size_of_struct = 0,
@@ -7690,7 +7690,7 @@ static bool print_backtrace_skipping_top_frames_msvc(int skipframes) {
 			.f_file_name = 0,
 			.f_address = 0,
 		};
-		sline64.f_size_of_struct = sizeof(/*typ*/Line64);
+		sline64.f_size_of_struct = sizeof(Line64);
 		voidptr handle = GetCurrentProcess();
 		SymSetOptions(((_const_SYMOPT_DEBUG | _const_SYMOPT_LOAD_LINES) | _const_SYMOPT_UNDNAME));
 		int syminitok = SymInitialize(handle, 0, 1);
@@ -8358,7 +8358,7 @@ static DenseArray new_dense_array(int value_bytes) {
 		.cap = 8,
 		.size = 0,
 		.deletes = 0,
-		.keys = ((string*)(v_malloc(8 * sizeof(/*typ*/string)))),
+		.keys = ((string*)(v_malloc(8 * sizeof(string)))),
 		.values = v_malloc(8 * value_bytes),
 	};
 }
@@ -8367,7 +8367,7 @@ static DenseArray new_dense_array(int value_bytes) {
 inline static u32 DenseArray_push(DenseArray* d, string key, voidptr value) {
 	if (d->cap == d->size) {
 		d->cap += d->cap >> 3;
-		d->keys = ((string*)(realloc(d->keys, sizeof(/*typ*/string) * d->cap)));
+		d->keys = ((string*)(realloc(d->keys, sizeof(string) * d->cap)));
 		d->values = realloc(d->values, d->value_bytes * d->cap);
 	}
 	u32 push_index = d->size;
@@ -8388,7 +8388,7 @@ static voidptr DenseArray_get(DenseArray d, int i) {
 // } no_bounds_checking
 #endif
 
-	return ((byteptr)(d.keys)) + i * sizeof(/*typ*/string);
+	return ((byteptr)(d.keys)) + i * sizeof(string);
 }
 
 static void DenseArray_zeros_to_end(DenseArray* d) {
@@ -8410,7 +8410,7 @@ static void DenseArray_zeros_to_end(DenseArray* d) {
 	d->deletes = 0;
 	d->size = count;
 	d->cap = (count < 8 ?  ( ((u32)(8)) )  :  ( count ) );
-	d->keys = ((string*)(realloc(d->keys, sizeof(/*typ*/string) * d->cap)));
+	d->keys = ((string*)(realloc(d->keys, sizeof(string) * d->cap)));
 	d->values = realloc(d->values, d->value_bytes * d->cap);
 }
 
@@ -8421,7 +8421,7 @@ static map new_map_1(int value_bytes) {
 		.cached_hashbits = _const_max_cached_hashbits,
 		.shift = _const_init_log_capicity,
 		.key_values = new_dense_array(value_bytes),
-		.metas = ((u32*)(vcalloc(sizeof(/*typ*/u32) * (_const_init_capicity + _const_extra_metas_inc)))),
+		.metas = ((u32*)(vcalloc(sizeof(u32) * (_const_init_capicity + _const_extra_metas_inc)))),
 		.extra_metas = _const_extra_metas_inc,
 		.size = 0,
 	};
@@ -8478,8 +8478,8 @@ inline static void map_meta_greater(map* m, u32 _index, u32 _metas, u32 kvi) {
 	if ((probe_count << 1) == m->extra_metas) {
 		m->extra_metas += _const_extra_metas_inc;
 		u32 mem_size = (m->cap + 2 + m->extra_metas);
-		m->metas = ((u32*)(realloc(m->metas, sizeof(/*typ*/u32) * mem_size)));
-		memset(m->metas + mem_size - _const_extra_metas_inc, 0, sizeof(/*typ*/u32) * _const_extra_metas_inc);
+		m->metas = ((u32*)(realloc(m->metas, sizeof(u32) * mem_size)));
+		memset(m->metas + mem_size - _const_extra_metas_inc, 0, sizeof(u32) * _const_extra_metas_inc);
 		if (probe_count == 252) {
 			v_panic(tos3("Probe overflow"));
 		}
@@ -8525,7 +8525,7 @@ static void map_expand(map* m) {
 }
 
 static void map_rehash(map* m) {
-	int meta_bytes = sizeof(/*typ*/u32) * (m->cap + 2 + m->extra_metas);
+	int meta_bytes = sizeof(u32) * (m->cap + 2 + m->extra_metas);
 	m->metas = ((u32*)(realloc(m->metas, meta_bytes)));
 	memset(m->metas, 0, meta_bytes);
 	for (u32 i = ((u32)(0));
@@ -8545,7 +8545,7 @@ static void map_rehash(map* m) {
 
 static void map_cached_rehash(map* m, u32 old_cap) {
 	u32* old_metas = m->metas;
-	m->metas = ((u32*)(vcalloc(sizeof(/*typ*/u32) * (m->cap + 2 + m->extra_metas))));
+	m->metas = ((u32*)(vcalloc(sizeof(u32) * (m->cap + 2 + m->extra_metas))));
 	u32 old_extra_metas = m->extra_metas;
 	for (u32 i = ((u32)(0));
 	i <= old_cap + old_extra_metas; i += 2) {
@@ -8620,7 +8620,7 @@ void map_delete(map* m, string key) {
 			m->size--;
 			m->metas[index] = 0;
 			m->key_values.deletes++;
-			memset(&m->key_values.keys[kv_index], 0, sizeof(/*typ*/string));
+			memset(&m->key_values.keys[kv_index], 0, sizeof(string));
 			if (m->key_values.size <= 32) {
 				return;
 			}
@@ -9958,7 +9958,7 @@ string ustring_str(ustring s) {
 ustring string_ustring(string s) {
 	ustring res = (ustring){
 		.s = s,
-		.runes = __new_array(0, s.len, sizeof(/*typ*/int)),
+		.runes = __new_array(0, s.len, sizeof(int)),
 		.len = 0,
 	};
 	for (int i = 0;
@@ -9973,7 +9973,7 @@ ustring string_ustring(string s) {
 
 ustring string_ustring_tmp(string s) {
 	if (g_ustring_runes.len == 0) {
-		g_ustring_runes = __new_array(0, 128, sizeof(/*typ*/int));
+		g_ustring_runes = __new_array(0, 128, sizeof(int));
 	}
 	ustring res = (ustring){
 		.s = s,
@@ -10024,7 +10024,7 @@ static bool ustring_ge(ustring u, ustring a) {
 ustring ustring_add(ustring u, ustring a) {
 	ustring res = (ustring){
 		.s = string_add(u.s, a.s),
-		.runes = __new_array(0, u.s.len + a.s.len, sizeof(/*typ*/int)),
+		.runes = __new_array(0, u.s.len + a.s.len, sizeof(int)),
 		.len = 0,
 	};
 	int j = 0;
@@ -16093,14 +16093,14 @@ static v__token__Position v__ast__Stmt_position(v__ast__Stmt stmt) {
 v__ast__Expr v__ast__fe2ex(v__table__FExpr x) {
 	v__ast__Expr res = (v__ast__Expr){
 	0};
-	memcpy(&res, &x, sizeof(/*typ*/v__ast__Expr));
+	memcpy(&res, &x, sizeof(v__ast__Expr));
 	return res;
 }
 
 v__table__FExpr v__ast__ex2fe(v__ast__Expr x) {
 	v__table__FExpr res = (v__table__FExpr){
 	0};
-	memcpy(&res, &x, sizeof(/*typ*/v__table__FExpr));
+	memcpy(&res, &x, sizeof(v__table__FExpr));
 	return res;
 }
 
@@ -19581,12 +19581,11 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 		g->is_amp = false;
 	}else if (node.typ == 218 /* v.ast.SizeOf */) {
 		v__ast__SizeOf* it = (v__ast__SizeOf*)node.obj; // ST it
-		if (string_ne(it->type_name, tos3(""))) {
-			v__gen__Gen_write(g, _STR("sizeof(%.*s\000)", 2, it->type_name));
-		} else {
-			string styp = v__gen__Gen_typ(g, it->typ);
-			v__gen__Gen_write(g, _STR("sizeof(/*typ*/%.*s\000)", 2, styp));
+		string styp = it->type_name;
+		if (string_eq(it->type_name, tos3(""))) {
+			styp = v__gen__Gen_typ(g, it->typ);
 		}
+		v__gen__Gen_write(g, _STR("sizeof(%.*s\000)", 2, styp));
 	}else if (node.typ == 196 /* v.ast.StringLiteral */) {
 		v__ast__StringLiteral* it = (v__ast__StringLiteral*)node.obj; // ST it
 		if (it->is_raw) {
@@ -20890,9 +20889,9 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__
 	v__gen__Gen_writeln(g, _STR("if (!%.*s\000.ok) {", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s\000.v_error;", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s\000.ecode;", 2, cvar_name));
-	multi_return_string_string mr_71966 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_71966.arg0;
-	string type_of_last_expression = mr_71966.arg1;
+	multi_return_string_string mr_72066 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_72066.arg0;
+	string type_of_last_expression = mr_72066.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -21050,6 +21049,9 @@ static string v__gen__Gen_type_default(v__gen__Gen g, v__table__Type typ) {
 	if (sym->kind == v__table__Kind_array) {
 		v__table__TypeSymbol* elem_sym = v__table__Table_get_type_symbol(g.table, v__table__TypeSymbol_array_info(sym).elem_type);
 		string elem_type_str = string_replace(elem_sym->name, tos3("."), tos3("__"));
+		if (string_starts_with(elem_type_str, tos3("C__"))) {
+			elem_type_str = string_substr(elem_type_str, 3, elem_type_str.len);
+		}
 		return _STR("__new_array(0, 1, sizeof(%.*s\000))", 2, elem_type_str);
 	}
 	if (sym->kind == v__table__Kind_map) {
@@ -32137,7 +32139,7 @@ void _vinit() {
 	_const_probe_inc = ((u32)(0x01000000));
 	_const_mid_index = _const_degree - 1;
 	_const_max_size = 2 * _const_degree - 1;
-	_const_children_bytes = sizeof(/*typ*/voidptr) * (_const_max_size + 1);
+	_const_children_bytes = sizeof(voidptr) * (_const_max_size + 1);
 	_const_os__STD_INPUT_HANDLE = -10;
 	_const_os__STD_OUTPUT_HANDLE = -11;
 	_const_os__STD_ERROR_HANDLE = -12;
