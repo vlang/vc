@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "99cf520"
+#define V_COMMIT_HASH "cc66eb1"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "61e00e6"
+#define V_COMMIT_HASH "99cf520"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "99cf520"
+#define V_CURRENT_COMMIT_HASH "cc66eb1"
 #endif
 
 
@@ -1421,6 +1421,7 @@ struct v__table__Arg {
 	string name;
 	bool is_mut;
 	v__table__Type typ;
+	bool is_hidden;
 };
 
 struct v__table__Var {
@@ -1569,12 +1570,6 @@ struct v__ast__SizeOf {
 struct v__ast__TypeOf {
 	v__ast__Expr expr;
 	v__table__Type expr_type;
-};
-
-struct v__ast__InterfaceDecl {
-	string name;
-	array_string field_names;
-	array_v__ast__FnDecl methods;
 };
 
 struct v__ast__ConcatExpr {
@@ -2092,6 +2087,13 @@ struct v__ast__StructInitField {
 	string name;
 	v__table__Type typ;
 	v__table__Type expected_type;
+};
+
+struct v__ast__InterfaceDecl {
+	string name;
+	array_string field_names;
+	array_v__ast__FnDecl methods;
+	v__token__Position pos;
 };
 
 struct v__ast__ReturnStmt {
@@ -16155,6 +16157,9 @@ string v__ast__FnDecl_str(v__ast__FnDecl* node, v__table__Table* t) {
 		if (node->is_method && i == 0) {
 			continue;
 		}
+		if (arg.is_hidden) {
+			continue;
+		}
 		bool is_last_arg = i == node->args.len - 1;
 		bool should_add_type = is_last_arg || (*(v__table__Arg*)array_get(node->args, i + 1)).typ != arg.typ || (node->is_variadic && i == node->args.len - 2);
 		strings__Builder_write(&f, arg.name);
@@ -17696,6 +17701,16 @@ static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) 
 		v__checker__Checker_expr(c, it->call_expr);
 	}else if (node.typ == 165 /* v.ast.Import */) {
 		v__ast__Import* it = (v__ast__Import*)node.obj; // ST it
+	}else if (node.typ == 217 /* v.ast.InterfaceDecl */) {
+		v__ast__InterfaceDecl* it = (v__ast__InterfaceDecl*)node.obj; // ST it
+		if (!byte_is_capital(string_at(it->name, 0))) {
+			v__token__Position pos = (v__token__Position){
+				.line_nr = it->pos.line_nr,
+				.pos = it->pos.pos + tos3("interface").len,
+				.len = it->name.len,
+			};
+			v__checker__Checker_error(c, tos3("interface name must begin with capital letter"), pos);
+		}
 	}else if (node.typ == 187 /* v.ast.Module */) {
 		v__ast__Module* it = (v__ast__Module*)node.obj; // ST it
 		c->mod = it->name;
@@ -25438,6 +25453,7 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 			.name = rec_name,
 			.is_mut = rec_mut,
 			.typ = rec_type,
+			.is_hidden = 0,
 		} });
 		v__parser__Parser_check(p, v__token__Kind_rpar);
 	}
@@ -25676,6 +25692,7 @@ static multi_return_array_v__table__Arg_bool v__parser__Parser_fn_args(v__parser
 				.name = arg_name,
 				.is_mut = is_mut,
 				.typ = arg_type,
+				.is_hidden = 0,
 			} });
 			arg_no++;
 		}
@@ -25711,6 +25728,7 @@ static multi_return_array_v__table__Arg_bool v__parser__Parser_fn_args(v__parser
 					.name = arg_name,
 					.is_mut = is_mut,
 					.typ = typ,
+					.is_hidden = 0,
 				} });
 				if (is_variadic && p->tok.kind == v__token__Kind_comma) {
 					v__parser__Parser_error(p, _STR("cannot use ...(variadic) with non-final parameter %.*s\000", 2, arg_name));
@@ -28013,6 +28031,7 @@ static v__ast__StructInit v__parser__Parser_struct_init(v__parser__Parser* p, bo
 }
 
 static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser* p) {
+	v__token__Position start_pos = v__token__Token_position(&p->tok);
 	bool is_pub = p->tok.kind == v__token__Kind_key_pub;
 	if (is_pub) {
 		v__parser__Parser_next(p);
@@ -28037,16 +28056,20 @@ static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser*
 	while (p->tok.kind != v__token__Kind_rcbr && p->tok.kind != v__token__Kind_eof) {
 		int line_nr = p->tok.line_nr;
 		string name = v__parser__Parser_check_name(p);
-		multi_return_array_v__table__Arg_bool mr_6751 = v__parser__Parser_fn_args(p);
-		array_v__table__Arg args2 = mr_6751.arg0;
+		if (v__util__contains_capital(name)) {
+			v__parser__Parser_error(p, tos3("interface methods cannot contain uppercase letters, use snake_case instead"));
+		}
+		multi_return_array_v__table__Arg_bool mr_6924 = v__parser__Parser_fn_args(p);
+		array_v__table__Arg args2 = mr_6924.arg0;
 		array_v__table__Arg args = new_array_from_c_array(1, 1, sizeof(v__table__Arg), (v__table__Arg[1]){
 		(v__table__Arg){
 			.name = tos3("x"),
 			.typ = typ,
+			.is_hidden = true,
 			.is_mut = 0,
 		}, 
 });
-		_PUSH_MANY(&args, (args2), tmp2, array_v__table__Arg);
+		_PUSH_MANY(&args, (args2), tmp3, array_v__table__Arg);
 		v__ast__FnDecl method = (v__ast__FnDecl){
 			.name = name,
 			.args = args,
@@ -28089,6 +28112,7 @@ static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser*
 	return (v__ast__InterfaceDecl){
 		.name = interface_name,
 		.methods = methods,
+		.pos = start_pos,
 		.field_names = __new_array(0, 1, sizeof(string)),
 	};
 }
