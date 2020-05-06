@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "e87289f"
+#define V_COMMIT_HASH "25db5e9"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f808764"
+#define V_COMMIT_HASH "e87289f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "e87289f"
+#define V_CURRENT_COMMIT_HASH "25db5e9"
 #endif
 
 
@@ -4281,7 +4281,6 @@ string strings__Builder_str(strings__Builder* b) {
 void strings__Builder_free(strings__Builder* b) {
 		v_free(b->buf.data);
 	int s = b->initial_size;
-	b->buf = __new_array(0, s, sizeof(byte));
 	b->len = 0;
 	b->str_calls = 0;
 }
@@ -21334,7 +21333,7 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstring x = %.*s\000_str(it);", 2, field_styp));
 	}
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tstrings__Builder_write(&sb, x);"));
-	if (info.elem_type != _const_v__table__bool_type) {
+	if (g->pref->autofree && info.elem_type != _const_v__table__bool_type) {
 		strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tstring_free(x);"));
 	}
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\tif (i < a.len-1) {"));
@@ -21342,7 +21341,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t\t}"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("\t}"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tstrings__Builder_write(&sb, tos3(\"]\"));"));
-	strings__Builder_writeln(&g->auto_str_funcs, tos3("\treturn strings__Builder_str(&sb);"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tstring res = strings__Builder_str(&sb);"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\tstrings__Builder_free(&sb);"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos3("\treturn res;"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos3("}"));
 }
 
