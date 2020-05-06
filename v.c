@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "cc66eb1"
+#define V_COMMIT_HASH "b4c9334"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "99cf520"
+#define V_COMMIT_HASH "cc66eb1"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "cc66eb1"
+#define V_CURRENT_COMMIT_HASH "b4c9334"
 #endif
 
 
@@ -17703,11 +17703,12 @@ static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) 
 		v__ast__Import* it = (v__ast__Import*)node.obj; // ST it
 	}else if (node.typ == 217 /* v.ast.InterfaceDecl */) {
 		v__ast__InterfaceDecl* it = (v__ast__InterfaceDecl*)node.obj; // ST it
-		if (!byte_is_capital(string_at(it->name, 0))) {
+		string name = string_after(it->name, tos3("."));
+		if (!byte_is_capital(string_at(name, 0))) {
 			v__token__Position pos = (v__token__Position){
 				.line_nr = it->pos.line_nr,
 				.pos = it->pos.pos + tos3("interface").len,
-				.len = it->name.len,
+				.len = name.len,
 			};
 			v__checker__Checker_error(c, tos3("interface name must begin with capital letter"), pos);
 		}
