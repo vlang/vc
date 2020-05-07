@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "673acdb"
+#define V_COMMIT_HASH "722a2c7"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7207a49"
+#define V_COMMIT_HASH "673acdb"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "673acdb"
+#define V_CURRENT_COMMIT_HASH "722a2c7"
 #endif
 
 
@@ -7029,7 +7029,7 @@ static f64 strconv__fabs(f64 x) {
 }
 
 static array __new_array(int mylen, int cap, int elm_size) {
-	int cap_ = (cap == 0 ?  ( 1 )  :  ( cap ) );
+	int cap_ = (cap < mylen ?  ( mylen )  :  ( cap ) );
 	array arr = (array){
 		.len = mylen,
 		.cap = cap_,
@@ -7040,10 +7040,10 @@ static array __new_array(int mylen, int cap, int elm_size) {
 }
 
 static array new_array_from_c_array(int len, int cap, int elm_size, voidptr c_array) {
-	int cap_ = (cap == 0 ?  ( 1 )  :  ( cap ) );
+	int cap_ = (cap < len ?  ( len )  :  ( cap ) );
 	array arr = (array){
 		.len = len,
-		.cap = cap,
+		.cap = cap_,
 		.element_size = elm_size,
 		.data = vcalloc(cap_ * elm_size),
 	};
@@ -7600,10 +7600,13 @@ byteptr v_calloc(int n) {
 }
 
 byteptr vcalloc(int n) {
-	if (n <= 0) {
+	if (n < 0) {
 		v_panic(tos3("calloc(<=0)"));
+	} else if (n == 0) {
+		return ((byteptr)(0));
+	} else {
+		return calloc(n, 1);
 	}
-	return calloc(n, 1);
 }
 
 // Attr: [unsafe_fn]
