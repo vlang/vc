@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "3c6e090"
+#define V_COMMIT_HASH "ef38777"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "be063d7"
+#define V_COMMIT_HASH "3c6e090"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "3c6e090"
+#define V_CURRENT_COMMIT_HASH "ef38777"
 #endif
 
 
@@ -19441,7 +19441,6 @@ static string v__gen__Gen_autofree_scope_vars(v__gen__Gen* g, int pos) {
 
 static string v__gen__Gen_autofree_variable(v__gen__Gen* g, v__ast__Var v) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, v.typ);
-	eprintln(_STR("   > var name: %*.*s\000 | is_arg: %*.*s\000 | var type: %8"PRId32"\000 | type_name: %*.*s", 4, v.name, -20, bool_str(v.is_arg), 6, ((int)(v.typ)), sym->name, -33));
 	if (sym->kind == v__table__Kind_array) {
 		return v__gen__Gen_autofree_var_call(g, tos3("array_free"), v);
 	}
@@ -19451,6 +19450,7 @@ static string v__gen__Gen_autofree_variable(v__gen__Gen* g, v__ast__Var v) {
 			v__ast__StringLiteral* it = (v__ast__StringLiteral*)v.expr.obj; // ST it
 			return tos3("// str literal\n");
 		}else {
+			return string_add(string_add(tos3("// other "), t), tos3("\n"));
 		};
 		return v__gen__Gen_autofree_var_call(g, tos3("string_free"), v);
 	}
