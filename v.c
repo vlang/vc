@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "be063d7"
+#define V_COMMIT_HASH "3c6e090"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d096763"
+#define V_COMMIT_HASH "be063d7"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "be063d7"
+#define V_CURRENT_COMMIT_HASH "3c6e090"
 #endif
 
 
@@ -19300,7 +19300,6 @@ static string v__gen__Gen_autofree_variable(v__gen__Gen* g, v__ast__Var v) {
 			v__ast__StringLiteral* it = (v__ast__StringLiteral*)v.expr.obj; // ST it
 			return tos3("// str literal\n");
 		}else {
-			return string_add(string_add(tos3("// other "), t), tos3("\n"));
 		};
 		return v__gen__Gen_autofree_var_call(g, tos3("string_free"), v);
 	}
@@ -20767,9 +20766,9 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__
 	v__gen__Gen_writeln(g, _STR("if (!%.*s\000.ok) {", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s\000.v_error;", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s\000.ecode;", 2, cvar_name));
-	multi_return_string_string mr_73930 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_73930.arg0;
-	string type_of_last_expression = mr_73930.arg1;
+	multi_return_string_string mr_73933 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_73933.arg0;
+	string type_of_last_expression = mr_73933.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
