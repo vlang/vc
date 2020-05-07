@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8cfb2ad"
+#define V_COMMIT_HASH "7207a49"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1991220"
+#define V_COMMIT_HASH "8cfb2ad"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8cfb2ad"
+#define V_CURRENT_COMMIT_HASH "7207a49"
 #endif
 
 
@@ -21375,7 +21375,7 @@ static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__T
 			v__table__Map* it = (v__table__Map*)sym->info.obj; // ST it
 			v__gen__Gen_gen_str_for_map(g, */*d*/it, styp, str_fn_name);
 		}else {
-			v__gen__verror(_STR("could not generate string method %.*s\000 for type \'%.*s\000\'", 3, str_fn_name, styp));
+			v__gen__verror(_STR("could not generate string method %.*s\000 for type \'%.*s\000\' | sym.name: %.*s", 3, str_fn_name, styp, sym->name));
 		};
 	}
 	if (v__table__Type_flag_is(typ, v__table__TypeFlag_variadic)) {
