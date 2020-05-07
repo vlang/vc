@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "6ff93f2"
+#define V_COMMIT_HASH "12221fb"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "78efe72"
+#define V_COMMIT_HASH "6ff93f2"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "6ff93f2"
+#define V_CURRENT_COMMIT_HASH "12221fb"
 #endif
 
 
@@ -16105,14 +16105,14 @@ static v__token__Position v__ast__Stmt_position(v__ast__Stmt stmt) {
 
 v__ast__Expr v__ast__fe2ex(v__table__FExpr x) {
 	v__ast__Expr res = (v__ast__Expr){
-	};
+	0};
 	memcpy(&res, &x, sizeof(v__ast__Expr));
 	return res;
 }
 
 v__table__FExpr v__ast__ex2fe(v__ast__Expr x) {
 	v__table__FExpr res = (v__table__FExpr){
-	};
+	0};
 	memcpy(&res, &x, sizeof(v__table__FExpr));
 	return res;
 }
@@ -20420,8 +20420,10 @@ static void v__gen__Gen_struct_init(v__gen__Gen* g, v__ast__StructInit struct_in
 		v__gen__Gen_expr_with_cast(g, field.expr, field.typ, field.expected_type);
 		v__gen__Gen_writeln(g, tos3(","));
 	}
+	int nr_info_fields = 0;
 	if (sym->kind == v__table__Kind_struct_) {
 		v__table__Struct* info = /* as */ (v__table__Struct*)__as_cast(sym->info.obj, sym->info.typ, /*expected:*/100);
+		nr_info_fields = info->fields.len;
 		// FOR IN array
 		array tmp6 = info->fields;
 		for (int tmp7 = 0; tmp7 < tmp6.len; tmp7++) {
@@ -20441,9 +20443,9 @@ static void v__gen__Gen_struct_init(v__gen__Gen* g, v__ast__StructInit struct_in
 			}
 			v__gen__Gen_writeln(g, tos3(","));
 		}
-		if (struct_init.fields.len == 0 && info->fields.len == 0) {
-			v__gen__Gen_write(g, tos3("0"));
-		}
+	}
+	if (struct_init.fields.len == 0 && nr_info_fields == 0) {
+		v__gen__Gen_write(g, tos3("0"));
 	}
 	v__gen__Gen_write(g, tos3("}"));
 	if (is_amp) {
@@ -20953,9 +20955,9 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__
 	v__gen__Gen_writeln(g, _STR("if (!%.*s\000.ok) {", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s\000.v_error;", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s\000.ecode;", 2, cvar_name));
-	multi_return_string_string mr_73377 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_73377.arg0;
-	string type_of_last_expression = mr_73377.arg1;
+	multi_return_string_string mr_73496 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_73496.arg0;
+	string type_of_last_expression = mr_73496.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -25484,9 +25486,9 @@ static v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser* p) {
 	bool has_len = false;
 	bool has_cap = false;
 	v__ast__Expr len_expr = (v__ast__Expr){
-	};
+	0};
 	v__ast__Expr cap_expr = (v__ast__Expr){
-	};
+	0};
 	if (p->tok.kind == v__token__Kind_lcbr && exprs.len == 0) {
 		v__parser__Parser_next(p);
 		while (p->tok.kind != v__token__Kind_rcbr) {
@@ -26028,10 +26030,10 @@ static v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 		v__parser__Parser_error(p, tos3("`mut` is not needed in for loops"));
 	} else if ((p->peek_tok.kind == v__token__Kind_decl_assign || p->peek_tok.kind == v__token__Kind_assign || p->peek_tok.kind == v__token__Kind_semicolon) || p->tok.kind == v__token__Kind_semicolon) {
 		v__ast__Stmt init = (v__ast__Stmt){
-		};
+		0};
 		v__ast__Expr cond = v__parser__Parser_new_true_expr(p);
 		v__ast__Expr inc = (v__ast__Expr){
-		};
+		0};
 		bool has_init = false;
 		bool has_cond = false;
 		bool has_inc = false;
@@ -26097,7 +26099,7 @@ static v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 		}
 		v__ast__Expr cond = v__parser__Parser_expr(p, 0);
 		v__ast__Expr high_expr = (v__ast__Expr){
-		};
+		0};
 		bool is_range = false;
 		if (p->tok.kind == v__token__Kind_dotdot) {
 			is_range = true;
@@ -26185,7 +26187,7 @@ static v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p) {
 			}
 		}
 		v__ast__Expr cond = (v__ast__Expr){
-		};
+		0};
 		bool is_or = false;
 		if (p->peek_tok.kind == v__token__Kind_decl_assign) {
 			is_or = true;
@@ -26727,13 +26729,13 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 	v__parser__Parser_read_first_token(&p);
 	while (p.tok.kind == v__token__Kind_comment) {
 		v__ast__Stmt stmt = (v__ast__Stmt){
-		};
+		0};
 		v__ast__Comment com = v__parser__Parser_comment(&p);
 		stmt = /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Comment[]) {com}, sizeof(v__ast__Comment)), .typ = 170 /* v.ast.Comment */};
 		array_push(&stmts, &(v__ast__Stmt[]){ stmt });
 	}
 	v__ast__Stmt mstmt = (v__ast__Stmt){
-	};
+	0};
 	v__ast__Module module_decl = v__parser__Parser_module_decl(&p);
 	mstmt = /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Module[]) {module_decl}, sizeof(v__ast__Module)), .typ = 200 /* v.ast.Module */};
 	array_push(&stmts, &(v__ast__Stmt[]){ mstmt });
@@ -26892,7 +26894,7 @@ v__ast__Stmt v__parser__Parser_top_stmt(v__parser__Parser* p) {
 		}else {
 			v__parser__Parser_error(p, tos3("wrong pub keyword usage"));
 			return (v__ast__Stmt){
-			};
+			0};
 		};
 	}else if (p->tok.kind == v__token__Kind_lsbr) {
 		return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Attr[]) {v__parser__Parser_attribute(p)}, sizeof(v__ast__Attr)), .typ = 191 /* v.ast.Attr */};
@@ -26928,7 +26930,7 @@ v__ast__Stmt v__parser__Parser_top_stmt(v__parser__Parser* p) {
 		} else {
 			v__parser__Parser_error(p, string_add(tos3("bad top level statement "), v__token__Token_str(p->tok)));
 			return (v__ast__Stmt){
-			};
+			0};
 		}
 	};
 }
@@ -27129,7 +27131,7 @@ v__ast__Ident v__parser__Parser_parse_ident(v__parser__Parser* p, bool is_c, boo
 
 v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 	v__ast__Expr node = (v__ast__Expr){
-	};
+	0};
 	if (p->expecting_type) {
 		p->expecting_type = false;
 		v__token__Position type_pos = v__token__Token_position(&p->tok);
@@ -27197,9 +27199,9 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 			}
 			v__parser__Parser_check(p, v__token__Kind_lpar);
 			v__ast__Expr expr = (v__ast__Expr){
-			};
+			0};
 			v__ast__Expr arg = (v__ast__Expr){
-			};
+			0};
 			bool has_arg = false;
 			expr = v__parser__Parser_expr(p, 0);
 			if (p->tok.kind == v__token__Kind_comma && v__table__Type_idx(to_typ) == _const_v__table__string_type_idx) {
@@ -27264,7 +27266,7 @@ static v__ast__IndexExpr v__parser__Parser_index_expr(v__parser__Parser* p, v__a
 			.pos = v__token__Token_position(&p->tok),
 			.index = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__RangeExpr[]) {(v__ast__RangeExpr){
 			.low = (v__ast__Expr){
-		},
+		0},
 			.high = high,
 			.has_high = true,
 			.has_low = 0,
@@ -27278,7 +27280,7 @@ static v__ast__IndexExpr v__parser__Parser_index_expr(v__parser__Parser* p, v__a
 	if (p->tok.kind == v__token__Kind_dotdot) {
 		v__parser__Parser_next(p);
 		v__ast__Expr high = (v__ast__Expr){
-		};
+		0};
 		if (p->tok.kind != v__token__Kind_rsbr) {
 			has_high = true;
 			high = v__parser__Parser_expr(p, 0);
@@ -27389,7 +27391,7 @@ static v__ast__Expr v__parser__Parser_dot_expr(v__parser__Parser* p, v__ast__Exp
 			.should_be_skipped = 0,
 		};
 		v__ast__Expr node = (v__ast__Expr){
-		};
+		0};
 		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__CallExpr[]) {mcall_expr}, sizeof(v__ast__CallExpr)), .typ = 157 /* v.ast.CallExpr */};
 		if (is_filter) {
 			v__parser__Parser_close_scope(p);
@@ -27403,7 +27405,7 @@ static v__ast__Expr v__parser__Parser_dot_expr(v__parser__Parser* p, v__ast__Exp
 		.expr_type = {0},
 	};
 	v__ast__Expr node = (v__ast__Expr){
-	};
+	0};
 	node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__SelectorExpr[]) {sel_expr}, sizeof(v__ast__SelectorExpr)), .typ = 195 /* v.ast.SelectorExpr */};
 	if (is_filter) {
 		v__parser__Parser_close_scope(p);
@@ -27430,7 +27432,7 @@ static v__ast__Expr v__parser__Parser_string_expr(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 	}
 	v__ast__Expr node = (v__ast__Expr){
-	};
+	0};
 	string val = p->tok.lit;
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	if (p->peek_tok.kind != v__token__Kind_str_dollar) {
@@ -27488,7 +27490,7 @@ static v__ast__Expr v__parser__Parser_parse_number_literal(v__parser__Parser* p)
 	string lit = p->tok.lit;
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__ast__Expr node = (v__ast__Expr){
-	};
+	0};
 	if (string_index_any(lit, tos3(".eE")) >= 0 && !(string_eq(string_substr(lit, 0, 2), tos3("0x")) || string_eq(string_substr(lit, 0, 2), tos3("0X")) || string_eq(string_substr(lit, 0, 2), tos3("0o")) || string_eq(string_substr(lit, 0, 2), tos3("0O")) || string_eq(string_substr(lit, 0, 2), tos3("0b")) || string_eq(string_substr(lit, 0, 2), tos3("0B")))) {
 		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__FloatLiteral[]) {(v__ast__FloatLiteral){
 			.val = lit,
@@ -27626,7 +27628,7 @@ static v__ast__GlobalDecl v__parser__Parser_global_decl(v__parser__Parser* p) {
 	string name = v__parser__Parser_check_name(p);
 	v__table__Type typ = v__parser__Parser_parse_type(p);
 	v__ast__Expr expr = (v__ast__Expr){
-	};
+	0};
 	bool has_expr = p->tok.kind == v__token__Kind_assign;
 	if (has_expr) {
 		v__parser__Parser_next(p);
@@ -27663,7 +27665,7 @@ static v__ast__EnumDecl v__parser__Parser_enum_decl(v__parser__Parser* p) {
 		string val = v__parser__Parser_check_name(p);
 		array_push(&vals, &(string[]){ val });
 		v__ast__Expr expr = (v__ast__Expr){
-		};
+		0};
 		bool has_expr = false;
 		if (p->tok.kind == v__token__Kind_assign) {
 			v__parser__Parser_next(p);
@@ -27829,7 +27831,7 @@ static void v__parser__verror(string s) {
 v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 	v__table__Type typ = _const_v__table__void_type;
 	v__ast__Expr node = (v__ast__Expr){
-	};
+	0};
 	bool is_stmt_ident = p->is_stmt_ident;
 	p->is_stmt_ident = false;
 	if (p->tok.kind == v__token__Kind_name) {
@@ -27987,7 +27989,7 @@ static v__ast__Expr v__parser__Parser_infix_expr(v__parser__Parser* p, v__ast__E
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_next(p);
 	v__ast__Expr right = (v__ast__Expr){
-	};
+	0};
 	if (op == v__token__Kind_key_is) {
 		p->expecting_type = true;
 	}
@@ -28110,7 +28112,7 @@ static v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
 			v__token__Position field_pos = v__token__Token_position(&p->tok);
 			v__table__Type typ = v__parser__Parser_parse_type(p);
 			v__ast__Expr default_expr = (v__ast__Expr){
-			};
+			0};
 			bool has_default_expr = false;
 			if (p->tok.kind == v__token__Kind_assign) {
 				v__parser__Parser_next(p);
