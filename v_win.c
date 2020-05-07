@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d096763"
+#define V_COMMIT_HASH "be063d7"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ab30e81"
+#define V_COMMIT_HASH "d096763"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d096763"
+#define V_CURRENT_COMMIT_HASH "be063d7"
 #endif
 
 
@@ -4025,6 +4025,7 @@ static array_v__cflag__CFlag v__builder__Builder_get_rest_of_module_cflags(v__bu
 static string v__builder__get_vtmp_folder();
 static string v__builder__get_vtmp_filename(string base_file_name, string postfix);
 void v__builder__compile(string command, v__pref__Preferences* pref);
+static void v__builder__Builder_myfree(v__builder__Builder* b);
 static void v__builder__Builder_run_compiled_executable_and_exit(v__builder__Builder* b);
 static void v__builder__Builder_set_module_lookup_paths(v__builder__Builder* v);
 array_string v__builder__Builder_get_builtin_files(v__builder__Builder v);
@@ -19440,6 +19441,7 @@ static string v__gen__Gen_autofree_scope_vars(v__gen__Gen* g, int pos) {
 
 static string v__gen__Gen_autofree_variable(v__gen__Gen* g, v__ast__Var v) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, v.typ);
+	eprintln(_STR("   > var name: %*.*s\000 | is_arg: %*.*s\000 | var type: %8"PRId32"\000 | type_name: %*.*s", 4, v.name, -20, bool_str(v.is_arg), 6, ((int)(v.typ)), sym->name, -33));
 	if (sym->kind == v__table__Kind_array) {
 		return v__gen__Gen_autofree_var_call(g, tos3("array_free"), v);
 	}
@@ -20916,9 +20918,9 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__
 	v__gen__Gen_writeln(g, _STR("if (!%.*s\000.ok) {", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s\000.v_error;", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s\000.ecode;", 2, cvar_name));
-	multi_return_string_string mr_73891 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_73891.arg0;
-	string type_of_last_expression = mr_73891.arg1;
+	multi_return_string_string mr_73930 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_73930.arg0;
+	string type_of_last_expression = mr_73930.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -28714,7 +28716,7 @@ string v__builder__Builder_gen_c(v__builder__Builder* b, array_string v_files) {
 void v__builder__Builder_build_c(v__builder__Builder* b, array_string v_files, string out_file) {
 	b->out_name_c = out_file;
 	v__builder__Builder_info(/*rec*/*b, _STR("build_c(%.*s\000)", 2, out_file));
-	string output = v__builder__Builder_gen_c(b, v_files);
+	string output2 = v__builder__Builder_gen_c(b, v_files);
 	Option_os__File f = os__create(out_file);
 	if (!f.ok) {
 		string err = f.v_error;
@@ -28724,7 +28726,7 @@ void v__builder__Builder_build_c(v__builder__Builder* b, array_string v_files, s
 		// last_expr_result_type: void
 		v_panic(err);
 	};
-	os__File_writeln(&/*opt*/(*(os__File*)f.data), output);
+	os__File_writeln(&/*opt*/(*(os__File*)f.data), output2);
 	os__File_close(&/*opt*/(*(os__File*)f.data));
 }
 
@@ -29319,6 +29321,11 @@ void v__builder__compile(string command, v__pref__Preferences* pref) {
 	if (pref->is_test || pref->is_run) {
 		v__builder__Builder_run_compiled_executable_and_exit(&b);
 	}
+	v__builder__Builder_myfree(&b);
+}
+
+static void v__builder__Builder_myfree(v__builder__Builder* b) {
+	array_free(&b->parsed_files);
 }
 
 static void v__builder__Builder_run_compiled_executable_and_exit(v__builder__Builder* b) {
