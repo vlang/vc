@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "1991220"
+#define V_COMMIT_HASH "8cfb2ad"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ef38777"
+#define V_COMMIT_HASH "1991220"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "1991220"
+#define V_CURRENT_COMMIT_HASH "8cfb2ad"
 #endif
 
 
@@ -889,6 +889,7 @@ string _STR(const char*, int, ...);
 string _STR_TMP(const char*, ...);
 
 struct string {
+	bool is_lit;
 	byteptr str;
 	int len;
 };
@@ -2875,6 +2876,7 @@ string tos(byteptr s, int len);
 string tos_clone(byteptr s);
 string tos2(byteptr s);
 string tos3(charptr s);
+string tos_lit(charptr s);
 static string string_clone_static(string a);
 string string_clone(string a);
 string cstring_to_vstring(byteptr cstr);
@@ -9149,6 +9151,14 @@ string tos3(charptr s) {
 	};
 }
 
+string tos_lit(charptr s) {
+	return (string){
+		.str = ((byteptr)(s)),
+		.len = strlen(s),
+		.is_lit = true,
+	};
+}
+
 static string string_clone_static(string a) {
 	return string_clone(a);
 }
@@ -10186,6 +10196,9 @@ bool byte_is_letter(byte c) {
 }
 
 void string_free(string* s) {
+	if (s->is_lit) {
+		return ;
+	}
 	v_free(s->str);
 }
 
@@ -19445,11 +19458,11 @@ static string v__gen__Gen_autofree_variable(v__gen__Gen* g, v__ast__Var v) {
 		return v__gen__Gen_autofree_var_call(g, tos3("array_free"), v);
 	}
 	if (sym->kind == v__table__Kind_string) {
-		string t = tos3( /* v.ast.Expr */ v_typeof_sumtype_146( (v.expr).typ ));
 		if (v.expr.typ == 196 /* v.ast.StringLiteral */) {
 			v__ast__StringLiteral* it = (v__ast__StringLiteral*)v.expr.obj; // ST it
 			return tos3("// str literal\n");
 		}else {
+			string t = tos3( /* v.ast.Expr */ v_typeof_sumtype_146( (v.expr).typ ));
 			return string_add(string_add(tos3("// other "), t), tos3("\n"));
 		};
 		return v__gen__Gen_autofree_var_call(g, tos3("string_free"), v);
@@ -20917,9 +20930,9 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__
 	v__gen__Gen_writeln(g, _STR("if (!%.*s\000.ok) {", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s\000.v_error;", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s\000.ecode;", 2, cvar_name));
-	multi_return_string_string mr_73933 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_73933.arg0;
-	string type_of_last_expression = mr_73933.arg1;
+	multi_return_string_string mr_73935 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_73935.arg0;
+	string type_of_last_expression = mr_73935.arg1;
 	if (string_eq(last_type, tos3("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos3("void"))) {
 		g->indent++;
 		// FOR IN array
