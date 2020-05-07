@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "7d32476"
+#define V_COMMIT_HASH "0f8ed84"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2f52106"
+#define V_COMMIT_HASH "7d32476"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "7d32476"
+#define V_CURRENT_COMMIT_HASH "0f8ed84"
 #endif
 
 
@@ -2247,6 +2247,7 @@ struct v__ast__FnDecl {
 	bool is_variadic;
 	bool is_anon;
 	v__ast__Field receiver;
+	v__token__Position receiver_pos;
 	bool is_method;
 	bool rec_mut;
 	bool is_c;
@@ -21389,11 +21390,17 @@ static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) 
 		v__checker__Checker_check_expr_opt_call(c, it->expr, etype, false);
 	}else if (node.typ == 124 /* v.ast.FnDecl */) {
 		v__ast__FnDecl* it = (v__ast__FnDecl*)node.obj; // ST it
+		if (it->is_method) {
+			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, it->receiver.typ);
+			if (sym->kind == v__table__Kind_interface_) {
+				v__checker__Checker_error(c, tos3("interaces cannot be used as method receiver"), it->receiver_pos);
+			}
+		}
 		if (!it->is_c) {
 			// FOR IN array
-			array tmp22 = it->args;
-			for (int tmp23 = 0; tmp23 < tmp22.len; tmp23++) {
-				v__table__Arg arg = ((v__table__Arg*)tmp22.data)[tmp23];
+			array tmp24 = it->args;
+			for (int tmp25 = 0; tmp25 < tmp24.len; tmp25++) {
+				v__table__Arg arg = ((v__table__Arg*)tmp24.data)[tmp25];
 				v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, arg.typ);
 				if (sym->kind == v__table__Kind_placeholder) {
 					v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, sym->name), it->pos);
@@ -30090,6 +30097,11 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 	}
 	string rec_name = tos3("");
 	bool is_method = false;
+	v__token__Position receiver_pos = (v__token__Position){
+		.line_nr = 0,
+		.pos = 0,
+		.len = 0,
+	};
 	v__table__Type rec_type = _const_v__table__void_type;
 	bool rec_mut = false;
 	array_v__table__Arg args = __new_array(0, 0, sizeof(v__table__Arg));
@@ -30100,11 +30112,13 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		if (rec_mut) {
 			v__parser__Parser_next(p);
 		}
+		v__token__Position rec_start_pos = v__token__Token_position(&p->tok);
 		rec_name = v__parser__Parser_check_name(p);
 		if (!rec_mut) {
 			rec_mut = p->tok.kind == v__token__Kind_key_mut;
 		}
 		bool is_amp = p->tok.kind == v__token__Kind_amp;
+		receiver_pos = v__token__Position_extend(rec_start_pos, v__token__Token_position(&p->tok));
 		rec_type = v__parser__Parser_parse_type_with_mut(p, rec_mut);
 		if (is_amp && rec_mut) {
 			v__parser__Parser_error(p, tos3("use `(mut f Foo)` or `(f &Foo)` instead of `(mut f &Foo)`"));
@@ -30137,9 +30151,9 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool mr_3689 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_3689.arg0;
-	bool is_variadic = mr_3689.arg1;
+	multi_return_array_v__table__Arg_bool mr_3819 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_3819.arg0;
+	bool is_variadic = mr_3819.arg1;
 	_PUSH_MANY(&args, (args2), tmp13, array_v__table__Arg);
 	// FOR IN array
 	array tmp14 = args;
@@ -30244,6 +30258,7 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		.typ = rec_type,
 		.pos = {0},
 	},
+		.receiver_pos = receiver_pos,
 		.is_method = is_method,
 		.rec_mut = rec_mut,
 		.is_c = is_c,
@@ -30262,9 +30277,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_6230 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_6230.arg0;
-	bool is_variadic = mr_6230.arg1;
+	multi_return_array_v__table__Arg_bool mr_6389 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_6389.arg0;
+	bool is_variadic = mr_6389.arg1;
 	// FOR IN array
 	array tmp1 = args;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
@@ -30325,6 +30340,7 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 		.is_deprecated = 0,
 		.is_pub = 0,
 		.receiver = {0},
+		.receiver_pos = {0},
 		.rec_mut = 0,
 		.is_c = 0,
 		.is_js = 0,
@@ -31313,6 +31329,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 					.is_variadic = 0,
 					.is_anon = 0,
 					.receiver = {0},
+					.receiver_pos = {0},
 					.is_method = 0,
 					.rec_mut = 0,
 					.is_c = 0,
@@ -33106,6 +33123,7 @@ static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser*
 			.is_variadic = 0,
 			.is_anon = 0,
 			.receiver = {0},
+			.receiver_pos = {0},
 			.is_method = 0,
 			.rec_mut = 0,
 			.is_c = 0,
