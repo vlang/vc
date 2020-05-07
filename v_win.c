@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "78c292b"
+#define V_COMMIT_HASH "78efe72"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0a930f9"
+#define V_COMMIT_HASH "78c292b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "78c292b"
+#define V_CURRENT_COMMIT_HASH "78efe72"
 #endif
 
 
@@ -21591,15 +21591,12 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, it->expr_type);
 		if (it->typ == _const_v__table__string_type && !((sym->kind == v__table__Kind_byte || sym->kind == v__table__Kind_byteptr) || sym->kind == v__table__Kind_array && string_eq(sym->name, tos3("array_byte")))) {
 			string type_name = v__table__Table_type_to_str(c->table, it->expr_type);
-			v__checker__Checker_error(c, _STR("cannot cast type `%.*s\000` to string", 2, type_name), it->pos);
+			v__checker__Checker_error(c, _STR("cannot cast type `%.*s\000` to string, use `x.str()` instead", 2, type_name), it->pos);
 		}
 		if (it->has_arg) {
 			v__checker__Checker_expr(c, it->arg);
 		}
 		it->typname = v__table__Table_get_type_symbol(c->table, it->typ)->name;
-		if (it->typ == _const_v__table__string_type && !it->has_arg && v__table__Type_is_number(it->expr_type) && !v__table__Type_is_ptr(it->expr_type)) {
-			v__checker__Checker_error(c, tos3("use `number.str()` instead of `string(number)`"), it->pos);
-		}
 		/* autofreeings before return:              -------
 		--------------------------------------------------- */
 		return it->typ;
@@ -21722,9 +21719,9 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 	}else if (node.typ == 197 /* v.ast.StringInterLiteral */) {
 		v__ast__StringInterLiteral* it = (v__ast__StringInterLiteral*)node.obj; // ST it
 		// FOR IN array
-		array tmp12 = it->exprs;
-		for (int tmp13 = 0; tmp13 < tmp12.len; tmp13++) {
-			v__ast__Expr expr = ((v__ast__Expr*)tmp12.data)[tmp13];
+		array tmp11 = it->exprs;
+		for (int tmp12 = 0; tmp12 < tmp11.len; tmp12++) {
+			v__ast__Expr expr = ((v__ast__Expr*)tmp11.data)[tmp12];
 			array_push(&it->expr_types, &(v__table__Type[]){ v__checker__Checker_expr(c, expr) });
 		}
 		/* autofreeings before return:              -------
