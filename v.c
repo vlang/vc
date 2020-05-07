@@ -9,11 +9,16 @@
 #define V_CURRENT_COMMIT_HASH "7d32476"
 #endif
 
-
-
+#ifdef __cplusplus
+#include <utility>
+#define _MOV std::move
+#include <execinfo.h>
+#else
+#define _MOV(x) ((&x))
+#endif
 
 // V typedefs:
-
+typedef int (*qsort_callback_func)(const void*, const void*);
 typedef struct {
 	void* _object;
 	int _interface_idx;
@@ -24862,6 +24867,8 @@ static string v__gen__Gen_comp_if_to_ifdef(v__gen__Gen* g, string name, bool is_
 		// other unknown v.ast.Expr
 --------------------------------------------------- */
 		return tos3("_MSC_VER");
+	}else if (string_eq(name, tos3("cplusplus"))) {
+		return tos3("_cplusplus");
 	}else if (string_eq(name, tos3("debug"))) {
 		/* autofreeings before return:              -------
 		// other unknown v.ast.Expr
