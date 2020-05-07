@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ab30e81"
+#define V_COMMIT_HASH "d096763"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "12221fb"
+#define V_COMMIT_HASH "ab30e81"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ab30e81"
+#define V_CURRENT_COMMIT_HASH "d096763"
 #endif
 
 
@@ -12487,7 +12487,7 @@ static array_string v__token__build_token_str() {
 	array_set(&s, v__token__Kind_eof, &(string[]) { tos3("eof") });
 	array_set(&s, v__token__Kind_name, &(string[]) { tos3("name") });
 	array_set(&s, v__token__Kind_number, &(string[]) { tos3("number") });
-	array_set(&s, v__token__Kind_string, &(string[]) { tos3("STR") });
+	array_set(&s, v__token__Kind_string, &(string[]) { tos3("string") });
 	array_set(&s, v__token__Kind_chartoken, &(string[]) { tos3("char") });
 	array_set(&s, v__token__Kind_plus, &(string[]) { tos3("+") });
 	array_set(&s, v__token__Kind_minus, &(string[]) { tos3("-") });
