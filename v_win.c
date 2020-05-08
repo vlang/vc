@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "6ea741e"
+#define V_COMMIT_HASH "4b347ff"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1ea13ac"
+#define V_COMMIT_HASH "6ea741e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "6ea741e"
+#define V_CURRENT_COMMIT_HASH "4b347ff"
 #endif
 
 
@@ -13798,6 +13798,10 @@ string term__header(string text, string divider) {
 }
 
 static bool term__supports_escape_sequences(int fd) {
+	string vcolors_override = os__getenv(tos_lit("VCOLORS"));
+	if (string_eq(vcolors_override, tos_lit("always"))) {
+		return true;
+	}
 	
 // $if  windows {
 #ifdef _WIN32
