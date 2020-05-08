@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "4c320e1"
+#define V_COMMIT_HASH "e08566d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "847a103"
+#define V_COMMIT_HASH "4c320e1"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4c320e1"
+#define V_CURRENT_COMMIT_HASH "e08566d"
 #endif
 
 
@@ -1255,6 +1255,7 @@ struct v__pref__Preferences {
 	array_string run_args;
 	array_string printfn_list;
 	bool print_v_files;
+	bool skip_running;
 };
 
 struct strings__Builder {
@@ -3882,6 +3883,7 @@ void v__builder__Builder_compile_x64(v__builder__Builder* b);
 array_string _const_simple_cmd; // inited later
 array_string _const_list_of_flags_that_allow_duplicates; // inited later
 array_string _const_list_of_flags_with_param; // inited later
+static void main_v();
 static multi_return_v__pref__Preferences_string parse_args(array_string args);
 static void invoke_help_and_exit(array_string remaining);
 static void create_symlink();
@@ -15048,6 +15050,7 @@ v__pref__Preferences v__pref__new_preferences() {
 		.run_args = __new_array(0, 1, sizeof(string)),
 		.printfn_list = __new_array(0, 1, sizeof(string)),
 		.print_v_files = 0,
+		.skip_running = 0,
 	};
 	v__pref__Preferences_fill_with_defaults(&p);
 	return p;
@@ -26573,6 +26576,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.run_args = __new_array(0, 1, sizeof(string)),
 		.printfn_list = __new_array(0, 1, sizeof(string)),
 		.print_v_files = 0,
+		.skip_running = 0,
 	}, sizeof(v__pref__Preferences)),
 		.scope = scope,
 		.global_scope = (v__ast__Scope*)memdup(&(v__ast__Scope){	.start_pos = 0,
@@ -28750,6 +28754,7 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 	bool ends_with_c = string_ends_with(v->pref->out_name, tos_lit(".c"));
 	bool ends_with_js = string_ends_with(v->pref->out_name, tos_lit(".js"));
 	if (ends_with_c || ends_with_js) {
+		v->pref->skip_running = true;
 		
 // $if !js {
 #ifndef _VJS
@@ -28784,7 +28789,7 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 			// last_expr_result_type: void
 			v_panic(err);
 		};
-		v_exit(0);
+		return ;
 	}
 	if (v->pref->os == v__pref__OS_windows) {
 		
@@ -29308,10 +29313,10 @@ void v__builder__compile(string command, v__pref__Preferences* pref) {
 	if (pref->is_stats) {
 		println(_STR("compilation took: %"PRId64"\000 ms", 2, time__Duration_milliseconds(time__StopWatch_elapsed(sw))));
 	}
+	v__builder__Builder_myfree(&b);
 	if (pref->is_test || pref->is_run) {
 		v__builder__Builder_run_compiled_executable_and_exit(&b);
 	}
-	v__builder__Builder_myfree(&b);
 }
 
 static void v__builder__Builder_myfree(v__builder__Builder* b) {
@@ -29319,14 +29324,17 @@ static void v__builder__Builder_myfree(v__builder__Builder* b) {
 }
 
 static void v__builder__Builder_run_compiled_executable_and_exit(v__builder__Builder* b) {
+	if (b->pref->skip_running) {
+		return ;
+	}
 	if (b->pref->is_verbose) {
 		println(_STR("============ running %.*s\000 ============", 2, b->pref->out_name));
 	}
 	string cmd = _STR("\"%.*s\000\"", 2, b->pref->out_name);
 	// FOR IN array
-	array tmp2 = b->pref->run_args;
-	for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
-		string arg = ((string*)tmp2.data)[tmp3];
+	array tmp3 = b->pref->run_args;
+	for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
+		string arg = ((string*)tmp3.data)[tmp4];
 		if (string_index_byte(arg, ' ') > 0) {
 			cmd = string_add(cmd, string_add(string_add(tos_lit(" \""), arg), tos_lit("\"")));
 		} else {
@@ -29967,6 +29975,68 @@ void v__builder__Builder_compile_x64(v__builder__Builder* b) {
 }
 
 
+static void main_v() {
+	array_string args = array_slice(_const_os__args, 1, _const_os__args.len);
+	if (args.len == 0 || (string_eq((*(string*)array_get(args, 0)), tos_lit("-")) || string_eq((*(string*)array_get(args, 0)), tos_lit("repl")))) {
+		if (args.len == 0) {
+			println(tos_lit("For usage information, quit V REPL using `exit` and use `v help`"));
+		}
+		v__util__launch_tool(false, tos_lit("vrepl"));
+		return ;
+	}
+	if (args.len > 0 && ((string_eq((*(string*)array_get(args, 0)), tos_lit("version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-V")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("--version"))) || (string_eq((*(string*)array_get(args, 0)), tos_lit("-v")) && args.len == 1))) {
+		println(v__util__full_v_version());
+		return ;
+	}
+	array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
+	multi_return_v__pref__Preferences_string mr_1403 = parse_args(args_and_flags);
+	v__pref__Preferences* prefs = mr_1403.arg0;
+	string command = mr_1403.arg1;
+	if (prefs->is_verbose) {
+		println(_STR("command = \"%.*s\000\"", 2, command));
+		println(v__util__full_v_version());
+	}
+	if (prefs->is_verbose) {
+	}
+	if (_IN(string, command, _const_simple_cmd)) {
+		v__util__launch_tool(prefs->is_verbose, string_add(tos_lit("v"), command));
+		return ;
+	}
+	if (string_eq(command, tos_lit("help"))) {
+		invoke_help_and_exit(args);
+	}else if (string_eq(command, tos_lit("new")) || string_eq(command, tos_lit("init"))) {
+		v__util__launch_tool(prefs->is_verbose, tos_lit("vcreate"));
+		return ;
+	}else if (string_eq(command, tos_lit("translate"))) {
+		println(tos_lit("Translating C to V will be available in V 0.3"));
+		return ;
+	}else if (string_eq(command, tos_lit("search")) || string_eq(command, tos_lit("install")) || string_eq(command, tos_lit("update")) || string_eq(command, tos_lit("remove"))) {
+		v__util__launch_tool(prefs->is_verbose, tos_lit("vpm"));
+		return ;
+	}else if (string_eq(command, tos_lit("get"))) {
+		println(tos_lit("V Error: Use `v install` to install modules from vpm.vlang.io"));
+		v_exit(1);
+	}else if (string_eq(command, tos_lit("symlink"))) {
+		create_symlink();
+		return ;
+	}else if (string_eq(command, tos_lit("doc"))) {
+		if (args.len == 1) {
+			println(tos_lit("v doc [module]"));
+			v_exit(1);
+		}
+		v__table__Table* table = v__table__new_table();
+		println(v__doc__doc((*(string*)array_get(args, 1)), table, prefs));
+		return ;
+	}else {
+	};
+	if ((string_eq(command, tos_lit("run")) || string_eq(command, tos_lit("build-module"))) || string_ends_with(command, tos_lit(".v")) || os__exists(command)) {
+		v__builder__compile(command, prefs);
+		return ;
+	}
+	eprintln(_STR("v %.*s\000: unknown command\nRun \"v help\" for usage.", 2, command));
+	v_exit(1);
+}
+
 static multi_return_v__pref__Preferences_string parse_args(array_string args) {
 	v__pref__Preferences* res = (v__pref__Preferences*)memdup(&(v__pref__Preferences){	.os = {0},
 		.backend = {0},
@@ -30015,6 +30085,7 @@ static multi_return_v__pref__Preferences_string parse_args(array_string args) {
 		.run_args = __new_array(0, 1, sizeof(string)),
 		.printfn_list = __new_array(0, 1, sizeof(string)),
 		.print_v_files = 0,
+		.skip_running = 0,
 	}, sizeof(v__pref__Preferences));
 	string command = tos_lit("");
 	int command_pos = 0;
@@ -32297,65 +32368,7 @@ void _vinit() {
 int main(int ___argc, char** ___argv){
 	_vinit();
 	_const_os__args = os__init_os_args(___argc, (byteptr*)___argv);
-array_string args = array_slice(_const_os__args, 1, _const_os__args.len);
-if (args.len == 0 || (string_eq((*(string*)array_get(args, 0)), tos_lit("-")) || string_eq((*(string*)array_get(args, 0)), tos_lit("repl")))) {
-	if (args.len == 0) {
-		println(tos_lit("For usage information, quit V REPL using `exit` and use `v help`"));
-	}
-	v__util__launch_tool(false, tos_lit("vrepl"));
-	return 0;
-}
-if (args.len > 0 && ((string_eq((*(string*)array_get(args, 0)), tos_lit("version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-V")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("--version"))) || (string_eq((*(string*)array_get(args, 0)), tos_lit("-v")) && args.len == 1))) {
-	println(v__util__full_v_version());
-	return 0;
-}
-array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-multi_return_v__pref__Preferences_string mr_1376 = parse_args(args_and_flags);
-v__pref__Preferences* prefs = mr_1376.arg0;
-string command = mr_1376.arg1;
-if (prefs->is_verbose) {
-	println(_STR("command = \"%.*s\000\"", 2, command));
-	println(v__util__full_v_version());
-}
-if (prefs->is_verbose) {
-}
-if (_IN(string, command, _const_simple_cmd)) {
-	v__util__launch_tool(prefs->is_verbose, string_add(tos_lit("v"), command));
-	return 0;
-}
-if (string_eq(command, tos_lit("help"))) {
-	invoke_help_and_exit(args);
-}else if (string_eq(command, tos_lit("new")) || string_eq(command, tos_lit("init"))) {
-	v__util__launch_tool(prefs->is_verbose, tos_lit("vcreate"));
-	return 0;
-}else if (string_eq(command, tos_lit("translate"))) {
-	println(tos_lit("Translating C to V will be available in V 0.3"));
-	return 0;
-}else if (string_eq(command, tos_lit("search")) || string_eq(command, tos_lit("install")) || string_eq(command, tos_lit("update")) || string_eq(command, tos_lit("remove"))) {
-	v__util__launch_tool(prefs->is_verbose, tos_lit("vpm"));
-	return 0;
-}else if (string_eq(command, tos_lit("get"))) {
-	println(tos_lit("V Error: Use `v install` to install modules from vpm.vlang.io"));
-	v_exit(1);
-}else if (string_eq(command, tos_lit("symlink"))) {
-	create_symlink();
-	return 0;
-}else if (string_eq(command, tos_lit("doc"))) {
-	if (args.len == 1) {
-		println(tos_lit("v doc [module]"));
-		v_exit(1);
-	}
-	v__table__Table* table = v__table__new_table();
-	println(v__doc__doc((*(string*)array_get(args, 1)), table, prefs));
-	return 0;
-}else {
-};
-if ((string_eq(command, tos_lit("run")) || string_eq(command, tos_lit("build-module"))) || string_ends_with(command, tos_lit(".v")) || os__exists(command)) {
-	v__builder__compile(command, prefs);
-	return 0;
-}
-eprintln(_STR("v %.*s\000: unknown command\nRun \"v help\" for usage.", 2, command));
-v_exit(1);
+main_v();
 	return 0;
 }
 
