@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "fec7f0f"
+#define V_COMMIT_HASH "13b11a4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8866773"
+#define V_COMMIT_HASH "fec7f0f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "fec7f0f"
+#define V_CURRENT_COMMIT_HASH "13b11a4"
 #endif
 
 
@@ -26441,7 +26441,8 @@ v__table__Type v__parser__Parser_parse_array_type(v__parser__Parser* p) {
 	v__parser__Parser_check(p, v__token__Kind_rsbr);
 	v__table__Type elem_type = v__parser__Parser_parse_type(p);
 	int nr_dims = 1;
-	while (p->tok.kind == v__token__Kind_lsbr) {
+	bool not_attr = p->peek_tok.kind != v__token__Kind_name && !(p->peek_tok2.kind == v__token__Kind_semicolon || p->peek_tok2.kind == v__token__Kind_rsbr);
+	while (p->tok.kind == v__token__Kind_lsbr && not_attr) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_rsbr);
 		nr_dims++;
@@ -26486,9 +26487,9 @@ v__table__Type v__parser__Parser_parse_multi_return_type(v__parser__Parser* p) {
 v__table__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name) {
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	int line_nr = p->tok.line_nr;
-	multi_return_array_v__table__Arg_bool mr_1759 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_1759.arg0;
-	bool is_variadic = mr_1759.arg1;
+	multi_return_array_v__table__Arg_bool mr_1872 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_1872.arg0;
+	bool is_variadic = mr_1872.arg1;
 	v__table__Type return_type = _const_v__table__void_type;
 	if (p->tok.line_nr == line_nr && v__token__Kind_is_start_of_type(p->tok.kind)) {
 		return_type = v__parser__Parser_parse_type(p);
