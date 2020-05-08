@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "4b347ff"
+#define V_COMMIT_HASH "b5bf0ee"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6ea741e"
+#define V_COMMIT_HASH "4b347ff"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4b347ff"
+#define V_CURRENT_COMMIT_HASH "b5bf0ee"
 #endif
 
 
@@ -221,6 +221,7 @@ typedef enum {
 	time__FormatDelimiter_hyphen, // +1
 	time__FormatDelimiter_slash, // +2
 	time__FormatDelimiter_space, // +3
+	time__FormatDelimiter_no_delimiter, // +4
 } time__FormatDelimiter;
 
 typedef struct v__depgraph__DepGraphNode v__depgraph__DepGraphNode;
@@ -12630,7 +12631,7 @@ string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr
 	string month = _STR("%.*s", 1, time__Time_smonth(t));
 	string year = string_substr(int_str(t.year), 2, int_str(t.year).len);
 	string res = (fmt_date == time__FormatDate_ddmmyy) ?  ( _STR("%02"PRId32"\000|%02"PRId32"\000|%.*s", 3, t.day, t.month, year) )  : (fmt_date == time__FormatDate_ddmmyyyy) ?  ( _STR("%02"PRId32"\000|%02"PRId32"\000|%"PRId32"", 3, t.day, t.month, t.year) )  : (fmt_date == time__FormatDate_mmddyy) ?  ( _STR("%02"PRId32"\000|%02"PRId32"\000|%.*s", 3, t.month, t.day, year) )  : (fmt_date == time__FormatDate_mmddyyyy) ?  ( _STR("%02"PRId32"\000|%02"PRId32"\000|%"PRId32"", 3, t.month, t.day, t.year) )  : (fmt_date == time__FormatDate_mmmd) ?  ( _STR("%.*s\000|%"PRId32"", 2, month, t.day) )  : (fmt_date == time__FormatDate_mmmdd) ?  ( _STR("%.*s\000|%02"PRId32"", 2, month, t.day) )  : (fmt_date == time__FormatDate_mmmddyyyy) ?  ( _STR("%.*s\000|%02"PRId32"\000|%"PRId32"", 3, month, t.day, t.year) )  : (fmt_date == time__FormatDate_yyyymmdd) ?  ( _STR("%"PRId32"\000|%02"PRId32"\000|%02"PRId32"", 3, t.year, t.month, t.day) )  :  ( _STR("unknown enumeration %.*s", 1, time__FormatDate_str(fmt_date)) ) ;
-	res = string_replace(res, tos_lit("|"), (fmt_dlmtr == time__FormatDelimiter_dot) ?  ( tos_lit(".") )  : (fmt_dlmtr == time__FormatDelimiter_hyphen) ?  ( tos_lit("-") )  : (fmt_dlmtr == time__FormatDelimiter_slash) ?  ( tos_lit("/") )  :  ( tos_lit(" ") ) );
+	res = string_replace(res, tos_lit("|"), (fmt_dlmtr == time__FormatDelimiter_dot) ?  ( tos_lit(".") )  : (fmt_dlmtr == time__FormatDelimiter_hyphen) ?  ( tos_lit("-") )  : (fmt_dlmtr == time__FormatDelimiter_slash) ?  ( tos_lit("/") )  : (fmt_dlmtr == time__FormatDelimiter_space) ?  ( tos_lit(" ") )  :  ( tos_lit("") ) );
 	return res;
 }
 
@@ -17643,7 +17644,7 @@ static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) 
 		if (it->is_method) {
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, it->receiver.typ);
 			if (sym->kind == v__table__Kind_interface_) {
-				v__checker__Checker_error(c, tos_lit("interaces cannot be used as method receiver"), it->receiver_pos);
+				v__checker__Checker_error(c, tos_lit("interfaces cannot be used as method receiver"), it->receiver_pos);
 			}
 		}
 		if (!it->is_c) {
