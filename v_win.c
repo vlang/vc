@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "847a103"
+#define V_COMMIT_HASH "4c320e1"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "13b11a4"
+#define V_COMMIT_HASH "847a103"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "847a103"
+#define V_CURRENT_COMMIT_HASH "4c320e1"
 #endif
 
 
@@ -1233,6 +1233,7 @@ struct v__pref__Preferences {
 	bool is_shared;
 	bool is_prof;
 	string profile_file;
+	bool profile_no_inline;
 	bool translated;
 	bool is_prod;
 	bool obfuscate;
@@ -15173,6 +15174,7 @@ v__pref__Preferences v__pref__new_preferences() {
 		.is_shared = 0,
 		.is_prof = 0,
 		.profile_file = (string){.str=""},
+		.profile_no_inline = 0,
 		.translated = 0,
 		.is_prod = 0,
 		.obfuscate = 0,
@@ -22592,6 +22594,10 @@ static void v__gen__Gen_profile_fn(v__gen__Gen* g, string fn_name, bool is_main)
 		v__gen__Gen_writeln(g, tos_lit("\tatexit(vprint_profile_stats);"));
 		v__gen__Gen_writeln(g, tos_lit(""));
 	}
+	if (g->pref->profile_no_inline && string_eq(g->attr, tos_lit("inline"))) {
+		g->defer_profile_code = tos_lit("");
+		return ;
+	}
 	if (string_starts_with(fn_name, tos_lit("time.vpc_now"))) {
 		g->defer_profile_code = tos_lit("");
 	} else {
@@ -26682,6 +26688,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.is_shared = 0,
 		.is_prof = 0,
 		.profile_file = (string){.str=""},
+		.profile_no_inline = 0,
 		.translated = 0,
 		.is_prod = 0,
 		.obfuscate = 0,
@@ -30092,6 +30099,7 @@ static multi_return_v__pref__Preferences_string parse_args(array_string args) {
 		.is_shared = 0,
 		.is_prof = 0,
 		.profile_file = (string){.str=""},
+		.profile_no_inline = 0,
 		.translated = 0,
 		.is_prod = 0,
 		.obfuscate = 0,
@@ -30157,6 +30165,8 @@ static multi_return_v__pref__Preferences_string parse_args(array_string args) {
 			res->profile_file = os__cmdline__option(current_args, tos_lit("-profile"), tos_lit("-"));
 			res->is_prof = true;
 			i++;
+		}else if (string_eq(arg, tos_lit("-profile-no-inline"))) {
+			res->profile_no_inline = true;
 		}else if (string_eq(arg, tos_lit("-prod"))) {
 			res->is_prod = true;
 		}else if (string_eq(arg, tos_lit("-stats"))) {
