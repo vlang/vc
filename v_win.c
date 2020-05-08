@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "dbb3c2a"
+#define V_COMMIT_HASH "ef505e2"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e08566d"
+#define V_COMMIT_HASH "dbb3c2a"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "dbb3c2a"
+#define V_CURRENT_COMMIT_HASH "ef505e2"
 #endif
 
 
@@ -18453,14 +18453,21 @@ v__table__Type v__checker__Checker_enum_val(v__checker__Checker* c, v__ast__Enum
 	int typ_idx = (string_eq(node->enum_name, tos_lit("")) ?  ( v__table__Type_idx(c->expected_type) )  :  ( v__table__Table_find_type_idx(c->table, node->enum_name) ) );
 	if (typ_idx == 0) {
 		v__checker__Checker_error(c, _STR("not an enum (name=%.*s\000) (type_idx=0)", 2, node->enum_name), node->pos);
+		return _const_v__table__void_type;
 	}
 	v__table__Type typ = v__table__new_type(typ_idx);
 	if (typ == _const_v__table__void_type) {
 		v__checker__Checker_error(c, tos_lit("not an enum"), node->pos);
+		return _const_v__table__void_type;
 	}
 	v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, typ);
 	if (typ_sym->kind != v__table__Kind_enum_) {
 		v__checker__Checker_error(c, tos_lit("not an enum"), node->pos);
+		return _const_v__table__void_type;
+	}
+	if (!(typ_sym->info.typ == 95 /* v.table.Enum */)) {
+		v__checker__Checker_error(c, tos_lit("not an enum"), node->pos);
+		return _const_v__table__void_type;
 	}
 	v__table__Enum info = v__table__TypeSymbol_enum_info(typ_sym);
 	if (!_IN(string, node->val, info.vals)) {
@@ -20830,9 +20837,9 @@ static void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInter
 			}
 		} else if ((*(byte*)array_get(specs, i)) == 's') {
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, (*(v__table__Type*)array_get(node.expr_types, i)));
-			multi_return_bool_bool_int mr_69720 = v__table__TypeSymbol_str_method_info(sym);
-			bool sym_has_str_method = mr_69720.arg0;
-			bool str_method_expects_ptr = mr_69720.arg1;
+			multi_return_bool_bool_int mr_69722 = v__table__TypeSymbol_str_method_info(sym);
+			bool sym_has_str_method = mr_69722.arg0;
+			bool str_method_expects_ptr = mr_69722.arg1;
 			if (v__table__Type_flag_is((*(v__table__Type*)array_get(node.expr_types, i)), v__table__TypeFlag_variadic)) {
 				string str_fn_name = v__gen__Gen_gen_str_for_type(g, (*(v__table__Type*)array_get(node.expr_types, i)));
 				v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -20975,9 +20982,9 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__
 	v__gen__Gen_writeln(g, _STR("if (!%.*s\000.ok) {", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s\000.v_error;", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s\000.ecode;", 2, cvar_name));
-	multi_return_string_string mr_74515 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_74515.arg0;
-	string type_of_last_expression = mr_74515.arg1;
+	multi_return_string_string mr_74517 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_74517.arg0;
+	string type_of_last_expression = mr_74517.arg1;
 	if (string_eq(last_type, tos_lit("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos_lit("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -21398,10 +21405,10 @@ inline static string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Type
 static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_85581 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_85581.arg0;
-	bool str_method_expects_ptr = mr_85581.arg1;
-	int str_nr_args = mr_85581.arg2;
+	multi_return_bool_bool_int mr_85583 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_85583.arg0;
+	bool str_method_expects_ptr = mr_85583.arg1;
+	int str_nr_args = mr_85583.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -21572,9 +21579,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_92434 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_92434.arg0;
-	bool str_method_expects_ptr = mr_92434.arg1;
+	multi_return_bool_bool_int mr_92436 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_92436.arg0;
+	bool str_method_expects_ptr = mr_92436.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ?  ( string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str")) )  :  ( string_add(field_styp, tos_lit("_str")) ) );
@@ -21626,9 +21633,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_95258 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_95258.arg0;
-	bool str_method_expects_ptr = mr_95258.arg1;
+	multi_return_bool_bool_int mr_95260 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_95260.arg0;
+	bool str_method_expects_ptr = mr_95260.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ?  ( string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str")) )  :  ( string_add(field_styp, tos_lit("_str")) ) );
@@ -27603,15 +27610,26 @@ static v__ast__Module v__parser__Parser_module_decl(v__parser__Parser* p) {
 }
 
 static v__ast__Import v__parser__Parser_import_stmt(v__parser__Parser* p) {
+	v__token__Position import_pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_import);
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	if (p->tok.kind == v__token__Kind_lpar) {
 		v__parser__Parser_error_with_pos(p, tos_lit("`import()` has been deprecated, use `import x` instead"), pos);
 	}
 	string mod_name = v__parser__Parser_check_name(p);
+	if (import_pos.line_nr != pos.line_nr) {
+		v__parser__Parser_error_with_pos(p, tos_lit("`import` and `module` must be at same line"), pos);
+	}
 	string mod_alias = mod_name;
 	while (p->tok.kind == v__token__Kind_dot) {
 		v__parser__Parser_next(p);
+		v__token__Position pos_t = v__token__Token_position(&p->tok);
+		if (p->tok.kind != v__token__Kind_name) {
+			v__parser__Parser_error_with_pos(p, tos_lit("module syntax error, please use `x.y.z`"), pos);
+		}
+		if (import_pos.line_nr != pos_t.line_nr) {
+			v__parser__Parser_error_with_pos(p, tos_lit("`import` and `submodule` must be at same line"), pos);
+		}
 		string submod_name = v__parser__Parser_check_name(p);
 		mod_name = string_add(mod_name, string_add(tos_lit("."), submod_name));
 		mod_alias = submod_name;
@@ -27619,6 +27637,14 @@ static v__ast__Import v__parser__Parser_import_stmt(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_key_as) {
 		v__parser__Parser_next(p);
 		mod_alias = v__parser__Parser_check_name(p);
+	}
+	v__token__Position pos_t = v__token__Token_position(&p->tok);
+	if (import_pos.line_nr == pos_t.line_nr) {
+		if (p->tok.kind != v__token__Kind_name) {
+			v__parser__Parser_error_with_pos(p, tos_lit("module syntax error, please use `x.y.z`"), pos_t);
+		} else {
+			v__parser__Parser_error_with_pos(p, tos_lit("cannot import multiple modules at a time"), pos_t);
+		}
 	}
 	map_set(&p->imports, mod_alias, &(string[]) { mod_name });
 	array_push(&p->table->imports, &(string[]){ mod_name });
