@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d7c4630"
+#define V_COMMIT_HASH "3052266"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "53989da"
+#define V_COMMIT_HASH "d7c4630"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d7c4630"
+#define V_CURRENT_COMMIT_HASH "3052266"
 #endif
 
 
@@ -15344,13 +15344,13 @@ bool v__pref__Preferences_should_compile_c(v__pref__Preferences* prefs, string f
 	if (!string_ends_with(file, tos_lit(".c.v")) && string_split(file, tos_lit(".")).len > 2) {
 		return false;
 	}
-	if (string_ends_with(file, tos_lit("_windows.c.v")) && prefs->os != v__pref__OS_windows) {
+	if ((string_ends_with(file, tos_lit("_windows.c.v")) || string_ends_with(file, tos_lit("_windows.v"))) && prefs->os != v__pref__OS_windows) {
 		return false;
 	}
-	if (string_ends_with(file, tos_lit("_linux.c.v")) && prefs->os != v__pref__OS_linux) {
+	if ((string_ends_with(file, tos_lit("_linux.c.v")) || string_ends_with(file, tos_lit("_linux.v"))) && prefs->os != v__pref__OS_linux) {
 		return false;
 	}
-	if (string_ends_with(file, tos_lit("_darwin.c.v")) && prefs->os != v__pref__OS_mac) {
+	if ((string_ends_with(file, tos_lit("_darwin.c.v")) || string_ends_with(file, tos_lit("_darwin.v"))) && prefs->os != v__pref__OS_mac) {
 		return false;
 	}
 	if (string_ends_with(file, tos_lit("_nix.c.v")) && prefs->os == v__pref__OS_windows) {
