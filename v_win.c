@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "53989da"
+#define V_COMMIT_HASH "d7c4630"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3eeef62"
+#define V_COMMIT_HASH "53989da"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "53989da"
+#define V_CURRENT_COMMIT_HASH "d7c4630"
 #endif
 
 
@@ -2395,11 +2395,11 @@ struct v__builder__Builder {
 	string compiled_dir;
 	string module_path;
 	v__pref__Preferences* pref;
-	array_string module_search_paths;
 	array_v__ast__File parsed_files;
 	v__ast__Scope* global_scope;
 	string out_name_c;
 	string out_name_js;
+	array_string module_search_paths;
 };
 
 struct v__ast__AnonFn {
@@ -17421,7 +17421,7 @@ v__table__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast_
 	{ /* if guard */ Option_v__table__Field field = v__table__Table_struct_find_field(c->table, typ_sym, field_name);
 	if ((tmp4 = field.ok)) {
 		if (string_ne(typ_sym->mod, c->mod) && !/*opt*/(*(v__table__Field*)field.data).is_pub) {
-			v__checker__Checker_warn(c, _STR("field `%.*s\000.%.*s\000` is not public", 3, typ_sym->name, field_name), selector_expr->pos);
+			v__checker__Checker_error(c, _STR("field `%.*s\000.%.*s\000` is not public", 3, typ_sym->name, field_name), selector_expr->pos);
 		}
 		return /*opt*/(*(v__table__Field*)field.data).typ;
 	}}
@@ -28708,10 +28708,10 @@ v__builder__Builder v__builder__new_builder(v__pref__Preferences* pref) {
 	}, sizeof(v__ast__Scope)),
 		.compiled_dir = compiled_dir,
 		.module_path = (string){.str=""},
-		.module_search_paths = __new_array(0, 1, sizeof(string)),
 		.parsed_files = __new_array(0, 1, sizeof(v__ast__File)),
 		.out_name_c = (string){.str=""},
 		.out_name_js = (string){.str=""},
+		.module_search_paths = __new_array(0, 1, sizeof(string)),
 	};
 }
 
