@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "1c8d2c2"
+#define V_COMMIT_HASH "5f435fa"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7815a54"
+#define V_COMMIT_HASH "1c8d2c2"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "1c8d2c2"
+#define V_CURRENT_COMMIT_HASH "5f435fa"
 #endif
 
 
@@ -8523,12 +8523,12 @@ static void map_set(map* m, string key, voidptr value) {
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_8621 = map_key_to_index(m, key);
-	u32 index = mr_8621.arg0;
-	u32 meta = mr_8621.arg1;
-	multi_return_u32_u32 mr_8655 = map_meta_less(m, index, meta);
-	index = mr_8655.arg0;
-	meta = mr_8655.arg1;
+	multi_return_u32_u32 mr_8712 = map_key_to_index(m, key);
+	u32 index = mr_8712.arg0;
+	u32 meta = mr_8712.arg1;
+	multi_return_u32_u32 mr_8746 = map_meta_less(m, index, meta);
+	index = mr_8746.arg0;
+	meta = mr_8746.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -8565,12 +8565,12 @@ static void map_rehash(map* m) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
-		multi_return_u32_u32 mr_9675 = map_key_to_index(m, m->key_values.keys[i]);
-		u32 index = mr_9675.arg0;
-		u32 meta = mr_9675.arg1;
-		multi_return_u32_u32 mr_9727 = map_meta_less(m, index, meta);
-		index = mr_9727.arg0;
-		meta = mr_9727.arg1;
+		multi_return_u32_u32 mr_9768 = map_key_to_index(m, m->key_values.keys[i]);
+		u32 index = mr_9768.arg0;
+		u32 meta = mr_9768.arg1;
+		multi_return_u32_u32 mr_9820 = map_meta_less(m, index, meta);
+		index = mr_9820.arg0;
+		meta = mr_9820.arg1;
 		map_meta_greater(m, index, meta, i);
 	}
 }
@@ -8589,9 +8589,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->cap >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->cap);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_10308 = map_meta_less(m, index, meta);
-		index = mr_10308.arg0;
-		meta = mr_10308.arg1;
+		multi_return_u32_u32 mr_10409 = map_meta_less(m, index, meta);
+		index = mr_10409.arg0;
+		meta = mr_10409.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -8599,48 +8599,52 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 }
 
 static voidptr map_get3(map m, string key, voidptr zero) {
-	multi_return_u32_u32 mr_10515 = map_key_to_index(&m, key);
-	u32 index = mr_10515.arg0;
-	u32 meta = mr_10515.arg1;
-	multi_return_u32_u32 mr_10549 = map_meta_less(&m, index, meta);
-	index = mr_10549.arg0;
-	meta = mr_10549.arg1;
-	while (meta == m.metas[index]) {
-		u32 kv_index = m.metas[index + 1];
-		if (fast_string_eq(key, m.key_values.keys[kv_index])) {
-			return ((voidptr)(m.key_values.values + kv_index * m.value_bytes));
+	multi_return_u32_u32 mr_10616 = map_key_to_index(&m, key);
+	u32 index = mr_10616.arg0;
+	u32 meta = mr_10616.arg1;
+	while (1) {
+		if (meta == m.metas[index]) {
+			u32 kv_index = m.metas[index + 1];
+			if (fast_string_eq(key, m.key_values.keys[kv_index])) {
+				return ((voidptr)(m.key_values.values + kv_index * m.value_bytes));
+			}
 		}
 		index += 2;
 		meta += _const_probe_inc;
+		if (meta > m.metas[index]) {
+			break;
+		}
 	}
 	return zero;
 }
 
 static bool map_exists(map m, string key) {
-	multi_return_u32_u32 mr_10875 = map_key_to_index(&m, key);
-	u32 index = mr_10875.arg0;
-	u32 meta = mr_10875.arg1;
-	multi_return_u32_u32 mr_10909 = map_meta_less(&m, index, meta);
-	index = mr_10909.arg0;
-	meta = mr_10909.arg1;
-	while (meta == m.metas[index]) {
-		u32 kv_index = m.metas[index + 1];
-		if (fast_string_eq(key, m.key_values.keys[kv_index])) {
-			return true;
+	multi_return_u32_u32 mr_10989 = map_key_to_index(&m, key);
+	u32 index = mr_10989.arg0;
+	u32 meta = mr_10989.arg1;
+	while (1) {
+		if (meta == m.metas[index]) {
+			u32 kv_index = m.metas[index + 1];
+			if (fast_string_eq(key, m.key_values.keys[kv_index])) {
+				return true;
+			}
 		}
 		index += 2;
 		meta += _const_probe_inc;
+		if (meta > m.metas[index]) {
+			break;
+		}
 	}
 	return false;
 }
 
 void map_delete(map* m, string key) {
-	multi_return_u32_u32 mr_11188 = map_key_to_index(m, key);
-	u32 index = mr_11188.arg0;
-	u32 meta = mr_11188.arg1;
-	multi_return_u32_u32 mr_11222 = map_meta_less(m, index, meta);
-	index = mr_11222.arg0;
-	meta = mr_11222.arg1;
+	multi_return_u32_u32 mr_11316 = map_key_to_index(m, key);
+	u32 index = mr_11316.arg0;
+	u32 meta = mr_11316.arg1;
+	multi_return_u32_u32 mr_11350 = map_meta_less(m, index, meta);
+	index = mr_11350.arg0;
+	meta = mr_11350.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -27819,7 +27823,7 @@ static v__ast__EnumDecl v__parser__Parser_enum_decl(v__parser__Parser* p) {
 	v__token__Position end_pos = v__token__Token_position(&p->tok);
 	string enum_name = v__parser__Parser_check_name(p);
 	if (enum_name.len > 0 && !byte_is_capital(string_at(enum_name, 0))) {
-		v__parser__verror(_STR("enum name `%.*s\000` must begin with a capital letter", 2, enum_name));
+		v__parser__Parser_error_with_pos(p, _STR("enum name `%.*s\000` must begin with a capital letter", 2, enum_name), end_pos);
 	}
 	string name = v__parser__Parser_prepend_mod(p, enum_name);
 	v__parser__Parser_check(p, v__token__Kind_lcbr);
@@ -27828,6 +27832,9 @@ static v__ast__EnumDecl v__parser__Parser_enum_decl(v__parser__Parser* p) {
 	while (p->tok.kind != v__token__Kind_eof && p->tok.kind != v__token__Kind_rcbr) {
 		v__token__Position pos = v__token__Token_position(&p->tok);
 		string val = v__parser__Parser_check_name(p);
+		if (!string_is_lower(val)) {
+			v__parser__Parser_error_with_pos(p, _STR("field name `%.*s\000` must be all lowercase", 2, val), pos);
+		}
 		array_push(&vals, &(string[]){ val });
 		v__ast__Expr expr = (v__ast__Expr){
 		0};
