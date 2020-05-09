@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "3052266"
+#define V_COMMIT_HASH "09f6cd6"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d7c4630"
+#define V_COMMIT_HASH "3052266"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "3052266"
+#define V_CURRENT_COMMIT_HASH "09f6cd6"
 #endif
 
 
@@ -1427,6 +1427,7 @@ struct v__table__Struct {
 	array_v__table__Field fields;
 	bool is_typedef;
 	bool is_union;
+	bool is_ref_only;
 };
 
 struct v__table__SumType {
@@ -2179,6 +2180,7 @@ struct v__ast__StructDecl {
 	bool is_c;
 	bool is_js;
 	bool is_union;
+	string attr;
 };
 
 struct v__ast__StructInit {
@@ -16736,6 +16738,12 @@ void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl 
 		if (sym->kind == v__table__Kind_placeholder && !decl.is_c && !string_starts_with(sym->name, tos_lit("C."))) {
 			v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, sym->name), field.pos);
 		}
+		if (sym->kind == v__table__Kind_struct_) {
+			v__table__Struct* info = /* as */ (v__table__Struct*)__as_cast(sym->info.obj, sym->info.typ, /*expected:*/100);
+			if (info->is_ref_only && !v__table__Type_is_ptr(field.typ)) {
+				v__checker__Checker_error(c, _STR("`%.*s\000` type can only be used as a reference: `&%.*s\000`", 3, sym->name, sym->name), field.pos);
+			}
+		}
 		if (field.has_default_expr) {
 			c->expected_type = field.typ;
 			v__table__Type field_expr_type = v__checker__Checker_expr(c, field.default_expr);
@@ -28365,6 +28373,7 @@ static v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
 		.fields = fields,
 		.is_typedef = is_typedef,
 		.is_union = is_union,
+		.is_ref_only = string_eq(p->attr, tos_lit("ref_only")),
 	}}, sizeof(v__table__Struct)), .typ = 100 /* v.table.Struct */},
 		.mod = p->mod,
 		.is_public = is_pub,
@@ -28392,6 +28401,7 @@ static v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
 		.is_c = is_c,
 		.is_js = is_js,
 		.is_union = is_union,
+		.attr = p->attr,
 	};
 }
 
@@ -28488,8 +28498,8 @@ static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser*
 		if (v__util__contains_capital(name)) {
 			v__parser__Parser_error(p, tos_lit("interface methods cannot contain uppercase letters, use snake_case instead"));
 		}
-		multi_return_array_v__table__Arg_bool mr_6960 = v__parser__Parser_fn_args(p);
-		array_v__table__Arg args2 = mr_6960.arg0;
+		multi_return_array_v__table__Arg_bool mr_7012 = v__parser__Parser_fn_args(p);
+		array_v__table__Arg args2 = mr_7012.arg0;
 		array_v__table__Arg args = new_array_from_c_array(1, 1, sizeof(v__table__Arg), (v__table__Arg[1]){
 		(v__table__Arg){
 			.name = tos_lit("x"),
