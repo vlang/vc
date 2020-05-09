@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "dea9ca2"
+#define V_COMMIT_HASH "3eeef62"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c64f8b0"
+#define V_COMMIT_HASH "dea9ca2"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "dea9ca2"
+#define V_CURRENT_COMMIT_HASH "3eeef62"
 #endif
 
 
@@ -18366,6 +18366,14 @@ v__table__Type v__checker__Checker_map_init(v__checker__Checker* c, v__ast__MapI
 	array tmp2 = node->keys;
 	for (int i = 0; i < tmp2.len; i++) {
 		v__ast__Expr key = ((v__ast__Expr*)tmp2.data)[i];
+		v__ast__StringLiteral* key_i = /* as */ (v__ast__StringLiteral*)__as_cast(key.obj, key.typ, /*expected:*/185);
+		for (int tmp3 = 0; tmp3 < i; tmp3++) {
+			int j = tmp3;
+			v__ast__StringLiteral* key_j = /* as */ (v__ast__StringLiteral*)__as_cast((*(v__ast__Expr*)array_get(node->keys, j)).obj, (*(v__ast__Expr*)array_get(node->keys, j)).typ, /*expected:*/185);
+			if (string_eq(key_i->val, key_j->val)) {
+				v__checker__Checker_error(c, _STR("duplicate key \"%.*s\000\" in map literal", 2, key_i->val), v__ast__Expr_position(key));
+			}
+		}
 		if (i == 0) {
 			continue;
 		}
