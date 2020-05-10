@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5f0ad0f"
+#define V_COMMIT_HASH "eabc72d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "01de1b6"
+#define V_COMMIT_HASH "5f0ad0f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5f0ad0f"
+#define V_CURRENT_COMMIT_HASH "eabc72d"
 #endif
 
 
@@ -3559,8 +3559,9 @@ void help__print_and_exit(string topic);
 #define _const_v__util__error_context_before 2
 #define _const_v__util__error_context_after 2
 v__util__EManager* _const_v__util__emanager; // inited later
-void v__util__EManager_set_support_color(v__util__EManager* e, bool b);
 v__util__EManager* v__util__new_error_manager();
+static string v__util__bold(string msg);
+static string v__util__color(string kind, string msg);
 string v__util__formatted_error(string kind, string emsg, string filepath, v__token__Position pos);
 array_string v__util__source_context(string kind, string source, int column, v__token__Position pos);
 void v__util__verror(string kind, string s);
@@ -15565,13 +15566,27 @@ void help__print_and_exit(string topic) {
 	v_exit(0);
 }
 
-void v__util__EManager_set_support_color(v__util__EManager* e, bool b) {
-	e->support_color = b;
-}
-
 v__util__EManager* v__util__new_error_manager() {
 	return (v__util__EManager*)memdup(&(v__util__EManager){	.support_color = term__can_show_color_on_stderr(),
 	}, sizeof(v__util__EManager));
+}
+
+static string v__util__bold(string msg) {
+	if (!_const_v__util__emanager->support_color) {
+		return msg;
+	}
+	return term__bold(msg);
+}
+
+static string v__util__color(string kind, string msg) {
+	if (!_const_v__util__emanager->support_color) {
+		return msg;
+	}
+	if (string_contains(kind, tos_lit("error"))) {
+		return term__red(msg);
+	} else {
+		return term__magenta(msg);
+	}
 }
 
 string v__util__formatted_error(string kind, string emsg, string filepath, v__token__Position pos) {
@@ -15604,11 +15619,8 @@ string v__util__formatted_error(string kind, string emsg, string filepath, v__to
 	int column = v__util__imax(0, pos.pos - p - 1);
 	string position = _STR("%.*s\000:%"PRId32"\000:%"PRId32"\000:", 4, path, pos.line_nr + 1, v__util__imax(1, column + 1));
 	string scontext = array_string_join(v__util__source_context(kind, /*opt*/(*(string*)source.data), column, pos), tos_lit("\n"));
-	string final_position = (_const_v__util__emanager->support_color ?  ( term__bold(position) )  :  ( position ) );
-	string final_kind = kind;
-	if (_const_v__util__emanager->support_color) {
-		final_kind = (string_contains(kind, tos_lit("error")) ?  ( term__bold(term__red(kind)) )  :  ( term__bold(term__magenta(kind)) ) );
-	}
+	string final_position = v__util__bold(position);
+	string final_kind = v__util__bold(v__util__color(kind, kind));
 	string final_msg = emsg;
 	string final_context = (scontext.len > 0 ?  ( _STR("\n%.*s", 1, scontext) )  :  ( tos_lit("") ) );
 	return string_trim_space(_STR("%.*s\000 %.*s\000 %.*s\000 %.*s", 4, final_position, final_kind, final_msg, final_context));
@@ -15627,8 +15639,8 @@ array_string v__util__source_context(string kind, string source, int column, v__
 	iline <= aline; iline++) {
 		string sline = (*(string*)array_get(source_lines, iline));
 		string cline = string_replace(sline, tos_lit("\t"), tab_spaces);
-		if (iline == pos.line_nr && _const_v__util__emanager->support_color) {
-			cline = (string_contains(kind, tos_lit("error")) ?  ( term__red(cline) )  :  ( term__magenta(cline) ) );
+		if (iline == pos.line_nr) {
+			cline = v__util__color(kind, cline);
 		}
 		array_push(&clines, &(string[]){ string_add(_STR("%5"PRId32"\000 | ", 2, iline + 1), cline) });
 		if (iline == pos.line_nr) {
@@ -15647,11 +15659,11 @@ array_string v__util__source_context(string kind, string source, int column, v__
 				}
 				if (pos.len > 1) {
 					int max_len = sline.len - pointerline.len;
-					int len = (pos.len > max_len ?  ( max_len )  :  ( pos.len ) );
+					int len = v__util__imin(max_len, pos.len);
 					string underline = string_repeat(tos_lit("~"), len);
-					array_push(&pointerline, &(string[]){ (_const_v__util__emanager->support_color ?  ( term__bold(term__blue(underline)) )  :  ( underline ) ) });
+					array_push(&pointerline, &(string[]){ v__util__bold(v__util__color(kind, underline)) });
 				} else {
-					array_push(&pointerline, &(string[]){ (_const_v__util__emanager->support_color ?  ( term__bold(term__blue(tos_lit("^"))) )  :  ( tos_lit("^") ) ) });
+					array_push(&pointerline, &(string[]){ v__util__bold(v__util__color(kind, tos_lit("^"))) });
 				}
 				break;
 			}
@@ -15662,11 +15674,8 @@ array_string v__util__source_context(string kind, string source, int column, v__
 }
 
 void v__util__verror(string kind, string s) {
-	if (_const_v__util__emanager->support_color) {
-		eprintln(string_add(term__bold(term__red(kind)), _STR(": %.*s", 1, s)));
-	} else {
-		eprintln(_STR("%.*s\000: %.*s", 2, kind, s));
-	}
+	string final_kind = v__util__bold(v__util__color(kind, kind));
+	eprintln(_STR("%.*s\000: %.*s", 2, final_kind, s));
 	v_exit(1);
 }
 
