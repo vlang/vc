@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b09fd66"
+#define V_COMMIT_HASH "c9c956f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7c59051"
+#define V_COMMIT_HASH "b09fd66"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b09fd66"
+#define V_CURRENT_COMMIT_HASH "c9c956f"
 #endif
 
 
@@ -16704,7 +16704,7 @@ v__table__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__S
 		array tmp16 = info->fields;
 		for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
 			v__table__Field field = ((v__table__Field*)tmp16.data)[tmp17];
-			if (_IN(string, field.name, inited_fields)) {
+			if (field.has_default_expr || _IN(string, field.name, inited_fields)) {
 				continue;
 			}
 			if (v__table__Type_is_ptr(field.typ)) {
