@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "7c59051"
+#define V_COMMIT_HASH "b09fd66"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1bf13f8"
+#define V_COMMIT_HASH "7c59051"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "7c59051"
+#define V_CURRENT_COMMIT_HASH "b09fd66"
 #endif
 
 
@@ -21887,7 +21887,7 @@ static string v__gen__Gen_interface_table(v__gen__Gen* g) {
 			v__table__Type st = ((v__table__Type*)tmp8.data)[i];
 			string cctype = v__gen__Gen_cc_type(g, st);
 			string interface_index_name = _STR("_%.*s\000_%.*s\000_index", 3, interface_name, cctype);
-			strings__Builder_writeln(&cast_functions, _STR("\n_Interface I_%.*s\000_to_Interface_%.*s\000(%.*s\000* x) {\n	return (_Interface) {\n		._object = (void*) (x),\n		._interface_idx = %.*s\000\n	};\n}", 5, cctype, interface_name, cctype, interface_index_name));
+			strings__Builder_writeln(&cast_functions, _STR("\n_Interface I_%.*s\000_to_Interface_%.*s\000(%.*s\000* x) {\n	return (_Interface) {\n		._object = (void*) (x),\n		._interface_idx = %.*s\000\n	};\n}\n\n_Interface* I_%.*s\000_to_Interface_%.*s\000_ptr(%.*s\000* x) {\n	/* TODO Remove memdup */\n	return (_Interface*) memdup(&(_Interface) {\n		._object = (void*) (x),\n		._interface_idx = %.*s\000\n	}, sizeof(_Interface));\n}", 9, cctype, interface_name, cctype, interface_index_name, cctype, interface_name, cctype, interface_index_name));
 			strings__Builder_writeln(&methods_struct, tos_lit("\t{"));
 			v__table__TypeSymbol* st_sym = v__table__Table_get_type_symbol(g->table, st);
 			// FOR IN array
@@ -21993,7 +21993,11 @@ static void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it) {
 static void v__gen__Gen_interface_call(v__gen__Gen* g, v__table__Type typ, v__table__Type interface_type) {
 	string interface_styp = v__gen__Gen_cc_type(g, interface_type);
 	string styp = v__gen__Gen_cc_type(g, typ);
-	v__gen__Gen_write(g, _STR("/* %.*s\000 */ I_%.*s\000_to_Interface_%.*s\000(", 4, interface_styp, styp, interface_styp));
+	string cast_fn_name = _STR("I_%.*s\000_to_Interface_%.*s", 2, styp, interface_styp);
+	if (v__table__Type_is_ptr(interface_type)) {
+		cast_fn_name = string_add(cast_fn_name, tos_lit("_ptr"));
+	}
+	v__gen__Gen_write(g, _STR("%.*s\000(", 2, cast_fn_name));
 	if (!v__table__Type_is_ptr(typ)) {
 		v__gen__Gen_write(g, tos_lit("&"));
 	}
@@ -22253,9 +22257,10 @@ static void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node) {
 	if (typ_sym->kind == v__table__Kind_interface_) {
 		v__gen__Gen_write(g, _STR("%.*s\000_name_table[", 2, v__gen__c_name(receiver_type_name)));
 		v__gen__Gen_expr(g, node.left);
-		v__gen__Gen_write(g, _STR("._interface_idx].%.*s\000(", 2, node.name));
+		string dot = (v__table__Type_is_ptr(node.left_type) ?  ( tos_lit("->") )  :  ( tos_lit(".") ) );
+		v__gen__Gen_write(g, _STR("%.*s\000_interface_idx].%.*s\000(", 3, dot, node.name));
 		v__gen__Gen_expr(g, node.left);
-		v__gen__Gen_write(g, tos_lit("._object"));
+		v__gen__Gen_write(g, _STR("%.*s\000_object", 2, dot));
 		if (node.args.len > 0) {
 			v__gen__Gen_write(g, tos_lit(", "));
 			v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
@@ -22432,7 +22437,11 @@ static void v__gen__Gen_call_args(v__gen__Gen* g, array_v__ast__CallArg args, ar
 					is_interface = true;
 				}
 			}
-			v__gen__Gen_ref_or_deref_arg(g, arg, (*(v__table__Type*)array_get(expected_types, i)));
+			if (is_interface) {
+				v__gen__Gen_expr(g, arg.expr);
+			} else {
+				v__gen__Gen_ref_or_deref_arg(g, arg, (*(v__table__Type*)array_get(expected_types, i)));
+			}
 		} else {
 			v__gen__Gen_expr(g, arg.expr);
 		}
@@ -22454,8 +22463,8 @@ static void v__gen__Gen_call_args(v__gen__Gen* g, array_v__ast__CallArg args, ar
 		}
 		v__gen__Gen_write(g, _STR("(%.*s\000){.len=%"PRId32"\000,.args={", 3, struct_name, variadic_count));
 		if (variadic_count > 0) {
-			for (int tmp11 = arg_nr; tmp11 < args.len; tmp11++) {
-				int j = tmp11;
+			for (int tmp12 = arg_nr; tmp12 < args.len; tmp12++) {
+				int j = tmp12;
 				v__gen__Gen_ref_or_deref_arg(g, (*(v__ast__CallArg*)array_get(args, j)), varg_type);
 				if (j < args.len - 1) {
 					v__gen__Gen_write(g, tos_lit(", "));
