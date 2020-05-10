@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "dae3907"
+#define V_COMMIT_HASH "1722171"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3ec2608"
+#define V_COMMIT_HASH "dae3907"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "dae3907"
+#define V_CURRENT_COMMIT_HASH "1722171"
 #endif
 
 
@@ -15495,36 +15495,20 @@ array_string v__util__source_context(string kind, string source, int column, v__
 	for (int iline = bline;
 	iline <= aline; iline++) {
 		string sline = (*(string*)array_get(source_lines, iline));
-		string cline = string_replace(sline, tos_lit("\t"), tab_spaces);
+		int start_column = v__util__imin(column, sline.len);
+		int end_column = v__util__imin(column + pos.len, sline.len);
+		string cline = (iline == pos.line_nr ?  ( string_add(string_add(string_substr(sline, 0, start_column), v__util__color(kind, string_substr(sline, start_column, end_column))), string_substr(sline, end_column, sline.len)) )  :  ( sline ) );
+		array_push(&clines, &(string[]){ string_add(_STR("%5"PRId32"\000 | ", 2, iline + 1), string_replace(cline, tos_lit("\t"), tab_spaces)) });
 		if (iline == pos.line_nr) {
-			cline = v__util__color(kind, cline);
-		}
-		array_push(&clines, &(string[]){ string_add(_STR("%5"PRId32"\000 | ", 2, iline + 1), cline) });
-		if (iline == pos.line_nr) {
-			array_string pointerline = __new_array(0, 0, sizeof(string));
-			for (int i = 0; i < sline.len; i++) {
-			byte bchar = sline.str[i];
-				if (i < column) {
-					byte x = bchar;
-					if (x == '\t') {
-						array_push(&pointerline, &(string[]){ tab_spaces });
-					} else {
-						x = (byte_is_space(x) ?  ( bchar )  :  ( ' ' ) );
-						array_push(&pointerline, &(string[]){ byte_str(x) });
-					}
-					continue;
-				}
-				if (pos.len > 1) {
-					int max_len = sline.len - pointerline.len;
-					int len = v__util__imin(max_len, pos.len);
-					string underline = string_repeat(tos_lit("~"), len);
-					array_push(&pointerline, &(string[]){ v__util__bold(v__util__color(kind, underline)) });
-				} else {
-					array_push(&pointerline, &(string[]){ v__util__bold(v__util__color(kind, tos_lit("^"))) });
-				}
-				break;
+			string pointerline = tos_lit("");
+			for (int tmp5 = 0; tmp5 < string_substr(sline, 0, start_column).len; tmp5++) {
+			byte bchar = string_substr(sline, 0, start_column).str[tmp5];
+				byte x = (byte_is_space(bchar) ?  ( bchar )  :  ( ' ' ) );
+				pointerline = string_add(pointerline, byte_str(x));
 			}
-			array_push(&clines, &(string[]){ string_add(tos_lit("      | "), array_string_join(pointerline, tos_lit(""))) });
+			string underline = (pos.len > 1 ?  ( string_repeat(tos_lit("~"), end_column - start_column) )  :  ( tos_lit("^") ) );
+			pointerline = string_add(pointerline, v__util__bold(v__util__color(kind, underline)));
+			array_push(&clines, &(string[]){ string_add(tos_lit("      | "), string_replace(pointerline, tos_lit("\t"), tab_spaces)) });
 		}
 	}
 	return clines;
