@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "09f6cd6"
+#define V_COMMIT_HASH "10da871"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3052266"
+#define V_COMMIT_HASH "09f6cd6"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "09f6cd6"
+#define V_CURRENT_COMMIT_HASH "10da871"
 #endif
 
 
@@ -16835,8 +16835,17 @@ static void v__checker__Checker_fail_if_immutable(v__checker__Checker* c, v__ast
 		v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, it->expr_type);
 		if (typ_sym->kind == v__table__Kind_struct_) {
 			v__table__Struct* struct_info = /* as */ (v__table__Struct*)__as_cast(typ_sym->info.obj, typ_sym->info.typ, /*expected:*/87);
-			v__table__Field field_info = v__table__Struct_get_field(/*rec*/*struct_info, it->field_name);
-			if (!field_info.is_mut) {
+			Option_v__table__Field field_info = v__table__Struct_find_field(/*rec*/*struct_info, it->field_name);
+			if (!field_info.ok) {
+				string err = field_info.v_error;
+				int errcode = field_info.ecode;
+				// last_type: v.ast.Return
+				// last_expr_result_type: 
+				string type_str = v__table__Table_type_to_str(c->table, it->expr_type);
+				v__checker__Checker_error(c, _STR("unknown field `%.*s\000.%.*s\000`", 3, type_str, it->field_name), it->pos);
+				return ;
+			};
+			if (!/*opt*/(*(v__table__Field*)field_info.data).is_mut) {
 				string type_str = v__table__Table_type_to_str(c->table, it->expr_type);
 				v__checker__Checker_error(c, _STR("field `%.*s\000` of struct `%.*s\000` is immutable", 3, it->field_name, type_str), it->pos);
 			}
