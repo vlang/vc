@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "76eec7b"
+#define V_COMMIT_HASH "7f69c2f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ba3a631"
+#define V_COMMIT_HASH "76eec7b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "76eec7b"
+#define V_CURRENT_COMMIT_HASH "7f69c2f"
 #endif
 
 
@@ -26906,6 +26906,9 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 	v__ast__Module module_decl = v__parser__Parser_module_decl(&p);
 	mstmt = /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Module[]) {module_decl}, sizeof(v__ast__Module)), .typ = 202 /* v.ast.Module */};
 	array_push(&stmts, &(v__ast__Stmt[]){ mstmt });
+	while (p.tok.kind == v__token__Kind_key_import) {
+		array_push(&stmts, &(v__ast__Stmt[]){ /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Import[]) {v__parser__Parser_import_stmt(&p)}, sizeof(v__ast__Import)), .typ = 179 /* v.ast.Import */} });
+	}
 	while (1) {
 		if (p.tok.kind == v__token__Kind_eof) {
 			if (p.pref->is_script && !p.pref->is_test && string_eq(p.mod, tos_lit("main")) && !v__parser__have_fn_main(stmts)) {
@@ -27072,6 +27075,7 @@ v__ast__Stmt v__parser__Parser_top_stmt(v__parser__Parser* p) {
 	}else if (p->tok.kind == v__token__Kind_key_interface) {
 		return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__InterfaceDecl[]) {v__parser__Parser_interface_decl(p)}, sizeof(v__ast__InterfaceDecl)), .typ = 232 /* v.ast.InterfaceDecl */};
 	}else if (p->tok.kind == v__token__Kind_key_import) {
+		v__parser__Parser_error_with_pos(p, tos_lit("`import x` can only be declared at the beginning of the file"), v__token__Token_position(&p->tok));
 		return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Import[]) {v__parser__Parser_import_stmt(p)}, sizeof(v__ast__Import)), .typ = 179 /* v.ast.Import */};
 	}else if (p->tok.kind == v__token__Kind_key_global) {
 		return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__GlobalDecl[]) {v__parser__Parser_global_decl(p)}, sizeof(v__ast__GlobalDecl)), .typ = 207 /* v.ast.GlobalDecl */};
