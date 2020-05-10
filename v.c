@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "10da871"
+#define V_COMMIT_HASH "ba3a631"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "09f6cd6"
+#define V_COMMIT_HASH "10da871"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "10da871"
+#define V_CURRENT_COMMIT_HASH "ba3a631"
 #endif
 
 
@@ -17728,6 +17728,9 @@ static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) 
 		} else {
 			v__ast__Scope* scope = v__ast__Scope_innermost(c->file.scope, it->pos.pos);
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, typ);
+			if (sym->kind == v__table__Kind_map && !(it->key_var.len > 0 && it->val_var.len > 0)) {
+				v__checker__Checker_error(c, tos_lit("for in: cannot use one variable in map"), it->pos);
+			}
 			if (it->key_var.len > 0) {
 				v__table__Type key_type = (sym->kind == v__table__Kind_map) ?  ( v__table__TypeSymbol_map_info(sym).key_type )  :  ( _const_v__table__int_type ) ;
 				it->key_type = key_type;
@@ -27544,8 +27547,21 @@ static v__ast__Module v__parser__Parser_module_decl(v__parser__Parser* p) {
 	string name = tos_lit("main");
 	bool is_skipped = p->tok.kind != v__token__Kind_key_module;
 	if (!is_skipped) {
+		v__token__Position module_pos = v__token__Token_position(&p->tok);
 		v__parser__Parser_next(p);
+		v__token__Position pos = v__token__Token_position(&p->tok);
 		name = v__parser__Parser_check_name(p);
+		if (module_pos.line_nr != pos.line_nr) {
+			v__parser__Parser_error_with_pos(p, _STR("`module` and `%.*s\000` must be at same line", 2, name), pos);
+		}
+		pos = v__token__Token_position(&p->tok);
+		if (module_pos.line_nr == pos.line_nr) {
+			if (p->tok.kind != v__token__Kind_name) {
+				v__parser__Parser_error_with_pos(p, tos_lit("`module x` syntax error"), pos);
+			} else {
+				v__parser__Parser_error_with_pos(p, tos_lit("`module x` can only declare one module"), pos);
+			}
+		}
 	}
 	string full_mod = v__table__Table_qualify_module(p->table, name, p->file_name);
 	p->mod = full_mod;
