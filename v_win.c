@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d33082d"
+#define V_COMMIT_HASH "1bf13f8"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1722171"
+#define V_COMMIT_HASH "d33082d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d33082d"
+#define V_CURRENT_COMMIT_HASH "1bf13f8"
 #endif
 
 
@@ -15799,22 +15799,26 @@ string v__util__githash(bool should_get_from_filesystem) {
 				// last_expr_result_type: 
 				break;
 			};
-			string gcbranch_rel_path = string_trim_space(string_replace(/*opt*/(*(string*)head_content.data), tos_lit("ref: "), tos_lit("")));
-			string gcbranch_file = os__join_path(vroot, (varg_string){.len=2,.args={tos_lit(".git"), gcbranch_rel_path}});
-			if (!os__exists(gcbranch_file)) {
-				break;
+			string current_branch_hash = /*opt*/(*(string*)head_content.data);
+			if (string_starts_with(/*opt*/(*(string*)head_content.data), tos_lit("ref: "))) {
+				string gcbranch_rel_path = string_trim_space(string_replace(/*opt*/(*(string*)head_content.data), tos_lit("ref: "), tos_lit("")));
+				string gcbranch_file = os__join_path(vroot, (varg_string){.len=2,.args={tos_lit(".git"), gcbranch_rel_path}});
+				if (!os__exists(gcbranch_file)) {
+					break;
+				}
+				Option_string branch_hash = os__read_file(gcbranch_file);
+				if (!branch_hash.ok) {
+					string err = branch_hash.v_error;
+					int errcode = branch_hash.ecode;
+					// last_type: v.ast.BranchStmt
+					// last_expr_result_type: 
+					break;
+				};
+				current_branch_hash = /*opt*/(*(string*)branch_hash.data);
 			}
-			Option_string current_branch_hash = os__read_file(gcbranch_file);
-			if (!current_branch_hash.ok) {
-				string err = current_branch_hash.v_error;
-				int errcode = current_branch_hash.ecode;
-				// last_type: v.ast.BranchStmt
-				// last_expr_result_type: 
-				break;
-			};
 			int desired_hash_length = 7;
-			if (/*opt*/(*(string*)current_branch_hash.data).len > desired_hash_length) {
-				return string_substr(/*opt*/(*(string*)current_branch_hash.data), 0, desired_hash_length);
+			if (current_branch_hash.len > desired_hash_length) {
+				return string_substr(current_branch_hash, 0, desired_hash_length);
 			}
 		}
 		break;
