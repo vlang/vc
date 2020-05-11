@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d359a7a"
+#define V_COMMIT_HASH "b74f4ee"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e6bc18b"
+#define V_COMMIT_HASH "d359a7a"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d359a7a"
+#define V_CURRENT_COMMIT_HASH "b74f4ee"
 #endif
 
 
@@ -16730,8 +16730,7 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 	infix_expr->right_type = right_type;
 	v__table__TypeSymbol* right = v__table__Table_get_type_symbol(c->table, right_type);
 	v__table__TypeSymbol* left = v__table__Table_get_type_symbol(c->table, left_type);
-	if (infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_ne || infix_expr->op == v__token__Kind_gt || infix_expr->op == v__token__Kind_lt || infix_expr->op == v__token__Kind_ge || infix_expr->op == v__token__Kind_le || infix_expr->op == v__token__Kind_and || infix_expr->op == v__token__Kind_logical_or || infix_expr->op == v__token__Kind_dot || infix_expr->op == v__token__Kind_key_as || infix_expr->op == v__token__Kind_right_shift) {
-	}else if (infix_expr->op == v__token__Kind_key_in || infix_expr->op == v__token__Kind_not_in) {
+	if (infix_expr->op == v__token__Kind_key_in || infix_expr->op == v__token__Kind_not_in) {
 		if (right->kind == v__table__Kind_array) {
 			v__table__TypeSymbol* right_sym = v__table__Table_get_type_symbol(c->table, v__table__TypeSymbol_array_info(right).elem_type);
 			if (left->kind != right_sym->kind) {
