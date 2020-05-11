@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "2618b4f"
+#define V_COMMIT_HASH "e9177fa"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "538662d"
+#define V_COMMIT_HASH "2618b4f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "2618b4f"
+#define V_CURRENT_COMMIT_HASH "e9177fa"
 #endif
 
 
@@ -1834,6 +1834,7 @@ struct v__parser__Parser {
 	bool returns;
 	bool inside_match;
 	bool inside_match_case;
+	bool inside_unsafe;
 	bool is_stmt_ident;
 	bool expecting_type;
 	array_v__errors__Error errors;
@@ -2308,6 +2309,7 @@ struct v__checker__Checker {
 	bool scope_returns;
 	string mod;
 	bool is_builtin_mod;
+	bool inside_unsafe;
 };
 
 struct v__ast__IfBranch {
@@ -16546,6 +16548,7 @@ v__checker__Checker v__checker__new_checker(v__table__Table* table, v__pref__Pre
 		.scope_returns = 0,
 		.mod = (string){.str=""},
 		.is_builtin_mod = 0,
+		.inside_unsafe = 0,
 	};
 }
 
@@ -17046,6 +17049,12 @@ static void v__checker__Checker_assign_expr(v__checker__Checker* c, v__ast__Assi
 		return ;
 	}
 	v__checker__Checker_fail_if_immutable(c, assign_expr->left);
+	if (assign_expr->left.typ == 230 /* v.ast.PrefixExpr */) {
+		v__ast__PrefixExpr* p = /* as */ (v__ast__PrefixExpr*)__as_cast(assign_expr->left.obj, assign_expr->left.typ, /*expected:*/230);
+		if (p->op == v__token__Kind_mul && !c->inside_unsafe) {
+			v__checker__Checker_error(c, tos_lit("modifying variables via deferencing can only be done in `unsafe` blocks"), assign_expr->pos);
+		}
+	}
 	if (assign_expr->op == v__token__Kind_assign) {
 	}else if (assign_expr->op == v__token__Kind_plus_assign) {
 		if (!v__table__TypeSymbol_is_number(left) && left_type != _const_v__table__string_type && !v__table__TypeSymbol_is_pointer(left)) {
@@ -17964,7 +17973,9 @@ static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) 
 		v__checker__Checker_type_decl(c, */*d*/it);
 	}else if (node.typ == 191 /* v.ast.UnsafeStmt */) {
 		v__ast__UnsafeStmt* it = (v__ast__UnsafeStmt*)node.obj; // ST it
+		c->inside_unsafe = true;
 		v__checker__Checker_stmts(c, it->stmts);
+		c->inside_unsafe = false;
 	}else {
 	};
 }
@@ -26898,6 +26909,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.returns = 0,
 		.inside_match = 0,
 		.inside_match_case = 0,
+		.inside_unsafe = 0,
 		.is_stmt_ident = 0,
 		.expecting_type = 0,
 		.errors = __new_array(0, 1, sizeof(v__errors__Error)),
@@ -26947,6 +26959,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 		.returns = 0,
 		.inside_match = 0,
 		.inside_match_case = 0,
+		.inside_unsafe = 0,
 		.is_stmt_ident = 0,
 		.expecting_type = 0,
 	};
@@ -27226,7 +27239,9 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p) {
 		}}, sizeof(v__ast__BranchStmt)), .typ = 190 /* v.ast.BranchStmt */};
 	}else if (p->tok.kind == v__token__Kind_key_unsafe) {
 		v__parser__Parser_next(p);
+		p->inside_unsafe = true;
 		array_v__ast__Stmt stmts = v__parser__Parser_parse_block(p);
+		p->inside_unsafe = false;
 		return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__UnsafeStmt[]) {(v__ast__UnsafeStmt){
 			.stmts = stmts,
 		}}, sizeof(v__ast__UnsafeStmt)), .typ = 191 /* v.ast.UnsafeStmt */};
