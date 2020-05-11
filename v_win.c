@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "e638d12"
+#define V_COMMIT_HASH "649a014"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e9177fa"
+#define V_COMMIT_HASH "e638d12"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "e638d12"
+#define V_CURRENT_COMMIT_HASH "649a014"
 #endif
 
 
@@ -23896,7 +23896,7 @@ void v__gen__x64__Gen_generate_elf_footer(v__gen__x64__Gen* g) {
 		string s = ((string*)tmp1.data)[i];
 		v__gen__x64__Gen_write64_at(g, _const_v__gen__x64__segment_start + g->buf.len, ((int)((*(i64*)array_get(g->str_pos, i)))));
 		v__gen__x64__Gen_write_string(g, s);
-		v__gen__x64__Gen_write8(g, 6);
+		v__gen__x64__Gen_write8(g, 0);
 	}
 	int file_size = g->buf.len;
 	v__gen__x64__Gen_write64_at(g, file_size, g->file_size_pos);
@@ -24249,7 +24249,7 @@ void v__gen__x64__Gen_gen_print(v__gen__x64__Gen* g, string s) {
 	int str_pos = g->buf.len + 2;
 	array_push(&g->str_pos, &(i64[]){ str_pos });
 	v__gen__x64__Gen_mov64(g, v__gen__x64__Register_rsi, 0);
-	v__gen__x64__Gen_mov(g, v__gen__x64__Register_edx, s.len + 1);
+	v__gen__x64__Gen_mov(g, v__gen__x64__Register_edx, s.len);
 	v__gen__x64__Gen_syscall(g);
 }
 
