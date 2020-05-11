@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "538662d"
+#define V_COMMIT_HASH "2618b4f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "828f9af"
+#define V_COMMIT_HASH "538662d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "538662d"
+#define V_CURRENT_COMMIT_HASH "2618b4f"
 #endif
 
 
@@ -15312,7 +15312,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 #endif
 
 	}
-	p->enable_globals = true;
+	p->enable_globals = false;
 }
 
 static string v__pref__default_c_compiler() {
