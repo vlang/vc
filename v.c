@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "e52d35b"
+#define V_COMMIT_HASH "74cc2b2"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "14bba54"
+#define V_COMMIT_HASH "e52d35b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "e52d35b"
+#define V_CURRENT_COMMIT_HASH "74cc2b2"
 #endif
 
 
@@ -15003,12 +15003,14 @@ bool v__table__Table_check(v__table__Table* t, v__table__Type got, v__table__Typ
 	if (got_type_sym->kind == v__table__Kind_function && exp_type_sym->kind == v__table__Kind_function) {
 		v__table__FnType* got_info = /* as */ (v__table__FnType*)__as_cast(got_type_sym->info.obj, got_type_sym->info.typ, /*expected:*/83);
 		v__table__FnType* exp_info = /* as */ (v__table__FnType*)__as_cast(exp_type_sym->info.obj, exp_type_sym->info.typ, /*expected:*/83);
-		if (got_info->func.args.len == exp_info->func.args.len) {
+		v__table__Fn got_fn = got_info->func;
+		v__table__Fn exp_fn = exp_info->func;
+		if (got_fn.args.len == exp_fn.args.len && v__table__Table_check(t, got_fn.return_type, exp_fn.return_type)) {
 			// FOR IN array
-			array tmp22 = got_info->func.args;
+			array tmp22 = got_fn.args;
 			for (int i = 0; i < tmp22.len; i++) {
 				v__table__Arg got_arg = ((v__table__Arg*)tmp22.data)[i];
-				v__table__Arg exp_arg = (*(v__table__Arg*)array_get(exp_info->func.args, i));
+				v__table__Arg exp_arg = (*(v__table__Arg*)array_get(exp_fn.args, i));
 				if (!v__table__Table_check(t, got_arg.typ, exp_arg.typ)) {
 					return false;
 				}
