@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "2a40665"
+#define V_COMMIT_HASH "8a6820d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8488f7d"
+#define V_COMMIT_HASH "2a40665"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "2a40665"
+#define V_CURRENT_COMMIT_HASH "8a6820d"
 #endif
 
 
@@ -25763,9 +25763,9 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool mr_3882 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_3882.arg0;
-	bool is_variadic = mr_3882.arg1;
+	multi_return_array_v__table__Arg_bool mr_3872 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_3872.arg0;
+	bool is_variadic = mr_3872.arg1;
 	_PUSH_MANY(&args, (args2), tmp13, array_v__table__Arg);
 	// FOR IN array
 	array tmp14 = args;
@@ -25881,9 +25881,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_6452 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_6452.arg0;
-	bool is_variadic = mr_6452.arg1;
+	multi_return_array_v__table__Arg_bool mr_6442 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_6442.arg0;
+	bool is_variadic = mr_6442.arg1;
 	// FOR IN array
 	array tmp1 = args;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
@@ -25969,6 +25969,9 @@ static multi_return_array_v__table__Arg_bool v__parser__Parser_fn_args(v__parser
 				is_variadic = true;
 			}
 			v__table__Type arg_type = v__parser__Parser_parse_type(p);
+			if (is_mut) {
+				arg_type = v__table__Type_set_nr_muls(arg_type, 1);
+			}
 			if (is_variadic) {
 				arg_type = v__table__Type_set_flag(arg_type, v__table__TypeFlag_variadic);
 			}
@@ -26007,13 +26010,18 @@ static multi_return_array_v__table__Arg_bool v__parser__Parser_fn_args(v__parser
 				is_variadic = true;
 			}
 			v__table__Type typ = v__parser__Parser_parse_type(p);
+			if (is_mut) {
+				if (v__table__Type_is_ptr(typ)) {
+				}
+				typ = v__table__Type_set_nr_muls(typ, 1);
+			}
 			if (is_variadic) {
 				typ = v__table__Type_set_flag(typ, v__table__TypeFlag_variadic);
 			}
 			// FOR IN array
-			array tmp13 = arg_names;
-			for (int tmp14 = 0; tmp14 < tmp13.len; tmp14++) {
-				string arg_name = ((string*)tmp13.data)[tmp14];
+			array tmp16 = arg_names;
+			for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
+				string arg_name = ((string*)tmp16.data)[tmp17];
 				array_push(&args, &(v__table__Arg[]){ (v__table__Arg){
 					.name = arg_name,
 					.is_mut = is_mut,
