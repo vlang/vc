@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8488f7d"
+#define V_COMMIT_HASH "2a40665"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8bc0c31"
+#define V_COMMIT_HASH "8488f7d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8488f7d"
+#define V_CURRENT_COMMIT_HASH "2a40665"
 #endif
 
 
@@ -16054,9 +16054,8 @@ Option_v__ast__Var_ptr v__ast__Scope_find_var(v__ast__Scope* s, string name) {
 	bool tmp1;
 	{ /* if guard */ Option_v__ast__ScopeObject obj = v__ast__Scope_find(s, name);
 	if ((tmp1 = obj.ok)) {
-		v__ast__ScopeObject v = /*opt*/(*(v__ast__ScopeObject*)obj.data);
-		if (v.typ == 133 /* v.ast.Var */) {
-			v__ast__Var* it = (v__ast__Var*)v.obj; // ST it
+		if (/*opt*/(*(v__ast__ScopeObject*)obj.data).typ == 133 /* v.ast.Var */) {
+			v__ast__Var* it = (v__ast__Var*)/*opt*/(*(v__ast__ScopeObject*)obj.data).obj; // ST it
 			return /*:)v.ast.Var*/opt_ok(&(v__ast__Var*[]) { it }, sizeof(v__ast__Var*));
 		}else {
 		};
@@ -16067,9 +16066,8 @@ Option_v__ast__ConstField_ptr v__ast__Scope_find_const(v__ast__Scope* s, string 
 	bool tmp1;
 	{ /* if guard */ Option_v__ast__ScopeObject obj = v__ast__Scope_find(s, name);
 	if ((tmp1 = obj.ok)) {
-		v__ast__ScopeObject cf = /*opt*/(*(v__ast__ScopeObject*)obj.data);
-		if (cf.typ == 196 /* v.ast.ConstField */) {
-			v__ast__ConstField* it = (v__ast__ConstField*)cf.obj; // ST it
+		if (/*opt*/(*(v__ast__ScopeObject*)obj.data).typ == 196 /* v.ast.ConstField */) {
+			v__ast__ConstField* it = (v__ast__ConstField*)/*opt*/(*(v__ast__ScopeObject*)obj.data).obj; // ST it
 			return /*:)v.ast.ConstField*/opt_ok(&(v__ast__ConstField*[]) { it }, sizeof(v__ast__ConstField*));
 		}else {
 		};
