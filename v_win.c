@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "1c8e14c"
+#define V_COMMIT_HASH "27d3800"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b74f4ee"
+#define V_COMMIT_HASH "1c8e14c"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "1c8e14c"
+#define V_CURRENT_COMMIT_HASH "27d3800"
 #endif
 
 
@@ -27284,6 +27284,7 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p) {
 		} else if (p->tok.kind == v__token__Kind_name && p->peek_tok.kind == v__token__Kind_name) {
 			v__parser__Parser_error_with_pos(p, _STR("unexpected name `%.*s\000`", 2, p->peek_tok.lit), v__token__Token_position(&p->peek_tok));
 		} else if (p->tok.kind == v__token__Kind_name && !p->inside_if_expr && !p->inside_match && !p->inside_or_expr && (p->peek_tok.kind == v__token__Kind_rcbr || p->peek_tok.kind == v__token__Kind_eof)) {
+			v__parser__Parser_error_with_pos(p, _STR("`%.*s\000` evaluated but not used", 2, p->tok.lit), v__token__Token_position(&p->tok));
 		}
 		v__token__Position epos = v__token__Token_position(&p->tok);
 		v__ast__Expr expr = v__parser__Parser_expr(p, 0);
