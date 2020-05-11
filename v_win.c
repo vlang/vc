@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "3a3d00a"
+#define V_COMMIT_HASH "8bc0c31"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1b3cd7a"
+#define V_COMMIT_HASH "3a3d00a"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "3a3d00a"
+#define V_CURRENT_COMMIT_HASH "8bc0c31"
 #endif
 
 
@@ -1816,6 +1816,8 @@ struct v__parser__Parser {
 	bool is_c;
 	bool is_js;
 	bool inside_if;
+	bool inside_if_expr;
+	bool inside_or_expr;
 	bool inside_for;
 	bool inside_fn;
 	v__pref__Preferences* pref;
@@ -25774,6 +25776,7 @@ v__ast__CallExpr v__parser__Parser_call_expr(v__parser__Parser* p, bool is_c, bo
 	array_v__ast__Stmt or_stmts = __new_array(0, 0, sizeof(v__ast__Stmt));
 	bool is_or_block_used = false;
 	if (p->tok.kind == v__token__Kind_key_orelse) {
+		p->inside_or_expr = true;
 		v__parser__Parser_next(p);
 		v__parser__Parser_open_scope(p);
 		v__ast__Scope_register(p->scope, tos_lit("err"), /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){
@@ -25797,6 +25800,7 @@ v__ast__CallExpr v__parser__Parser_call_expr(v__parser__Parser* p, bool is_c, bo
 		is_or_block_used = true;
 		or_stmts = v__parser__Parser_parse_block_no_scope(p);
 		v__parser__Parser_close_scope(p);
+		p->inside_or_expr = false;
 	}
 	v__ast__CallExpr node = (v__ast__CallExpr){
 		.name = fn_name,
@@ -25912,9 +25916,9 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool mr_3829 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_3829.arg0;
-	bool is_variadic = mr_3829.arg1;
+	multi_return_array_v__table__Arg_bool mr_3882 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_3882.arg0;
+	bool is_variadic = mr_3882.arg1;
 	_PUSH_MANY(&args, (args2), tmp13, array_v__table__Arg);
 	// FOR IN array
 	array tmp14 = args;
@@ -26030,9 +26034,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_6399 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_6399.arg0;
-	bool is_variadic = mr_6399.arg1;
+	multi_return_array_v__table__Arg_bool mr_6452 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_6452.arg0;
+	bool is_variadic = mr_6452.arg1;
 	// FOR IN array
 	array tmp1 = args;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
@@ -26351,6 +26355,7 @@ static v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 }
 
 static v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p) {
+	p->inside_if_expr = true;
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	array_v__ast__IfBranch branches = __new_array(0, 0, sizeof(v__ast__IfBranch));
 	bool has_else = false;
@@ -26430,6 +26435,8 @@ static v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p) {
 			break;
 		}
 	}
+	// defer
+		p->inside_if_expr = false;
 	return (v__ast__IfExpr){
 		.branches = branches,
 		.pos = pos,
@@ -26439,6 +26446,8 @@ static v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p) {
 		.is_expr = 0,
 		.typ = {0},
 	};
+// defer
+	p->inside_if_expr = false;
 }
 
 static v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser* p) {
@@ -26867,6 +26876,8 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.is_c = 0,
 		.is_js = 0,
 		.inside_if = 0,
+		.inside_if_expr = 0,
+		.inside_or_expr = 0,
 		.inside_for = 0,
 		.inside_fn = 0,
 		.builtin_mod = 0,
@@ -26914,6 +26925,8 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 		.is_c = 0,
 		.is_js = 0,
 		.inside_if = 0,
+		.inside_if_expr = 0,
+		.inside_or_expr = 0,
 		.inside_for = 0,
 		.inside_fn = 0,
 		.builtin_mod = 0,
@@ -27246,6 +27259,8 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p) {
 			}}, sizeof(v__ast__GotoLabel)), .typ = 195 /* v.ast.GotoLabel */};
 		} else if (p->tok.kind == v__token__Kind_name && p->peek_tok.kind == v__token__Kind_name) {
 			v__parser__Parser_error_with_pos(p, _STR("unexpected name `%.*s\000`", 2, p->peek_tok.lit), v__token__Token_position(&p->peek_tok));
+		} else if (p->tok.kind == v__token__Kind_name && !p->inside_if_expr && !p->inside_or_expr && (p->peek_tok.kind == v__token__Kind_rcbr || p->peek_tok.kind == v__token__Kind_eof)) {
+			v__parser__Parser_error_with_pos(p, _STR("`%.*s\000` evaluated but not used", 2, p->tok.lit), v__token__Token_position(&p->tok));
 		}
 		v__token__Position epos = v__token__Token_position(&p->tok);
 		v__ast__Expr expr = v__parser__Parser_expr(p, 0);
