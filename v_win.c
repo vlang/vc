@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "27d3800"
+#define V_COMMIT_HASH "712fd38"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1c8e14c"
+#define V_COMMIT_HASH "27d3800"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "27d3800"
+#define V_CURRENT_COMMIT_HASH "712fd38"
 #endif
 
 
@@ -1833,6 +1833,7 @@ struct v__parser__Parser {
 	bool returns;
 	bool inside_match;
 	bool inside_match_case;
+	bool inside_match_body;
 	bool inside_unsafe;
 	bool is_stmt_ident;
 	bool expecting_type;
@@ -26534,7 +26535,9 @@ static v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser* p) {
 			}
 		}
 		v__token__Position branch_last_pos = v__token__Token_position(&p->tok);
+		p->inside_match_body = true;
 		array_v__ast__Stmt stmts = v__parser__Parser_parse_block(p);
+		p->inside_match_body = false;
 		v__token__Position pos = (v__token__Position){
 			.line_nr = branch_first_pos.line_nr,
 			.pos = branch_first_pos.pos,
@@ -26911,6 +26914,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.returns = 0,
 		.inside_match = 0,
 		.inside_match_case = 0,
+		.inside_match_body = 0,
 		.inside_unsafe = 0,
 		.is_stmt_ident = 0,
 		.expecting_type = 0,
@@ -26961,6 +26965,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 		.returns = 0,
 		.inside_match = 0,
 		.inside_match_case = 0,
+		.inside_match_body = 0,
 		.inside_unsafe = 0,
 		.is_stmt_ident = 0,
 		.expecting_type = 0,
@@ -27283,7 +27288,7 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p) {
 			}}, sizeof(v__ast__GotoLabel)), .typ = 196 /* v.ast.GotoLabel */};
 		} else if (p->tok.kind == v__token__Kind_name && p->peek_tok.kind == v__token__Kind_name) {
 			v__parser__Parser_error_with_pos(p, _STR("unexpected name `%.*s\000`", 2, p->peek_tok.lit), v__token__Token_position(&p->peek_tok));
-		} else if (p->tok.kind == v__token__Kind_name && !p->inside_if_expr && !p->inside_match && !p->inside_or_expr && (p->peek_tok.kind == v__token__Kind_rcbr || p->peek_tok.kind == v__token__Kind_eof)) {
+		} else if (p->tok.kind == v__token__Kind_name && !p->inside_if_expr && !p->inside_match_body && !p->inside_or_expr && (p->peek_tok.kind == v__token__Kind_rcbr || p->peek_tok.kind == v__token__Kind_eof)) {
 			v__parser__Parser_error_with_pos(p, _STR("`%.*s\000` evaluated but not used", 2, p->tok.lit), v__token__Token_position(&p->tok));
 		}
 		v__token__Position epos = v__token__Token_position(&p->tok);
