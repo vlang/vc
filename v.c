@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b5b8fda"
+#define V_COMMIT_HASH "7a5a4df"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7837abf"
+#define V_COMMIT_HASH "b5b8fda"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b5b8fda"
+#define V_CURRENT_COMMIT_HASH "7a5a4df"
 #endif
 
 
@@ -17140,7 +17140,7 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 		v__checker__Checker_error(c, _STR("too many arguments in call to `%.*s\000` (%"PRId32"\000 instead of %"PRId32"\000)", 4, fn_name, call_expr->args.len, f.args.len), call_expr->pos);
 		return f.return_type;
 	}
-	if (string_eq(fn_name, tos_lit("println")) || string_eq(fn_name, tos_lit("print"))) {
+	if ((string_eq(fn_name, tos_lit("println")) || string_eq(fn_name, tos_lit("print"))) && call_expr->args.len > 0) {
 		c->expected_type = _const_v__table__string_type;
 		(*(v__ast__CallArg*)array_get(call_expr->args, 0)).typ = v__checker__Checker_expr(c, (*(v__ast__CallArg*)array_get(call_expr->args, 0)).expr);
 		return f.return_type;
