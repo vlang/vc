@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "712fd38"
+#define V_COMMIT_HASH "99b31d8"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "27d3800"
+#define V_COMMIT_HASH "712fd38"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "712fd38"
+#define V_CURRENT_COMMIT_HASH "99b31d8"
 #endif
 
 
@@ -16578,23 +16578,12 @@ void v__checker__Checker_type_decl(v__checker__Checker* c, v__ast__TypeDecl node
 }
 
 void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl decl) {
-	array_string splitted_full_name = string_split(decl.name, tos_lit("."));
-	bool is_builtin = string_eq((*(string*)array_get(splitted_full_name, 0)), tos_lit("builtin"));
-	string name = *(string*)array_last(splitted_full_name);
-	if (!byte_is_capital(string_at(name, 0)) && !decl.is_c && !is_builtin && !_IN(string, name, _const_v__table__builtin_type_names)) {
-		v__token__Position pos = (v__token__Position){
-			.line_nr = decl.pos.line_nr,
-			.pos = decl.pos.pos + 7,
-			.len = name.len,
-		};
-		v__checker__Checker_error(c, tos_lit("struct name must begin with capital letter"), pos);
-	}
 	// FOR IN array
-	array tmp2 = decl.fields;
-	for (int i = 0; i < tmp2.len; i++) {
-		v__ast__StructField field = ((v__ast__StructField*)tmp2.data)[i];
-		for (int tmp3 = 0; tmp3 < i; tmp3++) {
-			int j = tmp3;
+	array tmp1 = decl.fields;
+	for (int i = 0; i < tmp1.len; i++) {
+		v__ast__StructField field = ((v__ast__StructField*)tmp1.data)[i];
+		for (int tmp2 = 0; tmp2 < i; tmp2++) {
+			int j = tmp2;
 			if (string_eq(field.name, (*(v__ast__StructField*)array_get(decl.fields, j)).name)) {
 				v__checker__Checker_error(c, _STR("field name `%.*s\000` duplicate", 2, field.name), field.pos);
 			}
@@ -16615,10 +16604,7 @@ void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl 
 			if (!v__table__Table_check(c->table, field_expr_type, field.typ)) {
 				v__table__TypeSymbol* field_expr_type_sym = v__table__Table_get_type_symbol(c->table, field_expr_type);
 				v__table__TypeSymbol* field_type_sym = v__table__Table_get_type_symbol(c->table, field.typ);
-				string field_name = field.name;
-				string fet_name = field_expr_type_sym->name;
-				string ft_name = field_type_sym->name;
-				v__checker__Checker_error(c, string_add(_STR("default expression for field `%.*s\000` ", 2, field_name), _STR("has type `%.*s\000`, but should be `%.*s\000`", 3, fet_name, ft_name)), v__ast__Expr_position(field.default_expr));
+				v__checker__Checker_error(c, string_add(_STR("default expression for field `%.*s\000` ", 2, field.name), _STR("has type `%.*s\000`, but should be `%.*s\000`", 3, field_expr_type_sym->name, field_type_sym->name)), v__ast__Expr_position(field.default_expr));
 			}
 		}
 	}
@@ -27836,7 +27822,7 @@ static v__ast__EnumDecl v__parser__Parser_enum_decl(v__parser__Parser* p) {
 	v__token__Position end_pos = v__token__Token_position(&p->tok);
 	string enum_name = v__parser__Parser_check_name(p);
 	if (enum_name.len > 0 && !byte_is_capital(string_at(enum_name, 0))) {
-		v__parser__Parser_error_with_pos(p, _STR("enum name `%.*s\000` must begin with a capital letter", 2, enum_name), end_pos);
+		v__parser__Parser_error_with_pos(p, _STR("enum name `%.*s\000` must begin with capital letter", 2, enum_name), end_pos);
 	}
 	string name = v__parser__Parser_prepend_mod(p, enum_name);
 	v__parser__Parser_check(p, v__token__Kind_lcbr);
@@ -28230,6 +28216,9 @@ static v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
 	}
 	v__token__Position end_pos = v__token__Token_position(&p->tok);
 	string name = v__parser__Parser_check_name(p);
+	if (!is_c && !is_js && string_ne(p->mod, tos_lit("builtin")) && name.len > 0 && !byte_is_capital(string_at(name, 0))) {
+		v__parser__Parser_error_with_pos(p, _STR("struct name `%.*s\000` must begin with capital letter", 2, name), end_pos);
+	}
 	array_v__ast__StructField ast_fields = __new_array(0, 0, sizeof(v__ast__StructField));
 	array_v__table__Field fields = __new_array(0, 0, sizeof(v__table__Field));
 	int mut_pos = -1;
@@ -28313,9 +28302,9 @@ static v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
 			if (p->tok.kind == v__token__Kind_lsbr) {
 				array_v__ast__Attr parsed_attrs = v__parser__Parser_attributes(p);
 				// FOR IN array
-				array tmp16 = parsed_attrs;
-				for (int tmp17 = 0; tmp17 < tmp16.len; tmp17++) {
-					v__ast__Attr attr = ((v__ast__Attr*)tmp16.data)[tmp17];
+				array tmp17 = parsed_attrs;
+				for (int tmp18 = 0; tmp18 < tmp17.len; tmp18++) {
+					v__ast__Attr attr = ((v__ast__Attr*)tmp17.data)[tmp18];
 					array_push(&attrs, &(string[]){ attr.name });
 				}
 			}
@@ -28485,8 +28474,8 @@ static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser*
 		if (v__util__contains_capital(name)) {
 			v__parser__Parser_error(p, tos_lit("interface methods cannot contain uppercase letters, use snake_case instead"));
 		}
-		multi_return_array_v__table__Arg_bool mr_7025 = v__parser__Parser_fn_args(p);
-		array_v__table__Arg args2 = mr_7025.arg0;
+		multi_return_array_v__table__Arg_bool mr_7195 = v__parser__Parser_fn_args(p);
+		array_v__table__Arg args2 = mr_7195.arg0;
 		array_v__table__Arg args = new_array_from_c_array(1, 1, sizeof(v__table__Arg), (v__table__Arg[1]){
 		(v__table__Arg){
 			.name = tos_lit("x"),
