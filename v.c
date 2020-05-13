@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "478ebed"
+#define V_COMMIT_HASH "33a9822"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c92b09d"
+#define V_COMMIT_HASH "478ebed"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "478ebed"
+#define V_CURRENT_COMMIT_HASH "33a9822"
 #endif
 
 
@@ -1807,9 +1807,11 @@ struct v__ast__ArrayInit {
 	bool has_val;
 	string mod;
 	v__ast__Expr len_expr;
+	v__ast__Expr cap_expr;
+	v__ast__Expr default_expr;
 	bool has_len;
 	bool has_cap;
-	v__ast__Expr cap_expr;
+	bool has_default;
 	bool is_interface;
 	array_v__table__Type interface_types;
 	v__table__Type interface_type;
@@ -25516,9 +25518,12 @@ static v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser* p) {
 	}
 	bool has_len = false;
 	bool has_cap = false;
+	bool has_default = false;
 	v__ast__Expr len_expr = (v__ast__Expr){
 	0};
 	v__ast__Expr cap_expr = (v__ast__Expr){
+	0};
+	v__ast__Expr default_expr = (v__ast__Expr){
 	0};
 	if (p->tok.kind == v__token__Kind_lcbr && exprs.len == 0) {
 		v__parser__Parser_next(p);
@@ -25532,7 +25537,8 @@ static v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser* p) {
 				has_cap = true;
 				cap_expr = v__parser__Parser_expr(p, 0);
 			}else if (string_eq(key, tos_lit("default"))) {
-				v__parser__Parser_expr(p, 0);
+				has_default = true;
+				default_expr = v__parser__Parser_expr(p, 0);
 			}else {
 				v__parser__Parser_error(p, _STR("wrong field `%.*s\000`, expecting `len`, `cap`, or `default`", 2, key));
 			};
@@ -25558,7 +25564,9 @@ static v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser* p) {
 		.has_len = has_len,
 		.len_expr = len_expr,
 		.has_cap = has_cap,
+		.has_default = has_default,
 		.cap_expr = cap_expr,
+		.default_expr = default_expr,
 		.is_interface = 0,
 		.interface_types = __new_array(0, 1, sizeof(v__table__Type)),
 		.interface_type = {0},
