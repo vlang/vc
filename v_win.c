@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b1511ce"
+#define V_COMMIT_HASH "db50366"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "60dd7a7"
+#define V_COMMIT_HASH "b1511ce"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b1511ce"
+#define V_CURRENT_COMMIT_HASH "db50366"
 #endif
 
 
@@ -16770,7 +16770,7 @@ v__table__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__S
 	}
 	v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(c->table, struct_init->typ);
 	if (!type_sym->is_public && type_sym->kind != v__table__Kind_placeholder && string_ne(type_sym->mod, c->mod)) {
-		v__checker__Checker_warn(c, _STR("type `%.*s\000` is private", 2, type_sym->name), struct_init->pos);
+		v__checker__Checker_error(c, _STR("type `%.*s\000` is private", 2, type_sym->name), struct_init->pos);
 	}
 	if (type_sym->kind == v__table__Kind_placeholder) {
 		v__checker__Checker_error(c, _STR("unknown struct: %.*s", 1, type_sym->name), struct_init->pos);
