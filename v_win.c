@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "1bf26a3"
+#define V_COMMIT_HASH "e60e8f3"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ab7bc76"
+#define V_COMMIT_HASH "1bf26a3"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "1bf26a3"
+#define V_CURRENT_COMMIT_HASH "e60e8f3"
 #endif
 
 
@@ -29688,6 +29688,57 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 }
 
 static void v__builder__Builder_cc_windows_cross(v__builder__Builder* c) {
+	println(tos_lit("Cross compiling for Windows..."));
+	if (!string_ends_with(c->pref->out_name, tos_lit(".exe"))) {
+		c->pref->out_name = string_add(c->pref->out_name, tos_lit(".exe"));
+	}
+	string args = _STR("-o %.*s\000 -w -L. ", 2, c->pref->out_name);
+	array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(c);
+	args = string_add(args, (string_eq(c->pref->ccompiler, tos_lit("msvc")) ?  ( array_v__cflag__CFlag_c_options_before_target_msvc(cflags) )  :  ( array_v__cflag__CFlag_c_options_before_target(cflags) ) ));
+	string libs = tos_lit("");
+	if (false && c->pref->build_mode == v__pref__BuildMode_default_mode) {
+		libs = _STR("\"%.*s\000/vlib/builtin.o\"", 2, _const_v__pref__default_module_path);
+		if (!os__exists(libs)) {
+			println(_STR("`%.*s\000` not found", 2, libs));
+			v_exit(1);
+		}
+		// FOR IN array
+		array tmp2 = c->table->imports;
+		for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
+			string imp = ((string*)tmp2.data)[tmp3];
+			libs = string_add(libs, _STR(" \"%.*s\000/vlib/%.*s\000.o\"", 3, _const_v__pref__default_module_path, imp));
+		}
+	}
+	args = string_add(args, _STR(" %.*s\000 ", 2, c->out_name_c));
+	args = string_add(args, (string_eq(c->pref->ccompiler, tos_lit("msvc")) ?  ( array_v__cflag__CFlag_c_options_after_target_msvc(cflags) )  :  ( array_v__cflag__CFlag_c_options_after_target(cflags) ) ));
+	if (!(string_eq(os__user_os(), tos_lit("mac")) || string_eq(os__user_os(), tos_lit("darwin")) || string_eq(os__user_os(), tos_lit("linux")))) {
+		println(os__user_os());
+		v_panic(tos_lit("your platform is not supported yet"));
+	}
+	string cmd = tos_lit("x86_64-w64-mingw32-gcc");
+	cmd = string_add(cmd, _STR(" -std=gnu11 %.*s\000 -municode", 2, args));
+	if (c->pref->is_verbose) {
+		println(cmd);
+	}
+	if (os__system(cmd) != 0) {
+		println(tos_lit("Cross compilation for Windows failed. Make sure you have mingw-w64 installed."));
+		
+// $if  macos {
+#ifdef __APPLE__
+		
+// } macos
+#endif
+
+		
+// $if  linux {
+#ifdef __linux__
+		
+// } linux
+#endif
+
+		v_exit(1);
+	}
+	println(string_add(c->pref->out_name, tos_lit(" has been successfully compiled")));
 }
 
 static void v__builder__Builder_build_thirdparty_obj_files(v__builder__Builder* c) {
