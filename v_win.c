@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "60dd7a7"
+#define V_COMMIT_HASH "b1511ce"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3fd852d"
+#define V_COMMIT_HASH "60dd7a7"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "60dd7a7"
+#define V_CURRENT_COMMIT_HASH "b1511ce"
 #endif
 
 
@@ -3923,7 +3923,6 @@ static void v__gen__x64__verror(string s);
 #define _const_v__scanner__num_sep '_'
 v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__CommentsMode comments_mode);
 v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMode comments_mode);
-void v__scanner__Scanner_add_fn_main_and_rescan(v__scanner__Scanner* s, int pos);
 static v__token__Token v__scanner__Scanner_new_token(v__scanner__Scanner* s, v__token__Kind tok_kind, string lit, int len);
 static string v__scanner__Scanner_ident_name(v__scanner__Scanner* s);
 static string v__scanner__filter_num_sep(byteptr txt, int start, int end);
@@ -24559,19 +24558,6 @@ v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMo
 	return s;
 }
 
-void v__scanner__Scanner_add_fn_main_and_rescan(v__scanner__Scanner* s, int pos) {
-	if (pos > 0) {
-		s->text = string_add(string_add(string_add(string_substr(s->text, 0, pos), tos_lit("fn main() {")), string_substr(s->text, pos, s->text.len)), tos_lit("\n}"));
-		s->pos = pos;
-		s->is_started = false;
-	} else {
-		s->text = string_add(string_add(tos_lit("fn main() {"), s->text), tos_lit("\n}"));
-		s->pos = 0;
-		s->line_nr = 0;
-		s->is_started = false;
-	}
-}
-
 static v__token__Token v__scanner__Scanner_new_token(v__scanner__Scanner* s, v__token__Kind tok_kind, string lit, int len) {
 	return (v__token__Token){
 		.kind = tok_kind,
@@ -27172,9 +27158,32 @@ v__ast__Stmt v__parser__Parser_top_stmt(v__parser__Parser* p) {
 		return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Comment[]) {v__parser__Parser_comment(p)}, sizeof(v__ast__Comment)), .typ = 173 /* v.ast.Comment */};
 	}else {
 		if (p->pref->is_script && !p->pref->is_test) {
-			v__scanner__Scanner_add_fn_main_and_rescan(p->scanner, p->tok.pos - 1);
-			v__parser__Parser_read_first_token(p);
-			return v__parser__Parser_top_stmt(p);
+			array_v__ast__Stmt stmts = __new_array(0, 0, sizeof(v__ast__Stmt));
+			while (p->tok.kind != v__token__Kind_eof) {
+				array_push(&stmts, &(v__ast__Stmt[]){ v__parser__Parser_stmt(p) });
+			}
+			return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__FnDecl[]) {(v__ast__FnDecl){
+				.name = tos_lit("main"),
+				.stmts = stmts,
+				.file = p->file_name,
+				.return_type = _const_v__table__void_type,
+				.args = __new_array(0, 1, sizeof(v__table__Arg)),
+				.is_deprecated = 0,
+				.is_pub = 0,
+				.is_variadic = 0,
+				.is_anon = 0,
+				.receiver = {0},
+				.receiver_pos = {0},
+				.is_method = 0,
+				.rec_mut = 0,
+				.is_c = 0,
+				.is_js = 0,
+				.no_body = 0,
+				.is_builtin = 0,
+				.ctdefine = (string){.str=""},
+				.pos = {0},
+				.body_pos = {0},
+			}}, sizeof(v__ast__FnDecl)), .typ = 125 /* v.ast.FnDecl */};
 		} else {
 			v__parser__Parser_error(p, string_add(tos_lit("bad top level statement "), v__token__Token_str(p->tok)));
 			return (v__ast__Stmt){
