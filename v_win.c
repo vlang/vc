@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ab7bc76"
+#define V_COMMIT_HASH "1bf26a3"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9895cab"
+#define V_COMMIT_HASH "ab7bc76"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ab7bc76"
+#define V_CURRENT_COMMIT_HASH "1bf26a3"
 #endif
 
 
@@ -25822,11 +25822,11 @@ static v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser* p) {
 			}else if (string_eq(key, tos_lit("cap"))) {
 				has_cap = true;
 				cap_expr = v__parser__Parser_expr(p, 0);
-			}else if (string_eq(key, tos_lit("default"))) {
+			}else if (string_eq(key, tos_lit("init"))) {
 				has_default = true;
 				default_expr = v__parser__Parser_expr(p, 0);
 			}else {
-				v__parser__Parser_error(p, _STR("wrong field `%.*s\000`, expecting `len`, `cap`, or `default`", 2, key));
+				v__parser__Parser_error(p, _STR("wrong field `%.*s\000`, expecting `len`, `cap`, or `init`", 2, key));
 			};
 			if (p->tok.kind != v__token__Kind_rcbr) {
 				v__parser__Parser_check(p, v__token__Kind_comma);
