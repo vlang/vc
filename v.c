@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "3270545"
+#define V_COMMIT_HASH "1ca04e6"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "33a9822"
+#define V_COMMIT_HASH "3270545"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "3270545"
+#define V_CURRENT_COMMIT_HASH "1ca04e6"
 #endif
 
 
@@ -16609,6 +16609,9 @@ v__table__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__S
 		struct_init->typ = c->expected_type;
 	}
 	v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(c->table, struct_init->typ);
+	if (type_sym->kind == v__table__Kind_interface_) {
+		v__checker__Checker_error(c, _STR("cannot instantiate interface `%.*s\000`", 2, type_sym->name), struct_init->pos);
+	}
 	if (!type_sym->is_public && type_sym->kind != v__table__Kind_placeholder && string_ne(type_sym->mod, c->mod)) {
 		v__checker__Checker_error(c, _STR("type `%.*s\000` is private", 2, type_sym->name), struct_init->pos);
 	}
