@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "f49ef39"
+#define V_COMMIT_HASH "0f251e9"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e5d4786"
+#define V_COMMIT_HASH "f49ef39"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "f49ef39"
+#define V_CURRENT_COMMIT_HASH "0f251e9"
 #endif
 
 
@@ -19393,9 +19393,11 @@ v__ast__CallExpr v__parser__Parser_call_expr(v__parser__Parser* p, bool is_c, bo
 	) : (
 		name
 	));
+	bool is_or_block_used = false;
 	if (string_eq(fn_name, tos_lit("json.decode"))) {
 		p->expecting_type = true;
 		p->expr_mod = tos_lit("");
+		is_or_block_used = true;
 	}
 	;
 	v__parser__Parser_check(p, v__token__Kind_lpar);
@@ -19408,7 +19410,6 @@ v__ast__CallExpr v__parser__Parser_call_expr(v__parser__Parser* p, bool is_c, bo
 		.len = last_pos.pos - first_pos.pos + last_pos.len,
 	};
 	array_v__ast__Stmt or_stmts = __new_array(0, 0, sizeof(v__ast__Stmt));
-	bool is_or_block_used = false;
 	if (p->tok.kind == v__token__Kind_key_orelse) {
 		p->inside_or_expr = true;
 		v__parser__Parser_next(p);
@@ -19574,9 +19575,9 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
 	;
-	multi_return_array_v__table__Arg_bool mr_4034 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_4034.arg0;
-	bool is_variadic = mr_4034.arg1;
+	multi_return_array_v__table__Arg_bool mr_4058 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_4058.arg0;
+	bool is_variadic = mr_4058.arg1;
 	_PUSH_MANY(&args, (args2), tmp2, array_v__table__Arg);
 	// FOR IN array
 	array tmp3 = args;
@@ -19700,9 +19701,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_6604 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_6604.arg0;
-	bool is_variadic = mr_6604.arg1;
+	multi_return_array_v__table__Arg_bool mr_6628 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_6628.arg0;
+	bool is_variadic = mr_6628.arg1;
 	// FOR IN array
 	array tmp1 = args;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
@@ -23629,8 +23630,8 @@ void v__checker__Checker_check_expr_opt_call(v__checker__Checker* c, v__ast__Exp
 		v__ast__CallExpr* it = (v__ast__CallExpr*)x.obj; // ST it
 		if (v__table__Type_flag_is(it->return_type, v__table__TypeFlag_optional)) {
 			v__checker__Checker_check_or_block(c, it, xtype, is_return_used);
-		} else if (it->or_block.is_used) {
-			v__checker__Checker_error(c, tos_lit("unexpected `or` block, the function does not return an optional"), it->pos);
+		} else if (it->or_block.is_used && string_ne(it->name, tos_lit("json.decode"))) {
+			v__checker__Checker_error(c, _STR("unexpected `or` block, the function `%.*s\000` does not return an optional", 2, it->name), it->pos);
 		}
 		;
 	}else {
