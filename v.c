@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ab8264f"
+#define V_COMMIT_HASH "e5d4786"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fd0d833"
+#define V_COMMIT_HASH "ab8264f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ab8264f"
+#define V_CURRENT_COMMIT_HASH "e5d4786"
 #endif
 
 
@@ -3886,6 +3886,7 @@ static void v__builder__verror(string s);
 string v__builder__Builder_gen_c(v__builder__Builder* b, array_string v_files);
 void v__builder__Builder_build_c(v__builder__Builder* b, array_string v_files, string out_file);
 void v__builder__Builder_compile_c(v__builder__Builder* b);
+string _const_v__builder__c_error_info; // a string literal, inited later
 static void v__builder__todo();
 static bool v__builder__Builder_no_cc_installed(v__builder__Builder* v);
 static void v__builder__Builder_cc(v__builder__Builder* v);
@@ -4132,6 +4133,7 @@ void vinit_string_literals(){
 	_const_v__gen__c_builtin_types = tos_lit("\n\n//================================== builtin types ================================*/\n\ntypedef int64_t i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef unsigned char* byteptr;\ntypedef void* voidptr;\ntypedef char* charptr;\ntypedef struct array array;\ntypedef struct map map;\ntypedef array array_string;\ntypedef array array_int;\ntypedef array array_byte;\ntypedef array array_f32;\ntypedef array array_f64;\ntypedef array array_u16;\ntypedef array array_u32;\ntypedef array array_u64;\ntypedef map map_int;\ntypedef map map_string;\ntypedef byte array_fixed_byte_300 [300];\ntypedef byte array_fixed_byte_400 [400];\n#ifndef __cplusplus\n#ifndef bool\n	typedef int bool;\n	#define true 1\n	#define false 0\n#endif\n#endif\n\n");
 	_const_v__gen__posix_hotcode_definitions_1 = tos_lit("\nvoid v_bind_live_symbols(void* live_lib){\n    @LOAD_FNS@\n}\n");
 	_const_v__gen__windows_hotcode_definitions_1 = tos_lit("\nvoid v_bind_live_symbols(void* live_lib){\n    @LOAD_FNS@\n}\n");
+	_const_v__builder__c_error_info = tos_lit("\n==================\nC error. This should never happen.\n\nIf you were not working with C interop, please raise an issue on GitHub:\n\nhttps://github.com/vlang/v/issues/new/choose\n\nYou can also use #help on Discord: https://discord.gg/vlang\n");
 }
 // << string literal consts
 
@@ -32504,7 +32506,7 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 				eword
 			));
 			println(string_replace(/*opt*/(*(os__Result*)res.data).output, eword, khighlight));
-			v__builder__verror(_STR("\n==================\nC error. This should never happen.\n\nV compiler version: %.*s\000\nHost OS: %.*s\000\nTarget OS: %.*s\000\n\nIf you were not working with C interop and are not sure about what's happening,\nplease put the whole output in a pastebin and contact us through the following ways with a link to the pastebin:\n- Raise an issue on GitHub: https://github.com/vlang/v/issues/new/choose\n- Ask a question in #help on Discord: https://discord.gg/vlang", 4, v__util__full_v_version(), v__pref__OS_str(v__pref__get_host_os()), v__pref__OS_str(v->pref->os)));
+			v__builder__verror(_const_v__builder__c_error_info);
 		} else {
 			if (/*opt*/(*(os__Result*)res.data).output.len < 30) {
 				println(/*opt*/(*(os__Result*)res.data).output);
@@ -32522,7 +32524,7 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 				println(tos_lit("(Use `v -cg` to print the entire error message)\n"));
 			}
 			;
-			v__builder__verror(tos_lit("C error.\n\nPlease make sure that:\n- You have all V dependencies installed.\n- You did not declare a C function that was not included. (Try commenting your code that involves C interop)\n- You are running the latest version of V. (Try running `v up` and rerunning your command)\n\nIf you're confident that all of the above is true, please try running V with the `-cg` option which enables more debugging capabilities.\n"));
+			v__builder__verror(_const_v__builder__c_error_info);
 		}
 		;
 	}
