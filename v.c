@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "74005b4"
+#define V_COMMIT_HASH "70b76a8"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d830620"
+#define V_COMMIT_HASH "74005b4"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "74005b4"
+#define V_CURRENT_COMMIT_HASH "70b76a8"
 #endif
 
 
@@ -28905,14 +28905,14 @@ void v__builder__Builder_parse_imports(v__builder__Builder* b) {
 			if (!import_path.ok) {
 				string err = import_path.v_error;
 				int errcode = import_path.ecode;
-				 // typeof it_expr_type: v.ast.CallExpr
-				// last_type: v.ast.ExprStmt
-				// last_expr_result_type: void
-				v_panic(_STR("cannot import module \"%.*s\000\" (not found)", 2, mod));
+				// last_type: v.ast.BranchStmt
+				// last_expr_result_type: 
+				v__builder__verror(_STR("cannot import module \"%.*s\000\" (not found)", 2, mod));
+				break;
 			};
 			array_string v_files = v__builder__Builder_v_files_from_dir(/*rec*/*b, /*opt*/(*(string*)import_path.data));
 			if (v_files.len == 0) {
-				v_panic(_STR("cannot import module \"%.*s\000\" (no .v files in \"%.*s\000\")", 3, mod, /*opt*/(*(string*)import_path.data)));
+				v__builder__verror(_STR("cannot import module \"%.*s\000\" (no .v files in \"%.*s\000\")", 3, mod, /*opt*/(*(string*)import_path.data)));
 			}
 			array_v__ast__File parsed_files = v__parser__parse_files(v_files, b->table, b->pref, b->global_scope);
 			// FOR IN array
