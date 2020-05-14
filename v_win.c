@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "c86e367"
+#define V_COMMIT_HASH "1cb4aa7"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e60e8f3"
+#define V_COMMIT_HASH "c86e367"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c86e367"
+#define V_CURRENT_COMMIT_HASH "1cb4aa7"
 #endif
 
 
@@ -4055,6 +4055,7 @@ void v__builder__Builder_compile_c(v__builder__Builder* b);
 static void v__builder__todo();
 static bool v__builder__Builder_no_cc_installed(v__builder__Builder* v);
 static void v__builder__Builder_cc(v__builder__Builder* v);
+static void v__builder__Builder_cc_linux_cross(v__builder__Builder* c);
 static void v__builder__Builder_cc_windows_cross(v__builder__Builder* c);
 static void v__builder__Builder_build_thirdparty_obj_files(v__builder__Builder* c);
 static void v__builder__Builder_build_thirdparty_obj_file(v__builder__Builder* v, string path, array_v__cflag__CFlag moduleflags);
@@ -29519,6 +29520,16 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 	if (v->pref->sanitize) {
 		array_push(&a, &(string[]){ tos_lit("-fsanitize=leak") });
 	}
+	if (v->pref->os == v__pref__OS_linux) {
+		
+// $if !linux {
+#ifndef __linux__
+			v__builder__Builder_cc_linux_cross(v);
+		
+// } linux
+#endif
+
+	}
 	array_push(&a, &(string[]){ _STR("-o \"%.*s\000\"", 2, v->pref->out_name) });
 	if (os__is_dir(v->pref->out_name)) {
 		v__builder__verror(_STR("'%.*s\000' is a directory", 2, v->pref->out_name));
@@ -29685,6 +29696,9 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 
 		}
 	}
+}
+
+static void v__builder__Builder_cc_linux_cross(v__builder__Builder* c) {
 }
 
 static void v__builder__Builder_cc_windows_cross(v__builder__Builder* c) {
