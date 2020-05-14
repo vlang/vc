@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "1cb4aa7"
+#define V_COMMIT_HASH "d830620"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c86e367"
+#define V_COMMIT_HASH "1cb4aa7"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "1cb4aa7"
+#define V_CURRENT_COMMIT_HASH "d830620"
 #endif
 
 
@@ -15459,7 +15459,6 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 #endif
 
 	}
-	p->enable_globals = false;
 }
 
 static string v__pref__default_c_compiler() {
@@ -30732,6 +30731,8 @@ static multi_return_v__pref__Preferences_string parse_args(array_string args) {
 			res->is_shared = true;
 		}else if (string_eq(arg, tos_lit("-shared"))) {
 			res->is_shared = true;
+		}else if (string_eq(arg, tos_lit("--enable-globals"))) {
+			res->enable_globals = true;
 		}else if (string_eq(arg, tos_lit("-autofree"))) {
 			res->autofree = true;
 		}else if (string_eq(arg, tos_lit("-compress"))) {
