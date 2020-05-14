@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d830620"
+#define V_COMMIT_HASH "74005b4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1cb4aa7"
+#define V_COMMIT_HASH "d830620"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d830620"
+#define V_CURRENT_COMMIT_HASH "74005b4"
 #endif
 
 
@@ -3591,6 +3591,8 @@ string v__util__full_v_version();
 string v__util__githash(bool should_get_from_filesystem);
 static void v__util__set_vroot_folder(string vroot_path);
 void v__util__launch_tool(bool is_verbose, string tool_name);
+string v__util__quote_path_with_spaces(string s);
+string v__util__args_quote_paths_with_spaces(array_string args);
 string v__util__path_of_executable(string path);
 Option_string v__util__read_file(string file_path);
 static int v__util__imin(int a, int b);
@@ -15988,7 +15990,7 @@ void v__util__launch_tool(bool is_verbose, string tool_name) {
 	string vexe = v__pref__vexe_path();
 	string vroot = os__dir(vexe);
 	v__util__set_vroot_folder(vroot);
-	string tool_args = array_string_join(array_slice(_const_os__args, 1, _const_os__args.len), tos_lit(" "));
+	string tool_args = v__util__args_quote_paths_with_spaces(array_slice(_const_os__args, 1, _const_os__args.len));
 	string tool_exe = v__util__path_of_executable(os__real_path(_STR("%.*s\000/cmd/tools/%.*s", 2, vroot, tool_name)));
 	string tool_source = os__real_path(_STR("%.*s\000/cmd/tools/%.*s\000.v", 3, vroot, tool_name));
 	string tool_command = _STR("\"%.*s\000\" %.*s", 2, tool_exe, tool_args);
@@ -16043,6 +16045,24 @@ void v__util__launch_tool(bool is_verbose, string tool_name) {
 		println(_STR("launch_tool running tool command: %.*s\000 ...", 2, tool_command));
 	}
 	v_exit(os__system(tool_command));
+}
+
+string v__util__quote_path_with_spaces(string s) {
+	if (string_contains(s, tos_lit(" "))) {
+		return _STR("\"%.*s\000\"", 2, s);
+	}
+	return s;
+}
+
+string v__util__args_quote_paths_with_spaces(array_string args) {
+	array_string res = __new_array(0, 0, sizeof(string));
+	// FOR IN array
+	array tmp1 = args;
+	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+		string a = ((string*)tmp1.data)[tmp2];
+		array_push(&res, &(string[]){ v__util__quote_path_with_spaces(a) });
+	}
+	return array_string_join(res, tos_lit(" "));
 }
 
 string v__util__path_of_executable(string path) {
