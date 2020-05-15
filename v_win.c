@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "c4ca6a9"
+#define V_COMMIT_HASH "5d0cc09"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "465f0dd"
+#define V_COMMIT_HASH "c4ca6a9"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c4ca6a9"
+#define V_CURRENT_COMMIT_HASH "5d0cc09"
 #endif
 
 
@@ -19919,14 +19919,14 @@ static v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 			.pos = pos,
 		}}, sizeof(v__ast__ForCStmt)), .typ = 170 /* v.ast.ForCStmt */};
 	} else if ((p->peek_tok.kind == v__token__Kind_key_in || p->peek_tok.kind == v__token__Kind_comma)) {
+		v__token__Position key_var_pos = v__token__Token_position(&p->tok);
 		v__token__Position val_var_pos = v__token__Token_position(&p->tok);
 		string key_var_name = tos_lit("");
 		string val_var_name = v__parser__Parser_check_name(p);
 		if (p->tok.kind == v__token__Kind_comma) {
 			v__parser__Parser_next(p);
-			v__token__Position key_var_pos = val_var_pos;
-			val_var_pos = v__token__Token_position(&p->tok);
 			key_var_name = val_var_name;
+			val_var_pos = v__token__Token_position(&p->tok);
 			val_var_name = v__parser__Parser_check_name(p);
 			if (v__ast__Scope_known_var(p->scope, key_var_name)) {
 				v__parser__Parser_error(p, _STR("redefinition of key iteration variable `%.*s\000`", 2, key_var_name));
