@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d73bedc"
+#define V_COMMIT_HASH "8de6da0"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e18268e"
+#define V_COMMIT_HASH "d73bedc"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d73bedc"
+#define V_CURRENT_COMMIT_HASH "8de6da0"
 #endif
 
 
@@ -3931,6 +3931,7 @@ void v__gen__js__JsGen_dec_indent(v__gen__js__JsGen* g);
 void v__gen__js__JsGen_write(v__gen__js__JsGen* g, string s);
 void v__gen__js__JsGen_writeln(v__gen__js__JsGen* g, string s);
 string v__gen__js__JsGen_new_tmp_var(v__gen__js__JsGen* g);
+static string v__gen__js__js_name(string name_);
 static void v__gen__js__JsGen_stmts(v__gen__js__JsGen* g, array_v__ast__Stmt stmts);
 static void v__gen__js__JsGen_stmt(v__gen__js__JsGen* g, v__ast__Stmt node);
 static void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr node);
@@ -20401,7 +20402,11 @@ v__table__Type v__parser__Parser_parse_type(v__parser__Parser* p) {
 		v__parser__Parser_check(p, v__token__Kind_dot);
 	}
 	;
-	v__table__Type typ = v__parser__Parser_parse_any_type(p, is_c, is_js, nr_muls > 0);
+	v__table__Type typ = _const_v__table__void_type;
+	if (p->tok.kind != v__token__Kind_lcbr) {
+		typ = v__parser__Parser_parse_any_type(p, is_c, is_js, nr_muls > 0);
+	}
+	;
 	if (is_optional) {
 		typ = v__table__Type_set_flag(typ, v__table__TypeFlag_optional);
 	}
@@ -25259,7 +25264,12 @@ static string v__gen__Gen_base_type(v__gen__Gen* g, v__table__Type t) {
 
 static void v__gen__Gen_register_optional(v__gen__Gen* g, v__table__Type t, string styp) {
 	string no_ptr = string_replace(styp, tos_lit("*"), tos_lit("_ptr"));
-	strings__Builder_writeln(&g->hotcode_definitions, _STR("typedef struct {\n		%.*s\000  data;\n		string error;\n		int    ecode;\n		bool   ok;\n		bool   is_none;\n	} Option2_%.*s\000;", 3, styp, no_ptr));
+	string typ = (string_eq(styp, tos_lit("void")) ? (
+		tos_lit("void*")
+	) : (
+		styp
+	));
+	strings__Builder_writeln(&g->hotcode_definitions, _STR("typedef struct {\n		%.*s\000  data;\n		string error;\n		int    ecode;\n		bool   ok;\n		bool   is_none;\n	} Option2_%.*s\000;", 3, typ, no_ptr));
 }
 
 static string v__gen__Gen_cc_type(v__gen__Gen* g, v__table__Type t) {
@@ -27712,9 +27722,9 @@ static void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInter
 			;
 		} else if ((*(byte*)array_get(specs, i)) == 's') {
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, (*(v__table__Type*)array_get(node.expr_types, i)));
-			multi_return_bool_bool_int mr_71905 = v__table__TypeSymbol_str_method_info(sym);
-			bool sym_has_str_method = mr_71905.arg0;
-			bool str_method_expects_ptr = mr_71905.arg1;
+			multi_return_bool_bool_int mr_71956 = v__table__TypeSymbol_str_method_info(sym);
+			bool sym_has_str_method = mr_71956.arg0;
+			bool str_method_expects_ptr = mr_71956.arg1;
 			if (v__table__Type_flag_is((*(v__table__Type*)array_get(node.expr_types, i)), v__table__TypeFlag_variadic)) {
 				string str_fn_name = v__gen__Gen_gen_str_for_type(g, (*(v__table__Type*)array_get(node.expr_types, i)));
 				v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -27895,9 +27905,9 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__
 	v__gen__Gen_writeln(g, _STR("if (!%.*s\000.ok) {", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s\000.v_error;", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s\000.ecode;", 2, cvar_name));
-	multi_return_string_string mr_76865 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_76865.arg0;
-	string type_of_last_expression = mr_76865.arg1;
+	multi_return_string_string mr_76916 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_76916.arg0;
+	string type_of_last_expression = mr_76916.arg1;
 	if (string_eq(last_type, tos_lit("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos_lit("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -28391,10 +28401,10 @@ inline static string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Type
 static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_88124 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_88124.arg0;
-	bool str_method_expects_ptr = mr_88124.arg1;
-	int str_nr_args = mr_88124.arg2;
+	multi_return_bool_bool_int mr_88175 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_88175.arg0;
+	bool str_method_expects_ptr = mr_88175.arg1;
+	int str_nr_args = mr_88175.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -28590,9 +28600,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_95065 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_95065.arg0;
-	bool str_method_expects_ptr = mr_95065.arg1;
+	multi_return_bool_bool_int mr_95116 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_95116.arg0;
+	bool str_method_expects_ptr = mr_95116.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (
@@ -28654,9 +28664,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_97889 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_97889.arg0;
-	bool str_method_expects_ptr = mr_97889.arg1;
+	multi_return_bool_bool_int mr_97940 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_97940.arg0;
+	bool str_method_expects_ptr = mr_97940.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (
@@ -29950,9 +29960,7 @@ void v__gen__js__JsGen_escape_namespace(v__gen__js__JsGen* g) {
 }
 
 void v__gen__js__JsGen_push_pub_var(v__gen__js__JsGen* g, string s) {
-	array_string arr = (*(array_string*)map_get3(g->namespaces_pub, g->namespace, &(array_string[]){ __new_array(0, 1, sizeof(string)) }));
-	array_push(&arr, &(string[]){ s });
-	map_set(&g->namespaces_pub, g->namespace, &(array_string[]) { arr });
+	array_push(&(*(array_string*)map_get3(g->namespaces_pub, g->namespace, &(array_string[]){ __new_array(0, 1, sizeof(string)) })), &(string[]){ s });
 }
 
 void v__gen__js__JsGen_find_class_methods(v__gen__js__JsGen* g, array_v__ast__Stmt stmts) {
@@ -30046,11 +30054,11 @@ void v__gen__js__JsGen_gen_indent(v__gen__js__JsGen* g) {
 }
 
 void v__gen__js__JsGen_inc_indent(v__gen__js__JsGen* g) {
-	map_set(&g->indents, g->namespace, &(int[]) { (*(int*)map_get3(g->indents, g->namespace, &(int[]){ 0 })) + 1 });
+	(*(int*)map_get3(g->indents, g->namespace, &(int[]){ 0 }))++;
 }
 
 void v__gen__js__JsGen_dec_indent(v__gen__js__JsGen* g) {
-	map_set(&g->indents, g->namespace, &(int[]) { (*(int*)map_get3(g->indents, g->namespace, &(int[]){ 0 })) - 1 });
+	(*(int*)map_get3(g->indents, g->namespace, &(int[]){ 0 }))--;
 }
 
 void v__gen__js__JsGen_write(v__gen__js__JsGen* g, string s) {
@@ -30066,7 +30074,17 @@ void v__gen__js__JsGen_writeln(v__gen__js__JsGen* g, string s) {
 
 string v__gen__js__JsGen_new_tmp_var(v__gen__js__JsGen* g) {
 	g->tmp_count++;
-	return _STR("tmp%"PRId32"", 1, g->tmp_count);
+	return _STR("_tmp%"PRId32"", 1, g->tmp_count);
+}
+
+// Attr: [inline]
+inline static string v__gen__js__js_name(string name_) {
+	string name = string_replace(name_, tos_lit("."), tos_lit("__"));
+	if (_IN(string, name, _const_v__gen__js__js_reserved)) {
+		return _STR("v_%.*s", 1, name);
+	}
+	;
+	return name;
 }
 
 static void v__gen__js__JsGen_stmts(v__gen__js__JsGen* g, array_v__ast__Stmt stmts) {
@@ -30138,7 +30156,7 @@ static void v__gen__js__JsGen_stmt(v__gen__js__JsGen* g, v__ast__Stmt node) {
 		v__gen__js__JsGen_writeln(g, tos_lit(""));
 	}else if (node.typ == 193 /* v.ast.GotoLabel */) {
 		v__ast__GotoLabel* it = (v__ast__GotoLabel*)node.obj; // ST it
-		v__gen__js__JsGen_writeln(g, _STR("%.*s\000:", 2, it->name));
+		v__gen__js__JsGen_writeln(g, _STR("%.*s\000:", 2, v__gen__js__js_name(it->name)));
 	}else if (node.typ == 199 /* v.ast.GotoStmt */) {
 		v__ast__GotoStmt* it = (v__ast__GotoStmt*)node.obj; // ST it
 	}else if (node.typ == 157 /* v.ast.HashStmt */) {
@@ -30189,7 +30207,7 @@ static void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr node) {
 			v__gen__js__JsGen_write(g, tos_lit("."));
 		}
 		;
-		v__gen__js__JsGen_write(g, _STR("%.*s\000(", 2, it->name));
+		v__gen__js__JsGen_write(g, _STR("%.*s\000(", 2, v__gen__js__js_name(it->name)));
 		// FOR IN array
 		array tmp2 = it->args;
 		for (int i = 0; i < tmp2.len; i++) {
@@ -30251,7 +30269,7 @@ static void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr node) {
 		v__ast__SelectorExpr* it = (v__ast__SelectorExpr*)node.obj; // ST it
 		v__gen__js__JsGen_gen_selector_expr(g, *it);
 	}else {
-		println(term__red(tos_lit("jsgen.expr(): bad node")));
+		println(term__red(_STR("jsgen.expr(): bad node \"%.*s\000\"", 2, tos3( /* v.ast.Expr */ v_typeof_sumtype_150( (node).typ )))));
 	};
 }
 
@@ -30362,7 +30380,7 @@ static void v__gen__js__JsGen_gen_assign_stmt(v__gen__js__JsGen* g, v__ast__Assi
 			v__ast__IdentVar ident_var_info = v__ast__Ident_var_info(&ident);
 			string styp = v__gen__js__JsGen_typ(g, ident_var_info.typ);
 			strings__Builder_write(&jsdoc, styp);
-			strings__Builder_write(&stmt, _STR("%.*s", 1, ident.name));
+			strings__Builder_write(&stmt, v__gen__js__js_name(ident.name));
 			if (i < it.left.len - 1) {
 				strings__Builder_write(&jsdoc, tos_lit(", "));
 				strings__Builder_write(&stmt, tos_lit(", "));
@@ -30401,7 +30419,7 @@ static void v__gen__js__JsGen_gen_assign_stmt(v__gen__js__JsGen* g, v__ast__Assi
 				v__gen__js__JsGen_write(g, tos_lit("const "));
 			}
 			;
-			v__gen__js__JsGen_write(g, _STR("%.*s\000 = ", 2, ident.name));
+			v__gen__js__JsGen_write(g, _STR("%.*s\000 = ", 2, v__gen__js__js_name(ident.name)));
 			v__gen__js__JsGen_expr(g, val);
 			if (g->inside_loop) {
 				v__gen__js__JsGen_write(g, tos_lit("; "));
@@ -30442,7 +30460,7 @@ static void v__gen__js__JsGen_gen_const_decl(v__gen__js__JsGen* g, v__ast__Const
 		strings__Builder_write(&g->constants, tos_lit("\t"));
 		strings__Builder_writeln(&g->constants, v__gen__js__JsDoc_gen_typ(g->doc, typ, field.name));
 		strings__Builder_write(&g->constants, tos_lit("\t"));
-		strings__Builder_write(&g->constants, _STR("%.*s\000: %.*s", 2, field.name, val));
+		strings__Builder_write(&g->constants, _STR("%.*s\000: %.*s", 2, v__gen__js__js_name(field.name), val));
 		if (i < it.fields.len - 1) {
 			strings__Builder_writeln(&g->constants, tos_lit(","));
 		}
@@ -30463,7 +30481,7 @@ static void v__gen__js__JsGen_gen_defer_stmts(v__gen__js__JsGen* g) {
 }
 
 static void v__gen__js__JsGen_gen_enum_decl(v__gen__js__JsGen* g, v__ast__EnumDecl it) {
-	v__gen__js__JsGen_writeln(g, _STR("const %.*s\000 = Object.freeze({", 2, it.name));
+	v__gen__js__JsGen_writeln(g, _STR("const %.*s\000 = Object.freeze({", 2, v__gen__js__js_name(it.name)));
 	v__gen__js__JsGen_inc_indent(g);
 	// FOR IN array
 	array tmp1 = it.fields;
@@ -30528,7 +30546,7 @@ static void v__gen__js__JsGen_gen_method_decl(v__gen__js__JsGen* g, v__ast__FnDe
 		;
 		v__gen__js__JsGen_write(g, tos_lit("function("));
 	} else {
-		string name = it.name;
+		string name = v__gen__js__js_name(it.name);
 		byte c = string_at(name, 0);
 		if ((c == '+' || c == '-' || c == '*' || c == '/')) {
 			name = v__util__replace_op(name);
@@ -30674,11 +30692,12 @@ static void v__gen__js__JsGen_fn_args(v__gen__js__JsGen* g, array_v__table__Arg 
 	array tmp1 = args;
 	for (int i = 0; i < tmp1.len; i++) {
 		v__table__Arg arg = ((v__table__Arg*)tmp1.data)[i];
+		string name = v__gen__js__js_name(arg.name);
 		bool is_varg = i == args.len - 1 && is_variadic;
 		if (is_varg) {
-			v__gen__js__JsGen_write(g, _STR("...%.*s", 1, arg.name));
+			v__gen__js__JsGen_write(g, _STR("...%.*s", 1, name));
 		} else {
-			v__gen__js__JsGen_write(g, arg.name);
+			v__gen__js__JsGen_write(g, name);
 		}
 		;
 		if (i < args.len - 1) {
@@ -30783,7 +30802,7 @@ static void v__gen__js__JsGen_enum_expr(v__gen__js__JsGen* g, v__ast__Expr node)
 }
 
 static void v__gen__js__JsGen_gen_struct_decl(v__gen__js__JsGen* g, v__ast__StructDecl node) {
-	v__gen__js__JsGen_writeln(g, _STR("class %.*s\000 {", 2, node.name));
+	v__gen__js__JsGen_writeln(g, _STR("class %.*s\000 {", 2, v__gen__js__js_name(node.name)));
 	v__gen__js__JsGen_inc_indent(g);
 	v__gen__js__JsGen_writeln(g, v__gen__js__JsDoc_gen_ctor(g->doc, node.fields));
 	v__gen__js__JsGen_writeln(g, tos_lit("constructor(values) {"));
@@ -30841,7 +30860,7 @@ static void v__gen__js__JsGen_gen_ident(v__gen__js__JsGen* g, v__ast__Ident node
 		v__gen__js__JsGen_write(g, tos_lit("CONSTANTS."));
 	}
 	;
-	string name = node.name;
+	string name = v__gen__js__js_name(node.name);
 	v__gen__js__JsGen_write(g, name);
 }
 
@@ -30956,7 +30975,7 @@ static string v__gen__js__JsDoc_gen_typ(v__gen__js__JsDoc* d, string typ, string
 	v__gen__js__JsDoc_write(d, tos_lit("/**"));
 	v__gen__js__JsDoc_write(d, _STR(" @type {%.*s\000}", 2, typ));
 	if (name.len > 0) {
-		v__gen__js__JsDoc_write(d, _STR(" - %.*s", 1, name));
+		v__gen__js__JsDoc_write(d, _STR(" - %.*s", 1, v__gen__js__js_name(name)));
 	}
 	;
 	v__gen__js__JsDoc_write(d, tos_lit(" */"));
@@ -30997,10 +31016,11 @@ static string v__gen__js__JsDoc_gen_fn(v__gen__js__JsDoc* d, v__ast__FnDecl it) 
 		;
 		string arg_type_name = v__gen__js__JsGen_typ(d->gen, arg.typ);
 		bool is_varg = i == it.args.len - 1 && it.is_variadic;
+		string name = v__gen__js__js_name(arg.name);
 		if (is_varg) {
-			v__gen__js__JsDoc_writeln(d, _STR("* @param {...%.*s\000} %.*s", 2, arg_type_name, arg.name));
+			v__gen__js__JsDoc_writeln(d, _STR("* @param {...%.*s\000} %.*s", 2, arg_type_name, name));
 		} else {
-			v__gen__js__JsDoc_writeln(d, _STR("* @param {%.*s\000} %.*s", 2, arg_type_name, arg.name));
+			v__gen__js__JsDoc_writeln(d, _STR("* @param {%.*s\000} %.*s", 2, arg_type_name, name));
 		}
 		;
 	}
@@ -36069,8 +36089,8 @@ void _vinit() {
 });
 	_const_v__gen__c_headers = _STR("\n\n// c_headers\ntypedef int (*qsort_callback_func)(const void*, const void*);\n#include <stdio.h>  // TODO remove all these includes, define all function signatures and types manually\n#include <stdlib.h>\n#ifdef __cplusplus\n#include <utility>\n#define _MOV std::move\n#endif\n\n#ifndef _WIN32\n#if defined __has_include\n#if __has_include (<execinfo.h>)\n#	include <execinfo.h>\n#else\n// Most probably musl OR __ANDROID__ ...\nint backtrace (void **__array, int __size) { return 0; }\nchar **backtrace_symbols (void *const *__array, int __size){ return 0; }\nvoid backtrace_symbols_fd (void *const *__array, int __size, int __fd){}	\n#endif\n#endif\n#endif\n\n//#include \"fns.h\"\n#include <signal.h>\n#include <stdarg.h> // for va_list\n#include <string.h> // memcpy\n\n#if INTPTR_MAX == INT32_MAX\n    #define TARGET_IS_32BIT 1\n#elif INTPTR_MAX == INT64_MAX\n    #define TARGET_IS_64BIT 1\n#else\n    #error \"The environment is not 32 or 64-bit.\"\n#endif\n\n#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) || defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || defined(__MIBSEB__)\n    #define TARGET_ORDER_IS_BIG\n#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || defined(_M_X64) || defined(_M_IX86)\n    #define TARGET_ORDER_IS_LITTLE\n#else\n    #error \"Unknown architecture endianness\"\n#endif\n\n#ifndef _WIN32\n#include <ctype.h>\n#include <locale.h> // tolower\n#include <sys/time.h>\n#include <unistd.h> // sleep\nextern char **environ;\n#endif\n\n#if defined(__CYGWIN__) && !defined(_WIN32)\n#error Cygwin is not supported, please use MinGW or Visual Studio.\n#endif\n\n\n#ifdef __linux__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __FreeBSD__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __DragonFly__\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n#include <sys/types.h>\n#include <sys/resource.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __NetBSD__\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __sun\n#include <sys/types.h>\n#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n%.*s\000\n\n#ifdef _WIN32\n#define WINVER 0x0600\n#ifdef _WIN32_WINNT\n#undef _WIN32_WINNT\n#endif\n#define _WIN32_WINNT 0x0600\n#define WIN32_LEAN_AND_MEAN\n#define _UNICODE\n#define UNICODE\n#include <windows.h>\n\n#include <io.h> // _waccess\n#include <direct.h> // _wgetcwd\n//#include <WinSock2.h>\n#ifdef _MSC_VER\n\n// On MSVC these are the same (as long as /volatile:ms is passed)\n#define _Atomic volatile\n\n// MSVC cannot parse some things properly\n#undef EMPTY_STRUCT_DECLARATION\n#undef OPTION_CAST\n\n#define EMPTY_STRUCT_DECLARATION int ____dummy_variable\n#define OPTION_CAST(x)\n\n#include <dbghelp.h>\n#pragma comment(lib, \"Dbghelp.lib\")\n\nextern wchar_t **_wenviron;\n\n#endif\n\n#else\n#include <pthread.h>\n#endif\n\n// g_live_info is used by live.info()\nvoid* g_live_info = NULL;\n\n//============================== HELPER C MACROS =============================*/\n//#define tos4(s, slen) ((string){.str=(s), .len=(slen)})\n#define _SLIT(s) ((string){.str=(s), .len=(strlen(s))})\n#define _PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); array_push_many(arr, tmp.data, tmp.len);}\n#define _IN(typ, val, arr) array_##typ##_contains(arr, val)\n#define _IN_MAP(val, m) map_exists(m, val)\n#define DEFAULT_EQUAL(a, b) (a == b)\n#define DEFAULT_NOT_EQUAL(a, b) (a != b)\n#define DEFAULT_LT(a, b) (a < b)\n#define DEFAULT_LE(a, b) (a <= b)\n#define DEFAULT_GT(a, b) (a > b)\n#define DEFAULT_GE(a, b) (a >= b)\n\n// NB: macro_fXX_eq and macro_fXX_ne are NOT used\n// in the generated C code. They are here just for\n// completeness/testing.\n\n#define macro_f64_eq(a, b) (a == b)\n#define macro_f64_ne(a, b) (a != b)\n#define macro_f64_lt(a, b) (a <  b)\n#define macro_f64_le(a, b) (a <= b)\n#define macro_f64_gt(a, b) (a >  b)\n#define macro_f64_ge(a, b) (a >= b)\n\n#define macro_f32_eq(a, b) (a == b)\n#define macro_f32_ne(a, b) (a != b)\n#define macro_f32_lt(a, b) (a <  b)\n#define macro_f32_le(a, b) (a <= b)\n#define macro_f32_gt(a, b) (a >  b)\n#define macro_f32_ge(a, b) (a >= b)\n\n#if defined(__MINGW32__) || defined(__MINGW64__)\n#undef PRId64\n#undef PRIi64\n#undef PRIo64\n#undef PRIu64\n#undef PRIx64\n#undef PRIX64\n#define PRId64 \"lld\"\n#define PRIi64 \"lli\"\n#define PRIo64 \"llo\"\n#define PRIu64 \"llu\"\n#define PRIx64 \"llx\"\n#define PRIX64 \"llX\"\n#endif\n\n//================================== GLOBALS =================================*/\nbyte g_str_buf[1024];\nint load_so(byteptr);\nvoid reload_so();\nvoid _vinit();\nvoid _vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\n// ============== wyhash ==============\n//Author: Wang Yi\n#ifndef wyhash_version_gamma\n#define wyhash_version_gamma\n#define WYHASH_CONDOM 0\n#include <stdint.h>\n#include <string.h>\n#if defined(_MSC_VER) && defined(_M_X64)\n#include <intrin.h>\n#pragma intrinsic(_umul128)\n#endif\n\n//const uint64_t _wyp0=0xa0761d6478bd642full, _wyp1=0xe7037ed1a0b428dbull;\n#define _wyp0 ((uint64_t)0xa0761d6478bd642full)\n#define _wyp1 ((uint64_t)0xe7037ed1a0b428dbull)\n\n\n#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__) || defined(__TINYC__)\n#define _likely_(x) __builtin_expect(x, 1)\n#else\n#define _likely_(x) (x)\n#endif\n\n#if defined(TARGET_ORDER_IS_LITTLE)\n#define WYHASH_LITTLE_ENDIAN 1\n#elif defined(TARGET_ORDER_IS_BIG)\n#define WYHASH_LITTLE_ENDIAN 0\n#endif\n\n#if (WYHASH_LITTLE_ENDIAN)\n  static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return v;}\n  static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return v;}\n#else\n#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__)\n  static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return __builtin_bswap64(v);}\n  static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return __builtin_bswap32(v);}\n#elif defined(_MSC_VER)\n  static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return _byteswap_uint64(v);}\n  static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return _byteswap_ulong(v);}\n#elif defined(__TINYC__)\n  static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return bswap_64(v);}\n  static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return bswap_32(v);}\n#endif\n#endif\n\nstatic inline uint64_t _wyr3(const uint8_t *p, unsigned k) { return (((uint64_t)p[0]) << 16) | (((uint64_t)p[k >> 1]) << 8) | p[k - 1];}\nstatic inline uint64_t _wyrotr(uint64_t v, unsigned k) { return (v >> k) | (v << (64 - k));}\nstatic inline void _wymix128(uint64_t A, uint64_t B, uint64_t *C, uint64_t *D){\n	A^=*C;	B^=*D;\n#ifdef UNOFFICIAL_WYHASH_32BIT\n	uint64_t hh=(A>>32)*(B>>32), hl=(A>>32)*(unsigned)B, lh=(unsigned)A*(B>>32), ll=(uint64_t)(unsigned)A*(unsigned)B;\n	*C=_wyrotr(hl,32)^hh; *D=_wyrotr(lh,32)^ll;\n#else\n#ifdef __SIZEOF_INT128__\n	__uint128_t r=A; r*=B; *C=(uint64_t)r; *D=(uint64_t)(r>>64);\n#elif defined(_MSC_VER) && defined(_M_X64)\n	A=_umul128(A,B,&B); *C=A; *D=B;\n#else\n	uint64_t ha=A>>32, hb=B>>32, la=(uint32_t)A, lb=(uint32_t)B, hi, lo;\n	uint64_t rh=ha*hb, rm0=ha*lb, rm1=hb*la, rl=la*lb, t=rl+(rm0<<32), c=t<rl;\n	lo=t+(rm1<<32); c+=lo<t; hi=rh+(rm0>>32)+(rm1>>32)+c;\n	*C=lo;	*D=hi;\n#endif\n#endif\n}\nstatic inline uint64_t wyhash(const void *key, uint64_t len, uint64_t seed){\n	const uint8_t *p=(const uint8_t *)key;\n	uint64_t i=len, see1=seed;\n	start:\n	if(_likely_(i<=16)){\n	#ifndef	WYHASH_CONDOM\n		uint64_t shift=(i<8)*((8-i)<<3);\n		//WARNING: intended reading outside buffer, trading for speed.\n		_wymix128((_wyr8(p)<<shift)^_wyp0,(_wyr8(p+i-8)>>shift)^_wyp1, &seed, &see1);\n	#else\n		if(_likely_(i<=8)){\n			if(_likely_(i>=4))	_wymix128(_wyr4(p)^_wyp0,_wyr4(p+i-4)^_wyp1, &seed, &see1);\n			else if (_likely_(i))	_wymix128(_wyr3(p,i)^_wyp0,_wyp1, &seed, &see1);\n			else	_wymix128(_wyp0,_wyp1, &seed, &see1);\n		}\n  		else	_wymix128(_wyr8(p)^_wyp0,_wyr8(p+i-8)^_wyp1, &seed, &see1);\n	#endif\n		_wymix128(len,_wyp0, &seed, &see1);\n		return	seed^see1;\n	}\n	_wymix128(_wyr8(p)^_wyp0,_wyr8(p+8)^_wyp1, &seed, &see1);\n	i-=16;	p+=16;	goto start;\n}\nstatic inline uint64_t wyhash64(uint64_t A, uint64_t B){\n	_wymix128(_wyp0,_wyp1,&A,&B);\n	_wymix128(0,0,&A,&B);\n	return	A^B;\n}\nstatic inline uint64_t wyrand(uint64_t *seed){\n	*seed+=_wyp0;\n	uint64_t	a=0, b=0;\n	_wymix128(*seed,*seed^_wyp1,&a,&b);\n	return	a^b;\n}\nstatic inline double wy2u01(uint64_t r) {\n	const double _wynorm=1.0/(1ull<<52);\n	return (r>>12)*_wynorm;\n}\nstatic inline double wy2gau(uint64_t r) {\n	const double _wynorm=1.0/(1ull<<20);\n	return ((r&0x1fffff)+((r>>21)&0x1fffff)+((r>>42)&0x1fffff))*_wynorm-3.0;\n}\n#endif\n\n", 2, _const_v__gen__c_common_macros);
 	_const_v__gen__bare_c_headers = _STR("\n\n%.*s\000\n\n#ifndef exit\n#define exit(rc) sys_exit(rc)\nvoid sys_exit (int);\n#endif\n\n", 2, _const_v__gen__c_common_macros);
-	_const_v__gen__js__js_reserved = new_array_from_c_array(14, 14, sizeof(string), (string[14]){
-		tos_lit("delete"), tos_lit("const"), tos_lit("let"), tos_lit("var"), tos_lit("function"), tos_lit("continue"), tos_lit("break"), tos_lit("switch"), tos_lit("for"), tos_lit("in"), tos_lit("of"), tos_lit("instanceof"), tos_lit("typeof"), tos_lit("do"), 
+	_const_v__gen__js__js_reserved = new_array_from_c_array(43, 43, sizeof(string), (string[43]){
+		tos_lit("await"), tos_lit("break"), tos_lit("case"), tos_lit("catch"), tos_lit("class"), tos_lit("const"), tos_lit("continue"), tos_lit("debugger"), tos_lit("default"), tos_lit("delete"), tos_lit("do"), tos_lit("else"), tos_lit("enum"), tos_lit("export"), tos_lit("extends"), tos_lit("finally"), tos_lit("for"), tos_lit("function"), tos_lit("if"), tos_lit("implements"), tos_lit("import"), tos_lit("in"), tos_lit("instanceof"), tos_lit("interface"), tos_lit("let"), tos_lit("new"), tos_lit("package"), tos_lit("private"), tos_lit("protected"), tos_lit("public"), tos_lit("return"), tos_lit("static"), tos_lit("super"), tos_lit("switch"), tos_lit("this"), tos_lit("throw"), tos_lit("try"), tos_lit("typeof"), tos_lit("var"), tos_lit("void"), tos_lit("while"), tos_lit("with"), tos_lit("yield"), 
 });
 	_const_v__gen__js__tabs = new_array_from_c_array(9, 9, sizeof(string), (string[9]){
 		tos_lit(""), tos_lit("\t"), tos_lit("\t\t"), tos_lit("\t\t\t"), tos_lit("\t\t\t\t"), tos_lit("\t\t\t\t\t"), tos_lit("\t\t\t\t\t\t"), tos_lit("\t\t\t\t\t\t\t"), tos_lit("\t\t\t\t\t\t\t\t"), 
