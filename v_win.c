@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "04744a5"
+#define V_COMMIT_HASH "7c9bb44"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5d0cc09"
+#define V_COMMIT_HASH "04744a5"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "04744a5"
+#define V_CURRENT_COMMIT_HASH "7c9bb44"
 #endif
 
 
@@ -3713,6 +3713,7 @@ array_v__ast__Stmt v__parser__Parser_parse_block(v__parser__Parser* p);
 array_v__ast__Stmt v__parser__Parser_parse_block_no_scope(v__parser__Parser* p);
 static void v__parser__Parser_next(v__parser__Parser* p);
 static void v__parser__Parser_check(v__parser__Parser* p, v__token__Kind expected);
+static string v__parser__Parser_check_js_name(v__parser__Parser* p);
 static string v__parser__Parser_check_name(v__parser__Parser* p);
 v__ast__Stmt v__parser__Parser_top_stmt(v__parser__Parser* p);
 v__ast__Comment v__parser__Parser_check_comment(v__parser__Parser* p);
@@ -3933,7 +3934,7 @@ void v__gen__js__JsGen_dec_indent(v__gen__js__JsGen* g);
 void v__gen__js__JsGen_write(v__gen__js__JsGen* g, string s);
 void v__gen__js__JsGen_writeln(v__gen__js__JsGen* g, string s);
 string v__gen__js__JsGen_new_tmp_var(v__gen__js__JsGen* g);
-static string v__gen__js__js_name(string name_);
+static string v__gen__js__js_name(string name);
 static void v__gen__js__JsGen_stmts(v__gen__js__JsGen* g, array_v__ast__Stmt stmts);
 static void v__gen__js__JsGen_stmt(v__gen__js__JsGen* g, v__ast__Stmt node);
 static void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr node);
@@ -19358,15 +19359,14 @@ static v__ast__MapInit v__parser__Parser_map_init(v__parser__Parser* p) {
 
 v__ast__CallExpr v__parser__Parser_call_expr(v__parser__Parser* p, bool is_c, bool is_js, string mod) {
 	v__token__Position first_pos = v__token__Token_position(&p->tok);
-	string name = v__parser__Parser_check_name(p);
 	string fn_name = (is_c ? (
-		_STR("C.%.*s", 1, name)
+		_STR("C.%.*s", 1, v__parser__Parser_check_name(p))
 	) : is_js ? (
-		_STR("JS.%.*s", 1, name)
+		_STR("JS.%.*s", 1, v__parser__Parser_check_js_name(p))
 	) : mod.len > 0 ? (
-		_STR("%.*s\000.%.*s", 2, mod, name)
+		_STR("%.*s\000.%.*s", 2, mod, v__parser__Parser_check_name(p))
 	) : (
-		name
+		v__parser__Parser_check_name(p)
 	));
 	bool is_or_block_used = false;
 	if (string_eq(fn_name, tos_lit("json.decode"))) {
@@ -19527,7 +19527,11 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 	;
 	string name = tos_lit("");
 	if (p->tok.kind == v__token__Kind_name) {
-		name = v__parser__Parser_check_name(p);
+		name = (is_js ? (
+			v__parser__Parser_check_js_name(p)
+		) : (
+			v__parser__Parser_check_name(p)
+		));
 		if (!is_js && !is_c && !p->pref->translated && v__util__contains_capital(name)) {
 			v__parser__Parser_error(p, tos_lit("function names cannot contain uppercase letters, use snake_case instead"));
 		}
@@ -19550,9 +19554,9 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
 	;
-	multi_return_array_v__table__Arg_bool mr_4058 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_4058.arg0;
-	bool is_variadic = mr_4058.arg1;
+	multi_return_array_v__table__Arg_bool mr_4124 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_4124.arg0;
+	bool is_variadic = mr_4124.arg1;
 	_PUSH_MANY(&args, (args2), tmp2, array_v__table__Arg);
 	// FOR IN array
 	array tmp3 = args;
@@ -19676,9 +19680,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_6628 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_6628.arg0;
-	bool is_variadic = mr_6628.arg1;
+	multi_return_array_v__table__Arg_bool mr_6694 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_6694.arg0;
+	bool is_variadic = mr_6694.arg1;
 	// FOR IN array
 	array tmp1 = args;
 	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
@@ -20862,6 +20866,18 @@ static void v__parser__Parser_check(v__parser__Parser* p, v__token__Kind expecte
 	v__parser__Parser_next(p);
 }
 
+static string v__parser__Parser_check_js_name(v__parser__Parser* p) {
+	string name = tos_lit("");
+	while (p->peek_tok.kind == v__token__Kind_dot) {
+		name = string_add(name, _STR("%.*s\000.", 2, p->tok.lit));
+		v__parser__Parser_next(p);
+		v__parser__Parser_next(p);
+	}
+	name = string_add(name, p->tok.lit);
+	v__parser__Parser_next(p);
+	return name;
+}
+
 static string v__parser__Parser_check_name(v__parser__Parser* p) {
 	string name = p->tok.lit;
 	if (p->peek_tok.kind == v__token__Kind_dot && _IN_MAP(name, p->imports)) {
@@ -21323,8 +21339,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 			p->expr_mod = tos_lit("");
 			return node;
 		} else {
-			v__ast__CallExpr x = v__parser__Parser_call_expr(p, is_c, is_js, mod);
-			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__CallExpr[]) {x}, sizeof(v__ast__CallExpr)), .typ = 161 /* v.ast.CallExpr */};
+			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__CallExpr[]) {v__parser__Parser_call_expr(p, is_c, is_js, mod)}, sizeof(v__ast__CallExpr)), .typ = 161 /* v.ast.CallExpr */};
 		}
 		;
 	} else if (p->peek_tok.kind == v__token__Kind_lcbr && !p->inside_match && !p->inside_match_case && !p->inside_if && !p->inside_for) {
@@ -21349,6 +21364,8 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 		}}, sizeof(v__ast__EnumVal)), .typ = 203 /* v.ast.EnumVal */};
 	} else if (p->peek_tok.kind == v__token__Kind_colon && p->prev_tok.kind != v__token__Kind_str_dollar) {
 		return /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__StructInit[]) {v__parser__Parser_struct_init(p, true)}, sizeof(v__ast__StructInit)), .typ = 236 /* v.ast.StructInit */};
+	} else if (is_js && p->peek_tok.kind == v__token__Kind_dot && p->peek_tok2.kind == v__token__Kind_name) {
+		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__CallExpr[]) {v__parser__Parser_call_expr(p, is_c, is_js, mod)}, sizeof(v__ast__CallExpr)), .typ = 161 /* v.ast.CallExpr */};
 	} else {
 		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Ident[]) {v__parser__Parser_parse_ident(p, is_c, is_js)}, sizeof(v__ast__Ident)), .typ = 153 /* v.ast.Ident */};
 	}
@@ -30100,8 +30117,7 @@ string v__gen__js__JsGen_new_tmp_var(v__gen__js__JsGen* g) {
 }
 
 // Attr: [inline]
-inline static string v__gen__js__js_name(string name_) {
-	string name = string_replace(name_, tos_lit("."), tos_lit("__"));
+inline static string v__gen__js__js_name(string name) {
 	if (_IN(string, name, _const_v__gen__js__js_reserved)) {
 		return _STR("v_%.*s", 1, name);
 	}
@@ -30224,12 +30240,17 @@ static void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr node) {
 		v__gen__js__JsGen_write(g, _STR("'%.*s\000'", 2, it->val));
 	}else if (node.typ == 161 /* v.ast.CallExpr */) {
 		v__ast__CallExpr* it = (v__ast__CallExpr*)node.obj; // ST it
+		string name = (string_starts_with(it->name, tos_lit("JS.")) ? (
+			string_substr(it->name, 3, it->name.len)
+		) : (
+			it->name
+		));
 		v__gen__js__JsGen_expr(g, it->left);
 		if (it->is_method) {
 			v__gen__js__JsGen_write(g, tos_lit("."));
 		}
 		;
-		v__gen__js__JsGen_write(g, _STR("%.*s\000(", 2, v__gen__js__js_name(it->name)));
+		v__gen__js__JsGen_write(g, _STR("%.*s\000(", 2, v__gen__js__js_name(name)));
 		// FOR IN array
 		array tmp2 = it->args;
 		for (int i = 0; i < tmp2.len; i++) {
