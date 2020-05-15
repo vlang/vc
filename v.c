@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "e18268e"
+#define V_COMMIT_HASH "d73bedc"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2c93deb"
+#define V_COMMIT_HASH "e18268e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "e18268e"
+#define V_CURRENT_COMMIT_HASH "d73bedc"
 #endif
 
 
@@ -8184,7 +8184,7 @@ static bool print_backtrace_skipping_top_frames_mac(int skipframes) {
 // $if  macos {
 #ifdef __APPLE__
 		array_fixed_byteptr_100 buffer = {0};
-		int nr_ptrs = backtrace(&/*qq*/buffer, 100);
+		int nr_ptrs = backtrace(buffer, 100);
 		backtrace_symbols_fd(&buffer[skipframes], nr_ptrs - skipframes, 2);
 	
 // } macos
@@ -8198,7 +8198,7 @@ static bool print_backtrace_skipping_top_frames_freebsd(int skipframes) {
 // $if  freebsd {
 #ifdef __FreeBSD__
 		array_fixed_byteptr_100 buffer = {0};
-		int nr_ptrs = backtrace(&/*qq*/buffer, 100);
+		int nr_ptrs = backtrace(buffer, 100);
 		backtrace_symbols_fd(&buffer[skipframes], nr_ptrs - skipframes, 2);
 	
 // } freebsd
@@ -8209,74 +8209,75 @@ static bool print_backtrace_skipping_top_frames_freebsd(int skipframes) {
 
 static bool print_backtrace_skipping_top_frames_linux(int skipframes) {
 	
+// $if  android {
+#ifdef __ANDROID__
+		eprintln(tos_lit("On Android no backtrace is available."));
+		return false;
+	
+// } android
+#endif
+
+	
+// $if !glibc {
+#ifndef __GLIBC__
+		eprintln(tos_lit("backtrace_symbols is missing => printing backtraces is not available."));
+		eprintln(tos_lit("Some libc implementations like musl simply do not provide it."));
+		return false;
+	
+// } glibc
+#endif
+
+	
 // $if  tinyc {
 #ifdef __TINYC__
-		println(_STR("TODO: print_backtrace_skipping_top_frames_linux %"PRId32"\000 with tcc fails tests with \"stack smashing detected\" .", 2, skipframes));
+		eprintln(_STR("TODO: print_backtrace_skipping_top_frames_linux %"PRId32"", 1, skipframes));
+		eprintln(tos_lit("with tcc fails tests with \"stack smashing detected\" ."));
 		return false;
 	
 // } tinyc
 #endif
 
-	
-// $if !android {
-#ifndef __ANDROID__
-		
-// $if  glibc {
-#ifdef __GLIBC__
-			array_fixed_byteptr_100 buffer = {0};
-			int nr_ptrs = backtrace(&/*qq*/buffer, 100);
-			int nr_actual_frames = nr_ptrs - skipframes;
-			array_string sframes = __new_array(0, 0, sizeof(string));
-			charptr* csymbols = backtrace_symbols(&buffer[skipframes], nr_actual_frames);
-			for (int i = 0; i < nr_actual_frames; i++) {
-				array_push(&sframes, &(string[]){ tos2(((byteptr)(((voidptr)(csymbols[i]))))) });
-			}
-			// FOR IN array
-			array tmp2 = sframes;
-			for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
-				string sframe = ((string*)tmp2.data)[tmp3];
-				string executable = string_all_before(sframe, tos_lit("("));
-				string addr = string_all_before(string_all_after(sframe, tos_lit("[")), tos_lit("]"));
-				string beforeaddr = string_all_before(sframe, tos_lit("["));
-				string cmd = _STR("addr2line -e %.*s\000 %.*s", 2, executable, addr);
-				voidptr f = popen(cmd.str, "r");
-				if (isnil(f)) {
-					eprintln(sframe);
-					continue;
-				}
-				;
-				array_fixed_byte_1000 buf = {0};
-				string output = tos_lit("");
-				while (fgets(((charptr)(buf)), 1000, f) != 0) {
-					output = string_add(output, tos(&/*qq*/buf, vstrlen(&/*qq*/buf)));
-				}
-				output = string_add(string_trim_space(output), tos_lit(":"));
-				if (pclose(f) != 0) {
-					eprintln(sframe);
-					continue;
-				}
-				;
-				if ((string_eq(output, tos_lit("??:0:")) || string_eq(output, tos_lit("??:?:")))) {
-					output = tos_lit("");
-				}
-				;
-				output = string_replace(output, tos_lit(" (discriminator"), tos_lit(": (d."));
-				eprintln(_STR("%*.*s\000 | %*.*s\000 | %.*s", 3, output, -46, addr, 14, beforeaddr));
-			}
-			return true;
-		
-#else
-			eprintln(tos_lit("backtrace_symbols_fd is missing, so printing backtraces is not available.\n"));
-			eprintln(tos_lit("Some libc implementations like musl simply do not provide it."));
-		
-// } glibc
-#endif
-
-	
-// } android
-#endif
-
-	return false;
+	array_fixed_byteptr_100 buffer = {0};
+	int nr_ptrs = backtrace(buffer, 100);
+	int nr_actual_frames = nr_ptrs - skipframes;
+	array_string sframes = __new_array(0, 0, sizeof(string));
+	charptr* csymbols = backtrace_symbols(&buffer[skipframes], nr_actual_frames);
+	for (int i = 0; i < nr_actual_frames; i++) {
+		array_push(&sframes, &(string[]){ tos2(((byteptr)(csymbols[i]))) });
+	}
+	// FOR IN array
+	array tmp2 = sframes;
+	for (int tmp3 = 0; tmp3 < tmp2.len; tmp3++) {
+		string sframe = ((string*)tmp2.data)[tmp3];
+		string executable = string_all_before(sframe, tos_lit("("));
+		string addr = string_all_before(string_all_after(sframe, tos_lit("[")), tos_lit("]"));
+		string beforeaddr = string_all_before(sframe, tos_lit("["));
+		string cmd = _STR("addr2line -e %.*s\000 %.*s", 2, executable, addr);
+		voidptr f = popen(cmd.str, "r");
+		if (isnil(f)) {
+			eprintln(sframe);
+			continue;
+		}
+		;
+		array_fixed_byte_1000 buf = {0};
+		string output = tos_lit("");
+		while (fgets(((charptr)(buf)), 1000, f) != 0) {
+			output = string_add(output, tos(&/*qq*/buf, vstrlen(&/*qq*/buf)));
+		}
+		output = string_add(string_trim_space(output), tos_lit(":"));
+		if (pclose(f) != 0) {
+			eprintln(sframe);
+			continue;
+		}
+		;
+		if ((string_eq(output, tos_lit("??:0:")) || string_eq(output, tos_lit("??:?:")))) {
+			output = tos_lit("");
+		}
+		;
+		output = string_replace(output, tos_lit(" (discriminator"), tos_lit(": (d."));
+		eprintln(_STR("%*.*s\000 | %*.*s\000 | %.*s", 3, output, -46, addr, 14, beforeaddr));
+	}
+	return true;
 }
 
 
@@ -28816,10 +28817,6 @@ static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 		v__gen__Gen_write(g, tos_lit("inline "));
 	}
 	;
-	if ((string_eq(it.name, tos_lit("backtrace")) || string_eq(it.name, tos_lit("backtrace_symbols")) || string_eq(it.name, tos_lit("backtrace_symbols_fd")))) {
-		return ;
-	}
-	;
 	bool is_livefn = string_eq(g->attr, tos_lit("live"));
 	bool is_livemain = g->pref->is_livemain && is_livefn;
 	bool is_liveshared = g->pref->is_liveshared && is_livefn;
@@ -28893,9 +28890,9 @@ static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 			v__gen__Gen_write(g, _STR("%.*s\000 %.*s\000(", 3, type_name, name));
 		}
 		;
-		multi_return_array_string_array_string mr_3073 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
-		array_string fargs = mr_3073.arg0;
-		array_string fargtypes = mr_3073.arg1;
+		multi_return_array_string_array_string mr_2825 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
+		array_string fargs = mr_2825.arg0;
+		array_string fargtypes = mr_2825.arg1;
 		if (it.no_body || (g->pref->use_cache && it.is_builtin)) {
 			strings__Builder_writeln(&g->definitions, tos_lit(");"));
 			v__gen__Gen_writeln(g, tos_lit(");"));

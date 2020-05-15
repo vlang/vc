@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "e18268e"
+#define V_COMMIT_HASH "d73bedc"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2c93deb"
+#define V_COMMIT_HASH "e18268e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "e18268e"
+#define V_CURRENT_COMMIT_HASH "d73bedc"
 #endif
 
 
@@ -28973,10 +28973,6 @@ static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 		v__gen__Gen_write(g, tos_lit("inline "));
 	}
 	;
-	if ((string_eq(it.name, tos_lit("backtrace")) || string_eq(it.name, tos_lit("backtrace_symbols")) || string_eq(it.name, tos_lit("backtrace_symbols_fd")))) {
-		return ;
-	}
-	;
 	bool is_livefn = string_eq(g->attr, tos_lit("live"));
 	bool is_livemain = g->pref->is_livemain && is_livefn;
 	bool is_liveshared = g->pref->is_liveshared && is_livefn;
@@ -29050,9 +29046,9 @@ static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 			v__gen__Gen_write(g, _STR("%.*s\000 %.*s\000(", 3, type_name, name));
 		}
 		;
-		multi_return_array_string_array_string mr_3073 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
-		array_string fargs = mr_3073.arg0;
-		array_string fargtypes = mr_3073.arg1;
+		multi_return_array_string_array_string mr_2825 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
+		array_string fargs = mr_2825.arg0;
+		array_string fargtypes = mr_2825.arg1;
 		if (it.no_body || (g->pref->use_cache && it.is_builtin)) {
 			strings__Builder_writeln(&g->definitions, tos_lit(");"));
 			v__gen__Gen_writeln(g, tos_lit(");"));
