@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5d0cc09"
+#define V_COMMIT_HASH "04744a5"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c4ca6a9"
+#define V_COMMIT_HASH "5d0cc09"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5d0cc09"
+#define V_CURRENT_COMMIT_HASH "04744a5"
 #endif
 
 
@@ -2982,6 +2982,8 @@ string string_trim_space(string s);
 string string_trim(string s, string cutset);
 string string_trim_left(string s, string cutset);
 string string_trim_right(string s, string cutset);
+string string_trim_prefix(string s, string str);
+string string_trim_suffix(string s, string str);
 static int compare_strings(string* a, string* b);
 static int compare_strings_by_len(string* a, string* b);
 static int compare_lower_strings(string* a, string* b);
@@ -10756,6 +10758,22 @@ string string_trim_right(string s, string cutset) {
 	) : (
 		string_left(s, pos + 1)
 	));
+}
+
+string string_trim_prefix(string s, string str) {
+	if (string_starts_with(s, str)) {
+		return string_replace(s, str, tos_lit(""));
+	}
+	;
+	return s;
+}
+
+string string_trim_suffix(string s, string str) {
+	if (string_ends_with(s, str)) {
+		return string_replace(s, str, tos_lit(""));
+	}
+	;
+	return s;
 }
 
 static int compare_strings(string* a, string* b) {
