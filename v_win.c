@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "2dbb4c2"
+#define V_COMMIT_HASH "7caebc5"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7c9bb44"
+#define V_COMMIT_HASH "2dbb4c2"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "2dbb4c2"
+#define V_CURRENT_COMMIT_HASH "7caebc5"
 #endif
 
 
@@ -31781,9 +31781,27 @@ string v__doc__doc(string mod, v__table__Table* table, v__pref__Preferences* pre
 	string vlib_path = string_add(os__dir(v__pref__vexe_path()), tos_lit("/vlib"));
 	string mod_path = string_replace(mod, tos_lit("."), _const_os__path_separator);
 	string path = os__join_path(vlib_path, (varg_string){.len=1,.args={mod_path}});
-	if (!os__exists(path)) {
-		println(_STR("module \"%.*s\000\" not found", 2, mod));
-		println(path);
+	if (string_eq(mod, tos_lit("")) || !os__exists(path)) {
+		if (string_ne(mod, tos_lit(""))) {
+			println(_STR("module \"%.*s\000\" not found", 2, mod));
+		}
+		;
+		println(tos_lit("\navailable modules:"));
+		Option_array_string files = os__ls(vlib_path);
+		if (!files.ok) {
+			string err = files.v_error;
+			int errcode = files.ecode;
+			// last_type: v.ast.Return
+			// last_expr_result_type: 
+			return tos_lit("");
+		};
+		array_string_sort(&/*opt*/(*(array_string*)files.data));
+		// FOR IN array
+		array tmp1 = /*opt*/(*(array_string*)files.data);
+		for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
+			string file = ((string*)tmp1.data)[tmp2];
+			println(file);
+		}
 		return tos_lit("");
 	}
 	;
@@ -31798,9 +31816,9 @@ string v__doc__doc(string mod, v__table__Table* table, v__pref__Preferences* pre
 	};
 	array_string filtered_files = v__pref__Preferences_should_compile_filtered_files(prefs, path, /*opt*/(*(array_string*)files.data));
 	// FOR IN array
-	array tmp1 = filtered_files;
-	for (int tmp2 = 0; tmp2 < tmp1.len; tmp2++) {
-		string file = ((string*)tmp1.data)[tmp2];
+	array tmp3 = filtered_files;
+	for (int tmp4 = 0; tmp4 < tmp3.len; tmp4++) {
+		string file = ((string*)tmp3.data)[tmp4];
 		v__ast__Scope* fscope = (v__ast__Scope*)memdup(&(v__ast__Scope){	.parent = 0,
 			.objects = new_map_1(sizeof(v__ast__ScopeObject)),
 			.children = __new_array(0, 1, sizeof(v__ast__Scope)),
@@ -31808,7 +31826,7 @@ string v__doc__doc(string mod, v__table__Table* table, v__pref__Preferences* pre
 			.end_pos = 0,
 		}, sizeof(v__ast__Scope));
 		v__ast__File file_ast = v__parser__parse_file(file, table, v__scanner__CommentsMode_skip_comments, prefs, fscope);
-		_PUSH_MANY(&d.stmts, (file_ast.stmts), tmp3, array_v__ast__Stmt);
+		_PUSH_MANY(&d.stmts, (file_ast.stmts), tmp5, array_v__ast__Stmt);
 	}
 	if (d.stmts.len == 0) {
 		println(tos_lit("nothing here"));
@@ -33790,13 +33808,15 @@ static void main_v() {
 		create_symlink();
 		return ;
 	}else if (string_eq(command, tos_lit("doc"))) {
+		string mod = tos_lit("");
 		if (args.len == 1) {
 			println(tos_lit("v doc [module]"));
-			v_exit(1);
+		} else if (args.len > 1) {
+			mod = (*(string*)array_get(args, 1));
 		}
 		;
 		v__table__Table* table = v__table__new_table();
-		println(v__doc__doc((*(string*)array_get(args, 1)), table, prefs));
+		println(v__doc__doc(mod, table, prefs));
 		return ;
 	}else {
 	};
