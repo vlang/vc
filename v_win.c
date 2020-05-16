@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "655d9bd"
+#define V_COMMIT_HASH "48659f4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f44a40e"
+#define V_COMMIT_HASH "655d9bd"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "655d9bd"
+#define V_CURRENT_COMMIT_HASH "48659f4"
 #endif
 
 
@@ -3187,6 +3187,7 @@ void os__on_segfault(voidptr f);
 string os__executable();
 static string os__executable_fallback();
 Option_string os__find_abs_path_of_executable(string exepath);
+static bool os__exists_in_system_path(string prog);
 bool os__dir_exists(string path);
 bool os__is_dir(string path);
 bool os__is_link(string path);
@@ -12250,6 +12251,18 @@ Option_string os__find_abs_path_of_executable(string exepath) {
 		return /*:)string*/opt_ok(&(string[]) { res }, sizeof(string));
 	}
 	return v_error(tos_lit("failed to find executable"));}
+
+static bool os__exists_in_system_path(string prog) {
+	Option_string _t1 = os__find_abs_path_of_executable(prog);
+	if (!_t1.ok) {
+		string err = _t1.v_error;
+		int errcode = _t1.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
+		return false;
+	};
+	return true;
+}
 
 // Attr: [deprecated]
 bool os__dir_exists(string path) {
