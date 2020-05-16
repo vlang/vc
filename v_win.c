@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "fb27fe5"
+#define V_COMMIT_HASH "81148fa"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8cbb9e1"
+#define V_COMMIT_HASH "fb27fe5"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "fb27fe5"
+#define V_CURRENT_COMMIT_HASH "81148fa"
 #endif
 
 
@@ -3614,7 +3614,7 @@ string _const_v__util__v_version; // a string literal, inited later
 array_string _const_v__util__builtin_module_parts; // inited later
 string v__util__vhash();
 string v__util__full_hash();
-string v__util__full_v_version();
+string v__util__full_v_version(bool is_verbose);
 string v__util__githash(bool should_get_from_filesystem);
 static void v__util__set_vroot_folder(string vroot_path);
 void v__util__launch_tool(bool is_verbose, string tool_name);
@@ -16616,8 +16616,12 @@ string v__util__full_hash() {
 	return _STR("%.*s\000.%.*s", 2, build_hash, current_hash);
 }
 
-string v__util__full_v_version() {
-	return _STR("V %.*s\000 %.*s", 2, _const_v__util__v_version, v__util__full_hash());
+string v__util__full_v_version(bool is_verbose) {
+	if (is_verbose) {
+		return _STR("V %.*s\000 %.*s", 2, _const_v__util__v_version, v__util__full_hash());
+	}
+	string hash = v__util__githash(false);
+	return _STR("V %.*s\000 %.*s", 2, _const_v__util__v_version, hash);
 }
 
 string v__util__githash(bool should_get_from_filesystem) {
@@ -32111,17 +32115,13 @@ static void main_v() {
 		v__util__launch_tool(false, tos_lit("vrepl"));
 		return ;
 	}
-	if (args.len > 0 && ((string_eq((*(string*)array_get(args, 0)), tos_lit("version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-V")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("--version"))) || (string_eq((*(string*)array_get(args, 0)), tos_lit("-v")) && args.len == 1))) {
-		println(v__util__full_v_version());
-		return ;
-	}
 	array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_1226 = v__pref__parse_args(args_and_flags);
-	v__pref__Preferences* prefs = mr_1226.arg0;
-	string command = mr_1226.arg1;
-	if (prefs->is_verbose) {
-		println(_STR("command = \"%.*s\000\"", 2, command));
-		println(v__util__full_v_version());
+	multi_return_v__pref__Preferences_string mr_967 = v__pref__parse_args(args_and_flags);
+	v__pref__Preferences* prefs = mr_967.arg0;
+	string command = mr_967.arg1;
+	if (args.len > 0 && ((string_eq((*(string*)array_get(args, 0)), tos_lit("version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-V")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("--version"))) || (string_eq((*(string*)array_get(args, 0)), tos_lit("-v")) && args.len == 1))) {
+		println(v__util__full_v_version(prefs->is_verbose));
+		return ;
 	}
 	if (prefs->is_verbose) {
 	}
@@ -32143,6 +32143,9 @@ static void main_v() {
 	}else if (string_eq(command, tos_lit("get"))) {
 		println(tos_lit("V Error: Use `v install` to install modules from vpm.vlang.io"));
 		v_exit(1);
+	}else if (string_eq(command, tos_lit("version"))) {
+		println(v__util__full_v_version(prefs->is_verbose));
+		return ;
 	}else if (string_eq(command, tos_lit("symlink"))) {
 		create_symlink();
 		return ;
