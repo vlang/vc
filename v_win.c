@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "a3a19e8"
+#define V_COMMIT_HASH "62cb48d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6855996"
+#define V_COMMIT_HASH "a3a19e8"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "a3a19e8"
+#define V_CURRENT_COMMIT_HASH "62cb48d"
 #endif
 
 
@@ -19327,6 +19327,9 @@ static void v__parser__Parser_check_unused_imports(v__parser__Parser* p) {
 		}
 	}
 	if (string_eq(output, tos_lit(""))) {
+		return ;
+	}
+	if (p->pref->is_repl) {
 		return ;
 	}
 	eprintln(_STR("`%.*s\000` warning: the following imports were never used: %.*s", 2, p->file_name, output));
