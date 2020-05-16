@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "9b6ee8e"
+#define V_COMMIT_HASH "37cf46d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5767576"
+#define V_COMMIT_HASH "9b6ee8e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "9b6ee8e"
+#define V_CURRENT_COMMIT_HASH "37cf46d"
 #endif
 
 
@@ -23088,10 +23088,14 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 			v__checker__Checker_error(c, _STR("mismatched types `%.*s\000` and `%.*s\000`", 3, left->name, right->name), v__ast__Expr_position(infix_expr->right));
 		} else if (!v__table__TypeSymbol_is_int(left) && v__table__TypeSymbol_is_int(right)) {
 			v__checker__Checker_error(c, _STR("mismatched types `%.*s\000` and `%.*s\000`", 3, left->name, right->name), v__ast__Expr_position(infix_expr->left));
+		} else if (left->kind == v__table__Kind_f32 && right->kind == v__table__Kind_f32 || left->kind == v__table__Kind_f64 && right->kind == v__table__Kind_f64) {
+			v__checker__Checker_error(c, tos_lit("float modulo not allowed, use math.fmod() instead"), v__ast__Expr_position(infix_expr->left));
 		} else if ((left->kind == v__table__Kind_f32 || left->kind == v__table__Kind_f64 || left->kind == v__table__Kind_string || left->kind == v__table__Kind_array || left->kind == v__table__Kind_array_fixed || left->kind == v__table__Kind_map || left->kind == v__table__Kind_struct_) && !v__table__TypeSymbol_has_method(left, v__token__Kind_str(infix_expr->op))) {
 			v__checker__Checker_error(c, _STR("mismatched types `%.*s\000` and `%.*s\000`", 3, left->name, right->name), v__ast__Expr_position(infix_expr->left));
 		} else if ((right->kind == v__table__Kind_f32 || right->kind == v__table__Kind_f64 || right->kind == v__table__Kind_string || right->kind == v__table__Kind_array || right->kind == v__table__Kind_array_fixed || right->kind == v__table__Kind_map || right->kind == v__table__Kind_struct_) && !v__table__TypeSymbol_has_method(right, v__token__Kind_str(infix_expr->op))) {
 			v__checker__Checker_error(c, _STR("mismatched types `%.*s\000` and `%.*s\000`", 3, left->name, right->name), v__ast__Expr_position(infix_expr->right));
+		} else if (infix_expr->right.typ == 195 /* v.ast.IntegerLiteral */ && string_eq(v__ast__Expr_str(infix_expr->right), tos_lit("0"))) {
+			v__checker__Checker_error(c, tos_lit("modulo by zero"), v__ast__Expr_position(infix_expr->right));
 		}
 		;
 	}else {
