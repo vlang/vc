@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "7a404af"
+#define V_COMMIT_HASH "aa30549"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "034bf46"
+#define V_COMMIT_HASH "7a404af"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "7a404af"
+#define V_CURRENT_COMMIT_HASH "aa30549"
 #endif
 
 
@@ -3414,6 +3414,7 @@ Option_string v__util__find_working_diff_command();
 string v__util__color_compare_files(string diff_cmd, string file1, string file2);
 static string v__util__color_compare_strings(string diff_cmd, string expected, string found);
 static bool v__util__is_name_char(byte c);
+static bool v__util__is_func_char(byte c);
 static bool v__util__is_nl(byte c);
 static bool v__util__contains_capital(string s);
 static bool v__util__good_type_name(string s);
@@ -3469,6 +3470,7 @@ v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__
 v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMode comments_mode);
 static v__token__Token v__scanner__Scanner_new_token(v__scanner__Scanner* s, v__token__Kind tok_kind, string lit, int len);
 static string v__scanner__Scanner_ident_name(v__scanner__Scanner* s);
+static string v__scanner__Scanner_ident_fn_name(v__scanner__Scanner* s);
 static string v__scanner__filter_num_sep(byteptr txt, int start, int end);
 static string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner* s);
 static string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner* s);
@@ -16908,6 +16910,11 @@ inline static bool v__util__is_name_char(byte c) {
 }
 
 // Attr: [inline]
+inline static bool v__util__is_func_char(byte c) {
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || byte_is_digit(c);
+}
+
+// Attr: [inline]
 inline static bool v__util__is_nl(byte c) {
 	return c == '\r' || c == '\n';
 }
@@ -17880,6 +17887,48 @@ static string v__scanner__Scanner_ident_name(v__scanner__Scanner* s) {
 	return name;
 }
 
+static string v__scanner__Scanner_ident_fn_name(v__scanner__Scanner* s) {
+	int start = s->pos;
+	int pos = s->pos;
+	pos++;
+	while (pos < s->text.len && string_at(s->text, pos) != '{') {
+		pos++;
+	}
+	if (pos >= s->text.len) {
+		return tos_lit("");
+	}
+	;
+	while (pos > start && string_at(s->text, pos) != '(') {
+		pos--;
+	}
+	if (pos < start) {
+		return tos_lit("");
+	}
+	;
+	while (pos > start && !v__util__is_func_char(string_at(s->text, pos))) {
+		pos--;
+	}
+	int end_pos = pos + 1;
+	if (pos < start) {
+		return tos_lit("");
+	}
+	;
+	while (pos > start && v__util__is_func_char(string_at(s->text, pos))) {
+		pos--;
+	}
+	int start_pos = pos + 1;
+	if (pos < start || pos >= s->text.len) {
+		return tos_lit("");
+	}
+	;
+	if (byte_is_digit(string_at(s->text, start_pos)) || end_pos > s->text.len || end_pos <= start_pos || end_pos <= start || start_pos <= start) {
+		return tos_lit("");
+	}
+	;
+	string fn_name = string_substr(s->text, start_pos, end_pos);
+	return fn_name;
+}
+
 static string v__scanner__filter_num_sep(byteptr txt, int start, int end) {
 		byteptr b = v_malloc(end - start + 1);
 		int i = start;
@@ -18168,7 +18217,12 @@ v__token__Token v__scanner__Scanner_scan(v__scanner__Scanner* s) {
 			'\0'
 		));
 		if (v__token__is_key(name)) {
-			return v__scanner__Scanner_new_token(s, v__token__key_to_token(name), name, name.len);
+			v__token__Kind kind = v__token__key_to_token(name);
+			if (kind == v__token__Kind_key_fn) {
+				s->fn_name = v__scanner__Scanner_ident_fn_name(s);
+			}
+			;
+			return v__scanner__Scanner_new_token(s, kind, name, name.len);
 		}
 		;
 		if (s->is_inside_string) {
