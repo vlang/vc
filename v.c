@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "0def084"
+#define V_COMMIT_HASH "d697b28"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a66eebc"
+#define V_COMMIT_HASH "0def084"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "0def084"
+#define V_CURRENT_COMMIT_HASH "d697b28"
 #endif
 
 
@@ -22064,19 +22064,19 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 		if (right->kind == v__table__Kind_array) {
 			v__table__TypeSymbol* right_sym = v__table__Table_get_type_symbol(c->table, v__table__TypeSymbol_array_info(right).elem_type);
 			if (left->kind != right_sym->kind) {
-				v__checker__Checker_error(c, tos_lit("the data type on the left of `in` does not match the array item type"), infix_expr->pos);
+				v__checker__Checker_error(c, _STR("the data type on the left of `%.*s\000` does not match the array item type", 2, v__token__Kind_str(infix_expr->op)), infix_expr->pos);
 			}
 		}else if (right->kind == v__table__Kind_map) {
 			v__table__TypeSymbol* key_sym = v__table__Table_get_type_symbol(c->table, v__table__TypeSymbol_map_info(right).key_type);
 			if (left->kind != key_sym->kind) {
-				v__checker__Checker_error(c, tos_lit("the data type on the left of `in` does not match the map key type"), infix_expr->pos);
+				v__checker__Checker_error(c, _STR("the data type on the left of `%.*s\000` does not match the map key type", 2, v__token__Kind_str(infix_expr->op)), infix_expr->pos);
 			}
 		}else if (right->kind == v__table__Kind_string) {
 			if (left->kind != v__table__Kind_string) {
-				v__checker__Checker_error(c, tos_lit("the data type on the left of `in` must be a string"), infix_expr->pos);
+				v__checker__Checker_error(c, _STR("the data type on the left of `%.*s\000` must be a string", 2, v__token__Kind_str(infix_expr->op)), infix_expr->pos);
 			}
 		}else {
-			v__checker__Checker_error(c, tos_lit("`in` can only be used with an array/map/string"), infix_expr->pos);
+			v__checker__Checker_error(c, _STR("`%.*s\000` can only be used with an array/map/string", 2, v__token__Kind_str(infix_expr->op)), infix_expr->pos);
 		};
 		// defer
 			c->expected_type = former_expected_type;
