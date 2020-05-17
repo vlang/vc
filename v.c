@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "a66eebc"
+#define V_COMMIT_HASH "0def084"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2de127f"
+#define V_COMMIT_HASH "a66eebc"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "a66eebc"
+#define V_CURRENT_COMMIT_HASH "0def084"
 #endif
 
 
@@ -21918,14 +21918,14 @@ void v__checker__Checker_interface_decl(v__checker__Checker* c, v__ast__Interfac
 }
 
 void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl decl) {
-	if (!decl.is_c && !c->is_builtin_mod) {
+	if (!decl.is_c && !decl.is_js && !c->is_builtin_mod) {
 		v__checker__Checker_check_valid_pascal_case(c, decl.name, tos_lit("struct name"), decl.pos);
 	}
 	// FOR IN array
 	array _t1 = decl.fields;
 	for (int i = 0; i < _t1.len; i++) {
 		v__ast__StructField field = ((v__ast__StructField*)_t1.data)[i];
-		if (!decl.is_c) {
+		if (!decl.is_c && !decl.is_js) {
 			v__checker__Checker_check_valid_snake_case(c, field.name, tos_lit("field name"), field.pos);
 		}
 		for (int j = 0; j < i; j++) {
@@ -23091,7 +23091,7 @@ static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) 
 		v__checker__Checker_check_expr_opt_call(c, it->expr, etype, false);
 	}else if (node.typ == 110 /* v.ast.FnDecl */) {
 		v__ast__FnDecl* it = (v__ast__FnDecl*)node.obj; // ST it
-		if (!it->is_c && !c->is_builtin_mod) {
+		if (!it->is_c && !it->is_js && !c->is_builtin_mod) {
 			v__checker__Checker_check_valid_snake_case(c, it->name, tos_lit("function name"), it->pos);
 		}
 		if (it->is_method) {
