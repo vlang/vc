@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "4a70d2f"
+#define V_COMMIT_HASH "6274007"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7f4cf08"
+#define V_COMMIT_HASH "4a70d2f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4a70d2f"
+#define V_CURRENT_COMMIT_HASH "6274007"
 #endif
 
 
@@ -1702,6 +1702,7 @@ struct v__depgraph__OrderedDepMap {
 
 struct v__gen__x64__Gen {
 	string out_name;
+	v__pref__Preferences* pref;
 	array_byte buf;
 	int sect_header_name_pos;
 	i64 offset;
@@ -1714,6 +1715,8 @@ struct v__gen__x64__Gen {
 	map_string_int var_offset;
 	int stack_var_pos;
 	int debug_pos;
+	array_v__errors__Error errors;
+	array_v__errors__Warning warnings;
 };
 
 struct v__gen__x64__SectionConfig {
@@ -4019,7 +4022,7 @@ void v__gen__x64__Gen_generate_elf_footer(v__gen__x64__Gen* g);
 static void v__gen__x64__Gen_section_header(v__gen__x64__Gen* g, v__gen__x64__SectionConfig c);
 static void v__gen__x64__genobj();
 array_v__gen__x64__Register _const_v__gen__x64__fn_arg_registers; // inited later
-void v__gen__x64__gen(array_v__ast__File files, string out_name);
+void v__gen__x64__gen(array_v__ast__File files, string out_name, v__pref__Preferences* pref);
 void v__gen__x64__Gen_stmts(v__gen__x64__Gen* g, array_v__ast__Stmt stmts);
 i64 v__gen__x64__Gen_pos(v__gen__x64__Gen* g);
 static void v__gen__x64__Gen_write8(v__gen__x64__Gen* g, int n);
@@ -4074,6 +4077,7 @@ static void v__gen__x64__Gen_for_stmt(v__gen__x64__Gen* g, v__ast__ForStmt node)
 static void v__gen__x64__Gen_fn_decl(v__gen__x64__Gen* g, v__ast__FnDecl node);
 static void v__gen__x64__Gen_postfix_expr(v__gen__x64__Gen* g, v__ast__PostfixExpr node);
 static void v__gen__x64__verror(string s);
+void v__gen__x64__Gen_error_with_pos(v__gen__x64__Gen* g, string s, v__token__Position pos);
 string v__doc__doc(string mod, v__table__Table* table, v__pref__Preferences* prefs);
 static string v__doc__Doc_get_fn_node(v__doc__Doc* d, v__ast__FnDecl f);
 static void v__doc__Doc_print_fns(v__doc__Doc* d);
@@ -29700,10 +29704,11 @@ static void v__gen__x64__Gen_section_header(v__gen__x64__Gen* g, v__gen__x64__Se
 static void v__gen__x64__genobj() {
 }
 
-void v__gen__x64__gen(array_v__ast__File files, string out_name) {
+void v__gen__x64__gen(array_v__ast__File files, string out_name, v__pref__Preferences* pref) {
 	v__gen__x64__Gen g = (v__gen__x64__Gen){
 		.sect_header_name_pos = 0,
 		.out_name = out_name,
+		.pref = pref,
 		.buf = __new_array(0, 1, sizeof(byte)),
 		.offset = 0,
 		.str_pos = __new_array(0, 1, sizeof(i64)),
@@ -29715,6 +29720,8 @@ void v__gen__x64__gen(array_v__ast__File files, string out_name) {
 		.var_offset = new_map_1(sizeof(int)),
 		.stack_var_pos = 0,
 		.debug_pos = 0,
+		.errors = __new_array(0, 1, sizeof(v__errors__Error)),
+		.warnings = __new_array(0, 1, sizeof(v__errors__Warning)),
 	};
 	v__gen__x64__Gen_generate_elf_header(&g);
 	// FOR IN array
@@ -29923,6 +29930,10 @@ static void v__gen__x64__Gen_mov_from_reg(v__gen__x64__Gen* g, int var_offset, v
 		v__gen__x64__Gen_write8(g, 0x7d);
 	}else if (reg == v__gen__x64__Register_rsi) {
 		v__gen__x64__Gen_write8(g, 0x75);
+	}else if (reg == v__gen__x64__Register_rdx) {
+		v__gen__x64__Gen_write8(g, 0x55);
+	}else if (reg == v__gen__x64__Register_rcx) {
+		v__gen__x64__Gen_write8(g, 0x4d);
 	}else {
 		v__gen__x64__verror(_STR("mov_from_reg %.*s", 1, v__gen__x64__Register_str(reg)));
 	};
@@ -30122,6 +30133,9 @@ static void v__gen__x64__Gen_stmt(v__gen__x64__Gen* g, v__ast__Stmt node) {
 		v__gen__x64__Gen_ret(g);
 	}else if (node.typ == 234 /* v.ast.StructDecl */) {
 		v__ast__StructDecl* it = (v__ast__StructDecl*)node.obj; // ST it
+	}else if (node.typ == 195 /* v.ast.UnsafeStmt */) {
+		v__ast__UnsafeStmt* it = (v__ast__UnsafeStmt*)node.obj; // ST it
+		v__gen__x64__Gen_stmts(g, it->stmts);
 	}else {
 		println(string_add(tos_lit("x64.stmt(): bad node: "), tos3( /* v.ast.Stmt */ v_typeof_sumtype_122( (node).typ ))));
 	};
@@ -30162,6 +30176,7 @@ static void v__gen__x64__Gen_expr(v__gen__x64__Gen* g, v__ast__Expr node) {
 	}else if (node.typ == 224 /* v.ast.BoolLiteral */) {
 		v__ast__BoolLiteral* it = (v__ast__BoolLiteral*)node.obj; // ST it
 	}else {
+		println(term__red(string_add(tos_lit("x64.expr(): unhandled node: "), tos3( /* v.ast.Expr */ v_typeof_sumtype_152( (node).typ )))));
 	};
 }
 
@@ -30200,7 +30215,7 @@ static void v__gen__x64__Gen_assign_stmt(v__gen__x64__Gen* g, v__ast__AssignStmt
 			v__gen__x64__Gen_infix_expr(g, *it);
 			v__gen__x64__Gen_allocate_var(g, ident.name, 4, 0);
 		}else {
-			v__gen__x64__verror(tos_lit("assign_stmt unhandled expr"));
+			v__gen__x64__Gen_error_with_pos(g, string_add(tos_lit("assign_stmt unhandled expr: "), tos3( /* v.ast.Expr */ v_typeof_sumtype_152( ((*(v__ast__Expr*)array_get(node.right, 0))).typ ))), v__ast__Expr_position((*(v__ast__Expr*)array_get(node.right, 0))));
 		};
 	}
 }
@@ -30292,6 +30307,23 @@ static void v__gen__x64__Gen_postfix_expr(v__gen__x64__Gen* g, v__ast__PostfixEx
 
 static void v__gen__x64__verror(string s) {
 	v__util__verror(tos_lit("x64 gen error"), s);
+}
+
+void v__gen__x64__Gen_error_with_pos(v__gen__x64__Gen* g, string s, v__token__Position pos) {
+	string kind = tos_lit("error:");
+	if (g->pref->output_mode == v__pref__OutputMode_stdout) {
+		string ferror = v__util__formatted_error(kind, s, g->pref->path, pos);
+		eprintln(ferror);
+		v_exit(1);
+	} else {
+		array_push(&g->errors, &(v__errors__Error[]){ (v__errors__Error){
+			.file_path = g->pref->path,
+			.pos = pos,
+			.reporter = v__errors__Reporter_gen,
+			.message = s,
+			.backtrace = (string){.str=""},
+		} });
+	}
 }
 
 // TypeDecl
@@ -30537,7 +30569,8 @@ void v__builder__Builder_parse_imports(v__builder__Builder* b) {
 void v__builder__Builder_resolve_deps(v__builder__Builder* b) {
 	v__depgraph__DepGraph* graph = v__builder__Builder_import_graph(b);
 	v__depgraph__DepGraph* deps_resolved = v__depgraph__DepGraph_resolve(graph);
-	if (!deps_resolved->acyclic) {
+	bool is_main_to_builtin = deps_resolved->nodes.len == 1 && string_eq((*(v__depgraph__DepGraphNode*)array_get(deps_resolved->nodes, 0)).name, tos_lit("main")) && (*(v__depgraph__DepGraphNode*)array_get(deps_resolved->nodes, 0)).deps.len == 1 && string_eq((*(string*)array_get((*(v__depgraph__DepGraphNode*)array_get(deps_resolved->nodes, 0)).deps, 0)), tos_lit("builtin"));
+	if (!deps_resolved->acyclic && !is_main_to_builtin) {
 		eprintln(string_add(tos_lit("warning: import cycle detected between the following modules: \n"), v__depgraph__DepGraph_display_cycles(deps_resolved)));
 		return ;
 	}
@@ -32094,7 +32127,7 @@ void v__builder__Builder_build_x64(v__builder__Builder* b, array_string v_files,
 	i64 t2 = time__ticks();
 	i64 check_time = t2 - t1;
 	v__builder__Builder_info(/*rec*/*b, _STR("CHECK: %"PRId64"\000ms", 2, check_time));
-	v__gen__x64__gen(b->parsed_files, out_file);
+	v__gen__x64__gen(b->parsed_files, out_file, b->pref);
 	i64 t3 = time__ticks();
 	i64 gen_time = t3 - t2;
 	v__builder__Builder_info(/*rec*/*b, _STR("x64 GEN: %"PRId64"\000ms", 2, gen_time));
