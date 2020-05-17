@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b138cad"
+#define V_COMMIT_HASH "7f4cf08"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "02fb393"
+#define V_COMMIT_HASH "b138cad"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b138cad"
+#define V_CURRENT_COMMIT_HASH "7f4cf08"
 #endif
 
 
@@ -8937,12 +8937,12 @@ static void map_set(map* m, string key, voidptr value) {
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_8712 = map_key_to_index(m, key);
-	u32 index = mr_8712.arg0;
-	u32 meta = mr_8712.arg1;
-	multi_return_u32_u32 mr_8746 = map_meta_less(m, index, meta);
-	index = mr_8746.arg0;
-	meta = mr_8746.arg1;
+	multi_return_u32_u32 mr_8708 = map_key_to_index(m, key);
+	u32 index = mr_8708.arg0;
+	u32 meta = mr_8708.arg1;
+	multi_return_u32_u32 mr_8742 = map_meta_less(m, index, meta);
+	index = mr_8742.arg0;
+	meta = mr_8742.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -8979,12 +8979,12 @@ static void map_rehash(map* m) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
-		multi_return_u32_u32 mr_9768 = map_key_to_index(m, m->key_values.keys[i]);
-		u32 index = mr_9768.arg0;
-		u32 meta = mr_9768.arg1;
-		multi_return_u32_u32 mr_9820 = map_meta_less(m, index, meta);
-		index = mr_9820.arg0;
-		meta = mr_9820.arg1;
+		multi_return_u32_u32 mr_9764 = map_key_to_index(m, m->key_values.keys[i]);
+		u32 index = mr_9764.arg0;
+		u32 meta = mr_9764.arg1;
+		multi_return_u32_u32 mr_9816 = map_meta_less(m, index, meta);
+		index = mr_9816.arg0;
+		meta = mr_9816.arg1;
 		map_meta_greater(m, index, meta, i);
 	}
 }
@@ -9003,9 +9003,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->cap >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->cap);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_10409 = map_meta_less(m, index, meta);
-		index = mr_10409.arg0;
-		meta = mr_10409.arg1;
+		multi_return_u32_u32 mr_10405 = map_meta_less(m, index, meta);
+		index = mr_10405.arg0;
+		meta = mr_10405.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -9013,9 +9013,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 }
 
 static voidptr map_get3(map m, string key, voidptr zero) {
-	multi_return_u32_u32 mr_10616 = map_key_to_index(&m, key);
-	u32 index = mr_10616.arg0;
-	u32 meta = mr_10616.arg1;
+	multi_return_u32_u32 mr_10612 = map_key_to_index(&m, key);
+	u32 index = mr_10612.arg0;
+	u32 meta = mr_10612.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9033,9 +9033,9 @@ static voidptr map_get3(map m, string key, voidptr zero) {
 }
 
 static bool map_exists(map m, string key) {
-	multi_return_u32_u32 mr_10989 = map_key_to_index(&m, key);
-	u32 index = mr_10989.arg0;
-	u32 meta = mr_10989.arg1;
+	multi_return_u32_u32 mr_10985 = map_key_to_index(&m, key);
+	u32 index = mr_10985.arg0;
+	u32 meta = mr_10985.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9053,12 +9053,12 @@ static bool map_exists(map m, string key) {
 }
 
 void map_delete(map* m, string key) {
-	multi_return_u32_u32 mr_11316 = map_key_to_index(m, key);
-	u32 index = mr_11316.arg0;
-	u32 meta = mr_11316.arg1;
-	multi_return_u32_u32 mr_11350 = map_meta_less(m, index, meta);
-	index = mr_11350.arg0;
-	meta = mr_11350.arg1;
+	multi_return_u32_u32 mr_11312 = map_key_to_index(m, key);
+	u32 index = mr_11312.arg0;
+	u32 meta = mr_11312.arg1;
+	multi_return_u32_u32 mr_11346 = map_meta_less(m, index, meta);
+	index = mr_11346.arg0;
+	meta = mr_11346.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -18825,6 +18825,9 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		rec_name = v__parser__Parser_check_name(p);
 		if (!rec_mut) {
 			rec_mut = p->tok.kind == v__token__Kind_key_mut;
+			if (rec_mut) {
+				v__parser__Parser_warn_with_pos(p, tos_lit("use `(mut f Foo)` instead of `(f mut Foo)`"), v__token__Token_position(&p->tok));
+			}
 		}
 		receiver_pos = v__token__Position_extend(rec_start_pos, v__token__Token_position(&p->tok));
 		bool is_amp = p->tok.kind == v__token__Kind_amp;
@@ -18864,9 +18867,9 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool mr_4124 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_4124.arg0;
-	bool is_variadic = mr_4124.arg1;
+	multi_return_array_v__table__Arg_bool mr_4229 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_4229.arg0;
+	bool is_variadic = mr_4229.arg1;
 	_PUSH_MANY(&args, (args2), _t2, array_v__table__Arg);
 	// FOR IN array
 	array _t3 = args;
@@ -18981,9 +18984,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_6694 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_6694.arg0;
-	bool is_variadic = mr_6694.arg1;
+	multi_return_array_v__table__Arg_bool mr_6799 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_6799.arg0;
+	bool is_variadic = mr_6799.arg1;
 	// FOR IN array
 	array _t1 = args;
 	for (int _t2 = 0; _t2 < _t1.len; _t2++) {
