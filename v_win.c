@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "07a78b2"
+#define V_COMMIT_HASH "857276e"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fc900ba"
+#define V_COMMIT_HASH "7c923ce"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "07a78b2"
+#define V_CURRENT_COMMIT_HASH "857276e"
 #endif
 
 
@@ -20301,7 +20301,11 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 	};
 	v__parser__Parser_read_first_token(&p);
 	while (p.tok.kind == v__token__Kind_comment) {
-		array_push(&stmts, &(v__ast__Stmt[]){ /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Comment[]) {v__parser__Parser_comment(&p)}, sizeof(v__ast__Comment)), .typ = 174 /* v.ast.Comment */} });
+		v__ast__Stmt stmt = (v__ast__Stmt){
+		0};
+		v__ast__Comment com = v__parser__Parser_comment(&p);
+		stmt = /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Comment[]) {com}, sizeof(v__ast__Comment)), .typ = 174 /* v.ast.Comment */};
+		array_push(&stmts, &(v__ast__Stmt[]){ stmt });
 	}
 	v__ast__Stmt mstmt = (v__ast__Stmt){
 	0};
