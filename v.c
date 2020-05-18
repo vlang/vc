@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "59c080b"
+#define V_COMMIT_HASH "53ffee1"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4f307c1"
+#define V_COMMIT_HASH "59c080b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "59c080b"
+#define V_CURRENT_COMMIT_HASH "53ffee1"
 #endif
 
 
@@ -31196,6 +31196,22 @@ static void v__builder__Builder_cc_windows_cross(v__builder__Builder* c) {
 	) : (
 		array_v__cflag__CFlag_c_options_before_target(cflags)
 	)));
+	string optimization_options = tos_lit("");
+	string debug_options = tos_lit("");
+	if (c->pref->is_prod) {
+		optimization_options = (string_eq(c->pref->ccompiler, tos_lit("msvc")) ? (
+			tos_lit("")
+		) : (
+			tos_lit(" -O3 -fno-strict-aliasing -flto ")
+		));
+	}
+	if (c->pref->is_debug) {
+		debug_options = (string_eq(c->pref->ccompiler, tos_lit("msvc")) ? (
+			tos_lit("")
+		) : (
+			tos_lit(" -g3 -no-pie ")
+		));
+	}
 	string libs = tos_lit("");
 	if (false && c->pref->build_mode == v__pref__BuildMode_default_mode) {
 		libs = _STR("\"%.*s\000/vlib/builtin.o\"", 2, _const_v__pref__default_module_path);
@@ -31221,8 +31237,8 @@ static void v__builder__Builder_cc_windows_cross(v__builder__Builder* c) {
 		v_panic(tos_lit("your platform is not supported yet"));
 	}
 	string cmd = tos_lit("x86_64-w64-mingw32-gcc");
-	cmd = string_add(cmd, _STR(" -std=gnu11 %.*s\000 -municode", 2, args));
-	if (c->pref->is_verbose) {
+	cmd = string_add(cmd, _STR(" %.*s\000 %.*s\000 -std=gnu11 %.*s\000 -municode", 4, optimization_options, debug_options, args));
+	if (c->pref->is_verbose || c->pref->show_cc) {
 		println(cmd);
 	}
 	if (os__system(cmd) != 0) {
