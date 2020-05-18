@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ebdfe9a"
+#define V_COMMIT_HASH "d94d436"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "53ffee1"
+#define V_COMMIT_HASH "ebdfe9a"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ebdfe9a"
+#define V_CURRENT_COMMIT_HASH "d94d436"
 #endif
 
 
@@ -15842,8 +15842,12 @@ string array_v__table__Kind_str(array_v__table__Kind kinds) {
 // TypeDecl
 string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(table, t);
+	string res = sym->name;
 	if (sym->kind == v__table__Kind_multi_return) {
-		string res = tos_lit("(");
+		res = tos_lit("(");
+		if (v__table__Type_flag_is(t, v__table__TypeFlag_optional)) {
+			res = string_add(tos_lit("?"), res);
+		}
 		v__table__MultiReturn* mr_info = /* as */ (v__table__MultiReturn*)__as_cast(sym->info.obj, sym->info.typ, /*expected:*/84);
 		// FOR IN array
 		array _t1 = mr_info->types;
@@ -15857,10 +15861,9 @@ string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 		res = string_add(res, tos_lit(")"));
 		return res;
 	}
-	string res = sym->name;
-	if (sym->kind == v__table__Kind_array) {
+	if (sym->kind == v__table__Kind_array || string_contains(res, tos_lit("array_"))) {
 		res = string_replace(res, tos_lit("array_"), tos_lit("[]"));
-	} else if (sym->kind == v__table__Kind_map) {
+	} else if (sym->kind == v__table__Kind_map || string_contains(res, tos_lit("map_string_"))) {
 		res = string_replace(res, tos_lit("map_string_"), tos_lit("map[string]"));
 	}
 	if (string_contains(res, tos_lit("."))) {
