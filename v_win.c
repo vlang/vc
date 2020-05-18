@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "2a62f1a"
+#define V_COMMIT_HASH "0352584"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2635be5"
+#define V_COMMIT_HASH "2a62f1a"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "2a62f1a"
+#define V_CURRENT_COMMIT_HASH "0352584"
 #endif
 
 
@@ -2777,7 +2777,7 @@ static u64 strconv__converter(strconv__PrepNumber* pn);
 f64 strconv__atof64(string s);
 #define _const_strconv__int_size 32
 u64 _const_strconv__max_u64; // inited later
-static byte strconv__byte_to_lower(byte c);
+byte strconv__byte_to_lower(byte c);
 u64 strconv__common_parse_uint(string s, int _base, int _bit_size, bool error_on_non_digit, bool error_on_high_digit);
 u64 strconv__parse_uint(string s, int _base, int _bit_size);
 i64 strconv__common_parse_int(string _s, int base, int _bit_size, bool error_on_non_digit, bool error_on_high_digit);
@@ -2868,7 +2868,7 @@ static bool print_backtrace_skipping_top_frames(int skipframes);
 static bool print_backtrace_skipping_top_frames_msvc(int skipframes);
 static bool print_backtrace_skipping_top_frames_mingw(int skipframes);
 void println(string s);
-static int proc_pidpath(int, voidptr, int);
+int proc_pidpath(int, voidptr, int);
 string f64_str(f64 d);
 string f64_strsci(f64 x, int digit_num);
 string f64_strlong(f64 x);
@@ -3401,7 +3401,7 @@ u64 _const_time__freq_time; // inited later
 static int time__make_unix_time(struct tm t);
 static u64 time__init_win_time_freq();
 static u64 time__init_win_time_start();
-static u64 time__sys_mono_now();
+u64 time__sys_mono_now();
 static u64 time__vpc_now();
 time__Time time__unix(int abs);
 static multi_return_int_int_int time__calculate_date_from_offset(int day_offset_);
@@ -3676,11 +3676,11 @@ void v__util__verror(string kind, string s);
 Option_string v__util__find_working_diff_command();
 string v__util__color_compare_files(string diff_cmd, string file1, string file2);
 static string v__util__color_compare_strings(string diff_cmd, string expected, string found);
-static bool v__util__is_name_char(byte c);
-static bool v__util__is_func_char(byte c);
-static bool v__util__is_nl(byte c);
-static bool v__util__contains_capital(string s);
-static bool v__util__good_type_name(string s);
+bool v__util__is_name_char(byte c);
+bool v__util__is_func_char(byte c);
+bool v__util__is_nl(byte c);
+bool v__util__contains_capital(string s);
+bool v__util__good_type_name(string s);
 string v__util__cescaped_path(string s);
 bool v__util__is_fmt();
 string _const_v__util__v_version; // a string literal, inited later
@@ -3697,7 +3697,7 @@ string v__util__path_of_executable(string path);
 Option_string v__util__read_file(string file_path);
 static int v__util__imin(int a, int b);
 static int v__util__imax(int a, int b);
-static string v__util__replace_op(string s);
+string v__util__replace_op(string s);
 array_string v__util__join_env_vflags_and_os_args();
 static array_string v__util__non_empty(array_string arg);
 v__ast__IdentVar v__ast__Ident_var_info(v__ast__Ident* i);
@@ -3887,6 +3887,7 @@ void v__checker__Checker_warn(v__checker__Checker* c, string s, v__token__Positi
 void v__checker__Checker_error(v__checker__Checker* c, string message, v__token__Position pos);
 static void v__checker__Checker_warn_or_error(v__checker__Checker* c, string message, v__token__Position pos, bool warn);
 static bool v__checker__Checker_fileis(v__checker__Checker* c, string s);
+static void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast__FnDecl it);
 array_string _const_v__gen__c_reserved; // inited later
 array_string _const_v__gen__tabs; // inited later
 string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__Preferences* pref);
@@ -6532,7 +6533,7 @@ f64 strconv__atof64(string s) {
 	return res.f;
 }
 
-static byte strconv__byte_to_lower(byte c) {
+byte strconv__byte_to_lower(byte c) {
 	return (c | ('x' - 'X'));
 }
 
@@ -8331,7 +8332,7 @@ void println(string s) {
 
 
 
-static int proc_pidpath(int, voidptr, int);
+int proc_pidpath(int, voidptr, int);
 
 
 
@@ -12269,7 +12270,6 @@ void os__on_segfault(voidptr f) {
 
 
 
-
 string os__executable() {
 	
 // $if  linux {
@@ -13909,7 +13909,7 @@ static u64 time__init_win_time_start() {
 	return s;
 }
 
-static u64 time__sys_mono_now() {
+u64 time__sys_mono_now() {
 	u64 tm = ((u64)(0));
 	QueryPerformanceCounter(&tm);
 	return (tm - _const_time__start_time) * 1000000000 / _const_time__freq_time;
@@ -17073,21 +17073,21 @@ static string v__util__color_compare_strings(string diff_cmd, string expected, s
 }
 
 // Attr: [inline]
-inline static bool v__util__is_name_char(byte c) {
+inline bool v__util__is_name_char(byte c) {
 	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 }
 
 // Attr: [inline]
-inline static bool v__util__is_func_char(byte c) {
+inline bool v__util__is_func_char(byte c) {
 	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || byte_is_digit(c);
 }
 
 // Attr: [inline]
-inline static bool v__util__is_nl(byte c) {
+inline bool v__util__is_nl(byte c) {
 	return c == '\r' || c == '\n';
 }
 
-static bool v__util__contains_capital(string s) {
+bool v__util__contains_capital(string s) {
 	for (int _t1 = 0; _t1 < s.len; _t1++) {
 	byte c = s.str[_t1];
 		if (c >= 'A' && c <= 'Z') {
@@ -17097,7 +17097,7 @@ static bool v__util__contains_capital(string s) {
 	return false;
 }
 
-static bool v__util__good_type_name(string s) {
+bool v__util__good_type_name(string s) {
 	if (s.len < 4) {
 		return true;
 	}
@@ -17324,7 +17324,7 @@ inline static int v__util__imax(int a, int b) {
 	));
 }
 
-static string v__util__replace_op(string s) {
+string v__util__replace_op(string s) {
 	byte last_char = string_at(s, s.len - 1);
 	string suffix = (last_char == '+') ? (
 		tos_lit("_plus")
@@ -19484,7 +19484,7 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 			.is_js = is_js,
 			.is_generic = is_generic,
 			.is_pub = is_pub,
-			.mod = (string){.str=""},
+			.mod = p->mod,
 			.ctdefine = ctdefine,
 			.name = name,
 		});
@@ -19530,9 +19530,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_7021 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_7021.arg0;
-	bool is_variadic = mr_7021.arg1;
+	multi_return_array_v__table__Arg_bool mr_7035 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_7035.arg0;
+	bool is_variadic = mr_7035.arg1;
 	// FOR IN array
 	array _t1 = args;
 	for (int _t2 = 0; _t2 < _t1.len; _t2++) {
@@ -23294,6 +23294,9 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 			v__checker__Checker_error(c, _STR("ambiguous call to: `%.*s\000`, may refer to fn `%.*s\000` or variable `%.*s\000`", 4, fn_name, fn_name, fn_name), call_expr->pos);
 		}}
 	}
+	if (!f.is_pub && !f.is_c && !c->is_builtin_mod && !c->pref->is_test && string_ne(f.mod, c->mod) && string_ne(f.name, tos_lit("")) && string_ne(f.mod, tos_lit(""))) {
+		v__checker__Checker_warn(c, _STR("function `%.*s\000` is private. curmod=%.*s\000 fmod=%.*s", 3, f.name, c->mod, f.mod), call_expr->pos);
+	}
 	call_expr->return_type = f.return_type;
 	if (f.return_type == _const_v__table__void_type && f.ctdefine.len > 0 && !_IN(string, f.ctdefine, c->pref->compile_defines)) {
 		call_expr->should_be_skipped = true;
@@ -23882,33 +23885,7 @@ x });
 		v__checker__Checker_check_expr_opt_call(c, it->expr, etype, false);
 	}else if (node.typ == 126 /* v.ast.FnDecl */) {
 		v__ast__FnDecl* it = (v__ast__FnDecl*)node.obj; // ST it
-		if (!it->is_c && !it->is_js && !c->is_builtin_mod) {
-			v__checker__Checker_check_valid_snake_case(c, it->name, tos_lit("function name"), it->pos);
-		}
-		if (it->is_method) {
-			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, it->receiver.typ);
-			if (sym->kind == v__table__Kind_interface_) {
-				v__checker__Checker_error(c, tos_lit("interfaces cannot be used as method receiver"), it->receiver_pos);
-			}
-		}
-		if (!it->is_c) {
-			// FOR IN array
-			array _t15 = it->args;
-			for (int _t16 = 0; _t16 < _t15.len; _t16++) {
-				v__table__Arg arg = ((v__table__Arg*)_t15.data)[_t16];
-				v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, arg.typ);
-				if (sym->kind == v__table__Kind_placeholder) {
-					v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, sym->name), it->pos);
-				}
-			}
-		}
-		c->expected_type = _const_v__table__void_type;
-		c->fn_return_type = it->return_type;
-		v__checker__Checker_stmts(c, it->stmts);
-		if (!it->is_c && !it->is_js && !it->no_body && it->return_type != _const_v__table__void_type && !c->returns && !(string_eq(it->name, tos_lit("panic")) || string_eq(it->name, tos_lit("exit")))) {
-			v__checker__Checker_error(c, _STR("missing return at end of function `%.*s\000`", 2, it->name), it->pos);
-		}
-		c->returns = false;
+		v__checker__Checker_fn_decl(c, *it);
 	}else if (node.typ == 170 /* v.ast.ForCStmt */) {
 		v__ast__ForCStmt* it = (v__ast__ForCStmt*)node.obj; // ST it
 		c->in_for_count++;
@@ -24700,6 +24677,36 @@ static void v__checker__Checker_warn_or_error(v__checker__Checker* c, string mes
 
 static bool v__checker__Checker_fileis(v__checker__Checker* c, string s) {
 	return string_contains(c->file.path, s);
+}
+
+static void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast__FnDecl it) {
+	if (!it.is_c && !it.is_js && !c->is_builtin_mod) {
+		v__checker__Checker_check_valid_snake_case(c, it.name, tos_lit("function name"), it.pos);
+	}
+	if (it.is_method) {
+		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, it.receiver.typ);
+		if (sym->kind == v__table__Kind_interface_) {
+			v__checker__Checker_error(c, tos_lit("interfaces cannot be used as method receiver"), it.receiver_pos);
+		}
+	}
+	if (!it.is_c) {
+		// FOR IN array
+		array _t1 = it.args;
+		for (int _t2 = 0; _t2 < _t1.len; _t2++) {
+			v__table__Arg arg = ((v__table__Arg*)_t1.data)[_t2];
+			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, arg.typ);
+			if (sym->kind == v__table__Kind_placeholder) {
+				v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, sym->name), it.pos);
+			}
+		}
+	}
+	c->expected_type = _const_v__table__void_type;
+	c->fn_return_type = it.return_type;
+	v__checker__Checker_stmts(c, it.stmts);
+	if (!it.is_c && !it.is_js && !it.no_body && it.return_type != _const_v__table__void_type && !c->returns && !(string_eq(it.name, tos_lit("panic")) || string_eq(it.name, tos_lit("exit")))) {
+		v__checker__Checker_error(c, _STR("missing return at end of function `%.*s\000`", 2, it.name), it.pos);
+	}
+	c->returns = false;
 }
 
 string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__Preferences* pref) {
