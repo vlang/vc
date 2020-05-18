@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "88e6d98"
+#define V_COMMIT_HASH "4f307c1"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1a99040"
+#define V_COMMIT_HASH "88e6d98"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "88e6d98"
+#define V_CURRENT_COMMIT_HASH "4f307c1"
 #endif
 
 
@@ -2913,6 +2913,7 @@ string string_all_before(string s, string dot);
 string string_all_before_last(string s, string dot);
 string string_all_after(string s, string dot);
 string string_after(string s, string dot);
+string string_after_char(string s, byte dot);
 string array_string_join(array_string a, string del);
 string array_string_join_lines(array_string s);
 string string_reverse(string s);
@@ -10553,6 +10554,21 @@ string string_all_after(string s, string dot) {
 
 string string_after(string s, string dot) {
 	return string_all_after(s, dot);
+}
+
+string string_after_char(string s, byte dot) {
+	int pos = 0;
+	for (int i = 0; i < s.len; i++) {
+	byte c = s.str[i];
+		if (c == dot) {
+			pos = i;
+			break;
+		}
+	}
+	if (pos == 0) {
+		return s;
+	}
+	return string_right(s, pos + 1);
 }
 
 string array_string_join(array_string a, string del) {
@@ -22035,6 +22051,9 @@ v__table__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__S
 			if (!v__table__Table_check(c->table, expr_type, info_field.typ)) {
 				v__checker__Checker_error(c, _STR("cannot assign `%.*s\000` as `%.*s\000` for field `%.*s\000`", 4, expr_type_sym->name, field_type_sym->name, info_field.name), field.pos);
 			}
+			if (v__table__Type_is_ptr(info_field.typ) && !v__table__Type_is_ptr(expr_type) && !v__table__Type_is_number(expr_type)) {
+				v__checker__Checker_error(c, tos_lit("ref"), field.pos);
+			}
 			(*(v__ast__StructInitField*)array_get(struct_init->fields, i)).typ = expr_type;
 			(*(v__ast__StructInitField*)array_get(struct_init->fields, i)).expected_type = info_field.typ;
 		}
@@ -26012,6 +26031,9 @@ static void v__gen__Gen_struct_init(v__gen__Gen* g, v__ast__StructInit struct_in
 			}
 		}
 		if (!cloned) {
+			if (v__table__Type_is_ptr(field.expected_type) && !v__table__Type_is_ptr(field.typ) && !v__table__Type_is_number(field.typ)) {
+				v__gen__Gen_write(g, tos_lit("/* autoref */&"));
+			}
 			v__gen__Gen_expr_with_cast(g, field.expr, field.typ, field.expected_type);
 		}
 		v__gen__Gen_writeln(g, tos_lit(","));
@@ -26430,9 +26452,9 @@ static void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInter
 			}
 		} else if ((*(byte*)array_get(specs, i)) == 's') {
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, (*(v__table__Type*)array_get(node.expr_types, i)));
-			multi_return_bool_bool_int mr_72797 = v__table__TypeSymbol_str_method_info(sym);
-			bool sym_has_str_method = mr_72797.arg0;
-			bool str_method_expects_ptr = mr_72797.arg1;
+			multi_return_bool_bool_int mr_72918 = v__table__TypeSymbol_str_method_info(sym);
+			bool sym_has_str_method = mr_72918.arg0;
+			bool str_method_expects_ptr = mr_72918.arg1;
 			if (v__table__Type_flag_is((*(v__table__Type*)array_get(node.expr_types, i)), v__table__TypeFlag_variadic)) {
 				string str_fn_name = v__gen__Gen_gen_str_for_type(g, (*(v__table__Type*)array_get(node.expr_types, i)));
 				v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -26599,9 +26621,9 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, array_v__ast__
 	v__gen__Gen_writeln(g, _STR("if (!%.*s\000.ok) {", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tstring err = %.*s\000.v_error;", 2, cvar_name));
 	v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s\000.ecode;", 2, cvar_name));
-	multi_return_string_string mr_77757 = v__gen__Gen_type_of_last_statement(g, stmts);
-	string last_type = mr_77757.arg0;
-	string type_of_last_expression = mr_77757.arg1;
+	multi_return_string_string mr_77878 = v__gen__Gen_type_of_last_statement(g, stmts);
+	string last_type = mr_77878.arg0;
+	string type_of_last_expression = mr_77878.arg1;
 	if (string_eq(last_type, tos_lit("v.ast.ExprStmt")) && string_ne(type_of_last_expression, tos_lit("void"))) {
 		g->indent++;
 		// FOR IN array
@@ -27052,10 +27074,10 @@ inline static string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Type
 static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_89016 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_89016.arg0;
-	bool str_method_expects_ptr = mr_89016.arg1;
-	int str_nr_args = mr_89016.arg2;
+	multi_return_bool_bool_int mr_89137 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_89137.arg0;
+	bool str_method_expects_ptr = mr_89137.arg1;
+	int str_nr_args = mr_89137.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -27237,9 +27259,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_95957 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_95957.arg0;
-	bool str_method_expects_ptr = mr_95957.arg1;
+	multi_return_bool_bool_int mr_96078 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_96078.arg0;
+	bool str_method_expects_ptr = mr_96078.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (
@@ -27295,9 +27317,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_98781 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_98781.arg0;
-	bool str_method_expects_ptr = mr_98781.arg1;
+	multi_return_bool_bool_int mr_98902 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_98902.arg0;
+	bool str_method_expects_ptr = mr_98902.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (
