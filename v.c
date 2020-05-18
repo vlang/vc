@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "53ffee1"
+#define V_COMMIT_HASH "ebdfe9a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "59c080b"
+#define V_COMMIT_HASH "53ffee1"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "53ffee1"
+#define V_CURRENT_COMMIT_HASH "ebdfe9a"
 #endif
 
 
@@ -260,6 +260,25 @@ typedef enum {
 
 typedef struct v__pref__Preferences v__pref__Preferences;
 typedef struct v__cflag__CFlag v__cflag__CFlag;
+typedef enum {
+	v__vmod__TokenKind_module_keyword, // 
+	v__vmod__TokenKind_field_key, // +1
+	v__vmod__TokenKind_lcbr, // +2
+	v__vmod__TokenKind_rcbr, // +3
+	v__vmod__TokenKind_labr, // +4
+	v__vmod__TokenKind_rabr, // +5
+	v__vmod__TokenKind_comma, // +6
+	v__vmod__TokenKind_colon, // +7
+	v__vmod__TokenKind_eof, // +8
+	v__vmod__TokenKind_str, // +9
+	v__vmod__TokenKind_ident, // +10
+	v__vmod__TokenKind_unknown, // +11
+} v__vmod__TokenKind;
+
+typedef struct v__vmod__Manifest v__vmod__Manifest;
+typedef struct v__vmod__Scanner v__vmod__Scanner;
+typedef struct v__vmod__Parser v__vmod__Parser;
+typedef struct v__vmod__Token v__vmod__Token;
 typedef struct v__vmod__ModFileAndFolder v__vmod__ModFileAndFolder;
 typedef struct v__vmod__ModFileCacher v__vmod__ModFileCacher;
 typedef enum {
@@ -488,6 +507,8 @@ typedef Option Option_os__Result;
 typedef Option Option_time__Time;
 typedef Option Option_v__pref__OS;
 typedef Option Option_v__pref__Backend;
+typedef Option Option_v__vmod__Manifest;
+typedef Option Option_multi_return_array_string_int;
 typedef Option Option_v__table__Fn;
 typedef Option Option_v__table__Field;
 typedef Option Option_v__table__TypeSymbol;
@@ -1000,8 +1021,9 @@ typedef array array_v__token__Kind;
 typedef array array_v__token__Precedence;
 typedef i64 time__Duration;
 typedef voidptr time__time_t;
-typedef map map_string_v__vmod__ModFileAndFolder;
 typedef map map_string_array_string;
+typedef array array_v__vmod__Token;
+typedef map map_string_v__vmod__ModFileAndFolder;
 typedef array array_v__depgraph__DepGraphNode;
 typedef map map_string_v__depgraph__DepGraphNode;
 typedef array array_v__ast__DeferStmt;
@@ -1015,6 +1037,7 @@ typedef array array_u32;
 typedef array array_u64;
 typedef array array_strconv__ftoa__Uint128;
 typedef array array_f64;
+typedef array array_v__vmod__TokenKind;
 typedef array array_v__gen__x64__Register;
 typedef array array_v__pref__OS;
 // builtin types:
@@ -1619,6 +1642,29 @@ struct time__StopWatch {
 	u64 end;
 };
 
+struct v__vmod__Manifest {
+	string name;
+	string version;
+	string description;
+	array_string dependencies;
+	string license;
+	string repo_url;
+	string author;
+	map_string_array_string unknown;
+};
+
+struct v__vmod__Token {
+	v__vmod__TokenKind typ;
+	string val;
+};
+
+struct v__vmod__Scanner {
+	int pos;
+	string text;
+	bool inside_text;
+	array_v__vmod__Token tokens;
+};
+
 struct v__vmod__ModFileCacher {
 	map_string_v__vmod__ModFileAndFolder cache;
 	map_string_array_string folder_files;
@@ -2147,6 +2193,11 @@ struct v__ast__InterfaceDecl {
 	v__token__Position pos;
 };
 
+struct v__vmod__Parser {
+	string file_path;
+	v__vmod__Scanner scanner;
+};
+
 struct v__gen__js__JsDoc {
 	v__gen__js__JsGen* gen;
 	strings__Builder out;
@@ -2409,6 +2460,11 @@ typedef struct {
 	int arg1;
 	int arg2;
 } multi_return_int_int_int;
+
+typedef struct {
+	array_string arg0;
+	int arg1;
+} multi_return_array_string_int;
 
 typedef struct {
 	array_string arg0;
@@ -3282,6 +3338,17 @@ string term__h_divider(string divider);
 string term__header(string text, string divider);
 static bool term__supports_escape_sequences(int fd);
 multi_return_int_int term__get_terminal_size();
+Option_v__vmod__Manifest v__vmod__from_file(string vmod_path);
+Option_v__vmod__Manifest v__vmod__decode(string contents);
+static void v__vmod__Scanner_tokenize(v__vmod__Scanner* s, v__vmod__TokenKind t_type, string val);
+static void v__vmod__Scanner_skip_whitespace(v__vmod__Scanner* s);
+static bool v__vmod__is_name_alpha(byte chr);
+static string v__vmod__Scanner_create_string(v__vmod__Scanner* s, byte q);
+static string v__vmod__Scanner_create_ident(v__vmod__Scanner* s);
+static bool v__vmod__Scanner_peek_char(v__vmod__Scanner s, byte c);
+static void v__vmod__Scanner_scan_all(v__vmod__Scanner* s);
+static Option_multi_return_array_string_int v__vmod__get_array_content(array_v__vmod__Token tokens, int st_idx);
+static Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* p);
 v__vmod__ModFileCacher* v__vmod__new_mod_file_cacher();
 void v__vmod__ModFileCacher_dump(v__vmod__ModFileCacher* mcache);
 v__vmod__ModFileAndFolder v__vmod__ModFileCacher_get(v__vmod__ModFileCacher* mcache, string mfolder);
@@ -4076,6 +4143,20 @@ typedef struct {
 		bool   ok;
 		bool   is_none;
 	} Option2_v__pref__Backend;
+typedef struct {
+		v__vmod__Manifest  data;
+		string error;
+		int    ecode;
+		bool   ok;
+		bool   is_none;
+	} Option2_v__vmod__Manifest;
+typedef struct {
+		multi_return_array_string_int  data;
+		string error;
+		int    ecode;
+		bool   ok;
+		bool   is_none;
+	} Option2_multi_return_array_string_int;
 typedef struct {
 		v__table__Fn  data;
 		string error;
@@ -14823,6 +14904,245 @@ multi_return_int_int term__get_terminal_size() {
 	};
 	ioctl(1, TIOCGWINSZ, &w);
 	return (multi_return_int_int){.arg0=((int)(w.ws_col)),.arg1=((int)(w.ws_row))};
+}
+
+Option_v__vmod__Manifest v__vmod__from_file(string vmod_path) {
+	if (!os__exists(vmod_path)) {
+		return v_error(tos_lit("v.mod: v.mod file not found."));}
+	Option_string contents = os__read_file(vmod_path);
+	if (!contents.ok) {
+		string err = contents.v_error;
+		int errcode = contents.ecode;
+		 // typeof it_expr_type: v.ast.CallExpr
+		// last_type: v.ast.ExprStmt
+		// last_expr_result_type: void
+		v_panic(tos_lit("v.mod: cannot parse v.mod"));
+	};
+	return v__vmod__decode(/*opt*/(*(string*)contents.data));
+}
+
+Option_v__vmod__Manifest v__vmod__decode(string contents) {
+	v__vmod__Parser parser = (v__vmod__Parser){
+		.scanner = (v__vmod__Scanner){
+		.pos = 0,
+		.text = contents,
+		.inside_text = 0,
+		.tokens = __new_array(0, 1, sizeof(v__vmod__Token)),
+	},
+		.file_path = (string){.str=""},
+	};
+	return v__vmod__Parser_parse(&parser);
+}
+
+static void v__vmod__Scanner_tokenize(v__vmod__Scanner* s, v__vmod__TokenKind t_type, string val) {
+	array_push(&s->tokens, &(v__vmod__Token[]){ (v__vmod__Token){
+		.typ = t_type,
+		.val = val,
+	} });
+}
+
+static void v__vmod__Scanner_skip_whitespace(v__vmod__Scanner* s) {
+	while (s->pos < s->text.len && byte_is_space(string_at(s->text, s->pos))) {
+		s->pos++;
+	}
+}
+
+static bool v__vmod__is_name_alpha(byte chr) {
+	return byte_is_letter(chr) || chr == '_';
+}
+
+static string v__vmod__Scanner_create_string(v__vmod__Scanner* s, byte q) {
+	string str = tos_lit("");
+	while (string_at(s->text, s->pos) != q) {
+		if (string_at(s->text, s->pos) == '\\' && string_at(s->text, s->pos + 1) == q) {
+			str = string_add(str, string_substr(s->text, s->pos, s->pos + 1));
+			s->pos += 2;
+		} else {
+			str = string_add(str, byte_str(string_at(s->text, s->pos)));
+			s->pos++;
+		}
+	}
+	return str;
+}
+
+static string v__vmod__Scanner_create_ident(v__vmod__Scanner* s) {
+	string text = tos_lit("");
+	while (v__vmod__is_name_alpha(string_at(s->text, s->pos))) {
+		text = string_add(text, byte_str(string_at(s->text, s->pos)));
+		s->pos++;
+	}
+	return text;
+}
+
+static bool v__vmod__Scanner_peek_char(v__vmod__Scanner s, byte c) {
+	return s.pos - 1 < s.text.len && string_at(s.text, s.pos - 1) == c;
+}
+
+static void v__vmod__Scanner_scan_all(v__vmod__Scanner* s) {
+	while (s->pos < s->text.len) {
+		byte c = string_at(s->text, s->pos);
+		if (byte_is_space(c) || c == '\\') {
+			s->pos++;
+			continue;
+		}
+		if (v__vmod__is_name_alpha(c)) {
+			string name = v__vmod__Scanner_create_ident(s);
+			if (string_eq(name, tos_lit("Module"))) {
+				v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_module_keyword, name);
+				s->pos++;
+				continue;
+			} else if (string_at(s->text, s->pos) == ':') {
+				v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_field_key, string_add(name, tos_lit(":")));
+				s->pos += 2;
+				continue;
+			} else {
+				v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_ident, name);
+				s->pos++;
+				continue;
+			}
+		}
+		if ((c == '\'' || c == '\"') && !v__vmod__Scanner_peek_char(/*rec*/*s, '\\')) {
+			s->pos++;
+			string str = v__vmod__Scanner_create_string(s, c);
+			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_str, str);
+			s->pos++;
+			continue;
+		}
+		if (c == '{') {
+			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_lcbr, byte_str(c));
+		}else if (c == '}') {
+			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_rcbr, byte_str(c));
+		}else if (c == '[') {
+			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_labr, byte_str(c));
+		}else if (c == ']') {
+			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_rabr, byte_str(c));
+		}else if (c == ':') {
+			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_colon, byte_str(c));
+		}else if (c == ',') {
+			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_comma, byte_str(c));
+		}else {
+			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_unknown, byte_str(c));
+		};
+		s->pos++;
+	}
+	v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_eof, tos_lit("eof"));
+}
+
+static Option_multi_return_array_string_int v__vmod__get_array_content(array_v__vmod__Token tokens, int st_idx) {
+	array_string vals = __new_array_with_default(0, 0, sizeof(string), 0);
+	int idx = st_idx;
+	if ((*(v__vmod__Token*)array_get(tokens, idx)).typ != v__vmod__TokenKind_labr) {
+		return v_error(tos_lit("vmod: not a valid array"));}
+	idx++;
+	while (1) {
+		v__vmod__Token tok = (*(v__vmod__Token*)array_get(tokens, idx));
+		if (tok.typ == v__vmod__TokenKind_str) {
+			array_push(&vals, &(string[]){ tok.val });
+			if (!((*(v__vmod__Token*)array_get(tokens, idx + 1)).typ == v__vmod__TokenKind_comma || (*(v__vmod__Token*)array_get(tokens, idx + 1)).typ == v__vmod__TokenKind_rabr)) {
+				return v_error(_STR("vmod: invalid separator \"%.*s\000\"", 2, (*(v__vmod__Token*)array_get(tokens, idx + 1)).val));}
+			idx += ((*(v__vmod__Token*)array_get(tokens, idx + 1)).typ == v__vmod__TokenKind_comma ? (
+				2
+			) : (
+				1
+			));
+		}else if (tok.typ == v__vmod__TokenKind_rabr) {
+			idx++;
+			break;
+		}else {
+			return v_error(_STR("vmod: invalid token \"%.*s\000\"", 2, tok.val));};
+	}
+	return opt_ok(&(multi_return_array_string_int/*X*/[]) { (multi_return_array_string_int){.arg0=vals,.arg1=idx} }, sizeof(multi_return_array_string_int));
+}
+
+static Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* p) {
+	string err_label = tos_lit("vmod:");
+	if (p->scanner.text.len == 0) {
+		return v_error(_STR("%.*s\000 no content.", 2, err_label));}
+	v__vmod__Scanner_scan_all(&p->scanner);
+	array_v__vmod__Token tokens = p->scanner.tokens;
+	v__vmod__Manifest mn = (v__vmod__Manifest){
+		.name = (string){.str=""},
+		.version = (string){.str=""},
+		.description = (string){.str=""},
+		.dependencies = __new_array(0, 1, sizeof(string)),
+		.license = (string){.str=""},
+		.repo_url = (string){.str=""},
+		.author = (string){.str=""},
+		.unknown = new_map_1(sizeof(array_string)),
+	};
+	if ((*(v__vmod__Token*)array_get(tokens, 0)).typ != v__vmod__TokenKind_module_keyword) {
+		v_panic(tos_lit("not a valid v.mod"));
+	}
+	int i = 1;
+	while (i < tokens.len) {
+		v__vmod__Token tok = (*(v__vmod__Token*)array_get(tokens, i));
+		if (tok.typ == v__vmod__TokenKind_lcbr) {
+			if (!((*(v__vmod__Token*)array_get(tokens, i + 1)).typ == v__vmod__TokenKind_field_key || (*(v__vmod__Token*)array_get(tokens, i + 1)).typ == v__vmod__TokenKind_rcbr)) {
+				return v_error(_STR("%.*s\000 invalid content after opening brace", 2, err_label));}
+			i++;
+			continue;
+		}else if (tok.typ == v__vmod__TokenKind_rcbr) {
+			break;
+		}else if (tok.typ == v__vmod__TokenKind_field_key) {
+			string field_name = string_trim_right(tok.val, tos_lit(":"));
+			if (!((*(v__vmod__Token*)array_get(tokens, i + 1)).typ == v__vmod__TokenKind_str || (*(v__vmod__Token*)array_get(tokens, i + 1)).typ == v__vmod__TokenKind_labr)) {
+				return v_error(_STR("%.*s\000 value of field \"%.*s\000\" must be either string or an array of strings", 3, err_label, field_name));}
+			string field_value = (*(v__vmod__Token*)array_get(tokens, i + 1)).val;
+			if (string_eq(field_name, tos_lit("name"))) {
+				mn.name = field_value;
+			}else if (string_eq(field_name, tos_lit("version"))) {
+				mn.version = field_value;
+			}else if (string_eq(field_name, tos_lit("license"))) {
+				mn.license = field_value;
+			}else if (string_eq(field_name, tos_lit("repo_url"))) {
+				mn.repo_url = field_value;
+			}else if (string_eq(field_name, tos_lit("description"))) {
+				mn.description = field_value;
+			}else if (string_eq(field_name, tos_lit("author"))) {
+				mn.author = field_value;
+			}else if (string_eq(field_name, tos_lit("dependencies"))) {
+				Option_multi_return_array_string_int mr_4459 = v__vmod__get_array_content(tokens, i + 1);
+				if (!mr_4459.ok) {
+					string err = mr_4459.v_error;
+					int errcode = mr_4459.ecode;
+					// last_type: v.ast.Return
+					// last_expr_result_type: 
+					return v_error(err);};
+				array_string deps = (*(multi_return_array_string_int*)mr_4459.data).arg0;
+				int idx = (*(multi_return_array_string_int*)mr_4459.data).arg1;
+				mn.dependencies = deps;
+				i = idx;
+				continue;
+			}else {
+				if ((*(v__vmod__Token*)array_get(tokens, i + 1)).typ == v__vmod__TokenKind_labr) {
+					Option_multi_return_array_string_int mr_4665 = v__vmod__get_array_content(tokens, i + 1);
+					if (!mr_4665.ok) {
+						string err = mr_4665.v_error;
+						int errcode = mr_4665.ecode;
+						// last_type: v.ast.Return
+						// last_expr_result_type: 
+						return v_error(err);};
+					array_string vals = (*(multi_return_array_string_int*)mr_4665.data).arg0;
+					int idx = (*(multi_return_array_string_int*)mr_4665.data).arg1;
+					map_set(&mn.unknown, field_name, &(array_string[]) { vals });
+					i = idx;
+					continue;
+				}
+				map_set(&mn.unknown, field_name, &(array_string[]) { new_array_from_c_array(1, 1, sizeof(string), (string[1]){
+		field_value, 
+}) });
+			};
+			i += 2;
+			continue;
+		}else if (tok.typ == v__vmod__TokenKind_comma) {
+			if (!((*(v__vmod__Token*)array_get(tokens, i - 1)).typ == v__vmod__TokenKind_str || (*(v__vmod__Token*)array_get(tokens, i - 1)).typ == v__vmod__TokenKind_rabr) || (*(v__vmod__Token*)array_get(tokens, i + 1)).typ != v__vmod__TokenKind_field_key) {
+				return v_error(_STR("%.*s\000 invalid comma placement", 2, err_label));}
+			i++;
+			continue;
+		}else {
+			return v_error(_STR("%.*s\000 invalid token \"%.*s\000\"", 3, err_label, tok.val));};
+	}
+	return /*:)v.vmod.Manifest*/opt_ok(&(v__vmod__Manifest[]) { mn }, sizeof(v__vmod__Manifest));
 }
 
 v__vmod__ModFileCacher* v__vmod__new_mod_file_cacher() {
