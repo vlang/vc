@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "57ea9be"
+#define V_COMMIT_HASH "895cefe"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2344c1a"
+#define V_COMMIT_HASH "57ea9be"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "57ea9be"
+#define V_CURRENT_COMMIT_HASH "895cefe"
 #endif
 
 
@@ -19179,6 +19179,10 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		receiver_pos = v__token__Position_extend(rec_start_pos, v__token__Token_position(&p->tok));
 		bool is_amp = p->tok.kind == v__token__Kind_amp;
 		rec_type = v__parser__Parser_parse_type_with_mut(p, rec_mut);
+		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(p->table, rec_type);
+		if (string_ne(sym->mod, p->mod) && string_ne(sym->mod, tos_lit(""))) {
+			v__parser__Parser_error(p, _STR("cannot define methods on types from other modules (current module is `%.*s\000`, `%.*s\000` is from `%.*s\000`)", 4, p->mod, sym->name, sym->mod));
+		}
 		if (is_amp && rec_mut) {
 			v__parser__Parser_error(p, tos_lit("use `(mut f Foo)` or `(f &Foo)` instead of `(mut f &Foo)`"));
 		}
@@ -19214,9 +19218,9 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool mr_4229 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_4229.arg0;
-	bool is_variadic = mr_4229.arg1;
+	multi_return_array_v__table__Arg_bool mr_4451 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_4451.arg0;
+	bool is_variadic = mr_4451.arg1;
 	_PUSH_MANY(&args, (args2), _t2, array_v__table__Arg);
 	// FOR IN array
 	array _t3 = args;
@@ -19331,9 +19335,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_6799 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_6799.arg0;
-	bool is_variadic = mr_6799.arg1;
+	multi_return_array_v__table__Arg_bool mr_7021 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_7021.arg0;
+	bool is_variadic = mr_7021.arg1;
 	// FOR IN array
 	array _t1 = args;
 	for (int _t2 = 0; _t2 < _t1.len; _t2++) {
