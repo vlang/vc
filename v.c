@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "96a8eaa"
+#define V_COMMIT_HASH "bd85d2f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "931c846"
+#define V_COMMIT_HASH "96a8eaa"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "96a8eaa"
+#define V_CURRENT_COMMIT_HASH "bd85d2f"
 #endif
 
 
@@ -31275,9 +31275,9 @@ void v__builder__Builder_parse_imports(v__builder__Builder* b) {
 void v__builder__Builder_resolve_deps(v__builder__Builder* b) {
 	v__depgraph__DepGraph* graph = v__builder__Builder_import_graph(b);
 	v__depgraph__DepGraph* deps_resolved = v__depgraph__DepGraph_resolve(graph);
-	bool is_main_to_builtin = deps_resolved->nodes.len == 1 && string_eq((*(v__depgraph__DepGraphNode*)array_get(deps_resolved->nodes, 0)).name, tos_lit("main")) && (*(v__depgraph__DepGraphNode*)array_get(deps_resolved->nodes, 0)).deps.len == 1 && string_eq((*(string*)array_get((*(v__depgraph__DepGraphNode*)array_get(deps_resolved->nodes, 0)).deps, 0)), tos_lit("builtin"));
-	if (!deps_resolved->acyclic && !is_main_to_builtin) {
-		eprintln(string_add(tos_lit("warning: import cycle detected between the following modules: \n"), v__depgraph__DepGraph_display_cycles(deps_resolved)));
+	string cycles = v__depgraph__DepGraph_display_cycles(deps_resolved);
+	if (cycles.len > 1) {
+		eprintln(string_add(tos_lit("warning: import cycle detected between the following modules: \n"), cycles));
 		return ;
 	}
 	if (b->pref->is_verbose) {
