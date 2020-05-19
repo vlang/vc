@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "0352584"
+#define V_COMMIT_HASH "931c846"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2a62f1a"
+#define V_COMMIT_HASH "0352584"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "0352584"
+#define V_CURRENT_COMMIT_HASH "931c846"
 #endif
 
 
@@ -3204,7 +3204,8 @@ Option_bool os__cp(string old, string v_new);
 Option_bool os__cp_r(string osource_path, string odest_path, bool overwrite);
 Option_bool os__cp_all(string osource_path, string odest_path, bool overwrite);
 Option_bool os__mv_by_cp(string source, string target);
-static FILE* os__vfopen(string path, string mode);
+FILE* os__vfopen(string path, string mode);
+int os__fileno(voidptr cfile);
 Option_array_string os__read_lines(string path);
 static Option_array_ustring os__read_ulines(string path);
 Option_os__File os__open_append(string path);
@@ -3274,13 +3275,13 @@ string os__temp_dir();
 void os__chmod(string path, int mode);
 string _const_os__wd_at_startup; // inited later
 string os__resource_abs_path(string path);
-string _const_os__path_separator; // a string literal, inited later
-static array_string os__init_os_args_wide(int argc, byteptr* argv);
-Option_array_string os__ls(string path);
 Option_os__File os__open(string path);
 Option_os__File os__create(string path);
 void os__File_write(os__File* f, string s);
 void os__File_writeln(os__File* f, string s);
+string _const_os__path_separator; // a string literal, inited later
+static array_string os__init_os_args_wide(int argc, byteptr* argv);
+Option_array_string os__ls(string path);
 Option_bool os__mkdir(string path);
 os__HANDLE os__get_file_handle(string path);
 Option_string os__get_module_filename(os__HANDLE handle);
@@ -8459,6 +8460,7 @@ int proc_pidpath(int, voidptr, int);
 
 
 
+
 // Attr: [inline]
 inline string f64_str(f64 d) {
 	return strconv__ftoa__ftoa_64(d);
@@ -11570,7 +11572,7 @@ Option_bool os__mv_by_cp(string source, string target) {
 	return /*:)bool*/opt_ok(&(bool[]) { true }, sizeof(bool));
 }
 
-static FILE* os__vfopen(string path, string mode) {
+FILE* os__vfopen(string path, string mode) {
 	
 // $if  windows {
 #ifdef _WIN32
@@ -11578,6 +11580,20 @@ static FILE* os__vfopen(string path, string mode) {
 	
 #else
 		return fopen(((charptr)(path.str)), ((charptr)(mode.str)));
+	
+// } windows
+#endif
+
+}
+
+int os__fileno(voidptr cfile) {
+	
+// $if  windows {
+#ifdef _WIN32
+		return _fileno(cfile);
+	
+#else
+		return fileno(cfile);
 	
 // } windows
 #endif
@@ -11774,8 +11790,8 @@ static int os__vpclose(voidptr f) {
 		return _pclose(f);
 	
 #else
-		multi_return_int_bool mr_8162 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_8162.arg0;
+		multi_return_int_bool mr_8564 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_8564.arg0;
 		return ret;
 	
 // } windows
@@ -12752,6 +12768,45 @@ string os__resource_abs_path(string path) {
 	return os__real_path(os__join_path(base_path, (varg_string){.len=1,.args={path}}));
 }
 
+Option_os__File os__open(string path) {
+	FILE* cfile = os__vfopen(path, tos_lit("rb"));
+	if (cfile == 0) {
+		return v_error(_STR("failed to open file \"%.*s\000\"", 2, path));}
+	int fd = os__fileno(cfile);
+	return /*:)os.File*/opt_ok(&(os__File[]) { (os__File){
+		.cfile = cfile,
+		.fd = fd,
+		.opened = true,
+	} }, sizeof(os__File));
+}
+
+Option_os__File os__create(string path) {
+	FILE* cfile = os__vfopen(path, tos_lit("wb"));
+	if (cfile == 0) {
+		return v_error(_STR("failed to create file \"%.*s\000\"", 2, path));}
+	int fd = os__fileno(cfile);
+	return /*:)os.File*/opt_ok(&(os__File[]) { (os__File){
+		.cfile = cfile,
+		.fd = fd,
+		.opened = true,
+	} }, sizeof(os__File));
+}
+
+void os__File_write(os__File* f, string s) {
+	if (!f->opened) {
+		return ;
+	}
+	fputs(s.str, f->cfile);
+}
+
+void os__File_writeln(os__File* f, string s) {
+	if (!f->opened) {
+		return ;
+	}
+	fputs(s.str, f->cfile);
+	fputs("\n", f->cfile);
+}
+
 // TypeDecl
 static array_string os__init_os_args_wide(int argc, byteptr* argv) {
 	array_string args = __new_array_with_default(0, 0, sizeof(string), 0);
@@ -12796,45 +12851,6 @@ Option_array_string os__ls(string path) {
 	return /*:)array_string*/opt_ok(&(array_string[]) { dir_files }, sizeof(array_string));
 }
 
-Option_os__File os__open(string path) {
-	string mode = tos_lit("rb");
-	os__File file = (os__File){
-		.cfile = _wfopen(string_to_wide(path), string_to_wide(mode)),
-		.fd = 0,
-		.opened = true,
-	};
-	if (isnil(file.cfile)) {
-		return v_error(_STR("failed to open file \"%.*s\000\"", 2, path));}
-	return /*:)os.File*/opt_ok(&(os__File[]) { file }, sizeof(os__File));
-}
-
-Option_os__File os__create(string path) {
-	string mode = tos_lit("wb");
-	os__File file = (os__File){
-		.cfile = _wfopen(string_to_wide(path), string_to_wide(mode)),
-		.fd = 0,
-		.opened = true,
-	};
-	if (isnil(file.cfile)) {
-		return v_error(_STR("failed to create file \"%.*s\000\"", 2, path));}
-	return /*:)os.File*/opt_ok(&(os__File[]) { file }, sizeof(os__File));
-}
-
-void os__File_write(os__File* f, string s) {
-	if (!f->opened) {
-		return ;
-	}
-	fputs(s.str, f->cfile);
-}
-
-void os__File_writeln(os__File* f, string s) {
-	if (!f->opened) {
-		return ;
-	}
-	fputs(s.str, f->cfile);
-	fputs("\n", f->cfile);
-}
-
 Option_bool os__mkdir(string path) {
 	if (string_eq(path, tos_lit("."))) {
 		return /*:)bool*/opt_ok(&(bool[]) { true }, sizeof(bool));
@@ -12846,12 +12862,11 @@ Option_bool os__mkdir(string path) {
 }
 
 os__HANDLE os__get_file_handle(string path) {
-	string mode = tos_lit("rb");
-	voidptr fd = _wfopen(string_to_wide(path), string_to_wide(mode));
-	if (fd == 0) {
+	FILE* cfile = os__vfopen(path, tos_lit("rb"));
+	if (cfile == 0) {
 		return ((os__HANDLE)(_const_os__INVALID_HANDLE_VALUE));
 	}
-	os__HANDLE handle = ((os__HANDLE)(_get_osfhandle(_fileno(fd))));
+	os__HANDLE handle = ((os__HANDLE)(_get_osfhandle(os__fileno(cfile))));
 	return handle;
 }
 
