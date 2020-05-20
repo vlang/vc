@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "dd534fd"
+#define V_COMMIT_HASH "0d3f133"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a0ed1e2"
+#define V_COMMIT_HASH "dd534fd"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "dd534fd"
+#define V_CURRENT_COMMIT_HASH "0d3f133"
 #endif
 
 
@@ -1415,6 +1415,7 @@ struct v__table__Table {
 	array_string imports;
 	array_string modules;
 	array_v__cflag__CFlag cflags;
+	array_string redefined_fns;
 };
 
 struct v__table__Field {
@@ -16271,6 +16272,7 @@ v__table__Table* v__table__new_table() {
 		.imports = __new_array(0, 1, sizeof(string)),
 		.modules = __new_array(0, 1, sizeof(string)),
 		.cflags = __new_array(0, 1, sizeof(v__cflag__CFlag)),
+		.redefined_fns = __new_array(0, 1, sizeof(string)),
 	}, sizeof(v__table__Table));
 	v__table__Table_register_builtin_type_symbols(t);
 	return t;
@@ -19572,7 +19574,7 @@ static bool v__parser__Parser_fileis(v__parser__Parser* p, string s) {
 }
 
 static void v__parser__Parser_fn_redefinition_error(v__parser__Parser* p, string name) {
-	v__parser__Parser_error(p, _STR("redefinition of function `%.*s\000`", 2, name));
+	array_push(&p->table->redefined_fns, _MOV((string[]){ name }));
 }
 
 static bool v__parser__have_fn_main(array_v__ast__Stmt stmts) {
@@ -31598,6 +31600,31 @@ static void v__builder__Builder_print_warnings_and_errors(v__builder__Builder* b
 			}
 		}
 		v_exit(1);
+	}
+	if (b->table->redefined_fns.len > 0) {
+		// FOR IN array
+		array _t3 = b->table->redefined_fns;
+		for (int _t4 = 0; _t4 < _t3.len; _t4++) {
+			string fn_name = ((string*)_t3.data)[_t4];
+			eprintln(_STR("redefinition of function `%.*s\000`", 2, fn_name));
+			// FOR IN array
+			array _t5 = b->parsed_files;
+			for (int _t6 = 0; _t6 < _t5.len; _t6++) {
+				v__ast__File file = ((v__ast__File*)_t5.data)[_t6];
+				// FOR IN array
+				array _t7 = file.stmts;
+				for (int _t8 = 0; _t8 < _t7.len; _t8++) {
+					v__ast__Stmt stmt = ((v__ast__Stmt*)_t7.data)[_t8];
+					if (stmt.typ == 112 /* v.ast.FnDecl */) {
+						v__ast__FnDecl* f = /* as */ (v__ast__FnDecl*)__as_cast(stmt.obj, stmt.typ, /*expected:*/112);
+						if (string_eq(f->name, fn_name)) {
+							println(string_add(string_add(file.path, tos_lit(":")), int_str(f->pos.line_nr)));
+						}
+					}
+				}
+			}
+			v_exit(1);
+		}
 	}
 }
 
