@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "9d4fe88"
+#define V_COMMIT_HASH "10ad533"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8007051"
+#define V_COMMIT_HASH "9d4fe88"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "9d4fe88"
+#define V_CURRENT_COMMIT_HASH "10ad533"
 #endif
 
 
@@ -19992,34 +19992,30 @@ static bool v__parser__Parser_is_used_import(v__parser__Parser* p, string alias)
 }
 
 static void v__parser__Parser_register_used_import(v__parser__Parser* p, string alias) {
-	if (!_IN(string, alias, p->used_imports)) {
+	if (!v__parser__Parser_is_used_import(p, alias)) {
 		array_push(&p->used_imports, _MOV((string[]){ alias }));
 	}
 }
 
 static void v__parser__Parser_check_unused_imports(v__parser__Parser* p) {
-	string output = tos_lit("");
-	// FOR IN map
-	array_string keys__t1 = map_keys(&p->imports);
-	for (int _t2 = 0; _t2 < keys__t1.len; _t2++) {
-		string alias = ((string*)keys__t1.data)[_t2];
-		string mod = (*(string*)map_get3(p->imports, alias, &(string[]){ (string){.str=""} }));
+	if (p->pref->is_repl) {
+		return ;
+	}
+	// FOR IN array
+	array _t1 = p->ast_imports;
+	for (int _t2 = 0; _t2 < _t1.len; _t2++) {
+		v__ast__Import import_m = ((v__ast__Import*)_t1.data)[_t2];
+		string alias = import_m.alias;
+		string mod = import_m.mod;
 		if (!v__parser__Parser_is_used_import(p, alias)) {
 			string mod_alias = (string_eq(alias, mod) ? (
 				alias
 			) : (
 				_STR("%.*s\000 (%.*s\000)", 3, alias, mod)
 			));
-			output = string_add(output, _STR("\n * %.*s", 1, mod_alias));
+			v__parser__Parser_warn_with_pos(p, _STR("module '%.*s\000' is imported but never used", 2, mod_alias), import_m.pos);
 		}
 	}
-	if (string_eq(output, tos_lit(""))) {
-		return ;
-	}
-	if (p->pref->is_repl) {
-		return ;
-	}
-	eprintln(_STR("`%.*s\000` warning: the following imports were never used: %.*s", 2, p->file_name, output));
 }
 
 v__table__Type v__parser__Parser_parse_array_type(v__parser__Parser* p) {
