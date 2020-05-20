@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "1c23767"
+#define V_COMMIT_HASH "ac396ea"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0a6d709"
+#define V_COMMIT_HASH "1c23767"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "1c23767"
+#define V_CURRENT_COMMIT_HASH "ac396ea"
 #endif
 
 
@@ -2968,6 +2968,7 @@ void string_free(string* s);
 string string_all_before(string s, string dot);
 string string_all_before_last(string s, string dot);
 string string_all_after(string s, string dot);
+string string_all_after_last(string s, string dot);
 string string_after(string s, string dot);
 string string_after_char(string s, byte dot);
 string array_string_join(array_string a, string del);
@@ -10666,6 +10667,18 @@ string string_all_before_last(string s, string dot) {
 }
 
 string string_all_after(string s, string dot) {
+	Option_int pos = string_index(s, dot);
+	if (!pos.ok) {
+		string err = pos.v_error;
+		int errcode = pos.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
+		return s;
+	};
+	return string_right(s, /*opt*/(*(int*)pos.data) + dot.len);
+}
+
+string string_all_after_last(string s, string dot) {
 	Option_int pos = string_last_index(s, dot);
 	if (!pos.ok) {
 		string err = pos.v_error;
@@ -10678,7 +10691,7 @@ string string_all_after(string s, string dot) {
 }
 
 string string_after(string s, string dot) {
-	return string_all_after(s, dot);
+	return string_all_after_last(s, dot);
 }
 
 string string_after_char(string s, byte dot) {
@@ -11956,7 +11969,7 @@ string os__base_dir(string path) {
 }
 
 string os__file_name(string path) {
-	return string_all_after(path, _const_os__path_separator);
+	return string_all_after_last(path, _const_os__path_separator);
 }
 
 string os__input(string prompt) {
@@ -18641,7 +18654,7 @@ static void v__scanner__Scanner_debug_tokens(v__scanner__Scanner* s) {
 	s->pos = 0;
 	s->is_started = false;
 	s->is_debug = true;
-	string fname = string_all_after(s->file_path, _const_os__path_separator);
+	string fname = string_all_after_last(s->file_path, _const_os__path_separator);
 	println(_STR("\n===DEBUG TOKENS %.*s\000===", 2, fname));
 	while (1) {
 		v__token__Token tok = v__scanner__Scanner_scan(s);
@@ -21011,7 +21024,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 		}else {
 		};
 	}}
-	if (p->peek_tok.kind == v__token__Kind_dot && !known_var && (language != v__table__Language_v || v__parser__Parser_known_import(p, p->tok.lit) || string_eq(string_all_after(p->mod, tos_lit(".")), p->tok.lit))) {
+	if (p->peek_tok.kind == v__token__Kind_dot && !known_var && (language != v__table__Language_v || v__parser__Parser_known_import(p, p->tok.lit) || string_eq(string_all_after_last(p->mod, tos_lit(".")), p->tok.lit))) {
 		if (language == v__table__Language_c) {
 			mod = tos_lit("C");
 		} else if (language == v__table__Language_js) {
