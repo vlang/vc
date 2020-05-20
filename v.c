@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "cd07429"
+#define V_COMMIT_HASH "b8c028c"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ca81442"
+#define V_COMMIT_HASH "cd07429"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "cd07429"
+#define V_CURRENT_COMMIT_HASH "b8c028c"
 #endif
 
 
@@ -22016,7 +22016,17 @@ static v__ast__PrefixExpr v__parser__Parser_prefix_expr(v__parser__Parser* p) {
 		p->is_amp = true;
 	}
 	v__parser__Parser_next(p);
-	v__ast__Expr right = v__parser__Parser_expr(p, v__token__Precedence_prefix);
+	v__ast__Expr right = (v__ast__Expr){
+	
+#ifndef __cplusplus
+0
+#endif
+};
+	if (op == v__token__Kind_minus) {
+		right = v__parser__Parser_expr(p, v__token__Precedence_call);
+	} else {
+		right = v__parser__Parser_expr(p, v__token__Precedence_prefix);
+	}
 	p->is_amp = false;
 	return (v__ast__PrefixExpr){
 		.op = op,
