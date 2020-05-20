@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "10ad533"
+#define V_COMMIT_HASH "d4c1ea4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9d4fe88"
+#define V_COMMIT_HASH "10ad533"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "10ad533"
+#define V_CURRENT_COMMIT_HASH "d4c1ea4"
 #endif
 
 
@@ -29429,8 +29429,8 @@ string v__gen__js__JsGen_typ(v__gen__js__JsGen* g, v__table__Type t) {
 		}
 		return string_add(string_add(res, tos_lit(") => ")), v__gen__js__JsGen_typ(g, info->func.return_type));
 	}
-	if (sym->kind == v__table__Kind_struct_) {
-		return string_add(v__gen__js__JsGen_to_js_typ(g, styp), tos_lit("[\"prototype\"]"));
+	if (sym->kind == v__table__Kind_struct_ && v__gen__js__get_ns(styp).len > 0) {
+		return string_add(v__gen__js__JsGen_to_js_typ(g, v__gen__js__JsGen_get_alias(g, styp)), tos_lit("[\"prototype\"]"));
 	}
 	return v__gen__js__JsGen_to_js_typ(g, styp);
 }
