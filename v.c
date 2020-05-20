@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "a0ed1e2"
+#define V_COMMIT_HASH "dd534fd"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c9f3a05"
+#define V_COMMIT_HASH "a0ed1e2"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "a0ed1e2"
+#define V_CURRENT_COMMIT_HASH "dd534fd"
 #endif
 
 
@@ -2364,6 +2364,7 @@ struct v__gen__js__JsGen {
 	map_string_map_string_string namespace_imports;
 	string v_namespace;
 	v__gen__js__JsDoc* doc;
+	bool enable_doc;
 	strings__Builder constants;
 	v__ast__File file;
 	int tmp_count;
@@ -3854,7 +3855,9 @@ void v__gen__js__JsGen_dec_indent(v__gen__js__JsGen* g);
 void v__gen__js__JsGen_write(v__gen__js__JsGen* g, string s);
 void v__gen__js__JsGen_writeln(v__gen__js__JsGen* g, string s);
 string v__gen__js__JsGen_new_tmp_var(v__gen__js__JsGen* g);
-static string v__gen__js__js_name(string name);
+static string v__gen__js__get_ns(string s);
+static string v__gen__js__JsGen_get_alias(v__gen__js__JsGen* g, string name);
+static string v__gen__js__JsGen_js_name(v__gen__js__JsGen* g, string name_);
 static void v__gen__js__JsGen_stmts(v__gen__js__JsGen* g, array_v__ast__Stmt stmts);
 static void v__gen__js__JsGen_stmt(v__gen__js__JsGen* g, v__ast__Stmt node);
 static void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr node);
@@ -3863,6 +3866,7 @@ static void v__gen__js__JsGen_gen_import_stmt(v__gen__js__JsGen* g, v__ast__Impo
 static void v__gen__js__JsGen_gen_array_init_expr(v__gen__js__JsGen* g, v__ast__ArrayInit it);
 static void v__gen__js__JsGen_gen_assert_stmt(v__gen__js__JsGen* g, v__ast__AssertStmt a);
 static void v__gen__js__JsGen_gen_assign_stmt(v__gen__js__JsGen* g, v__ast__AssignStmt it);
+static void v__gen__js__JsGen_gen_assign_expr(v__gen__js__JsGen* g, v__ast__AssignExpr it);
 static void v__gen__js__JsGen_gen_attr(v__gen__js__JsGen* g, v__ast__Attr it);
 static void v__gen__js__JsGen_gen_block(v__gen__js__JsGen* g, v__ast__Block it);
 static void v__gen__js__JsGen_gen_branch_stmt(v__gen__js__JsGen* g, v__ast__BranchStmt it);
@@ -29208,6 +29212,7 @@ string v__gen__js__gen(array_v__ast__File files, v__table__Table* table, v__pref
 		.namespace_imports = new_map_1(sizeof(map_string_string)),
 		.v_namespace = (string){.str=""},
 		.doc = 0,
+		.enable_doc = true,
 		.constants = strings__new_builder(100),
 		.file = {0},
 		.tmp_count = 0,
@@ -29223,6 +29228,9 @@ string v__gen__js__gen(array_v__ast__File files, v__table__Table* table, v__pref
 		.empty_line = true,
 	}, sizeof(v__gen__js__JsGen));
 	g->doc = v__gen__js__new_jsdoc(g);
+	if (pref->is_prod) {
+		g->enable_doc = false;
+	}
 	v__gen__js__JsGen_init(g);
 	v__depgraph__DepGraph* graph = v__depgraph__new_dep_graph();
 	// FOR IN array
@@ -29260,7 +29268,7 @@ string v__gen__js__gen(array_v__ast__File files, v__table__Table* table, v__pref
 	array _t8 = deps_resolved->nodes;
 	for (int _t9 = 0; _t9 < _t8.len; _t9++) {
 		v__depgraph__DepGraphNode node = ((v__depgraph__DepGraphNode*)_t8.data)[_t9];
-		out = string_add(out, _STR("\n/* namespace: %.*s\000 */\n", 2, node.name));
+		out = string_add(out, _STR("/* namespace: %.*s\000 */\n", 2, node.name));
 		out = string_add(out, _STR("const %.*s\000 = (function (", 2, node.name));
 		map_string_string imports = (*(map_string_string*)map_get3(g->namespace_imports, node.name, &(map_string_string[]){ new_map_1(sizeof(string)) }))
 ;
@@ -29274,10 +29282,10 @@ string v__gen__js__gen(array_v__ast__File files, v__table__Table* table, v__pref
 			out = string_add(out, (*(string*)map_get3(imports, key, &(string[]){ (string){.str=""} }))
 );
 		}
-		out = string_add(out, tos_lit(") {"));
-		out = string_add(out, strings__Builder_str(&(*(strings__Builder*)map_get3(g->namespaces, node.name, &(strings__Builder[]){ {0} }))
-));
-		out = string_add(out, tos_lit("\n\t/* module exports */"));
+		out = string_add(out, tos_lit(") {\n\t"));
+		out = string_add(out, string_trim_space(strings__Builder_str(&(*(strings__Builder*)map_get3(g->namespaces, node.name, &(strings__Builder[]){ {0} }))
+)));
+		out = string_add(out, tos_lit("\n\n\t/* module exports */"));
 		out = string_add(out, tos_lit("\n\treturn {"));
 		// FOR IN array
 		array _t11 = (*(array_string*)map_get3(g->namespaces_pub, node.name, &(array_string[]){ __new_array(0, 1, sizeof(string)) }))
@@ -29297,7 +29305,7 @@ string v__gen__js__gen(array_v__ast__File files, v__table__Table* table, v__pref
 			}
 			out = string_add(out, key);
 		}
-		out = string_add(out, tos_lit(");"));
+		out = string_add(out, tos_lit(");\n\n"));
 	}
 	return out;
 }
@@ -29324,7 +29332,7 @@ g->out });
 void v__gen__js__JsGen_push_pub_var(v__gen__js__JsGen* g, string s) {
 	array_string arr = (*(array_string*)map_get3(g->namespaces_pub, g->v_namespace, &(array_string[]){ __new_array(0, 1, sizeof(string)) }))
 ;
-	array_push(&arr, _MOV((string[]){ s }));
+	array_push(&arr, _MOV((string[]){ v__gen__js__JsGen_js_name(g, s) }));
 	map_set(&g->namespaces_pub, g->v_namespace, &(array_string[]) { 
 arr });
 }
@@ -29337,7 +29345,7 @@ void v__gen__js__JsGen_find_class_methods(v__gen__js__JsGen* g, array_v__ast__St
 		if (stmt.typ == 112 /* v.ast.FnDecl */) {
 			v__ast__FnDecl* it = (v__ast__FnDecl*)stmt.obj; // ST it
 			if (it->is_method) {
-				string class_name = v__table__Table_get_type_symbol(g->table, it->receiver.typ)->name;
+				string class_name = v__table__Table_get_type_name(g->table, it->receiver.typ);
 				array_v__ast__Stmt arr = (*(array_v__ast__Stmt*)map_get3(g->method_fn_decls, class_name, &(array_v__ast__Stmt[]){ __new_array(0, 1, sizeof(v__ast__Stmt)) }))
 ;
 				array_push(&arr, _MOV((v__ast__Stmt[]){ stmt }));
@@ -29350,7 +29358,7 @@ arr });
 }
 
 void v__gen__js__JsGen_init(v__gen__js__JsGen* g) {
-	strings__Builder_writeln(&g->definitions, tos_lit("// Generated by the V compiler"));
+	strings__Builder_writeln(&g->definitions, tos_lit("// Generated by the V compiler\n"));
 	strings__Builder_writeln(&g->definitions, tos_lit("\"use strict\";"));
 	strings__Builder_writeln(&g->definitions, tos_lit(""));
 }
@@ -29359,7 +29367,7 @@ void v__gen__js__JsGen_finish(v__gen__js__JsGen* g) {
 	if (g->constants.len > 0) {
 		string constants = strings__Builder_str(&g->constants);
 		g->constants = strings__new_builder(100);
-		strings__Builder_writeln(&g->constants, tos_lit("const CONSTANTS = Object.freeze({"));
+		strings__Builder_writeln(&g->constants, tos_lit("const _CONSTS = Object.freeze({"));
 		strings__Builder_write(&g->constants, constants);
 		strings__Builder_writeln(&g->constants, tos_lit("});"));
 		strings__Builder_writeln(&g->constants, tos_lit(""));
@@ -29368,15 +29376,44 @@ void v__gen__js__JsGen_finish(v__gen__js__JsGen* g) {
 
 string v__gen__js__JsGen_hashes(v__gen__js__JsGen g) {
 	string res = _STR("// V_COMMIT_HASH %.*s\000\n", 2, v__util__vhash());
-	res = string_add(res, _STR("// V_CURRENT_COMMIT_HASH %.*s\000\n\n", 2, v__util__githash(g.pref->building_v)));
+	res = string_add(res, _STR("// V_CURRENT_COMMIT_HASH %.*s\000\n", 2, v__util__githash(g.pref->building_v)));
 	return res;
 }
 
 string v__gen__js__JsGen_typ(v__gen__js__JsGen* g, v__table__Type t) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, t);
-	string styp = string_replace(sym->name, tos_lit("."), tos_lit("__"));
-	if (string_starts_with(styp, tos_lit("JS__"))) {
-		styp = string_substr(styp, 4, styp.len);
+	string styp = sym->name;
+	if (string_starts_with(styp, tos_lit("JS."))) {
+		styp = string_substr(styp, 3, styp.len);
+	}
+	if (string_starts_with(styp, tos_lit("multi_return_"))) {
+		array_string tokens = string_split(string_replace(styp, tos_lit("multi_return_"), tos_lit("")), tos_lit("_"));
+
+		int _t1_len = tokens.len;
+		array_string _t1 = __new_array(0, _t1_len, sizeof(string));
+		for (int _t2 = 0; _t2 < _t1_len; _t2++) {
+			string it = ((string*) tokens.data)[_t2];
+			string ti = v__gen__js__JsGen_to_js_typ(g, it);
+			array_push(&_t1, &ti);
+		}
+				return string_add(string_add(tos_lit("["), array_string_join(_t1, tos_lit(", "))), tos_lit("]"));
+	}
+	if (string_starts_with(styp, tos_lit("anon_"))) {
+		v__table__FnType* info = /* as */ (v__table__FnType*)__as_cast(sym->info.obj, sym->info.typ, /*expected:*/82);
+		string res = tos_lit("(");
+		// FOR IN array
+		array _t3 = info->func.args;
+		for (int i = 0; i < _t3.len; i++) {
+			v__table__Arg arg = ((v__table__Arg*)_t3.data)[i];
+			res = string_add(res, _STR("%.*s\000: %.*s", 2, arg.name, v__gen__js__JsGen_typ(g, arg.typ)));
+			if (i < info->func.args.len - 1) {
+				res = string_add(res, tos_lit(", "));
+			}
+		}
+		return string_add(string_add(res, tos_lit(") => ")), v__gen__js__JsGen_typ(g, info->func.return_type));
+	}
+	if (sym->kind == v__table__Kind_struct_) {
+		return string_add(v__gen__js__JsGen_to_js_typ(g, styp), tos_lit("[\"prototype\"]"));
 	}
 	return v__gen__js__JsGen_to_js_typ(g, styp);
 }
@@ -29403,6 +29440,16 @@ static string v__gen__js__JsGen_to_js_typ(v__gen__js__JsGen* g, string typ) {
 			styp = typ;
 		}
 	};
+	// FOR IN array
+	array _t2 = string_split(styp, tos_lit("."));
+	for (int i = 0; i < _t2.len; i++) {
+		string v = ((string*)_t2.data)[i];
+		if (i == 0) {
+			styp = v;
+			continue;
+		}
+		styp = string_add(styp, _STR("[\"%.*s\000\"]", 2, v));
+	}
 	return styp;
 }
 
@@ -29445,11 +29492,56 @@ string v__gen__js__JsGen_new_tmp_var(v__gen__js__JsGen* g) {
 }
 
 // Attr: [inline]
-inline static string v__gen__js__js_name(string name) {
-	if (_IN(string, name, _const_v__gen__js__js_reserved)) {
-		return _STR("v_%.*s", 1, name);
+inline static string v__gen__js__get_ns(string s) {
+	array_string parts = string_split(s, tos_lit("."));
+	string res = tos_lit("");
+	// FOR IN array
+	array _t1 = parts;
+	for (int i = 0; i < _t1.len; i++) {
+		string p = ((string*)_t1.data)[i];
+		if (i == parts.len - 1) {
+			break;
+		}
+		res = string_add(res, p);
+		if (i < parts.len - 2) {
+			res = string_add(res, tos_lit("."));
+		}
+	}
+	return res;
+}
+
+static string v__gen__js__JsGen_get_alias(v__gen__js__JsGen* g, string name) {
+	array_string split = string_split(name, tos_lit("."));
+	if (split.len > 1) {
+		map_string_string imports = (*(map_string_string*)map_get3(g->namespace_imports, g->v_namespace, &(map_string_string[]){ new_map_1(sizeof(string)) }))
+;
+		string alias = (*(string*)map_get3(imports, (*(string*)array_get(split, 0)), &(string[]){ (string){.str=""} }))
+;
+		if (string_ne(alias, tos_lit(""))) {
+			return string_add(string_add(alias, tos_lit(".")), array_string_join(array_slice(split, 1, split.len), tos_lit(".")));
+		}
 	}
 	return name;
+}
+
+static string v__gen__js__JsGen_js_name(v__gen__js__JsGen* g, string name_) {
+	string ns = v__gen__js__get_ns(name_);
+	string name = (string_eq(ns, g->v_namespace) ? (
+		*(string*)array_last(string_split(name_, tos_lit(".")))
+	) : (
+		v__gen__js__JsGen_get_alias(g, name_)
+	));
+	array_string parts = string_split(name, tos_lit("."));
+	// FOR IN array
+	array _t1 = parts;
+	for (int i = 0; i < _t1.len; i++) {
+		string p = ((string*)_t1.data)[i];
+		if (_IN(string, p, _const_v__gen__js__js_reserved)) {
+			array_set(&parts, i, &(string[]) { 
+_STR("v_%.*s", 1, p) });
+		}
+	}
+	return array_string_join(parts, tos_lit("."));
 }
 
 static void v__gen__js__JsGen_stmts(v__gen__js__JsGen* g, array_v__ast__Stmt stmts) {
@@ -29521,7 +29613,7 @@ static void v__gen__js__JsGen_stmt(v__gen__js__JsGen* g, v__ast__Stmt node) {
 		v__gen__js__JsGen_writeln(g, tos_lit(""));
 	}else if (node.typ == 179 /* v.ast.GotoLabel */) {
 		v__ast__GotoLabel* it = (v__ast__GotoLabel*)node.obj; // ST it
-		v__gen__js__JsGen_writeln(g, _STR("%.*s\000:", 2, v__gen__js__js_name(it->name)));
+		v__gen__js__JsGen_writeln(g, _STR("%.*s\000:", 2, v__gen__js__JsGen_js_name(g, it->name)));
 	}else if (node.typ == 184 /* v.ast.GotoStmt */) {
 		v__ast__GotoStmt* it = (v__ast__GotoStmt*)node.obj; // ST it
 	}else if (node.typ == 143 /* v.ast.HashStmt */) {
@@ -29554,6 +29646,9 @@ static void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr node) {
 	if (node.typ == 145 /* v.ast.ArrayInit */) {
 		v__ast__ArrayInit* it = (v__ast__ArrayInit*)node.obj; // ST it
 		v__gen__js__JsGen_gen_array_init_expr(g, *it);
+	}else if (node.typ == 140 /* v.ast.AssignExpr */) {
+		v__ast__AssignExpr* it = (v__ast__AssignExpr*)node.obj; // ST it
+		v__gen__js__JsGen_gen_assign_expr(g, *it);
 	}else if (node.typ == 211 /* v.ast.BoolLiteral */) {
 		v__ast__BoolLiteral* it = (v__ast__BoolLiteral*)node.obj; // ST it
 		if (it->val == true) {
@@ -29570,31 +29665,13 @@ static void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr node) {
 		if (string_starts_with(it->name, tos_lit("JS."))) {
 			name = string_substr(it->name, 3, it->name.len);
 		} else {
-			name = it->name;
-			Option_int dot_idx = string_index(name, tos_lit("."));
-			if (!dot_idx.ok) {
-				string err = dot_idx.v_error;
-				int errcode = dot_idx.ecode;
-				// last_type: v.ast.ExprStmt
-				// last_expr_result_type: v.ast.PrefixExpr
-				*(int*) dot_idx.data = -1;
-			};
-			if (/*opt*/(*(int*)dot_idx.data) > -1) {
-				array_string split = string_split(name, tos_lit("."));
-				map_string_string imports = (*(map_string_string*)map_get3(g->namespace_imports, g->v_namespace, &(map_string_string[]){ new_map_1(sizeof(string)) }))
-;
-				string alias = (*(string*)map_get3(imports, *(string*)array_first(split), &(string[]){ (string){.str=""} }))
-;
-				if (string_ne(alias, tos_lit(""))) {
-					name = string_add(string_add(alias, tos_lit(".")), array_string_join(array_slice(split, 1, split.len), tos_lit(".")));
-				}
-			}
+			name = v__gen__js__JsGen_js_name(g, it->name);
 		}
 		v__gen__js__JsGen_expr(g, it->left);
 		if (it->is_method) {
 			v__gen__js__JsGen_write(g, tos_lit("."));
 		}
-		v__gen__js__JsGen_write(g, _STR("%.*s\000(", 2, v__gen__js__js_name(name)));
+		v__gen__js__JsGen_write(g, _STR("%.*s\000(", 2, v__gen__js__JsGen_js_name(g, name)));
 		// FOR IN array
 		array _t2 = it->args;
 		for (int i = 0; i < _t2.len; i++) {
@@ -29770,7 +29847,7 @@ static void v__gen__js__JsGen_gen_assign_stmt(v__gen__js__JsGen* g, v__ast__Assi
 			v__ast__IdentVar ident_var_info = v__ast__Ident_var_info(&ident);
 			string styp = v__gen__js__JsGen_typ(g, ident_var_info.typ);
 			strings__Builder_write(&jsdoc, styp);
-			strings__Builder_write(&stmt, v__gen__js__js_name(ident.name));
+			strings__Builder_write(&stmt, v__gen__js__JsGen_js_name(g, ident.name));
 			if (i < it.left.len - 1) {
 				strings__Builder_write(&jsdoc, tos_lit(", "));
 				strings__Builder_write(&stmt, tos_lit(", "));
@@ -29791,13 +29868,10 @@ static void v__gen__js__JsGen_gen_assign_stmt(v__gen__js__JsGen* g, v__ast__Assi
 			v__ast__IdentVar ident_var_info = v__ast__Ident_var_info(&ident);
 			string styp = v__gen__js__JsGen_typ(g, ident_var_info.typ);
 			if (val.typ == 191 /* v.ast.EnumVal */) {
-				v__ast__EnumVal* it = (v__ast__EnumVal*)val.obj; // ST it
 				styp = tos_lit("number");
-			}else if (val.typ == 224 /* v.ast.StructInit */) {
-				v__ast__StructInit* it = (v__ast__StructInit*)val.obj; // ST it
+			} else if (val.typ == 224 /* v.ast.StructInit */) {
 				styp = tos_lit("");
-			}else {
-			};
+			}
 			if (!g->inside_loop && styp.len > 0) {
 				v__gen__js__JsGen_writeln(g, v__gen__js__JsDoc_gen_typ(g->doc, styp, ident.name));
 			}
@@ -29806,7 +29880,7 @@ static void v__gen__js__JsGen_gen_assign_stmt(v__gen__js__JsGen* g, v__ast__Assi
 			} else {
 				v__gen__js__JsGen_write(g, tos_lit("const "));
 			}
-			v__gen__js__JsGen_write(g, _STR("%.*s\000 = ", 2, v__gen__js__js_name(ident.name)));
+			v__gen__js__JsGen_write(g, _STR("%.*s\000 = ", 2, v__gen__js__JsGen_js_name(g, ident.name)));
 			v__gen__js__JsGen_expr(g, val);
 			if (g->inside_loop) {
 				v__gen__js__JsGen_write(g, tos_lit("; "));
@@ -29815,6 +29889,12 @@ static void v__gen__js__JsGen_gen_assign_stmt(v__gen__js__JsGen* g, v__ast__Assi
 			}
 		}
 	}
+}
+
+static void v__gen__js__JsGen_gen_assign_expr(v__gen__js__JsGen* g, v__ast__AssignExpr it) {
+	v__gen__js__JsGen_expr(g, it.left);
+	v__gen__js__JsGen_write(g, _STR(" %.*s\000 ", 2, v__token__Kind_str(it.op)));
+	v__gen__js__JsGen_expr(g, it.val);
 }
 
 static void v__gen__js__JsGen_gen_attr(v__gen__js__JsGen* g, v__ast__Attr it) {
@@ -29841,11 +29921,13 @@ static void v__gen__js__JsGen_gen_const_decl(v__gen__js__JsGen* g, v__ast__Const
 		v__gen__js__JsGen_expr(g, field.expr);
 		string val = strings__Builder_after(&g->out, pos);
 		strings__Builder_go_back(&g->out, val.len);
-		string typ = v__gen__js__JsGen_typ(g, field.typ);
+		if (g->enable_doc) {
+			string typ = v__gen__js__JsGen_typ(g, field.typ);
+			strings__Builder_write(&g->constants, tos_lit("\t"));
+			strings__Builder_writeln(&g->constants, v__gen__js__JsDoc_gen_typ(g->doc, typ, field.name));
+		}
 		strings__Builder_write(&g->constants, tos_lit("\t"));
-		strings__Builder_writeln(&g->constants, v__gen__js__JsDoc_gen_typ(g->doc, typ, field.name));
-		strings__Builder_write(&g->constants, tos_lit("\t"));
-		strings__Builder_write(&g->constants, _STR("%.*s\000: %.*s", 2, v__gen__js__js_name(field.name), val));
+		strings__Builder_write(&g->constants, _STR("%.*s\000: %.*s", 2, v__gen__js__JsGen_js_name(g, field.name), val));
 		if (i < it.fields.len - 1) {
 			strings__Builder_writeln(&g->constants, tos_lit(","));
 		}
@@ -29866,7 +29948,7 @@ static void v__gen__js__JsGen_gen_defer_stmts(v__gen__js__JsGen* g) {
 }
 
 static void v__gen__js__JsGen_gen_enum_decl(v__gen__js__JsGen* g, v__ast__EnumDecl it) {
-	v__gen__js__JsGen_writeln(g, _STR("const %.*s\000 = Object.freeze({", 2, v__gen__js__js_name(it.name)));
+	v__gen__js__JsGen_writeln(g, _STR("const %.*s\000 = Object.freeze({", 2, v__gen__js__JsGen_js_name(g, it.name)));
 	v__gen__js__JsGen_inc_indent(g);
 	// FOR IN array
 	array _t1 = it.fields;
@@ -29895,12 +29977,9 @@ static void v__gen__js__JsGen_gen_expr_stmt(v__gen__js__JsGen* g, v__ast__ExprSt
 	v__gen__js__JsGen_expr(g, it.expr);
 	v__ast__Expr expr = it.expr;
 	if (expr.typ == 158 /* v.ast.IfExpr */) {
-		v__ast__IfExpr* it = (v__ast__IfExpr*)expr.obj; // ST it
-	}else {
-		if (!g->inside_ternary) {
-			v__gen__js__JsGen_writeln(g, tos_lit(";"));
-		}
-	};
+	} else if (!g->inside_ternary) {
+		v__gen__js__JsGen_writeln(g, tos_lit(";"));
+	}
 }
 
 static void v__gen__js__JsGen_gen_fn_decl(v__gen__js__JsGen* g, v__ast__FnDecl it) {
@@ -29931,7 +30010,7 @@ static void v__gen__js__JsGen_gen_method_decl(v__gen__js__JsGen* g, v__ast__FnDe
 	} else if (it.is_anon) {
 		v__gen__js__JsGen_write(g, tos_lit("function ("));
 	} else {
-		string name = v__gen__js__js_name(*(string*)array_last(string_split(it.name, tos_lit("."))));
+		string name = v__gen__js__JsGen_js_name(g, it.name);
 		byte c = string_at(name, 0);
 		if ((c == '+' || c == '-' || c == '*' || c == '/')) {
 			name = v__util__replace_op(name);
@@ -29944,7 +30023,7 @@ static void v__gen__js__JsGen_gen_method_decl(v__gen__js__JsGen* g, v__ast__FnDe
 			v__gen__js__JsGen_write(g, tos_lit("function "));
 		}
 		v__gen__js__JsGen_write(g, _STR("%.*s\000(", 2, name));
-		if (it.is_pub) {
+		if (it.is_pub && !it.is_method) {
 			v__gen__js__JsGen_push_pub_var(g, name);
 		}
 	}
@@ -30066,7 +30145,7 @@ static void v__gen__js__JsGen_fn_args(v__gen__js__JsGen* g, array_v__table__Arg 
 	array _t1 = args;
 	for (int i = 0; i < _t1.len; i++) {
 		v__table__Arg arg = ((v__table__Arg*)_t1.data)[i];
-		string name = v__gen__js__js_name(arg.name);
+		string name = v__gen__js__JsGen_js_name(g, arg.name);
 		bool is_varg = i == args.len - 1 && is_variadic;
 		if (is_varg) {
 			v__gen__js__JsGen_write(g, _STR("...%.*s", 1, name));
@@ -30135,11 +30214,10 @@ static void v__gen__js__JsGen_gen_map_init_expr(v__gen__js__JsGen* g, v__ast__Ma
 
 static void v__gen__js__JsGen_gen_return_stmt(v__gen__js__JsGen* g, v__ast__Return it) {
 	v__gen__js__JsGen_write(g, tos_lit("return "));
-	if (string_eq(g->fn_decl->name, tos_lit("main"))) {
-		v__gen__js__JsGen_writeln(g, tos_lit("void;"));
-		return ;
-	}
-	if (it.exprs.len > 1) {
+	if (it.exprs.len == 0) {
+	} else if (it.exprs.len == 1) {
+		v__gen__js__JsGen_expr(g, (*(v__ast__Expr*)array_get(it.exprs, 0)));
+	} else {
 		v__gen__js__JsGen_write(g, tos_lit("["));
 		// FOR IN array
 		array _t1 = it.exprs;
@@ -30151,8 +30229,6 @@ static void v__gen__js__JsGen_gen_return_stmt(v__gen__js__JsGen* g, v__ast__Retu
 			}
 		}
 		v__gen__js__JsGen_write(g, tos_lit("]"));
-	} else {
-		v__gen__js__JsGen_expr(g, (*(v__ast__Expr*)array_get(it.exprs, 0)));
 	}
 	v__gen__js__JsGen_writeln(g, tos_lit(";"));
 }
@@ -30167,7 +30243,7 @@ static void v__gen__js__JsGen_enum_expr(v__gen__js__JsGen* g, v__ast__Expr node)
 }
 
 static void v__gen__js__JsGen_gen_struct_decl(v__gen__js__JsGen* g, v__ast__StructDecl node) {
-	v__gen__js__JsGen_writeln(g, _STR("class %.*s\000 {", 2, v__gen__js__js_name(node.name)));
+	v__gen__js__JsGen_writeln(g, _STR("class %.*s\000 {", 2, v__gen__js__JsGen_js_name(g, node.name)));
 	v__gen__js__JsGen_inc_indent(g);
 	v__gen__js__JsGen_writeln(g, v__gen__js__JsDoc_gen_ctor(g->doc, node.fields));
 	v__gen__js__JsGen_writeln(g, tos_lit("constructor(values) {"));
@@ -30180,21 +30256,18 @@ static void v__gen__js__JsGen_gen_struct_decl(v__gen__js__JsGen* g, v__ast__Stru
 	}
 	v__gen__js__JsGen_dec_indent(g);
 	v__gen__js__JsGen_writeln(g, tos_lit("}"));
-	v__gen__js__JsGen_writeln(g, tos_lit(""));
 	array_v__ast__Stmt fns = (*(array_v__ast__Stmt*)map_get3(g->method_fn_decls, node.name, &(array_v__ast__Stmt[]){ __new_array(0, 1, sizeof(v__ast__Stmt)) }))
 ;
 	// FOR IN array
 	array _t3 = fns;
 	for (int _t4 = 0; _t4 < _t3.len; _t4++) {
 		v__ast__Stmt cfn = ((v__ast__Stmt*)_t3.data)[_t4];
-		if (cfn.typ == 112 /* v.ast.FnDecl */) {
-			v__ast__FnDecl* it = (v__ast__FnDecl*)cfn.obj; // ST it
-			v__gen__js__JsGen_gen_method_decl(g, *it);
-		}else {
-		};
+		v__ast__FnDecl* it = /* as */ (v__ast__FnDecl*)__as_cast(cfn.obj, cfn.typ, /*expected:*/112);
+		v__gen__js__JsGen_writeln(g, tos_lit(""));
+		v__gen__js__JsGen_gen_method_decl(g, *it);
 	}
 	v__gen__js__JsGen_dec_indent(g);
-	v__gen__js__JsGen_writeln(g, tos_lit("}"));
+	v__gen__js__JsGen_writeln(g, tos_lit("}\n"));
 	if (node.is_pub) {
 		v__gen__js__JsGen_push_pub_var(g, node.name);
 	}
@@ -30202,7 +30275,8 @@ static void v__gen__js__JsGen_gen_struct_decl(v__gen__js__JsGen* g, v__ast__Stru
 
 static void v__gen__js__JsGen_gen_struct_init(v__gen__js__JsGen* g, v__ast__StructInit it) {
 	v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(g->table, it.typ);
-	v__gen__js__JsGen_writeln(g, _STR("new %.*s\000({", 2, type_sym->name));
+	string name = type_sym->name;
+	v__gen__js__JsGen_writeln(g, _STR("new %.*s\000({", 2, v__gen__js__JsGen_js_name(g, name)));
 	v__gen__js__JsGen_inc_indent(g);
 	// FOR IN array
 	array _t1 = it.fields;
@@ -30221,9 +30295,9 @@ static void v__gen__js__JsGen_gen_struct_init(v__gen__js__JsGen* g, v__ast__Stru
 
 static void v__gen__js__JsGen_gen_ident(v__gen__js__JsGen* g, v__ast__Ident node) {
 	if (node.kind == v__ast__IdentKind_constant) {
-		v__gen__js__JsGen_write(g, tos_lit("CONSTANTS."));
+		v__gen__js__JsGen_write(g, tos_lit("_CONSTS."));
 	}
-	string name = v__gen__js__js_name(node.name);
+	string name = v__gen__js__JsGen_js_name(g, node.name);
 	v__gen__js__JsGen_write(g, name);
 }
 
@@ -30290,10 +30364,8 @@ static bool v__gen__js__fn_has_go(v__ast__FnDecl it) {
 	for (int _t2 = 0; _t2 < _t1.len; _t2++) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t1.data)[_t2];
 		if (stmt.typ == 183 /* v.ast.GoStmt */) {
-			v__ast__GoStmt* it = (v__ast__GoStmt*)stmt.obj; // ST it
 			has_go = true;
-		}else {
-		};
+		}
 	}
 	return has_go;
 }
@@ -30315,11 +30387,17 @@ static void v__gen__js__JsDoc_gen_indent(v__gen__js__JsDoc* d) {
 }
 
 static void v__gen__js__JsDoc_write(v__gen__js__JsDoc* d, string s) {
+	if (!d->gen->enable_doc) {
+		return ;
+	}
 	v__gen__js__JsDoc_gen_indent(d);
 	strings__Builder_write(&d->out, s);
 }
 
 static void v__gen__js__JsDoc_writeln(v__gen__js__JsDoc* d, string s) {
+	if (!d->gen->enable_doc) {
+		return ;
+	}
 	v__gen__js__JsDoc_gen_indent(d);
 	strings__Builder_writeln(&d->out, s);
 	d->empty_line = true;
@@ -30335,7 +30413,7 @@ static string v__gen__js__JsDoc_gen_typ(v__gen__js__JsDoc* d, string typ, string
 	v__gen__js__JsDoc_write(d, tos_lit("/**"));
 	v__gen__js__JsDoc_write(d, _STR(" @type {%.*s\000}", 2, typ));
 	if (name.len > 0) {
-		v__gen__js__JsDoc_write(d, _STR(" - %.*s", 1, v__gen__js__js_name(name)));
+		v__gen__js__JsDoc_write(d, _STR(" - %.*s", 1, v__gen__js__JsGen_js_name(d->gen, name)));
 	}
 	v__gen__js__JsDoc_write(d, tos_lit(" */"));
 	return strings__Builder_str(&d->out);
@@ -30344,18 +30422,18 @@ static string v__gen__js__JsDoc_gen_typ(v__gen__js__JsDoc* d, string typ, string
 static string v__gen__js__JsDoc_gen_ctor(v__gen__js__JsDoc* d, array_v__ast__StructField fields) {
 	v__gen__js__JsDoc_reset(d);
 	v__gen__js__JsDoc_writeln(d, tos_lit("/**"));
-	v__gen__js__JsDoc_write(d, tos_lit("* @param {{"));
+	v__gen__js__JsDoc_write(d, tos_lit(" * @param {{"));
 	// FOR IN array
 	array _t1 = fields;
 	for (int i = 0; i < _t1.len; i++) {
 		v__ast__StructField field = ((v__ast__StructField*)_t1.data)[i];
-		v__gen__js__JsDoc_write(d, _STR("%.*s\000: %.*s", 2, field.name, v__gen__js__JsGen_typ(d->gen, field.typ)));
+		v__gen__js__JsDoc_write(d, _STR("%.*s\000?: %.*s", 2, field.name, v__gen__js__JsGen_typ(d->gen, field.typ)));
 		if (i < fields.len - 1) {
 			v__gen__js__JsDoc_write(d, tos_lit(", "));
 		}
 	}
 	v__gen__js__JsDoc_writeln(d, tos_lit("}} values - values for this class fields"));
-	v__gen__js__JsDoc_writeln(d, tos_lit("* @constructor"));
+	v__gen__js__JsDoc_writeln(d, tos_lit(" * @constructor"));
 	v__gen__js__JsDoc_write(d, tos_lit("*/"));
 	return strings__Builder_str(&d->out);
 }
@@ -30364,6 +30442,9 @@ static string v__gen__js__JsDoc_gen_fn(v__gen__js__JsDoc* d, v__ast__FnDecl it) 
 	v__gen__js__JsDoc_reset(d);
 	string type_name = v__gen__js__JsGen_typ(d->gen, it.return_type);
 	v__gen__js__JsDoc_writeln(d, tos_lit("/**"));
+	if (it.is_deprecated) {
+		v__gen__js__JsDoc_writeln(d, tos_lit(" * @deprecated"));
+	}
 	// FOR IN array
 	array _t1 = it.args;
 	for (int i = 0; i < _t1.len; i++) {
@@ -30373,14 +30454,14 @@ static string v__gen__js__JsDoc_gen_fn(v__gen__js__JsDoc* d, v__ast__FnDecl it) 
 		}
 		string arg_type_name = v__gen__js__JsGen_typ(d->gen, arg.typ);
 		bool is_varg = i == it.args.len - 1 && it.is_variadic;
-		string name = v__gen__js__js_name(arg.name);
+		string name = v__gen__js__JsGen_js_name(d->gen, arg.name);
 		if (is_varg) {
-			v__gen__js__JsDoc_writeln(d, _STR("* @param {...%.*s\000} %.*s", 2, arg_type_name, name));
+			v__gen__js__JsDoc_writeln(d, _STR(" * @param {...%.*s\000} %.*s", 2, arg_type_name, name));
 		} else {
-			v__gen__js__JsDoc_writeln(d, _STR("* @param {%.*s\000} %.*s", 2, arg_type_name, name));
+			v__gen__js__JsDoc_writeln(d, _STR(" * @param {%.*s\000} %.*s", 2, arg_type_name, name));
 		}
 	}
-	v__gen__js__JsDoc_writeln(d, _STR("* @return {%.*s\000}", 2, type_name));
+	v__gen__js__JsDoc_writeln(d, _STR(" * @returns {%.*s\000}", 2, type_name));
 	v__gen__js__JsDoc_write(d, tos_lit("*/"));
 	return strings__Builder_str(&d->out);
 }
