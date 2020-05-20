@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "e137fbb"
+#define V_COMMIT_HASH "0a6d709"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b3b86ea"
+#define V_COMMIT_HASH "e137fbb"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "e137fbb"
+#define V_CURRENT_COMMIT_HASH "0a6d709"
 #endif
 
 
@@ -28921,7 +28921,7 @@ static void v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Type typ) {
 	}
 	array_push(&g->json_types, _MOV((string[]){ sym->name }));
 	string dec_fn_name = v__gen__js_dec_name(sym->name);
-	strings__Builder_writeln(&dec, _STR("\n//Option %.*s\000(cJSON* root, %.*s\000* res) {\nOption %.*s\000(cJSON* root) {\n  %.*s\000 res;\n  if (!root) {\n    const char *error_ptr = cJSON_GetErrorPtr();\n    if (error_ptr != NULL)	{\n      fprintf(stderr, \"Error in decode() for %.*s\000 error_ptr=: %%%%s\\n\", error_ptr);\n//      printf(\"\\nbad js=%%%%s\\n\", js.str);\n      return v_error(tos2(error_ptr));\n    }\n  }\n", 6, dec_fn_name, styp, dec_fn_name, styp, styp));
+	strings__Builder_writeln(&dec, _STR("\n//Option %.*s\000(cJSON* root, %.*s\000* res) {\nOption %.*s\000(cJSON* root) {\n  %.*s\000 res;\n  if (!root) {\n    const char *error_ptr = cJSON_GetErrorPtr();\n    if (error_ptr != NULL)	{\n//      fprintf(stderr, \"Error in decode() for %.*s\000 error_ptr=: %%%%s\\n\", error_ptr);\n//      printf(\"\\nbad js=%%%%s\\n\", js.str);\n      return v_error(tos2(error_ptr));\n    }\n  }\n", 6, dec_fn_name, styp, dec_fn_name, styp, styp));
 	string enc_fn_name = v__gen__js_enc_name(sym->name);
 	strings__Builder_writeln(&enc, _STR("\ncJSON* %.*s\000(%.*s\000 val) {\n\tcJSON *o = cJSON_CreateObject();", 3, enc_fn_name, styp));
 	if (sym->kind == v__table__Kind_array) {
