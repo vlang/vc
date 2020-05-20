@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "82cedba"
+#define V_COMMIT_HASH "ca81442"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e3a162d"
+#define V_COMMIT_HASH "82cedba"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "82cedba"
+#define V_CURRENT_COMMIT_HASH "ca81442"
 #endif
 
 
@@ -21230,7 +21230,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 		v__parser__Parser_check(p, v__token__Kind_dot);
 		p->expr_mod = mod;
 	}
-	if (p->peek_tok.kind == v__token__Kind_lpar || (p->peek_tok.kind == v__token__Kind_lt && p->peek_tok.pos == p->peek_tok2.pos - 1)) {
+	if (p->peek_tok.kind == v__token__Kind_lpar || (p->peek_tok.kind == v__token__Kind_lt && p->peek_tok2.kind == v__token__Kind_name && p->peek_tok.pos == p->peek_tok2.pos - 1)) {
 		string name = p->tok.lit;
 		if (mod.len > 0) {
 			name = _STR("%.*s\000.%.*s", 2, mod, name);
