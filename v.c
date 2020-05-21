@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "227f039"
+#define V_COMMIT_HASH "b2b0461"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "87d8e70"
+#define V_COMMIT_HASH "227f039"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "227f039"
+#define V_CURRENT_COMMIT_HASH "b2b0461"
 #endif
 
 
@@ -18005,6 +18005,7 @@ static string v__scanner__filter_num_sep(byteptr txt, int start, int end) {
 
 static string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner* s) {
 	bool has_wrong_digit = false;
+	int first_wrong_digit_pos = 0;
 	byte first_wrong_digit = '\0';
 	int start_pos = s->pos;
 	s->pos += 2;
@@ -18015,6 +18016,7 @@ static string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner* s) {
 				break;
 			} else if (!has_wrong_digit) {
 				has_wrong_digit = true;
+				first_wrong_digit_pos = s->pos;
 				first_wrong_digit = c;
 			}
 		}
@@ -18024,7 +18026,7 @@ static string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner* s) {
 		s->pos--;
 		v__scanner__Scanner_error(s, tos_lit("number part of this binary is not provided"));
 	} else if (has_wrong_digit) {
-		s->pos--;
+		s->pos = first_wrong_digit_pos;
 		v__scanner__Scanner_error(s, _STR("this binary number has unsuitable digit `%.*s\000`", 2, byte_str(first_wrong_digit)));
 	}
 	string number = v__scanner__filter_num_sep(s->text.str, start_pos, s->pos);
@@ -18034,6 +18036,7 @@ static string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner* s) {
 
 static string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner* s) {
 	bool has_wrong_digit = false;
+	int first_wrong_digit_pos = 0;
 	byte first_wrong_digit = '\0';
 	int start_pos = s->pos;
 	s->pos += 2;
@@ -18044,6 +18047,7 @@ static string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner* s) {
 				break;
 			} else if (!has_wrong_digit) {
 				has_wrong_digit = true;
+				first_wrong_digit_pos = s->pos;
 				first_wrong_digit = c;
 			}
 		}
@@ -18053,7 +18057,7 @@ static string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner* s) {
 		s->pos--;
 		v__scanner__Scanner_error(s, tos_lit("number part of this hexadecimal is not provided"));
 	} else if (has_wrong_digit) {
-		s->pos--;
+		s->pos = first_wrong_digit_pos;
 		v__scanner__Scanner_error(s, _STR("this hexadecimal number has unsuitable digit `%.*s\000`", 2, byte_str(first_wrong_digit)));
 	}
 	string number = v__scanner__filter_num_sep(s->text.str, start_pos, s->pos);
@@ -18063,6 +18067,7 @@ static string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner* s) {
 
 static string v__scanner__Scanner_ident_oct_number(v__scanner__Scanner* s) {
 	bool has_wrong_digit = false;
+	int first_wrong_digit_pos = 0;
 	byte first_wrong_digit = '\0';
 	int start_pos = s->pos;
 	s->pos += 2;
@@ -18073,6 +18078,7 @@ static string v__scanner__Scanner_ident_oct_number(v__scanner__Scanner* s) {
 				break;
 			} else if (!has_wrong_digit) {
 				has_wrong_digit = true;
+				first_wrong_digit_pos = s->pos;
 				first_wrong_digit = c;
 			}
 		}
@@ -18082,7 +18088,7 @@ static string v__scanner__Scanner_ident_oct_number(v__scanner__Scanner* s) {
 		s->pos--;
 		v__scanner__Scanner_error(s, tos_lit("number part of this octal is not provided"));
 	} else if (has_wrong_digit) {
-		s->pos--;
+		s->pos = first_wrong_digit_pos;
 		v__scanner__Scanner_error(s, _STR("this octal number has unsuitable digit `%.*s\000`", 2, byte_str(first_wrong_digit)));
 	}
 	string number = v__scanner__filter_num_sep(s->text.str, start_pos, s->pos);
@@ -18092,6 +18098,7 @@ static string v__scanner__Scanner_ident_oct_number(v__scanner__Scanner* s) {
 
 static string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 	bool has_wrong_digit = false;
+	int first_wrong_digit_pos = 0;
 	byte first_wrong_digit = '\0';
 	int start_pos = s->pos;
 	while (s->pos < s->text.len) {
@@ -18101,6 +18108,7 @@ static string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 				break;
 			} else if (!has_wrong_digit) {
 				has_wrong_digit = true;
+				first_wrong_digit_pos = s->pos;
 				first_wrong_digit = c;
 			}
 		}
@@ -18123,6 +18131,7 @@ static string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 							break;
 						} else if (!has_wrong_digit) {
 							has_wrong_digit = true;
+							first_wrong_digit_pos = s->pos;
 							first_wrong_digit = c;
 						}
 					}
@@ -18158,6 +18167,7 @@ static string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 					break;
 				} else if (!has_wrong_digit) {
 					has_wrong_digit = true;
+					first_wrong_digit_pos = s->pos;
 					first_wrong_digit = c;
 				}
 			}
@@ -18165,7 +18175,7 @@ static string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 		}
 	}
 	if (has_wrong_digit) {
-		s->pos--;
+		s->pos = first_wrong_digit_pos;
 		v__scanner__Scanner_error(s, _STR("this number has unsuitable digit `%.*s\000`", 2, byte_str(first_wrong_digit)));
 	} else if ((string_at(s->text, s->pos - 1) == 'e' || string_at(s->text, s->pos - 1) == 'E')) {
 		s->pos--;
