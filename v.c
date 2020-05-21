@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "26cb9e4"
+#define V_COMMIT_HASH "7e55261"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9888bac"
+#define V_COMMIT_HASH "26cb9e4"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "26cb9e4"
+#define V_CURRENT_COMMIT_HASH "7e55261"
 #endif
 
 
@@ -3920,6 +3920,7 @@ static void v__gen__js__JsDoc_reset(v__gen__js__JsDoc* d);
 static string v__gen__js__JsDoc_gen_typ(v__gen__js__JsDoc* d, string typ, string name);
 static string v__gen__js__JsDoc_gen_ctor(v__gen__js__JsDoc* d, array_v__ast__StructField fields);
 static string v__gen__js__JsDoc_gen_fn(v__gen__js__JsDoc* d, v__ast__FnDecl it);
+static string v__gen__js__JsDoc_gen_namespace(v__gen__js__JsDoc* d, string ns);
 byte _const_v__gen__x64__mag0; // inited later
 #define _const_v__gen__x64__mag1 'E'
 #define _const_v__gen__x64__mag2 'L'
@@ -29391,7 +29392,7 @@ string v__gen__js__gen(array_v__ast__File files, v__table__Table* table, v__pref
 	array _t8 = deps_resolved->nodes;
 	for (int _t9 = 0; _t9 < _t8.len; _t9++) {
 		v__depgraph__DepGraphNode node = ((v__depgraph__DepGraphNode*)_t8.data)[_t9];
-		out = string_add(out, _STR("/* namespace: %.*s\000 */\n", 2, node.name));
+		out = string_add(out, v__gen__js__JsDoc_gen_namespace(g->doc, node.name));
 		out = string_add(out, _STR("const %.*s\000 = (function (", 2, node.name));
 		map_string_string imports = (*(map_string_string*)map_get3(g->namespace_imports, node.name, &(map_string_string[]){ new_map_1(sizeof(string)) }))
 ;
@@ -30597,6 +30598,12 @@ static string v__gen__js__JsDoc_gen_fn(v__gen__js__JsDoc* d, v__ast__FnDecl it) 
 	return strings__Builder_str(&d->out);
 }
 
+static string v__gen__js__JsDoc_gen_namespace(v__gen__js__JsDoc* d, string ns) {
+	v__gen__js__JsDoc_reset(d);
+	v__gen__js__JsDoc_writeln(d, _STR("/** @namespace %.*s\000 */", 2, ns));
+	return strings__Builder_str(&d->out);
+}
+
 void v__gen__x64__Gen_generate_elf_header(v__gen__x64__Gen* g) {
 	_PUSH_MANY(&g->buf, (new_array_from_c_array(4, 4, sizeof(byte), _MOV((byte[4]){
 	((byte)(_const_v__gen__x64__mag0)), _const_v__gen__x64__mag1, _const_v__gen__x64__mag2, _const_v__gen__x64__mag3, 
@@ -31514,6 +31521,10 @@ void v__builder__Builder_parse_imports(v__builder__Builder* b) {
 		for (int _t2 = 0; _t2 < _t1.len; _t2++) {
 			v__ast__Import imp = ((v__ast__Import*)_t1.data)[_t2];
 			string mod = imp.mod;
+			if (string_eq(mod, tos_lit("builtin"))) {
+				v__builder__verror(_STR("cannot import module \"%.*s\000\"", 2, mod));
+				break;
+			}
 			if (_IN(string, mod, done_imports)) {
 				continue;
 			}
