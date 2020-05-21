@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "9888bac"
+#define V_COMMIT_HASH "26cb9e4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a9999ee"
+#define V_COMMIT_HASH "9888bac"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "9888bac"
+#define V_CURRENT_COMMIT_HASH "26cb9e4"
 #endif
 
 
@@ -18169,8 +18169,10 @@ static string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner* s) {
 		s->pos++;
 	}
 	if (start_pos + 2 == s->pos) {
+		s->pos--;
 		v__scanner__Scanner_error(s, tos_lit("number part of this binary is not provided"));
 	} else if (has_wrong_digit) {
+		s->pos--;
 		v__scanner__Scanner_error(s, _STR("this binary number has unsuitable digit `%.*s\000`", 2, byte_str(first_wrong_digit)));
 	}
 	string number = v__scanner__filter_num_sep(s->text.str, start_pos, s->pos);
@@ -18196,8 +18198,10 @@ static string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner* s) {
 		s->pos++;
 	}
 	if (start_pos + 2 == s->pos) {
+		s->pos--;
 		v__scanner__Scanner_error(s, tos_lit("number part of this hexadecimal is not provided"));
 	} else if (has_wrong_digit) {
+		s->pos--;
 		v__scanner__Scanner_error(s, _STR("this hexadecimal number has unsuitable digit `%.*s\000`", 2, byte_str(first_wrong_digit)));
 	}
 	string number = v__scanner__filter_num_sep(s->text.str, start_pos, s->pos);
@@ -18223,8 +18227,10 @@ static string v__scanner__Scanner_ident_oct_number(v__scanner__Scanner* s) {
 		s->pos++;
 	}
 	if (start_pos + 2 == s->pos) {
+		s->pos--;
 		v__scanner__Scanner_error(s, tos_lit("number part of this octal is not provided"));
 	} else if (has_wrong_digit) {
+		s->pos--;
 		v__scanner__Scanner_error(s, _STR("this octal number has unsuitable digit `%.*s\000`", 2, byte_str(first_wrong_digit)));
 	}
 	string number = v__scanner__filter_num_sep(s->text.str, start_pos, s->pos);
@@ -18307,8 +18313,10 @@ static string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 		}
 	}
 	if (has_wrong_digit) {
+		s->pos--;
 		v__scanner__Scanner_error(s, _STR("this number has unsuitable digit `%.*s\000`", 2, byte_str(first_wrong_digit)));
 	} else if ((string_at(s->text, s->pos - 1) == 'e' || string_at(s->text, s->pos - 1) == 'E')) {
+		s->pos--;
 		v__scanner__Scanner_error(s, tos_lit("exponent has no digits"));
 	} else if (s->pos < s->text.len && string_at(s->text, s->pos) == '.' && !is_range && !is_float_without_fraction && !call_method) {
 		if (has_exp) {
