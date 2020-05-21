@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "7e55261"
+#define V_COMMIT_HASH "87d8e70"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "26cb9e4"
+#define V_COMMIT_HASH "7e55261"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "7e55261"
+#define V_CURRENT_COMMIT_HASH "87d8e70"
 #endif
 
 
@@ -16989,6 +16989,9 @@ string v__table__Table_qualify_module(v__table__Table* table, string mod, string
 void v__table__Table_register_fn_gen_type(v__table__Table* table, string fn_name, v__table__Type typ) {
 	array_v__table__Type a = (*(array_v__table__Type*)map_get3(table->fn_gen_types, fn_name, &(array_v__table__Type[]){ __new_array(0, 1, sizeof(v__table__Type)) }))
 ;
+	if (_IN(v__table__Type, typ, a)) {
+		return ;
+	}
 	array_push(&a, _MOV((v__table__Type[]){ typ }));
 	map_set(&table->fn_gen_types, fn_name, &(array_v__table__Type[]) { 
 a });
@@ -23443,12 +23446,6 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 		v__checker__Checker_error(c, _STR("unknown function: %.*s", 1, fn_name), call_expr->pos);
 		return _const_v__table__void_type;
 	}
-	if (call_expr->generic_type != _const_v__table__void_type && f.return_type != 0) {
-		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, f.return_type);
-		if (string_eq(sym->name, tos_lit("T"))) {
-			return call_expr->generic_type;
-		}
-	}
 	if (!found_in_args && (string_eq(call_expr->mod, tos_lit("builtin")) || string_eq(call_expr->mod, tos_lit("main")))) {
 		v__ast__Scope* scope = v__ast__Scope_innermost(c->file.scope, call_expr->pos.pos);
 		{ /* if guard */ Option_v__ast__Var_ptr _ = v__ast__Scope_find_var(scope, fn_name);
@@ -23530,6 +23527,12 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 			if (typ_sym->kind == v__table__Kind_array_fixed) {
 			}
 			v__checker__Checker_error(c, _STR("cannot use type `%.*s\000` as type `%.*s\000` in argument %"PRId32"\000 to `%.*s\000`", 5, v__table__TypeSymbol_str(typ_sym), v__table__TypeSymbol_str(arg_typ_sym), i + 1, fn_name), call_expr->pos);
+		}
+	}
+	if (call_expr->generic_type != _const_v__table__void_type && f.return_type != 0) {
+		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, f.return_type);
+		if (string_eq(sym->name, tos_lit("T"))) {
+			return call_expr->generic_type;
 		}
 	}
 	return f.return_type;
