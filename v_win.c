@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "a9999ee"
+#define V_COMMIT_HASH "9888bac"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "047e982"
+#define V_COMMIT_HASH "a9999ee"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "a9999ee"
+#define V_CURRENT_COMMIT_HASH "9888bac"
 #endif
 
 
@@ -4034,6 +4034,7 @@ void v__gen__Gen_gen_vprint_profile_stats(v__gen__Gen* g);
 static void v__gen__Gen_write_str_fn_definitions(v__gen__Gen* g);
 array_string _const_v__gen__js__js_reserved; // inited later
 array_string _const_v__gen__js__tabs; // inited later
+array_string _const_v__gen__js__builtin_globals; // inited later
 string v__gen__js__gen(array_v__ast__File files, v__table__Table* table, v__pref__Preferences* pref);
 void v__gen__js__JsGen_enter_namespace(v__gen__js__JsGen* g, string n);
 void v__gen__js__JsGen_escape_namespace(v__gen__js__JsGen* g);
@@ -4084,6 +4085,7 @@ static void v__gen__js__JsGen_enum_expr(v__gen__js__JsGen* g, v__ast__Expr node)
 static void v__gen__js__JsGen_gen_struct_decl(v__gen__js__JsGen* g, v__ast__StructDecl node);
 static void v__gen__js__JsGen_gen_struct_init(v__gen__js__JsGen* g, v__ast__StructInit it);
 static void v__gen__js__JsGen_gen_ident(v__gen__js__JsGen* g, v__ast__Ident node);
+static void v__gen__js__JsGen_gen_call_expr(v__gen__js__JsGen* g, v__ast__CallExpr it);
 static void v__gen__js__JsGen_gen_selector_expr(v__gen__js__JsGen* g, v__ast__SelectorExpr it);
 static void v__gen__js__JsGen_gen_if_expr(v__gen__js__JsGen* g, v__ast__IfExpr node);
 static void v__gen__js__verror(string s);
@@ -4224,6 +4226,7 @@ array_string v__builder__Builder_get_user_files(v__builder__Builder v);
 string v__builder__Builder_gen_js(v__builder__Builder* b, array_string v_files);
 void v__builder__Builder_build_js(v__builder__Builder* b, array_string v_files, string out_file);
 void v__builder__Builder_compile_js(v__builder__Builder* b);
+static void v__builder__Builder_run_js(v__builder__Builder* b);
 v__builder__RegKey _const_v__builder__HKEY_LOCAL_MACHINE; // inited later
 int _const_v__builder__KEY_QUERY_VALUE; // inited later
 int _const_v__builder__KEY_WOW64_32KEY; // inited later
@@ -29925,27 +29928,7 @@ static void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr node) {
 		v__gen__js__JsGen_write(g, _STR("'%.*s\000'", 2, it->val));
 	}else if (node.typ == 165 /* v.ast.CallExpr */) {
 		v__ast__CallExpr* it = (v__ast__CallExpr*)node.obj; // ST it
-		string name = tos_lit("");
-		if (string_starts_with(it->name, tos_lit("JS."))) {
-			name = string_substr(it->name, 3, it->name.len);
-		} else {
-			name = v__gen__js__JsGen_js_name(g, it->name);
-		}
-		v__gen__js__JsGen_expr(g, it->left);
-		if (it->is_method) {
-			v__gen__js__JsGen_write(g, tos_lit("."));
-		}
-		v__gen__js__JsGen_write(g, _STR("%.*s\000(", 2, v__gen__js__JsGen_js_name(g, name)));
-		// FOR IN array
-		array _t2 = it->args;
-		for (int i = 0; i < _t2.len; i++) {
-			v__ast__CallArg arg = ((v__ast__CallArg*)_t2.data)[i];
-			v__gen__js__JsGen_expr(g, arg.expr);
-			if (i != it->args.len - 1) {
-				v__gen__js__JsGen_write(g, tos_lit(", "));
-			}
-		}
-		v__gen__js__JsGen_write(g, tos_lit(")"));
+		v__gen__js__JsGen_gen_call_expr(g, *it);
 	}else if (node.typ == 209 /* v.ast.EnumVal */) {
 		v__ast__EnumVal* it = (v__ast__EnumVal*)node.obj; // ST it
 		string styp = v__gen__js__JsGen_typ(g, it->typ);
@@ -30563,6 +30546,34 @@ static void v__gen__js__JsGen_gen_ident(v__gen__js__JsGen* g, v__ast__Ident node
 	}
 	string name = v__gen__js__JsGen_js_name(g, node.name);
 	v__gen__js__JsGen_write(g, name);
+}
+
+static void v__gen__js__JsGen_gen_call_expr(v__gen__js__JsGen* g, v__ast__CallExpr it) {
+	string name = tos_lit("");
+	if (string_starts_with(it.name, tos_lit("JS."))) {
+		name = string_substr(it.name, 3, it.name.len);
+	} else {
+		name = v__gen__js__JsGen_js_name(g, it.name);
+	}
+	v__gen__js__JsGen_expr(g, it.left);
+	if (it.is_method) {
+		v__gen__js__JsGen_write(g, tos_lit("."));
+	} else {
+		if (_IN(string, name, _const_v__gen__js__builtin_globals)) {
+			v__gen__js__JsGen_write(g, tos_lit("builtin."));
+		}
+	}
+	v__gen__js__JsGen_write(g, _STR("%.*s\000(", 2, v__gen__js__JsGen_js_name(g, name)));
+	// FOR IN array
+	array _t1 = it.args;
+	for (int i = 0; i < _t1.len; i++) {
+		v__ast__CallArg arg = ((v__ast__CallArg*)_t1.data)[i];
+		v__gen__js__JsGen_expr(g, arg.expr);
+		if (i != it.args.len - 1) {
+			v__gen__js__JsGen_write(g, tos_lit(", "));
+		}
+	}
+	v__gen__js__JsGen_write(g, tos_lit(")"));
 }
 
 static void v__gen__js__JsGen_gen_selector_expr(v__gen__js__JsGen* g, v__ast__SelectorExpr it) {
@@ -32655,6 +32666,9 @@ static void v__builder__Builder_run_compiled_executable_and_exit(v__builder__Bui
 		println(_STR("============ running %.*s\000 ============", 2, b->pref->out_name));
 	}
 	string cmd = _STR("\"%.*s\000\"", 2, b->pref->out_name);
+	if (b->pref->backend == v__pref__Backend_js) {
+		cmd = _STR("node \"%.*s\000.js\"", 2, b->pref->out_name);
+	}
 	// FOR IN array
 	array _t1 = b->pref->run_args;
 	for (int _t2 = 0; _t2 < _t1.len; _t2++) {
@@ -32716,13 +32730,9 @@ array_string v__builder__Builder_get_builtin_files(v__builder__Builder v) {
 		if (v.pref->is_bare) {
 			return v__builder__Builder_v_files_from_dir(v, os__join_path(location, (varg_string){.len=2,.args={tos_lit("builtin"), tos_lit("bare")}}));
 		}
-		
-// $if  js {
-#ifdef _VJS
-		
-// } js
-#endif
-
+		if (v.pref->backend == v__pref__Backend_js) {
+			return v__builder__Builder_v_files_from_dir(v, os__join_path(location, (varg_string){.len=2,.args={tos_lit("builtin"), tos_lit("js")}}));
+		}
 		return v__builder__Builder_v_files_from_dir(v, os__join_path(location, (varg_string){.len=1,.args={tos_lit("builtin")}}));
 	}
 	v__builder__verror(tos_lit("`builtin/` not included on module lookup path.\nDid you forget to add vlib to the path? (Use @vlib for default vlib)"));
@@ -32856,12 +32866,28 @@ void v__builder__Builder_build_js(v__builder__Builder* b, array_string v_files, 
 
 void v__builder__Builder_compile_js(v__builder__Builder* b) {
 	array_string files = v__builder__Builder_get_user_files(/*rec*/*b);
+	_PUSH_MANY(&files, (v__builder__Builder_get_builtin_files(/*rec*/*b)), _t1, array_string);
 	v__builder__Builder_set_module_lookup_paths(b);
 	if (b->pref->is_verbose) {
 		println(tos_lit("all .v files:"));
 		println(array_string_str(files));
 	}
 	v__builder__Builder_build_js(b, files, string_add(b->pref->out_name, tos_lit(".js")));
+}
+
+static void v__builder__Builder_run_js(v__builder__Builder* b) {
+	string cmd = string_add(string_add(tos_lit("node "), b->pref->out_name), tos_lit(".js"));
+	Option_os__Result res = os__exec(cmd);
+	if (!res.ok) {
+		string err = res.v_error;
+		int errcode = res.ecode;
+		// last_type: v.ast.Return
+		// last_expr_result_type: 
+		println(tos_lit("JS compilation failed."));
+		v__builder__verror(err);
+		return ;
+	};
+	println(/*opt*/(*(os__Result*)res.data).output);
 }
 
 // TypeDecl
@@ -35479,6 +35505,9 @@ tos_lit("await"), tos_lit("break"), tos_lit("case"), tos_lit("catch"), tos_lit("
 }));
 	_const_v__gen__js__tabs = new_array_from_c_array(9, 9, sizeof(string), _MOV((string[9]){
 tos_lit(""), tos_lit("\t"), tos_lit("\t\t"), tos_lit("\t\t\t"), tos_lit("\t\t\t\t"), tos_lit("\t\t\t\t\t"), tos_lit("\t\t\t\t\t\t"), tos_lit("\t\t\t\t\t\t\t"), tos_lit("\t\t\t\t\t\t\t\t"), 
+}));
+	_const_v__gen__js__builtin_globals = new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){
+tos_lit("println"), tos_lit("print"), 
 }));
 	_const_v__gen__x64__mag0 = ((byte)(0x7f));
 	_const_v__gen__x64__fn_arg_registers = new_array_from_c_array(6, 6, sizeof(v__gen__x64__Register), _MOV((v__gen__x64__Register[6]){
