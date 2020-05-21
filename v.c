@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "0de70e8"
+#define V_COMMIT_HASH "047e982"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "abb1527"
+#define V_COMMIT_HASH "0de70e8"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "0de70e8"
+#define V_CURRENT_COMMIT_HASH "047e982"
 #endif
 
 
@@ -28811,10 +28811,14 @@ static void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node) {
 		}
 	}
 	string name = string_replace(_STR("%.*s\000_%.*s", 2, receiver_type_name, node.name), tos_lit("."), tos_lit("__"));
-	v__gen__Gen_write(g, _STR("%.*s\000(", 2, name));
+	if (!v__table__Type_is_ptr(node.receiver_type) && v__table__Type_is_ptr(node.left_type) && string_eq(node.name, tos_lit("str"))) {
+		v__gen__Gen_write(g, tos_lit("ptr_str("));
+	} else {
+		v__gen__Gen_write(g, _STR("%.*s\000(", 2, name));
+	}
 	if (v__table__Type_is_ptr(node.receiver_type) && !v__table__Type_is_ptr(node.left_type)) {
 		v__gen__Gen_write(g, tos_lit("&"));
-	} else if (!v__table__Type_is_ptr(node.receiver_type) && v__table__Type_is_ptr(node.left_type)) {
+	} else if (!v__table__Type_is_ptr(node.receiver_type) && v__table__Type_is_ptr(node.left_type) && string_ne(node.name, tos_lit("str"))) {
 		v__gen__Gen_write(g, tos_lit("/*rec*/*"));
 	}
 	v__gen__Gen_expr(g, node.left);
