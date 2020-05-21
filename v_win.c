@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ce1a181"
+#define V_COMMIT_HASH "45c9ccf"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b8c028c"
+#define V_COMMIT_HASH "ce1a181"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ce1a181"
+#define V_CURRENT_COMMIT_HASH "45c9ccf"
 #endif
 
 
@@ -29020,7 +29020,7 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 	if (is_json_encode) {
 		name = string_add(name, string_add(tos_lit("_"), string_replace(json_type_str, tos_lit("."), tos_lit("__"))));
 	}
-	if (node.generic_type != _const_v__table__void_type) {
+	if (node.generic_type != _const_v__table__void_type && node.generic_type != 0) {
 		name = string_add(name, string_add(tos_lit("_"), v__gen__Gen_typ(g, node.generic_type)));
 	}
 	if (is_print && (*(v__ast__CallArg*)array_get(node.args, 0)).typ != _const_v__table__string_type) {
