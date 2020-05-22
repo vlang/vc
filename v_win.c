@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "de09e38"
+#define V_COMMIT_HASH "acb58a1"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "dda875a"
+#define V_COMMIT_HASH "de09e38"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "de09e38"
+#define V_CURRENT_COMMIT_HASH "acb58a1"
 #endif
 
 
@@ -1938,6 +1938,7 @@ struct v__parser__Parser {
 	v__token__Token prev_tok;
 	v__token__Token peek_tok;
 	v__token__Token peek_tok2;
+	v__token__Token peek_tok3;
 	v__table__Table* table;
 	v__table__Language language;
 	bool inside_if;
@@ -20882,6 +20883,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.prev_tok = {0},
 		.peek_tok = {0},
 		.peek_tok2 = {0},
+		.peek_tok3 = {0},
 		.table = table,
 		.language = {0},
 		.inside_if = 0,
@@ -20983,6 +20985,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 		.prev_tok = {0},
 		.peek_tok = {0},
 		.peek_tok2 = {0},
+		.peek_tok3 = {0},
 		.table = b_table,
 		.language = {0},
 		.inside_if = 0,
@@ -21128,6 +21131,7 @@ void v__parser__Parser_read_first_token(v__parser__Parser* p) {
 	v__parser__Parser_next(p);
 	v__parser__Parser_next(p);
 	v__parser__Parser_next(p);
+	v__parser__Parser_next(p);
 }
 
 void v__parser__Parser_open_scope(v__parser__Parser* p) {
@@ -21190,7 +21194,8 @@ static void v__parser__Parser_next(v__parser__Parser* p) {
 	p->prev_tok = p->tok;
 	p->tok = p->peek_tok;
 	p->peek_tok = p->peek_tok2;
-	p->peek_tok2 = v__scanner__Scanner_scan(p->scanner);
+	p->peek_tok2 = p->peek_tok3;
+	p->peek_tok3 = v__scanner__Scanner_scan(p->scanner);
 }
 
 static void v__parser__Parser_check(v__parser__Parser* p, v__token__Kind expected) {
@@ -21699,7 +21704,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 		v__parser__Parser_check(p, v__token__Kind_dot);
 		p->expr_mod = mod;
 	}
-	if (p->peek_tok.kind == v__token__Kind_lpar || (p->peek_tok.kind == v__token__Kind_lt && p->peek_tok2.kind == v__token__Kind_name && p->peek_tok.pos == p->peek_tok2.pos - 1)) {
+	if (p->peek_tok.kind == v__token__Kind_lpar || (p->peek_tok.kind == v__token__Kind_lt && p->peek_tok2.kind == v__token__Kind_name && p->peek_tok3.kind == v__token__Kind_gt)) {
 		string name = p->tok.lit;
 		if (mod.len > 0) {
 			name = _STR("%.*s\000.%.*s", 2, mod, name);
