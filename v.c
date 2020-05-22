@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "fe0b587"
+#define V_COMMIT_HASH "88fa935"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1cc52b0"
+#define V_COMMIT_HASH "fe0b587"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "fe0b587"
+#define V_CURRENT_COMMIT_HASH "88fa935"
 #endif
 
 
@@ -2797,6 +2797,8 @@ void v_panic(string s);
 void eprintln(string s);
 void eprint(string s);
 void print(string s);
+string _const_new_line_character; // a string literal, inited later
+void println(string s);
 i64 total_m; // global
 int nr_mallocs; // global
 static void looo();
@@ -2809,7 +2811,6 @@ static void v_ptr_free(voidptr ptr);
 int is_atty(int fd);
 static voidptr __as_cast(voidptr obj, int obj_type, int expected_type);
 static void builtin_init();
-void println(string s);
 static bool print_backtrace_skipping_top_frames(int xskipframes);
 static bool print_backtrace_skipping_top_frames_mac(int skipframes);
 static bool print_backtrace_skipping_top_frames_freebsd(int skipframes);
@@ -4374,6 +4375,7 @@ typedef struct {
 void vinit_string_literals(){
 	_const_math__bits__overflow_error = tos_lit("Overflow Error");
 	_const_math__bits__divide_error = tos_lit("Divide Error");
+	_const_new_line_character = tos_lit("\n");
 	_const_digit_pairs = tos_lit("00102030405060708090011121314151617181910212223242526272829203132333435363738393041424344454647484940515253545556575859506162636465666768696071727374757677787970818283848586878889809192939495969798999");
 	_const_os__path_separator = tos_lit("/");
 	_const_time__days_string = tos_lit("MonTueWedThuFriSatSun");
@@ -8050,12 +8052,28 @@ void print(string s) {
 			u16* wide_str = string_to_wide(s);
 			int wide_len = wcslen(wide_str);
 			WriteConsole(output_handle, wide_str, wide_len, &bytes_written, 0);
+				v_free(wide_str);
 		} else {
 			WriteFile(output_handle, s.str, s.len, &bytes_written, 0);
 		}
 	
 #else
 		printf("%.*s", s.len, s.str);
+	
+// } windows
+#endif
+
+}
+
+void println(string s) {
+	
+// $if  windows {
+#ifdef _WIN32
+		print(s);
+		print(_const_new_line_character);
+	
+#else
+		printf("%.*s\n", s.len, s.str);
 	
 // } windows
 #endif
@@ -8146,10 +8164,6 @@ static voidptr __as_cast(voidptr obj, int obj_type, int expected_type) {
 }
 
 static void builtin_init() {
-}
-
-void println(string s) {
-	printf("%.*s\n", s.len, s.str);
 }
 
 static bool print_backtrace_skipping_top_frames(int xskipframes) {
