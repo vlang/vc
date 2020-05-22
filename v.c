@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "aef7518"
+#define V_COMMIT_HASH "dda875a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b5af6d4"
+#define V_COMMIT_HASH "aef7518"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "aef7518"
+#define V_CURRENT_COMMIT_HASH "dda875a"
 #endif
 
 
@@ -2700,11 +2700,11 @@ static multi_return_u32_u32_u32 strconv__lsr96(u32 s2, u32 s1, u32 s0);
 static multi_return_u32_u32_u32 strconv__lsl96(u32 s2, u32 s1, u32 s0);
 static multi_return_u32_u32_u32 strconv__add96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1, u32 d0);
 static multi_return_u32_u32_u32 strconv__sub96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1, u32 d0);
-#define _const_strconv__DIGITS 18
-u64 _const_strconv__DOUBLE_PLUS_ZERO; // inited later
-u64 _const_strconv__DOUBLE_MINUS_ZERO; // inited later
-u64 _const_strconv__DOUBLE_PLUS_INFINITY; // inited later
-u64 _const_strconv__DOUBLE_MINUS_INFINITY; // inited later
+#define _const_strconv__digits 18
+u64 _const_strconv__double_plus_zero; // inited later
+u64 _const_strconv__double_minus_zero; // inited later
+u64 _const_strconv__double_plus_infinity; // inited later
+u64 _const_strconv__double_minus_infinity; // inited later
 #define _const_strconv__fsm_a 0
 #define _const_strconv__fsm_b 1
 #define _const_strconv__fsm_c 2
@@ -2714,18 +2714,18 @@ u64 _const_strconv__DOUBLE_MINUS_INFINITY; // inited later
 #define _const_strconv__fsm_g 6
 #define _const_strconv__fsm_h 7
 #define _const_strconv__fsm_i 8
-#define _const_strconv__FSM_STOP 9
+#define _const_strconv__fsm_stop 9
 #define _const_strconv__parser_ok 0
 #define _const_strconv__parser_pzero 1
 #define _const_strconv__parser_mzero 2
 #define _const_strconv__parser_pinf 3
 #define _const_strconv__parser_minf 4
-#define _const_strconv__DPOINT '.'
-#define _const_strconv__PLUS '+'
-#define _const_strconv__MINUS '-'
-#define _const_strconv__ZERO '0'
-#define _const_strconv__NINE '9'
-u32 _const_strconv__TEN; // inited later
+#define _const_strconv__c_dpoint '.'
+#define _const_strconv__c_plus '+'
+#define _const_strconv__c_minus '-'
+#define _const_strconv__c_zero '0'
+#define _const_strconv__c_nine '9'
+u32 _const_strconv__c_ten; // inited later
 static bool strconv__is_digit(byte x);
 static bool strconv__is_space(byte x);
 static bool strconv__is_exp(byte x);
@@ -3057,7 +3057,7 @@ int utf8_char_len(byte b);
 string utf32_to_str(u32 code);
 string utf32_to_str_no_malloc(u32 code, voidptr buf);
 int string_utf32_code(string _rune);
-#define _const_CP_UTF8 65001
+#define _const_cp_utf8 65001
 u16* string_to_wide(string _str);
 string string_from_wide(u16* _wstr);
 string string_from_wide2(u16* _wstr, int len);
@@ -3065,32 +3065,32 @@ static int utf8_len(byte c);
 static int utf8_str_len(string s);
 static int utf8_str_visible_length(string s);
 int utf8_getchar();
-#define _const_os__S_IFMT 0xF000
-#define _const_os__S_IFDIR 0x4000
-#define _const_os__S_IFLNK 0xa000
-#define _const_os__S_IXUSR 0100
-#define _const_os__S_IXGRP 0010
-#define _const_os__S_IXOTH 0001
-int _const_os__STD_INPUT_HANDLE; // inited later
-int _const_os__STD_OUTPUT_HANDLE; // inited later
-int _const_os__STD_ERROR_HANDLE; // inited later
-#define _const_os__O_RDONLY 0
-#define _const_os__O_WRONLY 1
-#define _const_os__O_RDWR 2
-#define _const_os__O_CREATE 100
-#define _const_os__O_EXCL 200
-#define _const_os__O_NOCTTY 400
-#define _const_os__O_TRUNC 1000
-#define _const_os__O_APPEND 2000
-#define _const_os__O_NONBLOCK 4000
-#define _const_os__O_SYNC 10000
+#define _const_os__s_ifmt 0xF000
+#define _const_os__s_ifdir 0x4000
+#define _const_os__s_iflnk 0xa000
+#define _const_os__s_ixusr 0100
+#define _const_os__s_ixgrp 0010
+#define _const_os__s_ixoth 0001
+int _const_os__std_input_handle; // inited later
+int _const_os__std_output_handle; // inited later
+int _const_os__std_error_handle; // inited later
+#define _const_os__o_rdonly 0
+#define _const_os__o_wronly 1
+#define _const_os__o_rdwr 2
+#define _const_os__o_create 100
+#define _const_os__o_excl 200
+#define _const_os__o_noctty 400
+#define _const_os__o_trunc 1000
+#define _const_os__o_append 2000
+#define _const_os__o_nonblock 4000
+#define _const_os__o_sync 10000
 string os__getenv(string key);
 int os__setenv(string name, string value, bool overwrite);
 int os__unsetenv(string name);
 map_string_string os__environ();
 os__FileMode os__inode(string path);
 array_string _const_os__args; // inited later
-#define _const_os__MAX_PATH 4096
+#define _const_os__max_path_len 4096
 bool os__File_is_opened(os__File f);
 void os__File_write(os__File* f, string s);
 void os__File_writeln(os__File* f, string s);
@@ -3119,10 +3119,10 @@ string os__posix_get_error_msg(int code);
 static int os__vpclose(voidptr f);
 int os__system(string cmd);
 string os__sigint_to_signal_name(int si);
-#define _const_os__F_OK 0
-#define _const_os__X_OK 1
-#define _const_os__W_OK 2
-#define _const_os__R_OK 4
+#define _const_os__f_ok 0
+#define _const_os__x_ok 1
+#define _const_os__w_ok 2
+#define _const_os__r_ok 4
 bool os__exists(string path);
 bool os__is_executable(string path);
 Option_bool os__is_writable_folder(string folder);
@@ -3178,10 +3178,10 @@ string _const_os__wd_at_startup; // inited later
 string os__resource_abs_path(string path);
 Option_os__File os__open(string path);
 Option_os__File os__create(string path);
-#define _const_os__PROT_READ 1
-#define _const_os__PROT_WRITE 2
-#define _const_os__MAP_PRIVATE 0x02
-#define _const_os__MAP_ANONYMOUS 0x20
+#define _const_os__prot_read 1
+#define _const_os__prot_write 2
+#define _const_os__map_private 0x02
+#define _const_os__map_anonymous 0x20
 #define _const_os__sys_write 1
 #define _const_os__sys_open 2
 #define _const_os__sys_close 3
@@ -3430,7 +3430,7 @@ static void v__vmod__ModFileCacher_add(v__vmod__ModFileCacher* cacher, string pa
 static multi_return_array_string_v__vmod__ModFileAndFolder v__vmod__ModFileCacher_traverse(v__vmod__ModFileCacher* mcache, string mfolder);
 static void v__vmod__ModFileCacher_mark_folders_with_vmod(v__vmod__ModFileCacher* mcache, array_string folders_so_far, v__vmod__ModFileAndFolder vmod);
 static void v__vmod__ModFileCacher_mark_folders_as_vmod_free(v__vmod__ModFileCacher* mcache, array_string folders_so_far);
-array_string _const_v__vmod__MOD_FILE_STOP_PATHS; // inited later
+array_string _const_v__vmod__mod_file_stop_paths; // inited later
 static bool v__vmod__ModFileCacher_check_for_stop(v__vmod__ModFileCacher* mcache, string cfolder, array_string files);
 static array_string v__vmod__ModFileCacher_get_files(v__vmod__ModFileCacher* mcache, string cfolder);
 v__vmod__ModFileCacher* _const_v__vmod__mod_file_cacher; // inited later
@@ -4038,8 +4038,8 @@ byte _const_v__gen__x64__mag0; // inited later
 #define _const_v__gen__x64__shn_xindex 0xffff
 #define _const_v__gen__x64__sht_null 0
 #define _const_v__gen__x64__segment_start 0x400000
-#define _const_v__gen__x64__PLACEHOLDER 0
-#define _const_v__gen__x64__SEVENS 0x77777777
+#define _const_v__gen__x64__placeholder 0
+#define _const_v__gen__x64__sevens 0x77777777
 void v__gen__x64__Gen_generate_elf_header(v__gen__x64__Gen* g);
 void v__gen__x64__Gen_generate_elf_footer(v__gen__x64__Gen* g);
 static void v__gen__x64__Gen_section_header(v__gen__x64__Gen* g, v__gen__x64__SectionConfig c);
@@ -4151,10 +4151,10 @@ string v__builder__Builder_gen_js(v__builder__Builder* b, array_string v_files);
 void v__builder__Builder_build_js(v__builder__Builder* b, array_string v_files, string out_file);
 void v__builder__Builder_compile_js(v__builder__Builder* b);
 static void v__builder__Builder_run_js(v__builder__Builder* b);
-v__builder__RegKey _const_v__builder__HKEY_LOCAL_MACHINE; // inited later
-int _const_v__builder__KEY_QUERY_VALUE; // inited later
-int _const_v__builder__KEY_WOW64_32KEY; // inited later
-int _const_v__builder__KEY_ENUMERATE_SUB_KEYS; // inited later
+v__builder__RegKey _const_v__builder__hkey_local_machine; // inited later
+int _const_v__builder__key_query_value; // inited later
+int _const_v__builder__key_wow64_32key; // inited later
+int _const_v__builder__key_enumerate_sub_keys; // inited later
 static Option_string v__builder__find_windows_kit_internal(v__builder__RegKey key, array_string versions);
 static Option_v__builder__WindowsKit v__builder__find_windows_kit_root(string host_arch);
 static Option_v__builder__VsInstallation v__builder__find_vs(string vswhere_dir, string host_arch);
@@ -6178,7 +6178,7 @@ static multi_return_u32_u32_u32 strconv__sub96(u32 s2, u32 s1, u32 s0, u32 d2, u
 }
 
 static bool strconv__is_digit(byte x) {
-	return (x >= _const_strconv__ZERO && x <= _const_strconv__NINE) == true;
+	return (x >= _const_strconv__c_zero && x <= _const_strconv__c_nine) == true;
 }
 
 static bool strconv__is_space(byte x) {
@@ -6202,7 +6202,7 @@ static multi_return_int_strconv__PrepNumber strconv__parser(string s) {
 		.exponent = 0,
 		.mantissa = 0,
 	};
-	while (state != _const_strconv__FSM_STOP) {
+	while (state != _const_strconv__fsm_stop) {
 		if (state == _const_strconv__fsm_a) {
 			if (strconv__is_space(c) == true) {
 				c = string_at(s, i++);
@@ -6211,27 +6211,27 @@ static multi_return_int_strconv__PrepNumber strconv__parser(string s) {
 			}
 		}else if (state == _const_strconv__fsm_b) {
 			state = _const_strconv__fsm_c;
-			if (c == _const_strconv__PLUS) {
+			if (c == _const_strconv__c_plus) {
 				c = string_at(s, i++);
-			} else if (c == _const_strconv__MINUS) {
+			} else if (c == _const_strconv__c_minus) {
 				pn.negative = true;
 				c = string_at(s, i++);
 			} else if (strconv__is_digit(c)) {
-			} else if (c == _const_strconv__DPOINT) {
+			} else if (c == _const_strconv__c_dpoint) {
 			} else {
-				state = _const_strconv__FSM_STOP;
+				state = _const_strconv__fsm_stop;
 			}
 		}else if (state == _const_strconv__fsm_c) {
-			if (c == _const_strconv__ZERO) {
+			if (c == _const_strconv__c_zero) {
 				c = string_at(s, i++);
-			} else if (c == _const_strconv__DPOINT) {
+			} else if (c == _const_strconv__c_dpoint) {
 				c = string_at(s, i++);
 				state = _const_strconv__fsm_d;
 			} else {
 				state = _const_strconv__fsm_e;
 			}
 		}else if (state == _const_strconv__fsm_d) {
-			if (c == _const_strconv__ZERO) {
+			if (c == _const_strconv__c_zero) {
 				c = string_at(s, i++);
 				if (pn.exponent > -2147483647) {
 					pn.exponent--;
@@ -6241,15 +6241,15 @@ static multi_return_int_strconv__PrepNumber strconv__parser(string s) {
 			}
 		}else if (state == _const_strconv__fsm_e) {
 			if (strconv__is_digit(c)) {
-				if (digx < _const_strconv__DIGITS) {
+				if (digx < _const_strconv__digits) {
 					pn.mantissa *= 10;
-					pn.mantissa += ((u64)(c - _const_strconv__ZERO));
+					pn.mantissa += ((u64)(c - _const_strconv__c_zero));
 					digx++;
 				} else if (pn.exponent < 2147483647) {
 					pn.exponent++;
 				}
 				c = string_at(s, i++);
-			} else if (c == _const_strconv__DPOINT) {
+			} else if (c == _const_strconv__c_dpoint) {
 				c = string_at(s, i++);
 				state = _const_strconv__fsm_f;
 			} else {
@@ -6257,9 +6257,9 @@ static multi_return_int_strconv__PrepNumber strconv__parser(string s) {
 			}
 		}else if (state == _const_strconv__fsm_f) {
 			if (strconv__is_digit(c)) {
-				if (digx < _const_strconv__DIGITS) {
+				if (digx < _const_strconv__digits) {
 					pn.mantissa *= 10;
-					pn.mantissa += ((u64)(c - _const_strconv__ZERO));
+					pn.mantissa += ((u64)(c - _const_strconv__c_zero));
 					pn.exponent--;
 					digx++;
 				}
@@ -6271,15 +6271,15 @@ static multi_return_int_strconv__PrepNumber strconv__parser(string s) {
 				state = _const_strconv__fsm_g;
 			}
 		}else if (state == _const_strconv__fsm_g) {
-			if (c == _const_strconv__PLUS) {
+			if (c == _const_strconv__c_plus) {
 				c = string_at(s, i++);
-			} else if (c == _const_strconv__MINUS) {
+			} else if (c == _const_strconv__c_minus) {
 				expneg = true;
 				c = string_at(s, i++);
 			}
 			state = _const_strconv__fsm_h;
 		}else if (state == _const_strconv__fsm_h) {
-			if (c == _const_strconv__ZERO) {
+			if (c == _const_strconv__c_zero) {
 				c = string_at(s, i++);
 			} else {
 				state = _const_strconv__fsm_i;
@@ -6288,16 +6288,16 @@ static multi_return_int_strconv__PrepNumber strconv__parser(string s) {
 			if (strconv__is_digit(c)) {
 				if (expexp < 214748364) {
 					expexp *= 10;
-					expexp += ((int)(c - _const_strconv__ZERO));
+					expexp += ((int)(c - _const_strconv__c_zero));
 				}
 				c = string_at(s, i++);
 			} else {
-				state = _const_strconv__FSM_STOP;
+				state = _const_strconv__fsm_stop;
 			}
 		}else {
 		};
 		if (i >= s.len) {
-			state = _const_strconv__FSM_STOP;
+			state = _const_strconv__fsm_stop;
 		}
 	}
 	if (expneg) {
@@ -6343,28 +6343,28 @@ static u64 strconv__converter(strconv__PrepNumber* pn) {
 	s1 = ((u32)(pn->mantissa >> 32));
 	s2 = ((u32)(0));
 	while (pn->exponent > 0) {
-		multi_return_u32_u32_u32 mr_7893 = strconv__lsl96(s2, s1, s0);
-		q2 = mr_7893.arg0;
-		q1 = mr_7893.arg1;
-		q0 = mr_7893.arg2;
-		multi_return_u32_u32_u32 mr_7937 = strconv__lsl96(q2, q1, q0);
-		r2 = mr_7937.arg0;
-		r1 = mr_7937.arg1;
-		r0 = mr_7937.arg2;
-		multi_return_u32_u32_u32 mr_7991 = strconv__lsl96(r2, r1, r0);
-		s2 = mr_7991.arg0;
-		s1 = mr_7991.arg1;
-		s0 = mr_7991.arg2;
-		multi_return_u32_u32_u32 mr_8045 = strconv__add96(s2, s1, s0, q2, q1, q0);
-		s2 = mr_8045.arg0;
-		s1 = mr_8045.arg1;
-		s0 = mr_8045.arg2;
+		multi_return_u32_u32_u32 mr_7935 = strconv__lsl96(s2, s1, s0);
+		q2 = mr_7935.arg0;
+		q1 = mr_7935.arg1;
+		q0 = mr_7935.arg2;
+		multi_return_u32_u32_u32 mr_7979 = strconv__lsl96(q2, q1, q0);
+		r2 = mr_7979.arg0;
+		r1 = mr_7979.arg1;
+		r0 = mr_7979.arg2;
+		multi_return_u32_u32_u32 mr_8033 = strconv__lsl96(r2, r1, r0);
+		s2 = mr_8033.arg0;
+		s1 = mr_8033.arg1;
+		s0 = mr_8033.arg2;
+		multi_return_u32_u32_u32 mr_8087 = strconv__add96(s2, s1, s0, q2, q1, q0);
+		s2 = mr_8087.arg0;
+		s1 = mr_8087.arg1;
+		s0 = mr_8087.arg2;
 		pn->exponent--;
 		while (((s2 & mask28)) != 0) {
-			multi_return_u32_u32_u32 mr_8166 = strconv__lsr96(s2, s1, s0);
-			q2 = mr_8166.arg0;
-			q1 = mr_8166.arg1;
-			q0 = mr_8166.arg2;
+			multi_return_u32_u32_u32 mr_8208 = strconv__lsr96(s2, s1, s0);
+			q2 = mr_8208.arg0;
+			q1 = mr_8208.arg1;
+			q0 = mr_8208.arg2;
 			binexp++;
 			s2 = q2;
 			s1 = q1;
@@ -6373,27 +6373,27 @@ static u64 strconv__converter(strconv__PrepNumber* pn) {
 	}
 	while (pn->exponent < 0) {
 		while (!(((s2 & (((u32)(1)) << 31))) != 0)) {
-			multi_return_u32_u32_u32 mr_8309 = strconv__lsl96(s2, s1, s0);
-			q2 = mr_8309.arg0;
-			q1 = mr_8309.arg1;
-			q0 = mr_8309.arg2;
+			multi_return_u32_u32_u32 mr_8351 = strconv__lsl96(s2, s1, s0);
+			q2 = mr_8351.arg0;
+			q1 = mr_8351.arg1;
+			q0 = mr_8351.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
 			s0 = q0;
 		}
-		q2 = s2 / _const_strconv__TEN;
-		r1 = s2 % _const_strconv__TEN;
+		q2 = s2 / _const_strconv__c_ten;
+		r1 = s2 % _const_strconv__c_ten;
 		r2 = ((s1 >> 8) | (r1 << 24));
-		q1 = r2 / _const_strconv__TEN;
-		r1 = r2 % _const_strconv__TEN;
+		q1 = r2 / _const_strconv__c_ten;
+		r1 = r2 % _const_strconv__c_ten;
 		r2 = (((((s1 & ((u32)(0xFF)))) << 16) | (s0 >> 16)) | (r1 << 24));
-		r0 = r2 / _const_strconv__TEN;
-		r1 = r2 % _const_strconv__TEN;
+		r0 = r2 / _const_strconv__c_ten;
+		r1 = r2 % _const_strconv__c_ten;
 		q1 = ((q1 << 8) | (((r0 & ((u32)(0x00FF0000)))) >> 16));
 		q0 = r0 << 16;
 		r2 = (((s0 & ((u32)(0xFFFF)))) | (r1 << 16));
-		q0 |= r2 / _const_strconv__TEN;
+		q0 |= r2 / _const_strconv__c_ten;
 		s2 = q2;
 		s1 = q1;
 		s0 = q0;
@@ -6401,10 +6401,10 @@ static u64 strconv__converter(strconv__PrepNumber* pn) {
 	}
 	if (s2 != 0 || s1 != 0 || s0 != 0) {
 		while (((s2 & mask28)) == 0) {
-			multi_return_u32_u32_u32 mr_8954 = strconv__lsl96(s2, s1, s0);
-			q2 = mr_8954.arg0;
-			q1 = mr_8954.arg1;
-			q0 = mr_8954.arg2;
+			multi_return_u32_u32_u32 mr_9010 = strconv__lsl96(s2, s1, s0);
+			q2 = mr_9010.arg0;
+			q1 = mr_9010.arg1;
+			q0 = mr_9010.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
@@ -6416,25 +6416,25 @@ static u64 strconv__converter(strconv__PrepNumber* pn) {
 	u32 check_round_mask = ((u32)(0xFFFFFFFF)) << ((u32)(nbit));
 	if (((s1 & check_round_bit)) != 0) {
 		if (((s1 & ~check_round_mask)) != 0) {
-			multi_return_u32_u32_u32 mr_10027 = strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
-			s2 = mr_10027.arg0;
-			s1 = mr_10027.arg1;
-			s0 = mr_10027.arg2;
+			multi_return_u32_u32_u32 mr_10083 = strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
+			s2 = mr_10083.arg0;
+			s1 = mr_10083.arg1;
+			s0 = mr_10083.arg2;
 		} else {
 			if (((s1 & (check_round_bit << ((u32)(1))))) != 0) {
-				multi_return_u32_u32_u32 mr_10217 = strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
-				s2 = mr_10217.arg0;
-				s1 = mr_10217.arg1;
-				s0 = mr_10217.arg2;
+				multi_return_u32_u32_u32 mr_10273 = strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
+				s2 = mr_10273.arg0;
+				s1 = mr_10273.arg1;
+				s0 = mr_10273.arg2;
 			}
 		}
 		s1 = (s1 & check_round_mask);
 		s0 = ((u32)(0));
 		if ((s2 & (mask28 << ((u32)(1)))) != 0) {
-			multi_return_u32_u32_u32 mr_10417 = strconv__lsr96(s2, s1, s0);
-			q2 = mr_10417.arg0;
-			q1 = mr_10417.arg1;
-			q0 = mr_10417.arg2;
+			multi_return_u32_u32_u32 mr_10473 = strconv__lsr96(s2, s1, s0);
+			q2 = mr_10473.arg0;
+			q1 = mr_10473.arg1;
+			q0 = mr_10473.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
@@ -6444,15 +6444,15 @@ static u64 strconv__converter(strconv__PrepNumber* pn) {
 	binexp += 1023;
 	if (binexp > 2046) {
 		if (pn->negative) {
-			result = _const_strconv__DOUBLE_MINUS_INFINITY;
+			result = _const_strconv__double_minus_infinity;
 		} else {
-			result = _const_strconv__DOUBLE_PLUS_INFINITY;
+			result = _const_strconv__double_plus_infinity;
 		}
 	} else if (binexp < 1) {
 		if (pn->negative) {
-			result = _const_strconv__DOUBLE_MINUS_ZERO;
+			result = _const_strconv__double_minus_zero;
 		} else {
-			result = _const_strconv__DOUBLE_PLUS_ZERO;
+			result = _const_strconv__double_plus_zero;
 		}
 	} else if (s2 != 0) {
 		u64 q = ((u64)(0));
@@ -6474,19 +6474,19 @@ f64 strconv__atof64(string s) {
 	};
 	int res_parsing = 0;
 	strconv__Float64u res;
-	multi_return_int_strconv__PrepNumber mr_11564 = strconv__parser(string_add(s, tos_lit(" ")));
-	res_parsing = mr_11564.arg0;
-	pn = mr_11564.arg1;
+	multi_return_int_strconv__PrepNumber mr_11620 = strconv__parser(string_add(s, tos_lit(" ")));
+	res_parsing = mr_11620.arg0;
+	pn = mr_11620.arg1;
 	if (res_parsing == _const_strconv__parser_ok) {
 		res.u = strconv__converter((voidptr)&/*qq*/pn);
 	}else if (res_parsing == _const_strconv__parser_pzero) {
-		res.u = _const_strconv__DOUBLE_PLUS_ZERO;
+		res.u = _const_strconv__double_plus_zero;
 	}else if (res_parsing == _const_strconv__parser_mzero) {
-		res.u = _const_strconv__DOUBLE_MINUS_ZERO;
+		res.u = _const_strconv__double_minus_zero;
 	}else if (res_parsing == _const_strconv__parser_pinf) {
-		res.u = _const_strconv__DOUBLE_PLUS_INFINITY;
+		res.u = _const_strconv__double_plus_infinity;
 	}else if (res_parsing == _const_strconv__parser_minf) {
-		res.u = _const_strconv__DOUBLE_MINUS_INFINITY;
+		res.u = _const_strconv__double_minus_infinity;
 	}else {
 	};
 	return res.f;
@@ -11078,10 +11078,10 @@ u16* string_to_wide(string _str) {
 	
 // $if  windows {
 #ifdef _WIN32
-		int num_chars = (MultiByteToWideChar(_const_CP_UTF8, 0, _str.str, _str.len, 0, 0));
+		int num_chars = (MultiByteToWideChar(_const_cp_utf8, 0, _str.str, _str.len, 0, 0));
 		u16* wstr = ((u16*)(v_malloc((num_chars + 1) * 2)));
 		if (wstr != 0) {
-			MultiByteToWideChar(_const_CP_UTF8, 0, _str.str, _str.len, wstr, num_chars);
+			MultiByteToWideChar(_const_cp_utf8, 0, _str.str, _str.len, wstr, num_chars);
 			memset(((byte*)(wstr)) + num_chars * 2, 0, 2);
 		}
 		return wstr;
@@ -11113,10 +11113,10 @@ string string_from_wide2(u16* _wstr, int len) {
 	
 // $if  windows {
 #ifdef _WIN32
-		int num_chars = WideCharToMultiByte(_const_CP_UTF8, 0, _wstr, len, 0, 0, 0, 0);
+		int num_chars = WideCharToMultiByte(_const_cp_utf8, 0, _wstr, len, 0, 0, 0, 0);
 		byteptr str_to = v_malloc(num_chars + 1);
 		if (str_to != 0) {
-			WideCharToMultiByte(_const_CP_UTF8, 0, _wstr, len, str_to, num_chars, 0, 0);
+			WideCharToMultiByte(_const_cp_utf8, 0, _wstr, len, str_to, num_chars, 0, 0);
 			memset(str_to + num_chars, 0, 1);
 		}
 		return tos2(str_to);
@@ -11703,19 +11703,19 @@ Option_os__File os__open_file(string path, string mode, varg_int options) {
 	for (int _t1 = 0; _t1 < mode.len; _t1++) {
 	byte m = mode.str[_t1];
 		if (m == 'r') {
-			flags |= _const_os__O_RDONLY;
+			flags |= _const_os__o_rdonly;
 		}else if (m == 'w') {
-			flags |= (_const_os__O_CREATE | _const_os__O_TRUNC);
+			flags |= (_const_os__o_create | _const_os__o_trunc);
 		}else if (m == 'a') {
-			flags |= (_const_os__O_CREATE | _const_os__O_APPEND);
+			flags |= (_const_os__o_create | _const_os__o_append);
 		}else if (m == 's') {
-			flags |= _const_os__O_SYNC;
+			flags |= _const_os__o_sync;
 		}else if (m == 'n') {
-			flags |= _const_os__O_NONBLOCK;
+			flags |= _const_os__o_nonblock;
 		}else if (m == 'c') {
-			flags |= _const_os__O_NOCTTY;
+			flags |= _const_os__o_noctty;
 		}else if (m == '+') {
-			flags |= _const_os__O_RDWR;
+			flags |= _const_os__o_rdwr;
 		}else {
 		};
 	}
@@ -11812,8 +11812,8 @@ static int os__vpclose(voidptr f) {
 		return _pclose(f);
 	
 #else
-		multi_return_int_bool mr_9390 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_9390.arg0;
+		multi_return_int_bool mr_9394 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_9394.arg0;
 		return ret;
 	
 // } windows
@@ -11845,9 +11845,9 @@ int os__system(string cmd) {
 	
 // $if !windows {
 #ifndef _WIN32
-		multi_return_int_bool mr_10181 = os__posix_wait4_to_exit_status(ret);
-		int pret = mr_10181.arg0;
-		bool is_signaled = mr_10181.arg1;
+		multi_return_int_bool mr_10185 = os__posix_wait4_to_exit_status(ret);
+		int pret = mr_10185.arg0;
+		bool is_signaled = mr_10185.arg1;
 		if (is_signaled) {
 			println(string_add(string_add(_STR("Terminated by signal %2"PRId32"\000 (", 2, ret), os__sigint_to_signal_name(pret)), tos_lit(")")));
 		}
@@ -11921,10 +11921,10 @@ bool os__exists(string path) {
 // $if  windows {
 #ifdef _WIN32
 		string p = string_replace(path, tos_lit("/"), tos_lit("\\"));
-		return _waccess(string_to_wide(p), _const_os__F_OK) != -1;
+		return _waccess(string_to_wide(p), _const_os__f_ok) != -1;
 	
 #else
-		return access(path.str, _const_os__F_OK) != -1;
+		return access(path.str, _const_os__f_ok) != -1;
 	
 // } windows
 #endif
@@ -11948,12 +11948,12 @@ bool os__is_executable(string path) {
 		if (stat(path.str, &statbuf) != 0) {
 			return false;
 		}
-		return ((((int)(statbuf.st_mode)) & (((_const_os__S_IXUSR | _const_os__S_IXGRP) | _const_os__S_IXOTH)))) != 0;
+		return ((((int)(statbuf.st_mode)) & (((_const_os__s_ixusr | _const_os__s_ixgrp) | _const_os__s_ixoth)))) != 0;
 	
 // } solaris
 #endif
 
-	return access(path.str, _const_os__X_OK) != -1;
+	return access(path.str, _const_os__x_ok) != -1;
 }
 
 Option_bool os__is_writable_folder(string folder) {
@@ -11978,10 +11978,10 @@ bool os__is_writable(string path) {
 // $if  windows {
 #ifdef _WIN32
 		string p = string_replace(path, tos_lit("/"), tos_lit("\\"));
-		return _waccess(string_to_wide(p), _const_os__W_OK) != -1;
+		return _waccess(string_to_wide(p), _const_os__w_ok) != -1;
 	
 #else
-		return access(path.str, _const_os__W_OK) != -1;
+		return access(path.str, _const_os__w_ok) != -1;
 	
 // } windows
 #endif
@@ -11993,10 +11993,10 @@ bool os__is_readable(string path) {
 // $if  windows {
 #ifdef _WIN32
 		string p = string_replace(path, tos_lit("/"), tos_lit("\\"));
-		return _waccess(string_to_wide(p), _const_os__R_OK) != -1;
+		return _waccess(string_to_wide(p), _const_os__r_ok) != -1;
 	
 #else
-		return access(path.str, _const_os__R_OK) != -1;
+		return access(path.str, _const_os__r_ok) != -1;
 	
 // } windows
 #endif
@@ -12142,7 +12142,7 @@ string os__get_raw_line() {
 #ifdef _WIN32
 			int max_line_chars = 256;
 			byteptr buf = v_malloc(max_line_chars * 2);
-			voidptr h_input = GetStdHandle(_const_os__STD_INPUT_HANDLE);
+			voidptr h_input = GetStdHandle(_const_os__std_input_handle);
 			int bytes_read = 0;
 			if (is_atty(0) > 0) {
 				ReadConsole(h_input, buf, max_line_chars * 2, &bytes_read, 0);
@@ -12352,8 +12352,8 @@ string os__executable() {
 	
 // $if  linux {
 #ifdef __linux__
-		byteptr result = vcalloc(_const_os__MAX_PATH);
-		int count = readlink("/proc/self/exe", result, _const_os__MAX_PATH);
+		byteptr result = vcalloc(_const_os__max_path_len);
+		int count = readlink("/proc/self/exe", result, _const_os__max_path_len);
 		if (count < 0) {
 			eprintln(tos_lit("os.executable() failed at reading /proc/self/exe to get exe path"));
 			return os__executable_fallback();
@@ -12377,9 +12377,9 @@ string os__executable() {
 	
 // $if  macos {
 #ifdef __APPLE__
-		byteptr result = vcalloc(_const_os__MAX_PATH);
+		byteptr result = vcalloc(_const_os__max_path_len);
 		int pid = getpid();
-		int ret = proc_pidpath(pid, result, _const_os__MAX_PATH);
+		int ret = proc_pidpath(pid, result, _const_os__max_path_len);
 		if (ret <= 0) {
 			eprintln(_STR("os.executable() failed at calling proc_pidpath with pid: %"PRId32"\000 . proc_pidpath returned %"PRId32"\000 ", 3, pid, ret));
 			return os__executable_fallback();
@@ -12392,11 +12392,11 @@ string os__executable() {
 	
 // $if  freebsd {
 #ifdef __FreeBSD__
-		byteptr result = vcalloc(_const_os__MAX_PATH);
+		byteptr result = vcalloc(_const_os__max_path_len);
 		array_int mib = new_array_from_c_array(4, 4, sizeof(int), _MOV((int[4]){
 		1, 14, 12, -1, 
 		}));
-		int size = _const_os__MAX_PATH;
+		int size = _const_os__max_path_len;
 		sysctl(mib.data, 4, result, &size, 0, 0);
 		return tos2((byteptr)result);
 	
@@ -12427,8 +12427,8 @@ string os__executable() {
 	
 // $if  netbsd {
 #ifdef __NetBSD__
-		byteptr result = vcalloc(_const_os__MAX_PATH);
-		int count = readlink("/proc/curproc/exe", result, _const_os__MAX_PATH);
+		byteptr result = vcalloc(_const_os__max_path_len);
+		int count = readlink("/proc/curproc/exe", result, _const_os__max_path_len);
 		if (count < 0) {
 			eprintln(tos_lit("os.executable() failed at reading /proc/curproc/exe to get exe path"));
 			return os__executable_fallback();
@@ -12441,8 +12441,8 @@ string os__executable() {
 	
 // $if  dragonfly {
 #ifdef __DragonFly__
-		byteptr result = vcalloc(_const_os__MAX_PATH);
-		int count = readlink("/proc/curproc/file", result, _const_os__MAX_PATH);
+		byteptr result = vcalloc(_const_os__max_path_len);
+		int count = readlink("/proc/curproc/file", result, _const_os__max_path_len);
 		if (count < 0) {
 			eprintln(tos_lit("os.executable() failed at reading /proc/curproc/file to get exe path"));
 			return os__executable_fallback();
@@ -12541,8 +12541,8 @@ bool os__is_dir(string path) {
 		if (stat(path.str, &statbuf) != 0) {
 			return false;
 		}
-		int val = (((int)(statbuf.st_mode)) & _const_os__S_IFMT);
-		return val == _const_os__S_IFDIR;
+		int val = (((int)(statbuf.st_mode)) & _const_os__s_ifmt);
+		return val == _const_os__s_ifdir;
 	
 // } windows
 #endif
@@ -12560,7 +12560,7 @@ bool os__is_link(string path) {
 		if (lstat(path.str, &statbuf) != 0) {
 			return false;
 		}
-		return (((int)(statbuf.st_mode)) & _const_os__S_IFMT) == _const_os__S_IFLNK;
+		return (((int)(statbuf.st_mode)) & _const_os__s_ifmt) == _const_os__s_iflnk;
 	
 // } windows
 #endif
@@ -12605,12 +12605,12 @@ string os__getwd() {
 }
 
 string os__real_path(string fpath) {
-	byteptr fullpath = vcalloc(_const_os__MAX_PATH);
+	byteptr fullpath = vcalloc(_const_os__max_path_len);
 	charptr ret = ((charptr)(0));
 	
 // $if  windows {
 #ifdef _WIN32
-		ret = _fullpath(fullpath, fpath.str, _const_os__MAX_PATH);
+		ret = _fullpath(fullpath, fpath.str, _const_os__max_path_len);
 		if (ret == 0) {
 			return fpath;
 		}
@@ -15576,7 +15576,7 @@ static void v__vmod__ModFileCacher_mark_folders_as_vmod_free(v__vmod__ModFileCac
 
 static bool v__vmod__ModFileCacher_check_for_stop(v__vmod__ModFileCacher* mcache, string cfolder, array_string files) {
 	// FOR IN array
-	array _t1 = _const_v__vmod__MOD_FILE_STOP_PATHS;
+	array _t1 = _const_v__vmod__mod_file_stop_paths;
 	for (int _t2 = 0; _t2 < _t1.len; _t2++) {
 		string i = ((string*)_t1.data)[_t2];
 		if (_IN(string, i, files)) {
@@ -22009,11 +22009,15 @@ static v__ast__ConstDecl v__parser__Parser_const_decl(v__parser__Parser* p) {
 			comment = v__parser__Parser_comment(p);
 		}
 		v__token__Position pos = v__token__Token_position(&p->tok);
-		string name = v__parser__Parser_prepend_mod(p, v__parser__Parser_check_name(p));
+		string name = v__parser__Parser_check_name(p);
+		if (v__util__contains_capital(name)) {
+			v__parser__Parser_warn_with_pos(p, tos_lit("const names cannot contain uppercase letters, use snake_case instead"), pos);
+		}
+		string full_name = v__parser__Parser_prepend_mod(p, name);
 		v__parser__Parser_check(p, v__token__Kind_assign);
 		v__ast__Expr expr = v__parser__Parser_expr(p, 0);
 		v__ast__ConstField field = (v__ast__ConstField){
-			.name = name,
+			.name = full_name,
 			.expr = expr,
 			.is_pub = 0,
 			.pos = pos,
@@ -31147,7 +31151,7 @@ void v__gen__x64__Gen_generate_elf_header(v__gen__x64__Gen* g) {
 	println(_STR("code_start_pos = %.*s", 1, int_hex(g->buf.len)));
 	g->code_start_pos = g->buf.len;
 	g->debug_pos = g->buf.len;
-	v__gen__x64__Gen_call(g, _const_v__gen__x64__PLACEHOLDER);
+	v__gen__x64__Gen_call(g, _const_v__gen__x64__placeholder);
 	v__gen__x64__Gen_println(g, tos_lit("call fn main"));
 }
 
@@ -31344,7 +31348,7 @@ static void v__gen__x64__Gen_inc_var(v__gen__x64__Gen* g, string var_name) {
 static int v__gen__x64__Gen_jne(v__gen__x64__Gen* g) {
 	v__gen__x64__Gen_write16(g, 0x850f);
 	i64 pos = v__gen__x64__Gen_pos(g);
-	v__gen__x64__Gen_write32(g, _const_v__gen__x64__PLACEHOLDER);
+	v__gen__x64__Gen_write32(g, _const_v__gen__x64__placeholder);
 	v__gen__x64__Gen_println(g, tos_lit("jne"));
 	return pos;
 }
@@ -31352,7 +31356,7 @@ static int v__gen__x64__Gen_jne(v__gen__x64__Gen* g) {
 static int v__gen__x64__Gen_jge(v__gen__x64__Gen* g) {
 	v__gen__x64__Gen_write16(g, 0x8d0f);
 	i64 pos = v__gen__x64__Gen_pos(g);
-	v__gen__x64__Gen_write32(g, _const_v__gen__x64__PLACEHOLDER);
+	v__gen__x64__Gen_write32(g, _const_v__gen__x64__placeholder);
 	v__gen__x64__Gen_println(g, tos_lit("jne"));
 	return pos;
 }
@@ -33315,7 +33319,7 @@ static Option_v__builder__WindowsKit v__builder__find_windows_kit_root(string ho
 #ifdef _WIN32
 		v__builder__RegKey root_key = ((v__builder__RegKey)(0));
 		string path = tos_lit("SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots");
-		voidptr rc = RegOpenKeyEx(_const_v__builder__HKEY_LOCAL_MACHINE, string_to_wide(path), 0, ((_const_v__builder__KEY_QUERY_VALUE | _const_v__builder__KEY_WOW64_32KEY) | _const_v__builder__KEY_ENUMERATE_SUB_KEYS), &root_key);
+		voidptr rc = RegOpenKeyEx(_const_v__builder__hkey_local_machine, string_to_wide(path), 0, ((_const_v__builder__key_query_value | _const_v__builder__key_wow64_32key) | _const_v__builder__key_enumerate_sub_keys), &root_key);
 		if (rc != 0) {
 			// defer
 			
@@ -35744,11 +35748,11 @@ void _vinit() {
 	.hi = ((u64)(0x027eab3cf7dcd826)),
 }, 
 }));
-	_const_strconv__DOUBLE_PLUS_ZERO = ((u64)(0x0000000000000000));
-	_const_strconv__DOUBLE_MINUS_ZERO = ((u64)(0x8000000000000000));
-	_const_strconv__DOUBLE_PLUS_INFINITY = ((u64)(0x7FF0000000000000));
-	_const_strconv__DOUBLE_MINUS_INFINITY = ((u64)(0xFFF0000000000000));
-	_const_strconv__TEN = ((u32)(10));
+	_const_strconv__double_plus_zero = ((u64)(0x0000000000000000));
+	_const_strconv__double_minus_zero = ((u64)(0x8000000000000000));
+	_const_strconv__double_plus_infinity = ((u64)(0x7FF0000000000000));
+	_const_strconv__double_minus_infinity = ((u64)(0xFFF0000000000000));
+	_const_strconv__c_ten = ((u32)(10));
 	_const_strconv__max_u64 = ((u64)(UINT64_MAX));
 	_const_strconv__dec_round = new_array_from_c_array(20, 20, sizeof(f64), _MOV((f64[20]){
 ((f64)(0.44)), 0.044, 0.0044, 0.00044, 0.000044, 0.0000044, 0.00000044, 0.000000044, 0.0000000044, 0.00000000044, 0.000000000044, 0.0000000000044, 0.00000000000044, 0.000000000000044, 0.0000000000000044, 0.00000000000000044, 0.000000000000000044, 0.0000000000000000044, 0.00000000000000000044, 0.000000000000000000044, 
@@ -35760,9 +35764,9 @@ void _vinit() {
 	_const_mid_index = _const_degree - 1;
 	_const_max_size = 2 * _const_degree - 1;
 	_const_children_bytes = sizeof(voidptr) * (_const_max_size + 1);
-	_const_os__STD_INPUT_HANDLE = -10;
-	_const_os__STD_OUTPUT_HANDLE = -11;
-	_const_os__STD_ERROR_HANDLE = -12;
+	_const_os__std_input_handle = -10;
+	_const_os__std_output_handle = -11;
+	_const_os__std_error_handle = -12;
 	_const_os__args = __new_array_with_default(0, 0, sizeof(string), 0);
 	_const_os__wd_at_startup = os__getwd();
 	_const_v__token__assign_tokens = new_array_from_c_array(11, 11, sizeof(v__token__Kind), _MOV((v__token__Kind[11]){
@@ -35795,7 +35799,7 @@ v__token__Kind_assign, v__token__Kind_plus_assign, v__token__Kind_minus_assign, 
 	_const_v__pref__list_of_flags_with_param = new_array_from_c_array(14, 14, sizeof(string), _MOV((string[14]){
 tos_lit("o"), tos_lit("output"), tos_lit("d"), tos_lit("define"), tos_lit("b"), tos_lit("backend"), tos_lit("cc"), tos_lit("os"), tos_lit("target-os"), tos_lit("arch"), tos_lit("csource"), tos_lit("cf"), tos_lit("cflags"), tos_lit("path"), 
 }));
-	_const_v__vmod__MOD_FILE_STOP_PATHS = new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){
+	_const_v__vmod__mod_file_stop_paths = new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){
 tos_lit(".git"), tos_lit(".hg"), tos_lit(".svn"), tos_lit(".v.mod.stop"), 
 }));
 	_const_v__vmod__mod_file_cacher = v__vmod__new_mod_file_cacher();
@@ -35885,10 +35889,10 @@ tos_lit("println"), tos_lit("print"),
 	_const_v__gen__x64__fn_arg_registers = new_array_from_c_array(6, 6, sizeof(v__gen__x64__Register), _MOV((v__gen__x64__Register[6]){
 v__gen__x64__Register_rdi, v__gen__x64__Register_rsi, v__gen__x64__Register_rdx, v__gen__x64__Register_rcx, v__gen__x64__Register_r8, v__gen__x64__Register_r9, 
 }));
-	_const_v__builder__HKEY_LOCAL_MACHINE = ((v__builder__RegKey)(0x80000002));
-	_const_v__builder__KEY_QUERY_VALUE = (0x0001);
-	_const_v__builder__KEY_WOW64_32KEY = (0x0200);
-	_const_v__builder__KEY_ENUMERATE_SUB_KEYS = (0x0008);
+	_const_v__builder__hkey_local_machine = ((v__builder__RegKey)(0x80000002));
+	_const_v__builder__key_query_value = (0x0001);
+	_const_v__builder__key_wow64_32key = (0x0200);
+	_const_v__builder__key_enumerate_sub_keys = (0x0008);
 	_const_simple_cmd = new_array_from_c_array(13, 13, sizeof(string), _MOV((string[13]){
 tos_lit("fmt"), tos_lit("up"), tos_lit("self"), tos_lit("test"), tos_lit("test-fmt"), tos_lit("test-compiler"), tos_lit("test-fixed"), tos_lit("bin2v"), tos_lit("repl"), tos_lit("build-tools"), tos_lit("build-examples"), tos_lit("build-vbinaries"), tos_lit("setup-freetype"), 
 }));
