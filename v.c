@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "2764433"
+#define V_COMMIT_HASH "7a4f26a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2f171bf"
+#define V_COMMIT_HASH "2764433"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "2764433"
+#define V_CURRENT_COMMIT_HASH "7a4f26a"
 #endif
 
 
@@ -20936,6 +20936,10 @@ array_v__ast__File v__parser__parse_files(array_string paths, v__table__Table* t
 // } macos
 #endif
 
+	if (false) {
+		time__sleep_ms(1);
+		println(int_str(runtime__nr_cpus()));
+	}
 	array_v__ast__File files = __new_array_with_default(0, 0, sizeof(v__ast__File), 0);
 	// FOR IN array
 	array _t3 = paths;
