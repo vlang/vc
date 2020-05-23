@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "43eaec3"
+#define V_COMMIT_HASH "4271eb4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c690c2f"
+#define V_COMMIT_HASH "43eaec3"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "43eaec3"
+#define V_CURRENT_COMMIT_HASH "4271eb4"
 #endif
 
 
@@ -29226,16 +29226,16 @@ static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 				v__gen__Gen_write(g, _STR("%.*s\000 %.*s\000(", 3, type_name, impl_fn_name));
 			}
 		} else {
-			if (!it.is_pub) {
+			if (!(it.is_pub || g->pref->is_debug)) {
 				v__gen__Gen_write(g, tos_lit("static "));
 				strings__Builder_write(&g->definitions, tos_lit("static "));
 			}
 			strings__Builder_write(&g->definitions, _STR("%.*s\000 %.*s\000(", 3, type_name, name));
 			v__gen__Gen_write(g, _STR("%.*s\000 %.*s\000(", 3, type_name, name));
 		}
-		multi_return_array_string_array_string mr_3359 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
-		array_string fargs = mr_3359.arg0;
-		array_string fargtypes = mr_3359.arg1;
+		multi_return_array_string_array_string mr_3380 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
+		array_string fargs = mr_3380.arg0;
+		array_string fargtypes = mr_3380.arg1;
 		if (it.no_body || (g->pref->use_cache && it.is_builtin)) {
 			strings__Builder_writeln(&g->definitions, tos_lit(");"));
 			v__gen__Gen_writeln(g, tos_lit(");"));
@@ -29589,11 +29589,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_16144 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_16144.arg0;
-		string pafile = mr_16144.arg1;
-		string pamod = mr_16144.arg2;
-		string pafn = mr_16144.arg3;
+		multi_return_int_string_string_string mr_16165 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_16165.arg0;
+		string pafile = mr_16165.arg1;
+		string pamod = mr_16165.arg2;
+		string pafn = mr_16165.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		v__gen__Gen_write(g, tos_lit(")"));
