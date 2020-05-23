@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "4271eb4"
+#define V_COMMIT_HASH "4608898"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "43eaec3"
+#define V_COMMIT_HASH "4271eb4"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4271eb4"
+#define V_CURRENT_COMMIT_HASH "4608898"
 #endif
 
 
@@ -24245,6 +24245,7 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 		}
 		v__ast__IdentVar ident_var_info = v__ast__Ident_var_info(&ident);
 		if (assign_stmt->op == v__token__Kind_assign) {
+			v__checker__Checker_fail_if_immutable(c, /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Ident[]) {ident}, sizeof(v__ast__Ident)), .typ = 153 /* v.ast.Ident */});
 			v__table__Type var_type = v__checker__Checker_expr(c, /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Ident[]) {ident}, sizeof(v__ast__Ident)), .typ = 153 /* v.ast.Ident */});
 			array_push(&assign_stmt->left_types, _MOV((v__table__Type[]){ var_type }));
 			if (!v__table__Table_check(c->table, val_type, var_type)) {
