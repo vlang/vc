@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "c95a113"
+#define V_COMMIT_HASH "c4fbae3"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2adfbfc"
+#define V_COMMIT_HASH "c95a113"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c95a113"
+#define V_CURRENT_COMMIT_HASH "c4fbae3"
 #endif
 
 
@@ -564,6 +564,8 @@ typedef uint8_t byte;
 typedef uint32_t rune;
 typedef float f32;
 typedef double f64;
+typedef int64_t any_int;
+typedef double any_float;
 typedef unsigned char* byteptr;
 typedef void* voidptr;
 typedef char* charptr;
@@ -4409,7 +4411,7 @@ void vinit_string_literals(){
 	_const_v__gen__c_commit_hash_default = tos_lit("\n#ifndef V_COMMIT_HASH\n#define V_COMMIT_HASH \"@@@\"\n#endif\n\n");
 	_const_v__gen__c_current_commit_hash_default = tos_lit("\n#ifndef V_CURRENT_COMMIT_HASH\n#define V_CURRENT_COMMIT_HASH \"@@@\"\n#endif\n\n");
 	_const_v__gen__c_common_macros = tos_lit("\n#define EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an array needs to be specified, but GCC crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#ifdef __TINYC__\n#undef EMPTY_STRUCT_DECLARATION\n#undef EMPTY_STRUCT_INITIALIZATION\n#define EMPTY_STRUCT_DECLARATION char _dummy\n#define EMPTY_STRUCT_INITIALIZATION 0\n#undef EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef TCCSKIP\n#define TCCSKIP(x)\n#include <byteswap.h>\n#endif\n\n// for __offset_of\n#ifndef __offsetof\n#define __offsetof(s,memb) \((size_t)((char *)&((s *)0)->memb - (char *)0))\n#endif\n\n#define OPTION_CAST(x) (x)\n\n#ifndef V64_PRINTFORMAT\n#ifdef PRIx64\n#define V64_PRINTFORMAT \"0x%\"PRIx64\n#elif defined(__WIN32__)\n#define V64_PRINTFORMAT \"0x%I64x\"\n#elif defined(__linux__) && defined(__LP64__)\n#define V64_PRINTFORMAT \"0x%lx\"\n#else\n#define V64_PRINTFORMAT \"0x%llx\"\n#endif\n#endif\n\n");
-	_const_v__gen__c_builtin_types = tos_lit("\n\n//================================== builtin types ================================*/\n\ntypedef int64_t i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef unsigned char* byteptr;\ntypedef void* voidptr;\ntypedef char* charptr;\ntypedef struct array array;\ntypedef struct map map;\ntypedef array array_string;\ntypedef array array_int;\ntypedef array array_byte;\ntypedef array array_f32;\ntypedef array array_f64;\ntypedef array array_u16;\ntypedef array array_u32;\ntypedef array array_u64;\ntypedef map map_int;\ntypedef map map_string;\ntypedef byte array_fixed_byte_300 [300];\ntypedef byte array_fixed_byte_400 [400];\n#ifndef __cplusplus\n#ifndef bool\n        typedef int bool;\n        #define true 1\n        #define false 0\n#endif\n#endif\n\n");
+	_const_v__gen__c_builtin_types = tos_lit("\n\n//================================== builtin types ================================*/\n\ntypedef int64_t i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef int64_t any_int;\ntypedef double any_float;\ntypedef unsigned char* byteptr;\ntypedef void* voidptr;\ntypedef char* charptr;\ntypedef struct array array;\ntypedef struct map map;\ntypedef array array_string;\ntypedef array array_int;\ntypedef array array_byte;\ntypedef array array_f32;\ntypedef array array_f64;\ntypedef array array_u16;\ntypedef array array_u32;\ntypedef array array_u64;\ntypedef map map_int;\ntypedef map map_string;\ntypedef byte array_fixed_byte_300 [300];\ntypedef byte array_fixed_byte_400 [400];\n#ifndef __cplusplus\n#ifndef bool\n        typedef int bool;\n        #define true 1\n        #define false 0\n#endif\n#endif\n\n");
 	_const_v__gen__posix_hotcode_definitions_1 = tos_lit("\nvoid v_bind_live_symbols(void* live_lib){\n    @LOAD_FNS@\n}\n");
 	_const_v__gen__windows_hotcode_definitions_1 = tos_lit("\nvoid v_bind_live_symbols(void* live_lib){\n    @LOAD_FNS@\n}\n");
 	_const_v__builder__c_error_info = tos_lit("\n==================\nC error. This should never happen.\n\nIf you were not working with C interop, please raise an issue on GitHub:\n\nhttps://github.com/vlang/v/issues/new/choose\n\nYou can also use #help on Discord: https://discord.gg/vlang\n");
