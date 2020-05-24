@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "641fe5c"
+#define V_COMMIT_HASH "23e8c8e"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1754ba1"
+#define V_COMMIT_HASH "641fe5c"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "641fe5c"
+#define V_CURRENT_COMMIT_HASH "23e8c8e"
 #endif
 
 
@@ -24889,6 +24889,13 @@ v__table__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* 
 				v__ast__Var* it = (v__ast__Var*)/*opt*/(*(v__ast__ScopeObject*)obj.data).obj; // ST it
 				v__table__Type typ = it->typ;
 				if (typ == 0) {
+					if (it->expr.typ == 155 /* v.ast.Ident */) {
+						v__ast__Ident* inner_ident = /* as */ (v__ast__Ident*)__as_cast(it->expr.obj, it->expr.typ, /*expected:*/155);
+						if (inner_ident->kind == v__ast__IdentKind_unresolved) {
+							v__checker__Checker_error(c, _STR("unresolved variable: `%.*s\000`", 2, ident->name), ident->pos);
+							return _const_v__table__void_type;
+						}
+					}
 					typ = v__checker__Checker_expr(c, it->expr);
 				}
 				bool is_optional = v__table__Type_flag_is(typ, v__table__TypeFlag_optional);
