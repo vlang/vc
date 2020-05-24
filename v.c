@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "465dc68"
+#define V_COMMIT_HASH "ddcb5f7"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c4fbae3"
+#define V_COMMIT_HASH "465dc68"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "465dc68"
+#define V_CURRENT_COMMIT_HASH "ddcb5f7"
 #endif
 
 
@@ -3937,7 +3937,7 @@ static void v__gen__Gen_gen_str_for_struct(v__gen__Gen* g, v__table__Struct info
 static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, string styp, string str_fn_name);
 static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayFixed info, string styp, string str_fn_name);
 static void v__gen__Gen_gen_str_for_map(v__gen__Gen* g, v__table__Map info, string styp, string str_fn_name);
-static void v__gen__Gen_gen_str_for_varg(v__gen__Gen* g, string styp, string str_fn_name);
+static void v__gen__Gen_gen_str_for_varg(v__gen__Gen* g, string styp, string str_fn_name, bool has_str_method);
 static string v__gen__Gen_type_to_fmt(v__gen__Gen g, v__table__Type typ);
 static string v__gen__Gen_interface_table(v__gen__Gen* g);
 static void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it);
@@ -28472,7 +28472,7 @@ static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__T
 	if (v__table__Type_flag_is(typ, v__table__TypeFlag_variadic)) {
 		string varg_already_generated_key = _STR("varg_%.*s", 1, already_generated_key);
 		if (!_IN(string, varg_already_generated_key, g->str_types)) {
-			v__gen__Gen_gen_str_for_varg(g, styp, str_fn_name);
+			v__gen__Gen_gen_str_for_varg(g, styp, str_fn_name, sym_has_str_method);
 			array_push(&g->str_types, _MOV((string[]){ varg_already_generated_key }));
 		}
 		return _STR("varg_%.*s", 1, str_fn_name);
@@ -28617,9 +28617,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_98771 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_98771.arg0;
-	bool str_method_expects_ptr = mr_98771.arg1;
+	multi_return_bool_bool_int mr_98791 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_98791.arg0;
+	bool str_method_expects_ptr = mr_98791.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (
@@ -28675,9 +28675,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_101595 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_101595.arg0;
-	bool str_method_expects_ptr = mr_101595.arg1;
+	multi_return_bool_bool_int mr_101615 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_101615.arg0;
+	bool str_method_expects_ptr = mr_101615.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (
@@ -28763,13 +28763,17 @@ static void v__gen__Gen_gen_str_for_map(v__gen__Gen* g, v__table__Map info, stri
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("}"));
 }
 
-static void v__gen__Gen_gen_str_for_varg(v__gen__Gen* g, string styp, string str_fn_name) {
+static void v__gen__Gen_gen_str_for_varg(v__gen__Gen* g, string styp, string str_fn_name, bool has_str_method) {
 	strings__Builder_writeln(&g->definitions, _STR("string varg_%.*s\000(varg_%.*s\000 it); // auto", 3, str_fn_name, styp));
 	strings__Builder_writeln(&g->auto_str_funcs, _STR("string varg_%.*s\000(varg_%.*s\000 it) {", 3, str_fn_name, styp));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tstrings__Builder sb = strings__new_builder(it.len);"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tstrings__Builder_write(&sb, tos_lit(\"[\"));"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tfor(int i=0; i<it.len; i++) {"));
-	strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstrings__Builder_write(&sb, %.*s\000(it.args[i], 0));", 2, str_fn_name));
+	if (has_str_method) {
+		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstrings__Builder_write(&sb, %.*s\000(it.args[i]));", 2, str_fn_name));
+	} else {
+		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstrings__Builder_write(&sb, %.*s\000(it.args[i], 0));", 2, str_fn_name));
+	}
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t\tif (i < it.len-1) {"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t\t\tstrings__Builder_write(&sb, tos_lit(\", \"));"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t\t}"));
