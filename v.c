@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "7963e48"
+#define V_COMMIT_HASH "2adfbfc"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "494f4fe"
+#define V_COMMIT_HASH "7963e48"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "7963e48"
+#define V_CURRENT_COMMIT_HASH "2adfbfc"
 #endif
 
 
@@ -7639,7 +7639,7 @@ void array_delete(array* a, int i) {
 #endif
 
 	int size = a->element_size;
-	memmove(((byteptr)(a->data)) + i * size, ((byteptr)(a->data)) + (i + 1) * size, (a->len - i) * size);
+	memmove(((byteptr)(a->data)) + i * size, ((byteptr)(a->data)) + (i + 1) * size, (a->len - i - 1) * size);
 	a->len--;
 }
 
