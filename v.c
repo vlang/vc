@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d4fac6a"
+#define V_COMMIT_HASH "8ea0c81"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0f92800"
+#define V_COMMIT_HASH "d4fac6a"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d4fac6a"
+#define V_CURRENT_COMMIT_HASH "8ea0c81"
 #endif
 
 
@@ -2937,6 +2937,8 @@ static voidptr map_get3(map m, string key, voidptr zero);
 static bool map_exists(map m, string key);
 void map_delete(map* m, string key);
 array_string map_keys(map* m);
+DenseArray DenseArray_clone(DenseArray d);
+map map_clone(map m);
 void map_free(map* m);
 string map_string_str(map_string m);
 string Option_str(Option o);
@@ -9258,6 +9260,38 @@ m->key_values.keys[i] });
 		j++;
 	}
 	return keys;
+}
+
+// Attr: [unsafe_fn]
+DenseArray DenseArray_clone(DenseArray d) {
+	DenseArray res = (DenseArray){
+		.value_bytes = d.value_bytes,
+		.cap = d.cap,
+		.size = d.size,
+		.deletes = d.deletes,
+		.keys = ((string*)(v_malloc(d.cap * sizeof(string)))),
+		.values = ((byteptr)(v_malloc(d.cap * d.value_bytes))),
+	};
+	memcpy(res.keys, d.keys, d.cap * sizeof(string));
+	memcpy(res.values, d.values, d.cap * d.value_bytes);
+	return res;
+}
+
+// Attr: [unsafe_fn]
+map map_clone(map m) {
+	int metas_size = sizeof(u32) * (m.cap + 2 + m.extra_metas);
+	map res = (map){
+		.value_bytes = m.value_bytes,
+		.cap = m.cap,
+		.cached_hashbits = m.cached_hashbits,
+		.shift = m.shift,
+		.key_values = DenseArray_clone(m.key_values),
+		.metas = ((u32*)(v_malloc(metas_size))),
+		.extra_metas = m.extra_metas,
+		.size = m.size,
+	};
+	memcpy(res.metas, m.metas, metas_size);
+	return res;
 }
 
 // Attr: [unsafe_fn]
