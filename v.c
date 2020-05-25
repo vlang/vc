@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "f8b2374"
+#define V_COMMIT_HASH "5825e46"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2eac2a5"
+#define V_COMMIT_HASH "f8b2374"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "f8b2374"
+#define V_CURRENT_COMMIT_HASH "5825e46"
 #endif
 
 
@@ -25275,8 +25275,13 @@ v__table__Type v__checker__Checker_enum_val(v__checker__Checker* c, v__ast__Enum
 		return _const_v__table__void_type;
 	}
 	v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, typ);
+	if (typ_sym->kind == v__table__Kind_array && node->enum_name.len == 0) {
+		v__table__Array* array_info = /* as */ (v__table__Array*)__as_cast(typ_sym->info.obj, typ_sym->info.typ, /*expected:*/82);
+		typ = array_info->elem_type;
+		typ_sym = v__table__Table_get_type_symbol(c->table, typ);
+	}
 	if (typ_sym->kind != v__table__Kind_enum_) {
-		v__checker__Checker_error(c, tos_lit("not an enum"), node->pos);
+		v__checker__Checker_error(c, tos_lit("expected type is not an enum"), node->pos);
 		return _const_v__table__void_type;
 	}
 	if (!(typ_sym->info.typ == 84 /* v.table.Enum */)) {
