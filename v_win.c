@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d226090"
+#define V_COMMIT_HASH "fe249cd"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3aeaa24"
+#define V_COMMIT_HASH "d226090"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d226090"
+#define V_CURRENT_COMMIT_HASH "fe249cd"
 #endif
 
 
@@ -14826,7 +14826,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 		res->path = command;
 	} else if (string_eq(command, tos_lit("run"))) {
 		res->is_run = true;
-		if (command_pos > args.len) {
+		if (command_pos + 2 > args.len) {
 			eprintln(tos_lit("v run: no v files listed"));
 			v_exit(1);
 		}
