@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "fe249cd"
+#define V_COMMIT_HASH "53a10eb"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d226090"
+#define V_COMMIT_HASH "fe249cd"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "fe249cd"
+#define V_CURRENT_COMMIT_HASH "53a10eb"
 #endif
 
 
@@ -4904,7 +4904,7 @@ string _STR(const char *fmt, int nfmts, ...) {
 string _STR_TMP(const char *fmt, ...) {
 	va_list argptr;
 	va_start(argptr, fmt);
-	//size_t len = vsnprintf(0, 0, fmt, argptr) + 1;
+	size_t len = vsnprintf(0, 0, fmt, argptr) + 1;
 	va_end(argptr);
 	va_start(argptr, fmt);
 	vsprintf((char *)g_str_buf, fmt, argptr);
@@ -4913,7 +4913,7 @@ string _STR_TMP(const char *fmt, ...) {
 	//puts('_STR_TMP:');
 	//puts(g_str_buf);
 #endif
-	return tos2(g_str_buf);
+	return tos(g_str_buf,  len);
 } // endof _STR_TMP
 
 
@@ -28013,7 +28013,11 @@ static array_v__table__TypeSymbol v__gen__Gen_sort_structs(v__gen__Gen g, array_
 }
 
 static void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInterLiteral node) {
-	v__gen__Gen_write(g, tos_lit("_STR(\""));
+	if (g->pref->autofree) {
+		v__gen__Gen_write(g, tos_lit("_STR_TMP(\""));
+	} else {
+		v__gen__Gen_write(g, tos_lit("_STR(\""));
+	}
 	array_int fieldwidths = __new_array_with_default(0, 0, sizeof(int), 0);
 	array_byte specs = __new_array_with_default(0, 0, sizeof(byte), 0);
 	bool end_string = false;
@@ -28027,7 +28031,9 @@ static void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInter
 		if (i >= node.exprs.len) {
 			if (escaped_val.len > 0) {
 				end_string = true;
-				v__gen__Gen_write(g, tos_lit("\\000"));
+				if (!g->pref->autofree) {
+					v__gen__Gen_write(g, tos_lit("\\000"));
+				}
 				v__gen__Gen_write(g, escaped_val);
 			}
 			continue;
@@ -28121,7 +28127,7 @@ static void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInter
 		} else {
 			v__gen__Gen_write(g, _STR("%.*s\000\"PRId32\"", 2, fmt));
 		}
-		if (i < node.exprs.len - 1) {
+		if (i < node.exprs.len - 1 && !g->pref->autofree) {
 			v__gen__Gen_write(g, tos_lit("\\000"));
 		}
 	}
@@ -28158,9 +28164,9 @@ static void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInter
 			}
 		} else if ((*(byte*)array_get(specs, i)) == 's') {
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, (*(v__table__Type*)array_get(node.expr_types, i)));
-			multi_return_bool_bool_int mr_76214 = v__table__TypeSymbol_str_method_info(sym);
-			bool sym_has_str_method = mr_76214.arg0;
-			bool str_method_expects_ptr = mr_76214.arg1;
+			multi_return_bool_bool_int mr_76324 = v__table__TypeSymbol_str_method_info(sym);
+			bool sym_has_str_method = mr_76324.arg0;
+			bool str_method_expects_ptr = mr_76324.arg1;
 			if (v__table__Type_flag_is((*(v__table__Type*)array_get(node.expr_types, i)), v__table__TypeFlag_variadic)) {
 				string str_fn_name = v__gen__Gen_gen_str_for_type(g, (*(v__table__Type*)array_get(node.expr_types, i)));
 				v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -28380,11 +28386,11 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExpr
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->cur_fn->name, tos_lit("main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_82455 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_82455.arg0;
-				string pafile = mr_82455.arg1;
-				string pamod = mr_82455.arg2;
-				string pafn = mr_82455.arg3;
+				multi_return_int_string_string_string mr_82565 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_82565.arg0;
+				string pafile = mr_82565.arg1;
+				string pamod = mr_82565.arg2;
+				string pafn = mr_82565.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(%.*s\000.v_error);", 2, cvar_name));
@@ -28802,10 +28808,10 @@ inline static string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Type
 static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_92905 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_92905.arg0;
-	bool str_method_expects_ptr = mr_92905.arg1;
-	int str_nr_args = mr_92905.arg2;
+	multi_return_bool_bool_int mr_93015 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_93015.arg0;
+	bool str_method_expects_ptr = mr_93015.arg1;
+	int str_nr_args = mr_93015.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -28989,9 +28995,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_99872 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_99872.arg0;
-	bool str_method_expects_ptr = mr_99872.arg1;
+	multi_return_bool_bool_int mr_99982 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_99982.arg0;
+	bool str_method_expects_ptr = mr_99982.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (
@@ -29047,9 +29053,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_102696 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_102696.arg0;
-	bool str_method_expects_ptr = mr_102696.arg1;
+	multi_return_bool_bool_int mr_102806 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_102806.arg0;
+	bool str_method_expects_ptr = mr_102806.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (
@@ -30238,7 +30244,7 @@ void v__gen__Gen_gen_vprint_profile_stats(v__gen__Gen* g) {
 }
 
 static void v__gen__Gen_write_str_fn_definitions(v__gen__Gen* g) {
-	v__gen__Gen_writeln(g, tos_lit("\nvoid _STR_PRINT_ARG(const char *fmt, char** refbufp, int *nbytes, int *memsize, int guess, ...) {\n	va_list args;\n	va_start(args, guess);\n	// NB: (*memsize - *nbytes) === how much free space is left at the end of the current buffer refbufp\n	// *memsize === total length of the buffer refbufp\n	// *nbytes === already occupied bytes of buffer refbufp\n	// guess === how many bytes were taken during the current vsnprintf run\n	for(;;) {\n		if (guess < *memsize - *nbytes) {\n			guess = vsnprintf(*refbufp + *nbytes, *memsize - *nbytes, fmt, args);\n			if (guess < *memsize - *nbytes) { // result did fit into buffer\n				*nbytes += guess;\n				return;\n			}\n		}\n		// increase buffer (somewhat exponentially)\n		*memsize += (*memsize + *memsize) / 3 + guess;\n		*refbufp = (char*)realloc((void*)*refbufp, *memsize);\n	}\n}\n\nstring _STR(const char *fmt, int nfmts, ...) {\n	va_list argptr;\n	int memsize = 128;\n	int nbytes = 0;\n	char* buf = (char*)malloc(memsize);\n	va_start(argptr, nfmts);\n	for (int i=0; i<nfmts; i++) {\n		int k = strlen(fmt);\n		bool is_fspec = false;\n		for (int j=0; j<k; j++) {\n			if (fmt[j] == '%') {\n				j++;\n				if (fmt[j] != '%') {\n					is_fspec = true;\n					break;\n				}\n			}\n		}\n		if (is_fspec) {\n			char f = fmt[k-1];\n			char fup = f & 0xdf; // toupper\n			bool l = fmt[k-2] == 'l';\n			bool ll = l && fmt[k-3] == 'l';\n			if (f == 'u' || fup == 'X' || f == 'o' || f == 'd' || f == 'c') { // int...\n				if (ll) _STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+16, va_arg(argptr, long long));\n				else if (l) _STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+10, va_arg(argptr, long));\n				else _STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+8, va_arg(argptr, int));\n			} else if (fup >= 'E' && fup <= 'G') { // floating point\n				_STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+10, va_arg(argptr, double));\n			} else if (f == 'p') {\n				_STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+14, va_arg(argptr, void*));\n			} else if (f == 's') { // v string\n				string s = va_arg(argptr, string);\n				if (fmt[k-4] == '*') { // %*.*s\n					int fwidth = va_arg(argptr, int);\n					if (fwidth < 0)\n						fwidth -= (s.len - utf8_str_visible_length(s));\n					else\n						fwidth += (s.len - utf8_str_visible_length(s));\n					_STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+s.len-4, fwidth, s.len, s.str);\n				} else { // %.*s\n					_STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+s.len-4, s.len, s.str);\n				}\n			} else {\n				//v_panic(tos3('Invaid format specifier'));\n			}\n		} else {\n			_STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k);\n		}\n		fmt += k+1;\n	}\n	va_end(argptr);\n	buf[nbytes] = 0;\n	buf = (char*)realloc((void*)buf, nbytes+1);\n#ifdef DEBUG_ALLOC\n	//puts('_STR:');\n	puts(buf);\n#endif\n	return tos2((byteptr)buf);\n}\n\nstring _STR_TMP(const char *fmt, ...) {\n	va_list argptr;\n	va_start(argptr, fmt);\n	//size_t len = vsnprintf(0, 0, fmt, argptr) + 1;\n	va_end(argptr);\n	va_start(argptr, fmt);\n	vsprintf((char *)g_str_buf, fmt, argptr);\n	va_end(argptr);\n#ifdef DEBUG_ALLOC\n	//puts('_STR_TMP:');\n	//puts(g_str_buf);\n#endif\n	return tos2(g_str_buf);\n} // endof _STR_TMP\n\n"));
+	v__gen__Gen_writeln(g, tos_lit("\nvoid _STR_PRINT_ARG(const char *fmt, char** refbufp, int *nbytes, int *memsize, int guess, ...) {\n	va_list args;\n	va_start(args, guess);\n	// NB: (*memsize - *nbytes) === how much free space is left at the end of the current buffer refbufp\n	// *memsize === total length of the buffer refbufp\n	// *nbytes === already occupied bytes of buffer refbufp\n	// guess === how many bytes were taken during the current vsnprintf run\n	for(;;) {\n		if (guess < *memsize - *nbytes) {\n			guess = vsnprintf(*refbufp + *nbytes, *memsize - *nbytes, fmt, args);\n			if (guess < *memsize - *nbytes) { // result did fit into buffer\n				*nbytes += guess;\n				return;\n			}\n		}\n		// increase buffer (somewhat exponentially)\n		*memsize += (*memsize + *memsize) / 3 + guess;\n		*refbufp = (char*)realloc((void*)*refbufp, *memsize);\n	}\n}\n\nstring _STR(const char *fmt, int nfmts, ...) {\n	va_list argptr;\n	int memsize = 128;\n	int nbytes = 0;\n	char* buf = (char*)malloc(memsize);\n	va_start(argptr, nfmts);\n	for (int i=0; i<nfmts; i++) {\n		int k = strlen(fmt);\n		bool is_fspec = false;\n		for (int j=0; j<k; j++) {\n			if (fmt[j] == '%') {\n				j++;\n				if (fmt[j] != '%') {\n					is_fspec = true;\n					break;\n				}\n			}\n		}\n		if (is_fspec) {\n			char f = fmt[k-1];\n			char fup = f & 0xdf; // toupper\n			bool l = fmt[k-2] == 'l';\n			bool ll = l && fmt[k-3] == 'l';\n			if (f == 'u' || fup == 'X' || f == 'o' || f == 'd' || f == 'c') { // int...\n				if (ll) _STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+16, va_arg(argptr, long long));\n				else if (l) _STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+10, va_arg(argptr, long));\n				else _STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+8, va_arg(argptr, int));\n			} else if (fup >= 'E' && fup <= 'G') { // floating point\n				_STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+10, va_arg(argptr, double));\n			} else if (f == 'p') {\n				_STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+14, va_arg(argptr, void*));\n			} else if (f == 's') { // v string\n				string s = va_arg(argptr, string);\n				if (fmt[k-4] == '*') { // %*.*s\n					int fwidth = va_arg(argptr, int);\n					if (fwidth < 0)\n						fwidth -= (s.len - utf8_str_visible_length(s));\n					else\n						fwidth += (s.len - utf8_str_visible_length(s));\n					_STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+s.len-4, fwidth, s.len, s.str);\n				} else { // %.*s\n					_STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+s.len-4, s.len, s.str);\n				}\n			} else {\n				//v_panic(tos3('Invaid format specifier'));\n			}\n		} else {\n			_STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k);\n		}\n		fmt += k+1;\n	}\n	va_end(argptr);\n	buf[nbytes] = 0;\n	buf = (char*)realloc((void*)buf, nbytes+1);\n#ifdef DEBUG_ALLOC\n	//puts('_STR:');\n	puts(buf);\n#endif\n	return tos2((byteptr)buf);\n}\n\nstring _STR_TMP(const char *fmt, ...) {\n	va_list argptr;\n	va_start(argptr, fmt);\n	size_t len = vsnprintf(0, 0, fmt, argptr) + 1;\n	va_end(argptr);\n	va_start(argptr, fmt);\n	vsprintf((char *)g_str_buf, fmt, argptr);\n	va_end(argptr);\n#ifdef DEBUG_ALLOC\n	//puts('_STR_TMP:');\n	//puts(g_str_buf);\n#endif\n	return tos(g_str_buf,  len);\n} // endof _STR_TMP\n\n"));
 }
 
 string v__gen__js__gen(array_v__ast__File files, v__table__Table* table, v__pref__Preferences* pref) {
