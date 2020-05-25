@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "2eac2a5"
+#define V_COMMIT_HASH "f8b2374"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bc3e29e"
+#define V_COMMIT_HASH "2eac2a5"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "2eac2a5"
+#define V_CURRENT_COMMIT_HASH "f8b2374"
 #endif
 
 
@@ -1592,6 +1592,7 @@ struct v__scanner__Scanner {
 	string line_comment;
 	bool is_started;
 	string fn_name;
+	string mod_name;
 	bool is_print_line_on_error;
 	bool is_print_colored_error;
 	bool is_print_rel_paths_on_error;
@@ -3704,6 +3705,7 @@ v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMo
 static v__token__Token v__scanner__Scanner_new_token(v__scanner__Scanner* s, v__token__Kind tok_kind, string lit, int len);
 static string v__scanner__Scanner_ident_name(v__scanner__Scanner* s);
 static string v__scanner__Scanner_ident_fn_name(v__scanner__Scanner* s);
+static string v__scanner__Scanner_ident_mod_name(v__scanner__Scanner* s);
 static string v__scanner__filter_num_sep(byteptr txt, int start, int end);
 static string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner* s);
 static string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner* s);
@@ -18322,6 +18324,7 @@ v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMo
 		.line_comment = (string){.str=""},
 		.is_started = 0,
 		.fn_name = (string){.str=""},
+		.mod_name = (string){.str=""},
 		.is_print_line_on_error = true,
 		.is_print_colored_error = true,
 		.is_print_rel_paths_on_error = true,
@@ -18391,6 +18394,31 @@ static string v__scanner__Scanner_ident_fn_name(v__scanner__Scanner* s) {
 	}
 	string fn_name = string_substr(s->text, start_pos, end_pos);
 	return fn_name;
+}
+
+static string v__scanner__Scanner_ident_mod_name(v__scanner__Scanner* s) {
+	int start = s->pos;
+	int pos = s->pos;
+	pos++;
+	while (pos < s->text.len && byte_is_space(string_at(s->text, pos))) {
+		pos++;
+	}
+	if (pos >= s->text.len) {
+		return tos_lit("");
+	}
+	int start_pos = pos;
+	while (pos < s->text.len && !byte_is_space(string_at(s->text, pos)) && !v__util__is_nl(string_at(s->text, pos))) {
+		pos++;
+	}
+	if (pos >= s->text.len) {
+		return tos_lit("");
+	}
+	int end_pos = pos;
+	if (end_pos > s->text.len || end_pos <= start_pos || end_pos <= start || start_pos <= start) {
+		return tos_lit("");
+	}
+	string mod_name = string_substr(s->text, start_pos, end_pos);
+	return mod_name;
 }
 
 static string v__scanner__filter_num_sep(byteptr txt, int start, int end) {
@@ -18668,6 +18696,8 @@ v__token__Token v__scanner__Scanner_scan(v__scanner__Scanner* s) {
 			v__token__Kind kind = v__token__key_to_token(name);
 			if (kind == v__token__Kind_key_fn) {
 				s->fn_name = v__scanner__Scanner_ident_fn_name(s);
+			} else if (kind == v__token__Kind_key_module) {
+				s->mod_name = v__scanner__Scanner_ident_mod_name(s);
 			}
 			return v__scanner__Scanner_new_token(s, kind, name, name.len);
 		}
@@ -18816,6 +18846,9 @@ v__token__Token v__scanner__Scanner_scan(v__scanner__Scanner* s) {
 		string name = v__scanner__Scanner_ident_name(s);
 		if (string_eq(name, tos_lit("FN"))) {
 			return v__scanner__Scanner_new_token(s, v__token__Kind_string, s->fn_name, 3);
+		}
+		if (string_eq(name, tos_lit("MOD"))) {
+			return v__scanner__Scanner_new_token(s, v__token__Kind_string, s->mod_name, 4);
 		}
 		if (string_eq(name, tos_lit("VEXE"))) {
 			string vexe = v__pref__vexe_path();
@@ -31282,15 +31315,32 @@ static void v__gen__js__JsGen_gen_index_expr(v__gen__js__JsGen* g, v__ast__Index
 }
 
 static void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__ast__InfixExpr it) {
-	v__gen__js__JsGen_expr(g, it.left);
-	string op = v__token__Kind_str(it.op);
-	if (string_eq(op, tos_lit("=="))) {
-		op = tos_lit("===");
-	} else if (string_eq(op, tos_lit("!="))) {
-		op = tos_lit("!==");
+	v__table__TypeSymbol* l_sym = v__table__Table_get_type_symbol(g->table, it.left_type);
+	v__table__TypeSymbol* r_sym = v__table__Table_get_type_symbol(g->table, it.right_type);
+	if (l_sym->kind == v__table__Kind_array && it.op == v__token__Kind_left_shift) {
+		v__gen__js__JsGen_expr(g, it.left);
+		v__gen__js__JsGen_write(g, tos_lit(".push("));
+		if (r_sym->kind == v__table__Kind_array) {
+			v__gen__js__JsGen_write(g, tos_lit("..."));
+		}
+		v__gen__js__JsGen_expr(g, it.right);
+		v__gen__js__JsGen_write(g, tos_lit(")"));
+	} else if (it.op == v__token__Kind_key_is) {
+		v__gen__js__JsGen_write(g, tos_lit("/*"));
+		v__gen__js__JsGen_expr(g, it.left);
+		v__gen__js__JsGen_write(g, _STR(" is %.*s", 1, r_sym->name));
+		v__gen__js__JsGen_write(g, tos_lit("*/0"));
+	} else {
+		v__gen__js__JsGen_expr(g, it.left);
+		if (it.op == v__token__Kind_eq) {
+			v__gen__js__JsGen_write(g, tos_lit(" === "));
+		} else if (it.op == v__token__Kind_ne) {
+			v__gen__js__JsGen_write(g, tos_lit(" !== "));
+		} else {
+			v__gen__js__JsGen_write(g, _STR(" %.*s\000 ", 2, v__token__Kind_str(it.op)));
+		}
+		v__gen__js__JsGen_expr(g, it.right);
 	}
-	v__gen__js__JsGen_write(g, _STR(" %.*s\000 ", 2, op));
-	v__gen__js__JsGen_expr(g, it.right);
 }
 
 static void v__gen__js__JsGen_gen_map_init_expr(v__gen__js__JsGen* g, v__ast__MapInit it) {
