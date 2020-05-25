@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5825e46"
+#define V_COMMIT_HASH "b0cfd3f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f8b2374"
+#define V_COMMIT_HASH "5825e46"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5825e46"
+#define V_CURRENT_COMMIT_HASH "b0cfd3f"
 #endif
 
 
@@ -1396,6 +1396,7 @@ struct v__table__ArrayFixed {
 
 struct v__table__Enum {
 	array_string vals;
+	bool is_flag;
 };
 
 struct v__table__Interface {
@@ -2160,6 +2161,7 @@ struct v__ast__GlobalDecl {
 struct v__ast__EnumDecl {
 	string name;
 	bool is_pub;
+	bool is_flag;
 	array_v__ast__EnumField fields;
 	v__token__Position pos;
 };
@@ -3727,6 +3729,7 @@ static void v__scanner__Scanner_eat_to_end_of_line(v__scanner__Scanner* s);
 static void v__scanner__Scanner_inc_line_number(v__scanner__Scanner* s);
 void v__scanner__Scanner_error(v__scanner__Scanner* s, string msg);
 void v__scanner__verror(string s);
+void v__scanner__Scanner_codegen(v__scanner__Scanner* s, string newtext);
 static v__ast__Stmt v__parser__Parser_assign_stmt(v__parser__Parser* p);
 static void v__parser__Parser_check_undefined_variables(v__parser__Parser* p, array_v__ast__Ident idents, v__ast__Expr expr);
 static v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Parser* p, array_v__ast__Ident known_lhs);
@@ -19232,6 +19235,20 @@ void v__scanner__verror(string s) {
 	v__util__verror(tos_lit("scanner error"), s);
 }
 
+void v__scanner__Scanner_codegen(v__scanner__Scanner* s, string newtext) {
+	if (s->comments_mode == v__scanner__CommentsMode_skip_comments) {
+		s->text = /*f*/string_add(s->text, newtext);
+		
+// $if  debug_codegen {
+#ifdef CUSTOM_DEFINE_debug_codegen
+			eprintln(_STR("scanner.codegen:\n %.*s", 1, newtext));
+		
+// } debug_codegen
+#endif
+
+	}
+}
+
 static v__ast__Stmt v__parser__Parser_assign_stmt(v__parser__Parser* p) {
 	return v__parser__Parser_partial_assign_stmt(p, __new_array_with_default(0, 0, sizeof(v__ast__Ident), 0));
 }
@@ -19244,7 +19261,7 @@ static void v__parser__Parser_check_undefined_variables(v__parser__Parser* p, ar
 		for (int _t3 = 0; _t3 < _t2.len; _t3++) {
 			v__ast__Ident ident = ((v__ast__Ident*)_t2.data)[_t3];
 			if (string_eq(ident.name, it->name)) {
-				v__parser__Parser_error_with_pos(p, _STR("undefined: `%.*s\000`", 2, it->name), it->pos);
+				v__parser__Parser_error_with_pos(p, _STR("undefined variable: `%.*s\000`", 2, it->name), it->pos);
 			}
 		}
 	}else if (expr.typ == 143 /* v.ast.InfixExpr */) {
@@ -20997,6 +21014,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 		.errors = __new_array_with_default(0, 0, sizeof(v__errors__Error), 0),
 		.warnings = __new_array_with_default(0, 0, sizeof(v__errors__Warning), 0),
 	};
+	v__parser__Parser_init_parse_fns(&p);
 	v__parser__Parser_read_first_token(&p);
 	while (p.tok.kind == v__token__Kind_comment) {
 		array_push(&stmts, _MOV((v__ast__Stmt[]){ /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Comment[]) {v__parser__Parser_comment(&p)}, sizeof(v__ast__Comment)), .typ = 168 /* v.ast.Comment */} }));
@@ -21127,7 +21145,6 @@ array_v__ast__File v__parser__parse_files(array_string paths, v__table__Table* t
 }
 
 void v__parser__Parser_init_parse_fns(v__parser__Parser* p) {
-	println(tos_lit(""));
 }
 
 void v__parser__Parser_read_first_token(v__parser__Parser* p) {
@@ -22294,10 +22311,24 @@ static v__ast__EnumDecl v__parser__Parser_enum_decl(v__parser__Parser* p) {
 		} }));
 	}
 	v__parser__Parser_check(p, v__token__Kind_rcbr);
+	string attr = p->attr;
+	bool is_flag = string_eq(attr, tos_lit("flag"));
+	if (is_flag) {
+		if (fields.len > 32) {
+			v__parser__Parser_error(p, tos_lit("when an enum is used as bit field, it must have a max of 32 fields"));
+		}
+		string pubfn = (string_eq(p->mod, tos_lit("main")) ? (
+			tos_lit("fn")
+		) : (
+			tos_lit("pub fn")
+		));
+		v__scanner__Scanner_codegen(p->scanner, _STR("\n//\n%.*s\000 (    e &%.*s\000) has(flag %.*s\000) bool { return      (int(*e) &  (1 << int(flag))) != 0 }\n%.*s\000 (mut e  %.*s\000) set(flag %.*s\000)      { unsafe{ *e = int(*e) |  (1 << int(flag)) } }\n%.*s\000 (mut e  %.*s\000) clear(flag %.*s\000)    { unsafe{ *e = int(*e) & ~(1 << int(flag)) } }\n%.*s\000 (mut e  %.*s\000) toggle(flag %.*s\000)   { unsafe{ *e = int(*e) ^  (1 << int(flag)) } }\n//\n        ", 13, pubfn, name, name, pubfn, name, name, pubfn, name, name, pubfn, name, name));
+	}
 	v__table__Table_register_type_symbol(p->table, (v__table__TypeSymbol){
 		.parent_idx = 0,
 		.info = /* sum type cast */ (v__table__TypeInfo) {.obj = memdup(&(v__table__Enum[]) {(v__table__Enum){
 		.vals = vals,
+		.is_flag = is_flag,
 	}}, sizeof(v__table__Enum)), .typ = 84 /* v.table.Enum */},
 		.kind = v__table__Kind_enum_,
 		.name = name,
@@ -22308,6 +22339,7 @@ static v__ast__EnumDecl v__parser__Parser_enum_decl(v__parser__Parser* p) {
 	return (v__ast__EnumDecl){
 		.name = name,
 		.is_pub = is_pub,
+		.is_flag = is_flag,
 		.fields = fields,
 		.pos = v__token__Position_extend(start_pos, end_pos),
 	};
@@ -24992,7 +25024,7 @@ v__table__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* 
 		return _const_v__table__int_type;
 	}
 	if (string_ne(ident->name, tos_lit("_"))) {
-		v__checker__Checker_error(c, _STR("undefined: `%.*s\000`", 2, ident->name), ident->pos);
+		v__checker__Checker_error(c, _STR("undefined ident: `%.*s\000`", 2, ident->name), ident->pos);
 	}
 	if (v__table__Table_known_type(c->table, ident->name)) {
 		return _const_v__table__void_type;
