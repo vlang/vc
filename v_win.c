@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "285e043"
+#define V_COMMIT_HASH "31ba64b"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ca19cec"
+#define V_COMMIT_HASH "285e043"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "285e043"
+#define V_CURRENT_COMMIT_HASH "31ba64b"
 #endif
 
 
@@ -1671,6 +1671,7 @@ struct v__scanner__Scanner {
 	bool is_started;
 	string fn_name;
 	string mod_name;
+	string struct_name;
 	bool is_print_line_on_error;
 	bool is_print_colored_error;
 	bool is_print_rel_paths_on_error;
@@ -3918,6 +3919,7 @@ static v__token__Token v__scanner__Scanner_new_token(v__scanner__Scanner* s, v__
 static string v__scanner__Scanner_ident_name(v__scanner__Scanner* s);
 static string v__scanner__Scanner_ident_fn_name(v__scanner__Scanner* s);
 static string v__scanner__Scanner_ident_mod_name(v__scanner__Scanner* s);
+static string v__scanner__Scanner_ident_struct_name(v__scanner__Scanner* s);
 static string v__scanner__filter_num_sep(byteptr txt, int start, int end);
 static string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner* s);
 static string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner* s);
@@ -18575,6 +18577,7 @@ v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMo
 		.is_started = 0,
 		.fn_name = (string){.str=""},
 		.mod_name = (string){.str=""},
+		.struct_name = (string){.str=""},
 		.is_print_line_on_error = true,
 		.is_print_colored_error = true,
 		.is_print_rel_paths_on_error = true,
@@ -18669,6 +18672,50 @@ static string v__scanner__Scanner_ident_mod_name(v__scanner__Scanner* s) {
 	}
 	string mod_name = string_substr(s->text, start_pos, end_pos);
 	return mod_name;
+}
+
+static string v__scanner__Scanner_ident_struct_name(v__scanner__Scanner* s) {
+	int start = s->pos;
+	int pos = s->pos;
+	if (v__scanner__Scanner_current_column(s) - 2 != 0) {
+		return s->struct_name;
+	}
+	pos++;
+	while (pos < s->text.len && byte_is_space(string_at(s->text, pos))) {
+		pos++;
+	}
+	if (pos >= s->text.len) {
+		return tos_lit("");
+	}
+	if (string_at(s->text, pos) != '(') {
+		return tos_lit("");
+	}
+	while (pos < s->text.len && string_at(s->text, pos) != ')') {
+		pos++;
+	}
+	if (pos >= s->text.len) {
+		return tos_lit("");
+	}
+	pos--;
+	while (pos > start && byte_is_space(string_at(s->text, pos))) {
+		pos--;
+	}
+	if (pos < start) {
+		return tos_lit("");
+	}
+	int end_pos = pos + 1;
+	while (pos > start && (v__util__is_name_char(string_at(s->text, pos)) || byte_is_digit(string_at(s->text, pos)))) {
+		pos--;
+	}
+	if (pos < start) {
+		return tos_lit("");
+	}
+	int start_pos = pos + 1;
+	if (byte_is_digit(string_at(s->text, start_pos)) || end_pos > s->text.len || end_pos <= start_pos || end_pos <= start || start_pos <= start) {
+		return tos_lit("");
+	}
+	string struct_name = string_substr(s->text, start_pos, end_pos);
+	return struct_name;
 }
 
 static string v__scanner__filter_num_sep(byteptr txt, int start, int end) {
@@ -18946,6 +18993,7 @@ v__token__Token v__scanner__Scanner_scan(v__scanner__Scanner* s) {
 			v__token__Kind kind = v__token__key_to_token(name);
 			if (kind == v__token__Kind_key_fn) {
 				s->fn_name = v__scanner__Scanner_ident_fn_name(s);
+				s->struct_name = v__scanner__Scanner_ident_struct_name(s);
 			} else if (kind == v__token__Kind_key_module) {
 				s->mod_name = v__scanner__Scanner_ident_mod_name(s);
 			}
@@ -19099,6 +19147,9 @@ v__token__Token v__scanner__Scanner_scan(v__scanner__Scanner* s) {
 		}
 		if (string_eq(name, tos_lit("MOD"))) {
 			return v__scanner__Scanner_new_token(s, v__token__Kind_string, s->mod_name, 4);
+		}
+		if (string_eq(name, tos_lit("STRUCT"))) {
+			return v__scanner__Scanner_new_token(s, v__token__Kind_string, s->struct_name, 7);
 		}
 		if (string_eq(name, tos_lit("VEXE"))) {
 			string vexe = v__pref__vexe_path();
