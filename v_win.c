@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "bb48851"
+#define V_COMMIT_HASH "3cfdd2a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "64173c7"
+#define V_COMMIT_HASH "bb48851"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "bb48851"
+#define V_CURRENT_COMMIT_HASH "3cfdd2a"
 #endif
 
 
@@ -1672,6 +1672,7 @@ struct v__scanner__Scanner {
 	string fn_name;
 	string mod_name;
 	string struct_name;
+	string vmod_file_content;
 	bool is_print_line_on_error;
 	bool is_print_colored_error;
 	bool is_print_rel_paths_on_error;
@@ -18589,6 +18590,7 @@ v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMo
 		.fn_name = (string){.str=""},
 		.mod_name = (string){.str=""},
 		.struct_name = (string){.str=""},
+		.vmod_file_content = (string){.str=""},
 		.is_print_line_on_error = true,
 		.is_print_colored_error = true,
 		.is_print_rel_paths_on_error = true,
@@ -19177,6 +19179,23 @@ v__token__Token v__scanner__Scanner_scan(v__scanner__Scanner* s) {
 		}
 		if (string_eq(name, tos_lit("VHASH"))) {
 			return v__scanner__Scanner_new_token(s, v__token__Kind_string, v__util__vhash(), 6);
+		}
+		if (string_eq(name, tos_lit("VMOD_FILE"))) {
+			if (s->vmod_file_content.len == 0) {
+				v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get(_const_v__vmod__mod_file_cacher, os__dir(os__real_path(s->file_path)));
+				if (vmod_file_location.vmod_file.len == 0) {
+					v__scanner__Scanner_error(s, tos_lit("@VMOD_FILE can be used only in projects, that have v.mod file"));
+				}
+				Option_string _t2 = os__read_file(vmod_file_location.vmod_file);
+				if (!_t2.ok) {
+					string err = _t2.v_error;
+					int errcode = _t2.ecode;
+					*(string*) _t2.data = tos_lit("");
+				}
+				Option_string vmod_content = _t2;
+				s->vmod_file_content = /*opt*/(*(string*)vmod_content.data);
+			}
+			return v__scanner__Scanner_new_token(s, v__token__Kind_string, s->vmod_file_content, 10);
 		}
 		if (!v__token__is_key(name)) {
 			v__scanner__Scanner_error(s, tos_lit("@ must be used before keywords (e.g. `@type string`)"));
