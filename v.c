@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "31ba64b"
+#define V_COMMIT_HASH "64173c7"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "285e043"
+#define V_COMMIT_HASH "31ba64b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "31ba64b"
+#define V_CURRENT_COMMIT_HASH "64173c7"
 #endif
 
 
@@ -2943,7 +2943,8 @@ static map new_map_init(int n, int value_bytes, string* keys, voidptr values);
 static multi_return_u32_u32 map_key_to_index(map* m, string key);
 static multi_return_u32_u32 map_meta_less(map* m, u32 _index, u32 _metas);
 static void map_meta_greater(map* m, u32 _index, u32 _metas, u32 kvi);
-static void map_set(map* m, string key, voidptr value);
+static void map_ensure_extra_metas(map* m, u32 probe_count);
+static void map_set(map* m, string k, voidptr value);
 static void map_expand(map* m);
 static void map_rehash(map* m);
 static void map_cached_rehash(map* m, u32 old_cap);
@@ -9096,6 +9097,11 @@ inline static void map_meta_greater(map* m, u32 _index, u32 _metas, u32 kvi) {
 	m->metas[index] = meta;
 	m->metas[index + 1] = kv_index;
 	u32 probe_count = (meta >> _const_hashbits) - 1;
+	map_ensure_extra_metas(m, probe_count);
+}
+
+// Attr: [inline]
+inline static void map_ensure_extra_metas(map* m, u32 probe_count) {
 	if ((probe_count << 1) == m->extra_metas) {
 		m->extra_metas += _const_extra_metas_inc;
 		u32 mem_size = (m->cap + 2 + m->extra_metas);
@@ -9107,17 +9113,18 @@ inline static void map_meta_greater(map* m, u32 _index, u32 _metas, u32 kvi) {
 	}
 }
 
-static void map_set(map* m, string key, voidptr value) {
+static void map_set(map* m, string k, voidptr value) {
+	string key = string_clone(k);
 	f32 load_factor = ((f32)(m->size << 1)) / ((f32)(m->cap));
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_8708 = map_key_to_index(m, key);
-	u32 index = mr_8708.arg0;
-	u32 meta = mr_8708.arg1;
-	multi_return_u32_u32 mr_8742 = map_meta_less(m, index, meta);
-	index = mr_8742.arg0;
-	meta = mr_8742.arg1;
+	multi_return_u32_u32 mr_8768 = map_key_to_index(m, key);
+	u32 index = mr_8768.arg0;
+	u32 meta = mr_8768.arg1;
+	multi_return_u32_u32 mr_8802 = map_meta_less(m, index, meta);
+	index = mr_8802.arg0;
+	meta = mr_8802.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -9154,12 +9161,12 @@ static void map_rehash(map* m) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
-		multi_return_u32_u32 mr_9764 = map_key_to_index(m, m->key_values.keys[i]);
-		u32 index = mr_9764.arg0;
-		u32 meta = mr_9764.arg1;
-		multi_return_u32_u32 mr_9816 = map_meta_less(m, index, meta);
-		index = mr_9816.arg0;
-		meta = mr_9816.arg1;
+		multi_return_u32_u32 mr_9824 = map_key_to_index(m, m->key_values.keys[i]);
+		u32 index = mr_9824.arg0;
+		u32 meta = mr_9824.arg1;
+		multi_return_u32_u32 mr_9876 = map_meta_less(m, index, meta);
+		index = mr_9876.arg0;
+		meta = mr_9876.arg1;
 		map_meta_greater(m, index, meta, i);
 	}
 }
@@ -9178,9 +9185,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->cap >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->cap);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_10405 = map_meta_less(m, index, meta);
-		index = mr_10405.arg0;
-		meta = mr_10405.arg1;
+		multi_return_u32_u32 mr_10465 = map_meta_less(m, index, meta);
+		index = mr_10465.arg0;
+		meta = mr_10465.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -9188,9 +9195,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 }
 
 static voidptr map_get3(map m, string key, voidptr zero) {
-	multi_return_u32_u32 mr_10612 = map_key_to_index(&m, key);
-	u32 index = mr_10612.arg0;
-	u32 meta = mr_10612.arg1;
+	multi_return_u32_u32 mr_10672 = map_key_to_index(&m, key);
+	u32 index = mr_10672.arg0;
+	u32 meta = mr_10672.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9208,9 +9215,9 @@ static voidptr map_get3(map m, string key, voidptr zero) {
 }
 
 static bool map_exists(map m, string key) {
-	multi_return_u32_u32 mr_10985 = map_key_to_index(&m, key);
-	u32 index = mr_10985.arg0;
-	u32 meta = mr_10985.arg1;
+	multi_return_u32_u32 mr_11045 = map_key_to_index(&m, key);
+	u32 index = mr_11045.arg0;
+	u32 meta = mr_11045.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9228,12 +9235,12 @@ static bool map_exists(map m, string key) {
 }
 
 void map_delete(map* m, string key) {
-	multi_return_u32_u32 mr_11312 = map_key_to_index(m, key);
-	u32 index = mr_11312.arg0;
-	u32 meta = mr_11312.arg1;
-	multi_return_u32_u32 mr_11346 = map_meta_less(m, index, meta);
-	index = mr_11346.arg0;
-	meta = mr_11346.arg1;
+	multi_return_u32_u32 mr_11372 = map_key_to_index(m, key);
+	u32 index = mr_11372.arg0;
+	u32 meta = mr_11372.arg1;
+	multi_return_u32_u32 mr_11406 = map_meta_less(m, index, meta);
+	index = mr_11406.arg0;
+	meta = mr_11406.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -9245,6 +9252,7 @@ void map_delete(map* m, string key) {
 			m->size--;
 			m->metas[index] = 0;
 			m->key_values.deletes++;
+			string_free(&m->key_values.keys[kv_index]);
 			memset(&m->key_values.keys[kv_index], 0, sizeof(string));
 			if (m->key_values.size <= 32) {
 				return ;
@@ -9272,7 +9280,7 @@ array_string map_keys(map* m) {
 			continue;
 		}
 		array_set(&keys, j, &(string[]) { 
-m->key_values.keys[i] });
+string_clone(m->key_values.keys[i]) });
 		j++;
 	}
 	return keys;
