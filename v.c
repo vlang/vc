@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ca19cec"
+#define V_COMMIT_HASH "285e043"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8d10adf"
+#define V_COMMIT_HASH "ca19cec"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ca19cec"
+#define V_CURRENT_COMMIT_HASH "285e043"
 #endif
 
 
@@ -29455,21 +29455,21 @@ static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 	if (string_eq(g->attr, tos_lit("inline"))) {
 		v__gen__Gen_write(g, tos_lit("inline "));
 	}else if (string_eq(g->attr, tos_lit("no_inline"))) {
-		v__gen__Gen_write(g, tos_lit("__NOINLINE"));
+		v__gen__Gen_write(g, tos_lit("__NOINLINE "));
 	}else if (string_eq(g->attr, tos_lit("irq_handler"))) {
 		v__gen__Gen_write(g, tos_lit("__IRQHANDLER "));
 	}else if (string_eq(g->attr, tos_lit("_cold"))) {
-		v__gen__Gen_write(g, tos_lit("__attribute__((cold))"));
+		v__gen__Gen_write(g, tos_lit("__attribute__((cold)) "));
 	}else if (string_eq(g->attr, tos_lit("_constructor"))) {
-		v__gen__Gen_write(g, tos_lit("__attribute__((constructor))"));
+		v__gen__Gen_write(g, tos_lit("__attribute__((constructor)) "));
 	}else if (string_eq(g->attr, tos_lit("_destructor"))) {
-		v__gen__Gen_write(g, tos_lit("__attribute__((destructor))"));
+		v__gen__Gen_write(g, tos_lit("__attribute__((destructor)) "));
 	}else if (string_eq(g->attr, tos_lit("_flatten"))) {
-		v__gen__Gen_write(g, tos_lit("__attribute__((flatten))"));
+		v__gen__Gen_write(g, tos_lit("__attribute__((flatten)) "));
 	}else if (string_eq(g->attr, tos_lit("_hot"))) {
-		v__gen__Gen_write(g, tos_lit("__attribute__((hot))"));
+		v__gen__Gen_write(g, tos_lit("__attribute__((hot)) "));
 	}else if (string_eq(g->attr, tos_lit("_malloc"))) {
-		v__gen__Gen_write(g, tos_lit("__attribute__((malloc))"));
+		v__gen__Gen_write(g, tos_lit("__attribute__((malloc)) "));
 	}else if (string_eq(g->attr, tos_lit("_pure"))) {
 		v__gen__Gen_write(g, tos_lit("__attribute__((const)) "));
 	}else {
@@ -29539,9 +29539,9 @@ static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 			strings__Builder_write(&g->definitions, _STR("%.*s\000 %.*s\000(", 3, type_name, name));
 			v__gen__Gen_write(g, _STR("%.*s\000 %.*s\000(", 3, type_name, name));
 		}
-		multi_return_array_string_array_string mr_6045 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
-		array_string fargs = mr_6045.arg0;
-		array_string fargtypes = mr_6045.arg1;
+		multi_return_array_string_array_string mr_6026 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
+		array_string fargs = mr_6026.arg0;
+		array_string fargtypes = mr_6026.arg1;
 		if (it.no_body || (g->pref->use_cache && it.is_builtin)) {
 			strings__Builder_writeln(&g->definitions, tos_lit(");"));
 			v__gen__Gen_writeln(g, tos_lit(");"));
@@ -29895,11 +29895,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_18920 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_18920.arg0;
-		string pafile = mr_18920.arg1;
-		string pamod = mr_18920.arg2;
-		string pafn = mr_18920.arg3;
+		multi_return_int_string_string_string mr_18901 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_18901.arg0;
+		string pafile = mr_18901.arg1;
+		string pamod = mr_18901.arg2;
+		string pafn = mr_18901.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		v__gen__Gen_write(g, tos_lit(")"));
