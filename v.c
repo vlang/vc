@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8ea0c81"
+#define V_COMMIT_HASH "b4d88ee"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d4fac6a"
+#define V_COMMIT_HASH "8ea0c81"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8ea0c81"
+#define V_CURRENT_COMMIT_HASH "b4d88ee"
 #endif
 
 
@@ -23866,6 +23866,10 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 		} else if (string_eq(method_name, tos_lit("clone"))) {
 			call_expr->receiver_type = v__table__Type_to_ptr(left_type);
 		}
+		return call_expr->return_type;
+	} else if (left_type_sym->kind == v__table__Kind_map && string_eq(method_name, tos_lit("clone"))) {
+		call_expr->return_type = left_type;
+		call_expr->receiver_type = v__table__Type_to_ptr(left_type);
 		return call_expr->return_type;
 	} else if (left_type_sym->kind == v__table__Kind_array && (string_eq(method_name, tos_lit("first")) || string_eq(method_name, tos_lit("last")))) {
 		v__table__Array* info = /* as */ (v__table__Array*)__as_cast(left_type_sym->info.obj, left_type_sym->info.typ, /*expected:*/82);
