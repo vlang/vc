@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b4eadb9"
+#define V_COMMIT_HASH "7585483"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b1bbb17"
+#define V_COMMIT_HASH "b4eadb9"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b4eadb9"
+#define V_CURRENT_COMMIT_HASH "7585483"
 #endif
 
 
@@ -4218,7 +4218,6 @@ array_string _const_simple_cmd; // inited later
 array_string _const_list_of_flags_that_allow_duplicates; // inited later
 static void main_v();
 static void invoke_help_and_exit(array_string remaining);
-static void create_symlink();
 // variadic structs
 struct varg_voidptr {
 	int len;
@@ -34271,9 +34270,9 @@ static void main_v() {
 		return ;
 	}
 	array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_967 = v__pref__parse_args(args_and_flags);
-	v__pref__Preferences* prefs = mr_967.arg0;
-	string command = mr_967.arg1;
+	multi_return_v__pref__Preferences_string mr_993 = v__pref__parse_args(args_and_flags);
+	v__pref__Preferences* prefs = mr_993.arg0;
+	string command = mr_993.arg1;
 	if (args.len > 0 && ((string_eq((*(string*)array_get(args, 0)), tos_lit("version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-V")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("--version"))) || (string_eq((*(string*)array_get(args, 0)), tos_lit("-v")) && args.len == 1))) {
 		println(v__util__full_v_version(prefs->is_verbose));
 		return ;
@@ -34300,9 +34299,6 @@ static void main_v() {
 		v_exit(1);
 	}else if (string_eq(command, tos_lit("version"))) {
 		println(v__util__full_v_version(prefs->is_verbose));
-		return ;
-	}else if (string_eq(command, tos_lit("symlink"))) {
-		create_symlink();
 		return ;
 	}else if (string_eq(command, tos_lit("doc"))) {
 		string mod = tos_lit("");
@@ -34334,52 +34330,6 @@ static void invoke_help_and_exit(array_string remaining) {
 	println(tos_lit("V Error: Expected only one help topic to be provided."));
 	println(tos_lit("For usage information, use `v help`."));
 	v_exit(1);
-}
-
-static void create_symlink() {
-	
-// $if  windows {
-#ifdef _WIN32
-		return ;
-	
-// } windows
-#endif
-
-	string vexe = v__pref__vexe_path();
-	string link_path = tos_lit("/usr/local/bin/v");
-	Option_os__Result _t1 = os__exec(_STR("ln -sf %.*s\000 %.*s", 2, vexe, link_path));
-	if (!_t1.ok) {
-		string err = _t1.v_error;
-		int errcode = _t1.ecode;
-		v_panic(err);
-	}
-	Option_os__Result ret = _t1;
-	if (/*opt*/(*(os__Result*)ret.data).exit_code == 0) {
-		println(_STR("Symlink \"%.*s\000\" has been created", 2, link_path));
-	} else if (os__system(tos_lit("uname -o | grep -q \'[A/a]ndroid\'")) == 0) {
-		println(_STR("Failed to create symlink \"%.*s\000\". Trying again with Termux path for Android.", 2, link_path));
-		link_path = tos_lit("/data/data/com.termux/files/usr/bin/v");
-		Option_os__Result _t3 = os__exec(_STR("ln -sf %.*s\000 %.*s", 2, vexe, link_path));
-		if (!_t3.ok) {
-			string err = _t3.v_error;
-			int errcode = _t3.ecode;
-			v_panic(err);
-		}
-		/*q*/ Option_os__Result _t2 = _t3;
-		if (!_t2.ok) {
-			string err = _t2.v_error;
-			int errcode = _t2.ecode;
-			v_panic(err);
-		}
-ret = _t2;
-		if (/*opt*/(*(os__Result*)ret.data).exit_code == 0) {
-			println(_STR("Symlink \"%.*s\000\" has been created", 2, link_path));
-		} else {
-			println(_STR("Failed to create symlink \"%.*s\000\". Try again with sudo.", 2, link_path));
-		}
-	} else {
-		println(_STR("Failed to create symlink \"%.*s\000\". Try again with sudo.", 2, link_path));
-	}
 }
 
 void _vinit() {
@@ -36447,8 +36397,8 @@ v__gen__x64__Register_rdi, v__gen__x64__Register_rsi, v__gen__x64__Register_rdx,
 	_const_v__builder__key_query_value = (0x0001);
 	_const_v__builder__key_wow64_32key = (0x0200);
 	_const_v__builder__key_enumerate_sub_keys = (0x0008);
-	_const_simple_cmd = new_array_from_c_array(13, 13, sizeof(string), _MOV((string[13]){
-tos_lit("fmt"), tos_lit("up"), tos_lit("self"), tos_lit("test"), tos_lit("test-fmt"), tos_lit("test-compiler"), tos_lit("test-fixed"), tos_lit("bin2v"), tos_lit("repl"), tos_lit("build-tools"), tos_lit("build-examples"), tos_lit("build-vbinaries"), tos_lit("setup-freetype"), 
+	_const_simple_cmd = new_array_from_c_array(14, 14, sizeof(string), _MOV((string[14]){
+tos_lit("fmt"), tos_lit("up"), tos_lit("self"), tos_lit("symlink"), tos_lit("bin2v"), tos_lit("test"), tos_lit("test-fmt"), tos_lit("test-compiler"), tos_lit("test-fixed"), tos_lit("repl"), tos_lit("build-tools"), tos_lit("build-examples"), tos_lit("build-vbinaries"), tos_lit("setup-freetype"), 
 }));
 	_const_list_of_flags_that_allow_duplicates = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){
 tos_lit("cc"), tos_lit("d"), tos_lit("define"), tos_lit("cf"), tos_lit("cflags"), 
