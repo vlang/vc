@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b1bbb17"
+#define V_COMMIT_HASH "b4eadb9"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b4d88ee"
+#define V_COMMIT_HASH "b1bbb17"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b1bbb17"
+#define V_CURRENT_COMMIT_HASH "b4eadb9"
 #endif
 
 
@@ -3401,6 +3401,7 @@ string os__resource_abs_path(string path);
 Option_os__File os__open(string path);
 Option_os__File os__create(string path);
 string _const_os__path_separator; // a string literal, inited later
+string _const_os__path_delimiter; // a string literal, inited later
 static array_string os__init_os_args_wide(int argc, byteptr* argv);
 Option_array_string os__ls(string path);
 Option_bool os__mkdir(string path);
@@ -4617,6 +4618,7 @@ void vinit_string_literals(){
 	_const_new_line_character = tos_lit("\n");
 	_const_digit_pairs = tos_lit("00102030405060708090011121314151617181910212223242526272829203132333435363738393041424344454647484940515253545556575859506162636465666768696071727374757677787970818283848586878889809192939495969798999");
 	_const_os__path_separator = tos_lit("\\");
+	_const_os__path_delimiter = tos_lit(";");
 	_const_time__days_string = tos_lit("MonTueWedThuFriSatSun");
 	_const_time__months_string = tos_lit("JanFebMarAprMayJunJulAugSepOctNovDec");
 	_const_vweb__tmpl__str_start = tos_lit("sb.write(\'");
@@ -14842,6 +14844,10 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 			}
 			Option_v__pref__Backend b = _t4;
 			res->backend = /*opt*/(*(v__pref__Backend*)b.data);
+			i++;
+		}else if (string_eq(arg, tos_lit("-path"))) {
+			string path = os__cmdline__option(current_args, tos_lit("-path"), tos_lit(""));
+			res->lookup_path = string_split(path, _const_os__path_delimiter);
 			i++;
 		}else {
 			bool should_continue = false;
