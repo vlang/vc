@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "3cfdd2a"
+#define V_COMMIT_HASH "b02ec8c"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bb48851"
+#define V_COMMIT_HASH "3cfdd2a"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "3cfdd2a"
+#define V_CURRENT_COMMIT_HASH "b02ec8c"
 #endif
 
 
@@ -3655,14 +3655,14 @@ string v__util__vhash();
 string v__util__full_hash();
 string v__util__full_v_version(bool is_verbose);
 string v__util__githash(bool should_get_from_filesystem);
-static void v__util__set_vroot_folder(string vroot_path);
+void v__util__set_vroot_folder(string vroot_path);
 void v__util__launch_tool(bool is_verbose, string tool_name);
 string v__util__quote_path_with_spaces(string s);
 string v__util__args_quote_paths_with_spaces(array_string args);
 string v__util__path_of_executable(string path);
 Option_string v__util__read_file(string file_path);
-static int v__util__imin(int a, int b);
-static int v__util__imax(int a, int b);
+int v__util__imin(int a, int b);
+int v__util__imax(int a, int b);
 string v__util__replace_op(string s);
 array_string v__util__join_env_vflags_and_os_args();
 static array_string v__util__non_empty(array_string arg);
@@ -17453,7 +17453,7 @@ string v__util__githash(bool should_get_from_filesystem) {
 	return tos_clone((voidptr)&/*qq*/buf);
 }
 
-static void v__util__set_vroot_folder(string vroot_path) {
+void v__util__set_vroot_folder(string vroot_path) {
 	string vname = (string_eq(os__user_os(), tos_lit("windows")) ? (
 		tos_lit("v.exe")
 	) : (
@@ -17569,7 +17569,7 @@ Option_string v__util__read_file(string file_path) {
 }
 
 // Attr: [inline]
-inline static int v__util__imin(int a, int b) {
+inline int v__util__imin(int a, int b) {
 	return (a < b ? (
 		a
 	) : (
@@ -17578,7 +17578,7 @@ inline static int v__util__imin(int a, int b) {
 }
 
 // Attr: [inline]
-inline static int v__util__imax(int a, int b) {
+inline int v__util__imax(int a, int b) {
 	return (a > b ? (
 		a
 	) : (
