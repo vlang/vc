@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8c753dd"
+#define V_COMMIT_HASH "5423a15"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e0db880"
+#define V_COMMIT_HASH "8c753dd"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8c753dd"
+#define V_CURRENT_COMMIT_HASH "5423a15"
 #endif
 
 
@@ -20029,6 +20029,7 @@ v__ast__CallExpr v__parser__Parser_call_expr(v__parser__Parser* p, v__table__Lan
 	v__table__Type generic_type = _const_v__table__void_type;
 	if (p->tok.kind == v__token__Kind_lt) {
 		v__parser__Parser_next(p);
+		p->expr_mod = tos_lit("");
 		generic_type = v__parser__Parser_parse_type(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 		v__table__Table_register_fn_gen_type(p->table, fn_name, generic_type);
@@ -20206,9 +20207,9 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool mr_4782 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_4782.arg0;
-	bool is_variadic = mr_4782.arg1;
+	multi_return_array_v__table__Arg_bool mr_4800 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_4800.arg0;
+	bool is_variadic = mr_4800.arg1;
 	_PUSH_MANY(&args, (args2), _t2, array_v__table__Arg);
 	// FOR IN array
 	array _t3 = args;
@@ -20321,9 +20322,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_7396 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_7396.arg0;
-	bool is_variadic = mr_7396.arg1;
+	multi_return_array_v__table__Arg_bool mr_7414 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_7414.arg0;
+	bool is_variadic = mr_7414.arg1;
 	// FOR IN array
 	array _t1 = args;
 	for (int _t2 = 0; _t2 < _t1.len; _t2++) {
@@ -21064,7 +21065,7 @@ v__table__Type v__parser__Parser_parse_any_type(v__parser__Parser* p, v__table__
 , p->tok.lit);
 	} else if (string_ne(p->expr_mod, tos_lit(""))) {
 		name = string_add(string_add(p->expr_mod, tos_lit(".")), name);
-	} else if (!(string_eq(p->mod, tos_lit("builtin")) || string_eq(p->mod, tos_lit("main"))) && !_IN(string, name, _const_v__table__builtin_type_names)) {
+	} else if (!(string_eq(p->mod, tos_lit("builtin")) || string_eq(p->mod, tos_lit("main"))) && !_IN(string, name, _const_v__table__builtin_type_names) && name.len > 1) {
 		name = string_add(string_add(p->mod, tos_lit(".")), name);
 	}
 	if (p->tok.kind == v__token__Kind_key_fn) {
@@ -24152,7 +24153,7 @@ static void v__checker__Checker_fail_if_immutable(v__checker__Checker* c, v__ast
 			v__checker__Checker_error(c, tos_lit("0 type in SelectorExpr"), it->pos);
 			return ;
 		}
-		v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, it->expr_type);
+		v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, v__checker__Checker_unwrap_generic(c, it->expr_type));
 		if (typ_sym->kind == v__table__Kind_struct_) {
 			v__table__Struct* struct_info = /* as */ (v__table__Struct*)__as_cast(typ_sym->info.obj, typ_sym->info.typ, /*expected:*/89);
 			Option_v__table__Field _t3 = v__table__Struct_find_field(/*rec*/*struct_info, it->field_name);
@@ -24647,24 +24648,24 @@ v__table__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast_
 		return _const_v__table__void_type;
 	}
 	selector_expr->expr_type = typ;
-	v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, typ);
+	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, v__checker__Checker_unwrap_generic(c, typ));
 	string field_name = selector_expr->field_name;
 	if (v__table__Type_flag_is(typ, v__table__TypeFlag_variadic)) {
 		if (string_eq(field_name, tos_lit("len"))) {
 			return _const_v__table__int_type;
 		}
 	}
-	{ /* if guard */ Option_v__table__Field field = v__table__Table_struct_find_field(c->table, typ_sym, field_name);
+	{ /* if guard */ Option_v__table__Field field = v__table__Table_struct_find_field(c->table, sym, field_name);
 	if (field.ok) {
-		if (string_ne(typ_sym->mod, c->mod) && !/*opt*/(*(v__table__Field*)field.data).is_pub) {
-			v__checker__Checker_error(c, _STR("field `%.*s\000.%.*s\000` is not public", 3, typ_sym->name, field_name), selector_expr->pos);
+		if (string_ne(sym->mod, c->mod) && !/*opt*/(*(v__table__Field*)field.data).is_pub) {
+			v__checker__Checker_error(c, _STR("field `%.*s\000.%.*s\000` is not public", 3, sym->name, field_name), selector_expr->pos);
 		}
 		return /*opt*/(*(v__table__Field*)field.data).typ;
 	}}
-	if (typ_sym->kind != v__table__Kind_struct_) {
-		v__checker__Checker_error(c, _STR("`%.*s\000` is not a struct", 2, typ_sym->name), selector_expr->pos);
+	if (sym->kind != v__table__Kind_struct_) {
+		v__checker__Checker_error(c, _STR("`%.*s\000` is not a struct", 2, sym->name), selector_expr->pos);
 	} else {
-		v__checker__Checker_error(c, _STR("unknown field `%.*s\000.%.*s\000`", 3, typ_sym->name, field_name), selector_expr->pos);
+		v__checker__Checker_error(c, _STR("type `%.*s\000` has no field or method `%.*s\000`", 3, sym->name, field_name), selector_expr->pos);
 	}
 	return _const_v__table__void_type;
 }
