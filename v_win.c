@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "013fdb8"
+#define V_COMMIT_HASH "59711d9"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fc67046"
+#define V_COMMIT_HASH "013fdb8"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "013fdb8"
+#define V_CURRENT_COMMIT_HASH "59711d9"
 #endif
 
 
@@ -16500,7 +16500,7 @@ void v__table__Table_register_builtin_type_symbols(v__table__Table* t) {
 		.name = tos_lit("T"),
 		.methods = __new_array(0, 1, sizeof(v__table__Fn)),
 		.mod = tos_lit("builtin"),
-		.is_public = 0,
+		.is_public = true,
 	});
 	v__table__Table_register_type_symbol(t, (v__table__TypeSymbol){
 		.parent_idx = 0,
