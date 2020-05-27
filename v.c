@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "481f103"
+#define V_COMMIT_HASH "6ca53d7"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ebbf42d"
+#define V_COMMIT_HASH "481f103"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "481f103"
+#define V_CURRENT_COMMIT_HASH "6ca53d7"
 #endif
 
 
@@ -18505,33 +18505,43 @@ static string v__scanner__Scanner_ident_fn_name(v__scanner__Scanner* s) {
 	int start = s->pos;
 	int pos = s->pos;
 	pos++;
-	while (pos < s->text.len && string_at(s->text, pos) != '{') {
+	if (v__scanner__Scanner_current_column(s) - 2 != 0) {
+		return s->fn_name;
+	}
+	bool has_struct_name = string_ne(s->struct_name, tos_lit(""));
+	if (has_struct_name) {
+		while (pos < s->text.len && string_at(s->text, pos) != '(') {
+			pos++;
+		}
+		if (pos >= s->text.len) {
+			return tos_lit("");
+		}
+		pos++;
+	}
+	while (pos < s->text.len && string_at(s->text, pos) != '(') {
 		pos++;
 	}
 	if (pos >= s->text.len) {
 		return tos_lit("");
 	}
-	while (pos > start && string_at(s->text, pos) != '(') {
+	pos--;
+	while (pos > start && byte_is_space(string_at(s->text, pos))) {
 		pos--;
 	}
 	if (pos < start) {
 		return tos_lit("");
-	}
-	while (pos > start && !v__util__is_func_char(string_at(s->text, pos))) {
-		pos--;
 	}
 	int end_pos = pos + 1;
-	if (pos < start) {
-		return tos_lit("");
-	}
+	pos--;
 	while (pos > start && v__util__is_func_char(string_at(s->text, pos))) {
 		pos--;
 	}
-	int start_pos = pos + 1;
-	if (pos < start || pos >= s->text.len) {
+	pos++;
+	int start_pos = pos;
+	if (pos <= start || pos >= s->text.len) {
 		return tos_lit("");
 	}
-	if (byte_is_digit(string_at(s->text, start_pos)) || end_pos > s->text.len || end_pos <= start_pos || end_pos <= start || start_pos <= start) {
+	if (byte_is_digit(string_at(s->text, start_pos)) || end_pos > s->text.len || end_pos <= start_pos || end_pos <= start || start_pos < start) {
 		return tos_lit("");
 	}
 	string fn_name = string_substr(s->text, start_pos, end_pos);
@@ -18881,8 +18891,8 @@ v__token__Token v__scanner__Scanner_scan(v__scanner__Scanner* s) {
 		if (v__token__is_key(name)) {
 			v__token__Kind kind = v__token__key_to_token(name);
 			if (kind == v__token__Kind_key_fn) {
-				s->fn_name = v__scanner__Scanner_ident_fn_name(s);
 				s->struct_name = v__scanner__Scanner_ident_struct_name(s);
+				s->fn_name = v__scanner__Scanner_ident_fn_name(s);
 			} else if (kind == v__token__Kind_key_module) {
 				s->mod_name = v__scanner__Scanner_ident_mod_name(s);
 			}
