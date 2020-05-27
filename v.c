@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5423a15"
+#define V_COMMIT_HASH "84edbd8"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8c753dd"
+#define V_COMMIT_HASH "5423a15"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5423a15"
+#define V_CURRENT_COMMIT_HASH "84edbd8"
 #endif
 
 
@@ -23040,6 +23040,9 @@ static v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
 	if (language == v__table__Language_v && string_ne(p->mod, tos_lit("builtin")) && name.len > 0 && !byte_is_capital(string_at(name, 0))) {
 		v__parser__Parser_error_with_pos(p, _STR("struct name `%.*s\000` must begin with capital letter", 2, name), end_pos);
 	}
+	if (name.len == 1) {
+		v__parser__Parser_error_with_pos(p, tos_lit("struct names must have more than one character"), end_pos);
+	}
 	array_v__ast__StructField ast_fields = __new_array_with_default(0, 0, sizeof(v__ast__StructField), 0);
 	array_v__table__Field fields = __new_array_with_default(0, 0, sizeof(v__table__Field), 0);
 	int mut_pos = -1;
@@ -23304,8 +23307,8 @@ static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser*
 		if (v__util__contains_capital(name)) {
 			v__parser__Parser_error(p, tos_lit("interface methods cannot contain uppercase letters, use snake_case instead"));
 		}
-		multi_return_array_v__table__Arg_bool mr_7401 = v__parser__Parser_fn_args(p);
-		array_v__table__Arg args2 = mr_7401.arg0;
+		multi_return_array_v__table__Arg_bool mr_7502 = v__parser__Parser_fn_args(p);
+		array_v__table__Arg args2 = mr_7502.arg0;
 		array_v__table__Arg args = new_array_from_c_array(1, 1, sizeof(v__table__Arg), _MOV((v__table__Arg[1]){
 		(v__table__Arg){
 			.name = tos_lit("x"),
