@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "48cc8dd"
+#define V_COMMIT_HASH "0292666"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "84edbd8"
+#define V_COMMIT_HASH "48cc8dd"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "48cc8dd"
+#define V_CURRENT_COMMIT_HASH "0292666"
 #endif
 
 
@@ -34131,7 +34131,7 @@ static string v__builder__get_vtmp_folder() {
 		if (!_t1.ok) {
 			string err = _t1.v_error;
 			int errcode = _t1.ecode;
-			v_panic(err);
+			v__builder__verror(err);
 		}
 _t1;
 	}
@@ -34285,7 +34285,8 @@ array_string v__builder__Builder_get_user_files(v__builder__Builder v) {
 		if (!_t7.ok) {
 			string err = _t7.v_error;
 			int errcode = _t7.ecode;
-			v_panic(_STR("%.*s\000 does not exist", 2, dir));
+			v__builder__verror(_STR("%.*s\000 does not exist", 2, dir));
+			v_exit(0);
 		}
 		Option_string tcontent = _t7;
 		array_string slines = string_split_into_lines(string_trim_space(/*opt*/(*(string*)tcontent.data)));
