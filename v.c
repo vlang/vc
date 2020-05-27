@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "0292666"
+#define V_COMMIT_HASH "04ca7ef"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "48cc8dd"
+#define V_COMMIT_HASH "0292666"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "0292666"
+#define V_CURRENT_COMMIT_HASH "04ca7ef"
 #endif
 
 
@@ -3481,7 +3481,8 @@ static Option_multi_return_array_string_int v__vmod__get_array_content(array_v__
 static Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* p);
 v__vmod__ModFileCacher* v__vmod__new_mod_file_cacher();
 void v__vmod__ModFileCacher_dump(v__vmod__ModFileCacher* mcache);
-v__vmod__ModFileAndFolder v__vmod__ModFileCacher_get(v__vmod__ModFileCacher* mcache, string mfolder);
+v__vmod__ModFileAndFolder v__vmod__ModFileCacher_get_by_file(v__vmod__ModFileCacher* mcache, string vfile);
+v__vmod__ModFileAndFolder v__vmod__ModFileCacher_get_by_folder(v__vmod__ModFileCacher* mcache, string vfolder);
 static void v__vmod__ModFileCacher_add(v__vmod__ModFileCacher* cacher, string path, v__vmod__ModFileAndFolder result);
 static multi_return_array_string_v__vmod__ModFileAndFolder v__vmod__ModFileCacher_traverse(v__vmod__ModFileCacher* mcache, string mfolder);
 static void v__vmod__ModFileCacher_mark_folders_with_vmod(v__vmod__ModFileCacher* mcache, array_string folders_so_far, v__vmod__ModFileAndFolder vmod);
@@ -15661,14 +15662,19 @@ void v__vmod__ModFileCacher_dump(v__vmod__ModFileCacher* mcache) {
 
 }
 
-v__vmod__ModFileAndFolder v__vmod__ModFileCacher_get(v__vmod__ModFileCacher* mcache, string mfolder) {
+v__vmod__ModFileAndFolder v__vmod__ModFileCacher_get_by_file(v__vmod__ModFileCacher* mcache, string vfile) {
+	return v__vmod__ModFileCacher_get_by_folder(mcache, os__dir(vfile));
+}
+
+v__vmod__ModFileAndFolder v__vmod__ModFileCacher_get_by_folder(v__vmod__ModFileCacher* mcache, string vfolder) {
+	string mfolder = os__real_path(vfolder);
 	if (_IN_MAP(mfolder, mcache->cache)) {
 		return (*(v__vmod__ModFileAndFolder*)map_get3(mcache->cache, mfolder, &(v__vmod__ModFileAndFolder[]){ {0} }))
 ;
 	}
-	multi_return_array_string_v__vmod__ModFileAndFolder mr_1957 = v__vmod__ModFileCacher_traverse(mcache, mfolder);
-	array_string traversed_folders = mr_1957.arg0;
-	v__vmod__ModFileAndFolder res = mr_1957.arg1;
+	multi_return_array_string_v__vmod__ModFileAndFolder mr_2134 = v__vmod__ModFileCacher_traverse(mcache, mfolder);
+	array_string traversed_folders = mr_2134.arg0;
+	v__vmod__ModFileAndFolder res = mr_2134.arg1;
 	// FOR IN array
 	array _t1 = traversed_folders;
 	for (int _t2 = 0; _t2 < _t1.len; _t2++) {
@@ -19104,7 +19110,7 @@ v__token__Token v__scanner__Scanner_scan(v__scanner__Scanner* s) {
 		}
 		if (string_eq(name, tos_lit("VMOD_FILE"))) {
 			if (s->vmod_file_content.len == 0) {
-				v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get(_const_v__vmod__mod_file_cacher, os__dir(os__real_path(s->file_path)));
+				v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get_by_file(_const_v__vmod__mod_file_cacher, s->file_path);
 				if (vmod_file_location.vmod_file.len == 0) {
 					v__scanner__Scanner_error(s, tos_lit("@VMOD_FILE can be used only in projects, that have v.mod file"));
 				}
@@ -19698,7 +19704,7 @@ static v__ast__HashStmt v__parser__Parser_hash(v__parser__Parser* p) {
 	if (string_starts_with(val, tos_lit("flag"))) {
 		string flag = string_substr(val, 5, val.len);
 		if (string_contains(flag, tos_lit("@VROOT"))) {
-			v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get(_const_v__vmod__mod_file_cacher, p->file_name_dir);
+			v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get_by_folder(_const_v__vmod__mod_file_cacher, p->file_name_dir);
 			if (vmod_file_location.vmod_file.len == 0) {
 				v__parser__Parser_error(p, string_add(string_add(tos_lit("To use @VROOT, you need"), _STR(" to have a \"v.mod\" file in %.*s\000,", 2, p->file_name_dir)), tos_lit(" or in one of its parent folders.")));
 			}
@@ -33297,7 +33303,7 @@ inline static string v__builder__module_path(string mod) {
 }
 
 Option_string v__builder__Builder_find_module_path(v__builder__Builder b, string mod, string fpath) {
-	v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get(_const_v__vmod__mod_file_cacher, fpath);
+	v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get_by_file(_const_v__vmod__mod_file_cacher, fpath);
 	string mod_path = v__builder__module_path(mod);
 	array_string module_lookup_paths = __new_array_with_default(0, 0, sizeof(string), 0);
 	if (vmod_file_location.vmod_file.len != 0 && !_IN(string, vmod_file_location.vmod_folder, b.module_search_paths)) {
@@ -33387,7 +33393,8 @@ static void v__builder__Builder_print_warnings_and_errors(v__builder__Builder* b
 					if (stmt.typ == 116 /* v.ast.FnDecl */) {
 						v__ast__FnDecl* f = /* as */ (v__ast__FnDecl*)__as_cast(stmt.obj, stmt.typ, /*expected:*/116);
 						if (string_eq(f->name, fn_name)) {
-							println(string_add(string_add(file.path, tos_lit(":")), int_str(f->pos.line_nr)));
+							int fline = f->pos.line_nr;
+							println(_STR("%.*s\000:%"PRId32"\000:", 3, file.path, fline));
 						}
 					}
 				}
