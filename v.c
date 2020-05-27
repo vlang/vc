@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "04ca7ef"
+#define V_COMMIT_HASH "cecb7d2"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0292666"
+#define V_COMMIT_HASH "04ca7ef"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "04ca7ef"
+#define V_CURRENT_COMMIT_HASH "cecb7d2"
 #endif
 
 
@@ -24255,7 +24255,7 @@ v__table__Type v__checker__Checker_call_expr(v__checker__Checker* c, v__ast__Cal
 v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__CallExpr* call_expr) {
 	v__table__Type left_type = v__checker__Checker_expr(c, call_expr->left);
 	call_expr->left_type = left_type;
-	v__table__TypeSymbol* left_type_sym = v__table__Table_get_type_symbol(c->table, left_type);
+	v__table__TypeSymbol* left_type_sym = v__table__Table_get_type_symbol(c->table, v__checker__Checker_unwrap_generic(c, left_type));
 	string method_name = call_expr->name;
 	if (left_type_sym->kind == v__table__Kind_array && (string_eq(method_name, tos_lit("filter")) || string_eq(method_name, tos_lit("clone")) || string_eq(method_name, tos_lit("repeat")) || string_eq(method_name, tos_lit("reverse")) || string_eq(method_name, tos_lit("map")) || string_eq(method_name, tos_lit("slice")))) {
 		if ((string_eq(method_name, tos_lit("filter")) || string_eq(method_name, tos_lit("map")))) {
