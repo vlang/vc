@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "7c9279c"
+#define V_COMMIT_HASH "fc67046"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6f7628c"
+#define V_COMMIT_HASH "7c9279c"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "7c9279c"
+#define V_CURRENT_COMMIT_HASH "fc67046"
 #endif
 
 
@@ -23628,7 +23628,7 @@ static bool v__checker__Checker_check_file_in_main(v__checker__Checker* c, v__as
 					v__checker__Checker_error(c, tos_lit("function `main` cannot return values"), it->pos);
 				}
 			} else {
-				if (it->is_pub) {
+				if (it->is_pub && !it->is_method) {
 					v__checker__Checker_warn(c, _STR("function `%.*s\000` %.*s", 2, it->name, _const_v__checker__no_pub_in_main_warning), it->pos);
 				}
 			}
