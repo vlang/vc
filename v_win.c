@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "6ca53d7"
+#define V_COMMIT_HASH "72ed673"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "481f103"
+#define V_COMMIT_HASH "6ca53d7"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "6ca53d7"
+#define V_CURRENT_COMMIT_HASH "72ed673"
 #endif
 
 
@@ -30334,13 +30334,25 @@ static void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node) {
 		}
 	}
 	string name = string_replace(_STR("%.*s\000_%.*s", 2, receiver_type_name, node.name), tos_lit("."), tos_lit("__"));
+	bool is_range_slice = false;
+	if (v__table__Type_is_ptr(node.receiver_type) && !v__table__Type_is_ptr(node.left_type)) {
+		if (node.left.typ == 163 /* v.ast.IndexExpr */) {
+			v__ast__Expr idx = (/* as */ (v__ast__IndexExpr*)__as_cast(node.left.obj, node.left.typ, /*expected:*/163))->index;
+			if (idx.typ == 216 /* v.ast.RangeExpr */) {
+				name = string_replace(_STR("%.*s\000_%.*s\000_static", 3, receiver_type_name, node.name), tos_lit("."), tos_lit("__"));
+				is_range_slice = true;
+			}
+		}
+	}
 	if (!v__table__Type_is_ptr(node.receiver_type) && v__table__Type_is_ptr(node.left_type) && string_eq(node.name, tos_lit("str"))) {
 		v__gen__Gen_write(g, tos_lit("ptr_str("));
 	} else {
 		v__gen__Gen_write(g, _STR("%.*s\000(", 2, name));
 	}
 	if (v__table__Type_is_ptr(node.receiver_type) && !v__table__Type_is_ptr(node.left_type)) {
-		v__gen__Gen_write(g, tos_lit("&"));
+		if (!is_range_slice) {
+			v__gen__Gen_write(g, tos_lit("&"));
+		}
 	} else if (!v__table__Type_is_ptr(node.receiver_type) && v__table__Type_is_ptr(node.left_type) && string_ne(node.name, tos_lit("str"))) {
 		v__gen__Gen_write(g, tos_lit("/*rec*/*"));
 	}
@@ -30450,11 +30462,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_18901 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_18901.arg0;
-		string pafile = mr_18901.arg1;
-		string pamod = mr_18901.arg2;
-		string pafn = mr_18901.arg3;
+		multi_return_int_string_string_string mr_19508 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_19508.arg0;
+		string pafile = mr_19508.arg1;
+		string pamod = mr_19508.arg2;
+		string pafn = mr_19508.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		v__gen__Gen_write(g, tos_lit(")"));
