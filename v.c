@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ebbf42d"
+#define V_COMMIT_HASH "481f103"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "59711d9"
+#define V_COMMIT_HASH "ebbf42d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ebbf42d"
+#define V_CURRENT_COMMIT_HASH "481f103"
 #endif
 
 
@@ -3060,7 +3060,7 @@ string string_trim_left(string s, string cutset);
 string string_trim_right(string s, string cutset);
 string string_trim_prefix(string s, string str);
 string string_trim_suffix(string s, string str);
-static int compare_strings(string* a, string* b);
+int compare_strings(string* a, string* b);
 static int compare_strings_by_len(string* a, string* b);
 static int compare_lower_strings(string* a, string* b);
 void array_string_sort(array_string* s);
@@ -3647,7 +3647,7 @@ array_string v__util__source_context(string kind, string source, int column, v__
 void v__util__verror(string kind, string s);
 Option_string v__util__find_working_diff_command();
 string v__util__color_compare_files(string diff_cmd, string file1, string file2);
-static string v__util__color_compare_strings(string diff_cmd, string expected, string found);
+string v__util__color_compare_strings(string diff_cmd, string expected, string found);
 bool v__util__is_name_char(byte c);
 bool v__util__is_func_char(byte c);
 bool v__util__is_nl(byte c);
@@ -10628,7 +10628,7 @@ string string_trim_suffix(string s, string str) {
 	return s;
 }
 
-static int compare_strings(string* a, string* b) {
+int compare_strings(string* a, string* b) {
 	if (string_lt(/*rec*/*a, *b)) {
 		return -1;
 	}
@@ -17378,7 +17378,7 @@ string v__util__color_compare_files(string diff_cmd, string file1, string file2)
 	return tos_lit("");
 }
 
-static string v__util__color_compare_strings(string diff_cmd, string expected, string found) {
+string v__util__color_compare_strings(string diff_cmd, string expected, string found) {
 	string cdir = os__cache_dir();
 	u64 ctime = time__sys_mono_now();
 	string e_file = os__join_path(cdir, (varg_string){.len=1,.args={_STR("%"PRIu64"\000.expected.txt", 2, ctime)}});
@@ -24409,8 +24409,8 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 			v__checker__Checker_error(c, _STR("ambiguous call to: `%.*s\000`, may refer to fn `%.*s\000` or variable `%.*s\000`", 4, fn_name, fn_name, fn_name), call_expr->pos);
 		}}
 	}
-	if (!f.is_pub && f.language == v__table__Language_v && !c->is_builtin_mod && !c->pref->is_test && string_ne(f.mod, c->mod) && string_ne(f.name, tos_lit("")) && string_ne(f.mod, tos_lit(""))) {
-		v__checker__Checker_warn(c, _STR("function `%.*s\000` is private. curmod=%.*s\000 fmod=%.*s", 3, f.name, c->mod, f.mod), call_expr->pos);
+	if (!f.is_pub && f.language == v__table__Language_v && f.name.len > 0 && f.mod.len > 0 && string_ne(f.mod, c->mod)) {
+		v__checker__Checker_error(c, _STR("function `%.*s\000` is private. curmod=%.*s\000 fmod=%.*s", 3, f.name, c->mod, f.mod), call_expr->pos);
 	}
 	call_expr->return_type = f.return_type;
 	if (f.return_type == _const_v__table__void_type && f.ctdefine.len > 0 && !_IN(string, f.ctdefine, c->pref->compile_defines)) {
