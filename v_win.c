@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "da9b3d8"
+#define V_COMMIT_HASH "d70cd81"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9609b3a"
+#define V_COMMIT_HASH "da9b3d8"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "da9b3d8"
+#define V_CURRENT_COMMIT_HASH "d70cd81"
 #endif
 
 
@@ -14990,9 +14990,6 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 	if (string_eq(command, tos_lit("build-module"))) {
 		res->build_mode = v__pref__BuildMode_build_module;
 		res->path = (*(string*)array_get(args, command_pos + 1));
-	}
-	if (res->is_verbose) {
-		println(_STR("setting pref.path to \"%.*s\000\"", 2, res->path));
 	}
 	v__pref__Preferences_fill_with_defaults(res);
 
