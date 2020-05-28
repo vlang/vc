@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "2943bdc"
+#define V_COMMIT_HASH "1d0ebfb"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6da1d3a"
+#define V_COMMIT_HASH "2943bdc"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "2943bdc"
+#define V_CURRENT_COMMIT_HASH "1d0ebfb"
 #endif
 
 
@@ -4272,6 +4272,7 @@ static void v__gen__js__JsGen_gen_for_stmt(v__gen__js__JsGen* g, v__ast__ForStmt
 static void v__gen__js__JsGen_gen_go_stmt(v__gen__js__JsGen* g, v__ast__GoStmt node);
 static void v__gen__js__JsGen_gen_import_stmt(v__gen__js__JsGen* g, v__ast__Import it);
 static void v__gen__js__JsGen_gen_return_stmt(v__gen__js__JsGen* g, v__ast__Return it);
+static void v__gen__js__JsGen_gen_hash_stmt(v__gen__js__JsGen* g, v__ast__HashStmt it);
 static void v__gen__js__JsGen_gen_struct_decl(v__gen__js__JsGen* g, v__ast__StructDecl node);
 static void v__gen__js__JsGen_gen_array_init_expr(v__gen__js__JsGen* g, v__ast__ArrayInit it);
 static void v__gen__js__JsGen_gen_assign_expr(v__gen__js__JsGen* g, v__ast__AssignExpr it);
@@ -19881,6 +19882,14 @@ static array_v__ast__Expr v__parser__Parser_parse_assign_rhs(v__parser__Parser* 
 static v__ast__HashStmt v__parser__Parser_hash(v__parser__Parser* p) {
 	string val = p->tok.lit;
 	v__parser__Parser_next(p);
+	if (p->pref->backend == v__pref__Backend_js) {
+		if (!string_ends_with(p->file_name, tos_lit(".js.v"))) {
+			v__parser__Parser_error(p, tos_lit("Hash statements are only allowed in backend specific files such \"x.js.v\""));
+		}
+		if (string_eq(p->mod, tos_lit("main"))) {
+			v__parser__Parser_error(p, tos_lit("Hash statements are not allowed in the main module. Please place them in a separate module."));
+		}
+	}
 	if (string_starts_with(val, tos_lit("flag"))) {
 		string flag = string_substr(val, 5, val.len);
 		if (string_contains(flag, tos_lit("@VROOT"))) {
@@ -31444,6 +31453,7 @@ static void v__gen__js__JsGen_stmt(v__gen__js__JsGen* g, v__ast__Stmt node) {
 		v__ast__GotoStmt* it = (v__ast__GotoStmt*)node.obj; // ST it
 	}else if (node.typ == 167 /* v.ast.HashStmt */) {
 		v__ast__HashStmt* it = (v__ast__HashStmt*)node.obj; // ST it
+		v__gen__js__JsGen_gen_hash_stmt(g, *it);
 	}else if (node.typ == 193 /* v.ast.Import */) {
 		v__ast__Import* it = (v__ast__Import*)node.obj; // ST it
 		v__gen__js__JsGen_gen_import_stmt(g, *it);
@@ -31975,6 +31985,10 @@ static void v__gen__js__JsGen_gen_return_stmt(v__gen__js__JsGen* g, v__ast__Retu
 		v__gen__js__JsGen_write(g, tos_lit("]"));
 	}
 	v__gen__js__JsGen_writeln(g, tos_lit(";"));
+}
+
+static void v__gen__js__JsGen_gen_hash_stmt(v__gen__js__JsGen* g, v__ast__HashStmt it) {
+	v__gen__js__JsGen_writeln(g, it.val);
 }
 
 static void v__gen__js__JsGen_gen_struct_decl(v__gen__js__JsGen* g, v__ast__StructDecl node) {
