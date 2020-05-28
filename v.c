@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "01dbb25"
+#define V_COMMIT_HASH "9609b3a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1d0ebfb"
+#define V_COMMIT_HASH "01dbb25"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "01dbb25"
+#define V_CURRENT_COMMIT_HASH "9609b3a"
 #endif
 
 
@@ -20226,9 +20226,9 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool mr_4814 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_4814.arg0;
-	bool is_variadic = mr_4814.arg1;
+	multi_return_array_v__table__Arg_bool mr_4587 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_4587.arg0;
+	bool is_variadic = mr_4587.arg1;
 	_PUSH_MANY(&args, (args2), _t2, array_v__table__Arg);
 	// FOR IN array
 	array _t3 = args;
@@ -20341,9 +20341,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_7428 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_7428.arg0;
-	bool is_variadic = mr_7428.arg1;
+	multi_return_array_v__table__Arg_bool mr_7201 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_7201.arg0;
+	bool is_variadic = mr_7201.arg1;
 	// FOR IN array
 	array _t1 = args;
 	for (int _t2 = 0; _t2 < _t1.len; _t2++) {
@@ -25962,14 +25962,26 @@ static void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast__FnDecl i
 			v__checker__Checker_error(c, tos_lit("interfaces cannot be used as method receiver"), it.receiver_pos);
 		}
 		if (string_ne(sym->mod, c->mod) && !c->is_builtin_mod && string_ne(sym->mod, tos_lit(""))) {
-			v__checker__Checker_warn(c, string_add(tos_lit("cannot define methods on types from other modules ("), _STR("current module is `%.*s\000`, `%.*s\000` is from `%.*s\000`)", 4, c->mod, sym->name, sym->mod)), it.pos);
+			int idx = 0;
+			// FOR IN array
+			array _t3 = sym->methods;
+			for (int i = 0; i < _t3.len; i++) {
+				v__table__Fn m = ((v__table__Fn*)_t3.data)[i];
+				if (string_eq(m.name, it.name)) {
+					println(tos_lit("got it"));
+					idx = i;
+					break;
+				}
+			}
+			array_delete(&sym->methods, idx);
+			v__checker__Checker_error(c, string_add(_STR("cannot define new methods on non-local `%.*s\000` (", 2, sym->name), _STR("current module is `%.*s\000`, `%.*s\000` is from `%.*s\000`)", 4, c->mod, sym->name, sym->mod)), it.pos);
 		}
 	}
 	if (it.language == v__table__Language_v) {
 		// FOR IN array
-		array _t3 = it.args;
-		for (int _t4 = 0; _t4 < _t3.len; _t4++) {
-			v__table__Arg arg = ((v__table__Arg*)_t3.data)[_t4];
+		array _t4 = it.args;
+		for (int _t5 = 0; _t5 < _t4.len; _t5++) {
+			v__table__Arg arg = ((v__table__Arg*)_t4.data)[_t5];
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, arg.typ);
 			if (sym->kind == v__table__Kind_placeholder) {
 				v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, sym->name), it.pos);
