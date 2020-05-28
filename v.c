@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d70cd81"
+#define V_COMMIT_HASH "75b8822"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "da9b3d8"
+#define V_COMMIT_HASH "d70cd81"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d70cd81"
+#define V_CURRENT_COMMIT_HASH "75b8822"
 #endif
 
 
@@ -1620,6 +1620,7 @@ struct v__scanner__Scanner {
 	bool is_vh;
 	bool is_fmt;
 	v__scanner__CommentsMode comments_mode;
+	int eofs;
 };
 
 struct v__token__Token {
@@ -18520,6 +18521,7 @@ v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMo
 		.is_vh = 0,
 		.is_fmt = v__util__is_fmt(),
 		.comments_mode = comments_mode,
+		.eofs = 0,
 	}, sizeof(v__scanner__Scanner));
 	return s;
 }
@@ -18890,8 +18892,15 @@ static void v__scanner__Scanner_skip_whitespace(v__scanner__Scanner* s) {
 }
 
 static v__token__Token v__scanner__Scanner_end_of_file(v__scanner__Scanner* s) {
+	s->eofs++;
+	if (s->eofs > 50) {
+		s->line_nr--;
+		v__scanner__Scanner_error(s, string_add(string_add(_STR("the end of file `%.*s\000` has been reached 50 times already, the v parser is probably stuck.\n", 2, s->file_path), tos_lit("This should not happen. Please report the bug here, and include the last 2-3 lines of your source code:\n")), tos_lit("https://github.com/vlang/v/issues/new?labels=Bug&template=bug_report.md")));
+	}
+	if (s->pos != s->text.len && s->eofs == 1) {
+		v__scanner__Scanner_inc_line_number(s);
+	}
 	s->pos = s->text.len;
-	v__scanner__Scanner_inc_line_number(s);
 	return v__scanner__Scanner_new_token(s, v__token__Kind_eof, tos_lit(""), 1);
 }
 
