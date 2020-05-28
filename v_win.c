@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "94f23d9"
+#define V_COMMIT_HASH "55ef117"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d6037cb"
+#define V_COMMIT_HASH "94f23d9"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "94f23d9"
+#define V_CURRENT_COMMIT_HASH "55ef117"
 #endif
 
 
@@ -29641,15 +29641,15 @@ field_fn_name });
 			));
 			if (sym->kind == v__table__Kind_enum_) {
 				strings__Builder_write(&g->auto_str_funcs, tos_lit("indents, "));
-				strings__Builder_write(&g->auto_str_funcs, _STR("%.*s\000( it->%.*s\000 ) ", 3, field_styp_fn_name, field.name));
+				strings__Builder_write(&g->auto_str_funcs, _STR("%.*s\000( it->%.*s\000 ) ", 3, field_styp_fn_name, v__gen__c_name(field.name)));
 			} else if (sym->kind == v__table__Kind_struct_) {
 				strings__Builder_write(&g->auto_str_funcs, tos_lit("indents, "));
-				strings__Builder_write(&g->auto_str_funcs, _STR("%.*s\000( it->%.*s\000%.*s\000 ) ", 4, field_styp_fn_name, field.name, second_str_param));
+				strings__Builder_write(&g->auto_str_funcs, _STR("%.*s\000( it->%.*s\000%.*s\000 ) ", 4, field_styp_fn_name, v__gen__c_name(field.name), second_str_param));
 			} else if ((sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed || sym->kind == v__table__Kind_map)) {
 				strings__Builder_write(&g->auto_str_funcs, tos_lit("indents, "));
-				strings__Builder_write(&g->auto_str_funcs, _STR("%.*s\000( it->%.*s\000) ", 3, field_styp_fn_name, field.name));
+				strings__Builder_write(&g->auto_str_funcs, _STR("%.*s\000( it->%.*s\000) ", 3, field_styp_fn_name, v__gen__c_name(field.name)));
 			} else {
-				strings__Builder_write(&g->auto_str_funcs, _STR("indents, it->%.*s", 1, field.name));
+				strings__Builder_write(&g->auto_str_funcs, _STR("indents, it->%.*s", 1, v__gen__c_name(field.name)));
 				if (field.typ == _const_v__table__bool_type) {
 					strings__Builder_write(&g->auto_str_funcs, tos_lit(" ? _SLIT(\"true\") : _SLIT(\"false\")"));
 				}
@@ -29668,9 +29668,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_102342 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_102342.arg0;
-	bool str_method_expects_ptr = mr_102342.arg1;
+	multi_return_bool_bool_int mr_102374 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_102374.arg0;
+	bool str_method_expects_ptr = mr_102374.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (
@@ -29726,9 +29726,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_105166 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_105166.arg0;
-	bool str_method_expects_ptr = mr_105166.arg1;
+	multi_return_bool_bool_int mr_105198 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_105198.arg0;
+	bool str_method_expects_ptr = mr_105198.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (
@@ -30755,17 +30755,17 @@ static void v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Type typ) {
 			string field_type = v__gen__Gen_typ(g, field.typ);
 			string enc_name = v__gen__js_enc_name(field_type);
 			if (_IN(string, tos_lit("raw"), field.attrs)) {
-				strings__Builder_writeln(&dec, string_add(_STR(" res . %.*s\000 = tos2(cJSON_PrintUnformatted(", 2, field.name), _STR("js_get(root, \"%.*s\000\")));", 2, name)));
+				strings__Builder_writeln(&dec, string_add(_STR(" res . %.*s\000 = tos2(cJSON_PrintUnformatted(", 2, v__gen__c_name(field.name)), _STR("js_get(root, \"%.*s\000\")));", 2, name)));
 			} else {
 				v__gen__Gen_gen_json_for_type(g, field.typ);
 				string dec_name = v__gen__js_dec_name(field_type);
 				if (v__gen__is_js_prim(field_type)) {
-					strings__Builder_writeln(&dec, _STR(" res . %.*s\000 = %.*s\000 (js_get(root, \"%.*s\000\"));", 4, field.name, dec_name, name));
+					strings__Builder_writeln(&dec, _STR(" res . %.*s\000 = %.*s\000 (js_get(root, \"%.*s\000\"));", 4, v__gen__c_name(field.name), dec_name, name));
 				} else {
-					strings__Builder_writeln(&dec, _STR("  res . %.*s\000 = *(%.*s\000*) %.*s\000 (js_get(root,\"%.*s\000\")).data;", 5, field.name, field_type, dec_name, name));
+					strings__Builder_writeln(&dec, _STR("  res . %.*s\000 = *(%.*s\000*) %.*s\000 (js_get(root,\"%.*s\000\")).data;", 5, v__gen__c_name(field.name), field_type, dec_name, name));
 				}
 			}
-			strings__Builder_writeln(&enc, _STR("\tcJSON_AddItemToObject(o, \"%.*s\000\", %.*s\000(val.%.*s\000));", 4, name, enc_name, field.name));
+			strings__Builder_writeln(&enc, _STR("\tcJSON_AddItemToObject(o, \"%.*s\000\", %.*s\000(val.%.*s\000));", 4, name, enc_name, v__gen__c_name(field.name)));
 		}
 	}
 	strings__Builder_writeln(&dec, tos_lit("return opt_ok(&res, sizeof(res)); \n}"));
