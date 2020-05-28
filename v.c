@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "75b8822"
+#define V_COMMIT_HASH "28ffe2a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d70cd81"
+#define V_COMMIT_HASH "75b8822"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "75b8822"
+#define V_CURRENT_COMMIT_HASH "28ffe2a"
 #endif
 
 
@@ -3769,6 +3769,7 @@ v__ast__AssignExpr v__parser__Parser_assign_expr(v__parser__Parser* p, v__ast__E
 static v__ast__Ident v__parser__Parser_parse_assign_ident(v__parser__Parser* p);
 static array_v__ast__Expr v__parser__Parser_parse_assign_rhs(v__parser__Parser* p);
 array_string _const_v__parser__supported_platforms; // inited later
+static string v__parser__Parser_resolve_vroot(v__parser__Parser* p, string flag);
 static v__ast__HashStmt v__parser__Parser_hash(v__parser__Parser* p);
 static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p);
 static v__ast__Stmt v__parser__Parser_comp_if(v__parser__Parser* p);
@@ -19709,6 +19710,15 @@ static array_v__ast__Expr v__parser__Parser_parse_assign_rhs(v__parser__Parser* 
 	return exprs;
 }
 
+static string v__parser__Parser_resolve_vroot(v__parser__Parser* p, string flag) {
+	v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get_by_folder(_const_v__vmod__mod_file_cacher, p->file_name_dir);
+	if (vmod_file_location.vmod_file.len == 0) {
+		v__parser__Parser_error(p, string_add(string_add(tos_lit("To use @VROOT, you need"), _STR(" to have a \"v.mod\" file in %.*s\000,", 2, p->file_name_dir)), tos_lit(" or in one of its parent folders.")));
+	}
+	string vmod_path = vmod_file_location.vmod_folder;
+	return string_replace(flag, tos_lit("@VROOT"), os__real_path(vmod_path));
+}
+
 static v__ast__HashStmt v__parser__Parser_hash(v__parser__Parser* p) {
 	string val = p->tok.lit;
 	v__parser__Parser_next(p);
@@ -19720,14 +19730,17 @@ static v__ast__HashStmt v__parser__Parser_hash(v__parser__Parser* p) {
 			v__parser__Parser_error(p, tos_lit("Hash statements are not allowed in the main module. Please place them in a separate module."));
 		}
 	}
+	if (string_starts_with(val, tos_lit("include"))) {
+		string flag = string_substr(val, 8, val.len);
+		if (string_contains(flag, tos_lit("@VROOT"))) {
+			string vroot = v__parser__Parser_resolve_vroot(p, flag);
+			val = _STR("include %.*s", 1, vroot);
+		}
+	}
 	if (string_starts_with(val, tos_lit("flag"))) {
 		string flag = string_substr(val, 5, val.len);
 		if (string_contains(flag, tos_lit("@VROOT"))) {
-			v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get_by_folder(_const_v__vmod__mod_file_cacher, p->file_name_dir);
-			if (vmod_file_location.vmod_file.len == 0) {
-				v__parser__Parser_error(p, string_add(string_add(tos_lit("To use @VROOT, you need"), _STR(" to have a \"v.mod\" file in %.*s\000,", 2, p->file_name_dir)), tos_lit(" or in one of its parent folders.")));
-			}
-			flag = string_replace(flag, tos_lit("@VROOT"), vmod_file_location.vmod_folder);
+			flag = v__parser__Parser_resolve_vroot(p, flag);
 		}
 		// FOR IN array
 		array _t1 = new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){
@@ -19895,7 +19908,7 @@ static v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_rsbr) {
 		int line_nr = p->tok.line_nr;
 		v__parser__Parser_next(p);
-		if ((p->tok.kind == v__token__Kind_name || p->tok.kind == v__token__Kind_amp) && p->tok.line_nr == line_nr) {
+		if ((p->tok.kind == v__token__Kind_name || p->tok.kind == v__token__Kind_amp || p->tok.kind == v__token__Kind_lsbr) && p->tok.line_nr == line_nr) {
 			elem_type_pos = v__token__Token_position(&p->tok);
 			elem_type = v__parser__Parser_parse_type(p);
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(p->table, elem_type);
@@ -23134,8 +23147,8 @@ static v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
 			}
 			v__token__Position field_start_pos = v__token__Token_position(&p->tok);
 			string field_name = v__parser__Parser_check_name(p);
-			v__token__Position field_pos = v__token__Position_extend(field_start_pos, v__token__Token_position(&p->tok));
 			v__table__Type typ = v__parser__Parser_parse_type(p);
+			v__token__Position field_pos = v__token__Position_extend(field_start_pos, v__token__Token_position(&p->tok));
 			v__ast__Expr default_expr = (v__ast__Expr){
 			
 #ifndef __cplusplus
@@ -23853,6 +23866,13 @@ void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl 
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, field.typ);
 		if (sym->kind == v__table__Kind_placeholder && decl.language != v__table__Language_c && !string_starts_with(sym->name, tos_lit("C."))) {
 			v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, sym->name), field.pos);
+		}
+		if (sym->kind == v__table__Kind_array) {
+			v__table__Array array_info = v__table__TypeSymbol_array_info(sym);
+			v__table__TypeSymbol* elem_sym = v__table__Table_get_type_symbol(c->table, array_info.elem_type);
+			if (elem_sym->kind == v__table__Kind_placeholder) {
+				v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, elem_sym->name), field.pos);
+			}
 		}
 		if (sym->kind == v__table__Kind_struct_) {
 			v__table__Struct* info = /* as */ (v__table__Struct*)__as_cast(sym->info.obj, sym->info.typ, /*expected:*/89);
