@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ae8cc2f"
+#define V_COMMIT_HASH "d6037cb"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9cbd9db"
+#define V_COMMIT_HASH "ae8cc2f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ae8cc2f"
+#define V_CURRENT_COMMIT_HASH "d6037cb"
 #endif
 
 
@@ -4016,6 +4016,7 @@ static void v__gen__Gen_write_autofree_stmts_when_needed(v__gen__Gen* g, v__ast_
 static void v__gen__Gen_write_defer_stmts_when_needed(v__gen__Gen* g);
 static multi_return_array_string_array_string v__gen__Gen_fn_args(v__gen__Gen* g, array_v__table__Arg args, bool is_variadic);
 static void v__gen__Gen_call_expr(v__gen__Gen* g, v__ast__CallExpr node);
+v__table__Type v__gen__Gen_unwrap_generic(v__gen__Gen* g, v__table__Type typ);
 static void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node);
 static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node);
 static void v__gen__Gen_call_args(v__gen__Gen* g, array_v__ast__CallArg args, array_v__table__Type expected_types);
@@ -24254,6 +24255,7 @@ v__table__Type v__checker__Checker_call_expr(v__checker__Checker* c, v__ast__Cal
 
 v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__CallExpr* call_expr) {
 	v__table__Type left_type = v__checker__Checker_expr(c, call_expr->left);
+	bool is_generic = left_type == _const_v__table__t_type;
 	call_expr->left_type = left_type;
 	v__table__TypeSymbol* left_type_sym = v__table__Table_get_type_symbol(c->table, v__checker__Checker_unwrap_generic(c, left_type));
 	string method_name = call_expr->name;
@@ -24353,7 +24355,11 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 				array_push(&call_expr->expected_arg_types, _MOV((v__table__Type[]){ (*(v__table__Arg*)array_get(/*opt*/(*(v__table__Fn*)method.data).args, i)).typ }));
 			}
 		}
-		call_expr->receiver_type = (*(v__table__Arg*)array_get(/*opt*/(*(v__table__Fn*)method.data).args, 0)).typ;
+		if (is_generic) {
+			call_expr->receiver_type = _const_v__table__t_type;
+		} else {
+			call_expr->receiver_type = (*(v__table__Arg*)array_get(/*opt*/(*(v__table__Fn*)method.data).args, 0)).typ;
+		}
 		call_expr->return_type = /*opt*/(*(v__table__Fn*)method.data).return_type;
 		return /*opt*/(*(v__table__Fn*)method.data).return_type;
 	}}
@@ -25404,8 +25410,6 @@ v__table__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* 
 	}
 	if (ident->kind == v__ast__IdentKind_variable) {
 		v__ast__IdentVar* info = /* as */ (v__ast__IdentVar*)__as_cast(ident->info.obj, ident->info.typ, /*expected:*/200);
-		if (info->typ == _const_v__table__t_type) {
-		}
 		return info->typ;
 	} else if (ident->kind == v__ast__IdentKind_constant) {
 		v__ast__IdentVar* info = /* as */ (v__ast__IdentVar*)__as_cast(ident->info.obj, ident->info.typ, /*expected:*/200);
@@ -30049,9 +30053,9 @@ static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 			strings__Builder_write(&g->definitions, _STR("%.*s\000 %.*s\000(", 3, type_name, name));
 			v__gen__Gen_write(g, _STR("%.*s\000 %.*s\000(", 3, type_name, name));
 		}
-		multi_return_array_string_array_string mr_6026 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
-		array_string fargs = mr_6026.arg0;
-		array_string fargtypes = mr_6026.arg1;
+		multi_return_array_string_array_string mr_6014 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
+		array_string fargs = mr_6014.arg0;
+		array_string fargtypes = mr_6014.arg1;
 		if (it.no_body || (g->pref->use_cache && it.is_builtin)) {
 			strings__Builder_writeln(&g->definitions, tos_lit(");"));
 			v__gen__Gen_writeln(g, tos_lit(");"));
@@ -30243,11 +30247,18 @@ static void v__gen__Gen_call_expr(v__gen__Gen* g, v__ast__CallExpr node) {
 	}
 }
 
+v__table__Type v__gen__Gen_unwrap_generic(v__gen__Gen* g, v__table__Type typ) {
+	if (typ == _const_v__table__t_type) {
+		return g->cur_generic_type;
+	}
+	return typ;
+}
+
 static void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node) {
 	if (node.left_type == 0) {
 		v__gen__verror(tos_lit("method receiver type is 0, this means there are some uchecked exprs"));
 	}
-	v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(g->table, node.receiver_type);
+	v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(g->table, v__gen__Gen_unwrap_generic(g, node.receiver_type));
 	string receiver_type_name = string_replace(typ_sym->name, tos_lit("."), tos_lit("__"));
 	if (typ_sym->kind == v__table__Kind_interface_) {
 		v__gen__Gen_write(g, _STR("%.*s\000_name_table[", 2, v__gen__c_name(receiver_type_name)));
@@ -30418,11 +30429,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_19508 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_19508.arg0;
-		string pafile = mr_19508.arg1;
-		string pamod = mr_19508.arg2;
-		string pafn = mr_19508.arg3;
+		multi_return_int_string_string_string mr_19649 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_19649.arg0;
+		string pafile = mr_19649.arg1;
+		string pamod = mr_19649.arg2;
+		string pafn = mr_19649.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		v__gen__Gen_write(g, tos_lit(")"));
