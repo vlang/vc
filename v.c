@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "6da1d3a"
+#define V_COMMIT_HASH "2943bdc"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c7501e2"
+#define V_COMMIT_HASH "6da1d3a"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "6da1d3a"
+#define V_CURRENT_COMMIT_HASH "2943bdc"
 #endif
 
 
@@ -1977,6 +1977,7 @@ struct v__ast__CompIf {
 
 struct v__ast__ArrayInit {
 	v__token__Position pos;
+	v__token__Position elem_type_pos;
 	array_v__ast__Expr exprs;
 	bool is_fixed;
 	bool has_val;
@@ -19871,6 +19872,7 @@ static v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser* p) {
 	v__parser__Parser_check(p, v__token__Kind_lsbr);
 	v__table__Type array_type = _const_v__table__void_type;
 	v__table__Type elem_type = _const_v__table__void_type;
+	v__token__Position elem_type_pos = first_pos;
 	array_v__ast__Expr exprs = __new_array_with_default(0, 0, sizeof(v__ast__Expr), 0);
 	bool is_fixed = false;
 	bool has_val = false;
@@ -19879,6 +19881,7 @@ static v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser* p) {
 		int line_nr = p->tok.line_nr;
 		v__parser__Parser_next(p);
 		if ((p->tok.kind == v__token__Kind_name || p->tok.kind == v__token__Kind_amp) && p->tok.line_nr == line_nr) {
+			elem_type_pos = v__token__Token_position(&p->tok);
 			elem_type = v__parser__Parser_parse_type(p);
 			int idx = v__table__Table_find_or_register_array(p->table, elem_type, 1);
 			array_type = v__table__new_type(idx);
@@ -19976,6 +19979,7 @@ static v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser* p) {
 	};
 	return (v__ast__ArrayInit){
 		.pos = pos,
+		.elem_type_pos = elem_type_pos,
 		.exprs = exprs,
 		.is_fixed = is_fixed,
 		.has_val = has_val,
@@ -24878,6 +24882,10 @@ v__table__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__Ar
 				}
 			}
 		}
+		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, array_init->elem_type);
+		if (sym->kind == v__table__Kind_placeholder) {
+			v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, sym->name), array_init->elem_type_pos);
+		}
 		return array_init->typ;
 	}
 	if (array_init->exprs.len == 0) {
@@ -28985,6 +28993,16 @@ static string v__gen__Gen_comp_if_to_ifdef(v__gen__Gen* g, string name, bool is_
 		return tos_lit("__APPLE__");
 	}else if (string_eq(name, tos_lit("macos"))) {
 		return tos_lit("__APPLE__");
+	}else if (string_eq(name, tos_lit("mach"))) {
+		return tos_lit("__MACH__");
+	}else if (string_eq(name, tos_lit("darwin"))) {
+		return tos_lit("__DARWIN__");
+	}else if (string_eq(name, tos_lit("hpux"))) {
+		return tos_lit("__HPUX__");
+	}else if (string_eq(name, tos_lit("gnu"))) {
+		return tos_lit("__GNU__");
+	}else if (string_eq(name, tos_lit("qnx"))) {
+		return tos_lit("__QNX__");
 	}else if (string_eq(name, tos_lit("linux"))) {
 		return tos_lit("__linux__");
 	}else if (string_eq(name, tos_lit("freebsd"))) {
@@ -28993,6 +29011,8 @@ static string v__gen__Gen_comp_if_to_ifdef(v__gen__Gen* g, string name, bool is_
 		return tos_lit("__OpenBSD__");
 	}else if (string_eq(name, tos_lit("netbsd"))) {
 		return tos_lit("__NetBSD__");
+	}else if (string_eq(name, tos_lit("bsd"))) {
+		return tos_lit("__BSD__");
 	}else if (string_eq(name, tos_lit("dragonfly"))) {
 		return tos_lit("__DragonFly__");
 	}else if (string_eq(name, tos_lit("android"))) {
@@ -29333,10 +29353,10 @@ inline static string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Type
 static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_95375 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_95375.arg0;
-	bool str_method_expects_ptr = mr_95375.arg1;
-	int str_nr_args = mr_95375.arg2;
+	multi_return_bool_bool_int mr_95589 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_95589.arg0;
+	bool str_method_expects_ptr = mr_95589.arg1;
+	int str_nr_args = mr_95589.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -29528,9 +29548,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_102600 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_102600.arg0;
-	bool str_method_expects_ptr = mr_102600.arg1;
+	multi_return_bool_bool_int mr_102814 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_102814.arg0;
+	bool str_method_expects_ptr = mr_102814.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (
@@ -29586,9 +29606,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_105424 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_105424.arg0;
-	bool str_method_expects_ptr = mr_105424.arg1;
+	multi_return_bool_bool_int mr_105638 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_105638.arg0;
+	bool str_method_expects_ptr = mr_105638.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (
