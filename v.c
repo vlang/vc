@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "104c278"
+#define V_COMMIT_HASH "b3f2c62"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "96fb790"
+#define V_COMMIT_HASH "104c278"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "104c278"
+#define V_CURRENT_COMMIT_HASH "b3f2c62"
 #endif
 
 
@@ -33767,7 +33767,17 @@ _t1;
 	if (v->pref->is_shared) {
 		array_push(&linker_flags, _MOV((string[]){ tos_lit("-shared") }));
 		array_push(&a, _MOV((string[]){ tos_lit("-fPIC") }));
-		v->pref->out_name = /*f*/string_add(v->pref->out_name, tos_lit(".so"));
+		
+// $if  macos {
+#ifdef __APPLE__
+			v->pref->out_name = /*f*/string_add(v->pref->out_name, tos_lit(".dylib"));
+		
+#else
+			v->pref->out_name = /*f*/string_add(v->pref->out_name, tos_lit(".so"));
+		
+// } macos
+#endif
+
 	}
 	if (v->pref->is_bare) {
 		array_push(&a, _MOV((string[]){ tos_lit("-fno-stack-protector") }));
