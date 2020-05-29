@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "4b36286"
+#define V_COMMIT_HASH "1c11ac9"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3a340cb"
+#define V_COMMIT_HASH "4b36286"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4b36286"
+#define V_CURRENT_COMMIT_HASH "1c11ac9"
 #endif
 
 
@@ -24448,6 +24448,9 @@ v__table__Type  v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__I
 		v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, type_expr->typ);
 		if (typ_sym->kind == v__table__Kind_placeholder) {
 			v__checker__Checker_error(c, _STR("is: type `%.*s\000` does not exist", 2, typ_sym->name), type_expr->pos);
+		}
+		if (left->kind != v__table__Kind_interface_ && left->kind != v__table__Kind_sum_type) {
+			v__checker__Checker_error(c, tos_lit("`is` can only be used with interfaces and sum types"), type_expr->pos);
 		}
 		// defer
 			c->expected_type = former_expected_type;
