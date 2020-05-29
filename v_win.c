@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b52c98a"
+#define V_COMMIT_HASH "f3c5f36"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0970e61"
+#define V_COMMIT_HASH "b52c98a"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b52c98a"
+#define V_CURRENT_COMMIT_HASH "f3c5f36"
 #endif
 
 
@@ -23452,6 +23452,16 @@ static v__ast__StructDecl  v__parser__Parser_struct_decl(v__parser__Parser* p) {
 			string field_name = v__parser__Parser_check_name(p);
 			v__table__Type typ = v__parser__Parser_parse_type(p);
 			v__token__Position field_pos = v__token__Position_extend(field_start_pos, v__token__Token_position(&p->tok));
+			array_string attrs = __new_array_with_default(0, 0, sizeof(string), 0);
+			if (p->tok.kind == v__token__Kind_lsbr) {
+				array_v__ast__Attr parsed_attrs = v__parser__Parser_attributes(p);
+				// FOR IN array
+				array _t1 = parsed_attrs;
+				for (int _t2 = 0; _t2 < _t1.len; _t2++) {
+					v__ast__Attr attr = ((v__ast__Attr*)_t1.data)[_t2];
+					array_push(&attrs, _MOV((string[]){ attr.name }));
+				}
+			}
 			v__ast__Expr default_expr = (v__ast__Expr){
 			
 #ifndef __cplusplus
@@ -23468,16 +23478,6 @@ static v__ast__StructDecl  v__parser__Parser_struct_decl(v__parser__Parser* p) {
 				}else {
 				};
 				has_default_expr = true;
-			}
-			array_string attrs = __new_array_with_default(0, 0, sizeof(string), 0);
-			if (p->tok.kind == v__token__Kind_lsbr) {
-				array_v__ast__Attr parsed_attrs = v__parser__Parser_attributes(p);
-				// FOR IN array
-				array _t2 = parsed_attrs;
-				for (int _t3 = 0; _t3 < _t2.len; _t3++) {
-					v__ast__Attr attr = ((v__ast__Attr*)_t2.data)[_t3];
-					array_push(&attrs, _MOV((string[]){ attr.name }));
-				}
 			}
 			if (p->tok.kind == v__token__Kind_comment) {
 				comment = v__parser__Parser_comment(p);
