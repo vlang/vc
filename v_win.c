@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "bec3e07"
+#define V_COMMIT_HASH "3a340cb"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b3f2c62"
+#define V_COMMIT_HASH "bec3e07"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "bec3e07"
+#define V_CURRENT_COMMIT_HASH "3a340cb"
 #endif
 
 
@@ -4156,6 +4156,7 @@ v__table__Type  v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast
 void  v__checker__Checker_return_stmt(v__checker__Checker* c, v__ast__Return* return_stmt);
 void  v__checker__Checker_enum_decl(v__checker__Checker* c, v__ast__EnumDecl decl);
 void  v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt* assign_stmt);
+static void  v__checker__Checker_check_array_init_para_type(v__checker__Checker* c, string para, v__ast__Expr expr, v__token__Position pos);
 v__table__Type  v__checker__Checker_array_init(v__checker__Checker* c, v__ast__ArrayInit* array_init);
 static Option_int  v__checker__const_int_value(v__ast__ConstField cfield);
 static Option_v__ast__IntegerLiteral  v__checker__is_const_integer(v__ast__ConstField cfield);
@@ -25212,19 +25213,22 @@ void  v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt
 	c->expected_type = _const_v__table__void_type;
 }
 
+static void  v__checker__Checker_check_array_init_para_type(v__checker__Checker* c, string para, v__ast__Expr expr, v__token__Position pos) {
+	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, v__checker__Checker_expr(c, expr));
+	if (!(sym->kind == v__table__Kind_int || sym->kind == v__table__Kind_any_int)) {
+		v__checker__Checker_error(c, _STR("array %.*s\000 needs to be an int", 2, para), pos);
+	}
+}
+
 v__table__Type  v__checker__Checker_array_init(v__checker__Checker* c, v__ast__ArrayInit* array_init) {
 	v__table__Type elem_type = _const_v__table__void_type;
 	if (array_init->typ != _const_v__table__void_type) {
 		if (array_init->exprs.len == 0) {
 			if (array_init->has_cap) {
-				if (!(v__checker__Checker_expr(c, array_init->cap_expr) == _const_v__table__int_type || v__checker__Checker_expr(c, array_init->cap_expr) == _const_v__table__any_int_type)) {
-					v__checker__Checker_error(c, tos_lit("array cap needs to be an int"), array_init->pos);
-				}
+				v__checker__Checker_check_array_init_para_type(c, tos_lit("cap"), array_init->cap_expr, array_init->pos);
 			}
 			if (array_init->has_len) {
-				if (!(v__checker__Checker_expr(c, array_init->len_expr) == _const_v__table__int_type || v__checker__Checker_expr(c, array_init->len_expr) == _const_v__table__any_int_type)) {
-					v__checker__Checker_error(c, tos_lit("array len needs to be an int"), array_init->pos);
-				}
+				v__checker__Checker_check_array_init_para_type(c, tos_lit("len"), array_init->len_expr, array_init->pos);
 			}
 		}
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, array_init->elem_type);
@@ -25234,16 +25238,6 @@ v__table__Type  v__checker__Checker_array_init(v__checker__Checker* c, v__ast__A
 		return array_init->typ;
 	}
 	if (array_init->exprs.len == 0) {
-		if (array_init->has_cap) {
-			if (!(v__checker__Checker_expr(c, array_init->cap_expr) == _const_v__table__int_type || v__checker__Checker_expr(c, array_init->cap_expr) == _const_v__table__any_int_type)) {
-				v__checker__Checker_error(c, tos_lit("array cap needs to be an int"), array_init->pos);
-			}
-		}
-		if (array_init->has_len) {
-			if (!(v__checker__Checker_expr(c, array_init->len_expr) == _const_v__table__int_type || v__checker__Checker_expr(c, array_init->len_expr) == _const_v__table__any_int_type)) {
-				v__checker__Checker_error(c, tos_lit("array len needs to be an int"), array_init->pos);
-			}
-		}
 		v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(c->table, c->expected_type);
 		if (type_sym->kind != v__table__Kind_array) {
 			v__checker__Checker_error(c, tos_lit("array_init: no type specified (maybe: `[]Type{}` instead of `[]`)"), array_init->pos);
