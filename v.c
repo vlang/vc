@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "077e06b"
+#define V_COMMIT_HASH "b7dc5b2"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1e504fb"
+#define V_COMMIT_HASH "077e06b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "077e06b"
+#define V_CURRENT_COMMIT_HASH "b7dc5b2"
 #endif
 
 
@@ -194,6 +194,7 @@ typedef enum {
 	v__token__Precedence_index, // +10
 } v__token__Precedence;
 
+typedef struct time__StopWatchOptions time__StopWatchOptions;
 typedef struct time__StopWatch time__StopWatch;
 typedef struct time__Time time__Time;
 typedef enum {
@@ -1714,8 +1715,12 @@ struct time__Time {
 	u64 v_unix;
 };
 
+struct time__StopWatchOptions {
+	bool auto_start;
+};
+
 struct time__StopWatch {
-	u64 pause_time;
+	u64 elapsed;
 	u64 start;
 	u64 end;
 };
@@ -3305,7 +3310,7 @@ string time__FormatDate_str(time__FormatDate it); // auto
 string  time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatTime fmt_time, time__FormatDate fmt_date);
 Option_time__Time  time__parse(string s);
 Option_time__Time  time__parse_rfc2822(string s);
-time__StopWatch  time__new_stopwatch();
+time__StopWatch  time__new_stopwatch(time__StopWatchOptions opts);
 void  time__StopWatch_start(time__StopWatch* t);
 void  time__StopWatch_restart(time__StopWatch* t);
 void  time__StopWatch_stop(time__StopWatch* t);
@@ -13798,46 +13803,53 @@ Option_time__Time  time__parse_rfc2822(string s) {
 	return time__parse(tos(tmstr, count));
 }
 
-time__StopWatch  time__new_stopwatch() {
+time__StopWatch  time__new_stopwatch(time__StopWatchOptions opts) {
+	u64 initial = ((u64)(0));
+	if (opts.auto_start) {
+		initial = time__sys_mono_now();
+	}
 	return (time__StopWatch){
-		.pause_time = 0,
-		.start = time__sys_mono_now(),
+		.elapsed = 0,
+		.start = initial,
 		.end = 0,
 	};
 }
 
 void  time__StopWatch_start(time__StopWatch* t) {
-	if (t->pause_time == 0) {
-		t->start = time__sys_mono_now();
-	} else {
-		t->start += time__sys_mono_now() - t->pause_time;
-	}
+	t->start = time__sys_mono_now();
 	t->end = 0;
-	t->pause_time = 0;
 }
 
 void  time__StopWatch_restart(time__StopWatch* t) {
-	t->end = 0;
-	t->pause_time = 0;
 	t->start = time__sys_mono_now();
+	t->end = 0;
+	t->elapsed = 0;
 }
 
 void  time__StopWatch_stop(time__StopWatch* t) {
 	t->end = time__sys_mono_now();
-	t->pause_time = 0;
 }
 
 void  time__StopWatch_pause(time__StopWatch* t) {
-	t->pause_time = time__sys_mono_now();
-	t->end = t->pause_time;
+	if (t->start > 0) {
+		if (t->end == 0) {
+			t->elapsed += time__sys_mono_now() - t->start;
+		} else {
+			t->elapsed += t->end - t->start;
+		}
+	}
+	t->start = 0;
 }
 
 time__Duration  time__StopWatch_elapsed(time__StopWatch t) {
-	if (t.end == 0) {
-		return ((time__Duration)(time__sys_mono_now() - t.start));
-	} else {
-		return ((time__Duration)(t.end - t.start));
+	if (t.start > 0) {
+		if (t.end == 0) {
+			return ((time__Duration)(time__sys_mono_now() - t.start + t.elapsed));
+		} else {
+			return ((time__Duration)(t.end - t.start + t.elapsed));
+		}
 	}
+	return ((time__Duration)(t.elapsed));
 }
 
 
@@ -34345,7 +34357,9 @@ void  v__builder__compile(string command, v__pref__Preferences* pref) {
 	if (pref->is_verbose) {
 		println(tos_lit("builder.compile() pref:"));
 	}
-	time__StopWatch sw = time__new_stopwatch();
+	time__StopWatch sw = time__new_stopwatch((time__StopWatchOptions){
+		.auto_start = true,
+	});
 	if (pref->backend == v__pref__Backend_c) {
 		v__builder__Builder_compile_c(&b);
 	}else if (pref->backend == v__pref__Backend_js) {
