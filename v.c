@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "a4de507"
+#define V_COMMIT_HASH "b74e1bb"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "dd34e65"
+#define V_COMMIT_HASH "a4de507"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "a4de507"
+#define V_CURRENT_COMMIT_HASH "b74e1bb"
 #endif
 
 
@@ -17885,14 +17885,14 @@ sync__PoolProcessor*  sync__new_pool_processor(sync__PoolProcessorConfig context
 		v_panic(tos_lit("You need to pass a valid callback to new_pool_processor."));
 	}
 	runtime__nr_jobs();
-	sync__PoolProcessor* pool = (sync__PoolProcessor*)memdup(&(sync__PoolProcessor){	.thread_cb = ((voidptr*)(context.callback)),
+	sync__PoolProcessor* pool = (sync__PoolProcessor*)memdup(&(sync__PoolProcessor){	.thread_cb = ((voidptr)(context.callback)),
 		.njobs = context.maxjobs,
 		.items = __new_array_with_default(0, 0, sizeof(voidptr), 0),
 		.results = __new_array_with_default(0, 0, sizeof(voidptr), 0),
 		.ntask = 0,
 		.ntask_mtx = sync__new_mutex(),
 		.waitgroup = sync__new_waitgroup(),
-		.shared_context = ((voidptr*)(0)),
+		.shared_context = ((voidptr)(0)),
 		.thread_contexts = __new_array_with_default(0, 0, sizeof(voidptr), 0),
 	}, sizeof(sync__PoolProcessor));
 	return pool;
@@ -23422,6 +23422,8 @@ static v__ast__StructInit  v__parser__Parser_struct_init(v__parser__Parser* p, b
 	array_v__ast__StructInitField fields = __new_array_with_default(0, 0, sizeof(v__ast__StructInitField), 0);
 	int i = 0;
 	bool no_keys = p->peek_tok.kind != v__token__Kind_colon && p->tok.kind != v__token__Kind_rcbr;
+	bool saved_is_amp = p->is_amp;
+	p->is_amp = false;
 	while (p->tok.kind != v__token__Kind_rcbr && p->tok.kind != v__token__Kind_rpar) {
 		v__parser__Parser_check_comment(p);
 		string field_name = tos_lit("");
@@ -23463,6 +23465,7 @@ static v__ast__StructInit  v__parser__Parser_struct_init(v__parser__Parser* p, b
 	if (!short_syntax) {
 		v__parser__Parser_check(p, v__token__Kind_rcbr);
 	}
+	p->is_amp = saved_is_amp;
 	v__ast__StructInit node = (v__ast__StructInit){
 		.pos = (v__token__Position){
 		.len = last_pos.pos - first_pos.pos + last_pos.len,
@@ -23506,8 +23509,8 @@ static v__ast__InterfaceDecl  v__parser__Parser_interface_decl(v__parser__Parser
 		if (v__util__contains_capital(name)) {
 			v__parser__Parser_error(p, tos_lit("interface methods cannot contain uppercase letters, use snake_case instead"));
 		}
-		multi_return_array_v__table__Arg_bool mr_7551 = v__parser__Parser_fn_args(p);
-		array_v__table__Arg args2 = mr_7551.arg0;
+		multi_return_array_v__table__Arg_bool mr_7620 = v__parser__Parser_fn_args(p);
+		array_v__table__Arg args2 = mr_7620.arg0;
 		array_v__table__Arg args = new_array_from_c_array(1, 1, sizeof(v__table__Arg), _MOV((v__table__Arg[1]){
 		(v__table__Arg){
 			.name = tos_lit("x"),
@@ -23692,7 +23695,7 @@ v__table__Type  v__checker__Checker_promote(v__checker__Checker* c, v__table__Ty
 				if ((idx_lo == _const_v__table__int_type_idx || idx_lo == _const_v__table__i64_type_idx || idx_lo == _const_v__table__u32_type_idx || idx_lo == _const_v__table__u64_type_idx)) {
 					return _const_v__table__void_type;
 				} else {
-					return idx_hi;
+					return type_hi;
 				}
 			} else {
 				if ((idx_lo == _const_v__table__i64_type_idx || idx_lo == _const_v__table__u64_type_idx)) {
