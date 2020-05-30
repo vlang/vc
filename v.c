@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b7dc5b2"
+#define V_COMMIT_HASH "d148920"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "077e06b"
+#define V_COMMIT_HASH "b7dc5b2"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b7dc5b2"
+#define V_CURRENT_COMMIT_HASH "d148920"
 #endif
 
 
@@ -3667,6 +3667,7 @@ string  v__util__cescaped_path(string s);
 bool  v__util__is_fmt();
 string _const_v__util__v_version; // a string literal, inited later
 array_string _const_v__util__builtin_module_parts; // inited later
+map_string_array_string _const_v__util__external_module_dependencies_for_tool; // inited later
 string  v__util__vhash();
 string  v__util__full_hash();
 string  v__util__full_v_version(bool is_verbose);
@@ -3682,6 +3683,8 @@ int  v__util__imax(int a, int b);
 string  v__util__replace_op(string s);
 array_string  v__util__join_env_vflags_and_os_args();
 static array_string  v__util__non_empty(array_string arg);
+Option_bool  v__util__check_module_is_installed(string modulename, bool is_verbose);
+void  v__util__ensure_modules_for_all_tools_are_installed(bool is_verbose);
 voidptr _const_sync__no_result; // inited later
 sync__PoolProcessor*  sync__new_pool_processor(sync__PoolProcessorConfig context);
 void  sync__PoolProcessor_set_max_jobs(sync__PoolProcessor* pool, int njobs);
@@ -17649,18 +17652,32 @@ void  v__util__launch_tool(bool is_verbose, string tool_name, array_string args)
 		println(_STR("launch_tool should_compile: %.*s", 1, should_compile ? _SLIT("true") : _SLIT("false")));
 	}
 	if (should_compile) {
+		array_string emodules = (*(array_string*)map_get3(_const_v__util__external_module_dependencies_for_tool, tool_name, &(array_string[]){ __new_array(0, 1, sizeof(string)) }))
+;
+		// FOR IN array
+		array _t1 = emodules;
+		for (int _t2 = 0; _t2 < _t1.len; _t2++) {
+			string emodule = ((string*)_t1.data)[_t2];
+			Option_bool _t3 = v__util__check_module_is_installed(emodule, is_verbose);
+			if (!_t3.ok) {
+				string err = _t3.v_error;
+				int errcode = _t3.ecode;
+				v_panic(err);
+			}
+_t3;
+		}
 		string compilation_command = _STR("\"%.*s\000\" ", 2, vexe);
 		compilation_command = /*f*/string_add(compilation_command, _STR("\"%.*s\000\"", 2, tool_source));
 		if (is_verbose) {
 			println(_STR("Compiling %.*s\000 with: \"%.*s\000\"", 3, tool_name, compilation_command));
 		}
-		Option_os__Result _t1 = os__exec(compilation_command);
-		if (!_t1.ok) {
-			string err = _t1.v_error;
-			int errcode = _t1.ecode;
+		Option_os__Result _t4 = os__exec(compilation_command);
+		if (!_t4.ok) {
+			string err = _t4.v_error;
+			int errcode = _t4.ecode;
 			v_panic(err);
 		}
-		Option_os__Result tool_compilation = _t1;
+		Option_os__Result tool_compilation = _t4;
 		if (/*opt*/(*(os__Result*)tool_compilation.data).exit_code != 0) {
 			string err = tos_lit("Permission denied");
 			if (!string_contains(/*opt*/(*(os__Result*)tool_compilation.data).output, tos_lit("Permission denied"))) {
@@ -17786,6 +17803,80 @@ int _t1_len = arg.len;
 	if (string_ne(it, tos_lit(""))) array_push(&_t1, &it); 
  }
 		return  _t1;
+}
+
+Option_bool  v__util__check_module_is_installed(string modulename, bool is_verbose) {
+	string mpath = os__join_path(os__home_dir(), (varg_string){.len=2,.args={tos_lit(".vmodules"), modulename}});
+	string mod_v_file = os__join_path(mpath, (varg_string){.len=1,.args={tos_lit("v.mod")}});
+	string murl = _STR("https://github.com/vlang/%.*s", 1, modulename);
+	if (is_verbose) {
+		eprintln(_STR("check_module_is_installed: mpath: %.*s", 1, mpath));
+		eprintln(_STR("check_module_is_installed: mod_v_file: %.*s", 1, mod_v_file));
+		eprintln(_STR("check_module_is_installed: murl: %.*s", 1, murl));
+	}
+	if (os__exists(mod_v_file)) {
+		string vexe = v__pref__vexe_path();
+		string update_cmd = _STR("\"%.*s\000\" update \"%.*s\000\"", 3, vexe, modulename);
+		if (is_verbose) {
+			eprintln(_STR("check_module_is_installed: updating with %.*s\000 ...", 2, update_cmd));
+		}
+		Option_os__Result _t1 = os__exec(update_cmd);
+		if (!_t1.ok) {
+			string err = _t1.v_error;
+			int errcode = _t1.ecode;
+			return v_error(_STR("can not start %.*s\000, error: %.*s", 2, update_cmd, err));}
+		Option_os__Result update_res = _t1;
+		if (/*opt*/(*(os__Result*)update_res.data).exit_code != 0) {
+			eprintln(_STR("Warning: `%.*s\000` exists, but is not updated.\nV will continue, since updates can fail due to temporary network problems,\nand the existing module `%.*s\000` may still work.", 3, modulename, modulename));
+			if (is_verbose) {
+				eprintln(tos_lit("Details:"));
+				eprintln(/*opt*/(*(os__Result*)update_res.data).output);
+			}
+			eprintln(string_repeat(tos_lit("-"), 50));
+		}
+		return /*:)bool*/opt_ok(&(bool[]) { true }, sizeof(bool));
+	}
+	if (is_verbose) {
+		eprintln(_STR("check_module_is_installed: cloning from %.*s\000 ...", 2, murl));
+	}
+	Option_os__Result _t2 = os__exec(_STR("git clone %.*s\000 ~/.vmodules/%.*s", 2, murl, modulename));
+	if (!_t2.ok) {
+		string err = _t2.v_error;
+		int errcode = _t2.ecode;
+		return v_error(_STR("git is not installed, error: %.*s", 1, err));}
+	Option_os__Result cloning_res = _t2;
+	if (/*opt*/(*(os__Result*)cloning_res.data).exit_code != 0) {
+		return v_error(_STR("cloning failed, details: %.*s", 1, /*opt*/(*(os__Result*)cloning_res.data).output));}
+	if (!os__exists(mod_v_file)) {
+		return v_error(_STR("even after cloning, %.*s\000 is still missing", 2, mod_v_file));}
+	if (is_verbose) {
+		eprintln(tos_lit("check_module_is_installed: done"));
+	}
+	return /*:)bool*/opt_ok(&(bool[]) { true }, sizeof(bool));
+}
+
+void  v__util__ensure_modules_for_all_tools_are_installed(bool is_verbose) {
+	// FOR IN map
+	array_string keys__t1 = map_keys(&_const_v__util__external_module_dependencies_for_tool);
+	for (int _t2 = 0; _t2 < keys__t1.len; _t2++) {
+		string tool_name = ((string*)keys__t1.data)[_t2];
+		array_string tool_modules = (*(array_string*)map_get3(_const_v__util__external_module_dependencies_for_tool, tool_name, &(array_string[]){ __new_array(0, 1, sizeof(string)) }));
+		if (is_verbose) {
+			eprintln(_STR("Installing modules for tool: %.*s\000 ...", 2, tool_name));
+		}
+		// FOR IN array
+		array _t3 = tool_modules;
+		for (int _t4 = 0; _t4 < _t3.len; _t4++) {
+			string emodule = ((string*)_t3.data)[_t4];
+			Option_bool _t5 = v__util__check_module_is_installed(emodule, is_verbose);
+			if (!_t5.ok) {
+				string err = _t5.v_error;
+				int errcode = _t5.ecode;
+				v_panic(err);
+			}
+_t5;
+		}
+	}
 }
 
 // TypeDecl
@@ -34217,7 +34308,12 @@ static void  v__builder__Builder_build_thirdparty_obj_file(v__builder__Builder* 
 	}
 	string btarget = array_v__cflag__CFlag_c_options_before_target(moduleflags);
 	string atarget = array_v__cflag__CFlag_c_options_after_target(moduleflags);
-	string cmd = _STR("%.*s\000 %.*s\000 %.*s\000 -c -o \"%.*s\000\" %.*s\000 %.*s\000 ", 7, v->pref->ccompiler, v->pref->third_party_option, btarget, obj_path, cfiles, atarget);
+	string cppoptions = (string_contains(v->pref->ccompiler, tos_lit("++")) ? (
+		tos_lit(" -fpermissive -w ")
+	) : (
+		tos_lit("")
+	));
+	string cmd = _STR("%.*s\000 %.*s\000 %.*s\000 %.*s\000 -c -o \"%.*s\000\" %.*s\000 %.*s\000 ", 8, v->pref->ccompiler, cppoptions, v->pref->third_party_option, btarget, obj_path, cfiles, atarget);
 	Option_os__Result _t4 = os__exec(cmd);
 	if (!_t4.ok) {
 		string err = _t4.v_error;
@@ -37137,6 +37233,9 @@ tos_lit("void"), tos_lit("voidptr"), tos_lit("charptr"), tos_lit("byteptr"), tos
 	_const_v__util__builtin_module_parts = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){
 tos_lit("math.bits"), tos_lit("strconv"), tos_lit("strconv.ftoa"), tos_lit("hash.wyhash"), tos_lit("strings"), 
 }));
+	_const_v__util__external_module_dependencies_for_tool = new_map_init(1, sizeof(array_string), _MOV((string[1]){tos_lit("vdoc"), }), _MOV((array_string[1]){new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){
+tos_lit("markdown"), 
+})), }));
 	_const_sync__no_result = ((voidptr)(0));
 	_const_v__parser__supported_platforms = new_array_from_c_array(14, 14, sizeof(string), _MOV((string[14]){
 tos_lit("windows"), tos_lit("mac"), tos_lit("macos"), tos_lit("darwin"), tos_lit("linux"), tos_lit("freebsd"), tos_lit("openbsd"), tos_lit("netbsd"), tos_lit("dragonfly"), tos_lit("android"), tos_lit("js"), tos_lit("solaris"), tos_lit("haiku"), tos_lit("linux_or_macos"), 
