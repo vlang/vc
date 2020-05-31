@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "faf3248"
+#define V_COMMIT_HASH "f1f6fb1"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3a36ed3"
+#define V_COMMIT_HASH "faf3248"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "faf3248"
+#define V_CURRENT_COMMIT_HASH "f1f6fb1"
 #endif
 
 
@@ -31218,7 +31218,7 @@ static void  v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Type typ) {
 	strings__Builder enc = strings__new_builder(100);
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string styp = v__gen__Gen_typ(g, typ);
-	if ((string_eq(sym->name, tos_lit("int")) || string_eq(sym->name, tos_lit("string")) || string_eq(sym->name, tos_lit("bool")))) {
+	if ((string_eq(sym->name, tos_lit("int")) || string_eq(sym->name, tos_lit("string")) || string_eq(sym->name, tos_lit("bool")) || string_eq(sym->name, tos_lit("f32")))) {
 		return;
 	}
 	if (sym->kind == v__table__Kind_array) {
