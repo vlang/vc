@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "f1f6fb1"
+#define V_COMMIT_HASH "a5ddb61"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "faf3248"
+#define V_COMMIT_HASH "f1f6fb1"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "f1f6fb1"
+#define V_CURRENT_COMMIT_HASH "a5ddb61"
 #endif
 
 
@@ -34152,6 +34152,7 @@ _t1;
 // $if !linux {
 #ifndef __linux__
 			v__builder__Builder_cc_linux_cross(v);
+			return;
 		
 // } linux
 #endif
@@ -34341,6 +34342,31 @@ _t1;
 }
 
 static void  v__builder__Builder_cc_linux_cross(v__builder__Builder* c) {
+	string parent_dir = string_add(os__home_dir(), tos_lit(".vmodules"));
+	string sysroot = string_add(os__home_dir(), tos_lit(".vmodules/linuxroot/"));
+	if (!os__is_dir(sysroot)) {
+		println(tos_lit("Downloading files for Linux cross compilation (~18 MB)..."));
+		string zip_file = string_add(string_substr(sysroot, 0, sysroot.len - 1), tos_lit(".zip"));
+		os__system(_STR("curl -L -o %.*s\000 https://github.com/vlang/v/releases/download/0.1.27/linuxroot.zip ", 2, zip_file));
+		os__system(_STR("unzip -q %.*s\000 -d %.*s", 2, zip_file, parent_dir));
+		if (!os__is_dir(sysroot)) {
+			println(tos_lit("Failed to download."));
+			v_exit(1);
+		}
+	}
+	string cc_args = _STR("-fPIC -w -c -target x86_64-linux-gnu -c -o x.o %.*s\000 -I %.*s\000/include", 3, c->out_name_c, sysroot);
+	if (os__system(_STR("cc %.*s", 1, cc_args)) != 0) {
+		println(tos_lit("Cross compilation for Linux failed. Make sure you have clang installed."));
+	}
+	array_string args = new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){
+	tos_lit("-L SYSROOT/usr/lib/x86_64-linux-gnu/"), tos_lit("--sysroot=SYSROOT -v -o hi -m elf_x86_64"), tos_lit("-dynamic-linker /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"), tos_lit("SYSROOT/crt1.o SYSROOT/crti.o x.o"), tos_lit("SYSROOT/lib/x86_64-linux-gnu/libc.so.6"), tos_lit("-lc"), tos_lit("SYSROOT/crtn.o"), 
+	}));
+	string s = array_string_join(args, tos_lit(" "));
+	s = string_replace(s, tos_lit("SYSROOT"), sysroot);
+	if (os__system(string_add(_STR("%.*s\000/ld.lld ", 2, sysroot), s)) != 0) {
+		println(tos_lit("Cross compilation for Linux failed. Make sure you have clang installed."));
+	}
+	println(string_add(c->pref->out_name, tos_lit(" has been successfully compiled")));
 }
 
 static void  v__builder__Builder_cc_windows_cross(v__builder__Builder* c) {
