@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "a5ddb61"
+#define V_COMMIT_HASH "411868a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f1f6fb1"
+#define V_COMMIT_HASH "a5ddb61"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "a5ddb61"
+#define V_CURRENT_COMMIT_HASH "411868a"
 #endif
 
 
@@ -17712,8 +17712,8 @@ void  v__util__verror(string kind, string s) {
 
 Option_string  v__util__find_working_diff_command() {
 	// FOR IN array
-	array _t1 = new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){
-	tos_lit("colordiff"), tos_lit("diff"), tos_lit("colordiff.exe"), tos_lit("diff.exe"), 
+	array _t1 = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){
+	tos_lit("colordiff"), tos_lit("gdiff"), tos_lit("diff"), tos_lit("colordiff.exe"), tos_lit("diff.exe"), 
 	}));
 	for (int _t2 = 0; _t2 < _t1.len; _t2++) {
 		string diffcmd = ((string*)_t1.data)[_t2];
