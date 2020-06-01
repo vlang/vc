@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "3d83934"
+#define V_COMMIT_HASH "86862d6"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "945439d"
+#define V_COMMIT_HASH "3d83934"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "3d83934"
+#define V_CURRENT_COMMIT_HASH "86862d6"
 #endif
 
 
@@ -3951,7 +3951,8 @@ static void  v__vmod__ModFileCacher_mark_folders_as_vmod_free(v__vmod__ModFileCa
 array_string _const_v__vmod__mod_file_stop_paths; // inited later
 static bool  v__vmod__ModFileCacher_check_for_stop(v__vmod__ModFileCacher* mcache, string cfolder, array_string files);
 static array_string  v__vmod__ModFileCacher_get_files(v__vmod__ModFileCacher* mcache, string cfolder);
-v__vmod__ModFileCacher* _const_v__vmod__mod_file_cacher; // inited later
+v__vmod__ModFileCacher* _const_v__vmod__private_file_cacher; // inited later
+v__vmod__ModFileCacher*  v__vmod__get_cache();
 int  runtime__nr_cpus();
 int  runtime__nr_jobs();
 bool  runtime__is_32bit();
@@ -16244,6 +16245,7 @@ new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){
 	return _t14;
 }
 
+// Attr: [ref_only]
 v__vmod__ModFileCacher*  v__vmod__new_mod_file_cacher() {
 	return (v__vmod__ModFileCacher*)memdup(&(v__vmod__ModFileCacher){	.cache = new_map_1(sizeof(v__vmod__ModFileAndFolder)),
 		.folder_files = new_map_1(sizeof(array_string)),
@@ -16287,9 +16289,9 @@ v__vmod__ModFileAndFolder  v__vmod__ModFileCacher_get_by_folder(v__vmod__ModFile
 		return (*(v__vmod__ModFileAndFolder*)map_get3(mcache->cache, mfolder, &(v__vmod__ModFileAndFolder[]){ {0} }))
 ;
 	}
-	multi_return_array_string_v__vmod__ModFileAndFolder mr_2134 = v__vmod__ModFileCacher_traverse(mcache, mfolder);
-	array_string traversed_folders = mr_2134.arg0;
-	v__vmod__ModFileAndFolder res = mr_2134.arg1;
+	multi_return_array_string_v__vmod__ModFileAndFolder mr_2145 = v__vmod__ModFileCacher_traverse(mcache, mfolder);
+	array_string traversed_folders = mr_2145.arg0;
+	v__vmod__ModFileAndFolder res = mr_2145.arg1;
 	// FOR IN array
 	array _t1 = traversed_folders;
 	for (int _t2 = 0; _t2 < _t1.len; _t2++) {
@@ -16402,6 +16404,10 @@ static array_string  v__vmod__ModFileCacher_get_files(v__vmod__ModFileCacher* mc
 	map_set(&mcache->folder_files, cfolder, &(array_string[]) { 
 files });
 	return files;
+}
+
+v__vmod__ModFileCacher*  v__vmod__get_cache() {
+	return _const_v__vmod__private_file_cacher;
 }
 
 
@@ -19665,7 +19671,8 @@ v__token__Token  v__scanner__Scanner_scan(v__scanner__Scanner* s) {
 		}
 		if (string_eq(name, tos_lit("VMOD_FILE"))) {
 			if (s->vmod_file_content.len == 0) {
-				v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get_by_file(_const_v__vmod__mod_file_cacher, s->file_path);
+				v__vmod__ModFileCacher* mcache = v__vmod__get_cache();
+				v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get_by_file(mcache, s->file_path);
 				if (vmod_file_location.vmod_file.len == 0) {
 					v__scanner__Scanner_error(s, tos_lit("@VMOD_FILE can be used only in projects, that have v.mod file"));
 				}
@@ -20263,7 +20270,8 @@ static array_v__ast__Expr  v__parser__Parser_parse_assign_rhs(v__parser__Parser*
 }
 
 static string  v__parser__Parser_resolve_vroot(v__parser__Parser* p, string flag) {
-	v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get_by_folder(_const_v__vmod__mod_file_cacher, p->file_name_dir);
+	v__vmod__ModFileCacher* mcache = v__vmod__get_cache();
+	v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get_by_folder(mcache, p->file_name_dir);
 	if (vmod_file_location.vmod_file.len == 0) {
 		v__parser__Parser_error(p, string_add(string_add(tos_lit("To use @VROOT, you need"), _STR(" to have a \"v.mod\" file in %.*s\000,", 2, p->file_name_dir)), tos_lit(" or in one of its parent folders.")));
 	}
@@ -24713,9 +24721,6 @@ static void  v__checker__Checker_fail_if_immutable(v__checker__Checker* c, v__as
 				v__checker__Checker_error(c, _STR("`%.*s\000` is immutable, declare it with `mut` to make it mutable", 2, it->name), it->pos);
 			}
 		} else if (_IN(string, it->name, c->const_names)) {
-			if (string_contains(it->name, tos_lit("mod_file_cacher"))) {
-				return;
-			}
 			v__checker__Checker_error(c, _STR("cannot modify constant `%.*s\000`", 2, it->name), it->pos);
 		}}
 	}else if (expr.typ == 177 /* v.ast.IndexExpr */) {
@@ -34147,7 +34152,8 @@ inline static string  v__builder__module_path(string mod) {
 }
 
 Option_string  v__builder__Builder_find_module_path(v__builder__Builder b, string mod, string fpath) {
-	v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get_by_file(_const_v__vmod__mod_file_cacher, fpath);
+	v__vmod__ModFileCacher* mcache = v__vmod__get_cache();
+	v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get_by_file(mcache, fpath);
 	string mod_path = v__builder__module_path(mod);
 	array_string module_lookup_paths = __new_array_with_default(0, 0, sizeof(string), 0);
 	if (vmod_file_location.vmod_file.len != 0 && !_IN(string, vmod_file_location.vmod_folder, b.module_search_paths)) {
@@ -37754,7 +37760,7 @@ tos_lit("o"), tos_lit("output"), tos_lit("d"), tos_lit("define"), tos_lit("b"), 
 	_const_v__vmod__mod_file_stop_paths = new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){
 tos_lit(".git"), tos_lit(".hg"), tos_lit(".svn"), tos_lit(".v.mod.stop"), 
 }));
-	_const_v__vmod__mod_file_cacher = v__vmod__new_mod_file_cacher();
+	_const_v__vmod__private_file_cacher = v__vmod__new_mod_file_cacher();
 	_const_v__table__integer_type_idxs = new_array_from_c_array(9, 9, sizeof(int), _MOV((int[9]){
 _const_v__table__i8_type_idx, _const_v__table__i16_type_idx, _const_v__table__int_type_idx, _const_v__table__i64_type_idx, _const_v__table__byte_type_idx, _const_v__table__u16_type_idx, _const_v__table__u32_type_idx, _const_v__table__u64_type_idx, _const_v__table__any_int_type_idx, 
 }));
