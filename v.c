@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "945439d"
+#define V_COMMIT_HASH "3d83934"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "39bd058"
+#define V_COMMIT_HASH "945439d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "945439d"
+#define V_CURRENT_COMMIT_HASH "3d83934"
 #endif
 
 
@@ -310,6 +310,7 @@ typedef enum {
 	v__table__TypeFlag_unset, // 
 	v__table__TypeFlag_optional, // +1
 	v__table__TypeFlag_variadic, // +2
+	v__table__TypeFlag_generic, // +3
 } v__table__TypeFlag;
 
 typedef struct v__table__MultiReturn v__table__MultiReturn;
@@ -1808,16 +1809,16 @@ struct v__table__FnType {
 };
 
 struct v__doc__Doc {
-	strings__Builder out;
 	v__table__Table* table;
 	string mod;
+	strings__Builder out;
 	array_v__ast__Stmt stmts;
 };
 
 struct v__parser__Parser {
-	v__scanner__Scanner* scanner;
 	string file_name;
 	string file_name_dir;
+	v__scanner__Scanner* scanner;
 	v__token__Token tok;
 	v__token__Token prev_tok;
 	v__token__Token peek_tok;
@@ -2373,6 +2374,9 @@ struct v__ast__AnonFn {
 };
 
 struct v__gen__Gen {
+	v__table__Table* table;
+	v__pref__Preferences* pref;
+	string module_built;
 	strings__Builder out;
 	strings__Builder cheaders;
 	strings__Builder includes;
@@ -2389,9 +2393,6 @@ struct v__gen__Gen {
 	strings__Builder pcs_declarations;
 	strings__Builder hotcode_definitions;
 	strings__Builder options;
-	v__table__Table* table;
-	v__pref__Preferences* pref;
-	string module_built;
 	v__ast__File file;
 	v__ast__FnDecl* fn_decl;
 	string last_fn_c_name;
@@ -2432,8 +2433,8 @@ struct v__gen__Gen {
 
 struct v__gen__js__JsGen {
 	v__table__Table* table;
-	strings__Builder definitions;
 	v__pref__Preferences* pref;
+	strings__Builder definitions;
 	strings__Builder out;
 	map_string_strings__Builder namespaces;
 	map_string_array_string namespaces_pub;
@@ -2458,9 +2459,9 @@ struct v__gen__js__JsGen {
 
 struct v__builder__Builder {
 	v__table__Table* table;
-	v__checker__Checker checker;
 	string compiled_dir;
 	string module_path;
+	v__checker__Checker checker;
 	v__pref__Preferences* pref;
 	array_v__ast__File parsed_files;
 	v__ast__Scope* global_scope;
@@ -3586,7 +3587,7 @@ array_string _const_v__pref__list_of_flags_with_param; // inited later
 multi_return_v__pref__Preferences_string  v__pref__parse_args(array_string args);
 Option_v__pref__Backend  v__pref__backend_from_string(string s);
 static void  v__pref__parse_define(v__pref__Preferences* prefs, string define);
-array_string  v__pref__Preferences_should_compile_filtered_files(v__pref__Preferences* prefs, string dir, array_string files);
+array_string  v__pref__Preferences_should_compile_filtered_files(v__pref__Preferences* prefs, string dir, array_string files_);
 bool  v__pref__Preferences_should_compile_c(v__pref__Preferences* prefs, string file);
 bool  v__pref__Preferences_should_compile_js(v__pref__Preferences* prefs, string file);
 string  v__cflag__CFlag_str(v__cflag__CFlag* c);
@@ -15205,8 +15206,9 @@ static void  v__pref__parse_define(v__pref__Preferences* prefs, string define) {
 	v_exit(1);
 }
 
-array_string  v__pref__Preferences_should_compile_filtered_files(v__pref__Preferences* prefs, string dir, array_string files) {
+array_string  v__pref__Preferences_should_compile_filtered_files(v__pref__Preferences* prefs, string dir, array_string files_) {
 	array_string res = __new_array_with_default(0, 0, sizeof(string), 0);
+	array_string files = array_clone(&files_);
 	array_string_sort(&files);
 	// FOR IN array
 	array _t1 = files;
@@ -20576,7 +20578,7 @@ static v__ast__FnDecl  v__parser__Parser_fn_decl(v__parser__Parser* p) {
 				continue;
 			}
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(p->table, arg.typ);
-			if (!(sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_map || sym->kind == v__table__Kind_placeholder) && !v__table__Type_is_ptr(arg.typ)) {
+			if (!(sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_map || sym->kind == v__table__Kind_placeholder) && arg.typ != _const_v__table__t_type && !v__table__Type_is_ptr(arg.typ)) {
 				v__parser__Parser_error(p, string_add(tos_lit("mutable arguments are only allowed for arrays, maps, and structs\n"), tos_lit("return values instead: `fn foo(n mut int) {` => `fn foo(n int) int {`")));
 			}
 		}
@@ -20666,9 +20668,9 @@ static v__ast__AnonFn  v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_7324 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_7324.arg0;
-	bool is_variadic = mr_7324.arg1;
+	multi_return_array_v__table__Arg_bool mr_7355 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_7355.arg0;
+	bool is_variadic = mr_7355.arg1;
 	// FOR IN array
 	array _t1 = args;
 	for (int _t2 = 0; _t2 < _t1.len; _t2++) {
@@ -20753,7 +20755,7 @@ static multi_return_array_v__table__Arg_bool  v__parser__Parser_fn_args(v__parse
 				is_variadic = true;
 			}
 			v__table__Type arg_type = v__parser__Parser_parse_type(p);
-			if (is_mut) {
+			if (is_mut && arg_type != _const_v__table__t_type) {
 				arg_type = v__table__Type_set_nr_muls(arg_type, 1);
 			}
 			if (is_variadic) {
@@ -20794,7 +20796,7 @@ static multi_return_array_v__table__Arg_bool  v__parser__Parser_fn_args(v__parse
 				is_variadic = true;
 			}
 			v__table__Type typ = v__parser__Parser_parse_type(p);
-			if (is_mut) {
+			if (is_mut && typ != _const_v__table__t_type) {
 				if (v__table__Type_is_ptr(typ)) {
 				}
 				typ = v__table__Type_set_nr_muls(typ, 1);
@@ -21511,9 +21513,9 @@ v__table__Type  v__parser__Parser_parse_any_type(v__parser__Parser* p, v__table_
 v__ast__Stmt  v__parser__parse_stmt(string text, v__table__Table* table, v__ast__Scope* scope) {
 	v__scanner__Scanner* s = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments);
 	v__parser__Parser p = (v__parser__Parser){
-		.scanner = s,
 		.file_name = (string){.str=""},
 		.file_name_dir = (string){.str=""},
+		.scanner = s,
 		.tok = {0},
 		.prev_tok = {0},
 		.peek_tok = {0},
@@ -21616,9 +21618,9 @@ v__ast__Stmt  v__parser__parse_stmt(string text, v__table__Table* table, v__ast_
 v__ast__File  v__parser__parse_file(string path, v__table__Table* b_table, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, v__ast__Scope* global_scope) {
 	array_v__ast__Stmt stmts = __new_array_with_default(0, 0, sizeof(v__ast__Stmt), 0);
 	v__parser__Parser p = (v__parser__Parser){
-		.scanner = v__scanner__new_scanner_file(path, comments_mode),
 		.file_name = path,
 		.file_name_dir = os__dir(path),
+		.scanner = v__scanner__new_scanner_file(path, comments_mode),
 		.tok = {0},
 		.prev_tok = {0},
 		.peek_tok = {0},
@@ -24453,7 +24455,10 @@ v__table__Type  v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__I
 }
 
 static void  v__checker__Checker_fail_if_immutable(v__checker__Checker* c, v__ast__Expr expr) {
-	if (expr.typ == 143 /* v.ast.Ident */) {
+	if (expr.typ == 203 /* v.ast.CastExpr */) {
+		v__ast__CastExpr* it = (v__ast__CastExpr*)expr.obj; // ST it
+		return;
+	}else if (expr.typ == 143 /* v.ast.Ident */) {
 		v__ast__Ident* it = (v__ast__Ident*)expr.obj; // ST it
 		v__ast__Scope* scope = v__ast__Scope_innermost(c->file.scope, it->pos.pos);
 		{ /* if guard */ Option_v__ast__Var_ptr v = v__ast__Scope_find_var(scope, it->name);
@@ -24462,7 +24467,10 @@ static void  v__checker__Checker_fail_if_immutable(v__checker__Checker* c, v__as
 				v__checker__Checker_error(c, _STR("`%.*s\000` is immutable, declare it with `mut` to make it mutable", 2, it->name), it->pos);
 			}
 		} else if (_IN(string, it->name, c->const_names)) {
-			v__checker__Checker_error(c, _STR("cannot assign to constant `%.*s\000`", 2, it->name), it->pos);
+			if (string_contains(it->name, tos_lit("mod_file_cacher"))) {
+				return;
+			}
+			v__checker__Checker_error(c, _STR("cannot modify constant `%.*s\000`", 2, it->name), it->pos);
 		}}
 	}else if (expr.typ == 154 /* v.ast.IndexExpr */) {
 		v__ast__IndexExpr* it = (v__ast__IndexExpr*)expr.obj; // ST it
@@ -24618,6 +24626,9 @@ v__table__Type  v__checker__Checker_call_method(v__checker__Checker* c, v__ast__
 	if (method.ok) {
 		if (!/*opt*/(*(v__table__Fn*)method.data).is_pub && !c->is_builtin_mod && !c->pref->is_test && string_ne(left_type_sym->mod, c->mod) && string_ne(left_type_sym->mod, tos_lit(""))) {
 			v__checker__Checker_error(c, _STR("method `%.*s\000.%.*s\000` is private", 3, left_type_sym->name, method_name), call_expr->pos);
+		}
+		if ((*(v__table__Arg*)array_get(/*opt*/(*(v__table__Fn*)method.data).args, 0)).is_mut) {
+			v__checker__Checker_fail_if_immutable(c, call_expr->left);
 		}
 		if (/*opt*/(*(v__table__Fn*)method.data).return_type == _const_v__table__void_type && /*opt*/(*(v__table__Fn*)method.data).ctdefine.len > 0 && !_IN(string, /*opt*/(*(v__table__Fn*)method.data).ctdefine, c->pref->compile_defines)) {
 			call_expr->should_be_skipped = true;
@@ -24854,6 +24865,8 @@ v__table__Type  v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__Call
 		}
 		if (arg.is_mut && !call_arg.is_mut) {
 			v__checker__Checker_error(c, _STR("`%.*s\000` is a mutable argument, you need to provide `mut`: `%.*s\000(mut ...)`", 3, arg.name, call_expr->name), v__ast__Expr_position(call_arg.expr));
+		} else if (!arg.is_mut && call_arg.is_mut) {
+			v__checker__Checker_error(c, _STR("`%.*s\000` argument is not mutable, `mut` is not needed`", 2, arg.name), v__ast__Expr_position(call_arg.expr));
 		}
 		if (arg_typ_sym->kind == v__table__Kind_interface_) {
 			v__checker__Checker_type_implements(c, typ, arg.typ, v__ast__Expr_position(call_arg.expr));
@@ -26319,6 +26332,9 @@ static void  v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast__FnDecl 
 
 string  v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__Preferences* pref) {
 	v__gen__Gen g = (v__gen__Gen){
+		.table = table,
+		.pref = pref,
+		.module_built = string_after(pref->path, tos_lit("vlib/")),
 		.out = strings__new_builder(1000),
 		.cheaders = strings__new_builder(8192),
 		.includes = strings__new_builder(100),
@@ -26335,9 +26351,6 @@ string  v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__
 		.pcs_declarations = strings__new_builder(100),
 		.hotcode_definitions = strings__new_builder(100),
 		.options = strings__new_builder(100),
-		.table = table,
-		.pref = pref,
-		.module_built = string_after(pref->path, tos_lit("vlib/")),
 		.file = {0},
 		.fn_decl = 0,
 		.last_fn_c_name = (string){.str=""},
@@ -28912,9 +28925,9 @@ static void  v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__TypeSymbol 
 					if (v__table__Type_flag_is(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_75595 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_75595.arg0;
-						string base = mr_75595.arg1;
+						multi_return_string_string mr_75594 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_75594.arg0;
+						string base = mr_75594.arg1;
 						array_push(&g->optionals, _MOV((string[]){ styp }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -29183,9 +29196,9 @@ static void  v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInte
 
 static Option_bool  v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr expr, v__table__Type etype) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, etype);
-	multi_return_bool_bool_int mr_84141 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_84141.arg0;
-	bool str_method_expects_ptr = mr_84141.arg1;
+	multi_return_bool_bool_int mr_84140 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_84140.arg0;
+	bool str_method_expects_ptr = mr_84140.arg1;
 	if (v__table__Type_flag_is(etype, v__table__TypeFlag_variadic)) {
 		string str_fn_name = v__gen__Gen_gen_str_for_type(g, etype);
 		v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -29396,11 +29409,11 @@ static void  v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExp
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->cur_fn->name, tos_lit("main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_90008 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_90008.arg0;
-				string pafile = mr_90008.arg1;
-				string pamod = mr_90008.arg2;
-				string pafn = mr_90008.arg3;
+				multi_return_int_string_string_string mr_90007 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_90007.arg0;
+				string pafile = mr_90007.arg1;
+				string pamod = mr_90007.arg2;
+				string pafn = mr_90007.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(%.*s\000.v_error);", 2, cvar_name));
@@ -29835,10 +29848,10 @@ inline static string  v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Typ
 static string  v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_100956 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_100956.arg0;
-	bool str_method_expects_ptr = mr_100956.arg1;
-	int str_nr_args = mr_100956.arg2;
+	multi_return_bool_bool_int mr_100955 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_100955.arg0;
+	bool str_method_expects_ptr = mr_100955.arg1;
+	int str_nr_args = mr_100955.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -30030,9 +30043,9 @@ static void  v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info,
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_108205 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_108205.arg0;
-	bool str_method_expects_ptr = mr_108205.arg1;
+	multi_return_bool_bool_int mr_108204 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_108204.arg0;
+	bool str_method_expects_ptr = mr_108204.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (
@@ -30088,9 +30101,9 @@ static void  v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__Array
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_111034 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_111034.arg0;
-	bool str_method_expects_ptr = mr_111034.arg1;
+	multi_return_bool_bool_int mr_111033 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_111033.arg0;
+	bool str_method_expects_ptr = mr_111033.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (
@@ -31334,8 +31347,8 @@ static void  v__gen__Gen_write_str_fn_definitions(v__gen__Gen* g) {
 
 string  v__gen__js__gen(array_v__ast__File files, v__table__Table* table, v__pref__Preferences* pref) {
 	v__gen__js__JsGen* g = (v__gen__js__JsGen*)memdup(&(v__gen__js__JsGen){	.table = table,
-		.definitions = strings__new_builder(100),
 		.pref = pref,
+		.definitions = strings__new_builder(100),
 		.out = strings__new_builder(100),
 		.namespaces = new_map_1(sizeof(strings__Builder)),
 		.namespaces_pub = new_map_1(sizeof(array_string)),
@@ -33534,9 +33547,9 @@ void  v__gen__x64__Gen_error_with_pos(v__gen__x64__Gen* g, string s, v__token__P
 // TypeDecl
 string  v__doc__doc(string mod, v__table__Table* table, v__pref__Preferences* prefs) {
 	v__doc__Doc d = (v__doc__Doc){
-		.out = strings__new_builder(1000),
 		.table = table,
 		.mod = mod,
+		.out = strings__new_builder(1000),
 		.stmts = __new_array(0, 1, sizeof(v__ast__Stmt)),
 	};
 	string vlib_path = string_add(os__dir(v__pref__vexe_path()), tos_lit("/vlib"));
@@ -33706,9 +33719,9 @@ v__builder__Builder  v__builder__new_builder(v__pref__Preferences* pref) {
 	}
 	return (v__builder__Builder){
 		.table = table,
-		.checker = v__checker__new_checker(table, pref),
 		.compiled_dir = compiled_dir,
 		.module_path = (string){.str=""},
+		.checker = v__checker__new_checker(table, pref),
 		.pref = pref,
 		.parsed_files = __new_array(0, 1, sizeof(v__ast__File)),
 		.global_scope = (v__ast__Scope*)memdup(&(v__ast__Scope){	.objects = new_map_1(sizeof(v__ast__ScopeObject)),
