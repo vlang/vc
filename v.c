@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "c6a7d0a"
+#define V_COMMIT_HASH "6161392"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ae8f7cf"
+#define V_COMMIT_HASH "c6a7d0a"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c6a7d0a"
+#define V_CURRENT_COMMIT_HASH "6161392"
 #endif
 
 
@@ -31099,7 +31099,7 @@ static void  v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Type typ) {
 	strings__Builder enc = strings__new_builder(100);
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string styp = v__gen__Gen_typ(g, typ);
-	if ((string_eq(sym->name, tos_lit("int")) || string_eq(sym->name, tos_lit("string")) || string_eq(sym->name, tos_lit("bool")) || string_eq(sym->name, tos_lit("f32")))) {
+	if ((string_eq(sym->name, tos_lit("int")) || string_eq(sym->name, tos_lit("string")) || string_eq(sym->name, tos_lit("bool")) || string_eq(sym->name, tos_lit("f32")) || string_eq(sym->name, tos_lit("f64")) || string_eq(sym->name, tos_lit("i8")) || string_eq(sym->name, tos_lit("i16")) || string_eq(sym->name, tos_lit("i64")) || string_eq(sym->name, tos_lit("byte")) || string_eq(sym->name, tos_lit("u16")) || string_eq(sym->name, tos_lit("u32")) || string_eq(sym->name, tos_lit("u64")) || string_eq(sym->name, tos_lit("bool")))) {
 		return;
 	}
 	if (sym->kind == v__table__Kind_array) {
