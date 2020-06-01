@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "a24bf80"
+#define V_COMMIT_HASH "a7c8483"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4956ca6"
+#define V_COMMIT_HASH "a24bf80"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "a24bf80"
+#define V_CURRENT_COMMIT_HASH "a7c8483"
 #endif
 
 
@@ -1893,6 +1893,7 @@ struct v__gen__x64__SectionConfig {
 
 typedef byte array_fixed_byte_26 [26];
 typedef voidptr array_fixed_voidptr_100 [100];
+typedef byte array_fixed_byte_1024 [1024];
 typedef u16 array_fixed_u16_32768 [32768];
 typedef byte array_fixed_byte_4096 [4096];
 typedef byte array_fixed_byte_50 [50];
@@ -2977,7 +2978,6 @@ f32  strings__levenshtein_distance_percentage(string a, string b);
 f32  strings__dice_coefficient(string s1, string s2);
 string  strings__repeat(byte c, int n);
 string  strings__repeat_string(string s, int n);
-u64  hash__wyhash__rand_u64(u64* seed);
 u64 _const_hash__wyhash__wyp0; // inited later
 u64 _const_hash__wyhash__wyp1; // inited later
 u64 _const_hash__wyhash__wyp2; // inited later
@@ -2988,7 +2988,7 @@ u64  hash__wyhash__sum64_string(string key, u64 seed);
 u64  hash__wyhash__sum64(array_byte key, u64 seed);
 static u64  hash__wyhash__wyhash64(byteptr key, u64 len, u64 seed_);
 static u64  hash__wyhash__wyrotr(u64 v, u32 k);
-static u64  hash__wyhash__wymum(u64 a, u64 b);
+u64  hash__wyhash__wymum(u64 a, u64 b);
 static u64  hash__wyhash__wyr3(byteptr p, u64 k);
 static u64  hash__wyhash__wyr4(byteptr p);
 static u64  hash__wyhash__wyr8(byteptr p);
@@ -5406,15 +5406,6 @@ string  strings__repeat_string(string s, int n) {
 	return tos((byteptr)bytes, blen);
 }
 
-u64  hash__wyhash__rand_u64(u64* seed) {
-	u64* seed0 = seed;
-		u64 seed1 = *seed0;
-		seed1 += _const_hash__wyhash__wyp0;
-		*seed0 = seed1;
-		return hash__wyhash__wymum((seed1 ^ _const_hash__wyhash__wyp1), seed1);
-	return 0;
-}
-
 
 // Attr: [inline]
 inline u64  hash__wyhash__wyhash_c(byteptr key, u64 len, u64 seed) {
@@ -5476,7 +5467,7 @@ inline static u64  hash__wyhash__wyrotr(u64 v, u32 k) {
 }
 
 // Attr: [inline]
-inline static u64  hash__wyhash__wymum(u64 a, u64 b) {
+inline u64  hash__wyhash__wymum(u64 a, u64 b) {
 	u32 mask32 = ((u32)(4294967295));
 	u64 x0 = (a & mask32);
 	u64 x1 = a >> 32;
@@ -8982,6 +8973,9 @@ int  proc_pidpath(int, voidptr, int);
 
 
 
+
+
+
 // Attr: [inline]
 inline string  f64_str(f64 d) {
 	return strconv__ftoa__ftoa_64(d);
@@ -12141,9 +12135,33 @@ Option_bool  os__cp(string old, string v_new) {
 		}
 	
 #else
-		os__system(_STR("cp \"%.*s\000\" \"%.*s\000\"", 3, old, v_new));
-		Option_bool _t3;/*:)bool*/opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t3), sizeof(bool));
-		return _t3;
+		int fp_from = open(old.str, O_RDONLY);
+		if (fp_from < 0) {
+			/*opt promotion*/ Option _t3 = error_with_code(_STR("cp: failed to open %.*s", 1, old), ((int)(fp_from)));return *(Option_bool*)&_t3;
+		}
+		int fp_to = open(v_new.str, ((O_WRONLY | O_CREAT) | O_TRUNC));
+		if (fp_to < 0) {
+			close(fp_from);
+			/*opt promotion*/ Option _t4 = error_with_code(_STR("cp: failed to write to %.*s", 1, v_new), ((int)(fp_to)));return *(Option_bool*)&_t4;
+		}
+		array_fixed_byte_1024 buf = {0};
+		int count = 0;
+		while (1) {
+			count = read(fp_from, buf, 1024);
+			if (count == 0) {
+				break;
+			}
+			if (write(fp_to, buf, count) < 0) {
+				/*opt promotion*/ Option _t5 = error_with_code(_STR("cp: failed to write to %.*s", 1, v_new), ((int)(-1)));return *(Option_bool*)&_t5;
+			}
+		}
+		struct stat from_attr;
+		stat(old.str, &from_attr);
+		if (chmod(v_new.str, from_attr.st_mode) < 0) {
+			/*opt promotion*/ Option _t6 = error_with_code(_STR("failed to set permissions for %.*s", 1, v_new), ((int)(-1)));return *(Option_bool*)&_t6;
+		}
+		Option_bool _t7;/*:)bool*/opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t7), sizeof(bool));
+		return _t7;
 	
 // } windows
 #endif
@@ -12451,8 +12469,8 @@ static int  os__vpclose(voidptr f) {
 		return _pclose(f);
 	
 #else
-		multi_return_int_bool mr_9641 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_9641.arg0;
+		multi_return_int_bool mr_10392 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_10392.arg0;
 		return ret;
 	
 // } windows
