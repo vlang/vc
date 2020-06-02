@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "4e51867"
+#define V_COMMIT_HASH "640688d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "78f8a8a"
+#define V_COMMIT_HASH "4e51867"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4e51867"
+#define V_CURRENT_COMMIT_HASH "640688d"
 #endif
 
 
@@ -122,78 +122,79 @@ typedef enum {
 	v__token__Kind_left_shift, // +28
 	v__token__Kind_right_shift, // +29
 	v__token__Kind_not_in, // +30
-	v__token__Kind_assign, // +31
-	v__token__Kind_decl_assign, // +32
-	v__token__Kind_plus_assign, // +33
-	v__token__Kind_minus_assign, // +34
-	v__token__Kind_div_assign, // +35
-	v__token__Kind_mult_assign, // +36
-	v__token__Kind_xor_assign, // +37
-	v__token__Kind_mod_assign, // +38
-	v__token__Kind_or_assign, // +39
-	v__token__Kind_and_assign, // +40
-	v__token__Kind_right_shift_assign, // +41
-	v__token__Kind_left_shift_assign, // +42
-	v__token__Kind_lcbr, // +43
-	v__token__Kind_rcbr, // +44
-	v__token__Kind_lpar, // +45
-	v__token__Kind_rpar, // +46
-	v__token__Kind_lsbr, // +47
-	v__token__Kind_rsbr, // +48
-	v__token__Kind_eq, // +49
-	v__token__Kind_ne, // +50
-	v__token__Kind_gt, // +51
-	v__token__Kind_lt, // +52
-	v__token__Kind_ge, // +53
-	v__token__Kind_le, // +54
-	v__token__Kind_comment, // +55
-	v__token__Kind_nl, // +56
-	v__token__Kind_dot, // +57
-	v__token__Kind_dotdot, // +58
-	v__token__Kind_ellipsis, // +59
-	v__token__Kind_keyword_beg, // +60
-	v__token__Kind_key_as, // +61
-	v__token__Kind_key_asm, // +62
-	v__token__Kind_key_assert, // +63
-	v__token__Kind_key_atomic, // +64
-	v__token__Kind_key_break, // +65
-	v__token__Kind_key_const, // +66
-	v__token__Kind_key_continue, // +67
-	v__token__Kind_key_defer, // +68
-	v__token__Kind_key_else, // +69
-	v__token__Kind_key_embed, // +70
-	v__token__Kind_key_enum, // +71
-	v__token__Kind_key_false, // +72
-	v__token__Kind_key_for, // +73
-	v__token__Kind_key_fn, // +74
-	v__token__Kind_key_global, // +75
-	v__token__Kind_key_go, // +76
-	v__token__Kind_key_goto, // +77
-	v__token__Kind_key_if, // +78
-	v__token__Kind_key_import, // +79
-	v__token__Kind_key_in, // +80
-	v__token__Kind_key_interface, // +81
-	v__token__Kind_key_is, // +82
-	v__token__Kind_key_match, // +83
-	v__token__Kind_key_module, // +84
-	v__token__Kind_key_mut, // +85
-	v__token__Kind_key_none, // +86
-	v__token__Kind_key_return, // +87
-	v__token__Kind_key_select, // +88
-	v__token__Kind_key_sizeof, // +89
-	v__token__Kind_key_offsetof, // +90
-	v__token__Kind_key_struct, // +91
-	v__token__Kind_key_switch, // +92
-	v__token__Kind_key_true, // +93
-	v__token__Kind_key_type, // +94
-	v__token__Kind_key_typeof, // +95
-	v__token__Kind_key_orelse, // +96
-	v__token__Kind_key_union, // +97
-	v__token__Kind_key_pub, // +98
-	v__token__Kind_key_static, // +99
-	v__token__Kind_key_unsafe, // +100
-	v__token__Kind_keyword_end, // +101
-	v__token__Kind__end_, // +102
+	v__token__Kind_not_is, // +31
+	v__token__Kind_assign, // +32
+	v__token__Kind_decl_assign, // +33
+	v__token__Kind_plus_assign, // +34
+	v__token__Kind_minus_assign, // +35
+	v__token__Kind_div_assign, // +36
+	v__token__Kind_mult_assign, // +37
+	v__token__Kind_xor_assign, // +38
+	v__token__Kind_mod_assign, // +39
+	v__token__Kind_or_assign, // +40
+	v__token__Kind_and_assign, // +41
+	v__token__Kind_right_shift_assign, // +42
+	v__token__Kind_left_shift_assign, // +43
+	v__token__Kind_lcbr, // +44
+	v__token__Kind_rcbr, // +45
+	v__token__Kind_lpar, // +46
+	v__token__Kind_rpar, // +47
+	v__token__Kind_lsbr, // +48
+	v__token__Kind_rsbr, // +49
+	v__token__Kind_eq, // +50
+	v__token__Kind_ne, // +51
+	v__token__Kind_gt, // +52
+	v__token__Kind_lt, // +53
+	v__token__Kind_ge, // +54
+	v__token__Kind_le, // +55
+	v__token__Kind_comment, // +56
+	v__token__Kind_nl, // +57
+	v__token__Kind_dot, // +58
+	v__token__Kind_dotdot, // +59
+	v__token__Kind_ellipsis, // +60
+	v__token__Kind_keyword_beg, // +61
+	v__token__Kind_key_as, // +62
+	v__token__Kind_key_asm, // +63
+	v__token__Kind_key_assert, // +64
+	v__token__Kind_key_atomic, // +65
+	v__token__Kind_key_break, // +66
+	v__token__Kind_key_const, // +67
+	v__token__Kind_key_continue, // +68
+	v__token__Kind_key_defer, // +69
+	v__token__Kind_key_else, // +70
+	v__token__Kind_key_embed, // +71
+	v__token__Kind_key_enum, // +72
+	v__token__Kind_key_false, // +73
+	v__token__Kind_key_for, // +74
+	v__token__Kind_key_fn, // +75
+	v__token__Kind_key_global, // +76
+	v__token__Kind_key_go, // +77
+	v__token__Kind_key_goto, // +78
+	v__token__Kind_key_if, // +79
+	v__token__Kind_key_import, // +80
+	v__token__Kind_key_in, // +81
+	v__token__Kind_key_interface, // +82
+	v__token__Kind_key_is, // +83
+	v__token__Kind_key_match, // +84
+	v__token__Kind_key_module, // +85
+	v__token__Kind_key_mut, // +86
+	v__token__Kind_key_none, // +87
+	v__token__Kind_key_return, // +88
+	v__token__Kind_key_select, // +89
+	v__token__Kind_key_sizeof, // +90
+	v__token__Kind_key_offsetof, // +91
+	v__token__Kind_key_struct, // +92
+	v__token__Kind_key_switch, // +93
+	v__token__Kind_key_true, // +94
+	v__token__Kind_key_type, // +95
+	v__token__Kind_key_typeof, // +96
+	v__token__Kind_key_orelse, // +97
+	v__token__Kind_key_union, // +98
+	v__token__Kind_key_pub, // +99
+	v__token__Kind_key_static, // +100
+	v__token__Kind_key_unsafe, // +101
+	v__token__Kind_keyword_end, // +102
+	v__token__Kind__end_, // +103
 } v__token__Kind;
 
 typedef enum {
@@ -13872,6 +13873,8 @@ tos_lit("...") });
 tos_lit(",") });
 	array_set(&s, v__token__Kind_not_in, &(string[]) { 
 tos_lit("!in") });
+	array_set(&s, v__token__Kind_not_is, &(string[]) { 
+tos_lit("!is") });
 	array_set(&s, v__token__Kind_semicolon, &(string[]) { 
 tos_lit(";") });
 	array_set(&s, v__token__Kind_colon, &(string[]) { 
@@ -14123,7 +14126,7 @@ int  v__token__Token_precedence(v__token__Token tok) {
 		return ((int)(v__token__Precedence_eq));
 	}else if (tok.kind == v__token__Kind_assign || tok.kind == v__token__Kind_plus_assign || tok.kind == v__token__Kind_minus_assign || tok.kind == v__token__Kind_div_assign || tok.kind == v__token__Kind_mod_assign || tok.kind == v__token__Kind_or_assign || tok.kind == v__token__Kind_and_assign || tok.kind == v__token__Kind_left_shift_assign || tok.kind == v__token__Kind_right_shift_assign || tok.kind == v__token__Kind_mult_assign || tok.kind == v__token__Kind_xor_assign) {
 		return ((int)(v__token__Precedence_assign));
-	}else if (tok.kind == v__token__Kind_key_in || tok.kind == v__token__Kind_not_in || tok.kind == v__token__Kind_key_as || tok.kind == v__token__Kind_key_is) {
+	}else if (tok.kind == v__token__Kind_key_in || tok.kind == v__token__Kind_not_in || tok.kind == v__token__Kind_key_as || tok.kind == v__token__Kind_key_is || tok.kind == v__token__Kind_not_is) {
 		return ((int)(v__token__Precedence_in_as));
 	}else if (tok.kind == v__token__Kind_logical_or || tok.kind == v__token__Kind_and) {
 		return ((int)(v__token__Precedence_cond));
@@ -14149,7 +14152,7 @@ bool  v__token__Kind_is_start_of_type(v__token__Kind k) {
 }
 
 bool  v__token__Kind_is_infix(v__token__Kind kind) {
-	return (kind == v__token__Kind_plus || kind == v__token__Kind_minus || kind == v__token__Kind_mod || kind == v__token__Kind_mul || kind == v__token__Kind_div || kind == v__token__Kind_eq || kind == v__token__Kind_ne || kind == v__token__Kind_gt || kind == v__token__Kind_lt || kind == v__token__Kind_key_in || kind == v__token__Kind_key_as || kind == v__token__Kind_ge || kind == v__token__Kind_le || kind == v__token__Kind_logical_or || kind == v__token__Kind_xor || kind == v__token__Kind_not_in || kind == v__token__Kind_key_is || kind == v__token__Kind_and || kind == v__token__Kind_dot || kind == v__token__Kind_pipe || kind == v__token__Kind_amp || kind == v__token__Kind_left_shift || kind == v__token__Kind_right_shift);
+	return (kind == v__token__Kind_plus || kind == v__token__Kind_minus || kind == v__token__Kind_mod || kind == v__token__Kind_mul || kind == v__token__Kind_div || kind == v__token__Kind_eq || kind == v__token__Kind_ne || kind == v__token__Kind_gt || kind == v__token__Kind_lt || kind == v__token__Kind_key_in || kind == v__token__Kind_key_as || kind == v__token__Kind_ge || kind == v__token__Kind_le || kind == v__token__Kind_logical_or || kind == v__token__Kind_xor || kind == v__token__Kind_not_in || kind == v__token__Kind_key_is || kind == v__token__Kind_not_is || kind == v__token__Kind_and || kind == v__token__Kind_dot || kind == v__token__Kind_pipe || kind == v__token__Kind_amp || kind == v__token__Kind_left_shift || kind == v__token__Kind_right_shift);
 }
 
 string  time__Time_format(time__Time t) {
@@ -19790,6 +19793,9 @@ v__token__Token  v__scanner__Scanner_scan(v__scanner__Scanner* s) {
 		} else if (nextc == 'i' && string_at(s->text, s->pos + 2) == 'n' && byte_is_space(string_at(s->text, s->pos + 3))) {
 			s->pos += 2;
 			return v__scanner__Scanner_new_token(s, v__token__Kind_not_in, tos_lit(""), 3);
+		} else if (nextc == 'i' && string_at(s->text, s->pos + 2) == 's' && byte_is_space(string_at(s->text, s->pos + 3))) {
+			s->pos += 2;
+			return v__scanner__Scanner_new_token(s, v__token__Kind_not_is, tos_lit(""), 3);
 		} else {
 			return v__scanner__Scanner_new_token(s, v__token__Kind_not, tos_lit(""), 1);
 		}
@@ -20834,7 +20840,7 @@ v__table__Type  v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__I
 		// defer
 			c->expected_type = former_expected_type;
 		return v__checker__Checker_check_shift(c, left_type, right_type, left_pos, right_pos);
-	}else if (infix_expr->op == v__token__Kind_key_is) {
+	}else if (infix_expr->op == v__token__Kind_key_is || infix_expr->op == v__token__Kind_not_is) {
 		v__ast__Type* type_expr = /* as */ (v__ast__Type*)__as_cast(infix_expr->right.obj, infix_expr->right.typ, /*expected:*/189);
 		v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, type_expr->typ);
 		if (typ_sym->kind == v__table__Kind_placeholder) {
@@ -26206,7 +26212,7 @@ static v__ast__Expr  v__parser__Parser_infix_expr(v__parser__Parser* p, v__ast__
 0
 #endif
 };
-	if (op == v__token__Kind_key_is) {
+	if ((op == v__token__Kind_key_is || op == v__token__Kind_not_is)) {
 		p->expecting_type = true;
 	}
 	right = v__parser__Parser_expr(p, precedence);
@@ -28242,7 +28248,7 @@ static void  v__gen__Gen_infix_expr(v__gen__Gen* g, v__ast__InfixExpr node) {
 		node.left_type
 	));
 	v__table__TypeSymbol* left_sym = v__table__Table_get_type_symbol(g->table, left_type);
-	if (node.op == v__token__Kind_key_is) {
+	if ((node.op == v__token__Kind_key_is || node.op == v__token__Kind_not_is)) {
 		v__gen__Gen_is_expr(g, node);
 		return;
 	}
@@ -29218,9 +29224,9 @@ static void  v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__TypeSymbol 
 					if (v__table__Type_flag_is(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_75972 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_75972.arg0;
-						string base = mr_75972.arg1;
+						multi_return_string_string mr_75983 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_75983.arg0;
+						string base = mr_75983.arg1;
 						array_push(&g->optionals, _MOV((string[]){ styp }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -29489,9 +29495,9 @@ static void  v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInte
 
 static Option_bool  v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr expr, v__table__Type etype) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, etype);
-	multi_return_bool_bool_int mr_84515 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_84515.arg0;
-	bool str_method_expects_ptr = mr_84515.arg1;
+	multi_return_bool_bool_int mr_84526 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_84526.arg0;
+	bool str_method_expects_ptr = mr_84526.arg1;
 	if (v__table__Type_flag_is(etype, v__table__TypeFlag_variadic)) {
 		string str_fn_name = v__gen__Gen_gen_str_for_type(g, etype);
 		v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -29702,11 +29708,11 @@ static void  v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExp
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->cur_fn->name, tos_lit("main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_90382 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_90382.arg0;
-				string pafile = mr_90382.arg1;
-				string pamod = mr_90382.arg2;
-				string pafn = mr_90382.arg3;
+				multi_return_int_string_string_string mr_90393 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_90393.arg0;
+				string pafile = mr_90393.arg1;
+				string pamod = mr_90393.arg2;
+				string pafn = mr_90393.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(%.*s\000.v_error);", 2, cvar_name));
@@ -30108,6 +30114,11 @@ static void  v__gen__Gen_as_cast(v__gen__Gen* g, v__ast__AsCast node) {
 }
 
 static void  v__gen__Gen_is_expr(v__gen__Gen* g, v__ast__InfixExpr node) {
+	string eq = (node.op == v__token__Kind_key_is ? (
+		tos_lit("==")
+	) : (
+		tos_lit("!=")
+	));
 	v__gen__Gen_expr(g, node.left);
 	if (v__table__Type_is_ptr(node.left_type)) {
 		v__gen__Gen_write(g, tos_lit("->"));
@@ -30116,13 +30127,13 @@ static void  v__gen__Gen_is_expr(v__gen__Gen* g, v__ast__InfixExpr node) {
 	}
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, node.left_type);
 	if (sym->kind == v__table__Kind_interface_) {
-		v__gen__Gen_write(g, tos_lit("_interface_idx == "));
+		v__gen__Gen_write(g, _STR("_interface_idx %.*s\000 ", 2, eq));
 		v__ast__Type* sub_type = /* as */ (v__ast__Type*)__as_cast(node.right.obj, node.right.typ, /*expected:*/189);
 		v__table__TypeSymbol* sub_sym = v__table__Table_get_type_symbol(g->table, sub_type->typ);
 		v__gen__Gen_write(g, _STR("_%.*s\000_%.*s\000_index", 3, sym->name, sub_sym->name));
 		return;
 	} else if (sym->kind == v__table__Kind_sum_type) {
-		v__gen__Gen_write(g, tos_lit("typ == "));
+		v__gen__Gen_write(g, _STR("typ %.*s\000 ", 2, eq));
 	}
 	v__gen__Gen_expr(g, node.right);
 }
@@ -30141,10 +30152,10 @@ inline static string  v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Typ
 static string  v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_101330 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_101330.arg0;
-	bool str_method_expects_ptr = mr_101330.arg1;
-	int str_nr_args = mr_101330.arg2;
+	multi_return_bool_bool_int mr_101395 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_101395.arg0;
+	bool str_method_expects_ptr = mr_101395.arg1;
+	int str_nr_args = mr_101395.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -30336,9 +30347,9 @@ static void  v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info,
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_108579 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_108579.arg0;
-	bool str_method_expects_ptr = mr_108579.arg1;
+	multi_return_bool_bool_int mr_108644 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_108644.arg0;
+	bool str_method_expects_ptr = mr_108644.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (
@@ -30394,9 +30405,9 @@ static void  v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__Array
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_111408 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_111408.arg0;
-	bool str_method_expects_ptr = mr_111408.arg1;
+	multi_return_bool_bool_int mr_111473 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_111473.arg0;
+	bool str_method_expects_ptr = mr_111473.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (
