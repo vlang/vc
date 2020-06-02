@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "9fcb853"
+#define V_COMMIT_HASH "138d730"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "13c68eb"
+#define V_COMMIT_HASH "9fcb853"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "9fcb853"
+#define V_CURRENT_COMMIT_HASH "138d730"
 #endif
 
 
@@ -1904,6 +1904,7 @@ struct v__ast__Var {
 	v__table__Type typ;
 	v__token__Position pos;
 	bool is_used;
+	bool is_changed;
 };
 
 struct v__ast__AssignStmt {
@@ -19981,6 +19982,7 @@ static v__ast__Stmt  v__parser__Parser_partial_assign_stmt(v__parser__Parser* p,
 					.typ = {0},
 					.pos = ident.pos,
 					.is_used = 0,
+					.is_changed = 0,
 				}}, sizeof(v__ast__Var)), .typ = 151 /* v.ast.Var */});
 			} else {
 				v__ast__Scope_register(p->scope, ident.name, /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){
@@ -19991,6 +19993,7 @@ static v__ast__Stmt  v__parser__Parser_partial_assign_stmt(v__parser__Parser* p,
 					.typ = {0},
 					.pos = ident.pos,
 					.is_used = 0,
+					.is_changed = 0,
 				}}, sizeof(v__ast__Var)), .typ = 151 /* v.ast.Var */});
 			}
 		}
@@ -20438,6 +20441,7 @@ v__ast__CallExpr  v__parser__Parser_call_expr(v__parser__Parser* p, v__table__La
 			.typ = _const_v__table__string_type,
 			.pos = v__token__Token_position(&p->tok),
 			.is_used = true,
+			.is_changed = 0,
 		}}, sizeof(v__ast__Var)), .typ = 151 /* v.ast.Var */});
 		v__ast__Scope_register(p->scope, tos_lit("errcode"), /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){
 			.name = tos_lit("errcode"),
@@ -20447,6 +20451,7 @@ v__ast__CallExpr  v__parser__Parser_call_expr(v__parser__Parser* p, v__table__La
 			.typ = _const_v__table__int_type,
 			.pos = v__token__Token_position(&p->tok),
 			.is_used = true,
+			.is_changed = 0,
 		}}, sizeof(v__ast__Var)), .typ = 151 /* v.ast.Var */});
 		or_kind = v__ast__OrKind_block;
 		or_stmts = v__parser__Parser_parse_block_no_scope(p);
@@ -20603,6 +20608,7 @@ static v__ast__FnDecl  v__parser__Parser_fn_decl(v__parser__Parser* p) {
 			.typ = arg.typ,
 			.pos = v__token__Token_position(&p->tok),
 			.is_used = true,
+			.is_changed = 0,
 		}}, sizeof(v__ast__Var)), .typ = 151 /* v.ast.Var */});
 		if (arg.is_mut) {
 			if (i == 0 && is_method) {
@@ -20714,6 +20720,7 @@ static v__ast__AnonFn  v__parser__Parser_anon_fn(v__parser__Parser* p) {
 			.typ = arg.typ,
 			.pos = v__token__Token_position(&p->tok),
 			.is_used = true,
+			.is_changed = 0,
 		}}, sizeof(v__ast__Var)), .typ = 151 /* v.ast.Var */});
 	}
 	v__table__Type return_type = _const_v__table__void_type;
@@ -20970,6 +20977,7 @@ static v__ast__Stmt  v__parser__Parser_for_stmt(v__parser__Parser* p) {
 				.typ = _const_v__table__int_type,
 				.pos = key_var_pos,
 				.is_used = 0,
+				.is_changed = 0,
 			}}, sizeof(v__ast__Var)), .typ = 151 /* v.ast.Var */});
 		} else if (v__ast__Scope_known_var(p->scope, val_var_name)) {
 			v__parser__Parser_error(p, _STR("redefinition of value iteration variable `%.*s\000`", 2, val_var_name));
@@ -20998,6 +21006,7 @@ static v__ast__Stmt  v__parser__Parser_for_stmt(v__parser__Parser* p) {
 				.typ = _const_v__table__int_type,
 				.pos = val_var_pos,
 				.is_used = 0,
+				.is_changed = 0,
 			}}, sizeof(v__ast__Var)), .typ = 151 /* v.ast.Var */});
 		} else {
 			v__ast__Scope_register(p->scope, val_var_name, /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){
@@ -21008,6 +21017,7 @@ static v__ast__Stmt  v__parser__Parser_for_stmt(v__parser__Parser* p) {
 				.typ = {0},
 				.pos = val_var_pos,
 				.is_used = 0,
+				.is_changed = 0,
 			}}, sizeof(v__ast__Var)), .typ = 151 /* v.ast.Var */});
 		}
 		p->inside_for = false;
@@ -21095,6 +21105,7 @@ static v__ast__IfExpr  v__parser__Parser_if_expr(v__parser__Parser* p) {
 				.typ = {0},
 				.pos = var_pos,
 				.is_used = 0,
+				.is_changed = 0,
 			}}, sizeof(v__ast__Var)), .typ = 151 /* v.ast.Var */});
 			cond = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__IfGuardExpr[]) {(v__ast__IfGuardExpr){
 				.var_name = var_name,
@@ -21177,6 +21188,7 @@ static v__ast__MatchExpr  v__parser__Parser_match_expr(v__parser__Parser* p) {
 				.typ = v__table__Type_to_ptr(typ),
 				.pos = cond_pos,
 				.is_used = true,
+				.is_changed = 0,
 			}}, sizeof(v__ast__Var)), .typ = 151 /* v.ast.Var */});
 			if (p->tok.kind == v__token__Kind_comma) {
 				v__parser__Parser_next(p);
@@ -22512,6 +22524,7 @@ static void  v__parser__Parser_scope_register_it(v__parser__Parser* p) {
 		.typ = {0},
 		.pos = v__token__Token_position(&p->tok),
 		.is_used = true,
+		.is_changed = 0,
 	}}, sizeof(v__ast__Var)), .typ = 151 /* v.ast.Var */});
 }
 
@@ -22548,6 +22561,7 @@ static v__ast__Expr  v__parser__Parser_dot_expr(v__parser__Parser* p, v__ast__Ex
 				.typ = _const_v__table__int_type,
 				.pos = v__token__Token_position(&p->tok),
 				.is_used = true,
+				.is_changed = 0,
 			}}, sizeof(v__ast__Var)), .typ = 151 /* v.ast.Var */});
 			v__ast__Scope_register(p->scope, tos_lit("err"), /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){
 				.name = tos_lit("err"),
@@ -22557,6 +22571,7 @@ static v__ast__Expr  v__parser__Parser_dot_expr(v__parser__Parser* p, v__ast__Ex
 				.typ = _const_v__table__string_type,
 				.pos = v__token__Token_position(&p->tok),
 				.is_used = true,
+				.is_changed = 0,
 			}}, sizeof(v__ast__Var)), .typ = 151 /* v.ast.Var */});
 			or_kind = v__ast__OrKind_block;
 			or_stmts = v__parser__Parser_parse_block_no_scope(p);
@@ -24503,6 +24518,7 @@ static void  v__checker__Checker_fail_if_immutable(v__checker__Checker* c, v__as
 			if (!/*opt*/(*(v__ast__Var**)v.data)->is_mut && !v__table__Type_is_ptr(/*opt*/(*(v__ast__Var**)v.data)->typ)) {
 				v__checker__Checker_error(c, _STR("`%.*s\000` is immutable, declare it with `mut` to make it mutable", 2, it->name), it->pos);
 			}
+			/*opt*/(*(v__ast__Var**)v.data)->is_changed = true;
 		} else if (_IN(string, it->name, c->const_names)) {
 			v__checker__Checker_error(c, _STR("cannot modify constant `%.*s\000`", 2, it->name), it->pos);
 		}}
