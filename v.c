@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b99ba21"
+#define V_COMMIT_HASH "3521c90"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "46dbbd0"
+#define V_COMMIT_HASH "b99ba21"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b99ba21"
+#define V_CURRENT_COMMIT_HASH "3521c90"
 #endif
 
 
@@ -16871,7 +16871,7 @@ Option_bool  v__util__check_module_is_installed(string modulename, bool is_verbo
 	if (is_verbose) {
 		eprintln(_STR("check_module_is_installed: cloning from %.*s\000 ...", 2, murl));
 	}
-	Option_os__Result _t4 = os__exec(_STR("git clone %.*s\000 ~/.vmodules/%.*s", 2, murl, modulename));
+	Option_os__Result _t4 = os__exec(_STR("git clone %.*s\000 %.*s", 2, murl, mpath));
 	if (!_t4.ok) {
 		string err = _t4.v_error;
 		int errcode = _t4.ecode;
