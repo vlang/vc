@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "640688d"
+#define V_COMMIT_HASH "b0f66a4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4e51867"
+#define V_COMMIT_HASH "640688d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "640688d"
+#define V_CURRENT_COMMIT_HASH "b0f66a4"
 #endif
 
 
@@ -19987,17 +19987,13 @@ static v__table__Type  v__checker__Checker_promote_num(v__checker__Checker* c, v
 		}
 	} else if (v__table__Type_is_float(type_hi)) {
 		if (idx_hi == _const_v__table__f32_type_idx) {
-			if ((idx_lo == _const_v__table__int_type_idx || idx_lo == _const_v__table__i64_type_idx || idx_lo == _const_v__table__u32_type_idx || idx_lo == _const_v__table__u64_type_idx)) {
-				return _const_v__table__void_type;
-			} else {
-				return type_hi;
-			}
-		} else {
 			if ((idx_lo == _const_v__table__i64_type_idx || idx_lo == _const_v__table__u64_type_idx)) {
 				return _const_v__table__void_type;
 			} else {
 				return type_hi;
 			}
+		} else {
+			return type_hi;
 		}
 	} else if (idx_lo >= _const_v__table__byte_type_idx) {
 		return type_hi;
