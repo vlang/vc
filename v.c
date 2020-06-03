@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d182059"
+#define V_COMMIT_HASH "4b7c70c"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "888a43a"
+#define V_COMMIT_HASH "d182059"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d182059"
+#define V_CURRENT_COMMIT_HASH "4b7c70c"
 #endif
 
 
@@ -25102,7 +25102,7 @@ v__ast__Expr  v__parser__Parser_name_expr(v__parser__Parser* p) {
 		}
 	} else if (p->peek_tok.kind == v__token__Kind_lcbr && !p->inside_match && !p->inside_match_case && !p->inside_if && !p->inside_for) {
 		return /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__StructInit[]) {v__parser__Parser_struct_init(p, false)}, sizeof(v__ast__StructInit)), .typ = 164 /* v.ast.StructInit */};
-	} else if (p->peek_tok.kind == v__token__Kind_dot && (byte_is_capital(string_at(p->tok.lit, 0)) && !known_var)) {
+	} else if (p->peek_tok.kind == v__token__Kind_dot && (byte_is_capital(string_at(p->tok.lit, 0)) && !known_var && language == v__table__Language_v)) {
 		string enum_name = v__parser__Parser_check_name(p);
 		if (string_ne(mod, tos_lit(""))) {
 			enum_name = string_add(string_add(mod, tos_lit(".")), enum_name);
