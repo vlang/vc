@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ffafeac"
+#define V_COMMIT_HASH "d286f67"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5e2a6ff"
+#define V_COMMIT_HASH "ffafeac"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ffafeac"
+#define V_CURRENT_COMMIT_HASH "d286f67"
 #endif
 
 
@@ -17596,7 +17596,11 @@ string  v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 		res = string_add(strings__repeat('&', nr_muls), res);
 	}
 	if (v__table__Type_flag_is(t, v__table__TypeFlag_optional)) {
-		res = string_add(tos_lit("?"), res);
+		if (sym->kind == v__table__Kind_void) {
+			res = tos_lit("?");
+		} else {
+			res = string_add(tos_lit("?"), res);
+		}
 	}
 	return res;
 }
@@ -23597,7 +23601,7 @@ static bool  v__parser__Parser_fileis(v__parser__Parser* p, string s) {
 static void  v__parser__Parser_check_fn_mutable_arguments(v__parser__Parser* p, v__table__Type typ, v__token__Position pos) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(p->table, typ);
 	if (!(sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_map || sym->kind == v__table__Kind_placeholder) && !v__table__Type_is_ptr(typ)) {
-		v__parser__Parser_error_with_pos(p, string_add(tos_lit("mutable arguments are only allowed for arrays, maps, and structs\n"), tos_lit("return values instead: `fn foo(n mut int) {` => `fn foo(n int) int {`")), pos);
+		v__parser__Parser_error_with_pos(p, string_add(tos_lit("mutable arguments are only allowed for arrays, maps, and structs\n"), _STR("return values instead: `fn foo(mut n %.*s\000) {` => `fn foo(n %.*s\000) %.*s\000 {`", 4, sym->name, sym->name, sym->name)), pos);
 	}
 }
 
