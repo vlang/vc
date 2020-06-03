@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8a23cfc"
+#define V_COMMIT_HASH "5e2a6ff"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e9bcd36"
+#define V_COMMIT_HASH "8a23cfc"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8a23cfc"
+#define V_CURRENT_COMMIT_HASH "5e2a6ff"
 #endif
 
 
@@ -31777,9 +31777,13 @@ string  v__gen__js__gen(array_v__ast__File files, v__table__Table* table, v__pre
 		// FOR IN array
 		array _t11 = (*(array_string*)map_get3(g->namespaces_pub, node.name, &(array_string[]){ __new_array(0, 1, sizeof(string)) }))
 ;
-		for (int _t12 = 0; _t12 < _t11.len; _t12++) {
-			string pub_var = ((string*)_t11.data)[_t12];
-			out = /*f*/string_add(out, _STR("\n\t\t%.*s\000,", 2, pub_var));
+		for (int i = 0; i < _t11.len; i++) {
+			string pub_var = ((string*)_t11.data)[i];
+			out = /*f*/string_add(out, _STR("\n\t\t%.*s", 1, pub_var));
+			if (i < (*(array_string*)map_get3(g->namespaces_pub, node.name, &(array_string[]){ __new_array(0, 1, sizeof(string)) }))
+.len - 1) {
+				out = /*f*/string_add(out, tos_lit(","));
+			}
 		}
 		if ((*(array_string*)map_get3(g->namespaces_pub, node.name, &(array_string[]){ __new_array(0, 1, sizeof(string)) }))
 .len > 0) {
@@ -31788,9 +31792,9 @@ string  v__gen__js__gen(array_v__ast__File files, v__table__Table* table, v__pre
 		out = /*f*/string_add(out, tos_lit("};"));
 		out = /*f*/string_add(out, tos_lit("\n})("));
 		// FOR IN array
-		array _t13 = map_keys(&imports);
-		for (int i = 0; i < _t13.len; i++) {
-			string key = ((string*)_t13.data)[i];
+		array _t12 = map_keys(&imports);
+		for (int i = 0; i < _t12.len; i++) {
+			string key = ((string*)_t12.data)[i];
 			if (i > 0) {
 				out = /*f*/string_add(out, tos_lit(", "));
 			}
