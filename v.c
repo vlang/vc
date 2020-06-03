@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "4b7c70c"
+#define V_COMMIT_HASH "1060de8"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d182059"
+#define V_COMMIT_HASH "4b7c70c"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4b7c70c"
+#define V_CURRENT_COMMIT_HASH "1060de8"
 #endif
 
 
@@ -4019,6 +4019,7 @@ static v__ast__FnDecl  v__parser__Parser_fn_decl(v__parser__Parser* p);
 static v__ast__AnonFn  v__parser__Parser_anon_fn(v__parser__Parser* p);
 static multi_return_array_v__table__Arg_bool  v__parser__Parser_fn_args(v__parser__Parser* p);
 static bool  v__parser__Parser_fileis(v__parser__Parser* p, string s);
+static void  v__parser__Parser_check_fn_mutable_arguments(v__parser__Parser* p, v__table__Type typ, v__token__Position pos);
 static void  v__parser__Parser_fn_redefinition_error(v__parser__Parser* p, string name);
 static bool  v__parser__have_fn_main(array_v__ast__Stmt stmts);
 static v__ast__Stmt  v__parser__Parser_for_stmt(v__parser__Parser* p);
@@ -23263,8 +23264,8 @@ static v__ast__FnDecl  v__parser__Parser_fn_decl(v__parser__Parser* p) {
 	_PUSH_MANY(&args, (args2), _t2, array_v__table__Arg);
 	// FOR IN array
 	array _t3 = args;
-	for (int i = 0; i < _t3.len; i++) {
-		v__table__Arg arg = ((v__table__Arg*)_t3.data)[i];
+	for (int _t4 = 0; _t4 < _t3.len; _t4++) {
+		v__table__Arg arg = ((v__table__Arg*)_t3.data)[_t4];
 		if (v__ast__Scope_known_var(p->scope, arg.name)) {
 			v__parser__Parser_error_with_pos(p, _STR("redefinition of parameter `%.*s\000`", 2, arg.name), arg.pos);
 		}
@@ -23278,15 +23279,6 @@ static v__ast__FnDecl  v__parser__Parser_fn_decl(v__parser__Parser* p) {
 			.is_used = true,
 			.is_changed = 0,
 		}}, sizeof(v__ast__Var)), .typ = 195 /* v.ast.Var */});
-		if (arg.is_mut) {
-			if (i == 0 && is_method) {
-				continue;
-			}
-			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(p->table, arg.typ);
-			if (!(sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_map || sym->kind == v__table__Kind_placeholder) && arg.typ != _const_v__table__t_type) {
-				v__parser__Parser_error_with_pos(p, string_add(tos_lit("mutable arguments are only allowed for arrays, maps, and structs\n"), tos_lit("return values instead: `fn foo(n mut int) {` => `fn foo(n int) int {`")), arg.pos);
-			}
-		}
 	}
 	v__token__Position end_pos = v__token__Token_position(&p->prev_tok);
 	v__table__Type return_type = _const_v__table__void_type;
@@ -23373,9 +23365,9 @@ static v__ast__AnonFn  v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_7480 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_7480.arg0;
-	bool is_variadic = mr_7480.arg1;
+	multi_return_array_v__table__Arg_bool mr_6912 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_6912.arg0;
+	bool is_variadic = mr_6912.arg1;
 	// FOR IN array
 	array _t1 = args;
 	for (int _t2 = 0; _t2 < _t1.len; _t2++) {
@@ -23463,6 +23455,7 @@ static multi_return_array_v__table__Arg_bool  v__parser__Parser_fn_args(v__parse
 			v__token__Position pos = v__token__Token_position(&p->tok);
 			v__table__Type arg_type = v__parser__Parser_parse_type(p);
 			if (is_mut && arg_type != _const_v__table__t_type) {
+				v__parser__Parser_check_fn_mutable_arguments(p, arg_type, pos);
 				arg_type = v__table__Type_set_nr_muls(arg_type, 1);
 			}
 			if (is_variadic) {
@@ -23507,10 +23500,10 @@ static multi_return_array_v__table__Arg_bool  v__parser__Parser_fn_args(v__parse
 				v__parser__Parser_next(p);
 				is_variadic = true;
 			}
+			v__token__Position pos = v__token__Token_position(&p->tok);
 			v__table__Type typ = v__parser__Parser_parse_type(p);
 			if (is_mut && typ != _const_v__table__t_type) {
-				if (v__table__Type_is_ptr(typ)) {
-				}
+				v__parser__Parser_check_fn_mutable_arguments(p, typ, pos);
 				typ = v__table__Type_set_nr_muls(typ, 1);
 			}
 			if (is_variadic) {
@@ -23543,6 +23536,13 @@ static multi_return_array_v__table__Arg_bool  v__parser__Parser_fn_args(v__parse
 
 static bool  v__parser__Parser_fileis(v__parser__Parser* p, string s) {
 	return string_contains(p->file_name, s);
+}
+
+static void  v__parser__Parser_check_fn_mutable_arguments(v__parser__Parser* p, v__table__Type typ, v__token__Position pos) {
+	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(p->table, typ);
+	if (!(sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_map || sym->kind == v__table__Kind_placeholder) && !v__table__Type_is_ptr(typ)) {
+		v__parser__Parser_error_with_pos(p, string_add(tos_lit("mutable arguments are only allowed for arrays, maps, and structs\n"), tos_lit("return values instead: `fn foo(n mut int) {` => `fn foo(n int) int {`")), pos);
+	}
 }
 
 static void  v__parser__Parser_fn_redefinition_error(v__parser__Parser* p, string name) {
