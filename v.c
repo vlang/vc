@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "41dca3e"
+#define V_COMMIT_HASH "277b7b3"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8a24d7d"
+#define V_COMMIT_HASH "41dca3e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "41dca3e"
+#define V_CURRENT_COMMIT_HASH "277b7b3"
 #endif
 
 
@@ -4209,6 +4209,7 @@ static void  v__gen__Gen_call_args(v__gen__Gen* g, array_v__ast__CallArg args, a
 static void  v__gen__Gen_ref_or_deref_arg(v__gen__Gen* g, v__ast__CallArg arg, v__table__Type expected_type);
 static bool  v__gen__Gen_is_gui_app(v__gen__Gen* g);
 static bool  v__gen__Gen_fileis(v__gen__Gen* g, string s);
+static string  v__gen__Gen_write_fn_attr(v__gen__Gen* g);
 static void  v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Type typ);
 static string  v__gen__js_enc_name(string typ);
 static string  v__gen__js_dec_name(string typ);
@@ -30390,31 +30391,7 @@ static void  v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 		return;
 	}
 	int fn_start_pos = g->out.len;
-	string msvc_attrs = tos_lit("");
-	if (string_eq(g->attr, tos_lit("inline"))) {
-		v__gen__Gen_write(g, tos_lit("inline "));
-	}else if (string_eq(g->attr, tos_lit("no_inline"))) {
-		v__gen__Gen_write(g, tos_lit("__NOINLINE "));
-	}else if (string_eq(g->attr, tos_lit("irq_handler"))) {
-		v__gen__Gen_write(g, tos_lit("__IRQHANDLER "));
-	}else if (string_eq(g->attr, tos_lit("_cold"))) {
-		v__gen__Gen_write(g, tos_lit("__attribute__((cold)) "));
-	}else if (string_eq(g->attr, tos_lit("_constructor"))) {
-		v__gen__Gen_write(g, tos_lit("__attribute__((constructor)) "));
-	}else if (string_eq(g->attr, tos_lit("_destructor"))) {
-		v__gen__Gen_write(g, tos_lit("__attribute__((destructor)) "));
-	}else if (string_eq(g->attr, tos_lit("_flatten"))) {
-		v__gen__Gen_write(g, tos_lit("__attribute__((flatten)) "));
-	}else if (string_eq(g->attr, tos_lit("_hot"))) {
-		v__gen__Gen_write(g, tos_lit("__attribute__((hot)) "));
-	}else if (string_eq(g->attr, tos_lit("_malloc"))) {
-		v__gen__Gen_write(g, tos_lit("__attribute__((malloc)) "));
-	}else if (string_eq(g->attr, tos_lit("_pure"))) {
-		v__gen__Gen_write(g, tos_lit("__attribute__((const)) "));
-	}else if (string_eq(g->attr, tos_lit("windows_stdcall"))) {
-		msvc_attrs = /*f*/string_add(msvc_attrs, tos_lit("__stdcall "));
-	}else {
-	};
+	string msvc_attrs = v__gen__Gen_write_fn_attr(g);
 	bool is_livefn = string_eq(g->attr, tos_lit("live"));
 	bool is_livemain = g->pref->is_livemain && is_livefn;
 	bool is_liveshared = g->pref->is_liveshared && is_livefn;
@@ -30480,9 +30457,9 @@ static void  v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 			strings__Builder_write(&g->definitions, _STR("%.*s\000 %.*s\000 %.*s\000(", 4, type_name, msvc_attrs, name));
 			v__gen__Gen_write(g, _STR("%.*s\000 %.*s\000 %.*s\000(", 4, type_name, msvc_attrs, name));
 		}
-		multi_return_array_string_array_string mr_6364 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
-		array_string fargs = mr_6364.arg0;
-		array_string fargtypes = mr_6364.arg1;
+		multi_return_array_string_array_string mr_3621 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
+		array_string fargs = mr_3621.arg0;
+		array_string fargtypes = mr_3621.arg1;
 		if (it.no_body || (g->pref->use_cache && it.is_builtin)) {
 			strings__Builder_writeln(&g->definitions, tos_lit(");"));
 			v__gen__Gen_writeln(g, tos_lit(");"));
@@ -30495,9 +30472,9 @@ static void  v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 		if (is_live_wrap) {
 			array_string fn_args_list = __new_array_with_default(0, 0, sizeof(string), 0);
 			// FOR IN array
-			array _t5 = fargs;
-			for (int ia = 0; ia < _t5.len; ia++) {
-				string fa = ((string*)_t5.data)[ia];
+			array _t4 = fargs;
+			for (int ia = 0; ia < _t4.len; ia++) {
+				string fa = ((string*)_t4.data)[ia];
 				array_push(&fn_args_list, _MOV((string[]){ _STR("%.*s\000 %.*s", 2, (*(string*)array_get(fargtypes, ia)), fa) }));
 			}
 			string live_fncall = string_add(string_add(_STR("%.*s\000(", 2, impl_fn_name), array_string_join(fargs, tos_lit(", "))), tos_lit(");"));
@@ -30862,11 +30839,11 @@ static void  v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_20127 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_20127.arg0;
-		string pafile = mr_20127.arg1;
-		string pamod = mr_20127.arg2;
-		string pafn = mr_20127.arg3;
+		multi_return_int_string_string_string mr_17412 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_17412.arg0;
+		string pafile = mr_17412.arg1;
+		string pamod = mr_17412.arg2;
+		string pafn = mr_17412.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		v__gen__Gen_write(g, tos_lit(")"));
@@ -30991,6 +30968,35 @@ static bool  v__gen__Gen_is_gui_app(v__gen__Gen* g) {
 
 static bool  v__gen__Gen_fileis(v__gen__Gen* g, string s) {
 	return string_contains(g->file.path, s);
+}
+
+static string  v__gen__Gen_write_fn_attr(v__gen__Gen* g) {
+	string msvc_attrs = tos_lit("");
+	if (string_eq(g->attr, tos_lit("inline"))) {
+		v__gen__Gen_write(g, tos_lit("inline "));
+	}else if (string_eq(g->attr, tos_lit("no_inline"))) {
+		v__gen__Gen_write(g, tos_lit("__NOINLINE "));
+	}else if (string_eq(g->attr, tos_lit("irq_handler"))) {
+		v__gen__Gen_write(g, tos_lit("__IRQHANDLER "));
+	}else if (string_eq(g->attr, tos_lit("_cold"))) {
+		v__gen__Gen_write(g, tos_lit("__attribute__((cold)) "));
+	}else if (string_eq(g->attr, tos_lit("_constructor"))) {
+		v__gen__Gen_write(g, tos_lit("__attribute__((constructor)) "));
+	}else if (string_eq(g->attr, tos_lit("_destructor"))) {
+		v__gen__Gen_write(g, tos_lit("__attribute__((destructor)) "));
+	}else if (string_eq(g->attr, tos_lit("_flatten"))) {
+		v__gen__Gen_write(g, tos_lit("__attribute__((flatten)) "));
+	}else if (string_eq(g->attr, tos_lit("_hot"))) {
+		v__gen__Gen_write(g, tos_lit("__attribute__((hot)) "));
+	}else if (string_eq(g->attr, tos_lit("_malloc"))) {
+		v__gen__Gen_write(g, tos_lit("__attribute__((malloc)) "));
+	}else if (string_eq(g->attr, tos_lit("_pure"))) {
+		v__gen__Gen_write(g, tos_lit("__attribute__((const)) "));
+	}else if (string_eq(g->attr, tos_lit("windows_stdcall"))) {
+		msvc_attrs = /*f*/string_add(msvc_attrs, tos_lit("__stdcall "));
+	}else {
+	};
+	return msvc_attrs;
 }
 
 static void  v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Type typ) {
