@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "edd56bc"
+#define V_COMMIT_HASH "dd7ebf7"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6081e0d"
+#define V_COMMIT_HASH "edd56bc"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "edd56bc"
+#define V_CURRENT_COMMIT_HASH "dd7ebf7"
 #endif
 
 
@@ -23564,6 +23564,7 @@ static multi_return_array_v__table__Arg_bool  v__parser__Parser_fn_args(v__parse
 				array_push(&arg_names, _MOV((string[]){ v__parser__Parser_check_name(p) }));
 			}
 			if (p->tok.kind == v__token__Kind_key_mut) {
+				v__parser__Parser_warn_with_pos(p, tos_lit("use `mut f Foo` instead of `f mut Foo`"), v__token__Token_position(&p->tok));
 				is_mut = true;
 			}
 			if (p->tok.kind == v__token__Kind_ellipsis) {
