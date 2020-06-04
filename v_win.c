@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "e2976b7"
+#define V_COMMIT_HASH "1c43204"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6b6c9d6"
+#define V_COMMIT_HASH "e2976b7"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "e2976b7"
+#define V_CURRENT_COMMIT_HASH "1c43204"
 #endif
 
 
@@ -17058,8 +17058,9 @@ inline v__table__Type  v__table__Type_set_flag(v__table__Type t, v__table__TypeF
 	return ((((((((((int)(t)) >> 24) & 0xff)) | 1 << ((int)(flag)))) << 24) | ((((((int)(t)) >> 16) & 0xff)) << 16)) | ((((u16)(t)) & 0xffff)));
 }
 
-v__table__Type  v__table__Type_clear_flag(v__table__Type t, v__table__TypeFlag flag) {
-	return (((((((((((int)(t)) >> 24) & 0xff)) & ~(1 << ((int)(flag))))) << 24)) | ((((((int)(t)) >> 16) & 0xff)) << 16)) | ((((u16)(t)) & 0xffff)));
+// Attr: [inline]
+inline v__table__Type  v__table__Type_clear_flag(v__table__Type t, v__table__TypeFlag flag) {
+	return ((((((((((int)(t)) >> 24) & 0xff)) & ~(1 << ((int)(flag))))) << 24) | ((((((int)(t)) >> 16) & 0xff)) << 16)) | ((((u16)(t)) & 0xffff)));
 }
 
 v__table__Type  v__table__Type_clear_flags(v__table__Type t) {
