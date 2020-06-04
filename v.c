@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5ae8853"
+#define V_COMMIT_HASH "8a24d7d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0b7fe0a"
+#define V_COMMIT_HASH "5ae8853"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5ae8853"
+#define V_CURRENT_COMMIT_HASH "8a24d7d"
 #endif
 
 
@@ -21092,6 +21092,10 @@ void  v__checker__Checker_return_stmt(v__checker__Checker* c, v__ast__Return* re
 	for (int i = 0; i < _t7.len; i++) {
 		v__table__Type exp_type = ((v__table__Type*)_t7.data)[i];
 		v__table__Type got_typ = (*(v__table__Type*)array_get(got_types, i));
+		if (v__table__Type_flag_is(got_typ, v__table__TypeFlag_optional) && (!v__table__Type_flag_is(exp_type, v__table__TypeFlag_optional) || string_ne(v__table__Table_type_to_str(c->table, got_typ), v__table__Table_type_to_str(c->table, exp_type)))) {
+			v__token__Position pos = v__ast__Expr_position((*(v__ast__Expr*)array_get(return_stmt->exprs, i)));
+			v__checker__Checker_error(c, _STR("cannot use `%.*s\000` as type `%.*s\000` in return argument", 3, v__table__Table_type_to_str(c->table, got_typ), v__table__Table_type_to_str(c->table, exp_type)), pos);
+		}
 		bool is_generic = exp_type == _const_v__table__t_type;
 		bool ok = (is_generic ? (
 			v__checker__Checker_check_types(c, got_typ, c->cur_generic_type) || got_typ == exp_type
