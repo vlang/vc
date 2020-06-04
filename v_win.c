@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "6118875"
+#define V_COMMIT_HASH "e7f52eb"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "13a7ce9"
+#define V_COMMIT_HASH "6118875"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "6118875"
+#define V_CURRENT_COMMIT_HASH "e7f52eb"
 #endif
 
 
@@ -35400,8 +35400,8 @@ static void  main_v() {
 		v__util__launch_tool(prefs->is_verbose, tos_lit("vpm"), array_slice(_const_os__args, 1, _const_os__args.len));
 		return;
 	}else if (string_eq(command, tos_lit("vlib-docs"))) {
-		v__util__launch_tool(prefs->is_verbose, tos_lit("vdoc"), new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){
-		tos_lit("doc"), tos_lit("-m"), tos_lit("-s"), tos_lit("-r"), os__join_path(os__base_dir(tos_lit("/tmp/gen_vc/v/v")), (varg_string){.len=1,.args={tos_lit("vlib")}}), 
+		v__util__launch_tool(prefs->is_verbose, tos_lit("vdoc"), new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){
+		tos_lit("doc"), tos_lit("-m"), tos_lit("-s"), os__join_path(os__base_dir(tos_lit("/tmp/gen_vc/v/v")), (varg_string){.len=1,.args={tos_lit("vlib")}}), 
 		})));
 	}else if (string_eq(command, tos_lit("get"))) {
 		println(tos_lit("V Error: Use `v install` to install modules from vpm.vlang.io"));
