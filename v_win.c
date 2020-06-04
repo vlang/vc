@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8a24d7d"
+#define V_COMMIT_HASH "41dca3e"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5ae8853"
+#define V_COMMIT_HASH "8a24d7d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8a24d7d"
+#define V_CURRENT_COMMIT_HASH "41dca3e"
 #endif
 
 
@@ -21818,7 +21818,7 @@ static void  v__checker__Checker_stmts(v__checker__Checker* c, array_v__ast__Stm
 }
 
 v__table__Type  v__checker__Checker_unwrap_generic(v__checker__Checker* c, v__table__Type typ) {
-	if (typ == _const_v__table__t_type) {
+	if (v__table__Type_idx(typ) == _const_v__table__t_type_idx) {
 		return c->cur_generic_type;
 	}
 	return typ;
@@ -23518,8 +23518,10 @@ static multi_return_array_v__table__Arg_bool  v__parser__Parser_fn_args(v__parse
 			}
 			v__token__Position pos = v__token__Token_position(&p->tok);
 			v__table__Type arg_type = v__parser__Parser_parse_type(p);
-			if (is_mut && arg_type != _const_v__table__t_type) {
-				v__parser__Parser_check_fn_mutable_arguments(p, arg_type, pos);
+			if (is_mut) {
+				if (arg_type != _const_v__table__t_type) {
+					v__parser__Parser_check_fn_mutable_arguments(p, arg_type, pos);
+				}
 				arg_type = v__table__Type_set_nr_muls(arg_type, 1);
 			}
 			if (is_variadic) {
@@ -23566,8 +23568,10 @@ static multi_return_array_v__table__Arg_bool  v__parser__Parser_fn_args(v__parse
 			}
 			v__token__Position pos = v__token__Token_position(&p->tok);
 			v__table__Type typ = v__parser__Parser_parse_type(p);
-			if (is_mut && typ != _const_v__table__t_type) {
-				v__parser__Parser_check_fn_mutable_arguments(p, typ, pos);
+			if (is_mut) {
+				if (typ != _const_v__table__t_type) {
+					v__parser__Parser_check_fn_mutable_arguments(p, typ, pos);
+				}
 				typ = v__table__Type_set_nr_muls(typ, 1);
 			}
 			if (is_variadic) {
@@ -30836,8 +30840,9 @@ static multi_return_array_string_array_string  v__gen__Gen_fn_args(v__gen__Gen* 
 	for (int i = 0; i < _t1.len; i++) {
 		v__table__Arg arg = ((v__table__Arg*)_t1.data)[i];
 		string caname = v__gen__c_name(arg.name);
-		v__table__TypeSymbol* arg_type_sym = v__table__Table_get_type_symbol(g->table, arg.typ);
-		string arg_type_name = v__gen__Gen_typ(g, arg.typ);
+		v__table__Type typ = v__table__Type_set_nr_muls(v__gen__Gen_unwrap_generic(g, arg.typ), v__table__Type_nr_muls(arg.typ));
+		v__table__TypeSymbol* arg_type_sym = v__table__Table_get_type_symbol(g->table, typ);
+		string arg_type_name = v__gen__Gen_typ(g, typ);
 		bool is_varg = i == args.len - 1 && is_variadic;
 		if (is_varg) {
 			string varg_type_str = int_str(((int)(arg.typ)));
@@ -30920,7 +30925,7 @@ static void  v__gen__Gen_call_expr(v__gen__Gen* g, v__ast__CallExpr node) {
 }
 
 v__table__Type  v__gen__Gen_unwrap_generic(v__gen__Gen* g, v__table__Type typ) {
-	if (typ == _const_v__table__t_type) {
+	if (v__table__Type_idx(typ) == _const_v__table__t_type_idx) {
 		return g->cur_generic_type;
 	}
 	return typ;
@@ -31101,11 +31106,11 @@ static void  v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_20059 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_20059.arg0;
-		string pafile = mr_20059.arg1;
-		string pamod = mr_20059.arg2;
-		string pafn = mr_20059.arg3;
+		multi_return_int_string_string_string mr_20127 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_20127.arg0;
+		string pafile = mr_20127.arg1;
+		string pamod = mr_20127.arg2;
+		string pafn = mr_20127.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		v__gen__Gen_write(g, tos_lit(")"));
