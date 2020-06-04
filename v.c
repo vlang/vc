@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "13a7ce9"
+#define V_COMMIT_HASH "6118875"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "926ffc8"
+#define V_COMMIT_HASH "13a7ce9"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "13a7ce9"
+#define V_CURRENT_COMMIT_HASH "6118875"
 #endif
 
 
@@ -3663,7 +3663,8 @@ static int  runtime__nr_cpus_nix();
 static int  runtime__nr_cpus_win();
 string _const_vweb__tmpl__str_start; // a string literal, inited later
 string _const_vweb__tmpl__str_end; // a string literal, inited later
-string  vweb__tmpl__compile_template(string path);
+string  vweb__tmpl__compile_file(string path);
+string  vweb__tmpl__compile_template(string content);
 string _const_help__unknown_topic; // a string literal, inited later
 void  help__print_and_exit(string topic);
 #define _const_v__util__error_context_before 2
@@ -16007,7 +16008,7 @@ static int  runtime__nr_cpus_win() {
 	return 1;
 }
 
-string  vweb__tmpl__compile_template(string path) {
+string  vweb__tmpl__compile_file(string path) {
 	Option_string _t1 = os__read_file(path);
 	if (!_t1.ok) {
 		string err = _t1.v_error;
@@ -16015,27 +16016,32 @@ string  vweb__tmpl__compile_template(string path) {
 		v_panic(tos_lit("html failed"));
 	}
 	Option_string html = _t1;
+	return vweb__tmpl__compile_template(/*opt*/(*(string*)html.data));
+}
+
+string  vweb__tmpl__compile_template(string content) {
+	string html = content;
 	string header = tos_lit("");
-	if (os__exists(tos_lit("header.html")) && string_contains(/*opt*/(*(string*)html.data), tos_lit("@header"))) {
-		Option_string _t2 = os__read_file(tos_lit("header.html"));
-		if (!_t2.ok) {
-			string err = _t2.v_error;
-			int errcode = _t2.ecode;
+	if (os__exists(tos_lit("header.html")) && string_contains(html, tos_lit("@header"))) {
+		Option_string _t1 = os__read_file(tos_lit("header.html"));
+		if (!_t1.ok) {
+			string err = _t1.v_error;
+			int errcode = _t1.ecode;
 			v_panic(tos_lit("reading file header.html failed"));
 		}
-		Option_string h = _t2;
+		Option_string h = _t1;
 		header = string_replace(/*opt*/(*(string*)h.data), tos_lit("\'"), tos_lit("\""));
-		/*opt*/(*(string*)html.data) = string_add(header, /*opt*/(*(string*)html.data));
+		html = string_add(header, html);
 	}
-	array_string lines = string_split_into_lines(/*opt*/(*(string*)html.data));
+	array_string lines = string_split_into_lines(html);
 	strings__Builder s = strings__new_builder(1000);
 	strings__Builder_writeln(&s, _STR("\nmut sb := strings.new_builder(%"PRId32"\000)\nheader := \' \' // TODO remove\n_ = header\n//footer := \'footer\'\n", 2, lines.len * 30));
 	strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
 	bool in_css = true;
 	// FOR IN array
-	array _t3 = lines;
-	for (int _t4 = 0; _t4 < _t3.len; _t4++) {
-		string _line = ((string*)_t3.data)[_t4];
+	array _t2 = lines;
+	for (int _t3 = 0; _t3 < _t2.len; _t3++) {
+		string _line = ((string*)_t2.data)[_t3];
 		string line = string_trim_space(_line);
 		if (string_eq(line, tos_lit("<style>"))) {
 			in_css = true;
@@ -16043,13 +16049,13 @@ string  vweb__tmpl__compile_template(string path) {
 		}
 		if (string_contains(line, tos_lit("@if "))) {
 			strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
-			Option_int _t5 = string_index(line, tos_lit("@if"));
-			if (!_t5.ok) {
-				string err = _t5.v_error;
-				int errcode = _t5.ecode;
+			Option_int _t4 = string_index(line, tos_lit("@if"));
+			if (!_t4.ok) {
+				string err = _t4.v_error;
+				int errcode = _t4.ecode;
 				continue;
 			}
-			Option_int pos = _t5;
+			Option_int pos = _t4;
 			strings__Builder_writeln(&s, string_add(string_add(tos_lit("if "), string_substr(line, /*opt*/(*(int*)pos.data) + 4, line.len)), tos_lit("{")));
 			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
 		} else if (string_contains(line, tos_lit("@end"))) {
@@ -16062,13 +16068,13 @@ string  vweb__tmpl__compile_template(string path) {
 			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
 		} else if (string_contains(line, tos_lit("@for"))) {
 			strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
-			Option_int _t6 = string_index(line, tos_lit("@for"));
-			if (!_t6.ok) {
-				string err = _t6.v_error;
-				int errcode = _t6.ecode;
+			Option_int _t5 = string_index(line, tos_lit("@for"));
+			if (!_t5.ok) {
+				string err = _t5.v_error;
+				int errcode = _t5.ecode;
 				continue;
 			}
-			Option_int pos = _t6;
+			Option_int pos = _t5;
 			strings__Builder_writeln(&s, string_add(string_add(tos_lit("for "), string_substr(line, /*opt*/(*(int*)pos.data) + 4, line.len)), tos_lit("{")));
 			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
 		} else if (!in_css && string_contains(line, tos_lit(".")) && string_ends_with(line, tos_lit("{"))) {
