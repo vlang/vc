@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "926ffc8"
+#define V_COMMIT_HASH "13a7ce9"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fb7ca56"
+#define V_COMMIT_HASH "926ffc8"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "926ffc8"
+#define V_CURRENT_COMMIT_HASH "13a7ce9"
 #endif
 
 
@@ -3223,8 +3223,8 @@ static f32  f32_max(f32 a, f32 b);
 static f32  f32_min(f32 a, f32 b);
 static f64  f64_max(f64 a, f64 b);
 static f64  f64_min(f64 a, f64 b);
-static bool  f32_eq_epsilon(f32 a, f32 b);
-static bool  f64_eq_epsilon(f64 a, f64 b);
+bool  f32_eq_epsilon(f32 a, f32 b);
+bool  f64_eq_epsilon(f64 a, f64 b);
 string  ptr_str(voidptr ptr);
 string _const_digit_pairs; // a string literal, inited later
 string  int_str_l(int nn, int max);
@@ -8975,7 +8975,7 @@ inline static f64  f64_min(f64 a, f64 b) {
 }
 
 // Attr: [inline]
-inline static bool  f32_eq_epsilon(f32 a, f32 b) {
+inline bool  f32_eq_epsilon(f32 a, f32 b) {
 	f32 hi = f32_max(f32_abs(a), f32_abs(b));
 	f32 delta = f32_abs(a - b);
 	if (hi > ((f32)(1.0))) {
@@ -8986,7 +8986,7 @@ inline static bool  f32_eq_epsilon(f32 a, f32 b) {
 }
 
 // Attr: [inline]
-inline static bool  f64_eq_epsilon(f64 a, f64 b) {
+inline bool  f64_eq_epsilon(f64 a, f64 b) {
 	f64 hi = f64_max(f64_abs(a), f64_abs(b));
 	f64 delta = f64_abs(a - b);
 	if (hi > 1.0) {
