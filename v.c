@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "c9b395f"
+#define V_COMMIT_HASH "30e0bda"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ef46fbb"
+#define V_COMMIT_HASH "c9b395f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c9b395f"
+#define V_CURRENT_COMMIT_HASH "30e0bda"
 #endif
 
 
@@ -14553,10 +14553,6 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 			i++;
 		}else if (string_eq(arg, tos_lit("-o"))) {
 			res->out_name = os__cmdline__option(current_args, tos_lit("-o"), tos_lit(""));
-			if (string_ends_with(res->out_name, tos_lit(".v"))) {
-				eprintln(tos_lit("Cannot save output binary in a .v file."));
-				v_exit(1);
-			}
 			i++;
 		}else if (string_eq(arg, tos_lit("-b"))) {
 			Option_v__pref__Backend _t4 = v__pref__backend_from_string(os__cmdline__option(current_args, tos_lit("-b"), tos_lit("c")));
@@ -14604,6 +14600,10 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 				command_pos = i;
 			}
 		};
+	}
+	if (string_ne(command, tos_lit("doc")) && string_ends_with(res->out_name, tos_lit(".v"))) {
+		eprintln(tos_lit("Cannot save output binary in a .v file."));
+		v_exit(1);
 	}
 	if (string_ends_with(command, tos_lit(".v")) || os__exists(command)) {
 		res->path = command;
