@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "30e0bda"
+#define V_COMMIT_HASH "3c4e4d4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c9b395f"
+#define V_COMMIT_HASH "30e0bda"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "30e0bda"
+#define V_CURRENT_COMMIT_HASH "3c4e4d4"
 #endif
 
 
@@ -3711,6 +3711,7 @@ bool array_v__table__Type_contains(array_v__table__Type types, v__table__Type ty
 int v__table__Type_idx(v__table__Type t);
 int v__table__Type_nr_muls(v__table__Type t);
 bool v__table__Type_is_ptr(v__table__Type t);
+v__table__Type v__table__Type_set_idx(v__table__Type t, int idx);
 v__table__Type v__table__Type_set_nr_muls(v__table__Type t, int nr_muls);
 v__table__Type v__table__Type_to_ptr(v__table__Type t);
 v__table__Type v__table__Type_deref(v__table__Type t);
@@ -16333,6 +16334,11 @@ inline bool v__table__Type_is_ptr(v__table__Type t) {
 }
 
 // Attr: [inline]
+inline v__table__Type v__table__Type_set_idx(v__table__Type t, int idx) {
+	return ((((((((int)(t)) >> 24) & 0xff)) << 24) | ((((((int)(t)) >> 16) & 0xff)) << 16)) | ((((u16)(idx)) & 0xffff)));
+}
+
+// Attr: [inline]
 inline v__table__Type v__table__Type_set_nr_muls(v__table__Type t, int nr_muls) {
 	if (nr_muls < 0 || nr_muls > 255) {
 		v_panic(tos_lit("set_nr_muls: nr_muls must be between 0 & 255"));
@@ -16368,7 +16374,8 @@ inline v__table__Type v__table__Type_clear_flag(v__table__Type t, v__table__Type
 	return ((((((((((int)(t)) >> 24) & 0xff)) & ~(1 << ((int)(flag))))) << 24) | ((((((int)(t)) >> 16) & 0xff)) << 16)) | ((((u16)(t)) & 0xffff)));
 }
 
-v__table__Type v__table__Type_clear_flags(v__table__Type t) {
+// Attr: [inline]
+inline v__table__Type v__table__Type_clear_flags(v__table__Type t) {
 	return ((0 | ((((((int)(t)) >> 16) & 0xff)) << 16)) | ((((u16)(t)) & 0xffff)));
 }
 
@@ -20956,7 +20963,7 @@ static void v__checker__Checker_stmts(v__checker__Checker* c, array_v__ast__Stmt
 
 v__table__Type v__checker__Checker_unwrap_generic(v__checker__Checker* c, v__table__Type typ) {
 	if (v__table__Type_idx(typ) == _const_v__table__t_type_idx) {
-		return c->cur_generic_type;
+		return v__table__Type_set_idx(typ, c->cur_generic_type);
 	}
 	return typ;
 }
@@ -29665,7 +29672,7 @@ static multi_return_array_string_array_string v__gen__Gen_fn_args(v__gen__Gen* g
 	for (int i = 0; i < _t1.len; i++) {
 		v__table__Arg arg = ((v__table__Arg*)_t1.data)[i];
 		string caname = v__gen__c_name(arg.name);
-		v__table__Type typ = v__table__Type_set_nr_muls(v__gen__Gen_unwrap_generic(g, arg.typ), v__table__Type_nr_muls(arg.typ));
+		v__table__Type typ = v__gen__Gen_unwrap_generic(g, arg.typ);
 		v__table__TypeSymbol* arg_type_sym = v__table__Table_get_type_symbol(g->table, typ);
 		string arg_type_name = v__gen__Gen_typ(g, typ);
 		bool is_varg = i == args.len - 1 && is_variadic;
@@ -29741,7 +29748,7 @@ static void v__gen__Gen_call_expr(v__gen__Gen* g, v__ast__CallExpr node) {
 
 v__table__Type v__gen__Gen_unwrap_generic(v__gen__Gen* g, v__table__Type typ) {
 	if (v__table__Type_idx(typ) == _const_v__table__t_type_idx) {
-		return g->cur_generic_type;
+		return v__table__Type_set_idx(typ, g->cur_generic_type);
 	}
 	return typ;
 }
@@ -29907,11 +29914,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_17474 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_17474.arg0;
-		string pafile = mr_17474.arg1;
-		string pamod = mr_17474.arg2;
-		string pafn = mr_17474.arg3;
+		multi_return_int_string_string_string mr_17559 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_17559.arg0;
+		string pafile = mr_17559.arg1;
+		string pamod = mr_17559.arg2;
+		string pafn = mr_17559.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		v__gen__Gen_write(g, tos_lit(")"));
