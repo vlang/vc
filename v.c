@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "1190841"
+#define V_COMMIT_HASH "de76ac5"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e3917d9"
+#define V_COMMIT_HASH "1190841"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "1190841"
+#define V_CURRENT_COMMIT_HASH "de76ac5"
 #endif
 
 
@@ -2207,6 +2207,7 @@ struct v__parser__Parser {
 	bool inside_or_expr;
 	bool inside_for;
 	bool inside_fn;
+	bool inside_str_interp;
 	v__pref__Preferences* pref;
 	bool builtin_mod;
 	string mod;
@@ -23423,6 +23424,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.inside_or_expr = 0,
 		.inside_for = 0,
 		.inside_fn = 0,
+		.inside_str_interp = 0,
 		.pref = (v__pref__Preferences*)memdup(&(v__pref__Preferences){	.os = {0},
 		.backend = {0},
 		.build_mode = {0},
@@ -23528,6 +23530,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 		.inside_or_expr = 0,
 		.inside_for = 0,
 		.inside_fn = 0,
+		.inside_str_interp = 0,
 		.pref = pref,
 		.builtin_mod = 0,
 		.mod = (string){.str=""},
@@ -24192,7 +24195,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 			.value_type = {0},
 		}}, sizeof(v__ast__MapInit)), .typ = 152 /* v.ast.MapInit */};
 	}
-	if ((string_eq(p->tok.lit, tos_lit("r")) || string_eq(p->tok.lit, tos_lit("c")) || string_eq(p->tok.lit, tos_lit("js"))) && p->peek_tok.kind == v__token__Kind_string && p->prev_tok.kind != v__token__Kind_str_dollar) {
+	if ((string_eq(p->tok.lit, tos_lit("r")) || string_eq(p->tok.lit, tos_lit("c")) || string_eq(p->tok.lit, tos_lit("js"))) && p->peek_tok.kind == v__token__Kind_string && !p->inside_str_interp) {
 		return v__parser__Parser_string_expr(p);
 	}
 	bool known_var = false;
@@ -24516,6 +24519,7 @@ static v__ast__Expr v__parser__Parser_string_expr(v__parser__Parser* p) {
 	array_v__ast__Expr exprs = __new_array_with_default(0, 0, sizeof(v__ast__Expr), 0);
 	array_string vals = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_string efmts = __new_array_with_default(0, 0, sizeof(string), 0);
+	p->inside_str_interp = true;
 	while (p->tok.kind == v__token__Kind_string) {
 		array_push(&vals, _MOV((string[]){ p->tok.lit }));
 		v__parser__Parser_next(p);
@@ -24550,6 +24554,7 @@ static v__ast__Expr v__parser__Parser_string_expr(v__parser__Parser* p) {
 		.pos = pos,
 		.expr_types = __new_array(0, 1, sizeof(v__table__Type)),
 	}}, sizeof(v__ast__StringInterLiteral)), .typ = 162 /* v.ast.StringInterLiteral */};
+	p->inside_str_interp = false;
 	return node;
 }
 
