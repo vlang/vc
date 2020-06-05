@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ef46fbb"
+#define V_COMMIT_HASH "c9b395f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "24b263c"
+#define V_COMMIT_HASH "ef46fbb"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ef46fbb"
+#define V_CURRENT_COMMIT_HASH "c9b395f"
 #endif
 
 
@@ -21111,9 +21111,8 @@ static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) 
 				v__ast__Scope_update_var_type(scope, it->key_var, key_type);
 			}
 			v__table__Type value_type = v__table__Table_value_type(c->table, typ);
-			if (value_type == _const_v__table__void_type) {
-				v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, typ);
-				v__checker__Checker_error(c, _STR("for in: cannot index `%.*s\000`", 2, typ_sym->name), v__ast__Expr_position(it->cond));
+			if (value_type == _const_v__table__void_type || v__table__Type_has_flag(typ, v__table__TypeFlag_optional)) {
+				v__checker__Checker_error(c, _STR("for in: cannot index `%.*s\000`", 2, v__table__Table_type_to_str(c->table, typ)), v__ast__Expr_position(it->cond));
 			}
 			it->cond_type = typ;
 			it->kind = sym->kind;
