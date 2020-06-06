@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "31d03bb"
+#define V_COMMIT_HASH "c2fe4ff"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "de76ac5"
+#define V_COMMIT_HASH "31d03bb"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "31d03bb"
+#define V_CURRENT_COMMIT_HASH "c2fe4ff"
 #endif
 
 
@@ -3712,7 +3712,6 @@ bool array_v__table__Type_contains(array_v__table__Type types, v__table__Type ty
 int v__table__Type_idx(v__table__Type t);
 int v__table__Type_nr_muls(v__table__Type t);
 bool v__table__Type_is_ptr(v__table__Type t);
-v__table__Type v__table__Type_set_idx(v__table__Type t, int idx);
 v__table__Type v__table__Type_set_nr_muls(v__table__Type t, int nr_muls);
 v__table__Type v__table__Type_to_ptr(v__table__Type t);
 v__table__Type v__table__Type_deref(v__table__Type t);
@@ -3720,6 +3719,7 @@ v__table__Type v__table__Type_set_flag(v__table__Type t, v__table__TypeFlag flag
 v__table__Type v__table__Type_clear_flag(v__table__Type t, v__table__TypeFlag flag);
 v__table__Type v__table__Type_clear_flags(v__table__Type t);
 bool v__table__Type_has_flag(v__table__Type t, v__table__TypeFlag flag);
+v__table__Type v__table__Type_derive(v__table__Type t, v__table__Type t_from);
 v__table__Type v__table__new_type(int idx);
 v__table__Type v__table__new_type_ptr(int idx, int nr_muls);
 bool v__table__Type_is_pointer(v__table__Type typ);
@@ -16335,11 +16335,6 @@ inline bool v__table__Type_is_ptr(v__table__Type t) {
 }
 
 // Attr: [inline]
-inline v__table__Type v__table__Type_set_idx(v__table__Type t, int idx) {
-	return ((((((((int)(t)) >> 24) & 0xff)) << 24) | ((((((int)(t)) >> 16) & 0xff)) << 16)) | ((((u16)(idx)) & 0xffff)));
-}
-
-// Attr: [inline]
 inline v__table__Type v__table__Type_set_nr_muls(v__table__Type t, int nr_muls) {
 	if (nr_muls < 0 || nr_muls > 255) {
 		v_panic(tos_lit("set_nr_muls: nr_muls must be between 0 & 255"));
@@ -16383,6 +16378,11 @@ inline v__table__Type v__table__Type_clear_flags(v__table__Type t) {
 // Attr: [inline]
 inline bool v__table__Type_has_flag(v__table__Type t, v__table__TypeFlag flag) {
 	return (((((((int)(t)) >> 24) & 0xff)) >> ((int)(flag))) & 1) == 1;
+}
+
+// Attr: [inline]
+inline v__table__Type v__table__Type_derive(v__table__Type t, v__table__Type t_from) {
+	return ((((((((int)(t_from)) >> 24) & 0xff)) << 24) | ((((((int)(t_from)) >> 16) & 0xff)) << 16)) | ((((u16)(t)) & 0xffff)));
 }
 
 // Attr: [inline]
@@ -20959,7 +20959,7 @@ static void v__checker__Checker_stmts(v__checker__Checker* c, array_v__ast__Stmt
 
 v__table__Type v__checker__Checker_unwrap_generic(v__checker__Checker* c, v__table__Type typ) {
 	if (v__table__Type_idx(typ) == _const_v__table__t_type_idx) {
-		return v__table__Type_set_idx(typ, c->cur_generic_type);
+		return v__table__Type_derive(c->cur_generic_type, typ);
 	}
 	return typ;
 }
@@ -29748,7 +29748,7 @@ static void v__gen__Gen_call_expr(v__gen__Gen* g, v__ast__CallExpr node) {
 
 v__table__Type v__gen__Gen_unwrap_generic(v__gen__Gen* g, v__table__Type typ) {
 	if (v__table__Type_idx(typ) == _const_v__table__t_type_idx) {
-		return v__table__Type_set_idx(typ, g->cur_generic_type);
+		return v__table__Type_derive(g->cur_generic_type, typ);
 	}
 	return typ;
 }
@@ -29914,11 +29914,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_17556 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_17556.arg0;
-		string pafile = mr_17556.arg1;
-		string pamod = mr_17556.arg2;
-		string pafn = mr_17556.arg3;
+		multi_return_int_string_string_string mr_17483 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_17483.arg0;
+		string pafile = mr_17483.arg1;
+		string pamod = mr_17483.arg2;
+		string pafn = mr_17483.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		v__gen__Gen_write(g, tos_lit(")"));
