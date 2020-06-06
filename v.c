@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "e5f12ad"
+#define V_COMMIT_HASH "2770077"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "40bd1be"
+#define V_COMMIT_HASH "e5f12ad"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "e5f12ad"
+#define V_CURRENT_COMMIT_HASH "2770077"
 #endif
 
 
@@ -2274,7 +2274,6 @@ struct v__ast__CallExpr {
 	string mod;
 	string name;
 	bool is_method;
-	bool is_mut;
 	array_v__ast__CallArg args;
 	array_v__table__Type expected_arg_types;
 	v__table__Language language;
@@ -20072,7 +20071,6 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 		}
 		if ((*(v__table__Arg*)array_get(/*opt*/(*(v__table__Fn*)method.data).args, 0)).is_mut) {
 			v__checker__Checker_fail_if_immutable(c, call_expr->left);
-			call_expr->is_mut = true;
 		}
 		if (/*opt*/(*(v__table__Fn*)method.data).return_type == _const_v__table__void_type && /*opt*/(*(v__table__Fn*)method.data).ctdefine.len > 0 && !_IN(string, /*opt*/(*(v__table__Fn*)method.data).ctdefine, c->pref->compile_defines)) {
 			call_expr->should_be_skipped = true;
@@ -22337,7 +22335,6 @@ v__ast__CallExpr v__parser__Parser_call_expr(v__parser__Parser* p, v__table__Lan
 		.mod = p->mod,
 		.name = fn_name,
 		.is_method = 0,
-		.is_mut = 0,
 		.args = args,
 		.expected_arg_types = __new_array(0, 1, sizeof(v__table__Type)),
 		.language = language,
@@ -24458,7 +24455,6 @@ static v__ast__Expr v__parser__Parser_dot_expr(v__parser__Parser* p, v__ast__Exp
 			.mod = (string){.str=""},
 			.name = field_name,
 			.is_method = true,
-			.is_mut = 0,
 			.args = args,
 			.expected_arg_types = __new_array(0, 1, sizeof(v__table__Type)),
 			.language = {0},
