@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "de76ac5"
+#define V_COMMIT_HASH "31d03bb"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1190841"
+#define V_COMMIT_HASH "de76ac5"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "de76ac5"
+#define V_CURRENT_COMMIT_HASH "31d03bb"
 #endif
 
 
@@ -20452,7 +20452,7 @@ void v__checker__Checker_return_stmt(v__checker__Checker* c, v__ast__Return* ret
 	if (return_stmt->exprs.len == 0) {
 		return;
 	}
-	v__table__Type expected_type = c->expected_type;
+	v__table__Type expected_type = v__checker__Checker_unwrap_generic(c, c->expected_type);
 	v__table__TypeSymbol* expected_type_sym = v__table__Table_get_type_symbol(c->table, expected_type);
 	bool exp_is_optional = v__table__Type_has_flag(expected_type, v__table__TypeFlag_optional);
 	array_v__table__Type expected_types = new_array_from_c_array(1, 1, sizeof(v__table__Type), _MOV((v__table__Type[1]){
@@ -20493,20 +20493,15 @@ void v__checker__Checker_return_stmt(v__checker__Checker* c, v__ast__Return* ret
 	array _t7 = expected_types;
 	for (int i = 0; i < _t7.len; i++) {
 		v__table__Type exp_type = ((v__table__Type*)_t7.data)[i];
-		v__table__Type got_typ = (*(v__table__Type*)array_get(got_types, i));
+		v__table__Type got_typ = v__checker__Checker_unwrap_generic(c, (*(v__table__Type*)array_get(got_types, i)));
 		if (v__table__Type_has_flag(got_typ, v__table__TypeFlag_optional) && (!v__table__Type_has_flag(exp_type, v__table__TypeFlag_optional) || string_ne(v__table__Table_type_to_str(c->table, got_typ), v__table__Table_type_to_str(c->table, exp_type)))) {
 			v__token__Position pos = v__ast__Expr_position((*(v__ast__Expr*)array_get(return_stmt->exprs, i)));
 			v__checker__Checker_error(c, _STR("cannot use `%.*s\000` as type `%.*s\000` in return argument", 3, v__table__Table_type_to_str(c->table, got_typ), v__table__Table_type_to_str(c->table, exp_type)), pos);
 		}
-		bool is_generic = exp_type == _const_v__table__t_type;
-		bool ok = (is_generic ? (v__checker__Checker_check_types(c, got_typ, c->cur_generic_type) || got_typ == exp_type) : (v__checker__Checker_check_types(c, got_typ, exp_type)));
-		if (!ok) {
+		if (!v__checker__Checker_check_types(c, got_typ, exp_type)) {
 			v__table__TypeSymbol* got_typ_sym = v__table__Table_get_type_symbol(c->table, got_typ);
 			v__table__TypeSymbol* exp_typ_sym = v__table__Table_get_type_symbol(c->table, exp_type);
 			v__token__Position pos = v__ast__Expr_position((*(v__ast__Expr*)array_get(return_stmt->exprs, i)));
-			if (is_generic) {
-				exp_typ_sym = v__table__Table_get_type_symbol(c->table, c->cur_generic_type);
-			}
 			if (exp_typ_sym->kind == v__table__Kind_interface_) {
 				v__checker__Checker_type_implements(c, got_typ, exp_type, return_stmt->pos);
 				continue;
@@ -29919,11 +29914,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_17559 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_17559.arg0;
-		string pafile = mr_17559.arg1;
-		string pamod = mr_17559.arg2;
-		string pafn = mr_17559.arg3;
+		multi_return_int_string_string_string mr_17556 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_17556.arg0;
+		string pafile = mr_17556.arg1;
+		string pamod = mr_17556.arg2;
+		string pafn = mr_17556.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		v__gen__Gen_write(g, tos_lit(")"));
