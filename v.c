@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "c1ccd56"
+#define V_COMMIT_HASH "0a3486b"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c2fe4ff"
+#define V_COMMIT_HASH "c1ccd56"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c1ccd56"
+#define V_CURRENT_COMMIT_HASH "0a3486b"
 #endif
 
 
@@ -20105,7 +20105,7 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 			}
 		}
 		if (is_generic) {
-			call_expr->receiver_type = _const_v__table__t_type;
+			call_expr->receiver_type = v__table__Type_derive(_const_v__table__t_type, (*(v__table__Arg*)array_get(/*opt*/(*(v__table__Fn*)method.data).args, 0)).typ);
 		} else {
 			call_expr->receiver_type = (*(v__table__Arg*)array_get(/*opt*/(*(v__table__Fn*)method.data).args, 0)).typ;
 		}
