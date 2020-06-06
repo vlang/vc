@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "16bf300"
+#define V_COMMIT_HASH "d62d0c4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e534f85"
+#define V_COMMIT_HASH "16bf300"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "16bf300"
+#define V_CURRENT_COMMIT_HASH "d62d0c4"
 #endif
 
 
@@ -466,6 +466,7 @@ typedef enum {
 } v__scanner__CommentsMode;
 
 typedef struct v__checker__Checker v__checker__Checker;
+typedef struct v__parser__ParserState v__parser__ParserState;
 typedef struct v__parser__Parser v__parser__Parser;
 typedef struct v__gen__Gen v__gen__Gen;
 typedef struct v__gen__ProfileCounterMeta v__gen__ProfileCounterMeta;
@@ -1857,6 +1858,8 @@ struct v__ast__CharLiteral {
 struct v__ast__ComptimeCall {
 	string method_name;
 	v__ast__Expr left;
+	bool is_vweb;
+	array_v__ast__Stmt vweb_stmts;
 	v__table__TypeSymbol sym;
 };
 
@@ -2234,6 +2237,16 @@ struct v__parser__Parser {
 	bool expecting_type;
 	array_v__errors__Error errors;
 	array_v__errors__Warning warnings;
+	string cur_fn_name;
+};
+
+struct v__parser__ParserState {
+	int scanner_pos;
+	v__token__Token tok;
+	v__token__Token prev_tok;
+	v__token__Token peek_tok;
+	v__token__Token peek_tok2;
+	v__token__Token peek_tok3;
 };
 
 struct v__ast__File {
@@ -3659,6 +3672,10 @@ string array_v__cflag__CFlag_c_options_before_target(array_v__cflag__CFlag cflag
 string array_v__cflag__CFlag_c_options_after_target(array_v__cflag__CFlag cflags);
 string array_v__cflag__CFlag_c_options_without_object_files(array_v__cflag__CFlag cflags);
 string array_v__cflag__CFlag_c_options_only_object_files(array_v__cflag__CFlag cflags);
+string _const_vweb__tmpl__str_start; // a string literal, inited later
+string _const_vweb__tmpl__str_end; // a string literal, inited later
+string vweb__tmpl__compile_file(string path);
+string vweb__tmpl__compile_template(string content);
 int runtime__nr_cpus();
 int runtime__nr_jobs();
 bool runtime__is_32bit();
@@ -3667,10 +3684,6 @@ bool runtime__is_little_endian();
 bool runtime__is_big_endian();
 static int runtime__nr_cpus_nix();
 static int runtime__nr_cpus_win();
-string _const_vweb__tmpl__str_start; // a string literal, inited later
-string _const_vweb__tmpl__str_end; // a string literal, inited later
-string vweb__tmpl__compile_file(string path);
-string vweb__tmpl__compile_template(string content);
 string _const_help__unknown_topic; // a string literal, inited later
 void help__print_and_exit(string topic);
 #define _const_v__util__error_context_before 2
@@ -3978,6 +3991,8 @@ static array_v__ast__Expr v__parser__Parser_parse_assign_rhs(v__parser__Parser* 
 array_string _const_v__parser__supported_platforms; // inited later
 static string v__parser__Parser_resolve_vroot(v__parser__Parser* p, string flag);
 static v__ast__HashStmt v__parser__Parser_hash(v__parser__Parser* p);
+v__parser__ParserState v__parser__Parser_save_state(v__parser__Parser* p);
+void v__parser__Parser_restore_state(v__parser__Parser* p, v__parser__ParserState state);
 static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p);
 static v__ast__Stmt v__parser__Parser_comp_if(v__parser__Parser* p);
 v__pref__OS _const_v__parser__todo_delete_me; // inited later
@@ -15592,6 +15607,90 @@ string array_v__cflag__CFlag_c_options_only_object_files(array_v__cflag__CFlag c
 	return array_string_join(args, tos_lit(" "));
 }
 
+string vweb__tmpl__compile_file(string path) {
+	Option_string _t1 = os__read_file(path);
+	if (!_t1.ok) {
+		string err = _t1.v_error;
+		int errcode = _t1.ecode;
+		v_panic(tos_lit("html failed"));
+	}
+	Option_string html = _t1;
+	return vweb__tmpl__compile_template(/*opt*/(*(string*)html.data));
+}
+
+string vweb__tmpl__compile_template(string content) {
+	string html = content;
+	string header = tos_lit("");
+	if (os__exists(tos_lit("header.html")) && string_contains(html, tos_lit("@header"))) {
+		Option_string _t1 = os__read_file(tos_lit("header.html"));
+		if (!_t1.ok) {
+			string err = _t1.v_error;
+			int errcode = _t1.ecode;
+			v_panic(tos_lit("reading file header.html failed"));
+		}
+		Option_string h = _t1;
+		header = string_replace(/*opt*/(*(string*)h.data), tos_lit("\'"), tos_lit("\""));
+		html = string_add(header, html);
+	}
+	array_string lines = string_split_into_lines(html);
+	strings__Builder s = strings__new_builder(1000);
+	strings__Builder_writeln(&s, _STR("\n	// === vweb html template ===\n	mut sb := strings.new_builder(%"PRId32"\000)\n	header := \' \' // TODO remove\n	_ = header\n	//footer := \'footer\'\n", 2, lines.len * 30));
+	strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
+	bool in_css = true;
+	// FOR IN array
+	array _t2 = lines;
+	for (int _t3 = 0; _t3 < _t2.len; _t3++) {
+		string _line = ((string*)_t2.data)[_t3];
+		string line = string_trim_space(_line);
+		if (string_eq(line, tos_lit("<style>"))) {
+			in_css = true;
+		} else if (string_eq(line, tos_lit("</style>"))) {
+		}
+		if (string_contains(line, tos_lit("@if "))) {
+			strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
+			Option_int _t4 = string_index(line, tos_lit("@if"));
+			if (!_t4.ok) {
+				string err = _t4.v_error;
+				int errcode = _t4.ecode;
+				continue;
+			}
+			Option_int pos = _t4;
+			strings__Builder_writeln(&s, string_add(string_add(tos_lit("if "), string_substr(line, /*opt*/(*(int*)pos.data) + 4, line.len)), tos_lit("{")));
+			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
+		} else if (string_contains(line, tos_lit("@end"))) {
+			strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
+			strings__Builder_writeln(&s, tos_lit("}"));
+			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
+		} else if (string_contains(line, tos_lit("@else"))) {
+			strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
+			strings__Builder_writeln(&s, tos_lit(" } else { "));
+			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
+		} else if (string_contains(line, tos_lit("@for"))) {
+			strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
+			Option_int _t5 = string_index(line, tos_lit("@for"));
+			if (!_t5.ok) {
+				string err = _t5.v_error;
+				int errcode = _t5.ecode;
+				continue;
+			}
+			Option_int pos = _t5;
+			strings__Builder_writeln(&s, string_add(string_add(tos_lit("for "), string_substr(line, /*opt*/(*(int*)pos.data) + 4, line.len)), tos_lit("{")));
+			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
+		} else if (!in_css && string_contains(line, tos_lit(".")) && string_ends_with(line, tos_lit("{"))) {
+			string v_class = string_find_between(line, tos_lit("."), tos_lit("{"));
+			strings__Builder_writeln(&s, _STR("<div class=\"%.*s\000\">", 2, v_class));
+		} else if (!in_css && string_eq(line, tos_lit("}"))) {
+			strings__Builder_writeln(&s, tos_lit("</div>"));
+		} else {
+			strings__Builder_writeln(&s, string_replace(string_replace(line, tos_lit("@"), tos_lit("\x24")), tos_lit("'"), tos_lit("\"")));
+		}
+	}
+	strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
+	strings__Builder_writeln(&s, tos_lit("tmpl_res := sb.str() "));
+	strings__Builder_writeln(&s, tos_lit("// === end of vweb html template ==="));
+	return strings__Builder_str(&s);
+}
+
 
 
 int runtime__nr_cpus() {
@@ -15698,89 +15797,6 @@ static int runtime__nr_cpus_nix() {
 static int runtime__nr_cpus_win() {
 	eprintln(tos_lit("nr_cpus_win should be callable only for windows"));
 	return 1;
-}
-
-string vweb__tmpl__compile_file(string path) {
-	Option_string _t1 = os__read_file(path);
-	if (!_t1.ok) {
-		string err = _t1.v_error;
-		int errcode = _t1.ecode;
-		v_panic(tos_lit("html failed"));
-	}
-	Option_string html = _t1;
-	return vweb__tmpl__compile_template(/*opt*/(*(string*)html.data));
-}
-
-string vweb__tmpl__compile_template(string content) {
-	string html = content;
-	string header = tos_lit("");
-	if (os__exists(tos_lit("header.html")) && string_contains(html, tos_lit("@header"))) {
-		Option_string _t1 = os__read_file(tos_lit("header.html"));
-		if (!_t1.ok) {
-			string err = _t1.v_error;
-			int errcode = _t1.ecode;
-			v_panic(tos_lit("reading file header.html failed"));
-		}
-		Option_string h = _t1;
-		header = string_replace(/*opt*/(*(string*)h.data), tos_lit("\'"), tos_lit("\""));
-		html = string_add(header, html);
-	}
-	array_string lines = string_split_into_lines(html);
-	strings__Builder s = strings__new_builder(1000);
-	strings__Builder_writeln(&s, _STR("\nmut sb := strings.new_builder(%"PRId32"\000)\nheader := \' \' // TODO remove\n_ = header\n//footer := \'footer\'\n", 2, lines.len * 30));
-	strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
-	bool in_css = true;
-	// FOR IN array
-	array _t2 = lines;
-	for (int _t3 = 0; _t3 < _t2.len; _t3++) {
-		string _line = ((string*)_t2.data)[_t3];
-		string line = string_trim_space(_line);
-		if (string_eq(line, tos_lit("<style>"))) {
-			in_css = true;
-		} else if (string_eq(line, tos_lit("</style>"))) {
-		}
-		if (string_contains(line, tos_lit("@if "))) {
-			strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
-			Option_int _t4 = string_index(line, tos_lit("@if"));
-			if (!_t4.ok) {
-				string err = _t4.v_error;
-				int errcode = _t4.ecode;
-				continue;
-			}
-			Option_int pos = _t4;
-			strings__Builder_writeln(&s, string_add(string_add(tos_lit("if "), string_substr(line, /*opt*/(*(int*)pos.data) + 4, line.len)), tos_lit("{")));
-			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
-		} else if (string_contains(line, tos_lit("@end"))) {
-			strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
-			strings__Builder_writeln(&s, tos_lit("}"));
-			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
-		} else if (string_contains(line, tos_lit("@else"))) {
-			strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
-			strings__Builder_writeln(&s, tos_lit(" } else { "));
-			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
-		} else if (string_contains(line, tos_lit("@for"))) {
-			strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
-			Option_int _t5 = string_index(line, tos_lit("@for"));
-			if (!_t5.ok) {
-				string err = _t5.v_error;
-				int errcode = _t5.ecode;
-				continue;
-			}
-			Option_int pos = _t5;
-			strings__Builder_writeln(&s, string_add(string_add(tos_lit("for "), string_substr(line, /*opt*/(*(int*)pos.data) + 4, line.len)), tos_lit("{")));
-			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
-		} else if (!in_css && string_contains(line, tos_lit(".")) && string_ends_with(line, tos_lit("{"))) {
-			string v_class = string_find_between(line, tos_lit("."), tos_lit("{"));
-			strings__Builder_writeln(&s, _STR("<div class=\"%.*s\000\">", 2, v_class));
-		} else if (!in_css && string_eq(line, tos_lit("}"))) {
-			strings__Builder_writeln(&s, tos_lit("</div>"));
-		} else {
-			strings__Builder_writeln(&s, string_replace(string_replace(line, tos_lit("@"), tos_lit("\x24")), tos_lit("'"), tos_lit("\"")));
-		}
-	}
-	strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
-	strings__Builder_writeln(&s, tos_lit("tmpl_res := sb.str() }"));
-	return strings__Builder_str(&s);
 }
 
 void help__print_and_exit(string topic) {
@@ -22061,16 +22077,54 @@ _t3;
 	};
 }
 
+v__parser__ParserState v__parser__Parser_save_state(v__parser__Parser* p) {
+	return (v__parser__ParserState){
+		.scanner_pos = p->scanner->pos,
+		.tok = p->tok,
+		.prev_tok = p->prev_tok,
+		.peek_tok = p->peek_tok,
+		.peek_tok2 = p->peek_tok2,
+		.peek_tok3 = p->peek_tok3,
+	};
+}
+
+void v__parser__Parser_restore_state(v__parser__Parser* p, v__parser__ParserState state) {
+	p->scanner->pos = state.scanner_pos;
+	p->tok = state.tok;
+	p->prev_tok = state.prev_tok;
+	p->peek_tok = state.peek_tok;
+	p->peek_tok2 = state.peek_tok2;
+	p->peek_tok3 = state.peek_tok3;
+}
+
 static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 	v__parser__Parser_check(p, v__token__Kind_dollar);
 	v__parser__Parser_check(p, v__token__Kind_name);
 	v__parser__Parser_check(p, v__token__Kind_dot);
+	int pos = p->scanner->pos;
 	v__parser__Parser_check(p, v__token__Kind_name);
 	v__parser__Parser_check(p, v__token__Kind_lpar);
 	v__parser__Parser_check(p, v__token__Kind_rpar);
+	v__parser__ParserState state = v__parser__Parser_save_state(p);
+	string path = string_add(p->cur_fn_name, tos_lit(".html"));
+	println(_STR(">>> compiling vweb HTML template \"%.*s\000\"", 2, path));
+	string v_code = vweb__tmpl__compile_file(path);
+	if (p->pref->is_verbose) {
+		println(tos_lit("\n\n"));
+		println(_STR(">>> vweb template for %.*s\000:", 2, path));
+		println(v_code);
+		println(tos_lit(">>> end of vweb template END"));
+		println(tos_lit("\n\n"));
+		p->scanner->text = string_add(string_add(string_substr(p->scanner->text, 0, pos), v_code), string_substr(p->scanner->text, pos, p->scanner->text.len));
+		println(p->scanner->text);
+	}
+	v__parser__Parser_restore_state(p, state);
+	p->scanner->pos = pos + v_code.len + 1;
 	return (v__ast__ComptimeCall){
 		.method_name = (string){.str=""},
 		.left = {0},
+		.is_vweb = true,
+		.vweb_stmts = __new_array(0, 1, sizeof(v__ast__Stmt)),
 		.sym = {0},
 	};
 }
@@ -22185,6 +22239,8 @@ static v__ast__ComptimeCall v__parser__Parser_comptime_method_call(v__parser__Pa
 	return (v__ast__ComptimeCall){
 		.method_name = method_name,
 		.left = left,
+		.is_vweb = 0,
+		.vweb_stmts = __new_array(0, 1, sizeof(v__ast__Stmt)),
 		.sym = {0},
 	};
 }
@@ -22597,6 +22653,7 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 			.name = name,
 		});
 	}
+	p->cur_fn_name = name;
 	array_v__ast__Stmt stmts = __new_array_with_default(0, 0, sizeof(v__ast__Stmt), 0);
 	bool no_body = p->tok.kind != v__token__Kind_lcbr;
 	v__token__Position body_start_pos = v__token__Token_position(&p->peek_tok);
@@ -22638,9 +22695,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_7016 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_7016.arg0;
-	bool is_variadic = mr_7016.arg1;
+	multi_return_array_v__table__Arg_bool mr_7038 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_7038.arg0;
+	bool is_variadic = mr_7038.arg1;
 	// FOR IN array
 	array _t1 = args;
 	for (int _t2 = 0; _t2 < _t1.len; _t2++) {
@@ -23601,6 +23658,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.expecting_type = 0,
 		.errors = __new_array(0, 1, sizeof(v__errors__Error)),
 		.warnings = __new_array(0, 1, sizeof(v__errors__Warning)),
+		.cur_fn_name = (string){.str=""},
 	};
 	v__parser__Parser_init_parse_fns(&p);
 	v__parser__Parser_read_first_token(&p);
@@ -23653,6 +23711,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 		.expecting_type = 0,
 		.errors = __new_array_with_default(0, 0, sizeof(v__errors__Error), 0),
 		.warnings = __new_array_with_default(0, 0, sizeof(v__errors__Warning), 0),
+		.cur_fn_name = (string){.str=""},
 	};
 	v__parser__Parser_init_parse_fns(&p);
 	v__parser__Parser_read_first_token(&p);
@@ -29596,6 +29655,10 @@ static void v__gen__Gen_interface_call(v__gen__Gen* g, v__table__Type typ, v__ta
 }
 
 static void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node) {
+	if (node.is_vweb) {
+		v__gen__Gen_writeln(g, tos_lit("vweb__Context_html(&app-> vweb, tmpl_res)"));
+		return;
+	}
 	v__gen__Gen_writeln(g, string_add(tos_lit("// $"), _STR("method call. sym=\"%.*s\000\"", 2, node.sym.name)));
 	int j = 0;
 	// FOR IN array
