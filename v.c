@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "e534f85"
+#define V_COMMIT_HASH "16bf300"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "32463e9"
+#define V_COMMIT_HASH "e534f85"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "e534f85"
+#define V_CURRENT_COMMIT_HASH "16bf300"
 #endif
 
 
@@ -11534,7 +11534,7 @@ Option_bool os__cp(string old, string v_new) {
 		if (fp_from < 0) {
 			/*opt promotion*/ Option _t3 = error_with_code(_STR("cp: failed to open %.*s", 1, old), ((int)(fp_from)));return *(Option_bool*)&_t3;
 		}
-		int fp_to = open(v_new.str, ((O_WRONLY | O_CREAT) | O_TRUNC));
+		int fp_to = open(v_new.str, ((O_WRONLY | O_CREAT) | O_TRUNC), (S_IWUSR | S_IRUSR));
 		if (fp_to < 0) {
 			close(fp_from);
 			/*opt promotion*/ Option _t4 = error_with_code(_STR("cp: failed to write to %.*s", 1, v_new), ((int)(fp_to)));return *(Option_bool*)&_t4;
@@ -11860,8 +11860,8 @@ static int os__vpclose(voidptr f) {
 		return _pclose(f);
 	
 #else
-		multi_return_int_bool mr_9737 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_9737.arg0;
+		multi_return_int_bool mr_9760 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_9760.arg0;
 		return ret;
 	
 // } windows
@@ -11889,9 +11889,9 @@ int os__system(string cmd) {
 	
 // $if !windows {
 #ifndef _WIN32
-		multi_return_int_bool mr_10503 = os__posix_wait4_to_exit_status(ret);
-		int pret = mr_10503.arg0;
-		bool is_signaled = mr_10503.arg1;
+		multi_return_int_bool mr_10526 = os__posix_wait4_to_exit_status(ret);
+		int pret = mr_10526.arg0;
+		bool is_signaled = mr_10526.arg1;
 		if (is_signaled) {
 			println(string_add(string_add(_STR("Terminated by signal %2"PRId32"\000 (", 2, ret), os__sigint_to_signal_name(pret)), tos_lit(")")));
 		}
