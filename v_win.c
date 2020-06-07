@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8c8df66"
+#define V_COMMIT_HASH "36edd62"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3bbda71"
+#define V_COMMIT_HASH "8c8df66"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8c8df66"
+#define V_CURRENT_COMMIT_HASH "36edd62"
 #endif
 
 
@@ -5976,9 +5976,9 @@ string strconv__ftoa__f32_to_str(f32 f, int n_digit) {
 	if ((exp == _const_strconv__ftoa__maxexp32) || (exp == 0 && mant == 0)) {
 		return strconv__ftoa__get_string_special(neg, exp == 0, mant == 0);
 	}
-	multi_return_strconv__ftoa__Dec32_bool mr_8464 = strconv__ftoa__f32_to_decimal_exact_int(mant, exp);
-	strconv__ftoa__Dec32 d = mr_8464.arg0;
-	bool ok = mr_8464.arg1;
+	multi_return_strconv__ftoa__Dec32_bool mr_8141 = strconv__ftoa__f32_to_decimal_exact_int(mant, exp);
+	strconv__ftoa__Dec32 d = mr_8141.arg0;
+	bool ok = mr_8141.arg1;
 	if (!ok) {
 		d = strconv__ftoa__f32_to_decimal(mant, exp);
 	}
@@ -5995,9 +5995,9 @@ string strconv__ftoa__f32_to_str_pad(f32 f, int n_digit) {
 	if ((exp == _const_strconv__ftoa__maxexp32) || (exp == 0 && mant == 0)) {
 		return strconv__ftoa__get_string_special(neg, exp == 0, mant == 0);
 	}
-	multi_return_strconv__ftoa__Dec32_bool mr_9172 = strconv__ftoa__f32_to_decimal_exact_int(mant, exp);
-	strconv__ftoa__Dec32 d = mr_9172.arg0;
-	bool ok = mr_9172.arg1;
+	multi_return_strconv__ftoa__Dec32_bool mr_8849 = strconv__ftoa__f32_to_decimal_exact_int(mant, exp);
+	strconv__ftoa__Dec32 d = mr_8849.arg0;
+	bool ok = mr_8849.arg1;
 	if (!ok) {
 		d = strconv__ftoa__f32_to_decimal(mant, exp);
 	}
@@ -6248,9 +6248,9 @@ string strconv__ftoa__f64_to_str(f64 f, int n_digit) {
 	if ((exp == _const_strconv__ftoa__maxexp64) || (exp == 0 && mant == 0)) {
 		return strconv__ftoa__get_string_special(neg, exp == 0, mant == 0);
 	}
-	multi_return_strconv__ftoa__Dec64_bool mr_10250 = strconv__ftoa__f64_to_decimal_exact_int(mant, exp);
-	strconv__ftoa__Dec64 d = mr_10250.arg0;
-	bool ok = mr_10250.arg1;
+	multi_return_strconv__ftoa__Dec64_bool mr_9926 = strconv__ftoa__f64_to_decimal_exact_int(mant, exp);
+	strconv__ftoa__Dec64 d = mr_9926.arg0;
+	bool ok = mr_9926.arg1;
 	if (!ok) {
 		d = strconv__ftoa__f64_to_decimal(mant, exp);
 	}
@@ -6267,9 +6267,9 @@ string strconv__ftoa__f64_to_str_pad(f64 f, int n_digit) {
 	if ((exp == _const_strconv__ftoa__maxexp64) || (exp == 0 && mant == 0)) {
 		return strconv__ftoa__get_string_special(neg, exp == 0, mant == 0);
 	}
-	multi_return_strconv__ftoa__Dec64_bool mr_10986 = strconv__ftoa__f64_to_decimal_exact_int(mant, exp);
-	strconv__ftoa__Dec64 d = mr_10986.arg0;
-	bool ok = mr_10986.arg1;
+	multi_return_strconv__ftoa__Dec64_bool mr_10662 = strconv__ftoa__f64_to_decimal_exact_int(mant, exp);
+	strconv__ftoa__Dec64 d = mr_10662.arg0;
+	bool ok = mr_10662.arg1;
 	if (!ok) {
 		d = strconv__ftoa__f64_to_decimal(mant, exp);
 	}
@@ -6366,9 +6366,9 @@ static int strconv__ftoa__decimal_len_32(u32 u) {
 }
 
 static u32 strconv__ftoa__mul_shift_32(u32 m, u64 mul, int ishift) {
-	multi_return_u64_u64 mr_2335 = math__bits__mul_64(((u64)(m)), mul);
-	u64 hi = mr_2335.arg0;
-	u64 lo = mr_2335.arg1;
+	multi_return_u64_u64 mr_1854 = math__bits__mul_64(((u64)(m)), mul);
+	u64 hi = mr_1854.arg0;
+	u64 lo = mr_1854.arg1;
 	u64 shifted_sum = (lo >> ((u64)(ishift))) + (hi << ((u64)(64 - ishift)));
 	strconv__ftoa__assert1(shifted_sum <= 2147483647, tos_lit("shiftedSum <= math.max_u32"));
 	return ((u32)(shifted_sum));
@@ -6434,11 +6434,11 @@ static u64 strconv__ftoa__shift_right_128(strconv__ftoa__Uint128 v, int shift) {
 }
 
 static u64 strconv__ftoa__mul_shift_64(u64 m, strconv__ftoa__Uint128 mul, int shift) {
-	multi_return_u64_u64 mr_5025 = math__bits__mul_64(m, mul.hi);
-	u64 hihi = mr_5025.arg0;
-	u64 hilo = mr_5025.arg1;
-	multi_return_u64_u64 mr_5063 = math__bits__mul_64(m, mul.lo);
-	u64 lohi = mr_5063.arg0;
+	multi_return_u64_u64 mr_4387 = math__bits__mul_64(m, mul.hi);
+	u64 hihi = mr_4387.arg0;
+	u64 hilo = mr_4387.arg1;
+	multi_return_u64_u64 mr_4425 = math__bits__mul_64(m, mul.lo);
+	u64 lohi = mr_4425.arg0;
 	strconv__ftoa__Uint128 sum = (strconv__ftoa__Uint128){
 		.lo = lohi + hilo,
 		.hi = hihi,
@@ -6794,28 +6794,28 @@ static u64 strconv__converter(strconv__PrepNumber* pn) {
 	s1 = ((u32)(pn->mantissa >> 32));
 	s2 = ((u32)(0));
 	while (pn->exponent > 0) {
-		multi_return_u32_u32_u32 mr_7935 = strconv__lsl96(s2, s1, s0);
-		q2 = mr_7935.arg0;
-		q1 = mr_7935.arg1;
-		q0 = mr_7935.arg2;
-		multi_return_u32_u32_u32 mr_7979 = strconv__lsl96(q2, q1, q0);
-		r2 = mr_7979.arg0;
-		r1 = mr_7979.arg1;
-		r0 = mr_7979.arg2;
-		multi_return_u32_u32_u32 mr_8033 = strconv__lsl96(r2, r1, r0);
-		s2 = mr_8033.arg0;
-		s1 = mr_8033.arg1;
-		s0 = mr_8033.arg2;
-		multi_return_u32_u32_u32 mr_8087 = strconv__add96(s2, s1, s0, q2, q1, q0);
-		s2 = mr_8087.arg0;
-		s1 = mr_8087.arg1;
-		s0 = mr_8087.arg2;
+		multi_return_u32_u32_u32 mr_6911 = strconv__lsl96(s2, s1, s0);
+		q2 = mr_6911.arg0;
+		q1 = mr_6911.arg1;
+		q0 = mr_6911.arg2;
+		multi_return_u32_u32_u32 mr_6955 = strconv__lsl96(q2, q1, q0);
+		r2 = mr_6955.arg0;
+		r1 = mr_6955.arg1;
+		r0 = mr_6955.arg2;
+		multi_return_u32_u32_u32 mr_7009 = strconv__lsl96(r2, r1, r0);
+		s2 = mr_7009.arg0;
+		s1 = mr_7009.arg1;
+		s0 = mr_7009.arg2;
+		multi_return_u32_u32_u32 mr_7063 = strconv__add96(s2, s1, s0, q2, q1, q0);
+		s2 = mr_7063.arg0;
+		s1 = mr_7063.arg1;
+		s0 = mr_7063.arg2;
 		pn->exponent--;
 		while (((s2 & mask28)) != 0) {
-			multi_return_u32_u32_u32 mr_8208 = strconv__lsr96(s2, s1, s0);
-			q2 = mr_8208.arg0;
-			q1 = mr_8208.arg1;
-			q0 = mr_8208.arg2;
+			multi_return_u32_u32_u32 mr_7184 = strconv__lsr96(s2, s1, s0);
+			q2 = mr_7184.arg0;
+			q1 = mr_7184.arg1;
+			q0 = mr_7184.arg2;
 			binexp++;
 			s2 = q2;
 			s1 = q1;
@@ -6824,10 +6824,10 @@ static u64 strconv__converter(strconv__PrepNumber* pn) {
 	}
 	while (pn->exponent < 0) {
 		while (!(((s2 & (((u32)(1)) << 31))) != 0)) {
-			multi_return_u32_u32_u32 mr_8351 = strconv__lsl96(s2, s1, s0);
-			q2 = mr_8351.arg0;
-			q1 = mr_8351.arg1;
-			q0 = mr_8351.arg2;
+			multi_return_u32_u32_u32 mr_7327 = strconv__lsl96(s2, s1, s0);
+			q2 = mr_7327.arg0;
+			q1 = mr_7327.arg1;
+			q0 = mr_7327.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
@@ -6852,10 +6852,10 @@ static u64 strconv__converter(strconv__PrepNumber* pn) {
 	}
 	if (s2 != 0 || s1 != 0 || s0 != 0) {
 		while (((s2 & mask28)) == 0) {
-			multi_return_u32_u32_u32 mr_9010 = strconv__lsl96(s2, s1, s0);
-			q2 = mr_9010.arg0;
-			q1 = mr_9010.arg1;
-			q0 = mr_9010.arg2;
+			multi_return_u32_u32_u32 mr_7986 = strconv__lsl96(s2, s1, s0);
+			q2 = mr_7986.arg0;
+			q1 = mr_7986.arg1;
+			q0 = mr_7986.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
@@ -6867,25 +6867,25 @@ static u64 strconv__converter(strconv__PrepNumber* pn) {
 	u32 check_round_mask = ((u32)(0xFFFFFFFF)) << ((u32)(nbit));
 	if (((s1 & check_round_bit)) != 0) {
 		if (((s1 & ~check_round_mask)) != 0) {
-			multi_return_u32_u32_u32 mr_10083 = strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
-			s2 = mr_10083.arg0;
-			s1 = mr_10083.arg1;
-			s0 = mr_10083.arg2;
+			multi_return_u32_u32_u32 mr_9059 = strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
+			s2 = mr_9059.arg0;
+			s1 = mr_9059.arg1;
+			s0 = mr_9059.arg2;
 		} else {
 			if (((s1 & (check_round_bit << ((u32)(1))))) != 0) {
-				multi_return_u32_u32_u32 mr_10273 = strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
-				s2 = mr_10273.arg0;
-				s1 = mr_10273.arg1;
-				s0 = mr_10273.arg2;
+				multi_return_u32_u32_u32 mr_9249 = strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
+				s2 = mr_9249.arg0;
+				s1 = mr_9249.arg1;
+				s0 = mr_9249.arg2;
 			}
 		}
 		s1 = (s1 & check_round_mask);
 		s0 = ((u32)(0));
 		if ((s2 & (mask28 << ((u32)(1)))) != 0) {
-			multi_return_u32_u32_u32 mr_10473 = strconv__lsr96(s2, s1, s0);
-			q2 = mr_10473.arg0;
-			q1 = mr_10473.arg1;
-			q0 = mr_10473.arg2;
+			multi_return_u32_u32_u32 mr_9449 = strconv__lsr96(s2, s1, s0);
+			q2 = mr_9449.arg0;
+			q1 = mr_9449.arg1;
+			q0 = mr_9449.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
@@ -6925,9 +6925,9 @@ f64 strconv__atof64(string s) {
 	};
 	int res_parsing = 0;
 	strconv__Float64u res;
-	multi_return_int_strconv__PrepNumber mr_11620 = strconv__parser(string_add(s, tos_lit(" ")));
-	res_parsing = mr_11620.arg0;
-	pn = mr_11620.arg1;
+	multi_return_int_strconv__PrepNumber mr_10454 = strconv__parser(string_add(s, tos_lit(" ")));
+	res_parsing = mr_10454.arg0;
+	pn = mr_10454.arg1;
 	if (res_parsing == _const_strconv__parser_ok) {
 		res.u = strconv__converter((voidptr)&/*qq*/pn);
 	}else if (res_parsing == _const_strconv__parser_pzero) {
@@ -12140,8 +12140,8 @@ static int os__vpclose(voidptr f) {
 		return _pclose(f);
 	
 #else
-		multi_return_int_bool mr_9760 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_9760.arg0;
+		multi_return_int_bool mr_9702 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_9702.arg0;
 		return ret;
 	
 // } windows
