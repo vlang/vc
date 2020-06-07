@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8277c97"
+#define V_COMMIT_HASH "931cf86"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9c87695"
+#define V_COMMIT_HASH "8277c97"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8277c97"
+#define V_CURRENT_COMMIT_HASH "931cf86"
 #endif
 
 
@@ -22296,6 +22296,12 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 	v__parser__Parser_check(p, v__token__Kind_rpar);
 	string path = string_add(p->cur_fn_name, tos_lit(".html"));
 	println(_STR(">>> compiling vweb HTML template \"%.*s\000\"", 2, path));
+	if (!os__exists(path)) {
+		path = string_add(string_add(os__dir(p->scanner->file_path), tos_lit("/")), path);
+		if (!os__exists(path)) {
+			v__parser__Parser_error(p, _STR("vweb HTML template \"%.*s\000\" not found", 2, path));
+		}
+	}
 	string v_code = vweb__tmpl__compile_file(path);
 	v__ast__Scope* scope = (v__ast__Scope*)memdup(&(v__ast__Scope){	.objects = new_map_1(sizeof(v__ast__ScopeObject)),
 		.parent = 0,
