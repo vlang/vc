@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "add4d39"
+#define V_COMMIT_HASH "d7c6392"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2b6ba63"
+#define V_COMMIT_HASH "add4d39"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "add4d39"
+#define V_CURRENT_COMMIT_HASH "d7c6392"
 #endif
 
 
@@ -23950,7 +23950,7 @@ v__table__Type v__parser__Parser_parse_type(v__parser__Parser* p) {
 	if (p->tok.kind != v__token__Kind_lcbr) {
 		v__token__Position pos = v__token__Token_position(&p->tok);
 		typ = v__parser__Parser_parse_any_type(p, language, nr_muls > 0);
-		if (typ == _const_v__table__void_type) {
+		if (typ == _const_v__table__void_type && is_optional) {
 			v__parser__Parser_error_with_pos(p, tos_lit("use `?` instead of `?void`"), pos);
 		}
 	}
