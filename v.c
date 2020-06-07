@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d7c6392"
+#define V_COMMIT_HASH "3bbda71"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "add4d39"
+#define V_COMMIT_HASH "d7c6392"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d7c6392"
+#define V_CURRENT_COMMIT_HASH "3bbda71"
 #endif
 
 
@@ -15841,7 +15841,7 @@ string vweb__tmpl__compile_template(string content) {
 	strings__Builder s = strings__new_builder(1000);
 	strings__Builder_writeln(&s, _STR("\n	import strings\n	// === vweb html template ===\n	fn vweb_tmpl() {\n	mut sb := strings.new_builder(%"PRId32"\000)\n	header := \' \' // TODO remove\n	_ = header\n	//footer := \'footer\'\n", 2, lines.len * 30));
 	strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
-	bool in_css = true;
+	bool in_css = false;
 	// FOR IN array
 	array _t2 = lines;
 	for (int _t3 = 0; _t3 < _t2.len; _t3++) {
@@ -23646,7 +23646,7 @@ v__table__Type v__parser__Parser_parse_type(v__parser__Parser* p) {
 	if (p->tok.kind != v__token__Kind_lcbr) {
 		v__token__Position pos = v__token__Token_position(&p->tok);
 		typ = v__parser__Parser_parse_any_type(p, language, nr_muls > 0);
-		if (typ == _const_v__table__void_type && is_optional) {
+		if (typ == _const_v__table__void_type) {
 			v__parser__Parser_error_with_pos(p, tos_lit("use `?` instead of `?void`"), pos);
 		}
 	}
