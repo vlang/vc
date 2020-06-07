@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "013bfc7"
+#define V_COMMIT_HASH "cbcdc84"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "caa25a3"
+#define V_COMMIT_HASH "013bfc7"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "013bfc7"
+#define V_CURRENT_COMMIT_HASH "cbcdc84"
 #endif
 
 
@@ -483,7 +483,6 @@ typedef enum {
 } v__scanner__CommentsMode;
 
 typedef struct v__checker__Checker v__checker__Checker;
-typedef struct v__parser__ParserState v__parser__ParserState;
 typedef struct v__parser__Parser v__parser__Parser;
 typedef struct v__gen__Gen v__gen__Gen;
 typedef struct v__gen__ProfileCounterMeta v__gen__ProfileCounterMeta;
@@ -2005,14 +2004,6 @@ struct v__ast__CharLiteral {
 	v__token__Position pos;
 };
 
-struct v__ast__ComptimeCall {
-	string method_name;
-	v__ast__Expr left;
-	bool is_vweb;
-	array_v__ast__Stmt vweb_stmts;
-	v__table__TypeSymbol sym;
-};
-
 struct v__ast__EnumVal {
 	string enum_name;
 	string val;
@@ -2390,15 +2381,6 @@ struct v__parser__Parser {
 	string cur_fn_name;
 };
 
-struct v__parser__ParserState {
-	int scanner_pos;
-	v__token__Token tok;
-	v__token__Token prev_tok;
-	v__token__Token peek_tok;
-	v__token__Token peek_tok2;
-	v__token__Token peek_tok3;
-};
-
 struct SymbolInfoContainer {
 	SymbolInfo syminfo;
 	array_fixed_char_254 f_name_rest;
@@ -2516,6 +2498,14 @@ struct v__checker__Checker {
 struct v__ast__AnonFn {
 	v__ast__FnDecl decl;
 	v__table__Type typ;
+};
+
+struct v__ast__ComptimeCall {
+	string method_name;
+	v__ast__Expr left;
+	bool is_vweb;
+	v__ast__File vweb_tmpl;
+	v__table__TypeSymbol sym;
 };
 
 struct v__gen__Gen {
@@ -4247,8 +4237,6 @@ static array_v__ast__Expr v__parser__Parser_parse_assign_rhs(v__parser__Parser* 
 array_string _const_v__parser__supported_platforms; // inited later
 static string v__parser__Parser_resolve_vroot(v__parser__Parser* p, string flag);
 static v__ast__HashStmt v__parser__Parser_hash(v__parser__Parser* p);
-v__parser__ParserState v__parser__Parser_save_state(v__parser__Parser* p);
-void v__parser__Parser_restore_state(v__parser__Parser* p, v__parser__ParserState state);
 static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p);
 static v__ast__Stmt v__parser__Parser_comp_if(v__parser__Parser* p);
 v__pref__OS _const_v__parser__todo_delete_me; // inited later
@@ -4281,7 +4269,9 @@ v__table__Type v__parser__Parser_parse_type_with_mut(v__parser__Parser* p, bool 
 v__table__Type v__parser__Parser_parse_type(v__parser__Parser* p);
 v__table__Type v__parser__Parser_parse_any_type(v__parser__Parser* p, v__table__Language language, bool is_ptr);
 v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__Scope* scope);
+v__ast__File v__parser__parse_text(string text, v__table__Table* b_table, v__ast__Scope* scope, v__ast__Scope* global_scope);
 v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, v__ast__Scope* global_scope);
+static v__ast__File v__parser__Parser_parse(v__parser__Parser* p);
 array_v__ast__File v__parser__parse_files(array_string paths, v__table__Table* table, v__pref__Preferences* pref, v__ast__Scope* global_scope);
 void v__parser__Parser_init_parse_fns(v__parser__Parser* p);
 void v__parser__Parser_read_first_token(v__parser__Parser* p);
@@ -15894,7 +15884,7 @@ string vweb__tmpl__compile_template(string content) {
 	}
 	array_string lines = string_split_into_lines(html);
 	strings__Builder s = strings__new_builder(1000);
-	strings__Builder_writeln(&s, _STR("\n	// === vweb html template ===\n	mut sb := strings.new_builder(%"PRId32"\000)\n	header := \' \' // TODO remove\n	_ = header\n	//footer := \'footer\'\n", 2, lines.len * 30));
+	strings__Builder_writeln(&s, _STR("\n	import strings\n	// === vweb html template ===\n	fn vweb_tmpl() {\n	mut sb := strings.new_builder(%"PRId32"\000)\n	header := \' \' // TODO remove\n	_ = header\n	//footer := \'footer\'\n", 2, lines.len * 30));
 	strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
 	bool in_css = true;
 	// FOR IN array
@@ -15947,6 +15937,7 @@ string vweb__tmpl__compile_template(string content) {
 	}
 	strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
 	strings__Builder_writeln(&s, tos_lit("tmpl_res := sb.str() "));
+	strings__Builder_writeln(&s, tos_lit("}"));
 	strings__Builder_writeln(&s, tos_lit("// === end of vweb html template ==="));
 	return strings__Builder_str(&s);
 }
@@ -21391,6 +21382,10 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 	}else if (node.typ == 166 /* v.ast.ComptimeCall */) {
 		v__ast__ComptimeCall* it = (v__ast__ComptimeCall*)node.obj; // ST it
 		it->sym = *v__table__Table_get_type_symbol(c->table, v__checker__Checker_unwrap_generic(c, v__checker__Checker_expr(c, it->left)));
+		if (it->is_vweb) {
+			v__checker__Checker c2 = v__checker__new_checker(c->table, c->pref);
+			v__checker__Checker_check(&c2, it->vweb_tmpl);
+		}
 		return _const_v__table__void_type;
 	}else if (node.typ == 167 /* v.ast.ConcatExpr */) {
 		v__ast__ConcatExpr* it = (v__ast__ConcatExpr*)node.obj; // ST it
@@ -22317,54 +22312,35 @@ _t3;
 	};
 }
 
-v__parser__ParserState v__parser__Parser_save_state(v__parser__Parser* p) {
-	return (v__parser__ParserState){
-		.scanner_pos = p->scanner->pos,
-		.tok = p->tok,
-		.prev_tok = p->prev_tok,
-		.peek_tok = p->peek_tok,
-		.peek_tok2 = p->peek_tok2,
-		.peek_tok3 = p->peek_tok3,
-	};
-}
-
-void v__parser__Parser_restore_state(v__parser__Parser* p, v__parser__ParserState state) {
-	p->scanner->pos = state.scanner_pos;
-	p->tok = state.tok;
-	p->prev_tok = state.prev_tok;
-	p->peek_tok = state.peek_tok;
-	p->peek_tok2 = state.peek_tok2;
-	p->peek_tok3 = state.peek_tok3;
-}
-
 static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 	v__parser__Parser_check(p, v__token__Kind_dollar);
 	v__parser__Parser_check(p, v__token__Kind_name);
 	v__parser__Parser_check(p, v__token__Kind_dot);
-	int pos = p->scanner->pos;
 	v__parser__Parser_check(p, v__token__Kind_name);
 	v__parser__Parser_check(p, v__token__Kind_lpar);
 	v__parser__Parser_check(p, v__token__Kind_rpar);
-	v__parser__ParserState state = v__parser__Parser_save_state(p);
 	string path = string_add(p->cur_fn_name, tos_lit(".html"));
 	println(_STR(">>> compiling vweb HTML template \"%.*s\000\"", 2, path));
 	string v_code = vweb__tmpl__compile_file(path);
+	v__ast__Scope* scope = (v__ast__Scope*)memdup(&(v__ast__Scope){	.objects = new_map_1(sizeof(v__ast__ScopeObject)),
+		.parent = 0,
+		.children = __new_array(0, 1, sizeof(v__ast__Scope*)),
+		.start_pos = 0,
+		.end_pos = 0,
+	}, sizeof(v__ast__Scope));
+	v__ast__File file = v__parser__parse_text(v_code, p->table, scope, p->global_scope);
 	if (p->pref->is_verbose) {
 		println(tos_lit("\n\n"));
 		println(_STR(">>> vweb template for %.*s\000:", 2, path));
 		println(v_code);
 		println(tos_lit(">>> end of vweb template END"));
 		println(tos_lit("\n\n"));
-		p->scanner->text = string_add(string_add(string_substr(p->scanner->text, 0, pos), v_code), string_substr(p->scanner->text, pos, p->scanner->text.len));
-		println(p->scanner->text);
 	}
-	v__parser__Parser_restore_state(p, state);
-	p->scanner->pos = pos + v_code.len + 1;
 	return (v__ast__ComptimeCall){
 		.method_name = (string){.str=""},
 		.left = {0},
 		.is_vweb = true,
-		.vweb_stmts = __new_array(0, 1, sizeof(v__ast__Stmt)),
+		.vweb_tmpl = file,
 		.sym = {0},
 	};
 }
@@ -22480,7 +22456,7 @@ static v__ast__ComptimeCall v__parser__Parser_comptime_method_call(v__parser__Pa
 		.method_name = method_name,
 		.left = left,
 		.is_vweb = 0,
-		.vweb_stmts = __new_array(0, 1, sizeof(v__ast__Stmt)),
+		.vweb_tmpl = {0},
 		.sym = {0},
 	};
 }
@@ -23905,8 +23881,108 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 	return v__parser__Parser_stmt(&p);
 }
 
+v__ast__File v__parser__parse_text(string text, v__table__Table* b_table, v__ast__Scope* scope, v__ast__Scope* global_scope) {
+	v__scanner__Scanner* s = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments);
+	v__parser__Parser p = (v__parser__Parser){
+		.file_name = (string){.str=""},
+		.file_name_dir = (string){.str=""},
+		.scanner = s,
+		.comments_mode = v__scanner__CommentsMode_skip_comments,
+		.tok = {0},
+		.prev_tok = {0},
+		.peek_tok = {0},
+		.peek_tok2 = {0},
+		.peek_tok3 = {0},
+		.table = b_table,
+		.language = {0},
+		.inside_if = 0,
+		.inside_if_expr = 0,
+		.inside_or_expr = 0,
+		.inside_for = 0,
+		.inside_fn = 0,
+		.inside_str_interp = 0,
+		.pref = (v__pref__Preferences*)memdup(&(v__pref__Preferences){	.os = {0},
+		.backend = {0},
+		.build_mode = {0},
+		.output_mode = v__pref__OutputMode_stdout,
+		.is_verbose = 0,
+		.is_test = 0,
+		.is_script = 0,
+		.is_livemain = 0,
+		.is_liveshared = 0,
+		.is_shared = 0,
+		.is_prof = 0,
+		.profile_file = (string){.str=""},
+		.profile_no_inline = 0,
+		.translated = 0,
+		.is_prod = 0,
+		.obfuscate = 0,
+		.is_repl = 0,
+		.is_run = 0,
+		.sanitize = 0,
+		.is_debug = 0,
+		.is_vlines = 0,
+		.keep_c = 0,
+		.show_cc = 0,
+		.use_cache = 0,
+		.is_stats = 0,
+		.no_auto_free = 0,
+		.cflags = (string){.str=""},
+		.ccompiler = (string){.str=""},
+		.third_party_option = (string){.str=""},
+		.building_v = 0,
+		.autofree = 0,
+		.compress = 0,
+		.fast = 0,
+		.enable_globals = 0,
+		.is_fmt = 0,
+		.is_bare = 0,
+		.no_preludes = 0,
+		.custom_prelude = (string){.str=""},
+		.lookup_path = __new_array(0, 1, sizeof(string)),
+		.output_cross_c = 0,
+		.prealloc = 0,
+		.vroot = (string){.str=""},
+		.out_name = (string){.str=""},
+		.path = (string){.str=""},
+		.compile_defines = __new_array(0, 1, sizeof(string)),
+		.compile_defines_all = __new_array(0, 1, sizeof(string)),
+		.mod = (string){.str=""},
+		.run_args = __new_array(0, 1, sizeof(string)),
+		.printfn_list = __new_array(0, 1, sizeof(string)),
+		.print_v_files = 0,
+		.skip_running = 0,
+		.skip_warnings = 0,
+		.use_color = {0},
+		.is_parallel = 0,
+		.error_limit = 0,
+	}, sizeof(v__pref__Preferences)),
+		.builtin_mod = 0,
+		.mod = (string){.str=""},
+		.attr = (string){.str=""},
+		.attr_ctdefine = (string){.str=""},
+		.expr_mod = (string){.str=""},
+		.scope = scope,
+		.global_scope = global_scope,
+		.imports = new_map_1(sizeof(string)),
+		.ast_imports = __new_array(0, 1, sizeof(v__ast__Import)),
+		.used_imports = __new_array(0, 1, sizeof(string)),
+		.is_amp = 0,
+		.returns = 0,
+		.inside_match = 0,
+		.inside_match_case = 0,
+		.inside_match_body = 0,
+		.inside_unsafe = 0,
+		.is_stmt_ident = 0,
+		.expecting_type = 0,
+		.errors = __new_array_with_default(0, 0, sizeof(v__errors__Error), 0),
+		.warnings = __new_array_with_default(0, 0, sizeof(v__errors__Warning), 0),
+		.cur_fn_name = (string){.str=""},
+	};
+	return v__parser__Parser_parse(&p);
+}
+
 v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, v__ast__Scope* global_scope) {
-	array_v__ast__Stmt stmts = __new_array_with_default(0, 0, sizeof(v__ast__Stmt), 0);
 	v__parser__Parser p = (v__parser__Parser){
 		.file_name = path,
 		.file_name_dir = os__dir(path),
@@ -23953,26 +24029,24 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 		.warnings = __new_array_with_default(0, 0, sizeof(v__errors__Warning), 0),
 		.cur_fn_name = (string){.str=""},
 	};
-	v__parser__Parser_init_parse_fns(&p);
-	v__parser__Parser_read_first_token(&p);
-	while (p.tok.kind == v__token__Kind_comment) {
-		array_push(&stmts, _MOV((v__ast__Stmt[]){ /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Comment[]) {v__parser__Parser_comment(&p)}, sizeof(v__ast__Comment)), .typ = 197 /* v.ast.Comment */} }));
+	return v__parser__Parser_parse(&p);
+}
+
+static v__ast__File v__parser__Parser_parse(v__parser__Parser* p) {
+	v__parser__Parser_init_parse_fns(p);
+	v__parser__Parser_read_first_token(p);
+	array_v__ast__Stmt stmts = __new_array_with_default(0, 0, sizeof(v__ast__Stmt), 0);
+	while (p->tok.kind == v__token__Kind_comment) {
+		array_push(&stmts, _MOV((v__ast__Stmt[]){ /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Comment[]) {v__parser__Parser_comment(p)}, sizeof(v__ast__Comment)), .typ = 197 /* v.ast.Comment */} }));
 	}
-	v__ast__Stmt mstmt = (v__ast__Stmt){
-	
-#ifndef __cplusplus
-0
-#endif
-};
-	v__ast__Module module_decl = v__parser__Parser_module_decl(&p);
-	mstmt = /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Module[]) {module_decl}, sizeof(v__ast__Module)), .typ = 213 /* v.ast.Module */};
-	array_push(&stmts, _MOV((v__ast__Stmt[]){ mstmt }));
-	while (p.tok.kind == v__token__Kind_key_import) {
-		array_push(&stmts, _MOV((v__ast__Stmt[]){ /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Import[]) {v__parser__Parser_import_stmt(&p)}, sizeof(v__ast__Import)), .typ = 211 /* v.ast.Import */} }));
+	v__ast__Module module_decl = v__parser__Parser_module_decl(p);
+	array_push(&stmts, _MOV((v__ast__Stmt[]){ /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Module[]) {module_decl}, sizeof(v__ast__Module)), .typ = 213 /* v.ast.Module */} }));
+	while (p->tok.kind == v__token__Kind_key_import) {
+		array_push(&stmts, _MOV((v__ast__Stmt[]){ /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Import[]) {v__parser__Parser_import_stmt(p)}, sizeof(v__ast__Import)), .typ = 211 /* v.ast.Import */} }));
 	}
 	while (1) {
-		if (p.tok.kind == v__token__Kind_eof) {
-			if (p.pref->is_script && !p.pref->is_test && string_eq(p.mod, tos_lit("main")) && !v__parser__have_fn_main(stmts)) {
+		if (p->tok.kind == v__token__Kind_eof) {
+			if (p->pref->is_script && !p->pref->is_test && string_eq(p->mod, tos_lit("main")) && !v__parser__have_fn_main(stmts)) {
 				array_push(&stmts, _MOV((v__ast__Stmt[]){ /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__FnDecl[]) {(v__ast__FnDecl){
 					.name = tos_lit("main"),
 					.stmts = __new_array(0, 1, sizeof(v__ast__Stmt)),
@@ -23991,27 +24065,27 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 					.ctdefine = (string){.str=""},
 					.pos = {0},
 					.body_pos = {0},
-					.file = p.file_name,
+					.file = p->file_name,
 					.is_generic = 0,
 					.return_type = _const_v__table__void_type,
 				}}, sizeof(v__ast__FnDecl)), .typ = 121 /* v.ast.FnDecl */} }));
 			} else {
-				v__parser__Parser_check_unused_imports(&p);
+				v__parser__Parser_check_unused_imports(p);
 			}
 			break;
 		}
-		array_push(&stmts, _MOV((v__ast__Stmt[]){ v__parser__Parser_top_stmt(&p) }));
+		array_push(&stmts, _MOV((v__ast__Stmt[]){ v__parser__Parser_top_stmt(p) }));
 	}
-	p.scope->end_pos = p.tok.pos;
+	p->scope->end_pos = p->tok.pos;
 	return (v__ast__File){
-		.path = path,
+		.path = p->file_name,
 		.mod = module_decl,
 		.stmts = stmts,
-		.scope = p.scope,
-		.global_scope = p.global_scope,
-		.imports = p.ast_imports,
-		.errors = p.errors,
-		.warnings = p.warnings,
+		.scope = p->scope,
+		.global_scope = p->global_scope,
+		.imports = p->ast_imports,
+		.errors = p->errors,
+		.warnings = p->warnings,
 	};
 }
 
@@ -29896,15 +29970,27 @@ static void v__gen__Gen_interface_call(v__gen__Gen* g, v__table__Type typ, v__ta
 
 static void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node) {
 	if (node.is_vweb) {
+		// FOR IN array
+		array _t1 = node.vweb_tmpl.stmts;
+		for (int _t2 = 0; _t2 < _t1.len; _t2++) {
+			v__ast__Stmt stmt = ((v__ast__Stmt*)_t1.data)[_t2];
+			if (stmt.typ == 121 /* v.ast.FnDecl */) {
+				v__ast__FnDecl* fn_decl = /* as */ (v__ast__FnDecl*)__as_cast(stmt.obj, stmt.typ, /*expected:*/121);
+				if (string_eq(fn_decl->name, tos_lit("vweb_tmpl"))) {
+					v__gen__Gen_stmts(g, fn_decl->stmts);
+					break;
+				}
+			}
+		}
 		v__gen__Gen_writeln(g, tos_lit("vweb__Context_html(&app-> vweb, tmpl_res)"));
 		return;
 	}
 	v__gen__Gen_writeln(g, string_add(tos_lit("// $"), _STR("method call. sym=\"%.*s\000\"", 2, node.sym.name)));
 	int j = 0;
 	// FOR IN array
-	array _t1 = node.sym.methods;
-	for (int _t2 = 0; _t2 < _t1.len; _t2++) {
-		v__table__Fn method = ((v__table__Fn*)_t1.data)[_t2];
+	array _t3 = node.sym.methods;
+	for (int _t4 = 0; _t4 < _t3.len; _t4++) {
+		v__table__Fn method = ((v__table__Fn*)_t3.data)[_t4];
 		if (method.return_type != _const_v__table__void_type) {
 			continue;
 		}
