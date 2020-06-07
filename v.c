@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "eec5cf1"
+#define V_COMMIT_HASH "9c87695"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "70c18fc"
+#define V_COMMIT_HASH "eec5cf1"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "eec5cf1"
+#define V_CURRENT_COMMIT_HASH "9c87695"
 #endif
 
 
@@ -933,6 +933,8 @@ static inline double wy2gau(uint64_t r) {
 #include <fcntl.h>
 // added by module `time`:
 #include <time.h>
+// added by module `time`:
+#include <time.h>
 // added by module `term`:
 #include <sys/ioctl.h>
 // added by module `term`:
@@ -1479,6 +1481,7 @@ struct time__Time {
 	int hour;
 	int minute;
 	int second;
+	int microsecond;
 	u64 v_unix;
 };
 
@@ -3469,8 +3472,15 @@ string time__Time_clean12(time__Time t);
 string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time);
 string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatDate fmt_date);
 string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatTime fmt_time, time__FormatDate fmt_date);
+bool time__Time_eq(time__Time t1, time__Time t2);
+bool time__Time_ne(time__Time t1, time__Time t2);
+bool time__Time_lt(time__Time t1, time__Time t2);
+bool time__Time_le(time__Time t1, time__Time t2);
+bool time__Time_gt(time__Time t1, time__Time t2);
+bool time__Time_ge(time__Time t1, time__Time t2);
 Option_time__Time time__parse(string s);
 Option_time__Time time__parse_rfc2822(string s);
+Option_time__Time time__parse_rfc8601(string s);
 time__StopWatch time__new_stopwatch(time__StopWatchOptions opts);
 void time__StopWatch_start(time__StopWatch* t);
 void time__StopWatch_restart(time__StopWatch* t);
@@ -3507,7 +3517,7 @@ void time__usleep(int microseconds);
 bool time__is_leap_year(int year);
 Option_int time__days_in_month(int month, int year);
 string time__Time_str(time__Time t);
-static time__Time time__convert_ctime(struct tm t);
+static time__Time time__convert_ctime(struct tm t, int microsecond);
 time__Duration _const_time__nanosecond; // inited later
 i64 _const_time__microsecond; // inited later
 i64 _const_time__millisecond; // inited later
@@ -3521,10 +3531,15 @@ f64 time__Duration_seconds(time__Duration d);
 f64 time__Duration_minutes(time__Duration d);
 f64 time__Duration_hours(time__Duration d);
 static u64 time__sys_mono_now_darwin();
+time__Time time__darwin_now();
+time__Time time__solaris_now();
+static time__Time time__linux_now();
 static int time__make_unix_time(struct tm t);
 u64 time__sys_mono_now();
 static u64 time__vpc_now();
+time__Time time__win_now();
 time__Time time__unix(int abs);
+time__Time time__unix2(int abs, int microsecond);
 static multi_return_int_int_int time__calculate_date_from_offset(int day_offset_);
 static multi_return_int_int_int time__calculate_time_from_offset(int second_offset_);
 void v__depgraph__OrderedDepMap_set(v__depgraph__OrderedDepMap* o, string name, array_string deps);
@@ -8347,6 +8362,7 @@ static void break_if_debugger_attached() {
 		voidptr* ptr = ((voidptr*)(0));
 		*ptr = 0;
 }
+
 
 
 
@@ -13490,6 +13506,39 @@ string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, tim
 	}
 }
 
+bool time__Time_eq(time__Time t1, time__Time t2) {
+	if (t1.v_unix == t2.v_unix && t1.microsecond == t2.microsecond) {
+		return true;
+	}
+	return false;
+}
+
+bool time__Time_ne(time__Time t1, time__Time t2) {
+	return !time__Time_eq(t1, t2);
+}
+
+bool time__Time_lt(time__Time t1, time__Time t2) {
+	if (t1.v_unix < t2.v_unix || (t1.v_unix == t2.v_unix && t1.microsecond < t2.microsecond)) {
+		return true;
+	}
+	return false;
+}
+
+bool time__Time_le(time__Time t1, time__Time t2) {
+	return time__Time_lt(t1, t2) || time__Time_eq(t1, t2);
+}
+
+bool time__Time_gt(time__Time t1, time__Time t2) {
+	if (t1.v_unix > t2.v_unix || (t1.v_unix == t2.v_unix && t1.microsecond > t2.microsecond)) {
+		return true;
+	}
+	return false;
+}
+
+bool time__Time_ge(time__Time t1, time__Time t2) {
+	return time__Time_gt(t1, t2) || time__Time_eq(t1, t2);
+}
+
 Option_time__Time time__parse(string s) {
 	Option_int _t1 = string_index(s, tos_lit(" "));
 	if (!_t1.ok) {
@@ -13515,6 +13564,7 @@ Option_time__Time time__parse(string s) {
 		.hour = string_int(hour),
 		.minute = string_int(minute),
 		.second = string_int(second),
+		.microsecond = 0,
 		.v_unix = 0,
 	});
 	Option_time__Time _t4;/*:)time.Time*/opt_ok2(&(time__Time[]) { res }, (OptionBase*)(&_t4), sizeof(time__Time));
@@ -13538,6 +13588,58 @@ Option_time__Time time__parse_rfc2822(string s) {
 		tmstr = v_malloc(s.len * 2);
 	int count = snprintf(((charptr)(tmstr)), (s.len * 2), "%s-%02d-%s %s", (*(string*)array_get(fields, 3)).str, mm, (*(string*)array_get(fields, 1)).str, (*(string*)array_get(fields, 4)).str);
 	return time__parse(tos(tmstr, count));
+}
+
+Option_time__Time time__parse_rfc8601(string s) {
+	int year = 0;
+	int month = 0;
+	int day = 0;
+	int hour = 0;
+	int minute = 0;
+	int second = 0;
+	int mic_second = 0;
+	byte time_char = 'a';
+	byte plus_min = 'a';
+	int offset_hour = 0;
+	int offset_min = 0;
+	int count = sscanf(s.str, "%4d-%2d-%2d%c%2d:%2d:%2d.%6d%c%2d:%2d", &year, &month, &day, &time_char, &hour, &minute, &second, &mic_second, &plus_min, &offset_hour, &offset_min);
+	if (count != 11) {
+		/*opt promotion*/ Option _t1 = v_error(tos_lit("Invalid 8601 format"));return *(Option_time__Time*)&_t1;
+	}
+	if (time_char != 'T' && time_char != ' ') {
+		/*opt promotion*/ Option _t2 = v_error(tos_lit("Invalid 8601 format, expected space or `T` as time separator"));return *(Option_time__Time*)&_t2;
+	}
+	if (plus_min != '+' && plus_min != '-') {
+		/*opt promotion*/ Option _t3 = v_error(tos_lit("Invalid 8601 format, expected `+` or `-` as time separator"));return *(Option_time__Time*)&_t3;
+	}
+	time__Time t = time__new_time((time__Time){
+		.year = year,
+		.month = month,
+		.day = day,
+		.hour = hour,
+		.minute = minute,
+		.second = second,
+		.microsecond = mic_second,
+		.v_unix = 0,
+	});
+	int unix_offset = ((int)(0));
+	if (offset_hour > 0) {
+		unix_offset += 3600 * offset_hour;
+	}
+	if (offset_min > 0) {
+		unix_offset += 60 * offset_min;
+	}
+	if (unix_offset != 0) {
+		if (plus_min == '+') {
+			Option_time__Time _t4;/*:)time.Time*/opt_ok2(&(time__Time[]) { time__unix2(((int)(t.v_unix)) + unix_offset, t.microsecond) }, (OptionBase*)(&_t4), sizeof(time__Time));
+			return _t4;
+		} else {
+			Option_time__Time _t5;/*:)time.Time*/opt_ok2(&(time__Time[]) { time__unix2(((int)(t.v_unix)) - unix_offset, t.microsecond) }, (OptionBase*)(&_t5), sizeof(time__Time));
+			return _t5;
+		}
+	}
+	Option_time__Time _t6;/*:)time.Time*/opt_ok2(&(time__Time[]) { t }, (OptionBase*)(&_t6), sizeof(time__Time));
+	return _t6;
 }
 
 time__StopWatch time__new_stopwatch(time__StopWatchOptions opts) {
@@ -13592,9 +13694,41 @@ time__Duration time__StopWatch_elapsed(time__StopWatch t) {
 
 
 time__Time time__now() {
+	
+// $if  macos {
+#ifdef __APPLE__
+		return time__darwin_now();
+	
+// } macos
+#endif
+
+	
+// $if  windows {
+#ifdef _WIN32
+		return time__win_now();
+	
+// } windows
+#endif
+
+	
+// $if  solaris {
+#ifdef __sun
+		return time__solaris_now();
+	
+// } solaris
+#endif
+
+	
+// $if  linux {
+#ifdef __linux__
+		return time__linux_now();
+	
+// } linux
+#endif
+
 	time_t t = time(0);
 	struct tm* now = localtime(&t);
-	return time__convert_ctime(*now);
+	return time__convert_ctime(*now, 0);
 }
 
 string time__Time_smonth(time__Time t) {
@@ -13610,6 +13744,7 @@ time__Time time__new_time(time__Time t) {
 		.hour = t.hour,
 		.minute = t.minute,
 		.second = t.second,
+		.microsecond = t.microsecond,
 		.v_unix = ((u64)(time__Time_unix_time(t))),
 	};
 }
@@ -13765,7 +13900,7 @@ string time__Time_str(time__Time t) {
 	return time__Time_format_ss(t);
 }
 
-static time__Time time__convert_ctime(struct tm t) {
+static time__Time time__convert_ctime(struct tm t, int microsecond) {
 	return (time__Time){
 		.year = t.tm_year + 1900,
 		.month = t.tm_mon + 1,
@@ -13773,6 +13908,7 @@ static time__Time time__convert_ctime(struct tm t) {
 		.hour = t.tm_hour,
 		.minute = t.tm_min,
 		.second = t.tm_sec,
+		.microsecond = microsecond,
 		.v_unix = ((u64)(time__make_unix_time(t))),
 	};
 }
@@ -13812,6 +13948,46 @@ static u64 time__sys_mono_now_darwin() {
 	return 0;
 }
 
+time__Time time__darwin_now() {
+	return (time__Time){
+		.year = 0,
+		.month = 0,
+		.day = 0,
+		.hour = 0,
+		.minute = 0,
+		.second = 0,
+		.microsecond = 0,
+		.v_unix = 0,
+	};
+}
+
+time__Time time__solaris_now() {
+	return (time__Time){
+		.year = 0,
+		.month = 0,
+		.day = 0,
+		.hour = 0,
+		.minute = 0,
+		.second = 0,
+		.microsecond = 0,
+		.v_unix = 0,
+	};
+}
+
+static time__Time time__linux_now() {
+	struct timespec ts = (struct timespec){
+		.tv_sec = 0,
+		.tv_nsec = 0,
+	};
+	clock_gettime(CLOCK_REALTIME, &ts);
+	time_t t = time(0);
+	struct tm* tm = localtime(&t);
+	if (((int)(t)) != ts.tv_sec || ts.tv_nsec == 0) {
+		return time__convert_ctime(*tm, 0);
+	}
+	return time__convert_ctime(*tm, ((int)(ts.tv_nsec / 1000)));
+}
+
 
 static int time__make_unix_time(struct tm t) {
 	return ((int)(timegm(&t)));
@@ -13848,6 +14024,19 @@ inline static u64 time__vpc_now() {
 	return ((u64)(ts.tv_sec)) * 1000000000 + ((u64)(ts.tv_nsec));
 }
 
+time__Time time__win_now() {
+	return (time__Time){
+		.year = 0,
+		.month = 0,
+		.day = 0,
+		.hour = 0,
+		.minute = 0,
+		.second = 0,
+		.microsecond = 0,
+		.v_unix = 0,
+	};
+}
+
 time__Time time__unix(int abs) {
 	int day_offset = abs / _const_time__seconds_per_day;
 	if (abs % _const_time__seconds_per_day < 0) {
@@ -13868,6 +14057,32 @@ time__Time time__unix(int abs) {
 		.hour = hr,
 		.minute = min,
 		.second = sec,
+		.microsecond = 0,
+		.v_unix = ((u64)(abs)),
+	};
+}
+
+time__Time time__unix2(int abs, int microsecond) {
+	int day_offset = abs / _const_time__seconds_per_day;
+	if (abs % _const_time__seconds_per_day < 0) {
+		day_offset--;
+	}
+	multi_return_int_int_int mr_1022 = time__calculate_date_from_offset(day_offset);
+	int year = mr_1022.arg0;
+	int month = mr_1022.arg1;
+	int day = mr_1022.arg2;
+	multi_return_int_int_int mr_1076 = time__calculate_time_from_offset(abs % _const_time__seconds_per_day);
+	int hr = mr_1076.arg0;
+	int min = mr_1076.arg1;
+	int sec = mr_1076.arg2;
+	return (time__Time){
+		.year = year,
+		.month = month,
+		.day = day,
+		.hour = hr,
+		.minute = min,
+		.second = sec,
+		.microsecond = microsecond,
 		.v_unix = ((u64)(abs)),
 	};
 }
