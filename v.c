@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "36edd62"
+#define V_COMMIT_HASH "11b7b97"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8c8df66"
+#define V_COMMIT_HASH "36edd62"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "36edd62"
+#define V_CURRENT_COMMIT_HASH "11b7b97"
 #endif
 
 
@@ -3867,7 +3867,6 @@ string v__table__Table_qualify_module(v__table__Table* table, string mod, string
 void v__table__Table_register_fn_gen_type(v__table__Table* table, string fn_name, v__table__Type typ);
 v__ast__IdentVar v__ast__Ident_var_info(v__ast__Ident* i);
 bool v__ast__expr_is_blank_ident(v__ast__Expr expr);
-bool v__ast__expr_is_call(v__ast__Expr expr);
 v__token__Position v__ast__Expr_position(v__ast__Expr expr);
 v__token__Position v__ast__Stmt_position(v__ast__Stmt stmt);
 v__ast__Expr v__ast__fe2ex(v__table__FExpr x);
@@ -17517,18 +17516,13 @@ inline int v__table__Table_register_type_symbol(v__table__Table* t, v__table__Ty
 }
 
 bool v__table__Table_known_type(v__table__Table* t, string name) {
-	Option_v__table__TypeSymbol _t2 = v__table__Table_find_type(t, name);
-	if (!_t2.ok) {
-		string err = _t2.v_error;
-		int errcode = _t2.ecode;
-		return false;
-	}
-	/*q*/ Option_v__table__TypeSymbol _t1 = _t2;
+	Option_v__table__TypeSymbol _t1 = v__table__Table_find_type(t, name);
 	if (!_t1.ok) {
 		string err = _t1.v_error;
 		int errcode = _t1.ecode;
 		return false;
-	};
+	}
+_t1;
 	return true;
 }
 
@@ -17771,11 +17765,6 @@ inline bool v__ast__expr_is_blank_ident(v__ast__Expr expr) {
 	}else {
 		return false;
 	};
-}
-
-// Attr: [inline]
-inline bool v__ast__expr_is_call(v__ast__Expr expr) {
-	return (expr.typ == 139 /* v.ast.CallExpr */) ? (true) : (false);
 }
 
 v__token__Position v__ast__Expr_position(v__ast__Expr expr) {
@@ -20267,21 +20256,30 @@ static void v__checker__Checker_assign_expr(v__checker__Checker* c, v__ast__Assi
 	c->expected_type = _const_v__table__void_type;
 	v__table__Type left_type = v__checker__Checker_unwrap_generic(c, v__checker__Checker_expr(c, assign_expr->left));
 	c->expected_type = left_type;
+	if (v__ast__expr_is_blank_ident(assign_expr->left)) {
+		c->expected_type = ((v__table__Type)(0));
+	}
 	assign_expr->left_type = left_type;
 	v__table__Type right_type = v__checker__Checker_check_expr_opt_call(c, assign_expr->val, v__checker__Checker_unwrap_generic(c, v__checker__Checker_expr(c, assign_expr->val)));
 	assign_expr->right_type = right_type;
 	v__table__TypeSymbol* right = v__table__Table_get_type_symbol(c->table, right_type);
 	v__table__TypeSymbol* left = v__table__Table_get_type_symbol(c->table, left_type);
-	if (v__ast__expr_is_blank_ident(assign_expr->left)) {
-		return;
-	}
-	v__checker__Checker_fail_if_immutable(c, assign_expr->left);
-	if (assign_expr->left.typ == 158 /* v.ast.PrefixExpr */) {
-		v__ast__PrefixExpr* p = /* as */ (v__ast__PrefixExpr*)__as_cast(assign_expr->left.obj, assign_expr->left.typ, /*expected:*/158);
-		if (p->op == v__token__Kind_mul && !c->inside_unsafe) {
+	if (assign_expr->left.typ == 146 /* v.ast.Ident */) {
+		v__ast__Ident* it = (v__ast__Ident*)assign_expr->left.obj; // ST it
+		if (it->kind == v__ast__IdentKind_blank_ident) {
+			if (assign_expr->op != v__token__Kind_assign) {
+				v__checker__Checker_error(c, tos_lit("cannot modify blank `_` variable"), it->pos);
+			}
+			return;
+		}
+	}else if (assign_expr->left.typ == 158 /* v.ast.PrefixExpr */) {
+		v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)assign_expr->left.obj; // ST it
+		if (it->op == v__token__Kind_mul && !c->inside_unsafe) {
 			v__checker__Checker_error(c, tos_lit("modifying variables via deferencing can only be done in `unsafe` blocks"), assign_expr->pos);
 		}
-	}
+	}else {
+	};
+	v__checker__Checker_fail_if_immutable(c, assign_expr->left);
 	if (assign_expr->op == v__token__Kind_assign) {
 	}else if (assign_expr->op == v__token__Kind_plus_assign) {
 		if (!v__table__TypeSymbol_is_number(left) && left_type != _const_v__table__string_type && !v__table__TypeSymbol_is_pointer(left)) {
@@ -20865,7 +20863,7 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 	v__ast__Expr right_first = (*(v__ast__Expr*)array_get(assign_stmt->right, 0));
 	int right_len = assign_stmt->right.len;
 	if (right_first.typ == 139 /* v.ast.CallExpr */ || right_first.typ == 147 /* v.ast.IfExpr */ || right_first.typ == 153 /* v.ast.MatchExpr */) {
-		v__table__Type right_type0 = v__checker__Checker_expr(c, (*(v__ast__Expr*)array_get(assign_stmt->right, 0)));
+		v__table__Type right_type0 = v__checker__Checker_expr(c, right_first);
 		assign_stmt->right_types = new_array_from_c_array(1, 1, sizeof(v__table__Type), _MOV((v__table__Type[1]){
 		right_type0, 
 		}));
@@ -20880,11 +20878,10 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 			if (right_first.typ == 139 /* v.ast.CallExpr */) {
 				v__ast__CallExpr* call_expr = /* as */ (v__ast__CallExpr*)__as_cast((*(v__ast__Expr*)array_get(assign_stmt->right, 0)).obj, (*(v__ast__Expr*)array_get(assign_stmt->right, 0)).typ, /*expected:*/139);
 				v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) but `%.*s\000()` returns %"PRId32"\000 value(s)", 4, assign_stmt->left.len, call_expr->name, right_len), assign_stmt->pos);
-				return;
 			} else {
 				v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) %"PRId32"\000 value(s)", 3, assign_stmt->left.len, right_len), assign_stmt->pos);
-				return;
 			}
+			return;
 		}
 	} else if (assign_stmt->left.len != right_len) {
 		v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) %"PRId32"\000 value(s)", 3, assign_stmt->left.len, assign_stmt->right.len), assign_stmt->pos);
@@ -20902,19 +20899,18 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 			v__checker__Checker_check_expr_opt_call(c, (*(v__ast__Expr*)array_get(assign_stmt->right, i)), (*(v__table__Type*)array_get(assign_stmt->right_types, i)));
 		}
 		v__table__Type val_type = (*(v__table__Type*)array_get(assign_stmt->right_types, i));
-		bool is_decl = assign_stmt->op == v__token__Kind_decl_assign;
-		if (is_decl && string_ne(ident.name, tos_lit("_"))) {
-			v__checker__Checker_check_valid_snake_case(c, ident.name, tos_lit("variable name"), ident.pos);
-		}
-		if (assign_stmt->op == v__token__Kind_decl_assign) {
-			val_type = v__table__Table_mktyp(c->table, val_type);
-		}
 		v__ast__IdentVar ident_var_info = v__ast__Ident_var_info(&ident);
-		if (assign_stmt->op == v__token__Kind_assign) {
+		bool is_decl = assign_stmt->op == v__token__Kind_decl_assign;
+		if (is_decl) {
+			if (ident.kind != v__ast__IdentKind_blank_ident) {
+				v__checker__Checker_check_valid_snake_case(c, ident.name, tos_lit("variable name"), ident.pos);
+			}
+			val_type = v__table__Table_mktyp(c->table, val_type);
+		} else {
 			v__checker__Checker_fail_if_immutable(c, /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Ident[]) {ident}, sizeof(v__ast__Ident)), .typ = 146 /* v.ast.Ident */});
 			v__table__Type var_type = v__checker__Checker_expr(c, /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Ident[]) {ident}, sizeof(v__ast__Ident)), .typ = 146 /* v.ast.Ident */});
 			array_push(&assign_stmt->left_types, _MOV((v__table__Type[]){ var_type }));
-			if (!v__checker__Checker_check_types(c, val_type, var_type)) {
+			if (ident.kind != v__ast__IdentKind_blank_ident && !v__checker__Checker_check_types(c, val_type, var_type)) {
 				v__table__TypeSymbol* val_type_sym = v__table__Table_get_type_symbol(c->table, val_type);
 				v__table__TypeSymbol* var_type_sym = v__table__Table_get_type_symbol(c->table, var_type);
 				v__checker__Checker_error(c, _STR("assign stmt: cannot use `%.*s\000` as `%.*s\000`", 3, val_type_sym->name, var_type_sym->name), assign_stmt->pos);
@@ -22146,8 +22142,7 @@ static v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Parser* p, 
 	array _t6 = idents;
 	for (int i = 0; i < _t6.len; i++) {
 		v__ast__Ident ident = ((v__ast__Ident*)_t6.data)[i];
-		bool known_var = v__ast__Scope_known_var(p->scope, ident.name);
-		if (!is_decl && !known_var) {
+		if (!is_decl && ident.kind != v__ast__IdentKind_blank_ident && !v__ast__Scope_known_var(p->scope, ident.name)) {
 			v__parser__Parser_error(p, _STR("unknown variable `%.*s\000`", 2, ident.name));
 		}
 		if (is_decl && ident.kind != v__ast__IdentKind_blank_ident) {
@@ -22197,10 +22192,9 @@ v__ast__AssignExpr v__parser__Parser_assign_expr(v__parser__Parser* p, v__ast__E
 	v__parser__Parser_next(p);
 	v__ast__Expr val = v__parser__Parser_expr(p, 0);
 	if (left.typ == 149 /* v.ast.IndexExpr */) {
-		v__ast__IndexExpr* it = (v__ast__IndexExpr*)left.obj; // ST it
-		it->is_setter = true;
-	}else {
-	};
+		v__ast__IndexExpr* index_expr = /* as */ (v__ast__IndexExpr*)__as_cast(left.obj, left.typ, /*expected:*/149);
+		index_expr->is_setter = true;
+	}
 	v__ast__AssignExpr node = (v__ast__AssignExpr){
 		.op = op,
 		.pos = pos,
@@ -24543,7 +24537,15 @@ static v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p) {
 		array _t2 = collected;
 		for (int _t3 = 0; _t3 < _t2.len; _t3++) {
 			v__ast__Expr c = ((v__ast__Expr*)_t2.data)[_t3];
-			array_push(&idents, _MOV((v__ast__Ident[]){ */* as */ (v__ast__Ident*)__as_cast(c.obj, c.typ, /*expected:*/146) }));
+			if (c.typ == 146 /* v.ast.Ident */) {
+				v__ast__Ident* it = (v__ast__Ident*)c.obj; // ST it
+				array_push(&idents, _MOV((v__ast__Ident[]){ *it }));
+			}else if (c.typ == 160 /* v.ast.SelectorExpr */) {
+				v__ast__SelectorExpr* it = (v__ast__SelectorExpr*)c.obj; // ST it
+				v__parser__Parser_error_with_pos(p, tos_lit("struct fields can only be declared during the initialization"), it->pos);
+			}else {
+				v__parser__Parser_error_with_pos(p, _STR("unexpected `%.*s\000`", 2, tos3( /* v.ast.Expr */ v_typeof_sumtype_167( (c).typ ))), v__ast__Expr_position(c));
+			};
 		}
 		return v__parser__Parser_partial_assign_stmt(p, idents);
 	} else if (v__token__Kind_is_assign(p->tok.kind)) {
@@ -24615,7 +24617,7 @@ v__ast__Ident v__parser__Parser_parse_ident(v__parser__Parser* p, v__table__Lang
 		if (p->expr_mod.len > 0) {
 			name = _STR("%.*s\000.%.*s", 2, p->expr_mod, name);
 		}
-		v__ast__Ident ident = (v__ast__Ident){
+		return (v__ast__Ident){
 			.value = (string){.str=""},
 			.language = language,
 			.tok_kind = {0},
@@ -24623,17 +24625,14 @@ v__ast__Ident v__parser__Parser_parse_ident(v__parser__Parser* p, v__table__Lang
 			.pos = pos,
 			.name = name,
 			.kind = v__ast__IdentKind_unresolved,
-			.info = {0},
-			.is_mut = 0,
-		};
-		ident.is_mut = is_mut;
-		ident.info = /* sum type cast */ (v__ast__IdentInfo) {.obj = memdup(&(v__ast__IdentVar[]) {(v__ast__IdentVar){
+			.info = /* sum type cast */ (v__ast__IdentInfo) {.obj = memdup(&(v__ast__IdentVar[]) {(v__ast__IdentVar){
 			.typ = {0},
 			.is_mut = is_mut,
 			.is_static = is_static,
 			.is_optional = 0,
-		}}, sizeof(v__ast__IdentVar)), .typ = 219 /* v.ast.IdentVar */};
-		return ident;
+		}}, sizeof(v__ast__IdentVar)), .typ = 219 /* v.ast.IdentVar */},
+			.is_mut = is_mut,
+		};
 	} else {
 		v__parser__Parser_error(p, _STR("unexpected token `%.*s\000`", 2, p->tok.lit));
 	}
