@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "70c18fc"
+#define V_COMMIT_HASH "eec5cf1"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cbcdc84"
+#define V_COMMIT_HASH "70c18fc"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "70c18fc"
+#define V_CURRENT_COMMIT_HASH "eec5cf1"
 #endif
 
 
@@ -34593,9 +34593,9 @@ static void main_v() {
 		return;
 	}
 	array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_986 = v__pref__parse_args(args_and_flags);
-	v__pref__Preferences* prefs = mr_986.arg0;
-	string command = mr_986.arg1;
+	multi_return_v__pref__Preferences_string mr_961 = v__pref__parse_args(args_and_flags);
+	v__pref__Preferences* prefs = mr_961.arg0;
+	string command = mr_961.arg1;
 	if (args.len > 0 && ((string_eq((*(string*)array_get(args, 0)), tos_lit("version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-V")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("--version"))) || (string_eq((*(string*)array_get(args, 0)), tos_lit("-v")) && args.len == 1))) {
 		println(v__util__full_v_version(prefs->is_verbose));
 		return;
