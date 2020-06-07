@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "cbcdc84"
+#define V_COMMIT_HASH "70c18fc"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "013bfc7"
+#define V_COMMIT_HASH "cbcdc84"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "cbcdc84"
+#define V_CURRENT_COMMIT_HASH "70c18fc"
 #endif
 
 
@@ -22335,6 +22335,28 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 		println(v_code);
 		println(tos_lit(">>> end of vweb template END"));
 		println(tos_lit("\n\n"));
+	}
+	// FOR IN array
+	array _t1 = file.stmts;
+	for (int _t2 = 0; _t2 < _t1.len; _t2++) {
+		v__ast__Stmt stmt = ((v__ast__Stmt*)_t1.data)[_t2];
+		if (stmt.typ == 121 /* v.ast.FnDecl */) {
+			v__ast__FnDecl* fn_decl = /* as */ (v__ast__FnDecl*)__as_cast(stmt.obj, stmt.typ, /*expected:*/121);
+			if (string_eq(fn_decl->name, tos_lit("vweb_tmpl"))) {
+				v__ast__Scope* body_scope = v__ast__Scope_innermost(file.scope, fn_decl->body_pos.pos);
+				// FOR IN map
+				array_string keys__t3 = map_keys(&p->scope->objects);
+				for (int _t4 = 0; _t4 < keys__t3.len; _t4++) {
+					string _t5 = ((string*)keys__t3.data)[_t4];
+					v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)map_get3(p->scope->objects, _t5, &(v__ast__ScopeObject[]){ {0} }));
+					if (obj.typ == 219 /* v.ast.Var */) {
+						v__ast__Var* v = /* as */ (v__ast__Var*)__as_cast(obj.obj, obj.typ, /*expected:*/219);
+						v__ast__Scope_register(body_scope, v->name, /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {*v}, sizeof(v__ast__Var)), .typ = 219 /* v.ast.Var */});
+					}
+				}
+				break;
+			}
+		}
 	}
 	return (v__ast__ComptimeCall){
 		.method_name = (string){.str=""},
