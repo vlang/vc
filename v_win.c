@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "11b7b97"
+#define V_COMMIT_HASH "0058b82"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "36edd62"
+#define V_COMMIT_HASH "11b7b97"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "11b7b97"
+#define V_CURRENT_COMMIT_HASH "0058b82"
 #endif
 
 
@@ -24342,8 +24342,16 @@ static v__ast__File v__parser__Parser_parse(v__parser__Parser* p) {
 	}
 	v__ast__Module module_decl = v__parser__Parser_module_decl(p);
 	array_push(&stmts, _MOV((v__ast__Stmt[]){ /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Module[]) {module_decl}, sizeof(v__ast__Module)), .typ = 216 /* v.ast.Module */} }));
-	while (p->tok.kind == v__token__Kind_key_import) {
-		array_push(&stmts, _MOV((v__ast__Stmt[]){ /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Import[]) {v__parser__Parser_import_stmt(p)}, sizeof(v__ast__Import)), .typ = 214 /* v.ast.Import */} }));
+	while (1) {
+		if (p->tok.kind == v__token__Kind_key_import) {
+			array_push(&stmts, _MOV((v__ast__Stmt[]){ /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Import[]) {v__parser__Parser_import_stmt(p)}, sizeof(v__ast__Import)), .typ = 214 /* v.ast.Import */} }));
+			continue;
+		}
+		if (p->tok.kind == v__token__Kind_comment) {
+			array_push(&stmts, _MOV((v__ast__Stmt[]){ /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Comment[]) {v__parser__Parser_comment(p)}, sizeof(v__ast__Comment)), .typ = 200 /* v.ast.Comment */} }));
+			continue;
+		}
+		break;
 	}
 	while (1) {
 		if (p->tok.kind == v__token__Kind_eof) {
