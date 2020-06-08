@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "0058b82"
+#define V_COMMIT_HASH "6f8e91e"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "11b7b97"
+#define V_COMMIT_HASH "0058b82"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "0058b82"
+#define V_CURRENT_COMMIT_HASH "6f8e91e"
 #endif
 
 
@@ -8287,6 +8287,7 @@ static bool print_backtrace_skipping_top_frames_freebsd(int skipframes) {
 	return true;
 }
 
+
 static bool print_backtrace_skipping_top_frames_linux(int skipframes) {
 	
 // $if  android {
@@ -8310,8 +8311,7 @@ static bool print_backtrace_skipping_top_frames_linux(int skipframes) {
 	
 // $if  tinyc {
 #ifdef __TINYC__
-		eprintln(_STR("TODO: print_backtrace_skipping_top_frames_linux %"PRId32"", 1, skipframes));
-		eprintln(tos_lit("with tcc fails tests with \"stack smashing detected\" ."));
+		tcc_backtrace("Backtrace");
 		return false;
 	
 // } tinyc
@@ -8379,6 +8379,10 @@ static void break_if_debugger_attached() {
 
 
 int proc_pidpath(int, voidptr, int);
+
+
+
+
 
 
 
@@ -33737,6 +33741,9 @@ _t1;
 
 		}
 	}
+	if (is_cc_tcc) {
+		array_push(&a, _MOV((string[]){ tos_lit("-bt10") }));
+	}
 	if (!v->pref->is_bare && v->pref->build_mode != v__pref__BuildMode_build_module && (v->pref->os == v__pref__OS_linux || v->pref->os == v__pref__OS_freebsd || v->pref->os == v__pref__OS_openbsd || v->pref->os == v__pref__OS_netbsd || v->pref->os == v__pref__OS_dragonfly || v->pref->os == v__pref__OS_solaris || v->pref->os == v__pref__OS_haiku)) {
 		array_push(&linker_flags, _MOV((string[]){ tos_lit("-lm") }));
 		array_push(&linker_flags, _MOV((string[]){ tos_lit("-lpthread") }));
@@ -33759,15 +33766,15 @@ _t1;
 		println(cmd);
 	}
 	i64 ticks = time__ticks();
-	Option_os__Result _t39 = os__exec(cmd);
-	if (!_t39.ok) {
-		string err = _t39.v_error;
-		int errcode = _t39.ecode;
+	Option_os__Result _t40 = os__exec(cmd);
+	if (!_t40.ok) {
+		string err = _t40.v_error;
+		int errcode = _t40.ecode;
 		println(tos_lit("C compilation failed."));
 		v__builder__verror(err);
 		return;
 	}
-	Option_os__Result res = _t39;
+	Option_os__Result res = _t40;
 	if (/*opt*/(*(os__Result*)res.data).exit_code != 0) {
 		if (/*opt*/(*(os__Result*)res.data).exit_code == 127) {
 			
@@ -33795,9 +33802,9 @@ _t1;
 				array_string elines = v__builder__error_context_lines(/*opt*/(*(os__Result*)res.data).output, tos_lit("error:"), 1, 12);
 				println(tos_lit("=================="));
 				// FOR IN array
-				array _t40 = elines;
-				for (int _t41 = 0; _t41 < _t40.len; _t41++) {
-					string eline = ((string*)_t40.data)[_t41];
+				array _t41 = elines;
+				for (int _t42 = 0; _t42 < _t41.len; _t42++) {
+					string eline = ((string*)_t41.data)[_t42];
 					println(eline);
 				}
 				println(tos_lit("..."));
@@ -34492,7 +34499,7 @@ static Option_v__builder__WindowsKit v__builder__find_windows_kit_root(string ho
 		RegCloseKey(root_key);
 	
 	#endif
-	/*opt promotion*/ Option _t8 = v_error(tos_lit("Host OS does not support funding a windows kit"));return *(Option_v__builder__WindowsKit*)&_t8;
+	/*opt promotion*/ Option _t8 = v_error(tos_lit("Host OS does not support finding a windows kit"));return *(Option_v__builder__WindowsKit*)&_t8;
 // defer
 
 #ifdef _WIN32
@@ -34505,7 +34512,7 @@ static Option_v__builder__VsInstallation v__builder__find_vs(string vswhere_dir,
 	
 // $if !windows {
 #ifndef _WIN32
-		/*opt promotion*/ Option _t1 = v_error(tos_lit("Host OS does not support finding a Vs installation"));return *(Option_v__builder__VsInstallation*)&_t1;
+		/*opt promotion*/ Option _t1 = v_error(tos_lit("Host OS does not support finding a Visual Studio installation"));return *(Option_v__builder__VsInstallation*)&_t1;
 	
 // } windows
 #endif

@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "0058b82"
+#define V_COMMIT_HASH "6f8e91e"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "11b7b97"
+#define V_COMMIT_HASH "0058b82"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "0058b82"
+#define V_CURRENT_COMMIT_HASH "6f8e91e"
 #endif
 
 
@@ -8649,6 +8649,10 @@ static void break_if_debugger_attached() {
 
 
 int proc_pidpath(int, voidptr, int);
+
+
+
+
 
 
 
@@ -34018,6 +34022,9 @@ _t1;
 
 		}
 	}
+	if (is_cc_tcc) {
+		array_push(&a, _MOV((string[]){ tos_lit("-bt10") }));
+	}
 	if (!v->pref->is_bare && v->pref->build_mode != v__pref__BuildMode_build_module && (v->pref->os == v__pref__OS_linux || v->pref->os == v__pref__OS_freebsd || v->pref->os == v__pref__OS_openbsd || v->pref->os == v__pref__OS_netbsd || v->pref->os == v__pref__OS_dragonfly || v->pref->os == v__pref__OS_solaris || v->pref->os == v__pref__OS_haiku)) {
 		array_push(&linker_flags, _MOV((string[]){ tos_lit("-lm") }));
 		array_push(&linker_flags, _MOV((string[]){ tos_lit("-lpthread") }));
@@ -34040,15 +34047,15 @@ _t1;
 		println(cmd);
 	}
 	i64 ticks = time__ticks();
-	Option_os__Result _t35 = os__exec(cmd);
-	if (!_t35.ok) {
-		string err = _t35.v_error;
-		int errcode = _t35.ecode;
+	Option_os__Result _t36 = os__exec(cmd);
+	if (!_t36.ok) {
+		string err = _t36.v_error;
+		int errcode = _t36.ecode;
 		println(tos_lit("C compilation failed."));
 		v__builder__verror(err);
 		return;
 	}
-	Option_os__Result res = _t35;
+	Option_os__Result res = _t36;
 	if (/*opt*/(*(os__Result*)res.data).exit_code != 0) {
 		if (/*opt*/(*(os__Result*)res.data).exit_code == 127) {
 			
@@ -34072,9 +34079,9 @@ _t1;
 				array_string elines = v__builder__error_context_lines(/*opt*/(*(os__Result*)res.data).output, tos_lit("error:"), 1, 12);
 				println(tos_lit("=================="));
 				// FOR IN array
-				array _t36 = elines;
-				for (int _t37 = 0; _t37 < _t36.len; _t37++) {
-					string eline = ((string*)_t36.data)[_t37];
+				array _t37 = elines;
+				for (int _t38 = 0; _t38 < _t37.len; _t38++) {
+					string eline = ((string*)_t37.data)[_t38];
 					println(eline);
 				}
 				println(tos_lit("..."));
@@ -34763,7 +34770,7 @@ static Option_v__builder__WindowsKit v__builder__find_windows_kit_root(string ho
 		RegCloseKey(root_key);
 	
 	#endif
-	/*opt promotion*/ Option _t8 = v_error(tos_lit("Host OS does not support funding a windows kit"));return *(Option_v__builder__WindowsKit*)&_t8;
+	/*opt promotion*/ Option _t8 = v_error(tos_lit("Host OS does not support finding a windows kit"));return *(Option_v__builder__WindowsKit*)&_t8;
 // defer
 
 #ifdef _WIN32
