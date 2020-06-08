@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "288a6ee"
+#define V_COMMIT_HASH "808975f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6f8e91e"
+#define V_COMMIT_HASH "288a6ee"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "288a6ee"
+#define V_CURRENT_COMMIT_HASH "808975f"
 #endif
 
 
@@ -2510,6 +2510,7 @@ struct v__checker__Checker {
 	bool is_builtin_mod;
 	bool inside_unsafe;
 	v__table__Type cur_generic_type;
+	int expr_level;
 };
 
 struct v__ast__AnonFn {
@@ -3457,6 +3458,7 @@ bool byte_is_white(byte c);
 int string_hash(string s);
 array_byte string_bytes(string s);
 string string_repeat(string s, int count);
+array_string string_fields(string s);
 string string_strip_margin(string s);
 string string_strip_margin_custom(string s, byte del);
 int utf8_char_len(byte b);
@@ -11256,6 +11258,10 @@ string string_repeat(string s, int count) {
 	}
 	ret[s.len * count] = 0;
 	return tos2((byteptr)ret);
+}
+
+array_string string_fields(string s) {
+	return string_split(s, tos_lit(" "));
 }
 
 string string_strip_margin(string s) {
@@ -19974,6 +19980,7 @@ v__checker__Checker v__checker__new_checker(v__table__Table* table, v__pref__Pre
 		.is_builtin_mod = 0,
 		.inside_unsafe = 0,
 		.cur_generic_type = {0},
+		.expr_level = 0,
 	};
 }
 
@@ -19993,6 +20000,7 @@ void v__checker__Checker_check(v__checker__Checker* c, v__ast__File ast_file) {
 	array _t2 = ast_file.stmts;
 	for (int _t3 = 0; _t3 < _t2.len; _t3++) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t2.data)[_t3];
+		c->expr_level = 0;
 		v__checker__Checker_stmt(c, stmt);
 	}
 }
@@ -20332,7 +20340,7 @@ v__table__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__S
 			v__table__Type expr_type = v__checker__Checker_expr(c, field.expr);
 			v__table__TypeSymbol* expr_type_sym = v__table__Table_get_type_symbol(c->table, expr_type);
 			v__table__TypeSymbol* field_type_sym = v__table__Table_get_type_symbol(c->table, info_field.typ);
-			if (!v__checker__Checker_check_types(c, expr_type, info_field.typ)) {
+			if (!v__checker__Checker_check_types(c, expr_type, info_field.typ) && expr_type != _const_v__table__void_type) {
 				v__checker__Checker_error(c, _STR("cannot assign `%.*s\000` as `%.*s\000` for field `%.*s\000`", 4, expr_type_sym->name, field_type_sym->name, info_field.name), field.pos);
 			}
 			if (v__table__Type_is_ptr(info_field.typ) && !v__table__Type_is_ptr(expr_type) && !v__table__Type_is_pointer(expr_type) && !v__table__Type_is_number(expr_type)) {
@@ -20765,7 +20773,9 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 			return info->func.return_type;
 		}
 	}}
-	v__checker__Checker_error(c, _STR("unknown method: `%.*s\000.%.*s\000`", 3, left_type_sym->name, method_name), call_expr->pos);
+	if (left_type != _const_v__table__void_type) {
+		v__checker__Checker_error(c, _STR("unknown method: `%.*s\000.%.*s\000`", 3, left_type_sym->name, method_name), call_expr->pos);
+	}
 	return _const_v__table__void_type;
 }
 
@@ -22062,7 +22072,7 @@ v__table__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExp
 		}
 		if (!node->has_else || i < node->branches.len - 1) {
 			v__table__Type cond_typ = v__checker__Checker_expr(c, branch.cond);
-			if (v__table__Type_idx(cond_typ) != _const_v__table__bool_type_idx) {
+			if (!(v__table__Type_idx(cond_typ) == _const_v__table__bool_type_idx || v__table__Type_idx(cond_typ) == _const_v__table__void_type_idx)) {
 				v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, cond_typ);
 				v__checker__Checker_error(c, _STR("non-bool type `%.*s\000` used as if condition", 2, typ_sym->name), branch.pos);
 			}
