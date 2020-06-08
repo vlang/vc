@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "564545d"
+#define V_COMMIT_HASH "30f1c6b"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b4dbf9c"
+#define V_COMMIT_HASH "564545d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "564545d"
+#define V_CURRENT_COMMIT_HASH "30f1c6b"
 #endif
 
 
@@ -23005,7 +23005,7 @@ static multi_return_array_v__table__Arg_bool v__parser__Parser_fn_args(v__parser
 	v__parser__Parser_check(p, v__token__Kind_lpar);
 	array_v__table__Arg args = __new_array_with_default(0, 0, sizeof(v__table__Arg), 0);
 	bool is_variadic = false;
-	bool types_only = (p->tok.kind == v__token__Kind_amp || p->tok.kind == v__token__Kind_and) || (p->peek_tok.kind == v__token__Kind_comma && v__table__Table_known_type(p->table, p->tok.lit)) || p->peek_tok.kind == v__token__Kind_rpar;
+	bool types_only = (p->tok.kind == v__token__Kind_amp || p->tok.kind == v__token__Kind_and || p->tok.kind == v__token__Kind_ellipsis) || (p->peek_tok.kind == v__token__Kind_comma && v__table__Table_known_type(p->table, p->tok.lit)) || p->peek_tok.kind == v__token__Kind_rpar;
 	if (types_only) {
 		int arg_no = 1;
 		while (p->tok.kind != v__token__Kind_rpar) {
