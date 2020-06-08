@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "09fa0f1"
+#define V_COMMIT_HASH "0c1d3ff"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b6dc2d9"
+#define V_COMMIT_HASH "09fa0f1"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "09fa0f1"
+#define V_CURRENT_COMMIT_HASH "0c1d3ff"
 #endif
 
 
@@ -16903,7 +16903,7 @@ inline v__table__Type v__table__Type_set_nr_muls(v__table__Type t, int nr_muls) 
 	if (nr_muls < 0 || nr_muls > 255) {
 		v_panic(tos_lit("set_nr_muls: nr_muls must be between 0 & 255"));
 	}
-	return ((((((((int)(t)) >> 24) & 0xff)) << 24) | (nr_muls << 16)) | ((((u16)(t)) & 0xffff)));
+	return ((((int)(t)) & 0xff00ffff) | (nr_muls << 16));
 }
 
 // Attr: [inline]
@@ -16912,7 +16912,7 @@ inline v__table__Type v__table__Type_to_ptr(v__table__Type t) {
 	if (nr_muls == 255) {
 		v_panic(tos_lit("to_ptr: nr_muls is already at max of 255"));
 	}
-	return ((((((((int)(t)) >> 24) & 0xff)) << 24) | ((nr_muls + 1) << 16)) | ((((u16)(t)) & 0xffff)));
+	return ((((int)(t)) & 0xff00ffff) | ((nr_muls + 1) << 16));
 }
 
 // Attr: [inline]
@@ -16921,32 +16921,32 @@ inline v__table__Type v__table__Type_deref(v__table__Type t) {
 	if (nr_muls == 0) {
 		v_panic(_STR("deref: type `%"PRId32"\000` is not a pointer", 2, t));
 	}
-	return ((((((((int)(t)) >> 24) & 0xff)) << 24) | ((nr_muls - 1) << 16)) | ((((u16)(t)) & 0xffff)));
+	return ((((int)(t)) & 0xff00ffff) | ((nr_muls - 1) << 16));
 }
 
 // Attr: [inline]
 inline v__table__Type v__table__Type_set_flag(v__table__Type t, v__table__TypeFlag flag) {
-	return ((((((((((int)(t)) >> 24) & 0xff)) | 1 << ((int)(flag)))) << 24) | ((((((int)(t)) >> 16) & 0xff)) << 16)) | ((((u16)(t)) & 0xffff)));
+	return (((int)(t)) | (1 << (((int)(flag)) + 24)));
 }
 
 // Attr: [inline]
 inline v__table__Type v__table__Type_clear_flag(v__table__Type t, v__table__TypeFlag flag) {
-	return ((((((((((int)(t)) >> 24) & 0xff)) & ~(1 << ((int)(flag))))) << 24) | ((((((int)(t)) >> 16) & 0xff)) << 16)) | ((((u16)(t)) & 0xffff)));
+	return (((int)(t)) & ~(1 << (((int)(flag)) + 24)));
 }
 
 // Attr: [inline]
 inline v__table__Type v__table__Type_clear_flags(v__table__Type t) {
-	return ((0 | ((((((int)(t)) >> 16) & 0xff)) << 16)) | ((((u16)(t)) & 0xffff)));
+	return (((int)(t)) & 0xffffff);
 }
 
 // Attr: [inline]
 inline bool v__table__Type_has_flag(v__table__Type t, v__table__TypeFlag flag) {
-	return (((((((int)(t)) >> 24) & 0xff)) >> ((int)(flag))) & 1) == 1;
+	return (((int)(t)) & (1 << (((int)(flag)) + 24))) > 0;
 }
 
 // Attr: [inline]
 inline v__table__Type v__table__Type_derive(v__table__Type t, v__table__Type t_from) {
-	return ((((((((int)(t_from)) >> 24) & 0xff)) << 24) | ((((((int)(t_from)) >> 16) & 0xff)) << 16)) | ((((u16)(t)) & 0xffff)));
+	return (((0xffff0000 & t_from)) | ((u16)(t)));
 }
 
 // Attr: [inline]
