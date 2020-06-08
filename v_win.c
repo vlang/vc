@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "808975f"
+#define V_COMMIT_HASH "1bbfc27"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "288a6ee"
+#define V_COMMIT_HASH "808975f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "808975f"
+#define V_CURRENT_COMMIT_HASH "1bbfc27"
 #endif
 
 
@@ -4439,7 +4439,6 @@ static string v__gen__Gen_type_default(v__gen__Gen g, v__table__Type typ);
 void v__gen__Gen_write_tests_main(v__gen__Gen* g);
 static array_string v__gen__Gen_get_all_test_function_names(v__gen__Gen g);
 static bool v__gen__Gen_is_importing_os(v__gen__Gen g);
-static void v__gen__Gen_comp_if(v__gen__Gen* g, v__ast__CompIf it);
 static void v__gen__Gen_go_stmt(v__gen__Gen* g, v__ast__GoStmt node);
 static void v__gen__Gen_as_cast(v__gen__Gen* g, v__ast__AsCast node);
 static void v__gen__Gen_is_expr(v__gen__Gen* g, v__ast__InfixExpr node);
@@ -4457,7 +4456,6 @@ static string v__gen__Gen_type_to_fmt(v__gen__Gen g, v__table__Type typ);
 static string v__gen__Gen_interface_table(v__gen__Gen* g);
 static void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it);
 static void v__gen__Gen_interface_call(v__gen__Gen* g, v__table__Type typ, v__table__Type interface_type);
-static void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node);
 static multi_return_int_string_string_string v__gen__Gen_panic_debug_info(v__gen__Gen* g, v__token__Position pos);
 string _const_v__gen__c_commit_hash_default; // a string literal, inited later
 string _const_v__gen__c_current_commit_hash_default; // a string literal, inited later
@@ -4465,8 +4463,8 @@ string _const_v__gen__c_common_macros; // a string literal, inited later
 string _const_v__gen__c_headers; // inited later
 string _const_v__gen__c_builtin_types; // a string literal, inited later
 string _const_v__gen__bare_c_headers; // inited later
-static void v__gen__Gen_vweb_html(v__gen__Gen* g);
-static void v__gen__fooo();
+static void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node);
+static void v__gen__Gen_comp_if(v__gen__Gen* g, v__ast__CompIf it);
 static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it);
 static void v__gen__Gen_write_autofree_stmts_when_needed(v__gen__Gen* g, v__ast__Return r);
 static void v__gen__Gen_write_defer_stmts_when_needed(v__gen__Gen* g);
@@ -16237,7 +16235,7 @@ string vweb__tmpl__compile_template(string content) {
 		}
 	}
 	strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
-	strings__Builder_writeln(&s, tos_lit("tmpl_res := sb.str() "));
+	strings__Builder_writeln(&s, tos_lit("_tmpl_res := sb.str() "));
 	strings__Builder_writeln(&s, tos_lit("}"));
 	strings__Builder_writeln(&s, tos_lit("// === end of vweb html template ==="));
 	return strings__Builder_str(&s);
@@ -24478,7 +24476,7 @@ void v__parser__Parser_close_scope(v__parser__Parser* p) {
 			v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)map_get3(p->scope->objects, _t3, &(v__ast__ScopeObject[]){ {0} }));
 			if (obj.typ == 222 /* v.ast.Var */) {
 				v__ast__Var* it = (v__ast__Var*)obj.obj; // ST it
-				if (!it->is_used && !string_starts_with(it->name, tos_lit("__"))) {
+				if (!it->is_used && string_at(it->name, 0) != '_') {
 					if (p->pref->is_prod) {
 						v__parser__Parser_error_with_pos(p, _STR("unused variable: `%.*s\000`", 2, it->name), it->pos);
 					} else {
@@ -29616,25 +29614,6 @@ static bool v__gen__Gen_is_importing_os(v__gen__Gen g) {
 	return _IN(string, tos_lit("os"), g.table->imports);
 }
 
-static void v__gen__Gen_comp_if(v__gen__Gen* g, v__ast__CompIf it) {
-	string ifdef = v__gen__Gen_comp_if_to_ifdef(g, it.val, it.is_opt);
-	if (it.is_not) {
-		v__gen__Gen_writeln(g, string_add(_STR("\n// \$if !%.*s\000 {\n#ifndef ", 2, it.val), ifdef));
-	} else {
-		v__gen__Gen_writeln(g, string_add(_STR("\n// \$if  %.*s\000 {\n#ifdef ", 2, it.val), ifdef));
-	}
-	g->defer_ifdef = (it.is_not ? (string_add(tos_lit("\n#ifndef "), ifdef)) : (string_add(tos_lit("\n#ifdef "), ifdef)));
-	v__gen__Gen_stmts(g, it.stmts);
-	g->defer_ifdef = tos_lit("");
-	if (it.has_else) {
-		v__gen__Gen_writeln(g, tos_lit("\n#else"));
-		g->defer_ifdef = (it.is_not ? (string_add(tos_lit("\n#ifdef "), ifdef)) : (string_add(tos_lit("\n#ifndef "), ifdef)));
-		v__gen__Gen_stmts(g, it.else_stmts);
-		g->defer_ifdef = tos_lit("");
-	}
-	v__gen__Gen_writeln(g, _STR("\n// } %.*s\000\n#endif\n", 2, it.val));
-}
-
 static void v__gen__Gen_go_stmt(v__gen__Gen* g, v__ast__GoStmt node) {
 	string tmp = v__gen__Gen_new_tmp_var(g);
 	if (node.call_expr.typ == 166 /* v.ast.CallExpr */) {
@@ -29759,10 +29738,10 @@ inline static string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Type
 static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_101196 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_101196.arg0;
-	bool str_method_expects_ptr = mr_101196.arg1;
-	int str_nr_args = mr_101196.arg2;
+	multi_return_bool_bool_int mr_100436 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_100436.arg0;
+	bool str_method_expects_ptr = mr_100436.arg1;
+	int str_nr_args = mr_100436.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -29945,9 +29924,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_108446 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_108446.arg0;
-	bool str_method_expects_ptr = mr_108446.arg1;
+	multi_return_bool_bool_int mr_107686 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_107686.arg0;
+	bool str_method_expects_ptr = mr_107686.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -29999,9 +29978,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_111279 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_111279.arg0;
-	bool str_method_expects_ptr = mr_111279.arg1;
+	multi_return_bool_bool_int mr_110519 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_110519.arg0;
+	bool str_method_expects_ptr = mr_110519.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -30309,6 +30288,18 @@ static void v__gen__Gen_interface_call(v__gen__Gen* g, v__table__Type typ, v__ta
 	}
 }
 
+static multi_return_int_string_string_string v__gen__Gen_panic_debug_info(v__gen__Gen* g, v__token__Position pos) {
+	int paline = pos.line_nr + 1;
+	string pafile = string_replace(g->fn_decl->file, tos_lit("\\"), tos_lit("/"));
+	string pafn = string_after(g->fn_decl->name, tos_lit("."));
+	string pamod = string_all_before_last(g->fn_decl->name, tos_lit("."));
+	if (string_eq(pamod, pafn)) {
+		pamod = (g->fn_decl->is_builtin ? (tos_lit("builtin")) : (tos_lit("main")));
+	}
+
+		return (multi_return_int_string_string_string){.arg0=paline,.arg1=pafile,.arg2=pamod,.arg3=pafn};
+}
+
 static void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node) {
 	if (node.is_vweb) {
 		// FOR IN array
@@ -30323,7 +30314,7 @@ static void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node)
 				}
 			}
 		}
-		v__gen__Gen_writeln(g, tos_lit("vweb__Context_html(&app-> vweb, tmpl_res)"));
+		v__gen__Gen_writeln(g, tos_lit("vweb__Context_html(&app->vweb, _tmpl_res)"));
 		return;
 	}
 	v__gen__Gen_writeln(g, string_add(tos_lit("// $"), _STR("method call. sym=\"%.*s\000\"", 2, node.sym.name)));
@@ -30347,43 +30338,23 @@ static void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node)
 	}
 }
 
-static multi_return_int_string_string_string v__gen__Gen_panic_debug_info(v__gen__Gen* g, v__token__Position pos) {
-	int paline = pos.line_nr + 1;
-	string pafile = string_replace(g->fn_decl->file, tos_lit("\\"), tos_lit("/"));
-	string pafn = string_after(g->fn_decl->name, tos_lit("."));
-	string pamod = string_all_before_last(g->fn_decl->name, tos_lit("."));
-	if (string_eq(pamod, pafn)) {
-		pamod = (g->fn_decl->is_builtin ? (tos_lit("builtin")) : (tos_lit("main")));
+static void v__gen__Gen_comp_if(v__gen__Gen* g, v__ast__CompIf it) {
+	string ifdef = v__gen__Gen_comp_if_to_ifdef(g, it.val, it.is_opt);
+	if (it.is_not) {
+		v__gen__Gen_writeln(g, string_add(_STR("\n// \$if !%.*s\000 {\n#ifndef ", 2, it.val), ifdef));
+	} else {
+		v__gen__Gen_writeln(g, string_add(_STR("\n// \$if  %.*s\000 {\n#ifdef ", 2, it.val), ifdef));
 	}
-
-		return (multi_return_int_string_string_string){.arg0=paline,.arg1=pafile,.arg2=pamod,.arg3=pafn};
-}
-
-static void v__gen__Gen_vweb_html(v__gen__Gen* g) {
-	string path = string_add(g->cur_fn->name, tos_lit(".html"));
-	println(_STR("html path=%.*s", 1, path));
-	if (g->pref->is_debug) {
-		println(_STR(">>> compiling vweb HTML template \"%.*s\000\"", 2, path));
+	g->defer_ifdef = (it.is_not ? (string_add(tos_lit("\n#ifndef "), ifdef)) : (string_add(tos_lit("\n#ifdef "), ifdef)));
+	v__gen__Gen_stmts(g, it.stmts);
+	g->defer_ifdef = tos_lit("");
+	if (it.has_else) {
+		v__gen__Gen_writeln(g, tos_lit("\n#else"));
+		g->defer_ifdef = (it.is_not ? (string_add(tos_lit("\n#ifdef "), ifdef)) : (string_add(tos_lit("\n#ifndef "), ifdef)));
+		v__gen__Gen_stmts(g, it.else_stmts);
+		g->defer_ifdef = tos_lit("");
 	}
-	if (!os__exists(path)) {
-		v__gen__verror(_STR("vweb HTML template \"%.*s\000\" not found", 2, path));
-	}
-	string v_code = vweb__tmpl__compile_template(path);
-	if (g->pref->is_verbose) {
-		println(tos_lit("\n\n"));
-		println(_STR(">>> vweb template for %.*s\000:", 2, path));
-		println(v_code);
-		println(tos_lit(">>> vweb template END"));
-		println(tos_lit("\n\n"));
-	}
-	v__gen__Gen_writeln(g, tos_lit("/////////////////// tmpl start"));
-	v__gen__Gen_writeln(g, tos_lit("/////////////////// tmpl end"));
-	v__table__Arg receiver = (*(v__table__Arg*)array_get(g->cur_fn->args, 0));
-	string dot = tos_lit(".");
-	v__gen__Gen_writeln(g, _STR("vweb__Context_html(&%.*s\000 /*!*/%.*s\000 vweb, tmpl_res)", 3, receiver.name, dot));
-}
-
-static void v__gen__fooo() {
+	v__gen__Gen_writeln(g, _STR("\n// } %.*s\000\n#endif\n", 2, it.val));
 }
 
 static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
