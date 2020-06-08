@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "6f8e91e"
+#define V_COMMIT_HASH "288a6ee"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0058b82"
+#define V_COMMIT_HASH "6f8e91e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "6f8e91e"
+#define V_CURRENT_COMMIT_HASH "288a6ee"
 #endif
 
 
@@ -16169,6 +16169,7 @@ string vweb__tmpl__compile_template(string content) {
 	strings__Builder_writeln(&s, _STR("\n	import strings\n	// === vweb html template ===\n	fn vweb_tmpl() {\n	mut sb := strings.new_builder(%"PRId32"\000)\n	header := \' \' // TODO remove\n	_ = header\n	//footer := \'footer\'\n", 2, lines.len * 30));
 	strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
 	bool in_css = false;
+	bool in_span = false;
 	// FOR IN array
 	array _t2 = lines;
 	for (int _t3 = 0; _t3 < _t2.len; _t3++) {
@@ -16208,11 +16209,23 @@ string vweb__tmpl__compile_template(string content) {
 			Option_int pos = _t5;
 			strings__Builder_writeln(&s, string_add(string_add(tos_lit("for "), string_substr(line, /*opt*/(*(int*)pos.data) + 4, line.len)), tos_lit("{")));
 			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
+		} else if (!in_css && string_contains(line, tos_lit("span.")) && string_ends_with(line, tos_lit("{"))) {
+			string v_class = string_trim_space(string_find_between(line, tos_lit("span."), tos_lit("{")));
+			strings__Builder_writeln(&s, _STR("<span class=\"%.*s\000\">", 2, v_class));
+			in_span = true;
 		} else if (!in_css && string_contains(line, tos_lit(".")) && string_ends_with(line, tos_lit("{"))) {
-			string v_class = string_find_between(line, tos_lit("."), tos_lit("{"));
+			string v_class = string_trim_space(string_find_between(line, tos_lit("."), tos_lit("{")));
 			strings__Builder_writeln(&s, _STR("<div class=\"%.*s\000\">", 2, v_class));
+		} else if (!in_css && string_contains(line, tos_lit("#")) && string_ends_with(line, tos_lit("{"))) {
+			string v_class = string_trim_space(string_find_between(line, tos_lit("#"), tos_lit("{")));
+			strings__Builder_writeln(&s, _STR("<div id=\"%.*s\000\">", 2, v_class));
 		} else if (!in_css && string_eq(line, tos_lit("}"))) {
-			strings__Builder_writeln(&s, tos_lit("</div>"));
+			if (in_span) {
+				strings__Builder_writeln(&s, tos_lit("</span>"));
+				in_span = false;
+			} else {
+				strings__Builder_writeln(&s, tos_lit("</div>"));
+			}
 		} else {
 			strings__Builder_writeln(&s, string_replace(string_replace(line, tos_lit("@"), tos_lit("\x24")), tos_lit("'"), tos_lit("\"")));
 		}
