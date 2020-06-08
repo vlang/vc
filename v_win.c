@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "0c1d3ff"
+#define V_COMMIT_HASH "b4dbf9c"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "09fa0f1"
+#define V_COMMIT_HASH "0c1d3ff"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "0c1d3ff"
+#define V_CURRENT_COMMIT_HASH "b4dbf9c"
 #endif
 
 
@@ -1728,7 +1728,6 @@ struct v__table__Map {
 };
 
 struct v__table__MultiReturn {
-	string name;
 	array_v__table__Type types;
 };
 
@@ -17955,7 +17954,6 @@ int v__table__Table_find_or_register_multi_return(v__table__Table* t, array_v__t
 	v__table__TypeSymbol mr_type = (v__table__TypeSymbol){
 		.parent_idx = 0,
 		.info = /* sum type cast */ (v__table__TypeInfo) {.obj = memdup(&(v__table__MultiReturn[]) {(v__table__MultiReturn){
-		.name = (string){.str=""},
 		.types = mr_typs,
 	}}, sizeof(v__table__MultiReturn)), .typ = 271 /* v.table.MultiReturn */},
 		.kind = v__table__Kind_multi_return,
