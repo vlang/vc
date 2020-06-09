@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d472a27"
+#define V_COMMIT_HASH "82e6628"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "895c762"
+#define V_COMMIT_HASH "d472a27"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d472a27"
+#define V_CURRENT_COMMIT_HASH "82e6628"
 #endif
 
 
@@ -10988,7 +10988,7 @@ string string_repeat(string s, int count) {
 }
 
 array_string string_fields(string s) {
-	return string_split(s, tos_lit(" "));
+	return string_split(string_replace(s, tos_lit("\t"), tos_lit(" ")), tos_lit(" "));
 }
 
 string string_strip_margin(string s) {
