@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "1396dc1"
+#define V_COMMIT_HASH "b3e416f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "62c80bc"
+#define V_COMMIT_HASH "1396dc1"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "1396dc1"
+#define V_CURRENT_COMMIT_HASH "b3e416f"
 #endif
 
 
@@ -3674,8 +3674,8 @@ string array_v__cflag__CFlag_c_options_without_object_files(array_v__cflag__CFla
 string array_v__cflag__CFlag_c_options_only_object_files(array_v__cflag__CFlag cflags);
 string _const_vweb__tmpl__str_start; // a string literal, inited later
 string _const_vweb__tmpl__str_end; // a string literal, inited later
-string vweb__tmpl__compile_file(string path);
-string vweb__tmpl__compile_template(string content);
+string vweb__tmpl__compile_file(string path, string fn_name);
+string vweb__tmpl__compile_template(string content, string fn_name);
 int runtime__nr_cpus();
 int runtime__nr_jobs();
 bool runtime__is_32bit();
@@ -15648,7 +15648,7 @@ string array_v__cflag__CFlag_c_options_only_object_files(array_v__cflag__CFlag c
 	return array_string_join(args, tos_lit(" "));
 }
 
-string vweb__tmpl__compile_file(string path) {
+string vweb__tmpl__compile_file(string path, string fn_name) {
 	Option_string _t1 = os__read_file(path);
 	if (!_t1.ok) {
 		string err = _t1.v_error;
@@ -15656,10 +15656,10 @@ string vweb__tmpl__compile_file(string path) {
 		v_panic(tos_lit("html failed"));
 	}
 	Option_string html = _t1;
-	return vweb__tmpl__compile_template(/*opt*/(*(string*)html.data));
+	return vweb__tmpl__compile_template(/*opt*/(*(string*)html.data), fn_name);
 }
 
-string vweb__tmpl__compile_template(string content) {
+string vweb__tmpl__compile_template(string content, string fn_name) {
 	string html = content;
 	string header = tos_lit("");
 	if (os__exists(tos_lit("header.html")) && string_contains(html, tos_lit("@header"))) {
@@ -15675,7 +15675,7 @@ string vweb__tmpl__compile_template(string content) {
 	}
 	array_string lines = string_split_into_lines(html);
 	strings__Builder s = strings__new_builder(1000);
-	strings__Builder_writeln(&s, _STR("\n	import strings\n	// === vweb html template ===\n	fn vweb_tmpl() {\n	mut sb := strings.new_builder(%"PRId32"\000)\n	header := \' \' // TODO remove\n	_ = header\n	//footer := \'footer\'\n", 2, lines.len * 30));
+	strings__Builder_writeln(&s, _STR("\n	import strings\n	// === vweb html template ===\n	fn vweb_tmpl_%.*s\000() {\n	mut sb := strings.new_builder(%"PRId32"\000)\n	header := \' \' // TODO remove\n	_ = header\n	//footer := \'footer\'\n", 3, fn_name, lines.len * 30));
 	strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
 	bool in_css = false;
 	bool in_span = false;
@@ -22226,7 +22226,7 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 			v__parser__Parser_error(p, _STR("vweb HTML template \"%.*s\000\" not found", 2, path));
 		}
 	}
-	string v_code = vweb__tmpl__compile_file(path);
+	string v_code = vweb__tmpl__compile_file(path, p->cur_fn_name);
 	v__ast__Scope* scope = (v__ast__Scope*)memdup(&(v__ast__Scope){	.objects = new_map_1(sizeof(v__ast__ScopeObject)),
 		.parent = p->global_scope,
 		.children = __new_array(0, 1, sizeof(v__ast__Scope*)),
@@ -22247,7 +22247,7 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t1.data)[_t2];
 		if (stmt.typ == 98 /* v.ast.FnDecl */) {
 			v__ast__FnDecl* fn_decl = /* as */ (v__ast__FnDecl*)__as_cast(stmt.obj, stmt.typ, /*expected:*/98);
-			if (string_eq(fn_decl->name, tos_lit("vweb_tmpl"))) {
+			if (string_starts_with(fn_decl->name, tos_lit("vweb_tmpl"))) {
 				v__ast__Scope* body_scope = v__ast__Scope_innermost(file.scope, fn_decl->body_pos.pos);
 				// FOR IN map
 				array_string keys__t3 = map_keys(&p->scope->objects);
@@ -29920,7 +29920,7 @@ static void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node)
 			v__ast__Stmt stmt = ((v__ast__Stmt*)_t1.data)[_t2];
 			if (stmt.typ == 98 /* v.ast.FnDecl */) {
 				v__ast__FnDecl* fn_decl = /* as */ (v__ast__FnDecl*)__as_cast(stmt.obj, stmt.typ, /*expected:*/98);
-				if (string_eq(fn_decl->name, tos_lit("vweb_tmpl"))) {
+				if (string_starts_with(fn_decl->name, tos_lit("vweb_tmpl"))) {
 					v__gen__Gen_stmts(g, fn_decl->stmts);
 					break;
 				}
