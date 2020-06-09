@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "2799a6f"
+#define V_COMMIT_HASH "895c762"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c6573f9"
+#define V_COMMIT_HASH "2799a6f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "2799a6f"
+#define V_CURRENT_COMMIT_HASH "895c762"
 #endif
 
 
@@ -31645,7 +31645,11 @@ static void v__gen__js__JsGen_gen_assign_stmt(v__gen__js__JsGen* g, v__ast__Assi
 		array _t1 = it.left;
 		for (int i = 0; i < _t1.len; i++) {
 			v__ast__Ident ident = ((v__ast__Ident*)_t1.data)[i];
-			v__gen__js__JsGen_write(g, v__gen__js__JsGen_js_name(g, ident.name));
+			if ((string_eq(ident.name, tos_lit("")) || string_eq(ident.name, tos_lit("_")))) {
+				v__gen__js__JsGen_write(g, tos_lit(""));
+			} else {
+				v__gen__js__JsGen_write(g, v__gen__js__JsGen_js_name(g, ident.name));
+			}
 			if (i < it.left.len - 1) {
 				v__gen__js__JsGen_write(g, tos_lit(", "));
 			}
@@ -31659,6 +31663,13 @@ static void v__gen__js__JsGen_gen_assign_stmt(v__gen__js__JsGen* g, v__ast__Assi
 		for (int i = 0; i < _t2.len; i++) {
 			v__ast__Ident ident = ((v__ast__Ident*)_t2.data)[i];
 			v__ast__Expr val = (*(v__ast__Expr*)array_get(it.right, i));
+			if (ident.kind == v__ast__IdentKind_blank_ident || (string_eq(ident.name, tos_lit("")) || string_eq(ident.name, tos_lit("_")))) {
+				string tmp_var = v__gen__js__JsGen_new_tmp_var(g);
+				v__gen__js__JsGen_write(g, _STR("const %.*s\000 = ", 2, tmp_var));
+				v__gen__js__JsGen_expr(g, val);
+				v__gen__js__JsGen_writeln(g, tos_lit(";"));
+				continue;
+			}
 			v__ast__IdentVar ident_var_info = v__ast__Ident_var_info(&ident);
 			string styp = v__gen__js__JsGen_typ(g, ident_var_info.typ);
 			if (!g->inside_loop && styp.len > 0) {
@@ -31873,6 +31884,9 @@ static void v__gen__js__JsGen_gen_for_c_stmt(v__gen__js__JsGen* g, v__ast__ForCS
 static void v__gen__js__JsGen_gen_for_in_stmt(v__gen__js__JsGen* g, v__ast__ForInStmt it) {
 	if (it.is_range) {
 		string i = it.val_var;
+		if ((string_eq(i, tos_lit("")) || string_eq(i, tos_lit("_")))) {
+			i = v__gen__js__JsGen_new_tmp_var(g);
+		}
 		g->inside_loop = true;
 		v__gen__js__JsGen_write(g, _STR("for (let %.*s\000 = ", 2, i));
 		v__gen__js__JsGen_expr(g, it.cond);
@@ -31882,35 +31896,27 @@ static void v__gen__js__JsGen_gen_for_in_stmt(v__gen__js__JsGen* g, v__ast__ForI
 		g->inside_loop = false;
 		v__gen__js__JsGen_stmts(g, it.stmts);
 		v__gen__js__JsGen_writeln(g, tos_lit("}"));
-	} else if (it.kind == v__table__Kind_array || v__table__Type_has_flag(it.cond_type, v__table__TypeFlag_variadic)) {
-		string i = (string_eq(it.key_var, tos_lit("")) ? (v__gen__js__JsGen_new_tmp_var(g)) : (it.key_var));
+	} else if ((it.kind == v__table__Kind_array || it.kind == v__table__Kind_string) || v__table__Type_has_flag(it.cond_type, v__table__TypeFlag_variadic)) {
+		string i = ((string_eq(it.key_var, tos_lit("")) || string_eq(it.key_var, tos_lit("_"))) ? (v__gen__js__JsGen_new_tmp_var(g)) : (it.key_var));
+		string val = ((string_eq(it.val_var, tos_lit("")) || string_eq(it.val_var, tos_lit("_"))) ? (tos_lit("")) : (it.val_var));
 		g->inside_loop = true;
 		v__gen__js__JsGen_write(g, _STR("for (let %.*s\000 = 0; %.*s\000 < ", 3, i, i));
 		v__gen__js__JsGen_expr(g, it.cond);
 		v__gen__js__JsGen_writeln(g, _STR(".length; ++%.*s\000) {", 2, i));
 		g->inside_loop = false;
-		v__gen__js__JsGen_write(g, _STR("\tlet %.*s\000 = ", 2, it.val_var));
-		v__gen__js__JsGen_expr(g, it.cond);
-		v__gen__js__JsGen_writeln(g, _STR("[%.*s\000];", 2, i));
+		if (!(string_eq(val, tos_lit("")) || string_eq(val, tos_lit("_")))) {
+			v__gen__js__JsGen_write(g, _STR("\tconst %.*s\000 = ", 2, val));
+			v__gen__js__JsGen_expr(g, it.cond);
+			v__gen__js__JsGen_writeln(g, _STR("[%.*s\000];", 2, i));
+		}
 		v__gen__js__JsGen_stmts(g, it.stmts);
 		v__gen__js__JsGen_writeln(g, tos_lit("}"));
 	} else if (it.kind == v__table__Kind_map) {
-		string key = (string_eq(it.key_var, tos_lit("")) ? (v__gen__js__JsGen_new_tmp_var(g)) : (it.key_var));
-		v__gen__js__JsGen_write(g, _STR("for (let [%.*s\000, %.*s\000] of ", 3, key, it.val_var));
+		string key = ((string_eq(it.key_var, tos_lit("")) || string_eq(it.key_var, tos_lit("_"))) ? (tos_lit("")) : (it.key_var));
+		string val = ((string_eq(it.val_var, tos_lit("")) || string_eq(it.val_var, tos_lit("_"))) ? (tos_lit("")) : (it.val_var));
+		v__gen__js__JsGen_write(g, _STR("for (let [%.*s\000, %.*s\000] of ", 3, key, val));
 		v__gen__js__JsGen_expr(g, it.cond);
 		v__gen__js__JsGen_writeln(g, tos_lit(") {"));
-		v__gen__js__JsGen_stmts(g, it.stmts);
-		v__gen__js__JsGen_writeln(g, tos_lit("}"));
-	} else if (it.kind == v__table__Kind_string) {
-		string i = (string_eq(it.key_var, tos_lit("")) ? (v__gen__js__JsGen_new_tmp_var(g)) : (it.key_var));
-		g->inside_loop = true;
-		v__gen__js__JsGen_write(g, _STR("for (let %.*s\000 = 0; %.*s\000 < ", 3, i, i));
-		v__gen__js__JsGen_expr(g, it.cond);
-		v__gen__js__JsGen_writeln(g, _STR(".length; ++%.*s\000) {", 2, i));
-		g->inside_loop = false;
-		v__gen__js__JsGen_write(g, _STR("\tlet %.*s\000 = ", 2, it.val_var));
-		v__gen__js__JsGen_expr(g, it.cond);
-		v__gen__js__JsGen_writeln(g, _STR("[%.*s\000];", 2, i));
 		v__gen__js__JsGen_stmts(g, it.stmts);
 		v__gen__js__JsGen_writeln(g, tos_lit("}"));
 	}
@@ -32073,6 +32079,11 @@ static void v__gen__js__JsGen_gen_array_init_expr(v__gen__js__JsGen* g, v__ast__
 }
 
 static void v__gen__js__JsGen_gen_assign_expr(v__gen__js__JsGen* g, v__ast__AssignExpr it) {
+	if (it.left_type == _const_v__table__void_type && it.op == v__token__Kind_assign) {
+		string tmp_var = v__gen__js__JsGen_new_tmp_var(g);
+		v__gen__js__JsGen_write(g, _STR("const %.*s\000 = ", 2, tmp_var));
+		v__gen__js__JsGen_expr(g, it.val);
+	}
 	v__gen__js__JsGen_expr(g, it.left);
 	if (g->inside_map_set && it.op == v__token__Kind_assign) {
 		g->inside_map_set = false;
@@ -32115,6 +32126,9 @@ static void v__gen__js__JsGen_gen_call_expr(v__gen__js__JsGen* g, v__ast__CallEx
 
 static void v__gen__js__JsGen_gen_ident(v__gen__js__JsGen* g, v__ast__Ident node) {
 	string name = v__gen__js__JsGen_js_name(g, node.name);
+	if (node.kind == v__ast__IdentKind_blank_ident || (string_eq(name, tos_lit("")) || string_eq(name, tos_lit("_")))) {
+		name = v__gen__js__JsGen_new_tmp_var(g);
+	}
 	v__gen__js__JsGen_write(g, name);
 }
 
