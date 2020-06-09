@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "c6573f9"
+#define V_COMMIT_HASH "2799a6f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "99f311c"
+#define V_COMMIT_HASH "c6573f9"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c6573f9"
+#define V_CURRENT_COMMIT_HASH "2799a6f"
 #endif
 
 
@@ -21585,7 +21585,17 @@ v__table__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* 
 		v__ast__Scope* start_scope = v__ast__Scope_innermost(c->file.scope, ident->pos.pos);
 		{ /* if guard */ Option_v__ast__ScopeObject obj = v__ast__Scope_find(start_scope, ident->name);
 		if (obj.ok) {
-			if (/*opt*/(*(v__ast__ScopeObject*)obj.data).typ == 195 /* v.ast.Var */) {
+			if (/*opt*/(*(v__ast__ScopeObject*)obj.data).typ == 182 /* v.ast.GlobalDecl */) {
+				v__ast__GlobalDecl* it = (v__ast__GlobalDecl*)/*opt*/(*(v__ast__ScopeObject*)obj.data).obj; // ST it
+				ident->kind = v__ast__IdentKind_global;
+				ident->info = /* sum type cast */ (v__ast__IdentInfo) {.obj = memdup(&(v__ast__IdentVar[]) {(v__ast__IdentVar){
+					.typ = it->typ,
+					.is_mut = 0,
+					.is_static = 0,
+					.is_optional = 0,
+				}}, sizeof(v__ast__IdentVar)), .typ = 219 /* v.ast.IdentVar */};
+				return it->typ;
+			}else if (/*opt*/(*(v__ast__ScopeObject*)obj.data).typ == 195 /* v.ast.Var */) {
 				v__ast__Var* it = (v__ast__Var*)/*opt*/(*(v__ast__ScopeObject*)obj.data).obj; // ST it
 				v__table__Type typ = it->typ;
 				if (typ == 0) {
@@ -21620,17 +21630,7 @@ v__table__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* 
 		}
 		{ /* if guard */ Option_v__ast__ScopeObject obj = v__ast__Scope_find(c->file.global_scope, name);
 		if (obj.ok) {
-			if (/*opt*/(*(v__ast__ScopeObject*)obj.data).typ == 182 /* v.ast.GlobalDecl */) {
-				v__ast__GlobalDecl* it = (v__ast__GlobalDecl*)/*opt*/(*(v__ast__ScopeObject*)obj.data).obj; // ST it
-				ident->kind = v__ast__IdentKind_global;
-				ident->info = /* sum type cast */ (v__ast__IdentInfo) {.obj = memdup(&(v__ast__IdentVar[]) {(v__ast__IdentVar){
-					.typ = it->typ,
-					.is_mut = 0,
-					.is_static = 0,
-					.is_optional = 0,
-				}}, sizeof(v__ast__IdentVar)), .typ = 219 /* v.ast.IdentVar */};
-				return it->typ;
-			}else if (/*opt*/(*(v__ast__ScopeObject*)obj.data).typ == 194 /* v.ast.ConstField */) {
+			if (/*opt*/(*(v__ast__ScopeObject*)obj.data).typ == 194 /* v.ast.ConstField */) {
 				v__ast__ConstField* it = (v__ast__ConstField*)/*opt*/(*(v__ast__ScopeObject*)obj.data).obj; // ST it
 				v__table__Type typ = it->typ;
 				if (typ == 0) {
@@ -22400,7 +22400,7 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 	}
 	string v_code = vweb__tmpl__compile_file(path);
 	v__ast__Scope* scope = (v__ast__Scope*)memdup(&(v__ast__Scope){	.objects = new_map_1(sizeof(v__ast__ScopeObject)),
-		.parent = 0,
+		.parent = p->global_scope,
 		.children = __new_array(0, 1, sizeof(v__ast__Scope*)),
 		.start_pos = 0,
 		.end_pos = 0,
@@ -24107,7 +24107,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 		.attr_ctdefine = (string){.str=""},
 		.expr_mod = (string){.str=""},
 		.scope = (v__ast__Scope*)memdup(&(v__ast__Scope){	.objects = new_map_1(sizeof(v__ast__ScopeObject)),
-		.parent = 0,
+		.parent = global_scope,
 		.children = __new_array(0, 1, sizeof(v__ast__Scope*)),
 		.start_pos = 0,
 		.end_pos = 0,
