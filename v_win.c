@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "e8e2052"
+#define V_COMMIT_HASH "3664bea"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b3e0827"
+#define V_COMMIT_HASH "e8e2052"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "e8e2052"
+#define V_CURRENT_COMMIT_HASH "3664bea"
 #endif
 
 
@@ -4307,7 +4307,7 @@ v__table__Type v__parser__Parser_parse_type_with_mut(v__parser__Parser* p, bool 
 v__table__Type v__parser__Parser_parse_type(v__parser__Parser* p);
 v__table__Type v__parser__Parser_parse_any_type(v__parser__Parser* p, v__table__Language language, bool is_ptr);
 v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__Scope* scope);
-v__ast__File v__parser__parse_text(string text, v__table__Table* b_table, v__ast__Scope* scope, v__ast__Scope* global_scope);
+v__ast__File v__parser__parse_text(string text, v__table__Table* b_table, v__pref__Preferences* pref, v__ast__Scope* scope, v__ast__Scope* global_scope);
 v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, v__ast__Scope* global_scope);
 static v__ast__File v__parser__Parser_parse(v__parser__Parser* p);
 array_v__ast__File v__parser__parse_files(array_string paths, v__table__Table* table, v__pref__Preferences* pref, v__ast__Scope* global_scope);
@@ -16067,7 +16067,7 @@ string vweb__tmpl__compile_template(string content, string fn_name) {
 		}
 	}
 	strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
-	strings__Builder_writeln(&s, tos_lit("_tmpl_res := sb.str() "));
+	strings__Builder_writeln(&s, _STR("tmpl_res_%.*s\000 := sb.str() ", 2, fn_name));
 	strings__Builder_writeln(&s, tos_lit("}"));
 	strings__Builder_writeln(&s, tos_lit("// === end of vweb html template ==="));
 	return strings__Builder_str(&s);
@@ -21543,6 +21543,10 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 		if (it->is_vweb) {
 			v__checker__Checker c2 = v__checker__new_checker(c->table, c->pref);
 			v__checker__Checker_check(&c2, it->vweb_tmpl);
+			_PUSH_MANY(&c->warnings, (c2.warnings), _t4, array_v__errors__Warning);
+			_PUSH_MANY(&c->errors, (c2.errors), _t5, array_v__errors__Error);
+			c->nr_warnings += c2.nr_warnings;
+			c->nr_errors += c2.nr_errors;
 		}
 		// defer
 			c->expr_level--;
@@ -21661,9 +21665,9 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 	}else if (node.typ == 189 /* v.ast.StringInterLiteral */) {
 		v__ast__StringInterLiteral* it = (v__ast__StringInterLiteral*)node.obj; // ST it
 		// FOR IN array
-		array _t4 = it->exprs;
-		for (int _t5 = 0; _t5 < _t4.len; _t5++) {
-			v__ast__Expr expr = ((v__ast__Expr*)_t4.data)[_t5];
+		array _t6 = it->exprs;
+		for (int _t7 = 0; _t7 < _t6.len; _t7++) {
+			v__ast__Expr expr = ((v__ast__Expr*)_t6.data)[_t7];
 			array_push(&it->expr_types, _MOV((v__table__Type[]){ v__checker__Checker_expr(c, expr) }));
 		}
 		// defer
@@ -22557,7 +22561,7 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 		.start_pos = 0,
 		.end_pos = 0,
 	}, sizeof(v__ast__Scope));
-	v__ast__File file = v__parser__parse_text(v_code, p->table, scope, p->global_scope);
+	v__ast__File file = v__parser__parse_text(v_code, p->table, p->pref, scope, p->global_scope);
 	if (p->pref->is_verbose) {
 		println(tos_lit("\n\n"));
 		println(_STR(">>> vweb template for %.*s\000:", 2, path));
@@ -22571,8 +22575,8 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t1.data)[_t2];
 		if (stmt.typ == 121 /* v.ast.FnDecl */) {
 			v__ast__FnDecl* fn_decl = /* as */ (v__ast__FnDecl*)__as_cast(stmt.obj, stmt.typ, /*expected:*/121);
-			if (string_starts_with(fn_decl->name, tos_lit("vweb_tmpl"))) {
-				v__ast__Scope* body_scope = v__ast__Scope_innermost(file.scope, fn_decl->body_pos.pos);
+			if (string_eq(fn_decl->name, _STR("vweb_tmpl_%.*s", 1, p->cur_fn_name))) {
+				v__ast__Scope* tmpl_scope = v__ast__Scope_innermost(file.scope, fn_decl->body_pos.pos);
 				// FOR IN map
 				array_string keys__t3 = map_keys(&p->scope->objects);
 				for (int _t4 = 0; _t4 < keys__t3.len; _t4++) {
@@ -22580,7 +22584,10 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 					v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)map_get3(p->scope->objects, _t5, &(v__ast__ScopeObject[]){ {0} }));
 					if (obj.typ == 223 /* v.ast.Var */) {
 						v__ast__Var* v = /* as */ (v__ast__Var*)__as_cast(obj.obj, obj.typ, /*expected:*/223);
-						v__ast__Scope_register(body_scope, v->name, /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {*v}, sizeof(v__ast__Var)), .typ = 223 /* v.ast.Var */});
+						v__ast__Scope_register(tmpl_scope, v->name, /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {*v}, sizeof(v__ast__Var)), .typ = 223 /* v.ast.Var */});
+						if (string_contains(v_code, v->name)) {
+							v->is_used = true;
+						}
 					}
 				}
 				break;
@@ -24132,7 +24139,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 	return v__parser__Parser_stmt(&p);
 }
 
-v__ast__File v__parser__parse_text(string text, v__table__Table* b_table, v__ast__Scope* scope, v__ast__Scope* global_scope) {
+v__ast__File v__parser__parse_text(string text, v__table__Table* b_table, v__pref__Preferences* pref, v__ast__Scope* scope, v__ast__Scope* global_scope) {
 	v__scanner__Scanner* s = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments);
 	v__parser__Parser p = (v__parser__Parser){
 		.file_name = (string){.str=""},
@@ -24152,62 +24159,7 @@ v__ast__File v__parser__parse_text(string text, v__table__Table* b_table, v__ast
 		.inside_for = 0,
 		.inside_fn = 0,
 		.inside_str_interp = 0,
-		.pref = (v__pref__Preferences*)memdup(&(v__pref__Preferences){	.os = {0},
-		.backend = {0},
-		.build_mode = {0},
-		.output_mode = v__pref__OutputMode_stdout,
-		.is_verbose = 0,
-		.is_test = 0,
-		.is_script = 0,
-		.is_livemain = 0,
-		.is_liveshared = 0,
-		.is_shared = 0,
-		.is_prof = 0,
-		.profile_file = (string){.str=""},
-		.profile_no_inline = 0,
-		.translated = 0,
-		.is_prod = 0,
-		.obfuscate = 0,
-		.is_repl = 0,
-		.is_run = 0,
-		.sanitize = 0,
-		.is_debug = 0,
-		.is_vlines = 0,
-		.keep_c = 0,
-		.show_cc = 0,
-		.use_cache = 0,
-		.is_stats = 0,
-		.no_auto_free = 0,
-		.cflags = (string){.str=""},
-		.ccompiler = (string){.str=""},
-		.third_party_option = (string){.str=""},
-		.building_v = 0,
-		.autofree = 0,
-		.compress = 0,
-		.fast = 0,
-		.enable_globals = 0,
-		.is_fmt = 0,
-		.is_bare = 0,
-		.no_preludes = 0,
-		.custom_prelude = (string){.str=""},
-		.lookup_path = __new_array(0, 1, sizeof(string)),
-		.output_cross_c = 0,
-		.prealloc = 0,
-		.vroot = (string){.str=""},
-		.out_name = (string){.str=""},
-		.path = (string){.str=""},
-		.compile_defines = __new_array(0, 1, sizeof(string)),
-		.compile_defines_all = __new_array(0, 1, sizeof(string)),
-		.mod = (string){.str=""},
-		.run_args = __new_array(0, 1, sizeof(string)),
-		.printfn_list = __new_array(0, 1, sizeof(string)),
-		.print_v_files = 0,
-		.skip_running = 0,
-		.skip_warnings = 0,
-		.use_color = {0},
-		.is_parallel = 0,
-		.error_limit = 0,
-	}, sizeof(v__pref__Preferences)),
+		.pref = pref,
 		.builtin_mod = 0,
 		.mod = (string){.str=""},
 		.attr = (string){.str=""},
@@ -30282,7 +30234,7 @@ static void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node)
 				}
 			}
 		}
-		v__gen__Gen_writeln(g, tos_lit("vweb__Context_html(&app->vweb, _tmpl_res)"));
+		v__gen__Gen_writeln(g, _STR("vweb__Context_html(&app->vweb, tmpl_res_%.*s\000)", 2, g->fn_decl->name));
 		return;
 	}
 	v__gen__Gen_writeln(g, string_add(tos_lit("// $"), _STR("method call. sym=\"%.*s\000\"", 2, node.sym.name)));
