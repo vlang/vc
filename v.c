@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "4fdb33b"
+#define V_COMMIT_HASH "e5aba94"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "66696e1"
+#define V_COMMIT_HASH "4fdb33b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4fdb33b"
+#define V_CURRENT_COMMIT_HASH "e5aba94"
 #endif
 
 
@@ -302,6 +302,13 @@ typedef enum {
 
 typedef struct v__errors__Error v__errors__Error;
 typedef struct v__errors__Warning v__errors__Warning;
+typedef enum {
+	vweb__tmpl__State_html, // 
+	vweb__tmpl__State_css, // +1
+	vweb__tmpl__State_js, // +2
+	vweb__tmpl__State_span, // +3
+} vweb__tmpl__State;
+
 typedef struct v__util__EManager v__util__EManager;
 typedef enum {
 	v__table__Language_v, // 
@@ -15692,16 +15699,20 @@ string vweb__tmpl__compile_template(string content, string fn_name) {
 	strings__Builder s = strings__new_builder(1000);
 	strings__Builder_writeln(&s, _STR("\n	import strings\n	// === vweb html template ===\n	fn vweb_tmpl_%.*s\000() {\n	mut sb := strings.new_builder(%"PRId32"\000)\n	header := \' \' // TODO remove\n	_ = header\n	//footer := \'footer\'\n", 3, fn_name, lines.len * 30));
 	strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
-	bool in_css = false;
-	bool in_span = false;
+	vweb__tmpl__State state = vweb__tmpl__State_html;
 	// FOR IN array
 	array _t2 = lines;
 	for (int _t3 = 0; _t3 < _t2.len; _t3++) {
 		string _line = ((string*)_t2.data)[_t3];
 		string line = string_trim_space(_line);
 		if (string_eq(line, tos_lit("<style>"))) {
-			in_css = true;
+			state = vweb__tmpl__State_css;
 		} else if (string_eq(line, tos_lit("</style>"))) {
+			state = vweb__tmpl__State_html;
+		} else if (string_eq(line, tos_lit("<script>"))) {
+			state = vweb__tmpl__State_js;
+		} else if (string_eq(line, tos_lit("</script>"))) {
+			state = vweb__tmpl__State_html;
 		}
 		if (string_contains(line, tos_lit("@if "))) {
 			strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
@@ -15733,20 +15744,20 @@ string vweb__tmpl__compile_template(string content, string fn_name) {
 			Option_int pos = _t5;
 			strings__Builder_writeln(&s, string_add(string_add(tos_lit("for "), string_substr(line, /*opt*/(*(int*)pos.data) + 4, line.len)), tos_lit("{")));
 			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
-		} else if (!in_css && string_contains(line, tos_lit("span.")) && string_ends_with(line, tos_lit("{"))) {
+		} else if (state == vweb__tmpl__State_html && string_contains(line, tos_lit("span.")) && string_ends_with(line, tos_lit("{"))) {
 			string v_class = string_trim_space(string_find_between(line, tos_lit("span."), tos_lit("{")));
 			strings__Builder_writeln(&s, _STR("<span class=\"%.*s\000\">", 2, v_class));
-			in_span = true;
-		} else if (!in_css && string_contains(line, tos_lit(".")) && string_ends_with(line, tos_lit("{"))) {
+			state = vweb__tmpl__State_span;
+		} else if (state == vweb__tmpl__State_html && string_contains(line, tos_lit(".")) && string_ends_with(line, tos_lit("{"))) {
 			string v_class = string_trim_space(string_find_between(line, tos_lit("."), tos_lit("{")));
 			strings__Builder_writeln(&s, _STR("<div class=\"%.*s\000\">", 2, v_class));
-		} else if (!in_css && string_contains(line, tos_lit("#")) && string_ends_with(line, tos_lit("{"))) {
+		} else if (state == vweb__tmpl__State_html && string_contains(line, tos_lit("#")) && string_ends_with(line, tos_lit("{"))) {
 			string v_class = string_trim_space(string_find_between(line, tos_lit("#"), tos_lit("{")));
 			strings__Builder_writeln(&s, _STR("<div id=\"%.*s\000\">", 2, v_class));
-		} else if (!in_css && string_eq(line, tos_lit("}"))) {
-			if (in_span) {
+		} else if (state == vweb__tmpl__State_html && string_eq(line, tos_lit("}"))) {
+			if (state == vweb__tmpl__State_span) {
 				strings__Builder_writeln(&s, tos_lit("</span>"));
-				in_span = false;
+				state = vweb__tmpl__State_html;
 			} else {
 				strings__Builder_writeln(&s, tos_lit("</div>"));
 			}
