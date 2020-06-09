@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "82e6628"
+#define V_COMMIT_HASH "62c80bc"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d472a27"
+#define V_COMMIT_HASH "82e6628"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "82e6628"
+#define V_CURRENT_COMMIT_HASH "62c80bc"
 #endif
 
 
@@ -4338,6 +4338,7 @@ static v__ast__Module v__parser__Parser_module_decl(v__parser__Parser* p);
 static v__ast__Import v__parser__Parser_import_stmt(v__parser__Parser* p);
 static v__ast__ConstDecl v__parser__Parser_const_decl(v__parser__Parser* p);
 static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p);
+array_string _const_v__parser__global_enabled_mods; // inited later
 static v__ast__GlobalDecl v__parser__Parser_global_decl(v__parser__Parser* p);
 static v__ast__EnumDecl v__parser__Parser_enum_decl(v__parser__Parser* p);
 static v__ast__TypeDecl v__parser__Parser_type_decl(v__parser__Parser* p);
@@ -25643,7 +25644,7 @@ static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 }
 
 static v__ast__GlobalDecl v__parser__Parser_global_decl(v__parser__Parser* p) {
-	if (!p->pref->translated && !p->pref->is_livemain && !p->builtin_mod && !p->pref->building_v && string_ne(p->mod, tos_lit("ui")) && string_ne(p->mod, tos_lit("gg2")) && string_ne(p->mod, tos_lit("uiold")) && !string_contains(os__getwd(), tos_lit("/volt")) && !p->pref->enable_globals) {
+	if (!p->pref->translated && !p->pref->is_livemain && !p->builtin_mod && !p->pref->building_v && string_ne(p->mod, tos_lit("ui")) && string_ne(p->mod, tos_lit("gg2")) && string_ne(p->mod, tos_lit("uiold")) && !string_contains(os__getwd(), tos_lit("/volt")) && !p->pref->enable_globals && !_IN(string, p->mod, _const_v__parser__global_enabled_mods)) {
 		v__parser__Parser_error(p, tos_lit("use `v --enable-globals ...` to enable globals"));
 	}
 	v__token__Position start_pos = v__token__Token_position(&p->tok);
@@ -37285,6 +37286,9 @@ tos_lit("void"), tos_lit("voidptr"), tos_lit("charptr"), tos_lit("byteptr"), tos
 tos_lit("windows"), tos_lit("mac"), tos_lit("macos"), tos_lit("darwin"), tos_lit("linux"), tos_lit("freebsd"), tos_lit("openbsd"), tos_lit("netbsd"), tos_lit("dragonfly"), tos_lit("android"), tos_lit("js"), tos_lit("solaris"), tos_lit("haiku"), tos_lit("linux_or_macos"), 
 }));
 	_const_v__parser__todo_delete_me = v__pref__OS_linux;
+	_const_v__parser__global_enabled_mods = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){
+tos_lit("rand"), 
+}));
 	_const_v__gen__c_reserved = new_array_from_c_array(35, 35, sizeof(string), _MOV((string[35]){
 tos_lit("delete"), tos_lit("exit"), tos_lit("unix"), tos_lit("error"), tos_lit("calloc"), tos_lit("malloc"), tos_lit("free"), tos_lit("panic"), tos_lit("auto"), tos_lit("char"), tos_lit("default"), tos_lit("do"), tos_lit("double"), tos_lit("extern"), tos_lit("float"), tos_lit("inline"), tos_lit("int"), tos_lit("long"), tos_lit("register"), tos_lit("restrict"), tos_lit("short"), tos_lit("signed"), tos_lit("sizeof"), tos_lit("static"), tos_lit("switch"), tos_lit("typedef"), tos_lit("union"), tos_lit("unsigned"), tos_lit("void"), tos_lit("volatile"), tos_lit("while"), tos_lit("new"), tos_lit("namespace"), tos_lit("class"), tos_lit("typename"), 
 }));
