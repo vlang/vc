@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "acf0b84"
+#define V_COMMIT_HASH "3a369f5"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a130d3c"
+#define V_COMMIT_HASH "acf0b84"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "acf0b84"
+#define V_CURRENT_COMMIT_HASH "3a369f5"
 #endif
 
 
@@ -17071,8 +17071,10 @@ string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 	if (sym->kind == v__table__Kind_array || string_contains(res, tos_lit("array_"))) {
 		res = string_replace(res, tos_lit("array_"), tos_lit("[]"));
 	}
+	string map_start = tos_lit("");
 	if (sym->kind == v__table__Kind_map || string_contains(res, tos_lit("map_string_"))) {
 		res = string_replace(res, tos_lit("map_string_"), tos_lit("map[string]"));
+		map_start = tos_lit("map[string]");
 	}
 	if (string_contains(res, tos_lit("."))) {
 		array_string vals = string_split(res, tos_lit("."));
@@ -17081,6 +17083,9 @@ string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 		}
 		if (sym->kind == v__table__Kind_array && !string_starts_with(res, tos_lit("[]"))) {
 			res = string_add(tos_lit("[]"), res);
+		}
+		if (sym->kind == v__table__Kind_map && !string_starts_with(res, tos_lit("map"))) {
+			res = string_add(map_start, res);
 		}
 	}
 	int nr_muls = v__table__Type_nr_muls(t);
