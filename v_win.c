@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "bf7f84d"
+#define V_COMMIT_HASH "1254d7a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a43b8b5"
+#define V_COMMIT_HASH "bf7f84d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "bf7f84d"
+#define V_CURRENT_COMMIT_HASH "1254d7a"
 #endif
 
 
@@ -4677,6 +4677,7 @@ string v__builder__Builder_gen_c(v__builder__Builder* b, array_string v_files);
 void v__builder__Builder_build_c(v__builder__Builder* b, array_string v_files, string out_file);
 void v__builder__Builder_compile_c(v__builder__Builder* b);
 string _const_v__builder__c_error_info; // a string literal, inited later
+string _const_v__builder__mingw_cc; // a string literal, inited later
 static void v__builder__todo();
 static bool v__builder__Builder_no_cc_installed(v__builder__Builder* v);
 static void v__builder__Builder_cc(v__builder__Builder* v);
@@ -4923,6 +4924,7 @@ void vinit_string_literals(){
 	_const_v__gen__posix_hotcode_definitions_1 = tos_lit("\nvoid v_bind_live_symbols(void* live_lib){\n    @LOAD_FNS@\n}\n");
 	_const_v__gen__windows_hotcode_definitions_1 = tos_lit("\nvoid v_bind_live_symbols(void* live_lib){\n    @LOAD_FNS@\n}\n");
 	_const_v__builder__c_error_info = tos_lit("\n==================\nC error. This should never happen.\n\nIf you were not working with C interop, please raise an issue on GitHub:\n\nhttps://github.com/vlang/v/issues/new/choose\n\nYou can also use #help on Discord: https://discord.gg/vlang\n");
+	_const_v__builder__mingw_cc = tos_lit("x86_64-w64-mingw32-gcc");
 }
 // << string literal consts
 
@@ -34397,8 +34399,7 @@ static void v__builder__Builder_cc_windows_cross(v__builder__Builder* c) {
 		println(os__user_os());
 		v_panic(tos_lit("your platform is not supported yet"));
 	}
-	string cmd = tos_lit("x86_64-w64-mingw32-gcc");
-	cmd = /*f*/string_add(cmd, _STR(" %.*s\000 %.*s\000 -std=gnu11 %.*s\000 -municode", 4, optimization_options, debug_options, args));
+	string cmd = _STR("%.*s\000 %.*s\000 %.*s\000 -std=gnu11 %.*s\000 -municode", 5, _const_v__builder__mingw_cc, optimization_options, debug_options, args);
 	if (c->pref->is_verbose || c->pref->show_cc) {
 		println(cmd);
 	}
@@ -34441,6 +34442,15 @@ static void v__builder__Builder_build_thirdparty_obj_files(v__builder__Builder* 
 
 static void v__builder__Builder_build_thirdparty_obj_file(v__builder__Builder* v, string path, array_v__cflag__CFlag moduleflags) {
 	string obj_path = os__real_path(path);
+	if (v->pref->os == v__pref__OS_windows) {
+		
+// $if !windows {
+#ifndef _WIN32
+		
+// } windows
+#endif
+
+	}
 	if (os__exists(obj_path)) {
 		return;
 	}
