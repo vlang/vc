@@ -1,7 +1,7 @@
 #define V_COMMIT_HASH "2dc547a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e38a221"
+#define V_COMMIT_HASH "2dc547a"
 #endif
 
 
