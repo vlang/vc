@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b6e2495"
+#define V_COMMIT_HASH "972f60d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1254d7a"
+#define V_COMMIT_HASH "b6e2495"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b6e2495"
+#define V_CURRENT_COMMIT_HASH "972f60d"
 #endif
 
 
@@ -29190,16 +29190,17 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExpr
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->cur_fn->name, tos_lit("main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_91409 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_91409.arg0;
-				string pafile = mr_91409.arg1;
-				string pamod = mr_91409.arg2;
-				string pafn = mr_91409.arg3;
+				multi_return_int_string_string_string mr_91407 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_91407.arg0;
+				string pafile = mr_91407.arg1;
+				string pamod = mr_91407.arg2;
+				string pafn = mr_91407.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(%.*s\000.v_error);", 2, cvar_name));
 			}
 		} else {
+			v__gen__Gen_write_defer_stmts(g);
 			string styp = v__gen__Gen_typ(g, g->fn_decl->return_type);
 			v__gen__Gen_writeln(g, _STR("\treturn *(%.*s\000 *)&%.*s\000;", 3, styp, cvar_name));
 		}
@@ -29589,10 +29590,10 @@ inline static string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Type
 static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_101687 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_101687.arg0;
-	bool str_method_expects_ptr = mr_101687.arg1;
-	int str_nr_args = mr_101687.arg2;
+	multi_return_bool_bool_int mr_101908 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_101908.arg0;
+	bool str_method_expects_ptr = mr_101908.arg1;
+	int str_nr_args = mr_101908.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -29775,9 +29776,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_108937 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_108937.arg0;
-	bool str_method_expects_ptr = mr_108937.arg1;
+	multi_return_bool_bool_int mr_109158 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_109158.arg0;
+	bool str_method_expects_ptr = mr_109158.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -29829,9 +29830,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_111770 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_111770.arg0;
-	bool str_method_expects_ptr = mr_111770.arg1;
+	multi_return_bool_bool_int mr_111991 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_111991.arg0;
+	bool str_method_expects_ptr = mr_111991.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
