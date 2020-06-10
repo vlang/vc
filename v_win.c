@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "deddc71"
+#define V_COMMIT_HASH "a130d3c"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b904d7d"
+#define V_COMMIT_HASH "deddc71"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "deddc71"
+#define V_CURRENT_COMMIT_HASH "a130d3c"
 #endif
 
 
@@ -1534,6 +1534,7 @@ struct v__pref__Preferences {
 	v__pref__ColorOutput use_color;
 	bool is_parallel;
 	int error_limit;
+	bool is_vweb;
 };
 
 struct v__util__EManager {
@@ -14731,6 +14732,7 @@ v__pref__Preferences v__pref__new_preferences() {
 		.use_color = {0},
 		.is_parallel = 0,
 		.error_limit = 0,
+		.is_vweb = 0,
 	};
 	v__pref__Preferences_fill_with_defaults(&p);
 	return p;
@@ -15011,6 +15013,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 		.use_color = {0},
 		.is_parallel = 0,
 		.error_limit = 0,
+		.is_vweb = 0,
 	}, sizeof(v__pref__Preferences));
 	string command = tos_lit("");
 	int command_pos = 0;
@@ -16229,7 +16232,7 @@ string vweb__tmpl__compile_template(string content, string fn_name) {
 		}
 	}
 	strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
-	strings__Builder_writeln(&s, _STR("tmpl_res_%.*s\000 := sb.str() ", 2, fn_name));
+	strings__Builder_writeln(&s, _STR("_tmpl_res_%.*s\000 := sb.str() ", 2, fn_name));
 	strings__Builder_writeln(&s, tos_lit("}"));
 	strings__Builder_writeln(&s, tos_lit("// === end of vweb html template ==="));
 	return strings__Builder_str(&s);
@@ -20122,7 +20125,7 @@ static bool v__checker__Checker_check_file_in_main(v__checker__Checker* c, v__as
 }
 
 static void v__checker__Checker_check_valid_snake_case(v__checker__Checker* c, string name, string identifier, v__token__Position pos) {
-	if (string_at(name, 0) == '_') {
+	if (string_at(name, 0) == '_' && !c->pref->is_vweb) {
 		v__checker__Checker_error(c, _STR("%.*s\000 `%.*s\000` cannot start with `_`", 3, identifier, name), pos);
 	}
 	if (v__util__contains_capital(name)) {
@@ -21703,7 +21706,67 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 		v__ast__ComptimeCall* it = (v__ast__ComptimeCall*)node.obj; // ST it
 		it->sym = *v__table__Table_get_type_symbol(c->table, v__checker__Checker_unwrap_generic(c, v__checker__Checker_expr(c, it->left)));
 		if (it->is_vweb) {
-			v__checker__Checker c2 = v__checker__new_checker(c->table, c->pref);
+			v__pref__Preferences x = *c->pref;
+			v__pref__Preferences xx = // assoc
+			(v__pref__Preferences){
+				.os = x.os,
+				.backend = x.backend,
+				.build_mode = x.build_mode,
+				.output_mode = x.output_mode,
+				.is_verbose = x.is_verbose,
+				.is_test = x.is_test,
+				.is_script = x.is_script,
+				.is_livemain = x.is_livemain,
+				.is_liveshared = x.is_liveshared,
+				.is_shared = x.is_shared,
+				.is_prof = x.is_prof,
+				.profile_file = x.profile_file,
+				.profile_no_inline = x.profile_no_inline,
+				.translated = x.translated,
+				.is_prod = x.is_prod,
+				.obfuscate = x.obfuscate,
+				.is_repl = x.is_repl,
+				.is_run = x.is_run,
+				.sanitize = x.sanitize,
+				.is_debug = x.is_debug,
+				.is_vlines = x.is_vlines,
+				.keep_c = x.keep_c,
+				.show_cc = x.show_cc,
+				.use_cache = x.use_cache,
+				.is_stats = x.is_stats,
+				.no_auto_free = x.no_auto_free,
+				.cflags = x.cflags,
+				.ccompiler = x.ccompiler,
+				.third_party_option = x.third_party_option,
+				.building_v = x.building_v,
+				.autofree = x.autofree,
+				.compress = x.compress,
+				.fast = x.fast,
+				.enable_globals = x.enable_globals,
+				.is_fmt = x.is_fmt,
+				.is_bare = x.is_bare,
+				.no_preludes = x.no_preludes,
+				.custom_prelude = x.custom_prelude,
+				.lookup_path = x.lookup_path,
+				.output_cross_c = x.output_cross_c,
+				.prealloc = x.prealloc,
+				.vroot = x.vroot,
+				.out_name = x.out_name,
+				.path = x.path,
+				.compile_defines = x.compile_defines,
+				.compile_defines_all = x.compile_defines_all,
+				.mod = x.mod,
+				.run_args = x.run_args,
+				.printfn_list = x.printfn_list,
+				.print_v_files = x.print_v_files,
+				.skip_running = x.skip_running,
+				.skip_warnings = x.skip_warnings,
+				.use_color = x.use_color,
+				.is_parallel = x.is_parallel,
+				.error_limit = x.error_limit,
+				.is_vweb = true, 
+			};
+			v__checker__Checker c2 = v__checker__new_checker(c->table, (voidptr)&/*qq*/xx);
 			v__checker__Checker_check(&c2, it->vweb_tmpl);
 			_PUSH_MANY(&c->warnings, (c2.warnings), _t4, array_v__errors__Warning);
 			_PUSH_MANY(&c->errors, (c2.errors), _t5, array_v__errors__Error);
@@ -24265,6 +24328,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.use_color = {0},
 		.is_parallel = 0,
 		.error_limit = 0,
+		.is_vweb = 0,
 	}, sizeof(v__pref__Preferences)),
 		.builtin_mod = 0,
 		.mod = (string){.str=""},
@@ -30393,7 +30457,7 @@ static void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node)
 				}
 			}
 		}
-		v__gen__Gen_writeln(g, _STR("vweb__Context_html(&app->vweb, tmpl_res_%.*s\000)", 2, g->fn_decl->name));
+		v__gen__Gen_writeln(g, _STR("vweb__Context_html(&app->vweb, _tmpl_res_%.*s\000)", 2, g->fn_decl->name));
 		return;
 	}
 	v__gen__Gen_writeln(g, string_add(tos_lit("// $"), _STR("method call. sym=\"%.*s\000\"", 2, node.sym.name)));
