@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "4a7ec90"
+#define V_COMMIT_HASH "e38a221"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e5aba94"
+#define V_COMMIT_HASH "4a7ec90"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4a7ec90"
+#define V_CURRENT_COMMIT_HASH "e38a221"
 #endif
 
 
@@ -1059,6 +1059,7 @@ typedef array array_u32;
 typedef array array_strconv__ftoa__Uint128;
 typedef array array_f64;
 typedef array array_v__vmod__TokenKind;
+typedef array array_v__ast__IdentKind;
 typedef array array_v__token__Position;
 typedef array array_v__gen__x64__Register;
 typedef array array_v__pref__OS;
@@ -21447,10 +21448,7 @@ v__table__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* 
 	if (ident->kind == v__ast__IdentKind_blank_ident) {
 		return _const_v__table__void_type;
 	}
-	if (ident->kind == v__ast__IdentKind_variable) {
-		v__ast__IdentVar* info = /* as */ (v__ast__IdentVar*)__as_cast(ident->info.obj, ident->info.typ, /*expected:*/220);
-		return info->typ;
-	} else if (ident->kind == v__ast__IdentKind_constant) {
+	if ((ident->kind == v__ast__IdentKind_constant || ident->kind == v__ast__IdentKind_global || ident->kind == v__ast__IdentKind_variable)) {
 		v__ast__IdentVar* info = /* as */ (v__ast__IdentVar*)__as_cast(ident->info.obj, ident->info.typ, /*expected:*/220);
 		return info->typ;
 	} else if (ident->kind == v__ast__IdentKind_function) {
