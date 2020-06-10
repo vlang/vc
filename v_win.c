@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "a43b8b5"
+#define V_COMMIT_HASH "bf7f84d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3a369f5"
+#define V_COMMIT_HASH "a43b8b5"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "a43b8b5"
+#define V_CURRENT_COMMIT_HASH "bf7f84d"
 #endif
 
 
@@ -27,25 +27,6 @@ typedef struct strconv__ftoa__Dec64 strconv__ftoa__Dec64;
 typedef union strconv__ftoa__Uf64 strconv__ftoa__Uf64;
 typedef union strconv__Float64u strconv__Float64u;
 typedef struct strconv__PrepNumber strconv__PrepNumber;
-typedef enum {
-	strconv__Char_parse_state_start, // 
-	strconv__Char_parse_state_norm_char, // +1
-	strconv__Char_parse_state_field_char, // +2
-	strconv__Char_parse_state_pad_ch, // +3
-	strconv__Char_parse_state_len_set_start, // +4
-	strconv__Char_parse_state_len_set_in, // +5
-	strconv__Char_parse_state_check_type, // +6
-	strconv__Char_parse_state_check_float, // +7
-	strconv__Char_parse_state_check_float_in, // +8
-	strconv__Char_parse_state_reset_params, // +9
-} strconv__Char_parse_state;
-
-typedef enum {
-	strconv__Align_text_right = 0, // 0
-	strconv__Align_text_left, // 0+1
-	strconv__Align_text_center, // 0+2
-} strconv__Align_text;
-
 typedef struct strconv__BF_param strconv__BF_param;
 typedef struct array array;
 typedef struct VAssertMetaInfo VAssertMetaInfo;
@@ -64,16 +45,6 @@ typedef struct mapnode mapnode;
 typedef struct string string;
 typedef struct ustring ustring;
 typedef struct RepIndex RepIndex;
-typedef enum {
-	os__FileType_regular, // 
-	os__FileType_directory, // +1
-	os__FileType_character_device, // +2
-	os__FileType_block_device, // +3
-	os__FileType_fifo, // +4
-	os__FileType_symbolic_link, // +5
-	os__FileType_socket, // +6
-} os__FileType;
-
 typedef struct os__FilePermission os__FilePermission;
 typedef struct os__FileMode os__FileMode;
 typedef struct os__File os__File;
@@ -89,221 +60,17 @@ typedef struct os__ContextRecord os__ContextRecord;
 typedef struct os__ExceptionPointers os__ExceptionPointers;
 typedef struct v__token__Position v__token__Position;
 typedef struct v__token__Token v__token__Token;
-typedef enum {
-	v__token__Kind_unknown, // 
-	v__token__Kind_eof, // +1
-	v__token__Kind_name, // +2
-	v__token__Kind_number, // +3
-	v__token__Kind_string, // +4
-	v__token__Kind_str_inter, // +5
-	v__token__Kind_chartoken, // +6
-	v__token__Kind_plus, // +7
-	v__token__Kind_minus, // +8
-	v__token__Kind_mul, // +9
-	v__token__Kind_div, // +10
-	v__token__Kind_mod, // +11
-	v__token__Kind_xor, // +12
-	v__token__Kind_pipe, // +13
-	v__token__Kind_inc, // +14
-	v__token__Kind_dec, // +15
-	v__token__Kind_and, // +16
-	v__token__Kind_logical_or, // +17
-	v__token__Kind_not, // +18
-	v__token__Kind_bit_not, // +19
-	v__token__Kind_question, // +20
-	v__token__Kind_comma, // +21
-	v__token__Kind_semicolon, // +22
-	v__token__Kind_colon, // +23
-	v__token__Kind_arrow, // +24
-	v__token__Kind_amp, // +25
-	v__token__Kind_hash, // +26
-	v__token__Kind_dollar, // +27
-	v__token__Kind_str_dollar, // +28
-	v__token__Kind_left_shift, // +29
-	v__token__Kind_right_shift, // +30
-	v__token__Kind_not_in, // +31
-	v__token__Kind_not_is, // +32
-	v__token__Kind_assign, // +33
-	v__token__Kind_decl_assign, // +34
-	v__token__Kind_plus_assign, // +35
-	v__token__Kind_minus_assign, // +36
-	v__token__Kind_div_assign, // +37
-	v__token__Kind_mult_assign, // +38
-	v__token__Kind_xor_assign, // +39
-	v__token__Kind_mod_assign, // +40
-	v__token__Kind_or_assign, // +41
-	v__token__Kind_and_assign, // +42
-	v__token__Kind_right_shift_assign, // +43
-	v__token__Kind_left_shift_assign, // +44
-	v__token__Kind_lcbr, // +45
-	v__token__Kind_rcbr, // +46
-	v__token__Kind_lpar, // +47
-	v__token__Kind_rpar, // +48
-	v__token__Kind_lsbr, // +49
-	v__token__Kind_rsbr, // +50
-	v__token__Kind_eq, // +51
-	v__token__Kind_ne, // +52
-	v__token__Kind_gt, // +53
-	v__token__Kind_lt, // +54
-	v__token__Kind_ge, // +55
-	v__token__Kind_le, // +56
-	v__token__Kind_comment, // +57
-	v__token__Kind_nl, // +58
-	v__token__Kind_dot, // +59
-	v__token__Kind_dotdot, // +60
-	v__token__Kind_ellipsis, // +61
-	v__token__Kind_keyword_beg, // +62
-	v__token__Kind_key_as, // +63
-	v__token__Kind_key_asm, // +64
-	v__token__Kind_key_assert, // +65
-	v__token__Kind_key_atomic, // +66
-	v__token__Kind_key_break, // +67
-	v__token__Kind_key_const, // +68
-	v__token__Kind_key_continue, // +69
-	v__token__Kind_key_defer, // +70
-	v__token__Kind_key_else, // +71
-	v__token__Kind_key_embed, // +72
-	v__token__Kind_key_enum, // +73
-	v__token__Kind_key_false, // +74
-	v__token__Kind_key_for, // +75
-	v__token__Kind_key_fn, // +76
-	v__token__Kind_key_global, // +77
-	v__token__Kind_key_go, // +78
-	v__token__Kind_key_goto, // +79
-	v__token__Kind_key_if, // +80
-	v__token__Kind_key_import, // +81
-	v__token__Kind_key_in, // +82
-	v__token__Kind_key_interface, // +83
-	v__token__Kind_key_is, // +84
-	v__token__Kind_key_match, // +85
-	v__token__Kind_key_module, // +86
-	v__token__Kind_key_mut, // +87
-	v__token__Kind_key_none, // +88
-	v__token__Kind_key_return, // +89
-	v__token__Kind_key_select, // +90
-	v__token__Kind_key_sizeof, // +91
-	v__token__Kind_key_likely, // +92
-	v__token__Kind_key_unlikely, // +93
-	v__token__Kind_key_offsetof, // +94
-	v__token__Kind_key_struct, // +95
-	v__token__Kind_key_switch, // +96
-	v__token__Kind_key_true, // +97
-	v__token__Kind_key_type, // +98
-	v__token__Kind_key_typeof, // +99
-	v__token__Kind_key_orelse, // +100
-	v__token__Kind_key_union, // +101
-	v__token__Kind_key_pub, // +102
-	v__token__Kind_key_static, // +103
-	v__token__Kind_key_unsafe, // +104
-	v__token__Kind_keyword_end, // +105
-	v__token__Kind__end_, // +106
-} v__token__Kind;
-
-typedef enum {
-	v__token__Precedence_lowest, // 
-	v__token__Precedence_cond, // +1
-	v__token__Precedence_in_as, // +2
-	v__token__Precedence_assign, // +3
-	v__token__Precedence_eq, // +4
-	v__token__Precedence_sum, // +5
-	v__token__Precedence_product, // +6
-	v__token__Precedence_prefix, // +7
-	v__token__Precedence_postfix, // +8
-	v__token__Precedence_call, // +9
-	v__token__Precedence_index, // +10
-} v__token__Precedence;
-
 typedef struct time__StopWatchOptions time__StopWatchOptions;
 typedef struct time__StopWatch time__StopWatch;
 typedef struct time__Time time__Time;
-typedef enum {
-	time__FormatTime_hhmm12, // 
-	time__FormatTime_hhmm24, // +1
-	time__FormatTime_hhmmss12, // +2
-	time__FormatTime_hhmmss24, // +3
-	time__FormatTime_no_time, // +4
-} time__FormatTime;
-
-typedef enum {
-	time__FormatDate_ddmmyy, // 
-	time__FormatDate_ddmmyyyy, // +1
-	time__FormatDate_mmddyy, // +2
-	time__FormatDate_mmddyyyy, // +3
-	time__FormatDate_mmmd, // +4
-	time__FormatDate_mmmdd, // +5
-	time__FormatDate_mmmddyyyy, // +6
-	time__FormatDate_no_date, // +7
-	time__FormatDate_yyyymmdd, // +8
-} time__FormatDate;
-
-typedef enum {
-	time__FormatDelimiter_dot, // 
-	time__FormatDelimiter_hyphen, // +1
-	time__FormatDelimiter_slash, // +2
-	time__FormatDelimiter_space, // +3
-	time__FormatDelimiter_no_delimiter, // +4
-} time__FormatDelimiter;
-
 typedef struct time__SystemTime time__SystemTime;
 typedef struct v__depgraph__DepGraphNode v__depgraph__DepGraphNode;
 typedef struct v__depgraph__DepGraph v__depgraph__DepGraph;
 typedef struct v__depgraph__OrderedDepMap v__depgraph__OrderedDepMap;
-typedef enum {
-	v__pref__OS__auto, // 
-	v__pref__OS_mac, // +1
-	v__pref__OS_linux, // +2
-	v__pref__OS_windows, // +3
-	v__pref__OS_freebsd, // +4
-	v__pref__OS_openbsd, // +5
-	v__pref__OS_netbsd, // +6
-	v__pref__OS_dragonfly, // +7
-	v__pref__OS_js, // +8
-	v__pref__OS_android, // +9
-	v__pref__OS_solaris, // +10
-	v__pref__OS_haiku, // +11
-} v__pref__OS;
-
-typedef enum {
-	v__pref__BuildMode_default_mode, // 
-	v__pref__BuildMode_build_module, // +1
-} v__pref__BuildMode;
-
-typedef enum {
-	v__pref__OutputMode_stdout, // 
-	v__pref__OutputMode_silent, // +1
-} v__pref__OutputMode;
-
-typedef enum {
-	v__pref__ColorOutput_auto, // 
-	v__pref__ColorOutput_always, // +1
-	v__pref__ColorOutput_never, // +2
-} v__pref__ColorOutput;
-
-typedef enum {
-	v__pref__Backend_c, // 
-	v__pref__Backend_js, // +1
-	v__pref__Backend_x64, // +2
-} v__pref__Backend;
-
 typedef struct v__pref__Preferences v__pref__Preferences;
 typedef struct term__Coord term__Coord;
 typedef struct term__SmallRect term__SmallRect;
 typedef struct term__ConsoleScreenBufferInfo term__ConsoleScreenBufferInfo;
-typedef enum {
-	v__vmod__TokenKind_module_keyword, // 
-	v__vmod__TokenKind_field_key, // +1
-	v__vmod__TokenKind_lcbr, // +2
-	v__vmod__TokenKind_rcbr, // +3
-	v__vmod__TokenKind_labr, // +4
-	v__vmod__TokenKind_rabr, // +5
-	v__vmod__TokenKind_comma, // +6
-	v__vmod__TokenKind_colon, // +7
-	v__vmod__TokenKind_eof, // +8
-	v__vmod__TokenKind_str, // +9
-	v__vmod__TokenKind_ident, // +10
-	v__vmod__TokenKind_unknown, // +11
-} v__vmod__TokenKind;
-
 typedef struct v__vmod__Manifest v__vmod__Manifest;
 typedef struct v__vmod__Scanner v__vmod__Scanner;
 typedef struct v__vmod__Parser v__vmod__Parser;
@@ -311,74 +78,12 @@ typedef struct v__vmod__Token v__vmod__Token;
 typedef struct v__vmod__ModFileAndFolder v__vmod__ModFileAndFolder;
 typedef struct v__vmod__ModFileCacher v__vmod__ModFileCacher;
 typedef struct v__cflag__CFlag v__cflag__CFlag;
-typedef enum {
-	v__errors__Reporter_scanner, // 
-	v__errors__Reporter_parser, // +1
-	v__errors__Reporter_checker, // +2
-	v__errors__Reporter_gen, // +3
-} v__errors__Reporter;
-
 typedef struct v__errors__Error v__errors__Error;
 typedef struct v__errors__Warning v__errors__Warning;
-typedef enum {
-	vweb__tmpl__State_html, // 
-	vweb__tmpl__State_css, // +1
-	vweb__tmpl__State_js, // +2
-} vweb__tmpl__State;
-
 typedef struct v__util__EManager v__util__EManager;
-typedef enum {
-	v__table__Language_v, // 
-	v__table__Language_c, // +1
-	v__table__Language_js, // +2
-} v__table__Language;
-
 typedef struct v__table__TypeSymbol v__table__TypeSymbol;
-typedef enum {
-	v__table__TypeFlag_optional, // 
-	v__table__TypeFlag_variadic, // +1
-	v__table__TypeFlag_generic, // +2
-} v__table__TypeFlag;
-
 typedef struct v__table__MultiReturn v__table__MultiReturn;
 typedef struct v__table__FnType v__table__FnType;
-typedef enum {
-	v__table__Kind_placeholder, // 
-	v__table__Kind_void, // +1
-	v__table__Kind_voidptr, // +2
-	v__table__Kind_byteptr, // +3
-	v__table__Kind_charptr, // +4
-	v__table__Kind_i8, // +5
-	v__table__Kind_i16, // +6
-	v__table__Kind_int, // +7
-	v__table__Kind_i64, // +8
-	v__table__Kind_byte, // +9
-	v__table__Kind_u16, // +10
-	v__table__Kind_u32, // +11
-	v__table__Kind_u64, // +12
-	v__table__Kind_f32, // +13
-	v__table__Kind_f64, // +14
-	v__table__Kind_char, // +15
-	v__table__Kind_size_t, // +16
-	v__table__Kind_bool, // +17
-	v__table__Kind_none_, // +18
-	v__table__Kind_string, // +19
-	v__table__Kind_ustring, // +20
-	v__table__Kind_array, // +21
-	v__table__Kind_array_fixed, // +22
-	v__table__Kind_map, // +23
-	v__table__Kind_any, // +24
-	v__table__Kind_struct_, // +25
-	v__table__Kind_multi_return, // +26
-	v__table__Kind_sum_type, // +27
-	v__table__Kind_alias, // +28
-	v__table__Kind_enum_, // +29
-	v__table__Kind_function, // +30
-	v__table__Kind_interface_, // +31
-	v__table__Kind_any_float, // +32
-	v__table__Kind_any_int, // +33
-} v__table__Kind;
-
 typedef struct v__table__Struct v__table__Struct;
 typedef struct v__table__Interface v__table__Interface;
 typedef struct v__table__Enum v__table__Enum;
@@ -423,15 +128,6 @@ typedef struct v__ast__GlobalDecl v__ast__GlobalDecl;
 typedef struct v__ast__File v__ast__File;
 typedef struct v__ast__IdentFn v__ast__IdentFn;
 typedef struct v__ast__IdentVar v__ast__IdentVar;
-typedef enum {
-	v__ast__IdentKind_unresolved, // 
-	v__ast__IdentKind_blank_ident, // +1
-	v__ast__IdentKind_variable, // +2
-	v__ast__IdentKind_constant, // +3
-	v__ast__IdentKind_global, // +4
-	v__ast__IdentKind_function, // +5
-} v__ast__IdentKind;
-
 typedef struct v__ast__Ident v__ast__Ident;
 typedef struct v__ast__InfixExpr v__ast__InfixExpr;
 typedef struct v__ast__PostfixExpr v__ast__PostfixExpr;
@@ -469,12 +165,6 @@ typedef struct v__ast__RangeExpr v__ast__RangeExpr;
 typedef struct v__ast__CastExpr v__ast__CastExpr;
 typedef struct v__ast__AssertStmt v__ast__AssertStmt;
 typedef struct v__ast__IfGuardExpr v__ast__IfGuardExpr;
-typedef enum {
-	v__ast__OrKind_absent, // 
-	v__ast__OrKind_block, // +1
-	v__ast__OrKind_propagate, // +2
-} v__ast__OrKind;
-
 typedef struct v__ast__OrExpr v__ast__OrExpr;
 typedef struct v__ast__Assoc v__ast__Assoc;
 typedef struct v__ast__SizeOf v__ast__SizeOf;
@@ -486,57 +176,14 @@ typedef struct v__ast__ComptimeCall v__ast__ComptimeCall;
 typedef struct v__ast__None v__ast__None;
 typedef struct v__ast__Scope v__ast__Scope;
 typedef struct v__scanner__Scanner v__scanner__Scanner;
-typedef enum {
-	v__scanner__CommentsMode_skip_comments, // 
-	v__scanner__CommentsMode_parse_comments, // +1
-	v__scanner__CommentsMode_toplevel_comments, // +2
-} v__scanner__CommentsMode;
-
 typedef struct v__checker__Checker v__checker__Checker;
 typedef struct v__parser__Parser v__parser__Parser;
 typedef struct v__gen__Gen v__gen__Gen;
 typedef struct v__gen__ProfileCounterMeta v__gen__ProfileCounterMeta;
 typedef struct v__gen__js__JsGen v__gen__js__JsGen;
 typedef struct v__gen__js__JsDoc v__gen__js__JsDoc;
-typedef enum {
-	v__gen__x64__SectionType_null = 0, // 0
-	v__gen__x64__SectionType_progbits = 1, // 1
-	v__gen__x64__SectionType_symtab = 2, // 2
-	v__gen__x64__SectionType_strtab = 3, // 3
-	v__gen__x64__SectionType_rela = 4, // 4
-} v__gen__x64__SectionType;
-
 typedef struct v__gen__x64__SectionConfig v__gen__x64__SectionConfig;
 typedef struct v__gen__x64__Gen v__gen__x64__Gen;
-typedef enum {
-	v__gen__x64__Register_rax, // 
-	v__gen__x64__Register_rcx, // +1
-	v__gen__x64__Register_rdx, // +2
-	v__gen__x64__Register_rbx, // +3
-	v__gen__x64__Register_rsp, // +4
-	v__gen__x64__Register_rbp, // +5
-	v__gen__x64__Register_rsi, // +6
-	v__gen__x64__Register_rdi, // +7
-	v__gen__x64__Register_eax, // +8
-	v__gen__x64__Register_edi, // +9
-	v__gen__x64__Register_edx, // +10
-	v__gen__x64__Register_r8, // +11
-	v__gen__x64__Register_r9, // +12
-	v__gen__x64__Register_r10, // +13
-	v__gen__x64__Register_r11, // +14
-	v__gen__x64__Register_r12, // +15
-	v__gen__x64__Register_r13, // +16
-	v__gen__x64__Register_r14, // +17
-	v__gen__x64__Register_r15, // +18
-} v__gen__x64__Register;
-
-typedef enum {
-	v__gen__x64__Size__8, // 
-	v__gen__x64__Size__16, // +1
-	v__gen__x64__Size__32, // +2
-	v__gen__x64__Size__64, // +3
-} v__gen__x64__Size;
-
 typedef struct v__builder__Builder v__builder__Builder;
 typedef struct v__builder__MsvcResult v__builder__MsvcResult;
 typedef struct v__builder__WindowsKit v__builder__WindowsKit;
@@ -962,6 +609,362 @@ static inline double wy2gau(uint64_t r) {
 #include <time.h>
 // added by module `time`:
 #include <sysinfoapi.h>
+
+
+// Enum definitions:
+typedef enum {
+	strconv__Char_parse_state_start, // 
+	strconv__Char_parse_state_norm_char, // +1
+	strconv__Char_parse_state_field_char, // +2
+	strconv__Char_parse_state_pad_ch, // +3
+	strconv__Char_parse_state_len_set_start, // +4
+	strconv__Char_parse_state_len_set_in, // +5
+	strconv__Char_parse_state_check_type, // +6
+	strconv__Char_parse_state_check_float, // +7
+	strconv__Char_parse_state_check_float_in, // +8
+	strconv__Char_parse_state_reset_params, // +9
+} strconv__Char_parse_state;
+
+typedef enum {
+	strconv__Align_text_right = 0, // 0
+	strconv__Align_text_left, // 0+1
+	strconv__Align_text_center, // 0+2
+} strconv__Align_text;
+
+typedef enum {
+	os__FileType_regular, // 
+	os__FileType_directory, // +1
+	os__FileType_character_device, // +2
+	os__FileType_block_device, // +3
+	os__FileType_fifo, // +4
+	os__FileType_symbolic_link, // +5
+	os__FileType_socket, // +6
+} os__FileType;
+
+typedef enum {
+	v__token__Kind_unknown, // 
+	v__token__Kind_eof, // +1
+	v__token__Kind_name, // +2
+	v__token__Kind_number, // +3
+	v__token__Kind_string, // +4
+	v__token__Kind_str_inter, // +5
+	v__token__Kind_chartoken, // +6
+	v__token__Kind_plus, // +7
+	v__token__Kind_minus, // +8
+	v__token__Kind_mul, // +9
+	v__token__Kind_div, // +10
+	v__token__Kind_mod, // +11
+	v__token__Kind_xor, // +12
+	v__token__Kind_pipe, // +13
+	v__token__Kind_inc, // +14
+	v__token__Kind_dec, // +15
+	v__token__Kind_and, // +16
+	v__token__Kind_logical_or, // +17
+	v__token__Kind_not, // +18
+	v__token__Kind_bit_not, // +19
+	v__token__Kind_question, // +20
+	v__token__Kind_comma, // +21
+	v__token__Kind_semicolon, // +22
+	v__token__Kind_colon, // +23
+	v__token__Kind_arrow, // +24
+	v__token__Kind_amp, // +25
+	v__token__Kind_hash, // +26
+	v__token__Kind_dollar, // +27
+	v__token__Kind_str_dollar, // +28
+	v__token__Kind_left_shift, // +29
+	v__token__Kind_right_shift, // +30
+	v__token__Kind_not_in, // +31
+	v__token__Kind_not_is, // +32
+	v__token__Kind_assign, // +33
+	v__token__Kind_decl_assign, // +34
+	v__token__Kind_plus_assign, // +35
+	v__token__Kind_minus_assign, // +36
+	v__token__Kind_div_assign, // +37
+	v__token__Kind_mult_assign, // +38
+	v__token__Kind_xor_assign, // +39
+	v__token__Kind_mod_assign, // +40
+	v__token__Kind_or_assign, // +41
+	v__token__Kind_and_assign, // +42
+	v__token__Kind_right_shift_assign, // +43
+	v__token__Kind_left_shift_assign, // +44
+	v__token__Kind_lcbr, // +45
+	v__token__Kind_rcbr, // +46
+	v__token__Kind_lpar, // +47
+	v__token__Kind_rpar, // +48
+	v__token__Kind_lsbr, // +49
+	v__token__Kind_rsbr, // +50
+	v__token__Kind_eq, // +51
+	v__token__Kind_ne, // +52
+	v__token__Kind_gt, // +53
+	v__token__Kind_lt, // +54
+	v__token__Kind_ge, // +55
+	v__token__Kind_le, // +56
+	v__token__Kind_comment, // +57
+	v__token__Kind_nl, // +58
+	v__token__Kind_dot, // +59
+	v__token__Kind_dotdot, // +60
+	v__token__Kind_ellipsis, // +61
+	v__token__Kind_keyword_beg, // +62
+	v__token__Kind_key_as, // +63
+	v__token__Kind_key_asm, // +64
+	v__token__Kind_key_assert, // +65
+	v__token__Kind_key_atomic, // +66
+	v__token__Kind_key_break, // +67
+	v__token__Kind_key_const, // +68
+	v__token__Kind_key_continue, // +69
+	v__token__Kind_key_defer, // +70
+	v__token__Kind_key_else, // +71
+	v__token__Kind_key_embed, // +72
+	v__token__Kind_key_enum, // +73
+	v__token__Kind_key_false, // +74
+	v__token__Kind_key_for, // +75
+	v__token__Kind_key_fn, // +76
+	v__token__Kind_key_global, // +77
+	v__token__Kind_key_go, // +78
+	v__token__Kind_key_goto, // +79
+	v__token__Kind_key_if, // +80
+	v__token__Kind_key_import, // +81
+	v__token__Kind_key_in, // +82
+	v__token__Kind_key_interface, // +83
+	v__token__Kind_key_is, // +84
+	v__token__Kind_key_match, // +85
+	v__token__Kind_key_module, // +86
+	v__token__Kind_key_mut, // +87
+	v__token__Kind_key_none, // +88
+	v__token__Kind_key_return, // +89
+	v__token__Kind_key_select, // +90
+	v__token__Kind_key_sizeof, // +91
+	v__token__Kind_key_likely, // +92
+	v__token__Kind_key_unlikely, // +93
+	v__token__Kind_key_offsetof, // +94
+	v__token__Kind_key_struct, // +95
+	v__token__Kind_key_switch, // +96
+	v__token__Kind_key_true, // +97
+	v__token__Kind_key_type, // +98
+	v__token__Kind_key_typeof, // +99
+	v__token__Kind_key_orelse, // +100
+	v__token__Kind_key_union, // +101
+	v__token__Kind_key_pub, // +102
+	v__token__Kind_key_static, // +103
+	v__token__Kind_key_unsafe, // +104
+	v__token__Kind_keyword_end, // +105
+	v__token__Kind__end_, // +106
+} v__token__Kind;
+
+typedef enum {
+	v__token__Precedence_lowest, // 
+	v__token__Precedence_cond, // +1
+	v__token__Precedence_in_as, // +2
+	v__token__Precedence_assign, // +3
+	v__token__Precedence_eq, // +4
+	v__token__Precedence_sum, // +5
+	v__token__Precedence_product, // +6
+	v__token__Precedence_prefix, // +7
+	v__token__Precedence_postfix, // +8
+	v__token__Precedence_call, // +9
+	v__token__Precedence_index, // +10
+} v__token__Precedence;
+
+typedef enum {
+	time__FormatTime_hhmm12, // 
+	time__FormatTime_hhmm24, // +1
+	time__FormatTime_hhmmss12, // +2
+	time__FormatTime_hhmmss24, // +3
+	time__FormatTime_no_time, // +4
+} time__FormatTime;
+
+typedef enum {
+	time__FormatDate_ddmmyy, // 
+	time__FormatDate_ddmmyyyy, // +1
+	time__FormatDate_mmddyy, // +2
+	time__FormatDate_mmddyyyy, // +3
+	time__FormatDate_mmmd, // +4
+	time__FormatDate_mmmdd, // +5
+	time__FormatDate_mmmddyyyy, // +6
+	time__FormatDate_no_date, // +7
+	time__FormatDate_yyyymmdd, // +8
+} time__FormatDate;
+
+typedef enum {
+	time__FormatDelimiter_dot, // 
+	time__FormatDelimiter_hyphen, // +1
+	time__FormatDelimiter_slash, // +2
+	time__FormatDelimiter_space, // +3
+	time__FormatDelimiter_no_delimiter, // +4
+} time__FormatDelimiter;
+
+typedef enum {
+	v__pref__OS__auto, // 
+	v__pref__OS_mac, // +1
+	v__pref__OS_linux, // +2
+	v__pref__OS_windows, // +3
+	v__pref__OS_freebsd, // +4
+	v__pref__OS_openbsd, // +5
+	v__pref__OS_netbsd, // +6
+	v__pref__OS_dragonfly, // +7
+	v__pref__OS_js, // +8
+	v__pref__OS_android, // +9
+	v__pref__OS_solaris, // +10
+	v__pref__OS_haiku, // +11
+} v__pref__OS;
+
+typedef enum {
+	v__pref__BuildMode_default_mode, // 
+	v__pref__BuildMode_build_module, // +1
+} v__pref__BuildMode;
+
+typedef enum {
+	v__pref__OutputMode_stdout, // 
+	v__pref__OutputMode_silent, // +1
+} v__pref__OutputMode;
+
+typedef enum {
+	v__pref__ColorOutput_auto, // 
+	v__pref__ColorOutput_always, // +1
+	v__pref__ColorOutput_never, // +2
+} v__pref__ColorOutput;
+
+typedef enum {
+	v__pref__Backend_c, // 
+	v__pref__Backend_js, // +1
+	v__pref__Backend_x64, // +2
+} v__pref__Backend;
+
+typedef enum {
+	v__vmod__TokenKind_module_keyword, // 
+	v__vmod__TokenKind_field_key, // +1
+	v__vmod__TokenKind_lcbr, // +2
+	v__vmod__TokenKind_rcbr, // +3
+	v__vmod__TokenKind_labr, // +4
+	v__vmod__TokenKind_rabr, // +5
+	v__vmod__TokenKind_comma, // +6
+	v__vmod__TokenKind_colon, // +7
+	v__vmod__TokenKind_eof, // +8
+	v__vmod__TokenKind_str, // +9
+	v__vmod__TokenKind_ident, // +10
+	v__vmod__TokenKind_unknown, // +11
+} v__vmod__TokenKind;
+
+typedef enum {
+	v__errors__Reporter_scanner, // 
+	v__errors__Reporter_parser, // +1
+	v__errors__Reporter_checker, // +2
+	v__errors__Reporter_gen, // +3
+} v__errors__Reporter;
+
+typedef enum {
+	vweb__tmpl__State_html, // 
+	vweb__tmpl__State_css, // +1
+	vweb__tmpl__State_js, // +2
+} vweb__tmpl__State;
+
+typedef enum {
+	v__table__Language_v, // 
+	v__table__Language_c, // +1
+	v__table__Language_js, // +2
+} v__table__Language;
+
+typedef enum {
+	v__table__TypeFlag_optional, // 
+	v__table__TypeFlag_variadic, // +1
+	v__table__TypeFlag_generic, // +2
+} v__table__TypeFlag;
+
+typedef enum {
+	v__table__Kind_placeholder, // 
+	v__table__Kind_void, // +1
+	v__table__Kind_voidptr, // +2
+	v__table__Kind_byteptr, // +3
+	v__table__Kind_charptr, // +4
+	v__table__Kind_i8, // +5
+	v__table__Kind_i16, // +6
+	v__table__Kind_int, // +7
+	v__table__Kind_i64, // +8
+	v__table__Kind_byte, // +9
+	v__table__Kind_u16, // +10
+	v__table__Kind_u32, // +11
+	v__table__Kind_u64, // +12
+	v__table__Kind_f32, // +13
+	v__table__Kind_f64, // +14
+	v__table__Kind_char, // +15
+	v__table__Kind_size_t, // +16
+	v__table__Kind_bool, // +17
+	v__table__Kind_none_, // +18
+	v__table__Kind_string, // +19
+	v__table__Kind_ustring, // +20
+	v__table__Kind_array, // +21
+	v__table__Kind_array_fixed, // +22
+	v__table__Kind_map, // +23
+	v__table__Kind_any, // +24
+	v__table__Kind_struct_, // +25
+	v__table__Kind_multi_return, // +26
+	v__table__Kind_sum_type, // +27
+	v__table__Kind_alias, // +28
+	v__table__Kind_enum_, // +29
+	v__table__Kind_function, // +30
+	v__table__Kind_interface_, // +31
+	v__table__Kind_any_float, // +32
+	v__table__Kind_any_int, // +33
+} v__table__Kind;
+
+typedef enum {
+	v__ast__IdentKind_unresolved, // 
+	v__ast__IdentKind_blank_ident, // +1
+	v__ast__IdentKind_variable, // +2
+	v__ast__IdentKind_constant, // +3
+	v__ast__IdentKind_global, // +4
+	v__ast__IdentKind_function, // +5
+} v__ast__IdentKind;
+
+typedef enum {
+	v__ast__OrKind_absent, // 
+	v__ast__OrKind_block, // +1
+	v__ast__OrKind_propagate, // +2
+} v__ast__OrKind;
+
+typedef enum {
+	v__scanner__CommentsMode_skip_comments, // 
+	v__scanner__CommentsMode_parse_comments, // +1
+	v__scanner__CommentsMode_toplevel_comments, // +2
+} v__scanner__CommentsMode;
+
+typedef enum {
+	v__gen__x64__SectionType_null = 0, // 0
+	v__gen__x64__SectionType_progbits = 1, // 1
+	v__gen__x64__SectionType_symtab = 2, // 2
+	v__gen__x64__SectionType_strtab = 3, // 3
+	v__gen__x64__SectionType_rela = 4, // 4
+} v__gen__x64__SectionType;
+
+typedef enum {
+	v__gen__x64__Register_rax, // 
+	v__gen__x64__Register_rcx, // +1
+	v__gen__x64__Register_rdx, // +2
+	v__gen__x64__Register_rbx, // +3
+	v__gen__x64__Register_rsp, // +4
+	v__gen__x64__Register_rbp, // +5
+	v__gen__x64__Register_rsi, // +6
+	v__gen__x64__Register_rdi, // +7
+	v__gen__x64__Register_eax, // +8
+	v__gen__x64__Register_edi, // +9
+	v__gen__x64__Register_edx, // +10
+	v__gen__x64__Register_r8, // +11
+	v__gen__x64__Register_r9, // +12
+	v__gen__x64__Register_r10, // +13
+	v__gen__x64__Register_r11, // +14
+	v__gen__x64__Register_r12, // +15
+	v__gen__x64__Register_r13, // +16
+	v__gen__x64__Register_r14, // +17
+	v__gen__x64__Register_r15, // +18
+} v__gen__x64__Register;
+
+typedef enum {
+	v__gen__x64__Size__8, // 
+	v__gen__x64__Size__16, // +1
+	v__gen__x64__Size__32, // +2
+	v__gen__x64__Size__64, // +3
+} v__gen__x64__Size;
+
 
 
 // V type definitions:
@@ -2566,6 +2569,7 @@ struct v__gen__Gen {
 	strings__Builder hotcode_definitions;
 	strings__Builder options;
 	strings__Builder json_forward_decls;
+	strings__Builder enum_typedefs;
 	v__ast__File file;
 	v__ast__FnDecl* fn_decl;
 	string last_fn_c_name;
@@ -26557,6 +26561,7 @@ string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__P
 		.hotcode_definitions = strings__new_builder(100),
 		.options = strings__new_builder(100),
 		.json_forward_decls = strings__new_builder(100),
+		.enum_typedefs = strings__new_builder(100),
 		.file = {0},
 		.fn_decl = 0,
 		.last_fn_c_name = (string){.str=""},
@@ -26637,6 +26642,8 @@ string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__P
 	strings__Builder_writeln(&b, strings__Builder_str(&g.cheaders));
 	strings__Builder_writeln(&b, tos_lit("\n// V includes:"));
 	strings__Builder_writeln(&b, strings__Builder_str(&g.includes));
+	strings__Builder_writeln(&b, tos_lit("\n// Enum definitions:"));
+	strings__Builder_writeln(&b, strings__Builder_str(&g.enum_typedefs));
 	strings__Builder_writeln(&b, tos_lit("\n// V type definitions:"));
 	strings__Builder_writeln(&b, strings__Builder_str(&g.type_definitions));
 	strings__Builder_writeln(&b, tos_lit("\n// V Option_xxx definitions:"));
@@ -26808,9 +26815,9 @@ static string v__gen__Gen_optional_type_text(v__gen__Gen* g, string styp, string
 }
 
 static string v__gen__Gen_register_optional(v__gen__Gen* g, v__table__Type t) {
-	multi_return_string_string mr_12056 = v__gen__Gen_optional_type_name(g, t);
-	string styp = mr_12056.arg0;
-	string base = mr_12056.arg1;
+	multi_return_string_string mr_12225 = v__gen__Gen_optional_type_name(g, t);
+	string styp = mr_12225.arg0;
+	string base = mr_12225.arg1;
 	if (!_IN(string, styp, g->optionals)) {
 		string no_ptr = string_replace(base, tos_lit("*"), tos_lit("_ptr"));
 		string typ = (string_eq(base, tos_lit("void")) ? (tos_lit("void*")) : (base));
@@ -27037,29 +27044,29 @@ static void v__gen__Gen_stmt(v__gen__Gen* g, v__ast__Stmt node) {
 	}else if (node.typ == 205 /* v.ast.EnumDecl */) {
 		v__ast__EnumDecl* it = (v__ast__EnumDecl*)node.obj; // ST it
 		string enum_name = string_replace(it->name, tos_lit("."), tos_lit("__"));
-		strings__Builder_writeln(&g->typedefs, tos_lit("typedef enum {"));
+		strings__Builder_writeln(&g->enum_typedefs, tos_lit("typedef enum {"));
 		string cur_enum_expr = tos_lit("");
 		int cur_enum_offset = 0;
 		// FOR IN array
 		array _t743 = it->fields;
 		for (int _t744 = 0; _t744 < _t743.len; _t744++) {
 			v__ast__EnumField field = ((v__ast__EnumField*)_t743.data)[_t744];
-			strings__Builder_write(&g->typedefs, _STR("\t%.*s\000_%.*s", 2, enum_name, field.name));
+			strings__Builder_write(&g->enum_typedefs, _STR("\t%.*s\000_%.*s", 2, enum_name, field.name));
 			if (field.has_expr) {
-				strings__Builder_write(&g->typedefs, tos_lit(" = "));
+				strings__Builder_write(&g->enum_typedefs, tos_lit(" = "));
 				int pos = g->out.len;
 				v__gen__Gen_expr(g, field.expr);
 				string expr_str = strings__Builder_after(&g->out, pos);
 				strings__Builder_go_back(&g->out, expr_str.len);
-				strings__Builder_write(&g->typedefs, expr_str);
+				strings__Builder_write(&g->enum_typedefs, expr_str);
 				cur_enum_expr = expr_str;
 				cur_enum_offset = 0;
 			}
 			string cur_value = (cur_enum_offset > 0 ? (_STR("%.*s\000+%"PRId32"", 2, cur_enum_expr, cur_enum_offset)) : (cur_enum_expr));
-			strings__Builder_writeln(&g->typedefs, _STR(", // %.*s", 1, cur_value));
+			strings__Builder_writeln(&g->enum_typedefs, _STR(", // %.*s", 1, cur_value));
 			cur_enum_offset++;
 		}
-		strings__Builder_writeln(&g->typedefs, _STR("} %.*s\000;\n", 2, enum_name));
+		strings__Builder_writeln(&g->enum_typedefs, _STR("} %.*s\000;\n", 2, enum_name));
 	}else if (node.typ == 206 /* v.ast.ExprStmt */) {
 		v__ast__ExprStmt* it = (v__ast__ExprStmt*)node.obj; // ST it
 		v__gen__Gen_expr(g, it->expr);
@@ -27518,9 +27525,9 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 			v__table__TypeSymbol* right_sym = v__table__Table_get_type_symbol(g->table, (*(v__table__Type*)array_get(assign_stmt.right_types, i)));
 			bool is_fixed_array_init = false;
 			bool has_val = false;
-			multi_return_bool_bool mr_31579 = v__gen__Gen_gen_default_init_value(g, val);
-			is_fixed_array_init = mr_31579.arg0;
-			has_val = mr_31579.arg1;
+			multi_return_bool_bool mr_31778 = v__gen__Gen_gen_default_init_value(g, val);
+			is_fixed_array_init = mr_31778.arg0;
+			has_val = mr_31778.arg1;
 			bool is_inside_ternary = g->inside_ternary != 0;
 			string cur_line = (is_inside_ternary ? (v__gen__Gen_register_ternary_name(g, ident.name),g->empty_line = false,v__gen__Gen_go_before_ternary(g)) : (tos_lit("")));
 			bool is_decl = assign_stmt.op == v__token__Kind_decl_assign;
@@ -29020,9 +29027,9 @@ static void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__TypeSymbol t
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_75904 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_75904.arg0;
-						string base = mr_75904.arg1;
+						multi_return_string_string mr_76103 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_76103.arg0;
+						string base = mr_76103.arg1;
 						array_push(&g->optionals, _MOV((string[]){ styp }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -29265,9 +29272,9 @@ static void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInter
 
 static Option_bool v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr expr, v__table__Type etype) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, etype);
-	multi_return_bool_bool_int mr_84467 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_84467.arg0;
-	bool str_method_expects_ptr = mr_84467.arg1;
+	multi_return_bool_bool_int mr_84666 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_84666.arg0;
+	bool str_method_expects_ptr = mr_84666.arg1;
 	if (v__table__Type_has_flag(etype, v__table__TypeFlag_variadic)) {
 		string str_fn_name = v__gen__Gen_gen_str_for_type(g, etype);
 		v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -29465,8 +29472,13 @@ static void v__gen__Gen_insert_before_stmt(v__gen__Gen* g, string s) {
 static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExpr or_block, v__table__Type return_type) {
 	string cvar_name = v__gen__c_name(var_name);
 	string mr_styp = v__gen__Gen_base_type(g, return_type);
+	bool is_none_ok = string_eq(mr_styp, tos_lit("void"));
 	v__gen__Gen_writeln(g, tos_lit(";"));
-	v__gen__Gen_writeln(g, _STR("if (!%.*s\000.ok) {", 2, cvar_name));
+	if (is_none_ok) {
+		v__gen__Gen_writeln(g, _STR("if (!%.*s\000.ok && !%.*s\000.is_none) {", 3, cvar_name, cvar_name));
+	} else {
+		v__gen__Gen_writeln(g, _STR("if (!%.*s\000.ok) {", 2, cvar_name));
+	}
 	if (or_block.kind == v__ast__OrKind_block) {
 		v__gen__Gen_writeln(g, _STR("\tstring err = %.*s\000.v_error;", 2, cvar_name));
 		v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s\000.ecode;", 2, cvar_name));
@@ -29502,14 +29514,13 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExpr
 			v__gen__Gen_stmts(g, stmts);
 		}
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
-		v__gen__Gen_write_defer_stmts(g);
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->cur_fn->name, tos_lit("main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_91351 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_91351.arg0;
-				string pafile = mr_91351.arg1;
-				string pamod = mr_91351.arg2;
-				string pafn = mr_91351.arg3;
+				multi_return_int_string_string_string mr_91729 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_91729.arg0;
+				string pafile = mr_91729.arg1;
+				string pamod = mr_91729.arg2;
+				string pafn = mr_91729.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(%.*s\000.v_error);", 2, cvar_name));
@@ -29904,10 +29915,10 @@ inline static string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Type
 static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_101629 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_101629.arg0;
-	bool str_method_expects_ptr = mr_101629.arg1;
-	int str_nr_args = mr_101629.arg2;
+	multi_return_bool_bool_int mr_102007 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_102007.arg0;
+	bool str_method_expects_ptr = mr_102007.arg1;
+	int str_nr_args = mr_102007.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -30090,9 +30101,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_108879 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_108879.arg0;
-	bool str_method_expects_ptr = mr_108879.arg1;
+	multi_return_bool_bool_int mr_109257 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_109257.arg0;
+	bool str_method_expects_ptr = mr_109257.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -30144,9 +30155,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_111712 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_111712.arg0;
-	bool str_method_expects_ptr = mr_111712.arg1;
+	multi_return_bool_bool_int mr_112090 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_112090.arg0;
+	bool str_method_expects_ptr = mr_112090.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
