@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "e38a221"
+#define V_COMMIT_HASH "2dc547a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4a7ec90"
+#define V_COMMIT_HASH "e38a221"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "e38a221"
+#define V_CURRENT_COMMIT_HASH "2dc547a"
 #endif
 
 
@@ -3494,7 +3494,7 @@ bool time__Time_gt(time__Time t1, time__Time t2);
 bool time__Time_ge(time__Time t1, time__Time t2);
 Option_time__Time time__parse(string s);
 Option_time__Time time__parse_rfc2822(string s);
-Option_time__Time time__parse_rfc8601(string s);
+Option_time__Time time__parse_iso8601(string s);
 time__StopWatch time__new_stopwatch(time__StopWatchOptions opts);
 void time__StopWatch_start(time__StopWatch* t);
 void time__StopWatch_restart(time__StopWatch* t);
@@ -3514,6 +3514,7 @@ int _const_time__days_per_100_years; // inited later
 int _const_time__days_per_4_years; // inited later
 array_int _const_time__days_before; // inited later
 time__Time time__now();
+time__Time time__utc();
 string time__Time_smonth(time__Time t);
 time__Time time__new_time(time__Time t);
 int time__Time_unix_time(time__Time t);
@@ -3544,14 +3545,19 @@ i64 time__Duration_milliseconds(time__Duration d);
 f64 time__Duration_seconds(time__Duration d);
 f64 time__Duration_minutes(time__Duration d);
 f64 time__Duration_hours(time__Duration d);
+static time__Time time__linux_now();
+static time__Time time__linux_utc();
 static u64 time__sys_mono_now_darwin();
 time__Time time__darwin_now();
 time__Time time__solaris_now();
-static time__Time time__linux_now();
+time__Time time__darwin_utc();
+time__Time time__solaris_utc();
 static int time__make_unix_time(struct tm t);
+static time__Time time__to_local_time(time__Time t);
 u64 time__sys_mono_now();
 static u64 time__vpc_now();
 time__Time time__win_now();
+time__Time time__win_utc();
 time__Time time__unix(int abs);
 time__Time time__unix2(int abs, int microsecond);
 static multi_return_int_int_int time__calculate_date_from_offset(int day_offset_);
@@ -13369,7 +13375,8 @@ string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, tim
 	}
 }
 
-bool time__Time_eq(time__Time t1, time__Time t2) {
+// Attr: [inline]
+inline bool time__Time_eq(time__Time t1, time__Time t2) {
 	if (t1.v_unix == t2.v_unix && t1.microsecond == t2.microsecond) {
 		return true;
 	}
@@ -13453,7 +13460,7 @@ Option_time__Time time__parse_rfc2822(string s) {
 	return time__parse(tos(tmstr, count));
 }
 
-Option_time__Time time__parse_rfc8601(string s) {
+Option_time__Time time__parse_iso8601(string s) {
 	int year = 0;
 	int month = 0;
 	int day = 0;
@@ -13485,6 +13492,7 @@ Option_time__Time time__parse_rfc8601(string s) {
 		.microsecond = mic_second,
 		.v_unix = 0,
 	});
+	u64 unix_time = t.v_unix;
 	int unix_offset = ((int)(0));
 	if (offset_hour > 0) {
 		unix_offset += 3600 * offset_hour;
@@ -13494,15 +13502,14 @@ Option_time__Time time__parse_rfc8601(string s) {
 	}
 	if (unix_offset != 0) {
 		if (plus_min == '+') {
-			Option_time__Time _t4;/*:)time.Time*/opt_ok2(&(time__Time[]) { time__unix2(((int)(t.v_unix)) + unix_offset, t.microsecond) }, (OptionBase*)(&_t4), sizeof(time__Time));
-			return _t4;
+			unix_time -= ((u64)(unix_offset));
 		} else {
-			Option_time__Time _t5;/*:)time.Time*/opt_ok2(&(time__Time[]) { time__unix2(((int)(t.v_unix)) - unix_offset, t.microsecond) }, (OptionBase*)(&_t5), sizeof(time__Time));
-			return _t5;
+			unix_time += ((u64)(unix_offset));
 		}
+		t = time__unix2(((int)(unix_time)), t.microsecond);
 	}
-	Option_time__Time _t6;/*:)time.Time*/opt_ok2(&(time__Time[]) { t }, (OptionBase*)(&_t6), sizeof(time__Time));
-	return _t6;
+	Option_time__Time _t4;/*:)time.Time*/opt_ok2(&(time__Time[]) { time__to_local_time(t) }, (OptionBase*)(&_t4), sizeof(time__Time));
+	return _t4;
 }
 
 time__StopWatch time__new_stopwatch(time__StopWatchOptions opts) {
@@ -13592,6 +13599,44 @@ time__Time time__now() {
 	return time__convert_ctime(*now, 0);
 }
 
+time__Time time__utc() {
+	
+// $if  macos {
+#ifdef __APPLE__
+		return time__darwin_utc();
+	
+// } macos
+#endif
+
+	
+// $if  windows {
+#ifdef _WIN32
+		return time__win_utc();
+	
+// } windows
+#endif
+
+	
+// $if  solaris {
+#ifdef __sun
+		return time__solaris_utc();
+	
+// } solaris
+#endif
+
+	
+// $if  linux {
+#ifdef __linux__
+		return time__linux_utc();
+	
+// } linux
+#endif
+
+	time_t t = time(0);
+	time(&t);
+	return time__unix2(((int)(t)), 0);
+}
+
 string time__Time_smonth(time__Time t) {
 	int i = t.month - 1;
 	return string_substr(_const_time__months_string, i * 3, (i + 1) * 3);
@@ -13621,6 +13666,9 @@ int time__Time_unix_time(time__Time t) {
 		.tm_mday = t.day,
 		.tm_mon = t.month - 1,
 		.tm_year = t.year - 1900,
+		.tm_wday = 0,
+		.tm_yday = 0,
+		.tm_isdst = 0,
 	};
 	return time__make_unix_time(tt);
 }
@@ -13805,6 +13853,38 @@ f64 time__Duration_hours(time__Duration d) {
 	return ((f64)(hr)) + ((f64)(nsec)) / (60 * 60 * 1e9);
 }
 
+// Attr: [inline]
+inline static time__Time time__linux_now() {
+	struct timespec ts = (struct timespec){
+		.tv_sec = 0,
+		.tv_nsec = 0,
+	};
+	clock_gettime(CLOCK_REALTIME, &ts);
+	struct tm loc_tm = (struct tm){
+		.tm_sec = 0,
+		.tm_min = 0,
+		.tm_hour = 0,
+		.tm_mday = 0,
+		.tm_mon = 0,
+		.tm_year = 0,
+		.tm_wday = 0,
+		.tm_yday = 0,
+		.tm_isdst = 0,
+	};
+	localtime_r(&ts.tv_sec, &loc_tm);
+	return time__convert_ctime(loc_tm, ((int)(ts.tv_nsec / 1000)));
+}
+
+// Attr: [inline]
+inline static time__Time time__linux_utc() {
+	struct timespec ts = (struct timespec){
+		.tv_sec = 0,
+		.tv_nsec = 0,
+	};
+	clock_gettime(CLOCK_REALTIME, &ts);
+	return time__unix2(((int)(ts.tv_sec)), ((int)(ts.tv_nsec / 1000)));
+}
+
 static u64 time__sys_mono_now_darwin() {
 	return 0;
 }
@@ -13835,22 +13915,50 @@ time__Time time__solaris_now() {
 	};
 }
 
-static time__Time time__linux_now() {
-	struct timespec ts = (struct timespec){
-		.tv_sec = 0,
-		.tv_nsec = 0,
+time__Time time__darwin_utc() {
+	return (time__Time){
+		.year = 0,
+		.month = 0,
+		.day = 0,
+		.hour = 0,
+		.minute = 0,
+		.second = 0,
+		.microsecond = 0,
+		.v_unix = 0,
 	};
-	clock_gettime(CLOCK_REALTIME, &ts);
-	time_t t = time(0);
-	struct tm* tm = localtime(&t);
-	if (((int)(t)) != ts.tv_sec || ts.tv_nsec == 0) {
-		return time__convert_ctime(*tm, 0);
-	}
-	return time__convert_ctime(*tm, ((int)(ts.tv_nsec / 1000)));
+}
+
+time__Time time__solaris_utc() {
+	return (time__Time){
+		.year = 0,
+		.month = 0,
+		.day = 0,
+		.hour = 0,
+		.minute = 0,
+		.second = 0,
+		.microsecond = 0,
+		.v_unix = 0,
+	};
 }
 
 static int time__make_unix_time(struct tm t) {
 	return ((int)(timegm(&t)));
+}
+
+static time__Time time__to_local_time(time__Time t) {
+	struct tm loc_tm = (struct tm){
+		.tm_sec = 0,
+		.tm_min = 0,
+		.tm_hour = 0,
+		.tm_mday = 0,
+		.tm_mon = 0,
+		.tm_year = 0,
+		.tm_wday = 0,
+		.tm_yday = 0,
+		.tm_isdst = 0,
+	};
+	localtime_r(&t.v_unix, &loc_tm);
+	return time__convert_ctime(loc_tm, t.microsecond);
 }
 
 // TypeDecl
@@ -13884,6 +13992,19 @@ inline static u64 time__vpc_now() {
 }
 
 time__Time time__win_now() {
+	return (time__Time){
+		.year = 0,
+		.month = 0,
+		.day = 0,
+		.hour = 0,
+		.minute = 0,
+		.second = 0,
+		.microsecond = 0,
+		.v_unix = 0,
+	};
+}
+
+time__Time time__win_utc() {
 	return (time__Time){
 		.year = 0,
 		.month = 0,
