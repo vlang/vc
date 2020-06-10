@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "972f60d"
+#define V_COMMIT_HASH "a2d7bc6"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b6e2495"
+#define V_COMMIT_HASH "972f60d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "972f60d"
+#define V_CURRENT_COMMIT_HASH "a2d7bc6"
 #endif
 
 
@@ -15815,12 +15815,12 @@ string vweb__tmpl__compile_file(string path, string fn_name) {
 string vweb__tmpl__compile_template(string content, string fn_name) {
 	string html = content;
 	string header = tos_lit("");
-	if (os__exists(tos_lit("header.html")) && string_contains(html, tos_lit("@header"))) {
-		Option_string _t316 = os__read_file(tos_lit("header.html"));
+	if (os__exists(tos_lit("templates/header.html")) && string_contains(html, tos_lit("@header"))) {
+		Option_string _t316 = os__read_file(tos_lit("templates/header.html"));
 		if (!_t316.ok) {
 			string err = _t316.v_error;
 			int errcode = _t316.ecode;
-			v_panic(tos_lit("reading file header.html failed"));
+			v_panic(tos_lit("reading file templates/header.html failed"));
 		}
 		Option_string h = _t316;
 		header = string_replace(/*opt*/(*(string*)h.data), tos_lit("\'"), tos_lit("\""));
@@ -22459,14 +22459,16 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 	v__parser__Parser_check(p, v__token__Kind_name);
 	v__parser__Parser_check(p, v__token__Kind_lpar);
 	v__parser__Parser_check(p, v__token__Kind_rpar);
-	string path = string_add(p->cur_fn_name, tos_lit(".html"));
-	println(_STR(">>> compiling vweb HTML template \"%.*s\000\"", 2, path));
+	string html_name = _STR("%.*s\000.html", 2, p->cur_fn_name);
+	string dir = os__dir(p->scanner->file_path);
+	string path = os__join_path(dir, (varg_string){.len=1,.args={html_name}});
 	if (!os__exists(path)) {
-		path = string_add(string_add(os__dir(p->scanner->file_path), tos_lit("/")), path);
+		path = os__join_path(dir, (varg_string){.len=2,.args={tos_lit("templates"), html_name}});
 		if (!os__exists(path)) {
-			v__parser__Parser_error(p, _STR("vweb HTML template \"%.*s\000\" not found", 2, path));
+			v__parser__Parser_error(p, _STR("vweb HTML template \"%.*s\000\" not found", 2, html_name));
 		}
 	}
+	println(_STR(">>> compiling vweb HTML template \"%.*s\000\"", 2, path));
 	string v_code = vweb__tmpl__compile_file(path, p->cur_fn_name);
 	v__ast__Scope* scope = (v__ast__Scope*)memdup(&(v__ast__Scope){	.objects = new_map_1(sizeof(v__ast__ScopeObject)),
 		.parent = p->global_scope,
