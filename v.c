@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "05177b9"
+#define V_COMMIT_HASH "3bf9b28"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b242829"
+#define V_COMMIT_HASH "05177b9"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "05177b9"
+#define V_CURRENT_COMMIT_HASH "3bf9b28"
 #endif
 
 
@@ -1429,7 +1429,6 @@ struct v__pref__Preferences {
 	string path;
 	array_string compile_defines;
 	array_string compile_defines_all;
-	string mod;
 	array_string run_args;
 	array_string printfn_list;
 	bool print_v_files;
@@ -2269,6 +2268,7 @@ struct v__ast__File {
 
 struct v__ast__FnDecl {
 	string name;
+	string mod;
 	array_v__ast__Stmt stmts;
 	array_v__table__Arg args;
 	bool is_deprecated;
@@ -3910,6 +3910,7 @@ v__ast__Scope* v__ast__Scope_innermost(v__ast__Scope* s, int pos);
 static bool v__ast__Scope_contains(v__ast__Scope* s, int pos);
 string v__ast__Scope_show(v__ast__Scope* sc, int depth, int max_depth);
 string v__ast__Scope_str(v__ast__Scope* sc);
+string v__ast__FnDecl_modname(v__ast__FnDecl* node);
 string v__ast__FnDecl_str(v__ast__FnDecl* node, v__table__Table* t);
 string v__ast__InfixExpr_str(v__ast__InfixExpr* x);
 string v__ast__Expr_str(v__ast__Expr x);
@@ -14383,7 +14384,6 @@ v__pref__Preferences v__pref__new_preferences() {
 		.path = (string){.str=""},
 		.compile_defines = __new_array(0, 1, sizeof(string)),
 		.compile_defines_all = __new_array(0, 1, sizeof(string)),
-		.mod = (string){.str=""},
 		.run_args = __new_array(0, 1, sizeof(string)),
 		.printfn_list = __new_array(0, 1, sizeof(string)),
 		.print_v_files = 0,
@@ -14675,7 +14675,6 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 		.path = (string){.str=""},
 		.compile_defines = __new_array(0, 1, sizeof(string)),
 		.compile_defines_all = __new_array(0, 1, sizeof(string)),
-		.mod = (string){.str=""},
 		.run_args = __new_array(0, 1, sizeof(string)),
 		.printfn_list = __new_array(0, 1, sizeof(string)),
 		.print_v_files = 0,
@@ -18146,6 +18145,17 @@ string v__ast__Scope_str(v__ast__Scope* sc) {
 	return v__ast__Scope_show(sc, 0, 0);
 }
 
+string v__ast__FnDecl_modname(v__ast__FnDecl* node) {
+	if (string_ne(node->mod, tos_lit(""))) {
+		return node->mod;
+	}
+	string pamod = string_all_before_last(node->name, tos_lit("."));
+	if (string_eq(pamod, string_after(node->name, tos_lit(".")))) {
+		pamod = (node->is_builtin ? (tos_lit("builtin")) : (tos_lit("main")));
+	}
+	return pamod;
+}
+
 string v__ast__FnDecl_str(v__ast__FnDecl* node, v__table__Table* t) {
 	strings__Builder f = strings__new_builder(30);
 	if (node->is_pub) {
@@ -21510,7 +21520,6 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 				.path = x.path,
 				.compile_defines = x.compile_defines,
 				.compile_defines_all = x.compile_defines_all,
-				.mod = x.mod,
 				.run_args = x.run_args,
 				.printfn_list = x.printfn_list,
 				.print_v_files = x.print_v_files,
@@ -23118,6 +23127,7 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 	p->attr_ctdefine = tos_lit("");
 	return (v__ast__FnDecl){
 		.name = name,
+		.mod = p->mod,
 		.stmts = stmts,
 		.args = args,
 		.is_deprecated = is_deprecated,
@@ -23148,9 +23158,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_7038 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_7038.arg0;
-	bool is_variadic = mr_7038.arg1;
+	multi_return_array_v__table__Arg_bool mr_7051 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_7051.arg0;
+	bool is_variadic = mr_7051.arg1;
 	// FOR IN array
 	array _t637 = args;
 	for (int _t638 = 0; _t638 < _t637.len; _t638++) {
@@ -23194,6 +23204,7 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	return (v__ast__AnonFn){
 		.decl = (v__ast__FnDecl){
 		.name = name,
+		.mod = p->mod,
 		.stmts = stmts,
 		.args = args,
 		.is_deprecated = 0,
@@ -24076,7 +24087,6 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.path = (string){.str=""},
 		.compile_defines = __new_array(0, 1, sizeof(string)),
 		.compile_defines_all = __new_array(0, 1, sizeof(string)),
-		.mod = (string){.str=""},
 		.run_args = __new_array(0, 1, sizeof(string)),
 		.printfn_list = __new_array(0, 1, sizeof(string)),
 		.print_v_files = 0,
@@ -24240,6 +24250,7 @@ static v__ast__File v__parser__Parser_parse(v__parser__Parser* p) {
 			if (p->pref->is_script && !p->pref->is_test && string_eq(p->mod, tos_lit("main")) && !v__parser__have_fn_main(stmts)) {
 				array_push(&stmts, _MOV((v__ast__Stmt[]){ /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__FnDecl[]) {(v__ast__FnDecl){
 					.name = tos_lit("main"),
+					.mod = p->mod,
 					.stmts = __new_array(0, 1, sizeof(v__ast__Stmt)),
 					.args = __new_array(0, 1, sizeof(v__table__Arg)),
 					.is_deprecated = 0,
@@ -24472,6 +24483,7 @@ v__ast__Stmt v__parser__Parser_top_stmt(v__parser__Parser* p) {
 			}
 			return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__FnDecl[]) {(v__ast__FnDecl){
 				.name = tos_lit("main"),
+				.mod = p->mod,
 				.stmts = stmts,
 				.args = __new_array(0, 1, sizeof(v__table__Arg)),
 				.is_deprecated = 0,
@@ -26241,6 +26253,7 @@ static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser*
 		_PUSH_MANY(&args, (args2), _t716, array_v__table__Arg);
 		v__ast__FnDecl method = (v__ast__FnDecl){
 			.name = name,
+			.mod = p->mod,
 			.stmts = __new_array(0, 1, sizeof(v__ast__Stmt)),
 			.args = args,
 			.is_deprecated = 0,
@@ -30210,10 +30223,7 @@ static multi_return_int_string_string_string v__gen__Gen_panic_debug_info(v__gen
 	int paline = pos.line_nr + 1;
 	string pafile = string_replace(g->fn_decl->file, tos_lit("\\"), tos_lit("/"));
 	string pafn = string_after(g->fn_decl->name, tos_lit("."));
-	string pamod = string_all_before_last(g->fn_decl->name, tos_lit("."));
-	if (string_eq(pamod, pafn)) {
-		pamod = (g->fn_decl->is_builtin ? (tos_lit("builtin")) : (tos_lit("main")));
-	}
+	string pamod = v__ast__FnDecl_modname(g->fn_decl);
 
 		return (multi_return_int_string_string_string){.arg0=paline,.arg1=pafile,.arg2=pamod,.arg3=pafn};
 }
