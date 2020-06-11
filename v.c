@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "3bf9b28"
+#define V_COMMIT_HASH "72fdb09"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "05177b9"
+#define V_COMMIT_HASH "3bf9b28"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "3bf9b28"
+#define V_CURRENT_COMMIT_HASH "72fdb09"
 #endif
 
 
@@ -3527,6 +3527,7 @@ time__Time time__Time_add_seconds(time__Time t, int seconds);
 time__Time time__Time_add_days(time__Time t, int days);
 static int time__since(time__Time t);
 string time__Time_relative(time__Time t);
+string time__Time_relative_short(time__Time t);
 int time__day_of_week(int y, int m, int d);
 int time__Time_day_of_week(time__Time t);
 string time__Time_weekday_str(time__Time t);
@@ -13705,6 +13706,30 @@ string time__Time_relative(time__Time t) {
 		return tos_lit("1m");
 	}
 	if (secs < 3600) {
+		return _STR("%"PRIu64"\000 minutes ago", 2, secs / 60);
+	}
+	if (secs < 3600 * 24) {
+		return _STR("%"PRIu64"\000 hours ago", 2, secs / 3600);
+	}
+	if (secs < 3600 * 24 * 5) {
+		return _STR("%"PRIu64"\000 days ago", 2, secs / 3600 / 24);
+	}
+	if (secs > 3600 * 24 * 10000) {
+		return tos_lit("");
+	}
+	return time__Time_md(t);
+}
+
+string time__Time_relative_short(time__Time t) {
+	time__Time now = time__now();
+	u64 secs = now.v_unix - t.v_unix;
+	if (secs <= 30) {
+		return tos_lit("now");
+	}
+	if (secs < 60) {
+		return tos_lit("1m");
+	}
+	if (secs < 3600) {
 		return _STR("%"PRIu64"\000m", 2, secs / 60);
 	}
 	if (secs < 3600 * 24) {
@@ -15813,7 +15838,7 @@ string vweb__tmpl__compile_file(string path, string fn_name) {
 }
 
 string vweb__tmpl__compile_template(string html_, string fn_name) {
-	string html = html_;
+	string html = string_trim_space(html_);
 	string header = tos_lit("");
 	if (os__exists(tos_lit("templates/header.html")) && string_contains(html, tos_lit("@header"))) {
 		Option_string _t316 = os__read_file(tos_lit("templates/header.html"));
@@ -15823,7 +15848,7 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 			v_panic(tos_lit("reading file templates/header.html failed"));
 		}
 		Option_string h = _t316;
-		header = string_replace(/*opt*/(*(string*)h.data), tos_lit("\'"), tos_lit("\""));
+		header = string_replace(string_trim_space(/*opt*/(*(string*)h.data)), tos_lit("\'"), tos_lit("\""));
 		html = string_add(header, html);
 	}
 	array_string lines = string_split_into_lines(html);
@@ -25435,7 +25460,7 @@ static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 }
 
 static v__ast__GlobalDecl v__parser__Parser_global_decl(v__parser__Parser* p) {
-	if (!p->pref->translated && !p->pref->is_livemain && !p->builtin_mod && !p->pref->building_v && string_ne(p->mod, tos_lit("ui")) && string_ne(p->mod, tos_lit("gg2")) && string_ne(p->mod, tos_lit("uiold")) && !string_contains(os__getwd(), tos_lit("/volt")) && !p->pref->enable_globals && !_IN(string, p->mod, _const_v__parser__global_enabled_mods)) {
+	if (!p->pref->translated && !p->pref->is_livemain && !p->builtin_mod && !p->pref->building_v && string_ne(p->mod, tos_lit("ui")) && string_ne(p->mod, tos_lit("gg2")) && string_ne(p->mod, tos_lit("uiold")) && !string_contains(os__getwd(), tos_lit("/volt")) && !p->pref->enable_globals && !p->pref->is_fmt && !_IN(string, p->mod, _const_v__parser__global_enabled_mods)) {
 		v__parser__Parser_error(p, tos_lit("use `v --enable-globals ...` to enable globals"));
 	}
 	v__token__Position start_pos = v__token__Token_position(&p->tok);
