@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "a667538"
+#define V_COMMIT_HASH "b242829"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8f3f27f"
+#define V_COMMIT_HASH "a667538"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "a667538"
+#define V_CURRENT_COMMIT_HASH "b242829"
 #endif
 
 
@@ -33786,7 +33786,7 @@ void v__builder__Builder_resolve_deps(v__builder__Builder* b) {
 }
 
 v__depgraph__DepGraph* v__builder__Builder_import_graph(v__builder__Builder* b) {
-	array_string builtins = _const_v__util__builtin_module_parts;
+	array_string builtins = array_clone(&_const_v__util__builtin_module_parts);
 	array_push(&builtins, _MOV((string[]){ tos_lit("builtin") }));
 	v__depgraph__DepGraph* graph = v__depgraph__new_dep_graph();
 	// FOR IN array
