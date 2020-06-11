@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "c9cfe9d"
+#define V_COMMIT_HASH "ff1437f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "72fdb09"
+#define V_COMMIT_HASH "c9cfe9d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c9cfe9d"
+#define V_CURRENT_COMMIT_HASH "ff1437f"
 #endif
 
 
@@ -3175,6 +3175,7 @@ string strconv__v_sprintf(string str, varg_voidptr pt);
 static f64 strconv__fabs(f64 x);
 static array __new_array(int mylen, int cap, int elm_size);
 static array __new_array_with_default(int mylen, int cap, int elm_size, voidptr val);
+static array __new_array_with_array_default(int mylen, int cap, int elm_size, array val);
 static array new_array_from_c_array(int len, int cap, int elm_size, voidptr c_array);
 static array new_array_from_c_array_no_alloc(int len, int cap, int elm_size, voidptr c_array);
 static void array_ensure_cap(array* a, int required);
@@ -7862,6 +7863,21 @@ static array __new_array_with_default(int mylen, int cap, int elm_size, voidptr 
 		for (int i = 0; i < arr.len; i++) {
 			memcpy(((charptr)(arr.data)) + i * elm_size, val, elm_size);
 		}
+	}
+	return arr;
+}
+
+static array __new_array_with_array_default(int mylen, int cap, int elm_size, array val) {
+	int cap_ = (cap < mylen ? (mylen) : (cap));
+	array arr = (array){
+		.element_size = elm_size,
+		.data = vcalloc(cap_ * elm_size),
+		.len = mylen,
+		.cap = cap_,
+	};
+	for (int i = 0; i < arr.len; i++) {
+		array val_clone = array_clone(&val);
+		memcpy(((charptr)(arr.data)) + i * elm_size, &val_clone, elm_size);
 	}
 	return arr;
 }
@@ -30037,10 +30053,10 @@ inline static string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Type
 static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_102021 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_102021.arg0;
-	bool str_method_expects_ptr = mr_102021.arg1;
-	int str_nr_args = mr_102021.arg2;
+	multi_return_bool_bool_int mr_102020 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_102020.arg0;
+	bool str_method_expects_ptr = mr_102020.arg1;
+	int str_nr_args = mr_102020.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -30223,9 +30239,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_109271 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_109271.arg0;
-	bool str_method_expects_ptr = mr_109271.arg1;
+	multi_return_bool_bool_int mr_109270 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_109270.arg0;
+	bool str_method_expects_ptr = mr_109270.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -30277,9 +30293,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_112104 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_112104.arg0;
-	bool str_method_expects_ptr = mr_112104.arg1;
+	multi_return_bool_bool_int mr_112103 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_112103.arg0;
+	bool str_method_expects_ptr = mr_112103.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -30533,7 +30549,13 @@ static void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it) {
 	}
 	string elem_type_str = v__gen__Gen_typ(g, it.elem_type);
 	if (it.exprs.len == 0) {
-		v__gen__Gen_write(g, tos_lit("__new_array_with_default("));
+		v__table__TypeSymbol* elem_sym = v__table__Table_get_type_symbol(g->table, it.elem_type);
+		bool is_default_array = elem_sym->kind == v__table__Kind_array && it.has_default;
+		if (is_default_array) {
+			v__gen__Gen_write(g, tos_lit("__new_array_with_array_default("));
+		} else {
+			v__gen__Gen_write(g, tos_lit("__new_array_with_default("));
+		}
 		if (it.has_len) {
 			v__gen__Gen_expr(g, it.len_expr);
 			v__gen__Gen_write(g, tos_lit(", "));
@@ -30547,10 +30569,14 @@ static void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it) {
 			v__gen__Gen_write(g, tos_lit("0, "));
 		}
 		v__gen__Gen_write(g, _STR("sizeof(%.*s\000), ", 2, elem_type_str));
-		if (it.has_default || (it.has_len && it.elem_type == _const_v__table__string_type)) {
-			v__gen__Gen_write(g, _STR("&_val_%"PRId32"\000)", 2, it.pos.pos));
+		if (is_default_array) {
+			v__gen__Gen_write(g, _STR("_val_%"PRId32"\000)", 2, it.pos.pos));
 		} else {
-			v__gen__Gen_write(g, tos_lit("0)"));
+			if (it.has_default || (it.has_len && it.elem_type == _const_v__table__string_type)) {
+				v__gen__Gen_write(g, _STR("&_val_%"PRId32"\000)", 2, it.pos.pos));
+			} else {
+				v__gen__Gen_write(g, tos_lit("0)"));
+			}
 		}
 		return;
 	}
