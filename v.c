@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ca63b92"
+#define V_COMMIT_HASH "af27963"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "90f07eb"
+#define V_COMMIT_HASH "ca63b92"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ca63b92"
+#define V_CURRENT_COMMIT_HASH "af27963"
 #endif
 
 
@@ -10727,7 +10727,7 @@ bool byte_is_letter(byte c) {
 }
 
 void string_free(string* s) {
-	if (s->is_lit) {
+	if (s->is_lit || s->len == 0) {
 		return;
 	}
 	v_free(s->str);
