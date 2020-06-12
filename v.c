@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "827a9e2"
+#define V_COMMIT_HASH "b4ad174"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0a07dc5"
+#define V_COMMIT_HASH "827a9e2"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "827a9e2"
+#define V_CURRENT_COMMIT_HASH "b4ad174"
 #endif
 
 
@@ -7663,7 +7663,19 @@ array array_repeat(array a, int count) {
 		.cap = count * a.len,
 	};
 	for (int i = 0; i < count; i++) {
-		memcpy(((byteptr)(arr.data)) + i * a.len * a.element_size, ((byteptr)(a.data)), a.len * a.element_size);
+		if (a.len > 0 && a.element_size == sizeof(array)) {
+			array ary = (array){
+				.element_size = 0,
+				.data = 0,
+				.len = 0,
+				.cap = 0,
+			};
+			memcpy(&ary, a.data, sizeof(array));
+			array ary_clone = array_clone(&ary);
+			memcpy(((byteptr)(arr.data)) + i * a.len * a.element_size, &ary_clone, a.len * a.element_size);
+		} else {
+			memcpy(((byteptr)(arr.data)) + i * a.len * a.element_size, ((byteptr)(a.data)), a.len * a.element_size);
+		}
 	}
 	return arr;
 }
