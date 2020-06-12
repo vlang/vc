@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "0d1e5ab"
+#define V_COMMIT_HASH "90f07eb"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7750ce5"
+#define V_COMMIT_HASH "0d1e5ab"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "0d1e5ab"
+#define V_CURRENT_COMMIT_HASH "90f07eb"
 #endif
 
 
@@ -24857,9 +24857,14 @@ v__ast__Stmt v__parser__Parser_top_stmt(v__parser__Parser* p) {
 };
 		};
 	}else if (p->tok.kind == v__token__Kind_lsbr) {
+		v__token__Position start_pos = v__token__Token_position(&p->tok);
 		array_v__ast__Attr attrs = v__parser__Parser_attributes(p);
 		if (attrs.len > 1) {
-			v__parser__Parser_error(p, tos_lit("multiple attributes detected"));
+			v__token__Position end_pos = v__token__Token_position(&p->tok);
+			v__parser__Parser_error_with_pos(p, tos_lit("multiple attributes detected"), v__token__Position_extend(start_pos, end_pos));
+		} else if (attrs.len == 0) {
+			v__token__Position end_pos = v__token__Token_position(&p->tok);
+			v__parser__Parser_error_with_pos(p, tos_lit("attributes cannot be empty"), v__token__Position_extend(start_pos, end_pos));
 		}
 		return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Attr[]) {(*(v__ast__Attr*)array_get(attrs, 0))}, sizeof(v__ast__Attr)), .typ = 198 /* v.ast.Attr */};
 	}else if (p->tok.kind == v__token__Kind_key_interface) {
