@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b306c04"
+#define V_COMMIT_HASH "0a07dc5"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0845a9b"
+#define V_COMMIT_HASH "b306c04"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b306c04"
+#define V_CURRENT_COMMIT_HASH "0a07dc5"
 #endif
 
 
@@ -1072,6 +1072,9 @@ typedef map map_string_array_v__ast__Stmt;
 typedef array array_i64;
 typedef map map_string_i64;
 typedef array array_v__token__Token;
+typedef array array_u32;
+typedef array array_strconv__ftoa__Uint128;
+typedef array array_f64;
 typedef array array_v__vmod__TokenKind;
 typedef array array_v__ast__IdentKind;
 typedef array array_v__token__Position;
@@ -1886,16 +1889,7 @@ struct v__gen__x64__SectionConfig {
 	i64 entsize;
 };
 
-typedef byte array_fixed_byte_32 [32];
-typedef byte array_fixed_byte_64 [64];
-typedef byte array_fixed_byte_256 [256];
-typedef u32 array_fixed_u32_12 [12];
-typedef u64 array_fixed_u64_20 [20];
-typedef u64 array_fixed_u64_18 [18];
-typedef u64 array_fixed_u64_47 [47];
-typedef u64 array_fixed_u64_31 [31];
 typedef byte array_fixed_byte_26 [26];
-typedef f64 array_fixed_f64_20 [20];
 typedef voidptr array_fixed_voidptr_100 [100];
 typedef byte array_fixed_byte_1024 [1024];
 typedef u16 array_fixed_u16_32768 [32768];
@@ -2425,8 +2419,6 @@ struct v__parser__Parser {
 	string cur_fn_name;
 };
 
-typedef strconv__ftoa__Uint128 array_fixed_strconv__ftoa__Uint128_292 [292];
-typedef strconv__ftoa__Uint128 array_fixed_strconv__ftoa__Uint128_326 [326];
 struct SymbolInfoContainer {
 	SymbolInfo syminfo;
 	array_fixed_char_254 f_name_rest;
@@ -3015,9 +3007,9 @@ static u64 hash__wyhash__wyr3(byteptr p, u64 k);
 static u64 hash__wyhash__wyr4(byteptr p);
 static u64 hash__wyhash__wyr8(byteptr p);
 u32 _const_math__bits__de_bruijn32; // inited later
-array_fixed_byte_32 _const_math__bits__de_bruijn32tab = {((byte)(0)), 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9}; // fixed array const
+array_byte _const_math__bits__de_bruijn32tab; // inited later
 u64 _const_math__bits__de_bruijn64; // inited later
-array_fixed_byte_64 _const_math__bits__de_bruijn64tab = {((byte)(0)), 1, 56, 2, 57, 49, 28, 3, 61, 58, 42, 50, 38, 29, 17, 4, 62, 47, 59, 36, 45, 43, 51, 22, 53, 39, 33, 30, 24, 18, 12, 5, 63, 55, 48, 27, 60, 41, 37, 16, 46, 35, 44, 21, 52, 32, 23, 11, 54, 26, 40, 15, 34, 20, 31, 10, 25, 14, 19, 9, 13, 8, 7, 6}; // fixed array const
+array_byte _const_math__bits__de_bruijn64tab; // inited later
 u64 _const_math__bits__m0; // inited later
 u64 _const_math__bits__m1; // inited later
 u64 _const_math__bits__m2; // inited later
@@ -3066,11 +3058,11 @@ multi_return_u32_u32 math__bits__div_32(u32 hi, u32 lo, u32 y);
 multi_return_u64_u64 math__bits__div_64(u64 hi, u64 lo, u64 y1);
 u32 math__bits__rem_32(u32 hi, u32 lo, u32 y);
 u64 math__bits__rem_64(u64 hi, u64 lo, u64 y);
-array_fixed_byte_256 _const_math__bits__ntz_8_tab = {((byte)(0x08)), 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x07, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00}; // fixed array const
-array_fixed_byte_256 _const_math__bits__pop_8_tab = {((byte)(0x00)), 0x01, 0x01, 0x02, 0x01, 0x02, 0x02, 0x03, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x05, 0x06, 0x06, 0x07, 0x06, 0x07, 0x07, 0x08}; // fixed array const
-array_fixed_byte_256 _const_math__bits__rev_8_tab = {((byte)(0x00)), 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0, 0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0, 0x08, 0x88, 0x48, 0xc8, 0x28, 0xa8, 0x68, 0xe8, 0x18, 0x98, 0x58, 0xd8, 0x38, 0xb8, 0x78, 0xf8, 0x04, 0x84, 0x44, 0xc4, 0x24, 0xa4, 0x64, 0xe4, 0x14, 0x94, 0x54, 0xd4, 0x34, 0xb4, 0x74, 0xf4, 0x0c, 0x8c, 0x4c, 0xcc, 0x2c, 0xac, 0x6c, 0xec, 0x1c, 0x9c, 0x5c, 0xdc, 0x3c, 0xbc, 0x7c, 0xfc, 0x02, 0x82, 0x42, 0xc2, 0x22, 0xa2, 0x62, 0xe2, 0x12, 0x92, 0x52, 0xd2, 0x32, 0xb2, 0x72, 0xf2, 0x0a, 0x8a, 0x4a, 0xca, 0x2a, 0xaa, 0x6a, 0xea, 0x1a, 0x9a, 0x5a, 0xda, 0x3a, 0xba, 0x7a, 0xfa, 0x06, 0x86, 0x46, 0xc6, 0x26, 0xa6, 0x66, 0xe6, 0x16, 0x96, 0x56, 0xd6, 0x36, 0xb6, 0x76, 0xf6, 0x0e, 0x8e, 0x4e, 0xce, 0x2e, 0xae, 0x6e, 0xee, 0x1e, 0x9e, 0x5e, 0xde, 0x3e, 0xbe, 0x7e, 0xfe, 0x01, 0x81, 0x41, 0xc1, 0x21, 0xa1, 0x61, 0xe1, 0x11, 0x91, 0x51, 0xd1, 0x31, 0xb1, 0x71, 0xf1, 0x09, 0x89, 0x49, 0xc9, 0x29, 0xa9, 0x69, 0xe9, 0x19, 0x99, 0x59, 0xd9, 0x39, 0xb9, 0x79, 0xf9, 0x05, 0x85, 0x45, 0xc5, 0x25, 0xa5, 0x65, 0xe5, 0x15, 0x95, 0x55, 0xd5, 0x35, 0xb5, 0x75, 0xf5, 0x0d, 0x8d, 0x4d, 0xcd, 0x2d, 0xad, 0x6d, 0xed, 0x1d, 0x9d, 0x5d, 0xdd, 0x3d, 0xbd, 0x7d, 0xfd, 0x03, 0x83, 0x43, 0xc3, 0x23, 0xa3, 0x63, 0xe3, 0x13, 0x93, 0x53, 0xd3, 0x33, 0xb3, 0x73, 0xf3, 0x0b, 0x8b, 0x4b, 0xcb, 0x2b, 0xab, 0x6b, 0xeb, 0x1b, 0x9b, 0x5b, 0xdb, 0x3b, 0xbb, 0x7b, 0xfb, 0x07, 0x87, 0x47, 0xc7, 0x27, 0xa7, 0x67, 0xe7, 0x17, 0x97, 0x57, 0xd7, 0x37, 0xb7, 0x77, 0xf7, 0x0f, 0x8f, 0x4f, 0xcf, 0x2f, 0xaf, 0x6f, 0xef, 0x1f, 0x9f, 0x5f, 0xdf, 0x3f, 0xbf, 0x7f, 0xff}; // fixed array const
-array_fixed_byte_256 _const_math__bits__len_8_tab = {((byte)(0x00)), 0x01, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08}; // fixed array const
-array_fixed_u32_12 _const_strconv__ftoa__ten_pow_table_32 = {((u32)(1)), ((u32)(10)), ((u32)(100)), ((u32)(1000)), ((u32)(10000)), ((u32)(100000)), ((u32)(1000000)), ((u32)(10000000)), ((u32)(100000000)), ((u32)(1000000000)), ((u32)(10000000000)), ((u32)(100000000000))}; // fixed array const
+array_byte _const_math__bits__ntz_8_tab; // inited later
+array_byte _const_math__bits__pop_8_tab; // inited later
+array_byte _const_math__bits__rev_8_tab; // inited later
+array_byte _const_math__bits__len_8_tab; // inited later
+array_u32 _const_strconv__ftoa__ten_pow_table_32; // inited later
 u32 _const_strconv__ftoa__mantbits32; // inited later
 u32 _const_strconv__ftoa__expbits32; // inited later
 #define _const_strconv__ftoa__bias32 127
@@ -3080,7 +3072,7 @@ static multi_return_strconv__ftoa__Dec32_bool strconv__ftoa__f32_to_decimal_exac
 strconv__ftoa__Dec32 strconv__ftoa__f32_to_decimal(u32 mant, u32 exp);
 string strconv__ftoa__f32_to_str(f32 f, int n_digit);
 string strconv__ftoa__f32_to_str_pad(f32 f, int n_digit);
-array_fixed_u64_20 _const_strconv__ftoa__ten_pow_table_64 = {((u64)(1)), ((u64)(10)), ((u64)(100)), ((u64)(1000)), ((u64)(10000)), ((u64)(100000)), ((u64)(1000000)), ((u64)(10000000)), ((u64)(100000000)), ((u64)(1000000000)), ((u64)(10000000000)), ((u64)(100000000000)), ((u64)(1000000000000)), ((u64)(10000000000000)), ((u64)(100000000000000)), ((u64)(1000000000000000)), ((u64)(10000000000000000)), ((u64)(100000000000000000)), ((u64)(1000000000000000000)), ((u64)(10000000000000000000))}; // fixed array const
+array_u64 _const_strconv__ftoa__ten_pow_table_64; // inited later
 u32 _const_strconv__ftoa__mantbits64; // inited later
 u32 _const_strconv__ftoa__expbits64; // inited later
 #define _const_strconv__ftoa__bias64 1023
@@ -3098,1865 +3090,11 @@ string strconv__ftoa__ftoa_long_32(f32 f);
 #define _const_strconv__ftoa__pow5_inv_num_bits_32 59
 #define _const_strconv__ftoa__pow5_num_bits_64 121
 #define _const_strconv__ftoa__pow5_inv_num_bits_64 122
-array_fixed_u64_18 _const_strconv__ftoa__powers_of_10 = {((u64)(1e0)), ((u64)(1e1)), ((u64)(1e2)), ((u64)(1e3)), ((u64)(1e4)), ((u64)(1e5)), ((u64)(1e6)), ((u64)(1e7)), ((u64)(1e8)), ((u64)(1e9)), ((u64)(1e10)), ((u64)(1e11)), ((u64)(1e12)), ((u64)(1e13)), ((u64)(1e14)), ((u64)(1e15)), ((u64)(1e16)), ((u64)(1e17))}; // fixed array const
-array_fixed_u64_47 _const_strconv__ftoa__pow5_split_32 = {((u64)(1152921504606846976)), ((u64)(1441151880758558720)), ((u64)(1801439850948198400)), ((u64)(2251799813685248000)), ((u64)(1407374883553280000)), ((u64)(1759218604441600000)), ((u64)(2199023255552000000)), ((u64)(1374389534720000000)), ((u64)(1717986918400000000)), ((u64)(2147483648000000000)), ((u64)(1342177280000000000)), ((u64)(1677721600000000000)), ((u64)(2097152000000000000)), ((u64)(1310720000000000000)), ((u64)(1638400000000000000)), ((u64)(2048000000000000000)), ((u64)(1280000000000000000)), ((u64)(1600000000000000000)), ((u64)(2000000000000000000)), ((u64)(1250000000000000000)), ((u64)(1562500000000000000)), ((u64)(1953125000000000000)), ((u64)(1220703125000000000)), ((u64)(1525878906250000000)), ((u64)(1907348632812500000)), ((u64)(1192092895507812500)), ((u64)(1490116119384765625)), ((u64)(1862645149230957031)), ((u64)(1164153218269348144)), ((u64)(1455191522836685180)), ((u64)(1818989403545856475)), ((u64)(2273736754432320594)), ((u64)(1421085471520200371)), ((u64)(1776356839400250464)), ((u64)(2220446049250313080)), ((u64)(1387778780781445675)), ((u64)(1734723475976807094)), ((u64)(2168404344971008868)), ((u64)(1355252715606880542)), ((u64)(1694065894508600678)), ((u64)(2117582368135750847)), ((u64)(1323488980084844279)), ((u64)(1654361225106055349)), ((u64)(2067951531382569187)), ((u64)(1292469707114105741)), ((u64)(1615587133892632177)), ((u64)(2019483917365790221))}; // fixed array const
-array_fixed_u64_31 _const_strconv__ftoa__pow5_inv_split_32 = {((u64)(576460752303423489)), ((u64)(461168601842738791)), ((u64)(368934881474191033)), ((u64)(295147905179352826)), ((u64)(472236648286964522)), ((u64)(377789318629571618)), ((u64)(302231454903657294)), ((u64)(483570327845851670)), ((u64)(386856262276681336)), ((u64)(309485009821345069)), ((u64)(495176015714152110)), ((u64)(396140812571321688)), ((u64)(316912650057057351)), ((u64)(507060240091291761)), ((u64)(405648192073033409)), ((u64)(324518553658426727)), ((u64)(519229685853482763)), ((u64)(415383748682786211)), ((u64)(332306998946228969)), ((u64)(531691198313966350)), ((u64)(425352958651173080)), ((u64)(340282366920938464)), ((u64)(544451787073501542)), ((u64)(435561429658801234)), ((u64)(348449143727040987)), ((u64)(557518629963265579)), ((u64)(446014903970612463)), ((u64)(356811923176489971)), ((u64)(570899077082383953)), ((u64)(456719261665907162)), ((u64)(365375409332725730))}; // fixed array const
-array_fixed_strconv__ftoa__Uint128_326 _const_strconv__ftoa__pow5_split_64 = {(strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x0100000000000000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x0140000000000000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x0190000000000000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x01f4000000000000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x0138800000000000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x0186a00000000000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x01e8480000000000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x01312d0000000000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x017d784000000000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x01dcd65000000000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x012a05f200000000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x0174876e80000000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x01d1a94a20000000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x012309ce54000000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x016bcc41e9000000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x01c6bf5263400000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x011c37937e080000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x016345785d8a0000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x01bc16d674ec8000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x01158e460913d000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x015af1d78b58c400)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x01b1ae4d6e2ef500)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x010f0cf064dd5920)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x0152d02c7e14af68)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000000)),
-	.hi = ((u64)(0x01a784379d99db42)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4000000000000000)),
-	.hi = ((u64)(0x0108b2a2c2802909)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x9000000000000000)),
-	.hi = ((u64)(0x014adf4b7320334b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x7400000000000000)),
-	.hi = ((u64)(0x019d971e4fe8401e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0880000000000000)),
-	.hi = ((u64)(0x01027e72f1f12813)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xcaa0000000000000)),
-	.hi = ((u64)(0x01431e0fae6d7217)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbd48000000000000)),
-	.hi = ((u64)(0x0193e5939a08ce9d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2c9a000000000000)),
-	.hi = ((u64)(0x01f8def8808b0245)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3be0400000000000)),
-	.hi = ((u64)(0x013b8b5b5056e16b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0ad8500000000000)),
-	.hi = ((u64)(0x018a6e32246c99c6)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8d8e640000000000)),
-	.hi = ((u64)(0x01ed09bead87c037)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb878fe8000000000)),
-	.hi = ((u64)(0x013426172c74d822)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x66973e2000000000)),
-	.hi = ((u64)(0x01812f9cf7920e2b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x403d0da800000000)),
-	.hi = ((u64)(0x01e17b84357691b6)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe826288900000000)),
-	.hi = ((u64)(0x012ced32a16a1b11)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x622fb2ab40000000)),
-	.hi = ((u64)(0x0178287f49c4a1d6)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xfabb9f5610000000)),
-	.hi = ((u64)(0x01d6329f1c35ca4b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x7cb54395ca000000)),
-	.hi = ((u64)(0x0125dfa371a19e6f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x5be2947b3c800000)),
-	.hi = ((u64)(0x016f578c4e0a060b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x32db399a0ba00000)),
-	.hi = ((u64)(0x01cb2d6f618c878e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xdfc9040047440000)),
-	.hi = ((u64)(0x011efc659cf7d4b8)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x17bb450059150000)),
-	.hi = ((u64)(0x0166bb7f0435c9e7)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xddaa16406f5a4000)),
-	.hi = ((u64)(0x01c06a5ec5433c60)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8a8a4de845986800)),
-	.hi = ((u64)(0x0118427b3b4a05bc)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xad2ce16256fe8200)),
-	.hi = ((u64)(0x015e531a0a1c872b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x987819baecbe2280)),
-	.hi = ((u64)(0x01b5e7e08ca3a8f6)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1f4b1014d3f6d590)),
-	.hi = ((u64)(0x0111b0ec57e6499a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xa71dd41a08f48af4)),
-	.hi = ((u64)(0x01561d276ddfdc00)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd0e549208b31adb1)),
-	.hi = ((u64)(0x01aba4714957d300)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x828f4db456ff0c8e)),
-	.hi = ((u64)(0x010b46c6cdd6e3e0)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xa33321216cbecfb2)),
-	.hi = ((u64)(0x014e1878814c9cd8)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xcbffe969c7ee839e)),
-	.hi = ((u64)(0x01a19e96a19fc40e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3f7ff1e21cf51243)),
-	.hi = ((u64)(0x0105031e2503da89)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8f5fee5aa43256d4)),
-	.hi = ((u64)(0x014643e5ae44d12b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x7337e9f14d3eec89)),
-	.hi = ((u64)(0x0197d4df19d60576)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1005e46da08ea7ab)),
-	.hi = ((u64)(0x01fdca16e04b86d4)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8a03aec4845928cb)),
-	.hi = ((u64)(0x013e9e4e4c2f3444)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xac849a75a56f72fd)),
-	.hi = ((u64)(0x018e45e1df3b0155)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x17a5c1130ecb4fbd)),
-	.hi = ((u64)(0x01f1d75a5709c1ab)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xeec798abe93f11d6)),
-	.hi = ((u64)(0x013726987666190a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xaa797ed6e38ed64b)),
-	.hi = ((u64)(0x0184f03e93ff9f4d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1517de8c9c728bde)),
-	.hi = ((u64)(0x01e62c4e38ff8721)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xad2eeb17e1c7976b)),
-	.hi = ((u64)(0x012fdbb0e39fb474)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd87aa5ddda397d46)),
-	.hi = ((u64)(0x017bd29d1c87a191)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4e994f5550c7dc97)),
-	.hi = ((u64)(0x01dac74463a989f6)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf11fd195527ce9de)),
-	.hi = ((u64)(0x0128bc8abe49f639)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x6d67c5faa71c2456)),
-	.hi = ((u64)(0x0172ebad6ddc73c8)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x88c1b77950e32d6c)),
-	.hi = ((u64)(0x01cfa698c95390ba)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x957912abd28dfc63)),
-	.hi = ((u64)(0x0121c81f7dd43a74)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbad75756c7317b7c)),
-	.hi = ((u64)(0x016a3a275d494911)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x298d2d2c78fdda5b)),
-	.hi = ((u64)(0x01c4c8b1349b9b56)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd9f83c3bcb9ea879)),
-	.hi = ((u64)(0x011afd6ec0e14115)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x50764b4abe865297)),
-	.hi = ((u64)(0x0161bcca7119915b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2493de1d6e27e73d)),
-	.hi = ((u64)(0x01ba2bfd0d5ff5b2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x56dc6ad264d8f086)),
-	.hi = ((u64)(0x01145b7e285bf98f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2c938586fe0f2ca8)),
-	.hi = ((u64)(0x0159725db272f7f3)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf7b866e8bd92f7d2)),
-	.hi = ((u64)(0x01afcef51f0fb5ef)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xfad34051767bdae3)),
-	.hi = ((u64)(0x010de1593369d1b5)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x79881065d41ad19c)),
-	.hi = ((u64)(0x015159af80444623)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x57ea147f49218603)),
-	.hi = ((u64)(0x01a5b01b605557ac)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb6f24ccf8db4f3c1)),
-	.hi = ((u64)(0x01078e111c3556cb)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xa4aee003712230b2)),
-	.hi = ((u64)(0x014971956342ac7e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4dda98044d6abcdf)),
-	.hi = ((u64)(0x019bcdfabc13579e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf0a89f02b062b60b)),
-	.hi = ((u64)(0x010160bcb58c16c2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xacd2c6c35c7b638e)),
-	.hi = ((u64)(0x0141b8ebe2ef1c73)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x98077874339a3c71)),
-	.hi = ((u64)(0x01922726dbaae390)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbe0956914080cb8e)),
-	.hi = ((u64)(0x01f6b0f092959c74)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf6c5d61ac8507f38)),
-	.hi = ((u64)(0x013a2e965b9d81c8)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x34774ba17a649f07)),
-	.hi = ((u64)(0x0188ba3bf284e23b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x01951e89d8fdc6c8)),
-	.hi = ((u64)(0x01eae8caef261aca)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x40fd3316279e9c3d)),
-	.hi = ((u64)(0x0132d17ed577d0be)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd13c7fdbb186434c)),
-	.hi = ((u64)(0x017f85de8ad5c4ed)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x458b9fd29de7d420)),
-	.hi = ((u64)(0x01df67562d8b3629)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xcb7743e3a2b0e494)),
-	.hi = ((u64)(0x012ba095dc7701d9)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3e5514dc8b5d1db9)),
-	.hi = ((u64)(0x017688bb5394c250)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4dea5a13ae346527)),
-	.hi = ((u64)(0x01d42aea2879f2e4)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb0b2784c4ce0bf38)),
-	.hi = ((u64)(0x01249ad2594c37ce)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x5cdf165f6018ef06)),
-	.hi = ((u64)(0x016dc186ef9f45c2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf416dbf7381f2ac8)),
-	.hi = ((u64)(0x01c931e8ab871732)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd88e497a83137abd)),
-	.hi = ((u64)(0x011dbf316b346e7f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xceb1dbd923d8596c)),
-	.hi = ((u64)(0x01652efdc6018a1f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc25e52cf6cce6fc7)),
-	.hi = ((u64)(0x01be7abd3781eca7)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd97af3c1a40105dc)),
-	.hi = ((u64)(0x01170cb642b133e8)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0fd9b0b20d014754)),
-	.hi = ((u64)(0x015ccfe3d35d80e3)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd3d01cde90419929)),
-	.hi = ((u64)(0x01b403dcc834e11b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x6462120b1a28ffb9)),
-	.hi = ((u64)(0x01108269fd210cb1)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbd7a968de0b33fa8)),
-	.hi = ((u64)(0x0154a3047c694fdd)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2cd93c3158e00f92)),
-	.hi = ((u64)(0x01a9cbc59b83a3d5)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3c07c59ed78c09bb)),
-	.hi = ((u64)(0x010a1f5b81324665)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8b09b7068d6f0c2a)),
-	.hi = ((u64)(0x014ca732617ed7fe)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2dcc24c830cacf34)),
-	.hi = ((u64)(0x019fd0fef9de8dfe)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xdc9f96fd1e7ec180)),
-	.hi = ((u64)(0x0103e29f5c2b18be)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x93c77cbc661e71e1)),
-	.hi = ((u64)(0x0144db473335deee)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x38b95beb7fa60e59)),
-	.hi = ((u64)(0x01961219000356aa)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc6e7b2e65f8f91ef)),
-	.hi = ((u64)(0x01fb969f40042c54)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xfc50cfcffbb9bb35)),
-	.hi = ((u64)(0x013d3e2388029bb4)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3b6503c3faa82a03)),
-	.hi = ((u64)(0x018c8dac6a0342a2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xca3e44b4f9523484)),
-	.hi = ((u64)(0x01efb1178484134a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbe66eaf11bd360d2)),
-	.hi = ((u64)(0x0135ceaeb2d28c0e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x6e00a5ad62c83907)),
-	.hi = ((u64)(0x0183425a5f872f12)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0980cf18bb7a4749)),
-	.hi = ((u64)(0x01e412f0f768fad7)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x65f0816f752c6c8d)),
-	.hi = ((u64)(0x012e8bd69aa19cc6)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xff6ca1cb527787b1)),
-	.hi = ((u64)(0x017a2ecc414a03f7)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xff47ca3e2715699d)),
-	.hi = ((u64)(0x01d8ba7f519c84f5)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbf8cde66d86d6202)),
-	.hi = ((u64)(0x0127748f9301d319)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2f7016008e88ba83)),
-	.hi = ((u64)(0x017151b377c247e0)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3b4c1b80b22ae923)),
-	.hi = ((u64)(0x01cda62055b2d9d8)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x250f91306f5ad1b6)),
-	.hi = ((u64)(0x012087d4358fc827)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xee53757c8b318623)),
-	.hi = ((u64)(0x0168a9c942f3ba30)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x29e852dbadfde7ac)),
-	.hi = ((u64)(0x01c2d43b93b0a8bd)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3a3133c94cbeb0cc)),
-	.hi = ((u64)(0x0119c4a53c4e6976)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc8bd80bb9fee5cff)),
-	.hi = ((u64)(0x016035ce8b6203d3)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbaece0ea87e9f43e)),
-	.hi = ((u64)(0x01b843422e3a84c8)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x74d40c9294f238a7)),
-	.hi = ((u64)(0x01132a095ce492fd)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd2090fb73a2ec6d1)),
-	.hi = ((u64)(0x0157f48bb41db7bc)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x068b53a508ba7885)),
-	.hi = ((u64)(0x01adf1aea12525ac)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8417144725748b53)),
-	.hi = ((u64)(0x010cb70d24b7378b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x651cd958eed1ae28)),
-	.hi = ((u64)(0x014fe4d06de5056e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xfe640faf2a8619b2)),
-	.hi = ((u64)(0x01a3de04895e46c9)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3efe89cd7a93d00f)),
-	.hi = ((u64)(0x01066ac2d5daec3e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xcebe2c40d938c413)),
-	.hi = ((u64)(0x014805738b51a74d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x426db7510f86f518)),
-	.hi = ((u64)(0x019a06d06e261121)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc9849292a9b4592f)),
-	.hi = ((u64)(0x0100444244d7cab4)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xfbe5b73754216f7a)),
-	.hi = ((u64)(0x01405552d60dbd61)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x7adf25052929cb59)),
-	.hi = ((u64)(0x01906aa78b912cba)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1996ee4673743e2f)),
-	.hi = ((u64)(0x01f485516e7577e9)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xaffe54ec0828a6dd)),
-	.hi = ((u64)(0x0138d352e5096af1)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1bfdea270a32d095)),
-	.hi = ((u64)(0x018708279e4bc5ae)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xa2fd64b0ccbf84ba)),
-	.hi = ((u64)(0x01e8ca3185deb719)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x05de5eee7ff7b2f4)),
-	.hi = ((u64)(0x01317e5ef3ab3270)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0755f6aa1ff59fb1)),
-	.hi = ((u64)(0x017dddf6b095ff0c)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x092b7454a7f3079e)),
-	.hi = ((u64)(0x01dd55745cbb7ecf)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x65bb28b4e8f7e4c3)),
-	.hi = ((u64)(0x012a5568b9f52f41)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbf29f2e22335ddf3)),
-	.hi = ((u64)(0x0174eac2e8727b11)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2ef46f9aac035570)),
-	.hi = ((u64)(0x01d22573a28f19d6)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xdd58c5c0ab821566)),
-	.hi = ((u64)(0x0123576845997025)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x54aef730d6629ac0)),
-	.hi = ((u64)(0x016c2d4256ffcc2f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x29dab4fd0bfb4170)),
-	.hi = ((u64)(0x01c73892ecbfbf3b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xfa28b11e277d08e6)),
-	.hi = ((u64)(0x011c835bd3f7d784)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x38b2dd65b15c4b1f)),
-	.hi = ((u64)(0x0163a432c8f5cd66)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc6df94bf1db35de7)),
-	.hi = ((u64)(0x01bc8d3f7b3340bf)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xdc4bbcf772901ab0)),
-	.hi = ((u64)(0x0115d847ad000877)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd35eac354f34215c)),
-	.hi = ((u64)(0x015b4e5998400a95)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x48365742a30129b4)),
-	.hi = ((u64)(0x01b221effe500d3b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0d21f689a5e0ba10)),
-	.hi = ((u64)(0x010f5535fef20845)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x506a742c0f58e894)),
-	.hi = ((u64)(0x01532a837eae8a56)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe4851137132f22b9)),
-	.hi = ((u64)(0x01a7f5245e5a2ceb)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x6ed32ac26bfd75b4)),
-	.hi = ((u64)(0x0108f936baf85c13)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4a87f57306fcd321)),
-	.hi = ((u64)(0x014b378469b67318)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x5d29f2cfc8bc07e9)),
-	.hi = ((u64)(0x019e056584240fde)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xfa3a37c1dd7584f1)),
-	.hi = ((u64)(0x0102c35f729689ea)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb8c8c5b254d2e62e)),
-	.hi = ((u64)(0x014374374f3c2c65)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x26faf71eea079fb9)),
-	.hi = ((u64)(0x01945145230b377f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf0b9b4e6a48987a8)),
-	.hi = ((u64)(0x01f965966bce055e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x5674111026d5f4c9)),
-	.hi = ((u64)(0x013bdf7e0360c35b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2c111554308b71fb)),
-	.hi = ((u64)(0x018ad75d8438f432)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb7155aa93cae4e7a)),
-	.hi = ((u64)(0x01ed8d34e547313e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x326d58a9c5ecf10c)),
-	.hi = ((u64)(0x013478410f4c7ec7)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xff08aed437682d4f)),
-	.hi = ((u64)(0x01819651531f9e78)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3ecada89454238a3)),
-	.hi = ((u64)(0x01e1fbe5a7e78617)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x873ec895cb496366)),
-	.hi = ((u64)(0x012d3d6f88f0b3ce)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x290e7abb3e1bbc3f)),
-	.hi = ((u64)(0x01788ccb6b2ce0c2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb352196a0da2ab4f)),
-	.hi = ((u64)(0x01d6affe45f818f2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb0134fe24885ab11)),
-	.hi = ((u64)(0x01262dfeebbb0f97)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x9c1823dadaa715d6)),
-	.hi = ((u64)(0x016fb97ea6a9d37d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x031e2cd19150db4b)),
-	.hi = ((u64)(0x01cba7de5054485d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x21f2dc02fad2890f)),
-	.hi = ((u64)(0x011f48eaf234ad3a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xaa6f9303b9872b53)),
-	.hi = ((u64)(0x01671b25aec1d888)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd50b77c4a7e8f628)),
-	.hi = ((u64)(0x01c0e1ef1a724eaa)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc5272adae8f199d9)),
-	.hi = ((u64)(0x01188d357087712a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x7670f591a32e004f)),
-	.hi = ((u64)(0x015eb082cca94d75)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd40d32f60bf98063)),
-	.hi = ((u64)(0x01b65ca37fd3a0d2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc4883fd9c77bf03e)),
-	.hi = ((u64)(0x0111f9e62fe44483)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb5aa4fd0395aec4d)),
-	.hi = ((u64)(0x0156785fbbdd55a4)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe314e3c447b1a760)),
-	.hi = ((u64)(0x01ac1677aad4ab0d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xaded0e5aaccf089c)),
-	.hi = ((u64)(0x010b8e0acac4eae8)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd96851f15802cac3)),
-	.hi = ((u64)(0x014e718d7d7625a2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8fc2666dae037d74)),
-	.hi = ((u64)(0x01a20df0dcd3af0b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x39d980048cc22e68)),
-	.hi = ((u64)(0x010548b68a044d67)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x084fe005aff2ba03)),
-	.hi = ((u64)(0x01469ae42c8560c1)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4a63d8071bef6883)),
-	.hi = ((u64)(0x0198419d37a6b8f1)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x9cfcce08e2eb42a4)),
-	.hi = ((u64)(0x01fe52048590672d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x821e00c58dd309a7)),
-	.hi = ((u64)(0x013ef342d37a407c)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xa2a580f6f147cc10)),
-	.hi = ((u64)(0x018eb0138858d09b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8b4ee134ad99bf15)),
-	.hi = ((u64)(0x01f25c186a6f04c2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x97114cc0ec80176d)),
-	.hi = ((u64)(0x0137798f428562f9)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xfcd59ff127a01d48)),
-	.hi = ((u64)(0x018557f31326bbb7)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xfc0b07ed7188249a)),
-	.hi = ((u64)(0x01e6adefd7f06aa5)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbd86e4f466f516e0)),
-	.hi = ((u64)(0x01302cb5e6f642a7)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xace89e3180b25c98)),
-	.hi = ((u64)(0x017c37e360b3d351)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1822c5bde0def3be)),
-	.hi = ((u64)(0x01db45dc38e0c826)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xcf15bb96ac8b5857)),
-	.hi = ((u64)(0x01290ba9a38c7d17)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc2db2a7c57ae2e6d)),
-	.hi = ((u64)(0x01734e940c6f9c5d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3391f51b6d99ba08)),
-	.hi = ((u64)(0x01d022390f8b8375)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x403b393124801445)),
-	.hi = ((u64)(0x01221563a9b73229)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x904a077d6da01956)),
-	.hi = ((u64)(0x016a9abc9424feb3)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x745c895cc9081fac)),
-	.hi = ((u64)(0x01c5416bb92e3e60)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x48b9d5d9fda513cb)),
-	.hi = ((u64)(0x011b48e353bce6fc)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x5ae84b507d0e58be)),
-	.hi = ((u64)(0x01621b1c28ac20bb)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x31a25e249c51eeee)),
-	.hi = ((u64)(0x01baa1e332d728ea)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x5f057ad6e1b33554)),
-	.hi = ((u64)(0x0114a52dffc67992)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf6c6d98c9a2002aa)),
-	.hi = ((u64)(0x0159ce797fb817f6)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb4788fefc0a80354)),
-	.hi = ((u64)(0x01b04217dfa61df4)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf0cb59f5d8690214)),
-	.hi = ((u64)(0x010e294eebc7d2b8)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2cfe30734e83429a)),
-	.hi = ((u64)(0x0151b3a2a6b9c767)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf83dbc9022241340)),
-	.hi = ((u64)(0x01a6208b50683940)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x9b2695da15568c08)),
-	.hi = ((u64)(0x0107d457124123c8)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc1f03b509aac2f0a)),
-	.hi = ((u64)(0x0149c96cd6d16cba)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x726c4a24c1573acd)),
-	.hi = ((u64)(0x019c3bc80c85c7e9)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe783ae56f8d684c0)),
-	.hi = ((u64)(0x0101a55d07d39cf1)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x616499ecb70c25f0)),
-	.hi = ((u64)(0x01420eb449c8842e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf9bdc067e4cf2f6c)),
-	.hi = ((u64)(0x019292615c3aa539)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x782d3081de02fb47)),
-	.hi = ((u64)(0x01f736f9b3494e88)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4b1c3e512ac1dd0c)),
-	.hi = ((u64)(0x013a825c100dd115)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x9de34de57572544f)),
-	.hi = ((u64)(0x018922f31411455a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x455c215ed2cee963)),
-	.hi = ((u64)(0x01eb6bafd91596b1)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xcb5994db43c151de)),
-	.hi = ((u64)(0x0133234de7ad7e2e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x7e2ffa1214b1a655)),
-	.hi = ((u64)(0x017fec216198ddba)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1dbbf89699de0feb)),
-	.hi = ((u64)(0x01dfe729b9ff1529)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb2957b5e202ac9f3)),
-	.hi = ((u64)(0x012bf07a143f6d39)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1f3ada35a8357c6f)),
-	.hi = ((u64)(0x0176ec98994f4888)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x270990c31242db8b)),
-	.hi = ((u64)(0x01d4a7bebfa31aaa)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x5865fa79eb69c937)),
-	.hi = ((u64)(0x0124e8d737c5f0aa)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xee7f791866443b85)),
-	.hi = ((u64)(0x016e230d05b76cd4)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2a1f575e7fd54a66)),
-	.hi = ((u64)(0x01c9abd04725480a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x5a53969b0fe54e80)),
-	.hi = ((u64)(0x011e0b622c774d06)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf0e87c41d3dea220)),
-	.hi = ((u64)(0x01658e3ab7952047)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xed229b5248d64aa8)),
-	.hi = ((u64)(0x01bef1c9657a6859)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3435a1136d85eea9)),
-	.hi = ((u64)(0x0117571ddf6c8138)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4143095848e76a53)),
-	.hi = ((u64)(0x015d2ce55747a186)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd193cbae5b2144e8)),
-	.hi = ((u64)(0x01b4781ead1989e7)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe2fc5f4cf8f4cb11)),
-	.hi = ((u64)(0x0110cb132c2ff630)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1bbb77203731fdd5)),
-	.hi = ((u64)(0x0154fdd7f73bf3bd)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x62aa54e844fe7d4a)),
-	.hi = ((u64)(0x01aa3d4df50af0ac)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbdaa75112b1f0e4e)),
-	.hi = ((u64)(0x010a6650b926d66b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xad15125575e6d1e2)),
-	.hi = ((u64)(0x014cffe4e7708c06)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x585a56ead360865b)),
-	.hi = ((u64)(0x01a03fde214caf08)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x37387652c41c53f8)),
-	.hi = ((u64)(0x010427ead4cfed65)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x850693e7752368f7)),
-	.hi = ((u64)(0x014531e58a03e8be)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x264838e1526c4334)),
-	.hi = ((u64)(0x01967e5eec84e2ee)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xafda4719a7075402)),
-	.hi = ((u64)(0x01fc1df6a7a61ba9)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0de86c7008649481)),
-	.hi = ((u64)(0x013d92ba28c7d14a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x9162878c0a7db9a1)),
-	.hi = ((u64)(0x018cf768b2f9c59c)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb5bb296f0d1d280a)),
-	.hi = ((u64)(0x01f03542dfb83703)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x5194f9e568323906)),
-	.hi = ((u64)(0x01362149cbd32262)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe5fa385ec23ec747)),
-	.hi = ((u64)(0x0183a99c3ec7eafa)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x9f78c67672ce7919)),
-	.hi = ((u64)(0x01e494034e79e5b9)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x03ab7c0a07c10bb0)),
-	.hi = ((u64)(0x012edc82110c2f94)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x04965b0c89b14e9c)),
-	.hi = ((u64)(0x017a93a2954f3b79)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x45bbf1cfac1da243)),
-	.hi = ((u64)(0x01d9388b3aa30a57)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8b957721cb92856a)),
-	.hi = ((u64)(0x0127c35704a5e676)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2e7ad4ea3e7726c4)),
-	.hi = ((u64)(0x0171b42cc5cf6014)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3a198a24ce14f075)),
-	.hi = ((u64)(0x01ce2137f7433819)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc44ff65700cd1649)),
-	.hi = ((u64)(0x0120d4c2fa8a030f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb563f3ecc1005bdb)),
-	.hi = ((u64)(0x016909f3b92c83d3)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xa2bcf0e7f14072d2)),
-	.hi = ((u64)(0x01c34c70a777a4c8)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x65b61690f6c847c3)),
-	.hi = ((u64)(0x011a0fc668aac6fd)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbf239c35347a59b4)),
-	.hi = ((u64)(0x016093b802d578bc)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xeeec83428198f021)),
-	.hi = ((u64)(0x01b8b8a6038ad6eb)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x7553d20990ff9615)),
-	.hi = ((u64)(0x01137367c236c653)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x52a8c68bf53f7b9a)),
-	.hi = ((u64)(0x01585041b2c477e8)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x6752f82ef28f5a81)),
-	.hi = ((u64)(0x01ae64521f7595e2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8093db1d57999890)),
-	.hi = ((u64)(0x010cfeb353a97dad)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe0b8d1e4ad7ffeb4)),
-	.hi = ((u64)(0x01503e602893dd18)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x18e7065dd8dffe62)),
-	.hi = ((u64)(0x01a44df832b8d45f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x6f9063faa78bfefd)),
-	.hi = ((u64)(0x0106b0bb1fb384bb)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4b747cf9516efebc)),
-	.hi = ((u64)(0x01485ce9e7a065ea)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xde519c37a5cabe6b)),
-	.hi = ((u64)(0x019a742461887f64)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0af301a2c79eb703)),
-	.hi = ((u64)(0x01008896bcf54f9f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xcdafc20b798664c4)),
-	.hi = ((u64)(0x0140aabc6c32a386)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x811bb28e57e7fdf5)),
-	.hi = ((u64)(0x0190d56b873f4c68)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xa1629f31ede1fd72)),
-	.hi = ((u64)(0x01f50ac6690f1f82)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xa4dda37f34ad3e67)),
-	.hi = ((u64)(0x013926bc01a973b1)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0e150c5f01d88e01)),
-	.hi = ((u64)(0x0187706b0213d09e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x919a4f76c24eb181)),
-	.hi = ((u64)(0x01e94c85c298c4c5)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x7b0071aa39712ef1)),
-	.hi = ((u64)(0x0131cfd3999f7afb)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x59c08e14c7cd7aad)),
-	.hi = ((u64)(0x017e43c8800759ba)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf030b199f9c0d958)),
-	.hi = ((u64)(0x01ddd4baa0093028)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x961e6f003c1887d7)),
-	.hi = ((u64)(0x012aa4f4a405be19)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xfba60ac04b1ea9cd)),
-	.hi = ((u64)(0x01754e31cd072d9f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xfa8f8d705de65440)),
-	.hi = ((u64)(0x01d2a1be4048f907)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xfc99b8663aaff4a8)),
-	.hi = ((u64)(0x0123a516e82d9ba4)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3bc0267fc95bf1d2)),
-	.hi = ((u64)(0x016c8e5ca239028e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xcab0301fbbb2ee47)),
-	.hi = ((u64)(0x01c7b1f3cac74331)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1eae1e13d54fd4ec)),
-	.hi = ((u64)(0x011ccf385ebc89ff)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe659a598caa3ca27)),
-	.hi = ((u64)(0x01640306766bac7e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x9ff00efefd4cbcb1)),
-	.hi = ((u64)(0x01bd03c81406979e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x23f6095f5e4ff5ef)),
-	.hi = ((u64)(0x0116225d0c841ec3)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xecf38bb735e3f36a)),
-	.hi = ((u64)(0x015baaf44fa52673)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe8306ea5035cf045)),
-	.hi = ((u64)(0x01b295b1638e7010)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x911e4527221a162b)),
-	.hi = ((u64)(0x010f9d8ede39060a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3565d670eaa09bb6)),
-	.hi = ((u64)(0x015384f295c7478d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x82bf4c0d2548c2a3)),
-	.hi = ((u64)(0x01a8662f3b391970)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x51b78f88374d79a6)),
-	.hi = ((u64)(0x01093fdd8503afe6)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe625736a4520d810)),
-	.hi = ((u64)(0x014b8fd4e6449bdf)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xdfaed044d6690e14)),
-	.hi = ((u64)(0x019e73ca1fd5c2d7)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xebcd422b0601a8cc)),
-	.hi = ((u64)(0x0103085e53e599c6)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xa6c092b5c78212ff)),
-	.hi = ((u64)(0x0143ca75e8df0038)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd070b763396297bf)),
-	.hi = ((u64)(0x0194bd136316c046)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x848ce53c07bb3daf)),
-	.hi = ((u64)(0x01f9ec583bdc7058)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x52d80f4584d5068d)),
-	.hi = ((u64)(0x013c33b72569c637)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x278e1316e60a4831)),
-	.hi = ((u64)(0x018b40a4eec437c5)),
-}}; // fixed array const
-array_fixed_strconv__ftoa__Uint128_292 _const_strconv__ftoa__pow5_inv_split_64 = {(strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0000000000000001)),
-	.hi = ((u64)(0x0400000000000000)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3333333333333334)),
-	.hi = ((u64)(0x0333333333333333)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x28f5c28f5c28f5c3)),
-	.hi = ((u64)(0x028f5c28f5c28f5c)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xed916872b020c49c)),
-	.hi = ((u64)(0x020c49ba5e353f7c)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xaf4f0d844d013a93)),
-	.hi = ((u64)(0x0346dc5d63886594)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8c3f3e0370cdc876)),
-	.hi = ((u64)(0x029f16b11c6d1e10)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd698fe69270b06c5)),
-	.hi = ((u64)(0x0218def416bdb1a6)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf0f4ca41d811a46e)),
-	.hi = ((u64)(0x035afe535795e90a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf3f70834acdae9f1)),
-	.hi = ((u64)(0x02af31dc4611873b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x5cc5a02a23e254c1)),
-	.hi = ((u64)(0x0225c17d04dad296)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xfad5cd10396a2135)),
-	.hi = ((u64)(0x036f9bfb3af7b756)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xfbde3da69454e75e)),
-	.hi = ((u64)(0x02bfaffc2f2c92ab)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2fe4fe1edd10b918)),
-	.hi = ((u64)(0x0232f33025bd4223)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4ca19697c81ac1bf)),
-	.hi = ((u64)(0x0384b84d092ed038)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3d4e1213067bce33)),
-	.hi = ((u64)(0x02d09370d4257360)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x643e74dc052fd829)),
-	.hi = ((u64)(0x024075f3dceac2b3)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x6d30baf9a1e626a7)),
-	.hi = ((u64)(0x039a5652fb113785)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2426fbfae7eb5220)),
-	.hi = ((u64)(0x02e1dea8c8da92d1)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1cebfcc8b9890e80)),
-	.hi = ((u64)(0x024e4bba3a487574)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x94acc7a78f41b0cc)),
-	.hi = ((u64)(0x03b07929f6da5586)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xaa23d2ec729af3d7)),
-	.hi = ((u64)(0x02f394219248446b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbb4fdbf05baf2979)),
-	.hi = ((u64)(0x025c768141d369ef)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc54c931a2c4b758d)),
-	.hi = ((u64)(0x03c7240202ebdcb2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x9dd6dc14f03c5e0b)),
-	.hi = ((u64)(0x0305b66802564a28)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4b1249aa59c9e4d6)),
-	.hi = ((u64)(0x026af8533511d4ed)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x44ea0f76f60fd489)),
-	.hi = ((u64)(0x03de5a1ebb4fbb15)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x6a54d92bf80caa07)),
-	.hi = ((u64)(0x0318481895d96277)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x21dd7a89933d54d2)),
-	.hi = ((u64)(0x0279d346de4781f9)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x362f2a75b8622150)),
-	.hi = ((u64)(0x03f61ed7ca0c0328)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf825bb91604e810d)),
-	.hi = ((u64)(0x032b4bdfd4d668ec)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc684960de6a5340b)),
-	.hi = ((u64)(0x0289097fdd7853f0)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd203ab3e521dc33c)),
-	.hi = ((u64)(0x02073accb12d0ff3)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe99f7863b696052c)),
-	.hi = ((u64)(0x033ec47ab514e652)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x87b2c6b62bab3757)),
-	.hi = ((u64)(0x02989d2ef743eb75)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd2f56bc4efbc2c45)),
-	.hi = ((u64)(0x0213b0f25f69892a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1e55793b192d13a2)),
-	.hi = ((u64)(0x0352b4b6ff0f41de)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4b77942f475742e8)),
-	.hi = ((u64)(0x02a8909265a5ce4b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd5f9435905df68ba)),
-	.hi = ((u64)(0x022073a8515171d5)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x565b9ef4d6324129)),
-	.hi = ((u64)(0x03671f73b54f1c89)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xdeafb25d78283421)),
-	.hi = ((u64)(0x02b8e5f62aa5b06d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x188c8eb12cecf681)),
-	.hi = ((u64)(0x022d84c4eeeaf38b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8dadb11b7b14bd9b)),
-	.hi = ((u64)(0x037c07a17e44b8de)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x7157c0e2c8dd647c)),
-	.hi = ((u64)(0x02c99fb46503c718)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8ddfcd823a4ab6ca)),
-	.hi = ((u64)(0x023ae629ea696c13)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1632e269f6ddf142)),
-	.hi = ((u64)(0x0391704310a8acec)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x44f581ee5f17f435)),
-	.hi = ((u64)(0x02dac035a6ed5723)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x372ace584c1329c4)),
-	.hi = ((u64)(0x024899c4858aac1c)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbeaae3c079b842d3)),
-	.hi = ((u64)(0x03a75c6da27779c6)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x6555830061603576)),
-	.hi = ((u64)(0x02ec49f14ec5fb05)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb7779c004de6912b)),
-	.hi = ((u64)(0x0256a18dd89e626a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf258f99a163db512)),
-	.hi = ((u64)(0x03bdcf495a9703dd)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x5b7a614811caf741)),
-	.hi = ((u64)(0x02fe3f6de212697e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xaf951aa00e3bf901)),
-	.hi = ((u64)(0x0264ff8b1b41edfe)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x7f54f7667d2cc19b)),
-	.hi = ((u64)(0x03d4cc11c5364997)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x32aa5f8530f09ae3)),
-	.hi = ((u64)(0x0310a3416a91d479)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf55519375a5a1582)),
-	.hi = ((u64)(0x0273b5cdeedb1060)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbbbb5b8bc3c3559d)),
-	.hi = ((u64)(0x03ec56164af81a34)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2fc916096969114a)),
-	.hi = ((u64)(0x03237811d593482a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x596dab3ababa743c)),
-	.hi = ((u64)(0x0282c674aadc39bb)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x478aef622efb9030)),
-	.hi = ((u64)(0x0202385d557cfafc)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd8de4bd04b2c19e6)),
-	.hi = ((u64)(0x0336c0955594c4c6)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xad7ea30d08f014b8)),
-	.hi = ((u64)(0x029233aaaadd6a38)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x24654f3da0c01093)),
-	.hi = ((u64)(0x020e8fbbbbe454fa)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3a3bb1fc346680eb)),
-	.hi = ((u64)(0x034a7f92c63a2190)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x94fc8e635d1ecd89)),
-	.hi = ((u64)(0x02a1ffa89e94e7a6)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xaa63a51c4a7f0ad4)),
-	.hi = ((u64)(0x021b32ed4baa52eb)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xdd6c3b607731aaed)),
-	.hi = ((u64)(0x035eb7e212aa1e45)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1789c919f8f488bd)),
-	.hi = ((u64)(0x02b22cb4dbbb4b6b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xac6e3a7b2d906d64)),
-	.hi = ((u64)(0x022823c3e2fc3c55)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x13e390c515b3e23a)),
-	.hi = ((u64)(0x03736c6c9e606089)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xdcb60d6a77c31b62)),
-	.hi = ((u64)(0x02c2bd23b1e6b3a0)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x7d5e7121f968e2b5)),
-	.hi = ((u64)(0x0235641c8e52294d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc8971b698f0e3787)),
-	.hi = ((u64)(0x0388a02db0837548)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xa078e2bad8d82c6c)),
-	.hi = ((u64)(0x02d3b357c0692aa0)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe6c71bc8ad79bd24)),
-	.hi = ((u64)(0x0242f5dfcd20eee6)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0ad82c7448c2c839)),
-	.hi = ((u64)(0x039e5632e1ce4b0b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3be023903a356cfa)),
-	.hi = ((u64)(0x02e511c24e3ea26f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2fe682d9c82abd95)),
-	.hi = ((u64)(0x0250db01d8321b8c)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4ca4048fa6aac8ee)),
-	.hi = ((u64)(0x03b4919c8d1cf8e0)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3d5003a61eef0725)),
-	.hi = ((u64)(0x02f6dae3a4172d80)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x9773361e7f259f51)),
-	.hi = ((u64)(0x025f1582e9ac2466)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8beb89ca6508fee8)),
-	.hi = ((u64)(0x03cb559e42ad070a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x6fefa16eb73a6586)),
-	.hi = ((u64)(0x0309114b688a6c08)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf3261abef8fb846b)),
-	.hi = ((u64)(0x026da76f86d52339)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x51d691318e5f3a45)),
-	.hi = ((u64)(0x03e2a57f3e21d1f6)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0e4540f471e5c837)),
-	.hi = ((u64)(0x031bb798fe8174c5)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd8376729f4b7d360)),
-	.hi = ((u64)(0x027c92e0cb9ac3d0)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf38bd84321261eff)),
-	.hi = ((u64)(0x03fa849adf5e061a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x293cad0280eb4bff)),
-	.hi = ((u64)(0x032ed07be5e4d1af)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xedca240200bc3ccc)),
-	.hi = ((u64)(0x028bd9fcb7ea4158)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbe3b50019a3030a4)),
-	.hi = ((u64)(0x02097b309321cde0)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc9f88002904d1a9f)),
-	.hi = ((u64)(0x03425eb41e9c7c9a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3b2d3335403daee6)),
-	.hi = ((u64)(0x029b7ef67ee396e2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x95bdc291003158b8)),
-	.hi = ((u64)(0x0215ff2b98b6124e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x892f9db4cd1bc126)),
-	.hi = ((u64)(0x035665128df01d4a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x07594af70a7c9a85)),
-	.hi = ((u64)(0x02ab840ed7f34aa2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x6c476f2c0863aed1)),
-	.hi = ((u64)(0x0222d00bdff5d54e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x13a57eacda3917b4)),
-	.hi = ((u64)(0x036ae67966562217)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0fb7988a482dac90)),
-	.hi = ((u64)(0x02bbeb9451de81ac)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd95fad3b6cf156da)),
-	.hi = ((u64)(0x022fefa9db1867bc)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf565e1f8ae4ef15c)),
-	.hi = ((u64)(0x037fe5dc91c0a5fa)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x911e4e608b725ab0)),
-	.hi = ((u64)(0x02ccb7e3a7cd5195)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xda7ea51a0928488d)),
-	.hi = ((u64)(0x023d5fe9530aa7aa)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf7310829a8407415)),
-	.hi = ((u64)(0x039566421e7772aa)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2c2739baed005cde)),
-	.hi = ((u64)(0x02ddeb68185f8eef)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbcec2e2f24004a4b)),
-	.hi = ((u64)(0x024b22b9ad193f25)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x94ad16b1d333aa11)),
-	.hi = ((u64)(0x03ab6ac2ae8ecb6f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xaa241227dc2954db)),
-	.hi = ((u64)(0x02ef889bbed8a2bf)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x54e9a81fe35443e2)),
-	.hi = ((u64)(0x02593a163246e899)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2175d9cc9eed396a)),
-	.hi = ((u64)(0x03c1f689ea0b0dc2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe7917b0a18bdc788)),
-	.hi = ((u64)(0x03019207ee6f3e34)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb9412f3b46fe393a)),
-	.hi = ((u64)(0x0267a8065858fe90)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf535185ed7fd285c)),
-	.hi = ((u64)(0x03d90cd6f3c1974d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc42a79e57997537d)),
-	.hi = ((u64)(0x03140a458fce12a4)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x03552e512e12a931)),
-	.hi = ((u64)(0x02766e9e0ca4dbb7)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x9eeeb081e3510eb4)),
-	.hi = ((u64)(0x03f0b0fce107c5f1)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4bf226ce4f740bc3)),
-	.hi = ((u64)(0x0326f3fd80d304c1)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xa3281f0b72c33c9c)),
-	.hi = ((u64)(0x02858ffe00a8d09a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1c2018d5f568fd4a)),
-	.hi = ((u64)(0x020473319a20a6e2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf9ccf48988a7fba9)),
-	.hi = ((u64)(0x033a51e8f69aa49c)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xfb0a5d3ad3b99621)),
-	.hi = ((u64)(0x02950e53f87bb6e3)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2f3b7dc8a96144e7)),
-	.hi = ((u64)(0x0210d8432d2fc583)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe52bfc7442353b0c)),
-	.hi = ((u64)(0x034e26d1e1e608d1)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb756639034f76270)),
-	.hi = ((u64)(0x02a4ebdb1b1e6d74)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2c451c735d92b526)),
-	.hi = ((u64)(0x021d897c15b1f12a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x13a1c71efc1deea3)),
-	.hi = ((u64)(0x0362759355e981dd)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x761b05b2634b2550)),
-	.hi = ((u64)(0x02b52adc44bace4a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x91af37c1e908eaa6)),
-	.hi = ((u64)(0x022a88b036fbd83b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x82b1f2cfdb417770)),
-	.hi = ((u64)(0x03774119f192f392)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xcef4c23fe29ac5f3)),
-	.hi = ((u64)(0x02c5cdae5adbf60e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3f2a34ffe87bd190)),
-	.hi = ((u64)(0x0237d7beaf165e72)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x984387ffda5fb5b2)),
-	.hi = ((u64)(0x038c8c644b56fd83)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe0360666484c915b)),
-	.hi = ((u64)(0x02d6d6b6a2abfe02)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x802b3851d3707449)),
-	.hi = ((u64)(0x024578921bbccb35)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x99dec082ebe72075)),
-	.hi = ((u64)(0x03a25a835f947855)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xae4bcd358985b391)),
-	.hi = ((u64)(0x02e8486919439377)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbea30a913ad15c74)),
-	.hi = ((u64)(0x02536d20e102dc5f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xfdd1aa81f7b560b9)),
-	.hi = ((u64)(0x03b8ae9b019e2d65)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x97daeece5fc44d61)),
-	.hi = ((u64)(0x02fa2548ce182451)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xdfe258a51969d781)),
-	.hi = ((u64)(0x0261b76d71ace9da)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x996a276e8f0fbf34)),
-	.hi = ((u64)(0x03cf8be24f7b0fc4)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe121b9253f3fcc2a)),
-	.hi = ((u64)(0x030c6fe83f95a636)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb41afa8432997022)),
-	.hi = ((u64)(0x02705986994484f8)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xecf7f739ea8f19cf)),
-	.hi = ((u64)(0x03e6f5a4286da18d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x23f99294bba5ae40)),
-	.hi = ((u64)(0x031f2ae9b9f14e0b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4ffadbaa2fb7be99)),
-	.hi = ((u64)(0x027f5587c7f43e6f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x7ff7c5dd1925fdc2)),
-	.hi = ((u64)(0x03feef3fa6539718)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xccc637e4141e649b)),
-	.hi = ((u64)(0x033258ffb842df46)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd704f983434b83af)),
-	.hi = ((u64)(0x028ead9960357f6b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x126a6135cf6f9c8c)),
-	.hi = ((u64)(0x020bbe144cf79923)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x83dd685618b29414)),
-	.hi = ((u64)(0x0345fced47f28e9e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x9cb12044e08edcdd)),
-	.hi = ((u64)(0x029e63f1065ba54b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x16f419d0b3a57d7d)),
-	.hi = ((u64)(0x02184ff405161dd6)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8b20294dec3bfbfb)),
-	.hi = ((u64)(0x035a19866e89c956)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3c19baa4bcfcc996)),
-	.hi = ((u64)(0x02ae7ad1f207d445)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc9ae2eea30ca3adf)),
-	.hi = ((u64)(0x02252f0e5b39769d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0f7d17dd1add2afd)),
-	.hi = ((u64)(0x036eb1b091f58a96)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3f97464a7be42264)),
-	.hi = ((u64)(0x02bef48d41913bab)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xcc790508631ce850)),
-	.hi = ((u64)(0x02325d3dce0dc955)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe0c1a1a704fb0d4d)),
-	.hi = ((u64)(0x0383c862e3494222)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4d67b4859d95a43e)),
-	.hi = ((u64)(0x02cfd3824f6dce82)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x711fc39e17aae9cb)),
-	.hi = ((u64)(0x023fdc683f8b0b9b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe832d2968c44a945)),
-	.hi = ((u64)(0x039960a6cc11ac2b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xecf575453d03ba9e)),
-	.hi = ((u64)(0x02e11a1f09a7bcef)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x572ac4376402fbb1)),
-	.hi = ((u64)(0x024dae7f3aec9726)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x58446d256cd192b5)),
-	.hi = ((u64)(0x03af7d985e47583d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x79d0575123dadbc4)),
-	.hi = ((u64)(0x02f2cae04b6c4697)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x94a6ac40e97be303)),
-	.hi = ((u64)(0x025bd5803c569edf)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8771139b0f2c9e6c)),
-	.hi = ((u64)(0x03c62266c6f0fe32)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x9f8da948d8f07ebd)),
-	.hi = ((u64)(0x0304e85238c0cb5b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe60aedd3e0c06564)),
-	.hi = ((u64)(0x026a5374fa33d5e2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xa344afb9679a3bd2)),
-	.hi = ((u64)(0x03dd5254c3862304)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe903bfc78614fca8)),
-	.hi = ((u64)(0x031775109c6b4f36)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xba6966393810ca20)),
-	.hi = ((u64)(0x02792a73b055d8f8)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2a423d2859b4769a)),
-	.hi = ((u64)(0x03f510b91a22f4c1)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xee9b642047c39215)),
-	.hi = ((u64)(0x032a73c7481bf700)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbee2b680396941aa)),
-	.hi = ((u64)(0x02885c9f6ce32c00)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xff1bc53361210155)),
-	.hi = ((u64)(0x0206b07f8a4f5666)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x31c6085235019bbb)),
-	.hi = ((u64)(0x033de73276e5570b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x27d1a041c4014963)),
-	.hi = ((u64)(0x0297ec285f1ddf3c)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xeca7b367d0010782)),
-	.hi = ((u64)(0x021323537f4b18fc)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xadd91f0c8001a59d)),
-	.hi = ((u64)(0x0351d21f3211c194)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf17a7f3d3334847e)),
-	.hi = ((u64)(0x02a7db4c280e3476)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x279532975c2a0398)),
-	.hi = ((u64)(0x021fe2a3533e905f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd8eeb75893766c26)),
-	.hi = ((u64)(0x0366376bb8641a31)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x7a5892ad42c52352)),
-	.hi = ((u64)(0x02b82c562d1ce1c1)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xfb7a0ef102374f75)),
-	.hi = ((u64)(0x022cf044f0e3e7cd)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc59017e8038bb254)),
-	.hi = ((u64)(0x037b1a07e7d30c7c)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x37a67986693c8eaa)),
-	.hi = ((u64)(0x02c8e19feca8d6ca)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf951fad1edca0bbb)),
-	.hi = ((u64)(0x023a4e198a20abd4)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x28832ae97c76792b)),
-	.hi = ((u64)(0x03907cf5a9cddfbb)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2068ef21305ec756)),
-	.hi = ((u64)(0x02d9fd9154a4b2fc)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x19ed8c1a8d189f78)),
-	.hi = ((u64)(0x0247fe0ddd508f30)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x5caf4690e1c0ff26)),
-	.hi = ((u64)(0x03a66349621a7eb3)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4a25d20d81673285)),
-	.hi = ((u64)(0x02eb82a11b48655c)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3b5174d79ab8f537)),
-	.hi = ((u64)(0x0256021a7c39eab0)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x921bee25c45b21f1)),
-	.hi = ((u64)(0x03bcd02a605caab3)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xdb498b5169e2818e)),
-	.hi = ((u64)(0x02fd735519e3bbc2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x15d46f7454b53472)),
-	.hi = ((u64)(0x02645c4414b62fcf)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xefba4bed545520b6)),
-	.hi = ((u64)(0x03d3c6d35456b2e4)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf2fb6ff110441a2b)),
-	.hi = ((u64)(0x030fd242a9def583)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8f2f8cc0d9d014ef)),
-	.hi = ((u64)(0x02730e9bbb18c469)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb1e5ae015c80217f)),
-	.hi = ((u64)(0x03eb4a92c4f46d75)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc1848b344a001acc)),
-	.hi = ((u64)(0x0322a20f03f6bdf7)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xce03a2903b3348a3)),
-	.hi = ((u64)(0x02821b3f365efe5f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd802e873628f6d4f)),
-	.hi = ((u64)(0x0201af65c518cb7f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x599e40b89db2487f)),
-	.hi = ((u64)(0x0335e56fa1c14599)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe14b66fa17c1d399)),
-	.hi = ((u64)(0x029184594e3437ad)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x81091f2e7967dc7a)),
-	.hi = ((u64)(0x020e037aa4f692f1)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x9b41cb7d8f0c93f6)),
-	.hi = ((u64)(0x03499f2aa18a84b5)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xaf67d5fe0c0a0ff8)),
-	.hi = ((u64)(0x02a14c221ad536f7)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf2b977fe70080cc7)),
-	.hi = ((u64)(0x021aa34e7bddc592)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1df58cca4cd9ae0b)),
-	.hi = ((u64)(0x035dd2172c9608eb)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe4c470a1d7148b3c)),
-	.hi = ((u64)(0x02b174df56de6d88)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x83d05a1b1276d5ca)),
-	.hi = ((u64)(0x022790b2abe5246d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x9fb3c35e83f1560f)),
-	.hi = ((u64)(0x0372811ddfd50715)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb2f635e5365aab3f)),
-	.hi = ((u64)(0x02c200e4b310d277)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf591c4b75eaeef66)),
-	.hi = ((u64)(0x0234cd83c273db92)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xef4fa125644b18a3)),
-	.hi = ((u64)(0x0387af39371fc5b7)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8c3fb41de9d5ad4f)),
-	.hi = ((u64)(0x02d2f2942c196af9)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3cffc34b2177bdd9)),
-	.hi = ((u64)(0x02425ba9bce12261)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x94cc6bab68bf9628)),
-	.hi = ((u64)(0x039d5f75fb01d09b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x10a38955ed6611b9)),
-	.hi = ((u64)(0x02e44c5e6267da16)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xda1c6dde5784dafb)),
-	.hi = ((u64)(0x02503d184eb97b44)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf693e2fd58d49191)),
-	.hi = ((u64)(0x03b394f3b128c53a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc5431bfde0aa0e0e)),
-	.hi = ((u64)(0x02f610c2f4209dc8)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x6a9c1664b3bb3e72)),
-	.hi = ((u64)(0x025e73cf29b3b16d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x10f9bd6dec5eca4f)),
-	.hi = ((u64)(0x03ca52e50f85e8af)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xda616457f04bd50c)),
-	.hi = ((u64)(0x03084250d937ed58)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe1e783798d09773d)),
-	.hi = ((u64)(0x026d01da475ff113)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x030c058f480f252e)),
-	.hi = ((u64)(0x03e19c9072331b53)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x68d66ad906728425)),
-	.hi = ((u64)(0x031ae3a6c1c27c42)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8711ef14052869b7)),
-	.hi = ((u64)(0x027be952349b969b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0b4fe4ecd50d75f2)),
-	.hi = ((u64)(0x03f97550542c242c)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xa2a650bd773df7f5)),
-	.hi = ((u64)(0x032df7737689b689)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb551da312c31932a)),
-	.hi = ((u64)(0x028b2c5c5ed49207)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x5ddb14f4235adc22)),
-	.hi = ((u64)(0x0208f049e576db39)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2fc4ee536bc49369)),
-	.hi = ((u64)(0x034180763bf15ec2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xbfd0bea92303a921)),
-	.hi = ((u64)(0x029acd2b63277f01)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x9973cbba8269541a)),
-	.hi = ((u64)(0x021570ef8285ff34)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x5bec792a6a42202a)),
-	.hi = ((u64)(0x0355817f373ccb87)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe3239421ee9b4cef)),
-	.hi = ((u64)(0x02aacdff5f63d605)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb5b6101b25490a59)),
-	.hi = ((u64)(0x02223e65e5e97804)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x22bce691d541aa27)),
-	.hi = ((u64)(0x0369fd6fd64259a1)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb563eba7ddce21b9)),
-	.hi = ((u64)(0x02bb31264501e14d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf78322ecb171b494)),
-	.hi = ((u64)(0x022f5a850401810a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x259e9e47824f8753)),
-	.hi = ((u64)(0x037ef73b399c01ab)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1e187e9f9b72d2a9)),
-	.hi = ((u64)(0x02cbf8fc2e1667bc)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4b46cbb2e2c24221)),
-	.hi = ((u64)(0x023cc73024deb963)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x120adf849e039d01)),
-	.hi = ((u64)(0x039471e6a1645bd2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xdb3be603b19c7d9a)),
-	.hi = ((u64)(0x02dd27ebb4504974)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x7c2feb3627b0647c)),
-	.hi = ((u64)(0x024a865629d9d45d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2d197856a5e7072c)),
-	.hi = ((u64)(0x03aa7089dc8fba2f)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8a7ac6abb7ec05bd)),
-	.hi = ((u64)(0x02eec06e4a0c94f2)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd52f05562cbcd164)),
-	.hi = ((u64)(0x025899f1d4d6dd8e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x21e4d556adfae8a0)),
-	.hi = ((u64)(0x03c0f64fbaf1627e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe7ea444557fbed4d)),
-	.hi = ((u64)(0x0300c50c958de864)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xecbb69d1132ff10a)),
-	.hi = ((u64)(0x0267040a113e5383)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xadf8a94e851981aa)),
-	.hi = ((u64)(0x03d8067681fd526c)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8b2d543ed0e13488)),
-	.hi = ((u64)(0x0313385ece6441f0)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd5bddcff0d80f6d3)),
-	.hi = ((u64)(0x0275c6b23eb69b26)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x892fc7fe7c018aeb)),
-	.hi = ((u64)(0x03efa45064575ea4)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3a8c9ffec99ad589)),
-	.hi = ((u64)(0x03261d0d1d12b21d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc8707fff07af113b)),
-	.hi = ((u64)(0x0284e40a7da88e7d)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x39f39998d2f2742f)),
-	.hi = ((u64)(0x0203e9a1fe2071fe)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x8fec28f484b7204b)),
-	.hi = ((u64)(0x033975cffd00b663)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xd989ba5d36f8e6a2)),
-	.hi = ((u64)(0x02945e3ffd9a2b82)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x47a161e42bfa521c)),
-	.hi = ((u64)(0x02104b66647b5602)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0c35696d132a1cf9)),
-	.hi = ((u64)(0x034d4570a0c5566a)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x09c454574288172d)),
-	.hi = ((u64)(0x02a4378d4d6aab88)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xa169dd129ba0128b)),
-	.hi = ((u64)(0x021cf93dd7888939)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x0242fb50f9001dab)),
-	.hi = ((u64)(0x03618ec958da7529)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x9b68c90d940017bc)),
-	.hi = ((u64)(0x02b4723aad7b90ed)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x4920a0d7a999ac96)),
-	.hi = ((u64)(0x0229f4fbbdfc73f1)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x750101590f5c4757)),
-	.hi = ((u64)(0x037654c5fcc71fe8)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2a6734473f7d05df)),
-	.hi = ((u64)(0x02c5109e63d27fed)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xeeb8f69f65fd9e4c)),
-	.hi = ((u64)(0x0237407eb641fff0)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe45b24323cc8fd46)),
-	.hi = ((u64)(0x038b9a6456cfffe7)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xb6af502830a0ca9f)),
-	.hi = ((u64)(0x02d6151d123fffec)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xf88c402026e7087f)),
-	.hi = ((u64)(0x0244ddb0db666656)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x2746cd003e3e73fe)),
-	.hi = ((u64)(0x03a162b4923d708b)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x1f6bd73364fec332)),
-	.hi = ((u64)(0x02e7822a0e978d3c)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xe5efdf5c50cbcf5b)),
-	.hi = ((u64)(0x0252ce880bac70fc)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x3cb2fefa1adfb22b)),
-	.hi = ((u64)(0x03b7b0d9ac471b2e)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x308f3261af195b56)),
-	.hi = ((u64)(0x02f95a47bd05af58)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x5a0c284e25ade2ab)),
-	.hi = ((u64)(0x0261150630d15913)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x29ad0d49d5e30445)),
-	.hi = ((u64)(0x03ce8809e7b55b52)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x548a7107de4f369d)),
-	.hi = ((u64)(0x030ba007ec9115db)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xdd3b8d9fe50c2bb1)),
-	.hi = ((u64)(0x026fb3398a0dab15)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x952c15cca1ad12b5)),
-	.hi = ((u64)(0x03e5eb8f434911bc)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0x775677d6e7bda891)),
-	.hi = ((u64)(0x031e560c35d40e30)),
-}, (strconv__ftoa__Uint128){
-	.lo = ((u64)(0xc5dec645863153a7)),
-	.hi = ((u64)(0x027eab3cf7dcd826)),
-}}; // fixed array const
+array_u64 _const_strconv__ftoa__powers_of_10; // inited later
+array_u64 _const_strconv__ftoa__pow5_split_32; // inited later
+array_u64 _const_strconv__ftoa__pow5_inv_split_32; // inited later
+array_strconv__ftoa__Uint128 _const_strconv__ftoa__pow5_split_64; // inited later
+array_strconv__ftoa__Uint128 _const_strconv__ftoa__pow5_inv_split_64; // inited later
 static void strconv__ftoa__assert1(bool t, string msg);
 static int strconv__ftoa__bool_to_int(bool b);
 static u32 strconv__ftoa__bool_to_u32(bool b);
@@ -5025,7 +3163,7 @@ i64 strconv__common_parse_int(string _s, int base, int _bit_size, bool error_on_
 i64 strconv__parse_int(string _s, int base, int _bit_size);
 int strconv__atoi(string s);
 static bool strconv__underscore_ok(string s);
-array_fixed_f64_20 _const_strconv__dec_round = {((f64)(0.44)), 0.044, 0.0044, 0.00044, 0.000044, 0.0000044, 0.00000044, 0.000000044, 0.0000000044, 0.00000000044, 0.000000000044, 0.0000000000044, 0.00000000000044, 0.000000000000044, 0.0000000000000044, 0.00000000000000044, 0.000000000000000044, 0.0000000000000000044, 0.00000000000000000044, 0.000000000000000000044}; // fixed array const
+array_f64 _const_strconv__dec_round; // inited later
 string strconv__f64_to_str_lnd(f64 f, int dec_digit);
 string strconv__format_str(string s, strconv__BF_param p);
 string strconv__format_dec(u64 d, strconv__BF_param p);
@@ -7374,40 +5512,40 @@ int math__bits__leading_zeros_64(u64 x) {
 }
 
 int math__bits__trailing_zeros_8(byte x) {
-	return ((int)(_const_math__bits__ntz_8_tab[x]));
+	return ((int)((*(byte*)array_get(_const_math__bits__ntz_8_tab, x))));
 }
 
 int math__bits__trailing_zeros_16(u16 x) {
 	if (x == 0) {
 		return 16;
 	}
-	return ((int)(_const_math__bits__de_bruijn32tab[((u32)((x & -x))) * _const_math__bits__de_bruijn32 >> (32 - 5)]));
+	return ((int)((*(byte*)array_get(_const_math__bits__de_bruijn32tab, ((u32)((x & -x))) * _const_math__bits__de_bruijn32 >> (32 - 5)))));
 }
 
 int math__bits__trailing_zeros_32(u32 x) {
 	if (x == 0) {
 		return 32;
 	}
-	return ((int)(_const_math__bits__de_bruijn32tab[((x & -x)) * _const_math__bits__de_bruijn32 >> (32 - 5)]));
+	return ((int)((*(byte*)array_get(_const_math__bits__de_bruijn32tab, ((x & -x)) * _const_math__bits__de_bruijn32 >> (32 - 5)))));
 }
 
 int math__bits__trailing_zeros_64(u64 x) {
 	if (x == 0) {
 		return 64;
 	}
-	return ((int)(_const_math__bits__de_bruijn64tab[((x & -x)) * _const_math__bits__de_bruijn64 >> (64 - 6)]));
+	return ((int)((*(byte*)array_get(_const_math__bits__de_bruijn64tab, ((x & -x)) * _const_math__bits__de_bruijn64 >> (64 - 6)))));
 }
 
 int math__bits__ones_count_8(byte x) {
-	return ((int)(_const_math__bits__pop_8_tab[x]));
+	return ((int)((*(byte*)array_get(_const_math__bits__pop_8_tab, x))));
 }
 
 int math__bits__ones_count_16(u16 x) {
-	return ((int)(_const_math__bits__pop_8_tab[x >> 8] + _const_math__bits__pop_8_tab[(x & ((u16)(0xff)))]));
+	return ((int)((*(byte*)array_get(_const_math__bits__pop_8_tab, x >> 8)) + (*(byte*)array_get(_const_math__bits__pop_8_tab, (x & ((u16)(0xff)))))));
 }
 
 int math__bits__ones_count_32(u32 x) {
-	return ((int)(_const_math__bits__pop_8_tab[x >> 24] + _const_math__bits__pop_8_tab[(x >> 16 & 0xff)] + _const_math__bits__pop_8_tab[(x >> 8 & 0xff)] + _const_math__bits__pop_8_tab[(x & ((u32)(0xff)))]));
+	return ((int)((*(byte*)array_get(_const_math__bits__pop_8_tab, x >> 24)) + (*(byte*)array_get(_const_math__bits__pop_8_tab, (x >> 16 & 0xff))) + (*(byte*)array_get(_const_math__bits__pop_8_tab, (x >> 8 & 0xff))) + (*(byte*)array_get(_const_math__bits__pop_8_tab, (x & ((u32)(0xff)))))));
 }
 
 int math__bits__ones_count_64(u64 x) {
@@ -7450,12 +5588,12 @@ inline u64 math__bits__rotate_left_64(u64 x, int k) {
 
 // Attr: [inline]
 inline byte math__bits__reverse_8(byte x) {
-	return _const_math__bits__rev_8_tab[x];
+	return (*(byte*)array_get(_const_math__bits__rev_8_tab, x));
 }
 
 // Attr: [inline]
 inline u16 math__bits__reverse_16(u16 x) {
-	return (((u16)(_const_math__bits__rev_8_tab[x >> 8])) | (((u16)(_const_math__bits__rev_8_tab[(x & ((u16)(0xff)))])) << 8));
+	return (((u16)((*(byte*)array_get(_const_math__bits__rev_8_tab, x >> 8)))) | (((u16)((*(byte*)array_get(_const_math__bits__rev_8_tab, (x & ((u16)(0xff))))))) << 8));
 }
 
 // Attr: [inline]
@@ -7493,7 +5631,7 @@ inline u64 math__bits__reverse_bytes_64(u64 x) {
 }
 
 int math__bits__len_8(byte x) {
-	return ((int)(_const_math__bits__len_8_tab[x]));
+	return ((int)((*(byte*)array_get(_const_math__bits__len_8_tab, x))));
 }
 
 int math__bits__len_16(u16 x) {
@@ -7503,7 +5641,7 @@ int math__bits__len_16(u16 x) {
 		y >>= 8;
 		n = 8;
 	}
-	return n + ((int)(_const_math__bits__len_8_tab[y]));
+	return n + ((int)((*(byte*)array_get(_const_math__bits__len_8_tab, y))));
 }
 
 int math__bits__len_32(u32 x) {
@@ -7517,7 +5655,7 @@ int math__bits__len_32(u32 x) {
 		y >>= 8;
 		n += 8;
 	}
-	return n + ((int)(_const_math__bits__len_8_tab[y]));
+	return n + ((int)((*(byte*)array_get(_const_math__bits__len_8_tab, y))));
 }
 
 int math__bits__len_64(u64 x) {
@@ -7535,7 +5673,7 @@ int math__bits__len_64(u64 x) {
 		y >>= 8;
 		n += 8;
 	}
-	return n + ((int)(_const_math__bits__len_8_tab[y]));
+	return n + ((int)((*(byte*)array_get(_const_math__bits__len_8_tab, y))));
 }
 
 multi_return_u32_u32 math__bits__add_32(u32 x, u32 y, u32 carry) {
@@ -7646,8 +5784,8 @@ u32 math__bits__rem_32(u32 hi, u32 lo, u32 y) {
 }
 
 u64 math__bits__rem_64(u64 hi, u64 lo, u64 y) {
-	multi_return_u64_u64 mr_15093 = math__bits__div_64(hi % y, lo, y);
-	u64 rem = mr_15093.arg1;
+	multi_return_u64_u64 mr_15089 = math__bits__div_64(hi % y, lo, y);
+	u64 rem = mr_15089.arg1;
 	return rem;
 }
 
@@ -7674,8 +5812,8 @@ static string strconv__ftoa__Dec32_get_string_32(strconv__ftoa__Dec32 d, bool ne
 		disp = 1;
 	}
 	if (n_digit < out_len) {
-		out += _const_strconv__ftoa__ten_pow_table_32[out_len - n_digit - 1] * 5;
-		out /= _const_strconv__ftoa__ten_pow_table_32[out_len - n_digit];
+		out += (*(u32*)array_get(_const_strconv__ftoa__ten_pow_table_32, out_len - n_digit - 1)) * 5;
+		out /= (*(u32*)array_get(_const_strconv__ftoa__ten_pow_table_32, out_len - n_digit));
 		out_len = n_digit;
 	}
 	int y = i + out_len;
@@ -7868,9 +6006,9 @@ string strconv__ftoa__f32_to_str(f32 f, int n_digit) {
 	if ((exp == _const_strconv__ftoa__maxexp32) || (exp == 0 && mant == 0)) {
 		return strconv__ftoa__get_string_special(neg, exp == 0, mant == 0);
 	}
-	multi_return_strconv__ftoa__Dec32_bool mr_8143 = strconv__ftoa__f32_to_decimal_exact_int(mant, exp);
-	strconv__ftoa__Dec32 d = mr_8143.arg0;
-	bool ok = mr_8143.arg1;
+	multi_return_strconv__ftoa__Dec32_bool mr_8141 = strconv__ftoa__f32_to_decimal_exact_int(mant, exp);
+	strconv__ftoa__Dec32 d = mr_8141.arg0;
+	bool ok = mr_8141.arg1;
 	if (!ok) {
 		d = strconv__ftoa__f32_to_decimal(mant, exp);
 	}
@@ -7887,9 +6025,9 @@ string strconv__ftoa__f32_to_str_pad(f32 f, int n_digit) {
 	if ((exp == _const_strconv__ftoa__maxexp32) || (exp == 0 && mant == 0)) {
 		return strconv__ftoa__get_string_special(neg, exp == 0, mant == 0);
 	}
-	multi_return_strconv__ftoa__Dec32_bool mr_8851 = strconv__ftoa__f32_to_decimal_exact_int(mant, exp);
-	strconv__ftoa__Dec32 d = mr_8851.arg0;
-	bool ok = mr_8851.arg1;
+	multi_return_strconv__ftoa__Dec32_bool mr_8849 = strconv__ftoa__f32_to_decimal_exact_int(mant, exp);
+	strconv__ftoa__Dec32 d = mr_8849.arg0;
+	bool ok = mr_8849.arg1;
 	if (!ok) {
 		d = strconv__ftoa__f32_to_decimal(mant, exp);
 	}
@@ -7920,9 +6058,9 @@ static string strconv__ftoa__Dec64_get_string_64(strconv__ftoa__Dec64 d, bool ne
 		disp = 1;
 	}
 	if (n_digit < out_len) {
-		out += _const_strconv__ftoa__ten_pow_table_64[out_len - n_digit - 1] * 5;
-		out /= _const_strconv__ftoa__ten_pow_table_64[out_len - n_digit];
-		if (d.m / _const_strconv__ftoa__ten_pow_table_64[out_len - n_digit] < out) {
+		out += (*(u64*)array_get(_const_strconv__ftoa__ten_pow_table_64, out_len - n_digit - 1)) * 5;
+		out /= (*(u64*)array_get(_const_strconv__ftoa__ten_pow_table_64, out_len - n_digit));
+		if (d.m / (*(u64*)array_get(_const_strconv__ftoa__ten_pow_table_64, out_len - n_digit)) < out) {
 			d_exp += 1;
 			n_digit += 1;
 		}
@@ -8026,7 +6164,7 @@ static strconv__ftoa__Dec64 strconv__ftoa__f64_to_decimal(u64 mant, u64 exp) {
 		e10 = ((int)(q));
 		int k = _const_strconv__ftoa__pow5_inv_num_bits_64 + strconv__ftoa__pow5_bits(((int)(q))) - 1;
 		int i = -e2 + ((int)(q)) + k;
-		strconv__ftoa__Uint128 mul = _const_strconv__ftoa__pow5_inv_split_64[q];
+		strconv__ftoa__Uint128 mul = (*(strconv__ftoa__Uint128*)array_get(_const_strconv__ftoa__pow5_inv_split_64, q));
 		vr = strconv__ftoa__mul_shift_64(((u64)(4)) * m2, mul, i);
 		vp = strconv__ftoa__mul_shift_64(((u64)(4)) * m2 + ((u64)(2)), mul, i);
 		vm = strconv__ftoa__mul_shift_64(((u64)(4)) * m2 - ((u64)(1)) - mm_shift, mul, i);
@@ -8045,7 +6183,7 @@ static strconv__ftoa__Dec64 strconv__ftoa__f64_to_decimal(u64 mant, u64 exp) {
 		int i = -e2 - ((int)(q));
 		int k = strconv__ftoa__pow5_bits(i) - _const_strconv__ftoa__pow5_num_bits_64;
 		int j = ((int)(q)) - k;
-		strconv__ftoa__Uint128 mul = _const_strconv__ftoa__pow5_split_64[i];
+		strconv__ftoa__Uint128 mul = (*(strconv__ftoa__Uint128*)array_get(_const_strconv__ftoa__pow5_split_64, i));
 		vr = strconv__ftoa__mul_shift_64(((u64)(4)) * m2, mul, j);
 		vp = strconv__ftoa__mul_shift_64(((u64)(4)) * m2 + ((u64)(2)), mul, j);
 		vm = strconv__ftoa__mul_shift_64(((u64)(4)) * m2 - ((u64)(1)) - mm_shift, mul, j);
@@ -8140,9 +6278,9 @@ string strconv__ftoa__f64_to_str(f64 f, int n_digit) {
 	if ((exp == _const_strconv__ftoa__maxexp64) || (exp == 0 && mant == 0)) {
 		return strconv__ftoa__get_string_special(neg, exp == 0, mant == 0);
 	}
-	multi_return_strconv__ftoa__Dec64_bool mr_9928 = strconv__ftoa__f64_to_decimal_exact_int(mant, exp);
-	strconv__ftoa__Dec64 d = mr_9928.arg0;
-	bool ok = mr_9928.arg1;
+	multi_return_strconv__ftoa__Dec64_bool mr_9926 = strconv__ftoa__f64_to_decimal_exact_int(mant, exp);
+	strconv__ftoa__Dec64 d = mr_9926.arg0;
+	bool ok = mr_9926.arg1;
 	if (!ok) {
 		d = strconv__ftoa__f64_to_decimal(mant, exp);
 	}
@@ -8159,9 +6297,9 @@ string strconv__ftoa__f64_to_str_pad(f64 f, int n_digit) {
 	if ((exp == _const_strconv__ftoa__maxexp64) || (exp == 0 && mant == 0)) {
 		return strconv__ftoa__get_string_special(neg, exp == 0, mant == 0);
 	}
-	multi_return_strconv__ftoa__Dec64_bool mr_10664 = strconv__ftoa__f64_to_decimal_exact_int(mant, exp);
-	strconv__ftoa__Dec64 d = mr_10664.arg0;
-	bool ok = mr_10664.arg1;
+	multi_return_strconv__ftoa__Dec64_bool mr_10662 = strconv__ftoa__f64_to_decimal_exact_int(mant, exp);
+	strconv__ftoa__Dec64 d = mr_10662.arg0;
+	bool ok = mr_10662.arg1;
 	if (!ok) {
 		d = strconv__ftoa__f64_to_decimal(mant, exp);
 	}
@@ -8267,11 +6405,11 @@ static u32 strconv__ftoa__mul_shift_32(u32 m, u64 mul, int ishift) {
 }
 
 static u32 strconv__ftoa__mul_pow5_invdiv_pow2(u32 m, u32 q, int j) {
-	return strconv__ftoa__mul_shift_32(m, _const_strconv__ftoa__pow5_inv_split_32[q], j);
+	return strconv__ftoa__mul_shift_32(m, (*(u64*)array_get(_const_strconv__ftoa__pow5_inv_split_32, q)), j);
 }
 
 static u32 strconv__ftoa__mul_pow5_div_pow2(u32 m, u32 i, int j) {
-	return strconv__ftoa__mul_shift_32(m, _const_strconv__ftoa__pow5_split_32[i], j);
+	return strconv__ftoa__mul_shift_32(m, (*(u64*)array_get(_const_strconv__ftoa__pow5_split_32, i)), j);
 }
 
 static u32 strconv__ftoa__pow5_factor_32(u32 i_v) {
@@ -8317,7 +6455,7 @@ static int strconv__ftoa__pow5_bits(int e) {
 static int strconv__ftoa__decimal_len_64(u64 u) {
 	int log2 = 64 - math__bits__leading_zeros_64(u) - 1;
 	int t = (log2 + 1) * 1233 >> 12;
-	return t - strconv__ftoa__bool_to_int(u < _const_strconv__ftoa__powers_of_10[t]) + 1;
+	return t - strconv__ftoa__bool_to_int(u < (*(u64*)array_get(_const_strconv__ftoa__powers_of_10, t))) + 1;
 }
 
 static u64 strconv__ftoa__shift_right_128(strconv__ftoa__Uint128 v, int shift) {
@@ -9015,7 +7153,7 @@ static bool strconv__underscore_ok(string s) {
 }
 
 string strconv__f64_to_str_lnd(f64 f, int dec_digit) {
-	string s = strconv__ftoa__f64_to_str(f + _const_strconv__dec_round[dec_digit], 18);
+	string s = strconv__ftoa__f64_to_str(f + (*(f64*)array_get(_const_strconv__dec_round, dec_digit)), 18);
 	if (s.len > 2 && (string_at(s, 0) == 'n' || string_at(s, 1) == 'i')) {
 		return s;
 	}
@@ -37380,7 +35518,13 @@ void _vinit() {
 	_const_hash__wyhash__wyp3 = ((u64)(0x589965cc75374cc3));
 	_const_hash__wyhash__wyp4 = ((u64)(0x1d8e4e27c47d124f));
 	_const_math__bits__de_bruijn32 = ((u32)(0x077CB531));
+	_const_math__bits__de_bruijn32tab = new_array_from_c_array(32, 32, sizeof(byte), _MOV((byte[32]){
+((byte)(0)), 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9, 
+}));
 	_const_math__bits__de_bruijn64 = ((u64)(0x03f79d71b4ca8b09));
+	_const_math__bits__de_bruijn64tab = new_array_from_c_array(64, 64, sizeof(byte), _MOV((byte[64]){
+((byte)(0)), 1, 56, 2, 57, 49, 28, 3, 61, 58, 42, 50, 38, 29, 17, 4, 62, 47, 59, 36, 45, 43, 51, 22, 53, 39, 33, 30, 24, 18, 12, 5, 63, 55, 48, 27, 60, 41, 37, 16, 46, 35, 44, 21, 52, 32, 23, 11, 54, 26, 40, 15, 34, 20, 31, 10, 25, 14, 19, 9, 13, 8, 7, 6, 
+}));
 	_const_math__bits__m0 = ((u64)(0x5555555555555555));
 	_const_math__bits__m1 = ((u64)(0x3333333333333333));
 	_const_math__bits__m2 = ((u64)(0x0f0f0f0f0f0f0f0f));
@@ -37390,16 +35534,1906 @@ void _vinit() {
 	_const_math__bits__max_u64 = ((u64)(18446744073709551615));
 	_const_math__bits__two32 = ((u64)(0x100000000));
 	_const_math__bits__mask32 = _const_math__bits__two32 - 1;
+	_const_math__bits__ntz_8_tab = new_array_from_c_array(256, 256, sizeof(byte), _MOV((byte[256]){
+((byte)(0x08)), 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x07, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x06, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x05, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 
+}));
+	_const_math__bits__pop_8_tab = new_array_from_c_array(256, 256, sizeof(byte), _MOV((byte[256]){
+((byte)(0x00)), 0x01, 0x01, 0x02, 0x01, 0x02, 0x02, 0x03, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x02, 0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x05, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x03, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05, 0x06, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x04, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x07, 0x05, 0x06, 0x06, 0x07, 0x06, 0x07, 0x07, 0x08, 
+}));
+	_const_math__bits__rev_8_tab = new_array_from_c_array(256, 256, sizeof(byte), _MOV((byte[256]){
+((byte)(0x00)), 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0, 0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0, 0x08, 0x88, 0x48, 0xc8, 0x28, 0xa8, 0x68, 0xe8, 0x18, 0x98, 0x58, 0xd8, 0x38, 0xb8, 0x78, 0xf8, 0x04, 0x84, 0x44, 0xc4, 0x24, 0xa4, 0x64, 0xe4, 0x14, 0x94, 0x54, 0xd4, 0x34, 0xb4, 0x74, 0xf4, 0x0c, 0x8c, 0x4c, 0xcc, 0x2c, 0xac, 0x6c, 0xec, 0x1c, 0x9c, 0x5c, 0xdc, 0x3c, 0xbc, 0x7c, 0xfc, 0x02, 0x82, 0x42, 0xc2, 0x22, 0xa2, 0x62, 0xe2, 0x12, 0x92, 0x52, 0xd2, 0x32, 0xb2, 0x72, 0xf2, 0x0a, 0x8a, 0x4a, 0xca, 0x2a, 0xaa, 0x6a, 0xea, 0x1a, 0x9a, 0x5a, 0xda, 0x3a, 0xba, 0x7a, 0xfa, 0x06, 0x86, 0x46, 0xc6, 0x26, 0xa6, 0x66, 0xe6, 0x16, 0x96, 0x56, 0xd6, 0x36, 0xb6, 0x76, 0xf6, 0x0e, 0x8e, 0x4e, 0xce, 0x2e, 0xae, 0x6e, 0xee, 0x1e, 0x9e, 0x5e, 0xde, 0x3e, 0xbe, 0x7e, 0xfe, 0x01, 0x81, 0x41, 0xc1, 0x21, 0xa1, 0x61, 0xe1, 0x11, 0x91, 0x51, 0xd1, 0x31, 0xb1, 0x71, 0xf1, 0x09, 0x89, 0x49, 0xc9, 0x29, 0xa9, 0x69, 0xe9, 0x19, 0x99, 0x59, 0xd9, 0x39, 0xb9, 0x79, 0xf9, 0x05, 0x85, 0x45, 0xc5, 0x25, 0xa5, 0x65, 0xe5, 0x15, 0x95, 0x55, 0xd5, 0x35, 0xb5, 0x75, 0xf5, 0x0d, 0x8d, 0x4d, 0xcd, 0x2d, 0xad, 0x6d, 0xed, 0x1d, 0x9d, 0x5d, 0xdd, 0x3d, 0xbd, 0x7d, 0xfd, 0x03, 0x83, 0x43, 0xc3, 0x23, 0xa3, 0x63, 0xe3, 0x13, 0x93, 0x53, 0xd3, 0x33, 0xb3, 0x73, 0xf3, 0x0b, 0x8b, 0x4b, 0xcb, 0x2b, 0xab, 0x6b, 0xeb, 0x1b, 0x9b, 0x5b, 0xdb, 0x3b, 0xbb, 0x7b, 0xfb, 0x07, 0x87, 0x47, 0xc7, 0x27, 0xa7, 0x67, 0xe7, 0x17, 0x97, 0x57, 0xd7, 0x37, 0xb7, 0x77, 0xf7, 0x0f, 0x8f, 0x4f, 0xcf, 0x2f, 0xaf, 0x6f, 0xef, 0x1f, 0x9f, 0x5f, 0xdf, 0x3f, 0xbf, 0x7f, 0xff, 
+}));
+	_const_math__bits__len_8_tab = new_array_from_c_array(256, 256, sizeof(byte), _MOV((byte[256]){
+((byte)(0x00)), 0x01, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 
+}));
+	_const_strconv__ftoa__ten_pow_table_32 = new_array_from_c_array(12, 12, sizeof(u32), _MOV((u32[12]){
+((u32)(1)), ((u32)(10)), ((u32)(100)), ((u32)(1000)), ((u32)(10000)), ((u32)(100000)), ((u32)(1000000)), ((u32)(10000000)), ((u32)(100000000)), ((u32)(1000000000)), ((u32)(10000000000)), ((u32)(100000000000)), 
+}));
 	_const_strconv__ftoa__mantbits32 = ((u32)(23));
 	_const_strconv__ftoa__expbits32 = ((u32)(8));
+	_const_strconv__ftoa__ten_pow_table_64 = new_array_from_c_array(20, 20, sizeof(u64), _MOV((u64[20]){
+((u64)(1)), ((u64)(10)), ((u64)(100)), ((u64)(1000)), ((u64)(10000)), ((u64)(100000)), ((u64)(1000000)), ((u64)(10000000)), ((u64)(100000000)), ((u64)(1000000000)), ((u64)(10000000000)), ((u64)(100000000000)), ((u64)(1000000000000)), ((u64)(10000000000000)), ((u64)(100000000000000)), ((u64)(1000000000000000)), ((u64)(10000000000000000)), ((u64)(100000000000000000)), ((u64)(1000000000000000000)), ((u64)(10000000000000000000)), 
+}));
 	_const_strconv__ftoa__mantbits64 = ((u32)(52));
 	_const_strconv__ftoa__expbits64 = ((u32)(11));
+	_const_strconv__ftoa__powers_of_10 = new_array_from_c_array(18, 18, sizeof(u64), _MOV((u64[18]){
+((u64)(1e0)), ((u64)(1e1)), ((u64)(1e2)), ((u64)(1e3)), ((u64)(1e4)), ((u64)(1e5)), ((u64)(1e6)), ((u64)(1e7)), ((u64)(1e8)), ((u64)(1e9)), ((u64)(1e10)), ((u64)(1e11)), ((u64)(1e12)), ((u64)(1e13)), ((u64)(1e14)), ((u64)(1e15)), ((u64)(1e16)), ((u64)(1e17)), 
+}));
+	_const_strconv__ftoa__pow5_split_32 = new_array_from_c_array(47, 47, sizeof(u64), _MOV((u64[47]){
+((u64)(1152921504606846976)), ((u64)(1441151880758558720)), ((u64)(1801439850948198400)), ((u64)(2251799813685248000)), ((u64)(1407374883553280000)), ((u64)(1759218604441600000)), ((u64)(2199023255552000000)), ((u64)(1374389534720000000)), ((u64)(1717986918400000000)), ((u64)(2147483648000000000)), ((u64)(1342177280000000000)), ((u64)(1677721600000000000)), ((u64)(2097152000000000000)), ((u64)(1310720000000000000)), ((u64)(1638400000000000000)), ((u64)(2048000000000000000)), ((u64)(1280000000000000000)), ((u64)(1600000000000000000)), ((u64)(2000000000000000000)), ((u64)(1250000000000000000)), ((u64)(1562500000000000000)), ((u64)(1953125000000000000)), ((u64)(1220703125000000000)), ((u64)(1525878906250000000)), ((u64)(1907348632812500000)), ((u64)(1192092895507812500)), ((u64)(1490116119384765625)), ((u64)(1862645149230957031)), ((u64)(1164153218269348144)), ((u64)(1455191522836685180)), ((u64)(1818989403545856475)), ((u64)(2273736754432320594)), ((u64)(1421085471520200371)), ((u64)(1776356839400250464)), ((u64)(2220446049250313080)), ((u64)(1387778780781445675)), ((u64)(1734723475976807094)), ((u64)(2168404344971008868)), ((u64)(1355252715606880542)), ((u64)(1694065894508600678)), ((u64)(2117582368135750847)), ((u64)(1323488980084844279)), ((u64)(1654361225106055349)), ((u64)(2067951531382569187)), ((u64)(1292469707114105741)), ((u64)(1615587133892632177)), ((u64)(2019483917365790221)), 
+}));
+	_const_strconv__ftoa__pow5_inv_split_32 = new_array_from_c_array(31, 31, sizeof(u64), _MOV((u64[31]){
+((u64)(576460752303423489)), ((u64)(461168601842738791)), ((u64)(368934881474191033)), ((u64)(295147905179352826)), ((u64)(472236648286964522)), ((u64)(377789318629571618)), ((u64)(302231454903657294)), ((u64)(483570327845851670)), ((u64)(386856262276681336)), ((u64)(309485009821345069)), ((u64)(495176015714152110)), ((u64)(396140812571321688)), ((u64)(316912650057057351)), ((u64)(507060240091291761)), ((u64)(405648192073033409)), ((u64)(324518553658426727)), ((u64)(519229685853482763)), ((u64)(415383748682786211)), ((u64)(332306998946228969)), ((u64)(531691198313966350)), ((u64)(425352958651173080)), ((u64)(340282366920938464)), ((u64)(544451787073501542)), ((u64)(435561429658801234)), ((u64)(348449143727040987)), ((u64)(557518629963265579)), ((u64)(446014903970612463)), ((u64)(356811923176489971)), ((u64)(570899077082383953)), ((u64)(456719261665907162)), ((u64)(365375409332725730)), 
+}));
+	_const_strconv__ftoa__pow5_split_64 = new_array_from_c_array(326, 326, sizeof(strconv__ftoa__Uint128), _MOV((strconv__ftoa__Uint128[326]){
+(strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x0100000000000000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x0140000000000000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x0190000000000000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x01f4000000000000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x0138800000000000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x0186a00000000000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x01e8480000000000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x01312d0000000000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x017d784000000000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x01dcd65000000000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x012a05f200000000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x0174876e80000000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x01d1a94a20000000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x012309ce54000000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x016bcc41e9000000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x01c6bf5263400000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x011c37937e080000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x016345785d8a0000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x01bc16d674ec8000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x01158e460913d000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x015af1d78b58c400)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x01b1ae4d6e2ef500)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x010f0cf064dd5920)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x0152d02c7e14af68)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000000)),
+	.hi = ((u64)(0x01a784379d99db42)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4000000000000000)),
+	.hi = ((u64)(0x0108b2a2c2802909)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x9000000000000000)),
+	.hi = ((u64)(0x014adf4b7320334b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x7400000000000000)),
+	.hi = ((u64)(0x019d971e4fe8401e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0880000000000000)),
+	.hi = ((u64)(0x01027e72f1f12813)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xcaa0000000000000)),
+	.hi = ((u64)(0x01431e0fae6d7217)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbd48000000000000)),
+	.hi = ((u64)(0x0193e5939a08ce9d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2c9a000000000000)),
+	.hi = ((u64)(0x01f8def8808b0245)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3be0400000000000)),
+	.hi = ((u64)(0x013b8b5b5056e16b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0ad8500000000000)),
+	.hi = ((u64)(0x018a6e32246c99c6)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8d8e640000000000)),
+	.hi = ((u64)(0x01ed09bead87c037)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb878fe8000000000)),
+	.hi = ((u64)(0x013426172c74d822)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x66973e2000000000)),
+	.hi = ((u64)(0x01812f9cf7920e2b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x403d0da800000000)),
+	.hi = ((u64)(0x01e17b84357691b6)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe826288900000000)),
+	.hi = ((u64)(0x012ced32a16a1b11)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x622fb2ab40000000)),
+	.hi = ((u64)(0x0178287f49c4a1d6)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xfabb9f5610000000)),
+	.hi = ((u64)(0x01d6329f1c35ca4b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x7cb54395ca000000)),
+	.hi = ((u64)(0x0125dfa371a19e6f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x5be2947b3c800000)),
+	.hi = ((u64)(0x016f578c4e0a060b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x32db399a0ba00000)),
+	.hi = ((u64)(0x01cb2d6f618c878e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xdfc9040047440000)),
+	.hi = ((u64)(0x011efc659cf7d4b8)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x17bb450059150000)),
+	.hi = ((u64)(0x0166bb7f0435c9e7)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xddaa16406f5a4000)),
+	.hi = ((u64)(0x01c06a5ec5433c60)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8a8a4de845986800)),
+	.hi = ((u64)(0x0118427b3b4a05bc)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xad2ce16256fe8200)),
+	.hi = ((u64)(0x015e531a0a1c872b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x987819baecbe2280)),
+	.hi = ((u64)(0x01b5e7e08ca3a8f6)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1f4b1014d3f6d590)),
+	.hi = ((u64)(0x0111b0ec57e6499a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xa71dd41a08f48af4)),
+	.hi = ((u64)(0x01561d276ddfdc00)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd0e549208b31adb1)),
+	.hi = ((u64)(0x01aba4714957d300)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x828f4db456ff0c8e)),
+	.hi = ((u64)(0x010b46c6cdd6e3e0)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xa33321216cbecfb2)),
+	.hi = ((u64)(0x014e1878814c9cd8)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xcbffe969c7ee839e)),
+	.hi = ((u64)(0x01a19e96a19fc40e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3f7ff1e21cf51243)),
+	.hi = ((u64)(0x0105031e2503da89)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8f5fee5aa43256d4)),
+	.hi = ((u64)(0x014643e5ae44d12b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x7337e9f14d3eec89)),
+	.hi = ((u64)(0x0197d4df19d60576)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1005e46da08ea7ab)),
+	.hi = ((u64)(0x01fdca16e04b86d4)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8a03aec4845928cb)),
+	.hi = ((u64)(0x013e9e4e4c2f3444)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xac849a75a56f72fd)),
+	.hi = ((u64)(0x018e45e1df3b0155)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x17a5c1130ecb4fbd)),
+	.hi = ((u64)(0x01f1d75a5709c1ab)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xeec798abe93f11d6)),
+	.hi = ((u64)(0x013726987666190a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xaa797ed6e38ed64b)),
+	.hi = ((u64)(0x0184f03e93ff9f4d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1517de8c9c728bde)),
+	.hi = ((u64)(0x01e62c4e38ff8721)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xad2eeb17e1c7976b)),
+	.hi = ((u64)(0x012fdbb0e39fb474)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd87aa5ddda397d46)),
+	.hi = ((u64)(0x017bd29d1c87a191)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4e994f5550c7dc97)),
+	.hi = ((u64)(0x01dac74463a989f6)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf11fd195527ce9de)),
+	.hi = ((u64)(0x0128bc8abe49f639)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x6d67c5faa71c2456)),
+	.hi = ((u64)(0x0172ebad6ddc73c8)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x88c1b77950e32d6c)),
+	.hi = ((u64)(0x01cfa698c95390ba)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x957912abd28dfc63)),
+	.hi = ((u64)(0x0121c81f7dd43a74)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbad75756c7317b7c)),
+	.hi = ((u64)(0x016a3a275d494911)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x298d2d2c78fdda5b)),
+	.hi = ((u64)(0x01c4c8b1349b9b56)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd9f83c3bcb9ea879)),
+	.hi = ((u64)(0x011afd6ec0e14115)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x50764b4abe865297)),
+	.hi = ((u64)(0x0161bcca7119915b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2493de1d6e27e73d)),
+	.hi = ((u64)(0x01ba2bfd0d5ff5b2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x56dc6ad264d8f086)),
+	.hi = ((u64)(0x01145b7e285bf98f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2c938586fe0f2ca8)),
+	.hi = ((u64)(0x0159725db272f7f3)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf7b866e8bd92f7d2)),
+	.hi = ((u64)(0x01afcef51f0fb5ef)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xfad34051767bdae3)),
+	.hi = ((u64)(0x010de1593369d1b5)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x79881065d41ad19c)),
+	.hi = ((u64)(0x015159af80444623)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x57ea147f49218603)),
+	.hi = ((u64)(0x01a5b01b605557ac)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb6f24ccf8db4f3c1)),
+	.hi = ((u64)(0x01078e111c3556cb)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xa4aee003712230b2)),
+	.hi = ((u64)(0x014971956342ac7e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4dda98044d6abcdf)),
+	.hi = ((u64)(0x019bcdfabc13579e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf0a89f02b062b60b)),
+	.hi = ((u64)(0x010160bcb58c16c2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xacd2c6c35c7b638e)),
+	.hi = ((u64)(0x0141b8ebe2ef1c73)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x98077874339a3c71)),
+	.hi = ((u64)(0x01922726dbaae390)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbe0956914080cb8e)),
+	.hi = ((u64)(0x01f6b0f092959c74)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf6c5d61ac8507f38)),
+	.hi = ((u64)(0x013a2e965b9d81c8)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x34774ba17a649f07)),
+	.hi = ((u64)(0x0188ba3bf284e23b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x01951e89d8fdc6c8)),
+	.hi = ((u64)(0x01eae8caef261aca)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x40fd3316279e9c3d)),
+	.hi = ((u64)(0x0132d17ed577d0be)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd13c7fdbb186434c)),
+	.hi = ((u64)(0x017f85de8ad5c4ed)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x458b9fd29de7d420)),
+	.hi = ((u64)(0x01df67562d8b3629)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xcb7743e3a2b0e494)),
+	.hi = ((u64)(0x012ba095dc7701d9)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3e5514dc8b5d1db9)),
+	.hi = ((u64)(0x017688bb5394c250)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4dea5a13ae346527)),
+	.hi = ((u64)(0x01d42aea2879f2e4)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb0b2784c4ce0bf38)),
+	.hi = ((u64)(0x01249ad2594c37ce)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x5cdf165f6018ef06)),
+	.hi = ((u64)(0x016dc186ef9f45c2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf416dbf7381f2ac8)),
+	.hi = ((u64)(0x01c931e8ab871732)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd88e497a83137abd)),
+	.hi = ((u64)(0x011dbf316b346e7f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xceb1dbd923d8596c)),
+	.hi = ((u64)(0x01652efdc6018a1f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc25e52cf6cce6fc7)),
+	.hi = ((u64)(0x01be7abd3781eca7)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd97af3c1a40105dc)),
+	.hi = ((u64)(0x01170cb642b133e8)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0fd9b0b20d014754)),
+	.hi = ((u64)(0x015ccfe3d35d80e3)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd3d01cde90419929)),
+	.hi = ((u64)(0x01b403dcc834e11b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x6462120b1a28ffb9)),
+	.hi = ((u64)(0x01108269fd210cb1)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbd7a968de0b33fa8)),
+	.hi = ((u64)(0x0154a3047c694fdd)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2cd93c3158e00f92)),
+	.hi = ((u64)(0x01a9cbc59b83a3d5)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3c07c59ed78c09bb)),
+	.hi = ((u64)(0x010a1f5b81324665)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8b09b7068d6f0c2a)),
+	.hi = ((u64)(0x014ca732617ed7fe)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2dcc24c830cacf34)),
+	.hi = ((u64)(0x019fd0fef9de8dfe)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xdc9f96fd1e7ec180)),
+	.hi = ((u64)(0x0103e29f5c2b18be)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x93c77cbc661e71e1)),
+	.hi = ((u64)(0x0144db473335deee)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x38b95beb7fa60e59)),
+	.hi = ((u64)(0x01961219000356aa)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc6e7b2e65f8f91ef)),
+	.hi = ((u64)(0x01fb969f40042c54)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xfc50cfcffbb9bb35)),
+	.hi = ((u64)(0x013d3e2388029bb4)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3b6503c3faa82a03)),
+	.hi = ((u64)(0x018c8dac6a0342a2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xca3e44b4f9523484)),
+	.hi = ((u64)(0x01efb1178484134a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbe66eaf11bd360d2)),
+	.hi = ((u64)(0x0135ceaeb2d28c0e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x6e00a5ad62c83907)),
+	.hi = ((u64)(0x0183425a5f872f12)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0980cf18bb7a4749)),
+	.hi = ((u64)(0x01e412f0f768fad7)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x65f0816f752c6c8d)),
+	.hi = ((u64)(0x012e8bd69aa19cc6)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xff6ca1cb527787b1)),
+	.hi = ((u64)(0x017a2ecc414a03f7)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xff47ca3e2715699d)),
+	.hi = ((u64)(0x01d8ba7f519c84f5)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbf8cde66d86d6202)),
+	.hi = ((u64)(0x0127748f9301d319)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2f7016008e88ba83)),
+	.hi = ((u64)(0x017151b377c247e0)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3b4c1b80b22ae923)),
+	.hi = ((u64)(0x01cda62055b2d9d8)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x250f91306f5ad1b6)),
+	.hi = ((u64)(0x012087d4358fc827)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xee53757c8b318623)),
+	.hi = ((u64)(0x0168a9c942f3ba30)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x29e852dbadfde7ac)),
+	.hi = ((u64)(0x01c2d43b93b0a8bd)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3a3133c94cbeb0cc)),
+	.hi = ((u64)(0x0119c4a53c4e6976)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc8bd80bb9fee5cff)),
+	.hi = ((u64)(0x016035ce8b6203d3)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbaece0ea87e9f43e)),
+	.hi = ((u64)(0x01b843422e3a84c8)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x74d40c9294f238a7)),
+	.hi = ((u64)(0x01132a095ce492fd)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd2090fb73a2ec6d1)),
+	.hi = ((u64)(0x0157f48bb41db7bc)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x068b53a508ba7885)),
+	.hi = ((u64)(0x01adf1aea12525ac)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8417144725748b53)),
+	.hi = ((u64)(0x010cb70d24b7378b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x651cd958eed1ae28)),
+	.hi = ((u64)(0x014fe4d06de5056e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xfe640faf2a8619b2)),
+	.hi = ((u64)(0x01a3de04895e46c9)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3efe89cd7a93d00f)),
+	.hi = ((u64)(0x01066ac2d5daec3e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xcebe2c40d938c413)),
+	.hi = ((u64)(0x014805738b51a74d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x426db7510f86f518)),
+	.hi = ((u64)(0x019a06d06e261121)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc9849292a9b4592f)),
+	.hi = ((u64)(0x0100444244d7cab4)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xfbe5b73754216f7a)),
+	.hi = ((u64)(0x01405552d60dbd61)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x7adf25052929cb59)),
+	.hi = ((u64)(0x01906aa78b912cba)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1996ee4673743e2f)),
+	.hi = ((u64)(0x01f485516e7577e9)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xaffe54ec0828a6dd)),
+	.hi = ((u64)(0x0138d352e5096af1)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1bfdea270a32d095)),
+	.hi = ((u64)(0x018708279e4bc5ae)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xa2fd64b0ccbf84ba)),
+	.hi = ((u64)(0x01e8ca3185deb719)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x05de5eee7ff7b2f4)),
+	.hi = ((u64)(0x01317e5ef3ab3270)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0755f6aa1ff59fb1)),
+	.hi = ((u64)(0x017dddf6b095ff0c)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x092b7454a7f3079e)),
+	.hi = ((u64)(0x01dd55745cbb7ecf)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x65bb28b4e8f7e4c3)),
+	.hi = ((u64)(0x012a5568b9f52f41)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbf29f2e22335ddf3)),
+	.hi = ((u64)(0x0174eac2e8727b11)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2ef46f9aac035570)),
+	.hi = ((u64)(0x01d22573a28f19d6)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xdd58c5c0ab821566)),
+	.hi = ((u64)(0x0123576845997025)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x54aef730d6629ac0)),
+	.hi = ((u64)(0x016c2d4256ffcc2f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x29dab4fd0bfb4170)),
+	.hi = ((u64)(0x01c73892ecbfbf3b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xfa28b11e277d08e6)),
+	.hi = ((u64)(0x011c835bd3f7d784)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x38b2dd65b15c4b1f)),
+	.hi = ((u64)(0x0163a432c8f5cd66)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc6df94bf1db35de7)),
+	.hi = ((u64)(0x01bc8d3f7b3340bf)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xdc4bbcf772901ab0)),
+	.hi = ((u64)(0x0115d847ad000877)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd35eac354f34215c)),
+	.hi = ((u64)(0x015b4e5998400a95)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x48365742a30129b4)),
+	.hi = ((u64)(0x01b221effe500d3b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0d21f689a5e0ba10)),
+	.hi = ((u64)(0x010f5535fef20845)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x506a742c0f58e894)),
+	.hi = ((u64)(0x01532a837eae8a56)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe4851137132f22b9)),
+	.hi = ((u64)(0x01a7f5245e5a2ceb)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x6ed32ac26bfd75b4)),
+	.hi = ((u64)(0x0108f936baf85c13)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4a87f57306fcd321)),
+	.hi = ((u64)(0x014b378469b67318)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x5d29f2cfc8bc07e9)),
+	.hi = ((u64)(0x019e056584240fde)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xfa3a37c1dd7584f1)),
+	.hi = ((u64)(0x0102c35f729689ea)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb8c8c5b254d2e62e)),
+	.hi = ((u64)(0x014374374f3c2c65)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x26faf71eea079fb9)),
+	.hi = ((u64)(0x01945145230b377f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf0b9b4e6a48987a8)),
+	.hi = ((u64)(0x01f965966bce055e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x5674111026d5f4c9)),
+	.hi = ((u64)(0x013bdf7e0360c35b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2c111554308b71fb)),
+	.hi = ((u64)(0x018ad75d8438f432)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb7155aa93cae4e7a)),
+	.hi = ((u64)(0x01ed8d34e547313e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x326d58a9c5ecf10c)),
+	.hi = ((u64)(0x013478410f4c7ec7)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xff08aed437682d4f)),
+	.hi = ((u64)(0x01819651531f9e78)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3ecada89454238a3)),
+	.hi = ((u64)(0x01e1fbe5a7e78617)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x873ec895cb496366)),
+	.hi = ((u64)(0x012d3d6f88f0b3ce)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x290e7abb3e1bbc3f)),
+	.hi = ((u64)(0x01788ccb6b2ce0c2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb352196a0da2ab4f)),
+	.hi = ((u64)(0x01d6affe45f818f2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb0134fe24885ab11)),
+	.hi = ((u64)(0x01262dfeebbb0f97)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x9c1823dadaa715d6)),
+	.hi = ((u64)(0x016fb97ea6a9d37d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x031e2cd19150db4b)),
+	.hi = ((u64)(0x01cba7de5054485d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x21f2dc02fad2890f)),
+	.hi = ((u64)(0x011f48eaf234ad3a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xaa6f9303b9872b53)),
+	.hi = ((u64)(0x01671b25aec1d888)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd50b77c4a7e8f628)),
+	.hi = ((u64)(0x01c0e1ef1a724eaa)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc5272adae8f199d9)),
+	.hi = ((u64)(0x01188d357087712a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x7670f591a32e004f)),
+	.hi = ((u64)(0x015eb082cca94d75)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd40d32f60bf98063)),
+	.hi = ((u64)(0x01b65ca37fd3a0d2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc4883fd9c77bf03e)),
+	.hi = ((u64)(0x0111f9e62fe44483)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb5aa4fd0395aec4d)),
+	.hi = ((u64)(0x0156785fbbdd55a4)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe314e3c447b1a760)),
+	.hi = ((u64)(0x01ac1677aad4ab0d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xaded0e5aaccf089c)),
+	.hi = ((u64)(0x010b8e0acac4eae8)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd96851f15802cac3)),
+	.hi = ((u64)(0x014e718d7d7625a2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8fc2666dae037d74)),
+	.hi = ((u64)(0x01a20df0dcd3af0b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x39d980048cc22e68)),
+	.hi = ((u64)(0x010548b68a044d67)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x084fe005aff2ba03)),
+	.hi = ((u64)(0x01469ae42c8560c1)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4a63d8071bef6883)),
+	.hi = ((u64)(0x0198419d37a6b8f1)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x9cfcce08e2eb42a4)),
+	.hi = ((u64)(0x01fe52048590672d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x821e00c58dd309a7)),
+	.hi = ((u64)(0x013ef342d37a407c)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xa2a580f6f147cc10)),
+	.hi = ((u64)(0x018eb0138858d09b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8b4ee134ad99bf15)),
+	.hi = ((u64)(0x01f25c186a6f04c2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x97114cc0ec80176d)),
+	.hi = ((u64)(0x0137798f428562f9)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xfcd59ff127a01d48)),
+	.hi = ((u64)(0x018557f31326bbb7)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xfc0b07ed7188249a)),
+	.hi = ((u64)(0x01e6adefd7f06aa5)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbd86e4f466f516e0)),
+	.hi = ((u64)(0x01302cb5e6f642a7)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xace89e3180b25c98)),
+	.hi = ((u64)(0x017c37e360b3d351)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1822c5bde0def3be)),
+	.hi = ((u64)(0x01db45dc38e0c826)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xcf15bb96ac8b5857)),
+	.hi = ((u64)(0x01290ba9a38c7d17)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc2db2a7c57ae2e6d)),
+	.hi = ((u64)(0x01734e940c6f9c5d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3391f51b6d99ba08)),
+	.hi = ((u64)(0x01d022390f8b8375)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x403b393124801445)),
+	.hi = ((u64)(0x01221563a9b73229)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x904a077d6da01956)),
+	.hi = ((u64)(0x016a9abc9424feb3)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x745c895cc9081fac)),
+	.hi = ((u64)(0x01c5416bb92e3e60)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x48b9d5d9fda513cb)),
+	.hi = ((u64)(0x011b48e353bce6fc)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x5ae84b507d0e58be)),
+	.hi = ((u64)(0x01621b1c28ac20bb)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x31a25e249c51eeee)),
+	.hi = ((u64)(0x01baa1e332d728ea)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x5f057ad6e1b33554)),
+	.hi = ((u64)(0x0114a52dffc67992)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf6c6d98c9a2002aa)),
+	.hi = ((u64)(0x0159ce797fb817f6)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb4788fefc0a80354)),
+	.hi = ((u64)(0x01b04217dfa61df4)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf0cb59f5d8690214)),
+	.hi = ((u64)(0x010e294eebc7d2b8)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2cfe30734e83429a)),
+	.hi = ((u64)(0x0151b3a2a6b9c767)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf83dbc9022241340)),
+	.hi = ((u64)(0x01a6208b50683940)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x9b2695da15568c08)),
+	.hi = ((u64)(0x0107d457124123c8)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc1f03b509aac2f0a)),
+	.hi = ((u64)(0x0149c96cd6d16cba)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x726c4a24c1573acd)),
+	.hi = ((u64)(0x019c3bc80c85c7e9)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe783ae56f8d684c0)),
+	.hi = ((u64)(0x0101a55d07d39cf1)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x616499ecb70c25f0)),
+	.hi = ((u64)(0x01420eb449c8842e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf9bdc067e4cf2f6c)),
+	.hi = ((u64)(0x019292615c3aa539)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x782d3081de02fb47)),
+	.hi = ((u64)(0x01f736f9b3494e88)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4b1c3e512ac1dd0c)),
+	.hi = ((u64)(0x013a825c100dd115)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x9de34de57572544f)),
+	.hi = ((u64)(0x018922f31411455a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x455c215ed2cee963)),
+	.hi = ((u64)(0x01eb6bafd91596b1)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xcb5994db43c151de)),
+	.hi = ((u64)(0x0133234de7ad7e2e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x7e2ffa1214b1a655)),
+	.hi = ((u64)(0x017fec216198ddba)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1dbbf89699de0feb)),
+	.hi = ((u64)(0x01dfe729b9ff1529)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb2957b5e202ac9f3)),
+	.hi = ((u64)(0x012bf07a143f6d39)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1f3ada35a8357c6f)),
+	.hi = ((u64)(0x0176ec98994f4888)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x270990c31242db8b)),
+	.hi = ((u64)(0x01d4a7bebfa31aaa)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x5865fa79eb69c937)),
+	.hi = ((u64)(0x0124e8d737c5f0aa)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xee7f791866443b85)),
+	.hi = ((u64)(0x016e230d05b76cd4)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2a1f575e7fd54a66)),
+	.hi = ((u64)(0x01c9abd04725480a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x5a53969b0fe54e80)),
+	.hi = ((u64)(0x011e0b622c774d06)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf0e87c41d3dea220)),
+	.hi = ((u64)(0x01658e3ab7952047)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xed229b5248d64aa8)),
+	.hi = ((u64)(0x01bef1c9657a6859)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3435a1136d85eea9)),
+	.hi = ((u64)(0x0117571ddf6c8138)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4143095848e76a53)),
+	.hi = ((u64)(0x015d2ce55747a186)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd193cbae5b2144e8)),
+	.hi = ((u64)(0x01b4781ead1989e7)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe2fc5f4cf8f4cb11)),
+	.hi = ((u64)(0x0110cb132c2ff630)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1bbb77203731fdd5)),
+	.hi = ((u64)(0x0154fdd7f73bf3bd)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x62aa54e844fe7d4a)),
+	.hi = ((u64)(0x01aa3d4df50af0ac)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbdaa75112b1f0e4e)),
+	.hi = ((u64)(0x010a6650b926d66b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xad15125575e6d1e2)),
+	.hi = ((u64)(0x014cffe4e7708c06)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x585a56ead360865b)),
+	.hi = ((u64)(0x01a03fde214caf08)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x37387652c41c53f8)),
+	.hi = ((u64)(0x010427ead4cfed65)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x850693e7752368f7)),
+	.hi = ((u64)(0x014531e58a03e8be)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x264838e1526c4334)),
+	.hi = ((u64)(0x01967e5eec84e2ee)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xafda4719a7075402)),
+	.hi = ((u64)(0x01fc1df6a7a61ba9)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0de86c7008649481)),
+	.hi = ((u64)(0x013d92ba28c7d14a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x9162878c0a7db9a1)),
+	.hi = ((u64)(0x018cf768b2f9c59c)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb5bb296f0d1d280a)),
+	.hi = ((u64)(0x01f03542dfb83703)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x5194f9e568323906)),
+	.hi = ((u64)(0x01362149cbd32262)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe5fa385ec23ec747)),
+	.hi = ((u64)(0x0183a99c3ec7eafa)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x9f78c67672ce7919)),
+	.hi = ((u64)(0x01e494034e79e5b9)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x03ab7c0a07c10bb0)),
+	.hi = ((u64)(0x012edc82110c2f94)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x04965b0c89b14e9c)),
+	.hi = ((u64)(0x017a93a2954f3b79)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x45bbf1cfac1da243)),
+	.hi = ((u64)(0x01d9388b3aa30a57)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8b957721cb92856a)),
+	.hi = ((u64)(0x0127c35704a5e676)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2e7ad4ea3e7726c4)),
+	.hi = ((u64)(0x0171b42cc5cf6014)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3a198a24ce14f075)),
+	.hi = ((u64)(0x01ce2137f7433819)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc44ff65700cd1649)),
+	.hi = ((u64)(0x0120d4c2fa8a030f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb563f3ecc1005bdb)),
+	.hi = ((u64)(0x016909f3b92c83d3)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xa2bcf0e7f14072d2)),
+	.hi = ((u64)(0x01c34c70a777a4c8)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x65b61690f6c847c3)),
+	.hi = ((u64)(0x011a0fc668aac6fd)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbf239c35347a59b4)),
+	.hi = ((u64)(0x016093b802d578bc)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xeeec83428198f021)),
+	.hi = ((u64)(0x01b8b8a6038ad6eb)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x7553d20990ff9615)),
+	.hi = ((u64)(0x01137367c236c653)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x52a8c68bf53f7b9a)),
+	.hi = ((u64)(0x01585041b2c477e8)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x6752f82ef28f5a81)),
+	.hi = ((u64)(0x01ae64521f7595e2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8093db1d57999890)),
+	.hi = ((u64)(0x010cfeb353a97dad)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe0b8d1e4ad7ffeb4)),
+	.hi = ((u64)(0x01503e602893dd18)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x18e7065dd8dffe62)),
+	.hi = ((u64)(0x01a44df832b8d45f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x6f9063faa78bfefd)),
+	.hi = ((u64)(0x0106b0bb1fb384bb)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4b747cf9516efebc)),
+	.hi = ((u64)(0x01485ce9e7a065ea)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xde519c37a5cabe6b)),
+	.hi = ((u64)(0x019a742461887f64)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0af301a2c79eb703)),
+	.hi = ((u64)(0x01008896bcf54f9f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xcdafc20b798664c4)),
+	.hi = ((u64)(0x0140aabc6c32a386)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x811bb28e57e7fdf5)),
+	.hi = ((u64)(0x0190d56b873f4c68)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xa1629f31ede1fd72)),
+	.hi = ((u64)(0x01f50ac6690f1f82)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xa4dda37f34ad3e67)),
+	.hi = ((u64)(0x013926bc01a973b1)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0e150c5f01d88e01)),
+	.hi = ((u64)(0x0187706b0213d09e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x919a4f76c24eb181)),
+	.hi = ((u64)(0x01e94c85c298c4c5)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x7b0071aa39712ef1)),
+	.hi = ((u64)(0x0131cfd3999f7afb)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x59c08e14c7cd7aad)),
+	.hi = ((u64)(0x017e43c8800759ba)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf030b199f9c0d958)),
+	.hi = ((u64)(0x01ddd4baa0093028)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x961e6f003c1887d7)),
+	.hi = ((u64)(0x012aa4f4a405be19)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xfba60ac04b1ea9cd)),
+	.hi = ((u64)(0x01754e31cd072d9f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xfa8f8d705de65440)),
+	.hi = ((u64)(0x01d2a1be4048f907)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xfc99b8663aaff4a8)),
+	.hi = ((u64)(0x0123a516e82d9ba4)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3bc0267fc95bf1d2)),
+	.hi = ((u64)(0x016c8e5ca239028e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xcab0301fbbb2ee47)),
+	.hi = ((u64)(0x01c7b1f3cac74331)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1eae1e13d54fd4ec)),
+	.hi = ((u64)(0x011ccf385ebc89ff)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe659a598caa3ca27)),
+	.hi = ((u64)(0x01640306766bac7e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x9ff00efefd4cbcb1)),
+	.hi = ((u64)(0x01bd03c81406979e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x23f6095f5e4ff5ef)),
+	.hi = ((u64)(0x0116225d0c841ec3)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xecf38bb735e3f36a)),
+	.hi = ((u64)(0x015baaf44fa52673)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe8306ea5035cf045)),
+	.hi = ((u64)(0x01b295b1638e7010)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x911e4527221a162b)),
+	.hi = ((u64)(0x010f9d8ede39060a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3565d670eaa09bb6)),
+	.hi = ((u64)(0x015384f295c7478d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x82bf4c0d2548c2a3)),
+	.hi = ((u64)(0x01a8662f3b391970)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x51b78f88374d79a6)),
+	.hi = ((u64)(0x01093fdd8503afe6)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe625736a4520d810)),
+	.hi = ((u64)(0x014b8fd4e6449bdf)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xdfaed044d6690e14)),
+	.hi = ((u64)(0x019e73ca1fd5c2d7)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xebcd422b0601a8cc)),
+	.hi = ((u64)(0x0103085e53e599c6)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xa6c092b5c78212ff)),
+	.hi = ((u64)(0x0143ca75e8df0038)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd070b763396297bf)),
+	.hi = ((u64)(0x0194bd136316c046)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x848ce53c07bb3daf)),
+	.hi = ((u64)(0x01f9ec583bdc7058)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x52d80f4584d5068d)),
+	.hi = ((u64)(0x013c33b72569c637)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x278e1316e60a4831)),
+	.hi = ((u64)(0x018b40a4eec437c5)),
+}, 
+}));
+	_const_strconv__ftoa__pow5_inv_split_64 = new_array_from_c_array(292, 292, sizeof(strconv__ftoa__Uint128), _MOV((strconv__ftoa__Uint128[292]){
+(strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0000000000000001)),
+	.hi = ((u64)(0x0400000000000000)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3333333333333334)),
+	.hi = ((u64)(0x0333333333333333)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x28f5c28f5c28f5c3)),
+	.hi = ((u64)(0x028f5c28f5c28f5c)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xed916872b020c49c)),
+	.hi = ((u64)(0x020c49ba5e353f7c)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xaf4f0d844d013a93)),
+	.hi = ((u64)(0x0346dc5d63886594)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8c3f3e0370cdc876)),
+	.hi = ((u64)(0x029f16b11c6d1e10)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd698fe69270b06c5)),
+	.hi = ((u64)(0x0218def416bdb1a6)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf0f4ca41d811a46e)),
+	.hi = ((u64)(0x035afe535795e90a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf3f70834acdae9f1)),
+	.hi = ((u64)(0x02af31dc4611873b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x5cc5a02a23e254c1)),
+	.hi = ((u64)(0x0225c17d04dad296)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xfad5cd10396a2135)),
+	.hi = ((u64)(0x036f9bfb3af7b756)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xfbde3da69454e75e)),
+	.hi = ((u64)(0x02bfaffc2f2c92ab)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2fe4fe1edd10b918)),
+	.hi = ((u64)(0x0232f33025bd4223)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4ca19697c81ac1bf)),
+	.hi = ((u64)(0x0384b84d092ed038)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3d4e1213067bce33)),
+	.hi = ((u64)(0x02d09370d4257360)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x643e74dc052fd829)),
+	.hi = ((u64)(0x024075f3dceac2b3)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x6d30baf9a1e626a7)),
+	.hi = ((u64)(0x039a5652fb113785)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2426fbfae7eb5220)),
+	.hi = ((u64)(0x02e1dea8c8da92d1)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1cebfcc8b9890e80)),
+	.hi = ((u64)(0x024e4bba3a487574)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x94acc7a78f41b0cc)),
+	.hi = ((u64)(0x03b07929f6da5586)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xaa23d2ec729af3d7)),
+	.hi = ((u64)(0x02f394219248446b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbb4fdbf05baf2979)),
+	.hi = ((u64)(0x025c768141d369ef)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc54c931a2c4b758d)),
+	.hi = ((u64)(0x03c7240202ebdcb2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x9dd6dc14f03c5e0b)),
+	.hi = ((u64)(0x0305b66802564a28)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4b1249aa59c9e4d6)),
+	.hi = ((u64)(0x026af8533511d4ed)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x44ea0f76f60fd489)),
+	.hi = ((u64)(0x03de5a1ebb4fbb15)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x6a54d92bf80caa07)),
+	.hi = ((u64)(0x0318481895d96277)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x21dd7a89933d54d2)),
+	.hi = ((u64)(0x0279d346de4781f9)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x362f2a75b8622150)),
+	.hi = ((u64)(0x03f61ed7ca0c0328)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf825bb91604e810d)),
+	.hi = ((u64)(0x032b4bdfd4d668ec)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc684960de6a5340b)),
+	.hi = ((u64)(0x0289097fdd7853f0)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd203ab3e521dc33c)),
+	.hi = ((u64)(0x02073accb12d0ff3)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe99f7863b696052c)),
+	.hi = ((u64)(0x033ec47ab514e652)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x87b2c6b62bab3757)),
+	.hi = ((u64)(0x02989d2ef743eb75)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd2f56bc4efbc2c45)),
+	.hi = ((u64)(0x0213b0f25f69892a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1e55793b192d13a2)),
+	.hi = ((u64)(0x0352b4b6ff0f41de)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4b77942f475742e8)),
+	.hi = ((u64)(0x02a8909265a5ce4b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd5f9435905df68ba)),
+	.hi = ((u64)(0x022073a8515171d5)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x565b9ef4d6324129)),
+	.hi = ((u64)(0x03671f73b54f1c89)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xdeafb25d78283421)),
+	.hi = ((u64)(0x02b8e5f62aa5b06d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x188c8eb12cecf681)),
+	.hi = ((u64)(0x022d84c4eeeaf38b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8dadb11b7b14bd9b)),
+	.hi = ((u64)(0x037c07a17e44b8de)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x7157c0e2c8dd647c)),
+	.hi = ((u64)(0x02c99fb46503c718)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8ddfcd823a4ab6ca)),
+	.hi = ((u64)(0x023ae629ea696c13)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1632e269f6ddf142)),
+	.hi = ((u64)(0x0391704310a8acec)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x44f581ee5f17f435)),
+	.hi = ((u64)(0x02dac035a6ed5723)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x372ace584c1329c4)),
+	.hi = ((u64)(0x024899c4858aac1c)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbeaae3c079b842d3)),
+	.hi = ((u64)(0x03a75c6da27779c6)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x6555830061603576)),
+	.hi = ((u64)(0x02ec49f14ec5fb05)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb7779c004de6912b)),
+	.hi = ((u64)(0x0256a18dd89e626a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf258f99a163db512)),
+	.hi = ((u64)(0x03bdcf495a9703dd)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x5b7a614811caf741)),
+	.hi = ((u64)(0x02fe3f6de212697e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xaf951aa00e3bf901)),
+	.hi = ((u64)(0x0264ff8b1b41edfe)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x7f54f7667d2cc19b)),
+	.hi = ((u64)(0x03d4cc11c5364997)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x32aa5f8530f09ae3)),
+	.hi = ((u64)(0x0310a3416a91d479)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf55519375a5a1582)),
+	.hi = ((u64)(0x0273b5cdeedb1060)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbbbb5b8bc3c3559d)),
+	.hi = ((u64)(0x03ec56164af81a34)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2fc916096969114a)),
+	.hi = ((u64)(0x03237811d593482a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x596dab3ababa743c)),
+	.hi = ((u64)(0x0282c674aadc39bb)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x478aef622efb9030)),
+	.hi = ((u64)(0x0202385d557cfafc)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd8de4bd04b2c19e6)),
+	.hi = ((u64)(0x0336c0955594c4c6)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xad7ea30d08f014b8)),
+	.hi = ((u64)(0x029233aaaadd6a38)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x24654f3da0c01093)),
+	.hi = ((u64)(0x020e8fbbbbe454fa)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3a3bb1fc346680eb)),
+	.hi = ((u64)(0x034a7f92c63a2190)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x94fc8e635d1ecd89)),
+	.hi = ((u64)(0x02a1ffa89e94e7a6)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xaa63a51c4a7f0ad4)),
+	.hi = ((u64)(0x021b32ed4baa52eb)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xdd6c3b607731aaed)),
+	.hi = ((u64)(0x035eb7e212aa1e45)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1789c919f8f488bd)),
+	.hi = ((u64)(0x02b22cb4dbbb4b6b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xac6e3a7b2d906d64)),
+	.hi = ((u64)(0x022823c3e2fc3c55)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x13e390c515b3e23a)),
+	.hi = ((u64)(0x03736c6c9e606089)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xdcb60d6a77c31b62)),
+	.hi = ((u64)(0x02c2bd23b1e6b3a0)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x7d5e7121f968e2b5)),
+	.hi = ((u64)(0x0235641c8e52294d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc8971b698f0e3787)),
+	.hi = ((u64)(0x0388a02db0837548)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xa078e2bad8d82c6c)),
+	.hi = ((u64)(0x02d3b357c0692aa0)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe6c71bc8ad79bd24)),
+	.hi = ((u64)(0x0242f5dfcd20eee6)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0ad82c7448c2c839)),
+	.hi = ((u64)(0x039e5632e1ce4b0b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3be023903a356cfa)),
+	.hi = ((u64)(0x02e511c24e3ea26f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2fe682d9c82abd95)),
+	.hi = ((u64)(0x0250db01d8321b8c)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4ca4048fa6aac8ee)),
+	.hi = ((u64)(0x03b4919c8d1cf8e0)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3d5003a61eef0725)),
+	.hi = ((u64)(0x02f6dae3a4172d80)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x9773361e7f259f51)),
+	.hi = ((u64)(0x025f1582e9ac2466)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8beb89ca6508fee8)),
+	.hi = ((u64)(0x03cb559e42ad070a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x6fefa16eb73a6586)),
+	.hi = ((u64)(0x0309114b688a6c08)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf3261abef8fb846b)),
+	.hi = ((u64)(0x026da76f86d52339)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x51d691318e5f3a45)),
+	.hi = ((u64)(0x03e2a57f3e21d1f6)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0e4540f471e5c837)),
+	.hi = ((u64)(0x031bb798fe8174c5)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd8376729f4b7d360)),
+	.hi = ((u64)(0x027c92e0cb9ac3d0)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf38bd84321261eff)),
+	.hi = ((u64)(0x03fa849adf5e061a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x293cad0280eb4bff)),
+	.hi = ((u64)(0x032ed07be5e4d1af)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xedca240200bc3ccc)),
+	.hi = ((u64)(0x028bd9fcb7ea4158)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbe3b50019a3030a4)),
+	.hi = ((u64)(0x02097b309321cde0)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc9f88002904d1a9f)),
+	.hi = ((u64)(0x03425eb41e9c7c9a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3b2d3335403daee6)),
+	.hi = ((u64)(0x029b7ef67ee396e2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x95bdc291003158b8)),
+	.hi = ((u64)(0x0215ff2b98b6124e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x892f9db4cd1bc126)),
+	.hi = ((u64)(0x035665128df01d4a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x07594af70a7c9a85)),
+	.hi = ((u64)(0x02ab840ed7f34aa2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x6c476f2c0863aed1)),
+	.hi = ((u64)(0x0222d00bdff5d54e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x13a57eacda3917b4)),
+	.hi = ((u64)(0x036ae67966562217)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0fb7988a482dac90)),
+	.hi = ((u64)(0x02bbeb9451de81ac)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd95fad3b6cf156da)),
+	.hi = ((u64)(0x022fefa9db1867bc)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf565e1f8ae4ef15c)),
+	.hi = ((u64)(0x037fe5dc91c0a5fa)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x911e4e608b725ab0)),
+	.hi = ((u64)(0x02ccb7e3a7cd5195)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xda7ea51a0928488d)),
+	.hi = ((u64)(0x023d5fe9530aa7aa)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf7310829a8407415)),
+	.hi = ((u64)(0x039566421e7772aa)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2c2739baed005cde)),
+	.hi = ((u64)(0x02ddeb68185f8eef)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbcec2e2f24004a4b)),
+	.hi = ((u64)(0x024b22b9ad193f25)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x94ad16b1d333aa11)),
+	.hi = ((u64)(0x03ab6ac2ae8ecb6f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xaa241227dc2954db)),
+	.hi = ((u64)(0x02ef889bbed8a2bf)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x54e9a81fe35443e2)),
+	.hi = ((u64)(0x02593a163246e899)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2175d9cc9eed396a)),
+	.hi = ((u64)(0x03c1f689ea0b0dc2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe7917b0a18bdc788)),
+	.hi = ((u64)(0x03019207ee6f3e34)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb9412f3b46fe393a)),
+	.hi = ((u64)(0x0267a8065858fe90)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf535185ed7fd285c)),
+	.hi = ((u64)(0x03d90cd6f3c1974d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc42a79e57997537d)),
+	.hi = ((u64)(0x03140a458fce12a4)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x03552e512e12a931)),
+	.hi = ((u64)(0x02766e9e0ca4dbb7)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x9eeeb081e3510eb4)),
+	.hi = ((u64)(0x03f0b0fce107c5f1)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4bf226ce4f740bc3)),
+	.hi = ((u64)(0x0326f3fd80d304c1)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xa3281f0b72c33c9c)),
+	.hi = ((u64)(0x02858ffe00a8d09a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1c2018d5f568fd4a)),
+	.hi = ((u64)(0x020473319a20a6e2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf9ccf48988a7fba9)),
+	.hi = ((u64)(0x033a51e8f69aa49c)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xfb0a5d3ad3b99621)),
+	.hi = ((u64)(0x02950e53f87bb6e3)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2f3b7dc8a96144e7)),
+	.hi = ((u64)(0x0210d8432d2fc583)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe52bfc7442353b0c)),
+	.hi = ((u64)(0x034e26d1e1e608d1)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb756639034f76270)),
+	.hi = ((u64)(0x02a4ebdb1b1e6d74)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2c451c735d92b526)),
+	.hi = ((u64)(0x021d897c15b1f12a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x13a1c71efc1deea3)),
+	.hi = ((u64)(0x0362759355e981dd)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x761b05b2634b2550)),
+	.hi = ((u64)(0x02b52adc44bace4a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x91af37c1e908eaa6)),
+	.hi = ((u64)(0x022a88b036fbd83b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x82b1f2cfdb417770)),
+	.hi = ((u64)(0x03774119f192f392)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xcef4c23fe29ac5f3)),
+	.hi = ((u64)(0x02c5cdae5adbf60e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3f2a34ffe87bd190)),
+	.hi = ((u64)(0x0237d7beaf165e72)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x984387ffda5fb5b2)),
+	.hi = ((u64)(0x038c8c644b56fd83)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe0360666484c915b)),
+	.hi = ((u64)(0x02d6d6b6a2abfe02)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x802b3851d3707449)),
+	.hi = ((u64)(0x024578921bbccb35)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x99dec082ebe72075)),
+	.hi = ((u64)(0x03a25a835f947855)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xae4bcd358985b391)),
+	.hi = ((u64)(0x02e8486919439377)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbea30a913ad15c74)),
+	.hi = ((u64)(0x02536d20e102dc5f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xfdd1aa81f7b560b9)),
+	.hi = ((u64)(0x03b8ae9b019e2d65)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x97daeece5fc44d61)),
+	.hi = ((u64)(0x02fa2548ce182451)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xdfe258a51969d781)),
+	.hi = ((u64)(0x0261b76d71ace9da)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x996a276e8f0fbf34)),
+	.hi = ((u64)(0x03cf8be24f7b0fc4)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe121b9253f3fcc2a)),
+	.hi = ((u64)(0x030c6fe83f95a636)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb41afa8432997022)),
+	.hi = ((u64)(0x02705986994484f8)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xecf7f739ea8f19cf)),
+	.hi = ((u64)(0x03e6f5a4286da18d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x23f99294bba5ae40)),
+	.hi = ((u64)(0x031f2ae9b9f14e0b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4ffadbaa2fb7be99)),
+	.hi = ((u64)(0x027f5587c7f43e6f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x7ff7c5dd1925fdc2)),
+	.hi = ((u64)(0x03feef3fa6539718)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xccc637e4141e649b)),
+	.hi = ((u64)(0x033258ffb842df46)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd704f983434b83af)),
+	.hi = ((u64)(0x028ead9960357f6b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x126a6135cf6f9c8c)),
+	.hi = ((u64)(0x020bbe144cf79923)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x83dd685618b29414)),
+	.hi = ((u64)(0x0345fced47f28e9e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x9cb12044e08edcdd)),
+	.hi = ((u64)(0x029e63f1065ba54b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x16f419d0b3a57d7d)),
+	.hi = ((u64)(0x02184ff405161dd6)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8b20294dec3bfbfb)),
+	.hi = ((u64)(0x035a19866e89c956)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3c19baa4bcfcc996)),
+	.hi = ((u64)(0x02ae7ad1f207d445)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc9ae2eea30ca3adf)),
+	.hi = ((u64)(0x02252f0e5b39769d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0f7d17dd1add2afd)),
+	.hi = ((u64)(0x036eb1b091f58a96)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3f97464a7be42264)),
+	.hi = ((u64)(0x02bef48d41913bab)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xcc790508631ce850)),
+	.hi = ((u64)(0x02325d3dce0dc955)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe0c1a1a704fb0d4d)),
+	.hi = ((u64)(0x0383c862e3494222)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4d67b4859d95a43e)),
+	.hi = ((u64)(0x02cfd3824f6dce82)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x711fc39e17aae9cb)),
+	.hi = ((u64)(0x023fdc683f8b0b9b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe832d2968c44a945)),
+	.hi = ((u64)(0x039960a6cc11ac2b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xecf575453d03ba9e)),
+	.hi = ((u64)(0x02e11a1f09a7bcef)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x572ac4376402fbb1)),
+	.hi = ((u64)(0x024dae7f3aec9726)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x58446d256cd192b5)),
+	.hi = ((u64)(0x03af7d985e47583d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x79d0575123dadbc4)),
+	.hi = ((u64)(0x02f2cae04b6c4697)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x94a6ac40e97be303)),
+	.hi = ((u64)(0x025bd5803c569edf)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8771139b0f2c9e6c)),
+	.hi = ((u64)(0x03c62266c6f0fe32)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x9f8da948d8f07ebd)),
+	.hi = ((u64)(0x0304e85238c0cb5b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe60aedd3e0c06564)),
+	.hi = ((u64)(0x026a5374fa33d5e2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xa344afb9679a3bd2)),
+	.hi = ((u64)(0x03dd5254c3862304)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe903bfc78614fca8)),
+	.hi = ((u64)(0x031775109c6b4f36)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xba6966393810ca20)),
+	.hi = ((u64)(0x02792a73b055d8f8)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2a423d2859b4769a)),
+	.hi = ((u64)(0x03f510b91a22f4c1)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xee9b642047c39215)),
+	.hi = ((u64)(0x032a73c7481bf700)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbee2b680396941aa)),
+	.hi = ((u64)(0x02885c9f6ce32c00)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xff1bc53361210155)),
+	.hi = ((u64)(0x0206b07f8a4f5666)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x31c6085235019bbb)),
+	.hi = ((u64)(0x033de73276e5570b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x27d1a041c4014963)),
+	.hi = ((u64)(0x0297ec285f1ddf3c)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xeca7b367d0010782)),
+	.hi = ((u64)(0x021323537f4b18fc)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xadd91f0c8001a59d)),
+	.hi = ((u64)(0x0351d21f3211c194)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf17a7f3d3334847e)),
+	.hi = ((u64)(0x02a7db4c280e3476)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x279532975c2a0398)),
+	.hi = ((u64)(0x021fe2a3533e905f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd8eeb75893766c26)),
+	.hi = ((u64)(0x0366376bb8641a31)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x7a5892ad42c52352)),
+	.hi = ((u64)(0x02b82c562d1ce1c1)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xfb7a0ef102374f75)),
+	.hi = ((u64)(0x022cf044f0e3e7cd)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc59017e8038bb254)),
+	.hi = ((u64)(0x037b1a07e7d30c7c)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x37a67986693c8eaa)),
+	.hi = ((u64)(0x02c8e19feca8d6ca)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf951fad1edca0bbb)),
+	.hi = ((u64)(0x023a4e198a20abd4)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x28832ae97c76792b)),
+	.hi = ((u64)(0x03907cf5a9cddfbb)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2068ef21305ec756)),
+	.hi = ((u64)(0x02d9fd9154a4b2fc)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x19ed8c1a8d189f78)),
+	.hi = ((u64)(0x0247fe0ddd508f30)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x5caf4690e1c0ff26)),
+	.hi = ((u64)(0x03a66349621a7eb3)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4a25d20d81673285)),
+	.hi = ((u64)(0x02eb82a11b48655c)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3b5174d79ab8f537)),
+	.hi = ((u64)(0x0256021a7c39eab0)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x921bee25c45b21f1)),
+	.hi = ((u64)(0x03bcd02a605caab3)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xdb498b5169e2818e)),
+	.hi = ((u64)(0x02fd735519e3bbc2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x15d46f7454b53472)),
+	.hi = ((u64)(0x02645c4414b62fcf)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xefba4bed545520b6)),
+	.hi = ((u64)(0x03d3c6d35456b2e4)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf2fb6ff110441a2b)),
+	.hi = ((u64)(0x030fd242a9def583)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8f2f8cc0d9d014ef)),
+	.hi = ((u64)(0x02730e9bbb18c469)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb1e5ae015c80217f)),
+	.hi = ((u64)(0x03eb4a92c4f46d75)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc1848b344a001acc)),
+	.hi = ((u64)(0x0322a20f03f6bdf7)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xce03a2903b3348a3)),
+	.hi = ((u64)(0x02821b3f365efe5f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd802e873628f6d4f)),
+	.hi = ((u64)(0x0201af65c518cb7f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x599e40b89db2487f)),
+	.hi = ((u64)(0x0335e56fa1c14599)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe14b66fa17c1d399)),
+	.hi = ((u64)(0x029184594e3437ad)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x81091f2e7967dc7a)),
+	.hi = ((u64)(0x020e037aa4f692f1)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x9b41cb7d8f0c93f6)),
+	.hi = ((u64)(0x03499f2aa18a84b5)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xaf67d5fe0c0a0ff8)),
+	.hi = ((u64)(0x02a14c221ad536f7)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf2b977fe70080cc7)),
+	.hi = ((u64)(0x021aa34e7bddc592)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1df58cca4cd9ae0b)),
+	.hi = ((u64)(0x035dd2172c9608eb)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe4c470a1d7148b3c)),
+	.hi = ((u64)(0x02b174df56de6d88)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x83d05a1b1276d5ca)),
+	.hi = ((u64)(0x022790b2abe5246d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x9fb3c35e83f1560f)),
+	.hi = ((u64)(0x0372811ddfd50715)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb2f635e5365aab3f)),
+	.hi = ((u64)(0x02c200e4b310d277)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf591c4b75eaeef66)),
+	.hi = ((u64)(0x0234cd83c273db92)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xef4fa125644b18a3)),
+	.hi = ((u64)(0x0387af39371fc5b7)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8c3fb41de9d5ad4f)),
+	.hi = ((u64)(0x02d2f2942c196af9)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3cffc34b2177bdd9)),
+	.hi = ((u64)(0x02425ba9bce12261)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x94cc6bab68bf9628)),
+	.hi = ((u64)(0x039d5f75fb01d09b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x10a38955ed6611b9)),
+	.hi = ((u64)(0x02e44c5e6267da16)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xda1c6dde5784dafb)),
+	.hi = ((u64)(0x02503d184eb97b44)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf693e2fd58d49191)),
+	.hi = ((u64)(0x03b394f3b128c53a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc5431bfde0aa0e0e)),
+	.hi = ((u64)(0x02f610c2f4209dc8)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x6a9c1664b3bb3e72)),
+	.hi = ((u64)(0x025e73cf29b3b16d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x10f9bd6dec5eca4f)),
+	.hi = ((u64)(0x03ca52e50f85e8af)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xda616457f04bd50c)),
+	.hi = ((u64)(0x03084250d937ed58)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe1e783798d09773d)),
+	.hi = ((u64)(0x026d01da475ff113)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x030c058f480f252e)),
+	.hi = ((u64)(0x03e19c9072331b53)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x68d66ad906728425)),
+	.hi = ((u64)(0x031ae3a6c1c27c42)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8711ef14052869b7)),
+	.hi = ((u64)(0x027be952349b969b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0b4fe4ecd50d75f2)),
+	.hi = ((u64)(0x03f97550542c242c)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xa2a650bd773df7f5)),
+	.hi = ((u64)(0x032df7737689b689)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb551da312c31932a)),
+	.hi = ((u64)(0x028b2c5c5ed49207)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x5ddb14f4235adc22)),
+	.hi = ((u64)(0x0208f049e576db39)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2fc4ee536bc49369)),
+	.hi = ((u64)(0x034180763bf15ec2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xbfd0bea92303a921)),
+	.hi = ((u64)(0x029acd2b63277f01)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x9973cbba8269541a)),
+	.hi = ((u64)(0x021570ef8285ff34)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x5bec792a6a42202a)),
+	.hi = ((u64)(0x0355817f373ccb87)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe3239421ee9b4cef)),
+	.hi = ((u64)(0x02aacdff5f63d605)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb5b6101b25490a59)),
+	.hi = ((u64)(0x02223e65e5e97804)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x22bce691d541aa27)),
+	.hi = ((u64)(0x0369fd6fd64259a1)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb563eba7ddce21b9)),
+	.hi = ((u64)(0x02bb31264501e14d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf78322ecb171b494)),
+	.hi = ((u64)(0x022f5a850401810a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x259e9e47824f8753)),
+	.hi = ((u64)(0x037ef73b399c01ab)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1e187e9f9b72d2a9)),
+	.hi = ((u64)(0x02cbf8fc2e1667bc)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4b46cbb2e2c24221)),
+	.hi = ((u64)(0x023cc73024deb963)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x120adf849e039d01)),
+	.hi = ((u64)(0x039471e6a1645bd2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xdb3be603b19c7d9a)),
+	.hi = ((u64)(0x02dd27ebb4504974)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x7c2feb3627b0647c)),
+	.hi = ((u64)(0x024a865629d9d45d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2d197856a5e7072c)),
+	.hi = ((u64)(0x03aa7089dc8fba2f)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8a7ac6abb7ec05bd)),
+	.hi = ((u64)(0x02eec06e4a0c94f2)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd52f05562cbcd164)),
+	.hi = ((u64)(0x025899f1d4d6dd8e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x21e4d556adfae8a0)),
+	.hi = ((u64)(0x03c0f64fbaf1627e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe7ea444557fbed4d)),
+	.hi = ((u64)(0x0300c50c958de864)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xecbb69d1132ff10a)),
+	.hi = ((u64)(0x0267040a113e5383)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xadf8a94e851981aa)),
+	.hi = ((u64)(0x03d8067681fd526c)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8b2d543ed0e13488)),
+	.hi = ((u64)(0x0313385ece6441f0)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd5bddcff0d80f6d3)),
+	.hi = ((u64)(0x0275c6b23eb69b26)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x892fc7fe7c018aeb)),
+	.hi = ((u64)(0x03efa45064575ea4)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3a8c9ffec99ad589)),
+	.hi = ((u64)(0x03261d0d1d12b21d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc8707fff07af113b)),
+	.hi = ((u64)(0x0284e40a7da88e7d)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x39f39998d2f2742f)),
+	.hi = ((u64)(0x0203e9a1fe2071fe)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x8fec28f484b7204b)),
+	.hi = ((u64)(0x033975cffd00b663)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xd989ba5d36f8e6a2)),
+	.hi = ((u64)(0x02945e3ffd9a2b82)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x47a161e42bfa521c)),
+	.hi = ((u64)(0x02104b66647b5602)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0c35696d132a1cf9)),
+	.hi = ((u64)(0x034d4570a0c5566a)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x09c454574288172d)),
+	.hi = ((u64)(0x02a4378d4d6aab88)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xa169dd129ba0128b)),
+	.hi = ((u64)(0x021cf93dd7888939)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x0242fb50f9001dab)),
+	.hi = ((u64)(0x03618ec958da7529)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x9b68c90d940017bc)),
+	.hi = ((u64)(0x02b4723aad7b90ed)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x4920a0d7a999ac96)),
+	.hi = ((u64)(0x0229f4fbbdfc73f1)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x750101590f5c4757)),
+	.hi = ((u64)(0x037654c5fcc71fe8)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2a6734473f7d05df)),
+	.hi = ((u64)(0x02c5109e63d27fed)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xeeb8f69f65fd9e4c)),
+	.hi = ((u64)(0x0237407eb641fff0)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe45b24323cc8fd46)),
+	.hi = ((u64)(0x038b9a6456cfffe7)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xb6af502830a0ca9f)),
+	.hi = ((u64)(0x02d6151d123fffec)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xf88c402026e7087f)),
+	.hi = ((u64)(0x0244ddb0db666656)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x2746cd003e3e73fe)),
+	.hi = ((u64)(0x03a162b4923d708b)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x1f6bd73364fec332)),
+	.hi = ((u64)(0x02e7822a0e978d3c)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xe5efdf5c50cbcf5b)),
+	.hi = ((u64)(0x0252ce880bac70fc)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x3cb2fefa1adfb22b)),
+	.hi = ((u64)(0x03b7b0d9ac471b2e)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x308f3261af195b56)),
+	.hi = ((u64)(0x02f95a47bd05af58)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x5a0c284e25ade2ab)),
+	.hi = ((u64)(0x0261150630d15913)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x29ad0d49d5e30445)),
+	.hi = ((u64)(0x03ce8809e7b55b52)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x548a7107de4f369d)),
+	.hi = ((u64)(0x030ba007ec9115db)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xdd3b8d9fe50c2bb1)),
+	.hi = ((u64)(0x026fb3398a0dab15)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x952c15cca1ad12b5)),
+	.hi = ((u64)(0x03e5eb8f434911bc)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0x775677d6e7bda891)),
+	.hi = ((u64)(0x031e560c35d40e30)),
+}, (strconv__ftoa__Uint128){
+	.lo = ((u64)(0xc5dec645863153a7)),
+	.hi = ((u64)(0x027eab3cf7dcd826)),
+}, 
+}));
 	_const_strconv__double_plus_zero = ((u64)(0x0000000000000000));
 	_const_strconv__double_minus_zero = ((u64)(0x8000000000000000));
 	_const_strconv__double_plus_infinity = ((u64)(0x7FF0000000000000));
 	_const_strconv__double_minus_infinity = ((u64)(0xFFF0000000000000));
 	_const_strconv__c_ten = ((u32)(10));
 	_const_strconv__max_u64 = ((u64)(UINT64_MAX));
+	_const_strconv__dec_round = new_array_from_c_array(20, 20, sizeof(f64), _MOV((f64[20]){
+((f64)(0.44)), 0.044, 0.0044, 0.00044, 0.000044, 0.0000044, 0.00000044, 0.000000044, 0.0000000044, 0.00000000044, 0.000000000044, 0.0000000000044, 0.00000000000044, 0.000000000000044, 0.0000000000000044, 0.00000000000000044, 0.000000000000000044, 0.0000000000000000044, 0.00000000000000000044, 0.000000000000000000044, 
+}));
 	_const_init_capicity = 1 << _const_init_log_capicity;
 	_const_init_cap = _const_init_capicity - 2;
 	_const_hash_mask = ((u32)(0x00FFFFFF));
