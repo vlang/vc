@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ff1437f"
+#define V_COMMIT_HASH "47ffedc"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "c9cfe9d"
+#define V_COMMIT_HASH "ff1437f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ff1437f"
+#define V_CURRENT_COMMIT_HASH "47ffedc"
 #endif
 
 
@@ -30250,12 +30250,10 @@ static void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it) {
 		v__gen__Gen_write(g, _STR("sizeof(%.*s\000), ", 2, elem_type_str));
 		if (is_default_array) {
 			v__gen__Gen_write(g, _STR("_val_%"PRId32"\000)", 2, it.pos.pos));
+		} else if (it.has_default || (it.has_len && it.elem_type == _const_v__table__string_type)) {
+			v__gen__Gen_write(g, _STR("&_val_%"PRId32"\000)", 2, it.pos.pos));
 		} else {
-			if (it.has_default || (it.has_len && it.elem_type == _const_v__table__string_type)) {
-				v__gen__Gen_write(g, _STR("&_val_%"PRId32"\000)", 2, it.pos.pos));
-			} else {
-				v__gen__Gen_write(g, tos_lit("0)"));
-			}
+			v__gen__Gen_write(g, tos_lit("0)"));
 		}
 		return;
 	}
