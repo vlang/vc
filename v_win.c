@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "af27963"
+#define V_COMMIT_HASH "b3fc462"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ca63b92"
+#define V_COMMIT_HASH "af27963"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "af27963"
+#define V_CURRENT_COMMIT_HASH "b3fc462"
 #endif
 
 
@@ -4216,6 +4216,7 @@ static v__token__Token v__scanner__Scanner_end_of_file(v__scanner__Scanner* s);
 void v__scanner__Scanner_scan_all_tokens_in_buffer(v__scanner__Scanner* s);
 v__token__Token v__scanner__Scanner_scan(v__scanner__Scanner* s);
 v__token__Token v__scanner__Scanner_buffer_scan(v__scanner__Scanner* s);
+static byte v__scanner__Scanner_look_ahead(v__scanner__Scanner s, int n);
 static v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanner* s);
 static int v__scanner__Scanner_current_column(v__scanner__Scanner* s);
 static int v__scanner__Scanner_count_symbol_before(v__scanner__Scanner* s, int p, byte sym);
@@ -17973,7 +17974,7 @@ _t420;
 // Attr: [inline]
 inline string v__table__Table_array_name(v__table__Table* t, v__table__Type elem_type, int nr_dims) {
 	v__table__TypeSymbol* elem_type_sym = v__table__Table_get_type_symbol(t, elem_type);
-	return string_add(string_add(_STR("array_%.*s", 1, elem_type_sym->name), (v__table__Type_is_ptr(elem_type) ? (tos_lit("_ptr")) : (tos_lit("")))), (nr_dims > 1 ? (_STR("_%"PRId32"\000d", 2, nr_dims)) : (tos_lit(""))));
+	return string_add(string_add(_STR("array_%.*s", 1, elem_type_sym->name), (v__table__Type_is_ptr(elem_type) ? (string_repeat(tos_lit("_ptr"), v__table__Type_nr_muls(elem_type))) : (tos_lit("")))), (nr_dims > 1 ? (_STR("_%"PRId32"\000d", 2, nr_dims)) : (tos_lit(""))));
 }
 
 // Attr: [inline]
@@ -19270,6 +19271,15 @@ v__token__Token v__scanner__Scanner_buffer_scan(v__scanner__Scanner* s) {
 	}
 }
 
+// Attr: [inline]
+inline static byte v__scanner__Scanner_look_ahead(v__scanner__Scanner s, int n) {
+	if (s.pos + n < s.text.len) {
+		return string_at(s.text, s.pos + n);
+	} else {
+		return '\0';
+	}
+}
+
 static v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanner* s) {
 	if (s->is_started) {
 		s->pos++;
@@ -19295,10 +19305,10 @@ static v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanner* s) {
 		return v__scanner__Scanner_end_of_file(s);
 	}
 	byte c = string_at(s->text, s->pos);
-	byte nextc = (s->pos + 1 < s->text.len ? (string_at(s->text, s->pos + 1)) : ('\0'));
+	byte nextc = v__scanner__Scanner_look_ahead(/*rec*/*s, 1);
 	if (v__util__is_name_char(c)) {
 		string name = v__scanner__Scanner_ident_name(s);
-		byte next_char = (s->pos + 1 < s->text.len ? (string_at(s->text, s->pos + 1)) : ('\0'));
+		byte next_char = v__scanner__Scanner_look_ahead(/*rec*/*s, 1);
 		v__token__Kind kind = (*(v__token__Kind*)map_get3(_const_v__token__keywords, name, &(v__token__Kind[]){ {0} }))
 ;
 		if (kind != v__token__Kind_unknown) {
@@ -19343,7 +19353,7 @@ static v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanner* s) {
 	if (c == ')' && s->is_inter_start) {
 		s->is_inter_end = true;
 		s->is_inter_start = false;
-		byte next_char = (s->pos + 1 < s->text.len ? (string_at(s->text, s->pos + 1)) : ('\0'));
+		byte next_char = v__scanner__Scanner_look_ahead(/*rec*/*s, 1);
 		if (next_char == s->quote) {
 			s->is_inside_string = false;
 		}
@@ -19429,7 +19439,8 @@ static v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanner* s) {
 			s->pos++;
 			return v__scanner__Scanner_new_token(s, v__token__Kind_and_assign, tos_lit(""), 2);
 		}
-		if (nextc == '&') {
+		byte afternextc = v__scanner__Scanner_look_ahead(/*rec*/*s, 2);
+		if (nextc == '&' && byte_is_space(afternextc)) {
 			s->pos++;
 			return v__scanner__Scanner_new_token(s, v__token__Kind_and, tos_lit(""), 2);
 		}
@@ -23645,7 +23656,7 @@ static multi_return_array_v__table__Arg_bool v__parser__Parser_fn_args(v__parser
 	v__parser__Parser_check(p, v__token__Kind_lpar);
 	array_v__table__Arg args = __new_array_with_default(0, 0, sizeof(v__table__Arg), 0);
 	bool is_variadic = false;
-	bool types_only = (p->tok.kind == v__token__Kind_amp || p->tok.kind == v__token__Kind_and || p->tok.kind == v__token__Kind_ellipsis) || (p->peek_tok.kind == v__token__Kind_comma && v__table__Table_known_type(p->table, p->tok.lit)) || p->peek_tok.kind == v__token__Kind_rpar;
+	bool types_only = (p->tok.kind == v__token__Kind_amp || p->tok.kind == v__token__Kind_ellipsis) || (p->peek_tok.kind == v__token__Kind_comma && v__table__Table_known_type(p->table, p->tok.lit)) || p->peek_tok.kind == v__token__Kind_rpar;
 	if (types_only) {
 		int arg_no = 1;
 		while (p->tok.kind != v__token__Kind_rpar) {
@@ -24286,12 +24297,8 @@ v__table__Type v__parser__Parser_parse_type(v__parser__Parser* p) {
 		nr_muls++;
 		v__parser__Parser_next(p);
 	}
-	while ((p->tok.kind == v__token__Kind_and || p->tok.kind == v__token__Kind_amp)) {
-		if (p->tok.kind == v__token__Kind_and) {
-			nr_muls += 2;
-		} else {
-			nr_muls++;
-		}
+	while (p->tok.kind == v__token__Kind_amp) {
+		nr_muls++;
 		v__parser__Parser_next(p);
 	}
 	v__table__Language language = (string_eq(p->tok.lit, tos_lit("C")) ? (v__table__Language_c) : string_eq(p->tok.lit, tos_lit("JS")) ? (v__table__Language_js) : (v__table__Language_v));
