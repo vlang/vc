@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b4ad174"
+#define V_COMMIT_HASH "56ae379"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "827a9e2"
+#define V_COMMIT_HASH "b4ad174"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b4ad174"
+#define V_CURRENT_COMMIT_HASH "56ae379"
 #endif
 
 
@@ -21689,6 +21689,9 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 			// defer
 				c->expr_level--;
 			return v__table__Type_deref(right_type);
+		}
+		if (it->op == v__token__Kind_bit_not && !v__table__Type_is_int(right_type)) {
+			v__checker__Checker_error(c, tos_lit("operator ~ only defined on int types"), it->pos);
 		}
 		if (it->op == v__token__Kind_not && right_type != _const_v__table__bool_type_idx) {
 			v__checker__Checker_error(c, tos_lit("! operator can only be used with bool types"), it->pos);
