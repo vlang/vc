@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "0838080"
+#define V_COMMIT_HASH "7750ce5"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b13c95e"
+#define V_COMMIT_HASH "0838080"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "0838080"
+#define V_CURRENT_COMMIT_HASH "7750ce5"
 #endif
 
 
@@ -14009,13 +14009,25 @@ string time__Time_relative(time__Time t) {
 		return tos_lit("1m");
 	}
 	if (secs < 3600) {
-		return _STR("%"PRIu64"\000 minutes ago", 2, secs / 60);
+		u64 m = secs / 60;
+		if (m == 1) {
+			return tos_lit("1 minute ago");
+		}
+		return _STR("%"PRIu64"\000 minutes ago", 2, m);
 	}
 	if (secs < 3600 * 24) {
-		return _STR("%"PRIu64"\000 hours ago", 2, secs / 3600);
+		u64 h = secs / 3600;
+		if (h == 1) {
+			return tos_lit("1 hour ago");
+		}
+		return _STR("%"PRIu64"\000 hours ago", 2, h);
 	}
 	if (secs < 3600 * 24 * 5) {
-		return _STR("%"PRIu64"\000 days ago", 2, secs / 3600 / 24);
+		u64 d = secs / 3600 / 24;
+		if (d == 1) {
+			return tos_lit("1 day ago");
+		}
+		return _STR("%"PRIu64"\000 days ago", 2, d);
 	}
 	if (secs > 3600 * 24 * 10000) {
 		return tos_lit("");
