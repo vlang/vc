@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "f2a75d5"
+#define V_COMMIT_HASH "6ce7bb4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "183924e"
+#define V_COMMIT_HASH "f2a75d5"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "f2a75d5"
+#define V_CURRENT_COMMIT_HASH "6ce7bb4"
 #endif
 
 
@@ -15896,7 +15896,7 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 	array_string lines = string_split_into_lines(html);
 	strings__Builder s = strings__new_builder(1000);
 	strings__Builder_writeln(&s, _STR("\nimport strings\n// === vweb html template ===\nfn vweb_tmpl_%.*s\000() {\nmut sb := strings.new_builder(%"PRId32"\000)\n\nheader := \' \' // TODO remove\n_ = header\n\n", 3, fn_name, lines.len * 30));
-	strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
+	strings__Builder_write(&s, _const_vweb__tmpl__str_start);
 	vweb__tmpl__State state = vweb__tmpl__State_html;
 	bool in_span = false;
 	for (int i = 0;
