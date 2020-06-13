@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "50cd0ed"
+#define V_COMMIT_HASH "45a3d84"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0115c5e"
+#define V_COMMIT_HASH "50cd0ed"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "50cd0ed"
+#define V_CURRENT_COMMIT_HASH "45a3d84"
 #endif
 
 
@@ -34258,15 +34258,14 @@ static void v__builder__Builder_cc_linux_cross(v__builder__Builder* c) {
 		println(tos_lit("Cross compilation for Linux failed. Make sure you have clang installed."));
 	}
 	array_string linker_args = new_array_from_c_array(8, 8, sizeof(string), _MOV((string[8]){
-	tos_lit("-L SYSROOT/usr/lib/x86_64-linux-gnu/"), tos_lit("--sysroot=SYSROOT -v -o hi -m elf_x86_64"), tos_lit("-dynamic-linker /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"), tos_lit("SYSROOT/crt1.o SYSROOT/crti.o x.o"), tos_lit("-lc"), tos_lit("-lcrypto"), tos_lit("-lssl"), tos_lit("SYSROOT/crtn.o"), 
+	_STR("-L %.*s\000/usr/lib/x86_64-linux-gnu/", 2, sysroot), _STR("--sysroot=%.*s\000 -v -o %.*s\000 -m elf_x86_64", 3, sysroot, c->pref->out_name), tos_lit("-dynamic-linker /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"), _STR("%.*s\000/crt1.o %.*s\000/crti.o x.o", 3, sysroot, sysroot), tos_lit("-lc"), tos_lit("-lcrypto"), tos_lit("-lssl"), _STR("%.*s\000/crtn.o", 2, sysroot), 
 	}));
-	string s = array_string_join(linker_args, tos_lit(" "));
-	s = string_replace(s, tos_lit("SYSROOT"), sysroot);
-	s = string_replace(s, tos_lit("-o hi"), string_add(tos_lit("-o "), c->pref->out_name));
+	string linker_args_str = array_string_join(linker_args, tos_lit(" "));
+	string cmd = string_add(_STR("%.*s\000/ld.lld ", 2, sysroot), linker_args_str);
 	if (c->pref->show_cc) {
-		println(string_add(_STR("%.*s\000/ld.lld ", 2, sysroot), s));
+		println(cmd);
 	}
-	Option_os__Result _t1136 = os__exec(string_add(_STR("%.*s\000/ld.lld ", 2, sysroot), s));
+	Option_os__Result _t1136 = os__exec(cmd);
 	if (!_t1136.ok) {
 		string err = _t1136.v_error;
 		int errcode = _t1136.ecode;
