@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "0115c5e"
+#define V_COMMIT_HASH "50cd0ed"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6113c4f"
+#define V_COMMIT_HASH "0115c5e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "0115c5e"
+#define V_CURRENT_COMMIT_HASH "50cd0ed"
 #endif
 
 
@@ -25313,7 +25313,7 @@ static v__ast__Expr v__parser__Parser_string_expr(v__parser__Parser* p) {
 		array_push(&vals, _MOV((string[]){ p->tok.lit }));
 		v__parser__Parser_next(p);
 		if (p->tok.kind != v__token__Kind_str_dollar) {
-			continue;
+			break;
 		}
 		v__parser__Parser_next(p);
 		array_push(&exprs, _MOV((v__ast__Expr[]){ v__parser__Parser_expr(p, 0) }));
