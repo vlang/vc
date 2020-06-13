@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "45a3d84"
+#define V_COMMIT_HASH "471c931"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "50cd0ed"
+#define V_COMMIT_HASH "45a3d84"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "45a3d84"
+#define V_CURRENT_COMMIT_HASH "471c931"
 #endif
 
 
@@ -12958,7 +12958,7 @@ Option_os__Result os__exec(string cmd) {
 		byteptr bufbp = ((byteptr)(buf));
 		strings__Builder_write_bytes(&res, bufbp, vstrlen(bufbp));
 	}
-	string soutput = string_trim_space(strings__Builder_str(&res));
+	string soutput = strings__Builder_str(&res);
 	int exit_code = os__vpclose(f);
 	Option_os__Result _t162;/*:)os.Result*/opt_ok2(&(os__Result[]) { (os__Result){
 		.exit_code = exit_code,
