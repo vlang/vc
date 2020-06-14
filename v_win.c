@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "c874a22"
+#define V_COMMIT_HASH "5f21b15"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4e1a09c"
+#define V_COMMIT_HASH "c874a22"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c874a22"
+#define V_CURRENT_COMMIT_HASH "5f21b15"
 #endif
 
 
@@ -382,7 +382,7 @@ extern char **environ;
 #define __IRQHANDLER
 #undef TCCSKIP
 #define TCCSKIP(x)
-#include <byteswap.h>
+// #include <byteswap.h>
 #endif
 
 // for __offset_of
@@ -608,8 +608,6 @@ static inline double wy2gau(uint64_t r) {
 #include <time.h>
 // added by module `time`:
 #include <time.h>
-// added by module `time`:
-#include <sysinfoapi.h>
 
 
 // Enum definitions:
@@ -3254,6 +3252,7 @@ static void builtin_init();
 static bool print_backtrace_skipping_top_frames(int skipframes);
 static bool print_backtrace_skipping_top_frames_msvc(int skipframes);
 static bool print_backtrace_skipping_top_frames_mingw(int skipframes);
+static bool print_backtrace_skipping_top_frames_tcc(int skipframes);
 static void add_vectored_exception_handler(VectoredExceptionHandler handler);
 static u32 __stdcall  unhandled_exception_handler(ExceptionPointers* e);
 static void add_unhandled_exception_handler();
@@ -4929,7 +4928,7 @@ void vinit_string_literals(){
 	_const_v__checker__no_pub_in_main_warning = tos_lit("in module main cannot be declared public");
 	_const_v__gen__c_commit_hash_default = tos_lit("\n#ifndef V_COMMIT_HASH\n#define V_COMMIT_HASH \"@@@\"\n#endif\n\n");
 	_const_v__gen__c_current_commit_hash_default = tos_lit("\n#ifndef V_CURRENT_COMMIT_HASH\n#define V_CURRENT_COMMIT_HASH \"@@@\"\n#endif\n\n");
-	_const_v__gen__c_common_macros = tos_lit("\n#define EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an array needs to be specified, but GCC crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#define __NOINLINE __attribute__((noinline))\n#define __IRQHANDLER __attribute__((interrupt))\n\n#ifdef __TINYC__\n#undef EMPTY_STRUCT_DECLARATION\n#undef EMPTY_STRUCT_INITIALIZATION\n#define EMPTY_STRUCT_DECLARATION char _dummy\n#define EMPTY_STRUCT_INITIALIZATION 0\n#undef EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef __NOINLINE\n#undef __IRQHANDLER\n// tcc does not support inlining at all\n#define __NOINLINE\n#define __IRQHANDLER\n#undef TCCSKIP\n#define TCCSKIP(x)\n#include <byteswap.h>\n#endif\n\n// for __offset_of\n#ifndef __offsetof\n#define __offsetof(s,memb) \((size_t)((char *)&((s *)0)->memb - (char *)0))\n#endif\n\n#define OPTION_CAST(x) (x)\n\n#ifndef V64_PRINTFORMAT\n#ifdef PRIx64\n#define V64_PRINTFORMAT \"0x%\"PRIx64\n#elif defined(__WIN32__)\n#define V64_PRINTFORMAT \"0x%I64x\"\n#elif defined(__linux__) && defined(__LP64__)\n#define V64_PRINTFORMAT \"0x%lx\"\n#else\n#define V64_PRINTFORMAT \"0x%llx\"\n#endif\n#endif\n\n");
+	_const_v__gen__c_common_macros = tos_lit("\n#define EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an array needs to be specified, but GCC crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#define __NOINLINE __attribute__((noinline))\n#define __IRQHANDLER __attribute__((interrupt))\n\n#ifdef __TINYC__\n#undef EMPTY_STRUCT_DECLARATION\n#undef EMPTY_STRUCT_INITIALIZATION\n#define EMPTY_STRUCT_DECLARATION char _dummy\n#define EMPTY_STRUCT_INITIALIZATION 0\n#undef EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef __NOINLINE\n#undef __IRQHANDLER\n// tcc does not support inlining at all\n#define __NOINLINE\n#define __IRQHANDLER\n#undef TCCSKIP\n#define TCCSKIP(x)\n// #include <byteswap.h>\n#endif\n\n// for __offset_of\n#ifndef __offsetof\n#define __offsetof(s,memb) \((size_t)((char *)&((s *)0)->memb - (char *)0))\n#endif\n\n#define OPTION_CAST(x) (x)\n\n#ifndef V64_PRINTFORMAT\n#ifdef PRIx64\n#define V64_PRINTFORMAT \"0x%\"PRIx64\n#elif defined(__WIN32__)\n#define V64_PRINTFORMAT \"0x%I64x\"\n#elif defined(__linux__) && defined(__LP64__)\n#define V64_PRINTFORMAT \"0x%lx\"\n#else\n#define V64_PRINTFORMAT \"0x%llx\"\n#endif\n#endif\n\n");
 	_const_v__gen__c_builtin_types = tos_lit("\n\n//================================== builtin types ================================*/\n\ntypedef int64_t i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef int64_t any_int;\ntypedef double any_float;\ntypedef unsigned char* byteptr;\ntypedef void* voidptr;\ntypedef char* charptr;\ntypedef struct array array;\ntypedef struct map map;\ntypedef array array_string;\ntypedef array array_int;\ntypedef array array_byte;\ntypedef array array_f32;\ntypedef array array_f64;\ntypedef array array_u16;\ntypedef array array_u32;\ntypedef array array_u64;\ntypedef map map_int;\ntypedef map map_string;\ntypedef byte array_fixed_byte_300 [300];\ntypedef byte array_fixed_byte_400 [400];\n#ifndef __cplusplus\n#ifndef bool\n        typedef int bool;\n        #define true 1\n        #define false 0\n#endif\n#endif\n\n");
 	_const_v__gen__posix_hotcode_definitions_1 = tos_lit("\nvoid v_bind_live_symbols(void* live_lib){\n    @LOAD_FNS@\n}\n");
 	_const_v__gen__windows_hotcode_definitions_1 = tos_lit("\nvoid v_bind_live_symbols(void* live_lib){\n    @LOAD_FNS@\n}\n");
@@ -8555,6 +8554,14 @@ static bool print_backtrace_skipping_top_frames(int skipframes) {
 #endif
 
 	
+// $if  tinyc {
+#ifdef __TINYC__
+		return print_backtrace_skipping_top_frames_tcc(skipframes);
+	
+// } tinyc
+#endif
+
+	
 // $if  mingw {
 #ifdef __MINGW32__
 		return print_backtrace_skipping_top_frames_mingw(skipframes);
@@ -8661,6 +8668,22 @@ static bool print_backtrace_skipping_top_frames_mingw(int skipframes) {
 	return false;
 }
 
+static bool print_backtrace_skipping_top_frames_tcc(int skipframes) {
+	
+// $if  tinyc {
+#ifdef __TINYC__
+		tcc_backtrace("Backtrace");
+		return false;
+	
+#else
+		eprintln(tos_lit("print_backtrace_skipping_top_frames_tcc must be called only when the compiler is tcc"));
+		return false;
+	
+// } tinyc
+#endif
+
+}
+
 // TypeDecl
 static void add_vectored_exception_handler(VectoredExceptionHandler handler) {
 	AddVectoredExceptionHandler(1, handler);
@@ -8682,9 +8705,20 @@ static void add_unhandled_exception_handler() {
 }
 
 static void break_if_debugger_attached() {
-	if (IsDebuggerPresent()) {
-		__debugbreak();
-	}
+	
+// $if  tinyc {
+#ifdef __TINYC__
+			voidptr* ptr = ((voidptr*)(0));
+			*ptr = 0;
+	
+#else
+		if (IsDebuggerPresent()) {
+			__debugbreak();
+		}
+	
+// } tinyc
+#endif
+
 }
 
 int proc_pidpath(int, voidptr, int);
