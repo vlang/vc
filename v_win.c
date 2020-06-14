@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "7e0197c"
+#define V_COMMIT_HASH "2ef0f15"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "471c931"
+#define V_COMMIT_HASH "7e0197c"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "7e0197c"
+#define V_CURRENT_COMMIT_HASH "2ef0f15"
 #endif
 
 
@@ -10506,6 +10506,9 @@ int string_count(string s, string substr) {
 }
 
 bool string_contains(string s, string p) {
+	if (p.len == 0) {
+		return true;
+	}
 	Option_int _t46 = string_index(s, p);
 	if (!_t46.ok) {
 		string err = _t46.v_error;
