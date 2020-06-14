@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "206e64d"
+#define V_COMMIT_HASH "a3a91f5"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2ef0f15"
+#define V_COMMIT_HASH "206e64d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "206e64d"
+#define V_CURRENT_COMMIT_HASH "a3a91f5"
 #endif
 
 
@@ -20651,10 +20651,10 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 		v__ast__Type* type_expr = /* as */ (v__ast__Type*)__as_cast(infix_expr->right.obj, infix_expr->right.typ, /*expected:*/193);
 		v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, type_expr->typ);
 		if (typ_sym->kind == v__table__Kind_placeholder) {
-			v__checker__Checker_error(c, _STR("is: type `%.*s\000` does not exist", 2, typ_sym->name), type_expr->pos);
+			v__checker__Checker_error(c, _STR("%.*s\000: type `%.*s\000` does not exist", 3, v__token__Kind_str(infix_expr->op), typ_sym->name), type_expr->pos);
 		}
 		if (left->kind != v__table__Kind_interface_ && left->kind != v__table__Kind_sum_type) {
-			v__checker__Checker_error(c, tos_lit("`is` can only be used with interfaces and sum types"), type_expr->pos);
+			v__checker__Checker_error(c, _STR("`%.*s\000` can only be used with interfaces and sum types", 2, v__token__Kind_str(infix_expr->op)), type_expr->pos);
 		}
 		// defer
 			c->expected_type = former_expected_type;
@@ -20672,7 +20672,7 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 	if (left_type == _const_v__table__bool_type && !(infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_ne || infix_expr->op == v__token__Kind_logical_or || infix_expr->op == v__token__Kind_and)) {
 		v__checker__Checker_error(c, tos_lit("bool types only have the following operators defined: `==`, `!=`, `||`, and `&&`"), infix_expr->pos);
 	} else if (left_type == _const_v__table__string_type && !(infix_expr->op == v__token__Kind_plus || infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_ne || infix_expr->op == v__token__Kind_lt || infix_expr->op == v__token__Kind_gt || infix_expr->op == v__token__Kind_le || infix_expr->op == v__token__Kind_ge)) {
-		v__checker__Checker_error(c, tos_lit("string types only have the following operators defined: `==`, `!=`, `<`, `>`, `<=`, `>=`, and `&&`"), infix_expr->pos);
+		v__checker__Checker_error(c, tos_lit("string types only have the following operators defined: `==`, `!=`, `<`, `>`, `<=`, `>=`, and `+`"), infix_expr->pos);
 	}
 	if (!v__checker__Checker_symmetric_check(c, right_type, left_type)) {
 		if (left_type == _const_v__table__void_type || right_type == _const_v__table__void_type) {
