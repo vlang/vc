@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5af6a68"
+#define V_COMMIT_HASH "cadde3e"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b0138e0"
+#define V_COMMIT_HASH "5af6a68"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5af6a68"
+#define V_CURRENT_COMMIT_HASH "cadde3e"
 #endif
 
 
@@ -16309,7 +16309,7 @@ string v__util__color_compare_files(string diff_cmd, string file1, string file2)
 			return _STR("comparison command: `%.*s\000` failed", 2, full_cmd);
 		}
 		Option_os__Result x = _t336;
-		return /*opt*/(*(os__Result*)x.data).output;
+		return string_trim_right(/*opt*/(*(os__Result*)x.data).output, tos_lit("\r\n"));
 	}
 	return tos_lit("");
 }
@@ -34193,7 +34193,7 @@ _t1092;
 		if (v->pref->is_debug) {
 			string eword = tos_lit("error:");
 			string khighlight = (term__can_show_color_on_stdout() ? (term__red(eword)) : (eword));
-			println(string_replace(/*opt*/(*(os__Result*)res.data).output, eword, khighlight));
+			println(string_replace(string_trim_right(/*opt*/(*(os__Result*)res.data).output, tos_lit("\r\n")), eword, khighlight));
 			v__builder__verror(_const_v__builder__c_error_info);
 		} else {
 			if (/*opt*/(*(os__Result*)res.data).output.len < 30) {
@@ -34953,7 +34953,8 @@ static Option_v__builder__VsInstallation v__builder__find_vs(string vswhere_dir,
 		/*opt promotion*/ Option _t1191 = v_error(err);return *(Option_v__builder__VsInstallation*)&_t1191;
 	}
 	Option_os__Result res = _t1190;
-	Option_string _t1192 = os__read_file(_STR("%.*s\000\\VC\\Auxiliary\\Build\\Microsoft.VCToolsVersion.default.txt", 2, /*opt*/(*(os__Result*)res.data).output));
+	string res_output = string_trim_right(/*opt*/(*(os__Result*)res.data).output, tos_lit("\r\n"));
+	Option_string _t1192 = os__read_file(_STR("%.*s\000\\VC\\Auxiliary\\Build\\Microsoft.VCToolsVersion.default.txt", 2, res_output));
 	if (!_t1192.ok) {
 		string err = _t1192.v_error;
 		int errcode = _t1192.ecode;
