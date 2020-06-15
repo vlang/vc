@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b93177c"
+#define V_COMMIT_HASH "2785a5b"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5f21b15"
+#define V_COMMIT_HASH "b93177c"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b93177c"
+#define V_CURRENT_COMMIT_HASH "2785a5b"
 #endif
 
 
@@ -1533,10 +1533,6 @@ struct v__ast__IfGuardExpr {
 	v__table__Type expr_type;
 };
 
-struct v__ast__None {
-	int foo;
-};
-
 struct v__ast__ParExpr {
 	v__ast__Expr expr;
 };
@@ -1961,6 +1957,11 @@ struct v__ast__MatchExpr {
 	v__table__Type expected_type;
 	bool is_sum_type;
 	bool is_interface;
+};
+
+struct v__ast__None {
+	v__token__Position pos;
+	int foo;
 };
 
 struct v__ast__OrExpr {
@@ -17980,6 +17981,9 @@ v__token__Position v__ast__Expr_position(v__ast__Expr expr) {
 	}else if (expr.typ == 155 /* v.ast.MatchExpr */) {
 		v__ast__MatchExpr* it = (v__ast__MatchExpr*)expr.obj; // ST it
 		return it->pos;
+	}else if (expr.typ == 156 /* v.ast.None */) {
+		v__ast__None* it = (v__ast__None*)expr.obj; // ST it
+		return it->pos;
 	}else if (expr.typ == 159 /* v.ast.PostfixExpr */) {
 		v__ast__PostfixExpr* it = (v__ast__PostfixExpr*)expr.obj; // ST it
 		return it->pos;
@@ -21488,7 +21492,7 @@ static void v__checker__Checker_stmts(v__checker__Checker* c, array_v__ast__Stmt
 		v__checker__Checker_stmt(c, stmt);
 	}
 	if (unreachable.line_nr >= 0) {
-		v__checker__Checker_warn(c, tos_lit("unreachable code"), unreachable);
+		v__checker__Checker_error(c, tos_lit("unreachable code"), unreachable);
 	}
 	c->scope_returns = false;
 	c->expected_type = _const_v__table__void_type;
@@ -25910,8 +25914,10 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 			node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__ArrayInit[]) {v__parser__Parser_array_init(p)}, sizeof(v__ast__ArrayInit)), .typ = 136 /* v.ast.ArrayInit */};
 		}
 	}else if (p->tok.kind == v__token__Kind_key_none) {
+		v__token__Position pos = v__token__Token_position(&p->tok);
 		v__parser__Parser_next(p);
 		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__None[]) {(v__ast__None){
+			.pos = pos,
 			.foo = 0,
 		}}, sizeof(v__ast__None)), .typ = 156 /* v.ast.None */};
 	}else if (p->tok.kind == v__token__Kind_key_sizeof) {
