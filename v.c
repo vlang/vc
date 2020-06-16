@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "f2d9fa3"
+#define V_COMMIT_HASH "2daf915"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "015d0c5"
+#define V_COMMIT_HASH "f2d9fa3"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "f2d9fa3"
+#define V_CURRENT_COMMIT_HASH "2daf915"
 #endif
 
 
@@ -4092,14 +4092,14 @@ static string v__parser__Parser_check_name(v__parser__Parser* p);
 v__ast__Stmt v__parser__Parser_top_stmt(v__parser__Parser* p);
 v__ast__Comment v__parser__Parser_check_comment(v__parser__Parser* p);
 v__ast__Comment v__parser__Parser_comment(v__parser__Parser* p);
-v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p);
+v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p, bool is_top_level);
 static array_v__ast__Attr v__parser__Parser_attributes(v__parser__Parser* p);
 static v__ast__Attr v__parser__Parser_parse_attr(v__parser__Parser* p);
 void v__parser__Parser_error(v__parser__Parser* p, string s);
 void v__parser__Parser_warn(v__parser__Parser* p, string s);
 void v__parser__Parser_error_with_pos(v__parser__Parser* p, string s, v__token__Position pos);
 void v__parser__Parser_warn_with_pos(v__parser__Parser* p, string s, v__token__Position pos);
-static v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p);
+static v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p, bool is_top_level);
 v__ast__Ident v__parser__Parser_parse_ident(v__parser__Parser* p, v__table__Language language);
 v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p);
 static v__ast__IndexExpr v__parser__Parser_index_expr(v__parser__Parser* p, v__ast__Expr left);
@@ -24343,7 +24343,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 	};
 	v__parser__Parser_init_parse_fns(&p);
 	v__parser__Parser_read_first_token(&p);
-	return v__parser__Parser_stmt(&p);
+	return v__parser__Parser_stmt(&p, false);
 }
 
 v__ast__File v__parser__parse_text(string text, v__table__Table* b_table, v__pref__Preferences* pref, v__ast__Scope* scope, v__ast__Scope* global_scope) {
@@ -24594,7 +24594,7 @@ array_v__ast__Stmt v__parser__Parser_parse_block_no_scope(v__parser__Parser* p, 
 	array_v__ast__Stmt stmts = __new_array_with_default(0, 0, sizeof(v__ast__Stmt), 0);
 	if (p->tok.kind != v__token__Kind_rcbr) {
 		while (1) {
-			array_push(&stmts, _MOV((v__ast__Stmt[]){ v__parser__Parser_stmt(p) }));
+			array_push(&stmts, _MOV((v__ast__Stmt[]){ v__parser__Parser_stmt(p, is_top_level) }));
 			if ((p->tok.kind == v__token__Kind_eof || p->tok.kind == v__token__Kind_rcbr)) {
 				break;
 			}
@@ -24703,7 +24703,7 @@ v__ast__Stmt v__parser__Parser_top_stmt(v__parser__Parser* p) {
 		if (p->pref->is_script && !p->pref->is_test) {
 			array_v__ast__Stmt stmts = __new_array_with_default(0, 0, sizeof(v__ast__Stmt), 0);
 			while (p->tok.kind != v__token__Kind_eof) {
-				array_push(&stmts, _MOV((v__ast__Stmt[]){ v__parser__Parser_stmt(p) }));
+				array_push(&stmts, _MOV((v__ast__Stmt[]){ v__parser__Parser_stmt(p, false) }));
 			}
 			return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__FnDecl[]) {(v__ast__FnDecl){
 				.name = tos_lit("main"),
@@ -24764,7 +24764,7 @@ v__ast__Comment v__parser__Parser_comment(v__parser__Parser* p) {
 	};
 }
 
-v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p) {
+v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p, bool is_top_level) {
 	p->is_stmt_ident = p->tok.kind == v__token__Kind_name;
 	if (p->tok.kind == v__token__Kind_lcbr) {
 		array_v__ast__Stmt stmts = v__parser__Parser_parse_block(p);
@@ -24787,7 +24787,7 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p) {
 		if (p->peek_tok.kind == v__token__Kind_decl_assign) {
 			return v__parser__Parser_assign_stmt(p);
 		} else if (p->peek_tok.kind == v__token__Kind_comma) {
-			return v__parser__Parser_parse_multi_expr(p);
+			return v__parser__Parser_parse_multi_expr(p, is_top_level);
 		} else if (p->peek_tok.kind == v__token__Kind_colon) {
 			string name = v__parser__Parser_check_name(p);
 			v__parser__Parser_next(p);
@@ -24799,7 +24799,7 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p) {
 		} else if (!p->inside_if_expr && !p->inside_match_body && !p->inside_or_expr && (p->peek_tok.kind == v__token__Kind_rcbr || p->peek_tok.kind == v__token__Kind_eof)) {
 			v__parser__Parser_error_with_pos(p, _STR("`%.*s\000` evaluated but not used", 2, p->tok.lit), v__token__Token_position(&p->tok));
 		}
-		return v__parser__Parser_parse_multi_expr(p);
+		return v__parser__Parser_parse_multi_expr(p, is_top_level);
 	}else if (p->tok.kind == v__token__Kind_comment) {
 		return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__Comment[]) {v__parser__Parser_comment(p)}, sizeof(v__ast__Comment)), .typ = 176 /* v.ast.Comment */};
 	}else if (p->tok.kind == v__token__Kind_key_return) {
@@ -24856,7 +24856,7 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p) {
 	}else if (p->tok.kind == v__token__Kind_key_const) {
 		v__parser__Parser_error_with_pos(p, tos_lit("const can only be defined at the top level (outside of functions)"), v__token__Token_position(&p->tok));
 	}else {
-		return v__parser__Parser_parse_multi_expr(p);
+		return v__parser__Parser_parse_multi_expr(p, is_top_level);
 	};
 }
 
@@ -24955,7 +24955,8 @@ void v__parser__Parser_warn_with_pos(v__parser__Parser* p, string s, v__token__P
 	}
 }
 
-static v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p) {
+static v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p, bool is_top_level) {
+	v__token__Kind tok_kind = p->tok.kind;
 	array_v__ast__Expr collected = __new_array_with_default(0, 0, sizeof(v__ast__Expr), 0);
 	while (1) {
 		array_push(&collected, _MOV((v__ast__Expr[]){ v__parser__Parser_expr(p, 0) }));
@@ -24999,6 +25000,8 @@ static v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p) {
 			.pos = epos,
 			.typ = {0},
 		}}, sizeof(v__ast__ExprStmt)), .typ = 181 /* v.ast.ExprStmt */};
+	} else if (is_top_level && collected.len > 0 && (*(v__ast__Expr*)array_get(collected, 0)).typ != 138 /* v.ast.AssignExpr */ && (*(v__ast__Expr*)array_get(collected, 0)).typ != 141 /* v.ast.CallExpr */ && (*(v__ast__Expr*)array_get(collected, 0)).typ != 159 /* v.ast.PostfixExpr */ && !((*(v__ast__Expr*)array_get(collected, 0)).typ == 152 /* v.ast.InfixExpr */ && (/* as */ (v__ast__InfixExpr*)__as_cast((*(v__ast__Expr*)array_get(collected, 0)).obj, (*(v__ast__Expr*)array_get(collected, 0)).typ, /*expected:*/152))->op == v__token__Kind_left_shift) && (*(v__ast__Expr*)array_get(collected, 0)).typ != 144 /* v.ast.ComptimeCall */ && !(tok_kind == v__token__Kind_key_if || tok_kind == v__token__Kind_key_match)) {
+		v__parser__Parser_error_with_pos(p, tos_lit("expression evaluated but not used"), v__ast__Expr_position((*(v__ast__Expr*)array_get(collected, 0))));
 	} else {
 		if (collected.len == 1) {
 			return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__ExprStmt[]) {(v__ast__ExprStmt){
