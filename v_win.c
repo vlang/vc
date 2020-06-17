@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ed58192"
+#define V_COMMIT_HASH "88654ad"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "23993d2"
+#define V_COMMIT_HASH "ed58192"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ed58192"
+#define V_CURRENT_COMMIT_HASH "88654ad"
 #endif
 
 
@@ -31747,8 +31747,8 @@ static void v__gen__Gen_sql_expr(v__gen__Gen* g, v__ast__SqlExpr node) {
 	g->sql_stmt_name = v__gen__Gen_new_tmp_var(g);
 	string db_name = v__gen__Gen_new_tmp_var(g);
 	v__gen__Gen_writeln(g, tos_lit("\n\t// sql"));
-	v__gen__Gen_write(g, _STR("%.*s\000__DB %.*s\000 = *(%.*s\000__DB*)%.*s\000.data;", 5, _const_v__gen__dbtype, db_name, _const_v__gen__dbtype, node.db_var_name));
-	v__gen__Gen_write(g, _STR("sqlite3_stmt* %.*s\000 = %.*s\000__DB_init_stmt(*(%.*s\000__DB*)%.*s\000.data, tos_lit(\"%.*s", 5, g->sql_stmt_name, _const_v__gen__dbtype, _const_v__gen__dbtype, node.db_var_name, q));
+	v__gen__Gen_write(g, _STR("%.*s\000__DB %.*s\000 = %.*s\000;", 4, _const_v__gen__dbtype, db_name, node.db_var_name));
+	v__gen__Gen_write(g, _STR("sqlite3_stmt* %.*s\000 = %.*s\000__DB_init_stmt(%.*s\000, tos_lit(\"%.*s", 4, g->sql_stmt_name, _const_v__gen__dbtype, db_name, q));
 	if (node.has_where && node.where_expr.typ == 177 /* v.ast.InfixExpr */) {
 		v__gen__Gen_expr_to_sql(g, node.where_expr);
 	}
