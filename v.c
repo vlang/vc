@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "3f01e2b"
+#define V_COMMIT_HASH "b806fff"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7056f87"
+#define V_COMMIT_HASH "3f01e2b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "3f01e2b"
+#define V_CURRENT_COMMIT_HASH "b806fff"
 #endif
 
 
@@ -25040,7 +25040,7 @@ static v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p, boo
 	v__ast__Expr left0 = (*(v__ast__Expr*)array_get(left, 0));
 	if ((p->tok.kind == v__token__Kind_assign || p->tok.kind == v__token__Kind_decl_assign) || v__token__Kind_is_assign(p->tok.kind)) {
 		return v__parser__Parser_partial_assign_stmt(p, left);
-	} else if (is_top_level && left.len > 0 && left0.typ != 141 /* v.ast.CallExpr */ && left0.typ != 160 /* v.ast.PostfixExpr */ && !(left0.typ == 152 /* v.ast.InfixExpr */ && (/* as */ (v__ast__InfixExpr*)__as_cast(left0.obj, left0.typ, /*expected:*/152))->op == v__token__Kind_left_shift) && left0.typ != 144 /* v.ast.ComptimeCall */ && !(tok.kind == v__token__Kind_key_if || tok.kind == v__token__Kind_key_match)) {
+	} else if (is_top_level && !(tok.kind == v__token__Kind_key_if || tok.kind == v__token__Kind_key_match) && left0.typ != 141 /* v.ast.CallExpr */ && left0.typ != 160 /* v.ast.PostfixExpr */ && !(left0.typ == 152 /* v.ast.InfixExpr */ && (/* as */ (v__ast__InfixExpr*)__as_cast(left0.obj, left0.typ, /*expected:*/152))->op == v__token__Kind_left_shift) && left0.typ != 144 /* v.ast.ComptimeCall */) {
 		v__parser__Parser_error_with_pos(p, tos_lit("expression evaluated but not used"), v__ast__Expr_position(left0));
 	}
 	if (left.len == 1) {
