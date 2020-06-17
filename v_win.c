@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "effa006"
+#define V_COMMIT_HASH "6066414"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5749add"
+#define V_COMMIT_HASH "effa006"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "effa006"
+#define V_CURRENT_COMMIT_HASH "6066414"
 #endif
 
 
@@ -1691,6 +1691,7 @@ struct v__ast__SqlExpr {
 	v__ast__Expr where_expr;
 	bool has_where;
 	array_v__table__Field fields;
+	bool is_array;
 };
 
 struct v__ast__TypeOf {
@@ -26565,6 +26566,7 @@ static v__ast__SqlExpr v__parser__Parser_sql_expr(v__parser__Parser* p) {
 #endif
 };
 	bool has_where = p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("where"));
+	bool query_one = false;
 	if (has_where) {
 		v__parser__Parser_next(p);
 		where_expr = v__parser__Parser_expr(p, 0);
@@ -26573,10 +26575,14 @@ static v__ast__SqlExpr v__parser__Parser_sql_expr(v__parser__Parser* p) {
 			if (e->op == v__token__Kind_eq && e->left.typ == 174 /* v.ast.Ident */) {
 				v__ast__Ident* ident = /* as */ (v__ast__Ident*)__as_cast(e->left.obj, e->left.typ, /*expected:*/174);
 				if (string_eq(ident->name, tos_lit("id"))) {
+					query_one = true;
 					typ = table_type;
 				}
 			}
 		}
+	}
+	if (!query_one && !is_count) {
+		typ = v__table__new_type(v__table__Table_find_or_register_array(p->table, table_type, 1, p->mod));
 	}
 	v__parser__Parser_check(p, v__token__Kind_rcbr);
 	v__table__Struct* info = /* as */ (v__table__Struct*)__as_cast(sym->info.obj, sym->info.typ, /*expected:*/279);
@@ -26617,6 +26623,7 @@ int _t716_len = info->fields.len;
 		.where_expr = where_expr,
 		.has_where = has_where,
 		.fields = fields,
+		.is_array = !query_one,
 	};
 }
 
@@ -31848,9 +31855,22 @@ static void v__gen__Gen_sql_expr(v__gen__Gen* g, v__ast__SqlExpr node) {
 		v__gen__Gen_writeln(g, _STR("%.*s\000 %.*s\000__get_int_from_stmt(%.*s\000);", 4, cur_line, _const_v__gen__dbtype, g->sql_stmt_name));
 	} else {
 		string tmp = v__gen__Gen_new_tmp_var(g);
-		v__gen__Gen_write(g, v__gen__Gen_typ(g, node.typ));
-		v__gen__Gen_writeln(g, _STR(" %.*s\000;", 2, tmp));
-		v__gen__Gen_writeln(g, _STR("sqlite3_step(%.*s\000);", 2, g->sql_stmt_name));
+		string styp = v__gen__Gen_typ(g, node.typ);
+		string elem_type_str = tos_lit("");
+		if (node.is_array) {
+			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, node.typ);
+			v__table__Array* info = /* as */ (v__table__Array*)__as_cast(sym->info.obj, sym->info.typ, /*expected:*/272);
+			elem_type_str = v__gen__Gen_typ(g, info->elem_type);
+			v__gen__Gen_writeln(g, _STR("%.*s\000 %.*s\000_array = __new_array(0, 10, sizeof(%.*s\000));", 4, styp, tmp, elem_type_str));
+			v__gen__Gen_writeln(g, tos_lit("while (1) {"));
+			v__gen__Gen_writeln(g, _STR("\t%.*s\000 %.*s\000;", 3, elem_type_str, tmp));
+		} else {
+			v__gen__Gen_writeln(g, _STR("%.*s\000 %.*s\000;", 3, styp, tmp));
+		}
+		v__gen__Gen_writeln(g, _STR("int _step_res%.*s\000 = sqlite3_step(%.*s\000);", 3, tmp, g->sql_stmt_name));
+		if (node.is_array) {
+			v__gen__Gen_writeln(g, _STR("\tif (_step_res%.*s\000 == SQLITE_DONE) break;", 2, tmp));
+		}
 		// FOR IN array
 		array _t937 = node.fields;
 		for (int i = 0; i < _t937.len; i++) {
@@ -31863,8 +31883,16 @@ static void v__gen__Gen_sql_expr(v__gen__Gen* g, v__ast__SqlExpr node) {
 				v__gen__Gen_writeln(g, _STR("%.*s\000.%.*s\000 = %.*s\000(%.*s\000, %"PRId32"\000);", 6, tmp, field.name, func, g->sql_stmt_name, i));
 			}
 		}
+		if (node.is_array) {
+			v__gen__Gen_writeln(g, _STR("\t array_push(&%.*s\000_array, _MOV((%.*s\000[]){ %.*s\000 }));", 4, tmp, elem_type_str, tmp));
+			v__gen__Gen_writeln(g, tos_lit("} // for"));
+		}
 		v__gen__Gen_writeln(g, _STR("sqlite3_finalize(%.*s\000);", 2, g->sql_stmt_name));
-		v__gen__Gen_writeln(g, _STR("%.*s\000 %.*s\000; ", 3, cur_line, tmp));
+		if (node.is_array) {
+			v__gen__Gen_writeln(g, _STR("%.*s\000 %.*s\000_array; ", 3, cur_line, tmp));
+		} else {
+			v__gen__Gen_writeln(g, _STR("%.*s\000 %.*s\000; ", 3, cur_line, tmp));
+		}
 	}
 }
 
@@ -31874,6 +31902,8 @@ static void v__gen__Gen_expr_to_sql(v__gen__Gen* g, v__ast__Expr expr) {
 		v__gen__Gen_expr_to_sql(g, it->left);
 		if (it->op == v__token__Kind_eq) {
 			v__gen__Gen_write(g, tos_lit(" = "));
+		}else if (it->op == v__token__Kind_gt) {
+			v__gen__Gen_write(g, tos_lit(" > "));
 		}else if (it->op == v__token__Kind_and) {
 			v__gen__Gen_write(g, tos_lit(" and "));
 		}else {
