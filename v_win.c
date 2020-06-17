@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "6066414"
+#define V_COMMIT_HASH "325a7c7"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "effa006"
+#define V_COMMIT_HASH "6066414"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "6066414"
+#define V_CURRENT_COMMIT_HASH "325a7c7"
 #endif
 
 
@@ -31904,8 +31904,16 @@ static void v__gen__Gen_expr_to_sql(v__gen__Gen* g, v__ast__Expr expr) {
 			v__gen__Gen_write(g, tos_lit(" = "));
 		}else if (it->op == v__token__Kind_gt) {
 			v__gen__Gen_write(g, tos_lit(" > "));
+		}else if (it->op == v__token__Kind_lt) {
+			v__gen__Gen_write(g, tos_lit(" < "));
+		}else if (it->op == v__token__Kind_ge) {
+			v__gen__Gen_write(g, tos_lit(" >= "));
+		}else if (it->op == v__token__Kind_le) {
+			v__gen__Gen_write(g, tos_lit(" <= "));
 		}else if (it->op == v__token__Kind_and) {
 			v__gen__Gen_write(g, tos_lit(" and "));
+		}else if (it->op == v__token__Kind_logical_or) {
+			v__gen__Gen_write(g, tos_lit(" or "));
 		}else {
 		};
 		v__gen__Gen_expr_to_sql(g, it->right);
