@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "68967e8"
+#define V_COMMIT_HASH "1c68417"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5ddb129"
+#define V_COMMIT_HASH "68967e8"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "68967e8"
+#define V_CURRENT_COMMIT_HASH "1c68417"
 #endif
 
 
@@ -22864,25 +22864,28 @@ static v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Parser* p, 
 			v__ast__Ident* it = (v__ast__Ident*)lx.obj; // ST it
 			v__ast__Ident* lx = it;
 			if (op == v__token__Kind_decl_assign) {
+				if (v__ast__Scope_known_var(p->scope, lx->name)) {
+					v__parser__Parser_error_with_pos(p, _STR("redefinition of `%.*s\000`", 2, lx->name), lx->pos);
+				}
 				if (left.len == right.len) {
-					v__ast__Scope_register(p->scope, it->name, /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){
-						.name = it->name,
+					v__ast__Scope_register(p->scope, lx->name, /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){
+						.name = lx->name,
 						.expr = (*(v__ast__Expr*)array_get(right, i)),
-						.is_mut = it->is_mut || p->inside_for,
+						.is_mut = lx->is_mut || p->inside_for,
 						.is_arg = 0,
 						.typ = {0},
-						.pos = it->pos,
+						.pos = lx->pos,
 						.is_used = 0,
 						.is_changed = 0,
 					}}, sizeof(v__ast__Var)), .typ = 200 /* v.ast.Var */});
 				} else {
-					v__ast__Scope_register(p->scope, it->name, /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){
-						.name = it->name,
+					v__ast__Scope_register(p->scope, lx->name, /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){
+						.name = lx->name,
 						.expr = {0},
-						.is_mut = it->is_mut || p->inside_for,
+						.is_mut = lx->is_mut || p->inside_for,
 						.is_arg = 0,
 						.typ = {0},
-						.pos = it->pos,
+						.pos = lx->pos,
 						.is_used = 0,
 						.is_changed = 0,
 					}}, sizeof(v__ast__Var)), .typ = 200 /* v.ast.Var */});
@@ -22891,7 +22894,7 @@ static v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Parser* p, 
 		}else if (lx.typ == 152 /* v.ast.IndexExpr */) {
 			v__ast__IndexExpr* it = (v__ast__IndexExpr*)lx.obj; // ST it
 			v__ast__IndexExpr* lx = it;
-			it->is_setter = true;
+			lx->is_setter = true;
 		}else if (lx.typ == 160 /* v.ast.ParExpr */) {
 			v__ast__ParExpr* it = (v__ast__ParExpr*)lx.obj; // ST it
 			v__ast__ParExpr* lx = it;
@@ -22902,7 +22905,7 @@ static v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Parser* p, 
 			v__ast__SelectorExpr* it = (v__ast__SelectorExpr*)lx.obj; // ST it
 			v__ast__SelectorExpr* lx = it;
 			if (op == v__token__Kind_decl_assign) {
-				v__parser__Parser_error_with_pos(p, tos_lit("struct fields can only be declared during the initialization"), it->pos);
+				v__parser__Parser_error_with_pos(p, tos_lit("struct fields can only be declared during the initialization"), lx->pos);
 			}
 		}else {
 		};
