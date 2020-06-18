@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "1c68417"
+#define V_COMMIT_HASH "770132f"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "68967e8"
+#define V_COMMIT_HASH "1c68417"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "1c68417"
+#define V_CURRENT_COMMIT_HASH "770132f"
 #endif
 
 
@@ -3310,18 +3310,18 @@ static u32 __stdcall  unhandled_exception_handler(ExceptionPointers* e);
 static void add_unhandled_exception_handler();
 static void break_if_debugger_attached();
 int proc_pidpath(int, voidptr, int);
-string f64_str(f64 d);
+string f64_str(f64 x);
 string any_float_str(any_float d);
 string f64_strsci(f64 x, int digit_num);
 string f64_strlong(f64 x);
-string f32_str(f32 d);
+string f32_str(f32 x);
 string f32_strsci(f32 x, int digit_num);
 string f32_strlong(f32 x);
-static f32 f32_abs(f32 a);
+f32 f32_abs(f32 a);
 static f64 f64_abs(f64 a);
-static f32 f32_max(f32 a, f32 b);
-static f32 f32_min(f32 a, f32 b);
-static f64 f64_max(f64 a, f64 b);
+f32 f32_max(f32 a, f32 b);
+f32 f32_min(f32 a, f32 b);
+f64 f64_max(f64 a, f64 b);
 static f64 f64_min(f64 a, f64 b);
 bool f32_eq_epsilon(f32 a, f32 b);
 bool f64_eq_epsilon(f64 a, f64 b);
@@ -8735,19 +8735,18 @@ static void break_if_debugger_attached() {
 int proc_pidpath(int, voidptr, int);
 
 // Attr: [inline]
-inline string f64_str(f64 d) {
-	return strconv__ftoa__ftoa_64(d);
-}
-
-// Attr: [inline]
-inline string any_float_str(any_float d) {
-	f64 x = ((f64)(d));
+inline string f64_str(f64 x) {
 	f64 abs_x = f64_abs(x);
-	if (abs_x >= 0.01 && abs_x < 1.0e16) {
+	if (abs_x >= 0.0001 && abs_x < 1.0e6) {
 		return strconv__ftoa__f64_to_str_l(x);
 	} else {
 		return strconv__ftoa__ftoa_64(x);
 	}
+}
+
+// Attr: [inline]
+inline string any_float_str(any_float d) {
+	return f64_str(((f64)(d)));
 }
 
 // Attr: [inline]
@@ -8767,8 +8766,13 @@ inline string f64_strlong(f64 x) {
 }
 
 // Attr: [inline]
-inline string f32_str(f32 d) {
-	return strconv__ftoa__ftoa_32(d);
+inline string f32_str(f32 x) {
+	f32 abs_x = f32_abs(x);
+	if (abs_x >= 0.0001 && abs_x < 1.0e6) {
+		return strconv__ftoa__f32_to_str_l(x);
+	} else {
+		return strconv__ftoa__ftoa_32(x);
+	}
 }
 
 // Attr: [inline]
@@ -8788,7 +8792,7 @@ inline string f32_strlong(f32 x) {
 }
 
 // Attr: [inline]
-inline static f32 f32_abs(f32 a) {
+inline f32 f32_abs(f32 a) {
 	return (a < 0 ? (-a) : (a));
 }
 
@@ -8798,17 +8802,17 @@ inline static f64 f64_abs(f64 a) {
 }
 
 // Attr: [inline]
-inline static f32 f32_max(f32 a, f32 b) {
+inline f32 f32_max(f32 a, f32 b) {
 	return (a > b ? (a) : (b));
 }
 
 // Attr: [inline]
-inline static f32 f32_min(f32 a, f32 b) {
+inline f32 f32_min(f32 a, f32 b) {
 	return (a < b ? (a) : (b));
 }
 
 // Attr: [inline]
-inline static f64 f64_max(f64 a, f64 b) {
+inline f64 f64_max(f64 a, f64 b) {
 	return (a > b ? (a) : (b));
 }
 
