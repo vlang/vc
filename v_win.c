@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "f526754"
+#define V_COMMIT_HASH "3b6e66d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "98a48ec"
+#define V_COMMIT_HASH "f526754"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "f526754"
+#define V_CURRENT_COMMIT_HASH "3b6e66d"
 #endif
 
 
@@ -4061,7 +4061,6 @@ bool v__util__is_nl(byte c);
 bool v__util__contains_capital(string s);
 bool v__util__good_type_name(string s);
 string v__util__cescaped_path(string s);
-bool v__util__is_fmt();
 string _const_v__util__v_version; // a string literal, inited later
 array_string _const_v__util__builtin_module_parts; // inited later
 map_string_array_string _const_v__util__external_module_dependencies_for_tool; // inited later
@@ -4249,8 +4248,8 @@ string v__ast__Stmt_str(v__ast__Stmt node);
 #define _const_v__scanner__single_quote '\''
 #define _const_v__scanner__double_quote '"'
 #define _const_v__scanner__num_sep '_'
-v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__CommentsMode comments_mode);
-v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMode comments_mode);
+v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__CommentsMode comments_mode, bool is_fmt);
+v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMode comments_mode, bool is_fmt);
 static bool v__scanner__Scanner_should_parse_comment(v__scanner__Scanner* s);
 void v__scanner__Scanner_set_is_inside_toplevel_statement(v__scanner__Scanner* s, bool newstate);
 void v__scanner__Scanner_set_current_tidx(v__scanner__Scanner* s, int cidx);
@@ -16780,10 +16779,6 @@ string v__util__cescaped_path(string s) {
 	return string_replace(s, tos_lit("\\"), tos_lit("\\\\"));
 }
 
-bool v__util__is_fmt() {
-	return string_contains(os__executable(), tos_lit("vfmt"));
-}
-
 string v__util__vhash() {
 	array_fixed_byte_50 buf = {0};
 	buf[0] = 0;
@@ -18819,7 +18814,7 @@ multi_return_string_bool v__ast__StringInterLiteral_get_fspec_braces(v__ast__Str
 	if (!needs_braces) {
 		if (i + 1 < lit->vals.len && (*(string*)array_get(lit->vals, i + 1)).len > 0) {
 			byte next_char = string_at((*(string*)array_get(lit->vals, i + 1)), 0);
-			if (v__util__is_func_char(next_char) || next_char == '.') {
+			if (v__util__is_func_char(next_char) || next_char == '.' || next_char == '(') {
 				needs_braces = true;
 			}
 		}
@@ -18830,6 +18825,16 @@ multi_return_string_bool v__ast__StringInterLiteral_get_fspec_braces(v__ast__Str
 			if (sub_expr.typ == 174 /* v.ast.Ident */) {
 				v__ast__Ident* it = (v__ast__Ident*)sub_expr.obj; // ST it
 				v__ast__Ident* sx = it;
+				if (string_at(sx->name, 0) == '@') {
+					needs_braces = true;
+				}
+				break;
+			}else if (sub_expr.typ == 167 /* v.ast.CallExpr */) {
+				v__ast__CallExpr* it = (v__ast__CallExpr*)sub_expr.obj; // ST it
+				v__ast__CallExpr* sx = it;
+				if (sx->args.len != 0) {
+					needs_braces = true;
+				}
 				break;
 			}else if (sub_expr.typ == 189 /* v.ast.SelectorExpr */) {
 				v__ast__SelectorExpr* it = (v__ast__SelectorExpr*)sub_expr.obj; // ST it
@@ -18935,9 +18940,9 @@ string v__ast__Expr_str(v__ast__Expr x) {
 				break;
 			}
 			array_push(&res, _MOV((string[]){ tos_lit("$") }));
-			multi_return_string_bool mr_4966 = v__ast__StringInterLiteral_get_fspec_braces(it, i);
-			string fspec_str = mr_4966.arg0;
-			bool needs_braces = mr_4966.arg1;
+			multi_return_string_bool mr_5191 = v__ast__StringInterLiteral_get_fspec_braces(it, i);
+			string fspec_str = mr_5191.arg0;
+			bool needs_braces = mr_5191.arg1;
 			if (needs_braces) {
 				array_push(&res, _MOV((string[]){ tos_lit("{") }));
 				array_push(&res, _MOV((string[]){ v__ast__Expr_str((*(v__ast__Expr*)array_get(it->exprs, i))) }));
@@ -19029,7 +19034,7 @@ string v__ast__Stmt_str(v__ast__Stmt node) {
 	};
 }
 
-v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__CommentsMode comments_mode) {
+v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__CommentsMode comments_mode, bool is_fmt) {
 	if (!os__exists(file_path)) {
 		v__scanner__verror(_STR("%.*s\000 doesn't exist", 2, file_path));
 	}
@@ -19041,12 +19046,12 @@ v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__
 		return ((voidptr)(0));
 	}
 	string raw_text = *(string*)_t475.data;
-	v__scanner__Scanner* s = v__scanner__new_scanner(raw_text, comments_mode);
+	v__scanner__Scanner* s = v__scanner__new_scanner(raw_text, comments_mode, is_fmt);
 	s->file_path = file_path;
 	return s;
 }
 
-v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMode comments_mode) {
+v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMode comments_mode, bool is_fmt) {
 	v__scanner__Scanner* s = (v__scanner__Scanner*)memdup(&(v__scanner__Scanner){	.file_path = (string){.str=""},
 		.text = text,
 		.pos = 0,
@@ -19069,7 +19074,7 @@ v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMo
 		.line_ends = __new_array(0, 1, sizeof(int)),
 		.nr_lines = 0,
 		.is_vh = 0,
-		.is_fmt = v__util__is_fmt(),
+		.is_fmt = is_fmt,
 		.comments_mode = comments_mode,
 		.is_inside_toplvl_statement = false,
 		.all_tokens = __new_array(0, 1, sizeof(v__token__Token)),
@@ -19715,6 +19720,9 @@ static v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanner* s) {
 	}else if (c == '@') {
 		s->pos++;
 		string name = v__scanner__Scanner_ident_name(s);
+		if (s->is_fmt) {
+			return v__scanner__Scanner_new_token(s, v__token__Kind_name, string_add(tos_lit("@"), name), name.len + 1);
+		}
 		if (string_eq(name, tos_lit("FN"))) {
 			return v__scanner__Scanner_new_token(s, v__token__Kind_string, s->fn_name, 3);
 		}
@@ -19984,12 +19992,12 @@ static string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) {
 		if (c == '0' && s->pos > 5 && v__scanner__Scanner_expect(s, tos_lit("\\x0"), s->pos - 3)) {
 			v__scanner__Scanner_error(s, tos_lit("0 character in a string literal"));
 		}
-		if (c == '{' && prevc == '$' && !is_raw && !s->is_fmt && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
+		if (c == '{' && prevc == '$' && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
 			s->is_inside_string = true;
 			s->pos -= 2;
 			break;
 		}
-		if (v__util__is_name_char(c) && prevc == '$' && !s->is_fmt && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
+		if (v__util__is_name_char(c) && prevc == '$' && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
 			s->is_inside_string = true;
 			s->is_inter_start = true;
 			s->pos -= 2;
@@ -24809,7 +24817,7 @@ v__table__Type v__parser__Parser_parse_any_type(v__parser__Parser* p, v__table__
 }
 
 v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__Scope* scope) {
-	v__scanner__Scanner* s = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments);
+	v__scanner__Scanner* s = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments, false);
 	v__parser__Parser p = (v__parser__Parser){
 		.file_name = (string){.str=""},
 		.file_name_dir = (string){.str=""},
@@ -24917,7 +24925,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 }
 
 v__ast__File v__parser__parse_text(string text, v__table__Table* b_table, v__pref__Preferences* pref, v__ast__Scope* scope, v__ast__Scope* global_scope) {
-	v__scanner__Scanner* s = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments);
+	v__scanner__Scanner* s = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments, pref->is_fmt);
 	v__parser__Parser p = (v__parser__Parser){
 		.file_name = (string){.str=""},
 		.file_name_dir = (string){.str=""},
@@ -24966,7 +24974,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 	v__parser__Parser p = (v__parser__Parser){
 		.file_name = path,
 		.file_name_dir = os__dir(path),
-		.scanner = v__scanner__new_scanner_file(path, comments_mode),
+		.scanner = v__scanner__new_scanner_file(path, comments_mode, pref->is_fmt),
 		.comments_mode = comments_mode,
 		.tok = {0},
 		.prev_tok = {0},
