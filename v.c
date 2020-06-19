@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5ff7d07"
+#define V_COMMIT_HASH "5a6d440"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "770132f"
+#define V_COMMIT_HASH "5ff7d07"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5ff7d07"
+#define V_CURRENT_COMMIT_HASH "5a6d440"
 #endif
 
 
@@ -20810,6 +20810,22 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 		call_expr->return_type = info->elem_type;
 		call_expr->receiver_type = left_type;
 		return call_expr->return_type;
+	} else if (left_type_sym->kind == v__table__Kind_array && (string_eq(method_name, tos_lit("insert")) || string_eq(method_name, tos_lit("prepend")))) {
+		v__table__Array* array_info = /* as */ (v__table__Array*)__as_cast(left_type_sym->info.obj, left_type_sym->info.typ, /*expected:*/249);
+		v__table__TypeSymbol* elem_sym = v__table__Table_get_type_symbol(c->table, array_info->elem_type);
+		v__ast__Expr arg_expr = (string_eq(method_name, tos_lit("insert")) ? ((*(v__ast__CallArg*)array_get(call_expr->args, 1)).expr) : ((*(v__ast__CallArg*)array_get(call_expr->args, 0)).expr));
+		v__table__TypeSymbol* arg_sym = v__table__Table_get_type_symbol(c->table, v__checker__Checker_expr(c, arg_expr));
+		if (arg_sym->kind == v__table__Kind_array) {
+			v__table__Array* info = /* as */ (v__table__Array*)__as_cast(arg_sym->info.obj, arg_sym->info.typ, /*expected:*/249);
+			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, info->elem_type);
+			if (sym->kind != elem_sym->kind && ((elem_sym->kind == v__table__Kind_int && sym->kind != v__table__Kind_any_int) || (elem_sym->kind == v__table__Kind_f64 && sym->kind != v__table__Kind_any_float))) {
+				v__checker__Checker_error(c, _STR("type mismatch, should use `%.*s\000[]`", 2, elem_sym->name), v__ast__Expr_position(arg_expr));
+			}
+		} else {
+			if (arg_sym->kind != elem_sym->kind && ((elem_sym->kind == v__table__Kind_int && arg_sym->kind != v__table__Kind_any_int) || (elem_sym->kind == v__table__Kind_f64 && arg_sym->kind != v__table__Kind_any_float))) {
+				v__checker__Checker_error(c, _STR("type mismatch, should use `%.*s\000`", 2, elem_sym->name), v__ast__Expr_position(arg_expr));
+			}
+		}
 	}
 	{ /* if guard */ Option_v__table__Fn method = v__table__Table_type_find_method(c->table, left_type_sym, method_name);
 	if (method.ok) {
