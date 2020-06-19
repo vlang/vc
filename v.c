@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "3cfeb92"
+#define V_COMMIT_HASH "72b09d4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "cd8392e"
+#define V_COMMIT_HASH "3cfeb92"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "3cfeb92"
+#define V_CURRENT_COMMIT_HASH "72b09d4"
 #endif
 
 
@@ -3461,7 +3461,6 @@ string os__get_lines_joined();
 string os__user_os();
 string os__home_dir();
 void os__write_file(string path, string text);
-void os__clear();
 void os__on_segfault(voidptr f);
 string os__executable();
 static string os__executable_fallback();
@@ -3737,6 +3736,7 @@ string term__warn_message(string s);
 string term__h_divider(string divider);
 string term__header(string text, string divider);
 static bool term__supports_escape_sequences(int fd);
+void term__clear();
 multi_return_int_int term__get_terminal_size();
 Option_v__vmod__Manifest v__vmod__from_file(string vmod_path);
 Option_v__vmod__Manifest v__vmod__decode(string contents);
@@ -12481,18 +12481,6 @@ void os__write_file(string path, string text) {
 	os__File_close(&f);
 }
 
-void os__clear() {
-	
-// $if !windows {
-#ifndef _WIN32
-		printf("\x1b[2J");
-		printf("\x1b[H");
-	
-// } windows
-#endif
-
-}
-
 void os__on_segfault(voidptr f) {
 	
 // $if  windows {
@@ -15512,6 +15500,18 @@ static bool term__supports_escape_sequences(int fd) {
 	
 #else
 		return is_atty(fd) > 0 && string_ne(os__getenv(tos_lit("TERM")), tos_lit("dumb"));
+	
+// } windows
+#endif
+
+}
+
+void term__clear() {
+	
+// $if !windows {
+#ifndef _WIN32
+		printf("\x1b[2J");
+		printf("\x1b[H");
 	
 // } windows
 #endif
