@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "72b09d4"
+#define V_COMMIT_HASH "a609ff4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3cfeb92"
+#define V_COMMIT_HASH "72b09d4"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "72b09d4"
+#define V_CURRENT_COMMIT_HASH "a609ff4"
 #endif
 
 
@@ -32264,7 +32264,7 @@ int _t939_len = info->fields.len;
 	array_v__table__Field _t939 = __new_array(0, _t939_len, sizeof(v__table__Field));
 	for (int i = 0; i < _t939_len; i++) {
 	  v__table__Field it = ((v__table__Field*) info->fields.data)[i];
-	if ((it.typ == _const_v__table__string_type || it.typ == _const_v__table__int_type || it.typ == _const_v__table__bool_type)) array_push(&_t939, &it); 
+	if ((it.typ == _const_v__table__string_type || it.typ == _const_v__table__int_type || it.typ == _const_v__table__bool_type) && !_IN(string, tos_lit("skip"), it.attrs)) array_push(&_t939, &it); 
  }
 		array_v__table__Field fields =  _t939;
 	v__gen__Gen_writeln(g, tos_lit("\n\t// sql insert"));
