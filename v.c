@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "d76e94b"
+#define V_COMMIT_HASH "c78cfa4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7bc9e23"
+#define V_COMMIT_HASH "d76e94b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "d76e94b"
+#define V_CURRENT_COMMIT_HASH "c78cfa4"
 #endif
 
 
@@ -22667,8 +22667,8 @@ v__table__Type v__checker__Checker_map_init(v__checker__Checker* c, v__ast__MapI
 		node->value_type = info.value_type;
 		return node->typ;
 	}
-	v__table__Type key0_type = v__checker__Checker_expr(c, (*(v__ast__Expr*)array_get(node->keys, 0)));
-	v__table__Type val0_type = v__checker__Checker_expr(c, (*(v__ast__Expr*)array_get(node->vals, 0)));
+	v__table__Type key0_type = v__table__Table_mktyp(c->table, v__checker__Checker_expr(c, (*(v__ast__Expr*)array_get(node->keys, 0))));
+	v__table__Type val0_type = v__table__Table_mktyp(c->table, v__checker__Checker_expr(c, (*(v__ast__Expr*)array_get(node->vals, 0))));
 	// FOR IN array
 	array _t603 = node->keys;
 	for (int i = 0; i < _t603.len; i++) {
