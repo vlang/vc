@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "770132f"
+#define V_COMMIT_HASH "5ff7d07"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1c68417"
+#define V_COMMIT_HASH "770132f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "770132f"
+#define V_CURRENT_COMMIT_HASH "5ff7d07"
 #endif
 
 
@@ -23419,6 +23419,9 @@ static v__pref__OS v__parser__os_from_string(string os) {
 }
 
 v__pref__CompilerType v__parser__cc_from_string(string cc_str) {
+	if (cc_str.len == 0) {
+		return v__pref__CompilerType_gcc;
+	}
 	string cc = string_all_before(*(string*)array_last(string_split(string_replace(cc_str, tos_lit("\\"), tos_lit("/")), tos_lit("/"))), tos_lit("."));
 	if (string_contains(cc, tos_lit("tcc"))) {
 		return v__pref__CompilerType_tinyc;
