@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5a6d440"
+#define V_COMMIT_HASH "d9dd967"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5ff7d07"
+#define V_COMMIT_HASH "5a6d440"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5a6d440"
+#define V_CURRENT_COMMIT_HASH "d9dd967"
 #endif
 
 
@@ -20323,7 +20323,9 @@ v__table__Type v__checker__Checker_string_inter_lit(v__checker__Checker* c, v__a
 		if (fmt == '_') {
 			fmt = v__checker__Checker_get_default_fmt(c, ftyp, typ);
 			if (fmt == '_') {
-				v__checker__Checker_error(c, _STR("no known default format for type `%.*s\000`", 2, v__table__Table_get_type_name(c->table, ftyp)), (*(v__token__Position*)array_get(node->fmt_poss, i)));
+				if (typ != _const_v__table__void_type) {
+					v__checker__Checker_error(c, _STR("no known default format for type `%.*s\000`", 2, v__table__Table_get_type_name(c->table, ftyp)), (*(v__token__Position*)array_get(node->fmt_poss, i)));
+				}
 			} else {
 				(*(byte*)array_get(node->fmts, i)) = fmt;
 				(*(bool*)array_get(node->need_fmts, i)) = false;
@@ -21129,7 +21131,9 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 				if (exp_arg_sym->kind == v__table__Kind_string && v__table__TypeSymbol_has_method(got_arg_sym, tos_lit("str"))) {
 					continue;
 				}
-				v__checker__Checker_error(c, _STR("cannot use type `%.*s\000` as type `%.*s\000` in argument %"PRId32"\000 to `%.*s\000.%.*s\000`", 6, v__table__TypeSymbol_str(got_arg_sym), v__table__TypeSymbol_str(exp_arg_sym), i + 1, left_type_sym->name, method_name), call_expr->pos);
+				if (got_arg_typ != _const_v__table__void_type) {
+					v__checker__Checker_error(c, _STR("cannot use type `%.*s\000` as type `%.*s\000` in argument %"PRId32"\000 to `%.*s\000.%.*s\000`", 6, v__table__TypeSymbol_str(got_arg_sym), v__table__TypeSymbol_str(exp_arg_sym), i + 1, left_type_sym->name, method_name), call_expr->pos);
+				}
 			}
 		}
 		if (call_expr->expected_arg_types.len == 0) {
@@ -21471,7 +21475,9 @@ v__table__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast_
 		return /*opt*/(*(v__table__Field*)field.data).typ;
 	}}
 	if (sym->kind != v__table__Kind_struct_) {
-		v__checker__Checker_error(c, _STR("`%.*s\000` is not a struct", 2, sym->name), selector_expr->pos);
+		if (sym->kind != v__table__Kind_placeholder) {
+			v__checker__Checker_error(c, _STR("`%.*s\000` is not a struct", 2, sym->name), selector_expr->pos);
+		}
 	} else {
 		v__checker__Checker_error(c, _STR("type `%.*s\000` has no field or method `%.*s\000`", 3, sym->name, field_name), selector_expr->pos);
 	}
@@ -21976,7 +21982,9 @@ static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) 
 			}
 			v__table__Type value_type = v__table__Table_value_type(c->table, typ);
 			if (value_type == _const_v__table__void_type || v__table__Type_has_flag(typ, v__table__TypeFlag_optional)) {
-				v__checker__Checker_error(c, _STR("for in: cannot index `%.*s\000`", 2, v__table__Table_type_to_str(c->table, typ)), v__ast__Expr_position(it->cond));
+				if (typ != _const_v__table__void_type) {
+					v__checker__Checker_error(c, _STR("for in: cannot index `%.*s\000`", 2, v__table__Table_type_to_str(c->table, typ)), v__ast__Expr_position(it->cond));
+				}
 			}
 			it->cond_type = typ;
 			it->kind = sym->kind;
@@ -22107,6 +22115,9 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 		v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(c->table, node->typ);
 		if (expr_type_sym->kind == v__table__Kind_sum_type) {
 			v__table__SumType* info = /* as */ (v__table__SumType*)__as_cast(expr_type_sym->info.obj, expr_type_sym->info.typ, /*expected:*/283);
+			if (type_sym->kind == v__table__Kind_placeholder) {
+				v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, type_sym->name), node->pos);
+			}
 			if (!_IN(v__table__Type, node->typ, info->variants)) {
 				v__checker__Checker_error(c, _STR("cannot cast `%.*s\000` to `%.*s\000`", 3, expr_type_sym->name, type_sym->name), node->pos);
 			}
