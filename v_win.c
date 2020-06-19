@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "dc8b82e"
+#define V_COMMIT_HASH "7bc9e23"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8a5ca4c"
+#define V_COMMIT_HASH "dc8b82e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "dc8b82e"
+#define V_CURRENT_COMMIT_HASH "7bc9e23"
 #endif
 
 
@@ -22525,9 +22525,6 @@ v__table__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* 
 			}else if (/*opt*/(*(v__ast__ScopeObject*)obj.data).typ == 226 /* v.ast.Var */) {
 				v__ast__Var* it = (v__ast__Var*)/*opt*/(*(v__ast__ScopeObject*)obj.data).obj; // ST it
 				v__ast__Var* obj = it;
-				if (ident->pos.pos < obj->pos.pos) {
-					v__checker__Checker_error(c, _STR("variable `%.*s\000` used before decleration", 2, ident->name), ident->pos);
-				}
 				v__table__Type typ = obj->typ;
 				if (typ == 0) {
 					if (obj->expr.typ == 175 /* v.ast.Ident */) {
