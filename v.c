@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8a5ca4c"
+#define V_COMMIT_HASH "dc8b82e"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "624005b"
+#define V_COMMIT_HASH "8a5ca4c"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8a5ca4c"
+#define V_CURRENT_COMMIT_HASH "dc8b82e"
 #endif
 
 
@@ -7927,7 +7927,21 @@ array array_clone(array* a) {
 		.len = a->len,
 		.cap = a->cap,
 	};
-	memcpy(((byteptr)(arr.data)), a->data, a->cap * a->element_size);
+	if (_us32_eq(sizeof(array),a->element_size)) {
+		for (int i = 0; i < a->len; i++) {
+			array ar = (array){
+				.element_size = 0,
+				.data = 0,
+				.len = 0,
+				.cap = 0,
+			};
+			memcpy(&ar, ((byteptr)(a->data)) + i * a->element_size, sizeof(array));
+			array ar_clone = array_clone(&ar);
+			memcpy(((byteptr)(arr.data)) + i * a->element_size, &ar_clone, a->element_size);
+		}
+	} else {
+		memcpy(((byteptr)(arr.data)), a->data, a->cap * a->element_size);
+	}
 	return arr;
 }
 
