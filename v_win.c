@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "76dc7ee"
+#define V_COMMIT_HASH "3792723"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a02aff9"
+#define V_COMMIT_HASH "76dc7ee"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "76dc7ee"
+#define V_CURRENT_COMMIT_HASH "3792723"
 #endif
 
 
@@ -23270,6 +23270,9 @@ static v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Parser* p, 
 		}else if (lx.typ == 178 /* v.ast.IndexExpr */) {
 			v__ast__IndexExpr* it = (v__ast__IndexExpr*)lx.obj; // ST it
 			v__ast__IndexExpr* lx = it;
+			if (op == v__token__Kind_decl_assign) {
+				v__parser__Parser_error_with_pos(p, _STR("non-name `%.*s\000[%.*s\000]` on left side of `:=`", 3, v__ast__Expr_str(  lx->left), v__ast__Expr_str(  lx->index)), lx->pos);
+			}
 			lx->is_setter = true;
 		}else if (lx.typ == 186 /* v.ast.ParExpr */) {
 			v__ast__ParExpr* it = (v__ast__ParExpr*)lx.obj; // ST it
