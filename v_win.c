@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "fbe5599"
+#define V_COMMIT_HASH "7f225f2"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "81d17a6"
+#define V_COMMIT_HASH "fbe5599"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "fbe5599"
+#define V_CURRENT_COMMIT_HASH "7f225f2"
 #endif
 
 
@@ -1007,7 +1007,7 @@ struct array {
 struct DenseArray {
 	int value_bytes;
 	u32 cap;
-	u32 size;
+	u32 len;
 	u32 deletes;
 	string* keys;
 	byteptr values;
@@ -1021,7 +1021,7 @@ struct map {
 	DenseArray key_values;
 	u32* metas;
 	u32 extra_metas;
-	int size;
+	int len;
 };
 
 struct Option {
@@ -1381,7 +1381,7 @@ typedef byte array_fixed_byte_400 [400];
 struct SortedMap {
 	int value_bytes;
 	mapnode* root;
-	int size;
+	int len;
 };
 
 typedef voidptr array_fixed_voidptr_11 [11];
@@ -1961,7 +1961,7 @@ struct SymbolInfo {
 
 struct mapnode {
 	voidptr* children;
-	int size;
+	int len;
 	array_fixed_string_11 keys;
 	array_fixed_voidptr_11 values;
 };
@@ -3401,7 +3401,7 @@ Option v_error(string s);
 Option error_with_code(string s, int code);
 #define _const_degree 6
 int _const_mid_index; // inited later
-int _const_max_size; // inited later
+int _const_max_len; // inited later
 u32 _const_children_bytes; // inited later
 static SortedMap new_sorted_map(int n, int value_bytes);
 static SortedMap new_sorted_map_init(int n, int value_bytes, string* keys, voidptr values);
@@ -9197,7 +9197,7 @@ inline static DenseArray new_dense_array(int value_bytes) {
 	return (DenseArray){
 		.value_bytes = value_bytes,
 		.cap = 8,
-		.size = 0,
+		.len = 0,
 		.deletes = 0,
 		.keys = ((string*)(v_malloc(((int*)(8 * sizeof(string)))))),
 		.values = v_malloc(8 * value_bytes),
@@ -9206,15 +9206,15 @@ inline static DenseArray new_dense_array(int value_bytes) {
 
 // Attr: [inline]
 inline static u32 DenseArray_push(DenseArray* d, string key, voidptr value) {
-	if (d->cap == d->size) {
+	if (d->cap == d->len) {
 		d->cap += d->cap >> 3;
 		d->keys = ((string*)(realloc(d->keys, sizeof(string) * d->cap)));
 		d->values = realloc(d->values, ((u32)(d->value_bytes)) * d->cap);
 	}
-	u32 push_index = d->size;
+	u32 push_index = d->len;
 	d->keys[push_index] = key;
 	memcpy(d->values + push_index * ((u32)(d->value_bytes)), value, d->value_bytes);
-	d->size++;
+	d->len++;
 	return push_index;
 }
 
@@ -9222,8 +9222,8 @@ static voidptr DenseArray_get(DenseArray d, int i) {
 	
 // $if !no_bounds_checking {
 #ifndef CUSTOM_DEFINE_no_bounds_checking
-		if (i < 0 || i >= ((int)(d.size))) {
-			v_panic(_STR("DenseArray.get: index out of range (i == %"PRId32"\000, d.len == %"PRIu32"\000)", 3, i, d.size));
+		if (i < 0 || i >= ((int)(d.len))) {
+			v_panic(_STR("DenseArray.get: index out of range (i == %"PRId32"\000, d.len == %"PRIu32"\000)", 3, i, d.len));
 		}
 	
 // } no_bounds_checking
@@ -9235,7 +9235,7 @@ static voidptr DenseArray_get(DenseArray d, int i) {
 static void DenseArray_zeros_to_end(DenseArray* d) {
 	byteptr tmp_value = v_malloc(d->value_bytes);
 	u32 count = ((u32)(0));
-	for (int i = 0; i < d->size; i++) {
+	for (int i = 0; i < d->len; i++) {
 		if (d->keys[i].str != 0) {
 			string tmp_key = d->keys[count];
 			d->keys[count] = d->keys[i];
@@ -9248,7 +9248,7 @@ static void DenseArray_zeros_to_end(DenseArray* d) {
 	}
 	v_free(tmp_value);
 	d->deletes = 0;
-	d->size = count;
+	d->len = count;
 	d->cap = (count < 8 ? (((u32)(8))) : (count));
 	d->keys = ((string*)(realloc(d->keys, sizeof(string) * d->cap)));
 	d->values = realloc(d->values, ((u32)(d->value_bytes)) * d->cap);
@@ -9263,7 +9263,7 @@ static map new_map_1(int value_bytes) {
 		.key_values = new_dense_array(value_bytes),
 		.metas = ((u32*)(vcalloc(((int*)(sizeof(u32) * (_const_init_capicity + _const_extra_metas_inc)))))),
 		.extra_metas = _const_extra_metas_inc,
-		.size = 0,
+		.len = 0,
 	};
 }
 
@@ -9334,16 +9334,16 @@ inline static void map_ensure_extra_metas(map* m, u32 probe_count) {
 
 static void map_set(map* m, string k, voidptr value) {
 	string key = string_clone(k);
-	f32 load_factor = ((f32)(m->size << 1)) / ((f32)(m->cap));
+	f32 load_factor = ((f32)(m->len << 1)) / ((f32)(m->cap));
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_8810 = map_key_to_index(m, key);
-	u32 index = mr_8810.arg0;
-	u32 meta = mr_8810.arg1;
-	multi_return_u32_u32 mr_8845 = map_meta_less(m, index, meta);
-	index = mr_8845.arg0;
-	meta = mr_8845.arg1;
+	multi_return_u32_u32 mr_8783 = map_key_to_index(m, key);
+	u32 index = mr_8783.arg0;
+	u32 meta = mr_8783.arg1;
+	multi_return_u32_u32 mr_8818 = map_meta_less(m, index, meta);
+	index = mr_8818.arg0;
+	meta = mr_8818.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -9355,7 +9355,7 @@ static void map_set(map* m, string k, voidptr value) {
 	}
 	u32 kv_index = DenseArray_push(&m->key_values, key, value);
 	map_meta_greater(m, index, meta, kv_index);
-	m->size++;
+	m->len++;
 }
 
 static void map_expand(map* m) {
@@ -9376,16 +9376,16 @@ static void map_rehash(map* m) {
 	m->metas = ((u32*)(realloc(m->metas, meta_bytes)));
 	memset(m->metas, 0, meta_bytes);
 	for (u32 i = ((u32)(0));
-	i < m->key_values.size; i++) {
+	i < m->key_values.len; i++) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
-		multi_return_u32_u32 mr_9870 = map_key_to_index(m, m->key_values.keys[i]);
-		u32 index = mr_9870.arg0;
-		u32 meta = mr_9870.arg1;
-		multi_return_u32_u32 mr_9923 = map_meta_less(m, index, meta);
-		index = mr_9923.arg0;
-		meta = mr_9923.arg1;
+		multi_return_u32_u32 mr_9841 = map_key_to_index(m, m->key_values.keys[i]);
+		u32 index = mr_9841.arg0;
+		u32 meta = mr_9841.arg1;
+		multi_return_u32_u32 mr_9894 = map_meta_less(m, index, meta);
+		index = mr_9894.arg0;
+		meta = mr_9894.arg1;
 		map_meta_greater(m, index, meta, i);
 	}
 }
@@ -9404,9 +9404,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->cap >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->cap);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_10517 = map_meta_less(m, index, meta);
-		index = mr_10517.arg0;
-		meta = mr_10517.arg1;
+		multi_return_u32_u32 mr_10488 = map_meta_less(m, index, meta);
+		index = mr_10488.arg0;
+		meta = mr_10488.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -9414,9 +9414,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 }
 
 static voidptr map_get3(map m, string key, voidptr zero) {
-	multi_return_u32_u32 mr_10723 = map_key_to_index(&m, key);
-	u32 index = mr_10723.arg0;
-	u32 meta = mr_10723.arg1;
+	multi_return_u32_u32 mr_10694 = map_key_to_index(&m, key);
+	u32 index = mr_10694.arg0;
+	u32 meta = mr_10694.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9434,9 +9434,9 @@ static voidptr map_get3(map m, string key, voidptr zero) {
 }
 
 static bool map_exists(map m, string key) {
-	multi_return_u32_u32 mr_11101 = map_key_to_index(&m, key);
-	u32 index = mr_11101.arg0;
-	u32 meta = mr_11101.arg1;
+	multi_return_u32_u32 mr_11072 = map_key_to_index(&m, key);
+	u32 index = mr_11072.arg0;
+	u32 meta = mr_11072.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9454,12 +9454,12 @@ static bool map_exists(map m, string key) {
 }
 
 void map_delete(map* m, string key) {
-	multi_return_u32_u32 mr_11428 = map_key_to_index(m, key);
-	u32 index = mr_11428.arg0;
-	u32 meta = mr_11428.arg1;
-	multi_return_u32_u32 mr_11463 = map_meta_less(m, index, meta);
-	index = mr_11463.arg0;
-	meta = mr_11463.arg1;
+	multi_return_u32_u32 mr_11399 = map_key_to_index(m, key);
+	u32 index = mr_11399.arg0;
+	u32 meta = mr_11399.arg1;
+	multi_return_u32_u32 mr_11434 = map_meta_less(m, index, meta);
+	index = mr_11434.arg0;
+	meta = mr_11434.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -9468,15 +9468,15 @@ void map_delete(map* m, string key) {
 				m->metas[index + 1] = m->metas[index + 3];
 				index += 2;
 			}
-			m->size--;
+			m->len--;
 			m->metas[index] = 0;
 			m->key_values.deletes++;
 			string_free(&m->key_values.keys[kv_index]);
 			memset(&m->key_values.keys[kv_index], 0, sizeof(string));
-			if (m->key_values.size <= 32) {
+			if (m->key_values.len <= 32) {
 				return;
 			}
-			if (m->key_values.deletes >= (m->key_values.size >> 1)) {
+			if (m->key_values.deletes >= (m->key_values.len >> 1)) {
 				DenseArray_zeros_to_end(&m->key_values);
 				map_rehash(m);
 				m->key_values.deletes = 0;
@@ -9489,10 +9489,10 @@ void map_delete(map* m, string key) {
 }
 
 array_string map_keys(map* m) {
-	array_string keys = array_repeat(new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){tos_lit("")})), m->size);
+	array_string keys = array_repeat(new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){tos_lit("")})), m->len);
 	int j = 0;
 	for (u32 i = ((u32)(0));
-	i < m->key_values.size; i++) {
+	i < m->key_values.len; i++) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
@@ -9507,7 +9507,7 @@ DenseArray DenseArray_clone(DenseArray d) {
 	DenseArray res = (DenseArray){
 		.value_bytes = d.value_bytes,
 		.cap = d.cap,
-		.size = d.size,
+		.len = d.len,
 		.deletes = d.deletes,
 		.keys = ((string*)(v_malloc(((int*)(d.cap * sizeof(string)))))),
 		.values = ((byteptr)(v_malloc(((int)(d.cap * ((u32)(d.value_bytes))))))),
@@ -9528,7 +9528,7 @@ map map_clone(map m) {
 		.key_values = DenseArray_clone(m.key_values),
 		.metas = ((u32*)(v_malloc(((int*)(metas_size))))),
 		.extra_metas = m.extra_metas,
-		.size = m.size,
+		.len = m.len,
 	};
 	memcpy(res.metas, m.metas, metas_size);
 	return res;
@@ -9538,7 +9538,7 @@ map map_clone(map m) {
 void map_free(map* m) {
 	v_free(m->metas);
 	for (u32 i = ((u32)(0));
-	i < m->key_values.size; i++) {
+	i < m->key_values.len; i++) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
@@ -9549,7 +9549,7 @@ void map_free(map* m) {
 }
 
 string map_string_str(map_string m) {
-	if (m.size == 0) {
+	if (m.len == 0) {
 		return tos_lit("{}");
 	}
 	strings__Builder sb = strings__new_builder(50);
@@ -9637,7 +9637,7 @@ static SortedMap new_sorted_map(int n, int value_bytes) {
 	return (SortedMap){
 		.value_bytes = value_bytes,
 		.root = new_node(),
-		.size = 0,
+		.len = 0,
 	};
 }
 
@@ -9651,7 +9651,7 @@ static SortedMap new_sorted_map_init(int n, int value_bytes, string* keys, voidp
 
 static mapnode* new_node() {
 	return (mapnode*)memdup(&(mapnode){	.children = 0,
-		.size = 0,
+		.len = 0,
 		.keys = {0},
 		.values = {0},
 	}, sizeof(mapnode));
@@ -9662,7 +9662,7 @@ static void SortedMap_set(SortedMap* m, string key, voidptr value) {
 	int child_index = 0;
 	mapnode* parent = ((mapnode*)(0));
 	while (1) {
-		if (node->size == _const_max_size) {
+		if (node->len == _const_max_len) {
 			if (isnil(parent)) {
 				parent = new_node();
 				m->root = parent;
@@ -9675,15 +9675,15 @@ static void SortedMap_set(SortedMap* m, string key, voidptr value) {
 			node = (string_lt(key, parent->keys[child_index]) ? (((mapnode*)(parent->children[child_index]))) : (((mapnode*)(parent->children[child_index + 1]))));
 		}
 		int i = 0;
-		while (i < node->size && string_gt(key, node->keys[i])) {
+		while (i < node->len && string_gt(key, node->keys[i])) {
 			i++;
 		}
-		if (i != node->size && string_eq(key, node->keys[i])) {
+		if (i != node->len && string_eq(key, node->keys[i])) {
 			memcpy(node->values[i], value, m->value_bytes);
 			return;
 		}
 		if (isnil(node->children)) {
-			int j = node->size - 1;
+			int j = node->len - 1;
 			while (j >= 0 && string_lt(key, node->keys[j])) {
 				node->keys[j + 1] = node->keys[j];
 				node->values[j + 1] = node->values[j];
@@ -9692,8 +9692,8 @@ static void SortedMap_set(SortedMap* m, string key, voidptr value) {
 			node->keys[j + 1] = key;
 			node->values[j + 1] = v_malloc(m->value_bytes);
 			memcpy(node->values[j + 1], value, m->value_bytes);
-			node->size++;
-			m->size++;
+			node->len++;
+			m->len++;
 			return;
 		}
 		parent = node;
@@ -9704,8 +9704,8 @@ static void SortedMap_set(SortedMap* m, string key, voidptr value) {
 
 static void mapnode_split_child(mapnode* n, int child_index, mapnode* y) {
 	mapnode* z = new_node();
-	z->size = _const_mid_index;
-	y->size = _const_mid_index;
+	z->len = _const_mid_index;
+	y->len = _const_mid_index;
 	for (int j = _const_mid_index - 1;
 	j >= 0; j--) {
 		z->keys[j] = y->keys[j + _const_degree];
@@ -9721,8 +9721,8 @@ static void mapnode_split_child(mapnode* n, int child_index, mapnode* y) {
 	if (isnil(n->children)) {
 		n->children = ((voidptr*)(v_malloc(((int*)(_const_children_bytes)))));
 	}
-	n->children[n->size + 1] = n->children[n->size];
-	for (int j = n->size;
+	n->children[n->len + 1] = n->children[n->len];
+	for (int j = n->len;
 	j > child_index; j--) {
 		n->keys[j] = n->keys[j - 1];
 		n->values[j] = n->values[j - 1];
@@ -9732,13 +9732,13 @@ static void mapnode_split_child(mapnode* n, int child_index, mapnode* y) {
 	n->values[child_index] = y->values[_const_mid_index];
 	n->children[child_index] = ((voidptr)(y));
 	n->children[child_index + 1] = ((voidptr)(z));
-	n->size++;
+	n->len++;
 }
 
 static bool SortedMap_get(SortedMap m, string key, voidptr out) {
 	mapnode* node = m.root;
 	while (1) {
-		int i = node->size - 1;
+		int i = node->len - 1;
 		while (i >= 0 && string_lt(key, node->keys[i])) {
 			i--;
 		}
@@ -9760,7 +9760,7 @@ static bool SortedMap_exists(SortedMap m, string key) {
 	}
 	mapnode* node = m.root;
 	while (1) {
-		int i = node->size - 1;
+		int i = node->len - 1;
 		while (i >= 0 && string_lt(key, node->keys[i])) {
 			i--;
 		}
@@ -9777,7 +9777,7 @@ static bool SortedMap_exists(SortedMap m, string key) {
 
 static int mapnode_find_key(mapnode* n, string k) {
 	int idx = 0;
-	while (idx < n->size && string_lt(n->keys[idx], k)) {
+	while (idx < n->len && string_lt(n->keys[idx], k)) {
 		idx++;
 	}
 	return idx;
@@ -9785,7 +9785,7 @@ static int mapnode_find_key(mapnode* n, string k) {
 
 static bool mapnode_remove_key(mapnode* n, string k) {
 	int idx = mapnode_find_key(n, k);
-	if (idx < n->size && string_eq(n->keys[idx], k)) {
+	if (idx < n->len && string_eq(n->keys[idx], k)) {
 		if (isnil(n->children)) {
 			mapnode_remove_from_leaf(n, idx);
 		} else {
@@ -9796,11 +9796,11 @@ static bool mapnode_remove_key(mapnode* n, string k) {
 		if (isnil(n->children)) {
 			return false;
 		}
-		bool flag = (idx == n->size ? (true) : (false));
-		if ((((mapnode*)(n->children[idx])))->size < _const_degree) {
+		bool flag = (idx == n->len ? (true) : (false));
+		if ((((mapnode*)(n->children[idx])))->len < _const_degree) {
 			mapnode_fill(n, idx);
 		}
-		if (flag && idx > n->size) {
+		if (flag && idx > n->len) {
 			return mapnode_remove_key((((mapnode*)(n->children[idx - 1]))), k);
 		} else {
 			return mapnode_remove_key((((mapnode*)(n->children[idx]))), k);
@@ -9810,25 +9810,25 @@ static bool mapnode_remove_key(mapnode* n, string k) {
 
 static void mapnode_remove_from_leaf(mapnode* n, int idx) {
 	for (int i = idx + 1;
-	i < n->size; i++) {
+	i < n->len; i++) {
 		n->keys[i - 1] = n->keys[i];
 		n->values[i - 1] = n->values[i];
 	}
-	n->size--;
+	n->len--;
 }
 
 static void mapnode_remove_from_non_leaf(mapnode* n, int idx) {
 	string k = n->keys[idx];
-	if (((mapnode*)(n->children[idx]))->size >= _const_degree) {
+	if (((mapnode*)(n->children[idx]))->len >= _const_degree) {
 		mapnode* current = ((mapnode*)(n->children[idx]));
 		while (!isnil(current->children)) {
-			current = ((mapnode*)(current->children[current->size]));
+			current = ((mapnode*)(current->children[current->len]));
 		}
-		string predecessor = current->keys[current->size - 1];
+		string predecessor = current->keys[current->len - 1];
 		n->keys[idx] = predecessor;
-		n->values[idx] = current->values[current->size - 1];
+		n->values[idx] = current->values[current->len - 1];
 		mapnode_remove_key((((mapnode*)(n->children[idx]))), predecessor);
-	} else if (((mapnode*)(n->children[idx + 1]))->size >= _const_degree) {
+	} else if (((mapnode*)(n->children[idx + 1]))->len >= _const_degree) {
 		mapnode* current = ((mapnode*)(n->children[idx + 1]));
 		while (!isnil(current->children)) {
 			current = ((mapnode*)(current->children[0]));
@@ -9844,11 +9844,11 @@ static void mapnode_remove_from_non_leaf(mapnode* n, int idx) {
 }
 
 static void mapnode_fill(mapnode* n, int idx) {
-	if (idx != 0 && ((mapnode*)(n->children[idx - 1]))->size >= _const_degree) {
+	if (idx != 0 && ((mapnode*)(n->children[idx - 1]))->len >= _const_degree) {
 		mapnode_borrow_from_prev(n, idx);
-	} else if (idx != n->size && ((mapnode*)(n->children[idx + 1]))->size >= _const_degree) {
+	} else if (idx != n->len && ((mapnode*)(n->children[idx + 1]))->len >= _const_degree) {
 		mapnode_borrow_from_next(n, idx);
-	} else if (idx != n->size) {
+	} else if (idx != n->len) {
 		mapnode_merge(n, idx);
 	} else {
 		mapnode_merge(n, idx - 1);
@@ -9858,13 +9858,13 @@ static void mapnode_fill(mapnode* n, int idx) {
 static void mapnode_borrow_from_prev(mapnode* n, int idx) {
 	mapnode* child = ((mapnode*)(n->children[idx]));
 	mapnode* sibling = ((mapnode*)(n->children[idx - 1]));
-	for (int i = child->size - 1;
+	for (int i = child->len - 1;
 	i >= 0; i--) {
 		child->keys[i + 1] = child->keys[i];
 		child->values[i + 1] = child->values[i];
 	}
 	if (!isnil(child->children)) {
-		for (int i = child->size;
+		for (int i = child->len;
 		i >= 0; i--) {
 			child->children[i + 1] = child->children[i];
 		}
@@ -9872,37 +9872,37 @@ static void mapnode_borrow_from_prev(mapnode* n, int idx) {
 	child->keys[0] = n->keys[idx - 1];
 	child->values[0] = n->values[idx - 1];
 	if (!isnil(child->children)) {
-		child->children[0] = sibling->children[sibling->size];
+		child->children[0] = sibling->children[sibling->len];
 	}
-	n->keys[idx - 1] = sibling->keys[sibling->size - 1];
-	n->values[idx - 1] = sibling->values[sibling->size - 1];
-	child->size++;
-	sibling->size--;
+	n->keys[idx - 1] = sibling->keys[sibling->len - 1];
+	n->values[idx - 1] = sibling->values[sibling->len - 1];
+	child->len++;
+	sibling->len--;
 }
 
 static void mapnode_borrow_from_next(mapnode* n, int idx) {
 	mapnode* child = ((mapnode*)(n->children[idx]));
 	mapnode* sibling = ((mapnode*)(n->children[idx + 1]));
-	child->keys[child->size] = n->keys[idx];
-	child->values[child->size] = n->values[idx];
+	child->keys[child->len] = n->keys[idx];
+	child->values[child->len] = n->values[idx];
 	if (!isnil(child->children)) {
-		child->children[child->size + 1] = sibling->children[0];
+		child->children[child->len + 1] = sibling->children[0];
 	}
 	n->keys[idx] = sibling->keys[0];
 	n->values[idx] = sibling->values[0];
 	for (int i = 1;
-	i < sibling->size; i++) {
+	i < sibling->len; i++) {
 		sibling->keys[i - 1] = sibling->keys[i];
 		sibling->values[i - 1] = sibling->values[i];
 	}
 	if (!isnil(sibling->children)) {
 		for (int i = 1;
-		i <= sibling->size; i++) {
+		i <= sibling->len; i++) {
 			sibling->children[i - 1] = sibling->children[i];
 		}
 	}
-	child->size++;
-	sibling->size--;
+	child->len++;
+	sibling->len--;
 }
 
 static void mapnode_merge(mapnode* n, int idx) {
@@ -9910,38 +9910,38 @@ static void mapnode_merge(mapnode* n, int idx) {
 	mapnode* sibling = ((mapnode*)(n->children[idx + 1]));
 	child->keys[_const_mid_index] = n->keys[idx];
 	child->values[_const_mid_index] = n->values[idx];
-	for (int i = 0; i < sibling->size; i++) {
+	for (int i = 0; i < sibling->len; i++) {
 		child->keys[i + _const_degree] = sibling->keys[i];
 		child->values[i + _const_degree] = sibling->values[i];
 	}
 	if (!isnil(child->children)) {
 		for (int i = 0;
-		i <= sibling->size; i++) {
+		i <= sibling->len; i++) {
 			child->children[i + _const_degree] = sibling->children[i];
 		}
 	}
 	for (int i = idx + 1;
-	i < n->size; i++) {
+	i < n->len; i++) {
 		n->keys[i - 1] = n->keys[i];
 		n->values[i - 1] = n->values[i];
 	}
 	for (int i = idx + 2;
-	i <= n->size; i++) {
+	i <= n->len; i++) {
 		n->children[i - 1] = n->children[i];
 	}
-	child->size += sibling->size + 1;
-	n->size--;
+	child->len += sibling->len + 1;
+	n->len--;
 }
 
 void SortedMap_delete(SortedMap* m, string key) {
-	if (m->root->size == 0) {
+	if (m->root->len == 0) {
 		return;
 	}
 	bool removed = mapnode_remove_key(m->root, key);
 	if (removed) {
-		m->size--;
+		m->len--;
 	}
-	if (m->root->size == 0) {
+	if (m->root->len == 0) {
 		if (isnil(m->root->children)) {
 			return;
 		} else {
@@ -9953,26 +9953,26 @@ void SortedMap_delete(SortedMap* m, string key) {
 static int mapnode_subkeys(mapnode* n, array_string* keys, int at) {
 	int position = at;
 	if (!isnil(n->children)) {
-		for (int i = 0; i < n->size; i++) {
+		for (int i = 0; i < n->len; i++) {
 			mapnode* child = ((mapnode*)(n->children[i]));
 			position += mapnode_subkeys(child, keys, position);
 			array_set(keys, position, &(string[]) { n->keys[i] });
 			position++;
 		}
-		mapnode* child = ((mapnode*)(n->children[n->size]));
+		mapnode* child = ((mapnode*)(n->children[n->len]));
 		position += mapnode_subkeys(child, keys, position);
 	} else {
-		for (int i = 0; i < n->size; i++) {
+		for (int i = 0; i < n->len; i++) {
 			array_set(keys, position + i, &(string[]) { n->keys[i] });
 		}
-		position += n->size;
+		position += n->len;
 	}
 	return position - at;
 }
 
 array_string SortedMap_keys(SortedMap* m) {
-	array_string keys = array_repeat(new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){tos_lit("")})), m->size);
-	if (isnil(m->root) || m->root->size == 0) {
+	array_string keys = array_repeat(new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){tos_lit("")})), m->len);
+	if (isnil(m->root) || m->root->len == 0) {
 		return keys;
 	}
 	mapnode_subkeys(m->root, &/*111*/(array[]){keys}[0], 0);
@@ -14714,7 +14714,7 @@ void v__depgraph__OrderedDepMap_apply_diff(v__depgraph__OrderedDepMap* o, string
 }
 
 int v__depgraph__OrderedDepMap_size(v__depgraph__OrderedDepMap* o) {
-	return o->data.size;
+	return o->data.len;
 }
 
 v__depgraph__DepGraph* v__depgraph__new_dep_graph() {
@@ -27693,7 +27693,7 @@ void v__gen__Gen_write_multi_return_types(v__gen__Gen* g) {
 }
 
 void v__gen__Gen_write_variadic_types(v__gen__Gen* g) {
-	if (g->variadic_args.size > 0) {
+	if (g->variadic_args.len > 0) {
 		strings__Builder_writeln(&g->type_definitions, tos_lit("// variadic structs"));
 	}
 	// FOR IN map
@@ -29870,9 +29870,9 @@ static void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__TypeSymbol t
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_76615 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_76615.arg0;
-						string base = mr_76615.arg1;
+						multi_return_string_string mr_76614 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_76614.arg0;
+						string base = mr_76614.arg1;
 						array_push(&g->optionals, _MOV((string[]){ styp }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -30084,9 +30084,9 @@ static void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInter
 
 static Option_bool v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr expr, v__table__Type etype) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, etype);
-	multi_return_bool_bool_int mr_82832 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_82832.arg0;
-	bool str_method_expects_ptr = mr_82832.arg1;
+	multi_return_bool_bool_int mr_82831 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_82831.arg0;
+	bool str_method_expects_ptr = mr_82831.arg1;
 	if (v__table__Type_has_flag(etype, v__table__TypeFlag_variadic)) {
 		string str_fn_name = v__gen__Gen_gen_str_for_type(g, etype);
 		v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -30377,11 +30377,11 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExpr
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->cur_fn->name, tos_lit("main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_91090 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_91090.arg0;
-				string pafile = mr_91090.arg1;
-				string pamod = mr_91090.arg2;
-				string pafn = mr_91090.arg3;
+				multi_return_int_string_string_string mr_91089 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_91089.arg0;
+				string pafile = mr_91089.arg1;
+				string pamod = mr_91089.arg2;
+				string pafn = mr_91089.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(%.*s\000.v_error);", 2, cvar_name));
@@ -30786,10 +30786,10 @@ inline static string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Type
 static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_101888 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_101888.arg0;
-	bool str_method_expects_ptr = mr_101888.arg1;
-	int str_nr_args = mr_101888.arg2;
+	multi_return_bool_bool_int mr_101887 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_101887.arg0;
+	bool str_method_expects_ptr = mr_101887.arg1;
+	int str_nr_args = mr_101887.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -30972,9 +30972,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_109110 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_109110.arg0;
-	bool str_method_expects_ptr = mr_109110.arg1;
+	multi_return_bool_bool_int mr_109109 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_109109.arg0;
+	bool str_method_expects_ptr = mr_109109.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -31026,9 +31026,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_111933 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_111933.arg0;
-	bool str_method_expects_ptr = mr_111933.arg1;
+	multi_return_bool_bool_int mr_111932 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_111932.arg0;
+	bool str_method_expects_ptr = mr_111932.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -31082,9 +31082,9 @@ static void v__gen__Gen_gen_str_for_map(v__gen__Gen* g, v__table__Map info, stri
 	string zero = v__gen__Gen_type_default(/*rec*/*g, info.value_type);
 	strings__Builder_writeln(&g->type_definitions, _STR("string %.*s\000(%.*s\000 m); // auto", 3, str_fn_name, styp));
 	strings__Builder_writeln(&g->auto_str_funcs, _STR("string %.*s\000(%.*s\000 m) { /* gen_str_for_map */", 3, str_fn_name, styp));
-	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tstrings__Builder sb = strings__new_builder(m.key_values.size*10);"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tstrings__Builder sb = strings__new_builder(m.key_values.len*10);"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tstrings__Builder_write(&sb, tos_lit(\"{\"));"));
-	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tfor (unsigned int i = 0; i < m.key_values.size; i++) {"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tfor (unsigned int i = 0; i < m.key_values.len; i++) {"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t\tstring key = (*(string*)DenseArray_get(m.key_values, i));"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t\tstrings__Builder_write(&sb, _STR(\"\'%.*s\\000\'\", 2, key));"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t\tstrings__Builder_write(&sb, tos_lit(\": \"));"));
@@ -31101,7 +31101,7 @@ static void v__gen__Gen_gen_str_for_map(v__gen__Gen* g, v__table__Map info, stri
 	} else {
 		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstrings__Builder_write(&sb, %.*s\000(it));", 2, elem_str_fn_name));
 	}
-	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t\tif (i != m.key_values.size-1) {"));
+	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t\tif (i != m.key_values.len-1) {"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t\t\tstrings__Builder_write(&sb, tos_lit(\", \"));"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t\t}"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t}"));
@@ -38612,8 +38612,8 @@ void _vinit() {
 	_const_hash_mask = ((u32)(0x00FFFFFF));
 	_const_probe_inc = ((u32)(0x01000000));
 	_const_mid_index = _const_degree - 1;
-	_const_max_size = 2 * _const_degree - 1;
-	_const_children_bytes = sizeof(voidptr) * (_const_max_size + 1);
+	_const_max_len = 2 * _const_degree - 1;
+	_const_children_bytes = sizeof(voidptr) * (_const_max_len + 1);
 	_const_os__std_input_handle = -10;
 	_const_os__std_output_handle = -11;
 	_const_os__std_error_handle = -12;
