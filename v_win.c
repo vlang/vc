@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "504fd01"
+#define V_COMMIT_HASH "73296e4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b930a11"
+#define V_COMMIT_HASH "504fd01"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "504fd01"
+#define V_CURRENT_COMMIT_HASH "73296e4"
 #endif
 
 
@@ -23948,7 +23948,7 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 	}
 	v__token__Position end_pos = v__token__Token_position(&p->prev_tok);
 	v__table__Type return_type = _const_v__table__void_type;
-	if (v__token__Kind_is_start_of_type(p->tok.kind)) {
+	if (v__token__Kind_is_start_of_type(p->tok.kind) || (p->tok.kind == v__token__Kind_key_fn && p->tok.line_nr == p->prev_tok.line_nr)) {
 		end_pos = v__token__Token_position(&p->tok);
 		return_type = v__parser__Parser_parse_type(p);
 	}
@@ -24031,9 +24031,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_6998 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_6998.arg0;
-	bool is_variadic = mr_6998.arg1;
+	multi_return_array_v__table__Arg_bool mr_7064 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_7064.arg0;
+	bool is_variadic = mr_7064.arg1;
 	// FOR IN array
 	array _t656 = args;
 	for (int _t657 = 0; _t657 < _t656.len; _t657++) {
