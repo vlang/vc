@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "deb09d9"
+#define V_COMMIT_HASH "e3f00ff"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "73296e4"
+#define V_COMMIT_HASH "deb09d9"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "deb09d9"
+#define V_CURRENT_COMMIT_HASH "e3f00ff"
 #endif
 
 
@@ -26647,13 +26647,9 @@ static v__ast__Expr v__parser__Parser_sql_expr(v__parser__Parser* p) {
 				v__ast__Ident* ident = /* as */ (v__ast__Ident*)__as_cast(e->left.obj, e->left.typ, /*expected:*/149);
 				if (string_eq(ident->name, tos_lit("id"))) {
 					query_one = true;
-					typ = table_type;
 				}
 			}
 		}
-	}
-	if (!query_one && !is_count) {
-		typ = v__table__new_type(v__table__Table_find_or_register_array(p->table, table_type, 1, p->mod));
 	}
 	if (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("limit"))) {
 		v__parser__Parser_check_name(p);
@@ -26661,6 +26657,11 @@ static v__ast__Expr v__parser__Parser_sql_expr(v__parser__Parser* p) {
 			query_one = true;
 		}
 		v__parser__Parser_next(p);
+	}
+	if (!query_one && !is_count) {
+		typ = v__table__new_type(v__table__Table_find_or_register_array(p->table, table_type, 1, p->mod));
+	} else if (!is_count) {
+		typ = table_type;
 	}
 	v__parser__Parser_check(p, v__token__Kind_rcbr);
 	v__table__Struct* info = /* as */ (v__table__Struct*)__as_cast(sym->info.obj, sym->info.typ, /*expected:*/256);
