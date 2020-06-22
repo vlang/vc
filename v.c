@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "e3f00ff"
+#define V_COMMIT_HASH "a4b159a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "deb09d9"
+#define V_COMMIT_HASH "e3f00ff"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "e3f00ff"
+#define V_CURRENT_COMMIT_HASH "a4b159a"
 #endif
 
 
@@ -32246,7 +32246,7 @@ static void v__gen__Gen_sql_select_expr(v__gen__Gen* g, v__ast__SqlExpr node) {
 	if (node.has_where && node.where_expr.typ == 153 /* v.ast.InfixExpr */) {
 		v__gen__Gen_expr_to_sql(g, node.where_expr);
 	}
-	v__gen__Gen_writeln(g, tos_lit("\"));"));
+	v__gen__Gen_writeln(g, tos_lit(" order by id\"));"));
 	string binds = strings__Builder_str(&g->sql_buf);
 	g->sql_buf = strings__new_builder(100);
 	v__gen__Gen_writeln(g, binds);
@@ -32269,7 +32269,6 @@ static void v__gen__Gen_sql_select_expr(v__gen__Gen* g, v__ast__SqlExpr node) {
 		}
 		v__gen__Gen_writeln(g, _STR("int _step_res%.*s\000 = sqlite3_step(%.*s\000);", 3, tmp, g->sql_stmt_name));
 		if (node.is_array) {
-			v__gen__Gen_writeln(g, _STR("\tprintf(\"step res=%%d\\n\", _step_res%.*s\000);", 2, tmp));
 			v__gen__Gen_writeln(g, _STR("\tif (_step_res%.*s\000 == SQLITE_DONE) break;", 2, tmp));
 			v__gen__Gen_writeln(g, _STR("\tif (_step_res%.*s\000 = SQLITE_ROW) ;", 2, tmp));
 			v__gen__Gen_writeln(g, _STR("\telse if (_step_res%.*s\000 != SQLITE_OK) break;", 2, tmp));
