@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "837df7c"
+#define V_COMMIT_HASH "cff2874"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "d19a33c"
+#define V_COMMIT_HASH "837df7c"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "837df7c"
+#define V_CURRENT_COMMIT_HASH "cff2874"
 #endif
 
 
@@ -21212,9 +21212,6 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 			}
 			if (!v__checker__Checker_check_types(c, got_arg_typ, exp_arg_typ)) {
 				v__table__TypeSymbol* got_arg_sym = v__table__Table_get_type_symbol(c->table, got_arg_typ);
-				if (exp_arg_sym->kind == v__table__Kind_string && v__table__TypeSymbol_has_method(got_arg_sym, tos_lit("str"))) {
-					continue;
-				}
 				if (got_arg_typ != _const_v__table__void_type) {
 					v__checker__Checker_error(c, _STR("cannot use type `%.*s\000` as type `%.*s\000` in argument %"PRId32"\000 to `%.*s\000.%.*s\000`", 6, v__table__TypeSymbol_str(got_arg_sym), v__table__TypeSymbol_str(exp_arg_sym), i + 1, left_type_sym->name, method_name), call_expr->pos);
 				}
