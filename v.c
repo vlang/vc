@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "cf4dc93"
+#define V_COMMIT_HASH "d232833"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "640bbba"
+#define V_COMMIT_HASH "cf4dc93"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "cf4dc93"
+#define V_CURRENT_COMMIT_HASH "d232833"
 #endif
 
 
@@ -21141,9 +21141,16 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 		}
 	}
 	if (call_expr->generic_type != _const_v__table__void_type && f.return_type != 0) {
-		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, f.return_type);
-		if (string_eq(sym->name, tos_lit("T"))) {
+		v__table__TypeSymbol* return_sym = v__table__Table_get_type_symbol(c->table, f.return_type);
+		if (string_eq(return_sym->name, tos_lit("T"))) {
 			return call_expr->generic_type;
+		} else if (return_sym->kind == v__table__Kind_array) {
+			v__table__Array* elem_info = /* as */ (v__table__Array*)__as_cast(return_sym->info.obj, return_sym->info.typ, /*expected:*/249);
+			v__table__TypeSymbol* elem_sym = v__table__Table_get_type_symbol(c->table, elem_info->elem_type);
+			if (string_eq(elem_sym->name, tos_lit("T"))) {
+				int idx = v__table__Table_find_or_register_array(c->table, call_expr->generic_type, 1, return_sym->mod);
+				return v__table__new_type(idx);
+			}
 		}
 	}
 	return f.return_type;
@@ -31299,15 +31306,17 @@ static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 		} else {
 			name = v__gen__c_name(name);
 		}
+		string type_name = v__gen__Gen_typ(g, it.return_type);
 		if (g->cur_generic_type != 0) {
-			name = /*f*/string_add(name, string_add(tos_lit("_"), v__gen__Gen_typ(g, g->cur_generic_type)));
+			string gen_name = v__gen__Gen_typ(g, g->cur_generic_type);
+			name = /*f*/string_add(name, string_add(tos_lit("_"), gen_name));
+			type_name = string_replace(type_name, tos_lit("T"), gen_name);
 		}
 		if (is_livemain) {
 			array_push(&g->hotcode_fn_names, _MOV((string[]){ name }));
 		}
 		string impl_fn_name = (is_live_wrap ? (_STR("impl_live_%.*s", 1, name)) : (name));
 		g->last_fn_c_name = impl_fn_name;
-		string type_name = v__gen__Gen_typ(g, it.return_type);
 		if (is_live_wrap) {
 			if (is_livemain) {
 				strings__Builder_write(&g->definitions, _STR("%.*s\000 (* %.*s\000)(", 3, type_name, impl_fn_name));
@@ -31326,9 +31335,9 @@ static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 			strings__Builder_write(&g->definitions, fn_header);
 			v__gen__Gen_write(g, fn_header);
 		}
-		multi_return_array_string_array_string mr_3658 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
-		array_string fargs = mr_3658.arg0;
-		array_string fargtypes = mr_3658.arg1;
+		multi_return_array_string_array_string mr_3734 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
+		array_string fargs = mr_3734.arg0;
+		array_string fargtypes = mr_3734.arg1;
 		if (it.no_body || (g->pref->use_cache && it.is_builtin)) {
 			strings__Builder_writeln(&g->definitions, tos_lit(");"));
 			v__gen__Gen_writeln(g, tos_lit(");"));
@@ -31445,6 +31454,10 @@ static multi_return_array_string_array_string v__gen__Gen_fn_args(v__gen__Gen* g
 		v__table__Type typ = v__gen__Gen_unwrap_generic(g, arg.typ);
 		v__table__TypeSymbol* arg_type_sym = v__table__Table_get_type_symbol(g->table, typ);
 		string arg_type_name = v__gen__Gen_typ(g, typ);
+		if (g->cur_generic_type != 0) {
+			string gen_name = v__gen__Gen_typ(g, g->cur_generic_type);
+			arg_type_name = string_replace(arg_type_name, tos_lit("T"), gen_name);
+		}
 		bool is_varg = i == args.len - 1 && is_variadic;
 		if (is_varg) {
 			string varg_type_str = int_str(((int)(arg.typ)));
@@ -31693,11 +31706,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_17491 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_17491.arg0;
-		string pafile = mr_17491.arg1;
-		string pamod = mr_17491.arg2;
-		string pafn = mr_17491.arg3;
+		multi_return_int_string_string_string mr_17745 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_17745.arg0;
+		string pafile = mr_17745.arg1;
+		string pamod = mr_17745.arg2;
+		string pafn = mr_17745.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		v__gen__Gen_write(g, tos_lit(")"));
