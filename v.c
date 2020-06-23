@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "16dd889"
+#define V_COMMIT_HASH "db28796"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "076d020"
+#define V_COMMIT_HASH "16dd889"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "16dd889"
+#define V_CURRENT_COMMIT_HASH "db28796"
 #endif
 
 
@@ -23158,7 +23158,9 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 			v__parser__Parser_error(p, _STR("vweb HTML template \"%.*s\000\" not found", 2, html_name));
 		}
 	}
-	println(_STR(">>> compiling vweb HTML template \"%.*s\000\"", 2, path));
+	if (p->pref->is_verbose) {
+		println(_STR(">>> compiling vweb HTML template \"%.*s\000\"", 2, path));
+	}
 	string v_code = vweb__tmpl__compile_file(path, p->cur_fn_name);
 	v__ast__Scope* scope = (v__ast__Scope*)memdup(&(v__ast__Scope){	.objects = new_map_1(sizeof(v__ast__ScopeObject)),
 		.parent = p->global_scope,
@@ -32360,6 +32362,11 @@ static void v__gen__Gen_expr_to_sql(v__gen__Gen* g, v__ast__Expr expr) {
 		v__ast__IntegerLiteral* expr = it;
 		v__gen__Gen_inc_sql_i(g);
 		v__gen__Gen_sql_bind_int(g, it->val);
+	}else if (expr.typ == 141 /* v.ast.BoolLiteral */) {
+		v__ast__BoolLiteral* it = (v__ast__BoolLiteral*)expr.obj; // ST it
+		v__ast__BoolLiteral* expr = it;
+		v__gen__Gen_inc_sql_i(g);
+		v__gen__Gen_sql_bind_int(g, (it->val ? (tos_lit("1")) : (tos_lit("0"))));
 	}else if (expr.typ == 149 /* v.ast.Ident */) {
 		v__ast__Ident* it = (v__ast__Ident*)expr.obj; // ST it
 		v__ast__Ident* expr = it;
