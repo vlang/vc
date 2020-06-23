@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "63ef04e"
+#define V_COMMIT_HASH "076d020"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e2b5deb"
+#define V_COMMIT_HASH "63ef04e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "63ef04e"
+#define V_CURRENT_COMMIT_HASH "076d020"
 #endif
 
 
@@ -35851,8 +35851,8 @@ static void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) {
 		println(cc_res.output);
 		v_exit(1);
 	}
-	array_string linker_args = new_array_from_c_array(9, 9, sizeof(string), _MOV((string[9]){
-	_STR("-L %.*s\000/usr/lib/x86_64-linux-gnu/", 2, sysroot), _STR("--sysroot=%.*s\000 -v -o %.*s\000 -m elf_x86_64", 3, sysroot, b->pref->out_name), tos_lit("-dynamic-linker /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"), _STR("%.*s\000/crt1.o %.*s\000/crti.o x.o", 3, sysroot, sysroot), tos_lit("-lc"), tos_lit("-lcrypto"), tos_lit("-lssl"), tos_lit("-lpthread"), _STR("%.*s\000/crtn.o", 2, sysroot)
+	array_string linker_args = new_array_from_c_array(11, 11, sizeof(string), _MOV((string[11]){
+	_STR("-L %.*s\000/usr/lib/x86_64-linux-gnu/", 2, sysroot), _STR("--sysroot=%.*s\000 -v -o %.*s\000 -m elf_x86_64", 3, sysroot, b->pref->out_name), tos_lit("-dynamic-linker /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"), _STR("%.*s\000/crt1.o %.*s\000/crti.o x.o", 3, sysroot, sysroot), tos_lit("-lc"), tos_lit("-lcrypto"), tos_lit("-lssl"), tos_lit("-lpthread"), tos_lit("-ldl"), _STR("%.*s\000/crtn.o", 2, sysroot), array_v__cflag__CFlag_c_options_only_object_files(cflags)
 	}));
 	string linker_args_str = array_string_join(linker_args, tos_lit(" "));
 	string cmd = string_add(_STR("%.*s\000/ld.lld ", 2, sysroot), linker_args_str);
