@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "cff2874"
+#define V_COMMIT_HASH "e2b5deb"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "837df7c"
+#define V_COMMIT_HASH "cff2874"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "cff2874"
+#define V_CURRENT_COMMIT_HASH "e2b5deb"
 #endif
 
 
@@ -21115,6 +21115,10 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 	call_expr->left_type = left_type;
 	v__table__TypeSymbol* left_type_sym = v__table__Table_get_type_symbol(c->table, v__checker__Checker_unwrap_generic(c, left_type));
 	string method_name = call_expr->name;
+	if (v__table__Type_has_flag(left_type, v__table__TypeFlag_optional)) {
+		v__checker__Checker_error(c, tos_lit("optional type cannot be called directly"), v__ast__Expr_position(call_expr->left));
+		return _const_v__table__void_type;
+	}
 	if (left_type_sym->kind == v__table__Kind_array && (string_eq(method_name, tos_lit("filter")) || string_eq(method_name, tos_lit("clone")) || string_eq(method_name, tos_lit("repeat")) || string_eq(method_name, tos_lit("reverse")) || string_eq(method_name, tos_lit("map")) || string_eq(method_name, tos_lit("slice")))) {
 		v__table__Type elem_typ = _const_v__table__void_type;
 		if ((string_eq(method_name, tos_lit("filter")) || string_eq(method_name, tos_lit("map")))) {
@@ -21374,6 +21378,9 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 	if ((string_eq(fn_name, tos_lit("println")) || string_eq(fn_name, tos_lit("print"))) && call_expr->args.len > 0) {
 		c->expected_type = _const_v__table__string_type;
 		(*(v__ast__CallArg*)array_get(call_expr->args, 0)).typ = v__checker__Checker_expr(c, (*(v__ast__CallArg*)array_get(call_expr->args, 0)).expr);
+		if (v__table__Type_has_flag((*(v__ast__CallArg*)array_get(call_expr->args, 0)).typ, v__table__TypeFlag_optional)) {
+			v__checker__Checker_error(c, tos_lit("cannot print optional type"), v__ast__Expr_position((*(v__ast__CallArg*)array_get(call_expr->args, 0)).expr));
+		}
 		return f.return_type;
 	}
 	if (call_expr->expected_arg_types.len == 0) {
