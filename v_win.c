@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "74af88b"
+#define V_COMMIT_HASH "fcd73bc"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4e447db"
+#define V_COMMIT_HASH "74af88b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "74af88b"
+#define V_CURRENT_COMMIT_HASH "fcd73bc"
 #endif
 
 
@@ -19982,6 +19982,7 @@ static string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) {
 	if (is_quote && !s->is_inside_string) {
 		s->quote = q;
 	}
+	int n_cr_chars = 0;
 	int start = s->pos;
 	s->is_inside_string = false;
 	byte slash = '\\';
@@ -19994,6 +19995,9 @@ static string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) {
 		byte prevc = string_at(s->text, s->pos - 1);
 		if (c == s->quote && (prevc != slash || (prevc == slash && string_at(s->text, s->pos - 2) == slash))) {
 			break;
+		}
+		if (c == '\r') {
+			n_cr_chars++;
 		}
 		if (c == '\n') {
 			v__scanner__Scanner_inc_line_number(s);
@@ -20028,10 +20032,14 @@ static string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) {
 		end++;
 	}
 	if (start <= s->pos) {
-		if (string_contains(string_substr(s->text, start, end), tos_lit("\\\n"))) {
-			lit = v__scanner__trim_slash_line_break(string_substr(s->text, start, end));
+		string string_so_far = string_substr(s->text, start, end);
+		if (n_cr_chars > 0) {
+			string_so_far = string_replace(string_so_far, tos_lit("\r"), tos_lit(""));
+		}
+		if (string_contains(string_so_far, tos_lit("\\\n"))) {
+			lit = v__scanner__trim_slash_line_break(string_so_far);
 		} else {
-			lit = string_substr(s->text, start, end);
+			lit = string_so_far;
 		}
 	}
 	return lit;
