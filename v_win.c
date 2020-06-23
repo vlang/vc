@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "db28796"
+#define V_COMMIT_HASH "7efb3ec"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "16dd889"
+#define V_COMMIT_HASH "db28796"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "db28796"
+#define V_CURRENT_COMMIT_HASH "7efb3ec"
 #endif
 
 
@@ -1830,6 +1830,7 @@ struct v__table__Fn {
 	v__table__Language language;
 	bool is_generic;
 	bool is_pub;
+	bool is_deprecated;
 	string mod;
 	string ctdefine;
 	string name;
@@ -11229,7 +11230,8 @@ string string_limit(string s, int max) {
 
 // Attr: [deprecated]
 bool byte_is_white(byte c) {
-	v_panic(tos_lit("Use `string.is_space` instead of `string.is_white"));
+	eprintln(tos_lit("warning: `string.is_white` has been deprecated, use `string.is_space` instead"));
+	return byte_is_space(c);
 }
 
 int string_hash(string s) {
@@ -11878,7 +11880,8 @@ Option_bool os__cp(string old, string v_new) {
 
 // Attr: [deprecated]
 Option_bool os__cp_r(string osource_path, string odest_path, bool overwrite) {
-	v_panic(tos_lit("Use `os.cp_all` instead of `os.cp_r`"));
+	eprintln(tos_lit("warning: `os.cp_r` has been deprecated, use `os.cp_all` instead"));
+	return os__cp_all(osource_path, odest_path, overwrite);
 }
 
 Option_bool os__cp_all(string osource_path, string odest_path, bool overwrite) {
@@ -12173,8 +12176,8 @@ static int os__vpclose(voidptr f) {
 		return _pclose(f);
 	
 #else
-		multi_return_int_bool mr_9781 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_9781.arg0;
+		multi_return_int_bool mr_9863 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_9863.arg0;
 		return ret;
 	
 // } windows
@@ -12332,7 +12335,8 @@ bool os__is_readable(string path) {
 
 // Attr: [deprecated]
 bool os__file_exists(string _path) {
-	v_panic(tos_lit("Use `os.exists` instead of `os.file_exists`"));
+	eprintln(tos_lit("warning: `os.file_exists` has been deprecated, use `os.exists` instead"));
+	return os__exists(_path);
 }
 
 void os__rm(string path) {
@@ -12364,7 +12368,8 @@ void os__rmdir(string path) {
 
 // Attr: [deprecated]
 void os__rmdir_recursive(string path) {
-	v_panic(tos_lit("Use `os.rmdir_all` instead of `os.rmdir_recursive`"));
+	eprintln(tos_lit("warning: `os.rmdir_recursive` has been deprecated, use `os.rmdir_all` instead"));
+	os__rmdir_all(path);
 }
 
 void os__rmdir_all(string path) {
@@ -12818,7 +12823,8 @@ _t134;
 
 // Attr: [deprecated]
 bool os__dir_exists(string path) {
-	v_panic(tos_lit("Use `os.is_dir` instead of `os.dir_exists`"));
+	eprintln(tos_lit("warning: `os.dir_exists` has been deprecated, use `os.is_dir` instead"));
+	return os__is_dir(path);
 }
 
 bool os__is_dir(string path) {
@@ -13060,7 +13066,8 @@ void os__log(string s) {
 
 // Attr: [deprecated]
 void os__flush_stdout() {
-	v_panic(tos_lit("Use `os.flush` instead of `os.flush_stdout`"));
+	eprintln(tos_lit("warning: `os.flush_stdout` has been deprecated, use `os.flush` instead"));
+	os__flush();
 }
 
 void os__flush() {
@@ -21320,6 +21327,7 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 		.language = {0},
 		.is_generic = 0,
 		.is_pub = 0,
+		.is_deprecated = 0,
 		.mod = (string){.str=""},
 		.ctdefine = (string){.str=""},
 		.name = (string){.str=""},
@@ -21370,6 +21378,9 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 	}
 	if (!f.is_pub && f.language == v__table__Language_v && f.name.len > 0 && f.mod.len > 0 && string_ne(f.mod, c->mod)) {
 		v__checker__Checker_error(c, _STR("function `%.*s\000` is private. curmod=%.*s\000 fmod=%.*s", 3, f.name, c->mod, f.mod), call_expr->pos);
+	}
+	if (f.is_deprecated) {
+		v__checker__Checker_warn(c, _STR("function `%.*s\000` has been deprecated", 2, f.name), call_expr->pos);
 	}
 	call_expr->return_type = f.return_type;
 	if (f.return_type == _const_v__table__void_type && f.ctdefine.len > 0 && !_IN(string, f.ctdefine, c->pref->compile_defines)) {
@@ -24007,6 +24018,7 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 			.language = {0},
 			.is_generic = is_generic,
 			.is_pub = is_pub,
+			.is_deprecated = is_deprecated,
 			.mod = (string){.str=""},
 			.ctdefine = ctdefine,
 			.name = name,
@@ -24030,6 +24042,7 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 			.language = language,
 			.is_generic = is_generic,
 			.is_pub = is_pub,
+			.is_deprecated = is_deprecated,
 			.mod = p->mod,
 			.ctdefine = ctdefine,
 			.name = name,
@@ -24076,9 +24089,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_7064 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_7064.arg0;
-	bool is_variadic = mr_7064.arg1;
+	multi_return_array_v__table__Arg_bool mr_7128 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_7128.arg0;
+	bool is_variadic = mr_7128.arg1;
 	// FOR IN array
 	array _t658 = args;
 	for (int _t659 = 0; _t659 < _t658.len; _t659++) {
@@ -24111,6 +24124,7 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 		.language = {0},
 		.is_generic = 0,
 		.is_pub = 0,
+		.is_deprecated = 0,
 		.mod = (string){.str=""},
 		.ctdefine = (string){.str=""},
 		.name = (string){.str=""},
@@ -24780,6 +24794,7 @@ v__table__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name
 		.language = {0},
 		.is_generic = 0,
 		.is_pub = 0,
+		.is_deprecated = 0,
 		.mod = (string){.str=""},
 		.ctdefine = (string){.str=""},
 		.name = name,
@@ -27362,6 +27377,7 @@ static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser*
 			.language = {0},
 			.is_generic = 0,
 			.is_pub = true,
+			.is_deprecated = 0,
 			.mod = (string){.str=""},
 			.ctdefine = (string){.str=""},
 			.name = name,
@@ -31329,6 +31345,7 @@ static string v__gen__Gen_interface_table(v__gen__Gen* g) {
 				.language = {0},
 				.is_generic = 0,
 				.is_pub = 0,
+				.is_deprecated = 0,
 				.mod = (string){.str=""},
 				.ctdefine = (string){.str=""},
 				.name = (string){.str=""},
