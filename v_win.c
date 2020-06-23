@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "076d020"
+#define V_COMMIT_HASH "16dd889"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "63ef04e"
+#define V_COMMIT_HASH "076d020"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "076d020"
+#define V_CURRENT_COMMIT_HASH "16dd889"
 #endif
 
 
@@ -32547,7 +32547,6 @@ static void v__gen__Gen_sql_select_expr(v__gen__Gen* g, v__ast__SqlExpr node) {
 		}
 		v__gen__Gen_writeln(g, _STR("int _step_res%.*s\000 = sqlite3_step(%.*s\000);", 3, tmp, g->sql_stmt_name));
 		if (node.is_array) {
-			v__gen__Gen_writeln(g, _STR("\tprintf(\"step res=%%d\\n\", _step_res%.*s\000);", 2, tmp));
 			v__gen__Gen_writeln(g, _STR("\tif (_step_res%.*s\000 == SQLITE_DONE) break;", 2, tmp));
 			v__gen__Gen_writeln(g, _STR("\tif (_step_res%.*s\000 == SQLITE_ROW) ;", 2, tmp));
 			v__gen__Gen_writeln(g, _STR("\telse if (_step_res%.*s\000 != SQLITE_OK) break;", 2, tmp));
@@ -32623,7 +32622,6 @@ static void v__gen__Gen_expr_to_sql(v__gen__Gen* g, v__ast__Expr expr) {
 		v__ast__Ident* it = (v__ast__Ident*)expr.obj; // ST it
 		v__ast__Ident* expr = it;
 		if (g->sql_side == v__gen__SqlExprSide_left) {
-			println(_STR("sql gen left %.*s", 1, expr->name));
 			v__gen__Gen_write(g, expr->name);
 		} else {
 			v__gen__Gen_inc_sql_i(g);
