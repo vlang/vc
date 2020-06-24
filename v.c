@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8ac00b8"
+#define V_COMMIT_HASH "9a77c0a"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9df29d0"
+#define V_COMMIT_HASH "8ac00b8"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8ac00b8"
+#define V_CURRENT_COMMIT_HASH "9a77c0a"
 #endif
 
 
@@ -24229,7 +24229,7 @@ static v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 			key_var_name = val_var_name;
 			val_var_pos = v__token__Token_position(&p->tok);
 			val_var_name = v__parser__Parser_check_name(p);
-			if (string_eq(key_var_name, val_var_name)) {
+			if (string_eq(key_var_name, val_var_name) && string_ne(key_var_name, tos_lit("_"))) {
 				v__parser__Parser_error_with_pos(p, tos_lit("key and value in a for loop cannot be the same"), val_var_pos);
 			}
 			if (v__ast__Scope_known_var(p->scope, key_var_name)) {
