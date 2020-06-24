@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "9df29d0"
+#define V_COMMIT_HASH "8ac00b8"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0ea2e68"
+#define V_COMMIT_HASH "9df29d0"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "9df29d0"
+#define V_CURRENT_COMMIT_HASH "8ac00b8"
 #endif
 
 
@@ -20876,8 +20876,11 @@ v__table__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__S
 		v__checker__Checker_error(c, _STR("cannot instantiate interface `%.*s\000`", 2, type_sym->name), struct_init->pos);
 	}
 	if (type_sym->kind == v__table__Kind_alias) {
-		v__checker__Checker_error(c, _STR("cannot instantiate type alias `%.*s\000`", 2, type_sym->name), struct_init->pos);
-		return _const_v__table__void_type;
+		v__table__Alias* info = /* as */ (v__table__Alias*)__as_cast(type_sym->info.obj, type_sym->info.typ, /*expected:*/276);
+		if (v__table__Type_is_number(info->parent_typ)) {
+			v__checker__Checker_error(c, _STR("cannot instantiate number type alias `%.*s\000`", 2, type_sym->name), struct_init->pos);
+			return _const_v__table__void_type;
+		}
 	}
 	if (!type_sym->is_public && type_sym->kind != v__table__Kind_placeholder && string_ne(type_sym->mod, c->mod)) {
 		v__checker__Checker_error(c, _STR("type `%.*s\000` is private", 2, type_sym->name), struct_init->pos);
@@ -24487,6 +24490,9 @@ static v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 			key_var_name = val_var_name;
 			val_var_pos = v__token__Token_position(&p->tok);
 			val_var_name = v__parser__Parser_check_name(p);
+			if (string_eq(key_var_name, val_var_name)) {
+				v__parser__Parser_error_with_pos(p, tos_lit("key and value in a for loop cannot be the same"), val_var_pos);
+			}
 			if (v__ast__Scope_known_var(p->scope, key_var_name)) {
 				v__parser__Parser_error(p, _STR("redefinition of key iteration variable `%.*s\000`", 2, key_var_name));
 			}
