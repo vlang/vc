@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "e918f8f"
+#define V_COMMIT_HASH "9d0cc79"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "090e6e9"
+#define V_COMMIT_HASH "e918f8f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "e918f8f"
+#define V_CURRENT_COMMIT_HASH "9d0cc79"
 #endif
 
 
@@ -22659,7 +22659,7 @@ static void v__checker__Checker_match_exprs(v__checker__Checker* c, v__ast__Matc
 			string v_str = v__table__Table_type_to_str(c->table, v);
 			if (!_IN_MAP(v_str, branch_exprs)) {
 				is_exhaustive = false;
-				array_push(&unhandled, _MOV((string[]){ _STR("					`%.*s\000`", 2, v_str) }));
+				array_push(&unhandled, _MOV((string[]){ _STR("`%.*s\000`", 2, v_str) }));
 			}
 		}
 	}else if (type_sym.info.typ == 253 /* v.table.Enum */) {
@@ -22670,7 +22670,7 @@ static void v__checker__Checker_match_exprs(v__checker__Checker* c, v__ast__Matc
 			string v = ((string*)_t609.data)[_t610];
 			if (!_IN_MAP(v, branch_exprs)) {
 				is_exhaustive = false;
-				array_push(&unhandled, _MOV((string[]){ _STR("					`.%.*s\000`", 2, v) }));
+				array_push(&unhandled, _MOV((string[]){ _STR("`.%.*s\000`", 2, v) }));
 			}
 		}
 	}else {
@@ -31562,9 +31562,9 @@ static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 			strings__Builder_write(&g->definitions, fn_header);
 			v__gen__Gen_write(g, fn_header);
 		}
-		multi_return_array_string_array_string mr_3734 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
-		array_string fargs = mr_3734.arg0;
-		array_string fargtypes = mr_3734.arg1;
+		multi_return_array_string_array_string mr_3730 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
+		array_string fargs = mr_3730.arg0;
+		array_string fargtypes = mr_3730.arg1;
 		if (it.no_body || (g->pref->use_cache && it.is_builtin)) {
 			strings__Builder_writeln(&g->definitions, tos_lit(");"));
 			v__gen__Gen_writeln(g, tos_lit(");"));
@@ -31933,11 +31933,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_17747 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_17747.arg0;
-		string pafile = mr_17747.arg1;
-		string pamod = mr_17747.arg2;
-		string pafn = mr_17747.arg3;
+		multi_return_int_string_string_string mr_17738 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_17738.arg0;
+		string pafile = mr_17738.arg1;
+		string pamod = mr_17738.arg2;
+		string pafn = mr_17738.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		v__gen__Gen_write(g, tos_lit(")"));
