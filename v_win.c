@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "ce6f687"
+#define V_COMMIT_HASH "a8b0dfb"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "afa5a13"
+#define V_COMMIT_HASH "ce6f687"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "ce6f687"
+#define V_CURRENT_COMMIT_HASH "a8b0dfb"
 #endif
 
 
@@ -22463,14 +22463,17 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 			v__checker__Checker_error(c, _STR("cannot cast type `%.*s\000` to string, use `x.str()` instead", 2, type_name), node->pos);
 		}
 		if (node->expr_type == _const_v__table__string_type) {
-			string error_msg = tos_lit("cannot cast a string");
-			if (node->expr.typ == 194 /* v.ast.StringLiteral */) {
-				v__ast__StringLiteral* str_lit = /* as */ (v__ast__StringLiteral*)__as_cast(node->expr.obj, node->expr.typ, /*expected:*/194);
-				if (str_lit->val.len == 1) {
-					error_msg = /*f*/string_add(error_msg, _STR(", for denoting characters use `%.*s\000` instead of '%.*s\000'", 3, str_lit->val, str_lit->val));
+			v__table__TypeSymbol* cast_to_type_sym = v__table__Table_get_type_symbol(c->table, node->typ);
+			if (cast_to_type_sym->kind != v__table__Kind_alias) {
+				string error_msg = tos_lit("cannot cast a string");
+				if (node->expr.typ == 194 /* v.ast.StringLiteral */) {
+					v__ast__StringLiteral* str_lit = /* as */ (v__ast__StringLiteral*)__as_cast(node->expr.obj, node->expr.typ, /*expected:*/194);
+					if (str_lit->val.len == 1) {
+						error_msg = /*f*/string_add(error_msg, _STR(", for denoting characters use `%.*s\000` instead of '%.*s\000'", 3, str_lit->val, str_lit->val));
+					}
 				}
+				v__checker__Checker_error(c, error_msg, node->pos);
 			}
-			v__checker__Checker_error(c, error_msg, node->pos);
 		}
 		if (node->has_arg) {
 			v__checker__Checker_expr(c, node->arg);
