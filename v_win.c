@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "aec7f2f"
+#define V_COMMIT_HASH "9a713ff"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "46379d9"
+#define V_COMMIT_HASH "aec7f2f"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "aec7f2f"
+#define V_CURRENT_COMMIT_HASH "9a713ff"
 #endif
 
 
@@ -33031,6 +33031,14 @@ static void v__gen__Gen_expr_to_sql(v__gen__Gen* g, v__ast__Expr expr) {
 			v__gen__Gen_write(g, tos_lit(" and "));
 		}else if (expr->op == v__token__Kind_logical_or) {
 			v__gen__Gen_write(g, tos_lit(" or "));
+		}else if (expr->op == v__token__Kind_plus) {
+			v__gen__Gen_write(g, tos_lit(" + "));
+		}else if (expr->op == v__token__Kind_minus) {
+			v__gen__Gen_write(g, tos_lit(" - "));
+		}else if (expr->op == v__token__Kind_mul) {
+			v__gen__Gen_write(g, tos_lit(" * "));
+		}else if (expr->op == v__token__Kind_div) {
+			v__gen__Gen_write(g, tos_lit(" / "));
 		}else {
 		};
 		g->sql_side = v__gen__SqlExprSide_right;
