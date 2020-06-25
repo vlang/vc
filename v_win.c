@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "afa5a13"
+#define V_COMMIT_HASH "ce6f687"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f1e17f3"
+#define V_COMMIT_HASH "afa5a13"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "afa5a13"
+#define V_CURRENT_COMMIT_HASH "ce6f687"
 #endif
 
 
@@ -21015,8 +21015,8 @@ v__table__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__S
 			v__table__Type expr_type = v__checker__Checker_expr(c, field.expr);
 			v__table__TypeSymbol* expr_type_sym = v__table__Table_get_type_symbol(c->table, expr_type);
 			v__table__TypeSymbol* field_type_sym = v__table__Table_get_type_symbol(c->table, info_field.typ);
-			if (!v__checker__Checker_check_types(c, expr_type, info_field.typ) && expr_type != _const_v__table__void_type) {
-				v__checker__Checker_error(c, _STR("cannot assign `%.*s\000` as `%.*s\000` for field `%.*s\000`", 4, expr_type_sym->name, field_type_sym->name, info_field.name), field.pos);
+			if (!v__checker__Checker_check_types(c, expr_type, info_field.typ) && expr_type != _const_v__table__void_type && expr_type_sym->kind != v__table__Kind_placeholder) {
+				v__checker__Checker_error(c, _STR("!cannot assign %.*s\000 `%.*s\000` as `%.*s\000` for field `%.*s\000`", 5, v__table__Kind_str(expr_type_sym->kind), expr_type_sym->name, field_type_sym->name, info_field.name), field.pos);
 			}
 			if (v__table__Type_is_ptr(info_field.typ) && !v__table__Type_is_ptr(expr_type) && !v__table__Type_is_pointer(expr_type) && !v__table__Type_is_number(expr_type)) {
 				v__checker__Checker_error(c, tos_lit("ref"), field.pos);
@@ -21997,7 +21997,7 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 			}
 		}else {
 		};
-		if (!is_blank_ident && !v__checker__Checker_check_types(c, right_type_unwrapped, left_type_unwrapped)) {
+		if (!is_blank_ident && !v__checker__Checker_check_types(c, right_type_unwrapped, left_type_unwrapped) && right_sym->kind != v__table__Kind_placeholder) {
 			v__checker__Checker_error(c, _STR("cannot assign `%.*s\000` to `%.*s\000` of type `%.*s\000`", 4, right_sym->name, v__ast__Expr_str(left), left_sym->name), v__ast__Expr_position(right));
 		}
 	}
