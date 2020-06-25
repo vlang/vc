@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b280e08"
+#define V_COMMIT_HASH "450c6e8"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a8b0dfb"
+#define V_COMMIT_HASH "b280e08"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b280e08"
+#define V_CURRENT_COMMIT_HASH "450c6e8"
 #endif
 
 
@@ -27242,10 +27242,17 @@ static v__ast__SqlStmt v__parser__Parser_sql_stmt(v__parser__Parser* p) {
 		if (string_ne(n, tos_lit("set"))) {
 			v__parser__Parser_error(p, tos_lit("expecting `set`"));
 		}
-		string column = v__parser__Parser_check_name(p);
-		array_push(&updated_columns, _MOV((string[]){ column }));
-		v__parser__Parser_check(p, v__token__Kind_assign);
-		array_push(&update_exprs, _MOV((v__ast__Expr[]){ v__parser__Parser_expr(p, 0) }));
+		while (1) {
+			string column = v__parser__Parser_check_name(p);
+			array_push(&updated_columns, _MOV((string[]){ column }));
+			v__parser__Parser_check(p, v__token__Kind_assign);
+			array_push(&update_exprs, _MOV((v__ast__Expr[]){ v__parser__Parser_expr(p, 0) }));
+			if (p->tok.kind == v__token__Kind_comma) {
+				v__parser__Parser_check(p, v__token__Kind_comma);
+			} else {
+				break;
+			}
+		}
 	}
 	v__table__Type table_type = ((v__table__Type)(0));
 	v__ast__Expr where_expr = (v__ast__Expr){
@@ -32832,6 +32839,9 @@ static void v__gen__Gen_sql_stmt(v__gen__Gen* g, v__ast__SqlStmt node) {
 			string col = ((string*)_t969.data)[i];
 			v__gen__Gen_write(g, _STR(" %.*s\000 = ", 2, col));
 			v__gen__Gen_expr_to_sql(g, (*(v__ast__Expr*)array_get(node.update_exprs, i)));
+			if (i < node.updated_columns.len - 1) {
+				v__gen__Gen_write(g, tos_lit(", "));
+			}
 		}
 		v__gen__Gen_write(g, tos_lit(" where "));
 	}
@@ -32854,7 +32864,6 @@ static void v__gen__Gen_sql_stmt(v__gen__Gen* g, v__ast__SqlStmt node) {
 				v__gen__Gen_writeln(g, _STR("sqlite3_bind_int(%.*s\000, %"PRId32"\000, %.*s\000); // stmt", 4, g->sql_stmt_name, i + 0, x));
 			}
 		}
-	} else if (node.kind == v__ast__SqlStmtKind_update) {
 	}
 	string binds = strings__Builder_str(&g->sql_buf);
 	g->sql_buf = strings__new_builder(100);
