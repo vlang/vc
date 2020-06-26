@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8903f6e"
+#define V_COMMIT_HASH "951f308"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f703ddf"
+#define V_COMMIT_HASH "8903f6e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8903f6e"
+#define V_CURRENT_COMMIT_HASH "951f308"
 #endif
 
 
@@ -12303,7 +12303,7 @@ Option_void os__rmdir(string path) {
 	
 #else
 		int rc = RemoveDirectory(string_to_wide(path));
-		if (rc == -1) {
+		if (rc == 0) {
 			/*opt promotion*/ Option _t126 = v_error(_STR("Failed to remove \"%.*s\000\"", 2, path));
 			return *(Option_void*)&_t126;
 		}
