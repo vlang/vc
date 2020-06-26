@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5bd6d3a"
+#define V_COMMIT_HASH "202d479"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9a713ff"
+#define V_COMMIT_HASH "5bd6d3a"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5bd6d3a"
+#define V_CURRENT_COMMIT_HASH "202d479"
 #endif
 
 
@@ -20586,7 +20586,7 @@ v__table__Type v__checker__Checker_string_inter_lit(v__checker__Checker* c, v__a
 				v__checker__Checker_error(c, tos_lit("precision specification only valid for float types"), (*(v__token__Position*)array_get(node->fmt_poss, i)));
 			}
 			if ((*(bool*)array_get(node->pluss, i)) && !v__table__Type_is_number(typ)) {
-				v__checker__Checker_error(c, tos_lit("plus prefix only allowd for numbers"), (*(v__token__Position*)array_get(node->fmt_poss, i)));
+				v__checker__Checker_error(c, tos_lit("plus prefix only allowed for numbers"), (*(v__token__Position*)array_get(node->fmt_poss, i)));
 			}
 			if ((v__table__Type_is_unsigned(typ) && !(fmt == 'u' || fmt == 'x' || fmt == 'X' || fmt == 'o' || fmt == 'c')) || (v__table__Type_is_signed(typ) && !(fmt == 'd' || fmt == 'x' || fmt == 'X' || fmt == 'o' || fmt == 'c')) || (v__table__Type_is_any_int(typ) && !(fmt == 'd' || fmt == 'c' || fmt == 'x' || fmt == 'X' || fmt == 'o' || fmt == 'u' || fmt == 'x' || fmt == 'X' || fmt == 'o')) || (v__table__Type_is_float(typ) && !(fmt == 'E' || fmt == 'F' || fmt == 'G' || fmt == 'e' || fmt == 'f' || fmt == 'g')) || (v__table__Type_is_pointer(typ) && !(fmt == 'p' || fmt == 'x' || fmt == 'X')) || (v__table__Type_is_string(typ) && fmt != 's') || ((v__table__Type_idx(typ) == _const_v__table__i64_type_idx || v__table__Type_idx(typ) == _const_v__table__f64_type_idx) && fmt == 'c')) {
 				v__checker__Checker_error(c, _STR("illegal format specifier `%c\000` for type `%.*s\000`", 3, fmt, v__table__Table_get_type_name(c->table, ftyp)), (*(v__token__Position*)array_get(node->fmt_poss, i)));
