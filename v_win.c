@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "f8f2fa2"
+#define V_COMMIT_HASH "f073ffa"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6a335c4"
+#define V_COMMIT_HASH "f8f2fa2"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "f8f2fa2"
+#define V_CURRENT_COMMIT_HASH "f073ffa"
 #endif
 
 
@@ -2193,9 +2193,13 @@ struct v__ast__SqlExpr {
 	v__ast__Expr db_expr;
 	v__ast__Expr where_expr;
 	bool has_where;
+	bool has_offset;
+	v__ast__Expr offset_expr;
 	bool is_array;
 	v__table__Type table_type;
 	v__token__Position pos;
+	bool has_limit;
+	v__ast__Expr limit_expr;
 	string table_name;
 	array_v__table__Field fields;
 };
@@ -27246,12 +27250,21 @@ static v__ast__Expr v__parser__Parser_sql_expr(v__parser__Parser* p) {
 			}
 		}
 	}
+	bool has_limit = false;
+	v__ast__Expr limit_expr = (v__ast__Expr){
+	
+#ifndef __cplusplus
+0
+#endif
+};
 	if (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("limit"))) {
 		v__parser__Parser_check_name(p);
 		if (p->tok.kind == v__token__Kind_number && string_eq(p->tok.lit, tos_lit("1"))) {
 			query_one = true;
+		} else {
+			has_limit = true;
 		}
-		v__parser__Parser_next(p);
+		limit_expr = v__parser__Parser_expr(p, 0);
 	}
 	if (!query_one && !is_count) {
 		typ = v__table__new_type(v__table__Table_find_or_register_array(p->table, table_type, 1, p->mod));
@@ -27265,9 +27278,13 @@ static v__ast__Expr v__parser__Parser_sql_expr(v__parser__Parser* p) {
 		.db_expr = db_expr,
 		.where_expr = where_expr,
 		.has_where = has_where,
+		.has_offset = 0,
+		.offset_expr = {0},
 		.is_array = !query_one,
 		.table_type = table_type,
 		.pos = pos,
+		.has_limit = has_limit,
+		.limit_expr = limit_expr,
 		.table_name = (string){.str=""},
 		.fields = __new_array(0, 1, sizeof(v__table__Field)),
 	}}, sizeof(v__ast__SqlExpr)), .typ = 192 /* v.ast.SqlExpr */};
@@ -32969,7 +32986,12 @@ static void v__gen__Gen_sql_select_expr(v__gen__Gen* g, v__ast__SqlExpr node) {
 	if (node.has_where && node.where_expr.typ == 179 /* v.ast.InfixExpr */) {
 		v__gen__Gen_expr_to_sql(g, node.where_expr);
 	}
-	v__gen__Gen_writeln(g, tos_lit(" order by id\"));"));
+	v__gen__Gen_write(g, tos_lit(" order by id "));
+	if (node.has_limit) {
+		v__gen__Gen_write(g, tos_lit(" limit "));
+		v__gen__Gen_expr_to_sql(g, node.limit_expr);
+	}
+	v__gen__Gen_writeln(g, tos_lit("\"));"));
 	string binds = strings__Builder_str(&g->sql_buf);
 	g->sql_buf = strings__new_builder(100);
 	v__gen__Gen_writeln(g, binds);
@@ -33014,7 +33036,6 @@ static void v__gen__Gen_sql_select_expr(v__gen__Gen* g, v__ast__SqlExpr node) {
 			v__gen__Gen_writeln(g, _STR("\tif (_step_res%.*s\000 == SQLITE_ROW) ;", 2, tmp));
 			v__gen__Gen_writeln(g, _STR("\telse if (_step_res%.*s\000 != SQLITE_OK) break;", 2, tmp));
 		} else {
-			v__gen__Gen_writeln(g, _STR("printf(\"RES: %%d\\n\", _step_res%.*s\000) ;", 2, tmp));
 			v__gen__Gen_writeln(g, _STR("\tif (_step_res%.*s\000 == SQLITE_OK || _step_res%.*s\000 == SQLITE_ROW) {", 3, tmp, tmp));
 		}
 		// FOR IN array
