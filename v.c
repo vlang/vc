@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "2bfe8e5"
+#define V_COMMIT_HASH "6a335c4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "58763ff"
+#define V_COMMIT_HASH "2bfe8e5"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "2bfe8e5"
+#define V_CURRENT_COMMIT_HASH "6a335c4"
 #endif
 
 
@@ -23220,33 +23220,33 @@ static void v__parser__Parser_check_undefined_variables(v__parser__Parser* p, ar
 			v__ast__Expr expr = ((v__ast__Expr*)_t649.data)[_t650];
 			if (expr.typ == 149 /* v.ast.Ident */) {
 				v__ast__Ident* ident = /* as */ (v__ast__Ident*)__as_cast(expr.obj, expr.typ, /*expected:*/149);
-				if (string_eq(ident->name, it->name)) {
-					v__parser__Parser_error_with_pos(p, _STR("undefined variable: `%.*s\000`", 2, it->name), it->pos);
+				if (string_eq(ident->name, val->name)) {
+					v__parser__Parser_error_with_pos(p, _STR("undefined variable: `%.*s\000`", 2, val->name), val->pos);
 				}
 			}
 		}
 	}else if (val.typ == 153 /* v.ast.InfixExpr */) {
 		v__ast__InfixExpr* it = (v__ast__InfixExpr*)val.obj; // ST it
 		v__ast__InfixExpr* val = it;
-		v__parser__Parser_check_undefined_variables(p, exprs, it->left);
-		v__parser__Parser_check_undefined_variables(p, exprs, it->right);
+		v__parser__Parser_check_undefined_variables(p, exprs, val->left);
+		v__parser__Parser_check_undefined_variables(p, exprs, val->right);
 	}else if (val.typ == 160 /* v.ast.ParExpr */) {
 		v__ast__ParExpr* it = (v__ast__ParExpr*)val.obj; // ST it
 		v__ast__ParExpr* val = it;
-		v__parser__Parser_check_undefined_variables(p, exprs, it->expr);
+		v__parser__Parser_check_undefined_variables(p, exprs, val->expr);
 	}else if (val.typ == 161 /* v.ast.PostfixExpr */) {
 		v__ast__PostfixExpr* it = (v__ast__PostfixExpr*)val.obj; // ST it
 		v__ast__PostfixExpr* val = it;
-		v__parser__Parser_check_undefined_variables(p, exprs, it->expr);
+		v__parser__Parser_check_undefined_variables(p, exprs, val->expr);
 	}else if (val.typ == 162 /* v.ast.PrefixExpr */) {
 		v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)val.obj; // ST it
 		v__ast__PrefixExpr* val = it;
-		v__parser__Parser_check_undefined_variables(p, exprs, it->right);
+		v__parser__Parser_check_undefined_variables(p, exprs, val->right);
 	}else if (val.typ == 167 /* v.ast.StringInterLiteral */) {
 		v__ast__StringInterLiteral* it = (v__ast__StringInterLiteral*)val.obj; // ST it
 		v__ast__StringInterLiteral* val = it;
 		// FOR IN array
-		array _t651 = it->exprs;
+		array _t651 = val->exprs;
 		for (int _t652 = 0; _t652 < _t651.len; _t652++) {
 			v__ast__Expr expr_ = ((v__ast__Expr*)_t651.data)[_t652];
 			v__parser__Parser_check_undefined_variables(p, exprs, expr_);
@@ -23265,7 +23265,7 @@ static bool v__parser__Parser_check_cross_variables(v__parser__Parser* p, array_
 			v__ast__Expr expr = ((v__ast__Expr*)_t654.data)[_t655];
 			if (expr.typ == 149 /* v.ast.Ident */) {
 				v__ast__Ident* ident = /* as */ (v__ast__Ident*)__as_cast(expr.obj, expr.typ, /*expected:*/149);
-				if (string_eq(ident->name, it->name)) {
+				if (string_eq(ident->name, val->name)) {
 					return true;
 				}
 			}
@@ -23273,15 +23273,15 @@ static bool v__parser__Parser_check_cross_variables(v__parser__Parser* p, array_
 	}else if (val.typ == 153 /* v.ast.InfixExpr */) {
 		v__ast__InfixExpr* it = (v__ast__InfixExpr*)val.obj; // ST it
 		v__ast__InfixExpr* val = it;
-		return v__parser__Parser_check_cross_variables(p, exprs, it->left) || v__parser__Parser_check_cross_variables(p, exprs, it->right);
+		return v__parser__Parser_check_cross_variables(p, exprs, val->left) || v__parser__Parser_check_cross_variables(p, exprs, val->right);
 	}else if (val.typ == 162 /* v.ast.PrefixExpr */) {
 		v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)val.obj; // ST it
 		v__ast__PrefixExpr* val = it;
-		return v__parser__Parser_check_cross_variables(p, exprs, it->right);
+		return v__parser__Parser_check_cross_variables(p, exprs, val->right);
 	}else if (val.typ == 161 /* v.ast.PostfixExpr */) {
 		v__ast__PostfixExpr* it = (v__ast__PostfixExpr*)val.obj; // ST it
 		v__ast__PostfixExpr* val = it;
-		return v__parser__Parser_check_cross_variables(p, exprs, it->expr);
+		return v__parser__Parser_check_cross_variables(p, exprs, val->expr);
 	}else {
 	};
 	return false;
