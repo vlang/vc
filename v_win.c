@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "f990a0b"
+#define V_COMMIT_HASH "190f970"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f073ffa"
+#define V_COMMIT_HASH "f990a0b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "f990a0b"
+#define V_CURRENT_COMMIT_HASH "190f970"
 #endif
 
 
@@ -23361,6 +23361,12 @@ static v__table__Type v__checker__Checker_sql_expr(v__checker__Checker* c, v__as
 	}
 	if (node->has_where) {
 		v__checker__Checker_expr(c, node->where_expr);
+	}
+	if (node->has_offset) {
+		v__checker__Checker_expr(c, node->offset_expr);
+	}
+	if (node->has_limit) {
+		v__checker__Checker_expr(c, node->limit_expr);
 	}
 	v__checker__Checker_expr(c, node->db_expr);
 	return node->typ;
