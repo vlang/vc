@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "58763ff"
+#define V_COMMIT_HASH "2bfe8e5"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "288ea18"
+#define V_COMMIT_HASH "58763ff"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "58763ff"
+#define V_CURRENT_COMMIT_HASH "2bfe8e5"
 #endif
 
 
@@ -1563,6 +1563,7 @@ struct v__pref__Preferences {
 	bool fast;
 	bool enable_globals;
 	bool is_fmt;
+	bool is_vet;
 	bool is_bare;
 	bool no_preludes;
 	string custom_prelude;
@@ -15049,6 +15050,7 @@ v__pref__Preferences v__pref__new_preferences() {
 		.fast = 0,
 		.enable_globals = 0,
 		.is_fmt = 0,
+		.is_vet = 0,
 		.is_bare = 0,
 		.no_preludes = 0,
 		.custom_prelude = (string){.str=""},
@@ -15328,6 +15330,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 		.fast = 0,
 		.enable_globals = 0,
 		.is_fmt = 0,
+		.is_vet = 0,
 		.is_bare = 0,
 		.no_preludes = 0,
 		.custom_prelude = (string){.str=""},
@@ -22571,6 +22574,7 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 				.fast = pref.fast,
 				.enable_globals = pref.enable_globals,
 				.is_fmt = pref.is_fmt,
+				.is_vet = pref.is_vet,
 				.is_bare = pref.is_bare,
 				.no_preludes = pref.no_preludes,
 				.custom_prelude = pref.custom_prelude,
@@ -24879,7 +24883,7 @@ static v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser* p) {
 				if (cond.typ == 175 /* v.ast.Ident */) {
 					v__ast__Ident* it = (v__ast__Ident*)cond.obj; // ST it
 					v__ast__Ident* cond = it;
-					var_name = it->name;
+					var_name = cond->name;
 				}else {
 				};
 			}
@@ -25312,6 +25316,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.fast = 0,
 		.enable_globals = 0,
 		.is_fmt = 0,
+		.is_vet = 0,
 		.is_bare = 0,
 		.no_preludes = 0,
 		.custom_prelude = (string){.str=""},
@@ -25458,6 +25463,11 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 		.warnings = __new_array_with_default(0, 0, sizeof(v__errors__Warning), 0),
 		.cur_fn_name = (string){.str=""},
 	};
+	if (pref->is_vet && string_contains(p.scanner->text, tos_lit("\n        "))) {
+		println(p.scanner->file_path);
+		println(string_add(tos_lit("Looks like you are using spaces for indentation.\n"), tos_lit("You can run `v fmt -w file.v` to fix that automatically")));
+		v_exit(1);
+	}
 	return v__parser__Parser_parse(&p);
 }
 
@@ -26752,7 +26762,7 @@ static v__ast__EnumDecl v__parser__Parser_enum_decl(v__parser__Parser* p) {
 			v__parser__Parser_error(p, tos_lit("when an enum is used as bit field, it must have a max of 32 fields"));
 		}
 		string pubfn = (string_eq(p->mod, tos_lit("main")) ? (tos_lit("fn")) : (tos_lit("pub fn")));
-		v__scanner__Scanner_codegen(p->scanner, _STR("\n//\n%.*s\000 (    e &%.*s\000) has(flag %.*s\000) bool { return      (int(*e) &  (1 << int(flag))) != 0 }\n%.*s\000 (mut e  %.*s\000) set(flag %.*s\000)      { unsafe{ *e = int(*e) |  (1 << int(flag)) } }\n%.*s\000 (mut e  %.*s\000) clear(flag %.*s\000)    { unsafe{ *e = int(*e) & ~(1 << int(flag)) } }\n%.*s\000 (mut e  %.*s\000) toggle(flag %.*s\000)   { unsafe{ *e = int(*e) ^  (1 << int(flag)) } }\n//\n        ", 13, pubfn, name, name, pubfn, name, name, pubfn, name, name, pubfn, name, name));
+		v__scanner__Scanner_codegen(p->scanner, _STR("\n//\n%.*s\000 (    e &%.*s\000) has(flag %.*s\000) bool { return      (int(*e) &  (1 << int(flag))) != 0 }\n%.*s\000 (mut e  %.*s\000) set(flag %.*s\000)      { unsafe{ *e = int(*e) |  (1 << int(flag)) } }\n%.*s\000 (mut e  %.*s\000) clear(flag %.*s\000)    { unsafe{ *e = int(*e) & ~(1 << int(flag)) } }\n%.*s\000 (mut e  %.*s\000) toggle(flag %.*s\000)   { unsafe{ *e = int(*e) ^  (1 << int(flag)) } }\n//\n", 13, pubfn, name, name, pubfn, name, name, pubfn, name, name, pubfn, name, name));
 	}
 	v__table__Table_register_type_symbol(p->table, (v__table__TypeSymbol){
 		.parent_idx = 0,
@@ -37297,9 +37307,9 @@ static void main_v() {
 		return;
 	}
 	array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_958 = v__pref__parse_args(args_and_flags);
-	v__pref__Preferences* prefs = mr_958.arg0;
-	string command = mr_958.arg1;
+	multi_return_v__pref__Preferences_string mr_965 = v__pref__parse_args(args_and_flags);
+	v__pref__Preferences* prefs = mr_965.arg0;
+	string command = mr_965.arg1;
 	if (args.len > 0 && ((string_eq((*(string*)array_get(args, 0)), tos_lit("version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-V")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("--version"))) || (string_eq((*(string*)array_get(args, 0)), tos_lit("-v")) && args.len == 1))) {
 		println(v__util__full_v_version(prefs->is_verbose));
 		return;
@@ -39398,8 +39408,8 @@ tos_lit(""), tos_lit("\t"), tos_lit("\t\t"), tos_lit("\t\t\t"), tos_lit("\t\t\t\
 	_const_v__builder__key_query_value = (0x0001);
 	_const_v__builder__key_wow64_32key = (0x0200);
 	_const_v__builder__key_enumerate_sub_keys = (0x0008);
-	_const_simple_cmd = new_array_from_c_array(15, 15, sizeof(string), _MOV((string[15]){
-tos_lit("fmt"), tos_lit("up"), tos_lit("self"), tos_lit("symlink"), tos_lit("bin2v"), tos_lit("test"), tos_lit("test-fmt"), tos_lit("test-compiler"), tos_lit("test-fixed"), tos_lit("repl"), tos_lit("build-tools"), tos_lit("build-examples"), tos_lit("build-vbinaries"), tos_lit("setup-freetype"), tos_lit("doc")
+	_const_simple_cmd = new_array_from_c_array(16, 16, sizeof(string), _MOV((string[16]){
+tos_lit("fmt"), tos_lit("up"), tos_lit("vet"), tos_lit("self"), tos_lit("symlink"), tos_lit("bin2v"), tos_lit("test"), tos_lit("test-fmt"), tos_lit("test-compiler"), tos_lit("test-fixed"), tos_lit("repl"), tos_lit("build-tools"), tos_lit("build-examples"), tos_lit("build-vbinaries"), tos_lit("setup-freetype"), tos_lit("doc")
 }));
 	_const_list_of_flags_that_allow_duplicates = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){tos_lit("cc"), tos_lit("d"), tos_lit("define"), tos_lit("cf"), tos_lit("cflags")}));
 
