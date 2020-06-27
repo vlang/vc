@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "6a335c4"
+#define V_COMMIT_HASH "f8f2fa2"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2bfe8e5"
+#define V_COMMIT_HASH "6a335c4"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "6a335c4"
+#define V_CURRENT_COMMIT_HASH "f8f2fa2"
 #endif
 
 
@@ -32866,9 +32866,9 @@ static void v__gen__Gen_sql_stmt(v__gen__Gen* g, v__ast__SqlStmt node) {
 	v__gen__Gen_writeln(g, tos_lit(";"));
 	v__gen__Gen_write(g, _STR("sqlite3_stmt* %.*s\000 = %.*s\000__DB_init_stmt(%.*s\000, tos_lit(\"", 4, g->sql_stmt_name, _const_v__gen__dbtype, db_name));
 	if (node.kind == v__ast__SqlStmtKind_insert) {
-		v__gen__Gen_write(g, _STR("insert into %.*s\000 (", 2, node.table_name));
+		v__gen__Gen_write(g, _STR("insert into `%.*s\000` (", 2, node.table_name));
 	} else {
-		v__gen__Gen_write(g, _STR("update %.*s\000 set ", 2, node.table_name));
+		v__gen__Gen_write(g, _STR("update `%.*s\000` set ", 2, node.table_name));
 	}
 	if (node.kind == v__ast__SqlStmtKind_insert) {
 		// FOR IN array
@@ -32943,7 +32943,7 @@ static void v__gen__Gen_sql_select_expr(v__gen__Gen* g, v__ast__SqlExpr node) {
 	string cur_line = v__gen__Gen_go_before_stmt(g, 0);
 	string q = tos_lit("select ");
 	if (node.is_count) {
-		q = /*f*/string_add(q, _STR("count(*) from %.*s", 1, node.table_name));
+		q = /*f*/string_add(q, _STR("count(*) from `%.*s\000`", 2, node.table_name));
 	} else {
 		// FOR IN array
 		array _t985 = node.fields;
@@ -32954,7 +32954,7 @@ static void v__gen__Gen_sql_select_expr(v__gen__Gen* g, v__ast__SqlExpr node) {
 				q = /*f*/string_add(q, tos_lit(", "));
 			}
 		}
-		q = /*f*/string_add(q, _STR(" from %.*s", 1, node.table_name));
+		q = /*f*/string_add(q, _STR(" from `%.*s\000`", 2, node.table_name));
 	}
 	if (node.has_where) {
 		q = /*f*/string_add(q, tos_lit(" where "));
