@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "f073ffa"
+#define V_COMMIT_HASH "f990a0b"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "f8f2fa2"
+#define V_COMMIT_HASH "f073ffa"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "f073ffa"
+#define V_CURRENT_COMMIT_HASH "f990a0b"
 #endif
 
 
@@ -26995,6 +26995,13 @@ static v__ast__Expr v__parser__Parser_sql_expr(v__parser__Parser* p) {
 0
 #endif
 };
+	bool has_offset = false;
+	v__ast__Expr offset_expr = (v__ast__Expr){
+	
+#ifndef __cplusplus
+0
+#endif
+};
 	if (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("limit"))) {
 		v__parser__Parser_check_name(p);
 		if (p->tok.kind == v__token__Kind_number && string_eq(p->tok.lit, tos_lit("1"))) {
@@ -27003,6 +27010,11 @@ static v__ast__Expr v__parser__Parser_sql_expr(v__parser__Parser* p) {
 			has_limit = true;
 		}
 		limit_expr = v__parser__Parser_expr(p, 0);
+	}
+	if (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("offset"))) {
+		v__parser__Parser_check_name(p);
+		has_offset = true;
+		offset_expr = v__parser__Parser_expr(p, 0);
 	}
 	if (!query_one && !is_count) {
 		typ = v__table__new_type(v__table__Table_find_or_register_array(p->table, table_type, 1, p->mod));
@@ -27016,8 +27028,8 @@ static v__ast__Expr v__parser__Parser_sql_expr(v__parser__Parser* p) {
 		.db_expr = db_expr,
 		.where_expr = where_expr,
 		.has_where = has_where,
-		.has_offset = 0,
-		.offset_expr = {0},
+		.has_offset = has_offset,
+		.offset_expr = offset_expr,
 		.is_array = !query_one,
 		.table_type = table_type,
 		.pos = pos,
@@ -32728,6 +32740,10 @@ static void v__gen__Gen_sql_select_expr(v__gen__Gen* g, v__ast__SqlExpr node) {
 	if (node.has_limit) {
 		v__gen__Gen_write(g, tos_lit(" limit "));
 		v__gen__Gen_expr_to_sql(g, node.limit_expr);
+	}
+	if (node.has_offset) {
+		v__gen__Gen_write(g, tos_lit(" offset "));
+		v__gen__Gen_expr_to_sql(g, node.offset_expr);
 	}
 	v__gen__Gen_writeln(g, tos_lit("\"));"));
 	string binds = strings__Builder_str(&g->sql_buf);
