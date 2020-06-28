@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "219ecd1"
+#define V_COMMIT_HASH "d2c508e"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3dea698"
+#define V_COMMIT_HASH "219ecd1"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "219ecd1"
+#define V_CURRENT_COMMIT_HASH "d2c508e"
 #endif
 
 
@@ -23112,8 +23112,6 @@ static v__table__Type v__checker__Checker_sql_expr(v__checker__Checker* c, v__as
 	node->fields = fields;
 	node->table_name = sym->name;
 	if (node->has_where) {
-	}
-	if (node->has_where) {
 		v__checker__Checker_expr(c, node->where_expr);
 	}
 	if (node->has_offset) {
@@ -31964,7 +31962,7 @@ static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 		}
 	}
 	v__gen__Gen_write_defer_stmts_when_needed(g);
-	if (g->autofree) {
+	if (g->autofree && !is_main) {
 		v__gen__Gen_writeln(g, v__gen__Gen_autofree_scope_vars(g, it.body_pos.pos));
 	}
 	if (is_main) {
@@ -32259,11 +32257,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_17747 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_17747.arg0;
-		string pafile = mr_17747.arg1;
-		string pamod = mr_17747.arg2;
-		string pafn = mr_17747.arg3;
+		multi_return_int_string_string_string mr_17759 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_17759.arg0;
+		string pafile = mr_17759.arg1;
+		string pamod = mr_17759.arg2;
+		string pafn = mr_17759.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		v__gen__Gen_write(g, tos_lit(")"));
