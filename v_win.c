@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "3dea698"
+#define V_COMMIT_HASH "219ecd1"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9cbf572"
+#define V_COMMIT_HASH "3dea698"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "3dea698"
+#define V_CURRENT_COMMIT_HASH "219ecd1"
 #endif
 
 
@@ -23365,6 +23365,12 @@ static bool v__checker__Checker_fileis(v__checker__Checker* c, string s) {
 static v__table__Type v__checker__Checker_sql_expr(v__checker__Checker* c, v__ast__SqlExpr* node) {
 	c->inside_sql = true;
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, node->table_type);
+	if (sym->kind == v__table__Kind_placeholder) {
+		v__checker__Checker_error(c, _STR("orm: unknown type `%.*s\000`", 2, sym->name), node->pos);
+		// defer
+			c->inside_sql = false;
+		return _const_v__table__void_type;
+	}
 	c->cur_orm_ts = *sym;
 	v__table__Struct* info = /* as */ (v__table__Struct*)__as_cast(sym->info.obj, sym->info.typ, /*expected:*/284);
 	array_v__table__Field fields = v__checker__Checker_fetch_and_verify_orm_fields(c, *info, node->pos, node->table_name);
@@ -23391,7 +23397,16 @@ static v__table__Type v__checker__Checker_sql_expr(v__checker__Checker* c, v__as
 
 static v__table__Type v__checker__Checker_sql_stmt(v__checker__Checker* c, v__ast__SqlStmt* node) {
 	c->inside_sql = true;
+	if (node->table_type == 0) {
+		v__checker__Checker_error(c, _STR("orm: unknown type `%.*s\000`", 2, node->table_name), node->pos);
+	}
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, node->table_type);
+	if (sym->kind == v__table__Kind_placeholder) {
+		v__checker__Checker_error(c, _STR("orm: unknown type `%.*s\000`", 2, sym->name), node->pos);
+		// defer
+			c->inside_sql = false;
+		return _const_v__table__void_type;
+	}
 	c->cur_orm_ts = *sym;
 	v__table__Struct* info = /* as */ (v__table__Struct*)__as_cast(sym->info.obj, sym->info.typ, /*expected:*/284);
 	array_v__table__Field fields = v__checker__Checker_fetch_and_verify_orm_fields(c, *info, node->pos, node->table_name);
