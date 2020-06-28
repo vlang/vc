@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "fa86757"
+#define V_COMMIT_HASH "9814497"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0661273"
+#define V_COMMIT_HASH "fa86757"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "fa86757"
+#define V_CURRENT_COMMIT_HASH "9814497"
 #endif
 
 
@@ -27293,9 +27293,8 @@ static v__ast__Expr v__parser__Parser_sql_expr(v__parser__Parser* p) {
 		v__parser__Parser_check_name(p);
 		if (p->tok.kind == v__token__Kind_number && string_eq(p->tok.lit, tos_lit("1"))) {
 			query_one = true;
-		} else {
-			has_limit = true;
 		}
+		has_limit = true;
 		limit_expr = v__parser__Parser_expr(p, 0);
 	}
 	if (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("offset"))) {
