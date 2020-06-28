@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "0661273"
+#define V_COMMIT_HASH "fa86757"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b924c6c"
+#define V_COMMIT_HASH "0661273"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "0661273"
+#define V_CURRENT_COMMIT_HASH "fa86757"
 #endif
 
 
@@ -27387,8 +27387,10 @@ static v__ast__SqlStmt v__parser__Parser_sql_stmt(v__parser__Parser* p) {
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(p->table, table_type);
 		table_name = sym->name;
 	} else if (kind == v__ast__SqlStmtKind_update) {
-		int idx = v__table__Table_find_type_idx(p->table, table_name);
-		table_type = v__table__new_type(idx);
+		if (!p->pref->is_fmt) {
+			int idx = v__table__Table_find_type_idx(p->table, table_name);
+			table_type = v__table__new_type(idx);
+		}
 		v__parser__Parser_check_sql_keyword(p, tos_lit("where"));
 		where_expr = v__parser__Parser_expr(p, 0);
 	}
