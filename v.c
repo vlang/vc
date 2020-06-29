@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "77e56aa"
+#define V_COMMIT_HASH "7565fe5"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "ab37dca"
+#define V_COMMIT_HASH "77e56aa"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "77e56aa"
+#define V_CURRENT_COMMIT_HASH "7565fe5"
 #endif
 
 
@@ -36927,7 +36927,7 @@ void v__builder__Builder_instantiate_generic_structs(v__builder__Builder* b) {
 					for (int j = 0; j < _t1243.len; j++) {
 						v__table__Type gp = ((v__table__Type*)_t1243.data)[j];
 						if (gp == field.typ) {
-							field.typ = (*(v__table__Type*)array_get(info->generic_types, j));
+							field.typ = v__table__Type_clear_flag(v__table__Type_derive((*(v__table__Type*)array_get(info->generic_types, j)), field.typ), v__table__TypeFlag_generic);
 							break;
 						}
 					}
