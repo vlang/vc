@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "4a1ce3e"
+#define V_COMMIT_HASH "c69ef87"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "025652b"
+#define V_COMMIT_HASH "4a1ce3e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4a1ce3e"
+#define V_CURRENT_COMMIT_HASH "c69ef87"
 #endif
 
 
@@ -11741,8 +11741,9 @@ Option_void os__cp(string old, string v_new) {
 // } windows
 #endif
 
-	/*opt promotion*/ Option _t80 = opt_none();
-	return *(Option_void*)&_t80;
+	Option_void _t80;
+	_t80.ok = true;
+	return _t80;
 }
 
 // Attr: [deprecated]
@@ -11776,8 +11777,9 @@ Option_void os__cp_all(string osource_path, string odest_path, bool overwrite) {
 			return *(Option_void*)&_t84;
 		}
 	_t83;
-		/*opt promotion*/ Option _t85 = opt_none();
-		return *(Option_void*)&_t85;
+		Option_void _t85;
+		_t85.ok = true;
+		return _t85;
 	}
 	if (!os__is_dir(dest_path)) {
 		/*opt promotion*/ Option _t86 = v_error(tos_lit("Destination path is not a valid directory"));
@@ -11815,8 +11817,9 @@ Option_void os__cp_all(string osource_path, string odest_path, bool overwrite) {
 		}
 	_t92;
 	}
-	/*opt promotion*/ Option _t93 = opt_none();
-	return *(Option_void*)&_t93;
+	Option_void _t93;
+	_t93.ok = true;
+	return _t93;
 }
 
 Option_void os__mv_by_cp(string source, string target) {
@@ -11836,8 +11839,9 @@ Option_void os__mv_by_cp(string source, string target) {
 		return *(Option_void*)&_t97;
 	}
 	_t96;
-	/*opt promotion*/ Option _t98 = opt_none();
-	return *(Option_void*)&_t98;
+	Option_void _t98;
+	_t98.ok = true;
+	return _t98;
 }
 
 FILE* os__vfopen(string path, string mode) {
@@ -12061,8 +12065,8 @@ static int os__vpclose(voidptr f) {
 		return _pclose(f);
 	
 #else
-		multi_return_int_bool mr_9845 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_9845.arg0;
+		multi_return_int_bool mr_9801 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_9801.arg0;
 		return ret;
 	
 // } windows
@@ -12090,9 +12094,9 @@ int os__system(string cmd) {
 	
 // $if !windows {
 #ifndef _WIN32
-		multi_return_int_bool mr_10611 = os__posix_wait4_to_exit_status(ret);
-		int pret = mr_10611.arg0;
-		bool is_signaled = mr_10611.arg1;
+		multi_return_int_bool mr_10567 = os__posix_wait4_to_exit_status(ret);
+		int pret = mr_10567.arg0;
+		bool is_signaled = mr_10567.arg1;
 		if (is_signaled) {
 			println(string_add(string_add(_STR("Terminated by signal %2"PRId32"\000 (", 2, ret), os__sigint_to_signal_name(pret)), tos_lit(")")));
 		}
@@ -12281,8 +12285,9 @@ Option_void os__rm(string path) {
 // } windows
 #endif
 
-	/*opt promotion*/ Option _t124 = opt_none();
-	return *(Option_void*)&_t124;
+	Option_void _t124;
+	_t124.ok = true;
+	return _t124;
 }
 
 Option_void os__rmdir(string path) {
@@ -12305,8 +12310,9 @@ Option_void os__rmdir(string path) {
 // } windows
 #endif
 
-	/*opt promotion*/ Option _t127 = opt_none();
-	return *(Option_void*)&_t127;
+	Option_void _t127;
+	_t127.ok = true;
+	return _t127;
 }
 
 // Attr: [deprecated]
@@ -12351,8 +12357,9 @@ Option_void os__rmdir_all(string path) {
 		/*opt promotion*/ Option _t134 = v_error(ret_err);
 		return *(Option_void*)&_t134;
 	}
-	/*opt promotion*/ Option _t135 = opt_none();
-	return *(Option_void*)&_t135;
+	Option_void _t135;
+	_t135.ok = true;
+	return _t135;
 }
 
 bool os__is_dir_empty(string path) {

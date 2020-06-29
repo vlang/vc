@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "4a1ce3e"
+#define V_COMMIT_HASH "c69ef87"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "025652b"
+#define V_COMMIT_HASH "4a1ce3e"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4a1ce3e"
+#define V_CURRENT_COMMIT_HASH "c69ef87"
 #endif
 
 
@@ -11939,8 +11939,9 @@ Option_void os__cp(string old, string v_new) {
 // } windows
 #endif
 
-	/*opt promotion*/ Option _t78 = opt_none();
-	return *(Option_void*)&_t78;
+	Option_void _t78;
+	_t78.ok = true;
+	return _t78;
 }
 
 // Attr: [deprecated]
@@ -11974,8 +11975,9 @@ Option_void os__cp_all(string osource_path, string odest_path, bool overwrite) {
 			return *(Option_void*)&_t82;
 		}
 	_t81;
-		/*opt promotion*/ Option _t83 = opt_none();
-		return *(Option_void*)&_t83;
+		Option_void _t83;
+		_t83.ok = true;
+		return _t83;
 	}
 	if (!os__is_dir(dest_path)) {
 		/*opt promotion*/ Option _t84 = v_error(tos_lit("Destination path is not a valid directory"));
@@ -12013,8 +12015,9 @@ Option_void os__cp_all(string osource_path, string odest_path, bool overwrite) {
 		}
 	_t90;
 	}
-	/*opt promotion*/ Option _t91 = opt_none();
-	return *(Option_void*)&_t91;
+	Option_void _t91;
+	_t91.ok = true;
+	return _t91;
 }
 
 Option_void os__mv_by_cp(string source, string target) {
@@ -12034,8 +12037,9 @@ Option_void os__mv_by_cp(string source, string target) {
 		return *(Option_void*)&_t95;
 	}
 	_t94;
-	/*opt promotion*/ Option _t96 = opt_none();
-	return *(Option_void*)&_t96;
+	Option_void _t96;
+	_t96.ok = true;
+	return _t96;
 }
 
 FILE* os__vfopen(string path, string mode) {
@@ -12259,8 +12263,8 @@ static int os__vpclose(voidptr f) {
 		return _pclose(f);
 	
 #else
-		multi_return_int_bool mr_9845 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_9845.arg0;
+		multi_return_int_bool mr_9801 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_9801.arg0;
 		return ret;
 	
 // } windows
@@ -12445,8 +12449,9 @@ Option_void os__rm(string path) {
 // } windows
 #endif
 
-	/*opt promotion*/ Option _t121 = opt_none();
-	return *(Option_void*)&_t121;
+	Option_void _t121;
+	_t121.ok = true;
+	return _t121;
 }
 
 Option_void os__rmdir(string path) {
@@ -12469,8 +12474,9 @@ Option_void os__rmdir(string path) {
 // } windows
 #endif
 
-	/*opt promotion*/ Option _t124 = opt_none();
-	return *(Option_void*)&_t124;
+	Option_void _t124;
+	_t124.ok = true;
+	return _t124;
 }
 
 // Attr: [deprecated]
@@ -12515,8 +12521,9 @@ Option_void os__rmdir_all(string path) {
 		/*opt promotion*/ Option _t131 = v_error(ret_err);
 		return *(Option_void*)&_t131;
 	}
-	/*opt promotion*/ Option _t132 = opt_none();
-	return *(Option_void*)&_t132;
+	Option_void _t132;
+	_t132.ok = true;
+	return _t132;
 }
 
 bool os__is_dir_empty(string path) {
