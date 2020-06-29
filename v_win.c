@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "c69ef87"
+#define V_COMMIT_HASH "9d84526"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4a1ce3e"
+#define V_COMMIT_HASH "c69ef87"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "c69ef87"
+#define V_CURRENT_COMMIT_HASH "9d84526"
 #endif
 
 
@@ -26167,6 +26167,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 		}else {
 		};
 	}}
+	bool is_mod_cast = false;
 	if (p->peek_tok.kind == v__token__Kind_dot && !known_var && (language != v__table__Language_v || v__parser__Parser_known_import(p, p->tok.lit) || string_eq(string_all_after_last(p->mod, tos_lit(".")), p->tok.lit))) {
 		if (language == v__table__Language_c) {
 			mod = tos_lit("C");
@@ -26175,6 +26176,9 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 		} else {
 			if (_IN_MAP(p->tok.lit, p->imports)) {
 				v__parser__Parser_register_used_import(p, p->tok.lit);
+				if (p->peek_tok.kind == v__token__Kind_dot && byte_is_capital(string_at(p->peek_tok2.lit, 0))) {
+					is_mod_cast = true;
+				}
 			}
 			mod = (*(string*)map_get(p->imports, p->tok.lit, &(string[]){ (string){.str=""} }))
 ;
@@ -26189,7 +26193,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 			name = _STR("%.*s\000.%.*s", 2, mod, name);
 		}
 		string name_w_mod = v__parser__Parser_prepend_mod(p, name);
-		if (!known_var && (_IN_MAP(name, p->table->type_idxs) || _IN_MAP(name_w_mod, p->table->type_idxs)) && !(string_eq(name, tos_lit("C.stat")) || string_eq(name, tos_lit("C.sigaction")))) {
+		if ((!known_var && (_IN_MAP(name, p->table->type_idxs) || _IN_MAP(name_w_mod, p->table->type_idxs)) && !(string_eq(name, tos_lit("C.stat")) || string_eq(name, tos_lit("C.sigaction")))) || is_mod_cast) {
 			v__table__Type to_typ = v__parser__Parser_parse_type(p);
 			if (p->is_amp) {
 				to_typ = v__table__Type_to_ptr(to_typ);
