@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "616b072"
+#define V_COMMIT_HASH "73da3c9"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "7565fe5"
+#define V_COMMIT_HASH "616b072"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "616b072"
+#define V_CURRENT_COMMIT_HASH "73da3c9"
 #endif
 
 
@@ -86,7 +86,7 @@ typedef struct v__table__TypeSymbol v__table__TypeSymbol;
 typedef struct v__table__MultiReturn v__table__MultiReturn;
 typedef struct v__table__FnType v__table__FnType;
 typedef struct v__table__Struct v__table__Struct;
-typedef struct v__table__GenericStructInstance v__table__GenericStructInstance;
+typedef struct v__table__GenericStructInst v__table__GenericStructInst;
 typedef struct v__table__Interface v__table__Interface;
 typedef struct v__table__Enum v__table__Enum;
 typedef struct v__table__Alias v__table__Alias;
@@ -922,7 +922,7 @@ typedef enum {
 	v__table__Kind_map, // +23
 	v__table__Kind_any, // +24
 	v__table__Kind_struct_, // +25
-	v__table__Kind_generic_struct_instance, // +26
+	v__table__Kind_generic_struct_inst, // +26
 	v__table__Kind_multi_return, // +27
 	v__table__Kind_sum_type, // +28
 	v__table__Kind_alias, // +29
@@ -1328,7 +1328,7 @@ typedef struct {
 //          |  283 = v__table__Map       
 //          |  284 = v__table__MultiReturn
 //          |  127 = v__table__Struct    
-//          |  126 = v__table__GenericStructInstance
+//          |  126 = v__table__GenericStructInst
 //          |  285 = v__table__SumType   
 typedef struct {
     void* obj;
@@ -1623,7 +1623,7 @@ struct v__depgraph__DepGraph {
 	array_v__depgraph__DepGraphNode nodes;
 };
 
-struct v__table__GenericStructInstance {
+struct v__table__GenericStructInst {
 	int parent_idx;
 	array_v__table__Type generic_types;
 };
@@ -4857,7 +4857,7 @@ static void v__builder__Builder_run_compiled_executable_and_exit(v__builder__Bui
 static void v__builder__Builder_set_module_lookup_paths(v__builder__Builder* v);
 array_string v__builder__Builder_get_builtin_files(v__builder__Builder v);
 array_string v__builder__Builder_get_user_files(v__builder__Builder v);
-void v__builder__Builder_instantiate_generic_structs(v__builder__Builder* b);
+void v__builder__Builder_generic_struct_insts_to_concrete(v__builder__Builder* b);
 string v__builder__Builder_gen_js(v__builder__Builder* b, array_string v_files);
 void v__builder__Builder_build_js(v__builder__Builder* b, array_string v_files, string out_file);
 void v__builder__Builder_compile_js(v__builder__Builder* b);
@@ -5286,7 +5286,7 @@ char * v_typeof_sumtype_286(int sidx) { /* v.table.TypeInfo */
 		case 283: return "v.table.Map";
 		case 284: return "v.table.MultiReturn";
 		case 127: return "v.table.Struct";
-		case 126: return "v.table.GenericStructInstance";
+		case 126: return "v.table.GenericStructInst";
 		case 285: return "v.table.SumType";
 		default: return "unknown v.table.TypeInfo";
 	}
@@ -25411,12 +25411,12 @@ v__table__Type v__parser__Parser_parse_generic_struct_inst_type(v__parser__Parse
 		gt_idx = v__table__Table_add_placeholder_type(p->table, bs_name);
 		int idx = v__table__Table_register_type_symbol(p->table, (v__table__TypeSymbol){
 			.parent_idx = 0,
-			.info = /* sum type cast */ (v__table__TypeInfo) {.obj = memdup(&(v__table__GenericStructInstance[]) {(v__table__GenericStructInstance){
+			.info = /* sum type cast */ (v__table__TypeInfo) {.obj = memdup(&(v__table__GenericStructInst[]) {(v__table__GenericStructInst){
 			.parent_idx = (*(int*)map_get(p->table->type_idxs, name, &(int[]){ 0 }))
 ,
 			.generic_types = generic_types,
-		}}, sizeof(v__table__GenericStructInstance)), .typ = 126 /* v.table.GenericStructInstance */},
-			.kind = v__table__Kind_generic_struct_instance,
+		}}, sizeof(v__table__GenericStructInst)), .typ = 126 /* v.table.GenericStructInst */},
+			.kind = v__table__Kind_generic_struct_inst,
 			.name = bs_name,
 			.methods = __new_array(0, 1, sizeof(v__table__Fn)),
 			.mod = (string){.str=""},
@@ -33674,7 +33674,7 @@ string v__gen__js__JsGen_typ(v__gen__js__JsGen* g, v__table__Type t) {
 		styp = tos_lit("any");
 	}else if (sym->kind == v__table__Kind_struct_) {
 		styp = v__gen__js__JsGen_struct_typ(g, sym->name);
-	}else if (sym->kind == v__table__Kind_generic_struct_instance) {
+	}else if (sym->kind == v__table__Kind_generic_struct_inst) {
 	}else if (sym->kind == v__table__Kind_multi_return) {
 		v__table__MultiReturn* info = /* as */ (v__table__MultiReturn*)__as_cast(sym->info.obj, sym->info.typ, /*expected:*/284);
 
@@ -36152,7 +36152,7 @@ string v__builder__Builder_gen_c(v__builder__Builder* b, array_string v_files) {
 	i64 t1 = time__ticks();
 	i64 parse_time = t1 - t0;
 	v__builder__Builder_info(/*rec*/*b, _STR("PARSE: %"PRId64"\000ms", 2, parse_time));
-	v__builder__Builder_instantiate_generic_structs(b);
+	v__builder__Builder_generic_struct_insts_to_concrete(b);
 	v__checker__Checker_check_files(&b->checker, b->parsed_files);
 	i64 t2 = time__ticks();
 	i64 check_time = t2 - t1;
@@ -37135,18 +37135,18 @@ array_string v__builder__Builder_get_user_files(v__builder__Builder v) {
 	return user_files;
 }
 
-void v__builder__Builder_instantiate_generic_structs(v__builder__Builder* b) {
+void v__builder__Builder_generic_struct_insts_to_concrete(v__builder__Builder* b) {
 	// FOR IN array
 	array _t1239 = b->table->types;
 	for (int idx = 0; idx < _t1239.len; idx++) {
 		v__table__TypeSymbol* typ = &(*(v__table__TypeSymbol*)array_get(b->table->types, idx));
-		if (typ->kind == v__table__Kind_generic_struct_instance) {
-			v__table__GenericStructInstance* info = /* as */ (v__table__GenericStructInstance*)__as_cast(typ->info.obj, typ->info.typ, /*expected:*/126);
+		if (typ->kind == v__table__Kind_generic_struct_inst) {
+			v__table__GenericStructInst* info = /* as */ (v__table__GenericStructInst*)__as_cast(typ->info.obj, typ->info.typ, /*expected:*/126);
 			v__table__TypeSymbol parent = (*(v__table__TypeSymbol*)array_get(b->table->types, info->parent_idx));
 			v__table__Struct parent_info = *(/* as */ (v__table__Struct*)__as_cast(parent.info.obj, parent.info.typ, /*expected:*/127));
 			array_v__table__Field fields = array_clone(&parent_info.fields);
 			// FOR IN array
-			array _t1240 = parent_info.fields;
+			array _t1240 = fields;
 			for (int i = 0; i < _t1240.len; i++) {
 				v__table__Field field = (*(v__table__Field*)array_get(fields, i));
 				if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_generic)) {
@@ -37166,16 +37166,10 @@ void v__builder__Builder_instantiate_generic_structs(v__builder__Builder* b) {
 				array_set(&fields, i, &(v__table__Field[]) { field });
 			}
 			parent_info.generic_types = __new_array_with_default(0, 0, sizeof(v__table__Type), 0);
+			parent_info.fields = fields;
 			typ->is_public = true;
 			typ->kind = v__table__Kind_struct_;
-			typ->info = /* sum type cast */ (v__table__TypeInfo) {.obj = memdup(&(v__table__Struct[]) {// assoc
-			(v__table__Struct){
-				.fields = fields, 
-				.is_typedef = parent_info.is_typedef,
-				.is_union = parent_info.is_union,
-				.is_ref_only = parent_info.is_ref_only,
-				.generic_types = parent_info.generic_types,
-			}}, sizeof(v__table__Struct)), .typ = 127 /* v.table.Struct */};
+			typ->info = /* sum type cast */ (v__table__TypeInfo) {.obj = memdup(&(v__table__Struct[]) {parent_info}, sizeof(v__table__Struct)), .typ = 127 /* v.table.Struct */};
 		}
 	}
 }
