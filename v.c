@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "1b0b4be"
+#define V_COMMIT_HASH "b6e6cde"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "8f1e8a9"
+#define V_COMMIT_HASH "1b0b4be"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "1b0b4be"
+#define V_CURRENT_COMMIT_HASH "b6e6cde"
 #endif
 
 
@@ -2657,7 +2657,8 @@ typedef struct {
 typedef struct {
 	array_v__table__Arg arg0;
 	bool arg1;
-} multi_return_array_v__table__Arg_bool;
+	bool arg2;
+} multi_return_array_v__table__Arg_bool_bool;
 
 typedef struct {
 	string arg0;
@@ -4153,7 +4154,7 @@ v__ast__CallExpr v__parser__Parser_call_expr(v__parser__Parser* p, v__table__Lan
 array_v__ast__CallArg v__parser__Parser_call_args(v__parser__Parser* p);
 static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p);
 static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p);
-static multi_return_array_v__table__Arg_bool v__parser__Parser_fn_args(v__parser__Parser* p);
+static multi_return_array_v__table__Arg_bool_bool v__parser__Parser_fn_args(v__parser__Parser* p);
 static bool v__parser__Parser_fileis(v__parser__Parser* p, string s);
 static void v__parser__Parser_check_fn_mutable_arguments(v__parser__Parser* p, v__table__Type typ, v__token__Position pos);
 static void v__parser__Parser_fn_redefinition_error(v__parser__Parser* p, string name);
@@ -24037,9 +24038,10 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool mr_4792 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_4792.arg0;
-	bool is_variadic = mr_4792.arg1;
+	multi_return_array_v__table__Arg_bool_bool mr_4812 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_4812.arg0;
+	bool are_args_type_only = mr_4812.arg1;
+	bool is_variadic = mr_4812.arg2;
 	_PUSH_MANY(&args, (args2), _t674, array_v__table__Arg);
 	// FOR IN array
 	array _t675 = args;
@@ -24113,6 +24115,9 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		stmts = v__parser__Parser_parse_block_no_scope(p, true);
 	}
 	v__parser__Parser_close_scope(p);
+	if (!no_body && are_args_type_only) {
+		v__parser__Parser_error_with_pos(p, tos_lit("functions with type only args can not have bodies"), body_start_pos);
+	}
 	return (v__ast__FnDecl){
 		.name = name,
 		.mod = p->mod,
@@ -24146,9 +24151,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool mr_7128 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_7128.arg0;
-	bool is_variadic = mr_7128.arg1;
+	multi_return_array_v__table__Arg_bool_bool mr_7279 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_7279.arg0;
+	bool is_variadic = mr_7279.arg2;
 	// FOR IN array
 	array _t677 = args;
 	for (int _t678 = 0; _t678 < _t677.len; _t678++) {
@@ -24225,11 +24230,11 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	};
 }
 
-static multi_return_array_v__table__Arg_bool v__parser__Parser_fn_args(v__parser__Parser* p) {
+static multi_return_array_v__table__Arg_bool_bool v__parser__Parser_fn_args(v__parser__Parser* p) {
 	v__parser__Parser_check(p, v__token__Kind_lpar);
 	array_v__table__Arg args = __new_array_with_default(0, 0, sizeof(v__table__Arg), 0);
 	bool is_variadic = false;
-	bool types_only = (p->tok.kind == v__token__Kind_amp || p->tok.kind == v__token__Kind_ellipsis || p->tok.kind == v__token__Kind_key_fn) || (p->peek_tok.kind == v__token__Kind_comma && v__table__Table_known_type(p->table, p->tok.lit)) || p->peek_tok.kind == v__token__Kind_rpar;
+	bool types_only = (p->tok.kind == v__token__Kind_amp || p->tok.kind == v__token__Kind_ellipsis || p->tok.kind == v__token__Kind_key_fn) || ((p->peek_tok.kind == v__token__Kind_comma || p->peek_tok.kind == v__token__Kind_rpar) && v__table__Table_known_type(p->table, p->tok.lit));
 	if (types_only) {
 		int arg_no = 1;
 		while (p->tok.kind != v__token__Kind_rpar) {
@@ -24322,7 +24327,7 @@ static multi_return_array_v__table__Arg_bool v__parser__Parser_fn_args(v__parser
 	}
 	v__parser__Parser_check(p, v__token__Kind_rpar);
 
-		return (multi_return_array_v__table__Arg_bool){.arg0=args,.arg1=is_variadic};
+		return (multi_return_array_v__table__Arg_bool_bool){.arg0=args,.arg1=types_only,.arg2=is_variadic};
 }
 
 static bool v__parser__Parser_fileis(v__parser__Parser* p, string s) {
@@ -24847,9 +24852,9 @@ v__table__Type v__parser__Parser_parse_multi_return_type(v__parser__Parser* p) {
 v__table__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name) {
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	int line_nr = p->tok.line_nr;
-	multi_return_array_v__table__Arg_bool mr_1966 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_1966.arg0;
-	bool is_variadic = mr_1966.arg1;
+	multi_return_array_v__table__Arg_bool_bool mr_1969 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_1969.arg0;
+	bool is_variadic = mr_1969.arg2;
 	v__table__Type return_type = _const_v__table__void_type;
 	if (p->tok.line_nr == line_nr && v__token__Kind_is_start_of_type(p->tok.kind)) {
 		return_type = v__parser__Parser_parse_type(p);
@@ -27484,8 +27489,8 @@ static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser*
 		if (v__util__contains_capital(name)) {
 			v__parser__Parser_error(p, tos_lit("interface methods cannot contain uppercase letters, use snake_case instead"));
 		}
-		multi_return_array_v__table__Arg_bool mr_8535 = v__parser__Parser_fn_args(p);
-		array_v__table__Arg args2 = mr_8535.arg0;
+		multi_return_array_v__table__Arg_bool_bool mr_8538 = v__parser__Parser_fn_args(p);
+		array_v__table__Arg args2 = mr_8538.arg0;
 		array_v__table__Arg args = new_array_from_c_array(1, 1, sizeof(v__table__Arg), _MOV((v__table__Arg[1]){(v__table__Arg){
 			.pos = {0},
 			.name = tos_lit("x"),
