@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8f1e8a9"
+#define V_COMMIT_HASH "1b0b4be"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3f59f23"
+#define V_COMMIT_HASH "8f1e8a9"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8f1e8a9"
+#define V_CURRENT_COMMIT_HASH "1b0b4be"
 #endif
 
 
@@ -6543,7 +6543,7 @@ static bool strconv__is_digit(byte x) {
 }
 
 static bool strconv__is_space(byte x) {
-	return ((x >= 0x89 && x <= 0x13) || x == 0x20) == true;
+	return (x == '\t' || x == '\n' || x == '\v' || x == '\f' || x == '\r' || x == ' ');
 }
 
 static bool strconv__is_exp(byte x) {
@@ -6705,28 +6705,28 @@ static u64 strconv__converter(strconv__PrepNumber* pn) {
 	s1 = ((u32)(pn->mantissa >> 32));
 	s2 = ((u32)(0));
 	while (pn->exponent > 0) {
-		multi_return_u32_u32_u32 mr_6909 = strconv__lsl96(s2, s1, s0);
-		q2 = mr_6909.arg0;
-		q1 = mr_6909.arg1;
-		q0 = mr_6909.arg2;
-		multi_return_u32_u32_u32 mr_6953 = strconv__lsl96(q2, q1, q0);
-		r2 = mr_6953.arg0;
-		r1 = mr_6953.arg1;
-		r0 = mr_6953.arg2;
-		multi_return_u32_u32_u32 mr_7007 = strconv__lsl96(r2, r1, r0);
-		s2 = mr_7007.arg0;
-		s1 = mr_7007.arg1;
-		s0 = mr_7007.arg2;
-		multi_return_u32_u32_u32 mr_7061 = strconv__add96(s2, s1, s0, q2, q1, q0);
-		s2 = mr_7061.arg0;
-		s1 = mr_7061.arg1;
-		s0 = mr_7061.arg2;
+		multi_return_u32_u32_u32 mr_6937 = strconv__lsl96(s2, s1, s0);
+		q2 = mr_6937.arg0;
+		q1 = mr_6937.arg1;
+		q0 = mr_6937.arg2;
+		multi_return_u32_u32_u32 mr_6981 = strconv__lsl96(q2, q1, q0);
+		r2 = mr_6981.arg0;
+		r1 = mr_6981.arg1;
+		r0 = mr_6981.arg2;
+		multi_return_u32_u32_u32 mr_7035 = strconv__lsl96(r2, r1, r0);
+		s2 = mr_7035.arg0;
+		s1 = mr_7035.arg1;
+		s0 = mr_7035.arg2;
+		multi_return_u32_u32_u32 mr_7089 = strconv__add96(s2, s1, s0, q2, q1, q0);
+		s2 = mr_7089.arg0;
+		s1 = mr_7089.arg1;
+		s0 = mr_7089.arg2;
 		pn->exponent--;
 		while (((s2 & mask28)) != 0) {
-			multi_return_u32_u32_u32 mr_7182 = strconv__lsr96(s2, s1, s0);
-			q2 = mr_7182.arg0;
-			q1 = mr_7182.arg1;
-			q0 = mr_7182.arg2;
+			multi_return_u32_u32_u32 mr_7210 = strconv__lsr96(s2, s1, s0);
+			q2 = mr_7210.arg0;
+			q1 = mr_7210.arg1;
+			q0 = mr_7210.arg2;
 			binexp++;
 			s2 = q2;
 			s1 = q1;
@@ -6735,10 +6735,10 @@ static u64 strconv__converter(strconv__PrepNumber* pn) {
 	}
 	while (pn->exponent < 0) {
 		while (!(((s2 & (((u32)(1)) << 31))) != 0)) {
-			multi_return_u32_u32_u32 mr_7325 = strconv__lsl96(s2, s1, s0);
-			q2 = mr_7325.arg0;
-			q1 = mr_7325.arg1;
-			q0 = mr_7325.arg2;
+			multi_return_u32_u32_u32 mr_7353 = strconv__lsl96(s2, s1, s0);
+			q2 = mr_7353.arg0;
+			q1 = mr_7353.arg1;
+			q0 = mr_7353.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
@@ -6763,10 +6763,10 @@ static u64 strconv__converter(strconv__PrepNumber* pn) {
 	}
 	if (s2 != 0 || s1 != 0 || s0 != 0) {
 		while (((s2 & mask28)) == 0) {
-			multi_return_u32_u32_u32 mr_7984 = strconv__lsl96(s2, s1, s0);
-			q2 = mr_7984.arg0;
-			q1 = mr_7984.arg1;
-			q0 = mr_7984.arg2;
+			multi_return_u32_u32_u32 mr_8012 = strconv__lsl96(s2, s1, s0);
+			q2 = mr_8012.arg0;
+			q1 = mr_8012.arg1;
+			q0 = mr_8012.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
@@ -6778,25 +6778,25 @@ static u64 strconv__converter(strconv__PrepNumber* pn) {
 	u32 check_round_mask = ((u32)(0xFFFFFFFF)) << ((u32)(nbit));
 	if (((s1 & check_round_bit)) != 0) {
 		if (((s1 & ~check_round_mask)) != 0) {
-			multi_return_u32_u32_u32 mr_9057 = strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
-			s2 = mr_9057.arg0;
-			s1 = mr_9057.arg1;
-			s0 = mr_9057.arg2;
+			multi_return_u32_u32_u32 mr_9085 = strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
+			s2 = mr_9085.arg0;
+			s1 = mr_9085.arg1;
+			s0 = mr_9085.arg2;
 		} else {
 			if (((s1 & (check_round_bit << ((u32)(1))))) != 0) {
-				multi_return_u32_u32_u32 mr_9247 = strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
-				s2 = mr_9247.arg0;
-				s1 = mr_9247.arg1;
-				s0 = mr_9247.arg2;
+				multi_return_u32_u32_u32 mr_9275 = strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
+				s2 = mr_9275.arg0;
+				s1 = mr_9275.arg1;
+				s0 = mr_9275.arg2;
 			}
 		}
 		s1 = (s1 & check_round_mask);
 		s0 = ((u32)(0));
 		if ((s2 & (mask28 << ((u32)(1)))) != 0) {
-			multi_return_u32_u32_u32 mr_9447 = strconv__lsr96(s2, s1, s0);
-			q2 = mr_9447.arg0;
-			q1 = mr_9447.arg1;
-			q0 = mr_9447.arg2;
+			multi_return_u32_u32_u32 mr_9475 = strconv__lsr96(s2, s1, s0);
+			q2 = mr_9475.arg0;
+			q1 = mr_9475.arg1;
+			q0 = mr_9475.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
@@ -6836,9 +6836,9 @@ f64 strconv__atof64(string s) {
 	};
 	int res_parsing = 0;
 	strconv__Float64u res;
-	multi_return_int_strconv__PrepNumber mr_10452 = strconv__parser(string_add(s, tos_lit(" ")));
-	res_parsing = mr_10452.arg0;
-	pn = mr_10452.arg1;
+	multi_return_int_strconv__PrepNumber mr_10480 = strconv__parser(string_add(s, tos_lit(" ")));
+	res_parsing = mr_10480.arg0;
+	pn = mr_10480.arg1;
 	if (res_parsing == _const_strconv__parser_ok) {
 		res.u = strconv__converter((voidptr)&/*qq*/pn);
 	}else if (res_parsing == _const_strconv__parser_pzero) {
