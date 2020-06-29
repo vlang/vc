@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "7565fe5"
+#define V_COMMIT_HASH "616b072"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "77e56aa"
+#define V_COMMIT_HASH "7565fe5"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "7565fe5"
+#define V_CURRENT_COMMIT_HASH "616b072"
 #endif
 
 
@@ -3615,6 +3615,7 @@ string time__Time_clean12(time__Time t);
 string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time);
 string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatDate fmt_date);
 string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatTime fmt_time, time__FormatDate fmt_date);
+string time__Time_utc_string(time__Time time);
 bool time__Time_eq(time__Time t1, time__Time t2);
 bool time__Time_ne(time__Time t1, time__Time t2);
 bool time__Time_lt(time__Time t1, time__Time t2);
@@ -13759,6 +13760,13 @@ string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, tim
 			return time__Time_get_fmt_date_str(t, fmt_dlmtr, fmt_date);
 		}
 	}
+}
+
+string time__Time_utc_string(time__Time time) {
+	string day_str = time__Time_weekday_str(time);
+	string month_str = time__Time_smonth(time);
+	string utc_string = _STR("%.*s\000, %"PRId32"\000 %.*s\000 %"PRId32"\000 %02"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000 UTC", 8, day_str, time.day, month_str, time.year, time.hour, time.minute, time.second);
+	return utc_string;
 }
 
 // Attr: [inline]
