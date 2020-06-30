@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "61b8c0b"
+#define V_COMMIT_HASH "8a46911"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "a45ad47"
+#define V_COMMIT_HASH "61b8c0b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "61b8c0b"
+#define V_CURRENT_COMMIT_HASH "8a46911"
 #endif
 
 
@@ -21064,6 +21064,18 @@ static void v__checker__Checker_fail_if_immutable(v__checker__Checker* c, v__ast
 		}else {
 			v__checker__Checker_error(c, _STR("unexpected symbol `%.*s\000`", 2, v__table__Kind_str(typ_sym->kind)), expr->pos);
 		};
+	}else if (expr.typ == 143 /* v.ast.CallExpr */) {
+		v__ast__CallExpr* it = (v__ast__CallExpr*)expr.obj; // ST it
+		v__ast__CallExpr* expr = it;
+		if (string_eq(expr->name, tos_lit("slice"))) {
+			return;
+		} else {
+			v__checker__Checker_error(c, tos_lit("cannot use function call as mut"), expr->pos);
+		}
+	}else if (expr.typ == 139 /* v.ast.ArrayInit */) {
+		v__ast__ArrayInit* it = (v__ast__ArrayInit*)expr.obj; // ST it
+		v__ast__ArrayInit* expr = it;
+		return;
 	}else {
 		v__checker__Checker_error(c, _STR("unexpected expression `%.*s\000`", 2, tos3( /* v.ast.Expr */ v_typeof_sumtype_173( (expr).typ ))), v__ast__Expr_position(expr));
 	};
@@ -21427,10 +21439,15 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 		if (f.is_variadic && v__table__Type_has_flag(typ, v__table__TypeFlag_variadic) && call_expr->args.len - 1 > i) {
 			v__checker__Checker_error(c, tos_lit("when forwarding a varg variable, it must be the final argument"), call_expr->pos);
 		}
-		if (arg.is_mut && !call_arg.is_mut) {
-			v__checker__Checker_error(c, _STR("`%.*s\000` is a mutable argument, you need to provide `mut`: `%.*s\000(mut ...)`", 3, arg.name, call_expr->name), v__ast__Expr_position(call_arg.expr));
-		} else if (!arg.is_mut && call_arg.is_mut) {
-			v__checker__Checker_error(c, _STR("`%.*s\000` argument is not mutable, `mut` is not needed`", 2, arg.name), v__ast__Expr_position(call_arg.expr));
+		if (call_arg.is_mut) {
+			v__checker__Checker_fail_if_immutable(c, call_arg.expr);
+			if (!arg.is_mut) {
+				v__checker__Checker_error(c, _STR("`%.*s\000` argument is not mutable, `mut` is not needed`", 2, arg.name), v__ast__Expr_position(call_arg.expr));
+			}
+		} else {
+			if (arg.is_mut) {
+				v__checker__Checker_error(c, _STR("`%.*s\000` is a mutable argument, you need to provide `mut`: `%.*s\000(mut ...)`", 3, arg.name, call_expr->name), v__ast__Expr_position(call_arg.expr));
+			}
 		}
 		if (arg_typ_sym->kind == v__table__Kind_interface_) {
 			v__checker__Checker_type_implements(c, typ, arg.typ, v__ast__Expr_position(call_arg.expr));
