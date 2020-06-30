@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "af56b01"
+#define V_COMMIT_HASH "f10d2bb"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "55989b3"
+#define V_COMMIT_HASH "af56b01"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "af56b01"
+#define V_CURRENT_COMMIT_HASH "f10d2bb"
 #endif
 
 
@@ -10689,14 +10689,14 @@ string string_trim_right(string s, string cutset) {
 
 string string_trim_prefix(string s, string str) {
 	if (string_starts_with(s, str)) {
-		return string_replace(s, str, tos_lit(""));
+		return string_substr(s, str.len, s.len);
 	}
 	return s;
 }
 
 string string_trim_suffix(string s, string str) {
 	if (string_ends_with(s, str)) {
-		return string_replace(s, str, tos_lit(""));
+		return string_substr(s, 0, s.len - str.len);
 	}
 	return s;
 }
