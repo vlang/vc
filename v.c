@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "66f36f6"
+#define V_COMMIT_HASH "2716a37"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "625ed03"
+#define V_COMMIT_HASH "66f36f6"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "66f36f6"
+#define V_CURRENT_COMMIT_HASH "2716a37"
 #endif
 
 
@@ -2281,14 +2281,6 @@ struct v__ast__Field {
 	v__table__Type typ;
 };
 
-struct v__ast__StructInitField {
-	v__ast__Expr expr;
-	v__token__Position pos;
-	string name;
-	v__table__Type typ;
-	v__table__Type expected_type;
-};
-
 struct v__table__Arg {
 	v__token__Position pos;
 	string name;
@@ -2422,6 +2414,15 @@ struct v__ast__CallExpr {
 	v__table__Type return_type;
 	bool should_be_skipped;
 	v__table__Type generic_type;
+};
+
+struct v__ast__StructInitField {
+	v__ast__Expr expr;
+	v__token__Position pos;
+	v__ast__Comment comment;
+	string name;
+	v__table__Type typ;
+	v__table__Type expected_type;
 };
 
 struct v__ast__IfBranch {
@@ -27657,13 +27658,14 @@ static v__ast__StructInit v__parser__Parser_struct_init(v__parser__Parser* p, bo
 	bool saved_is_amp = p->is_amp;
 	p->is_amp = false;
 	while (p->tok.kind != v__token__Kind_rcbr && p->tok.kind != v__token__Kind_rpar) {
-		v__parser__Parser_check_comment(p);
+		v__ast__Comment comment = v__parser__Parser_check_comment(p);
 		string field_name = tos_lit("");
 		if (no_keys) {
 			v__ast__Expr expr = v__parser__Parser_expr(p, 0);
 			array_push(&fields, _MOV((v__ast__StructInitField[]){ (v__ast__StructInitField){
 				.expr = expr,
 				.pos = v__ast__Expr_position(expr),
+				.comment = comment,
 				.name = (string){.str=""},
 				.typ = {0},
 				.expected_type = {0},
@@ -27682,6 +27684,7 @@ static v__ast__StructInit v__parser__Parser_struct_init(v__parser__Parser* p, bo
 			array_push(&fields, _MOV((v__ast__StructInitField[]){ (v__ast__StructInitField){
 				.expr = expr,
 				.pos = field_pos,
+				.comment = {0},
 				.name = field_name,
 				.typ = {0},
 				.expected_type = {0},
@@ -27742,8 +27745,8 @@ static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser*
 		if (v__util__contains_capital(name)) {
 			v__parser__Parser_error(p, tos_lit("interface methods cannot contain uppercase letters, use snake_case instead"));
 		}
-		multi_return_array_v__table__Arg_bool_bool mr_8909 = v__parser__Parser_fn_args(p);
-		array_v__table__Arg args2 = mr_8909.arg0;
+		multi_return_array_v__table__Arg_bool_bool mr_8940 = v__parser__Parser_fn_args(p);
+		array_v__table__Arg args2 = mr_8940.arg0;
 		array_v__table__Arg args = new_array_from_c_array(1, 1, sizeof(v__table__Arg), _MOV((v__table__Arg[1]){(v__table__Arg){
 			.pos = {0},
 			.name = tos_lit("x"),
