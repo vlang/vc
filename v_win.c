@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "e78dc4d"
+#define V_COMMIT_HASH "5de0f94"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2f614ad"
+#define V_COMMIT_HASH "e78dc4d"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "e78dc4d"
+#define V_CURRENT_COMMIT_HASH "5de0f94"
 #endif
 
 
@@ -5491,6 +5491,8 @@ string strings__Builder_str(strings__Builder* b) {
 	}
 	array_push(&b->buf, _MOV((byte[]){ '\0' }));
 	string s = tos((byteptr)b->buf.data, b->len);
+	int bis = b->initial_size;
+	b->buf = __new_array_with_default(0, bis, sizeof(byte), 0);
 	b->len = 0;
 	return s;
 }
@@ -32311,7 +32313,7 @@ static void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node)
 				}
 			}
 		}
-		v__gen__Gen_writeln(g, _STR("vweb__Context_html(&app->vweb, _tmpl_res_%.*s\000); string_free(&_tmpl_res_%.*s\000);", 3, g->fn_decl->name, g->fn_decl->name));
+		v__gen__Gen_writeln(g, _STR("vweb__Context_html(&app->vweb, _tmpl_res_%.*s\000); strings__Builder_free(&sb); string_free(&_tmpl_res_%.*s\000);", 3, g->fn_decl->name, g->fn_decl->name));
 		return;
 	}
 	v__gen__Gen_writeln(g, string_add(tos_lit("// $"), _STR("method call. sym=\"%.*s\000\"", 2, node.sym.name)));
