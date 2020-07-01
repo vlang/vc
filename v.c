@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "2f614ad"
+#define V_COMMIT_HASH "e78dc4d"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "6dad3cc"
+#define V_COMMIT_HASH "2f614ad"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "2f614ad"
+#define V_CURRENT_COMMIT_HASH "e78dc4d"
 #endif
 
 
@@ -5222,8 +5222,6 @@ string strings__Builder_str(strings__Builder* b) {
 	}
 	array_push(&b->buf, _MOV((byte[]){ '\0' }));
 	string s = tos((byteptr)b->buf.data, b->len);
-	int bis = b->initial_size;
-	b->buf = __new_array_with_default(0, bis, sizeof(byte), 0);
 	b->len = 0;
 	return s;
 }
@@ -16311,7 +16309,7 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 	bool in_span = false;
 	for (int i = 0;
 	i < lines.len; i++) {
-		string line = string_trim_space((*(string*)array_get(lines, i)));
+		string line = string_replace(string_trim_space((*(string*)array_get(lines, i))), tos_lit("\'"), tos_lit("\""));
 		if (string_eq(line, tos_lit("<style>"))) {
 			state = vweb__tmpl__State_css;
 		} else if (string_eq(line, tos_lit("</style>"))) {
