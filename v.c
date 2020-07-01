@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "4e34edf"
+#define V_COMMIT_HASH "6c022db"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "03ffe49"
+#define V_COMMIT_HASH "4e34edf"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "4e34edf"
+#define V_CURRENT_COMMIT_HASH "6c022db"
 #endif
 
 
@@ -19616,13 +19616,15 @@ static v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanner* s) {
 		return v__scanner__Scanner_new_token(s, v__token__Kind_number, num, num.len);
 	}
 	if (c == ')' && s->is_inter_start) {
-		s->is_inter_end = true;
-		s->is_inter_start = false;
 		byte next_char = v__scanner__Scanner_look_ahead(/*rec*/*s, 1);
-		if (next_char == s->quote) {
-			s->is_inside_string = false;
+		if (next_char != '.') {
+			s->is_inter_end = true;
+			s->is_inter_start = false;
+			if (next_char == s->quote) {
+				s->is_inside_string = false;
+			}
+			return v__scanner__Scanner_new_token(s, v__token__Kind_rpar, tos_lit(""), 1);
 		}
-		return v__scanner__Scanner_new_token(s, v__token__Kind_rpar, tos_lit(""), 1);
 	}
 	if (c == '+') {
 		if (nextc == '+') {
