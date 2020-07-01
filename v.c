@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5eb7660"
+#define V_COMMIT_HASH "e7339fe"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "92eea7f"
+#define V_COMMIT_HASH "5eb7660"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5eb7660"
+#define V_CURRENT_COMMIT_HASH "e7339fe"
 #endif
 
 
@@ -8406,7 +8406,7 @@ byteptr v_malloc(int n) {
 // $if  prealloc {
 #ifdef VPREALLOC
 		byteptr res = g_m2_ptr;
-		g_m2_ptr += n;
+			g_m2_ptr += n;
 		nr_mallocs++;
 		return res;
 	
@@ -21871,7 +21871,7 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 			v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)left.obj; // ST it
 			v__ast__PrefixExpr* left = it;
 			if (left->op == v__token__Kind_mul && !c->inside_unsafe) {
-				v__checker__Checker_error(c, tos_lit("modifying variables via deferencing can only be done in `unsafe` blocks"), assign_stmt->pos);
+				v__checker__Checker_error(c, tos_lit("modifying variables via dereferencing can only be done in `unsafe` blocks"), assign_stmt->pos);
 			}
 		}else {
 		};
@@ -21879,6 +21879,9 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 		v__table__Type right_type_unwrapped = v__checker__Checker_unwrap_generic(c, right_type);
 		v__table__TypeSymbol* left_sym = v__table__Table_get_type_symbol(c->table, left_type_unwrapped);
 		v__table__TypeSymbol* right_sym = v__table__Table_get_type_symbol(c->table, right_type_unwrapped);
+		if ((v__table__Type_is_ptr(left_type) || v__table__TypeSymbol_is_pointer(left_sym)) && !(assign_stmt->op == v__token__Kind_assign || assign_stmt->op == v__token__Kind_decl_assign) && !c->inside_unsafe) {
+			v__checker__Checker_error(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), assign_stmt->pos);
+		}
 		if (assign_stmt->op == v__token__Kind_assign) {
 		}else if (assign_stmt->op == v__token__Kind_plus_assign) {
 			if (!v__table__TypeSymbol_is_number(left_sym) && left_type != _const_v__table__string_type && !v__table__TypeSymbol_is_pointer(left_sym)) {
@@ -23071,6 +23074,9 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node.op), typ_sym->name), node.pos);
 	} else {
 		v__checker__Checker_fail_if_immutable(c, node.expr);
+	}
+	if ((v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym)) && !c->inside_unsafe) {
+		v__checker__Checker_error(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), node.pos);
 	}
 	return typ;
 }
