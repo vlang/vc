@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5de0f94"
+#define V_COMMIT_HASH "56ae814"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "e78dc4d"
+#define V_COMMIT_HASH "5de0f94"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5de0f94"
+#define V_CURRENT_COMMIT_HASH "56ae814"
 #endif
 
 
@@ -34193,7 +34193,7 @@ static bool v__gen__js__fn_has_go(v__ast__FnDecl it) {
 static void v__gen__js__JsGen_gen_method_decl(v__gen__js__JsGen* g, v__ast__FnDecl it) {
 	g->fn_decl = &it;
 	bool has_go = v__gen__js__fn_has_go(it);
-	bool is_main = string_eq(it.name, tos_lit("main"));
+	bool is_main = string_eq(it.name, tos_lit("main.main"));
 	if (is_main) {
 		v__gen__js__JsGen_writeln(g, tos_lit("/* program entry point */"));
 		v__gen__js__JsGen_write(g, tos_lit("("));
