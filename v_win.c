@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "03ffe49"
+#define V_COMMIT_HASH "4e34edf"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "2716a37"
+#define V_COMMIT_HASH "03ffe49"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "03ffe49"
+#define V_CURRENT_COMMIT_HASH "4e34edf"
 #endif
 
 
@@ -16597,7 +16597,7 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 	bool in_span = false;
 	for (int i = 0;
 	i < lines.len; i++) {
-		string line = string_replace(string_trim_space((*(string*)array_get(lines, i))), tos_lit("\'"), tos_lit("\""));
+		string line = string_trim_space((*(string*)array_get(lines, i)));
 		if (string_eq(line, tos_lit("<style>"))) {
 			state = vweb__tmpl__State_css;
 		} else if (string_eq(line, tos_lit("</style>"))) {
@@ -16641,9 +16641,9 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 				continue;
 			}
 				int pos = *(int*)_t338.data;
-			strings__Builder_write(&s, tos_lit("<script src="));
-			strings__Builder_write(&s, string_substr(line, pos + 4, line.len));
-			strings__Builder_writeln(&s, tos_lit("></script>"));
+			strings__Builder_write(&s, tos_lit("<script src=\""));
+			strings__Builder_write(&s, string_substr(line, pos + 5, line.len - 1));
+			strings__Builder_writeln(&s, tos_lit("\"></script>"));
 		} else if (string_contains(line, tos_lit("@css "))) {
 			Option_int _t339 = string_index(line, tos_lit("@css"));
 			if (!_t339.ok) {
@@ -16652,9 +16652,9 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 				continue;
 			}
 				int pos = *(int*)_t339.data;
-			strings__Builder_write(&s, tos_lit("<link href="));
-			strings__Builder_write(&s, string_substr(line, pos + 4, line.len));
-			strings__Builder_writeln(&s, tos_lit(" rel=\"stylesheet\" type=\"text/css\">"));
+			strings__Builder_write(&s, tos_lit("<link href=\""));
+			strings__Builder_write(&s, string_substr(line, pos + 6, line.len - 1));
+			strings__Builder_writeln(&s, tos_lit("\" rel=\"stylesheet\" type=\"text/css\">"));
 		} else if (string_contains(line, tos_lit("@if "))) {
 			strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
 			Option_int _t340 = string_index(line, tos_lit("@if"));
