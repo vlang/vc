@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "40a3939"
+#define V_COMMIT_HASH "da99868"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "56ae814"
+#define V_COMMIT_HASH "40a3939"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "40a3939"
+#define V_CURRENT_COMMIT_HASH "da99868"
 #endif
 
 
@@ -24588,9 +24588,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool_bool mr_7773 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_7773.arg0;
-	bool is_variadic = mr_7773.arg2;
+	multi_return_array_v__table__Arg_bool_bool mr_7753 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_7753.arg0;
+	bool is_variadic = mr_7753.arg2;
 	// FOR IN array
 	array _t684 = args;
 	for (int _t685 = 0; _t685 < _t684.len; ++_t685) {
