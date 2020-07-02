@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "5813d2b"
+#define V_COMMIT_HASH "421b6d4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b89cbf3"
+#define V_COMMIT_HASH "5813d2b"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "5813d2b"
+#define V_CURRENT_COMMIT_HASH "421b6d4"
 #endif
 
 
@@ -33046,6 +33046,7 @@ static void v__gen__Gen_sql_select_expr(v__gen__Gen* g, v__ast__SqlExpr node) {
 	}
 	if (node.has_offset) {
 		v__gen__Gen_write(g, tos_lit(" OFFSET "));
+		g->sql_side = v__gen__SqlExprSide_right;
 		v__gen__Gen_expr_to_sql(g, node.offset_expr);
 	}
 	v__gen__Gen_writeln(g, tos_lit("\"));"));
