@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "6d78865"
+#define V_COMMIT_HASH "b89cbf3"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "5b90005"
+#define V_COMMIT_HASH "6d78865"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "6d78865"
+#define V_CURRENT_COMMIT_HASH "b89cbf3"
 #endif
 
 
@@ -2208,6 +2208,9 @@ struct v__ast__SqlExpr {
 	bool has_where;
 	bool has_offset;
 	v__ast__Expr offset_expr;
+	bool has_order;
+	v__ast__Expr order_expr;
+	bool has_desc;
 	bool is_array;
 	v__table__Type table_type;
 	v__token__Position pos;
@@ -23446,6 +23449,9 @@ static v__table__Type v__checker__Checker_sql_expr(v__checker__Checker* c, v__as
 	if (node->has_limit) {
 		v__checker__Checker_expr(c, node->limit_expr);
 	}
+	if (node->has_order) {
+		v__checker__Checker_expr(c, node->order_expr);
+	}
 	v__checker__Checker_expr(c, node->db_expr);
 	// defer
 		c->inside_sql = false;
@@ -27466,6 +27472,23 @@ static v__ast__Expr v__parser__Parser_sql_expr(v__parser__Parser* p) {
 0
 #endif
 };
+	bool has_order = false;
+	v__ast__Expr order_expr = (v__ast__Expr){
+	
+#ifndef __cplusplus
+0
+#endif
+};
+	bool has_desc = false;
+	if (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("order"))) {
+		v__parser__Parser_check_name(p);
+		has_order = true;
+		order_expr = v__parser__Parser_expr(p, 0);
+		if (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("desc"))) {
+			v__parser__Parser_check_name(p);
+			has_desc = true;
+		}
+	}
 	if (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("limit"))) {
 		v__parser__Parser_check_name(p);
 		if (p->tok.kind == v__token__Kind_number && string_eq(p->tok.lit, tos_lit("1"))) {
@@ -27493,6 +27516,9 @@ static v__ast__Expr v__parser__Parser_sql_expr(v__parser__Parser* p) {
 		.has_where = has_where,
 		.has_offset = has_offset,
 		.offset_expr = offset_expr,
+		.has_order = has_order,
+		.order_expr = order_expr,
+		.has_desc = has_desc,
 		.is_array = !query_one,
 		.table_type = table_type,
 		.pos = pos,
@@ -33266,7 +33292,16 @@ static void v__gen__Gen_sql_select_expr(v__gen__Gen* g, v__ast__SqlExpr node) {
 	if (node.has_where && node.where_expr.typ == 180 /* v.ast.InfixExpr */) {
 		v__gen__Gen_expr_to_sql(g, node.where_expr);
 	}
-	v__gen__Gen_write(g, tos_lit(" ORDER BY id "));
+	if (node.has_order) {
+		v__gen__Gen_write(g, tos_lit(" ORDER BY "));
+		g->sql_side = v__gen__SqlExprSide_left;
+		v__gen__Gen_expr_to_sql(g, node.order_expr);
+		if (node.has_desc) {
+			v__gen__Gen_write(g, tos_lit(" DESC "));
+		}
+	} else {
+		v__gen__Gen_write(g, tos_lit(" ORDER BY id "));
+	}
 	if (node.has_limit) {
 		v__gen__Gen_write(g, tos_lit(" LIMIT "));
 		v__gen__Gen_expr_to_sql(g, node.limit_expr);
