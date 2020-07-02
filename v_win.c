@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "6c022db"
+#define V_COMMIT_HASH "e904732"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "4e34edf"
+#define V_COMMIT_HASH "6c022db"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "6c022db"
+#define V_CURRENT_COMMIT_HASH "e904732"
 #endif
 
 
@@ -5640,8 +5640,7 @@ inline static u64 hash__wyhash__wyhash64(byteptr key, u64 len, u64 seed_) {
 	u64 see2 = seed;
 	u64 see3 = seed;
 	p = p + i;
-	for (i = len - i;
-	i >= 64; i -= 64) {
+	for (i = len - i; i >= 64; i -= 64) {
 		seed = hash__wyhash__wymum(((hash__wyhash__wyr8(p) ^ seed) ^ _const_hash__wyhash__wyp0), ((hash__wyhash__wyr8(p + 8) ^ seed) ^ _const_hash__wyhash__wyp1));
 		see1 = hash__wyhash__wymum(((hash__wyhash__wyr8(p + 16) ^ see1) ^ _const_hash__wyhash__wyp2), ((hash__wyhash__wyr8(p + 24) ^ see1) ^ _const_hash__wyhash__wyp3));
 		see2 = hash__wyhash__wymum(((hash__wyhash__wyr8(p + 32) ^ see2) ^ _const_hash__wyhash__wyp1), ((hash__wyhash__wyr8(p + 40) ^ see2) ^ _const_hash__wyhash__wyp2));
@@ -6603,8 +6602,7 @@ static u32 strconv__ftoa__mul_pow5_div_pow2(u32 m, u32 i, int j) {
 
 static u32 strconv__ftoa__pow5_factor_32(u32 i_v) {
 	u32 v = i_v;
-	for (u32 n = ((u32)(0));
-	; n++) {
+	for (u32 n = ((u32)(0)); ; n++) {
 		u32 q = v / 5;
 		u32 r = v % 5;
 		if (r != 0) {
@@ -6670,8 +6668,7 @@ static u64 strconv__ftoa__mul_shift_64(u64 m, strconv__ftoa__Uint128 mul, int sh
 
 static u32 strconv__ftoa__pow5_factor_64(u64 v_i) {
 	u64 v = v_i;
-	for (u32 n = ((u32)(0));
-	; n++) {
+	for (u32 n = ((u32)(0)); ; n++) {
 		u64 q = v / 5;
 		u64 r = v % 5;
 		if (r != 0) {
@@ -7459,15 +7456,13 @@ string strconv__format_str(string s, strconv__BF_param p) {
 	}
 	strings__Builder res = strings__new_builder(s.len + dif);
 	if (p.allign == strconv__Align_text_right) {
-		for (int i1 = 0;
-		i1 < dif; i1++) {
+		for (int i1 = 0; i1 < dif; i1++) {
 			strings__Builder_write_b(&res, p.pad_ch);
 		}
 	}
 	strings__Builder_write(&res, s);
 	if (p.allign == strconv__Align_text_left) {
-		for (int i1 = 0;
-		i1 < dif; i1++) {
+		for (int i1 = 0; i1 < dif; i1++) {
 			strings__Builder_write_b(&res, p.pad_ch);
 		}
 	}
@@ -7502,15 +7497,13 @@ string strconv__format_dec(u64 d, strconv__BF_param p) {
 	}
 	int dif = p.len0 - s.len + sign_len_diff;
 	if (p.allign == strconv__Align_text_right) {
-		for (int i1 = 0;
-		i1 < dif; i1++) {
+		for (int i1 = 0; i1 < dif; i1++) {
 			strings__Builder_write_b(&res, p.pad_ch);
 		}
 	}
 	strings__Builder_write(&res, s);
 	if (p.allign == strconv__Align_text_left) {
-		for (int i1 = 0;
-		i1 < dif; i1++) {
+		for (int i1 = 0; i1 < dif; i1++) {
 			strings__Builder_write_b(&res, p.pad_ch);
 		}
 	}
@@ -7552,15 +7545,13 @@ string strconv__format_fl(f64 f, strconv__BF_param p) {
 	}
 	int dif = p.len0 - s.len + sign_len_diff;
 	if (p.allign == strconv__Align_text_right) {
-		for (int i1 = 0;
-		i1 < dif; i1++) {
+		for (int i1 = 0; i1 < dif; i1++) {
 			strings__Builder_write_b(&res, p.pad_ch);
 		}
 	}
 	strings__Builder_write(&res, s);
 	if (p.allign == strconv__Align_text_left) {
-		for (int i1 = 0;
-		i1 < dif; i1++) {
+		for (int i1 = 0; i1 < dif; i1++) {
 			strings__Builder_write_b(&res, p.pad_ch);
 		}
 	}
@@ -7599,15 +7590,13 @@ string strconv__format_es(f64 f, strconv__BF_param p) {
 	}
 	int dif = p.len0 - s.len + sign_len_diff;
 	if (p.allign == strconv__Align_text_right) {
-		for (int i1 = 0;
-		i1 < dif; i1++) {
+		for (int i1 = 0; i1 < dif; i1++) {
 			strings__Builder_write_b(&res, p.pad_ch);
 		}
 	}
 	strings__Builder_write(&res, s);
 	if (p.allign == strconv__Align_text_left) {
-		for (int i1 = 0;
-		i1 < dif; i1++) {
+		for (int i1 = 0; i1 < dif; i1++) {
 			strings__Builder_write_b(&res, p.pad_ch);
 		}
 	}
@@ -9476,8 +9465,7 @@ static void map_rehash(map* m) {
 	u32 meta_bytes = /*SizeOfType*/ sizeof(u32) * (m->cap + 2 + m->extra_metas);
 	m->metas = ((u32*)(realloc(m->metas, meta_bytes)));
 	memset(m->metas, 0, meta_bytes);
-	for (u32 i = ((u32)(0));
-	i < m->key_values.len; i++) {
+	for (u32 i = ((u32)(0)); i < m->key_values.len; i++) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
@@ -9495,8 +9483,7 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 	u32* old_metas = m->metas;
 	m->metas = ((u32*)(vcalloc(((int*)(/*SizeOfType*/ sizeof(u32) * (m->cap + 2 + m->extra_metas))))));
 	u32 old_extra_metas = m->extra_metas;
-	for (u32 i = ((u32)(0));
-	i <= old_cap + old_extra_metas; i += 2) {
+	for (u32 i = ((u32)(0)); i <= old_cap + old_extra_metas; i += 2) {
 		if (old_metas[i] == 0) {
 			continue;
 		}
@@ -9614,8 +9601,7 @@ void map_delete(map* m, string key) {
 array_string map_keys(map* m) {
 	array_string keys = __new_array_with_default(m->len, 0, sizeof(string), &(string[]){tos_lit("")});
 	int j = 0;
-	for (u32 i = ((u32)(0));
-	i < m->key_values.len; i++) {
+	for (u32 i = ((u32)(0)); i < m->key_values.len; i++) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
@@ -9660,8 +9646,7 @@ map map_clone(map m) {
 // Attr: [unsafe_fn]
 void map_free(map* m) {
 	v_free(m->metas);
-	for (u32 i = ((u32)(0));
-	i < m->key_values.len; i++) {
+	for (u32 i = ((u32)(0)); i < m->key_values.len; i++) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
@@ -9829,15 +9814,13 @@ static void mapnode_split_child(mapnode* n, int child_index, mapnode* y) {
 	mapnode* z = new_node();
 	z->len = _const_mid_index;
 	y->len = _const_mid_index;
-	for (int j = _const_mid_index - 1;
-	j >= 0; j--) {
+	for (int j = _const_mid_index - 1; j >= 0; j--) {
 		z->keys[j] = y->keys[j + _const_degree];
 		z->values[j] = y->values[j + _const_degree];
 	}
 	if (!isnil(y->children)) {
 		z->children = ((voidptr*)(v_malloc(((int*)(_const_children_bytes)))));
-		for (int jj = _const_degree - 1;
-		jj >= 0; jj--) {
+		for (int jj = _const_degree - 1; jj >= 0; jj--) {
 			z->children[jj] = y->children[jj + _const_degree];
 		}
 	}
@@ -9845,8 +9828,7 @@ static void mapnode_split_child(mapnode* n, int child_index, mapnode* y) {
 		n->children = ((voidptr*)(v_malloc(((int*)(_const_children_bytes)))));
 	}
 	n->children[n->len + 1] = n->children[n->len];
-	for (int j = n->len;
-	j > child_index; j--) {
+	for (int j = n->len; j > child_index; j--) {
 		n->keys[j] = n->keys[j - 1];
 		n->values[j] = n->values[j - 1];
 		n->children[j] = n->children[j - 1];
@@ -9932,8 +9914,7 @@ static bool mapnode_remove_key(mapnode* n, string k) {
 }
 
 static void mapnode_remove_from_leaf(mapnode* n, int idx) {
-	for (int i = idx + 1;
-	i < n->len; i++) {
+	for (int i = idx + 1; i < n->len; i++) {
 		n->keys[i - 1] = n->keys[i];
 		n->values[i - 1] = n->values[i];
 	}
@@ -9981,14 +9962,12 @@ static void mapnode_fill(mapnode* n, int idx) {
 static void mapnode_borrow_from_prev(mapnode* n, int idx) {
 	mapnode* child = ((mapnode*)(n->children[idx]));
 	mapnode* sibling = ((mapnode*)(n->children[idx - 1]));
-	for (int i = child->len - 1;
-	i >= 0; i--) {
+	for (int i = child->len - 1; i >= 0; i--) {
 		child->keys[i + 1] = child->keys[i];
 		child->values[i + 1] = child->values[i];
 	}
 	if (!isnil(child->children)) {
-		for (int i = child->len;
-		i >= 0; i--) {
+		for (int i = child->len; i >= 0; i--) {
 			child->children[i + 1] = child->children[i];
 		}
 	}
@@ -10013,14 +9992,12 @@ static void mapnode_borrow_from_next(mapnode* n, int idx) {
 	}
 	n->keys[idx] = sibling->keys[0];
 	n->values[idx] = sibling->values[0];
-	for (int i = 1;
-	i < sibling->len; i++) {
+	for (int i = 1; i < sibling->len; i++) {
 		sibling->keys[i - 1] = sibling->keys[i];
 		sibling->values[i - 1] = sibling->values[i];
 	}
 	if (!isnil(sibling->children)) {
-		for (int i = 1;
-		i <= sibling->len; i++) {
+		for (int i = 1; i <= sibling->len; i++) {
 			sibling->children[i - 1] = sibling->children[i];
 		}
 	}
@@ -10038,18 +10015,15 @@ static void mapnode_merge(mapnode* n, int idx) {
 		child->values[i + _const_degree] = sibling->values[i];
 	}
 	if (!isnil(child->children)) {
-		for (int i = 0;
-		i <= sibling->len; i++) {
+		for (int i = 0; i <= sibling->len; i++) {
 			child->children[i + _const_degree] = sibling->children[i];
 		}
 	}
-	for (int i = idx + 1;
-	i < n->len; i++) {
+	for (int i = idx + 1; i < n->len; i++) {
 		n->keys[i - 1] = n->keys[i];
 		n->values[i - 1] = n->values[i];
 	}
-	for (int i = idx + 2;
-	i <= n->len; i++) {
+	for (int i = idx + 2; i <= n->len; i++) {
 		n->children[i - 1] = n->children[i];
 	}
 	child->len += sibling->len + 1;
@@ -10222,8 +10196,7 @@ string string_replace(string s, string rep, string with) {
 	int idx_pos = 0;
 	int cur_idx = (*(int*)array_get(idxs, idx_pos));
 	int b_i = 0;
-	for (int i = 0;
-	i < s.len; i++) {
+	for (int i = 0; i < s.len; i++) {
 		if (i == cur_idx) {
 			for (int j = 0; j < with.len; ++j) {
 				b[b_i] = string_at(with, j);
@@ -10268,8 +10241,7 @@ string string_replace_each(string s, array_string vals) {
 	int new_len = s.len;
 	array_RepIndex idxs = __new_array_with_default(0, 0, sizeof(RepIndex), 0);
 	int idx = 0;
-	for (int rep_i = 0;
-	rep_i < vals.len; rep_i += 2) {
+	for (int rep_i = 0; rep_i < vals.len; rep_i += 2) {
 		string rep = (*(string*)array_get(vals, rep_i));
 		string with = (*(string*)array_get(vals, rep_i + 1));
 		while (1) {
@@ -10293,8 +10265,7 @@ string string_replace_each(string s, array_string vals) {
 	int idx_pos = 0;
 	RepIndex cur_idx = (*(RepIndex*)array_get(idxs, idx_pos));
 	int b_i = 0;
-	for (int i = 0;
-	i < s.len; i++) {
+	for (int i = 0; i < s.len; i++) {
 		if (i == cur_idx.idx) {
 			string rep = (*(string*)array_get(vals, cur_idx.val_idx));
 			string with = (*(string*)array_get(vals, cur_idx.val_idx + 1));
@@ -10472,8 +10443,7 @@ array_string string_split_into_lines(string s) {
 		return res;
 	}
 	int start = 0;
-	for (int i = 0;
-	i < s.len; i++) {
+	for (int i = 0; i < s.len; i++) {
 		bool is_lf = s.str[i] == '\n';
 		bool is_crlf = i != s.len - 1 && s.str[i] == '\r' && s.str[i + 1] == '\n';
 		bool is_eol = is_lf || is_crlf;
@@ -10580,8 +10550,7 @@ static int string_index_kmp(string s, string p) {
 	}
 	array_int prefix = __new_array_with_default(p.len, 0, sizeof(int), 0);
 	int j = 0;
-	for (int i = 1;
-	i < p.len; i++) {
+	for (int i = 1; i < p.len; i++) {
 		while (p.str[j] != p.str[i] && j > 0) {
 			j = (*(int*)array_get(prefix, j - 1));
 		}
@@ -10678,8 +10647,7 @@ int string_index_byte(string s, byte c) {
 }
 
 int string_last_index_byte(string s, byte c) {
-	for (int i = s.len - 1;
-	i >= 0; i--) {
+	for (int i = s.len - 1; i >= 0; i--) {
 		if (s.str[i] == c) {
 			return i;
 		}
@@ -10980,8 +10948,7 @@ ustring string_ustring(string s) {
 		.runes = __new_array(0, s.len, ((int)(/*SizeOfType*/ sizeof(int)))),
 		.len = 0,
 	};
-	for (int i = 0;
-	i < s.len; i++) {
+	for (int i = 0; i < s.len; i++) {
 		int char_len = utf8_char_len(s.str[i]);
 		array_push(&res.runes, _MOV((int[]){ i }));
 		i += char_len - 1;
@@ -11002,8 +10969,7 @@ ustring string_ustring_tmp(string s) {
 	res.runes = g_ustring_runes;
 	res.runes.len = s.len;
 	int j = 0;
-	for (int i = 0;
-	i < s.len; i++) {
+	for (int i = 0; i < s.len; i++) {
 		int char_len = utf8_char_len(s.str[i]);
 		(*(int*)array_get(res.runes, j)) = i;
 		j++;
@@ -11047,16 +11013,14 @@ ustring ustring_add(ustring u, ustring a) {
 		.len = 0,
 	};
 	int j = 0;
-	for (int i = 0;
-	i < u.s.len; i++) {
+	for (int i = 0; i < u.s.len; i++) {
 		int char_len = utf8_char_len(u.s.str[i]);
 		array_push(&res.runes, _MOV((int[]){ j }));
 		i += char_len - 1;
 		j += char_len;
 		res.len++;
 	}
-	for (int i = 0;
-	i < a.s.len; i++) {
+	for (int i = 0; i < a.s.len; i++) {
 		int char_len = utf8_char_len(a.s.str[i]);
 		array_push(&res.runes, _MOV((int[]){ j }));
 		i += char_len - 1;
@@ -11316,8 +11280,7 @@ string string_reverse(string s) {
 		.str = v_malloc(s.len),
 		.len = s.len,
 	};
-	for (int i = s.len - 1;
-	i >= 0; i--) {
+	for (int i = s.len - 1; i >= 0; i--) {
 		res.str[s.len - i - 1] = string_at(s, i);
 	}
 	return res;
@@ -11400,8 +11363,7 @@ string string_strip_margin_custom(string s, byte del) {
 	}
 	byteptr ret = v_malloc(s.len + 1);
 	int count = 0;
-	for (int i = 0;
-	i < s.len; i++) {
+	for (int i = 0; i < s.len; i++) {
 		if ((string_at(s, i) == '\n' || string_at(s, i) == '\r')) {
 			ret[count] = string_at(s, i);
 			count++;
@@ -11496,8 +11458,7 @@ int string_utf32_code(string _rune) {
 	b = b << _rune.len;
 	int res = ((int)(b));
 	int shift = 6 - _rune.len;
-	for (int i = 1;
-	i < _rune.len; i++) {
+	for (int i = 1; i < _rune.len; i++) {
 		int c = ((int)(string_at(_rune, i)));
 		res = res << shift;
 		res |= (c & 63);
@@ -11582,13 +11543,11 @@ static int utf8_len(byte c) {
 
 static int utf8_str_len(string s) {
 	int l = 0;
-	for (int i = 0;
-	i < s.len; i++) {
+	for (int i = 0; i < s.len; i++) {
 		l++;
 		byte c = s.str[i];
 		if (((c & (1 << 7))) != 0) {
-			for (byte t = ((byte)(1 << 6));
-			((c & t)) != 0; t >>= 1) {
+			for (byte t = ((byte)(1 << 6)); ((c & t)) != 0; t >>= 1) {
 				i++;
 			}
 		}
@@ -11599,13 +11558,11 @@ static int utf8_str_len(string s) {
 static int utf8_str_visible_length(string s) {
 	int l = 0;
 	int ul = 1;
-	for (int i = 0;
-	i < s.len; i += ul) {
+	for (int i = 0; i < s.len; i += ul) {
 		ul = 1;
 		byte c = s.str[i];
 		if (((c & (1 << 7))) != 0) {
-			for (byte t = ((byte)(1 << 6));
-			((c & t)) != 0; t >>= 1) {
+			for (byte t = ((byte)(1 << 6)); ((c & t)) != 0; t >>= 1) {
 				ul++;
 			}
 		}
@@ -11639,8 +11596,7 @@ int utf8_getchar() {
 		return -1;
 	} else {
 		int uc = (c & ((1 << (7 - len)) - 1));
-		for (int i = 0;
-		i + 1 < len; i++) {
+		for (int i = 0; i + 1 < len; i++) {
 			int c2 = getchar();
 			if (c2 != -1 && (c2 >> 6) == 2) {
 				uc <<= 6;
@@ -11717,8 +11673,7 @@ map_string_string os__environ() {
 #ifdef _WIN32
 		u16* estrings = GetEnvironmentStringsW();
 		string eline = tos_lit("");
-		for (u16* c = estrings;
-		*c != 0; c = c + eline.len + 1) {
+		for (u16* c = estrings; *c != 0; c = c + eline.len + 1) {
 			eline = string_from_wide(c);
 			int eq_index = string_index_byte(eline, '=');
 			if (eq_index > 0) {
@@ -11729,8 +11684,7 @@ map_string_string os__environ() {
 	
 #else
 		charptr* e = ((charptr*)(environ));
-		for (int i = 0;
-		!isnil(e[i]); i++) {
+		for (int i = 0; !isnil(e[i]); i++) {
 			string eline = cstring_to_vstring(e[i]);
 			int eq_index = string_index_byte(eline, '=');
 			if (eq_index > 0) {
@@ -15417,8 +15371,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 	}, sizeof(v__pref__Preferences));
 	string command = tos_lit("");
 	int command_pos = 0;
-	for (int i = 0;
-	i < args.len; i++) {
+	for (int i = 0; i < args.len; i++) {
 		string arg = (*(string*)array_get(args, i));
 		array_string current_args = array_slice(args, i, args.len);
 		if (string_eq(arg, tos_lit("-v"))) {
@@ -16595,8 +16548,7 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 	strings__Builder_write(&s, _const_vweb__tmpl__str_start);
 	vweb__tmpl__State state = vweb__tmpl__State_html;
 	bool in_span = false;
-	for (int i = 0;
-	i < lines.len; i++) {
+	for (int i = 0; i < lines.len; i++) {
 		string line = string_trim_space((*(string*)array_get(lines, i)));
 		if (string_eq(line, tos_lit("<style>"))) {
 			state = vweb__tmpl__State_css;
@@ -16896,8 +16848,7 @@ array_string v__util__source_context(string kind, string source, int column, v__
 	int bline = v__util__imax(0, pos.line_nr - _const_v__util__error_context_before);
 	int aline = v__util__imax(0, v__util__imin(source_lines.len - 1, pos.line_nr + _const_v__util__error_context_after));
 	string tab_spaces = tos_lit("    ");
-	for (int iline = bline;
-	iline <= aline; iline++) {
+	for (int iline = bline; iline <= aline; iline++) {
 		string sline = (*(string*)array_get(source_lines, iline));
 		int start_column = v__util__imin(column, sline.len);
 		int end_column = v__util__imin(column + pos.len, sline.len);
@@ -18834,8 +18785,7 @@ Option_multi_return_v__ast__ScopeObject_v__ast__Scope v__ast__Scope_find_with_sc
 }
 
 Option_v__ast__ScopeObject v__ast__Scope_find(v__ast__Scope* s, string name) {
-	for (v__ast__Scope* sc = s;
-	true; sc = sc->parent) {
+	for (v__ast__Scope* sc = s; true; sc = sc->parent) {
 		if (_IN_MAP(name, sc->objects)) {
 			Option_v__ast__ScopeObject _t450;/*:)v.ast.ScopeObject*/opt_ok2(&(v__ast__ScopeObject[]) { (*(v__ast__ScopeObject*)map_get(sc->objects, name, &(v__ast__ScopeObject[]){ {0} }))
  }, (OptionBase*)(&_t450), sizeof(v__ast__ScopeObject));
@@ -20158,8 +20108,7 @@ static v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanner* s) {
 			s->line_nr--;
 			if (v__scanner__Scanner_should_parse_comment(s)) {
 				bool is_separate_line_comment = true;
-				for (int j = start - 2;
-				j >= 0 && string_at(s->text, j) != '\n'; j--) {
+				for (int j = start - 2; j >= 0 && string_at(s->text, j) != '\n'; j--) {
 					if (!(string_at(s->text, j) == '\t' || string_at(s->text, j) == ' ')) {
 						is_separate_line_comment = false;
 					}
@@ -20222,8 +20171,7 @@ static int v__scanner__Scanner_current_column(v__scanner__Scanner* s) {
 
 static int v__scanner__Scanner_count_symbol_before(v__scanner__Scanner* s, int p, byte sym) {
 	int count = 0;
-	for (int i = p;
-	i >= 0; i--) {
+	for (int i = p; i >= 0; i--) {
 		if (string_at(s->text, i) != sym) {
 			break;
 		}
@@ -24154,8 +24102,7 @@ static v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser* p) {
 			has_type = true;
 		}
 	} else {
-		for (int i = 0;
-		p->tok.kind != v__token__Kind_rsbr; i++) {
+		for (int i = 0; p->tok.kind != v__token__Kind_rsbr; i++) {
 			v__ast__Expr expr = v__parser__Parser_expr(p, 0);
 			array_push(&exprs, _MOV((v__ast__Expr[]){ expr }));
 			if (p->tok.kind == v__token__Kind_comma) {
@@ -28691,6 +28638,11 @@ static void v__gen__Gen_stmt(v__gen__Gen* g, v__ast__Stmt node) {
 			v__gen__Gen_write(g, tos_lit("; "));
 		} else {
 			v__gen__Gen_stmt(g, node->init);
+			if (string_eq(strings__Builder_last_n(&g->out, 1), tos_lit("\n"))) {
+				strings__Builder_go_back(&g->out, 1);
+				g->empty_line = false;
+				v__gen__Gen_write(g, tos_lit(" "));
+			}
 		}
 		if (node->has_cond) {
 			v__gen__Gen_expr(g, node->cond);
@@ -30816,9 +30768,9 @@ static void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__TypeSymbol t
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_80921 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_80921.arg0;
-						string base = mr_80921.arg1;
+						multi_return_string_string mr_81068 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_81068.arg0;
+						string base = mr_81068.arg1;
 						array_push(&g->optionals, _MOV((string[]){ styp }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -30925,9 +30877,9 @@ static array_v__table__TypeSymbol v__gen__Gen_sort_structs(v__gen__Gen g, array_
 
 static Option_bool v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr expr, v__table__Type etype) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, etype);
-	multi_return_bool_bool_int mr_84249 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_84249.arg0;
-	bool str_method_expects_ptr = mr_84249.arg1;
+	multi_return_bool_bool_int mr_84396 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_84396.arg0;
+	bool str_method_expects_ptr = mr_84396.arg1;
 	if (v__table__Type_has_flag(etype, v__table__TypeFlag_variadic)) {
 		string str_fn_name = v__gen__Gen_gen_str_for_type(g, etype);
 		v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -31223,11 +31175,11 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExpr
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->fn_decl->name, tos_lit("main.main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_92713 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_92713.arg0;
-				string pafile = mr_92713.arg1;
-				string pamod = mr_92713.arg2;
-				string pafn = mr_92713.arg3;
+				multi_return_int_string_string_string mr_92860 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_92860.arg0;
+				string pafile = mr_92860.arg1;
+				string pamod = mr_92860.arg2;
+				string pafn = mr_92860.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(%.*s\000.v_error);", 2, cvar_name));
@@ -31636,10 +31588,10 @@ inline static string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Type
 static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_103644 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_103644.arg0;
-	bool str_method_expects_ptr = mr_103644.arg1;
-	int str_nr_args = mr_103644.arg2;
+	multi_return_bool_bool_int mr_103791 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_103791.arg0;
+	bool str_method_expects_ptr = mr_103791.arg1;
+	int str_nr_args = mr_103791.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -31826,9 +31778,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_111011 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_111011.arg0;
-	bool str_method_expects_ptr = mr_111011.arg1;
+	multi_return_bool_bool_int mr_111158 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_111158.arg0;
+	bool str_method_expects_ptr = mr_111158.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -31880,9 +31832,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_113834 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_113834.arg0;
-	bool str_method_expects_ptr = mr_113834.arg1;
+	multi_return_bool_bool_int mr_113981 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_113981.arg0;
+	bool str_method_expects_ptr = mr_113981.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -32006,9 +31958,9 @@ static void v__gen__Gen_gen_str_for_multi_return(v__gen__Gen* g, v__table__Multi
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 		string field_styp = v__gen__Gen_typ(g, typ);
 		bool is_arg_ptr = v__table__Type_is_ptr(typ);
-		multi_return_bool_bool_int mr_119990 = v__table__TypeSymbol_str_method_info(sym);
-		bool sym_has_str_method = mr_119990.arg0;
-		bool str_method_expects_ptr = mr_119990.arg1;
+		multi_return_bool_bool_int mr_120137 = v__table__TypeSymbol_str_method_info(sym);
+		bool sym_has_str_method = mr_120137.arg0;
+		bool str_method_expects_ptr = mr_120137.arg1;
 		string arg_str_fn_name = tos_lit("");
 		if (sym_has_str_method) {
 			arg_str_fn_name = (is_arg_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -35477,8 +35429,7 @@ static void v__gen__x64__Gen_jle(v__gen__x64__Gen* g, i64 addr) {
 static void v__gen__x64__Gen_println(v__gen__x64__Gen* g, string comment) {
 	string addr = int_hex(g->debug_pos);
 	print(term__red(string_add(string_add(strings__repeat('0', 6 - addr.len), addr), tos_lit("  "))));
-	for (int i = g->debug_pos;
-	i < g->buf.len; i++) {
+	for (int i = g->debug_pos; i < g->buf.len; i++) {
 		string s = byte_hex((*(byte*)array_get(g->buf, i)));
 		if (s.len == 1) {
 			print(term__blue(tos_lit("0")));
@@ -36072,8 +36023,7 @@ v__builder__Builder v__builder__new_builder(v__pref__Preferences* pref) {
 
 void v__builder__Builder_parse_imports(v__builder__Builder* b) {
 	array_string done_imports = __new_array_with_default(0, 0, sizeof(string), 0);
-	for (int i = 0;
-	i < b->parsed_files.len; i++) {
+	for (int i = 0; i < b->parsed_files.len; i++) {
 		v__ast__File ast_file = (*(v__ast__File*)array_get(b->parsed_files, i));
 		// FOR IN array
 		array _t1116 = ast_file.imports;
