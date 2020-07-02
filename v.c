@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "7004f74"
+#define V_COMMIT_HASH "3c432f5"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "421b6d4"
+#define V_COMMIT_HASH "7004f74"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "7004f74"
+#define V_CURRENT_COMMIT_HASH "3c432f5"
 #endif
 
 
@@ -27220,6 +27220,12 @@ static v__ast__Expr v__parser__Parser_sql_expr(v__parser__Parser* p) {
 	bool has_desc = false;
 	if (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("order"))) {
 		v__parser__Parser_check_name(p);
+		v__token__Position order_pos = v__token__Token_position(&p->tok);
+		if (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("by"))) {
+			v__parser__Parser_check_name(p);
+		} else {
+			v__parser__Parser_error_with_pos(p, tos_lit("use `order by` in ORM queries"), order_pos);
+		}
 		has_order = true;
 		order_expr = v__parser__Parser_expr(p, 0);
 		if (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("desc"))) {
