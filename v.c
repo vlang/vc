@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "dff385c"
+#define V_COMMIT_HASH "652380c"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "df2749d"
+#define V_COMMIT_HASH "dff385c"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "dff385c"
+#define V_CURRENT_COMMIT_HASH "652380c"
 #endif
 
 
@@ -4649,7 +4649,6 @@ void v__builder__Builder_compile_x64(v__builder__Builder* b);
 array_string _const_main__simple_cmd; // inited later
 array_string _const_main__list_of_flags_that_allow_duplicates; // inited later
 static void main__main();
-static void main__main_v();
 static void main__invoke_help_and_exit(array_string remaining);
 
 
@@ -32128,9 +32127,13 @@ void v__gen__Gen_gen_c_main(v__gen__Gen* g) {
 		return;
 	}
 	strings__Builder_writeln(&g->out, tos_lit(""));
+	int main_fn_start_pos = g->out.len;
 	v__gen__Gen_gen_c_main_header(g);
 	v__gen__Gen_writeln(g, tos_lit("\tmain__main();"));
 	v__gen__Gen_gen_c_main_footer(g);
+	if (g->pref->printfn_list.len > 0 && _IN(string, tos_lit("main"), g->pref->printfn_list)) {
+		println(strings__Builder_after(&g->out, main_fn_start_pos));
+	}
 }
 
 static void v__gen__Gen_gen_c_main_header(v__gen__Gen* g) {
@@ -37806,10 +37809,6 @@ void v__builder__Builder_compile_x64(v__builder__Builder* b) {
 }
 
 static void main__main() {
-	main__main_v();
-}
-
-static void main__main_v() {
 	array_string args = array_slice(_const_os__args, 1, _const_os__args.len);
 	if (args.len == 0 || (string_eq((*(string*)array_get(args, 0)), tos_lit("-")) || string_eq((*(string*)array_get(args, 0)), tos_lit("repl")))) {
 		if (args.len == 0) {
@@ -37819,9 +37818,9 @@ static void main__main_v() {
 		return;
 	}
 	array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_965 = v__pref__parse_args(args_and_flags);
-	v__pref__Preferences* prefs = mr_965.arg0;
-	string command = mr_965.arg1;
+	multi_return_v__pref__Preferences_string mr_938 = v__pref__parse_args(args_and_flags);
+	v__pref__Preferences* prefs = mr_938.arg0;
+	string command = mr_938.arg1;
 	if (args.len > 0 && ((string_eq((*(string*)array_get(args, 0)), tos_lit("version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-V")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("--version"))) || (string_eq((*(string*)array_get(args, 0)), tos_lit("-v")) && args.len == 1))) {
 		println(v__util__full_v_version(prefs->is_verbose));
 		return;
