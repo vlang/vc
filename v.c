@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "51410fd"
+#define V_COMMIT_HASH "2281163"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "652380c"
+#define V_COMMIT_HASH "51410fd"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "51410fd"
+#define V_CURRENT_COMMIT_HASH "2281163"
 #endif
 
 
@@ -23660,7 +23660,6 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 }
 
 static v__ast__CompFor v__parser__Parser_comp_for(v__parser__Parser* p) {
-	println(tos_lit("COMP FOR"));
 	v__parser__Parser_next(p);
 	v__parser__Parser_check(p, v__token__Kind_key_for);
 	string val_var = v__parser__Parser_check_name(p);
