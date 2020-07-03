@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "37f31da"
+#define V_COMMIT_HASH "9569655"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "3d3549d"
+#define V_COMMIT_HASH "37f31da"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "37f31da"
+#define V_CURRENT_COMMIT_HASH "9569655"
 #endif
 
 
@@ -11589,7 +11589,7 @@ void os__File_write(os__File* f, string s) {
 	if (!f->opened) {
 		return;
 	}
-	fputs(s.str, f->cfile);
+	fwrite(s.str, s.len, 1, f->cfile);
 }
 
 void os__File_writeln(os__File* f, string s) {
@@ -12076,8 +12076,8 @@ static int os__vpclose(voidptr f) {
 		return _pclose(f);
 	
 #else
-		multi_return_int_bool mr_9801 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_9801.arg0;
+		multi_return_int_bool mr_9812 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_9812.arg0;
 		return ret;
 	
 #endif
@@ -12105,9 +12105,9 @@ int os__system(string cmd) {
 	
 // $if !windows {
 #ifndef _WIN32
-		multi_return_int_bool mr_10567 = os__posix_wait4_to_exit_status(ret);
-		int pret = mr_10567.arg0;
-		bool is_signaled = mr_10567.arg1;
+		multi_return_int_bool mr_10578 = os__posix_wait4_to_exit_status(ret);
+		int pret = mr_10578.arg0;
+		bool is_signaled = mr_10578.arg1;
 		if (is_signaled) {
 			println(string_add(string_add(_STR("Terminated by signal %2"PRId32"\000 (", 2, ret), os__sigint_to_signal_name(pret)), tos_lit(")")));
 		}
