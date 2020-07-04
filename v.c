@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "0637feb"
+#define V_COMMIT_HASH "108913c"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "db4a9d6"
+#define V_COMMIT_HASH "0637feb"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "0637feb"
+#define V_CURRENT_COMMIT_HASH "108913c"
 #endif
 
 
@@ -16637,8 +16637,8 @@ array_string v__util__source_context(string kind, string source, int column, v__
 	string tab_spaces = tos_lit("    ");
 	for (int iline = bline; iline <= aline; iline++) {
 		string sline = (*(string*)array_get(source_lines, iline));
-		int start_column = v__util__imin(column, sline.len);
-		int end_column = v__util__imin(column + pos.len, sline.len);
+		int start_column = v__util__imax(0, v__util__imin(column, sline.len));
+		int end_column = v__util__imax(0, v__util__imin(column + v__util__imax(0, pos.len), sline.len));
 		string cline = (iline == pos.line_nr ? (string_add(string_add(string_substr(sline, 0, start_column), v__util__color(kind, string_substr(sline, start_column, end_column))), string_substr(sline, end_column, sline.len))) : (sline));
 		array_push(&clines, _MOV((string[]){ string_add(_STR("%5"PRId32"\000 | ", 2, iline + 1), string_replace(cline, tos_lit("\t"), tab_spaces)) }));
 		if (iline == pos.line_nr) {
@@ -21614,8 +21614,9 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 			if (typ_sym->kind == v__table__Kind_function && arg_typ_sym->kind == v__table__Kind_function) {
 				string candidate_fn_name = (string_starts_with(typ_sym->name, tos_lit("anon_")) ? (tos_lit("anonymous function")) : (_STR("fn `%.*s\000`", 2, typ_sym->name)));
 				v__checker__Checker_error(c, _STR("cannot use %.*s\000 as function type `%.*s\000` in argument %"PRId32"\000 to `%.*s\000`", 5, candidate_fn_name, v__table__TypeSymbol_str(arg_typ_sym), i + 1, fn_name), call_expr->pos);
+			} else {
+				v__checker__Checker_error(c, _STR("cannot use type `%.*s\000` as type `%.*s\000` in argument %"PRId32"\000 to `%.*s\000`", 5, v__table__TypeSymbol_str(typ_sym), v__table__TypeSymbol_str(arg_typ_sym), i + 1, fn_name), call_expr->pos);
 			}
-			v__checker__Checker_error(c, _STR("cannot use type `%.*s\000` as type `%.*s\000` in argument %"PRId32"\000 to `%.*s\000`", 5, v__table__TypeSymbol_str(typ_sym), v__table__TypeSymbol_str(arg_typ_sym), i + 1, fn_name), call_expr->pos);
 		}
 	}
 	if (call_expr->generic_type != _const_v__table__void_type && f.return_type != 0) {
