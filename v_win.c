@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "56ad6ce"
+#define V_COMMIT_HASH "27149ba"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "da98c3c"
+#define V_COMMIT_HASH "56ad6ce"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "56ad6ce"
+#define V_CURRENT_COMMIT_HASH "27149ba"
 #endif
 
 
@@ -29911,6 +29911,9 @@ static void v__gen__Gen_infix_expr(v__gen__Gen* g, v__ast__InfixExpr node) {
 			v__gen__Gen_write(g, _STR("_IN(%.*s\000, ", 2, styp));
 			v__gen__Gen_expr(g, node.left);
 			v__gen__Gen_write(g, tos_lit(", "));
+			if (v__table__Type_is_ptr(node.right_type)) {
+				v__gen__Gen_write(g, tos_lit("*"));
+			}
 			v__gen__Gen_expr(g, node.right);
 			v__gen__Gen_write(g, tos_lit(")"));
 		} else if (right_sym->kind == v__table__Kind_map) {
@@ -30865,9 +30868,9 @@ static void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__TypeSymbol t
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_81637 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_81637.arg0;
-						string base = mr_81637.arg1;
+						multi_return_string_string mr_81692 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_81692.arg0;
+						string base = mr_81692.arg1;
 						array_push(&g->optionals, _MOV((string[]){ styp }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -30973,9 +30976,9 @@ static array_v__table__TypeSymbol v__gen__Gen_sort_structs(v__gen__Gen g, array_
 
 static Option_bool v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr expr, v__table__Type etype) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, etype);
-	multi_return_bool_bool_int mr_84966 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_84966.arg0;
-	bool str_method_expects_ptr = mr_84966.arg1;
+	multi_return_bool_bool_int mr_85021 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_85021.arg0;
+	bool str_method_expects_ptr = mr_85021.arg1;
 	if (v__table__Type_has_flag(etype, v__table__TypeFlag_variadic)) {
 		string str_fn_name = v__gen__Gen_gen_str_for_type(g, etype);
 		v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -31271,11 +31274,11 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExpr
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->fn_decl->name, tos_lit("main.main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_93430 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_93430.arg0;
-				string pafile = mr_93430.arg1;
-				string pamod = mr_93430.arg2;
-				string pafn = mr_93430.arg3;
+				multi_return_int_string_string_string mr_93485 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_93485.arg0;
+				string pafile = mr_93485.arg1;
+				string pamod = mr_93485.arg2;
+				string pafn = mr_93485.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(%.*s\000.v_error);", 2, cvar_name));
@@ -31637,10 +31640,10 @@ inline static string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Type
 static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_103310 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_103310.arg0;
-	bool str_method_expects_ptr = mr_103310.arg1;
-	int str_nr_args = mr_103310.arg2;
+	multi_return_bool_bool_int mr_103365 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_103365.arg0;
+	bool str_method_expects_ptr = mr_103365.arg1;
+	int str_nr_args = mr_103365.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -31826,9 +31829,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_110677 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_110677.arg0;
-	bool str_method_expects_ptr = mr_110677.arg1;
+	multi_return_bool_bool_int mr_110732 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_110732.arg0;
+	bool str_method_expects_ptr = mr_110732.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -31880,9 +31883,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_113500 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_113500.arg0;
-	bool str_method_expects_ptr = mr_113500.arg1;
+	multi_return_bool_bool_int mr_113555 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_113555.arg0;
+	bool str_method_expects_ptr = mr_113555.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -32006,9 +32009,9 @@ static void v__gen__Gen_gen_str_for_multi_return(v__gen__Gen* g, v__table__Multi
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 		string field_styp = v__gen__Gen_typ(g, typ);
 		bool is_arg_ptr = v__table__Type_is_ptr(typ);
-		multi_return_bool_bool_int mr_119656 = v__table__TypeSymbol_str_method_info(sym);
-		bool sym_has_str_method = mr_119656.arg0;
-		bool str_method_expects_ptr = mr_119656.arg1;
+		multi_return_bool_bool_int mr_119711 = v__table__TypeSymbol_str_method_info(sym);
+		bool sym_has_str_method = mr_119711.arg0;
+		bool str_method_expects_ptr = mr_119711.arg1;
 		string arg_str_fn_name = tos_lit("");
 		if (sym_has_str_method) {
 			arg_str_fn_name = (is_arg_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
