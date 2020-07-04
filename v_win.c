@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "db4a9d6"
+#define V_COMMIT_HASH "0637feb"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "bb6ab18"
+#define V_COMMIT_HASH "db4a9d6"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "db4a9d6"
+#define V_CURRENT_COMMIT_HASH "0637feb"
 #endif
 
 
@@ -21875,6 +21875,10 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 				continue;
 			}
 			if (typ_sym->kind == v__table__Kind_array_fixed) {
+			}
+			if (typ_sym->kind == v__table__Kind_function && arg_typ_sym->kind == v__table__Kind_function) {
+				string candidate_fn_name = (string_starts_with(typ_sym->name, tos_lit("anon_")) ? (tos_lit("anonymous function")) : (_STR("fn `%.*s\000`", 2, typ_sym->name)));
+				v__checker__Checker_error(c, _STR("cannot use %.*s\000 as function type `%.*s\000` in argument %"PRId32"\000 to `%.*s\000`", 5, candidate_fn_name, v__table__TypeSymbol_str(arg_typ_sym), i + 1, fn_name), call_expr->pos);
 			}
 			v__checker__Checker_error(c, _STR("cannot use type `%.*s\000` as type `%.*s\000` in argument %"PRId32"\000 to `%.*s\000`", 5, v__table__TypeSymbol_str(typ_sym), v__table__TypeSymbol_str(arg_typ_sym), i + 1, fn_name), call_expr->pos);
 		}
