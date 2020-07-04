@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "b4dc968"
+#define V_COMMIT_HASH "48029fa"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "35431d4"
+#define V_COMMIT_HASH "b4dc968"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "b4dc968"
+#define V_CURRENT_COMMIT_HASH "48029fa"
 #endif
 
 
@@ -21602,6 +21602,10 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 	if (string_eq(method_name, tos_lit("str"))) {
 		call_expr->receiver_type = left_type;
 		call_expr->return_type = _const_v__table__string_type;
+		eprintln(_STR("method .str() call_expr.args.len: %"PRId32"", 1, call_expr->args.len));
+		if (call_expr->args.len > 0) {
+			v__checker__Checker_error(c, tos_lit(".str() method calls should have no arguments"), call_expr->pos);
+		}
 		return _const_v__table__string_type;
 	}
 	{ /* if guard */ Option_v__table__Field field = v__table__Table_struct_find_field(c->table, left_type_sym, method_name);
