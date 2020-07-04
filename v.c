@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "68af464"
+#define V_COMMIT_HASH "fe50bdc"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "48029fa"
+#define V_COMMIT_HASH "68af464"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "68af464"
+#define V_CURRENT_COMMIT_HASH "fe50bdc"
 #endif
 
 
@@ -248,9 +248,9 @@ typedef byte array_fixed_byte_300 [300];
 typedef byte array_fixed_byte_400 [400];
 #ifndef __cplusplus
 #ifndef bool
-        typedef int bool;
-        #define true 1
-        #define false 0
+	typedef int bool;
+	#define true 1
+	#define false 0
 #endif
 #endif
 
@@ -2353,6 +2353,13 @@ struct v__errors__Warning {
 	v__errors__Reporter reporter;
 };
 
+struct v__ast__IfBranch {
+	v__ast__Expr cond;
+	array_v__ast__Stmt stmts;
+	v__token__Position pos;
+	array_v__ast__Comment comments;
+};
+
 struct v__ast__EnumField {
 	string name;
 	v__token__Position pos;
@@ -2474,13 +2481,6 @@ struct v__ast__StructInitField {
 	string name;
 	v__table__Type typ;
 	v__table__Type expected_type;
-};
-
-struct v__ast__IfBranch {
-	v__ast__Expr cond;
-	array_v__ast__Stmt stmts;
-	v__token__Position pos;
-	v__ast__Comment comment;
 };
 
 struct v__ast__MatchBranch {
@@ -4906,7 +4906,7 @@ void vinit_string_literals(){
 	_const_v__gen__c_commit_hash_default = tos_lit("\n#ifndef V_COMMIT_HASH\n#define V_COMMIT_HASH \"@@@\"\n#endif\n\n");
 	_const_v__gen__c_current_commit_hash_default = tos_lit("\n#ifndef V_CURRENT_COMMIT_HASH\n#define V_CURRENT_COMMIT_HASH \"@@@\"\n#endif\n\n");
 	_const_v__gen__c_common_macros = tos_lit("\n#define EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an array needs to be specified, but GCC crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#define __NOINLINE __attribute__((noinline))\n#define __IRQHANDLER __attribute__((interrupt))\n\n#ifdef __TINYC__\n#undef EMPTY_STRUCT_DECLARATION\n#undef EMPTY_STRUCT_INITIALIZATION\n#define EMPTY_STRUCT_DECLARATION char _dummy\n#define EMPTY_STRUCT_INITIALIZATION 0\n#undef EMPTY_ARRAY_OF_ELEMS\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n#undef __NOINLINE\n#undef __IRQHANDLER\n// tcc does not support inlining at all\n#define __NOINLINE\n#define __IRQHANDLER\n#undef TCCSKIP\n#define TCCSKIP(x)\n// #include <byteswap.h>\n#endif\n\n// for __offset_of\n#ifndef __offsetof\n#define __offsetof(s,memb) \((size_t)((char *)&((s *)0)->memb - (char *)0))\n#endif\n\n#define OPTION_CAST(x) (x)\n\n#ifndef V64_PRINTFORMAT\n#ifdef PRIx64\n#define V64_PRINTFORMAT \"0x%\"PRIx64\n#elif defined(__WIN32__)\n#define V64_PRINTFORMAT \"0x%I64x\"\n#elif defined(__linux__) && defined(__LP64__)\n#define V64_PRINTFORMAT \"0x%lx\"\n#else\n#define V64_PRINTFORMAT \"0x%llx\"\n#endif\n#endif\n\n");
-	_const_v__gen__c_builtin_types = tos_lit("\n\n//================================== builtin types ================================*/\n\ntypedef int64_t i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef int64_t any_int;\ntypedef double any_float;\ntypedef unsigned char* byteptr;\ntypedef void* voidptr;\ntypedef char* charptr;\ntypedef struct array array;\ntypedef struct map map;\ntypedef array array_string;\ntypedef array array_int;\ntypedef array array_byte;\ntypedef array array_f32;\ntypedef array array_f64;\ntypedef array array_u16;\ntypedef array array_u32;\ntypedef array array_u64;\ntypedef map map_int;\ntypedef map map_string;\ntypedef byte array_fixed_byte_300 [300];\ntypedef byte array_fixed_byte_400 [400];\n#ifndef __cplusplus\n#ifndef bool\n        typedef int bool;\n        #define true 1\n        #define false 0\n#endif\n#endif\n\n");
+	_const_v__gen__c_builtin_types = tos_lit("\n\n//================================== builtin types ================================*/\n\ntypedef int64_t i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef int64_t any_int;\ntypedef double any_float;\ntypedef unsigned char* byteptr;\ntypedef void* voidptr;\ntypedef char* charptr;\ntypedef struct array array;\ntypedef struct map map;\ntypedef array array_string;\ntypedef array array_int;\ntypedef array array_byte;\ntypedef array array_f32;\ntypedef array array_f64;\ntypedef array array_u16;\ntypedef array array_u32;\ntypedef array array_u64;\ntypedef map map_int;\ntypedef map map_string;\ntypedef byte array_fixed_byte_300 [300];\ntypedef byte array_fixed_byte_400 [400];\n#ifndef __cplusplus\n#ifndef bool\n	typedef int bool;\n	#define true 1\n	#define false 0\n#endif\n#endif\n\n");
 	_const_v__gen__posix_hotcode_definitions_1 = tos_lit("\nvoid v_bind_live_symbols(void* live_lib){\n    @LOAD_FNS@\n}\n");
 	_const_v__gen__windows_hotcode_definitions_1 = tos_lit("\nvoid v_bind_live_symbols(void* live_lib){\n    @LOAD_FNS@\n}\n");
 	_const_v__gen__dbtype = tos_lit("sqlite");
@@ -19263,17 +19263,15 @@ static string v__scanner__Scanner_ident_struct_name(v__scanner__Scanner* s) {
 
 static string v__scanner__filter_num_sep(byteptr txt, int start, int end) {
 		byteptr b = v_malloc(end - start + 1);
-		int i = start;
 		int i1 = 0;
-		while (i < end) {
+		for (int i = start; i < end; i++) {
 			if (txt[i] != _const_v__scanner__num_sep) {
 				b[i1] = txt[i];
 				i1++;
 			}
-			i++;
 		}
 		b[i1] = 0;
-		return tos((byteptr)b, i1);
+		return tos2((byteptr)b);
 }
 
 static string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner* s) {
@@ -19759,7 +19757,8 @@ static v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanner* s) {
 			return v__scanner__Scanner_new_token(s, v__token__Kind_string, v__util__cescaped_path(vexe), 5);
 		}
 		if (string_eq(name, tos_lit("FILE"))) {
-			return v__scanner__Scanner_new_token(s, v__token__Kind_string, v__util__cescaped_path(os__real_path(s->file_path)), 5);
+			string fpath = os__real_path(s->file_path);
+			return v__scanner__Scanner_new_token(s, v__token__Kind_string, v__util__cescaped_path(fpath), 5);
 		}
 		if (string_eq(name, tos_lit("LINE"))) {
 			return v__scanner__Scanner_new_token(s, v__token__Kind_string, int_str((s->line_nr + 1)), 5);
@@ -24915,19 +24914,14 @@ static v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	array_v__ast__IfBranch branches = __new_array_with_default(0, 0, sizeof(v__ast__IfBranch), 0);
 	bool has_else = false;
+	array_v__ast__Comment comments = __new_array_with_default(0, 0, sizeof(v__ast__Comment), 0);
 	while ((p->tok.kind == v__token__Kind_key_if || p->tok.kind == v__token__Kind_key_else)) {
 		p->inside_if = true;
 		v__token__Position start_pos = v__token__Token_position(&p->tok);
-		v__ast__Comment comment = (v__ast__Comment){
-			.text = (string){.str=""},
-			.is_multi = 0,
-			.line_nr = 0,
-			.pos = {0},
-		};
 		if (p->tok.kind == v__token__Kind_key_if) {
 			v__parser__Parser_next(p);
 		} else {
-			comment = v__parser__Parser_check_comment(p);
+			comments = v__parser__Parser_eat_comments(p);
 			v__parser__Parser_check(p, v__token__Kind_key_else);
 			if (p->tok.kind == v__token__Kind_key_if) {
 				v__parser__Parser_next(p);
@@ -24939,8 +24933,9 @@ static v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p) {
 					.cond = {0},
 					.stmts = v__parser__Parser_parse_block(p),
 					.pos = v__token__Position_extend(start_pos, end_pos),
-					.comment = comment,
+					.comments = comments,
 				} }));
+				comments = __new_array_with_default(0, 0, sizeof(v__ast__Comment), 0);
 				break;
 			}
 		}
@@ -24987,8 +24982,9 @@ static v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p) {
 			.cond = cond,
 			.stmts = stmts,
 			.pos = v__token__Position_extend(start_pos, end_pos),
-			.comment = comment,
+			.comments = comments,
 		} }));
+		comments = __new_array_with_default(0, 0, sizeof(v__ast__Comment), 0);
 		if (p->tok.kind != v__token__Kind_key_else) {
 			break;
 		}
