@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "be04de9"
+#define V_COMMIT_HASH "0626ac2"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b018381"
+#define V_COMMIT_HASH "be04de9"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "be04de9"
+#define V_CURRENT_COMMIT_HASH "0626ac2"
 #endif
 
 
@@ -21317,7 +21317,7 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 			v__checker__Checker_error(c, _STR("%.*s\000: type `%.*s\000` does not exist", 3, v__token__Kind_str(infix_expr->op), typ_sym->name), type_expr->pos);
 		}
 		if (left->kind != v__table__Kind_interface_ && left->kind != v__table__Kind_sum_type) {
-			v__checker__Checker_error(c, _STR("`%.*s\000` can only be used with interfaces and sum types", 2, v__token__Kind_str(infix_expr->op)), type_expr->pos);
+			v__checker__Checker_error(c, _STR("`%.*s\000` can only be used with interfaces and sum types", 2, v__token__Kind_str(infix_expr->op)), infix_expr->pos);
 		}
 		// defer
 			c->expected_type = former_expected_type;
