@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "bb6ab18"
+#define V_COMMIT_HASH "db4a9d6"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "fbfd92a"
+#define V_COMMIT_HASH "bb6ab18"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "bb6ab18"
+#define V_CURRENT_COMMIT_HASH "db4a9d6"
 #endif
 
 
@@ -4157,6 +4157,7 @@ void v__scanner__Scanner_error(v__scanner__Scanner* s, string msg);
 void v__scanner__verror(string s);
 void v__scanner__Scanner_codegen(v__scanner__Scanner* s, string newtext);
 bool v__checker__Checker_check_basic(v__checker__Checker* c, v__table__Type got, v__table__Type expected);
+bool v__checker__Checker_check_matching_function_symbols(v__checker__Checker* c, v__table__TypeSymbol* got_type_sym, v__table__TypeSymbol* exp_type_sym);
 static v__table__Type v__checker__Checker_check_shift(v__checker__Checker* c, v__table__Type left_type, v__table__Type right_type, v__token__Position left_pos, v__token__Position right_pos);
 v__table__Type v__checker__Checker_promote(v__checker__Checker* c, v__table__Type left_type, v__table__Type right_type);
 static v__table__Type v__checker__Checker_promote_num(v__checker__Checker* c, v__table__Type left_type, v__table__Type right_type);
@@ -17609,7 +17610,7 @@ inline bool v__table__TypeSymbol_is_number(v__table__TypeSymbol* t) {
 }
 
 string v__table__Kind_str(v__table__Kind k) {
-	string k_str = (k == v__table__Kind_placeholder) ? (tos_lit("placeholder")) : (k == v__table__Kind_void) ? (tos_lit("void")) : (k == v__table__Kind_voidptr) ? (tos_lit("voidptr")) : (k == v__table__Kind_charptr) ? (tos_lit("charptr")) : (k == v__table__Kind_byteptr) ? (tos_lit("byteptr")) : (k == v__table__Kind_struct_) ? (tos_lit("struct")) : (k == v__table__Kind_int) ? (tos_lit("int")) : (k == v__table__Kind_i8) ? (tos_lit("i8")) : (k == v__table__Kind_i16) ? (tos_lit("i16")) : (k == v__table__Kind_i64) ? (tos_lit("i64")) : (k == v__table__Kind_byte) ? (tos_lit("byte")) : (k == v__table__Kind_u16) ? (tos_lit("u16")) : (k == v__table__Kind_u32) ? (tos_lit("u32")) : (k == v__table__Kind_u64) ? (tos_lit("u64")) : (k == v__table__Kind_any_int) ? (tos_lit("any_int")) : (k == v__table__Kind_f32) ? (tos_lit("f32")) : (k == v__table__Kind_f64) ? (tos_lit("f64")) : (k == v__table__Kind_any_float) ? (tos_lit("any_float")) : (k == v__table__Kind_string) ? (tos_lit("string")) : (k == v__table__Kind_char) ? (tos_lit("char")) : (k == v__table__Kind_bool) ? (tos_lit("bool")) : (k == v__table__Kind_size_t) ? (tos_lit("size_t")) : (k == v__table__Kind_none_) ? (tos_lit("none")) : (k == v__table__Kind_array) ? (tos_lit("array")) : (k == v__table__Kind_array_fixed) ? (tos_lit("array_fixed")) : (k == v__table__Kind_map) ? (tos_lit("map")) : (k == v__table__Kind_multi_return) ? (tos_lit("multi_return")) : (k == v__table__Kind_sum_type) ? (tos_lit("sum_type")) : (k == v__table__Kind_alias) ? (tos_lit("alias")) : (k == v__table__Kind_enum_) ? (tos_lit("enum")) : (k == v__table__Kind_any) ? (tos_lit("any")) : (tos_lit("unknown"));
+	string k_str = (k == v__table__Kind_placeholder) ? (tos_lit("placeholder")) : (k == v__table__Kind_void) ? (tos_lit("void")) : (k == v__table__Kind_voidptr) ? (tos_lit("voidptr")) : (k == v__table__Kind_charptr) ? (tos_lit("charptr")) : (k == v__table__Kind_byteptr) ? (tos_lit("byteptr")) : (k == v__table__Kind_struct_) ? (tos_lit("struct")) : (k == v__table__Kind_int) ? (tos_lit("int")) : (k == v__table__Kind_i8) ? (tos_lit("i8")) : (k == v__table__Kind_i16) ? (tos_lit("i16")) : (k == v__table__Kind_i64) ? (tos_lit("i64")) : (k == v__table__Kind_byte) ? (tos_lit("byte")) : (k == v__table__Kind_u16) ? (tos_lit("u16")) : (k == v__table__Kind_u32) ? (tos_lit("u32")) : (k == v__table__Kind_u64) ? (tos_lit("u64")) : (k == v__table__Kind_any_int) ? (tos_lit("any_int")) : (k == v__table__Kind_f32) ? (tos_lit("f32")) : (k == v__table__Kind_f64) ? (tos_lit("f64")) : (k == v__table__Kind_any_float) ? (tos_lit("any_float")) : (k == v__table__Kind_string) ? (tos_lit("string")) : (k == v__table__Kind_char) ? (tos_lit("char")) : (k == v__table__Kind_bool) ? (tos_lit("bool")) : (k == v__table__Kind_size_t) ? (tos_lit("size_t")) : (k == v__table__Kind_none_) ? (tos_lit("none")) : (k == v__table__Kind_array) ? (tos_lit("array")) : (k == v__table__Kind_array_fixed) ? (tos_lit("array_fixed")) : (k == v__table__Kind_map) ? (tos_lit("map")) : (k == v__table__Kind_multi_return) ? (tos_lit("multi_return")) : (k == v__table__Kind_sum_type) ? (tos_lit("sum_type")) : (k == v__table__Kind_alias) ? (tos_lit("alias")) : (k == v__table__Kind_enum_) ? (tos_lit("enum")) : (k == v__table__Kind_any) ? (tos_lit("any")) : (k == v__table__Kind_function) ? (tos_lit("function")) : (k == v__table__Kind_interface_) ? (tos_lit("interface")) : (k == v__table__Kind_ustring) ? (tos_lit("ustring")) : (tos_lit("generic_struct_inst"));
 	return k_str;
 }
 
@@ -20185,6 +20186,9 @@ void v__scanner__Scanner_codegen(v__scanner__Scanner* s, string newtext) {
 }
 
 bool v__checker__Checker_check_basic(v__checker__Checker* c, v__table__Type got, v__table__Type expected) {
+	if (got == expected) {
+		return true;
+	}
 	v__table__Table* t = c->table;
 	int got_idx = v__table__Type_idx(v__table__Table_unalias_num_type(t, got));
 	int exp_idx = v__table__Type_idx(v__table__Table_unalias_num_type(t, expected));
@@ -20243,24 +20247,47 @@ bool v__checker__Checker_check_basic(v__checker__Checker* c, v__table__Type got,
 		}
 	}
 	if (got_type_sym->kind == v__table__Kind_function && exp_type_sym->kind == v__table__Kind_function) {
-		v__table__FnType* got_info = /* as */ (v__table__FnType*)__as_cast(got_type_sym->info.obj, got_type_sym->info.typ, /*expected:*/260);
-		v__table__FnType* exp_info = /* as */ (v__table__FnType*)__as_cast(exp_type_sym->info.obj, exp_type_sym->info.typ, /*expected:*/260);
-		v__table__Fn got_fn = got_info->func;
-		v__table__Fn exp_fn = exp_info->func;
-		if (got_fn.args.len == exp_fn.args.len && v__checker__Checker_check_basic(c, got_fn.return_type, exp_fn.return_type)) {
-			// FOR IN array
-			array _t497 = got_fn.args;
-			for (int i = 0; i < _t497.len; ++i) {
-				v__table__Arg got_arg = ((v__table__Arg*)_t497.data)[i];
-				v__table__Arg exp_arg = (*(v__table__Arg*)array_get(exp_fn.args, i));
-				if (!v__checker__Checker_check_basic(c, got_arg.typ, exp_arg.typ)) {
-					return false;
-				}
-			}
-			return true;
-		}
+		return v__checker__Checker_check_matching_function_symbols(c, got_type_sym, exp_type_sym);
 	}
 	return false;
+}
+
+bool v__checker__Checker_check_matching_function_symbols(v__checker__Checker* c, v__table__TypeSymbol* got_type_sym, v__table__TypeSymbol* exp_type_sym) {
+	v__table__FnType* got_info = /* as */ (v__table__FnType*)__as_cast(got_type_sym->info.obj, got_type_sym->info.typ, /*expected:*/260);
+	v__table__FnType* exp_info = /* as */ (v__table__FnType*)__as_cast(exp_type_sym->info.obj, exp_type_sym->info.typ, /*expected:*/260);
+	v__table__Fn got_fn = got_info->func;
+	v__table__Fn exp_fn = exp_info->func;
+	if (got_fn.args.len != exp_fn.args.len) {
+		return false;
+	}
+	if (!v__checker__Checker_check_basic(c, got_fn.return_type, exp_fn.return_type)) {
+		return false;
+	}
+	// FOR IN array
+	array _t497 = got_fn.args;
+	for (int i = 0; i < _t497.len; ++i) {
+		v__table__Arg got_arg = ((v__table__Arg*)_t497.data)[i];
+		v__table__Arg exp_arg = (*(v__table__Arg*)array_get(exp_fn.args, i));
+		bool exp_arg_is_ptr = v__table__Type_is_ptr(exp_arg.typ) || v__table__Type_is_pointer(exp_arg.typ);
+		bool got_arg_is_ptr = v__table__Type_is_ptr(got_arg.typ) || v__table__Type_is_pointer(got_arg.typ);
+		if (exp_arg_is_ptr != got_arg_is_ptr) {
+			
+// $if  debug_matching_function_symbols {
+#ifdef CUSTOM_DEFINE_debug_matching_function_symbols
+				string exp_arg_pointedness = (exp_arg_is_ptr ? (tos_lit("a pointer")) : (tos_lit("NOT a pointer")));
+				string got_arg_pointedness = (got_arg_is_ptr ? (tos_lit("a pointer")) : (tos_lit("NOT a pointer")));
+				eprintln(_STR("`%.*s\000` expected fn argument: `%.*s\000` is %.*s\000, but `%.*s\000` actual fn argument: `%.*s\000` is %.*s", 6, exp_fn.name, exp_arg.name, exp_arg_pointedness, got_fn.name, got_arg.name, got_arg_pointedness));
+			
+#endif
+// } debug_matching_function_symbols
+
+			return false;
+		}
+		if (!v__checker__Checker_check_basic(c, got_arg.typ, exp_arg.typ)) {
+			return false;
+		}
+	}
+	return true;
 }
 
 // Attr: [inline]
@@ -20303,10 +20330,10 @@ static v__table__Type v__checker__Checker_promote_num(v__checker__Checker* c, v_
 	v__table__Type type_hi = left_type;
 	v__table__Type type_lo = right_type;
 	if (v__table__Type_idx(type_hi) < v__table__Type_idx(type_lo)) {
-		v__table__Type _var_5835 = type_hi;
-		v__table__Type _var_5844 = type_lo;
-		type_hi = _var_5844;
-		type_lo = _var_5835;
+		v__table__Type _var_6677 = type_hi;
+		v__table__Type _var_6686 = type_lo;
+		type_hi = _var_6686;
+		type_lo = _var_6677;
 	}
 	int idx_hi = v__table__Type_idx(type_hi);
 	int idx_lo = v__table__Type_idx(type_lo);
@@ -20340,6 +20367,9 @@ static v__table__Type v__checker__Checker_promote_num(v__checker__Checker* c, v_
 }
 
 bool v__checker__Checker_check_types(v__checker__Checker* c, v__table__Type got, v__table__Type expected) {
+	if (got == expected) {
+		return true;
+	}
 	int exp_idx = v__table__Type_idx(expected);
 	int got_idx = v__table__Type_idx(got);
 	if (exp_idx == got_idx) {
