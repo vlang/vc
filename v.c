@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "9569655"
+#define V_COMMIT_HASH "cdd4a7c"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "37f31da"
+#define V_COMMIT_HASH "9569655"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "9569655"
+#define V_CURRENT_COMMIT_HASH "cdd4a7c"
 #endif
 
 
@@ -22102,7 +22102,8 @@ static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) 
 		v__table__Type typ = v__checker__Checker_expr(c, node->cond);
 		int typ_idx = v__table__Type_idx(typ);
 		if (node->is_range) {
-			int high_type_idx = v__table__Type_idx(v__checker__Checker_expr(c, node->high));
+			v__table__Type high_type = v__checker__Checker_expr(c, node->high);
+			int high_type_idx = v__table__Type_idx(high_type);
 			if (_IN(int, typ_idx, _const_v__table__integer_type_idxs) && !_IN(int, high_type_idx, _const_v__table__integer_type_idxs)) {
 				v__checker__Checker_error(c, tos_lit("range types do not match"), v__ast__Expr_position(node->cond));
 			} else if (_IN(int, typ_idx, _const_v__table__float_type_idxs) || _IN(int, high_type_idx, _const_v__table__float_type_idxs)) {
@@ -22112,7 +22113,6 @@ static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) 
 			} else if (typ_idx == _const_v__table__string_type_idx || high_type_idx == _const_v__table__string_type_idx) {
 				v__checker__Checker_error(c, tos_lit("range type can not be string"), v__ast__Expr_position(node->cond));
 			}
-			v__checker__Checker_expr(c, node->high);
 		} else {
 			v__ast__Scope* scope = v__ast__Scope_innermost(c->file.scope, node->pos.pos);
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, typ);
