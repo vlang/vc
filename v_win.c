@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "1416c70"
+#define V_COMMIT_HASH "8d035a4"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "271786b"
+#define V_COMMIT_HASH "1416c70"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "1416c70"
+#define V_CURRENT_COMMIT_HASH "8d035a4"
 #endif
 
 
@@ -4540,6 +4540,7 @@ v__table__Type v__parser__Parser_parse_map_type(v__parser__Parser* p);
 v__table__Type v__parser__Parser_parse_multi_return_type(v__parser__Parser* p);
 v__table__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name);
 v__table__Type v__parser__Parser_parse_type_with_mut(v__parser__Parser* p, bool is_mut);
+v__table__Language v__parser__Parser_parse_language(v__parser__Parser* p);
 v__table__Type v__parser__Parser_parse_type(v__parser__Parser* p);
 v__table__Type v__parser__Parser_parse_any_type(v__parser__Parser* p, v__table__Language language, bool is_ptr);
 v__table__Type v__parser__Parser_parse_enum_or_struct_type(v__parser__Parser* p, string name);
@@ -24802,11 +24803,28 @@ v__table__Type v__parser__Parser_parse_type_with_mut(v__parser__Parser* p, bool 
 	return typ;
 }
 
+v__table__Language v__parser__Parser_parse_language(v__parser__Parser* p) {
+	v__table__Language language = (string_eq(p->tok.lit, tos_lit("C")) ? (v__table__Language_c) : string_eq(p->tok.lit, tos_lit("JS")) ? (v__table__Language_js) : (v__table__Language_v));
+	if (language != v__table__Language_v) {
+		v__parser__Parser_next(p);
+		v__parser__Parser_check(p, v__token__Kind_dot);
+	}
+	return language;
+}
+
 v__table__Type v__parser__Parser_parse_type(v__parser__Parser* p) {
 	bool is_optional = false;
 	if (p->tok.kind == v__token__Kind_question) {
+		int line_nr = p->tok.line_nr;
 		v__parser__Parser_next(p);
 		is_optional = true;
+		if (p->tok.line_nr > line_nr) {
+			v__table__Type typ = _const_v__table__void_type;
+			if (is_optional) {
+				typ = v__table__Type_set_flag(typ, v__table__TypeFlag_optional);
+			}
+			return typ;
+		}
 	}
 	bool is_shared = (p->tok.kind == v__token__Kind_key_shared || p->tok.kind == v__token__Kind_key_rwshared);
 	bool is_atomic_or_rw = (p->tok.kind == v__token__Kind_key_rwshared || p->tok.kind == v__token__Kind_key_atomic);
@@ -24819,11 +24837,7 @@ v__table__Type v__parser__Parser_parse_type(v__parser__Parser* p) {
 		nr_muls++;
 		v__parser__Parser_next(p);
 	}
-	v__table__Language language = (string_eq(p->tok.lit, tos_lit("C")) ? (v__table__Language_c) : string_eq(p->tok.lit, tos_lit("JS")) ? (v__table__Language_js) : (v__table__Language_v));
-	if (language != v__table__Language_v) {
-		v__parser__Parser_next(p);
-		v__parser__Parser_check(p, v__token__Kind_dot);
-	}
+	v__table__Language language = v__parser__Parser_parse_language(p);
 	v__table__Type typ = _const_v__table__void_type;
 	if (p->tok.kind != v__token__Kind_lcbr) {
 		v__token__Position pos = v__token__Token_position(&p->tok);
