@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "0fb28eb"
+#define V_COMMIT_HASH "cda9240"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "b525553"
+#define V_COMMIT_HASH "0fb28eb"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "0fb28eb"
+#define V_CURRENT_COMMIT_HASH "cda9240"
 #endif
 
 
@@ -5577,7 +5577,9 @@ string strings__Builder_str(strings__Builder* b) {
 }
 
 void strings__Builder_free(strings__Builder* b) {
+	{ // Unsafe block
 		v_free(b->buf.data);
+	}
 	b->len = 0;
 	b->str_calls = 0;
 }
@@ -5649,7 +5651,9 @@ string strings__repeat(byte c, int n) {
 		return tos_lit("");
 	}
 	byte* bytes = ((byte*)(0));
+	{ // Unsafe block
 		bytes = v_malloc(n + 1);
+	}
 	memset(bytes, c, n);
 	bytes[n] = '0';
 	return tos((byteptr)bytes, n);
@@ -5662,7 +5666,9 @@ string strings__repeat_string(string s, int n) {
 	int slen = s.len;
 	int blen = slen * n;
 	byte* bytes = ((byte*)(0));
+	{ // Unsafe block
 		bytes = v_malloc(blen + 1);
+	}
 	for (int bi = 0; bi < n; ++bi) {
 		int bislen = bi * slen;
 		for (int si = 0; si < slen; ++si) {
@@ -5696,6 +5702,7 @@ inline static u64 hash__wyhash__wyhash64(byteptr key, u64 len, u64 seed_) {
 	byte* p = &key[0];
 	u64 seed = seed_;
 	u64 i = (len & 63);
+	{ // Unsafe block
 		if (i < 4) {
 			seed = hash__wyhash__wymum(((hash__wyhash__wyr3(p, i) ^ seed) ^ _const_hash__wyhash__wyp0), (seed ^ _const_hash__wyhash__wyp1));
 		} else if (i <= 8) {
@@ -5709,12 +5716,14 @@ inline static u64 hash__wyhash__wyhash64(byteptr key, u64 len, u64 seed_) {
 		} else {
 			seed = (((hash__wyhash__wymum(((hash__wyhash__wyr8(p) ^ seed) ^ _const_hash__wyhash__wyp0), ((hash__wyhash__wyr8(p + 8) ^ seed) ^ _const_hash__wyhash__wyp1)) ^ hash__wyhash__wymum(((hash__wyhash__wyr8(p + 16) ^ seed) ^ _const_hash__wyhash__wyp2), ((hash__wyhash__wyr8(p + 24) ^ seed) ^ _const_hash__wyhash__wyp3))) ^ hash__wyhash__wymum(((hash__wyhash__wyr8(p + i - 32) ^ seed) ^ _const_hash__wyhash__wyp1), ((hash__wyhash__wyr8(p + i - 24) ^ seed) ^ _const_hash__wyhash__wyp2))) ^ hash__wyhash__wymum(((hash__wyhash__wyr8(p + i - 16) ^ seed) ^ _const_hash__wyhash__wyp3), ((hash__wyhash__wyr8(p + i - 8) ^ seed) ^ _const_hash__wyhash__wyp0)));
 		}
+	}
 	if (i == len) {
 		return hash__wyhash__wymum(seed, (len ^ _const_hash__wyhash__wyp4));
 	}
 	u64 see1 = seed;
 	u64 see2 = seed;
 	u64 see3 = seed;
+	{ // Unsafe block
 		p = p + i;
 		for (i = len - i; i >= 64; i -= 64) {
 			seed = hash__wyhash__wymum(((hash__wyhash__wyr8(p) ^ seed) ^ _const_hash__wyhash__wyp0), ((hash__wyhash__wyr8(p + 8) ^ seed) ^ _const_hash__wyhash__wyp1));
@@ -5723,6 +5732,7 @@ inline static u64 hash__wyhash__wyhash64(byteptr key, u64 len, u64 seed_) {
 			see3 = hash__wyhash__wymum(((hash__wyhash__wyr8(p + 48) ^ see3) ^ _const_hash__wyhash__wyp3), ((hash__wyhash__wyr8(p + 56) ^ see3) ^ _const_hash__wyhash__wyp0));
 			p = p + 64;
 		}
+	}
 	return hash__wyhash__wymum(((seed ^ see1) ^ see2), ((see3 ^ len) ^ _const_hash__wyhash__wyp4));
 }
 
@@ -8011,7 +8021,9 @@ static array __new_array_with_default(int mylen, int cap, int elm_size, voidptr 
 	array arr = (array){.element_size = elm_size, .data = vcalloc(cap_ * elm_size), .len = mylen, .cap = cap_};
 	if (val != 0) {
 		for (int i = 0; i < arr.len; ++i) {
+			{ // Unsafe block
 				array_set_unsafe(&arr, i, val);
+			}
 		}
 	}
 	return arr;
@@ -8022,7 +8034,9 @@ static array __new_array_with_array_default(int mylen, int cap, int elm_size, ar
 	array arr = (array){.element_size = elm_size, .data = vcalloc(cap_ * elm_size), .len = mylen, .cap = cap_};
 	for (int i = 0; i < arr.len; ++i) {
 		array val_clone = array_clone(&val);
+		{ // Unsafe block
 			array_set_unsafe(&arr, i, &val_clone);
+		}
 	}
 	return arr;
 }
@@ -8074,9 +8088,13 @@ array array_repeat(array a, int count) {
 			};
 			memcpy(&ary, a.data, /*SizeOfType*/ sizeof(struct array));
 			array ary_clone = array_clone(&ary);
+			{ // Unsafe block
 				memcpy(array_get_unsafe(arr, i * a.len), &ary_clone, a.len * a.element_size);
+			}
 		} else {
+			{ // Unsafe block
 				memcpy(array_get_unsafe(arr, i * a.len), ((byteptr)(a.data)), a.len * a.element_size);
+			}
 		}
 	}
 	return arr;
@@ -8098,8 +8116,10 @@ void array_insert(array* a, int i, voidptr val) {
 // } no_bounds_checking
 
 	array_ensure_cap(a, a->len + 1);
+	{ // Unsafe block
 		memmove(array_get_unsafe(/*rec*/*a, i + 1), array_get_unsafe(/*rec*/*a, i), (a->len - i) * a->element_size);
 		array_set_unsafe(a, i, val);
+	}
 	a->len++;
 }
 
@@ -8116,9 +8136,11 @@ void array_insert_many(array* a, int i, voidptr val, int size) {
 
 	array_ensure_cap(a, a->len + size);
 	int elem_size = a->element_size;
+	{ // Unsafe block
 		voidptr iptr = array_get_unsafe(/*rec*/*a, i);
 		memmove(array_get_unsafe(/*rec*/*a, i + size), iptr, (a->len - i) * elem_size);
 		memcpy(iptr, val, size * elem_size);
+	}
 	a->len += size;
 }
 
@@ -8141,7 +8163,9 @@ void array_delete(array* a, int i) {
 #endif
 // } no_bounds_checking
 
+	{ // Unsafe block
 		memmove(array_get_unsafe(/*rec*/*a, i), array_get_unsafe(/*rec*/*a, i + 1), (a->len - i - 1) * a->element_size);
+	}
 	a->len--;
 }
 
@@ -8158,7 +8182,9 @@ void array_trim(array* a, int index) {
 // Attr: [inline]
 // Attr: [unsafe_fn]
 inline static voidptr array_get_unsafe(array a, int i) {
+	{ // Unsafe block
 		return ((byteptr)(a.data)) + i * a.element_size;
+	}
 }
 
 static voidptr array_get(array a, int i) {
@@ -8172,7 +8198,9 @@ static voidptr array_get(array a, int i) {
 #endif
 // } no_bounds_checking
 
+	{ // Unsafe block
 		return ((byteptr)(a.data)) + i * a.element_size;
+	}
 }
 
 voidptr array_first(array a) {
@@ -8200,7 +8228,9 @@ voidptr array_last(array a) {
 #endif
 // } no_bounds_checking
 
+	{ // Unsafe block
 		return ((byteptr)(a.data)) + (a.len - 1) * a.element_size;
+	}
 }
 
 static array array_slice(array a, int start, int _end) {
@@ -8222,7 +8252,9 @@ static array array_slice(array a, int start, int _end) {
 // } no_bounds_checking
 
 	byteptr data = ((byteptr)(0));
+	{ // Unsafe block
 		data = ((byteptr)(a.data)) + start * a.element_size;
+	}
 	int l = end - start;
 	array res = (array){.element_size = a.element_size, .data = data, .len = l, .cap = l};
 	return res;
@@ -8279,7 +8311,9 @@ static array array_slice_clone(array* a, int start, int _end) {
 // } no_bounds_checking
 
 	byteptr data = ((byteptr)(0));
+	{ // Unsafe block
 		data = ((byteptr)(a->data)) + start * a->element_size;
+	}
 	int l = end - start;
 	array res = (array){.element_size = a->element_size, .data = data, .len = l, .cap = l};
 	return array_clone(&res);
@@ -8288,7 +8322,9 @@ static array array_slice_clone(array* a, int start, int _end) {
 // Attr: [inline]
 // Attr: [unsafe_fn]
 inline static void array_set_unsafe(array* a, int i, voidptr val) {
+	{ // Unsafe block
 		memcpy(((byteptr)(a->data)) + a->element_size * i, val, a->element_size);
+	}
 }
 
 static void array_set(array* a, int i, voidptr val) {
@@ -8302,12 +8338,16 @@ static void array_set(array* a, int i, voidptr val) {
 #endif
 // } no_bounds_checking
 
+	{ // Unsafe block
 		memcpy(((byteptr)(a->data)) + a->element_size * i, val, a->element_size);
+	}
 }
 
 static void array_push(array* a, voidptr val) {
 	array_ensure_cap(a, a->len + 1);
+	{ // Unsafe block
 		memcpy(((byteptr)(a->data)) + a->element_size * a->len, val, a->element_size);
+	}
 	a->len++;
 }
 
@@ -8315,10 +8355,14 @@ void array_push_many(array* a3, voidptr val, int size) {
 	if (a3->data == val) {
 		array copy = array_clone(a3);
 		array_ensure_cap(a3, a3->len + size);
+		{ // Unsafe block
 			memcpy(array_get_unsafe(/*rec*/*a3, a3->len), copy.data, a3->element_size * size);
+		}
 	} else {
 		array_ensure_cap(a3, a3->len + size);
+		{ // Unsafe block
 			memcpy(array_get_unsafe(/*rec*/*a3, a3->len), val, a3->element_size * size);
+		}
 	}
 	a3->len += size;
 }
@@ -8329,7 +8373,9 @@ array array_reverse(array a) {
 	}
 	array arr = (array){.element_size = a.element_size, .data = vcalloc(a.cap * a.element_size), .len = a.len, .cap = a.cap};
 	for (int i = 0; i < a.len; ++i) {
+		{ // Unsafe block
 			array_set_unsafe(&arr, i, array_get_unsafe(a, a.len - 1 - i));
+		}
 	}
 	return arr;
 }
@@ -8562,7 +8608,9 @@ void print(string s) {
 			u16* wide_str = string_to_wide(s);
 			int wide_len = wcslen(wide_str);
 			WriteConsole(output_handle, wide_str, wide_len, &bytes_written, 0);
+			{ // Unsafe block
 				v_free(wide_str);
+			}
 		} else {
 			WriteFile(output_handle, s.str, s.len, &bytes_written, 0);
 		}
@@ -8602,7 +8650,9 @@ byteptr v_malloc(int n) {
 // $if  prealloc {
 #ifdef VPREALLOC
 		byteptr res = g_m2_ptr;
+		{ // Unsafe block
 			g_m2_ptr += n;
+		}
 		nr_mallocs++;
 		return res;
 	
@@ -8943,7 +8993,9 @@ inline string int_str_l(int nn, int max) {
 		index--;
 		buf[index] = '-';
 	}
+	{ // Unsafe block
 		memmove(buf, buf + index, (max - index) + 1);
+	}
 	return tos(buf, (max - index));
 }
 
@@ -8984,7 +9036,9 @@ string u32_str(u32 nn) {
 	if (d < ((u32)(20))) {
 		index++;
 	}
+	{ // Unsafe block
 		memmove(buf, buf + index, (max - index) + 1);
+	}
 	return tos(buf, (max - index));
 }
 
@@ -9023,7 +9077,9 @@ string i64_str(i64 nn) {
 		index--;
 		buf[index] = '-';
 	}
+	{ // Unsafe block
 		memmove(buf, buf + index, (max - index) + 1);
+	}
 	return tos(buf, (max - index));
 }
 
@@ -9048,7 +9104,9 @@ string u64_str(u64 nn) {
 	if (d < 20) {
 		index++;
 	}
+	{ // Unsafe block
 		memmove(buf, buf + index, (max - index) + 1);
+	}
 	return tos(buf, (max - index));
 }
 
@@ -9074,7 +9132,9 @@ string byte_hex(byte nn) {
 		buf[index--] = (d < 10 ? (d + '0') : (d + 87));
 	}
 	index++;
+	{ // Unsafe block
 		return tos(buf + index, (max - index));
+	}
 }
 
 string i8_hex(i8 nn) {
@@ -9096,7 +9156,9 @@ string u16_hex(u16 nn) {
 		buf[index--] = (d < 10 ? (d + '0') : (d + 87));
 	}
 	index++;
+	{ // Unsafe block
 		return tos(buf + index, (max - index));
+	}
 }
 
 string i16_hex(i16 nn) {
@@ -9118,7 +9180,9 @@ string u32_hex(u32 nn) {
 		buf[index--] = (d < 10 ? (d + '0') : (d + 87));
 	}
 	index++;
+	{ // Unsafe block
 		return tos(buf + index, (max - index));
+	}
 }
 
 string int_hex(int nn) {
@@ -9144,7 +9208,9 @@ string u64_hex(u64 nn) {
 		buf[index--] = (d < 10 ? (d + '0') : (d + 87));
 	}
 	index++;
+	{ // Unsafe block
 		memmove(buf, buf + index, (max - index) + 1);
+	}
 	return tos(buf, (max - index));
 }
 
@@ -9242,7 +9308,9 @@ inline static u32 DenseArray_push(DenseArray* d, string key, voidptr value) {
 	}
 	u32 push_index = d->len;
 	d->keys[push_index] = key;
+	{ // Unsafe block
 		memcpy(d->values + push_index * ((u32)(d->value_bytes)), value, d->value_bytes);
+	}
 	d->len++;
 	return push_index;
 }
@@ -9258,7 +9326,9 @@ static voidptr DenseArray_get(DenseArray d, int i) {
 #endif
 // } no_bounds_checking
 
+	{ // Unsafe block
 		return ((byteptr)(d.keys)) + i * ((int)(/*SizeOfType*/ sizeof(string)));
+	}
 }
 
 static void DenseArray_zeros_to_end(DenseArray* d) {
@@ -9269,9 +9339,11 @@ static void DenseArray_zeros_to_end(DenseArray* d) {
 			string tmp_key = d->keys[count];
 			d->keys[count] = d->keys[i];
 			d->keys[i] = tmp_key;
+			{ // Unsafe block
 				memcpy(tmp_value, d->values + count * ((u32)(d->value_bytes)), d->value_bytes);
 				memcpy(d->values + count * ((u32)(d->value_bytes)), d->values + i * d->value_bytes, d->value_bytes);
 				memcpy(d->values + i * d->value_bytes, tmp_value, d->value_bytes);
+			}
 			count++;
 		}
 	}
@@ -9290,7 +9362,9 @@ static map new_map_1(int value_bytes) {
 static map new_map_init(int n, int value_bytes, string* keys, voidptr values) {
 	map out = new_map_1(value_bytes);
 	for (int i = 0; i < n; ++i) {
+		{ // Unsafe block
 			map_set(&out, keys[i], ((byteptr)(values)) + i * value_bytes);
+		}
 	}
 	return out;
 }
@@ -9342,8 +9416,10 @@ inline static void map_ensure_extra_metas(map* m, u32 probe_count) {
 	if ((probe_count << 1) == m->extra_metas) {
 		m->extra_metas += _const_extra_metas_inc;
 		u32 mem_size = (m->cap + 2 + m->extra_metas);
+		{ // Unsafe block
 			m->metas = ((u32*)(realloc(m->metas, /*SizeOfType*/ sizeof(u32) * mem_size)));
 			memset(m->metas + mem_size - _const_extra_metas_inc, 0, /*SizeOfType*/ sizeof(u32) * _const_extra_metas_inc);
+		}
 		if (probe_count == 252) {
 			v_panic(tos_lit("Probe overflow"));
 		}
@@ -9365,7 +9441,9 @@ static void map_set(map* m, string k, voidptr value) {
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
+			{ // Unsafe block
 				memcpy(m->key_values.values + kv_index * ((u32)(m->value_bytes)), value, m->value_bytes);
+			}
 			return;
 		}
 		index += 2;
@@ -9426,7 +9504,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
+	{ // Unsafe block
 		v_free(old_metas);
+	}
 }
 
 static voidptr map_get_and_set(map* m, string key, voidptr zero) {
@@ -9438,7 +9518,9 @@ static voidptr map_get_and_set(map* m, string key, voidptr zero) {
 			if (meta == m->metas[index]) {
 				u32 kv_index = m->metas[index + 1];
 				if (fast_string_eq(key, m->key_values.keys[kv_index])) {
+					{ // Unsafe block
 						return ((voidptr)(m->key_values.values + kv_index * ((u32)(m->value_bytes))));
+					}
 				}
 			}
 			index += 2;
@@ -9459,7 +9541,9 @@ static voidptr map_get(map m, string key, voidptr zero) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
 			if (fast_string_eq(key, m.key_values.keys[kv_index])) {
+				{ // Unsafe block
 					return ((voidptr)(m.key_values.values + kv_index * ((u32)(m.value_bytes))));
+				}
 			}
 		}
 		index += 2;
@@ -9589,11 +9673,13 @@ string OptionBase_str(OptionBase o) {
 }
 
 static void opt_ok2(voidptr data, OptionBase* option, int size) {
+	{ // Unsafe block
 		*option = (OptionBase){.ok = true, 	.is_none = 0,
 			.v_error = (string){.str=""},
 			.ecode = 0,
 		};
 		memcpy(((byteptr)(&option->ecode)) + /*SizeOfType*/ sizeof(int), data, size);
+	}
 }
 
 string Option_str(Option o) {
@@ -9644,7 +9730,9 @@ static SortedMap new_sorted_map(int n, int value_bytes) {
 static SortedMap new_sorted_map_init(int n, int value_bytes, string* keys, voidptr values) {
 	SortedMap out = new_sorted_map(n, value_bytes);
 	for (int i = 0; i < n; ++i) {
+		{ // Unsafe block
 			SortedMap_set(&out, keys[i], ((byteptr)(values)) + i * value_bytes);
+		}
 	}
 	return out;
 }
@@ -11329,7 +11417,9 @@ u16* string_to_wide(string _str) {
 		u16* wstr = ((u16*)(v_malloc((num_chars + 1) * 2)));
 		if (wstr != 0) {
 			MultiByteToWideChar(_const_cp_utf8, 0, _str.str, _str.len, wstr, num_chars);
+			{ // Unsafe block
 				memset(((byte*)(wstr)) + num_chars * 2, 0, 2);
+			}
 		}
 		return wstr;
 	
@@ -11364,7 +11454,9 @@ string string_from_wide2(u16* _wstr, int len) {
 		byteptr str_to = v_malloc(num_chars + 1);
 		if (str_to != 0) {
 			WideCharToMultiByte(_const_cp_utf8, 0, _wstr, len, str_to, num_chars, 0, 0);
+			{ // Unsafe block
 				memset(str_to + num_chars, 0, 1);
+			}
 		}
 		return tos2(str_to);
 	
@@ -11533,7 +11625,9 @@ map_string_string os__environ() {
 			if (eq_index > 0) {
 				map_set(&res, string_substr(eline, 0, eq_index), &(string[]) { string_substr(eline, eq_index + 1, eline.len) });
 			}
+			{ // Unsafe block
 				c = c + eline.len + 1;
+			}
 		}
 		FreeEnvironmentStringsW(estrings);
 	
@@ -11648,7 +11742,9 @@ Option_string os__read_file(string path) {
 	int fsize = ftell(fp);
 	rewind(fp);
 	byte* str = ((byte*)(0));
+	{ // Unsafe block
 		str = v_malloc(fsize + 1);
+	}
 	fread(str, fsize, 1, fp);
 	str[fsize] = 0;
 	// defer
@@ -12407,6 +12503,7 @@ string os__get_raw_line() {
 	
 // $if  windows {
 #ifdef _WIN32
+		{ // Unsafe block
 			int max_line_chars = 256;
 			byteptr buf = v_malloc(max_line_chars * 2);
 			voidptr h_input = GetStdHandle(_const_os__std_input_handle);
@@ -12429,6 +12526,7 @@ string os__get_raw_line() {
 				offset++;
 			}
 			return tos((byteptr)buf, offset);
+		}
 	
 #else
 		size_t max = ((size_t)(0));
@@ -12448,6 +12546,7 @@ array_byte os__get_raw_stdin() {
 	
 // $if  windows {
 #ifdef _WIN32
+		{ // Unsafe block
 			int block_bytes = 512;
 			byteptr buf = v_malloc(block_bytes);
 			voidptr h_input = GetStdHandle(_const_os__std_input_handle);
@@ -12464,6 +12563,7 @@ array_byte os__get_raw_stdin() {
 			}
 			CloseHandle(h_input);
 			return (array){.element_size = 1, .data = ((voidptr)(buf)), .len = offset, .cap = offset};
+		}
 	
 #else
 		v_panic(tos_lit("get_raw_stdin not implemented on this platform..."));
@@ -13182,6 +13282,7 @@ os__HANDLE os__get_file_handle(string path) {
 }
 
 Option_string os__get_module_filename(os__HANDLE handle) {
+	{ // Unsafe block
 		int sz = 4096;
 		u16* buf = ((u16*)(v_malloc(4096)));
 		while (1) {
@@ -13194,6 +13295,7 @@ Option_string os__get_module_filename(os__HANDLE handle) {
 				return *(Option_string*)&_t175;
 			};
 		}
+	}
 	v_panic(tos_lit("this should be unreachable"));
 }
 
@@ -13823,7 +13925,9 @@ Option_time__Time time__parse_rfc2822(string s) {
 		int pos = *(int*)_t204.data;
 	int mm = pos / 3 + 1;
 	byteptr tmstr = ((byteptr)(0));
+	{ // Unsafe block
 		tmstr = v_malloc(s.len * 2);
+	}
 	int count = snprintf(((charptr)(tmstr)), (s.len * 2), "%s-%02d-%s %s", (*(string*)array_get(fields, 3)).str, mm, (*(string*)array_get(fields, 1)).str, (*(string*)array_get(fields, 4)).str);
 	return time__parse(tos(tmstr, count));
 }
@@ -18906,6 +19010,7 @@ static string v__scanner__Scanner_ident_struct_name(v__scanner__Scanner* s) {
 }
 
 static string v__scanner__filter_num_sep(byteptr txt, int start, int end) {
+	{ // Unsafe block
 		byteptr b = v_malloc(end - start + 1);
 		int i1 = 0;
 		for (int i = start; i < end; i++) {
@@ -18916,6 +19021,7 @@ static string v__scanner__filter_num_sep(byteptr txt, int start, int end) {
 		}
 		b[i1] = 0;
 		return tos2((byteptr)b);
+	}
 }
 
 static string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner* s) {
@@ -27721,7 +27827,9 @@ static void v__gen__Gen_stmt(v__gen__Gen* g, v__ast__Stmt node) {
 	} else if (node.typ == 228 /* v.ast.UnsafeStmt */) {
 		v__ast__UnsafeStmt* it = (v__ast__UnsafeStmt*)node.obj; // ST it
 		v__ast__UnsafeStmt* node = it;
+		v__gen__Gen_writeln(g, tos_lit("{ // Unsafe block"));
 		v__gen__Gen_stmts(g, node->stmts);
+		v__gen__Gen_writeln(g, tos_lit("}"));
 	};
 	array_delete(&g->stmt_path_pos, g->stmt_path_pos.len - 1);
 // defer
@@ -29841,9 +29949,9 @@ static void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__TypeSymbol t
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_84988 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_84988.arg0;
-						string base = mr_84988.arg1;
+						multi_return_string_string mr_85040 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_85040.arg0;
+						string base = mr_85040.arg1;
 						array_push(&g->optionals, _MOV((string[]){ styp }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -29949,9 +30057,9 @@ static array_v__table__TypeSymbol v__gen__Gen_sort_structs(v__gen__Gen g, array_
 
 static Option_bool v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr expr, v__table__Type etype) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, etype);
-	multi_return_bool_bool_int mr_88317 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_88317.arg0;
-	bool str_method_expects_ptr = mr_88317.arg1;
+	multi_return_bool_bool_int mr_88369 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_88369.arg0;
+	bool str_method_expects_ptr = mr_88369.arg1;
 	if (v__table__Type_has_flag(etype, v__table__TypeFlag_variadic)) {
 		string str_fn_name = v__gen__Gen_gen_str_for_type(g, etype);
 		v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -30247,11 +30355,11 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExpr
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->fn_decl->name, tos_lit("main.main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_96777 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_96777.arg0;
-				string pafile = mr_96777.arg1;
-				string pamod = mr_96777.arg2;
-				string pafn = mr_96777.arg3;
+				multi_return_int_string_string_string mr_96829 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_96829.arg0;
+				string pafile = mr_96829.arg1;
+				string pamod = mr_96829.arg2;
+				string pafn = mr_96829.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(%.*s\000.v_error);", 2, cvar_name));
@@ -30613,10 +30721,10 @@ inline static string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Type
 static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_106657 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_106657.arg0;
-	bool str_method_expects_ptr = mr_106657.arg1;
-	int str_nr_args = mr_106657.arg2;
+	multi_return_bool_bool_int mr_106709 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_106709.arg0;
+	bool str_method_expects_ptr = mr_106709.arg1;
+	int str_nr_args = mr_106709.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -30807,9 +30915,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_114345 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_114345.arg0;
-	bool str_method_expects_ptr = mr_114345.arg1;
+	multi_return_bool_bool_int mr_114397 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_114397.arg0;
+	bool str_method_expects_ptr = mr_114397.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -30861,9 +30969,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_117164 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_117164.arg0;
-	bool str_method_expects_ptr = mr_117164.arg1;
+	multi_return_bool_bool_int mr_117216 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_117216.arg0;
+	bool str_method_expects_ptr = mr_117216.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -30983,9 +31091,9 @@ static void v__gen__Gen_gen_str_for_multi_return(v__gen__Gen* g, v__table__Multi
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 		string field_styp = v__gen__Gen_typ(g, typ);
 		bool is_arg_ptr = v__table__Type_is_ptr(typ);
-		multi_return_bool_bool_int mr_123112 = v__table__TypeSymbol_str_method_info(sym);
-		bool sym_has_str_method = mr_123112.arg0;
-		bool str_method_expects_ptr = mr_123112.arg1;
+		multi_return_bool_bool_int mr_123164 = v__table__TypeSymbol_str_method_info(sym);
+		bool sym_has_str_method = mr_123164.arg0;
+		bool str_method_expects_ptr = mr_123164.arg1;
 		string arg_str_fn_name = tos_lit("");
 		if (sym_has_str_method) {
 			arg_str_fn_name = (is_arg_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -36485,6 +36593,7 @@ static Option_string v__builder__find_windows_kit_internal(v__builder__RegKey ke
 	
 // $if  windows {
 #ifdef _WIN32
+		{ // Unsafe block
 			// FOR IN array
 			array _t1273 = versions;
 			for (int _t1274 = 0; _t1274 < _t1273.len; ++_t1274) {
@@ -36512,6 +36621,7 @@ static Option_string v__builder__find_windows_kit_internal(v__builder__RegKey ke
 				Option_string _t1275;/*:)string*/opt_ok2(&(string[]) { res }, (OptionBase*)(&_t1275), sizeof(string));
 				return _t1275;
 			}
+		}
 	
 #endif
 // } windows
