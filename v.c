@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "96bd4e8"
+#define V_COMMIT_HASH "3618366"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "9d7f1a2"
+#define V_COMMIT_HASH "96bd4e8"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "96bd4e8"
+#define V_CURRENT_COMMIT_HASH "3618366"
 #endif
 
 
@@ -31384,14 +31384,15 @@ static void v__gen__Gen_comp_if(v__gen__Gen* g, v__ast__CompIf it) {
 }
 
 static void v__gen__Gen_comp_for(v__gen__Gen* g, v__ast__CompFor node) {
-	v__gen__Gen_writeln(g, string_add(tos_lit("// comptime $"), tos_lit("for {")));
+	v__gen__Gen_writeln(g, string_add(tos_lit("// 2comptime $"), tos_lit("for {")));
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, v__gen__Gen_unwrap_generic(g, node.typ));
+	v__table__Type vweb_result_type = v__table__new_type(v__table__Table_find_type_idx(g->table, tos_lit("vweb.Result")));
 	int i = 0;
 	// FOR IN array
 	array _t960 = sym->methods;
 	for (int _t961 = 0; _t961 < _t960.len; ++_t961) {
 		v__table__Fn method = ((v__table__Fn*)_t960.data)[_t961];
-		if (method.attrs.len == 0) {
+		if (method.return_type != vweb_result_type) {
 			continue;
 		}
 		g->comp_for_method = method.name;
@@ -31403,7 +31404,11 @@ static void v__gen__Gen_comp_for(v__gen__Gen* g, v__ast__CompFor node) {
 		if (i == 0) {
 			v__gen__Gen_write(g, tos_lit("\tstring "));
 		}
-		v__gen__Gen_writeln(g, _STR("attrs = tos_lit(\"%.*s\000\");", 2, (*(string*)array_get(method.attrs, 0))));
+		if (method.attrs.len == 0) {
+			v__gen__Gen_writeln(g, tos_lit("attrs = tos_lit(\"\");"));
+		} else {
+			v__gen__Gen_writeln(g, _STR("attrs = tos_lit(\"%.*s\000\");", 2, (*(string*)array_get(method.attrs, 0))));
+		}
 		v__gen__Gen_stmts(g, node.stmts);
 		i++;
 		v__gen__Gen_writeln(g, tos_lit(""));
