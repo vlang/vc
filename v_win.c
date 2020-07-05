@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "cda9240"
+#define V_COMMIT_HASH "34a24ea"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "0fb28eb"
+#define V_COMMIT_HASH "cda9240"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "cda9240"
+#define V_CURRENT_COMMIT_HASH "34a24ea"
 #endif
 
 
@@ -22018,6 +22018,12 @@ static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) 
 		c->in_for_count++;
 		v__table__Type typ = v__checker__Checker_expr(c, node->cond);
 		int typ_idx = v__table__Type_idx(typ);
+		if (node->key_var.len > 0 && string_ne(node->key_var, tos_lit("_"))) {
+			v__checker__Checker_check_valid_snake_case(c, node->key_var, tos_lit("variable name"), node->pos);
+		}
+		if (node->val_var.len > 0 && string_ne(node->val_var, tos_lit("_"))) {
+			v__checker__Checker_check_valid_snake_case(c, node->val_var, tos_lit("variable name"), node->pos);
+		}
 		if (node->is_range) {
 			v__table__Type high_type = v__checker__Checker_expr(c, node->high);
 			int high_type_idx = v__table__Type_idx(high_type);
