@@ -1,12 +1,12 @@
-#define V_COMMIT_HASH "8d035a4"
+#define V_COMMIT_HASH "d0e321c"
 
 #ifndef V_COMMIT_HASH
-#define V_COMMIT_HASH "1416c70"
+#define V_COMMIT_HASH "8d035a4"
 #endif
 
 
 #ifndef V_CURRENT_COMMIT_HASH
-#define V_CURRENT_COMMIT_HASH "8d035a4"
+#define V_CURRENT_COMMIT_HASH "d0e321c"
 #endif
 
 
@@ -25458,6 +25458,8 @@ v__ast__Stmt v__parser__Parser_top_stmt(v__parser__Parser* p) {
 				.body_pos = {0},
 			.file = p->file_name, 	.is_generic = 0,
 			.return_type = _const_v__table__void_type}}, sizeof(v__ast__FnDecl)), .typ = 124 /* v.ast.FnDecl */};
+		} else if (p->pref->is_fmt) {
+			return v__parser__Parser_stmt(p, false);
 		} else {
 			v__parser__Parser_error(p, string_add(tos_lit("bad top level statement "), v__token__Token_str(p->tok)));
 			return (v__ast__Stmt){
