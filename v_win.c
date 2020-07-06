@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6b2777e"
+#define V_COMMIT_HASH "659aa8d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d82e6c9"
+	#define V_COMMIT_HASH "6b2777e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6b2777e"
+	#define V_CURRENT_COMMIT_HASH "659aa8d"
 #endif
 
 // V typedefs:
@@ -34243,6 +34243,9 @@ static void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__ast__Infix
 			v__gen__js__JsGen_write(g, _STR(" %.*s\000 ", 2, v__token__Kind_str(it.op)));
 		}
 		v__gen__js__JsGen_expr(g, it.right);
+		if (it.op == v__token__Kind_div && it.left_type == _const_v__table__any_int_type_idx && it.right_type == _const_v__table__any_int_type_idx) {
+			v__gen__js__JsGen_write(g, tos_lit("|0"));
+		}
 	}
 }
 
