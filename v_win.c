@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c94038a"
+#define V_COMMIT_HASH "25771a1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c3614c0"
+	#define V_COMMIT_HASH "c94038a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c94038a"
+	#define V_CURRENT_COMMIT_HASH "25771a1"
 #endif
 
 // V typedefs:
@@ -1568,7 +1568,6 @@ struct v__pref__Preferences {
 	bool sanitize;
 	bool is_debug;
 	bool is_vlines;
-	bool keep_c;
 	bool show_cc;
 	bool use_cache;
 	bool is_stats;
@@ -14780,7 +14779,6 @@ v__pref__Preferences v__pref__new_preferences() {
 		.sanitize = 0,
 		.is_debug = 0,
 		.is_vlines = 0,
-		.keep_c = 0,
 		.show_cc = 0,
 		.use_cache = 0,
 		.is_stats = 0,
@@ -15060,7 +15058,6 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 		.sanitize = 0,
 		.is_debug = 0,
 		.is_vlines = 0,
-		.keep_c = 0,
 		.show_cc = 0,
 		.use_cache = 0,
 		.is_stats = 0,
@@ -15149,7 +15146,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 		} else if (string_eq(arg, tos_lit("-usecache"))) {
 			res->use_cache = true;
 		} else if (string_eq(arg, tos_lit("-keepc"))) {
-			res->keep_c = true;
+			eprintln(tos_lit("-keepc is deprecated. V always keeps the generated .tmp.c files now."));
 		} else if (string_eq(arg, tos_lit("-parallel"))) {
 			res->is_parallel = true;
 		} else if (string_eq(arg, tos_lit("-x64"))) {
@@ -22326,7 +22323,6 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 				.sanitize = pref.sanitize,
 				.is_debug = pref.is_debug,
 				.is_vlines = pref.is_vlines,
-				.keep_c = pref.keep_c,
 				.show_cc = pref.show_cc,
 				.use_cache = pref.use_cache,
 				.is_stats = pref.is_stats,
@@ -25068,7 +25064,6 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.sanitize = 0,
 		.is_debug = 0,
 		.is_vlines = 0,
-		.keep_c = 0,
 		.show_cc = 0,
 		.use_cache = 0,
 		.is_stats = 0,
@@ -32391,7 +32386,7 @@ static void v__gen__Gen_generate_hotcode_reloading_main_caller(v__gen__Gen* g) {
 	string file = v__util__cescaped_path(g->pref->path);
 	string msvc = (string_eq(g->pref->ccompiler, tos_lit("msvc")) ? (tos_lit("-cc msvc")) : (tos_lit("")));
 	string so_debug_flag = (g->pref->is_debug ? (tos_lit("-cg")) : (tos_lit("")));
-	string vopts = _STR("%.*s\000 %.*s\000 -keepc -sharedlive -shared", 3, msvc, so_debug_flag);
+	string vopts = _STR("%.*s\000 %.*s\000 -sharedlive -shared", 3, msvc, so_debug_flag);
 	v__gen__Gen_writeln(g, tos_lit("\t\t// start background reloading thread"));
 	if (g->pref->os == v__pref__OS_windows) {
 		v__gen__Gen_writeln(g, tos_lit("\t\tlive_fn_mutex = CreateMutexA(0, 0, 0);"));
@@ -36014,9 +36009,6 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 		println(_STR("%.*s\000 took %"PRId64"\000 ms", 3, ccompiler, diff));
 		println(tos_lit("=========\n"));
 	}
-	if (!v->pref->keep_c && string_ne(v->out_name_c, tos_lit("v.c"))) {
-		os__rm(v->out_name_c);
-	}
 	if (v->pref->compress) {
 		
 // $if  windows {
@@ -36856,9 +36848,6 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 	if (!_t1301.ok) {
 		string err = _t1301.v_error;
 		int errcode = _t1301.ecode;
-		if (!v->pref->keep_c && string_ne(v->out_name_c, tos_lit("v.c")) && string_ne(v->out_name_c, tos_lit("v_macos.c"))) {
-			os__rm(v->out_name_c);
-		}
 		v__builder__verror(tos_lit("Cannot find MSVC on this OS"));
 		return;
 	}
@@ -36937,9 +36926,6 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 		os__Result res = *(os__Result*)_t1329.data;
 	if (res.exit_code != 0) {
 		v__builder__verror(res.output);
-	}
-	if (!v->pref->keep_c && string_ne(v->out_name_c, tos_lit("v.c")) && string_ne(v->out_name_c, tos_lit("v_macos.c"))) {
-		os__rm(v->out_name_c);
 	}
 	os__rm(out_name_obj);
 }
