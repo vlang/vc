@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9a4d989"
+#define V_COMMIT_HASH "cfa8e0a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "659aa8d"
+	#define V_COMMIT_HASH "9a4d989"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9a4d989"
+	#define V_CURRENT_COMMIT_HASH "cfa8e0a"
 #endif
 
 // V typedefs:
@@ -34234,6 +34234,10 @@ static void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__ast__Infix
 			v__gen__js__JsGen_write(g, tos_lit(")"));
 		}
 	} else {
+		bool both_are_int = _IN(int, ((int)(it.left_type)), _const_v__table__integer_type_idxs) && _IN(int, ((int)(it.right_type)), _const_v__table__integer_type_idxs);
+		if (it.op == v__token__Kind_div && both_are_int) {
+			v__gen__js__JsGen_write(g, tos_lit("parseInt("));
+		}
 		v__gen__js__JsGen_expr(g, it.left);
 		if (it.op == v__token__Kind_eq) {
 			v__gen__js__JsGen_write(g, tos_lit(" === "));
@@ -34243,8 +34247,8 @@ static void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__ast__Infix
 			v__gen__js__JsGen_write(g, _STR(" %.*s\000 ", 2, v__token__Kind_str(it.op)));
 		}
 		v__gen__js__JsGen_expr(g, it.right);
-		if (it.op == v__token__Kind_div && it.left_type == _const_v__table__any_int_type_idx && it.right_type == _const_v__table__any_int_type_idx) {
-			v__gen__js__JsGen_write(g, tos_lit("|0"));
+		if (it.op == v__token__Kind_div && both_are_int) {
+			v__gen__js__JsGen_write(g, tos_lit(",10)"));
 		}
 	}
 }
