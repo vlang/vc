@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "25771a1"
+#define V_COMMIT_HASH "d82e6c9"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c94038a"
+	#define V_COMMIT_HASH "25771a1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "25771a1"
+	#define V_CURRENT_COMMIT_HASH "d82e6c9"
 #endif
 
 // V typedefs:
@@ -22007,11 +22007,10 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 		v__table__TypeSymbol* expr_type_sym = v__table__Table_get_type_symbol(c->table, node->expr_type);
 		v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(c->table, node->typ);
 		if (expr_type_sym->kind == v__table__Kind_sum_type) {
-			v__table__SumType* info = /* as */ (v__table__SumType*)__as_cast(expr_type_sym->info.obj, expr_type_sym->info.typ, /*expected:*/264);
 			if (type_sym->kind == v__table__Kind_placeholder) {
 				v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, type_sym->name), node->pos);
 			}
-			if (!_IN(v__table__Type, node->typ, info->variants)) {
+			if (!v__table__Table_sumtype_has_variant(c->table, node->expr_type, node->typ)) {
 				v__checker__Checker_error(c, _STR("cannot cast `%.*s\000` to `%.*s\000`", 3, expr_type_sym->name, type_sym->name), node->pos);
 			}
 		} else {
@@ -22050,14 +22049,20 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 		v__ast__CastExpr* it = (v__ast__CastExpr*)node.obj; // ST it
 		v__ast__CastExpr* node = it;
 		node->expr_type = v__checker__Checker_expr(c, node->expr);
-		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, node->expr_type);
-		if (node->typ == _const_v__table__string_type && !((sym->kind == v__table__Kind_byte || sym->kind == v__table__Kind_byteptr) || (sym->kind == v__table__Kind_array && string_eq(sym->name, tos_lit("array_byte"))))) {
+		v__table__TypeSymbol* from_type_sym = v__table__Table_get_type_symbol(c->table, node->expr_type);
+		v__table__TypeSymbol* to_type_sym = v__table__Table_get_type_symbol(c->table, node->typ);
+		if (to_type_sym->kind == v__table__Kind_sum_type) {
+			if ((node->expr_type == _const_v__table__any_int_type || node->expr_type == _const_v__table__any_flt_type)) {
+				node->expr_type = v__checker__Checker_promote_num(c, node->expr_type, (node->expr_type == _const_v__table__any_int_type ? (_const_v__table__int_type) : (_const_v__table__f64_type)));
+			}
+			if (!v__table__Table_sumtype_has_variant(c->table, node->typ, node->expr_type)) {
+				v__checker__Checker_error(c, _STR("cannot cast `%.*s\000` to `%.*s\000`", 3, from_type_sym->name, to_type_sym->name), node->pos);
+			}
+		} else if (node->typ == _const_v__table__string_type && !((from_type_sym->kind == v__table__Kind_byte || from_type_sym->kind == v__table__Kind_byteptr) || (from_type_sym->kind == v__table__Kind_array && string_eq(from_type_sym->name, tos_lit("array_byte"))))) {
 			string type_name = v__table__Table_type_to_str(c->table, node->expr_type);
 			v__checker__Checker_error(c, _STR("cannot cast type `%.*s\000` to string, use `x.str()` instead", 2, type_name), node->pos);
-		}
-		if (node->expr_type == _const_v__table__string_type) {
-			v__table__TypeSymbol* cast_to_type_sym = v__table__Table_get_type_symbol(c->table, node->typ);
-			if (!(cast_to_type_sym->kind == v__table__Kind_alias || cast_to_type_sym->kind == v__table__Kind_sum_type)) {
+		} else if (node->expr_type == _const_v__table__string_type) {
+			if (!(to_type_sym->kind == v__table__Kind_alias)) {
 				string error_msg = tos_lit("cannot cast a string");
 				if (node->expr.typ == 171 /* v.ast.StringLiteral */) {
 					v__ast__StringLiteral* str_lit = /* as */ (v__ast__StringLiteral*)__as_cast(node->expr.obj, node->expr.typ, /*expected:*/171);
