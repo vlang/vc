@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "cfa8e0a"
+#define V_COMMIT_HASH "1f3d7d3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9a4d989"
+	#define V_COMMIT_HASH "cfa8e0a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "cfa8e0a"
+	#define V_CURRENT_COMMIT_HASH "1f3d7d3"
 #endif
 
 // V typedefs:
@@ -21069,7 +21069,7 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 		if (call_expr->args.len < min_required_args) {
 			v__checker__Checker_error(c, _STR("too few arguments in call to `%.*s\000.%.*s\000` (%"PRId32"\000 instead of %"PRId32"\000)", 5, left_type_sym->name, method_name, call_expr->args.len, min_required_args), call_expr->pos);
 		} else if (!/*opt*/(*(v__table__Fn*)method.data).is_variadic && call_expr->args.len > nr_args) {
-			v__checker__Checker_error(c, _STR("!too many arguments in call to `%.*s\000.%.*s\000` (%"PRId32"\000 instead of %"PRId32"\000)", 5, left_type_sym->name, method_name, call_expr->args.len, nr_args), call_expr->pos);
+			v__checker__Checker_error(c, _STR("too many arguments in call to `%.*s\000.%.*s\000` (%"PRId32"\000 instead of %"PRId32"\000)", 5, left_type_sym->name, method_name, call_expr->args.len, nr_args), call_expr->pos);
 			return /*opt*/(*(v__table__Fn*)method.data).return_type;
 		}
 		// FOR IN array
