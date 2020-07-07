@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d2d4ea4"
+#define V_COMMIT_HASH "68e01d8"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4490cd2"
+	#define V_COMMIT_HASH "d2d4ea4"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d2d4ea4"
+	#define V_CURRENT_COMMIT_HASH "68e01d8"
 #endif
 
 // V typedefs:
@@ -21058,7 +21058,9 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 		}
 		if (assign_stmt->right_types.len < assign_stmt->left.len) {
 			v__table__Type right_type = v__checker__Checker_expr(c, (*(v__ast__Expr*)array_get(assign_stmt->right, i)));
-			array_push(&assign_stmt->right_types, _MOV((v__table__Type[]){ v__checker__Checker_check_expr_opt_call(c, (*(v__ast__Expr*)array_get(assign_stmt->right, i)), right_type) }));
+			if (assign_stmt->right_types.len == i) {
+				array_push(&assign_stmt->right_types, _MOV((v__table__Type[]){ v__checker__Checker_check_expr_opt_call(c, (*(v__ast__Expr*)array_get(assign_stmt->right, i)), right_type) }));
+			}
 		}
 		v__ast__Expr right = (i < assign_stmt->right.len ? ((*(v__ast__Expr*)array_get(assign_stmt->right, i))) : ((*(v__ast__Expr*)array_get(assign_stmt->right, 0))));
 		v__table__Type right_type = (*(v__table__Type*)array_get(assign_stmt->right_types, i));
