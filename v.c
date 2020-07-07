@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4d7d1eb"
+#define V_COMMIT_HASH "b3ed2a4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "dc24327"
+	#define V_COMMIT_HASH "4d7d1eb"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4d7d1eb"
+	#define V_CURRENT_COMMIT_HASH "b3ed2a4"
 #endif
 
 // V typedefs:
@@ -26093,18 +26093,20 @@ static v__ast__SqlStmt v__parser__Parser_sql_stmt(v__parser__Parser* p) {
 	}
 	string inserted_var_name = tos_lit("");
 	string table_name = tos_lit("");
-	v__ast__Expr expr = v__parser__Parser_expr(p, 0);
-	if (expr.typ == 151 /* v.ast.Ident */) {
-		v__ast__Ident* it = (v__ast__Ident*)expr.obj; // ST it
-		v__ast__Ident* expr = it;
-		if (kind == v__ast__SqlStmtKind_insert) {
-			inserted_var_name = expr->name;
-		} else if (kind == v__ast__SqlStmtKind_update) {
-			table_name = expr->name;
-		}
-	} else {
-		v__parser__Parser_error(p, tos_lit("can only insert variables"));
-	};
+	if (kind != v__ast__SqlStmtKind_delete) {
+		v__ast__Expr expr = v__parser__Parser_expr(p, 0);
+		if (expr.typ == 151 /* v.ast.Ident */) {
+			v__ast__Ident* it = (v__ast__Ident*)expr.obj; // ST it
+			v__ast__Ident* expr = it;
+			if (kind == v__ast__SqlStmtKind_insert) {
+				inserted_var_name = expr->name;
+			} else if (kind == v__ast__SqlStmtKind_update) {
+				table_name = expr->name;
+			}
+		} else {
+			v__parser__Parser_error(p, tos_lit("can only insert variables"));
+		};
+	}
 	n = v__parser__Parser_check_name(p);
 	array_string updated_columns = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_v__ast__Expr update_exprs = __new_array_with_default(0, 5, sizeof(v__ast__Expr), 0);
@@ -26125,6 +26127,8 @@ static v__ast__SqlStmt v__parser__Parser_sql_stmt(v__parser__Parser* p) {
 				break;
 			}
 		}
+	} else if (kind == v__ast__SqlStmtKind_delete && string_ne(n, tos_lit("from"))) {
+		v__parser__Parser_error(p, tos_lit("expecting `from`"));
 	}
 	v__table__Type table_type = ((v__table__Type)(0));
 	v__ast__Expr where_expr = (v__ast__Expr){
@@ -26141,6 +26145,12 @@ static v__ast__SqlStmt v__parser__Parser_sql_stmt(v__parser__Parser* p) {
 			int idx = v__table__Table_find_type_idx(p->table, v__parser__Parser_prepend_mod(p, table_name));
 			table_type = v__table__new_type(idx);
 		}
+		v__parser__Parser_check_sql_keyword(p, tos_lit("where"));
+		where_expr = v__parser__Parser_expr(p, 0);
+	} else if (kind == v__ast__SqlStmtKind_delete) {
+		table_type = v__parser__Parser_parse_type(p);
+		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(p->table, table_type);
+		table_name = sym->name;
 		v__parser__Parser_check_sql_keyword(p, tos_lit("where"));
 		where_expr = v__parser__Parser_expr(p, 0);
 	}
@@ -31789,8 +31799,10 @@ static void v__gen__Gen_sql_stmt(v__gen__Gen* g, v__ast__SqlStmt node) {
 	v__gen__Gen_write(g, _STR("sqlite3_stmt* %.*s\000 = %.*s\000__DB_init_stmt(%.*s\000, tos_lit(\"", 4, g->sql_stmt_name, _const_v__gen__dbtype, db_name));
 	if (node.kind == v__ast__SqlStmtKind_insert) {
 		v__gen__Gen_write(g, _STR("INSERT INTO `%.*s\000` (", 2, v__util__strip_mod_name(node.table_name)));
-	} else {
+	} else if (node.kind == v__ast__SqlStmtKind_update) {
 		v__gen__Gen_write(g, _STR("UPDATE `%.*s\000` SET ", 2, v__util__strip_mod_name(node.table_name)));
+	} else if (node.kind == v__ast__SqlStmtKind_delete) {
+		v__gen__Gen_write(g, _STR("DELETE FROM `%.*s\000` ", 2, v__util__strip_mod_name(node.table_name)));
 	}
 	if (node.kind == v__ast__SqlStmtKind_insert) {
 		// FOR IN array
@@ -31831,8 +31843,10 @@ static void v__gen__Gen_sql_stmt(v__gen__Gen* g, v__ast__SqlStmt node) {
 			}
 		}
 		v__gen__Gen_write(g, tos_lit(" WHERE "));
+	} else if (node.kind == v__ast__SqlStmtKind_delete) {
+		v__gen__Gen_write(g, tos_lit(" WHERE "));
 	}
-	if (node.kind == v__ast__SqlStmtKind_update) {
+	if (node.kind == v__ast__SqlStmtKind_update || node.kind == v__ast__SqlStmtKind_delete) {
 		v__gen__Gen_expr_to_sql(g, node.where_expr);
 	}
 	v__gen__Gen_writeln(g, tos_lit("\"));"));
