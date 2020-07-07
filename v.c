@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "68e01d8"
+#define V_COMMIT_HASH "dc24327"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d2d4ea4"
+	#define V_COMMIT_HASH "68e01d8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "68e01d8"
+	#define V_CURRENT_COMMIT_HASH "dc24327"
 #endif
 
 // V typedefs:
@@ -9816,7 +9816,7 @@ string string_replace_once(string s, string rep, string with) {
 		int errcode = _t30.ecode;
 		return s;
 	}
-		int index = *(int*)_t30.data;
+	int index = *(int*)_t30.data;
 	return string_add(string_add(string_substr(s, 0, index), with), string_substr(s, index + rep.len, s.len));
 }
 
@@ -10159,7 +10159,7 @@ int string_index_old(string s, string p) {
 
 Option_int string_index(string s, string p) {
 	if (p.len > s.len || p.len == 0) {
-		/*opt promotion*/ Option _t40 = opt_none();
+		Option _t40 = opt_none();
 		return *(Option_int*)&_t40;
 	}
 	int i = 0;
@@ -10169,12 +10169,13 @@ Option_int string_index(string s, string p) {
 			j++;
 		}
 		if (j == p.len) {
-			Option_int _t41;/*:)int*/opt_ok2(&(int[]) { i }, (OptionBase*)(&_t41), sizeof(int));
+			Option_int _t41;
+			opt_ok2(&(int[]) { i }, (OptionBase*)(&_t41), sizeof(int));
 			return _t41;
 		}
 		i++;
 	}
-	/*opt promotion*/ Option _t42 = opt_none();
+	Option _t42 = opt_none();
 	return *(Option_int*)&_t42;
 }
 
@@ -10217,7 +10218,7 @@ int string_index_any(string s, string chars) {
 			int errcode = _t44.ecode;
 			continue;
 		}
-			int index = *(int*)_t44.data;
+		int index = *(int*)_t44.data;
 		return index;
 	}
 	return -1;
@@ -10225,7 +10226,7 @@ int string_index_any(string s, string chars) {
 
 Option_int string_last_index(string s, string p) {
 	if (p.len > s.len || p.len == 0) {
-		/*opt promotion*/ Option _t45 = opt_none();
+		Option _t45 = opt_none();
 		return *(Option_int*)&_t45;
 	}
 	int i = s.len - p.len;
@@ -10235,12 +10236,13 @@ Option_int string_last_index(string s, string p) {
 			j++;
 		}
 		if (j == p.len) {
-			Option_int _t46;/*:)int*/opt_ok2(&(int[]) { i }, (OptionBase*)(&_t46), sizeof(int));
+			Option_int _t46;
+			opt_ok2(&(int[]) { i }, (OptionBase*)(&_t46), sizeof(int));
 			return _t46;
 		}
 		i--;
 	}
-	/*opt promotion*/ Option _t47 = opt_none();
+	Option _t47 = opt_none();
 	return *(Option_int*)&_t47;
 }
 
@@ -10318,8 +10320,7 @@ bool string_contains(string s, string p) {
 		string err = _t48.v_error;
 		int errcode = _t48.ecode;
 		return false;
-	}
-	_t48;
+	};
 	return true;
 }
 
@@ -10435,7 +10436,7 @@ string string_find_between(string s, string start, string end) {
 		int errcode = _t54.ecode;
 		return tos_lit("");
 	}
-		int start_pos = *(int*)_t54.data;
+	int start_pos = *(int*)_t54.data;
 	string val = string_right(s, start_pos + start.len);
 	Option_int _t55 = string_index(val, end);
 	if (!_t55.ok) {
@@ -10443,7 +10444,7 @@ string string_find_between(string s, string start, string end) {
 		int errcode = _t55.ecode;
 		return val;
 	}
-		int end_pos = *(int*)_t55.data;
+	int end_pos = *(int*)_t55.data;
 	return string_left(val, end_pos);
 }
 
@@ -10794,7 +10795,7 @@ string string_all_before(string s, string dot) {
 		int errcode = _t61.ecode;
 		return s;
 	}
-		int pos = *(int*)_t61.data;
+	int pos = *(int*)_t61.data;
 	return string_left(s, pos);
 }
 
@@ -10805,7 +10806,7 @@ string string_all_before_last(string s, string dot) {
 		int errcode = _t62.ecode;
 		return s;
 	}
-		int pos = *(int*)_t62.data;
+	int pos = *(int*)_t62.data;
 	return string_left(s, pos);
 }
 
@@ -10816,7 +10817,7 @@ string string_all_after(string s, string dot) {
 		int errcode = _t63.ecode;
 		return s;
 	}
-		int pos = *(int*)_t63.data;
+	int pos = *(int*)_t63.data;
 	return string_right(s, pos + dot.len);
 }
 
@@ -10827,7 +10828,7 @@ string string_all_after_last(string s, string dot) {
 		int errcode = _t64.ecode;
 		return s;
 	}
-		int pos = *(int*)_t64.data;
+	int pos = *(int*)_t64.data;
 	return string_right(s, pos + dot.len);
 }
 
@@ -11366,7 +11367,7 @@ array_byte os__File_read_bytes_at(os__File* f, int size, int pos) {
 Option_array_byte os__read_bytes(string path) {
 	FILE* fp = os__vfopen(path, tos_lit("rb"));
 	if (isnil(fp)) {
-		/*opt promotion*/ Option _t69 = v_error(_STR("failed to open file \"%.*s\000\"", 2, path));
+		Option _t69 = v_error(_STR("failed to open file \"%.*s\000\"", 2, path));
 		return *(Option_array_byte*)&_t69;
 	}
 	fseek(fp, 0, SEEK_END);
@@ -11375,7 +11376,8 @@ Option_array_byte os__read_bytes(string path) {
 	array_byte res = array_repeat(new_array_from_c_array(1, 1, sizeof(byte), _MOV((byte[1]){'0'})), fsize);
 	int nr_read_elements = fread(res.data, fsize, 1, fp);
 	fclose(fp);
-	Option_array_byte _t70;/*:)array_byte*/opt_ok2(&(array_byte[]) { array_slice(res, 0, nr_read_elements * fsize) }, (OptionBase*)(&_t70), sizeof(array_byte));
+	Option_array_byte _t70;
+	opt_ok2(&(array_byte[]) { array_slice(res, 0, nr_read_elements * fsize) }, (OptionBase*)(&_t70), sizeof(array_byte));
 	return _t70;
 }
 
@@ -11383,7 +11385,7 @@ Option_string os__read_file(string path) {
 	string mode = tos_lit("rb");
 	FILE* fp = os__vfopen(path, mode);
 	if (isnil(fp)) {
-		/*opt promotion*/ Option _t71 = v_error(_STR("failed to open file \"%.*s\000\"", 2, path));
+		Option _t71 = v_error(_STR("failed to open file \"%.*s\000\"", 2, path));
 		return *(Option_string*)&_t71;
 	}
 	fseek(fp, 0, SEEK_END);
@@ -11397,7 +11399,8 @@ Option_string os__read_file(string path) {
 	str[fsize] = 0;
 	// defer
 		fclose(fp);
-	Option_string _t72;/*:)string*/opt_ok2(&(string[]) { tos((byteptr)str, fsize) }, (OptionBase*)(&_t72), sizeof(string));
+	Option_string _t72;
+	opt_ok2(&(string[]) { tos((byteptr)str, fsize) }, (OptionBase*)(&_t72), sizeof(string));
 	return _t72;
 // defer
 	fclose(fp);
@@ -11446,19 +11449,19 @@ Option_void os__cp(string old, string v_new) {
 	CopyFile(string_to_wide(w_old), string_to_wide(w_new), false);
 	u32 result = GetLastError();
 	if (result != 0) {
-		/*opt promotion*/ Option _t73 = error_with_code(_STR("failed to copy %.*s\000 to %.*s", 2, old, v_new), ((int)(result)));
+		Option _t73 = error_with_code(_STR("failed to copy %.*s\000 to %.*s", 2, old, v_new), ((int)(result)));
 		return *(Option_void*)&_t73;
 	}
 #else
 	int fp_from = open(old.str, O_RDONLY);
 	if (fp_from < 0) {
-		/*opt promotion*/ Option _t74 = error_with_code(_STR("cp: failed to open %.*s", 1, old), ((int)(fp_from)));
+		Option _t74 = error_with_code(_STR("cp: failed to open %.*s", 1, old), ((int)(fp_from)));
 		return *(Option_void*)&_t74;
 	}
 	int fp_to = open(v_new.str, ((O_WRONLY | O_CREAT) | O_TRUNC), (S_IWUSR | S_IRUSR));
 	if (fp_to < 0) {
 		close(fp_from);
-		/*opt promotion*/ Option _t75 = error_with_code(_STR("cp: failed to write to %.*s", 1, v_new), ((int)(fp_to)));
+		Option _t75 = error_with_code(_STR("cp: failed to write to %.*s", 1, v_new), ((int)(fp_to)));
 		return *(Option_void*)&_t75;
 	}
 	array_fixed_byte_1024 buf = {0};
@@ -11469,20 +11472,19 @@ Option_void os__cp(string old, string v_new) {
 			break;
 		}
 		if (write(fp_to, buf, count) < 0) {
-			/*opt promotion*/ Option _t76 = error_with_code(_STR("cp: failed to write to %.*s", 1, v_new), ((int)(-1)));
+			Option _t76 = error_with_code(_STR("cp: failed to write to %.*s", 1, v_new), ((int)(-1)));
 			return *(Option_void*)&_t76;
 		}
 	}
 	struct stat from_attr;
 	stat(old.str, &from_attr);
 	if (chmod(v_new.str, from_attr.st_mode) < 0) {
-		/*opt promotion*/ Option _t77 = error_with_code(_STR("failed to set permissions for %.*s", 1, v_new), ((int)(-1)));
+		Option _t77 = error_with_code(_STR("failed to set permissions for %.*s", 1, v_new), ((int)(-1)));
 		return *(Option_void*)&_t77;
 	}
 #endif
 // } windows
-	Option_void _t78;
-	_t78.ok = true;
+	Option_void _t78 = {.ok = true};
 	return _t78;
 }
 
@@ -11496,7 +11498,7 @@ Option_void os__cp_all(string osource_path, string odest_path, bool overwrite) {
 	string source_path = os__real_path(osource_path);
 	string dest_path = os__real_path(odest_path);
 	if (!os__exists(source_path)) {
-		/*opt promotion*/ Option _t79 = v_error(tos_lit("Source path doesn\'t exist"));
+		Option _t79 = v_error(tos_lit("Source path doesn\'t exist"));
 		return *(Option_void*)&_t79;
 	}
 	if (!os__is_dir(source_path)) {
@@ -11505,7 +11507,7 @@ Option_void os__cp_all(string osource_path, string odest_path, bool overwrite) {
 			if (overwrite) {
 				os__rm(adjusted_path);
 			} else {
-				/*opt promotion*/ Option _t80 = v_error(tos_lit("Destination file path already exist"));
+				Option _t80 = v_error(tos_lit("Destination file path already exist"));
 				return *(Option_void*)&_t80;
 			}
 		}
@@ -11513,26 +11515,24 @@ Option_void os__cp_all(string osource_path, string odest_path, bool overwrite) {
 		if (!_t81.ok && !_t81.is_none) {
 			string err = _t81.v_error;
 			int errcode = _t81.ecode;
-			/*opt promotion*/ Option _t82 = v_error(err);
+			Option _t82 = v_error(err);
 			return *(Option_void*)&_t82;
-		}
-	_t81;
-		Option_void _t83;
-		_t83.ok = true;
+		};
+		Option_void _t83 = {.ok = true};
 		return _t83;
 	}
 	if (!os__is_dir(dest_path)) {
-		/*opt promotion*/ Option _t84 = v_error(tos_lit("Destination path is not a valid directory"));
+		Option _t84 = v_error(tos_lit("Destination path is not a valid directory"));
 		return *(Option_void*)&_t84;
 	}
 	Option_array_string _t85 = os__ls(source_path);
 	if (!_t85.ok) {
 		string err = _t85.v_error;
 		int errcode = _t85.ecode;
-		/*opt promotion*/ Option _t86 = v_error(err);
+		Option _t86 = v_error(err);
 		return *(Option_void*)&_t86;
 	}
-		array_string files = *(array_string*)_t85.data;
+	array_string files = *(array_string*)_t85.data;
 	// FOR IN array
 	array _t87 = files;
 	for (int _t88 = 0; _t88 < _t87.len; ++_t88) {
@@ -11544,23 +11544,20 @@ Option_void os__cp_all(string osource_path, string odest_path, bool overwrite) {
 			if (!_t89.ok) {
 				string err = _t89.v_error;
 				int errcode = _t89.ecode;
-				/*opt promotion*/ Option _t90 = v_error(err);
+				Option _t90 = v_error(err);
 				return *(Option_void*)&_t90;
-			}
-	_t89;
+			};
 		}
 		Option_void _t91 = os__cp_all(sp, dp, overwrite);
 		if (!_t91.ok && !_t91.is_none) {
 			string err = _t91.v_error;
 			int errcode = _t91.ecode;
 			os__rmdir(dp);
-			/*opt promotion*/ Option _t92 = v_error(err);
+			Option _t92 = v_error(err);
 			return *(Option_void*)&_t92;
-		}
-	_t91;
+		};
 	}
-	Option_void _t93;
-	_t93.ok = true;
+	Option_void _t93 = {.ok = true};
 	return _t93;
 }
 
@@ -11569,20 +11566,17 @@ Option_void os__mv_by_cp(string source, string target) {
 	if (!_t94.ok && !_t94.is_none) {
 		string err = _t94.v_error;
 		int errcode = _t94.ecode;
-		/*opt promotion*/ Option _t95 = v_error(err);
+		Option _t95 = v_error(err);
 		return *(Option_void*)&_t95;
-	}
-	_t94;
+	};
 	Option_void _t96 = os__rm(source);
 	if (!_t96.ok && !_t96.is_none) {
 		string err = _t96.v_error;
 		int errcode = _t96.ecode;
-		/*opt promotion*/ Option _t97 = v_error(err);
+		Option _t97 = v_error(err);
 		return *(Option_void*)&_t97;
-	}
-	_t96;
-	Option_void _t98;
-	_t98.ok = true;
+	};
+	Option_void _t98 = {.ok = true};
 	return _t98;
 }
 
@@ -11613,11 +11607,12 @@ Option_array_string os__read_lines(string path) {
 	if (!_t99.ok) {
 		string err = _t99.v_error;
 		int errcode = _t99.ecode;
-		/*opt promotion*/ Option _t100 = v_error(err);
+		Option _t100 = v_error(err);
 		return *(Option_array_string*)&_t100;
 	}
-		string buf = *(string*)_t99.data;
-	Option_array_string _t101;/*:)array_string*/opt_ok2(&(array_string[]) { string_split_into_lines(buf) }, (OptionBase*)(&_t101), sizeof(array_string));
+	string buf = *(string*)_t99.data;
+	Option_array_string _t101;
+	opt_ok2(&(array_string[]) { string_split_into_lines(buf) }, (OptionBase*)(&_t101), sizeof(array_string));
 	return _t101;
 }
 
@@ -11626,10 +11621,10 @@ static Option_array_ustring os__read_ulines(string path) {
 	if (!_t102.ok) {
 		string err = _t102.v_error;
 		int errcode = _t102.ecode;
-		/*opt promotion*/ Option _t103 = v_error(err);
+		Option _t103 = v_error(err);
 		return *(Option_array_ustring*)&_t103;
 	}
-		array_string lines = *(array_string*)_t102.data;
+	array_string lines = *(array_string*)_t102.data;
 	array_ustring ulines = __new_array_with_default(0, 0, sizeof(ustring), 0);
 	// FOR IN array
 	array _t104 = lines;
@@ -11637,7 +11632,8 @@ static Option_array_ustring os__read_ulines(string path) {
 		string myline = ((string*)_t104.data)[_t105];
 		array_push(&ulines, _MOV((ustring[]){ string_ustring(myline) }));
 	}
-	Option_array_ustring _t107;/*:)array_ustring*/opt_ok2(&(array_ustring[]) { ulines }, (OptionBase*)(&_t107), sizeof(array_ustring));
+	Option_array_ustring _t107;
+	opt_ok2(&(array_ustring[]) { ulines }, (OptionBase*)(&_t107), sizeof(array_ustring));
 	return _t107;
 }
 
@@ -11661,11 +11657,12 @@ Option_os__File os__open_append(string path) {
 #endif
 // } windows
 	if (isnil(file.cfile)) {
-		/*opt promotion*/ Option _t108 = v_error(_STR("failed to create(append) file \"%.*s\000\"", 2, path));
+		Option _t108 = v_error(_STR("failed to create(append) file \"%.*s\000\"", 2, path));
 		return *(Option_os__File*)&_t108;
 	}
 	file.opened = true;
-	Option_os__File _t109;/*:)os.File*/opt_ok2(&(os__File[]) { file }, (OptionBase*)(&_t109), sizeof(os__File));
+	Option_os__File _t109;
+	opt_ok2(&(os__File[]) { file }, (OptionBase*)(&_t109), sizeof(os__File));
 	return _t109;
 }
 
@@ -11711,15 +11708,16 @@ Option_os__File os__open_file(string path, string mode, varg_int options) {
 // } windows
 	int fd = open(((charptr)(p.str)), flags, permission);
 	if (fd == -1) {
-		/*opt promotion*/ Option _t112 = v_error(os__posix_get_error_msg(errno));
+		Option _t112 = v_error(os__posix_get_error_msg(errno));
 		return *(Option_os__File*)&_t112;
 	}
 	voidptr cfile = fdopen(fd, ((charptr)(mode.str)));
 	if (isnil(cfile)) {
-		/*opt promotion*/ Option _t113 = v_error(_STR("Failed to open or create file \"%.*s\000\"", 2, path));
+		Option _t113 = v_error(_STR("Failed to open or create file \"%.*s\000\"", 2, path));
 		return *(Option_os__File*)&_t113;
 	}
-	Option_os__File _t114;/*:)os.File*/opt_ok2(&(os__File[]) { (os__File){.cfile = cfile, .fd = fd, .opened = true} }, (OptionBase*)(&_t114), sizeof(os__File));
+	Option_os__File _t114;
+	opt_ok2(&(os__File[]) { (os__File){.cfile = cfile, .fd = fd, .opened = true} }, (OptionBase*)(&_t114), sizeof(os__File));
 	return _t114;
 }
 
@@ -11888,11 +11886,11 @@ bool os__is_executable(string path) {
 
 Option_bool os__is_writable_folder(string folder) {
 	if (!os__exists(folder)) {
-		/*opt promotion*/ Option _t117 = v_error(_STR("`%.*s\000` does not exist", 2, folder));
+		Option _t117 = v_error(_STR("`%.*s\000` does not exist", 2, folder));
 		return *(Option_bool*)&_t117;
 	}
 	if (!os__is_dir(folder)) {
-		/*opt promotion*/ Option _t118 = v_error(tos_lit("`folder` is not a folder"));
+		Option _t118 = v_error(tos_lit("`folder` is not a folder"));
 		return *(Option_bool*)&_t118;
 	}
 	string tmp_perm_check = os__join_path(folder, (varg_string){.len=1,.args={tos_lit("tmp_perm_check")}});
@@ -11900,13 +11898,14 @@ Option_bool os__is_writable_folder(string folder) {
 	if (!_t119.ok) {
 		string err = _t119.v_error;
 		int errcode = _t119.ecode;
-		/*opt promotion*/ Option _t120 = v_error(_STR("cannot write to folder `%.*s\000`: %.*s", 2, folder, err));
+		Option _t120 = v_error(_STR("cannot write to folder `%.*s\000`: %.*s", 2, folder, err));
 		return *(Option_bool*)&_t120;
 	}
-		os__File f = *(os__File*)_t119.data;
+	os__File f = *(os__File*)_t119.data;
 	os__File_close(&f);
 	os__rm(tmp_perm_check);
-	Option_bool _t121;/*:)bool*/opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t121), sizeof(bool));
+	Option_bool _t121;
+	opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t121), sizeof(bool));
 	return _t121;
 }
 
@@ -11943,19 +11942,18 @@ Option_void os__rm(string path) {
 #ifdef _WIN32
 	int rc = _wremove(string_to_wide(path));
 	if (rc == -1) {
-		/*opt promotion*/ Option _t122 = v_error(_STR("Failed to remove \"%.*s\000\"", 2, path));
+		Option _t122 = v_error(_STR("Failed to remove \"%.*s\000\"", 2, path));
 		return *(Option_void*)&_t122;
 	}
 #else
 	int rc = remove(path.str);
 	if (rc == -1) {
-		/*opt promotion*/ Option _t123 = v_error(os__posix_get_error_msg(errno));
+		Option _t123 = v_error(os__posix_get_error_msg(errno));
 		return *(Option_void*)&_t123;
 	}
 #endif
 // } windows
-	Option_void _t124;
-	_t124.ok = true;
+	Option_void _t124 = {.ok = true};
 	return _t124;
 }
 
@@ -11964,19 +11962,18 @@ Option_void os__rmdir(string path) {
 #ifdef _WIN32
 	int rc = RemoveDirectory(string_to_wide(path));
 	if (rc == 0) {
-		/*opt promotion*/ Option _t125 = v_error(_STR("Failed to remove \"%.*s\000\"", 2, path));
+		Option _t125 = v_error(_STR("Failed to remove \"%.*s\000\"", 2, path));
 		return *(Option_void*)&_t125;
 	}
 #else
 	int rc = rmdir(path.str);
 	if (rc == -1) {
-		/*opt promotion*/ Option _t126 = v_error(os__posix_get_error_msg(errno));
+		Option _t126 = v_error(os__posix_get_error_msg(errno));
 		return *(Option_void*)&_t126;
 	}
 #endif
 // } windows
-	Option_void _t127;
-	_t127.ok = true;
+	Option_void _t127 = {.ok = true};
 	return _t127;
 }
 
@@ -11992,10 +11989,10 @@ Option_void os__rmdir_all(string path) {
 	if (!_t128.ok) {
 		string err = _t128.v_error;
 		int errcode = _t128.ecode;
-		/*opt promotion*/ Option _t129 = v_error(err);
+		Option _t129 = v_error(err);
 		return *(Option_void*)&_t129;
 	}
-		array_string items = *(array_string*)_t128.data;
+	array_string items = *(array_string*)_t128.data;
 	// FOR IN array
 	array _t130 = items;
 	for (int _t131 = 0; _t131 < _t130.len; ++_t131) {
@@ -12008,22 +12005,19 @@ Option_void os__rmdir_all(string path) {
 			string err = _t132.v_error;
 			int errcode = _t132.ecode;
 			ret_err = err;
-		}
-	_t132;
+		};
 	}
 	Option_void _t133 = os__rmdir(path);
 	if (!_t133.ok && !_t133.is_none) {
 		string err = _t133.v_error;
 		int errcode = _t133.ecode;
 		ret_err = err;
-	}
-	_t133;
+	};
 	if (ret_err.len > 0) {
-		/*opt promotion*/ Option _t134 = v_error(ret_err);
+		Option _t134 = v_error(ret_err);
 		return *(Option_void*)&_t134;
 	}
-	Option_void _t135;
-	_t135.ok = true;
+	Option_void _t135 = {.ok = true};
 	return _t135;
 }
 
@@ -12034,7 +12028,7 @@ bool os__is_dir_empty(string path) {
 		int errcode = _t136.ecode;
 		return true;
 	}
-		array_string items = *(array_string*)_t136.data;
+	array_string items = *(array_string*)_t136.data;
 	return items.len == 0;
 }
 
@@ -12051,7 +12045,7 @@ string os__file_ext(string path) {
 		int errcode = _t137.ecode;
 		return tos_lit("");
 	}
-		int pos = *(int*)_t137.data;
+	int pos = *(int*)_t137.data;
 	return string_substr(path, pos, path.len);
 }
 
@@ -12062,7 +12056,7 @@ string os__dir(string path) {
 		int errcode = _t138.ecode;
 		return tos_lit(".");
 	}
-		int pos = *(int*)_t138.data;
+	int pos = *(int*)_t138.data;
 	return string_substr(path, 0, pos);
 }
 
@@ -12073,7 +12067,7 @@ string os__base_dir(string path) {
 		int errcode = _t139.ecode;
 		return path;
 	}
-		int posx = *(int*)_t139.data;
+	int posx = *(int*)_t139.data;
 	return string_substr(path, 0, posx);
 }
 
@@ -12261,14 +12255,13 @@ Option_void os__write_file(string path, string text) {
 	if (!_t141.ok) {
 		string err = _t141.v_error;
 		int errcode = _t141.ecode;
-		/*opt promotion*/ Option _t142 = v_error(err);
+		Option _t142 = v_error(err);
 		return *(Option_void*)&_t142;
 	}
-		os__File f = *(os__File*)_t141.data;
+	os__File f = *(os__File*)_t141.data;
 	os__File_write(&f, text);
 	os__File_close(&f);
-	Option_void _t143;
-	_t143.ok = true;
+	Option_void _t143 = {.ok = true};
 	return _t143;
 }
 
@@ -12366,7 +12359,7 @@ static string os__executable_fallback() {
 				int errcode = _t144.ecode;
 				*(string*) _t144.data = tos_lit("");
 			}
-				string foundpath = *(string*)_t144.data;
+			string foundpath = *(string*)_t144.data;
 			if (foundpath.len > 0) {
 				exepath = foundpath;
 			}
@@ -12378,7 +12371,8 @@ static string os__executable_fallback() {
 
 Option_string os__find_abs_path_of_executable(string exepath) {
 	if (os__is_abs_path(exepath)) {
-		Option_string _t145;/*:)string*/opt_ok2(&(string[]) { exepath }, (OptionBase*)(&_t145), sizeof(string));
+		Option_string _t145;
+		opt_ok2(&(string[]) { exepath }, (OptionBase*)(&_t145), sizeof(string));
 		return _t145;
 	}
 	string res = tos_lit("");
@@ -12395,10 +12389,11 @@ Option_string os__find_abs_path_of_executable(string exepath) {
 		}
 	}
 	if (res.len > 0) {
-		Option_string _t148;/*:)string*/opt_ok2(&(string[]) { res }, (OptionBase*)(&_t148), sizeof(string));
+		Option_string _t148;
+		opt_ok2(&(string[]) { res }, (OptionBase*)(&_t148), sizeof(string));
 		return _t148;
 	}
-	/*opt promotion*/ Option _t149 = v_error(tos_lit("failed to find executable"));
+	Option _t149 = v_error(tos_lit("failed to find executable"));
 	return *(Option_string*)&_t149;
 }
 
@@ -12408,8 +12403,7 @@ bool os__exists_in_system_path(string prog) {
 		string err = _t150.v_error;
 		int errcode = _t150.ecode;
 		return false;
-	}
-	_t150;
+	};
 	return true;
 }
 
@@ -12534,7 +12528,7 @@ array_string os__walk_ext(string path, string ext) {
 		int errcode = _t154.ecode;
 		return __new_array_with_default(0, 0, sizeof(string), 0);
 	}
-		array_string files = *(array_string*)_t154.data;
+	array_string files = *(array_string*)_t154.data;
 	array_string res = __new_array_with_default(0, 0, sizeof(string), 0);
 	string separator = (string_ends_with(path, _const_os__path_separator) ? (tos_lit("")) : (_const_os__path_separator));
 	// FOR IN array
@@ -12564,7 +12558,7 @@ void os__walk(string path, void (*f)(string path)) {
 		int errcode = _t159.ecode;
 		return;
 	}
-		array_string files = *(array_string*)_t159.data;
+	array_string files = *(array_string*)_t159.data;
 	// FOR IN array
 	array _t160 = files;
 	for (int _t161 = 0; _t161 < _t160.len; ++_t161) {
@@ -12648,13 +12642,11 @@ Option_void os__mkdir_all(string path) {
 		if (!_t164.ok) {
 			string err = _t164.v_error;
 			int errcode = _t164.ecode;
-			/*opt promotion*/ Option _t165 = v_error(_STR("folder: %.*s\000, error: %.*s", 2, p, err));
+			Option _t165 = v_error(_STR("folder: %.*s\000, error: %.*s", 2, p, err));
 			return *(Option_void*)&_t165;
-		}
-	_t164;
+		};
 	}
-	Option_void _t166;
-	_t166.ok = true;
+	Option_void _t166 = {.ok = true};
 	return _t166;
 }
 
@@ -12674,8 +12666,7 @@ string os__cache_dir() {
 			string err = _t167.v_error;
 			int errcode = _t167.ecode;
 			v_panic(err);
-		}
-	_t167;
+		};
 	}
 	return cdir;
 }
@@ -12720,22 +12711,24 @@ string os__resource_abs_path(string path) {
 Option_os__File os__open(string path) {
 	FILE* cfile = os__vfopen(path, tos_lit("rb"));
 	if (cfile == ((voidptr)(0))) {
-		/*opt promotion*/ Option _t168 = v_error(_STR("failed to open file \"%.*s\000\"", 2, path));
+		Option _t168 = v_error(_STR("failed to open file \"%.*s\000\"", 2, path));
 		return *(Option_os__File*)&_t168;
 	}
 	int fd = os__fileno(cfile);
-	Option_os__File _t169;/*:)os.File*/opt_ok2(&(os__File[]) { (os__File){.cfile = cfile, .fd = fd, .opened = true} }, (OptionBase*)(&_t169), sizeof(os__File));
+	Option_os__File _t169;
+	opt_ok2(&(os__File[]) { (os__File){.cfile = cfile, .fd = fd, .opened = true} }, (OptionBase*)(&_t169), sizeof(os__File));
 	return _t169;
 }
 
 Option_os__File os__create(string path) {
 	FILE* cfile = os__vfopen(path, tos_lit("wb"));
 	if (cfile == ((voidptr)(0))) {
-		/*opt promotion*/ Option _t170 = v_error(_STR("failed to create file \"%.*s\000\"", 2, path));
+		Option _t170 = v_error(_STR("failed to create file \"%.*s\000\"", 2, path));
 		return *(Option_os__File*)&_t170;
 	}
 	int fd = os__fileno(cfile);
-	Option_os__File _t171;/*:)os.File*/opt_ok2(&(os__File[]) { (os__File){.cfile = cfile, .fd = fd, .opened = true} }, (OptionBase*)(&_t171), sizeof(os__File));
+	Option_os__File _t171;
+	opt_ok2(&(os__File[]) { (os__File){.cfile = cfile, .fd = fd, .opened = true} }, (OptionBase*)(&_t171), sizeof(os__File));
 	return _t171;
 }
 
@@ -12770,7 +12763,7 @@ Option_array_string os__ls(string path) {
 	array_string res = __new_array_with_default(0, 0, sizeof(string), 0);
 	voidptr dir = opendir(path.str);
 	if (isnil(dir)) {
-		/*opt promotion*/ Option _t173 = v_error(_STR("ls() couldnt open dir \"%.*s\000\"", 2, path));
+		Option _t173 = v_error(_STR("ls() couldnt open dir \"%.*s\000\"", 2, path));
 		return *(Option_array_string*)&_t173;
 	}
 	struct dirent* ent = ((struct dirent*)(0));
@@ -12785,22 +12778,25 @@ Option_array_string os__ls(string path) {
 		}
 	}
 	closedir(dir);
-	Option_array_string _t175;/*:)array_string*/opt_ok2(&(array_string[]) { res }, (OptionBase*)(&_t175), sizeof(array_string));
+	Option_array_string _t175;
+	opt_ok2(&(array_string[]) { res }, (OptionBase*)(&_t175), sizeof(array_string));
 	return _t175;
 }
 
 Option_bool os__mkdir(string path) {
 	if (string_eq(path, tos_lit("."))) {
-		Option_bool _t176;/*:)bool*/opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t176), sizeof(bool));
+		Option_bool _t176;
+		opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t176), sizeof(bool));
 		return _t176;
 	}
 	string apath = os__real_path(path);
 	int r = mkdir(apath.str, 511);
 	if (r == -1) {
-		/*opt promotion*/ Option _t177 = v_error(os__posix_get_error_msg(errno));
+		Option _t177 = v_error(os__posix_get_error_msg(errno));
 		return *(Option_bool*)&_t177;
 	}
-	Option_bool _t178;/*:)bool*/opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t178), sizeof(bool));
+	Option_bool _t178;
+	opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t178), sizeof(bool));
 	return _t178;
 }
 
@@ -12808,7 +12804,7 @@ Option_os__Result os__exec(string cmd) {
 	string pcmd = _STR("%.*s\000 2>&1", 2, cmd);
 	voidptr f = os__vpopen(pcmd);
 	if (isnil(f)) {
-		/*opt promotion*/ Option _t179 = v_error(_STR("exec(\"%.*s\000\") failed", 2, cmd));
+		Option _t179 = v_error(_STR("exec(\"%.*s\000\") failed", 2, cmd));
 		return *(Option_os__Result*)&_t179;
 	}
 	array_fixed_byte_4096 buf = {0};
@@ -12819,17 +12815,19 @@ Option_os__Result os__exec(string cmd) {
 	}
 	string soutput = strings__Builder_str(&res);
 	int exit_code = os__vpclose(f);
-	Option_os__Result _t180;/*:)os.Result*/opt_ok2(&(os__Result[]) { (os__Result){.exit_code = exit_code, .output = soutput} }, (OptionBase*)(&_t180), sizeof(os__Result));
+	Option_os__Result _t180;
+	opt_ok2(&(os__Result[]) { (os__Result){.exit_code = exit_code, .output = soutput} }, (OptionBase*)(&_t180), sizeof(os__Result));
 	return _t180;
 }
 
 Option_bool os__symlink(string origin, string target) {
 	int res = symlink(origin.str, target.str);
 	if (res == 0) {
-		Option_bool _t181;/*:)bool*/opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t181), sizeof(bool));
+		Option_bool _t181;
+		opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t181), sizeof(bool));
 		return _t181;
 	}
-	/*opt promotion*/ Option _t182 = v_error(os__posix_get_error_msg(errno));
+	Option _t182 = v_error(os__posix_get_error_msg(errno));
 	return *(Option_bool*)&_t182;
 }
 
@@ -13312,14 +13310,14 @@ Option_time__Time time__parse(string s) {
 	if (!_t200.ok) {
 		string err = _t200.v_error;
 		int errcode = _t200.ecode;
-		/*opt promotion*/ Option _t201 = v_error(_STR("Invalid time format: %.*s", 1, s));
+		Option _t201 = v_error(_STR("Invalid time format: %.*s", 1, s));
 		return *(Option_time__Time*)&_t201;
 	}
-		int pos = *(int*)_t200.data;
+	int pos = *(int*)_t200.data;
 	string symd = string_substr(s, 0, pos);
 	array_string ymd = string_split(symd, tos_lit("-"));
 	if (ymd.len != 3) {
-		/*opt promotion*/ Option _t202 = v_error(_STR("Invalid time format: %.*s", 1, s));
+		Option _t202 = v_error(_STR("Invalid time format: %.*s", 1, s));
 		return *(Option_time__Time*)&_t202;
 	}
 	string shms = string_substr(s, pos, s.len);
@@ -13330,24 +13328,25 @@ Option_time__Time time__parse(string s) {
 	time__Time res = time__new_time((time__Time){.year = string_int((*(string*)array_get(ymd, 0))), .month = string_int((*(string*)array_get(ymd, 1))), .day = string_int((*(string*)array_get(ymd, 2))), .hour = string_int(hour), .minute = string_int(minute), .second = string_int(second), 	.microsecond = 0,
 		.v_unix = 0,
 	});
-	Option_time__Time _t203;/*:)time.Time*/opt_ok2(&(time__Time[]) { res }, (OptionBase*)(&_t203), sizeof(time__Time));
+	Option_time__Time _t203;
+	opt_ok2(&(time__Time[]) { res }, (OptionBase*)(&_t203), sizeof(time__Time));
 	return _t203;
 }
 
 Option_time__Time time__parse_rfc2822(string s) {
 	array_string fields = string_split(s, tos_lit(" "));
 	if (fields.len < 5) {
-		/*opt promotion*/ Option _t204 = v_error(_STR("Invalid time format: %.*s", 1, s));
+		Option _t204 = v_error(_STR("Invalid time format: %.*s", 1, s));
 		return *(Option_time__Time*)&_t204;
 	}
 	Option_int _t205 = string_index(_const_time__months_string, (*(string*)array_get(fields, 2)));
 	if (!_t205.ok) {
 		string err = _t205.v_error;
 		int errcode = _t205.ecode;
-		/*opt promotion*/ Option _t206 = v_error(_STR("Invalid time format: %.*s", 1, s));
+		Option _t206 = v_error(_STR("Invalid time format: %.*s", 1, s));
 		return *(Option_time__Time*)&_t206;
 	}
-		int pos = *(int*)_t205.data;
+	int pos = *(int*)_t205.data;
 	int mm = pos / 3 + 1;
 	byteptr tmstr = ((byteptr)(0));
 	{ // Unsafe block
@@ -13371,15 +13370,15 @@ Option_time__Time time__parse_iso8601(string s) {
 	int offset_min = 0;
 	int count = sscanf(s.str, "%4d-%2d-%2d%c%2d:%2d:%2d.%6d%c%2d:%2d", &year, &month, &day, &time_char, &hour, &minute, &second, &mic_second, &plus_min, &offset_hour, &offset_min);
 	if (count != 11) {
-		/*opt promotion*/ Option _t207 = v_error(tos_lit("Invalid 8601 format"));
+		Option _t207 = v_error(tos_lit("Invalid 8601 format"));
 		return *(Option_time__Time*)&_t207;
 	}
 	if (time_char != 'T' && time_char != ' ') {
-		/*opt promotion*/ Option _t208 = v_error(tos_lit("Invalid 8601 format, expected space or `T` as time separator"));
+		Option _t208 = v_error(tos_lit("Invalid 8601 format, expected space or `T` as time separator"));
 		return *(Option_time__Time*)&_t208;
 	}
 	if (plus_min != '+' && plus_min != '-') {
-		/*opt promotion*/ Option _t209 = v_error(tos_lit("Invalid 8601 format, expected `+` or `-` as time separator"));
+		Option _t209 = v_error(tos_lit("Invalid 8601 format, expected `+` or `-` as time separator"));
 		return *(Option_time__Time*)&_t209;
 	}
 	time__Time t = time__new_time((time__Time){.year = year, .month = month, .day = day, .hour = hour, .minute = minute, .second = second, .microsecond = mic_second, 	.v_unix = 0,
@@ -13400,7 +13399,8 @@ Option_time__Time time__parse_iso8601(string s) {
 		}
 		t = time__unix2(((int)(unix_time)), t.microsecond);
 	}
-	Option_time__Time _t210;/*:)time.Time*/opt_ok2(&(time__Time[]) { time__to_local_time(t) }, (OptionBase*)(&_t210), sizeof(time__Time));
+	Option_time__Time _t210;
+	opt_ok2(&(time__Time[]) { time__to_local_time(t) }, (OptionBase*)(&_t210), sizeof(time__Time));
 	return _t210;
 }
 
@@ -13663,12 +13663,13 @@ bool time__is_leap_year(int year) {
 
 Option_int time__days_in_month(int month, int year) {
 	if (month > 12 || month < 1) {
-		/*opt promotion*/ Option _t211 = v_error(_STR("Invalid month: %"PRId32"", 1, month));
+		Option _t211 = v_error(_STR("Invalid month: %"PRId32"", 1, month));
 		return *(Option_int*)&_t211;
 	}
 	int extra = (month == 2 && time__is_leap_year(year) ? (1) : (0));
 	int res = (*(int*)array_get(_const_time__month_days, month - 1)) + extra;
-	Option_int _t212;/*:)int*/opt_ok2(&(int[]) { res }, (OptionBase*)(&_t212), sizeof(int));
+	Option_int _t212;
+	opt_ok2(&(int[]) { res }, (OptionBase*)(&_t212), sizeof(int));
 	return _t212;
 }
 
@@ -14268,49 +14269,63 @@ string v__pref__vexe_path() {
 
 Option_v__pref__OS v__pref__os_from_string(string os_str) {
 	if (string_eq(os_str, tos_lit("linux"))) {
-		Option_v__pref__OS _t245;/*:)v.pref.OS*/opt_ok2(&(v__pref__OS[]) { v__pref__OS_linux }, (OptionBase*)(&_t245), sizeof(v__pref__OS));
+		Option_v__pref__OS _t245;
+		opt_ok2(&(v__pref__OS[]) { v__pref__OS_linux }, (OptionBase*)(&_t245), sizeof(v__pref__OS));
 		return _t245;
 	} else if (string_eq(os_str, tos_lit("windows"))) {
-		Option_v__pref__OS _t246;/*:)v.pref.OS*/opt_ok2(&(v__pref__OS[]) { v__pref__OS_windows }, (OptionBase*)(&_t246), sizeof(v__pref__OS));
+		Option_v__pref__OS _t246;
+		opt_ok2(&(v__pref__OS[]) { v__pref__OS_windows }, (OptionBase*)(&_t246), sizeof(v__pref__OS));
 		return _t246;
 	} else if (string_eq(os_str, tos_lit("mac"))) {
-		Option_v__pref__OS _t247;/*:)v.pref.OS*/opt_ok2(&(v__pref__OS[]) { v__pref__OS_mac }, (OptionBase*)(&_t247), sizeof(v__pref__OS));
+		Option_v__pref__OS _t247;
+		opt_ok2(&(v__pref__OS[]) { v__pref__OS_mac }, (OptionBase*)(&_t247), sizeof(v__pref__OS));
 		return _t247;
 	} else if (string_eq(os_str, tos_lit("macos"))) {
-		Option_v__pref__OS _t248;/*:)v.pref.OS*/opt_ok2(&(v__pref__OS[]) { v__pref__OS_mac }, (OptionBase*)(&_t248), sizeof(v__pref__OS));
+		Option_v__pref__OS _t248;
+		opt_ok2(&(v__pref__OS[]) { v__pref__OS_mac }, (OptionBase*)(&_t248), sizeof(v__pref__OS));
 		return _t248;
 	} else if (string_eq(os_str, tos_lit("freebsd"))) {
-		Option_v__pref__OS _t249;/*:)v.pref.OS*/opt_ok2(&(v__pref__OS[]) { v__pref__OS_freebsd }, (OptionBase*)(&_t249), sizeof(v__pref__OS));
+		Option_v__pref__OS _t249;
+		opt_ok2(&(v__pref__OS[]) { v__pref__OS_freebsd }, (OptionBase*)(&_t249), sizeof(v__pref__OS));
 		return _t249;
 	} else if (string_eq(os_str, tos_lit("openbsd"))) {
-		Option_v__pref__OS _t250;/*:)v.pref.OS*/opt_ok2(&(v__pref__OS[]) { v__pref__OS_openbsd }, (OptionBase*)(&_t250), sizeof(v__pref__OS));
+		Option_v__pref__OS _t250;
+		opt_ok2(&(v__pref__OS[]) { v__pref__OS_openbsd }, (OptionBase*)(&_t250), sizeof(v__pref__OS));
 		return _t250;
 	} else if (string_eq(os_str, tos_lit("netbsd"))) {
-		Option_v__pref__OS _t251;/*:)v.pref.OS*/opt_ok2(&(v__pref__OS[]) { v__pref__OS_netbsd }, (OptionBase*)(&_t251), sizeof(v__pref__OS));
+		Option_v__pref__OS _t251;
+		opt_ok2(&(v__pref__OS[]) { v__pref__OS_netbsd }, (OptionBase*)(&_t251), sizeof(v__pref__OS));
 		return _t251;
 	} else if (string_eq(os_str, tos_lit("dragonfly"))) {
-		Option_v__pref__OS _t252;/*:)v.pref.OS*/opt_ok2(&(v__pref__OS[]) { v__pref__OS_dragonfly }, (OptionBase*)(&_t252), sizeof(v__pref__OS));
+		Option_v__pref__OS _t252;
+		opt_ok2(&(v__pref__OS[]) { v__pref__OS_dragonfly }, (OptionBase*)(&_t252), sizeof(v__pref__OS));
 		return _t252;
 	} else if (string_eq(os_str, tos_lit("js"))) {
-		Option_v__pref__OS _t253;/*:)v.pref.OS*/opt_ok2(&(v__pref__OS[]) { v__pref__OS_js }, (OptionBase*)(&_t253), sizeof(v__pref__OS));
+		Option_v__pref__OS _t253;
+		opt_ok2(&(v__pref__OS[]) { v__pref__OS_js }, (OptionBase*)(&_t253), sizeof(v__pref__OS));
 		return _t253;
 	} else if (string_eq(os_str, tos_lit("solaris"))) {
-		Option_v__pref__OS _t254;/*:)v.pref.OS*/opt_ok2(&(v__pref__OS[]) { v__pref__OS_solaris }, (OptionBase*)(&_t254), sizeof(v__pref__OS));
+		Option_v__pref__OS _t254;
+		opt_ok2(&(v__pref__OS[]) { v__pref__OS_solaris }, (OptionBase*)(&_t254), sizeof(v__pref__OS));
 		return _t254;
 	} else if (string_eq(os_str, tos_lit("android"))) {
-		Option_v__pref__OS _t255;/*:)v.pref.OS*/opt_ok2(&(v__pref__OS[]) { v__pref__OS_android }, (OptionBase*)(&_t255), sizeof(v__pref__OS));
+		Option_v__pref__OS _t255;
+		opt_ok2(&(v__pref__OS[]) { v__pref__OS_android }, (OptionBase*)(&_t255), sizeof(v__pref__OS));
 		return _t255;
 	} else if (string_eq(os_str, tos_lit("haiku"))) {
-		Option_v__pref__OS _t256;/*:)v.pref.OS*/opt_ok2(&(v__pref__OS[]) { v__pref__OS_haiku }, (OptionBase*)(&_t256), sizeof(v__pref__OS));
+		Option_v__pref__OS _t256;
+		opt_ok2(&(v__pref__OS[]) { v__pref__OS_haiku }, (OptionBase*)(&_t256), sizeof(v__pref__OS));
 		return _t256;
 	} else if (string_eq(os_str, tos_lit("linux_or_macos"))) {
-		Option_v__pref__OS _t257;/*:)v.pref.OS*/opt_ok2(&(v__pref__OS[]) { v__pref__OS_linux }, (OptionBase*)(&_t257), sizeof(v__pref__OS));
+		Option_v__pref__OS _t257;
+		opt_ok2(&(v__pref__OS[]) { v__pref__OS_linux }, (OptionBase*)(&_t257), sizeof(v__pref__OS));
 		return _t257;
 	} else if (string_eq(os_str, tos_lit(""))) {
-		Option_v__pref__OS _t258;/*:)v.pref.OS*/opt_ok2(&(v__pref__OS[]) { v__pref__OS__auto }, (OptionBase*)(&_t258), sizeof(v__pref__OS));
+		Option_v__pref__OS _t258;
+		opt_ok2(&(v__pref__OS[]) { v__pref__OS__auto }, (OptionBase*)(&_t258), sizeof(v__pref__OS));
 		return _t258;
 	} else {
-		/*opt promotion*/ Option _t259 = v_error(_STR("bad OS %.*s", 1, os_str));
+		Option _t259 = v_error(_STR("bad OS %.*s", 1, os_str));
 		return *(Option_v__pref__OS*)&_t259;
 	};
 }
@@ -14527,7 +14542,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 				eprintln(_STR("unknown operating system target `%.*s\000`", 2, target_os));
 				v_exit(1);
 			}
-				v__pref__OS target_os_kind = *(v__pref__OS*)_t262.data;
+			v__pref__OS target_os_kind = *(v__pref__OS*)_t262.data;
 			res->os = target_os_kind;
 		} else if (string_eq(arg, tos_lit("-printfn"))) {
 			array_push(&res->printfn_list, _MOV((string[]){ os__cmdline__option(current_args, tos_lit("-printfn"), tos_lit("")) }));
@@ -14554,7 +14569,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 				int errcode = _t264.ecode;
 				continue;
 			}
-				v__pref__Backend b = *(v__pref__Backend*)_t264.data;
+			v__pref__Backend b = *(v__pref__Backend*)_t264.data;
 			res->backend = b;
 			i++;
 		} else if (string_eq(arg, tos_lit("-path"))) {
@@ -14570,7 +14585,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 				eprintln(_STR("cannot open custom prelude file: %.*s", 1, err));
 				v_exit(1);
 			}
-				string prelude = *(string*)_t265.data;
+			string prelude = *(string*)_t265.data;
 			res->custom_prelude = prelude;
 			i++;
 		} else {
@@ -14619,16 +14634,19 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 
 Option_v__pref__Backend v__pref__backend_from_string(string s) {
 	if (string_eq(s, tos_lit("c"))) {
-		Option_v__pref__Backend _t269;/*:)v.pref.Backend*/opt_ok2(&(v__pref__Backend[]) { v__pref__Backend_c }, (OptionBase*)(&_t269), sizeof(v__pref__Backend));
+		Option_v__pref__Backend _t269;
+		opt_ok2(&(v__pref__Backend[]) { v__pref__Backend_c }, (OptionBase*)(&_t269), sizeof(v__pref__Backend));
 		return _t269;
 	} else if (string_eq(s, tos_lit("js"))) {
-		Option_v__pref__Backend _t270;/*:)v.pref.Backend*/opt_ok2(&(v__pref__Backend[]) { v__pref__Backend_js }, (OptionBase*)(&_t270), sizeof(v__pref__Backend));
+		Option_v__pref__Backend _t270;
+		opt_ok2(&(v__pref__Backend[]) { v__pref__Backend_js }, (OptionBase*)(&_t270), sizeof(v__pref__Backend));
 		return _t270;
 	} else if (string_eq(s, tos_lit("x64"))) {
-		Option_v__pref__Backend _t271;/*:)v.pref.Backend*/opt_ok2(&(v__pref__Backend[]) { v__pref__Backend_x64 }, (OptionBase*)(&_t271), sizeof(v__pref__Backend));
+		Option_v__pref__Backend _t271;
+		opt_ok2(&(v__pref__Backend[]) { v__pref__Backend_x64 }, (OptionBase*)(&_t271), sizeof(v__pref__Backend));
 		return _t271;
 	} else {
-		/*opt promotion*/ Option _t272 = v_error(_STR("Unknown backend type %.*s", 1, s));
+		Option _t272 = v_error(_STR("Unknown backend type %.*s", 1, s));
 		return *(Option_v__pref__Backend*)&_t272;
 	};
 }
@@ -15077,7 +15095,7 @@ multi_return_int_int term__get_terminal_size() {
 
 Option_v__vmod__Manifest v__vmod__from_file(string vmod_path) {
 	if (!os__exists(vmod_path)) {
-		/*opt promotion*/ Option _t283 = v_error(tos_lit("v.mod: v.mod file not found."));
+		Option _t283 = v_error(tos_lit("v.mod: v.mod file not found."));
 		return *(Option_v__vmod__Manifest*)&_t283;
 	}
 	Option_string _t284 = os__read_file(vmod_path);
@@ -15086,7 +15104,7 @@ Option_v__vmod__Manifest v__vmod__from_file(string vmod_path) {
 		int errcode = _t284.ecode;
 		v_panic(tos_lit("v.mod: cannot parse v.mod"));
 	}
-		string contents = *(string*)_t284.data;
+	string contents = *(string*)_t284.data;
 	return v__vmod__decode(contents);
 }
 
@@ -15193,7 +15211,7 @@ static Option_multi_return_array_string_int v__vmod__get_array_content(array_v__
 	array_string vals = __new_array_with_default(0, 0, sizeof(string), 0);
 	int idx = st_idx;
 	if ((*(v__vmod__Token*)array_get(tokens, idx)).typ != v__vmod__TokenKind_labr) {
-		/*opt promotion*/ Option _t287 = v_error(tos_lit("vmod: not a valid array"));
+		Option _t287 = v_error(tos_lit("vmod: not a valid array"));
 		return *(Option_multi_return_array_string_int*)&_t287;
 	}
 	idx++;
@@ -15202,7 +15220,7 @@ static Option_multi_return_array_string_int v__vmod__get_array_content(array_v__
 		if (tok.typ == v__vmod__TokenKind_str) {
 			array_push(&vals, _MOV((string[]){ tok.val }));
 			if (!((*(v__vmod__Token*)array_get(tokens, idx + 1)).typ == v__vmod__TokenKind_comma || (*(v__vmod__Token*)array_get(tokens, idx + 1)).typ == v__vmod__TokenKind_rabr)) {
-				/*opt promotion*/ Option _t290 = v_error(_STR("vmod: invalid separator \"%.*s\000\"", 2, (*(v__vmod__Token*)array_get(tokens, idx + 1)).val));
+				Option _t290 = v_error(_STR("vmod: invalid separator \"%.*s\000\"", 2, (*(v__vmod__Token*)array_get(tokens, idx + 1)).val));
 				return *(Option_multi_return_array_string_int*)&_t290;
 			}
 			idx += ((*(v__vmod__Token*)array_get(tokens, idx + 1)).typ == v__vmod__TokenKind_comma ? (2) : (1));
@@ -15210,18 +15228,19 @@ static Option_multi_return_array_string_int v__vmod__get_array_content(array_v__
 			idx++;
 			break;
 		} else {
-			/*opt promotion*/ Option _t291 = v_error(_STR("vmod: invalid token \"%.*s\000\"", 2, tok.val));
+			Option _t291 = v_error(_STR("vmod: invalid token \"%.*s\000\"", 2, tok.val));
 			return *(Option_multi_return_array_string_int*)&_t291;
 		};
 	}
-	Option_multi_return_array_string_int _t292;opt_ok2(&(multi_return_array_string_int/*X*/[]) { (multi_return_array_string_int){.arg0=vals, .arg1=idx} }, (OptionBase*)(&_t292), sizeof(multi_return_array_string_int));
+	Option_multi_return_array_string_int _t292;
+	opt_ok2(&(multi_return_array_string_int/*X*/[]) { (multi_return_array_string_int){.arg0=vals, .arg1=idx} }, (OptionBase*)(&_t292), sizeof(multi_return_array_string_int));
 	return _t292;
 }
 
 static Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* p) {
 	string err_label = tos_lit("vmod:");
 	if (p->scanner.text.len == 0) {
-		/*opt promotion*/ Option _t293 = v_error(_STR("%.*s\000 no content.", 2, err_label));
+		Option _t293 = v_error(_STR("%.*s\000 no content.", 2, err_label));
 		return *(Option_v__vmod__Manifest*)&_t293;
 	}
 	v__vmod__Scanner_scan_all(&p->scanner);
@@ -15243,7 +15262,7 @@ static Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* p) {
 		v__vmod__Token tok = (*(v__vmod__Token*)array_get(tokens, i));
 		if (tok.typ == v__vmod__TokenKind_lcbr) {
 			if (!((*(v__vmod__Token*)array_get(tokens, i + 1)).typ == v__vmod__TokenKind_field_key || (*(v__vmod__Token*)array_get(tokens, i + 1)).typ == v__vmod__TokenKind_rcbr)) {
-				/*opt promotion*/ Option _t295 = v_error(_STR("%.*s\000 invalid content after opening brace", 2, err_label));
+				Option _t295 = v_error(_STR("%.*s\000 invalid content after opening brace", 2, err_label));
 				return *(Option_v__vmod__Manifest*)&_t295;
 			}
 			i++;
@@ -15253,7 +15272,7 @@ static Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* p) {
 		} else if (tok.typ == v__vmod__TokenKind_field_key) {
 			string field_name = string_trim_right(tok.val, tos_lit(":"));
 			if (!((*(v__vmod__Token*)array_get(tokens, i + 1)).typ == v__vmod__TokenKind_str || (*(v__vmod__Token*)array_get(tokens, i + 1)).typ == v__vmod__TokenKind_labr)) {
-				/*opt promotion*/ Option _t296 = v_error(_STR("%.*s\000 value of field \"%.*s\000\" must be either string or an array of strings", 3, err_label, field_name));
+				Option _t296 = v_error(_STR("%.*s\000 value of field \"%.*s\000\" must be either string or an array of strings", 3, err_label, field_name));
 				return *(Option_v__vmod__Manifest*)&_t296;
 			}
 			string field_value = (*(v__vmod__Token*)array_get(tokens, i + 1)).val;
@@ -15274,10 +15293,10 @@ static Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* p) {
 				if (!_t298.ok) {
 					string err = _t298.v_error;
 					int errcode = _t298.ecode;
-					/*opt promotion*/ Option _t299 = v_error(err);
+					Option _t299 = v_error(err);
 					return *(Option_v__vmod__Manifest*)&_t299;
 				}
-					Option_multi_return_array_string_int mr_4456 = _t298;
+				Option_multi_return_array_string_int mr_4456 = _t298;
 				array_string deps = (*(multi_return_array_string_int*)mr_4456.data).arg0;
 				int idx = (*(multi_return_array_string_int*)mr_4456.data).arg1;
 				mn.dependencies = deps;
@@ -15289,10 +15308,10 @@ static Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* p) {
 					if (!_t300.ok) {
 						string err = _t300.v_error;
 						int errcode = _t300.ecode;
-						/*opt promotion*/ Option _t301 = v_error(err);
+						Option _t301 = v_error(err);
 						return *(Option_v__vmod__Manifest*)&_t301;
 					}
-						Option_multi_return_array_string_int mr_4662 = _t300;
+					Option_multi_return_array_string_int mr_4662 = _t300;
 					array_string vals = (*(multi_return_array_string_int*)mr_4662.data).arg0;
 					int idx = (*(multi_return_array_string_int*)mr_4662.data).arg1;
 					map_set(&mn.unknown, field_name, &(array_string[]) { vals });
@@ -15305,17 +15324,18 @@ static Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* p) {
 			continue;
 		} else if (tok.typ == v__vmod__TokenKind_comma) {
 			if (!((*(v__vmod__Token*)array_get(tokens, i - 1)).typ == v__vmod__TokenKind_str || (*(v__vmod__Token*)array_get(tokens, i - 1)).typ == v__vmod__TokenKind_rabr) || (*(v__vmod__Token*)array_get(tokens, i + 1)).typ != v__vmod__TokenKind_field_key) {
-				/*opt promotion*/ Option _t302 = v_error(_STR("%.*s\000 invalid comma placement", 2, err_label));
+				Option _t302 = v_error(_STR("%.*s\000 invalid comma placement", 2, err_label));
 				return *(Option_v__vmod__Manifest*)&_t302;
 			}
 			i++;
 			continue;
 		} else {
-			/*opt promotion*/ Option _t303 = v_error(_STR("%.*s\000 invalid token \"%.*s\000\"", 3, err_label, tok.val));
+			Option _t303 = v_error(_STR("%.*s\000 invalid token \"%.*s\000\"", 3, err_label, tok.val));
 			return *(Option_v__vmod__Manifest*)&_t303;
 		};
 	}
-	Option_v__vmod__Manifest _t304;/*:)v.vmod.Manifest*/opt_ok2(&(v__vmod__Manifest[]) { mn }, (OptionBase*)(&_t304), sizeof(v__vmod__Manifest));
+	Option_v__vmod__Manifest _t304;
+	opt_ok2(&(v__vmod__Manifest[]) { mn }, (OptionBase*)(&_t304), sizeof(v__vmod__Manifest));
 	return _t304;
 }
 
@@ -15551,7 +15571,7 @@ string vweb__tmpl__compile_file(string path, string fn_name) {
 		int errcode = _t332.ecode;
 		v_panic(tos_lit("html failed"));
 	}
-		string html = *(string*)_t332.data;
+	string html = *(string*)_t332.data;
 	return vweb__tmpl__compile_template(html, fn_name);
 }
 
@@ -15566,7 +15586,7 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 			int errcode = _t333.ecode;
 			v_panic(tos_lit("reading file templates/header.html failed"));
 		}
-			string h = *(string*)_t333.data;
+		string h = *(string*)_t333.data;
 		header = string_replace(string_trim_space(h), tos_lit("\'"), tos_lit("\""));
 		html = string_add(header, html);
 	}
@@ -15577,7 +15597,7 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 			int errcode = _t334.ecode;
 			v_panic(tos_lit("reading file templates/footer.html failed"));
 		}
-			string f = *(string*)_t334.data;
+		string f = *(string*)_t334.data;
 		footer = string_replace(string_trim_space(f), tos_lit("\'"), tos_lit("\""));
 		html = /*f*/string_add(html, footer);
 	}
@@ -15605,7 +15625,7 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 				int errcode = _t335.ecode;
 				continue;
 			}
-				int pos = *(int*)_t335.data;
+			int pos = *(int*)_t335.data;
 			string file_name = string_substr(line, pos + 9, line.len);
 			string file_path = os__join_path(tos_lit("templates"), (varg_string){.len=1,.args={_STR("%.*s\000.html", 2, file_name)}});
 			Option_string _t336 = os__read_file(file_path);
@@ -15614,7 +15634,7 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 				int errcode = _t336.ecode;
 				v_panic(_STR("reading file %.*s\000 failed", 2, file_name));
 			}
-				string file_content = *(string*)_t336.data;
+			string file_content = *(string*)_t336.data;
 			file_content = string_replace(file_content, tos_lit("\'"), tos_lit("\""));
 			array_string lines2 = string_split_into_lines(file_content);
 			// FOR IN array
@@ -15631,7 +15651,7 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 				int errcode = _t339.ecode;
 				continue;
 			}
-				int pos = *(int*)_t339.data;
+			int pos = *(int*)_t339.data;
 			strings__Builder_write(&s, tos_lit("<script src=\""));
 			strings__Builder_write(&s, string_substr(line, pos + 5, line.len - 1));
 			strings__Builder_writeln(&s, tos_lit("\"></script>"));
@@ -15642,7 +15662,7 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 				int errcode = _t340.ecode;
 				continue;
 			}
-				int pos = *(int*)_t340.data;
+			int pos = *(int*)_t340.data;
 			strings__Builder_write(&s, tos_lit("<link href=\""));
 			strings__Builder_write(&s, string_substr(line, pos + 6, line.len - 1));
 			strings__Builder_writeln(&s, tos_lit("\" rel=\"stylesheet\" type=\"text/css\">"));
@@ -15654,7 +15674,7 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 				int errcode = _t341.ecode;
 				continue;
 			}
-				int pos = *(int*)_t341.data;
+			int pos = *(int*)_t341.data;
 			strings__Builder_writeln(&s, string_add(string_add(tos_lit("if "), string_substr(line, pos + 4, line.len)), tos_lit("{")));
 			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
 		} else if (string_contains(line, tos_lit("@end"))) {
@@ -15673,7 +15693,7 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 				int errcode = _t342.ecode;
 				continue;
 			}
-				int pos = *(int*)_t342.data;
+			int pos = *(int*)_t342.data;
 			strings__Builder_writeln(&s, string_add(string_add(tos_lit("for "), string_substr(line, pos + 4, line.len)), tos_lit("{")));
 			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
 		} else if (state == vweb__tmpl__State_html && string_contains(line, tos_lit("span.")) && string_ends_with(line, tos_lit("{"))) {
@@ -15805,7 +15825,7 @@ void help__print_and_exit(string topic) {
 		println(_const_help__unknown_topic);
 		v_exit(1);
 	}
-		string content = *(string*)_t344.data;
+	string content = *(string*)_t344.data;
 	println(content);
 	v_exit(0);
 }
@@ -15854,7 +15874,7 @@ string v__util__formatted_error(string kind, string omsg, string filepath, v__to
 		int errcode = _t345.ecode;
 		*(string*) _t345.data = tos_lit("");
 	}
-		string source = *(string*)_t345.data;
+	string source = *(string*)_t345.data;
 	int p = v__util__imax(0, v__util__imin(source.len - 1, pos.pos));
 	if (source.len > 0) {
 		for (; p >= 0; p--) {
@@ -15920,13 +15940,14 @@ Option_string v__util__find_working_diff_command() {
 			int errcode = _t351.ecode;
 			continue;
 		}
-			os__Result p = *(os__Result*)_t351.data;
+		os__Result p = *(os__Result*)_t351.data;
 		if (p.exit_code == 0) {
-			Option_string _t352;/*:)string*/opt_ok2(&(string[]) { diffcmd }, (OptionBase*)(&_t352), sizeof(string));
+			Option_string _t352;
+			opt_ok2(&(string[]) { diffcmd }, (OptionBase*)(&_t352), sizeof(string));
 			return _t352;
 		}
 	}
-	/*opt promotion*/ Option _t353 = v_error(tos_lit("no working diff command found"));
+	Option _t353 = v_error(tos_lit("no working diff command found"));
 	return *(Option_string*)&_t353;
 }
 
@@ -15940,7 +15961,7 @@ string v__util__color_compare_files(string diff_cmd, string file1, string file2)
 			int errcode = _t354.ecode;
 			return _STR("comparison command: `%.*s\000` failed", 2, full_cmd);
 		}
-			os__Result x = *(os__Result*)_t354.data;
+		os__Result x = *(os__Result*)_t354.data;
 		return string_trim_right(x.output, tos_lit("\r\n"));
 	}
 	return tos_lit("");
@@ -16039,7 +16060,7 @@ string v__util__githash(bool should_get_from_filesystem) {
 				int errcode = _t356.ecode;
 				break;
 			}
-				string head_content = *(string*)_t356.data;
+			string head_content = *(string*)_t356.data;
 			string current_branch_hash = head_content;
 			if (string_starts_with(head_content, tos_lit("ref: "))) {
 				string gcbranch_rel_path = string_trim_space(string_replace(head_content, tos_lit("ref: "), tos_lit("")));
@@ -16053,7 +16074,7 @@ string v__util__githash(bool should_get_from_filesystem) {
 					int errcode = _t357.ecode;
 					break;
 				}
-					string branch_hash = *(string*)_t357.data;
+				string branch_hash = *(string*)_t357.data;
 				current_branch_hash = branch_hash;
 			}
 			int desired_hash_length = 7;
@@ -16116,8 +16137,7 @@ void v__util__launch_tool(bool is_verbose, string tool_name, array_string args) 
 				string err = _t360.v_error;
 				int errcode = _t360.ecode;
 				v_panic(err);
-			}
-	_t360;
+			};
 		}
 		string compilation_command = _STR("\"%.*s\000\" ", 2, vexe);
 		compilation_command = /*f*/string_add(compilation_command, _STR("\"%.*s\000\"", 2, tool_source));
@@ -16130,7 +16150,7 @@ void v__util__launch_tool(bool is_verbose, string tool_name, array_string args) 
 			int errcode = _t361.ecode;
 			v_panic(err);
 		}
-			os__Result tool_compilation = *(os__Result*)_t361.data;
+		os__Result tool_compilation = *(os__Result*)_t361.data;
 		if (tool_compilation.exit_code != 0) {
 			string err = tos_lit("Permission denied");
 			if (!string_contains(tool_compilation.output, tos_lit("Permission denied"))) {
@@ -16178,10 +16198,10 @@ Option_string v__util__read_file(string file_path) {
 	if (!_t365.ok) {
 		string err = _t365.v_error;
 		int errcode = _t365.ecode;
-		/*opt promotion*/ Option _t366 = v_error(_STR("failed to open %.*s", 1, file_path));
+		Option _t366 = v_error(_STR("failed to open %.*s", 1, file_path));
 		return *(Option_string*)&_t366;
 	}
-		string raw_text = *(string*)_t365.data;
+	string raw_text = *(string*)_t365.data;
 	if (raw_text.len >= 3) {
 		byteptr c_text = raw_text.str;
 		if (c_text[0] == 0xEF && c_text[1] == 0xBB && c_text[2] == 0xBF) {
@@ -16189,7 +16209,8 @@ Option_string v__util__read_file(string file_path) {
 			raw_text = tos((voidptr)&/*qq*/c_text[offset_from_begin], vstrlen(c_text) - offset_from_begin);
 		}
 	}
-	Option_string _t367;/*:)string*/opt_ok2(&(string[]) { raw_text }, (OptionBase*)(&_t367), sizeof(string));
+	Option_string _t367;
+	opt_ok2(&(string[]) { raw_text }, (OptionBase*)(&_t367), sizeof(string));
 	return _t367;
 }
 
@@ -16257,10 +16278,10 @@ Option_bool v__util__check_module_is_installed(string modulename, bool is_verbos
 		if (!_t373.ok) {
 			string err = _t373.v_error;
 			int errcode = _t373.ecode;
-			/*opt promotion*/ Option _t374 = v_error(_STR("can not start %.*s\000, error: %.*s", 2, update_cmd, err));
+			Option _t374 = v_error(_STR("can not start %.*s\000, error: %.*s", 2, update_cmd, err));
 			return *(Option_bool*)&_t374;
 		}
-			os__Result update_res = *(os__Result*)_t373.data;
+		os__Result update_res = *(os__Result*)_t373.data;
 		if (update_res.exit_code != 0) {
 			eprintln(_STR("Warning: `%.*s\000` exists, but is not updated.\nV will continue, since updates can fail due to temporary network problems,\nand the existing module `%.*s\000` may still work.", 3, modulename, modulename));
 			if (is_verbose) {
@@ -16269,7 +16290,8 @@ Option_bool v__util__check_module_is_installed(string modulename, bool is_verbos
 			}
 			eprintln(string_repeat(tos_lit("-"), 50));
 		}
-		Option_bool _t375;/*:)bool*/opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t375), sizeof(bool));
+		Option_bool _t375;
+		opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t375), sizeof(bool));
 		return _t375;
 	}
 	if (is_verbose) {
@@ -16279,22 +16301,23 @@ Option_bool v__util__check_module_is_installed(string modulename, bool is_verbos
 	if (!_t376.ok) {
 		string err = _t376.v_error;
 		int errcode = _t376.ecode;
-		/*opt promotion*/ Option _t377 = v_error(_STR("git is not installed, error: %.*s", 1, err));
+		Option _t377 = v_error(_STR("git is not installed, error: %.*s", 1, err));
 		return *(Option_bool*)&_t377;
 	}
-		os__Result cloning_res = *(os__Result*)_t376.data;
+	os__Result cloning_res = *(os__Result*)_t376.data;
 	if (cloning_res.exit_code != 0) {
-		/*opt promotion*/ Option _t378 = v_error(_STR("cloning failed, details: %.*s", 1, cloning_res.output));
+		Option _t378 = v_error(_STR("cloning failed, details: %.*s", 1, cloning_res.output));
 		return *(Option_bool*)&_t378;
 	}
 	if (!os__exists(mod_v_file)) {
-		/*opt promotion*/ Option _t379 = v_error(_STR("even after cloning, %.*s\000 is still missing", 2, mod_v_file));
+		Option _t379 = v_error(_STR("even after cloning, %.*s\000 is still missing", 2, mod_v_file));
 		return *(Option_bool*)&_t379;
 	}
 	if (is_verbose) {
 		eprintln(tos_lit("check_module_is_installed: done"));
 	}
-	Option_bool _t380;/*:)bool*/opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t380), sizeof(bool));
+	Option_bool _t380;
+	opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t380), sizeof(bool));
 	return _t380;
 }
 
@@ -16317,8 +16340,7 @@ void v__util__ensure_modules_for_all_tools_are_installed(bool is_verbose) {
 				string err = _t386.v_error;
 				int errcode = _t386.ecode;
 				v_panic(err);
-			}
-	_t386;
+			};
 		}
 	}
 	/*for in map cleanup*/
@@ -16839,8 +16861,7 @@ bool v__table__TypeSymbol_has_method(v__table__TypeSymbol* t, string name) {
 		string err = _t400.v_error;
 		int errcode = _t400.ecode;
 		return false;
-	}
-	_t400;
+	};
 	return true;
 }
 
@@ -16850,11 +16871,12 @@ Option_v__table__Fn v__table__TypeSymbol_find_method(v__table__TypeSymbol* t, st
 	for (int _t402 = 0; _t402 < _t401.len; ++_t402) {
 		v__table__Fn method = ((v__table__Fn*)_t401.data)[_t402];
 		if (string_eq(method.name, name)) {
-			Option_v__table__Fn _t403;/*:)v.table.Fn*/opt_ok2(&(v__table__Fn[]) { method }, (OptionBase*)(&_t403), sizeof(v__table__Fn));
+			Option_v__table__Fn _t403;
+			opt_ok2(&(v__table__Fn[]) { method }, (OptionBase*)(&_t403), sizeof(v__table__Fn));
 			return _t403;
 		}
 	}
-	/*opt promotion*/ Option _t404 = opt_none();
+	Option _t404 = opt_none();
 	return *(Option_v__table__Fn*)&_t404;
 }
 
@@ -16879,11 +16901,12 @@ Option_v__table__Field v__table__Struct_find_field(v__table__Struct s, string na
 	for (int _t406 = 0; _t406 < _t405.len; ++_t406) {
 		v__table__Field field = ((v__table__Field*)_t405.data)[_t406];
 		if (string_eq(field.name, name)) {
-			Option_v__table__Field _t407;/*:)v.table.Field*/opt_ok2(&(v__table__Field[]) { field }, (OptionBase*)(&_t407), sizeof(v__table__Field));
+			Option_v__table__Field _t407;
+			opt_ok2(&(v__table__Field[]) { field }, (OptionBase*)(&_t407), sizeof(v__table__Field));
 			return _t407;
 		}
 	}
-	/*opt promotion*/ Option _t408 = opt_none();
+	Option _t408 = opt_none();
 	return *(Option_v__table__Field*)&_t408;
 }
 
@@ -16912,7 +16935,7 @@ Option_bool v__table__Table_parse_cflag(v__table__Table* table, string cflg, str
 	string flag_orig = string_trim_space(cflg);
 	string flag = flag_orig;
 	if (string_eq(flag, tos_lit(""))) {
-		/*opt promotion*/ Option _t411 = opt_none();
+		Option _t411 = opt_none();
 		return *(Option_bool*)&_t411;
 	}
 	string fos = tos_lit("");
@@ -16929,10 +16952,10 @@ Option_bool v__table__Table_parse_cflag(v__table__Table* table, string cflg, str
 		if (!_t415.ok) {
 			string err = _t415.v_error;
 			int errcode = _t415.ecode;
-			/*opt promotion*/ Option _t416 = opt_none();
+			Option _t416 = opt_none();
 			return *(Option_bool*)&_t416;
 		}
-			int pos = *(int*)_t415.data;
+		int pos = *(int*)_t415.data;
 		fos = string_trim_space(string_substr(flag, 0, pos));
 		flag = string_trim_space(string_substr(flag, pos, flag.len));
 	}
@@ -16958,7 +16981,7 @@ Option_bool v__table__Table_parse_cflag(v__table__Table* table, string cflg, str
 			int errcode = _t419.ecode;
 			*(int*) _t419.data = -1;
 		}
-			int index = *(int*)_t419.data;
+		int index = *(int*)_t419.data;
 		while (index > -1) {
 			bool has_next = false;
 			// FOR IN array
@@ -16983,7 +17006,7 @@ Option_bool v__table__Table_parse_cflag(v__table__Table* table, string cflg, str
 		}
 		if (((string_eq(name, tos_lit("-I")) || string_eq(name, tos_lit("-l")) || string_eq(name, tos_lit("-L")))) && string_eq(value, tos_lit(""))) {
 			string hint = (string_eq(name, tos_lit("-l")) ? (tos_lit("library name")) : (tos_lit("path")));
-			/*opt promotion*/ Option _t422 = v_error(_STR("bad #flag `%.*s\000`: missing %.*s\000 after `%.*s\000`", 4, flag_orig, hint, name));
+			Option _t422 = v_error(_STR("bad #flag `%.*s\000`: missing %.*s\000 after `%.*s\000`", 4, flag_orig, hint, name));
 			return *(Option_bool*)&_t422;
 		}
 		v__cflag__CFlag cf = (v__cflag__CFlag){.mod = mod, .os = fos, .name = name, .value = value};
@@ -16994,7 +17017,8 @@ Option_bool v__table__Table_parse_cflag(v__table__Table* table, string cflg, str
 			break;
 		}
 	}
-	Option_bool _t424;/*:)bool*/opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t424), sizeof(bool));
+	Option_bool _t424;
+	opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t424), sizeof(bool));
 	return _t424;
 }
 
@@ -17046,10 +17070,11 @@ bool v__table__Fn_is_same_method_as(v__table__Fn* f, v__table__Fn* func) {
 Option_v__table__Fn v__table__Table_find_fn(v__table__Table* t, string name) {
 	v__table__Fn f = (*(v__table__Fn*)map_get(t->fns, name, &(v__table__Fn[]){ {0} }));
 	if (f.name.str != 0) {
-		Option_v__table__Fn _t426;/*:)v.table.Fn*/opt_ok2(&(v__table__Fn[]) { f }, (OptionBase*)(&_t426), sizeof(v__table__Fn));
+		Option_v__table__Fn _t426;
+		opt_ok2(&(v__table__Fn[]) { f }, (OptionBase*)(&_t426), sizeof(v__table__Fn));
 		return _t426;
 	}
-	/*opt promotion*/ Option _t427 = opt_none();
+	Option _t427 = opt_none();
 	return *(Option_v__table__Fn*)&_t427;
 }
 
@@ -17059,8 +17084,7 @@ bool v__table__Table_known_fn(v__table__Table* t, string name) {
 		string err = _t428.v_error;
 		int errcode = _t428.ecode;
 		return false;
-	}
-	_t428;
+	};
 	return true;
 }
 
@@ -17085,7 +17109,8 @@ Option_v__table__Fn v__table__Table_type_find_method(v__table__Table* t, v__tabl
 	while (1) {
 		{ /* if guard */ Option_v__table__Fn method = v__table__TypeSymbol_find_method(ts, name);
 		if (method.ok) {
-			Option_v__table__Fn _t430;/*:)v.table.Fn*/opt_ok2(&(v__table__Fn[]) { /*opt*/(*(v__table__Fn*)method.data) }, (OptionBase*)(&_t430), sizeof(v__table__Fn));
+			Option_v__table__Fn _t430;
+			opt_ok2(&(v__table__Fn[]) { /*opt*/(*(v__table__Fn*)method.data) }, (OptionBase*)(&_t430), sizeof(v__table__Fn));
 			return _t430;
 		}}
 		if (ts->parent_idx == 0) {
@@ -17093,7 +17118,7 @@ Option_v__table__Fn v__table__Table_type_find_method(v__table__Table* t, v__tabl
 		}
 		ts = &(*(v__table__TypeSymbol*)array_get(t->types, ts->parent_idx));
 	}
-	/*opt promotion*/ Option _t431 = opt_none();
+	Option _t431 = opt_none();
 	return *(Option_v__table__Fn*)&_t431;
 }
 
@@ -17112,7 +17137,8 @@ Option_v__table__Field v__table__Table_struct_find_field(v__table__Table* t, v__
 			v__table__Struct* struct_info = /* as */ (v__table__Struct*)__as_cast(ts->info.obj, ts->info.typ, /*expected:*/106);
 			{ /* if guard */ Option_v__table__Field field = v__table__Struct_find_field(/*rec*/*struct_info, name);
 			if (field.ok) {
-				Option_v__table__Field _t432;/*:)v.table.Field*/opt_ok2(&(v__table__Field[]) { /*opt*/(*(v__table__Field*)field.data) }, (OptionBase*)(&_t432), sizeof(v__table__Field));
+				Option_v__table__Field _t432;
+				opt_ok2(&(v__table__Field[]) { /*opt*/(*(v__table__Field*)field.data) }, (OptionBase*)(&_t432), sizeof(v__table__Field));
 				return _t432;
 			}}
 		}
@@ -17121,7 +17147,7 @@ Option_v__table__Field v__table__Table_struct_find_field(v__table__Table* t, v__
 		}
 		ts = &(*(v__table__TypeSymbol*)array_get(t->types, ts->parent_idx));
 	}
-	/*opt promotion*/ Option _t433 = opt_none();
+	Option _t433 = opt_none();
 	return *(Option_v__table__Field*)&_t433;
 }
 
@@ -17134,10 +17160,11 @@ inline int v__table__Table_find_type_idx(v__table__Table* t, string name) {
 inline Option_v__table__TypeSymbol v__table__Table_find_type(v__table__Table* t, string name) {
 	int idx = (*(int*)map_get(t->type_idxs, name, &(int[]){ 0 }));
 	if (idx > 0) {
-		Option_v__table__TypeSymbol _t434;/*:)v.table.TypeSymbol*/opt_ok2(&(v__table__TypeSymbol[]) { (*(v__table__TypeSymbol*)array_get(t->types, idx)) }, (OptionBase*)(&_t434), sizeof(v__table__TypeSymbol));
+		Option_v__table__TypeSymbol _t434;
+		opt_ok2(&(v__table__TypeSymbol[]) { (*(v__table__TypeSymbol*)array_get(t->types, idx)) }, (OptionBase*)(&_t434), sizeof(v__table__TypeSymbol));
 		return _t434;
 	}
-	/*opt promotion*/ Option _t435 = opt_none();
+	Option _t435 = opt_none();
 	return *(Option_v__table__TypeSymbol*)&_t435;
 }
 
@@ -17230,8 +17257,7 @@ bool v__table__Table_known_type(v__table__Table* t, string name) {
 		string err = _t438.v_error;
 		int errcode = _t438.ecode;
 		return false;
-	}
-	_t438;
+	};
 	return true;
 }
 
@@ -17670,7 +17696,8 @@ Option_multi_return_v__ast__ScopeObject_v__ast__Scope v__ast__Scope_find_with_sc
 	v__ast__Scope* sc = s;
 	while (1) {
 		if (_IN_MAP(name, sc->objects)) {
-			Option_multi_return_v__ast__ScopeObject_v__ast__Scope _t453;opt_ok2(&(multi_return_v__ast__ScopeObject_v__ast__Scope/*X*/[]) { (multi_return_v__ast__ScopeObject_v__ast__Scope){.arg0=(*(v__ast__ScopeObject*)map_get(sc->objects, name, &(v__ast__ScopeObject[]){ {0} })), .arg1=sc} }, (OptionBase*)(&_t453), sizeof(multi_return_v__ast__ScopeObject_v__ast__Scope));
+			Option_multi_return_v__ast__ScopeObject_v__ast__Scope _t453;
+			opt_ok2(&(multi_return_v__ast__ScopeObject_v__ast__Scope/*X*/[]) { (multi_return_v__ast__ScopeObject_v__ast__Scope){.arg0=(*(v__ast__ScopeObject*)map_get(sc->objects, name, &(v__ast__ScopeObject[]){ {0} })), .arg1=sc} }, (OptionBase*)(&_t453), sizeof(multi_return_v__ast__ScopeObject_v__ast__Scope));
 			return _t453;
 		}
 		if (isnil(sc->parent)) {
@@ -17678,21 +17705,22 @@ Option_multi_return_v__ast__ScopeObject_v__ast__Scope v__ast__Scope_find_with_sc
 		}
 		sc = sc->parent;
 	}
-	/*opt promotion*/ Option _t454 = opt_none();
+	Option _t454 = opt_none();
 	return *(Option_multi_return_v__ast__ScopeObject_v__ast__Scope*)&_t454;
 }
 
 Option_v__ast__ScopeObject v__ast__Scope_find(v__ast__Scope* s, string name) {
 	for (v__ast__Scope* sc = s; true; sc = sc->parent) {
 		if (_IN_MAP(name, sc->objects)) {
-			Option_v__ast__ScopeObject _t455;/*:)v.ast.ScopeObject*/opt_ok2(&(v__ast__ScopeObject[]) { (*(v__ast__ScopeObject*)map_get(sc->objects, name, &(v__ast__ScopeObject[]){ {0} })) }, (OptionBase*)(&_t455), sizeof(v__ast__ScopeObject));
+			Option_v__ast__ScopeObject _t455;
+			opt_ok2(&(v__ast__ScopeObject[]) { (*(v__ast__ScopeObject*)map_get(sc->objects, name, &(v__ast__ScopeObject[]){ {0} })) }, (OptionBase*)(&_t455), sizeof(v__ast__ScopeObject));
 			return _t455;
 		}
 		if (isnil(sc->parent)) {
 			break;
 		}
 	}
-	/*opt promotion*/ Option _t456 = opt_none();
+	Option _t456 = opt_none();
 	return *(Option_v__ast__ScopeObject*)&_t456;
 }
 
@@ -17711,12 +17739,13 @@ Option_v__ast__Var_ptr v__ast__Scope_find_var(v__ast__Scope* s, string name) {
 		if (/*opt*/(*(v__ast__ScopeObject*)obj.data).typ == 205 /* v.ast.Var */) {
 			v__ast__Var* it = (v__ast__Var*)/*opt*/(*(v__ast__ScopeObject*)obj.data).obj; // ST it
 			v__ast__Var* obj = it;
-			Option_v__ast__Var_ptr _t458;/*:)v.ast.Var*/opt_ok2(&(v__ast__Var*[]) { obj }, (OptionBase*)(&_t458), sizeof(v__ast__Var*));
+			Option_v__ast__Var_ptr _t458;
+			opt_ok2(&(v__ast__Var*[]) { obj }, (OptionBase*)(&_t458), sizeof(v__ast__Var*));
 			return _t458;
 		} else {
 		};
 	}}
-	/*opt promotion*/ Option _t459 = opt_none();
+	Option _t459 = opt_none();
 	return *(Option_v__ast__Var_ptr*)&_t459;
 }
 
@@ -17726,12 +17755,13 @@ Option_v__ast__ConstField_ptr v__ast__Scope_find_const(v__ast__Scope* s, string 
 		if (/*opt*/(*(v__ast__ScopeObject*)obj.data).typ == 204 /* v.ast.ConstField */) {
 			v__ast__ConstField* it = (v__ast__ConstField*)/*opt*/(*(v__ast__ScopeObject*)obj.data).obj; // ST it
 			v__ast__ConstField* obj = it;
-			Option_v__ast__ConstField_ptr _t461;/*:)v.ast.ConstField*/opt_ok2(&(v__ast__ConstField*[]) { obj }, (OptionBase*)(&_t461), sizeof(v__ast__ConstField*));
+			Option_v__ast__ConstField_ptr _t461;
+			opt_ok2(&(v__ast__ConstField*[]) { obj }, (OptionBase*)(&_t461), sizeof(v__ast__ConstField*));
 			return _t461;
 		} else {
 		};
 	}}
-	/*opt promotion*/ Option _t462 = opt_none();
+	Option _t462 = opt_none();
 	return *(Option_v__ast__ConstField_ptr*)&_t462;
 }
 
@@ -18159,7 +18189,7 @@ v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__
 		v__scanner__verror(err);
 		return ((voidptr)(0));
 	}
-		string raw_text = *(string*)_t496.data;
+	string raw_text = *(string*)_t496.data;
 	v__scanner__Scanner* s = v__scanner__new_scanner(raw_text, comments_mode, is_fmt);
 	s->file_path = file_path;
 	return s;
@@ -18861,7 +18891,7 @@ static v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanner* s) {
 					int errcode = _t501.ecode;
 					*(string*) _t501.data = tos_lit("");
 				}
-					string vmod_content = *(string*)_t501.data;
+				string vmod_content = *(string*)_t501.data;
 // $if  windows {
 #ifdef _WIN32
 				s->vmod_file_content = string_replace(vmod_content, tos_lit("\r\n"), tos_lit("\n"));
@@ -19780,7 +19810,7 @@ static string v__checker__stripped_name(string name) {
 		int errcode = _t523.ecode;
 		*(int*) _t523.data = -1;
 	}
-		int idx = *(int*)_t523.data;
+	int idx = *(int*)_t523.data;
 	return string_substr(name, (idx + 1), name.len);
 }
 
@@ -20228,7 +20258,7 @@ static void v__checker__Checker_fail_if_immutable(v__checker__Checker* c, v__ast
 				v__checker__Checker_error(c, _STR("unknown field `%.*s\000.%.*s\000`", 3, type_str, expr->field_name), expr->pos);
 				return;
 			}
-				v__table__Field field_info = *(v__table__Field*)_t544.data;
+			v__table__Field field_info = *(v__table__Field*)_t544.data;
 			if (!field_info.is_mut) {
 				string type_str = v__table__Table_type_to_str(c->table, expr->expr_type);
 				v__checker__Checker_error(c, _STR("field `%.*s\000` of struct `%.*s\000` is immutable", 3, expr->field_name, type_str), expr->pos);
@@ -20289,7 +20319,7 @@ static void v__checker__Checker_check_map_and_filter(v__checker__Checker* c, boo
 				v__checker__Checker_error(c, _STR("%.*s\000 is not exist", 2, arg_expr->name), arg_expr->pos);
 				return;
 			}
-				v__table__Fn func = *(v__table__Fn*)_t546.data;
+			v__table__Fn func = *(v__table__Fn*)_t546.data;
 			if (func.args.len > 1) {
 				v__checker__Checker_error(c, tos_lit("function needs exactly 1 argument"), call_expr.pos);
 			} else if (is_map && (func.return_type != elem_typ || (*(v__table__Arg*)array_get(func.args, 0)).typ != elem_typ)) {
@@ -21211,21 +21241,23 @@ v__table__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__Ar
 static Option_int v__checker__const_int_value(v__ast__ConstField cfield) {
 	{ /* if guard */ Option_v__ast__IntegerLiteral cint = v__checker__is_const_integer(cfield);
 	if (cint.ok) {
-		Option_int _t585;/*:)int*/opt_ok2(&(int[]) { string_int(/*opt*/(*(v__ast__IntegerLiteral*)cint.data).val) }, (OptionBase*)(&_t585), sizeof(int));
+		Option_int _t585;
+		opt_ok2(&(int[]) { string_int(/*opt*/(*(v__ast__IntegerLiteral*)cint.data).val) }, (OptionBase*)(&_t585), sizeof(int));
 		return _t585;
 	}}
-	/*opt promotion*/ Option _t586 = opt_none();
+	Option _t586 = opt_none();
 	return *(Option_int*)&_t586;
 }
 
 static Option_v__ast__IntegerLiteral v__checker__is_const_integer(v__ast__ConstField cfield) {
 	if (cfield.expr.typ == 156 /* v.ast.IntegerLiteral */) {
 		v__ast__IntegerLiteral* it = (v__ast__IntegerLiteral*)cfield.expr.obj; // ST it
-		Option_v__ast__IntegerLiteral _t588;/*:)v.ast.IntegerLiteral*/opt_ok2(&(v__ast__IntegerLiteral[]) { *it }, (OptionBase*)(&_t588), sizeof(v__ast__IntegerLiteral));
+		Option_v__ast__IntegerLiteral _t588;
+		opt_ok2(&(v__ast__IntegerLiteral[]) { *it }, (OptionBase*)(&_t588), sizeof(v__ast__IntegerLiteral));
 		return _t588;
 	} else {
 	};
-	/*opt promotion*/ Option _t589 = opt_none();
+	Option _t589 = opt_none();
 	return *(Option_v__ast__IntegerLiteral*)&_t589;
 }
 
@@ -21554,7 +21586,7 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 			int errcode = _t610.ecode;
 			v_panic(err);
 		}
-			v__ast__Var* v = *(v__ast__Var**)_t610.data;
+		v__ast__Var* v = *(v__ast__Var**)_t610.data;
 		// FOR IN array
 		array _t611 = node->fields;
 		for (int i = 0; i < _t611.len; ++i) {
@@ -22828,8 +22860,7 @@ static v__ast__HashStmt v__parser__Parser_hash(v__parser__Parser* p) {
 			string err = _t677.v_error;
 			int errcode = _t677.ecode;
 			v__parser__Parser_error(p, err);
-		}
-	_t677;
+		};
 	}
 	return (v__ast__HashStmt){.val = val, .mod = p->mod};
 }
@@ -24527,7 +24558,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 			int errcode = _t719.ecode;
 			*(array_string*) _t719.data = __new_array_with_default(0, 0, sizeof(string), 0);
 		}
-			array_string source_lines = *(array_string*)_t719.data;
+		array_string source_lines = *(array_string*)_t719.data;
 		// FOR IN array
 		array _t720 = source_lines;
 		for (int lnumber = 0; lnumber < _t720.len; ++lnumber) {
@@ -25676,7 +25707,7 @@ static v__ast__Assoc v__parser__Parser_assoc(v__parser__Parser* p) {
 			.typ = {0},
 		};
 	}
-		v__ast__Var* v = *(v__ast__Var**)_t759.data;
+	v__ast__Var* v = *(v__ast__Var**)_t759.data;
 	v->is_used = true;
 	array_string fields = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_v__ast__Expr vals = __new_array_with_default(0, 0, sizeof(v__ast__Expr), 0);
@@ -28760,8 +28791,7 @@ static void v__gen__Gen_return_statement(v__gen__Gen* g, v__ast__Return node) {
 		if (fn_return_is_optional) {
 			string tmp = v__gen__Gen_new_tmp_var(g);
 			string styp = v__gen__Gen_typ(g, g->fn_decl->return_type);
-			v__gen__Gen_writeln(g, _STR("%.*s\000 %.*s\000;", 3, styp, tmp));
-			v__gen__Gen_writeln(g, _STR("%.*s\000.ok = true;", 2, tmp));
+			v__gen__Gen_writeln(g, _STR("%.*s\000 %.*s\000 = {.ok = true};", 3, styp, tmp));
 			v__gen__Gen_writeln(g, _STR("return %.*s\000;", 2, tmp));
 		} else {
 			v__gen__Gen_writeln(g, tos_lit("return;"));
@@ -28775,7 +28805,7 @@ static void v__gen__Gen_return_statement(v__gen__Gen* g, v__ast__Return node) {
 		bool is_regular_option = string_eq(v__gen__Gen_typ(g, (*(v__table__Type*)array_get(node.types, 0))), tos_lit("Option"));
 		if (optional_none || is_regular_option) {
 			string tmp = v__gen__Gen_new_tmp_var(g);
-			v__gen__Gen_write(g, _STR("/*opt promotion*/ Option %.*s\000 = ", 2, tmp));
+			v__gen__Gen_write(g, _STR("Option %.*s\000 = ", 2, tmp));
 			v__gen__Gen_expr_with_cast(g, (*(v__ast__Expr*)array_get(node.exprs, 0)), (*(v__table__Type*)array_get(node.types, 0)), g->fn_decl->return_type);
 			v__gen__Gen_writeln(g, tos_lit(";"));
 			string styp = v__gen__Gen_typ(g, g->fn_decl->return_type);
@@ -28792,7 +28822,7 @@ static void v__gen__Gen_return_statement(v__gen__Gen* g, v__ast__Return node) {
 		if (fn_return_is_optional) {
 			opt_type = v__gen__Gen_typ(g, g->fn_decl->return_type);
 			opt_tmp = v__gen__Gen_new_tmp_var(g);
-			v__gen__Gen_write(g, _STR("%.*s\000 %.*s\000;", 3, opt_type, opt_tmp));
+			v__gen__Gen_writeln(g, _STR("%.*s\000 %.*s\000;", 3, opt_type, opt_tmp));
 			styp = v__gen__Gen_base_type(g, g->fn_decl->return_type);
 			v__gen__Gen_write(g, _STR("opt_ok2(&(%.*s\000/*X*/[]) { ", 2, styp));
 		} else {
@@ -28859,8 +28889,8 @@ static void v__gen__Gen_return_statement(v__gen__Gen* g, v__ast__Return node) {
 			string styp = v__gen__Gen_base_type(g, g->fn_decl->return_type);
 			string opt_type = v__gen__Gen_typ(g, g->fn_decl->return_type);
 			string opt_tmp = v__gen__Gen_new_tmp_var(g);
-			v__gen__Gen_write(g, _STR("%.*s\000 %.*s\000;", 3, opt_type, opt_tmp));
-			v__gen__Gen_write(g, _STR("/*:)%.*s\000*/opt_ok2(&(%.*s\000[]) { ", 3, return_sym->name, styp));
+			v__gen__Gen_writeln(g, _STR("%.*s\000 %.*s\000;", 3, opt_type, opt_tmp));
+			v__gen__Gen_write(g, _STR("opt_ok2(&(%.*s\000[]) { ", 2, styp));
 			if (!v__table__Type_is_ptr(g->fn_decl->return_type) && v__table__Type_is_ptr((*(v__table__Type*)array_get(node.types, 0)))) {
 				v__gen__Gen_write(g, tos_lit("*"));
 			}
@@ -29280,9 +29310,9 @@ static void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__TypeSymbol t
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_84298 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_84298.arg0;
-						string base = mr_84298.arg1;
+						multi_return_string_string mr_84243 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_84243.arg0;
+						string base = mr_84243.arg1;
 						array_push(&g->optionals, _MOV((string[]){ styp }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -29388,9 +29418,9 @@ static array_v__table__TypeSymbol v__gen__Gen_sort_structs(v__gen__Gen g, array_
 
 static Option_bool v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr expr, v__table__Type etype) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, etype);
-	multi_return_bool_bool_int mr_87627 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_87627.arg0;
-	bool str_method_expects_ptr = mr_87627.arg1;
+	multi_return_bool_bool_int mr_87572 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_87572.arg0;
+	bool str_method_expects_ptr = mr_87572.arg1;
 	if (v__table__Type_has_flag(etype, v__table__TypeFlag_variadic)) {
 		string str_fn_name = v__gen__Gen_gen_str_for_type(g, etype);
 		v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -29398,7 +29428,8 @@ static Option_bool v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr e
 		v__gen__Gen_write(g, tos_lit(")"));
 	} else if (sym->kind == v__table__Kind_alias && (/* as */ (v__table__Alias*)__as_cast(sym->info.obj, sym->info.typ, /*expected:*/256))->parent_type == _const_v__table__string_type) {
 		v__gen__Gen_expr(g, expr);
-		Option_bool _t906;/*:)bool*/opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t906), sizeof(bool));
+		Option_bool _t906;
+		opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t906), sizeof(bool));
 		return _t906;
 	} else if (sym->kind == v__table__Kind_enum_) {
 		bool is_var = (expr.typ == 167 /* v.ast.SelectorExpr */) ? (true) : (expr.typ == 151 /* v.ast.Ident */) ? (true) : (false);
@@ -29448,10 +29479,11 @@ static Option_bool v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr e
 		v__gen__Gen_expr(g, expr);
 		v__gen__Gen_write(g, tos_lit(")"));
 	} else {
-		/*opt promotion*/ Option _t908 = v_error(tos_lit("cannot convert to string"));
+		Option _t908 = v_error(tos_lit("cannot convert to string"));
 		return *(Option_bool*)&_t908;
 	}
-	Option_bool _t909;/*:)bool*/opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t909), sizeof(bool));
+	Option_bool _t909;
+	opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t909), sizeof(bool));
 	return _t909;
 }
 
@@ -29686,11 +29718,11 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExpr
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->fn_decl->name, tos_lit("main.main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_96087 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_96087.arg0;
-				string pafile = mr_96087.arg1;
-				string pamod = mr_96087.arg2;
-				string pafn = mr_96087.arg3;
+				multi_return_int_string_string_string mr_96032 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_96032.arg0;
+				string pafile = mr_96032.arg1;
+				string pamod = mr_96032.arg2;
+				string pafn = mr_96032.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(%.*s\000.v_error);", 2, cvar_name));
@@ -30052,10 +30084,10 @@ inline static string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Type
 static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_105967 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_105967.arg0;
-	bool str_method_expects_ptr = mr_105967.arg1;
-	int str_nr_args = mr_105967.arg2;
+	multi_return_bool_bool_int mr_105912 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_105912.arg0;
+	bool str_method_expects_ptr = mr_105912.arg1;
+	int str_nr_args = mr_105912.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -30243,9 +30275,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_113655 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_113655.arg0;
-	bool str_method_expects_ptr = mr_113655.arg1;
+	multi_return_bool_bool_int mr_113600 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_113600.arg0;
+	bool str_method_expects_ptr = mr_113600.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -30297,9 +30329,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_116474 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_116474.arg0;
-	bool str_method_expects_ptr = mr_116474.arg1;
+	multi_return_bool_bool_int mr_116419 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_116419.arg0;
+	bool str_method_expects_ptr = mr_116419.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -30419,9 +30451,9 @@ static void v__gen__Gen_gen_str_for_multi_return(v__gen__Gen* g, v__table__Multi
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 		string field_styp = v__gen__Gen_typ(g, typ);
 		bool is_arg_ptr = v__table__Type_is_ptr(typ);
-		multi_return_bool_bool_int mr_122422 = v__table__TypeSymbol_str_method_info(sym);
-		bool sym_has_str_method = mr_122422.arg0;
-		bool str_method_expects_ptr = mr_122422.arg1;
+		multi_return_bool_bool_int mr_122367 = v__table__TypeSymbol_str_method_info(sym);
+		bool sym_has_str_method = mr_122367.arg0;
+		bool str_method_expects_ptr = mr_122367.arg1;
 		string arg_str_fn_name = tos_lit("");
 		if (sym_has_str_method) {
 			arg_str_fn_name = (is_arg_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -30826,7 +30858,7 @@ static void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node)
 			int errcode = _t962.ecode;
 			return;
 		}
-			v__table__Fn m = *(v__table__Fn*)_t962.data;
+		v__table__Fn m = *(v__table__Fn*)_t962.data;
 		v__gen__Gen_write(g, _STR("%.*s\000_%.*s\000(", 3, v__util__no_dots(node.sym.name), g->comp_for_method));
 		v__gen__Gen_expr(g, node.left);
 		if (m.args.len > 1) {
@@ -31146,8 +31178,9 @@ static void v__gen__Gen_call_expr(v__gen__Gen* g, v__ast__CallExpr node) {
 	}
 	g->inside_call = true;
 	bool gen_or = node.or_block.kind != v__ast__OrKind_absent;
+	bool is_gen_or_and_assign_rhs = gen_or && g->is_assign_rhs;
 	string _t982;
-	string cur_line = (gen_or && g->is_assign_rhs ? (		_t982 = v__gen__Gen_go_before_stmt(g, 0),strings__Builder_write(&g->out, (*(string*)array_get(_const_v__gen__tabs, g->indent))),_t982) : (tos_lit("")));
+	string cur_line = (is_gen_or_and_assign_rhs ? (		_t982 = v__gen__Gen_go_before_stmt(g, 0),strings__Builder_write(&g->out, (*(string*)array_get(_const_v__gen__tabs, g->indent))),_t982) : (tos_lit("")));
 	string tmp_opt = (gen_or ? (v__gen__Gen_new_tmp_var(g)) : (tos_lit("")));
 	if (gen_or) {
 		string styp = v__gen__Gen_typ(g, v__table__Type_set_flag(node.return_type, v__table__TypeFlag_optional));
@@ -31160,7 +31193,9 @@ static void v__gen__Gen_call_expr(v__gen__Gen* g, v__ast__CallExpr node) {
 	}
 	if (gen_or) {
 		v__gen__Gen_or_block(g, tmp_opt, node.or_block, node.return_type);
-		v__gen__Gen_write(g, _STR("\n\t%.*s\000%.*s", 2, cur_line, tmp_opt));
+		if (is_gen_or_and_assign_rhs) {
+			v__gen__Gen_write(g, _STR("\n%.*s\000%.*s", 2, cur_line, tmp_opt));
+		}
 	}
 // defer
 	g->inside_call = false;
@@ -31341,11 +31376,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_15709 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_15709.arg0;
-		string pafile = mr_15709.arg1;
-		string pamod = mr_15709.arg2;
-		string pafn = mr_15709.arg3;
+		multi_return_int_string_string_string mr_15798 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_15798.arg0;
+		string pafile = mr_15798.arg1;
+		string pamod = mr_15798.arg2;
+		string pafn = mr_15798.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		v__gen__Gen_write(g, tos_lit(")"));
@@ -32511,7 +32546,7 @@ inline static string v__gen__js__get_ns(string s) {
 		int errcode = _t1046.ecode;
 		return tos_lit("");
 	}
-		int idx = *(int*)_t1046.data;
+	int idx = *(int*)_t1046.data;
 	return string_substr(s, 0, idx);
 }
 
@@ -33804,7 +33839,7 @@ void v__gen__x64__Gen_generate_elf_footer(v__gen__x64__Gen* g) {
 		int errcode = _t1092.ecode;
 		v_panic(err);
 	}
-		os__File f = *(os__File*)_t1092.data;
+	os__File f = *(os__File*)_t1092.data;
 	os__chmod(g->out_name, 0775);
 	os__File_write_bytes(&f, g->buf.data, g->buf.len);
 	os__File_close(&f);
@@ -34611,7 +34646,7 @@ void v__builder__Builder_parse_imports(v__builder__Builder* b) {
 				v__builder__verror(_STR("cannot import module \"%.*s\000\" (not found)", 2, mod));
 				break;
 			}
-				string import_path = *(string*)_t1143.data;
+			string import_path = *(string*)_t1143.data;
 			array_string v_files = v__builder__Builder_v_files_from_dir(/*rec*/*b, import_path);
 			if (v_files.len == 0) {
 				v__builder__verror(_STR("cannot import module \"%.*s\000\" (no .v files in \"%.*s\000\")", 3, mod, import_path));
@@ -34725,7 +34760,7 @@ array_string v__builder__Builder_v_files_from_dir(v__builder__Builder b, string 
 		int errcode = _t1165.ecode;
 		v_panic(err);
 	}
-		array_string files = *(array_string*)_t1165.data;
+	array_string files = *(array_string*)_t1165.data;
 	if (b.pref->is_verbose) {
 		println(_STR("v_files_from_dir (\"%.*s\000\")", 2, dir));
 	}
@@ -34770,12 +34805,13 @@ Option_string v__builder__Builder_find_module_path(v__builder__Builder b, string
 			if (b.pref->is_verbose) {
 				println(_STR("  << found %.*s\000 .", 2, try_path));
 			}
-			Option_string _t1170;/*:)string*/opt_ok2(&(string[]) { try_path }, (OptionBase*)(&_t1170), sizeof(string));
+			Option_string _t1170;
+			opt_ok2(&(string[]) { try_path }, (OptionBase*)(&_t1170), sizeof(string));
 			return _t1170;
 		}
 	}
 	string smodule_lookup_paths = array_string_join(module_lookup_paths, tos_lit(", "));
-	/*opt promotion*/ Option _t1171 = v_error(_STR("module \"%.*s\000\" not found in:\n%.*s", 2, mod, smodule_lookup_paths));
+	Option _t1171 = v_error(_STR("module \"%.*s\000\" not found in:\n%.*s", 2, mod, smodule_lookup_paths));
 	return *(Option_string*)&_t1171;
 }
 
@@ -34887,7 +34923,7 @@ void v__builder__Builder_build_c(v__builder__Builder* b, array_string v_files, s
 		int errcode = _t1180.ecode;
 		v_panic(err);
 	}
-		os__File f = *(os__File*)_t1180.data;
+	os__File f = *(os__File*)_t1180.data;
 	os__File_writeln(&f, output2);
 	os__File_close(&f);
 }
@@ -34907,7 +34943,7 @@ void v__builder__Builder_compile_c(v__builder__Builder* b) {
 		int errcode = _t1181.ecode;
 		v_panic(_const_v__builder__no_compiler_error);
 	}
-		b->pref->ccompiler = *(string*)_t1181.data;
+	b->pref->ccompiler = *(string*)_t1181.data;
 #endif
 // } windows
 	array_string files = v__builder__Builder_get_builtin_files(/*rec*/*b);
@@ -34931,7 +34967,7 @@ static void v__builder__todo() {
 static Option_string v__builder__Builder_find_win_cc(v__builder__Builder* v) {
 // $if !windows {
 #ifndef _WIN32
-	/*opt promotion*/ Option _t1183 = opt_none();
+	Option _t1183 = opt_none();
 	return *(Option_string*)&_t1183;
 #endif
 // } windows
@@ -34958,19 +34994,19 @@ static Option_string v__builder__Builder_find_win_cc(v__builder__Builder* v) {
 				if (v->pref->is_verbose) {
 					println(tos_lit("No C compiler found"));
 				}
-				/*opt promotion*/ Option _t1187 = opt_none();
+				Option _t1187 = opt_none();
 				return *(Option_string*)&_t1187;
-			}
-	_t1186;
-			Option_string _t1188;/*:)string*/opt_ok2(&(string[]) { thirdparty_tcc }, (OptionBase*)(&_t1188), sizeof(string));
+			};
+			Option_string _t1188;
+			opt_ok2(&(string[]) { thirdparty_tcc }, (OptionBase*)(&_t1188), sizeof(string));
 			return _t1188;
-		}
-	_t1185;
-		Option_string _t1189;/*:)string*/opt_ok2(&(string[]) { tos_lit("msvc") }, (OptionBase*)(&_t1189), sizeof(string));
+		};
+		Option_string _t1189;
+		opt_ok2(&(string[]) { tos_lit("msvc") }, (OptionBase*)(&_t1189), sizeof(string));
 		return _t1189;
-	}
-	_t1184;
-	Option_string _t1190;/*:)string*/opt_ok2(&(string[]) { v->pref->ccompiler }, (OptionBase*)(&_t1190), sizeof(string));
+	};
+	Option_string _t1190;
+	opt_ok2(&(string[]) { v->pref->ccompiler }, (OptionBase*)(&_t1190), sizeof(string));
 	return _t1190;
 }
 
@@ -35015,8 +35051,7 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 			string err = _t1191.v_error;
 			int errcode = _t1191.ecode;
 			v_panic(err);
-		}
-	_t1191;
+		};
 		return;
 	}
 	if (v->pref->os == v__pref__OS_windows) {
@@ -35257,7 +35292,7 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 		v__builder__verror(err);
 		return;
 	}
-		os__Result res = *(os__Result*)_t1230.data;
+	os__Result res = *(os__Result*)_t1230.data;
 	if (res.exit_code != 0) {
 		if (res.exit_code == 127) {
 // $if  linux {
@@ -35356,7 +35391,7 @@ static void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) {
 		int errcode = _t1233.ecode;
 		return;
 	}
-		os__Result cc_res = *(os__Result*)_t1233.data;
+	os__Result cc_res = *(os__Result*)_t1233.data;
 	if (cc_res.exit_code != 0) {
 		println(tos_lit("Cross compilation for Linux failed (first step, clang). Make sure you have clang installed."));
 		println(cc_res.output);
@@ -35375,7 +35410,7 @@ static void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) {
 		int errcode = _t1234.ecode;
 		return;
 	}
-		os__Result res = *(os__Result*)_t1234.data;
+	os__Result res = *(os__Result*)_t1234.data;
 	if (res.exit_code != 0) {
 		println(tos_lit("Cross compilation for Linux failed (second step, lld):"));
 		println(res.output);
@@ -35480,7 +35515,7 @@ static void v__builder__Builder_build_thirdparty_obj_file(v__builder__Builder* v
 		int errcode = _t1239.ecode;
 		v_panic(err);
 	}
-		array_string files = *(array_string*)_t1239.data;
+	array_string files = *(array_string*)_t1239.data;
 	string cfiles = tos_lit("");
 	// FOR IN array
 	array _t1240 = files;
@@ -35502,7 +35537,7 @@ static void v__builder__Builder_build_thirdparty_obj_file(v__builder__Builder* v
 		v__builder__verror(err);
 		return;
 	}
-		os__Result res = *(os__Result*)_t1242.data;
+	os__Result res = *(os__Result*)_t1242.data;
 	if (res.exit_code != 0) {
 		println(_STR("failed thirdparty object build cmd: %.*s", 1, cmd));
 		v__builder__verror(res.output);
@@ -35760,7 +35795,7 @@ array_string v__builder__Builder_get_user_files(v__builder__Builder v) {
 			v__builder__verror(_STR("%.*s\000 does not exist", 2, dir));
 			v_exit(0);
 		}
-			string tcontent = *(string*)_t1271.data;
+		string tcontent = *(string*)_t1271.data;
 		array_string slines = string_split_into_lines(string_trim_space(tcontent));
 		// FOR IN array
 		array _t1272 = slines;
@@ -35878,7 +35913,7 @@ void v__builder__Builder_build_js(v__builder__Builder* b, array_string v_files, 
 		int errcode = _t1280.ecode;
 		v_panic(err);
 	}
-		os__File f = *(os__File*)_t1280.data;
+	os__File f = *(os__File*)_t1280.data;
 	os__File_writeln(&f, output);
 	os__File_close(&f);
 }
@@ -35904,7 +35939,7 @@ static void v__builder__Builder_run_js(v__builder__Builder* b) {
 		v__builder__verror(err);
 		return;
 	}
-		os__Result res = *(os__Result*)_t1282.data;
+	os__Result res = *(os__Result*)_t1282.data;
 	println(res.output);
 }
 
@@ -35937,13 +35972,14 @@ static Option_string v__builder__find_windows_kit_internal(v__builder__RegKey ke
 				value[length] = ((u16)(0));
 			}
 			string res = string_from_wide(value);
-			Option_string _t1285;/*:)string*/opt_ok2(&(string[]) { res }, (OptionBase*)(&_t1285), sizeof(string));
+			Option_string _t1285;
+			opt_ok2(&(string[]) { res }, (OptionBase*)(&_t1285), sizeof(string));
 			return _t1285;
 		}
 	}
 #endif
 // } windows
-	/*opt promotion*/ Option _t1286 = v_error(tos_lit("windows kit not found"));
+	Option _t1286 = v_error(tos_lit("windows kit not found"));
 	return *(Option_string*)&_t1286;
 }
 
@@ -35959,7 +35995,7 @@ static Option_v__builder__WindowsKit v__builder__find_windows_kit_root(string ho
 			RegCloseKey(root_key);
 		
 		#endif
-		/*opt promotion*/ Option _t1287 = v_error(tos_lit("Unable to open root key"));
+		Option _t1287 = v_error(tos_lit("Unable to open root key"));
 		return *(Option_v__builder__WindowsKit*)&_t1287;
 	}
 	Option_string _t1288 = v__builder__find_windows_kit_internal(root_key, new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){tos_lit("KitsRoot10"), tos_lit("KitsRoot81")})));
@@ -35971,10 +36007,10 @@ static Option_v__builder__WindowsKit v__builder__find_windows_kit_root(string ho
 			RegCloseKey(root_key);
 		
 		#endif
-		/*opt promotion*/ Option _t1289 = v_error(tos_lit("Unable to find a windows kit"));
+		Option _t1289 = v_error(tos_lit("Unable to find a windows kit"));
 		return *(Option_v__builder__WindowsKit*)&_t1289;
 	}
-		string kit_root = *(string*)_t1288.data;
+	string kit_root = *(string*)_t1288.data;
 	string kit_lib = string_add(kit_root, tos_lit("Lib"));
 	Option_array_string _t1290 = os__ls(kit_lib);
 	if (!_t1290.ok) {
@@ -35982,7 +36018,7 @@ static Option_v__builder__WindowsKit v__builder__find_windows_kit_root(string ho
 		int errcode = _t1290.ecode;
 		v_panic(err);
 	}
-		array_string files = *(array_string*)_t1290.data;
+	array_string files = *(array_string*)_t1290.data;
 	string highest_path = tos_lit("");
 	int highest_int = 0;
 	// FOR IN array
@@ -36003,7 +36039,8 @@ static Option_v__builder__WindowsKit v__builder__find_windows_kit_root(string ho
 		RegCloseKey(root_key);
 	
 	#endif
-	Option_v__builder__WindowsKit _t1293;/*:)v.builder.WindowsKit*/opt_ok2(&(v__builder__WindowsKit[]) { (v__builder__WindowsKit){.um_lib_path = string_add(kit_lib_highest, _STR("\\um\\%.*s", 1, host_arch)), .ucrt_lib_path = string_add(kit_lib_highest, _STR("\\ucrt\\%.*s", 1, host_arch)), .um_include_path = string_add(kit_include_highest, tos_lit("\\um")), .ucrt_include_path = string_add(kit_include_highest, tos_lit("\\ucrt")), .shared_include_path = string_add(kit_include_highest, tos_lit("\\shared"))} }, (OptionBase*)(&_t1293), sizeof(v__builder__WindowsKit));
+	Option_v__builder__WindowsKit _t1293;
+	opt_ok2(&(v__builder__WindowsKit[]) { (v__builder__WindowsKit){.um_lib_path = string_add(kit_lib_highest, _STR("\\um\\%.*s", 1, host_arch)), .ucrt_lib_path = string_add(kit_lib_highest, _STR("\\ucrt\\%.*s", 1, host_arch)), .um_include_path = string_add(kit_include_highest, tos_lit("\\um")), .ucrt_include_path = string_add(kit_include_highest, tos_lit("\\ucrt")), .shared_include_path = string_add(kit_include_highest, tos_lit("\\shared"))} }, (OptionBase*)(&_t1293), sizeof(v__builder__WindowsKit));
 	return _t1293;
 #endif
 // } windows
@@ -36012,7 +36049,7 @@ static Option_v__builder__WindowsKit v__builder__find_windows_kit_root(string ho
 		RegCloseKey(root_key);
 	
 	#endif
-	/*opt promotion*/ Option _t1294 = v_error(tos_lit("Host OS does not support finding a windows kit"));
+	Option _t1294 = v_error(tos_lit("Host OS does not support finding a windows kit"));
 	return *(Option_v__builder__WindowsKit*)&_t1294;
 // defer
 #ifdef _WIN32
@@ -36024,7 +36061,7 @@ static Option_v__builder__WindowsKit v__builder__find_windows_kit_root(string ho
 static Option_v__builder__VsInstallation v__builder__find_vs(string vswhere_dir, string host_arch) {
 // $if !windows {
 #ifndef _WIN32
-	/*opt promotion*/ Option _t1295 = v_error(tos_lit("Host OS does not support finding a Visual Studio installation"));
+	Option _t1295 = v_error(tos_lit("Host OS does not support finding a Visual Studio installation"));
 	return *(Option_v__builder__VsInstallation*)&_t1295;
 #endif
 // } windows
@@ -36032,31 +36069,32 @@ static Option_v__builder__VsInstallation v__builder__find_vs(string vswhere_dir,
 	if (!_t1296.ok) {
 		string err = _t1296.v_error;
 		int errcode = _t1296.ecode;
-		/*opt promotion*/ Option _t1297 = v_error(err);
+		Option _t1297 = v_error(err);
 		return *(Option_v__builder__VsInstallation*)&_t1297;
 	}
-		os__Result res = *(os__Result*)_t1296.data;
+	os__Result res = *(os__Result*)_t1296.data;
 	string res_output = string_trim_right(res.output, tos_lit("\r\n"));
 	Option_string _t1298 = os__read_file(_STR("%.*s\000\\VC\\Auxiliary\\Build\\Microsoft.VCToolsVersion.default.txt", 2, res_output));
 	if (!_t1298.ok) {
 		string err = _t1298.v_error;
 		int errcode = _t1298.ecode;
 		println(tos_lit("Unable to find msvc version"));
-		/*opt promotion*/ Option _t1299 = v_error(tos_lit("Unable to find vs installation"));
+		Option _t1299 = v_error(tos_lit("Unable to find vs installation"));
 		return *(Option_v__builder__VsInstallation*)&_t1299;
 	}
-		string version = *(string*)_t1298.data;
+	string version = *(string*)_t1298.data;
 	string version2 = version;
 	string v = (string_ends_with(version, tos_lit("\n")) ? (string_substr(version2, 0, version.len - 2)) : (version2));
 	string lib_path = _STR("%.*s\000\\VC\\Tools\\MSVC\\%.*s\000\\lib\\%.*s", 3, res.output, v, host_arch);
 	string include_path = _STR("%.*s\000\\VC\\Tools\\MSVC\\%.*s\000\\include", 3, res.output, v);
 	if (os__exists(_STR("%.*s\000\\vcruntime.lib", 2, lib_path))) {
 		string p = _STR("%.*s\000\\VC\\Tools\\MSVC\\%.*s\000\\bin\\Host%.*s\000\\%.*s", 4, res.output, v, host_arch, host_arch);
-		Option_v__builder__VsInstallation _t1300;/*:)v.builder.VsInstallation*/opt_ok2(&(v__builder__VsInstallation[]) { (v__builder__VsInstallation){.include_path = include_path, .lib_path = lib_path, .exe_path = p} }, (OptionBase*)(&_t1300), sizeof(v__builder__VsInstallation));
+		Option_v__builder__VsInstallation _t1300;
+		opt_ok2(&(v__builder__VsInstallation[]) { (v__builder__VsInstallation){.include_path = include_path, .lib_path = lib_path, .exe_path = p} }, (OptionBase*)(&_t1300), sizeof(v__builder__VsInstallation));
 		return _t1300;
 	}
 	println(_STR("Unable to find vs installation (attempted to use lib path \"%.*s\000\")", 2, lib_path));
-	/*opt promotion*/ Option _t1301 = v_error(tos_lit("Unable to find vs exe folder"));
+	Option _t1301 = v_error(tos_lit("Unable to find vs exe folder"));
 	return *(Option_v__builder__VsInstallation*)&_t1301;
 }
 
@@ -36070,23 +36108,24 @@ static Option_v__builder__MsvcResult v__builder__find_msvc() {
 	if (!_t1302.ok) {
 		string err = _t1302.v_error;
 		int errcode = _t1302.ecode;
-		/*opt promotion*/ Option _t1303 = v_error(tos_lit("Unable to find windows sdk"));
+		Option _t1303 = v_error(tos_lit("Unable to find windows sdk"));
 		return *(Option_v__builder__MsvcResult*)&_t1303;
 	}
-		v__builder__WindowsKit wk = *(v__builder__WindowsKit*)_t1302.data;
+	v__builder__WindowsKit wk = *(v__builder__WindowsKit*)_t1302.data;
 	Option_v__builder__VsInstallation _t1304 = v__builder__find_vs(vswhere_dir, host_arch);
 	if (!_t1304.ok) {
 		string err = _t1304.v_error;
 		int errcode = _t1304.ecode;
-		/*opt promotion*/ Option _t1305 = v_error(tos_lit("Unable to find visual studio"));
+		Option _t1305 = v_error(tos_lit("Unable to find visual studio"));
 		return *(Option_v__builder__MsvcResult*)&_t1305;
 	}
-		v__builder__VsInstallation vs = *(v__builder__VsInstallation*)_t1304.data;
-	Option_v__builder__MsvcResult _t1306;/*:)v.builder.MsvcResult*/opt_ok2(&(v__builder__MsvcResult[]) { (v__builder__MsvcResult){.full_cl_exe_path = os__real_path(string_add(string_add(vs.exe_path, _const_os__path_separator), tos_lit("cl.exe"))), .exe_path = vs.exe_path, .um_lib_path = wk.um_lib_path, .ucrt_lib_path = wk.ucrt_lib_path, .vs_lib_path = vs.lib_path, .um_include_path = wk.um_include_path, .ucrt_include_path = wk.ucrt_include_path, .vs_include_path = vs.include_path, .shared_include_path = wk.shared_include_path} }, (OptionBase*)(&_t1306), sizeof(v__builder__MsvcResult));
+	v__builder__VsInstallation vs = *(v__builder__VsInstallation*)_t1304.data;
+	Option_v__builder__MsvcResult _t1306;
+	opt_ok2(&(v__builder__MsvcResult[]) { (v__builder__MsvcResult){.full_cl_exe_path = os__real_path(string_add(string_add(vs.exe_path, _const_os__path_separator), tos_lit("cl.exe"))), .exe_path = vs.exe_path, .um_lib_path = wk.um_lib_path, .ucrt_lib_path = wk.ucrt_lib_path, .vs_lib_path = vs.lib_path, .um_include_path = wk.um_include_path, .ucrt_include_path = wk.ucrt_include_path, .vs_include_path = vs.include_path, .shared_include_path = wk.shared_include_path} }, (OptionBase*)(&_t1306), sizeof(v__builder__MsvcResult));
 	return _t1306;
 #else
 	v__builder__verror(tos_lit("Cannot find msvc on this OS"));
-	/*opt promotion*/ Option _t1307 = v_error(tos_lit("msvc not found"));
+	Option _t1307 = v_error(tos_lit("msvc not found"));
 	return *(Option_v__builder__MsvcResult*)&_t1307;
 #endif
 // } windows
@@ -36100,7 +36139,7 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 		v__builder__verror(tos_lit("Cannot find MSVC on this OS"));
 		return;
 	}
-		v__builder__MsvcResult r = *(v__builder__MsvcResult*)_t1308.data;
+	v__builder__MsvcResult r = *(v__builder__MsvcResult*)_t1308.data;
 	string out_name_obj = os__real_path(string_add(v->out_name_c, tos_lit(".obj")));
 	string out_name_pdb = os__real_path(string_add(v->out_name_c, tos_lit(".pdb")));
 	array_string a = new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){tos_lit("-w"), tos_lit("/we4013"), tos_lit("/volatile:ms"), _STR("/Fo\"%.*s\000\"", 2, out_name_obj)}));
@@ -36172,7 +36211,7 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 		v__builder__verror(tos_lit("msvc error"));
 		return;
 	}
-		os__Result res = *(os__Result*)_t1336.data;
+	os__Result res = *(os__Result*)_t1336.data;
 	if (res.exit_code != 0) {
 		v__builder__verror(res.output);
 	}
@@ -36187,7 +36226,7 @@ static void v__builder__build_thirdparty_obj_file_with_msvc(string path, array_v
 		println(tos_lit("Could not find visual studio"));
 		return;
 	}
-		v__builder__MsvcResult msvc = *(v__builder__MsvcResult*)_t1337.data;
+	v__builder__MsvcResult msvc = *(v__builder__MsvcResult*)_t1337.data;
 	string obj_path = _STR("%.*s\000bj", 2, path);
 	obj_path = os__real_path(obj_path);
 	if (os__exists(obj_path)) {
@@ -36202,7 +36241,7 @@ static void v__builder__build_thirdparty_obj_file_with_msvc(string path, array_v
 		int errcode = _t1338.ecode;
 		v_panic(err);
 	}
-		array_string files = *(array_string*)_t1338.data;
+	array_string files = *(array_string*)_t1338.data;
 	string cfiles = tos_lit("");
 	// FOR IN array
 	array _t1339 = files;
@@ -36225,7 +36264,7 @@ static void v__builder__build_thirdparty_obj_file_with_msvc(string path, array_v
 		v__builder__verror(err);
 		return;
 	}
-		os__Result res = *(os__Result*)_t1341.data;
+	os__Result res = *(os__Result*)_t1341.data;
 	if (res.exit_code != 0) {
 		println(_STR("msvc: failed thirdparty object build cmd: %.*s", 1, cmd));
 		v__builder__verror(res.output);
