@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2480cce"
+#define V_COMMIT_HASH "c992009"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e0fcd56"
+	#define V_COMMIT_HASH "2480cce"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2480cce"
+	#define V_CURRENT_COMMIT_HASH "c992009"
 #endif
 
 // V typedefs:
@@ -20548,7 +20548,8 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 		v__table__TypeSymbol* anon_fn_sym = v__table__Table_get_type_symbol(c->table, anon_fn->typ);
 		f = (/* as */ (v__table__FnType*)__as_cast(anon_fn_sym->info.obj, anon_fn_sym->info.typ, /*expected:*/260))->func;
 		found = true;
-	} else if (!string_contains(fn_name, tos_lit(".")) && !(string_eq(call_expr->mod, tos_lit("builtin")))) {
+	}
+	if (!found && !string_contains(fn_name, tos_lit(".")) && !(string_eq(call_expr->mod, tos_lit("builtin")))) {
 		string name_prefixed = _STR("%.*s\000.%.*s", 2, call_expr->mod, fn_name);
 		{ /* if guard */ Option_v__table__Fn f1 = v__table__Table_find_fn(c->table, name_prefixed);
 		if (f1.ok) {
