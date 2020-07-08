@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f834276"
+#define V_COMMIT_HASH "e7cd496"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ec82fa7"
+	#define V_COMMIT_HASH "f834276"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f834276"
+	#define V_CURRENT_COMMIT_HASH "e7cd496"
 #endif
 
 // V typedefs:
@@ -23075,9 +23075,9 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t686.data)[_t687];
 		if (stmt.typ == 125 /* v.ast.FnDecl */) {
 			v__ast__FnDecl* it = (v__ast__FnDecl*)stmt.obj;
-			v__ast__FnDecl* fn_decl = /* as */ (v__ast__FnDecl*)__as_cast(stmt.obj, stmt.typ, /*expected:*/125);
-			if (string_eq(fn_decl->name, _STR("main.vweb_tmpl_%.*s", 1, p->cur_fn_name))) {
-				v__ast__Scope* tmpl_scope = v__ast__Scope_innermost(file.scope, fn_decl->body_pos.pos);
+			if (string_eq(it->name, _STR("main.vweb_tmpl_%.*s", 1, p->cur_fn_name))) {
+				v__ast__FnDecl* fn_decl = it;
+				v__ast__Scope* tmpl_scope = v__ast__Scope_innermost(file.scope, it->body_pos.pos);
 				// FOR IN map
 				map_string_v__ast__ScopeObject _t691 = p->scope->objects;
 				array_string keys__t688 = map_keys(&_t691);
