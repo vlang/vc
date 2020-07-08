@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e7cd496"
+#define V_COMMIT_HASH "03b76d1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f834276"
+	#define V_COMMIT_HASH "e7cd496"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e7cd496"
+	#define V_CURRENT_COMMIT_HASH "03b76d1"
 #endif
 
 // V typedefs:
@@ -36565,15 +36565,15 @@ static void main__main() {
 	array_string args = array_slice(_const_os__args, 1, _const_os__args.len);
 	if (args.len == 0 || (string_eq((*(string*)array_get(args, 0)), tos_lit("-")) || string_eq((*(string*)array_get(args, 0)), tos_lit("repl")))) {
 		if (args.len == 0) {
-			println(tos_lit("For usage information, quit V REPL using `exit` and use `v help`"));
+			println(tos_lit("For usage information, quit V REPL and run `v help`"));
 		}
 		v__util__launch_tool(false, tos_lit("vrepl"), array_slice(_const_os__args, 1, _const_os__args.len));
 		return;
 	}
 	array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_938 = v__pref__parse_args(args_and_flags);
-	v__pref__Preferences* prefs = mr_938.arg0;
-	string command = mr_938.arg1;
+	multi_return_v__pref__Preferences_string mr_925 = v__pref__parse_args(args_and_flags);
+	v__pref__Preferences* prefs = mr_925.arg0;
+	string command = mr_925.arg1;
 	if (args.len > 0 && ((string_eq((*(string*)array_get(args, 0)), tos_lit("version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-V")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("--version"))) || (string_eq((*(string*)array_get(args, 0)), tos_lit("-v")) && args.len == 1))) {
 		println(v__util__full_v_version(prefs->is_verbose));
 		return;
