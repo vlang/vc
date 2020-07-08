@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "bd16dd9"
+#define V_COMMIT_HASH "3bb1d24"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d77a78d"
+	#define V_COMMIT_HASH "bd16dd9"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "bd16dd9"
+	#define V_CURRENT_COMMIT_HASH "3bb1d24"
 #endif
 
 // V typedefs:
@@ -22932,13 +22932,16 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 	v__parser__Parser_check(p, v__token__Kind_name);
 	v__parser__Parser_check(p, v__token__Kind_lpar);
 	v__parser__Parser_check(p, v__token__Kind_rpar);
-	string html_name = _STR("%.*s\000.html", 2, p->cur_fn_name);
+	array_string fn_path = string_split(p->cur_fn_name, tos_lit("_"));
+	string html_name = _STR("%.*s\000.html", 2, *(string*)array_last(fn_path));
 	string dir = os__dir(p->scanner->file_path);
-	string path = os__join_path(dir, (varg_string){.len=1,.args={html_name}});
+	string path = os__join_path(dir, (varg_string){.len=1,.args={array_string_join(fn_path, tos_lit("/"))}});
+	path = /*f*/string_add(path, tos_lit(".html"));
 	if (!os__exists(path)) {
-		path = os__join_path(dir, (varg_string){.len=2,.args={tos_lit("templates"), html_name}});
+		path = os__join_path(dir, (varg_string){.len=2,.args={tos_lit("templates"), array_string_join(fn_path, tos_lit("/"))}});
+		path = /*f*/string_add(path, tos_lit(".html"));
 		if (!os__exists(path)) {
-			v__parser__Parser_error(p, _STR("vweb HTML template \"%.*s\000\" not found", 2, html_name));
+			v__parser__Parser_error(p, _STR("vweb HTML template \"%.*s\000\" not found", 2, path));
 		}
 	}
 	if (p->pref->is_verbose) {
