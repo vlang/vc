@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "dfa29b6"
+#define V_COMMIT_HASH "9511b7d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "73a2594"
+	#define V_COMMIT_HASH "dfa29b6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "dfa29b6"
+	#define V_CURRENT_COMMIT_HASH "9511b7d"
 #endif
 
 // V typedefs:
@@ -35704,11 +35704,15 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 
 static void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) {
 	string parent_dir = string_add(os__home_dir(), tos_lit(".vmodules"));
+	if (!os__exists(parent_dir)) {
+		os__mkdir(parent_dir);
+	}
 	string sysroot = string_add(os__home_dir(), tos_lit(".vmodules/linuxroot/"));
+	string zip_url = tos_lit("https://github.com/vlang/v/releases/download/0.1.27/linuxroot.zip");
 	if (!os__is_dir(sysroot)) {
 		println(tos_lit("Downloading files for Linux cross compilation (~18 MB)..."));
 		string zip_file = string_add(string_substr(sysroot, 0, sysroot.len - 1), tos_lit(".zip"));
-		os__system(_STR("curl -L -o %.*s\000 https://github.com/vlang/v/releases/download/0.1.27/linuxroot.zip ", 2, zip_file));
+		os__system(_STR("curl -L -o %.*s\000 %.*s", 2, zip_file, zip_url));
 		os__system(_STR("unzip -q %.*s\000 -d %.*s", 2, zip_file, parent_dir));
 		if (!os__is_dir(sysroot)) {
 			println(tos_lit("Failed to download."));
@@ -35733,8 +35737,8 @@ static void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) {
 		println(cc_res.output);
 		v_exit(1);
 	}
-	array_string linker_args = new_array_from_c_array(11, 11, sizeof(string), _MOV((string[11]){
-			_STR("-L %.*s\000/usr/lib/x86_64-linux-gnu/", 2, sysroot), _STR("--sysroot=%.*s\000 -v -o %.*s\000 -m elf_x86_64", 3, sysroot, b->pref->out_name), tos_lit("-dynamic-linker /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"), _STR("%.*s\000/crt1.o %.*s\000/crti.o x.o", 3, sysroot, sysroot), tos_lit("-lc"), tos_lit("-lcrypto"), tos_lit("-lssl"), tos_lit("-lpthread"), tos_lit("-ldl"), _STR("%.*s\000/crtn.o", 2, sysroot), array_v__cflag__CFlag_c_options_only_object_files(cflags)}));
+	array_string linker_args = new_array_from_c_array(10, 10, sizeof(string), _MOV((string[10]){
+			_STR("-L %.*s\000/usr/lib/x86_64-linux-gnu/", 2, sysroot), _STR("--sysroot=%.*s\000 -v -o %.*s\000 -m elf_x86_64", 3, sysroot, b->pref->out_name), tos_lit("-dynamic-linker /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"), _STR("%.*s\000/crt1.o %.*s\000/crti.o x.o", 3, sysroot, sysroot), tos_lit("-lc"), tos_lit("-lcrypto"), tos_lit("-lssl"), tos_lit("-lpthread"), _STR("%.*s\000/crtn.o", 2, sysroot), array_v__cflag__CFlag_c_options_only_object_files(cflags)}));
 	string linker_args_str = array_string_join(linker_args, tos_lit(" "));
 	string cmd = string_add(_STR("%.*s\000/ld.lld ", 2, sysroot), linker_args_str);
 	if (b->pref->show_cc) {
