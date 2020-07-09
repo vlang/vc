@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "73a2594"
+#define V_COMMIT_HASH "dfa29b6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ce31c4c"
+	#define V_COMMIT_HASH "73a2594"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "73a2594"
+	#define V_CURRENT_COMMIT_HASH "dfa29b6"
 #endif
 
 // V typedefs:
@@ -34230,6 +34230,9 @@ void v__gen__x64__gen(array_v__ast__File files, string out_name, v__pref__Prefer
 		.errors = __new_array(0, 1, sizeof(v__errors__Error)),
 		.warnings = __new_array(0, 1, sizeof(v__errors__Warning)),
 	};
+	if (!pref->is_verbose) {
+		println(tos_lit("use `v -x64 -v ...` to print resulting asembly/machine code"));
+	}
 	v__gen__x64__Gen_generate_elf_header(&g);
 	// FOR IN array
 	array _t1106 = files;
@@ -34390,6 +34393,9 @@ static void v__gen__x64__Gen_jle(v__gen__x64__Gen* g, i64 addr) {
 }
 
 static void v__gen__x64__Gen_println(v__gen__x64__Gen* g, string comment) {
+	if (!g->pref->is_verbose) {
+		return;
+	}
 	string addr = int_hex(g->debug_pos);
 	print(term__red(string_add(string_add(strings__repeat('0', 6 - addr.len), addr), tos_lit("  "))));
 	for (int i = g->debug_pos; i < g->buf.len; i++) {
@@ -34669,11 +34675,13 @@ void v__gen__x64__Gen_call_fn(v__gen__x64__Gen* g, v__ast__CallExpr node) {
 			v__ast__Ident* it = (v__ast__Ident*)expr.obj; // ST it
 			v__ast__Ident* expr = it;
 			int var_offset = v__gen__x64__Gen_get_var_offset(g, expr->name);
-			println(_STR("i=%"PRId32"\000 fn name= %.*s\000 offset=%"PRId32"", 3, i, name, var_offset));
-			println(int_str(((int)((*(v__gen__x64__Register*)array_get(_const_v__gen__x64__fn_arg_registers, i))))));
+			if (g->pref->is_verbose) {
+				println(_STR("i=%"PRId32"\000 fn name= %.*s\000 offset=%"PRId32"", 3, i, name, var_offset));
+				println(int_str(((int)((*(v__gen__x64__Register*)array_get(_const_v__gen__x64__fn_arg_registers, i))))));
+			}
 			v__gen__x64__Gen_mov_var_to_reg(g, (*(v__gen__x64__Register*)array_get(_const_v__gen__x64__fn_arg_registers, i)), var_offset);
 		} else {
-			v__gen__x64__verror(string_add(tos_lit("unhandled call_fn node: "), tos3( /* v.ast.Expr */ v_typeof_sumtype_201( (expr).typ ))));
+			v__gen__x64__verror(string_add(_STR("unhandled call_fn (name=%.*s\000) node: ", 2, name), tos3( /* v.ast.Expr */ v_typeof_sumtype_201( (expr).typ ))));
 		};
 	}
 	if (node.args.len > 6) {
@@ -34890,7 +34898,9 @@ static void v__gen__x64__Gen_for_stmt(v__gen__x64__Gen* g, v__ast__ForStmt node)
 }
 
 static void v__gen__x64__Gen_fn_decl(v__gen__x64__Gen* g, v__ast__FnDecl node) {
-	println(term__green(_STR("\n%.*s\000:", 2, node.name)));
+	if (g->pref->is_verbose) {
+		println(term__green(_STR("\n%.*s\000:", 2, node.name)));
+	}
 	g->stack_var_pos = 0;
 	bool is_main = string_eq(node.name, tos_lit("main.main"));
 	if (is_main) {
