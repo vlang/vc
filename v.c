@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "fb927da"
+#define V_COMMIT_HASH "581603f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e47ad33"
+	#define V_COMMIT_HASH "fb927da"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "fb927da"
+	#define V_CURRENT_COMMIT_HASH "581603f"
 #endif
 
 // V typedefs:
@@ -17649,7 +17649,7 @@ string v__ast__FnDecl_stringify(v__ast__FnDecl* node, v__table__Table* t) {
 	string receiver = tos_lit("");
 	if (node->is_method) {
 		string styp = v__table__Table_type_to_str(t, node->receiver.typ);
-		string m = (node->rec_mut ? (tos_lit("mut ")) : (tos_lit("")));
+		string m = (node->rec_mut ? (string_add(v__table__ShareType_str(v__table__Type_share(node->receiver.typ)), tos_lit(" "))) : (tos_lit("")));
 		if (node->rec_mut) {
 			styp = string_substr(styp, 1, styp.len);
 		}
@@ -17679,7 +17679,7 @@ string v__ast__FnDecl_stringify(v__ast__FnDecl* node, v__table__Table* t) {
 		bool is_last_arg = i == node->args.len - 1;
 		bool should_add_type = is_last_arg || (*(v__table__Arg*)array_get(node->args, i + 1)).typ != arg.typ || (node->is_variadic && i == node->args.len - 2);
 		if (arg.is_mut) {
-			strings__Builder_write(&f, tos_lit("mut "));
+			strings__Builder_write(&f, string_add(v__table__ShareType_str(v__table__Type_share(arg.typ)), tos_lit(" ")));
 		}
 		strings__Builder_write(&f, arg.name);
 		string s = v__table__Table_type_to_str(t, arg.typ);
@@ -17842,9 +17842,9 @@ string v__ast__Expr_str(v__ast__Expr x) {
 				break;
 			}
 			array_push(&res, _MOV((string[]){ tos_lit("$") }));
-			multi_return_string_bool mr_5197 = v__ast__StringInterLiteral_get_fspec_braces(it, i);
-			string fspec_str = mr_5197.arg0;
-			bool needs_braces = mr_5197.arg1;
+			multi_return_string_bool mr_5249 = v__ast__StringInterLiteral_get_fspec_braces(it, i);
+			string fspec_str = mr_5249.arg0;
+			bool needs_braces = mr_5249.arg1;
 			if (needs_braces) {
 				array_push(&res, _MOV((string[]){ tos_lit("{") }));
 				array_push(&res, _MOV((string[]){ v__ast__Expr_str((*(v__ast__Expr*)array_get(it->exprs, i))) }));
@@ -17901,8 +17901,8 @@ string v__ast__Stmt_str(v__ast__Stmt node) {
 		for (int i = 0; i < _t496.len; ++i) {
 			v__ast__Expr left = ((v__ast__Expr*)_t496.data)[i];
 			if (left.typ == 151 /* v.ast.Ident */) {
-				v__ast__Ident* _sc_tmp_5991 = (v__ast__Ident*)left.obj;
-				v__ast__Ident* left = _sc_tmp_5991;
+				v__ast__Ident* _sc_tmp_6043 = (v__ast__Ident*)left.obj;
+				v__ast__Ident* left = _sc_tmp_6043;
 				v__ast__IdentVar var_info = v__ast__Ident_var_info(left);
 				if (var_info.is_mut) {
 					out = /*f*/string_add(out, tos_lit("mut "));
