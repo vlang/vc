@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "10e0c39"
+#define V_COMMIT_HASH "2fb5c91"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0c9c66d"
+	#define V_COMMIT_HASH "10e0c39"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "10e0c39"
+	#define V_CURRENT_COMMIT_HASH "2fb5c91"
 #endif
 
 // V typedefs:
@@ -18950,6 +18950,7 @@ static string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) {
 	byte q = string_at(s->text, s->pos);
 	bool is_quote = q == _const_v__scanner__single_quote || q == _const_v__scanner__double_quote;
 	bool is_raw = is_quote && s->pos > 0 && string_at(s->text, s->pos - 1) == 'r';
+	bool is_cstr = is_quote && s->pos > 0 && string_at(s->text, s->pos - 1) == 'c';
 	if (is_quote && !s->is_inside_string) {
 		s->quote = q;
 	}
@@ -18975,12 +18976,14 @@ static string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) {
 		}
 		if (c == '0' && s->pos > 2 && string_at(s->text, s->pos - 1) == slash) {
 			if (s->pos < s->text.len - 1 && byte_is_digit(string_at(s->text, s->pos + 1))) {
-			} else {
+			} else if (!is_cstr) {
 				v__scanner__Scanner_error(s, tos_lit("0 character in a string literal"));
 			}
 		}
 		if (c == '0' && s->pos > 5 && v__scanner__Scanner_expect(s, tos_lit("\\x0"), s->pos - 3)) {
-			v__scanner__Scanner_error(s, tos_lit("0 character in a string literal"));
+			if (!is_cstr) {
+				v__scanner__Scanner_error(s, tos_lit("0 character in a string literal"));
+			}
 		}
 		if (c == '{' && prevc == '$' && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
 			s->is_inside_string = true;
