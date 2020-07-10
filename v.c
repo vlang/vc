@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9fd0bc9"
+#define V_COMMIT_HASH "0c9c66d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "49a4ced"
+	#define V_COMMIT_HASH "9fd0bc9"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9fd0bc9"
+	#define V_CURRENT_COMMIT_HASH "0c9c66d"
 #endif
 
 // V typedefs:
@@ -9804,7 +9804,7 @@ array_string SortedMap_keys(SortedMap* m) {
 	if (isnil(m->root) || m->root->len == 0) {
 		return keys;
 	}
-	mapnode_subkeys(m->root, &/*111*/(array[]){keys}[0], 0);
+	mapnode_subkeys(m->root, &/*arr*/keys, 0);
 	return keys;
 }
 
@@ -31592,9 +31592,14 @@ inline static void v__gen__Gen_ref_or_deref_arg(v__gen__Gen* g, v__ast__CallArg 
 	} else if (arg_is_ptr && !expr_is_ptr) {
 		if (arg.is_mut) {
 			if (exp_sym->kind == v__table__Kind_array) {
-				v__gen__Gen_write(g, tos_lit("&/*111*/(array[]){"));
-				v__gen__Gen_expr(g, arg.expr);
-				v__gen__Gen_write(g, tos_lit("}[0]"));
+				if (arg.expr.typ == 151 /* v.ast.Ident */ && (/* as */ (v__ast__Ident*)__as_cast(arg.expr.obj, arg.expr.typ, /*expected:*/151))->kind == v__ast__IdentKind_variable) {
+					v__gen__Gen_write(g, tos_lit("&/*arr*/"));
+					v__gen__Gen_expr(g, arg.expr);
+				} else {
+					v__gen__Gen_write(g, tos_lit("&/*111*/(array[]){"));
+					v__gen__Gen_expr(g, arg.expr);
+					v__gen__Gen_write(g, tos_lit("}[0]"));
+				}
 				return;
 			}
 		}
