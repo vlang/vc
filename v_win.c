@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3c3a916"
+#define V_COMMIT_HASH "7248d84"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8df8866"
+	#define V_COMMIT_HASH "3c3a916"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3c3a916"
+	#define V_CURRENT_COMMIT_HASH "7248d84"
 #endif
 
 // V typedefs:
@@ -10083,7 +10083,7 @@ string string_replace_once(string s, string rep, string with) {
 	if (!_t28.ok) {
 		string err = _t28.v_error;
 		int errcode = _t28.ecode;
-		return s;
+		return string_clone(s);
 	}
 	int index = *(int*)_t28.data;
 	return string_add(string_add(string_substr(s, 0, index), with), string_substr(s, index + rep.len, s.len));
