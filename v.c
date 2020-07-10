@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7248d84"
+#define V_COMMIT_HASH "646df49"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3c3a916"
+	#define V_COMMIT_HASH "7248d84"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7248d84"
+	#define V_CURRENT_COMMIT_HASH "646df49"
 #endif
 
 // V typedefs:
@@ -10984,14 +10984,14 @@ bool byte_is_white(byte c) {
 }
 
 int string_hash(string s) {
-	int h = 0;
+	u32 h = ((u32)(0));
 	if (h == 0 && s.len > 0) {
 		for (int _t68 = 0; _t68 < s.len; ++_t68) {
 			byte c = s.str[_t68];
-			h = h * 31 + ((int)(c));
+			h = h * 31 + ((u32)(c));
 		}
 	}
-	return h;
+	return ((int)(h));
 }
 
 array_byte string_bytes(string s) {
