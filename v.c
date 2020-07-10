@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1a9690c"
+#define V_COMMIT_HASH "9839b0e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "75b7b95"
+	#define V_COMMIT_HASH "1a9690c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1a9690c"
+	#define V_CURRENT_COMMIT_HASH "9839b0e"
 #endif
 
 // V typedefs:
@@ -22736,6 +22736,9 @@ static v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Parser* p, 
 		for (int _t704 = 0; _t704 < _t703.len; ++_t704) {
 			v__ast__Expr r = ((v__ast__Expr*)_t703.data)[_t704];
 			has_cross_var = v__parser__Parser_check_cross_variables(p, left, r);
+			if (!(op == v__token__Kind_assign || op == v__token__Kind_decl_assign)) {
+				v__parser__Parser_error(p, _STR("unexpected %.*s\000, expecting := or = or comma", 2, v__token__Kind_str(op)));
+			}
 			if (has_cross_var) {
 				break;
 			}
