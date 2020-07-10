@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "203bec6"
+#define V_COMMIT_HASH "75b7b95"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ca9790a"
+	#define V_COMMIT_HASH "203bec6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "203bec6"
+	#define V_CURRENT_COMMIT_HASH "75b7b95"
 #endif
 
 // V typedefs:
@@ -35451,7 +35451,8 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 		println(array_string_str(a));
 	}
 	string response_file = _STR("%.*s\000.rsp", 2, v->out_name_c);
-	Option_void _t1267 = os__write_file(response_file, string_replace(args, tos_lit("\\"), tos_lit("\\\\")));
+	string response_file_content = string_replace(args, tos_lit("\\"), tos_lit("\\\\"));
+	Option_void _t1267 = os__write_file(response_file, response_file_content);
 	if (!_t1267.ok && !_t1267.is_none) {
 		string err = _t1267.v_error;
 		int errcode = _t1267.ecode;
@@ -35461,8 +35462,14 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 	v__builder__todo();
 	string cmd = _STR("%.*s\000 @%.*s", 2, ccompiler, response_file);
 	if (v->pref->is_verbose || v->pref->show_cc) {
-		println(tos_lit("\n=========="));
-		println(cmd);
+		println(tos_lit(""));
+		println(tos_lit("====================="));
+		println(_STR("> C compiler cmd: %.*s", 1, cmd));
+		if (v->pref->show_cc) {
+			println(_STR("> C compiler response file %.*s\000:", 2, response_file));
+			println(response_file_content);
+		}
+		println(tos_lit("====================="));
 	}
 	i64 ticks = time__ticks();
 	Option_os__Result _t1268 = os__exec(cmd);
