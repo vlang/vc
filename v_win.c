@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2fb5c91"
+#define V_COMMIT_HASH "7d6ba2d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "10e0c39"
+	#define V_COMMIT_HASH "2fb5c91"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2fb5c91"
+	#define V_CURRENT_COMMIT_HASH "7d6ba2d"
 #endif
 
 // V typedefs:
@@ -20278,6 +20278,10 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 		return /*opt*/(*(v__table__Fn*)method.data).return_type;
 	}}
 	if (string_eq(method_name, tos_lit("str"))) {
+		if (left_type_sym->kind == v__table__Kind_interface_) {
+			string iname = left_type_sym->name;
+			v__checker__Checker_error(c, _STR("interface `%.*s\000` does not have a .str() method. Use typeof() instead", 2, iname), call_expr->pos);
+		}
 		call_expr->receiver_type = left_type;
 		call_expr->return_type = _const_v__table__string_type;
 		if (call_expr->args.len > 0) {
@@ -20573,8 +20577,8 @@ static bool v__checker__Checker_type_implements(v__checker__Checker* c, v__table
 
 v__table__Type v__checker__Checker_check_expr_opt_call(v__checker__Checker* c, v__ast__Expr expr, v__table__Type ret_type) {
 	if (expr.typ == 170 /* v.ast.CallExpr */) {
-		v__ast__CallExpr* _sc_tmp_42495 = (v__ast__CallExpr*)expr.obj;
-		v__ast__CallExpr* expr = _sc_tmp_42495;
+		v__ast__CallExpr* _sc_tmp_42671 = (v__ast__CallExpr*)expr.obj;
+		v__ast__CallExpr* expr = _sc_tmp_42671;
 		if (v__table__Type_has_flag(expr->return_type, v__table__TypeFlag_optional)) {
 			if (expr->or_block.kind == v__ast__OrKind_absent) {
 				if (ret_type != _const_v__table__void_type) {
@@ -20825,8 +20829,8 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 	}
 	if (assign_stmt->left.len != right_len) {
 		if (right_first.typ == 170 /* v.ast.CallExpr */) {
-			v__ast__CallExpr* _sc_tmp_50664 = (v__ast__CallExpr*)right_first.obj;
-			v__ast__CallExpr* right_first = _sc_tmp_50664;
+			v__ast__CallExpr* _sc_tmp_50840 = (v__ast__CallExpr*)right_first.obj;
+			v__ast__CallExpr* right_first = _sc_tmp_50840;
 			v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) but `%.*s\000()` returns %"PRId32"\000 value(s)", 4, assign_stmt->left.len, right_first->name, right_len), assign_stmt->pos);
 		} else {
 			v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) %"PRId32"\000 value(s)", 3, assign_stmt->left.len, right_len), assign_stmt->pos);
@@ -22616,15 +22620,15 @@ int _t675_len = stmts.len;
 	for (int _t677 = 0; _t677 < _t676.len; ++_t677) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t676.data)[_t677];
 		if (stmt.typ == 228 /* v.ast.UnsafeStmt */) {
-			v__ast__UnsafeStmt* _sc_tmp_98884 = (v__ast__UnsafeStmt*)stmt.obj;
-			v__ast__UnsafeStmt* stmt = _sc_tmp_98884;
+			v__ast__UnsafeStmt* _sc_tmp_99060 = (v__ast__UnsafeStmt*)stmt.obj;
+			v__ast__UnsafeStmt* stmt = _sc_tmp_99060;
 			// FOR IN array
 			array _t678 = stmt->stmts;
 			for (int _t679 = 0; _t679 < _t678.len; ++_t679) {
 				v__ast__Stmt ustmt = ((v__ast__Stmt*)_t678.data)[_t679];
 				if (ustmt.typ == 225 /* v.ast.Return */) {
-					v__ast__Return* _sc_tmp_98945 = (v__ast__Return*)ustmt.obj;
-					v__ast__Return* ustmt = _sc_tmp_98945;
+					v__ast__Return* _sc_tmp_99121 = (v__ast__Return*)ustmt.obj;
+					v__ast__Return* ustmt = _sc_tmp_99121;
 					has_unsafe_return = true;
 				}
 			}
