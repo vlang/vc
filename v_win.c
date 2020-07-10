@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "581603f"
+#define V_COMMIT_HASH "d3e676b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "fb927da"
+	#define V_COMMIT_HASH "581603f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "581603f"
+	#define V_CURRENT_COMMIT_HASH "d3e676b"
 #endif
 
 // V typedefs:
@@ -32040,10 +32040,10 @@ static void v__gen__Gen_sql_stmt(v__gen__Gen* g, v__ast__SqlStmt node) {
 	string binds = strings__Builder_str(&g->sql_buf);
 	g->sql_buf = strings__new_builder(100);
 	v__gen__Gen_writeln(g, binds);
-	v__gen__Gen_writeln(g, _STR("sqlite3_step(%.*s\000);", 2, g->sql_stmt_name));
-	v__gen__Gen_write(g, _STR("if (strcmp(sqlite3_errmsg(%.*s\000.conn), \"not an error\") != 0)", 2, db_name));
-	v__gen__Gen_write(g, _STR("if (strcmp(sqlite3_errmsg(%.*s\000.conn), \"no more rows available\") != 0) puts(sqlite3_errmsg(%.*s\000.conn));", 3, db_name, db_name));
-	v__gen__Gen_writeln(g, _STR("sqlite3_finalize(%.*s\000);", 2, g->sql_stmt_name));
+	string step_res = v__gen__Gen_new_tmp_var(g);
+	v__gen__Gen_writeln(g, _STR("\tint %.*s\000 = sqlite3_step(%.*s\000);", 3, step_res, g->sql_stmt_name));
+	v__gen__Gen_writeln(g, _STR("\tif( (%.*s\000 != SQLITE_OK) && (%.*s\000 != SQLITE_DONE)){ puts(sqlite3_errmsg(%.*s\000.conn)); }", 4, step_res, step_res, db_name));
+	v__gen__Gen_writeln(g, _STR("\tsqlite3_finalize(%.*s\000);", 2, g->sql_stmt_name));
 }
 
 static void v__gen__Gen_sql_select_expr(v__gen__Gen* g, v__ast__SqlExpr node) {
@@ -32102,7 +32102,9 @@ static void v__gen__Gen_sql_select_expr(v__gen__Gen* g, v__ast__SqlExpr node) {
 	string binds = strings__Builder_str(&g->sql_buf);
 	g->sql_buf = strings__new_builder(100);
 	v__gen__Gen_writeln(g, binds);
-	v__gen__Gen_writeln(g, _STR("if (strcmp(sqlite3_errmsg(%.*s\000.conn), \"not an error\") != 0) puts(sqlite3_errmsg(%.*s\000.conn)); ", 3, db_name, db_name));
+	string binding_res = v__gen__Gen_new_tmp_var(g);
+	v__gen__Gen_writeln(g, _STR("int %.*s\000 = sqlite3_extended_errcode(%.*s\000.conn);", 3, binding_res, db_name));
+	v__gen__Gen_writeln(g, _STR("if (%.*s\000 != SQLITE_OK) { puts(sqlite3_errmsg(%.*s\000.conn)); }", 3, binding_res, db_name));
 	if (node.is_count) {
 		v__gen__Gen_writeln(g, _STR("%.*s\000 %.*s\000__get_int_from_stmt(%.*s\000);", 4, cur_line, _const_v__gen__dbtype, g->sql_stmt_name));
 	} else {
