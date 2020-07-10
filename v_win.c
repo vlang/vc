@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e85c1fb"
+#define V_COMMIT_HASH "88946a3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9839b0e"
+	#define V_COMMIT_HASH "e85c1fb"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e85c1fb"
+	#define V_CURRENT_COMMIT_HASH "88946a3"
 #endif
 
 // V typedefs:
@@ -4433,6 +4433,7 @@ byte v__checker__Checker_get_default_fmt(v__checker__Checker* c, v__table__Type 
 v__table__Type v__checker__Checker_string_inter_lit(v__checker__Checker* c, v__ast__StringInterLiteral* node);
 bool v__checker__Checker_check_sumtype_compatibility(v__checker__Checker* c, v__table__Type a, v__table__Type b);
 #define _const_v__checker__max_nr_errors 300
+#define _const_v__checker__match_exhaustive_cutoff_limit 10
 int _const_v__checker__enum_min; // inited later
 #define _const_v__checker__enum_max 0x7FFFFFFF
 v__checker__Checker v__checker__new_checker(v__table__Table* table, v__pref__Preferences* pref);
@@ -19587,20 +19588,20 @@ static bool v__checker__Checker_check_file_in_main(v__checker__Checker* c, v__as
 			v__ast__TypeDecl* it = (v__ast__TypeDecl*)stmt.obj; // ST it
 			v__ast__TypeDecl* stmt = it;
 			if (stmt->typ == 161 /* v.ast.AliasTypeDecl */) {
-				v__ast__AliasTypeDecl* _sc_tmp_5478 = (v__ast__AliasTypeDecl*)stmt->obj;
-				v__ast__AliasTypeDecl* stmt = _sc_tmp_5478;
+				v__ast__AliasTypeDecl* _sc_tmp_5514 = (v__ast__AliasTypeDecl*)stmt->obj;
+				v__ast__AliasTypeDecl* stmt = _sc_tmp_5514;
 				if (stmt->is_pub) {
 					v__checker__Checker_warn(c, _STR("type alias `%.*s\000` %.*s", 2, stmt->name, _const_v__checker__no_pub_in_main_warning), stmt->pos);
 				}
 			} else if (stmt->typ == 163 /* v.ast.SumTypeDecl */) {
-				v__ast__SumTypeDecl* _sc_tmp_5625 = (v__ast__SumTypeDecl*)stmt->obj;
-				v__ast__SumTypeDecl* stmt = _sc_tmp_5625;
+				v__ast__SumTypeDecl* _sc_tmp_5661 = (v__ast__SumTypeDecl*)stmt->obj;
+				v__ast__SumTypeDecl* stmt = _sc_tmp_5661;
 				if (stmt->is_pub) {
 					v__checker__Checker_warn(c, _STR("sum type `%.*s\000` %.*s", 2, stmt->name, _const_v__checker__no_pub_in_main_warning), stmt->pos);
 				}
 			} else if (stmt->typ == 162 /* v.ast.FnTypeDecl */) {
-				v__ast__FnTypeDecl* _sc_tmp_5766 = (v__ast__FnTypeDecl*)stmt->obj;
-				v__ast__FnTypeDecl* stmt = _sc_tmp_5766;
+				v__ast__FnTypeDecl* _sc_tmp_5802 = (v__ast__FnTypeDecl*)stmt->obj;
+				v__ast__FnTypeDecl* stmt = _sc_tmp_5802;
 				if (stmt->is_pub) {
 					v__checker__Checker_warn(c, _STR("type alias `%.*s\000` %.*s", 2, stmt->name, _const_v__checker__no_pub_in_main_warning), stmt->pos);
 				}
@@ -20565,8 +20566,8 @@ static bool v__checker__Checker_type_implements(v__checker__Checker* c, v__table
 
 v__table__Type v__checker__Checker_check_expr_opt_call(v__checker__Checker* c, v__ast__Expr expr, v__table__Type ret_type) {
 	if (expr.typ == 170 /* v.ast.CallExpr */) {
-		v__ast__CallExpr* _sc_tmp_42459 = (v__ast__CallExpr*)expr.obj;
-		v__ast__CallExpr* expr = _sc_tmp_42459;
+		v__ast__CallExpr* _sc_tmp_42495 = (v__ast__CallExpr*)expr.obj;
+		v__ast__CallExpr* expr = _sc_tmp_42495;
 		if (v__table__Type_has_flag(expr->return_type, v__table__TypeFlag_optional)) {
 			if (expr->or_block.kind == v__ast__OrKind_absent) {
 				if (ret_type != _const_v__table__void_type) {
@@ -20817,8 +20818,8 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 	}
 	if (assign_stmt->left.len != right_len) {
 		if (right_first.typ == 170 /* v.ast.CallExpr */) {
-			v__ast__CallExpr* _sc_tmp_50602 = (v__ast__CallExpr*)right_first.obj;
-			v__ast__CallExpr* right_first = _sc_tmp_50602;
+			v__ast__CallExpr* _sc_tmp_50638 = (v__ast__CallExpr*)right_first.obj;
+			v__ast__CallExpr* right_first = _sc_tmp_50638;
 			v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) but `%.*s\000()` returns %"PRId32"\000 value(s)", 4, assign_stmt->left.len, right_first->name, right_len), assign_stmt->pos);
 		} else {
 			v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) %"PRId32"\000 value(s)", 3, assign_stmt->left.len, right_len), assign_stmt->pos);
@@ -22057,7 +22058,15 @@ static void v__checker__Checker_match_exprs(v__checker__Checker* c, v__ast__Matc
 	}
 	string err_details = tos_lit("match must be exhaustive");
 	if (unhandled.len > 0) {
-		err_details = /*f*/string_add(err_details, string_add(string_add(tos_lit(" (add match branches for: "), array_string_join(unhandled, tos_lit(", "))), tos_lit(" or `else {}` at the end)")));
+		err_details = /*f*/string_add(err_details, tos_lit(" (add match branches for: "));
+		if (unhandled.len < _const_v__checker__match_exhaustive_cutoff_limit) {
+			err_details = /*f*/string_add(err_details, array_string_join(unhandled, tos_lit(", ")));
+		} else {
+			int remaining = unhandled.len - _const_v__checker__match_exhaustive_cutoff_limit;
+			err_details = /*f*/string_add(err_details, array_string_join(array_slice(unhandled, 0, _const_v__checker__match_exhaustive_cutoff_limit), tos_lit(", ")));
+			err_details = /*f*/string_add(err_details, _STR(", and %"PRId32"\000 others ...", 2, remaining));
+		}
+		err_details = /*f*/string_add(err_details, tos_lit(" or `else {}` at the end)"));
 	} else {
 		err_details = /*f*/string_add(err_details, tos_lit(" (add `else {}` at the end)"));
 	}
@@ -22600,15 +22609,15 @@ int _t675_len = stmts.len;
 	for (int _t677 = 0; _t677 < _t676.len; ++_t677) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t676.data)[_t677];
 		if (stmt.typ == 228 /* v.ast.UnsafeStmt */) {
-			v__ast__UnsafeStmt* _sc_tmp_98538 = (v__ast__UnsafeStmt*)stmt.obj;
-			v__ast__UnsafeStmt* stmt = _sc_tmp_98538;
+			v__ast__UnsafeStmt* _sc_tmp_98858 = (v__ast__UnsafeStmt*)stmt.obj;
+			v__ast__UnsafeStmt* stmt = _sc_tmp_98858;
 			// FOR IN array
 			array _t678 = stmt->stmts;
 			for (int _t679 = 0; _t679 < _t678.len; ++_t679) {
 				v__ast__Stmt ustmt = ((v__ast__Stmt*)_t678.data)[_t679];
 				if (ustmt.typ == 225 /* v.ast.Return */) {
-					v__ast__Return* _sc_tmp_98599 = (v__ast__Return*)ustmt.obj;
-					v__ast__Return* ustmt = _sc_tmp_98599;
+					v__ast__Return* _sc_tmp_98919 = (v__ast__Return*)ustmt.obj;
+					v__ast__Return* ustmt = _sc_tmp_98919;
 					has_unsafe_return = true;
 				}
 			}
