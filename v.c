@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b92ce38"
+#define V_COMMIT_HASH "fae601f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "867929e"
+	#define V_COMMIT_HASH "b92ce38"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b92ce38"
+	#define V_CURRENT_COMMIT_HASH "fae601f"
 #endif
 
 // V typedefs:
@@ -3214,6 +3214,7 @@ static void array_set_unsafe(array* a, int i, voidptr val);
 static void array_set(array* a, int i, voidptr val);
 static void array_push(array* a, voidptr val);
 void array_push_many(array* a3, voidptr val, int size);
+void array_reverse_in_place(array* a);
 array array_reverse(array a);
 void array_free(array* a);
 string array_string_str(array_string a);
@@ -8101,6 +8102,21 @@ void array_push_many(array* a3, voidptr val, int size) {
 		}
 	}
 	a3->len += size;
+}
+
+void array_reverse_in_place(array* a) {
+	if (a->len < 2) {
+		return;
+	}
+	{ // Unsafe block
+		byteptr tmp_value = v_malloc(a->element_size);
+		for (int i = 0; i < a->len / 2; ++i) {
+			memcpy(tmp_value, ((byteptr)(a->data)) + i * a->element_size, a->element_size);
+			memcpy(((byteptr)(a->data)) + i * a->element_size, ((byteptr)(a->data)) + (a->len - 1 - i) * a->element_size, a->element_size);
+			memcpy(((byteptr)(a->data)) + (a->len - 1 - i) * a->element_size, tmp_value, a->element_size);
+		}
+		v_free(tmp_value);
+	}
 }
 
 array array_reverse(array a) {
