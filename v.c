@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a2cb01e"
+#define V_COMMIT_HASH "022cc72"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d4dd564"
+	#define V_COMMIT_HASH "a2cb01e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a2cb01e"
+	#define V_CURRENT_COMMIT_HASH "022cc72"
 #endif
 
 // V typedefs:
@@ -18540,406 +18540,409 @@ inline static byte v__scanner__Scanner_look_ahead(v__scanner__Scanner s, int n) 
 }
 
 static v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanner* s) {
-	if (s->is_started) {
-		s->pos++;
-	}
-	s->is_started = true;
-	if (s->pos >= s->text.len) {
-		return v__scanner__Scanner_end_of_file(s);
-	}
-	if (!s->is_inside_string) {
-		v__scanner__Scanner_skip_whitespace(s);
-	}
-	if (s->is_inter_end) {
-		if (string_at(s->text, s->pos) == s->quote) {
-			s->is_inter_end = false;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_string, tos_lit(""), 1);
-		}
-		s->is_inter_end = false;
-		string ident_string = v__scanner__Scanner_ident_string(s);
-		return v__scanner__Scanner_new_token(s, v__token__Kind_string, ident_string, ident_string.len + 2);
-	}
-	v__scanner__Scanner_skip_whitespace(s);
-	if (s->pos >= s->text.len) {
-		return v__scanner__Scanner_end_of_file(s);
-	}
-	byte c = string_at(s->text, s->pos);
-	byte nextc = v__scanner__Scanner_look_ahead(/*rec*/*s, 1);
-	if (v__util__is_name_char(c)) {
-		string name = v__scanner__Scanner_ident_name(s);
-		byte next_char = v__scanner__Scanner_look_ahead(/*rec*/*s, 1);
-		v__token__Kind kind = (*(v__token__Kind*)map_get(_const_v__token__keywords, name, &(v__token__Kind[]){ {0} }));
-		if (kind != v__token__Kind_unknown) {
-			if (kind == v__token__Kind_key_fn) {
-				s->struct_name = v__scanner__Scanner_ident_struct_name(s);
-				s->fn_name = v__scanner__Scanner_ident_fn_name(s);
-			} else if (kind == v__token__Kind_key_module) {
-				s->mod_name = v__scanner__Scanner_ident_mod_name(s);
-			}
-			return v__scanner__Scanner_new_token(s, kind, name, name.len);
-		}
-		if (s->is_inside_string) {
-			if (next_char == s->quote) {
-				s->is_inter_end = true;
-				s->is_inter_start = false;
-				s->is_inside_string = false;
-			}
-		}
-		if (s->is_inter_start && next_char != '.' && next_char != '(') {
-			s->is_inter_end = true;
-			s->is_inter_start = false;
-		}
-		if (s->pos == 0 && next_char == ' ') {
+	while (1) {
+		if (s->is_started) {
 			s->pos++;
 		}
-		return v__scanner__Scanner_new_token(s, v__token__Kind_name, name, name.len);
-	} else if (byte_is_digit(c) || (c == '.' && byte_is_digit(nextc))) {
+		s->is_started = true;
+		if (s->pos >= s->text.len) {
+			return v__scanner__Scanner_end_of_file(s);
+		}
 		if (!s->is_inside_string) {
-			int start_pos = s->pos;
-			while (start_pos < s->text.len && string_at(s->text, start_pos) == '0') {
-				start_pos++;
-			}
-			int prefix_zero_num = start_pos - s->pos;
-			if (start_pos == s->text.len || (c == '0' && !byte_is_digit(string_at(s->text, start_pos)))) {
-				prefix_zero_num--;
-			}
-			s->pos += prefix_zero_num;
+			v__scanner__Scanner_skip_whitespace(s);
 		}
-		string num = v__scanner__Scanner_ident_number(s);
-		return v__scanner__Scanner_new_token(s, v__token__Kind_number, num, num.len);
-	}
-	if (c == ')' && s->is_inter_start) {
-		byte next_char = v__scanner__Scanner_look_ahead(/*rec*/*s, 1);
-		if (next_char != '.') {
-			s->is_inter_end = true;
-			s->is_inter_start = false;
-			if (next_char == s->quote) {
-				s->is_inside_string = false;
-			}
-			return v__scanner__Scanner_new_token(s, v__token__Kind_rpar, tos_lit(""), 1);
-		}
-	}
-	if (c == '+') {
-		if (nextc == '+') {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_inc, tos_lit(""), 2);
-		} else if (nextc == '=') {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_plus_assign, tos_lit(""), 2);
-		}
-		return v__scanner__Scanner_new_token(s, v__token__Kind_plus, tos_lit(""), 1);
-	} else if (c == '-') {
-		if (nextc == '-') {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_dec, tos_lit(""), 2);
-		} else if (nextc == '=') {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_minus_assign, tos_lit(""), 2);
-		}
-		return v__scanner__Scanner_new_token(s, v__token__Kind_minus, tos_lit(""), 1);
-	} else if (c == '*') {
-		if (nextc == '=') {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_mult_assign, tos_lit(""), 2);
-		}
-		return v__scanner__Scanner_new_token(s, v__token__Kind_mul, tos_lit(""), 1);
-	} else if (c == '^') {
-		if (nextc == '=') {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_xor_assign, tos_lit(""), 2);
-		}
-		return v__scanner__Scanner_new_token(s, v__token__Kind_xor, tos_lit(""), 1);
-	} else if (c == '%') {
-		if (nextc == '=') {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_mod_assign, tos_lit(""), 2);
-		}
-		return v__scanner__Scanner_new_token(s, v__token__Kind_mod, tos_lit(""), 1);
-	} else if (c == '?') {
-		return v__scanner__Scanner_new_token(s, v__token__Kind_question, tos_lit(""), 1);
-	} else if (c == _const_v__scanner__single_quote || c == _const_v__scanner__double_quote) {
-		string ident_string = v__scanner__Scanner_ident_string(s);
-		return v__scanner__Scanner_new_token(s, v__token__Kind_string, ident_string, ident_string.len + 2);
-	} else if (c == '\`') {
-		string ident_char = v__scanner__Scanner_ident_char(s);
-		return v__scanner__Scanner_new_token(s, v__token__Kind_chartoken, ident_char, ident_char.len + 2);
-	} else if (c == '(') {
-		if (s->pref->is_vet && string_at(s->text, s->pos + 1) == ' ') {
-			println(_STR("%.*s\000:%"PRId32"\000: Looks like you are adding a space after `(`", 3, s->file_path, s->line_nr));
-		}
-		return v__scanner__Scanner_new_token(s, v__token__Kind_lpar, tos_lit(""), 1);
-	} else if (c == ')') {
-		if (s->pref->is_vet && string_at(s->text, s->pos - 1) == ' ') {
-			println(_STR("%.*s\000:%"PRId32"\000: Looks like you are adding a space before `)`", 3, s->file_path, s->line_nr));
-		}
-		return v__scanner__Scanner_new_token(s, v__token__Kind_rpar, tos_lit(""), 1);
-	} else if (c == '[') {
-		return v__scanner__Scanner_new_token(s, v__token__Kind_lsbr, tos_lit(""), 1);
-	} else if (c == ']') {
-		return v__scanner__Scanner_new_token(s, v__token__Kind_rsbr, tos_lit(""), 1);
-	} else if (c == '{') {
-		if (s->is_inside_string) {
-			return v__scanner__Scanner_scan(s);
-		}
-		return v__scanner__Scanner_new_token(s, v__token__Kind_lcbr, tos_lit(""), 1);
-	} else if (c == '$') {
-		if (s->is_inside_string) {
-			return v__scanner__Scanner_new_token(s, v__token__Kind_str_dollar, tos_lit(""), 1);
-		} else {
-			return v__scanner__Scanner_new_token(s, v__token__Kind_dollar, tos_lit(""), 1);
-		}
-	} else if (c == '}') {
-		if (s->is_inside_string) {
-			s->pos++;
+		if (s->is_inter_end) {
 			if (string_at(s->text, s->pos) == s->quote) {
-				s->is_inside_string = false;
+				s->is_inter_end = false;
 				return v__scanner__Scanner_new_token(s, v__token__Kind_string, tos_lit(""), 1);
 			}
+			s->is_inter_end = false;
 			string ident_string = v__scanner__Scanner_ident_string(s);
 			return v__scanner__Scanner_new_token(s, v__token__Kind_string, ident_string, ident_string.len + 2);
-		} else {
-			return v__scanner__Scanner_new_token(s, v__token__Kind_rcbr, tos_lit(""), 1);
 		}
-	} else if (c == '&') {
-		if (nextc == '=') {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_and_assign, tos_lit(""), 2);
+		v__scanner__Scanner_skip_whitespace(s);
+		if (s->pos >= s->text.len) {
+			return v__scanner__Scanner_end_of_file(s);
 		}
-		byte afternextc = v__scanner__Scanner_look_ahead(/*rec*/*s, 2);
-		if (nextc == '&' && byte_is_space(afternextc)) {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_and, tos_lit(""), 2);
-		}
-		return v__scanner__Scanner_new_token(s, v__token__Kind_amp, tos_lit(""), 1);
-	} else if (c == '|') {
-		if (nextc == '|') {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_logical_or, tos_lit(""), 2);
-		}
-		if (nextc == '=') {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_or_assign, tos_lit(""), 2);
-		}
-		return v__scanner__Scanner_new_token(s, v__token__Kind_pipe, tos_lit(""), 1);
-	} else if (c == ',') {
-		return v__scanner__Scanner_new_token(s, v__token__Kind_comma, tos_lit(""), 1);
-	} else if (c == '@') {
-		s->pos++;
-		string name = v__scanner__Scanner_ident_name(s);
-		if (s->is_fmt) {
-			return v__scanner__Scanner_new_token(s, v__token__Kind_name, string_add(tos_lit("@"), name), name.len + 1);
-		}
-		if (string_eq(name, tos_lit("FN"))) {
-			return v__scanner__Scanner_new_token(s, v__token__Kind_string, s->fn_name, 3);
-		}
-		if (string_eq(name, tos_lit("MOD"))) {
-			return v__scanner__Scanner_new_token(s, v__token__Kind_string, s->mod_name, 4);
-		}
-		if (string_eq(name, tos_lit("STRUCT"))) {
-			return v__scanner__Scanner_new_token(s, v__token__Kind_string, s->struct_name, 7);
-		}
-		if (string_eq(name, tos_lit("VEXE"))) {
-			string vexe = v__pref__vexe_path();
-			return v__scanner__Scanner_new_token(s, v__token__Kind_string, v__util__cescaped_path(vexe), 5);
-		}
-		if (string_eq(name, tos_lit("FILE"))) {
-			string fpath = os__real_path(s->file_path);
-			return v__scanner__Scanner_new_token(s, v__token__Kind_string, v__util__cescaped_path(fpath), 5);
-		}
-		if (string_eq(name, tos_lit("LINE"))) {
-			return v__scanner__Scanner_new_token(s, v__token__Kind_string, int_str((s->line_nr + 1)), 5);
-		}
-		if (string_eq(name, tos_lit("COLUMN"))) {
-			return v__scanner__Scanner_new_token(s, v__token__Kind_string, int_str(v__scanner__Scanner_current_column(s)), 7);
-		}
-		if (string_eq(name, tos_lit("VHASH"))) {
-			return v__scanner__Scanner_new_token(s, v__token__Kind_string, v__util__vhash(), 6);
-		}
-		if (string_eq(name, tos_lit("VMOD_FILE"))) {
-			if (s->vmod_file_content.len == 0) {
-				v__vmod__ModFileCacher* mcache = v__vmod__get_cache();
-				v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get_by_file(mcache, s->file_path);
-				if (vmod_file_location.vmod_file.len == 0) {
-					v__scanner__Scanner_error(s, tos_lit("@VMOD_FILE can be used only in projects, that have v.mod file"));
+		byte c = string_at(s->text, s->pos);
+		byte nextc = v__scanner__Scanner_look_ahead(/*rec*/*s, 1);
+		if (v__util__is_name_char(c)) {
+			string name = v__scanner__Scanner_ident_name(s);
+			byte next_char = v__scanner__Scanner_look_ahead(/*rec*/*s, 1);
+			v__token__Kind kind = (*(v__token__Kind*)map_get(_const_v__token__keywords, name, &(v__token__Kind[]){ {0} }));
+			if (kind != v__token__Kind_unknown) {
+				if (kind == v__token__Kind_key_fn) {
+					s->struct_name = v__scanner__Scanner_ident_struct_name(s);
+					s->fn_name = v__scanner__Scanner_ident_fn_name(s);
+				} else if (kind == v__token__Kind_key_module) {
+					s->mod_name = v__scanner__Scanner_ident_mod_name(s);
 				}
-				Option_string _t503 = os__read_file(vmod_file_location.vmod_file);
-				if (!_t503.ok) {
-					string err = _t503.v_error;
-					int errcode = _t503.ecode;
-					*(string*) _t503.data = tos_lit("");
+				return v__scanner__Scanner_new_token(s, kind, name, name.len);
+			}
+			if (s->is_inside_string) {
+				if (next_char == s->quote) {
+					s->is_inter_end = true;
+					s->is_inter_start = false;
+					s->is_inside_string = false;
 				}
-				string vmod_content = *(string*)_t503.data;
+			}
+			if (s->is_inter_start && next_char != '.' && next_char != '(') {
+				s->is_inter_end = true;
+				s->is_inter_start = false;
+			}
+			if (s->pos == 0 && next_char == ' ') {
+				s->pos++;
+			}
+			return v__scanner__Scanner_new_token(s, v__token__Kind_name, name, name.len);
+		} else if (byte_is_digit(c) || (c == '.' && byte_is_digit(nextc))) {
+			if (!s->is_inside_string) {
+				int start_pos = s->pos;
+				while (start_pos < s->text.len && string_at(s->text, start_pos) == '0') {
+					start_pos++;
+				}
+				int prefix_zero_num = start_pos - s->pos;
+				if (start_pos == s->text.len || (c == '0' && !byte_is_digit(string_at(s->text, start_pos)))) {
+					prefix_zero_num--;
+				}
+				s->pos += prefix_zero_num;
+			}
+			string num = v__scanner__Scanner_ident_number(s);
+			return v__scanner__Scanner_new_token(s, v__token__Kind_number, num, num.len);
+		}
+		if (c == ')' && s->is_inter_start) {
+			byte next_char = v__scanner__Scanner_look_ahead(/*rec*/*s, 1);
+			if (next_char != '.') {
+				s->is_inter_end = true;
+				s->is_inter_start = false;
+				if (next_char == s->quote) {
+					s->is_inside_string = false;
+				}
+				return v__scanner__Scanner_new_token(s, v__token__Kind_rpar, tos_lit(""), 1);
+			}
+		}
+		if (c == '+') {
+			if (nextc == '+') {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_inc, tos_lit(""), 2);
+			} else if (nextc == '=') {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_plus_assign, tos_lit(""), 2);
+			}
+			return v__scanner__Scanner_new_token(s, v__token__Kind_plus, tos_lit(""), 1);
+		} else if (c == '-') {
+			if (nextc == '-') {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_dec, tos_lit(""), 2);
+			} else if (nextc == '=') {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_minus_assign, tos_lit(""), 2);
+			}
+			return v__scanner__Scanner_new_token(s, v__token__Kind_minus, tos_lit(""), 1);
+		} else if (c == '*') {
+			if (nextc == '=') {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_mult_assign, tos_lit(""), 2);
+			}
+			return v__scanner__Scanner_new_token(s, v__token__Kind_mul, tos_lit(""), 1);
+		} else if (c == '^') {
+			if (nextc == '=') {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_xor_assign, tos_lit(""), 2);
+			}
+			return v__scanner__Scanner_new_token(s, v__token__Kind_xor, tos_lit(""), 1);
+		} else if (c == '%') {
+			if (nextc == '=') {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_mod_assign, tos_lit(""), 2);
+			}
+			return v__scanner__Scanner_new_token(s, v__token__Kind_mod, tos_lit(""), 1);
+		} else if (c == '?') {
+			return v__scanner__Scanner_new_token(s, v__token__Kind_question, tos_lit(""), 1);
+		} else if (c == _const_v__scanner__single_quote || c == _const_v__scanner__double_quote) {
+			string ident_string = v__scanner__Scanner_ident_string(s);
+			return v__scanner__Scanner_new_token(s, v__token__Kind_string, ident_string, ident_string.len + 2);
+		} else if (c == '\`') {
+			string ident_char = v__scanner__Scanner_ident_char(s);
+			return v__scanner__Scanner_new_token(s, v__token__Kind_chartoken, ident_char, ident_char.len + 2);
+		} else if (c == '(') {
+			if (s->pref->is_vet && string_at(s->text, s->pos + 1) == ' ') {
+				println(_STR("%.*s\000:%"PRId32"\000: Looks like you are adding a space after `(`", 3, s->file_path, s->line_nr));
+			}
+			return v__scanner__Scanner_new_token(s, v__token__Kind_lpar, tos_lit(""), 1);
+		} else if (c == ')') {
+			if (s->pref->is_vet && string_at(s->text, s->pos - 1) == ' ') {
+				println(_STR("%.*s\000:%"PRId32"\000: Looks like you are adding a space before `)`", 3, s->file_path, s->line_nr));
+			}
+			return v__scanner__Scanner_new_token(s, v__token__Kind_rpar, tos_lit(""), 1);
+		} else if (c == '[') {
+			return v__scanner__Scanner_new_token(s, v__token__Kind_lsbr, tos_lit(""), 1);
+		} else if (c == ']') {
+			return v__scanner__Scanner_new_token(s, v__token__Kind_rsbr, tos_lit(""), 1);
+		} else if (c == '{') {
+			if (s->is_inside_string) {
+				continue;
+			}
+			return v__scanner__Scanner_new_token(s, v__token__Kind_lcbr, tos_lit(""), 1);
+		} else if (c == '$') {
+			if (s->is_inside_string) {
+				return v__scanner__Scanner_new_token(s, v__token__Kind_str_dollar, tos_lit(""), 1);
+			} else {
+				return v__scanner__Scanner_new_token(s, v__token__Kind_dollar, tos_lit(""), 1);
+			}
+		} else if (c == '}') {
+			if (s->is_inside_string) {
+				s->pos++;
+				if (string_at(s->text, s->pos) == s->quote) {
+					s->is_inside_string = false;
+					return v__scanner__Scanner_new_token(s, v__token__Kind_string, tos_lit(""), 1);
+				}
+				string ident_string = v__scanner__Scanner_ident_string(s);
+				return v__scanner__Scanner_new_token(s, v__token__Kind_string, ident_string, ident_string.len + 2);
+			} else {
+				return v__scanner__Scanner_new_token(s, v__token__Kind_rcbr, tos_lit(""), 1);
+			}
+		} else if (c == '&') {
+			if (nextc == '=') {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_and_assign, tos_lit(""), 2);
+			}
+			byte afternextc = v__scanner__Scanner_look_ahead(/*rec*/*s, 2);
+			if (nextc == '&' && byte_is_space(afternextc)) {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_and, tos_lit(""), 2);
+			}
+			return v__scanner__Scanner_new_token(s, v__token__Kind_amp, tos_lit(""), 1);
+		} else if (c == '|') {
+			if (nextc == '|') {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_logical_or, tos_lit(""), 2);
+			}
+			if (nextc == '=') {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_or_assign, tos_lit(""), 2);
+			}
+			return v__scanner__Scanner_new_token(s, v__token__Kind_pipe, tos_lit(""), 1);
+		} else if (c == ',') {
+			return v__scanner__Scanner_new_token(s, v__token__Kind_comma, tos_lit(""), 1);
+		} else if (c == '@') {
+			s->pos++;
+			string name = v__scanner__Scanner_ident_name(s);
+			if (s->is_fmt) {
+				return v__scanner__Scanner_new_token(s, v__token__Kind_name, string_add(tos_lit("@"), name), name.len + 1);
+			}
+			if (string_eq(name, tos_lit("FN"))) {
+				return v__scanner__Scanner_new_token(s, v__token__Kind_string, s->fn_name, 3);
+			}
+			if (string_eq(name, tos_lit("MOD"))) {
+				return v__scanner__Scanner_new_token(s, v__token__Kind_string, s->mod_name, 4);
+			}
+			if (string_eq(name, tos_lit("STRUCT"))) {
+				return v__scanner__Scanner_new_token(s, v__token__Kind_string, s->struct_name, 7);
+			}
+			if (string_eq(name, tos_lit("VEXE"))) {
+				string vexe = v__pref__vexe_path();
+				return v__scanner__Scanner_new_token(s, v__token__Kind_string, v__util__cescaped_path(vexe), 5);
+			}
+			if (string_eq(name, tos_lit("FILE"))) {
+				string fpath = os__real_path(s->file_path);
+				return v__scanner__Scanner_new_token(s, v__token__Kind_string, v__util__cescaped_path(fpath), 5);
+			}
+			if (string_eq(name, tos_lit("LINE"))) {
+				return v__scanner__Scanner_new_token(s, v__token__Kind_string, int_str((s->line_nr + 1)), 5);
+			}
+			if (string_eq(name, tos_lit("COLUMN"))) {
+				return v__scanner__Scanner_new_token(s, v__token__Kind_string, int_str(v__scanner__Scanner_current_column(s)), 7);
+			}
+			if (string_eq(name, tos_lit("VHASH"))) {
+				return v__scanner__Scanner_new_token(s, v__token__Kind_string, v__util__vhash(), 6);
+			}
+			if (string_eq(name, tos_lit("VMOD_FILE"))) {
+				if (s->vmod_file_content.len == 0) {
+					v__vmod__ModFileCacher* mcache = v__vmod__get_cache();
+					v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get_by_file(mcache, s->file_path);
+					if (vmod_file_location.vmod_file.len == 0) {
+						v__scanner__Scanner_error(s, tos_lit("@VMOD_FILE can be used only in projects, that have v.mod file"));
+					}
+					Option_string _t503 = os__read_file(vmod_file_location.vmod_file);
+					if (!_t503.ok) {
+						string err = _t503.v_error;
+						int errcode = _t503.ecode;
+						*(string*) _t503.data = tos_lit("");
+					}
+					string vmod_content = *(string*)_t503.data;
 // $if  windows {
 #ifdef _WIN32
-				s->vmod_file_content = string_replace(vmod_content, tos_lit("\r\n"), tos_lit("\n"));
+					s->vmod_file_content = string_replace(vmod_content, tos_lit("\r\n"), tos_lit("\n"));
 #else
-				s->vmod_file_content = vmod_content;
+					s->vmod_file_content = vmod_content;
 #endif
 // } windows
+				}
+				return v__scanner__Scanner_new_token(s, v__token__Kind_string, s->vmod_file_content, 10);
 			}
-			return v__scanner__Scanner_new_token(s, v__token__Kind_string, s->vmod_file_content, 10);
-		}
-		if (!v__token__is_key(name)) {
-			v__scanner__Scanner_error(s, tos_lit("@ must be used before keywords (e.g. `@type string`)"));
-		}
-		return v__scanner__Scanner_new_token(s, v__token__Kind_name, name, name.len);
-	} else if (c == '.') {
-		if (nextc == '.') {
-			s->pos++;
-			if (string_at(s->text, s->pos + 1) == '.') {
+			if (!v__token__is_key(name)) {
+				v__scanner__Scanner_error(s, tos_lit("@ must be used before keywords (e.g. `@type string`)"));
+			}
+			return v__scanner__Scanner_new_token(s, v__token__Kind_name, name, name.len);
+		} else if (c == '.') {
+			if (nextc == '.') {
 				s->pos++;
-				return v__scanner__Scanner_new_token(s, v__token__Kind_ellipsis, tos_lit(""), 3);
+				if (string_at(s->text, s->pos + 1) == '.') {
+					s->pos++;
+					return v__scanner__Scanner_new_token(s, v__token__Kind_ellipsis, tos_lit(""), 3);
+				}
+				return v__scanner__Scanner_new_token(s, v__token__Kind_dotdot, tos_lit(""), 2);
 			}
-			return v__scanner__Scanner_new_token(s, v__token__Kind_dotdot, tos_lit(""), 2);
-		}
-		return v__scanner__Scanner_new_token(s, v__token__Kind_dot, tos_lit(""), 1);
-	} else if (c == '#') {
-		int start = s->pos + 1;
-		v__scanner__Scanner_ignore_line(s);
-		if (nextc == '!') {
-			s->line_comment = string_trim_space(string_substr(s->text, start + 1, s->pos));
-			return v__scanner__Scanner_scan(s);
-		}
-		string hash = string_trim_space(string_substr(s->text, start, s->pos));
-		return v__scanner__Scanner_new_token(s, v__token__Kind_hash, hash, hash.len);
-	} else if (c == '>') {
-		if (nextc == '=') {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_ge, tos_lit(""), 2);
-		} else if (nextc == '>') {
-			if (s->pos + 2 < s->text.len && string_at(s->text, s->pos + 2) == '=') {
-				s->pos += 2;
-				return v__scanner__Scanner_new_token(s, v__token__Kind_right_shift_assign, tos_lit(""), 3);
-			}
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_right_shift, tos_lit(""), 2);
-		} else {
-			return v__scanner__Scanner_new_token(s, v__token__Kind_gt, tos_lit(""), 1);
-		}
-	} else if (c == 0xE2) {
-		if (nextc == 0x89 && string_at(s->text, s->pos + 2) == 0xA0) {
-			s->pos += 2;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_ne, tos_lit(""), 3);
-		} else if (nextc == 0x89 && string_at(s->text, s->pos + 2) == 0xBD) {
-			s->pos += 2;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_le, tos_lit(""), 3);
-		} else if (nextc == 0xA9 && string_at(s->text, s->pos + 2) == 0xBE) {
-			s->pos += 2;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_ge, tos_lit(""), 3);
-		}
-	} else if (c == '<') {
-		if (nextc == '=') {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_le, tos_lit(""), 2);
-		} else if (nextc == '<') {
-			if (s->pos + 2 < s->text.len && string_at(s->text, s->pos + 2) == '=') {
-				s->pos += 2;
-				return v__scanner__Scanner_new_token(s, v__token__Kind_left_shift_assign, tos_lit(""), 3);
-			}
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_left_shift, tos_lit(""), 2);
-		} else {
-			return v__scanner__Scanner_new_token(s, v__token__Kind_lt, tos_lit(""), 1);
-		}
-	} else if (c == '=') {
-		if (nextc == '=') {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_eq, tos_lit(""), 2);
-		} else if (nextc == '>') {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_arrow, tos_lit(""), 2);
-		} else {
-			return v__scanner__Scanner_new_token(s, v__token__Kind_assign, tos_lit(""), 1);
-		}
-	} else if (c == ':') {
-		if (nextc == '=') {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_decl_assign, tos_lit(""), 2);
-		} else {
-			return v__scanner__Scanner_new_token(s, v__token__Kind_colon, tos_lit(""), 1);
-		}
-	} else if (c == ';') {
-		return v__scanner__Scanner_new_token(s, v__token__Kind_semicolon, tos_lit(""), 1);
-	} else if (c == '!') {
-		if (nextc == '=') {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_ne, tos_lit(""), 2);
-		} else if (nextc == 'i' && string_at(s->text, s->pos + 2) == 'n' && byte_is_space(string_at(s->text, s->pos + 3))) {
-			s->pos += 2;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_not_in, tos_lit(""), 3);
-		} else if (nextc == 'i' && string_at(s->text, s->pos + 2) == 's' && byte_is_space(string_at(s->text, s->pos + 3))) {
-			s->pos += 2;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_not_is, tos_lit(""), 3);
-		} else {
-			return v__scanner__Scanner_new_token(s, v__token__Kind_not, tos_lit(""), 1);
-		}
-	} else if (c == '~') {
-		return v__scanner__Scanner_new_token(s, v__token__Kind_bit_not, tos_lit(""), 1);
-	} else if (c == '/') {
-		if (nextc == '=') {
-			s->pos++;
-			return v__scanner__Scanner_new_token(s, v__token__Kind_div_assign, tos_lit(""), 2);
-		}
-		if (nextc == '/') {
+			return v__scanner__Scanner_new_token(s, v__token__Kind_dot, tos_lit(""), 1);
+		} else if (c == '#') {
 			int start = s->pos + 1;
 			v__scanner__Scanner_ignore_line(s);
-			s->line_comment = string_substr(s->text, start + 1, s->pos);
-			string comment = string_trim_space(s->line_comment);
-			s->pos--;
-			s->line_nr--;
-			if (v__scanner__Scanner_should_parse_comment(s)) {
-				bool is_separate_line_comment = true;
-				for (int j = start - 2; j >= 0 && string_at(s->text, j) != '\n'; j--) {
-					if (!(string_at(s->text, j) == '\t' || string_at(s->text, j) == ' ')) {
-						is_separate_line_comment = false;
+			if (nextc == '!') {
+				s->line_comment = string_trim_space(string_substr(s->text, start + 1, s->pos));
+				continue;
+			}
+			string hash = string_trim_space(string_substr(s->text, start, s->pos));
+			return v__scanner__Scanner_new_token(s, v__token__Kind_hash, hash, hash.len);
+		} else if (c == '>') {
+			if (nextc == '=') {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_ge, tos_lit(""), 2);
+			} else if (nextc == '>') {
+				if (s->pos + 2 < s->text.len && string_at(s->text, s->pos + 2) == '=') {
+					s->pos += 2;
+					return v__scanner__Scanner_new_token(s, v__token__Kind_right_shift_assign, tos_lit(""), 3);
+				}
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_right_shift, tos_lit(""), 2);
+			} else {
+				return v__scanner__Scanner_new_token(s, v__token__Kind_gt, tos_lit(""), 1);
+			}
+		} else if (c == 0xE2) {
+			if (nextc == 0x89 && string_at(s->text, s->pos + 2) == 0xA0) {
+				s->pos += 2;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_ne, tos_lit(""), 3);
+			} else if (nextc == 0x89 && string_at(s->text, s->pos + 2) == 0xBD) {
+				s->pos += 2;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_le, tos_lit(""), 3);
+			} else if (nextc == 0xA9 && string_at(s->text, s->pos + 2) == 0xBE) {
+				s->pos += 2;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_ge, tos_lit(""), 3);
+			}
+		} else if (c == '<') {
+			if (nextc == '=') {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_le, tos_lit(""), 2);
+			} else if (nextc == '<') {
+				if (s->pos + 2 < s->text.len && string_at(s->text, s->pos + 2) == '=') {
+					s->pos += 2;
+					return v__scanner__Scanner_new_token(s, v__token__Kind_left_shift_assign, tos_lit(""), 3);
+				}
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_left_shift, tos_lit(""), 2);
+			} else {
+				return v__scanner__Scanner_new_token(s, v__token__Kind_lt, tos_lit(""), 1);
+			}
+		} else if (c == '=') {
+			if (nextc == '=') {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_eq, tos_lit(""), 2);
+			} else if (nextc == '>') {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_arrow, tos_lit(""), 2);
+			} else {
+				return v__scanner__Scanner_new_token(s, v__token__Kind_assign, tos_lit(""), 1);
+			}
+		} else if (c == ':') {
+			if (nextc == '=') {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_decl_assign, tos_lit(""), 2);
+			} else {
+				return v__scanner__Scanner_new_token(s, v__token__Kind_colon, tos_lit(""), 1);
+			}
+		} else if (c == ';') {
+			return v__scanner__Scanner_new_token(s, v__token__Kind_semicolon, tos_lit(""), 1);
+		} else if (c == '!') {
+			if (nextc == '=') {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_ne, tos_lit(""), 2);
+			} else if (nextc == 'i' && string_at(s->text, s->pos + 2) == 'n' && byte_is_space(string_at(s->text, s->pos + 3))) {
+				s->pos += 2;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_not_in, tos_lit(""), 3);
+			} else if (nextc == 'i' && string_at(s->text, s->pos + 2) == 's' && byte_is_space(string_at(s->text, s->pos + 3))) {
+				s->pos += 2;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_not_is, tos_lit(""), 3);
+			} else {
+				return v__scanner__Scanner_new_token(s, v__token__Kind_not, tos_lit(""), 1);
+			}
+		} else if (c == '~') {
+			return v__scanner__Scanner_new_token(s, v__token__Kind_bit_not, tos_lit(""), 1);
+		} else if (c == '/') {
+			if (nextc == '=') {
+				s->pos++;
+				return v__scanner__Scanner_new_token(s, v__token__Kind_div_assign, tos_lit(""), 2);
+			}
+			if (nextc == '/') {
+				int start = s->pos + 1;
+				v__scanner__Scanner_ignore_line(s);
+				s->line_comment = string_substr(s->text, start + 1, s->pos);
+				string comment = string_trim_space(s->line_comment);
+				s->pos--;
+				s->line_nr--;
+				if (v__scanner__Scanner_should_parse_comment(s)) {
+					bool is_separate_line_comment = true;
+					for (int j = start - 2; j >= 0 && string_at(s->text, j) != '\n'; j--) {
+						if (!(string_at(s->text, j) == '\t' || string_at(s->text, j) == ' ')) {
+							is_separate_line_comment = false;
+						}
+					}
+					if (is_separate_line_comment) {
+						comment = string_add(tos_lit("|"), comment);
+					}
+					return v__scanner__Scanner_new_token(s, v__token__Kind_comment, comment, comment.len + 2);
+				}
+				continue;
+			}
+			if (nextc == '*') {
+				int start = s->pos + 2;
+				int nest_count = 1;
+				while (nest_count > 0) {
+					s->pos++;
+					if (s->pos >= s->text.len) {
+						s->line_nr--;
+						v__scanner__Scanner_error(s, tos_lit("comment not terminated"));
+					}
+					if (string_at(s->text, s->pos) == '\n') {
+						v__scanner__Scanner_inc_line_number(s);
+						continue;
+					}
+					if (v__scanner__Scanner_expect(s, tos_lit("/*"), s->pos)) {
+						nest_count++;
+						continue;
+					}
+					if (v__scanner__Scanner_expect(s, tos_lit("*/"), s->pos)) {
+						nest_count--;
 					}
 				}
-				if (is_separate_line_comment) {
-					comment = string_add(tos_lit("|"), comment);
-				}
-				return v__scanner__Scanner_new_token(s, v__token__Kind_comment, comment, comment.len + 2);
-			}
-			return v__scanner__Scanner_scan(s);
-		}
-		if (nextc == '*') {
-			int start = s->pos + 2;
-			int nest_count = 1;
-			while (nest_count > 0) {
 				s->pos++;
-				if (s->pos >= s->text.len) {
-					s->line_nr--;
-					v__scanner__Scanner_error(s, tos_lit("comment not terminated"));
+				if (v__scanner__Scanner_should_parse_comment(s)) {
+					string comment = string_trim_space(string_substr(s->text, start, (s->pos - 1)));
+					return v__scanner__Scanner_new_token(s, v__token__Kind_comment, comment, comment.len + 4);
 				}
-				if (string_at(s->text, s->pos) == '\n') {
-					v__scanner__Scanner_inc_line_number(s);
-					continue;
-				}
-				if (v__scanner__Scanner_expect(s, tos_lit("/*"), s->pos)) {
-					nest_count++;
-					continue;
-				}
-				if (v__scanner__Scanner_expect(s, tos_lit("*/"), s->pos)) {
-					nest_count--;
-				}
+				continue;
 			}
-			s->pos++;
-			if (v__scanner__Scanner_should_parse_comment(s)) {
-				string comment = string_trim_space(string_substr(s->text, start, (s->pos - 1)));
-				return v__scanner__Scanner_new_token(s, v__token__Kind_comment, comment, comment.len + 4);
-			}
-			return v__scanner__Scanner_scan(s);
-		}
-		return v__scanner__Scanner_new_token(s, v__token__Kind_div, tos_lit(""), 1);
-	} else {
-	};
+			return v__scanner__Scanner_new_token(s, v__token__Kind_div, tos_lit(""), 1);
+		} else {
+		};
 // $if  windows {
 #ifdef _WIN32
-	if (c == '\0') {
-		return v__scanner__Scanner_end_of_file(s);
-	}
+		if (c == '\0') {
+			return v__scanner__Scanner_end_of_file(s);
+		}
 #endif
 // } windows
-	v__scanner__Scanner_error(s, _STR("invalid character `%.*s\000`", 2, byte_str(c)));
+		v__scanner__Scanner_error(s, _STR("invalid character `%.*s\000`", 2, byte_str(c)));
+		break;
+	}
 	return v__scanner__Scanner_end_of_file(s);
 }
 
