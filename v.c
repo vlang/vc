@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "498c8cf"
+#define V_COMMIT_HASH "d4dd564"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9b4c81e"
+	#define V_COMMIT_HASH "498c8cf"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "498c8cf"
+	#define V_CURRENT_COMMIT_HASH "d4dd564"
 #endif
 
 // V typedefs:
@@ -25403,12 +25403,12 @@ static v__ast__Expr v__parser__Parser_string_expr(v__parser__Parser* p) {
 				if ((*(string*)array_get(fields, 0)).len > 0 && string_at((*(string*)array_get(fields, 0)), 0) == '0') {
 					fill = true;
 				}
-				fwidth = strconv__atoi((*(string*)array_get(fields, 0)));
+				fwidth = string_int((*(string*)array_get(fields, 0)));
 				if (fwidthneg) {
 					fwidth = -fwidth;
 				}
 				if (fields.len > 1) {
-					precision = strconv__atoi((*(string*)array_get(fields, 1)));
+					precision = string_int((*(string*)array_get(fields, 1)));
 				}
 				v__parser__Parser_next(p);
 			}
