@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "26768e8"
+#define V_COMMIT_HASH "839bd0e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b55f84c"
+	#define V_COMMIT_HASH "26768e8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "26768e8"
+	#define V_CURRENT_COMMIT_HASH "839bd0e"
 #endif
 
 // V typedefs:
@@ -435,7 +435,7 @@ typedef int (*qsort_callback_func)(const void*, const void*);
 #endif
 
 // g_live_info is used by live.info()
-void* g_live_info = NULL;
+static void* g_live_info = NULL;
 
 //============================== HELPER C MACROS =============================*/
 //#define tos4(s, slen) ((string){.str=(s), .len=(slen)})
@@ -475,7 +475,7 @@ static inline bool _us64_lt(uint64_t a, int64_t b) { return a < INT64_MAX && (in
 
 //================================== GLOBALS =================================*/
 //byte g_str_buf[1024];
-byte* g_str_buf;
+static byte* g_str_buf;
 int load_so(byteptr);
 void reload_so();
 void _vinit();
@@ -3006,11 +3006,11 @@ f32 strings__levenshtein_distance_percentage(string a, string b);
 f32 strings__dice_coefficient(string s1, string s2);
 string strings__repeat(byte c, int n);
 string strings__repeat_string(string s, int n);
-u64 _const_hash__wyhash__wyp0; // inited later
-u64 _const_hash__wyhash__wyp1; // inited later
-u64 _const_hash__wyhash__wyp2; // inited later
-u64 _const_hash__wyhash__wyp3; // inited later
-u64 _const_hash__wyhash__wyp4; // inited later
+static u64 _const_hash__wyhash__wyp0; // inited later
+static u64 _const_hash__wyhash__wyp1; // inited later
+static u64 _const_hash__wyhash__wyp2; // inited later
+static u64 _const_hash__wyhash__wyp3; // inited later
+static u64 _const_hash__wyhash__wyp4; // inited later
 u64 hash__wyhash__wyhash_c(byteptr key, u64 len, u64 seed);
 u64 hash__wyhash__sum64_string(string key, u64 seed);
 u64 hash__wyhash__sum64(array_byte key, u64 seed);
@@ -3020,17 +3020,17 @@ u64 hash__wyhash__wymum(u64 a, u64 b);
 static u64 hash__wyhash__wyr3(byteptr p, u64 k);
 static u64 hash__wyhash__wyr4(byteptr p);
 static u64 hash__wyhash__wyr8(byteptr p);
-u32 _const_math__bits__de_bruijn32; // inited later
-array_byte _const_math__bits__de_bruijn32tab; // inited later
-u64 _const_math__bits__de_bruijn64; // inited later
-array_byte _const_math__bits__de_bruijn64tab; // inited later
-u64 _const_math__bits__m0; // inited later
-u64 _const_math__bits__m1; // inited later
-u64 _const_math__bits__m2; // inited later
-u64 _const_math__bits__m3; // inited later
-u64 _const_math__bits__m4; // inited later
-u32 _const_math__bits__max_u32; // inited later
-u64 _const_math__bits__max_u64; // inited later
+static u32 _const_math__bits__de_bruijn32; // inited later
+static array_byte _const_math__bits__de_bruijn32tab; // inited later
+static u64 _const_math__bits__de_bruijn64; // inited later
+static array_byte _const_math__bits__de_bruijn64tab; // inited later
+static u64 _const_math__bits__m0; // inited later
+static u64 _const_math__bits__m1; // inited later
+static u64 _const_math__bits__m2; // inited later
+static u64 _const_math__bits__m3; // inited later
+static u64 _const_math__bits__m4; // inited later
+static u32 _const_math__bits__max_u32; // inited later
+static u64 _const_math__bits__max_u64; // inited later
 int math__bits__leading_zeros_8(byte x);
 int math__bits__leading_zeros_16(u16 x);
 int math__bits__leading_zeros_32(u32 x);
@@ -3062,23 +3062,23 @@ multi_return_u32_u32 math__bits__add_32(u32 x, u32 y, u32 carry);
 multi_return_u64_u64 math__bits__add_64(u64 x, u64 y, u64 carry);
 multi_return_u32_u32 math__bits__sub_32(u32 x, u32 y, u32 borrow);
 multi_return_u64_u64 math__bits__sub_64(u64 x, u64 y, u64 borrow);
-u64 _const_math__bits__two32; // inited later
-u64 _const_math__bits__mask32; // inited later
-string _const_math__bits__overflow_error; // a string literal, inited later
-string _const_math__bits__divide_error; // a string literal, inited later
+static u64 _const_math__bits__two32; // inited later
+static u64 _const_math__bits__mask32; // inited later
+static string _const_math__bits__overflow_error; // a string literal, inited later
+static string _const_math__bits__divide_error; // a string literal, inited later
 multi_return_u32_u32 math__bits__mul_32(u32 x, u32 y);
 multi_return_u64_u64 math__bits__mul_64(u64 x, u64 y);
 multi_return_u32_u32 math__bits__div_32(u32 hi, u32 lo, u32 y);
 multi_return_u64_u64 math__bits__div_64(u64 hi, u64 lo, u64 y1);
 u32 math__bits__rem_32(u32 hi, u32 lo, u32 y);
 u64 math__bits__rem_64(u64 hi, u64 lo, u64 y);
-array_byte _const_math__bits__ntz_8_tab; // inited later
-array_byte _const_math__bits__pop_8_tab; // inited later
-array_byte _const_math__bits__rev_8_tab; // inited later
-array_byte _const_math__bits__len_8_tab; // inited later
-array_u32 _const_strconv__ftoa__ten_pow_table_32; // inited later
-u32 _const_strconv__ftoa__mantbits32; // inited later
-u32 _const_strconv__ftoa__expbits32; // inited later
+static array_byte _const_math__bits__ntz_8_tab; // inited later
+static array_byte _const_math__bits__pop_8_tab; // inited later
+static array_byte _const_math__bits__rev_8_tab; // inited later
+static array_byte _const_math__bits__len_8_tab; // inited later
+static array_u32 _const_strconv__ftoa__ten_pow_table_32; // inited later
+static u32 _const_strconv__ftoa__mantbits32; // inited later
+static u32 _const_strconv__ftoa__expbits32; // inited later
 #define _const_strconv__ftoa__bias32 127
 #define _const_strconv__ftoa__maxexp32 255
 static string strconv__ftoa__Dec32_get_string_32(strconv__ftoa__Dec32 d, bool neg, int i_n_digit, int i_pad_digit);
@@ -3086,9 +3086,9 @@ static multi_return_strconv__ftoa__Dec32_bool strconv__ftoa__f32_to_decimal_exac
 strconv__ftoa__Dec32 strconv__ftoa__f32_to_decimal(u32 mant, u32 exp);
 string strconv__ftoa__f32_to_str(f32 f, int n_digit);
 string strconv__ftoa__f32_to_str_pad(f32 f, int n_digit);
-array_u64 _const_strconv__ftoa__ten_pow_table_64; // inited later
-u32 _const_strconv__ftoa__mantbits64; // inited later
-u32 _const_strconv__ftoa__expbits64; // inited later
+static array_u64 _const_strconv__ftoa__ten_pow_table_64; // inited later
+static u32 _const_strconv__ftoa__mantbits64; // inited later
+static u32 _const_strconv__ftoa__expbits64; // inited later
 #define _const_strconv__ftoa__bias64 1023
 #define _const_strconv__ftoa__maxexp64 2047
 static string strconv__ftoa__Dec64_get_string_64(strconv__ftoa__Dec64 d, bool neg, int i_n_digit, int i_pad_digit);
@@ -3104,11 +3104,11 @@ string strconv__ftoa__ftoa_long_32(f32 f);
 #define _const_strconv__ftoa__pow5_inv_num_bits_32 59
 #define _const_strconv__ftoa__pow5_num_bits_64 121
 #define _const_strconv__ftoa__pow5_inv_num_bits_64 122
-array_u64 _const_strconv__ftoa__powers_of_10; // inited later
-array_u64 _const_strconv__ftoa__pow5_split_32; // inited later
-array_u64 _const_strconv__ftoa__pow5_inv_split_32; // inited later
-array_strconv__ftoa__Uint128 _const_strconv__ftoa__pow5_split_64; // inited later
-array_strconv__ftoa__Uint128 _const_strconv__ftoa__pow5_inv_split_64; // inited later
+static array_u64 _const_strconv__ftoa__powers_of_10; // inited later
+static array_u64 _const_strconv__ftoa__pow5_split_32; // inited later
+static array_u64 _const_strconv__ftoa__pow5_inv_split_32; // inited later
+static array_strconv__ftoa__Uint128 _const_strconv__ftoa__pow5_split_64; // inited later
+static array_strconv__ftoa__Uint128 _const_strconv__ftoa__pow5_inv_split_64; // inited later
 static void strconv__ftoa__assert1(bool t, string msg);
 static int strconv__ftoa__bool_to_int(bool b);
 static u32 strconv__ftoa__bool_to_u32(bool b);
@@ -3137,10 +3137,10 @@ static multi_return_u32_u32_u32 strconv__lsl96(u32 s2, u32 s1, u32 s0);
 static multi_return_u32_u32_u32 strconv__add96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1, u32 d0);
 static multi_return_u32_u32_u32 strconv__sub96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1, u32 d0);
 #define _const_strconv__digits 18
-u64 _const_strconv__double_plus_zero; // inited later
-u64 _const_strconv__double_minus_zero; // inited later
-u64 _const_strconv__double_plus_infinity; // inited later
-u64 _const_strconv__double_minus_infinity; // inited later
+static u64 _const_strconv__double_plus_zero; // inited later
+static u64 _const_strconv__double_minus_zero; // inited later
+static u64 _const_strconv__double_plus_infinity; // inited later
+static u64 _const_strconv__double_minus_infinity; // inited later
 #define _const_strconv__fsm_a 0
 #define _const_strconv__fsm_b 1
 #define _const_strconv__fsm_c 2
@@ -3161,7 +3161,7 @@ u64 _const_strconv__double_minus_infinity; // inited later
 #define _const_strconv__c_minus '-'
 #define _const_strconv__c_zero '0'
 #define _const_strconv__c_nine '9'
-u32 _const_strconv__c_ten; // inited later
+static u32 _const_strconv__c_ten; // inited later
 static bool strconv__is_digit(byte x);
 static bool strconv__is_space(byte x);
 static bool strconv__is_exp(byte x);
@@ -3169,7 +3169,7 @@ static multi_return_int_strconv__PrepNumber strconv__parser(string s);
 static u64 strconv__converter(strconv__PrepNumber* pn);
 f64 strconv__atof64(string s);
 #define _const_strconv__int_size 32
-u64 _const_strconv__max_u64; // inited later
+static u64 _const_strconv__max_u64; // inited later
 byte strconv__byte_to_lower(byte c);
 u64 strconv__common_parse_uint(string s, int _base, int _bit_size, bool error_on_non_digit, bool error_on_high_digit);
 u64 strconv__parse_uint(string s, int _base, int _bit_size);
@@ -3177,7 +3177,7 @@ i64 strconv__common_parse_int(string _s, int base, int _bit_size, bool error_on_
 i64 strconv__parse_int(string _s, int base, int _bit_size);
 int strconv__atoi(string s);
 static bool strconv__underscore_ok(string s);
-array_f64 _const_strconv__dec_round; // inited later
+static array_f64 _const_strconv__dec_round; // inited later
 string strconv__f64_to_str_lnd(f64 f, int dec_digit);
 string strconv__format_str(string s, strconv__BF_param p);
 string strconv__format_dec(u64 d, strconv__BF_param p);
@@ -3233,8 +3233,8 @@ int compare_i64(i64* a, i64* b);
 int compare_f64(f64* a, f64* b);
 int compare_f32(f32* a, f32* b);
 array_voidptr array_pointers(array a);
-byteptr g_m2_buf; // global
-byteptr g_m2_ptr; // global
+static byteptr g_m2_buf; // global
+static byteptr g_m2_ptr; // global
 void v_exit(int code);
 bool isnil(voidptr v);
 void print_backtrace();
@@ -3243,10 +3243,10 @@ void v_panic(string s);
 void eprintln(string s);
 void eprint(string s);
 void print(string s);
-string _const_new_line_character; // a string literal, inited later
+static string _const_new_line_character; // a string literal, inited later
 void println(string s);
-i64 total_m; // global
-int nr_mallocs; // global
+static i64 total_m; // global
+static int nr_mallocs; // global
 static void looo();
 byteptr v_malloc(int n);
 byteptr v_realloc(byteptr b, u32 n);
@@ -3281,7 +3281,7 @@ static f64 f64_min(f64 a, f64 b);
 bool f32_eq_epsilon(f32 a, f32 b);
 bool f64_eq_epsilon(f64 a, f64 b);
 string ptr_str(voidptr ptr);
-string _const_digit_pairs; // a string literal, inited later
+static string _const_digit_pairs; // a string literal, inited later
 string int_str_l(int nn, int max);
 string i8_str(i8 n);
 string i16_str(i16 n);
@@ -3313,12 +3313,12 @@ bool array_u64_contains(array_u64 a, u64 val);
 #define _const_hashbits 24
 #define _const_max_cached_hashbits 16
 #define _const_init_log_capicity 5
-int _const_init_capicity; // inited later
+static int _const_init_capicity; // inited later
 #define _const_max_load_factor 0.8
-int _const_init_cap; // inited later
+static int _const_init_cap; // inited later
 #define _const_extra_metas_inc 4
-u32 _const_hash_mask; // inited later
-u32 _const_probe_inc; // inited later
+static u32 _const_hash_mask; // inited later
+static u32 _const_probe_inc; // inited later
 static bool fast_string_eq(string a, string b);
 static DenseArray new_dense_array(int value_bytes);
 static u32 DenseArray_push(DenseArray* d, string key, voidptr value);
@@ -3351,9 +3351,9 @@ static Option opt_none();
 Option v_error(string s);
 Option error_with_code(string s, int code);
 #define _const_degree 6
-int _const_mid_index; // inited later
-int _const_max_len; // inited later
-u32 _const_children_bytes; // inited later
+static int _const_mid_index; // inited later
+static int _const_max_len; // inited later
+static u32 _const_children_bytes; // inited later
 static SortedMap new_sorted_map(int n, int value_bytes);
 static SortedMap new_sorted_map_init(int n, int value_bytes, string* keys, voidptr values);
 static mapnode* new_node();
@@ -3451,7 +3451,7 @@ void array_string_sort_by_len(array_string* s);
 string string_str(string s);
 string ustring_str(ustring s);
 ustring string_ustring(string s);
-array_int g_ustring_runes; // global
+static array_int g_ustring_runes; // global
 ustring string_ustring_tmp(string s);
 static bool ustring_eq(ustring u, ustring a);
 static bool ustring_ne(ustring u, ustring a);
@@ -3510,9 +3510,9 @@ int utf8_getchar();
 #define _const_os__s_ixusr 0100
 #define _const_os__s_ixgrp 0010
 #define _const_os__s_ixoth 0001
-int _const_os__std_input_handle; // inited later
-int _const_os__std_output_handle; // inited later
-int _const_os__std_error_handle; // inited later
+static int _const_os__std_input_handle; // inited later
+static int _const_os__std_output_handle; // inited later
+static int _const_os__std_error_handle; // inited later
 #define _const_os__o_rdonly 0
 #define _const_os__o_wronly 1
 #define _const_os__o_rdwr 2
@@ -3528,7 +3528,7 @@ int os__setenv(string name, string value, bool overwrite);
 int os__unsetenv(string name);
 map_string_string os__environ();
 os__FileMode os__inode(string path);
-array_string _const_os__args; // inited later
+static array_string _const_os__args; // inited later
 #define _const_os__max_path_len 4096
 bool os__File_is_opened(os__File f);
 void os__File_write(os__File* f, string s);
@@ -3613,7 +3613,7 @@ Option_void os__mkdir_all(string path);
 string os__cache_dir();
 string os__temp_dir();
 void os__chmod(string path, int mode);
-string _const_os__wd_at_startup; // inited later
+static string _const_os__wd_at_startup; // inited later
 string os__resource_abs_path(string path);
 Option_os__File os__open(string path);
 Option_os__File os__create(string path);
@@ -3626,8 +3626,8 @@ Option_os__File os__create(string path);
 #define _const_os__sys_close 3
 #define _const_os__sys_mkdir 83
 #define _const_os__sys_creat 85
-string _const_os__path_separator; // a string literal, inited later
-string _const_os__path_delimiter; // a string literal, inited later
+static string _const_os__path_separator; // a string literal, inited later
+static string _const_os__path_delimiter; // a string literal, inited later
 #define _const_os__stdin_value 0
 #define _const_os__stdout_value 1
 #define _const_os__stderr_value 2
@@ -3649,12 +3649,12 @@ array_string os__cmdline__only_options(array_string args);
 string v__token__Position_str(v__token__Position pos);
 v__token__Position v__token__Position_extend(v__token__Position pos, v__token__Position end);
 v__token__Position v__token__Token_position(v__token__Token* tok);
-array_v__token__Kind _const_v__token__assign_tokens; // inited later
-int _const_v__token__nr_tokens; // inited later
+static array_v__token__Kind _const_v__token__assign_tokens; // inited later
+static int _const_v__token__nr_tokens; // inited later
 static map_string_v__token__Kind v__token__build_keys();
 static array_string v__token__build_token_str();
-array_string _const_v__token__token_str; // inited later
-map_string_v__token__Kind _const_v__token__keywords; // inited later
+static array_string _const_v__token__token_str; // inited later
+static map_string_v__token__Kind _const_v__token__keywords; // inited later
 v__token__Kind v__token__key_to_token(string key);
 bool v__token__is_key(string key);
 bool v__token__is_decl(v__token__Kind t);
@@ -3663,7 +3663,7 @@ static bool array_v__token__Kind_contains(array_v__token__Kind t, v__token__Kind
 string v__token__Kind_str(v__token__Kind t);
 string v__token__Token_str(v__token__Token t);
 array_v__token__Precedence v__token__build_precedences();
-array_v__token__Precedence _const_v__token__precedences; // inited later
+static array_v__token__Precedence _const_v__token__precedences; // inited later
 int v__token__Token_precedence(v__token__Token tok);
 bool v__token__Token_is_scalar(v__token__Token tok);
 bool v__token__Token_is_unary(v__token__Token tok);
@@ -3699,18 +3699,18 @@ void time__StopWatch_restart(time__StopWatch* t);
 void time__StopWatch_stop(time__StopWatch* t);
 void time__StopWatch_pause(time__StopWatch* t);
 time__Duration time__StopWatch_elapsed(time__StopWatch t);
-string _const_time__days_string; // a string literal, inited later
-array_int _const_time__month_days; // inited later
-string _const_time__months_string; // a string literal, inited later
-i64 _const_time__absolute_zero_year; // inited later
+static string _const_time__days_string; // a string literal, inited later
+static array_int _const_time__month_days; // inited later
+static string _const_time__months_string; // a string literal, inited later
+static i64 _const_time__absolute_zero_year; // inited later
 #define _const_time__seconds_per_minute 60
-int _const_time__seconds_per_hour; // inited later
-int _const_time__seconds_per_day; // inited later
-int _const_time__seconds_per_week; // inited later
-int _const_time__days_per_400_years; // inited later
-int _const_time__days_per_100_years; // inited later
-int _const_time__days_per_4_years; // inited later
-array_int _const_time__days_before; // inited later
+static int _const_time__seconds_per_hour; // inited later
+static int _const_time__seconds_per_day; // inited later
+static int _const_time__seconds_per_week; // inited later
+static int _const_time__days_per_400_years; // inited later
+static int _const_time__days_per_100_years; // inited later
+static int _const_time__days_per_4_years; // inited later
+static array_int _const_time__days_before; // inited later
 time__Time time__now();
 time__Time time__utc();
 string time__Time_smonth(time__Time t);
@@ -3732,12 +3732,12 @@ bool time__is_leap_year(int year);
 Option_int time__days_in_month(int month, int year);
 string time__Time_str(time__Time t);
 static time__Time time__convert_ctime(struct tm t, int microsecond);
-time__Duration _const_time__nanosecond; // inited later
-i64 _const_time__microsecond; // inited later
-i64 _const_time__millisecond; // inited later
-i64 _const_time__second; // inited later
-i64 _const_time__minute; // inited later
-i64 _const_time__hour; // inited later
+static time__Duration _const_time__nanosecond; // inited later
+static i64 _const_time__microsecond; // inited later
+static i64 _const_time__millisecond; // inited later
+static i64 _const_time__second; // inited later
+static i64 _const_time__minute; // inited later
+static i64 _const_time__hour; // inited later
 i64 time__Duration_nanoseconds(time__Duration d);
 i64 time__Duration_microseconds(time__Duration d);
 i64 time__Duration_milliseconds(time__Duration d);
@@ -3773,7 +3773,7 @@ v__depgraph__DepGraph* v__depgraph__DepGraph_resolve(v__depgraph__DepGraph* grap
 v__depgraph__DepGraphNode v__depgraph__DepGraph_last_node(v__depgraph__DepGraph* graph);
 string v__depgraph__DepGraph_display(v__depgraph__DepGraph* graph);
 string v__depgraph__DepGraph_display_cycles(v__depgraph__DepGraph* graph);
-string _const_v__pref__default_module_path; // inited later
+static string _const_v__pref__default_module_path; // inited later
 static string v__pref__mpath();
 v__pref__Preferences v__pref__new_preferences();
 void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p);
@@ -3782,7 +3782,7 @@ string v__pref__vexe_path();
 Option_v__pref__OS v__pref__os_from_string(string os_str);
 string v__pref__OS_str(v__pref__OS o);
 v__pref__OS v__pref__get_host_os();
-array_string _const_v__pref__list_of_flags_with_param; // inited later
+static array_string _const_v__pref__list_of_flags_with_param; // inited later
 multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args);
 Option_v__pref__Backend v__pref__backend_from_string(string s);
 static void v__pref__parse_define(v__pref__Preferences* prefs, string define);
@@ -3884,10 +3884,10 @@ static void v__vmod__ModFileCacher_add(v__vmod__ModFileCacher* cacher, string pa
 static multi_return_array_string_v__vmod__ModFileAndFolder v__vmod__ModFileCacher_traverse(v__vmod__ModFileCacher* mcache, string mfolder);
 static void v__vmod__ModFileCacher_mark_folders_with_vmod(v__vmod__ModFileCacher* mcache, array_string folders_so_far, v__vmod__ModFileAndFolder vmod);
 static void v__vmod__ModFileCacher_mark_folders_as_vmod_free(v__vmod__ModFileCacher* mcache, array_string folders_so_far);
-array_string _const_v__vmod__mod_file_stop_paths; // inited later
+static array_string _const_v__vmod__mod_file_stop_paths; // inited later
 static bool v__vmod__ModFileCacher_check_for_stop(v__vmod__ModFileCacher* mcache, string cfolder, array_string files);
 static array_string v__vmod__ModFileCacher_get_files(v__vmod__ModFileCacher* mcache, string cfolder);
-v__vmod__ModFileCacher* _const_v__vmod__private_file_cacher; // inited later
+static v__vmod__ModFileCacher* _const_v__vmod__private_file_cacher; // inited later
 v__vmod__ModFileCacher* v__vmod__get_cache();
 string v__cflag__CFlag_str(v__cflag__CFlag* c);
 string v__cflag__CFlag_format(v__cflag__CFlag* cf);
@@ -3897,8 +3897,8 @@ string array_v__cflag__CFlag_c_options_before_target(array_v__cflag__CFlag cflag
 string array_v__cflag__CFlag_c_options_after_target(array_v__cflag__CFlag cflags);
 string array_v__cflag__CFlag_c_options_without_object_files(array_v__cflag__CFlag cflags);
 string array_v__cflag__CFlag_c_options_only_object_files(array_v__cflag__CFlag cflags);
-string _const_vweb__tmpl__str_start; // a string literal, inited later
-string _const_vweb__tmpl__str_end; // a string literal, inited later
+static string _const_vweb__tmpl__str_start; // a string literal, inited later
+static string _const_vweb__tmpl__str_end; // a string literal, inited later
 string vweb__tmpl__compile_file(string path, string fn_name);
 string vweb__tmpl__compile_template(string html_, string fn_name);
 int runtime__nr_cpus();
@@ -3909,11 +3909,11 @@ bool runtime__is_little_endian();
 bool runtime__is_big_endian();
 static int runtime__nr_cpus_nix();
 static int runtime__nr_cpus_win();
-string _const_help__unknown_topic; // a string literal, inited later
+static string _const_help__unknown_topic; // a string literal, inited later
 void help__print_and_exit(string topic);
 #define _const_v__util__error_context_before 2
 #define _const_v__util__error_context_after 2
-v__util__EManager* _const_v__util__emanager; // inited later
+static v__util__EManager* _const_v__util__emanager; // inited later
 v__util__EManager* v__util__new_error_manager();
 void v__util__EManager_set_support_color(v__util__EManager* e, bool b);
 static string v__util__bold(string msg);
@@ -3930,9 +3930,9 @@ bool v__util__is_nl(byte c);
 bool v__util__contains_capital(string s);
 bool v__util__good_type_name(string s);
 string v__util__cescaped_path(string s);
-string _const_v__util__v_version; // a string literal, inited later
-array_string _const_v__util__builtin_module_parts; // inited later
-map_string_array_string _const_v__util__external_module_dependencies_for_tool; // inited later
+static string _const_v__util__v_version; // a string literal, inited later
+static array_string _const_v__util__builtin_module_parts; // inited later
+static map_string_array_string _const_v__util__external_module_dependencies_for_tool; // inited later
 string v__util__vhash();
 string v__util__full_hash();
 string v__util__full_v_version(bool is_verbose);
@@ -4004,38 +4004,38 @@ bool v__table__Type_is_string(v__table__Type typ);
 #define _const_v__table__any_type_idx 22
 #define _const_v__table__any_flt_type_idx 23
 #define _const_v__table__any_int_type_idx 24
-array_int _const_v__table__integer_type_idxs; // inited later
-array_int _const_v__table__signed_integer_type_idxs; // inited later
-array_int _const_v__table__unsigned_integer_type_idxs; // inited later
-array_int _const_v__table__float_type_idxs; // inited later
-array_int _const_v__table__number_type_idxs; // inited later
-array_int _const_v__table__pointer_type_idxs; // inited later
-array_int _const_v__table__string_type_idxs; // inited later
-v__table__Type _const_v__table__void_type; // inited later
-v__table__Type _const_v__table__voidptr_type; // inited later
-v__table__Type _const_v__table__byteptr_type; // inited later
-v__table__Type _const_v__table__charptr_type; // inited later
-v__table__Type _const_v__table__i8_type; // inited later
-v__table__Type _const_v__table__int_type; // inited later
-v__table__Type _const_v__table__i16_type; // inited later
-v__table__Type _const_v__table__i64_type; // inited later
-v__table__Type _const_v__table__byte_type; // inited later
-v__table__Type _const_v__table__u16_type; // inited later
-v__table__Type _const_v__table__u32_type; // inited later
-v__table__Type _const_v__table__u64_type; // inited later
-v__table__Type _const_v__table__f32_type; // inited later
-v__table__Type _const_v__table__f64_type; // inited later
-v__table__Type _const_v__table__char_type; // inited later
-v__table__Type _const_v__table__bool_type; // inited later
-v__table__Type _const_v__table__none_type; // inited later
-v__table__Type _const_v__table__string_type; // inited later
-v__table__Type _const_v__table__ustring_type; // inited later
-v__table__Type _const_v__table__array_type; // inited later
-v__table__Type _const_v__table__map_type; // inited later
-v__table__Type _const_v__table__any_type; // inited later
-v__table__Type _const_v__table__any_flt_type; // inited later
-v__table__Type _const_v__table__any_int_type; // inited later
-array_string _const_v__table__builtin_type_names; // inited later
+static array_int _const_v__table__integer_type_idxs; // inited later
+static array_int _const_v__table__signed_integer_type_idxs; // inited later
+static array_int _const_v__table__unsigned_integer_type_idxs; // inited later
+static array_int _const_v__table__float_type_idxs; // inited later
+static array_int _const_v__table__number_type_idxs; // inited later
+static array_int _const_v__table__pointer_type_idxs; // inited later
+static array_int _const_v__table__string_type_idxs; // inited later
+static v__table__Type _const_v__table__void_type; // inited later
+static v__table__Type _const_v__table__voidptr_type; // inited later
+static v__table__Type _const_v__table__byteptr_type; // inited later
+static v__table__Type _const_v__table__charptr_type; // inited later
+static v__table__Type _const_v__table__i8_type; // inited later
+static v__table__Type _const_v__table__int_type; // inited later
+static v__table__Type _const_v__table__i16_type; // inited later
+static v__table__Type _const_v__table__i64_type; // inited later
+static v__table__Type _const_v__table__byte_type; // inited later
+static v__table__Type _const_v__table__u16_type; // inited later
+static v__table__Type _const_v__table__u32_type; // inited later
+static v__table__Type _const_v__table__u64_type; // inited later
+static v__table__Type _const_v__table__f32_type; // inited later
+static v__table__Type _const_v__table__f64_type; // inited later
+static v__table__Type _const_v__table__char_type; // inited later
+static v__table__Type _const_v__table__bool_type; // inited later
+static v__table__Type _const_v__table__none_type; // inited later
+static v__table__Type _const_v__table__string_type; // inited later
+static v__table__Type _const_v__table__ustring_type; // inited later
+static v__table__Type _const_v__table__array_type; // inited later
+static v__table__Type _const_v__table__map_type; // inited later
+static v__table__Type _const_v__table__any_type; // inited later
+static v__table__Type _const_v__table__any_flt_type; // inited later
+static v__table__Type _const_v__table__any_int_type; // inited later
+static array_string _const_v__table__builtin_type_names; // inited later
 string v__table__TypeSymbol_str(v__table__TypeSymbol* t);
 v__table__Enum v__table__TypeSymbol_enum_info(v__table__TypeSymbol* t);
 v__table__MultiReturn v__table__TypeSymbol_mr_info(v__table__TypeSymbol* t);
@@ -4172,14 +4172,14 @@ v__table__Type v__checker__Checker_string_inter_lit(v__checker__Checker* c, v__a
 bool v__checker__Checker_check_sumtype_compatibility(v__checker__Checker* c, v__table__Type a, v__table__Type b);
 #define _const_v__checker__max_nr_errors 300
 #define _const_v__checker__match_exhaustive_cutoff_limit 10
-int _const_v__checker__enum_min; // inited later
+static int _const_v__checker__enum_min; // inited later
 #define _const_v__checker__enum_max 0x7FFFFFFF
 v__checker__Checker v__checker__new_checker(v__table__Table* table, v__pref__Preferences* pref);
 void v__checker__Checker_check(v__checker__Checker* c, v__ast__File ast_file);
 void v__checker__Checker_check_scope_vars(v__checker__Checker* c, v__ast__Scope* sc);
 array_v__errors__Error v__checker__Checker_check2(v__checker__Checker* c, v__ast__File ast_file);
 void v__checker__Checker_check_files(v__checker__Checker* c, array_v__ast__File ast_files);
-string _const_v__checker__no_pub_in_main_warning; // a string literal, inited later
+static string _const_v__checker__no_pub_in_main_warning; // a string literal, inited later
 static bool v__checker__Checker_check_file_in_main(v__checker__Checker* c, v__ast__File file);
 static void v__checker__Checker_check_valid_snake_case(v__checker__Checker* c, string name, string identifier, v__token__Position pos);
 static string v__checker__stripped_name(string name);
@@ -4235,14 +4235,14 @@ static v__ast__Stmt v__parser__Parser_assign_stmt(v__parser__Parser* p);
 static void v__parser__Parser_check_undefined_variables(v__parser__Parser* p, array_v__ast__Expr exprs, v__ast__Expr val);
 static bool v__parser__Parser_check_cross_variables(v__parser__Parser* p, array_v__ast__Expr exprs, v__ast__Expr val);
 static v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Parser* p, array_v__ast__Expr left);
-array_string _const_v__parser__supported_platforms; // inited later
-array_string _const_v__parser__supported_ccompilers; // inited later
+static array_string _const_v__parser__supported_platforms; // inited later
+static array_string _const_v__parser__supported_ccompilers; // inited later
 static string v__parser__Parser_resolve_vroot(v__parser__Parser* p, string flag);
 static v__ast__HashStmt v__parser__Parser_hash(v__parser__Parser* p);
 static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p);
 static v__ast__CompFor v__parser__Parser_comp_for(v__parser__Parser* p);
 static v__ast__Stmt v__parser__Parser_comp_if(v__parser__Parser* p);
-v__pref__OS _const_v__parser__todo_delete_me; // inited later
+static v__pref__OS _const_v__parser__todo_delete_me; // inited later
 static v__pref__OS v__parser__os_from_string(string os);
 v__pref__CompilerType v__parser__cc_from_string(string cc_str);
 static v__ast__ComptimeCall v__parser__Parser_comptime_method_call(v__parser__Parser* p, v__ast__Expr left);
@@ -4319,7 +4319,7 @@ static v__ast__Module v__parser__Parser_module_decl(v__parser__Parser* p);
 static v__ast__Import v__parser__Parser_import_stmt(v__parser__Parser* p);
 static v__ast__ConstDecl v__parser__Parser_const_decl(v__parser__Parser* p);
 static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p);
-array_string _const_v__parser__global_enabled_mods; // inited later
+static array_string _const_v__parser__global_enabled_mods; // inited later
 static v__ast__GlobalDecl v__parser__Parser_global_decl(v__parser__Parser* p);
 static v__ast__EnumDecl v__parser__Parser_enum_decl(v__parser__Parser* p);
 static v__ast__TypeDecl v__parser__Parser_type_decl(v__parser__Parser* p);
@@ -4339,10 +4339,10 @@ static void v__parser__Parser_check_sql_keyword(v__parser__Parser* p, string nam
 static v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p);
 static v__ast__StructInit v__parser__Parser_struct_init(v__parser__Parser* p, bool short_syntax);
 static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser* p);
-array_string _const_v__gen__c_reserved; // inited later
-array_string _const_v__gen__cmp_str; // inited later
-array_string _const_v__gen__cmp_rev; // inited later
-array_string _const_v__gen__tabs; // inited later
+static array_string _const_v__gen__c_reserved; // inited later
+static array_string _const_v__gen__cmp_str; // inited later
+static array_string _const_v__gen__cmp_rev; // inited later
+static array_string _const_v__gen__tabs; // inited later
 string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__Preferences* pref);
 string v__gen__Gen_hashes(v__gen__Gen g);
 void v__gen__Gen_init(v__gen__Gen* g);
@@ -4399,7 +4399,7 @@ static void v__gen__Gen_const_decl(v__gen__Gen* g, v__ast__ConstDecl node);
 static void v__gen__Gen_const_decl_simple_define(v__gen__Gen* g, string name, string val);
 static void v__gen__Gen_const_decl_init_later(v__gen__Gen* g, string mod, string name, string val, v__table__Type typ);
 static void v__gen__Gen_go_back_out(v__gen__Gen* g, int n);
-array_string _const_v__gen__skip_struct_init; // inited later
+static array_string _const_v__gen__skip_struct_init; // inited later
 static void v__gen__Gen_struct_init(v__gen__Gen* g, v__ast__StructInit struct_init);
 static void v__gen__Gen_zero_struct_field(v__gen__Gen* g, v__table__Field field);
 static void v__gen__Gen_assoc(v__gen__Gen* g, v__ast__Assoc node);
@@ -4407,7 +4407,7 @@ static string v__gen__Gen_gen_array_equality_fn(v__gen__Gen* g, v__table__Type l
 static string v__gen__Gen_gen_map_equality_fn(v__gen__Gen* g, v__table__Type left);
 static void v__gen__verror(string s);
 static void v__gen__Gen_write_init_function(v__gen__Gen* g);
-array_string _const_v__gen__builtins; // inited later
+static array_string _const_v__gen__builtins; // inited later
 static void v__gen__Gen_write_builtin_types(v__gen__Gen* g);
 static void v__gen__Gen_write_sorted_types(v__gen__Gen* g);
 static void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__TypeSymbol types);
@@ -4450,12 +4450,12 @@ static string v__gen__Gen_interface_table(v__gen__Gen* g);
 static void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it);
 static void v__gen__Gen_interface_call(v__gen__Gen* g, v__table__Type typ, v__table__Type interface_type);
 static multi_return_int_string_string_string v__gen__Gen_panic_debug_info(v__gen__Gen* g, v__token__Position pos);
-string _const_v__gen__c_commit_hash_default; // a string literal, inited later
-string _const_v__gen__c_current_commit_hash_default; // a string literal, inited later
-string _const_v__gen__c_common_macros; // a string literal, inited later
-string _const_v__gen__c_headers; // inited later
-string _const_v__gen__c_builtin_types; // a string literal, inited later
-string _const_v__gen__bare_c_headers; // inited later
+static string _const_v__gen__c_commit_hash_default; // a string literal, inited later
+static string _const_v__gen__c_current_commit_hash_default; // a string literal, inited later
+static string _const_v__gen__c_common_macros; // a string literal, inited later
+static string _const_v__gen__c_headers; // inited later
+static string _const_v__gen__c_builtin_types; // a string literal, inited later
+static string _const_v__gen__bare_c_headers; // inited later
 void v__gen__Gen_gen_c_main(v__gen__Gen* g);
 static void v__gen__Gen_gen_c_main_header(v__gen__Gen* g);
 void v__gen__Gen_gen_c_main_footer(v__gen__Gen* g);
@@ -4484,12 +4484,12 @@ static string v__gen__Gen_decode_array(v__gen__Gen* g, v__table__Type value_type
 static string v__gen__Gen_encode_array(v__gen__Gen* g, v__table__Type value_type);
 static void v__gen__Gen_generate_hotcode_reloading_declarations(v__gen__Gen* g);
 static void v__gen__Gen_generate_hotcode_reloader_code(v__gen__Gen* g);
-string _const_v__gen__posix_hotcode_definitions_1; // a string literal, inited later
-string _const_v__gen__windows_hotcode_definitions_1; // a string literal, inited later
+static string _const_v__gen__posix_hotcode_definitions_1; // a string literal, inited later
+static string _const_v__gen__windows_hotcode_definitions_1; // a string literal, inited later
 static void v__gen__Gen_generate_hotcode_reloading_main_caller(v__gen__Gen* g);
 static void v__gen__Gen_profile_fn(v__gen__Gen* g, string fn_name);
 void v__gen__Gen_gen_vprint_profile_stats(v__gen__Gen* g);
-string _const_v__gen__dbtype; // a string literal, inited later
+static string _const_v__gen__dbtype; // a string literal, inited later
 static void v__gen__Gen_sql_stmt(v__gen__Gen* g, v__ast__SqlStmt node);
 static void v__gen__Gen_sql_select_expr(v__gen__Gen* g, v__ast__SqlExpr node);
 static void v__gen__Gen_sql_bind_int(v__gen__Gen* g, string val);
@@ -4500,8 +4500,8 @@ static void v__gen__Gen_write_str_fn_definitions(v__gen__Gen* g);
 static void v__gen__Gen_string_literal(v__gen__Gen* g, v__ast__StringLiteral node);
 static void v__gen__Gen_string_inter_literal_sb_optimized(v__gen__Gen* g, v__ast__CallExpr call_expr);
 static void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInterLiteral node);
-array_string _const_v__gen__js__js_reserved; // inited later
-array_string _const_v__gen__js__tabs; // inited later
+static array_string _const_v__gen__js__js_reserved; // inited later
+static array_string _const_v__gen__js__tabs; // inited later
 string v__gen__js__gen(array_v__ast__File files, v__table__Table* table, v__pref__Preferences* pref);
 void v__gen__js__JsGen_enter_namespace(v__gen__js__JsGen* g, string n);
 void v__gen__js__JsGen_escape_namespace(v__gen__js__JsGen* g);
@@ -4569,7 +4569,7 @@ static void v__gen__js__JsDoc_gen_enum(v__gen__js__JsDoc* d);
 static void v__gen__js__JsDoc_gen_fac_fn(v__gen__js__JsDoc* d, array_v__ast__StructField fields);
 static void v__gen__js__JsDoc_gen_fn(v__gen__js__JsDoc* d, v__ast__FnDecl it);
 static void v__gen__js__JsDoc_gen_interface(v__gen__js__JsDoc* d, v__ast__InterfaceDecl it);
-byte _const_v__gen__x64__mag0; // inited later
+static byte _const_v__gen__x64__mag0; // inited later
 #define _const_v__gen__x64__mag1 'E'
 #define _const_v__gen__x64__mag2 'L'
 #define _const_v__gen__x64__mag3 'F'
@@ -4591,7 +4591,7 @@ void v__gen__x64__Gen_generate_elf_header(v__gen__x64__Gen* g);
 void v__gen__x64__Gen_generate_elf_footer(v__gen__x64__Gen* g);
 static void v__gen__x64__Gen_section_header(v__gen__x64__Gen* g, v__gen__x64__SectionConfig c);
 static void v__gen__x64__genobj();
-array_v__gen__x64__Register _const_v__gen__x64__fn_arg_registers; // inited later
+static array_v__gen__x64__Register _const_v__gen__x64__fn_arg_registers; // inited later
 void v__gen__x64__gen(array_v__ast__File files, string out_name, v__pref__Preferences* pref);
 void v__gen__x64__Gen_stmts(v__gen__x64__Gen* g, array_v__ast__Stmt stmts);
 i64 v__gen__x64__Gen_pos(v__gen__x64__Gen* g);
@@ -4667,9 +4667,9 @@ static void v__builder__verror(string s);
 string v__builder__Builder_gen_c(v__builder__Builder* b, array_string v_files);
 void v__builder__Builder_build_c(v__builder__Builder* b, array_string v_files, string out_file);
 void v__builder__Builder_compile_c(v__builder__Builder* b);
-string _const_v__builder__c_error_info; // a string literal, inited later
-string _const_v__builder__no_compiler_error; // a string literal, inited later
-string _const_v__builder__mingw_cc; // a string literal, inited later
+static string _const_v__builder__c_error_info; // a string literal, inited later
+static string _const_v__builder__no_compiler_error; // a string literal, inited later
+static string _const_v__builder__mingw_cc; // a string literal, inited later
 static void v__builder__todo();
 static Option_string v__builder__Builder_find_win_cc(v__builder__Builder* v);
 static void v__builder__Builder_cc(v__builder__Builder* v);
@@ -4694,10 +4694,10 @@ string v__builder__Builder_gen_js(v__builder__Builder* b, array_string v_files);
 void v__builder__Builder_build_js(v__builder__Builder* b, array_string v_files, string out_file);
 void v__builder__Builder_compile_js(v__builder__Builder* b);
 static void v__builder__Builder_run_js(v__builder__Builder* b);
-v__builder__RegKey _const_v__builder__hkey_local_machine; // inited later
-int _const_v__builder__key_query_value; // inited later
-int _const_v__builder__key_wow64_32key; // inited later
-int _const_v__builder__key_enumerate_sub_keys; // inited later
+static v__builder__RegKey _const_v__builder__hkey_local_machine; // inited later
+static int _const_v__builder__key_query_value; // inited later
+static int _const_v__builder__key_wow64_32key; // inited later
+static int _const_v__builder__key_enumerate_sub_keys; // inited later
 static Option_string v__builder__find_windows_kit_internal(v__builder__RegKey key, array_string versions);
 static Option_v__builder__WindowsKit v__builder__find_windows_kit_root(string host_arch);
 static Option_v__builder__VsInstallation v__builder__find_vs(string vswhere_dir, string host_arch);
@@ -4707,8 +4707,8 @@ static void v__builder__Builder_build_thirdparty_obj_file_with_msvc(v__builder__
 v__builder__MsvcStringFlags v__builder__msvc_string_flags(array_v__cflag__CFlag cflags);
 void v__builder__Builder_build_x64(v__builder__Builder* b, array_string v_files, string out_file);
 void v__builder__Builder_compile_x64(v__builder__Builder* b);
-array_string _const_main__simple_cmd; // inited later
-array_string _const_main__list_of_flags_that_allow_duplicates; // inited later
+static array_string _const_main__simple_cmd; // inited later
+static array_string _const_main__list_of_flags_that_allow_duplicates; // inited later
 static void main__main();
 static void main__invoke_help_and_exit(array_string remaining);
 
@@ -9097,7 +9097,7 @@ inline static DenseArray new_dense_array(int value_bytes) {
 inline static u32 DenseArray_push(DenseArray* d, string key, voidptr value) {
 	if (d->cap == d->len) {
 		d->cap += d->cap >> 3;
-		d->keys = ((string*)(v_realloc(((byteptr*)(d->keys)), /*SizeOfType*/ sizeof(string) * d->cap)));
+		d->keys = ((string*)(v_realloc(d->keys, /*SizeOfType*/ sizeof(string) * d->cap)));
 		d->values = v_realloc(d->values, ((u32)(d->value_bytes)) * d->cap);
 	}
 	u32 push_index = d->len;
@@ -9232,12 +9232,12 @@ static void map_set(map* m, string k, voidptr value) {
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_9114 = map_key_to_index(m, key);
-	u32 index = mr_9114.arg0;
-	u32 meta = mr_9114.arg1;
-	multi_return_u32_u32 mr_9149 = map_meta_less(m, index, meta);
-	index = mr_9149.arg0;
-	meta = mr_9149.arg1;
+	multi_return_u32_u32 mr_9105 = map_key_to_index(m, key);
+	u32 index = mr_9105.arg0;
+	u32 meta = mr_9105.arg1;
+	multi_return_u32_u32 mr_9140 = map_meta_less(m, index, meta);
+	index = mr_9140.arg0;
+	meta = mr_9140.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -9275,12 +9275,12 @@ static void map_rehash(map* m) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
-		multi_return_u32_u32 mr_10477 = map_key_to_index(m, m->key_values.keys[i]);
-		u32 index = mr_10477.arg0;
-		u32 meta = mr_10477.arg1;
-		multi_return_u32_u32 mr_10530 = map_meta_less(m, index, meta);
-		index = mr_10530.arg0;
-		meta = mr_10530.arg1;
+		multi_return_u32_u32 mr_10468 = map_key_to_index(m, m->key_values.keys[i]);
+		u32 index = mr_10468.arg0;
+		u32 meta = mr_10468.arg1;
+		multi_return_u32_u32 mr_10521 = map_meta_less(m, index, meta);
+		index = mr_10521.arg0;
+		meta = mr_10521.arg1;
 		map_meta_greater(m, index, meta, i);
 	}
 }
@@ -9298,9 +9298,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->cap >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->cap);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_11247 = map_meta_less(m, index, meta);
-		index = mr_11247.arg0;
-		meta = mr_11247.arg1;
+		multi_return_u32_u32 mr_11238 = map_meta_less(m, index, meta);
+		index = mr_11238.arg0;
+		meta = mr_11238.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -9311,9 +9311,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 
 static voidptr map_get_and_set(map* m, string key, voidptr zero) {
 	while (1) {
-		multi_return_u32_u32 mr_11684 = map_key_to_index(m, key);
-		u32 index = mr_11684.arg0;
-		u32 meta = mr_11684.arg1;
+		multi_return_u32_u32 mr_11675 = map_key_to_index(m, key);
+		u32 index = mr_11675.arg0;
+		u32 meta = mr_11675.arg1;
 		while (1) {
 			if (meta == m->metas[index]) {
 				u32 kv_index = m->metas[index + 1];
@@ -9334,9 +9334,9 @@ static voidptr map_get_and_set(map* m, string key, voidptr zero) {
 }
 
 static voidptr map_get(map m, string key, voidptr zero) {
-	multi_return_u32_u32 mr_12325 = map_key_to_index(&m, key);
-	u32 index = mr_12325.arg0;
-	u32 meta = mr_12325.arg1;
+	multi_return_u32_u32 mr_12316 = map_key_to_index(&m, key);
+	u32 index = mr_12316.arg0;
+	u32 meta = mr_12316.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9356,9 +9356,9 @@ static voidptr map_get(map m, string key, voidptr zero) {
 }
 
 static bool map_exists(map m, string key) {
-	multi_return_u32_u32 mr_12777 = map_key_to_index(&m, key);
-	u32 index = mr_12777.arg0;
-	u32 meta = mr_12777.arg1;
+	multi_return_u32_u32 mr_12768 = map_key_to_index(&m, key);
+	u32 index = mr_12768.arg0;
+	u32 meta = mr_12768.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9376,12 +9376,12 @@ static bool map_exists(map m, string key) {
 }
 
 void map_delete(map* m, string key) {
-	multi_return_u32_u32 mr_13161 = map_key_to_index(m, key);
-	u32 index = mr_13161.arg0;
-	u32 meta = mr_13161.arg1;
-	multi_return_u32_u32 mr_13196 = map_meta_less(m, index, meta);
-	index = mr_13196.arg0;
-	meta = mr_13196.arg1;
+	multi_return_u32_u32 mr_13152 = map_key_to_index(m, key);
+	u32 index = mr_13152.arg0;
+	u32 meta = mr_13152.arg1;
+	multi_return_u32_u32 mr_13187 = map_meta_less(m, index, meta);
+	index = mr_13187.arg0;
+	meta = mr_13187.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -27226,7 +27226,7 @@ static void v__gen__Gen_stmt(v__gen__Gen* g, v__ast__Stmt node) {
 		v__ast__GlobalDecl* it = (v__ast__GlobalDecl*)node.obj; // ST it
 		v__ast__GlobalDecl* node = it;
 		string styp = v__gen__Gen_typ(g, node->typ);
-		strings__Builder_writeln(&g->definitions, _STR("%.*s\000 %.*s\000; // global", 3, styp, node->name));
+		strings__Builder_writeln(&g->definitions, _STR("static %.*s\000 %.*s\000; // global", 3, styp, node->name));
 	} else if (node.typ == 192 /* v.ast.GoStmt */) {
 		v__ast__GoStmt* it = (v__ast__GoStmt*)node.obj; // ST it
 		v__ast__GoStmt* node = it;
@@ -27699,8 +27699,8 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 		bool blank_assign = false;
 		v__ast__Ident ident = (v__ast__Ident){.language = {0},.tok_kind = {0},.pos = {0},.mod = (string){.str=""},.name = (string){.str=""},.kind = {0},.info = {0},.is_mut = 0,};
 		if (left.typ == 151 /* v.ast.Ident */) {
-			v__ast__Ident* _sc_tmp_36200 = (v__ast__Ident*)left.obj;
-			v__ast__Ident* left = _sc_tmp_36200;
+			v__ast__Ident* _sc_tmp_36207 = (v__ast__Ident*)left.obj;
+			v__ast__Ident* left = _sc_tmp_36207;
 			ident = *left;
 			blank_assign = left->kind == v__ast__IdentKind_blank_ident;
 			if (left->info.typ == 233 /* v.ast.IdentVar */) {
@@ -27777,8 +27777,8 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 			bool str_add = false;
 			if (var_type == _const_v__table__string_type_idx && assign_stmt.op == v__token__Kind_plus_assign) {
 				if (left.typ == 154 /* v.ast.IndexExpr */) {
-					v__ast__IndexExpr* _sc_tmp_38159 = (v__ast__IndexExpr*)left.obj;
-					v__ast__IndexExpr* left = _sc_tmp_38159;
+					v__ast__IndexExpr* _sc_tmp_38166 = (v__ast__IndexExpr*)left.obj;
+					v__ast__IndexExpr* left = _sc_tmp_38166;
 					v__gen__Gen_expr(g, /* sum type cast */ (v__ast__Expr) {.obj = left, .typ = 154 /* v.ast.IndexExpr */});
 					v__gen__Gen_write(g, tos_lit("string_add("));
 				} else {
@@ -27878,8 +27878,8 @@ static void v__gen__Gen_gen_cross_tmp_variable(v__gen__Gen* g, array_v__ast__Exp
 		for (int _t865 = 0; _t865 < _t864.len; ++_t865) {
 			v__ast__Expr lx = ((v__ast__Expr*)_t864.data)[_t865];
 			if (lx.typ == 151 /* v.ast.Ident */) {
-				v__ast__Ident* _sc_tmp_40557 = (v__ast__Ident*)lx.obj;
-				v__ast__Ident* lx = _sc_tmp_40557;
+				v__ast__Ident* _sc_tmp_40564 = (v__ast__Ident*)lx.obj;
+				v__ast__Ident* lx = _sc_tmp_40564;
 				if (string_eq(val->name, lx->name)) {
 					v__gen__Gen_write(g, tos_lit("_var_"));
 					v__gen__Gen_write(g, int_str(lx->pos.pos));
@@ -29152,7 +29152,7 @@ static void v__gen__Gen_const_decl(v__gen__Gen* g, v__ast__ConstDecl node) {
 			}
 		} else if (field.expr.typ == 171 /* v.ast.StringLiteral */) {
 			v__ast__StringLiteral* it = (v__ast__StringLiteral*)field.expr.obj; // ST it
-			strings__Builder_writeln(&g->definitions, _STR("string _const_%.*s\000; // a string literal, inited later", 2, name));
+			strings__Builder_writeln(&g->definitions, _STR("static string _const_%.*s\000; // a string literal, inited later", 2, name));
 			if (g->pref->build_mode != v__pref__BuildMode_build_module) {
 				strings__Builder_writeln(&g->stringliterals, _STR("\t_const_%.*s\000 = %.*s\000;", 3, name, val));
 			}
@@ -29173,7 +29173,7 @@ static void v__gen__Gen_const_decl_simple_define(v__gen__Gen* g, string name, st
 static void v__gen__Gen_const_decl_init_later(v__gen__Gen* g, string mod, string name, string val, v__table__Type typ) {
 	string styp = v__gen__Gen_typ(g, typ);
 	string cname = _STR("_const_%.*s", 1, name);
-	strings__Builder_writeln(&g->definitions, _STR("%.*s\000 %.*s\000; // inited later", 3, styp, cname));
+	strings__Builder_writeln(&g->definitions, _STR("static %.*s\000 %.*s\000; // inited later", 3, styp, cname));
 	strings__Builder_writeln(&(*(strings__Builder*)map_get(g->inits, mod, &(strings__Builder[]){ {0} })), _STR("\t%.*s\000 = %.*s\000;", 3, cname, val));
 	if (g->pref->autofree) {
 		if (string_starts_with(styp, tos_lit("array_"))) {
@@ -29560,9 +29560,9 @@ static void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__TypeSymbol t
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_89078 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_89078.arg0;
-						string base = mr_89078.arg1;
+						multi_return_string_string mr_89099 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_89099.arg0;
+						string base = mr_89099.arg1;
 						array_push(&g->optionals, _MOV((string[]){ styp }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -29668,9 +29668,9 @@ static array_v__table__TypeSymbol v__gen__Gen_sort_structs(v__gen__Gen g, array_
 
 static Option_bool v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr expr, v__table__Type etype) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, etype);
-	multi_return_bool_bool_int mr_92406 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_92406.arg0;
-	bool str_method_expects_ptr = mr_92406.arg1;
+	multi_return_bool_bool_int mr_92427 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_92427.arg0;
+	bool str_method_expects_ptr = mr_92427.arg1;
 	if (v__table__Type_has_flag(etype, v__table__TypeFlag_variadic)) {
 		string str_fn_name = v__gen__Gen_gen_str_for_type(g, etype);
 		v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -29965,11 +29965,11 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExpr
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->fn_decl->name, tos_lit("main.main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_100871 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_100871.arg0;
-				string pafile = mr_100871.arg1;
-				string pamod = mr_100871.arg2;
-				string pafn = mr_100871.arg3;
+				multi_return_int_string_string_string mr_100892 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_100892.arg0;
+				string pafile = mr_100892.arg1;
+				string pamod = mr_100892.arg2;
+				string pafn = mr_100892.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(%.*s\000.v_error);", 2, cvar_name));
@@ -30331,10 +30331,10 @@ inline static string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Type
 static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_110749 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_110749.arg0;
-	bool str_method_expects_ptr = mr_110749.arg1;
-	int str_nr_args = mr_110749.arg2;
+	multi_return_bool_bool_int mr_110770 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_110770.arg0;
+	bool str_method_expects_ptr = mr_110770.arg1;
+	int str_nr_args = mr_110770.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -30528,9 +30528,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_118641 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_118641.arg0;
-	bool str_method_expects_ptr = mr_118641.arg1;
+	multi_return_bool_bool_int mr_118662 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_118662.arg0;
+	bool str_method_expects_ptr = mr_118662.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -30582,9 +30582,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_121460 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_121460.arg0;
-	bool str_method_expects_ptr = mr_121460.arg1;
+	multi_return_bool_bool_int mr_121481 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_121481.arg0;
+	bool str_method_expects_ptr = mr_121481.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -30704,9 +30704,9 @@ static void v__gen__Gen_gen_str_for_multi_return(v__gen__Gen* g, v__table__Multi
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 		string field_styp = v__gen__Gen_typ(g, typ);
 		bool is_arg_ptr = v__table__Type_is_ptr(typ);
-		multi_return_bool_bool_int mr_127408 = v__table__TypeSymbol_str_method_info(sym);
-		bool sym_has_str_method = mr_127408.arg0;
-		bool str_method_expects_ptr = mr_127408.arg1;
+		multi_return_bool_bool_int mr_127429 = v__table__TypeSymbol_str_method_info(sym);
+		bool sym_has_str_method = mr_127429.arg0;
+		bool str_method_expects_ptr = mr_127429.arg1;
 		string arg_str_fn_name = tos_lit("");
 		if (sym_has_str_method) {
 			arg_str_fn_name = (is_arg_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -36925,7 +36925,7 @@ void _vinit() {
 		tos_lit(""), tos_lit("\t"), tos_lit("\t\t"), tos_lit("\t\t\t"), tos_lit("\t\t\t\t"), tos_lit("\t\t\t\t\t"), tos_lit("\t\t\t\t\t\t"), tos_lit("\t\t\t\t\t\t\t"), tos_lit("\t\t\t\t\t\t\t\t")}));
 	_const_v__gen__skip_struct_init = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){tos_lit("strconv__ftoa__Uf32"), tos_lit("strconv__ftoa__Uf64"), tos_lit("strconv__Float64u"), tos_lit("struct stat"), tos_lit("struct addrinfo")}));
 	_const_v__gen__builtins = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){tos_lit("string"), tos_lit("array"), tos_lit("KeyValue"), tos_lit("DenseArray"), tos_lit("map"), tos_lit("Option")}));
-	_const_v__gen__c_headers = _STR("\n// c_headers\ntypedef int (*qsort_callback_func)(const void*, const void*);\n#include <stdio.h>  // TODO remove all these includes, define all function signatures and types manually\n#include <stdlib.h>\n\n#ifdef __cplusplus\n	#include <utility>\n	#define _MOV std::move\n#else\n	#define _MOV\n#endif\n\n#ifndef _WIN32\n	#if defined __has_include\n		#if __has_include (<execinfo.h>)\n			#include <execinfo.h>\n		#else\n			// Most probably musl OR __ANDROID__ ...\n			int backtrace (void **__array, int __size) { return 0; }\n			char **backtrace_symbols (void *const *__array, int __size){ return 0; }\n			void backtrace_symbols_fd (void *const *__array, int __size, int __fd){}\n		#endif\n	#endif\n#endif\n\n//#include \"fns.h\"\n#include <signal.h>\n#include <stdarg.h> // for va_list\n#include <string.h> // memcpy\n\n#if INTPTR_MAX == INT32_MAX\n	#define TARGET_IS_32BIT 1\n#elif INTPTR_MAX == INT64_MAX\n	#define TARGET_IS_64BIT 1\n#else\n	#error \"The environment is not 32 or 64-bit.\"\n#endif\n\n#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) || defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || defined(__MIBSEB__)\n	#define TARGET_ORDER_IS_BIG\n#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || defined(_M_X64) || defined(_M_IX86)\n	#define TARGET_ORDER_IS_LITTLE\n#else\n	#error \"Unknown architecture endianness\"\n#endif\n\n#ifndef _WIN32\n	#include <ctype.h>\n	#include <locale.h> // tolower\n	#include <sys/time.h>\n	#include <unistd.h> // sleep\n	extern char **environ;\n#endif\n\n#if defined(__CYGWIN__) && !defined(_WIN32)\n	#error Cygwin is not supported, please use MinGW or Visual Studio.\n#endif\n\n#ifdef __linux__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __FreeBSD__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __DragonFly__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n	#include <sys/types.h>\n	#include <sys/resource.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __NetBSD__\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __sun\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n%.*s\000\n\n#ifdef _WIN32\n	#define WINVER 0x0600\n	#ifdef _WIN32_WINNT\n		#undef _WIN32_WINNT\n	#endif\n	#define _WIN32_WINNT 0x0600\n	#define WIN32_LEAN_AND_MEAN\n	#define _UNICODE\n	#define UNICODE\n	#include <windows.h>\n\n	#include <io.h> // _waccess\n	#include <direct.h> // _wgetcwd\n	//#include <WinSock2.h>\n\n	#ifdef _MSC_VER\n		// On MSVC these are the same (as long as /volatile:ms is passed)\n		#define _Atomic volatile\n\n		// MSVC cannot parse some things properly\n		#undef EMPTY_STRUCT_DECLARATION\n		#undef OPTION_CAST\n\n		#define EMPTY_STRUCT_DECLARATION int ____dummy_variable\n		#define OPTION_CAST(x)\n		#undef __NOINLINE\n		#undef __IRQHANDLER\n		#define __NOINLINE __declspec(noinline)\n		#define __IRQHANDLER __declspec(naked)\n\n		#include <dbghelp.h>\n		#pragma comment(lib, \"Dbghelp.lib\")\n\n		extern wchar_t **_wenviron;\n	#elif !defined(SRWLOCK_INIT)\n		// these seem to be missing on Windows tcc\n		typedef struct SRWLOCK { void* SRWLOCK; } SRWLOCK;\n		void InitializeSRWLock(void*);\n		void AcquireSRWLockShared(void*);\n		void AcquireSRWLockExclusive(void*);\n		void ReleaseSRWLockShared(void*);\n		void ReleaseSRWLockExclusive(void*);\n	#endif\n#else\n	#include <pthread.h>\n	#ifndef PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP\n		// musl does not have that\n		#define pthread_rwlockattr_setkind_np(a, b)\n	#endif\n#endif\n\n// g_live_info is used by live.info()\nvoid* g_live_info = NULL;\n\n//============================== HELPER C MACROS =============================*/\n//#define tos4(s, slen) ((string){.str=(s), .len=(slen)})\n#define _SLIT(s) ((string){.str=(s), .len=(strlen(s))})\n#define _PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); array_push_many(arr, tmp.data, tmp.len);}\n#define _IN(typ, val, arr) array_##typ##_contains(arr, val)\n#define _IN_MAP(val, m) map_exists(m, val)\n\n// unsigned/signed comparisons\nstatic inline bool _us32_gt(uint32_t a, int32_t b) { return a > INT32_MAX || (int32_t)a > b; }\nstatic inline bool _us32_ge(uint32_t a, int32_t b) { return a >= INT32_MAX || (int32_t)a >= b; }\nstatic inline bool _us32_eq(uint32_t a, int32_t b) { return a <= INT32_MAX && (int32_t)a == b; }\nstatic inline bool _us32_ne(uint32_t a, int32_t b) { return a > INT32_MAX || (int32_t)a != b; }\nstatic inline bool _us32_le(uint32_t a, int32_t b) { return a <= INT32_MAX && (int32_t)a <= b; }\nstatic inline bool _us32_lt(uint32_t a, int32_t b) { return a < INT32_MAX && (int32_t)a < b; }\nstatic inline bool _us64_gt(uint64_t a, int64_t b) { return a > INT64_MAX || (int64_t)a > b; }\nstatic inline bool _us64_ge(uint64_t a, int64_t b) { return a >= INT64_MAX || (int64_t)a >= b; }\nstatic inline bool _us64_eq(uint64_t a, int64_t b) { return a <= INT64_MAX && (int64_t)a == b; }\nstatic inline bool _us64_ne(uint64_t a, int64_t b) { return a > INT64_MAX || (int64_t)a != b; }\nstatic inline bool _us64_le(uint64_t a, int64_t b) { return a <= INT64_MAX && (int64_t)a <= b; }\nstatic inline bool _us64_lt(uint64_t a, int64_t b) { return a < INT64_MAX && (int64_t)a < b; }\n\n#if defined(__MINGW32__) || defined(__MINGW64__) || (defined(_WIN32) && defined(__TINYC__))\n	#undef PRId64\n	#undef PRIi64\n	#undef PRIo64\n	#undef PRIu64\n	#undef PRIx64\n	#undef PRIX64\n	#define PRId64 \"lld\"\n	#define PRIi64 \"lli\"\n	#define PRIo64 \"llo\"\n	#define PRIu64 \"llu\"\n	#define PRIx64 \"llx\"\n	#define PRIX64 \"llX\"\n#endif\n\n//================================== GLOBALS =================================*/\n//byte g_str_buf[1024];\nbyte* g_str_buf;\nint load_so(byteptr);\nvoid reload_so();\nvoid _vinit();\nvoid _vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\n// ============== wyhash ==============\n//Author: Wang Yi\n#ifndef wyhash_version_gamma\n	#define wyhash_version_gamma\n	#define WYHASH_CONDOM 0\n	#include <stdint.h>\n	#include <string.h>\n	#if defined(_MSC_VER) && defined(_M_X64)\n		#include <intrin.h>\n		#pragma intrinsic(_umul128)\n	#endif\n\n	//const uint64_t _wyp0=0xa0761d6478bd642full, _wyp1=0xe7037ed1a0b428dbull;\n	#define _wyp0 ((uint64_t)0xa0761d6478bd642full)\n	#define _wyp1 ((uint64_t)0xe7037ed1a0b428dbull)\n\n	#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__) || defined(__TINYC__)\n		#define _likely_(x) __builtin_expect(x, 1)\n		#define _unlikely_(x) __builtin_expect((x), 0)\n	#else\n		#define _likely_(x) (x)\n		#define _unlikely_(x) (x)\n	#endif\n\n	#if defined(TARGET_ORDER_IS_LITTLE)\n		#define WYHASH_LITTLE_ENDIAN 1\n	#elif defined(TARGET_ORDER_IS_BIG)\n		#define WYHASH_LITTLE_ENDIAN 0\n	#endif\n\n	#if (WYHASH_LITTLE_ENDIAN)\n		static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return v;}\n		static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return v;}\n	#else\n		#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__)\n			static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return __builtin_bswap64(v);}\n			static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return __builtin_bswap32(v);}\n		#elif defined(_MSC_VER)\n			static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return _byteswap_uint64(v);}\n			static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return _byteswap_ulong(v);}\n		#elif defined(__TINYC__)\n			static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return bswap_64(v);}\n			static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return bswap_32(v);}\n		#endif\n	#endif\n\n	static inline uint64_t _wyr3(const uint8_t *p, unsigned k) { return (((uint64_t)p[0]) << 16) | (((uint64_t)p[k >> 1]) << 8) | p[k - 1];}\n	static inline uint64_t _wyrotr(uint64_t v, unsigned k) { return (v >> k) | (v << (64 - k));}\n	static inline void _wymix128(uint64_t A, uint64_t B, uint64_t *C, uint64_t *D){\n		A^=*C;	B^=*D;\n	#ifdef UNOFFICIAL_WYHASH_32BIT\n		uint64_t hh=(A>>32)*(B>>32), hl=(A>>32)*(unsigned)B, lh=(unsigned)A*(B>>32), ll=(uint64_t)(unsigned)A*(unsigned)B;\n		*C=_wyrotr(hl,32)^hh; *D=_wyrotr(lh,32)^ll;\n	#else\n		#ifdef __SIZEOF_INT128__\n			__uint128_t r=A; r*=B; *C=(uint64_t)r; *D=(uint64_t)(r>>64);\n		#elif defined(_MSC_VER) && defined(_M_X64)\n			A=_umul128(A,B,&B); *C=A; *D=B;\n		#else\n			uint64_t ha=A>>32, hb=B>>32, la=(uint32_t)A, lb=(uint32_t)B, hi, lo;\n			uint64_t rh=ha*hb, rm0=ha*lb, rm1=hb*la, rl=la*lb, t=rl+(rm0<<32), c=t<rl;\n			lo=t+(rm1<<32); c+=lo<t; hi=rh+(rm0>>32)+(rm1>>32)+c;\n			*C=lo;	*D=hi;\n		#endif\n	#endif\n	}\n	static inline uint64_t wyhash(const void *key, uint64_t len, uint64_t seed){\n		const uint8_t *p=(const uint8_t *)key;\n		uint64_t i=len, see1=seed;\n		start:\n		if (_likely_(i<=16)) {\n	#ifndef	WYHASH_CONDOM\n			uint64_t shift = (i<8)*((8-i)<<3);\n			//WARNING: intended reading outside buffer, trading for speed.\n			_wymix128((_wyr8(p)<<shift)^_wyp0, (_wyr8(p+i-8)>>shift)^_wyp1, &seed, &see1);\n	#else\n			if (_likely_(i<=8)) {\n				if (_likely_(i>=4)) _wymix128(_wyr4(p)^_wyp0,_wyr4(p+i-4)^_wyp1, &seed, &see1);\n				else if (_likely_(i)) _wymix128(_wyr3(p,i)^_wyp0,_wyp1, &seed, &see1);\n				else _wymix128(_wyp0,_wyp1, &seed, &see1);\n			}\n  			else _wymix128(_wyr8(p)^_wyp0,_wyr8(p+i-8)^_wyp1, &seed, &see1);\n	#endif\n			_wymix128(len,_wyp0, &seed, &see1);\n			return	seed^see1;\n		}\n		_wymix128(_wyr8(p)^_wyp0,_wyr8(p+8)^_wyp1, &seed, &see1);\n		i-=16;	p+=16;	goto start;\n	}\n	static inline uint64_t wyhash64(uint64_t A, uint64_t B){\n		_wymix128(_wyp0,_wyp1,&A,&B);\n		_wymix128(0,0,&A,&B);\n		return	A^B;\n	}\n	static inline uint64_t wyrand(uint64_t *seed){\n		*seed+=_wyp0;\n		uint64_t	a=0, b=0;\n		_wymix128(*seed,*seed^_wyp1,&a,&b);\n		return	a^b;\n	}\n	static inline double wy2u01(uint64_t r) {\n		const double _wynorm=1.0/(1ull<<52);\n		return (r>>12)*_wynorm;\n	}\n	static inline double wy2gau(uint64_t r) {\n		const double _wynorm=1.0/(1ull<<20);\n		return ((r&0x1fffff)+((r>>21)&0x1fffff)+((r>>42)&0x1fffff))*_wynorm-3.0;\n	}\n#endif\n", 2, _const_v__gen__c_common_macros);
+	_const_v__gen__c_headers = _STR("\n// c_headers\ntypedef int (*qsort_callback_func)(const void*, const void*);\n#include <stdio.h>  // TODO remove all these includes, define all function signatures and types manually\n#include <stdlib.h>\n\n#ifdef __cplusplus\n	#include <utility>\n	#define _MOV std::move\n#else\n	#define _MOV\n#endif\n\n#ifndef _WIN32\n	#if defined __has_include\n		#if __has_include (<execinfo.h>)\n			#include <execinfo.h>\n		#else\n			// Most probably musl OR __ANDROID__ ...\n			int backtrace (void **__array, int __size) { return 0; }\n			char **backtrace_symbols (void *const *__array, int __size){ return 0; }\n			void backtrace_symbols_fd (void *const *__array, int __size, int __fd){}\n		#endif\n	#endif\n#endif\n\n//#include \"fns.h\"\n#include <signal.h>\n#include <stdarg.h> // for va_list\n#include <string.h> // memcpy\n\n#if INTPTR_MAX == INT32_MAX\n	#define TARGET_IS_32BIT 1\n#elif INTPTR_MAX == INT64_MAX\n	#define TARGET_IS_64BIT 1\n#else\n	#error \"The environment is not 32 or 64-bit.\"\n#endif\n\n#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) || defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || defined(__MIBSEB__)\n	#define TARGET_ORDER_IS_BIG\n#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || defined(_M_X64) || defined(_M_IX86)\n	#define TARGET_ORDER_IS_LITTLE\n#else\n	#error \"Unknown architecture endianness\"\n#endif\n\n#ifndef _WIN32\n	#include <ctype.h>\n	#include <locale.h> // tolower\n	#include <sys/time.h>\n	#include <unistd.h> // sleep\n	extern char **environ;\n#endif\n\n#if defined(__CYGWIN__) && !defined(_WIN32)\n	#error Cygwin is not supported, please use MinGW or Visual Studio.\n#endif\n\n#ifdef __linux__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __FreeBSD__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __DragonFly__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n	#include <sys/types.h>\n	#include <sys/resource.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __NetBSD__\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __sun\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n%.*s\000\n\n#ifdef _WIN32\n	#define WINVER 0x0600\n	#ifdef _WIN32_WINNT\n		#undef _WIN32_WINNT\n	#endif\n	#define _WIN32_WINNT 0x0600\n	#define WIN32_LEAN_AND_MEAN\n	#define _UNICODE\n	#define UNICODE\n	#include <windows.h>\n\n	#include <io.h> // _waccess\n	#include <direct.h> // _wgetcwd\n	//#include <WinSock2.h>\n\n	#ifdef _MSC_VER\n		// On MSVC these are the same (as long as /volatile:ms is passed)\n		#define _Atomic volatile\n\n		// MSVC cannot parse some things properly\n		#undef EMPTY_STRUCT_DECLARATION\n		#undef OPTION_CAST\n\n		#define EMPTY_STRUCT_DECLARATION int ____dummy_variable\n		#define OPTION_CAST(x)\n		#undef __NOINLINE\n		#undef __IRQHANDLER\n		#define __NOINLINE __declspec(noinline)\n		#define __IRQHANDLER __declspec(naked)\n\n		#include <dbghelp.h>\n		#pragma comment(lib, \"Dbghelp.lib\")\n\n		extern wchar_t **_wenviron;\n	#elif !defined(SRWLOCK_INIT)\n		// these seem to be missing on Windows tcc\n		typedef struct SRWLOCK { void* SRWLOCK; } SRWLOCK;\n		void InitializeSRWLock(void*);\n		void AcquireSRWLockShared(void*);\n		void AcquireSRWLockExclusive(void*);\n		void ReleaseSRWLockShared(void*);\n		void ReleaseSRWLockExclusive(void*);\n	#endif\n#else\n	#include <pthread.h>\n	#ifndef PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP\n		// musl does not have that\n		#define pthread_rwlockattr_setkind_np(a, b)\n	#endif\n#endif\n\n// g_live_info is used by live.info()\nstatic void* g_live_info = NULL;\n\n//============================== HELPER C MACROS =============================*/\n//#define tos4(s, slen) ((string){.str=(s), .len=(slen)})\n#define _SLIT(s) ((string){.str=(s), .len=(strlen(s))})\n#define _PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); array_push_many(arr, tmp.data, tmp.len);}\n#define _IN(typ, val, arr) array_##typ##_contains(arr, val)\n#define _IN_MAP(val, m) map_exists(m, val)\n\n// unsigned/signed comparisons\nstatic inline bool _us32_gt(uint32_t a, int32_t b) { return a > INT32_MAX || (int32_t)a > b; }\nstatic inline bool _us32_ge(uint32_t a, int32_t b) { return a >= INT32_MAX || (int32_t)a >= b; }\nstatic inline bool _us32_eq(uint32_t a, int32_t b) { return a <= INT32_MAX && (int32_t)a == b; }\nstatic inline bool _us32_ne(uint32_t a, int32_t b) { return a > INT32_MAX || (int32_t)a != b; }\nstatic inline bool _us32_le(uint32_t a, int32_t b) { return a <= INT32_MAX && (int32_t)a <= b; }\nstatic inline bool _us32_lt(uint32_t a, int32_t b) { return a < INT32_MAX && (int32_t)a < b; }\nstatic inline bool _us64_gt(uint64_t a, int64_t b) { return a > INT64_MAX || (int64_t)a > b; }\nstatic inline bool _us64_ge(uint64_t a, int64_t b) { return a >= INT64_MAX || (int64_t)a >= b; }\nstatic inline bool _us64_eq(uint64_t a, int64_t b) { return a <= INT64_MAX && (int64_t)a == b; }\nstatic inline bool _us64_ne(uint64_t a, int64_t b) { return a > INT64_MAX || (int64_t)a != b; }\nstatic inline bool _us64_le(uint64_t a, int64_t b) { return a <= INT64_MAX && (int64_t)a <= b; }\nstatic inline bool _us64_lt(uint64_t a, int64_t b) { return a < INT64_MAX && (int64_t)a < b; }\n\n#if defined(__MINGW32__) || defined(__MINGW64__) || (defined(_WIN32) && defined(__TINYC__))\n	#undef PRId64\n	#undef PRIi64\n	#undef PRIo64\n	#undef PRIu64\n	#undef PRIx64\n	#undef PRIX64\n	#define PRId64 \"lld\"\n	#define PRIi64 \"lli\"\n	#define PRIo64 \"llo\"\n	#define PRIu64 \"llu\"\n	#define PRIx64 \"llx\"\n	#define PRIX64 \"llX\"\n#endif\n\n//================================== GLOBALS =================================*/\n//byte g_str_buf[1024];\nstatic byte* g_str_buf;\nint load_so(byteptr);\nvoid reload_so();\nvoid _vinit();\nvoid _vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\n// ============== wyhash ==============\n//Author: Wang Yi\n#ifndef wyhash_version_gamma\n	#define wyhash_version_gamma\n	#define WYHASH_CONDOM 0\n	#include <stdint.h>\n	#include <string.h>\n	#if defined(_MSC_VER) && defined(_M_X64)\n		#include <intrin.h>\n		#pragma intrinsic(_umul128)\n	#endif\n\n	//const uint64_t _wyp0=0xa0761d6478bd642full, _wyp1=0xe7037ed1a0b428dbull;\n	#define _wyp0 ((uint64_t)0xa0761d6478bd642full)\n	#define _wyp1 ((uint64_t)0xe7037ed1a0b428dbull)\n\n	#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__) || defined(__TINYC__)\n		#define _likely_(x) __builtin_expect(x, 1)\n		#define _unlikely_(x) __builtin_expect((x), 0)\n	#else\n		#define _likely_(x) (x)\n		#define _unlikely_(x) (x)\n	#endif\n\n	#if defined(TARGET_ORDER_IS_LITTLE)\n		#define WYHASH_LITTLE_ENDIAN 1\n	#elif defined(TARGET_ORDER_IS_BIG)\n		#define WYHASH_LITTLE_ENDIAN 0\n	#endif\n\n	#if (WYHASH_LITTLE_ENDIAN)\n		static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return v;}\n		static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return v;}\n	#else\n		#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__)\n			static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return __builtin_bswap64(v);}\n			static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return __builtin_bswap32(v);}\n		#elif defined(_MSC_VER)\n			static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return _byteswap_uint64(v);}\n			static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return _byteswap_ulong(v);}\n		#elif defined(__TINYC__)\n			static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return bswap_64(v);}\n			static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return bswap_32(v);}\n		#endif\n	#endif\n\n	static inline uint64_t _wyr3(const uint8_t *p, unsigned k) { return (((uint64_t)p[0]) << 16) | (((uint64_t)p[k >> 1]) << 8) | p[k - 1];}\n	static inline uint64_t _wyrotr(uint64_t v, unsigned k) { return (v >> k) | (v << (64 - k));}\n	static inline void _wymix128(uint64_t A, uint64_t B, uint64_t *C, uint64_t *D){\n		A^=*C;	B^=*D;\n	#ifdef UNOFFICIAL_WYHASH_32BIT\n		uint64_t hh=(A>>32)*(B>>32), hl=(A>>32)*(unsigned)B, lh=(unsigned)A*(B>>32), ll=(uint64_t)(unsigned)A*(unsigned)B;\n		*C=_wyrotr(hl,32)^hh; *D=_wyrotr(lh,32)^ll;\n	#else\n		#ifdef __SIZEOF_INT128__\n			__uint128_t r=A; r*=B; *C=(uint64_t)r; *D=(uint64_t)(r>>64);\n		#elif defined(_MSC_VER) && defined(_M_X64)\n			A=_umul128(A,B,&B); *C=A; *D=B;\n		#else\n			uint64_t ha=A>>32, hb=B>>32, la=(uint32_t)A, lb=(uint32_t)B, hi, lo;\n			uint64_t rh=ha*hb, rm0=ha*lb, rm1=hb*la, rl=la*lb, t=rl+(rm0<<32), c=t<rl;\n			lo=t+(rm1<<32); c+=lo<t; hi=rh+(rm0>>32)+(rm1>>32)+c;\n			*C=lo;	*D=hi;\n		#endif\n	#endif\n	}\n	static inline uint64_t wyhash(const void *key, uint64_t len, uint64_t seed){\n		const uint8_t *p=(const uint8_t *)key;\n		uint64_t i=len, see1=seed;\n		start:\n		if (_likely_(i<=16)) {\n	#ifndef	WYHASH_CONDOM\n			uint64_t shift = (i<8)*((8-i)<<3);\n			//WARNING: intended reading outside buffer, trading for speed.\n			_wymix128((_wyr8(p)<<shift)^_wyp0, (_wyr8(p+i-8)>>shift)^_wyp1, &seed, &see1);\n	#else\n			if (_likely_(i<=8)) {\n				if (_likely_(i>=4)) _wymix128(_wyr4(p)^_wyp0,_wyr4(p+i-4)^_wyp1, &seed, &see1);\n				else if (_likely_(i)) _wymix128(_wyr3(p,i)^_wyp0,_wyp1, &seed, &see1);\n				else _wymix128(_wyp0,_wyp1, &seed, &see1);\n			}\n  			else _wymix128(_wyr8(p)^_wyp0,_wyr8(p+i-8)^_wyp1, &seed, &see1);\n	#endif\n			_wymix128(len,_wyp0, &seed, &see1);\n			return	seed^see1;\n		}\n		_wymix128(_wyr8(p)^_wyp0,_wyr8(p+8)^_wyp1, &seed, &see1);\n		i-=16;	p+=16;	goto start;\n	}\n	static inline uint64_t wyhash64(uint64_t A, uint64_t B){\n		_wymix128(_wyp0,_wyp1,&A,&B);\n		_wymix128(0,0,&A,&B);\n		return	A^B;\n	}\n	static inline uint64_t wyrand(uint64_t *seed){\n		*seed+=_wyp0;\n		uint64_t	a=0, b=0;\n		_wymix128(*seed,*seed^_wyp1,&a,&b);\n		return	a^b;\n	}\n	static inline double wy2u01(uint64_t r) {\n		const double _wynorm=1.0/(1ull<<52);\n		return (r>>12)*_wynorm;\n	}\n	static inline double wy2gau(uint64_t r) {\n		const double _wynorm=1.0/(1ull<<20);\n		return ((r&0x1fffff)+((r>>21)&0x1fffff)+((r>>42)&0x1fffff))*_wynorm-3.0;\n	}\n#endif\n", 2, _const_v__gen__c_common_macros);
 	_const_v__gen__bare_c_headers = _STR("\n%.*s\000\n\n#ifndef exit\n#define exit(rc) sys_exit(rc)\nvoid sys_exit (int);\n#endif\n", 2, _const_v__gen__c_common_macros);
 	// Initializations for module v.gen.js :
 	_const_v__gen__js__js_reserved = new_array_from_c_array(43, 43, sizeof(string), _MOV((string[43]){
