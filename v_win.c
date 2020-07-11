@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d4dd564"
+#define V_COMMIT_HASH "a2cb01e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "498c8cf"
+	#define V_COMMIT_HASH "d4dd564"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d4dd564"
+	#define V_CURRENT_COMMIT_HASH "a2cb01e"
 #endif
 
 // V typedefs:
@@ -14838,6 +14838,9 @@ bool v__pref__Preferences_should_compile_c(v__pref__Preferences* prefs, string f
 		return false;
 	}
 	if (string_ends_with(file, tos_lit("_solaris.c.v")) && prefs->os != v__pref__OS_solaris) {
+		return false;
+	}
+	if (string_ends_with(file, tos_lit("_x64.v")) && prefs->backend != v__pref__Backend_x64) {
 		return false;
 	}
 	return true;
