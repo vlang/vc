@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "022cc72"
+#define V_COMMIT_HASH "c891014"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a2cb01e"
+	#define V_COMMIT_HASH "022cc72"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "022cc72"
+	#define V_CURRENT_COMMIT_HASH "c891014"
 #endif
 
 // V typedefs:
@@ -18102,7 +18102,8 @@ void v__scanner__Scanner_set_current_tidx(v__scanner__Scanner* s, int cidx) {
 	s->tidx = tidx;
 }
 
-static v__token__Token v__scanner__Scanner_new_token(v__scanner__Scanner* s, v__token__Kind tok_kind, string lit, int len) {
+// Attr: [inline]
+inline static v__token__Token v__scanner__Scanner_new_token(v__scanner__Scanner* s, v__token__Kind tok_kind, string lit, int len) {
 	int cidx = s->tidx;
 	s->tidx++;
 	return (v__token__Token){
@@ -18115,7 +18116,8 @@ static v__token__Token v__scanner__Scanner_new_token(v__scanner__Scanner* s, v__
 	};
 }
 
-static string v__scanner__Scanner_ident_name(v__scanner__Scanner* s) {
+// Attr: [inline]
+inline static string v__scanner__Scanner_ident_name(v__scanner__Scanner* s) {
 	int start = s->pos;
 	s->pos++;
 	while (s->pos < s->text.len && (v__util__is_name_char(string_at(s->text, s->pos)) || byte_is_digit(string_at(s->text, s->pos)))) {
@@ -18458,7 +18460,8 @@ static string v__scanner__Scanner_ident_number(v__scanner__Scanner* s) {
 	}
 }
 
-static void v__scanner__Scanner_skip_whitespace(v__scanner__Scanner* s) {
+// Attr: [inline]
+inline static void v__scanner__Scanner_skip_whitespace(v__scanner__Scanner* s) {
 	while (s->pos < s->text.len && byte_is_space(string_at(s->text, s->pos))) {
 		if (v__util__is_nl(string_at(s->text, s->pos)) && s->is_vh) {
 			return;
@@ -18884,11 +18887,12 @@ static v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanner* s) {
 			if (nextc == '/') {
 				int start = s->pos + 1;
 				v__scanner__Scanner_ignore_line(s);
-				s->line_comment = string_substr(s->text, start + 1, s->pos);
-				string comment = string_trim_space(s->line_comment);
+				int comment_line_end = s->pos;
 				s->pos--;
 				s->line_nr--;
 				if (v__scanner__Scanner_should_parse_comment(s)) {
+					s->line_comment = string_substr(s->text, start + 1, comment_line_end);
+					string comment = string_trim_space(s->line_comment);
 					bool is_separate_line_comment = true;
 					for (int j = start - 2; j >= 0 && string_at(s->text, j) != '\n'; j--) {
 						if (!(string_at(s->text, j) == '\t' || string_at(s->text, j) == ' ')) {
@@ -19080,7 +19084,8 @@ static string v__scanner__Scanner_ident_char(v__scanner__Scanner* s) {
 	return (string_eq(c, tos_lit("\'")) ? (string_add(tos_lit("\\"), c)) : (c));
 }
 
-static bool v__scanner__Scanner_expect(v__scanner__Scanner* s, string want, int start_pos) {
+// Attr: [inline]
+inline static bool v__scanner__Scanner_expect(v__scanner__Scanner* s, string want, int start_pos) {
 	int end_pos = start_pos + want.len;
 	if (start_pos < 0 || start_pos >= s->text.len) {
 		return false;
@@ -19119,18 +19124,21 @@ static void v__scanner__Scanner_debug_tokens(v__scanner__Scanner* s) {
 	}
 }
 
-static void v__scanner__Scanner_ignore_line(v__scanner__Scanner* s) {
+// Attr: [inline]
+inline static void v__scanner__Scanner_ignore_line(v__scanner__Scanner* s) {
 	v__scanner__Scanner_eat_to_end_of_line(s);
 	v__scanner__Scanner_inc_line_number(s);
 }
 
-static void v__scanner__Scanner_eat_to_end_of_line(v__scanner__Scanner* s) {
+// Attr: [inline]
+inline static void v__scanner__Scanner_eat_to_end_of_line(v__scanner__Scanner* s) {
 	while (s->pos < s->text.len && string_at(s->text, s->pos) != '\n') {
 		s->pos++;
 	}
 }
 
-static void v__scanner__Scanner_inc_line_number(v__scanner__Scanner* s) {
+// Attr: [inline]
+inline static void v__scanner__Scanner_inc_line_number(v__scanner__Scanner* s) {
 	s->last_nl_pos = s->pos;
 	s->line_nr++;
 	array_push(&s->line_ends, _MOV((int[]){ s->pos }));
