@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "54da837"
+#define V_COMMIT_HASH "2a696cb"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "549d7a4"
+	#define V_COMMIT_HASH "54da837"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "54da837"
+	#define V_CURRENT_COMMIT_HASH "2a696cb"
 #endif
 
 // V typedefs:
@@ -18582,6 +18582,9 @@ static v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanner* s) {
 		}
 		return v__scanner__Scanner_new_token(s, v__token__Kind_lpar, tos_lit(""), 1);
 	} else if (c == ')') {
+		if (s->pref->is_vet && string_at(s->text, s->pos - 1) == ' ') {
+			println(_STR("%.*s\000:%"PRId32"\000: Looks like you are adding a space before `)`", 3, s->file_path, s->line_nr));
+		}
 		return v__scanner__Scanner_new_token(s, v__token__Kind_rpar, tos_lit(""), 1);
 	} else if (c == '[') {
 		return v__scanner__Scanner_new_token(s, v__token__Kind_lsbr, tos_lit(""), 1);
