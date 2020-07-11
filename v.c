@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9b4c81e"
+#define V_COMMIT_HASH "498c8cf"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "37d7396"
+	#define V_COMMIT_HASH "9b4c81e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9b4c81e"
+	#define V_CURRENT_COMMIT_HASH "498c8cf"
 #endif
 
 // V typedefs:
@@ -8317,14 +8317,22 @@ static void panic_debug(int line_no, string file, string mod, string fn_name, st
 	eprintln(_STR("     file: %.*s", 1, file));
 	eprintln(string_add(tos_lit("     line: "), int_str(line_no)));
 	eprintln(tos_lit("========================================="));
+// $if !tinyc {
+#ifndef __TINYC__
 	print_backtrace_skipping_top_frames(1);
+#endif
+// } tinyc
 	break_if_debugger_attached();
 	exit(1);
 }
 
 void v_panic(string s) {
 	eprintln(_STR("V panic: %.*s", 1, s));
+// $if !tinyc {
+#ifndef __TINYC__
 	print_backtrace();
+#endif
+// } tinyc
 	break_if_debugger_attached();
 	exit(1);
 }
