@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "839bd0e"
+#define V_COMMIT_HASH "37d7396"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "26768e8"
+	#define V_COMMIT_HASH "839bd0e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "839bd0e"
+	#define V_CURRENT_COMMIT_HASH "37d7396"
 #endif
 
 // V typedefs:
@@ -21437,6 +21437,9 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 		node->expr_type = v__checker__Checker_expr(c, node->expr);
 		v__table__TypeSymbol* from_type_sym = v__table__Table_get_type_symbol(c->table, node->expr_type);
 		v__table__TypeSymbol* to_type_sym = v__table__Table_get_type_symbol(c->table, node->typ);
+		if (node->expr_type == _const_v__table__byte_type && to_type_sym->kind == v__table__Kind_string) {
+			v__checker__Checker_error(c, _STR("can not cast type `byte` to string, use `%.*s\000.str()` instead.", 2, v__ast__Expr_str(node->expr)), node->pos);
+		}
 		if (to_type_sym->kind == v__table__Kind_sum_type) {
 			if ((node->expr_type == _const_v__table__any_int_type || node->expr_type == _const_v__table__any_flt_type)) {
 				node->expr_type = v__checker__Checker_promote_num(c, node->expr_type, (node->expr_type == _const_v__table__any_int_type ? (_const_v__table__int_type) : (_const_v__table__f64_type)));
@@ -22621,15 +22624,15 @@ int _t671_len = stmts.len;
 	for (int _t673 = 0; _t673 < _t672.len; ++_t673) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t672.data)[_t673];
 		if (stmt.typ == 202 /* v.ast.UnsafeStmt */) {
-			v__ast__UnsafeStmt* _sc_tmp_99060 = (v__ast__UnsafeStmt*)stmt.obj;
-			v__ast__UnsafeStmt* stmt = _sc_tmp_99060;
+			v__ast__UnsafeStmt* _sc_tmp_99251 = (v__ast__UnsafeStmt*)stmt.obj;
+			v__ast__UnsafeStmt* stmt = _sc_tmp_99251;
 			// FOR IN array
 			array _t674 = stmt->stmts;
 			for (int _t675 = 0; _t675 < _t674.len; ++_t675) {
 				v__ast__Stmt ustmt = ((v__ast__Stmt*)_t674.data)[_t675];
 				if (ustmt.typ == 199 /* v.ast.Return */) {
-					v__ast__Return* _sc_tmp_99121 = (v__ast__Return*)ustmt.obj;
-					v__ast__Return* ustmt = _sc_tmp_99121;
+					v__ast__Return* _sc_tmp_99312 = (v__ast__Return*)ustmt.obj;
+					v__ast__Return* ustmt = _sc_tmp_99312;
 					has_unsafe_return = true;
 				}
 			}
