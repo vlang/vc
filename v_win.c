@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b55f84c"
+#define V_COMMIT_HASH "26768e8"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7c0a298"
+	#define V_COMMIT_HASH "b55f84c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b55f84c"
+	#define V_CURRENT_COMMIT_HASH "26768e8"
 #endif
 
 // V typedefs:
@@ -1631,6 +1631,7 @@ struct v__table__Table {
 	array_v__cflag__CFlag cflags;
 	array_string redefined_fns;
 	map_string_array_v__table__Type fn_gen_types;
+	string cmod_prefix;
 };
 
 struct v__depgraph__DepGraph {
@@ -4221,6 +4222,7 @@ void v__util__ensure_modules_for_all_tools_are_installed(bool is_verbose);
 string v__util__strip_mod_name(string name);
 string v__util__strip_main_name(string name);
 string v__util__no_dots(string s);
+string v__util__no_cur_mod(string v_typename, string cur_mod);
 string v__table__ShareType_str(v__table__ShareType t);
 string v__table__Type_atomic_typename(v__table__Type t);
 v__table__ShareType v__table__sharetype_from_flags(bool is_shared, bool is_atomic);
@@ -4381,7 +4383,7 @@ static bool v__ast__Scope_contains(v__ast__Scope* s, int pos);
 string v__ast__Scope_show(v__ast__Scope* sc, int depth, int max_depth);
 string v__ast__Scope_str(v__ast__Scope* sc);
 string v__ast__FnDecl_modname(v__ast__FnDecl* node);
-string v__ast__FnDecl_stringify(v__ast__FnDecl* node, v__table__Table* t);
+string v__ast__FnDecl_stringify(v__ast__FnDecl* node, v__table__Table* t, string cur_mod);
 string v__ast__InfixExpr_str(v__ast__InfixExpr* x);
 multi_return_string_bool v__ast__StringInterLiteral_get_fspec_braces(v__ast__StringInterLiteral* lit, int i);
 string v__ast__Expr_str(v__ast__Expr x);
@@ -16411,6 +16413,25 @@ string v__util__no_dots(string s) {
 	return string_replace(s, tos_lit("."), tos_lit("__"));
 }
 
+string v__util__no_cur_mod(string v_typename, string cur_mod) {
+	string res = v_typename;
+	string map_prefix = tos_lit("map[string]");
+	string mod_prefix = string_add(cur_mod, tos_lit("."));
+	bool has_map_prefix = string_starts_with(res, map_prefix);
+	if (has_map_prefix) {
+		res = string_replace(res, map_prefix, tos_lit(""));
+	}
+	string no_symbols = string_trim_left(res, tos_lit("&[]"));
+	bool should_shorten = string_starts_with(no_symbols, mod_prefix);
+	if (should_shorten) {
+		res = string_replace_once(res, mod_prefix, tos_lit(""));
+	}
+	if (has_map_prefix) {
+		res = string_add(map_prefix, res);
+	}
+	return res;
+}
+
 // TypeDecl
 // TypeDecl
 string v__table__ShareType_str(v__table__ShareType t) {
@@ -16754,6 +16775,9 @@ string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 		if (vals.len > 2) {
 			res = string_add(string_add((*(string*)array_get(vals, vals.len - 2)), tos_lit(".")), (*(string*)array_get(vals, vals.len - 1)));
 		}
+		if (string_starts_with(res, table->cmod_prefix)) {
+			res = string_replace_once(res, table->cmod_prefix, tos_lit(""));
+		}
 		if (sym->kind == v__table__Kind_array && !string_starts_with(res, tos_lit("[]"))) {
 			res = string_add(tos_lit("[]"), res);
 		}
@@ -16963,7 +16987,7 @@ Option_bool v__table__Table_parse_cflag(v__table__Table* table, string cflg, str
 }
 
 v__table__Table* v__table__new_table() {
-	v__table__Table* t = (v__table__Table*)memdup(&(v__table__Table){.types = __new_array(0, 1, sizeof(v__table__TypeSymbol)),.type_idxs = new_map_1(sizeof(int)),.fns = new_map_1(sizeof(v__table__Fn)),.imports = __new_array(0, 1, sizeof(string)),.modules = __new_array(0, 1, sizeof(string)),.cflags = __new_array(0, 1, sizeof(v__cflag__CFlag)),.redefined_fns = __new_array(0, 1, sizeof(string)),.fn_gen_types = new_map_1(sizeof(array_v__table__Type)),}, sizeof(v__table__Table));
+	v__table__Table* t = (v__table__Table*)memdup(&(v__table__Table){.types = __new_array(0, 1, sizeof(v__table__TypeSymbol)),.type_idxs = new_map_1(sizeof(int)),.fns = new_map_1(sizeof(v__table__Fn)),.imports = __new_array(0, 1, sizeof(string)),.modules = __new_array(0, 1, sizeof(string)),.cflags = __new_array(0, 1, sizeof(v__cflag__CFlag)),.redefined_fns = __new_array(0, 1, sizeof(string)),.fn_gen_types = new_map_1(sizeof(array_v__table__Type)),.cmod_prefix = (string){.str=""},}, sizeof(v__table__Table));
 	v__table__Table_register_builtin_type_symbols(t);
 	return t;
 }
@@ -17789,18 +17813,19 @@ string v__ast__FnDecl_modname(v__ast__FnDecl* node) {
 	return pamod;
 }
 
-string v__ast__FnDecl_stringify(v__ast__FnDecl* node, v__table__Table* t) {
+string v__ast__FnDecl_stringify(v__ast__FnDecl* node, v__table__Table* t, string cur_mod) {
 	strings__Builder f = strings__new_builder(30);
 	if (node->is_pub) {
 		strings__Builder_write(&f, tos_lit("pub "));
 	}
 	string receiver = tos_lit("");
 	if (node->is_method) {
-		string styp = v__table__Table_type_to_str(t, node->receiver.typ);
+		string styp = v__util__no_cur_mod(v__table__Table_type_to_str(t, node->receiver.typ), cur_mod);
 		string m = (node->rec_mut ? (string_add(v__table__ShareType_str(v__table__Type_share(node->receiver.typ)), tos_lit(" "))) : (tos_lit("")));
 		if (node->rec_mut) {
 			styp = string_substr(styp, 1, styp.len);
 		}
+		styp = v__util__no_cur_mod(styp, cur_mod);
 		receiver = _STR("(%.*s\000%.*s\000 %.*s\000) ", 4, m, node->receiver.name, styp);
 	}
 	string name = (node->is_anon ? (tos_lit("")) : (string_after(node->name, tos_lit("."))));
@@ -17836,6 +17861,7 @@ string v__ast__FnDecl_stringify(v__ast__FnDecl* node, v__table__Table* t) {
 				s = string_substr(s, 1, s.len);
 			}
 		}
+		s = v__util__no_cur_mod(s, cur_mod);
 		if (should_add_type) {
 			if (node->is_variadic && is_last_arg) {
 				strings__Builder_write(&f, string_add(tos_lit(" ..."), s));
@@ -17849,7 +17875,7 @@ string v__ast__FnDecl_stringify(v__ast__FnDecl* node, v__table__Table* t) {
 	}
 	strings__Builder_write(&f, tos_lit(")"));
 	if (node->return_type != _const_v__table__void_type) {
-		strings__Builder_write(&f, string_add(tos_lit(" "), v__table__Table_type_to_str(t, node->return_type)));
+		strings__Builder_write(&f, string_add(tos_lit(" "), v__util__no_cur_mod(v__table__Table_type_to_str(t, node->return_type), cur_mod)));
 	}
 	return strings__Builder_str(&f);
 }
@@ -17990,9 +18016,9 @@ string v__ast__Expr_str(v__ast__Expr x) {
 				break;
 			}
 			array_push(&res, _MOV((string[]){ tos_lit("$") }));
-			multi_return_string_bool mr_5249 = v__ast__StringInterLiteral_get_fspec_braces(it, i);
-			string fspec_str = mr_5249.arg0;
-			bool needs_braces = mr_5249.arg1;
+			multi_return_string_bool mr_5391 = v__ast__StringInterLiteral_get_fspec_braces(it, i);
+			string fspec_str = mr_5391.arg0;
+			bool needs_braces = mr_5391.arg1;
 			if (needs_braces) {
 				array_push(&res, _MOV((string[]){ tos_lit("{") }));
 				array_push(&res, _MOV((string[]){ v__ast__Expr_str((*(v__ast__Expr*)array_get(it->exprs, i))) }));
@@ -18049,8 +18075,8 @@ string v__ast__Stmt_str(v__ast__Stmt node) {
 		for (int i = 0; i < _t500.len; ++i) {
 			v__ast__Expr left = ((v__ast__Expr*)_t500.data)[i];
 			if (left.typ == 177 /* v.ast.Ident */) {
-				v__ast__Ident* _sc_tmp_6043 = (v__ast__Ident*)left.obj;
-				v__ast__Ident* left = _sc_tmp_6043;
+				v__ast__Ident* _sc_tmp_6185 = (v__ast__Ident*)left.obj;
+				v__ast__Ident* left = _sc_tmp_6185;
 				v__ast__IdentVar var_info = v__ast__Ident_var_info(left);
 				if (var_info.is_mut) {
 					out = /*f*/string_add(out, tos_lit("mut "));
