@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "867929e"
+#define V_COMMIT_HASH "b92ce38"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2a696cb"
+	#define V_COMMIT_HASH "867929e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "867929e"
+	#define V_CURRENT_COMMIT_HASH "b92ce38"
 #endif
 
 // V typedefs:
@@ -3411,7 +3411,7 @@ i64 total_m; // global
 int nr_mallocs; // global
 static void looo();
 byteptr v_malloc(int n);
-byteptr v_realloc(byteptr b, int n);
+byteptr v_realloc(byteptr b, u32 n);
 byteptr v_calloc(int n);
 byteptr vcalloc(int n);
 void v_free(voidptr ptr);
@@ -8105,7 +8105,7 @@ inline static void array_ensure_cap(array* a, int required) {
 	if (a->cap == 0) {
 		a->data = vcalloc(cap * a->element_size);
 	} else {
-		a->data = realloc(a->data, cap * a->element_size);
+		a->data = v_realloc(a->data, ((u32)(cap * a->element_size)));
 	}
 	a->cap = cap;
 }
@@ -8648,10 +8648,10 @@ byteptr v_malloc(int n) {
 }
 
 // Attr: [unsafe_fn]
-byteptr v_realloc(byteptr b, int n) {
+byteptr v_realloc(byteptr b, u32 n) {
 	byteptr ptr = realloc(b, n);
 	if (ptr == 0) {
-		v_panic(_STR("realloc(%"PRId32"\000) failed", 2, n));
+		v_panic(_STR("realloc(%"PRIu32"\000) failed", 2, n));
 	}
 	return ptr;
 }
@@ -9252,8 +9252,8 @@ inline static DenseArray new_dense_array(int value_bytes) {
 inline static u32 DenseArray_push(DenseArray* d, string key, voidptr value) {
 	if (d->cap == d->len) {
 		d->cap += d->cap >> 3;
-		d->keys = ((string*)(realloc(d->keys, /*SizeOfType*/ sizeof(string) * d->cap)));
-		d->values = realloc(d->values, ((u32)(d->value_bytes)) * d->cap);
+		d->keys = ((string*)(v_realloc(d->keys, /*SizeOfType*/ sizeof(string) * d->cap)));
+		d->values = v_realloc(d->values, ((u32)(d->value_bytes)) * d->cap);
 	}
 	u32 push_index = d->len;
 	d->keys[push_index] = key;
@@ -9297,8 +9297,8 @@ static void DenseArray_zeros_to_end(DenseArray* d) {
 	d->deletes = 0;
 	d->len = count;
 	d->cap = (count < 8 ? (((u32)(8))) : (count));
-	d->keys = ((string*)(realloc(d->keys, /*SizeOfType*/ sizeof(string) * d->cap)));
-	d->values = realloc(d->values, ((u32)(d->value_bytes)) * d->cap);
+	d->keys = ((string*)(v_realloc(d->keys, /*SizeOfType*/ sizeof(string) * d->cap)));
+	d->values = v_realloc(d->values, ((u32)(d->value_bytes)) * d->cap);
 }
 
 static map new_map_1(int value_bytes) {
@@ -9372,7 +9372,7 @@ inline static void map_ensure_extra_metas(map* m, u32 probe_count) {
 		m->extra_metas += _const_extra_metas_inc;
 		u32 mem_size = (m->cap + 2 + m->extra_metas);
 		{ // Unsafe block
-			m->metas = ((u32*)(realloc(m->metas, /*SizeOfType*/ sizeof(u32) * mem_size)));
+			m->metas = ((u32*)(v_realloc(m->metas, /*SizeOfType*/ sizeof(u32) * mem_size)));
 			memset(m->metas + mem_size - _const_extra_metas_inc, 0, /*SizeOfType*/ sizeof(u32) * _const_extra_metas_inc);
 		}
 		if (probe_count == 252) {
@@ -9424,7 +9424,7 @@ static void map_expand(map* m) {
 
 static void map_rehash(map* m) {
 	u32 meta_bytes = /*SizeOfType*/ sizeof(u32) * (m->cap + 2 + m->extra_metas);
-	m->metas = ((u32*)(realloc(m->metas, meta_bytes)));
+	m->metas = ((u32*)(v_realloc(m->metas, meta_bytes)));
 	memset(m->metas, 0, meta_bytes);
 	for (u32 i = ((u32)(0)); i < m->key_values.len; i++) {
 		if (m->key_values.keys[i].str == 0) {
@@ -12345,7 +12345,7 @@ array_byte os__get_raw_stdin() {
 			if (!res) {
 				break;
 			}
-			buf = v_realloc(buf, offset + block_bytes + (block_bytes - bytes_read));
+			buf = v_realloc(buf, ((u32)(offset + block_bytes + (block_bytes - bytes_read))));
 		}
 		CloseHandle(h_input);
 		return (array){.element_size = 1,.data = ((voidptr)(buf)),.len = offset,.cap = offset,};
