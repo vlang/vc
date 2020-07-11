@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "fae601f"
+#define V_COMMIT_HASH "ab3c1f2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b92ce38"
+	#define V_COMMIT_HASH "fae601f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "fae601f"
+	#define V_CURRENT_COMMIT_HASH "ab3c1f2"
 #endif
 
 // V typedefs:
@@ -8134,6 +8134,11 @@ array array_reverse(array a) {
 
 // Attr: [unsafe_fn]
 void array_free(array* a) {
+// $if  prealloc {
+#ifdef _VPREALLOC
+	return;
+#endif
+// } prealloc
 	free(a->data);
 }
 
@@ -8414,11 +8419,20 @@ byteptr v_malloc(int n) {
 
 // Attr: [unsafe_fn]
 byteptr v_realloc(byteptr b, u32 n) {
+// $if  prealloc {
+#ifdef _VPREALLOC
+	byteptr new_ptr = v_malloc(((int)(n)));
+	int size = 0;
+	memcpy(new_ptr, b, size);
+	return new_ptr;
+#else
 	byteptr ptr = realloc(b, n);
 	if (ptr == 0) {
 		v_panic(_STR("realloc(%"PRIu32"\000) failed", 2, n));
 	}
 	return ptr;
+#endif
+// } prealloc
 }
 
 // Attr: [unsafe_fn]
@@ -8438,6 +8452,11 @@ byteptr vcalloc(int n) {
 
 // Attr: [unsafe_fn]
 void v_free(voidptr ptr) {
+// $if  prealloc {
+#ifdef _VPREALLOC
+	return;
+#endif
+// } prealloc
 	free(ptr);
 }
 
@@ -8450,6 +8469,11 @@ voidptr memdup(voidptr src, int sz) {
 }
 
 static void v_ptr_free(voidptr ptr) {
+// $if  prealloc {
+#ifdef _VPREALLOC
+	return;
+#endif
+// } prealloc
 	free(ptr);
 }
 
@@ -9071,7 +9095,7 @@ inline static DenseArray new_dense_array(int value_bytes) {
 inline static u32 DenseArray_push(DenseArray* d, string key, voidptr value) {
 	if (d->cap == d->len) {
 		d->cap += d->cap >> 3;
-		d->keys = ((string*)(v_realloc(d->keys, /*SizeOfType*/ sizeof(string) * d->cap)));
+		d->keys = ((string*)(v_realloc(((byteptr*)(d->keys)), /*SizeOfType*/ sizeof(string) * d->cap)));
 		d->values = v_realloc(d->values, ((u32)(d->value_bytes)) * d->cap);
 	}
 	u32 push_index = d->len;
@@ -9206,12 +9230,12 @@ static void map_set(map* m, string k, voidptr value) {
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_9105 = map_key_to_index(m, key);
-	u32 index = mr_9105.arg0;
-	u32 meta = mr_9105.arg1;
-	multi_return_u32_u32 mr_9140 = map_meta_less(m, index, meta);
-	index = mr_9140.arg0;
-	meta = mr_9140.arg1;
+	multi_return_u32_u32 mr_9114 = map_key_to_index(m, key);
+	u32 index = mr_9114.arg0;
+	u32 meta = mr_9114.arg1;
+	multi_return_u32_u32 mr_9149 = map_meta_less(m, index, meta);
+	index = mr_9149.arg0;
+	meta = mr_9149.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -9249,12 +9273,12 @@ static void map_rehash(map* m) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
-		multi_return_u32_u32 mr_10468 = map_key_to_index(m, m->key_values.keys[i]);
-		u32 index = mr_10468.arg0;
-		u32 meta = mr_10468.arg1;
-		multi_return_u32_u32 mr_10521 = map_meta_less(m, index, meta);
-		index = mr_10521.arg0;
-		meta = mr_10521.arg1;
+		multi_return_u32_u32 mr_10477 = map_key_to_index(m, m->key_values.keys[i]);
+		u32 index = mr_10477.arg0;
+		u32 meta = mr_10477.arg1;
+		multi_return_u32_u32 mr_10530 = map_meta_less(m, index, meta);
+		index = mr_10530.arg0;
+		meta = mr_10530.arg1;
 		map_meta_greater(m, index, meta, i);
 	}
 }
@@ -9272,9 +9296,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->cap >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->cap);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_11238 = map_meta_less(m, index, meta);
-		index = mr_11238.arg0;
-		meta = mr_11238.arg1;
+		multi_return_u32_u32 mr_11247 = map_meta_less(m, index, meta);
+		index = mr_11247.arg0;
+		meta = mr_11247.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -9285,9 +9309,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 
 static voidptr map_get_and_set(map* m, string key, voidptr zero) {
 	while (1) {
-		multi_return_u32_u32 mr_11675 = map_key_to_index(m, key);
-		u32 index = mr_11675.arg0;
-		u32 meta = mr_11675.arg1;
+		multi_return_u32_u32 mr_11684 = map_key_to_index(m, key);
+		u32 index = mr_11684.arg0;
+		u32 meta = mr_11684.arg1;
 		while (1) {
 			if (meta == m->metas[index]) {
 				u32 kv_index = m->metas[index + 1];
@@ -9308,9 +9332,9 @@ static voidptr map_get_and_set(map* m, string key, voidptr zero) {
 }
 
 static voidptr map_get(map m, string key, voidptr zero) {
-	multi_return_u32_u32 mr_12316 = map_key_to_index(&m, key);
-	u32 index = mr_12316.arg0;
-	u32 meta = mr_12316.arg1;
+	multi_return_u32_u32 mr_12325 = map_key_to_index(&m, key);
+	u32 index = mr_12325.arg0;
+	u32 meta = mr_12325.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9330,9 +9354,9 @@ static voidptr map_get(map m, string key, voidptr zero) {
 }
 
 static bool map_exists(map m, string key) {
-	multi_return_u32_u32 mr_12768 = map_key_to_index(&m, key);
-	u32 index = mr_12768.arg0;
-	u32 meta = mr_12768.arg1;
+	multi_return_u32_u32 mr_12777 = map_key_to_index(&m, key);
+	u32 index = mr_12777.arg0;
+	u32 meta = mr_12777.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9350,12 +9374,12 @@ static bool map_exists(map m, string key) {
 }
 
 void map_delete(map* m, string key) {
-	multi_return_u32_u32 mr_13152 = map_key_to_index(m, key);
-	u32 index = mr_13152.arg0;
-	u32 meta = mr_13152.arg1;
-	multi_return_u32_u32 mr_13187 = map_meta_less(m, index, meta);
-	index = mr_13187.arg0;
-	meta = mr_13187.arg1;
+	multi_return_u32_u32 mr_13161 = map_key_to_index(m, key);
+	u32 index = mr_13161.arg0;
+	u32 meta = mr_13161.arg1;
+	multi_return_u32_u32 mr_13196 = map_meta_less(m, index, meta);
+	index = mr_13196.arg0;
+	meta = mr_13196.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -10840,6 +10864,11 @@ string ustring_at(ustring u, int idx) {
 }
 
 static void ustring_free(ustring* u) {
+// $if  prealloc {
+#ifdef _VPREALLOC
+	return;
+#endif
+// } prealloc
 	array_free(&u->runes);
 }
 
@@ -10864,6 +10893,11 @@ bool byte_is_letter(byte c) {
 }
 
 void string_free(string* s) {
+// $if  prealloc {
+#ifdef _VPREALLOC
+	return;
+#endif
+// } prealloc
 	if (s->is_lit == -98761234) {
 		printf("double string.free() detected\n");
 		return;
