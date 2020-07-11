@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7c0a298"
+#define V_COMMIT_HASH "b55f84c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ab3c1f2"
+	#define V_COMMIT_HASH "7c0a298"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7c0a298"
+	#define V_CURRENT_COMMIT_HASH "b55f84c"
 #endif
 
 // V typedefs:
@@ -24226,7 +24226,7 @@ static void v__parser__Parser_check_unused_imports(v__parser__Parser* p) {
 		v__ast__Import import_m = ((v__ast__Import*)_t749.data)[_t750];
 		string alias = import_m.alias;
 		string mod = import_m.mod;
-		if (!v__parser__Parser_is_used_import(p, alias)) {
+		if (!v__parser__Parser_is_used_import(p, alias) && !p->pref->is_fmt) {
 			string mod_alias = (string_eq(alias, mod) ? (alias) : (_STR("%.*s\000 (%.*s\000)", 3, alias, mod)));
 			v__parser__Parser_warn_with_pos(p, _STR("module '%.*s\000' is imported but never used", 2, mod_alias), import_m.pos);
 		}
