@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a107310"
+#define V_COMMIT_HASH "d4d552f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2ea187f"
+	#define V_COMMIT_HASH "a107310"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a107310"
+	#define V_CURRENT_COMMIT_HASH "d4d552f"
 #endif
 
 // V typedefs:
@@ -1806,6 +1806,7 @@ struct v__scanner__Scanner {
 	array_v__token__Token all_tokens;
 	int tidx;
 	int eofs;
+	v__pref__Preferences* pref;
 };
 
 struct v__depgraph__DepGraphNode {
@@ -4120,8 +4121,8 @@ string v__ast__Stmt_str(v__ast__Stmt node);
 #define _const_v__scanner__single_quote '\''
 #define _const_v__scanner__double_quote '"'
 #define _const_v__scanner__num_sep '_'
-v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__CommentsMode comments_mode, bool is_fmt);
-v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMode comments_mode, bool is_fmt);
+v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref);
+v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref);
 static bool v__scanner__Scanner_should_parse_comment(v__scanner__Scanner* s);
 void v__scanner__Scanner_set_is_inside_toplevel_statement(v__scanner__Scanner* s, bool newstate);
 void v__scanner__Scanner_set_current_tidx(v__scanner__Scanner* s, int cidx);
@@ -17944,7 +17945,7 @@ string v__ast__Stmt_str(v__ast__Stmt node) {
 	};
 }
 
-v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__CommentsMode comments_mode, bool is_fmt) {
+v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref) {
 	if (!os__exists(file_path)) {
 		v__scanner__verror(_STR("%.*s\000 doesn't exist", 2, file_path));
 	}
@@ -17956,12 +17957,13 @@ v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__
 		return ((voidptr)(0));
 	}
 	string raw_text = *(string*)_t498.data;
-	v__scanner__Scanner* s = v__scanner__new_scanner(raw_text, comments_mode, is_fmt);
+	v__scanner__Scanner* s = v__scanner__new_scanner(raw_text, comments_mode, pref);
 	s->file_path = file_path;
 	return s;
 }
 
-v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMode comments_mode, bool is_fmt) {
+v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref) {
+	bool is_fmt = pref->is_fmt;
 	v__scanner__Scanner* s = (v__scanner__Scanner*)memdup(&(v__scanner__Scanner){.file_path = (string){.str=""},
 		.text = text,
 		.pos = 0,
@@ -17990,6 +17992,7 @@ v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMo
 		.all_tokens = __new_array(0, 1, sizeof(v__token__Token)),
 		.tidx = 0,
 		.eofs = 0,
+		.pref = pref,
 	}, sizeof(v__scanner__Scanner));
 	return s;
 }
@@ -18572,6 +18575,9 @@ static v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanner* s) {
 		string ident_char = v__scanner__Scanner_ident_char(s);
 		return v__scanner__Scanner_new_token(s, v__token__Kind_chartoken, ident_char, ident_char.len + 2);
 	} else if (c == '(') {
+		if (s->pref->is_vet && string_at(s->text, s->pos + 1) == ' ') {
+			println(_STR("%.*s\000:%"PRId32"\000: Looks like you are adding a space after `(`", 3, s->file_path, s->line_nr));
+		}
 		return v__scanner__Scanner_new_token(s, v__token__Kind_lpar, tos_lit(""), 1);
 	} else if (c == ')') {
 		return v__scanner__Scanner_new_token(s, v__token__Kind_rpar, tos_lit(""), 1);
@@ -24418,15 +24424,16 @@ v__table__Type v__parser__Parser_parse_generic_struct_inst_type(v__parser__Parse
 }
 
 v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__Scope* scope) {
-	v__scanner__Scanner* s = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments, false);
-	v__parser__Parser p = (v__parser__Parser){.file_name = (string){.str=""},.file_name_dir = (string){.str=""},.scanner = s,.comments_mode = v__scanner__CommentsMode_skip_comments,.tok = {0},.prev_tok = {0},.peek_tok = {0},.peek_tok2 = {0},.peek_tok3 = {0},.table = table,.language = {0},.inside_if = 0,.inside_if_expr = 0,.inside_or_expr = 0,.inside_for = 0,.inside_fn = 0,.inside_str_interp = 0,.pref = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = {0},.backend = {0},.build_mode = {0},.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=""},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.use_cache = 0,.is_stats = 0,.no_auto_free = 0,.cflags = (string){.str=""},.ccompiler = (string){.str=""},.third_party_option = (string){.str=""},.building_v = 0,.autofree = 0,.compress = 0,.fast = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=""},.lookup_path = __new_array(0, 1, sizeof(string)),.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=""},.out_name = (string){.str=""},.path = (string){.str=""},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.use_color = {0},.is_parallel = 0,.error_limit = 0,.is_vweb = 0,}, sizeof(v__pref__Preferences)),.builtin_mod = 0,.mod = (string){.str=""},.attrs = __new_array(0, 1, sizeof(string)),.attr_ctdefine = (string){.str=""},.expr_mod = (string){.str=""},.scope = scope,.global_scope = (v__ast__Scope*)memdup(&(v__ast__Scope){.objects = new_map_1(sizeof(v__ast__ScopeObject)),.parent = 0,.children = __new_array(0, 1, sizeof(v__ast__Scope*)),.start_pos = 0,.end_pos = 0,}, sizeof(v__ast__Scope)),.imports = new_map_1(sizeof(string)),.ast_imports = __new_array(0, 1, sizeof(v__ast__Import)),.used_imports = __new_array(0, 1, sizeof(string)),.is_amp = 0,.returns = 0,.inside_match = 0,.inside_match_case = 0,.inside_match_body = 0,.inside_unsafe = 0,.is_stmt_ident = 0,.expecting_type = 0,.errors = __new_array(0, 1, sizeof(v__errors__Error)),.warnings = __new_array(0, 1, sizeof(v__errors__Warning)),.cur_fn_name = (string){.str=""},};
+	v__pref__Preferences* pref = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = {0},.backend = {0},.build_mode = {0},.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=""},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.use_cache = 0,.is_stats = 0,.no_auto_free = 0,.cflags = (string){.str=""},.ccompiler = (string){.str=""},.third_party_option = (string){.str=""},.building_v = 0,.autofree = 0,.compress = 0,.fast = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=""},.lookup_path = __new_array(0, 1, sizeof(string)),.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=""},.out_name = (string){.str=""},.path = (string){.str=""},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.use_color = {0},.is_parallel = 0,.error_limit = 0,.is_vweb = 0,}, sizeof(v__pref__Preferences));
+	v__scanner__Scanner* s = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments, pref);
+	v__parser__Parser p = (v__parser__Parser){.file_name = (string){.str=""},.file_name_dir = (string){.str=""},.scanner = s,.comments_mode = v__scanner__CommentsMode_skip_comments,.tok = {0},.prev_tok = {0},.peek_tok = {0},.peek_tok2 = {0},.peek_tok3 = {0},.table = table,.language = {0},.inside_if = 0,.inside_if_expr = 0,.inside_or_expr = 0,.inside_for = 0,.inside_fn = 0,.inside_str_interp = 0,.pref = pref,.builtin_mod = 0,.mod = (string){.str=""},.attrs = __new_array(0, 1, sizeof(string)),.attr_ctdefine = (string){.str=""},.expr_mod = (string){.str=""},.scope = scope,.global_scope = (v__ast__Scope*)memdup(&(v__ast__Scope){.objects = new_map_1(sizeof(v__ast__ScopeObject)),.parent = 0,.children = __new_array(0, 1, sizeof(v__ast__Scope*)),.start_pos = 0,.end_pos = 0,}, sizeof(v__ast__Scope)),.imports = new_map_1(sizeof(string)),.ast_imports = __new_array(0, 1, sizeof(v__ast__Import)),.used_imports = __new_array(0, 1, sizeof(string)),.is_amp = 0,.returns = 0,.inside_match = 0,.inside_match_case = 0,.inside_match_body = 0,.inside_unsafe = 0,.is_stmt_ident = 0,.expecting_type = 0,.errors = __new_array(0, 1, sizeof(v__errors__Error)),.warnings = __new_array(0, 1, sizeof(v__errors__Warning)),.cur_fn_name = (string){.str=""},};
 	v__parser__Parser_init_parse_fns(&p);
 	v__parser__Parser_read_first_token(&p);
 	return v__parser__Parser_stmt(&p, false);
 }
 
 v__ast__File v__parser__parse_text(string text, v__table__Table* b_table, v__pref__Preferences* pref, v__ast__Scope* scope, v__ast__Scope* global_scope) {
-	v__scanner__Scanner* s = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments, pref->is_fmt);
+	v__scanner__Scanner* s = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments, pref);
 	v__parser__Parser p = (v__parser__Parser){
 		.file_name = (string){.str=""},
 		.file_name_dir = (string){.str=""},
@@ -24475,7 +24482,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 	v__parser__Parser p = (v__parser__Parser){
 		.file_name = path,
 		.file_name_dir = os__dir(path),
-		.scanner = v__scanner__new_scanner_file(path, comments_mode, pref->is_fmt),
+		.scanner = v__scanner__new_scanner_file(path, comments_mode, pref),
 		.comments_mode = comments_mode,
 		.tok = {0},
 		.prev_tok = {0},
