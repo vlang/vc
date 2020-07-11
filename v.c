@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "37d7396"
+#define V_COMMIT_HASH "9b4c81e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "839bd0e"
+	#define V_COMMIT_HASH "37d7396"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "37d7396"
+	#define V_CURRENT_COMMIT_HASH "9b4c81e"
 #endif
 
 // V typedefs:
@@ -22534,7 +22534,7 @@ int _t663_len = info.fields.len;
 }
 
 static void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast__FnDecl* node) {
-	c->returns = true;
+	c->returns = false;
 	if (node->is_generic && c->cur_generic_type == 0) {
 		// FOR IN array
 		array _t664 = (*(array_v__table__Type*)map_get(c->table->fn_gen_types, node->name, &(array_v__table__Type[]){ __new_array(0, 1, sizeof(v__table__Type)) }));
