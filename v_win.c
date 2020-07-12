@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "23c8e1f"
+#define V_COMMIT_HASH "9c43d36"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "40da32a"
+	#define V_COMMIT_HASH "23c8e1f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "23c8e1f"
+	#define V_CURRENT_COMMIT_HASH "9c43d36"
 #endif
 
 // V typedefs:
@@ -21192,6 +21192,12 @@ static Option_v__ast__IntegerLiteral v__checker__is_const_integer(v__ast__ConstF
 }
 
 static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) {
+// $if  trace_checker {
+#ifdef CUSTOM_DEFINE_trace_checker
+	v__token__Position stmt_pos = v__ast__Stmt_position(node);
+	eprintln(_STR("checking file: %*.*s\000 | stmt pos: %*.*s\000 | stmt", 3, c->file.path, -30, v__token__Position_str(stmt_pos), -45));
+#endif
+// } trace_checker
 	if (node.typ == 202 /* v.ast.AssertStmt */) {
 		v__ast__AssertStmt* it = (v__ast__AssertStmt*)node.obj; // ST it
 		v__ast__AssertStmt* node = it;
@@ -21444,12 +21450,6 @@ static void v__checker__Checker_stmts(v__checker__Checker* c, array_v__ast__Stmt
 	array _t614 = stmts;
 	for (int _t615 = 0; _t615 < _t614.len; ++_t615) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t614.data)[_t615];
-// $if  debug_stmts {
-#ifdef CUSTOM_DEFINE_debug_stmts
-		v__token__Position stmt_pos = v__ast__Stmt_position(stmt);
-		eprintln(_STR("file: %*.*s\000 | stmt pos: %.*s", 2, c->file.path, -30, v__token__Position_str(  stmt_pos)));
-#endif
-// } debug_stmts
 		if (c->scope_returns) {
 			if (unreachable.line_nr == -1) {
 				unreachable = v__ast__Stmt_position(stmt);
@@ -22740,15 +22740,15 @@ int _t675_len = stmts.len;
 	for (int _t677 = 0; _t677 < _t676.len; ++_t677) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t676.data)[_t677];
 		if (stmt.typ == 228 /* v.ast.UnsafeStmt */) {
-			v__ast__UnsafeStmt* _sc_tmp_99369 = (v__ast__UnsafeStmt*)stmt.obj;
-			v__ast__UnsafeStmt* stmt = _sc_tmp_99369;
+			v__ast__UnsafeStmt* _sc_tmp_99395 = (v__ast__UnsafeStmt*)stmt.obj;
+			v__ast__UnsafeStmt* stmt = _sc_tmp_99395;
 			// FOR IN array
 			array _t678 = stmt->stmts;
 			for (int _t679 = 0; _t679 < _t678.len; ++_t679) {
 				v__ast__Stmt ustmt = ((v__ast__Stmt*)_t678.data)[_t679];
 				if (ustmt.typ == 225 /* v.ast.Return */) {
-					v__ast__Return* _sc_tmp_99430 = (v__ast__Return*)ustmt.obj;
-					v__ast__Return* ustmt = _sc_tmp_99430;
+					v__ast__Return* _sc_tmp_99456 = (v__ast__Return*)ustmt.obj;
+					v__ast__Return* ustmt = _sc_tmp_99456;
 					has_unsafe_return = true;
 				}
 			}
@@ -24884,6 +24884,12 @@ static string v__parser__Parser_check_name(v__parser__Parser* p) {
 }
 
 v__ast__Stmt v__parser__Parser_top_stmt(v__parser__Parser* p) {
+// $if  trace_parser {
+#ifdef CUSTOM_DEFINE_trace_parser
+	v__token__Position tok_pos = v__token__Token_position(&p->tok);
+	eprintln(_STR("parsing file: %*.*s\000 | tok.kind: %*.*s\000 | tok.lit: %*.*s\000 | tok_pos: %*.*s\000 | top_stmt", 5, p->file_name, -30, v__token__Kind_str(p->tok.kind), -10, p->tok.lit, -10, v__token__Position_str(tok_pos), -45));
+#endif
+// } trace_parser
 	if (p->tok.kind == v__token__Kind_key_pub) {
 		if (p->peek_tok.kind == v__token__Kind_key_const) {
 			return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__ConstDecl[]) {v__parser__Parser_const_decl(p)}, sizeof(v__ast__ConstDecl)), .typ = 210 /* v.ast.ConstDecl */};
@@ -24979,6 +24985,12 @@ array_v__ast__Comment v__parser__Parser_eat_comments(v__parser__Parser* p) {
 }
 
 v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p, bool is_top_level) {
+// $if  trace_parser {
+#ifdef CUSTOM_DEFINE_trace_parser
+	v__token__Position tok_pos = v__token__Token_position(&p->tok);
+	eprintln(_STR("parsing file: %*.*s\000 | tok.kind: %*.*s\000 | tok.lit: %*.*s\000 | tok_pos: %*.*s\000 | stmt(%.*s\000)", 6, p->file_name, -30, v__token__Kind_str(p->tok.kind), -10, p->tok.lit, -10, v__token__Position_str(tok_pos), -45, is_top_level ? _SLIT("true") : _SLIT("false")));
+#endif
+// } trace_parser
 	p->is_stmt_ident = p->tok.kind == v__token__Kind_name;
 	if (p->tok.kind == v__token__Kind_lcbr) {
 		array_v__ast__Stmt stmts = v__parser__Parser_parse_block(p);
