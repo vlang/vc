@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b5b5176"
+#define V_COMMIT_HASH "f1fdafc"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8674991"
+	#define V_COMMIT_HASH "b5b5176"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b5b5176"
+	#define V_CURRENT_COMMIT_HASH "f1fdafc"
 #endif
 
 // V typedefs:
@@ -1592,6 +1592,7 @@ struct v__pref__Preferences {
 	bool is_parallel;
 	int error_limit;
 	bool is_vweb;
+	bool only_check_syntax;
 };
 
 struct v__util__EManager {
@@ -14405,7 +14406,7 @@ static string v__pref__mpath() {
 }
 
 v__pref__Preferences v__pref__new_preferences() {
-	v__pref__Preferences p = (v__pref__Preferences){.os = {0},.backend = {0},.build_mode = {0},.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=""},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.use_cache = 0,.is_stats = 0,.no_auto_free = 0,.cflags = (string){.str=""},.ccompiler = (string){.str=""},.third_party_option = (string){.str=""},.building_v = 0,.autofree = 0,.compress = 0,.fast = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=""},.lookup_path = __new_array(0, 1, sizeof(string)),.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=""},.out_name = (string){.str=""},.path = (string){.str=""},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.use_color = {0},.is_parallel = 0,.error_limit = 0,.is_vweb = 0,};
+	v__pref__Preferences p = (v__pref__Preferences){.os = {0},.backend = {0},.build_mode = {0},.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=""},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.use_cache = 0,.is_stats = 0,.no_auto_free = 0,.cflags = (string){.str=""},.ccompiler = (string){.str=""},.third_party_option = (string){.str=""},.building_v = 0,.autofree = 0,.compress = 0,.fast = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=""},.lookup_path = __new_array(0, 1, sizeof(string)),.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=""},.out_name = (string){.str=""},.path = (string){.str=""},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.use_color = {0},.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,};
 	v__pref__Preferences_fill_with_defaults(&p);
 	return p;
 }
@@ -14576,13 +14577,15 @@ v__pref__OS v__pref__get_host_os() {
 }
 
 multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) {
-	v__pref__Preferences* res = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = {0},.backend = {0},.build_mode = {0},.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=""},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.use_cache = 0,.is_stats = 0,.no_auto_free = 0,.cflags = (string){.str=""},.ccompiler = (string){.str=""},.third_party_option = (string){.str=""},.building_v = 0,.autofree = 0,.compress = 0,.fast = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=""},.lookup_path = __new_array(0, 1, sizeof(string)),.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=""},.out_name = (string){.str=""},.path = (string){.str=""},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.use_color = {0},.is_parallel = 0,.error_limit = 0,.is_vweb = 0,}, sizeof(v__pref__Preferences));
+	v__pref__Preferences* res = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = {0},.backend = {0},.build_mode = {0},.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=""},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.use_cache = 0,.is_stats = 0,.no_auto_free = 0,.cflags = (string){.str=""},.ccompiler = (string){.str=""},.third_party_option = (string){.str=""},.building_v = 0,.autofree = 0,.compress = 0,.fast = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=""},.lookup_path = __new_array(0, 1, sizeof(string)),.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=""},.out_name = (string){.str=""},.path = (string){.str=""},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.use_color = {0},.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,}, sizeof(v__pref__Preferences));
 	string command = tos_lit("");
 	int command_pos = 0;
 	for (int i = 0; i < args.len; i++) {
 		string arg = (*(string*)array_get(args, i));
 		array_string current_args = array_slice(args, i, args.len);
-		if (string_eq(arg, tos_lit("-v"))) {
+		if (string_eq(arg, tos_lit("-check-syntax"))) {
+			res->only_check_syntax = true;
+		} else if (string_eq(arg, tos_lit("-v"))) {
 			res->is_verbose = true;
 		} else if (string_eq(arg, tos_lit("-silent"))) {
 			res->output_mode = v__pref__OutputMode_silent;
@@ -21704,6 +21707,7 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 				.is_parallel = pref.is_parallel,
 				.error_limit = pref.error_limit,
 				.is_vweb = true, 
+				.only_check_syntax = pref.only_check_syntax,
 			};
 			v__checker__Checker c2 = v__checker__new_checker(c->table, (voidptr)&/*qq*/pref2);
 			v__checker__Checker_check(&c2, node->vweb_tmpl);
@@ -24708,7 +24712,7 @@ v__table__Type v__parser__Parser_parse_generic_struct_inst_type(v__parser__Parse
 }
 
 v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__Scope* scope) {
-	v__pref__Preferences* pref = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = {0},.backend = {0},.build_mode = {0},.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=""},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.use_cache = 0,.is_stats = 0,.no_auto_free = 0,.cflags = (string){.str=""},.ccompiler = (string){.str=""},.third_party_option = (string){.str=""},.building_v = 0,.autofree = 0,.compress = 0,.fast = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=""},.lookup_path = __new_array(0, 1, sizeof(string)),.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=""},.out_name = (string){.str=""},.path = (string){.str=""},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.use_color = {0},.is_parallel = 0,.error_limit = 0,.is_vweb = 0,}, sizeof(v__pref__Preferences));
+	v__pref__Preferences* pref = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = {0},.backend = {0},.build_mode = {0},.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=""},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.use_cache = 0,.is_stats = 0,.no_auto_free = 0,.cflags = (string){.str=""},.ccompiler = (string){.str=""},.third_party_option = (string){.str=""},.building_v = 0,.autofree = 0,.compress = 0,.fast = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=""},.lookup_path = __new_array(0, 1, sizeof(string)),.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=""},.out_name = (string){.str=""},.path = (string){.str=""},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.use_color = {0},.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,}, sizeof(v__pref__Preferences));
 	v__scanner__Scanner* s = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments, pref);
 	v__parser__Parser p = (v__parser__Parser){.file_name = (string){.str=""},.file_name_dir = (string){.str=""},.scanner = s,.comments_mode = v__scanner__CommentsMode_skip_comments,.tok = {0},.prev_tok = {0},.peek_tok = {0},.peek_tok2 = {0},.peek_tok3 = {0},.table = table,.language = {0},.inside_if = 0,.inside_if_expr = 0,.inside_or_expr = 0,.inside_for = 0,.inside_fn = 0,.inside_str_interp = 0,.pref = pref,.builtin_mod = 0,.mod = (string){.str=""},.attrs = __new_array(0, 1, sizeof(string)),.attr_ctdefine = (string){.str=""},.expr_mod = (string){.str=""},.scope = scope,.global_scope = (v__ast__Scope*)memdup(&(v__ast__Scope){.objects = new_map_1(sizeof(v__ast__ScopeObject)),.parent = 0,.children = __new_array(0, 1, sizeof(v__ast__Scope*)),.start_pos = 0,.end_pos = 0,}, sizeof(v__ast__Scope)),.imports = new_map_1(sizeof(string)),.ast_imports = __new_array(0, 1, sizeof(v__ast__Import)),.used_imports = __new_array(0, 1, sizeof(string)),.is_amp = 0,.returns = 0,.inside_match = 0,.inside_match_case = 0,.inside_match_body = 0,.inside_unsafe = 0,.is_stmt_ident = 0,.expecting_type = 0,.errors = __new_array(0, 1, sizeof(v__errors__Error)),.warnings = __new_array(0, 1, sizeof(v__errors__Warning)),.cur_fn_name = (string){.str=""},};
 	v__parser__Parser_init_parse_fns(&p);
@@ -35506,6 +35510,9 @@ string v__builder__Builder_gen_c(v__builder__Builder* b, array_string v_files) {
 	i64 t1 = time__ticks();
 	i64 parse_time = t1 - t0;
 	v__builder__Builder_info(/*rec*/*b, _STR("PARSE: %"PRId64"\000ms", 2, parse_time));
+	if (b->pref->only_check_syntax) {
+		return tos_lit("");
+	}
 	v__builder__Builder_generic_struct_insts_to_concrete(b);
 	v__checker__Checker_check_files(&b->checker, b->parsed_files);
 	i64 t2 = time__ticks();
@@ -35616,6 +35623,12 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 	}
 	if (v->pref->is_verbose) {
 		println(_STR("builder.cc() pref.out_name=\"%.*s\000\"", 2, v->pref->out_name));
+	}
+	if (v->pref->only_check_syntax) {
+		if (v->pref->is_verbose) {
+			println(tos_lit("builder.cc returning early, since pref.only_check_syntax is true"));
+		}
+		return;
 	}
 	v__builder__Builder_build_thirdparty_obj_files(v);
 	string vexe = v__pref__vexe_path();
