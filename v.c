@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "53023c1"
+#define V_COMMIT_HASH "53ee5eb"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9c43d36"
+	#define V_COMMIT_HASH "53023c1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "53023c1"
+	#define V_CURRENT_COMMIT_HASH "53ee5eb"
 #endif
 
 // V typedefs:
@@ -16707,7 +16707,7 @@ string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 		if (vals.len > 2) {
 			res = string_add(string_add((*(string*)array_get(vals, vals.len - 2)), tos_lit(".")), (*(string*)array_get(vals, vals.len - 1)));
 		}
-		if (string_starts_with(res, table->cmod_prefix)) {
+		if (string_starts_with(res, table->cmod_prefix) || (sym->kind == v__table__Kind_array && string_starts_with(res, string_add(tos_lit("[]"), table->cmod_prefix)))) {
 			res = string_replace_once(res, table->cmod_prefix, tos_lit(""));
 		}
 		if (sym->kind == v__table__Kind_array && !string_starts_with(res, tos_lit("[]"))) {
