@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "40da32a"
+#define V_COMMIT_HASH "23c8e1f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e747dfd"
+	#define V_COMMIT_HASH "40da32a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "40da32a"
+	#define V_CURRENT_COMMIT_HASH "23c8e1f"
 #endif
 
 // V typedefs:
@@ -21444,6 +21444,12 @@ static void v__checker__Checker_stmts(v__checker__Checker* c, array_v__ast__Stmt
 	array _t614 = stmts;
 	for (int _t615 = 0; _t615 < _t614.len; ++_t615) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t614.data)[_t615];
+// $if  debug_stmts {
+#ifdef CUSTOM_DEFINE_debug_stmts
+		v__token__Position stmt_pos = v__ast__Stmt_position(stmt);
+		eprintln(_STR("file: %*.*s\000 | stmt pos: %.*s", 2, c->file.path, -30, v__token__Position_str(  stmt_pos)));
+#endif
+// } debug_stmts
 		if (c->scope_returns) {
 			if (unreachable.line_nr == -1) {
 				unreachable = v__ast__Stmt_position(stmt);
@@ -22734,15 +22740,15 @@ int _t675_len = stmts.len;
 	for (int _t677 = 0; _t677 < _t676.len; ++_t677) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t676.data)[_t677];
 		if (stmt.typ == 228 /* v.ast.UnsafeStmt */) {
-			v__ast__UnsafeStmt* _sc_tmp_99251 = (v__ast__UnsafeStmt*)stmt.obj;
-			v__ast__UnsafeStmt* stmt = _sc_tmp_99251;
+			v__ast__UnsafeStmt* _sc_tmp_99369 = (v__ast__UnsafeStmt*)stmt.obj;
+			v__ast__UnsafeStmt* stmt = _sc_tmp_99369;
 			// FOR IN array
 			array _t678 = stmt->stmts;
 			for (int _t679 = 0; _t679 < _t678.len; ++_t679) {
 				v__ast__Stmt ustmt = ((v__ast__Stmt*)_t678.data)[_t679];
 				if (ustmt.typ == 225 /* v.ast.Return */) {
-					v__ast__Return* _sc_tmp_99312 = (v__ast__Return*)ustmt.obj;
-					v__ast__Return* ustmt = _sc_tmp_99312;
+					v__ast__Return* _sc_tmp_99430 = (v__ast__Return*)ustmt.obj;
+					v__ast__Return* ustmt = _sc_tmp_99430;
 					has_unsafe_return = true;
 				}
 			}
