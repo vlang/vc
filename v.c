@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e5a5e76"
+#define V_COMMIT_HASH "1c682d7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e3f7681"
+	#define V_COMMIT_HASH "e5a5e76"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e5a5e76"
+	#define V_CURRENT_COMMIT_HASH "1c682d7"
 #endif
 
 // V typedefs:
@@ -32674,13 +32674,13 @@ static void v__gen__Gen_string_literal(v__gen__Gen* g, v__ast__StringLiteral nod
 static void v__gen__Gen_string_inter_literal_sb_optimized(v__gen__Gen* g, v__ast__CallExpr call_expr) {
 	v__ast__StringInterLiteral* node = /* as */ (v__ast__StringInterLiteral*)__as_cast((*(v__ast__CallArg*)array_get(call_expr.args, 0)).expr.obj, (*(v__ast__CallArg*)array_get(call_expr.args, 0)).expr.typ, /*expected:*/173);
 	v__gen__Gen_writeln(g, tos_lit("// sb inter opt"));
-	string write = tos_lit("writeln");
+	bool is_nl = string_eq(call_expr.name, tos_lit("writeln"));
 	// FOR IN array
 	array _t1069 = node->vals;
 	for (int i = 0; i < _t1069.len; ++i) {
 		string val = ((string*)_t1069.data)[i];
 		string escaped_val = string_replace_each(val, new_array_from_c_array(8, 8, sizeof(string), _MOV((string[8]){tos_lit("\""), tos_lit("\\\""), tos_lit("\r\n"), tos_lit("\\n"), tos_lit("\n"), tos_lit("\\n"), tos_lit("%"), tos_lit("%%")})));
-		v__gen__Gen_write(g, _STR("strings__Builder_%.*s\000(&", 2, write));
+		v__gen__Gen_write(g, tos_lit("strings__Builder_write(&"));
 		v__gen__Gen_expr(g, call_expr.left);
 		v__gen__Gen_write(g, tos_lit(", tos_lit(\""));
 		v__gen__Gen_write(g, escaped_val);
@@ -32688,11 +32688,21 @@ static void v__gen__Gen_string_inter_literal_sb_optimized(v__gen__Gen* g, v__ast
 		if (i >= node->exprs.len) {
 			break;
 		}
-		v__gen__Gen_write(g, _STR("strings__Builder_%.*s\000(&", 2, write));
+		if (is_nl && i == node->exprs.len - 1) {
+			v__gen__Gen_write(g, tos_lit("strings__Builder_writeln(&"));
+		} else {
+			v__gen__Gen_write(g, tos_lit("strings__Builder_write(&"));
+		}
 		v__gen__Gen_expr(g, call_expr.left);
 		v__gen__Gen_write(g, tos_lit(", "));
-		v__gen__Gen_write(g, v__gen__Gen_typ(g, (*(v__table__Type*)array_get(node->expr_types, i))));
-		v__gen__Gen_write(g, tos_lit("_str("));
+		v__table__Type typ = (*(v__table__Type*)array_get(node->expr_types, i));
+		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
+		if (sym->kind == v__table__Kind_alias && v__table__Type_is_number((/* as */ (v__table__Alias*)__as_cast(sym->info.obj, sym->info.typ, /*expected:*/260))->parent_type)) {
+			v__gen__Gen_write(g, tos_lit("int_str("));
+		} else {
+			v__gen__Gen_write(g, v__gen__Gen_typ(g, typ));
+			v__gen__Gen_write(g, tos_lit("_str("));
+		}
 		v__gen__Gen_expr(g, (*(v__ast__Expr*)array_get(node->exprs, i)));
 		v__gen__Gen_writeln(g, tos_lit("));"));
 	}
