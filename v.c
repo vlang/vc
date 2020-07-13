@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e3f7681"
+#define V_COMMIT_HASH "e5a5e76"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "97d01a5"
+	#define V_COMMIT_HASH "e3f7681"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e3f7681"
+	#define V_CURRENT_COMMIT_HASH "e5a5e76"
 #endif
 
 // V typedefs:
@@ -8220,7 +8220,7 @@ static int compare_ints(int* a, int* b) {
 }
 
 void array_int_sort(array_int* a) {
-	array_sort_with_compare(a, (voidptr)&/*qq*/compare_ints);
+	array_sort_with_compare(a, compare_ints);
 }
 
 int array_string_index(array_string a, string v) {
@@ -10021,7 +10021,7 @@ static int compare_rep_index(RepIndex* a, RepIndex* b) {
 }
 
 static void array_RepIndex_sort(array_RepIndex* a) {
-	array_sort_with_compare(a, (voidptr)&/*qq*/compare_rep_index);
+	array_sort_with_compare(a, compare_rep_index);
 }
 
 string string_replace_each(string s, array_string vals) {
@@ -10706,15 +10706,15 @@ static int compare_lower_strings(string* a, string* b) {
 }
 
 void array_string_sort(array_string* s) {
-	array_sort_with_compare(s, (voidptr)&/*qq*/compare_strings);
+	array_sort_with_compare(s, compare_strings);
 }
 
 void array_string_sort_ignore_case(array_string* s) {
-	array_sort_with_compare(s, (voidptr)&/*qq*/compare_lower_strings);
+	array_sort_with_compare(s, compare_lower_strings);
 }
 
 void array_string_sort_by_len(array_string* s) {
-	array_sort_with_compare(s, (voidptr)&/*qq*/compare_strings_by_len);
+	array_sort_with_compare(s, compare_strings_by_len);
 }
 
 string string_str(string s) {
@@ -32035,7 +32035,10 @@ inline static void v__gen__Gen_ref_or_deref_arg(v__gen__Gen* g, v__ast__CallArg 
 			}
 		}
 		if (!g->is_json_fn) {
-			v__gen__Gen_write(g, tos_lit("(voidptr)&/*qq*/"));
+			v__table__TypeSymbol* arg_typ_sym = v__table__Table_get_type_symbol(g->table, arg.typ);
+			if (arg_typ_sym->kind != v__table__Kind_function) {
+				v__gen__Gen_write(g, tos_lit("(voidptr)&/*qq*/"));
+			}
 		}
 	}
 	v__gen__Gen_expr_with_cast(g, arg.expr, arg.typ, expected_type);
