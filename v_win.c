@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "06f5279"
+#define V_COMMIT_HASH "e23925f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "899c69c"
+	#define V_COMMIT_HASH "06f5279"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "06f5279"
+	#define V_CURRENT_COMMIT_HASH "e23925f"
 #endif
 
 // V typedefs:
@@ -1595,6 +1595,7 @@ struct v__pref__Preferences {
 	bool is_vweb;
 	bool only_check_syntax;
 	bool experimental;
+	bool show_timings;
 };
 
 struct v__util__EManager {
@@ -4957,6 +4958,7 @@ static string v__builder__module_path(string mod);
 Option_string v__builder__Builder_find_module_path(v__builder__Builder b, string mod, string fpath);
 static void v__builder__Builder_print_warnings_and_errors(v__builder__Builder* b);
 static void v__builder__verror(string s);
+void v__builder__Builder_timing_message(v__builder__Builder* b, string msg);
 string v__builder__Builder_gen_c(v__builder__Builder* b, array_string v_files);
 void v__builder__Builder_build_c(v__builder__Builder* b, array_string v_files, string out_file);
 void v__builder__Builder_compile_c(v__builder__Builder* b);
@@ -14436,7 +14438,7 @@ static string v__pref__mpath() {
 }
 
 v__pref__Preferences v__pref__new_preferences() {
-	v__pref__Preferences p = (v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)""},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.use_cache = 0,.is_stats = 0,.no_auto_free = 0,.cflags = (string){.str=(byteptr)""},.ccompiler = (string){.str=(byteptr)""},.third_party_option = (string){.str=(byteptr)""},.building_v = 0,.autofree = 0,.compress = 0,.fast = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)""},.lookup_path = __new_array(0, 1, sizeof(string)),.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)""},.out_name = (string){.str=(byteptr)""},.path = (string){.str=(byteptr)""},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,};
+	v__pref__Preferences p = (v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)""},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.use_cache = 0,.is_stats = 0,.no_auto_free = 0,.cflags = (string){.str=(byteptr)""},.ccompiler = (string){.str=(byteptr)""},.third_party_option = (string){.str=(byteptr)""},.building_v = 0,.autofree = 0,.compress = 0,.fast = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)""},.lookup_path = __new_array(0, 1, sizeof(string)),.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)""},.out_name = (string){.str=(byteptr)""},.path = (string){.str=(byteptr)""},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.show_timings = 0,};
 	v__pref__Preferences_fill_with_defaults(&p);
 	return p;
 }
@@ -14607,13 +14609,15 @@ v__pref__OS v__pref__get_host_os() {
 }
 
 multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) {
-	v__pref__Preferences* res = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)""},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.use_cache = 0,.is_stats = 0,.no_auto_free = 0,.cflags = (string){.str=(byteptr)""},.ccompiler = (string){.str=(byteptr)""},.third_party_option = (string){.str=(byteptr)""},.building_v = 0,.autofree = 0,.compress = 0,.fast = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)""},.lookup_path = __new_array(0, 1, sizeof(string)),.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)""},.out_name = (string){.str=(byteptr)""},.path = (string){.str=(byteptr)""},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,}, sizeof(v__pref__Preferences));
+	v__pref__Preferences* res = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)""},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.use_cache = 0,.is_stats = 0,.no_auto_free = 0,.cflags = (string){.str=(byteptr)""},.ccompiler = (string){.str=(byteptr)""},.third_party_option = (string){.str=(byteptr)""},.building_v = 0,.autofree = 0,.compress = 0,.fast = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)""},.lookup_path = __new_array(0, 1, sizeof(string)),.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)""},.out_name = (string){.str=(byteptr)""},.path = (string){.str=(byteptr)""},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.show_timings = 0,}, sizeof(v__pref__Preferences));
 	string command = tos_lit("");
 	int command_pos = 0;
 	for (int i = 0; i < args.len; i++) {
 		string arg = (*(string*)array_get(args, i));
 		array_string current_args = array_slice(args, i, args.len);
-		if (string_eq(arg, tos_lit("-check-syntax"))) {
+		if (string_eq(arg, tos_lit("-show-timings"))) {
+			res->show_timings = true;
+		} else if (string_eq(arg, tos_lit("-check-syntax"))) {
 			res->only_check_syntax = true;
 		} else if (string_eq(arg, tos_lit("-v"))) {
 			res->is_verbose = true;
@@ -21817,6 +21821,7 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 				.is_vweb = true, 
 				.only_check_syntax = pref.only_check_syntax,
 				.experimental = pref.experimental,
+				.show_timings = pref.show_timings,
 			};
 			v__checker__Checker c2 = v__checker__new_checker(c->table, (voidptr)&/*qq*/pref2);
 			v__checker__Checker_check(&c2, node->vweb_tmpl);
@@ -24862,7 +24867,7 @@ v__table__Type v__parser__Parser_parse_generic_struct_inst_type(v__parser__Parse
 }
 
 v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__Scope* scope) {
-	v__pref__Preferences* pref = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)""},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.use_cache = 0,.is_stats = 0,.no_auto_free = 0,.cflags = (string){.str=(byteptr)""},.ccompiler = (string){.str=(byteptr)""},.third_party_option = (string){.str=(byteptr)""},.building_v = 0,.autofree = 0,.compress = 0,.fast = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)""},.lookup_path = __new_array(0, 1, sizeof(string)),.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)""},.out_name = (string){.str=(byteptr)""},.path = (string){.str=(byteptr)""},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,}, sizeof(v__pref__Preferences));
+	v__pref__Preferences* pref = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)""},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.use_cache = 0,.is_stats = 0,.no_auto_free = 0,.cflags = (string){.str=(byteptr)""},.ccompiler = (string){.str=(byteptr)""},.third_party_option = (string){.str=(byteptr)""},.building_v = 0,.autofree = 0,.compress = 0,.fast = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)""},.lookup_path = __new_array(0, 1, sizeof(string)),.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)""},.out_name = (string){.str=(byteptr)""},.path = (string){.str=(byteptr)""},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.show_timings = 0,}, sizeof(v__pref__Preferences));
 	v__scanner__Scanner* s = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments, pref);
 	v__parser__Parser p = (v__parser__Parser){.file_name = (string){.str=(byteptr)""},.file_name_dir = (string){.str=(byteptr)""},.scanner = s,.comments_mode = v__scanner__CommentsMode_skip_comments,.tok = {0},.prev_tok = {0},.peek_tok = {0},.peek_tok2 = {0},.peek_tok3 = {0},.table = table,.language = 0,.inside_if = 0,.inside_if_expr = 0,.inside_or_expr = 0,.inside_for = 0,.inside_fn = 0,.inside_str_interp = 0,.pref = pref,.builtin_mod = 0,.mod = (string){.str=(byteptr)""},.attrs = __new_array(0, 1, sizeof(string)),.attr_ctdefine = (string){.str=(byteptr)""},.expr_mod = (string){.str=(byteptr)""},.scope = scope,.global_scope = (v__ast__Scope*)memdup(&(v__ast__Scope){.objects = new_map_1(sizeof(v__ast__ScopeObject)),.parent = 0,.children = __new_array(0, 1, sizeof(v__ast__Scope*)),.start_pos = 0,.end_pos = 0,}, sizeof(v__ast__Scope)),.imports = new_map_1(sizeof(string)),.ast_imports = __new_array(0, 1, sizeof(v__ast__Import)),.used_imports = __new_array(0, 1, sizeof(string)),.is_amp = 0,.returns = 0,.inside_match = 0,.inside_match_case = 0,.inside_match_body = 0,.inside_unsafe = 0,.is_stmt_ident = 0,.expecting_type = 0,.errors = __new_array(0, 1, sizeof(v__errors__Error)),.warnings = __new_array(0, 1, sizeof(v__errors__Warning)),.cur_fn_name = (string){.str=(byteptr)""},};
 	v__parser__Parser_init_parse_fns(&p);
@@ -35710,13 +35715,21 @@ static void v__builder__verror(string s) {
 	v__util__verror(tos_lit("builder error"), s);
 }
 
+void v__builder__Builder_timing_message(v__builder__Builder* b, string msg) {
+	if (b->pref->show_timings) {
+		println(msg);
+	} else {
+		v__builder__Builder_info(/*rec*/*b, msg);
+	}
+}
+
 string v__builder__Builder_gen_c(v__builder__Builder* b, array_string v_files) {
 	i64 t0 = time__ticks();
 	b->parsed_files = v__parser__parse_files(v_files, b->table, b->pref, b->global_scope);
 	v__builder__Builder_parse_imports(b);
 	i64 t1 = time__ticks();
 	i64 parse_time = t1 - t0;
-	v__builder__Builder_info(/*rec*/*b, _STR("PARSE: %"PRId64"\000ms", 2, parse_time));
+	v__builder__Builder_timing_message(b, _STR("PARSE: %"PRId64"\000ms", 2, parse_time));
 	if (b->pref->only_check_syntax) {
 		return tos_lit("");
 	}
@@ -35724,12 +35737,12 @@ string v__builder__Builder_gen_c(v__builder__Builder* b, array_string v_files) {
 	v__checker__Checker_check_files(&b->checker, b->parsed_files);
 	i64 t2 = time__ticks();
 	i64 check_time = t2 - t1;
-	v__builder__Builder_info(/*rec*/*b, _STR("CHECK: %"PRId64"\000ms", 2, check_time));
+	v__builder__Builder_timing_message(b, _STR("CHECK: %"PRId64"\000ms", 2, check_time));
 	v__builder__Builder_print_warnings_and_errors(b);
 	string res = v__gen__cgen(b->parsed_files, b->table, b->pref);
 	i64 t3 = time__ticks();
 	i64 gen_time = t3 - t2;
-	v__builder__Builder_info(/*rec*/*b, _STR("C GEN: %"PRId64"\000ms", 2, gen_time));
+	v__builder__Builder_timing_message(b, _STR("C GEN: %"PRId64"\000ms", 2, gen_time));
 	return res;
 }
 
@@ -36126,6 +36139,7 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 		println(_STR("%.*s\000 took %"PRId64"\000 ms", 3, ccompiler, diff));
 		println(tos_lit("=========\n"));
 	}
+	v__builder__Builder_timing_message(v, _STR("C %*.*s\000: %"PRId64"\000ms", 3, ccompiler, 3, diff));
 	if (v->pref->compress) {
 // $if  windows {
 #ifdef _WIN32
@@ -36631,16 +36645,16 @@ string v__builder__Builder_gen_js(v__builder__Builder* b, array_string v_files) 
 	v__builder__Builder_parse_imports(b);
 	i64 t1 = time__ticks();
 	i64 parse_time = t1 - t0;
-	v__builder__Builder_info(/*rec*/*b, _STR("PARSE: %"PRId64"\000ms", 2, parse_time));
+	v__builder__Builder_timing_message(b, _STR("PARSE: %"PRId64"\000ms", 2, parse_time));
 	v__checker__Checker_check_files(&b->checker, b->parsed_files);
 	i64 t2 = time__ticks();
 	i64 check_time = t2 - t1;
-	v__builder__Builder_info(/*rec*/*b, _STR("CHECK: %"PRId64"\000ms", 2, check_time));
+	v__builder__Builder_timing_message(b, _STR("CHECK: %"PRId64"\000ms", 2, check_time));
 	v__builder__Builder_print_warnings_and_errors(b);
 	string res = v__gen__js__gen(b->parsed_files, b->table, b->pref);
 	i64 t3 = time__ticks();
 	i64 gen_time = t3 - t2;
-	v__builder__Builder_info(/*rec*/*b, _STR("JS GEN: %"PRId64"\000ms", 2, gen_time));
+	v__builder__Builder_timing_message(b, _STR("JS GEN: %"PRId64"\000ms", 2, gen_time));
 	return res;
 }
 
@@ -37053,15 +37067,15 @@ void v__builder__Builder_build_x64(v__builder__Builder* b, array_string v_files,
 	v__builder__Builder_parse_imports(b);
 	i64 t1 = time__ticks();
 	i64 parse_time = t1 - t0;
-	v__builder__Builder_info(/*rec*/*b, _STR("PARSE: %"PRId64"\000ms", 2, parse_time));
+	v__builder__Builder_timing_message(b, _STR("PARSE: %"PRId64"\000ms", 2, parse_time));
 	v__checker__Checker_check_files(&b->checker, b->parsed_files);
 	i64 t2 = time__ticks();
 	i64 check_time = t2 - t1;
-	v__builder__Builder_info(/*rec*/*b, _STR("CHECK: %"PRId64"\000ms", 2, check_time));
+	v__builder__Builder_timing_message(b, _STR("CHECK: %"PRId64"\000ms", 2, check_time));
 	v__gen__x64__gen(b->parsed_files, out_file, b->pref);
 	i64 t3 = time__ticks();
 	i64 gen_time = t3 - t2;
-	v__builder__Builder_info(/*rec*/*b, _STR("x64 GEN: %"PRId64"\000ms", 2, gen_time));
+	v__builder__Builder_timing_message(b, _STR("x64 GEN: %"PRId64"\000ms", 2, gen_time));
 }
 
 void v__builder__Builder_compile_x64(v__builder__Builder* b) {
