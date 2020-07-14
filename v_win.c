@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "de0b96f"
+#define V_COMMIT_HASH "cf7d03b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "60ce938"
+	#define V_COMMIT_HASH "de0b96f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "de0b96f"
+	#define V_CURRENT_COMMIT_HASH "cf7d03b"
 #endif
 
 // V typedefs:
@@ -3393,6 +3393,7 @@ static voidptr array_get_unsafe(array a, int i);
 static voidptr array_get(array a, int i);
 voidptr array_first(array a);
 voidptr array_last(array a);
+voidptr array_pop(array* a);
 static array array_slice(array a, int start, int _end);
 static array array_slice2(array a, int start, int _end, bool end_max);
 static array array_clone_static(array a);
@@ -8280,6 +8281,20 @@ voidptr array_last(array a) {
 	{ // Unsafe block
 		return ((byteptr)(a.data)) + (a.len - 1) * a.element_size;
 	}
+}
+
+voidptr array_pop(array* a) {
+// $if !no_bounds_checking {
+#ifndef CUSTOM_DEFINE_no_bounds_checking
+	if (a->len == 0) {
+		v_panic(tos_lit("array.pop: array is empty"));
+	}
+#endif
+// } no_bounds_checking
+	int new_len = a->len - 1;
+	byteptr last_elem = ((byteptr)(a->data)) + (new_len) * a->element_size;
+	a->len = new_len;
+	return memdup(last_elem, a->element_size);
 }
 
 static array array_slice(array a, int start, int _end) {
@@ -20431,10 +20446,14 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 		call_expr->return_type = left_type;
 		call_expr->receiver_type = v__table__Type_to_ptr(left_type);
 		return call_expr->return_type;
-	} else if (left_type_sym->kind == v__table__Kind_array && (string_eq(method_name, tos_lit("first")) || string_eq(method_name, tos_lit("last")))) {
+	} else if (left_type_sym->kind == v__table__Kind_array && (string_eq(method_name, tos_lit("first")) || string_eq(method_name, tos_lit("last")) || string_eq(method_name, tos_lit("pop")))) {
 		v__table__Array* info = /* as */ (v__table__Array*)__as_cast(left_type_sym->info.obj, left_type_sym->info.typ, /*expected:*/287);
 		call_expr->return_type = info->elem_type;
-		call_expr->receiver_type = left_type;
+		if (string_eq(method_name, tos_lit("pop"))) {
+			call_expr->receiver_type = v__table__Type_to_ptr(left_type);
+		} else {
+			call_expr->receiver_type = left_type;
+		}
 		return call_expr->return_type;
 	} else if (left_type_sym->kind == v__table__Kind_array && (string_eq(method_name, tos_lit("insert")) || string_eq(method_name, tos_lit("prepend")))) {
 		v__table__Array* array_info = /* as */ (v__table__Array*)__as_cast(left_type_sym->info.obj, left_type_sym->info.typ, /*expected:*/287);
@@ -20823,8 +20842,8 @@ static bool v__checker__Checker_type_implements(v__checker__Checker* c, v__table
 
 v__table__Type v__checker__Checker_check_expr_opt_call(v__checker__Checker* c, v__ast__Expr expr, v__table__Type ret_type) {
 	if (expr.typ == 173 /* v.ast.CallExpr */) {
-		v__ast__CallExpr* _sc_tmp_43777 = (v__ast__CallExpr*)expr.obj;
-		v__ast__CallExpr* expr = _sc_tmp_43777;
+		v__ast__CallExpr* _sc_tmp_43876 = (v__ast__CallExpr*)expr.obj;
+		v__ast__CallExpr* expr = _sc_tmp_43876;
 		if (v__table__Type_has_flag(expr->return_type, v__table__TypeFlag_optional)) {
 			if (expr->or_block.kind == v__ast__OrKind_absent) {
 				if (ret_type != _const_v__table__void_type) {
@@ -21077,8 +21096,8 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 	}
 	if (assign_stmt->left.len != right_len) {
 		if (right_first.typ == 173 /* v.ast.CallExpr */) {
-			v__ast__CallExpr* _sc_tmp_51946 = (v__ast__CallExpr*)right_first.obj;
-			v__ast__CallExpr* right_first = _sc_tmp_51946;
+			v__ast__CallExpr* _sc_tmp_52045 = (v__ast__CallExpr*)right_first.obj;
+			v__ast__CallExpr* right_first = _sc_tmp_52045;
 			v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) but `%.*s\000()` returns %"PRId32"\000 value(s)", 4, assign_stmt->left.len, right_first->name, right_len), assign_stmt->pos);
 		} else {
 			v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) %"PRId32"\000 value(s)", 3, assign_stmt->left.len, right_len), assign_stmt->pos);
@@ -21586,7 +21605,7 @@ static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) 
 			VAssertMetaInfo v_assert_meta_info__t642;
 			memset(&v_assert_meta_info__t642, 0, sizeof(VAssertMetaInfo));
 			v_assert_meta_info__t642.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-			v_assert_meta_info__t642.line_nr = 2060;
+			v_assert_meta_info__t642.line_nr = 2064;
 			v_assert_meta_info__t642.fn_name = tos_lit("stmt");
 			v_assert_meta_info__t642.src = tos_lit("!c.inside_unsafe");
 			__print_assert_failure(&v_assert_meta_info__t642);
@@ -22433,7 +22452,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 		VAssertMetaInfo v_assert_meta_info__t684;
 		memset(&v_assert_meta_info__t684, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t684.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t684.line_nr = 2697;
+		v_assert_meta_info__t684.line_nr = 2701;
 		v_assert_meta_info__t684.fn_name = tos_lit("unsafe_expr");
 		v_assert_meta_info__t684.src = tos_lit("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t684);
@@ -22446,8 +22465,8 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 	}
 	v__ast__Stmt last = (*(v__ast__Stmt*)array_get(node->stmts, 0));
 	if (last.typ == 217 /* v.ast.ExprStmt */) {
-		v__ast__ExprStmt* _sc_tmp_85583 = (v__ast__ExprStmt*)last.obj;
-		v__ast__ExprStmt* last = _sc_tmp_85583;
+		v__ast__ExprStmt* _sc_tmp_85682 = (v__ast__ExprStmt*)last.obj;
+		v__ast__ExprStmt* last = _sc_tmp_85682;
 		v__table__Type t = v__checker__Checker_expr(c, last->expr);
 		// Defer begin
 		c->inside_unsafe = false;
@@ -22641,8 +22660,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 		println(v__table__Kind_str(typ_sym->kind));
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_91138 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_91138.arg0;
+		multi_return_string_v__token__Position mr_91237 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_91237.arg0;
 	}
 	if ((v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym)) && !c->inside_unsafe) {
 		v__checker__Checker_error(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -22989,15 +23008,15 @@ int _t714_len = stmts.len;
 	for (int _t716 = 0; _t716 < _t715.len; ++_t716) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t715.data)[_t716];
 		if (stmt.typ == 232 /* v.ast.UnsafeStmt */) {
-			v__ast__UnsafeStmt* _sc_tmp_102044 = (v__ast__UnsafeStmt*)stmt.obj;
-			v__ast__UnsafeStmt* stmt = _sc_tmp_102044;
+			v__ast__UnsafeStmt* _sc_tmp_102143 = (v__ast__UnsafeStmt*)stmt.obj;
+			v__ast__UnsafeStmt* stmt = _sc_tmp_102143;
 			// FOR IN array
 			array _t717 = stmt->stmts;
 			for (int _t718 = 0; _t718 < _t717.len; ++_t718) {
 				v__ast__Stmt ustmt = ((v__ast__Stmt*)_t717.data)[_t718];
 				if (ustmt.typ == 229 /* v.ast.Return */) {
-					v__ast__Return* _sc_tmp_102105 = (v__ast__Return*)ustmt.obj;
-					v__ast__Return* ustmt = _sc_tmp_102105;
+					v__ast__Return* _sc_tmp_102204 = (v__ast__Return*)ustmt.obj;
+					v__ast__Return* ustmt = _sc_tmp_102204;
 					has_unsafe_return = true;
 				}
 			}
@@ -31991,9 +32010,9 @@ static void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node) {
 		}
 		v__gen__Gen_gen_str_for_type_with_styp(g, node.receiver_type, styp);
 	}
-	if (left_sym->kind == v__table__Kind_array && (string_eq(node.name, tos_lit("repeat")) || string_eq(node.name, tos_lit("sort_with_compare")) || string_eq(node.name, tos_lit("free")) || string_eq(node.name, tos_lit("push_many")) || string_eq(node.name, tos_lit("trim")) || string_eq(node.name, tos_lit("first")) || string_eq(node.name, tos_lit("last")) || string_eq(node.name, tos_lit("clone")) || string_eq(node.name, tos_lit("reverse")) || string_eq(node.name, tos_lit("slice")))) {
+	if (left_sym->kind == v__table__Kind_array && (string_eq(node.name, tos_lit("repeat")) || string_eq(node.name, tos_lit("sort_with_compare")) || string_eq(node.name, tos_lit("free")) || string_eq(node.name, tos_lit("push_many")) || string_eq(node.name, tos_lit("trim")) || string_eq(node.name, tos_lit("first")) || string_eq(node.name, tos_lit("last")) || string_eq(node.name, tos_lit("pop")) || string_eq(node.name, tos_lit("clone")) || string_eq(node.name, tos_lit("reverse")) || string_eq(node.name, tos_lit("slice")))) {
 		receiver_type_name = tos_lit("array");
-		if ((string_eq(node.name, tos_lit("last")) || string_eq(node.name, tos_lit("first")))) {
+		if ((string_eq(node.name, tos_lit("last")) || string_eq(node.name, tos_lit("first")) || string_eq(node.name, tos_lit("pop")))) {
 			string return_type_str = v__gen__Gen_typ(g, node.return_type);
 			v__gen__Gen_write(g, _STR("*(%.*s\000*)", 2, return_type_str));
 		}
@@ -32004,8 +32023,8 @@ static void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node) {
 		if (node.left.typ == 183 /* v.ast.IndexExpr */) {
 			v__ast__Expr idx = (/* as */ (v__ast__IndexExpr*)__as_cast(node.left.obj, node.left.typ, /*expected:*/183))->index;
 			if (idx.typ == 195 /* v.ast.RangeExpr */) {
-				v__ast__RangeExpr* _sc_tmp_11684 = (v__ast__RangeExpr*)idx.obj;
-				v__ast__RangeExpr* idx = _sc_tmp_11684;
+				v__ast__RangeExpr* _sc_tmp_11698 = (v__ast__RangeExpr*)idx.obj;
+				v__ast__RangeExpr* idx = _sc_tmp_11698;
 				name = v__util__no_dots(_STR("%.*s\000_%.*s\000_static", 3, receiver_type_name, node.name));
 				is_range_slice = true;
 			}
@@ -32116,11 +32135,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_16274 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_16274.arg0;
-		string pafile = mr_16274.arg1;
-		string pamod = mr_16274.arg2;
-		string pafn = mr_16274.arg3;
+		multi_return_int_string_string_string mr_16288 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_16288.arg0;
+		string pafile = mr_16288.arg1;
+		string pamod = mr_16288.arg2;
+		string pafn = mr_16288.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		v__gen__Gen_write(g, tos_lit(")"));
