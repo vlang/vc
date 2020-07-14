@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5ad957f"
+#define V_COMMIT_HASH "60ce938"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e23925f"
+	#define V_COMMIT_HASH "5ad957f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5ad957f"
+	#define V_CURRENT_COMMIT_HASH "60ce938"
 #endif
 
 // V typedefs:
@@ -4714,7 +4714,7 @@ static void v__builder__Builder_myfree(v__builder__Builder* b);
 static void v__builder__Builder_run_compiled_executable_and_exit(v__builder__Builder* b);
 static void v__builder__Builder_set_module_lookup_paths(v__builder__Builder* v);
 array_string v__builder__Builder_get_builtin_files(v__builder__Builder v);
-array_string v__builder__Builder_get_user_files(v__builder__Builder v);
+array_string v__builder__Builder_get_user_files(v__builder__Builder* v);
 void v__builder__Builder_generic_struct_insts_to_concrete(v__builder__Builder* b);
 string v__builder__Builder_gen_js(v__builder__Builder* b, array_string v_files);
 void v__builder__Builder_build_js(v__builder__Builder* b, array_string v_files, string out_file);
@@ -35699,7 +35699,7 @@ void v__builder__Builder_compile_c(v__builder__Builder* b) {
 #endif
 // } windows
 	array_string files = v__builder__Builder_get_builtin_files(/*rec*/*b);
-	_PUSH_MANY(&files, (v__builder__Builder_get_user_files(/*rec*/*b)), _t1269, array_string);
+	_PUSH_MANY(&files, (v__builder__Builder_get_user_files(b)), _t1269, array_string);
 	v__builder__Builder_set_module_lookup_paths(b);
 	if (b->pref->is_verbose) {
 		println(tos_lit("all .v files:"));
@@ -36485,12 +36485,6 @@ static void v__builder__Builder_set_module_lookup_paths(v__builder__Builder* v) 
 }
 
 array_string v__builder__Builder_get_builtin_files(v__builder__Builder v) {
-	if (v.pref->build_mode == v__pref__BuildMode_build_module && string_eq(v.pref->path, tos_lit("vlib/builtin"))) {
-		if (v.pref->is_verbose) {
-			println(tos_lit("skipping builtin modules for builtin.o"));
-		}
-		return __new_array_with_default(0, 0, sizeof(string), 0);
-	}
 	// FOR IN array
 	array _t1345 = v.pref->lookup_path;
 	for (int _t1346 = 0; _t1346 < _t1345.len; ++_t1346) {
@@ -36516,35 +36510,36 @@ array_string v__builder__Builder_get_builtin_files(v__builder__Builder v) {
 	v_panic(tos_lit("Unreachable code reached."));
 }
 
-array_string v__builder__Builder_get_user_files(v__builder__Builder v) {
-	if (string_eq(v.pref->path, tos_lit("vlib/builtin"))) {
+array_string v__builder__Builder_get_user_files(v__builder__Builder* v) {
+	if ((string_eq(v->pref->path, tos_lit("vlib/builtin")) || string_eq(v->pref->path, tos_lit("vlib/strconv")))) {
+		v__builder__Builder_log(/*rec*/*v, tos_lit("Skipping user files."));
 		return __new_array_with_default(0, 0, sizeof(string), 0);
 	}
-	string dir = v.pref->path;
-	v__builder__Builder_log(v, _STR("get_v_files(%.*s\000)", 2, dir));
+	string dir = v->pref->path;
+	v__builder__Builder_log(/*rec*/*v, _STR("get_v_files(%.*s\000)", 2, dir));
 	array_string user_files = __new_array_with_default(0, 0, sizeof(string), 0);
 	string vroot = os__dir(v__pref__vexe_path());
 	string preludes_path = os__join_path(vroot, (varg_string){.len=3,.args={tos_lit("cmd"), tos_lit("tools"), tos_lit("preludes")}});
-	if (v.pref->is_livemain || v.pref->is_liveshared) {
+	if (v->pref->is_livemain || v->pref->is_liveshared) {
 		array_push(&user_files, _MOV((string[]){ os__join_path(preludes_path, (varg_string){.len=1,.args={tos_lit("live.v")}}) }));
 	}
-	if (v.pref->is_livemain) {
+	if (v->pref->is_livemain) {
 		array_push(&user_files, _MOV((string[]){ os__join_path(preludes_path, (varg_string){.len=1,.args={tos_lit("live_main.v")}}) }));
 	}
-	if (v.pref->is_liveshared) {
+	if (v->pref->is_liveshared) {
 		array_push(&user_files, _MOV((string[]){ os__join_path(preludes_path, (varg_string){.len=1,.args={tos_lit("live_shared.v")}}) }));
 	}
-	if (v.pref->is_test) {
+	if (v->pref->is_test) {
 		array_push(&user_files, _MOV((string[]){ os__join_path(preludes_path, (varg_string){.len=1,.args={tos_lit("tests_assertions.v")}}) }));
 	}
-	if (v.pref->is_test && v.pref->is_stats) {
+	if (v->pref->is_test && v->pref->is_stats) {
 		array_push(&user_files, _MOV((string[]){ os__join_path(preludes_path, (varg_string){.len=1,.args={tos_lit("tests_with_stats.v")}}) }));
 	}
-	if (v.pref->is_prof) {
+	if (v->pref->is_prof) {
 		array_push(&user_files, _MOV((string[]){ os__join_path(preludes_path, (varg_string){.len=1,.args={tos_lit("profiled_program.v")}}) }));
 	}
 	bool is_test = string_ends_with(dir, tos_lit("_test.v"));
-	if (v.pref->is_run && is_test) {
+	if (v->pref->is_run && is_test) {
 		println(tos_lit("use `v x_test.v` instead of `v run x_test.v`"));
 		v_exit(1);
 	}
@@ -36577,9 +36572,9 @@ array_string v__builder__Builder_get_user_files(v__builder__Builder v) {
 	}
 	if (is_internal_module_test) {
 		string single_test_v_file = os__real_path(dir);
-		if (v.pref->is_verbose) {
-			v__builder__Builder_log(v, _STR("> Compiling an internal module _test.v file %.*s\000 .", 2, single_test_v_file));
-			v__builder__Builder_log(v, tos_lit("> That brings in all other ordinary .v files in the same module too ."));
+		if (v->pref->is_verbose) {
+			v__builder__Builder_log(/*rec*/*v, _STR("> Compiling an internal module _test.v file %.*s\000 .", 2, single_test_v_file));
+			v__builder__Builder_log(/*rec*/*v, tos_lit("> That brings in all other ordinary .v files in the same module too ."));
 		}
 		array_push(&user_files, _MOV((string[]){ single_test_v_file }));
 		dir = os__base_dir(single_test_v_file);
@@ -36588,21 +36583,21 @@ array_string v__builder__Builder_get_user_files(v__builder__Builder v) {
 	if (is_real_file && (string_ends_with(dir, tos_lit(".v")) || string_ends_with(dir, tos_lit(".vsh")))) {
 		string single_v_file = dir;
 		array_push(&user_files, _MOV((string[]){ single_v_file }));
-		if (v.pref->is_verbose) {
-			v__builder__Builder_log(v, _STR("> just compile one file: \"%.*s\000\"", 2, single_v_file));
+		if (v->pref->is_verbose) {
+			v__builder__Builder_log(/*rec*/*v, _STR("> just compile one file: \"%.*s\000\"", 2, single_v_file));
 		}
 	} else {
-		if (v.pref->is_verbose) {
-			v__builder__Builder_log(v, _STR("> add all .v files from directory \"%.*s\000\" ...", 2, dir));
+		if (v->pref->is_verbose) {
+			v__builder__Builder_log(/*rec*/*v, _STR("> add all .v files from directory \"%.*s\000\" ...", 2, dir));
 		}
-		_PUSH_MANY(&user_files, (v__builder__Builder_v_files_from_dir(v, dir)), _t1362, array_string);
+		_PUSH_MANY(&user_files, (v__builder__Builder_v_files_from_dir(/*rec*/*v, dir)), _t1362, array_string);
 	}
 	if (user_files.len == 0) {
 		println(tos_lit("No input .v files"));
 		v_exit(1);
 	}
-	if (v.pref->is_verbose) {
-		v__builder__Builder_log(v, _STR("user_files: %.*s", 1, array_string_str(  user_files)));
+	if (v->pref->is_verbose) {
+		v__builder__Builder_log(/*rec*/*v, _STR("user_files: %.*s", 1, array_string_str(  user_files)));
 	}
 	return user_files;
 }
@@ -36681,7 +36676,7 @@ void v__builder__Builder_build_js(v__builder__Builder* b, array_string v_files, 
 }
 
 void v__builder__Builder_compile_js(v__builder__Builder* b) {
-	array_string files = v__builder__Builder_get_user_files(/*rec*/*b);
+	array_string files = v__builder__Builder_get_user_files(b);
 	_PUSH_MANY(&files, (v__builder__Builder_get_builtin_files(/*rec*/*b)), _t1367, array_string);
 	v__builder__Builder_set_module_lookup_paths(b);
 	if (b->pref->is_verbose) {
