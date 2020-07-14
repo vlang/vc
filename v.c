@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "60ce938"
+#define V_COMMIT_HASH "de0b96f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5ad957f"
+	#define V_COMMIT_HASH "60ce938"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "60ce938"
+	#define V_CURRENT_COMMIT_HASH "de0b96f"
 #endif
 
 // V typedefs:
@@ -2259,6 +2259,7 @@ struct v__ast__Import {
 struct v__ast__InterfaceDecl {
 	string name;
 	array_string field_names;
+	bool is_pub;
 	array_v__ast__FnDecl methods;
 	v__token__Position pos;
 };
@@ -26543,10 +26544,10 @@ static v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 	}
 	bool is_typedef = _IN(string, tos_lit("typedef"), p->attrs);
-	v__token__Position end_pos = v__token__Token_position(&p->tok);
+	v__token__Position name_pos = v__token__Token_position(&p->tok);
 	string name = v__parser__Parser_check_name(p);
 	if (name.len == 1 && byte_is_capital(string_at(name, 0))) {
-		v__parser__Parser_error_with_pos(p, tos_lit("single letter capital names are reserved for generic template types."), end_pos);
+		v__parser__Parser_error_with_pos(p, tos_lit("single letter capital names are reserved for generic template types."), name_pos);
 	}
 	array_v__table__Type generic_types = __new_array_with_default(0, 0, sizeof(v__table__Type), 0);
 	if (p->tok.kind == v__token__Kind_lt) {
@@ -26565,10 +26566,10 @@ static v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
 		v__parser__Parser_error(p, _STR("`%.*s\000` lacks body", 2, p->tok.lit));
 	}
 	if (language == v__table__Language_v && string_ne(p->mod, tos_lit("builtin")) && name.len > 0 && !byte_is_capital(string_at(name, 0))) {
-		v__parser__Parser_error_with_pos(p, _STR("struct name `%.*s\000` must begin with capital letter", 2, name), end_pos);
+		v__parser__Parser_error_with_pos(p, _STR("struct name `%.*s\000` must begin with capital letter", 2, name), name_pos);
 	}
 	if (name.len == 1) {
-		v__parser__Parser_error_with_pos(p, tos_lit("struct names must have more than one character"), end_pos);
+		v__parser__Parser_error_with_pos(p, tos_lit("struct names must have more than one character"), name_pos);
 	}
 	array_v__ast__StructField ast_fields = __new_array_with_default(0, 0, sizeof(v__ast__StructField), 0);
 	array_v__table__Field fields = __new_array_with_default(0, 0, sizeof(v__table__Field), 0);
@@ -26729,11 +26730,11 @@ static v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p) {
 		ret = v__table__Table_register_type_symbol(p->table, t);
 	}
 	if (ret == -1) {
-		v__parser__Parser_error(p, _STR("cannot register type `%.*s\000`, another type with this name exists", 2, name));
+		v__parser__Parser_error_with_pos(p, _STR("cannot register struct `%.*s\000`, another type with this name exists", 2, name), name_pos);
 	}
 	p->expr_mod = tos_lit("");
 	return (v__ast__StructDecl){
-		.pos = v__token__Position_extend(start_pos, end_pos),
+		.pos = v__token__Position_extend(start_pos, name_pos),
 		.name = name,
 		.fields = ast_fields,
 		.is_pub = is_pub,
@@ -26797,10 +26798,14 @@ static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser*
 		v__parser__Parser_next(p);
 	}
 	v__parser__Parser_next(p);
+	v__token__Position name_pos = v__token__Token_position(&p->tok);
 	string interface_name = v__parser__Parser_prepend_mod(p, v__parser__Parser_check_name(p));
 	v__parser__Parser_check(p, v__token__Kind_lcbr);
-	v__table__TypeSymbol t = (v__table__TypeSymbol){.parent_idx = 0,.info = /* sum type cast */ (v__table__TypeInfo) {.obj = memdup(&(v__table__Interface[]) {(v__table__Interface){.types = __new_array_with_default(0, 0, sizeof(v__table__Type), 0),}}, sizeof(v__table__Interface)), .typ = 265 /* v.table.Interface */},.kind = v__table__Kind_interface_,.name = interface_name,.methods = __new_array(0, 1, sizeof(v__table__Fn)),.mod = p->mod,.is_public = 0,};
-	v__table__Type typ = v__table__new_type(v__table__Table_register_type_symbol(p->table, t));
+	int reg_idx = v__table__Table_register_type_symbol(p->table, (v__table__TypeSymbol){.parent_idx = 0,.info = /* sum type cast */ (v__table__TypeInfo) {.obj = memdup(&(v__table__Interface[]) {(v__table__Interface){.types = __new_array_with_default(0, 0, sizeof(v__table__Type), 0),}}, sizeof(v__table__Interface)), .typ = 265 /* v.table.Interface */},.kind = v__table__Kind_interface_,.name = interface_name,.methods = __new_array(0, 1, sizeof(v__table__Fn)),.mod = p->mod,.is_public = 0,});
+	if (reg_idx == -1) {
+		v__parser__Parser_error_with_pos(p, _STR("cannot register interface `%.*s\000`, another type with this name exists", 2, interface_name), name_pos);
+	}
+	v__table__Type typ = v__table__new_type(reg_idx);
 	v__table__TypeSymbol* ts = v__table__Table_get_type_symbol(p->table, typ);
 	array_v__ast__FnDecl methods = __new_array_with_default(0, 0, sizeof(v__ast__FnDecl), 0);
 	while (p->tok.kind != v__token__Kind_rcbr && p->tok.kind != v__token__Kind_eof) {
@@ -26810,8 +26815,8 @@ static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser*
 		if (v__util__contains_capital(name)) {
 			v__parser__Parser_error(p, tos_lit("interface methods cannot contain uppercase letters, use snake_case instead"));
 		}
-		multi_return_array_v__table__Arg_bool_bool mr_8940 = v__parser__Parser_fn_args(p);
-		array_v__table__Arg args2 = mr_8940.arg0;
+		multi_return_array_v__table__Arg_bool_bool mr_9133 = v__parser__Parser_fn_args(p);
+		array_v__table__Arg args2 = mr_9133.arg0;
 		array_v__table__Arg args = new_array_from_c_array(1, 1, sizeof(v__table__Arg), _MOV((v__table__Arg[1]){(v__table__Arg){.pos = {0},.name = tos_lit("x"),.is_mut = 0,.typ = typ,.is_hidden = true,}}));
 		_PUSH_MANY(&args, (args2), _t855, array_v__table__Arg);
 		v__ast__FnDecl method = (v__ast__FnDecl){
@@ -26846,7 +26851,7 @@ static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser*
 	}
 	v__parser__Parser_top_level_statement_end(p);
 	v__parser__Parser_check(p, v__token__Kind_rcbr);
-	return (v__ast__InterfaceDecl){.name = interface_name,.field_names = __new_array(0, 1, sizeof(string)),.methods = methods,.pos = start_pos,};
+	return (v__ast__InterfaceDecl){.name = interface_name,.field_names = __new_array(0, 1, sizeof(string)),.is_pub = is_pub,.methods = methods,.pos = start_pos,};
 }
 
 string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__Preferences* pref) {
