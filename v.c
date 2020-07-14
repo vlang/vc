@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e23925f"
+#define V_COMMIT_HASH "5ad957f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "06f5279"
+	#define V_COMMIT_HASH "e23925f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e23925f"
+	#define V_CURRENT_COMMIT_HASH "5ad957f"
 #endif
 
 // V typedefs:
@@ -22552,8 +22552,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 		println(v__table__Kind_str(typ_sym->kind));
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_91143 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_91143.arg0;
+		multi_return_string_v__token__Position mr_91138 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_91138.arg0;
 	}
 	if ((v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym)) && !c->inside_unsafe) {
 		v__checker__Checker_error(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -22900,15 +22900,15 @@ int _t710_len = stmts.len;
 	for (int _t712 = 0; _t712 < _t711.len; ++_t712) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t711.data)[_t712];
 		if (stmt.typ == 206 /* v.ast.UnsafeStmt */) {
-			v__ast__UnsafeStmt* _sc_tmp_102050 = (v__ast__UnsafeStmt*)stmt.obj;
-			v__ast__UnsafeStmt* stmt = _sc_tmp_102050;
+			v__ast__UnsafeStmt* _sc_tmp_102044 = (v__ast__UnsafeStmt*)stmt.obj;
+			v__ast__UnsafeStmt* stmt = _sc_tmp_102044;
 			// FOR IN array
 			array _t713 = stmt->stmts;
 			for (int _t714 = 0; _t714 < _t713.len; ++_t714) {
 				v__ast__Stmt ustmt = ((v__ast__Stmt*)_t713.data)[_t714];
 				if (ustmt.typ == 203 /* v.ast.Return */) {
-					v__ast__Return* _sc_tmp_102111 = (v__ast__Return*)ustmt.obj;
-					v__ast__Return* ustmt = _sc_tmp_102111;
+					v__ast__Return* _sc_tmp_102105 = (v__ast__Return*)ustmt.obj;
+					v__ast__Return* ustmt = _sc_tmp_102105;
 					has_unsafe_return = true;
 				}
 			}
