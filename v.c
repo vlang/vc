@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "880c8e4"
+#define V_COMMIT_HASH "899c69c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c3bdacb"
+	#define V_COMMIT_HASH "880c8e4"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "880c8e4"
+	#define V_CURRENT_COMMIT_HASH "899c69c"
 #endif
 
 // V typedefs:
@@ -21299,7 +21299,7 @@ static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) 
 		for (int i = 0; i < _t622.len; ++i) {
 			v__ast__ConstField field = ((v__ast__ConstField*)_t622.data)[i];
 			if (_IN(string, field.name, c->const_names)) {
-				v__checker__Checker_error(c, _STR("duplciate const `%.*s\000`", 2, field.name), field.pos);
+				v__checker__Checker_error(c, _STR("duplicate const `%.*s\000`", 2, field.name), field.pos);
 			}
 			array_push(&c->const_names, _MOV((string[]){ field.name }));
 			array_push(&field_names, _MOV((string[]){ field.name }));
