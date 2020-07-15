@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c563168"
+#define V_COMMIT_HASH "2492066"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4b0ded0"
+	#define V_COMMIT_HASH "c563168"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c563168"
+	#define V_CURRENT_COMMIT_HASH "2492066"
 #endif
 
 // V typedefs:
@@ -5674,12 +5674,11 @@ string strings__repeat(byte c, int n) {
 	if (n <= 0) {
 		return tos_lit("");
 	}
-	byte* bytes = ((byte*)(0));
+	byteptr bytes = v_malloc(n + 1);
 	{ // Unsafe block
-		bytes = v_malloc(n + 1);
+		memset(bytes, c, n);
+		bytes[n] = '0';
 	}
-	memset(bytes, c, n);
-	bytes[n] = '0';
 	return tos((byteptr)bytes, n);
 }
 
@@ -5689,17 +5688,18 @@ string strings__repeat_string(string s, int n) {
 	}
 	int slen = s.len;
 	int blen = slen * n;
-	byte* bytes = ((byte*)(0));
-	{ // Unsafe block
-		bytes = v_malloc(blen + 1);
-	}
+	byteptr bytes = v_malloc(blen + 1);
 	for (int bi = 0; bi < n; ++bi) {
 		int bislen = bi * slen;
 		for (int si = 0; si < slen; ++si) {
-			bytes[bislen + si] = string_at(s, si);
+			{ // Unsafe block
+				bytes[bislen + si] = string_at(s, si);
+			}
 		}
 	}
-	bytes[blen] = '0';
+	{ // Unsafe block
+		bytes[blen] = '0';
+	}
 	return tos((byteptr)bytes, blen);
 }
 
@@ -5723,7 +5723,7 @@ inline static u64 hash__wyhash__wyhash64(byteptr key, u64 len, u64 seed_) {
 	if (len == 0) {
 		return 0;
 	}
-	byte* p = &key[0];
+	byteptr p = key;
 	u64 seed = seed_;
 	u64 i = (len & 63);
 	{ // Unsafe block
@@ -5784,17 +5784,23 @@ inline u64 hash__wyhash__wymum(u64 a, u64 b) {
 
 // Attr: [inline]
 inline static u64 hash__wyhash__wyr3(byteptr p, u64 k) {
-	return (((((u64)(p[0])) << 16) | (((u64)(p[k >> 1])) << 8)) | ((u64)(p[k - 1])));
+	{ // Unsafe block
+		return (((((u64)(p[0])) << 16) | (((u64)(p[k >> 1])) << 8)) | ((u64)(p[k - 1])));
+	}
 }
 
 // Attr: [inline]
 inline static u64 hash__wyhash__wyr4(byteptr p) {
-	return (((((u32)(p[0])) | (((u32)(p[1])) << ((u32)(8)))) | (((u32)(p[2])) << ((u32)(16)))) | (((u32)(p[3])) << ((u32)(24))));
+	{ // Unsafe block
+		return (((((u32)(p[0])) | (((u32)(p[1])) << ((u32)(8)))) | (((u32)(p[2])) << ((u32)(16)))) | (((u32)(p[3])) << ((u32)(24))));
+	}
 }
 
 // Attr: [inline]
 inline static u64 hash__wyhash__wyr8(byteptr p) {
-	return (((((((((u64)(p[0])) | (((u64)(p[1])) << 8)) | (((u64)(p[2])) << 16)) | (((u64)(p[3])) << 24)) | (((u64)(p[4])) << 32)) | (((u64)(p[5])) << 40)) | (((u64)(p[6])) << 48)) | (((u64)(p[7])) << 56));
+	{ // Unsafe block
+		return (((((((((u64)(p[0])) | (((u64)(p[1])) << 8)) | (((u64)(p[2])) << 16)) | (((u64)(p[3])) << 24)) | (((u64)(p[4])) << 32)) | (((u64)(p[5])) << 40)) | (((u64)(p[6])) << 48)) | (((u64)(p[7])) << 56));
+	}
 }
 
 int math__bits__leading_zeros_8(byte x) {
@@ -7761,7 +7767,8 @@ string strconv__v_sprintf(string str, varg_voidptr pt) {
 			continue;
 		}
 		if (ch == 'p' && status == strconv__Char_parse_state_field_char) {
-			strings__Builder_write(&res, string_add(tos_lit("0x"), ptr_str(pt.args[p_index])));
+			strings__Builder_write(&res, tos_lit("0x"));
+			strings__Builder_write(&res, ptr_str(pt.args[p_index]));
 			status = strconv__Char_parse_state_reset_params;
 			p_index++;
 			i++;
@@ -8480,12 +8487,18 @@ string array_byte_hex(array_byte b) {
 	for (int _t17 = 0; _t17 < _t16.len; ++_t17) {
 		byte i = ((byte*)_t16.data)[_t17];
 		byte n0 = i >> 4;
-		hex[dst_i++] = (n0 < 10 ? (n0 + '0') : (n0 + ((byte)(87))));
+		{ // Unsafe block
+			hex[dst_i++] = (n0 < 10 ? (n0 + '0') : (n0 + ((byte)(87))));
+		}
 		byte n1 = (i & 0xF);
-		hex[dst_i++] = (n1 < 10 ? (n1 + '0') : (n1 + ((byte)(87))));
+		{ // Unsafe block
+			hex[dst_i++] = (n1 < 10 ? (n1 + '0') : (n1 + ((byte)(87))));
+		}
 	}
-	hex[dst_i] = '\0';
-	return tos(hex, dst_i);
+	{ // Unsafe block
+		hex[dst_i] = '\0';
+		return tos(hex, dst_i);
+	}
 }
 
 int copy(array_byte dst, array_byte src) {
@@ -9012,13 +9025,17 @@ inline string int_str_l(int nn, int max) {
 		is_neg = true;
 	}
 	int index = max;
-	buf[index--] = '\0';
+	{ // Unsafe block
+		buf[index--] = '\0';
+	}
 	while (n > 0) {
 		int n1 = n / 100;
 		d = ((n - (n1 * 100)) << 1);
 		n = n1;
-		buf[index--] = _const_digit_pairs.str[d++];
-		buf[index--] = _const_digit_pairs.str[d];
+		{ // Unsafe block
+			buf[index--] = _const_digit_pairs.str[d++];
+			buf[index--] = _const_digit_pairs.str[d];
+		}
 	}
 	index++;
 	if (d < 20) {
@@ -9026,12 +9043,14 @@ inline string int_str_l(int nn, int max) {
 	}
 	if (is_neg) {
 		index--;
-		buf[index] = '-';
+		{ // Unsafe block
+			buf[index] = '-';
+		}
 	}
 	{ // Unsafe block
 		memmove(buf, buf + index, (max - index) + 1);
+		return tos(buf, (max - index));
 	}
-	return tos(buf, (max - index));
 }
 
 string i8_str(i8 n) {
@@ -9059,13 +9078,17 @@ string u32_str(u32 nn) {
 	int max = 12;
 	byteptr buf = v_malloc(max + 1);
 	int index = max;
-	buf[index--] = '\0';
+	{ // Unsafe block
+		buf[index--] = '\0';
+	}
 	while (n > 0) {
 		u32 n1 = n / ((u32)(100));
 		d = ((n - (n1 * ((u32)(100)))) << ((u32)(1)));
 		n = n1;
-		buf[index--] = string_at(_const_digit_pairs, d++);
-		buf[index--] = string_at(_const_digit_pairs, d);
+		{ // Unsafe block
+			buf[index--] = string_at(_const_digit_pairs, d++);
+			buf[index--] = string_at(_const_digit_pairs, d);
+		}
 	}
 	index++;
 	if (d < ((u32)(20))) {
@@ -9073,8 +9096,8 @@ string u32_str(u32 nn) {
 	}
 	{ // Unsafe block
 		memmove(buf, buf + index, (max - index) + 1);
+		return tos(buf, (max - index));
 	}
-	return tos(buf, (max - index));
 }
 
 // Attr: [inline]
@@ -9096,13 +9119,17 @@ string i64_str(i64 nn) {
 		is_neg = true;
 	}
 	int index = max;
-	buf[index--] = '\0';
+	{ // Unsafe block
+		buf[index--] = '\0';
+	}
 	while (n > 0) {
 		i64 n1 = n / ((i64)(100));
 		d = ((n - (n1 * ((i64)(100)))) << ((i64)(1)));
 		n = n1;
-		buf[index--] = string_at(_const_digit_pairs, d++);
-		buf[index--] = string_at(_const_digit_pairs, d);
+		{ // Unsafe block
+			buf[index--] = string_at(_const_digit_pairs, d++);
+			buf[index--] = string_at(_const_digit_pairs, d);
+		}
 	}
 	index++;
 	if (d < ((i64)(20))) {
@@ -9110,12 +9137,14 @@ string i64_str(i64 nn) {
 	}
 	if (is_neg) {
 		index--;
-		buf[index] = '-';
+		{ // Unsafe block
+			buf[index] = '-';
+		}
 	}
 	{ // Unsafe block
 		memmove(buf, buf + index, (max - index) + 1);
+		return tos(buf, (max - index));
 	}
-	return tos(buf, (max - index));
 }
 
 string u64_str(u64 nn) {
@@ -9127,13 +9156,17 @@ string u64_str(u64 nn) {
 	int max = 20;
 	byteptr buf = vcalloc(max + 1);
 	int index = max;
-	buf[index--] = '\0';
+	{ // Unsafe block
+		buf[index--] = '\0';
+	}
 	while (n > 0) {
 		u64 n1 = n / 100;
 		d = ((n - (n1 * 100)) << 1);
 		n = n1;
-		buf[index--] = string_at(_const_digit_pairs, d++);
-		buf[index--] = string_at(_const_digit_pairs, d);
+		{ // Unsafe block
+			buf[index--] = string_at(_const_digit_pairs, d++);
+			buf[index--] = string_at(_const_digit_pairs, d);
+		}
 	}
 	index++;
 	if (d < 20) {
@@ -9141,8 +9174,8 @@ string u64_str(u64 nn) {
 	}
 	{ // Unsafe block
 		memmove(buf, buf + index, (max - index) + 1);
+		return tos(buf, (max - index));
 	}
-	return tos(buf, (max - index));
 }
 
 string bool_str(bool b) {
@@ -9160,11 +9193,15 @@ string byte_hex(byte nn) {
 	int max = 2;
 	byteptr buf = v_malloc(max + 1);
 	int index = max;
-	buf[index--] = '\0';
+	{ // Unsafe block
+		buf[index--] = '\0';
+	}
 	while (n > 0) {
 		byte d = (n & 0xF);
 		n = n >> 4;
-		buf[index--] = (d < 10 ? (d + '0') : (d + 87));
+		{ // Unsafe block
+			buf[index--] = (d < 10 ? (d + '0') : (d + 87));
+		}
 	}
 	index++;
 	{ // Unsafe block
@@ -9184,11 +9221,15 @@ string u16_hex(u16 nn) {
 	int max = 5;
 	byteptr buf = v_malloc(max + 1);
 	int index = max;
-	buf[index--] = '\0';
+	{ // Unsafe block
+		buf[index--] = '\0';
+	}
 	while (n > 0) {
 		byte d = ((byte)((n & 0xF)));
 		n = n >> 4;
-		buf[index--] = (d < 10 ? (d + '0') : (d + 87));
+		{ // Unsafe block
+			buf[index--] = (d < 10 ? (d + '0') : (d + 87));
+		}
 	}
 	index++;
 	{ // Unsafe block
@@ -9208,11 +9249,15 @@ string u32_hex(u32 nn) {
 	int max = 10;
 	byteptr buf = v_malloc(max + 1);
 	int index = max;
-	buf[index--] = '\0';
+	{ // Unsafe block
+		buf[index--] = '\0';
+	}
 	while (n > 0) {
 		byte d = ((byte)((n & 0xF)));
 		n = n >> 4;
-		buf[index--] = (d < 10 ? (d + '0') : (d + 87));
+		{ // Unsafe block
+			buf[index--] = (d < 10 ? (d + '0') : (d + 87));
+		}
 	}
 	index++;
 	{ // Unsafe block
@@ -9236,17 +9281,21 @@ string u64_hex(u64 nn) {
 	int max = 18;
 	byteptr buf = v_malloc(max + 1);
 	int index = max;
-	buf[index--] = '\0';
+	{ // Unsafe block
+		buf[index--] = '\0';
+	}
 	while (n > 0) {
 		byte d = ((byte)((n & 0xF)));
 		n = n >> 4;
-		buf[index--] = (d < 10 ? (d + '0') : (d + 87));
+		{ // Unsafe block
+			buf[index--] = (d < 10 ? (d + '0') : (d + 87));
+		}
 	}
 	index++;
 	{ // Unsafe block
 		memmove(buf, buf + index, (max - index) + 1);
+		return tos(buf, (max - index));
 	}
-	return tos(buf, (max - index));
 }
 
 string i64_hex(i64 nn) {
@@ -9267,8 +9316,10 @@ string byteptr_str(byteptr nn) {
 
 string byte_str(byte c) {
 	string str = (string){.str = v_malloc(2), .len = 1};
-	str.str[0] = c;
-	str.str[1] = '\0';
+	{ // Unsafe block
+		str.str[0] = c;
+		str.str[1] = '\0';
+	}
 	return str;
 }
 
@@ -9345,12 +9396,14 @@ inline static DenseArray new_dense_array(int value_bytes) {
 inline static u32 DenseArray_push(DenseArray* d, string key, voidptr value) {
 	if (d->cap == d->len) {
 		d->cap += d->cap >> 3;
-		d->keys = ((string*)(v_realloc(d->keys, /*SizeOfType*/ sizeof(string) * d->cap)));
-		d->values = v_realloc(d->values, ((u32)(d->value_bytes)) * d->cap);
+		{ // Unsafe block
+			d->keys = ((string*)(v_realloc(d->keys, /*SizeOfType*/ sizeof(string) * d->cap)));
+			d->values = v_realloc(d->values, ((u32)(d->value_bytes)) * d->cap);
+		}
 	}
 	u32 push_index = d->len;
-	d->keys[push_index] = key;
 	{ // Unsafe block
+		d->keys[push_index] = key;
 		memcpy(d->values + push_index * ((u32)(d->value_bytes)), value, d->value_bytes);
 	}
 	d->len++;
@@ -9375,9 +9428,11 @@ static void DenseArray_zeros_to_end(DenseArray* d) {
 	u32 count = ((u32)(0));
 	for (int i = 0; i < d->len; ++i) {
 		if (d->keys[i].str != 0) {
-			string tmp_key = d->keys[count];
-			d->keys[count] = d->keys[i];
-			d->keys[i] = tmp_key;
+			{ // Unsafe block
+				string tmp_key = d->keys[count];
+				d->keys[count] = d->keys[i];
+				d->keys[i] = tmp_key;
+			}
 			{ // Unsafe block
 				memcpy(tmp_value, d->values + count * ((u32)(d->value_bytes)), d->value_bytes);
 				memcpy(d->values + count * ((u32)(d->value_bytes)), d->values + i * d->value_bytes, d->value_bytes);
@@ -9390,8 +9445,10 @@ static void DenseArray_zeros_to_end(DenseArray* d) {
 	d->deletes = 0;
 	d->len = count;
 	d->cap = (count < 8 ? (((u32)(8))) : (count));
-	d->keys = ((string*)(v_realloc(d->keys, /*SizeOfType*/ sizeof(string) * d->cap)));
-	d->values = v_realloc(d->values, ((u32)(d->value_bytes)) * d->cap);
+	{ // Unsafe block
+		d->keys = ((string*)(v_realloc(d->keys, /*SizeOfType*/ sizeof(string) * d->cap)));
+		d->values = v_realloc(d->values, ((u32)(d->value_bytes)) * d->cap);
+	}
 }
 
 static map new_map_1(int value_bytes) {
@@ -9443,18 +9500,24 @@ inline static void map_meta_greater(map* m, u32 _index, u32 _metas, u32 kvi) {
 	u32 kv_index = kvi;
 	while (m->metas[index] != 0) {
 		if (meta > m->metas[index]) {
-			u32 tmp_meta = m->metas[index];
-			m->metas[index] = meta;
-			meta = tmp_meta;
+			{ // Unsafe block
+				u32 tmp_meta = m->metas[index];
+				m->metas[index] = meta;
+				meta = tmp_meta;
+			}
 			u32 tmp_index = m->metas[index + 1];
-			m->metas[index + 1] = kv_index;
+			{ // Unsafe block
+				m->metas[index + 1] = kv_index;
+			}
 			kv_index = tmp_index;
 		}
 		index += 2;
 		meta += _const_probe_inc;
 	}
-	m->metas[index] = meta;
-	m->metas[index + 1] = kv_index;
+	{ // Unsafe block
+		m->metas[index] = meta;
+		m->metas[index + 1] = kv_index;
+	}
 	u32 probe_count = (meta >> _const_hashbits) - 1;
 	map_ensure_extra_metas(m, probe_count);
 }
@@ -9480,12 +9543,12 @@ static void map_set(map* m, string k, voidptr value) {
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_9065 = map_key_to_index(m, key);
-	u32 index = mr_9065.arg0;
-	u32 meta = mr_9065.arg1;
-	multi_return_u32_u32 mr_9100 = map_meta_less(m, index, meta);
-	index = mr_9100.arg0;
-	meta = mr_9100.arg1;
+	multi_return_u32_u32 mr_9216 = map_key_to_index(m, key);
+	u32 index = mr_9216.arg0;
+	u32 meta = mr_9216.arg1;
+	multi_return_u32_u32 mr_9251 = map_meta_less(m, index, meta);
+	index = mr_9251.arg0;
+	meta = mr_9251.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -9517,18 +9580,20 @@ static void map_expand(map* m) {
 
 static void map_rehash(map* m) {
 	u32 meta_bytes = /*SizeOfType*/ sizeof(u32) * (m->cap + 2 + m->extra_metas);
-	m->metas = ((u32*)(v_realloc(m->metas, meta_bytes)));
-	memset(m->metas, 0, meta_bytes);
+	{ // Unsafe block
+		m->metas = ((u32*)(v_realloc(m->metas, meta_bytes)));
+		memset(m->metas, 0, meta_bytes);
+	}
 	for (u32 i = ((u32)(0)); i < m->key_values.len; i++) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
-		multi_return_u32_u32 mr_10428 = map_key_to_index(m, m->key_values.keys[i]);
-		u32 index = mr_10428.arg0;
-		u32 meta = mr_10428.arg1;
-		multi_return_u32_u32 mr_10481 = map_meta_less(m, index, meta);
-		index = mr_10481.arg0;
-		meta = mr_10481.arg1;
+		multi_return_u32_u32 mr_10630 = map_key_to_index(m, m->key_values.keys[i]);
+		u32 index = mr_10630.arg0;
+		u32 meta = mr_10630.arg1;
+		multi_return_u32_u32 mr_10692 = map_meta_less(m, index, meta);
+		index = mr_10692.arg0;
+		meta = mr_10692.arg1;
 		map_meta_greater(m, index, meta, i);
 	}
 }
@@ -9546,9 +9611,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->cap >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->cap);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_11198 = map_meta_less(m, index, meta);
-		index = mr_11198.arg0;
-		meta = mr_11198.arg1;
+		multi_return_u32_u32 mr_11427 = map_meta_less(m, index, meta);
+		index = mr_11427.arg0;
+		meta = mr_11427.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -9559,9 +9624,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 
 static voidptr map_get_and_set(map* m, string key, voidptr zero) {
 	while (1) {
-		multi_return_u32_u32 mr_11635 = map_key_to_index(m, key);
-		u32 index = mr_11635.arg0;
-		u32 meta = mr_11635.arg1;
+		multi_return_u32_u32 mr_11873 = map_key_to_index(m, key);
+		u32 index = mr_11873.arg0;
+		u32 meta = mr_11873.arg1;
 		while (1) {
 			if (meta == m->metas[index]) {
 				u32 kv_index = m->metas[index + 1];
@@ -9582,9 +9647,9 @@ static voidptr map_get_and_set(map* m, string key, voidptr zero) {
 }
 
 static voidptr map_get(map m, string key, voidptr zero) {
-	multi_return_u32_u32 mr_12276 = map_key_to_index(&m, key);
-	u32 index = mr_12276.arg0;
-	u32 meta = mr_12276.arg1;
+	multi_return_u32_u32 mr_12550 = map_key_to_index(&m, key);
+	u32 index = mr_12550.arg0;
+	u32 meta = mr_12550.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9604,9 +9669,9 @@ static voidptr map_get(map m, string key, voidptr zero) {
 }
 
 static bool map_exists(map m, string key) {
-	multi_return_u32_u32 mr_12728 = map_key_to_index(&m, key);
-	u32 index = mr_12728.arg0;
-	u32 meta = mr_12728.arg1;
+	multi_return_u32_u32 mr_13038 = map_key_to_index(&m, key);
+	u32 index = mr_13038.arg0;
+	u32 meta = mr_13038.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9624,25 +9689,31 @@ static bool map_exists(map m, string key) {
 }
 
 void map_delete(map* m, string key) {
-	multi_return_u32_u32 mr_13112 = map_key_to_index(m, key);
-	u32 index = mr_13112.arg0;
-	u32 meta = mr_13112.arg1;
-	multi_return_u32_u32 mr_13147 = map_meta_less(m, index, meta);
-	index = mr_13147.arg0;
-	meta = mr_13147.arg1;
+	multi_return_u32_u32 mr_13458 = map_key_to_index(m, key);
+	u32 index = mr_13458.arg0;
+	u32 meta = mr_13458.arg1;
+	multi_return_u32_u32 mr_13493 = map_meta_less(m, index, meta);
+	index = mr_13493.arg0;
+	meta = mr_13493.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
 			while ((m->metas[index + 2] >> _const_hashbits) > 1) {
-				m->metas[index] = m->metas[index + 2] - _const_probe_inc;
-				m->metas[index + 1] = m->metas[index + 3];
+				{ // Unsafe block
+					m->metas[index] = m->metas[index + 2] - _const_probe_inc;
+					m->metas[index + 1] = m->metas[index + 3];
+				}
 				index += 2;
 			}
 			m->len--;
-			m->metas[index] = 0;
+			{ // Unsafe block
+				m->metas[index] = 0;
+			}
 			m->key_values.deletes++;
-			string_free(&m->key_values.keys[kv_index]);
-			memset(&m->key_values.keys[kv_index], 0, /*SizeOfType*/ sizeof(string));
+			{ // Unsafe block
+				string_free(&m->key_values.keys[kv_index]);
+				memset(&m->key_values.keys[kv_index], 0, /*SizeOfType*/ sizeof(string));
+			}
 			if (m->key_values.len <= 32) {
 				return;
 			}
@@ -9699,21 +9770,29 @@ map map_clone(map m) {
 		.extra_metas = m.extra_metas,
 		.len = m.len,
 	};
-	memcpy(res.metas, m.metas, metas_size);
+	{ // Unsafe block
+		memcpy(res.metas, m.metas, metas_size);
+	}
 	return res;
 }
 
 // Attr: [unsafe_fn]
 void map_free(map* m) {
-	v_free(m->metas);
+	{ // Unsafe block
+		v_free(m->metas);
+	}
 	for (u32 i = ((u32)(0)); i < m->key_values.len; i++) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
-		string_free(&m->key_values.keys[i]);
+		{ // Unsafe block
+			string_free(&m->key_values.keys[i]);
+		}
 	}
-	v_free(m->key_values.keys);
-	v_free(m->key_values.values);
+	{ // Unsafe block
+		v_free(m->key_values.keys);
+		v_free(m->key_values.values);
+	}
 }
 
 string map_string_str(map_string m) {
@@ -10122,6 +10201,7 @@ int vstrlen(byteptr s) {
 	return strlen(((charptr)(s)));
 }
 
+// Attr: [unsafe_fn]
 string tos(byteptr s, int len) {
 	if (s == 0) {
 		v_panic(tos_lit("tos(): nil string"));
@@ -10163,15 +10243,19 @@ string string_clone(string a) {
 	for (int i = 0; i < a.len; ++i) {
 		b.str[i] = a.str[i];
 	}
-	b.str[a.len] = '\0';
+	{ // Unsafe block
+		b.str[a.len] = '\0';
+	}
 	return b;
 }
 
 string cstring_to_vstring(byteptr cstr) {
-	int slen = strlen(((charptr)(cstr)));
-	byteptr s = ((byteptr)(memdup(cstr, slen + 1)));
-	s[slen] = '\0';
-	return tos(s, slen);
+	{ // Unsafe block
+		int slen = strlen(((charptr)(cstr)));
+		byteptr s = ((byteptr)(memdup(cstr, slen + 1)));
+		s[slen] = '\0';
+		return tos(s, slen);
+	}
 }
 
 string string_replace_once(string s, string rep, string with) {
@@ -10210,7 +10294,9 @@ string string_replace(string s, string rep, string with) {
 	for (int i = 0; i < s.len; i++) {
 		if (i == cur_idx) {
 			for (int j = 0; j < with.len; ++j) {
-				b[b_i] = string_at(with, j);
+				{ // Unsafe block
+					b[b_i] = string_at(with, j);
+				}
 				b_i++;
 			}
 			i += rep.len - 1;
@@ -10219,12 +10305,16 @@ string string_replace(string s, string rep, string with) {
 				cur_idx = (*(int*)array_get(idxs, idx_pos));
 			}
 		} else {
-			b[b_i] = string_at(s, i);
+			{ // Unsafe block
+				b[b_i] = string_at(s, i);
+			}
 			b_i++;
 		}
 	}
-	b[new_len] = '\0';
-	return tos(b, new_len);
+	{ // Unsafe block
+		b[new_len] = '\0';
+		return tos(b, new_len);
+	}
 }
 
 static int compare_rep_index(RepIndex* a, RepIndex* b) {
@@ -10278,7 +10368,9 @@ string string_replace_each(string s, array_string vals) {
 			string rep = (*(string*)array_get(vals, cur_idx.val_idx));
 			string with = (*(string*)array_get(vals, cur_idx.val_idx + 1));
 			for (int j = 0; j < with.len; ++j) {
-				b[b_i] = string_at(with, j);
+				{ // Unsafe block
+					b[b_i] = string_at(with, j);
+				}
 				b_i++;
 			}
 			i += rep.len - 1;
@@ -10287,12 +10379,16 @@ string string_replace_each(string s, array_string vals) {
 				cur_idx = (*(RepIndex*)array_get(idxs, idx_pos));
 			}
 		} else {
-			b[b_i] = s.str[i];
+			{ // Unsafe block
+				b[b_i] = s.str[i];
+			}
 			b_i++;
 		}
 	}
-	b[new_len] = '\0';
-	return tos(b, new_len);
+	{ // Unsafe block
+		b[new_len] = '\0';
+		return tos(b, new_len);
+	}
 }
 
 bool string_bool(string s) {
@@ -10379,12 +10475,18 @@ static string string_add(string s, string a) {
 	int new_len = a.len + s.len;
 	string res = (string){.str = v_malloc(new_len + 1), .len = new_len};
 	for (int j = 0; j < s.len; ++j) {
-		res.str[j] = s.str[j];
+		{ // Unsafe block
+			res.str[j] = s.str[j];
+		}
 	}
 	for (int j = 0; j < a.len; ++j) {
-		res.str[s.len + j] = a.str[j];
+		{ // Unsafe block
+			res.str[s.len + j] = a.str[j];
+		}
 	}
-	res.str[new_len] = '\0';
+	{ // Unsafe block
+		res.str[new_len] = '\0';
+	}
 	return res;
 }
 
@@ -10498,9 +10600,13 @@ string string_substr(string s, int start, int end) {
 	int len = end - start;
 	string res = (string){.str = v_malloc(len + 1), .len = len};
 	for (int i = 0; i < len; ++i) {
-		res.str[i] = s.str[start + i];
+		{ // Unsafe block
+			res.str[i] = s.str[start + i];
+		}
 	}
-	res.str[len] = '\0';
+	{ // Unsafe block
+		res.str[len] = '\0';
+	}
 	return res;
 }
 
@@ -10714,11 +10820,13 @@ bool string_ends_with(string s, string p) {
 }
 
 string string_to_lower(string s) {
-	byteptr b = v_malloc(s.len + 1);
-	for (int i = 0; i < s.len; ++i) {
-		b[i] = ((byte)(tolower(s.str[i])));
+	{ // Unsafe block
+		byteptr b = v_malloc(s.len + 1);
+		for (int i = 0; i < s.len; ++i) {
+			b[i] = ((byte)(tolower(s.str[i])));
+		}
+		return tos(b, s.len);
 	}
-	return tos(b, s.len);
 }
 
 bool string_is_lower(string s) {
@@ -10731,11 +10839,13 @@ bool string_is_lower(string s) {
 }
 
 string string_to_upper(string s) {
-	byteptr b = v_malloc(s.len + 1);
-	for (int i = 0; i < s.len; ++i) {
-		b[i] = ((byte)(toupper(s.str[i])));
+	{ // Unsafe block
+		byteptr b = v_malloc(s.len + 1);
+		for (int i = 0; i < s.len; ++i) {
+			b[i] = ((byte)(toupper(s.str[i])));
+		}
+		return tos(b, s.len);
 	}
-	return tos(b, s.len);
 }
 
 bool string_is_upper(string s) {
@@ -11099,7 +11209,9 @@ static byte string_at(string s, int idx) {
 	}
 #endif
 // } no_bounds_checking
-	return s.str[idx];
+	{ // Unsafe block
+		return s.str[idx];
+	}
 }
 
 string ustring_at(ustring u, int idx) {
@@ -11243,17 +11355,23 @@ string array_string_join(array_string a, string del) {
 	for (int i = 0; i < _t65.len; ++i) {
 		string val = ((string*)_t65.data)[i];
 		for (int j = 0; j < val.len; ++j) {
-			res.str[idx] = val.str[j];
+			{ // Unsafe block
+				res.str[idx] = val.str[j];
+			}
 			idx++;
 		}
 		if (i != a.len - 1) {
 			for (int k = 0; k < del.len; ++k) {
-				res.str[idx] = del.str[k];
+				{ // Unsafe block
+					res.str[idx] = del.str[k];
+				}
 				idx++;
 			}
 		}
 	}
-	res.str[res.len] = '\0';
+	{ // Unsafe block
+		res.str[res.len] = '\0';
+	}
 	return res;
 }
 
@@ -11267,7 +11385,9 @@ string string_reverse(string s) {
 	}
 	string res = (string){.str = v_malloc(s.len), .len = s.len};
 	for (int i = s.len - 1; i >= 0; i--) {
-		res.str[s.len - i - 1] = string_at(s, i);
+		{ // Unsafe block
+			res.str[s.len - i - 1] = string_at(s, i);
+		}
 	}
 	return res;
 }
@@ -11317,10 +11437,14 @@ string string_repeat(string s, int count) {
 	byteptr ret = v_malloc(s.len * count + 1);
 	for (int i = 0; i < count; ++i) {
 		for (int j = 0; j < s.len; ++j) {
-			ret[i * s.len + j] = string_at(s, j);
+			{ // Unsafe block
+				ret[i * s.len + j] = string_at(s, j);
+			}
 		}
 	}
-	ret[s.len * count] = 0;
+	{ // Unsafe block
+		ret[s.len * count] = 0;
+	}
 	return tos2((byteptr)ret);
 }
 
@@ -11329,11 +11453,13 @@ array_string string_fields(string s) {
 }
 
 string string_map(string s, byte (*func)(byte)) {
-	byteptr res = v_malloc(s.len + 1);
-	for (int i = 0; i < s.len; ++i) {
-		res[i] = func(string_at(s, i));
+	{ // Unsafe block
+		byteptr res = v_malloc(s.len + 1);
+		for (int i = 0; i < s.len; ++i) {
+			res[i] = func(string_at(s, i));
+		}
+		return tos(res, s.len);
 	}
-	return tos(res, s.len);
 }
 
 string string_filter(string s, bool (*func)(byte b)) {
@@ -11365,10 +11491,14 @@ string string_strip_margin_custom(string s, byte del) {
 	int count = 0;
 	for (int i = 0; i < s.len; i++) {
 		if ((string_at(s, i) == '\n' || string_at(s, i) == '\r')) {
-			ret[count] = string_at(s, i);
+			{ // Unsafe block
+				ret[count] = string_at(s, i);
+			}
 			count++;
 			if (string_at(s, i) == '\r' && i < s.len - 1 && string_at(s, i + 1) == '\n') {
-				ret[count] = string_at(s, i + 1);
+				{ // Unsafe block
+					ret[count] = string_at(s, i + 1);
+				}
 				count++;
 				i++;
 			}
@@ -11379,11 +11509,15 @@ string string_strip_margin_custom(string s, byte del) {
 				}
 			}
 		} else {
-			ret[count] = string_at(s, i);
+			{ // Unsafe block
+				ret[count] = string_at(s, i);
+			}
 			count++;
 		}
 	}
-	ret[count] = 0;
+	{ // Unsafe block
+		ret[count] = 0;
+	}
 	return tos2((byteptr)ret);
 }
 
@@ -37141,7 +37275,7 @@ static void main__main() {
 	} else if (string_eq(command, tos_lit("translate"))) {
 		println(tos_lit("Translating C to V will be available in V 0.3"));
 		return;
-	} else if (string_eq(command, tos_lit("search")) || string_eq(command, tos_lit("install")) || string_eq(command, tos_lit("update")) || string_eq(command, tos_lit("remove"))) {
+	} else if (string_eq(command, tos_lit("search")) || string_eq(command, tos_lit("install")) || string_eq(command, tos_lit("update")) || string_eq(command, tos_lit("outdated")) || string_eq(command, tos_lit("remove"))) {
 		v__util__launch_tool(prefs->is_verbose, tos_lit("vpm"), array_slice(_const_os__args, 1, _const_os__args.len));
 		return;
 	} else if (string_eq(command, tos_lit("vlib-docs"))) {
