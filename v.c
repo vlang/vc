@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4b0ded0"
+#define V_COMMIT_HASH "c563168"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1873a0c"
+	#define V_COMMIT_HASH "4b0ded0"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4b0ded0"
+	#define V_CURRENT_COMMIT_HASH "c563168"
 #endif
 
 // V typedefs:
@@ -31732,16 +31732,18 @@ static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it) {
 		}
 	} else {
 		if (!(it.is_pub || g->pref->is_debug)) {
-			v__gen__Gen_write(g, tos_lit("static "));
-			strings__Builder_write(&g->definitions, tos_lit("static "));
+			if (g->pref->build_mode != v__pref__BuildMode_build_module) {
+				v__gen__Gen_write(g, tos_lit("static "));
+				strings__Builder_write(&g->definitions, tos_lit("static "));
+			}
 		}
 		string fn_header = (msvc_attrs.len > 0 ? (_STR("%.*s\000 %.*s\000 %.*s\000(", 4, type_name, msvc_attrs, name)) : (_STR("%.*s\000 %.*s\000(", 3, type_name, name)));
 		strings__Builder_write(&g->definitions, fn_header);
 		v__gen__Gen_write(g, fn_header);
 	}
-	multi_return_array_string_array_string mr_3034 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
-	array_string fargs = mr_3034.arg0;
-	array_string fargtypes = mr_3034.arg1;
+	multi_return_array_string_array_string mr_3403 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
+	array_string fargs = mr_3403.arg0;
+	array_string fargtypes = mr_3403.arg1;
 	if (it.no_body || (g->pref->use_cache && it.is_builtin)) {
 		strings__Builder_writeln(&g->definitions, tos_lit(");"));
 		v__gen__Gen_writeln(g, tos_lit(");"));
@@ -31968,8 +31970,8 @@ static void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node) {
 		if (node.left.typ == 157 /* v.ast.IndexExpr */) {
 			v__ast__Expr idx = (/* as */ (v__ast__IndexExpr*)__as_cast(node.left.obj, node.left.typ, /*expected:*/157))->index;
 			if (idx.typ == 169 /* v.ast.RangeExpr */) {
-				v__ast__RangeExpr* _sc_tmp_11698 = (v__ast__RangeExpr*)idx.obj;
-				v__ast__RangeExpr* idx = _sc_tmp_11698;
+				v__ast__RangeExpr* _sc_tmp_12067 = (v__ast__RangeExpr*)idx.obj;
+				v__ast__RangeExpr* idx = _sc_tmp_12067;
 				name = v__util__no_dots(_STR("%.*s\000_%.*s\000_static", 3, receiver_type_name, node.name));
 				is_range_slice = true;
 			}
@@ -32080,11 +32082,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_16288 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_16288.arg0;
-		string pafile = mr_16288.arg1;
-		string pamod = mr_16288.arg2;
-		string pafn = mr_16288.arg3;
+		multi_return_int_string_string_string mr_16657 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_16657.arg0;
+		string pafile = mr_16657.arg1;
+		string pamod = mr_16657.arg2;
+		string pafn = mr_16657.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		v__gen__Gen_write(g, tos_lit(")"));
@@ -36561,7 +36563,7 @@ array_string v__builder__Builder_get_builtin_files(v__builder__Builder v) {
 }
 
 array_string v__builder__Builder_get_user_files(v__builder__Builder* v) {
-	if ((string_eq(v->pref->path, tos_lit("vlib/builtin")) || string_eq(v->pref->path, tos_lit("vlib/strconv")))) {
+	if ((string_eq(v->pref->path, tos_lit("vlib/builtin")) || string_eq(v->pref->path, tos_lit("vlib/strconv")) || string_eq(v->pref->path, tos_lit("vlib/strings")) || string_eq(v->pref->path, tos_lit("vlib/hash")))) {
 		v__builder__Builder_log(/*rec*/*v, tos_lit("Skipping user files."));
 		return __new_array_with_default(0, 0, sizeof(string), 0);
 	}
