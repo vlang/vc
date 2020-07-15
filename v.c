@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6a260ad"
+#define V_COMMIT_HASH "2ee8f93"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f557952"
+	#define V_COMMIT_HASH "6a260ad"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6a260ad"
+	#define V_CURRENT_COMMIT_HASH "2ee8f93"
 #endif
 
 // V typedefs:
@@ -3783,6 +3783,8 @@ u64 time__sys_mono_now();
 static u64 time__vpc_now();
 time__Time time__win_now();
 time__Time time__win_utc();
+struct timespec time__Duration_timespec(time__Duration d);
+struct timespec time__zero_timespec();
 time__Time time__unix(int abs);
 time__Time time__unix2(int abs, int microsecond);
 static multi_return_int_int_int time__calculate_date_from_offset(int day_offset_);
@@ -14016,6 +14018,25 @@ time__Time time__win_utc() {
 	return (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
 }
 
+struct timespec time__Duration_timespec(time__Duration d) {
+	struct timespec ts = (struct timespec){.tv_sec = 0,.tv_nsec = 0,};
+	clock_gettime(CLOCK_REALTIME, &ts);
+	i64 d_sec = d / _const_time__second;
+	i64 d_nsec = d % _const_time__second;
+	ts.tv_sec += d_sec;
+	ts.tv_nsec += d_nsec;
+	if (ts.tv_nsec > _const_time__second) {
+		ts.tv_nsec -= _const_time__second;
+		ts.tv_sec++;
+	}
+	return ts;
+}
+
+struct timespec time__zero_timespec() {
+	struct timespec ts = (struct timespec){.tv_sec = 0,.tv_nsec = 0,};
+	return ts;
+}
+
 time__Time time__unix(int abs) {
 	int day_offset = abs / _const_time__seconds_per_day;
 	if (abs % _const_time__seconds_per_day < 0) {
@@ -23769,7 +23790,8 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		if (language == v__table__Language_v && !p->pref->translated && v__util__contains_capital(name)) {
 			v__parser__Parser_error(p, tos_lit("function names cannot contain uppercase letters, use snake_case instead"));
 		}
-		if (is_method && v__table__TypeSymbol_has_method(v__table__Table_get_type_symbol(p->table, rec_type), name)) {
+		v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(p->table, rec_type);
+		if (is_method && (v__table__TypeSymbol_has_method(type_sym, name) && type_sym->kind != v__table__Kind_interface_)) {
 			v__parser__Parser_error(p, _STR("duplicate method `%.*s\000`", 2, name));
 		}
 	}
@@ -23783,10 +23805,10 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool_bool mr_5308 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_5308.arg0;
-	bool are_args_type_only = mr_5308.arg1;
-	bool is_variadic = mr_5308.arg2;
+	multi_return_array_v__table__Arg_bool_bool mr_5453 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_5453.arg0;
+	bool are_args_type_only = mr_5453.arg1;
+	bool is_variadic = mr_5453.arg2;
 	_PUSH_MANY(&args, (args2), _t762, array_v__table__Arg);
 	// FOR IN array
 	array _t763 = args;
@@ -23897,9 +23919,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool_bool mr_7844 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_7844.arg0;
-	bool is_variadic = mr_7844.arg2;
+	multi_return_array_v__table__Arg_bool_bool mr_7989 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_7989.arg0;
+	bool is_variadic = mr_7989.arg2;
 	// FOR IN array
 	array _t766 = args;
 	for (int _t767 = 0; _t767 < _t766.len; ++_t767) {
@@ -24102,8 +24124,8 @@ static bool v__parser__have_fn_main(array_v__ast__Stmt stmts) {
 	for (int _t775 = 0; _t775 < _t774.len; ++_t775) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t774.data)[_t775];
 		if (stmt.typ == 106 /* v.ast.FnDecl */) {
-			v__ast__FnDecl* _sc_tmp_13994 = (v__ast__FnDecl*)stmt.obj;
-			v__ast__FnDecl* stmt = _sc_tmp_13994;
+			v__ast__FnDecl* _sc_tmp_14148 = (v__ast__FnDecl*)stmt.obj;
+			v__ast__FnDecl* stmt = _sc_tmp_14148;
 			if (string_eq(stmt->name, tos_lit("main.main")) && string_eq(stmt->mod, tos_lit("main"))) {
 				return true;
 			}
@@ -26826,16 +26848,20 @@ static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser*
 	}
 	v__table__Type typ = v__table__new_type(reg_idx);
 	v__table__TypeSymbol* ts = v__table__Table_get_type_symbol(p->table, typ);
+	array_clear(&ts->methods);
 	array_v__ast__FnDecl methods = __new_array_with_default(0, 0, sizeof(v__ast__FnDecl), 0);
 	while (p->tok.kind != v__token__Kind_rcbr && p->tok.kind != v__token__Kind_eof) {
 		v__token__Position method_start_pos = v__token__Token_position(&p->tok);
 		int line_nr = p->tok.line_nr;
 		string name = v__parser__Parser_check_name(p);
+		if (v__table__TypeSymbol_has_method(ts, name)) {
+			v__parser__Parser_error_with_pos(p, _STR("duplicate method `%.*s\000`", 2, name), method_start_pos);
+		}
 		if (v__util__contains_capital(name)) {
 			v__parser__Parser_error(p, tos_lit("interface methods cannot contain uppercase letters, use snake_case instead"));
 		}
-		multi_return_array_v__table__Arg_bool_bool mr_9133 = v__parser__Parser_fn_args(p);
-		array_v__table__Arg args2 = mr_9133.arg0;
+		multi_return_array_v__table__Arg_bool_bool mr_9314 = v__parser__Parser_fn_args(p);
+		array_v__table__Arg args2 = mr_9314.arg0;
 		array_v__table__Arg args = new_array_from_c_array(1, 1, sizeof(v__table__Arg), _MOV((v__table__Arg[1]){(v__table__Arg){.pos = {0},.name = tos_lit("x"),.is_mut = 0,.typ = typ,.is_hidden = true,}}));
 		_PUSH_MANY(&args, (args2), _t855, array_v__table__Arg);
 		v__ast__FnDecl method = (v__ast__FnDecl){

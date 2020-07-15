@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6a260ad"
+#define V_COMMIT_HASH "2ee8f93"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f557952"
+	#define V_COMMIT_HASH "6a260ad"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6a260ad"
+	#define V_CURRENT_COMMIT_HASH "2ee8f93"
 #endif
 
 // V typedefs:
@@ -23850,7 +23850,8 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		if (language == v__table__Language_v && !p->pref->translated && v__util__contains_capital(name)) {
 			v__parser__Parser_error(p, tos_lit("function names cannot contain uppercase letters, use snake_case instead"));
 		}
-		if (is_method && v__table__TypeSymbol_has_method(v__table__Table_get_type_symbol(p->table, rec_type), name)) {
+		v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(p->table, rec_type);
+		if (is_method && (v__table__TypeSymbol_has_method(type_sym, name) && type_sym->kind != v__table__Kind_interface_)) {
 			v__parser__Parser_error(p, _STR("duplicate method `%.*s\000`", 2, name));
 		}
 	}
@@ -23864,10 +23865,10 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool_bool mr_5308 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_5308.arg0;
-	bool are_args_type_only = mr_5308.arg1;
-	bool is_variadic = mr_5308.arg2;
+	multi_return_array_v__table__Arg_bool_bool mr_5453 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_5453.arg0;
+	bool are_args_type_only = mr_5453.arg1;
+	bool is_variadic = mr_5453.arg2;
 	_PUSH_MANY(&args, (args2), _t766, array_v__table__Arg);
 	// FOR IN array
 	array _t767 = args;
@@ -23978,9 +23979,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool_bool mr_7844 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_7844.arg0;
-	bool is_variadic = mr_7844.arg2;
+	multi_return_array_v__table__Arg_bool_bool mr_7989 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_7989.arg0;
+	bool is_variadic = mr_7989.arg2;
 	// FOR IN array
 	array _t770 = args;
 	for (int _t771 = 0; _t771 < _t770.len; ++_t771) {
@@ -24183,8 +24184,8 @@ static bool v__parser__have_fn_main(array_v__ast__Stmt stmts) {
 	for (int _t779 = 0; _t779 < _t778.len; ++_t779) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t778.data)[_t779];
 		if (stmt.typ == 128 /* v.ast.FnDecl */) {
-			v__ast__FnDecl* _sc_tmp_13994 = (v__ast__FnDecl*)stmt.obj;
-			v__ast__FnDecl* stmt = _sc_tmp_13994;
+			v__ast__FnDecl* _sc_tmp_14148 = (v__ast__FnDecl*)stmt.obj;
+			v__ast__FnDecl* stmt = _sc_tmp_14148;
 			if (string_eq(stmt->name, tos_lit("main.main")) && string_eq(stmt->mod, tos_lit("main"))) {
 				return true;
 			}
@@ -26907,16 +26908,20 @@ static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser*
 	}
 	v__table__Type typ = v__table__new_type(reg_idx);
 	v__table__TypeSymbol* ts = v__table__Table_get_type_symbol(p->table, typ);
+	array_clear(&ts->methods);
 	array_v__ast__FnDecl methods = __new_array_with_default(0, 0, sizeof(v__ast__FnDecl), 0);
 	while (p->tok.kind != v__token__Kind_rcbr && p->tok.kind != v__token__Kind_eof) {
 		v__token__Position method_start_pos = v__token__Token_position(&p->tok);
 		int line_nr = p->tok.line_nr;
 		string name = v__parser__Parser_check_name(p);
+		if (v__table__TypeSymbol_has_method(ts, name)) {
+			v__parser__Parser_error_with_pos(p, _STR("duplicate method `%.*s\000`", 2, name), method_start_pos);
+		}
 		if (v__util__contains_capital(name)) {
 			v__parser__Parser_error(p, tos_lit("interface methods cannot contain uppercase letters, use snake_case instead"));
 		}
-		multi_return_array_v__table__Arg_bool_bool mr_9133 = v__parser__Parser_fn_args(p);
-		array_v__table__Arg args2 = mr_9133.arg0;
+		multi_return_array_v__table__Arg_bool_bool mr_9314 = v__parser__Parser_fn_args(p);
+		array_v__table__Arg args2 = mr_9314.arg0;
 		array_v__table__Arg args = new_array_from_c_array(1, 1, sizeof(v__table__Arg), _MOV((v__table__Arg[1]){(v__table__Arg){.pos = {0},.name = tos_lit("x"),.is_mut = 0,.typ = typ,.is_hidden = true,}}));
 		_PUSH_MANY(&args, (args2), _t859, array_v__table__Arg);
 		v__ast__FnDecl method = (v__ast__FnDecl){
