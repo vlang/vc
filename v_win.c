@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2ee8f93"
+#define V_COMMIT_HASH "1873a0c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "6a260ad"
+	#define V_COMMIT_HASH "2ee8f93"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2ee8f93"
+	#define V_CURRENT_COMMIT_HASH "1873a0c"
 #endif
 
 // V typedefs:
@@ -35968,7 +35968,7 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 		println(_STR("Building %.*s\000...", 2, v->pref->out_name));
 	}
 	bool debug_mode = v->pref->is_debug;
-	string debug_options = tos_lit("-g");
+	string debug_options = tos_lit("-g3");
 	string optimization_options = tos_lit("-O2");
 	string guessed_compiler = v->pref->ccompiler;
 	if (string_eq(guessed_compiler, tos_lit("cc")) && v->pref->is_prod) {
@@ -35991,7 +35991,7 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 	bool is_cc_gcc = !is_cc_tcc && !is_cc_clang && (string_contains(ccompiler, tos_lit("gcc")) || string_eq(guessed_compiler, tos_lit("gcc")));
 	if (is_cc_clang) {
 		if (debug_mode) {
-			debug_options = tos_lit("-g -O0 -no-pie");
+			debug_options = tos_lit("-g3 -O0 -no-pie");
 		}
 		optimization_options = tos_lit("-O3");
 		bool have_flto = true;
