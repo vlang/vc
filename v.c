@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1873a0c"
+#define V_COMMIT_HASH "4b0ded0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2ee8f93"
+	#define V_COMMIT_HASH "1873a0c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1873a0c"
+	#define V_CURRENT_COMMIT_HASH "4b0ded0"
 #endif
 
 // V typedefs:
@@ -20013,7 +20013,7 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 	v__token__Position left_pos = v__ast__Expr_position(infix_expr->left);
 	v__token__Position right_pos = v__ast__Expr_position(infix_expr->right);
 	if ((v__table__Type_is_ptr(left_type) || v__table__TypeSymbol_is_pointer(left)) && (infix_expr->op == v__token__Kind_plus || infix_expr->op == v__token__Kind_minus) && !c->inside_unsafe) {
-		v__checker__Checker_error(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), left_pos);
+		v__checker__Checker_warn(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), left_pos);
 	}
 	v__table__Type return_type = left_type;
 	if (infix_expr->op == v__token__Kind_key_in || infix_expr->op == v__token__Kind_not_in) {
@@ -20089,8 +20089,8 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 		}
 	} else if (infix_expr->op == v__token__Kind_left_shift) {
 		if (left->kind == v__table__Kind_array) {
-			multi_return_string_v__token__Position mr_18157 = v__checker__Checker_fail_if_immutable(c, infix_expr->left);
-			infix_expr->auto_locked = mr_18157.arg0;
+			multi_return_string_v__token__Position mr_18156 = v__checker__Checker_fail_if_immutable(c, infix_expr->left);
+			infix_expr->auto_locked = mr_18156.arg0;
 			v__table__Type left_value_type = v__table__Table_value_type(c->table, left_type);
 			v__table__TypeSymbol* left_value_sym = v__table__Table_get_type_symbol(c->table, left_value_type);
 			if (left_value_sym->kind == v__table__Kind_interface_) {
@@ -20208,21 +20208,21 @@ static multi_return_string_v__token__Position v__checker__Checker_fail_if_immuta
 	} else if (expr.typ == 157 /* v.ast.IndexExpr */) {
 		v__ast__IndexExpr* it = (v__ast__IndexExpr*)expr.obj; // ST it
 		v__ast__IndexExpr* expr = it;
-		multi_return_string_v__token__Position mr_22023 = v__checker__Checker_fail_if_immutable(c, expr->left);
-		to_lock = mr_22023.arg0;
-		pos = mr_22023.arg1;
+		multi_return_string_v__token__Position mr_22022 = v__checker__Checker_fail_if_immutable(c, expr->left);
+		to_lock = mr_22022.arg0;
+		pos = mr_22022.arg1;
 	} else if (expr.typ == 166 /* v.ast.ParExpr */) {
 		v__ast__ParExpr* it = (v__ast__ParExpr*)expr.obj; // ST it
 		v__ast__ParExpr* expr = it;
-		multi_return_string_v__token__Position mr_22092 = v__checker__Checker_fail_if_immutable(c, expr->expr);
-		to_lock = mr_22092.arg0;
-		pos = mr_22092.arg1;
+		multi_return_string_v__token__Position mr_22091 = v__checker__Checker_fail_if_immutable(c, expr->expr);
+		to_lock = mr_22091.arg0;
+		pos = mr_22091.arg1;
 	} else if (expr.typ == 168 /* v.ast.PrefixExpr */) {
 		v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)expr.obj; // ST it
 		v__ast__PrefixExpr* expr = it;
-		multi_return_string_v__token__Position mr_22164 = v__checker__Checker_fail_if_immutable(c, expr->right);
-		to_lock = mr_22164.arg0;
-		pos = mr_22164.arg1;
+		multi_return_string_v__token__Position mr_22163 = v__checker__Checker_fail_if_immutable(c, expr->right);
+		to_lock = mr_22163.arg0;
+		pos = mr_22163.arg1;
 	} else if (expr.typ == 170 /* v.ast.SelectorExpr */) {
 		v__ast__SelectorExpr* it = (v__ast__SelectorExpr*)expr.obj; // ST it
 		v__ast__SelectorExpr* expr = it;
@@ -20246,9 +20246,9 @@ static multi_return_string_v__token__Position v__checker__Checker_fail_if_immuta
 				string type_str = v__table__Table_type_to_str(c->table, expr->expr_type);
 				v__checker__Checker_error(c, _STR("field `%.*s\000` of struct `%.*s\000` is immutable", 3, expr->field_name, type_str), expr->pos);
 			}
-			multi_return_string_v__token__Position mr_22930 = v__checker__Checker_fail_if_immutable(c, expr->expr);
-			to_lock = mr_22930.arg0;
-			pos = mr_22930.arg1;
+			multi_return_string_v__token__Position mr_22929 = v__checker__Checker_fail_if_immutable(c, expr->expr);
+			to_lock = mr_22929.arg0;
+			pos = mr_22929.arg1;
 			if (string_ne(to_lock, tos_lit(""))) {
 				explicit_lock_needed = true;
 			}
@@ -20263,9 +20263,9 @@ static multi_return_string_v__token__Position v__checker__Checker_fail_if_immuta
 		v__ast__CallExpr* it = (v__ast__CallExpr*)expr.obj; // ST it
 		v__ast__CallExpr* expr = it;
 		if (string_eq(expr->name, tos_lit("slice"))) {
-			multi_return_string_v__token__Position mr_23632 = v__checker__Checker_fail_if_immutable(c, expr->left);
-			to_lock = mr_23632.arg0;
-			pos = mr_23632.arg1;
+			multi_return_string_v__token__Position mr_23631 = v__checker__Checker_fail_if_immutable(c, expr->left);
+			to_lock = mr_23631.arg0;
+			pos = mr_23631.arg1;
 			if (string_ne(to_lock, tos_lit(""))) {
 				explicit_lock_needed = true;
 			}
@@ -20775,8 +20775,8 @@ static bool v__checker__Checker_type_implements(v__checker__Checker* c, v__table
 
 v__table__Type v__checker__Checker_check_expr_opt_call(v__checker__Checker* c, v__ast__Expr expr, v__table__Type ret_type) {
 	if (expr.typ == 147 /* v.ast.CallExpr */) {
-		v__ast__CallExpr* _sc_tmp_43876 = (v__ast__CallExpr*)expr.obj;
-		v__ast__CallExpr* expr = _sc_tmp_43876;
+		v__ast__CallExpr* _sc_tmp_43875 = (v__ast__CallExpr*)expr.obj;
+		v__ast__CallExpr* expr = _sc_tmp_43875;
 		if (v__table__Type_has_flag(expr->return_type, v__table__TypeFlag_optional)) {
 			if (expr->or_block.kind == v__ast__OrKind_absent) {
 				if (ret_type != _const_v__table__void_type) {
@@ -21029,8 +21029,8 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 	}
 	if (assign_stmt->left.len != right_len) {
 		if (right_first.typ == 147 /* v.ast.CallExpr */) {
-			v__ast__CallExpr* _sc_tmp_52045 = (v__ast__CallExpr*)right_first.obj;
-			v__ast__CallExpr* right_first = _sc_tmp_52045;
+			v__ast__CallExpr* _sc_tmp_52044 = (v__ast__CallExpr*)right_first.obj;
+			v__ast__CallExpr* right_first = _sc_tmp_52044;
 			v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) but `%.*s\000()` returns %"PRId32"\000 value(s)", 4, assign_stmt->left.len, right_first->name, right_len), assign_stmt->pos);
 		} else {
 			v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) %"PRId32"\000 value(s)", 3, assign_stmt->left.len, right_len), assign_stmt->pos);
@@ -21104,7 +21104,7 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 		v__table__TypeSymbol* left_sym = v__table__Table_get_type_symbol(c->table, left_type_unwrapped);
 		v__table__TypeSymbol* right_sym = v__table__Table_get_type_symbol(c->table, right_type_unwrapped);
 		if ((v__table__Type_is_ptr(left_type) || v__table__TypeSymbol_is_pointer(left_sym)) && !(assign_stmt->op == v__token__Kind_assign || assign_stmt->op == v__token__Kind_decl_assign) && !c->inside_unsafe) {
-			v__checker__Checker_error(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), assign_stmt->pos);
+			v__checker__Checker_warn(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), assign_stmt->pos);
 		}
 		if (assign_stmt->op == v__token__Kind_assign) {
 		} else if (assign_stmt->op == v__token__Kind_plus_assign) {
@@ -22398,8 +22398,8 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 	}
 	v__ast__Stmt last = (*(v__ast__Stmt*)array_get(node->stmts, 0));
 	if (last.typ == 191 /* v.ast.ExprStmt */) {
-		v__ast__ExprStmt* _sc_tmp_85682 = (v__ast__ExprStmt*)last.obj;
-		v__ast__ExprStmt* last = _sc_tmp_85682;
+		v__ast__ExprStmt* _sc_tmp_85680 = (v__ast__ExprStmt*)last.obj;
+		v__ast__ExprStmt* last = _sc_tmp_85680;
 		v__table__Type t = v__checker__Checker_expr(c, last->expr);
 		// Defer begin
 		c->inside_unsafe = false;
@@ -22593,11 +22593,11 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 		println(v__table__Kind_str(typ_sym->kind));
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_91237 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_91237.arg0;
+		multi_return_string_v__token__Position mr_91235 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_91235.arg0;
 	}
 	if ((v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym)) && !c->inside_unsafe) {
-		v__checker__Checker_error(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
+		v__checker__Checker_warn(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
 	}
 	return typ;
 }
@@ -22941,15 +22941,15 @@ int _t710_len = stmts.len;
 	for (int _t712 = 0; _t712 < _t711.len; ++_t712) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t711.data)[_t712];
 		if (stmt.typ == 206 /* v.ast.UnsafeStmt */) {
-			v__ast__UnsafeStmt* _sc_tmp_102143 = (v__ast__UnsafeStmt*)stmt.obj;
-			v__ast__UnsafeStmt* stmt = _sc_tmp_102143;
+			v__ast__UnsafeStmt* _sc_tmp_102140 = (v__ast__UnsafeStmt*)stmt.obj;
+			v__ast__UnsafeStmt* stmt = _sc_tmp_102140;
 			// FOR IN array
 			array _t713 = stmt->stmts;
 			for (int _t714 = 0; _t714 < _t713.len; ++_t714) {
 				v__ast__Stmt ustmt = ((v__ast__Stmt*)_t713.data)[_t714];
 				if (ustmt.typ == 203 /* v.ast.Return */) {
-					v__ast__Return* _sc_tmp_102204 = (v__ast__Return*)ustmt.obj;
-					v__ast__Return* ustmt = _sc_tmp_102204;
+					v__ast__Return* _sc_tmp_102201 = (v__ast__Return*)ustmt.obj;
+					v__ast__Return* ustmt = _sc_tmp_102201;
 					has_unsafe_return = true;
 				}
 			}
