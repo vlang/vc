@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f3a505b"
+#define V_COMMIT_HASH "f66967a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b900577"
+	#define V_COMMIT_HASH "f3a505b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f3a505b"
+	#define V_CURRENT_COMMIT_HASH "f66967a"
 #endif
 
 // V typedefs:
@@ -12626,8 +12626,25 @@ string os__executable() {
 // $if  windows {
 #ifdef _WIN32
 	int max = 512;
-	u16* result = ((u16*)(vcalloc(max * 2)));
+	int size = max * 2;
+	u16* result = ((u16*)(vcalloc(size)));
 	int len = GetModuleFileName(0, result, max);
+	u32 attrs = GetFileAttributesW(result);
+	u32 is_set = (attrs & 0x400);
+	if (is_set != 0) {
+		voidptr file = CreateFile(result, 0x80000000, 1, 0, 3, 0x80, 0);
+		if (file != -1) {
+			u16* final_path = ((u16*)(vcalloc(size)));
+			int final_len = GetFinalPathNameByHandleW(file, final_path, size, 0);
+			if (final_len < size) {
+				string ret = string_from_wide2(final_path, final_len);
+				return string_substr(ret, 4, ret.len);
+			} else {
+				eprintln(tos_lit("os.executable() saw that the executable file path was too long"));
+			}
+		}
+		CloseHandle(file);
+	}
 	return string_from_wide2(result, len);
 #endif
 // } windows
@@ -12682,6 +12699,13 @@ static string os__executable_fallback() {
 		return tos_lit("");
 	}
 	string exepath = (*(string*)array_get(_const_os__args, 0));
+// $if  windows {
+#ifdef _WIN32
+	if (!string_contains(exepath, tos_lit(".exe"))) {
+		exepath = /*f*/string_add(exepath, tos_lit(".exe"));
+	}
+#endif
+// } windows
 	if (!os__is_abs_path(exepath)) {
 		if (string_contains(exepath, _const_os__path_separator)) {
 			exepath = os__join_path(_const_os__wd_at_startup, (varg_string){.len=1,.args={exepath}});

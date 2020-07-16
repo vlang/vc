@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f3a505b"
+#define V_COMMIT_HASH "f66967a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b900577"
+	#define V_COMMIT_HASH "f3a505b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f3a505b"
+	#define V_CURRENT_COMMIT_HASH "f66967a"
 #endif
 
 // V typedefs:
@@ -3712,45 +3712,47 @@ int utf8_getchar();
 static int _const_os__std_input_handle; // inited later
 static int _const_os__std_output_handle; // inited later
 static int _const_os__std_error_handle; // inited later
-#define _const_os__success 0
-#define _const_os__error_insufficient_buffer 130
-#define _const_os__file_share_read 1
-#define _const_os__file_share_write 2
-#define _const_os__file_share_delete 4
-#define _const_os__file_notify_change_file_name 1
-#define _const_os__file_notify_change_dir_name 2
-#define _const_os__file_notify_change_attributes 4
-#define _const_os__file_notify_change_size 8
-#define _const_os__file_notify_change_last_write 16
-#define _const_os__file_notify_change_last_access 32
-#define _const_os__file_notify_change_creation 64
-#define _const_os__file_notify_change_security 128
-#define _const_os__file_action_added 1
-#define _const_os__file_action_removed 2
-#define _const_os__file_action_modified 3
-#define _const_os__file_action_renamed_old_name 4
-#define _const_os__file_action_renamed_new_name 5
-#define _const_os__file_attr_readonly 0x1
-#define _const_os__file_attr_hidden 0x2
-#define _const_os__file_attr_system 0x4
-#define _const_os__file_attr_directory 0x10
-#define _const_os__file_attr_archive 0x20
-#define _const_os__file_attr_device 0x40
-#define _const_os__file_attr_normal 0x80
-#define _const_os__file_attr_temporary 0x100
-#define _const_os__file_attr_sparse_file 0x200
-#define _const_os__file_attr_reparse_point 0x400
-#define _const_os__file_attr_compressed 0x800
-#define _const_os__file_attr_offline 0x1000
-#define _const_os__file_attr_not_content_indexed 0x2000
-#define _const_os__file_attr_encrypted 0x4000
-#define _const_os__file_attr_integrity_stream 0x8000
-#define _const_os__file_attr_virtual 0x10000
-#define _const_os__file_attr_no_scrub_data 0x20000
-#define _const_os__file_type_disk 0x1
-#define _const_os__file_type_char 0x2
-#define _const_os__file_type_pipe 0x3
-#define _const_os__file_type_unknown 0x0
+#define _const_os__success 0x0000
+#define _const_os__error_insufficient_buffer 0x0082
+#define _const_os__handle_generic_read 0x80000000
+#define _const_os__handle_open_existing 0x00000003
+#define _const_os__file_share_read 0x01
+#define _const_os__file_share_write 0x02
+#define _const_os__file_share_delete 0x04
+#define _const_os__file_notify_change_file_name 0x01
+#define _const_os__file_notify_change_dir_name 0x02
+#define _const_os__file_notify_change_attributes 0x04
+#define _const_os__file_notify_change_size 0x08
+#define _const_os__file_notify_change_last_write 0x10
+#define _const_os__file_notify_change_last_access 0x20
+#define _const_os__file_notify_change_creation 0x40
+#define _const_os__file_notify_change_security 0x80
+#define _const_os__file_action_added 0x01
+#define _const_os__file_action_removed 0x02
+#define _const_os__file_action_modified 0x03
+#define _const_os__file_action_renamed_old_name 0x04
+#define _const_os__file_action_renamed_new_name 0x05
+#define _const_os__file_attr_readonly 0x00000001
+#define _const_os__file_attr_hidden 0x00000002
+#define _const_os__file_attr_system 0x00000004
+#define _const_os__file_attr_directory 0x00000010
+#define _const_os__file_attr_archive 0x00000020
+#define _const_os__file_attr_device 0x00000040
+#define _const_os__file_attr_normal 0x00000080
+#define _const_os__file_attr_temporary 0x00000100
+#define _const_os__file_attr_sparse_file 0x00000200
+#define _const_os__file_attr_reparse_point 0x00000400
+#define _const_os__file_attr_compressed 0x00000800
+#define _const_os__file_attr_offline 0x00001000
+#define _const_os__file_attr_not_content_indexed 0x00002000
+#define _const_os__file_attr_encrypted 0x00004000
+#define _const_os__file_attr_integrity_stream 0x00008000
+#define _const_os__file_attr_virtual 0x00010000
+#define _const_os__file_attr_no_scrub_data 0x00020000
+#define _const_os__file_type_unknown 0x00
+#define _const_os__file_type_disk 0x01
+#define _const_os__file_type_char 0x02
+#define _const_os__file_type_pipe 0x03
 static int _const_os__file_invalid_file_id; // inited later
 static voidptr _const_os__invalid_handle_value; // inited later
 #define _const_os__enable_echo_input 0x0004
@@ -3762,21 +3764,21 @@ static voidptr _const_os__invalid_handle_value; // inited later
 #define _const_os__enable_quick_edit_mode 0x0040
 #define _const_os__enable_window_input 0x0008
 #define _const_os__enable_virtual_terminal_input 0x0200
-#define _const_os__enable_processed_output 0x0001
-#define _const_os__enable_wrap_at_eol_output 0x0002
-#define _const_os__enable_virtual_terminal_processing 0x0004
-#define _const_os__disable_newline_auto_return 0x0008
-#define _const_os__enable_lvb_grid_worldwide 0x0010
-#define _const_os__o_rdonly 0
-#define _const_os__o_wronly 1
-#define _const_os__o_rdwr 2
+#define _const_os__enable_processed_output 0x01
+#define _const_os__enable_wrap_at_eol_output 0x02
+#define _const_os__enable_virtual_terminal_processing 0x04
+#define _const_os__disable_newline_auto_return 0x08
+#define _const_os__enable_lvb_grid_worldwide 0x10
+#define _const_os__o_rdonly 0x0000
+#define _const_os__o_wronly 0x0001
+#define _const_os__o_rdwr 0x0002
 #define _const_os__o_append 0x0008
 #define _const_os__o_create 0x0100
 #define _const_os__o_trunc 0x0200
 #define _const_os__o_excl 0x0400
-#define _const_os__o_sync 0
-#define _const_os__o_noctty 0
-#define _const_os__o_nonblock 0
+#define _const_os__o_sync 0x0000
+#define _const_os__o_noctty 0x0000
+#define _const_os__o_nonblock 0x0000
 #define _const_os__status_access_violation 0xC0000005
 #define _const_os__status_in_page_error 0xC0000006
 #define _const_os__status_invalid_handle 0xC0000008
@@ -3809,6 +3811,15 @@ static voidptr _const_os__invalid_handle_value; // inited later
 #define _const_os__status_stack_buffer_overrun 0xC0000409
 #define _const_os__status_invalid_cruntime_parameter 0xC0000417
 #define _const_os__status_assertion_failure 0xC0000420
+static voidptr _const_os__hkey_local_machine; // inited later
+static voidptr _const_os__hkey_current_user; // inited later
+#define _const_os__key_query_value 0x0001
+#define _const_os__key_set_value 0x0002
+#define _const_os__key_enumerate_sub_keys 0x0008
+#define _const_os__key_wow64_32key 0x0200
+static voidptr _const_os__hwnd_broadcast; // inited later
+#define _const_os__wm_settingchange 0x001A
+#define _const_os__smto_abortifhung 0x0002
 string os__getenv(string key);
 int os__setenv(string name, string value, bool overwrite);
 int os__unsetenv(string name);
@@ -12698,8 +12709,25 @@ string os__executable() {
 // $if  windows {
 #ifdef _WIN32
 	int max = 512;
-	u16* result = ((u16*)(vcalloc(max * 2)));
+	int size = max * 2;
+	u16* result = ((u16*)(vcalloc(size)));
 	int len = GetModuleFileName(0, result, max);
+	u32 attrs = GetFileAttributesW(result);
+	u32 is_set = (attrs & 0x400);
+	if (is_set != 0) {
+		voidptr file = CreateFile(result, 0x80000000, 1, 0, 3, 0x80, 0);
+		if (file != -1) {
+			u16* final_path = ((u16*)(vcalloc(size)));
+			int final_len = GetFinalPathNameByHandleW(file, final_path, size, 0);
+			if (final_len < size) {
+				string ret = string_from_wide2(final_path, final_len);
+				return string_substr(ret, 4, ret.len);
+			} else {
+				eprintln(tos_lit("os.executable() saw that the executable file path was too long"));
+			}
+		}
+		CloseHandle(file);
+	}
 	return string_from_wide2(result, len);
 #endif
 // } windows
@@ -12711,6 +12739,13 @@ static string os__executable_fallback() {
 		return tos_lit("");
 	}
 	string exepath = (*(string*)array_get(_const_os__args, 0));
+// $if  windows {
+#ifdef _WIN32
+	if (!string_contains(exepath, tos_lit(".exe"))) {
+		exepath = /*f*/string_add(exepath, tos_lit(".exe"));
+	}
+#endif
+// } windows
 	if (!os__is_abs_path(exepath)) {
 		if (string_contains(exepath, _const_os__path_separator)) {
 			exepath = os__join_path(_const_os__wd_at_startup, (varg_string){.len=1,.args={exepath}});
@@ -37453,6 +37488,9 @@ void _vinit() {
 	_const_os__std_error_handle = -12;
 	_const_os__file_invalid_file_id = (-1);
 	_const_os__invalid_handle_value = ((voidptr)(-1));
+	_const_os__hkey_local_machine = ((voidptr)(0x80000002));
+	_const_os__hkey_current_user = ((voidptr)(0x80000001));
+	_const_os__hwnd_broadcast = ((voidptr)(0xFFFF));
 	_const_os__args = __new_array_with_default(0, 0, sizeof(string), 0);
 	_const_os__wd_at_startup = os__getwd();
 	_const_os__lang_neutral = (_const_os__sublang_neutral);
