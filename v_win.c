@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b900577"
+#define V_COMMIT_HASH "f3a505b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "612fe1b"
+	#define V_COMMIT_HASH "b900577"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b900577"
+	#define V_CURRENT_COMMIT_HASH "f3a505b"
 #endif
 
 // V typedefs:
@@ -18589,6 +18589,9 @@ static string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner* s) {
 	byte first_wrong_digit = '\0';
 	int start_pos = s->pos;
 	s->pos += 2;
+	if (string_at(s->text, s->pos) == _const_v__scanner__num_sep) {
+		v__scanner__Scanner_error(s, tos_lit("separator `_` is only valid between digits in a numeric literal"));
+	}
 	while (s->pos < s->text.len) {
 		byte c = string_at(s->text, s->pos);
 		if (!byte_is_bin_digit(c) && c != _const_v__scanner__num_sep) {
@@ -18620,6 +18623,9 @@ static string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner* s) {
 	byte first_wrong_digit = '\0';
 	int start_pos = s->pos;
 	s->pos += 2;
+	if (string_at(s->text, s->pos) == _const_v__scanner__num_sep) {
+		v__scanner__Scanner_error(s, tos_lit("separator `_` is only valid between digits in a numeric literal"));
+	}
 	while (s->pos < s->text.len) {
 		byte c = string_at(s->text, s->pos);
 		if (!byte_is_hex_digit(c) && c != _const_v__scanner__num_sep) {
@@ -18651,6 +18657,9 @@ static string v__scanner__Scanner_ident_oct_number(v__scanner__Scanner* s) {
 	byte first_wrong_digit = '\0';
 	int start_pos = s->pos;
 	s->pos += 2;
+	if (string_at(s->text, s->pos) == _const_v__scanner__num_sep) {
+		v__scanner__Scanner_error(s, tos_lit("separator `_` is only valid between digits in a numeric literal"));
+	}
 	while (s->pos < s->text.len) {
 		byte c = string_at(s->text, s->pos);
 		if (!byte_is_oct_digit(c) && c != _const_v__scanner__num_sep) {
