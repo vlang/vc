@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "82e2b1e"
+#define V_COMMIT_HASH "fa03f39"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "69ef43b"
+	#define V_COMMIT_HASH "82e2b1e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "82e2b1e"
+	#define V_CURRENT_COMMIT_HASH "fa03f39"
 #endif
 
 // V typedefs:
@@ -24491,10 +24491,12 @@ static v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 		if ((p->peek_tok.kind == v__token__Kind_assign || p->peek_tok.kind == v__token__Kind_decl_assign)) {
 			init = v__parser__Parser_assign_stmt(p);
 			has_init = true;
-		} else if (p->tok.kind != v__token__Kind_semicolon) {
 		}
 		v__parser__Parser_check(p, v__token__Kind_semicolon);
 		if (p->tok.kind != v__token__Kind_semicolon) {
+			if (p->tok.kind == v__token__Kind_name && (p->peek_tok.kind == v__token__Kind_inc || p->peek_tok.kind == v__token__Kind_dec)) {
+				v__parser__Parser_error(p, _STR("cannot use %.*s\000%.*s\000 as value", 3, p->tok.lit, v__token__Kind_str(p->peek_tok.kind)));
+			}
 			cond = v__parser__Parser_expr(p, 0);
 			has_cond = true;
 		}
