@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ca83444"
+#define V_COMMIT_HASH "de0fc53"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e5a508c"
+	#define V_COMMIT_HASH "ca83444"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ca83444"
+	#define V_CURRENT_COMMIT_HASH "de0fc53"
 #endif
 
 // V typedefs:
@@ -37079,7 +37079,7 @@ array_string v__builder__Builder_get_builtin_files(v__builder__Builder v) {
 }
 
 array_string v__builder__Builder_get_user_files(v__builder__Builder* v) {
-	if ((string_eq(v->pref->path, tos_lit("vlib/builtin")) || string_eq(v->pref->path, tos_lit("vlib/strconv")) || string_eq(v->pref->path, tos_lit("vlib/strings")) || string_eq(v->pref->path, tos_lit("vlib/hash")) || string_eq(v->pref->path, tos_lit("vlib/hash/wyhash")))) {
+	if ((string_eq(v->pref->path, tos_lit("vlib/builtin")) || string_eq(v->pref->path, tos_lit("vlib/strconv")) || string_eq(v->pref->path, tos_lit("vlib/strings")) || string_eq(v->pref->path, tos_lit("vlib/hash")))) {
 		v__builder__Builder_log(/*rec*/*v, tos_lit("Skipping user files."));
 		return __new_array_with_default(0, 0, sizeof(string), 0);
 	}
@@ -37845,7 +37845,7 @@ void _vinit() {
 	// Initializations for module help :
 	// Initializations for module v.util :
 	_const_v__util__emanager = v__util__new_error_manager();
-	_const_v__util__builtin_module_parts = new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("math.bits"), tos_lit("strconv"), tos_lit("strconv.ftoa"), tos_lit("hash"), tos_lit("hash.wyhash"), tos_lit("strings"), tos_lit("builtin")}));
+	_const_v__util__builtin_module_parts = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){tos_lit("math.bits"), tos_lit("strconv"), tos_lit("strconv.ftoa"), tos_lit("hash"), tos_lit("strings"), tos_lit("builtin")}));
 	_const_v__util__external_module_dependencies_for_tool = new_map_init(1, sizeof(array_string), _MOV((string[1]){tos_lit("vdoc"), }), _MOV((array_string[1]){new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){tos_lit("markdown")})), }));
 	// Initializations for module v.table :
 	_const_v__table__integer_type_idxs = new_array_from_c_array(9, 9, sizeof(int), _MOV((int[9]){
