@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8a855cc"
+#define V_COMMIT_HASH "9f6aacb"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0b0f9c9"
+	#define V_COMMIT_HASH "8a855cc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8a855cc"
+	#define V_CURRENT_COMMIT_HASH "9f6aacb"
 #endif
 
 // V typedefs:
@@ -32158,7 +32158,12 @@ static void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it) {
 		return;
 	}
 	int len = it.exprs.len;
-	v__gen__Gen_write(g, _STR("new_array_from_c_array(%"PRId32"\000, %"PRId32"\000, sizeof(%.*s\000), _MOV((%.*s\000[%"PRId32"\000]){", 6, len, len, elem_type_str, elem_type_str, len));
+	v__table__TypeSymbol* elem_sym = v__table__Table_get_type_symbol(g->table, it.elem_type);
+	if (elem_sym->kind == v__table__Kind_function) {
+		v__gen__Gen_write(g, _STR("new_array_from_c_array(%"PRId32"\000, %"PRId32"\000, sizeof(voidptr), _MOV((voidptr[%"PRId32"\000]){", 4, len, len, len));
+	} else {
+		v__gen__Gen_write(g, _STR("new_array_from_c_array(%"PRId32"\000, %"PRId32"\000, sizeof(%.*s\000), _MOV((%.*s\000[%"PRId32"\000]){", 6, len, len, elem_type_str, elem_type_str, len));
+	}
 	if (len > 8) {
 		v__gen__Gen_writeln(g, tos_lit(""));
 		v__gen__Gen_write(g, tos_lit("\t\t"));
