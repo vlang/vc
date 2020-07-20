@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "fb4c3ff"
+#define V_COMMIT_HASH "c93467b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "60997b3"
+	#define V_COMMIT_HASH "fb4c3ff"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "fb4c3ff"
+	#define V_CURRENT_COMMIT_HASH "c93467b"
 #endif
 
 // V typedefs:
@@ -3962,14 +3962,12 @@ static string _const_vweb__tmpl__str_start; // a string literal, inited later
 static string _const_vweb__tmpl__str_end; // a string literal, inited later
 string vweb__tmpl__compile_file(string path, string fn_name);
 string vweb__tmpl__compile_template(string html_, string fn_name);
-int runtime__nr_cpus();
 int runtime__nr_jobs();
 bool runtime__is_32bit();
 bool runtime__is_64bit();
 bool runtime__is_little_endian();
 bool runtime__is_big_endian();
-static int runtime__nr_cpus_nix();
-static int runtime__nr_cpus_win();
+int runtime__nr_cpus();
 static string _const_help__unknown_topic; // a string literal, inited later
 void help__print_and_exit(string topic);
 Option_string v__util__find_working_diff_command();
@@ -16126,15 +16124,6 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 	return strings__Builder_str(&s);
 }
 
-int runtime__nr_cpus() {
-// $if  windows {
-#ifdef _WIN32
-	return runtime__nr_cpus_win();
-#endif
-// } windows
-	return runtime__nr_cpus_nix();
-}
-
 int runtime__nr_jobs() {
 	int cpus = runtime__nr_cpus();
 	int vjobs = string_int(os__getenv(tos_lit("VJOBS")));
@@ -16145,46 +16134,42 @@ int runtime__nr_jobs() {
 }
 
 bool runtime__is_32bit() {
-	bool x = false;
 // $if  x32 {
 #ifdef TARGET_IS_32BIT
-	x = true;
+	return true;
 #endif
 // } x32
-	return x;
+	return false;
 }
 
 bool runtime__is_64bit() {
-	bool x = false;
 // $if  x64 {
 #ifdef TARGET_IS_64BIT
-	x = true;
+	return true;
 #endif
 // } x64
-	return x;
+	return false;
 }
 
 bool runtime__is_little_endian() {
-	bool x = false;
 // $if  little_endian {
 #ifdef TARGET_ORDER_IS_LITTLE
-	x = true;
+	return true;
 #endif
 // } little_endian
-	return x;
+	return false;
 }
 
 bool runtime__is_big_endian() {
-	bool x = false;
 // $if  big_endian {
 #ifdef TARGET_ORDER_IS_BIG
-	x = true;
+	return true;
 #endif
 // } big_endian
-	return x;
+	return false;
 }
 
-static int runtime__nr_cpus_nix() {
+int runtime__nr_cpus() {
 // $if  linux {
 #ifdef __linux__
 	return ((int)(sysconf(_SC_NPROCESSORS_ONLN)));
@@ -16200,11 +16185,6 @@ static int runtime__nr_cpus_nix() {
 	return ((int)(sysconf(_SC_NPROCESSORS_ONLN)));
 #endif
 // } solaris
-	return 1;
-}
-
-static int runtime__nr_cpus_win() {
-	eprintln(tos_lit("nr_cpus_win should be callable only for windows"));
 	return 1;
 }
 
@@ -37923,7 +37903,7 @@ static void main__main() {
 	} else if (string_eq(command, tos_lit("translate"))) {
 		println(tos_lit("Translating C to V will be available in V 0.3"));
 		return;
-	} else if (string_eq(command, tos_lit("search")) || string_eq(command, tos_lit("install")) || string_eq(command, tos_lit("update")) || string_eq(command, tos_lit("outdated")) || string_eq(command, tos_lit("remove"))) {
+	} else if (string_eq(command, tos_lit("search")) || string_eq(command, tos_lit("install")) || string_eq(command, tos_lit("update")) || string_eq(command, tos_lit("outdated")) || string_eq(command, tos_lit("list")) || string_eq(command, tos_lit("remove"))) {
 		v__util__launch_tool(prefs->is_verbose, tos_lit("vpm"), array_slice(_const_os__args, 1, _const_os__args.len));
 		return;
 	} else if (string_eq(command, tos_lit("vlib-docs"))) {
