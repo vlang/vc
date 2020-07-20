@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "88c8e19"
+#define V_COMMIT_HASH "1a5236e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8653605"
+	#define V_COMMIT_HASH "88c8e19"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "88c8e19"
+	#define V_CURRENT_COMMIT_HASH "1a5236e"
 #endif
 
 // V typedefs:
@@ -33928,9 +33928,10 @@ string v__gen__js__gen(array_v__ast__File files, v__table__Table* table, v__pref
 		v__gen__js__JsGen_escape_namespace(g);
 	}
 	v__depgraph__DepGraph* deps_resolved = v__depgraph__DepGraph_resolve(graph);
+	array_v__depgraph__DepGraphNode nodes = deps_resolved->nodes;
 	string out = string_add(v__gen__js__JsGen_hashes(/*rec*/*g), strings__Builder_str(&g->definitions));
 	// FOR IN array
-	array _t1145 = deps_resolved->nodes;
+	array _t1145 = nodes;
 	for (int _t1146 = 0; _t1146 < _t1145.len; ++_t1146) {
 		v__depgraph__DepGraphNode node = ((v__depgraph__DepGraphNode*)_t1145.data)[_t1146];
 		string name = string_replace(v__gen__js__JsGen_js_name(g, node.name), tos_lit("."), tos_lit("_"));
@@ -33979,6 +33980,10 @@ string v__gen__js__gen(array_v__ast__File files, v__table__Table* table, v__pref
 			out = /*f*/string_add(out, string_replace(key, tos_lit("."), tos_lit("_")));
 		}
 		out = /*f*/string_add(out, tos_lit(");\n\n"));
+	}
+	if (pref->is_shared) {
+		string export = (*(v__depgraph__DepGraphNode*)array_get(nodes, nodes.len - 1)).name;
+		out = /*f*/string_add(out, _STR("if (typeof module === \"object\" && module.exports) module.exports = %.*s\000;", 2, export));
 	}
 	return out;
 }
@@ -34571,8 +34576,8 @@ static void v__gen__js__JsGen_gen_assign_stmt(v__gen__js__JsGen* g, v__ast__Assi
 			v__ast__Expr val = (*(v__ast__Expr*)array_get(stmt.right, i));
 			bool is_mut = false;
 			if (left.typ == 184 /* v.ast.Ident */) {
-				v__ast__Ident* _sc_tmp_14888 = (v__ast__Ident*)left.obj;
-				v__ast__Ident* left = _sc_tmp_14888;
+				v__ast__Ident* _sc_tmp_15137 = (v__ast__Ident*)left.obj;
+				v__ast__Ident* left = _sc_tmp_15137;
 				is_mut = left->is_mut;
 				if (left->kind == v__ast__IdentKind_blank_ident || (string_eq(left->name, tos_lit("")) || string_eq(left->name, tos_lit("_")))) {
 					string tmp_var = v__gen__js__JsGen_new_tmp_var(g);
@@ -34702,8 +34707,8 @@ static bool v__gen__js__fn_has_go(v__ast__FnDecl it) {
 	for (int _t1178 = 0; _t1178 < _t1177.len; ++_t1178) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t1177.data)[_t1178];
 		if (stmt.typ == 225 /* v.ast.GoStmt */) {
-			v__ast__GoStmt* _sc_tmp_17345 = (v__ast__GoStmt*)stmt.obj;
-			v__ast__GoStmt* stmt = _sc_tmp_17345;
+			v__ast__GoStmt* _sc_tmp_17594 = (v__ast__GoStmt*)stmt.obj;
+			v__ast__GoStmt* stmt = _sc_tmp_17594;
 			has_go = true;
 		}
 	}
