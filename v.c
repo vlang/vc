@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c93467b"
+#define V_COMMIT_HASH "fb76e02"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "fb4c3ff"
+	#define V_COMMIT_HASH "c93467b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c93467b"
+	#define V_CURRENT_COMMIT_HASH "fb76e02"
 #endif
 
 // V typedefs:
@@ -10175,9 +10175,6 @@ string tos(byteptr s, int len) {
 }
 
 string tos_clone(byteptr s) {
-	if (s == 0) {
-		v_panic(tos_lit("tos: nil string"));
-	}
 	return string_clone(tos2(s));
 }
 
@@ -10205,22 +10202,15 @@ static string string_clone_static(string a) {
 
 string string_clone(string a) {
 	string b = (string){.str = v_malloc(a.len + 1), .len = a.len};
-	for (int i = 0; i < a.len; ++i) {
-		b.str[i] = a.str[i];
-	}
 	{ // Unsafe block
+		memcpy(b.str, a.str, a.len);
 		b.str[a.len] = '\0';
 	}
 	return b;
 }
 
 string cstring_to_vstring(byteptr cstr) {
-	{ // Unsafe block
-		int slen = strlen(((charptr)(cstr)));
-		byteptr s = ((byteptr)(memdup(cstr, slen + 1)));
-		s[slen] = '\0';
-		return tos(s, slen);
-	}
+	return tos_clone(cstr);
 }
 
 string string_replace_once(string s, string rep, string with) {
