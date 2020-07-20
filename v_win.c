@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1a5236e"
+#define V_COMMIT_HASH "a74cbf5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "88c8e19"
+	#define V_COMMIT_HASH "1a5236e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1a5236e"
+	#define V_CURRENT_COMMIT_HASH "a74cbf5"
 #endif
 
 // V typedefs:
@@ -8289,7 +8289,9 @@ static array __new_array_with_array_default(int mylen, int cap, int elm_size, ar
 static array new_array_from_c_array(int len, int cap, int elm_size, voidptr c_array) {
 	int cap_ = (cap < len ? (len) : (cap));
 	array arr = (array){.element_size = elm_size,.data = vcalloc(cap_ * elm_size),.len = len,.cap = cap_,};
-	memcpy(arr.data, c_array, len * elm_size);
+	{ // Unsafe block
+		memcpy(arr.data, c_array, len * elm_size);
+	}
 	return arr;
 }
 
@@ -8327,7 +8329,9 @@ array array_repeat(array a, int count) {
 	for (int i = 0; i < count; ++i) {
 		if (a.len > 0 && _us32_eq(/*SizeOfType*/ sizeof(struct array),a.element_size)) {
 			array ary = (array){.element_size = 0,.data = 0,.len = 0,.cap = 0,};
-			memcpy(&ary, a.data, /*SizeOfType*/ sizeof(struct array));
+			{ // Unsafe block
+				memcpy(&ary, a.data, /*SizeOfType*/ sizeof(struct array));
+			}
 			array ary_clone = array_clone(&ary);
 			{ // Unsafe block
 				memcpy(array_get_unsafe(arr, i * a.len), &ary_clone, a.len * a.element_size);
@@ -8677,7 +8681,9 @@ int copy(array_byte dst, array_byte src) {
 	if (dst.len > 0 && src.len > 0) {
 		int min = 0;
 		min = (dst.len < src.len ? (dst.len) : (src.len));
-		memcpy(((byteptr)(dst.data)), array_slice(src, 0, min).data, dst.element_size * min);
+		{ // Unsafe block
+			memcpy(((byteptr)(dst.data)), array_slice(src, 0, min).data, dst.element_size * min);
+		}
 		return min;
 	}
 	return 0;
@@ -8912,10 +8918,12 @@ byteptr v_malloc(int n) {
 byteptr v_realloc(byteptr b, u32 n) {
 // $if  prealloc {
 #ifdef _VPREALLOC
-	byteptr new_ptr = v_malloc(((int)(n)));
-	int size = 0;
-	memcpy(new_ptr, b, size);
-	return new_ptr;
+	{ // Unsafe block
+		byteptr new_ptr = v_malloc(((int)(n)));
+		int size = 0;
+		memcpy(new_ptr, b, size);
+		return new_ptr;
+	}
 #else
 	byteptr ptr = realloc(b, n);
 	if (ptr == 0) {
@@ -8955,8 +8963,10 @@ voidptr memdup(voidptr src, int sz) {
 	if (sz == 0) {
 		return vcalloc(1);
 	}
-	byteptr mem = v_malloc(sz);
-	return memcpy(mem, src, sz);
+	{ // Unsafe block
+		byteptr mem = v_malloc(sz);
+		return memcpy(mem, src, sz);
+	}
 }
 
 static void v_ptr_free(voidptr ptr) {
@@ -9003,7 +9013,9 @@ static void __print_assert_failure(VAssertMetaInfo* i) {
 static void builtin_init() {
 	if (is_atty(1) > 0) {
 		SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), (ENABLE_PROCESSED_OUTPUT | 0x0004));
-		setbuf(stdout, 0);
+		{ // Unsafe block
+			setbuf(stdout, 0);
+		}
 	}
 	add_unhandled_exception_handler();
 }
@@ -9071,6 +9083,9 @@ static void break_if_debugger_attached() {
 
 int proc_pidpath(int, voidptr, int);
 
+// Attr: [trusted_fn]
+// Attr: [trusted_fn]
+// Attr: [trusted_fn]
 // Attr: [inline]
 inline string f64_str(f64 x) {
 	f64 abs_x = f64_abs(x);
@@ -9550,7 +9565,9 @@ inline static bool fast_string_eq(string a, string b) {
 	if (a.len != b.len) {
 		return false;
 	}
-	return memcmp(a.str, b.str, b.len) == 0;
+	{ // Unsafe block
+		return memcmp(a.str, b.str, b.len) == 0;
+	}
 }
 
 // Attr: [inline]
@@ -9717,12 +9734,12 @@ static void map_set(map* m, string k, voidptr value) {
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_9236 = map_key_to_index(m, key);
-	u32 index = mr_9236.arg0;
-	u32 meta = mr_9236.arg1;
-	multi_return_u32_u32 mr_9271 = map_meta_less(m, index, meta);
-	index = mr_9271.arg0;
-	meta = mr_9271.arg1;
+	multi_return_u32_u32 mr_9250 = map_key_to_index(m, key);
+	u32 index = mr_9250.arg0;
+	u32 meta = mr_9250.arg1;
+	multi_return_u32_u32 mr_9285 = map_meta_less(m, index, meta);
+	index = mr_9285.arg0;
+	meta = mr_9285.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -9762,12 +9779,12 @@ static void map_rehash(map* m) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
-		multi_return_u32_u32 mr_10650 = map_key_to_index(m, m->key_values.keys[i]);
-		u32 index = mr_10650.arg0;
-		u32 meta = mr_10650.arg1;
-		multi_return_u32_u32 mr_10712 = map_meta_less(m, index, meta);
-		index = mr_10712.arg0;
-		meta = mr_10712.arg1;
+		multi_return_u32_u32 mr_10664 = map_key_to_index(m, m->key_values.keys[i]);
+		u32 index = mr_10664.arg0;
+		u32 meta = mr_10664.arg1;
+		multi_return_u32_u32 mr_10726 = map_meta_less(m, index, meta);
+		index = mr_10726.arg0;
+		meta = mr_10726.arg1;
 		map_meta_greater(m, index, meta, i);
 	}
 }
@@ -9785,9 +9802,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->cap >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->cap);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_11447 = map_meta_less(m, index, meta);
-		index = mr_11447.arg0;
-		meta = mr_11447.arg1;
+		multi_return_u32_u32 mr_11461 = map_meta_less(m, index, meta);
+		index = mr_11461.arg0;
+		meta = mr_11461.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -9798,9 +9815,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 
 static voidptr map_get_and_set(map* m, string key, voidptr zero) {
 	while (1) {
-		multi_return_u32_u32 mr_11893 = map_key_to_index(m, key);
-		u32 index = mr_11893.arg0;
-		u32 meta = mr_11893.arg1;
+		multi_return_u32_u32 mr_11907 = map_key_to_index(m, key);
+		u32 index = mr_11907.arg0;
+		u32 meta = mr_11907.arg1;
 		while (1) {
 			if (meta == m->metas[index]) {
 				u32 kv_index = m->metas[index + 1];
@@ -9821,9 +9838,9 @@ static voidptr map_get_and_set(map* m, string key, voidptr zero) {
 }
 
 static voidptr map_get(map m, string key, voidptr zero) {
-	multi_return_u32_u32 mr_12570 = map_key_to_index(&m, key);
-	u32 index = mr_12570.arg0;
-	u32 meta = mr_12570.arg1;
+	multi_return_u32_u32 mr_12584 = map_key_to_index(&m, key);
+	u32 index = mr_12584.arg0;
+	u32 meta = mr_12584.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9843,9 +9860,9 @@ static voidptr map_get(map m, string key, voidptr zero) {
 }
 
 static bool map_exists(map m, string key) {
-	multi_return_u32_u32 mr_13058 = map_key_to_index(&m, key);
-	u32 index = mr_13058.arg0;
-	u32 meta = mr_13058.arg1;
+	multi_return_u32_u32 mr_13072 = map_key_to_index(&m, key);
+	u32 index = mr_13072.arg0;
+	u32 meta = mr_13072.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9863,12 +9880,12 @@ static bool map_exists(map m, string key) {
 }
 
 void map_delete(map* m, string key) {
-	multi_return_u32_u32 mr_13478 = map_key_to_index(m, key);
-	u32 index = mr_13478.arg0;
-	u32 meta = mr_13478.arg1;
-	multi_return_u32_u32 mr_13513 = map_meta_less(m, index, meta);
-	index = mr_13513.arg0;
-	meta = mr_13513.arg1;
+	multi_return_u32_u32 mr_13492 = map_key_to_index(m, key);
+	u32 index = mr_13492.arg0;
+	u32 meta = mr_13492.arg1;
+	multi_return_u32_u32 mr_13527 = map_meta_less(m, index, meta);
+	index = mr_13527.arg0;
+	meta = mr_13527.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -9926,8 +9943,10 @@ DenseArray DenseArray_clone(DenseArray d) {
 		.keys = ((string*)(v_malloc(((int*)(d.cap * /*SizeOfType*/ sizeof(string)))))),
 		.values = ((byteptr)(v_malloc(((int)(d.cap * ((u32)(d.value_bytes))))))),
 	};
-	memcpy(res.keys, d.keys, d.cap * /*SizeOfType*/ sizeof(string));
-	memcpy(res.values, d.values, d.cap * ((u32)(d.value_bytes)));
+	{ // Unsafe block
+		memcpy(res.keys, d.keys, d.cap * /*SizeOfType*/ sizeof(string));
+		memcpy(res.values, d.values, d.cap * ((u32)(d.value_bytes)));
+	}
 	return res;
 }
 
@@ -10011,7 +10030,9 @@ static Option opt_ok(voidptr data, int size) {
 		v_panic(_STR("option size too big: %"PRId32"\000 (max is 400), this is a temporary limit", 2, size));
 	}
 	Option res = (Option){.ok = true,.is_none = 0,.v_error = (string){.str=(byteptr)""},.ecode = 0,.data = {0},};
-	memcpy(res.data, data, size);
+	{ // Unsafe block
+		memcpy(res.data, data, size);
+	}
 	return res;
 }
 
@@ -10057,7 +10078,9 @@ static void SortedMap_set(SortedMap* m, string key, voidptr value) {
 			}
 			mapnode_split_child(parent, child_index, node);
 			if (string_eq(key, parent->keys[child_index])) {
-				memcpy(parent->values[child_index], value, m->value_bytes);
+				{ // Unsafe block
+					memcpy(parent->values[child_index], value, m->value_bytes);
+				}
 				return;
 			}
 			node = (string_lt(key, parent->keys[child_index]) ? (((mapnode*)(parent->children[child_index]))) : (((mapnode*)(parent->children[child_index + 1]))));
@@ -10067,7 +10090,9 @@ static void SortedMap_set(SortedMap* m, string key, voidptr value) {
 			i++;
 		}
 		if (i != node->len && string_eq(key, node->keys[i])) {
-			memcpy(node->values[i], value, m->value_bytes);
+			{ // Unsafe block
+				memcpy(node->values[i], value, m->value_bytes);
+			}
 			return;
 		}
 		if (isnil(node->children)) {
@@ -10079,7 +10104,9 @@ static void SortedMap_set(SortedMap* m, string key, voidptr value) {
 			}
 			node->keys[j + 1] = key;
 			node->values[j + 1] = v_malloc(m->value_bytes);
-			memcpy(node->values[j + 1], value, m->value_bytes);
+			{ // Unsafe block
+				memcpy(node->values[j + 1], value, m->value_bytes);
+			}
 			node->len++;
 			m->len++;
 			return;
@@ -10128,7 +10155,9 @@ static bool SortedMap_get(SortedMap m, string key, voidptr out) {
 			i--;
 		}
 		if (i != -1 && string_eq(key, node->keys[i])) {
-			memcpy(out, node->values[i], m.value_bytes);
+			{ // Unsafe block
+				memcpy(out, node->values[i], m.value_bytes);
+			}
 			return true;
 		}
 		if (isnil(node->children)) {
@@ -10371,6 +10400,7 @@ void SortedMap_print(SortedMap m) {
 	println(tos_lit("TODO"));
 }
 
+// Attr: [unsafe_fn]
 int vstrlen(byteptr s) {
 	return strlen(((charptr)(s)));
 }
@@ -10602,7 +10632,9 @@ static bool string_eq(string s, string a) {
 	if (s.len != a.len) {
 		return false;
 	}
-	return memcmp(s.str, a.str, a.len) == 0;
+	{ // Unsafe block
+		return memcmp(s.str, a.str, a.len) == 0;
+	}
 }
 
 static bool string_ne(string s, string a) {
@@ -11589,7 +11621,9 @@ array_byte string_bytes(string s) {
 		return __new_array_with_default(0, 0, sizeof(byte), 0);
 	}
 	array_byte buf = __new_array_with_default(s.len, 0, sizeof(byte), 0);
-	memcpy(buf.data, s.str, s.len);
+	{ // Unsafe block
+		memcpy(buf.data, s.str, s.len);
+	}
 	return buf;
 }
 
@@ -11927,11 +11961,15 @@ int os__setenv(string name, string value, bool overwrite) {
 #ifdef _WIN32
 	string format = _STR("%.*s\000=%.*s", 2, name, value);
 	if (overwrite) {
-		return _putenv(format.str);
+		{ // Unsafe block
+			return _putenv(format.str);
+		}
 	}
 	return -1;
 #else
-	return setenv(((charptr)(name.str)), ((charptr)(value.str)), overwrite);
+	{ // Unsafe block
+		return setenv(((charptr)(name.str)), ((charptr)(value.str)), overwrite);
+	}
 #endif
 // } windows
 }
@@ -11980,7 +12018,9 @@ map_string_string os__environ() {
 
 os__FileMode os__inode(string path) {
 	struct stat attr;
-	stat(((charptr)(path.str)), &attr);
+	{ // Unsafe block
+		stat(((charptr)(path.str)), &attr);
+	}
 	os__FileType typ = os__FileType_regular;
 	if ((attr.st_mode & ((u32)(S_IFMT))) == ((u32)(S_IFDIR))) {
 		typ = os__FileType_directory;
@@ -12086,18 +12126,20 @@ void os__File_flush(os__File* f) {
 
 int os__file_size(string path) {
 	struct stat s;
+	{ // Unsafe block
 // $if  windows {
 #ifdef _WIN32
 // $if  tinyc {
 #ifdef __TINYC__
 #else
-	_wstat(string_to_wide(path), ((voidptr)(&s)));
+		_wstat(string_to_wide(path), ((voidptr)(&s)));
 #endif
 // } tinyc
 #else
-	stat(((charptr)(path.str)), ((voidptr)(&s)));
+		stat(((charptr)(path.str)), &s);
 #endif
 // } windows
+	}
 	return s.st_size;
 }
 
@@ -12147,7 +12189,9 @@ Option_void os__cp(string old, string v_new) {
 		}
 	}
 	struct stat from_attr;
-	stat(((charptr)(old.str)), &from_attr);
+	{ // Unsafe block
+		stat(((charptr)(old.str)), &from_attr);
+	}
 	if (chmod(((charptr)(v_new.str)), from_attr.st_mode) < 0) {
 		Option _t75 = error_with_code(_STR("failed to set permissions for %.*s", 1, v_new), ((int)(-1)));
 		return *(Option_void*)&_t75;
@@ -12429,8 +12473,8 @@ static int os__vpclose(voidptr f) {
 #ifdef _WIN32
 	return _pclose(f);
 #else
-	multi_return_int_bool mr_9916 = os__posix_wait4_to_exit_status(pclose(f));
-	int ret = mr_9916.arg0;
+	multi_return_int_bool mr_9936 = os__posix_wait4_to_exit_status(pclose(f));
+	int ret = mr_9936.arg0;
 	return ret;
 #endif
 // } windows
@@ -12441,9 +12485,13 @@ int os__system(string cmd) {
 // $if  windows {
 #ifdef _WIN32
 	string wcmd = (cmd.len > 1 && string_at(cmd, 0) == '"' && string_at(cmd, 1) != '"' ? (_STR("\"%.*s\000\"", 2, cmd)) : (cmd));
-	ret = _wsystem(string_to_wide(wcmd));
+	{ // Unsafe block
+		ret = _wsystem(string_to_wide(wcmd));
+	}
 #else
-	ret = system(((charptr)(cmd.str)));
+	{ // Unsafe block
+		ret = system(((charptr)(cmd.str)));
+	}
 #endif
 // } windows
 	if (ret == -1) {
@@ -13126,8 +13174,11 @@ void os__walk(string path, void (*f)(string path)) {
 	return;
 }
 
+// Attr: [unsafe_fn]
 void os__signal(int signum, voidptr handler) {
-	signal(signum, handler);
+	{ // Unsafe block
+		signal(signum, handler);
+	}
 }
 
 int os__fork() {
@@ -13152,7 +13203,9 @@ int os__wait() {
 
 int os__file_last_mod_unix(string path) {
 	struct stat attr;
-	stat(((charptr)(path.str)), &attr);
+	{ // Unsafe block
+		stat(((charptr)(path.str)), &attr);
+	}
 	return attr.st_mtime;
 }
 
@@ -16517,7 +16570,9 @@ string v__util__cescaped_path(string s) {
 string v__util__vhash() {
 	array_fixed_byte_50 buf = {0};
 	buf[0] = 0;
-	snprintf(((charptr)(buf)), 50, "%s", V_COMMIT_HASH);
+	{ // Unsafe block
+		snprintf(((charptr)(buf)), 50, "%s", V_COMMIT_HASH);
+	}
 	return tos_clone((voidptr)&/*qq*/buf);
 }
 
@@ -16579,7 +16634,9 @@ string v__util__githash(bool should_get_from_filesystem) {
 	}
 	array_fixed_byte_50 buf = {0};
 	buf[0] = 0;
-	snprintf(((charptr)(buf)), 50, "%s", V_CURRENT_COMMIT_HASH);
+	{ // Unsafe block
+		snprintf(((charptr)(buf)), 50, "%s", V_CURRENT_COMMIT_HASH);
+	}
 	return tos_clone((voidptr)&/*qq*/buf);
 }
 
@@ -18054,7 +18111,9 @@ v__ast__Expr v__ast__fe2ex(v__table__FExpr x) {
 0
 #endif
 };
-	memcpy(&res, &x, /*SizeOfType*/ sizeof(v__ast__Expr));
+	{ // Unsafe block
+		memcpy(&res, &x, /*SizeOfType*/ sizeof(v__ast__Expr));
+	}
 	return res;
 }
 
@@ -18064,7 +18123,9 @@ v__table__FExpr v__ast__ex2fe(v__ast__Expr x) {
 0
 #endif
 };
-	memcpy(&res, &x, /*SizeOfType*/ sizeof(v__table__FExpr));
+	{ // Unsafe block
+		memcpy(&res, &x, /*SizeOfType*/ sizeof(v__table__FExpr));
+	}
 	return res;
 }
 
@@ -21057,6 +21118,9 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 	if (f.is_deprecated) {
 		v__checker__Checker_warn(c, _STR("function `%.*s\000` has been deprecated", 2, f.name), call_expr->pos);
 	}
+	if (f.is_unsafe && !c->inside_unsafe && f.language == v__table__Language_c && (string_at(f.name, 2) == 'm' || string_at(f.name, 2) == 's') && string_eq(f.mod, tos_lit("builtin"))) {
+		v__checker__Checker_warn(c, _STR("function `%.*s\000` must be called from an `unsafe` block", 2, f.name), call_expr->pos);
+	}
 	if (f.is_generic && v__table__Type_has_flag(f.return_type, v__table__TypeFlag_generic)) {
 		v__table__TypeSymbol* rts = v__table__Table_get_type_symbol(c->table, f.return_type);
 		if (rts->kind == v__table__Kind_struct_) {
@@ -21224,8 +21288,8 @@ static bool v__checker__Checker_type_implements(v__checker__Checker* c, v__table
 
 v__table__Type v__checker__Checker_check_expr_opt_call(v__checker__Checker* c, v__ast__Expr expr, v__table__Type ret_type) {
 	if (expr.typ == 176 /* v.ast.CallExpr */) {
-		v__ast__CallExpr* _sc_tmp_44659 = (v__ast__CallExpr*)expr.obj;
-		v__ast__CallExpr* expr = _sc_tmp_44659;
+		v__ast__CallExpr* _sc_tmp_44894 = (v__ast__CallExpr*)expr.obj;
+		v__ast__CallExpr* expr = _sc_tmp_44894;
 		if (v__table__Type_has_flag(expr->return_type, v__table__TypeFlag_optional)) {
 			if (expr->or_block.kind == v__ast__OrKind_absent) {
 				if (ret_type != _const_v__table__void_type) {
@@ -21478,8 +21542,8 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 	}
 	if (assign_stmt->left.len != right_len) {
 		if (right_first.typ == 176 /* v.ast.CallExpr */) {
-			v__ast__CallExpr* _sc_tmp_52829 = (v__ast__CallExpr*)right_first.obj;
-			v__ast__CallExpr* right_first = _sc_tmp_52829;
+			v__ast__CallExpr* _sc_tmp_53064 = (v__ast__CallExpr*)right_first.obj;
+			v__ast__CallExpr* right_first = _sc_tmp_53064;
 			v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) but `%.*s\000()` returns %"PRId32"\000 value(s)", 4, assign_stmt->left.len, right_first->name, right_len), assign_stmt->pos);
 		} else {
 			v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) %"PRId32"\000 value(s)", 3, assign_stmt->left.len, right_len), assign_stmt->pos);
@@ -22002,7 +22066,7 @@ static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) 
 			VAssertMetaInfo v_assert_meta_info__t649;
 			memset(&v_assert_meta_info__t649, 0, sizeof(VAssertMetaInfo));
 			v_assert_meta_info__t649.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-			v_assert_meta_info__t649.line_nr = 2087;
+			v_assert_meta_info__t649.line_nr = 2093;
 			v_assert_meta_info__t649.fn_name = tos_lit("stmt");
 			v_assert_meta_info__t649.src = tos_lit("!c.inside_unsafe");
 			__print_assert_failure(&v_assert_meta_info__t649);
@@ -22747,30 +22811,30 @@ static void v__checker__Checker_match_exprs(v__checker__Checker* c, v__ast__Matc
 			v__ast__Expr expr = ((v__ast__Expr*)_t679.data)[_t680];
 			string key = tos_lit("");
 			if (expr.typ == 199 /* v.ast.RangeExpr */) {
-				v__ast__RangeExpr* _sc_tmp_83506 = (v__ast__RangeExpr*)expr.obj;
-				v__ast__RangeExpr* expr = _sc_tmp_83506;
+				v__ast__RangeExpr* _sc_tmp_83741 = (v__ast__RangeExpr*)expr.obj;
+				v__ast__RangeExpr* expr = _sc_tmp_83741;
 				int low = 0;
 				int high = 0;
 				c->expected_type = node->expected_type;
 				v__ast__Expr low_expr = expr->low;
 				v__ast__Expr high_expr = expr->high;
 				if (low_expr.typ == 189 /* v.ast.IntegerLiteral */) {
-					v__ast__IntegerLiteral* _sc_tmp_83665 = (v__ast__IntegerLiteral*)low_expr.obj;
-					v__ast__IntegerLiteral* low_expr = _sc_tmp_83665;
+					v__ast__IntegerLiteral* _sc_tmp_83900 = (v__ast__IntegerLiteral*)low_expr.obj;
+					v__ast__IntegerLiteral* low_expr = _sc_tmp_83900;
 					if (high_expr.typ == 189 /* v.ast.IntegerLiteral */) {
-						v__ast__IntegerLiteral* _sc_tmp_83706 = (v__ast__IntegerLiteral*)high_expr.obj;
-						v__ast__IntegerLiteral* high_expr = _sc_tmp_83706;
+						v__ast__IntegerLiteral* _sc_tmp_83941 = (v__ast__IntegerLiteral*)high_expr.obj;
+						v__ast__IntegerLiteral* high_expr = _sc_tmp_83941;
 						low = string_int(low_expr->val);
 						high = string_int(high_expr->val);
 					} else {
 						v__checker__Checker_error(c, tos_lit("mismatched range types"), low_expr->pos);
 					}
 				} else if (low_expr.typ == 178 /* v.ast.CharLiteral */) {
-					v__ast__CharLiteral* _sc_tmp_83888 = (v__ast__CharLiteral*)low_expr.obj;
-					v__ast__CharLiteral* low_expr = _sc_tmp_83888;
+					v__ast__CharLiteral* _sc_tmp_84123 = (v__ast__CharLiteral*)low_expr.obj;
+					v__ast__CharLiteral* low_expr = _sc_tmp_84123;
 					if (high_expr.typ == 178 /* v.ast.CharLiteral */) {
-						v__ast__CharLiteral* _sc_tmp_83931 = (v__ast__CharLiteral*)high_expr.obj;
-						v__ast__CharLiteral* high_expr = _sc_tmp_83931;
+						v__ast__CharLiteral* _sc_tmp_84166 = (v__ast__CharLiteral*)high_expr.obj;
+						v__ast__CharLiteral* high_expr = _sc_tmp_84166;
 						low = string_at(low_expr->val, 0);
 						high = string_at(high_expr->val, 0);
 					} else {
@@ -22932,7 +22996,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 		VAssertMetaInfo v_assert_meta_info__t695;
 		memset(&v_assert_meta_info__t695, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t695.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t695.line_nr = 2777;
+		v_assert_meta_info__t695.line_nr = 2783;
 		v_assert_meta_info__t695.fn_name = tos_lit("unsafe_expr");
 		v_assert_meta_info__t695.src = tos_lit("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t695);
@@ -22945,8 +23009,8 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 	}
 	v__ast__Stmt last = (*(v__ast__Stmt*)array_get(node->stmts, 0));
 	if (last.typ == 220 /* v.ast.ExprStmt */) {
-		v__ast__ExprStmt* _sc_tmp_87978 = (v__ast__ExprStmt*)last.obj;
-		v__ast__ExprStmt* last = _sc_tmp_87978;
+		v__ast__ExprStmt* _sc_tmp_88213 = (v__ast__ExprStmt*)last.obj;
+		v__ast__ExprStmt* last = _sc_tmp_88213;
 		v__table__Type t = v__checker__Checker_expr(c, last->expr);
 		// Defer begin
 		c->inside_unsafe = false;
@@ -23139,8 +23203,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_93503 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_93503.arg0;
+		multi_return_string_v__token__Position mr_93738 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_93738.arg0;
 	}
 	if ((v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym)) && !c->inside_unsafe) {
 		v__checker__Checker_warn(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -23487,15 +23551,15 @@ int _t724_len = stmts.len;
 	for (int _t726 = 0; _t726 < _t725.len; ++_t726) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t725.data)[_t726];
 		if (stmt.typ == 235 /* v.ast.UnsafeStmt */) {
-			v__ast__UnsafeStmt* _sc_tmp_104569 = (v__ast__UnsafeStmt*)stmt.obj;
-			v__ast__UnsafeStmt* stmt = _sc_tmp_104569;
+			v__ast__UnsafeStmt* _sc_tmp_104804 = (v__ast__UnsafeStmt*)stmt.obj;
+			v__ast__UnsafeStmt* stmt = _sc_tmp_104804;
 			// FOR IN array
 			array _t727 = stmt->stmts;
 			for (int _t728 = 0; _t728 < _t727.len; ++_t728) {
 				v__ast__Stmt ustmt = ((v__ast__Stmt*)_t727.data)[_t728];
 				if (ustmt.typ == 232 /* v.ast.Return */) {
-					v__ast__Return* _sc_tmp_104630 = (v__ast__Return*)ustmt.obj;
-					v__ast__Return* ustmt = _sc_tmp_104630;
+					v__ast__Return* _sc_tmp_104865 = (v__ast__Return*)ustmt.obj;
+					v__ast__Return* ustmt = _sc_tmp_104865;
 					has_unsafe_return = true;
 				}
 			}
@@ -24300,7 +24364,7 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 	}
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	v__table__Language language = (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("C")) ? (v__table__Language_c) : p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("JS")) ? (v__table__Language_js) : (v__table__Language_v));
+	v__table__Language language = (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("C")) ? (is_unsafe = !(_IN(string, tos_lit("trusted_fn"), p->attrs)),v__table__Language_c) : p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("JS")) ? (v__table__Language_js) : (v__table__Language_v));
 	if (language != v__table__Language_v) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_dot);
@@ -24364,10 +24428,10 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool_bool mr_5731 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_5731.arg0;
-	bool are_args_type_only = mr_5731.arg1;
-	bool is_variadic = mr_5731.arg2;
+	multi_return_array_v__table__Arg_bool_bool mr_5776 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_5776.arg0;
+	bool are_args_type_only = mr_5776.arg1;
+	bool is_variadic = mr_5776.arg2;
 	_PUSH_MANY(&args, (args2), _t780, array_v__table__Arg);
 	// FOR IN array
 	array _t781 = args;
@@ -24482,9 +24546,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool_bool mr_8315 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_8315.arg0;
-	bool is_variadic = mr_8315.arg2;
+	multi_return_array_v__table__Arg_bool_bool mr_8360 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_8360.arg0;
+	bool is_variadic = mr_8360.arg2;
 	// FOR IN array
 	array _t784 = args;
 	for (int _t785 = 0; _t785 < _t784.len; ++_t785) {
@@ -24687,8 +24751,8 @@ static bool v__parser__have_fn_main(array_v__ast__Stmt stmts) {
 	for (int _t793 = 0; _t793 < _t792.len; ++_t793) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t792.data)[_t793];
 		if (stmt.typ == 131 /* v.ast.FnDecl */) {
-			v__ast__FnDecl* _sc_tmp_14474 = (v__ast__FnDecl*)stmt.obj;
-			v__ast__FnDecl* stmt = _sc_tmp_14474;
+			v__ast__FnDecl* _sc_tmp_14519 = (v__ast__FnDecl*)stmt.obj;
+			v__ast__FnDecl* stmt = _sc_tmp_14519;
 			if (string_eq(stmt->name, tos_lit("main.main")) && string_eq(stmt->mod, tos_lit("main"))) {
 				return true;
 			}
