@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0af415f"
+#define V_COMMIT_HASH "8f23acc"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "6dbc143"
+	#define V_COMMIT_HASH "0af415f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0af415f"
+	#define V_CURRENT_COMMIT_HASH "8f23acc"
 #endif
 
 // V typedefs:
@@ -656,7 +656,9 @@ typedef enum {
 	time__FormatTime_hhmm24, // +1
 	time__FormatTime_hhmmss12, // +2
 	time__FormatTime_hhmmss24, // +3
-	time__FormatTime_no_time, // +4
+	time__FormatTime_hhmmss24_milli, // +4
+	time__FormatTime_hhmmss24_micro, // +5
+	time__FormatTime_no_time, // +6
 } time__FormatTime;
 
 typedef enum {
@@ -3709,6 +3711,8 @@ array_string os__cmdline__only_non_options(array_string args);
 array_string os__cmdline__only_options(array_string args);
 string time__Time_format(time__Time t);
 string time__Time_format_ss(time__Time t);
+string time__Time_format_ss_milli(time__Time t);
+string time__Time_format_ss_micro(time__Time t);
 string time__Time_hhmm(time__Time t);
 string time__Time_hhmmss(time__Time t);
 string time__Time_hhmm12(time__Time t);
@@ -5001,6 +5005,8 @@ string time__FormatTime_str(time__FormatTime it) { /* gen_str_for_enum */
 		case time__FormatTime_hhmm24: return tos_lit("hhmm24");
 		case time__FormatTime_hhmmss12: return tos_lit("hhmmss12");
 		case time__FormatTime_hhmmss24: return tos_lit("hhmmss24");
+		case time__FormatTime_hhmmss24_milli: return tos_lit("hhmmss24_milli");
+		case time__FormatTime_hhmmss24_micro: return tos_lit("hhmmss24_micro");
 		case time__FormatTime_no_time: return tos_lit("no_time");
 		default: return tos_lit("unknown enum value");
 	}
@@ -13499,6 +13505,14 @@ string time__Time_format_ss(time__Time t) {
 	return time__Time_get_fmt_str(t, time__FormatDelimiter_hyphen, time__FormatTime_hhmmss24, time__FormatDate_yyyymmdd);
 }
 
+string time__Time_format_ss_milli(time__Time t) {
+	return time__Time_get_fmt_str(t, time__FormatDelimiter_hyphen, time__FormatTime_hhmmss24_milli, time__FormatDate_yyyymmdd);
+}
+
+string time__Time_format_ss_micro(time__Time t) {
+	return time__Time_get_fmt_str(t, time__FormatDelimiter_hyphen, time__FormatTime_hhmmss24_micro, time__FormatDate_yyyymmdd);
+}
+
 string time__Time_hhmm(time__Time t) {
 	return time__Time_get_fmt_time_str(t, time__FormatTime_hhmm24);
 }
@@ -13551,7 +13565,7 @@ string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time) {
 	}
 	string tp = (t.hour > 11 ? (tos_lit("p.m.")) : (tos_lit("a.m.")));
 	int hour = (t.hour > 12 ? (t.hour - 12) : t.hour == 0 ? (12) : (t.hour));
-	return (fmt_time == time__FormatTime_hhmm12) ? (_STR("%"PRId32"\000:%02"PRId32"\000 %.*s", 3, hour, t.minute, tp)) : (fmt_time == time__FormatTime_hhmm24) ? (_STR("%02"PRId32"\000:%02"PRId32"", 2, t.hour, t.minute)) : (fmt_time == time__FormatTime_hhmmss12) ? (_STR("%"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000 %.*s", 4, hour, t.minute, t.second, tp)) : (fmt_time == time__FormatTime_hhmmss24) ? (_STR("%02"PRId32"\000:%02"PRId32"\000:%02"PRId32"", 3, t.hour, t.minute, t.second)) : (_STR("unknown enumeration %.*s", 1, time__FormatTime_str(fmt_time)));
+	return (fmt_time == time__FormatTime_hhmm12) ? (_STR("%"PRId32"\000:%02"PRId32"\000 %.*s", 3, hour, t.minute, tp)) : (fmt_time == time__FormatTime_hhmm24) ? (_STR("%02"PRId32"\000:%02"PRId32"", 2, t.hour, t.minute)) : (fmt_time == time__FormatTime_hhmmss12) ? (_STR("%"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000 %.*s", 4, hour, t.minute, t.second, tp)) : (fmt_time == time__FormatTime_hhmmss24) ? (_STR("%02"PRId32"\000:%02"PRId32"\000:%02"PRId32"", 3, t.hour, t.minute, t.second)) : (fmt_time == time__FormatTime_hhmmss24_milli) ? (_STR("%02"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000.%03"PRId32"", 4, t.hour, t.minute, t.second, (t.microsecond / 1000))) : (fmt_time == time__FormatTime_hhmmss24_micro) ? (_STR("%02"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000.%06"PRId32"", 4, t.hour, t.minute, t.second, t.microsecond)) : (_STR("unknown enumeration %.*s", 1, time__FormatTime_str(fmt_time)));
 }
 
 string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatDate fmt_date) {
