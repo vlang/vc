@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8f23acc"
+#define V_COMMIT_HASH "35df792"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0af415f"
+	#define V_COMMIT_HASH "8f23acc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8f23acc"
+	#define V_CURRENT_COMMIT_HASH "35df792"
 #endif
 
 // V typedefs:
@@ -23869,6 +23869,9 @@ static string v__parser__Parser_resolve_vroot(v__parser__Parser* p, string flag)
 		v__parser__Parser_error(p, string_add(string_add(tos_lit("To use @VROOT, you need"), _STR(" to have a \"v.mod\" file in %.*s\000,", 2, p->file_name_dir)), tos_lit(" or in one of its parent folders.")));
 	}
 	string vmod_path = vmod_file_location.vmod_folder;
+	if (p->pref->is_fmt) {
+		return flag;
+	}
 	return string_replace(flag, tos_lit("@VROOT"), os__real_path(vmod_path));
 }
 
@@ -23961,8 +23964,8 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 	for (int _t766 = 0; _t766 < _t765.len; ++_t766) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t765.data)[_t766];
 		if (stmt.typ == 131 /* v.ast.FnDecl */) {
-			v__ast__FnDecl* _sc_tmp_3606 = (v__ast__FnDecl*)stmt.obj;
-			v__ast__FnDecl* stmt = _sc_tmp_3606;
+			v__ast__FnDecl* _sc_tmp_3651 = (v__ast__FnDecl*)stmt.obj;
+			v__ast__FnDecl* stmt = _sc_tmp_3651;
 			if (string_eq(stmt->name, _STR("main.vweb_tmpl_%.*s", 1, p->cur_fn_name))) {
 				v__ast__Scope* tmpl_scope = v__ast__Scope_innermost(file.scope, stmt->body_pos.pos);
 				// FOR IN map
@@ -23972,8 +23975,8 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 					string _t769 = /*kkkk*/ string_clone( ((string*)keys__t767.data)[_t768] );
 					v__ast__ScopeObject obj = /*vvv*/ (*(v__ast__ScopeObject*)map_get(_t770, _t769, &(v__ast__ScopeObject[]){ {0} }));
 					if (obj.typ == 238 /* v.ast.Var */) {
-						v__ast__Var* _sc_tmp_3782 = (v__ast__Var*)obj.obj;
-						v__ast__Var* obj = _sc_tmp_3782;
+						v__ast__Var* _sc_tmp_3827 = (v__ast__Var*)obj.obj;
+						v__ast__Var* obj = _sc_tmp_3827;
 						v__ast__Var* v = obj;
 						v->pos = stmt->body_pos;
 						v__ast__Scope_register(tmpl_scope, v->name, /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {*v}, sizeof(v__ast__Var)), .typ = 238 /* v.ast.Var */});
