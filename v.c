@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6dd1494"
+#define V_COMMIT_HASH "14fd7d9"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4cb9e65"
+	#define V_COMMIT_HASH "6dd1494"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6dd1494"
+	#define V_CURRENT_COMMIT_HASH "14fd7d9"
 #endif
 
 // V typedefs:
@@ -3851,6 +3851,7 @@ string v__pref__OS_str(v__pref__OS o);
 v__pref__OS v__pref__get_host_os();
 static array_string _const_v__pref__list_of_flags_with_param; // inited later
 multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args);
+static void v__pref__must_exist(string path);
 Option_v__pref__Backend v__pref__backend_from_string(string s);
 static void v__pref__parse_define(v__pref__Preferences* prefs, string define);
 array_string v__pref__Preferences_should_compile_filtered_files(v__pref__Preferences* prefs, string dir, array_string files_);
@@ -15085,6 +15086,13 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 	}
 	if (string_ends_with(command, tos_lit(".v")) || os__exists(command)) {
 		res->path = command;
+	} else if (string_eq(command, tos_lit("build"))) {
+		if (command_pos + 2 != args.len) {
+			eprintln(tos_lit("`v build` requires exactly one argument - either a single .v file, or a single folder/ containing several .v files"));
+			v_exit(1);
+		}
+		res->path = (*(string*)array_get(args, command_pos + 1));
+		v__pref__must_exist(res->path);
 	} else if (string_eq(command, tos_lit("run"))) {
 		res->is_run = true;
 		if (command_pos + 2 > args.len) {
@@ -15093,6 +15101,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 		}
 		res->path = (*(string*)array_get(args, command_pos + 1));
 		res->run_args = array_slice(args, command_pos + 2, args.len);
+		v__pref__must_exist(res->path);
 	}
 	if (string_eq(command, tos_lit("build-module"))) {
 		res->build_mode = v__pref__BuildMode_build_module;
@@ -15100,6 +15109,13 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 	}
 	v__pref__Preferences_fill_with_defaults(res);
 	return (multi_return_v__pref__Preferences_string){.arg0=res, .arg1=command};
+}
+
+static void v__pref__must_exist(string path) {
+	if (!os__exists(path)) {
+		eprintln(_STR("v expects that `%.*s\000` exists, but it does not", 2, path));
+		v_exit(1);
+	}
 }
 
 Option_v__pref__Backend v__pref__backend_from_string(string s) {
@@ -38088,7 +38104,7 @@ static void main__main() {
 		return;
 	} else {
 	};
-	if ((string_eq(command, tos_lit("run")) || string_eq(command, tos_lit("build-module"))) || string_ends_with(command, tos_lit(".v")) || os__exists(command)) {
+	if ((string_eq(command, tos_lit("run")) || string_eq(command, tos_lit("build")) || string_eq(command, tos_lit("build-module"))) || string_ends_with(command, tos_lit(".v")) || os__exists(command)) {
 		v__builder__compile(command, prefs);
 		return;
 	}
