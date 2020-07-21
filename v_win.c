@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "35df792"
+#define V_COMMIT_HASH "e1eb9c4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8f23acc"
+	#define V_COMMIT_HASH "35df792"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "35df792"
+	#define V_CURRENT_COMMIT_HASH "e1eb9c4"
 #endif
 
 // V typedefs:
@@ -26977,6 +26977,12 @@ bool v__parser__Parser_mark_var_as_used(v__parser__Parser* p, string varname) {
 }
 
 v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
+// $if  trace_parser {
+#ifdef CUSTOM_DEFINE_trace_parser
+	v__token__Position tok_pos = v__token__Token_position(&p->tok);
+	eprintln(_STR("parsing file: %*.*s\000 | tok.kind: %*.*s\000 | tok.lit: %*.*s\000 | tok_pos: %*.*s\000 | expr(%"PRId32"\000)", 6, p->file_name, -30, v__token__Kind_str(p->tok.kind), -10, p->tok.lit, -10, v__token__Position_str(tok_pos), -45, precedence));
+#endif
+// } trace_parser
 	v__table__Type typ = _const_v__table__void_type;
 	v__ast__Expr node = (v__ast__Expr){
 #ifndef __cplusplus
@@ -27039,7 +27045,7 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 			VAssertMetaInfo v_assert_meta_info__t866;
 			memset(&v_assert_meta_info__t866, 0, sizeof(VAssertMetaInfo));
 			v_assert_meta_info__t866.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/parser/pratt.v");
-			v_assert_meta_info__t866.line_nr = 89;
+			v_assert_meta_info__t866.line_nr = 93;
 			v_assert_meta_info__t866.fn_name = tos_lit("expr");
 			v_assert_meta_info__t866.src = tos_lit("!p.inside_unsafe");
 			__print_assert_failure(&v_assert_meta_info__t866);
