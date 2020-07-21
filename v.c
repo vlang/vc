@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e1eb9c4"
+#define V_COMMIT_HASH "4cb9e65"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "35df792"
+	#define V_COMMIT_HASH "e1eb9c4"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e1eb9c4"
+	#define V_CURRENT_COMMIT_HASH "4cb9e65"
 #endif
 
 // V typedefs:
@@ -13304,7 +13304,9 @@ Option_os__File os__create(string path) {
 
 os__Uname os__uname() {
 	os__Uname u = (os__Uname){.sysname = (string){.str=(byteptr)""},.nodename = (string){.str=(byteptr)""},.release = (string){.str=(byteptr)""},.version = (string){.str=(byteptr)""},.machine = (string){.str=(byteptr)""},};
-	struct utsname* d = ((struct utsname*)(v_malloc(((int*)(/*SizeOfType*/ sizeof(struct utsname))))));
+	u32 utsize = /*SizeOfType*/ sizeof(struct utsname);
+	byteptr x = v_malloc(((int)(utsize)));
+	struct utsname* d = ((struct utsname*)(x));
 	if (uname(d) == 0) {
 		u.sysname = cstring_to_vstring(((byteptr)(d->sysname)));
 		u.nodename = cstring_to_vstring(((byteptr)(d->nodename)));
