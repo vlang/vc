@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6d09842"
+#define V_COMMIT_HASH "1476602"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c3a2e9b"
+	#define V_COMMIT_HASH "6d09842"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6d09842"
+	#define V_CURRENT_COMMIT_HASH "1476602"
 #endif
 
 // V typedefs:
@@ -37619,13 +37619,15 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 	_PUSH_MANY(&real_libs, (sflags.real_libs), _t1426, array_string);
 	array_string inc_paths = sflags.inc_paths;
 	array_string lib_paths = sflags.lib_paths;
+	array_string defines = sflags.defines;
 	array_string other_flags = sflags.other_flags;
 	array_push(&a, _MOV((string[]){ _STR("-I \"%.*s\000\"", 2, r.ucrt_include_path) }));
 	array_push(&a, _MOV((string[]){ _STR("-I \"%.*s\000\"", 2, r.vs_include_path) }));
 	array_push(&a, _MOV((string[]){ _STR("-I \"%.*s\000\"", 2, r.um_include_path) }));
 	array_push(&a, _MOV((string[]){ _STR("-I \"%.*s\000\"", 2, r.shared_include_path) }));
-	_PUSH_MANY(&a, (inc_paths), _t1431, array_string);
-	_PUSH_MANY(&a, (other_flags), _t1432, array_string);
+	_PUSH_MANY(&a, (defines), _t1431, array_string);
+	_PUSH_MANY(&a, (inc_paths), _t1432, array_string);
+	_PUSH_MANY(&a, (other_flags), _t1433, array_string);
 	array_push(&a, _MOV((string[]){ array_string_join(real_libs, tos_lit(" ")) }));
 	array_push(&a, _MOV((string[]){ tos_lit("/link") }));
 	array_push(&a, _MOV((string[]){ tos_lit("/NOLOGO") }));
@@ -37639,12 +37641,12 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 		array_push(&a, _MOV((string[]){ tos_lit("/OPT:REF") }));
 		array_push(&a, _MOV((string[]){ tos_lit("/OPT:ICF") }));
 	}
-	_PUSH_MANY(&a, (lib_paths), _t1444, array_string);
+	_PUSH_MANY(&a, (lib_paths), _t1445, array_string);
 	string args = array_string_join(a, tos_lit(" "));
-	Option_void _t1445 = os__write_file(out_name_cmd_line, args);
-	if (!_t1445.ok && !_t1445.is_none) {
-		string err = _t1445.v_error;
-		int errcode = _t1445.ecode;
+	Option_void _t1446 = os__write_file(out_name_cmd_line, args);
+	if (!_t1446.ok && !_t1446.is_none) {
+		string err = _t1446.v_error;
+		int errcode = _t1446.ecode;
 		v__builder__verror(_STR("Unable to write response file to \"%.*s\000\"", 2, out_name_cmd_line));
 	};
 	string cmd = _STR("\"%.*s\000\" @%.*s", 2, r.full_cl_exe_path, out_name_cmd_line);
@@ -37654,15 +37656,15 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 		println(tos_lit("==========\n"));
 	}
 	i64 ticks = time__ticks();
-	Option_os__Result _t1446 = os__exec(cmd);
-	if (!_t1446.ok) {
-		string err = _t1446.v_error;
-		int errcode = _t1446.ecode;
+	Option_os__Result _t1447 = os__exec(cmd);
+	if (!_t1447.ok) {
+		string err = _t1447.v_error;
+		int errcode = _t1447.ecode;
 		println(err);
 		v__builder__verror(tos_lit("msvc error"));
 		return;
 	}
-	os__Result res = *(os__Result*)_t1446.data;
+	os__Result res = *(os__Result*)_t1447.data;
 	i64 diff = time__ticks() - ticks;
 	v__builder__Builder_timing_message(v, _STR("C msvc: %"PRId64"\000ms", 2, diff));
 	if (res.exit_code != 0) {
@@ -37689,15 +37691,15 @@ static void v__builder__Builder_build_thirdparty_obj_file_with_msvc(v__builder__
 	string defines = array_string_join(flags.defines, tos_lit(" "));
 	string include_string = _STR("-I \"%.*s\000\" -I \"%.*s\000\" -I \"%.*s\000\" -I \"%.*s\000\" %.*s", 5, msvc.ucrt_include_path, msvc.vs_include_path, msvc.um_include_path, msvc.shared_include_path, inc_dirs);
 	string cmd = _STR("\"%.*s\000\" /volatile:ms /DNDEBUG %.*s\000 %.*s\000 /c %.*s\000 /Fo\"%.*s\000\"", 6, msvc.full_cl_exe_path, defines, include_string, cfiles, obj_path);
-	Option_os__Result _t1447 = os__exec(cmd);
-	if (!_t1447.ok) {
-		string err = _t1447.v_error;
-		int errcode = _t1447.ecode;
+	Option_os__Result _t1448 = os__exec(cmd);
+	if (!_t1448.ok) {
+		string err = _t1448.v_error;
+		int errcode = _t1448.ecode;
 		println(_STR("msvc: failed thirdparty object build cmd: %.*s", 1, cmd));
 		v__builder__verror(err);
 		return;
 	}
-	os__Result res = *(os__Result*)_t1447.data;
+	os__Result res = *(os__Result*)_t1448.data;
 	if (res.exit_code != 0) {
 		println(_STR("msvc: failed thirdparty object build cmd: %.*s", 1, cmd));
 		v__builder__verror(res.output);
@@ -37713,9 +37715,9 @@ v__builder__MsvcStringFlags v__builder__msvc_string_flags(array_v__cflag__CFlag 
 	array_string defines = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_string other_flags = __new_array_with_default(0, 0, sizeof(string), 0);
 	// FOR IN array
-	array _t1448 = cflags;
-	for (int _t1449 = 0; _t1449 < _t1448.len; ++_t1449) {
-		v__cflag__CFlag flag = ((v__cflag__CFlag*)_t1448.data)[_t1449];if (string_eq(flag.name, tos_lit("-l"))) {
+	array _t1449 = cflags;
+	for (int _t1450 = 0; _t1450 < _t1449.len; ++_t1450) {
+		v__cflag__CFlag flag = ((v__cflag__CFlag*)_t1449.data)[_t1450];if (string_eq(flag.name, tos_lit("-l"))) {
 			if (string_ends_with(flag.value, tos_lit(".dll"))) {
 				v__builder__verror(_STR("MSVC cannot link against a dll (`#flag -l %.*s\000`)", 2, flag.value));
 			}
@@ -37736,9 +37738,9 @@ v__builder__MsvcStringFlags v__builder__msvc_string_flags(array_v__cflag__CFlag 
 	}
 	array_string lpaths = __new_array_with_default(0, 0, sizeof(string), 0);
 	// FOR IN array
-	array _t1457 = lib_paths;
-	for (int _t1458 = 0; _t1458 < _t1457.len; ++_t1458) {
-		string l = ((string*)_t1457.data)[_t1458];array_push(&lpaths, _MOV((string[]){ string_add(string_add(tos_lit("/LIBPATH:\""), os__real_path(l)), tos_lit("\"")) }));
+	array _t1458 = lib_paths;
+	for (int _t1459 = 0; _t1459 < _t1458.len; ++_t1459) {
+		string l = ((string*)_t1458.data)[_t1459];array_push(&lpaths, _MOV((string[]){ string_add(string_add(tos_lit("/LIBPATH:\""), os__real_path(l)), tos_lit("\"")) }));
 	}
 	return (v__builder__MsvcStringFlags){.real_libs = real_libs,.inc_paths = inc_paths,.lib_paths = lpaths,.defines = defines,.other_flags = other_flags,};
 }
