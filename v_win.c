@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b537d8e"
+#define V_COMMIT_HASH "b7bdb97"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7a4c27b"
+	#define V_COMMIT_HASH "b537d8e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b537d8e"
+	#define V_CURRENT_COMMIT_HASH "b7bdb97"
 #endif
 
 // V typedefs:
@@ -15653,11 +15653,11 @@ string term__h_divider(string divider) {
 }
 
 string term__header(string text, string divider) {
-	if (text.len == 0) {
+	if (text.len == 0 || divider.len < 2) {
 		return term__h_divider(divider);
 	}
-	multi_return_int_int mr_1775 = term__get_terminal_size();
-	int cols = mr_1775.arg0;
+	multi_return_int_int mr_1794 = term__get_terminal_size();
+	int cols = mr_1794.arg0;
 	int tlimit = (cols > text.len + 2 + 2 * divider.len ? (text.len) : (cols - 3 - 2 * divider.len));
 	int tlimit_alligned = ((tlimit % 2) != (cols % 2) ? (tlimit + 1) : (tlimit));
 	int tstart = (cols - tlimit_alligned) / 2;
