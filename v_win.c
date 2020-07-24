@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ec443c6"
+#define V_COMMIT_HASH "346cc5c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d2675b8"
+	#define V_COMMIT_HASH "ec443c6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ec443c6"
+	#define V_CURRENT_COMMIT_HASH "346cc5c"
 #endif
 
 // V typedefs:
@@ -4210,6 +4210,7 @@ string term__fail_message(string s);
 string term__warn_message(string s);
 string term__h_divider(string divider);
 string term__header(string text, string divider);
+static int term__imax(int x, int y);
 static bool term__supports_escape_sequences(int fd);
 void term__clear();
 multi_return_int_int term__get_terminal_size();
@@ -15653,31 +15654,42 @@ string term__h_divider(string divider) {
 }
 
 string term__header(string text, string divider) {
-	if (text.len == 0 || divider.len < 2) {
+	if (text.len == 0) {
 		return term__h_divider(divider);
 	}
-	multi_return_int_int mr_1794 = term__get_terminal_size();
-	int cols = mr_1794.arg0;
-	int tlimit = (cols > text.len + 2 + 2 * divider.len ? (text.len) : (cols - 3 - 2 * divider.len));
+	multi_return_int_int mr_1776 = term__get_terminal_size();
+	int xcols = mr_1776.arg0;
+	int cols = term__imax(1, xcols);
+	int tlimit = term__imax(1, (cols > text.len + 2 + 2 * divider.len ? (text.len) : (cols - 3 - 2 * divider.len)));
 	int tlimit_alligned = ((tlimit % 2) != (cols % 2) ? (tlimit + 1) : (tlimit));
-	int tstart = (cols - tlimit_alligned) / 2;
+	int tstart = term__imax(0, (cols - tlimit_alligned) / 2);
 	string ln = (divider.len > 0 ? (string_substr(string_repeat(divider, 1 + cols / divider.len), 0, cols)) : (string_repeat(tos_lit(" "), 1 + cols)));
+	if (ln.len == 1) {
+		return string_add(string_add(string_add(string_add(ln, tos_lit(" ")), string_substr(text, 0, tlimit)), tos_lit(" ")), ln);
+	}
 	return string_add(string_add(string_add(string_add(string_substr(ln, 0, tstart), tos_lit(" ")), string_substr(text, 0, tlimit)), tos_lit(" ")), string_substr(ln, tstart + tlimit + 2, cols));
 }
 
+static int term__imax(int x, int y) {
+	return (x > y ? (x) : (y));
+}
+
 static bool term__supports_escape_sequences(int fd) {
-	if (string_eq(os__getenv(tos_lit("TERM")), tos_lit("dumb"))) {
-		return false;
-	}
 	string vcolors_override = os__getenv(tos_lit("VCOLORS"));
 	if (string_eq(vcolors_override, tos_lit("always"))) {
 		return true;
 	}
+	if (string_eq(vcolors_override, tos_lit("never"))) {
+		return false;
+	}
+	if (string_eq(os__getenv(tos_lit("TERM")), tos_lit("dumb"))) {
+		return false;
+	}
 // $if  windows {
 #ifdef _WIN32
-	return ((is_atty(fd) & 0x0004)) > 0 && string_ne(os__getenv(tos_lit("TERM")), tos_lit("dumb"));
+	return ((is_atty(fd) & 0x0004)) > 0;
 #else
-	return is_atty(fd) > 0 && string_ne(os__getenv(tos_lit("TERM")), tos_lit("dumb"));
+	return is_atty(fd) > 0;
 #endif
 // } windows
 }
@@ -16489,7 +16501,10 @@ v__util__EManager* v__util__new_error_manager() {
 }
 
 void v__util__EManager_set_support_color(v__util__EManager* e, bool b) {
-	e->support_color = b;
+	{ // Unsafe block
+		v__util__EManager* me = e;
+		me->support_color = b;
+	}
 }
 
 static string v__util__bold(string msg) {
@@ -36476,8 +36491,10 @@ v__builder__Builder v__builder__new_builder(v__pref__Preferences* pref) {
 	string compiled_dir = (os__is_dir(rdir) ? (rdir) : (os__dir(rdir)));
 	v__table__Table* table = v__table__new_table();
 	if (pref->use_color == v__pref__ColorOutput_always) {
+		v__util__EManager_set_support_color(_const_v__util__emanager, true);
 	}
 	if (pref->use_color == v__pref__ColorOutput_never) {
+		v__util__EManager_set_support_color(_const_v__util__emanager, false);
 	}
 	Option_v__builder__MsvcResult _t1258 = v__builder__find_msvc();
 	if (!_t1258.ok) {
@@ -36762,8 +36779,8 @@ static void v__builder__Builder_print_warnings_and_errors(v__builder__Builder* b
 				for (int _t1298 = 0; _t1298 < _t1297.len; ++_t1298) {
 					v__ast__Stmt stmt = ((v__ast__Stmt*)_t1297.data)[_t1298];
 					if (stmt.typ == 131 /* v.ast.FnDecl */) {
-						v__ast__FnDecl* _sc_tmp_8005 = (v__ast__FnDecl*)stmt.obj;
-						v__ast__FnDecl* stmt = _sc_tmp_8005;
+						v__ast__FnDecl* _sc_tmp_7991 = (v__ast__FnDecl*)stmt.obj;
+						v__ast__FnDecl* stmt = _sc_tmp_7991;
 						if (string_eq(stmt->name, fn_name)) {
 							int fline = stmt->pos.line_nr;
 							println(_STR("%.*s\000:%"PRId32"\000:", 3, file.path, fline));
