@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d5b837e"
+#define V_COMMIT_HASH "a552674"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c1e14b4"
+	#define V_COMMIT_HASH "d5b837e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d5b837e"
+	#define V_CURRENT_COMMIT_HASH "a552674"
 #endif
 
 // V typedefs:
@@ -18871,6 +18871,7 @@ v__scanner__Scanner* v__scanner__new_vet_scanner(string text, v__scanner__Commen
 		.pref = pref,
 		.vet_errors = vet_errors,
 	}, sizeof(v__scanner__Scanner));
+	s->file_path = tos_lit("internal_memory");
 	return s;
 }
 
@@ -19951,7 +19952,12 @@ void v__scanner__Scanner_error(v__scanner__Scanner* s, string msg) {
 }
 
 static void v__scanner__Scanner_vet_error(v__scanner__Scanner* s, string msg) {
-	array_push(s->vet_errors, _MOV((string[]){ _STR("%.*s\000:%"PRId32"\000: %.*s", 3, s->file_path, s->line_nr, msg) }));
+	string eline = _STR("%.*s\000:%"PRId32"\000: %.*s", 3, s->file_path, s->line_nr, msg);
+	if (s->vet_errors == 0) {
+		eprintln(eline);
+		return;
+	}
+	array_push(s->vet_errors, _MOV((string[]){ eline }));
 }
 
 void v__scanner__verror(string s) {
