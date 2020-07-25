@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "34907f7"
+#define V_COMMIT_HASH "7c86156"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a552674"
+	#define V_COMMIT_HASH "34907f7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "34907f7"
+	#define V_CURRENT_COMMIT_HASH "7c86156"
 #endif
 
 // V typedefs:
@@ -32936,7 +32936,8 @@ int _t1082_len = sym->methods.len;
 			}
 			v__table__TypeSymbol* method_sym = v__table__Table_get_type_symbol(g->table, method.return_type);
 			v__gen__Gen_writeln(g, _STR("\t%.*s\000.ret_type = tos_lit(\"%.*s\000\");", 3, node.val_var, method_sym->name));
-			v__gen__Gen_writeln(g, _STR("\t%.*s\000.type = %.*s\000;", 3, node.val_var, int_str(((int)(method.return_type)))));
+			string styp = int_str(((int)(method.return_type)));
+			v__gen__Gen_writeln(g, _STR("\t%.*s\000.type = %.*s\000;", 3, node.val_var, styp));
 			map_set(&g->comptime_var_type_map, node.val_var, &(v__table__Type[]) { method.return_type });
 			v__gen__Gen_stmts(g, node.stmts);
 			i++;
@@ -32987,7 +32988,8 @@ int _t1090_len = info->fields.len;
 				}
 				v__table__TypeSymbol* field_sym = v__table__Table_get_type_symbol(g->table, field.typ);
 				v__gen__Gen_writeln(g, _STR("\t%.*s\000.typ = tos_lit(\"%.*s\000\");", 3, node.val_var, field_sym->name));
-				v__gen__Gen_writeln(g, _STR("\t%.*s\000.type = %.*s\000;", 3, node.val_var, int_str(((int)(field.typ)))));
+				string styp = int_str(((int)(field.typ)));
+				v__gen__Gen_writeln(g, _STR("\t%.*s\000.type = %.*s\000;", 3, node.val_var, styp));
 				v__gen__Gen_writeln(g, _STR("\t%.*s\000.is_pub = %.*s\000;", 3, node.val_var, field.is_pub ? _SLIT("true") : _SLIT("false")));
 				v__gen__Gen_writeln(g, _STR("\t%.*s\000.is_mut = %.*s\000;", 3, node.val_var, field.is_mut ? _SLIT("true") : _SLIT("false")));
 				map_set(&g->comptime_var_type_map, node.val_var, &(v__table__Type[]) { field.typ });
