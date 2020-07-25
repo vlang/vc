@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3c1427a"
+#define V_COMMIT_HASH "c1e14b4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b58b159"
+	#define V_COMMIT_HASH "3c1427a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3c1427a"
+	#define V_CURRENT_COMMIT_HASH "c1e14b4"
 #endif
 
 // V typedefs:
@@ -4305,7 +4305,7 @@ string v__util__color_compare_strings(string diff_cmd, string expected, string f
 static v__util__EManager* _const_v__util__emanager; // inited later
 v__util__EManager* v__util__new_error_manager();
 void v__util__EManager_set_support_color(v__util__EManager* e, bool b);
-static string v__util__bold(string msg);
+string v__util__bold(string msg);
 static string v__util__color(string kind, string msg);
 string v__util__formatted_error(string kind, string omsg, string filepath, v__token__Position pos);
 array_string v__util__source_context(string kind, string source, int column, v__token__Position pos);
@@ -5062,9 +5062,10 @@ void v__builder__Builder_log(v__builder__Builder b, string s);
 void v__builder__Builder_info(v__builder__Builder b, string s);
 static string v__builder__module_path(string mod);
 Option_string v__builder__Builder_find_module_path(v__builder__Builder* b, string mod, string fpath);
+static void v__builder__Builder_show_total_warns_and_errors_stats(v__builder__Builder* b);
 static void v__builder__Builder_print_warnings_and_errors(v__builder__Builder* b);
 static void v__builder__verror(string s);
-void v__builder__Builder_timing_message(v__builder__Builder* b, string msg);
+void v__builder__Builder_timing_message(v__builder__Builder* b, string msg, int ms);
 string v__builder__Builder_gen_c(v__builder__Builder* b, array_string v_files);
 void v__builder__Builder_build_c(v__builder__Builder* b, array_string v_files, string out_file);
 void v__builder__Builder_compile_c(v__builder__Builder* b);
@@ -16589,7 +16590,7 @@ void v__util__EManager_set_support_color(v__util__EManager* e, bool b) {
 	}
 }
 
-static string v__util__bold(string msg) {
+string v__util__bold(string msg) {
 	if (!_const_v__util__emanager->support_color) {
 		return msg;
 	}
@@ -36994,11 +36995,20 @@ Option_string v__builder__Builder_find_module_path(v__builder__Builder* b, strin
 	return *(Option_string*)&_t1301;
 }
 
+static void v__builder__Builder_show_total_warns_and_errors_stats(v__builder__Builder* b) {
+	if (b->pref->is_stats) {
+		println(_STR("checker summary: %.*s\000 V errors, %.*s\000 V warnings", 3, v__util__bold(int_str(b->checker.nr_errors)), v__util__bold(int_str(b->checker.nr_warnings))));
+	}
+}
+
 static void v__builder__Builder_print_warnings_and_errors(v__builder__Builder* b) {
 	if (b->pref->output_mode == v__pref__OutputMode_silent) {
 		if (b->checker.nr_errors > 0) {
 			v_exit(1);
 		}
+		// Defer begin
+		v__builder__Builder_show_total_warns_and_errors_stats(b);
+		// Defer end
 		return;
 	}
 	if (b->pref->is_verbose && b->checker.nr_warnings > 1) {
@@ -37016,6 +37026,9 @@ static void v__builder__Builder_print_warnings_and_errors(v__builder__Builder* b
 				eprintln(_STR("details: %.*s", 1, err.details));
 			}
 			if (i > b->max_nr_errors) {
+				// Defer begin
+				v__builder__Builder_show_total_warns_and_errors_stats(b);
+				// Defer end
 				return;
 			}
 		}
@@ -37035,9 +37048,13 @@ static void v__builder__Builder_print_warnings_and_errors(v__builder__Builder* b
 				eprintln(_STR("details: %.*s", 1, err.details));
 			}
 			if (i > b->max_nr_errors) {
+				// Defer begin
+				v__builder__Builder_show_total_warns_and_errors_stats(b);
+				// Defer end
 				return;
 			}
 		}
+		v__builder__Builder_show_total_warns_and_errors_stats(b);
 		v_exit(1);
 	}
 	if (b->table->redefined_fns.len > 0) {
@@ -37055,8 +37072,8 @@ static void v__builder__Builder_print_warnings_and_errors(v__builder__Builder* b
 				for (int _t1309 = 0; _t1309 < _t1308.len; ++_t1309) {
 					v__ast__Stmt stmt = ((v__ast__Stmt*)_t1308.data)[_t1309];
 					if (stmt.typ == 133 /* v.ast.FnDecl */) {
-						v__ast__FnDecl* _sc_tmp_7991 = (v__ast__FnDecl*)stmt.obj;
-						v__ast__FnDecl* stmt = _sc_tmp_7991;
+						v__ast__FnDecl* _sc_tmp_8295 = (v__ast__FnDecl*)stmt.obj;
+						v__ast__FnDecl* stmt = _sc_tmp_8295;
 						if (string_eq(stmt->name, fn_name)) {
 							int fline = stmt->pos.line_nr;
 							println(_STR("%.*s\000:%"PRId32"\000:", 3, file.path, fline));
@@ -37064,20 +37081,25 @@ static void v__builder__Builder_print_warnings_and_errors(v__builder__Builder* b
 					}
 				}
 			}
+			v__builder__Builder_show_total_warns_and_errors_stats(b);
 			v_exit(1);
 		}
 	}
+// Defer begin
+v__builder__Builder_show_total_warns_and_errors_stats(b);
+// Defer end
 }
 
 static void v__builder__verror(string s) {
 	v__util__verror(tos_lit("builder error"), s);
 }
 
-void v__builder__Builder_timing_message(v__builder__Builder* b, string msg) {
+void v__builder__Builder_timing_message(v__builder__Builder* b, string msg, int ms) {
+	string formatted_message = _STR("%.*s\000: %.*s\000 ms", 3, msg, v__util__bold(int_str(ms)));
 	if (b->pref->show_timings) {
-		println(msg);
+		println(formatted_message);
 	} else {
-		v__builder__Builder_info(/*rec*/*b, msg);
+		v__builder__Builder_info(/*rec*/*b, formatted_message);
 	}
 }
 
@@ -37087,7 +37109,7 @@ string v__builder__Builder_gen_c(v__builder__Builder* b, array_string v_files) {
 	v__builder__Builder_parse_imports(b);
 	i64 t1 = time__ticks();
 	i64 parse_time = t1 - t0;
-	v__builder__Builder_timing_message(b, _STR("PARSE: %"PRId64"\000ms", 2, parse_time));
+	v__builder__Builder_timing_message(b, tos_lit("PARSE"), parse_time);
 	if (b->pref->only_check_syntax) {
 		return tos_lit("");
 	}
@@ -37095,12 +37117,12 @@ string v__builder__Builder_gen_c(v__builder__Builder* b, array_string v_files) {
 	v__checker__Checker_check_files(&b->checker, b->parsed_files);
 	i64 t2 = time__ticks();
 	i64 check_time = t2 - t1;
-	v__builder__Builder_timing_message(b, _STR("CHECK: %"PRId64"\000ms", 2, check_time));
+	v__builder__Builder_timing_message(b, tos_lit("CHECK"), check_time);
 	v__builder__Builder_print_warnings_and_errors(b);
 	string res = v__gen__cgen(b->parsed_files, b->table, b->pref);
 	i64 t3 = time__ticks();
 	i64 gen_time = t3 - t2;
-	v__builder__Builder_timing_message(b, _STR("C GEN: %"PRId64"\000ms", 2, gen_time));
+	v__builder__Builder_timing_message(b, tos_lit("C GEN"), gen_time);
 	return res;
 }
 
@@ -37534,7 +37556,7 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 		println(_STR("%.*s\000 took %"PRId64"\000 ms", 3, ccompiler, diff));
 		println(tos_lit("=========\n"));
 	}
-	v__builder__Builder_timing_message(v, _STR("C %*.*s\000: %"PRId64"\000ms", 3, ccompiler, 3, diff));
+	v__builder__Builder_timing_message(v, _STR("C %*.*s", 1, ccompiler, 3), diff);
 	if (v->pref->compress) {
 // $if  windows {
 #ifdef _WIN32
@@ -37811,7 +37833,7 @@ void v__builder__compile(string command, v__pref__Preferences* pref) {
 		v__builder__Builder_compile_x64(&b);
 	};
 	if (pref->is_stats) {
-		println(_STR("compilation took: %"PRId64"\000 ms", 2, time__Duration_milliseconds(time__StopWatch_elapsed(sw))));
+		println(_STR("compilation took: %.*s\000 ms", 2, v__util__bold(i64_str(time__Duration_milliseconds(time__StopWatch_elapsed(sw))))));
 	}
 	{ // Unsafe block
 		v__builder__Builder_myfree(&b);
@@ -38046,16 +38068,16 @@ string v__builder__Builder_gen_js(v__builder__Builder* b, array_string v_files) 
 	v__builder__Builder_parse_imports(b);
 	i64 t1 = time__ticks();
 	i64 parse_time = t1 - t0;
-	v__builder__Builder_timing_message(b, _STR("PARSE: %"PRId64"\000ms", 2, parse_time));
+	v__builder__Builder_timing_message(b, tos_lit("PARSE"), parse_time);
 	v__checker__Checker_check_files(&b->checker, b->parsed_files);
 	i64 t2 = time__ticks();
 	i64 check_time = t2 - t1;
-	v__builder__Builder_timing_message(b, _STR("CHECK: %"PRId64"\000ms", 2, check_time));
+	v__builder__Builder_timing_message(b, tos_lit("CHECK"), check_time);
 	v__builder__Builder_print_warnings_and_errors(b);
 	string res = v__gen__js__gen(b->parsed_files, b->table, b->pref);
 	i64 t3 = time__ticks();
 	i64 gen_time = t3 - t2;
-	v__builder__Builder_timing_message(b, _STR("JS GEN: %"PRId64"\000ms", 2, gen_time));
+	v__builder__Builder_timing_message(b, tos_lit("JS GEN"), gen_time);
 	return res;
 }
 
@@ -38380,7 +38402,7 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 	}
 	os__Result res = *(os__Result*)_t1468.data;
 	i64 diff = time__ticks() - ticks;
-	v__builder__Builder_timing_message(v, _STR("C msvc: %"PRId64"\000ms", 2, diff));
+	v__builder__Builder_timing_message(v, tos_lit("C msvc"), diff);
 	if (res.exit_code != 0) {
 		v__builder__verror(res.output);
 	}
@@ -38473,15 +38495,15 @@ void v__builder__Builder_build_x64(v__builder__Builder* b, array_string v_files,
 	v__builder__Builder_parse_imports(b);
 	i64 t1 = time__ticks();
 	i64 parse_time = t1 - t0;
-	v__builder__Builder_timing_message(b, _STR("PARSE: %"PRId64"\000ms", 2, parse_time));
+	v__builder__Builder_timing_message(b, tos_lit("PARSE"), parse_time);
 	v__checker__Checker_check_files(&b->checker, b->parsed_files);
 	i64 t2 = time__ticks();
 	i64 check_time = t2 - t1;
-	v__builder__Builder_timing_message(b, _STR("CHECK: %"PRId64"\000ms", 2, check_time));
+	v__builder__Builder_timing_message(b, tos_lit("CHECK"), check_time);
 	v__gen__x64__gen(b->parsed_files, out_file, b->pref);
 	i64 t3 = time__ticks();
 	i64 gen_time = t3 - t2;
-	v__builder__Builder_timing_message(b, _STR("x64 GEN: %"PRId64"\000ms", 2, gen_time));
+	v__builder__Builder_timing_message(b, tos_lit("x64 GEN"), gen_time);
 }
 
 void v__builder__Builder_compile_x64(v__builder__Builder* b) {
