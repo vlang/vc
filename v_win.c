@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1f8ae5d"
+#define V_COMMIT_HASH "9e652c4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "6796b93"
+	#define V_COMMIT_HASH "1f8ae5d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1f8ae5d"
+	#define V_CURRENT_COMMIT_HASH "9e652c4"
 #endif
 
 // V typedefs:
@@ -21755,7 +21755,7 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 					v__ast__Ident* _sc_tmp_53750 = (v__ast__Ident*)left_first.obj;
 					v__ast__Ident* left_first = _sc_tmp_53750;
 					v__ast__Ident* assigned_var = left_first;
-					if (!/*opt*/(*(v__ast__Var**)v.data)->is_mut && assigned_var->is_mut) {
+					if (!/*opt*/(*(v__ast__Var**)v.data)->is_mut && assigned_var->is_mut && !c->inside_unsafe) {
 						v__checker__Checker_error(c, _STR("`%.*s\000` is immutable, cannot have a mutable reference to it", 2, ident->name), node->pos);
 					}
 				}
@@ -23040,30 +23040,30 @@ static void v__checker__Checker_match_exprs(v__checker__Checker* c, v__ast__Matc
 			v__ast__Expr expr = ((v__ast__Expr*)_t683.data)[_t684];
 			string key = tos_lit("");
 			if (expr.typ == 201 /* v.ast.RangeExpr */) {
-				v__ast__RangeExpr* _sc_tmp_84773 = (v__ast__RangeExpr*)expr.obj;
-				v__ast__RangeExpr* expr = _sc_tmp_84773;
+				v__ast__RangeExpr* _sc_tmp_84793 = (v__ast__RangeExpr*)expr.obj;
+				v__ast__RangeExpr* expr = _sc_tmp_84793;
 				int low = 0;
 				int high = 0;
 				c->expected_type = node->expected_type;
 				v__ast__Expr low_expr = expr->low;
 				v__ast__Expr high_expr = expr->high;
 				if (low_expr.typ == 191 /* v.ast.IntegerLiteral */) {
-					v__ast__IntegerLiteral* _sc_tmp_84932 = (v__ast__IntegerLiteral*)low_expr.obj;
-					v__ast__IntegerLiteral* low_expr = _sc_tmp_84932;
+					v__ast__IntegerLiteral* _sc_tmp_84952 = (v__ast__IntegerLiteral*)low_expr.obj;
+					v__ast__IntegerLiteral* low_expr = _sc_tmp_84952;
 					if (high_expr.typ == 191 /* v.ast.IntegerLiteral */) {
-						v__ast__IntegerLiteral* _sc_tmp_84973 = (v__ast__IntegerLiteral*)high_expr.obj;
-						v__ast__IntegerLiteral* high_expr = _sc_tmp_84973;
+						v__ast__IntegerLiteral* _sc_tmp_84993 = (v__ast__IntegerLiteral*)high_expr.obj;
+						v__ast__IntegerLiteral* high_expr = _sc_tmp_84993;
 						low = string_int(low_expr->val);
 						high = string_int(high_expr->val);
 					} else {
 						v__checker__Checker_error(c, tos_lit("mismatched range types"), low_expr->pos);
 					}
 				} else if (low_expr.typ == 180 /* v.ast.CharLiteral */) {
-					v__ast__CharLiteral* _sc_tmp_85155 = (v__ast__CharLiteral*)low_expr.obj;
-					v__ast__CharLiteral* low_expr = _sc_tmp_85155;
+					v__ast__CharLiteral* _sc_tmp_85175 = (v__ast__CharLiteral*)low_expr.obj;
+					v__ast__CharLiteral* low_expr = _sc_tmp_85175;
 					if (high_expr.typ == 180 /* v.ast.CharLiteral */) {
-						v__ast__CharLiteral* _sc_tmp_85198 = (v__ast__CharLiteral*)high_expr.obj;
-						v__ast__CharLiteral* high_expr = _sc_tmp_85198;
+						v__ast__CharLiteral* _sc_tmp_85218 = (v__ast__CharLiteral*)high_expr.obj;
+						v__ast__CharLiteral* high_expr = _sc_tmp_85218;
 						low = string_at(low_expr->val, 0);
 						high = string_at(high_expr->val, 0);
 					} else {
@@ -23178,8 +23178,8 @@ v__table__Type v__checker__Checker_lock_expr(v__checker__Checker* c, v__ast__Loc
 		v__ast__Ident id = ((v__ast__Ident*)_t694.data)[_t695];
 		v__checker__Checker_ident(c, (voidptr)&/*qq*/id);
 		if (id.obj.typ == 240 /* v.ast.Var */) {
-			v__ast__Var* _sc_tmp_87876 = (v__ast__Var*)id.obj.obj;
-			v__ast__Var* v = _sc_tmp_87876;
+			v__ast__Var* _sc_tmp_87896 = (v__ast__Var*)id.obj.obj;
+			v__ast__Var* v = _sc_tmp_87896;
 			if (v__table__Type_share(v->typ) != v__table__ShareType_shared_t) {
 				v__checker__Checker_error(c, _STR("`%.*s\000` must be declared `shared` to be locked", 2, id.name), id.pos);
 			}
@@ -23234,8 +23234,8 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 	}
 	v__ast__Stmt last = (*(v__ast__Stmt*)array_get(node->stmts, 0));
 	if (last.typ == 222 /* v.ast.ExprStmt */) {
-		v__ast__ExprStmt* _sc_tmp_89192 = (v__ast__ExprStmt*)last.obj;
-		v__ast__ExprStmt* last = _sc_tmp_89192;
+		v__ast__ExprStmt* _sc_tmp_89212 = (v__ast__ExprStmt*)last.obj;
+		v__ast__ExprStmt* last = _sc_tmp_89212;
 		v__table__Type t = v__checker__Checker_expr(c, last->expr);
 		// Defer begin
 		c->inside_unsafe = false;
@@ -23428,8 +23428,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_94717 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_94717.arg0;
+		multi_return_string_v__token__Position mr_94737 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_94737.arg0;
 	}
 	if ((v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym)) && !c->inside_unsafe) {
 		v__checker__Checker_warn(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -23792,15 +23792,15 @@ int _t728_len = stmts.len;
 	for (int _t730 = 0; _t730 < _t729.len; ++_t730) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t729.data)[_t730];
 		if (stmt.typ == 237 /* v.ast.UnsafeStmt */) {
-			v__ast__UnsafeStmt* _sc_tmp_106231 = (v__ast__UnsafeStmt*)stmt.obj;
-			v__ast__UnsafeStmt* stmt = _sc_tmp_106231;
+			v__ast__UnsafeStmt* _sc_tmp_106251 = (v__ast__UnsafeStmt*)stmt.obj;
+			v__ast__UnsafeStmt* stmt = _sc_tmp_106251;
 			// FOR IN array
 			array _t731 = stmt->stmts;
 			for (int _t732 = 0; _t732 < _t731.len; ++_t732) {
 				v__ast__Stmt ustmt = ((v__ast__Stmt*)_t731.data)[_t732];
 				if (ustmt.typ == 234 /* v.ast.Return */) {
-					v__ast__Return* _sc_tmp_106292 = (v__ast__Return*)ustmt.obj;
-					v__ast__Return* ustmt = _sc_tmp_106292;
+					v__ast__Return* _sc_tmp_106312 = (v__ast__Return*)ustmt.obj;
+					v__ast__Return* ustmt = _sc_tmp_106312;
 					has_unsafe_return = true;
 				}
 			}
