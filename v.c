@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9e652c4"
+#define V_COMMIT_HASH "7d52d61"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1f8ae5d"
+	#define V_COMMIT_HASH "9e652c4"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9e652c4"
+	#define V_CURRENT_COMMIT_HASH "7d52d61"
 #endif
 
 // V typedefs:
@@ -3797,6 +3797,7 @@ time__Time time__utc();
 string time__Time_smonth(time__Time t);
 time__Time time__new_time(time__Time t);
 int time__Time_unix_time(time__Time t);
+u64 time__Time_unix_time_milli(time__Time t);
 time__Time time__Time_add_seconds(time__Time t, int seconds);
 time__Time time__Time_add_days(time__Time t, int days);
 static int time__since(time__Time t);
@@ -13960,21 +13961,8 @@ string time__Time_smonth(time__Time t) {
 }
 
 time__Time time__new_time(time__Time t) {
-	return (time__Time){
-		.year = t.year,
-		.month = t.month,
-		.day = t.day,
-		.hour = t.hour,
-		.minute = t.minute,
-		.second = t.second,
-		.microsecond = t.microsecond,
-		.v_unix = ((u64)(time__Time_unix_time(t))),
-	};
-}
-
-int time__Time_unix_time(time__Time t) {
 	if (t.v_unix != 0) {
-		return ((int)(t.v_unix));
+		return t;
 	}
 	struct tm tt = (struct tm){
 		.tm_sec = t.second,
@@ -13987,7 +13975,28 @@ int time__Time_unix_time(time__Time t) {
 		.tm_yday = 0,
 		.tm_isdst = 0,
 	};
-	return time__make_unix_time(tt);
+	u64 utime = ((u64)(time__make_unix_time(tt)));
+	return // assoc
+	(time__Time){
+		.year = t.year,
+		.month = t.month,
+		.day = t.day,
+		.hour = t.hour,
+		.minute = t.minute,
+		.second = t.second,
+		.microsecond = t.microsecond,
+		.v_unix = utime, 
+	};
+}
+
+// Attr: [inline]
+inline int time__Time_unix_time(time__Time t) {
+	return ((int)(t.v_unix));
+}
+
+// Attr: [inline]
+inline u64 time__Time_unix_time_milli(time__Time t) {
+	return t.v_unix * 1000 + ((u64)(t.microsecond / 1000));
 }
 
 time__Time time__Time_add_seconds(time__Time t, int seconds) {
