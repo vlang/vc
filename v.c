@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9f6e4a8"
+#define V_COMMIT_HASH "3d19167"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "cf4235a"
+	#define V_COMMIT_HASH "9f6e4a8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9f6e4a8"
+	#define V_CURRENT_COMMIT_HASH "3d19167"
 #endif
 
 // V typedefs:
@@ -23444,7 +23444,7 @@ v__table__Type v__checker__Checker_enum_val(v__checker__Checker* c, v__ast__Enum
 		typ_sym = v__table__Table_get_type_symbol(c->table, typ);
 	}
 	if (typ_sym->kind != v__table__Kind_enum_) {
-		v__checker__Checker_error(c, tos_lit("expected type is not an enum"), node->pos);
+		v__checker__Checker_error(c, _STR("expected type is not an enum (`%.*s\000`)", 2, typ_sym->name), node->pos);
 		return _const_v__table__void_type;
 	}
 	if (typ_sym->info.typ != 273 /* v.table.Enum */) {
@@ -23722,15 +23722,15 @@ int _t724_len = stmts.len;
 	for (int _t726 = 0; _t726 < _t725.len; ++_t726) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t725.data)[_t726];
 		if (stmt.typ == 211 /* v.ast.UnsafeStmt */) {
-			v__ast__UnsafeStmt* _sc_tmp_106251 = (v__ast__UnsafeStmt*)stmt.obj;
-			v__ast__UnsafeStmt* stmt = _sc_tmp_106251;
+			v__ast__UnsafeStmt* _sc_tmp_106269 = (v__ast__UnsafeStmt*)stmt.obj;
+			v__ast__UnsafeStmt* stmt = _sc_tmp_106269;
 			// FOR IN array
 			array _t727 = stmt->stmts;
 			for (int _t728 = 0; _t728 < _t727.len; ++_t728) {
 				v__ast__Stmt ustmt = ((v__ast__Stmt*)_t727.data)[_t728];
 				if (ustmt.typ == 208 /* v.ast.Return */) {
-					v__ast__Return* _sc_tmp_106312 = (v__ast__Return*)ustmt.obj;
-					v__ast__Return* ustmt = _sc_tmp_106312;
+					v__ast__Return* _sc_tmp_106330 = (v__ast__Return*)ustmt.obj;
+					v__ast__Return* ustmt = _sc_tmp_106330;
 					has_unsafe_return = true;
 				}
 			}
