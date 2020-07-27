@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3d19167"
+#define V_COMMIT_HASH "1086150"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9f6e4a8"
+	#define V_COMMIT_HASH "3d19167"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3d19167"
+	#define V_CURRENT_COMMIT_HASH "1086150"
 #endif
 
 // V typedefs:
@@ -37082,8 +37082,8 @@ static void v__builder__Builder_print_warnings_and_errors(v__builder__Builder* b
 				for (int _t1312 = 0; _t1312 < _t1311.len; ++_t1312) {
 					v__ast__Stmt stmt = ((v__ast__Stmt*)_t1311.data)[_t1312];
 					if (stmt.typ == 111 /* v.ast.FnDecl */) {
-						v__ast__FnDecl* _sc_tmp_8440 = (v__ast__FnDecl*)stmt.obj;
-						v__ast__FnDecl* stmt = _sc_tmp_8440;
+						v__ast__FnDecl* _sc_tmp_9081 = (v__ast__FnDecl*)stmt.obj;
+						v__ast__FnDecl* stmt = _sc_tmp_9081;
 						if (string_eq(stmt->name, fn_name)) {
 							int fline = stmt->pos.line_nr;
 							println(_STR("%.*s\000:%"PRId32"\000:", 3, file.path, fline));
