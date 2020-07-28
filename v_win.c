@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "51c9b49"
+#define V_COMMIT_HASH "280afb2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1d59d35"
+	#define V_COMMIT_HASH "51c9b49"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "51c9b49"
+	#define V_CURRENT_COMMIT_HASH "280afb2"
 #endif
 
 // V typedefs:
@@ -37506,15 +37506,15 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 		string isysroot = string_replace(ios_sdk_path_res.output, tos_lit("\n"), tos_lit(""));
 		ccompiler = _STR("xcrun --sdk iphoneos clang -isysroot %.*s", 1, isysroot);
 	}
-	array_string a = new_array_from_c_array(10, 10, sizeof(string), _MOV((string[10]){
+	array_string args = new_array_from_c_array(10, 10, sizeof(string), _MOV((string[10]){
 			v->pref->cflags, tos_lit("-std=gnu11"), tos_lit("-Wall"), tos_lit("-Wextra"), tos_lit("-Wno-unused-variable"), tos_lit("-Wno-unused-parameter"), tos_lit("-Wno-unused-result"), tos_lit("-Wno-unused-function"), tos_lit("-Wno-missing-braces"), tos_lit("-Wno-unused-label")}));
 	if (v->pref->os == v__pref__OS_ios) {
-		array_push(&a, _MOV((string[]){ tos_lit("-framework Foundation") }));
-		array_push(&a, _MOV((string[]){ tos_lit("-framework UIKit") }));
-		array_push(&a, _MOV((string[]){ tos_lit("-framework Metal") }));
-		array_push(&a, _MOV((string[]){ tos_lit("-framework MetalKit") }));
-		array_push(&a, _MOV((string[]){ tos_lit("-DSOKOL_METAL") }));
-		array_push(&a, _MOV((string[]){ tos_lit("-fobjc-arc") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-framework Foundation") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-framework UIKit") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-framework Metal") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-framework MetalKit") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-DSOKOL_METAL") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-fobjc-arc") }));
 	}
 	array_string linker_flags = __new_array_with_default(0, 0, sizeof(string), 0);
 	if (v->pref->fast) {
@@ -37531,7 +37531,7 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 	v__builder__Builder_log(/*rec*/*v, _STR("cc() isprod=%.*s\000 outname=%.*s", 2, v->pref->is_prod ? _SLIT("true") : _SLIT("false"), v->pref->out_name));
 	if (v->pref->is_shared) {
 		array_push(&linker_flags, _MOV((string[]){ tos_lit("-shared") }));
-		array_push(&a, _MOV((string[]){ tos_lit("-fPIC") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-fPIC") }));
 // $if  macos {
 #ifdef __APPLE__
 #else
@@ -37540,8 +37540,8 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 // } macos
 	}
 	if (v->pref->is_bare) {
-		array_push(&a, _MOV((string[]){ tos_lit("-fno-stack-protector") }));
-		array_push(&a, _MOV((string[]){ tos_lit("-ffreestanding") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-fno-stack-protector") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-ffreestanding") }));
 		array_push(&linker_flags, _MOV((string[]){ tos_lit("-static") }));
 		array_push(&linker_flags, _MOV((string[]){ tos_lit("-nostdlib") }));
 	}
@@ -37593,28 +37593,28 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 		optimization_options = tos_lit("-O3 -fno-strict-aliasing -flto");
 	}
 	if (debug_mode) {
-		array_push(&a, _MOV((string[]){ debug_options }));
+		array_push(&args, _MOV((string[]){ debug_options }));
 	}
 	if (v->pref->is_prod) {
-		array_push(&a, _MOV((string[]){ optimization_options }));
+		array_push(&args, _MOV((string[]){ optimization_options }));
 	}
 	if (debug_mode && string_ne(os__user_os(), tos_lit("windows"))) {
 		array_push(&linker_flags, _MOV((string[]){ tos_lit(" -rdynamic ") }));
 	}
 	if (string_ne(ccompiler, tos_lit("msvc")) && v->pref->os != v__pref__OS_freebsd) {
-		array_push(&a, _MOV((string[]){ tos_lit("-Werror=implicit-function-declaration") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-Werror=implicit-function-declaration") }));
 	}
 	if (v->pref->is_liveshared || v->pref->is_livemain) {
 		if (v->pref->os == v__pref__OS_linux || string_eq(os__user_os(), tos_lit("linux"))) {
 			array_push(&linker_flags, _MOV((string[]){ tos_lit("-rdynamic") }));
 		}
 		if (v->pref->os == v__pref__OS_mac || string_eq(os__user_os(), tos_lit("mac"))) {
-			array_push(&a, _MOV((string[]){ tos_lit("-flat_namespace") }));
+			array_push(&args, _MOV((string[]){ tos_lit("-flat_namespace") }));
 		}
 	}
 	string libs = tos_lit("");
 	if (v->pref->build_mode == v__pref__BuildMode_build_module) {
-		array_push(&a, _MOV((string[]){ tos_lit("-c") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-c") }));
 	} else if (v->pref->use_cache) {
 		array_string unique_imports = __new_array_with_default(0, v->table->imports.len, sizeof(string), 0);
 		// FOR IN array
@@ -37644,12 +37644,12 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 				os__system(_STR("%.*s\000 build-module vlib%.*s\000%.*s", 3, vexe, _const_os__path_separator, imp_path));
 			}
 			if (string_ends_with(path, tos_lit("vlib/ui.o"))) {
-				array_push(&a, _MOV((string[]){ tos_lit("-framework Cocoa -framework Carbon") }));
+				array_push(&args, _MOV((string[]){ tos_lit("-framework Cocoa -framework Carbon") }));
 			}
 		}
 	}
 	if (v->pref->sanitize) {
-		array_push(&a, _MOV((string[]){ tos_lit("-fsanitize=leak") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-fsanitize=leak") }));
 	}
 	if (v->pref->os == v__pref__OS_linux) {
 // $if !linux {
@@ -37661,36 +37661,36 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 	}
 	if (v->pref->os == v__pref__OS_ios) {
 		string bundle_name = *(string*)array_last(string_split(v->pref->out_name, tos_lit("/")));
-		array_push(&a, _MOV((string[]){ _STR("-o \"%.*s\000\.app/%.*s\000\"", 3, v->pref->out_name, bundle_name) }));
+		array_push(&args, _MOV((string[]){ _STR("-o \"%.*s\000\.app/%.*s\000\"", 3, v->pref->out_name, bundle_name) }));
 	} else {
-		array_push(&a, _MOV((string[]){ _STR("-o \"%.*s\000\"", 2, v->pref->out_name) }));
+		array_push(&args, _MOV((string[]){ _STR("-o \"%.*s\000\"", 2, v->pref->out_name) }));
 	}
 	if (os__is_dir(v->pref->out_name)) {
 		v__builder__verror(_STR("'%.*s\000' is a directory", 2, v->pref->out_name));
 	}
 	if (v->pref->os == v__pref__OS_mac || v->pref->os == v__pref__OS_ios) {
-		array_push(&a, _MOV((string[]){ tos_lit("-x objective-c") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-x objective-c") }));
 	}
-	array_push(&a, _MOV((string[]){ _STR("\"%.*s\000\"", 2, v->out_name_c) }));
+	array_push(&args, _MOV((string[]){ _STR("\"%.*s\000\"", 2, v->out_name_c) }));
 	if (v->pref->os == v__pref__OS_mac) {
-		array_push(&a, _MOV((string[]){ tos_lit("-x none") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-x none") }));
 	}
 	if (v->pref->os == v__pref__OS_mac) {
-		array_push(&a, _MOV((string[]){ tos_lit("-mmacosx-version-min=10.7") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-mmacosx-version-min=10.7") }));
 	}
 	if (v->pref->os == v__pref__OS_ios) {
-		array_push(&a, _MOV((string[]){ tos_lit("-miphoneos-version-min=10.0") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-miphoneos-version-min=10.0") }));
 	}
 	if (v->pref->os == v__pref__OS_windows) {
-		array_push(&a, _MOV((string[]){ tos_lit("-municode") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-municode") }));
 	}
 	array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(v);
-	array_push(&a, _MOV((string[]){ array_v__cflag__CFlag_c_options_only_object_files(cflags) }));
-	array_push(&a, _MOV((string[]){ array_v__cflag__CFlag_c_options_without_object_files(cflags) }));
-	array_push(&a, _MOV((string[]){ libs }));
+	array_push(&args, _MOV((string[]){ array_v__cflag__CFlag_c_options_only_object_files(cflags) }));
+	array_push(&args, _MOV((string[]){ array_v__cflag__CFlag_c_options_without_object_files(cflags) }));
+	array_push(&args, _MOV((string[]){ libs }));
 	if (string_contains(guessed_compiler, tos_lit("++"))) {
-		array_push(&a, _MOV((string[]){ tos_lit("-fpermissive") }));
-		array_push(&a, _MOV((string[]){ tos_lit("-w") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-fpermissive") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-w") }));
 	}
 	if (v->pref->use_cache) {
 		array_string cached_modules = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){tos_lit("builtin"), tos_lit("os"), tos_lit("math"), tos_lit("strconv"), tos_lit("strings"), tos_lit("hash")}));
@@ -37704,13 +37704,13 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 				println(_STR("%.*s\000 build-module vlib/%.*s", 2, vexe, cfile));
 				os__system(_STR("%.*s\000 build-module vlib/%.*s", 2, vexe, cfile));
 			}
-			array_push(&a, _MOV((string[]){ ofile }));
+			array_push(&args, _MOV((string[]){ ofile }));
 		}
 		if (!is_cc_tcc) {
 		}
 	}
 	if (is_cc_tcc) {
-		array_push(&a, _MOV((string[]){ tos_lit("-bt10") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-bt10") }));
 	}
 	if (!v->pref->is_bare && v->pref->build_mode != v__pref__BuildMode_build_module && (v->pref->os == v__pref__OS_linux || v->pref->os == v__pref__OS_freebsd || v->pref->os == v__pref__OS_openbsd || v->pref->os == v__pref__OS_netbsd || v->pref->os == v__pref__OS_dragonfly || v->pref->os == v__pref__OS_solaris || v->pref->os == v__pref__OS_haiku)) {
 		array_push(&linker_flags, _MOV((string[]){ tos_lit("-lm") }));
@@ -37725,13 +37725,13 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 	if (!v->pref->is_bare && v->pref->os == v__pref__OS_js && string_eq(os__user_os(), tos_lit("linux"))) {
 		array_push(&linker_flags, _MOV((string[]){ tos_lit("-lm") }));
 	}
-	string args = string_add(string_add(array_string_join(a, tos_lit(" ")), tos_lit(" ")), array_string_join(linker_flags, tos_lit(" ")));
+	string str_args = string_add(string_add(array_string_join(args, tos_lit(" ")), tos_lit(" ")), array_string_join(linker_flags, tos_lit(" ")));
 	if (v->pref->is_verbose) {
-		println(_STR("cc args=%.*s", 1, args));
-		println(array_string_str(a));
+		println(_STR("cc args=%.*s", 1, str_args));
+		println(array_string_str(args));
 	}
 	string response_file = _STR("%.*s\000.rsp", 2, v->out_name_c);
-	string response_file_content = string_replace(args, tos_lit("\\"), tos_lit("\\\\"));
+	string response_file_content = string_replace(str_args, tos_lit("\\"), tos_lit("\\\\"));
 	Option_void _t1384 = os__write_file(response_file, response_file_content);
 	if (!_t1384.ok && !_t1384.is_none) {
 		string err = _t1384.v_error;
