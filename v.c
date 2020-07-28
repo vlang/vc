@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5d49034"
+#define V_COMMIT_HASH "8b66816"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "395e886"
+	#define V_COMMIT_HASH "5d49034"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5d49034"
+	#define V_CURRENT_COMMIT_HASH "8b66816"
 #endif
 
 // V typedefs:
@@ -18993,6 +18993,9 @@ static string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner* s) {
 	}
 	while (s->pos < s->text.len) {
 		byte c = string_at(s->text, s->pos);
+		if (c == _const_v__scanner__num_sep && string_at(s->text, s->pos + 1) == _const_v__scanner__num_sep) {
+			v__scanner__Scanner_error(s, tos_lit("cannot use `_` consecutively"));
+		}
 		if (!byte_is_bin_digit(c) && c != _const_v__scanner__num_sep) {
 			if ((!byte_is_digit(c) && !byte_is_letter(c)) || s->is_inside_string) {
 				break;
@@ -19004,7 +19007,9 @@ static string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner* s) {
 		}
 		s->pos++;
 	}
-	if (start_pos + 2 == s->pos) {
+	if (string_at(s->text, s->pos - 1) == _const_v__scanner__num_sep) {
+		v__scanner__Scanner_error(s, tos_lit("cannot use `_` at the end of a numeric literal"));
+	} else if (start_pos + 2 == s->pos) {
 		s->pos--;
 		v__scanner__Scanner_error(s, tos_lit("number part of this binary is not provided"));
 	} else if (has_wrong_digit) {
@@ -19027,6 +19032,9 @@ static string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner* s) {
 	}
 	while (s->pos < s->text.len) {
 		byte c = string_at(s->text, s->pos);
+		if (c == _const_v__scanner__num_sep && string_at(s->text, s->pos + 1) == _const_v__scanner__num_sep) {
+			v__scanner__Scanner_error(s, tos_lit("cannot use `_` consecutively"));
+		}
 		if (!byte_is_hex_digit(c) && c != _const_v__scanner__num_sep) {
 			if (!byte_is_letter(c) || s->is_inside_string) {
 				break;
@@ -19038,7 +19046,9 @@ static string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner* s) {
 		}
 		s->pos++;
 	}
-	if (start_pos + 2 == s->pos) {
+	if (string_at(s->text, s->pos - 1) == _const_v__scanner__num_sep) {
+		v__scanner__Scanner_error(s, tos_lit("cannot use `_` at the end of a numeric literal"));
+	} else if (start_pos + 2 == s->pos) {
 		s->pos--;
 		v__scanner__Scanner_error(s, tos_lit("number part of this hexadecimal is not provided"));
 	} else if (has_wrong_digit) {
@@ -19061,6 +19071,9 @@ static string v__scanner__Scanner_ident_oct_number(v__scanner__Scanner* s) {
 	}
 	while (s->pos < s->text.len) {
 		byte c = string_at(s->text, s->pos);
+		if (c == _const_v__scanner__num_sep && string_at(s->text, s->pos + 1) == _const_v__scanner__num_sep) {
+			v__scanner__Scanner_error(s, tos_lit("cannot use `_` consecutively"));
+		}
 		if (!byte_is_oct_digit(c) && c != _const_v__scanner__num_sep) {
 			if ((!byte_is_digit(c) && !byte_is_letter(c)) || s->is_inside_string) {
 				break;
@@ -19072,7 +19085,9 @@ static string v__scanner__Scanner_ident_oct_number(v__scanner__Scanner* s) {
 		}
 		s->pos++;
 	}
-	if (start_pos + 2 == s->pos) {
+	if (string_at(s->text, s->pos - 1) == _const_v__scanner__num_sep) {
+		v__scanner__Scanner_error(s, tos_lit("cannot use `_` at the end of a numeric literal"));
+	} else if (start_pos + 2 == s->pos) {
 		s->pos--;
 		v__scanner__Scanner_error(s, tos_lit("number part of this octal is not provided"));
 	} else if (has_wrong_digit) {
@@ -19091,6 +19106,9 @@ static string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 	int start_pos = s->pos;
 	while (s->pos < s->text.len) {
 		byte c = string_at(s->text, s->pos);
+		if (c == _const_v__scanner__num_sep && string_at(s->text, s->pos + 1) == _const_v__scanner__num_sep) {
+			v__scanner__Scanner_error(s, tos_lit("cannot use `_` consecutively"));
+		}
 		if (!byte_is_digit(c) && c != _const_v__scanner__num_sep) {
 			if (!byte_is_letter(c) || (c == 'e' || c == 'E') || s->is_inside_string) {
 				break;
@@ -19101,6 +19119,9 @@ static string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 			}
 		}
 		s->pos++;
+	}
+	if (string_at(s->text, s->pos - 1) == _const_v__scanner__num_sep) {
+		v__scanner__Scanner_error(s, tos_lit("cannot use `_` at the end of a numeric literal"));
 	}
 	bool call_method = false;
 	bool is_range = false;
