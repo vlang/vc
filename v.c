@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b5de19d"
+#define V_COMMIT_HASH "81f8e91"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4500e71"
+	#define V_COMMIT_HASH "b5de19d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b5de19d"
+	#define V_CURRENT_COMMIT_HASH "81f8e91"
 #endif
 
 // V typedefs:
@@ -16593,7 +16593,7 @@ string v__util__formatted_error(string kind, string omsg, string filepath, v__to
 	string final_kind = v__util__bold(v__util__color(kind, kind));
 	string final_msg = emsg;
 	string final_context = (scontext.len > 0 ? (_STR("\n%.*s", 1, scontext)) : (tos_lit("")));
-	return string_trim_space(_STR("%.*s\000 %.*s\000 %.*s\000 %.*s", 4, final_position, final_kind, final_msg, final_context));
+	return string_trim_space(_STR("%.*s\000 %.*s\000 %.*s\000%.*s", 4, final_position, final_kind, final_msg, final_context));
 }
 
 array_string v__util__source_context(string kind, string source, int column, v__token__Position pos) {
