@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f300f78"
+#define V_COMMIT_HASH "91c9c0c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2c45e60"
+	#define V_COMMIT_HASH "f300f78"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f300f78"
+	#define V_CURRENT_COMMIT_HASH "91c9c0c"
 #endif
 
 // V typedefs:
@@ -16819,11 +16819,11 @@ v__util__Suggestion v__util__new_suggestion(string wanted, array_string possibil
 }
 
 void v__util__Suggestion_add(v__util__Suggestion* s, string val) {
-	if (string_eq(val, s->wanted)) {
+	if ((string_eq(val, s->wanted) || string_eq(val, s->swanted))) {
 		return;
 	}
 	string sval = v__util__short_module_name(val);
-	if (string_eq(sval, s->wanted)) {
+	if ((string_eq(sval, s->wanted) || string_eq(sval, s->swanted))) {
 		return;
 	}
 	array_push(&s->known, _MOV((v__util__Possibility[]){ (v__util__Possibility){.value = val,.svalue = sval,.similarity = strings__dice_coefficient(s->swanted, sval),} }));
