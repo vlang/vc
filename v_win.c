@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3883c34"
+#define V_COMMIT_HASH "2c45e60"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f2c639c"
+	#define V_COMMIT_HASH "3883c34"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3883c34"
+	#define V_CURRENT_COMMIT_HASH "2c45e60"
 #endif
 
 // V typedefs:
@@ -37715,7 +37715,7 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 		}
 	}
 	if (is_cc_tcc) {
-		array_push(&args, _MOV((string[]){ tos_lit("-bt10") }));
+		array_push(&args, _MOV((string[]){ tos_lit("-bt25") }));
 	}
 	if (!v->pref->is_bare && v->pref->build_mode != v__pref__BuildMode_build_module && (v->pref->os == v__pref__OS_linux || v->pref->os == v__pref__OS_freebsd || v->pref->os == v__pref__OS_openbsd || v->pref->os == v__pref__OS_netbsd || v->pref->os == v__pref__OS_dragonfly || v->pref->os == v__pref__OS_solaris || v->pref->os == v__pref__OS_haiku)) {
 		array_push(&linker_flags, _MOV((string[]){ tos_lit("-lm") }));
