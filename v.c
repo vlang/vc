@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "fbb2601"
+#define V_COMMIT_HASH "0fb8074"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1ea511b"
+	#define V_COMMIT_HASH "fbb2601"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "fbb2601"
+	#define V_CURRENT_COMMIT_HASH "0fb8074"
 #endif
 
 // V typedefs:
@@ -352,6 +352,23 @@ typedef int (*qsort_callback_func)(const void*, const void*);
 
 #define __NOINLINE __attribute__((noinline))
 #define __IRQHANDLER __attribute__((interrupt))
+
+// Using just __GNUC__ for detecting gcc, is not reliable because other compilers define it too:
+#ifdef __GNUC__
+	#define __V_GCC__
+#endif    
+#ifdef __TINYC__
+	#undef __V_GCC__
+#endif
+#ifdef __cplusplus
+	#undef __V_GCC__
+#endif
+#ifdef __clang__
+	#undef __V_GCC__
+#endif
+#ifdef _MSC_VER
+	#undef __V_GCC__
+#endif
 
 #ifdef __TINYC__
 	#undef EMPTY_STRUCT_DECLARATION
@@ -5066,7 +5083,7 @@ void vinit_string_literals(){
 	_const_v__checker__no_pub_in_main_warning = tos_lit("in module main cannot be declared public");
 	_const_v__gen__c_commit_hash_default = tos_lit("\n#ifndef V_COMMIT_HASH\n	#define V_COMMIT_HASH \"@@@\"\n#endif\n");
 	_const_v__gen__c_current_commit_hash_default = tos_lit("\n#ifndef V_CURRENT_COMMIT_HASH\n	#define V_CURRENT_COMMIT_HASH \"@@@\"\n#endif\n");
-	_const_v__gen__c_common_macros = tos_lit("\n#define EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an array needs to be specified, but GCC crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#define __NOINLINE __attribute__((noinline))\n#define __IRQHANDLER __attribute__((interrupt))\n\n#ifdef __TINYC__\n	#undef EMPTY_STRUCT_DECLARATION\n	#undef EMPTY_STRUCT_INITIALIZATION\n	#define EMPTY_STRUCT_DECLARATION char _dummy\n	#define EMPTY_STRUCT_INITIALIZATION 0\n	#undef EMPTY_ARRAY_OF_ELEMS\n	#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n	#undef __NOINLINE\n	#undef __IRQHANDLER\n	// tcc does not support inlining at all\n	#define __NOINLINE\n	#define __IRQHANDLER\n	#undef TCCSKIP\n	#define TCCSKIP(x)\n	// #include <byteswap.h>\n#endif\n\n// for __offset_of\n#ifndef __offsetof\n	#define __offsetof(s,memb) \((size_t)((char *)&((s *)0)->memb - (char *)0))\n#endif\n\n#define OPTION_CAST(x) (x)\n\n#ifndef V64_PRINTFORMAT\n	#ifdef PRIx64\n		#define V64_PRINTFORMAT \"0x%\"PRIx64\n	#elif defined(__WIN32__)\n		#define V64_PRINTFORMAT \"0x%I64x\"\n	#elif defined(__linux__) && defined(__LP64__)\n		#define V64_PRINTFORMAT \"0x%lx\"\n	#else\n		#define V64_PRINTFORMAT \"0x%llx\"\n	#endif\n#endif\n");
+	_const_v__gen__c_common_macros = tos_lit("\n#define EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an array needs to be specified, but GCC crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#define __NOINLINE __attribute__((noinline))\n#define __IRQHANDLER __attribute__((interrupt))\n\n// Using just __GNUC__ for detecting gcc, is not reliable because other compilers define it too:\n#ifdef __GNUC__\n	#define __V_GCC__\n#endif    \n#ifdef __TINYC__\n	#undef __V_GCC__\n#endif\n#ifdef __cplusplus\n	#undef __V_GCC__\n#endif\n#ifdef __clang__\n	#undef __V_GCC__\n#endif\n#ifdef _MSC_VER\n	#undef __V_GCC__\n#endif\n\n#ifdef __TINYC__\n	#undef EMPTY_STRUCT_DECLARATION\n	#undef EMPTY_STRUCT_INITIALIZATION\n	#define EMPTY_STRUCT_DECLARATION char _dummy\n	#define EMPTY_STRUCT_INITIALIZATION 0\n	#undef EMPTY_ARRAY_OF_ELEMS\n	#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n	#undef __NOINLINE\n	#undef __IRQHANDLER\n	// tcc does not support inlining at all\n	#define __NOINLINE\n	#define __IRQHANDLER\n	#undef TCCSKIP\n	#define TCCSKIP(x)\n	// #include <byteswap.h>\n#endif\n\n// for __offset_of\n#ifndef __offsetof\n	#define __offsetof(s,memb) \((size_t)((char *)&((s *)0)->memb - (char *)0))\n#endif\n\n#define OPTION_CAST(x) (x)\n\n#ifndef V64_PRINTFORMAT\n	#ifdef PRIx64\n		#define V64_PRINTFORMAT \"0x%\"PRIx64\n	#elif defined(__WIN32__)\n		#define V64_PRINTFORMAT \"0x%I64x\"\n	#elif defined(__linux__) && defined(__LP64__)\n		#define V64_PRINTFORMAT \"0x%lx\"\n	#else\n		#define V64_PRINTFORMAT \"0x%llx\"\n	#endif\n#endif\n");
 	_const_v__gen__c_builtin_types = tos_lit("\n//================================== builtin types ================================*/\ntypedef int64_t i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef int64_t any_int;\ntypedef double any_float;\ntypedef unsigned char* byteptr;\ntypedef void* voidptr;\ntypedef char* charptr;\ntypedef struct array array;\ntypedef struct map map;\ntypedef array array_string;\ntypedef array array_int;\ntypedef array array_byte;\ntypedef array array_f32;\ntypedef array array_f64;\ntypedef array array_u16;\ntypedef array array_u32;\ntypedef array array_u64;\ntypedef map map_int;\ntypedef map map_string;\ntypedef byte array_fixed_byte_300 [300];\ntypedef byte array_fixed_byte_400 [400];\n\n#ifndef __cplusplus\n	#ifndef bool\n		typedef int bool;\n		#define true 1\n		#define false 0\n	#endif\n#endif\n");
 	_const_v__gen__posix_hotcode_definitions_1 = tos_lit("\nvoid v_bind_live_symbols(void* live_lib){\n	@LOAD_FNS@\n}\n");
 	_const_v__gen__windows_hotcode_definitions_1 = tos_lit("\nvoid v_bind_live_symbols(void* live_lib){\n	@LOAD_FNS@\n}\n");
@@ -24440,19 +24457,25 @@ static v__ast__Stmt v__parser__Parser_comp_if(v__parser__Parser* p) {
 	}
 	v__token__Position name_pos = v__token__Position_extend(name_pos_start, v__token__Token_position(&p->tok));
 	array_v__ast__Stmt stmts = __new_array_with_default(0, 0, sizeof(v__ast__Stmt), 0);
-	bool skip = false;
+	bool skip_os = false;
+	bool skip_cc = false;
 	if (_IN(string, val, _const_v__parser__supported_platforms)) {
 		v__pref__OS os = v__parser__os_from_string(val);
 		if ((!is_not && os != p->pref->os) || (is_not && os == p->pref->os)) {
-			skip = true;
+			skip_os = true;
 		}
 	} else if (_IN(string, val, _const_v__parser__supported_ccompilers)) {
-		v__pref__CompilerType cc = v__parser__cc_from_string(val);
-		v__pref__CompilerType user_cc = v__parser__cc_from_string(p->pref->ccompiler);
-		if ((!is_not && cc != user_cc) || (is_not && cc == user_cc)) {
-			skip = true;
+		if (p->pref->ccompiler.len == 2 && string_eq(p->pref->ccompiler, tos_lit("cc"))) {
+			skip_cc = false;
+		} else {
+			v__pref__CompilerType cc = v__parser__cc_from_string(val);
+			v__pref__CompilerType user_cc = v__parser__cc_from_string(p->pref->ccompiler);
+			if ((!is_not && cc != user_cc) || (is_not && cc == user_cc)) {
+				skip_cc = true;
+			}
 		}
 	}
+	bool skip = skip_os || skip_cc;
 	if (!p->pref->is_fmt && !p->pref->output_cross_c && skip) {
 		v__parser__Parser_check(p, v__token__Kind_lcbr);
 		int stack = 1;
@@ -32018,6 +32041,8 @@ static string v__gen__Gen_comp_if_to_ifdef(v__gen__Gen* g, string name, bool is_
 		return tos_lit("");
 	} else if (string_eq(name, tos_lit("js"))) {
 		return tos_lit("_VJS");
+	} else if (string_eq(name, tos_lit("gcc"))) {
+		return tos_lit("__V_GCC__");
 	} else if (string_eq(name, tos_lit("tinyc"))) {
 		return tos_lit("__TINYC__");
 	} else if (string_eq(name, tos_lit("clang"))) {
@@ -32285,10 +32310,10 @@ inline static string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Type
 static string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v__table__Type typ, string styp) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	string str_fn_name = v__gen__styp_to_str_fn_name(styp);
-	multi_return_bool_bool_int mr_119453 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_119453.arg0;
-	bool str_method_expects_ptr = mr_119453.arg1;
-	int str_nr_args = mr_119453.arg2;
+	multi_return_bool_bool_int mr_119489 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_119489.arg0;
+	bool str_method_expects_ptr = mr_119489.arg1;
+	int str_nr_args = mr_119489.arg2;
 	if (sym_has_str_method && str_method_expects_ptr && str_nr_args == 1) {
 		string str_fn_name_no_ptr = _STR("%.*s\000_no_ptr", 2, str_fn_name);
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
@@ -32482,9 +32507,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_127345 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_127345.arg0;
-	bool str_method_expects_ptr = mr_127345.arg1;
+	multi_return_bool_bool_int mr_127381 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_127381.arg0;
+	bool str_method_expects_ptr = mr_127381.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -32536,9 +32561,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_130164 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_130164.arg0;
-	bool str_method_expects_ptr = mr_130164.arg1;
+	multi_return_bool_bool_int mr_130200 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_130200.arg0;
+	bool str_method_expects_ptr = mr_130200.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -32658,9 +32683,9 @@ static void v__gen__Gen_gen_str_for_multi_return(v__gen__Gen* g, v__table__Multi
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 		string field_styp = v__gen__Gen_typ(g, typ);
 		bool is_arg_ptr = v__table__Type_is_ptr(typ);
-		multi_return_bool_bool_int mr_136112 = v__table__TypeSymbol_str_method_info(sym);
-		bool sym_has_str_method = mr_136112.arg0;
-		bool str_method_expects_ptr = mr_136112.arg1;
+		multi_return_bool_bool_int mr_136148 = v__table__TypeSymbol_str_method_info(sym);
+		bool sym_has_str_method = mr_136148.arg0;
+		bool str_method_expects_ptr = mr_136148.arg1;
 		string arg_str_fn_name = tos_lit("");
 		if (sym_has_str_method) {
 			arg_str_fn_name = (is_arg_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
