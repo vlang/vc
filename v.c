@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1fd499e"
+#define V_COMMIT_HASH "eb47ce1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "91c9c0c"
+	#define V_COMMIT_HASH "1fd499e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1fd499e"
+	#define V_CURRENT_COMMIT_HASH "eb47ce1"
 #endif
 
 // V typedefs:
@@ -18770,15 +18770,30 @@ string v__ast__Expr_str(v__ast__Expr x) {
 	} else if (x.typ == 175 /* v.ast.ParExpr */) {
 		v__ast__ParExpr* it = (v__ast__ParExpr*)x.obj; // ST it
 		v__ast__ParExpr* x = it;
-		return v__ast__Expr_str(it->expr);
+		return _STR("(%.*s\000)", 2, v__ast__Expr_str(  it->expr));
 	} else if (x.typ == 177 /* v.ast.PrefixExpr */) {
 		v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)x.obj; // ST it
 		v__ast__PrefixExpr* x = it;
 		return string_add(v__token__Kind_str(it->op), v__ast__Expr_str(it->right));
+	} else if (x.typ == 178 /* v.ast.RangeExpr */) {
+		v__ast__RangeExpr* it = (v__ast__RangeExpr*)x.obj; // ST it
+		v__ast__RangeExpr* x = it;
+		string s = tos_lit("..");
+		if (it->has_low) {
+			s = string_add(_STR("%.*s\000 ", 2, v__ast__Expr_str(  it->low)), s);
+		}
+		if (it->has_high) {
+			s = string_add(s, _STR(" %.*s", 1, v__ast__Expr_str(  it->high)));
+		}
+		return s;
 	} else if (x.typ == 179 /* v.ast.SelectorExpr */) {
 		v__ast__SelectorExpr* it = (v__ast__SelectorExpr*)x.obj; // ST it
 		v__ast__SelectorExpr* x = it;
 		return _STR("%.*s\000.%.*s", 2, v__ast__Expr_str(it->expr), it->field_name);
+	} else if (x.typ == 180 /* v.ast.SizeOf */) {
+		v__ast__SizeOf* it = (v__ast__SizeOf*)x.obj; // ST it
+		v__ast__SizeOf* x = it;
+		return _STR("sizeof(%.*s\000)", 2, v__ast__Expr_str(  it->expr));
 	} else if (x.typ == 182 /* v.ast.StringInterLiteral */) {
 		v__ast__StringInterLiteral* it = (v__ast__StringInterLiteral*)x.obj; // ST it
 		v__ast__StringInterLiteral* x = it;
@@ -18793,9 +18808,9 @@ string v__ast__Expr_str(v__ast__Expr x) {
 				break;
 			}
 			array_push(&res, _MOV((string[]){ tos_lit("$") }));
-			multi_return_string_bool mr_5391 = v__ast__StringInterLiteral_get_fspec_braces(it, i);
-			string fspec_str = mr_5391.arg0;
-			bool needs_braces = mr_5391.arg1;
+			multi_return_string_bool mr_5559 = v__ast__StringInterLiteral_get_fspec_braces(it, i);
+			string fspec_str = mr_5559.arg0;
+			bool needs_braces = mr_5559.arg1;
 			if (needs_braces) {
 				array_push(&res, _MOV((string[]){ tos_lit("{") }));
 				array_push(&res, _MOV((string[]){ v__ast__Expr_str((*(v__ast__Expr*)array_get(it->exprs, i))) }));
@@ -18824,8 +18839,8 @@ string v__ast__Expr_str(v__ast__Expr x) {
 		v__ast__UnsafeExpr* x = it;
 		return _STR("unsafe { %"PRId32"\000 stmts }", 2, it->stmts.len);
 	} else {
-		return _STR("[unhandled expr type %.*s\000]", 2, tos3( /* v.ast.Expr */ v_typeof_sumtype_188( (x).typ )));
 	};
+	return _STR("[unhandled expr type %.*s\000]", 2, tos3( /* v.ast.Expr */ v_typeof_sumtype_188( (x).typ )));
 }
 
 string v__ast__CallArg_str(v__ast__CallArg a) {
@@ -18856,8 +18871,8 @@ string v__ast__Stmt_str(v__ast__Stmt node) {
 		for (int i = 0; i < _t529.len; ++i) {
 			v__ast__Expr left = ((v__ast__Expr*)_t529.data)[i];
 			if (left.typ == 163 /* v.ast.Ident */) {
-				v__ast__Ident* _sc_tmp_6247 = (v__ast__Ident*)left.obj;
-				v__ast__Ident* left = _sc_tmp_6247;
+				v__ast__Ident* _sc_tmp_6410 = (v__ast__Ident*)left.obj;
+				v__ast__Ident* left = _sc_tmp_6410;
 				v__ast__IdentVar var_info = v__ast__Ident_var_info(left);
 				if (var_info.is_mut) {
 					out = /*f*/string_add(out, tos_lit("mut "));
