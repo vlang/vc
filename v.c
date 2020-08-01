@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "adafd24"
+#define V_COMMIT_HASH "1feca22"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2c6286b"
+	#define V_COMMIT_HASH "adafd24"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "adafd24"
+	#define V_CURRENT_COMMIT_HASH "1feca22"
 #endif
 
 // V typedefs:
@@ -35727,6 +35727,9 @@ static void v__gen__js__JsGen_gen_hash_stmt(v__gen__js__JsGen* g, v__ast__HashSt
 }
 
 static void v__gen__js__JsGen_gen_struct_decl(v__gen__js__JsGen* g, v__ast__StructDecl node) {
+	if (string_starts_with(node.name, tos_lit("JS."))) {
+		return;
+	}
 	v__gen__js__JsDoc_gen_fac_fn(g->doc, node.fields);
 	v__gen__js__JsGen_write(g, _STR("function %.*s\000({ ", 2, v__gen__js__JsGen_js_name(g, node.name)));
 	// FOR IN array
