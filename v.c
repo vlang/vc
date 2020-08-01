@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4f37202"
+#define V_COMMIT_HASH "4b86527"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1feca22"
+	#define V_COMMIT_HASH "4f37202"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4f37202"
+	#define V_CURRENT_COMMIT_HASH "4b86527"
 #endif
 
 // V typedefs:
@@ -39,10 +39,10 @@ typedef struct mapnode mapnode;
 typedef struct string string;
 typedef struct ustring ustring;
 typedef struct RepIndex RepIndex;
-typedef struct os__FilePermission os__FilePermission;
-typedef struct os__FileMode os__FileMode;
 typedef struct os__File os__File;
 typedef struct os__FileInfo os__FileInfo;
+typedef struct os__FilePermission os__FilePermission;
+typedef struct os__FileMode os__FileMode;
 typedef struct os__Result os__Result;
 typedef struct os__Uname os__Uname;
 typedef struct time__StopWatchOptions time__StopWatchOptions;
@@ -1484,21 +1484,21 @@ struct strconv__BF_param {
 	bool rm_tail_zero;
 };
 
-struct os__FilePermission {
-	bool read;
-	bool write;
-	bool execute;
-};
-
 struct os__File {
 	voidptr cfile;
 	int fd;
-	bool opened;
+	bool is_opened;
 };
 
 struct os__FileInfo {
 	string name;
 	int size;
+};
+
+struct os__FilePermission {
+	bool read;
+	bool write;
+	bool execute;
 };
 
 struct os__Result {
@@ -1946,6 +1946,7 @@ struct v__gen__x64__SectionConfig {
 typedef byte array_fixed_byte_26 [26];
 typedef byteptr array_fixed_byteptr_100 [100];
 typedef byte array_fixed_byte_1000 [1000];
+typedef byte array_fixed_byte_256 [256];
 typedef byte array_fixed_byte_1024 [1024];
 typedef byte array_fixed_byte_4096 [4096];
 typedef byte array_fixed_byte_50 [50];
@@ -3430,6 +3431,8 @@ string any_int_str(any_int n);
 string i64_str(i64 nn);
 string u64_str(u64 nn);
 string bool_str(bool b);
+static string u64_to_hex(u64 nn, byte len);
+static string u64_to_hex_no_leading_zeros(u64 nn, byte len);
 string byte_hex(byte nn);
 string i8_hex(i8 nn);
 string u16_hex(u16 nn);
@@ -3668,9 +3671,6 @@ string os__getenv(string key);
 int os__setenv(string name, string value, bool overwrite);
 int os__unsetenv(string name);
 map_string_string os__environ();
-os__FileMode os__inode(string path);
-static array_string _const_os__args; // inited later
-#define _const_os__max_path_len 4096
 bool os__File_is_opened(os__File f);
 void os__File_write(os__File* f, string s);
 void os__File_writeln(os__File* f, string s);
@@ -3678,9 +3678,12 @@ int os__File_write_bytes(os__File* f, voidptr data, int size);
 int os__File_write_bytes_at(os__File* f, voidptr data, int size, int pos);
 array_byte os__File_read_bytes(os__File* f, int size);
 array_byte os__File_read_bytes_at(os__File* f, int size, int pos);
+void os__File_flush(os__File* f);
+os__FileMode os__inode(string path);
+static array_string _const_os__args; // inited later
+#define _const_os__max_path_len 4096
 Option_array_byte os__read_bytes(string path);
 Option_string os__read_file(string path);
-void os__File_flush(os__File* f);
 int os__file_size(string path);
 void os__mv(string old, string v_new);
 Option_void os__cp(string old, string v_new);
@@ -9294,28 +9297,45 @@ string bool_str(bool b) {
 	return tos_lit("false");
 }
 
-string byte_hex(byte nn) {
-	if (nn == 0) {
-		return tos_lit("0");
-	}
-	byte n = nn;
-	int max = 2;
-	byteptr buf = v_malloc(max + 1);
-	int index = max;
-	{ // Unsafe block
-		buf[index--] = '\0';
-	}
-	while (n > 0) {
-		byte d = (n & 0xF);
+// Attr: [inline]
+inline static string u64_to_hex(u64 nn, byte len) {
+	u64 n = nn;
+	array_fixed_byte_256 buf = {0};
+	buf[len] = '\0';
+	int i = 0;
+	for (i = len - 1; i >= 0; i--) {
+		byte d = ((byte)((n & 0xF)));
+		byte x = (d < 10 ? (d + '0') : (d + 87));
+		buf[i] = x;
 		n = n >> 4;
-		{ // Unsafe block
-			buf[index--] = (d < 10 ? (d + '0') : (d + 87));
+	}
+	return (string){.str = memdup((voidptr)&/*qq*/buf, len + 1), .len = len};
+}
+
+// Attr: [inline]
+inline static string u64_to_hex_no_leading_zeros(u64 nn, byte len) {
+	u64 n = nn;
+	array_fixed_byte_256 buf = {0};
+	buf[len] = '\0';
+	int i = 0;
+	for (i = len - 1; i >= 0; i--) {
+		byte d = ((byte)((n & 0xF)));
+		byte x = (d < 10 ? (d + '0') : (d + 87));
+		buf[i] = x;
+		n = n >> 4;
+		if (n == 0) {
+			break;
 		}
 	}
-	index++;
-	{ // Unsafe block
-		return tos(buf + index, (max - index));
+	int res_len = len - i;
+	return (string){.str = memdup(&buf[i], res_len + 1), .len = res_len};
+}
+
+string byte_hex(byte nn) {
+	if (nn == 0) {
+		return tos_lit("00");
 	}
+	return u64_to_hex(nn, 2);
 }
 
 string i8_hex(i8 nn) {
@@ -9326,24 +9346,7 @@ string u16_hex(u16 nn) {
 	if (nn == 0) {
 		return tos_lit("0");
 	}
-	u16 n = nn;
-	int max = 5;
-	byteptr buf = v_malloc(max + 1);
-	int index = max;
-	{ // Unsafe block
-		buf[index--] = '\0';
-	}
-	while (n > 0) {
-		byte d = ((byte)((n & 0xF)));
-		n = n >> 4;
-		{ // Unsafe block
-			buf[index--] = (d < 10 ? (d + '0') : (d + 87));
-		}
-	}
-	index++;
-	{ // Unsafe block
-		return tos(buf + index, (max - index));
-	}
+	return u64_to_hex_no_leading_zeros(nn, 4);
 }
 
 string i16_hex(i16 nn) {
@@ -9354,24 +9357,7 @@ string u32_hex(u32 nn) {
 	if (nn == 0) {
 		return tos_lit("0");
 	}
-	u32 n = nn;
-	int max = 10;
-	byteptr buf = v_malloc(max + 1);
-	int index = max;
-	{ // Unsafe block
-		buf[index--] = '\0';
-	}
-	while (n > 0) {
-		byte d = ((byte)((n & 0xF)));
-		n = n >> 4;
-		{ // Unsafe block
-			buf[index--] = (d < 10 ? (d + '0') : (d + 87));
-		}
-	}
-	index++;
-	{ // Unsafe block
-		return tos(buf + index, (max - index));
-	}
+	return u64_to_hex_no_leading_zeros(nn, 8);
 }
 
 string int_hex(int nn) {
@@ -9386,25 +9372,7 @@ string u64_hex(u64 nn) {
 	if (nn == 0) {
 		return tos_lit("0");
 	}
-	u64 n = nn;
-	int max = 18;
-	byteptr buf = v_malloc(max + 1);
-	int index = max;
-	{ // Unsafe block
-		buf[index--] = '\0';
-	}
-	while (n > 0) {
-		byte d = ((byte)((n & 0xF)));
-		n = n >> 4;
-		{ // Unsafe block
-			buf[index--] = (d < 10 ? (d + '0') : (d + 87));
-		}
-	}
-	index++;
-	{ // Unsafe block
-		memmove(buf, buf + index, (max - index) + 1);
-		return tos(buf, (max - index));
-	}
+	return u64_to_hex_no_leading_zeros(nn, 16);
 }
 
 string i64_hex(i64 nn) {
@@ -11978,6 +11946,57 @@ map_string_string os__environ() {
 	return res;
 }
 
+// Attr: [deprecated]
+bool os__File_is_opened(os__File f) {
+	eprintln(tos_lit("warning: `file.is_opened()` has been deprecated, use `file.is_opened` instead"));
+	return f.is_opened;
+}
+
+void os__File_write(os__File* f, string s) {
+	if (!f->is_opened) {
+		return;
+	}
+	fwrite(s.str, s.len, 1, f->cfile);
+}
+
+void os__File_writeln(os__File* f, string s) {
+	if (!f->is_opened) {
+		return;
+	}
+	fwrite(s.str, s.len, 1, f->cfile);
+	fputs("\n", f->cfile);
+}
+
+int os__File_write_bytes(os__File* f, voidptr data, int size) {
+	return fwrite(data, 1, size, f->cfile);
+}
+
+int os__File_write_bytes_at(os__File* f, voidptr data, int size, int pos) {
+	fseek(f->cfile, pos, SEEK_SET);
+	int res = fwrite(data, 1, size, f->cfile);
+	fseek(f->cfile, 0, SEEK_END);
+	return res;
+}
+
+array_byte os__File_read_bytes(os__File* f, int size) {
+	return os__File_read_bytes_at(f, size, 0);
+}
+
+array_byte os__File_read_bytes_at(os__File* f, int size, int pos) {
+	array_byte arr = array_repeat(new_array_from_c_array(1, 1, sizeof(byte), _MOV((byte[1]){'0'})), size);
+	fseek(f->cfile, pos, SEEK_SET);
+	int nreadbytes = fread(arr.data, 1, size, f->cfile);
+	fseek(f->cfile, 0, SEEK_SET);
+	return array_slice(arr, 0, nreadbytes);
+}
+
+void os__File_flush(os__File* f) {
+	if (!f->is_opened) {
+		return;
+	}
+	fflush(f->cfile);
+}
+
 os__FileMode os__inode(string path) {
 	struct stat attr;
 	{ // Unsafe block
@@ -12009,48 +12028,6 @@ os__FileMode os__inode(string path) {
 	return (os__FileMode){.typ = typ,.owner = (os__FilePermission){.read = ((bool)((attr.st_mode & ((u32)(S_IRUSR))))),.write = ((bool)((attr.st_mode & ((u32)(S_IWUSR))))),.execute = ((bool)((attr.st_mode & ((u32)(S_IXUSR))))),},.group = (os__FilePermission){.read = ((bool)((attr.st_mode & ((u32)(S_IRGRP))))),.write = ((bool)((attr.st_mode & ((u32)(S_IWGRP))))),.execute = ((bool)((attr.st_mode & ((u32)(S_IXGRP))))),},.others = (os__FilePermission){.read = ((bool)((attr.st_mode & ((u32)(S_IROTH))))),.write = ((bool)((attr.st_mode & ((u32)(S_IWOTH))))),.execute = ((bool)((attr.st_mode & ((u32)(S_IXOTH))))),},};
 #endif
 // } windows
-}
-
-bool os__File_is_opened(os__File f) {
-	return f.opened;
-}
-
-void os__File_write(os__File* f, string s) {
-	if (!f->opened) {
-		return;
-	}
-	fwrite(s.str, s.len, 1, f->cfile);
-}
-
-void os__File_writeln(os__File* f, string s) {
-	if (!f->opened) {
-		return;
-	}
-	fwrite(s.str, s.len, 1, f->cfile);
-	fputs("\n", f->cfile);
-}
-
-int os__File_write_bytes(os__File* f, voidptr data, int size) {
-	return fwrite(data, 1, size, f->cfile);
-}
-
-int os__File_write_bytes_at(os__File* f, voidptr data, int size, int pos) {
-	fseek(f->cfile, pos, SEEK_SET);
-	int res = fwrite(data, 1, size, f->cfile);
-	fseek(f->cfile, 0, SEEK_END);
-	return res;
-}
-
-array_byte os__File_read_bytes(os__File* f, int size) {
-	return os__File_read_bytes_at(f, size, 0);
-}
-
-array_byte os__File_read_bytes_at(os__File* f, int size, int pos) {
-	array_byte arr = array_repeat(new_array_from_c_array(1, 1, sizeof(byte), _MOV((byte[1]){'0'})), size);
-	fseek(f->cfile, pos, SEEK_SET);
-	int nreadbytes = fread(arr.data, 1, size, f->cfile);
-	fseek(f->cfile, 0, SEEK_SET);
-	return array_slice(arr, 0, nreadbytes);
 }
 
 Option_array_byte os__read_bytes(string path) {
@@ -12096,13 +12073,6 @@ Option_string os__read_file(string path) {
 	// Defer end
 	Option _t76 = opt_none();
 	return *(Option_string*)&_t76;
-}
-
-void os__File_flush(os__File* f) {
-	if (!f->opened) {
-		return;
-	}
-	fflush(f->cfile);
 }
 
 int os__file_size(string path) {
@@ -12334,22 +12304,22 @@ static Option_array_ustring os__read_ulines(string path) {
 }
 
 Option_os__File os__open_append(string path) {
-	os__File file = (os__File){.cfile = 0,.fd = 0,.opened = 0,};
+	os__File file = (os__File){.cfile = 0,.fd = 0,.is_opened = 0,};
 // $if  windows {
 #ifdef _WIN32
 	u16* wpath = string_to_wide(string_replace(path, tos_lit("/"), tos_lit("\\")));
 	string mode = tos_lit("ab");
-	file = (os__File){.cfile = _wfopen(wpath, string_to_wide(mode)),.fd = 0,.opened = 0,};
+	file = (os__File){.cfile = _wfopen(wpath, string_to_wide(mode)),.fd = 0,.is_opened = 0,};
 #else
 	byteptr cpath = path.str;
-	file = (os__File){.cfile = fopen(((charptr)(cpath)), "ab"),.fd = 0,.opened = 0,};
+	file = (os__File){.cfile = fopen(((charptr)(cpath)), "ab"),.fd = 0,.is_opened = 0,};
 #endif
 // } windows
 	if (isnil(file.cfile)) {
 		Option _t112 = v_error(_STR("failed to create(append) file \"%.*s\000\"", 2, path));
 		return *(Option_os__File*)&_t112;
 	}
-	file.opened = true;
+	file.is_opened = true;
 	Option_os__File _t113;
 	opt_ok2(&(os__File[]) { file }, (OptionBase*)(&_t113), sizeof(os__File));
 	return _t113;
@@ -12406,7 +12376,7 @@ Option_os__File os__open_file(string path, string mode, varg_int options) {
 		return *(Option_os__File*)&_t117;
 	}
 	Option_os__File _t118;
-	opt_ok2(&(os__File[]) { (os__File){.cfile = cfile,.fd = fd,.opened = true,} }, (OptionBase*)(&_t118), sizeof(os__File));
+	opt_ok2(&(os__File[]) { (os__File){.cfile = cfile,.fd = fd,.is_opened = true,} }, (OptionBase*)(&_t118), sizeof(os__File));
 	return _t118;
 }
 
@@ -12455,8 +12425,8 @@ static int os__vpclose(voidptr f) {
 #ifdef _WIN32
 	return _pclose(f);
 #else
-	multi_return_int_bool mr_9930 = os__posix_wait4_to_exit_status(pclose(f));
-	int ret = mr_9930.arg0;
+	multi_return_int_bool mr_8321 = os__posix_wait4_to_exit_status(pclose(f));
+	int ret = mr_8321.arg0;
 	return ret;
 #endif
 // } windows
@@ -12496,9 +12466,9 @@ int os__system(string cmd) {
 	}
 // $if !windows {
 #ifndef _WIN32
-	multi_return_int_bool mr_11033 = os__posix_wait4_to_exit_status(ret);
-	int pret = mr_11033.arg0;
-	bool is_signaled = mr_11033.arg1;
+	multi_return_int_bool mr_9424 = os__posix_wait4_to_exit_status(ret);
+	int pret = mr_9424.arg0;
+	bool is_signaled = mr_9424.arg1;
 	if (is_signaled) {
 		println(string_add(string_add(_STR("Terminated by signal %2"PRId32"\000 (", 2, ret), os__sigint_to_signal_name(pret)), tos_lit(")")));
 	}
@@ -12583,8 +12553,10 @@ bool os__is_executable(string path) {
 // $if  solaris {
 #ifdef __sun
 	struct stat statbuf;
-	if (stat(((charptr)(path.str)), &statbuf) != 0) {
-		return false;
+	{ // Unsafe block
+		if (stat(((charptr)(path.str)), &statbuf) != 0) {
+			return false;
+		}
 	}
 	return ((((int)(statbuf.st_mode)) & (((_const_os__s_ixusr | _const_os__s_ixgrp) | _const_os__s_ixoth)))) != 0;
 #endif
@@ -13056,7 +13028,9 @@ string os__executable() {
 	byteptr result = vcalloc(_const_os__max_path_len);
 	array_int mib = new_array_from_c_array(4, 4, sizeof(int), _MOV((int[4]){1, 14, 12, -1}));
 	int size = _const_os__max_path_len;
-	sysctl(mib.data, 4, result, &size, 0, 0);
+	{ // Unsafe block
+		sysctl(mib.data, 4, result, &size, 0, 0);
+	}
 	return tos2((byteptr)result);
 #endif
 // } freebsd
@@ -13469,7 +13443,7 @@ Option_os__File os__open(string path) {
 	}
 	int fd = os__fileno(cfile);
 	Option_os__File _t176;
-	opt_ok2(&(os__File[]) { (os__File){.cfile = cfile,.fd = fd,.opened = true,} }, (OptionBase*)(&_t176), sizeof(os__File));
+	opt_ok2(&(os__File[]) { (os__File){.cfile = cfile,.fd = fd,.is_opened = true,} }, (OptionBase*)(&_t176), sizeof(os__File));
 	return _t176;
 }
 
@@ -13481,7 +13455,7 @@ Option_os__File os__create(string path) {
 	}
 	int fd = os__fileno(cfile);
 	Option_os__File _t178;
-	opt_ok2(&(os__File[]) { (os__File){.cfile = cfile,.fd = fd,.opened = true,} }, (OptionBase*)(&_t178), sizeof(os__File));
+	opt_ok2(&(os__File[]) { (os__File){.cfile = cfile,.fd = fd,.is_opened = true,} }, (OptionBase*)(&_t178), sizeof(os__File));
 	return _t178;
 }
 
@@ -13586,10 +13560,10 @@ string os__get_error_msg(int code) {
 }
 
 void os__File_close(os__File* f) {
-	if (!f->opened) {
+	if (!f->is_opened) {
 		return;
 	}
-	f->opened = false;
+	f->is_opened = false;
 	fflush(f->cfile);
 	fclose(f->cfile);
 }
