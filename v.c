@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "79b7000"
+#define V_COMMIT_HASH "0b6b0ac"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c6ae322"
+	#define V_COMMIT_HASH "79b7000"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "79b7000"
+	#define V_CURRENT_COMMIT_HASH "0b6b0ac"
 #endif
 
 // V typedefs:
@@ -26476,6 +26476,7 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p, bool is_top_level) {
 		} else if (p->peek_tok.kind == v__token__Kind_name) {
 			return /* sum type cast */ (v__ast__Stmt) {.obj = memdup(&(v__ast__ExprStmt[]) {(v__ast__ExprStmt){.expr = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__ComptimeCall[]) {v__parser__Parser_vweb(p)}, sizeof(v__ast__ComptimeCall)), .typ = 159 /* v.ast.ComptimeCall */},.pos = {0},.comments = __new_array(0, 1, sizeof(v__ast__Comment)),.is_expr = 0,.typ = 0,}}, sizeof(v__ast__ExprStmt)), .typ = 199 /* v.ast.ExprStmt */};
 		}
+		v__parser__Parser_error_with_pos(p, tos_lit("unexpected \$"), v__token__Token_position(&p->tok));
 		return (v__ast__Stmt){
 #ifndef __cplusplus
 0
@@ -26493,7 +26494,7 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p, bool is_top_level) {
 				VAssertMetaInfo v_assert_meta_info__t846;
 				memset(&v_assert_meta_info__t846, 0, sizeof(VAssertMetaInfo));
 				v_assert_meta_info__t846.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/parser/parser.v");
-				v_assert_meta_info__t846.line_nr = 616;
+				v_assert_meta_info__t846.line_nr = 617;
 				v_assert_meta_info__t846.fn_name = tos_lit("stmt");
 				v_assert_meta_info__t846.src = tos_lit("!p.inside_unsafe");
 				__print_assert_failure(&v_assert_meta_info__t846);
@@ -26542,8 +26543,8 @@ static multi_return_array_v__ast__Expr_array_v__ast__Comment v__parser__Parser_e
 	while (1) {
 		v__ast__Expr expr = v__parser__Parser_expr(p, 0);
 		if (expr.typ == 158 /* v.ast.Comment */) {
-			v__ast__Comment* _sc_tmp_15479 = (v__ast__Comment*)expr.obj;
-			v__ast__Comment* expr = _sc_tmp_15479;
+			v__ast__Comment* _sc_tmp_15534 = (v__ast__Comment*)expr.obj;
+			v__ast__Comment* expr = _sc_tmp_15534;
 			array_push(&comments, _MOV((v__ast__Comment[]){ *expr }));
 		} else {
 			array_push(&exprs, _MOV((v__ast__Expr[]){ expr }));
@@ -26656,9 +26657,9 @@ void v__parser__Parser_vet_error(v__parser__Parser* p, string s, int line) {
 
 static v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p, bool is_top_level) {
 	v__token__Token tok = p->tok;
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_18690 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr left = mr_18690.arg0;
-	array_v__ast__Comment left_comments = mr_18690.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_18745 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr left = mr_18745.arg0;
+	array_v__ast__Comment left_comments = mr_18745.arg1;
 	v__ast__Expr left0 = (*(v__ast__Expr*)array_get(left, 0));
 	if ((p->tok.kind == v__token__Kind_assign || p->tok.kind == v__token__Kind_decl_assign) || v__token__Kind_is_assign(p->tok.kind)) {
 		return v__parser__Parser_partial_assign_stmt(p, left, left_comments);
@@ -27228,9 +27229,9 @@ static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_36153 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_36153.arg0;
-	array_v__ast__Comment comments = mr_36153.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_36208 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_36208.arg0;
+	array_v__ast__Comment comments = mr_36208.arg1;
 	v__token__Position end_pos = v__ast__Expr_position(*(v__ast__Expr*)array_last(exprs));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 }
