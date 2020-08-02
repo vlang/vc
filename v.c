@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a7ca168"
+#define V_COMMIT_HASH "0ac30a8"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0b6b0ac"
+	#define V_COMMIT_HASH "a7ca168"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a7ca168"
+	#define V_CURRENT_COMMIT_HASH "0ac30a8"
 #endif
 
 // V typedefs:
