@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8dcc3cd"
+#define V_COMMIT_HASH "c6ae322"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "cc57b52"
+	#define V_COMMIT_HASH "8dcc3cd"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8dcc3cd"
+	#define V_CURRENT_COMMIT_HASH "c6ae322"
 #endif
 
 // V typedefs:
@@ -26421,10 +26421,18 @@ array_v__ast__Stmt v__parser__Parser_parse_block_no_scope(v__parser__Parser* p, 
 	v__parser__Parser_check(p, v__token__Kind_lcbr);
 	array_v__ast__Stmt stmts = __new_array_with_default(0, 0, sizeof(v__ast__Stmt), 0);
 	if (p->tok.kind != v__token__Kind_rcbr) {
+		int c = 0;
 		while (1) {
 			array_push(&stmts, _MOV((v__ast__Stmt[]){ v__parser__Parser_stmt(p, is_top_level) }));
 			if ((p->tok.kind == v__token__Kind_eof || p->tok.kind == v__token__Kind_rcbr)) {
 				break;
+			}
+			c++;
+			if (c % 100000 == 0) {
+				eprintln(_STR("parsed %"PRId32"\000 statements so far from fn %.*s\000 ...", 3, c, p->cur_fn_name));
+			}
+			if (c > 1000000) {
+				v__parser__Parser_error_with_pos(p, _STR("parsed over %"PRId32"\000 statements from fn %.*s\000, the parser is probably stuck", 3, c, p->cur_fn_name), v__token__Token_position(&p->tok));
 			}
 		}
 	}
@@ -26644,7 +26652,7 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p, bool is_top_level) {
 				VAssertMetaInfo v_assert_meta_info__t850;
 				memset(&v_assert_meta_info__t850, 0, sizeof(VAssertMetaInfo));
 				v_assert_meta_info__t850.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/parser/parser.v");
-				v_assert_meta_info__t850.line_nr = 607;
+				v_assert_meta_info__t850.line_nr = 616;
 				v_assert_meta_info__t850.fn_name = tos_lit("stmt");
 				v_assert_meta_info__t850.src = tos_lit("!p.inside_unsafe");
 				__print_assert_failure(&v_assert_meta_info__t850);
@@ -26693,8 +26701,8 @@ static multi_return_array_v__ast__Expr_array_v__ast__Comment v__parser__Parser_e
 	while (1) {
 		v__ast__Expr expr = v__parser__Parser_expr(p, 0);
 		if (expr.typ == 184 /* v.ast.Comment */) {
-			v__ast__Comment* _sc_tmp_15208 = (v__ast__Comment*)expr.obj;
-			v__ast__Comment* expr = _sc_tmp_15208;
+			v__ast__Comment* _sc_tmp_15479 = (v__ast__Comment*)expr.obj;
+			v__ast__Comment* expr = _sc_tmp_15479;
 			array_push(&comments, _MOV((v__ast__Comment[]){ *expr }));
 		} else {
 			array_push(&exprs, _MOV((v__ast__Expr[]){ expr }));
@@ -26807,9 +26815,9 @@ void v__parser__Parser_vet_error(v__parser__Parser* p, string s, int line) {
 
 static v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p, bool is_top_level) {
 	v__token__Token tok = p->tok;
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_18419 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr left = mr_18419.arg0;
-	array_v__ast__Comment left_comments = mr_18419.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_18690 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr left = mr_18690.arg0;
+	array_v__ast__Comment left_comments = mr_18690.arg1;
 	v__ast__Expr left0 = (*(v__ast__Expr*)array_get(left, 0));
 	if ((p->tok.kind == v__token__Kind_assign || p->tok.kind == v__token__Kind_decl_assign) || v__token__Kind_is_assign(p->tok.kind)) {
 		return v__parser__Parser_partial_assign_stmt(p, left, left_comments);
@@ -27379,9 +27387,9 @@ static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_35882 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_35882.arg0;
-	array_v__ast__Comment comments = mr_35882.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_36153 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_36153.arg0;
+	array_v__ast__Comment comments = mr_36153.arg1;
 	v__token__Position end_pos = v__ast__Expr_position(*(v__ast__Expr*)array_last(exprs));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 }
