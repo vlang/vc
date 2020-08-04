@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "60c642f"
+#define V_COMMIT_HASH "f7a0d0a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c33dbbc"
+	#define V_COMMIT_HASH "60c642f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "60c642f"
+	#define V_CURRENT_COMMIT_HASH "f7a0d0a"
 #endif
 
 // V typedefs:
@@ -34711,7 +34711,7 @@ static void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInter
 	string cur_line = tos_lit("");
 	string tmp = tos_lit("");
 	bool v_free = g->pref->autofree && g->inside_call && !g->inside_return && g->inside_ternary == 0 && !g->inside_const;
-	if (false && v_free) {
+	if (v_free) {
 		tmp = v__gen__Gen_new_tmp_var(g);
 		cur_line = v__gen__Gen_go_before_stmt(g, 0);
 		v__gen__Gen_writeln(g, _STR("// free _str2 %.*s", 1, g->inside_call ? _SLIT("true") : _SLIT("false")));
