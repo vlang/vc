@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f7a0d0a"
+#define V_COMMIT_HASH "f3817c4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "60c642f"
+	#define V_COMMIT_HASH "f7a0d0a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f7a0d0a"
+	#define V_CURRENT_COMMIT_HASH "f3817c4"
 #endif
 
 // V typedefs:
@@ -801,17 +801,16 @@ typedef enum {
 	v__token__Kind_key_unlikely, // +96
 	v__token__Kind_key_offsetof, // +97
 	v__token__Kind_key_struct, // +98
-	v__token__Kind_key_switch, // +99
-	v__token__Kind_key_true, // +100
-	v__token__Kind_key_type, // +101
-	v__token__Kind_key_typeof, // +102
-	v__token__Kind_key_orelse, // +103
-	v__token__Kind_key_union, // +104
-	v__token__Kind_key_pub, // +105
-	v__token__Kind_key_static, // +106
-	v__token__Kind_key_unsafe, // +107
-	v__token__Kind_keyword_end, // +108
-	v__token__Kind__end_, // +109
+	v__token__Kind_key_true, // +99
+	v__token__Kind_key_type, // +100
+	v__token__Kind_key_typeof, // +101
+	v__token__Kind_key_orelse, // +102
+	v__token__Kind_key_union, // +103
+	v__token__Kind_key_pub, // +104
+	v__token__Kind_key_static, // +105
+	v__token__Kind_key_unsafe, // +106
+	v__token__Kind_keyword_end, // +107
+	v__token__Kind__end_, // +108
 } v__token__Kind;
 
 typedef enum {
@@ -14569,7 +14568,6 @@ static array_string v__token__build_token_str() {
 	array_set(&s, v__token__Kind_key_rlock, &(string[]) { tos_lit("rlock") });
 	array_set(&s, v__token__Kind_key_type, &(string[]) { tos_lit("type") });
 	array_set(&s, v__token__Kind_key_for, &(string[]) { tos_lit("for") });
-	array_set(&s, v__token__Kind_key_switch, &(string[]) { tos_lit("switch") });
 	array_set(&s, v__token__Kind_key_fn, &(string[]) { tos_lit("fn") });
 	array_set(&s, v__token__Kind_key_true, &(string[]) { tos_lit("true") });
 	array_set(&s, v__token__Kind_key_false, &(string[]) { tos_lit("false") });
