@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5874d7c"
+#define V_COMMIT_HASH "bf20d6d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7b1944c"
+	#define V_COMMIT_HASH "5874d7c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5874d7c"
+	#define V_CURRENT_COMMIT_HASH "bf20d6d"
 #endif
 
 // V typedefs:
@@ -644,6 +644,8 @@ void _vcleanup();
 #include <errno.h>
 // added by module `os`:
 #include <winsock2.h>
+// added by module `os`:
+#include <process.h>
 // added by module `time`:
 #include <time.h>
 // added by module `time`:
@@ -38524,9 +38526,13 @@ static Option_v__builder__WindowsKit v__builder__find_windows_kit_root(string ho
 	string kit_lib = string_add(kit_root, tos_lit("Lib"));
 	Option_array_string _t1455 = os__ls(kit_lib);
 	if (!_t1455.ok) {
-		string err = _t1455.v_error;
-		int errcode = _t1455.ecode;
-		v_panic(err);
+	// Defer begin
+	#ifdef _WIN32
+		RegCloseKey(root_key);
+	
+	#endif
+	// Defer end
+		return *(Option_v__builder__WindowsKit *)&_t1455;
 	}
 	array_string files = *(array_string*)_t1455.data;
 	string highest_path = tos_lit("");
