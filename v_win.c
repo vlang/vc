@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f3ebd3a"
+#define V_COMMIT_HASH "c261408"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8d9f38f"
+	#define V_COMMIT_HASH "f3ebd3a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f3ebd3a"
+	#define V_CURRENT_COMMIT_HASH "c261408"
 #endif
 
 // V typedefs:
@@ -19277,7 +19277,6 @@ static string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 	}
 	bool call_method = false;
 	bool is_range = false;
-	bool is_float_without_fraction = false;
 	if (s->pos < s->text.len && string_at(s->text, s->pos) == '.') {
 		s->pos++;
 		if (s->pos < s->text.len) {
@@ -19305,9 +19304,7 @@ static string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 			} else if (byte_is_letter(string_at(s->text, s->pos))) {
 				call_method = true;
 				s->pos--;
-			} else if (string_at(s->text, s->pos) != ')') {
-				is_float_without_fraction = true;
-				s->pos--;
+			} else {
 			}
 		}
 	}
@@ -19341,7 +19338,7 @@ static string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 	} else if ((string_at(s->text, s->pos - 1) == 'e' || string_at(s->text, s->pos - 1) == 'E')) {
 		s->pos--;
 		v__scanner__Scanner_error(s, tos_lit("exponent has no digits"));
-	} else if (s->pos < s->text.len && string_at(s->text, s->pos) == '.' && !is_range && !is_float_without_fraction && !call_method) {
+	} else if (s->pos < s->text.len && string_at(s->text, s->pos) == '.' && !is_range && !call_method) {
 		if (has_exp) {
 			v__scanner__Scanner_error(s, tos_lit("exponential part should be integer"));
 		} else {
