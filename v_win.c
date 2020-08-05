@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b22711e"
+#define V_COMMIT_HASH "09f1362"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d1257f5"
+	#define V_COMMIT_HASH "b22711e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b22711e"
+	#define V_CURRENT_COMMIT_HASH "09f1362"
 #endif
 
 // V typedefs:
@@ -13387,9 +13387,6 @@ string os__temp_dir() {
 	}
 #endif
 // } windows
-	if (string_eq(path, tos_lit(""))) {
-		path = os__cache_dir();
-	}
 	if (string_eq(path, tos_lit(""))) {
 		path = tos_lit("/tmp");
 	}
