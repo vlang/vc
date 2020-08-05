@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7b1944c"
+#define V_COMMIT_HASH "5874d7c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "221a777"
+	#define V_COMMIT_HASH "7b1944c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7b1944c"
+	#define V_CURRENT_COMMIT_HASH "5874d7c"
 #endif
 
 // V typedefs:
@@ -3779,6 +3779,7 @@ string os__get_error_msg(int code);
 void os__File_close(os__File* f);
 bool os__debugger_present();
 Option_bool os__is_writable_folder(string folder);
+int os__getpid();
 array_string os__cmdline__options(array_string args, string param);
 string os__cmdline__option(array_string args, string param, string def);
 array_string os__cmdline__options_before(array_string args, array_string what);
@@ -13466,6 +13467,10 @@ Option_bool os__is_writable_folder(string folder) {
 	Option_bool _t190;
 	opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t190), sizeof(bool));
 	return _t190;
+}
+
+inline int os__getpid() {
+	return getpid();
 }
 
 array_string os__cmdline__options(array_string args, string param) {

@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7b1944c"
+#define V_COMMIT_HASH "5874d7c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "221a777"
+	#define V_COMMIT_HASH "7b1944c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7b1944c"
+	#define V_CURRENT_COMMIT_HASH "5874d7c"
 #endif
 
 // V typedefs:
@@ -4054,6 +4054,7 @@ void os__add_vectored_exception_handler(bool first, VectoredExceptionHandler han
 bool os__debugger_present();
 os__Uname os__uname();
 Option_bool os__is_writable_folder(string folder);
+int os__getpid();
 array_string os__cmdline__options(array_string args, string param);
 string os__cmdline__option(array_string args, string param, string def);
 array_string os__cmdline__options_before(array_string args, array_string what);
@@ -13652,7 +13653,7 @@ Option_bool os__is_writable_folder(string folder) {
 		Option _t192 = v_error(tos_lit("`folder` is not a folder"));
 		return *(Option_bool*)&_t192;
 	}
-	string tmp_perm_check = os__join_path(folder, (varg_string){.len=1,.args={tos_lit("tmp_perm_check")}});
+	string tmp_perm_check = os__join_path(folder, (varg_string){.len=1,.args={string_add(tos_lit("tmp_perm_check_pid_"), int_str(os__getpid()))}});
 	Option_os__File _t193 = os__open_file(tmp_perm_check, tos_lit("w+"), (varg_int){.len=1,.args={0700}});
 	if (!_t193.ok) {
 		string err = _t193.v_error;
@@ -13666,6 +13667,10 @@ Option_bool os__is_writable_folder(string folder) {
 	Option_bool _t195;
 	opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t195), sizeof(bool));
 	return _t195;
+}
+
+inline int os__getpid() {
+	return _getpid();
 }
 
 array_string os__cmdline__options(array_string args, string param) {
