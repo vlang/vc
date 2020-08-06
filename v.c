@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4568ce8"
+#define V_COMMIT_HASH "ce4ee2b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3a461e7"
+	#define V_COMMIT_HASH "4568ce8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4568ce8"
+	#define V_CURRENT_COMMIT_HASH "ce4ee2b"
 #endif
 
 // V typedefs:
@@ -5080,7 +5080,7 @@ void vinit_string_literals(){
 	_const_vweb__tmpl__str_start = tos_lit("sb.write(\'");
 	_const_vweb__tmpl__str_end = tos_lit("\' ) ");
 	_const_help__unknown_topic = tos_lit("V Error: Unknown help topic provided. Use `v help` for usage information.");
-	_const_v__util__v_version = tos_lit("0.1.28");
+	_const_v__util__v_version = tos_lit("0.1.29");
 	_const_v__checker__no_pub_in_main_warning = tos_lit("in module main cannot be declared public");
 	_const_v__gen__c_commit_hash_default = tos_lit("\n#ifndef V_COMMIT_HASH\n	#define V_COMMIT_HASH \"@@@\"\n#endif\n");
 	_const_v__gen__c_current_commit_hash_default = tos_lit("\n#ifndef V_CURRENT_COMMIT_HASH\n	#define V_CURRENT_COMMIT_HASH \"@@@\"\n#endif\n");
