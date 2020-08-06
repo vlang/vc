@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3a461e7"
+#define V_COMMIT_HASH "4568ce8"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d63daa0"
+	#define V_COMMIT_HASH "3a461e7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3a461e7"
+	#define V_CURRENT_COMMIT_HASH "4568ce8"
 #endif
 
 // V typedefs:
@@ -9137,9 +9137,19 @@ static bool print_backtrace_skipping_top_frames_msvc(int skipframes) {
 		
 		#endif
 		// Defer end
-		return true;
+		return false;
 	}
 	int frames = ((int)(CaptureStackBackTrace(skipframes + 1, 100, backtraces, 0)));
+	if (frames < 2) {
+		eprintln(tos_lit("C.CaptureStackBackTrace returned less than 2 frames"));
+		// Defer begin
+		#ifdef _MSC_VER
+			SymCleanup(handle);
+		
+		#endif
+		// Defer end
+		return false;
+	}
 	for (int i = 0; i < frames; ++i) {
 		voidptr frame_addr = backtraces[i];
 		if (SymFromAddr(handle, frame_addr, &offset, si) == 1) {

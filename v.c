@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3a461e7"
+#define V_COMMIT_HASH "4568ce8"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d63daa0"
+	#define V_COMMIT_HASH "3a461e7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3a461e7"
+	#define V_CURRENT_COMMIT_HASH "4568ce8"
 #endif
 
 // V typedefs:
@@ -8860,6 +8860,10 @@ static bool print_backtrace_skipping_top_frames_mac(int skipframes) {
 #ifdef __APPLE__
 	array_fixed_byteptr_100 buffer = {0};
 	int nr_ptrs = backtrace(buffer, 100);
+	if (nr_ptrs < 2) {
+		eprintln(tos_lit("C.backtrace returned less than 2 frames"));
+		return false;
+	}
 	backtrace_symbols_fd(&buffer[skipframes], nr_ptrs - skipframes, 2);
 #endif
 // } macos
@@ -8871,6 +8875,10 @@ static bool print_backtrace_skipping_top_frames_freebsd(int skipframes) {
 #ifdef __FreeBSD__
 	array_fixed_byteptr_100 buffer = {0};
 	int nr_ptrs = backtrace(buffer, 100);
+	if (nr_ptrs < 2) {
+		eprintln(tos_lit("C.backtrace returned less than 2 frames"));
+		return false;
+	}
 	backtrace_symbols_fd(&buffer[skipframes], nr_ptrs - skipframes, 2);
 #endif
 // } freebsd
@@ -8899,6 +8907,10 @@ static bool print_backtrace_skipping_top_frames_linux(int skipframes) {
 // } tinyc
 	array_fixed_byteptr_100 buffer = {0};
 	int nr_ptrs = backtrace(buffer, 100);
+	if (nr_ptrs < 2) {
+		eprintln(tos_lit("C.backtrace returned less than 2 frames"));
+		return false;
+	}
 	int nr_actual_frames = nr_ptrs - skipframes;
 	array_string sframes = __new_array_with_default(0, 0, sizeof(string), 0);
 	charptr* csymbols = backtrace_symbols(&buffer[skipframes], nr_actual_frames);
