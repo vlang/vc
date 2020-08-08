@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2a4ef2a"
+#define V_COMMIT_HASH "0692164"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "664c26a"
+	#define V_COMMIT_HASH "2a4ef2a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2a4ef2a"
+	#define V_CURRENT_COMMIT_HASH "0692164"
 #endif
 
 // V typedefs:
@@ -24680,7 +24680,7 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 	v__parser__Parser_top_level_statement_start(p);
 	v__token__Position start_pos = v__token__Token_position(&p->tok);
 	bool is_deprecated = array_v__table__Attr_contains(p->attrs, tos_lit("deprecated"));
-	bool is_unsafe = array_v__table__Attr_contains(p->attrs, tos_lit("unsafe_fn"));
+	bool is_unsafe = array_v__table__Attr_contains(p->attrs, tos_lit("unsafe"));
 	bool is_pub = p->tok.kind == v__token__Kind_key_pub;
 	if (is_pub) {
 		v__parser__Parser_next(p);
@@ -24751,10 +24751,10 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool_bool mr_5817 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_5817.arg0;
-	bool are_args_type_only = mr_5817.arg1;
-	bool is_variadic = mr_5817.arg2;
+	multi_return_array_v__table__Arg_bool_bool mr_5814 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_5814.arg0;
+	bool are_args_type_only = mr_5814.arg1;
+	bool is_variadic = mr_5814.arg2;
 	_PUSH_MANY(&args, (args2), _t796, array_v__table__Arg);
 	// FOR IN array
 	array _t797 = args;
@@ -24868,9 +24868,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool_bool mr_8333 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_8333.arg0;
-	bool is_variadic = mr_8333.arg2;
+	multi_return_array_v__table__Arg_bool_bool mr_8330 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_8330.arg0;
+	bool is_variadic = mr_8330.arg2;
 	// FOR IN array
 	array _t800 = args;
 	for (int _t801 = 0; _t801 < _t800.len; ++_t801) {
@@ -25083,8 +25083,8 @@ static bool v__parser__have_fn_main(array_v__ast__Stmt stmts) {
 	for (int _t809 = 0; _t809 < _t808.len; ++_t809) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t808.data)[_t809];
 		if (stmt.typ == 114 /* v.ast.FnDecl */) {
-			v__ast__FnDecl* _sc_tmp_14503 = (v__ast__FnDecl*)stmt.obj;
-			v__ast__FnDecl* stmt = _sc_tmp_14503;
+			v__ast__FnDecl* _sc_tmp_14500 = (v__ast__FnDecl*)stmt.obj;
+			v__ast__FnDecl* stmt = _sc_tmp_14500;
 			if (string_eq(stmt->name, tos_lit("main.main")) && string_eq(stmt->mod, tos_lit("main"))) {
 				return true;
 			}
@@ -26441,6 +26441,10 @@ static void v__parser__Parser_attributes(v__parser__Parser* p) {
 }
 
 static v__table__Attr v__parser__Parser_parse_attr(v__parser__Parser* p) {
+	if (p->tok.kind == v__token__Kind_key_unsafe) {
+		v__parser__Parser_next(p);
+		return (v__table__Attr){.name = tos_lit("unsafe"),.is_string = 0,.is_ctdefine = 0,};
+	}
 	bool is_ctdefine = false;
 	if (p->tok.kind == v__token__Kind_key_if) {
 		v__parser__Parser_next(p);
@@ -26453,6 +26457,9 @@ static v__table__Attr v__parser__Parser_parse_attr(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 	} else {
 		name = v__parser__Parser_check_name(p);
+		if (string_eq(name, tos_lit("unsafe_fn"))) {
+			name = tos_lit("unsafe");
+		}
 		if (p->tok.kind == v__token__Kind_colon) {
 			name = /*f*/string_add(name, tos_lit(":"));
 			v__parser__Parser_next(p);
@@ -26508,9 +26515,9 @@ void v__parser__Parser_vet_error(v__parser__Parser* p, string s, int line) {
 
 static v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p, bool is_top_level) {
 	v__token__Token tok = p->tok;
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_18918 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr left = mr_18918.arg0;
-	array_v__ast__Comment left_comments = mr_18918.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_19131 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr left = mr_19131.arg0;
+	array_v__ast__Comment left_comments = mr_19131.arg1;
 	v__ast__Expr left0 = (*(v__ast__Expr*)array_get(left, 0));
 	if ((p->tok.kind == v__token__Kind_assign || p->tok.kind == v__token__Kind_decl_assign) || v__token__Kind_is_assign(p->tok.kind)) {
 		return v__parser__Parser_partial_assign_stmt(p, left, left_comments);
@@ -27080,9 +27087,9 @@ static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_36381 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_36381.arg0;
-	array_v__ast__Comment comments = mr_36381.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_36594 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_36594.arg0;
+	array_v__ast__Comment comments = mr_36594.arg1;
 	v__token__Position end_pos = v__ast__Expr_position(*(v__ast__Expr*)array_last(exprs));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 }
