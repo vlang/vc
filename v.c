@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "200f8da"
+#define V_COMMIT_HASH "2dd90de"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f6a85d5"
+	#define V_COMMIT_HASH "200f8da"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "200f8da"
+	#define V_CURRENT_COMMIT_HASH "2dd90de"
 #endif
 
 // V typedefs:
@@ -9560,12 +9560,12 @@ static void map_set(map* m, string k, voidptr value) {
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_9324 = map_key_to_index(m, key);
-	u32 index = mr_9324.arg0;
-	u32 meta = mr_9324.arg1;
-	multi_return_u32_u32 mr_9359 = map_meta_less(m, index, meta);
-	index = mr_9359.arg0;
-	meta = mr_9359.arg1;
+	multi_return_u32_u32 mr_9321 = map_key_to_index(m, key);
+	u32 index = mr_9321.arg0;
+	u32 meta = mr_9321.arg1;
+	multi_return_u32_u32 mr_9356 = map_meta_less(m, index, meta);
+	index = mr_9356.arg0;
+	meta = mr_9356.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -9606,12 +9606,12 @@ static void map_rehash(map* m) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
-		multi_return_u32_u32 mr_10756 = map_key_to_index(m, m->key_values.keys[i]);
-		u32 index = mr_10756.arg0;
-		u32 meta = mr_10756.arg1;
-		multi_return_u32_u32 mr_10818 = map_meta_less(m, index, meta);
-		index = mr_10818.arg0;
-		meta = mr_10818.arg1;
+		multi_return_u32_u32 mr_10753 = map_key_to_index(m, m->key_values.keys[i]);
+		u32 index = mr_10753.arg0;
+		u32 meta = mr_10753.arg1;
+		multi_return_u32_u32 mr_10815 = map_meta_less(m, index, meta);
+		index = mr_10815.arg0;
+		meta = mr_10815.arg1;
 		map_meta_greater(m, index, meta, i);
 	}
 }
@@ -9629,9 +9629,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->cap >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->cap);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_11553 = map_meta_less(m, index, meta);
-		index = mr_11553.arg0;
-		meta = mr_11553.arg1;
+		multi_return_u32_u32 mr_11550 = map_meta_less(m, index, meta);
+		index = mr_11550.arg0;
+		meta = mr_11550.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -9642,9 +9642,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 
 static voidptr map_get_and_set(map* m, string key, voidptr zero) {
 	while (1) {
-		multi_return_u32_u32 mr_11999 = map_key_to_index(m, key);
-		u32 index = mr_11999.arg0;
-		u32 meta = mr_11999.arg1;
+		multi_return_u32_u32 mr_11996 = map_key_to_index(m, key);
+		u32 index = mr_11996.arg0;
+		u32 meta = mr_11996.arg1;
 		while (1) {
 			if (meta == m->metas[index]) {
 				u32 kv_index = m->metas[index + 1];
@@ -9665,9 +9665,9 @@ static voidptr map_get_and_set(map* m, string key, voidptr zero) {
 }
 
 static voidptr map_get(map m, string key, voidptr zero) {
-	multi_return_u32_u32 mr_12676 = map_key_to_index(&m, key);
-	u32 index = mr_12676.arg0;
-	u32 meta = mr_12676.arg1;
+	multi_return_u32_u32 mr_12673 = map_key_to_index(&m, key);
+	u32 index = mr_12673.arg0;
+	u32 meta = mr_12673.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9687,9 +9687,9 @@ static voidptr map_get(map m, string key, voidptr zero) {
 }
 
 static bool map_exists(map m, string key) {
-	multi_return_u32_u32 mr_13164 = map_key_to_index(&m, key);
-	u32 index = mr_13164.arg0;
-	u32 meta = mr_13164.arg1;
+	multi_return_u32_u32 mr_13161 = map_key_to_index(&m, key);
+	u32 index = mr_13161.arg0;
+	u32 meta = mr_13161.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9707,12 +9707,12 @@ static bool map_exists(map m, string key) {
 }
 
 void map_delete(map* m, string key) {
-	multi_return_u32_u32 mr_13584 = map_key_to_index(m, key);
-	u32 index = mr_13584.arg0;
-	u32 meta = mr_13584.arg1;
-	multi_return_u32_u32 mr_13619 = map_meta_less(m, index, meta);
-	index = mr_13619.arg0;
-	meta = mr_13619.arg1;
+	multi_return_u32_u32 mr_13581 = map_key_to_index(m, key);
+	u32 index = mr_13581.arg0;
+	u32 meta = mr_13581.arg1;
+	multi_return_u32_u32 mr_13616 = map_meta_less(m, index, meta);
+	index = mr_13616.arg0;
+	meta = mr_13616.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -24698,7 +24698,7 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 	}
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	v__table__Language language = (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("C")) ? (is_unsafe = !array_v__table__Attr_contains(p->attrs, tos_lit("trusted_fn")),v__table__Language_c) : p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("JS")) ? (v__table__Language_js) : (v__table__Language_v));
+	v__table__Language language = (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("C")) ? (is_unsafe = !array_v__table__Attr_contains(p->attrs, tos_lit("trusted")),v__table__Language_c) : p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("JS")) ? (v__table__Language_js) : (v__table__Language_v));
 	if (language != v__table__Language_v) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_dot);
@@ -24762,10 +24762,10 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool_bool mr_5814 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_5814.arg0;
-	bool are_args_type_only = mr_5814.arg1;
-	bool is_variadic = mr_5814.arg2;
+	multi_return_array_v__table__Arg_bool_bool mr_5811 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_5811.arg0;
+	bool are_args_type_only = mr_5811.arg1;
+	bool is_variadic = mr_5811.arg2;
 	_PUSH_MANY(&args, (args2), _t797, array_v__table__Arg);
 	// FOR IN array
 	array _t798 = args;
@@ -24879,9 +24879,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool_bool mr_8330 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_8330.arg0;
-	bool is_variadic = mr_8330.arg2;
+	multi_return_array_v__table__Arg_bool_bool mr_8327 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_8327.arg0;
+	bool is_variadic = mr_8327.arg2;
 	// FOR IN array
 	array _t801 = args;
 	for (int _t802 = 0; _t802 < _t801.len; ++_t802) {
@@ -25094,8 +25094,8 @@ static bool v__parser__have_fn_main(array_v__ast__Stmt stmts) {
 	for (int _t810 = 0; _t810 < _t809.len; ++_t810) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t809.data)[_t810];
 		if (stmt.typ == 114 /* v.ast.FnDecl */) {
-			v__ast__FnDecl* _sc_tmp_14500 = (v__ast__FnDecl*)stmt.obj;
-			v__ast__FnDecl* stmt = _sc_tmp_14500;
+			v__ast__FnDecl* _sc_tmp_14497 = (v__ast__FnDecl*)stmt.obj;
+			v__ast__FnDecl* stmt = _sc_tmp_14497;
 			if (string_eq(stmt->name, tos_lit("main.main")) && string_eq(stmt->mod, tos_lit("main"))) {
 				return true;
 			}
@@ -26469,7 +26469,9 @@ static v__table__Attr v__parser__Parser_parse_attr(v__parser__Parser* p) {
 	} else {
 		name = v__parser__Parser_check_name(p);
 		if (string_eq(name, tos_lit("unsafe_fn"))) {
-			name = tos_lit("unsafe");
+			v__parser__Parser_error_with_pos(p, tos_lit("please use `[unsafe]` instead"), v__token__Token_position(&p->tok));
+		} else if (string_eq(name, tos_lit("trusted_fn"))) {
+			v__parser__Parser_error_with_pos(p, tos_lit("please use `[trusted]` instead"), v__token__Token_position(&p->tok));
 		}
 		if (p->tok.kind == v__token__Kind_colon) {
 			name = /*f*/string_add(name, tos_lit(":"));
@@ -26526,9 +26528,9 @@ void v__parser__Parser_vet_error(v__parser__Parser* p, string s, int line) {
 
 static v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p, bool is_top_level) {
 	v__token__Token tok = p->tok;
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_19131 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr left = mr_19131.arg0;
-	array_v__ast__Comment left_comments = mr_19131.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_19212 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr left = mr_19212.arg0;
+	array_v__ast__Comment left_comments = mr_19212.arg1;
 	v__ast__Expr left0 = (*(v__ast__Expr*)array_get(left, 0));
 	if ((p->tok.kind == v__token__Kind_assign || p->tok.kind == v__token__Kind_decl_assign) || v__token__Kind_is_assign(p->tok.kind)) {
 		return v__parser__Parser_partial_assign_stmt(p, left, left_comments);
@@ -27098,9 +27100,9 @@ static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_36594 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_36594.arg0;
-	array_v__ast__Comment comments = mr_36594.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_36675 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_36675.arg0;
+	array_v__ast__Comment comments = mr_36675.arg1;
 	v__token__Position end_pos = v__ast__Expr_position(*(v__ast__Expr*)array_last(exprs));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 }
