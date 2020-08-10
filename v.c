@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "20a65cf"
+#define V_COMMIT_HASH "bd32f09"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "fce106c"
+	#define V_COMMIT_HASH "20a65cf"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "20a65cf"
+	#define V_CURRENT_COMMIT_HASH "bd32f09"
 #endif
 
 // V typedefs:
@@ -24725,7 +24725,13 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 	}
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	v__table__Language language = (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("C")) ? (is_unsafe = !array_v__table__Attr_contains(p->attrs, tos_lit("trusted")),v__table__Language_c) : p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("JS")) ? (v__table__Language_js) : (v__table__Language_v));
+	v__table__Language language = v__table__Language_v;
+	if (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("C"))) {
+		is_unsafe = !array_v__table__Attr_contains(p->attrs, tos_lit("trusted"));
+		language = v__table__Language_c;
+	} else if (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("JS"))) {
+		language = v__table__Language_js;
+	}
 	if (language != v__table__Language_v) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_dot);
@@ -24755,6 +24761,9 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		}
 		receiver_pos = v__token__Position_extend(rec_start_pos, v__token__Token_position(&p->tok));
 		bool is_amp = p->tok.kind == v__token__Kind_amp;
+		if (p->tok.kind == v__token__Kind_name && string_eq(p->tok.lit, tos_lit("JS"))) {
+			language = v__table__Language_js;
+		}
 		rec_type = v__parser__Parser_parse_type_with_mut(p, rec_mut);
 		if (is_amp && rec_mut) {
 			v__parser__Parser_error(p, tos_lit("use `(mut f Foo)` or `(f &Foo)` instead of `(mut f &Foo)`"));
@@ -24789,10 +24798,10 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Arg_bool_bool mr_5811 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args2 = mr_5811.arg0;
-	bool are_args_type_only = mr_5811.arg1;
-	bool is_variadic = mr_5811.arg2;
+	multi_return_array_v__table__Arg_bool_bool mr_5910 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args2 = mr_5910.arg0;
+	bool are_args_type_only = mr_5910.arg1;
+	bool is_variadic = mr_5910.arg2;
 	_PUSH_MANY(&args, (args2), _t797, array_v__table__Arg);
 	// FOR IN array
 	array _t798 = args;
@@ -24906,9 +24915,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Arg_bool_bool mr_8327 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_8327.arg0;
-	bool is_variadic = mr_8327.arg2;
+	multi_return_array_v__table__Arg_bool_bool mr_8426 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_8426.arg0;
+	bool is_variadic = mr_8426.arg2;
 	// FOR IN array
 	array _t801 = args;
 	for (int _t802 = 0; _t802 < _t801.len; ++_t802) {
@@ -25121,8 +25130,8 @@ static bool v__parser__have_fn_main(array_v__ast__Stmt stmts) {
 	for (int _t810 = 0; _t810 < _t809.len; ++_t810) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t809.data)[_t810];
 		if (stmt.typ == 114 /* v.ast.FnDecl */) {
-			v__ast__FnDecl* _sc_tmp_14497 = (v__ast__FnDecl*)stmt.obj;
-			v__ast__FnDecl* stmt = _sc_tmp_14497;
+			v__ast__FnDecl* _sc_tmp_14596 = (v__ast__FnDecl*)stmt.obj;
+			v__ast__FnDecl* stmt = _sc_tmp_14596;
 			if (string_eq(stmt->name, tos_lit("main.main")) && string_eq(stmt->mod, tos_lit("main"))) {
 				return true;
 			}
