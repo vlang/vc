@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6d72209"
+#define V_COMMIT_HASH "2dd8274"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "11113e4"
+	#define V_COMMIT_HASH "6d72209"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6d72209"
+	#define V_CURRENT_COMMIT_HASH "2dd8274"
 #endif
 
 // V typedefs:
@@ -20237,7 +20237,7 @@ bool v__checker__Checker_check_matching_function_symbols(v__checker__Checker* c,
 
 inline static v__table__Type v__checker__Checker_check_shift(v__checker__Checker* c, v__table__Type left_type, v__table__Type right_type, v__token__Position left_pos, v__token__Position right_pos) {
 	if (!v__table__Type_is_int(left_type)) {
-		v__checker__Checker_error(c, _STR("cannot shift type %.*s\000 into non-integer type %.*s", 2, v__table__Table_get_type_symbol(c->table, right_type)->name, v__table__Table_get_type_symbol(c->table, left_type)->name), left_pos);
+		v__checker__Checker_error(c, _STR("invalid operation: shift of type `%.*s\000`", 2, v__table__Table_get_type_symbol(c->table, left_type)->name), left_pos);
 		return _const_v__table__void_type;
 	} else if (!v__table__Type_is_int(right_type)) {
 		v__checker__Checker_error(c, _STR("cannot shift non-integer type %.*s\000 into type %.*s", 2, v__table__Table_get_type_symbol(c->table, right_type)->name, v__table__Table_get_type_symbol(c->table, left_type)->name), right_pos);
@@ -20274,10 +20274,10 @@ static v__table__Type v__checker__Checker_promote_num(v__checker__Checker* c, v_
 	v__table__Type type_hi = left_type;
 	v__table__Type type_lo = right_type;
 	if (v__table__Type_idx(type_hi) < v__table__Type_idx(type_lo)) {
-		v__table__Type _var_6038 = type_hi;
-		v__table__Type _var_6047 = type_lo;
-		type_hi = _var_6047;
-		type_lo = _var_6038;
+		v__table__Type _var_5989 = type_hi;
+		v__table__Type _var_5998 = type_lo;
+		type_hi = _var_5998;
+		type_lo = _var_5989;
 	}
 	int idx_hi = v__table__Type_idx(type_hi);
 	int idx_lo = v__table__Type_idx(type_lo);
