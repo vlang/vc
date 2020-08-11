@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c5aa2bf"
+#define V_COMMIT_HASH "99798b8"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "12d6620"
+	#define V_COMMIT_HASH "c5aa2bf"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c5aa2bf"
+	#define V_CURRENT_COMMIT_HASH "99798b8"
 #endif
 
 // V typedefs:
@@ -25479,7 +25479,8 @@ static v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		var_name = v__parser__Parser_check_name(p);
 	}
-	if (p->tok.kind == v__token__Kind_lcbr) {
+	bool no_lcbr = p->tok.kind != v__token__Kind_lcbr;
+	if (!no_lcbr) {
 		v__parser__Parser_check(p, v__token__Kind_lcbr);
 	}
 	array_v__ast__MatchBranch branches = __new_array_with_default(0, 0, sizeof(v__ast__MatchBranch), 0);
@@ -25547,7 +25548,7 @@ static v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser* p) {
 			.post_comments = post_comments,
 		} }));
 		v__parser__Parser_close_scope(p);
-		if (p->tok.kind == v__token__Kind_rcbr || is_else) {
+		if (p->tok.kind == v__token__Kind_rcbr || (is_else && no_lcbr)) {
 			break;
 		}
 	}
