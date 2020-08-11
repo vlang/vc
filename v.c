@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "99798b8"
+#define V_COMMIT_HASH "9fdb170"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c5aa2bf"
+	#define V_COMMIT_HASH "99798b8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "99798b8"
+	#define V_CURRENT_COMMIT_HASH "9fdb170"
 #endif
 
 // V typedefs:
@@ -23500,6 +23500,9 @@ v__table__Type v__checker__Checker_index_expr(v__checker__Checker* c, v__ast__In
 	if (!(typ_sym->kind == v__table__Kind_array || typ_sym->kind == v__table__Kind_array_fixed || typ_sym->kind == v__table__Kind_string || typ_sym->kind == v__table__Kind_map) && !v__table__Type_is_ptr(typ) && !(!byte_is_capital(string_at(typ_sym->name, 0)) && string_ends_with(typ_sym->name, tos_lit("ptr"))) && !v__table__Type_has_flag(typ, v__table__TypeFlag_variadic)) {
 		v__checker__Checker_error(c, _STR("type `%.*s\000` does not support indexing", 2, typ_sym->name), node->pos);
 	}
+	if (typ_sym->kind == v__table__Kind_string && !v__table__Type_is_ptr(typ) && node->is_setter) {
+		v__checker__Checker_error(c, tos_lit("cannot assign to s[i] (strings are immutable)"), node->pos);
+	}
 	if (!c->inside_unsafe && (v__table__Type_is_ptr(typ) || v__table__Type_is_pointer(typ))) {
 		bool is_ok = false;
 		if (node->left.typ == 163 /* v.ast.Ident */) {
@@ -23837,21 +23840,21 @@ static bool v__checker__has_top_return(array_v__ast__Stmt stmts) {
 	for (int _t738 = 0; _t738 < _t737.len; ++_t738) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t737.data)[_t738];
 		if (stmt.typ == 210 /* v.ast.Return */) {
-			v__ast__Return* _sc_tmp_108841 = (v__ast__Return*)stmt.obj;
-			v__ast__Return* stmt = _sc_tmp_108841;
+			v__ast__Return* _sc_tmp_108978 = (v__ast__Return*)stmt.obj;
+			v__ast__Return* stmt = _sc_tmp_108978;
 			return true;
 		} else if (stmt.typ == 191 /* v.ast.Block */) {
-			v__ast__Block* _sc_tmp_108884 = (v__ast__Block*)stmt.obj;
-			v__ast__Block* stmt = _sc_tmp_108884;
+			v__ast__Block* _sc_tmp_109021 = (v__ast__Block*)stmt.obj;
+			v__ast__Block* stmt = _sc_tmp_109021;
 			if (v__checker__has_top_return(stmt->stmts)) {
 				return true;
 			}
 		} else if (stmt.typ == 198 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_108972 = (v__ast__ExprStmt*)stmt.obj;
-			v__ast__ExprStmt* stmt = _sc_tmp_108972;
+			v__ast__ExprStmt* _sc_tmp_109109 = (v__ast__ExprStmt*)stmt.obj;
+			v__ast__ExprStmt* stmt = _sc_tmp_109109;
 			if (stmt->expr.typ == 155 /* v.ast.CallExpr */) {
-				v__ast__CallExpr* _sc_tmp_109006 = (v__ast__CallExpr*)stmt->expr.obj;
-				v__ast__CallExpr* ce = _sc_tmp_109006;
+				v__ast__CallExpr* _sc_tmp_109143 = (v__ast__CallExpr*)stmt->expr.obj;
+				v__ast__CallExpr* ce = _sc_tmp_109143;
 				if ((string_eq(ce->name, tos_lit("panic")) || string_eq(ce->name, tos_lit("exit")))) {
 					return true;
 				}
