@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "bb93bf3"
+#define V_COMMIT_HASH "9800cf1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ca7a64a"
+	#define V_COMMIT_HASH "bb93bf3"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "bb93bf3"
+	#define V_CURRENT_COMMIT_HASH "9800cf1"
 #endif
 
 // V typedefs:
@@ -23663,7 +23663,8 @@ void v__checker__Checker_error(v__checker__Checker* c, string message, v__token_
 	if (c->pref->is_verbose) {
 		print_backtrace();
 	}
-	v__checker__Checker_warn_or_error(c, message, pos, false);
+	string msg = string_replace(message, tos_lit("`array_"), tos_lit("`[]"));
+	v__checker__Checker_warn_or_error(c, msg, pos, false);
 }
 
 static void v__checker__Checker_warn_or_error(v__checker__Checker* c, string message, v__token__Position pos, bool warn) {
@@ -23858,21 +23859,21 @@ static bool v__checker__has_top_return(array_v__ast__Stmt stmts) {
 	for (int _t738 = 0; _t738 < _t737.len; ++_t738) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t737.data)[_t738];
 		if (stmt.typ == 210 /* v.ast.Return */) {
-			v__ast__Return* _sc_tmp_108978 = (v__ast__Return*)stmt.obj;
-			v__ast__Return* stmt = _sc_tmp_108978;
+			v__ast__Return* _sc_tmp_109016 = (v__ast__Return*)stmt.obj;
+			v__ast__Return* stmt = _sc_tmp_109016;
 			return true;
 		} else if (stmt.typ == 191 /* v.ast.Block */) {
-			v__ast__Block* _sc_tmp_109021 = (v__ast__Block*)stmt.obj;
-			v__ast__Block* stmt = _sc_tmp_109021;
+			v__ast__Block* _sc_tmp_109059 = (v__ast__Block*)stmt.obj;
+			v__ast__Block* stmt = _sc_tmp_109059;
 			if (v__checker__has_top_return(stmt->stmts)) {
 				return true;
 			}
 		} else if (stmt.typ == 198 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_109109 = (v__ast__ExprStmt*)stmt.obj;
-			v__ast__ExprStmt* stmt = _sc_tmp_109109;
+			v__ast__ExprStmt* _sc_tmp_109147 = (v__ast__ExprStmt*)stmt.obj;
+			v__ast__ExprStmt* stmt = _sc_tmp_109147;
 			if (stmt->expr.typ == 155 /* v.ast.CallExpr */) {
-				v__ast__CallExpr* _sc_tmp_109143 = (v__ast__CallExpr*)stmt->expr.obj;
-				v__ast__CallExpr* ce = _sc_tmp_109143;
+				v__ast__CallExpr* _sc_tmp_109181 = (v__ast__CallExpr*)stmt->expr.obj;
+				v__ast__CallExpr* ce = _sc_tmp_109181;
 				if ((string_eq(ce->name, tos_lit("panic")) || string_eq(ce->name, tos_lit("exit")))) {
 					return true;
 				}
