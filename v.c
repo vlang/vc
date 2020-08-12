@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e5e31f7"
+#define V_COMMIT_HASH "f8be211"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4bc0dde"
+	#define V_COMMIT_HASH "e5e31f7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e5e31f7"
+	#define V_CURRENT_COMMIT_HASH "f8be211"
 #endif
 
 // V typedefs:
@@ -2649,9 +2649,9 @@ struct v__ast__ComptimeCall {
 };
 
 struct v__gen__Gen {
-	v__table__Table* table;
 	v__pref__Preferences* pref;
 	string module_built;
+	v__table__Table* table;
 	strings__Builder out;
 	strings__Builder cheaders;
 	strings__Builder includes;
@@ -28550,9 +28550,9 @@ static void v__gen__Gen_gen_str_for_enum(v__gen__Gen* g, v__table__Enum info, st
 
 string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__Preferences* pref) {
 	v__gen__Gen g = (v__gen__Gen){
-		.table = table,
 		.pref = pref,
 		.module_built = string_replace(string_after(pref->path, tos_lit("vlib/")), tos_lit("/"), tos_lit(".")),
+		.table = table,
 		.out = strings__new_builder(1000),
 		.cheaders = strings__new_builder(8192),
 		.includes = strings__new_builder(100),
@@ -32087,24 +32087,73 @@ static void v__gen__Gen_gen_array_map(v__gen__Gen* g, v__ast__CallExpr node) {
 }
 
 static void v__gen__Gen_gen_array_sort(v__gen__Gen* g, v__ast__CallExpr node) {
-	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, node.return_type);
-	if (sym->kind != v__table__Kind_array) {
+	v__table__TypeSymbol* return_sym = v__table__Table_get_type_symbol(g->table, node.return_type);
+	if (return_sym->kind != v__table__Kind_array) {
 		println(node.name);
 		println(v__gen__Gen_typ(g, node.receiver_type));
-		println(v__table__Kind_str(sym->kind));
 		v__gen__verror(tos_lit("sort() requires an array"));
 	}
-	v__table__Array* info = /* as */ (v__table__Array*)__as_cast(sym->info.obj, sym->info.typ, /*expected:*/272);
+	v__table__Array* info = /* as */ (v__table__Array*)__as_cast(return_sym->info.obj, return_sym->info.typ, /*expected:*/272);
 	v__table__Type typ = info->elem_type;
 	bool is_reverse = false;
 	if (node.args.len > 0) {
 		v__ast__InfixExpr* infix_expr = /* as */ (v__ast__InfixExpr*)__as_cast((*(v__ast__CallArg*)array_get(node.args, 0)).expr.obj, (*(v__ast__CallArg*)array_get(node.args, 0)).expr.typ, /*expected:*/167);
-		typ = infix_expr->left_type;
 		is_reverse = infix_expr->op == v__token__Kind_gt;
 	}
-	v__table__TypeSymbol* _t1043;
-	string compare_fn = (typ == _const_v__table__int_type) ? (tos_lit("compare_ints")) : (typ == _const_v__table__string_type) ? (tos_lit("compare_strings")) : (typ == _const_v__table__f64_type) ? (tos_lit("compare_floats")) : (		_t1043 = v__table__Table_get_type_symbol(g->table, typ),(node.args.len == 0 ? (v__gen__verror(_STR("usage: .sort(a.field < b.field) %.*s", 1, _t1043->name))): 0),v__gen__verror(_STR("sort(): unhandled type %"PRId32"\000 %.*s", 2, typ, _t1043->name)),tos_lit(""));
-	if (is_reverse) {
+	string compare_fn = tos_lit("");
+	if (typ == _const_v__table__int_type) {
+		compare_fn = tos_lit("compare_ints");
+	} else if (typ == _const_v__table__string_type) {
+		compare_fn = tos_lit("compare_strings");
+	} else if (typ == _const_v__table__f64_type) {
+		compare_fn = tos_lit("compare_floats");
+	} else {
+		if (node.args.len == 0) {
+			v__gen__verror(tos_lit("usage: .sort(a.field < b.field)"));
+		}
+		compare_fn = string_add(tos_lit("compare_"), v__gen__Gen_typ(g, typ));
+		if (is_reverse) {
+			compare_fn = /*f*/string_add(compare_fn, tos_lit("_reverse"));
+		}
+		{ /* if guard */ 
+		Option_v__table__Fn _t1043;
+		if (_t1043 = v__table__Table_find_fn(g->table, compare_fn), _t1043.ok) {
+		} else {
+			string err = _t1043.v_error;
+			int errcode = _t1043.ecode;
+			v__table__Table_register_fn(g->table, (v__table__Fn){.args = __new_array(0, 1, sizeof(v__table__Arg)),.return_type = _const_v__table__int_type,.is_variadic = 0,.language = 0,.is_generic = 0,.is_pub = 0,.is_deprecated = 0,.is_unsafe = 0,.is_placeholder = 0,.mod = (string){.str=(byteptr)""},.ctdefine = (string){.str=(byteptr)""},.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.name = compare_fn,});
+			v__ast__InfixExpr* infix_expr = /* as */ (v__ast__InfixExpr*)__as_cast((*(v__ast__CallArg*)array_get(node.args, 0)).expr.obj, (*(v__ast__CallArg*)array_get(node.args, 0)).expr.typ, /*expected:*/167);
+			string styp = v__gen__Gen_typ(g, typ);
+			strings__Builder_writeln(&g->definitions, _STR("int %.*s\000 (%.*s\000* a, %.*s\000* b) {", 4, compare_fn, styp, styp));
+			string field_type = v__gen__Gen_typ(g, infix_expr->left_type);
+			string left_expr_str = string_replace(v__gen__Gen_write_expr_to_string(g, infix_expr->left), tos_lit("."), tos_lit("->"));
+			string right_expr_str = string_replace(v__gen__Gen_write_expr_to_string(g, infix_expr->right), tos_lit("."), tos_lit("->"));
+			strings__Builder_writeln(&g->definitions, _STR("%.*s\000 a_ = %.*s\000;", 3, field_type, left_expr_str));
+			strings__Builder_writeln(&g->definitions, _STR("%.*s\000 b_ = %.*s\000;", 3, field_type, right_expr_str));
+			string op1 = tos_lit("");
+			string op2 = tos_lit("");
+			if (infix_expr->left_type == _const_v__table__string_type) {
+				if (is_reverse) {
+					op1 = tos_lit("string_gt(a_, b_)");
+					op2 = tos_lit("string_lt(a_, b_)");
+				} else {
+					op1 = tos_lit("string_lt(a_, b_)");
+					op2 = tos_lit("string_gt(a_, b_)");
+				}
+			} else {
+				if (is_reverse) {
+					op1 = tos_lit("a_ > b_");
+					op2 = tos_lit("a_ < b_");
+				} else {
+					op1 = tos_lit("a_ < b_");
+					op2 = tos_lit("a_ > b_");
+				}
+			}
+			strings__Builder_writeln(&g->definitions, _STR("if (%.*s\000) return -1;", 2, op1));
+			strings__Builder_writeln(&g->definitions, _STR("if (%.*s\000) return 1; return 0; }\n", 2, op2));
+		}}
+	};
+	if (is_reverse && !string_ends_with(compare_fn, tos_lit("_reverse"))) {
 		compare_fn = /*f*/string_add(compare_fn, tos_lit("_reverse"));
 	}
 	v__gen__Gen_write(g, tos_lit("qsort("));
@@ -32289,11 +32338,11 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExpr
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->fn_decl->name, tos_lit("main.main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_111941 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_111941.arg0;
-				string pafile = mr_111941.arg1;
-				string pamod = mr_111941.arg2;
-				string pafn = mr_111941.arg3;
+				multi_return_int_string_string_string mr_113524 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_113524.arg0;
+				string pafile = mr_113524.arg1;
+				string pamod = mr_113524.arg2;
+				string pafn = mr_113524.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(%.*s\000.v_error);", 2, cvar_name));
