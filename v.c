@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "da7adb5"
+#define V_COMMIT_HASH "1135dff"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1a96bcf"
+	#define V_COMMIT_HASH "da7adb5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "da7adb5"
+	#define V_CURRENT_COMMIT_HASH "1135dff"
 #endif
 
 // V typedefs:
@@ -1154,6 +1154,7 @@ typedef map map_string_strings__Builder;
 typedef array array_v__ast__DeferStmt;
 typedef array array_v__gen__ProfileCounterMeta;
 typedef map map_string_v__table__Type;
+typedef map map_string_bool;
 typedef map map_string_map_string_string;
 typedef map map_string_array_v__ast__FnDecl;
 typedef array array_i64;
@@ -32796,12 +32797,17 @@ static string v__gen__Gen_interface_table(v__gen__Gen* g) {
 		strings__Builder_write(&cast_functions, _STR("// Casting functions for interface \"%.*s\000\"", 2, interface_name));
 		strings__Builder methods_wrapper = strings__new_builder(100);
 		strings__Builder_writeln(&methods_wrapper, _STR("// Methods wrapper for interface \"%.*s\000\"", 2, interface_name));
+		map_string_bool already_generated_mwrappers = new_map_1(sizeof(bool));
 		// FOR IN array
 		array _t1071 = inter_info->types;
 		for (int i = 0; i < _t1071.len; ++i) {
 			v__table__Type st = ((v__table__Type*)_t1071.data)[i];
 			string cctype = v__gen__Gen_cc_type(g, st);
 			string interface_index_name = _STR("_%.*s\000_%.*s\000_index", 3, interface_name, cctype);
+			if ((*(bool*)map_get(already_generated_mwrappers, interface_index_name, &(bool[]){ 0 }))) {
+				continue;
+			}
+			map_set(&already_generated_mwrappers, interface_index_name, &(bool[]) { true });
 			strings__Builder_writeln(&cast_functions, _STR("\n_Interface I_%.*s\000_to_Interface_%.*s\000(%.*s\000* x) {\n	return (_Interface) {\n		._object = (void*) (x),\n		._interface_idx = %.*s\000\n	};\n}\n\n_Interface* I_%.*s\000_to_Interface_%.*s\000_ptr(%.*s\000* x) {\n	// TODO Remove memdup\n	return (_Interface*) memdup(&(_Interface) {\n		._object = (void*) (x),\n		._interface_idx = %.*s\000\n	}, sizeof(_Interface));\n}", 9, cctype, interface_name, cctype, interface_index_name, cctype, interface_name, cctype, interface_index_name));
 			strings__Builder_writeln(&methods_struct, tos_lit("\t{"));
 			v__table__TypeSymbol* st_sym = v__table__Table_get_type_symbol(g->table, st);
