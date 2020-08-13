@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1135dff"
+#define V_COMMIT_HASH "a62307f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "da7adb5"
+	#define V_COMMIT_HASH "1135dff"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1135dff"
+	#define V_CURRENT_COMMIT_HASH "a62307f"
 #endif
 
 // V typedefs:
@@ -32590,6 +32590,12 @@ static void v__gen__Gen_go_stmt(v__gen__Gen* g, v__ast__GoStmt node) {
 	if (expr->is_method) {
 		v__table__TypeSymbol* receiver_sym = v__table__Table_get_type_symbol(g->table, expr->receiver_type);
 		name = string_add(string_add(receiver_sym->name, tos_lit("_")), name);
+	} else if (expr->left.typ == 150 /* v.ast.AnonFn */) {
+		v__ast__AnonFn* _sc_tmp_119992 = (v__ast__AnonFn*)expr->left.obj;
+		v__ast__AnonFn* anon_fn = _sc_tmp_119992;
+		v__gen__Gen_gen_anon_fn_decl(g, *anon_fn);
+		v__table__TypeSymbol* fsym = v__table__Table_get_type_symbol(g->table, anon_fn->typ);
+		name = fsym->name;
 	}
 	name = v__util__no_dots(name);
 	v__gen__Gen_writeln(g, tos_lit("// go"));
