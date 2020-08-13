@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1a96bcf"
+#define V_COMMIT_HASH "da7adb5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9478ff4"
+	#define V_COMMIT_HASH "1a96bcf"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1a96bcf"
+	#define V_CURRENT_COMMIT_HASH "da7adb5"
 #endif
 
 // V typedefs:
@@ -22104,9 +22104,6 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 		if ((v__table__Type_is_ptr(left_type) || v__table__TypeSymbol_is_pointer(left_sym)) && !(assign_stmt->op == v__token__Kind_assign || assign_stmt->op == v__token__Kind_decl_assign) && !c->inside_unsafe) {
 			v__checker__Checker_warn(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), assign_stmt->pos);
 		}
-		if (!is_blank_ident && !v__checker__Checker_check_types(c, right_type_unwrapped, left_type_unwrapped) && right_sym->kind != v__table__Kind_placeholder) {
-			v__checker__Checker_error(c, _STR("cannot assign `%.*s\000` to `%.*s\000` of type `%.*s\000`", 4, right_sym->name, v__ast__Expr_str(left), left_sym->name), v__ast__Expr_position(right));
-		}
 		if (c->pref->translated) {
 			continue;
 		}
@@ -22143,6 +22140,9 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 			}
 		} else {
 		};
+		if (!is_blank_ident && !v__checker__Checker_check_types(c, right_type_unwrapped, left_type_unwrapped) && right_sym->kind != v__table__Kind_placeholder) {
+			v__checker__Checker_error(c, _STR("cannot assign `%.*s\000` to `%.*s\000` of type `%.*s\000`", 4, right_sym->name, v__ast__Expr_str(left), left_sym->name), v__ast__Expr_position(right));
+		}
 	}
 // Defer begin
 c->expected_type = _const_v__table__void_type;
