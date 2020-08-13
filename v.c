@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8580a0b"
+#define V_COMMIT_HASH "88cde77"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a62307f"
+	#define V_COMMIT_HASH "8580a0b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8580a0b"
+	#define V_CURRENT_COMMIT_HASH "88cde77"
 #endif
 
 // V typedefs:
@@ -4650,7 +4650,6 @@ static void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node)
 static array_string v__gen__cgen_attrs(array_v__table__Attr attrs);
 static void v__gen__Gen_comp_if(v__gen__Gen* g, v__ast__CompIf* it);
 static void v__gen__Gen_comp_for(v__gen__Gen* g, v__ast__CompFor node);
-void v__gen__kek_cheburek();
 static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it, bool skip);
 static void v__gen__Gen_write_autofree_stmts_when_needed(v__gen__Gen* g, v__ast__Return r);
 static void v__gen__Gen_write_defer_stmts_when_needed(v__gen__Gen* g);
@@ -23563,7 +23562,7 @@ v__table__Type v__checker__Checker_index_expr(v__checker__Checker* c, v__ast__In
 		v__checker__Checker_error(c, _STR("type `%.*s\000` does not support indexing", 2, typ_sym->name), node->pos);
 	}
 	if (typ_sym->kind == v__table__Kind_string && !v__table__Type_is_ptr(typ) && node->is_setter) {
-		v__checker__Checker_error(c, tos_lit("cannot assign to s[i] (strings are immutable)"), node->pos);
+		v__checker__Checker_error(c, string_add(tos_lit("cannot assign to s[i] since V strings are immutable\n"), tos_lit("(note, that variables may be mutable but string values are always immutable, like in Go and Java)")), node->pos);
 	}
 	if (!c->inside_unsafe && (v__table__Type_is_ptr(typ) || v__table__Type_is_pointer(typ))) {
 		bool is_ok = false;
@@ -23903,21 +23902,21 @@ static bool v__checker__has_top_return(array_v__ast__Stmt stmts) {
 	for (int _t738 = 0; _t738 < _t737.len; ++_t738) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t737.data)[_t738];
 		if (stmt.typ == 210 /* v.ast.Return */) {
-			v__ast__Return* _sc_tmp_109535 = (v__ast__Return*)stmt.obj;
-			v__ast__Return* stmt = _sc_tmp_109535;
+			v__ast__Return* _sc_tmp_109651 = (v__ast__Return*)stmt.obj;
+			v__ast__Return* stmt = _sc_tmp_109651;
 			return true;
 		} else if (stmt.typ == 191 /* v.ast.Block */) {
-			v__ast__Block* _sc_tmp_109578 = (v__ast__Block*)stmt.obj;
-			v__ast__Block* stmt = _sc_tmp_109578;
+			v__ast__Block* _sc_tmp_109694 = (v__ast__Block*)stmt.obj;
+			v__ast__Block* stmt = _sc_tmp_109694;
 			if (v__checker__has_top_return(stmt->stmts)) {
 				return true;
 			}
 		} else if (stmt.typ == 198 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_109666 = (v__ast__ExprStmt*)stmt.obj;
-			v__ast__ExprStmt* stmt = _sc_tmp_109666;
+			v__ast__ExprStmt* _sc_tmp_109782 = (v__ast__ExprStmt*)stmt.obj;
+			v__ast__ExprStmt* stmt = _sc_tmp_109782;
 			if (stmt->expr.typ == 155 /* v.ast.CallExpr */) {
-				v__ast__CallExpr* _sc_tmp_109700 = (v__ast__CallExpr*)stmt->expr.obj;
-				v__ast__CallExpr* ce = _sc_tmp_109700;
+				v__ast__CallExpr* _sc_tmp_109816 = (v__ast__CallExpr*)stmt->expr.obj;
+				v__ast__CallExpr* ce = _sc_tmp_109816;
 				if ((string_eq(ce->name, tos_lit("panic")) || string_eq(ce->name, tos_lit("exit")))) {
 					return true;
 				}
@@ -33383,9 +33382,6 @@ int _t1094_len = info->fields.len;
 	v__gen__Gen_writeln(g, tos_lit("} // } comptime for"));
 }
 
-void v__gen__kek_cheburek() {
-}
-
 static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it, bool skip) {
 	if (it.language == v__table__Language_c) {
 		return;
@@ -33462,9 +33458,9 @@ static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it, bool skip
 		strings__Builder_write(&g->definitions, fn_header);
 		v__gen__Gen_write(g, fn_header);
 	}
-	multi_return_array_string_array_string mr_3641 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
-	array_string fargs = mr_3641.arg0;
-	array_string fargtypes = mr_3641.arg1;
+	multi_return_array_string_array_string mr_3614 = v__gen__Gen_fn_args(g, it.args, it.is_variadic);
+	array_string fargs = mr_3614.arg0;
+	array_string fargtypes = mr_3614.arg1;
 	if (it.no_body || (g->pref->use_cache && it.is_builtin) || skip) {
 		strings__Builder_writeln(&g->definitions, tos_lit(");"));
 		v__gen__Gen_writeln(g, tos_lit(");"));
@@ -33693,8 +33689,8 @@ static void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node) {
 		if (node.left.typ == 166 /* v.ast.IndexExpr */) {
 			v__ast__Expr idx = (/* as */ (v__ast__IndexExpr*)__as_cast(node.left.obj, node.left.typ, /*expected:*/166))->index;
 			if (idx.typ == 178 /* v.ast.RangeExpr */) {
-				v__ast__RangeExpr* _sc_tmp_12353 = (v__ast__RangeExpr*)idx.obj;
-				v__ast__RangeExpr* idx = _sc_tmp_12353;
+				v__ast__RangeExpr* _sc_tmp_12326 = (v__ast__RangeExpr*)idx.obj;
+				v__ast__RangeExpr* idx = _sc_tmp_12326;
 				name = v__util__no_dots(_STR("%.*s\000_%.*s\000_static", 3, receiver_type_name, node.name));
 				is_range_slice = true;
 			}
@@ -33825,11 +33821,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_17830 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_17830.arg0;
-		string pafile = mr_17830.arg1;
-		string pamod = mr_17830.arg2;
-		string pafn = mr_17830.arg3;
+		multi_return_int_string_string_string mr_17803 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_17803.arg0;
+		string pafile = mr_17803.arg1;
+		string pamod = mr_17803.arg2;
+		string pafn = mr_17803.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		v__gen__Gen_write(g, tos_lit(")"));
