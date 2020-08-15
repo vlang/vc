@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c2b4c64"
+#define V_COMMIT_HASH "e7b2aef"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0f0a91f"
+	#define V_COMMIT_HASH "c2b4c64"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c2b4c64"
+	#define V_CURRENT_COMMIT_HASH "e7b2aef"
 #endif
 
 // V typedefs:
@@ -15224,7 +15224,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 			i++;
 		} else if (string_eq(arg, tos_lit("-path"))) {
 			string path = os__cmdline__option(current_args, tos_lit("-path"), tos_lit(""));
-			res->lookup_path = string_split(path, _const_os__path_delimiter);
+			res->lookup_path = string_split(string_replace(path, tos_lit("|"), _const_os__path_delimiter), _const_os__path_delimiter);
 			i++;
 		} else if (string_eq(arg, tos_lit("-custom-prelude"))) {
 			string path = os__cmdline__option(current_args, tos_lit("-custom-prelude"), tos_lit(""));
@@ -38677,6 +38677,7 @@ static void v__builder__Builder_set_module_lookup_paths(v__builder__Builder* v) 
 }
 
 array_string v__builder__Builder_get_builtin_files(v__builder__Builder v) {
+	v__builder__Builder_log(v, _STR("v.pref.lookup_path: %.*s", 1, array_string_str(  v.pref->lookup_path)));
 	// FOR IN array
 	array _t1414 = v.pref->lookup_path;
 	for (int _t1415 = 0; _t1415 < _t1414.len; ++_t1415) {
