@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "bab5c21"
+#define V_COMMIT_HASH "fc7a108"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "bf06567"
+	#define V_COMMIT_HASH "bab5c21"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "bab5c21"
+	#define V_CURRENT_COMMIT_HASH "fc7a108"
 #endif
 
 // V typedefs:
@@ -12397,7 +12397,7 @@ Option_void os__cp(string old, string v_new) {
 	int fp_to = open(((charptr)(v_new.str)), ((O_WRONLY | O_CREAT) | O_TRUNC), (S_IWUSR | S_IRUSR));
 	if (fp_to < 0) {
 		close(fp_from);
-		Option _t79 = error_with_code(_STR("cp: failed to write to %.*s", 1, v_new), ((int)(fp_to)));
+		Option _t79 = error_with_code(_STR("cp (permission): failed to write to %.*s\000 (fp_to: %"PRId32"\000)", 3, v_new, fp_to), ((int)(fp_to)));
 		return *(Option_void*)&_t79;
 	}
 	array_fixed_byte_1024 buf = {0};
@@ -12420,6 +12420,8 @@ Option_void os__cp(string old, string v_new) {
 		Option _t81 = error_with_code(_STR("failed to set permissions for %.*s", 1, v_new), ((int)(-1)));
 		return *(Option_void*)&_t81;
 	}
+	close(fp_to);
+	close(fp_from);
 #endif
 // } windows
 	Option_void _t82 = {.ok = true};
@@ -12696,8 +12698,8 @@ static int os__vpclose(voidptr f) {
 #ifdef _WIN32
 	return _pclose(f);
 #else
-	multi_return_int_bool mr_8325 = os__posix_wait4_to_exit_status(pclose(f));
-	int ret = mr_8325.arg0;
+	multi_return_int_bool mr_8390 = os__posix_wait4_to_exit_status(pclose(f));
+	int ret = mr_8390.arg0;
 	return ret;
 #endif
 // } windows
@@ -38578,22 +38580,22 @@ static void v__builder__Builder_build_thirdparty_obj_file(v__builder__Builder* v
 		return;
 	}
 	println(_STR("%.*s\000 not found, building it...", 2, obj_path));
-	string cfiles = _STR("%.*s\000.c", 2, string_substr(path, 0, path.len - 2));
+	string cfile = _STR("%.*s\000.c", 2, string_substr(path, 0, path.len - 2));
 	string btarget = array_v__cflag__CFlag_c_options_before_target(moduleflags);
 	string atarget = array_v__cflag__CFlag_c_options_after_target(moduleflags);
 	string cppoptions = (string_contains(v->pref->ccompiler, tos_lit("++")) ? (tos_lit(" -fpermissive -w ")) : (tos_lit("")));
-	string cmd = _STR("%.*s\000 %.*s\000 %.*s\000 %.*s\000 -c -o \"%.*s\000\" %.*s\000 %.*s", 7, v->pref->ccompiler, cppoptions, v->pref->third_party_option, btarget, obj_path, cfiles, atarget);
+	string cmd = _STR("%.*s\000 %.*s\000 %.*s\000 %.*s\000 -c -o \"%.*s\000\" \"%.*s\000\" %.*s", 7, v->pref->ccompiler, cppoptions, v->pref->third_party_option, btarget, obj_path, cfile, atarget);
 	Option_os__Result _t1396 = os__exec(cmd);
 	if (!_t1396.ok) {
 		string err = _t1396.v_error;
 		int errcode = _t1396.ecode;
-		println(_STR("failed thirdparty object build cmd: %.*s", 1, cmd));
+		eprintln(_STR("exec failed for thirdparty object build cmd:\n%.*s", 1, cmd));
 		v__builder__verror(err);
 		return;
 	}
 	os__Result res = *(os__Result*)_t1396.data;
 	if (res.exit_code != 0) {
-		println(_STR("failed thirdparty object build cmd: %.*s", 1, cmd));
+		eprintln(_STR("failed thirdparty object build cmd:\n%.*s", 1, cmd));
 		v__builder__verror(res.output);
 		return;
 	}
