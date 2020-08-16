@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e7b2aef"
+#define V_COMMIT_HASH "bf06567"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c2b4c64"
+	#define V_COMMIT_HASH "e7b2aef"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e7b2aef"
+	#define V_CURRENT_COMMIT_HASH "bf06567"
 #endif
 
 // V typedefs:
@@ -4698,6 +4698,8 @@ static string v__gen__js_dec_name(string typ);
 static bool v__gen__is_js_prim(string typ);
 static string v__gen__Gen_decode_array(v__gen__Gen* g, v__table__Type value_type);
 static string v__gen__Gen_encode_array(v__gen__Gen* g, v__table__Type value_type);
+static string v__gen__Gen_decode_map(v__gen__Gen* g, v__table__Type key_type, v__table__Type value_type);
+static string v__gen__Gen_encode_map(v__gen__Gen* g, v__table__Type key_type, v__table__Type value_type);
 static void v__gen__Gen_generate_hotcode_reloading_declarations(v__gen__Gen* g);
 static void v__gen__Gen_generate_hotcode_reloader_code(v__gen__Gen* g);
 static string _const_v__gen__posix_hotcode_definitions_1; // a string literal, inited later
@@ -33983,27 +33985,43 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 	bool is_json_decode = string_eq(name, tos_lit("json.decode"));
 	g->is_json_fn = is_json_encode || is_json_decode;
 	string json_type_str = tos_lit("");
+	string json_obj = tos_lit("");
 	if (g->is_json_fn) {
-		if (string_eq(name, tos_lit("json.encode"))) {
-			v__gen__Gen_write(g, tos_lit("json__json_print("));
+		json_obj = v__gen__Gen_new_tmp_var(g);
+		string tmp2 = tos_lit("");
+		string cur_line = v__gen__Gen_go_before_stmt(g, 0);
+		if (is_json_encode) {
 			v__gen__Gen_gen_json_for_type(g, (*(v__ast__CallArg*)array_get(node.args, 0)).typ);
 			json_type_str = v__table__Table_get_type_symbol(g->table, (*(v__ast__CallArg*)array_get(node.args, 0)).typ)->name;
+			string encode_name = string_add(string_add(v__gen__c_name(name), tos_lit("_")), v__util__no_dots(json_type_str));
+			v__gen__Gen_writeln(g, tos_lit("// json.encode"));
+			v__gen__Gen_write(g, _STR("cJSON* %.*s\000 = %.*s\000(", 3, json_obj, encode_name));
+			v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
+			v__gen__Gen_writeln(g, tos_lit(");"));
+			tmp2 = v__gen__Gen_new_tmp_var(g);
+			v__gen__Gen_writeln(g, _STR("string %.*s\000 = json__json_print(%.*s\000);", 3, tmp2, json_obj));
 		} else {
-			v__gen__Gen_insert_before_stmt(g, tos_lit("// json.decode"));
 			v__ast__Type* ast_type = /* as */ (v__ast__Type*)__as_cast((*(v__ast__CallArg*)array_get(node.args, 0)).expr.obj, (*(v__ast__CallArg*)array_get(node.args, 0)).expr.typ, /*expected:*/187);
-			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, ast_type->typ);
-			name = /*f*/string_add(name, string_add(tos_lit("_"), sym->name));
+			string typ = v__gen__c_name(v__table__Table_get_type_symbol(g->table, ast_type->typ)->name);
+			string fn_name = string_add(string_add(v__gen__c_name(name), tos_lit("_")), typ);
 			v__gen__Gen_gen_json_for_type(g, ast_type->typ);
+			v__gen__Gen_writeln(g, tos_lit("// json.decode"));
+			v__gen__Gen_write(g, _STR("cJSON* %.*s\000 = json__json_parse(", 2, json_obj));
+			v__gen__Gen_call_args(g, array_slice(node.args, 1, node.args.len), node.expected_arg_types);
+			v__gen__Gen_writeln(g, tos_lit(");"));
+			tmp2 = v__gen__Gen_new_tmp_var(g);
+			v__gen__Gen_writeln(g, _STR("Option_%.*s\000 %.*s\000 = %.*s\000 (%.*s\000);", 5, typ, tmp2, fn_name, json_obj));
 		}
+		v__gen__Gen_write(g, _STR("cJSON_Delete(%.*s\000);", 2, json_obj));
+		v__gen__Gen_write(g, _STR("\n%.*s", 1, cur_line));
+		name = tos_lit("");
+		json_obj = tmp2;
 	}
 	if (node.language == v__table__Language_c) {
 		g->is_c_call = true;
 		name = v__util__no_dots(string_substr(name, 2, name.len));
 	} else {
 		name = v__gen__c_name(name);
-	}
-	if (is_json_encode) {
-		name = /*f*/string_add(name, string_add(tos_lit("_"), v__util__no_dots(json_type_str)));
 	}
 	if (node.generic_type != _const_v__table__void_type && node.generic_type != 0) {
 		name = /*f*/string_add(name, string_add(tos_lit("_"), v__gen__Gen_typ(g, node.generic_type)));
@@ -34071,29 +34089,25 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_17803 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_17803.arg0;
-		string pafile = mr_17803.arg1;
-		string pamod = mr_17803.arg2;
-		string pafn = mr_17803.arg3;
+		multi_return_int_string_string_string mr_18542 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_18542.arg0;
+		string pafile = mr_18542.arg1;
+		string pamod = mr_18542.arg2;
+		string pafn = mr_18542.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		v__gen__Gen_write(g, tos_lit(")"));
 	} else {
 		v__gen__Gen_write(g, _STR("%.*s\000(", 2, v__gen__Gen_get_ternary_name(g, name)));
-		if (is_json_decode) {
-			v__gen__Gen_write(g, tos_lit("json__json_parse("));
-			v__gen__Gen_call_args(g, array_slice(node.args, 1, node.args.len), node.expected_arg_types);
+		if (g->is_json_fn) {
+			v__gen__Gen_write(g, json_obj);
 		} else {
 			v__gen__Gen_call_args(g, node.args, node.expected_arg_types);
 		}
 		v__gen__Gen_write(g, tos_lit(")"));
 	}
 	g->is_c_call = false;
-	if (g->is_json_fn) {
-		v__gen__Gen_write(g, tos_lit(")"));
-		g->is_json_fn = false;
-	}
+	g->is_json_fn = false;
 	if (free_tmp_arg_vars) {
 		array_clear(&g->tmp_idxs);
 	}
@@ -34268,13 +34282,20 @@ static void v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Type typ) {
 	string enc_fn_name = v__gen__js_enc_name(sym->name);
 	string enc_fn_dec = _STR("cJSON* %.*s\000(%.*s\000 val)", 3, enc_fn_name, styp);
 	strings__Builder_writeln(&g->json_forward_decls, _STR("%.*s\000;\n", 2, enc_fn_dec));
-	strings__Builder_writeln(&enc, _STR("\n%.*s\000 {\n\tcJSON *o = cJSON_CreateObject();", 2, enc_fn_dec));
+	strings__Builder_writeln(&enc, _STR("\n%.*s\000 {\n\tcJSON *o;", 2, enc_fn_dec));
 	if (sym->kind == v__table__Kind_array) {
 		v__table__Type value_type = v__table__Table_value_type(g->table, typ);
 		v__gen__Gen_gen_json_for_type(g, value_type);
 		strings__Builder_writeln(&dec, v__gen__Gen_decode_array(g, value_type));
 		strings__Builder_writeln(&enc, v__gen__Gen_encode_array(g, value_type));
+	} else if (sym->kind == v__table__Kind_map) {
+		v__table__Map* m = /* as */ (v__table__Map*)__as_cast(sym->info.obj, sym->info.typ, /*expected:*/280);
+		v__gen__Gen_gen_json_for_type(g, m->key_type);
+		v__gen__Gen_gen_json_for_type(g, m->value_type);
+		strings__Builder_writeln(&dec, v__gen__Gen_decode_map(g, m->key_type, m->value_type));
+		strings__Builder_writeln(&enc, v__gen__Gen_encode_map(g, m->key_type, m->value_type));
 	} else {
+		strings__Builder_writeln(&enc, tos_lit("\to = cJSON_CreateObject();"));
 		if (sym->info.typ != 119 /* v.table.Struct */) {
 			v__gen__verror(_STR("json: %.*s\000 is not struct", 2, sym->name));
 		}
@@ -34298,16 +34319,21 @@ static void v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Type typ) {
 			}
 			string field_type = v__gen__Gen_typ(g, field.typ);
 			if (array_v__table__Attr_contains(field.attrs, tos_lit("raw"))) {
-				strings__Builder_writeln(&dec, string_add(_STR(" res . %.*s\000 = tos2(cJSON_PrintUnformatted(", 2, v__gen__c_name(field.name)), _STR("js_get(root, \"%.*s\000\")));", 2, name)));
+				strings__Builder_writeln(&dec, string_add(_STR("\tres.%.*s\000 = tos2(cJSON_PrintUnformatted(", 2, v__gen__c_name(field.name)), _STR("js_get(root, \"%.*s\000\")));", 2, name)));
 			} else {
 				v__gen__Gen_gen_json_for_type(g, field.typ);
 				string dec_name = v__gen__js_dec_name(field_type);
 				if (v__gen__is_js_prim(field_type)) {
-					strings__Builder_writeln(&dec, _STR(" res . %.*s\000 = %.*s\000 (js_get(root, \"%.*s\000\"));", 4, v__gen__c_name(field.name), dec_name, name));
+					strings__Builder_writeln(&dec, _STR("\tres.%.*s\000 = %.*s\000 (js_get(root, \"%.*s\000\"));", 4, v__gen__c_name(field.name), dec_name, name));
 				} else if (v__table__Table_get_type_symbol(g->table, field.typ)->kind == v__table__Kind_enum_) {
-					strings__Builder_writeln(&dec, _STR(" res . %.*s\000 = json__decode_u64(js_get(root, \"%.*s\000\"));", 3, v__gen__c_name(field.name), name));
+					strings__Builder_writeln(&dec, _STR("\tres.%.*s\000 = json__decode_u64(js_get(root, \"%.*s\000\"));", 3, v__gen__c_name(field.name), name));
 				} else {
-					strings__Builder_writeln(&dec, _STR("  res . %.*s\000 = *(%.*s\000*) %.*s\000 (js_get(root,\"%.*s\000\")).data;", 5, v__gen__c_name(field.name), field_type, dec_name, name));
+					string tmp = v__gen__Gen_new_tmp_var(g);
+					strings__Builder_writeln(&dec, _STR("\tOption_%.*s\000 %.*s\000 = %.*s\000 (js_get(root,\"%.*s\000\"));", 5, field_type, tmp, dec_name, name));
+					strings__Builder_writeln(&dec, _STR("\tif(!%.*s\000.ok) {", 2, tmp));
+					strings__Builder_writeln(&dec, _STR("\t\treturn *(Option_%.*s\000*) &%.*s\000;", 3, styp, tmp));
+					strings__Builder_writeln(&dec, tos_lit("\t}"));
+					strings__Builder_writeln(&dec, _STR("\tres.%.*s\000 = *(%.*s\000*) %.*s\000.data;", 4, v__gen__c_name(field.name), field_type, tmp));
 				}
 			}
 			string enc_name = v__gen__js_enc_name(field_type);
@@ -34318,9 +34344,9 @@ static void v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Type typ) {
 			}
 		}
 	}
-	strings__Builder_writeln(&dec, _STR("Option_%.*s\000 ret;", 2, styp));
-	strings__Builder_writeln(&dec, tos_lit("opt_ok2(&res, (OptionBase*)&ret, sizeof(res));"));
-	strings__Builder_writeln(&dec, tos_lit("return ret;\n}"));
+	strings__Builder_writeln(&dec, _STR("\tOption_%.*s\000 ret;", 2, styp));
+	strings__Builder_writeln(&dec, tos_lit("\topt_ok2(&res, (OptionBase*)&ret, sizeof(res));"));
+	strings__Builder_writeln(&dec, tos_lit("\treturn ret;\n}"));
 	strings__Builder_writeln(&enc, tos_lit("\treturn o;\n}"));
 	strings__Builder_writeln(&g->definitions, strings__Builder_str(&dec));
 	strings__Builder_writeln(&g->gowrappers, strings__Builder_str(&enc));
@@ -34343,20 +34369,47 @@ static bool v__gen__is_js_prim(string typ) {
 static string v__gen__Gen_decode_array(v__gen__Gen* g, v__table__Type value_type) {
 	string styp = v__gen__Gen_typ(g, value_type);
 	string fn_name = v__gen__js_dec_name(styp);
-	v__gen__Gen_gen_json_for_type(g, value_type);
 	string s = tos_lit("");
 	if (v__gen__is_js_prim(styp)) {
 		s = _STR("%.*s\000 val = %.*s\000(jsval); ", 3, styp, fn_name);
 	} else {
-		s = _STR("\t%.*s\000 val = *(%.*s\000*) %.*s\000(jsval).data; ", 4, styp, styp, fn_name);
+		s = _STR("\n		Option_%.*s\000 val2 = %.*s\000 (jsval);\n		if(!val2.ok) {\n			array_free(&res);\n			return *(Option_array_%.*s\000*)&val2;\n		}\n		%.*s\000 val = *(%.*s\000*)val2.data;\n", 6, styp, fn_name, styp, styp, styp);
 	}
-	return _STR("\nres = __new_array(0, 0, sizeof(%.*s\000));\nconst cJSON *jsval = NULL;\ncJSON_ArrayForEach(jsval, root)\n{\n%.*s\000\n	array_push(&res, &val);\n}\n", 3, styp, s);
+	return _STR("\n	if(!cJSON_IsArray(root)) {\n		Option err = v_error( string_add(tos_lit(\"Json element is not an array: \"), tos2(cJSON_PrintUnformatted(root))) );\n		return *(Option_array_%.*s\000 *)&err;\n	}\n	res = __new_array(0, 0, sizeof(%.*s\000));\n	const cJSON *jsval = NULL;\n	cJSON_ArrayForEach(jsval, root)\n	{\n	%.*s\000\n		array_push(&res, &val);\n	}\n", 4, styp, styp, s);
 }
 
 static string v__gen__Gen_encode_array(v__gen__Gen* g, v__table__Type value_type) {
 	string styp = v__gen__Gen_typ(g, value_type);
 	string fn_name = v__gen__js_enc_name(styp);
-	return _STR("\no = cJSON_CreateArray();\nfor (int i = 0; i < val.len; i++){\n	cJSON_AddItemToArray(o, %.*s\000 (  ((%.*s\000*)val.data)[i]  ));\n}\n", 3, fn_name, styp);
+	return _STR("\n	o = cJSON_CreateArray();\n	for (int i = 0; i < val.len; i++){\n		cJSON_AddItemToArray(o, %.*s\000 (  ((%.*s\000*)val.data)[i]  ));\n	}\n", 3, fn_name, styp);
+}
+
+static string v__gen__Gen_decode_map(v__gen__Gen* g, v__table__Type key_type, v__table__Type value_type) {
+	string styp = v__gen__Gen_typ(g, key_type);
+	string styp_v = v__gen__Gen_typ(g, value_type);
+	string fn_name_v = v__gen__js_dec_name(styp_v);
+	string s = tos_lit("");
+	if (v__gen__is_js_prim(styp_v)) {
+		s = _STR("%.*s\000 val = %.*s\000 (js_get(root, jsval->string));", 3, styp_v, fn_name_v);
+	} else {
+		s = _STR("\n		Option_%.*s\000 val2 = %.*s\000 (js_get(root, jsval->string));\n		if(!val2.ok) {\n			map_free(&res);\n			return *(Option_map_%.*s\000_%.*s\000*)&val2;\n		}\n		%.*s\000 val = *(%.*s\000*)val2.data;\n", 7, styp_v, fn_name_v, styp, styp_v, styp_v, styp_v);
+	}
+	return _STR("\n	if(!cJSON_IsObject(root)) {\n		Option err = v_error( string_add(tos_lit(\"Json element is not an object: \"), tos2(cJSON_PrintUnformatted(root))) );\n		return *(Option_map_%.*s\000_%.*s\000 *)&err;\n	}\n	res = new_map_1(sizeof(%.*s\000));\n	cJSON *jsval = NULL;\n	cJSON_ArrayForEach(jsval, root)\n	{\n		%.*s\000\n		map_set(&res, tos2( (byteptr) jsval->string ) , &val );\n	}\n", 5, styp, styp_v, styp_v, s);
+}
+
+static string v__gen__Gen_encode_map(v__gen__Gen* g, v__table__Type key_type, v__table__Type value_type) {
+	string styp = v__gen__Gen_typ(g, key_type);
+	string styp_v = v__gen__Gen_typ(g, value_type);
+	string fn_name_v = v__gen__js_enc_name(styp_v);
+	string zero = v__gen__Gen_type_default(g, value_type);
+	string keys_tmp = v__gen__Gen_new_tmp_var(g);
+	string key = tos_lit("string key = ");
+	if (v__table__Type_is_string(key_type)) {
+		key = /*f*/string_add(key, _STR("((%.*s\000*)%.*s\000.data)[i];", 3, styp, keys_tmp));
+	} else {
+		v__gen__verror(tos_lit("json: encode only maps with string keys"));
+	}
+	return _STR("\n	o = cJSON_CreateObject();\n	array_%.*s\000 %.*s\000 = map_keys(&val);\n	for (int i = 0; i < %.*s\000.len; ++i) {\n		%.*s\000\n		cJSON_AddItemToObject(o, (char*) key.str, %.*s\000 ( *(%.*s\000*) map_get(val, key, &(%.*s\000[]) { %.*s\000 } ) ) );\n	}\n	array_free(&%.*s\000);\n", 10, styp, keys_tmp, keys_tmp, key, fn_name_v, styp_v, styp_v, zero, keys_tmp);
 }
 
 static void v__gen__Gen_generate_hotcode_reloading_declarations(v__gen__Gen* g) {
