@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6ba6a22"
+#define V_COMMIT_HASH "c01fd4a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0c7d73c"
+	#define V_COMMIT_HASH "6ba6a22"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6ba6a22"
+	#define V_CURRENT_COMMIT_HASH "c01fd4a"
 #endif
 
 // V typedefs:
@@ -25445,7 +25445,7 @@ static v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p) {
 					v__ast__Scope_register(p->scope, tos_lit("errcode"), /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){.name = tos_lit("errcode"),.expr = {0},.share = 0,.is_mut = 0,.is_arg = 0,.typ = _const_v__table__int_type,.pos = body_pos,.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 217 /* v.ast.Var */});
 					v__ast__Scope_register(p->scope, tos_lit("err"), /* sum type cast */ (v__ast__ScopeObject) {.obj = memdup(&(v__ast__Var[]) {(v__ast__Var){.name = tos_lit("err"),.expr = {0},.share = 0,.is_mut = 0,.is_arg = 0,.typ = _const_v__table__string_type,.pos = body_pos,.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 217 /* v.ast.Var */});
 				}
-				array_push(&branches, _MOV((v__ast__IfBranch[]){ (v__ast__IfBranch){.cond = {0},.stmts = v__parser__Parser_parse_block(p),.pos = v__token__Position_extend(start_pos, end_pos),.body_pos = v__token__Position_extend(body_pos, v__token__Token_position(&p->tok)),.comments = comments,.smartcast = 0,.left_as_name = (string){.str=(byteptr)""},} }));
+				array_push(&branches, _MOV((v__ast__IfBranch[]){ (v__ast__IfBranch){.cond = {0},.stmts = (prev_guard ? (v__parser__Parser_parse_block_no_scope(p, false)) : (v__parser__Parser_parse_block(p))),.pos = v__token__Position_extend(start_pos, end_pos),.body_pos = v__token__Position_extend(body_pos, v__token__Token_position(&p->tok)),.comments = comments,.smartcast = 0,.left_as_name = (string){.str=(byteptr)""},} }));
 				if (prev_guard) {
 					v__parser__Parser_close_scope(p);
 				}
@@ -25479,8 +25479,8 @@ static v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p) {
 		_PUSH_MANY(&comments, (v__parser__Parser_eat_comments(p)), _t803, array_v__ast__Comment);
 		string left_as_name = tos_lit("");
 		if (cond.typ == 169 /* v.ast.InfixExpr */) {
-			v__ast__InfixExpr* _sc_tmp_2232 = (v__ast__InfixExpr*)cond.obj;
-			v__ast__InfixExpr* infix = _sc_tmp_2232;
+			v__ast__InfixExpr* _sc_tmp_2289 = (v__ast__InfixExpr*)cond.obj;
+			v__ast__InfixExpr* infix = _sc_tmp_2289;
 			bool is_is_cast = infix->op == v__token__Kind_key_is;
 			bool is_ident = infix->left.typ == 165 /* v.ast.Ident */;
 			v__ast__Ident* _t804;
@@ -25586,10 +25586,11 @@ static v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser* p) {
 		}
 		v__token__Position branch_last_pos = v__token__Token_position(&p->tok);
 		p->inside_match_body = true;
-		array_v__ast__Stmt stmts = v__parser__Parser_parse_block(p);
+		array_v__ast__Stmt stmts = v__parser__Parser_parse_block_no_scope(p, false);
+		v__parser__Parser_close_scope(p);
 		p->inside_match_body = false;
-		array_v__ast__Comment post_comments = v__parser__Parser_eat_comments(p);
 		v__token__Position pos = (v__token__Position){.len = branch_last_pos.pos - branch_first_pos.pos + branch_last_pos.len,.line_nr = branch_first_pos.line_nr,.pos = branch_first_pos.pos,};
+		array_v__ast__Comment post_comments = v__parser__Parser_eat_comments(p);
 		array_push(&branches, _MOV((v__ast__MatchBranch[]){ (v__ast__MatchBranch){
 			.exprs = exprs,
 			.stmts = stmts,
@@ -25598,7 +25599,6 @@ static v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser* p) {
 			.is_else = is_else,
 			.post_comments = post_comments,
 		} }));
-		v__parser__Parser_close_scope(p);
 		if (p->tok.kind == v__token__Kind_rcbr || (is_else && no_lcbr)) {
 			break;
 		}
@@ -26315,7 +26315,7 @@ void v__parser__Parser_open_scope(v__parser__Parser* p) {
 }
 
 void v__parser__Parser_close_scope(v__parser__Parser* p) {
-	p->scope->end_pos = p->tok.pos;
+	p->scope->end_pos = p->prev_tok.pos;
 	array_push(&p->scope->parent->children, _MOV((v__ast__Scope*[]){ p->scope }));
 	p->scope = p->scope->parent;
 }
@@ -26570,7 +26570,7 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p, bool is_top_level) {
 				VAssertMetaInfo v_assert_meta_info__t836;
 				memset(&v_assert_meta_info__t836, 0, sizeof(VAssertMetaInfo));
 				v_assert_meta_info__t836.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/parser/parser.v");
-				v_assert_meta_info__t836.line_nr = 618;
+				v_assert_meta_info__t836.line_nr = 623;
 				v_assert_meta_info__t836.fn_name = tos_lit("stmt");
 				v_assert_meta_info__t836.src = tos_lit("!p.inside_unsafe");
 				__print_assert_failure(&v_assert_meta_info__t836);
@@ -26619,8 +26619,8 @@ static multi_return_array_v__ast__Expr_array_v__ast__Comment v__parser__Parser_e
 	while (1) {
 		v__ast__Expr expr = v__parser__Parser_expr(p, 0);
 		if (expr.typ == 160 /* v.ast.Comment */) {
-			v__ast__Comment* _sc_tmp_15642 = (v__ast__Comment*)expr.obj;
-			v__ast__Comment* expr = _sc_tmp_15642;
+			v__ast__Comment* _sc_tmp_15963 = (v__ast__Comment*)expr.obj;
+			v__ast__Comment* expr = _sc_tmp_15963;
 			array_push(&comments, _MOV((v__ast__Comment[]){ *expr }));
 		} else {
 			array_push(&exprs, _MOV((v__ast__Expr[]){ expr }));
@@ -26743,9 +26743,9 @@ void v__parser__Parser_vet_error(v__parser__Parser* p, string s, int line) {
 
 static v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p, bool is_top_level) {
 	v__token__Token tok = p->tok;
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_19336 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr left = mr_19336.arg0;
-	array_v__ast__Comment left_comments = mr_19336.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_19657 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr left = mr_19657.arg0;
+	array_v__ast__Comment left_comments = mr_19657.arg1;
 	v__ast__Expr left0 = (*(v__ast__Expr*)array_get(left, 0));
 	if ((p->tok.kind == v__token__Kind_assign || p->tok.kind == v__token__Kind_decl_assign) || v__token__Kind_is_assign(p->tok.kind)) {
 		return v__parser__Parser_partial_assign_stmt(p, left, left_comments);
@@ -27355,9 +27355,9 @@ static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_38033 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_38033.arg0;
-	array_v__ast__Comment comments = mr_38033.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_38354 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_38354.arg0;
+	array_v__ast__Comment comments = mr_38354.arg1;
 	v__token__Position end_pos = v__ast__Expr_position(*(v__ast__Expr*)array_last(exprs));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 }
