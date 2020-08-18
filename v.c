@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7727aad"
+#define V_COMMIT_HASH "51bd69c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2f6757a"
+	#define V_COMMIT_HASH "7727aad"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7727aad"
+	#define V_CURRENT_COMMIT_HASH "51bd69c"
 #endif
 
 // V typedefs:
@@ -33157,6 +33157,8 @@ static string v__gen__Gen_type_to_fmt(v__gen__Gen* g, v__table__Type typ) {
 		return tos_lit("%.*s\\000");
 	} else if ((typ == _const_v__table__f32_type || typ == _const_v__table__f64_type)) {
 		return tos_lit("%g\\000");
+	} else if (typ == _const_v__table__u64_type) {
+		return tos_lit("%lld\\000");
 	}
 	return tos_lit("%d\\000");
 }
