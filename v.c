@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "fe5575f"
+#define V_COMMIT_HASH "b5b53a5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "40d91cc"
+	#define V_COMMIT_HASH "fe5575f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "fe5575f"
+	#define V_CURRENT_COMMIT_HASH "b5b53a5"
 #endif
 
 // V typedefs:
@@ -39519,7 +39519,7 @@ static void main__main() {
 	} else if (string_eq(command, tos_lit("translate"))) {
 		println(tos_lit("Translating C to V will be available in V 0.3"));
 		return;
-	} else if (string_eq(command, tos_lit("search")) || string_eq(command, tos_lit("install")) || string_eq(command, tos_lit("update")) || string_eq(command, tos_lit("outdated")) || string_eq(command, tos_lit("list")) || string_eq(command, tos_lit("remove"))) {
+	} else if (string_eq(command, tos_lit("search")) || string_eq(command, tos_lit("install")) || string_eq(command, tos_lit("update")) || string_eq(command, tos_lit("upgrade")) || string_eq(command, tos_lit("outdated")) || string_eq(command, tos_lit("list")) || string_eq(command, tos_lit("remove"))) {
 		v__util__launch_tool(prefs->is_verbose, tos_lit("vpm"), array_slice(_const_os__args, 1, _const_os__args.len));
 		return;
 	} else if (string_eq(command, tos_lit("vlib-docs"))) {
