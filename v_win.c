@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e69f091"
+#define V_COMMIT_HASH "c1651bd"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "51bd69c"
+	#define V_COMMIT_HASH "e69f091"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e69f091"
+	#define V_CURRENT_COMMIT_HASH "c1651bd"
 #endif
 
 // V typedefs:
@@ -39809,7 +39809,7 @@ void _vinit() {
 		tos_lit("windows"), tos_lit("mac"), tos_lit("macos"), tos_lit("darwin"), tos_lit("linux"), tos_lit("freebsd"), tos_lit("openbsd"), tos_lit("netbsd"), tos_lit("dragonfly"), tos_lit("android"), tos_lit("js"), tos_lit("solaris"), tos_lit("haiku"), tos_lit("linux_or_macos")}));
 	_const_v__parser__supported_ccompilers = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){tos_lit("tinyc"), tos_lit("clang"), tos_lit("mingw"), tos_lit("msvc"), tos_lit("gcc")}));
 	_const_v__parser__todo_delete_me = v__pref__OS_linux;
-	_const_v__parser__global_enabled_mods = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){tos_lit("rand")}));
+	_const_v__parser__global_enabled_mods = new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){tos_lit("rand"), tos_lit("sokol.sapp")}));
 	// Initializations for module v.gen :
 	_const_v__gen__c_reserved = new_array_from_c_array(37, 37, sizeof(string), _MOV((string[37]){
 		tos_lit("delete"), tos_lit("exit"), tos_lit("link"), tos_lit("unix"), tos_lit("error"), tos_lit("calloc"), tos_lit("malloc"), tos_lit("free"), tos_lit("panic"), tos_lit("auto"), tos_lit("char"), tos_lit("default"), tos_lit("do"), tos_lit("double"), tos_lit("extern"), tos_lit("float"), tos_lit("inline"), tos_lit("int"), tos_lit("long"), tos_lit("register"), tos_lit("restrict"), tos_lit("short"), tos_lit("signed"), tos_lit("sizeof"), tos_lit("static"), tos_lit("switch"), tos_lit("typedef"), tos_lit("union"), tos_lit("unsigned"), tos_lit("void"), tos_lit("volatile"), tos_lit("while"), tos_lit("new"), tos_lit("namespace"), tos_lit("class"), tos_lit("typename"), tos_lit("export")}));
