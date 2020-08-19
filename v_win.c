@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "51bd69c"
+#define V_COMMIT_HASH "e69f091"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7727aad"
+	#define V_COMMIT_HASH "51bd69c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "51bd69c"
+	#define V_CURRENT_COMMIT_HASH "e69f091"
 #endif
 
 // V typedefs:
@@ -27032,7 +27032,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 	}
 	if (string_eq(p->tok.lit, tos_lit("chan"))) {
 		v__token__Position first_pos = v__token__Token_position(&p->tok);
-		v__token__Position last_pos = v__token__Token_position(&p->tok);
+		v__token__Position last_pos = first_pos;
 		v__table__Type chan_type = v__parser__Parser_parse_chan_type(p);
 		bool has_cap = false;
 		v__ast__Expr cap_expr = (v__ast__Expr){
@@ -27058,8 +27058,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 			last_pos = v__token__Token_position(&p->tok);
 			v__parser__Parser_check(p, v__token__Kind_rcbr);
 		}
-		v__token__Position pos = (v__token__Position){.len = last_pos.pos - first_pos.pos + last_pos.len,.line_nr = first_pos.line_nr,.pos = first_pos.pos,};
-		return /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__ChanInit[]) {(v__ast__ChanInit){.pos = pos,.cap_expr = cap_expr,.has_cap = has_cap,.typ = chan_type,.elem_type = 0,}}, sizeof(v__ast__ChanInit)), .typ = 185 /* v.ast.ChanInit */};
+		return /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__ChanInit[]) {(v__ast__ChanInit){.pos = v__token__Position_extend(first_pos, last_pos),.cap_expr = cap_expr,.has_cap = has_cap,.typ = chan_type,.elem_type = 0,}}, sizeof(v__ast__ChanInit)), .typ = 185 /* v.ast.ChanInit */};
 	}
 	if ((string_eq(p->tok.lit, tos_lit("r")) || string_eq(p->tok.lit, tos_lit("c")) || string_eq(p->tok.lit, tos_lit("js"))) && p->peek_tok.kind == v__token__Kind_string && !p->inside_str_interp) {
 		return v__parser__Parser_string_expr(p);
@@ -27085,7 +27084,10 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 		p->expr_mod = mod;
 	}
 	bool lit0_is_capital = byte_is_capital(string_at(p->tok.lit, 0));
-	if (p->peek_tok.kind == v__token__Kind_lpar || (p->peek_tok.kind == v__token__Kind_lt && !lit0_is_capital && p->peek_tok2.kind == v__token__Kind_name && p->peek_tok3.kind == v__token__Kind_gt)) {
+	bool same_line = p->tok.line_nr == p->peek_tok.line_nr;
+	if (!same_line && p->peek_tok.kind == v__token__Kind_lpar) {
+		node = /* sum type cast */ (v__ast__Expr) {.obj = memdup(&(v__ast__Ident[]) {v__parser__Parser_parse_ident(p, language)}, sizeof(v__ast__Ident)), .typ = 191 /* v.ast.Ident */};
+	} else if (p->peek_tok.kind == v__token__Kind_lpar || (p->peek_tok.kind == v__token__Kind_lt && !lit0_is_capital && p->peek_tok2.kind == v__token__Kind_name && p->peek_tok3.kind == v__token__Kind_gt)) {
 		string name = p->tok.lit;
 		if (mod.len > 0) {
 			name = _STR("%.*s\000.%.*s", 2, mod, name);
@@ -27566,9 +27568,9 @@ static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_38364 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_38364.arg0;
-	array_v__ast__Comment comments = mr_38364.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_38438 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_38438.arg0;
+	array_v__ast__Comment comments = mr_38438.arg1;
 	v__token__Position end_pos = v__ast__Expr_position(*(v__ast__Expr*)array_last(exprs));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 }
