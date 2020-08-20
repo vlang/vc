@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0c183da"
+#define V_COMMIT_HASH "9b171b7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e8ff94f"
+	#define V_COMMIT_HASH "0c183da"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0c183da"
+	#define V_CURRENT_COMMIT_HASH "9b171b7"
 #endif
 
 // V typedefs:
@@ -13199,7 +13199,7 @@ static string os__executable_fallback() {
 Option_string os__find_abs_path_of_executable(string exepath) {
 	if (os__is_abs_path(exepath)) {
 		Option_string _t146;
-		opt_ok2(&(string[]) { exepath }, (OptionBase*)(&_t146), sizeof(string));
+		opt_ok2(&(string[]) { os__real_path(exepath) }, (OptionBase*)(&_t146), sizeof(string));
 		return _t146;
 	}
 	string res = tos_lit("");
@@ -13217,7 +13217,7 @@ Option_string os__find_abs_path_of_executable(string exepath) {
 	}
 	if (res.len > 0) {
 		Option_string _t149;
-		opt_ok2(&(string[]) { res }, (OptionBase*)(&_t149), sizeof(string));
+		opt_ok2(&(string[]) { os__real_path(res) }, (OptionBase*)(&_t149), sizeof(string));
 		return _t149;
 	}
 	Option _t150 = v_error(tos_lit("failed to find executable"));
