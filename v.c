@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "93e6c3d"
+#define V_COMMIT_HASH "06967d9"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b88569c"
+	#define V_COMMIT_HASH "93e6c3d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "93e6c3d"
+	#define V_CURRENT_COMMIT_HASH "06967d9"
 #endif
 
 // V typedefs:
@@ -21224,6 +21224,7 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 			if (is_filter_map) {
 				v__ast__Scope_update_var_type(scope, tos_lit("it"), array_info->elem_type);
 			} else if (is_sort) {
+				v__checker__Checker_fail_if_immutable(c, call_expr->left);
 				v__ast__Scope_update_var_type(scope, tos_lit("a"), array_info->elem_type);
 				v__ast__Scope_update_var_type(scope, tos_lit("b"), array_info->elem_type);
 				if (call_expr->args.len > 0) {
@@ -21683,8 +21684,8 @@ static bool v__checker__Checker_type_implements(v__checker__Checker* c, v__table
 
 v__table__Type v__checker__Checker_check_expr_opt_call(v__checker__Checker* c, v__ast__Expr expr, v__table__Type ret_type) {
 	if (expr.typ == 156 /* v.ast.CallExpr */) {
-		v__ast__CallExpr* _sc_tmp_46941 = (v__ast__CallExpr*)expr.obj;
-		v__ast__CallExpr* expr = _sc_tmp_46941;
+		v__ast__CallExpr* _sc_tmp_46981 = (v__ast__CallExpr*)expr.obj;
+		v__ast__CallExpr* expr = _sc_tmp_46981;
 		if (v__table__Type_has_flag(expr->return_type, v__table__TypeFlag_optional)) {
 			if (expr->or_block.kind == v__ast__OrKind_absent) {
 				if (ret_type != _const_v__table__void_type) {
@@ -21941,8 +21942,8 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 	}
 	if (assign_stmt->left.len != right_len) {
 		if (right_first.typ == 156 /* v.ast.CallExpr */) {
-			v__ast__CallExpr* _sc_tmp_55567 = (v__ast__CallExpr*)right_first.obj;
-			v__ast__CallExpr* right_first = _sc_tmp_55567;
+			v__ast__CallExpr* _sc_tmp_55607 = (v__ast__CallExpr*)right_first.obj;
+			v__ast__CallExpr* right_first = _sc_tmp_55607;
 			v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) but `%.*s\000()` returns %"PRId32"\000 value(s)", 4, assign_stmt->left.len, right_first->name, right_len), assign_stmt->pos);
 		} else {
 			v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) %"PRId32"\000 value(s)", 3, assign_stmt->left.len, right_len), assign_stmt->pos);
@@ -21953,8 +21954,8 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 		return;
 	}
 	if (right_first.typ == 179 /* v.ast.PrefixExpr */) {
-		v__ast__PrefixExpr* _sc_tmp_55904 = (v__ast__PrefixExpr*)right_first.obj;
-		v__ast__PrefixExpr* right_first = _sc_tmp_55904;
+		v__ast__PrefixExpr* _sc_tmp_55944 = (v__ast__PrefixExpr*)right_first.obj;
+		v__ast__PrefixExpr* right_first = _sc_tmp_55944;
 		v__ast__PrefixExpr* node = right_first;
 		v__ast__Expr left_first = (*(v__ast__Expr*)array_get(assign_stmt->left, 0));
 		if (node->op == v__token__Kind_amp && node->right.typ == 165 /* v.ast.Ident */) {
@@ -21965,8 +21966,8 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 			if (_t631 = v__ast__Scope_find_var(scope, ident->name), _t631.ok) {
 				Option_v__ast__Var_ptr v = _t631;
 				if (left_first.typ == 165 /* v.ast.Ident */) {
-					v__ast__Ident* _sc_tmp_56176 = (v__ast__Ident*)left_first.obj;
-					v__ast__Ident* left_first = _sc_tmp_56176;
+					v__ast__Ident* _sc_tmp_56216 = (v__ast__Ident*)left_first.obj;
+					v__ast__Ident* left_first = _sc_tmp_56216;
 					v__ast__Ident* assigned_var = left_first;
 					if (!/*opt*/(*(v__ast__Var**)v.data)->is_mut && assigned_var->is_mut && !c->inside_unsafe) {
 						v__checker__Checker_error(c, _STR("`%.*s\000` is immutable, cannot have a mutable reference to it", 2, ident->name), node->pos);
@@ -21981,8 +21982,8 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 	for (int i = 0; i < _t632.len; ++i) {
 		v__ast__Expr left = ((v__ast__Expr*)_t632.data)[i];
 		if (left.typ == 156 /* v.ast.CallExpr */) {
-			v__ast__CallExpr* _sc_tmp_56509 = (v__ast__CallExpr*)left.obj;
-			v__ast__CallExpr* left = _sc_tmp_56509;
+			v__ast__CallExpr* _sc_tmp_56549 = (v__ast__CallExpr*)left.obj;
+			v__ast__CallExpr* left = _sc_tmp_56549;
 			v__checker__Checker_error(c, _STR("cannot call function `%.*s\000()` on the left side of an assignment", 2, left->name), left->pos);
 		}
 		bool is_blank_ident = v__ast__Expr_is_blank_ident(left);
@@ -22274,7 +22275,7 @@ static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) 
 				VAssertMetaInfo v_assert_meta_info__t650;
 				memset(&v_assert_meta_info__t650, 0, sizeof(VAssertMetaInfo));
 				v_assert_meta_info__t650.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-				v_assert_meta_info__t650.line_nr = 1987;
+				v_assert_meta_info__t650.line_nr = 1988;
 				v_assert_meta_info__t650.fn_name = tos_lit("stmt");
 				v_assert_meta_info__t650.src = tos_lit("!c.inside_unsafe");
 				__print_assert_failure(&v_assert_meta_info__t650);
@@ -23308,30 +23309,30 @@ static void v__checker__Checker_match_exprs(v__checker__Checker* c, v__ast__Matc
 			v__ast__Expr expr = ((v__ast__Expr*)_t698.data)[_t699];
 			string key = tos_lit("");
 			if (expr.typ == 180 /* v.ast.RangeExpr */) {
-				v__ast__RangeExpr* _sc_tmp_89618 = (v__ast__RangeExpr*)expr.obj;
-				v__ast__RangeExpr* expr = _sc_tmp_89618;
+				v__ast__RangeExpr* _sc_tmp_89658 = (v__ast__RangeExpr*)expr.obj;
+				v__ast__RangeExpr* expr = _sc_tmp_89658;
 				int low = 0;
 				int high = 0;
 				c->expected_type = node->expected_type;
 				v__ast__Expr low_expr = expr->low;
 				v__ast__Expr high_expr = expr->high;
 				if (low_expr.typ == 170 /* v.ast.IntegerLiteral */) {
-					v__ast__IntegerLiteral* _sc_tmp_89777 = (v__ast__IntegerLiteral*)low_expr.obj;
-					v__ast__IntegerLiteral* low_expr = _sc_tmp_89777;
+					v__ast__IntegerLiteral* _sc_tmp_89817 = (v__ast__IntegerLiteral*)low_expr.obj;
+					v__ast__IntegerLiteral* low_expr = _sc_tmp_89817;
 					if (high_expr.typ == 170 /* v.ast.IntegerLiteral */) {
-						v__ast__IntegerLiteral* _sc_tmp_89818 = (v__ast__IntegerLiteral*)high_expr.obj;
-						v__ast__IntegerLiteral* high_expr = _sc_tmp_89818;
+						v__ast__IntegerLiteral* _sc_tmp_89858 = (v__ast__IntegerLiteral*)high_expr.obj;
+						v__ast__IntegerLiteral* high_expr = _sc_tmp_89858;
 						low = string_int(low_expr->val);
 						high = string_int(high_expr->val);
 					} else {
 						v__checker__Checker_error(c, tos_lit("mismatched range types"), low_expr->pos);
 					}
 				} else if (low_expr.typ == 158 /* v.ast.CharLiteral */) {
-					v__ast__CharLiteral* _sc_tmp_90000 = (v__ast__CharLiteral*)low_expr.obj;
-					v__ast__CharLiteral* low_expr = _sc_tmp_90000;
+					v__ast__CharLiteral* _sc_tmp_90040 = (v__ast__CharLiteral*)low_expr.obj;
+					v__ast__CharLiteral* low_expr = _sc_tmp_90040;
 					if (high_expr.typ == 158 /* v.ast.CharLiteral */) {
-						v__ast__CharLiteral* _sc_tmp_90043 = (v__ast__CharLiteral*)high_expr.obj;
-						v__ast__CharLiteral* high_expr = _sc_tmp_90043;
+						v__ast__CharLiteral* _sc_tmp_90083 = (v__ast__CharLiteral*)high_expr.obj;
+						v__ast__CharLiteral* high_expr = _sc_tmp_90083;
 						low = string_at(low_expr->val, 0);
 						high = string_at(high_expr->val, 0);
 					} else {
@@ -23453,8 +23454,8 @@ v__table__Type v__checker__Checker_lock_expr(v__checker__Checker* c, v__ast__Loc
 		v__ast__Ident id = ((v__ast__Ident*)_t709.data)[_t710];
 		v__checker__Checker_ident(c, (voidptr)&/*qq*/id);
 		if (id.obj.typ == 217 /* v.ast.Var */) {
-			v__ast__Var* _sc_tmp_93019 = (v__ast__Var*)id.obj.obj;
-			v__ast__Var* v = _sc_tmp_93019;
+			v__ast__Var* _sc_tmp_93059 = (v__ast__Var*)id.obj.obj;
+			v__ast__Var* v = _sc_tmp_93059;
 			if (v__table__Type_share(v->typ) != v__table__ShareType_shared_t) {
 				v__checker__Checker_error(c, _STR("`%.*s\000` must be declared `shared` to be locked", 2, id.name), id.pos);
 			}
@@ -23496,7 +23497,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 		VAssertMetaInfo v_assert_meta_info__t713;
 		memset(&v_assert_meta_info__t713, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t713.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t713.line_nr = 2936;
+		v_assert_meta_info__t713.line_nr = 2937;
 		v_assert_meta_info__t713.fn_name = tos_lit("unsafe_expr");
 		v_assert_meta_info__t713.src = tos_lit("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t713);
@@ -23509,8 +23510,8 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 	}
 	v__ast__Stmt last = (*(v__ast__Stmt*)array_get(node->stmts, 0));
 	if (last.typ == 200 /* v.ast.ExprStmt */) {
-		v__ast__ExprStmt* _sc_tmp_94335 = (v__ast__ExprStmt*)last.obj;
-		v__ast__ExprStmt* last = _sc_tmp_94335;
+		v__ast__ExprStmt* _sc_tmp_94375 = (v__ast__ExprStmt*)last.obj;
+		v__ast__ExprStmt* last = _sc_tmp_94375;
 		v__table__Type t = v__checker__Checker_expr(c, last->expr);
 		// Defer begin
 		c->inside_unsafe = false;
@@ -23558,8 +23559,8 @@ v__table__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExp
 						bool is_mut = false;
 						v__ast__Scope* scope = v__ast__Scope_innermost(c->file.scope, branch.body_pos.pos);
 						if (infix->left.typ == 165 /* v.ast.Ident */) {
-							v__ast__Ident* _sc_tmp_96289 = (v__ast__Ident*)infix->left.obj;
-							v__ast__Ident* infix_left = _sc_tmp_96289;
+							v__ast__Ident* _sc_tmp_96329 = (v__ast__Ident*)infix->left.obj;
+							v__ast__Ident* infix_left = _sc_tmp_96329;
 							{ /* if guard */ 
 							Option_v__ast__Var_ptr _t715;
 							if (_t715 = v__ast__Scope_find_var(scope, infix_left->name), _t715.ok) {
@@ -23661,14 +23662,14 @@ static Option_bool v__checker__Checker_has_return(v__checker__Checker* c, array_
 	for (int _t719 = 0; _t719 < _t718.len; ++_t719) {
 		v__ast__Stmt s = ((v__ast__Stmt*)_t718.data)[_t719];
 		if (s.typ == 196 /* v.ast.CompIf */) {
-			v__ast__CompIf* _sc_tmp_99195 = (v__ast__CompIf*)s.obj;
-			v__ast__CompIf* s = _sc_tmp_99195;
+			v__ast__CompIf* _sc_tmp_99235 = (v__ast__CompIf*)s.obj;
+			v__ast__CompIf* s = _sc_tmp_99235;
 			has_complexity = true;
 			break;
 		}
 		if (s.typ == 200 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_99256 = (v__ast__ExprStmt*)s.obj;
-			v__ast__ExprStmt* s = _sc_tmp_99256;
+			v__ast__ExprStmt* _sc_tmp_99296 = (v__ast__ExprStmt*)s.obj;
+			v__ast__ExprStmt* s = _sc_tmp_99296;
 			if (s->expr.typ == 166 /* v.ast.IfExpr */ || s->expr.typ == 174 /* v.ast.MatchExpr */) {
 				has_complexity = true;
 				break;
@@ -23690,8 +23691,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_99885 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_99885.arg0;
+		multi_return_string_v__token__Position mr_99925 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_99925.arg0;
 	}
 	if ((v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym)) && !c->inside_unsafe) {
 		v__checker__Checker_warn(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -24098,21 +24099,21 @@ static bool v__checker__has_top_return(array_v__ast__Stmt stmts) {
 	for (int _t744 = 0; _t744 < _t743.len; ++_t744) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t743.data)[_t744];
 		if (stmt.typ == 212 /* v.ast.Return */) {
-			v__ast__Return* _sc_tmp_112930 = (v__ast__Return*)stmt.obj;
-			v__ast__Return* stmt = _sc_tmp_112930;
+			v__ast__Return* _sc_tmp_112970 = (v__ast__Return*)stmt.obj;
+			v__ast__Return* stmt = _sc_tmp_112970;
 			return true;
 		} else if (stmt.typ == 193 /* v.ast.Block */) {
-			v__ast__Block* _sc_tmp_112973 = (v__ast__Block*)stmt.obj;
-			v__ast__Block* stmt = _sc_tmp_112973;
+			v__ast__Block* _sc_tmp_113013 = (v__ast__Block*)stmt.obj;
+			v__ast__Block* stmt = _sc_tmp_113013;
 			if (v__checker__has_top_return(stmt->stmts)) {
 				return true;
 			}
 		} else if (stmt.typ == 200 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_113061 = (v__ast__ExprStmt*)stmt.obj;
-			v__ast__ExprStmt* stmt = _sc_tmp_113061;
+			v__ast__ExprStmt* _sc_tmp_113101 = (v__ast__ExprStmt*)stmt.obj;
+			v__ast__ExprStmt* stmt = _sc_tmp_113101;
 			if (stmt->expr.typ == 156 /* v.ast.CallExpr */) {
-				v__ast__CallExpr* _sc_tmp_113095 = (v__ast__CallExpr*)stmt->expr.obj;
-				v__ast__CallExpr* ce = _sc_tmp_113095;
+				v__ast__CallExpr* _sc_tmp_113135 = (v__ast__CallExpr*)stmt->expr.obj;
+				v__ast__CallExpr* ce = _sc_tmp_113135;
 				if ((string_eq(ce->name, tos_lit("panic")) || string_eq(ce->name, tos_lit("exit")))) {
 					return true;
 				}
