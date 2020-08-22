@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f320be6"
+#define V_COMMIT_HASH "98c39a3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1b914d2"
+	#define V_COMMIT_HASH "f320be6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f320be6"
+	#define V_CURRENT_COMMIT_HASH "98c39a3"
 #endif
 
 // V typedefs:
@@ -4366,6 +4366,7 @@ static void v__scanner__Scanner_debug_tokens(v__scanner__Scanner* s);
 static void v__scanner__Scanner_ignore_line(v__scanner__Scanner* s);
 static void v__scanner__Scanner_eat_to_end_of_line(v__scanner__Scanner* s);
 static void v__scanner__Scanner_inc_line_number(v__scanner__Scanner* s);
+void v__scanner__Scanner_warn(v__scanner__Scanner* s, string msg);
 void v__scanner__Scanner_error(v__scanner__Scanner* s, string msg);
 static void v__scanner__Scanner_vet_error(v__scanner__Scanner* s, string msg);
 void v__scanner__verror(string s);
@@ -19542,7 +19543,11 @@ static v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanner* s) {
 					s->is_inside_string = false;
 				}
 			}
-			if (s->is_inter_start && next_char != '.' && next_char != '(') {
+			if (s->is_inter_start && next_char == '(') {
+				if (v__scanner__Scanner_look_ahead(/*rec*/*s, 2) != ')') {
+					v__scanner__Scanner_warn(s, tos_lit("use e.g. `\${f(expr)}` or `\$name\\(` instead of `\$f(expr)`"));
+				}
+			} else if (s->is_inter_start && next_char != '.') {
 				s->is_inter_end = true;
 				s->is_inter_start = false;
 			}
@@ -19957,12 +19962,12 @@ static string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) {
 				v__scanner__Scanner_error(s, tos_lit("0 character in a string literal"));
 			}
 		}
-		if (c == '{' && prevc == '$' && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
+		if (prevc == '$' && c == '{' && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
 			s->is_inside_string = true;
 			s->pos -= 2;
 			break;
 		}
-		if (v__util__is_name_char(c) && prevc == '$' && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
+		if (prevc == '$' && v__util__is_name_char(c) && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
 			s->is_inside_string = true;
 			s->is_inter_start = true;
 			s->pos -= 2;
@@ -20094,6 +20099,11 @@ inline static void v__scanner__Scanner_inc_line_number(v__scanner__Scanner* s) {
 	if (s->line_nr > s->nr_lines) {
 		s->nr_lines = s->line_nr;
 	}
+}
+
+void v__scanner__Scanner_warn(v__scanner__Scanner* s, string msg) {
+	v__token__Position pos = (v__token__Position){.len = 0,.line_nr = s->line_nr,.pos = s->pos,};
+	eprintln(v__util__formatted_error(tos_lit("warning:"), msg, s->file_path, pos));
 }
 
 void v__scanner__Scanner_error(v__scanner__Scanner* s, string msg) {
