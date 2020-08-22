@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7dde823"
+#define V_COMMIT_HASH "94ced90"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "fcc61a9"
+	#define V_COMMIT_HASH "7dde823"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7dde823"
+	#define V_CURRENT_COMMIT_HASH "94ced90"
 #endif
 
 // V typedefs:
@@ -32851,13 +32851,14 @@ static void v__gen__Gen_gen_array_sort(v__gen__Gen* g, v__ast__CallExpr node) {
 	if (is_reverse && !string_ends_with(compare_fn, tos_lit("_reverse"))) {
 		compare_fn = /*f*/string_add(compare_fn, tos_lit("_reverse"));
 	}
+	string deref = (v__table__Type_is_ptr(node.left_type) || v__table__Type_is_pointer(node.left_type) ? (tos_lit("->")) : (tos_lit(".")));
 	v__gen__Gen_write(g, tos_lit("qsort("));
 	v__gen__Gen_expr(g, node.left);
-	v__gen__Gen_write(g, tos_lit(".data, "));
+	v__gen__Gen_write(g, _STR("%.*s\000data, ", 2, deref));
 	v__gen__Gen_expr(g, node.left);
-	v__gen__Gen_write(g, tos_lit(".len, "));
+	v__gen__Gen_write(g, _STR("%.*s\000len, ", 2, deref));
 	v__gen__Gen_expr(g, node.left);
-	v__gen__Gen_writeln(g, _STR(".element_size, %.*s\000);", 2, compare_fn));
+	v__gen__Gen_writeln(g, _STR("%.*s\000element_size, %.*s\000);", 3, deref, compare_fn));
 }
 
 static void v__gen__Gen_gen_array_filter(v__gen__Gen* g, v__ast__CallExpr node) {
@@ -33033,11 +33034,11 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExpr
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->fn_decl->name, tos_lit("main.main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_118483 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_118483.arg0;
-				string pafile = mr_118483.arg1;
-				string pamod = mr_118483.arg2;
-				string pafn = mr_118483.arg3;
+				multi_return_int_string_string_string mr_118661 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_118661.arg0;
+				string pafile = mr_118661.arg1;
+				string pamod = mr_118661.arg2;
+				string pafn = mr_118661.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(%.*s\000.v_error);", 2, cvar_name));
@@ -33289,8 +33290,8 @@ static void v__gen__Gen_go_stmt(v__gen__Gen* g, v__ast__GoStmt node) {
 		v__table__TypeSymbol* receiver_sym = v__table__Table_get_type_symbol(g->table, expr->receiver_type);
 		name = string_add(string_add(receiver_sym->name, tos_lit("_")), name);
 	} else if (expr->left.typ == 177 /* v.ast.AnonFn */) {
-		v__ast__AnonFn* _sc_tmp_125106 = (v__ast__AnonFn*)expr->left.obj;
-		v__ast__AnonFn* anon_fn = _sc_tmp_125106;
+		v__ast__AnonFn* _sc_tmp_125284 = (v__ast__AnonFn*)expr->left.obj;
+		v__ast__AnonFn* anon_fn = _sc_tmp_125284;
 		v__gen__Gen_gen_anon_fn_decl(g, *anon_fn);
 		v__table__TypeSymbol* fsym = v__table__Table_get_type_symbol(g->table, anon_fn->typ);
 		name = fsym->name;
