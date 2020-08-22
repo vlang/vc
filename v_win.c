@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e9e2a58"
+#define V_COMMIT_HASH "b5ca114"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "98c39a3"
+	#define V_COMMIT_HASH "e9e2a58"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e9e2a58"
+	#define V_CURRENT_COMMIT_HASH "b5ca114"
 #endif
 
 // V typedefs:
@@ -33109,7 +33109,7 @@ static string v__gen__Gen_type_default(v__gen__Gen* g, v__table__Type typ) {
 		return tos_lit("0");
 	} else {
 	};
-	return (sym->kind == v__table__Kind_sum_type) ? (tos_lit("{0}")) : (sym->kind == v__table__Kind_array_fixed) ? (tos_lit("{0}")) : (tos_lit("0"));
+	return (sym->kind == v__table__Kind_interface_) ? (tos_lit("{0}")) : (sym->kind == v__table__Kind_sum_type) ? (tos_lit("{0}")) : (sym->kind == v__table__Kind_array_fixed) ? (tos_lit("{0}")) : (tos_lit("0"));
 }
 
 static array_string v__gen__Gen_get_all_test_function_names(v__gen__Gen* g) {
@@ -33180,8 +33180,8 @@ static void v__gen__Gen_go_stmt(v__gen__Gen* g, v__ast__GoStmt node) {
 		v__table__TypeSymbol* receiver_sym = v__table__Table_get_type_symbol(g->table, expr->receiver_type);
 		name = string_add(string_add(receiver_sym->name, tos_lit("_")), name);
 	} else if (expr->left.typ == 177 /* v.ast.AnonFn */) {
-		v__ast__AnonFn* _sc_tmp_125025 = (v__ast__AnonFn*)expr->left.obj;
-		v__ast__AnonFn* anon_fn = _sc_tmp_125025;
+		v__ast__AnonFn* _sc_tmp_125049 = (v__ast__AnonFn*)expr->left.obj;
+		v__ast__AnonFn* anon_fn = _sc_tmp_125049;
 		v__gen__Gen_gen_anon_fn_decl(g, *anon_fn);
 		v__table__TypeSymbol* fsym = v__table__Table_get_type_symbol(g->table, anon_fn->typ);
 		name = fsym->name;
