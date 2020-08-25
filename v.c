@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c8b3cd2"
+#define V_COMMIT_HASH "1619bed"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "33b4ff7"
+	#define V_COMMIT_HASH "c8b3cd2"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c8b3cd2"
+	#define V_CURRENT_COMMIT_HASH "1619bed"
 #endif
 
 // V typedefs:
@@ -39444,7 +39444,12 @@ array_string v__builder__Builder_get_user_files(v__builder__Builder* v) {
 		array_push(&user_files, _MOV((string[]){ single_test_v_file }));
 		dir = os__base_dir(single_test_v_file);
 	}
-	bool is_real_file = os__exists(dir) && !os__is_dir(dir);
+	bool does_exist = os__exists(dir);
+	if (!does_exist) {
+		v__builder__verror(_STR("%.*s\000 doesn't exist", 2, dir));
+		v_exit(1);
+	}
+	bool is_real_file = does_exist && !os__is_dir(dir);
 	if (is_real_file && (string_ends_with(dir, tos_lit(".v")) || string_ends_with(dir, tos_lit(".vsh")) || string_ends_with(dir, tos_lit(".vv")))) {
 		string single_v_file = dir;
 		array_push(&user_files, _MOV((string[]){ single_v_file }));
