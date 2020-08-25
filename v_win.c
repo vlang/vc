@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f259d27"
+#define V_COMMIT_HASH "86dfd39"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7b7ab58"
+	#define V_COMMIT_HASH "f259d27"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f259d27"
+	#define V_CURRENT_COMMIT_HASH "86dfd39"
 #endif
 
 // V typedefs:
@@ -15251,9 +15251,9 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (string_eq(p->ccompiler, tos_lit(""))) {
 		p->ccompiler = v__pref__default_c_compiler();
 	}
-	p->is_test = string_ends_with(p->path, tos_lit("_test.v")) || string_ends_with(p->path, tos_lit(".vv"));
+	p->is_test = string_ends_with(p->path, tos_lit("_test.v"));
 	p->is_vsh = string_ends_with(p->path, tos_lit(".vsh"));
-	p->is_script = p->is_vsh || string_ends_with(p->path, tos_lit(".v"));
+	p->is_script = p->is_vsh || string_ends_with(p->path, tos_lit(".v")) || string_ends_with(p->path, tos_lit(".vv"));
 	if (string_eq(p->third_party_option, tos_lit(""))) {
 		p->third_party_option = p->cflags;
 	}
