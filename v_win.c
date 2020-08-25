@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "479bfa2"
+#define V_COMMIT_HASH "33b4ff7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "995a5fe"
+	#define V_COMMIT_HASH "479bfa2"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "479bfa2"
+	#define V_CURRENT_COMMIT_HASH "33b4ff7"
 #endif
 
 // V typedefs:
@@ -28295,6 +28295,9 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 				return node;
 			}
 		} else if ((p->tok.kind == v__token__Kind_inc || p->tok.kind == v__token__Kind_dec)) {
+			if ((p->peek_tok.kind == v__token__Kind_rpar || p->peek_tok.kind == v__token__Kind_rsbr) && !(string_eq(p->mod, tos_lit("builtin")) || string_eq(p->mod, tos_lit("regex")) || string_eq(p->mod, tos_lit("strconv")))) {
+				v__parser__Parser_warn_with_pos(p, _STR("`%.*s\000` operator can only be used as a statement", 2, v__token__Kind_str(p->tok.kind)), v__token__Token_position(&p->peek_tok));
+			}
 			node = /* sum type cast */ (v__ast__Expr) {._object = memdup(&(v__ast__PostfixExpr[]) {(v__ast__PostfixExpr){.op = p->tok.kind,.expr = node,.pos = v__token__Token_position(&p->tok),.auto_locked = (string){.str=(byteptr)""},}}, sizeof(v__ast__PostfixExpr)), .typ = 204 /* v.ast.PostfixExpr */};
 			v__parser__Parser_next(p);
 		} else {
@@ -28334,8 +28337,8 @@ static v__ast__PrefixExpr v__parser__Parser_prefix_expr(v__parser__Parser* p) {
 	v__ast__Expr right = (op == v__token__Kind_minus ? (v__parser__Parser_expr(p, v__token__Precedence_call)) : (v__parser__Parser_expr(p, v__token__Precedence_prefix)));
 	p->is_amp = false;
 	if (right.typ == 183 /* v.ast.CastExpr */) {
-		v__ast__CastExpr* _sc_tmp_7044 = (v__ast__CastExpr*)right._object;
-		v__ast__CastExpr* right = _sc_tmp_7044;
+		v__ast__CastExpr* _sc_tmp_7281 = (v__ast__CastExpr*)right._object;
+		v__ast__CastExpr* right = _sc_tmp_7281;
 		right->in_prexpr = true;
 	}
 	array_v__ast__Stmt or_stmts = __new_array_with_default(0, 0, sizeof(v__ast__Stmt), 0);
@@ -39504,17 +39507,22 @@ array_string v__builder__Builder_get_user_files(v__builder__Builder* v) {
 		dir = os__base_dir(single_test_v_file);
 	}
 	bool is_real_file = os__exists(dir) && !os__is_dir(dir);
-	if (is_real_file && (string_ends_with(dir, tos_lit(".v")) || string_ends_with(dir, tos_lit(".vsh")))) {
+	if (is_real_file && (string_ends_with(dir, tos_lit(".v")) || string_ends_with(dir, tos_lit(".vsh")) || string_ends_with(dir, tos_lit(".vv")))) {
 		string single_v_file = dir;
 		array_push(&user_files, _MOV((string[]){ single_v_file }));
 		if (v->pref->is_verbose) {
 			v__builder__Builder_log(/*rec*/*v, _STR("> just compile one file: \"%.*s\000\"", 2, single_v_file));
 		}
-	} else {
+	} else if (os__is_dir(dir)) {
 		if (v->pref->is_verbose) {
 			v__builder__Builder_log(/*rec*/*v, _STR("> add all .v files from directory \"%.*s\000\" ...", 2, dir));
 		}
 		_PUSH_MANY(&user_files, (v__builder__Builder_v_files_from_dir(/*rec*/*v, dir)), _t1440, array_string);
+	} else {
+		println(tos_lit("usage: `v file.v` or `v directory`"));
+		string ext = os__file_ext(dir);
+		println(_STR("unknown file extension `%.*s\000`", 2, ext));
+		v_exit(1);
 	}
 	if (user_files.len == 0) {
 		println(tos_lit("No input .v files"));
