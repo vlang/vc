@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "84b8e0a"
+#define V_COMMIT_HASH "47f59d3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "393b46a"
+	#define V_COMMIT_HASH "84b8e0a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "84b8e0a"
+	#define V_CURRENT_COMMIT_HASH "47f59d3"
 #endif
 
 // V typedefs:
@@ -20084,8 +20084,12 @@ static v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanner* s) {
 				int start = s->pos + 1;
 				v__scanner__Scanner_ignore_line(s);
 				int comment_line_end = s->pos;
-				s->pos--;
-				s->line_nr--;
+				if (string_at(s->text, s->pos - 1) == '\r') {
+					comment_line_end--;
+				} else {
+					s->pos--;
+					s->line_nr--;
+				}
 				if (v__scanner__Scanner_should_parse_comment(s)) {
 					s->line_comment = string_substr(s->text, start + 1, comment_line_end);
 					string comment = string_trim_space(s->line_comment);
