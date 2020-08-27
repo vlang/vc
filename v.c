@@ -20900,7 +20900,7 @@ void v__checker__Checker_type_decl(v__checker__Checker* c, v__ast__TypeDecl node
 	if (node.typ == 148 /* v.ast.AliasTypeDecl */) {
 		v__ast__AliasTypeDecl* it = (v__ast__AliasTypeDecl*)node._object; // ST it
 		v__ast__AliasTypeDecl* node = it;
-		if (string_ne(c->file.mod.name, tos_lit("time"))) {
+		if (string_ne(c->file.mod.name, tos_lit("time")) && !string_ne(c->file.mod.name, tos_lit("builtin"))) {
 			v__checker__Checker_check_valid_pascal_case(c, node->name, tos_lit("type alias"), node->pos);
 		}
 		v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, node->parent_type);
