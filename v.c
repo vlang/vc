@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8f5ca29"
+#define V_COMMIT_HASH "0975f3b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1d39116"
+	#define V_COMMIT_HASH "8f5ca29"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8f5ca29"
+	#define V_CURRENT_COMMIT_HASH "0975f3b"
 #endif
 
 // V typedefs:
@@ -17675,6 +17675,9 @@ string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 		res = string_replace(res, tos_lit("map_string_"), tos_lit("map[string]"));
 		map_start = tos_lit("map[string]");
 	}
+	if (sym->kind == v__table__Kind_chan || string_contains(res, tos_lit("chan_"))) {
+		res = string_replace(res, tos_lit("chan_"), tos_lit(""));
+	}
 	if (string_contains(res, tos_lit("."))) {
 		array_string vals = string_split(res, tos_lit("."));
 		if (vals.len > 2) {
@@ -17688,6 +17691,9 @@ string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 		}
 		if (sym->kind == v__table__Kind_map && !string_starts_with(res, tos_lit("map"))) {
 			res = string_add(map_start, res);
+		}
+		if (sym->kind == v__table__Kind_chan && !string_starts_with(res, tos_lit("chan"))) {
+			res = string_add(tos_lit("chan "), res);
 		}
 	}
 	int nr_muls = v__table__Type_nr_muls(t);
