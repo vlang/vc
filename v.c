@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b4f03e1"
+#define V_COMMIT_HASH "d982aa5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "eff319f"
+	#define V_COMMIT_HASH "b4f03e1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b4f03e1"
+	#define V_CURRENT_COMMIT_HASH "d982aa5"
 #endif
 
 // V typedefs:
@@ -3729,10 +3729,10 @@ array_string _const_os__args; // inited later
 Option_array_byte os__read_bytes(string path);
 Option_string os__read_file(string path);
 int os__file_size(string path);
-void os__mv(string old, string v_new);
-Option_void os__cp(string old, string v_new);
+void os__mv(string src, string dst);
+Option_void os__cp(string src, string dst);
 Option_void os__cp_r(string osource_path, string odest_path, bool overwrite);
-Option_void os__cp_all(string osource_path, string odest_path, bool overwrite);
+Option_void os__cp_all(string src, string dst, bool overwrite);
 Option_void os__mv_by_cp(string source, string target);
 FILE* os__vfopen(string path, string mode);
 int os__fileno(voidptr cfile);
@@ -12203,36 +12203,36 @@ int os__file_size(string path) {
 	return s.st_size;
 }
 
-void os__mv(string old, string v_new) {
+void os__mv(string src, string dst) {
 // $if  windows {
 #ifdef _WIN32
-	_wrename(string_to_wide(old), string_to_wide(v_new));
+	_wrename(string_to_wide(src), string_to_wide(dst));
 #else
-	rename(((charptr)(old.str)), ((charptr)(v_new.str)));
+	rename(((charptr)(src.str)), ((charptr)(dst.str)));
 #endif
 // } windows
 }
 
-Option_void os__cp(string old, string v_new) {
+Option_void os__cp(string src, string dst) {
 // $if  windows {
 #ifdef _WIN32
-	string w_old = string_replace(old, tos_lit("/"), tos_lit("\\"));
-	string w_new = string_replace(v_new, tos_lit("/"), tos_lit("\\"));
-	if (CopyFile(string_to_wide(w_old), string_to_wide(w_new), false) == 0) {
+	string w_src = string_replace(src, tos_lit("/"), tos_lit("\\"));
+	string w_dst = string_replace(dst, tos_lit("/"), tos_lit("\\"));
+	if (CopyFile(string_to_wide(w_src), string_to_wide(w_dst), false) == 0) {
 		u32 result = GetLastError();
-		Option _t79 = error_with_code(_STR("failed to copy %.*s\000 to %.*s", 2, old, v_new), ((int)(result)));
+		Option _t79 = error_with_code(_STR("failed to copy %.*s\000 to %.*s", 2, src, dst), ((int)(result)));
 		return *(Option_void*)&_t79;
 	}
 #else
-	int fp_from = open(((charptr)(old.str)), O_RDONLY);
+	int fp_from = open(((charptr)(src.str)), O_RDONLY);
 	if (fp_from < 0) {
-		Option _t80 = error_with_code(_STR("cp: failed to open %.*s", 1, old), ((int)(fp_from)));
+		Option _t80 = error_with_code(_STR("cp: failed to open %.*s", 1, src), ((int)(fp_from)));
 		return *(Option_void*)&_t80;
 	}
-	int fp_to = open(((charptr)(v_new.str)), ((O_WRONLY | O_CREAT) | O_TRUNC), (S_IWUSR | S_IRUSR));
+	int fp_to = open(((charptr)(dst.str)), ((O_WRONLY | O_CREAT) | O_TRUNC), (S_IWUSR | S_IRUSR));
 	if (fp_to < 0) {
 		close(fp_from);
-		Option _t81 = error_with_code(_STR("cp (permission): failed to write to %.*s\000 (fp_to: %"PRId32"\000)", 3, v_new, fp_to), ((int)(fp_to)));
+		Option _t81 = error_with_code(_STR("cp (permission): failed to write to %.*s\000 (fp_to: %"PRId32"\000)", 3, dst, fp_to), ((int)(fp_to)));
 		return *(Option_void*)&_t81;
 	}
 	array_fixed_byte_1024 buf = {0};
@@ -12243,16 +12243,16 @@ Option_void os__cp(string old, string v_new) {
 			break;
 		}
 		if (write(fp_to, buf, count) < 0) {
-			Option _t82 = error_with_code(_STR("cp: failed to write to %.*s", 1, v_new), ((int)(-1)));
+			Option _t82 = error_with_code(_STR("cp: failed to write to %.*s", 1, dst), ((int)(-1)));
 			return *(Option_void*)&_t82;
 		}
 	}
 	struct stat from_attr;
 	{ // Unsafe block
-		stat(((charptr)(old.str)), &from_attr);
+		stat(((charptr)(src.str)), &from_attr);
 	}
-	if (chmod(((charptr)(v_new.str)), from_attr.st_mode) < 0) {
-		Option _t83 = error_with_code(_STR("failed to set permissions for %.*s", 1, v_new), ((int)(-1)));
+	if (chmod(((charptr)(dst.str)), from_attr.st_mode) < 0) {
+		Option _t83 = error_with_code(_STR("failed to set permissions for %.*s", 1, dst), ((int)(-1)));
 		return *(Option_void*)&_t83;
 	}
 	close(fp_to);
@@ -12269,9 +12269,9 @@ Option_void os__cp_r(string osource_path, string odest_path, bool overwrite) {
 	return os__cp_all(osource_path, odest_path, overwrite);
 }
 
-Option_void os__cp_all(string osource_path, string odest_path, bool overwrite) {
-	string source_path = os__real_path(osource_path);
-	string dest_path = os__real_path(odest_path);
+Option_void os__cp_all(string src, string dst, bool overwrite) {
+	string source_path = os__real_path(src);
+	string dest_path = os__real_path(dst);
 	if (!os__exists(source_path)) {
 		Option _t85 = v_error(tos_lit("Source path doesn\'t exist"));
 		return *(Option_void*)&_t85;
@@ -12534,8 +12534,8 @@ static int os__vpclose(voidptr f) {
 #ifdef _WIN32
 	return _pclose(f);
 #else
-	multi_return_int_bool mr_8397 = os__posix_wait4_to_exit_status(pclose(f));
-	int ret = mr_8397.arg0;
+	multi_return_int_bool mr_8703 = os__posix_wait4_to_exit_status(pclose(f));
+	int ret = mr_8703.arg0;
 	return ret;
 #endif
 // } windows
@@ -12575,9 +12575,9 @@ int os__system(string cmd) {
 	}
 // $if !windows {
 #ifndef _WIN32
-	multi_return_int_bool mr_9500 = os__posix_wait4_to_exit_status(ret);
-	int pret = mr_9500.arg0;
-	bool is_signaled = mr_9500.arg1;
+	multi_return_int_bool mr_9803 = os__posix_wait4_to_exit_status(ret);
+	int pret = mr_9803.arg0;
+	bool is_signaled = mr_9803.arg1;
 	if (is_signaled) {
 		println(string_add(string_add(_STR("Terminated by signal %2"PRId32"\000 (", 2, ret), os__sigint_to_signal_name(pret)), tos_lit(")")));
 	}
