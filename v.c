@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c01d17f"
+#define V_COMMIT_HASH "8f5cefb"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "15bdb8f"
+	#define V_COMMIT_HASH "c01d17f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c01d17f"
+	#define V_CURRENT_COMMIT_HASH "8f5cefb"
 #endif
 
 // V typedefs:
@@ -7257,45 +7257,45 @@ string strconv__f64_to_str_lnd(f64 f, int dec_digit) {
 		byte c = string_substr(s, i, s.len).str[_t11];
 		exp = exp * 10 + ((int)(c - '0'));
 	}
-	array_rune res = array_repeat(new_array_from_c_array(1, 1, sizeof(rune), _MOV((rune[1]){'0'})), exp + 32);
+	array_byte res = __new_array_with_default(exp + 32, 0, sizeof(byte), &(byte[]){0});
 	int r_i = 0;
 	if (sgn == 1) {
 		if (m_sgn_flag) {
-			array_set(&res, r_i++, &(rune[]) { '+' });
+			array_set(&res, r_i++, &(byte[]) { '+' });
 		}
 	} else {
-		array_set(&res, r_i++, &(rune[]) { '-' });
+		array_set(&res, r_i++, &(byte[]) { '-' });
 	}
 	i = 0;
 	if (exp_sgn >= 0) {
 		while (b[i] != 0) {
-			array_set(&res, r_i++, &(rune[]) { b[i] });
+			array_set(&res, r_i++, &(byte[]) { b[i] });
 			i++;
 			if (i >= d_pos && exp >= 0) {
 				if (exp == 0) {
 					dot_res_sp = r_i;
-					array_set(&res, r_i++, &(rune[]) { '.' });
+					array_set(&res, r_i++, &(byte[]) { '.' });
 				}
 				exp--;
 			}
 		}
 		while (exp >= 0) {
-			array_set(&res, r_i++, &(rune[]) { '0' });
+			array_set(&res, r_i++, &(byte[]) { '0' });
 			exp--;
 		}
 	} else {
 		bool dot_p = true;
 		while (exp > 0) {
-			array_set(&res, r_i++, &(rune[]) { '0' });
+			array_set(&res, r_i++, &(byte[]) { '0' });
 			exp--;
 			if (dot_p) {
 				dot_res_sp = r_i;
-				array_set(&res, r_i++, &(rune[]) { '.' });
+				array_set(&res, r_i++, &(byte[]) { '.' });
 				dot_p = false;
 			}
 		}
 		while (b[i] != 0) {
-			array_set(&res, r_i++, &(rune[]) { b[i] });
+			array_set(&res, r_i++, &(byte[]) { b[i] });
 			i++;
 		}
 	}
@@ -7303,19 +7303,19 @@ string strconv__f64_to_str_lnd(f64 f, int dec_digit) {
 		if ((r_i - dot_res_sp) > dec_digit) {
 			r_i = dot_res_sp + dec_digit + 1;
 		}
-		array_set(&res, r_i, &(rune[]) { 0 });
-		return tos(&(*(rune*)array_get(res, 0)), r_i);
+		array_set(&res, r_i, &(byte[]) { 0 });
+		return tos(res.data, r_i);
 	} else {
 		if (dec_digit > 0) {
 			int c = 0;
-			array_set(&res, r_i++, &(rune[]) { '.' });
+			array_set(&res, r_i++, &(byte[]) { '.' });
 			while (c < dec_digit) {
-				array_set(&res, r_i++, &(rune[]) { '0' });
+				array_set(&res, r_i++, &(byte[]) { '0' });
 				c++;
 			}
-			array_set(&res, r_i, &(rune[]) { 0 });
+			array_set(&res, r_i, &(byte[]) { 0 });
 		}
-		return tos(&(*(rune*)array_get(res, 0)), r_i);
+		return tos(res.data, r_i);
 	}
 }
 
@@ -8129,48 +8129,48 @@ string strconv__f64_to_str_l(f64 f) {
 		byte c = string_substr(s, i, s.len).str[_t16];
 		exp = exp * 10 + ((int)(c - '0'));
 	}
-	array_rune res = array_repeat(new_array_from_c_array(1, 1, sizeof(rune), _MOV((rune[1]){'0'})), exp + 32);
+	array_byte res = __new_array_with_default(exp + 32, 0, sizeof(byte), &(byte[]){0});
 	int r_i = 0;
 	if (sgn == 1) {
 		if (m_sgn_flag) {
-			array_set(&res, r_i++, &(rune[]) { '+' });
+			array_set(&res, r_i++, &(byte[]) { '+' });
 		}
 	} else {
-		array_set(&res, r_i++, &(rune[]) { '-' });
+		array_set(&res, r_i++, &(byte[]) { '-' });
 	}
 	i = 0;
 	if (exp_sgn >= 0) {
 		while (b[i] != 0) {
-			array_set(&res, r_i++, &(rune[]) { b[i] });
+			array_set(&res, r_i++, &(byte[]) { b[i] });
 			i++;
 			if (i >= d_pos && exp >= 0) {
 				if (exp == 0) {
-					array_set(&res, r_i++, &(rune[]) { '.' });
+					array_set(&res, r_i++, &(byte[]) { '.' });
 				}
 				exp--;
 			}
 		}
 		while (exp >= 0) {
-			array_set(&res, r_i++, &(rune[]) { '0' });
+			array_set(&res, r_i++, &(byte[]) { '0' });
 			exp--;
 		}
 	} else {
 		bool dot_p = true;
 		while (exp > 0) {
-			array_set(&res, r_i++, &(rune[]) { '0' });
+			array_set(&res, r_i++, &(byte[]) { '0' });
 			exp--;
 			if (dot_p) {
-				array_set(&res, r_i++, &(rune[]) { '.' });
+				array_set(&res, r_i++, &(byte[]) { '.' });
 				dot_p = false;
 			}
 		}
 		while (b[i] != 0) {
-			array_set(&res, r_i++, &(rune[]) { b[i] });
+			array_set(&res, r_i++, &(byte[]) { b[i] });
 			i++;
 		}
 	}
-	array_set(&res, r_i, &(rune[]) { 0 });
-	return tos(&(*(rune*)array_get(res, 0)), r_i);
+	array_set(&res, r_i, &(byte[]) { 0 });
+	return tos(res.data, r_i);
 }
 
 static array __new_array(int mylen, int cap, int elm_size) {
