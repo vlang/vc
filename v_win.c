@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3d8a35c"
+#define V_COMMIT_HASH "317d15d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "dde1b89"
+	#define V_COMMIT_HASH "3d8a35c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3d8a35c"
+	#define V_CURRENT_COMMIT_HASH "317d15d"
 #endif
 
 // V typedefs:
@@ -39943,7 +39943,7 @@ static Option_v__builder__VsInstallation v__builder__find_vs(string vswhere_dir,
 		return *(Option_v__builder__VsInstallation*)&_t1478;
 	}
 	os__Result res = *(os__Result*)_t1477.data;
-	string res_output = string_trim_space(res.output);
+	string res_output = string_trim_right(string_trim_space(res.output), tos_lit("\r\n"));
 	Option_string _t1479 = os__read_file(_STR("%.*s\000\\VC\\Auxiliary\\Build\\Microsoft.VCToolsVersion.default.txt", 2, res_output));
 	if (!_t1479.ok) {
 		string err = _t1479.v_error;
