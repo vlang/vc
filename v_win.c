@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "317d15d"
+#define V_COMMIT_HASH "68864d0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3d8a35c"
+	#define V_COMMIT_HASH "317d15d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "317d15d"
+	#define V_CURRENT_COMMIT_HASH "68864d0"
 #endif
 
 // V typedefs:
@@ -39943,8 +39943,8 @@ static Option_v__builder__VsInstallation v__builder__find_vs(string vswhere_dir,
 		return *(Option_v__builder__VsInstallation*)&_t1478;
 	}
 	os__Result res = *(os__Result*)_t1477.data;
-	string res_output = string_trim_right(string_trim_space(res.output), tos_lit("\r\n"));
-	Option_string _t1479 = os__read_file(_STR("%.*s\000\\VC\\Auxiliary\\Build\\Microsoft.VCToolsVersion.default.txt", 2, res_output));
+	string path = string_trim_right(string_trim_space(res.output), tos_lit("\r\n"));
+	Option_string _t1479 = os__read_file(_STR("%.*s\000\\VC\\Auxiliary\\Build\\Microsoft.VCToolsVersion.default.txt", 2, path));
 	if (!_t1479.ok) {
 		string err = _t1479.v_error;
 		int errcode = _t1479.ecode;
@@ -39954,10 +39954,10 @@ static Option_v__builder__VsInstallation v__builder__find_vs(string vswhere_dir,
 	string version = *(string*)_t1479.data;
 	string version2 = version;
 	string v = (string_ends_with(version, tos_lit("\n")) ? (string_substr(version2, 0, version.len - 2)) : (version2));
-	string lib_path = _STR("%.*s\000\\VC\\Tools\\MSVC\\%.*s\000\\lib\\%.*s", 3, res.output, v, host_arch);
-	string include_path = _STR("%.*s\000\\VC\\Tools\\MSVC\\%.*s\000\\include", 3, res.output, v);
+	string lib_path = _STR("%.*s\000\\VC\\Tools\\MSVC\\%.*s\000\\lib\\%.*s", 3, path, v, host_arch);
+	string include_path = _STR("%.*s\000\\VC\\Tools\\MSVC\\%.*s\000\\include", 3, path, v);
 	if (os__exists(_STR("%.*s\000\\vcruntime.lib", 2, lib_path))) {
-		string p = _STR("%.*s\000\\VC\\Tools\\MSVC\\%.*s\000\\bin\\Host%.*s\000\\%.*s", 4, res.output, v, host_arch, host_arch);
+		string p = _STR("%.*s\000\\VC\\Tools\\MSVC\\%.*s\000\\bin\\Host%.*s\000\\%.*s", 4, path, v, host_arch, host_arch);
 		Option_v__builder__VsInstallation _t1481;
 		opt_ok2(&(v__builder__VsInstallation[]) { (v__builder__VsInstallation){.include_path = include_path,.lib_path = lib_path,.exe_path = p,} }, (OptionBase*)(&_t1481), sizeof(v__builder__VsInstallation));
 		return _t1481;
