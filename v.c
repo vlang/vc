@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "02bece5"
+#define V_COMMIT_HASH "30fc374"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7dbae14"
+	#define V_COMMIT_HASH "02bece5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "02bece5"
+	#define V_CURRENT_COMMIT_HASH "30fc374"
 #endif
 
 // V typedefs:
@@ -34011,11 +34011,12 @@ static void v__gen__Gen_gen_c_main_header(v__gen__Gen* g) {
 		v__gen__Gen_writeln(g, tos_lit("int main(int ___argc, char** ___argv){"));
 	}
 	if (g->pref->os == v__pref__OS_windows && v__gen__Gen_is_gui_app(g)) {
+		v__gen__Gen_writeln(g, tos_lit("\tLPWSTR full_cmd_line = GetCommandLineW(); // NB: do not use cmd_line"));
 		v__gen__Gen_writeln(g, tos_lit("\ttypedef LPWSTR*(WINAPI *cmd_line_to_argv)(LPCWSTR, int*);"));
 		v__gen__Gen_writeln(g, tos_lit("\tHMODULE shell32_module = LoadLibrary(L\"shell32.dll\");"));
 		v__gen__Gen_writeln(g, tos_lit("\tcmd_line_to_argv CommandLineToArgvW = (cmd_line_to_argv)GetProcAddress(shell32_module, \"CommandLineToArgvW\");"));
 		v__gen__Gen_writeln(g, tos_lit("\tint ___argc;"));
-		v__gen__Gen_writeln(g, tos_lit("\twchar_t** ___argv = CommandLineToArgvW(cmd_line, &___argc);"));
+		v__gen__Gen_writeln(g, tos_lit("\twchar_t** ___argv = CommandLineToArgvW(full_cmd_line, &___argc);"));
 	}
 	v__gen__Gen_writeln(g, tos_lit("\t_vinit();"));
 	if (g->pref->is_prof) {
