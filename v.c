@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d663f57"
+#define V_COMMIT_HASH "88f75fc"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5526954"
+	#define V_COMMIT_HASH "d663f57"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d663f57"
+	#define V_CURRENT_COMMIT_HASH "88f75fc"
 #endif
 
 // V typedefs:
@@ -2934,6 +2934,7 @@ string time__FormatDate_str(time__FormatDate it); // auto
 string v__table__TypeSymbol_str_no_ptr(v__table__TypeSymbol it); // auto no_ptr version
 string v__gen__x64__Register_str(v__gen__x64__Register it); // auto
 string v__errors__Reporter_str(v__errors__Reporter it); // auto
+string array_v__cflag__CFlag_str(array_v__cflag__CFlag a); // auto
 // variadic structs
 struct varg_voidptr {
 	int len;
@@ -4931,7 +4932,7 @@ static Option_string v__builder__Builder_find_win_cc(v__builder__Builder* v);
 static void v__builder__Builder_cc(v__builder__Builder* v);
 static void v__builder__Builder_cc_linux_cross(v__builder__Builder* b);
 static void v__builder__Builder_cc_windows_cross(v__builder__Builder* c);
-static void v__builder__Builder_build_thirdparty_obj_files(v__builder__Builder* c);
+static void v__builder__Builder_build_thirdparty_obj_files(v__builder__Builder* v);
 static void v__builder__Builder_build_thirdparty_obj_file(v__builder__Builder* v, string path, array_v__cflag__CFlag moduleflags);
 static string v__builder__missing_compiler_info();
 static array_string v__builder__error_context_lines(string text, string keyword, int before, int after);
@@ -5238,6 +5239,22 @@ string v__errors__Reporter_str(v__errors__Reporter it) { /* gen_str_for_enum */
 		case v__errors__Reporter_gen: return tos_lit("gen");
 		default: return tos_lit("unknown enum value");
 	}
+}
+string array_v__cflag__CFlag_str(array_v__cflag__CFlag a) {
+	strings__Builder sb = strings__new_builder(a.len * 10);
+	strings__Builder_write(&sb, tos_lit("["));
+	for (int i = 0; i < a.len; ++i) {
+		v__cflag__CFlag it = (*(v__cflag__CFlag*)array_get(a, i));
+		string x = v__cflag__CFlag_str(&it);
+		strings__Builder_write(&sb, x);
+		if (i < a.len-1) {
+			strings__Builder_write(&sb, tos_lit(", "));
+		}
+	}
+	strings__Builder_write(&sb, tos_lit("]"));
+	string res = strings__Builder_str(&sb);
+	strings__Builder_free(&sb);
+	return res;
 }
 
 // V out
@@ -38794,7 +38811,7 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 		array_push(&linker_flags, _MOV((string[]){ tos_lit("-nostdlib") }));
 	}
 	if (v->pref->build_mode == v__pref__BuildMode_build_module) {
-		string out_dir = (string_starts_with(v->pref->path, tos_lit("vlib")) ? (_STR("%.*s\000%.*s\000cache%.*s\000%.*s", 4, _const_v__pref__default_module_path, _const_os__path_separator, _const_os__path_separator, v->pref->path)) : (_STR("%.*s\000%.*s\000cache/%.*s", 3, _const_v__pref__default_module_path, _const_os__path_separator, v->pref->path)));
+		string out_dir = os__join_path(_const_v__pref__default_module_path, (varg_string){.len=2,.args={tos_lit("cache"), v->pref->path}});
 		string pdir = string_all_before_last(out_dir, _const_os__path_separator);
 		if (!os__is_dir(pdir)) {
 			os__mkdir_all(pdir);
@@ -38878,7 +38895,7 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 		array_push(&args, _MOV((string[]){ tos_lit("-c") }));
 	} else if (v->pref->use_cache) {
 		array_string built_modules = __new_array_with_default(0, 0, sizeof(string), 0);
-		string builtin_obj_path = string_add(string_add(string_add(string_add(string_add(string_add(_const_v__pref__default_module_path, _const_os__path_separator), tos_lit("cache")), _const_os__path_separator), tos_lit("vlib")), _const_os__path_separator), tos_lit("builtin.o"));
+		string builtin_obj_path = os__join_path(_const_v__pref__default_module_path, (varg_string){.len=3,.args={tos_lit("cache"), tos_lit("vlib"), tos_lit("builtin.o")}});
 		if (!os__exists(builtin_obj_path)) {
 			os__system(_STR("%.*s\000 build-module vlib/builtin", 2, vexe));
 		}
@@ -38902,9 +38919,9 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 				if (string_eq(imp, tos_lit("help"))) {
 					continue;
 				}
-				string imp_path = string_add(string_add(tos_lit("vlib"), _const_os__path_separator), mod_path);
-				string cache_path = string_add(string_add(_const_v__pref__default_module_path, _const_os__path_separator), tos_lit("cache"));
-				string obj_path = string_add(string_add(cache_path, _const_os__path_separator), _STR("%.*s\000.o", 2, imp_path));
+				string imp_path = os__join_path(tos_lit("vlib"), (varg_string){.len=1,.args={mod_path}});
+				string cache_path = os__join_path(_const_v__pref__default_module_path, (varg_string){.len=1,.args={tos_lit("cache")}});
+				string obj_path = os__join_path(cache_path, (varg_string){.len=1,.args={_STR("%.*s\000.o", 2, imp_path)}});
 				if (os__exists(obj_path)) {
 					libs = /*f*/string_add(libs, string_add(tos_lit(" "), obj_path));
 				} else {
@@ -39212,17 +39229,18 @@ static void v__builder__Builder_cc_windows_cross(v__builder__Builder* c) {
 	println(string_add(c->pref->out_name, tos_lit(" has been successfully compiled")));
 }
 
-static void v__builder__Builder_build_thirdparty_obj_files(v__builder__Builder* c) {
+static void v__builder__Builder_build_thirdparty_obj_files(v__builder__Builder* v) {
+	v__builder__Builder_log(/*rec*/*v, _STR("build_thirdparty_obj_files: v.table.cflags: %.*s", 1, array_v__cflag__CFlag_str(  v->table->cflags)));
 	// FOR IN array
-	array _t1417 = v__builder__Builder_get_os_cflags(c);
+	array _t1417 = v__builder__Builder_get_os_cflags(v);
 	for (int _t1418 = 0; _t1418 < _t1417.len; ++_t1418) {
 		v__cflag__CFlag flag = ((v__cflag__CFlag*)_t1417.data)[_t1418];
 		if (string_ends_with(flag.value, tos_lit(".o"))) {
-			array_v__cflag__CFlag rest_of_module_flags = v__builder__Builder_get_rest_of_module_cflags(c, (voidptr)&/*qq*/flag);
-			if (string_eq(c->pref->ccompiler, tos_lit("msvc"))) {
-				v__builder__Builder_build_thirdparty_obj_file_with_msvc(c, flag.value, rest_of_module_flags);
+			array_v__cflag__CFlag rest_of_module_flags = v__builder__Builder_get_rest_of_module_cflags(v, (voidptr)&/*qq*/flag);
+			if (string_eq(v->pref->ccompiler, tos_lit("msvc"))) {
+				v__builder__Builder_build_thirdparty_obj_file_with_msvc(v, flag.value, rest_of_module_flags);
 			} else {
-				v__builder__Builder_build_thirdparty_obj_file(c, flag.value, rest_of_module_flags);
+				v__builder__Builder_build_thirdparty_obj_file(v, flag.value, rest_of_module_flags);
 			}
 		}
 	}
