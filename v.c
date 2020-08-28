@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "dde1b89"
+#define V_COMMIT_HASH "3d8a35c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2ce5797"
+	#define V_COMMIT_HASH "dde1b89"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "dde1b89"
+	#define V_CURRENT_COMMIT_HASH "3d8a35c"
 #endif
 
 // V typedefs:
@@ -39884,7 +39884,7 @@ static Option_v__builder__VsInstallation v__builder__find_vs(string vswhere_dir,
 		return *(Option_v__builder__VsInstallation*)&_t1478;
 	}
 	os__Result res = *(os__Result*)_t1477.data;
-	string res_output = string_trim_right(res.output, tos_lit("\r\n"));
+	string res_output = string_trim_space(res.output);
 	Option_string _t1479 = os__read_file(_STR("%.*s\000\\VC\\Auxiliary\\Build\\Microsoft.VCToolsVersion.default.txt", 2, res_output));
 	if (!_t1479.ok) {
 		string err = _t1479.v_error;
@@ -40036,7 +40036,7 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 	if (!_t1519.ok) {
 		string err = _t1519.v_error;
 		int errcode = _t1519.ecode;
-		println(err);
+		println(string_trim_space(err));
 		v__builder__verror(tos_lit("msvc error"));
 		return;
 	}
@@ -40044,7 +40044,7 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 	i64 diff = time__ticks() - ticks;
 	v__builder__Builder_timing_message(v, tos_lit("C msvc"), diff);
 	if (res.exit_code != 0) {
-		v__builder__verror(res.output);
+		v__builder__verror(string_trim_space(res.output));
 	}
 	os__rm(out_name_obj);
 }
@@ -40072,16 +40072,16 @@ static void v__builder__Builder_build_thirdparty_obj_file_with_msvc(v__builder__
 		string err = _t1520.v_error;
 		int errcode = _t1520.ecode;
 		println(_STR("msvc: failed thirdparty object build cmd: %.*s", 1, cmd));
-		v__builder__verror(err);
+		v__builder__verror(string_trim_space(err));
 		return;
 	}
 	os__Result res = *(os__Result*)_t1520.data;
 	if (res.exit_code != 0) {
 		println(_STR("msvc: failed thirdparty object build cmd: %.*s", 1, cmd));
-		v__builder__verror(res.output);
+		v__builder__verror(string_trim_space(res.output));
 		return;
 	}
-	println(res.output);
+	println(string_trim_space(res.output));
 }
 
 v__builder__MsvcStringFlags v__builder__msvc_string_flags(array_v__cflag__CFlag cflags) {
