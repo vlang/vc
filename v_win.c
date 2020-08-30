@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d88e8bb"
+#define V_COMMIT_HASH "5d3d14d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2b545f6"
+	#define V_COMMIT_HASH "d88e8bb"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d88e8bb"
+	#define V_CURRENT_COMMIT_HASH "5d3d14d"
 #endif
 
 // V typedefs:
@@ -16,6 +16,10 @@ typedef struct {
 } _Interface;
 
 typedef struct strings__Builder strings__Builder;
+typedef struct time__StopWatchOptions time__StopWatchOptions;
+typedef struct time__StopWatch time__StopWatch;
+typedef struct time__Time time__Time;
+typedef struct time__SystemTime time__SystemTime;
 typedef union strconv__Float64u strconv__Float64u;
 typedef struct strconv__PrepNumber strconv__PrepNumber;
 typedef union strconv__Float64u strconv__Float64u;
@@ -59,10 +63,6 @@ typedef struct os__SecurityAttributes os__SecurityAttributes;
 typedef struct os__ExceptionRecord os__ExceptionRecord;
 typedef struct os__ContextRecord os__ContextRecord;
 typedef struct os__ExceptionPointers os__ExceptionPointers;
-typedef struct time__StopWatchOptions time__StopWatchOptions;
-typedef struct time__StopWatch time__StopWatch;
-typedef struct time__Time time__Time;
-typedef struct time__SystemTime time__SystemTime;
 typedef struct v__token__Position v__token__Position;
 typedef struct v__token__Token v__token__Token;
 typedef struct v__depgraph__DepGraphNode v__depgraph__DepGraphNode;
@@ -203,6 +203,7 @@ typedef struct varg_string varg_string;
 typedef struct varg_int varg_int;
 
 // V typedefs2:
+typedef struct Option_time__Time Option_time__Time;
 typedef struct Option_int Option_int;
 typedef struct Option_array_byte Option_array_byte;
 typedef struct Option_FILE_ptr Option_FILE_ptr;
@@ -213,7 +214,6 @@ typedef struct Option_bool Option_bool;
 typedef struct Option_array_ustring Option_array_ustring;
 typedef struct Option_os__File Option_os__File;
 typedef struct Option_os__Result Option_os__Result;
-typedef struct Option_time__Time Option_time__Time;
 typedef struct Option_v__pref__OS Option_v__pref__OS;
 typedef struct Option_v__pref__Backend Option_v__pref__Backend;
 typedef struct Option_v__vmod__Manifest Option_v__vmod__Manifest;
@@ -647,6 +647,10 @@ void _vcleanup();
 
 
 // V includes:
+// added by module `time`:
+#include <time.h>
+// added by module `time`:
+#include <time.h>
 // added by module `builtin`:
 #include <float.h>
 // added by module `os`:
@@ -657,41 +661,8 @@ void _vcleanup();
 #include <winsock2.h>
 // added by module `os`:
 #include <process.h>
-// added by module `time`:
-#include <time.h>
-// added by module `time`:
-#include <time.h>
 
 // Enum definitions:
-typedef enum {
-	strconv__Char_parse_state_start, // 
-	strconv__Char_parse_state_norm_char, // +1
-	strconv__Char_parse_state_field_char, // +2
-	strconv__Char_parse_state_pad_ch, // +3
-	strconv__Char_parse_state_len_set_start, // +4
-	strconv__Char_parse_state_len_set_in, // +5
-	strconv__Char_parse_state_check_type, // +6
-	strconv__Char_parse_state_check_float, // +7
-	strconv__Char_parse_state_check_float_in, // +8
-	strconv__Char_parse_state_reset_params, // +9
-} strconv__Char_parse_state;
-
-typedef enum {
-	strconv__Align_text_right = 0, // 0
-	strconv__Align_text_left, // 0+1
-	strconv__Align_text_center, // 0+2
-} strconv__Align_text;
-
-typedef enum {
-	os__FileType_regular, // 
-	os__FileType_directory, // +1
-	os__FileType_character_device, // +2
-	os__FileType_block_device, // +3
-	os__FileType_fifo, // +4
-	os__FileType_symbolic_link, // +5
-	os__FileType_socket, // +6
-} os__FileType;
-
 typedef enum {
 	time__FormatTime_hhmm12, // 
 	time__FormatTime_hhmm24, // +1
@@ -721,6 +692,35 @@ typedef enum {
 	time__FormatDelimiter_space, // +3
 	time__FormatDelimiter_no_delimiter, // +4
 } time__FormatDelimiter;
+
+typedef enum {
+	strconv__Char_parse_state_start, // 
+	strconv__Char_parse_state_norm_char, // +1
+	strconv__Char_parse_state_field_char, // +2
+	strconv__Char_parse_state_pad_ch, // +3
+	strconv__Char_parse_state_len_set_start, // +4
+	strconv__Char_parse_state_len_set_in, // +5
+	strconv__Char_parse_state_check_type, // +6
+	strconv__Char_parse_state_check_float, // +7
+	strconv__Char_parse_state_check_float_in, // +8
+	strconv__Char_parse_state_reset_params, // +9
+} strconv__Char_parse_state;
+
+typedef enum {
+	strconv__Align_text_right = 0, // 0
+	strconv__Align_text_left, // 0+1
+	strconv__Align_text_center, // 0+2
+} strconv__Align_text;
+
+typedef enum {
+	os__FileType_regular, // 
+	os__FileType_directory, // +1
+	os__FileType_character_device, // +2
+	os__FileType_block_device, // +3
+	os__FileType_fifo, // +4
+	os__FileType_symbolic_link, // +5
+	os__FileType_socket, // +6
+} os__FileType;
 
 typedef enum {
 	v__token__Kind_unknown, // 
@@ -3096,9 +3096,9 @@ typedef struct {
 	array_string arg1;
 } multi_return_array_string_array_string;
 
-string strings__Builder_str_no_ptr(strings__Builder it); // auto no_ptr version
 string time__FormatTime_str(time__FormatTime it); // auto
 string time__FormatDate_str(time__FormatDate it); // auto
+string strings__Builder_str_no_ptr(strings__Builder it); // auto no_ptr version
 string v__table__TypeSymbol_str_no_ptr(v__table__TypeSymbol it); // auto no_ptr version
 string v__gen__x64__Register_str(v__gen__x64__Register it); // auto
 string v__errors__Reporter_str(v__errors__Reporter it); // auto
@@ -3121,6 +3121,14 @@ struct varg_int {
 
 
 // V Option_xxx definitions:
+struct Option_time__Time {
+	bool ok;
+	bool is_none;
+	string v_error;
+	int ecode;
+	byte data[sizeof(time__Time)];
+};
+
 struct Option_int {
 	bool ok;
 	bool is_none;
@@ -3199,14 +3207,6 @@ struct Option_os__Result {
 	string v_error;
 	int ecode;
 	byte data[sizeof(os__Result)];
-};
-
-struct Option_time__Time {
-	bool ok;
-	bool is_none;
-	string v_error;
-	int ecode;
-	byte data[sizeof(time__Time)];
 };
 
 struct Option_v__pref__OS {
@@ -3425,6 +3425,109 @@ array_byte _const_math__bits__ntz_8_tab; // inited later
 array_byte _const_math__bits__pop_8_tab; // inited later
 array_byte _const_math__bits__rev_8_tab; // inited later
 array_byte _const_math__bits__len_8_tab; // inited later
+string time__Time_format(time__Time t);
+string time__Time_format_ss(time__Time t);
+string time__Time_format_ss_milli(time__Time t);
+string time__Time_format_ss_micro(time__Time t);
+string time__Time_hhmm(time__Time t);
+string time__Time_hhmmss(time__Time t);
+string time__Time_hhmm12(time__Time t);
+string time__Time_ymmdd(time__Time t);
+string time__Time_ddmmy(time__Time t);
+string time__Time_md(time__Time t);
+string time__Time_clean(time__Time t);
+string time__Time_clean12(time__Time t);
+string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time);
+string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatDate fmt_date);
+string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatTime fmt_time, time__FormatDate fmt_date);
+string time__Time_utc_string(time__Time time);
+bool time__Time_eq(time__Time t1, time__Time t2);
+bool time__Time_ne(time__Time t1, time__Time t2);
+bool time__Time_lt(time__Time t1, time__Time t2);
+bool time__Time_le(time__Time t1, time__Time t2);
+bool time__Time_gt(time__Time t1, time__Time t2);
+bool time__Time_ge(time__Time t1, time__Time t2);
+Option_time__Time time__parse(string s);
+Option_time__Time time__parse_rfc2822(string s);
+Option_time__Time time__parse_iso8601(string s);
+time__StopWatch time__new_stopwatch(time__StopWatchOptions opts);
+void time__StopWatch_start(time__StopWatch* t);
+void time__StopWatch_restart(time__StopWatch* t);
+void time__StopWatch_stop(time__StopWatch* t);
+void time__StopWatch_pause(time__StopWatch* t);
+time__Duration time__StopWatch_elapsed(time__StopWatch t);
+string _const_time__days_string; // a string literal, inited later
+array_int _const_time__month_days; // inited later
+string _const_time__months_string; // a string literal, inited later
+i64 _const_time__absolute_zero_year; // inited later
+#define _const_time__seconds_per_minute 60
+int _const_time__seconds_per_hour; // inited later
+int _const_time__seconds_per_day; // inited later
+int _const_time__seconds_per_week; // inited later
+int _const_time__days_per_400_years; // inited later
+int _const_time__days_per_100_years; // inited later
+int _const_time__days_per_4_years; // inited later
+array_int _const_time__days_before; // inited later
+array_string _const_time__long_days; // inited later
+time__Time time__now();
+time__Time time__utc();
+string time__Time_smonth(time__Time t);
+time__Time time__new_time(time__Time t);
+int time__Time_unix_time(time__Time t);
+u64 time__Time_unix_time_milli(time__Time t);
+time__Time time__Time_add_seconds(time__Time t, int seconds);
+time__Time time__Time_add_days(time__Time t, int days);
+static int time__since(time__Time t);
+string time__Time_relative(time__Time t);
+string time__Time_relative_short(time__Time t);
+int time__day_of_week(int y, int m, int d);
+int time__Time_day_of_week(time__Time t);
+string time__Time_weekday_str(time__Time t);
+string time__Time_long_weekday_str(time__Time t);
+i64 time__ticks();
+void time__sleep(int seconds);
+void time__sleep_ms(int milliseconds);
+void time__usleep(int microseconds);
+bool time__is_leap_year(int year);
+Option_int time__days_in_month(int month, int year);
+string time__Time_str(time__Time t);
+static time__Time time__convert_ctime(struct tm t, int microsecond);
+time__Duration _const_time__nanosecond; // inited later
+i64 _const_time__microsecond; // inited later
+i64 _const_time__millisecond; // inited later
+i64 _const_time__second; // inited later
+i64 _const_time__minute; // inited later
+i64 _const_time__hour; // inited later
+time__Duration _const_time__infinite; // inited later
+i64 time__Duration_nanoseconds(time__Duration d);
+i64 time__Duration_microseconds(time__Duration d);
+i64 time__Duration_milliseconds(time__Duration d);
+f64 time__Duration_seconds(time__Duration d);
+f64 time__Duration_minutes(time__Duration d);
+f64 time__Duration_hours(time__Duration d);
+u64 _const_time__start_time; // inited later
+u64 _const_time__freq_time; // inited later
+int _const_time__start_local_time; // inited later
+static int time__make_unix_time(struct tm t);
+static u64 time__init_win_time_freq();
+static u64 time__init_win_time_start();
+u64 time__sys_mono_now();
+static u64 time__vpc_now();
+static int time__local_as_unix_time();
+static time__Time time__to_local_time(time__Time t);
+static time__Time time__win_now();
+static time__Time time__win_utc();
+int time__SystemTime_unix_time(time__SystemTime st);
+time__Time time__darwin_now();
+time__Time time__linux_now();
+time__Time time__solaris_now();
+time__Time time__darwin_utc();
+time__Time time__linux_utc();
+time__Time time__solaris_utc();
+time__Time time__unix(int abs);
+time__Time time__unix2(int abs, int microsecond);
+static multi_return_int_int_int time__calculate_date_from_offset(int day_offset_);
+static multi_return_int_int_int time__calculate_time_from_offset(int second_offset_);
 static multi_return_u32_u32_u32 strconv__lsr96(u32 s2, u32 s1, u32 s0);
 static multi_return_u32_u32_u32 strconv__lsl96(u32 s2, u32 s1, u32 s0);
 static multi_return_u32_u32_u32 strconv__add96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1, u32 d0);
@@ -4124,109 +4227,6 @@ array_string os__cmdline__options_before(array_string args, array_string what);
 array_string os__cmdline__options_after(array_string args, array_string what);
 array_string os__cmdline__only_non_options(array_string args);
 array_string os__cmdline__only_options(array_string args);
-string time__Time_format(time__Time t);
-string time__Time_format_ss(time__Time t);
-string time__Time_format_ss_milli(time__Time t);
-string time__Time_format_ss_micro(time__Time t);
-string time__Time_hhmm(time__Time t);
-string time__Time_hhmmss(time__Time t);
-string time__Time_hhmm12(time__Time t);
-string time__Time_ymmdd(time__Time t);
-string time__Time_ddmmy(time__Time t);
-string time__Time_md(time__Time t);
-string time__Time_clean(time__Time t);
-string time__Time_clean12(time__Time t);
-string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time);
-string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatDate fmt_date);
-string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatTime fmt_time, time__FormatDate fmt_date);
-string time__Time_utc_string(time__Time time);
-bool time__Time_eq(time__Time t1, time__Time t2);
-bool time__Time_ne(time__Time t1, time__Time t2);
-bool time__Time_lt(time__Time t1, time__Time t2);
-bool time__Time_le(time__Time t1, time__Time t2);
-bool time__Time_gt(time__Time t1, time__Time t2);
-bool time__Time_ge(time__Time t1, time__Time t2);
-Option_time__Time time__parse(string s);
-Option_time__Time time__parse_rfc2822(string s);
-Option_time__Time time__parse_iso8601(string s);
-time__StopWatch time__new_stopwatch(time__StopWatchOptions opts);
-void time__StopWatch_start(time__StopWatch* t);
-void time__StopWatch_restart(time__StopWatch* t);
-void time__StopWatch_stop(time__StopWatch* t);
-void time__StopWatch_pause(time__StopWatch* t);
-time__Duration time__StopWatch_elapsed(time__StopWatch t);
-string _const_time__days_string; // a string literal, inited later
-array_int _const_time__month_days; // inited later
-string _const_time__months_string; // a string literal, inited later
-i64 _const_time__absolute_zero_year; // inited later
-#define _const_time__seconds_per_minute 60
-int _const_time__seconds_per_hour; // inited later
-int _const_time__seconds_per_day; // inited later
-int _const_time__seconds_per_week; // inited later
-int _const_time__days_per_400_years; // inited later
-int _const_time__days_per_100_years; // inited later
-int _const_time__days_per_4_years; // inited later
-array_int _const_time__days_before; // inited later
-array_string _const_time__long_days; // inited later
-time__Time time__now();
-time__Time time__utc();
-string time__Time_smonth(time__Time t);
-time__Time time__new_time(time__Time t);
-int time__Time_unix_time(time__Time t);
-u64 time__Time_unix_time_milli(time__Time t);
-time__Time time__Time_add_seconds(time__Time t, int seconds);
-time__Time time__Time_add_days(time__Time t, int days);
-static int time__since(time__Time t);
-string time__Time_relative(time__Time t);
-string time__Time_relative_short(time__Time t);
-int time__day_of_week(int y, int m, int d);
-int time__Time_day_of_week(time__Time t);
-string time__Time_weekday_str(time__Time t);
-string time__Time_long_weekday_str(time__Time t);
-i64 time__ticks();
-void time__sleep(int seconds);
-void time__sleep_ms(int milliseconds);
-void time__usleep(int microseconds);
-bool time__is_leap_year(int year);
-Option_int time__days_in_month(int month, int year);
-string time__Time_str(time__Time t);
-static time__Time time__convert_ctime(struct tm t, int microsecond);
-time__Duration _const_time__nanosecond; // inited later
-i64 _const_time__microsecond; // inited later
-i64 _const_time__millisecond; // inited later
-i64 _const_time__second; // inited later
-i64 _const_time__minute; // inited later
-i64 _const_time__hour; // inited later
-time__Duration _const_time__infinite; // inited later
-i64 time__Duration_nanoseconds(time__Duration d);
-i64 time__Duration_microseconds(time__Duration d);
-i64 time__Duration_milliseconds(time__Duration d);
-f64 time__Duration_seconds(time__Duration d);
-f64 time__Duration_minutes(time__Duration d);
-f64 time__Duration_hours(time__Duration d);
-u64 _const_time__start_time; // inited later
-u64 _const_time__freq_time; // inited later
-int _const_time__start_local_time; // inited later
-static int time__make_unix_time(struct tm t);
-static u64 time__init_win_time_freq();
-static u64 time__init_win_time_start();
-u64 time__sys_mono_now();
-static u64 time__vpc_now();
-static int time__local_as_unix_time();
-static time__Time time__to_local_time(time__Time t);
-static time__Time time__win_now();
-static time__Time time__win_utc();
-int time__SystemTime_unix_time(time__SystemTime st);
-time__Time time__darwin_now();
-time__Time time__linux_now();
-time__Time time__solaris_now();
-time__Time time__darwin_utc();
-time__Time time__linux_utc();
-time__Time time__solaris_utc();
-time__Time time__unix(int abs);
-time__Time time__unix2(int abs, int microsecond);
-static multi_return_int_int_int time__calculate_date_from_offset(int day_offset_);
-static multi_return_int_int_int time__calculate_time_from_offset(int second_offset_);
 string v__token__Position_str(v__token__Position pos);
 v__token__Position v__token__Position_extend(v__token__Position pos, v__token__Position end);
 v__token__Position v__token__Token_position(v__token__Token* tok);
@@ -4928,6 +4928,7 @@ static void v__gen__Gen_autofree_variable(v__gen__Gen* g, v__ast__Var v);
 static void v__gen__Gen_autofree_var_call(v__gen__Gen* g, string free_fn_name, v__ast__Var v);
 static void v__gen__Gen_gen_anon_fn_decl(v__gen__Gen* g, v__ast__AnonFn it);
 static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node);
+static void v__gen__Gen_typeof_name(v__gen__Gen* g, v__ast__TypeOf node);
 static void v__gen__Gen_typeof_expr(v__gen__Gen* g, v__ast__TypeOf node);
 static void v__gen__Gen_enum_expr(v__gen__Gen* g, v__ast__Expr node);
 static void v__gen__Gen_infix_expr(v__gen__Gen* g, v__ast__InfixExpr node);
@@ -5262,6 +5263,13 @@ static void main__invoke_help_and_exit(array_string remaining);
 
 // V option typedefs:
 typedef struct {
+			time__Time  data;
+			string error;
+			int    ecode;
+			bool   ok;
+			bool   is_none;
+		} Option2_time__Time;
+typedef struct {
 			int  data;
 			string error;
 			int    ecode;
@@ -5331,13 +5339,6 @@ typedef struct {
 			bool   ok;
 			bool   is_none;
 		} Option2_os__Result;
-typedef struct {
-			time__Time  data;
-			string error;
-			int    ecode;
-			bool   ok;
-			bool   is_none;
-		} Option2_time__Time;
 typedef struct {
 			v__pref__OS  data;
 			string error;
@@ -5450,12 +5451,12 @@ typedef struct {
 void vinit_string_literals(){
 	_const_math__bits__overflow_error = tos_lit("Overflow Error");
 	_const_math__bits__divide_error = tos_lit("Divide Error");
+	_const_time__days_string = tos_lit("MonTueWedThuFriSatSun");
+	_const_time__months_string = tos_lit("JanFebMarAprMayJunJulAugSepOctNovDec");
 	_const_new_line_character = tos_lit("\n");
 	_const_digit_pairs = tos_lit("00102030405060708090011121314151617181910212223242526272829203132333435363738393041424344454647484940515253545556575859506162636465666768696071727374757677787970818283848586878889809192939495969798999");
 	_const_os__path_separator = tos_lit("\\");
 	_const_os__path_delimiter = tos_lit(";");
-	_const_time__days_string = tos_lit("MonTueWedThuFriSatSun");
-	_const_time__months_string = tos_lit("JanFebMarAprMayJunJulAugSepOctNovDec");
 	_const_vweb__tmpl__str_start = tos_lit("sb.write(\'");
 	_const_vweb__tmpl__str_end = tos_lit("\' ) ");
 	_const_help__unknown_topic = tos_lit("V Error: Unknown help topic provided. Use `v help` for usage information.");
@@ -5476,7 +5477,6 @@ void vinit_string_literals(){
 
 
 // V auto str functions:
-string strings__Builder_str_no_ptr(strings__Builder it){ return strings__Builder_str(&it); }
 string time__FormatTime_str(time__FormatTime it) { /* gen_str_for_enum */
 	switch(it) {
 		case time__FormatTime_hhmm12: return tos_lit("hhmm12");
@@ -5503,6 +5503,7 @@ string time__FormatDate_str(time__FormatDate it) { /* gen_str_for_enum */
 		default: return tos_lit("unknown enum value");
 	}
 }
+string strings__Builder_str_no_ptr(strings__Builder it){ return strings__Builder_str(&it); }
 string v__table__TypeSymbol_str_no_ptr(v__table__TypeSymbol it){ return v__table__TypeSymbol_str(&it); }
 string v__gen__x64__Register_str(v__gen__x64__Register it) { /* gen_str_for_enum */
 	switch(it) {
@@ -6349,6 +6350,835 @@ u64 math__bits__rem_64(u64 hi, u64 lo, u64 y) {
 	multi_return_u64_u64 mr_15086 = math__bits__div_64(hi % y, lo, y);
 	u64 rem = mr_15086.arg1;
 	return rem;
+}
+
+string time__Time_format(time__Time t) {
+	return time__Time_get_fmt_str(t, time__FormatDelimiter_hyphen, time__FormatTime_hhmm24, time__FormatDate_yyyymmdd);
+}
+
+string time__Time_format_ss(time__Time t) {
+	return time__Time_get_fmt_str(t, time__FormatDelimiter_hyphen, time__FormatTime_hhmmss24, time__FormatDate_yyyymmdd);
+}
+
+string time__Time_format_ss_milli(time__Time t) {
+	return time__Time_get_fmt_str(t, time__FormatDelimiter_hyphen, time__FormatTime_hhmmss24_milli, time__FormatDate_yyyymmdd);
+}
+
+string time__Time_format_ss_micro(time__Time t) {
+	return time__Time_get_fmt_str(t, time__FormatDelimiter_hyphen, time__FormatTime_hhmmss24_micro, time__FormatDate_yyyymmdd);
+}
+
+string time__Time_hhmm(time__Time t) {
+	return time__Time_get_fmt_time_str(t, time__FormatTime_hhmm24);
+}
+
+string time__Time_hhmmss(time__Time t) {
+	return time__Time_get_fmt_time_str(t, time__FormatTime_hhmmss24);
+}
+
+string time__Time_hhmm12(time__Time t) {
+	return time__Time_get_fmt_time_str(t, time__FormatTime_hhmm12);
+}
+
+string time__Time_ymmdd(time__Time t) {
+	return time__Time_get_fmt_date_str(t, time__FormatDelimiter_hyphen, time__FormatDate_yyyymmdd);
+}
+
+string time__Time_ddmmy(time__Time t) {
+	return time__Time_get_fmt_date_str(t, time__FormatDelimiter_dot, time__FormatDate_ddmmyyyy);
+}
+
+string time__Time_md(time__Time t) {
+	return time__Time_get_fmt_date_str(t, time__FormatDelimiter_space, time__FormatDate_mmmd);
+}
+
+string time__Time_clean(time__Time t) {
+	time__Time znow = time__now();
+	if (t.month == znow.month && t.year == znow.year && t.day == znow.day) {
+		return time__Time_get_fmt_time_str(t, time__FormatTime_hhmm24);
+	}
+	if (t.year == znow.year) {
+		return time__Time_get_fmt_str(t, time__FormatDelimiter_space, time__FormatTime_hhmm24, time__FormatDate_mmmd);
+	}
+	return time__Time_format(t);
+}
+
+string time__Time_clean12(time__Time t) {
+	time__Time znow = time__now();
+	if (t.month == znow.month && t.year == znow.year && t.day == znow.day) {
+		return time__Time_get_fmt_time_str(t, time__FormatTime_hhmm12);
+	}
+	if (t.year == znow.year) {
+		return time__Time_get_fmt_str(t, time__FormatDelimiter_space, time__FormatTime_hhmm12, time__FormatDate_mmmd);
+	}
+	return time__Time_format(t);
+}
+
+string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time) {
+	if (fmt_time == time__FormatTime_no_time) {
+		return tos_lit("");
+	}
+	string tp = (t.hour > 11 ? (tos_lit("p.m.")) : (tos_lit("a.m.")));
+	int hour = (t.hour > 12 ? (t.hour - 12) : t.hour == 0 ? (12) : (t.hour));
+	return (fmt_time == time__FormatTime_hhmm12) ? (_STR("%"PRId32"\000:%02"PRId32"\000 %.*s", 3, hour, t.minute, tp)) : (fmt_time == time__FormatTime_hhmm24) ? (_STR("%02"PRId32"\000:%02"PRId32"", 2, t.hour, t.minute)) : (fmt_time == time__FormatTime_hhmmss12) ? (_STR("%"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000 %.*s", 4, hour, t.minute, t.second, tp)) : (fmt_time == time__FormatTime_hhmmss24) ? (_STR("%02"PRId32"\000:%02"PRId32"\000:%02"PRId32"", 3, t.hour, t.minute, t.second)) : (fmt_time == time__FormatTime_hhmmss24_milli) ? (_STR("%02"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000.%03"PRId32"", 4, t.hour, t.minute, t.second, (t.microsecond / 1000))) : (fmt_time == time__FormatTime_hhmmss24_micro) ? (_STR("%02"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000.%06"PRId32"", 4, t.hour, t.minute, t.second, t.microsecond)) : (_STR("unknown enumeration %.*s", 1, time__FormatTime_str(fmt_time)));
+}
+
+string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatDate fmt_date) {
+	if (fmt_date == time__FormatDate_no_date) {
+		return tos_lit("");
+	}
+	string month = _STR("%.*s", 1, time__Time_smonth(t));
+	string year = string_substr(int_str(t.year), 2, int_str(t.year).len);
+	string res = (fmt_date == time__FormatDate_ddmmyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%.*s", 3, t.day, t.month, year)) : (fmt_date == time__FormatDate_ddmmyyyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%"PRId32"", 3, t.day, t.month, t.year)) : (fmt_date == time__FormatDate_mmddyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%.*s", 3, t.month, t.day, year)) : (fmt_date == time__FormatDate_mmddyyyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%"PRId32"", 3, t.month, t.day, t.year)) : (fmt_date == time__FormatDate_mmmd) ? (_STR("%.*s\000|%"PRId32"", 2, month, t.day)) : (fmt_date == time__FormatDate_mmmdd) ? (_STR("%.*s\000|%02"PRId32"", 2, month, t.day)) : (fmt_date == time__FormatDate_mmmddyyyy) ? (_STR("%.*s\000|%02"PRId32"\000|%"PRId32"", 3, month, t.day, t.year)) : (fmt_date == time__FormatDate_yyyymmdd) ? (_STR("%"PRId32"\000|%02"PRId32"\000|%02"PRId32"", 3, t.year, t.month, t.day)) : (_STR("unknown enumeration %.*s", 1, time__FormatDate_str(fmt_date)));
+	res = string_replace(res, tos_lit("|"), (fmt_dlmtr == time__FormatDelimiter_dot) ? (tos_lit(".")) : (fmt_dlmtr == time__FormatDelimiter_hyphen) ? (tos_lit("-")) : (fmt_dlmtr == time__FormatDelimiter_slash) ? (tos_lit("/")) : (fmt_dlmtr == time__FormatDelimiter_space) ? (tos_lit(" ")) : (tos_lit("")));
+	return res;
+}
+
+string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatTime fmt_time, time__FormatDate fmt_date) {
+	if (fmt_date == time__FormatDate_no_date) {
+		if (fmt_time == time__FormatTime_no_time) {
+			return tos_lit("");
+		} else {
+			return time__Time_get_fmt_time_str(t, fmt_time);
+		}
+	} else {
+		if (fmt_time != time__FormatTime_no_time) {
+			return string_add(string_add(time__Time_get_fmt_date_str(t, fmt_dlmtr, fmt_date), tos_lit(" ")), time__Time_get_fmt_time_str(t, fmt_time));
+		} else {
+			return time__Time_get_fmt_date_str(t, fmt_dlmtr, fmt_date);
+		}
+	}
+}
+
+string time__Time_utc_string(time__Time time) {
+	string day_str = time__Time_weekday_str(time);
+	string month_str = time__Time_smonth(time);
+	string utc_string = _STR("%.*s\000, %"PRId32"\000 %.*s\000 %"PRId32"\000 %02"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000 UTC", 8, day_str, time.day, month_str, time.year, time.hour, time.minute, time.second);
+	return utc_string;
+}
+
+// Attr: [inline]
+inline bool time__Time_eq(time__Time t1, time__Time t2) {
+	if (t1.v_unix == t2.v_unix && t1.microsecond == t2.microsecond) {
+		return true;
+	}
+	return false;
+}
+
+bool time__Time_ne(time__Time t1, time__Time t2) {
+	return !time__Time_eq(t1, t2);
+}
+
+bool time__Time_lt(time__Time t1, time__Time t2) {
+	if (t1.v_unix < t2.v_unix || (t1.v_unix == t2.v_unix && t1.microsecond < t2.microsecond)) {
+		return true;
+	}
+	return false;
+}
+
+bool time__Time_le(time__Time t1, time__Time t2) {
+	return time__Time_lt(t1, t2) || time__Time_eq(t1, t2);
+}
+
+bool time__Time_gt(time__Time t1, time__Time t2) {
+	if (t1.v_unix > t2.v_unix || (t1.v_unix == t2.v_unix && t1.microsecond > t2.microsecond)) {
+		return true;
+	}
+	return false;
+}
+
+bool time__Time_ge(time__Time t1, time__Time t2) {
+	return time__Time_gt(t1, t2) || time__Time_eq(t1, t2);
+}
+
+Option_time__Time time__parse(string s) {
+	Option_int _t11 = string_index(s, tos_lit(" "));
+	if (!_t11.ok) {
+		string err = _t11.v_error;
+		int errcode = _t11.ecode;
+		Option _t12 = v_error(_STR("Invalid time format: %.*s", 1, s));
+		return *(Option_time__Time*)&_t12;
+	}
+	int pos = *(int*)_t11.data;
+	string symd = string_substr(s, 0, pos);
+	array_string ymd = string_split(symd, tos_lit("-"));
+	if (ymd.len != 3) {
+		Option _t13 = v_error(_STR("Invalid time format: %.*s", 1, s));
+		return *(Option_time__Time*)&_t13;
+	}
+	string shms = string_substr(s, pos, s.len);
+	array_string hms = string_split(shms, tos_lit(":"));
+	string hour = string_substr((*(string*)array_get(hms, 0)), 1, (*(string*)array_get(hms, 0)).len);
+	string minute = (*(string*)array_get(hms, 1));
+	string second = (*(string*)array_get(hms, 2));
+	time__Time res = time__new_time((time__Time){
+		.year = string_int((*(string*)array_get(ymd, 0))),
+		.month = string_int((*(string*)array_get(ymd, 1))),
+		.day = string_int((*(string*)array_get(ymd, 2))),
+		.hour = string_int(hour),
+		.minute = string_int(minute),
+		.second = string_int(second),
+		.microsecond = 0,
+		.v_unix = 0,
+	});
+	Option_time__Time _t14;
+	opt_ok2(&(time__Time[]) { res }, (OptionBase*)(&_t14), sizeof(time__Time));
+	return _t14;
+}
+
+Option_time__Time time__parse_rfc2822(string s) {
+	array_string fields = string_split(s, tos_lit(" "));
+	if (fields.len < 5) {
+		Option _t15 = v_error(_STR("Invalid time format: %.*s", 1, s));
+		return *(Option_time__Time*)&_t15;
+	}
+	Option_int _t16 = string_index(_const_time__months_string, (*(string*)array_get(fields, 2)));
+	if (!_t16.ok) {
+		string err = _t16.v_error;
+		int errcode = _t16.ecode;
+		Option _t17 = v_error(_STR("Invalid time format: %.*s", 1, s));
+		return *(Option_time__Time*)&_t17;
+	}
+	int pos = *(int*)_t16.data;
+	int mm = pos / 3 + 1;
+	byteptr tmstr = ((byteptr)(0));
+	{ // Unsafe block
+		tmstr = v_malloc(s.len * 2);
+	}
+	int count = snprintf(((charptr)(tmstr)), (s.len * 2), "%s-%02d-%s %s", (*(string*)array_get(fields, 3)).str, mm, (*(string*)array_get(fields, 1)).str, (*(string*)array_get(fields, 4)).str);
+	return time__parse(tos(tmstr, count));
+}
+
+Option_time__Time time__parse_iso8601(string s) {
+	int year = 0;
+	int month = 0;
+	int day = 0;
+	int hour = 0;
+	int minute = 0;
+	int second = 0;
+	int mic_second = 0;
+	rune time_char = 'a';
+	rune plus_min = 'a';
+	int offset_hour = 0;
+	int offset_min = 0;
+	int count = sscanf(((charptr)(s.str)), "%4d-%2d-%2d%c%2d:%2d:%2d.%6d%c%2d:%2d", &year, &month, &day, &time_char, &hour, &minute, &second, &mic_second, &plus_min, &offset_hour, &offset_min);
+	if (count != 11) {
+		Option _t18 = v_error(tos_lit("Invalid 8601 format"));
+		return *(Option_time__Time*)&_t18;
+	}
+	if (time_char != 'T' && time_char != ' ') {
+		Option _t19 = v_error(tos_lit("Invalid 8601 format, expected space or `T` as time separator"));
+		return *(Option_time__Time*)&_t19;
+	}
+	if (plus_min != '+' && plus_min != '-') {
+		Option _t20 = v_error(tos_lit("Invalid 8601 format, expected `+` or `-` as time separator"));
+		return *(Option_time__Time*)&_t20;
+	}
+	time__Time t = time__new_time((time__Time){
+		.year = year,
+		.month = month,
+		.day = day,
+		.hour = hour,
+		.minute = minute,
+		.second = second,
+		.microsecond = mic_second,
+		.v_unix = 0,
+	});
+	u64 unix_time = t.v_unix;
+	int unix_offset = ((int)(0));
+	if (offset_hour > 0) {
+		unix_offset += 3600 * offset_hour;
+	}
+	if (offset_min > 0) {
+		unix_offset += 60 * offset_min;
+	}
+	if (unix_offset != 0) {
+		if (plus_min == '+') {
+			unix_time -= ((u64)(unix_offset));
+		} else {
+			unix_time += ((u64)(unix_offset));
+		}
+		t = time__unix2(((int)(unix_time)), t.microsecond);
+	}
+	Option_time__Time _t21;
+	opt_ok2(&(time__Time[]) { time__to_local_time(t) }, (OptionBase*)(&_t21), sizeof(time__Time));
+	return _t21;
+}
+
+time__StopWatch time__new_stopwatch(time__StopWatchOptions opts) {
+	u64 initial = ((u64)(0));
+	if (opts.auto_start) {
+		initial = time__sys_mono_now();
+	}
+	return (time__StopWatch){.elapsed = 0,.start = initial,.end = 0,};
+}
+
+void time__StopWatch_start(time__StopWatch* t) {
+	t->start = time__sys_mono_now();
+	t->end = 0;
+}
+
+void time__StopWatch_restart(time__StopWatch* t) {
+	t->start = time__sys_mono_now();
+	t->end = 0;
+	t->elapsed = 0;
+}
+
+void time__StopWatch_stop(time__StopWatch* t) {
+	t->end = time__sys_mono_now();
+}
+
+void time__StopWatch_pause(time__StopWatch* t) {
+	if (t->start > 0) {
+		if (t->end == 0) {
+			t->elapsed += time__sys_mono_now() - t->start;
+		} else {
+			t->elapsed += t->end - t->start;
+		}
+	}
+	t->start = 0;
+}
+
+time__Duration time__StopWatch_elapsed(time__StopWatch t) {
+	if (t.start > 0) {
+		if (t.end == 0) {
+			return ((time__Duration)(time__sys_mono_now() - t.start + t.elapsed));
+		} else {
+			return ((time__Duration)(t.end - t.start + t.elapsed));
+		}
+	}
+	return ((time__Duration)(t.elapsed));
+}
+
+time__Time time__now() {
+// $if  windows {
+#ifdef _WIN32
+	return time__win_now();
+#endif
+// } windows
+	time_t t = time(0);
+	struct tm* now = localtime(&t);
+	return time__convert_ctime(*now, 0);
+}
+
+time__Time time__utc() {
+// $if  windows {
+#ifdef _WIN32
+	return time__win_utc();
+#endif
+// } windows
+	time_t t = time(0);
+	time(&t);
+	return time__unix2(((int)(t)), 0);
+}
+
+string time__Time_smonth(time__Time t) {
+	int i = t.month - 1;
+	return string_substr(_const_time__months_string, i * 3, (i + 1) * 3);
+}
+
+time__Time time__new_time(time__Time t) {
+	if (t.v_unix != 0) {
+		return t;
+	}
+	struct tm tt = (struct tm){
+		.tm_year = t.year - 1900,
+		.tm_mon = t.month - 1,
+		.tm_mday = t.day,
+		.tm_hour = t.hour,
+		.tm_min = t.minute,
+		.tm_sec = t.second,
+	};
+	u64 utime = ((u64)(time__make_unix_time(tt)));
+	return // assoc
+	(time__Time){
+		.year = t.year,
+		.month = t.month,
+		.day = t.day,
+		.hour = t.hour,
+		.minute = t.minute,
+		.second = t.second,
+		.microsecond = t.microsecond,
+		.v_unix = utime, 
+	};
+}
+
+// Attr: [inline]
+inline int time__Time_unix_time(time__Time t) {
+	return ((int)(t.v_unix));
+}
+
+// Attr: [inline]
+inline u64 time__Time_unix_time_milli(time__Time t) {
+	return t.v_unix * 1000 + ((u64)(t.microsecond / 1000));
+}
+
+time__Time time__Time_add_seconds(time__Time t, int seconds) {
+	return time__unix(((int)(t.v_unix + ((u64)(seconds)))));
+}
+
+time__Time time__Time_add_days(time__Time t, int days) {
+	return time__unix(((int)(t.v_unix + ((u64)(((i64)(days)) * 3600 * 24)))));
+}
+
+static int time__since(time__Time t) {
+	return 0;
+}
+
+string time__Time_relative(time__Time t) {
+	time__Time znow = time__now();
+	u64 secs = znow.v_unix - t.v_unix;
+	if (secs <= 30) {
+		return tos_lit("now");
+	}
+	if (secs < 60) {
+		return tos_lit("1m");
+	}
+	if (secs < 3600) {
+		u64 m = secs / 60;
+		if (m == 1) {
+			return tos_lit("1 minute ago");
+		}
+		return _STR("%"PRIu64"\000 minutes ago", 2, m);
+	}
+	if (secs < 3600 * 24) {
+		u64 h = secs / 3600;
+		if (h == 1) {
+			return tos_lit("1 hour ago");
+		}
+		return _STR("%"PRIu64"\000 hours ago", 2, h);
+	}
+	if (secs < 3600 * 24 * 5) {
+		u64 d = secs / 3600 / 24;
+		if (d == 1) {
+			return tos_lit("1 day ago");
+		}
+		return _STR("%"PRIu64"\000 days ago", 2, d);
+	}
+	if (secs > 3600 * 24 * 10000) {
+		return tos_lit("");
+	}
+	return time__Time_md(t);
+}
+
+string time__Time_relative_short(time__Time t) {
+	time__Time znow = time__now();
+	u64 secs = znow.v_unix - t.v_unix;
+	if (secs <= 30) {
+		return tos_lit("now");
+	}
+	if (secs < 60) {
+		return tos_lit("1m");
+	}
+	if (secs < 3600) {
+		return _STR("%"PRIu64"\000m", 2, secs / 60);
+	}
+	if (secs < 3600 * 24) {
+		return _STR("%"PRIu64"\000h", 2, secs / 3600);
+	}
+	if (secs < 3600 * 24 * 5) {
+		return _STR("%"PRIu64"\000d", 2, secs / 3600 / 24);
+	}
+	if (secs > 3600 * 24 * 10000) {
+		return tos_lit("");
+	}
+	return time__Time_md(t);
+}
+
+int time__day_of_week(int y, int m, int d) {
+	array_int t = new_array_from_c_array(12, 12, sizeof(int), _MOV((int[12]){
+			0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4}));
+	int sy = y;
+	if (m < 3) {
+		sy = sy - 1;
+	}
+	return (sy + sy / 4 - sy / 100 + sy / 400 + (*(int*)array_get(t, m - 1)) + d - 1) % 7 + 1;
+}
+
+int time__Time_day_of_week(time__Time t) {
+	return time__day_of_week(t.year, t.month, t.day);
+}
+
+string time__Time_weekday_str(time__Time t) {
+	int i = time__Time_day_of_week(t) - 1;
+	return string_substr(_const_time__days_string, i * 3, (i + 1) * 3);
+}
+
+string time__Time_long_weekday_str(time__Time t) {
+	int i = time__Time_day_of_week(t) - 1;
+	return (*(string*)array_get(_const_time__long_days, i));
+}
+
+i64 time__ticks() {
+// $if  windows {
+#ifdef _WIN32
+	return GetTickCount();
+#else
+	struct timeval ts = (struct timeval){.tv_sec = 0,.tv_usec = 0,};
+	gettimeofday(&ts, 0);
+	return ((i64)(ts.tv_sec * ((u64)(1000)) + (ts.tv_usec / ((u64)(1000)))));
+#endif
+// } windows
+}
+
+void time__sleep(int seconds) {
+// $if  windows {
+#ifdef _WIN32
+	Sleep(seconds * 1000);
+#else
+	sleep(seconds);
+#endif
+// } windows
+}
+
+void time__sleep_ms(int milliseconds) {
+// $if  windows {
+#ifdef _WIN32
+	Sleep(milliseconds);
+#else
+	usleep(milliseconds * 1000);
+#endif
+// } windows
+}
+
+void time__usleep(int microseconds) {
+// $if  windows {
+#ifdef _WIN32
+	int milliseconds = microseconds / 1000;
+	Sleep(milliseconds);
+#else
+	usleep(microseconds);
+#endif
+// } windows
+}
+
+bool time__is_leap_year(int year) {
+	return (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
+}
+
+Option_int time__days_in_month(int month, int year) {
+	if (month > 12 || month < 1) {
+		Option _t22 = v_error(_STR("Invalid month: %"PRId32"", 1, month));
+		return *(Option_int*)&_t22;
+	}
+	int extra = (month == 2 && time__is_leap_year(year) ? (1) : (0));
+	int res = (*(int*)array_get(_const_time__month_days, month - 1)) + extra;
+	Option_int _t23;
+	opt_ok2(&(int[]) { res }, (OptionBase*)(&_t23), sizeof(int));
+	return _t23;
+}
+
+string time__Time_str(time__Time t) {
+	return time__Time_format_ss(t);
+}
+
+static time__Time time__convert_ctime(struct tm t, int microsecond) {
+	return (time__Time){
+		.year = t.tm_year + 1900,
+		.month = t.tm_mon + 1,
+		.day = t.tm_mday,
+		.hour = t.tm_hour,
+		.minute = t.tm_min,
+		.second = t.tm_sec,
+		.microsecond = microsecond,
+		.v_unix = ((u64)(time__make_unix_time(t))),
+	};
+}
+
+// TypeDecl
+i64 time__Duration_nanoseconds(time__Duration d) {
+	return ((i64)(d));
+}
+
+i64 time__Duration_microseconds(time__Duration d) {
+	return ((i64)(d)) / 1000;
+}
+
+i64 time__Duration_milliseconds(time__Duration d) {
+	return ((i64)(d)) / 1000000;
+}
+
+f64 time__Duration_seconds(time__Duration d) {
+	i64 sec = d / _const_time__second;
+	i64 nsec = d % _const_time__second;
+	return ((f64)(sec)) + ((f64)(nsec)) / 1e9;
+}
+
+f64 time__Duration_minutes(time__Duration d) {
+	i64 min = d / _const_time__minute;
+	i64 nsec = d % _const_time__minute;
+	return ((f64)(min)) + ((f64)(nsec)) / (60 * 1e9);
+}
+
+f64 time__Duration_hours(time__Duration d) {
+	i64 hr = d / _const_time__hour;
+	i64 nsec = d % _const_time__hour;
+	return ((f64)(hr)) + ((f64)(nsec)) / (60 * 60 * 1e9);
+}
+
+static int time__make_unix_time(struct tm t) {
+	return ((int)(_mkgmtime(&t)));
+}
+
+static u64 time__init_win_time_freq() {
+	u64 f = ((u64)(0));
+	QueryPerformanceFrequency(&f);
+	return f;
+}
+
+static u64 time__init_win_time_start() {
+	u64 s = ((u64)(0));
+	QueryPerformanceCounter(&s);
+	return s;
+}
+
+u64 time__sys_mono_now() {
+	u64 tm = ((u64)(0));
+	QueryPerformanceCounter(&tm);
+	return (tm - _const_time__start_time) * 1000000000 / _const_time__freq_time;
+}
+
+// Attr: [inline]
+inline static u64 time__vpc_now() {
+	u64 tm = ((u64)(0));
+	QueryPerformanceCounter(&tm);
+	return tm;
+}
+
+static int time__local_as_unix_time() {
+	time_t t = time(0);
+	struct tm* tm = localtime(&t);
+	return time__make_unix_time(*tm);
+}
+
+static time__Time time__to_local_time(time__Time t) {
+	time__SystemTime st_utc = (time__SystemTime){
+		.year = ((u16)(t.year)),
+		.month = ((u16)(t.month)),
+		.day_of_week = 0,
+		.day = ((u16)(t.day)),
+		.hour = ((u16)(t.hour)),
+		.minute = ((u16)(t.minute)),
+		.second = ((u16)(t.second)),
+		.millisecond = 0,
+	};
+	time__SystemTime st_local = (time__SystemTime){.year = 0,.month = 0,.day_of_week = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.millisecond = 0,};
+	SystemTimeToTzSpecificLocalTime(((voidptr)(0)), &st_utc, &st_local);
+	time__Time t_local = (time__Time){
+		.year = st_local.year,
+		.month = st_local.month,
+		.day = st_local.day,
+		.hour = st_local.hour,
+		.minute = st_local.minute,
+		.second = st_local.second,
+		.microsecond = t.microsecond,
+		.v_unix = t.v_unix,
+	};
+	return t_local;
+}
+
+// Attr: [inline]
+inline static time__Time time__win_now() {
+	struct _FILETIME ft_utc = (struct _FILETIME){
+#ifndef __cplusplus
+0
+#endif
+};
+	GetSystemTimeAsFileTime(&ft_utc);
+	time__SystemTime st_utc = (time__SystemTime){.year = 0,.month = 0,.day_of_week = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.millisecond = 0,};
+	FileTimeToSystemTime(&ft_utc, &st_utc);
+	time__SystemTime st_local = (time__SystemTime){.year = 0,.month = 0,.day_of_week = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.millisecond = 0,};
+	SystemTimeToTzSpecificLocalTime(((voidptr)(0)), &st_utc, &st_local);
+	time__Time t = (time__Time){
+		.year = st_local.year,
+		.month = st_local.month,
+		.day = st_local.day,
+		.hour = st_local.hour,
+		.minute = st_local.minute,
+		.second = st_local.second,
+		.microsecond = st_local.millisecond * 1000,
+		.v_unix = ((u64)(time__SystemTime_unix_time(st_local))),
+	};
+	return t;
+}
+
+// Attr: [inline]
+inline static time__Time time__win_utc() {
+	struct _FILETIME ft_utc = (struct _FILETIME){
+#ifndef __cplusplus
+0
+#endif
+};
+	GetSystemTimeAsFileTime(&ft_utc);
+	time__SystemTime st_utc = (time__SystemTime){.year = 0,.month = 0,.day_of_week = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.millisecond = 0,};
+	FileTimeToSystemTime(&ft_utc, &st_utc);
+	time__Time t = (time__Time){
+		.year = st_utc.year,
+		.month = st_utc.month,
+		.day = st_utc.day,
+		.hour = st_utc.hour,
+		.minute = st_utc.minute,
+		.second = st_utc.second,
+		.microsecond = st_utc.millisecond * 1000,
+		.v_unix = ((u64)(time__SystemTime_unix_time(st_utc))),
+	};
+	return t;
+}
+
+int time__SystemTime_unix_time(time__SystemTime st) {
+	struct tm tt = (struct tm){
+		.tm_year = st.year - 1900,
+		.tm_mon = st.month - 1,
+		.tm_mday = st.day,
+		.tm_hour = st.hour,
+		.tm_min = st.minute,
+		.tm_sec = st.second,
+	};
+	return time__make_unix_time(tt);
+}
+
+time__Time time__darwin_now() {
+	return (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
+}
+
+time__Time time__linux_now() {
+	return (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
+}
+
+time__Time time__solaris_now() {
+	return (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
+}
+
+time__Time time__darwin_utc() {
+	return (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
+}
+
+time__Time time__linux_utc() {
+	return (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
+}
+
+time__Time time__solaris_utc() {
+	return (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
+}
+
+time__Time time__unix(int abs) {
+	int day_offset = abs / _const_time__seconds_per_day;
+	if (abs % _const_time__seconds_per_day < 0) {
+		day_offset--;
+	}
+	multi_return_int_int_int mr_470 = time__calculate_date_from_offset(day_offset);
+	int year = mr_470.arg0;
+	int month = mr_470.arg1;
+	int day = mr_470.arg2;
+	multi_return_int_int_int mr_524 = time__calculate_time_from_offset(abs % _const_time__seconds_per_day);
+	int hr = mr_524.arg0;
+	int min = mr_524.arg1;
+	int sec = mr_524.arg2;
+	return (time__Time){
+		.year = year,
+		.month = month,
+		.day = day,
+		.hour = hr,
+		.minute = min,
+		.second = sec,
+		.microsecond = 0,
+		.v_unix = ((u64)(abs)),
+	};
+}
+
+time__Time time__unix2(int abs, int microsecond) {
+	int day_offset = abs / _const_time__seconds_per_day;
+	if (abs % _const_time__seconds_per_day < 0) {
+		day_offset--;
+	}
+	multi_return_int_int_int mr_1019 = time__calculate_date_from_offset(day_offset);
+	int year = mr_1019.arg0;
+	int month = mr_1019.arg1;
+	int day = mr_1019.arg2;
+	multi_return_int_int_int mr_1073 = time__calculate_time_from_offset(abs % _const_time__seconds_per_day);
+	int hr = mr_1073.arg0;
+	int min = mr_1073.arg1;
+	int sec = mr_1073.arg2;
+	return (time__Time){
+		.year = year,
+		.month = month,
+		.day = day,
+		.hour = hr,
+		.minute = min,
+		.second = sec,
+		.microsecond = microsecond,
+		.v_unix = ((u64)(abs)),
+	};
+}
+
+// Attr: [inline]
+inline static multi_return_int_int_int time__calculate_date_from_offset(int day_offset_) {
+	int day_offset = day_offset_;
+	int year = 2001;
+	day_offset -= 31 * 365 + 8;
+	year += (day_offset / _const_time__days_per_400_years) * 400;
+	day_offset %= _const_time__days_per_400_years;
+	if (day_offset == _const_time__days_per_100_years * 4) {
+		year += 300;
+		day_offset -= _const_time__days_per_100_years * 3;
+	} else {
+		year += (day_offset / _const_time__days_per_100_years) * 100;
+		day_offset %= _const_time__days_per_100_years;
+	}
+	if (day_offset == _const_time__days_per_4_years * 25) {
+		year += 96;
+		day_offset -= _const_time__days_per_4_years * 24;
+	} else {
+		year += (day_offset / _const_time__days_per_4_years) * 4;
+		day_offset %= _const_time__days_per_4_years;
+	}
+	if (day_offset == 365 * 4) {
+		year += 3;
+		day_offset -= 365 * 3;
+	} else {
+		year += (day_offset / 365);
+		day_offset %= 365;
+	}
+	if (day_offset < 0) {
+		year--;
+		if (time__is_leap_year(year)) {
+			day_offset += 366;
+		} else {
+			day_offset += 365;
+		}
+	}
+	if (time__is_leap_year(year)) {
+		if (day_offset > 31 + 29 - 1) {
+			day_offset--;
+		} else if (day_offset == 31 + 29 - 1) {
+			return (multi_return_int_int_int){.arg0=year, .arg1=2, .arg2=29};
+		}
+	}
+	int estimated_month = day_offset / 31;
+	while (day_offset >= (*(int*)array_get(_const_time__days_before, estimated_month + 1))) {
+		estimated_month++;
+	}
+	while (day_offset < (*(int*)array_get(_const_time__days_before, estimated_month))) {
+		if (estimated_month == 0) {
+			break;
+		}
+		estimated_month--;
+	}
+	day_offset -= (*(int*)array_get(_const_time__days_before, estimated_month));
+	return (multi_return_int_int_int){.arg0=year, .arg1=estimated_month + 1, .arg2=day_offset + 1};
+}
+
+// Attr: [inline]
+inline static multi_return_int_int_int time__calculate_time_from_offset(int second_offset_) {
+	int second_offset = second_offset_;
+	if (second_offset < 0) {
+		second_offset += _const_time__seconds_per_day;
+	}
+	int hour = second_offset / _const_time__seconds_per_hour;
+	second_offset %= _const_time__seconds_per_hour;
+	int min = second_offset / _const_time__seconds_per_minute;
+	second_offset %= _const_time__seconds_per_minute;
+	return (multi_return_int_int_int){.arg0=hour, .arg1=min, .arg2=second_offset};
 }
 
 static multi_return_u32_u32_u32 strconv__lsr96(u32 s2, u32 s1, u32 s0) {
@@ -7513,8 +8343,8 @@ string strconv__f64_to_str_lnd(f64 f, int dec_digit) {
 	int exp = 0;
 	int exp_sgn = 1;
 	int dot_res_sp = -1;
-	for (int _t10 = 0; _t10 < s.len; ++_t10) {
-		byte c = s.str[_t10];
+	for (int _t26 = 0; _t26 < s.len; ++_t26) {
+		byte c = s.str[_t26];
 		if (c == '-') {
 			sgn = -1;
 			i++;
@@ -7546,8 +8376,8 @@ string strconv__f64_to_str_lnd(f64 f, int dec_digit) {
 		exp_sgn = 1;
 		i++;
 	}
-	for (int _t11 = 0; _t11 < string_substr(s, i, s.len).len; ++_t11) {
-		byte c = string_substr(s, i, s.len).str[_t11];
+	for (int _t27 = 0; _t27 < string_substr(s, i, s.len).len; ++_t27) {
+		byte c = string_substr(s, i, s.len).str[_t27];
 		exp = exp * 10 + ((int)(c - '0'));
 	}
 	array_byte res = __new_array_with_default(exp + 32, 0, sizeof(byte), &(byte[]){0});
@@ -8385,8 +9215,8 @@ string strconv__f64_to_str_l(f64 f) {
 	int i1 = 0;
 	int exp = 0;
 	int exp_sgn = 1;
-	for (int _t15 = 0; _t15 < s.len; ++_t15) {
-		byte c = s.str[_t15];
+	for (int _t31 = 0; _t31 < s.len; ++_t31) {
+		byte c = s.str[_t31];
 		if (c == '-') {
 			sgn = -1;
 			i++;
@@ -8418,8 +9248,8 @@ string strconv__f64_to_str_l(f64 f) {
 		exp_sgn = 1;
 		i++;
 	}
-	for (int _t16 = 0; _t16 < string_substr(s, i, s.len).len; ++_t16) {
-		byte c = string_substr(s, i, s.len).str[_t16];
+	for (int _t32 = 0; _t32 < string_substr(s, i, s.len).len; ++_t32) {
+		byte c = string_substr(s, i, s.len).str[_t32];
 		exp = exp * 10 + ((int)(c - '0'));
 	}
 	array_byte res = __new_array_with_default(exp + 32, 0, sizeof(byte), &(byte[]){0});
@@ -8870,9 +9700,9 @@ string array_byte_hex(array_byte b) {
 	byteptr hex = v_malloc(b.len * 2 + 1);
 	int dst_i = 0;
 	// FOR IN array
-	array _t17 = b;
-	for (int _t18 = 0; _t18 < _t17.len; ++_t18) {
-		byte i = ((byte*)_t17.data)[_t18];
+	array _t33 = b;
+	for (int _t34 = 0; _t34 < _t33.len; ++_t34) {
+		byte i = ((byte*)_t33.data)[_t34];
 		byte n0 = i >> 4;
 		{ // Unsafe block
 			hex[dst_i++] = (n0 < 10 ? (n0 + '0') : (n0 + ((byte)(87))));
@@ -8992,9 +9822,9 @@ int array_char_index(array_char a, char v) {
 int array_int_reduce(array_int a, int (*iter)(int accum, int curr), int accum_start) {
 	int accum_ = accum_start;
 	// FOR IN array
-	array _t19 = a;
-	for (int _t20 = 0; _t20 < _t19.len; ++_t20) {
-		int i = ((int*)_t19.data)[_t20];
+	array _t35 = a;
+	for (int _t36 = 0; _t36 < _t35.len; ++_t36) {
+		int i = ((int*)_t35.data)[_t36];
 		accum_ = iter(accum_, i);
 	}
 	return accum_;
@@ -9821,9 +10651,9 @@ string byte_str(byte b) {
 
 bool array_byte_contains(array_byte a, byte val) {
 	// FOR IN array
-	array _t23 = a;
-	for (int _t24 = 0; _t24 < _t23.len; ++_t24) {
-		byte aa = ((byte*)_t23.data)[_t24];
+	array _t39 = a;
+	for (int _t40 = 0; _t40 < _t39.len; ++_t40) {
+		byte aa = ((byte*)_t39.data)[_t40];
 		if (aa == val) {
 			return true;
 		}
@@ -9833,9 +10663,9 @@ bool array_byte_contains(array_byte a, byte val) {
 
 static bool array_int_contains(array_int ar, int val) {
 	// FOR IN array
-	array _t25 = ar;
-	for (int _t26 = 0; _t26 < _t25.len; ++_t26) {
-		int s = ((int*)_t25.data)[_t26];
+	array _t41 = ar;
+	for (int _t42 = 0; _t42 < _t41.len; ++_t42) {
+		int s = ((int*)_t41.data)[_t42];
 		if (s == val) {
 			return true;
 		}
@@ -9845,9 +10675,9 @@ static bool array_int_contains(array_int ar, int val) {
 
 bool array_u64_contains(array_u64 a, u64 val) {
 	// FOR IN array
-	array _t27 = a;
-	for (int _t28 = 0; _t28 < _t27.len; ++_t28) {
-		u64 aa = ((u64*)_t27.data)[_t28];
+	array _t43 = a;
+	for (int _t44 = 0; _t44 < _t43.len; ++_t44) {
+		u64 aa = ((u64*)_t43.data)[_t44];
 		if (aa == val) {
 			return true;
 		}
@@ -10810,13 +11640,13 @@ string cstring_to_vstring(byteptr cstr) {
 }
 
 string string_replace_once(string s, string rep, string with) {
-	Option_int _t30 = string_index(s, rep);
-	if (!_t30.ok) {
-		string err = _t30.v_error;
-		int errcode = _t30.ecode;
+	Option_int _t46 = string_index(s, rep);
+	if (!_t46.ok) {
+		string err = _t46.v_error;
+		int errcode = _t46.ecode;
 		return string_clone(s);
 	}
-	int index = *(int*)_t30.data;
+	int index = *(int*)_t46.data;
 	return string_add(string_add(string_substr(s, 0, index), with), string_substr(s, index + rep.len, s.len));
 }
 
@@ -11052,8 +11882,8 @@ array_string string_split_nth(string s, string delim, int nth) {
 	int i = 0;
 	if (delim.len == 0) {
 		i = 1;
-		for (int _t33 = 0; _t33 < s.len; ++_t33) {
-			byte ch = s.str[_t33];
+		for (int _t49 = 0; _t49 < s.len; ++_t49) {
+			byte ch = s.str[_t49];
 			if (nth > 0 && i >= nth) {
 				array_push(&res, _MOV((string[]){ string_substr(s, i, s.len) }));
 				break;
@@ -11183,8 +12013,8 @@ int string_index_old(string s, string p) {
 
 Option_int string_index(string s, string p) {
 	if (p.len > s.len || p.len == 0) {
-		Option _t40 = opt_none();
-		return *(Option_int*)&_t40;
+		Option _t56 = opt_none();
+		return *(Option_int*)&_t56;
 	}
 	int i = 0;
 	while (i < s.len) {
@@ -11193,14 +12023,14 @@ Option_int string_index(string s, string p) {
 			j++;
 		}
 		if (j == p.len) {
-			Option_int _t41;
-			opt_ok2(&(int[]) { i }, (OptionBase*)(&_t41), sizeof(int));
-			return _t41;
+			Option_int _t57;
+			opt_ok2(&(int[]) { i }, (OptionBase*)(&_t57), sizeof(int));
+			return _t57;
 		}
 		i++;
 	}
-	Option _t42 = opt_none();
-	return *(Option_int*)&_t42;
+	Option _t58 = opt_none();
+	return *(Option_int*)&_t58;
 }
 
 static int string_index_kmp(string s, string p) {
@@ -11234,15 +12064,15 @@ static int string_index_kmp(string s, string p) {
 }
 
 int string_index_any(string s, string chars) {
-	for (int _t43 = 0; _t43 < chars.len; ++_t43) {
-		byte c = chars.str[_t43];
-		Option_int _t44 = string_index(s, byte_str(c));
-		if (!_t44.ok) {
-			string err = _t44.v_error;
-			int errcode = _t44.ecode;
+	for (int _t59 = 0; _t59 < chars.len; ++_t59) {
+		byte c = chars.str[_t59];
+		Option_int _t60 = string_index(s, byte_str(c));
+		if (!_t60.ok) {
+			string err = _t60.v_error;
+			int errcode = _t60.ecode;
 			continue;
 		}
-		int index = *(int*)_t44.data;
+		int index = *(int*)_t60.data;
 		return index;
 	}
 	return -1;
@@ -11250,8 +12080,8 @@ int string_index_any(string s, string chars) {
 
 Option_int string_last_index(string s, string p) {
 	if (p.len > s.len || p.len == 0) {
-		Option _t45 = opt_none();
-		return *(Option_int*)&_t45;
+		Option _t61 = opt_none();
+		return *(Option_int*)&_t61;
 	}
 	int i = s.len - p.len;
 	while (i >= 0) {
@@ -11260,14 +12090,14 @@ Option_int string_last_index(string s, string p) {
 			j++;
 		}
 		if (j == p.len) {
-			Option_int _t46;
-			opt_ok2(&(int[]) { i }, (OptionBase*)(&_t46), sizeof(int));
-			return _t46;
+			Option_int _t62;
+			opt_ok2(&(int[]) { i }, (OptionBase*)(&_t62), sizeof(int));
+			return _t62;
 		}
 		i--;
 	}
-	Option _t47 = opt_none();
-	return *(Option_int*)&_t47;
+	Option _t63 = opt_none();
+	return *(Option_int*)&_t63;
 }
 
 int string_index_after(string s, string p, int start) {
@@ -11339,18 +12169,18 @@ bool string_contains(string s, string substr) {
 	if (substr.len == 0) {
 		return true;
 	}
-	Option_int _t48 = string_index(s, substr);
-	if (!_t48.ok) {
-		string err = _t48.v_error;
-		int errcode = _t48.ecode;
+	Option_int _t64 = string_index(s, substr);
+	if (!_t64.ok) {
+		string err = _t64.v_error;
+		int errcode = _t64.ecode;
 		return false;
 	};
 	return true;
 }
 
 bool string_contains_any(string s, string chars) {
-	for (int _t49 = 0; _t49 < chars.len; ++_t49) {
-		byte c = chars.str[_t49];
+	for (int _t65 = 0; _t65 < chars.len; ++_t65) {
+		byte c = chars.str[_t65];
 		if (string_contains(s, byte_str(c))) {
 			return true;
 		}
@@ -11363,9 +12193,9 @@ bool string_contains_any_substr(string s, array_string substrs) {
 		return true;
 	}
 	// FOR IN array
-	array _t50 = substrs;
-	for (int _t51 = 0; _t51 < _t50.len; ++_t51) {
-		string sub = ((string*)_t50.data)[_t51];
+	array _t66 = substrs;
+	for (int _t67 = 0; _t67 < _t66.len; ++_t67) {
+		string sub = ((string*)_t66.data)[_t67];
 		if (string_contains(s, sub)) {
 			return true;
 		}
@@ -11458,9 +12288,9 @@ string string_title(string s) {
 	array_string words = string_split(s, tos_lit(" "));
 	array_string tit = __new_array_with_default(0, 0, sizeof(string), 0);
 	// FOR IN array
-	array _t52 = words;
-	for (int _t53 = 0; _t53 < _t52.len; ++_t53) {
-		string word = ((string*)_t52.data)[_t53];
+	array _t68 = words;
+	for (int _t69 = 0; _t69 < _t68.len; ++_t69) {
+		string word = ((string*)_t68.data)[_t69];
 		array_push(&tit, _MOV((string[]){ string_capitalize(word) }));
 	}
 	string title = array_string_join(tit, tos_lit(" "));
@@ -11470,9 +12300,9 @@ string string_title(string s) {
 bool string_is_title(string s) {
 	array_string words = string_split(s, tos_lit(" "));
 	// FOR IN array
-	array _t55 = words;
-	for (int _t56 = 0; _t56 < _t55.len; ++_t56) {
-		string word = ((string*)_t55.data)[_t56];
+	array _t71 = words;
+	for (int _t72 = 0; _t72 < _t71.len; ++_t72) {
+		string word = ((string*)_t71.data)[_t72];
 		if (!string_is_capital(word)) {
 			return false;
 		}
@@ -11481,29 +12311,29 @@ bool string_is_title(string s) {
 }
 
 string string_find_between(string s, string start, string end) {
-	Option_int _t57 = string_index(s, start);
-	if (!_t57.ok) {
-		string err = _t57.v_error;
-		int errcode = _t57.ecode;
+	Option_int _t73 = string_index(s, start);
+	if (!_t73.ok) {
+		string err = _t73.v_error;
+		int errcode = _t73.ecode;
 		return tos_lit("");
 	}
-	int start_pos = *(int*)_t57.data;
+	int start_pos = *(int*)_t73.data;
 	string val = string_right(s, start_pos + start.len);
-	Option_int _t58 = string_index(val, end);
-	if (!_t58.ok) {
-		string err = _t58.v_error;
-		int errcode = _t58.ecode;
+	Option_int _t74 = string_index(val, end);
+	if (!_t74.ok) {
+		string err = _t74.v_error;
+		int errcode = _t74.ecode;
 		return val;
 	}
-	int end_pos = *(int*)_t58.data;
+	int end_pos = *(int*)_t74.data;
 	return string_left(val, end_pos);
 }
 
 static bool array_string_contains(array_string ar, string val) {
 	// FOR IN array
-	array _t59 = ar;
-	for (int _t60 = 0; _t60 < _t59.len; ++_t60) {
-		string s = ((string*)_t59.data)[_t60];
+	array _t75 = ar;
+	for (int _t76 = 0; _t76 < _t75.len; ++_t76) {
+		string s = ((string*)_t75.data)[_t76];
 		if (string_eq(s, val)) {
 			return true;
 		}
@@ -11851,46 +12681,46 @@ void string_free(string* s) {
 }
 
 string string_all_before(string s, string dot) {
-	Option_int _t64 = string_index(s, dot);
-	if (!_t64.ok) {
-		string err = _t64.v_error;
-		int errcode = _t64.ecode;
+	Option_int _t80 = string_index(s, dot);
+	if (!_t80.ok) {
+		string err = _t80.v_error;
+		int errcode = _t80.ecode;
 		return s;
 	}
-	int pos = *(int*)_t64.data;
+	int pos = *(int*)_t80.data;
 	return string_left(s, pos);
 }
 
 string string_all_before_last(string s, string dot) {
-	Option_int _t65 = string_last_index(s, dot);
-	if (!_t65.ok) {
-		string err = _t65.v_error;
-		int errcode = _t65.ecode;
+	Option_int _t81 = string_last_index(s, dot);
+	if (!_t81.ok) {
+		string err = _t81.v_error;
+		int errcode = _t81.ecode;
 		return s;
 	}
-	int pos = *(int*)_t65.data;
+	int pos = *(int*)_t81.data;
 	return string_left(s, pos);
 }
 
 string string_all_after(string s, string dot) {
-	Option_int _t66 = string_index(s, dot);
-	if (!_t66.ok) {
-		string err = _t66.v_error;
-		int errcode = _t66.ecode;
+	Option_int _t82 = string_index(s, dot);
+	if (!_t82.ok) {
+		string err = _t82.v_error;
+		int errcode = _t82.ecode;
 		return s;
 	}
-	int pos = *(int*)_t66.data;
+	int pos = *(int*)_t82.data;
 	return string_right(s, pos + dot.len);
 }
 
 string string_all_after_last(string s, string dot) {
-	Option_int _t67 = string_last_index(s, dot);
-	if (!_t67.ok) {
-		string err = _t67.v_error;
-		int errcode = _t67.ecode;
+	Option_int _t83 = string_last_index(s, dot);
+	if (!_t83.ok) {
+		string err = _t83.v_error;
+		int errcode = _t83.ecode;
 		return s;
 	}
-	int pos = *(int*)_t67.data;
+	int pos = *(int*)_t83.data;
 	return string_right(s, pos + dot.len);
 }
 
@@ -11919,9 +12749,9 @@ string array_string_join(array_string a, string del) {
 	}
 	int len = 0;
 	// FOR IN array
-	array _t68 = a;
-	for (int _t69 = 0; _t69 < _t68.len; ++_t69) {
-		string val = ((string*)_t68.data)[_t69];
+	array _t84 = a;
+	for (int _t85 = 0; _t85 < _t84.len; ++_t85) {
+		string val = ((string*)_t84.data)[_t85];
 		len += val.len + del.len;
 	}
 	len -= del.len;
@@ -11930,9 +12760,9 @@ string array_string_join(array_string a, string del) {
 	res.str = v_malloc(res.len + 1);
 	int idx = 0;
 	// FOR IN array
-	array _t70 = a;
-	for (int i = 0; i < _t70.len; ++i) {
-		string val = ((string*)_t70.data)[i];
+	array _t86 = a;
+	for (int i = 0; i < _t86.len; ++i) {
+		string val = ((string*)_t86.data)[i];
 		for (int j = 0; j < val.len; ++j) {
 			{ // Unsafe block
 				res.str[idx] = val.str[j];
@@ -11988,8 +12818,8 @@ bool byte_is_white(byte c) {
 int string_hash(string s) {
 	u32 h = ((u32)(0));
 	if (h == 0 && s.len > 0) {
-		for (int _t71 = 0; _t71 < s.len; ++_t71) {
-			byte c = s.str[_t71];
+		for (int _t87 = 0; _t87 < s.len; ++_t87) {
+			byte c = s.str[_t87];
 			h = h * 31 + ((u32)(c));
 		}
 	}
@@ -12450,29 +13280,29 @@ os__FileMode os__inode(string path) {
 }
 
 Option_array_byte os__read_bytes(string path) {
-	Option_FILE_ptr _t72 = os__vfopen(path, tos_lit("rb"));
-	if (!_t72.ok) {
-		return *(Option_array_byte *)&_t72;
+	Option_FILE_ptr _t88 = os__vfopen(path, tos_lit("rb"));
+	if (!_t88.ok) {
+		return *(Option_array_byte *)&_t88;
 	}
-	FILE* fp = *(FILE**)_t72.data;
+	FILE* fp = *(FILE**)_t88.data;
 	fseek(fp, 0, SEEK_END);
 	int fsize = ftell(fp);
 	rewind(fp);
 	array_byte res = array_repeat(new_array_from_c_array(1, 1, sizeof(byte), _MOV((byte[1]){((byte)('0'))})), fsize);
 	int nr_read_elements = fread(res.data, fsize, 1, fp);
 	fclose(fp);
-	Option_array_byte _t73;
-	opt_ok2(&(array_byte[]) { array_slice(res, 0, nr_read_elements * fsize) }, (OptionBase*)(&_t73), sizeof(array_byte));
-	return _t73;
+	Option_array_byte _t89;
+	opt_ok2(&(array_byte[]) { array_slice(res, 0, nr_read_elements * fsize) }, (OptionBase*)(&_t89), sizeof(array_byte));
+	return _t89;
 }
 
 Option_string os__read_file(string path) {
 	string mode = tos_lit("rb");
-	Option_FILE_ptr _t74 = os__vfopen(path, mode);
-	if (!_t74.ok) {
-		return *(Option_string *)&_t74;
+	Option_FILE_ptr _t90 = os__vfopen(path, mode);
+	if (!_t90.ok) {
+		return *(Option_string *)&_t90;
 	}
-	FILE* fp = *(FILE**)_t74.data;
+	FILE* fp = *(FILE**)_t90.data;
 	fseek(fp, 0, SEEK_END);
 	int fsize = ftell(fp);
 	rewind(fp);
@@ -12483,15 +13313,15 @@ Option_string os__read_file(string path) {
 		// Defer begin
 		fclose(fp);
 		// Defer end
-		Option_string _t75;
-		opt_ok2(&(string[]) { byteptr_vstring_with_len(str, fsize) }, (OptionBase*)(&_t75), sizeof(string));
-		return _t75;
+		Option_string _t91;
+		opt_ok2(&(string[]) { byteptr_vstring_with_len(str, fsize) }, (OptionBase*)(&_t91), sizeof(string));
+		return _t91;
 	}
 	// Defer begin
 	fclose(fp);
 	// Defer end
-	Option _t76 = opt_none();
-	return *(Option_string*)&_t76;
+	Option _t92 = opt_none();
+	return *(Option_string*)&_t92;
 }
 
 int os__file_size(string path) {
@@ -12531,20 +13361,20 @@ Option_void os__cp(string src, string dst) {
 	string w_dst = string_replace(dst, tos_lit("/"), tos_lit("\\"));
 	if (CopyFile(string_to_wide(w_src), string_to_wide(w_dst), false) == 0) {
 		u32 result = GetLastError();
-		Option _t77 = error_with_code(_STR("failed to copy %.*s\000 to %.*s", 2, src, dst), ((int)(result)));
-		return *(Option_void*)&_t77;
+		Option _t93 = error_with_code(_STR("failed to copy %.*s\000 to %.*s", 2, src, dst), ((int)(result)));
+		return *(Option_void*)&_t93;
 	}
 #else
 	int fp_from = open(((charptr)(src.str)), O_RDONLY);
 	if (fp_from < 0) {
-		Option _t78 = error_with_code(_STR("cp: failed to open %.*s", 1, src), ((int)(fp_from)));
-		return *(Option_void*)&_t78;
+		Option _t94 = error_with_code(_STR("cp: failed to open %.*s", 1, src), ((int)(fp_from)));
+		return *(Option_void*)&_t94;
 	}
 	int fp_to = open(((charptr)(dst.str)), ((O_WRONLY | O_CREAT) | O_TRUNC), (S_IWUSR | S_IRUSR));
 	if (fp_to < 0) {
 		close(fp_from);
-		Option _t79 = error_with_code(_STR("cp (permission): failed to write to %.*s\000 (fp_to: %"PRId32"\000)", 3, dst, fp_to), ((int)(fp_to)));
-		return *(Option_void*)&_t79;
+		Option _t95 = error_with_code(_STR("cp (permission): failed to write to %.*s\000 (fp_to: %"PRId32"\000)", 3, dst, fp_to), ((int)(fp_to)));
+		return *(Option_void*)&_t95;
 	}
 	array_fixed_byte_1024 buf = {0};
 	int count = 0;
@@ -12554,8 +13384,8 @@ Option_void os__cp(string src, string dst) {
 			break;
 		}
 		if (write(fp_to, buf, count) < 0) {
-			Option _t80 = error_with_code(_STR("cp: failed to write to %.*s", 1, dst), ((int)(-1)));
-			return *(Option_void*)&_t80;
+			Option _t96 = error_with_code(_STR("cp: failed to write to %.*s", 1, dst), ((int)(-1)));
+			return *(Option_void*)&_t96;
 		}
 	}
 	struct stat from_attr;
@@ -12563,15 +13393,15 @@ Option_void os__cp(string src, string dst) {
 		stat(((charptr)(src.str)), &from_attr);
 	}
 	if (chmod(((charptr)(dst.str)), from_attr.st_mode) < 0) {
-		Option _t81 = error_with_code(_STR("failed to set permissions for %.*s", 1, dst), ((int)(-1)));
-		return *(Option_void*)&_t81;
+		Option _t97 = error_with_code(_STR("failed to set permissions for %.*s", 1, dst), ((int)(-1)));
+		return *(Option_void*)&_t97;
 	}
 	close(fp_to);
 	close(fp_from);
 #endif
 // } windows
-	Option_void _t82 = {.ok = true};
-	return _t82;
+	Option_void _t98 = {.ok = true};
+	return _t98;
 }
 
 // Attr: [deprecated]
@@ -12584,8 +13414,8 @@ Option_void os__cp_all(string src, string dst, bool overwrite) {
 	string source_path = os__real_path(src);
 	string dest_path = os__real_path(dst);
 	if (!os__exists(source_path)) {
-		Option _t83 = v_error(tos_lit("Source path doesn\'t exist"));
-		return *(Option_void*)&_t83;
+		Option _t99 = v_error(tos_lit("Source path doesn\'t exist"));
+		return *(Option_void*)&_t99;
 	}
 	if (!os__is_dir(source_path)) {
 		string adjusted_path = (os__is_dir(dest_path) ? (os__join_path(dest_path, (varg_string){.len=1,.args={os__file_name(source_path)}})) : (dest_path));
@@ -12593,62 +13423,62 @@ Option_void os__cp_all(string src, string dst, bool overwrite) {
 			if (overwrite) {
 				os__rm(adjusted_path);
 			} else {
-				Option _t84 = v_error(tos_lit("Destination file path already exist"));
-				return *(Option_void*)&_t84;
+				Option _t100 = v_error(tos_lit("Destination file path already exist"));
+				return *(Option_void*)&_t100;
 			}
 		}
-		Option_void _t85 = os__cp(source_path, adjusted_path);
-		if (!_t85.ok && !_t85.is_none) {
-			return *(Option_void *)&_t85;
+		Option_void _t101 = os__cp(source_path, adjusted_path);
+		if (!_t101.ok && !_t101.is_none) {
+			return *(Option_void *)&_t101;
 		};
-		Option_void _t86 = {.ok = true};
-		return _t86;
+		Option_void _t102 = {.ok = true};
+		return _t102;
 	}
 	if (!os__is_dir(dest_path)) {
-		Option _t87 = v_error(tos_lit("Destination path is not a valid directory"));
-		return *(Option_void*)&_t87;
+		Option _t103 = v_error(tos_lit("Destination path is not a valid directory"));
+		return *(Option_void*)&_t103;
 	}
-	Option_array_string _t88 = os__ls(source_path);
-	if (!_t88.ok) {
-		return *(Option_void *)&_t88;
+	Option_array_string _t104 = os__ls(source_path);
+	if (!_t104.ok) {
+		return *(Option_void *)&_t104;
 	}
-	array_string files = *(array_string*)_t88.data;
+	array_string files = *(array_string*)_t104.data;
 	// FOR IN array
-	array _t89 = files;
-	for (int _t90 = 0; _t90 < _t89.len; ++_t90) {
-		string file = ((string*)_t89.data)[_t90];
+	array _t105 = files;
+	for (int _t106 = 0; _t106 < _t105.len; ++_t106) {
+		string file = ((string*)_t105.data)[_t106];
 		string sp = os__join_path(source_path, (varg_string){.len=1,.args={file}});
 		string dp = os__join_path(dest_path, (varg_string){.len=1,.args={file}});
 		if (os__is_dir(sp)) {
-			Option_bool _t91 = os__mkdir(dp);
-			if (!_t91.ok) {
-				return *(Option_void *)&_t91;
+			Option_bool _t107 = os__mkdir(dp);
+			if (!_t107.ok) {
+				return *(Option_void *)&_t107;
 			};
 		}
-		Option_void _t92 = os__cp_all(sp, dp, overwrite);
-		if (!_t92.ok && !_t92.is_none) {
-			string err = _t92.v_error;
-			int errcode = _t92.ecode;
+		Option_void _t108 = os__cp_all(sp, dp, overwrite);
+		if (!_t108.ok && !_t108.is_none) {
+			string err = _t108.v_error;
+			int errcode = _t108.ecode;
 			os__rmdir(dp);
-			Option _t93 = v_error(err);
-			return *(Option_void*)&_t93;
+			Option _t109 = v_error(err);
+			return *(Option_void*)&_t109;
 		};
 	}
-	Option_void _t94 = {.ok = true};
-	return _t94;
+	Option_void _t110 = {.ok = true};
+	return _t110;
 }
 
 Option_void os__mv_by_cp(string source, string target) {
-	Option_void _t95 = os__cp(source, target);
-	if (!_t95.ok && !_t95.is_none) {
-		return *(Option_void *)&_t95;
+	Option_void _t111 = os__cp(source, target);
+	if (!_t111.ok && !_t111.is_none) {
+		return *(Option_void *)&_t111;
 	};
-	Option_void _t96 = os__rm(source);
-	if (!_t96.ok && !_t96.is_none) {
-		return *(Option_void *)&_t96;
+	Option_void _t112 = os__rm(source);
+	if (!_t112.ok && !_t112.is_none) {
+		return *(Option_void *)&_t112;
 	};
-	Option_void _t97 = {.ok = true};
-	return _t97;
+	Option_void _t113 = {.ok = true};
+	return _t113;
 }
 
 Option_FILE_ptr os__vfopen(string path, string mode) {
@@ -12661,15 +13491,15 @@ Option_FILE_ptr os__vfopen(string path, string mode) {
 #endif
 // } windows
 	if (isnil(fp)) {
-		Option _t98 = v_error(_STR("failed to open file \"%.*s\000\"", 2, path));
-		return *(Option_FILE_ptr*)&_t98;
+		Option _t114 = v_error(_STR("failed to open file \"%.*s\000\"", 2, path));
+		return *(Option_FILE_ptr*)&_t114;
 	} else {
-		Option_FILE_ptr _t99;
-		opt_ok2(&(FILE*[]) { fp }, (OptionBase*)(&_t99), sizeof(FILE*));
-		return _t99;
+		Option_FILE_ptr _t115;
+		opt_ok2(&(FILE*[]) { fp }, (OptionBase*)(&_t115), sizeof(FILE*));
+		return _t115;
 	}
-	Option _t100 = opt_none();
-	return *(Option_FILE_ptr*)&_t100;
+	Option _t116 = opt_none();
+	return *(Option_FILE_ptr*)&_t116;
 }
 
 int os__fileno(voidptr cfile) {
@@ -12685,32 +13515,32 @@ int os__fileno(voidptr cfile) {
 }
 
 Option_array_string os__read_lines(string path) {
-	Option_string _t101 = os__read_file(path);
-	if (!_t101.ok) {
-		return *(Option_array_string *)&_t101;
+	Option_string _t117 = os__read_file(path);
+	if (!_t117.ok) {
+		return *(Option_array_string *)&_t117;
 	}
-	string buf = *(string*)_t101.data;
-	Option_array_string _t102;
-	opt_ok2(&(array_string[]) { string_split_into_lines(buf) }, (OptionBase*)(&_t102), sizeof(array_string));
-	return _t102;
+	string buf = *(string*)_t117.data;
+	Option_array_string _t118;
+	opt_ok2(&(array_string[]) { string_split_into_lines(buf) }, (OptionBase*)(&_t118), sizeof(array_string));
+	return _t118;
 }
 
 static Option_array_ustring os__read_ulines(string path) {
-	Option_array_string _t103 = os__read_lines(path);
-	if (!_t103.ok) {
-		return *(Option_array_ustring *)&_t103;
+	Option_array_string _t119 = os__read_lines(path);
+	if (!_t119.ok) {
+		return *(Option_array_ustring *)&_t119;
 	}
-	array_string lines = *(array_string*)_t103.data;
+	array_string lines = *(array_string*)_t119.data;
 	array_ustring ulines = __new_array_with_default(0, 0, sizeof(ustring), 0);
 	// FOR IN array
-	array _t104 = lines;
-	for (int _t105 = 0; _t105 < _t104.len; ++_t105) {
-		string myline = ((string*)_t104.data)[_t105];
+	array _t120 = lines;
+	for (int _t121 = 0; _t121 < _t120.len; ++_t121) {
+		string myline = ((string*)_t120.data)[_t121];
 		array_push(&ulines, _MOV((ustring[]){ string_ustring(myline) }));
 	}
-	Option_array_ustring _t107;
-	opt_ok2(&(array_ustring[]) { ulines }, (OptionBase*)(&_t107), sizeof(array_ustring));
-	return _t107;
+	Option_array_ustring _t123;
+	opt_ok2(&(array_ustring[]) { ulines }, (OptionBase*)(&_t123), sizeof(array_ustring));
+	return _t123;
 }
 
 Option_os__File os__open_append(string path) {
@@ -12726,19 +13556,19 @@ Option_os__File os__open_append(string path) {
 #endif
 // } windows
 	if (isnil(file.cfile)) {
-		Option _t108 = v_error(_STR("failed to create(append) file \"%.*s\000\"", 2, path));
-		return *(Option_os__File*)&_t108;
+		Option _t124 = v_error(_STR("failed to create(append) file \"%.*s\000\"", 2, path));
+		return *(Option_os__File*)&_t124;
 	}
 	file.is_opened = true;
-	Option_os__File _t109;
-	opt_ok2(&(os__File[]) { file }, (OptionBase*)(&_t109), sizeof(os__File));
-	return _t109;
+	Option_os__File _t125;
+	opt_ok2(&(os__File[]) { file }, (OptionBase*)(&_t125), sizeof(os__File));
+	return _t125;
 }
 
 Option_os__File os__open_file(string path, string mode, varg_int options) {
 	int flags = 0;
-	for (int _t110 = 0; _t110 < mode.len; ++_t110) {
-		byte m = mode.str[_t110];
+	for (int _t126 = 0; _t126 < mode.len; ++_t126) {
+		byte m = mode.str[_t126];
 		if (m == 'r') {
 			flags |= _const_os__o_rdonly;
 		} else if (m == 'w') {
@@ -12777,17 +13607,17 @@ Option_os__File os__open_file(string path, string mode, varg_int options) {
 // } windows
 	int fd = open(((charptr)(p.str)), flags, permission);
 	if (fd == -1) {
-		Option _t112 = v_error(os__posix_get_error_msg(errno));
-		return *(Option_os__File*)&_t112;
+		Option _t128 = v_error(os__posix_get_error_msg(errno));
+		return *(Option_os__File*)&_t128;
 	}
 	voidptr cfile = fdopen(fd, ((charptr)(mode.str)));
 	if (isnil(cfile)) {
-		Option _t113 = v_error(_STR("Failed to open or create file \"%.*s\000\"", 2, path));
-		return *(Option_os__File*)&_t113;
+		Option _t129 = v_error(_STR("Failed to open or create file \"%.*s\000\"", 2, path));
+		return *(Option_os__File*)&_t129;
 	}
-	Option_os__File _t114;
-	opt_ok2(&(os__File[]) { (os__File){.cfile = cfile,.fd = fd,.is_opened = true,} }, (OptionBase*)(&_t114), sizeof(os__File));
-	return _t114;
+	Option_os__File _t130;
+	opt_ok2(&(os__File[]) { (os__File){.cfile = cfile,.fd = fd,.is_opened = true,} }, (OptionBase*)(&_t130), sizeof(os__File));
+	return _t130;
 }
 
 static voidptr os__vpopen(string path) {
@@ -12959,19 +13789,19 @@ Option_void os__rm(string path) {
 #ifdef _WIN32
 	int rc = _wremove(string_to_wide(path));
 	if (rc == -1) {
-		Option _t116 = v_error(_STR("Failed to remove \"%.*s\000\"", 2, path));
-		return *(Option_void*)&_t116;
+		Option _t132 = v_error(_STR("Failed to remove \"%.*s\000\"", 2, path));
+		return *(Option_void*)&_t132;
 	}
 #else
 	int rc = remove(((charptr)(path.str)));
 	if (rc == -1) {
-		Option _t117 = v_error(os__posix_get_error_msg(errno));
-		return *(Option_void*)&_t117;
+		Option _t133 = v_error(os__posix_get_error_msg(errno));
+		return *(Option_void*)&_t133;
 	}
 #endif
 // } windows
-	Option_void _t118 = {.ok = true};
-	return _t118;
+	Option_void _t134 = {.ok = true};
+	return _t134;
 }
 
 Option_void os__rmdir(string path) {
@@ -12979,19 +13809,19 @@ Option_void os__rmdir(string path) {
 #ifdef _WIN32
 	int rc = RemoveDirectory(string_to_wide(path));
 	if (rc == 0) {
-		Option _t119 = v_error(_STR("Failed to remove \"%.*s\000\"", 2, path));
-		return *(Option_void*)&_t119;
+		Option _t135 = v_error(_STR("Failed to remove \"%.*s\000\"", 2, path));
+		return *(Option_void*)&_t135;
 	}
 #else
 	int rc = rmdir(((charptr)(path.str)));
 	if (rc == -1) {
-		Option _t120 = v_error(os__posix_get_error_msg(errno));
-		return *(Option_void*)&_t120;
+		Option _t136 = v_error(os__posix_get_error_msg(errno));
+		return *(Option_void*)&_t136;
 	}
 #endif
 // } windows
-	Option_void _t121 = {.ok = true};
-	return _t121;
+	Option_void _t137 = {.ok = true};
+	return _t137;
 }
 
 // Attr: [deprecated]
@@ -13002,47 +13832,47 @@ void os__rmdir_recursive(string path) {
 
 Option_void os__rmdir_all(string path) {
 	string ret_err = tos_lit("");
-	Option_array_string _t122 = os__ls(path);
-	if (!_t122.ok) {
-		return *(Option_void *)&_t122;
+	Option_array_string _t138 = os__ls(path);
+	if (!_t138.ok) {
+		return *(Option_void *)&_t138;
 	}
-	array_string items = *(array_string*)_t122.data;
+	array_string items = *(array_string*)_t138.data;
 	// FOR IN array
-	array _t123 = items;
-	for (int _t124 = 0; _t124 < _t123.len; ++_t124) {
-		string item = ((string*)_t123.data)[_t124];
+	array _t139 = items;
+	for (int _t140 = 0; _t140 < _t139.len; ++_t140) {
+		string item = ((string*)_t139.data)[_t140];
 		if (os__is_dir(os__join_path(path, (varg_string){.len=1,.args={item}}))) {
 			os__rmdir_all(os__join_path(path, (varg_string){.len=1,.args={item}}));
 		}
-		Option_void _t125 = os__rm(os__join_path(path, (varg_string){.len=1,.args={item}}));
-		if (!_t125.ok && !_t125.is_none) {
-			string err = _t125.v_error;
-			int errcode = _t125.ecode;
+		Option_void _t141 = os__rm(os__join_path(path, (varg_string){.len=1,.args={item}}));
+		if (!_t141.ok && !_t141.is_none) {
+			string err = _t141.v_error;
+			int errcode = _t141.ecode;
 			ret_err = err;
 		};
 	}
-	Option_void _t126 = os__rmdir(path);
-	if (!_t126.ok && !_t126.is_none) {
-		string err = _t126.v_error;
-		int errcode = _t126.ecode;
+	Option_void _t142 = os__rmdir(path);
+	if (!_t142.ok && !_t142.is_none) {
+		string err = _t142.v_error;
+		int errcode = _t142.ecode;
 		ret_err = err;
 	};
 	if (ret_err.len > 0) {
-		Option _t127 = v_error(ret_err);
-		return *(Option_void*)&_t127;
+		Option _t143 = v_error(ret_err);
+		return *(Option_void*)&_t143;
 	}
-	Option_void _t128 = {.ok = true};
-	return _t128;
+	Option_void _t144 = {.ok = true};
+	return _t144;
 }
 
 bool os__is_dir_empty(string path) {
-	Option_array_string _t129 = os__ls(path);
-	if (!_t129.ok) {
-		string err = _t129.v_error;
-		int errcode = _t129.ecode;
+	Option_array_string _t145 = os__ls(path);
+	if (!_t145.ok) {
+		string err = _t145.v_error;
+		int errcode = _t145.ecode;
 		return true;
 	}
-	array_string items = *(array_string*)_t129.data;
+	array_string items = *(array_string*)_t145.data;
 	return items.len == 0;
 }
 
@@ -13053,35 +13883,35 @@ static void os__print_c_errno() {
 }
 
 string os__file_ext(string path) {
-	Option_int _t130 = string_last_index(path, tos_lit("."));
-	if (!_t130.ok) {
-		string err = _t130.v_error;
-		int errcode = _t130.ecode;
+	Option_int _t146 = string_last_index(path, tos_lit("."));
+	if (!_t146.ok) {
+		string err = _t146.v_error;
+		int errcode = _t146.ecode;
 		return tos_lit("");
 	}
-	int pos = *(int*)_t130.data;
+	int pos = *(int*)_t146.data;
 	return string_substr(path, pos, path.len);
 }
 
 string os__dir(string path) {
-	Option_int _t131 = string_last_index(path, _const_os__path_separator);
-	if (!_t131.ok) {
-		string err = _t131.v_error;
-		int errcode = _t131.ecode;
+	Option_int _t147 = string_last_index(path, _const_os__path_separator);
+	if (!_t147.ok) {
+		string err = _t147.v_error;
+		int errcode = _t147.ecode;
 		return tos_lit(".");
 	}
-	int pos = *(int*)_t131.data;
+	int pos = *(int*)_t147.data;
 	return string_substr(path, 0, pos);
 }
 
 string os__base_dir(string path) {
-	Option_int _t132 = string_last_index(path, _const_os__path_separator);
-	if (!_t132.ok) {
-		string err = _t132.v_error;
-		int errcode = _t132.ecode;
+	Option_int _t148 = string_last_index(path, _const_os__path_separator);
+	if (!_t148.ok) {
+		string err = _t148.v_error;
+		int errcode = _t148.ecode;
 		return string_clone(path);
 	}
-	int posx = *(int*)_t132.data;
+	int posx = *(int*)_t148.data;
 	return string_substr(path, 0, posx);
 }
 
@@ -13220,27 +14050,27 @@ string os__home_dir() {
 }
 
 Option_void os__write_file(string path, string text) {
-	Option_os__File _t134 = os__create(path);
-	if (!_t134.ok) {
-		return *(Option_void *)&_t134;
+	Option_os__File _t150 = os__create(path);
+	if (!_t150.ok) {
+		return *(Option_void *)&_t150;
 	}
-	os__File f = *(os__File*)_t134.data;
+	os__File f = *(os__File*)_t150.data;
 	os__File_write(&f, text);
 	os__File_close(&f);
-	Option_void _t135 = {.ok = true};
-	return _t135;
+	Option_void _t151 = {.ok = true};
+	return _t151;
 }
 
 Option_void os__write_file_array(string path, array buffer) {
-	Option_os__File _t136 = os__create(path);
-	if (!_t136.ok) {
-		return *(Option_void *)&_t136;
+	Option_os__File _t152 = os__create(path);
+	if (!_t152.ok) {
+		return *(Option_void *)&_t152;
 	}
-	os__File f = *(os__File*)_t136.data;
+	os__File f = *(os__File*)_t152.data;
 	os__File_write_bytes_at(&f, buffer.data, (buffer.len * buffer.element_size), 0);
 	os__File_close(&f);
-	Option_void _t137 = {.ok = true};
-	return _t137;
+	Option_void _t153 = {.ok = true};
+	return _t153;
 }
 
 
@@ -13297,13 +14127,13 @@ static string os__executable_fallback() {
 		if (string_contains(exepath, _const_os__path_separator)) {
 			exepath = os__join_path(_const_os__wd_at_startup, (varg_string){.len=1,.args={exepath}});
 		} else {
-			Option_string _t138 = os__find_abs_path_of_executable(exepath);
-			if (!_t138.ok) {
-				string err = _t138.v_error;
-				int errcode = _t138.ecode;
-				*(string*) _t138.data = tos_lit("");
+			Option_string _t154 = os__find_abs_path_of_executable(exepath);
+			if (!_t154.ok) {
+				string err = _t154.v_error;
+				int errcode = _t154.ecode;
+				*(string*) _t154.data = tos_lit("");
 			}
-			string foundpath = *(string*)_t138.data;
+			string foundpath = *(string*)_t154.data;
 			if (foundpath.len > 0) {
 				exepath = foundpath;
 			}
@@ -13315,17 +14145,17 @@ static string os__executable_fallback() {
 
 Option_string os__find_abs_path_of_executable(string exepath) {
 	if (os__is_abs_path(exepath)) {
-		Option_string _t139;
-		opt_ok2(&(string[]) { os__real_path(exepath) }, (OptionBase*)(&_t139), sizeof(string));
-		return _t139;
+		Option_string _t155;
+		opt_ok2(&(string[]) { os__real_path(exepath) }, (OptionBase*)(&_t155), sizeof(string));
+		return _t155;
 	}
 	string res = tos_lit("");
 	string env_path_delimiter = (string_eq(os__user_os(), tos_lit("windows")) ? (tos_lit(";")) : (tos_lit(":")));
 	array_string paths = string_split(os__getenv(tos_lit("PATH")), env_path_delimiter);
 	// FOR IN array
-	array _t140 = paths;
-	for (int _t141 = 0; _t141 < _t140.len; ++_t141) {
-		string p = ((string*)_t140.data)[_t141];
+	array _t156 = paths;
+	for (int _t157 = 0; _t157 < _t156.len; ++_t157) {
+		string p = ((string*)_t156.data)[_t157];
 		string found_abs_path = os__join_path(p, (varg_string){.len=1,.args={exepath}});
 		if (os__exists(found_abs_path) && os__is_executable(found_abs_path)) {
 			res = found_abs_path;
@@ -13333,19 +14163,19 @@ Option_string os__find_abs_path_of_executable(string exepath) {
 		}
 	}
 	if (res.len > 0) {
-		Option_string _t142;
-		opt_ok2(&(string[]) { os__real_path(res) }, (OptionBase*)(&_t142), sizeof(string));
-		return _t142;
+		Option_string _t158;
+		opt_ok2(&(string[]) { os__real_path(res) }, (OptionBase*)(&_t158), sizeof(string));
+		return _t158;
 	}
-	Option _t143 = v_error(tos_lit("failed to find executable"));
-	return *(Option_string*)&_t143;
+	Option _t159 = v_error(tos_lit("failed to find executable"));
+	return *(Option_string*)&_t159;
 }
 
 bool os__exists_in_system_path(string prog) {
-	Option_string _t144 = os__find_abs_path_of_executable(prog);
-	if (!_t144.ok) {
-		string err = _t144.v_error;
-		int errcode = _t144.ecode;
+	Option_string _t160 = os__find_abs_path_of_executable(prog);
+	if (!_t160.ok) {
+		string err = _t160.v_error;
+		int errcode = _t160.ecode;
 		return false;
 	};
 	return true;
@@ -13455,8 +14285,8 @@ string os__join_path(string base, varg_string dirs) {
 	array_string result = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push(&result, _MOV((string[]){ string_trim_right(base, tos_lit("\\/")) }));
 	// FOR IN cond_type/variadic
-	for (int _t146 = 0; _t146 < dirs.len; ++_t146) {
-		string d = dirs.args[_t146];
+	for (int _t162 = 0; _t162 < dirs.len; ++_t162) {
+		string d = dirs.args[_t162];
 		array_push(&result, _MOV((string[]){ d }));
 	}
 	return array_string_join(result, _const_os__path_separator);
@@ -13466,25 +14296,25 @@ array_string os__walk_ext(string path, string ext) {
 	if (!os__is_dir(path)) {
 		return __new_array_with_default(0, 0, sizeof(string), 0);
 	}
-	Option_array_string _t148 = os__ls(path);
-	if (!_t148.ok) {
-		string err = _t148.v_error;
-		int errcode = _t148.ecode;
+	Option_array_string _t164 = os__ls(path);
+	if (!_t164.ok) {
+		string err = _t164.v_error;
+		int errcode = _t164.ecode;
 		return __new_array_with_default(0, 0, sizeof(string), 0);
 	}
-	array_string files = *(array_string*)_t148.data;
+	array_string files = *(array_string*)_t164.data;
 	array_string res = __new_array_with_default(0, 0, sizeof(string), 0);
 	string separator = (string_ends_with(path, _const_os__path_separator) ? (tos_lit("")) : (_const_os__path_separator));
 	// FOR IN array
-	array _t149 = files;
-	for (int _t150 = 0; _t150 < _t149.len; ++_t150) {
-		string file = ((string*)_t149.data)[_t150];
+	array _t165 = files;
+	for (int _t166 = 0; _t166 < _t165.len; ++_t166) {
+		string file = ((string*)_t165.data)[_t166];
 		if (string_starts_with(file, tos_lit("."))) {
 			continue;
 		}
 		string p = string_add(string_add(path, separator), file);
 		if (os__is_dir(p) && !os__is_link(p)) {
-			_PUSH_MANY(&res, (os__walk_ext(p, ext)), _t151, array_string);
+			_PUSH_MANY(&res, (os__walk_ext(p, ext)), _t167, array_string);
 		} else if (string_ends_with(file, ext)) {
 			array_push(&res, _MOV((string[]){ p }));
 		}
@@ -13496,17 +14326,17 @@ void os__walk(string path, void (*f)(string path)) {
 	if (!os__is_dir(path)) {
 		return;
 	}
-	Option_array_string _t153 = os__ls(path);
-	if (!_t153.ok) {
-		string err = _t153.v_error;
-		int errcode = _t153.ecode;
+	Option_array_string _t169 = os__ls(path);
+	if (!_t169.ok) {
+		string err = _t169.v_error;
+		int errcode = _t169.ecode;
 		return;
 	}
-	array_string files = *(array_string*)_t153.data;
+	array_string files = *(array_string*)_t169.data;
 	// FOR IN array
-	array _t154 = files;
-	for (int _t155 = 0; _t155 < _t154.len; ++_t155) {
-		string file = ((string*)_t154.data)[_t155];
+	array _t170 = files;
+	for (int _t171 = 0; _t171 < _t170.len; ++_t171) {
+		string file = ((string*)_t170.data)[_t171];
 		string p = string_add(string_add(path, _const_os__path_separator), file);
 		if (os__is_dir(p) && !os__is_link(p)) {
 			os__walk(p, f);
@@ -13570,32 +14400,32 @@ Option_void os__mkdir_all(string path) {
 	string p = (string_starts_with(path, _const_os__path_separator) ? (_const_os__path_separator) : (tos_lit("")));
 	array_string path_parts = string_split(string_trim_left(path, _const_os__path_separator), _const_os__path_separator);
 	// FOR IN array
-	array _t156 = path_parts;
-	for (int _t157 = 0; _t157 < _t156.len; ++_t157) {
-		string subdir = ((string*)_t156.data)[_t157];
+	array _t172 = path_parts;
+	for (int _t173 = 0; _t173 < _t172.len; ++_t173) {
+		string subdir = ((string*)_t172.data)[_t173];
 		p = /*f*/string_add(p, string_add(subdir, _const_os__path_separator));
 		if (os__exists(p) && os__is_dir(p)) {
 			continue;
 		}
-		Option_bool _t158 = os__mkdir(p);
-		if (!_t158.ok) {
-			string err = _t158.v_error;
-			int errcode = _t158.ecode;
-			Option _t159 = v_error(_STR("folder: %.*s\000, error: %.*s", 2, p, err));
-			return *(Option_void*)&_t159;
+		Option_bool _t174 = os__mkdir(p);
+		if (!_t174.ok) {
+			string err = _t174.v_error;
+			int errcode = _t174.ecode;
+			Option _t175 = v_error(_STR("folder: %.*s\000, error: %.*s", 2, p, err));
+			return *(Option_void*)&_t175;
 		};
 	}
-	Option_void _t160 = {.ok = true};
-	return _t160;
+	Option_void _t176 = {.ok = true};
+	return _t176;
 }
 
 string os__cache_dir() {
 	string cdir = string_add(os__home_dir(), tos_lit(".cache"));
 	if (!os__is_dir(cdir) && !os__is_link(cdir)) {
-		Option_bool _t161 = os__mkdir(cdir);
-		if (!_t161.ok) {
-			string err = _t161.v_error;
-			int errcode = _t161.ecode;
+		Option_bool _t177 = os__mkdir(cdir);
+		if (!_t177.ok) {
+			string err = _t177.v_error;
+			int errcode = _t177.ecode;
 			v_panic(err);
 		};
 	}
@@ -13637,27 +14467,27 @@ string os__resource_abs_path(string path) {
 }
 
 Option_os__File os__open(string path) {
-	Option_FILE_ptr _t162 = os__vfopen(path, tos_lit("rb"));
-	if (!_t162.ok) {
-		return *(Option_os__File *)&_t162;
+	Option_FILE_ptr _t178 = os__vfopen(path, tos_lit("rb"));
+	if (!_t178.ok) {
+		return *(Option_os__File *)&_t178;
 	}
-	FILE* cfile = *(FILE**)_t162.data;
+	FILE* cfile = *(FILE**)_t178.data;
 	int fd = os__fileno(cfile);
-	Option_os__File _t163;
-	opt_ok2(&(os__File[]) { (os__File){.cfile = cfile,.fd = fd,.is_opened = true,} }, (OptionBase*)(&_t163), sizeof(os__File));
-	return _t163;
+	Option_os__File _t179;
+	opt_ok2(&(os__File[]) { (os__File){.cfile = cfile,.fd = fd,.is_opened = true,} }, (OptionBase*)(&_t179), sizeof(os__File));
+	return _t179;
 }
 
 Option_os__File os__create(string path) {
-	Option_FILE_ptr _t164 = os__vfopen(path, tos_lit("wb"));
-	if (!_t164.ok) {
-		return *(Option_os__File *)&_t164;
+	Option_FILE_ptr _t180 = os__vfopen(path, tos_lit("wb"));
+	if (!_t180.ok) {
+		return *(Option_os__File *)&_t180;
 	}
-	FILE* cfile = *(FILE**)_t164.data;
+	FILE* cfile = *(FILE**)_t180.data;
 	int fd = os__fileno(cfile);
-	Option_os__File _t165;
-	opt_ok2(&(os__File[]) { (os__File){.cfile = cfile,.fd = fd,.is_opened = true,} }, (OptionBase*)(&_t165), sizeof(os__File));
-	return _t165;
+	Option_os__File _t181;
+	opt_ok2(&(os__File[]) { (os__File){.cfile = cfile,.fd = fd,.is_opened = true,} }, (OptionBase*)(&_t181), sizeof(os__File));
+	return _t181;
 }
 
 // TypeDecl
@@ -13673,8 +14503,8 @@ Option_array_string os__ls(string path) {
 	os__Win32finddata find_file_data = (os__Win32finddata){.dw_file_attributes = 0,.ft_creation_time = {0},.ft_last_access_time = {0},.ft_last_write_time = {0},.n_file_size_high = 0,.n_file_size_low = 0,.dw_reserved0 = 0,.dw_reserved1 = 0,.c_file_name = {0},.c_alternate_file_name = {0},.dw_file_type = 0,.dw_creator_type = 0,.w_finder_flags = 0,};
 	array_string dir_files = __new_array_with_default(0, 0, sizeof(string), 0);
 	if (!os__is_dir(path)) {
-		Option _t167 = v_error(_STR("ls() couldnt open dir \"%.*s\000\": directory does not exist", 2, path));
-		return *(Option_array_string*)&_t167;
+		Option _t183 = v_error(_STR("ls() couldnt open dir \"%.*s\000\": directory does not exist", 2, path));
+		return *(Option_array_string*)&_t183;
 	}
 	string path_files = _STR("%.*s\000\\*", 2, path);
 	voidptr h_find_files = FindFirstFile(string_to_wide(path_files), ((voidptr)(&find_file_data)));
@@ -13689,35 +14519,35 @@ Option_array_string os__ls(string path) {
 		}
 	}
 	FindClose(h_find_files);
-	Option_array_string _t170;
-	opt_ok2(&(array_string[]) { dir_files }, (OptionBase*)(&_t170), sizeof(array_string));
-	return _t170;
+	Option_array_string _t186;
+	opt_ok2(&(array_string[]) { dir_files }, (OptionBase*)(&_t186), sizeof(array_string));
+	return _t186;
 }
 
 Option_bool os__mkdir(string path) {
 	if (string_eq(path, tos_lit("."))) {
-		Option_bool _t171;
-		opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t171), sizeof(bool));
-		return _t171;
+		Option_bool _t187;
+		opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t187), sizeof(bool));
+		return _t187;
 	}
 	string apath = os__real_path(path);
 	if (!CreateDirectory(string_to_wide(apath), 0)) {
-		Option _t172 = v_error(string_add(_STR("mkdir failed for \"%.*s\000\", because CreateDirectory returned ", 2, apath), os__get_error_msg(((int)(GetLastError())))));
-		return *(Option_bool*)&_t172;
+		Option _t188 = v_error(string_add(_STR("mkdir failed for \"%.*s\000\", because CreateDirectory returned ", 2, apath), os__get_error_msg(((int)(GetLastError())))));
+		return *(Option_bool*)&_t188;
 	}
-	Option_bool _t173;
-	opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t173), sizeof(bool));
-	return _t173;
+	Option_bool _t189;
+	opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t189), sizeof(bool));
+	return _t189;
 }
 
 os__HANDLE os__get_file_handle(string path) {
-	Option_FILE_ptr _t174 = os__vfopen(path, tos_lit("rb"));
-	if (!_t174.ok) {
-		string err = _t174.v_error;
-		int errcode = _t174.ecode;
+	Option_FILE_ptr _t190 = os__vfopen(path, tos_lit("rb"));
+	if (!_t190.ok) {
+		string err = _t190.v_error;
+		int errcode = _t190.ecode;
 		return ((os__HANDLE)(_const_os__invalid_handle_value));
 	}
-	FILE* cfile = *(FILE**)_t174.data;
+	FILE* cfile = *(FILE**)_t190.data;
 	os__HANDLE handle = ((os__HANDLE)(_get_osfhandle(os__fileno(cfile))));
 	return handle;
 }
@@ -13729,18 +14559,18 @@ Option_string os__get_module_filename(os__HANDLE handle) {
 		while (1) {
 			int status = ((int)(GetModuleFileNameW(handle, ((voidptr)(&buf)), sz)));
 			if (status == _const_os__success) {
-				Option_string _t176;
-				opt_ok2(&(string[]) { string_from_wide2(buf, sz) }, (OptionBase*)(&_t176), sizeof(string));
-				return _t176;
+				Option_string _t192;
+				opt_ok2(&(string[]) { string_from_wide2(buf, sz) }, (OptionBase*)(&_t192), sizeof(string));
+				return _t192;
 			} else {
-				Option _t177 = v_error(tos_lit("Cannot get file name from handle"));
-				return *(Option_string*)&_t177;
+				Option _t193 = v_error(tos_lit("Cannot get file name from handle"));
+				return *(Option_string*)&_t193;
 			};
 		}
 	}
 	v_panic(tos_lit("this should be unreachable"));
-	Option _t178 = opt_none();
-	return *(Option_string*)&_t178;
+	Option _t194 = opt_none();
+	return *(Option_string*)&_t194;
 }
 
 static voidptr os__ptr_win_get_error_msg(u32 code) {
@@ -13765,8 +14595,8 @@ string os__get_error_msg(int code) {
 
 Option_os__Result os__exec(string cmd) {
 	if (string_contains(cmd, tos_lit(";")) || string_contains(cmd, tos_lit("&&")) || string_contains(cmd, tos_lit("||")) || string_contains(cmd, tos_lit("\n"))) {
-		Option _t179 = v_error(tos_lit(";, &&, || and \\n are not allowed in shell commands"));
-		return *(Option_os__Result*)&_t179;
+		Option _t195 = v_error(tos_lit(";, &&, || and \\n are not allowed in shell commands"));
+		return *(Option_os__Result*)&_t195;
 	}
 	u32* child_stdin = ((u32*)(0));
 	u32* child_stdout_read = ((u32*)(0));
@@ -13778,15 +14608,15 @@ Option_os__Result os__exec(string cmd) {
 	if (!create_pipe_ok) {
 		int error_num = ((int)(GetLastError()));
 		string error_msg = os__get_error_msg(error_num);
-		Option _t180 = error_with_code(_STR("exec failed (CreatePipe): %.*s", 1, error_msg), error_num);
-		return *(Option_os__Result*)&_t180;
+		Option _t196 = error_with_code(_STR("exec failed (CreatePipe): %.*s", 1, error_msg), error_num);
+		return *(Option_os__Result*)&_t196;
 	}
 	bool set_handle_info_ok = SetHandleInformation(child_stdout_read, HANDLE_FLAG_INHERIT, 0);
 	if (!set_handle_info_ok) {
 		int error_num = ((int)(GetLastError()));
 		string error_msg = os__get_error_msg(error_num);
-		Option _t181 = error_with_code(_STR("exec failed (SetHandleInformation): %.*s", 1, error_msg), error_num);
-		return *(Option_os__Result*)&_t181;
+		Option _t197 = error_with_code(_STR("exec failed (SetHandleInformation): %.*s", 1, error_msg), error_num);
+		return *(Option_os__Result*)&_t197;
 	}
 	os__ProcessInformation proc_info = (os__ProcessInformation){.h_process = 0,.h_thread = 0,.dw_process_id = 0,.dw_thread_id = 0,};
 	os__StartupInfo start_info = (os__StartupInfo){
@@ -13815,8 +14645,8 @@ Option_os__Result os__exec(string cmd) {
 	if (!create_process_ok) {
 		int error_num = ((int)(GetLastError()));
 		string error_msg = os__get_error_msg(error_num);
-		Option _t182 = error_with_code(_STR("exec failed (CreateProcess) with code %"PRId32"\000: %.*s\000 cmd: %.*s", 3, error_num, error_msg, cmd), error_num);
-		return *(Option_os__Result*)&_t182;
+		Option _t198 = error_with_code(_STR("exec failed (CreateProcess) with code %"PRId32"\000: %.*s\000 cmd: %.*s", 3, error_num, error_msg, cmd), error_num);
+		return *(Option_os__Result*)&_t198;
 	}
 	CloseHandle(child_stdin);
 	CloseHandle(child_stdout_write);
@@ -13837,20 +14667,20 @@ Option_os__Result os__exec(string cmd) {
 	GetExitCodeProcess(proc_info.h_process, ((voidptr)(&exit_code)));
 	CloseHandle(proc_info.h_process);
 	CloseHandle(proc_info.h_thread);
-	Option_os__Result _t183;
-	opt_ok2(&(os__Result[]) { (os__Result){.exit_code = ((int)(exit_code)),.output = soutput,} }, (OptionBase*)(&_t183), sizeof(os__Result));
-	return _t183;
+	Option_os__Result _t199;
+	opt_ok2(&(os__Result[]) { (os__Result){.exit_code = ((int)(exit_code)),.output = soutput,} }, (OptionBase*)(&_t199), sizeof(os__Result));
+	return _t199;
 }
 
 Option_bool os__symlink(string origin, string target) {
 	int flags = (os__is_dir(origin) ? (1) : (0));
 	if (CreateSymbolicLinkW(string_to_wide(origin), string_to_wide(target), ((u32)(flags))) != 0) {
-		Option_bool _t184;
-		opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t184), sizeof(bool));
-		return _t184;
+		Option_bool _t200;
+		opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t200), sizeof(bool));
+		return _t200;
 	}
-	Option _t185 = v_error(os__get_error_msg(((int)(GetLastError()))));
-	return *(Option_bool*)&_t185;
+	Option _t201 = v_error(os__get_error_msg(((int)(GetLastError()))));
+	return *(Option_bool*)&_t201;
 }
 
 void os__File_close(os__File* f) {
@@ -13878,27 +14708,27 @@ os__Uname os__uname() {
 
 Option_bool os__is_writable_folder(string folder) {
 	if (!os__exists(folder)) {
-		Option _t186 = v_error(_STR("`%.*s\000` does not exist", 2, folder));
-		return *(Option_bool*)&_t186;
+		Option _t202 = v_error(_STR("`%.*s\000` does not exist", 2, folder));
+		return *(Option_bool*)&_t202;
 	}
 	if (!os__is_dir(folder)) {
-		Option _t187 = v_error(tos_lit("`folder` is not a folder"));
-		return *(Option_bool*)&_t187;
+		Option _t203 = v_error(tos_lit("`folder` is not a folder"));
+		return *(Option_bool*)&_t203;
 	}
 	string tmp_perm_check = os__join_path(folder, (varg_string){.len=1,.args={string_add(tos_lit("tmp_perm_check_pid_"), int_str(os__getpid()))}});
-	Option_os__File _t188 = os__open_file(tmp_perm_check, tos_lit("w+"), (varg_int){.len=1,.args={0700}});
-	if (!_t188.ok) {
-		string err = _t188.v_error;
-		int errcode = _t188.ecode;
-		Option _t189 = v_error(_STR("cannot write to folder %.*s\000: %.*s", 2, folder, err));
-		return *(Option_bool*)&_t189;
+	Option_os__File _t204 = os__open_file(tmp_perm_check, tos_lit("w+"), (varg_int){.len=1,.args={0700}});
+	if (!_t204.ok) {
+		string err = _t204.v_error;
+		int errcode = _t204.ecode;
+		Option _t205 = v_error(_STR("cannot write to folder %.*s\000: %.*s", 2, folder, err));
+		return *(Option_bool*)&_t205;
 	}
-	os__File f = *(os__File*)_t188.data;
+	os__File f = *(os__File*)_t204.data;
 	os__File_close(&f);
 	os__rm(tmp_perm_check);
-	Option_bool _t190;
-	opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t190), sizeof(bool));
-	return _t190;
+	Option_bool _t206;
+	opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t206), sizeof(bool));
+	return _t206;
 }
 
 // Attr: [inline]
@@ -13909,9 +14739,9 @@ inline int os__getpid() {
 array_string os__cmdline__options(array_string args, string param) {
 	array_string flags = __new_array_with_default(0, 0, sizeof(string), 0);
 	// FOR IN array
-	array _t191 = args;
-	for (int i = 0; i < _t191.len; ++i) {
-		string v = ((string*)_t191.data)[i];
+	array _t207 = args;
+	for (int i = 0; i < _t207.len; ++i) {
+		string v = ((string*)_t207.data)[i];
 		if (string_eq(v, param)) {
 			if (i + 1 < args.len) {
 				array_push(&flags, _MOV((string[]){ (*(string*)array_get(args, i + 1)) }));
@@ -13924,9 +14754,9 @@ array_string os__cmdline__options(array_string args, string param) {
 string os__cmdline__option(array_string args, string param, string def) {
 	bool found = false;
 	// FOR IN array
-	array _t193 = args;
-	for (int _t194 = 0; _t194 < _t193.len; ++_t194) {
-		string arg = ((string*)_t193.data)[_t194];
+	array _t209 = args;
+	for (int _t210 = 0; _t210 < _t209.len; ++_t210) {
+		string arg = ((string*)_t209.data)[_t210];
 		if (found) {
 			return arg;
 		} else if (string_eq(param, arg)) {
@@ -13939,9 +14769,9 @@ string os__cmdline__option(array_string args, string param, string def) {
 array_string os__cmdline__options_before(array_string args, array_string what) {
 	array_string args_before = __new_array_with_default(0, 0, sizeof(string), 0);
 	// FOR IN array
-	array _t195 = args;
-	for (int _t196 = 0; _t196 < _t195.len; ++_t196) {
-		string a = ((string*)_t195.data)[_t196];
+	array _t211 = args;
+	for (int _t212 = 0; _t212 < _t211.len; ++_t212) {
+		string a = ((string*)_t211.data)[_t212];
 		if (_IN(string, a, what)) {
 			break;
 		}
@@ -13954,9 +14784,9 @@ array_string os__cmdline__options_after(array_string args, array_string what) {
 	bool found = false;
 	array_string args_after = __new_array_with_default(0, 0, sizeof(string), 0);
 	// FOR IN array
-	array _t198 = args;
-	for (int _t199 = 0; _t199 < _t198.len; ++_t199) {
-		string a = ((string*)_t198.data)[_t199];
+	array _t214 = args;
+	for (int _t215 = 0; _t215 < _t214.len; ++_t215) {
+		string a = ((string*)_t214.data)[_t215];
 		if (_IN(string, a, what)) {
 			found = true;
 			continue;
@@ -13970,853 +14800,24 @@ array_string os__cmdline__options_after(array_string args, array_string what) {
 
 array_string os__cmdline__only_non_options(array_string args) {
 
-int _t201_len = args.len;
-	array_string _t201 = __new_array(0, _t201_len, sizeof(string));
-	for (int i = 0; i < _t201_len; ++i) {
+int _t217_len = args.len;
+	array_string _t217 = __new_array(0, _t217_len, sizeof(string));
+	for (int i = 0; i < _t217_len; ++i) {
 	  string it = ((string*) args.data)[i];
-	if (!string_starts_with(it, tos_lit("-"))) array_push(&_t201, &it); 
+	if (!string_starts_with(it, tos_lit("-"))) array_push(&_t217, &it); 
  }
-		return  _t201;
+		return  _t217;
 }
 
 array_string os__cmdline__only_options(array_string args) {
 
-int _t202_len = args.len;
-	array_string _t202 = __new_array(0, _t202_len, sizeof(string));
-	for (int i = 0; i < _t202_len; ++i) {
+int _t218_len = args.len;
+	array_string _t218 = __new_array(0, _t218_len, sizeof(string));
+	for (int i = 0; i < _t218_len; ++i) {
 	  string it = ((string*) args.data)[i];
-	if (string_starts_with(it, tos_lit("-"))) array_push(&_t202, &it); 
+	if (string_starts_with(it, tos_lit("-"))) array_push(&_t218, &it); 
  }
-		return  _t202;
-}
-
-string time__Time_format(time__Time t) {
-	return time__Time_get_fmt_str(t, time__FormatDelimiter_hyphen, time__FormatTime_hhmm24, time__FormatDate_yyyymmdd);
-}
-
-string time__Time_format_ss(time__Time t) {
-	return time__Time_get_fmt_str(t, time__FormatDelimiter_hyphen, time__FormatTime_hhmmss24, time__FormatDate_yyyymmdd);
-}
-
-string time__Time_format_ss_milli(time__Time t) {
-	return time__Time_get_fmt_str(t, time__FormatDelimiter_hyphen, time__FormatTime_hhmmss24_milli, time__FormatDate_yyyymmdd);
-}
-
-string time__Time_format_ss_micro(time__Time t) {
-	return time__Time_get_fmt_str(t, time__FormatDelimiter_hyphen, time__FormatTime_hhmmss24_micro, time__FormatDate_yyyymmdd);
-}
-
-string time__Time_hhmm(time__Time t) {
-	return time__Time_get_fmt_time_str(t, time__FormatTime_hhmm24);
-}
-
-string time__Time_hhmmss(time__Time t) {
-	return time__Time_get_fmt_time_str(t, time__FormatTime_hhmmss24);
-}
-
-string time__Time_hhmm12(time__Time t) {
-	return time__Time_get_fmt_time_str(t, time__FormatTime_hhmm12);
-}
-
-string time__Time_ymmdd(time__Time t) {
-	return time__Time_get_fmt_date_str(t, time__FormatDelimiter_hyphen, time__FormatDate_yyyymmdd);
-}
-
-string time__Time_ddmmy(time__Time t) {
-	return time__Time_get_fmt_date_str(t, time__FormatDelimiter_dot, time__FormatDate_ddmmyyyy);
-}
-
-string time__Time_md(time__Time t) {
-	return time__Time_get_fmt_date_str(t, time__FormatDelimiter_space, time__FormatDate_mmmd);
-}
-
-string time__Time_clean(time__Time t) {
-	time__Time znow = time__now();
-	if (t.month == znow.month && t.year == znow.year && t.day == znow.day) {
-		return time__Time_get_fmt_time_str(t, time__FormatTime_hhmm24);
-	}
-	if (t.year == znow.year) {
-		return time__Time_get_fmt_str(t, time__FormatDelimiter_space, time__FormatTime_hhmm24, time__FormatDate_mmmd);
-	}
-	return time__Time_format(t);
-}
-
-string time__Time_clean12(time__Time t) {
-	time__Time znow = time__now();
-	if (t.month == znow.month && t.year == znow.year && t.day == znow.day) {
-		return time__Time_get_fmt_time_str(t, time__FormatTime_hhmm12);
-	}
-	if (t.year == znow.year) {
-		return time__Time_get_fmt_str(t, time__FormatDelimiter_space, time__FormatTime_hhmm12, time__FormatDate_mmmd);
-	}
-	return time__Time_format(t);
-}
-
-string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time) {
-	if (fmt_time == time__FormatTime_no_time) {
-		return tos_lit("");
-	}
-	string tp = (t.hour > 11 ? (tos_lit("p.m.")) : (tos_lit("a.m.")));
-	int hour = (t.hour > 12 ? (t.hour - 12) : t.hour == 0 ? (12) : (t.hour));
-	return (fmt_time == time__FormatTime_hhmm12) ? (_STR("%"PRId32"\000:%02"PRId32"\000 %.*s", 3, hour, t.minute, tp)) : (fmt_time == time__FormatTime_hhmm24) ? (_STR("%02"PRId32"\000:%02"PRId32"", 2, t.hour, t.minute)) : (fmt_time == time__FormatTime_hhmmss12) ? (_STR("%"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000 %.*s", 4, hour, t.minute, t.second, tp)) : (fmt_time == time__FormatTime_hhmmss24) ? (_STR("%02"PRId32"\000:%02"PRId32"\000:%02"PRId32"", 3, t.hour, t.minute, t.second)) : (fmt_time == time__FormatTime_hhmmss24_milli) ? (_STR("%02"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000.%03"PRId32"", 4, t.hour, t.minute, t.second, (t.microsecond / 1000))) : (fmt_time == time__FormatTime_hhmmss24_micro) ? (_STR("%02"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000.%06"PRId32"", 4, t.hour, t.minute, t.second, t.microsecond)) : (_STR("unknown enumeration %.*s", 1, time__FormatTime_str(fmt_time)));
-}
-
-string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatDate fmt_date) {
-	if (fmt_date == time__FormatDate_no_date) {
-		return tos_lit("");
-	}
-	string month = _STR("%.*s", 1, time__Time_smonth(t));
-	string year = string_substr(int_str(t.year), 2, int_str(t.year).len);
-	string res = (fmt_date == time__FormatDate_ddmmyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%.*s", 3, t.day, t.month, year)) : (fmt_date == time__FormatDate_ddmmyyyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%"PRId32"", 3, t.day, t.month, t.year)) : (fmt_date == time__FormatDate_mmddyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%.*s", 3, t.month, t.day, year)) : (fmt_date == time__FormatDate_mmddyyyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%"PRId32"", 3, t.month, t.day, t.year)) : (fmt_date == time__FormatDate_mmmd) ? (_STR("%.*s\000|%"PRId32"", 2, month, t.day)) : (fmt_date == time__FormatDate_mmmdd) ? (_STR("%.*s\000|%02"PRId32"", 2, month, t.day)) : (fmt_date == time__FormatDate_mmmddyyyy) ? (_STR("%.*s\000|%02"PRId32"\000|%"PRId32"", 3, month, t.day, t.year)) : (fmt_date == time__FormatDate_yyyymmdd) ? (_STR("%"PRId32"\000|%02"PRId32"\000|%02"PRId32"", 3, t.year, t.month, t.day)) : (_STR("unknown enumeration %.*s", 1, time__FormatDate_str(fmt_date)));
-	res = string_replace(res, tos_lit("|"), (fmt_dlmtr == time__FormatDelimiter_dot) ? (tos_lit(".")) : (fmt_dlmtr == time__FormatDelimiter_hyphen) ? (tos_lit("-")) : (fmt_dlmtr == time__FormatDelimiter_slash) ? (tos_lit("/")) : (fmt_dlmtr == time__FormatDelimiter_space) ? (tos_lit(" ")) : (tos_lit("")));
-	return res;
-}
-
-string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatTime fmt_time, time__FormatDate fmt_date) {
-	if (fmt_date == time__FormatDate_no_date) {
-		if (fmt_time == time__FormatTime_no_time) {
-			return tos_lit("");
-		} else {
-			return time__Time_get_fmt_time_str(t, fmt_time);
-		}
-	} else {
-		if (fmt_time != time__FormatTime_no_time) {
-			return string_add(string_add(time__Time_get_fmt_date_str(t, fmt_dlmtr, fmt_date), tos_lit(" ")), time__Time_get_fmt_time_str(t, fmt_time));
-		} else {
-			return time__Time_get_fmt_date_str(t, fmt_dlmtr, fmt_date);
-		}
-	}
-}
-
-string time__Time_utc_string(time__Time time) {
-	string day_str = time__Time_weekday_str(time);
-	string month_str = time__Time_smonth(time);
-	string utc_string = _STR("%.*s\000, %"PRId32"\000 %.*s\000 %"PRId32"\000 %02"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000 UTC", 8, day_str, time.day, month_str, time.year, time.hour, time.minute, time.second);
-	return utc_string;
-}
-
-// Attr: [inline]
-inline bool time__Time_eq(time__Time t1, time__Time t2) {
-	if (t1.v_unix == t2.v_unix && t1.microsecond == t2.microsecond) {
-		return true;
-	}
-	return false;
-}
-
-bool time__Time_ne(time__Time t1, time__Time t2) {
-	return !time__Time_eq(t1, t2);
-}
-
-bool time__Time_lt(time__Time t1, time__Time t2) {
-	if (t1.v_unix < t2.v_unix || (t1.v_unix == t2.v_unix && t1.microsecond < t2.microsecond)) {
-		return true;
-	}
-	return false;
-}
-
-bool time__Time_le(time__Time t1, time__Time t2) {
-	return time__Time_lt(t1, t2) || time__Time_eq(t1, t2);
-}
-
-bool time__Time_gt(time__Time t1, time__Time t2) {
-	if (t1.v_unix > t2.v_unix || (t1.v_unix == t2.v_unix && t1.microsecond > t2.microsecond)) {
-		return true;
-	}
-	return false;
-}
-
-bool time__Time_ge(time__Time t1, time__Time t2) {
-	return time__Time_gt(t1, t2) || time__Time_eq(t1, t2);
-}
-
-Option_time__Time time__parse(string s) {
-	Option_int _t206 = string_index(s, tos_lit(" "));
-	if (!_t206.ok) {
-		string err = _t206.v_error;
-		int errcode = _t206.ecode;
-		Option _t207 = v_error(_STR("Invalid time format: %.*s", 1, s));
-		return *(Option_time__Time*)&_t207;
-	}
-	int pos = *(int*)_t206.data;
-	string symd = string_substr(s, 0, pos);
-	array_string ymd = string_split(symd, tos_lit("-"));
-	if (ymd.len != 3) {
-		Option _t208 = v_error(_STR("Invalid time format: %.*s", 1, s));
-		return *(Option_time__Time*)&_t208;
-	}
-	string shms = string_substr(s, pos, s.len);
-	array_string hms = string_split(shms, tos_lit(":"));
-	string hour = string_substr((*(string*)array_get(hms, 0)), 1, (*(string*)array_get(hms, 0)).len);
-	string minute = (*(string*)array_get(hms, 1));
-	string second = (*(string*)array_get(hms, 2));
-	time__Time res = time__new_time((time__Time){
-		.year = string_int((*(string*)array_get(ymd, 0))),
-		.month = string_int((*(string*)array_get(ymd, 1))),
-		.day = string_int((*(string*)array_get(ymd, 2))),
-		.hour = string_int(hour),
-		.minute = string_int(minute),
-		.second = string_int(second),
-		.microsecond = 0,
-		.v_unix = 0,
-	});
-	Option_time__Time _t209;
-	opt_ok2(&(time__Time[]) { res }, (OptionBase*)(&_t209), sizeof(time__Time));
-	return _t209;
-}
-
-Option_time__Time time__parse_rfc2822(string s) {
-	array_string fields = string_split(s, tos_lit(" "));
-	if (fields.len < 5) {
-		Option _t210 = v_error(_STR("Invalid time format: %.*s", 1, s));
-		return *(Option_time__Time*)&_t210;
-	}
-	Option_int _t211 = string_index(_const_time__months_string, (*(string*)array_get(fields, 2)));
-	if (!_t211.ok) {
-		string err = _t211.v_error;
-		int errcode = _t211.ecode;
-		Option _t212 = v_error(_STR("Invalid time format: %.*s", 1, s));
-		return *(Option_time__Time*)&_t212;
-	}
-	int pos = *(int*)_t211.data;
-	int mm = pos / 3 + 1;
-	byteptr tmstr = ((byteptr)(0));
-	{ // Unsafe block
-		tmstr = v_malloc(s.len * 2);
-	}
-	int count = snprintf(((charptr)(tmstr)), (s.len * 2), "%s-%02d-%s %s", (*(string*)array_get(fields, 3)).str, mm, (*(string*)array_get(fields, 1)).str, (*(string*)array_get(fields, 4)).str);
-	return time__parse(tos(tmstr, count));
-}
-
-Option_time__Time time__parse_iso8601(string s) {
-	int year = 0;
-	int month = 0;
-	int day = 0;
-	int hour = 0;
-	int minute = 0;
-	int second = 0;
-	int mic_second = 0;
-	rune time_char = 'a';
-	rune plus_min = 'a';
-	int offset_hour = 0;
-	int offset_min = 0;
-	int count = sscanf(((charptr)(s.str)), "%4d-%2d-%2d%c%2d:%2d:%2d.%6d%c%2d:%2d", &year, &month, &day, &time_char, &hour, &minute, &second, &mic_second, &plus_min, &offset_hour, &offset_min);
-	if (count != 11) {
-		Option _t213 = v_error(tos_lit("Invalid 8601 format"));
-		return *(Option_time__Time*)&_t213;
-	}
-	if (time_char != 'T' && time_char != ' ') {
-		Option _t214 = v_error(tos_lit("Invalid 8601 format, expected space or `T` as time separator"));
-		return *(Option_time__Time*)&_t214;
-	}
-	if (plus_min != '+' && plus_min != '-') {
-		Option _t215 = v_error(tos_lit("Invalid 8601 format, expected `+` or `-` as time separator"));
-		return *(Option_time__Time*)&_t215;
-	}
-	time__Time t = time__new_time((time__Time){
-		.year = year,
-		.month = month,
-		.day = day,
-		.hour = hour,
-		.minute = minute,
-		.second = second,
-		.microsecond = mic_second,
-		.v_unix = 0,
-	});
-	u64 unix_time = t.v_unix;
-	int unix_offset = ((int)(0));
-	if (offset_hour > 0) {
-		unix_offset += 3600 * offset_hour;
-	}
-	if (offset_min > 0) {
-		unix_offset += 60 * offset_min;
-	}
-	if (unix_offset != 0) {
-		if (plus_min == '+') {
-			unix_time -= ((u64)(unix_offset));
-		} else {
-			unix_time += ((u64)(unix_offset));
-		}
-		t = time__unix2(((int)(unix_time)), t.microsecond);
-	}
-	Option_time__Time _t216;
-	opt_ok2(&(time__Time[]) { time__to_local_time(t) }, (OptionBase*)(&_t216), sizeof(time__Time));
-	return _t216;
-}
-
-time__StopWatch time__new_stopwatch(time__StopWatchOptions opts) {
-	u64 initial = ((u64)(0));
-	if (opts.auto_start) {
-		initial = time__sys_mono_now();
-	}
-	return (time__StopWatch){.elapsed = 0,.start = initial,.end = 0,};
-}
-
-void time__StopWatch_start(time__StopWatch* t) {
-	t->start = time__sys_mono_now();
-	t->end = 0;
-}
-
-void time__StopWatch_restart(time__StopWatch* t) {
-	t->start = time__sys_mono_now();
-	t->end = 0;
-	t->elapsed = 0;
-}
-
-void time__StopWatch_stop(time__StopWatch* t) {
-	t->end = time__sys_mono_now();
-}
-
-void time__StopWatch_pause(time__StopWatch* t) {
-	if (t->start > 0) {
-		if (t->end == 0) {
-			t->elapsed += time__sys_mono_now() - t->start;
-		} else {
-			t->elapsed += t->end - t->start;
-		}
-	}
-	t->start = 0;
-}
-
-time__Duration time__StopWatch_elapsed(time__StopWatch t) {
-	if (t.start > 0) {
-		if (t.end == 0) {
-			return ((time__Duration)(time__sys_mono_now() - t.start + t.elapsed));
-		} else {
-			return ((time__Duration)(t.end - t.start + t.elapsed));
-		}
-	}
-	return ((time__Duration)(t.elapsed));
-}
-
-time__Time time__now() {
-// $if  windows {
-#ifdef _WIN32
-	return time__win_now();
-#endif
-// } windows
-	time_t t = time(0);
-	struct tm* now = localtime(&t);
-	return time__convert_ctime(*now, 0);
-}
-
-time__Time time__utc() {
-// $if  windows {
-#ifdef _WIN32
-	return time__win_utc();
-#endif
-// } windows
-	time_t t = time(0);
-	time(&t);
-	return time__unix2(((int)(t)), 0);
-}
-
-string time__Time_smonth(time__Time t) {
-	int i = t.month - 1;
-	return string_substr(_const_time__months_string, i * 3, (i + 1) * 3);
-}
-
-time__Time time__new_time(time__Time t) {
-	if (t.v_unix != 0) {
-		return t;
-	}
-	struct tm tt = (struct tm){
-		.tm_year = t.year - 1900,
-		.tm_mon = t.month - 1,
-		.tm_mday = t.day,
-		.tm_hour = t.hour,
-		.tm_min = t.minute,
-		.tm_sec = t.second,
-	};
-	u64 utime = ((u64)(time__make_unix_time(tt)));
-	return // assoc
-	(time__Time){
-		.year = t.year,
-		.month = t.month,
-		.day = t.day,
-		.hour = t.hour,
-		.minute = t.minute,
-		.second = t.second,
-		.microsecond = t.microsecond,
-		.v_unix = utime, 
-	};
-}
-
-// Attr: [inline]
-inline int time__Time_unix_time(time__Time t) {
-	return ((int)(t.v_unix));
-}
-
-// Attr: [inline]
-inline u64 time__Time_unix_time_milli(time__Time t) {
-	return t.v_unix * 1000 + ((u64)(t.microsecond / 1000));
-}
-
-time__Time time__Time_add_seconds(time__Time t, int seconds) {
-	return time__unix(((int)(t.v_unix + ((u64)(seconds)))));
-}
-
-time__Time time__Time_add_days(time__Time t, int days) {
-	return time__unix(((int)(t.v_unix + ((u64)(((i64)(days)) * 3600 * 24)))));
-}
-
-static int time__since(time__Time t) {
-	return 0;
-}
-
-string time__Time_relative(time__Time t) {
-	time__Time znow = time__now();
-	u64 secs = znow.v_unix - t.v_unix;
-	if (secs <= 30) {
-		return tos_lit("now");
-	}
-	if (secs < 60) {
-		return tos_lit("1m");
-	}
-	if (secs < 3600) {
-		u64 m = secs / 60;
-		if (m == 1) {
-			return tos_lit("1 minute ago");
-		}
-		return _STR("%"PRIu64"\000 minutes ago", 2, m);
-	}
-	if (secs < 3600 * 24) {
-		u64 h = secs / 3600;
-		if (h == 1) {
-			return tos_lit("1 hour ago");
-		}
-		return _STR("%"PRIu64"\000 hours ago", 2, h);
-	}
-	if (secs < 3600 * 24 * 5) {
-		u64 d = secs / 3600 / 24;
-		if (d == 1) {
-			return tos_lit("1 day ago");
-		}
-		return _STR("%"PRIu64"\000 days ago", 2, d);
-	}
-	if (secs > 3600 * 24 * 10000) {
-		return tos_lit("");
-	}
-	return time__Time_md(t);
-}
-
-string time__Time_relative_short(time__Time t) {
-	time__Time znow = time__now();
-	u64 secs = znow.v_unix - t.v_unix;
-	if (secs <= 30) {
-		return tos_lit("now");
-	}
-	if (secs < 60) {
-		return tos_lit("1m");
-	}
-	if (secs < 3600) {
-		return _STR("%"PRIu64"\000m", 2, secs / 60);
-	}
-	if (secs < 3600 * 24) {
-		return _STR("%"PRIu64"\000h", 2, secs / 3600);
-	}
-	if (secs < 3600 * 24 * 5) {
-		return _STR("%"PRIu64"\000d", 2, secs / 3600 / 24);
-	}
-	if (secs > 3600 * 24 * 10000) {
-		return tos_lit("");
-	}
-	return time__Time_md(t);
-}
-
-int time__day_of_week(int y, int m, int d) {
-	array_int t = new_array_from_c_array(12, 12, sizeof(int), _MOV((int[12]){
-			0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4}));
-	int sy = y;
-	if (m < 3) {
-		sy = sy - 1;
-	}
-	return (sy + sy / 4 - sy / 100 + sy / 400 + (*(int*)array_get(t, m - 1)) + d - 1) % 7 + 1;
-}
-
-int time__Time_day_of_week(time__Time t) {
-	return time__day_of_week(t.year, t.month, t.day);
-}
-
-string time__Time_weekday_str(time__Time t) {
-	int i = time__Time_day_of_week(t) - 1;
-	return string_substr(_const_time__days_string, i * 3, (i + 1) * 3);
-}
-
-string time__Time_long_weekday_str(time__Time t) {
-	int i = time__Time_day_of_week(t) - 1;
-	return (*(string*)array_get(_const_time__long_days, i));
-}
-
-i64 time__ticks() {
-// $if  windows {
-#ifdef _WIN32
-	return GetTickCount();
-#else
-	struct timeval ts = (struct timeval){.tv_sec = 0,.tv_usec = 0,};
-	gettimeofday(&ts, 0);
-	return ((i64)(ts.tv_sec * ((u64)(1000)) + (ts.tv_usec / ((u64)(1000)))));
-#endif
-// } windows
-}
-
-void time__sleep(int seconds) {
-// $if  windows {
-#ifdef _WIN32
-	Sleep(seconds * 1000);
-#else
-	sleep(seconds);
-#endif
-// } windows
-}
-
-void time__sleep_ms(int milliseconds) {
-// $if  windows {
-#ifdef _WIN32
-	Sleep(milliseconds);
-#else
-	usleep(milliseconds * 1000);
-#endif
-// } windows
-}
-
-void time__usleep(int microseconds) {
-// $if  windows {
-#ifdef _WIN32
-	int milliseconds = microseconds / 1000;
-	Sleep(milliseconds);
-#else
-	usleep(microseconds);
-#endif
-// } windows
-}
-
-bool time__is_leap_year(int year) {
-	return (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
-}
-
-Option_int time__days_in_month(int month, int year) {
-	if (month > 12 || month < 1) {
-		Option _t217 = v_error(_STR("Invalid month: %"PRId32"", 1, month));
-		return *(Option_int*)&_t217;
-	}
-	int extra = (month == 2 && time__is_leap_year(year) ? (1) : (0));
-	int res = (*(int*)array_get(_const_time__month_days, month - 1)) + extra;
-	Option_int _t218;
-	opt_ok2(&(int[]) { res }, (OptionBase*)(&_t218), sizeof(int));
-	return _t218;
-}
-
-string time__Time_str(time__Time t) {
-	return time__Time_format_ss(t);
-}
-
-static time__Time time__convert_ctime(struct tm t, int microsecond) {
-	return (time__Time){
-		.year = t.tm_year + 1900,
-		.month = t.tm_mon + 1,
-		.day = t.tm_mday,
-		.hour = t.tm_hour,
-		.minute = t.tm_min,
-		.second = t.tm_sec,
-		.microsecond = microsecond,
-		.v_unix = ((u64)(time__make_unix_time(t))),
-	};
-}
-
-// TypeDecl
-i64 time__Duration_nanoseconds(time__Duration d) {
-	return ((i64)(d));
-}
-
-i64 time__Duration_microseconds(time__Duration d) {
-	return ((i64)(d)) / 1000;
-}
-
-i64 time__Duration_milliseconds(time__Duration d) {
-	return ((i64)(d)) / 1000000;
-}
-
-f64 time__Duration_seconds(time__Duration d) {
-	i64 sec = d / _const_time__second;
-	i64 nsec = d % _const_time__second;
-	return ((f64)(sec)) + ((f64)(nsec)) / 1e9;
-}
-
-f64 time__Duration_minutes(time__Duration d) {
-	i64 min = d / _const_time__minute;
-	i64 nsec = d % _const_time__minute;
-	return ((f64)(min)) + ((f64)(nsec)) / (60 * 1e9);
-}
-
-f64 time__Duration_hours(time__Duration d) {
-	i64 hr = d / _const_time__hour;
-	i64 nsec = d % _const_time__hour;
-	return ((f64)(hr)) + ((f64)(nsec)) / (60 * 60 * 1e9);
-}
-
-static int time__make_unix_time(struct tm t) {
-	return ((int)(_mkgmtime(&t)));
-}
-
-static u64 time__init_win_time_freq() {
-	u64 f = ((u64)(0));
-	QueryPerformanceFrequency(&f);
-	return f;
-}
-
-static u64 time__init_win_time_start() {
-	u64 s = ((u64)(0));
-	QueryPerformanceCounter(&s);
-	return s;
-}
-
-u64 time__sys_mono_now() {
-	u64 tm = ((u64)(0));
-	QueryPerformanceCounter(&tm);
-	return (tm - _const_time__start_time) * 1000000000 / _const_time__freq_time;
-}
-
-// Attr: [inline]
-inline static u64 time__vpc_now() {
-	u64 tm = ((u64)(0));
-	QueryPerformanceCounter(&tm);
-	return tm;
-}
-
-static int time__local_as_unix_time() {
-	time_t t = time(0);
-	struct tm* tm = localtime(&t);
-	return time__make_unix_time(*tm);
-}
-
-static time__Time time__to_local_time(time__Time t) {
-	time__SystemTime st_utc = (time__SystemTime){
-		.year = ((u16)(t.year)),
-		.month = ((u16)(t.month)),
-		.day_of_week = 0,
-		.day = ((u16)(t.day)),
-		.hour = ((u16)(t.hour)),
-		.minute = ((u16)(t.minute)),
-		.second = ((u16)(t.second)),
-		.millisecond = 0,
-	};
-	time__SystemTime st_local = (time__SystemTime){.year = 0,.month = 0,.day_of_week = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.millisecond = 0,};
-	SystemTimeToTzSpecificLocalTime(((voidptr)(0)), &st_utc, &st_local);
-	time__Time t_local = (time__Time){
-		.year = st_local.year,
-		.month = st_local.month,
-		.day = st_local.day,
-		.hour = st_local.hour,
-		.minute = st_local.minute,
-		.second = st_local.second,
-		.microsecond = t.microsecond,
-		.v_unix = t.v_unix,
-	};
-	return t_local;
-}
-
-// Attr: [inline]
-inline static time__Time time__win_now() {
-	struct _FILETIME ft_utc = (struct _FILETIME){
-#ifndef __cplusplus
-0
-#endif
-};
-	GetSystemTimeAsFileTime(&ft_utc);
-	time__SystemTime st_utc = (time__SystemTime){.year = 0,.month = 0,.day_of_week = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.millisecond = 0,};
-	FileTimeToSystemTime(&ft_utc, &st_utc);
-	time__SystemTime st_local = (time__SystemTime){.year = 0,.month = 0,.day_of_week = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.millisecond = 0,};
-	SystemTimeToTzSpecificLocalTime(((voidptr)(0)), &st_utc, &st_local);
-	time__Time t = (time__Time){
-		.year = st_local.year,
-		.month = st_local.month,
-		.day = st_local.day,
-		.hour = st_local.hour,
-		.minute = st_local.minute,
-		.second = st_local.second,
-		.microsecond = st_local.millisecond * 1000,
-		.v_unix = ((u64)(time__SystemTime_unix_time(st_local))),
-	};
-	return t;
-}
-
-// Attr: [inline]
-inline static time__Time time__win_utc() {
-	struct _FILETIME ft_utc = (struct _FILETIME){
-#ifndef __cplusplus
-0
-#endif
-};
-	GetSystemTimeAsFileTime(&ft_utc);
-	time__SystemTime st_utc = (time__SystemTime){.year = 0,.month = 0,.day_of_week = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.millisecond = 0,};
-	FileTimeToSystemTime(&ft_utc, &st_utc);
-	time__Time t = (time__Time){
-		.year = st_utc.year,
-		.month = st_utc.month,
-		.day = st_utc.day,
-		.hour = st_utc.hour,
-		.minute = st_utc.minute,
-		.second = st_utc.second,
-		.microsecond = st_utc.millisecond * 1000,
-		.v_unix = ((u64)(time__SystemTime_unix_time(st_utc))),
-	};
-	return t;
-}
-
-int time__SystemTime_unix_time(time__SystemTime st) {
-	struct tm tt = (struct tm){
-		.tm_year = st.year - 1900,
-		.tm_mon = st.month - 1,
-		.tm_mday = st.day,
-		.tm_hour = st.hour,
-		.tm_min = st.minute,
-		.tm_sec = st.second,
-	};
-	return time__make_unix_time(tt);
-}
-
-time__Time time__darwin_now() {
-	return (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
-}
-
-time__Time time__linux_now() {
-	return (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
-}
-
-time__Time time__solaris_now() {
-	return (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
-}
-
-time__Time time__darwin_utc() {
-	return (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
-}
-
-time__Time time__linux_utc() {
-	return (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
-}
-
-time__Time time__solaris_utc() {
-	return (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
-}
-
-time__Time time__unix(int abs) {
-	int day_offset = abs / _const_time__seconds_per_day;
-	if (abs % _const_time__seconds_per_day < 0) {
-		day_offset--;
-	}
-	multi_return_int_int_int mr_470 = time__calculate_date_from_offset(day_offset);
-	int year = mr_470.arg0;
-	int month = mr_470.arg1;
-	int day = mr_470.arg2;
-	multi_return_int_int_int mr_524 = time__calculate_time_from_offset(abs % _const_time__seconds_per_day);
-	int hr = mr_524.arg0;
-	int min = mr_524.arg1;
-	int sec = mr_524.arg2;
-	return (time__Time){
-		.year = year,
-		.month = month,
-		.day = day,
-		.hour = hr,
-		.minute = min,
-		.second = sec,
-		.microsecond = 0,
-		.v_unix = ((u64)(abs)),
-	};
-}
-
-time__Time time__unix2(int abs, int microsecond) {
-	int day_offset = abs / _const_time__seconds_per_day;
-	if (abs % _const_time__seconds_per_day < 0) {
-		day_offset--;
-	}
-	multi_return_int_int_int mr_1019 = time__calculate_date_from_offset(day_offset);
-	int year = mr_1019.arg0;
-	int month = mr_1019.arg1;
-	int day = mr_1019.arg2;
-	multi_return_int_int_int mr_1073 = time__calculate_time_from_offset(abs % _const_time__seconds_per_day);
-	int hr = mr_1073.arg0;
-	int min = mr_1073.arg1;
-	int sec = mr_1073.arg2;
-	return (time__Time){
-		.year = year,
-		.month = month,
-		.day = day,
-		.hour = hr,
-		.minute = min,
-		.second = sec,
-		.microsecond = microsecond,
-		.v_unix = ((u64)(abs)),
-	};
-}
-
-// Attr: [inline]
-inline static multi_return_int_int_int time__calculate_date_from_offset(int day_offset_) {
-	int day_offset = day_offset_;
-	int year = 2001;
-	day_offset -= 31 * 365 + 8;
-	year += (day_offset / _const_time__days_per_400_years) * 400;
-	day_offset %= _const_time__days_per_400_years;
-	if (day_offset == _const_time__days_per_100_years * 4) {
-		year += 300;
-		day_offset -= _const_time__days_per_100_years * 3;
-	} else {
-		year += (day_offset / _const_time__days_per_100_years) * 100;
-		day_offset %= _const_time__days_per_100_years;
-	}
-	if (day_offset == _const_time__days_per_4_years * 25) {
-		year += 96;
-		day_offset -= _const_time__days_per_4_years * 24;
-	} else {
-		year += (day_offset / _const_time__days_per_4_years) * 4;
-		day_offset %= _const_time__days_per_4_years;
-	}
-	if (day_offset == 365 * 4) {
-		year += 3;
-		day_offset -= 365 * 3;
-	} else {
-		year += (day_offset / 365);
-		day_offset %= 365;
-	}
-	if (day_offset < 0) {
-		year--;
-		if (time__is_leap_year(year)) {
-			day_offset += 366;
-		} else {
-			day_offset += 365;
-		}
-	}
-	if (time__is_leap_year(year)) {
-		if (day_offset > 31 + 29 - 1) {
-			day_offset--;
-		} else if (day_offset == 31 + 29 - 1) {
-			return (multi_return_int_int_int){.arg0=year, .arg1=2, .arg2=29};
-		}
-	}
-	int estimated_month = day_offset / 31;
-	while (day_offset >= (*(int*)array_get(_const_time__days_before, estimated_month + 1))) {
-		estimated_month++;
-	}
-	while (day_offset < (*(int*)array_get(_const_time__days_before, estimated_month))) {
-		if (estimated_month == 0) {
-			break;
-		}
-		estimated_month--;
-	}
-	day_offset -= (*(int*)array_get(_const_time__days_before, estimated_month));
-	return (multi_return_int_int_int){.arg0=year, .arg1=estimated_month + 1, .arg2=day_offset + 1};
-}
-
-// Attr: [inline]
-inline static multi_return_int_int_int time__calculate_time_from_offset(int second_offset_) {
-	int second_offset = second_offset_;
-	if (second_offset < 0) {
-		second_offset += _const_time__seconds_per_day;
-	}
-	int hour = second_offset / _const_time__seconds_per_hour;
-	second_offset %= _const_time__seconds_per_hour;
-	int min = second_offset / _const_time__seconds_per_minute;
-	second_offset %= _const_time__seconds_per_minute;
-	return (multi_return_int_int_int){.arg0=hour, .arg1=min, .arg2=second_offset};
+		return  _t218;
 }
 
 string v__token__Position_str(v__token__Position pos) {
@@ -22220,6 +22221,15 @@ v__table__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast_
 		v__checker__Checker_error(c, tos_lit("unknown selector expression"), selector_expr->pos);
 		return _const_v__table__void_type;
 	}
+	if (selector_expr->expr.typ == 229 /* v.ast.TypeOf */) {
+		v__ast__TypeOf* _sc_tmp_50633 = (v__ast__TypeOf*)selector_expr->expr._object;
+		v__ast__TypeOf* left = _sc_tmp_50633;
+		if (string_eq(selector_expr->field_name, tos_lit("name"))) {
+			return _const_v__table__string_type;
+		} else {
+			v__checker__Checker_error(c, _STR("expected `.name`, not `.%.*s\000` after `typeof` expression", 2, selector_expr->field_name), selector_expr->pos);
+		}
+	}
 	selector_expr->expr_type = typ;
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, v__checker__Checker_unwrap_generic(c, typ));
 	string field_name = selector_expr->field_name;
@@ -22394,8 +22404,8 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 	}
 	if (assign_stmt->left.len != right_len) {
 		if (right_first.typ == 197 /* v.ast.CallExpr */) {
-			v__ast__CallExpr* _sc_tmp_56477 = (v__ast__CallExpr*)right_first._object;
-			v__ast__CallExpr* right_first = _sc_tmp_56477;
+			v__ast__CallExpr* _sc_tmp_56726 = (v__ast__CallExpr*)right_first._object;
+			v__ast__CallExpr* right_first = _sc_tmp_56726;
 			v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) but `%.*s\000()` returns %"PRId32"\000 value(s)", 4, assign_stmt->left.len, right_first->name, right_len), assign_stmt->pos);
 		} else {
 			v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) %"PRId32"\000 value(s)", 3, assign_stmt->left.len, right_len), assign_stmt->pos);
@@ -22406,8 +22416,8 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 		return;
 	}
 	if (right_first.typ == 220 /* v.ast.PrefixExpr */) {
-		v__ast__PrefixExpr* _sc_tmp_56814 = (v__ast__PrefixExpr*)right_first._object;
-		v__ast__PrefixExpr* right_first = _sc_tmp_56814;
+		v__ast__PrefixExpr* _sc_tmp_57063 = (v__ast__PrefixExpr*)right_first._object;
+		v__ast__PrefixExpr* right_first = _sc_tmp_57063;
 		v__ast__PrefixExpr* node = right_first;
 		v__ast__Expr left_first = (*(v__ast__Expr*)array_get(assign_stmt->left, 0));
 		if (node->op == v__token__Kind_amp && node->right.typ == 206 /* v.ast.Ident */) {
@@ -22418,8 +22428,8 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 			if (_t630 = v__ast__Scope_find_var(scope, ident->name), _t630.ok) {
 				Option_v__ast__Var_ptr v = _t630;
 				if (left_first.typ == 206 /* v.ast.Ident */) {
-					v__ast__Ident* _sc_tmp_57086 = (v__ast__Ident*)left_first._object;
-					v__ast__Ident* left_first = _sc_tmp_57086;
+					v__ast__Ident* _sc_tmp_57335 = (v__ast__Ident*)left_first._object;
+					v__ast__Ident* left_first = _sc_tmp_57335;
 					v__ast__Ident* assigned_var = left_first;
 					if (!/*opt*/(*(v__ast__Var**)v.data)->is_mut && assigned_var->is_mut && !c->inside_unsafe) {
 						v__checker__Checker_error(c, _STR("`%.*s\000` is immutable, cannot have a mutable reference to it", 2, ident->name), node->pos);
@@ -22434,8 +22444,8 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 	for (int i = 0; i < _t631.len; ++i) {
 		v__ast__Expr left = ((v__ast__Expr*)_t631.data)[i];
 		if (left.typ == 197 /* v.ast.CallExpr */) {
-			v__ast__CallExpr* _sc_tmp_57419 = (v__ast__CallExpr*)left._object;
-			v__ast__CallExpr* left = _sc_tmp_57419;
+			v__ast__CallExpr* _sc_tmp_57668 = (v__ast__CallExpr*)left._object;
+			v__ast__CallExpr* left = _sc_tmp_57668;
 			v__checker__Checker_error(c, _STR("cannot call function `%.*s\000()` on the left side of an assignment", 2, left->name), left->pos);
 		}
 		bool is_blank_ident = v__ast__Expr_is_blank_ident(left);
@@ -22727,7 +22737,7 @@ static void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node) 
 				VAssertMetaInfo v_assert_meta_info__t649;
 				memset(&v_assert_meta_info__t649, 0, sizeof(VAssertMetaInfo));
 				v_assert_meta_info__t649.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-				v_assert_meta_info__t649.line_nr = 1997;
+				v_assert_meta_info__t649.line_nr = 2005;
 				v_assert_meta_info__t649.fn_name = tos_lit("stmt");
 				v_assert_meta_info__t649.src = tos_lit("!c.inside_unsafe");
 				__print_assert_failure(&v_assert_meta_info__t649);
@@ -23823,30 +23833,30 @@ static void v__checker__Checker_match_exprs(v__checker__Checker* c, v__ast__Matc
 			v__ast__Expr expr = ((v__ast__Expr*)_t702.data)[_t703];
 			string key = tos_lit("");
 			if (expr.typ == 221 /* v.ast.RangeExpr */) {
-				v__ast__RangeExpr* _sc_tmp_92450 = (v__ast__RangeExpr*)expr._object;
-				v__ast__RangeExpr* expr = _sc_tmp_92450;
+				v__ast__RangeExpr* _sc_tmp_92699 = (v__ast__RangeExpr*)expr._object;
+				v__ast__RangeExpr* expr = _sc_tmp_92699;
 				int low = 0;
 				int high = 0;
 				c->expected_type = node->expected_type;
 				v__ast__Expr low_expr = expr->low;
 				v__ast__Expr high_expr = expr->high;
 				if (low_expr.typ == 211 /* v.ast.IntegerLiteral */) {
-					v__ast__IntegerLiteral* _sc_tmp_92609 = (v__ast__IntegerLiteral*)low_expr._object;
-					v__ast__IntegerLiteral* low_expr = _sc_tmp_92609;
+					v__ast__IntegerLiteral* _sc_tmp_92858 = (v__ast__IntegerLiteral*)low_expr._object;
+					v__ast__IntegerLiteral* low_expr = _sc_tmp_92858;
 					if (high_expr.typ == 211 /* v.ast.IntegerLiteral */) {
-						v__ast__IntegerLiteral* _sc_tmp_92650 = (v__ast__IntegerLiteral*)high_expr._object;
-						v__ast__IntegerLiteral* high_expr = _sc_tmp_92650;
+						v__ast__IntegerLiteral* _sc_tmp_92899 = (v__ast__IntegerLiteral*)high_expr._object;
+						v__ast__IntegerLiteral* high_expr = _sc_tmp_92899;
 						low = string_int(low_expr->val);
 						high = string_int(high_expr->val);
 					} else {
 						v__checker__Checker_error(c, tos_lit("mismatched range types"), low_expr->pos);
 					}
 				} else if (low_expr.typ == 199 /* v.ast.CharLiteral */) {
-					v__ast__CharLiteral* _sc_tmp_92832 = (v__ast__CharLiteral*)low_expr._object;
-					v__ast__CharLiteral* low_expr = _sc_tmp_92832;
+					v__ast__CharLiteral* _sc_tmp_93081 = (v__ast__CharLiteral*)low_expr._object;
+					v__ast__CharLiteral* low_expr = _sc_tmp_93081;
 					if (high_expr.typ == 199 /* v.ast.CharLiteral */) {
-						v__ast__CharLiteral* _sc_tmp_92875 = (v__ast__CharLiteral*)high_expr._object;
-						v__ast__CharLiteral* high_expr = _sc_tmp_92875;
+						v__ast__CharLiteral* _sc_tmp_93124 = (v__ast__CharLiteral*)high_expr._object;
+						v__ast__CharLiteral* high_expr = _sc_tmp_93124;
 						low = string_at(low_expr->val, 0);
 						high = string_at(high_expr->val, 0);
 					} else {
@@ -23968,8 +23978,8 @@ v__table__Type v__checker__Checker_lock_expr(v__checker__Checker* c, v__ast__Loc
 		v__ast__Ident id = ((v__ast__Ident*)_t713.data)[_t714];
 		v__checker__Checker_ident(c, (voidptr)&/*qq*/id);
 		if (id.obj.typ == 258 /* v.ast.Var */) {
-			v__ast__Var* _sc_tmp_95851 = (v__ast__Var*)id.obj._object;
-			v__ast__Var* v = _sc_tmp_95851;
+			v__ast__Var* _sc_tmp_96100 = (v__ast__Var*)id.obj._object;
+			v__ast__Var* v = _sc_tmp_96100;
 			if (v__table__Type_share(v->typ) != v__table__ShareType_shared_t) {
 				v__checker__Checker_error(c, _STR("`%.*s\000` must be declared `shared` to be locked", 2, id.name), id.pos);
 			}
@@ -24011,7 +24021,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 		VAssertMetaInfo v_assert_meta_info__t717;
 		memset(&v_assert_meta_info__t717, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t717.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t717.line_nr = 3005;
+		v_assert_meta_info__t717.line_nr = 3013;
 		v_assert_meta_info__t717.fn_name = tos_lit("unsafe_expr");
 		v_assert_meta_info__t717.src = tos_lit("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t717);
@@ -24024,8 +24034,8 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 	}
 	v__ast__Stmt last = (*(v__ast__Stmt*)array_get(node->stmts, 0));
 	if (last.typ == 241 /* v.ast.ExprStmt */) {
-		v__ast__ExprStmt* _sc_tmp_97167 = (v__ast__ExprStmt*)last._object;
-		v__ast__ExprStmt* last = _sc_tmp_97167;
+		v__ast__ExprStmt* _sc_tmp_97416 = (v__ast__ExprStmt*)last._object;
+		v__ast__ExprStmt* last = _sc_tmp_97416;
 		v__table__Type t = v__checker__Checker_expr(c, last->expr);
 		// Defer begin
 		c->inside_unsafe = false;
@@ -24073,8 +24083,8 @@ v__table__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExp
 						bool is_mut = false;
 						v__ast__Scope* scope = v__ast__Scope_innermost(c->file.scope, branch.body_pos.pos);
 						if (infix->left.typ == 206 /* v.ast.Ident */) {
-							v__ast__Ident* _sc_tmp_99165 = (v__ast__Ident*)infix->left._object;
-							v__ast__Ident* infix_left = _sc_tmp_99165;
+							v__ast__Ident* _sc_tmp_99414 = (v__ast__Ident*)infix->left._object;
+							v__ast__Ident* infix_left = _sc_tmp_99414;
 							{ /* if guard */ 
 							Option_v__ast__Var_ptr _t719;
 							if (_t719 = v__ast__Scope_find_var(scope, infix_left->name), _t719.ok) {
@@ -24176,14 +24186,14 @@ static Option_bool v__checker__Checker_has_return(v__checker__Checker* c, array_
 	for (int _t723 = 0; _t723 < _t722.len; ++_t723) {
 		v__ast__Stmt s = ((v__ast__Stmt*)_t722.data)[_t723];
 		if (s.typ == 237 /* v.ast.CompIf */) {
-			v__ast__CompIf* _sc_tmp_102175 = (v__ast__CompIf*)s._object;
-			v__ast__CompIf* s = _sc_tmp_102175;
+			v__ast__CompIf* _sc_tmp_102424 = (v__ast__CompIf*)s._object;
+			v__ast__CompIf* s = _sc_tmp_102424;
 			has_complexity = true;
 			break;
 		}
 		if (s.typ == 241 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_102236 = (v__ast__ExprStmt*)s._object;
-			v__ast__ExprStmt* s = _sc_tmp_102236;
+			v__ast__ExprStmt* _sc_tmp_102485 = (v__ast__ExprStmt*)s._object;
+			v__ast__ExprStmt* s = _sc_tmp_102485;
 			if (s->expr.typ == 207 /* v.ast.IfExpr */ || s->expr.typ == 215 /* v.ast.MatchExpr */) {
 				has_complexity = true;
 				break;
@@ -24205,8 +24215,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->source_name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_102872 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_102872.arg0;
+		multi_return_string_v__token__Position mr_103121 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_103121.arg0;
 	}
 	if ((v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym)) && !c->inside_unsafe) {
 		v__checker__Checker_warn(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -24616,21 +24626,21 @@ static bool v__checker__has_top_return(array_v__ast__Stmt stmts) {
 	for (int _t748 = 0; _t748 < _t747.len; ++_t748) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t747.data)[_t748];
 		if (stmt.typ == 253 /* v.ast.Return */) {
-			v__ast__Return* _sc_tmp_116138 = (v__ast__Return*)stmt._object;
-			v__ast__Return* stmt = _sc_tmp_116138;
+			v__ast__Return* _sc_tmp_116387 = (v__ast__Return*)stmt._object;
+			v__ast__Return* stmt = _sc_tmp_116387;
 			return true;
 		} else if (stmt.typ == 234 /* v.ast.Block */) {
-			v__ast__Block* _sc_tmp_116181 = (v__ast__Block*)stmt._object;
-			v__ast__Block* stmt = _sc_tmp_116181;
+			v__ast__Block* _sc_tmp_116430 = (v__ast__Block*)stmt._object;
+			v__ast__Block* stmt = _sc_tmp_116430;
 			if (v__checker__has_top_return(stmt->stmts)) {
 				return true;
 			}
 		} else if (stmt.typ == 241 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_116269 = (v__ast__ExprStmt*)stmt._object;
-			v__ast__ExprStmt* stmt = _sc_tmp_116269;
+			v__ast__ExprStmt* _sc_tmp_116518 = (v__ast__ExprStmt*)stmt._object;
+			v__ast__ExprStmt* stmt = _sc_tmp_116518;
 			if (stmt->expr.typ == 197 /* v.ast.CallExpr */) {
-				v__ast__CallExpr* _sc_tmp_116303 = (v__ast__CallExpr*)stmt->expr._object;
-				v__ast__CallExpr* ce = _sc_tmp_116303;
+				v__ast__CallExpr* _sc_tmp_116552 = (v__ast__CallExpr*)stmt->expr._object;
+				v__ast__CallExpr* ce = _sc_tmp_116552;
 				if ((string_eq(ce->name, tos_lit("panic")) || string_eq(ce->name, tos_lit("exit")))) {
 					return true;
 				}
@@ -26312,6 +26322,9 @@ v__table__Type v__parser__Parser_parse_map_type(v__parser__Parser* p) {
 
 v__table__Type v__parser__Parser_parse_chan_type(v__parser__Parser* p) {
 	v__parser__Parser_next(p);
+	if (p->tok.kind != v__token__Kind_name && p->tok.kind != v__token__Kind_key_mut && p->tok.kind != v__token__Kind_amp) {
+		return _const_v__table__chan_type;
+	}
 	v__table__Type elem_type = v__parser__Parser_parse_type(p);
 	int idx = v__table__Table_find_or_register_chan(p->table, elem_type);
 	return v__table__new_type(idx);
@@ -26337,9 +26350,9 @@ v__table__Type v__parser__Parser_parse_multi_return_type(v__parser__Parser* p) {
 v__table__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name) {
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	int line_nr = p->tok.line_nr;
-	multi_return_array_v__table__Arg_bool_bool mr_2140 = v__parser__Parser_fn_args(p);
-	array_v__table__Arg args = mr_2140.arg0;
-	bool is_variadic = mr_2140.arg2;
+	multi_return_array_v__table__Arg_bool_bool mr_2242 = v__parser__Parser_fn_args(p);
+	array_v__table__Arg args = mr_2242.arg0;
+	bool is_variadic = mr_2242.arg2;
 	v__table__Type return_type = _const_v__table__void_type;
 	if (p->tok.line_nr == line_nr && v__token__Kind_is_start_of_type(p->tok.kind)) {
 		return_type = v__parser__Parser_parse_type(p);
@@ -31390,6 +31403,12 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 	} else if (node.typ == 222 /* v.ast.SelectorExpr */) {
 		v__ast__SelectorExpr* it = (v__ast__SelectorExpr*)node._object; // ST it
 		v__ast__SelectorExpr* node = it;
+		if (node->expr.typ == 229 /* v.ast.TypeOf */) {
+			v__ast__TypeOf* _sc_tmp_59792 = (v__ast__TypeOf*)node->expr._object;
+			v__ast__TypeOf* left = _sc_tmp_59792;
+			v__gen__Gen_typeof_name(g, *left);
+			return;
+		}
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, node->expr_type);
 		if (sym->kind == v__table__Kind_array_fixed) {
 			// assert
@@ -31397,7 +31416,7 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 				VAssertMetaInfo v_assert_meta_info__t975;
 				memset(&v_assert_meta_info__t975, 0, sizeof(VAssertMetaInfo));
 				v_assert_meta_info__t975.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/gen/cgen.v");
-				v_assert_meta_info__t975.line_nr = 2106;
+				v_assert_meta_info__t975.line_nr = 2111;
 				v_assert_meta_info__t975.fn_name = tos_lit("expr");
 				v_assert_meta_info__t975.src = tos_lit("node.field_name == 'len'");
 				v_assert_meta_info__t975.op = tos_lit("==");
@@ -31459,6 +31478,20 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 		v__ast__ExprStmt* es = /* as */ (v__ast__ExprStmt*)__as_cast((*(v__ast__Stmt*)array_get(node->stmts, 0))._object, (*(v__ast__Stmt*)array_get(node->stmts, 0)).typ, /*expected:*/241);
 		v__gen__Gen_expr(g, es->expr);
 	};
+}
+
+static void v__gen__Gen_typeof_name(v__gen__Gen* g, v__ast__TypeOf node) {
+	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, node.expr_type);
+	if (sym->kind == v__table__Kind_array) {
+		v__table__Array* info = /* as */ (v__table__Array*)__as_cast(sym->info._object, sym->info.typ, /*expected:*/315);
+		string s = v__table__Table_get_type_name(g->table, info->elem_type);
+		s = v__util__strip_main_name(s);
+		v__gen__Gen_write(g, _STR("tos_lit(\"[]%.*s\000\")", 2, s));
+	} else if (sym->kind == v__table__Kind_sum_type) {
+		v__gen__Gen_write(g, _STR("tos_lit(\"%.*s\000\")", 2, v__util__strip_main_name(sym->name)));
+	} else {
+		v__gen__Gen_typeof_expr(g, node);
+	}
 }
 
 static void v__gen__Gen_typeof_expr(v__gen__Gen* g, v__ast__TypeOf node) {
@@ -31805,8 +31838,8 @@ static void v__gen__Gen_match_expr(v__gen__Gen* g, v__ast__MatchExpr node) {
 					v__gen__Gen_expr(g, expr);
 					v__gen__Gen_write(g, tos_lit(")"));
 				} else if (expr.typ == 221 /* v.ast.RangeExpr */) {
-					v__ast__RangeExpr* _sc_tmp_72616 = (v__ast__RangeExpr*)expr._object;
-					v__ast__RangeExpr* expr = _sc_tmp_72616;
+					v__ast__RangeExpr* _sc_tmp_73182 = (v__ast__RangeExpr*)expr._object;
+					v__ast__RangeExpr* expr = _sc_tmp_73182;
 					v__gen__Gen_write(g, tos_lit("("));
 					v__gen__Gen_expr(g, node.cond);
 					v__gen__Gen_write(g, tos_lit(" >= "));
@@ -31896,8 +31929,8 @@ static void v__gen__Gen_ident(v__gen__Gen* g, v__ast__Ident node) {
 // Attr: [unlikely]
 static bool v__gen__Gen_should_write_asterisk_due_to_match_sumtype(v__gen__Gen* g, v__ast__Expr expr) {
 	if (expr.typ == 206 /* v.ast.Ident */) {
-		v__ast__Ident* _sc_tmp_75032 = (v__ast__Ident*)expr._object;
-		v__ast__Ident* expr = _sc_tmp_75032;
+		v__ast__Ident* _sc_tmp_75598 = (v__ast__Ident*)expr._object;
+		v__ast__Ident* expr = _sc_tmp_75598;
 		v__table__Type typ = (expr->info.typ == 291 /* v.ast.IdentVar */ ? ((/* as */ (v__ast__IdentVar*)__as_cast(expr->info._object, expr->info.typ, /*expected:*/291))->typ) : ((/* as */ (v__ast__IdentFn*)__as_cast(expr->info._object, expr->info.typ, /*expected:*/290))->typ));
 		return (v__table__Type_is_ptr(typ) && v__gen__Gen_match_sumtype_has_no_struct_and_contains(g, *expr) ? (true) : (false));
 	} else {
@@ -31982,8 +32015,8 @@ static void v__gen__Gen_if_expr(v__gen__Gen* g, v__ast__IfExpr node) {
 		v__ast__IfBranch branch = ((v__ast__IfBranch*)_t994.data)[i];
 		v__ast__Expr cond = branch.cond;
 		if (cond.typ == 208 /* v.ast.IfGuardExpr */) {
-			v__ast__IfGuardExpr* _sc_tmp_76675 = (v__ast__IfGuardExpr*)cond._object;
-			v__ast__IfGuardExpr* cond = _sc_tmp_76675;
+			v__ast__IfGuardExpr* _sc_tmp_77241 = (v__ast__IfGuardExpr*)cond._object;
+			v__ast__IfGuardExpr* cond = _sc_tmp_77241;
 			if (!is_guard) {
 				is_guard = true;
 				guard_idx = i;
@@ -32911,9 +32944,9 @@ static void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__TypeSymbol t
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_106753 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_106753.arg0;
-						string base = mr_106753.arg1;
+						multi_return_string_string mr_107319 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_107319.arg0;
+						string base = mr_107319.arg1;
 						array_push(&g->optionals, _MOV((string[]){ styp }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -33019,9 +33052,9 @@ static array_v__table__TypeSymbol v__gen__Gen_sort_structs(v__gen__Gen* g, array
 
 static Option_bool v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr expr, v__table__Type etype) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, etype);
-	multi_return_bool_bool_int mr_110086 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_110086.arg0;
-	bool str_method_expects_ptr = mr_110086.arg1;
+	multi_return_bool_bool_int mr_110652 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_110652.arg0;
+	bool str_method_expects_ptr = mr_110652.arg1;
 	if (v__table__Type_has_flag(etype, v__table__TypeFlag_variadic)) {
 		string str_fn_name = v__gen__Gen_gen_str_for_type(g, etype);
 		v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -33061,8 +33094,8 @@ static Option_bool v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr e
 			v__gen__Gen_write(g, _STR("%.*s\000( &", 2, str_fn_name));
 		}
 		if (expr.typ == 193 /* v.ast.ArrayInit */) {
-			v__ast__ArrayInit* _sc_tmp_111304 = (v__ast__ArrayInit*)expr._object;
-			v__ast__ArrayInit* expr = _sc_tmp_111304;
+			v__ast__ArrayInit* _sc_tmp_111870 = (v__ast__ArrayInit*)expr._object;
+			v__ast__ArrayInit* expr = _sc_tmp_111870;
 			if (expr->is_fixed) {
 				string s = v__gen__Gen_typ(g, expr->typ);
 				v__gen__Gen_write(g, _STR("(%.*s\000)", 2, s));
@@ -33404,11 +33437,11 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExpr
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->fn_decl->name, tos_lit("main.main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_121793 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_121793.arg0;
-				string pafile = mr_121793.arg1;
-				string pamod = mr_121793.arg2;
-				string pafn = mr_121793.arg3;
+				multi_return_int_string_string_string mr_122359 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_122359.arg0;
+				string pafile = mr_122359.arg1;
+				string pamod = mr_122359.arg2;
+				string pafn = mr_122359.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(%.*s\000.v_error);", 2, cvar_name));
@@ -33661,8 +33694,8 @@ static void v__gen__Gen_go_stmt(v__gen__Gen* g, v__ast__GoStmt node) {
 		v__table__TypeSymbol* receiver_sym = v__table__Table_get_type_symbol(g->table, expr->receiver_type);
 		name = string_add(string_add(receiver_sym->name, tos_lit("_")), name);
 	} else if (expr->left.typ == 192 /* v.ast.AnonFn */) {
-		v__ast__AnonFn* _sc_tmp_128416 = (v__ast__AnonFn*)expr->left._object;
-		v__ast__AnonFn* anon_fn = _sc_tmp_128416;
+		v__ast__AnonFn* _sc_tmp_128982 = (v__ast__AnonFn*)expr->left._object;
+		v__ast__AnonFn* anon_fn = _sc_tmp_128982;
 		v__gen__Gen_gen_anon_fn_decl(g, *anon_fn);
 		v__table__TypeSymbol* fsym = v__table__Table_get_type_symbol(g->table, anon_fn->typ);
 		name = fsym->name;
@@ -39581,7 +39614,7 @@ array_string v__builder__Builder_get_builtin_files(v__builder__Builder v) {
 }
 
 array_string v__builder__Builder_get_user_files(v__builder__Builder* v) {
-	if ((string_eq(v->pref->path, tos_lit("vlib/builtin")) || string_eq(v->pref->path, tos_lit("vlib/strconv")) || string_eq(v->pref->path, tos_lit("vlib/strings")) || string_eq(v->pref->path, tos_lit("vlib/hash")))) {
+	if ((string_eq(v->pref->path, tos_lit("vlib/builtin")) || string_eq(v->pref->path, tos_lit("vlib/strconv")) || string_eq(v->pref->path, tos_lit("vlib/strings")) || string_eq(v->pref->path, tos_lit("vlib/hash")) || string_eq(v->pref->path, tos_lit("vlib/time")))) {
 		v__builder__Builder_log(/*rec*/*v, tos_lit("Skipping user files."));
 		return __new_array_with_default(0, 0, sizeof(string), 0);
 	}
@@ -40274,6 +40307,29 @@ void _vinit() {
 		((byte)(0x00)), 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0, 0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0, 0x08, 0x88, 0x48, 0xc8, 0x28, 0xa8, 0x68, 0xe8, 0x18, 0x98, 0x58, 0xd8, 0x38, 0xb8, 0x78, 0xf8, 0x04, 0x84, 0x44, 0xc4, 0x24, 0xa4, 0x64, 0xe4, 0x14, 0x94, 0x54, 0xd4, 0x34, 0xb4, 0x74, 0xf4, 0x0c, 0x8c, 0x4c, 0xcc, 0x2c, 0xac, 0x6c, 0xec, 0x1c, 0x9c, 0x5c, 0xdc, 0x3c, 0xbc, 0x7c, 0xfc, 0x02, 0x82, 0x42, 0xc2, 0x22, 0xa2, 0x62, 0xe2, 0x12, 0x92, 0x52, 0xd2, 0x32, 0xb2, 0x72, 0xf2, 0x0a, 0x8a, 0x4a, 0xca, 0x2a, 0xaa, 0x6a, 0xea, 0x1a, 0x9a, 0x5a, 0xda, 0x3a, 0xba, 0x7a, 0xfa, 0x06, 0x86, 0x46, 0xc6, 0x26, 0xa6, 0x66, 0xe6, 0x16, 0x96, 0x56, 0xd6, 0x36, 0xb6, 0x76, 0xf6, 0x0e, 0x8e, 0x4e, 0xce, 0x2e, 0xae, 0x6e, 0xee, 0x1e, 0x9e, 0x5e, 0xde, 0x3e, 0xbe, 0x7e, 0xfe, 0x01, 0x81, 0x41, 0xc1, 0x21, 0xa1, 0x61, 0xe1, 0x11, 0x91, 0x51, 0xd1, 0x31, 0xb1, 0x71, 0xf1, 0x09, 0x89, 0x49, 0xc9, 0x29, 0xa9, 0x69, 0xe9, 0x19, 0x99, 0x59, 0xd9, 0x39, 0xb9, 0x79, 0xf9, 0x05, 0x85, 0x45, 0xc5, 0x25, 0xa5, 0x65, 0xe5, 0x15, 0x95, 0x55, 0xd5, 0x35, 0xb5, 0x75, 0xf5, 0x0d, 0x8d, 0x4d, 0xcd, 0x2d, 0xad, 0x6d, 0xed, 0x1d, 0x9d, 0x5d, 0xdd, 0x3d, 0xbd, 0x7d, 0xfd, 0x03, 0x83, 0x43, 0xc3, 0x23, 0xa3, 0x63, 0xe3, 0x13, 0x93, 0x53, 0xd3, 0x33, 0xb3, 0x73, 0xf3, 0x0b, 0x8b, 0x4b, 0xcb, 0x2b, 0xab, 0x6b, 0xeb, 0x1b, 0x9b, 0x5b, 0xdb, 0x3b, 0xbb, 0x7b, 0xfb, 0x07, 0x87, 0x47, 0xc7, 0x27, 0xa7, 0x67, 0xe7, 0x17, 0x97, 0x57, 0xd7, 0x37, 0xb7, 0x77, 0xf7, 0x0f, 0x8f, 0x4f, 0xcf, 0x2f, 0xaf, 0x6f, 0xef, 0x1f, 0x9f, 0x5f, 0xdf, 0x3f, 0xbf, 0x7f, 0xff}));
 	_const_math__bits__len_8_tab = new_array_from_c_array(256, 256, sizeof(byte), _MOV((byte[256]){
 		((byte)(0x00)), 0x01, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08}));
+	// Initializations for module time :
+	_const_time__month_days = new_array_from_c_array(12, 12, sizeof(int), _MOV((int[12]){
+		31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}));
+	_const_time__absolute_zero_year = ((i64)(-292277022399));
+	_const_time__seconds_per_hour = 60 * _const_time__seconds_per_minute;
+	_const_time__seconds_per_day = 24 * _const_time__seconds_per_hour;
+	_const_time__seconds_per_week = 7 * _const_time__seconds_per_day;
+	_const_time__days_per_400_years = 365 * 400 + 97;
+	_const_time__days_per_100_years = 365 * 100 + 24;
+	_const_time__days_per_4_years = 365 * 4 + 1;
+	_const_time__days_before = new_array_from_c_array(13, 13, sizeof(int), _MOV((int[13]){
+		0, 31, 31 + 28, 31 + 28 + 31, 31 + 28 + 31 + 30, 31 + 28 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31}));
+	_const_time__long_days = new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("Monday"), tos_lit("Tuesday"), tos_lit("Wednesday"), tos_lit("Thusday"), tos_lit("Friday"), tos_lit("Saturday"), tos_lit("Sunday")}));
+	_const_time__nanosecond = ((time__Duration)(1));
+	_const_time__microsecond = ((time__Duration)(1000)) * _const_time__nanosecond;
+	_const_time__millisecond = ((time__Duration)(1000)) * _const_time__microsecond;
+	_const_time__second = ((time__Duration)(1000)) * _const_time__millisecond;
+	_const_time__minute = ((time__Duration)(60)) * _const_time__second;
+	_const_time__hour = ((time__Duration)(60)) * _const_time__minute;
+	_const_time__infinite = ((time__Duration)(-1));
+	_const_time__start_time = time__init_win_time_start();
+	_const_time__freq_time = time__init_win_time_freq();
+	_const_time__start_local_time = time__local_as_unix_time();
 	// Initializations for module strconv :
 	_const_strconv__double_plus_zero = ((u64)(0x0000000000000000));
 	_const_strconv__double_minus_zero = ((u64)(0x8000000000000000));
@@ -40326,29 +40382,6 @@ void _vinit() {
 	_const_os__wd_at_startup = os__getwd();
 	_const_os__lang_neutral = (_const_os__sublang_neutral);
 	// Initializations for module os.cmdline :
-	// Initializations for module time :
-	_const_time__month_days = new_array_from_c_array(12, 12, sizeof(int), _MOV((int[12]){
-		31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}));
-	_const_time__absolute_zero_year = ((i64)(-292277022399));
-	_const_time__seconds_per_hour = 60 * _const_time__seconds_per_minute;
-	_const_time__seconds_per_day = 24 * _const_time__seconds_per_hour;
-	_const_time__seconds_per_week = 7 * _const_time__seconds_per_day;
-	_const_time__days_per_400_years = 365 * 400 + 97;
-	_const_time__days_per_100_years = 365 * 100 + 24;
-	_const_time__days_per_4_years = 365 * 4 + 1;
-	_const_time__days_before = new_array_from_c_array(13, 13, sizeof(int), _MOV((int[13]){
-		0, 31, 31 + 28, 31 + 28 + 31, 31 + 28 + 31 + 30, 31 + 28 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31}));
-	_const_time__long_days = new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("Monday"), tos_lit("Tuesday"), tos_lit("Wednesday"), tos_lit("Thusday"), tos_lit("Friday"), tos_lit("Saturday"), tos_lit("Sunday")}));
-	_const_time__nanosecond = ((time__Duration)(1));
-	_const_time__microsecond = ((time__Duration)(1000)) * _const_time__nanosecond;
-	_const_time__millisecond = ((time__Duration)(1000)) * _const_time__microsecond;
-	_const_time__second = ((time__Duration)(1000)) * _const_time__millisecond;
-	_const_time__minute = ((time__Duration)(60)) * _const_time__second;
-	_const_time__hour = ((time__Duration)(60)) * _const_time__minute;
-	_const_time__infinite = ((time__Duration)(-1));
-	_const_time__start_time = time__init_win_time_start();
-	_const_time__freq_time = time__init_win_time_freq();
-	_const_time__start_local_time = time__local_as_unix_time();
 	// Initializations for module v.token :
 	_const_v__token__assign_tokens = new_array_from_c_array(11, 11, sizeof(v__token__Kind), _MOV((v__token__Kind[11]){
 		v__token__Kind_assign, v__token__Kind_plus_assign, v__token__Kind_minus_assign, v__token__Kind_mult_assign, v__token__Kind_div_assign, v__token__Kind_xor_assign, v__token__Kind_mod_assign, v__token__Kind_or_assign, v__token__Kind_and_assign, v__token__Kind_right_shift_assign, v__token__Kind_left_shift_assign}));
@@ -40372,7 +40405,7 @@ void _vinit() {
 	// Initializations for module help :
 	// Initializations for module v.util :
 	_const_v__util__emanager = v__util__new_error_manager();
-	_const_v__util__builtin_module_parts = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){tos_lit("math.bits"), tos_lit("strconv"), tos_lit("strconv.ftoa"), tos_lit("hash"), tos_lit("strings"), tos_lit("builtin")}));
+	_const_v__util__builtin_module_parts = new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("math.bits"), tos_lit("strconv"), tos_lit("strconv.ftoa"), tos_lit("hash"), tos_lit("strings"), tos_lit("time"), tos_lit("builtin")}));
 	_const_v__util__external_module_dependencies_for_tool = new_map_init(1, sizeof(array_string), _MOV((string[1]){tos_lit("vdoc"), }), _MOV((array_string[1]){new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){tos_lit("markdown")})), }));
 	// Initializations for module v.table :
 	_const_v__table__integer_type_idxs = new_array_from_c_array(10, 10, sizeof(int), _MOV((int[10]){
