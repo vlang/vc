@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "35cbca9"
+#define V_COMMIT_HASH "a3ee217"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "bd304f1"
+	#define V_COMMIT_HASH "35cbca9"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "35cbca9"
+	#define V_CURRENT_COMMIT_HASH "a3ee217"
 #endif
 
 // V typedefs:
@@ -39309,7 +39309,7 @@ static void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) {
 		println(tos_lit("Downloading files for Linux cross compilation (~18 MB)..."));
 		string zip_file = string_add(string_substr(sysroot, 0, sysroot.len - 1), tos_lit(".zip"));
 		os__system(_STR("curl -L -o %.*s\000 %.*s", 2, zip_file, zip_url));
-		os__system(_STR("unzip -q %.*s\000 -d %.*s", 2, zip_file, parent_dir));
+		os__system(_STR("tar -C %.*s\000 -xf %.*s", 2, parent_dir, zip_file));
 		if (!os__is_dir(sysroot)) {
 			println(tos_lit("Failed to download."));
 			v_exit(1);
