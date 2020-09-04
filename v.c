@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "efa49bf"
+#define V_COMMIT_HASH "81778e5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "333f355"
+	#define V_COMMIT_HASH "efa49bf"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "efa49bf"
+	#define V_CURRENT_COMMIT_HASH "81778e5"
 #endif
 
 // V typedefs:
@@ -3793,6 +3793,7 @@ Option_string os__find_abs_path_of_executable(string exepath);
 bool os__exists_in_system_path(string prog);
 bool os__dir_exists(string path);
 bool os__is_dir(string path);
+bool os__is_file(string path);
 bool os__is_link(string path);
 void os__chdir(string path);
 string os__getwd();
@@ -13262,6 +13263,10 @@ bool os__is_dir(string path) {
 	return val == _const_os__s_ifdir;
 #endif
 // } windows
+}
+
+bool os__is_file(string path) {
+	return os__exists(path) && !os__is_dir(path);
 }
 
 bool os__is_link(string path) {
