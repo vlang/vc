@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "333f355"
+#define V_COMMIT_HASH "efa49bf"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b8617ac"
+	#define V_COMMIT_HASH "333f355"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "333f355"
+	#define V_CURRENT_COMMIT_HASH "efa49bf"
 #endif
 
 // V typedefs:
@@ -12241,11 +12241,15 @@ int os__file_size(string path) {
 }
 
 void os__mv(string src, string dst) {
+	string rdst = dst;
+	if (os__is_dir(rdst)) {
+		rdst = os__join_path(rdst, (varg_string){.len=1,.args={os__file_name(string_trim_right(src, _const_os__path_separator))}});
+	}
 // $if  windows {
 #ifdef _WIN32
-	_wrename(string_to_wide(src), string_to_wide(dst));
+	_wrename(string_to_wide(src), string_to_wide(rdst));
 #else
-	rename(((charptr)(src.str)), ((charptr)(dst.str)));
+	rename(((charptr)(src.str)), ((charptr)(rdst.str)));
 #endif
 // } windows
 }
@@ -12561,8 +12565,8 @@ static int os__vpclose(voidptr f) {
 #ifdef _WIN32
 	return _pclose(f);
 #else
-	multi_return_int_bool mr_8486 = os__posix_wait4_to_exit_status(pclose(f));
-	int ret = mr_8486.arg0;
+	multi_return_int_bool mr_8594 = os__posix_wait4_to_exit_status(pclose(f));
+	int ret = mr_8594.arg0;
 	return ret;
 #endif
 // } windows
@@ -12602,9 +12606,9 @@ int os__system(string cmd) {
 	}
 // $if !windows {
 #ifndef _WIN32
-	multi_return_int_bool mr_9586 = os__posix_wait4_to_exit_status(ret);
-	int pret = mr_9586.arg0;
-	bool is_signaled = mr_9586.arg1;
+	multi_return_int_bool mr_9694 = os__posix_wait4_to_exit_status(ret);
+	int pret = mr_9694.arg0;
+	bool is_signaled = mr_9694.arg1;
 	if (is_signaled) {
 		println(string_add(string_add(_STR("Terminated by signal %2"PRId32"\000 (", 2, ret), os__sigint_to_signal_name(pret)), tos_lit(")")));
 	}
