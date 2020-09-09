@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5d484bf"
+#define V_COMMIT_HASH "bc8aab4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3a146a6"
+	#define V_COMMIT_HASH "5d484bf"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5d484bf"
+	#define V_CURRENT_COMMIT_HASH "bc8aab4"
 #endif
 
 // V typedefs:
@@ -27626,15 +27626,10 @@ void v__parser__Parser_vet_error(v__parser__Parser* p, string s, int line) {
 }
 
 static v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p, bool is_top_level) {
-// $if  debug {
-#ifdef _VDEBUG
-	v__parser__Parser_warn(p, tos_lit("xxx"));
-#endif
-// } debug
 	v__token__Token tok = p->tok;
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_19689 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr left = mr_19689.arg0;
-	array_v__ast__Comment left_comments = mr_19689.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_19657 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr left = mr_19657.arg0;
+	array_v__ast__Comment left_comments = mr_19657.arg1;
 	v__ast__Expr left0 = (*(v__ast__Expr*)array_get(left, 0));
 	if (tok.kind == v__token__Kind_key_mut && p->tok.kind != v__token__Kind_decl_assign) {
 		v__parser__Parser_error(p, tos_lit("expecting `:=` (e.g. `mut x :=`)"));
@@ -28254,9 +28249,9 @@ static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_38784 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_38784.arg0;
-	array_v__ast__Comment comments = mr_38784.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_38752 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_38752.arg0;
+	array_v__ast__Comment comments = mr_38752.arg1;
 	v__token__Position end_pos = v__ast__Expr_position(*(v__ast__Expr*)array_last(exprs));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 }
