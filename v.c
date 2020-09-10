@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "368c2a6"
+#define V_COMMIT_HASH "03327e5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "bc8aab4"
+	#define V_COMMIT_HASH "368c2a6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "368c2a6"
+	#define V_CURRENT_COMMIT_HASH "03327e5"
 #endif
 
 // V typedefs:
@@ -3897,7 +3897,7 @@ string time__Time_clean12(time__Time t);
 string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time);
 string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatDate fmt_date);
 string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatTime fmt_time, time__FormatDate fmt_date);
-string time__Time_utc_string(time__Time time);
+string time__Time_utc_string(time__Time t);
 bool time__Time_eq(time__Time t1, time__Time t2);
 bool time__Time_ne(time__Time t1, time__Time t2);
 bool time__Time_lt(time__Time t1, time__Time t2);
@@ -13957,7 +13957,8 @@ string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr
 	time__FormatDate _t200 = fmt_date;
 		string res = (_t200 == time__FormatDate_ddmmyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%.*s", 3, t.day, t.month, year)) : (_t200 == time__FormatDate_ddmmyyyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%"PRId32"", 3, t.day, t.month, t.year)) : (_t200 == time__FormatDate_mmddyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%.*s", 3, t.month, t.day, year)) : (_t200 == time__FormatDate_mmddyyyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%"PRId32"", 3, t.month, t.day, t.year)) : (_t200 == time__FormatDate_mmmd) ? (_STR("%.*s\000|%"PRId32"", 2, month, t.day)) : (_t200 == time__FormatDate_mmmdd) ? (_STR("%.*s\000|%02"PRId32"", 2, month, t.day)) : (_t200 == time__FormatDate_mmmddyyyy) ? (_STR("%.*s\000|%02"PRId32"\000|%"PRId32"", 3, month, t.day, t.year)) : (_t200 == time__FormatDate_yyyymmdd) ? (_STR("%"PRId32"\000|%02"PRId32"\000|%02"PRId32"", 3, t.year, t.month, t.day)) : (_STR("unknown enumeration %.*s", 1, time__FormatDate_str(fmt_date)));
 	time__FormatDelimiter _t201 = fmt_dlmtr;
-		res = string_replace(res, tos_lit("|"), (_t201 == time__FormatDelimiter_dot) ? (tos_lit(".")) : (_t201 == time__FormatDelimiter_hyphen) ? (tos_lit("-")) : (_t201 == time__FormatDelimiter_slash) ? (tos_lit("/")) : (_t201 == time__FormatDelimiter_space) ? (tos_lit(" ")) : (tos_lit("")));
+		string del = (_t201 == time__FormatDelimiter_dot) ? (tos_lit(".")) : (_t201 == time__FormatDelimiter_hyphen) ? (tos_lit("-")) : (_t201 == time__FormatDelimiter_slash) ? (tos_lit("/")) : (_t201 == time__FormatDelimiter_space) ? (tos_lit(" ")) : (tos_lit(""));
+	res = string_replace(res, tos_lit("|"), del);
 	return res;
 }
 
@@ -13977,10 +13978,10 @@ string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, tim
 	}
 }
 
-string time__Time_utc_string(time__Time time) {
-	string day_str = time__Time_weekday_str(time);
-	string month_str = time__Time_smonth(time);
-	string utc_string = _STR("%.*s\000, %"PRId32"\000 %.*s\000 %"PRId32"\000 %02"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000 UTC", 8, day_str, time.day, month_str, time.year, time.hour, time.minute, time.second);
+string time__Time_utc_string(time__Time t) {
+	string day_str = time__Time_weekday_str(t);
+	string month_str = time__Time_smonth(t);
+	string utc_string = _STR("%.*s\000, %"PRId32"\000 %.*s\000 %"PRId32"\000 %02"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000 UTC", 8, day_str, t.day, month_str, t.year, t.hour, t.minute, t.second);
 	return utc_string;
 }
 
