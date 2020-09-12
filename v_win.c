@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b10d79c"
+#define V_COMMIT_HASH "332f3a9"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "07b5d6b"
+	#define V_COMMIT_HASH "b10d79c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b10d79c"
+	#define V_CURRENT_COMMIT_HASH "332f3a9"
 #endif
 
 // V typedefs:
@@ -10977,7 +10977,7 @@ string string_replace_each(string s, array_string vals) {
 				break;
 			}
 			array_push(&idxs, _MOV((RepIndex[]){ (RepIndex){.idx = idx,.val_idx = rep_i,} }));
-			idx++;
+			idx += rep.len;
 			new_len += with.len - rep.len;
 		}
 	}
