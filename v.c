@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f074d76"
+#define V_COMMIT_HASH "3b58911"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "db51ee0"
+	#define V_COMMIT_HASH "f074d76"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f074d76"
+	#define V_CURRENT_COMMIT_HASH "3b58911"
 #endif
 
 // V typedefs:
@@ -35321,7 +35321,6 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 		name = /*f*/string_add(name, string_add(tos_lit("_"), v__gen__Gen_typ(g, node.generic_type)));
 	}
 	bool free_tmp_arg_vars = g->autofree && g->pref->experimental && !g->is_builtin_mod && node.args.len > 0 && !v__table__Type_has_flag((*(v__ast__CallArg*)array_get(node.args, 0)).typ, v__table__TypeFlag_optional);
-	string cur_line = tos_lit("");
 	if (free_tmp_arg_vars) {
 		free_tmp_arg_vars = false;
 		g->tmp_count2++;
@@ -35337,8 +35336,7 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			string t = _STR("_tt%"PRId32"\000_arg_expr_%.*s\000_%"PRId32"", 3, g->tmp_count2, fn_name, i);
 			g->called_fn_name = name;
 			string str_expr = v__gen__Gen_write_expr_to_string(g, arg.expr);
-			cur_line = v__gen__Gen_go_before_stmt(g, 0);
-			v__gen__Gen_writeln(g, _STR("string %.*s\000 = %.*s\000; // new3. to free arg #%"PRId32"\000 name=%.*s", 4, t, str_expr, i, name));
+			v__gen__Gen_insert_before_stmt(g, _STR("string %.*s\000 = %.*s\000; // new4. to free arg #%"PRId32"\000 name=%.*s", 4, t, str_expr, i, name));
 			array_push(&g->strs_to_free, _MOV((string[]){ _STR("string_free(&%.*s\000);", 2, t) }));
 		}
 	}
@@ -35386,18 +35384,15 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_19660 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_19660.arg0;
-		string pafile = mr_19660.arg1;
-		string pamod = mr_19660.arg2;
-		string pafn = mr_19660.arg3;
+		multi_return_int_string_string_string mr_19681 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_19681.arg0;
+		string pafile = mr_19681.arg1;
+		string pamod = mr_19681.arg2;
+		string pafn = mr_19681.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node);
 		v__gen__Gen_write(g, tos_lit(")"));
 	} else {
-		if (free_tmp_arg_vars) {
-			v__gen__Gen_write(g, string_add(cur_line, tos_lit(" /* <== af cur line*/")));
-		}
 		v__gen__Gen_write(g, _STR("%.*s\000(", 2, v__gen__Gen_get_ternary_name(g, name)));
 		if (g->is_json_fn) {
 			v__gen__Gen_write(g, json_obj);
