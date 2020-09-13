@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3b58911"
+#define V_COMMIT_HASH "f337980"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f074d76"
+	#define V_COMMIT_HASH "3b58911"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3b58911"
+	#define V_CURRENT_COMMIT_HASH "f337980"
 #endif
 
 // V typedefs:
@@ -5059,6 +5059,7 @@ static void v__gen__Gen_call_expr(v__gen__Gen* g, v__ast__CallExpr node);
 v__table__Type v__gen__Gen_unwrap_generic(v__gen__Gen* g, v__table__Type typ);
 static void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node);
 static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node);
+static void v__gen__Gen_generate_tmp_autofree_arg_vars(v__gen__Gen* g, v__ast__CallExpr node, string name);
 static void v__gen__Gen_call_args(v__gen__Gen* g, v__ast__CallExpr node);
 static void v__gen__Gen_ref_or_deref_arg(v__gen__Gen* g, v__ast__CallArg arg, v__table__Type expected_type);
 static bool v__gen__Gen_is_gui_app(v__gen__Gen* g);
@@ -35424,26 +35425,7 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 	if (node.generic_type != _const_v__table__void_type && node.generic_type != 0) {
 		name = /*f*/string_add(name, string_add(tos_lit("_"), v__gen__Gen_typ(g, node.generic_type)));
 	}
-	bool free_tmp_arg_vars = g->autofree && g->pref->experimental && !g->is_builtin_mod && node.args.len > 0 && !v__table__Type_has_flag((*(v__ast__CallArg*)array_get(node.args, 0)).typ, v__table__TypeFlag_optional);
-	if (free_tmp_arg_vars) {
-		free_tmp_arg_vars = false;
-		g->tmp_count2++;
-		// FOR IN array
-		array _t1155 = node.args;
-		for (int i = 0; i < _t1155.len; ++i) {
-			v__ast__CallArg arg = ((v__ast__CallArg*)_t1155.data)[i];
-			if (!arg.is_tmp_autofree) {
-				continue;
-			}
-			free_tmp_arg_vars = true;
-			string fn_name = string_replace(node.name, tos_lit("."), tos_lit("_"));
-			string t = _STR("_tt%"PRId32"\000_arg_expr_%.*s\000_%"PRId32"", 3, g->tmp_count2, fn_name, i);
-			g->called_fn_name = name;
-			string str_expr = v__gen__Gen_write_expr_to_string(g, arg.expr);
-			v__gen__Gen_insert_before_stmt(g, _STR("string %.*s\000 = %.*s\000; // new4. to free arg #%"PRId32"\000 name=%.*s", 4, t, str_expr, i, name));
-			array_push(&g->strs_to_free, _MOV((string[]){ _STR("string_free(&%.*s\000);", 2, t) }));
-		}
-	}
+	v__gen__Gen_generate_tmp_autofree_arg_vars(g, node, name);
 	if (is_print && (*(v__ast__CallArg*)array_get(node.args, 0)).typ != _const_v__table__string_type) {
 		v__table__Type typ = (*(v__ast__CallArg*)array_get(node.args, 0)).typ;
 		string styp = v__gen__Gen_typ(g, typ);
@@ -35459,8 +35441,8 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_writeln(g, _STR("); %.*s\000(%.*s\000); string_free(&%.*s\000); //MEM2 %.*s", 4, print_method, tmp, tmp, styp));
 		} else {
 			v__ast__Expr expr = (*(v__ast__CallArg*)array_get(node.args, 0)).expr;
-			v__ast__Expr _t1157 = expr;
-						bool is_var = (_t1157.typ == 226 /* v.ast.SelectorExpr */) ? (true) : (_t1157.typ == 210 /* v.ast.Ident */) ? (true) : (false);
+			v__ast__Expr _t1155 = expr;
+						bool is_var = (_t1155.typ == 226 /* v.ast.SelectorExpr */) ? (true) : (_t1155.typ == 210 /* v.ast.Ident */) ? (true) : (false);
 			if (v__table__Type_is_ptr(typ) && sym->kind != v__table__Kind_struct_) {
 				styp = tos_lit("ptr");
 				str_fn_name = tos_lit("ptr_str");
@@ -35488,11 +35470,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_19681 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_19681.arg0;
-		string pafile = mr_19681.arg1;
-		string pamod = mr_19681.arg2;
-		string pafn = mr_19681.arg3;
+		multi_return_int_string_string_string mr_18508 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_18508.arg0;
+		string pafile = mr_18508.arg1;
+		string pamod = mr_18508.arg2;
+		string pafn = mr_18508.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node);
 		v__gen__Gen_write(g, tos_lit(")"));
@@ -35507,6 +35489,29 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 	}
 	g->is_c_call = false;
 	g->is_json_fn = false;
+}
+
+static void v__gen__Gen_generate_tmp_autofree_arg_vars(v__gen__Gen* g, v__ast__CallExpr node, string name) {
+	bool free_tmp_arg_vars = g->autofree && g->pref->experimental && !g->is_builtin_mod && node.args.len > 0 && !v__table__Type_has_flag((*(v__ast__CallArg*)array_get(node.args, 0)).typ, v__table__TypeFlag_optional);
+	if (free_tmp_arg_vars) {
+		free_tmp_arg_vars = false;
+		g->tmp_count2++;
+		// FOR IN array
+		array _t1156 = node.args;
+		for (int i = 0; i < _t1156.len; ++i) {
+			v__ast__CallArg arg = ((v__ast__CallArg*)_t1156.data)[i];
+			if (!arg.is_tmp_autofree) {
+				continue;
+			}
+			free_tmp_arg_vars = true;
+			string fn_name = string_replace(node.name, tos_lit("."), tos_lit("_"));
+			string t = _STR("_tt%"PRId32"\000_arg_expr_%.*s\000_%"PRId32"", 3, g->tmp_count2, fn_name, i);
+			g->called_fn_name = name;
+			string str_expr = v__gen__Gen_write_expr_to_string(g, arg.expr);
+			v__gen__Gen_insert_before_stmt(g, _STR("string %.*s\000 = %.*s\000; // new4. to free arg #%"PRId32"\000 name=%.*s", 4, t, str_expr, i, name));
+			array_push(&g->strs_to_free, _MOV((string[]){ _STR("string_free(&%.*s\000);", 2, t) }));
+		}
+	}
 }
 
 static void v__gen__Gen_call_args(v__gen__Gen* g, v__ast__CallExpr node) {
