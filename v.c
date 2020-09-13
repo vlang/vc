@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "db51ee0"
+#define V_COMMIT_HASH "f074d76"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e77c4c1"
+	#define V_COMMIT_HASH "db51ee0"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "db51ee0"
+	#define V_CURRENT_COMMIT_HASH "f074d76"
 #endif
 
 // V typedefs:
@@ -35386,11 +35386,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_19621 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_19621.arg0;
-		string pafile = mr_19621.arg1;
-		string pamod = mr_19621.arg2;
-		string pafn = mr_19621.arg3;
+		multi_return_int_string_string_string mr_19660 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_19660.arg0;
+		string pafile = mr_19660.arg1;
+		string pamod = mr_19660.arg2;
+		string pafn = mr_19660.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node);
 		v__gen__Gen_write(g, tos_lit(")"));
