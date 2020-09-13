@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f337980"
+#define V_COMMIT_HASH "fc88f43"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3b58911"
+	#define V_COMMIT_HASH "f337980"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f337980"
+	#define V_CURRENT_COMMIT_HASH "fc88f43"
 #endif
 
 // V typedefs:
@@ -35345,6 +35345,7 @@ static void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			}
 		}
 	}
+	v__gen__Gen_generate_tmp_autofree_arg_vars(g, node, name);
 	if (!v__table__Type_is_ptr(node.receiver_type) && v__table__Type_is_ptr(node.left_type) && string_eq(node.name, tos_lit("str")) && !v__gen__Gen_should_write_asterisk_due_to_match_sumtype(g, node.left)) {
 		v__gen__Gen_write(g, tos_lit("ptr_str("));
 	} else {
@@ -35470,11 +35471,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_18508 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_18508.arg0;
-		string pafile = mr_18508.arg1;
-		string pamod = mr_18508.arg2;
-		string pafn = mr_18508.arg3;
+		multi_return_int_string_string_string mr_18554 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_18554.arg0;
+		string pafile = mr_18554.arg1;
+		string pamod = mr_18554.arg2;
+		string pafn = mr_18554.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node);
 		v__gen__Gen_write(g, tos_lit(")"));
