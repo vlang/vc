@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "bbf4983"
+#define V_COMMIT_HASH "a9bd6ac"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "bffa100"
+	#define V_COMMIT_HASH "bbf4983"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "bbf4983"
+	#define V_CURRENT_COMMIT_HASH "a9bd6ac"
 #endif
 
 // V typedefs:
@@ -9624,12 +9624,13 @@ inline static bool fast_string_eq(string a, string b) {
 // Attr: [inline]
 // Attr: [unsafe]
 inline static DenseArray new_dense_array(int value_bytes) {
+	int s8size = ((int)(8 * /*SizeOfType*/ sizeof(string)));
 	return (DenseArray){
 		.value_bytes = value_bytes,
 		.cap = 8,
 		.len = 0,
 		.deletes = 0,
-		.keys = ((string*)(v_malloc(((int*)(8 * /*SizeOfType*/ sizeof(string)))))),
+		.keys = ((string*)(v_malloc(s8size))),
 		.values = v_malloc(8 * value_bytes),
 	};
 }
@@ -9696,13 +9697,14 @@ static void DenseArray_zeros_to_end(DenseArray* d) {
 }
 
 static map new_map_1(int value_bytes) {
+	int metasize = ((int)(/*SizeOfType*/ sizeof(u32) * (_const_init_capicity + _const_extra_metas_inc)));
 	return (map){
 		.value_bytes = value_bytes,
 		.cap = _const_init_cap,
 		.cached_hashbits = _const_max_cached_hashbits,
 		.shift = _const_init_log_capicity,
 		.key_values = new_dense_array(value_bytes),
-		.metas = ((u32*)(vcalloc(((int*)(/*SizeOfType*/ sizeof(u32) * (_const_init_capicity + _const_extra_metas_inc)))))),
+		.metas = ((u32*)(vcalloc(metasize))),
 		.extra_metas = _const_extra_metas_inc,
 		.len = 0,
 	};
@@ -9788,12 +9790,12 @@ static void map_set(map* m, string k, voidptr value) {
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_9306 = map_key_to_index(m, key);
-	u32 index = mr_9306.arg0;
-	u32 meta = mr_9306.arg1;
-	multi_return_u32_u32 mr_9341 = map_meta_less(m, index, meta);
-	index = mr_9341.arg0;
-	meta = mr_9341.arg1;
+	multi_return_u32_u32 mr_9346 = map_key_to_index(m, key);
+	u32 index = mr_9346.arg0;
+	u32 meta = mr_9346.arg1;
+	multi_return_u32_u32 mr_9381 = map_meta_less(m, index, meta);
+	index = mr_9381.arg0;
+	meta = mr_9381.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -9834,19 +9836,20 @@ static void map_rehash(map* m) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
-		multi_return_u32_u32 mr_10738 = map_key_to_index(m, m->key_values.keys[i]);
-		u32 index = mr_10738.arg0;
-		u32 meta = mr_10738.arg1;
-		multi_return_u32_u32 mr_10800 = map_meta_less(m, index, meta);
-		index = mr_10800.arg0;
-		meta = mr_10800.arg1;
+		multi_return_u32_u32 mr_10778 = map_key_to_index(m, m->key_values.keys[i]);
+		u32 index = mr_10778.arg0;
+		u32 meta = mr_10778.arg1;
+		multi_return_u32_u32 mr_10840 = map_meta_less(m, index, meta);
+		index = mr_10840.arg0;
+		meta = mr_10840.arg1;
 		map_meta_greater(m, index, meta, i);
 	}
 }
 
 static void map_cached_rehash(map* m, u32 old_cap) {
 	u32* old_metas = m->metas;
-	m->metas = ((u32*)(vcalloc(((int*)(/*SizeOfType*/ sizeof(u32) * (m->cap + 2 + m->extra_metas))))));
+	int metasize = ((int)(/*SizeOfType*/ sizeof(u32) * (m->cap + 2 + m->extra_metas)));
+	m->metas = ((u32*)(vcalloc(metasize)));
 	u32 old_extra_metas = m->extra_metas;
 	for (u32 i = ((u32)(0)); i <= old_cap + old_extra_metas; i += 2) {
 		if (old_metas[i] == 0) {
@@ -9857,9 +9860,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->cap >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->cap);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_11535 = map_meta_less(m, index, meta);
-		index = mr_11535.arg0;
-		meta = mr_11535.arg1;
+		multi_return_u32_u32 mr_11597 = map_meta_less(m, index, meta);
+		index = mr_11597.arg0;
+		meta = mr_11597.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -9870,9 +9873,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 
 static voidptr map_get_and_set(map* m, string key, voidptr zero) {
 	while (1) {
-		multi_return_u32_u32 mr_11981 = map_key_to_index(m, key);
-		u32 index = mr_11981.arg0;
-		u32 meta = mr_11981.arg1;
+		multi_return_u32_u32 mr_12043 = map_key_to_index(m, key);
+		u32 index = mr_12043.arg0;
+		u32 meta = mr_12043.arg1;
 		while (1) {
 			if (meta == m->metas[index]) {
 				u32 kv_index = m->metas[index + 1];
@@ -9893,9 +9896,9 @@ static voidptr map_get_and_set(map* m, string key, voidptr zero) {
 }
 
 static voidptr map_get(map m, string key, voidptr zero) {
-	multi_return_u32_u32 mr_12658 = map_key_to_index(&m, key);
-	u32 index = mr_12658.arg0;
-	u32 meta = mr_12658.arg1;
+	multi_return_u32_u32 mr_12720 = map_key_to_index(&m, key);
+	u32 index = mr_12720.arg0;
+	u32 meta = mr_12720.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9915,9 +9918,9 @@ static voidptr map_get(map m, string key, voidptr zero) {
 }
 
 static bool map_exists(map m, string key) {
-	multi_return_u32_u32 mr_13146 = map_key_to_index(&m, key);
-	u32 index = mr_13146.arg0;
-	u32 meta = mr_13146.arg1;
+	multi_return_u32_u32 mr_13208 = map_key_to_index(&m, key);
+	u32 index = mr_13208.arg0;
+	u32 meta = mr_13208.arg1;
 	while (1) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -9935,12 +9938,12 @@ static bool map_exists(map m, string key) {
 }
 
 void map_delete(map* m, string key) {
-	multi_return_u32_u32 mr_13566 = map_key_to_index(m, key);
-	u32 index = mr_13566.arg0;
-	u32 meta = mr_13566.arg1;
-	multi_return_u32_u32 mr_13601 = map_meta_less(m, index, meta);
-	index = mr_13601.arg0;
-	meta = mr_13601.arg1;
+	multi_return_u32_u32 mr_13628 = map_key_to_index(m, key);
+	u32 index = mr_13628.arg0;
+	u32 meta = mr_13628.arg1;
+	multi_return_u32_u32 mr_13663 = map_meta_less(m, index, meta);
+	index = mr_13663.arg0;
+	meta = mr_13663.arg1;
 	while (meta == m->metas[index]) {
 		u32 kv_index = m->metas[index + 1];
 		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
@@ -9990,36 +9993,38 @@ array_string map_keys(map* m) {
 
 // Attr: [unsafe]
 DenseArray DenseArray_clone(DenseArray d) {
+	int ksize = ((int)(d.cap * /*SizeOfType*/ sizeof(string)));
+	int vsize = ((int)(d.cap * ((u32)(d.value_bytes))));
 	DenseArray res = (DenseArray){
 		.value_bytes = d.value_bytes,
 		.cap = d.cap,
 		.len = d.len,
 		.deletes = d.deletes,
-		.keys = ((string*)(v_malloc(((int*)(d.cap * /*SizeOfType*/ sizeof(string)))))),
-		.values = ((byteptr)(v_malloc(((int)(d.cap * ((u32)(d.value_bytes))))))),
+		.keys = ((string*)(v_malloc(ksize))),
+		.values = ((byteptr)(v_malloc(vsize))),
 	};
 	{ // Unsafe block
-		memcpy(res.keys, d.keys, d.cap * /*SizeOfType*/ sizeof(string));
-		memcpy(res.values, d.values, d.cap * ((u32)(d.value_bytes)));
+		memcpy(res.keys, d.keys, ksize);
+		memcpy(res.values, d.values, vsize);
 	}
 	return res;
 }
 
 // Attr: [unsafe]
 map map_clone(map m) {
-	u32 metas_size = /*SizeOfType*/ sizeof(u32) * (m.cap + 2 + m.extra_metas);
+	int metasize = ((int)(/*SizeOfType*/ sizeof(u32) * (m.cap + 2 + m.extra_metas)));
 	map res = (map){
 		.value_bytes = m.value_bytes,
 		.cap = m.cap,
 		.cached_hashbits = m.cached_hashbits,
 		.shift = m.shift,
 		.key_values = DenseArray_clone(m.key_values),
-		.metas = ((u32*)(v_malloc(((int*)(metas_size))))),
+		.metas = ((u32*)(v_malloc(metasize))),
 		.extra_metas = m.extra_metas,
 		.len = m.len,
 	};
 	{ // Unsafe block
-		memcpy(res.metas, m.metas, metas_size);
+		memcpy(res.metas, m.metas, metasize);
 	}
 	return res;
 }
