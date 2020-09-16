@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "bb20586"
+#define V_COMMIT_HASH "80b150d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2464dee"
+	#define V_COMMIT_HASH "bb20586"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "bb20586"
+	#define V_CURRENT_COMMIT_HASH "80b150d"
 #endif
 
 // V typedefs:
@@ -3557,6 +3557,7 @@ string strconv__format_es(f64 f, strconv__BF_param p);
 string strconv__remove_tail_zeros(string s);
 void strconv__v_printf(string str, varg_voidptr pt);
 string strconv__v_sprintf(string str, varg_voidptr pt);
+static void strconv__v_sprintf_panic(int idx, int len);
 static f64 strconv__fabs(f64 x);
 string strconv__ftoa_64(f64 f);
 string strconv__ftoa_long_64(f64 f);
@@ -7923,6 +7924,7 @@ string strconv__v_sprintf(string str, varg_voidptr pt) {
 			continue;
 		}
 		if (ch == 'c' && status == strconv__Char_parse_state_field_char) {
+			strconv__v_sprintf_panic(p_index, pt.len);
 			byte d1 = *(((byte*)(pt.args[p_index])));
 			strings__Builder_write_b(&res, d1);
 			status = strconv__Char_parse_state_reset_params;
@@ -7931,6 +7933,7 @@ string strconv__v_sprintf(string str, varg_voidptr pt) {
 			continue;
 		}
 		if (ch == 'p' && status == strconv__Char_parse_state_field_char) {
+			strconv__v_sprintf_panic(p_index, pt.len);
 			strings__Builder_write(&res, tos_lit("0x"));
 			strings__Builder_write(&res, ptr_str(pt.args[p_index]));
 			status = strconv__Char_parse_state_reset_params;
@@ -7970,8 +7973,10 @@ string strconv__v_sprintf(string str, varg_voidptr pt) {
 				i++;
 				continue;
 			} else if (ch == '.' && fc_ch1 == '*' && fc_ch2 == 's') {
+				strconv__v_sprintf_panic(p_index, pt.len);
 				int len = *(((int*)(pt.args[p_index])));
 				p_index++;
+				strconv__v_sprintf_panic(p_index, pt.len);
 				string s = *(((string*)(pt.args[p_index])));
 				s = string_substr(s, 0, len);
 				p_index++;
@@ -8060,6 +8065,7 @@ string strconv__v_sprintf(string str, varg_voidptr pt) {
 				rune _t12 = ch1;
 				if (_t12 == 'h') {
 					if (ch2 == 'h') {
+						strconv__v_sprintf_panic(p_index, pt.len);
 						i8 x = *(((i8*)(pt.args[p_index])));
 						positive = (x >= 0 ? (true) : (false));
 						d1 = (positive ? (((u64)(x))) : (((u64)(-x))));
@@ -8069,10 +8075,12 @@ string strconv__v_sprintf(string str, varg_voidptr pt) {
 						d1 = (positive ? (((u64)(x))) : (((u64)(-x))));
 					}
 				} else if (_t12 == 'l') {
+					strconv__v_sprintf_panic(p_index, pt.len);
 					i64 x = *(((i64*)(pt.args[p_index])));
 					positive = (x >= 0 ? (true) : (false));
 					d1 = (positive ? (((u64)(x))) : (((u64)(-x))));
 				} else {
+					strconv__v_sprintf_panic(p_index, pt.len);
 					int x = *(((int*)(pt.args[p_index])));
 					positive = (x >= 0 ? (true) : (false));
 					d1 = (positive ? (((u64)(x))) : (((u64)(-x))));
@@ -8095,6 +8103,7 @@ string strconv__v_sprintf(string str, varg_voidptr pt) {
 			} else if (ch == 'u') {
 				u64 d1 = ((u64)(0U));
 				bool positive = true;
+				strconv__v_sprintf_panic(p_index, pt.len);
 				rune _t13 = ch1;
 				if (_t13 == 'h') {
 					if (ch2 == 'h') {
@@ -8121,6 +8130,7 @@ string strconv__v_sprintf(string str, varg_voidptr pt) {
 				i++;
 				continue;
 			} else if ((ch == 'x' || ch == 'X')) {
+				strconv__v_sprintf_panic(p_index, pt.len);
 				string s = tos_lit("");
 				rune _t14 = ch1;
 				if (_t14 == 'h') {
@@ -8156,6 +8166,7 @@ string strconv__v_sprintf(string str, varg_voidptr pt) {
 				continue;
 			}
 			if ((ch == 'f' || ch == 'F')) {
+				strconv__v_sprintf_panic(p_index, pt.len);
 				f64 x = *(((f64*)(pt.args[p_index])));
 				bool positive = x >= ((f64)(0.0));
 				len1 = (len1 >= 0 ? (len1) : (def_len1));
@@ -8174,6 +8185,7 @@ string strconv__v_sprintf(string str, varg_voidptr pt) {
 				i++;
 				continue;
 			} else if ((ch == 'e' || ch == 'E')) {
+				strconv__v_sprintf_panic(p_index, pt.len);
 				f64 x = *(((f64*)(pt.args[p_index])));
 				bool positive = x >= ((f64)(0.0));
 				len1 = (len1 >= 0 ? (len1) : (def_len1));
@@ -8192,6 +8204,7 @@ string strconv__v_sprintf(string str, varg_voidptr pt) {
 				i++;
 				continue;
 			} else if ((ch == 'g' || ch == 'G')) {
+				strconv__v_sprintf_panic(p_index, pt.len);
 				f64 x = *(((f64*)(pt.args[p_index])));
 				bool positive = x >= ((f64)(0.0));
 				string s = tos_lit("");
@@ -8225,6 +8238,7 @@ string strconv__v_sprintf(string str, varg_voidptr pt) {
 				i++;
 				continue;
 			} else if (ch == 's') {
+				strconv__v_sprintf_panic(p_index, pt.len);
 				string s1 = *(((string*)(pt.args[p_index])));
 				pad_ch = ' ';
 				strings__Builder_write(&res, strconv__format_str(s1, (strconv__BF_param){
@@ -8246,7 +8260,17 @@ string strconv__v_sprintf(string str, varg_voidptr pt) {
 		p_index++;
 		i++;
 	}
+	if (p_index != pt.len) {
+		v_panic(_STR("%"PRId32"\000 %% conversion specifiers, but given %"PRId32"\000 args", 3, p_index, pt.len));
+	}
 	return strings__Builder_str(&res);
+}
+
+// Attr: [inline]
+inline static void strconv__v_sprintf_panic(int idx, int len) {
+	if (idx >= len) {
+		v_panic(_STR("%"PRId32"\000 %% conversion specifiers, but given only %"PRId32"\000 args", 3, idx + 1, len));
+	}
 }
 
 static f64 strconv__fabs(f64 x) {
