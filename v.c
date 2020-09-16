@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "96b7cce"
+#define V_COMMIT_HASH "e2e6831"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1bc9063"
+	#define V_COMMIT_HASH "96b7cce"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "96b7cce"
+	#define V_CURRENT_COMMIT_HASH "e2e6831"
 #endif
 
 // V typedefs:
@@ -14104,9 +14104,9 @@ string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr
 		return tos_lit("");
 	}
 	string month = _STR("%.*s", 1, time__Time_smonth(t));
-	string year = string_substr(int_str(t.year), 2, int_str(t.year).len);
+	string year = _STR("%02"PRId32"", 1, (t.year % 100));
 	time__FormatDate _t223 = fmt_date;
-		string res = (_t223 == time__FormatDate_ddmmyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%.*s", 3, t.day, t.month, year)) : (_t223 == time__FormatDate_ddmmyyyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%"PRId32"", 3, t.day, t.month, t.year)) : (_t223 == time__FormatDate_mmddyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%.*s", 3, t.month, t.day, year)) : (_t223 == time__FormatDate_mmddyyyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%"PRId32"", 3, t.month, t.day, t.year)) : (_t223 == time__FormatDate_mmmd) ? (_STR("%.*s\000|%"PRId32"", 2, month, t.day)) : (_t223 == time__FormatDate_mmmdd) ? (_STR("%.*s\000|%02"PRId32"", 2, month, t.day)) : (_t223 == time__FormatDate_mmmddyyyy) ? (_STR("%.*s\000|%02"PRId32"\000|%"PRId32"", 3, month, t.day, t.year)) : (_t223 == time__FormatDate_yyyymmdd) ? (_STR("%"PRId32"\000|%02"PRId32"\000|%02"PRId32"", 3, t.year, t.month, t.day)) : (_STR("unknown enumeration %.*s", 1, time__FormatDate_str(fmt_date)));
+		string res = (_t223 == time__FormatDate_ddmmyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%.*s", 3, t.day, t.month, year)) : (_t223 == time__FormatDate_ddmmyyyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%04"PRId32"", 3, t.day, t.month, t.year)) : (_t223 == time__FormatDate_mmddyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%.*s", 3, t.month, t.day, year)) : (_t223 == time__FormatDate_mmddyyyy) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%04"PRId32"", 3, t.month, t.day, t.year)) : (_t223 == time__FormatDate_mmmd) ? (_STR("%.*s\000|%"PRId32"", 2, month, t.day)) : (_t223 == time__FormatDate_mmmdd) ? (_STR("%.*s\000|%02"PRId32"", 2, month, t.day)) : (_t223 == time__FormatDate_mmmddyyyy) ? (_STR("%.*s\000|%02"PRId32"\000|%04"PRId32"", 3, month, t.day, t.year)) : (_t223 == time__FormatDate_yyyymmdd) ? (_STR("%04"PRId32"\000|%02"PRId32"\000|%02"PRId32"", 3, t.year, t.month, t.day)) : (_STR("unknown enumeration %.*s", 1, time__FormatDate_str(fmt_date)));
 	time__FormatDelimiter _t224 = fmt_dlmtr;
 		string del = (_t224 == time__FormatDelimiter_dot) ? (tos_lit(".")) : (_t224 == time__FormatDelimiter_hyphen) ? (tos_lit("-")) : (_t224 == time__FormatDelimiter_slash) ? (tos_lit("/")) : (_t224 == time__FormatDelimiter_space) ? (tos_lit(" ")) : (tos_lit(""));
 	res = string_replace(res, tos_lit("|"), del);
@@ -14382,6 +14382,9 @@ time__Time time__utc() {
 }
 
 string time__Time_smonth(time__Time t) {
+	if (t.month <= 0 || t.month > 12) {
+		return tos_lit("---");
+	}
 	int i = t.month - 1;
 	return string_substr(_const_time__months_string, i * 3, (i + 1) * 3);
 }
