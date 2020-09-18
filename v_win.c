@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d2badcd"
+#define V_COMMIT_HASH "46dc6cc"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c1f04d8"
+	#define V_COMMIT_HASH "d2badcd"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d2badcd"
+	#define V_CURRENT_COMMIT_HASH "46dc6cc"
 #endif
 
 // V typedefs:
@@ -17474,6 +17474,7 @@ string v__util__githash(bool should_get_from_filesystem) {
 void v__util__set_vroot_folder(string vroot_path) {
 	string vname = (string_eq(os__user_os(), tos_lit("windows")) ? (tos_lit("v.exe")) : (tos_lit("v")));
 	os__setenv(tos_lit("VEXE"), os__real_path(os__join_path(vroot_path, (varg_string){.len=1,.args={vname}})), true);
+	os__setenv(tos_lit("VCHILD"), tos_lit("true"), true);
 }
 
 Option_string v__util__resolve_vroot(string str, string dir) {
