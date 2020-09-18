@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c1f04d8"
+#define V_COMMIT_HASH "d2badcd"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ffc8cf3"
+	#define V_COMMIT_HASH "c1f04d8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c1f04d8"
+	#define V_CURRENT_COMMIT_HASH "d2badcd"
 #endif
 
 // V typedefs:
@@ -10826,7 +10826,7 @@ string tos_lit(charptr s) {
 
 // Attr: [unsafe]
 string byteptr_vstring(byteptr bp) {
-	return (string){.str = bp, .len = strlen(bp)};
+	return (string){.str = bp, .len = strlen(((charptr)(bp)))};
 }
 
 // Attr: [unsafe]
@@ -12210,10 +12210,10 @@ int string_utf32_code(string _rune) {
 u16* string_to_wide(string _str) {
 	#if defined(_WIN32)
 	{
-		int num_chars = (MultiByteToWideChar(_const_cp_utf8, 0, _str.str, _str.len, 0, 0));
+		int num_chars = (MultiByteToWideChar(_const_cp_utf8, 0, ((charptr)(_str.str)), _str.len, 0, 0));
 		u16* wstr = ((u16*)(v_malloc((num_chars + 1) * 2)));
 		if (wstr != 0) {
-			MultiByteToWideChar(_const_cp_utf8, 0, _str.str, _str.len, wstr, num_chars);
+			MultiByteToWideChar(_const_cp_utf8, 0, ((charptr)(_str.str)), _str.len, wstr, num_chars);
 			{ // Unsafe block
 				memset(((byte*)(wstr)) + num_chars * 2, 0, 2);
 			}
@@ -12244,7 +12244,7 @@ string string_from_wide2(u16* _wstr, int len) {
 		int num_chars = WideCharToMultiByte(_const_cp_utf8, 0, _wstr, len, 0, 0, 0, 0);
 		byteptr str_to = v_malloc(num_chars + 1);
 		if (str_to != 0) {
-			WideCharToMultiByte(_const_cp_utf8, 0, _wstr, len, str_to, num_chars, 0, 0);
+			WideCharToMultiByte(_const_cp_utf8, 0, _wstr, len, ((charptr)(str_to)), num_chars, 0, 0);
 			{ // Unsafe block
 				memset(str_to + num_chars, 0, 1);
 			}
