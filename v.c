@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ffc8cf3"
+#define V_COMMIT_HASH "c1f04d8"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c02a0f9"
+	#define V_COMMIT_HASH "ffc8cf3"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ffc8cf3"
+	#define V_CURRENT_COMMIT_HASH "c1f04d8"
 #endif
 
 // V typedefs:
@@ -9337,7 +9337,7 @@ string ptr_str(voidptr ptr) {
 
 // Attr: [inline]
 inline string int_str_l(int nn, int max) {
-	int n = nn;
+	i64 n = ((i64)(nn));
 	int d = 0;
 	if (n == 0) {
 		return tos_lit("0");
@@ -9353,8 +9353,8 @@ inline string int_str_l(int nn, int max) {
 		buf[index--] = '\0';
 	}
 	while (n > 0) {
-		int n1 = n / 100;
-		d = ((n - (n1 * 100)) << 1);
+		int n1 = ((int)(n / 100));
+		d = ((((int)(n)) - (n1 * 100)) << 1);
 		n = n1;
 		{ // Unsafe block
 			buf[index--] = _const_digit_pairs.str[d++];
