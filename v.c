@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4b0e7fc"
+#define V_COMMIT_HASH "1c886ad"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4121ba9"
+	#define V_COMMIT_HASH "4b0e7fc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4b0e7fc"
+	#define V_CURRENT_COMMIT_HASH "1c886ad"
 #endif
 
 // V typedefs:
@@ -20753,13 +20753,13 @@ static string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) {
 		}
 		if (c == '0' && s->pos > 2 && string_at(s->text, s->pos - 1) == slash) {
 			if ((s->pos < s->text.len - 1 && byte_is_digit(string_at(s->text, s->pos + 1))) || v__scanner__Scanner_count_symbol_before(s, s->pos - 1, slash) % 2 == 0) {
-			} else if (!is_cstr) {
+			} else if (!is_cstr && !is_raw) {
 				v__scanner__Scanner_error(s, tos_lit("0 character in a string literal"));
 			}
 		}
 		if (c == '0' && s->pos > 5 && v__scanner__Scanner_expect(s, tos_lit("\\x0"), s->pos - 3)) {
 			if (v__scanner__Scanner_count_symbol_before(s, s->pos - 3, slash) % 2 == 0) {
-			} else if (!is_cstr) {
+			} else if (!is_cstr && !is_raw) {
 				v__scanner__Scanner_error(s, tos_lit("0 character in a string literal"));
 			}
 		}
