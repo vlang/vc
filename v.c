@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "31a52cd"
+#define V_COMMIT_HASH "4121ba9"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5782f56"
+	#define V_COMMIT_HASH "31a52cd"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "31a52cd"
+	#define V_CURRENT_COMMIT_HASH "4121ba9"
 #endif
 
 // V typedefs:
@@ -28445,7 +28445,7 @@ static v__ast__Import v__parser__Parser_import_stmt(v__parser__Parser* p) {
 	}
 	v__token__Position pos_t = v__token__Token_position(&p->tok);
 	if (import_pos.line_nr == pos_t.line_nr) {
-		if (p->tok.kind != v__token__Kind_lcbr) {
+		if (!(p->tok.kind == v__token__Kind_lcbr || p->tok.kind == v__token__Kind_eof)) {
 			v__parser__Parser_error_with_pos(p, tos_lit("cannot import multiple modules at a time"), pos_t);
 		}
 	}
@@ -28547,9 +28547,9 @@ static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_39024 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_39024.arg0;
-	array_v__ast__Comment comments = mr_39024.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_39033 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_39033.arg0;
+	array_v__ast__Comment comments = mr_39033.arg1;
 	v__token__Position end_pos = v__ast__Expr_position(*(v__ast__Expr*)array_last(exprs));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 }
