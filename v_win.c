@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d4fbf42"
+#define V_COMMIT_HASH "79ac431"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c781a5f"
+	#define V_COMMIT_HASH "d4fbf42"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d4fbf42"
+	#define V_CURRENT_COMMIT_HASH "79ac431"
 #endif
 
 // V typedefs:
@@ -41191,9 +41191,9 @@ static void main__main() {
 		return;
 	}
 	array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_935 = v__pref__parse_args(args_and_flags);
-	v__pref__Preferences* prefs = mr_935.arg0;
-	string command = mr_935.arg1;
+	multi_return_v__pref__Preferences_string mr_945 = v__pref__parse_args(args_and_flags);
+	v__pref__Preferences* prefs = mr_945.arg0;
+	string command = mr_945.arg1;
 	if (args.len > 0 && ((string_eq((*(string*)array_get(args, 0)), tos_lit("version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-V")) || string_eq((*(string*)array_get(args, 0)), tos_lit("-version")) || string_eq((*(string*)array_get(args, 0)), tos_lit("--version"))) || (string_eq((*(string*)array_get(args, 0)), tos_lit("-v")) && args.len == 1))) {
 		println(v__util__full_v_version(prefs->is_verbose));
 		return;
@@ -41459,8 +41459,8 @@ void _vinit() {
 	_const_v__builder__key_wow64_32key = (0x0200);
 	_const_v__builder__key_enumerate_sub_keys = (0x0008);
 	// Initializations for module main :
-	_const_main__simple_cmd = new_array_from_c_array(17, 17, sizeof(string), _MOV((string[17]){
-		tos_lit("fmt"), tos_lit("up"), tos_lit("vet"), tos_lit("self"), tos_lit("tracev"), tos_lit("symlink"), tos_lit("bin2v"), tos_lit("test"), tos_lit("test-fmt"), tos_lit("test-compiler"), tos_lit("test-fixed"), tos_lit("repl"), tos_lit("build-tools"), tos_lit("build-examples"), tos_lit("build-vbinaries"), tos_lit("setup-freetype"), tos_lit("doc")}));
+	_const_main__simple_cmd = new_array_from_c_array(18, 18, sizeof(string), _MOV((string[18]){
+		tos_lit("fmt"), tos_lit("up"), tos_lit("vet"), tos_lit("self"), tos_lit("tracev"), tos_lit("symlink"), tos_lit("bin2v"), tos_lit("test"), tos_lit("test-fmt"), tos_lit("test-compiler"), tos_lit("test-fixed"), tos_lit("repl"), tos_lit("build-tools"), tos_lit("build-examples"), tos_lit("build-vbinaries"), tos_lit("setup-freetype"), tos_lit("doc"), tos_lit("doctor")}));
 	_const_main__list_of_flags_that_allow_duplicates = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){tos_lit("cc"), tos_lit("d"), tos_lit("define"), tos_lit("cf"), tos_lit("cflags")}));
 }
 
