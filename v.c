@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6e5d507"
+#define V_COMMIT_HASH "b39b195"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "79ac431"
+	#define V_COMMIT_HASH "6e5d507"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6e5d507"
+	#define V_CURRENT_COMMIT_HASH "b39b195"
 #endif
 
 // V typedefs:
