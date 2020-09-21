@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "744f685"
+#define V_COMMIT_HASH "a9ef7d1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8c0b8c5"
+	#define V_COMMIT_HASH "744f685"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "744f685"
+	#define V_CURRENT_COMMIT_HASH "a9ef7d1"
 #endif
 
 // V typedefs:
@@ -5538,7 +5538,7 @@ void vinit_string_literals(){
 	_const_v__gen__windows_hotcode_definitions_1 = tos_lit("\nvoid v_bind_live_symbols(void* live_lib){\n	@LOAD_FNS@\n}\n");
 	_const_v__gen__dbtype = tos_lit("sqlite");
 	_const_v__builder__c_error_info = tos_lit("\n==================\nC error. This should never happen.\n\nIf you were not working with C interop, please raise an issue on GitHub:\n\nhttps://github.com/vlang/v/issues/new/choose\n\nYou can also use #help on Discord: https://discord.gg/vlang\n");
-	_const_v__builder__no_compiler_error = tos_lit("\n==================\nError: no C compiler detected.\n\nYou can find instructions on how to install one in the V wiki:\nhttps://github.com/vlang/v/wiki/Installing-a-C-compiler-on-Windows\n\nIf you think you have one installed, make sure it is in your PATH.\nIf you do have one in your PATH, please raise an issue on GitHub:\nhttps://github.com/vlang/v/issues/new/choose\n\nYou can also use #help on Discord: https://discord.gg/vlang\n");
+	_const_v__builder__no_compiler_error = tos_lit("\n==================\nError: no C compiler detected.\n\nYou can find instructions on how to install one in the V wiki:\nhttps://github.com/vlang/v/wiki/Installing-a-C-compiler-on-Windows\n\nIf you think you have one installed, make sure it is in your PATH.\nIf you do have one in your PATH, please raise an issue on GitHub:\nhttps://github.com/vlang/v/issues/new/choose\n\nYou can also use `v doctor`, to see what V knows about your current environment.\n\nYou can also seek #help on Discord: https://discord.gg/vlang\n");
 	_const_v__builder__mingw_cc = tos_lit("x86_64-w64-mingw32-gcc");
 }
 // << string literal consts
