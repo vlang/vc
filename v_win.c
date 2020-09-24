@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "72ecc22"
+#define V_COMMIT_HASH "3925c3f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4f09ddc"
+	#define V_COMMIT_HASH "72ecc22"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "72ecc22"
+	#define V_CURRENT_COMMIT_HASH "3925c3f"
 #endif
 
 // V typedefs:
@@ -26519,6 +26519,9 @@ static v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 			v__parser__Parser_next(p);
 			high_expr = v__parser__Parser_expr(p, 0);
 			v__ast__Scope_register(p->scope, val_var_name, /* sum type cast */ (v__ast__ScopeObject) {._object = memdup(&(v__ast__Var[]) {(v__ast__Var){.name = val_var_name,.expr = {0},.share = 0,.is_mut = 0,.is_arg = 0,.typ = _const_v__table__int_type,.pos = val_var_pos,.is_used = 0,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 264 /* v.ast.Var */});
+			if (key_var_name.len > 0) {
+				v__parser__Parser_error_with_pos(p, tos_lit("cannot declare index variable with range `for`"), key_var_pos);
+			}
 		} else {
 			v__ast__Scope_register(p->scope, val_var_name, /* sum type cast */ (v__ast__ScopeObject) {._object = memdup(&(v__ast__Var[]) {(v__ast__Var){.name = val_var_name,.expr = {0},.share = 0,.is_mut = 0,.is_arg = 0,.typ = 0,.pos = val_var_pos,.is_used = 0,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 264 /* v.ast.Var */});
 		}
