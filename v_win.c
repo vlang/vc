@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2ea94d6"
+#define V_COMMIT_HASH "abc98c2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0b95d72"
+	#define V_COMMIT_HASH "2ea94d6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2ea94d6"
+	#define V_CURRENT_COMMIT_HASH "abc98c2"
 #endif
 
 // V typedefs:
@@ -28781,9 +28781,7 @@ static v__ast__TypeDecl v__parser__Parser_type_decl(v__parser__Parser* p) {
 		v__parser__Parser_error_with_pos(p, tos_lit("single letter capital names are reserved for generic template types."), decl_pos);
 	}
 	array_v__table__Type sum_variants = __new_array_with_default(0, 0, sizeof(v__table__Type), 0);
-	if (p->tok.kind == v__token__Kind_assign) {
-		v__parser__Parser_next(p);
-	}
+	v__parser__Parser_check(p, v__token__Kind_assign);
 	if (p->tok.kind == v__token__Kind_key_fn) {
 		string fn_name = v__parser__Parser_prepend_mod(p, name);
 		v__table__Type fn_type = v__parser__Parser_parse_fn_type(p, fn_name);
@@ -28938,7 +28936,7 @@ static v__ast__Stmt v__parser__Parser_unsafe_stmt(v__parser__Parser* p) {
 		VAssertMetaInfo v_assert_meta_info__t892;
 		memset(&v_assert_meta_info__t892, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t892.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/parser/parser.v");
-		v_assert_meta_info__t892.line_nr = 1987;
+		v_assert_meta_info__t892.line_nr = 1985;
 		v_assert_meta_info__t892.fn_name = tos_lit("unsafe_stmt");
 		v_assert_meta_info__t892.src = tos_lit("!p.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t892);
@@ -28954,8 +28952,8 @@ static v__ast__Stmt v__parser__Parser_unsafe_stmt(v__parser__Parser* p) {
 	v__ast__Stmt stmt = v__parser__Parser_stmt(p, false);
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		if (stmt.typ == 247 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_47497 = (v__ast__ExprStmt*)stmt._object;
-			v__ast__ExprStmt* stmt = _sc_tmp_47497;
+			v__ast__ExprStmt* _sc_tmp_47453 = (v__ast__ExprStmt*)stmt._object;
+			v__ast__ExprStmt* stmt = _sc_tmp_47453;
 			if (v__ast__Expr_is_expr(stmt->expr)) {
 				v__parser__Parser_next(p);
 				v__ast__UnsafeExpr ue = (v__ast__UnsafeExpr){.expr = stmt->expr,.pos = pos,};
