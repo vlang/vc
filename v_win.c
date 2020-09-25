@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b999d01"
+#define V_COMMIT_HASH "d782de5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "acbfc11"
+	#define V_COMMIT_HASH "b999d01"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b999d01"
+	#define V_CURRENT_COMMIT_HASH "d782de5"
 #endif
 
 // V typedefs:
@@ -30143,48 +30143,52 @@ static void v__gen__Gen_gen_str_for_struct(v__gen__Gen* g, v__table__Struct info
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tfor (int i = 0; i < indent_count; ++i) {"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t\tindents = string_add(indents, tos_lit(\"    \"));"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t}"));
-	strings__Builder_writeln(&g->auto_str_funcs, _STR("\treturn _STR(\"%.*s\000 {\\n\"", 2, clean_struct_v_type_name));
-	// FOR IN array
-	array _t923 = info.fields;
-	for (int _t924 = 0; _t924 < _t923.len; ++_t924) {
-		v__table__Field field = ((v__table__Field*)_t923.data)[_t924];
-		string fmt = v__gen__Gen_type_to_fmt(g, field.typ);
-		if (v__table__Type_is_ptr(field.typ)) {
-			fmt = _STR("&%.*s", 1, fmt);
-		}
-		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\t\"%%.*s\\000    %.*s\000: %.*s\000\\n\"", 3, field.name, fmt));
-	}
-	strings__Builder_write(&g->auto_str_funcs, _STR("\t\t\"%%.*s\\000}\", %"PRId32"", 1, 2 * (info.fields.len + 1)));
-	if (info.fields.len > 0) {
-		strings__Builder_write(&g->auto_str_funcs, tos_lit(",\n\t\t"));
+	if (info.fields.len == 0) {
+		strings__Builder_write(&g->auto_str_funcs, _STR("\treturn tos_lit(\"%.*s\000 { }\");", 2, clean_struct_v_type_name));
+	} else {
+		strings__Builder_write(&g->auto_str_funcs, _STR("\treturn _STR(\"%.*s\000 {\\n\"", 2, clean_struct_v_type_name));
 		// FOR IN array
-		array _t925 = info.fields;
-		for (int i = 0; i < _t925.len; ++i) {
-			v__table__Field field = ((v__table__Field*)_t925.data)[i];
-			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, field.typ);
-			bool has_custom_str = v__table__TypeSymbol_has_method(sym, tos_lit("str"));
-			string field_styp = v__gen__Gen_typ(g, field.typ);
-			if (string_ends_with(field_styp, tos_lit("*"))) {
-				field_styp = string_replace(field_styp, tos_lit("*"), tos_lit(""));
-			}
-			string field_styp_fn_name = (has_custom_str ? (_STR("%.*s\000_str", 2, field_styp)) : ((*(string*)map_get(fnames2strfunc, field_styp, &(string[]){ (string){.str=(byteptr)""} }))));
-			strings__Builder_write(&g->auto_str_funcs, tos_lit("indents, "));
-			string func = v__gen__struct_auto_str_func(*sym, field.typ, field_styp_fn_name, field.name);
+		array _t923 = info.fields;
+		for (int _t924 = 0; _t924 < _t923.len; ++_t924) {
+			v__table__Field field = ((v__table__Field*)_t923.data)[_t924];
+			string fmt = v__gen__Gen_type_to_fmt(g, field.typ);
 			if (v__table__Type_is_ptr(field.typ)) {
-				strings__Builder_write(&g->auto_str_funcs, _STR("isnil(it->%.*s\000)", 2, v__gen__c_name(field.name)));
-				strings__Builder_write(&g->auto_str_funcs, tos_lit(" ? tos_lit(\"nil\") : "));
-				if (sym->kind != v__table__Kind_struct_ && !v__table__Type_is_int(field.typ) && !v__table__Type_is_float(field.typ)) {
-					strings__Builder_write(&g->auto_str_funcs, tos_lit("*"));
+				fmt = _STR("&%.*s", 1, fmt);
+			}
+			strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\t\"%%.*s\\000    %.*s\000: %.*s\000\\n\"", 3, field.name, fmt));
+		}
+		strings__Builder_write(&g->auto_str_funcs, _STR("\t\t\"%%.*s\\000}\", %"PRId32"", 1, 2 * (info.fields.len + 1)));
+		if (info.fields.len > 0) {
+			strings__Builder_write(&g->auto_str_funcs, tos_lit(",\n\t\t"));
+			// FOR IN array
+			array _t925 = info.fields;
+			for (int i = 0; i < _t925.len; ++i) {
+				v__table__Field field = ((v__table__Field*)_t925.data)[i];
+				v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, field.typ);
+				bool has_custom_str = v__table__TypeSymbol_has_method(sym, tos_lit("str"));
+				string field_styp = v__gen__Gen_typ(g, field.typ);
+				if (string_ends_with(field_styp, tos_lit("*"))) {
+					field_styp = string_replace(field_styp, tos_lit("*"), tos_lit(""));
+				}
+				string field_styp_fn_name = (has_custom_str ? (_STR("%.*s\000_str", 2, field_styp)) : ((*(string*)map_get(fnames2strfunc, field_styp, &(string[]){ (string){.str=(byteptr)""} }))));
+				strings__Builder_write(&g->auto_str_funcs, tos_lit("indents, "));
+				string func = v__gen__struct_auto_str_func(*sym, field.typ, field_styp_fn_name, field.name);
+				if (v__table__Type_is_ptr(field.typ)) {
+					strings__Builder_write(&g->auto_str_funcs, _STR("isnil(it->%.*s\000)", 2, v__gen__c_name(field.name)));
+					strings__Builder_write(&g->auto_str_funcs, tos_lit(" ? tos_lit(\"nil\") : "));
+					if (sym->kind != v__table__Kind_struct_ && !v__table__Type_is_int(field.typ) && !v__table__Type_is_float(field.typ)) {
+						strings__Builder_write(&g->auto_str_funcs, tos_lit("*"));
+					}
+				}
+				strings__Builder_write(&g->auto_str_funcs, func);
+				if (i < info.fields.len - 1) {
+					strings__Builder_write(&g->auto_str_funcs, tos_lit(",\n\t\t"));
 				}
 			}
-			strings__Builder_write(&g->auto_str_funcs, func);
-			if (i < info.fields.len - 1) {
-				strings__Builder_write(&g->auto_str_funcs, tos_lit(",\n\t\t"));
-			}
 		}
+		strings__Builder_writeln(&g->auto_str_funcs, tos_lit(","));
+		strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t\tindents);"));
 	}
-	strings__Builder_writeln(&g->auto_str_funcs, tos_lit(","));
-	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t\tindents);"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("}"));
 }
 
