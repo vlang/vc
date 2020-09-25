@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "90d1a68"
+#define V_COMMIT_HASH "0b95d72"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "47a62b1"
+	#define V_COMMIT_HASH "90d1a68"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "90d1a68"
+	#define V_CURRENT_COMMIT_HASH "0b95d72"
 #endif
 
 // V typedefs:
@@ -24850,11 +24850,11 @@ static bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, v__ast__E
 		if (_t738 == v__token__Kind_and) {
 			bool l = v__checker__Checker_comp_if_branch(c, cond->left, cond->pos);
 			bool r = v__checker__Checker_comp_if_branch(c, cond->right, cond->pos);
-			return l && r;
+			return l || r;
 		} else if (_t738 == v__token__Kind_logical_or) {
 			bool l = v__checker__Checker_comp_if_branch(c, cond->left, cond->pos);
 			bool r = v__checker__Checker_comp_if_branch(c, cond->right, cond->pos);
-			return l || r;
+			return l && r;
 		} else if (_t738 == v__token__Kind_key_is || _t738 == v__token__Kind_not_is) {
 			if (cond->left.typ != 229 /* v.ast.SelectorExpr */ || cond->right.typ != 235 /* v.ast.Type */) {
 				v__checker__Checker_error(c, tos_lit("invalid `\$if` condition"), cond->pos);
@@ -24906,8 +24906,8 @@ static Option_bool v__checker__Checker_has_return(v__checker__Checker* c, array_
 	for (int _t741 = 0; _t741 < _t740.len; ++_t741) {
 		v__ast__Stmt s = ((v__ast__Stmt*)_t740.data)[_t741];
 		if (s.typ == 247 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_113769 = (v__ast__ExprStmt*)s._object;
-			v__ast__ExprStmt* s = _sc_tmp_113769;
+			v__ast__ExprStmt* _sc_tmp_113878 = (v__ast__ExprStmt*)s._object;
+			v__ast__ExprStmt* s = _sc_tmp_113878;
 			if (s->expr.typ == 213 /* v.ast.IfExpr */ || s->expr.typ == 221 /* v.ast.MatchExpr */) {
 				has_complexity = true;
 				break;
@@ -24929,8 +24929,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->source_name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_114405 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_114405.arg0;
+		multi_return_string_v__token__Position mr_114514 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_114514.arg0;
 	}
 	if ((v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym)) && !c->inside_unsafe) {
 		v__checker__Checker_warn(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -25348,21 +25348,21 @@ static bool v__checker__has_top_return(array_v__ast__Stmt stmts) {
 	for (int _t766 = 0; _t766 < _t765.len; ++_t766) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t765.data)[_t766];
 		if (stmt.typ == 259 /* v.ast.Return */) {
-			v__ast__Return* _sc_tmp_127983 = (v__ast__Return*)stmt._object;
-			v__ast__Return* stmt = _sc_tmp_127983;
+			v__ast__Return* _sc_tmp_128092 = (v__ast__Return*)stmt._object;
+			v__ast__Return* stmt = _sc_tmp_128092;
 			return true;
 		} else if (stmt.typ == 241 /* v.ast.Block */) {
-			v__ast__Block* _sc_tmp_128026 = (v__ast__Block*)stmt._object;
-			v__ast__Block* stmt = _sc_tmp_128026;
+			v__ast__Block* _sc_tmp_128135 = (v__ast__Block*)stmt._object;
+			v__ast__Block* stmt = _sc_tmp_128135;
 			if (v__checker__has_top_return(stmt->stmts)) {
 				return true;
 			}
 		} else if (stmt.typ == 247 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_128114 = (v__ast__ExprStmt*)stmt._object;
-			v__ast__ExprStmt* stmt = _sc_tmp_128114;
+			v__ast__ExprStmt* _sc_tmp_128223 = (v__ast__ExprStmt*)stmt._object;
+			v__ast__ExprStmt* stmt = _sc_tmp_128223;
 			if (stmt->expr.typ == 203 /* v.ast.CallExpr */) {
-				v__ast__CallExpr* _sc_tmp_128148 = (v__ast__CallExpr*)stmt->expr._object;
-				v__ast__CallExpr* ce = _sc_tmp_128148;
+				v__ast__CallExpr* _sc_tmp_128257 = (v__ast__CallExpr*)stmt->expr._object;
+				v__ast__CallExpr* ce = _sc_tmp_128257;
 				if ((string_eq(ce->name, tos_lit("panic")) || string_eq(ce->name, tos_lit("exit")))) {
 					return true;
 				}
