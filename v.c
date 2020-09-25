@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "aa1d5fc"
+#define V_COMMIT_HASH "b44620d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ae48b70"
+	#define V_COMMIT_HASH "aa1d5fc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "aa1d5fc"
+	#define V_CURRENT_COMMIT_HASH "b44620d"
 #endif
 
 // V typedefs:
@@ -3981,8 +3981,6 @@ i64 time__Duration_milliseconds(time__Duration d);
 f64 time__Duration_seconds(time__Duration d);
 f64 time__Duration_minutes(time__Duration d);
 f64 time__Duration_hours(time__Duration d);
-static time__Time time__linux_now();
-static time__Time time__linux_utc();
 static u64 time__sys_mono_now_darwin();
 time__Time time__darwin_now();
 time__Time time__solaris_now();
@@ -3992,6 +3990,8 @@ static int time__make_unix_time(struct tm t);
 static time__Time time__to_local_time(time__Time t);
 u64 time__sys_mono_now();
 static u64 time__vpc_now();
+static time__Time time__linux_now();
+static time__Time time__linux_utc();
 time__Time time__win_now();
 time__Time time__win_utc();
 struct timespec time__Duration_timespec(time__Duration d);
@@ -14465,7 +14465,7 @@ time__Time time__now() {
 		return time__solaris_now();
 	}
 	#endif
-	#if defined(__linux__)
+	#if defined(__linux__) || defined(__ANDROID__)
 	{
 		return time__linux_now();
 	}
@@ -14491,7 +14491,7 @@ time__Time time__utc() {
 		return time__solaris_utc();
 	}
 	#endif
-	#if defined(__linux__)
+	#if defined(__linux__) || defined(__ANDROID__)
 	{
 		return time__linux_utc();
 	}
@@ -14759,22 +14759,6 @@ f64 time__Duration_hours(time__Duration d) {
 	return ((f64)(hr)) + ((f64)(nsec)) / (60 * 60 * 1e9);
 }
 
-// Attr: [inline]
-inline static time__Time time__linux_now() {
-	struct timespec ts = (struct timespec){.tv_sec = 0,.tv_nsec = 0,};
-	clock_gettime(CLOCK_REALTIME, &ts);
-	struct tm loc_tm = (struct tm){.tm_sec = 0,.tm_min = 0,.tm_hour = 0,.tm_mday = 0,.tm_mon = 0,.tm_year = 0,.tm_wday = 0,.tm_yday = 0,.tm_isdst = 0,};
-	localtime_r(&ts.tv_sec, &loc_tm);
-	return time__convert_ctime(loc_tm, ((int)(ts.tv_nsec / 1000)));
-}
-
-// Attr: [inline]
-inline static time__Time time__linux_utc() {
-	struct timespec ts = (struct timespec){.tv_sec = 0,.tv_nsec = 0,};
-	clock_gettime(CLOCK_REALTIME, &ts);
-	return time__unix2(((int)(ts.tv_sec)), ((int)(ts.tv_nsec / 1000)));
-}
-
 static u64 time__sys_mono_now_darwin() {
 	return 0;
 }
@@ -14825,6 +14809,22 @@ inline static u64 time__vpc_now() {
 	struct timespec ts = (struct timespec){.tv_sec = 0,.tv_nsec = 0,};
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 	return ((u64)(ts.tv_sec)) * 1000000000 + ((u64)(ts.tv_nsec));
+}
+
+// Attr: [inline]
+inline static time__Time time__linux_now() {
+	struct timespec ts = (struct timespec){.tv_sec = 0,.tv_nsec = 0,};
+	clock_gettime(CLOCK_REALTIME, &ts);
+	struct tm loc_tm = (struct tm){.tm_sec = 0,.tm_min = 0,.tm_hour = 0,.tm_mday = 0,.tm_mon = 0,.tm_year = 0,.tm_wday = 0,.tm_yday = 0,.tm_isdst = 0,};
+	localtime_r(&ts.tv_sec, &loc_tm);
+	return time__convert_ctime(loc_tm, ((int)(ts.tv_nsec / 1000)));
+}
+
+// Attr: [inline]
+inline static time__Time time__linux_utc() {
+	struct timespec ts = (struct timespec){.tv_sec = 0,.tv_nsec = 0,};
+	clock_gettime(CLOCK_REALTIME, &ts);
+	return time__unix2(((int)(ts.tv_sec)), ((int)(ts.tv_nsec / 1000)));
 }
 
 time__Time time__win_now() {

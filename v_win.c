@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "aa1d5fc"
+#define V_COMMIT_HASH "b44620d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ae48b70"
+	#define V_COMMIT_HASH "aa1d5fc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "aa1d5fc"
+	#define V_CURRENT_COMMIT_HASH "b44620d"
 #endif
 
 // V typedefs:
@@ -14528,7 +14528,7 @@ time__Time time__now() {
 	{
 	}
 	#endif
-	#if defined(__linux__)
+	#if defined(__linux__) || defined(__ANDROID__)
 	{
 	}
 	#endif
@@ -14551,7 +14551,7 @@ time__Time time__utc() {
 	{
 	}
 	#endif
-	#if defined(__linux__)
+	#if defined(__linux__) || defined(__ANDROID__)
 	{
 	}
 	#endif
