@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "acbfc11"
+#define V_COMMIT_HASH "b999d01"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "fbae0a7"
+	#define V_COMMIT_HASH "acbfc11"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "acbfc11"
+	#define V_CURRENT_COMMIT_HASH "b999d01"
 #endif
 
 // V typedefs:
@@ -17081,7 +17081,9 @@ bool runtime__is_big_endian() {
 }
 
 int runtime__nr_cpus() {
-	int nr = ((int)(GetCurrentProcessorNumber()));
+	SYSTEM_INFO sinfo = (SYSTEM_INFO){.dwNumberOfProcessors = 0,};
+	GetSystemInfo(&sinfo);
+	int nr = ((int)(sinfo.dwNumberOfProcessors));
 	if (nr == 0) {
 		nr = string_int(os__getenv(tos_lit("NUMBER_OF_PROCESSORS")));
 	}
