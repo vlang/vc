@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "03258db"
+#define V_COMMIT_HASH "3a869c7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "aa889b0"
+	#define V_COMMIT_HASH "03258db"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "03258db"
+	#define V_CURRENT_COMMIT_HASH "3a869c7"
 #endif
 
 // V typedefs:
@@ -1144,7 +1144,7 @@ typedef int (*anon_fn_7_7_7)(int,int);
 typedef array array_voidptr;
 typedef void (*FnExitCb)();
 typedef array array_MethodArgs;
-typedef u32 (*VectoredExceptionHandler)(ExceptionPointers*);
+typedef int (*VectoredExceptionHandler)(ExceptionPointers*);
 typedef array array_u16;
 typedef array array_u64;
 typedef array array_RepIndex;
@@ -3673,7 +3673,7 @@ static bool print_backtrace_skipping_top_frames_msvc(int skipframes);
 static bool print_backtrace_skipping_top_frames_mingw(int skipframes);
 static bool print_backtrace_skipping_top_frames_tcc(int skipframes);
 static void add_vectored_exception_handler(VectoredExceptionHandler handler);
-static u32 __stdcall  unhandled_exception_handler(ExceptionPointers* e);
+static int __stdcall  unhandled_exception_handler(ExceptionPointers* e);
 static void add_unhandled_exception_handler();
 static void break_if_debugger_attached();
 int proc_pidpath(int, voidptr, int);
@@ -9422,7 +9422,7 @@ static void add_vectored_exception_handler(VectoredExceptionHandler handler) {
 }
 
 // Attr: [windows_stdcall]
-static u32 __stdcall  unhandled_exception_handler(ExceptionPointers* e) {
+static int __stdcall  unhandled_exception_handler(ExceptionPointers* e) {
 	u32 _t22 = e->exception_record->code;
 	if (_t22 == 0x4001000A || _t22 == 0x40010006) {
 		return 0;
