@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6981f2a"
+#define V_COMMIT_HASH "9e31335"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "71e1ca7"
+	#define V_COMMIT_HASH "6981f2a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6981f2a"
+	#define V_CURRENT_COMMIT_HASH "9e31335"
 #endif
 
 // V typedefs:
@@ -41789,8 +41789,8 @@ void _vinit() {
 	// Initializations for module v.depgraph :
 	// Initializations for module v.pref :
 	_const_v__pref__default_module_path = v__pref__mpath();
-	_const_v__pref__list_of_flags_with_param = new_array_from_c_array(14, 14, sizeof(string), _MOV((string[14]){
-		tos_lit("o"), tos_lit("output"), tos_lit("d"), tos_lit("define"), tos_lit("b"), tos_lit("backend"), tos_lit("cc"), tos_lit("os"), tos_lit("target-os"), tos_lit("arch"), tos_lit("csource"), tos_lit("cf"), tos_lit("cflags"), tos_lit("path")}));
+	_const_v__pref__list_of_flags_with_param = new_array_from_c_array(12, 12, sizeof(string), _MOV((string[12]){
+		tos_lit("o"), tos_lit("output"), tos_lit("d"), tos_lit("define"), tos_lit("b"), tos_lit("backend"), tos_lit("cc"), tos_lit("os"), tos_lit("target-os"), tos_lit("cf"), tos_lit("cflags"), tos_lit("path")}));
 	// Initializations for module term :
 	// Initializations for module v.vmod :
 	_const_v__vmod__mod_file_stop_paths = new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){tos_lit(".git"), tos_lit(".hg"), tos_lit(".svn"), tos_lit(".v.mod.stop")}));
