@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ae7689f"
+#define V_COMMIT_HASH "763ddf7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c38a050"
+	#define V_COMMIT_HASH "ae7689f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ae7689f"
+	#define V_CURRENT_COMMIT_HASH "763ddf7"
 #endif
 
 // V typedefs:
@@ -35450,13 +35450,14 @@ void v__gen__Gen_gen_c_main_footer(v__gen__Gen* g) {
 }
 
 void v__gen__Gen_gen_c_android_sokol_main(v__gen__Gen* g) {
-	v__gen__Gen_writeln(g, tos_lit("sapp_desc sokol_main(int argc, char* argv[]) {"));
-	v__gen__Gen_writeln(g, tos_lit("\t(void)argc; (void)argv;"));
-	v__gen__Gen_writeln(g, tos_lit(""));
-	v__gen__Gen_writeln(g, tos_lit("\t_vinit();"));
-	v__gen__Gen_writeln(g, tos_lit("\tmain__main();"));
-	v__gen__Gen_writeln(g, tos_lit(""));
-	v__gen__Gen_writeln(g, tos_lit("\treturn g_desc;"));
+	if (g->autofree) {
+		v__gen__Gen_writeln(g, tos_lit("// Wrapping cleanup/free callbacks for sokol to include _vcleanup()\nvoid (*_vsokol_user_cleanup_ptr)(void);\nvoid (*_vsokol_user_cleanup_cb_ptr)(void *);\n\nvoid (_vsokol_cleanup_cb)(void) {\n	if (_vsokol_user_cleanup_ptr) {\n		_vsokol_user_cleanup_ptr();\n	}\n	_vcleanup();\n}\n\nvoid (_vsokol_cleanup_userdata_cb)(void* user_data) {\n	if (_vsokol_user_cleanup_cb_ptr) {\n		_vsokol_user_cleanup_cb_ptr(g_desc.user_data);\n	}\n	_vcleanup();\n}\n"));
+	}
+	v__gen__Gen_writeln(g, tos_lit("// The sokol_main entry point on Android\nsapp_desc sokol_main(int argc, char* argv[]) {\n	(void)argc; (void)argv;\n\n	_vinit();\n	main__main();\n"));
+	if (g->autofree) {
+		v__gen__Gen_writeln(g, tos_lit("	// Wrap user provided cleanup/free functions for sokol to be able to call _vcleanup()\n	if (g_desc.cleanup_cb) {\n		_vsokol_user_cleanup_ptr = g_desc.cleanup_cb;\n		g_desc.cleanup_cb = _vsokol_cleanup_cb;\n	}\n	else if (g_desc.cleanup_userdata_cb) {\n		_vsokol_user_cleanup_cb_ptr = g_desc.cleanup_userdata_cb;\n		g_desc.cleanup_userdata_cb = _vsokol_cleanup_userdata_cb;\n	}\n"));
+	}
+	v__gen__Gen_writeln(g, tos_lit("	return g_desc;"));
 	v__gen__Gen_writeln(g, tos_lit("}"));
 }
 
