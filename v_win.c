@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "76e373a"
+#define V_COMMIT_HASH "3a8be4d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "763ddf7"
+	#define V_COMMIT_HASH "76e373a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "76e373a"
+	#define V_CURRENT_COMMIT_HASH "3a8be4d"
 #endif
 
 // V typedefs:
@@ -13397,7 +13397,7 @@ string os__user_os() {
 string os__home_dir() {
 	#if defined(_WIN32)
 	{
-		return string_add(os__getenv(tos_lit("USERPROFILE")), _const_os__path_separator);
+		return os__getenv(tos_lit("USERPROFILE"));
 	}
 	#else
 	{
@@ -13813,7 +13813,7 @@ string os__cache_dir() {
 	{
 	}
 	#endif
-	string cdir = string_add(os__home_dir(), tos_lit(".cache"));
+	string cdir = os__join_path(os__home_dir(), (varg_string){.len=1,.args={tos_lit(".cache")}});
 	if (!os__is_dir(cdir) && !os__is_link(cdir)) {
 		Option_bool _t178 = os__mkdir(cdir);
 		if (!_t178.ok) {
@@ -15496,7 +15496,7 @@ string v__depgraph__DepGraph_display_cycles(v__depgraph__DepGraph* graph) {
 }
 
 static string v__pref__mpath() {
-	return string_add(os__home_dir(), tos_lit(".vmodules"));
+	return os__join_path(os__home_dir(), (varg_string){.len=1,.args={tos_lit(".vmodules")}});
 }
 
 v__pref__Preferences v__pref__new_preferences() {
