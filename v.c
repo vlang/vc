@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a57e01f"
+#define V_COMMIT_HASH "7e720a1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d96f1bf"
+	#define V_COMMIT_HASH "a57e01f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a57e01f"
+	#define V_CURRENT_COMMIT_HASH "7e720a1"
 #endif
 
 // V typedefs:
@@ -15841,7 +15841,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 				command_pos = i;
 				continue;
 			}
-			if (!(string_eq(command, tos_lit("")) || string_eq(command, tos_lit("run")) || string_eq(command, tos_lit("build")) || string_eq(command, tos_lit("build-module")))) {
+			if (!(string_eq(command, tos_lit("")) || string_eq(command, tos_lit("build")) || string_eq(command, tos_lit("build-module")))) {
 				continue;
 			}
 			eprint(_STR("Unknown argument `%.*s\000`", 2, arg));
