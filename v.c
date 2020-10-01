@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a0e4be0"
+#define V_COMMIT_HASH "ac384db"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d9aa691"
+	#define V_COMMIT_HASH "a0e4be0"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a0e4be0"
+	#define V_CURRENT_COMMIT_HASH "ac384db"
 #endif
 
 // V typedefs:
@@ -17269,7 +17269,7 @@ string v__util__color_compare_strings(string diff_cmd, string expected, string f
 }
 
 v__util__EManager* v__util__new_error_manager() {
-	return (v__util__EManager*)memdup(&(v__util__EManager){.support_color = term__can_show_color_on_stderr(),}, sizeof(v__util__EManager));
+	return (v__util__EManager*)memdup(&(v__util__EManager){.support_color = term__can_show_color_on_stderr() && term__can_show_color_on_stdout(),}, sizeof(v__util__EManager));
 }
 
 void v__util__EManager_set_support_color(v__util__EManager* e, bool b) {
@@ -40407,7 +40407,8 @@ static void v__builder__verror(string s) {
 }
 
 void v__builder__Builder_timing_message(v__builder__Builder* b, string msg, i64 ms) {
-	string formatted_message = _STR("%.*s\000: %.*s\000 ms", 3, msg, v__util__bold(i64_str(ms)));
+	string value = v__util__bold(_STR("%"PRId64"", 1, ms));
+	string formatted_message = _STR("%.*s\000: %.*s\000 ms", 3, msg, value);
 	if (b->pref->show_timings) {
 		println(formatted_message);
 	} else {
