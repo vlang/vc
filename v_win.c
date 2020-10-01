@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "11b16a6"
+#define V_COMMIT_HASH "0f1ed1c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4879661"
+	#define V_COMMIT_HASH "11b16a6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "11b16a6"
+	#define V_CURRENT_COMMIT_HASH "0f1ed1c"
 #endif
 
 // V typedefs:
@@ -20998,7 +20998,7 @@ static string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) {
 	for (;;) {
 		s->pos++;
 		if (s->pos >= s->text.len) {
-			break;
+			v__scanner__Scanner_error(s, tos_lit("unfinished string literal"));
 		}
 		byte c = string_at(s->text, s->pos);
 		byte prevc = string_at(s->text, s->pos - 1);
