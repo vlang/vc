@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8152b86"
+#define V_COMMIT_HASH "94cf8ef"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "417b145"
+	#define V_COMMIT_HASH "8152b86"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8152b86"
+	#define V_CURRENT_COMMIT_HASH "94cf8ef"
 #endif
 
 // V typedefs:
@@ -15949,7 +15949,7 @@ static void v__pref__parse_define(v__pref__Preferences* prefs, string define) {
 		} else if (string_eq(_t305, tos_lit("1"))) {
 			array_push(&prefs->compile_defines, _MOV((string[]){ (*(string*)array_get(define_parts, 0)) }));
 		} else {
-			println(string_add(_STR("V error: Unknown define argument value `%.*s\000` for %.*s\000.", 3, (*(string*)array_get(define_parts, 1)), (*(string*)array_get(define_parts, 0))), tos_lit("Expected `0` or `1`.")));
+			println(string_add(_STR("V error: Unknown define argument value `%.*s\000` for %.*s\000.", 3, (*(string*)array_get(define_parts, 1)), (*(string*)array_get(define_parts, 0))), tos_lit(" Expected `0` or `1`.")));
 			v_exit(1);
 		};
 		return;
