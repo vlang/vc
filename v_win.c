@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c53ebd8"
+#define V_COMMIT_HASH "2204bad"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "032a3e6"
+	#define V_COMMIT_HASH "c53ebd8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c53ebd8"
+	#define V_CURRENT_COMMIT_HASH "2204bad"
 #endif
 
 // V typedefs:
@@ -30501,9 +30501,9 @@ static void v__gen__Gen_gen_str_for_struct(v__gen__Gen* g, v__table__Struct info
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t\tindents = string_add(indents, tos_lit(\"    \"));"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t}"));
 	if (info.fields.len == 0) {
-		strings__Builder_write(&g->auto_str_funcs, _STR("\treturn tos_lit(\"%.*s\000 { }\");", 2, clean_struct_v_type_name));
+		strings__Builder_write(&g->auto_str_funcs, _STR("\treturn tos_lit(\"%.*s\000{}\");", 2, clean_struct_v_type_name));
 	} else {
-		strings__Builder_write(&g->auto_str_funcs, _STR("\treturn _STR(\"%.*s\000 {\\n\"", 2, clean_struct_v_type_name));
+		strings__Builder_write(&g->auto_str_funcs, _STR("\treturn _STR(\"%.*s\000{\\n\"", 2, clean_struct_v_type_name));
 		// FOR IN array
 		array _t960 = info.fields;
 		for (int _t961 = 0; _t961 < _t960.len; ++_t961) {
