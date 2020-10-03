@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "677b0ba"
+#define V_COMMIT_HASH "de77f0b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7b034a5"
+	#define V_COMMIT_HASH "677b0ba"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "677b0ba"
+	#define V_CURRENT_COMMIT_HASH "de77f0b"
 #endif
 
 // V typedefs:
@@ -18938,7 +18938,14 @@ bool v__table__Table_known_type(v__table__Table* t, string name) {
 // Attr: [inline]
 inline string v__table__Table_array_name(v__table__Table* t, v__table__Type elem_type, int nr_dims) {
 	v__table__TypeSymbol* elem_type_sym = v__table__Table_get_type_symbol(t, elem_type);
-	return string_add(string_add(_STR("array_%.*s", 1, elem_type_sym->name), (v__table__Type_is_ptr(elem_type) ? (string_repeat(tos_lit("_ptr"), v__table__Type_nr_muls(elem_type))) : (tos_lit("")))), (nr_dims > 1 ? (_STR("_%"PRId32"\000d", 2, nr_dims)) : (tos_lit(""))));
+	string res = tos_lit("");
+	if (v__table__Type_is_ptr(elem_type)) {
+		res = string_repeat(tos_lit("_ptr"), v__table__Type_nr_muls(elem_type));
+	}
+	if (nr_dims > 1) {
+		res = /*f*/string_add(res, _STR("_%"PRId32"\000d", 2, nr_dims));
+	}
+	return string_add(_STR("array_%.*s", 1, elem_type_sym->name), res);
 }
 
 // Attr: [inline]
@@ -18951,7 +18958,14 @@ inline string v__table__Table_array_source_name(v__table__Table* t, v__table__Ty
 // Attr: [inline]
 inline string v__table__Table_array_fixed_name(v__table__Table* t, v__table__Type elem_type, int size, int nr_dims) {
 	v__table__TypeSymbol* elem_type_sym = v__table__Table_get_type_symbol(t, elem_type);
-	return string_add(string_add(_STR("array_fixed_%.*s\000_%"PRId32"", 2, elem_type_sym->name, size), (v__table__Type_is_ptr(elem_type) ? (tos_lit("_ptr")) : (tos_lit("")))), (nr_dims > 1 ? (_STR("_%"PRId32"\000d", 2, nr_dims)) : (tos_lit(""))));
+	string res = tos_lit("");
+	if (v__table__Type_is_ptr(elem_type)) {
+		res = tos_lit("_ptr");
+	}
+	if (nr_dims > 1) {
+		res = /*f*/string_add(res, _STR("_%"PRId32"\000d", 2, nr_dims));
+	}
+	return string_add(_STR("array_fixed_%.*s\000_%"PRId32"", 2, elem_type_sym->name, size), res);
 }
 
 // Attr: [inline]
