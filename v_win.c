@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "eefe067"
+#define V_COMMIT_HASH "c8a884f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "259f6ea"
+	#define V_COMMIT_HASH "eefe067"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "eefe067"
+	#define V_CURRENT_COMMIT_HASH "c8a884f"
 #endif
 
 // V typedefs:
@@ -22232,7 +22232,7 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 				v__checker__Checker_fail_if_immutable(c, infix_expr->right);
 			}
 			if (v__table__Type_is_ptr(elem_type) && !v__table__Type_is_ptr(right_type)) {
-				v__checker__Checker_error(c, _STR("cannon push non-reference `%.*s\000` on `%.*s\000`", 3, right->source_name, left->source_name), right_pos);
+				v__checker__Checker_error(c, _STR("cannot push non-reference `%.*s\000` on `%.*s\000`", 3, right->source_name, left->source_name), right_pos);
 			}
 		} else {
 			v__checker__Checker_error(c, _STR("cannot push on non-channel `%.*s\000`", 2, left->name), left_pos);
