@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c5e46c9"
+#define V_COMMIT_HASH "c84848c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d93b0f0"
+	#define V_COMMIT_HASH "c5e46c9"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c5e46c9"
+	#define V_CURRENT_COMMIT_HASH "c84848c"
 #endif
 
 // V typedefs:
@@ -2510,6 +2510,7 @@ struct v__ast__EnumDecl {
 	bool is_multi_allowed;
 	array_v__ast__Comment comments;
 	array_v__ast__EnumField fields;
+	array_v__table__Attr attrs;
 	v__token__Position pos;
 };
 
@@ -29200,6 +29201,7 @@ static v__ast__EnumDecl v__parser__Parser_enum_decl(v__parser__Parser* p) {
 		.is_multi_allowed = is_multi_allowed,
 		.comments = enum_decl_comments,
 		.fields = fields,
+		.attrs = p->attrs,
 		.pos = v__token__Position_extend(start_pos, end_pos),
 	};
 }
@@ -29373,7 +29375,7 @@ static v__ast__Stmt v__parser__Parser_unsafe_stmt(v__parser__Parser* p) {
 		VAssertMetaInfo v_assert_meta_info__t935;
 		memset(&v_assert_meta_info__t935, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t935.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/parser/parser.v");
-		v_assert_meta_info__t935.line_nr = 2006;
+		v_assert_meta_info__t935.line_nr = 2007;
 		v_assert_meta_info__t935.fn_name = tos_lit("unsafe_stmt");
 		v_assert_meta_info__t935.src = tos_lit("!p.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t935);
@@ -29389,8 +29391,8 @@ static v__ast__Stmt v__parser__Parser_unsafe_stmt(v__parser__Parser* p) {
 	v__ast__Stmt stmt = v__parser__Parser_stmt(p, false);
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		if ((stmt).typ == 248 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_48162 = (v__ast__ExprStmt*)stmt._object;
-			v__ast__ExprStmt* stmt = _sc_tmp_48162;
+			v__ast__ExprStmt* _sc_tmp_48179 = (v__ast__ExprStmt*)stmt._object;
+			v__ast__ExprStmt* stmt = _sc_tmp_48179;
 			if (v__ast__Expr_is_expr(stmt->expr)) {
 				v__parser__Parser_next(p);
 				v__ast__UnsafeExpr ue = (v__ast__UnsafeExpr){.expr = stmt->expr,.pos = pos,};
