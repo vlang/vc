@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a9da4dd"
+#define V_COMMIT_HASH "7e13518"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5aea0d0"
+	#define V_COMMIT_HASH "a9da4dd"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a9da4dd"
+	#define V_CURRENT_COMMIT_HASH "7e13518"
 #endif
 
 // V typedefs:
@@ -26798,6 +26798,9 @@ static v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_open_scope(p);
 	p->inside_for = true;
+	if (p->tok.kind == v__token__Kind_key_match) {
+		v__parser__Parser_error(p, tos_lit("cannot use `match` in `for` loop"));
+	}
 	if (p->tok.kind == v__token__Kind_lcbr) {
 		p->inside_for = false;
 		array_v__ast__Stmt stmts = v__parser__Parser_parse_block(p);
@@ -26936,6 +26939,9 @@ static v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p, bool is_co
 			_PUSH_MANY(&comments, (v__parser__Parser_eat_comments(p)), _t856, array_v__ast__Comment);
 			v__parser__Parser_check(p, v__token__Kind_key_else);
 			_PUSH_MANY(&comments, (v__parser__Parser_eat_comments(p)), _t857, array_v__ast__Comment);
+			if (p->tok.kind == v__token__Kind_key_match) {
+				v__parser__Parser_error(p, tos_lit("cannot use `match` with `if` statements"));
+			}
 			if (p->tok.kind == v__token__Kind_lcbr) {
 				has_else = true;
 				p->inside_if = false;
@@ -26958,6 +26964,9 @@ static v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p, bool is_co
 			}
 		}
 		v__parser__Parser_check(p, v__token__Kind_key_if);
+		if (p->tok.kind == v__token__Kind_key_match) {
+			v__parser__Parser_error(p, tos_lit("cannot use `match` with `if` statements"));
+		}
 		_PUSH_MANY(&comments, (v__parser__Parser_eat_comments(p)), _t859, array_v__ast__Comment);
 		bool mut_name = false;
 		if (p->tok.kind == v__token__Kind_key_mut && p->peek_tok2.kind == v__token__Kind_key_is) {
@@ -26990,8 +26999,8 @@ static v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p, bool is_co
 		_PUSH_MANY(&comments, (v__parser__Parser_eat_comments(p)), _t863, array_v__ast__Comment);
 		string left_as_name = tos_lit("");
 		if ((cond).typ == 216 /* v.ast.InfixExpr */) {
-			v__ast__InfixExpr* _sc_tmp_2840 = (v__ast__InfixExpr*)cond._object;
-			v__ast__InfixExpr* infix = _sc_tmp_2840;
+			v__ast__InfixExpr* _sc_tmp_3023 = (v__ast__InfixExpr*)cond._object;
+			v__ast__InfixExpr* infix = _sc_tmp_3023;
 			bool is_is_cast = infix->op == v__token__Kind_key_is;
 			bool is_ident = (infix->left).typ == 212 /* v.ast.Ident */;
 			v__ast__Ident* _t864;
@@ -27227,9 +27236,9 @@ static v__ast__SelectExpr v__parser__Parser_select_expr(v__parser__Parser* p) {
 		} else {
 			p->inside_match = true;
 			p->inside_select = true;
-			multi_return_array_v__ast__Expr_array_v__ast__Comment mr_9659 = v__parser__Parser_expr_list(p);
-			array_v__ast__Expr exprs = mr_9659.arg0;
-			array_v__ast__Comment comments = mr_9659.arg1;
+			multi_return_array_v__ast__Expr_array_v__ast__Comment mr_9842 = v__parser__Parser_expr_list(p);
+			array_v__ast__Expr exprs = mr_9842.arg0;
+			array_v__ast__Comment comments = mr_9842.arg1;
 			if (exprs.len != 1) {
 				v__parser__Parser_error(p, tos_lit("only one expression allowed as `select` key"));
 			}
