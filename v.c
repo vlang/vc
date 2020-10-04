@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9ea7369"
+#define V_COMMIT_HASH "aa81ebb"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c84848c"
+	#define V_COMMIT_HASH "9ea7369"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9ea7369"
+	#define V_CURRENT_COMMIT_HASH "aa81ebb"
 #endif
 
 // V typedefs:
@@ -4871,6 +4871,7 @@ static void v__gen__Gen_sql_bind_int(v__gen__Gen* g, string val);
 static void v__gen__Gen_sql_bind_string(v__gen__Gen* g, string val, string len);
 static void v__gen__Gen_expr_to_sql(v__gen__Gen* g, v__ast__Expr expr);
 static void v__gen__Gen_inc_sql_i(v__gen__Gen* g);
+static string v__gen__smart_quote(string str, bool raw);
 static void v__gen__Gen_write_str_fn_definitions(v__gen__Gen* g);
 static void v__gen__Gen_string_literal(v__gen__Gen* g, v__ast__StringLiteral node);
 static void v__gen__Gen_string_inter_literal_sb_optimized(v__gen__Gen* g, v__ast__CallExpr call_expr);
@@ -37564,17 +37565,98 @@ static void v__gen__Gen_inc_sql_i(v__gen__Gen* g) {
 	v__gen__Gen_write(g, _STR("?%"PRId32"", 1, g->sql_i));
 }
 
+static string v__gen__smart_quote(string str, bool raw) {
+	int len = str.len;
+	if (len == 0) {
+		return str;
+	}
+	strings__Builder result = strings__new_builder(0);
+	int pos = -1;
+	string last = tos_lit("");
+	string next = tos_lit("");
+	bool skip_next = false;
+	for (;;) {
+		pos = pos + 1;
+		if (skip_next) {
+			skip_next = false;
+			pos = pos + 1;
+		}
+		if (pos >= len) {
+			break;
+		}
+		if (pos + 1 < len) {
+			{ // Unsafe block
+				next = byte_str(str.str[pos + 1]);
+			}
+		}
+		string current = str;
+		string toadd = str;
+		if (len > 1) {
+			{ // Unsafe block
+				current = byte_str(str.str[pos]);
+			}
+			toadd = current;
+		}
+		if (string_eq(current, tos_lit("\""))) {
+			toadd = tos_lit("\\\"");
+			current = tos_lit("");
+		}
+		if (raw && string_eq(current, tos_lit("\\"))) {
+			toadd = tos_lit("\\\\");
+		}
+		if (string_eq(current, tos_lit("\n"))) {
+			toadd = tos_lit("\\n");
+			current = tos_lit("");
+		}
+		if (string_eq(current, tos_lit("\r")) && string_eq(next, tos_lit("\n"))) {
+			toadd = tos_lit("\r\n");
+			current = tos_lit("");
+			skip_next = true;
+		}
+		if (!raw && string_eq(current, tos_lit("\\"))) {
+			if (string_eq(next, tos_lit("\\"))) {
+				toadd = tos_lit("\\\\");
+				skip_next = true;
+			} else {
+				if ((next).len != 0) {
+					if (raw) {
+						toadd = string_add(tos_lit("\\\\"), next);
+						skip_next = true;
+					} else {
+						toadd = string_add(tos_lit("\\"), next);
+						skip_next = true;
+					}
+				}
+			}
+		}
+		if (!raw && string_eq(current, tos_lit("$"))) {
+			if (string_eq(last, tos_lit("\\"))) {
+				toadd = tos_lit("\\\$");
+			}
+		}
+		if (!raw && string_eq(current, tos_lit("\r"))) {
+			if (string_eq(next, tos_lit("\n"))) {
+				skip_next = true;
+				toadd = tos_lit("\\n");
+			}
+		}
+		strings__Builder_write(&result, toadd);
+		last = current;
+	}
+	return strings__Builder_str(&result);
+}
+
 static void v__gen__Gen_write_str_fn_definitions(v__gen__Gen* g) {
 	v__gen__Gen_writeln(g, tos_lit("\nvoid _STR_PRINT_ARG(const char *fmt, char** refbufp, int *nbytes, int *memsize, int guess, ...) {\n	va_list args;\n	va_start(args, guess);\n	// NB: (*memsize - *nbytes) === how much free space is left at the end of the current buffer refbufp\n	// *memsize === total length of the buffer refbufp\n	// *nbytes === already occupied bytes of buffer refbufp\n	// guess === how many bytes were taken during the current vsnprintf run\n	for(;;) {\n		if (guess < *memsize - *nbytes) {\n			guess = vsnprintf(*refbufp + *nbytes, *memsize - *nbytes, fmt, args);\n			if (guess < *memsize - *nbytes) { // result did fit into buffer\n				*nbytes += guess;\n				break;\n			}\n		}\n		// increase buffer (somewhat exponentially)\n		*memsize += (*memsize + *memsize) / 3 + guess;\n		*refbufp = (char*)realloc((void*)*refbufp, *memsize);\n	}\n	va_end(args);\n}\n\nstring _STR(const char *fmt, int nfmts, ...) {\n	va_list argptr;\n	int memsize = 128;\n	int nbytes = 0;\n	char* buf = (char*)malloc(memsize);\n	va_start(argptr, nfmts);\n	for (int i=0; i<nfmts; ++i) {\n		int k = strlen(fmt);\n		bool is_fspec = false;\n		for (int j=0; j<k; ++j) {\n			if (fmt[j] == '%') {\n				j++;\n				if (fmt[j] != '%') {\n					is_fspec = true;\n					break;\n				}\n			}\n		}\n		if (is_fspec) {\n			char f = fmt[k-1];\n			char fup = f & 0xdf; // toupper\n			bool l = fmt[k-2] == 'l';\n			bool ll = l && fmt[k-3] == 'l';\n			if (f == 'u' || fup == 'X' || f == 'o' || f == 'd' || f == 'c') { // int...\n				if (ll) _STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+16, va_arg(argptr, long long));\n				else if (l) _STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+10, va_arg(argptr, long));\n				else _STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+8, va_arg(argptr, int));\n			} else if (fup >= 'E' && fup <= 'G') { // floating point\n				_STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+10, va_arg(argptr, double));\n			} else if (f == 'p') {\n				_STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+14, va_arg(argptr, void*));\n			} else if (f == 's') { // v string\n				string s = va_arg(argptr, string);\n				if (fmt[k-4] == '*') { // %*.*s\n					int fwidth = va_arg(argptr, int);\n					if (fwidth < 0)\n						fwidth -= (s.len - utf8_str_visible_length(s));\n					else\n						fwidth += (s.len - utf8_str_visible_length(s));\n					_STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+s.len-4, fwidth, s.len, s.str);\n				} else { // %.*s\n					_STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k+s.len-4, s.len, s.str);\n				}\n			} else {\n				//v_panic(tos3('Invaid format specifier'));\n			}\n		} else {\n			_STR_PRINT_ARG(fmt, &buf, &nbytes, &memsize, k);\n		}\n		fmt += k+1;\n	}\n	va_end(argptr);\n	buf[nbytes] = 0;\n	buf = (char*)realloc((void*)buf, nbytes+1);\n#ifdef DEBUG_ALLOC\n	//puts('_STR:');\n	puts(buf);\n#endif\n#if _VAUTOFREE\n	//g_cur_str = (byteptr)buf;\n#endif\n	return tos2((byteptr)buf);\n}\n\nstring _STR_TMP(const char *fmt, ...) {\n	va_list argptr;\n	va_start(argptr, fmt);\n	size_t len = vsnprintf(0, 0, fmt, argptr) + 1;\n	va_end(argptr);\n	va_start(argptr, fmt);\n	vsprintf((char *)g_str_buf, fmt, argptr);\n	va_end(argptr);\n\n#ifdef DEBUG_ALLOC\n	//puts('_STR_TMP:');\n	//puts(g_str_buf);\n#endif\n	string res = tos(g_str_buf,  len);\n	res.is_lit = 1;\n	return res;\n\n} // endof _STR_TMP\n\n"));
 }
 
 static void v__gen__Gen_string_literal(v__gen__Gen* g, v__ast__StringLiteral node) {
 	if (node.is_raw) {
-		string escaped_val = string_replace_each(node.val, new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){tos_lit("\""), tos_lit("\\\""), tos_lit("\\"), tos_lit("\\\\")})));
+		string escaped_val = v__gen__smart_quote(node.val, true);
 		v__gen__Gen_write(g, _STR("tos_lit(\"%.*s\000\")", 2, escaped_val));
 		return;
 	}
-	string escaped_val = string_replace_each(node.val, new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){tos_lit("\""), tos_lit("\\\""), tos_lit("\r\n"), tos_lit("\\n"), tos_lit("\n"), tos_lit("\\n")})));
+	string escaped_val = v__gen__smart_quote(node.val, false);
 	if (g->is_c_call || node.language == v__table__Language_c) {
 		v__gen__Gen_write(g, _STR("\"%.*s\000\"", 2, escaped_val));
 	} else {
@@ -37590,7 +37672,7 @@ static void v__gen__Gen_string_inter_literal_sb_optimized(v__gen__Gen* g, v__ast
 	array _t1277 = node->vals;
 	for (int i = 0; i < _t1277.len; ++i) {
 		string val = ((string*)_t1277.data)[i];
-		string escaped_val = string_replace_each(val, new_array_from_c_array(8, 8, sizeof(string), _MOV((string[8]){tos_lit("\""), tos_lit("\\\""), tos_lit("\r\n"), tos_lit("\\n"), tos_lit("\n"), tos_lit("\\n"), tos_lit("%"), tos_lit("%%")})));
+		string escaped_val = v__gen__smart_quote(val, false);
 		v__gen__Gen_write(g, tos_lit("strings__Builder_write(&"));
 		v__gen__Gen_expr(g, call_expr.left);
 		v__gen__Gen_write(g, tos_lit(", tos_lit(\""));
@@ -37631,7 +37713,8 @@ static void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInter
 	array _t1278 = node.vals;
 	for (int i = 0; i < _t1278.len; ++i) {
 		string val = ((string*)_t1278.data)[i];
-		string escaped_val = string_replace_each(val, new_array_from_c_array(8, 8, sizeof(string), _MOV((string[8]){tos_lit("\""), tos_lit("\\\""), tos_lit("\r\n"), tos_lit("\\n"), tos_lit("\n"), tos_lit("\\n"), tos_lit("%"), tos_lit("%%")})));
+		string escaped_val = string_replace_each(val, new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){tos_lit("%"), tos_lit("%%")})));
+		escaped_val = v__gen__smart_quote(escaped_val, false);
 		if (i >= node.exprs.len) {
 			if (escaped_val.len > 0) {
 				end_string = true;
