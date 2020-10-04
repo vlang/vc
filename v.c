@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0c17410"
+#define V_COMMIT_HASH "2622070"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "628b136"
+	#define V_COMMIT_HASH "0c17410"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0c17410"
+	#define V_CURRENT_COMMIT_HASH "2622070"
 #endif
 
 // V typedefs:
@@ -12210,6 +12210,12 @@ int os__setenv(string name, string value, bool overwrite) {
 		if (overwrite) {
 			{ // Unsafe block
 				return _putenv(format.str);
+			}
+		} else {
+			if (os__getenv(name).len == 0) {
+				{ // Unsafe block
+					return _putenv(format.str);
+				}
 			}
 		}
 		return -1;
