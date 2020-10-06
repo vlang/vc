@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f943bf2"
+#define V_COMMIT_HASH "7082691"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "256a572"
+	#define V_COMMIT_HASH "f943bf2"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f943bf2"
+	#define V_CURRENT_COMMIT_HASH "7082691"
 #endif
 
 // V typedefs:
@@ -27561,8 +27561,10 @@ v__table__Type v__parser__Parser_parse_type(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_mul) {
 		v__parser__Parser_error(p, tos_lit("use `&Type` instead of `*Type` when declaring references"));
 	}
+	int nr_amps = 0;
 	for (;;) {
 		if (!(p->tok.kind == v__token__Kind_amp)) break;
+		nr_amps++;
 		nr_muls++;
 		v__parser__Parser_next(p);
 	}
@@ -27587,7 +27589,7 @@ v__table__Type v__parser__Parser_parse_type(v__parser__Parser* p) {
 	}
 	if (nr_muls > 0) {
 		typ = v__table__Type_set_nr_muls(typ, nr_muls);
-		if (is_array) {
+		if (is_array && nr_amps > 0) {
 			v__parser__Parser_error(p, tos_lit("V arrays are already references behind the scenes,\nthere is no need to use a reference to an array (e.g. use `[]string` instead of `&[]string`).\nIf you need to modify an array in a function, use a mutable argument instead: `fn foo(mut s []string) {}`."));
 		}
 	}
