@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "06a02c4"
+#define V_COMMIT_HASH "d2d3289"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d77669d"
+	#define V_COMMIT_HASH "06a02c4"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "06a02c4"
+	#define V_CURRENT_COMMIT_HASH "d2d3289"
 #endif
 
 // V typedefs:
@@ -2579,6 +2579,7 @@ struct v__table__FnType {
 struct v__parser__Parser {
 	string file_name;
 	string file_name_dir;
+	v__pref__Preferences* pref;
 	v__scanner__Scanner* scanner;
 	v__scanner__CommentsMode comments_mode;
 	v__token__Token tok;
@@ -2595,7 +2596,6 @@ struct v__parser__Parser {
 	bool inside_for;
 	bool inside_fn;
 	bool inside_str_interp;
-	v__pref__Preferences* pref;
 	bool builtin_mod;
 	string mod;
 	array_v__table__Attr attrs;
@@ -2713,6 +2713,7 @@ struct v__ast__SelectBranch {
 };
 
 struct v__checker__Checker {
+	v__pref__Preferences* pref;
 	v__table__Table* table;
 	v__ast__File file;
 	int nr_errors;
@@ -2728,7 +2729,6 @@ struct v__checker__Checker {
 	array_string global_names;
 	array_string locked_names;
 	array_string rlocked_names;
-	v__pref__Preferences* pref;
 	int in_for_count;
 	bool returns;
 	bool scope_returns;
@@ -2877,8 +2877,8 @@ struct v__gen__js__JsGen {
 struct v__builder__Builder {
 	string compiled_dir;
 	string module_path;
-	v__checker__Checker checker;
 	v__pref__Preferences* pref;
+	v__checker__Checker checker;
 	v__ast__Scope* global_scope;
 	string out_name_c;
 	string out_name_js;
@@ -21583,7 +21583,7 @@ bool v__checker__Checker_check_sumtype_compatibility(v__checker__Checker* c, v__
 }
 
 v__checker__Checker v__checker__new_checker(v__table__Table* table, v__pref__Preferences* pref) {
-	return (v__checker__Checker){.table = table,.file = {0},.nr_errors = 0,.nr_warnings = 0,.errors = __new_array(0, 1, sizeof(v__errors__Error)),.warnings = __new_array(0, 1, sizeof(v__errors__Warning)),.error_lines = __new_array(0, 1, sizeof(int)),.expected_type = 0,.cur_fn = 0,.const_decl = (string){.str=(byteptr)""},.const_deps = __new_array(0, 1, sizeof(string)),.const_names = __new_array(0, 1, sizeof(string)),.global_names = __new_array(0, 1, sizeof(string)),.locked_names = __new_array(0, 1, sizeof(string)),.rlocked_names = __new_array(0, 1, sizeof(string)),.pref = pref,.in_for_count = 0,.returns = 0,.scope_returns = 0,.mod = (string){.str=(byteptr)""},.is_builtin_mod = 0,.inside_unsafe = 0,.skip_flags = 0,.cur_generic_type = 0,.expr_level = 0,.inside_sql = 0,.cur_orm_ts = {0},.error_details = __new_array(0, 1, sizeof(string)),};
+	return (v__checker__Checker){.pref = pref,.table = table,.file = {0},.nr_errors = 0,.nr_warnings = 0,.errors = __new_array(0, 1, sizeof(v__errors__Error)),.warnings = __new_array(0, 1, sizeof(v__errors__Warning)),.error_lines = __new_array(0, 1, sizeof(int)),.expected_type = 0,.cur_fn = 0,.const_decl = (string){.str=(byteptr)""},.const_deps = __new_array(0, 1, sizeof(string)),.const_names = __new_array(0, 1, sizeof(string)),.global_names = __new_array(0, 1, sizeof(string)),.locked_names = __new_array(0, 1, sizeof(string)),.rlocked_names = __new_array(0, 1, sizeof(string)),.in_for_count = 0,.returns = 0,.scope_returns = 0,.mod = (string){.str=(byteptr)""},.is_builtin_mod = 0,.inside_unsafe = 0,.skip_flags = 0,.cur_generic_type = 0,.expr_level = 0,.inside_sql = 0,.cur_orm_ts = {0},.error_details = __new_array(0, 1, sizeof(string)),};
 }
 
 void v__checker__Checker_check(v__checker__Checker* c, v__ast__File ast_file) {
@@ -27806,6 +27806,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 	v__parser__Parser p = (v__parser__Parser){
 		.file_name = (string){.str=(byteptr)""},
 		.file_name_dir = (string){.str=(byteptr)""},
+		.pref = pref,
 		.scanner = s,
 		.comments_mode = v__scanner__CommentsMode_skip_comments,
 		.tok = {0},
@@ -27822,7 +27823,6 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 		.inside_for = 0,
 		.inside_fn = 0,
 		.inside_str_interp = 0,
-		.pref = pref,
 		.builtin_mod = 0,
 		.mod = (string){.str=(byteptr)""},
 		.attrs = __new_array(0, 1, sizeof(v__table__Attr)),
@@ -27856,6 +27856,7 @@ v__ast__File v__parser__parse_text(string text, v__table__Table* b_table, v__pre
 	v__parser__Parser p = (v__parser__Parser){
 		.file_name = (string){.str=(byteptr)""},
 		.file_name_dir = (string){.str=(byteptr)""},
+		.pref = pref,
 		.scanner = s,
 		.comments_mode = v__scanner__CommentsMode_skip_comments,
 		.tok = {0},
@@ -27872,7 +27873,6 @@ v__ast__File v__parser__parse_text(string text, v__table__Table* b_table, v__pre
 		.inside_for = 0,
 		.inside_fn = 0,
 		.inside_str_interp = 0,
-		.pref = pref,
 		.builtin_mod = 0,
 		.mod = (string){.str=(byteptr)""},
 		.attrs = __new_array(0, 1, sizeof(v__table__Attr)),
@@ -27903,6 +27903,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 	v__parser__Parser p = (v__parser__Parser){
 		.file_name = path,
 		.file_name_dir = os__dir(path),
+		.pref = pref,
 		.scanner = v__scanner__new_scanner_file(path, comments_mode, pref),
 		.comments_mode = comments_mode,
 		.tok = {0},
@@ -27919,7 +27920,6 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 		.inside_for = 0,
 		.inside_fn = 0,
 		.inside_str_interp = 0,
-		.pref = pref,
 		.builtin_mod = 0,
 		.mod = (string){.str=(byteptr)""},
 		.attrs = __new_array(0, 1, sizeof(v__table__Attr)),
@@ -27951,6 +27951,7 @@ v__ast__File v__parser__parse_vet_file(string path, v__table__Table* table_, v__
 	v__parser__Parser p = (v__parser__Parser){
 		.file_name = path,
 		.file_name_dir = os__dir(path),
+		.pref = pref,
 		.scanner = v__scanner__new_vet_scanner_file(path, v__scanner__CommentsMode_parse_comments, pref, vet_errors),
 		.comments_mode = v__scanner__CommentsMode_parse_comments,
 		.tok = {0},
@@ -27967,7 +27968,6 @@ v__ast__File v__parser__parse_vet_file(string path, v__table__Table* table_, v__
 		.inside_for = 0,
 		.inside_fn = 0,
 		.inside_str_interp = 0,
-		.pref = pref,
 		.builtin_mod = 0,
 		.mod = (string){.str=(byteptr)""},
 		.attrs = __new_array(0, 1, sizeof(v__table__Attr)),
@@ -40351,8 +40351,8 @@ v__builder__Builder v__builder__new_builder(v__pref__Preferences* pref) {
 	return (v__builder__Builder){
 		.compiled_dir = compiled_dir,
 		.module_path = (string){.str=(byteptr)""},
-		.checker = v__checker__new_checker(table, pref),
 		.pref = pref,
+		.checker = v__checker__new_checker(table, pref),
 		.global_scope = (v__ast__Scope*)memdup(&(v__ast__Scope){.objects = new_map_1(sizeof(v__ast__ScopeObject)),.parent = 0,.children = __new_array(0, 1, sizeof(v__ast__Scope*)),.start_pos = 0,.end_pos = 0,}, sizeof(v__ast__Scope)),
 		.out_name_c = (string){.str=(byteptr)""},
 		.out_name_js = (string){.str=(byteptr)""},
