@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d2d3289"
+#define V_COMMIT_HASH "a51c445"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "06a02c4"
+	#define V_COMMIT_HASH "d2d3289"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d2d3289"
+	#define V_CURRENT_COMMIT_HASH "a51c445"
 #endif
 
 // V typedefs:
@@ -18788,8 +18788,8 @@ Option_v__table__Field v__table__Table_struct_find_field(v__table__Table* t, v__
 	v__table__TypeSymbol* ts = s;
 	for (;;) {
 		if ((ts->info).typ == 127 /* v.table.Struct */) {
-			v__table__Struct* _sc_tmp_6586 = (v__table__Struct*)ts->info._object;
-			v__table__Struct* struct_info = _sc_tmp_6586;
+			v__table__Struct* _sc_tmp_6584 = (v__table__Struct*)ts->info._object;
+			v__table__Struct* struct_info = _sc_tmp_6584;
 			{ /* if guard */ 
 			Option_v__table__Field _t504;
 			if (_t504 = v__table__Struct_find_field(/*rec*/*struct_info, name), _t504.ok) {
@@ -18799,8 +18799,8 @@ Option_v__table__Field v__table__Table_struct_find_field(v__table__Table* t, v__
 				return _t505;
 			}}
 		} else if ((ts->info).typ == 307 /* v.table.Aggregate */) {
-			v__table__Aggregate* _sc_tmp_6696 = (v__table__Aggregate*)ts->info._object;
-			v__table__Aggregate* agg_info = _sc_tmp_6696;
+			v__table__Aggregate* _sc_tmp_6694 = (v__table__Aggregate*)ts->info._object;
+			v__table__Aggregate* agg_info = _sc_tmp_6694;
 			{ /* if guard */ 
 			Option_v__table__Field _t506;
 			if (_t506 = v__table__Aggregate_find_field(agg_info, name), _t506.ok) {
