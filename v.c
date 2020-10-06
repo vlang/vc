@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f7decfe"
+#define V_COMMIT_HASH "ce302c2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "580fefe"
+	#define V_COMMIT_HASH "f7decfe"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f7decfe"
+	#define V_CURRENT_COMMIT_HASH "ce302c2"
 #endif
 
 // V typedefs:
@@ -3732,6 +3732,7 @@ string string_trim_right(string s, string cutset);
 string string_trim_prefix(string s, string str);
 string string_trim_suffix(string s, string str);
 int compare_strings(string* a, string* b);
+static int compare_strings_reverse(string* a, string* b);
 static int compare_strings_by_len(string* a, string* b);
 static int compare_lower_strings(string* a, string* b);
 void array_string_sort(array_string* s);
@@ -11485,6 +11486,16 @@ int compare_strings(string* a, string* b) {
 	}
 	if (string_gt(/*rec*/*a, *b)) {
 		return 1;
+	}
+	return 0;
+}
+
+static int compare_strings_reverse(string* a, string* b) {
+	if (string_lt(/*rec*/*a, *b)) {
+		return 1;
+	}
+	if (string_gt(/*rec*/*a, *b)) {
+		return -1;
 	}
 	return 0;
 }
