@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a51c445"
+#define V_COMMIT_HASH "63c9b88"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d2d3289"
+	#define V_COMMIT_HASH "a51c445"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a51c445"
+	#define V_CURRENT_COMMIT_HASH "63c9b88"
 #endif
 
 // V typedefs:
@@ -2072,7 +2072,7 @@ struct v__scanner__Scanner {
 	int tidx;
 	int eofs;
 	v__pref__Preferences* pref;
-	array_string* vet_errors;
+	array_string vet_errors;
 };
 
 struct v__depgraph__DepGraphNode {
@@ -4744,9 +4744,9 @@ string v__ast__CompForKind_str(v__ast__CompForKind e);
 #define _const_v__scanner__double_quote '"'
 #define _const_v__scanner__num_sep '_'
 v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref);
-v__scanner__Scanner* v__scanner__new_vet_scanner_file(string file_path, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, array_string* vet_errors);
+v__scanner__Scanner* v__scanner__new_vet_scanner_file(string file_path, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, array_string vet_errors);
 v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref);
-v__scanner__Scanner* v__scanner__new_vet_scanner(string text, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, array_string* vet_errors);
+v__scanner__Scanner* v__scanner__new_vet_scanner(string text, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, array_string vet_errors);
 static bool v__scanner__Scanner_should_parse_comment(v__scanner__Scanner* s);
 void v__scanner__Scanner_set_is_inside_toplevel_statement(v__scanner__Scanner* s, bool newstate);
 void v__scanner__Scanner_set_current_tidx(v__scanner__Scanner* s, int cidx);
@@ -20060,10 +20060,10 @@ string v__ast__CompForKind_str(v__ast__CompForKind e) {
 }
 
 v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref) {
-	return v__scanner__new_vet_scanner_file(file_path, comments_mode, pref, ((voidptr)(0)));
+	return v__scanner__new_vet_scanner_file(file_path, comments_mode, pref, __new_array_with_default(0, 0, sizeof(string), 0));
 }
 
-v__scanner__Scanner* v__scanner__new_vet_scanner_file(string file_path, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, array_string* vet_errors) {
+v__scanner__Scanner* v__scanner__new_vet_scanner_file(string file_path, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, array_string vet_errors) {
 	if (!os__exists(file_path)) {
 		v__scanner__verror(_STR("%.*s\000 doesn't exist", 2, file_path));
 	}
@@ -20081,10 +20081,10 @@ v__scanner__Scanner* v__scanner__new_vet_scanner_file(string file_path, v__scann
 }
 
 v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref) {
-	return v__scanner__new_vet_scanner(text, comments_mode, pref, ((voidptr)(0)));
+	return v__scanner__new_vet_scanner(text, comments_mode, pref, __new_array_with_default(0, 0, sizeof(string), 0));
 }
 
-v__scanner__Scanner* v__scanner__new_vet_scanner(string text, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, array_string* vet_errors) {
+v__scanner__Scanner* v__scanner__new_vet_scanner(string text, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, array_string vet_errors) {
 	bool is_fmt = pref->is_fmt;
 	v__scanner__Scanner* s = (v__scanner__Scanner*)memdup(&(v__scanner__Scanner){.file_path = (string){.str=(byteptr)""},
 		.text = text,
@@ -21248,11 +21248,11 @@ void v__scanner__Scanner_error(v__scanner__Scanner* s, string msg) {
 
 static void v__scanner__Scanner_vet_error(v__scanner__Scanner* s, string msg) {
 	string eline = _STR("%.*s\000:%"PRId32"\000: %.*s", 3, s->file_path, s->line_nr, msg);
-	if (s->vet_errors == 0) {
+	if (s->vet_errors.len == 0) {
 		eprintln(eline);
 		return;
 	}
-	array_push(s->vet_errors, _MOV((string[]){ eline }));
+	array_push(&s->vet_errors, _MOV((string[]){ eline }));
 }
 
 void v__scanner__verror(string s) {
@@ -27936,7 +27936,7 @@ v__ast__File v__parser__parse_vet_file(string path, v__table__Table* table_, v__
 		.file_name = path,
 		.file_name_dir = os__dir(path),
 		.pref = pref,
-		.scanner = v__scanner__new_vet_scanner_file(path, v__scanner__CommentsMode_parse_comments, pref, vet_errors),
+		.scanner = v__scanner__new_vet_scanner_file(path, v__scanner__CommentsMode_parse_comments, pref, *vet_errors),
 		.comments_mode = v__scanner__CommentsMode_parse_comments,
 		.tok = {0},
 		.prev_tok = {0},
