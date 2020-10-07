@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b940dc4"
+#define V_COMMIT_HASH "3d0f4fd"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ce302c2"
+	#define V_COMMIT_HASH "b940dc4"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b940dc4"
+	#define V_CURRENT_COMMIT_HASH "3d0f4fd"
 #endif
 
 // V typedefs:
@@ -40872,7 +40872,7 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 		ccompiler = _STR("xcrun --sdk iphoneos clang -isysroot %.*s", 1, isysroot);
 	}
 	array_string args = new_array_from_c_array(10, 10, sizeof(string), _MOV((string[10]){
-			v->pref->cflags, tos_lit("-std=gnu11"), tos_lit("-Wall"), tos_lit("-Wextra"), tos_lit("-Wno-unused-variable"), tos_lit("-Wno-unused-parameter"), tos_lit("-Wno-unused-result"), tos_lit("-Wno-unused-function"), tos_lit("-Wno-missing-braces"), tos_lit("-Wno-unused-label")}));
+			v->pref->cflags, tos_lit("-std=gnu99"), tos_lit("-Wall"), tos_lit("-Wextra"), tos_lit("-Wno-unused-variable"), tos_lit("-Wno-unused-parameter"), tos_lit("-Wno-unused-result"), tos_lit("-Wno-unused-function"), tos_lit("-Wno-missing-braces"), tos_lit("-Wno-unused-label")}));
 	if (v->pref->os == v__pref__OS_ios) {
 		array_push(&args, _MOV((string[]){ tos_lit("-framework Foundation") }));
 		array_push(&args, _MOV((string[]){ tos_lit("-framework UIKit") }));
@@ -41105,7 +41105,9 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 	if (!v->pref->is_bare && v->pref->os == v__pref__OS_js && string_eq(os__user_os(), tos_lit("linux"))) {
 		array_push(&linker_flags, _MOV((string[]){ tos_lit("-lm") }));
 	}
-	string str_args = string_add(string_add(array_string_join(args, tos_lit(" ")), tos_lit(" ")), array_string_join(linker_flags, tos_lit(" ")));
+	string env_cflags = os__getenv(tos_lit("CFLAGS"));
+	string env_ldflags = os__getenv(tos_lit("LDFLAGS"));
+	string str_args = string_add(string_add(string_add(string_add(string_add(string_add(env_cflags, tos_lit(" ")), array_string_join(args, tos_lit(" "))), tos_lit(" ")), array_string_join(linker_flags, tos_lit(" "))), tos_lit(" ")), env_ldflags);
 	if (v->pref->is_verbose) {
 		println(_STR("cc args=%.*s", 1, str_args));
 		println(array_string_str(args));
