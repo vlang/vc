@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d46d607"
+#define V_COMMIT_HASH "efce448"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "317a9ba"
+	#define V_COMMIT_HASH "d46d607"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d46d607"
+	#define V_CURRENT_COMMIT_HASH "efce448"
 #endif
 
 // V comptime_defines:
@@ -28647,7 +28647,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 			name = _STR("%.*s\000.%.*s", 2, mod, name);
 		}
 		string name_w_mod = v__parser__Parser_prepend_mod(p, name);
-		if ((!known_var && (_IN_MAP(name, p->table->type_idxs) || _IN_MAP(name_w_mod, p->table->type_idxs)) && !(string_eq(name, tos_lit("C.stat")) || string_eq(name, tos_lit("C.sigaction")))) || is_mod_cast) {
+		if ((!known_var && (_IN_MAP(name, p->table->type_idxs) || _IN_MAP(name_w_mod, p->table->type_idxs)) && !(string_eq(name, tos_lit("C.stat")) || string_eq(name, tos_lit("C.sigaction")))) || is_mod_cast || (!(name.len > 1 && string_at(name, 0) == 'C' && string_at(name, 1) == '.') && byte_is_capital(string_at(name, 0)))) {
 			v__table__Type to_typ = v__parser__Parser_parse_type(p);
 			if (p->is_amp) {
 				to_typ = v__table__Type_to_ptr(to_typ);
@@ -29131,9 +29131,9 @@ static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_39059 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_39059.arg0;
-	array_v__ast__Comment comments = mr_39059.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_39206 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_39206.arg0;
+	array_v__ast__Comment comments = mr_39206.arg1;
 	v__token__Position end_pos = v__ast__Expr_position(*(v__ast__Expr*)array_last(exprs));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 }
@@ -29424,7 +29424,7 @@ static v__ast__Stmt v__parser__Parser_unsafe_stmt(v__parser__Parser* p) {
 		VAssertMetaInfo v_assert_meta_info__t938;
 		memset(&v_assert_meta_info__t938, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t938.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/parser/parser.v");
-		v_assert_meta_info__t938.line_nr = 2005;
+		v_assert_meta_info__t938.line_nr = 2006;
 		v_assert_meta_info__t938.fn_name = tos_lit("unsafe_stmt");
 		v_assert_meta_info__t938.src = tos_lit("!p.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t938);
@@ -29440,8 +29440,8 @@ static v__ast__Stmt v__parser__Parser_unsafe_stmt(v__parser__Parser* p) {
 	v__ast__Stmt stmt = v__parser__Parser_stmt(p, false);
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		if ((stmt).typ == 248 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_48149 = (v__ast__ExprStmt*)stmt._object;
-			v__ast__ExprStmt* stmt = _sc_tmp_48149;
+			v__ast__ExprStmt* _sc_tmp_48296 = (v__ast__ExprStmt*)stmt._object;
+			v__ast__ExprStmt* stmt = _sc_tmp_48296;
 			if (v__ast__Expr_is_expr(stmt->expr)) {
 				v__parser__Parser_next(p);
 				v__ast__UnsafeExpr ue = (v__ast__UnsafeExpr){.expr = stmt->expr,.pos = pos,};
