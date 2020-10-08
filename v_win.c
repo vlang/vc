@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "92630a2"
+#define V_COMMIT_HASH "c463c26"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7d65e4c"
+	#define V_COMMIT_HASH "92630a2"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "92630a2"
+	#define V_CURRENT_COMMIT_HASH "c463c26"
 #endif
 
 // V comptime_defines:
@@ -32044,6 +32044,11 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 			v__gen__Gen_writeln(g, tos_lit("); // free str on re-assignment"));
 		}
 	}
+	v__ast__Expr first_right = (*(v__ast__Expr*)array_get(assign_stmt.right, 0));
+	bool af = g->pref->autofree && (first_right).typ == 204 /* v.ast.CallExpr */ && !g->is_builtin_mod;
+	if (af) {
+		v__gen__Gen_autofree_call_pregen(g, */* as */ (v__ast__CallExpr*)__as_cast((first_right)._object, (first_right).typ, /*expected:*/204));
+	}
 	bool gen_or = false;
 	string tmp_opt = tos_lit("");
 	if (g->pref->autofree && assign_stmt.op == v__token__Kind_decl_assign && assign_stmt.left_types.len == 1 && ((*(v__ast__Expr*)array_get(assign_stmt.right, 0))).typ == 204 /* v.ast.CallExpr */) {
@@ -32057,11 +32062,6 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 			v__gen__Gen_or_block(g, tmp_opt, call_expr->or_block, call_expr->return_type);
 			v__gen__Gen_writeln(g, tos_lit("/*=============ret*/"));
 		}
-	}
-	v__ast__Expr first_right = (*(v__ast__Expr*)array_get(assign_stmt.right, 0));
-	bool af = g->pref->autofree && (first_right).typ == 204 /* v.ast.CallExpr */ && !g->is_builtin_mod;
-	if (af) {
-		v__gen__Gen_autofree_call_pregen(g, */* as */ (v__ast__CallExpr*)__as_cast((first_right)._object, (first_right).typ, /*expected:*/204));
 	}
 	if (return_type != _const_v__table__void_type && return_type != 0) {
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, return_type);
