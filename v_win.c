@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "04d3ca7"
+#define V_COMMIT_HASH "e862fad"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3670612"
+	#define V_COMMIT_HASH "04d3ca7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "04d3ca7"
+	#define V_CURRENT_COMMIT_HASH "e862fad"
 #endif
 
 // V comptime_defines:
@@ -26001,6 +26001,7 @@ static v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Parser* p, 
 			}
 		}
 	}
+	bool is_static = false;
 	// FOR IN array
 	array _t827 = left;
 	for (int i = 0; i < _t827.len; ++i) {
@@ -26015,7 +26016,14 @@ static v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Parser* p, 
 				}
 				v__table__ShareType share = ((v__table__ShareType)(0));
 				if ((lx->info).typ == 300 /* v.ast.IdentVar */) {
-					share = (/* as */ (v__ast__IdentVar*)__as_cast((lx->info)._object, (lx->info).typ, /*expected:*/300))->share;
+					v__ast__IdentVar* iv = /* as */ (v__ast__IdentVar*)__as_cast((lx->info)._object, (lx->info).typ, /*expected:*/300);
+					share = iv->share;
+					if (iv->is_static) {
+						if (!p->pref->translated) {
+							v__parser__Parser_error_with_pos(p, tos_lit("static variables are supported only in -translated mode"), lx->pos);
+						}
+						is_static = true;
+					}
 				}
 				v__ast__Var v = (v__ast__Var){.name = lx->name,.expr = (left.len == right.len ? ((*(v__ast__Expr*)array_get(right, i))) : ((v__ast__Expr){
 #ifndef __cplusplus
@@ -26056,7 +26064,7 @@ static v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Parser* p, 
 		.left = left,
 		.left_types = __new_array(0, 1, sizeof(v__table__Type)),
 		.right_types = __new_array(0, 1, sizeof(v__table__Type)),
-		.is_static = 0,
+		.is_static = is_static,
 		.is_simple = p->inside_for && p->tok.kind == v__token__Kind_lcbr,
 		.has_cross_var = has_cross_var,
 	}}, sizeof(v__ast__AssignStmt)), .typ = 241 /* v.ast.AssignStmt */};
