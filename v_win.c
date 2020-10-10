@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b2fdd7f"
+#define V_COMMIT_HASH "1332bba"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d56072e"
+	#define V_COMMIT_HASH "b2fdd7f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b2fdd7f"
+	#define V_CURRENT_COMMIT_HASH "1332bba"
 #endif
 
 // V comptime_defines:
@@ -3000,7 +3000,6 @@ struct v__gen__Gen {
 	bool inside_return;
 	bool inside_or_block;
 	array_string strs_to_free;
-	array_string strs_to_free0;
 	bool inside_call;
 	bool has_main;
 	bool inside_const;
@@ -5144,6 +5143,7 @@ v__table__Type v__gen__Gen_unwrap_generic(v__gen__Gen* g, v__table__Type typ);
 static void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node);
 static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node);
 static void v__gen__Gen_autofree_call_pregen(v__gen__Gen* g, v__ast__CallExpr node);
+static void v__gen__Gen_autofree_call_postgen(v__gen__Gen* g);
 static void v__gen__Gen_call_args(v__gen__Gen* g, v__ast__CallExpr node);
 static void v__gen__Gen_ref_or_deref_arg(v__gen__Gen* g, v__ast__CallArg arg, v__table__Type expected_type);
 static bool v__gen__Gen_is_gui_app(v__gen__Gen* g);
@@ -30890,7 +30890,6 @@ string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__P
 		.inside_return = 0,
 		.inside_or_block = 0,
 		.strs_to_free = __new_array(0, 1, sizeof(string)),
-		.strs_to_free0 = __new_array(0, 1, sizeof(string)),
 		.inside_call = 0,
 		.has_main = 0,
 		.inside_const = 0,
@@ -31166,9 +31165,9 @@ static string v__gen__Gen_optional_type_text(v__gen__Gen* g, string styp, string
 }
 
 static string v__gen__Gen_register_optional(v__gen__Gen* g, v__table__Type t) {
-	multi_return_string_string mr_15702 = v__gen__Gen_optional_type_name(g, t);
-	string styp = mr_15702.arg0;
-	string base = mr_15702.arg1;
+	multi_return_string_string mr_15705 = v__gen__Gen_optional_type_name(g, t);
+	string styp = mr_15705.arg0;
+	string base = mr_15705.arg1;
 	if (!_IN(string, styp, g->optionals)) {
 		string no_ptr = string_replace(base, tos_lit("*"), tos_lit("_ptr"));
 		string typ = (string_eq(base, tos_lit("void")) ? (tos_lit("void*")) : (base));
@@ -31516,16 +31515,7 @@ static void v__gen__Gen_stmt(v__gen__Gen* g, v__ast__Stmt node) {
 		}
 		v__gen__Gen_expr(g, node->expr);
 		if (af) {
-			if (g->strs_to_free.len > 0) {
-				v__gen__Gen_writeln(g, tos_lit(";\n// strs_to_free2:"));
-				// FOR IN array
-				array _t1012 = g->strs_to_free;
-				for (int _t1013 = 0; _t1013 < _t1012.len; ++_t1013) {
-					string s = ((string*)_t1012.data)[_t1013];
-					v__gen__Gen_writeln(g, _STR("string_free(&%.*s\000);", 2, s));
-				}
-				g->strs_to_free = __new_array_with_default(0, 0, sizeof(string), 0);
-			}
+			v__gen__Gen_autofree_call_postgen(g);
 		}
 		if (g->inside_ternary == 0 && !node->is_expr && !((node->expr).typ == 214 /* v.ast.IfExpr */)) {
 			v__gen__Gen_writeln(g, tos_lit(";"));
@@ -31702,9 +31692,9 @@ static void v__gen__Gen_stmt(v__gen__Gen* g, v__ast__Stmt node) {
 
 static void v__gen__Gen_write_defer_stmts(v__gen__Gen* g) {
 	// FOR IN array
-	array _t1015 = g->defer_stmts;
-	for (int _t1016 = 0; _t1016 < _t1015.len; ++_t1016) {
-		v__ast__DeferStmt defer_stmt = ((v__ast__DeferStmt*)_t1015.data)[_t1016];
+	array _t1013 = g->defer_stmts;
+	for (int _t1014 = 0; _t1014 < _t1013.len; ++_t1014) {
+		v__ast__DeferStmt defer_stmt = ((v__ast__DeferStmt*)_t1013.data)[_t1014];
 		v__gen__Gen_writeln(g, tos_lit("// Defer begin"));
 		if (defer_stmt.ifdef.len > 0) {
 			v__gen__Gen_writeln(g, defer_stmt.ifdef);
@@ -31904,9 +31894,9 @@ static string v__gen__ctoslit(string s) {
 
 static void v__gen__Gen_gen_attrs(v__gen__Gen* g, array_v__table__Attr attrs) {
 	// FOR IN array
-	array _t1017 = attrs;
-	for (int _t1018 = 0; _t1018 < _t1017.len; ++_t1018) {
-		v__table__Attr attr = ((v__table__Attr*)_t1017.data)[_t1018];
+	array _t1015 = attrs;
+	for (int _t1016 = 0; _t1016 < _t1015.len; ++_t1016) {
+		v__table__Attr attr = ((v__table__Attr*)_t1015.data)[_t1016];
 		v__gen__Gen_writeln(g, _STR("// Attr: [%.*s\000]", 2, attr.name));
 	}
 }
@@ -31953,9 +31943,9 @@ static string v__gen__Gen_gen_assert_metainfo(v__gen__Gen* g, v__ast__AssertStmt
 	v__gen__Gen_writeln(g, _STR("\t%.*s\000.line_nr = %"PRId32"\000;", 3, metaname, line_nr));
 	v__gen__Gen_writeln(g, _STR("\t%.*s\000.fn_name = %.*s\000;", 3, metaname, v__gen__ctoslit(fn_name)));
 	v__gen__Gen_writeln(g, _STR("\t%.*s\000.src = %.*s\000;", 3, metaname, v__gen__ctoslit(src)));
-	v__ast__Expr _t1019 = a.expr;
-	if (_t1019.typ == 217 /* v.ast.InfixExpr */) {
-		v__ast__InfixExpr* it = (v__ast__InfixExpr*)_t1019._object; // ST it
+	v__ast__Expr _t1017 = a.expr;
+	if (_t1017.typ == 217 /* v.ast.InfixExpr */) {
+		v__ast__InfixExpr* it = (v__ast__InfixExpr*)_t1017._object; // ST it
 		v__gen__Gen_writeln(g, _STR("\t%.*s\000.op = %.*s\000;", 3, metaname, v__gen__ctoslit(v__token__Kind_str(it->op))));
 		v__gen__Gen_writeln(g, _STR("\t%.*s\000.llabel = %.*s\000;", 3, metaname, v__gen__ctoslit(v__ast__Expr_str(it->left))));
 		v__gen__Gen_writeln(g, _STR("\t%.*s\000.rlabel = %.*s\000;", 3, metaname, v__gen__ctoslit(v__ast__Expr_str(it->right))));
@@ -31965,8 +31955,8 @@ static string v__gen__Gen_gen_assert_metainfo(v__gen__Gen* g, v__ast__AssertStmt
 		v__gen__Gen_write(g, _STR("\t%.*s\000.rvalue = ", 2, metaname));
 		v__gen__Gen_gen_assert_single_expr(g, it->right, it->right_type);
 		v__gen__Gen_writeln(g, tos_lit(";"));
-	} else if (_t1019.typ == 204 /* v.ast.CallExpr */) {
-		v__ast__CallExpr* it = (v__ast__CallExpr*)_t1019._object; // ST it
+	} else if (_t1017.typ == 204 /* v.ast.CallExpr */) {
+		v__ast__CallExpr* it = (v__ast__CallExpr*)_t1017._object; // ST it
 		v__gen__Gen_writeln(g, _STR("\t%.*s\000.op = tos_lit(\"call\");", 2, metaname));
 	} else {
 	};
@@ -31975,37 +31965,37 @@ static string v__gen__Gen_gen_assert_metainfo(v__gen__Gen* g, v__ast__AssertStmt
 
 static void v__gen__Gen_gen_assert_single_expr(v__gen__Gen* g, v__ast__Expr e, v__table__Type t) {
 	string unknown_value = tos_lit("*unknown value*");
-	v__ast__Expr _t1020 = e;
-	if (_t1020.typ == 204 /* v.ast.CallExpr */) {
-		v__ast__CallExpr* it = (v__ast__CallExpr*)_t1020._object; // ST it
+	v__ast__Expr _t1018 = e;
+	if (_t1018.typ == 204 /* v.ast.CallExpr */) {
+		v__ast__CallExpr* it = (v__ast__CallExpr*)_t1018._object; // ST it
 		v__ast__CallExpr* e = it;
 		v__gen__Gen_write(g, v__gen__ctoslit(unknown_value));
-	} else if (_t1020.typ == 205 /* v.ast.CastExpr */) {
-		v__ast__CastExpr* it = (v__ast__CastExpr*)_t1020._object; // ST it
+	} else if (_t1018.typ == 205 /* v.ast.CastExpr */) {
+		v__ast__CastExpr* it = (v__ast__CastExpr*)_t1018._object; // ST it
 		v__ast__CastExpr* e = it;
 		v__gen__Gen_write(g, v__gen__ctoslit(unknown_value));
-	} else if (_t1020.typ == 216 /* v.ast.IndexExpr */) {
-		v__ast__IndexExpr* it = (v__ast__IndexExpr*)_t1020._object; // ST it
+	} else if (_t1018.typ == 216 /* v.ast.IndexExpr */) {
+		v__ast__IndexExpr* it = (v__ast__IndexExpr*)_t1018._object; // ST it
 		v__ast__IndexExpr* e = it;
 		v__gen__Gen_write(g, v__gen__ctoslit(unknown_value));
-	} else if (_t1020.typ == 227 /* v.ast.PrefixExpr */) {
-		v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)_t1020._object; // ST it
+	} else if (_t1018.typ == 227 /* v.ast.PrefixExpr */) {
+		v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)_t1018._object; // ST it
 		v__ast__PrefixExpr* e = it;
 		v__gen__Gen_write(g, v__gen__ctoslit(unknown_value));
-	} else if (_t1020.typ == 222 /* v.ast.MatchExpr */) {
-		v__ast__MatchExpr* it = (v__ast__MatchExpr*)_t1020._object; // ST it
+	} else if (_t1018.typ == 222 /* v.ast.MatchExpr */) {
+		v__ast__MatchExpr* it = (v__ast__MatchExpr*)_t1018._object; // ST it
 		v__ast__MatchExpr* e = it;
 		v__gen__Gen_write(g, v__gen__ctoslit(unknown_value));
-	} else if (_t1020.typ == 236 /* v.ast.Type */) {
-		v__ast__Type* it = (v__ast__Type*)_t1020._object; // ST it
+	} else if (_t1018.typ == 236 /* v.ast.Type */) {
+		v__ast__Type* it = (v__ast__Type*)_t1018._object; // ST it
 		v__ast__Type* e = it;
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, t);
 		v__gen__Gen_write(g, v__gen__ctoslit(_STR("%.*s", 1, sym->name)));
 	} else {
-		Option_bool _t1021 = v__gen__Gen_gen_expr_to_string(g, e, t);
-		if (!_t1021.ok) {
-			string err = _t1021.v_error;
-			int errcode = _t1021.ecode;
+		Option_bool _t1019 = v__gen__Gen_gen_expr_to_string(g, e, t);
+		if (!_t1019.ok) {
+			string err = _t1019.v_error;
+			int errcode = _t1019.ecode;
 			v__gen__Gen_write(g, v__gen__ctoslit(_STR("[%.*s\000]", 2, err)));
 		};
 	};
@@ -32017,9 +32007,9 @@ static void v__gen__Gen_write_fn_ptr_decl(v__gen__Gen* g, v__table__FnType* func
 	v__gen__Gen_write(g, _STR("%.*s\000 (*%.*s\000) (", 3, ret_styp, ptr_name));
 	int arg_len = func->func.params.len;
 	// FOR IN array
-	array _t1022 = func->func.params;
-	for (int i = 0; i < _t1022.len; ++i) {
-		v__table__Param arg = ((v__table__Param*)_t1022.data)[i];
+	array _t1020 = func->func.params;
+	for (int i = 0; i < _t1020.len; ++i) {
+		v__table__Param arg = ((v__table__Param*)_t1020.data)[i];
 		string arg_styp = v__gen__Gen_typ(g, arg.typ);
 		v__gen__Gen_write(g, _STR("%.*s\000 %.*s", 2, arg_styp, arg.name));
 		if (i < arg_len - 1) {
@@ -32036,15 +32026,15 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 	v__table__Type return_type = _const_v__table__void_type;
 	v__token__Kind op = (assign_stmt.op == v__token__Kind_decl_assign ? (v__token__Kind_assign) : (assign_stmt.op));
 	bool is_decl = assign_stmt.op == v__token__Kind_decl_assign;
-	v__ast__Expr _t1023 = (*(v__ast__Expr*)array_get(assign_stmt.right, 0));
-	if (_t1023.typ == 204 /* v.ast.CallExpr */) {
-		v__ast__CallExpr* it = (v__ast__CallExpr*)_t1023._object; // ST it
+	v__ast__Expr _t1021 = (*(v__ast__Expr*)array_get(assign_stmt.right, 0));
+	if (_t1021.typ == 204 /* v.ast.CallExpr */) {
+		v__ast__CallExpr* it = (v__ast__CallExpr*)_t1021._object; // ST it
 		return_type = it->return_type;
-	} else if (_t1023.typ == 214 /* v.ast.IfExpr */) {
-		v__ast__IfExpr* it = (v__ast__IfExpr*)_t1023._object; // ST it
+	} else if (_t1021.typ == 214 /* v.ast.IfExpr */) {
+		v__ast__IfExpr* it = (v__ast__IfExpr*)_t1021._object; // ST it
 		return_type = it->typ;
-	} else if (_t1023.typ == 222 /* v.ast.MatchExpr */) {
-		v__ast__MatchExpr* it = (v__ast__MatchExpr*)_t1023._object; // ST it
+	} else if (_t1021.typ == 222 /* v.ast.MatchExpr */) {
+		v__ast__MatchExpr* it = (v__ast__MatchExpr*)_t1021._object; // ST it
 		return_type = it->return_type;
 	} else {
 	};
@@ -32063,7 +32053,8 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 	}
 	bool gen_or = false;
 	string tmp_opt = tos_lit("");
-	if (g->pref->autofree && assign_stmt.op == v__token__Kind_decl_assign && assign_stmt.left_types.len == 1 && ((*(v__ast__Expr*)array_get(assign_stmt.right, 0))).typ == 204 /* v.ast.CallExpr */) {
+	bool is_optional = g->pref->autofree && assign_stmt.op == v__token__Kind_decl_assign && assign_stmt.left_types.len == 1 && ((*(v__ast__Expr*)array_get(assign_stmt.right, 0))).typ == 204 /* v.ast.CallExpr */;
+	if (is_optional) {
 		v__ast__CallExpr* call_expr = /* as */ (v__ast__CallExpr*)__as_cast(((*(v__ast__Expr*)array_get(assign_stmt.right, 0)))._object, ((*(v__ast__Expr*)array_get(assign_stmt.right, 0))).typ, /*expected:*/204);
 		if (call_expr->or_block.kind != v__ast__OrKind_absent) {
 			string styp = v__gen__Gen_typ(g, v__table__Type_set_flag(call_expr->return_type, v__table__TypeFlag_optional));
@@ -32073,12 +32064,15 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 			gen_or = true;
 			v__gen__Gen_or_block(g, tmp_opt, call_expr->or_block, call_expr->return_type);
 			v__gen__Gen_writeln(g, tos_lit("/*=============ret*/"));
+			if (af && is_optional) {
+				v__gen__Gen_autofree_call_postgen(g);
+			}
 		}
 	}
 	if (return_type != _const_v__table__void_type && return_type != 0) {
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, return_type);
 		if (sym->kind == v__table__Kind_multi_return) {
-			bool is_optional = v__table__Type_has_flag(return_type, v__table__TypeFlag_optional);
+			bool is_opt = v__table__Type_has_flag(return_type, v__table__TypeFlag_optional);
 			string mr_var_name = _STR("mr_%"PRId32"", 1, assign_stmt.pos.pos);
 			string mr_styp = v__gen__Gen_typ(g, return_type);
 			v__gen__Gen_write(g, _STR("%.*s\000 %.*s\000 = ", 3, mr_styp, mr_var_name));
@@ -32087,12 +32081,12 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 			g->is_assign_rhs = false;
 			v__gen__Gen_writeln(g, tos_lit(";"));
 			// FOR IN array
-			array _t1024 = assign_stmt.left;
-			for (int i = 0; i < _t1024.len; ++i) {
-				v__ast__Expr lx = ((v__ast__Expr*)_t1024.data)[i];
-				v__ast__Expr _t1025 = lx;
-				if (_t1025.typ == 213 /* v.ast.Ident */) {
-					v__ast__Ident* it = (v__ast__Ident*)_t1025._object; // ST it
+			array _t1022 = assign_stmt.left;
+			for (int i = 0; i < _t1022.len; ++i) {
+				v__ast__Expr lx = ((v__ast__Expr*)_t1022.data)[i];
+				v__ast__Expr _t1023 = lx;
+				if (_t1023.typ == 213 /* v.ast.Ident */) {
+					v__ast__Ident* it = (v__ast__Ident*)_t1023._object; // ST it
 					v__ast__Ident* lx = it;
 					if (lx->kind == v__ast__IdentKind_blank_ident) {
 						continue;
@@ -32104,7 +32098,7 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 					v__gen__Gen_write(g, _STR("%.*s\000 ", 2, styp));
 				}
 				v__gen__Gen_expr(g, lx);
-				if (is_optional) {
+				if (is_opt) {
 					string mr_base_styp = v__gen__Gen_base_type(g, return_type);
 					v__gen__Gen_writeln(g, _STR(" = (*(%.*s\000*)%.*s\000.data).arg%"PRId32"\000;", 4, mr_base_styp, mr_var_name, i));
 				} else {
@@ -32116,12 +32110,12 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 	}
 	if (assign_stmt.has_cross_var) {
 		// FOR IN array
-		array _t1026 = assign_stmt.left;
-		for (int i = 0; i < _t1026.len; ++i) {
-			v__ast__Expr left = ((v__ast__Expr*)_t1026.data)[i];
-			v__ast__Expr _t1027 = left;
-			if (_t1027.typ == 213 /* v.ast.Ident */) {
-				v__ast__Ident* it = (v__ast__Ident*)_t1027._object; // ST it
+		array _t1024 = assign_stmt.left;
+		for (int i = 0; i < _t1024.len; ++i) {
+			v__ast__Expr left = ((v__ast__Expr*)_t1024.data)[i];
+			v__ast__Expr _t1025 = left;
+			if (_t1025.typ == 213 /* v.ast.Ident */) {
+				v__ast__Ident* it = (v__ast__Ident*)_t1025._object; // ST it
 				v__ast__Ident* left = it;
 				v__table__Type left_typ = (*(v__table__Type*)array_get(assign_stmt.left_types, i));
 				v__table__TypeSymbol* left_sym = v__table__Table_get_type_symbol(g->table, left_typ);
@@ -32132,8 +32126,8 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 					string styp = v__gen__Gen_typ(g, left_typ);
 					v__gen__Gen_writeln(g, _STR("%.*s\000 _var_%"PRId32"\000 = %.*s\000;", 4, styp, left->pos.pos, left->name));
 				}
-			} else if (_t1027.typ == 216 /* v.ast.IndexExpr */) {
-				v__ast__IndexExpr* it = (v__ast__IndexExpr*)_t1027._object; // ST it
+			} else if (_t1025.typ == 216 /* v.ast.IndexExpr */) {
+				v__ast__IndexExpr* it = (v__ast__IndexExpr*)_t1025._object; // ST it
 				v__ast__IndexExpr* left = it;
 				v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, left->left_type);
 				if (sym->kind == v__table__Kind_array) {
@@ -32180,8 +32174,8 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 						v__gen__Gen_writeln(g, _STR(", &(%.*s\000[]){ %.*s\000 });", 3, styp, zero));
 					}
 				}
-			} else if (_t1027.typ == 230 /* v.ast.SelectorExpr */) {
-				v__ast__SelectorExpr* it = (v__ast__SelectorExpr*)_t1027._object; // ST it
+			} else if (_t1025.typ == 230 /* v.ast.SelectorExpr */) {
+				v__ast__SelectorExpr* it = (v__ast__SelectorExpr*)_t1025._object; // ST it
 				v__ast__SelectorExpr* left = it;
 				string styp = v__gen__Gen_typ(g, left->typ);
 				v__gen__Gen_write(g, _STR("%.*s\000 _var_%"PRId32"\000 = ", 3, styp, left->pos.pos));
@@ -32196,9 +32190,9 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 		}
 	}
 	// FOR IN array
-	array _t1028 = assign_stmt.left;
-	for (int i = 0; i < _t1028.len; ++i) {
-		v__ast__Expr left = ((v__ast__Expr*)_t1028.data)[i];
+	array _t1026 = assign_stmt.left;
+	for (int i = 0; i < _t1026.len; ++i) {
+		v__ast__Expr left = ((v__ast__Expr*)_t1026.data)[i];
 		v__table__Type var_type = (*(v__table__Type*)array_get(assign_stmt.left_types, i));
 		v__table__Type val_type = (*(v__table__Type*)array_get(assign_stmt.right_types, i));
 		v__ast__Expr val = (*(v__ast__Expr*)array_get(assign_stmt.right, i));
@@ -32206,8 +32200,8 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 		bool blank_assign = false;
 		v__ast__Ident ident = (v__ast__Ident){.language = 0,.tok_kind = 0,.pos = {0},.obj = {0},.mod = (string){.str=(byteptr)""},.name = (string){.str=(byteptr)""},.kind = 0,.info = {0},.is_mut = 0,};
 		if ((left).typ == 213 /* v.ast.Ident */) {
-			v__ast__Ident* _sc_tmp_47189 = (v__ast__Ident*)left._object;
-			v__ast__Ident* left = _sc_tmp_47189;
+			v__ast__Ident* _sc_tmp_47166 = (v__ast__Ident*)left._object;
+			v__ast__Ident* left = _sc_tmp_47166;
 			ident = *left;
 			blank_assign = left->kind == v__ast__IdentKind_blank_ident;
 			if ((left->info).typ == 300 /* v.ast.IdentVar */) {
@@ -32223,19 +32217,19 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 		string styp = v__gen__Gen_typ(g, var_type);
 		bool is_fixed_array_init = false;
 		bool has_val = false;
-		v__ast__Expr _t1029 = val;
-		if (_t1029.typ == 200 /* v.ast.ArrayInit */) {
-			v__ast__ArrayInit* it = (v__ast__ArrayInit*)_t1029._object; // ST it
+		v__ast__Expr _t1027 = val;
+		if (_t1027.typ == 200 /* v.ast.ArrayInit */) {
+			v__ast__ArrayInit* it = (v__ast__ArrayInit*)_t1027._object; // ST it
 			v__ast__ArrayInit* val = it;
 			is_fixed_array_init = val->is_fixed;
 			has_val = val->has_val;
-		} else if (_t1029.typ == 204 /* v.ast.CallExpr */) {
-			v__ast__CallExpr* it = (v__ast__CallExpr*)_t1029._object; // ST it
+		} else if (_t1027.typ == 204 /* v.ast.CallExpr */) {
+			v__ast__CallExpr* it = (v__ast__CallExpr*)_t1027._object; // ST it
 			v__ast__CallExpr* val = it;
 			is_call = true;
 			return_type = val->return_type;
-		} else if (_t1029.typ == 199 /* v.ast.AnonFn */) {
-			v__ast__AnonFn* it = (v__ast__AnonFn*)_t1029._object; // ST it
+		} else if (_t1027.typ == 199 /* v.ast.AnonFn */) {
+			v__ast__AnonFn* it = (v__ast__AnonFn*)_t1027._object; // ST it
 			v__ast__AnonFn* val = it;
 			if (blank_assign) {
 				v__gen__Gen_write(g, tos_lit("{"));
@@ -32271,9 +32265,9 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 			v__ast__ArrayInit* right = /* as */ (v__ast__ArrayInit*)__as_cast((val)._object, (val).typ, /*expected:*/200);
 			if (right->has_val) {
 				// FOR IN array
-				array _t1030 = right->exprs;
-				for (int j = 0; j < _t1030.len; ++j) {
-					v__ast__Expr expr = ((v__ast__Expr*)_t1030.data)[j];
+				array _t1028 = right->exprs;
+				for (int j = 0; j < _t1028.len; ++j) {
+					v__ast__Expr expr = ((v__ast__Expr*)_t1028.data)[j];
 					v__gen__Gen_expr(g, left);
 					v__gen__Gen_write(g, _STR("[%"PRId32"\000] = ", 2, j));
 					v__gen__Gen_expr(g, expr);
@@ -32299,8 +32293,8 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 			bool str_add = false;
 			if (var_type == _const_v__table__string_type_idx && assign_stmt.op == v__token__Kind_plus_assign) {
 				if ((left).typ == 216 /* v.ast.IndexExpr */) {
-					v__ast__IndexExpr* _sc_tmp_49483 = (v__ast__IndexExpr*)left._object;
-					v__ast__IndexExpr* left = _sc_tmp_49483;
+					v__ast__IndexExpr* _sc_tmp_49460 = (v__ast__IndexExpr*)left._object;
+					v__ast__IndexExpr* left = _sc_tmp_49460;
 					v__gen__Gen_expr(g, /* sum type cast */ (v__ast__Expr) {._object = left, .typ = 216 /* v.ast.IndexExpr */});
 					v__gen__Gen_write(g, tos_lit("string_add("));
 				} else {
@@ -32367,12 +32361,12 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 				if (is_decl) {
 					if (is_fixed_array_init && !has_val) {
 						if ((val).typ == 200 /* v.ast.ArrayInit */) {
-							v__ast__ArrayInit* _sc_tmp_51524 = (v__ast__ArrayInit*)val._object;
-							v__ast__ArrayInit* val = _sc_tmp_51524;
+							v__ast__ArrayInit* _sc_tmp_51501 = (v__ast__ArrayInit*)val._object;
+							v__ast__ArrayInit* val = _sc_tmp_51501;
 							if (val->has_default) {
 								v__gen__Gen_write(g, _STR("{%.*s", 1, v__ast__Expr_str(  val->default_expr)));
 								v__table__ArrayFixed* info = /* as */ (v__table__ArrayFixed*)__as_cast((right_sym->info)._object, (right_sym->info).typ, /*expected:*/326);
-								for (int _t1031 = 1; _t1031 < info->size; ++_t1031) {
+								for (int _t1029 = 1; _t1029 < info->size; ++_t1029) {
 									v__gen__Gen_write(g, _STR(", %.*s", 1, v__ast__Expr_str(  val->default_expr)));
 								}
 								v__gen__Gen_write(g, tos_lit("}"));
@@ -32418,18 +32412,18 @@ static void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignStmt assig
 
 static void v__gen__Gen_gen_cross_tmp_variable(v__gen__Gen* g, array_v__ast__Expr left, v__ast__Expr val) {
 	v__ast__Expr val_ = val;
-	v__ast__Expr _t1032 = val;
-	if (_t1032.typ == 213 /* v.ast.Ident */) {
-		v__ast__Ident* it = (v__ast__Ident*)_t1032._object; // ST it
+	v__ast__Expr _t1030 = val;
+	if (_t1030.typ == 213 /* v.ast.Ident */) {
+		v__ast__Ident* it = (v__ast__Ident*)_t1030._object; // ST it
 		v__ast__Ident* val = it;
 		bool has_var = false;
 		// FOR IN array
-		array _t1033 = left;
-		for (int _t1034 = 0; _t1034 < _t1033.len; ++_t1034) {
-			v__ast__Expr lx = ((v__ast__Expr*)_t1033.data)[_t1034];
+		array _t1031 = left;
+		for (int _t1032 = 0; _t1032 < _t1031.len; ++_t1032) {
+			v__ast__Expr lx = ((v__ast__Expr*)_t1031.data)[_t1032];
 			if ((lx).typ == 213 /* v.ast.Ident */) {
-				v__ast__Ident* _sc_tmp_52650 = (v__ast__Ident*)lx._object;
-				v__ast__Ident* lx = _sc_tmp_52650;
+				v__ast__Ident* _sc_tmp_52627 = (v__ast__Ident*)lx._object;
+				v__ast__Ident* lx = _sc_tmp_52627;
 				if (string_eq(val->name, lx->name)) {
 					v__gen__Gen_write(g, tos_lit("_var_"));
 					v__gen__Gen_write(g, int_str(lx->pos.pos));
@@ -32441,14 +32435,14 @@ static void v__gen__Gen_gen_cross_tmp_variable(v__gen__Gen* g, array_v__ast__Exp
 		if (!has_var) {
 			v__gen__Gen_expr(g, val_);
 		}
-	} else if (_t1032.typ == 216 /* v.ast.IndexExpr */) {
-		v__ast__IndexExpr* it = (v__ast__IndexExpr*)_t1032._object; // ST it
+	} else if (_t1030.typ == 216 /* v.ast.IndexExpr */) {
+		v__ast__IndexExpr* it = (v__ast__IndexExpr*)_t1030._object; // ST it
 		v__ast__IndexExpr* val = it;
 		bool has_var = false;
 		// FOR IN array
-		array _t1035 = left;
-		for (int _t1036 = 0; _t1036 < _t1035.len; ++_t1036) {
-			v__ast__Expr lx = ((v__ast__Expr*)_t1035.data)[_t1036];
+		array _t1033 = left;
+		for (int _t1034 = 0; _t1034 < _t1033.len; ++_t1034) {
+			v__ast__Expr lx = ((v__ast__Expr*)_t1033.data)[_t1034];
 			if (string_eq(v__ast__Expr_str(val_), v__ast__Expr_str(lx))) {
 				v__gen__Gen_write(g, tos_lit("_var_"));
 				v__gen__Gen_write(g, int_str(v__ast__Expr_position(lx).pos));
@@ -32459,30 +32453,30 @@ static void v__gen__Gen_gen_cross_tmp_variable(v__gen__Gen* g, array_v__ast__Exp
 		if (!has_var) {
 			v__gen__Gen_expr(g, val_);
 		}
-	} else if (_t1032.typ == 217 /* v.ast.InfixExpr */) {
-		v__ast__InfixExpr* it = (v__ast__InfixExpr*)_t1032._object; // ST it
+	} else if (_t1030.typ == 217 /* v.ast.InfixExpr */) {
+		v__ast__InfixExpr* it = (v__ast__InfixExpr*)_t1030._object; // ST it
 		v__ast__InfixExpr* val = it;
 		v__gen__Gen_gen_cross_tmp_variable(g, left, val->left);
 		v__gen__Gen_write(g, v__token__Kind_str(val->op));
 		v__gen__Gen_gen_cross_tmp_variable(g, left, val->right);
-	} else if (_t1032.typ == 227 /* v.ast.PrefixExpr */) {
-		v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)_t1032._object; // ST it
+	} else if (_t1030.typ == 227 /* v.ast.PrefixExpr */) {
+		v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)_t1030._object; // ST it
 		v__ast__PrefixExpr* val = it;
 		v__gen__Gen_write(g, v__token__Kind_str(val->op));
 		v__gen__Gen_gen_cross_tmp_variable(g, left, val->right);
-	} else if (_t1032.typ == 226 /* v.ast.PostfixExpr */) {
-		v__ast__PostfixExpr* it = (v__ast__PostfixExpr*)_t1032._object; // ST it
+	} else if (_t1030.typ == 226 /* v.ast.PostfixExpr */) {
+		v__ast__PostfixExpr* it = (v__ast__PostfixExpr*)_t1030._object; // ST it
 		v__ast__PostfixExpr* val = it;
 		v__gen__Gen_gen_cross_tmp_variable(g, left, val->expr);
 		v__gen__Gen_write(g, v__token__Kind_str(val->op));
-	} else if (_t1032.typ == 230 /* v.ast.SelectorExpr */) {
-		v__ast__SelectorExpr* it = (v__ast__SelectorExpr*)_t1032._object; // ST it
+	} else if (_t1030.typ == 230 /* v.ast.SelectorExpr */) {
+		v__ast__SelectorExpr* it = (v__ast__SelectorExpr*)_t1030._object; // ST it
 		v__ast__SelectorExpr* val = it;
 		bool has_var = false;
 		// FOR IN array
-		array _t1037 = left;
-		for (int _t1038 = 0; _t1038 < _t1037.len; ++_t1038) {
-			v__ast__Expr lx = ((v__ast__Expr*)_t1037.data)[_t1038];
+		array _t1035 = left;
+		for (int _t1036 = 0; _t1036 < _t1035.len; ++_t1036) {
+			v__ast__Expr lx = ((v__ast__Expr*)_t1035.data)[_t1036];
 			if (string_eq(v__ast__Expr_str(val_), v__ast__Expr_str(lx))) {
 				v__gen__Gen_write(g, tos_lit("_var_"));
 				v__gen__Gen_write(g, int_str(v__ast__Expr_position(lx).pos));
@@ -32544,14 +32538,14 @@ static void v__gen__Gen_autofree_scope_vars(v__gen__Gen* g, int pos) {
 	v__gen__Gen_writeln(g, _STR("// autofree_scope_vars(%"PRId32"\000)", 2, pos));
 	v__ast__Scope* scope = v__ast__Scope_innermost(g->file.scope, pos);
 	// FOR IN map
-	map_string_v__ast__ScopeObject _t1043 = scope->objects;
-	array_string keys__t1040 = map_keys(&_t1043);
-	for (int _t1041 = 0; _t1041 < keys__t1040.len; ++_t1041) {
-		string _t1042 = /*kkkk*/ string_clone( ((string*)keys__t1040.data)[_t1041] );
-		v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)map_get(_t1043, _t1042, &(v__ast__ScopeObject[]){ {0} }));
-		v__ast__ScopeObject _t1044 = obj;
-		if (_t1044.typ == 266 /* v.ast.Var */) {
-			v__ast__Var* it = (v__ast__Var*)_t1044._object; // ST it
+	map_string_v__ast__ScopeObject _t1041 = scope->objects;
+	array_string keys__t1038 = map_keys(&_t1041);
+	for (int _t1039 = 0; _t1039 < keys__t1038.len; ++_t1039) {
+		string _t1040 = /*kkkk*/ string_clone( ((string*)keys__t1038.data)[_t1039] );
+		v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)map_get(_t1041, _t1040, &(v__ast__ScopeObject[]){ {0} }));
+		v__ast__ScopeObject _t1042 = obj;
+		if (_t1042.typ == 266 /* v.ast.Var */) {
+			v__ast__Var* it = (v__ast__Var*)_t1042._object; // ST it
 			v__ast__Var* obj = it;
 			v__ast__Var v = *obj;
 			bool is_optional = v__table__Type_has_flag(v.typ, v__table__TypeFlag_optional);
@@ -32563,8 +32557,8 @@ static void v__gen__Gen_autofree_scope_vars(v__gen__Gen* g, int pos) {
 		};
 	}
 	/*for in map cleanup*/
-	for (int _t1041 = 0; _t1041 < keys__t1040.len; ++_t1041) { string_free(&((string*)keys__t1040.data)[_t1041]); }
-	array_free(&keys__t1040);
+	for (int _t1039 = 0; _t1039 < keys__t1038.len; ++_t1039) { string_free(&((string*)keys__t1038.data)[_t1039]); }
+	array_free(&keys__t1038);
 }
 
 static void v__gen__Gen_autofree_variable(v__gen__Gen* g, v__ast__Var v) {
@@ -32574,9 +32568,9 @@ static void v__gen__Gen_autofree_variable(v__gen__Gen* g, v__ast__Var v) {
 		return;
 	}
 	if (sym->kind == v__table__Kind_string) {
-		v__ast__Expr _t1045 = v.expr;
-		if (_t1045.typ == 234 /* v.ast.StringLiteral */) {
-			v__ast__StringLiteral* it = (v__ast__StringLiteral*)_t1045._object; // ST it
+		v__ast__Expr _t1043 = v.expr;
+		if (_t1043.typ == 234 /* v.ast.StringLiteral */) {
+			v__ast__StringLiteral* it = (v__ast__StringLiteral*)_t1043._object; // ST it
 			v__gen__Gen_writeln(g, tos_lit("// str literal"));
 		} else {
 		};
@@ -32610,37 +32604,37 @@ static void v__gen__Gen_gen_anon_fn_decl(v__gen__Gen* g, v__ast__AnonFn it) {
 }
 
 static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
-	v__ast__Expr _t1046 = node;
-	if (_t1046.typ == 199 /* v.ast.AnonFn */) {
-		v__ast__AnonFn* it = (v__ast__AnonFn*)_t1046._object; // ST it
+	v__ast__Expr _t1044 = node;
+	if (_t1044.typ == 199 /* v.ast.AnonFn */) {
+		v__ast__AnonFn* it = (v__ast__AnonFn*)_t1044._object; // ST it
 		v__ast__AnonFn* node = it;
 		v__gen__Gen_gen_anon_fn_decl(g, *node);
 		v__table__TypeSymbol* fsym = v__table__Table_get_type_symbol(g->table, node->typ);
 		v__gen__Gen_write(g, fsym->name);
-	} else if (_t1046.typ == 200 /* v.ast.ArrayInit */) {
-		v__ast__ArrayInit* it = (v__ast__ArrayInit*)_t1046._object; // ST it
+	} else if (_t1044.typ == 200 /* v.ast.ArrayInit */) {
+		v__ast__ArrayInit* it = (v__ast__ArrayInit*)_t1044._object; // ST it
 		v__ast__ArrayInit* node = it;
 		v__gen__Gen_array_init(g, *node);
-	} else if (_t1046.typ == 201 /* v.ast.AsCast */) {
-		v__ast__AsCast* it = (v__ast__AsCast*)_t1046._object; // ST it
+	} else if (_t1044.typ == 201 /* v.ast.AsCast */) {
+		v__ast__AsCast* it = (v__ast__AsCast*)_t1044._object; // ST it
 		v__ast__AsCast* node = it;
 		v__gen__Gen_as_cast(g, *node);
-	} else if (_t1046.typ == 202 /* v.ast.Assoc */) {
-		v__ast__Assoc* it = (v__ast__Assoc*)_t1046._object; // ST it
+	} else if (_t1044.typ == 202 /* v.ast.Assoc */) {
+		v__ast__Assoc* it = (v__ast__Assoc*)_t1044._object; // ST it
 		v__ast__Assoc* node = it;
 		v__gen__Gen_assoc(g, *node);
-	} else if (_t1046.typ == 203 /* v.ast.BoolLiteral */) {
-		v__ast__BoolLiteral* it = (v__ast__BoolLiteral*)_t1046._object; // ST it
+	} else if (_t1044.typ == 203 /* v.ast.BoolLiteral */) {
+		v__ast__BoolLiteral* it = (v__ast__BoolLiteral*)_t1044._object; // ST it
 		v__ast__BoolLiteral* node = it;
 		v__gen__Gen_write(g, bool_str(node->val));
-	} else if (_t1046.typ == 204 /* v.ast.CallExpr */) {
-		v__ast__CallExpr* it = (v__ast__CallExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 204 /* v.ast.CallExpr */) {
+		v__ast__CallExpr* it = (v__ast__CallExpr*)_t1044._object; // ST it
 		v__ast__CallExpr* node = it;
 		v__gen__Gen_call_expr(g, *node);
 		if (g->pref->autofree) {
 		}
-	} else if (_t1046.typ == 205 /* v.ast.CastExpr */) {
-		v__ast__CastExpr* it = (v__ast__CastExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 205 /* v.ast.CastExpr */) {
+		v__ast__CastExpr* it = (v__ast__CastExpr*)_t1044._object; // ST it
 		v__ast__CastExpr* node = it;
 		if (g->is_amp) {
 			strings__Builder_go_back(&g->out, 1);
@@ -32679,8 +32673,8 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 			}
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
-	} else if (_t1046.typ == 206 /* v.ast.ChanInit */) {
-		v__ast__ChanInit* it = (v__ast__ChanInit*)_t1046._object; // ST it
+	} else if (_t1044.typ == 206 /* v.ast.ChanInit */) {
+		v__ast__ChanInit* it = (v__ast__ChanInit*)_t1044._object; // ST it
 		v__ast__ChanInit* node = it;
 		string elem_typ_str = v__gen__Gen_typ(g, node->elem_type);
 		v__gen__Gen_write(g, tos_lit("sync__new_channel_st("));
@@ -32692,51 +32686,51 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 		v__gen__Gen_write(g, tos_lit(", sizeof("));
 		v__gen__Gen_write(g, elem_typ_str);
 		v__gen__Gen_write(g, tos_lit("))"));
-	} else if (_t1046.typ == 207 /* v.ast.CharLiteral */) {
-		v__ast__CharLiteral* it = (v__ast__CharLiteral*)_t1046._object; // ST it
+	} else if (_t1044.typ == 207 /* v.ast.CharLiteral */) {
+		v__ast__CharLiteral* it = (v__ast__CharLiteral*)_t1044._object; // ST it
 		v__ast__CharLiteral* node = it;
 		v__gen__Gen_write(g, _STR("'%.*s\000'", 2, node->val));
-	} else if (_t1046.typ == 209 /* v.ast.ComptimeCall */) {
-		v__ast__ComptimeCall* it = (v__ast__ComptimeCall*)_t1046._object; // ST it
+	} else if (_t1044.typ == 209 /* v.ast.ComptimeCall */) {
+		v__ast__ComptimeCall* it = (v__ast__ComptimeCall*)_t1044._object; // ST it
 		v__ast__ComptimeCall* node = it;
 		v__gen__Gen_comptime_call(g, *node);
-	} else if (_t1046.typ == 208 /* v.ast.Comment */) {
-		v__ast__Comment* it = (v__ast__Comment*)_t1046._object; // ST it
+	} else if (_t1044.typ == 208 /* v.ast.Comment */) {
+		v__ast__Comment* it = (v__ast__Comment*)_t1044._object; // ST it
 		v__ast__Comment* node = it;
-	} else if (_t1046.typ == 210 /* v.ast.ConcatExpr */) {
-		v__ast__ConcatExpr* it = (v__ast__ConcatExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 210 /* v.ast.ConcatExpr */) {
+		v__ast__ConcatExpr* it = (v__ast__ConcatExpr*)_t1044._object; // ST it
 		v__ast__ConcatExpr* node = it;
 		v__gen__Gen_concat_expr(g, *node);
-	} else if (_t1046.typ == 211 /* v.ast.EnumVal */) {
-		v__ast__EnumVal* it = (v__ast__EnumVal*)_t1046._object; // ST it
+	} else if (_t1044.typ == 211 /* v.ast.EnumVal */) {
+		v__ast__EnumVal* it = (v__ast__EnumVal*)_t1044._object; // ST it
 		v__ast__EnumVal* node = it;
 		string styp = v__gen__Gen_typ(g, node->typ);
 		v__gen__Gen_write(g, _STR("%.*s\000_%.*s", 2, styp, node->val));
-	} else if (_t1046.typ == 212 /* v.ast.FloatLiteral */) {
-		v__ast__FloatLiteral* it = (v__ast__FloatLiteral*)_t1046._object; // ST it
+	} else if (_t1044.typ == 212 /* v.ast.FloatLiteral */) {
+		v__ast__FloatLiteral* it = (v__ast__FloatLiteral*)_t1044._object; // ST it
 		v__ast__FloatLiteral* node = it;
 		v__gen__Gen_write(g, node->val);
-	} else if (_t1046.typ == 213 /* v.ast.Ident */) {
-		v__ast__Ident* it = (v__ast__Ident*)_t1046._object; // ST it
+	} else if (_t1044.typ == 213 /* v.ast.Ident */) {
+		v__ast__Ident* it = (v__ast__Ident*)_t1044._object; // ST it
 		v__ast__Ident* node = it;
 		if (v__gen__Gen_should_write_asterisk_due_to_match_sumtype(g, /* sum type cast */ (v__ast__Expr) {._object = node, .typ = 213 /* v.ast.Ident */})) {
 			v__gen__Gen_write(g, tos_lit("*"));
 		}
 		v__gen__Gen_ident(g, *node);
-	} else if (_t1046.typ == 214 /* v.ast.IfExpr */) {
-		v__ast__IfExpr* it = (v__ast__IfExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 214 /* v.ast.IfExpr */) {
+		v__ast__IfExpr* it = (v__ast__IfExpr*)_t1044._object; // ST it
 		v__ast__IfExpr* node = it;
 		v__gen__Gen_if_expr(g, *node);
-	} else if (_t1046.typ == 215 /* v.ast.IfGuardExpr */) {
-		v__ast__IfGuardExpr* it = (v__ast__IfGuardExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 215 /* v.ast.IfGuardExpr */) {
+		v__ast__IfGuardExpr* it = (v__ast__IfGuardExpr*)_t1044._object; // ST it
 		v__ast__IfGuardExpr* node = it;
 		v__gen__Gen_write(g, tos_lit("/* guard */"));
-	} else if (_t1046.typ == 216 /* v.ast.IndexExpr */) {
-		v__ast__IndexExpr* it = (v__ast__IndexExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 216 /* v.ast.IndexExpr */) {
+		v__ast__IndexExpr* it = (v__ast__IndexExpr*)_t1044._object; // ST it
 		v__ast__IndexExpr* node = it;
 		v__gen__Gen_index_expr(g, *node);
-	} else if (_t1046.typ == 217 /* v.ast.InfixExpr */) {
-		v__ast__InfixExpr* it = (v__ast__InfixExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 217 /* v.ast.InfixExpr */) {
+		v__ast__InfixExpr* it = (v__ast__InfixExpr*)_t1044._object; // ST it
 		v__ast__InfixExpr* node = it;
 		if ((node->op == v__token__Kind_left_shift || node->op == v__token__Kind_plus_assign || node->op == v__token__Kind_minus_assign)) {
 			g->inside_map_infix = true;
@@ -32745,8 +32739,8 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 		} else {
 			v__gen__Gen_infix_expr(g, *node);
 		}
-	} else if (_t1046.typ == 218 /* v.ast.IntegerLiteral */) {
-		v__ast__IntegerLiteral* it = (v__ast__IntegerLiteral*)_t1046._object; // ST it
+	} else if (_t1044.typ == 218 /* v.ast.IntegerLiteral */) {
+		v__ast__IntegerLiteral* it = (v__ast__IntegerLiteral*)_t1044._object; // ST it
 		v__ast__IntegerLiteral* node = it;
 		if (string_starts_with(node->val, tos_lit("0o"))) {
 			v__gen__Gen_write(g, tos_lit("0"));
@@ -32754,16 +32748,16 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 		} else {
 			v__gen__Gen_write(g, node->val);
 		}
-	} else if (_t1046.typ == 220 /* v.ast.LockExpr */) {
-		v__ast__LockExpr* it = (v__ast__LockExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 220 /* v.ast.LockExpr */) {
+		v__ast__LockExpr* it = (v__ast__LockExpr*)_t1044._object; // ST it
 		v__ast__LockExpr* node = it;
 		v__gen__Gen_lock_expr(g, *node);
-	} else if (_t1046.typ == 222 /* v.ast.MatchExpr */) {
-		v__ast__MatchExpr* it = (v__ast__MatchExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 222 /* v.ast.MatchExpr */) {
+		v__ast__MatchExpr* it = (v__ast__MatchExpr*)_t1044._object; // ST it
 		v__ast__MatchExpr* node = it;
 		v__gen__Gen_match_expr(g, *node);
-	} else if (_t1046.typ == 221 /* v.ast.MapInit */) {
-		v__ast__MapInit* it = (v__ast__MapInit*)_t1046._object; // ST it
+	} else if (_t1044.typ == 221 /* v.ast.MapInit */) {
+		v__ast__MapInit* it = (v__ast__MapInit*)_t1044._object; // ST it
 		v__ast__MapInit* node = it;
 		string key_typ_str = v__gen__Gen_typ(g, node->key_type);
 		string value_typ_str = v__gen__Gen_typ(g, node->value_type);
@@ -32776,9 +32770,9 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 				v__gen__Gen_write(g, _STR("new_map_init(%"PRId32"\000, sizeof(%.*s\000), _MOV((%.*s\000[%"PRId32"\000]){", 5, size, value_typ_str, key_typ_str, size));
 			}
 			// FOR IN array
-			array _t1047 = node->keys;
-			for (int _t1048 = 0; _t1048 < _t1047.len; ++_t1048) {
-				v__ast__Expr expr = ((v__ast__Expr*)_t1047.data)[_t1048];
+			array _t1045 = node->keys;
+			for (int _t1046 = 0; _t1046 < _t1045.len; ++_t1046) {
+				v__ast__Expr expr = ((v__ast__Expr*)_t1045.data)[_t1046];
 				v__gen__Gen_expr(g, expr);
 				v__gen__Gen_write(g, tos_lit(", "));
 			}
@@ -32788,9 +32782,9 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 				v__gen__Gen_write(g, _STR("}), _MOV((%.*s\000[%"PRId32"\000]){", 3, value_typ_str, size));
 			}
 			// FOR IN array
-			array _t1049 = node->vals;
-			for (int _t1050 = 0; _t1050 < _t1049.len; ++_t1050) {
-				v__ast__Expr expr = ((v__ast__Expr*)_t1049.data)[_t1050];
+			array _t1047 = node->vals;
+			for (int _t1048 = 0; _t1048 < _t1047.len; ++_t1048) {
+				v__ast__Expr expr = ((v__ast__Expr*)_t1047.data)[_t1048];
 				v__gen__Gen_expr(g, expr);
 				v__gen__Gen_write(g, tos_lit(", "));
 			}
@@ -32798,21 +32792,21 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 		} else {
 			v__gen__Gen_write(g, _STR("new_map_1(sizeof(%.*s\000))", 2, value_typ_str));
 		}
-	} else if (_t1046.typ == 223 /* v.ast.None */) {
-		v__ast__None* it = (v__ast__None*)_t1046._object; // ST it
+	} else if (_t1044.typ == 223 /* v.ast.None */) {
+		v__ast__None* it = (v__ast__None*)_t1044._object; // ST it
 		v__ast__None* node = it;
 		v__gen__Gen_write(g, tos_lit("opt_none()"));
-	} else if (_t1046.typ == 224 /* v.ast.OrExpr */) {
-		v__ast__OrExpr* it = (v__ast__OrExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 224 /* v.ast.OrExpr */) {
+		v__ast__OrExpr* it = (v__ast__OrExpr*)_t1044._object; // ST it
 		v__ast__OrExpr* node = it;
-	} else if (_t1046.typ == 225 /* v.ast.ParExpr */) {
-		v__ast__ParExpr* it = (v__ast__ParExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 225 /* v.ast.ParExpr */) {
+		v__ast__ParExpr* it = (v__ast__ParExpr*)_t1044._object; // ST it
 		v__ast__ParExpr* node = it;
 		v__gen__Gen_write(g, tos_lit("("));
 		v__gen__Gen_expr(g, node->expr);
 		v__gen__Gen_write(g, tos_lit(")"));
-	} else if (_t1046.typ == 226 /* v.ast.PostfixExpr */) {
-		v__ast__PostfixExpr* it = (v__ast__PostfixExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 226 /* v.ast.PostfixExpr */) {
+		v__ast__PostfixExpr* it = (v__ast__PostfixExpr*)_t1044._object; // ST it
 		v__ast__PostfixExpr* node = it;
 		if ((node->auto_locked).len != 0) {
 			v__gen__Gen_writeln(g, _STR("sync__RwMutex_w_lock(%.*s\000->mtx);", 2, node->auto_locked));
@@ -32825,8 +32819,8 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 			v__gen__Gen_writeln(g, tos_lit(";"));
 			v__gen__Gen_write(g, _STR("sync__RwMutex_w_unlock(%.*s\000->mtx)", 2, node->auto_locked));
 		}
-	} else if (_t1046.typ == 227 /* v.ast.PrefixExpr */) {
-		v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 227 /* v.ast.PrefixExpr */) {
+		v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)_t1044._object; // ST it
 		v__ast__PrefixExpr* node = it;
 		bool gen_or = node->op == v__token__Kind_arrow && node->or_block.kind != v__ast__OrKind_absent;
 		if (node->op == v__token__Kind_amp) {
@@ -32838,8 +32832,8 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 			v__table__Chan* right_inf = /* as */ (v__table__Chan*)__as_cast((right_sym->info)._object, (right_sym->info).typ, /*expected:*/327);
 			v__table__Type elem_type = right_inf->elem_type;
 			bool is_gen_or_and_assign_rhs = gen_or && g->is_assign_rhs;
-			string _t1051;
-			string cur_line = (is_gen_or_and_assign_rhs ? (				_t1051 = v__gen__Gen_go_before_stmt(g, 0),strings__Builder_write(&g->out, (*(string*)array_get(_const_v__gen__tabs, g->indent))),_t1051) : (tos_lit("")));
+			string _t1049;
+			string cur_line = (is_gen_or_and_assign_rhs ? (				_t1049 = v__gen__Gen_go_before_stmt(g, 0),strings__Builder_write(&g->out, (*(string*)array_get(_const_v__gen__tabs, g->indent))),_t1049) : (tos_lit("")));
 			string tmp_opt = (gen_or ? (v__gen__Gen_new_tmp_var(g)) : (tos_lit("")));
 			if (gen_or) {
 				string opt_elem_type = v__gen__Gen_typ(g, v__table__Type_set_flag(elem_type, v__table__TypeFlag_optional));
@@ -32862,15 +32856,15 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 			v__gen__Gen_expr(g, node->right);
 		}
 		g->is_amp = false;
-	} else if (_t1046.typ == 228 /* v.ast.RangeExpr */) {
-		v__ast__RangeExpr* it = (v__ast__RangeExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 228 /* v.ast.RangeExpr */) {
+		v__ast__RangeExpr* it = (v__ast__RangeExpr*)_t1044._object; // ST it
 		v__ast__RangeExpr* node = it;
-	} else if (_t1046.typ == 229 /* v.ast.SelectExpr */) {
-		v__ast__SelectExpr* it = (v__ast__SelectExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 229 /* v.ast.SelectExpr */) {
+		v__ast__SelectExpr* it = (v__ast__SelectExpr*)_t1044._object; // ST it
 		v__ast__SelectExpr* node = it;
 		v__gen__Gen_select_expr(g, *node);
-	} else if (_t1046.typ == 231 /* v.ast.SizeOf */) {
-		v__ast__SizeOf* it = (v__ast__SizeOf*)_t1046._object; // ST it
+	} else if (_t1044.typ == 231 /* v.ast.SizeOf */) {
+		v__ast__SizeOf* it = (v__ast__SizeOf*)_t1044._object; // ST it
 		v__ast__SizeOf* node = it;
 		if (node->is_type) {
 			v__table__Type node_typ = v__gen__Gen_unwrap_generic(g, node->typ);
@@ -32895,28 +32889,28 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 			v__gen__Gen_expr(g, node->expr);
 			v__gen__Gen_write(g, tos_lit(")"));
 		}
-	} else if (_t1046.typ == 232 /* v.ast.SqlExpr */) {
-		v__ast__SqlExpr* it = (v__ast__SqlExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 232 /* v.ast.SqlExpr */) {
+		v__ast__SqlExpr* it = (v__ast__SqlExpr*)_t1044._object; // ST it
 		v__ast__SqlExpr* node = it;
 		v__gen__Gen_sql_select_expr(g, *node);
-	} else if (_t1046.typ == 234 /* v.ast.StringLiteral */) {
-		v__ast__StringLiteral* it = (v__ast__StringLiteral*)_t1046._object; // ST it
+	} else if (_t1044.typ == 234 /* v.ast.StringLiteral */) {
+		v__ast__StringLiteral* it = (v__ast__StringLiteral*)_t1044._object; // ST it
 		v__ast__StringLiteral* node = it;
 		v__gen__Gen_string_literal(g, *node);
-	} else if (_t1046.typ == 233 /* v.ast.StringInterLiteral */) {
-		v__ast__StringInterLiteral* it = (v__ast__StringInterLiteral*)_t1046._object; // ST it
+	} else if (_t1044.typ == 233 /* v.ast.StringInterLiteral */) {
+		v__ast__StringInterLiteral* it = (v__ast__StringInterLiteral*)_t1044._object; // ST it
 		v__ast__StringInterLiteral* node = it;
 		v__gen__Gen_string_inter_literal(g, *node);
-	} else if (_t1046.typ == 235 /* v.ast.StructInit */) {
-		v__ast__StructInit* it = (v__ast__StructInit*)_t1046._object; // ST it
+	} else if (_t1044.typ == 235 /* v.ast.StructInit */) {
+		v__ast__StructInit* it = (v__ast__StructInit*)_t1044._object; // ST it
 		v__ast__StructInit* node = it;
 		v__gen__Gen_struct_init(g, *node);
-	} else if (_t1046.typ == 230 /* v.ast.SelectorExpr */) {
-		v__ast__SelectorExpr* it = (v__ast__SelectorExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 230 /* v.ast.SelectorExpr */) {
+		v__ast__SelectorExpr* it = (v__ast__SelectorExpr*)_t1044._object; // ST it
 		v__ast__SelectorExpr* node = it;
 		if ((node->expr).typ == 237 /* v.ast.TypeOf */) {
-			v__ast__TypeOf* _sc_tmp_64029 = (v__ast__TypeOf*)node->expr._object;
-			v__ast__TypeOf* left = _sc_tmp_64029;
+			v__ast__TypeOf* _sc_tmp_64006 = (v__ast__TypeOf*)node->expr._object;
+			v__ast__TypeOf* left = _sc_tmp_64006;
 			v__gen__Gen_typeof_name(g, *left);
 			return;
 		}
@@ -32924,18 +32918,18 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 		if (sym->kind == v__table__Kind_array_fixed) {
 			// assert
 			if (string_eq(node->field_name, tos_lit("len"))) {} else {
-				VAssertMetaInfo v_assert_meta_info__t1052;
-				memset(&v_assert_meta_info__t1052, 0, sizeof(VAssertMetaInfo));
-				v_assert_meta_info__t1052.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/gen/cgen.v");
-				v_assert_meta_info__t1052.line_nr = 2237;
-				v_assert_meta_info__t1052.fn_name = tos_lit("expr");
-				v_assert_meta_info__t1052.src = tos_lit("node.field_name == 'len'");
-				v_assert_meta_info__t1052.op = tos_lit("==");
-				v_assert_meta_info__t1052.llabel = tos_lit("node.field_name");
-				v_assert_meta_info__t1052.rlabel = tos_lit("'len'");
-				v_assert_meta_info__t1052.lvalue = string_str(  node->field_name) /* typeof: v.ast.SelectorExpr type: 18 */ ;
-				v_assert_meta_info__t1052.rvalue = string_str(  tos_lit("len")) /* typeof: v.ast.StringLiteral type: 18 */ ;
-				__print_assert_failure(&v_assert_meta_info__t1052);
+				VAssertMetaInfo v_assert_meta_info__t1050;
+				memset(&v_assert_meta_info__t1050, 0, sizeof(VAssertMetaInfo));
+				v_assert_meta_info__t1050.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/gen/cgen.v");
+				v_assert_meta_info__t1050.line_nr = 2236;
+				v_assert_meta_info__t1050.fn_name = tos_lit("expr");
+				v_assert_meta_info__t1050.src = tos_lit("node.field_name == 'len'");
+				v_assert_meta_info__t1050.op = tos_lit("==");
+				v_assert_meta_info__t1050.llabel = tos_lit("node.field_name");
+				v_assert_meta_info__t1050.rlabel = tos_lit("'len'");
+				v_assert_meta_info__t1050.lvalue = string_str(  node->field_name) /* typeof: v.ast.SelectorExpr type: 18 */ ;
+				v_assert_meta_info__t1050.rvalue = string_str(  tos_lit("len")) /* typeof: v.ast.StringLiteral type: 18 */ ;
+				__print_assert_failure(&v_assert_meta_info__t1050);
 				v_panic(tos_lit("Assertion failed..."));
 				exit(1);
 			}
@@ -32962,18 +32956,18 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 			v__gen__verror(_STR("cgen: SelectorExpr | expr_type: 0 | it.expr: `%.*s\000` | field: `%.*s\000` | file: %.*s\000 | line: %"PRId32"", 4, v__ast__Expr_str(  node->expr), node->field_name, g->file.path, node->pos.line_nr));
 		}
 		v__gen__Gen_write(g, v__gen__c_name(node->field_name));
-	} else if (_t1046.typ == 236 /* v.ast.Type */) {
-		v__ast__Type* it = (v__ast__Type*)_t1046._object; // ST it
+	} else if (_t1044.typ == 236 /* v.ast.Type */) {
+		v__ast__Type* it = (v__ast__Type*)_t1044._object; // ST it
 		v__ast__Type* node = it;
 		int type_idx = v__table__Type_idx(node->typ);
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, node->typ);
 		v__gen__Gen_write(g, _STR("%"PRId32"\000 /* %.*s\000 */", 3, type_idx, sym->name));
-	} else if (_t1046.typ == 237 /* v.ast.TypeOf */) {
-		v__ast__TypeOf* it = (v__ast__TypeOf*)_t1046._object; // ST it
+	} else if (_t1044.typ == 237 /* v.ast.TypeOf */) {
+		v__ast__TypeOf* it = (v__ast__TypeOf*)_t1044._object; // ST it
 		v__ast__TypeOf* node = it;
 		v__gen__Gen_typeof_expr(g, *node);
-	} else if (_t1046.typ == 219 /* v.ast.Likely */) {
-		v__ast__Likely* it = (v__ast__Likely*)_t1046._object; // ST it
+	} else if (_t1044.typ == 219 /* v.ast.Likely */) {
+		v__ast__Likely* it = (v__ast__Likely*)_t1044._object; // ST it
 		v__ast__Likely* node = it;
 		if (node->is_likely) {
 			v__gen__Gen_write(g, tos_lit("_likely_"));
@@ -32983,8 +32977,8 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 		v__gen__Gen_write(g, tos_lit("("));
 		v__gen__Gen_expr(g, node->expr);
 		v__gen__Gen_write(g, tos_lit(")"));
-	} else if (_t1046.typ == 238 /* v.ast.UnsafeExpr */) {
-		v__ast__UnsafeExpr* it = (v__ast__UnsafeExpr*)_t1046._object; // ST it
+	} else if (_t1044.typ == 238 /* v.ast.UnsafeExpr */) {
+		v__ast__UnsafeExpr* it = (v__ast__UnsafeExpr*)_t1044._object; // ST it
 		v__ast__UnsafeExpr* node = it;
 		v__gen__Gen_expr(g, node->expr);
 	};
@@ -33020,9 +33014,9 @@ static void v__gen__Gen_typeof_expr(v__gen__Gen* g, v__ast__TypeOf node) {
 		v__table__Fn fn_info = info->func;
 		string repr = tos_lit("fn (");
 		// FOR IN array
-		array _t1053 = fn_info.params;
-		for (int i = 0; i < _t1053.len; ++i) {
-			v__table__Param arg = ((v__table__Param*)_t1053.data)[i];
+		array _t1051 = fn_info.params;
+		for (int i = 0; i < _t1051.len; ++i) {
+			v__table__Param arg = ((v__table__Param*)_t1051.data)[i];
 			if (i > 0) {
 				repr = /*f*/string_add(repr, tos_lit(", "));
 			}
@@ -33039,9 +33033,9 @@ static void v__gen__Gen_typeof_expr(v__gen__Gen* g, v__ast__TypeOf node) {
 }
 
 static void v__gen__Gen_enum_expr(v__gen__Gen* g, v__ast__Expr node) {
-	v__ast__Expr _t1054 = node;
-	if (_t1054.typ == 211 /* v.ast.EnumVal */) {
-		v__ast__EnumVal* it = (v__ast__EnumVal*)_t1054._object; // ST it
+	v__ast__Expr _t1052 = node;
+	if (_t1052.typ == 211 /* v.ast.EnumVal */) {
+		v__ast__EnumVal* it = (v__ast__EnumVal*)_t1052._object; // ST it
 		v__ast__EnumVal* node = it;
 		v__gen__Gen_write(g, node->val);
 	} else {
@@ -33063,8 +33057,8 @@ static void v__gen__Gen_infix_expr(v__gen__Gen* g, v__ast__InfixExpr node) {
 	v__table__TypeSymbol* right_sym = v__table__Table_get_type_symbol(g->table, node.right_type);
 	v__table__Type unaliased_right = (right_sym->kind == v__table__Kind_alias ? ((/* as */ (v__table__Alias*)__as_cast((right_sym->info)._object, (right_sym->info).typ, /*expected:*/324))->parent_type) : (node.right_type));
 	if (left_type == _const_v__table__ustring_type_idx && node.op != v__token__Kind_key_in && node.op != v__token__Kind_not_in) {
-		v__token__Kind _t1055 = node.op;
-				string fn_name = (_t1055 == v__token__Kind_plus) ? (tos_lit("ustring_add(")) : (_t1055 == v__token__Kind_eq) ? (tos_lit("ustring_eq(")) : (_t1055 == v__token__Kind_ne) ? (tos_lit("ustring_ne(")) : (_t1055 == v__token__Kind_lt) ? (tos_lit("ustring_lt(")) : (_t1055 == v__token__Kind_le) ? (tos_lit("ustring_le(")) : (_t1055 == v__token__Kind_gt) ? (tos_lit("ustring_gt(")) : (_t1055 == v__token__Kind_ge) ? (tos_lit("ustring_ge(")) : (v__gen__verror(_STR("op error for type `%.*s\000`", 2, left_sym->name)),tos_lit("/*node error*/"));
+		v__token__Kind _t1053 = node.op;
+				string fn_name = (_t1053 == v__token__Kind_plus) ? (tos_lit("ustring_add(")) : (_t1053 == v__token__Kind_eq) ? (tos_lit("ustring_eq(")) : (_t1053 == v__token__Kind_ne) ? (tos_lit("ustring_ne(")) : (_t1053 == v__token__Kind_lt) ? (tos_lit("ustring_lt(")) : (_t1053 == v__token__Kind_le) ? (tos_lit("ustring_le(")) : (_t1053 == v__token__Kind_gt) ? (tos_lit("ustring_gt(")) : (_t1053 == v__token__Kind_ge) ? (tos_lit("ustring_ge(")) : (v__gen__verror(_STR("op error for type `%.*s\000`", 2, left_sym->name)),tos_lit("/*node error*/"));
 		v__gen__Gen_write(g, fn_name);
 		v__gen__Gen_expr(g, node.left);
 		v__gen__Gen_write(g, tos_lit(", "));
@@ -33078,8 +33072,8 @@ static void v__gen__Gen_infix_expr(v__gen__Gen* g, v__ast__InfixExpr node) {
 			v__gen__Gen_write(g, tos_lit(")"));
 			v__gen__Gen_write(g, _STR("%.*s\000len %.*s\000 0", 3, arrow, v__token__Kind_str(node.op)));
 		} else {
-			v__token__Kind _t1056 = node.op;
-						string fn_name = (_t1056 == v__token__Kind_plus) ? (tos_lit("string_add(")) : (_t1056 == v__token__Kind_eq) ? (tos_lit("string_eq(")) : (_t1056 == v__token__Kind_ne) ? (tos_lit("string_ne(")) : (_t1056 == v__token__Kind_lt) ? (tos_lit("string_lt(")) : (_t1056 == v__token__Kind_le) ? (tos_lit("string_le(")) : (_t1056 == v__token__Kind_gt) ? (tos_lit("string_gt(")) : (_t1056 == v__token__Kind_ge) ? (tos_lit("string_ge(")) : (v__gen__verror(_STR("op error for type `%.*s\000`", 2, left_sym->name)),tos_lit("/*node error*/"));
+			v__token__Kind _t1054 = node.op;
+						string fn_name = (_t1054 == v__token__Kind_plus) ? (tos_lit("string_add(")) : (_t1054 == v__token__Kind_eq) ? (tos_lit("string_eq(")) : (_t1054 == v__token__Kind_ne) ? (tos_lit("string_ne(")) : (_t1054 == v__token__Kind_lt) ? (tos_lit("string_lt(")) : (_t1054 == v__token__Kind_le) ? (tos_lit("string_le(")) : (_t1054 == v__token__Kind_gt) ? (tos_lit("string_gt(")) : (_t1054 == v__token__Kind_ge) ? (tos_lit("string_ge(")) : (v__gen__verror(_STR("op error for type `%.*s\000`", 2, left_sym->name)),tos_lit("/*node error*/"));
 			v__gen__Gen_write(g, fn_name);
 			v__gen__Gen_expr(g, node.left);
 			v__gen__Gen_write(g, tos_lit(", "));
@@ -33147,9 +33141,9 @@ static void v__gen__Gen_infix_expr(v__gen__Gen* g, v__ast__InfixExpr node) {
 			v__gen__Gen_write(g, tos_lit("!"));
 		}
 		if (right_sym->kind == v__table__Kind_array) {
-			v__ast__Expr _t1057 = node.right;
-			if (_t1057.typ == 200 /* v.ast.ArrayInit */) {
-				v__ast__ArrayInit* it = (v__ast__ArrayInit*)_t1057._object; // ST it
+			v__ast__Expr _t1055 = node.right;
+			if (_t1055.typ == 200 /* v.ast.ArrayInit */) {
+				v__ast__ArrayInit* it = (v__ast__ArrayInit*)_t1055._object; // ST it
 				if (it->exprs.len > 0) {
 					v__gen__Gen_write(g, tos_lit("("));
 					v__gen__Gen_in_optimization(g, node.left, *it);
@@ -33277,9 +33271,9 @@ static void v__gen__Gen_infix_expr(v__gen__Gen* g, v__ast__InfixExpr node) {
 static void v__gen__Gen_lock_expr(v__gen__Gen* g, v__ast__LockExpr node) {
 	array_byte lock_prefixes = __new_array_with_default(0, node.lockeds.len, sizeof(byte), 0);
 	// FOR IN array
-	array _t1058 = node.lockeds;
-	for (int _t1059 = 0; _t1059 < _t1058.len; ++_t1059) {
-		v__ast__Ident id = ((v__ast__Ident*)_t1058.data)[_t1059];
+	array _t1056 = node.lockeds;
+	for (int _t1057 = 0; _t1057 < _t1056.len; ++_t1057) {
+		v__ast__Ident id = ((v__ast__Ident*)_t1056.data)[_t1057];
 		string name = id.name;
 		string deref = (id.is_mut ? (tos_lit("->")) : (tos_lit(".")));
 		rune lock_prefix = (node.is_rlock ? ('r') : ('w'));
@@ -33326,9 +33320,9 @@ static void v__gen__Gen_match_expr_sumtype(v__gen__Gen* g, v__ast__MatchExpr nod
 	array_push(&g->match_sumtype_exprs, _MOV((v__ast__Expr[]){ node.cond }));
 	array_push(&g->match_sumtype_syms, _MOV((v__table__TypeSymbol[]){ *type_sym }));
 	// FOR IN array
-	array _t1063 = node.branches;
-	for (int j = 0; j < _t1063.len; ++j) {
-		v__ast__MatchBranch branch = ((v__ast__MatchBranch*)_t1063.data)[j];
+	array _t1061 = node.branches;
+	for (int j = 0; j < _t1061.len; ++j) {
+		v__ast__MatchBranch branch = ((v__ast__MatchBranch*)_t1061.data)[j];
 		int sumtype_index = 0;
 		for (;;) {
 			bool is_last = j == node.branches.len - 1;
@@ -33401,9 +33395,9 @@ static void v__gen__Gen_match_expr_sumtype(v__gen__Gen* g, v__ast__MatchExpr nod
 static void v__gen__Gen_match_expr_classic(v__gen__Gen* g, v__ast__MatchExpr node, bool is_expr, string cond_var) {
 	v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(g->table, node.cond_type);
 	// FOR IN array
-	array _t1064 = node.branches;
-	for (int j = 0; j < _t1064.len; ++j) {
-		v__ast__MatchBranch branch = ((v__ast__MatchBranch*)_t1064.data)[j];
+	array _t1062 = node.branches;
+	for (int j = 0; j < _t1062.len; ++j) {
+		v__ast__MatchBranch branch = ((v__ast__MatchBranch*)_t1062.data)[j];
 		bool is_last = j == node.branches.len - 1;
 		if (branch.is_else || (node.is_expr && is_last)) {
 			if (node.branches.len > 1) {
@@ -33427,9 +33421,9 @@ static void v__gen__Gen_match_expr_classic(v__gen__Gen* g, v__ast__MatchExpr nod
 				v__gen__Gen_write(g, tos_lit("if ("));
 			}
 			// FOR IN array
-			array _t1065 = branch.exprs;
-			for (int i = 0; i < _t1065.len; ++i) {
-				v__ast__Expr expr = ((v__ast__Expr*)_t1065.data)[i];
+			array _t1063 = branch.exprs;
+			for (int i = 0; i < _t1063.len; ++i) {
+				v__ast__Expr expr = ((v__ast__Expr*)_t1063.data)[i];
 				if (i > 0) {
 					v__gen__Gen_write(g, tos_lit(" || "));
 				}
@@ -33444,12 +33438,12 @@ static void v__gen__Gen_match_expr_classic(v__gen__Gen* g, v__ast__MatchExpr nod
 						v__gen__Gen_write(g, tos_lit(")"));
 					}
 				} else if ((expr).typ == 228 /* v.ast.RangeExpr */) {
-					v__ast__RangeExpr* _sc_tmp_80042 = (v__ast__RangeExpr*)expr._object;
-					v__ast__RangeExpr* expr = _sc_tmp_80042;
+					v__ast__RangeExpr* _sc_tmp_80019 = (v__ast__RangeExpr*)expr._object;
+					v__ast__RangeExpr* expr = _sc_tmp_80019;
 					bool skip_low = false;
 					if ((expr->low).typ == 218 /* v.ast.IntegerLiteral */) {
-						v__ast__IntegerLiteral* _sc_tmp_80166 = (v__ast__IntegerLiteral*)expr->low._object;
-						v__ast__IntegerLiteral* expr_low = _sc_tmp_80166;
+						v__ast__IntegerLiteral* _sc_tmp_80143 = (v__ast__IntegerLiteral*)expr->low._object;
+						v__ast__IntegerLiteral* expr_low = _sc_tmp_80143;
 						if ((node.cond_type == _const_v__table__u16_type || node.cond_type == _const_v__table__u32_type || node.cond_type == _const_v__table__u64_type) && string_eq(expr_low->val, tos_lit("0"))) {
 							skip_low = true;
 						}
@@ -33502,9 +33496,9 @@ static void v__gen__Gen_select_expr(v__gen__Gen* g, v__ast__SelectExpr node) {
 };
 	int exception_branch = -1;
 	// FOR IN array
-	array _t1066 = node.branches;
-	for (int j = 0; j < _t1066.len; ++j) {
-		v__ast__SelectBranch branch = ((v__ast__SelectBranch*)_t1066.data)[j];
+	array _t1064 = node.branches;
+	for (int j = 0; j < _t1064.len; ++j) {
+		v__ast__SelectBranch branch = ((v__ast__SelectBranch*)_t1064.data)[j];
 		if (branch.is_else) {
 			has_else = true;
 			exception_branch = j;
@@ -33513,9 +33507,9 @@ static void v__gen__Gen_select_expr(v__gen__Gen* g, v__ast__SelectExpr node) {
 			exception_branch = j;
 			timeout_expr = (/* as */ (v__ast__ExprStmt*)__as_cast((branch.stmt)._object, (branch.stmt).typ, /*expected:*/248))->expr;
 		} else {
-			v__ast__Stmt _t1067 = branch.stmt;
-			if (_t1067.typ == 248 /* v.ast.ExprStmt */) {
-				v__ast__ExprStmt* it = (v__ast__ExprStmt*)_t1067._object; // ST it
+			v__ast__Stmt _t1065 = branch.stmt;
+			if (_t1065.typ == 248 /* v.ast.ExprStmt */) {
+				v__ast__ExprStmt* it = (v__ast__ExprStmt*)_t1065._object; // ST it
 				v__ast__ExprStmt* stmt = it;
 				v__ast__InfixExpr* expr = /* as */ (v__ast__InfixExpr*)__as_cast((stmt->expr)._object, (stmt->expr).typ, /*expected:*/217);
 				array_push(&channels, _MOV((v__ast__Expr[]){ expr->left }));
@@ -33535,8 +33529,8 @@ static void v__gen__Gen_select_expr(v__gen__Gen* g, v__ast__SelectExpr node) {
 					v__gen__Gen_writeln(g, _STR("%.*s\000 %.*s\000;", 3, el_stype, tmp_obj));
 				}
 				array_push(&is_push, _MOV((bool[]){ true }));
-			} else if (_t1067.typ == 241 /* v.ast.AssignStmt */) {
-				v__ast__AssignStmt* it = (v__ast__AssignStmt*)_t1067._object; // ST it
+			} else if (_t1065.typ == 241 /* v.ast.AssignStmt */) {
+				v__ast__AssignStmt* it = (v__ast__AssignStmt*)_t1065._object; // ST it
 				v__ast__AssignStmt* stmt = it;
 				v__ast__PrefixExpr* rec_expr = /* as */ (v__ast__PrefixExpr*)__as_cast(((*(v__ast__Expr*)array_get(stmt->right, 0)))._object, ((*(v__ast__Expr*)array_get(stmt->right, 0))).typ, /*expected:*/227);
 				array_push(&channels, _MOV((v__ast__Expr[]){ rec_expr->right }));
@@ -33659,8 +33653,8 @@ static void v__gen__Gen_ident(v__gen__Gen* g, v__ast__Ident node) {
 // Attr: [unlikely]
 static bool v__gen__Gen_should_write_asterisk_due_to_match_sumtype(v__gen__Gen* g, v__ast__Expr expr) {
 	if ((expr).typ == 213 /* v.ast.Ident */) {
-		v__ast__Ident* _sc_tmp_85868 = (v__ast__Ident*)expr._object;
-		v__ast__Ident* expr = _sc_tmp_85868;
+		v__ast__Ident* _sc_tmp_85845 = (v__ast__Ident*)expr._object;
+		v__ast__Ident* expr = _sc_tmp_85845;
 		v__table__Type typ = ((expr->info).typ == 300 /* v.ast.IdentVar */ ? ((/* as */ (v__ast__IdentVar*)__as_cast((expr->info)._object, (expr->info).typ, /*expected:*/300))->typ) : ((/* as */ (v__ast__IdentFn*)__as_cast((expr->info)._object, (expr->info).typ, /*expected:*/299))->typ));
 		return v__table__Type_is_ptr(typ) && v__gen__Gen_match_sumtype_has_no_struct_and_contains(g, *expr);
 	} else {
@@ -33671,15 +33665,15 @@ static bool v__gen__Gen_should_write_asterisk_due_to_match_sumtype(v__gen__Gen* 
 // Attr: [unlikely]
 static bool v__gen__Gen_match_sumtype_has_no_struct_and_contains(v__gen__Gen* g, v__ast__Ident node) {
 	// FOR IN array
-	array _t1082 = g->match_sumtype_exprs;
-	for (int i = 0; i < _t1082.len; ++i) {
-		v__ast__Expr expr = ((v__ast__Expr*)_t1082.data)[i];
+	array _t1080 = g->match_sumtype_exprs;
+	for (int i = 0; i < _t1080.len; ++i) {
+		v__ast__Expr expr = ((v__ast__Expr*)_t1080.data)[i];
 		if ((expr).typ == 213 /* v.ast.Ident */ && string_eq(node.name, (/* as */ (v__ast__Ident*)__as_cast((expr)._object, (expr).typ, /*expected:*/213))->name)) {
 			v__table__SumType* sumtype = /* as */ (v__table__SumType*)__as_cast(((*(v__table__TypeSymbol*)array_get(g->match_sumtype_syms, i)).info)._object, ((*(v__table__TypeSymbol*)array_get(g->match_sumtype_syms, i)).info).typ, /*expected:*/333);
 			// FOR IN array
-			array _t1083 = sumtype->variants;
-			for (int _t1084 = 0; _t1084 < _t1083.len; ++_t1084) {
-				v__table__Type typ = ((v__table__Type*)_t1083.data)[_t1084];
+			array _t1081 = sumtype->variants;
+			for (int _t1082 = 0; _t1082 < _t1081.len; ++_t1082) {
+				v__table__Type typ = ((v__table__Type*)_t1081.data)[_t1082];
 				if (v__table__Table_get_type_symbol(g->table, typ)->kind == v__table__Kind_struct_) {
 					return false;
 				}
@@ -33699,9 +33693,9 @@ static void v__gen__Gen_concat_expr(v__gen__Gen* g, v__ast__ConcatExpr node) {
 	} else {
 		v__gen__Gen_write(g, _STR("(%.*s\000){", 2, styp));
 		// FOR IN array
-		array _t1085 = node.vals;
-		for (int i = 0; i < _t1085.len; ++i) {
-			v__ast__Expr expr = ((v__ast__Expr*)_t1085.data)[i];
+		array _t1083 = node.vals;
+		for (int i = 0; i < _t1083.len; ++i) {
+			v__ast__Expr expr = ((v__ast__Expr*)_t1083.data)[i];
 			v__gen__Gen_write(g, _STR(".arg%"PRId32"\000=", 2, i));
 			v__gen__Gen_expr(g, expr);
 			if (i < node.vals.len - 1) {
@@ -33721,9 +33715,9 @@ static void v__gen__Gen_if_expr(v__gen__Gen* g, v__ast__IfExpr node) {
 		g->inside_ternary++;
 		v__gen__Gen_write(g, tos_lit("("));
 		// FOR IN array
-		array _t1086 = node.branches;
-		for (int i = 0; i < _t1086.len; ++i) {
-			v__ast__IfBranch branch = ((v__ast__IfBranch*)_t1086.data)[i];
+		array _t1084 = node.branches;
+		for (int i = 0; i < _t1084.len; ++i) {
+			v__ast__IfBranch branch = ((v__ast__IfBranch*)_t1084.data)[i];
 			if (i > 0) {
 				v__gen__Gen_write(g, tos_lit(" : "));
 			}
@@ -33744,13 +33738,13 @@ static void v__gen__Gen_if_expr(v__gen__Gen* g, v__ast__IfExpr node) {
 	int guard_idx = 0;
 	array_string guard_vars = __new_array_with_default(0, 0, sizeof(string), 0);
 	// FOR IN array
-	array _t1087 = node.branches;
-	for (int i = 0; i < _t1087.len; ++i) {
-		v__ast__IfBranch branch = ((v__ast__IfBranch*)_t1087.data)[i];
+	array _t1085 = node.branches;
+	for (int i = 0; i < _t1085.len; ++i) {
+		v__ast__IfBranch branch = ((v__ast__IfBranch*)_t1085.data)[i];
 		v__ast__Expr cond = branch.cond;
 		if ((cond).typ == 215 /* v.ast.IfGuardExpr */) {
-			v__ast__IfGuardExpr* _sc_tmp_87527 = (v__ast__IfGuardExpr*)cond._object;
-			v__ast__IfGuardExpr* cond = _sc_tmp_87527;
+			v__ast__IfGuardExpr* _sc_tmp_87504 = (v__ast__IfGuardExpr*)cond._object;
+			v__ast__IfGuardExpr* cond = _sc_tmp_87504;
 			if (!is_guard) {
 				is_guard = true;
 				guard_idx = i;
@@ -33763,9 +33757,9 @@ static void v__gen__Gen_if_expr(v__gen__Gen* g, v__ast__IfExpr node) {
 		}
 	}
 	// FOR IN array
-	array _t1088 = node.branches;
-	for (int i = 0; i < _t1088.len; ++i) {
-		v__ast__IfBranch branch = ((v__ast__IfBranch*)_t1088.data)[i];
+	array _t1086 = node.branches;
+	for (int i = 0; i < _t1086.len; ++i) {
+		v__ast__IfBranch branch = ((v__ast__IfBranch*)_t1086.data)[i];
 		if (i > 0) {
 			v__gen__Gen_write(g, tos_lit("} else "));
 		}
@@ -33777,9 +33771,9 @@ static void v__gen__Gen_if_expr(v__gen__Gen* g, v__ast__IfExpr node) {
 				v__gen__Gen_writeln(g, _STR("\tint errcode = %.*s\000.ecode;", 2, cvar_name));
 			}
 		} else {
-			v__ast__Expr _t1089 = branch.cond;
-			if (_t1089.typ == 215 /* v.ast.IfGuardExpr */) {
-				v__ast__IfGuardExpr* it = (v__ast__IfGuardExpr*)_t1089._object; // ST it
+			v__ast__Expr _t1087 = branch.cond;
+			if (_t1087.typ == 215 /* v.ast.IfGuardExpr */) {
+				v__ast__IfGuardExpr* it = (v__ast__IfGuardExpr*)_t1087._object; // ST it
 				v__ast__IfGuardExpr* cond = it;
 				string var_name = (*(string*)array_get(guard_vars, i));
 				v__gen__Gen_write(g, _STR("if (%.*s\000 = ", 2, var_name));
@@ -33818,9 +33812,9 @@ static void v__gen__Gen_if_expr(v__gen__Gen* g, v__ast__IfExpr node) {
 }
 
 static void v__gen__Gen_index_expr(v__gen__Gen* g, v__ast__IndexExpr node) {
-	v__ast__Expr _t1090 = node.index;
-	if (_t1090.typ == 228 /* v.ast.RangeExpr */) {
-		v__ast__RangeExpr* it = (v__ast__RangeExpr*)_t1090._object; // ST it
+	v__ast__Expr _t1088 = node.index;
+	if (_t1088.typ == 228 /* v.ast.RangeExpr */) {
+		v__ast__RangeExpr* it = (v__ast__RangeExpr*)_t1088._object; // ST it
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, node.left_type);
 		if (sym->kind == v__table__Kind_string) {
 			v__gen__Gen_write(g, tos_lit("string_substr("));
@@ -33874,8 +33868,8 @@ static void v__gen__Gen_index_expr(v__gen__Gen* g, v__ast__IndexExpr node) {
 			bool is_selector = (node.left).typ == 230 /* v.ast.SelectorExpr */;
 			if (g->is_assign_lhs && !is_selector && node.is_setter) {
 				bool is_direct_array_access = g->fn_decl != 0 && g->fn_decl->is_direct_arr;
-				v__table__Kind _t1091 = elem_typ->kind;
-								string array_ptr_type_str = (_t1091 == v__table__Kind_function) ? (tos_lit("voidptr*")) : (_STR("%.*s\000*", 2, elem_type_str));
+				v__table__Kind _t1089 = elem_typ->kind;
+								string array_ptr_type_str = (_t1089 == v__table__Kind_function) ? (tos_lit("voidptr*")) : (_STR("%.*s\000*", 2, elem_type_str));
 				if (is_direct_array_access) {
 					v__gen__Gen_write(g, _STR("((%.*s\000)", 2, array_ptr_type_str));
 				} else {
@@ -33931,15 +33925,15 @@ static void v__gen__Gen_index_expr(v__gen__Gen* g, v__ast__IndexExpr node) {
 						v__gen__Gen_write(g, tos_lit(", "));
 						v__gen__Gen_expr(g, node.index);
 						v__gen__Gen_write(g, tos_lit(") "));
-						v__token__Kind _t1092 = g->assign_op;
-												string op = (_t1092 == v__token__Kind_mult_assign) ? (tos_lit("*")) : (_t1092 == v__token__Kind_plus_assign) ? (tos_lit("+")) : (_t1092 == v__token__Kind_minus_assign) ? (tos_lit("-")) : (_t1092 == v__token__Kind_div_assign) ? (tos_lit("/")) : (_t1092 == v__token__Kind_xor_assign) ? (tos_lit("^")) : (_t1092 == v__token__Kind_mod_assign) ? (tos_lit("%")) : (_t1092 == v__token__Kind_or_assign) ? (tos_lit("|")) : (_t1092 == v__token__Kind_and_assign) ? (tos_lit("&")) : (_t1092 == v__token__Kind_left_shift_assign) ? (tos_lit("<<")) : (_t1092 == v__token__Kind_right_shift_assign) ? (tos_lit(">>")) : (tos_lit(""));
+						v__token__Kind _t1090 = g->assign_op;
+												string op = (_t1090 == v__token__Kind_mult_assign) ? (tos_lit("*")) : (_t1090 == v__token__Kind_plus_assign) ? (tos_lit("+")) : (_t1090 == v__token__Kind_minus_assign) ? (tos_lit("-")) : (_t1090 == v__token__Kind_div_assign) ? (tos_lit("/")) : (_t1090 == v__token__Kind_xor_assign) ? (tos_lit("^")) : (_t1090 == v__token__Kind_mod_assign) ? (tos_lit("%")) : (_t1090 == v__token__Kind_or_assign) ? (tos_lit("|")) : (_t1090 == v__token__Kind_and_assign) ? (tos_lit("&")) : (_t1090 == v__token__Kind_left_shift_assign) ? (tos_lit("<<")) : (_t1090 == v__token__Kind_right_shift_assign) ? (tos_lit(">>")) : (tos_lit(""));
 						v__gen__Gen_write(g, op);
 					}
 				}
 			} else {
 				bool is_direct_array_access = g->fn_decl != 0 && g->fn_decl->is_direct_arr;
-				v__table__Kind _t1093 = elem_typ->kind;
-								string array_ptr_type_str = (_t1093 == v__table__Kind_function) ? (tos_lit("voidptr*")) : (_STR("%.*s\000*", 2, elem_type_str));
+				v__table__Kind _t1091 = elem_typ->kind;
+								string array_ptr_type_str = (_t1091 == v__table__Kind_function) ? (tos_lit("voidptr*")) : (_STR("%.*s\000*", 2, elem_type_str));
 				if (is_direct_array_access) {
 					v__gen__Gen_write(g, _STR("((%.*s\000)", 2, array_ptr_type_str));
 				} else {
@@ -34035,9 +34029,9 @@ static void v__gen__Gen_index_expr(v__gen__Gen* g, v__ast__IndexExpr node) {
 
 // Attr: [inline]
 inline static bool v__gen__Gen_expr_is_multi_return_call(v__gen__Gen* g, v__ast__Expr expr) {
-	v__ast__Expr _t1094 = expr;
-	if (_t1094.typ == 204 /* v.ast.CallExpr */) {
-		v__ast__CallExpr* it = (v__ast__CallExpr*)_t1094._object; // ST it
+	v__ast__Expr _t1092 = expr;
+	if (_t1092.typ == 204 /* v.ast.CallExpr */) {
+		v__ast__CallExpr* it = (v__ast__CallExpr*)_t1092._object; // ST it
 		v__ast__CallExpr* expr = it;
 		return v__table__Table_get_type_symbol(g->table, expr->return_type)->kind == v__table__Kind_multi_return;
 	} else {
@@ -34106,9 +34100,9 @@ static void v__gen__Gen_return_statement(v__gen__Gen* g, v__ast__Return node) {
 		v__gen__Gen_write(g, _STR("(%.*s\000){", 2, styp));
 		int arg_idx = 0;
 		// FOR IN array
-		array _t1095 = node.exprs;
-		for (int i = 0; i < _t1095.len; ++i) {
-			v__ast__Expr expr = ((v__ast__Expr*)_t1095.data)[i];
+		array _t1093 = node.exprs;
+		for (int i = 0; i < _t1093.len; ++i) {
+			v__ast__Expr expr = ((v__ast__Expr*)_t1093.data)[i];
 			if (v__gen__Gen_expr_is_multi_return_call(g, expr)) {
 				v__ast__CallExpr* c = /* as */ (v__ast__CallExpr*)__as_cast((expr)._object, (expr).typ, /*expected:*/204);
 				v__table__TypeSymbol* expr_sym = v__table__Table_get_type_symbol(g->table, c->return_type);
@@ -34132,8 +34126,8 @@ static void v__gen__Gen_return_statement(v__gen__Gen* g, v__ast__Return node) {
 				}
 				array_v__table__Type expr_types = v__table__TypeSymbol_mr_info(expr_sym).types;
 				// FOR IN array
-				array _t1096 = expr_types;
-				for (int j = 0; j < _t1096.len; ++j) {
+				array _t1094 = expr_types;
+				for (int j = 0; j < _t1094.len; ++j) {
 					v__gen__Gen_write(g, _STR(".arg%"PRId32"\000=%.*s\000.arg%"PRId32"", 3, arg_idx, tmp, j));
 					if (j < expr_types.len || i < node.exprs.len - 1) {
 						v__gen__Gen_write(g, tos_lit(","));
@@ -34169,9 +34163,9 @@ static void v__gen__Gen_return_statement(v__gen__Gen* g, v__ast__Return node) {
 				v__gen__Gen_write(g, tos_lit("*"));
 			}
 			// FOR IN array
-			array _t1097 = node.exprs;
-			for (int i = 0; i < _t1097.len; ++i) {
-				v__ast__Expr expr = ((v__ast__Expr*)_t1097.data)[i];
+			array _t1095 = node.exprs;
+			for (int i = 0; i < _t1095.len; ++i) {
+				v__ast__Expr expr = ((v__ast__Expr*)_t1095.data)[i];
 				v__gen__Gen_expr(g, expr);
 				if (i < node.exprs.len - 1) {
 					v__gen__Gen_write(g, tos_lit(", "));
@@ -34220,34 +34214,34 @@ g->inside_return = false;
 static void v__gen__Gen_const_decl(v__gen__Gen* g, v__ast__ConstDecl node) {
 	g->inside_const = true;
 	// FOR IN array
-	array _t1098 = node.fields;
-	for (int _t1099 = 0; _t1099 < _t1098.len; ++_t1099) {
-		v__ast__ConstField field = ((v__ast__ConstField*)_t1098.data)[_t1099];
+	array _t1096 = node.fields;
+	for (int _t1097 = 0; _t1097 < _t1096.len; ++_t1097) {
+		v__ast__ConstField field = ((v__ast__ConstField*)_t1096.data)[_t1097];
 		string name = v__gen__c_name(field.name);
 		int pos = g->out.len;
 		v__gen__Gen_expr(g, field.expr);
 		string val = strings__Builder_after(&g->out, pos);
 		strings__Builder_go_back(&g->out, val.len);
-		v__ast__Expr _t1100 = field.expr;
-		if (_t1100.typ == 207 /* v.ast.CharLiteral */) {
-			v__ast__CharLiteral* it = (v__ast__CharLiteral*)_t1100._object; // ST it
+		v__ast__Expr _t1098 = field.expr;
+		if (_t1098.typ == 207 /* v.ast.CharLiteral */) {
+			v__ast__CharLiteral* it = (v__ast__CharLiteral*)_t1098._object; // ST it
 			v__gen__Gen_const_decl_simple_define(g, name, val);
-		} else if (_t1100.typ == 212 /* v.ast.FloatLiteral */) {
-			v__ast__FloatLiteral* it = (v__ast__FloatLiteral*)_t1100._object; // ST it
+		} else if (_t1098.typ == 212 /* v.ast.FloatLiteral */) {
+			v__ast__FloatLiteral* it = (v__ast__FloatLiteral*)_t1098._object; // ST it
 			v__gen__Gen_const_decl_simple_define(g, name, val);
-		} else if (_t1100.typ == 218 /* v.ast.IntegerLiteral */) {
-			v__ast__IntegerLiteral* it = (v__ast__IntegerLiteral*)_t1100._object; // ST it
+		} else if (_t1098.typ == 218 /* v.ast.IntegerLiteral */) {
+			v__ast__IntegerLiteral* it = (v__ast__IntegerLiteral*)_t1098._object; // ST it
 			v__gen__Gen_const_decl_simple_define(g, name, val);
-		} else if (_t1100.typ == 200 /* v.ast.ArrayInit */) {
-			v__ast__ArrayInit* it = (v__ast__ArrayInit*)_t1100._object; // ST it
+		} else if (_t1098.typ == 200 /* v.ast.ArrayInit */) {
+			v__ast__ArrayInit* it = (v__ast__ArrayInit*)_t1098._object; // ST it
 			if (it->is_fixed) {
 				string styp = v__gen__Gen_typ(g, it->typ);
 				strings__Builder_writeln(&g->definitions, _STR("%.*s\000 _const_%.*s\000 = %.*s\000; // fixed array const", 4, styp, name, val));
 			} else {
 				v__gen__Gen_const_decl_init_later(g, field.mod, name, val, field.typ);
 			}
-		} else if (_t1100.typ == 234 /* v.ast.StringLiteral */) {
-			v__ast__StringLiteral* it = (v__ast__StringLiteral*)_t1100._object; // ST it
+		} else if (_t1098.typ == 234 /* v.ast.StringLiteral */) {
+			v__ast__StringLiteral* it = (v__ast__StringLiteral*)_t1098._object; // ST it
 			strings__Builder_writeln(&g->definitions, _STR("string _const_%.*s\000; // a string literal, inited later", 2, name));
 			if (g->pref->build_mode != v__pref__BuildMode_build_module) {
 				strings__Builder_writeln(&g->stringliterals, _STR("\t_const_%.*s\000 = %.*s\000;", 3, name, val));
@@ -34283,9 +34277,9 @@ static void v__gen__Gen_const_decl_init_later(v__gen__Gen* g, string mod, string
 
 static void v__gen__Gen_global_decl(v__gen__Gen* g, v__ast__GlobalDecl node) {
 	// FOR IN array
-	array _t1101 = node.fields;
-	for (int _t1102 = 0; _t1102 < _t1101.len; ++_t1102) {
-		v__ast__GlobalField field = ((v__ast__GlobalField*)_t1101.data)[_t1102];
+	array _t1099 = node.fields;
+	for (int _t1100 = 0; _t1100 < _t1099.len; ++_t1100) {
+		v__ast__GlobalField field = ((v__ast__GlobalField*)_t1099.data)[_t1100];
 		string styp = v__gen__Gen_typ(g, field.typ);
 		if (field.has_expr) {
 			strings__Builder_writeln(&g->definitions, _STR("%.*s\000 %.*s\000 = %.*s\000; // global", 4, styp, field.name, v__ast__Expr_str(  field.expr)));
@@ -34334,9 +34328,9 @@ static void v__gen__Gen_struct_init(v__gen__Gen* g, v__ast__StructInit struct_in
 	}
 	bool initialized = false;
 	// FOR IN array
-	array _t1103 = struct_init.fields;
-	for (int i = 0; i < _t1103.len; ++i) {
-		v__ast__StructInitField field = ((v__ast__StructInitField*)_t1103.data)[i];
+	array _t1101 = struct_init.fields;
+	for (int i = 0; i < _t1101.len; ++i) {
+		v__ast__StructInitField field = ((v__ast__StructInitField*)_t1101.data)[i];
 		map_set(&inited_fields, field.name, &(int[]) { i });
 		if (sym->kind != v__table__Kind_struct_) {
 			string field_name = v__gen__c_name(field.name);
@@ -34371,9 +34365,9 @@ static void v__gen__Gen_struct_init(v__gen__Gen* g, v__ast__StructInit struct_in
 			v__gen__verror(tos_lit("union must not have more than 1 initializer"));
 		}
 		// FOR IN array
-		array _t1104 = info->fields;
-		for (int _t1105 = 0; _t1105 < _t1104.len; ++_t1105) {
-			v__table__Field field = ((v__table__Field*)_t1104.data)[_t1105];
+		array _t1102 = info->fields;
+		for (int _t1103 = 0; _t1103 < _t1102.len; ++_t1103) {
+			v__table__Field field = ((v__table__Field*)_t1102.data)[_t1103];
 			if (_IN_MAP(field.name, inited_fields)) {
 				v__ast__StructInitField sfield = (*(v__ast__StructInitField*)array_get(struct_init.fields, (*(int*)map_get(inited_fields, field.name, &(int[]){ 0 }))));
 				string field_name = v__gen__c_name(sfield.name);
@@ -34451,17 +34445,17 @@ static void v__gen__Gen_assoc(v__gen__Gen* g, v__ast__Assoc node) {
 	v__gen__Gen_writeln(g, _STR("(%.*s\000){", 2, styp));
 	map_string_int inited_fields = new_map_1(sizeof(int));
 	// FOR IN array
-	array _t1106 = node.fields;
-	for (int i = 0; i < _t1106.len; ++i) {
-		string field = ((string*)_t1106.data)[i];
+	array _t1104 = node.fields;
+	for (int i = 0; i < _t1104.len; ++i) {
+		string field = ((string*)_t1104.data)[i];
 		map_set(&inited_fields, field, &(int[]) { i });
 	}
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, node.typ);
 	v__table__Struct* info = /* as */ (v__table__Struct*)__as_cast((sym->info)._object, (sym->info).typ, /*expected:*/150);
 	// FOR IN array
-	array _t1107 = info->fields;
-	for (int _t1108 = 0; _t1108 < _t1107.len; ++_t1108) {
-		v__table__Field field = ((v__table__Field*)_t1107.data)[_t1108];
+	array _t1105 = info->fields;
+	for (int _t1106 = 0; _t1106 < _t1105.len; ++_t1106) {
+		v__table__Field field = ((v__table__Field*)_t1105.data)[_t1106];
 		string field_name = v__gen__c_name(field.name);
 		if (_IN_MAP(field.name, inited_fields)) {
 			v__gen__Gen_write(g, _STR("\t.%.*s\000 = ", 2, field_name));
@@ -34496,14 +34490,14 @@ static string v__gen__Gen_gen_array_equality_fn(v__gen__Gen* g, v__table__Type l
 	strings__Builder_writeln(&g->definitions, tos_lit("\t\treturn false;"));
 	strings__Builder_writeln(&g->definitions, tos_lit("\t}"));
 	strings__Builder_writeln(&g->definitions, tos_lit("\tfor (int i = 0; i < a.len; ++i) {"));
-	v__table__Kind _t1110 = elem_sym->kind;
-	if (_t1110 == v__table__Kind_string) {
+	v__table__Kind _t1108 = elem_sym->kind;
+	if (_t1108 == v__table__Kind_string) {
 		strings__Builder_writeln(&g->definitions, _STR("\t\tif (string_ne(*((%.*s\000*)((byte*)a.data+(i*a.element_size))), *((%.*s\000*)((byte*)b.data+(i*b.element_size))))) {", 3, ptr_typ, ptr_typ));
-	} else if (_t1110 == v__table__Kind_struct_) {
+	} else if (_t1108 == v__table__Kind_struct_) {
 		strings__Builder_writeln(&g->definitions, tos_lit("\t\tif (memcmp((byte*)a.data+(i*a.element_size), (byte*)b.data+(i*b.element_size), a.element_size)) {"));
-	} else if (_t1110 == v__table__Kind_array) {
+	} else if (_t1108 == v__table__Kind_array) {
 		strings__Builder_writeln(&g->definitions, _STR("\t\tif (!%.*s\000_arr_eq(((%.*s\000*)a.data)[i], ((%.*s\000*)b.data)[i])) {", 4, ptr_elem_typ, elem_typ, elem_typ));
-	} else if (_t1110 == v__table__Kind_function) {
+	} else if (_t1108 == v__table__Kind_function) {
 		strings__Builder_writeln(&g->definitions, tos_lit("\t\tif (*((voidptr*)((byte*)a.data+(i*a.element_size))) != *((voidptr*)((byte*)b.data+(i*b.element_size)))) {"));
 	} else {
 		strings__Builder_writeln(&g->definitions, _STR("\t\tif (*((%.*s\000*)((byte*)a.data+(i*a.element_size))) != *((%.*s\000*)((byte*)b.data+(i*b.element_size)))) {", 3, ptr_typ, ptr_typ));
@@ -34542,9 +34536,9 @@ static string v__gen__Gen_gen_map_equality_fn(v__gen__Gen* g, v__table__Type lef
 		strings__Builder_write(&g->definitions, _STR("\t\t%.*s\000 (*v) (", 2, ret_styp));
 		int arg_len = func->func.params.len;
 		// FOR IN array
-		array _t1112 = func->func.params;
-		for (int i = 0; i < _t1112.len; ++i) {
-			v__table__Param arg = ((v__table__Param*)_t1112.data)[i];
+		array _t1110 = func->func.params;
+		for (int i = 0; i < _t1110.len; ++i) {
+			v__table__Param arg = ((v__table__Param*)_t1110.data)[i];
 			string arg_styp = v__gen__Gen_typ(g, arg.typ);
 			strings__Builder_write(&g->definitions, _STR("%.*s\000 %.*s", 2, arg_styp, arg.name));
 			if (i < arg_len - 1) {
@@ -34555,10 +34549,10 @@ static string v__gen__Gen_gen_map_equality_fn(v__gen__Gen* g, v__table__Type lef
 	} else {
 		strings__Builder_writeln(&g->definitions, _STR("\t\t%.*s\000 v = (*(%.*s\000*)map_get(a, k, &(%.*s\000[]){ 0 }));", 4, value_typ, value_typ, value_typ));
 	}
-	v__table__Kind _t1113 = value_sym->kind;
-	if (_t1113 == v__table__Kind_string) {
+	v__table__Kind _t1111 = value_sym->kind;
+	if (_t1111 == v__table__Kind_string) {
 		strings__Builder_writeln(&g->definitions, _STR("\t\tif (!map_exists(b, k) || string_ne((*(%.*s\000*)map_get(b, k, &(%.*s\000[]){tos_lit(\"\")})), v)) {", 3, value_typ, value_typ));
-	} else if (_t1113 == v__table__Kind_function) {
+	} else if (_t1111 == v__table__Kind_function) {
 		strings__Builder_writeln(&g->definitions, tos_lit("\t\tif (!map_exists(b, k) || (*(voidptr*)map_get(b, k, &(voidptr[]){ 0 })) != v) {"));
 	} else {
 		strings__Builder_writeln(&g->definitions, _STR("\t\tif (!map_exists(b, k) || (*(%.*s\000*)map_get(b, k, &(%.*s\000[]){ 0 })) != v) {", 3, value_typ, value_typ));
@@ -34602,16 +34596,16 @@ static void v__gen__Gen_write_init_function(v__gen__Gen* g) {
 	v__gen__Gen_writeln(g, tos_lit("\tbuiltin_init();"));
 	v__gen__Gen_writeln(g, tos_lit("\tvinit_string_literals();"));
 	// FOR IN array
-	array _t1114 = g->table->modules;
-	for (int _t1115 = 0; _t1115 < _t1114.len; ++_t1115) {
-		string mod_name = ((string*)_t1114.data)[_t1115];
+	array _t1112 = g->table->modules;
+	for (int _t1113 = 0; _t1113 < _t1112.len; ++_t1113) {
+		string mod_name = ((string*)_t1112.data)[_t1113];
 		v__gen__Gen_writeln(g, _STR("\t// Initializations for module %.*s\000 :", 2, mod_name));
 		v__gen__Gen_write(g, strings__Builder_str(&(*(strings__Builder*)map_get(g->inits, mod_name, &(strings__Builder[]){ {0} }))));
 		string init_fn_name = _STR("%.*s\000.init", 2, mod_name);
 		{ /* if guard */ 
-		Option_v__table__Fn _t1116;
-		if (_t1116 = v__table__Table_find_fn(g->table, init_fn_name), _t1116.ok) {
-			Option_v__table__Fn initfn = _t1116;
+		Option_v__table__Fn _t1114;
+		if (_t1114 = v__table__Table_find_fn(g->table, init_fn_name), _t1114.ok) {
+			Option_v__table__Fn initfn = _t1114;
 			if (/*opt*/(*(v__table__Fn*)initfn.data).return_type == _const_v__table__void_type && /*opt*/(*(v__table__Fn*)initfn.data).params.len == 0) {
 				string mod_c_name = v__util__no_dots(mod_name);
 				string init_fn_c_name = _STR("%.*s\000__init", 2, mod_c_name);
@@ -34628,9 +34622,9 @@ static void v__gen__Gen_write_init_function(v__gen__Gen* g) {
 		v__gen__Gen_writeln(g, tos_lit("void _vcleanup() {"));
 		array_string reversed_table_modules = array_reverse(g->table->modules);
 		// FOR IN array
-		array _t1117 = reversed_table_modules;
-		for (int _t1118 = 0; _t1118 < _t1117.len; ++_t1118) {
-			string mod_name = ((string*)_t1117.data)[_t1118];
+		array _t1115 = reversed_table_modules;
+		for (int _t1116 = 0; _t1116 < _t1115.len; ++_t1116) {
+			string mod_name = ((string*)_t1115.data)[_t1116];
 			v__gen__Gen_writeln(g, _STR("\t// Cleanups for module %.*s\000 :", 2, mod_name));
 			v__gen__Gen_writeln(g, strings__Builder_str(&(*(strings__Builder*)map_get(g->cleanups, mod_name, &(strings__Builder[]){ {0} }))));
 		}
@@ -34644,9 +34638,9 @@ static void v__gen__Gen_write_init_function(v__gen__Gen* g) {
 static void v__gen__Gen_write_builtin_types(v__gen__Gen* g) {
 	array_v__table__TypeSymbol builtin_types = __new_array_with_default(0, 0, sizeof(v__table__TypeSymbol), 0);
 	// FOR IN array
-	array _t1119 = _const_v__gen__builtins;
-	for (int _t1120 = 0; _t1120 < _t1119.len; ++_t1120) {
-		string builtin_name = ((string*)_t1119.data)[_t1120];
+	array _t1117 = _const_v__gen__builtins;
+	for (int _t1118 = 0; _t1118 < _t1117.len; ++_t1118) {
+		string builtin_name = ((string*)_t1117.data)[_t1118];
 		array_push(&builtin_types, _MOV((v__table__TypeSymbol[]){ (*(v__table__TypeSymbol*)array_get(g->table->types, (*(int*)map_get_and_set(&g->table->type_idxs, builtin_name, &(int[]){ 0 })))) }));
 	}
 	v__gen__Gen_write_types(g, builtin_types);
@@ -34655,9 +34649,9 @@ static void v__gen__Gen_write_builtin_types(v__gen__Gen* g) {
 static void v__gen__Gen_write_sorted_types(v__gen__Gen* g) {
 	array_v__table__TypeSymbol types = __new_array_with_default(0, 0, sizeof(v__table__TypeSymbol), 0);
 	// FOR IN array
-	array _t1122 = g->table->types;
-	for (int _t1123 = 0; _t1123 < _t1122.len; ++_t1123) {
-		v__table__TypeSymbol typ = ((v__table__TypeSymbol*)_t1122.data)[_t1123];
+	array _t1120 = g->table->types;
+	for (int _t1121 = 0; _t1121 < _t1120.len; ++_t1121) {
+		v__table__TypeSymbol typ = ((v__table__TypeSymbol*)_t1120.data)[_t1121];
 		if (!_IN(string, typ.name, _const_v__gen__builtins)) {
 			array_push(&types, _MOV((v__table__TypeSymbol[]){ typ }));
 		}
@@ -34670,16 +34664,16 @@ static void v__gen__Gen_write_sorted_types(v__gen__Gen* g) {
 
 static void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__TypeSymbol types) {
 	// FOR IN array
-	array _t1125 = types;
-	for (int _t1126 = 0; _t1126 < _t1125.len; ++_t1126) {
-		v__table__TypeSymbol typ = ((v__table__TypeSymbol*)_t1125.data)[_t1126];
+	array _t1123 = types;
+	for (int _t1124 = 0; _t1124 < _t1123.len; ++_t1124) {
+		v__table__TypeSymbol typ = ((v__table__TypeSymbol*)_t1123.data)[_t1124];
 		if (string_starts_with(typ.name, tos_lit("C."))) {
 			continue;
 		}
 		string name = v__util__no_dots(typ.name);
-		v__table__TypeInfo _t1127 = typ.info;
-		if (_t1127.typ == 150 /* v.table.Struct */) {
-			v__table__Struct* it = (v__table__Struct*)_t1127._object; // ST it
+		v__table__TypeInfo _t1125 = typ.info;
+		if (_t1125.typ == 150 /* v.table.Struct */) {
+			v__table__Struct* it = (v__table__Struct*)_t1125._object; // ST it
 			v__table__Struct* info = it;
 			if (info->generic_types.len > 0) {
 				continue;
@@ -34696,15 +34690,15 @@ static void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__TypeSymbol t
 			}
 			if (info->fields.len > 0) {
 				// FOR IN array
-				array _t1128 = info->fields;
-				for (int _t1129 = 0; _t1129 < _t1128.len; ++_t1129) {
-					v__table__Field field = ((v__table__Field*)_t1128.data)[_t1129];
+				array _t1126 = info->fields;
+				for (int _t1127 = 0; _t1127 < _t1126.len; ++_t1127) {
+					v__table__Field field = ((v__table__Field*)_t1126.data)[_t1127];
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_117845 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_117845.arg0;
-						string base = mr_117845.arg1;
+						multi_return_string_string mr_117822 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_117822.arg0;
+						string base = mr_117822.arg1;
 						array_push(&g->optionals, _MOV((string[]){ styp }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -34718,18 +34712,18 @@ static void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__TypeSymbol t
 				strings__Builder_writeln(&g->type_definitions, tos_lit("EMPTY_STRUCT_DECLARATION;"));
 			}
 			strings__Builder_writeln(&g->type_definitions, tos_lit("};\n"));
-		} else if (_t1127.typ == 324 /* v.table.Alias */) {
-			v__table__Alias* it = (v__table__Alias*)_t1127._object; // ST it
+		} else if (_t1125.typ == 324 /* v.table.Alias */) {
+			v__table__Alias* it = (v__table__Alias*)_t1125._object; // ST it
 			v__table__Alias* info = it;
-		} else if (_t1127.typ == 333 /* v.table.SumType */) {
-			v__table__SumType* it = (v__table__SumType*)_t1127._object; // ST it
+		} else if (_t1125.typ == 333 /* v.table.SumType */) {
+			v__table__SumType* it = (v__table__SumType*)_t1125._object; // ST it
 			v__table__SumType* info = it;
 			strings__Builder_writeln(&g->type_definitions, tos_lit(""));
 			strings__Builder_writeln(&g->type_definitions, _STR("// Sum type %.*s\000 = ", 2, name));
 			// FOR IN array
-			array _t1131 = it->variants;
-			for (int _t1132 = 0; _t1132 < _t1131.len; ++_t1132) {
-				v__table__Type sv = ((v__table__Type*)_t1131.data)[_t1132];
+			array _t1129 = it->variants;
+			for (int _t1130 = 0; _t1130 < _t1129.len; ++_t1130) {
+				v__table__Type sv = ((v__table__Type*)_t1129.data)[_t1130];
 				strings__Builder_writeln(&g->type_definitions, _STR("//          | %4"PRId32"\000 = %*.*s", 2, sv, v__gen__Gen_typ(g, sv), -20));
 			}
 			strings__Builder_writeln(&g->type_definitions, tos_lit("typedef struct {"));
@@ -34737,8 +34731,8 @@ static void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__TypeSymbol t
 			strings__Builder_writeln(&g->type_definitions, tos_lit("    int typ;"));
 			strings__Builder_writeln(&g->type_definitions, _STR("} %.*s\000;", 2, name));
 			strings__Builder_writeln(&g->type_definitions, tos_lit(""));
-		} else if (_t1127.typ == 326 /* v.table.ArrayFixed */) {
-			v__table__ArrayFixed* it = (v__table__ArrayFixed*)_t1127._object; // ST it
+		} else if (_t1125.typ == 326 /* v.table.ArrayFixed */) {
+			v__table__ArrayFixed* it = (v__table__ArrayFixed*)_t1125._object; // ST it
 			v__table__ArrayFixed* info = it;
 			string styp = v__util__no_dots(typ.name);
 			string fixed = string_substr(styp, 12, styp.len);
@@ -34757,34 +34751,34 @@ static array_v__table__TypeSymbol v__gen__Gen_sort_structs(v__gen__Gen* g, array
 	v__depgraph__DepGraph* dep_graph = v__depgraph__new_dep_graph();
 	array_string type_names = __new_array_with_default(0, 0, sizeof(string), 0);
 	// FOR IN array
-	array _t1133 = typesa;
-	for (int _t1134 = 0; _t1134 < _t1133.len; ++_t1134) {
-		v__table__TypeSymbol typ = ((v__table__TypeSymbol*)_t1133.data)[_t1134];
+	array _t1131 = typesa;
+	for (int _t1132 = 0; _t1132 < _t1131.len; ++_t1132) {
+		v__table__TypeSymbol typ = ((v__table__TypeSymbol*)_t1131.data)[_t1132];
 		array_push(&type_names, _MOV((string[]){ typ.name }));
 	}
 	// FOR IN array
-	array _t1136 = typesa;
-	for (int _t1137 = 0; _t1137 < _t1136.len; ++_t1137) {
-		v__table__TypeSymbol t = ((v__table__TypeSymbol*)_t1136.data)[_t1137];
+	array _t1134 = typesa;
+	for (int _t1135 = 0; _t1135 < _t1134.len; ++_t1135) {
+		v__table__TypeSymbol t = ((v__table__TypeSymbol*)_t1134.data)[_t1135];
 		if (t.kind == v__table__Kind_interface_) {
 			v__depgraph__DepGraph_add(dep_graph, t.name, __new_array_with_default(0, 0, sizeof(string), 0));
 			continue;
 		}
 		array_string field_deps = __new_array_with_default(0, 0, sizeof(string), 0);
-		v__table__TypeInfo _t1138 = t.info;
-		if (_t1138.typ == 326 /* v.table.ArrayFixed */) {
-			v__table__ArrayFixed* it = (v__table__ArrayFixed*)_t1138._object; // ST it
+		v__table__TypeInfo _t1136 = t.info;
+		if (_t1136.typ == 326 /* v.table.ArrayFixed */) {
+			v__table__ArrayFixed* it = (v__table__ArrayFixed*)_t1136._object; // ST it
 			string dep = v__table__Table_get_type_symbol(g->table, it->elem_type)->name;
 			if (_IN(string, dep, type_names)) {
 				array_push(&field_deps, _MOV((string[]){ dep }));
 			}
-		} else if (_t1138.typ == 150 /* v.table.Struct */) {
-			v__table__Struct* it = (v__table__Struct*)_t1138._object; // ST it
+		} else if (_t1136.typ == 150 /* v.table.Struct */) {
+			v__table__Struct* it = (v__table__Struct*)_t1136._object; // ST it
 			v__table__Struct* info = /* as */ (v__table__Struct*)__as_cast((t.info)._object, (t.info).typ, /*expected:*/150);
 			// FOR IN array
-			array _t1140 = info->fields;
-			for (int _t1141 = 0; _t1141 < _t1140.len; ++_t1141) {
-				v__table__Field field = ((v__table__Field*)_t1140.data)[_t1141];
+			array _t1138 = info->fields;
+			for (int _t1139 = 0; _t1139 < _t1138.len; ++_t1139) {
+				v__table__Field field = ((v__table__Field*)_t1138.data)[_t1139];
 				string dep = v__table__Table_get_type_symbol(g->table, field.typ)->name;
 				if (!_IN(string, dep, type_names) || _IN(string, dep, field_deps) || v__table__Type_is_ptr(field.typ)) {
 					continue;
@@ -34801,9 +34795,9 @@ static array_v__table__TypeSymbol v__gen__Gen_sort_structs(v__gen__Gen* g, array
 	}
 	array_v__table__TypeSymbol types_sorted = __new_array_with_default(0, 0, sizeof(v__table__TypeSymbol), 0);
 	// FOR IN array
-	array _t1143 = dep_graph_sorted->nodes;
-	for (int _t1144 = 0; _t1144 < _t1143.len; ++_t1144) {
-		v__depgraph__DepGraphNode node = ((v__depgraph__DepGraphNode*)_t1143.data)[_t1144];
+	array _t1141 = dep_graph_sorted->nodes;
+	for (int _t1142 = 0; _t1142 < _t1141.len; ++_t1142) {
+		v__depgraph__DepGraphNode node = ((v__depgraph__DepGraphNode*)_t1141.data)[_t1142];
 		array_push(&types_sorted, _MOV((v__table__TypeSymbol[]){ (*(v__table__TypeSymbol*)array_get(g->table->types, (*(int*)map_get_and_set(&g->table->type_idxs, node.name, &(int[]){ 0 })))) }));
 	}
 	return types_sorted;
@@ -34814,9 +34808,9 @@ static Option_bool v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr e
 	if ((sym->info).typ == 324 /* v.table.Alias */) {
 		sym = v__table__Table_get_type_symbol(g->table, (/* as */ (v__table__Alias*)__as_cast((sym->info)._object, (sym->info).typ, /*expected:*/324))->parent_type);
 	}
-	multi_return_bool_bool_int mr_121286 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_121286.arg0;
-	bool str_method_expects_ptr = mr_121286.arg1;
+	multi_return_bool_bool_int mr_121263 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_121263.arg0;
+	bool str_method_expects_ptr = mr_121263.arg1;
 	if (v__table__Type_has_flag(etype, v__table__TypeFlag_variadic)) {
 		string str_fn_name = v__gen__Gen_gen_str_for_type(g, etype);
 		v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -34824,12 +34818,12 @@ static Option_bool v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr e
 		v__gen__Gen_write(g, tos_lit(")"));
 	} else if (sym->kind == v__table__Kind_alias && (/* as */ (v__table__Alias*)__as_cast((sym->info)._object, (sym->info).typ, /*expected:*/324))->parent_type == _const_v__table__string_type) {
 		v__gen__Gen_expr(g, expr);
-		Option_bool _t1146;
-		opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t1146), sizeof(bool));
-		return _t1146;
+		Option_bool _t1144;
+		opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t1144), sizeof(bool));
+		return _t1144;
 	} else if (sym->kind == v__table__Kind_enum_) {
-		v__ast__Expr _t1147 = expr;
-				bool is_var = (_t1147.typ == 230 /* v.ast.SelectorExpr */) ? (true) : (_t1147.typ == 213 /* v.ast.Ident */) ? (true) : (false);
+		v__ast__Expr _t1145 = expr;
+				bool is_var = (_t1145.typ == 230 /* v.ast.SelectorExpr */) ? (true) : (_t1145.typ == 213 /* v.ast.Ident */) ? (true) : (false);
 		if (is_var) {
 			string str_fn_name = v__gen__Gen_gen_str_for_type(g, etype);
 			v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -34857,8 +34851,8 @@ static Option_bool v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr e
 			v__gen__Gen_write(g, _STR("%.*s\000( &", 2, str_fn_name));
 		}
 		if ((expr).typ == 200 /* v.ast.ArrayInit */) {
-			v__ast__ArrayInit* _sc_tmp_122517 = (v__ast__ArrayInit*)expr._object;
-			v__ast__ArrayInit* expr = _sc_tmp_122517;
+			v__ast__ArrayInit* _sc_tmp_122494 = (v__ast__ArrayInit*)expr._object;
+			v__ast__ArrayInit* expr = _sc_tmp_122494;
 			if (expr->is_fixed) {
 				string s = v__gen__Gen_typ(g, expr->typ);
 				v__gen__Gen_write(g, _STR("(%.*s\000)", 2, s));
@@ -34884,12 +34878,12 @@ static Option_bool v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr e
 		v__gen__Gen_expr(g, expr);
 		v__gen__Gen_write(g, tos_lit(")"));
 	} else {
-		Option _t1148 = v_error(tos_lit("cannot convert to string"));
-		return *(Option_bool*)&_t1148;
+		Option _t1146 = v_error(tos_lit("cannot convert to string"));
+		return *(Option_bool*)&_t1146;
 	}
-	Option_bool _t1149;
-	opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t1149), sizeof(bool));
-	return _t1149;
+	Option_bool _t1147;
+	opt_ok2(&(bool[]) { true }, (OptionBase*)(&_t1147), sizeof(bool));
+	return _t1147;
 }
 
 static void v__gen__Gen_gen_array_map(v__gen__Gen* g, v__ast__CallExpr node) {
@@ -34916,13 +34910,13 @@ static void v__gen__Gen_gen_array_map(v__gen__Gen* g, v__ast__CallExpr node) {
 	v__gen__Gen_expr(g, node.left);
 	v__gen__Gen_writeln(g, _STR(".data)[%.*s\000];", 2, i));
 	v__gen__Gen_write(g, _STR("\t%.*s\000 ti = ", 2, ret_elem_type));
-	v__ast__Expr _t1150 = (*(v__ast__CallArg*)array_get(node.args, 0)).expr;
-	if (_t1150.typ == 199 /* v.ast.AnonFn */) {
-		v__ast__AnonFn* it = (v__ast__AnonFn*)_t1150._object; // ST it
+	v__ast__Expr _t1148 = (*(v__ast__CallArg*)array_get(node.args, 0)).expr;
+	if (_t1148.typ == 199 /* v.ast.AnonFn */) {
+		v__ast__AnonFn* it = (v__ast__AnonFn*)_t1148._object; // ST it
 		v__gen__Gen_gen_anon_fn_decl(g, *it);
 		v__gen__Gen_write(g, _STR("%.*s\000(it)", 2, it->decl.name));
-	} else if (_t1150.typ == 213 /* v.ast.Ident */) {
-		v__ast__Ident* it = (v__ast__Ident*)_t1150._object; // ST it
+	} else if (_t1148.typ == 213 /* v.ast.Ident */) {
+		v__ast__Ident* it = (v__ast__Ident*)_t1148._object; // ST it
 		if (it->kind == v__ast__IdentKind_function) {
 			v__gen__Gen_write(g, _STR("%.*s\000(it)", 2, v__gen__c_name(it->name)));
 		} else if (it->kind == v__ast__IdentKind_variable) {
@@ -34961,12 +34955,12 @@ static void v__gen__Gen_gen_array_sort(v__gen__Gen* g, v__ast__CallExpr node) {
 		is_reverse = infix_expr->op == v__token__Kind_gt;
 	}
 	string compare_fn = tos_lit("");
-	v__table__Type _t1151 = typ;
-	if (_t1151 == _const_v__table__int_type) {
+	v__table__Type _t1149 = typ;
+	if (_t1149 == _const_v__table__int_type) {
 		compare_fn = tos_lit("compare_ints");
-	} else if (_t1151 == _const_v__table__string_type) {
+	} else if (_t1149 == _const_v__table__string_type) {
 		compare_fn = tos_lit("compare_strings");
-	} else if (_t1151 == _const_v__table__f64_type) {
+	} else if (_t1149 == _const_v__table__f64_type) {
 		compare_fn = tos_lit("compare_floats");
 	} else {
 		if (node.args.len == 0) {
@@ -34977,11 +34971,11 @@ static void v__gen__Gen_gen_array_sort(v__gen__Gen* g, v__ast__CallExpr node) {
 			compare_fn = /*f*/string_add(compare_fn, tos_lit("_reverse"));
 		}
 		{ /* if guard */ 
-		Option_v__table__Fn _t1152;
-		if (_t1152 = v__table__Table_find_fn(g->table, compare_fn), _t1152.ok) {
+		Option_v__table__Fn _t1150;
+		if (_t1150 = v__table__Table_find_fn(g->table, compare_fn), _t1150.ok) {
 		} else {
-			string err = _t1152.v_error;
-			int errcode = _t1152.ecode;
+			string err = _t1150.v_error;
+			int errcode = _t1150.ecode;
 			v__table__Table_register_fn(g->table, (v__table__Fn){.params = __new_array(0, 1, sizeof(v__table__Param)),.return_type = _const_v__table__int_type,.return_type_source_name = (string){.str=(byteptr)""},.is_variadic = 0,.language = 0,.is_generic = 0,.is_pub = 0,.is_deprecated = 0,.is_unsafe = 0,.is_placeholder = 0,.mod = (string){.str=(byteptr)""},.ctdefine = (string){.str=(byteptr)""},.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.name = compare_fn,});
 			v__ast__InfixExpr* infix_expr = /* as */ (v__ast__InfixExpr*)__as_cast(((*(v__ast__CallArg*)array_get(node.args, 0)).expr)._object, ((*(v__ast__CallArg*)array_get(node.args, 0)).expr).typ, /*expected:*/217);
 			string styp = v__gen__Gen_typ(g, typ);
@@ -35046,13 +35040,13 @@ static void v__gen__Gen_gen_array_filter(v__gen__Gen* g, v__ast__CallExpr node) 
 	v__gen__Gen_expr(g, node.left);
 	v__gen__Gen_writeln(g, tos_lit(".data)[i];"));
 	v__gen__Gen_write(g, tos_lit("if ("));
-	v__ast__Expr _t1153 = (*(v__ast__CallArg*)array_get(node.args, 0)).expr;
-	if (_t1153.typ == 199 /* v.ast.AnonFn */) {
-		v__ast__AnonFn* it = (v__ast__AnonFn*)_t1153._object; // ST it
+	v__ast__Expr _t1151 = (*(v__ast__CallArg*)array_get(node.args, 0)).expr;
+	if (_t1151.typ == 199 /* v.ast.AnonFn */) {
+		v__ast__AnonFn* it = (v__ast__AnonFn*)_t1151._object; // ST it
 		v__gen__Gen_gen_anon_fn_decl(g, *it);
 		v__gen__Gen_write(g, _STR("%.*s\000(it)", 2, it->decl.name));
-	} else if (_t1153.typ == 213 /* v.ast.Ident */) {
-		v__ast__Ident* it = (v__ast__Ident*)_t1153._object; // ST it
+	} else if (_t1151.typ == 213 /* v.ast.Ident */) {
+		v__ast__Ident* it = (v__ast__Ident*)_t1151._object; // ST it
 		if (it->kind == v__ast__IdentKind_function) {
 			v__gen__Gen_write(g, _STR("%.*s\000(it)", 2, v__gen__c_name(it->name)));
 		} else if (it->kind == v__ast__IdentKind_variable) {
@@ -35174,9 +35168,9 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExpr
 		if (stmts.len > 0 && ((*(v__ast__Stmt*)array_get(stmts, or_block.stmts.len - 1))).typ == 248 /* v.ast.ExprStmt */ && (/* as */ (v__ast__ExprStmt*)__as_cast(((*(v__ast__Stmt*)array_get(stmts, stmts.len - 1)))._object, ((*(v__ast__Stmt*)array_get(stmts, stmts.len - 1))).typ, /*expected:*/248))->typ != _const_v__table__void_type) {
 			g->indent++;
 			// FOR IN array
-			array _t1154 = stmts;
-			for (int i = 0; i < _t1154.len; ++i) {
-				v__ast__Stmt stmt = ((v__ast__Stmt*)_t1154.data)[i];
+			array _t1152 = stmts;
+			for (int i = 0; i < _t1152.len; ++i) {
+				v__ast__Stmt stmt = ((v__ast__Stmt*)_t1152.data)[i];
 				if (i == stmts.len - 1) {
 					v__ast__ExprStmt* expr_stmt = /* as */ (v__ast__ExprStmt*)__as_cast((stmt)._object, (stmt).typ, /*expected:*/248);
 					array_push(&g->stmt_path_pos, _MOV((int[]){ g->out.len }));
@@ -35204,11 +35198,11 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExpr
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->fn_decl->name, tos_lit("main.main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_133072 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_133072.arg0;
-				string pafile = mr_133072.arg1;
-				string pamod = mr_133072.arg2;
-				string pafn = mr_133072.arg3;
+				multi_return_int_string_string_string mr_133049 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_133049.arg0;
+				string pafile = mr_133049.arg1;
+				string pamod = mr_133049.arg2;
+				string pafn = mr_133049.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(%.*s\000.v_error);", 2, cvar_name));
@@ -35226,9 +35220,9 @@ g->inside_or_block = false;
 }
 
 static string v__gen__Gen_type_of_call_expr(v__gen__Gen* g, v__ast__Expr node) {
-	v__ast__Expr _t1156 = node;
-	if (_t1156.typ == 204 /* v.ast.CallExpr */) {
-		v__ast__CallExpr* it = (v__ast__CallExpr*)_t1156._object; // ST it
+	v__ast__Expr _t1154 = node;
+	if (_t1154.typ == 204 /* v.ast.CallExpr */) {
+		v__ast__CallExpr* it = (v__ast__CallExpr*)_t1154._object; // ST it
 		v__ast__CallExpr* node = it;
 		return v__gen__Gen_typ(g, node->return_type);
 	} else {
@@ -35242,9 +35236,9 @@ static void v__gen__Gen_in_optimization(v__gen__Gen* g, v__ast__Expr left, v__as
 	v__table__TypeSymbol* elem_sym = v__table__Table_get_type_symbol(g->table, right.elem_type);
 	bool is_array = elem_sym->kind == v__table__Kind_array;
 	// FOR IN array
-	array _t1157 = right.exprs;
-	for (int i = 0; i < _t1157.len; ++i) {
-		v__ast__Expr array_expr = ((v__ast__Expr*)_t1157.data)[i];
+	array _t1155 = right.exprs;
+	for (int i = 0; i < _t1155.len; ++i) {
+		v__ast__Expr array_expr = ((v__ast__Expr*)_t1155.data)[i];
 		if (is_str) {
 			v__gen__Gen_write(g, tos_lit("string_eq("));
 		} else if (is_array) {
@@ -35268,83 +35262,83 @@ static void v__gen__Gen_in_optimization(v__gen__Gen* g, v__ast__Expr left, v__as
 }
 
 static string v__gen__op_to_fn_name(string name) {
-	string _t1158 = name;
-		return (string_eq(_t1158, tos_lit("+"))) ? (tos_lit("_op_plus")) : (string_eq(_t1158, tos_lit("-"))) ? (tos_lit("_op_minus")) : (string_eq(_t1158, tos_lit("*"))) ? (tos_lit("_op_mul")) : (string_eq(_t1158, tos_lit("/"))) ? (tos_lit("_op_div")) : (string_eq(_t1158, tos_lit("%"))) ? (tos_lit("_op_mod")) : (_STR("bad op %.*s", 1, name));
+	string _t1156 = name;
+		return (string_eq(_t1156, tos_lit("+"))) ? (tos_lit("_op_plus")) : (string_eq(_t1156, tos_lit("-"))) ? (tos_lit("_op_minus")) : (string_eq(_t1156, tos_lit("*"))) ? (tos_lit("_op_mul")) : (string_eq(_t1156, tos_lit("/"))) ? (tos_lit("_op_div")) : (string_eq(_t1156, tos_lit("%"))) ? (tos_lit("_op_mod")) : (_STR("bad op %.*s", 1, name));
 }
 
 static string v__gen__Gen_comp_if_to_ifdef(v__gen__Gen* g, string name, bool is_comptime_optional) {
-	string _t1159 = name;
-	if (string_eq(_t1159, tos_lit("windows"))) {
+	string _t1157 = name;
+	if (string_eq(_t1157, tos_lit("windows"))) {
 		return tos_lit("_WIN32");
-	} else if (string_eq(_t1159, tos_lit("ios"))) {
+	} else if (string_eq(_t1157, tos_lit("ios"))) {
 		return tos_lit("__TARGET_IOS__");
-	} else if (string_eq(_t1159, tos_lit("macos"))) {
+	} else if (string_eq(_t1157, tos_lit("macos"))) {
 		return tos_lit("__APPLE__");
-	} else if (string_eq(_t1159, tos_lit("mach"))) {
+	} else if (string_eq(_t1157, tos_lit("mach"))) {
 		return tos_lit("__MACH__");
-	} else if (string_eq(_t1159, tos_lit("darwin"))) {
+	} else if (string_eq(_t1157, tos_lit("darwin"))) {
 		return tos_lit("__DARWIN__");
-	} else if (string_eq(_t1159, tos_lit("hpux"))) {
+	} else if (string_eq(_t1157, tos_lit("hpux"))) {
 		return tos_lit("__HPUX__");
-	} else if (string_eq(_t1159, tos_lit("gnu"))) {
+	} else if (string_eq(_t1157, tos_lit("gnu"))) {
 		return tos_lit("__GNU__");
-	} else if (string_eq(_t1159, tos_lit("qnx"))) {
+	} else if (string_eq(_t1157, tos_lit("qnx"))) {
 		return tos_lit("__QNX__");
-	} else if (string_eq(_t1159, tos_lit("linux"))) {
+	} else if (string_eq(_t1157, tos_lit("linux"))) {
 		return tos_lit("__linux__");
-	} else if (string_eq(_t1159, tos_lit("freebsd"))) {
+	} else if (string_eq(_t1157, tos_lit("freebsd"))) {
 		return tos_lit("__FreeBSD__");
-	} else if (string_eq(_t1159, tos_lit("openbsd"))) {
+	} else if (string_eq(_t1157, tos_lit("openbsd"))) {
 		return tos_lit("__OpenBSD__");
-	} else if (string_eq(_t1159, tos_lit("netbsd"))) {
+	} else if (string_eq(_t1157, tos_lit("netbsd"))) {
 		return tos_lit("__NetBSD__");
-	} else if (string_eq(_t1159, tos_lit("bsd"))) {
+	} else if (string_eq(_t1157, tos_lit("bsd"))) {
 		return tos_lit("__BSD__");
-	} else if (string_eq(_t1159, tos_lit("dragonfly"))) {
+	} else if (string_eq(_t1157, tos_lit("dragonfly"))) {
 		return tos_lit("__DragonFly__");
-	} else if (string_eq(_t1159, tos_lit("android"))) {
+	} else if (string_eq(_t1157, tos_lit("android"))) {
 		return tos_lit("__ANDROID__");
-	} else if (string_eq(_t1159, tos_lit("solaris"))) {
+	} else if (string_eq(_t1157, tos_lit("solaris"))) {
 		return tos_lit("__sun");
-	} else if (string_eq(_t1159, tos_lit("haiku"))) {
+	} else if (string_eq(_t1157, tos_lit("haiku"))) {
 		return tos_lit("__haiku__");
-	} else if (string_eq(_t1159, tos_lit("linux_or_macos"))) {
+	} else if (string_eq(_t1157, tos_lit("linux_or_macos"))) {
 		return tos_lit("");
-	} else if (string_eq(_t1159, tos_lit("js"))) {
+	} else if (string_eq(_t1157, tos_lit("js"))) {
 		return tos_lit("_VJS");
-	} else if (string_eq(_t1159, tos_lit("gcc"))) {
+	} else if (string_eq(_t1157, tos_lit("gcc"))) {
 		return tos_lit("__V_GCC__");
-	} else if (string_eq(_t1159, tos_lit("tinyc"))) {
+	} else if (string_eq(_t1157, tos_lit("tinyc"))) {
 		return tos_lit("__TINYC__");
-	} else if (string_eq(_t1159, tos_lit("clang"))) {
+	} else if (string_eq(_t1157, tos_lit("clang"))) {
 		return tos_lit("__clang__");
-	} else if (string_eq(_t1159, tos_lit("mingw"))) {
+	} else if (string_eq(_t1157, tos_lit("mingw"))) {
 		return tos_lit("__MINGW32__");
-	} else if (string_eq(_t1159, tos_lit("msvc"))) {
+	} else if (string_eq(_t1157, tos_lit("msvc"))) {
 		return tos_lit("_MSC_VER");
-	} else if (string_eq(_t1159, tos_lit("cplusplus"))) {
+	} else if (string_eq(_t1157, tos_lit("cplusplus"))) {
 		return tos_lit("__cplusplus");
-	} else if (string_eq(_t1159, tos_lit("debug"))) {
+	} else if (string_eq(_t1157, tos_lit("debug"))) {
 		return tos_lit("_VDEBUG");
-	} else if (string_eq(_t1159, tos_lit("test"))) {
+	} else if (string_eq(_t1157, tos_lit("test"))) {
 		return tos_lit("_VTEST");
-	} else if (string_eq(_t1159, tos_lit("glibc"))) {
+	} else if (string_eq(_t1157, tos_lit("glibc"))) {
 		return tos_lit("__GLIBC__");
-	} else if (string_eq(_t1159, tos_lit("prealloc"))) {
+	} else if (string_eq(_t1157, tos_lit("prealloc"))) {
 		return tos_lit("_VPREALLOC");
-	} else if (string_eq(_t1159, tos_lit("no_bounds_checking"))) {
+	} else if (string_eq(_t1157, tos_lit("no_bounds_checking"))) {
 		return tos_lit("CUSTOM_DEFINE_no_bounds_checking");
-	} else if (string_eq(_t1159, tos_lit("amd64"))) {
+	} else if (string_eq(_t1157, tos_lit("amd64"))) {
 		return tos_lit("__V_amd64");
-	} else if (string_eq(_t1159, tos_lit("aarch64"))) {
+	} else if (string_eq(_t1157, tos_lit("aarch64"))) {
 		return tos_lit("__V_aarch64");
-	} else if (string_eq(_t1159, tos_lit("x64"))) {
+	} else if (string_eq(_t1157, tos_lit("x64"))) {
 		return tos_lit("TARGET_IS_64BIT");
-	} else if (string_eq(_t1159, tos_lit("x32"))) {
+	} else if (string_eq(_t1157, tos_lit("x32"))) {
 		return tos_lit("TARGET_IS_32BIT");
-	} else if (string_eq(_t1159, tos_lit("little_endian"))) {
+	} else if (string_eq(_t1157, tos_lit("little_endian"))) {
 		return tos_lit("TARGET_ORDER_IS_LITTLE");
-	} else if (string_eq(_t1159, tos_lit("big_endian"))) {
+	} else if (string_eq(_t1157, tos_lit("big_endian"))) {
 		return tos_lit("TARGET_ORDER_IS_BIG");
 	} else {
 		if (is_comptime_optional || (g->pref->compile_defines_all.len > 0 && _IN(string, name, g->pref->compile_defines_all))) {
@@ -35388,15 +35382,15 @@ static string v__gen__Gen_type_default(v__gen__Gen* g, v__table__Type typ) {
 	if (idx >= 1 && idx <= 17) {
 		return tos_lit("0");
 	}
-	string _t1160 = sym->name;
-	if (string_eq(_t1160, tos_lit("string"))) {
+	string _t1158 = sym->name;
+	if (string_eq(_t1158, tos_lit("string"))) {
 		return tos_lit("(string){.str=(byteptr)\"\"}");
-	} else if (string_eq(_t1160, tos_lit("rune"))) {
+	} else if (string_eq(_t1158, tos_lit("rune"))) {
 		return tos_lit("0");
 	} else {
 	};
-	v__table__Kind _t1161 = sym->kind;
-		return (_t1161 == v__table__Kind_interface_) ? (tos_lit("{0}")) : (_t1161 == v__table__Kind_sum_type) ? (tos_lit("{0}")) : (_t1161 == v__table__Kind_array_fixed) ? (tos_lit("{0}")) : (tos_lit("0"));
+	v__table__Kind _t1159 = sym->kind;
+		return (_t1159 == v__table__Kind_interface_) ? (tos_lit("{0}")) : (_t1159 == v__table__Kind_sum_type) ? (tos_lit("{0}")) : (_t1159 == v__table__Kind_array_fixed) ? (tos_lit("{0}")) : (tos_lit("0"));
 }
 
 static array_string v__gen__Gen_get_all_test_function_names(v__gen__Gen* g) {
@@ -35404,11 +35398,11 @@ static array_string v__gen__Gen_get_all_test_function_names(v__gen__Gen* g) {
 	string tsuite_begin = tos_lit("");
 	string tsuite_end = tos_lit("");
 	// FOR IN map
-	map_string_v__table__Fn _t1165 = g->table->fns;
-	array_string keys__t1162 = map_keys(&_t1165);
-	for (int _t1163 = 0; _t1163 < keys__t1162.len; ++_t1163) {
-		string _t1164 = /*kkkk*/ string_clone( ((string*)keys__t1162.data)[_t1163] );
-		v__table__Fn f = (*(v__table__Fn*)map_get(_t1165, _t1164, &(v__table__Fn[]){ {0} }));
+	map_string_v__table__Fn _t1163 = g->table->fns;
+	array_string keys__t1160 = map_keys(&_t1163);
+	for (int _t1161 = 0; _t1161 < keys__t1160.len; ++_t1161) {
+		string _t1162 = /*kkkk*/ string_clone( ((string*)keys__t1160.data)[_t1161] );
+		v__table__Fn f = (*(v__table__Fn*)map_get(_t1163, _t1162, &(v__table__Fn[]){ {0} }));
 		if (string_eq(f.name, tos_lit("testsuite_begin"))) {
 			tsuite_begin = f.name;
 			continue;
@@ -35435,21 +35429,21 @@ static array_string v__gen__Gen_get_all_test_function_names(v__gen__Gen* g) {
 		}
 	}
 	/*for in map cleanup*/
-	for (int _t1163 = 0; _t1163 < keys__t1162.len; ++_t1163) { string_free(&((string*)keys__t1162.data)[_t1163]); }
-	array_free(&keys__t1162);
+	for (int _t1161 = 0; _t1161 < keys__t1160.len; ++_t1161) { string_free(&((string*)keys__t1160.data)[_t1161]); }
+	array_free(&keys__t1160);
 	array_string all_tfuncs = __new_array_with_default(0, 0, sizeof(string), 0);
 	if (tsuite_begin.len > 0) {
 		array_push(&all_tfuncs, _MOV((string[]){ tsuite_begin }));
 	}
-	_PUSH_MANY(&all_tfuncs, (tfuncs), _t1169, array_string);
+	_PUSH_MANY(&all_tfuncs, (tfuncs), _t1167, array_string);
 	if (tsuite_end.len > 0) {
 		array_push(&all_tfuncs, _MOV((string[]){ tsuite_end }));
 	}
 	array_string all_tfuncs_c = __new_array_with_default(0, 0, sizeof(string), 0);
 	// FOR IN array
-	array _t1171 = all_tfuncs;
-	for (int _t1172 = 0; _t1172 < _t1171.len; ++_t1172) {
-		string f = ((string*)_t1171.data)[_t1172];
+	array _t1169 = all_tfuncs;
+	for (int _t1170 = 0; _t1170 < _t1169.len; ++_t1170) {
+		string f = ((string*)_t1169.data)[_t1170];
 		array_push(&all_tfuncs_c, _MOV((string[]){ v__util__no_dots(f) }));
 	}
 	return all_tfuncs_c;
@@ -35467,8 +35461,8 @@ static void v__gen__Gen_go_stmt(v__gen__Gen* g, v__ast__GoStmt node) {
 		v__table__TypeSymbol* receiver_sym = v__table__Table_get_type_symbol(g->table, expr->receiver_type);
 		name = string_add(string_add(receiver_sym->name, tos_lit("_")), name);
 	} else if ((expr->left).typ == 199 /* v.ast.AnonFn */) {
-		v__ast__AnonFn* _sc_tmp_139659 = (v__ast__AnonFn*)expr->left._object;
-		v__ast__AnonFn* anon_fn = _sc_tmp_139659;
+		v__ast__AnonFn* _sc_tmp_139636 = (v__ast__AnonFn*)expr->left._object;
+		v__ast__AnonFn* anon_fn = _sc_tmp_139636;
 		v__gen__Gen_gen_anon_fn_decl(g, *anon_fn);
 		v__table__TypeSymbol* fsym = v__table__Table_get_type_symbol(g->table, anon_fn->typ);
 		name = fsym->name;
@@ -35485,9 +35479,9 @@ static void v__gen__Gen_go_stmt(v__gen__Gen* g, v__ast__GoStmt node) {
 		v__gen__Gen_writeln(g, tos_lit(";"));
 	}
 	// FOR IN array
-	array _t1174 = expr->args;
-	for (int i = 0; i < _t1174.len; ++i) {
-		v__ast__CallArg arg = ((v__ast__CallArg*)_t1174.data)[i];
+	array _t1172 = expr->args;
+	for (int i = 0; i < _t1172.len; ++i) {
+		v__ast__CallArg arg = ((v__ast__CallArg*)_t1172.data)[i];
 		v__gen__Gen_write(g, _STR("%.*s\000->arg%"PRId32"\000 = ", 3, arg_tmp_var, i + 1));
 		v__gen__Gen_expr(g, arg.expr);
 		v__gen__Gen_writeln(g, tos_lit(";"));
@@ -35511,9 +35505,9 @@ static void v__gen__Gen_go_stmt(v__gen__Gen* g, v__ast__GoStmt node) {
 		strings__Builder_writeln(&g->type_definitions, tos_lit("EMPTY_STRUCT_DECLARATION;"));
 	} else {
 		// FOR IN array
-		array _t1175 = expr->args;
-		for (int i = 0; i < _t1175.len; ++i) {
-			v__ast__CallArg arg = ((v__ast__CallArg*)_t1175.data)[i];
+		array _t1173 = expr->args;
+		for (int i = 0; i < _t1173.len; ++i) {
+			v__ast__CallArg arg = ((v__ast__CallArg*)_t1173.data)[i];
 			string styp = v__gen__Gen_typ(g, arg.typ);
 			strings__Builder_writeln(&g->type_definitions, _STR("\t%.*s\000 arg%"PRId32"\000;", 3, styp, i + 1));
 		}
@@ -35650,9 +35644,9 @@ static string v__gen__Gen_type_to_fmt(v__gen__Gen* g, v__table__Type typ) {
 static string v__gen__Gen_interface_table(v__gen__Gen* g) {
 	strings__Builder sb = strings__new_builder(100);
 	// FOR IN array
-	array _t1177 = g->table->types;
-	for (int _t1178 = 0; _t1178 < _t1177.len; ++_t1178) {
-		v__table__TypeSymbol ityp = ((v__table__TypeSymbol*)_t1177.data)[_t1178];
+	array _t1175 = g->table->types;
+	for (int _t1176 = 0; _t1176 < _t1175.len; ++_t1176) {
+		v__table__TypeSymbol ityp = ((v__table__TypeSymbol*)_t1175.data)[_t1176];
 		if (ityp.kind != v__table__Kind_interface_) {
 			continue;
 		}
@@ -35669,9 +35663,9 @@ static string v__gen__Gen_interface_table(v__gen__Gen* g) {
 		map_string_string imethods = new_map_1(sizeof(string));
 		map_string_int methodidx = new_map_1(sizeof(int));
 		// FOR IN array
-		array _t1179 = ityp.methods;
-		for (int k = 0; k < _t1179.len; ++k) {
-			v__table__Fn method = ((v__table__Fn*)_t1179.data)[k];
+		array _t1177 = ityp.methods;
+		for (int k = 0; k < _t1177.len; ++k) {
+			v__table__Fn method = ((v__table__Fn*)_t1177.data)[k];
 			map_set(&methodidx, method.name, &(int[]) { k });
 			string typ_name = _STR("_%.*s\000_%.*s\000_fn", 3, interface_name, method.name);
 			string ret_styp = v__gen__Gen_typ(g, method.return_type);
@@ -35693,9 +35687,9 @@ static string v__gen__Gen_interface_table(v__gen__Gen* g) {
 		strings__Builder_writeln(&methods_wrapper, _STR("// Methods wrapper for interface \"%.*s\000\"", 2, interface_name));
 		map_string_bool already_generated_mwrappers = new_map_1(sizeof(bool));
 		// FOR IN array
-		array _t1180 = inter_info->types;
-		for (int i = 0; i < _t1180.len; ++i) {
-			v__table__Type st = ((v__table__Type*)_t1180.data)[i];
+		array _t1178 = inter_info->types;
+		for (int i = 0; i < _t1178.len; ++i) {
+			v__table__Type st = ((v__table__Type*)_t1178.data)[i];
 			string cctype = v__gen__Gen_cc_type(g, st);
 			string interface_index_name = _STR("_%.*s\000_%.*s\000_index", 3, interface_name, cctype);
 			if ((*(bool*)map_get(already_generated_mwrappers, interface_index_name, &(bool[]){ 0 }))) {
@@ -35707,13 +35701,13 @@ static string v__gen__Gen_interface_table(v__gen__Gen* g) {
 			v__table__TypeSymbol* st_sym = v__table__Table_get_type_symbol(g->table, st);
 			v__table__Fn method = (v__table__Fn){.params = __new_array(0, 1, sizeof(v__table__Param)),.return_type = 0,.return_type_source_name = (string){.str=(byteptr)""},.is_variadic = 0,.language = 0,.is_generic = 0,.is_pub = 0,.is_deprecated = 0,.is_unsafe = 0,.is_placeholder = 0,.mod = (string){.str=(byteptr)""},.ctdefine = (string){.str=(byteptr)""},.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.name = (string){.str=(byteptr)""},};
 			// FOR IN array
-			array _t1181 = ityp.methods;
-			for (int _t1182 = 0; _t1182 < _t1181.len; ++_t1182) {
-				v__table__Fn m = ((v__table__Fn*)_t1181.data)[_t1182];
+			array _t1179 = ityp.methods;
+			for (int _t1180 = 0; _t1180 < _t1179.len; ++_t1180) {
+				v__table__Fn m = ((v__table__Fn*)_t1179.data)[_t1180];
 				// FOR IN array
-				array _t1183 = st_sym->methods;
-				for (int _t1184 = 0; _t1184 < _t1183.len; ++_t1184) {
-					v__table__Fn mm = ((v__table__Fn*)_t1183.data)[_t1184];
+				array _t1181 = st_sym->methods;
+				for (int _t1182 = 0; _t1182 < _t1181.len; ++_t1182) {
+					v__table__Fn mm = ((v__table__Fn*)_t1181.data)[_t1182];
 					if (string_eq(mm.name, m.name)) {
 						method = mm;
 						break;
@@ -35784,9 +35778,9 @@ static void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it) {
 		v__gen__Gen_write(g, tos_lit("{"));
 		if (it.has_val) {
 			// FOR IN array
-			array _t1185 = it.exprs;
-			for (int i = 0; i < _t1185.len; ++i) {
-				v__ast__Expr expr = ((v__ast__Expr*)_t1185.data)[i];
+			array _t1183 = it.exprs;
+			for (int i = 0; i < _t1183.len; ++i) {
+				v__ast__Expr expr = ((v__ast__Expr*)_t1183.data)[i];
 				v__gen__Gen_expr(g, expr);
 				if (i != it.exprs.len - 1) {
 					v__gen__Gen_write(g, tos_lit(", "));
@@ -35853,9 +35847,9 @@ static void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it) {
 		v__gen__Gen_write(g, tos_lit("\t\t"));
 	}
 	// FOR IN array
-	array _t1186 = it.exprs;
-	for (int i = 0; i < _t1186.len; ++i) {
-		v__ast__Expr expr = ((v__ast__Expr*)_t1186.data)[i];
+	array _t1184 = it.exprs;
+	for (int i = 0; i < _t1184.len; ++i) {
+		v__ast__Expr expr = ((v__ast__Expr*)_t1184.data)[i];
 		if (it.is_interface) {
 			v__gen__Gen_interface_call(g, (*(v__table__Type*)array_get(it.interface_types, i)), it.interface_type);
 		}
@@ -36011,9 +36005,9 @@ void v__gen__Gen_write_tests_main(v__gen__Gen* g) {
 		v__gen__Gen_writeln(g, _STR("\tmain__BenchedTests bt = main__start_testing(%"PRId32"\000, tos_lit(\"%.*s\000\"));", 3, all_tfuncs.len, g->pref->path));
 	}
 	// FOR IN array
-	array _t1187 = all_tfuncs;
-	for (int _t1188 = 0; _t1188 < _t1187.len; ++_t1188) {
-		string t = ((string*)_t1187.data)[_t1188];
+	array _t1185 = all_tfuncs;
+	for (int _t1186 = 0; _t1186 < _t1185.len; ++_t1186) {
+		string t = ((string*)_t1185.data)[_t1186];
 		v__gen__Gen_writeln(g, tos_lit(""));
 		if (g->pref->is_stats) {
 			v__gen__Gen_writeln(g, _STR("\tmain__BenchedTests_testing_step_start(&bt, tos_lit(\"%.*s\000\"));", 2, t));
@@ -36041,9 +36035,9 @@ void v__gen__Gen_write_tests_main(v__gen__Gen* g) {
 static void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node) {
 	if (node.is_vweb) {
 		// FOR IN array
-		array _t1189 = node.vweb_tmpl.stmts;
-		for (int _t1190 = 0; _t1190 < _t1189.len; ++_t1190) {
-			v__ast__Stmt stmt = ((v__ast__Stmt*)_t1189.data)[_t1190];
+		array _t1187 = node.vweb_tmpl.stmts;
+		for (int _t1188 = 0; _t1188 < _t1187.len; ++_t1188) {
+			v__ast__Stmt stmt = ((v__ast__Stmt*)_t1187.data)[_t1188];
 			if ((stmt).typ == 146 /* v.ast.FnDecl */) {
 				v__ast__FnDecl* _sc_tmp_338 = (v__ast__FnDecl*)stmt._object;
 				v__ast__FnDecl* stmt = _sc_tmp_338;
@@ -36062,13 +36056,13 @@ static void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node)
 	int j = 0;
 	int result_type = v__table__Table_find_type_idx(g->table, tos_lit("vweb.Result"));
 	if (string_eq(node.method_name, tos_lit("method"))) {
-		Option_v__table__Fn _t1191 = v__table__TypeSymbol_find_method(&node.sym, g->comp_for_method);
-		if (!_t1191.ok) {
-			string err = _t1191.v_error;
-			int errcode = _t1191.ecode;
+		Option_v__table__Fn _t1189 = v__table__TypeSymbol_find_method(&node.sym, g->comp_for_method);
+		if (!_t1189.ok) {
+			string err = _t1189.v_error;
+			int errcode = _t1189.ecode;
 			return;
 		}
- 		v__table__Fn m = *(v__table__Fn*) _t1191.data;
+ 		v__table__Fn m = *(v__table__Fn*) _t1189.data;
 		v__gen__Gen_write(g, _STR("%.*s\000_%.*s\000(", 3, v__util__no_dots(node.sym.name), g->comp_for_method));
 		v__gen__Gen_expr(g, node.left);
 		if (m.params.len > 1) {
@@ -36095,9 +36089,9 @@ static void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node)
 		return;
 	}
 	// FOR IN array
-	array _t1192 = node.sym.methods;
-	for (int _t1193 = 0; _t1193 < _t1192.len; ++_t1193) {
-		v__table__Fn method = ((v__table__Fn*)_t1192.data)[_t1193];
+	array _t1190 = node.sym.methods;
+	for (int _t1191 = 0; _t1191 < _t1190.len; ++_t1191) {
+		v__table__Fn method = ((v__table__Fn*)_t1190.data)[_t1191];
 		if (method.return_type != result_type) {
 			continue;
 		}
@@ -36119,9 +36113,9 @@ static void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node)
 static array_string v__gen__cgen_attrs(array_v__table__Attr attrs) {
 	array_string res = __new_array_with_default(0, attrs.len, sizeof(string), 0);
 	// FOR IN array
-	array _t1194 = attrs;
-	for (int _t1195 = 0; _t1195 < _t1194.len; ++_t1195) {
-		v__table__Attr attr = ((v__table__Attr*)_t1194.data)[_t1195];
+	array _t1192 = attrs;
+	for (int _t1193 = 0; _t1193 < _t1192.len; ++_t1193) {
+		v__table__Attr attr = ((v__table__Attr*)_t1192.data)[_t1193];
 		string s = attr.name;
 		if (attr.arg.len > 0) {
 			s = /*f*/string_add(s, _STR(": %.*s", 1, attr.arg));
@@ -36132,12 +36126,12 @@ static array_string v__gen__cgen_attrs(array_v__table__Attr attrs) {
 }
 
 static void v__gen__Gen_comp_if(v__gen__Gen* g, v__ast__IfExpr node) {
-	string _t1197;
-	string line = (node.is_expr ? (		_t1197 = v__gen__Gen_go_before_stmt(g, 0),v__gen__Gen_write(g, (*(string*)array_get(_const_v__gen__tabs, g->indent))),string_trim_space(_t1197)) : (tos_lit("")));
+	string _t1195;
+	string line = (node.is_expr ? (		_t1195 = v__gen__Gen_go_before_stmt(g, 0),v__gen__Gen_write(g, (*(string*)array_get(_const_v__gen__tabs, g->indent))),string_trim_space(_t1195)) : (tos_lit("")));
 	// FOR IN array
-	array _t1198 = node.branches;
-	for (int i = 0; i < _t1198.len; ++i) {
-		v__ast__IfBranch branch = ((v__ast__IfBranch*)_t1198.data)[i];
+	array _t1196 = node.branches;
+	for (int i = 0; i < _t1196.len; ++i) {
+		v__ast__IfBranch branch = ((v__ast__IfBranch*)_t1196.data)[i];
 		int start_pos = g->out.len;
 		if (i == node.branches.len - 1 && node.has_else) {
 			v__gen__Gen_writeln(g, tos_lit("#else"));
@@ -36193,42 +36187,42 @@ static void v__gen__Gen_comp_if(v__gen__Gen* g, v__ast__IfExpr node) {
 }
 
 static void v__gen__Gen_comp_if_expr(v__gen__Gen* g, v__ast__Expr cond) {
-	v__ast__Expr _t1199 = cond;
-	if (_t1199.typ == 225 /* v.ast.ParExpr */) {
-		v__ast__ParExpr* it = (v__ast__ParExpr*)_t1199._object; // ST it
+	v__ast__Expr _t1197 = cond;
+	if (_t1197.typ == 225 /* v.ast.ParExpr */) {
+		v__ast__ParExpr* it = (v__ast__ParExpr*)_t1197._object; // ST it
 		v__ast__ParExpr* cond = it;
 		v__gen__Gen_write(g, tos_lit("("));
 		v__gen__Gen_comp_if_expr(g, cond->expr);
 		v__gen__Gen_write(g, tos_lit(")"));
-	} else if (_t1199.typ == 227 /* v.ast.PrefixExpr */) {
-		v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)_t1199._object; // ST it
+	} else if (_t1197.typ == 227 /* v.ast.PrefixExpr */) {
+		v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)_t1197._object; // ST it
 		v__ast__PrefixExpr* cond = it;
 		v__gen__Gen_write(g, v__token__Kind_str(cond->op));
 		v__gen__Gen_comp_if_expr(g, cond->right);
-	} else if (_t1199.typ == 226 /* v.ast.PostfixExpr */) {
-		v__ast__PostfixExpr* it = (v__ast__PostfixExpr*)_t1199._object; // ST it
+	} else if (_t1197.typ == 226 /* v.ast.PostfixExpr */) {
+		v__ast__PostfixExpr* it = (v__ast__PostfixExpr*)_t1197._object; // ST it
 		v__ast__PostfixExpr* cond = it;
 		string ifdef = v__gen__Gen_comp_if_to_ifdef(g, (/* as */ (v__ast__Ident*)__as_cast((cond->expr)._object, (cond->expr).typ, /*expected:*/213))->name, true);
 		v__gen__Gen_write(g, _STR("defined(%.*s\000)", 2, ifdef));
-	} else if (_t1199.typ == 217 /* v.ast.InfixExpr */) {
-		v__ast__InfixExpr* it = (v__ast__InfixExpr*)_t1199._object; // ST it
+	} else if (_t1197.typ == 217 /* v.ast.InfixExpr */) {
+		v__ast__InfixExpr* it = (v__ast__InfixExpr*)_t1197._object; // ST it
 		v__ast__InfixExpr* cond = it;
-		v__token__Kind _t1200 = cond->op;
-		if (_t1200 == v__token__Kind_and || _t1200 == v__token__Kind_logical_or) {
+		v__token__Kind _t1198 = cond->op;
+		if (_t1198 == v__token__Kind_and || _t1198 == v__token__Kind_logical_or) {
 			v__gen__Gen_comp_if_expr(g, cond->left);
 			v__gen__Gen_write(g, _STR(" %.*s\000 ", 2, v__token__Kind_str(cond->op)));
 			v__gen__Gen_comp_if_expr(g, cond->right);
-		} else if (_t1200 == v__token__Kind_key_is || _t1200 == v__token__Kind_not_is) {
+		} else if (_t1198 == v__token__Kind_key_is || _t1198 == v__token__Kind_not_is) {
 			v__ast__SelectorExpr* se = /* as */ (v__ast__SelectorExpr*)__as_cast((cond->left)._object, (cond->left).typ, /*expected:*/230);
 			string name = _STR("%.*s\000.%.*s", 2, v__ast__Expr_str(  se->expr), se->field_name);
 			v__table__Type exp_type = (*(v__table__Type*)map_get(g->comptime_var_type_map, name, &(v__table__Type[]){ 0 }));
 			v__table__Type got_type = (/* as */ (v__ast__Type*)__as_cast((cond->right)._object, (cond->right).typ, /*expected:*/236))->typ;
 			v__gen__Gen_write(g, _STR("%"PRId32"\000 == %"PRId32"", 2, exp_type, got_type));
-		} else if (_t1200 == v__token__Kind_eq || _t1200 == v__token__Kind_ne) {
+		} else if (_t1198 == v__token__Kind_eq || _t1198 == v__token__Kind_ne) {
 		} else {
 		};
-	} else if (_t1199.typ == 213 /* v.ast.Ident */) {
-		v__ast__Ident* it = (v__ast__Ident*)_t1199._object; // ST it
+	} else if (_t1197.typ == 213 /* v.ast.Ident */) {
+		v__ast__Ident* it = (v__ast__Ident*)_t1197._object; // ST it
 		v__ast__Ident* cond = it;
 		string ifdef = v__gen__Gen_comp_if_to_ifdef(g, cond->name, false);
 		v__gen__Gen_write(g, _STR("defined(%.*s\000)", 2, ifdef));
@@ -36242,30 +36236,30 @@ static void v__gen__Gen_comp_for(v__gen__Gen* g, v__ast__CompFor node) {
 	int i = 0;
 	if (node.kind == v__ast__CompForKind_methods) {
 
-int _t1201_len = sym->methods.len;
-		array_v__table__Fn _t1201 = __new_array(0, _t1201_len, sizeof(v__table__Fn));
-		for (int i = 0; i < _t1201_len; ++i) {
+int _t1199_len = sym->methods.len;
+		array_v__table__Fn _t1199 = __new_array(0, _t1199_len, sizeof(v__table__Fn));
+		for (int i = 0; i < _t1199_len; ++i) {
 		  v__table__Fn it = ((v__table__Fn*) sym->methods.data)[i];
-		if (it.attrs.len == 0) array_push(&_t1201, &it); 
+		if (it.attrs.len == 0) array_push(&_t1199, &it); 
  }
-				array_v__table__Fn methods =  _t1201;
+				array_v__table__Fn methods =  _t1199;
 
-int _t1202_len = sym->methods.len;
-		array_v__table__Fn _t1202 = __new_array(0, _t1202_len, sizeof(v__table__Fn));
-		for (int i = 0; i < _t1202_len; ++i) {
+int _t1200_len = sym->methods.len;
+		array_v__table__Fn _t1200 = __new_array(0, _t1200_len, sizeof(v__table__Fn));
+		for (int i = 0; i < _t1200_len; ++i) {
 		  v__table__Fn it = ((v__table__Fn*) sym->methods.data)[i];
-		if (it.attrs.len > 0) array_push(&_t1202, &it); 
+		if (it.attrs.len > 0) array_push(&_t1200, &it); 
  }
-				array_v__table__Fn methods_with_attrs =  _t1202;
-		_PUSH_MANY(&methods, (methods_with_attrs), _t1203, array_v__table__Fn);
+				array_v__table__Fn methods_with_attrs =  _t1200;
+		_PUSH_MANY(&methods, (methods_with_attrs), _t1201, array_v__table__Fn);
 		if (methods.len > 0) {
 			v__gen__Gen_writeln(g, _STR("\tFunctionData %.*s\000;", 2, node.val_var));
 			v__gen__Gen_writeln(g, _STR("\tmemset(&%.*s\000, 0, sizeof(FunctionData));", 2, node.val_var));
 		}
 		// FOR IN array
-		array _t1204 = methods;
-		for (int _t1205 = 0; _t1205 < _t1204.len; ++_t1205) {
-			v__table__Fn method = ((v__table__Fn*)_t1204.data)[_t1205];
+		array _t1202 = methods;
+		for (int _t1203 = 0; _t1203 < _t1202.len; ++_t1203) {
+			v__table__Fn method = ((v__table__Fn*)_t1202.data)[_t1203];
 			g->comp_for_method = method.name;
 			v__gen__Gen_writeln(g, _STR("\t// method %"PRId32"", 1, i));
 			v__gen__Gen_writeln(g, _STR("\t%.*s\000.name = tos_lit(\"%.*s\000\");", 3, node.val_var, method.name));
@@ -36281,9 +36275,9 @@ int _t1202_len = sym->methods.len;
 				int len = method.params.len - 1;
 				v__gen__Gen_write(g, _STR("\t%.*s\000.args = new_array_from_c_array(%"PRId32"\000, %"PRId32"\000, sizeof(MethodArgs), _MOV((MethodArgs[%"PRId32"\000]){", 5, node.val_var, len, len, len));
 				// FOR IN array
-				array _t1206 = array_slice(method.params, 1, method.params.len);
-				for (int j = 0; j < _t1206.len; ++j) {
-					v__table__Param arg = ((v__table__Param*)_t1206.data)[j];
+				array _t1204 = array_slice(method.params, 1, method.params.len);
+				for (int j = 0; j < _t1204.len; ++j) {
+					v__table__Param arg = ((v__table__Param*)_t1204.data)[j];
 					int typ = v__table__Type_idx(arg.typ);
 					v__gen__Gen_write(g, int_str(typ));
 					if (j < len - 1) {
@@ -36295,9 +36289,9 @@ int _t1202_len = sym->methods.len;
 			}
 			string sig = tos_lit("anon_fn_");
 			// FOR IN array
-			array _t1207 = array_slice(method.params, 1, method.params.len);
-			for (int j = 0; j < _t1207.len; ++j) {
-				v__table__Param arg = ((v__table__Param*)_t1207.data)[j];
+			array _t1205 = array_slice(method.params, 1, method.params.len);
+			for (int j = 0; j < _t1205.len; ++j) {
+				v__table__Param arg = ((v__table__Param*)_t1205.data)[j];
 				v__table__Type typ = v__table__Type_set_nr_muls(arg.typ, 0);
 				sig = /*f*/string_add(sig, _STR("%"PRId32"", 1, typ));
 				if (j < method.params.len - 2) {
@@ -36315,46 +36309,46 @@ int _t1202_len = sym->methods.len;
 			i++;
 			v__gen__Gen_writeln(g, tos_lit(""));
 			// FOR IN map
-			map_string_v__table__Type _t1210 = g->comptime_var_type_map;
-			array_string keys__t1208 = map_keys(&_t1210);
-			for (int _t1209 = 0; _t1209 < keys__t1208.len; ++_t1209) {
-				string key = /*kkkk*/ string_clone( ((string*)keys__t1208.data)[_t1209] );
+			map_string_v__table__Type _t1208 = g->comptime_var_type_map;
+			array_string keys__t1206 = map_keys(&_t1208);
+			for (int _t1207 = 0; _t1207 < keys__t1206.len; ++_t1207) {
+				string key = /*kkkk*/ string_clone( ((string*)keys__t1206.data)[_t1207] );
 				if (string_starts_with(key, node.val_var)) {
 					map_delete(&g->comptime_var_type_map, key);
 				}
 			}
 			/*for in map cleanup*/
-			for (int _t1209 = 0; _t1209 < keys__t1208.len; ++_t1209) { string_free(&((string*)keys__t1208.data)[_t1209]); }
-			array_free(&keys__t1208);
+			for (int _t1207 = 0; _t1207 < keys__t1206.len; ++_t1207) { string_free(&((string*)keys__t1206.data)[_t1207]); }
+			array_free(&keys__t1206);
 		}
 	} else if (node.kind == v__ast__CompForKind_fields) {
 		if ((sym->info).typ == 150 /* v.table.Struct */) {
 			v__table__Struct* info = /* as */ (v__table__Struct*)__as_cast((sym->info)._object, (sym->info).typ, /*expected:*/150);
 
-int _t1211_len = info->fields.len;
-			array_v__table__Field _t1211 = __new_array(0, _t1211_len, sizeof(v__table__Field));
-			for (int i = 0; i < _t1211_len; ++i) {
+int _t1209_len = info->fields.len;
+			array_v__table__Field _t1209 = __new_array(0, _t1209_len, sizeof(v__table__Field));
+			for (int i = 0; i < _t1209_len; ++i) {
 			  v__table__Field it = ((v__table__Field*) info->fields.data)[i];
-			if (it.attrs.len == 0) array_push(&_t1211, &it); 
+			if (it.attrs.len == 0) array_push(&_t1209, &it); 
  }
-						array_v__table__Field fields =  _t1211;
+						array_v__table__Field fields =  _t1209;
 
-int _t1212_len = info->fields.len;
-			array_v__table__Field _t1212 = __new_array(0, _t1212_len, sizeof(v__table__Field));
-			for (int i = 0; i < _t1212_len; ++i) {
+int _t1210_len = info->fields.len;
+			array_v__table__Field _t1210 = __new_array(0, _t1210_len, sizeof(v__table__Field));
+			for (int i = 0; i < _t1210_len; ++i) {
 			  v__table__Field it = ((v__table__Field*) info->fields.data)[i];
-			if (it.attrs.len > 0) array_push(&_t1212, &it); 
+			if (it.attrs.len > 0) array_push(&_t1210, &it); 
  }
-						array_v__table__Field fields_with_attrs =  _t1212;
-			_PUSH_MANY(&fields, (fields_with_attrs), _t1213, array_v__table__Field);
+						array_v__table__Field fields_with_attrs =  _t1210;
+			_PUSH_MANY(&fields, (fields_with_attrs), _t1211, array_v__table__Field);
 			if (fields.len > 0) {
 				v__gen__Gen_writeln(g, _STR("\tFieldData %.*s\000;", 2, node.val_var));
 				v__gen__Gen_writeln(g, _STR("\tmemset(&%.*s\000, 0, sizeof(FieldData));", 2, node.val_var));
 			}
 			// FOR IN array
-			array _t1214 = fields;
-			for (int _t1215 = 0; _t1215 < _t1214.len; ++_t1215) {
-				v__table__Field field = ((v__table__Field*)_t1214.data)[_t1215];
+			array _t1212 = fields;
+			for (int _t1213 = 0; _t1213 < _t1212.len; ++_t1213) {
+				v__table__Field field = ((v__table__Field*)_t1212.data)[_t1213];
 				v__gen__Gen_writeln(g, _STR("\t// field %"PRId32"", 1, i));
 				v__gen__Gen_writeln(g, _STR("\t%.*s\000.name = tos_lit(\"%.*s\000\");", 3, node.val_var, field.name));
 				if (field.attrs.len == 0) {
@@ -36386,9 +36380,9 @@ static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it, bool skip
 	}
 	if (it.is_generic && g->cur_generic_type == 0) {
 		// FOR IN array
-		array _t1216 = (*(array_v__table__Type*)map_get(g->table->fn_gen_types, it.name, &(array_v__table__Type[]){ __new_array(0, 1, sizeof(v__table__Type)) }));
-		for (int _t1217 = 0; _t1217 < _t1216.len; ++_t1217) {
-			v__table__Type gen_type = ((v__table__Type*)_t1216.data)[_t1217];
+		array _t1214 = (*(array_v__table__Type*)map_get(g->table->fn_gen_types, it.name, &(array_v__table__Type[]){ __new_array(0, 1, sizeof(v__table__Type)) }));
+		for (int _t1215 = 0; _t1215 < _t1214.len; ++_t1215) {
+			v__table__Type gen_type = ((v__table__Type*)_t1214.data)[_t1215];
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, gen_type);
 			if (g->pref->is_verbose) {
 				println(_STR("gen fn `%.*s\000` for type `%.*s\000`", 3, it.name, sym->name));
@@ -36477,9 +36471,9 @@ static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it, bool skip
 	if (is_live_wrap) {
 		array_string fn_args_list = __new_array_with_default(0, 0, sizeof(string), 0);
 		// FOR IN array
-		array _t1219 = fargs;
-		for (int ia = 0; ia < _t1219.len; ++ia) {
-			string fa = ((string*)_t1219.data)[ia];
+		array _t1217 = fargs;
+		for (int ia = 0; ia < _t1217.len; ++ia) {
+			string fa = ((string*)_t1217.data)[ia];
 			array_push(&fn_args_list, _MOV((string[]){ _STR("%.*s\000 %.*s", 2, (*(string*)array_get(fargtypes, ia)), fa) }));
 		}
 		string live_fncall = string_add(string_add(_STR("%.*s\000(", 2, impl_fn_name), array_string_join(fargs, tos_lit(", "))), tos_lit(");"));
@@ -36512,9 +36506,9 @@ static void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it, bool skip
 		println(strings__Builder_after(&g->out, fn_start_pos));
 	}
 	// FOR IN array
-	array _t1221 = it.attrs;
-	for (int _t1222 = 0; _t1222 < _t1221.len; ++_t1222) {
-		v__table__Attr attr = ((v__table__Attr*)_t1221.data)[_t1222];
+	array _t1219 = it.attrs;
+	for (int _t1220 = 0; _t1220 < _t1219.len; ++_t1220) {
+		v__table__Attr attr = ((v__table__Attr*)_t1219.data)[_t1220];
 		if (string_eq(attr.name, tos_lit("export"))) {
 			v__gen__Gen_writeln(g, _STR("// export alias: %.*s\000 -> %.*s", 2, attr.arg, name));
 			string export_alias = _STR("%.*s\000 %.*s\000(%.*s\000)", 4, type_name, attr.arg, arg_str);
@@ -36550,9 +36544,9 @@ static multi_return_array_string_array_string v__gen__Gen_fn_args(v__gen__Gen* g
 	array_string fargs = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_string fargtypes = __new_array_with_default(0, 0, sizeof(string), 0);
 	// FOR IN array
-	array _t1223 = args;
-	for (int i = 0; i < _t1223.len; ++i) {
-		v__table__Param arg = ((v__table__Param*)_t1223.data)[i];
+	array _t1221 = args;
+	for (int i = 0; i < _t1221.len; ++i) {
+		v__table__Param arg = ((v__table__Param*)_t1221.data)[i];
 		string caname = v__gen__c_name(arg.name);
 		v__table__Type typ = v__gen__Gen_unwrap_generic(g, arg.typ);
 		v__table__TypeSymbol* arg_type_sym = v__table__Table_get_type_symbol(g->table, typ);
@@ -36613,8 +36607,8 @@ static void v__gen__Gen_call_expr(v__gen__Gen* g, v__ast__CallExpr node) {
 	g->inside_call = true;
 	bool gen_or = node.or_block.kind != v__ast__OrKind_absent && !g->pref->autofree;
 	bool is_gen_or_and_assign_rhs = gen_or && g->is_assign_rhs;
-	string _t1228;
-	string cur_line = (is_gen_or_and_assign_rhs && !g->pref->autofree ? (		_t1228 = v__gen__Gen_go_before_stmt(g, 0),strings__Builder_write(&g->out, (*(string*)array_get(_const_v__gen__tabs, g->indent))),_t1228) : (tos_lit("")));
+	string _t1226;
+	string cur_line = (is_gen_or_and_assign_rhs && !g->pref->autofree ? (		_t1226 = v__gen__Gen_go_before_stmt(g, 0),strings__Builder_write(&g->out, (*(string*)array_get(_const_v__gen__tabs, g->indent))),_t1226) : (tos_lit("")));
 	string tmp_opt = (gen_or ? (v__gen__Gen_new_tmp_var(g)) : (tos_lit("")));
 	if (gen_or) {
 		string styp = v__gen__Gen_typ(g, v__table__Type_set_flag(node.return_type, v__table__TypeFlag_optional));
@@ -36672,20 +36666,20 @@ static void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node) {
 	}
 	v__table__TypeSymbol* left_sym = v__table__Table_get_type_symbol(g->table, node.left_type);
 	if (left_sym->kind == v__table__Kind_array) {
-		string _t1229 = node.name;
-		if (string_eq(_t1229, tos_lit("filter"))) {
+		string _t1227 = node.name;
+		if (string_eq(_t1227, tos_lit("filter"))) {
 			v__gen__Gen_gen_array_filter(g, node);
 			return;
-		} else if (string_eq(_t1229, tos_lit("sort"))) {
+		} else if (string_eq(_t1227, tos_lit("sort"))) {
 			v__gen__Gen_gen_array_sort(g, node);
 			return;
-		} else if (string_eq(_t1229, tos_lit("insert"))) {
+		} else if (string_eq(_t1227, tos_lit("insert"))) {
 			v__gen__Gen_gen_array_insert(g, node);
 			return;
-		} else if (string_eq(_t1229, tos_lit("map"))) {
+		} else if (string_eq(_t1227, tos_lit("map"))) {
 			v__gen__Gen_gen_array_map(g, node);
 			return;
-		} else if (string_eq(_t1229, tos_lit("prepend"))) {
+		} else if (string_eq(_t1227, tos_lit("prepend"))) {
 			v__gen__Gen_gen_array_prepend(g, node);
 			return;
 		} else {
@@ -36818,8 +36812,8 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_writeln(g, _STR("); %.*s\000(%.*s\000); string_free(&%.*s\000); //MEM2 %.*s", 4, print_method, tmp, tmp, styp));
 		} else {
 			v__ast__Expr expr = (*(v__ast__CallArg*)array_get(node.args, 0)).expr;
-			v__ast__Expr _t1230 = expr;
-						bool is_var = (_t1230.typ == 230 /* v.ast.SelectorExpr */) ? (true) : (_t1230.typ == 213 /* v.ast.Ident */) ? (true) : (false);
+			v__ast__Expr _t1228 = expr;
+						bool is_var = (_t1228.typ == 230 /* v.ast.SelectorExpr */) ? (true) : (_t1228.typ == 213 /* v.ast.Ident */) ? (true) : (false);
 			if (v__table__Type_is_ptr(typ) && sym->kind != v__table__Kind_struct_) {
 				styp = tos_lit("ptr");
 				str_fn_name = tos_lit("ptr_str");
@@ -36877,9 +36871,9 @@ static void v__gen__Gen_autofree_call_pregen(v__gen__Gen* g, v__ast__CallExpr no
 	free_tmp_arg_vars = false;
 	g->tmp_count2++;
 	// FOR IN array
-	array _t1231 = node.args;
-	for (int i = 0; i < _t1231.len; ++i) {
-		v__ast__CallArg arg = ((v__ast__CallArg*)_t1231.data)[i];
+	array _t1229 = node.args;
+	for (int i = 0; i < _t1229.len; ++i) {
+		v__ast__CallArg arg = ((v__ast__CallArg*)_t1229.data)[i];
 		if (!arg.is_tmp_autofree) {
 			continue;
 		}
@@ -36899,6 +36893,22 @@ static void v__gen__Gen_autofree_call_pregen(v__gen__Gen* g, v__ast__CallExpr no
 		v__gen__Gen_expr(g, arg.expr);
 		v__gen__Gen_writeln(g, tos_lit(";// new af pre"));
 		array_push(&g->strs_to_free, _MOV((string[]){ t }));
+	}
+}
+
+static void v__gen__Gen_autofree_call_postgen(v__gen__Gen* g) {
+	if (g->strs_to_free.len == 0) {
+		return;
+	}
+	v__gen__Gen_writeln(g, tos_lit(";\n// strs_to_free2:"));
+	// FOR IN array
+	array _t1232 = g->strs_to_free;
+	for (int _t1233 = 0; _t1233 < _t1232.len; ++_t1233) {
+		string s = ((string*)_t1232.data)[_t1233];
+		v__gen__Gen_writeln(g, _STR("string_free(&%.*s\000);", 2, s));
+	}
+	if (!g->inside_or_block) {
+		g->strs_to_free = __new_array_with_default(0, 0, sizeof(string), 0);
 	}
 }
 
