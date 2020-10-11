@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c7e0a27"
+#define V_COMMIT_HASH "62f6e65"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "604b28b"
+	#define V_COMMIT_HASH "c7e0a27"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c7e0a27"
+	#define V_CURRENT_COMMIT_HASH "62f6e65"
 #endif
 
 // V comptime_defines:
@@ -42337,16 +42337,16 @@ void v__builder__Builder_compile_x64(v__builder__Builder* b) {
 static void main__main() {
 	array_string args = array_slice(_const_os__args, 1, _const_os__args.len);
 	if (args.len == 0 || (string_eq((*(string*)array_get(args, 0)), tos_lit("-")) || string_eq((*(string*)array_get(args, 0)), tos_lit("repl")))) {
-		if (args.len == 0) {
+		if (args.len == 0 && is_atty(0) != 0) {
 			println(tos_lit("For usage information, quit V REPL and run `v help`"));
 		}
 		v__util__launch_tool(false, tos_lit("vrepl"), array_slice(_const_os__args, 1, _const_os__args.len));
 		return;
 	}
 	array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_945 = v__pref__parse_args(args_and_flags);
-	v__pref__Preferences* prefs = mr_945.arg0;
-	string command = mr_945.arg1;
+	multi_return_v__pref__Preferences_string mr_964 = v__pref__parse_args(args_and_flags);
+	v__pref__Preferences* prefs = mr_964.arg0;
+	string command = mr_964.arg1;
 	if (prefs->is_verbose) {
 	}
 	if (_IN(string, command, _const_main__simple_cmd)) {
