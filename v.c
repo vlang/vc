@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "230e986"
+#define V_COMMIT_HASH "93bb756"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "62f6e65"
+	#define V_COMMIT_HASH "230e986"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "230e986"
+	#define V_CURRENT_COMMIT_HASH "93bb756"
 #endif
 
 // V comptime_defines:
@@ -4281,6 +4281,7 @@ void v__util__ensure_modules_for_all_tools_are_installed(bool is_verbose);
 string v__util__strip_mod_name(string name);
 string v__util__strip_main_name(string name);
 string v__util__no_dots(string s);
+string _const_v__util__map_prefix; // a string literal, inited later
 string v__util__no_cur_mod(string v_typename, string cur_mod);
 string v__table__Attr_str(v__table__Attr attr);
 bool array_v__table__Attr_contains(array_v__table__Attr attrs, string str);
@@ -5320,6 +5321,7 @@ void vinit_string_literals(){
 	_const_vweb__tmpl__str_end = tos_lit("\' ) ");
 	_const_help__unknown_topic = tos_lit("V Error: Unknown help topic provided. Use `v help` for usage information.");
 	_const_v__util__v_version = tos_lit("0.1.29");
+	_const_v__util__map_prefix = tos_lit("map[string]");
 	_const_v__checker__no_pub_in_main_warning = tos_lit("in module main cannot be declared public");
 	_const_v__gen__c_commit_hash_default = tos_lit("\n#ifndef V_COMMIT_HASH\n	#define V_COMMIT_HASH \"@@@\"\n#endif\n");
 	_const_v__gen__c_current_commit_hash_default = tos_lit("\n#ifndef V_CURRENT_COMMIT_HASH\n	#define V_CURRENT_COMMIT_HASH \"@@@\"\n#endif\n");
@@ -17936,11 +17938,10 @@ string v__util__no_dots(string s) {
 
 string v__util__no_cur_mod(string v_typename, string cur_mod) {
 	string res = v_typename;
-	string map_prefix = tos_lit("map[string]");
 	string mod_prefix = string_add(cur_mod, tos_lit("."));
-	bool has_map_prefix = string_starts_with(res, map_prefix);
+	bool has_map_prefix = string_starts_with(res, _const_v__util__map_prefix);
 	if (has_map_prefix) {
-		res = string_replace(res, map_prefix, tos_lit(""));
+		res = string_replace_once(res, _const_v__util__map_prefix, tos_lit(""));
 	}
 	string no_symbols = string_trim_left(res, tos_lit("&[]"));
 	bool should_shorten = string_starts_with(no_symbols, mod_prefix);
@@ -17948,7 +17949,7 @@ string v__util__no_cur_mod(string v_typename, string cur_mod) {
 		res = string_replace_once(res, mod_prefix, tos_lit(""));
 	}
 	if (has_map_prefix) {
-		res = string_add(map_prefix, res);
+		res = string_add(_const_v__util__map_prefix, res);
 	}
 	return res;
 }
@@ -18326,7 +18327,9 @@ static bool v__table__Field_equals(v__table__Field* f, v__table__Field* o) {
 string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(table, t);
 	string res = sym->name;
-	if (sym->kind == v__table__Kind_multi_return) {
+	if ((sym->kind == v__table__Kind_array_fixed || sym->kind == v__table__Kind_function)) {
+		res = sym->source_name;
+	} else if (sym->kind == v__table__Kind_multi_return) {
 		res = tos_lit("(");
 		if (v__table__Type_has_flag(t, v__table__TypeFlag_optional)) {
 			res = string_add(tos_lit("?"), res);
