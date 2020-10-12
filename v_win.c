@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "93bb756"
+#define V_COMMIT_HASH "da7d531"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "230e986"
+	#define V_COMMIT_HASH "93bb756"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "93bb756"
+	#define V_CURRENT_COMMIT_HASH "da7d531"
 #endif
 
 // V comptime_defines:
@@ -18323,72 +18323,68 @@ static bool v__table__Field_equals(v__table__Field* f, v__table__Field* o) {
 
 string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(table, t);
-	string res = sym->name;
-	if ((sym->kind == v__table__Kind_array_fixed || sym->kind == v__table__Kind_function)) {
-		res = sym->source_name;
-	} else if (sym->kind == v__table__Kind_multi_return) {
-		res = tos_lit("(");
-		if (v__table__Type_has_flag(t, v__table__TypeFlag_optional)) {
-			res = string_add(tos_lit("?"), res);
+	string res = sym->source_name;
+	v__table__Kind _t434 = sym->kind;
+	if (_t434 == v__table__Kind_any_int || _t434 == v__table__Kind_i8 || _t434 == v__table__Kind_i16 || _t434 == v__table__Kind_int || _t434 == v__table__Kind_i64 || _t434 == v__table__Kind_byte || _t434 == v__table__Kind_u16 || _t434 == v__table__Kind_u32 || _t434 == v__table__Kind_u64 || _t434 == v__table__Kind_any_float || _t434 == v__table__Kind_f32 || _t434 == v__table__Kind_f64 || _t434 == v__table__Kind_char || _t434 == v__table__Kind_rune || _t434 == v__table__Kind_string || _t434 == v__table__Kind_bool || _t434 == v__table__Kind_none_ || _t434 == v__table__Kind_byteptr || _t434 == v__table__Kind_voidptr || _t434 == v__table__Kind_charptr) {
+		res = v__table__Kind_str(sym->kind);
+	} else if (_t434 == v__table__Kind_array) {
+		v__table__Array* info = /* as */ (v__table__Array*)__as_cast((sym->info)._object, (sym->info).typ, /*expected:*/326);
+		string elem_str = v__table__Table_type_to_str(table, info->elem_type);
+		res = _STR("[]%.*s", 1, elem_str);
+	} else if (_t434 == v__table__Kind_array_fixed) {
+		v__table__ArrayFixed* info = /* as */ (v__table__ArrayFixed*)__as_cast((sym->info)._object, (sym->info).typ, /*expected:*/327);
+		string elem_str = v__table__Table_type_to_str(table, info->elem_type);
+		res = _STR("[%"PRId32"\000]%.*s", 2, info->size, elem_str);
+	} else if (_t434 == v__table__Kind_chan) {
+		if (string_ne(sym->mod, tos_lit("builtin")) && string_ne(sym->name, tos_lit("chan"))) {
+			v__table__Chan* info = /* as */ (v__table__Chan*)__as_cast((sym->info)._object, (sym->info).typ, /*expected:*/328);
+			v__table__Type elem_type = info->elem_type;
+			string mut_str = tos_lit("");
+			if (info->is_mut) {
+				mut_str = tos_lit("mut ");
+				elem_type = v__table__Type_set_nr_muls(elem_type, v__table__Type_nr_muls(elem_type) - 1);
+			}
+			string elem_str = v__table__Table_type_to_str(table, elem_type);
+			res = _STR("chan %.*s\000%.*s", 2, mut_str, elem_str);
 		}
-		v__table__MultiReturn* mr_info = /* as */ (v__table__MultiReturn*)__as_cast((sym->info)._object, (sym->info).typ, /*expected:*/333);
+	} else if (_t434 == v__table__Kind_function) {
+	} else if (_t434 == v__table__Kind_map) {
+		v__table__Map* info = /* as */ (v__table__Map*)__as_cast((sym->info)._object, (sym->info).typ, /*expected:*/332);
+		string key_str = v__table__Table_type_to_str(table, info->key_type);
+		string val_str = v__table__Table_type_to_str(table, info->value_type);
+		res = _STR("map[%.*s\000]%.*s", 2, key_str, val_str);
+	} else if (_t434 == v__table__Kind_multi_return) {
+		res = tos_lit("(");
+		v__table__MultiReturn* info = /* as */ (v__table__MultiReturn*)__as_cast((sym->info)._object, (sym->info).typ, /*expected:*/333);
 		// FOR IN array
-		array _t434 = mr_info->types;
-		for (int i = 0; i < _t434.len; ++i) {
-			v__table__Type typ = ((v__table__Type*)_t434.data)[i];
-			res = /*f*/string_add(res, v__table__Table_type_to_str(table, typ));
-			if (i < mr_info->types.len - 1) {
+		array _t435 = info->types;
+		for (int i = 0; i < _t435.len; ++i) {
+			v__table__Type typ = ((v__table__Type*)_t435.data)[i];
+			if (i > 0) {
 				res = /*f*/string_add(res, tos_lit(", "));
 			}
+			res = /*f*/string_add(res, v__table__Table_type_to_str(table, typ));
 		}
 		res = /*f*/string_add(res, tos_lit(")"));
-		return res;
-	}
-	if (sym->kind == v__table__Kind_array || string_contains(res, tos_lit("array_"))) {
-		res = string_replace(res, tos_lit("array_"), tos_lit("[]"));
-	}
-	string map_start = tos_lit("");
-	if (sym->kind == v__table__Kind_map || string_contains(res, tos_lit("map_string_"))) {
-		res = string_replace(res, tos_lit("map_string_"), tos_lit("map[string]"));
-		map_start = tos_lit("map[string]");
-	}
-	if (sym->kind == v__table__Kind_chan || string_contains(res, tos_lit("chan_"))) {
-		res = string_replace(res, tos_lit("chan_"), tos_lit("chan "));
-	}
-	array_string parts = string_split(res, tos_lit(" "));
-	// FOR IN array
-	array _t435 = parts;
-	for (int i = 0; i < _t435.len; ++i) {
-		if (string_contains((*(string*)array_get(parts, i)), tos_lit("."))) {
-			array_string vals = string_split((*(string*)array_get(parts, i)), tos_lit("."));
-			if (vals.len > 2) {
-				array_set(&parts, i, &(string[]) { string_add(string_add((*(string*)array_get(vals, vals.len - 2)), tos_lit(".")), (*(string*)array_get(vals, vals.len - 1))) });
-			}
-			if (string_starts_with((*(string*)array_get(parts, i)), table->cmod_prefix) || (sym->kind == v__table__Kind_array && string_starts_with((*(string*)array_get(parts, i)), string_add(tos_lit("[]"), table->cmod_prefix)))) {
-				array_set(&parts, i, &(string[]) { string_replace_once((*(string*)array_get(parts, i)), table->cmod_prefix, tos_lit("")) });
-			}
-			if (sym->kind == v__table__Kind_array && !string_starts_with((*(string*)array_get(parts, i)), tos_lit("[]"))) {
-				array_set(&parts, i, &(string[]) { string_add(tos_lit("[]"), (*(string*)array_get(parts, i))) });
-			}
-			if (sym->kind == v__table__Kind_map && !string_starts_with((*(string*)array_get(parts, i)), tos_lit("map"))) {
-				array_set(&parts, i, &(string[]) { string_add(map_start, (*(string*)array_get(parts, i))) });
-			}
+		res = res;
+	} else if (_t434 == v__table__Kind_void) {
+		if (v__table__Type_has_flag(t, v__table__TypeFlag_optional)) {
+			return tos_lit("?");
 		}
-		if (string_contains((*(string*)array_get(parts, i)), tos_lit("_mut"))) {
-			array_set(&parts, i, &(string[]) { string_add(tos_lit("mut "), string_replace((*(string*)array_get(parts, i)), tos_lit("_mut"), tos_lit(""))) });
+		return tos_lit("void");
+	} else {
+		array_string parts = string_split(res, tos_lit("."));
+		res = (parts.len > 1 ? (array_string_join(array_slice(parts, parts.len - 2, parts.len), tos_lit("."))) : ((*(string*)array_get(parts, 0))));
+		if (string_starts_with(res, table->cmod_prefix)) {
+			res = string_replace_once(res, table->cmod_prefix, tos_lit(""));
 		}
-		int nr_muls = v__table__Type_nr_muls(t);
-		if (nr_muls > 0) {
-			array_set(&parts, i, &(string[]) { string_add(strings__repeat('&', nr_muls), (*(string*)array_get(parts, i))) });
-		}
+	};
+	int nr_muls = v__table__Type_nr_muls(t);
+	if (nr_muls > 0) {
+		res = string_add(strings__repeat('&', nr_muls), res);
 	}
-	res = array_string_join(parts, tos_lit(" "));
 	if (v__table__Type_has_flag(t, v__table__TypeFlag_optional)) {
-		if (sym->kind == v__table__Kind_void) {
-			res = tos_lit("?");
-		} else {
-			res = string_add(tos_lit("?"), res);
-		}
+		res = string_add(tos_lit("?"), res);
 	}
 	return res;
 }
