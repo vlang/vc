@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "194c2c9"
+#define V_COMMIT_HASH "ee0baf6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a07f31f"
+	#define V_COMMIT_HASH "194c2c9"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "194c2c9"
+	#define V_CURRENT_COMMIT_HASH "ee0baf6"
 #endif
 
 // V comptime_defines:
@@ -18332,6 +18332,9 @@ string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 	if (_t445 == v__table__Kind_any_int || _t445 == v__table__Kind_i8 || _t445 == v__table__Kind_i16 || _t445 == v__table__Kind_int || _t445 == v__table__Kind_i64 || _t445 == v__table__Kind_byte || _t445 == v__table__Kind_u16 || _t445 == v__table__Kind_u32 || _t445 == v__table__Kind_u64 || _t445 == v__table__Kind_any_float || _t445 == v__table__Kind_f32 || _t445 == v__table__Kind_f64 || _t445 == v__table__Kind_char || _t445 == v__table__Kind_rune || _t445 == v__table__Kind_string || _t445 == v__table__Kind_bool || _t445 == v__table__Kind_none_ || _t445 == v__table__Kind_byteptr || _t445 == v__table__Kind_voidptr || _t445 == v__table__Kind_charptr) {
 		res = v__table__Kind_str(sym->kind);
 	} else if (_t445 == v__table__Kind_array) {
+		if (t == _const_v__table__array_type) {
+			return tos_lit("array");
+		}
 		v__table__Array* info = /* as */ (v__table__Array*)__as_cast((sym->info)._object, (sym->info).typ, /*expected:*/301);
 		string elem_str = v__table__Table_type_to_str(table, info->elem_type);
 		res = _STR("[]%.*s", 1, elem_str);
@@ -18353,6 +18356,9 @@ string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 		}
 	} else if (_t445 == v__table__Kind_function) {
 	} else if (_t445 == v__table__Kind_map) {
+		if (((int)(t)) == _const_v__table__map_type_idx) {
+			return tos_lit("map");
+		}
 		v__table__Map* info = /* as */ (v__table__Map*)__as_cast((sym->info)._object, (sym->info).typ, /*expected:*/307);
 		string key_str = v__table__Table_type_to_str(table, info->key_type);
 		string val_str = v__table__Table_type_to_str(table, info->value_type);
