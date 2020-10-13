@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "05ec32c"
+#define V_COMMIT_HASH "78bcda1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "28dea17"
+	#define V_COMMIT_HASH "05ec32c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "05ec32c"
+	#define V_CURRENT_COMMIT_HASH "78bcda1"
 #endif
 
 // V comptime_defines:
@@ -21630,15 +21630,26 @@ void v__checker__Checker_infer_fn_types(v__checker__Checker* c, v__table__Fn f, 
 	// FOR IN array
 	array _t599 = f.params;
 	for (int i = 0; i < _t599.len; ++i) {
-		v__table__Param arg = ((v__table__Param*)_t599.data)[i];
-		if (string_eq(arg.type_source_name, gt_name)) {
-			typ = (*(v__ast__CallArg*)array_get(call_expr->args, i)).typ;
+		v__table__Param param = ((v__table__Param*)_t599.data)[i];
+		v__ast__CallArg arg = (*(v__ast__CallArg*)array_get(call_expr->args, i));
+		if (string_eq(param.type_source_name, gt_name)) {
+			typ = arg.typ;
+			break;
+		}
+		v__table__TypeSymbol* arg_sym = v__table__Table_get_type_symbol(c->table, arg.typ);
+		if (arg_sym->kind == v__table__Kind_array && string_eq(param.type_source_name, _STR("[]%.*s", 1, gt_name))) {
+			v__table__Array* info = /* as */ (v__table__Array*)__as_cast((arg_sym->info)._object, (arg_sym->info).typ, /*expected:*/301);
+			typ = info->elem_type;
 			break;
 		}
 	}
 	if (typ == _const_v__table__void_type) {
 		v__checker__Checker_error(c, _STR("could not infer generic type `%.*s\000` in call to `%.*s\000`", 3, gt_name, f.name), call_expr->pos);
 	} else {
+		if (c->pref->is_verbose) {
+			string s = v__table__Table_type_to_str(c->table, typ);
+			println(_STR("inferred `%.*s\000<%.*s\000>`", 3, f.name, s));
+		}
 		v__table__Table_register_fn_gen_type(c->table, f.name, typ);
 		call_expr->generic_type = typ;
 	}
