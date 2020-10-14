@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a45481b"
+#define V_COMMIT_HASH "6ad5ecf"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "988221d"
+	#define V_COMMIT_HASH "a45481b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a45481b"
+	#define V_CURRENT_COMMIT_HASH "6ad5ecf"
 #endif
 
 // V comptime_defines:
@@ -18895,7 +18895,7 @@ inline v__table__TypeSymbol* v__table__Table_get_type_symbol(v__table__Table* t,
 	if (idx > 0) {
 		return &(*(v__table__TypeSymbol*)array_get(t->types, idx));
 	}
-	v_panic(_STR("get_type_symbol: invalid type (typ=%"PRId32"\000 idx=%"PRId32"\000). Compiler bug. This should never happen", 3, typ, idx));
+	v_panic(_STR("get_type_symbol: invalid type (typ=%"PRId32"\000 idx=%"PRId32"\000). Compiler bug. This should never happen. Please create a GitHub issue.\n", 3, typ, idx));
 }
 
 // Attr: [inline]
@@ -18909,7 +18909,7 @@ inline v__table__TypeSymbol* v__table__Table_get_final_type_symbol(v__table__Tab
 		}
 		return &(*(v__table__TypeSymbol*)array_get(t->types, idx));
 	}
-	v_panic(_STR("get_final_type_symbol: invalid type (typ=%"PRId32"\000 idx=%"PRId32"\000). Compiler bug. This should never happen", 3, typ, idx));
+	v_panic(_STR("get_final_type_symbol: invalid type (typ=%"PRId32"\000 idx=%"PRId32"\000). Compiler bug. This should never happen. Please create a GitHub issue.", 3, typ, idx));
 }
 
 // Attr: [inline]
