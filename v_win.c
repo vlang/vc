@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "46c5a2c"
+#define V_COMMIT_HASH "067c8b3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "6ad5ecf"
+	#define V_COMMIT_HASH "46c5a2c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "46c5a2c"
+	#define V_CURRENT_COMMIT_HASH "067c8b3"
 #endif
 
 // V comptime_defines:
