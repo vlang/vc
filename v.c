@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b083f40"
+#define V_COMMIT_HASH "eab0974"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "23644d9"
+	#define V_COMMIT_HASH "b083f40"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b083f40"
+	#define V_CURRENT_COMMIT_HASH "eab0974"
 #endif
 
 // V comptime_defines:
