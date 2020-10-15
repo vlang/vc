@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9820568"
+#define V_COMMIT_HASH "7da1afa"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "314fae7"
+	#define V_COMMIT_HASH "9820568"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9820568"
+	#define V_CURRENT_COMMIT_HASH "7da1afa"
 #endif
 
 // V comptime_defines:
@@ -3679,7 +3679,7 @@ int array_int_index(array_int a, int v);
 int array_byte_index(array_byte a, byte v);
 int array_rune_index(array_rune a, rune v);
 int array_char_index(array_char a, char v);
-int array_int_reduce(array_int a, int (*iter)(int accum, int curr), int accum_start);
+int array_int_reduce(array_int a, int (*iter)(int , int ), int accum_start);
 bool array_string_eq(array_string a1, array_string a2);
 int compare_i64(i64* a, i64* b);
 int compare_f64(f64* a, f64* b);
@@ -6506,8 +6506,8 @@ u32 math__bits__rem_32(u32 hi, u32 lo, u32 y) {
 }
 
 u64 math__bits__rem_64(u64 hi, u64 lo, u64 y) {
-	multi_return_u64_u64 mr_15086 = math__bits__div_64(hi % y, lo, y);
-	u64 rem = mr_15086.arg1;
+	multi_return_u64_u64 mr_15272 = math__bits__div_64(hi % y, lo, y);
+	u64 rem = mr_15272.arg1;
 	return rem;
 }
 
@@ -9184,7 +9184,7 @@ int array_char_index(array_char a, char v) {
 	return -1;
 }
 
-int array_int_reduce(array_int a, int (*iter)(int accum, int curr), int accum_start) {
+int array_int_reduce(array_int a, int (*iter)(int , int ), int accum_start) {
 	int accum_ = accum_start;
 	// FOR IN array
 	array _t19 = a;
@@ -10176,12 +10176,12 @@ static void map_set(map* m, string k, voidptr value) {
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_9346 = map_key_to_index(m, key);
-	u32 index = mr_9346.arg0;
-	u32 meta = mr_9346.arg1;
-	multi_return_u32_u32 mr_9381 = map_meta_less(m, index, meta);
-	index = mr_9381.arg0;
-	meta = mr_9381.arg1;
+	multi_return_u32_u32 mr_9357 = map_key_to_index(m, key);
+	u32 index = mr_9357.arg0;
+	u32 meta = mr_9357.arg1;
+	multi_return_u32_u32 mr_9392 = map_meta_less(m, index, meta);
+	index = mr_9392.arg0;
+	meta = mr_9392.arg1;
 	for (;;) {
 		if (!(meta == m->metas[index])) break;
 		u32 kv_index = m->metas[index + 1];
@@ -10221,12 +10221,12 @@ static void map_rehash(map* m) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
-		multi_return_u32_u32 mr_10778 = map_key_to_index(m, m->key_values.keys[i]);
-		u32 index = mr_10778.arg0;
-		u32 meta = mr_10778.arg1;
-		multi_return_u32_u32 mr_10840 = map_meta_less(m, index, meta);
-		index = mr_10840.arg0;
-		meta = mr_10840.arg1;
+		multi_return_u32_u32 mr_10789 = map_key_to_index(m, m->key_values.keys[i]);
+		u32 index = mr_10789.arg0;
+		u32 meta = mr_10789.arg1;
+		multi_return_u32_u32 mr_10851 = map_meta_less(m, index, meta);
+		index = mr_10851.arg0;
+		meta = mr_10851.arg1;
 		map_meta_greater(m, index, meta, i);
 	}
 }
@@ -10245,9 +10245,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->cap >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->cap);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_11597 = map_meta_less(m, index, meta);
-		index = mr_11597.arg0;
-		meta = mr_11597.arg1;
+		multi_return_u32_u32 mr_11608 = map_meta_less(m, index, meta);
+		index = mr_11608.arg0;
+		meta = mr_11608.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -10256,9 +10256,9 @@ static void map_cached_rehash(map* m, u32 old_cap) {
 
 static voidptr map_get_and_set(map* m, string key, voidptr zero) {
 	for (;;) {
-		multi_return_u32_u32 mr_12043 = map_key_to_index(m, key);
-		u32 index = mr_12043.arg0;
-		u32 meta = mr_12043.arg1;
+		multi_return_u32_u32 mr_12054 = map_key_to_index(m, key);
+		u32 index = mr_12054.arg0;
+		u32 meta = mr_12054.arg1;
 		for (;;) {
 			if (meta == m->metas[index]) {
 				u32 kv_index = m->metas[index + 1];
@@ -10279,9 +10279,9 @@ static voidptr map_get_and_set(map* m, string key, voidptr zero) {
 }
 
 static voidptr map_get(map m, string key, voidptr zero) {
-	multi_return_u32_u32 mr_12720 = map_key_to_index(&m, key);
-	u32 index = mr_12720.arg0;
-	u32 meta = mr_12720.arg1;
+	multi_return_u32_u32 mr_12731 = map_key_to_index(&m, key);
+	u32 index = mr_12731.arg0;
+	u32 meta = mr_12731.arg1;
 	for (;;) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -10301,9 +10301,9 @@ static voidptr map_get(map m, string key, voidptr zero) {
 }
 
 static bool map_exists(map m, string key) {
-	multi_return_u32_u32 mr_13208 = map_key_to_index(&m, key);
-	u32 index = mr_13208.arg0;
-	u32 meta = mr_13208.arg1;
+	multi_return_u32_u32 mr_13219 = map_key_to_index(&m, key);
+	u32 index = mr_13219.arg0;
+	u32 meta = mr_13219.arg1;
 	for (;;) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -10321,12 +10321,12 @@ static bool map_exists(map m, string key) {
 }
 
 void map_delete(map* m, string key) {
-	multi_return_u32_u32 mr_13628 = map_key_to_index(m, key);
-	u32 index = mr_13628.arg0;
-	u32 meta = mr_13628.arg1;
-	multi_return_u32_u32 mr_13663 = map_meta_less(m, index, meta);
-	index = mr_13663.arg0;
-	meta = mr_13663.arg1;
+	multi_return_u32_u32 mr_13639 = map_key_to_index(m, key);
+	u32 index = mr_13639.arg0;
+	u32 meta = mr_13639.arg1;
+	multi_return_u32_u32 mr_13674 = map_meta_less(m, index, meta);
+	index = mr_13674.arg0;
+	meta = mr_13674.arg1;
 	for (;;) {
 		if (!(meta == m->metas[index])) break;
 		u32 kv_index = m->metas[index + 1];
@@ -16490,8 +16490,8 @@ string term__warn_message(string s) {
 }
 
 string term__h_divider(string divider) {
-	multi_return_int_int mr_1482 = term__get_terminal_size();
-	int cols = mr_1482.arg0;
+	multi_return_int_int mr_1504 = term__get_terminal_size();
+	int cols = mr_1504.arg0;
 	string result = (divider.len > 0 ? (string_repeat(divider, 1 + (cols / divider.len))) : (string_repeat(tos_lit(" "), 1 + cols)));
 	return string_substr(result, 0, cols);
 }
@@ -16500,8 +16500,8 @@ string term__header(string text, string divider) {
 	if (text.len == 0) {
 		return term__h_divider(divider);
 	}
-	multi_return_int_int mr_1895 = term__get_terminal_size();
-	int xcols = mr_1895.arg0;
+	multi_return_int_int mr_1928 = term__get_terminal_size();
+	int xcols = mr_1928.arg0;
 	int cols = term__imax(1, xcols);
 	int tlimit = term__imax(1, (cols > text.len + 2 + 2 * divider.len ? (text.len) : (cols - 3 - 2 * divider.len)));
 	int tlimit_alligned = ((tlimit % 2) != (cols % 2) ? (tlimit + 1) : (tlimit));
@@ -21465,10 +21465,10 @@ static v__table__Type v__checker__Checker_promote_num(v__checker__Checker* c, v_
 	v__table__Type type_hi = left_type;
 	v__table__Type type_lo = right_type;
 	if (v__table__Type_idx(type_hi) < v__table__Type_idx(type_lo)) {
-		v__table__Type _var_6415 = type_hi;
-		v__table__Type _var_6424 = type_lo;
-		type_hi = _var_6424;
-		type_lo = _var_6415;
+		v__table__Type _var_6492 = type_hi;
+		v__table__Type _var_6501 = type_lo;
+		type_hi = _var_6501;
+		type_lo = _var_6492;
 	}
 	int idx_hi = v__table__Type_idx(type_hi);
 	int idx_lo = v__table__Type_idx(type_lo);
@@ -26867,6 +26867,9 @@ static multi_return_array_v__table__Param_bool_bool v__parser__Parser_fn_args(v_
 			array_string arg_names = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){v__parser__Parser_check_name(p)}));
 			for (;;) {
 				if (!(p->tok.kind == v__token__Kind_comma)) break;
+				if (!p->pref->is_fmt) {
+					v__parser__Parser_warn(p, string_add(tos_lit("`fn f(x, y Type)` syntax has been deprecated and will soon be removed. "), tos_lit("Use `fn f(x Type, y Type)` instead. You can run `v fmt -w file.v` to automatically fix your code.")));
+				}
 				v__parser__Parser_next(p);
 				array_push(&arg_pos, _MOV((v__token__Position[]){ v__token__Token_position(&p->tok) }));
 				array_push(&arg_names, _MOV((string[]){ v__parser__Parser_check_name(p) }));
@@ -26957,8 +26960,8 @@ static bool v__parser__have_fn_main(array_v__ast__Stmt stmts) {
 	for (int _t857 = 0; _t857 < _t856.len; ++_t857) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t856.data)[_t857];
 		if ((stmt).typ == 146 /* v.ast.FnDecl */) {
-			v__ast__FnDecl* _sc_tmp_15653 = (v__ast__FnDecl*)stmt._object;
-			v__ast__FnDecl* stmt = _sc_tmp_15653;
+			v__ast__FnDecl* _sc_tmp_15878 = (v__ast__FnDecl*)stmt._object;
+			v__ast__FnDecl* stmt = _sc_tmp_15878;
 			if (string_eq(stmt->name, tos_lit("main.main")) && string_eq(stmt->mod, tos_lit("main"))) {
 				return true;
 			}
@@ -30478,9 +30481,9 @@ static void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Array info, 
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_3316 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_3316.arg0;
-	bool str_method_expects_ptr = mr_3316.arg1;
+	multi_return_bool_bool_int mr_3323 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_3323.arg0;
+	bool str_method_expects_ptr = mr_3323.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -30537,9 +30540,9 @@ static void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__table__ArrayF
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.elem_type);
 	string field_styp = v__gen__Gen_typ(g, info.elem_type);
 	bool is_elem_ptr = v__table__Type_is_ptr(info.elem_type);
-	multi_return_bool_bool_int mr_6478 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_6478.arg0;
-	bool str_method_expects_ptr = mr_6478.arg1;
+	multi_return_bool_bool_int mr_6492 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_6492.arg0;
+	bool str_method_expects_ptr = mr_6492.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -30663,9 +30666,9 @@ static void v__gen__Gen_gen_str_for_multi_return(v__gen__Gen* g, v__table__Multi
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 		string field_styp = v__gen__Gen_typ(g, typ);
 		bool is_arg_ptr = v__table__Type_is_ptr(typ);
-		multi_return_bool_bool_int mr_12901 = v__table__TypeSymbol_str_method_info(sym);
-		bool sym_has_str_method = mr_12901.arg0;
-		bool str_method_expects_ptr = mr_12901.arg1;
+		multi_return_bool_bool_int mr_12936 = v__table__TypeSymbol_str_method_info(sym);
+		bool sym_has_str_method = mr_12936.arg0;
+		bool str_method_expects_ptr = mr_12936.arg1;
 		string arg_str_fn_name = tos_lit("");
 		if (sym_has_str_method) {
 			arg_str_fn_name = (is_arg_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -40777,8 +40780,8 @@ static void v__builder__Builder_print_warnings_and_errors(v__builder__Builder* b
 				for (int _t1433 = 0; _t1433 < _t1432.len; ++_t1433) {
 					v__ast__Stmt stmt = ((v__ast__Stmt*)_t1432.data)[_t1433];
 					if ((stmt).typ == 146 /* v.ast.FnDecl */) {
-						v__ast__FnDecl* _sc_tmp_9075 = (v__ast__FnDecl*)stmt._object;
-						v__ast__FnDecl* stmt = _sc_tmp_9075;
+						v__ast__FnDecl* _sc_tmp_9082 = (v__ast__FnDecl*)stmt._object;
+						v__ast__FnDecl* stmt = _sc_tmp_9082;
 						if (string_eq(stmt->name, fn_name)) {
 							int fline = stmt->pos.line_nr;
 							println(_STR("%.*s\000:%"PRId32"\000:", 3, file.path, fline));
