@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "140166e"
+#define V_COMMIT_HASH "8d88b73"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "11ee68e"
+	#define V_COMMIT_HASH "140166e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "140166e"
+	#define V_CURRENT_COMMIT_HASH "8d88b73"
 #endif
 
 // V comptime_defines:
@@ -29260,9 +29260,9 @@ static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_39462 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_39462.arg0;
-	array_v__ast__Comment comments = mr_39462.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_39461 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_39461.arg0;
+	array_v__ast__Comment comments = mr_39461.arg1;
 	v__token__Position end_pos = v__ast__Expr_position(*(v__ast__Expr*)array_last(exprs));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 }
@@ -29571,8 +29571,8 @@ static v__ast__Stmt v__parser__Parser_unsafe_stmt(v__parser__Parser* p) {
 	v__ast__Stmt stmt = v__parser__Parser_stmt(p, false);
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		if ((stmt).typ == 248 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_48568 = (v__ast__ExprStmt*)stmt._object;
-			v__ast__ExprStmt* stmt = _sc_tmp_48568;
+			v__ast__ExprStmt* _sc_tmp_48567 = (v__ast__ExprStmt*)stmt._object;
+			v__ast__ExprStmt* stmt = _sc_tmp_48567;
 			if (v__ast__Expr_is_expr(stmt->expr)) {
 				v__parser__Parser_next(p);
 				v__ast__UnsafeExpr ue = (v__ast__UnsafeExpr){.expr = stmt->expr,.pos = pos,};
