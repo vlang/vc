@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "11ee68e"
+#define V_COMMIT_HASH "140166e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3af700d"
+	#define V_COMMIT_HASH "11ee68e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "11ee68e"
+	#define V_CURRENT_COMMIT_HASH "140166e"
 #endif
 
 // V comptime_defines:
@@ -19864,7 +19864,7 @@ string v__ast__InfixExpr_str(v__ast__InfixExpr* x) {
 
 multi_return_string_bool v__ast__StringInterLiteral_get_fspec_braces(v__ast__StringInterLiteral* lit, int i) {
 	array_string res = __new_array_with_default(0, 0, sizeof(string), 0);
-	bool needs_fspec = (*(bool*)array_get(lit->need_fmts, i)) || (*(bool*)array_get(lit->pluss, i)) || ((*(bool*)array_get(lit->fills, i)) && (*(int*)array_get(lit->fwidths, i)) >= 0) || (*(int*)array_get(lit->fwidths, i)) != 0 || (*(int*)array_get(lit->precisions, i)) != 0;
+	bool needs_fspec = (*(bool*)array_get(lit->need_fmts, i)) || (*(bool*)array_get(lit->pluss, i)) || ((*(bool*)array_get(lit->fills, i)) && (*(int*)array_get(lit->fwidths, i)) >= 0) || (*(int*)array_get(lit->fwidths, i)) != 0 || (*(int*)array_get(lit->precisions, i)) != 987698;
 	bool needs_braces = needs_fspec;
 	if (!needs_braces) {
 		if (i + 1 < lit->vals.len && (*(string*)array_get(lit->vals, i + 1)).len > 0) {
@@ -19914,7 +19914,7 @@ multi_return_string_bool v__ast__StringInterLiteral_get_fspec_braces(v__ast__Str
 		if ((*(int*)array_get(lit->fwidths, i)) != 0) {
 			array_push(&res, _MOV((string[]){ _STR("%"PRId32"", 1, (*(int*)array_get(lit->fwidths, i))) }));
 		}
-		if ((*(int*)array_get(lit->precisions, i)) != 0) {
+		if ((*(int*)array_get(lit->precisions, i)) != 987698) {
 			array_push(&res, _MOV((string[]){ _STR(".%"PRId32"", 1, (*(int*)array_get(lit->precisions, i))) }));
 		}
 		if ((*(bool*)array_get(lit->need_fmts, i))) {
@@ -20011,9 +20011,9 @@ string v__ast__Expr_str(v__ast__Expr x) {
 				break;
 			}
 			array_push(&res, _MOV((string[]){ tos_lit("$") }));
-			multi_return_string_bool mr_5579 = v__ast__StringInterLiteral_get_fspec_braces(x, i);
-			string fspec_str = mr_5579.arg0;
-			bool needs_braces = mr_5579.arg1;
+			multi_return_string_bool mr_5589 = v__ast__StringInterLiteral_get_fspec_braces(x, i);
+			string fspec_str = mr_5589.arg0;
+			bool needs_braces = mr_5589.arg1;
 			if (needs_braces) {
 				array_push(&res, _MOV((string[]){ tos_lit("{") }));
 				array_push(&res, _MOV((string[]){ v__ast__Expr_str((*(v__ast__Expr*)array_get(x->exprs, i))) }));
@@ -20075,8 +20075,8 @@ string v__ast__Stmt_str(v__ast__Stmt node) {
 		for (int i = 0; i < _t585.len; ++i) {
 			v__ast__Expr left = ((v__ast__Expr*)_t585.data)[i];
 			if ((left).typ == 186 /* v.ast.Ident */) {
-				v__ast__Ident* _sc_tmp_6406 = (v__ast__Ident*)left._object;
-				v__ast__Ident* left = _sc_tmp_6406;
+				v__ast__Ident* _sc_tmp_6416 = (v__ast__Ident*)left._object;
+				v__ast__Ident* left = _sc_tmp_6416;
 				v__ast__IdentVar var_info = v__ast__Ident_var_info(left);
 				if (var_info.is_mut) {
 					out = /*f*/string_add(out, tos_lit("mut "));
@@ -21628,7 +21628,7 @@ v__table__Type v__checker__Checker_string_inter_lit(v__checker__Checker* c, v__a
 				(*(bool*)array_get(node->need_fmts, i)) = false;
 			}
 		} else {
-			if ((*(int*)array_get(node->precisions, i)) != 0 && !v__table__Type_is_float(typ)) {
+			if ((*(int*)array_get(node->precisions, i)) != 987698 && !v__table__Type_is_float(typ)) {
 				v__checker__Checker_error(c, tos_lit("precision specification only valid for float types"), (*(v__token__Position*)array_get(node->fmt_poss, i)));
 			}
 			if ((*(bool*)array_get(node->pluss, i)) && !v__table__Type_is_number(typ)) {
@@ -29023,7 +29023,7 @@ static v__ast__Expr v__parser__Parser_string_expr(v__parser__Parser* p) {
 		bool has_fmt = false;
 		int fwidth = 0;
 		bool fwidthneg = false;
-		int precision = 0;
+		int precision = 987698;
 		bool visible_plus = false;
 		bool fill = false;
 		rune fmt = '_';
@@ -29280,9 +29280,9 @@ static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_39355 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_39355.arg0;
-	array_v__ast__Comment comments = mr_39355.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_39462 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_39462.arg0;
+	array_v__ast__Comment comments = mr_39462.arg1;
 	v__token__Position end_pos = v__ast__Expr_position(*(v__ast__Expr*)array_last(exprs));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 }
@@ -29577,7 +29577,7 @@ static v__ast__Stmt v__parser__Parser_unsafe_stmt(v__parser__Parser* p) {
 		VAssertMetaInfo v_assert_meta_info__t959;
 		memset(&v_assert_meta_info__t959, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t959.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/parser/parser.v");
-		v_assert_meta_info__t959.line_nr = 2010;
+		v_assert_meta_info__t959.line_nr = 2011;
 		v_assert_meta_info__t959.fn_name = tos_lit("unsafe_stmt");
 		v_assert_meta_info__t959.src = tos_lit("!p.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t959);
@@ -29593,8 +29593,8 @@ static v__ast__Stmt v__parser__Parser_unsafe_stmt(v__parser__Parser* p) {
 	v__ast__Stmt stmt = v__parser__Parser_stmt(p, false);
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		if ((stmt).typ == 221 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_48461 = (v__ast__ExprStmt*)stmt._object;
-			v__ast__ExprStmt* stmt = _sc_tmp_48461;
+			v__ast__ExprStmt* _sc_tmp_48568 = (v__ast__ExprStmt*)stmt._object;
+			v__ast__ExprStmt* stmt = _sc_tmp_48568;
 			if (v__ast__Expr_is_expr(stmt->expr)) {
 				v__parser__Parser_next(p);
 				v__ast__UnsafeExpr ue = (v__ast__UnsafeExpr){.expr = stmt->expr,.pos = pos,};
@@ -37987,7 +37987,7 @@ static void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInter
 		if ((*(int*)array_get(node.fwidths, i)) != 0) {
 			fmt = _STR("%.*s\000%"PRId32"", 2, fmt, (*(int*)array_get(node.fwidths, i)));
 		}
-		if ((*(int*)array_get(node.precisions, i)) != 0) {
+		if ((*(int*)array_get(node.precisions, i)) != 987698) {
 			fmt = _STR("%.*s\000.%"PRId32"", 2, fmt, (*(int*)array_get(node.precisions, i)));
 		}
 		if (fspec == 's') {
@@ -39516,7 +39516,7 @@ static void v__gen__js__JsGen_gen_string_inter_literal(v__gen__js__JsGen* g, v__
 		int fwidth = (*(int*)array_get(it.fwidths, i));
 		int precision = (*(int*)array_get(it.precisions, i));
 		v__gen__js__JsGen_write(g, tos_lit("\${"));
-		if (fmt != '_' || fwidth != 0 || precision != 0) {
+		if (fmt != '_' || fwidth != 0 || precision != 987698) {
 			v__gen__js__JsGen_expr(g, expr);
 		} else {
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, (*(v__table__Type*)array_get(it.expr_types, i)));
