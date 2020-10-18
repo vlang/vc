@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8b2e704"
+#define V_COMMIT_HASH "44753e6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "67ecc04"
+	#define V_COMMIT_HASH "8b2e704"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8b2e704"
+	#define V_CURRENT_COMMIT_HASH "44753e6"
 #endif
 
 // V comptime_defines:
@@ -41948,10 +41948,7 @@ static void v__builder__Builder_run_compiled_executable_and_exit(v__builder__Bui
 			println(_STR("command to run executable: %.*s", 1, cmd));
 		}
 		if (b->pref->is_test) {
-			int ret = os__system(cmd);
-			if (ret != 0) {
-				v_exit(1);
-			}
+			v_exit(os__system(cmd));
 		}
 		if (b->pref->is_run) {
 			int ret = os__system(cmd);
@@ -42035,10 +42032,6 @@ array_string v__builder__Builder_get_user_files(v__builder__Builder* v) {
 		array_push(&user_files, _MOV((string[]){ os__join_path(preludes_path, (varg_string){.len=1,.args={tos_lit("profiled_program.v")}}) }));
 	}
 	bool is_test = string_ends_with(dir, tos_lit("_test.v"));
-	if (v->pref->is_run && is_test) {
-		println(tos_lit("use `v x_test.v` instead of `v run x_test.v`"));
-		v_exit(1);
-	}
 	bool is_internal_module_test = false;
 	if (is_test) {
 		Option_string _t1562 = os__read_file(dir);
