@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8a68714"
+#define V_COMMIT_HASH "9cf5c9a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "941f138"
+	#define V_COMMIT_HASH "8a68714"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8a68714"
+	#define V_CURRENT_COMMIT_HASH "9cf5c9a"
 #endif
 
 // V comptime_defines:
@@ -15931,6 +15931,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 				command = tos_lit("version");
 				command_pos = i;
 			}
+		} else if (string_eq(_t288, tos_lit("-progress"))) {
 		} else if (string_eq(_t288, tos_lit("-silent"))) {
 			res->output_mode = v__pref__OutputMode_silent;
 		} else if (string_eq(_t288, tos_lit("-g"))) {
