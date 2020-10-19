@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0d31b39"
+#define V_COMMIT_HASH "37d6503"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d89986d"
+	#define V_COMMIT_HASH "0d31b39"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0d31b39"
+	#define V_CURRENT_COMMIT_HASH "37d6503"
 #endif
 
 // V comptime_defines:
@@ -29358,6 +29358,9 @@ static v__ast__ConstDecl v__parser__Parser_const_decl(v__parser__Parser* p) {
 		}
 		string full_name = v__parser__Parser_prepend_mod(p, name);
 		v__parser__Parser_check(p, v__token__Kind_assign);
+		if (p->tok.kind == v__token__Kind_key_fn) {
+			v__parser__Parser_error(p, tos_lit("const initializer fn literal is not a constant"));
+		}
 		v__ast__Expr expr = v__parser__Parser_expr(p, 0);
 		v__ast__ConstField field = (v__ast__ConstField){.mod = p->mod,.name = full_name,.expr = expr,.is_pub = 0,.pos = pos,.typ = 0,.comments = comments,};
 		array_push(&fields, _MOV((v__ast__ConstField[]){ field }));
@@ -29375,9 +29378,9 @@ static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_39461 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_39461.arg0;
-	array_v__ast__Comment comments = mr_39461.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_39555 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_39555.arg0;
+	array_v__ast__Comment comments = mr_39555.arg1;
 	v__token__Position end_pos = v__ast__Expr_position(*(v__ast__Expr*)array_last(exprs));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 }
@@ -29670,7 +29673,7 @@ static v__ast__Stmt v__parser__Parser_unsafe_stmt(v__parser__Parser* p) {
 		VAssertMetaInfo v_assert_meta_info__t946;
 		memset(&v_assert_meta_info__t946, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t946.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/parser/parser.v");
-		v_assert_meta_info__t946.line_nr = 2011;
+		v_assert_meta_info__t946.line_nr = 2014;
 		v_assert_meta_info__t946.fn_name = tos_lit("unsafe_stmt");
 		v_assert_meta_info__t946.src = tos_lit("!p.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t946);
@@ -29686,8 +29689,8 @@ static v__ast__Stmt v__parser__Parser_unsafe_stmt(v__parser__Parser* p) {
 	v__ast__Stmt stmt = v__parser__Parser_stmt(p, false);
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		if ((stmt).typ == 248 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_48567 = (v__ast__ExprStmt*)stmt._object;
-			v__ast__ExprStmt* stmt = _sc_tmp_48567;
+			v__ast__ExprStmt* _sc_tmp_48661 = (v__ast__ExprStmt*)stmt._object;
+			v__ast__ExprStmt* stmt = _sc_tmp_48661;
 			if (v__ast__Expr_is_expr(stmt->expr)) {
 				v__parser__Parser_next(p);
 				v__ast__UnsafeExpr ue = (v__ast__UnsafeExpr){.expr = stmt->expr,.pos = pos,};
