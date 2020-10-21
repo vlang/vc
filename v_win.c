@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5b1ab3b"
+#define V_COMMIT_HASH "28d7532"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0e56b96"
+	#define V_COMMIT_HASH "5b1ab3b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5b1ab3b"
+	#define V_CURRENT_COMMIT_HASH "28d7532"
 #endif
 
 // V comptime_defines:
@@ -4635,6 +4635,7 @@ string v__util__githash(bool should_get_from_filesystem);
 void v__util__set_vroot_folder(string vroot_path);
 Option_string v__util__resolve_vroot(string str, string dir);
 void v__util__launch_tool(bool is_verbose, string tool_name, array_string args);
+bool v__util__should_recompile_tool(string vexe, string tool_source);
 string v__util__quote_path_with_spaces(string s);
 string v__util__args_quote_paths_with_spaces(array_string args);
 string v__util__path_of_executable(string path);
@@ -17766,8 +17767,9 @@ void v__util__launch_tool(bool is_verbose, string tool_name, array_string args) 
 	string vroot = os__dir(vexe);
 	v__util__set_vroot_folder(vroot);
 	string tool_args = v__util__args_quote_paths_with_spaces(args);
-	string tool_exe = v__util__path_of_executable(os__real_path(_STR("%.*s\000/cmd/tools/%.*s", 2, vroot, tool_name)));
-	string tool_source = os__real_path(_STR("%.*s\000/cmd/tools/%.*s\000.v", 3, vroot, tool_name));
+	string tool_basename = os__real_path(os__join_path(vroot, (varg_string){.len=3,.args={tos_lit("cmd"), tos_lit("tools"), tool_name}}));
+	string tool_exe = v__util__path_of_executable(tool_basename);
+	string tool_source = string_add(tool_basename, tos_lit(".v"));
 	string tool_command = _STR("\"%.*s\000\" %.*s", 2, tool_exe, tool_args);
 	if (is_verbose) {
 		println(_STR("launch_tool vexe        : %.*s", 1, vroot));
@@ -17775,20 +17777,7 @@ void v__util__launch_tool(bool is_verbose, string tool_name, array_string args) 
 		println(_STR("launch_tool tool_args   : %.*s", 1, tool_args));
 		println(_STR("launch_tool tool_command: %.*s", 1, tool_command));
 	}
-	bool should_compile = false;
-	if (!os__exists(tool_exe)) {
-		should_compile = true;
-	} else {
-		if (os__file_last_mod_unix(tool_exe) <= os__file_last_mod_unix(vexe)) {
-			should_compile = true;
-			if (string_eq(tool_name, tos_lit("vself")) || string_eq(tool_name, tos_lit("vup"))) {
-				should_compile = false;
-			}
-		}
-		if (os__file_last_mod_unix(tool_exe) <= os__file_last_mod_unix(tool_source)) {
-			should_compile = true;
-		}
-	}
+	bool should_compile = v__util__should_recompile_tool(vexe, tool_source);
 	if (is_verbose) {
 		println(_STR("launch_tool should_compile: %.*s", 1, should_compile ? _SLIT("true") : _SLIT("false")));
 	}
@@ -17818,11 +17807,7 @@ void v__util__launch_tool(bool is_verbose, string tool_name, array_string args) 
 		}
  		os__Result tool_compilation = *(os__Result*) _t393.data;
 		if (tool_compilation.exit_code != 0) {
-			string err = tos_lit("Permission denied");
-			if (!string_contains(tool_compilation.output, err)) {
-				err = _STR("\n%.*s", 1, tool_compilation.output);
-			}
-			eprintln(_STR("cannot compile `%.*s\000`: %.*s", 2, tool_source, err));
+			eprintln(_STR("cannot compile `%.*s\000`: \n%.*s", 2, tool_source, tool_compilation.output));
 			v_exit(1);
 		}
 	}
@@ -17830,6 +17815,26 @@ void v__util__launch_tool(bool is_verbose, string tool_name, array_string args) 
 		println(_STR("launch_tool running tool command: %.*s\000 ...", 2, tool_command));
 	}
 	v_exit(os__system(tool_command));
+}
+
+bool v__util__should_recompile_tool(string vexe, string tool_source) {
+	string sfolder = os__base(tool_source);
+	string tool_name = string_replace(os__file_name(tool_source), tos_lit(".v"), tos_lit(""));
+	string tool_exe = os__join_path(sfolder, (varg_string){.len=1,.args={v__util__path_of_executable(tool_name)}});
+	bool should_compile = false;
+	if (!os__exists(tool_exe)) {
+		should_compile = true;
+	} else {
+		if (os__file_last_mod_unix(tool_exe) <= os__file_last_mod_unix(vexe)) {
+			should_compile = true;
+			if (string_eq(tool_name, tos_lit("vself")) || string_eq(tool_name, tos_lit("vup"))) {
+				should_compile = false;
+			}
+		}
+		if (os__file_last_mod_unix(tool_exe) <= os__file_last_mod_unix(tool_source)) {
+			should_compile = true;
+		}
+	}
 }
 
 string v__util__quote_path_with_spaces(string s) {
