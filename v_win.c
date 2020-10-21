@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5e523fd"
+#define V_COMMIT_HASH "d67e177"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e1478d0"
+	#define V_COMMIT_HASH "5e523fd"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5e523fd"
+	#define V_CURRENT_COMMIT_HASH "d67e177"
 #endif
 
 // V comptime_defines:
@@ -17818,8 +17818,8 @@ void v__util__launch_tool(bool is_verbose, string tool_name, array_string args) 
 }
 
 bool v__util__should_recompile_tool(string vexe, string tool_source) {
-	string sfolder = os__base(tool_source);
-	string tool_name = string_replace(os__file_name(tool_source), tos_lit(".v"), tos_lit(""));
+	string sfolder = os__dir(tool_source);
+	string tool_name = string_replace(os__base(tool_source), tos_lit(".v"), tos_lit(""));
 	string tool_exe = os__join_path(sfolder, (varg_string){.len=1,.args={v__util__path_of_executable(tool_name)}});
 	bool should_compile = false;
 	if (!os__exists(tool_exe)) {
