@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "28d7532"
+#define V_COMMIT_HASH "e1478d0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5b1ab3b"
+	#define V_COMMIT_HASH "28d7532"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "28d7532"
+	#define V_CURRENT_COMMIT_HASH "e1478d0"
 #endif
 
 // V comptime_defines:
@@ -17872,6 +17872,7 @@ bool v__util__should_recompile_tool(string vexe, string tool_source) {
 			should_compile = true;
 		}
 	}
+	return should_compile;
 }
 
 string v__util__quote_path_with_spaces(string s) {
