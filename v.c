@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "019e3b2"
+#define V_COMMIT_HASH "6d11caf"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d67e177"
+	#define V_COMMIT_HASH "019e3b2"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "019e3b2"
+	#define V_CURRENT_COMMIT_HASH "6d11caf"
 #endif
 
 // V comptime_defines:
@@ -10884,6 +10884,9 @@ string string_replace(string s, string rep, string with) {
 		idx += rep.len;
 	}
 	if (idxs.len == 0) {
+		// Defer begin
+		array_free(&idxs);
+		// Defer end
 		return string_clone(s);
 	}
 	int new_len = s.len + idxs.len * (with.len - rep.len);
@@ -10913,6 +10916,9 @@ string string_replace(string s, string rep, string with) {
 	}
 	{ // Unsafe block
 		b[new_len] = '\0';
+		// Defer begin
+		array_free(&idxs);
+		// Defer end
 		return tos(b, new_len);
 	}
 }
