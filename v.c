@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "66b8462"
+#define V_COMMIT_HASH "f7698ea"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ab137e4"
+	#define V_COMMIT_HASH "66b8462"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "66b8462"
+	#define V_CURRENT_COMMIT_HASH "f7698ea"
 #endif
 
 // V comptime_defines:
@@ -4048,6 +4048,7 @@ bool os__is_link(string path);
 void os__chdir(string path);
 string os__getwd();
 string os__real_path(string fpath);
+static string os__normalize_drive_letter(string path);
 bool os__is_abs_path(string path);
 string os__join_path(string base, varg_string dirs);
 array_string os__walk_ext(string path, string ext);
@@ -13954,7 +13955,23 @@ string os__real_path(string fpath) {
 		}
 	}
 	#endif
-	return byteptr_vstring(fullpath);
+	string res = byteptr_vstring(fullpath);
+	return os__normalize_drive_letter(res);
+}
+
+static string os__normalize_drive_letter(string path) {
+	#if !defined(_WIN32)
+	{
+		return path;
+	}
+	#endif
+	if (path.len > 2 && string_at(path, 0) >= 'a' && string_at(path, 0) <= 'z' && string_at(path, 1) == ':' && string_at(path, 2) == string_at(_const_os__path_separator, 0)) {
+		{ // Unsafe block
+			byte* x = &path.str[0];
+			(*x) = *x - 32;
+		}
+	}
+	return path;
 }
 
 bool os__is_abs_path(string path) {
