@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "296a609"
+#define V_COMMIT_HASH "23ee301"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ac6fad6"
+	#define V_COMMIT_HASH "296a609"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "296a609"
+	#define V_CURRENT_COMMIT_HASH "23ee301"
 #endif
 
 // V comptime_defines:
@@ -4456,6 +4456,8 @@ string v__util__strip_main_name(string name);
 string v__util__no_dots(string s);
 string _const_v__util__map_prefix; // a string literal, inited later
 string v__util__no_cur_mod(string v_typename, string cur_mod);
+void v__util__prepare_tool_when_needed(string source_name);
+void v__util__recompile_file(string vexe, string file);
 string v__table__Attr_str(v__table__Attr attr);
 bool array_v__table__Attr_contains(array_v__table__Attr attrs, string str);
 string v__table__ShareType_str(v__table__ShareType t);
@@ -18246,6 +18248,26 @@ string v__util__no_cur_mod(string v_typename, string cur_mod) {
 		res = string_add(_const_v__util__map_prefix, res);
 	}
 	return res;
+}
+
+void v__util__prepare_tool_when_needed(string source_name) {
+	string vexe = os__getenv(tos_lit("VEXE"));
+	string vroot = os__dir(vexe);
+	string stool = os__join_path(vroot, (varg_string){.len=3,.args={tos_lit("cmd"), tos_lit("tools"), source_name}});
+	if (v__util__should_recompile_tool(vexe, stool)) {
+		time__sleep_ms(1001);
+		v__util__recompile_file(vexe, stool);
+	}
+}
+
+void v__util__recompile_file(string vexe, string file) {
+	string cmd = _STR("%.*s\000 %.*s", 2, vexe, file);
+	println(_STR("recompilation command: %.*s", 1, cmd));
+	int recompile_result = os__system(cmd);
+	if (recompile_result != 0) {
+		eprintln(_STR("could not recompile %.*s", 1, file));
+		v_exit(2);
+	}
 }
 
 string v__table__Attr_str(v__table__Attr attr) {
@@ -43251,9 +43273,9 @@ static void main__main() {
 		return;
 	}
 	array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_964 = v__pref__parse_args(args_and_flags);
-	v__pref__Preferences* prefs = mr_964.arg0;
-	string command = mr_964.arg1;
+	multi_return_v__pref__Preferences_string mr_976 = v__pref__parse_args(args_and_flags);
+	v__pref__Preferences* prefs = mr_976.arg0;
+	string command = mr_976.arg1;
 	if (prefs->is_verbose) {
 	}
 	if (_IN(string, command, _const_main__simple_cmd)) {
@@ -43517,8 +43539,8 @@ void _vinit() {
 	_const_v__builder__key_wow64_32key = (0x0200);
 	_const_v__builder__key_enumerate_sub_keys = (0x0008);
 	// Initializations for module main :
-	_const_main__simple_cmd = new_array_from_c_array(18, 18, sizeof(string), _MOV((string[18]){
-		tos_lit("fmt"), tos_lit("up"), tos_lit("vet"), tos_lit("self"), tos_lit("tracev"), tos_lit("symlink"), tos_lit("bin2v"), tos_lit("test"), tos_lit("test-fmt"), tos_lit("test-compiler"), tos_lit("test-fixed"), tos_lit("repl"), tos_lit("build-tools"), tos_lit("build-examples"), tos_lit("build-vbinaries"), tos_lit("setup-freetype"), tos_lit("doc"), tos_lit("doctor")}));
+	_const_main__simple_cmd = new_array_from_c_array(19, 19, sizeof(string), _MOV((string[19]){
+		tos_lit("fmt"), tos_lit("up"), tos_lit("vet"), tos_lit("self"), tos_lit("tracev"), tos_lit("symlink"), tos_lit("bin2v"), tos_lit("test"), tos_lit("test-fmt"), tos_lit("test-compiler"), tos_lit("test-fixed"), tos_lit("test-vet"), tos_lit("repl"), tos_lit("build-tools"), tos_lit("build-examples"), tos_lit("build-vbinaries"), tos_lit("setup-freetype"), tos_lit("doc"), tos_lit("doctor")}));
 	_const_main__list_of_flags_that_allow_duplicates = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){tos_lit("cc"), tos_lit("d"), tos_lit("define"), tos_lit("cf"), tos_lit("cflags")}));
 }
 
