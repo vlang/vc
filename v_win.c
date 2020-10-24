@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6c267f1"
+#define V_COMMIT_HASH "89daec4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "42da37e"
+	#define V_COMMIT_HASH "6c267f1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6c267f1"
+	#define V_CURRENT_COMMIT_HASH "89daec4"
 #endif
 
 // V comptime_defines:
@@ -26592,8 +26592,8 @@ static void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast__FnDecl* 
 		for (int _t815 = 0; _t815 < _t814.len; ++_t815) {
 			v__ast__Stmt st = ((v__ast__Stmt*)_t814.data)[_t815];
 			if ((st).typ == 241 /* v.ast.AssertStmt */) {
-				v__ast__AssertStmt* _sc_tmp_133404 = (v__ast__AssertStmt*)st._object;
-				v__ast__AssertStmt* st = _sc_tmp_133404;
+				v__ast__AssertStmt* _sc_tmp_133405 = (v__ast__AssertStmt*)st._object;
+				v__ast__AssertStmt* st = _sc_tmp_133405;
 				v__checker__Checker_warn(c, tos_lit("tests will not be run because filename does not end with `_test.v`"), node->pos);
 				break;
 			}
@@ -26623,21 +26623,21 @@ static bool v__checker__has_top_return(array_v__ast__Stmt stmts) {
 	for (int _t819 = 0; _t819 < _t818.len; ++_t819) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t818.data)[_t819];
 		if ((stmt).typ == 261 /* v.ast.Return */) {
-			v__ast__Return* _sc_tmp_134437 = (v__ast__Return*)stmt._object;
-			v__ast__Return* stmt = _sc_tmp_134437;
+			v__ast__Return* _sc_tmp_134438 = (v__ast__Return*)stmt._object;
+			v__ast__Return* stmt = _sc_tmp_134438;
 			return true;
 		} else if ((stmt).typ == 243 /* v.ast.Block */) {
-			v__ast__Block* _sc_tmp_134480 = (v__ast__Block*)stmt._object;
-			v__ast__Block* stmt = _sc_tmp_134480;
+			v__ast__Block* _sc_tmp_134481 = (v__ast__Block*)stmt._object;
+			v__ast__Block* stmt = _sc_tmp_134481;
 			if (v__checker__has_top_return(stmt->stmts)) {
 				return true;
 			}
 		} else if ((stmt).typ == 249 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_134568 = (v__ast__ExprStmt*)stmt._object;
-			v__ast__ExprStmt* stmt = _sc_tmp_134568;
+			v__ast__ExprStmt* _sc_tmp_134569 = (v__ast__ExprStmt*)stmt._object;
+			v__ast__ExprStmt* stmt = _sc_tmp_134569;
 			if ((stmt->expr).typ == 205 /* v.ast.CallExpr */) {
-				v__ast__CallExpr* _sc_tmp_134602 = (v__ast__CallExpr*)stmt->expr._object;
-				v__ast__CallExpr* ce = _sc_tmp_134602;
+				v__ast__CallExpr* _sc_tmp_134603 = (v__ast__CallExpr*)stmt->expr._object;
+				v__ast__CallExpr* ce = _sc_tmp_134603;
 				if ((string_eq(ce->name, tos_lit("panic")) || string_eq(ce->name, tos_lit("exit")))) {
 					return true;
 				}
