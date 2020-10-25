@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4653ed3"
+#define V_COMMIT_HASH "5cb31c2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5f6259d"
+	#define V_COMMIT_HASH "4653ed3"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4653ed3"
+	#define V_CURRENT_COMMIT_HASH "5cb31c2"
 #endif
 
 // V comptime_defines:
@@ -42939,6 +42939,10 @@ static void v__builder__Builder_build_thirdparty_obj_file(v__builder__Builder* v
 	}
 	string opath = v__pref__CacheManager_postfix_with_key2cpath(&v->pref->cache_manager, tos_lit(".o"), obj_path);
 	if (os__exists(opath)) {
+		return;
+	}
+	if (os__exists(obj_path)) {
+		os__cp(obj_path, opath);
 		return;
 	}
 	println(_STR("%.*s\000 not found, building it in %.*s\000 ...", 3, obj_path, opath));
