@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8e478e8"
+#define V_COMMIT_HASH "a7e3092"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "60cc8ac"
+	#define V_COMMIT_HASH "8e478e8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8e478e8"
+	#define V_CURRENT_COMMIT_HASH "a7e3092"
 #endif
 
 // V comptime_defines:
@@ -42685,6 +42685,9 @@ static void v__builder__Builder_myfree(v__builder__Builder* b) {
 
 static void v__builder__Builder_run_compiled_executable_and_exit(v__builder__Builder* b) {
 	if (b->pref->skip_running) {
+		return;
+	}
+	if (b->pref->only_check_syntax) {
 		return;
 	}
 	if (b->pref->os == v__pref__OS_ios && b->pref->is_ios_simulator == false) {
