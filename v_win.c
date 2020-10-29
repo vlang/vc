@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "fbd193b"
+#define V_COMMIT_HASH "71dfec3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ce7da85"
+	#define V_COMMIT_HASH "fbd193b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "fbd193b"
+	#define V_CURRENT_COMMIT_HASH "71dfec3"
 #endif
 
 // V comptime_defines:
@@ -18844,7 +18844,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("ce7da85"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(  p->compile_defines_all)), _STR("%.*s", 1, array_string_str(  p->compile_defines)), _STR("%.*s", 1, array_string_str(  p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("fbd193b"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(  p->compile_defines_all)), _STR("%.*s", 1, array_string_str(  p->compile_defines)), _STR("%.*s", 1, array_string_str(  p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -39602,7 +39602,7 @@ static void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr node) {
 	}
 	if (node.free_receiver) {
 		string fn_name = string_replace(node.name, tos_lit("."), tos_lit("_"));
-		string arg_name = _STR("_arg_expr_%.*s\000_0", 2, fn_name);
+		string arg_name = _STR("_arg_expr_%.*s\000_0_%"PRId32"", 2, fn_name, node.pos.pos);
 		v__gen__Gen_write(g, string_add(tos_lit("/*af receiver arg*/"), arg_name));
 	} else {
 		v__gen__Gen_expr(g, node.left);
@@ -39718,11 +39718,11 @@ static void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) {
 			v__gen__Gen_write(g, tos_lit("))"));
 		}
 	} else if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-		multi_return_int_string_string_string mr_18790 = v__gen__Gen_panic_debug_info(g, node.pos);
-		int paline = mr_18790.arg0;
-		string pafile = mr_18790.arg1;
-		string pamod = mr_18790.arg2;
-		string pafn = mr_18790.arg3;
+		multi_return_int_string_string_string mr_18804 = v__gen__Gen_panic_debug_info(g, node.pos);
+		int paline = mr_18804.arg0;
+		string pafile = mr_18804.arg1;
+		string pamod = mr_18804.arg2;
+		string pafn = mr_18804.arg3;
 		v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 		v__gen__Gen_call_args(g, node);
 		v__gen__Gen_write(g, tos_lit(")"));
@@ -39761,9 +39761,9 @@ static void v__gen__Gen_autofree_call_pregen(v__gen__Gen* g, v__ast__CallExpr no
 		}
 		free_tmp_arg_vars = true;
 		string fn_name = string_replace(node.name, tos_lit("."), tos_lit("_"));
-		string t = _STR("_arg_expr_%.*s\000_%"PRId32"", 2, fn_name, i);
-		bool used = v__ast__Scope_known_var(scope, t);
-		string s = tos_lit("");
+		string t = _STR("_arg_expr_%.*s\000_%"PRId32"\000_%"PRId32"", 3, fn_name, i, node.pos.pos);
+		bool used = false;
+		string s = _STR("%.*s\000 = ", 2, t);
 		if (used) {
 			{ /* if guard */ 
 			Option_v__ast__ScopeObject _t1474;
@@ -39854,7 +39854,7 @@ static void v__gen__Gen_call_args(v__gen__Gen* g, v__ast__CallExpr node) {
 			} else if (use_tmp_var_autofree) {
 				if (arg.is_tmp_autofree) {
 					string fn_name = string_replace(node.name, tos_lit("."), tos_lit("_"));
-					string name = _STR("_arg_expr_%.*s\000_%"PRId32"", 2, fn_name, i + 1);
+					string name = _STR("_arg_expr_%.*s\000_%"PRId32"\000_%"PRId32"", 3, fn_name, i + 1, node.pos.pos);
 					v__gen__Gen_write(g, string_add(tos_lit("/*af arg*/"), name));
 				}
 			} else {
@@ -39863,7 +39863,7 @@ static void v__gen__Gen_call_args(v__gen__Gen* g, v__ast__CallExpr node) {
 		} else {
 			if (use_tmp_var_autofree) {
 				string fn_name = string_replace(node.name, tos_lit("."), tos_lit("_"));
-				string name = _STR("_arg_expr_%.*s\000_%"PRId32"", 2, fn_name, i + 1);
+				string name = _STR("_arg_expr_%.*s\000_%"PRId32"\000_%"PRId32"", 3, fn_name, i + 1, node.pos.pos);
 				v__gen__Gen_write(g, string_add(tos_lit("/*af arg2*/"), name));
 			} else {
 				v__gen__Gen_expr(g, arg.expr);
