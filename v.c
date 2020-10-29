@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "423044d"
+#define V_COMMIT_HASH "367067d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "71dfec3"
+	#define V_COMMIT_HASH "423044d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "423044d"
+	#define V_CURRENT_COMMIT_HASH "367067d"
 #endif
 
 // V comptime_defines:
@@ -72,10 +72,10 @@ typedef struct v__vmod__ModFileCacher v__vmod__ModFileCacher;
 typedef struct v__cflag__CFlag v__cflag__CFlag;
 typedef struct v__errors__Error v__errors__Error;
 typedef struct v__errors__Warning v__errors__Warning;
-typedef struct pkgconfig__Main pkgconfig__Main;
-typedef struct pkgconfig__MainOptions pkgconfig__MainOptions;
-typedef struct pkgconfig__Options pkgconfig__Options;
-typedef struct pkgconfig__PkgConfig pkgconfig__PkgConfig;
+typedef struct v__pkgconfig__Main v__pkgconfig__Main;
+typedef struct v__pkgconfig__MainOptions v__pkgconfig__MainOptions;
+typedef struct v__pkgconfig__Options v__pkgconfig__Options;
+typedef struct v__pkgconfig__PkgConfig v__pkgconfig__PkgConfig;
 typedef struct v__pref__Preferences v__pref__Preferences;
 typedef struct v__table__Attr v__table__Attr;
 typedef struct v__table__TypeSymbol v__table__TypeSymbol;
@@ -223,8 +223,8 @@ typedef struct Option_semver__ComparatorSet Option_semver__ComparatorSet;
 typedef struct Option_semver__Comparator Option_semver__Comparator;
 typedef struct Option_v__vmod__Manifest Option_v__vmod__Manifest;
 typedef struct Option_multi_return_array_string_int Option_multi_return_array_string_int;
-typedef struct Option_pkgconfig__PkgConfig_ptr Option_pkgconfig__PkgConfig_ptr;
-typedef struct Option_pkgconfig__Main_ptr Option_pkgconfig__Main_ptr;
+typedef struct Option_v__pkgconfig__PkgConfig_ptr Option_v__pkgconfig__PkgConfig_ptr;
+typedef struct Option_v__pkgconfig__Main_ptr Option_v__pkgconfig__Main_ptr;
 typedef struct Option_v__pref__OS Option_v__pref__OS;
 typedef struct Option_v__pref__Backend Option_v__pref__Backend;
 typedef struct Option_v__table__Fn Option_v__table__Fn;
@@ -2129,7 +2129,7 @@ struct v__gen__x64__SectionConfig {
 	i64 entsize;
 };
 
-struct pkgconfig__MainOptions {
+struct v__pkgconfig__MainOptions {
 	bool modversion;
 	bool description;
 	bool help;
@@ -2153,13 +2153,13 @@ struct pkgconfig__MainOptions {
 	array_string args;
 };
 
-struct pkgconfig__Main {
-	pkgconfig__MainOptions* opt;
+struct v__pkgconfig__Main {
+	v__pkgconfig__MainOptions* opt;
 	string res;
 	bool has_actions;
 };
 
-struct pkgconfig__Options {
+struct v__pkgconfig__Options {
 	string path;
 	bool debug;
 	bool norecurse;
@@ -2924,8 +2924,8 @@ struct v__parser__Parser {
 	string cur_fn_name;
 };
 
-struct pkgconfig__PkgConfig {
-	pkgconfig__Options options;
+struct v__pkgconfig__PkgConfig {
+	v__pkgconfig__Options options;
 	array_string libs;
 	array_string libs_private;
 	array_string cflags;
@@ -3496,20 +3496,20 @@ struct Option_multi_return_array_string_int {
 	byte data[sizeof(multi_return_array_string_int)];
 };
 
-struct Option_pkgconfig__PkgConfig_ptr {
+struct Option_v__pkgconfig__PkgConfig_ptr {
 	bool ok;
 	bool is_none;
 	string v_error;
 	int ecode;
-	byte data[sizeof(pkgconfig__PkgConfig*)];
+	byte data[sizeof(v__pkgconfig__PkgConfig*)];
 };
 
-struct Option_pkgconfig__Main_ptr {
+struct Option_v__pkgconfig__Main_ptr {
 	bool ok;
 	bool is_none;
 	string v_error;
 	int ecode;
-	byte data[sizeof(pkgconfig__Main*)];
+	byte data[sizeof(v__pkgconfig__Main*)];
 };
 
 struct Option_v__pref__OS {
@@ -4651,26 +4651,26 @@ string array_v__cflag__CFlag_c_options_before_target(array_v__cflag__CFlag cflag
 string array_v__cflag__CFlag_c_options_after_target(array_v__cflag__CFlag cflags);
 string array_v__cflag__CFlag_c_options_without_object_files(array_v__cflag__CFlag cflags);
 string array_v__cflag__CFlag_c_options_only_object_files(array_v__cflag__CFlag cflags);
-static Option_string pkgconfig__desc(string mod);
-Option_pkgconfig__Main_ptr pkgconfig__main(array_string args);
-Option_string pkgconfig__Main_run(pkgconfig__Main* m);
-static string pkgconfig__filter(array_string libs, string prefix, string prefix2);
-static pkgconfig__MainOptions* pkgconfig__parse_options(flag__FlagParser* fp);
-array_string _const_pkgconfig__default_paths; // inited later
-string _const_pkgconfig__version; // a string literal, inited later
-static array_string pkgconfig__PkgConfig_filters(pkgconfig__PkgConfig* pc, string s);
-static string pkgconfig__PkgConfig_filter(pkgconfig__PkgConfig* pc, string s);
-static void pkgconfig__PkgConfig_setvar(pkgconfig__PkgConfig* pc, string line);
-static bool pkgconfig__PkgConfig_parse(pkgconfig__PkgConfig* pc, string file);
-static Option_string pkgconfig__PkgConfig_resolve(pkgconfig__PkgConfig* pc, string pkgname);
-bool pkgconfig__atleast(string v);
-bool pkgconfig__PkgConfig_atleast(pkgconfig__PkgConfig* pc, string v);
-Option_string pkgconfig__PkgConfig_extend(pkgconfig__PkgConfig* pc, pkgconfig__PkgConfig* pcdep);
-static void pkgconfig__PkgConfig_load_requires(pkgconfig__PkgConfig* pc);
-static void pkgconfig__PkgConfig_add_path(pkgconfig__PkgConfig* pc, string path);
-static void pkgconfig__PkgConfig_load_paths(pkgconfig__PkgConfig* pc);
-Option_pkgconfig__PkgConfig_ptr pkgconfig__load(string pkgname, pkgconfig__Options options);
-array_string pkgconfig__list();
+static Option_string v__pkgconfig__desc(string mod);
+Option_v__pkgconfig__Main_ptr v__pkgconfig__main(array_string args);
+Option_string v__pkgconfig__Main_run(v__pkgconfig__Main* m);
+static string v__pkgconfig__filter(array_string libs, string prefix, string prefix2);
+static v__pkgconfig__MainOptions* v__pkgconfig__parse_options(flag__FlagParser* fp);
+array_string _const_v__pkgconfig__default_paths; // inited later
+string _const_v__pkgconfig__version; // a string literal, inited later
+static array_string v__pkgconfig__PkgConfig_parse_list(v__pkgconfig__PkgConfig* pc, string s);
+static string v__pkgconfig__PkgConfig_parse_line(v__pkgconfig__PkgConfig* pc, string s);
+static void v__pkgconfig__PkgConfig_setvar(v__pkgconfig__PkgConfig* pc, string line);
+static bool v__pkgconfig__PkgConfig_parse(v__pkgconfig__PkgConfig* pc, string file);
+static Option_string v__pkgconfig__PkgConfig_resolve(v__pkgconfig__PkgConfig* pc, string pkgname);
+bool v__pkgconfig__atleast(string v);
+bool v__pkgconfig__PkgConfig_atleast(v__pkgconfig__PkgConfig* pc, string v);
+Option_string v__pkgconfig__PkgConfig_extend(v__pkgconfig__PkgConfig* pc, v__pkgconfig__PkgConfig* pcdep);
+static void v__pkgconfig__PkgConfig_load_requires(v__pkgconfig__PkgConfig* pc);
+static void v__pkgconfig__PkgConfig_add_path(v__pkgconfig__PkgConfig* pc, string path);
+static void v__pkgconfig__PkgConfig_load_paths(v__pkgconfig__PkgConfig* pc);
+Option_v__pkgconfig__PkgConfig_ptr v__pkgconfig__load(string pkgname, v__pkgconfig__Options options);
+array_string v__pkgconfig__list();
 string _const_vweb__tmpl__str_start; // a string literal, inited later
 string _const_vweb__tmpl__str_end; // a string literal, inited later
 string vweb__tmpl__compile_file(string path, string fn_name);
@@ -5798,19 +5798,19 @@ typedef struct {
 			bool   is_none;
 		} Option2_multi_return_array_string_int;
 typedef struct {
-			pkgconfig__PkgConfig*  data;
+			v__pkgconfig__PkgConfig*  data;
 			string error;
 			int    ecode;
 			bool   ok;
 			bool   is_none;
-		} Option2_pkgconfig__PkgConfig_ptr;
+		} Option2_v__pkgconfig__PkgConfig_ptr;
 typedef struct {
-			pkgconfig__Main*  data;
+			v__pkgconfig__Main*  data;
 			string error;
 			int    ecode;
 			bool   ok;
 			bool   is_none;
-		} Option2_pkgconfig__Main_ptr;
+		} Option2_v__pkgconfig__Main_ptr;
 typedef struct {
 			v__pref__OS  data;
 			string error;
@@ -5921,7 +5921,7 @@ void vinit_string_literals(){
 	_const_semver__comparator_set_sep = tos_lit(" || ");
 	_const_semver__hyphen_range_sep = tos_lit(" - ");
 	_const_semver__x_range_symbols = tos_lit("Xx*");
-	_const_pkgconfig__version = tos_lit("0.2.0");
+	_const_v__pkgconfig__version = tos_lit("0.2.0");
 	_const_vweb__tmpl__str_start = tos_lit("sb.write(\'");
 	_const_vweb__tmpl__str_end = tos_lit("\' ) ");
 	_const_help__unknown_topic = tos_lit("V Error: Unknown help topic provided. Use `v help` for usage information.");
@@ -18046,33 +18046,33 @@ string array_v__cflag__CFlag_c_options_only_object_files(array_v__cflag__CFlag c
 	return array_string_join(args, tos_lit(" "));
 }
 
-static Option_string pkgconfig__desc(string mod) {
-	pkgconfig__Options options = (pkgconfig__Options){.path = (string){.str=(byteptr)""},.debug = 0,.norecurse = true,};
-	Option_pkgconfig__PkgConfig_ptr _t449 = pkgconfig__load(mod, options);
+static Option_string v__pkgconfig__desc(string mod) {
+	v__pkgconfig__Options options = (v__pkgconfig__Options){.path = (string){.str=(byteptr)""},.debug = 0,.norecurse = true,};
+	Option_v__pkgconfig__PkgConfig_ptr _t449 = v__pkgconfig__load(mod, options);
 	if (!_t449.ok) {
 		string err = _t449.v_error;
 		int errcode = _t449.ecode;
 		Option _t450 = v_error(tos_lit("cannot parse"));
 		return *(Option_string*)&_t450;
 	}
- 	pkgconfig__PkgConfig* pc = *(pkgconfig__PkgConfig**) _t449.data;
+ 	v__pkgconfig__PkgConfig* pc = *(v__pkgconfig__PkgConfig**) _t449.data;
 	Option_string _t451;
 	opt_ok2(&(string[]) { pc->description }, (OptionBase*)(&_t451), sizeof(string));
 	return _t451;
 }
 
-Option_pkgconfig__Main_ptr pkgconfig__main(array_string args) {
+Option_v__pkgconfig__Main_ptr v__pkgconfig__main(array_string args) {
 	flag__FlagParser* fp = flag__new_flag_parser(args);
 	flag__FlagParser_application(fp, tos_lit("pkgconfig"));
-	flag__FlagParser_version(fp, _const_pkgconfig__version);
-	pkgconfig__Main* m = (pkgconfig__Main*)memdup(&(pkgconfig__Main){.opt = pkgconfig__parse_options(fp),.res = (string){.str=(byteptr)""},.has_actions = 0,}, sizeof(pkgconfig__Main));
-	pkgconfig__MainOptions* opt = m->opt;
+	flag__FlagParser_version(fp, _const_v__pkgconfig__version);
+	v__pkgconfig__Main* m = (v__pkgconfig__Main*)memdup(&(v__pkgconfig__Main){.opt = v__pkgconfig__parse_options(fp),.res = (string){.str=(byteptr)""},.has_actions = 0,}, sizeof(v__pkgconfig__Main));
+	v__pkgconfig__MainOptions* opt = m->opt;
 	if (opt->help) {
 		m->res = string_replace(flag__FlagParser_usage(/*rec*/*fp), tos_lit("- ,"), tos_lit("   "));
 	} else if (opt->version) {
-		m->res = _const_pkgconfig__version;
+		m->res = _const_v__pkgconfig__version;
 	} else if (opt->listall) {
-		array_string modules = pkgconfig__list();
+		array_string modules = v__pkgconfig__list();
 		qsort(modules.data, modules.len, modules.element_size, compare_strings);
 		;
 		if (opt->description) {
@@ -18080,7 +18080,7 @@ Option_pkgconfig__Main_ptr pkgconfig__main(array_string args) {
 			array _t452 = modules;
 			for (int _t453 = 0; _t453 < _t452.len; ++_t453) {
 				string mod = ((string*)_t452.data)[_t453];
-				Option_string _t454 = pkgconfig__desc(mod);
+				Option_string _t454 = v__pkgconfig__desc(mod);
 				if (!_t454.ok) {
 					string err = _t454.v_error;
 					int errcode = _t454.ecode;
@@ -18095,23 +18095,23 @@ Option_pkgconfig__Main_ptr pkgconfig__main(array_string args) {
 		}
 	} else if (opt->args.len == 0) {
 		Option _t455 = v_error(tos_lit("No packages given"));
-		return *(Option_pkgconfig__Main_ptr*)&_t455;
+		return *(Option_v__pkgconfig__Main_ptr*)&_t455;
 	}
-	Option_pkgconfig__Main_ptr _t456;
-	opt_ok2(&(pkgconfig__Main*[]) { m }, (OptionBase*)(&_t456), sizeof(pkgconfig__Main*));
+	Option_v__pkgconfig__Main_ptr _t456;
+	opt_ok2(&(v__pkgconfig__Main*[]) { m }, (OptionBase*)(&_t456), sizeof(v__pkgconfig__Main*));
 	return _t456;
 }
 
-Option_string pkgconfig__Main_run(pkgconfig__Main* m) {
-	pkgconfig__Options options = (pkgconfig__Options){.path = (string){.str=(byteptr)""},.debug = m->opt->debug,.norecurse = 0,};
-	pkgconfig__MainOptions* opt = m->opt;
-	pkgconfig__PkgConfig* pc = ((pkgconfig__PkgConfig*)(0));
+Option_string v__pkgconfig__Main_run(v__pkgconfig__Main* m) {
+	v__pkgconfig__Options options = (v__pkgconfig__Options){.path = (string){.str=(byteptr)""},.debug = m->opt->debug,.norecurse = 0,};
+	v__pkgconfig__MainOptions* opt = m->opt;
+	v__pkgconfig__PkgConfig* pc = ((v__pkgconfig__PkgConfig*)(0));
 	string res = m->res;
 	// FOR IN array
 	array _t457 = opt->args;
 	for (int _t458 = 0; _t458 < _t457.len; ++_t458) {
 		string arg = ((string*)_t457.data)[_t458];
-		Option_pkgconfig__PkgConfig_ptr _t459 = pkgconfig__load(arg, options);
+		Option_v__pkgconfig__PkgConfig_ptr _t459 = v__pkgconfig__load(arg, options);
 		if (!_t459.ok) {
 			string err = _t459.v_error;
 			int errcode = _t459.ecode;
@@ -18121,7 +18121,7 @@ Option_string pkgconfig__Main_run(pkgconfig__Main* m) {
 			}
 			continue;
 		}
- 		pkgconfig__PkgConfig* pcdep = *(pkgconfig__PkgConfig**) _t459.data;
+ 		v__pkgconfig__PkgConfig* pcdep = *(v__pkgconfig__PkgConfig**) _t459.data;
 		if (opt->description) {
 			if ((res).len != 0) {
 				res = /*f*/string_add(res, tos_lit("\n"));
@@ -18129,7 +18129,7 @@ Option_string pkgconfig__Main_run(pkgconfig__Main* m) {
 			res = /*f*/string_add(res, pcdep->description);
 		}
 		if (pc != 0) {
-			pkgconfig__PkgConfig_extend(pc, pcdep);
+			v__pkgconfig__PkgConfig_extend(pc, pcdep);
 		} else {
 			pc = pcdep;
 		}
@@ -18149,7 +18149,7 @@ Option_string pkgconfig__Main_run(pkgconfig__Main* m) {
 		return _t463;
 	}
 	if ((opt->atleast).len != 0) {
-		if (pkgconfig__PkgConfig_atleast(pc, opt->atleast)) {
+		if (v__pkgconfig__PkgConfig_atleast(pc, opt->atleast)) {
 			Option _t464 = v_error(tos_lit("version mismatch"));
 			return *(Option_string*)&_t464;
 		}
@@ -18158,7 +18158,7 @@ Option_string pkgconfig__Main_run(pkgconfig__Main* m) {
 		return _t465;
 	}
 	if ((opt->atleastpc).len != 0) {
-		if (pkgconfig__atleast(opt->atleastpc)) {
+		if (v__pkgconfig__atleast(opt->atleastpc)) {
 			Option _t466 = v_error(tos_lit("version mismatch"));
 			return *(Option_string*)&_t466;
 		}
@@ -18183,22 +18183,22 @@ Option_string pkgconfig__Main_run(pkgconfig__Main* m) {
 	}
 	array_string r = __new_array_with_default(0, 0, sizeof(string), 0);
 	if (opt->cflags_only_path) {
-		array_push(&r, _MOV((string[]){ pkgconfig__filter(pc->cflags, tos_lit("-I"), tos_lit("")) }));
+		array_push(&r, _MOV((string[]){ v__pkgconfig__filter(pc->cflags, tos_lit("-I"), tos_lit("")) }));
 	}
 	if (opt->cflags_only_other) {
-		array_push(&r, _MOV((string[]){ pkgconfig__filter(pc->cflags, tos_lit("-I"), tos_lit("-I")) }));
+		array_push(&r, _MOV((string[]){ v__pkgconfig__filter(pc->cflags, tos_lit("-I"), tos_lit("-I")) }));
 	}
 	if (opt->cflags) {
 		array_push(&r, _MOV((string[]){ array_string_join(pc->cflags, tos_lit(" ")) }));
 	}
 	if (opt->libs_only_link) {
-		array_push(&r, _MOV((string[]){ pkgconfig__filter(pc->libs, tos_lit("-l"), tos_lit("")) }));
+		array_push(&r, _MOV((string[]){ v__pkgconfig__filter(pc->libs, tos_lit("-l"), tos_lit("")) }));
 	}
 	if (opt->libs_only_path) {
-		array_push(&r, _MOV((string[]){ pkgconfig__filter(pc->libs, tos_lit("-L"), tos_lit("")) }));
+		array_push(&r, _MOV((string[]){ v__pkgconfig__filter(pc->libs, tos_lit("-L"), tos_lit("")) }));
 	}
 	if (opt->libs_only_other) {
-		array_push(&r, _MOV((string[]){ pkgconfig__filter(pc->libs, tos_lit("-l"), tos_lit("-L")) }));
+		array_push(&r, _MOV((string[]){ v__pkgconfig__filter(pc->libs, tos_lit("-l"), tos_lit("-L")) }));
 	}
 	if (opt->libs) {
 		if (opt->stat1c) {
@@ -18215,7 +18215,7 @@ Option_string pkgconfig__Main_run(pkgconfig__Main* m) {
 	return _t480;
 }
 
-static string pkgconfig__filter(array_string libs, string prefix, string prefix2) {
+static string v__pkgconfig__filter(array_string libs, string prefix, string prefix2) {
 	string res = tos_lit("");
 	if ((prefix2).len != 0) {
 		// FOR IN array
@@ -18239,8 +18239,8 @@ static string pkgconfig__filter(array_string libs, string prefix, string prefix2
 	return res;
 }
 
-static pkgconfig__MainOptions* pkgconfig__parse_options(flag__FlagParser* fp) {
-	return (pkgconfig__MainOptions*)memdup(&(pkgconfig__MainOptions){.modversion = flag__FlagParser_bool(fp, tos_lit("modversion"), 'V', false, tos_lit("show version of module")),
+static v__pkgconfig__MainOptions* v__pkgconfig__parse_options(flag__FlagParser* fp) {
+	return (v__pkgconfig__MainOptions*)memdup(&(v__pkgconfig__MainOptions){.modversion = flag__FlagParser_bool(fp, tos_lit("modversion"), 'V', false, tos_lit("show version of module")),
 		.description = flag__FlagParser_bool(fp, tos_lit("description"), 'd', false, tos_lit("show pkg module description")),
 		.help = flag__FlagParser_bool(fp, tos_lit("help"), 'h', false, tos_lit("show this help message")),
 		.debug = flag__FlagParser_bool(fp, tos_lit("debug"), 'D', false, tos_lit("show debug information")),
@@ -18261,24 +18261,31 @@ static pkgconfig__MainOptions* pkgconfig__parse_options(flag__FlagParser* fp) {
 		.libs_only_path = flag__FlagParser_bool(fp, tos_lit("libs-only-L"), 'L', false, tos_lit("show only -L from ldflags")),
 		.libs_only_other = flag__FlagParser_bool(fp, tos_lit("libs-only-other"), ' ', false, tos_lit("show flags not containing -l or -L")),
 		.args = fp->args,
-	}, sizeof(pkgconfig__MainOptions));
+	}, sizeof(v__pkgconfig__MainOptions));
 }
 
-static array_string pkgconfig__PkgConfig_filters(pkgconfig__PkgConfig* pc, string s) {
-	array_string r = string_split(pkgconfig__PkgConfig_filter(pc, s), tos_lit(" "));
+static array_string v__pkgconfig__PkgConfig_parse_list(v__pkgconfig__PkgConfig* pc, string s) {
+	array_string operators = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){tos_lit("="), tos_lit("<"), tos_lit(">"), tos_lit(">="), tos_lit("<=")}));
+	array_string r = string_split(v__pkgconfig__PkgConfig_parse_line(pc, string_replace(s, tos_lit(","), tos_lit(""))), tos_lit(" "));
 	array_string res = __new_array_with_default(0, 0, sizeof(string), 0);
+	bool skip = false;
 	// FOR IN array
 	array _t485 = r;
 	for (int _t486 = 0; _t486 < _t485.len; ++_t486) {
 		string a = ((string*)_t485.data)[_t486];
-		if ((a).len != 0) {
-			array_push(&res, _MOV((string[]){ a }));
+		string b = string_trim_space(a);
+		if (skip) {
+			skip = false;
+		} else if (_IN(string, b, operators)) {
+			skip = true;
+		} else if ((b).len != 0) {
+			array_push(&res, _MOV((string[]){ b }));
 		}
 	}
 	return res;
 }
 
-static string pkgconfig__PkgConfig_filter(pkgconfig__PkgConfig* pc, string s) {
+static string v__pkgconfig__PkgConfig_parse_line(v__pkgconfig__PkgConfig* pc, string s) {
 	string r = string_trim_space(s);
 	for (;;) {
 		if (!(string_contains(r, tos_lit("\${")))) break;
@@ -18303,16 +18310,16 @@ static string pkgconfig__PkgConfig_filter(pkgconfig__PkgConfig* pc, string s) {
 	return string_trim_space(r);
 }
 
-static void pkgconfig__PkgConfig_setvar(pkgconfig__PkgConfig* pc, string line) {
+static void v__pkgconfig__PkgConfig_setvar(v__pkgconfig__PkgConfig* pc, string line) {
 	array_string kv = string_split(string_trim_space(line), tos_lit("="));
 	if (kv.len == 2) {
 		string k = (*(string*)array_get(kv, 0));
-		string v = pkgconfig__PkgConfig_filter(pc, (*(string*)array_get(kv, 1)));
-		map_set(&pc->vars, k, &(string[]) { pkgconfig__PkgConfig_filter(pc, v) });
+		string v = v__pkgconfig__PkgConfig_parse_line(pc, (*(string*)array_get(kv, 1)));
+		map_set(&pc->vars, k, &(string[]) { v__pkgconfig__PkgConfig_parse_line(pc, v) });
 	}
 }
 
-static bool pkgconfig__PkgConfig_parse(pkgconfig__PkgConfig* pc, string file) {
+static bool v__pkgconfig__PkgConfig_parse(v__pkgconfig__PkgConfig* pc, string file) {
 	Option_string _t490 = os__read_file(file);
 	if (!_t490.ok) {
 		string err = _t490.v_error;
@@ -18330,7 +18337,7 @@ static bool pkgconfig__PkgConfig_parse(pkgconfig__PkgConfig* pc, string file) {
 		for (int _t492 = 0; _t492 < _t491.len; ++_t492) {
 			string line = ((string*)_t491.data)[_t492];
 			if (string_starts_with(line, tos_lit("Description: "))) {
-				pc->description = pkgconfig__PkgConfig_filter(pc, string_substr(line, 13, line.len));
+				pc->description = v__pkgconfig__PkgConfig_parse_line(pc, string_substr(line, 13, line.len));
 			}
 		}
 	} else {
@@ -18342,30 +18349,30 @@ static bool pkgconfig__PkgConfig_parse(pkgconfig__PkgConfig* pc, string file) {
 				continue;
 			}
 			if (string_contains(line, tos_lit("=")) && !string_contains(line, tos_lit(" "))) {
-				pkgconfig__PkgConfig_setvar(pc, line);
+				v__pkgconfig__PkgConfig_setvar(pc, line);
 				continue;
 			}
-			if (string_starts_with(line, tos_lit("Description: "))) {
-				pc->description = pkgconfig__PkgConfig_filter(pc, string_substr(line, 13, line.len));
-			} else if (string_starts_with(line, tos_lit("Name: "))) {
-				pc->name = pkgconfig__PkgConfig_filter(pc, string_substr(line, 6, line.len));
-			} else if (string_starts_with(line, tos_lit("Version: "))) {
-				pc->version = pkgconfig__PkgConfig_filter(pc, string_substr(line, 9, line.len));
-			} else if (string_starts_with(line, tos_lit("Requires: "))) {
-				pc->requires = pkgconfig__PkgConfig_filters(pc, string_substr(line, 10, line.len));
-			} else if (string_starts_with(line, tos_lit("Cflags: "))) {
-				pc->cflags = pkgconfig__PkgConfig_filters(pc, string_substr(line, 8, line.len));
-			} else if (string_starts_with(line, tos_lit("Libs: "))) {
-				pc->libs = pkgconfig__PkgConfig_filters(pc, string_substr(line, 6, line.len));
-			} else if (string_starts_with(line, tos_lit("Libs.private: "))) {
-				pc->libs_private = pkgconfig__PkgConfig_filters(pc, string_substr(line, 14, line.len));
+			if (string_starts_with(line, tos_lit("Description:"))) {
+				pc->description = v__pkgconfig__PkgConfig_parse_line(pc, string_substr(line, 12, line.len));
+			} else if (string_starts_with(line, tos_lit("Name:"))) {
+				pc->name = v__pkgconfig__PkgConfig_parse_line(pc, string_substr(line, 5, line.len));
+			} else if (string_starts_with(line, tos_lit("Version:"))) {
+				pc->version = v__pkgconfig__PkgConfig_parse_line(pc, string_substr(line, 8, line.len));
+			} else if (string_starts_with(line, tos_lit("Requires:"))) {
+				pc->requires = v__pkgconfig__PkgConfig_parse_list(pc, string_substr(line, 9, line.len));
+			} else if (string_starts_with(line, tos_lit("Cflags:"))) {
+				pc->cflags = v__pkgconfig__PkgConfig_parse_list(pc, string_substr(line, 7, line.len));
+			} else if (string_starts_with(line, tos_lit("Libs:"))) {
+				pc->libs = v__pkgconfig__PkgConfig_parse_list(pc, string_substr(line, 5, line.len));
+			} else if (string_starts_with(line, tos_lit("Libs.private:"))) {
+				pc->libs_private = v__pkgconfig__PkgConfig_parse_list(pc, string_substr(line, 13, line.len));
 			}
 		}
 	}
 	return true;
 }
 
-static Option_string pkgconfig__PkgConfig_resolve(pkgconfig__PkgConfig* pc, string pkgname) {
+static Option_string v__pkgconfig__PkgConfig_resolve(v__pkgconfig__PkgConfig* pc, string pkgname) {
 	if (pc->paths.len == 0) {
 		array_push(&pc->paths, _MOV((string[]){ tos_lit(".") }));
 	}
@@ -18384,8 +18391,8 @@ static Option_string pkgconfig__PkgConfig_resolve(pkgconfig__PkgConfig* pc, stri
 	return *(Option_string*)&_t499;
 }
 
-bool pkgconfig__atleast(string v) {
-	Option_semver__Version _t500 = semver__from(_const_pkgconfig__version);
+bool v__pkgconfig__atleast(string v) {
+	Option_semver__Version _t500 = semver__from(_const_v__pkgconfig__version);
 	if (!_t500.ok) {
 		string err = _t500.v_error;
 		int errcode = _t500.ecode;
@@ -18402,7 +18409,7 @@ bool pkgconfig__atleast(string v) {
 	return semver__Version_gt(v0, v1);
 }
 
-bool pkgconfig__PkgConfig_atleast(pkgconfig__PkgConfig* pc, string v) {
+bool v__pkgconfig__PkgConfig_atleast(v__pkgconfig__PkgConfig* pc, string v) {
 	Option_semver__Version _t502 = semver__from(pc->version);
 	if (!_t502.ok) {
 		string err = _t502.v_error;
@@ -18420,7 +18427,7 @@ bool pkgconfig__PkgConfig_atleast(pkgconfig__PkgConfig* pc, string v) {
 	return semver__Version_gt(v0, v1);
 }
 
-Option_string pkgconfig__PkgConfig_extend(pkgconfig__PkgConfig* pc, pkgconfig__PkgConfig* pcdep) {
+Option_string v__pkgconfig__PkgConfig_extend(v__pkgconfig__PkgConfig* pc, v__pkgconfig__PkgConfig* pcdep) {
 	// FOR IN array
 	array _t504 = pcdep->cflags;
 	for (int _t505 = 0; _t505 < _t504.len; ++_t505) {
@@ -18449,44 +18456,44 @@ Option_string pkgconfig__PkgConfig_extend(pkgconfig__PkgConfig* pc, pkgconfig__P
 	return *(Option_string*)&_t513;
 }
 
-static void pkgconfig__PkgConfig_load_requires(pkgconfig__PkgConfig* pc) {
+static void v__pkgconfig__PkgConfig_load_requires(v__pkgconfig__PkgConfig* pc) {
 	// FOR IN array
 	array _t514 = pc->requires;
 	for (int _t515 = 0; _t515 < _t514.len; ++_t515) {
 		string dep = ((string*)_t514.data)[_t515];
-		pkgconfig__PkgConfig pcdep = (pkgconfig__PkgConfig){.options = {0},.libs = __new_array(0, 1, sizeof(string)),.libs_private = __new_array(0, 1, sizeof(string)),.cflags = __new_array(0, 1, sizeof(string)),.paths = pc->paths,.vars = new_map_1(sizeof(string)),.requires = __new_array(0, 1, sizeof(string)),.version = (string){.str=(byteptr)""},.description = (string){.str=(byteptr)""},.name = (string){.str=(byteptr)""},.modname = (string){.str=(byteptr)""},};
-		Option_string _t516 = pkgconfig__PkgConfig_resolve(&pcdep, dep);
+		v__pkgconfig__PkgConfig pcdep = (v__pkgconfig__PkgConfig){.options = {0},.libs = __new_array(0, 1, sizeof(string)),.libs_private = __new_array(0, 1, sizeof(string)),.cflags = __new_array(0, 1, sizeof(string)),.paths = pc->paths,.vars = new_map_1(sizeof(string)),.requires = __new_array(0, 1, sizeof(string)),.version = (string){.str=(byteptr)""},.description = (string){.str=(byteptr)""},.name = (string){.str=(byteptr)""},.modname = (string){.str=(byteptr)""},};
+		Option_string _t516 = v__pkgconfig__PkgConfig_resolve(&pcdep, dep);
 		if (!_t516.ok) {
 			string err = _t516.v_error;
 			int errcode = _t516.ecode;
 			break;
 		}
  		string depfile = *(string*) _t516.data;
-		pkgconfig__PkgConfig_parse(&pcdep, depfile);
-		pkgconfig__PkgConfig_load_requires(&pcdep);
-		pkgconfig__PkgConfig_extend(pc, (voidptr)&/*qq*/pcdep);
+		v__pkgconfig__PkgConfig_parse(&pcdep, depfile);
+		v__pkgconfig__PkgConfig_load_requires(&pcdep);
+		v__pkgconfig__PkgConfig_extend(pc, (voidptr)&/*qq*/pcdep);
 	}
 }
 
-static void pkgconfig__PkgConfig_add_path(pkgconfig__PkgConfig* pc, string path) {
+static void v__pkgconfig__PkgConfig_add_path(v__pkgconfig__PkgConfig* pc, string path) {
 	string p = (string_ends_with(path, tos_lit("/")) ? (string_substr(path, 0, path.len - 1)) : (path));
 	if (array_string_index(pc->paths, p) == -1) {
 		array_push(&pc->paths, _MOV((string[]){ p }));
 	}
 }
 
-static void pkgconfig__PkgConfig_load_paths(pkgconfig__PkgConfig* pc) {
+static void v__pkgconfig__PkgConfig_load_paths(v__pkgconfig__PkgConfig* pc) {
 	// FOR IN array
-	array _t518 = _const_pkgconfig__default_paths;
+	array _t518 = _const_v__pkgconfig__default_paths;
 	for (int _t519 = 0; _t519 < _t518.len; ++_t519) {
 		string path = ((string*)_t518.data)[_t519];
-		pkgconfig__PkgConfig_add_path(pc, path);
+		v__pkgconfig__PkgConfig_add_path(pc, path);
 	}
 	// FOR IN array
 	array _t520 = string_split(pc->options.path, tos_lit(":"));
 	for (int _t521 = 0; _t521 < _t520.len; ++_t521) {
 		string path = ((string*)_t520.data)[_t521];
-		pkgconfig__PkgConfig_add_path(pc, path);
+		v__pkgconfig__PkgConfig_add_path(pc, path);
 	}
 	string env_var = os__getenv(tos_lit("PKG_CONFIG_PATH"));
 	if ((env_var).len != 0) {
@@ -18495,34 +18502,34 @@ static void pkgconfig__PkgConfig_load_paths(pkgconfig__PkgConfig* pc) {
 		array _t522 = env_paths;
 		for (int _t523 = 0; _t523 < _t522.len; ++_t523) {
 			string path = ((string*)_t522.data)[_t523];
-			pkgconfig__PkgConfig_add_path(pc, path);
+			v__pkgconfig__PkgConfig_add_path(pc, path);
 		}
 	}
 }
 
-Option_pkgconfig__PkgConfig_ptr pkgconfig__load(string pkgname, pkgconfig__Options options) {
-	pkgconfig__PkgConfig* pc = (pkgconfig__PkgConfig*)memdup(&(pkgconfig__PkgConfig){.options = options,.libs = __new_array(0, 1, sizeof(string)),.libs_private = __new_array(0, 1, sizeof(string)),.cflags = __new_array(0, 1, sizeof(string)),.paths = __new_array(0, 1, sizeof(string)),.vars = new_map_1(sizeof(string)),.requires = __new_array(0, 1, sizeof(string)),.version = (string){.str=(byteptr)""},.description = (string){.str=(byteptr)""},.name = (string){.str=(byteptr)""},.modname = pkgname,}, sizeof(pkgconfig__PkgConfig));
-	pkgconfig__PkgConfig_load_paths(pc);
-	Option_string _t524 = pkgconfig__PkgConfig_resolve(pc, pkgname);
+Option_v__pkgconfig__PkgConfig_ptr v__pkgconfig__load(string pkgname, v__pkgconfig__Options options) {
+	v__pkgconfig__PkgConfig* pc = (v__pkgconfig__PkgConfig*)memdup(&(v__pkgconfig__PkgConfig){.options = options,.libs = __new_array(0, 1, sizeof(string)),.libs_private = __new_array(0, 1, sizeof(string)),.cflags = __new_array(0, 1, sizeof(string)),.paths = __new_array(0, 1, sizeof(string)),.vars = new_map_1(sizeof(string)),.requires = __new_array(0, 1, sizeof(string)),.version = (string){.str=(byteptr)""},.description = (string){.str=(byteptr)""},.name = (string){.str=(byteptr)""},.modname = pkgname,}, sizeof(v__pkgconfig__PkgConfig));
+	v__pkgconfig__PkgConfig_load_paths(pc);
+	Option_string _t524 = v__pkgconfig__PkgConfig_resolve(pc, pkgname);
 	if (!_t524.ok) {
 		string err = _t524.v_error;
 		int errcode = _t524.ecode;
 		Option _t525 = v_error(err);
-		return *(Option_pkgconfig__PkgConfig_ptr*)&_t525;
+		return *(Option_v__pkgconfig__PkgConfig_ptr*)&_t525;
 	}
  	string file = *(string*) _t524.data;
-	pkgconfig__PkgConfig_parse(pc, file);
+	v__pkgconfig__PkgConfig_parse(pc, file);
 	if (!options.norecurse) {
-		pkgconfig__PkgConfig_load_requires(pc);
+		v__pkgconfig__PkgConfig_load_requires(pc);
 	}
-	Option_pkgconfig__PkgConfig_ptr _t526;
-	opt_ok2(&(pkgconfig__PkgConfig*[]) { pc }, (OptionBase*)(&_t526), sizeof(pkgconfig__PkgConfig*));
+	Option_v__pkgconfig__PkgConfig_ptr _t526;
+	opt_ok2(&(v__pkgconfig__PkgConfig*[]) { pc }, (OptionBase*)(&_t526), sizeof(v__pkgconfig__PkgConfig*));
 	return _t526;
 }
 
-array_string pkgconfig__list() {
-	pkgconfig__PkgConfig* pc = (pkgconfig__PkgConfig*)memdup(&(pkgconfig__PkgConfig){.options = (pkgconfig__Options){.path = (string){.str=(byteptr)""},.debug = 0,.norecurse = 0,},.libs = __new_array(0, 1, sizeof(string)),.libs_private = __new_array(0, 1, sizeof(string)),.cflags = __new_array(0, 1, sizeof(string)),.paths = __new_array(0, 1, sizeof(string)),.vars = new_map_1(sizeof(string)),.requires = __new_array(0, 1, sizeof(string)),.version = (string){.str=(byteptr)""},.description = (string){.str=(byteptr)""},.name = (string){.str=(byteptr)""},.modname = (string){.str=(byteptr)""},}, sizeof(pkgconfig__PkgConfig));
-	pkgconfig__PkgConfig_load_paths(pc);
+array_string v__pkgconfig__list() {
+	v__pkgconfig__PkgConfig* pc = (v__pkgconfig__PkgConfig*)memdup(&(v__pkgconfig__PkgConfig){.options = (v__pkgconfig__Options){.path = (string){.str=(byteptr)""},.debug = 0,.norecurse = 0,},.libs = __new_array(0, 1, sizeof(string)),.libs_private = __new_array(0, 1, sizeof(string)),.cflags = __new_array(0, 1, sizeof(string)),.paths = __new_array(0, 1, sizeof(string)),.vars = new_map_1(sizeof(string)),.requires = __new_array(0, 1, sizeof(string)),.version = (string){.str=(byteptr)""},.description = (string){.str=(byteptr)""},.name = (string){.str=(byteptr)""},.modname = (string){.str=(byteptr)""},}, sizeof(v__pkgconfig__PkgConfig));
+	v__pkgconfig__PkgConfig_load_paths(pc);
 	array_string modules = __new_array_with_default(0, 0, sizeof(string), 0);
 	// FOR IN array
 	array _t527 = pc->paths;
@@ -18865,7 +18872,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("71dfec3"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(  p->compile_defines_all)), _STR("%.*s", 1, array_string_str(  p->compile_defines)), _STR("%.*s", 1, array_string_str(  p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("423044d"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(  p->compile_defines_all)), _STR("%.*s", 1, array_string_str(  p->compile_defines)), _STR("%.*s", 1, array_string_str(  p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -24491,20 +24498,20 @@ static bool v__checker__Checker_check_file_in_main(v__checker__Checker* c, v__as
 			v__ast__TypeDecl* it = (v__ast__TypeDecl*)_t849._object; // ST it
 			v__ast__TypeDecl* stmt = it;
 			if ((stmt)->typ == 169 /* v.ast.AliasTypeDecl */) {
-				v__ast__AliasTypeDecl* _sc_tmp_6496 = (v__ast__AliasTypeDecl*)stmt->_object;
-				v__ast__AliasTypeDecl* stmt = _sc_tmp_6496;
+				v__ast__AliasTypeDecl* _sc_tmp_6498 = (v__ast__AliasTypeDecl*)stmt->_object;
+				v__ast__AliasTypeDecl* stmt = _sc_tmp_6498;
 				if (stmt->is_pub) {
 					v__checker__Checker_warn(c, _STR("type alias `%.*s\000` %.*s", 2, stmt->name, _const_v__checker__no_pub_in_main_warning), stmt->pos);
 				}
 			} else if ((stmt)->typ == 171 /* v.ast.SumTypeDecl */) {
-				v__ast__SumTypeDecl* _sc_tmp_6636 = (v__ast__SumTypeDecl*)stmt->_object;
-				v__ast__SumTypeDecl* stmt = _sc_tmp_6636;
+				v__ast__SumTypeDecl* _sc_tmp_6638 = (v__ast__SumTypeDecl*)stmt->_object;
+				v__ast__SumTypeDecl* stmt = _sc_tmp_6638;
 				if (stmt->is_pub) {
 					v__checker__Checker_warn(c, _STR("sum type `%.*s\000` %.*s", 2, stmt->name, _const_v__checker__no_pub_in_main_warning), stmt->pos);
 				}
 			} else if ((stmt)->typ == 170 /* v.ast.FnTypeDecl */) {
-				v__ast__FnTypeDecl* _sc_tmp_6777 = (v__ast__FnTypeDecl*)stmt->_object;
-				v__ast__FnTypeDecl* stmt = _sc_tmp_6777;
+				v__ast__FnTypeDecl* _sc_tmp_6779 = (v__ast__FnTypeDecl*)stmt->_object;
+				v__ast__FnTypeDecl* stmt = _sc_tmp_6779;
 				if (stmt->is_pub) {
 					v__checker__Checker_warn(c, _STR("type alias `%.*s\000` %.*s", 2, stmt->name, _const_v__checker__no_pub_in_main_warning), stmt->pos);
 				}
@@ -24664,20 +24671,20 @@ void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl 
 				continue;
 			}
 			if ((field.default_expr).typ == 193 /* v.ast.IntegerLiteral */) {
-				v__ast__IntegerLiteral* _sc_tmp_11772 = (v__ast__IntegerLiteral*)field.default_expr._object;
-				v__ast__IntegerLiteral* lit = _sc_tmp_11772;
+				v__ast__IntegerLiteral* _sc_tmp_11774 = (v__ast__IntegerLiteral*)field.default_expr._object;
+				v__ast__IntegerLiteral* lit = _sc_tmp_11774;
 				if (string_eq(lit->val, tos_lit("0"))) {
 					v__checker__Checker_warn(c, tos_lit("unnecessary default value of `0`: struct fields are zeroed by default"), lit->pos);
 				}
 			} else if ((field.default_expr).typ == 209 /* v.ast.StringLiteral */) {
-				v__ast__StringLiteral* _sc_tmp_11960 = (v__ast__StringLiteral*)field.default_expr._object;
-				v__ast__StringLiteral* lit = _sc_tmp_11960;
+				v__ast__StringLiteral* _sc_tmp_11962 = (v__ast__StringLiteral*)field.default_expr._object;
+				v__ast__StringLiteral* lit = _sc_tmp_11962;
 				if ((lit->val).len == 0) {
 					v__checker__Checker_warn(c, tos_lit("unnecessary default value of '': struct fields are zeroed by default"), lit->pos);
 				}
 			} else if ((field.default_expr).typ == 177 /* v.ast.BoolLiteral */) {
-				v__ast__BoolLiteral* _sc_tmp_12150 = (v__ast__BoolLiteral*)field.default_expr._object;
-				v__ast__BoolLiteral* lit = _sc_tmp_12150;
+				v__ast__BoolLiteral* _sc_tmp_12152 = (v__ast__BoolLiteral*)field.default_expr._object;
+				v__ast__BoolLiteral* lit = _sc_tmp_12152;
 				if (lit->val == false) {
 					v__checker__Checker_warn(c, tos_lit("unnecessary default value `false`: struct fields are zeroed by default"), lit->pos);
 				}
@@ -24973,8 +24980,8 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 		}
 	} else if (_t872 == v__token__Kind_left_shift) {
 		if (left->kind == v__table__Kind_array) {
-			multi_return_string_v__token__Position mr_23133 = v__checker__Checker_fail_if_immutable(c, infix_expr->left);
-			infix_expr->auto_locked = mr_23133.arg0;
+			multi_return_string_v__token__Position mr_23135 = v__checker__Checker_fail_if_immutable(c, infix_expr->left);
+			infix_expr->auto_locked = mr_23135.arg0;
 			v__table__Type left_value_type = v__table__Table_value_type(c->table, left_type);
 			v__table__TypeSymbol* left_value_sym = v__table__Table_get_type_symbol(c->table, left_value_type);
 			if (left_value_sym->kind == v__table__Kind_interface_) {
@@ -25117,21 +25124,21 @@ static multi_return_string_v__token__Position v__checker__Checker_fail_if_immuta
 	} else if (_t880.typ == 191 /* v.ast.IndexExpr */) {
 		v__ast__IndexExpr* it = (v__ast__IndexExpr*)_t880._object; // ST it
 		v__ast__IndexExpr* expr = it;
-		multi_return_string_v__token__Position mr_28375 = v__checker__Checker_fail_if_immutable(c, expr->left);
-		to_lock = mr_28375.arg0;
-		pos = mr_28375.arg1;
+		multi_return_string_v__token__Position mr_28377 = v__checker__Checker_fail_if_immutable(c, expr->left);
+		to_lock = mr_28377.arg0;
+		pos = mr_28377.arg1;
 	} else if (_t880.typ == 200 /* v.ast.ParExpr */) {
 		v__ast__ParExpr* it = (v__ast__ParExpr*)_t880._object; // ST it
 		v__ast__ParExpr* expr = it;
-		multi_return_string_v__token__Position mr_28444 = v__checker__Checker_fail_if_immutable(c, expr->expr);
-		to_lock = mr_28444.arg0;
-		pos = mr_28444.arg1;
+		multi_return_string_v__token__Position mr_28446 = v__checker__Checker_fail_if_immutable(c, expr->expr);
+		to_lock = mr_28446.arg0;
+		pos = mr_28446.arg1;
 	} else if (_t880.typ == 202 /* v.ast.PrefixExpr */) {
 		v__ast__PrefixExpr* it = (v__ast__PrefixExpr*)_t880._object; // ST it
 		v__ast__PrefixExpr* expr = it;
-		multi_return_string_v__token__Position mr_28516 = v__checker__Checker_fail_if_immutable(c, expr->right);
-		to_lock = mr_28516.arg0;
-		pos = mr_28516.arg1;
+		multi_return_string_v__token__Position mr_28518 = v__checker__Checker_fail_if_immutable(c, expr->right);
+		to_lock = mr_28518.arg0;
+		pos = mr_28518.arg1;
 	} else if (_t880.typ == 205 /* v.ast.SelectorExpr */) {
 		v__ast__SelectorExpr* it = (v__ast__SelectorExpr*)_t880._object; // ST it
 		v__ast__SelectorExpr* expr = it;
@@ -25160,9 +25167,9 @@ static multi_return_string_v__token__Position v__checker__Checker_fail_if_immuta
 				string type_str = v__table__Table_type_to_str(c->table, expr->expr_type);
 				v__checker__Checker_error(c, _STR("field `%.*s\000` of struct `%.*s\000` is immutable", 3, expr->field_name, type_str), expr->pos);
 			}
-			multi_return_string_v__token__Position mr_29452 = v__checker__Checker_fail_if_immutable(c, expr->expr);
-			to_lock = mr_29452.arg0;
-			pos = mr_29452.arg1;
+			multi_return_string_v__token__Position mr_29454 = v__checker__Checker_fail_if_immutable(c, expr->expr);
+			to_lock = mr_29454.arg0;
+			pos = mr_29454.arg1;
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
 			}
@@ -25177,9 +25184,9 @@ static multi_return_string_v__token__Position v__checker__Checker_fail_if_immuta
 		v__ast__CallExpr* it = (v__ast__CallExpr*)_t880._object; // ST it
 		v__ast__CallExpr* expr = it;
 		if (string_eq(expr->name, tos_lit("slice"))) {
-			multi_return_string_v__token__Position mr_30154 = v__checker__Checker_fail_if_immutable(c, expr->left);
-			to_lock = mr_30154.arg0;
-			pos = mr_30154.arg1;
+			multi_return_string_v__token__Position mr_30156 = v__checker__Checker_fail_if_immutable(c, expr->left);
+			to_lock = mr_30156.arg0;
+			pos = mr_30156.arg1;
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
 			}
@@ -25748,8 +25755,8 @@ static bool v__checker__Checker_type_implements(v__checker__Checker* c, v__table
 
 v__table__Type v__checker__Checker_check_expr_opt_call(v__checker__Checker* c, v__ast__Expr expr, v__table__Type ret_type) {
 	if ((expr).typ == 179 /* v.ast.CallExpr */) {
-		v__ast__CallExpr* _sc_tmp_54368 = (v__ast__CallExpr*)expr._object;
-		v__ast__CallExpr* expr = _sc_tmp_54368;
+		v__ast__CallExpr* _sc_tmp_54370 = (v__ast__CallExpr*)expr._object;
+		v__ast__CallExpr* expr = _sc_tmp_54370;
 		if (v__table__Type_has_flag(expr->return_type, v__table__TypeFlag_optional)) {
 			if (expr->or_block.kind == v__ast__OrKind_absent) {
 				if (ret_type != _const_v__table__void_type) {
@@ -25835,8 +25842,8 @@ v__table__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast_
 		return _const_v__table__void_type;
 	}
 	if ((selector_expr->expr).typ == 212 /* v.ast.TypeOf */) {
-		v__ast__TypeOf* _sc_tmp_57246 = (v__ast__TypeOf*)selector_expr->expr._object;
-		v__ast__TypeOf* left = _sc_tmp_57246;
+		v__ast__TypeOf* _sc_tmp_57248 = (v__ast__TypeOf*)selector_expr->expr._object;
+		v__ast__TypeOf* left = _sc_tmp_57248;
 		if (string_eq(selector_expr->field_name, tos_lit("name"))) {
 			return _const_v__table__string_type;
 		} else {
@@ -26039,8 +26046,8 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 	}
 	if (assign_stmt->left.len != right_len) {
 		if ((right_first).typ == 179 /* v.ast.CallExpr */) {
-			v__ast__CallExpr* _sc_tmp_63707 = (v__ast__CallExpr*)right_first._object;
-			v__ast__CallExpr* right_first = _sc_tmp_63707;
+			v__ast__CallExpr* _sc_tmp_63709 = (v__ast__CallExpr*)right_first._object;
+			v__ast__CallExpr* right_first = _sc_tmp_63709;
 			v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) but `%.*s\000()` returns %"PRId32"\000 value(s)", 4, assign_stmt->left.len, right_first->name, right_len), assign_stmt->pos);
 		} else {
 			v__checker__Checker_error(c, _STR("assignment mismatch: %"PRId32"\000 variable(s) %"PRId32"\000 value(s)", 3, assign_stmt->left.len, right_len), assign_stmt->pos);
@@ -26051,13 +26058,13 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 		return;
 	}
 	if ((right_first).typ == 202 /* v.ast.PrefixExpr */) {
-		v__ast__PrefixExpr* _sc_tmp_64064 = (v__ast__PrefixExpr*)right_first._object;
-		v__ast__PrefixExpr* right_first = _sc_tmp_64064;
+		v__ast__PrefixExpr* _sc_tmp_64066 = (v__ast__PrefixExpr*)right_first._object;
+		v__ast__PrefixExpr* right_first = _sc_tmp_64066;
 		v__ast__PrefixExpr* node = right_first;
 		v__ast__Expr left_first = (*(v__ast__Expr*)array_get(assign_stmt->left, 0));
 		if ((left_first).typ == 188 /* v.ast.Ident */) {
-			v__ast__Ident* _sc_tmp_64159 = (v__ast__Ident*)left_first._object;
-			v__ast__Ident* left_first = _sc_tmp_64159;
+			v__ast__Ident* _sc_tmp_64161 = (v__ast__Ident*)left_first._object;
+			v__ast__Ident* left_first = _sc_tmp_64161;
 			v__ast__Ident* assigned_var = left_first;
 			if ((node->right).typ == 188 /* v.ast.Ident */) {
 				v__ast__Ident* ident = /* as */ (v__ast__Ident*)__as_cast((node->right)._object, (node->right).typ, /*expected:*/188);
@@ -26093,8 +26100,8 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 	for (int i = 0; i < _t930.len; ++i) {
 		v__ast__Expr left = ((v__ast__Expr*)_t930.data)[i];
 		if ((left).typ == 179 /* v.ast.CallExpr */) {
-			v__ast__CallExpr* _sc_tmp_65092 = (v__ast__CallExpr*)left._object;
-			v__ast__CallExpr* left = _sc_tmp_65092;
+			v__ast__CallExpr* _sc_tmp_65094 = (v__ast__CallExpr*)left._object;
+			v__ast__CallExpr* left = _sc_tmp_65094;
 			v__checker__Checker_error(c, _STR("cannot call function `%.*s\000()` on the left side of an assignment", 2, left->name), left->pos);
 		}
 		bool is_blank_ident = v__ast__Expr_is_blank_ident(left);
@@ -26117,16 +26124,16 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 				v__ast__Expr expr = right;
 				bool negative = false;
 				if ((right).typ == 202 /* v.ast.PrefixExpr */) {
-					v__ast__PrefixExpr* _sc_tmp_65986 = (v__ast__PrefixExpr*)right._object;
-					v__ast__PrefixExpr* right = _sc_tmp_65986;
+					v__ast__PrefixExpr* _sc_tmp_65988 = (v__ast__PrefixExpr*)right._object;
+					v__ast__PrefixExpr* right = _sc_tmp_65988;
 					expr = right->right;
 					if (right->op == v__token__Kind_minus) {
 						negative = true;
 					}
 				}
 				if ((expr).typ == 193 /* v.ast.IntegerLiteral */) {
-					v__ast__IntegerLiteral* _sc_tmp_66107 = (v__ast__IntegerLiteral*)expr._object;
-					v__ast__IntegerLiteral* expr = _sc_tmp_66107;
+					v__ast__IntegerLiteral* _sc_tmp_66109 = (v__ast__IntegerLiteral*)expr._object;
+					v__ast__IntegerLiteral* expr = _sc_tmp_66109;
 					bool is_large = false;
 					if (expr->val.len > 8) {
 						i64 val = string_i64(expr->val);
@@ -26716,15 +26723,15 @@ static void v__checker__Checker_hash_stmt(v__checker__Checker* c, v__ast__HashSt
 		}
 	} else if (string_eq(node->kind, tos_lit("pkgconfig"))) {
 		array_string args = (string_contains(node->main, tos_lit("--")) ? (string_split(node->main, tos_lit(" "))) : (string_split(_STR("--cflags --libs %.*s", 1, node->main), tos_lit(" "))));
-		Option_pkgconfig__Main_ptr _t970 = pkgconfig__main(args);
+		Option_v__pkgconfig__Main_ptr _t970 = v__pkgconfig__main(args);
 		if (!_t970.ok) {
 			string err = _t970.v_error;
 			int errcode = _t970.ecode;
 			v__checker__Checker_error(c, err, node->pos);
 			return;
 		}
- 		pkgconfig__Main* m = *(pkgconfig__Main**) _t970.data;
-		Option_string _t971 = pkgconfig__Main_run(m);
+ 		v__pkgconfig__Main* m = *(v__pkgconfig__Main**) _t970.data;
+		Option_string _t971 = v__pkgconfig__Main_run(m);
 		if (!_t971.ok) {
 			string err = _t971.v_error;
 			int errcode = _t971.ecode;
@@ -27209,13 +27216,13 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 				v__checker__Checker_error(c, tos_lit("cannot take the address of a string"), node->pos);
 			}
 			if ((node->right).typ == 191 /* v.ast.IndexExpr */) {
-				v__ast__IndexExpr* _sc_tmp_93818 = (v__ast__IndexExpr*)node->right._object;
-				v__ast__IndexExpr* index = _sc_tmp_93818;
+				v__ast__IndexExpr* _sc_tmp_93820 = (v__ast__IndexExpr*)node->right._object;
+				v__ast__IndexExpr* index = _sc_tmp_93820;
 				v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, index->left_type);
 				bool is_mut = false;
 				if ((index->left).typ == 188 /* v.ast.Ident */) {
-					v__ast__Ident* _sc_tmp_93947 = (v__ast__Ident*)index->left._object;
-					v__ast__Ident* ident = _sc_tmp_93947;
+					v__ast__Ident* _sc_tmp_93949 = (v__ast__Ident*)index->left._object;
+					v__ast__Ident* ident = _sc_tmp_93949;
 					if ((ident->obj).typ == 241 /* v.ast.Var */) {
 						v__ast__Var* v = /* as */ (v__ast__Var*)__as_cast((ident->obj)._object, (ident->obj).typ, /*expected:*/241);
 						is_mut = v->is_mut;
@@ -27632,30 +27639,30 @@ static void v__checker__Checker_match_exprs(v__checker__Checker* c, v__ast__Matc
 			v__ast__Expr expr = ((v__ast__Expr*)_t1007.data)[_t1008];
 			string key = tos_lit("");
 			if ((expr).typ == 203 /* v.ast.RangeExpr */) {
-				v__ast__RangeExpr* _sc_tmp_104006 = (v__ast__RangeExpr*)expr._object;
-				v__ast__RangeExpr* expr = _sc_tmp_104006;
+				v__ast__RangeExpr* _sc_tmp_104008 = (v__ast__RangeExpr*)expr._object;
+				v__ast__RangeExpr* expr = _sc_tmp_104008;
 				int low = 0;
 				int high = 0;
 				c->expected_type = node->expected_type;
 				v__ast__Expr low_expr = expr->low;
 				v__ast__Expr high_expr = expr->high;
 				if ((low_expr).typ == 193 /* v.ast.IntegerLiteral */) {
-					v__ast__IntegerLiteral* _sc_tmp_104165 = (v__ast__IntegerLiteral*)low_expr._object;
-					v__ast__IntegerLiteral* low_expr = _sc_tmp_104165;
+					v__ast__IntegerLiteral* _sc_tmp_104167 = (v__ast__IntegerLiteral*)low_expr._object;
+					v__ast__IntegerLiteral* low_expr = _sc_tmp_104167;
 					if ((high_expr).typ == 193 /* v.ast.IntegerLiteral */) {
-						v__ast__IntegerLiteral* _sc_tmp_104206 = (v__ast__IntegerLiteral*)high_expr._object;
-						v__ast__IntegerLiteral* high_expr = _sc_tmp_104206;
+						v__ast__IntegerLiteral* _sc_tmp_104208 = (v__ast__IntegerLiteral*)high_expr._object;
+						v__ast__IntegerLiteral* high_expr = _sc_tmp_104208;
 						low = string_int(low_expr->val);
 						high = string_int(high_expr->val);
 					} else {
 						v__checker__Checker_error(c, tos_lit("mismatched range types"), low_expr->pos);
 					}
 				} else if ((low_expr).typ == 182 /* v.ast.CharLiteral */) {
-					v__ast__CharLiteral* _sc_tmp_104388 = (v__ast__CharLiteral*)low_expr._object;
-					v__ast__CharLiteral* low_expr = _sc_tmp_104388;
+					v__ast__CharLiteral* _sc_tmp_104390 = (v__ast__CharLiteral*)low_expr._object;
+					v__ast__CharLiteral* low_expr = _sc_tmp_104390;
 					if ((high_expr).typ == 182 /* v.ast.CharLiteral */) {
-						v__ast__CharLiteral* _sc_tmp_104431 = (v__ast__CharLiteral*)high_expr._object;
-						v__ast__CharLiteral* high_expr = _sc_tmp_104431;
+						v__ast__CharLiteral* _sc_tmp_104433 = (v__ast__CharLiteral*)high_expr._object;
+						v__ast__CharLiteral* high_expr = _sc_tmp_104433;
 						low = string_at(low_expr->val, 0);
 						high = string_at(high_expr->val, 0);
 					} else {
@@ -27793,8 +27800,8 @@ v__table__Type v__checker__Checker_select_expr(v__checker__Checker* c, v__ast__S
 				}
 			} else {
 				if ((stmt->expr).typ == 192 /* v.ast.InfixExpr */) {
-					v__ast__InfixExpr* _sc_tmp_107932 = (v__ast__InfixExpr*)stmt->expr._object;
-					v__ast__InfixExpr* expr = _sc_tmp_107932;
+					v__ast__InfixExpr* _sc_tmp_107934 = (v__ast__InfixExpr*)stmt->expr._object;
+					v__ast__InfixExpr* expr = _sc_tmp_107934;
 					if ((expr->left).typ != 188 /* v.ast.Ident */ && (expr->left).typ != 205 /* v.ast.SelectorExpr */ && (expr->left).typ != 191 /* v.ast.IndexExpr */) {
 						v__checker__Checker_error(c, tos_lit("channel in `select` key must be predefined"), v__ast__Expr_position(expr->left));
 					}
@@ -27834,8 +27841,8 @@ v__table__Type v__checker__Checker_lock_expr(v__checker__Checker* c, v__ast__Loc
 		v__checker__Checker_ident(c, (voidptr)&/*qq*/(*(v__ast__Ident*)array_get(node->lockeds, i)));
 		v__ast__Ident id = (*(v__ast__Ident*)array_get(node->lockeds, i));
 		if ((id.obj).typ == 241 /* v.ast.Var */) {
-			v__ast__Var* _sc_tmp_109246 = (v__ast__Var*)id.obj._object;
-			v__ast__Var* v = _sc_tmp_109246;
+			v__ast__Var* _sc_tmp_109248 = (v__ast__Var*)id.obj._object;
+			v__ast__Var* v = _sc_tmp_109248;
 			if (v__table__Type_share(v->typ) != v__table__ShareType_shared_t) {
 				v__checker__Checker_error(c, _STR("`%.*s\000` must be declared `shared` to be locked", 2, id.name), id.pos);
 			}
@@ -27927,8 +27934,8 @@ v__table__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExp
 							bool is_mut = false;
 							v__ast__Scope* scope = v__ast__Scope_innermost(c->file.scope, branch.body_pos.pos);
 							if ((infix->left).typ == 188 /* v.ast.Ident */) {
-								v__ast__Ident* _sc_tmp_112721 = (v__ast__Ident*)infix->left._object;
-								v__ast__Ident* infix_left = _sc_tmp_112721;
+								v__ast__Ident* _sc_tmp_112723 = (v__ast__Ident*)infix->left._object;
+								v__ast__Ident* infix_left = _sc_tmp_112723;
 								{ /* if guard */ 
 								Option_v__ast__Var_ptr _t1025;
 								if (_t1025 = v__ast__Scope_find_var(scope, infix_left->name), _t1025.ok) {
@@ -28073,8 +28080,8 @@ static bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, v__ast__E
 		if (cond->op != v__token__Kind_question) {
 			v__checker__Checker_error(c, tos_lit("invalid \$if postfix operator"), cond->pos);
 		} else if ((cond->expr).typ == 188 /* v.ast.Ident */) {
-			v__ast__Ident* _sc_tmp_117096 = (v__ast__Ident*)cond->expr._object;
-			v__ast__Ident* ident = _sc_tmp_117096;
+			v__ast__Ident* _sc_tmp_117098 = (v__ast__Ident*)cond->expr._object;
+			v__ast__Ident* ident = _sc_tmp_117098;
 			return !_IN(string, ident->name, c->pref->compile_defines_all);
 		} else {
 			v__checker__Checker_error(c, tos_lit("invalid `\$if` condition"), cond->pos);
@@ -28146,8 +28153,8 @@ static Option_bool v__checker__Checker_has_return(v__checker__Checker* c, array_
 	for (int _t1035 = 0; _t1035 < _t1034.len; ++_t1035) {
 		v__ast__Stmt s = ((v__ast__Stmt*)_t1034.data)[_t1035];
 		if ((s).typ == 223 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_119355 = (v__ast__ExprStmt*)s._object;
-			v__ast__ExprStmt* s = _sc_tmp_119355;
+			v__ast__ExprStmt* _sc_tmp_119357 = (v__ast__ExprStmt*)s._object;
+			v__ast__ExprStmt* s = _sc_tmp_119357;
 			if ((s->expr).typ == 189 /* v.ast.IfExpr */ || (s->expr).typ == 197 /* v.ast.MatchExpr */) {
 				has_complexity = true;
 				break;
@@ -28169,8 +28176,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->source_name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_119991 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_119991.arg0;
+		multi_return_string_v__token__Position mr_119993 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_119993.arg0;
 	}
 	if ((v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym)) && !c->inside_unsafe) {
 		v__checker__Checker_warn(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -28212,8 +28219,8 @@ v__table__Type v__checker__Checker_index_expr(v__checker__Checker* c, v__ast__In
 		}
 	}
 	if ((node->index).typ == 203 /* v.ast.RangeExpr */) {
-		v__ast__RangeExpr* _sc_tmp_121928 = (v__ast__RangeExpr*)node->index._object;
-		v__ast__RangeExpr* range = _sc_tmp_121928;
+		v__ast__RangeExpr* _sc_tmp_121930 = (v__ast__RangeExpr*)node->index._object;
+		v__ast__RangeExpr* range = _sc_tmp_121930;
 		if (range->has_low) {
 			v__table__Type index_type = v__checker__Checker_expr(c, range->low);
 			v__checker__Checker_check_index_type(c, typ_sym, index_type, node->pos);
@@ -28584,8 +28591,8 @@ static void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast__FnDecl* 
 		for (int _t1059 = 0; _t1059 < _t1058.len; ++_t1059) {
 			v__ast__Stmt st = ((v__ast__Stmt*)_t1058.data)[_t1059];
 			if ((st).typ == 215 /* v.ast.AssertStmt */) {
-				v__ast__AssertStmt* _sc_tmp_133842 = (v__ast__AssertStmt*)st._object;
-				v__ast__AssertStmt* st = _sc_tmp_133842;
+				v__ast__AssertStmt* _sc_tmp_133844 = (v__ast__AssertStmt*)st._object;
+				v__ast__AssertStmt* st = _sc_tmp_133844;
 				v__checker__Checker_warn(c, tos_lit("tests will not be run because filename does not end with `_test.v`"), node->pos);
 				break;
 			}
@@ -28615,21 +28622,21 @@ static bool v__checker__has_top_return(array_v__ast__Stmt stmts) {
 	for (int _t1063 = 0; _t1063 < _t1062.len; ++_t1063) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t1062.data)[_t1063];
 		if ((stmt).typ == 235 /* v.ast.Return */) {
-			v__ast__Return* _sc_tmp_134875 = (v__ast__Return*)stmt._object;
-			v__ast__Return* stmt = _sc_tmp_134875;
+			v__ast__Return* _sc_tmp_134877 = (v__ast__Return*)stmt._object;
+			v__ast__Return* stmt = _sc_tmp_134877;
 			return true;
 		} else if ((stmt).typ == 217 /* v.ast.Block */) {
-			v__ast__Block* _sc_tmp_134918 = (v__ast__Block*)stmt._object;
-			v__ast__Block* stmt = _sc_tmp_134918;
+			v__ast__Block* _sc_tmp_134920 = (v__ast__Block*)stmt._object;
+			v__ast__Block* stmt = _sc_tmp_134920;
 			if (v__checker__has_top_return(stmt->stmts)) {
 				return true;
 			}
 		} else if ((stmt).typ == 223 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_135006 = (v__ast__ExprStmt*)stmt._object;
-			v__ast__ExprStmt* stmt = _sc_tmp_135006;
+			v__ast__ExprStmt* _sc_tmp_135008 = (v__ast__ExprStmt*)stmt._object;
+			v__ast__ExprStmt* stmt = _sc_tmp_135008;
 			if ((stmt->expr).typ == 179 /* v.ast.CallExpr */) {
-				v__ast__CallExpr* _sc_tmp_135040 = (v__ast__CallExpr*)stmt->expr._object;
-				v__ast__CallExpr* ce = _sc_tmp_135040;
+				v__ast__CallExpr* _sc_tmp_135042 = (v__ast__CallExpr*)stmt->expr._object;
+				v__ast__CallExpr* ce = _sc_tmp_135042;
 				if ((string_eq(ce->name, tos_lit("panic")) || string_eq(ce->name, tos_lit("exit")))) {
 					return true;
 				}
@@ -45476,8 +45483,8 @@ void _vinit() {
 	_const_v__vmod__private_file_cacher = v__vmod__new_mod_file_cacher();
 	// Initializations for module v.cflag :
 	// Initializations for module v.errors :
-	// Initializations for module pkgconfig :
-	_const_pkgconfig__default_paths = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){tos_lit("/usr/local/lib/x86_64-linux-gnu/pkgconfig"), tos_lit("/usr/local/lib/pkgconfig"), tos_lit("/usr/local/share/pkgconfig"), tos_lit("/usr/lib/x86_64-linux-gnu/pkgconfig"), tos_lit("/usr/lib/pkgconfig"), tos_lit("/usr/share/pkgconfig")}));
+	// Initializations for module v.pkgconfig :
+	_const_v__pkgconfig__default_paths = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){tos_lit("/usr/local/lib/x86_64-linux-gnu/pkgconfig"), tos_lit("/usr/local/lib/pkgconfig"), tos_lit("/usr/local/share/pkgconfig"), tos_lit("/usr/lib/x86_64-linux-gnu/pkgconfig"), tos_lit("/usr/lib/pkgconfig"), tos_lit("/usr/share/pkgconfig")}));
 	// Initializations for module vweb.tmpl :
 	// Initializations for module runtime :
 	// Initializations for module rand.util :
