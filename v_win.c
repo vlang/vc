@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "791fda1"
+#define V_COMMIT_HASH "fee56b1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2c75b13"
+	#define V_COMMIT_HASH "791fda1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "791fda1"
+	#define V_CURRENT_COMMIT_HASH "fee56b1"
 #endif
 
 // V comptime_defines:
@@ -18863,7 +18863,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("2c75b13"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(  p->compile_defines_all)), _STR("%.*s", 1, array_string_str(  p->compile_defines)), _STR("%.*s", 1, array_string_str(  p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("791fda1"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(  p->compile_defines_all)), _STR("%.*s", 1, array_string_str(  p->compile_defines)), _STR("%.*s", 1, array_string_str(  p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -45405,15 +45405,15 @@ static void main__main() {
 	array_string args = array_slice(_const_os__args, 1, _const_os__args.len);
 	if (args.len == 0 || (string_eq((*(string*)array_get(args, 0)), tos_lit("-")) || string_eq((*(string*)array_get(args, 0)), tos_lit("repl")))) {
 		if (args.len == 0 && is_atty(0) != 0) {
-			println(tos_lit("For usage information, quit V REPL and run `v help`"));
+			println(tos_lit("Welcome to the V REPL (for help with V itself, type `exit`, then run `v help`)."));
 		}
 		v__util__launch_tool(false, tos_lit("vrepl"), array_slice(_const_os__args, 1, _const_os__args.len));
 		return;
 	}
 	array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_976 = v__pref__parse_args(args_and_flags);
-	v__pref__Preferences* prefs = mr_976.arg0;
-	string command = mr_976.arg1;
+	multi_return_v__pref__Preferences_string mr_1004 = v__pref__parse_args(args_and_flags);
+	v__pref__Preferences* prefs = mr_1004.arg0;
+	string command = mr_1004.arg1;
 	if (prefs->is_verbose) {
 	}
 	if (_IN(string, command, _const_main__simple_cmd)) {
