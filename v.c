@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "fee56b1"
+#define V_COMMIT_HASH "ff93e8a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "791fda1"
+	#define V_COMMIT_HASH "fee56b1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "fee56b1"
+	#define V_CURRENT_COMMIT_HASH "ff93e8a"
 #endif
 
 // V comptime_defines:
@@ -9105,10 +9105,11 @@ array array_repeat(array a, int count) {
 		size = a.element_size;
 	}
 	array arr = (array){.element_size = a.element_size,.data = vcalloc(size),.len = count * a.len,.cap = count * a.len,};
+	int size_of_array = ((int)(/*SizeOfType*/ sizeof(struct array)));
 	for (int i = 0; i < count; ++i) {
-		if (a.len > 0 && _us32_eq(/*SizeOfType*/ sizeof(struct array),a.element_size)) {
+		if (a.len > 0 && a.element_size == size_of_array) {
 			array ary = (array){.element_size = 0,.data = 0,.len = 0,.cap = 0,};
-			memcpy(&ary, a.data, /*SizeOfType*/ sizeof(struct array));
+			memcpy(&ary, a.data, size_of_array);
 			array ary_clone = array_clone(&ary);
 			memcpy(array_get_unsafe(arr, i * a.len), &ary_clone, a.len * a.element_size);
 		} else {
@@ -9295,10 +9296,11 @@ array array_clone(array* a) {
 		size++;
 	}
 	array arr = (array){.element_size = a->element_size,.data = vcalloc(size),.len = a->len,.cap = a->cap,};
-	if (_us32_eq(/*SizeOfType*/ sizeof(struct array),a->element_size)) {
+	int size_of_array = ((int)(/*SizeOfType*/ sizeof(struct array)));
+	if (a->element_size == size_of_array) {
 		for (int i = 0; i < a->len; ++i) {
 			array ar = (array){.element_size = 0,.data = 0,.len = 0,.cap = 0,};
-			memcpy(&ar, array_get_unsafe(/*rec*/*a, i), /*SizeOfType*/ sizeof(struct array));
+			memcpy(&ar, array_get_unsafe(/*rec*/*a, i), size_of_array);
 			array ar_clone = array_clone(&ar);
 			array_set_unsafe(&arr, i, &ar_clone);
 		}
@@ -18883,7 +18885,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("791fda1"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(  p->compile_defines_all)), _STR("%.*s", 1, array_string_str(  p->compile_defines)), _STR("%.*s", 1, array_string_str(  p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("fee56b1"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(  p->compile_defines_all)), _STR("%.*s", 1, array_string_str(  p->compile_defines)), _STR("%.*s", 1, array_string_str(  p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
