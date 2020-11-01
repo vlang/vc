@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9fdf04b"
+#define V_COMMIT_HASH "e72d9c0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "db59585"
+	#define V_COMMIT_HASH "9fdf04b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9fdf04b"
+	#define V_CURRENT_COMMIT_HASH "e72d9c0"
 #endif
 
 // V comptime_defines:
@@ -18887,7 +18887,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("db59585"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(  p->compile_defines_all)), _STR("%.*s", 1, array_string_str(  p->compile_defines)), _STR("%.*s", 1, array_string_str(  p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("9fdf04b"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(  p->compile_defines_all)), _STR("%.*s", 1, array_string_str(  p->compile_defines)), _STR("%.*s", 1, array_string_str(  p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -29494,6 +29494,7 @@ static v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 			v__table__Param param = ((v__table__Param*)_t1106.data)[_t1107];
 			if (v__ast__Scope_known_var(p->scope, param.name)) {
 				v__parser__Parser_error_with_pos(p, _STR("redefinition of parameter `%.*s\000`", 2, param.name), param.pos);
+				break;
 			}
 			v__ast__Scope_register(p->scope, param.name, /* sum type cast */ (v__ast__ScopeObject) {._object = memdup(&(v__ast__Var[]) {(v__ast__Var){
 				.name = param.name,
@@ -29607,9 +29608,9 @@ static v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Param_bool_bool mr_9291 = v__parser__Parser_fn_args(p);
-	array_v__table__Param args = mr_9291.arg0;
-	bool is_variadic = mr_9291.arg2;
+	multi_return_array_v__table__Param_bool_bool mr_9301 = v__parser__Parser_fn_args(p);
+	array_v__table__Param args = mr_9301.arg0;
+	bool is_variadic = mr_9301.arg2;
 	// FOR IN array
 	array _t1109 = args;
 	for (int _t1110 = 0; _t1110 < _t1109.len; ++_t1110) {
@@ -29703,6 +29704,7 @@ static multi_return_array_v__table__Param_bool_bool v__parser__Parser_fn_args(v_
 					}
 				} else if (is_shared || is_atomic) {
 					v__parser__Parser_error_with_pos(p, tos_lit("generic object cannot be `atomic`or `shared`"), pos);
+					break;
 				}
 				arg_type = v__table__Type_set_nr_muls(arg_type, 1);
 				if (is_shared) {
@@ -29718,12 +29720,17 @@ static multi_return_array_v__table__Param_bool_bool v__parser__Parser_fn_args(v_
 			if (p->tok.kind == v__token__Kind_comma) {
 				if (is_variadic) {
 					v__parser__Parser_error_with_pos(p, _STR("cannot use ...(variadic) with non-final parameter no %"PRId32"", 1, arg_no), pos);
+					break;
 				}
 				v__parser__Parser_next(p);
 			}
 			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(p->table, arg_type);
 			array_push(&args, _MOV((v__table__Param[]){ (v__table__Param){.pos = pos,.name = tos_lit(""),.is_mut = is_mut,.typ = arg_type,.type_source_name = sym->source_name,.is_hidden = 0,} }));
 			arg_no++;
+			if (arg_no > 1024) {
+				v__parser__Parser_error_with_pos(p, tos_lit("too many args"), pos);
+				break;
+			}
 		}
 	} else {
 		for (;;) {
@@ -29766,6 +29773,7 @@ static multi_return_array_v__table__Param_bool_bool v__parser__Parser_fn_args(v_
 					}
 				} else if (is_shared || is_atomic) {
 					v__parser__Parser_error_with_pos(p, tos_lit("generic object cannot be `atomic` or `shared`"), pos);
+					break;
 				}
 				typ = v__table__Type_set_nr_muls(typ, 1);
 				if (is_shared) {
@@ -29786,6 +29794,7 @@ static multi_return_array_v__table__Param_bool_bool v__parser__Parser_fn_args(v_
 				array_push(&args, _MOV((v__table__Param[]){ (v__table__Param){.pos = (*(v__token__Position*)array_get(arg_pos, i)),.name = arg_name,.is_mut = is_mut,.typ = typ,.type_source_name = sym->source_name,.is_hidden = 0,} }));
 				if (is_variadic && p->tok.kind == v__token__Kind_comma) {
 					v__parser__Parser_error_with_pos(p, _STR("cannot use ...(variadic) with non-final parameter %.*s", 1, arg_name), (*(v__token__Position*)array_get(arg_pos, i)));
+					break;
 				}
 			}
 			if (p->tok.kind != v__token__Kind_rpar) {
@@ -29831,8 +29840,8 @@ static bool v__parser__have_fn_main(array_v__ast__Stmt stmts) {
 	for (int _t1118 = 0; _t1118 < _t1117.len; ++_t1118) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t1117.data)[_t1118];
 		if ((stmt).typ == 124 /* v.ast.FnDecl */) {
-			v__ast__FnDecl* _sc_tmp_15903 = (v__ast__FnDecl*)stmt._object;
-			v__ast__FnDecl* stmt = _sc_tmp_15903;
+			v__ast__FnDecl* _sc_tmp_16037 = (v__ast__FnDecl*)stmt._object;
+			v__ast__FnDecl* stmt = _sc_tmp_16037;
 			if (string_eq(stmt->name, tos_lit("main.main")) && string_eq(stmt->mod, tos_lit("main"))) {
 				return true;
 			}
@@ -31453,6 +31462,9 @@ void v__parser__Parser_error_with_pos(v__parser__Parser* p, string s, v__token__
 	} else {
 		array_push(&p->errors, _MOV((v__errors__Error[]){ (v__errors__Error){.message = s,.details = (string){.str=(byteptr)""},.file_path = p->file_name,.pos = pos,.backtrace = (string){.str=(byteptr)""},.reporter = v__errors__Reporter_parser,} }));
 	}
+	if (p->pref->output_mode == v__pref__OutputMode_silent) {
+		v__parser__Parser_next(p);
+	}
 }
 
 void v__parser__Parser_warn_with_pos(v__parser__Parser* p, string s, v__token__Position pos) {
@@ -31477,9 +31489,9 @@ void v__parser__Parser_vet_error(v__parser__Parser* p, string s, int line) {
 
 static v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p, bool is_top_level) {
 	v__token__Token tok = p->tok;
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_19568 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr left = mr_19568.arg0;
-	array_v__ast__Comment left_comments = mr_19568.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_20008 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr left = mr_20008.arg0;
+	array_v__ast__Comment left_comments = mr_20008.arg1;
 	v__ast__Expr left0 = (*(v__ast__Expr*)array_get(left, 0));
 	if (tok.kind == v__token__Kind_key_mut && p->tok.kind != v__token__Kind_decl_assign) {
 		v__parser__Parser_error(p, tos_lit("expecting `:=` (e.g. `mut x :=`)"));
@@ -32113,9 +32125,9 @@ static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_39628 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_39628.arg0;
-	array_v__ast__Comment comments = mr_39628.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_40068 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_40068.arg0;
+	array_v__ast__Comment comments = mr_40068.arg1;
 	v__token__Position end_pos = v__ast__Expr_position(*(v__ast__Expr*)array_last(exprs));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 }
@@ -32417,8 +32429,8 @@ static v__ast__Stmt v__parser__Parser_unsafe_stmt(v__parser__Parser* p) {
 	v__ast__Stmt stmt = v__parser__Parser_stmt(p, false);
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		if ((stmt).typ == 223 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_48791 = (v__ast__ExprStmt*)stmt._object;
-			v__ast__ExprStmt* stmt = _sc_tmp_48791;
+			v__ast__ExprStmt* _sc_tmp_49231 = (v__ast__ExprStmt*)stmt._object;
+			v__ast__ExprStmt* stmt = _sc_tmp_49231;
 			if (v__ast__Expr_is_expr(stmt->expr)) {
 				v__parser__Parser_next(p);
 				v__ast__UnsafeExpr ue = (v__ast__UnsafeExpr){.expr = stmt->expr,.pos = pos,};
