@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "aecdfb0"
+#define V_COMMIT_HASH "18f5ed6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "204fd8b"
+	#define V_COMMIT_HASH "aecdfb0"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "aecdfb0"
+	#define V_CURRENT_COMMIT_HASH "18f5ed6"
 #endif
 
 // V comptime_defines:
@@ -5654,6 +5654,7 @@ static void v__builder__todo();
 static Option_void v__builder__Builder_find_win_cc(v__builder__Builder* v);
 static void v__builder__Builder_post_process_c_compiler_output(v__builder__Builder* v, os__Result res);
 static string v__builder__Builder_rebuild_cached_module(v__builder__Builder* v, string vexe, string imp_path);
+static void v__builder__Builder_show_cc(v__builder__Builder* v, string cmd, string response_file, string response_file_content);
 static void v__builder__Builder_cc(v__builder__Builder* v);
 static void v__builder__Builder_cc_linux_cross(v__builder__Builder* b);
 static void v__builder__Builder_cc_windows_cross(v__builder__Builder* c);
@@ -18899,7 +18900,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("204fd8b"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(  p->compile_defines_all)), _STR("%.*s", 1, array_string_str(  p->compile_defines)), _STR("%.*s", 1, array_string_str(  p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("aecdfb0"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(  p->compile_defines_all)), _STR("%.*s", 1, array_string_str(  p->compile_defines)), _STR("%.*s", 1, array_string_str(  p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -44226,6 +44227,19 @@ static string v__builder__Builder_rebuild_cached_module(v__builder__Builder* v, 
 	return res;
 }
 
+static void v__builder__Builder_show_cc(v__builder__Builder* v, string cmd, string response_file, string response_file_content) {
+	if (v->pref->is_verbose || v->pref->show_cc) {
+		println(tos_lit(""));
+		println(tos_lit("====================="));
+		println(_STR("> C compiler cmd: %.*s", 1, cmd));
+		if (v->pref->show_cc) {
+			println(_STR("> C compiler response file %.*s\000:", 2, response_file));
+			println(response_file_content);
+		}
+		println(tos_lit("====================="));
+	}
+}
+
 static void v__builder__Builder_cc(v__builder__Builder* v) {
 	if (string_contains(os__executable(), tos_lit("vfmt"))) {
 		return;
@@ -44566,16 +44580,7 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 	start: {}
 	v__builder__todo();
 	string cmd = _STR("%.*s\000 @%.*s", 2, ccompiler, response_file);
-	if (v->pref->is_verbose || v->pref->show_cc) {
-		println(tos_lit(""));
-		println(tos_lit("====================="));
-		println(_STR("> C compiler cmd: %.*s", 1, cmd));
-		if (v->pref->show_cc) {
-			println(_STR("> C compiler response file %.*s\000:", 2, response_file));
-			println(response_file_content);
-		}
-		println(tos_lit("====================="));
-	}
+	v__builder__Builder_show_cc(v, cmd, response_file, response_file_content);
 	i64 ticks = time__ticks();
 	Option_os__Result _t1786 = os__exec(cmd);
 	if (!_t1786.ok) {
@@ -45499,11 +45504,7 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 		v__builder__verror(_STR("Unable to write response file to \"%.*s\000\"", 2, out_name_cmd_line));
 	};
 	string cmd = _STR("\"%.*s\000\" @%.*s", 2, r.full_cl_exe_path, out_name_cmd_line);
-	if (v->pref->is_verbose) {
-		println(tos_lit("\n========== cl cmd line:"));
-		println(cmd);
-		println(tos_lit("==========\n"));
-	}
+	v__builder__Builder_show_cc(v, cmd, out_name_cmd_line, args);
 	i64 ticks = time__ticks();
 	Option_os__Result _t1889 = os__exec(cmd);
 	if (!_t1889.ok) {
