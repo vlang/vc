@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "cc4bb71"
+#define V_COMMIT_HASH "2591267"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "cd399b7"
+	#define V_COMMIT_HASH "cc4bb71"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "cc4bb71"
+	#define V_CURRENT_COMMIT_HASH "2591267"
 #endif
 
 // V comptime_defines:
@@ -18868,7 +18868,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("cd399b7"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("cc4bb71"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -40370,10 +40370,11 @@ static string v__gen__Gen_write_fn_attrs(v__gen__Gen* g, array_v__table__Attr at
 }
 
 static void v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Type typ) {
+	v__table__Type utyp = v__gen__Gen_unwrap_generic(g, typ);
 	strings__Builder dec = strings__new_builder(100);
 	strings__Builder enc = strings__new_builder(100);
-	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
-	string styp = v__gen__Gen_typ(g, typ);
+	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, utyp);
+	string styp = v__gen__Gen_typ(g, utyp);
 	if (v__gen__is_js_prim(sym->name) || sym->kind == v__table__Kind_enum_) {
 		return;
 	}
@@ -40384,7 +40385,7 @@ static void v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Type typ) {
 	}
 	array_push(&g->json_types, _MOV((string[]){ sym->name }));
 	string dec_fn_name = v__gen__js_dec_name(styp);
-	v__gen__Gen_register_optional(g, typ);
+	v__gen__Gen_register_optional(g, utyp);
 	string dec_fn_dec = _STR("Option_%.*s\000 %.*s\000(cJSON* root)", 3, styp, dec_fn_name);
 	strings__Builder_writeln(&dec, _STR("\n//Option_%.*s\000 %.*s\000(cJSON* root, %.*s\000* res) {\n%.*s\000 {\n	%.*s\000 res;\n	if (!root) {\n		const char *error_ptr = cJSON_GetErrorPtr();\n		if (error_ptr != NULL)	{\n			// fprintf(stderr, \"Error in decode() for %.*s\000 error_ptr=: %%%%s\\n\", error_ptr);\n			// printf(\"\\nbad js=%%%%s\\n\", js.str);\n			Option err = v_error(tos2(error_ptr));\n			return *(Option_%.*s\000 *)&err;\n		}\n	}\n", 8, styp, dec_fn_name, styp, dec_fn_dec, styp, styp, styp));
 	strings__Builder_writeln(&g->json_forward_decls, _STR("%.*s\000;", 2, dec_fn_dec));
@@ -40393,7 +40394,7 @@ static void v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Type typ) {
 	strings__Builder_writeln(&g->json_forward_decls, _STR("%.*s\000;\n", 2, enc_fn_dec));
 	strings__Builder_writeln(&enc, _STR("\n%.*s\000 {\n\tcJSON *o;", 2, enc_fn_dec));
 	if (sym->kind == v__table__Kind_array) {
-		v__table__Type value_type = v__table__Table_value_type(g->table, typ);
+		v__table__Type value_type = v__table__Table_value_type(g->table, utyp);
 		v__gen__Gen_gen_json_for_type(g, value_type);
 		strings__Builder_writeln(&dec, v__gen__Gen_decode_array(g, value_type));
 		strings__Builder_writeln(&enc, v__gen__Gen_encode_array(g, value_type));
