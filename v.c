@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "953d102"
+#define V_COMMIT_HASH "26c2654"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3f9b05a"
+	#define V_COMMIT_HASH "953d102"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "953d102"
+	#define V_CURRENT_COMMIT_HASH "26c2654"
 #endif
 
 // V comptime_defines:
@@ -19003,7 +19003,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("3f9b05a"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("953d102"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -33447,8 +33447,8 @@ static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser*
 		if (v__util__contains_capital(name)) {
 			v__parser__Parser_error(p, tos_lit("interface methods cannot contain uppercase letters, use snake_case instead"));
 		}
-		multi_return_array_v__table__Param_bool_bool mr_10284 = v__parser__Parser_fn_args(p);
-		array_v__table__Param args2 = mr_10284.arg0;
+		multi_return_array_v__table__Param_bool_bool mr_10286 = v__parser__Parser_fn_args(p);
+		array_v__table__Param args2 = mr_10286.arg0;
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(p->table, typ);
 		array_v__table__Param args = new_array_from_c_array(1, 1, sizeof(v__table__Param), _MOV((v__table__Param[1]){(v__table__Param){.pos = {0},.name = tos_lit("x"),.is_mut = 0,.typ = typ,.type_source_name = sym->source_name,.is_hidden = true,}}));
 		_PUSH_MANY(&args, (args2), _t1224, array_v__table__Param);
