@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4bf1c2f"
+#define V_COMMIT_HASH "e80487b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "35096cd"
+	#define V_COMMIT_HASH "4bf1c2f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4bf1c2f"
+	#define V_CURRENT_COMMIT_HASH "e80487b"
 #endif
 
 // V comptime_defines:
@@ -2675,6 +2675,7 @@ struct v__ast__StringLiteral {
 struct v__ast__StructInit {
 	v__token__Position pos;
 	bool is_short;
+	array_v__ast__Comment pre_comments;
 	v__table__Type typ;
 	array_v__ast__StructInitField fields;
 };
@@ -18915,7 +18916,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("35096cd"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("4bf1c2f"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -33253,6 +33254,7 @@ static v__ast__StructInit v__parser__Parser_struct_init(v__parser__Parser* p, bo
 	if (!short_syntax) {
 		v__parser__Parser_check(p, v__token__Kind_lcbr);
 	}
+	array_v__ast__Comment pre_comments = v__parser__Parser_eat_comments(p);
 	array_v__ast__StructInitField fields = __new_array_with_default(0, 0, sizeof(v__ast__StructInitField), 0);
 	int i = 0;
 	bool no_keys = p->peek_tok.kind != v__token__Kind_colon && p->tok.kind != v__token__Kind_rcbr;
@@ -33293,7 +33295,7 @@ static v__ast__StructInit v__parser__Parser_struct_init(v__parser__Parser* p, bo
 		v__parser__Parser_check(p, v__token__Kind_rcbr);
 	}
 	p->is_amp = saved_is_amp;
-	v__ast__StructInit node = (v__ast__StructInit){.pos = (v__token__Position){.len = last_pos.pos - first_pos.pos + last_pos.len,.line_nr = first_pos.line_nr,.pos = first_pos.pos,},.is_short = no_keys,.typ = typ,.fields = fields,};
+	v__ast__StructInit node = (v__ast__StructInit){.pos = (v__token__Position){.len = last_pos.pos - first_pos.pos + last_pos.len,.line_nr = first_pos.line_nr,.pos = first_pos.pos,},.is_short = no_keys,.pre_comments = pre_comments,.typ = typ,.fields = fields,};
 	return node;
 }
 
@@ -33328,8 +33330,8 @@ static v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser*
 		if (v__util__contains_capital(name)) {
 			v__parser__Parser_error(p, tos_lit("interface methods cannot contain uppercase letters, use snake_case instead"));
 		}
-		multi_return_array_v__table__Param_bool_bool mr_10202 = v__parser__Parser_fn_args(p);
-		array_v__table__Param args2 = mr_10202.arg0;
+		multi_return_array_v__table__Param_bool_bool mr_10265 = v__parser__Parser_fn_args(p);
+		array_v__table__Param args2 = mr_10265.arg0;
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(p->table, typ);
 		array_v__table__Param args = new_array_from_c_array(1, 1, sizeof(v__table__Param), _MOV((v__table__Param[1]){(v__table__Param){.pos = {0},.name = tos_lit("x"),.is_mut = 0,.typ = typ,.type_source_name = sym->source_name,.is_hidden = true,}}));
 		_PUSH_MANY(&args, (args2), _t1209, array_v__table__Param);
