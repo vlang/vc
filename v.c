@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "26c2654"
+#define V_COMMIT_HASH "d34c5b7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "953d102"
+	#define V_COMMIT_HASH "26c2654"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "26c2654"
+	#define V_CURRENT_COMMIT_HASH "d34c5b7"
 #endif
 
 // V comptime_defines:
@@ -1797,6 +1797,7 @@ struct v__table__Table {
 	array_string redefined_fns;
 	map_string_array_v__table__Type fn_gen_types;
 	string cmod_prefix;
+	bool is_fmt;
 };
 
 struct v__depgraph__DepGraph {
@@ -19003,7 +19004,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("953d102"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("26c2654"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -19987,8 +19988,10 @@ string v__table__Table_type_to_str(v__table__Table* table, v__table__Type t) {
 			res = _STR("chan %.*s\000%.*s", 2, mut_str, elem_str);
 		}
 	} else if (_t623 == v__table__Kind_function) {
-		v__table__FnType* info = /* as */ (v__table__FnType*)__as_cast((sym->info)._object, (sym->info).typ, /*expected:*/316);
-		res = v__table__Table_fn_signature(table, (voidptr)&/*qq*/info->func, (v__table__FnSignatureOpts){.skip_receiver = 0,.type_only = true,});
+		if (!table->is_fmt) {
+			v__table__FnType* info = /* as */ (v__table__FnType*)__as_cast((sym->info)._object, (sym->info).typ, /*expected:*/316);
+			res = v__table__Table_fn_signature(table, (voidptr)&/*qq*/info->func, (v__table__FnSignatureOpts){.skip_receiver = 0,.type_only = true,});
+		}
 	} else if (_t623 == v__table__Kind_map) {
 		if (((int)(t)) == _const_v__table__map_type_idx) {
 			return tos_lit("map");
@@ -20274,8 +20277,9 @@ static bool array_v__table__Param_equals(array_v__table__Param p, array_v__table
 }
 
 v__table__Table* v__table__new_table() {
-	v__table__Table* t = (v__table__Table*)memdup(&(v__table__Table){.types = __new_array(0, 1, sizeof(v__table__TypeSymbol)),.type_idxs = new_map_1(sizeof(int)),.fns = new_map_1(sizeof(v__table__Fn)),.imports = __new_array(0, 1, sizeof(string)),.modules = __new_array(0, 1, sizeof(string)),.cflags = __new_array(0, 1, sizeof(v__cflag__CFlag)),.redefined_fns = __new_array(0, 1, sizeof(string)),.fn_gen_types = new_map_1(sizeof(array_v__table__Type)),.cmod_prefix = (string){.str=(byteptr)""},}, sizeof(v__table__Table));
+	v__table__Table* t = (v__table__Table*)memdup(&(v__table__Table){.types = __new_array(0, 1, sizeof(v__table__TypeSymbol)),.type_idxs = new_map_1(sizeof(int)),.fns = new_map_1(sizeof(v__table__Fn)),.imports = __new_array(0, 1, sizeof(string)),.modules = __new_array(0, 1, sizeof(string)),.cflags = __new_array(0, 1, sizeof(v__cflag__CFlag)),.redefined_fns = __new_array(0, 1, sizeof(string)),.fn_gen_types = new_map_1(sizeof(array_v__table__Type)),.cmod_prefix = (string){.str=(byteptr)""},.is_fmt = 0,}, sizeof(v__table__Table));
 	v__table__Table_register_builtin_type_symbols(t);
+	t->is_fmt = true;
 	return t;
 }
 
@@ -20484,8 +20488,8 @@ Option_v__table__Field v__table__Table_struct_find_field(v__table__Table* t, v__
 	v__table__TypeSymbol* ts = s;
 	for (;;) {
 		if ((ts->info).typ == 132 /* v.table.Struct */) {
-			v__table__Struct* _sc_tmp_6632 = (v__table__Struct*)ts->info._object;
-			v__table__Struct* struct_info = _sc_tmp_6632;
+			v__table__Struct* _sc_tmp_6669 = (v__table__Struct*)ts->info._object;
+			v__table__Struct* struct_info = _sc_tmp_6669;
 			{ /* if guard */ 
 			Option_v__table__Field _t682;
 			if (_t682 = v__table__Struct_find_field(/*rec*/*struct_info, name), _t682.ok) {
@@ -20495,8 +20499,8 @@ Option_v__table__Field v__table__Table_struct_find_field(v__table__Table* t, v__
 				return _t683;
 			}}
 		} else if ((ts->info).typ == 310 /* v.table.Aggregate */) {
-			v__table__Aggregate* _sc_tmp_6742 = (v__table__Aggregate*)ts->info._object;
-			v__table__Aggregate* agg_info = _sc_tmp_6742;
+			v__table__Aggregate* _sc_tmp_6779 = (v__table__Aggregate*)ts->info._object;
+			v__table__Aggregate* agg_info = _sc_tmp_6779;
 			{ /* if guard */ 
 			Option_v__table__Field _t684;
 			if (_t684 = v__table__Aggregate_find_field(agg_info, name), _t684.ok) {
@@ -43869,6 +43873,7 @@ v__builder__Builder v__builder__new_builder(v__pref__Preferences* pref) {
 	string rdir = os__real_path(pref->path);
 	string compiled_dir = (os__is_dir(rdir) ? (rdir) : (os__dir(rdir)));
 	v__table__Table* table = v__table__new_table();
+	table->is_fmt = false;
 	if (pref->use_color == v__pref__ColorOutput_always) {
 		v__util__EManager_set_support_color(_const_v__util__emanager, true);
 	}
@@ -44184,8 +44189,8 @@ static void v__builder__Builder_print_warnings_and_errors(v__builder__Builder* b
 				for (int _t1712 = 0; _t1712 < _t1711.len; ++_t1712) {
 					v__ast__Stmt stmt = ((v__ast__Stmt*)_t1711.data)[_t1712];
 					if ((stmt).typ == 128 /* v.ast.FnDecl */) {
-						v__ast__FnDecl* _sc_tmp_9107 = (v__ast__FnDecl*)stmt._object;
-						v__ast__FnDecl* stmt = _sc_tmp_9107;
+						v__ast__FnDecl* _sc_tmp_9133 = (v__ast__FnDecl*)stmt._object;
+						v__ast__FnDecl* stmt = _sc_tmp_9133;
 						if (string_eq(stmt->name, fn_name)) {
 							string fheader = v__ast__FnDecl_stringify(stmt, b->table, tos_lit("main"));
 							array_push(&redefines, _MOV((v__builder__FunctionRedefinition[]){ (v__builder__FunctionRedefinition){.fpath = file.path,.fline = stmt->pos.line_nr,.fheader = fheader,.f = *stmt,} }));
