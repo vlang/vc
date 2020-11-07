@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "125650c"
+#define V_COMMIT_HASH "6354fa0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0d8114e"
+	#define V_COMMIT_HASH "125650c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "125650c"
+	#define V_CURRENT_COMMIT_HASH "6354fa0"
 #endif
 
 // V comptime_defines:
@@ -19043,7 +19043,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("0d8114e"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("125650c"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -28503,8 +28503,15 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 
 static void v__checker__Checker_check_index_type(v__checker__Checker* c, v__table__TypeSymbol* typ_sym, v__table__Type index_type, v__token__Position pos) {
 	v__table__TypeSymbol* index_type_sym = v__table__Table_get_type_symbol(c->table, index_type);
-	if ((typ_sym->kind == v__table__Kind_array || typ_sym->kind == v__table__Kind_array_fixed) && !(v__table__Type_is_number(index_type) || index_type_sym->kind == v__table__Kind_enum_)) {
-		v__checker__Checker_error(c, _STR("non-integer index `%.*s\000` (array type `%.*s\000`)", 3, index_type_sym->source_name, typ_sym->source_name), pos);
+	if ((typ_sym->kind == v__table__Kind_array || typ_sym->kind == v__table__Kind_array_fixed || typ_sym->kind == v__table__Kind_string || typ_sym->kind == v__table__Kind_ustring)) {
+		if (!(v__table__Type_is_number(index_type) || index_type_sym->kind == v__table__Kind_enum_)) {
+			string type_str = ((typ_sym->kind == v__table__Kind_string || typ_sym->kind == v__table__Kind_ustring) ? (_STR("non-integer string index `%.*s\000`", 2, index_type_sym->source_name)) : (_STR("non-integer index `%.*s\000` (array type `%.*s\000`)", 3, index_type_sym->source_name, typ_sym->source_name)));
+			v__checker__Checker_error(c, _STR("%.*s", 1, type_str), pos);
+		}
+		if (v__table__Type_has_flag(index_type, v__table__TypeFlag_optional)) {
+			string type_str = ((typ_sym->kind == v__table__Kind_string || typ_sym->kind == v__table__Kind_ustring) ? (_STR("(type `%.*s\000`)", 2, typ_sym->source_name)) : (_STR("(array type `%.*s\000`)", 2, typ_sym->source_name)));
+			v__checker__Checker_error(c, _STR("cannot use optional as index %.*s", 1, type_str), pos);
+		}
 	}
 }
 
@@ -28535,8 +28542,8 @@ v__table__Type v__checker__Checker_index_expr(v__checker__Checker* c, v__ast__In
 		}
 	}
 	if ((node->index).typ == 208 /* v.ast.RangeExpr */) {
-		v__ast__RangeExpr* _sc_tmp_126499 = (v__ast__RangeExpr*)node->index._object;
-		v__ast__RangeExpr* range = _sc_tmp_126499;
+		v__ast__RangeExpr* _sc_tmp_126895 = (v__ast__RangeExpr*)node->index._object;
+		v__ast__RangeExpr* range = _sc_tmp_126895;
 		if (range->has_low) {
 			v__table__Type index_type = v__checker__Checker_expr(c, range->low);
 			v__checker__Checker_check_index_type(c, typ_sym, index_type, node->pos);
@@ -28908,8 +28915,8 @@ static void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast__FnDecl* 
 		for (int _t1071 = 0; _t1071 < _t1070.len; ++_t1071) {
 			v__ast__Stmt st = ((v__ast__Stmt*)_t1070.data)[_t1071];
 			if ((st).typ == 220 /* v.ast.AssertStmt */) {
-				v__ast__AssertStmt* _sc_tmp_138413 = (v__ast__AssertStmt*)st._object;
-				v__ast__AssertStmt* st = _sc_tmp_138413;
+				v__ast__AssertStmt* _sc_tmp_138809 = (v__ast__AssertStmt*)st._object;
+				v__ast__AssertStmt* st = _sc_tmp_138809;
 				v__checker__Checker_warn(c, tos_lit("tests will not be run because filename does not end with `_test.v`"), node->pos);
 				break;
 			}
@@ -28939,21 +28946,21 @@ static bool v__checker__has_top_return(array_v__ast__Stmt stmts) {
 	for (int _t1075 = 0; _t1075 < _t1074.len; ++_t1075) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t1074.data)[_t1075];
 		if ((stmt).typ == 240 /* v.ast.Return */) {
-			v__ast__Return* _sc_tmp_139446 = (v__ast__Return*)stmt._object;
-			v__ast__Return* stmt = _sc_tmp_139446;
+			v__ast__Return* _sc_tmp_139842 = (v__ast__Return*)stmt._object;
+			v__ast__Return* stmt = _sc_tmp_139842;
 			return true;
 		} else if ((stmt).typ == 222 /* v.ast.Block */) {
-			v__ast__Block* _sc_tmp_139489 = (v__ast__Block*)stmt._object;
-			v__ast__Block* stmt = _sc_tmp_139489;
+			v__ast__Block* _sc_tmp_139885 = (v__ast__Block*)stmt._object;
+			v__ast__Block* stmt = _sc_tmp_139885;
 			if (v__checker__has_top_return(stmt->stmts)) {
 				return true;
 			}
 		} else if ((stmt).typ == 228 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_139577 = (v__ast__ExprStmt*)stmt._object;
-			v__ast__ExprStmt* stmt = _sc_tmp_139577;
+			v__ast__ExprStmt* _sc_tmp_139973 = (v__ast__ExprStmt*)stmt._object;
+			v__ast__ExprStmt* stmt = _sc_tmp_139973;
 			if ((stmt->expr).typ == 184 /* v.ast.CallExpr */) {
-				v__ast__CallExpr* _sc_tmp_139611 = (v__ast__CallExpr*)stmt->expr._object;
-				v__ast__CallExpr* ce = _sc_tmp_139611;
+				v__ast__CallExpr* _sc_tmp_140007 = (v__ast__CallExpr*)stmt->expr._object;
+				v__ast__CallExpr* ce = _sc_tmp_140007;
 				if ((string_eq(ce->name, tos_lit("panic")) || string_eq(ce->name, tos_lit("exit")))) {
 					return true;
 				}
