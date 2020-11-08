@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0ba5544"
+#define V_COMMIT_HASH "4b35495"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "931882d"
+	#define V_COMMIT_HASH "0ba5544"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0ba5544"
+	#define V_CURRENT_COMMIT_HASH "4b35495"
 #endif
 
 // V comptime_defines:
@@ -4549,6 +4549,7 @@ void os__flush();
 Option_void os__mkdir_all(string path);
 string os__cache_dir();
 string os__temp_dir();
+string os__vmodules_dir();
 void os__chmod(string path, int mode);
 string _const_os__wd_at_startup; // inited later
 string os__resource_abs_path(string path);
@@ -4969,7 +4970,6 @@ array_u32 rand__util__time_seed_array(int count);
 u32 rand__util__time_seed_32();
 u64 rand__util__time_seed_64();
 string _const_v__pref__default_module_path; // inited later
-static string v__pref__mpath();
 v__pref__Preferences v__pref__new_preferences();
 void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p);
 static string v__pref__default_c_compiler();
@@ -14669,6 +14669,14 @@ string os__temp_dir() {
 	return path;
 }
 
+string os__vmodules_dir() {
+	string path = os__getenv(tos_lit("VMODULES"));
+	if ((path).len == 0) {
+		path = os__join_path(os__home_dir(), (varg_string){.len=1,.args={tos_lit(".vmodules")}});
+	}
+	return path;
+}
+
 void os__chmod(string path, int mode) {
 	chmod(((charptr)(path.str)), mode);
 }
@@ -17271,7 +17279,7 @@ static bool semver__is_valid_number(string input) {
 v__vcache__CacheManager v__vcache__new_cache_manager(array_string opts) {
 	string vcache_basepath = os__getenv(tos_lit("VCACHE"));
 	if ((vcache_basepath).len == 0) {
-		vcache_basepath = os__join_path(os__home_dir(), (varg_string){.len=2,.args={tos_lit(".vmodules"), tos_lit("cache")}});
+		vcache_basepath = os__join_path(os__vmodules_dir(), (varg_string){.len=1,.args={tos_lit("cache")}});
 	}
 	if (!os__is_dir(vcache_basepath)) {
 		os__mkdir_all(vcache_basepath);
@@ -18900,10 +18908,6 @@ inline u64 rand__util__time_seed_64() {
 	return (lower | (upper << 32));
 }
 
-static string v__pref__mpath() {
-	return os__join_path(os__home_dir(), (varg_string){.len=1,.args={tos_lit(".vmodules")}});
-}
-
 v__pref__Preferences v__pref__new_preferences() {
 	v__pref__Preferences p = (v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)""},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.use_cache = 0,.is_stats = 0,.no_auto_free = 0,.cflags = (string){.str=(byteptr)""},.ccompiler = (string){.str=(byteptr)""},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)""},.building_v = 0,.autofree = 0,.compress = 0,.fast = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)""},.lookup_path = __new_array(0, 1, sizeof(string)),.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)""},.out_name_c = (string){.str=(byteptr)""},.out_name = (string){.str=(byteptr)""},.display_name = (string){.str=(byteptr)""},.bundle_id = (string){.str=(byteptr)""},.path = (string){.str=(byteptr)""},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warns_are_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = {0},};
 	v__pref__Preferences_fill_with_defaults(&p);
@@ -18958,7 +18962,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("931882d"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("0ba5544"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -21737,7 +21741,7 @@ int _t736_len = arg.len;
 }
 
 Option_bool v__util__check_module_is_installed(string modulename, bool is_verbose) {
-	string mpath = os__join_path(os__home_dir(), (varg_string){.len=2,.args={tos_lit(".vmodules"), modulename}});
+	string mpath = os__join_path(os__vmodules_dir(), (varg_string){.len=1,.args={modulename}});
 	string mod_v_file = os__join_path(mpath, (varg_string){.len=1,.args={tos_lit("v.mod")}});
 	string murl = _STR("https://github.com/vlang/%.*s", 1, modulename);
 	if (is_verbose) {
@@ -44862,11 +44866,11 @@ static void v__builder__Builder_cc(v__builder__Builder* v) {
 }
 
 static void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) {
-	string parent_dir = os__join_path(os__home_dir(), (varg_string){.len=1,.args={tos_lit(".vmodules")}});
+	string parent_dir = os__vmodules_dir();
 	if (!os__exists(parent_dir)) {
 		os__mkdir(parent_dir);
 	}
-	string sysroot = os__join_path(os__home_dir(), (varg_string){.len=2,.args={tos_lit(".vmodules"), tos_lit("linuxroot")}});
+	string sysroot = os__join_path(os__vmodules_dir(), (varg_string){.len=1,.args={tos_lit("linuxroot")}});
 	if (!os__is_dir(sysroot)) {
 		println(tos_lit("Downloading files for Linux cross compilation (~18 MB)..."));
 		string zip_url = tos_lit("https://github.com/vlang/v/releases/download/0.1.27/linuxroot.zip");
@@ -46038,7 +46042,7 @@ void _vinit() {
 	_const_rand__util__u31_mask = ((u32)(0x7FFFFFFFU));
 	_const_rand__util__u63_mask = ((u64)(0x7FFFFFFFFFFFFFFFU));
 	// Initializations for module v.pref :
-	_const_v__pref__default_module_path = v__pref__mpath();
+	_const_v__pref__default_module_path = os__vmodules_dir();
 	_const_v__pref__list_of_flags_with_param = new_array_from_c_array(11, 11, sizeof(string), _MOV((string[11]){
 		tos_lit("o"), tos_lit("d"), tos_lit("define"), tos_lit("b"), tos_lit("backend"), tos_lit("cc"), tos_lit("os"), tos_lit("target-os"), tos_lit("cf"), tos_lit("cflags"), tos_lit("path")}));
 	// Initializations for module v.table :
