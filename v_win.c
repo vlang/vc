@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4b35495"
+#define V_COMMIT_HASH "6da8454"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0ba5544"
+	#define V_COMMIT_HASH "4b35495"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4b35495"
+	#define V_CURRENT_COMMIT_HASH "6da8454"
 #endif
 
 // V comptime_defines:
@@ -18962,7 +18962,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("0ba5544"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("4b35495"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -44452,6 +44452,9 @@ static string v__builder__Builder_rebuild_cached_module(v__builder__Builder* v, 
 		string err = _t1718.v_error;
 		int errcode = _t1718.ecode;
 		println(_STR("Cached %.*s\000 .o file not found... Building .o file for %.*s", 2, imp_path, imp_path));
+		string pwd = os__getwd();
+		string vroot = os__dir(vexe);
+		os__chdir(vroot);
 		string boptions = array_string_join(v->pref->build_options, tos_lit(" "));
 		string rebuild_cmd = _STR("%.*s\000 %.*s\000 build-module %.*s", 3, vexe, boptions, imp_path);
 		os__system(rebuild_cmd);
@@ -44462,6 +44465,7 @@ static string v__builder__Builder_rebuild_cached_module(v__builder__Builder* v, 
 			v_panic(_STR("could not rebuild cache module for %.*s\000, error: %.*s", 2, imp_path, err));
 		}
  		string rebuilded_o = *(string*) _t1719.data;
+		os__chdir(pwd);
 		return rebuilded_o;
 	}
  	string res = *(string*) _t1718.data;
