@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "68cfbd6"
+#define V_COMMIT_HASH "3c83551"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2994e71"
+	#define V_COMMIT_HASH "68cfbd6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "68cfbd6"
+	#define V_CURRENT_COMMIT_HASH "3c83551"
 #endif
 
 // V comptime_defines:
@@ -19079,7 +19079,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("2994e71"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("68cfbd6"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -31998,7 +31998,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 			name = _STR("%.*s\000.%.*s", 2, mod, name);
 		}
 		string name_w_mod = v__parser__Parser_prepend_mod(p, name);
-		if ((!known_var && (_IN_MAP(name, p->table->type_idxs) || _IN_MAP(name_w_mod, p->table->type_idxs)) && !(string_eq(name, tos_lit("C.stat")) || string_eq(name, tos_lit("C.sigaction")))) || is_mod_cast || (!(name.len > 1 && string_at(name, 0) == 'C' && string_at(name, 1) == '.') && byte_is_capital(string_at(name, 0)))) {
+		if ((!known_var && (_IN_MAP(name, p->table->type_idxs) || _IN_MAP(name_w_mod, p->table->type_idxs)) && !(string_eq(name, tos_lit("C.stat")) || string_eq(name, tos_lit("C.sigaction")))) || is_mod_cast || (language == v__table__Language_v && byte_is_capital(string_at(name, 0)))) {
 			v__token__Position start_pos = v__token__Token_position(&p->tok);
 			v__table__Type to_typ = v__parser__Parser_parse_type(p);
 			if (p->is_amp) {
@@ -32491,9 +32491,9 @@ static v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_40612 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_40612.arg0;
-	array_v__ast__Comment comments = mr_40612.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_40575 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_40575.arg0;
+	array_v__ast__Comment comments = mr_40575.arg1;
 	v__token__Position end_pos = v__ast__Expr_position(*(v__ast__Expr*)array_last(exprs));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 }
@@ -32797,8 +32797,8 @@ static v__ast__Stmt v__parser__Parser_unsafe_stmt(v__parser__Parser* p) {
 	v__ast__Stmt stmt = v__parser__Parser_stmt(p, false);
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		if ((stmt).typ == 229 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_49775 = (v__ast__ExprStmt*)stmt._object;
-			v__ast__ExprStmt* stmt = _sc_tmp_49775;
+			v__ast__ExprStmt* _sc_tmp_49738 = (v__ast__ExprStmt*)stmt._object;
+			v__ast__ExprStmt* stmt = _sc_tmp_49738;
 			if (v__ast__Expr_is_expr(stmt->expr)) {
 				v__parser__Parser_next(p);
 				v__ast__UnsafeExpr ue = (v__ast__UnsafeExpr){.expr = stmt->expr,.pos = pos,};
