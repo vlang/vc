@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a4acb70"
+#define V_COMMIT_HASH "43ce098"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "dd1717a"
+	#define V_COMMIT_HASH "a4acb70"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a4acb70"
+	#define V_CURRENT_COMMIT_HASH "43ce098"
 #endif
 
 // V comptime_defines:
@@ -19063,7 +19063,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("dd1717a"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("a4acb70"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -39530,7 +39530,7 @@ static string v__gen__Gen_type_default(v__gen__Gen* g, v__table__Type typ_) {
 	} else {
 	};
 	v__table__Kind _t1470 = sym->kind;
-		return ((_t1470 == v__table__Kind_interface_ || _t1470 == v__table__Kind_sum_type || _t1470 == v__table__Kind_array_fixed || _t1470 == v__table__Kind_multi_return) ? (tos_lit("{0}")) : (_t1470 == v__table__Kind_alias) ? (v__gen__Gen_type_default(g, (/* as */ (v__table__Alias*)__as_cast((sym->info)._object, (sym->info).typ, /*expected:*/340))->parent_type)) : (tos_lit("0")));
+		return ((_t1470 == v__table__Kind_interface_ || _t1470 == v__table__Kind_union_sum_type || _t1470 == v__table__Kind_sum_type || _t1470 == v__table__Kind_array_fixed || _t1470 == v__table__Kind_multi_return) ? (tos_lit("{0}")) : (_t1470 == v__table__Kind_alias) ? (v__gen__Gen_type_default(g, (/* as */ (v__table__Alias*)__as_cast((sym->info)._object, (sym->info).typ, /*expected:*/340))->parent_type)) : (tos_lit("0")));
 }
 
 static array_string v__gen__Gen_get_all_test_function_names(v__gen__Gen* g) {
@@ -39601,8 +39601,8 @@ static void v__gen__Gen_go_stmt(v__gen__Gen* g, v__ast__GoStmt node) {
 		v__table__TypeSymbol* receiver_sym = v__table__Table_get_type_symbol(g->table, expr->receiver_type);
 		name = string_add(string_add(receiver_sym->name, tos_lit("_")), name);
 	} else if ((expr->left).typ == 205 /* v.ast.AnonFn */) {
-		v__ast__AnonFn* _sc_tmp_153852 = (v__ast__AnonFn*)expr->left._object;
-		v__ast__AnonFn* anon_fn = _sc_tmp_153852;
+		v__ast__AnonFn* _sc_tmp_153869 = (v__ast__AnonFn*)expr->left._object;
+		v__ast__AnonFn* anon_fn = _sc_tmp_153869;
 		v__gen__Gen_gen_anon_fn_decl(g, *anon_fn);
 		v__table__TypeSymbol* fsym = v__table__Table_get_type_symbol(g->table, anon_fn->typ);
 		name = fsym->name;
