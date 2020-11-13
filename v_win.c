@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "eacd6b5"
+#define V_COMMIT_HASH "8cb1714"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b02f03e"
+	#define V_COMMIT_HASH "eacd6b5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "eacd6b5"
+	#define V_CURRENT_COMMIT_HASH "8cb1714"
 #endif
 
 // V comptime_defines:
@@ -19066,7 +19066,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("b02f03e"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("eacd6b5"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -45789,7 +45789,7 @@ static void v__builder__Builder_build_thirdparty_obj_file(v__builder__Builder* v
 		return;
 	}
 	println(_STR("%.*s\000 not found, building it in %.*s\000 ...", 3, obj_path, opath));
-	string cfile = _STR("%.*s\000.c", 2, string_substr(path, 0, path.len - 2));
+	string cfile = _STR("%.*s\000.c", 2, string_substr(obj_path, 0, obj_path.len - 2));
 	string btarget = array_v__cflag__CFlag_c_options_before_target(moduleflags);
 	string atarget = array_v__cflag__CFlag_c_options_after_target(moduleflags);
 	string cppoptions = (string_contains(v->pref->ccompiler, tos_lit("++")) ? (tos_lit(" -fpermissive -w ")) : (tos_lit("")));
