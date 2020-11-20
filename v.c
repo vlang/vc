@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d5242e0"
+#define V_COMMIT_HASH "3c4b87b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "412e2a4"
+	#define V_COMMIT_HASH "d5242e0"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d5242e0"
+	#define V_CURRENT_COMMIT_HASH "3c4b87b"
 #endif
 
 // V comptime_defines:
@@ -3476,6 +3476,7 @@ string strings__Builder_str_no_ptr(strings__Builder it); // auto no_ptr version
 string time__FormatTime_str(time__FormatTime it); // auto
 string time__FormatDate_str(time__FormatDate it); // auto
 string v__pref__Backend_str(v__pref__Backend it); // auto
+string v__ast__BranchStmt_str_no_ptr(v__ast__BranchStmt it); // auto no_ptr version
 string v__table__TypeSymbol_str_no_ptr(v__table__TypeSymbol it); // auto no_ptr version
 string v__ast__IdentKind_str(v__ast__IdentKind it); // auto
 string array_v__table__Attr_str(array_v__table__Attr a); // auto
@@ -5236,6 +5237,7 @@ multi_return_string_bool v__ast__StringInterLiteral_get_fspec_braces(v__ast__Str
 string v__ast__Expr_str(v__ast__Expr x);
 string v__ast__CallArg_str(v__ast__CallArg a);
 string v__ast__args2str(array_v__ast__CallArg args);
+string v__ast__BranchStmt_str(v__ast__BranchStmt* node);
 string v__ast__Stmt_str(v__ast__Stmt node);
 string v__ast__CompForKind_str(v__ast__CompForKind e);
 #define _const_v__scanner__single_quote '\''
@@ -6222,6 +6224,7 @@ string v__pref__Backend_str(v__pref__Backend it) { /* gen_str_for_enum */
 		default: return tos_lit("unknown enum value");
 	}
 }
+string v__ast__BranchStmt_str_no_ptr(v__ast__BranchStmt it){ return v__ast__BranchStmt_str(&it); }
 string v__table__TypeSymbol_str_no_ptr(v__table__TypeSymbol it){ return v__table__TypeSymbol_str(&it); }
 string v__ast__IdentKind_str(v__ast__IdentKind it) { /* gen_str_for_enum */
 	switch(it) {
@@ -21501,7 +21504,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("412e2a4"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("d5242e0"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -23957,6 +23960,14 @@ string v__ast__args2str(array_v__ast__CallArg args) {
 	return array_string_join(res, tos_lit(", "));
 }
 
+string v__ast__BranchStmt_str(v__ast__BranchStmt* node) {
+	string s = _STR("%.*s", 1, v__token__Kind_str(node->kind));
+	if (node->label.len > 0) {
+		s = /*f*/string_add(s, _STR(" %.*s", 1, node->label));
+	}
+	return s;
+}
+
 string v__ast__Stmt_str(v__ast__Stmt node) {
 	v__ast__Stmt _t867 = node;
 	if (_t867.typ == 230 /* v.ast.AssignStmt */) {
@@ -23968,8 +23979,8 @@ string v__ast__Stmt_str(v__ast__Stmt node) {
 		for (int i = 0; i < _t868.len; ++i) {
 			v__ast__Expr left = ((v__ast__Expr*)_t868.data)[i];
 			if ((left).typ == 202 /* v.ast.Ident */) {
-				v__ast__Ident* _sc_tmp_6588 = (v__ast__Ident*)left._object;
-				v__ast__Ident* left = _sc_tmp_6588;
+				v__ast__Ident* _sc_tmp_6715 = (v__ast__Ident*)left._object;
+				v__ast__Ident* left = _sc_tmp_6715;
 				v__ast__IdentVar var_info = v__ast__Ident_var_info(left);
 				if (var_info.is_mut) {
 					out = /*f*/string_add(out, tos_lit("mut "));
@@ -23991,6 +24002,10 @@ string v__ast__Stmt_str(v__ast__Stmt node) {
 			}
 		}
 		return out;
+	} else if (_t867.typ == 232 /* v.ast.BranchStmt */) {
+		v__ast__BranchStmt* it = (v__ast__BranchStmt*)_t867._object; // ST it
+		v__ast__BranchStmt* node = it;
+		return v__ast__BranchStmt_str(node);
 	} else if (_t867.typ == 237 /* v.ast.ExprStmt */) {
 		v__ast__ExprStmt* it = (v__ast__ExprStmt*)_t867._object; // ST it
 		v__ast__ExprStmt* node = it;
@@ -30061,17 +30076,22 @@ static void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast__FnDecl* 
 			v__checker__Checker_error(c, tos_lit(".str() methods should have 0 arguments"), node->pos);
 		}
 	}
-	if (node->language == v__table__Language_v && !node->is_method && node->params.len == 0 && node->return_type == _const_v__table__void_type_idx && string_starts_with(string_after(node->name, tos_lit(".")), tos_lit("test_")) && !string_ends_with(c->file->path, tos_lit("_test.v"))) {
-		// FOR IN array
-		array _t1137 = node->stmts;
-		for (int _t1138 = 0; _t1138 < _t1137.len; ++_t1138) {
-			v__ast__Stmt st = ((v__ast__Stmt*)_t1137.data)[_t1138];
-			if ((st).typ == 229 /* v.ast.AssertStmt */) {
-				v__ast__AssertStmt* _sc_tmp_147168 = (v__ast__AssertStmt*)st._object;
-				v__ast__AssertStmt* st = _sc_tmp_147168;
-				v__checker__Checker_warn(c, tos_lit("tests will not be run because filename does not end with `_test.v`"), node->pos);
-				break;
+	if (node->language == v__table__Language_v && !node->is_method && node->params.len == 0 && string_starts_with(string_after(node->name, tos_lit(".")), tos_lit("test_"))) {
+		if (!string_ends_with(c->file->path, tos_lit("_test.v"))) {
+			// FOR IN array
+			array _t1137 = node->stmts;
+			for (int _t1138 = 0; _t1138 < _t1137.len; ++_t1138) {
+				v__ast__Stmt st = ((v__ast__Stmt*)_t1137.data)[_t1138];
+				if ((st).typ == 229 /* v.ast.AssertStmt */) {
+					v__ast__AssertStmt* _sc_tmp_147130 = (v__ast__AssertStmt*)st._object;
+					v__ast__AssertStmt* st = _sc_tmp_147130;
+					v__checker__Checker_warn(c, tos_lit("tests will not be run, because filename does not end with `_test.v`"), node->pos);
+					break;
+				}
 			}
+		}
+		if (node->return_type != _const_v__table__void_type_idx) {
+			v__checker__Checker_error(c, tos_lit("test functions should not return anything"), node->pos);
 		}
 	}
 	c->expected_type = _const_v__table__void_type;
@@ -30099,21 +30119,21 @@ static bool v__checker__has_top_return(array_v__ast__Stmt stmts) {
 	for (int _t1142 = 0; _t1142 < _t1141.len; ++_t1142) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t1141.data)[_t1142];
 		if ((stmt).typ == 249 /* v.ast.Return */) {
-			v__ast__Return* _sc_tmp_148228 = (v__ast__Return*)stmt._object;
-			v__ast__Return* stmt = _sc_tmp_148228;
+			v__ast__Return* _sc_tmp_148396 = (v__ast__Return*)stmt._object;
+			v__ast__Return* stmt = _sc_tmp_148396;
 			return true;
 		} else if ((stmt).typ == 231 /* v.ast.Block */) {
-			v__ast__Block* _sc_tmp_148271 = (v__ast__Block*)stmt._object;
-			v__ast__Block* stmt = _sc_tmp_148271;
+			v__ast__Block* _sc_tmp_148439 = (v__ast__Block*)stmt._object;
+			v__ast__Block* stmt = _sc_tmp_148439;
 			if (v__checker__has_top_return(stmt->stmts)) {
 				return true;
 			}
 		} else if ((stmt).typ == 237 /* v.ast.ExprStmt */) {
-			v__ast__ExprStmt* _sc_tmp_148359 = (v__ast__ExprStmt*)stmt._object;
-			v__ast__ExprStmt* stmt = _sc_tmp_148359;
+			v__ast__ExprStmt* _sc_tmp_148527 = (v__ast__ExprStmt*)stmt._object;
+			v__ast__ExprStmt* stmt = _sc_tmp_148527;
 			if ((stmt->expr).typ == 193 /* v.ast.CallExpr */) {
-				v__ast__CallExpr* _sc_tmp_148393 = (v__ast__CallExpr*)stmt->expr._object;
-				v__ast__CallExpr* ce = _sc_tmp_148393;
+				v__ast__CallExpr* _sc_tmp_148561 = (v__ast__CallExpr*)stmt->expr._object;
+				v__ast__CallExpr* ce = _sc_tmp_148561;
 				if ((string_eq(ce->name, tos_lit("panic")) || string_eq(ce->name, tos_lit("exit")))) {
 					return true;
 				}
@@ -30155,10 +30175,10 @@ static void v__checker__Checker_verify_all_vweb_routes(v__checker__Checker* c) {
 		for (int _t1148 = 0; _t1148 < _t1147.len; ++_t1148) {
 			v__table__Fn m = ((v__table__Fn*)_t1147.data)[_t1148];
 			if (string_eq(m.return_type_source_name, tos_lit("vweb.Result"))) {
-				multi_return_bool_int_int mr_149291 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_149291.arg0;
-				int nroute_attributes = mr_149291.arg1;
-				int nargs = mr_149291.arg2;
+				multi_return_bool_int_int mr_149459 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_149459.arg0;
+				int nroute_attributes = mr_149459.arg1;
+				int nargs = mr_149459.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
