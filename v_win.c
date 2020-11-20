@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "93d460f"
+#define V_COMMIT_HASH "82b16cb"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5d76e85"
+	#define V_COMMIT_HASH "93d460f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "93d460f"
+	#define V_CURRENT_COMMIT_HASH "82b16cb"
 #endif
 
 // V comptime_defines:
@@ -21347,7 +21347,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("5d76e85"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("93d460f"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -47379,9 +47379,9 @@ static void main__main() {
 		return;
 	}
 	array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_1010 = v__pref__parse_args(args_and_flags);
-	v__pref__Preferences* prefs = mr_1010.arg0;
-	string command = mr_1010.arg1;
+	multi_return_v__pref__Preferences_string mr_1024 = v__pref__parse_args(args_and_flags);
+	v__pref__Preferences* prefs = mr_1024.arg0;
+	string command = mr_1024.arg1;
 	if (prefs->is_verbose) {
 	}
 	if (string_eq(command, tos_lit("test-vet"))) {
@@ -47667,8 +47667,8 @@ void _vinit() {
 	_const_v__builder__key_wow64_32key = (0x0200);
 	_const_v__builder__key_enumerate_sub_keys = (0x0008);
 	// Initializations for module main :
-	_const_main__simple_cmd = new_array_from_c_array(19, 19, sizeof(string), _MOV((string[19]){
-		tos_lit("fmt"), tos_lit("up"), tos_lit("vet"), tos_lit("self"), tos_lit("tracev"), tos_lit("symlink"), tos_lit("bin2v"), tos_lit("test"), tos_lit("test-fmt"), tos_lit("test-compiler"), tos_lit("test-fixed"), tos_lit("test-cleancode"), tos_lit("repl"), tos_lit("build-tools"), tos_lit("build-examples"), tos_lit("build-vbinaries"), tos_lit("setup-freetype"), tos_lit("doc"), tos_lit("doctor")}));
+	_const_main__simple_cmd = new_array_from_c_array(20, 20, sizeof(string), _MOV((string[20]){
+		tos_lit("fmt"), tos_lit("up"), tos_lit("vet"), tos_lit("self"), tos_lit("tracev"), tos_lit("symlink"), tos_lit("bin2v"), tos_lit("test"), tos_lit("test-fmt"), tos_lit("test-compiler"), tos_lit("test-fixed"), tos_lit("test-cleancode"), tos_lit("repl"), tos_lit("complete"), tos_lit("build-tools"), tos_lit("build-examples"), tos_lit("build-vbinaries"), tos_lit("setup-freetype"), tos_lit("doc"), tos_lit("doctor")}));
 	_const_main__list_of_flags_that_allow_duplicates = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){tos_lit("cc"), tos_lit("d"), tos_lit("define"), tos_lit("cf"), tos_lit("cflags")}));
 }
 
