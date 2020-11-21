@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "155aa6d"
+#define V_COMMIT_HASH "54df7d1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b6099cd"
+	#define V_COMMIT_HASH "155aa6d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "155aa6d"
+	#define V_CURRENT_COMMIT_HASH "54df7d1"
 #endif
 
 // V comptime_defines:
@@ -21391,7 +21391,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("b6099cd"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("155aa6d"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -46693,16 +46693,22 @@ void v__builder__Builder_compile_x64(v__builder__Builder* b) {
 static void main__main() {
 	array_string args = array_slice(_const_os__args, 1, _const_os__args.len);
 	if (args.len == 0 || (string_eq((*(string*)array_get(args, 0)), tos_lit("-")) || string_eq((*(string*)array_get(args, 0)), tos_lit("repl")))) {
-		if (args.len == 0 && is_atty(0) != 0) {
-			println(tos_lit("Welcome to the V REPL (for help with V itself, type `exit`, then run `v help`)."));
+		if (args.len == 0) {
+			if (is_atty(0) != 0) {
+				println(tos_lit("Welcome to the V REPL (for help with V itself, type `exit`, then run `v help`)."));
+			} else {
+				array_string args_and_flags = array_clone_static(array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len));
+				_PUSH_MANY(&args_and_flags, (new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){tos_lit("run"), tos_lit("-")}))), _t1984, array_string);
+				v__pref__parse_args(args_and_flags);
+			}
 		}
 		v__util__launch_tool(false, tos_lit("vrepl"), array_slice(_const_os__args, 1, _const_os__args.len));
 		return;
 	}
 	array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_1074 = v__pref__parse_args(args_and_flags);
-	v__pref__Preferences* prefs = mr_1074.arg0;
-	string command = mr_1074.arg1;
+	multi_return_v__pref__Preferences_string mr_1242 = v__pref__parse_args(args_and_flags);
+	v__pref__Preferences* prefs = mr_1242.arg0;
+	string command = mr_1242.arg1;
 	if (prefs->is_verbose) {
 	}
 	if (string_eq(command, tos_lit("test-vet"))) {
@@ -46713,24 +46719,24 @@ static void main__main() {
 		v__util__launch_tool(prefs->is_verbose, string_add(tos_lit("v"), command), array_slice(_const_os__args, 1, _const_os__args.len));
 		return;
 	}
-	string _t1984 = command;
-	if (string_eq(_t1984, tos_lit("help"))) {
+	string _t1985 = command;
+	if (string_eq(_t1985, tos_lit("help"))) {
 		main__invoke_help_and_exit(args);
-	} else if (string_eq(_t1984, tos_lit("new")) || string_eq(_t1984, tos_lit("init"))) {
+	} else if (string_eq(_t1985, tos_lit("new")) || string_eq(_t1985, tos_lit("init"))) {
 		v__util__launch_tool(prefs->is_verbose, tos_lit("vcreate"), array_slice(_const_os__args, 1, _const_os__args.len));
 		return;
-	} else if (string_eq(_t1984, tos_lit("translate"))) {
+	} else if (string_eq(_t1985, tos_lit("translate"))) {
 		println(tos_lit("Translating C to V will be available in V 0.3"));
 		return;
-	} else if (string_eq(_t1984, tos_lit("search")) || string_eq(_t1984, tos_lit("install")) || string_eq(_t1984, tos_lit("update")) || string_eq(_t1984, tos_lit("upgrade")) || string_eq(_t1984, tos_lit("outdated")) || string_eq(_t1984, tos_lit("list")) || string_eq(_t1984, tos_lit("remove"))) {
+	} else if (string_eq(_t1985, tos_lit("search")) || string_eq(_t1985, tos_lit("install")) || string_eq(_t1985, tos_lit("update")) || string_eq(_t1985, tos_lit("upgrade")) || string_eq(_t1985, tos_lit("outdated")) || string_eq(_t1985, tos_lit("list")) || string_eq(_t1985, tos_lit("remove"))) {
 		v__util__launch_tool(prefs->is_verbose, tos_lit("vpm"), array_slice(_const_os__args, 1, _const_os__args.len));
 		return;
-	} else if (string_eq(_t1984, tos_lit("vlib-docs"))) {
+	} else if (string_eq(_t1985, tos_lit("vlib-docs"))) {
 		v__util__launch_tool(prefs->is_verbose, tos_lit("vdoc"), new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){tos_lit("doc"), tos_lit("vlib")})));
-	} else if (string_eq(_t1984, tos_lit("get"))) {
+	} else if (string_eq(_t1985, tos_lit("get"))) {
 		println(tos_lit("V Error: Use `v install` to install modules from vpm.vlang.io"));
 		v_exit(1);
-	} else if (string_eq(_t1984, tos_lit("version"))) {
+	} else if (string_eq(_t1985, tos_lit("version"))) {
 		println(v__util__full_v_version(prefs->is_verbose));
 		return;
 	} else {
@@ -46744,10 +46750,10 @@ static void main__main() {
 }
 
 static void main__invoke_help_and_exit(array_string remaining) {
-	int _t1985 = remaining.len;
-	if (_t1985 == 0 || _t1985 == 1) {
+	int _t1986 = remaining.len;
+	if (_t1986 == 0 || _t1986 == 1) {
 		help__print_and_exit(tos_lit("default"));
-	} else if (_t1985 == 2) {
+	} else if (_t1986 == 2) {
 		help__print_and_exit((*(string*)array_get(remaining, 1)));
 	} else {
 	};
