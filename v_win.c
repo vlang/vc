@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "54df7d1"
+#define V_COMMIT_HASH "4b19a6e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "155aa6d"
+	#define V_COMMIT_HASH "54df7d1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "54df7d1"
+	#define V_CURRENT_COMMIT_HASH "4b19a6e"
 #endif
 
 // V comptime_defines:
@@ -21391,7 +21391,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("155aa6d"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("54df7d1"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -43609,7 +43609,11 @@ static void v__gen__js__JsGen_gen_if_expr(v__gen__js__JsGen* g, v__ast__IfExpr n
 				if (_t1687.typ == 229 /* v.ast.IfGuardExpr */) {
 				} else {
 					v__gen__js__JsGen_write(g, tos_lit("if ("));
-					v__gen__js__JsGen_expr(g, branch.cond);
+					if (string_eq(_STR("%.*s", 1, v__ast__Expr_str(branch.cond)), tos_lit("js"))) {
+						v__gen__js__JsGen_write(g, tos_lit("true"));
+					} else {
+						v__gen__js__JsGen_expr(g, branch.cond);
+					}
 					v__gen__js__JsGen_writeln(g, tos_lit(") {"));
 				};
 			} else if (i < node.branches.len - 1 || !node.has_else) {
