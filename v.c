@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2228d75"
+#define V_COMMIT_HASH "ad940ff"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "018bd6a"
+	#define V_COMMIT_HASH "2228d75"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2228d75"
+	#define V_CURRENT_COMMIT_HASH "ad940ff"
 #endif
 
 // V comptime_defines:
@@ -5594,8 +5594,8 @@ static void v__gen__Gen_gen_cross_tmp_variable(v__gen__Gen* g, array_v__ast__Exp
 static void v__gen__Gen_register_ternary_name(v__gen__Gen* g, string name);
 static string v__gen__Gen_get_ternary_name(v__gen__Gen* g, string name);
 static bool v__gen__Gen_gen_clone_assignment(v__gen__Gen* g, v__ast__Expr val, v__table__TypeSymbol right_sym, bool add_eq);
-static void v__gen__Gen_autofree_scope_vars(v__gen__Gen* g, int pos, int line_nr);
-static void v__gen__Gen_autofree_scope_vars2(v__gen__Gen* g, v__ast__Scope* scope, int start_pos, int end_pos, int line_nr);
+static void v__gen__Gen_autofree_scope_vars(v__gen__Gen* g, int pos, int line_nr, bool free_parent_scopes);
+static void v__gen__Gen_autofree_scope_vars2(v__gen__Gen* g, v__ast__Scope* scope, int start_pos, int end_pos, int line_nr, bool free_parent_scopes);
 static void v__gen__Gen_autofree_variable(v__gen__Gen* g, v__ast__Var v);
 static void v__gen__Gen_autofree_var_call(v__gen__Gen* g, string free_fn_name, v__ast__Var v);
 static void v__gen__Gen_gen_anon_fn_decl(v__gen__Gen* g, v__ast__AnonFn it);
@@ -21548,7 +21548,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("018bd6a"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("2228d75"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -35855,7 +35855,7 @@ static void v__gen__Gen_stmts_with_tmp_var(v__gen__Gen* g, array_v__ast__Stmt st
 		if ((stmt).typ != 132 /* v.ast.FnDecl */ && g->inside_ternary == 0) {
 			v__token__Position stmt_pos = v__ast__Stmt_position(stmt);
 			v__gen__Gen_writeln(g, tos_lit("// af scope_vars"));
-			v__gen__Gen_autofree_scope_vars(g, stmt_pos.pos - 1, stmt_pos.line_nr);
+			v__gen__Gen_autofree_scope_vars(g, stmt_pos.pos - 1, stmt_pos.line_nr, false);
 		}
 	}
 }
@@ -37079,16 +37079,16 @@ static bool v__gen__Gen_gen_clone_assignment(v__gen__Gen* g, v__ast__Expr val, v
 	return true;
 }
 
-static void v__gen__Gen_autofree_scope_vars(v__gen__Gen* g, int pos, int line_nr) {
+static void v__gen__Gen_autofree_scope_vars(v__gen__Gen* g, int pos, int line_nr, bool free_parent_scopes) {
 	if (g->is_builtin_mod) {
 		return;
 	}
 	v__ast__Scope* scope = v__ast__Scope_innermost(g->file.scope, pos);
 	v__gen__Gen_writeln(g, _STR("// autofree_scope_vars(pos=%"PRId32"\000 scope.pos=%"PRId32"\000 scope.end_pos=%"PRId32"\000)", 4, pos, scope->start_pos, scope->end_pos));
-	v__gen__Gen_autofree_scope_vars2(g, scope, scope->start_pos, scope->end_pos, line_nr);
+	v__gen__Gen_autofree_scope_vars2(g, scope, scope->start_pos, scope->end_pos, line_nr, free_parent_scopes);
 }
 
-static void v__gen__Gen_autofree_scope_vars2(v__gen__Gen* g, v__ast__Scope* scope, int start_pos, int end_pos, int line_nr) {
+static void v__gen__Gen_autofree_scope_vars2(v__gen__Gen* g, v__ast__Scope* scope, int start_pos, int end_pos, int line_nr, bool free_parent_scopes) {
 	if (isnil(scope)) {
 		return;
 	}
@@ -37118,7 +37118,7 @@ static void v__gen__Gen_autofree_scope_vars2(v__gen__Gen* g, v__ast__Scope* scop
 	/*for in map cleanup*/
 	for (int _t1399 = 0; _t1399 < keys__t1398.len; ++_t1399) { string_free(&((string*)keys__t1398.data)[_t1399]); }
 	array_free(&keys__t1398);
-	if (!isnil(scope->parent)) {
+	if (free_parent_scopes && !isnil(scope->parent)) {
 		v__gen__Gen_writeln(g, tos_lit("// af parent scope:"));
 	}
 }
@@ -37436,7 +37436,7 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 				VAssertMetaInfo v_assert_meta_info__t1410;
 				memset(&v_assert_meta_info__t1410, 0, sizeof(VAssertMetaInfo));
 				v_assert_meta_info__t1410.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/gen/cgen.v");
-				v_assert_meta_info__t1410.line_nr = 2532;
+				v_assert_meta_info__t1410.line_nr = 2533;
 				v_assert_meta_info__t1410.fn_name = tos_lit("expr");
 				v_assert_meta_info__t1410.src = tos_lit("node.field_name == 'len'");
 				v_assert_meta_info__t1410.op = tos_lit("==");
@@ -37474,8 +37474,8 @@ static void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 						v__gen__Gen_write(g, tos_lit("(*"));
 						v__table__TypeSymbol* cast_sym = v__table__Table_get_type_symbol(g->table, /*opt*/(*(v__ast__ScopeStructField*)field.data).sum_type_cast);
 						if ((cast_sym->info).typ == 319 /* v.table.Aggregate */) {
-							v__table__Aggregate* _sc_tmp_77316 = (v__table__Aggregate*)cast_sym->info._object;
-							v__table__Aggregate* sym_info = _sc_tmp_77316;
+							v__table__Aggregate* _sc_tmp_77477 = (v__table__Aggregate*)cast_sym->info._object;
+							v__table__Aggregate* sym_info = _sc_tmp_77477;
 							sum_type_deref_field = _STR("_%"PRId32"", 1, (*(v__table__Type*)array_get(sym_info->types, g->aggregate_type_idx)));
 						} else {
 							sum_type_deref_field = _STR("_%"PRId32"", 1, /*opt*/(*(v__ast__ScopeStructField*)field.data).sum_type_cast);
@@ -38207,8 +38207,8 @@ static void v__gen__Gen_ident(v__gen__Gen* g, v__ast__Ident node) {
 				if (!prevent_sum_type_unwrapping_once) {
 					v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, /*opt*/(*(v__ast__Var**)v.data)->sum_type_cast);
 					if ((sym->info).typ == 319 /* v.table.Aggregate */) {
-						v__table__Aggregate* _sc_tmp_99876 = (v__table__Aggregate*)sym->info._object;
-						v__table__Aggregate* sym_info = _sc_tmp_99876;
+						v__table__Aggregate* _sc_tmp_100037 = (v__table__Aggregate*)sym->info._object;
+						v__table__Aggregate* sym_info = _sc_tmp_100037;
 						v__gen__Gen_write(g, _STR("(*%.*s\000._%"PRId32"\000)", 3, name, (*(v__table__Type*)array_get(sym_info->types, g->aggregate_type_idx))));
 					} else {
 						v__gen__Gen_write(g, _STR("(*%.*s\000._%"PRId32"\000)", 3, name, /*opt*/(*(v__ast__Var**)v.data)->sum_type_cast));
@@ -38802,7 +38802,7 @@ static void v__gen__Gen_return_statement(v__gen__Gen* g, v__ast__Return node, bo
 		}
 		if (v_free) {
 			v__gen__Gen_writeln(g, tos_lit("; // free tmp exprs"));
-			v__gen__Gen_autofree_scope_vars(g, node.pos.pos + 1, node.pos.line_nr);
+			v__gen__Gen_autofree_scope_vars(g, node.pos.pos + 1, node.pos.line_nr, true);
 			v__gen__Gen_write(g, _STR("return %.*s", 1, tmp));
 		}
 	} else {
@@ -38931,8 +38931,8 @@ static void v__gen__Gen_struct_init(v__gen__Gen* g, v__ast__StructInit struct_in
 		v__ast__StructInitField field = ((v__ast__StructInitField*)_t1467.data)[i];
 		map_set(&inited_fields, field.name, &(int[]) { i });
 		if ((sym->info).typ == 136 /* v.table.Struct */) {
-			v__table__Struct* _sc_tmp_121566 = (v__table__Struct*)sym->info._object;
-			v__table__Struct* struct_info = _sc_tmp_121566;
+			v__table__Struct* _sc_tmp_121888 = (v__table__Struct*)sym->info._object;
+			v__table__Struct* struct_info = _sc_tmp_121888;
 
 int _t1468_len = struct_info->fields.len;
 			array_v__table__Field _t1468 = __new_array(0, _t1468_len, sizeof(v__table__Field));
@@ -38989,8 +38989,8 @@ int _t1468_len = struct_info->fields.len;
 		for (int _t1470 = 0; _t1470 < _t1469.len; ++_t1470) {
 			v__table__Field field = ((v__table__Field*)_t1469.data)[_t1470];
 			if ((sym->info).typ == 136 /* v.table.Struct */) {
-				v__table__Struct* _sc_tmp_123114 = (v__table__Struct*)sym->info._object;
-				v__table__Struct* struct_info = _sc_tmp_123114;
+				v__table__Struct* _sc_tmp_123436 = (v__table__Struct*)sym->info._object;
+				v__table__Struct* struct_info = _sc_tmp_123436;
 
 int _t1471_len = struct_info->fields.len;
 				array_v__table__Field _t1471 = __new_array(0, _t1471_len, sizeof(v__table__Field));
@@ -39347,9 +39347,9 @@ int _t1495_len = info->fields.len;
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_134548 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_134548.arg0;
-						string base = mr_134548.arg1;
+						multi_return_string_string mr_134870 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_134870.arg0;
+						string base = mr_134870.arg1;
 						array_push(&g->optionals, _MOV((string[]){ styp }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -39481,17 +39481,17 @@ static Option_bool v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__ast__Expr e
 	v__table__Type typ = etype;
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 	if ((sym->info).typ == 320 /* v.table.Alias */) {
-		v__table__Alias* _sc_tmp_138531 = (v__table__Alias*)sym->info._object;
-		v__table__Alias* alias_info = _sc_tmp_138531;
+		v__table__Alias* _sc_tmp_138853 = (v__table__Alias*)sym->info._object;
+		v__table__Alias* alias_info = _sc_tmp_138853;
 		v__table__TypeSymbol* parent_sym = v__table__Table_get_type_symbol(g->table, alias_info->parent_type);
 		if (v__table__TypeSymbol_has_method(parent_sym, tos_lit("str"))) {
 			sym = parent_sym;
 			typ = alias_info->parent_type;
 		}
 	}
-	multi_return_bool_bool_int mr_138780 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_138780.arg0;
-	bool str_method_expects_ptr = mr_138780.arg1;
+	multi_return_bool_bool_int mr_139102 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_139102.arg0;
+	bool str_method_expects_ptr = mr_139102.arg1;
 	if (v__table__Type_has_flag(typ, v__table__TypeFlag_variadic)) {
 		string str_fn_name = v__gen__Gen_gen_str_for_type(g, typ);
 		v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -39884,11 +39884,11 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExpr
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->fn_decl->name, tos_lit("main.main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_150726 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_150726.arg0;
-				string pafile = mr_150726.arg1;
-				string pamod = mr_150726.arg2;
-				string pafn = mr_150726.arg3;
+				multi_return_int_string_string_string mr_151048 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_151048.arg0;
+				string pafile = mr_151048.arg1;
+				string pamod = mr_151048.arg2;
+				string pafn = mr_151048.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(%.*s\000.v_error);", 2, cvar_name));
