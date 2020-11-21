@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4b19a6e"
+#define V_COMMIT_HASH "fa55c24"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "54df7d1"
+	#define V_COMMIT_HASH "4b19a6e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4b19a6e"
+	#define V_CURRENT_COMMIT_HASH "fa55c24"
 #endif
 
 // V comptime_defines:
@@ -21391,7 +21391,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("54df7d1"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("4b19a6e"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -29939,6 +29939,10 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 		println(_STR(">>> compiling vweb HTML template \"%.*s\000\"", 2, path));
 	}
 	string v_code = vweb__tmpl__compile_file(path, p->cur_fn_name);
+	#if defined(CUSTOM_DEFINE_print_vweb_template_expansions)
+	{
+	}
+	#endif
 	v__ast__Scope* scope = (v__ast__Scope*)memdup(&(v__ast__Scope){.objects = new_map_1(sizeof(v__ast__ScopeObject)),.struct_fields = __new_array(0, 1, sizeof(v__ast__ScopeStructField)),.parent = p->global_scope,.children = __new_array(0, 1, sizeof(v__ast__Scope*)),.start_pos = 0,.end_pos = 0,}, sizeof(v__ast__Scope));
 	v__ast__File file = v__parser__parse_text(v_code, p->table, p->pref, scope, p->global_scope);
 	if (p->pref->is_verbose) {
@@ -29964,8 +29968,8 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 	for (int _t1153 = 0; _t1153 < _t1152.len; ++_t1153) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t1152.data)[_t1153];
 		if ((stmt).typ == 153 /* v.ast.FnDecl */) {
-			v__ast__FnDecl* _sc_tmp_2443 = (v__ast__FnDecl*)stmt._object;
-			v__ast__FnDecl* stmt = _sc_tmp_2443;
+			v__ast__FnDecl* _sc_tmp_2579 = (v__ast__FnDecl*)stmt._object;
+			v__ast__FnDecl* stmt = _sc_tmp_2579;
 			if (string_eq(stmt->name, _STR("main.vweb_tmpl_%.*s", 1, p->cur_fn_name))) {
 				v__ast__Scope* tmpl_scope = v__ast__Scope_innermost(file.scope, stmt->body_pos.pos);
 				// FOR IN map
@@ -29975,8 +29979,8 @@ static v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 					string _t1156 = /*kkkk*/ string_clone( ((string*)keys__t1154.data)[_t1155] );
 					v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)map_get(_t1157, _t1156, &(v__ast__ScopeObject[]){ {0} }));
 					if ((obj).typ == 280 /* v.ast.Var */) {
-						v__ast__Var* _sc_tmp_2623 = (v__ast__Var*)obj._object;
-						v__ast__Var* obj = _sc_tmp_2623;
+						v__ast__Var* _sc_tmp_2759 = (v__ast__Var*)obj._object;
+						v__ast__Var* obj = _sc_tmp_2759;
 						v__ast__Var* v = obj;
 						v->pos = stmt->body_pos;
 						v__ast__Scope_register(tmpl_scope, v->name, /* sum type cast */ (v__ast__ScopeObject) {._object = memdup(&(v__ast__Var[]) {*v}, sizeof(v__ast__Var)), .typ = 280 /* v.ast.Var */});
