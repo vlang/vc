@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f8827c3"
+#define V_COMMIT_HASH "65005fd"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ed7413e"
+	#define V_COMMIT_HASH "f8827c3"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f8827c3"
+	#define V_CURRENT_COMMIT_HASH "65005fd"
 #endif
 
 // V comptime_defines:
@@ -19373,7 +19373,7 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 			array _t550 = lines2;
 			for (int _t551 = 0; _t551 < _t550.len; ++_t551) {
 				string l = ((string*)_t550.data)[_t551];
-				array_insert(&lines, i + 1, &(string[]){l});
+				array_insert(&lines, i + 1, &(string[]){string_clone(l)});
 			}
 			continue;
 		} else if (string_contains(line, tos_lit("@js "))) {
@@ -21392,7 +21392,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("ed7413e"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("f8827c3"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -39606,7 +39606,13 @@ static void v__gen__Gen_gen_array_insert(v__gen__Gen* g, v__ast__CallExpr node) 
 		v__gen__Gen_write(g, tos_lit(".len)"));
 	} else {
 		v__gen__Gen_write(g, _STR(", &(%.*s\000[]){", 2, elem_type_str));
+		if (left_info->elem_type == _const_v__table__string_type) {
+			v__gen__Gen_write(g, tos_lit("string_clone("));
+		}
 		v__gen__Gen_expr(g, (*(v__ast__CallArg*)array_get(node.args, 1)).expr);
+		if (left_info->elem_type == _const_v__table__string_type) {
+			v__gen__Gen_write(g, tos_lit(")"));
+		}
 		v__gen__Gen_write(g, tos_lit("})"));
 	}
 }
@@ -39713,11 +39719,11 @@ static void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__ast__OrExpr
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->fn_decl->name, tos_lit("main.main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_151772 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_151772.arg0;
-				string pafile = mr_151772.arg1;
-				string pamod = mr_151772.arg2;
-				string pafn = mr_151772.arg3;
+				multi_return_int_string_string_string mr_151920 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_151920.arg0;
+				string pafile = mr_151920.arg1;
+				string pamod = mr_151920.arg2;
+				string pafn = mr_151920.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(%.*s\000.v_error);", 2, cvar_name));
