@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a042966"
+#define V_COMMIT_HASH "98034e5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "aa6303f"
+	#define V_COMMIT_HASH "a042966"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a042966"
+	#define V_CURRENT_COMMIT_HASH "98034e5"
 #endif
 
 // V comptime_defines:
@@ -21389,7 +21389,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("aa6303f"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("a042966"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 static string v__pref__default_c_compiler() {
@@ -41264,7 +41264,7 @@ static void v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Type typ) {
 	string dec_fn_name = v__gen__js_dec_name(styp);
 	v__gen__Gen_register_optional(g, utyp);
 	string dec_fn_dec = _STR("Option_%.*s\000 %.*s\000(cJSON* root)", 3, styp, dec_fn_name);
-	strings__Builder_writeln(&dec, _STR("\n//Option_%.*s\000 %.*s\000(cJSON* root, %.*s\000* res) {\n%.*s\000 {\n	%.*s\000 res;\n	if (!root) {\n		const char *error_ptr = cJSON_GetErrorPtr();\n		if (error_ptr != NULL)	{\n			// fprintf(stderr, \"Error in decode() for %.*s\000 error_ptr=: %%%%s\\n\", error_ptr);\n			// printf(\"\\nbad js=%%%%s\\n\", js.str);\n			Option err = v_error(tos2(error_ptr));\n			return *(Option_%.*s\000 *)&err;\n		}\n	}\n", 8, styp, dec_fn_name, styp, dec_fn_dec, styp, styp, styp));
+	strings__Builder_writeln(&dec, _STR("\n//Option_%.*s\000 %.*s\000(cJSON* root, %.*s\000* res) {\n%.*s\000 {\n	%.*s\000 res;\n	if (!root) {\n		const char *error_ptr = cJSON_GetErrorPtr();\n		if (error_ptr != NULL)	{\n			// fprintf(stderr, \"Error in decode() for %.*s\000 error_ptr=: %%s\\n\", error_ptr);\n			// printf(\"\\nbad js=%%%%s\\n\", js.str);\n			Option err = v_error(tos2(error_ptr));\n			return *(Option_%.*s\000 *)&err;\n		}\n	}\n", 8, styp, dec_fn_name, styp, dec_fn_dec, styp, styp, styp));
 	strings__Builder_writeln(&g->json_forward_decls, _STR("%.*s\000;", 2, dec_fn_dec));
 	string enc_fn_name = v__gen__js_enc_name(styp);
 	string enc_fn_dec = _STR("cJSON* %.*s\000(%.*s\000 val)", 3, enc_fn_name, styp);
