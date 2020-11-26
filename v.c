@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c6a8c3c"
+#define V_COMMIT_HASH "5efd393"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "52b627f"
+	#define V_COMMIT_HASH "c6a8c3c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c6a8c3c"
+	#define V_CURRENT_COMMIT_HASH "5efd393"
 #endif
 
 // V comptime_defines:
@@ -21523,7 +21523,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("52b627f"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("c6a8c3c"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL string v__pref__default_c_compiler() {
@@ -26818,18 +26818,18 @@ v__table__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast_
 
 void v__checker__Checker_return_stmt(v__checker__Checker* c, v__ast__Return* return_stmt) {
 	c->expected_type = c->cur_fn->return_type;
-	if (return_stmt->exprs.len > 0 && c->expected_type == _const_v__table__void_type) {
+	v__table__Type expected_type = v__checker__Checker_unwrap_generic(c, c->expected_type);
+	v__table__TypeSymbol* expected_type_sym = v__table__Table_get_type_symbol(c->table, expected_type);
+	if (return_stmt->exprs.len > 0 && c->cur_fn->return_type == _const_v__table__void_type) {
 		v__checker__Checker_error(c, tos_lit("too many arguments to return, current function does not return anything"), return_stmt->pos);
 		return;
-	} else if (return_stmt->exprs.len == 0 && !(c->expected_type == _const_v__table__void_type || v__table__Table_get_type_symbol(c->table, c->expected_type)->kind == v__table__Kind_void)) {
+	} else if (return_stmt->exprs.len == 0 && !(c->expected_type == _const_v__table__void_type || expected_type_sym->kind == v__table__Kind_void)) {
 		v__checker__Checker_error(c, tos_lit("too few arguments to return"), return_stmt->pos);
 		return;
 	}
 	if (return_stmt->exprs.len == 0) {
 		return;
 	}
-	v__table__Type expected_type = v__checker__Checker_unwrap_generic(c, c->expected_type);
-	v__table__TypeSymbol* expected_type_sym = v__table__Table_get_type_symbol(c->table, expected_type);
 	bool exp_is_optional = v__table__Type_has_flag(expected_type, v__table__TypeFlag_optional);
 	array_v__table__Type expected_types = new_array_from_c_array(1, 1, sizeof(v__table__Type), _MOV((v__table__Type[1]){expected_type}));
 	if (expected_type_sym->kind == v__table__Kind_multi_return) {
@@ -27933,10 +27933,17 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 			c->nr_warnings += c2.nr_warnings;
 			c->nr_errors += c2.nr_errors;
 		}
-		// Defer begin
-		c->expr_level--;
-		// Defer end
-		return v__table__Table_find_type_idx(c->table, tos_lit("vweb.Result"));
+		if (string_eq((*node._195).method_name, tos_lit("html"))) {
+			// Defer begin
+			c->expr_level--;
+			// Defer end
+			return v__table__Table_find_type_idx(c->table, tos_lit("vweb.Result"));
+		} else {
+			// Defer begin
+			c->expr_level--;
+			// Defer end
+			return _const_v__table__string_type;
+		}
 	} else if (_t1040.typ == 196 /* v.ast.ConcatExpr */) {
 		// Defer begin
 		c->expr_level--;
@@ -28261,8 +28268,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 	} else if (_t1045 == v__token__AtKind_line_nr) {
 		node->val = int_str((node->pos.line_nr + 1));
 	} else if (_t1045 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_104739 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_104739.arg1;
+		multi_return_string_int mr_104803 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_104803.arg1;
 		node->val = int_str((column + 1));
 	} else if (_t1045 == v__token__AtKind_vhash) {
 		node->val = v__util__vhash();
@@ -28843,7 +28850,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 		VAssertMetaInfo v_assert_meta_info__t1095;
 		memset(&v_assert_meta_info__t1095, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t1095.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t1095.line_nr = 3775;
+		v_assert_meta_info__t1095.line_nr = 3779;
 		v_assert_meta_info__t1095.fn_name = tos_lit("unsafe_expr");
 		v_assert_meta_info__t1095.src = tos_lit("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t1095);
@@ -29177,8 +29184,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->source_name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_134669 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_134669.arg0;
+		multi_return_string_v__token__Position mr_134733 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_134733.arg0;
 	}
 	if ((v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym)) && !c->inside_unsafe) {
 		v__checker__Checker_warn(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -29687,10 +29694,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1146 = 0; _t1146 < _t1145.len; ++_t1146) {
 			v__table__Fn m = ((v__table__Fn*)_t1145.data)[_t1146];
 			if (string_eq(m.return_type_source_name, tos_lit("vweb.Result"))) {
-				multi_return_bool_int_int mr_151294 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_151294.arg0;
-				int nroute_attributes = mr_151294.arg1;
-				int nargs = mr_151294.arg2;
+				multi_return_bool_int_int mr_151358 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_151358.arg0;
+				int nroute_attributes = mr_151358.arg1;
+				int nargs = mr_151358.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -29908,27 +29915,53 @@ VV_LOCAL_SYMBOL v__ast__HashStmt v__parser__Parser_hash(v__parser__Parser* p) {
 
 VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p) {
 	v__parser__Parser_check(p, v__token__Kind_dollar);
-	v__parser__Parser_check(p, v__token__Kind_name);
-	v__parser__Parser_check(p, v__token__Kind_dot);
-	v__parser__Parser_check(p, v__token__Kind_name);
+	string error_msg = tos_lit("only `$tmpl()` and `$vweb.html()` comptime functions are supported right now");
+	if (p->peek_tok.kind == v__token__Kind_dot) {
+		string n = v__parser__Parser_check_name(p);
+		if (string_ne(n, tos_lit("vweb"))) {
+			v__parser__Parser_error(p, error_msg);
+		}
+		v__parser__Parser_check(p, v__token__Kind_dot);
+	}
+	string n = v__parser__Parser_check_name(p);
+	if (string_ne(n, tos_lit("html")) && string_ne(n, tos_lit("tmpl"))) {
+		v__parser__Parser_error(p, error_msg);
+	}
+	bool is_html = string_eq(n, tos_lit("html"));
 	v__parser__Parser_check(p, v__token__Kind_lpar);
+	string s = (is_html ? (tos_lit("")) : (p->tok.lit));
+	if (!is_html) {
+		v__parser__Parser_check(p, v__token__Kind_string);
+	}
+	println(_STR("SSSS \"%.*s\000\"", 2, s));
 	v__parser__Parser_check(p, v__token__Kind_rpar);
 	array_string fn_path = string_split(p->cur_fn_name, tos_lit("_"));
-	string html_name = _STR("%.*s\000.html", 2, *(string*)array_last(fn_path));
+	string tmpl_path = (is_html ? (_STR("%.*s\000.html", 2, *(string*)array_last(fn_path))) : (s));
 	string dir = os__dir(p->scanner->file_path);
 	string path = os__join_path(dir, (varg_string){.len=1,.args={array_string_join(fn_path, tos_lit("/"))}});
 	path = /*f*/string_add(path, tos_lit(".html"));
+	if (!is_html) {
+		path = tmpl_path;
+	}
 	if (!os__exists(path)) {
-		path = os__join_path(dir, (varg_string){.len=2,.args={tos_lit("templates"), array_string_join(fn_path, tos_lit("/"))}});
-		path = /*f*/string_add(path, tos_lit(".html"));
+		if (is_html) {
+			path = os__join_path(dir, (varg_string){.len=2,.args={tos_lit("templates"), array_string_join(fn_path, tos_lit("/"))}});
+			path = /*f*/string_add(path, tos_lit(".html"));
+		}
 		if (!os__exists(path)) {
-			v__parser__Parser_error(p, _STR("vweb HTML template \"%.*s\000\" not found", 2, path));
+			if (is_html) {
+				v__parser__Parser_error(p, _STR("vweb HTML template \"%.*s\000\" not found", 2, path));
+			} else {
+				v__parser__Parser_error(p, _STR("template file \"%.*s\000\" not found", 2, path));
+			}
 		}
 	}
-	if (p->pref->is_verbose) {
-		println(_STR(">>> compiling vweb HTML template \"%.*s\000\"", 2, path));
+	if (true || p->pref->is_verbose) {
+		println(_STR(">>> compiling comptime template file \"%.*s\000\"", 2, path));
 	}
-	string v_code = vweb__tmpl__compile_file(path, p->cur_fn_name);
+	string tmp_fn_name = string_replace(p->cur_fn_name, tos_lit("."), tos_lit("__"));
+	string v_code = vweb__tmpl__compile_file(path, tmp_fn_name);
+	println(tos_lit("done"));
 	#if defined(CUSTOM_DEFINE_print_vweb_template_expansions)
 	{
 		array_string lines = string_split(v_code, tos_lit("\n"));
@@ -29941,17 +29974,17 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p
 	}
 	#endif
 	v__ast__Scope* scope = (v__ast__Scope*)memdup(&(v__ast__Scope){.objects = new_map_1(sizeof(v__ast__ScopeObject)),.struct_fields = __new_array(0, 1, sizeof(v__ast__ScopeStructField)),.parent = p->global_scope,.children = __new_array(0, 1, sizeof(v__ast__Scope*)),.start_pos = 0,.end_pos = 0,}, sizeof(v__ast__Scope));
-	v__ast__File file = v__parser__parse_text(v_code, p->table, p->pref, scope, p->global_scope);
-	if (p->pref->is_verbose) {
+	if (true || p->pref->is_verbose) {
 		println(tos_lit("\n\n"));
 		println(_STR(">>> vweb template for %.*s\000:", 2, path));
 		println(v_code);
 		println(tos_lit(">>> end of vweb template END"));
 		println(tos_lit("\n\n"));
 	}
+	v__ast__File file = v__parser__parse_text(v_code, p->table, p->pref, scope, p->global_scope);
 	file = // assoc
 	(v__ast__File){
-		.path = html_name, 
+		.path = tmpl_path, 
 		.mod = file.mod,
 		.global_scope = file.global_scope,
 		.scope = file.scope,
@@ -29965,7 +29998,7 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p
 	for (int _t1169 = 0; _t1169 < _t1168.len; ++_t1169) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)_t1168.data)[_t1169];
 		if ((stmt).typ == 130 /* v.ast.FnDecl */) {
-			if (string_eq((*stmt._130).name, _STR("main.vweb_tmpl_%.*s", 1, p->cur_fn_name))) {
+			if (string_eq((*stmt._130).name, _STR("main.vweb_tmpl_%.*s", 1, tmp_fn_name))) {
 				v__ast__Scope* tmpl_scope = v__ast__Scope_innermost(file.scope, (*stmt._130).body_pos.pos);
 				// FOR IN map
 				map_string_v__ast__ScopeObject _t1173 = p->scope->objects;
@@ -29987,7 +30020,7 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p
 			}
 		}
 	}
-	return (v__ast__ComptimeCall){.method_name = (string){.str=(byteptr)""},.left = {0},.is_vweb = true,.vweb_tmpl = file,.args_var = (string){.str=(byteptr)""},.sym = {0},};
+	return (v__ast__ComptimeCall){.method_name = n,.left = {0},.is_vweb = true,.vweb_tmpl = file,.args_var = (string){.str=(byteptr)""},.sym = {0},};
 }
 
 VV_LOCAL_SYMBOL v__ast__CompFor v__parser__Parser_comp_for(v__parser__Parser* p) {
@@ -40187,20 +40220,28 @@ void v__gen__Gen_write_tests_main(v__gen__Gen* g) {
 
 VV_LOCAL_SYMBOL void v__gen__Gen_comptime_call(v__gen__Gen* g, v__ast__ComptimeCall node) {
 	if (node.is_vweb) {
+		bool is_html = string_eq(node.method_name, tos_lit("html"));
 		// FOR IN array
 		array _t1539 = node.vweb_tmpl.stmts;
 		for (int _t1540 = 0; _t1540 < _t1539.len; ++_t1540) {
 			v__ast__Stmt stmt = ((v__ast__Stmt*)_t1539.data)[_t1540];
 			if ((stmt).typ == 130 /* v.ast.FnDecl */) {
 				if (string_starts_with((*stmt._130).name, tos_lit("main.vweb_tmpl"))) {
-					g->inside_vweb_tmpl = true;
+					if (is_html) {
+						g->inside_vweb_tmpl = true;
+					}
 					v__gen__Gen_stmts(g, (*stmt._130).stmts);
 					g->inside_vweb_tmpl = false;
 					break;
 				}
 			}
 		}
-		v__gen__Gen_writeln(g, _STR("vweb__Context_html(&app->vweb, _tmpl_res_%.*s\000); strings__Builder_free(&sb); string_free(&_tmpl_res_%.*s\000);", 3, g->fn_decl->name, g->fn_decl->name));
+		if (is_html) {
+			v__gen__Gen_writeln(g, _STR("vweb__Context_html(&app->vweb, _tmpl_res_%.*s\000); strings__Builder_free(&sb); string_free(&_tmpl_res_%.*s\000);", 3, g->fn_decl->name, g->fn_decl->name));
+		} else {
+			string fn_name = string_replace(g->fn_decl->name, tos_lit("."), tos_lit("__"));
+			v__gen__Gen_writeln(g, _STR("return _tmpl_res_%.*s\000;", 2, fn_name));
+		}
 		return;
 	}
 	v__gen__Gen_writeln(g, string_add(tos_lit("// $"), _STR("method call. sym=\"%.*s\000\"", 2, node.sym.name)));
