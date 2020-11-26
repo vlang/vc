@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5efd393"
+#define V_COMMIT_HASH "5e59718"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c6a8c3c"
+	#define V_COMMIT_HASH "5efd393"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5efd393"
+	#define V_CURRENT_COMMIT_HASH "5e59718"
 #endif
 
 // V comptime_defines:
@@ -21366,7 +21366,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("c6a8c3c"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("5efd393"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL string v__pref__default_c_compiler() {
@@ -29757,7 +29757,6 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p
 	if (!is_html) {
 		v__parser__Parser_check(p, v__token__Kind_string);
 	}
-	println(_STR("SSSS \"%.*s\000\"", 2, s));
 	v__parser__Parser_check(p, v__token__Kind_rpar);
 	array_string fn_path = string_split(p->cur_fn_name, tos_lit("_"));
 	string tmpl_path = (is_html ? (_STR("%.*s\000.html", 2, *(string*)array_last(fn_path))) : (s));
@@ -29780,18 +29779,17 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p
 			}
 		}
 	}
-	if (true || p->pref->is_verbose) {
+	if (p->pref->is_verbose) {
 		println(_STR(">>> compiling comptime template file \"%.*s\000\"", 2, path));
 	}
 	string tmp_fn_name = string_replace(p->cur_fn_name, tos_lit("."), tos_lit("__"));
 	string v_code = vweb__tmpl__compile_file(path, tmp_fn_name);
-	println(tos_lit("done"));
 	#if defined(CUSTOM_DEFINE_print_vweb_template_expansions)
 	{
 	}
 	#endif
 	v__ast__Scope* scope = (v__ast__Scope*)memdup(&(v__ast__Scope){.objects = new_map_1(sizeof(v__ast__ScopeObject)),.struct_fields = __new_array(0, 1, sizeof(v__ast__ScopeStructField)),.parent = p->global_scope,.children = __new_array(0, 1, sizeof(v__ast__Scope*)),.start_pos = 0,.end_pos = 0,}, sizeof(v__ast__Scope));
-	if (true || p->pref->is_verbose) {
+	if (p->pref->is_verbose) {
 		println(tos_lit("\n\n"));
 		println(_STR(">>> vweb template for %.*s\000:", 2, path));
 		println(v_code);
@@ -29837,7 +29835,7 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p
 			}
 		}
 	}
-	return (v__ast__ComptimeCall){.method_name = n,.left = {0},.is_vweb = true,.vweb_tmpl = file,.args_var = (string){.str=(byteptr)""},.sym = {0},};
+	return (v__ast__ComptimeCall){.method_name = n,.left = {0},.is_vweb = true,.vweb_tmpl = file,.args_var = s,.sym = {0},};
 }
 
 VV_LOCAL_SYMBOL v__ast__CompFor v__parser__Parser_comp_for(v__parser__Parser* p) {
