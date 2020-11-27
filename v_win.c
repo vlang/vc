@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1891f55"
+#define V_COMMIT_HASH "1394815"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2473f65"
+	#define V_COMMIT_HASH "1891f55"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1891f55"
+	#define V_CURRENT_COMMIT_HASH "1394815"
 #endif
 
 // V comptime_defines:
@@ -21367,7 +21367,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("2473f65"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("1891f55"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL string v__pref__default_c_compiler() {
@@ -21628,7 +21628,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 			array_push(&res->build_options, _MOV((string[]){ string_clone(arg) }));
 		} else if (string_eq(_t677, tos_lit("-W"))) {
 			res->warns_are_errors = true;
-		} else if (string_eq(_t677, tos_lit("-reuse-tmpc"))) {
+		} else if (string_eq(_t677, tos_lit("-keepc"))) {
 			res->reuse_tmpc = true;
 		} else if (string_eq(_t677, tos_lit("-w"))) {
 			res->skip_warnings = true;
