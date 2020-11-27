@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2473f65"
+#define V_COMMIT_HASH "1891f55"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "bbea7fb"
+	#define V_COMMIT_HASH "2473f65"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2473f65"
+	#define V_CURRENT_COMMIT_HASH "1891f55"
 #endif
 
 // V comptime_defines:
@@ -4145,6 +4145,8 @@ int compare_i64(i64* a, i64* b);
 int compare_f64(f64* a, f64* b);
 int compare_f32(f32* a, f32* b);
 array_voidptr array_pointers(array a);
+array_byte voidptr_vbytes(voidptr data, int len);
+array_byte byteptr_vbytes(byteptr data, int len);
 byteptr g_m2_buf; // global
 byteptr g_m2_ptr; // global
 void v_exit(int code);
@@ -9959,6 +9961,17 @@ array_voidptr array_pointers(array a) {
 		array_push(&res, _MOV((voidptr[]){ array_get_unsafe(a, i) }));
 	}
 	return res;
+}
+
+// Attr: [unsafe]
+array_byte voidptr_vbytes(voidptr data, int len) {
+	array res = (array){.element_size = 1,.data = data,.len = len,.cap = len,};
+	return res;
+}
+
+// Attr: [unsafe]
+array_byte byteptr_vbytes(byteptr data, int len) {
+	return voidptr_vbytes(((voidptr)(data)), len);
 }
 
 // TypeDecl
@@ -21505,7 +21518,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("bbea7fb"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("2473f65"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL string v__pref__default_c_compiler() {
