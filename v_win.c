@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a2fedb4"
+#define V_COMMIT_HASH "c3ed8bb"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2095d4d"
+	#define V_COMMIT_HASH "a2fedb4"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a2fedb4"
+	#define V_CURRENT_COMMIT_HASH "c3ed8bb"
 #endif
 
 // V comptime_defines:
@@ -21367,7 +21367,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("2095d4d"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("a2fedb4"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL string v__pref__default_c_compiler() {
@@ -41749,9 +41749,6 @@ VV_LOCAL_SYMBOL void v__gen__Gen_string_inter_literal_sb_optimized(v__gen__Gen* 
 }
 
 VV_LOCAL_SYMBOL void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__StringInterLiteral node) {
-	string cur_line = tos_lit("");
-	string tmp = tos_lit("");
-	bool v_free = false && !g->pref->experimental && g->pref->autofree && g->inside_call && !g->inside_return && g->inside_ternary == 0 && !g->inside_const;
 	v__gen__Gen_write(g, tos_lit("_STR(\""));
 	bool end_string = false;
 	// FOR IN array
@@ -41866,11 +41863,6 @@ VV_LOCAL_SYMBOL void v__gen__Gen_string_inter_literal(v__gen__Gen* g, v__ast__St
 		}
 	}
 	v__gen__Gen_write(g, tos_lit(")"));
-	if (v_free) {
-		v__gen__Gen_writeln(g, tos_lit(";"));
-		v__gen__Gen_write(g, cur_line);
-		v__gen__Gen_write(g, tmp);
-	}
 }
 
 string v__gen__js__gen(array_v__ast__File files, v__table__Table* table, v__pref__Preferences* pref) {
