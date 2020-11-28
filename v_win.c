@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "159abd4"
+#define V_COMMIT_HASH "6da6a08"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "91007e8"
+	#define V_COMMIT_HASH "159abd4"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "159abd4"
+	#define V_CURRENT_COMMIT_HASH "6da6a08"
 #endif
 
 // V comptime_defines:
@@ -21817,7 +21817,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("91007e8"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("159abd4"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL string v__pref__default_c_compiler() {
@@ -33736,7 +33736,7 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 		} else if (_t1269 == v__token__Kind_key_if) {
 			return /* sum type cast 4 */ (v__ast__Expr){._225 = memdup(&(v__ast__IfExpr[]){v__parser__Parser_if_expr(p, true)}, sizeof(v__ast__IfExpr)), .typ = 225 /* v.ast.IfExpr */};
 		} else {
-			v__parser__Parser_error(p, tos_lit("unexpected $"));
+			v__parser__Parser_error_with_pos(p, tos_lit("unexpected `$`"), v__token__Token_position(&p->peek_tok));
 		};
 	} else if (_t1268 == v__token__Kind_chartoken) {
 		node = /* sum type cast 4 */ (v__ast__Expr){._218 = memdup(&(v__ast__CharLiteral[]){(v__ast__CharLiteral){.val = p->tok.lit,.pos = v__token__Token_position(&p->tok),}}, sizeof(v__ast__CharLiteral)), .typ = 218 /* v.ast.CharLiteral */};
@@ -33824,10 +33824,10 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 				node = /* sum type cast 4 */ (v__ast__Expr){._246 = memdup(&(v__ast__StructInit[]){v__parser__Parser_struct_init(p, true)}, sizeof(v__ast__StructInit)), .typ = 246 /* v.ast.StructInit */};
 			} else if (p->tok.kind == v__token__Kind_name) {
 				v__parser__Parser_next(p);
-				string lit = ((p->tok.lit).len != 0 ? (p->tok.lit) : (v__token__Kind_str(p->tok.kind)));
-				v__parser__Parser_error(p, _STR("unexpected `%.*s\000`, expecting `:`", 2, lit));
+				string s = ((p->tok.lit).len != 0 ? (_STR("`%.*s\000`", 2, p->tok.lit)) : (v__token__Kind_str(p->tok.kind)));
+				v__parser__Parser_error_with_pos(p, _STR("unexpected %.*s\000, expecting `:`", 2, s), v__token__Token_position(&p->tok));
 			} else {
-				v__parser__Parser_error(p, _STR("unexpected `%.*s\000`, expecting struct key", 2, p->tok.lit));
+				v__parser__Parser_error_with_pos(p, _STR("unexpected `%.*s\000`, expecting struct key", 2, p->tok.lit), v__token__Token_position(&p->tok));
 			}
 		}
 		v__parser__Parser_check(p, v__token__Kind_rcbr);
@@ -33847,7 +33847,7 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 			return node;
 		}
 	} else {
-		v__parser__Parser_error(p, _STR("expr(): bad token `%.*s\000`", 2, v__token__Kind_str(p->tok.kind)));
+		v__parser__Parser_error_with_pos(p, _STR("invalid expression: unexpected %.*s\000 token", 2, v__token__Kind_str(p->tok.kind)), v__token__Token_position(&p->tok));
 	};
 	return v__parser__Parser_expr_with_left(p, node, precedence, is_stmt_ident);
 }
