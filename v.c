@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ea04d23"
+#define V_COMMIT_HASH "aadeb62"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "57ad943"
+	#define V_COMMIT_HASH "ea04d23"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ea04d23"
+	#define V_CURRENT_COMMIT_HASH "aadeb62"
 #endif
 
 // V comptime_defines:
@@ -21521,7 +21521,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("57ad943"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("ea04d23"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL string v__pref__default_c_compiler() {
@@ -23120,9 +23120,6 @@ v__token__Position v__ast__Expr_position(v__ast__Expr expr) {
 	} else if (_t789.typ == 203 /* v.ast.InfixExpr */) {
 		v__token__Position left_pos = v__ast__Expr_position((*expr._203).left);
 		v__token__Position right_pos = v__ast__Expr_position((*expr._203).right);
-		if (left_pos.pos == 0 || right_pos.pos == 0) {
-			return (*expr._203).pos;
-		}
 		return (v__token__Position){.len = right_pos.pos - left_pos.pos + right_pos.len,.line_nr = (*expr._203).pos.line_nr,.pos = left_pos.pos,};
 	} else if (_t789.typ == 189 /* v.ast.CTempVar */) {
 		return (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,};
@@ -30105,6 +30102,7 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 #endif
 };
 	if (p->tok.kind == v__token__Kind_rsbr) {
+		last_pos = v__token__Token_position(&p->tok);
 		int line_nr = p->tok.line_nr;
 		v__parser__Parser_next(p);
 		if ((p->tok.kind == v__token__Kind_name || p->tok.kind == v__token__Kind_amp || p->tok.kind == v__token__Kind_lsbr) && p->tok.line_nr == line_nr) {
@@ -30206,7 +30204,7 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 		}
 		v__parser__Parser_check(p, v__token__Kind_rcbr);
 	}
-	v__token__Position pos = (v__token__Position){.len = last_pos.pos - first_pos.pos + last_pos.len,.line_nr = first_pos.line_nr,.pos = first_pos.pos,};
+	v__token__Position pos = v__token__Position_extend(first_pos, last_pos);
 	return (v__ast__ArrayInit){
 		.pos = pos,
 		.elem_type_pos = elem_type_pos,
@@ -40605,7 +40603,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it, 
 	string type_name = v__gen__Gen_typ(g, it.return_type);
 	if (g->cur_generic_type != 0) {
 		string gen_name = v__gen__Gen_typ(g, g->cur_generic_type);
-		name = /*f*/string_add(name, string_add(tos_lit("_"), gen_name));
+		name = /*f*/string_add(name, string_add(tos_lit("_T_"), gen_name));
 	}
 	if (is_livemain) {
 		array_push(&g->hotcode_fn_names, _MOV((string[]){ string_clone(name) }));
@@ -40636,9 +40634,9 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it, 
 		v__gen__Gen_write(g, fn_header);
 	}
 	int arg_start_pos = g->out.len;
-	multi_return_array_string_array_string mr_3666 = v__gen__Gen_fn_args(g, it.params, it.is_variadic);
-	array_string fargs = mr_3666.arg0;
-	array_string fargtypes = mr_3666.arg1;
+	multi_return_array_string_array_string mr_3739 = v__gen__Gen_fn_args(g, it.params, it.is_variadic);
+	array_string fargs = mr_3739.arg0;
+	array_string fargtypes = mr_3739.arg1;
 	string arg_str = strings__Builder_after(&g->out, arg_start_pos);
 	if (it.no_body || (g->pref->use_cache && it.is_builtin) || skip) {
 		strings__Builder_writeln(&g->definitions, tos_lit(");"));
@@ -40980,7 +40978,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) 
 		name = v__gen__c_name(name);
 	}
 	if (node.generic_type != _const_v__table__void_type && node.generic_type != 0) {
-		name = /*f*/string_add(name, string_add(tos_lit("_"), v__gen__Gen_typ(g, node.generic_type)));
+		name = /*f*/string_add(name, string_add(tos_lit("_T_"), v__gen__Gen_typ(g, node.generic_type)));
 	}
 	bool print_auto_str = false;
 	if (is_print && (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).typ != _const_v__table__string_type) {
@@ -41039,11 +41037,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) 
 	}
 	if (!print_auto_str) {
 		if (g->pref->is_debug && string_eq(node.name, tos_lit("panic"))) {
-			multi_return_int_string_string_string mr_19136 = v__gen__Gen_panic_debug_info(g, node.pos);
-			int paline = mr_19136.arg0;
-			string pafile = mr_19136.arg1;
-			string pamod = mr_19136.arg2;
-			string pafn = mr_19136.arg3;
+			multi_return_int_string_string_string mr_19280 = v__gen__Gen_panic_debug_info(g, node.pos);
+			int paline = mr_19280.arg0;
+			string pafile = mr_19280.arg1;
+			string pamod = mr_19280.arg2;
+			string pafn = mr_19280.arg3;
 			v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 			v__gen__Gen_call_args(g, node);
 			v__gen__Gen_write(g, tos_lit(")"));
