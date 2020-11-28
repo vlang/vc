@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "32c027a"
+#define V_COMMIT_HASH "f336c2c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "6da6a08"
+	#define V_COMMIT_HASH "32c027a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "32c027a"
+	#define V_CURRENT_COMMIT_HASH "f336c2c"
 #endif
 
 // V comptime_defines:
@@ -21974,7 +21974,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("6da6a08"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("32c027a"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL string v__pref__default_c_compiler() {
@@ -25106,6 +25106,9 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 			} else if (!is_cstr && !is_raw) {
 				v__scanner__Scanner_error(s, tos_lit("cannot use `\\x00` (NULL character) in the string literal"));
 			}
+		}
+		if (prevc == slash && c == 'x' && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0 && !is_raw && !is_cstr && (string_at(s->text, s->pos + 1) == s->quote || !byte_is_hex_digit(string_at(s->text, s->pos + 1)))) {
+			v__scanner__Scanner_error(s, tos_lit("`\\x` used with no following hex digits"));
 		}
 		if (prevc == '$' && c == '{' && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
 			s->is_inside_string = true;
