@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "008ce8f"
+#define V_COMMIT_HASH "0b96cd5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "6c63408"
+	#define V_COMMIT_HASH "008ce8f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "008ce8f"
+	#define V_CURRENT_COMMIT_HASH "0b96cd5"
 #endif
 
 // V comptime_defines:
@@ -20420,7 +20420,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("6c63408"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("008ce8f"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL string v__pref__default_c_compiler() {
@@ -24256,8 +24256,13 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 				v__scanner__Scanner_error(s, tos_lit("cannot use `\\x00` (NULL character) in the string literal"));
 			}
 		}
-		if (prevc == slash && c == 'x' && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0 && !is_raw && !is_cstr && (string_at(s->text, s->pos + 1) == s->quote || !byte_is_hex_digit(string_at(s->text, s->pos + 1)))) {
-			v__scanner__Scanner_error(s, tos_lit("`\\x` used with no following hex digits"));
+		if (prevc == slash && !is_raw && !is_cstr && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
+			if (c == 'x' && (string_at(s->text, s->pos + 1) == s->quote || !byte_is_hex_digit(string_at(s->text, s->pos + 1)))) {
+				v__scanner__Scanner_error(s, tos_lit("`\\x` used with no following hex digits"));
+			}
+			if (c == 'u' && (string_at(s->text, s->pos + 1) == s->quote || string_at(s->text, s->pos + 2) == s->quote || string_at(s->text, s->pos + 3) == s->quote || string_at(s->text, s->pos + 4) == s->quote || !byte_is_hex_digit(string_at(s->text, s->pos + 1)) || !byte_is_hex_digit(string_at(s->text, s->pos + 2)) || !byte_is_hex_digit(string_at(s->text, s->pos + 3)) || !byte_is_hex_digit(string_at(s->text, s->pos + 4)))) {
+				v__scanner__Scanner_error(s, tos_lit("`\\u` incomplete unicode character value"));
+			}
 		}
 		if (prevc == '$' && c == '{' && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
 			s->is_inside_string = true;
