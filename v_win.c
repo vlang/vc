@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c7cefa9"
+#define V_COMMIT_HASH "4e6bc27"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "adeebad"
+	#define V_COMMIT_HASH "c7cefa9"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c7cefa9"
+	#define V_CURRENT_COMMIT_HASH "4e6bc27"
 #endif
 
 // V comptime_defines:
@@ -559,7 +559,7 @@ typedef int (*qsort_callback_func)(const void*, const void*);
 #endif
 
 // g_live_info is used by live.info()
-void* g_live_info = NULL;
+static void* g_live_info = NULL;
 
 //============================== HELPER C MACROS =============================*/
 //#define tos4(s, slen) ((string){.str=(s), .len=(slen)})
@@ -732,7 +732,7 @@ void _vcleanup();
 #endif
 
 voidptr memdup(voidptr src, int sz);
-voidptr memfreedup(voidptr ptr, voidptr src, int sz) {
+static voidptr memfreedup(voidptr ptr, voidptr src, int sz) {
 	free(ptr);
 	return memdup(src, sz);
 }
@@ -3679,64 +3679,64 @@ typedef struct {
 
 // END_multi_return_structs
 
-string strings__Builder_str_no_ptr(strings__Builder it); // auto no_ptr version
-string time__FormatTime_str(time__FormatTime it); // auto
-string time__FormatDate_str(time__FormatDate it); // auto
-string v__pref__Backend_str(v__pref__Backend it); // auto
-string v__table__Type_str(v__table__Type it); // auto
-string indent_v__table__Type_str(v__table__Type it, int indent_count); // auto
-string v__table__FExpr_str(v__table__FExpr x); // auto
-string indent_v__table__FExpr_str(v__table__FExpr x, int indent_count); // auto
-string array_v__table__Attr_str(array_v__table__Attr a); // auto
-string indent_array_v__table__Attr_str(array_v__table__Attr a, int indent_count); // auto
-string v__table__Field_str(v__table__Field x); // auto
-string indent_v__table__Field_str(v__table__Field x, int indent_count); // auto
-string array_v__table__Field_str(array_v__table__Field a); // auto
-string indent_array_v__table__Field_str(array_v__table__Field a, int indent_count); // auto
-string array_v__table__Type_str(array_v__table__Type a); // auto
-string indent_array_v__table__Type_str(array_v__table__Type a, int indent_count); // auto
-string v__table__Aggregate_str(v__table__Aggregate x); // auto
-string indent_v__table__Aggregate_str(v__table__Aggregate x, int indent_count); // auto
-string v__table__Language_str(v__table__Language it); // auto
-string v__table__Alias_str(v__table__Alias x); // auto
-string indent_v__table__Alias_str(v__table__Alias x, int indent_count); // auto
-string v__table__Array_str(v__table__Array x); // auto
-string indent_v__table__Array_str(v__table__Array x, int indent_count); // auto
-string v__table__ArrayFixed_str(v__table__ArrayFixed x); // auto
-string indent_v__table__ArrayFixed_str(v__table__ArrayFixed x, int indent_count); // auto
-string v__table__Chan_str(v__table__Chan x); // auto
-string indent_v__table__Chan_str(v__table__Chan x, int indent_count); // auto
-string v__table__Enum_str(v__table__Enum x); // auto
-string indent_v__table__Enum_str(v__table__Enum x, int indent_count); // auto
-string v__table__Param_str(v__table__Param x); // auto
-string indent_v__table__Param_str(v__table__Param x, int indent_count); // auto
-string array_v__table__Param_str(array_v__table__Param a); // auto
-string indent_array_v__table__Param_str(array_v__table__Param a, int indent_count); // auto
-string v__table__Fn_str(v__table__Fn x); // auto
-string indent_v__table__Fn_str(v__table__Fn x, int indent_count); // auto
-string v__table__FnType_str(v__table__FnType x); // auto
-string indent_v__table__FnType_str(v__table__FnType x, int indent_count); // auto
-string v__table__GenericStructInst_str(v__table__GenericStructInst x); // auto
-string indent_v__table__GenericStructInst_str(v__table__GenericStructInst x, int indent_count); // auto
-string v__table__Interface_str(v__table__Interface x); // auto
-string indent_v__table__Interface_str(v__table__Interface x, int indent_count); // auto
-string v__table__Map_str(v__table__Map x); // auto
-string indent_v__table__Map_str(v__table__Map x, int indent_count); // auto
-string v__table__MultiReturn_str(v__table__MultiReturn x); // auto
-string indent_v__table__MultiReturn_str(v__table__MultiReturn x, int indent_count); // auto
-string v__table__Struct_str(v__table__Struct x); // auto
-string indent_v__table__Struct_str(v__table__Struct x, int indent_count); // auto
-string v__table__SumType_str(v__table__SumType x); // auto
-string indent_v__table__SumType_str(v__table__SumType x, int indent_count); // auto
-string v__table__TypeInfo_str(v__table__TypeInfo x); // auto
-string indent_v__table__TypeInfo_str(v__table__TypeInfo x, int indent_count); // auto
-string v__ast__BranchStmt_str_no_ptr(v__ast__BranchStmt it); // auto no_ptr version
-string v__table__TypeSymbol_str_no_ptr(v__table__TypeSymbol it); // auto no_ptr version
-string v__ast__IdentKind_str(v__ast__IdentKind it); // auto
-string v__gen__x64__Register_str(v__gen__x64__Register it); // auto
-string v__errors__Reporter_str(v__errors__Reporter it); // auto
-string array_v__cflag__CFlag_str(array_v__cflag__CFlag a); // auto
-string indent_array_v__cflag__CFlag_str(array_v__cflag__CFlag a, int indent_count); // auto
+static string strings__Builder_str_no_ptr(strings__Builder it); // auto no_ptr version
+static string time__FormatTime_str(time__FormatTime it); // auto
+static string time__FormatDate_str(time__FormatDate it); // auto
+static string v__pref__Backend_str(v__pref__Backend it); // auto
+static string v__table__Type_str(v__table__Type it); // auto
+static string indent_v__table__Type_str(v__table__Type it, int indent_count); // auto
+static string v__table__FExpr_str(v__table__FExpr x); // auto
+static string indent_v__table__FExpr_str(v__table__FExpr x, int indent_count); // auto
+static string array_v__table__Attr_str(array_v__table__Attr a); // auto
+static string indent_array_v__table__Attr_str(array_v__table__Attr a, int indent_count); // auto
+static string v__table__Field_str(v__table__Field x); // auto
+static string indent_v__table__Field_str(v__table__Field x, int indent_count); // auto
+static string array_v__table__Field_str(array_v__table__Field a); // auto
+static string indent_array_v__table__Field_str(array_v__table__Field a, int indent_count); // auto
+static string array_v__table__Type_str(array_v__table__Type a); // auto
+static string indent_array_v__table__Type_str(array_v__table__Type a, int indent_count); // auto
+static string v__table__Aggregate_str(v__table__Aggregate x); // auto
+static string indent_v__table__Aggregate_str(v__table__Aggregate x, int indent_count); // auto
+static string v__table__Language_str(v__table__Language it); // auto
+static string v__table__Alias_str(v__table__Alias x); // auto
+static string indent_v__table__Alias_str(v__table__Alias x, int indent_count); // auto
+static string v__table__Array_str(v__table__Array x); // auto
+static string indent_v__table__Array_str(v__table__Array x, int indent_count); // auto
+static string v__table__ArrayFixed_str(v__table__ArrayFixed x); // auto
+static string indent_v__table__ArrayFixed_str(v__table__ArrayFixed x, int indent_count); // auto
+static string v__table__Chan_str(v__table__Chan x); // auto
+static string indent_v__table__Chan_str(v__table__Chan x, int indent_count); // auto
+static string v__table__Enum_str(v__table__Enum x); // auto
+static string indent_v__table__Enum_str(v__table__Enum x, int indent_count); // auto
+static string v__table__Param_str(v__table__Param x); // auto
+static string indent_v__table__Param_str(v__table__Param x, int indent_count); // auto
+static string array_v__table__Param_str(array_v__table__Param a); // auto
+static string indent_array_v__table__Param_str(array_v__table__Param a, int indent_count); // auto
+static string v__table__Fn_str(v__table__Fn x); // auto
+static string indent_v__table__Fn_str(v__table__Fn x, int indent_count); // auto
+static string v__table__FnType_str(v__table__FnType x); // auto
+static string indent_v__table__FnType_str(v__table__FnType x, int indent_count); // auto
+static string v__table__GenericStructInst_str(v__table__GenericStructInst x); // auto
+static string indent_v__table__GenericStructInst_str(v__table__GenericStructInst x, int indent_count); // auto
+static string v__table__Interface_str(v__table__Interface x); // auto
+static string indent_v__table__Interface_str(v__table__Interface x, int indent_count); // auto
+static string v__table__Map_str(v__table__Map x); // auto
+static string indent_v__table__Map_str(v__table__Map x, int indent_count); // auto
+static string v__table__MultiReturn_str(v__table__MultiReturn x); // auto
+static string indent_v__table__MultiReturn_str(v__table__MultiReturn x, int indent_count); // auto
+static string v__table__Struct_str(v__table__Struct x); // auto
+static string indent_v__table__Struct_str(v__table__Struct x, int indent_count); // auto
+static string v__table__SumType_str(v__table__SumType x); // auto
+static string indent_v__table__SumType_str(v__table__SumType x, int indent_count); // auto
+static string v__table__TypeInfo_str(v__table__TypeInfo x); // auto
+static string indent_v__table__TypeInfo_str(v__table__TypeInfo x, int indent_count); // auto
+static string v__ast__BranchStmt_str_no_ptr(v__ast__BranchStmt it); // auto no_ptr version
+static string v__table__TypeSymbol_str_no_ptr(v__table__TypeSymbol it); // auto no_ptr version
+static string v__ast__IdentKind_str(v__ast__IdentKind it); // auto
+static string v__gen__x64__Register_str(v__gen__x64__Register it); // auto
+static string v__errors__Reporter_str(v__errors__Reporter it); // auto
+static string array_v__cflag__CFlag_str(array_v__cflag__CFlag a); // auto
+static string indent_array_v__cflag__CFlag_str(array_v__cflag__CFlag a, int indent_count); // auto
 
 //BEGIN_variadic_structs
 struct varg_voidptr {
@@ -6555,8 +6555,8 @@ void vinit_string_literals(){
 
 
 // V auto str functions:
-string strings__Builder_str_no_ptr(strings__Builder it){ return strings__Builder_str(&it); }
-string time__FormatTime_str(time__FormatTime it) { /* gen_str_for_enum */
+static string strings__Builder_str_no_ptr(strings__Builder it){ return strings__Builder_str(&it); }
+static string time__FormatTime_str(time__FormatTime it) { /* gen_str_for_enum */
 	switch(it) {
 		case time__FormatTime_hhmm12: return tos_lit("hhmm12");
 		case time__FormatTime_hhmm24: return tos_lit("hhmm24");
@@ -6568,7 +6568,7 @@ string time__FormatTime_str(time__FormatTime it) { /* gen_str_for_enum */
 		default: return tos_lit("unknown enum value");
 	}
 }
-string time__FormatDate_str(time__FormatDate it) { /* gen_str_for_enum */
+static string time__FormatDate_str(time__FormatDate it) { /* gen_str_for_enum */
 	switch(it) {
 		case time__FormatDate_ddmmyy: return tos_lit("ddmmyy");
 		case time__FormatDate_ddmmyyyy: return tos_lit("ddmmyyyy");
@@ -6582,7 +6582,7 @@ string time__FormatDate_str(time__FormatDate it) { /* gen_str_for_enum */
 		default: return tos_lit("unknown enum value");
 	}
 }
-string v__pref__Backend_str(v__pref__Backend it) { /* gen_str_for_enum */
+static string v__pref__Backend_str(v__pref__Backend it) { /* gen_str_for_enum */
 	switch(it) {
 		case v__pref__Backend_c: return tos_lit("c");
 		case v__pref__Backend_js: return tos_lit("js");
@@ -6590,24 +6590,24 @@ string v__pref__Backend_str(v__pref__Backend it) { /* gen_str_for_enum */
 		default: return tos_lit("unknown enum value");
 	}
 }
-string v__table__Type_str(v__table__Type it) { return indent_v__table__Type_str(it, 0); }
-string indent_v__table__Type_str(v__table__Type it, int indent_count) {
+static string v__table__Type_str(v__table__Type it) { return indent_v__table__Type_str(it, 0); }
+static string indent_v__table__Type_str(v__table__Type it, int indent_count) {
 	string indents = tos_lit("");
 	for (int i = 0; i < indent_count; ++i) {
 		indents = string_add(indents, tos_lit("    "));
 	}
 	return _STR("%.*s\000v.table.Type(%.*s\000)", 3, indents, int_str(it));
 }
-string v__table__FExpr_str(v__table__FExpr x) { return indent_v__table__FExpr_str(x, 0); }
-string indent_v__table__FExpr_str(v__table__FExpr x, int indent_count) {
+static string v__table__FExpr_str(v__table__FExpr x) { return indent_v__table__FExpr_str(x, 0); }
+static string indent_v__table__FExpr_str(v__table__FExpr x, int indent_count) {
 	switch(x.typ) {
 		case 3: return _STR("v.table.FExpr(%.*s\000)", 2, byteptr_str(*(byteptr*)x._byteptr));
 		case 2: return _STR("v.table.FExpr(%.*s\000)", 2, voidptr_str(*(voidptr*)x._voidptr));
 		default: return tos_lit("unknown sum type value");
 	}
 }
-string array_v__table__Attr_str(array_v__table__Attr a) { return indent_array_v__table__Attr_str(a, 0);}
-string indent_array_v__table__Attr_str(array_v__table__Attr a, int indent_count) {
+static string array_v__table__Attr_str(array_v__table__Attr a) { return indent_array_v__table__Attr_str(a, 0);}
+static string indent_array_v__table__Attr_str(array_v__table__Attr a, int indent_count) {
 	strings__Builder sb = strings__new_builder(a.len * 10);
 	strings__Builder_write(&sb, tos_lit("["));
 	for (int i = 0; i < a.len; ++i) {
@@ -6623,8 +6623,8 @@ string indent_array_v__table__Attr_str(array_v__table__Attr a, int indent_count)
 	strings__Builder_free(&sb);
 	return res;
 }
-string v__table__Field_str(v__table__Field x) { return indent_v__table__Field_str(x, 0);}
-string indent_v__table__Field_str(v__table__Field x, int indent_count) {
+static string v__table__Field_str(v__table__Field x) { return indent_v__table__Field_str(x, 0);}
+static string indent_v__table__Field_str(v__table__Field x, int indent_count) {
 	v__table__Field *it = &x;
 	string indents = tos_lit("");
 	for (int i = 0; i < indent_count; ++i) {
@@ -6655,8 +6655,8 @@ string indent_v__table__Field_str(v__table__Field x, int indent_count) {
 		indents, it->embed_alias_for,
 		indents);
 }
-string array_v__table__Field_str(array_v__table__Field a) { return indent_array_v__table__Field_str(a, 0);}
-string indent_array_v__table__Field_str(array_v__table__Field a, int indent_count) {
+static string array_v__table__Field_str(array_v__table__Field a) { return indent_array_v__table__Field_str(a, 0);}
+static string indent_array_v__table__Field_str(array_v__table__Field a, int indent_count) {
 	strings__Builder sb = strings__new_builder(a.len * 10);
 	strings__Builder_write(&sb, tos_lit("["));
 	for (int i = 0; i < a.len; ++i) {
@@ -6672,8 +6672,8 @@ string indent_array_v__table__Field_str(array_v__table__Field a, int indent_coun
 	strings__Builder_free(&sb);
 	return res;
 }
-string array_v__table__Type_str(array_v__table__Type a) { return indent_array_v__table__Type_str(a, 0);}
-string indent_array_v__table__Type_str(array_v__table__Type a, int indent_count) {
+static string array_v__table__Type_str(array_v__table__Type a) { return indent_array_v__table__Type_str(a, 0);}
+static string indent_array_v__table__Type_str(array_v__table__Type a, int indent_count) {
 	strings__Builder sb = strings__new_builder(a.len * 10);
 	strings__Builder_write(&sb, tos_lit("["));
 	for (int i = 0; i < a.len; ++i) {
@@ -6689,8 +6689,8 @@ string indent_array_v__table__Type_str(array_v__table__Type a, int indent_count)
 	strings__Builder_free(&sb);
 	return res;
 }
-string v__table__Aggregate_str(v__table__Aggregate x) { return indent_v__table__Aggregate_str(x, 0);}
-string indent_v__table__Aggregate_str(v__table__Aggregate x, int indent_count) {
+static string v__table__Aggregate_str(v__table__Aggregate x) { return indent_v__table__Aggregate_str(x, 0);}
+static string indent_v__table__Aggregate_str(v__table__Aggregate x, int indent_count) {
 	v__table__Aggregate *it = &x;
 	string indents = tos_lit("");
 	for (int i = 0; i < indent_count; ++i) {
@@ -6703,7 +6703,7 @@ string indent_v__table__Aggregate_str(v__table__Aggregate x, int indent_count) {
 		indents, indent_array_v__table__Type_str(it->types, indent_count + 1),
 		indents);
 }
-string v__table__Language_str(v__table__Language it) { /* gen_str_for_enum */
+static string v__table__Language_str(v__table__Language it) { /* gen_str_for_enum */
 	switch(it) {
 		case v__table__Language_v: return tos_lit("v");
 		case v__table__Language_c: return tos_lit("c");
@@ -6711,8 +6711,8 @@ string v__table__Language_str(v__table__Language it) { /* gen_str_for_enum */
 		default: return tos_lit("unknown enum value");
 	}
 }
-string v__table__Alias_str(v__table__Alias x) { return indent_v__table__Alias_str(x, 0);}
-string indent_v__table__Alias_str(v__table__Alias x, int indent_count) {
+static string v__table__Alias_str(v__table__Alias x) { return indent_v__table__Alias_str(x, 0);}
+static string indent_v__table__Alias_str(v__table__Alias x, int indent_count) {
 	v__table__Alias *it = &x;
 	string indents = tos_lit("");
 	for (int i = 0; i < indent_count; ++i) {
@@ -6727,8 +6727,8 @@ string indent_v__table__Alias_str(v__table__Alias x, int indent_count) {
 		indents, it->is_import ? _SLIT("true") : _SLIT("false"),
 		indents);
 }
-string v__table__Array_str(v__table__Array x) { return indent_v__table__Array_str(x, 0);}
-string indent_v__table__Array_str(v__table__Array x, int indent_count) {
+static string v__table__Array_str(v__table__Array x) { return indent_v__table__Array_str(x, 0);}
+static string indent_v__table__Array_str(v__table__Array x, int indent_count) {
 	v__table__Array *it = &x;
 	string indents = tos_lit("");
 	for (int i = 0; i < indent_count; ++i) {
@@ -6741,8 +6741,8 @@ string indent_v__table__Array_str(v__table__Array x, int indent_count) {
 		indents, it->elem_type,
 		indents);
 }
-string v__table__ArrayFixed_str(v__table__ArrayFixed x) { return indent_v__table__ArrayFixed_str(x, 0);}
-string indent_v__table__ArrayFixed_str(v__table__ArrayFixed x, int indent_count) {
+static string v__table__ArrayFixed_str(v__table__ArrayFixed x) { return indent_v__table__ArrayFixed_str(x, 0);}
+static string indent_v__table__ArrayFixed_str(v__table__ArrayFixed x, int indent_count) {
 	v__table__ArrayFixed *it = &x;
 	string indents = tos_lit("");
 	for (int i = 0; i < indent_count; ++i) {
@@ -6757,8 +6757,8 @@ string indent_v__table__ArrayFixed_str(v__table__ArrayFixed x, int indent_count)
 		indents, it->elem_type,
 		indents);
 }
-string v__table__Chan_str(v__table__Chan x) { return indent_v__table__Chan_str(x, 0);}
-string indent_v__table__Chan_str(v__table__Chan x, int indent_count) {
+static string v__table__Chan_str(v__table__Chan x) { return indent_v__table__Chan_str(x, 0);}
+static string indent_v__table__Chan_str(v__table__Chan x, int indent_count) {
 	v__table__Chan *it = &x;
 	string indents = tos_lit("");
 	for (int i = 0; i < indent_count; ++i) {
@@ -6771,8 +6771,8 @@ string indent_v__table__Chan_str(v__table__Chan x, int indent_count) {
 		indents, it->is_mut ? _SLIT("true") : _SLIT("false"),
 		indents);
 }
-string v__table__Enum_str(v__table__Enum x) { return indent_v__table__Enum_str(x, 0);}
-string indent_v__table__Enum_str(v__table__Enum x, int indent_count) {
+static string v__table__Enum_str(v__table__Enum x) { return indent_v__table__Enum_str(x, 0);}
+static string indent_v__table__Enum_str(v__table__Enum x, int indent_count) {
 	v__table__Enum *it = &x;
 	string indents = tos_lit("");
 	for (int i = 0; i < indent_count; ++i) {
@@ -6787,8 +6787,8 @@ string indent_v__table__Enum_str(v__table__Enum x, int indent_count) {
 		indents, it->is_multi_allowed ? _SLIT("true") : _SLIT("false"),
 		indents);
 }
-string v__table__Param_str(v__table__Param x) { return indent_v__table__Param_str(x, 0);}
-string indent_v__table__Param_str(v__table__Param x, int indent_count) {
+static string v__table__Param_str(v__table__Param x) { return indent_v__table__Param_str(x, 0);}
+static string indent_v__table__Param_str(v__table__Param x, int indent_count) {
 	v__table__Param *it = &x;
 	string indents = tos_lit("");
 	for (int i = 0; i < indent_count; ++i) {
@@ -6809,8 +6809,8 @@ string indent_v__table__Param_str(v__table__Param x, int indent_count) {
 		indents, it->is_hidden ? _SLIT("true") : _SLIT("false"),
 		indents);
 }
-string array_v__table__Param_str(array_v__table__Param a) { return indent_array_v__table__Param_str(a, 0);}
-string indent_array_v__table__Param_str(array_v__table__Param a, int indent_count) {
+static string array_v__table__Param_str(array_v__table__Param a) { return indent_array_v__table__Param_str(a, 0);}
+static string indent_array_v__table__Param_str(array_v__table__Param a, int indent_count) {
 	strings__Builder sb = strings__new_builder(a.len * 10);
 	strings__Builder_write(&sb, tos_lit("["));
 	for (int i = 0; i < a.len; ++i) {
@@ -6826,8 +6826,8 @@ string indent_array_v__table__Param_str(array_v__table__Param a, int indent_coun
 	strings__Builder_free(&sb);
 	return res;
 }
-string v__table__Fn_str(v__table__Fn x) { return indent_v__table__Fn_str(x, 0);}
-string indent_v__table__Fn_str(v__table__Fn x, int indent_count) {
+static string v__table__Fn_str(v__table__Fn x) { return indent_v__table__Fn_str(x, 0);}
+static string indent_v__table__Fn_str(v__table__Fn x, int indent_count) {
 	v__table__Fn *it = &x;
 	string indents = tos_lit("");
 	for (int i = 0; i < indent_count; ++i) {
@@ -6866,8 +6866,8 @@ string indent_v__table__Fn_str(v__table__Fn x, int indent_count) {
 		indents, it->source_fn,
 		indents);
 }
-string v__table__FnType_str(v__table__FnType x) { return indent_v__table__FnType_str(x, 0);}
-string indent_v__table__FnType_str(v__table__FnType x, int indent_count) {
+static string v__table__FnType_str(v__table__FnType x) { return indent_v__table__FnType_str(x, 0);}
+static string indent_v__table__FnType_str(v__table__FnType x, int indent_count) {
 	v__table__FnType *it = &x;
 	string indents = tos_lit("");
 	for (int i = 0; i < indent_count; ++i) {
@@ -6882,8 +6882,8 @@ string indent_v__table__FnType_str(v__table__FnType x, int indent_count) {
 		indents, indent_v__table__Fn_str(it->func, indent_count + 1),
 		indents);
 }
-string v__table__GenericStructInst_str(v__table__GenericStructInst x) { return indent_v__table__GenericStructInst_str(x, 0);}
-string indent_v__table__GenericStructInst_str(v__table__GenericStructInst x, int indent_count) {
+static string v__table__GenericStructInst_str(v__table__GenericStructInst x) { return indent_v__table__GenericStructInst_str(x, 0);}
+static string indent_v__table__GenericStructInst_str(v__table__GenericStructInst x, int indent_count) {
 	v__table__GenericStructInst *it = &x;
 	string indents = tos_lit("");
 	for (int i = 0; i < indent_count; ++i) {
@@ -6896,8 +6896,8 @@ string indent_v__table__GenericStructInst_str(v__table__GenericStructInst x, int
 		indents, indent_array_v__table__Type_str(it->generic_types, indent_count + 1),
 		indents);
 }
-string v__table__Interface_str(v__table__Interface x) { return indent_v__table__Interface_str(x, 0);}
-string indent_v__table__Interface_str(v__table__Interface x, int indent_count) {
+static string v__table__Interface_str(v__table__Interface x) { return indent_v__table__Interface_str(x, 0);}
+static string indent_v__table__Interface_str(v__table__Interface x, int indent_count) {
 	v__table__Interface *it = &x;
 	string indents = tos_lit("");
 	for (int i = 0; i < indent_count; ++i) {
@@ -6908,8 +6908,8 @@ string indent_v__table__Interface_str(v__table__Interface x, int indent_count) {
 		indents, indent_array_v__table__Type_str(it->types, indent_count + 1),
 		indents);
 }
-string v__table__Map_str(v__table__Map x) { return indent_v__table__Map_str(x, 0);}
-string indent_v__table__Map_str(v__table__Map x, int indent_count) {
+static string v__table__Map_str(v__table__Map x) { return indent_v__table__Map_str(x, 0);}
+static string indent_v__table__Map_str(v__table__Map x, int indent_count) {
 	v__table__Map *it = &x;
 	string indents = tos_lit("");
 	for (int i = 0; i < indent_count; ++i) {
@@ -6922,8 +6922,8 @@ string indent_v__table__Map_str(v__table__Map x, int indent_count) {
 		indents, it->value_type,
 		indents);
 }
-string v__table__MultiReturn_str(v__table__MultiReturn x) { return indent_v__table__MultiReturn_str(x, 0);}
-string indent_v__table__MultiReturn_str(v__table__MultiReturn x, int indent_count) {
+static string v__table__MultiReturn_str(v__table__MultiReturn x) { return indent_v__table__MultiReturn_str(x, 0);}
+static string indent_v__table__MultiReturn_str(v__table__MultiReturn x, int indent_count) {
 	v__table__MultiReturn *it = &x;
 	string indents = tos_lit("");
 	for (int i = 0; i < indent_count; ++i) {
@@ -6934,8 +6934,8 @@ string indent_v__table__MultiReturn_str(v__table__MultiReturn x, int indent_coun
 		indents, indent_array_v__table__Type_str(it->types, indent_count + 1),
 		indents);
 }
-string v__table__Struct_str(v__table__Struct x) { return indent_v__table__Struct_str(x, 0);}
-string indent_v__table__Struct_str(v__table__Struct x, int indent_count) {
+static string v__table__Struct_str(v__table__Struct x) { return indent_v__table__Struct_str(x, 0);}
+static string indent_v__table__Struct_str(v__table__Struct x, int indent_count) {
 	v__table__Struct *it = &x;
 	string indents = tos_lit("");
 	for (int i = 0; i < indent_count; ++i) {
@@ -6954,8 +6954,8 @@ string indent_v__table__Struct_str(v__table__Struct x, int indent_count) {
 		indents, indent_array_v__table__Type_str(it->generic_types, indent_count + 1),
 		indents);
 }
-string v__table__SumType_str(v__table__SumType x) { return indent_v__table__SumType_str(x, 0);}
-string indent_v__table__SumType_str(v__table__SumType x, int indent_count) {
+static string v__table__SumType_str(v__table__SumType x) { return indent_v__table__SumType_str(x, 0);}
+static string indent_v__table__SumType_str(v__table__SumType x, int indent_count) {
 	v__table__SumType *it = &x;
 	string indents = tos_lit("");
 	for (int i = 0; i < indent_count; ++i) {
@@ -6966,8 +6966,8 @@ string indent_v__table__SumType_str(v__table__SumType x, int indent_count) {
 		indents, indent_array_v__table__Type_str(it->variants, indent_count + 1),
 		indents);
 }
-string v__table__TypeInfo_str(v__table__TypeInfo x) { return indent_v__table__TypeInfo_str(x, 0); }
-string indent_v__table__TypeInfo_str(v__table__TypeInfo x, int indent_count) {
+static string v__table__TypeInfo_str(v__table__TypeInfo x) { return indent_v__table__TypeInfo_str(x, 0); }
+static string indent_v__table__TypeInfo_str(v__table__TypeInfo x, int indent_count) {
 	switch(x.typ) {
 		case 346: return _STR("v.table.TypeInfo(%.*s\000)", 2, indent_v__table__Aggregate_str(*(v__table__Aggregate*)x._v__table__Aggregate, indent_count));
 		case 347: return _STR("v.table.TypeInfo(%.*s\000)", 2, indent_v__table__Alias_str(*(v__table__Alias*)x._v__table__Alias, indent_count));
@@ -6985,9 +6985,9 @@ string indent_v__table__TypeInfo_str(v__table__TypeInfo x, int indent_count) {
 		default: return tos_lit("unknown sum type value");
 	}
 }
-string v__ast__BranchStmt_str_no_ptr(v__ast__BranchStmt it){ return v__ast__BranchStmt_str(&it); }
-string v__table__TypeSymbol_str_no_ptr(v__table__TypeSymbol it){ return v__table__TypeSymbol_str(&it); }
-string v__ast__IdentKind_str(v__ast__IdentKind it) { /* gen_str_for_enum */
+static string v__ast__BranchStmt_str_no_ptr(v__ast__BranchStmt it){ return v__ast__BranchStmt_str(&it); }
+static string v__table__TypeSymbol_str_no_ptr(v__table__TypeSymbol it){ return v__table__TypeSymbol_str(&it); }
+static string v__ast__IdentKind_str(v__ast__IdentKind it) { /* gen_str_for_enum */
 	switch(it) {
 		case v__ast__IdentKind_unresolved: return tos_lit("unresolved");
 		case v__ast__IdentKind_blank_ident: return tos_lit("blank_ident");
@@ -6998,7 +6998,7 @@ string v__ast__IdentKind_str(v__ast__IdentKind it) { /* gen_str_for_enum */
 		default: return tos_lit("unknown enum value");
 	}
 }
-string v__gen__x64__Register_str(v__gen__x64__Register it) { /* gen_str_for_enum */
+static string v__gen__x64__Register_str(v__gen__x64__Register it) { /* gen_str_for_enum */
 	switch(it) {
 		case v__gen__x64__Register_rax: return tos_lit("rax");
 		case v__gen__x64__Register_rcx: return tos_lit("rcx");
@@ -7022,7 +7022,7 @@ string v__gen__x64__Register_str(v__gen__x64__Register it) { /* gen_str_for_enum
 		default: return tos_lit("unknown enum value");
 	}
 }
-string v__errors__Reporter_str(v__errors__Reporter it) { /* gen_str_for_enum */
+static string v__errors__Reporter_str(v__errors__Reporter it) { /* gen_str_for_enum */
 	switch(it) {
 		case v__errors__Reporter_scanner: return tos_lit("scanner");
 		case v__errors__Reporter_parser: return tos_lit("parser");
@@ -7031,8 +7031,8 @@ string v__errors__Reporter_str(v__errors__Reporter it) { /* gen_str_for_enum */
 		default: return tos_lit("unknown enum value");
 	}
 }
-string array_v__cflag__CFlag_str(array_v__cflag__CFlag a) { return indent_array_v__cflag__CFlag_str(a, 0);}
-string indent_array_v__cflag__CFlag_str(array_v__cflag__CFlag a, int indent_count) {
+static string array_v__cflag__CFlag_str(array_v__cflag__CFlag a) { return indent_array_v__cflag__CFlag_str(a, 0);}
+static string indent_array_v__cflag__CFlag_str(array_v__cflag__CFlag a, int indent_count) {
 	strings__Builder sb = strings__new_builder(a.len * 10);
 	strings__Builder_write(&sb, tos_lit("["));
 	for (int i = 0; i < a.len; ++i) {
@@ -7052,7 +7052,7 @@ string indent_array_v__cflag__CFlag_str(array_v__cflag__CFlag a, int indent_coun
 // V out
 
 // >> typeof() support for sum types
-char * v_typeof_sumtype_207(int sidx) { /* v.ast.TypeDecl */ 
+static char * v_typeof_sumtype_207(int sidx) { /* v.ast.TypeDecl */ 
 	switch(sidx) {
 		case 207: return "v.ast.TypeDecl";
 		case 204: return "v.ast.AliasTypeDecl";
@@ -7061,7 +7061,7 @@ char * v_typeof_sumtype_207(int sidx) { /* v.ast.TypeDecl */
 		default: return "unknown v.ast.TypeDecl";
 	}
 }
-char * v_typeof_sumtype_250(int sidx) { /* v.ast.Expr */ 
+static char * v_typeof_sumtype_250(int sidx) { /* v.ast.Expr */ 
 	switch(sidx) {
 		case 250: return "v.ast.Expr";
 		case 208: return "v.ast.AnonFn";
@@ -7109,7 +7109,7 @@ char * v_typeof_sumtype_250(int sidx) { /* v.ast.Expr */
 		default: return "unknown v.ast.Expr";
 	}
 }
-char * v_typeof_sumtype_274(int sidx) { /* v.ast.Stmt */ 
+static char * v_typeof_sumtype_274(int sidx) { /* v.ast.Stmt */ 
 	switch(sidx) {
 		case 274: return "v.ast.Stmt";
 		case 251: return "v.ast.AssertStmt";
@@ -7140,7 +7140,7 @@ char * v_typeof_sumtype_274(int sidx) { /* v.ast.Stmt */
 		default: return "unknown v.ast.Stmt";
 	}
 }
-char * v_typeof_sumtype_278(int sidx) { /* v.ast.ScopeObject */ 
+static char * v_typeof_sumtype_278(int sidx) { /* v.ast.ScopeObject */ 
 	switch(sidx) {
 		case 278: return "v.ast.ScopeObject";
 		case 275: return "v.ast.ConstField";
@@ -7149,7 +7149,7 @@ char * v_typeof_sumtype_278(int sidx) { /* v.ast.ScopeObject */
 		default: return "unknown v.ast.ScopeObject";
 	}
 }
-char * v_typeof_sumtype_314(int sidx) { /* v.ast.IdentInfo */ 
+static char * v_typeof_sumtype_314(int sidx) { /* v.ast.IdentInfo */ 
 	switch(sidx) {
 		case 314: return "v.ast.IdentInfo";
 		case 312: return "v.ast.IdentFn";
@@ -7157,7 +7157,7 @@ char * v_typeof_sumtype_314(int sidx) { /* v.ast.IdentInfo */
 		default: return "unknown v.ast.IdentInfo";
 	}
 }
-char * v_typeof_sumtype_335(int sidx) { /* v.table.FExpr */ 
+static char * v_typeof_sumtype_335(int sidx) { /* v.table.FExpr */ 
 	switch(sidx) {
 		case 335: return "v.table.FExpr";
 		case 3: return "byteptr";
@@ -7165,7 +7165,7 @@ char * v_typeof_sumtype_335(int sidx) { /* v.table.FExpr */
 		default: return "unknown v.table.FExpr";
 	}
 }
-char * v_typeof_sumtype_357(int sidx) { /* v.table.TypeInfo */ 
+static char * v_typeof_sumtype_357(int sidx) { /* v.table.TypeInfo */ 
 	switch(sidx) {
 		case 357: return "v.table.TypeInfo";
 		case 346: return "v.table.Aggregate";
@@ -20427,7 +20427,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("adeebad"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("c7cefa9"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -34809,8 +34809,8 @@ VV_LOCAL_SYMBOL string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v_
 		string already_generated_key_no_ptr = _STR("%.*s\000:%.*s", 2, styp, str_fn_name_no_ptr);
 		if (!_IN(string, already_generated_key_no_ptr, g->str_types)) {
 			array_push(&g->str_types, _MOV((string[]){ string_clone(already_generated_key_no_ptr) }));
-			strings__Builder_writeln(&g->type_definitions, _STR("string %.*s\000(%.*s\000 it); // auto no_ptr version", 3, str_fn_name_no_ptr, styp));
-			strings__Builder_writeln(&g->auto_str_funcs, _STR("string %.*s\000(%.*s\000 it){ return %.*s\000(&it); }", 4, str_fn_name_no_ptr, styp, str_fn_name));
+			strings__Builder_writeln(&g->type_definitions, _STR("static string %.*s\000(%.*s\000 it); // auto no_ptr version", 3, str_fn_name_no_ptr, styp));
+			strings__Builder_writeln(&g->auto_str_funcs, _STR("static string %.*s\000(%.*s\000 it){ return %.*s\000(&it); }", 4, str_fn_name_no_ptr, styp, str_fn_name));
 		}
 		return str_fn_name_no_ptr;
 	}
@@ -34859,18 +34859,18 @@ VV_LOCAL_SYMBOL string v__gen__Gen_gen_str_for_type_with_styp(v__gen__Gen* g, v_
 
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_alias(v__gen__Gen* g, v__table__Alias info, string styp, string str_fn_name) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.parent_type);
-	multi_return_bool_bool_int mr_3479 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_3479.arg0;
+	multi_return_bool_bool_int mr_3493 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_3493.arg0;
 	string parent_str_fn_name = v__gen__styp_to_str_fn_name(string_replace(sym->name, tos_lit("."), tos_lit("__")));
 	if (!sym_has_str_method) {
 		string parent_styp = v__gen__Gen_typ(g, info.parent_type);
 		parent_str_fn_name = v__gen__Gen_gen_str_for_type_with_styp(g, info.parent_type, parent_styp);
 	}
 	string clean_type_v_type_name = v__util__strip_main_name(string_replace(styp, tos_lit("__"), tos_lit(".")));
-	strings__Builder_writeln(&g->type_definitions, _STR("string %.*s\000(%.*s\000 it); // auto", 3, str_fn_name, styp));
-	strings__Builder_writeln(&g->auto_str_funcs, _STR("string %.*s\000(%.*s\000 it) { return indent_%.*s\000(it, 0); }", 4, str_fn_name, styp, str_fn_name));
-	strings__Builder_writeln(&g->type_definitions, _STR("string indent_%.*s\000(%.*s\000 it, int indent_count); // auto", 3, str_fn_name, styp));
-	strings__Builder_writeln(&g->auto_str_funcs, _STR("string indent_%.*s\000(%.*s\000 it, int indent_count) {", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->type_definitions, _STR("static string %.*s\000(%.*s\000 it); // auto", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("static string %.*s\000(%.*s\000 it) { return indent_%.*s\000(it, 0); }", 4, str_fn_name, styp, str_fn_name));
+	strings__Builder_writeln(&g->type_definitions, _STR("static string indent_%.*s\000(%.*s\000 it, int indent_count); // auto", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("static string indent_%.*s\000(%.*s\000 it, int indent_count) {", 3, str_fn_name, styp));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tstring indents = tos_lit(\"\");"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tfor (int i = 0; i < indent_count; ++i) {"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\t\tindents = string_add(indents, tos_lit(\"    \"));"));
@@ -34888,9 +34888,9 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Arr
 	}
 	string field_styp = v__gen__Gen_typ(g, typ);
 	bool is_elem_ptr = v__table__Type_is_ptr(typ);
-	multi_return_bool_bool_int mr_4952 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_4952.arg0;
-	bool str_method_expects_ptr = mr_4952.arg1;
+	multi_return_bool_bool_int mr_4994 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_4994.arg0;
+	bool str_method_expects_ptr = mr_4994.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -34903,10 +34903,10 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Arr
 	if (!sym_has_str_method) {
 		v__gen__Gen_gen_str_for_type_with_styp(g, typ, field_styp);
 	}
-	strings__Builder_writeln(&g->type_definitions, _STR("string %.*s\000(%.*s\000 a); // auto", 3, str_fn_name, styp));
-	strings__Builder_writeln(&g->auto_str_funcs, _STR("string %.*s\000(%.*s\000 a) { return indent_%.*s\000(a, 0);}", 4, str_fn_name, styp, str_fn_name));
-	strings__Builder_writeln(&g->type_definitions, _STR("string indent_%.*s\000(%.*s\000 a, int indent_count); // auto", 3, str_fn_name, styp));
-	strings__Builder_writeln(&g->auto_str_funcs, _STR("string indent_%.*s\000(%.*s\000 a, int indent_count) {", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->type_definitions, _STR("static string %.*s\000(%.*s\000 a); // auto", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("static string %.*s\000(%.*s\000 a) { return indent_%.*s\000(a, 0);}", 4, str_fn_name, styp, str_fn_name));
+	strings__Builder_writeln(&g->type_definitions, _STR("static string indent_%.*s\000(%.*s\000 a, int indent_count); // auto", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("static string indent_%.*s\000(%.*s\000 a, int indent_count) {", 3, str_fn_name, styp));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tstrings__Builder sb = strings__new_builder(a.len * 10);"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tstrings__Builder_write(&sb, tos_lit(\"[\"));"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tfor (int i = 0; i < a.len; ++i) {"));
@@ -34952,9 +34952,9 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__tabl
 	}
 	string field_styp = v__gen__Gen_typ(g, typ);
 	bool is_elem_ptr = v__table__Type_is_ptr(typ);
-	multi_return_bool_bool_int mr_8155 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_8155.arg0;
-	bool str_method_expects_ptr = mr_8155.arg1;
+	multi_return_bool_bool_int mr_8225 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_8225.arg0;
+	bool str_method_expects_ptr = mr_8225.arg1;
 	string elem_str_fn_name = tos_lit("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -34964,10 +34964,10 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__tabl
 	if (!v__table__TypeSymbol_has_method(sym, tos_lit("str"))) {
 		elem_str_fn_name = v__gen__Gen_gen_str_for_type_with_styp(g, typ, field_styp);
 	}
-	strings__Builder_writeln(&g->type_definitions, _STR("string %.*s\000(%.*s\000 a); // auto", 3, str_fn_name, styp));
-	strings__Builder_writeln(&g->auto_str_funcs, _STR("string %.*s\000(%.*s\000 a) { return indent_%.*s\000(a, 0);}", 4, str_fn_name, styp, str_fn_name));
-	strings__Builder_writeln(&g->type_definitions, _STR("string indent_%.*s\000(%.*s\000 a, int indent_count); // auto", 3, str_fn_name, styp));
-	strings__Builder_writeln(&g->auto_str_funcs, _STR("string indent_%.*s\000(%.*s\000 a, int indent_count) {", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->type_definitions, _STR("static string %.*s\000(%.*s\000 a); // auto", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("static string %.*s\000(%.*s\000 a) { return indent_%.*s\000(a, 0);}", 4, str_fn_name, styp, str_fn_name));
+	strings__Builder_writeln(&g->type_definitions, _STR("static string indent_%.*s\000(%.*s\000 a, int indent_count); // auto", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("static string indent_%.*s\000(%.*s\000 a, int indent_count) {", 3, str_fn_name, styp));
 	strings__Builder_writeln(&g->auto_str_funcs, _STR("\tstrings__Builder sb = strings__new_builder(%"PRId32"\000 * 10);", 2, info.size));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tstrings__Builder_write(&sb, tos_lit(\"[\"));"));
 	strings__Builder_writeln(&g->auto_str_funcs, _STR("\tfor (int i = 0; i < %"PRId32"\000; ++i) {", 2, info.size));
@@ -35008,10 +35008,10 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_map(v__gen__Gen* g, v__table__Map i
 		v__gen__Gen_gen_str_for_type_with_styp(g, info.value_type, val_styp);
 	}
 	string zero = v__gen__Gen_type_default(g, info.value_type);
-	strings__Builder_writeln(&g->type_definitions, _STR("string %.*s\000(%.*s\000 m); // auto", 3, str_fn_name, styp));
-	strings__Builder_writeln(&g->auto_str_funcs, _STR("string %.*s\000(%.*s\000 m) { return indent_%.*s\000(m, 0);}", 4, str_fn_name, styp, str_fn_name));
-	strings__Builder_writeln(&g->type_definitions, _STR("string indent_%.*s\000(%.*s\000 m, int indent_count); // auto", 3, str_fn_name, styp));
-	strings__Builder_writeln(&g->auto_str_funcs, _STR("string indent_%.*s\000(%.*s\000 m, int indent_count) { /* gen_str_for_map */", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->type_definitions, _STR("static string %.*s\000(%.*s\000 m); // auto", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("static string %.*s\000(%.*s\000 m) { return indent_%.*s\000(m, 0);}", 4, str_fn_name, styp, str_fn_name));
+	strings__Builder_writeln(&g->type_definitions, _STR("static string indent_%.*s\000(%.*s\000 m, int indent_count); // auto", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("static string indent_%.*s\000(%.*s\000 m, int indent_count) { /* gen_str_for_map */", 3, str_fn_name, styp));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tstrings__Builder sb = strings__new_builder(m.key_values.len*10);"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tstrings__Builder_write(&sb, tos_lit(\"{\"));"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tfor (unsigned int i = 0; i < m.key_values.len; ++i) {"));
@@ -35042,8 +35042,8 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_map(v__gen__Gen* g, v__table__Map i
 }
 
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_varg(v__gen__Gen* g, string styp, string str_fn_name, bool has_str_method) {
-	strings__Builder_writeln(&g->definitions, _STR("string varg_%.*s\000(varg_%.*s\000 it); // auto", 3, str_fn_name, styp));
-	strings__Builder_writeln(&g->auto_str_funcs, _STR("string varg_%.*s\000(varg_%.*s\000 it) {", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->definitions, _STR("static string varg_%.*s\000(varg_%.*s\000 it); // auto", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("static string varg_%.*s\000(varg_%.*s\000 it) {", 3, str_fn_name, styp));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tstrings__Builder sb = strings__new_builder(it.len);"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tstrings__Builder_write(&sb, tos_lit(\"[\"));"));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tfor(int i=0; i<it.len; ++i) {"));
@@ -35068,8 +35068,8 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_multi_return(v__gen__Gen* g, v__tab
 			v__gen__Gen_gen_str_for_type_with_styp(g, typ, field_styp);
 		}
 	}
-	strings__Builder_writeln(&g->type_definitions, _STR("string %.*s\000(%.*s\000 a); // auto", 3, str_fn_name, styp));
-	strings__Builder_writeln(&g->auto_str_funcs, _STR("string %.*s\000(%.*s\000 a) {", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->type_definitions, _STR("static string %.*s\000(%.*s\000 a); // auto", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("static string %.*s\000(%.*s\000 a) {", 3, str_fn_name, styp));
 	strings__Builder_writeln(&g->auto_str_funcs, _STR("\tstrings__Builder sb = strings__new_builder(%"PRId32"\000 * 10);", 2, info.types.len));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tstrings__Builder_write(&sb, tos_lit(\"(\"));"));
 	// FOR IN array
@@ -35079,9 +35079,9 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_multi_return(v__gen__Gen* g, v__tab
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 		string field_styp = v__gen__Gen_typ(g, typ);
 		bool is_arg_ptr = v__table__Type_is_ptr(typ);
-		multi_return_bool_bool_int mr_14691 = v__table__TypeSymbol_str_method_info(sym);
-		bool sym_has_str_method = mr_14691.arg0;
-		bool str_method_expects_ptr = mr_14691.arg1;
+		multi_return_bool_bool_int mr_14845 = v__table__TypeSymbol_str_method_info(sym);
+		bool sym_has_str_method = mr_14845.arg0;
+		bool str_method_expects_ptr = mr_14845.arg1;
 		string arg_str_fn_name = tos_lit("");
 		if (sym_has_str_method) {
 			arg_str_fn_name = (is_arg_ptr ? (string_add(string_replace(field_styp, tos_lit("*"), tos_lit("")), tos_lit("_str"))) : (string_add(field_styp, tos_lit("_str"))));
@@ -35129,10 +35129,10 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_struct(v__gen__Gen* g, v__table__St
 			map_set(&fnames2strfunc, field_styp, &(string[]) { field_fn_name });
 		}
 	}
-	strings__Builder_writeln(&g->type_definitions, _STR("string %.*s\000(%.*s\000 x); // auto", 3, str_fn_name, styp));
-	strings__Builder_writeln(&g->auto_str_funcs, _STR("string %.*s\000(%.*s\000 x) { return indent_%.*s\000(x, 0);}", 4, str_fn_name, styp, str_fn_name));
-	strings__Builder_writeln(&g->type_definitions, _STR("string indent_%.*s\000(%.*s\000 x, int indent_count); // auto", 3, str_fn_name, styp));
-	strings__Builder_writeln(&g->auto_str_funcs, _STR("string indent_%.*s\000(%.*s\000 x, int indent_count) {", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->type_definitions, _STR("static string %.*s\000(%.*s\000 x); // auto", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("static string %.*s\000(%.*s\000 x) { return indent_%.*s\000(x, 0);}", 4, str_fn_name, styp, str_fn_name));
+	strings__Builder_writeln(&g->type_definitions, _STR("static string indent_%.*s\000(%.*s\000 x, int indent_count); // auto", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("static string indent_%.*s\000(%.*s\000 x, int indent_count) {", 3, str_fn_name, styp));
 	string clean_struct_v_type_name = string_replace(styp, tos_lit("__"), tos_lit("."));
 	if (string_contains(clean_struct_v_type_name, tos_lit("_T_"))) {
 		clean_struct_v_type_name = string_add(string_replace(string_replace(clean_struct_v_type_name, tos_lit("_T_"), tos_lit("<")), tos_lit("_"), tos_lit(", ")), tos_lit(">"));
@@ -35232,8 +35232,8 @@ VV_LOCAL_SYMBOL string v__gen__struct_auto_str_func(v__table__TypeSymbol sym, v_
 
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_enum(v__gen__Gen* g, v__table__Enum info, string styp, string str_fn_name) {
 	string s = v__util__no_dots(styp);
-	strings__Builder_writeln(&g->type_definitions, _STR("string %.*s\000(%.*s\000 it); // auto", 3, str_fn_name, styp));
-	strings__Builder_writeln(&g->auto_str_funcs, _STR("string %.*s\000(%.*s\000 it) { /* gen_str_for_enum */", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->type_definitions, _STR("static string %.*s\000(%.*s\000 it); // auto", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("static string %.*s\000(%.*s\000 it) { /* gen_str_for_enum */", 3, str_fn_name, styp));
 	strings__Builder_writeln(&g->auto_str_funcs, tos_lit("\tswitch(it) {"));
 	array_string seen = __new_array_with_default(info.vals.len, 0, sizeof(string), &(string[]){tos_lit("")});
 	// FOR IN array
@@ -35265,10 +35265,10 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_union_sum_type(v__gen__Gen* g, v__t
 			map_set(&gen_fn_names, field_styp, &(string[]) { field_fn_name });
 		}
 	}
-	strings__Builder_writeln(&g->type_definitions, _STR("string %.*s\000(%.*s\000 x); // auto", 3, str_fn_name, styp));
-	strings__Builder_writeln(&g->auto_str_funcs, _STR("string %.*s\000(%.*s\000 x) { return indent_%.*s\000(x, 0); }", 4, str_fn_name, styp, str_fn_name));
-	strings__Builder_writeln(&g->type_definitions, _STR("string indent_%.*s\000(%.*s\000 x, int indent_count); // auto", 3, str_fn_name, styp));
-	strings__Builder_writeln(&g->auto_str_funcs, _STR("string indent_%.*s\000(%.*s\000 x, int indent_count) {", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->type_definitions, _STR("static string %.*s\000(%.*s\000 x); // auto", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("static string %.*s\000(%.*s\000 x) { return indent_%.*s\000(x, 0); }", 4, str_fn_name, styp, str_fn_name));
+	strings__Builder_writeln(&g->type_definitions, _STR("static string indent_%.*s\000(%.*s\000 x, int indent_count); // auto", 3, str_fn_name, styp));
+	strings__Builder_writeln(&g->auto_str_funcs, _STR("static string indent_%.*s\000(%.*s\000 x, int indent_count) {", 3, str_fn_name, styp));
 	string clean_sum_type_v_type_name = string_replace(styp, tos_lit("__"), tos_lit("."));
 	if (string_ends_with(styp, tos_lit("*"))) {
 		clean_sum_type_v_type_name = string_add(tos_lit("&"), string_replace(clean_sum_type_v_type_name, tos_lit("*"), tos_lit("")));
@@ -35615,7 +35615,7 @@ void v__gen__Gen_write_typeof_functions(v__gen__Gen* g) {
 		if (typ.kind == v__table__Kind_sum_type) {
 			v__table__SumType sum_info = /* as */ *(v__table__SumType*)__as_cast((typ.info)._v__table__SumType, (typ.info).typ, /*expected:*/354);
 			int tidx = v__table__Table_find_type_idx(g->table, typ.name);
-			v__gen__Gen_writeln(g, _STR("char * v_typeof_sumtype_%"PRId32"\000(int sidx) { /* %.*s\000 */ ", 3, tidx, typ.name));
+			v__gen__Gen_writeln(g, _STR("static char * v_typeof_sumtype_%"PRId32"\000(int sidx) { /* %.*s\000 */ ", 3, tidx, typ.name));
 			v__gen__Gen_writeln(g, tos_lit("	switch(sidx) {"));
 			v__gen__Gen_writeln(g, _STR("		case %"PRId32"\000: return \"%.*s\000\";", 3, tidx, v__util__strip_main_name(typ.name)));
 			// FOR IN array
@@ -35672,9 +35672,9 @@ VV_LOCAL_SYMBOL string v__gen__Gen_optional_type_text(v__gen__Gen* g, string sty
 }
 
 VV_LOCAL_SYMBOL string v__gen__Gen_register_optional(v__gen__Gen* g, v__table__Type t) {
-	multi_return_string_string mr_17779 = v__gen__Gen_optional_type_name(g, t);
-	string styp = mr_17779.arg0;
-	string base = mr_17779.arg1;
+	multi_return_string_string mr_17786 = v__gen__Gen_optional_type_name(g, t);
+	string styp = mr_17786.arg0;
+	string base = mr_17786.arg1;
 	if (!_IN(string, styp, g->optionals)) {
 		string no_ptr = string_replace(base, tos_lit("*"), tos_lit("_ptr"));
 		string typ = (string_eq(base, tos_lit("void")) ? (tos_lit("void*")) : (base));
@@ -36046,11 +36046,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_stmt(v__gen__Gen* g, v__ast__Stmt node) {
 		bool skip = false;
 		int pos = g->out.buf.len;
 		if (g->pref->build_mode == v__pref__BuildMode_build_module) {
-			if (!string_starts_with((*node._v__ast__FnDecl).name, string_add(g->module_built, tos_lit("."))) && string_ne((*node._v__ast__FnDecl).mod, string_after(g->module_built, tos_lit("/")))) {
-				println(_STR("skip bm %.*s\000 mode=%.*s\000 module_built=%.*s", 3, (*node._v__ast__FnDecl).name, (*node._v__ast__FnDecl).mod, g->module_built));
+			string mod = (g->is_builtin_mod ? (tos_lit("builtin")) : (string_all_before_last((*node._v__ast__FnDecl).name, tos_lit("."))));
+			if (string_ne(mod, g->module_built) && string_ne((*node._v__ast__FnDecl).mod, string_after(g->module_built, tos_lit("/")))) {
 				skip = true;
 			}
-			if (g->is_builtin_mod && string_eq(g->module_built, tos_lit("builtin"))) {
+			if (g->is_builtin_mod && string_eq(g->module_built, tos_lit("builtin")) && string_eq((*node._v__ast__FnDecl).mod, tos_lit("builtin"))) {
 				skip = false;
 			}
 			if (!skip) {
@@ -38835,15 +38835,16 @@ VV_LOCAL_SYMBOL void v__gen__Gen_const_decl_init_later(v__gen__Gen* g, string mo
 }
 
 VV_LOCAL_SYMBOL void v__gen__Gen_global_decl(v__gen__Gen* g, v__ast__GlobalDecl node) {
+	string mod = (g->pref->build_mode == v__pref__BuildMode_build_module && g->is_builtin_mod ? (tos_lit("static ")) : (tos_lit("")));
 	// FOR IN array
 	array _t1432 = node.fields;
 	for (int _t1433 = 0; _t1433 < _t1432.len; ++_t1433) {
 		v__ast__GlobalField field = ((v__ast__GlobalField*)_t1432.data)[_t1433];
 		string styp = v__gen__Gen_typ(g, field.typ);
 		if (field.has_expr) {
-			strings__Builder_writeln(&g->definitions, _STR("%.*s\000 %.*s\000 = %.*s\000; // global", 4, styp, field.name, v__ast__Expr_str(field.expr)));
+			strings__Builder_writeln(&g->definitions, _STR("%.*s\000%.*s\000 %.*s\000 = %.*s\000; // global", 5, mod, styp, field.name, v__ast__Expr_str(field.expr)));
 		} else {
-			strings__Builder_writeln(&g->definitions, _STR("%.*s\000 %.*s\000; // global", 3, styp, field.name));
+			strings__Builder_writeln(&g->definitions, _STR("%.*s\000%.*s\000 %.*s\000; // global", 4, mod, styp, field.name));
 		}
 	}
 }
@@ -39302,9 +39303,9 @@ int _t1462_len = (*typ.info._v__table__Struct).fields.len;
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_131758 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_131758.arg0;
-						string base = mr_131758.arg1;
+						multi_return_string_string mr_131946 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_131946.arg0;
+						string base = mr_131946.arg1;
 						array_push(&g->optionals, _MOV((string[]){ string_clone(styp) }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -39419,9 +39420,9 @@ VV_LOCAL_SYMBOL Option_bool v__gen__Gen_gen_expr_to_string(v__gen__Gen* g, v__as
 			sym = parent_sym;
 		}
 	}
-	multi_return_bool_bool_int mr_135550 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_135550.arg0;
-	bool str_method_expects_ptr = mr_135550.arg1;
+	multi_return_bool_bool_int mr_135738 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_135738.arg0;
+	bool str_method_expects_ptr = mr_135738.arg1;
 	if (v__table__Type_has_flag(typ, v__table__TypeFlag_variadic)) {
 		string str_fn_name = v__gen__Gen_gen_str_for_type(g, typ);
 		v__gen__Gen_write(g, _STR("%.*s\000(", 2, str_fn_name));
@@ -39814,11 +39815,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__as
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->fn_decl->name, tos_lit("main.main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_147584 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_147584.arg0;
-				string pafile = mr_147584.arg1;
-				string pamod = mr_147584.arg2;
-				string pafn = mr_147584.arg3;
+				multi_return_int_string_string_string mr_147772 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_147772.arg0;
+				string pafile = mr_147772.arg1;
+				string pamod = mr_147772.arg2;
+				string pafn = mr_147772.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(_STR(\"optional not set (%%.*s\\000)\", 2, %.*s\000.v_error));", 2, cvar_name));
@@ -45357,6 +45358,9 @@ VV_LOCAL_SYMBOL void v__builder__Builder_post_process_c_compiler_output(v__build
 }
 
 VV_LOCAL_SYMBOL string v__builder__Builder_rebuild_cached_module(v__builder__Builder* v, string vexe, string imp_path) {
+	if (string_eq(imp_path, tos_lit("vlib/strconv"))) {
+		return tos_lit("");
+	}
 	Option_string _t1793 = v__vcache__CacheManager_exists(&v->pref->cache_manager, tos_lit(".o"), imp_path);
 	if (!_t1793.ok) {
 		string err = _t1793.v_error;
@@ -47075,7 +47079,7 @@ void _vinit() {
 		tos_lit(""), tos_lit("\t"), tos_lit("\t\t"), tos_lit("\t\t\t"), tos_lit("\t\t\t\t"), tos_lit("\t\t\t\t\t"), tos_lit("\t\t\t\t\t\t"), tos_lit("\t\t\t\t\t\t\t"), tos_lit("\t\t\t\t\t\t\t\t")}));
 	_const_v__gen__skip_struct_init = new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){tos_lit("struct stat"), tos_lit("struct addrinfo")}));
 	_const_v__gen__builtins = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){tos_lit("string"), tos_lit("array"), tos_lit("KeyValue"), tos_lit("DenseArray"), tos_lit("map"), tos_lit("Option")}));
-	_const_v__gen__c_headers = _STR("\n// c_headers\ntypedef int (*qsort_callback_func)(const void*, const void*);\n#include <stdio.h>  // TODO remove all these includes, define all function signatures and types manually\n#include <stdlib.h>\n\n#if defined(_WIN32) || defined(__CYGWIN__)\n	#define VV_EXPORTED_SYMBOL extern __declspec(dllexport)\n	#define VV_LOCAL_SYMBOL static\n#else\n	// 4 < gcc < 5 is used by some older Ubuntu LTS and Centos versions,\n	// and does not support __has_attribute(visibility) ...\n	#ifndef __has_attribute\n		#define __has_attribute(x) 0  // Compatibility with non-clang compilers.\n	#endif\n	#if (defined(__GNUC__) && (__GNUC__ >= 4)) || (defined(__clang__) && __has_attribute(visibility))\n		#define VV_EXPORTED_SYMBOL extern __attribute__ ((visibility (\"default\")))\n		#define VV_LOCAL_SYMBOL  __attribute__ ((visibility (\"hidden\")))\n	#else\n		#define VV_EXPORTED_SYMBOL extern\n		#define VV_LOCAL_SYMBOL static\n	#endif\n#endif\n\n#ifdef __cplusplus\n	#include <utility>\n	#define _MOV std::move\n#else\n	#define _MOV\n#endif\n\n#if defined(__TINYC__) && defined(__has_include)\n// tcc does not support has_include properly yet, turn it off completely\n#undef __has_include\n#endif\n\n#ifndef _WIN32\n	#if defined __has_include\n		#if __has_include (<execinfo.h>)\n			#include <execinfo.h>\n		#else\n			// Most probably musl OR __ANDROID__ ...\n			int backtrace (void **__array, int __size) { return 0; }\n			char **backtrace_symbols (void *const *__array, int __size){ return 0; }\n			void backtrace_symbols_fd (void *const *__array, int __size, int __fd){}\n		#endif\n	#endif\n#endif\n\n//#include \"fns.h\"\n#include <signal.h>\n#include <stdarg.h> // for va_list\n#include <string.h> // memcpy\n\n#if INTPTR_MAX == INT32_MAX\n	#define TARGET_IS_32BIT 1\n#elif INTPTR_MAX == INT64_MAX\n	#define TARGET_IS_64BIT 1\n#else\n	#error \"The environment is not 32 or 64-bit.\"\n#endif\n\n#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) || defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || defined(__MIBSEB__)\n	#define TARGET_ORDER_IS_BIG\n#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || defined(_M_X64) || defined(_M_IX86)\n	#define TARGET_ORDER_IS_LITTLE\n#else\n	#error \"Unknown architecture endianness\"\n#endif\n\n#ifndef _WIN32\n	#include <ctype.h>\n	#include <locale.h> // tolower\n	#include <sys/time.h>\n	#include <unistd.h> // sleep\n	extern char **environ;\n#endif\n\n#if defined(__CYGWIN__) && !defined(_WIN32)\n	#error Cygwin is not supported, please use MinGW or Visual Studio.\n#endif\n\n#ifdef __linux__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __FreeBSD__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __DragonFly__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n	#include <sys/types.h>\n	#include <sys/resource.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __NetBSD__\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __sun\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n%.*s\000\n\n#ifdef _WIN32\n	#define WINVER 0x0600\n	#ifdef _WIN32_WINNT\n		#undef _WIN32_WINNT\n	#endif\n	#define _WIN32_WINNT 0x0600\n	#define WIN32_LEAN_AND_MEAN\n	#ifndef _UNICODE\n	#define _UNICODE\n	#endif\n	#ifndef UNICODE\n	#define UNICODE\n	#endif\n	#include <windows.h>\n\n	#include <io.h> // _waccess\n	#include <direct.h> // _wgetcwd\n	//#include <WinSock2.h>\n\n	#ifdef _MSC_VER\n		// On MSVC these are the same (as long as /volatile:ms is passed)\n		#define _Atomic volatile\n\n		// MSVC cannot parse some things properly\n		#undef EMPTY_STRUCT_DECLARATION\n		#undef OPTION_CAST\n\n		#define EMPTY_STRUCT_DECLARATION int ____dummy_variable\n		#define OPTION_CAST(x)\n		#undef __NOINLINE\n		#undef __IRQHANDLER\n		#define __NOINLINE __declspec(noinline)\n		#define __IRQHANDLER __declspec(naked)\n\n		#include <dbghelp.h>\n		#pragma comment(lib, \"Dbghelp.lib\")\n\n		extern wchar_t **_wenviron;\n	#elif !defined(SRWLOCK_INIT)\n		// these seem to be missing on Windows tcc\n		typedef struct SRWLOCK { void* SRWLOCK; } SRWLOCK;\n		void InitializeSRWLock(void*);\n		void AcquireSRWLockShared(void*);\n		void AcquireSRWLockExclusive(void*);\n		void ReleaseSRWLockShared(void*);\n		void ReleaseSRWLockExclusive(void*);\n	#endif\n#else\n	#include <pthread.h>\n	#ifndef PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP\n		// musl does not have that\n		#define pthread_rwlockattr_setkind_np(a, b)\n	#endif\n#endif\n\n// g_live_info is used by live.info()\nvoid* g_live_info = NULL;\n\n//============================== HELPER C MACROS =============================*/\n//#define tos4(s, slen) ((string){.str=(s), .len=(slen)})\n#define _SLIT(s) ((string){.str=(byteptr)(s), .len=(strlen(s))})\n#define _PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); array_push_many(arr, tmp.data, tmp.len);}\n#define _IN(typ, val, arr) array_##typ##_contains(arr, val)\n#define _IN_MAP(val, m) map_exists(m, val)\n\n// these macros have corresponding implementations in builtin/int.v with different signedness\n#define array_i8_contains(a, b) array_byte_contains(a, (byte)(b))\n#define array_i16_contains(a, b) array_u16_contains(a, (u16)(b))\n#define array_u32_contains(a, b) array_int_contains(a, (int)(b))\n#define array_i64_contains(a, b) array_u64_contains(a, (u64)(b))\n#define array_rune_contains(a, b) array_int_contains(a, (int)(b))\n#define array_f32_contains(a, b) array_int_contains(a, *(int*)&((f32[]){(b)}))\n#define array_f64_contains(a, b) array_u64_contains(a, *(u64*)&((f64[]){(b)}))\n#ifdef TARGET_IS_64BIT\n#define array_voidptr_contains(a, b) array_u64_contains(a, (u64)(b))\n#else\n#define array_voidptr_contains(a, b) array_int_contains(a, (int)(b))\n#endif\n\n// unsigned/signed comparisons\nstatic inline bool _us32_gt(uint32_t a, int32_t b) { return a > INT32_MAX || (int32_t)a > b; }\nstatic inline bool _us32_ge(uint32_t a, int32_t b) { return a >= INT32_MAX || (int32_t)a >= b; }\nstatic inline bool _us32_eq(uint32_t a, int32_t b) { return a <= INT32_MAX && (int32_t)a == b; }\nstatic inline bool _us32_ne(uint32_t a, int32_t b) { return a > INT32_MAX || (int32_t)a != b; }\nstatic inline bool _us32_le(uint32_t a, int32_t b) { return a <= INT32_MAX && (int32_t)a <= b; }\nstatic inline bool _us32_lt(uint32_t a, int32_t b) { return a < INT32_MAX && (int32_t)a < b; }\nstatic inline bool _us64_gt(uint64_t a, int64_t b) { return a > INT64_MAX || (int64_t)a > b; }\nstatic inline bool _us64_ge(uint64_t a, int64_t b) { return a >= INT64_MAX || (int64_t)a >= b; }\nstatic inline bool _us64_eq(uint64_t a, int64_t b) { return a <= INT64_MAX && (int64_t)a == b; }\nstatic inline bool _us64_ne(uint64_t a, int64_t b) { return a > INT64_MAX || (int64_t)a != b; }\nstatic inline bool _us64_le(uint64_t a, int64_t b) { return a <= INT64_MAX && (int64_t)a <= b; }\nstatic inline bool _us64_lt(uint64_t a, int64_t b) { return a < INT64_MAX && (int64_t)a < b; }\n\n#if defined(__MINGW32__) || defined(__MINGW64__) || (defined(_WIN32) && defined(__TINYC__))\n	#undef PRId64\n	#undef PRIi64\n	#undef PRIo64\n	#undef PRIu64\n	#undef PRIx64\n	#undef PRIX64\n	#define PRId64 \"lld\"\n	#define PRIi64 \"lli\"\n	#define PRIo64 \"llo\"\n	#define PRIu64 \"llu\"\n	#define PRIx64 \"llx\"\n	#define PRIX64 \"llX\"\n#endif\n\n//================================== GLOBALS =================================*/\n//byte g_str_buf[1024];\nbyte* g_str_buf;\nint load_so(byteptr);\nvoid reload_so();\nvoid _vinit();\nvoid _vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\n// ============== wyhash ==============\n//Author: Wang Yi\n#ifndef wyhash_version_gamma\n	#define wyhash_version_gamma\n	#define WYHASH_CONDOM 0\n	#include <stdint.h>\n	#include <string.h>\n	#if defined(_MSC_VER) && defined(_M_X64)\n		#include <intrin.h>\n		#pragma intrinsic(_umul128)\n	#endif\n\n	//const uint64_t _wyp0=0xa0761d6478bd642full, _wyp1=0xe7037ed1a0b428dbull;\n	#define _wyp0 ((uint64_t)0xa0761d6478bd642full)\n	#define _wyp1 ((uint64_t)0xe7037ed1a0b428dbull)\n\n	#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__) || defined(__TINYC__)\n		#define _likely_(x) __builtin_expect(x, 1)\n		#define _unlikely_(x) __builtin_expect((x), 0)\n	#else\n		#define _likely_(x) (x)\n		#define _unlikely_(x) (x)\n	#endif\n\n	#if defined(TARGET_ORDER_IS_LITTLE)\n		#define WYHASH_LITTLE_ENDIAN 1\n	#elif defined(TARGET_ORDER_IS_BIG)\n		#define WYHASH_LITTLE_ENDIAN 0\n	#endif\n\n	#if (WYHASH_LITTLE_ENDIAN)\n		static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return v;}\n		static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return v;}\n	#else\n		#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__)\n			static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return __builtin_bswap64(v);}\n			static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return __builtin_bswap32(v);}\n		#elif defined(_MSC_VER)\n			static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return _byteswap_uint64(v);}\n			static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return _byteswap_ulong(v);}\n		#elif defined(__TINYC__)\n			static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return bswap_64(v);}\n			static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return bswap_32(v);}\n		#endif\n	#endif\n\n	static inline uint64_t _wyr3(const uint8_t *p, unsigned k) { return (((uint64_t)p[0]) << 16) | (((uint64_t)p[k >> 1]) << 8) | p[k - 1];}\n	static inline uint64_t _wyrotr(uint64_t v, unsigned k) { return (v >> k) | (v << (64 - k));}\n	static inline void _wymix128(uint64_t A, uint64_t B, uint64_t *C, uint64_t *D){\n		A^=*C;	B^=*D;\n	#ifdef UNOFFICIAL_WYHASH_32BIT\n		uint64_t hh=(A>>32)*(B>>32), hl=(A>>32)*(unsigned)B, lh=(unsigned)A*(B>>32), ll=(uint64_t)(unsigned)A*(unsigned)B;\n		*C=_wyrotr(hl,32)^hh; *D=_wyrotr(lh,32)^ll;\n	#else\n		#ifdef __SIZEOF_INT128__\n			__uint128_t r=A; r*=B; *C=(uint64_t)r; *D=(uint64_t)(r>>64);\n		#elif defined(_MSC_VER) && defined(_M_X64)\n			A=_umul128(A,B,&B); *C=A; *D=B;\n		#else\n			uint64_t ha=A>>32, hb=B>>32, la=(uint32_t)A, lb=(uint32_t)B, hi, lo;\n			uint64_t rh=ha*hb, rm0=ha*lb, rm1=hb*la, rl=la*lb, t=rl+(rm0<<32), c=t<rl;\n			lo=t+(rm1<<32); c+=lo<t; hi=rh+(rm0>>32)+(rm1>>32)+c;\n			*C=lo;	*D=hi;\n		#endif\n	#endif\n	}\n	static inline uint64_t wyhash(const void *key, uint64_t len, uint64_t seed){\n		const uint8_t *p=(const uint8_t *)key;\n		uint64_t i=len, see1=seed;\n		start:\n		if (_likely_(i<=16)) {\n	#ifndef	WYHASH_CONDOM\n			uint64_t shift = (i<8)*((8-i)<<3);\n			//WARNING: intended reading outside buffer, trading for speed.\n			_wymix128((_wyr8(p)<<shift)^_wyp0, (_wyr8(p+i-8)>>shift)^_wyp1, &seed, &see1);\n	#else\n			if (_likely_(i<=8)) {\n				if (_likely_(i>=4)) _wymix128(_wyr4(p)^_wyp0,_wyr4(p+i-4)^_wyp1, &seed, &see1);\n				else if (_likely_(i)) _wymix128(_wyr3(p,i)^_wyp0,_wyp1, &seed, &see1);\n				else _wymix128(_wyp0,_wyp1, &seed, &see1);\n			}\n			else _wymix128(_wyr8(p)^_wyp0,_wyr8(p+i-8)^_wyp1, &seed, &see1);\n	#endif\n			_wymix128(len,_wyp0, &seed, &see1);\n			return	seed^see1;\n		}\n		_wymix128(_wyr8(p)^_wyp0,_wyr8(p+8)^_wyp1, &seed, &see1);\n		i-=16;	p+=16;	goto start;\n	}\n	static inline uint64_t wyhash64(uint64_t A, uint64_t B){\n		_wymix128(_wyp0,_wyp1,&A,&B);\n		_wymix128(0,0,&A,&B);\n		return	A^B;\n	}\n	static inline uint64_t wyrand(uint64_t *seed){\n		*seed+=_wyp0;\n		uint64_t	a=0, b=0;\n		_wymix128(*seed,*seed^_wyp1,&a,&b);\n		return	a^b;\n	}\n	static inline double wy2u01(uint64_t r) {\n		const double _wynorm=1.0/(1ull<<52);\n		return (r>>12)*_wynorm;\n	}\n	static inline double wy2gau(uint64_t r) {\n		const double _wynorm=1.0/(1ull<<20);\n		return ((r&0x1fffff)+((r>>21)&0x1fffff)+((r>>42)&0x1fffff))*_wynorm-3.0;\n	}\n#endif\n\nvoidptr memdup(voidptr src, int sz);\nvoidptr memfreedup(voidptr ptr, voidptr src, int sz) {\n	free(ptr);\n	return memdup(src, sz);\n}\n", 2, _const_v__gen__c_common_macros);
+	_const_v__gen__c_headers = _STR("\n// c_headers\ntypedef int (*qsort_callback_func)(const void*, const void*);\n#include <stdio.h>  // TODO remove all these includes, define all function signatures and types manually\n#include <stdlib.h>\n\n#if defined(_WIN32) || defined(__CYGWIN__)\n	#define VV_EXPORTED_SYMBOL extern __declspec(dllexport)\n	#define VV_LOCAL_SYMBOL static\n#else\n	// 4 < gcc < 5 is used by some older Ubuntu LTS and Centos versions,\n	// and does not support __has_attribute(visibility) ...\n	#ifndef __has_attribute\n		#define __has_attribute(x) 0  // Compatibility with non-clang compilers.\n	#endif\n	#if (defined(__GNUC__) && (__GNUC__ >= 4)) || (defined(__clang__) && __has_attribute(visibility))\n		#define VV_EXPORTED_SYMBOL extern __attribute__ ((visibility (\"default\")))\n		#define VV_LOCAL_SYMBOL  __attribute__ ((visibility (\"hidden\")))\n	#else\n		#define VV_EXPORTED_SYMBOL extern\n		#define VV_LOCAL_SYMBOL static\n	#endif\n#endif\n\n#ifdef __cplusplus\n	#include <utility>\n	#define _MOV std::move\n#else\n	#define _MOV\n#endif\n\n#if defined(__TINYC__) && defined(__has_include)\n// tcc does not support has_include properly yet, turn it off completely\n#undef __has_include\n#endif\n\n#ifndef _WIN32\n	#if defined __has_include\n		#if __has_include (<execinfo.h>)\n			#include <execinfo.h>\n		#else\n			// Most probably musl OR __ANDROID__ ...\n			int backtrace (void **__array, int __size) { return 0; }\n			char **backtrace_symbols (void *const *__array, int __size){ return 0; }\n			void backtrace_symbols_fd (void *const *__array, int __size, int __fd){}\n		#endif\n	#endif\n#endif\n\n//#include \"fns.h\"\n#include <signal.h>\n#include <stdarg.h> // for va_list\n#include <string.h> // memcpy\n\n#if INTPTR_MAX == INT32_MAX\n	#define TARGET_IS_32BIT 1\n#elif INTPTR_MAX == INT64_MAX\n	#define TARGET_IS_64BIT 1\n#else\n	#error \"The environment is not 32 or 64-bit.\"\n#endif\n\n#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) || defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || defined(__MIBSEB__)\n	#define TARGET_ORDER_IS_BIG\n#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || defined(_M_X64) || defined(_M_IX86)\n	#define TARGET_ORDER_IS_LITTLE\n#else\n	#error \"Unknown architecture endianness\"\n#endif\n\n#ifndef _WIN32\n	#include <ctype.h>\n	#include <locale.h> // tolower\n	#include <sys/time.h>\n	#include <unistd.h> // sleep\n	extern char **environ;\n#endif\n\n#if defined(__CYGWIN__) && !defined(_WIN32)\n	#error Cygwin is not supported, please use MinGW or Visual Studio.\n#endif\n\n#ifdef __linux__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __FreeBSD__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __DragonFly__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n	#include <sys/types.h>\n	#include <sys/resource.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __NetBSD__\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __sun\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n%.*s\000\n\n#ifdef _WIN32\n	#define WINVER 0x0600\n	#ifdef _WIN32_WINNT\n		#undef _WIN32_WINNT\n	#endif\n	#define _WIN32_WINNT 0x0600\n	#define WIN32_LEAN_AND_MEAN\n	#ifndef _UNICODE\n	#define _UNICODE\n	#endif\n	#ifndef UNICODE\n	#define UNICODE\n	#endif\n	#include <windows.h>\n\n	#include <io.h> // _waccess\n	#include <direct.h> // _wgetcwd\n	//#include <WinSock2.h>\n\n	#ifdef _MSC_VER\n		// On MSVC these are the same (as long as /volatile:ms is passed)\n		#define _Atomic volatile\n\n		// MSVC cannot parse some things properly\n		#undef EMPTY_STRUCT_DECLARATION\n		#undef OPTION_CAST\n\n		#define EMPTY_STRUCT_DECLARATION int ____dummy_variable\n		#define OPTION_CAST(x)\n		#undef __NOINLINE\n		#undef __IRQHANDLER\n		#define __NOINLINE __declspec(noinline)\n		#define __IRQHANDLER __declspec(naked)\n\n		#include <dbghelp.h>\n		#pragma comment(lib, \"Dbghelp.lib\")\n\n		extern wchar_t **_wenviron;\n	#elif !defined(SRWLOCK_INIT)\n		// these seem to be missing on Windows tcc\n		typedef struct SRWLOCK { void* SRWLOCK; } SRWLOCK;\n		void InitializeSRWLock(void*);\n		void AcquireSRWLockShared(void*);\n		void AcquireSRWLockExclusive(void*);\n		void ReleaseSRWLockShared(void*);\n		void ReleaseSRWLockExclusive(void*);\n	#endif\n#else\n	#include <pthread.h>\n	#ifndef PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP\n		// musl does not have that\n		#define pthread_rwlockattr_setkind_np(a, b)\n	#endif\n#endif\n\n// g_live_info is used by live.info()\nstatic void* g_live_info = NULL;\n\n//============================== HELPER C MACROS =============================*/\n//#define tos4(s, slen) ((string){.str=(s), .len=(slen)})\n#define _SLIT(s) ((string){.str=(byteptr)(s), .len=(strlen(s))})\n#define _PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); array_push_many(arr, tmp.data, tmp.len);}\n#define _IN(typ, val, arr) array_##typ##_contains(arr, val)\n#define _IN_MAP(val, m) map_exists(m, val)\n\n// these macros have corresponding implementations in builtin/int.v with different signedness\n#define array_i8_contains(a, b) array_byte_contains(a, (byte)(b))\n#define array_i16_contains(a, b) array_u16_contains(a, (u16)(b))\n#define array_u32_contains(a, b) array_int_contains(a, (int)(b))\n#define array_i64_contains(a, b) array_u64_contains(a, (u64)(b))\n#define array_rune_contains(a, b) array_int_contains(a, (int)(b))\n#define array_f32_contains(a, b) array_int_contains(a, *(int*)&((f32[]){(b)}))\n#define array_f64_contains(a, b) array_u64_contains(a, *(u64*)&((f64[]){(b)}))\n#ifdef TARGET_IS_64BIT\n#define array_voidptr_contains(a, b) array_u64_contains(a, (u64)(b))\n#else\n#define array_voidptr_contains(a, b) array_int_contains(a, (int)(b))\n#endif\n\n// unsigned/signed comparisons\nstatic inline bool _us32_gt(uint32_t a, int32_t b) { return a > INT32_MAX || (int32_t)a > b; }\nstatic inline bool _us32_ge(uint32_t a, int32_t b) { return a >= INT32_MAX || (int32_t)a >= b; }\nstatic inline bool _us32_eq(uint32_t a, int32_t b) { return a <= INT32_MAX && (int32_t)a == b; }\nstatic inline bool _us32_ne(uint32_t a, int32_t b) { return a > INT32_MAX || (int32_t)a != b; }\nstatic inline bool _us32_le(uint32_t a, int32_t b) { return a <= INT32_MAX && (int32_t)a <= b; }\nstatic inline bool _us32_lt(uint32_t a, int32_t b) { return a < INT32_MAX && (int32_t)a < b; }\nstatic inline bool _us64_gt(uint64_t a, int64_t b) { return a > INT64_MAX || (int64_t)a > b; }\nstatic inline bool _us64_ge(uint64_t a, int64_t b) { return a >= INT64_MAX || (int64_t)a >= b; }\nstatic inline bool _us64_eq(uint64_t a, int64_t b) { return a <= INT64_MAX && (int64_t)a == b; }\nstatic inline bool _us64_ne(uint64_t a, int64_t b) { return a > INT64_MAX || (int64_t)a != b; }\nstatic inline bool _us64_le(uint64_t a, int64_t b) { return a <= INT64_MAX && (int64_t)a <= b; }\nstatic inline bool _us64_lt(uint64_t a, int64_t b) { return a < INT64_MAX && (int64_t)a < b; }\n\n#if defined(__MINGW32__) || defined(__MINGW64__) || (defined(_WIN32) && defined(__TINYC__))\n	#undef PRId64\n	#undef PRIi64\n	#undef PRIo64\n	#undef PRIu64\n	#undef PRIx64\n	#undef PRIX64\n	#define PRId64 \"lld\"\n	#define PRIi64 \"lli\"\n	#define PRIo64 \"llo\"\n	#define PRIu64 \"llu\"\n	#define PRIx64 \"llx\"\n	#define PRIX64 \"llX\"\n#endif\n\n//================================== GLOBALS =================================*/\n//byte g_str_buf[1024];\nbyte* g_str_buf;\nint load_so(byteptr);\nvoid reload_so();\nvoid _vinit();\nvoid _vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\n// ============== wyhash ==============\n//Author: Wang Yi\n#ifndef wyhash_version_gamma\n	#define wyhash_version_gamma\n	#define WYHASH_CONDOM 0\n	#include <stdint.h>\n	#include <string.h>\n	#if defined(_MSC_VER) && defined(_M_X64)\n		#include <intrin.h>\n		#pragma intrinsic(_umul128)\n	#endif\n\n	//const uint64_t _wyp0=0xa0761d6478bd642full, _wyp1=0xe7037ed1a0b428dbull;\n	#define _wyp0 ((uint64_t)0xa0761d6478bd642full)\n	#define _wyp1 ((uint64_t)0xe7037ed1a0b428dbull)\n\n	#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__) || defined(__TINYC__)\n		#define _likely_(x) __builtin_expect(x, 1)\n		#define _unlikely_(x) __builtin_expect((x), 0)\n	#else\n		#define _likely_(x) (x)\n		#define _unlikely_(x) (x)\n	#endif\n\n	#if defined(TARGET_ORDER_IS_LITTLE)\n		#define WYHASH_LITTLE_ENDIAN 1\n	#elif defined(TARGET_ORDER_IS_BIG)\n		#define WYHASH_LITTLE_ENDIAN 0\n	#endif\n\n	#if (WYHASH_LITTLE_ENDIAN)\n		static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return v;}\n		static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return v;}\n	#else\n		#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__)\n			static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return __builtin_bswap64(v);}\n			static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return __builtin_bswap32(v);}\n		#elif defined(_MSC_VER)\n			static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return _byteswap_uint64(v);}\n			static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return _byteswap_ulong(v);}\n		#elif defined(__TINYC__)\n			static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return bswap_64(v);}\n			static inline uint64_t _wyr4(const uint8_t *p) { unsigned v; memcpy(&v, p, 4); return bswap_32(v);}\n		#endif\n	#endif\n\n	static inline uint64_t _wyr3(const uint8_t *p, unsigned k) { return (((uint64_t)p[0]) << 16) | (((uint64_t)p[k >> 1]) << 8) | p[k - 1];}\n	static inline uint64_t _wyrotr(uint64_t v, unsigned k) { return (v >> k) | (v << (64 - k));}\n	static inline void _wymix128(uint64_t A, uint64_t B, uint64_t *C, uint64_t *D){\n		A^=*C;	B^=*D;\n	#ifdef UNOFFICIAL_WYHASH_32BIT\n		uint64_t hh=(A>>32)*(B>>32), hl=(A>>32)*(unsigned)B, lh=(unsigned)A*(B>>32), ll=(uint64_t)(unsigned)A*(unsigned)B;\n		*C=_wyrotr(hl,32)^hh; *D=_wyrotr(lh,32)^ll;\n	#else\n		#ifdef __SIZEOF_INT128__\n			__uint128_t r=A; r*=B; *C=(uint64_t)r; *D=(uint64_t)(r>>64);\n		#elif defined(_MSC_VER) && defined(_M_X64)\n			A=_umul128(A,B,&B); *C=A; *D=B;\n		#else\n			uint64_t ha=A>>32, hb=B>>32, la=(uint32_t)A, lb=(uint32_t)B, hi, lo;\n			uint64_t rh=ha*hb, rm0=ha*lb, rm1=hb*la, rl=la*lb, t=rl+(rm0<<32), c=t<rl;\n			lo=t+(rm1<<32); c+=lo<t; hi=rh+(rm0>>32)+(rm1>>32)+c;\n			*C=lo;	*D=hi;\n		#endif\n	#endif\n	}\n	static inline uint64_t wyhash(const void *key, uint64_t len, uint64_t seed){\n		const uint8_t *p=(const uint8_t *)key;\n		uint64_t i=len, see1=seed;\n		start:\n		if (_likely_(i<=16)) {\n	#ifndef	WYHASH_CONDOM\n			uint64_t shift = (i<8)*((8-i)<<3);\n			//WARNING: intended reading outside buffer, trading for speed.\n			_wymix128((_wyr8(p)<<shift)^_wyp0, (_wyr8(p+i-8)>>shift)^_wyp1, &seed, &see1);\n	#else\n			if (_likely_(i<=8)) {\n				if (_likely_(i>=4)) _wymix128(_wyr4(p)^_wyp0,_wyr4(p+i-4)^_wyp1, &seed, &see1);\n				else if (_likely_(i)) _wymix128(_wyr3(p,i)^_wyp0,_wyp1, &seed, &see1);\n				else _wymix128(_wyp0,_wyp1, &seed, &see1);\n			}\n			else _wymix128(_wyr8(p)^_wyp0,_wyr8(p+i-8)^_wyp1, &seed, &see1);\n	#endif\n			_wymix128(len,_wyp0, &seed, &see1);\n			return	seed^see1;\n		}\n		_wymix128(_wyr8(p)^_wyp0,_wyr8(p+8)^_wyp1, &seed, &see1);\n		i-=16;	p+=16;	goto start;\n	}\n	static inline uint64_t wyhash64(uint64_t A, uint64_t B){\n		_wymix128(_wyp0,_wyp1,&A,&B);\n		_wymix128(0,0,&A,&B);\n		return	A^B;\n	}\n	static inline uint64_t wyrand(uint64_t *seed){\n		*seed+=_wyp0;\n		uint64_t	a=0, b=0;\n		_wymix128(*seed,*seed^_wyp1,&a,&b);\n		return	a^b;\n	}\n	static inline double wy2u01(uint64_t r) {\n		const double _wynorm=1.0/(1ull<<52);\n		return (r>>12)*_wynorm;\n	}\n	static inline double wy2gau(uint64_t r) {\n		const double _wynorm=1.0/(1ull<<20);\n		return ((r&0x1fffff)+((r>>21)&0x1fffff)+((r>>42)&0x1fffff))*_wynorm-3.0;\n	}\n#endif\n\nvoidptr memdup(voidptr src, int sz);\nstatic voidptr memfreedup(voidptr ptr, voidptr src, int sz) {\n	free(ptr);\n	return memdup(src, sz);\n}\n", 2, _const_v__gen__c_common_macros);
 	_const_v__gen__bare_c_headers = _STR("\n%.*s\000\n\n#ifndef exit\n#define exit(rc) sys_exit(rc)\nvoid sys_exit (int);\n#endif\n", 2, _const_v__gen__c_common_macros);
 	// Initializations for module v.gen.js :
 	_const_v__gen__js__js_reserved = new_array_from_c_array(43, 43, sizeof(string), _MOV((string[43]){
