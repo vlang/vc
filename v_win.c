@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f7cc3d3"
+#define V_COMMIT_HASH "39b46e9"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "aae5812"
+	#define V_COMMIT_HASH "f7cc3d3"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f7cc3d3"
+	#define V_CURRENT_COMMIT_HASH "39b46e9"
 #endif
 
 // V comptime_defines:
@@ -20424,7 +20424,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("aae5812"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("f7cc3d3"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -40213,22 +40213,16 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_default(v__gen__Gen* g, v__table__TypeS
 
 VV_LOCAL_SYMBOL string v__gen__Gen_type_to_fmt(v__gen__Gen* g, v__table__Type typ) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
-	if ((v__table__Type_is_int(typ) || v__table__Type_is_float(typ)) && v__table__Type_is_ptr(typ)) {
+	if (v__table__Type_is_ptr(typ) && (v__table__Type_is_int(typ) || v__table__Type_is_float(typ))) {
 		return tos_lit("%.*s\\000");
-	} else if ((sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed || sym->kind == v__table__Kind_map)) {
+	} else if ((sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed || sym->kind == v__table__Kind_map || sym->kind == v__table__Kind_bool || sym->kind == v__table__Kind_enum_ || sym->kind == v__table__Kind_sum_type)) {
 		return tos_lit("%.*s\\000");
 	} else if (sym->kind == v__table__Kind_string) {
 		return tos_lit("\'%.*s\\000\'");
-	} else if (sym->kind == v__table__Kind_bool) {
-		return tos_lit("%.*s\\000");
-	} else if (sym->kind == v__table__Kind_enum_) {
-		return tos_lit("%.*s\\000");
 	} else if ((sym->kind == v__table__Kind_f32 || sym->kind == v__table__Kind_f64)) {
 		return tos_lit("%g\\000");
 	} else if (sym->kind == v__table__Kind_u64) {
 		return tos_lit("%lld\\000");
-	} else if (sym->kind == v__table__Kind_sum_type) {
-		return tos_lit("%.*s\\000");
 	}
 	return tos_lit("%d\\000");
 }
