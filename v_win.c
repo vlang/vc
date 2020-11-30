@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ff63fb7"
+#define V_COMMIT_HASH "05eeb8a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b1bff3f"
+	#define V_COMMIT_HASH "ff63fb7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ff63fb7"
+	#define V_CURRENT_COMMIT_HASH "05eeb8a"
 #endif
 
 // V comptime_defines:
@@ -960,43 +960,42 @@ typedef enum {
 	v__token__Kind_key_continue, // +70
 	v__token__Kind_key_defer, // +71
 	v__token__Kind_key_else, // +72
-	v__token__Kind_key_embed, // +73
-	v__token__Kind_key_enum, // +74
-	v__token__Kind_key_false, // +75
-	v__token__Kind_key_for, // +76
-	v__token__Kind_key_fn, // +77
-	v__token__Kind_key_global, // +78
-	v__token__Kind_key_go, // +79
-	v__token__Kind_key_goto, // +80
-	v__token__Kind_key_if, // +81
-	v__token__Kind_key_import, // +82
-	v__token__Kind_key_in, // +83
-	v__token__Kind_key_interface, // +84
-	v__token__Kind_key_is, // +85
-	v__token__Kind_key_match, // +86
-	v__token__Kind_key_module, // +87
-	v__token__Kind_key_mut, // +88
-	v__token__Kind_key_shared, // +89
-	v__token__Kind_key_lock, // +90
-	v__token__Kind_key_rlock, // +91
-	v__token__Kind_key_none, // +92
-	v__token__Kind_key_return, // +93
-	v__token__Kind_key_select, // +94
-	v__token__Kind_key_sizeof, // +95
-	v__token__Kind_key_likely, // +96
-	v__token__Kind_key_unlikely, // +97
-	v__token__Kind_key_offsetof, // +98
-	v__token__Kind_key_struct, // +99
-	v__token__Kind_key_true, // +100
-	v__token__Kind_key_type, // +101
-	v__token__Kind_key_typeof, // +102
-	v__token__Kind_key_orelse, // +103
-	v__token__Kind_key_union, // +104
-	v__token__Kind_key_pub, // +105
-	v__token__Kind_key_static, // +106
-	v__token__Kind_key_unsafe, // +107
-	v__token__Kind_keyword_end, // +108
-	v__token__Kind__end_, // +109
+	v__token__Kind_key_enum, // +73
+	v__token__Kind_key_false, // +74
+	v__token__Kind_key_for, // +75
+	v__token__Kind_key_fn, // +76
+	v__token__Kind_key_global, // +77
+	v__token__Kind_key_go, // +78
+	v__token__Kind_key_goto, // +79
+	v__token__Kind_key_if, // +80
+	v__token__Kind_key_import, // +81
+	v__token__Kind_key_in, // +82
+	v__token__Kind_key_interface, // +83
+	v__token__Kind_key_is, // +84
+	v__token__Kind_key_match, // +85
+	v__token__Kind_key_module, // +86
+	v__token__Kind_key_mut, // +87
+	v__token__Kind_key_shared, // +88
+	v__token__Kind_key_lock, // +89
+	v__token__Kind_key_rlock, // +90
+	v__token__Kind_key_none, // +91
+	v__token__Kind_key_return, // +92
+	v__token__Kind_key_select, // +93
+	v__token__Kind_key_sizeof, // +94
+	v__token__Kind_key_likely, // +95
+	v__token__Kind_key_unlikely, // +96
+	v__token__Kind_key_offsetof, // +97
+	v__token__Kind_key_struct, // +98
+	v__token__Kind_key_true, // +99
+	v__token__Kind_key_type, // +100
+	v__token__Kind_key_typeof, // +101
+	v__token__Kind_key_orelse, // +102
+	v__token__Kind_key_union, // +103
+	v__token__Kind_key_pub, // +104
+	v__token__Kind_key_static, // +105
+	v__token__Kind_key_unsafe, // +106
+	v__token__Kind_keyword_end, // +107
+	v__token__Kind__end_, // +108
 } v__token__Kind;
 
 typedef enum {
@@ -17115,7 +17114,6 @@ VV_LOCAL_SYMBOL array_string v__token__build_token_str() {
 	array_set(&s, v__token__Kind_key_continue, &(string[]) { tos_lit("continue") });
 	array_set(&s, v__token__Kind_key_break, &(string[]) { tos_lit("break") });
 	array_set(&s, v__token__Kind_key_import, &(string[]) { tos_lit("import") });
-	array_set(&s, v__token__Kind_key_embed, &(string[]) { tos_lit("embed") });
 	array_set(&s, v__token__Kind_key_unsafe, &(string[]) { tos_lit("unsafe") });
 	array_set(&s, v__token__Kind_key_typeof, &(string[]) { tos_lit("typeof") });
 	array_set(&s, v__token__Kind_key_enum, &(string[]) { tos_lit("enum") });
@@ -20427,7 +20425,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("b1bff3f"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("ff63fb7"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
