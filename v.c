@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "39b46e9"
+#define V_COMMIT_HASH "e3fab7e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f7cc3d3"
+	#define V_COMMIT_HASH "39b46e9"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "39b46e9"
+	#define V_CURRENT_COMMIT_HASH "e3fab7e"
 #endif
 
 // V comptime_defines:
@@ -20576,7 +20576,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("f7cc3d3"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("39b46e9"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -33153,8 +33153,12 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 		}
 		return /* sum type cast 4 */ (v__ast__Expr){._v__ast__ChanInit = memdup(&(v__ast__ChanInit[]){(v__ast__ChanInit){.pos = v__token__Position_extend(first_pos, last_pos),.cap_expr = cap_expr,.has_cap = has_cap,.typ = chan_type,.elem_type = 0,}}, sizeof(v__ast__ChanInit)), .typ = 192 /* v.ast.ChanInit */};
 	}
-	if ((string_eq(p->tok.lit, tos_lit("r")) || string_eq(p->tok.lit, tos_lit("c")) || string_eq(p->tok.lit, tos_lit("js"))) && p->peek_tok.kind == v__token__Kind_string && !p->inside_str_interp) {
-		return v__parser__Parser_string_expr(p);
+	if (p->peek_tok.kind == v__token__Kind_string && !p->inside_str_interp && p->peek_tok2.kind != v__token__Kind_colon) {
+		if ((string_eq(p->tok.lit, tos_lit("r")) || string_eq(p->tok.lit, tos_lit("c")) || string_eq(p->tok.lit, tos_lit("js"))) && p->tok.kind == v__token__Kind_name) {
+			return v__parser__Parser_string_expr(p);
+		} else {
+			v__parser__Parser_error(p, _STR("only `c`, `r`, `js` are recognized string prefixes, but you tried to use `%.*s\000`", 2, p->tok.lit));
+		}
 	}
 	if ((string_eq(p->tok.lit, tos_lit("r")) || string_eq(p->tok.lit, tos_lit("c"))) && p->peek_tok.kind == v__token__Kind_chartoken) {
 		string opt = (string_eq(p->tok.lit, tos_lit("r")) ? (tos_lit("`r` (raw string)")) : (tos_lit("`c` (c string)")));
@@ -33705,9 +33709,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_41941 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_41941.arg0;
-	array_v__ast__Comment comments2 = mr_41941.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_42181 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_42181.arg0;
+	array_v__ast__Comment comments2 = mr_42181.arg1;
 	_PUSH_MANY(&comments, (comments2), _t1270, array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position(*(v__ast__Expr*)array_last(exprs));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
