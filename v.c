@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c5cd53c"
+#define V_COMMIT_HASH "394e9c4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3612bd5"
+	#define V_COMMIT_HASH "c5cd53c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c5cd53c"
+	#define V_CURRENT_COMMIT_HASH "394e9c4"
 #endif
 
 // V comptime_defines:
@@ -20592,7 +20592,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("3612bd5"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("c5cd53c"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -45710,312 +45710,314 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 	}
 	array_string tried_compilation_commands = __new_array_with_default(0, 0, sizeof(string), 0);
 	string original_pwd = os__getwd();
-	start: {}
-	string ccompiler = v->pref->ccompiler;
-	#if defined(_WIN32)
-	{
-		if (string_eq(ccompiler, tos_lit("msvc"))) {
-			v__builder__Builder_cc_msvc(v);
-			return;
-		}
-	}
-	#endif
-	if (v->pref->os == v__pref__OS_ios) {
-		string ios_sdk = (v->pref->is_ios_simulator ? (tos_lit("iphonesimulator")) : (tos_lit("iphoneos")));
-		Option_os__Result _t1814 = os__exec(_STR("xcrun --sdk %.*s\000 --show-sdk-path", 2, ios_sdk));
-		if (!_t1814.ok) {
-			string err = _t1814.v_error;
-			int errcode = _t1814.ecode;
-			v_panic(tos_lit("Couldn\'t find iphonesimulator"));
-		}
- 		os__Result ios_sdk_path_res = *(os__Result*) _t1814.data;
-		string isysroot = string_replace(ios_sdk_path_res.output, tos_lit("\n"), tos_lit(""));
-		ccompiler = _STR("xcrun --sdk iphoneos clang -isysroot %.*s", 1, isysroot);
-	}
-	array_string args = new_array_from_c_array(10, 10, sizeof(string), _MOV((string[10]){
-			v->pref->cflags, tos_lit("-std=gnu99"), tos_lit("-Wall"), tos_lit("-Wextra"), tos_lit("-Wno-unused-variable"), tos_lit("-Wno-unused-parameter"), tos_lit("-Wno-unused-result"), tos_lit("-Wno-unused-function"), tos_lit("-Wno-missing-braces"), tos_lit("-Wno-unused-label")}));
-	if (v->pref->os == v__pref__OS_ios) {
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-framework Foundation")) }));
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-framework UIKit")) }));
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-framework Metal")) }));
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-framework MetalKit")) }));
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-DSOKOL_METAL")) }));
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-fobjc-arc")) }));
-	}
-	array_string linker_flags = __new_array_with_default(0, 0, sizeof(string), 0);
-	if (!v->pref->is_shared && v->pref->build_mode != v__pref__BuildMode_build_module && string_eq(os__user_os(), tos_lit("windows")) && !string_ends_with(v->pref->out_name, tos_lit(".exe"))) {
-		v->pref->out_name = /*f*/string_add(v->pref->out_name, tos_lit(".exe"));
-	}
-	v__builder__Builder_log(/*rec*/*v, _STR("cc() isprod=%.*s\000 outname=%.*s", 2, v->pref->is_prod ? _SLIT("true") : _SLIT("false"), v->pref->out_name));
-	if (v->pref->is_shared) {
-		array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-shared")) }));
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-fPIC")) }));
-		#if defined(__APPLE__)
+	for (;;) {
+		string ccompiler = v->pref->ccompiler;
+		#if defined(_WIN32)
 		{
-			v->pref->out_name = /*f*/string_add(v->pref->out_name, tos_lit(".dylib"));
-		}
-		#elif defined(_WIN32)
-		{
-			v->pref->out_name = /*f*/string_add(v->pref->out_name, tos_lit(".dll"));
-		}
-		#else
-		{
-			v->pref->out_name = /*f*/string_add(v->pref->out_name, tos_lit(".so"));
-		}
-		#endif
-	}
-	if (v->pref->is_bare) {
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-fno-stack-protector")) }));
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-ffreestanding")) }));
-		array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-static")) }));
-		array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-nostdlib")) }));
-	}
-	if (v->pref->build_mode == v__pref__BuildMode_build_module) {
-		v->pref->out_name = v__vcache__CacheManager_postfix_with_key2cpath(&v->pref->cache_manager, tos_lit(".o"), v->pref->path);
-		println(_STR("Building %.*s\000 to %.*s\000 ...", 3, v->pref->path, v->pref->out_name));
-		v__vcache__CacheManager_save(&v->pref->cache_manager, tos_lit(".description.txt"), v->pref->path, _STR("%*.*s\000 @ %.*s\000\n", 3, v->pref->path, -30, v->pref->cache_manager.vopts));
-	}
-	bool debug_mode = v->pref->is_debug;
-	string debug_options = tos_lit("-g3");
-	string optimization_options = tos_lit("-O2");
-	string guessed_compiler = v->pref->ccompiler;
-	if (string_eq(guessed_compiler, tos_lit("cc")) && v->pref->is_prod) {
-		{ /* if guard */ 
-		Option_os__Result _t1827;
-		if (_t1827 = os__exec(tos_lit("cc --version")), _t1827.ok) {
-			os__Result ccversion = *(os__Result*)_t1827.data;
-			if (ccversion.exit_code == 0) {
-				if (string_contains(ccversion.output, tos_lit("This is free software;")) && string_contains(ccversion.output, tos_lit("Free Software Foundation, Inc."))) {
-					guessed_compiler = tos_lit("gcc");
-				}
-				if (string_contains(ccversion.output, tos_lit("clang version "))) {
-					guessed_compiler = tos_lit("clang");
-				}
-			}
-		}}
-	}
-	bool is_cc_tcc = string_contains(ccompiler, tos_lit("tcc")) || string_eq(guessed_compiler, tos_lit("tcc"));
-	bool is_cc_clang = !is_cc_tcc && (string_contains(ccompiler, tos_lit("clang")) || string_eq(guessed_compiler, tos_lit("clang")));
-	bool is_cc_gcc = !is_cc_tcc && !is_cc_clang && (string_contains(ccompiler, tos_lit("gcc")) || string_eq(guessed_compiler, tos_lit("gcc")));
-	if (is_cc_clang) {
-		if (debug_mode) {
-			debug_options = tos_lit("-g3 -O0");
-		}
-		optimization_options = tos_lit("-O3");
-		bool have_flto = true;
-		#if defined(__OpenBSD__)
-		{
-			have_flto = false;
-		}
-		#endif
-		if (have_flto) {
-			optimization_options = /*f*/string_add(optimization_options, tos_lit(" -flto"));
-		}
-	}
-	if (is_cc_gcc) {
-		if (debug_mode) {
-			debug_options = tos_lit("-g3 -no-pie");
-		}
-		optimization_options = tos_lit("-O3 -fno-strict-aliasing -flto");
-	}
-	if (debug_mode) {
-		array_push(&args, _MOV((string[]){ string_clone(debug_options) }));
-	}
-	if (v->pref->is_prod) {
-		array_push(&args, _MOV((string[]){ string_clone(optimization_options) }));
-	}
-	if (v->pref->is_prod && !debug_mode) {
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-DNDEBUG")) }));
-	}
-	if (debug_mode && string_ne(os__user_os(), tos_lit("windows"))) {
-		array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit(" -rdynamic ")) }));
-	}
-	if (string_ne(ccompiler, tos_lit("msvc")) && v->pref->os != v__pref__OS_freebsd) {
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-Werror=implicit-function-declaration")) }));
-	}
-	if (v->pref->is_liveshared || v->pref->is_livemain) {
-		if (v->pref->os == v__pref__OS_linux || string_eq(os__user_os(), tos_lit("linux"))) {
-			array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-rdynamic")) }));
-		}
-		if (v->pref->os == v__pref__OS_macos || string_eq(os__user_os(), tos_lit("macos"))) {
-			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-flat_namespace")) }));
-		}
-	}
-	string libs = tos_lit("");
-	if (v->pref->build_mode == v__pref__BuildMode_build_module) {
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-c")) }));
-	} else if (v->pref->use_cache) {
-		array_string built_modules = __new_array_with_default(0, 0, sizeof(string), 0);
-		string builtin_obj_path = v__builder__Builder_rebuild_cached_module(v, vexe, tos_lit("vlib/builtin"));
-		libs = /*f*/string_add(libs, string_add(tos_lit(" "), builtin_obj_path));
-		// FOR IN array
-		array _t1836 = v->parsed_files;
-		for (int _t1837 = 0; _t1837 < _t1836.len; ++_t1837) {
-			v__ast__File ast_file = ((v__ast__File*)_t1836.data)[_t1837];
-			// FOR IN array
-			array _t1838 = ast_file.imports;
-			for (int _t1839 = 0; _t1839 < _t1838.len; ++_t1839) {
-				v__ast__Import imp_stmt = ((v__ast__Import*)_t1838.data)[_t1839];
-				string imp = imp_stmt.mod;
-				if (_IN(string, imp, built_modules)) {
-					continue;
-				}
-				if (string_eq(imp, tos_lit("webview"))) {
-					continue;
-				}
-				string mod_path = string_replace(imp, tos_lit("."), _const_os__path_separator);
-				if (string_eq(imp, tos_lit("help"))) {
-					continue;
-				}
-				string imp_path = os__join_path(tos_lit("vlib"), (varg_string){.len=1,.args={mod_path}});
-				string obj_path = v__builder__Builder_rebuild_cached_module(v, vexe, imp_path);
-				libs = /*f*/string_add(libs, string_add(tos_lit(" "), obj_path));
-				if (string_ends_with(obj_path, tos_lit("vlib/ui.o"))) {
-					array_push(&args, _MOV((string[]){ string_clone(tos_lit("-framework Cocoa -framework Carbon")) }));
-				}
-				array_push(&built_modules, _MOV((string[]){ string_clone(imp) }));
+			if (string_eq(ccompiler, tos_lit("msvc"))) {
+				v__builder__Builder_cc_msvc(v);
+				return;
 			}
 		}
-	}
-	if (v->pref->sanitize) {
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-fsanitize=leak")) }));
-	}
-	if (v->pref->os == v__pref__OS_linux) {
-		#if !defined(__linux__)
-		{
-			v__builder__Builder_cc_linux_cross(v);
-			return;
-		}
 		#endif
-	}
-	if (v->pref->os == v__pref__OS_ios) {
-		string bundle_name = *(string*)array_last(string_split(v->pref->out_name, tos_lit("/")));
-		array_push(&args, _MOV((string[]){ string_clone(_STR("-o \"%.*s\000.app/%.*s\000\"", 3, v->pref->out_name, bundle_name)) }));
-	} else {
-		array_push(&args, _MOV((string[]){ string_clone(_STR("-o \"%.*s\000\"", 2, v->pref->out_name)) }));
-	}
-	if (os__is_dir(v->pref->out_name)) {
-		v__builder__verror(_STR("'%.*s\000' is a directory", 2, v->pref->out_name));
-	}
-	if (v->pref->os == v__pref__OS_macos || v->pref->os == v__pref__OS_ios) {
-		if (!is_cc_tcc) {
-			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-x objective-c")) }));
+		if (v->pref->os == v__pref__OS_ios) {
+			string ios_sdk = (v->pref->is_ios_simulator ? (tos_lit("iphonesimulator")) : (tos_lit("iphoneos")));
+			Option_os__Result _t1814 = os__exec(_STR("xcrun --sdk %.*s\000 --show-sdk-path", 2, ios_sdk));
+			if (!_t1814.ok) {
+				string err = _t1814.v_error;
+				int errcode = _t1814.ecode;
+				v_panic(tos_lit("Couldn\'t find iphonesimulator"));
+			}
+ 			os__Result ios_sdk_path_res = *(os__Result*) _t1814.data;
+			string isysroot = string_replace(ios_sdk_path_res.output, tos_lit("\n"), tos_lit(""));
+			ccompiler = _STR("xcrun --sdk iphoneos clang -isysroot %.*s", 1, isysroot);
 		}
-	}
-	array_push(&args, _MOV((string[]){ string_clone(_STR("\"%.*s\000\"", 2, v->out_name_c)) }));
-	if (v->pref->os == v__pref__OS_macos) {
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-x none")) }));
-	}
-	if (v->pref->os == v__pref__OS_macos) {
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-mmacosx-version-min=10.7")) }));
-	}
-	if (v->pref->os == v__pref__OS_ios) {
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-miphoneos-version-min=10.0")) }));
-	}
-	if (v->pref->os == v__pref__OS_windows) {
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-municode")) }));
-	}
-	array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(v);
-	array_push(&args, _MOV((string[]){ string_clone(array_v__cflag__CFlag_c_options_only_object_files(cflags)) }));
-	array_push(&args, _MOV((string[]){ string_clone(array_v__cflag__CFlag_c_options_without_object_files(cflags)) }));
-	array_push(&args, _MOV((string[]){ string_clone(libs) }));
-	if (string_contains(guessed_compiler, tos_lit("++"))) {
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-fpermissive")) }));
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-w")) }));
-	}
-	if (v->pref->use_cache) {
-		if (!is_cc_tcc) {
-			#if defined(__linux__)
+		array_string args = new_array_from_c_array(10, 10, sizeof(string), _MOV((string[10]){
+				v->pref->cflags, tos_lit("-std=gnu99"), tos_lit("-Wall"), tos_lit("-Wextra"), tos_lit("-Wno-unused-variable"), tos_lit("-Wno-unused-parameter"), tos_lit("-Wno-unused-result"), tos_lit("-Wno-unused-function"), tos_lit("-Wno-missing-braces"), tos_lit("-Wno-unused-label")}));
+		if (v->pref->os == v__pref__OS_ios) {
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-framework Foundation")) }));
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-framework UIKit")) }));
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-framework Metal")) }));
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-framework MetalKit")) }));
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-DSOKOL_METAL")) }));
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-fobjc-arc")) }));
+		}
+		array_string linker_flags = __new_array_with_default(0, 0, sizeof(string), 0);
+		if (!v->pref->is_shared && v->pref->build_mode != v__pref__BuildMode_build_module && string_eq(os__user_os(), tos_lit("windows")) && !string_ends_with(v->pref->out_name, tos_lit(".exe"))) {
+			v->pref->out_name = /*f*/string_add(v->pref->out_name, tos_lit(".exe"));
+		}
+		v__builder__Builder_log(/*rec*/*v, _STR("cc() isprod=%.*s\000 outname=%.*s", 2, v->pref->is_prod ? _SLIT("true") : _SLIT("false"), v->pref->out_name));
+		if (v->pref->is_shared) {
+			array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-shared")) }));
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-fPIC")) }));
+			#if defined(__APPLE__)
 			{
-				array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-Xlinker -z")) }));
-				array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-Xlinker muldefs")) }));
+				v->pref->out_name = /*f*/string_add(v->pref->out_name, tos_lit(".dylib"));
+			}
+			#elif defined(_WIN32)
+			{
+				v->pref->out_name = /*f*/string_add(v->pref->out_name, tos_lit(".dll"));
+			}
+			#else
+			{
+				v->pref->out_name = /*f*/string_add(v->pref->out_name, tos_lit(".so"));
 			}
 			#endif
 		}
-	}
-	if (is_cc_tcc && !_IN(string, tos_lit("no_backtrace"), v->pref->compile_defines)) {
-		array_push(&args, _MOV((string[]){ string_clone(tos_lit("-bt25")) }));
-	}
-	if (!v->pref->is_bare && v->pref->build_mode != v__pref__BuildMode_build_module && (v->pref->os == v__pref__OS_linux || v->pref->os == v__pref__OS_freebsd || v->pref->os == v__pref__OS_openbsd || v->pref->os == v__pref__OS_netbsd || v->pref->os == v__pref__OS_dragonfly || v->pref->os == v__pref__OS_solaris || v->pref->os == v__pref__OS_haiku)) {
-		array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-lm")) }));
-		array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-lpthread")) }));
-		if (v->pref->os == v__pref__OS_linux) {
-			array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-ldl")) }));
+		if (v->pref->is_bare) {
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-fno-stack-protector")) }));
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-ffreestanding")) }));
+			array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-static")) }));
+			array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-nostdlib")) }));
 		}
-		if (v->pref->os == v__pref__OS_freebsd) {
-			array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-lexecinfo")) }));
+		if (v->pref->build_mode == v__pref__BuildMode_build_module) {
+			v->pref->out_name = v__vcache__CacheManager_postfix_with_key2cpath(&v->pref->cache_manager, tos_lit(".o"), v->pref->path);
+			println(_STR("Building %.*s\000 to %.*s\000 ...", 3, v->pref->path, v->pref->out_name));
+			v__vcache__CacheManager_save(&v->pref->cache_manager, tos_lit(".description.txt"), v->pref->path, _STR("%*.*s\000 @ %.*s\000\n", 3, v->pref->path, -30, v->pref->cache_manager.vopts));
 		}
-	}
-	if (!v->pref->is_bare && v->pref->os == v__pref__OS_js && string_eq(os__user_os(), tos_lit("linux"))) {
-		array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-lm")) }));
-	}
-	string env_cflags = os__getenv(tos_lit("CFLAGS"));
-	string env_ldflags = os__getenv(tos_lit("LDFLAGS"));
-	string str_args = string_add(string_add(string_add(string_add(string_add(string_add(env_cflags, tos_lit(" ")), array_string_join(args, tos_lit(" "))), tos_lit(" ")), array_string_join(linker_flags, tos_lit(" "))), tos_lit(" ")), env_ldflags);
-	if (v->pref->is_verbose) {
-		println(_STR("cc args=%.*s", 1, str_args));
-		println(array_string_str(args));
-	}
-	string response_file = _STR("%.*s\000.rsp", 2, v->out_name_c);
-	string response_file_content = string_replace(str_args, tos_lit("\\"), tos_lit("\\\\"));
-	Option_void _t1864 = os__write_file(response_file, response_file_content);
-	if (!_t1864.ok && !_t1864.is_none) {
-		string err = _t1864.v_error;
-		int errcode = _t1864.ecode;
-		v__builder__verror(_STR("Unable to write response file \"%.*s\000\"", 2, response_file));
-	};
-	if (!debug_mode) {
-		array_push(&v->pref->cleanup_files, _MOV((string[]){ string_clone(v->out_name_c) }));
-		array_push(&v->pref->cleanup_files, _MOV((string[]){ string_clone(response_file) }));
-	}
-	v__builder__todo();
-	os__chdir(vdir);
-	string cmd = _STR("%.*s\000 @%.*s", 2, ccompiler, response_file);
-	array_push(&tried_compilation_commands, _MOV((string[]){ string_clone(cmd) }));
-	v__builder__Builder_show_cc(v, cmd, response_file, response_file_content);
-	i64 ticks = time__ticks();
-	Option_os__Result _t1868 = os__exec(cmd);
-	if (!_t1868.ok) {
-		string err = _t1868.v_error;
-		int errcode = _t1868.ecode;
-		println(tos_lit("C compilation failed."));
-		os__chdir(original_pwd);
-		v__builder__verror(err);
-		return;
-	}
- 	os__Result res = *(os__Result*) _t1868.data;
-	i64 diff = time__ticks() - ticks;
-	v__builder__Builder_timing_message(v, _STR("C %*.*s", 1, ccompiler, 3), diff);
-	if (v->pref->show_c_output) {
-		v__builder__Builder_show_c_compiler_output(v, res);
-	}
-	os__chdir(original_pwd);
-	if (res.exit_code != 0) {
-		if (string_contains(ccompiler, tos_lit("tcc.exe"))) {
-			if (tried_compilation_commands.len > 1) {
-				eprintln(_STR("Recompilation loop detected (ccompiler: %.*s\000):", 2, ccompiler));
-				// FOR IN array
-				array _t1869 = tried_compilation_commands;
-				for (int _t1870 = 0; _t1870 < _t1869.len; ++_t1870) {
-					string recompile_command = ((string*)_t1869.data)[_t1870];
-					eprintln(_STR("   %.*s", 1, recompile_command));
+		bool debug_mode = v->pref->is_debug;
+		string debug_options = tos_lit("-g3");
+		string optimization_options = tos_lit("-O2");
+		string guessed_compiler = v->pref->ccompiler;
+		if (string_eq(guessed_compiler, tos_lit("cc")) && v->pref->is_prod) {
+			{ /* if guard */ 
+			Option_os__Result _t1827;
+			if (_t1827 = os__exec(tos_lit("cc --version")), _t1827.ok) {
+				os__Result ccversion = *(os__Result*)_t1827.data;
+				if (ccversion.exit_code == 0) {
+					if (string_contains(ccversion.output, tos_lit("This is free software;")) && string_contains(ccversion.output, tos_lit("Free Software Foundation, Inc."))) {
+						guessed_compiler = tos_lit("gcc");
+					}
+					if (string_contains(ccversion.output, tos_lit("clang version "))) {
+						guessed_compiler = tos_lit("clang");
+					}
 				}
-				v_exit(101);
+			}}
+		}
+		bool is_cc_tcc = string_contains(ccompiler, tos_lit("tcc")) || string_eq(guessed_compiler, tos_lit("tcc"));
+		bool is_cc_clang = !is_cc_tcc && (string_contains(ccompiler, tos_lit("clang")) || string_eq(guessed_compiler, tos_lit("clang")));
+		bool is_cc_gcc = !is_cc_tcc && !is_cc_clang && (string_contains(ccompiler, tos_lit("gcc")) || string_eq(guessed_compiler, tos_lit("gcc")));
+		if (is_cc_clang) {
+			if (debug_mode) {
+				debug_options = tos_lit("-g3 -O0");
 			}
-			eprintln(tos_lit("recompilation with tcc failed; retrying with cc ..."));
-			v->pref->ccompiler = v__pref__default_c_compiler();
-			goto start;
+			optimization_options = tos_lit("-O3");
+			bool have_flto = true;
+			#if defined(__OpenBSD__)
+			{
+				have_flto = false;
+			}
+			#endif
+			if (have_flto) {
+				optimization_options = /*f*/string_add(optimization_options, tos_lit(" -flto"));
+			}
 		}
-		if (res.exit_code == 127) {
-			v__builder__verror(string_add(string_add(string_add(string_add(string_add(string_add(tos_lit("C compiler error, while attempting to run: \n"), tos_lit("-----------------------------------------------------------\n")), _STR("%.*s\000\n", 2, cmd)), tos_lit("-----------------------------------------------------------\n")), tos_lit("Probably your C compiler is missing. \n")), tos_lit("Please reinstall it, or make it available in your PATH.\n\n")), v__builder__missing_compiler_info()));
+		if (is_cc_gcc) {
+			if (debug_mode) {
+				debug_options = tos_lit("-g3 -no-pie");
+			}
+			optimization_options = tos_lit("-O3 -fno-strict-aliasing -flto");
 		}
-	}
-	if (!v->pref->show_c_output) {
-		v__builder__Builder_post_process_c_compiler_output(v, res);
-	}
-	if (v->pref->is_verbose) {
-		println(_STR("%.*s\000 took %"PRId64"\000 ms", 3, ccompiler, diff));
-		println(tos_lit("=========\n"));
+		if (debug_mode) {
+			array_push(&args, _MOV((string[]){ string_clone(debug_options) }));
+		}
+		if (v->pref->is_prod) {
+			array_push(&args, _MOV((string[]){ string_clone(optimization_options) }));
+		}
+		if (v->pref->is_prod && !debug_mode) {
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-DNDEBUG")) }));
+		}
+		if (debug_mode && string_ne(os__user_os(), tos_lit("windows"))) {
+			array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit(" -rdynamic ")) }));
+		}
+		if (string_ne(ccompiler, tos_lit("msvc")) && v->pref->os != v__pref__OS_freebsd) {
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-Werror=implicit-function-declaration")) }));
+		}
+		if (v->pref->is_liveshared || v->pref->is_livemain) {
+			if (v->pref->os == v__pref__OS_linux || string_eq(os__user_os(), tos_lit("linux"))) {
+				array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-rdynamic")) }));
+			}
+			if (v->pref->os == v__pref__OS_macos || string_eq(os__user_os(), tos_lit("macos"))) {
+				array_push(&args, _MOV((string[]){ string_clone(tos_lit("-flat_namespace")) }));
+			}
+		}
+		string libs = tos_lit("");
+		if (v->pref->build_mode == v__pref__BuildMode_build_module) {
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-c")) }));
+		} else if (v->pref->use_cache) {
+			array_string built_modules = __new_array_with_default(0, 0, sizeof(string), 0);
+			string builtin_obj_path = v__builder__Builder_rebuild_cached_module(v, vexe, tos_lit("vlib/builtin"));
+			libs = /*f*/string_add(libs, string_add(tos_lit(" "), builtin_obj_path));
+			// FOR IN array
+			array _t1836 = v->parsed_files;
+			for (int _t1837 = 0; _t1837 < _t1836.len; ++_t1837) {
+				v__ast__File ast_file = ((v__ast__File*)_t1836.data)[_t1837];
+				// FOR IN array
+				array _t1838 = ast_file.imports;
+				for (int _t1839 = 0; _t1839 < _t1838.len; ++_t1839) {
+					v__ast__Import imp_stmt = ((v__ast__Import*)_t1838.data)[_t1839];
+					string imp = imp_stmt.mod;
+					if (_IN(string, imp, built_modules)) {
+						continue;
+					}
+					if (string_eq(imp, tos_lit("webview"))) {
+						continue;
+					}
+					string mod_path = string_replace(imp, tos_lit("."), _const_os__path_separator);
+					if (string_eq(imp, tos_lit("help"))) {
+						continue;
+					}
+					string imp_path = os__join_path(tos_lit("vlib"), (varg_string){.len=1,.args={mod_path}});
+					string obj_path = v__builder__Builder_rebuild_cached_module(v, vexe, imp_path);
+					libs = /*f*/string_add(libs, string_add(tos_lit(" "), obj_path));
+					if (string_ends_with(obj_path, tos_lit("vlib/ui.o"))) {
+						array_push(&args, _MOV((string[]){ string_clone(tos_lit("-framework Cocoa -framework Carbon")) }));
+					}
+					array_push(&built_modules, _MOV((string[]){ string_clone(imp) }));
+				}
+			}
+		}
+		if (v->pref->sanitize) {
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-fsanitize=leak")) }));
+		}
+		if (v->pref->os == v__pref__OS_linux) {
+			#if !defined(__linux__)
+			{
+				v__builder__Builder_cc_linux_cross(v);
+				return;
+			}
+			#endif
+		}
+		if (v->pref->os == v__pref__OS_ios) {
+			string bundle_name = *(string*)array_last(string_split(v->pref->out_name, tos_lit("/")));
+			array_push(&args, _MOV((string[]){ string_clone(_STR("-o \"%.*s\000.app/%.*s\000\"", 3, v->pref->out_name, bundle_name)) }));
+		} else {
+			array_push(&args, _MOV((string[]){ string_clone(_STR("-o \"%.*s\000\"", 2, v->pref->out_name)) }));
+		}
+		if (os__is_dir(v->pref->out_name)) {
+			v__builder__verror(_STR("'%.*s\000' is a directory", 2, v->pref->out_name));
+		}
+		if (v->pref->os == v__pref__OS_macos || v->pref->os == v__pref__OS_ios) {
+			if (!is_cc_tcc) {
+				array_push(&args, _MOV((string[]){ string_clone(tos_lit("-x objective-c")) }));
+			}
+		}
+		array_push(&args, _MOV((string[]){ string_clone(_STR("\"%.*s\000\"", 2, v->out_name_c)) }));
+		if (v->pref->os == v__pref__OS_macos) {
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-x none")) }));
+		}
+		if (v->pref->os == v__pref__OS_macos) {
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-mmacosx-version-min=10.7")) }));
+		}
+		if (v->pref->os == v__pref__OS_ios) {
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-miphoneos-version-min=10.0")) }));
+		}
+		if (v->pref->os == v__pref__OS_windows) {
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-municode")) }));
+		}
+		array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(v);
+		array_push(&args, _MOV((string[]){ string_clone(array_v__cflag__CFlag_c_options_only_object_files(cflags)) }));
+		array_push(&args, _MOV((string[]){ string_clone(array_v__cflag__CFlag_c_options_without_object_files(cflags)) }));
+		array_push(&args, _MOV((string[]){ string_clone(libs) }));
+		if (string_contains(guessed_compiler, tos_lit("++"))) {
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-fpermissive")) }));
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-w")) }));
+		}
+		if (v->pref->use_cache) {
+			if (!is_cc_tcc) {
+				#if defined(__linux__)
+				{
+					array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-Xlinker -z")) }));
+					array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-Xlinker muldefs")) }));
+				}
+				#endif
+			}
+		}
+		if (is_cc_tcc && !_IN(string, tos_lit("no_backtrace"), v->pref->compile_defines)) {
+			array_push(&args, _MOV((string[]){ string_clone(tos_lit("-bt25")) }));
+		}
+		if (!v->pref->is_bare && v->pref->build_mode != v__pref__BuildMode_build_module && (v->pref->os == v__pref__OS_linux || v->pref->os == v__pref__OS_freebsd || v->pref->os == v__pref__OS_openbsd || v->pref->os == v__pref__OS_netbsd || v->pref->os == v__pref__OS_dragonfly || v->pref->os == v__pref__OS_solaris || v->pref->os == v__pref__OS_haiku)) {
+			array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-lm")) }));
+			array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-lpthread")) }));
+			if (v->pref->os == v__pref__OS_linux) {
+				array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-ldl")) }));
+			}
+			if (v->pref->os == v__pref__OS_freebsd) {
+				array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-lexecinfo")) }));
+			}
+		}
+		if (!v->pref->is_bare && v->pref->os == v__pref__OS_js && string_eq(os__user_os(), tos_lit("linux"))) {
+			array_push(&linker_flags, _MOV((string[]){ string_clone(tos_lit("-lm")) }));
+		}
+		string env_cflags = os__getenv(tos_lit("CFLAGS"));
+		string env_ldflags = os__getenv(tos_lit("LDFLAGS"));
+		string str_args = string_add(string_add(string_add(string_add(string_add(string_add(env_cflags, tos_lit(" ")), array_string_join(args, tos_lit(" "))), tos_lit(" ")), array_string_join(linker_flags, tos_lit(" "))), tos_lit(" ")), env_ldflags);
+		if (v->pref->is_verbose) {
+			println(_STR("cc args=%.*s", 1, str_args));
+			println(array_string_str(args));
+		}
+		string response_file = _STR("%.*s\000.rsp", 2, v->out_name_c);
+		string response_file_content = string_replace(str_args, tos_lit("\\"), tos_lit("\\\\"));
+		Option_void _t1864 = os__write_file(response_file, response_file_content);
+		if (!_t1864.ok && !_t1864.is_none) {
+			string err = _t1864.v_error;
+			int errcode = _t1864.ecode;
+			v__builder__verror(_STR("Unable to write response file \"%.*s\000\"", 2, response_file));
+		};
+		if (!debug_mode) {
+			array_push(&v->pref->cleanup_files, _MOV((string[]){ string_clone(v->out_name_c) }));
+			array_push(&v->pref->cleanup_files, _MOV((string[]){ string_clone(response_file) }));
+		}
+		v__builder__todo();
+		os__chdir(vdir);
+		string cmd = _STR("%.*s\000 @%.*s", 2, ccompiler, response_file);
+		array_push(&tried_compilation_commands, _MOV((string[]){ string_clone(cmd) }));
+		v__builder__Builder_show_cc(v, cmd, response_file, response_file_content);
+		i64 ticks = time__ticks();
+		Option_os__Result _t1868 = os__exec(cmd);
+		if (!_t1868.ok) {
+			string err = _t1868.v_error;
+			int errcode = _t1868.ecode;
+			println(tos_lit("C compilation failed."));
+			os__chdir(original_pwd);
+			v__builder__verror(err);
+			return;
+		}
+ 		os__Result res = *(os__Result*) _t1868.data;
+		i64 diff = time__ticks() - ticks;
+		v__builder__Builder_timing_message(v, _STR("C %*.*s", 1, ccompiler, 3), diff);
+		if (v->pref->show_c_output) {
+			v__builder__Builder_show_c_compiler_output(v, res);
+		}
+		os__chdir(original_pwd);
+		if (res.exit_code != 0) {
+			if (string_contains(ccompiler, tos_lit("tcc.exe"))) {
+				if (tried_compilation_commands.len > 1) {
+					eprintln(_STR("Recompilation loop detected (ccompiler: %.*s\000):", 2, ccompiler));
+					// FOR IN array
+					array _t1869 = tried_compilation_commands;
+					for (int _t1870 = 0; _t1870 < _t1869.len; ++_t1870) {
+						string recompile_command = ((string*)_t1869.data)[_t1870];
+						eprintln(_STR("   %.*s", 1, recompile_command));
+					}
+					v_exit(101);
+				}
+				eprintln(tos_lit("recompilation with tcc failed; retrying with cc ..."));
+				v->pref->ccompiler = v__pref__default_c_compiler();
+				continue;
+			}
+			if (res.exit_code == 127) {
+				v__builder__verror(string_add(string_add(string_add(string_add(string_add(string_add(tos_lit("C compiler error, while attempting to run: \n"), tos_lit("-----------------------------------------------------------\n")), _STR("%.*s\000\n", 2, cmd)), tos_lit("-----------------------------------------------------------\n")), tos_lit("Probably your C compiler is missing. \n")), tos_lit("Please reinstall it, or make it available in your PATH.\n\n")), v__builder__missing_compiler_info()));
+			}
+		}
+		if (!v->pref->show_c_output) {
+			v__builder__Builder_post_process_c_compiler_output(v, res);
+		}
+		if (v->pref->is_verbose) {
+			println(_STR("%.*s\000 took %"PRId64"\000 ms", 3, ccompiler, diff));
+			println(tos_lit("=========\n"));
+		}
+		break;
 	}
 	if (v->pref->compress) {
 		#if defined(_WIN32)
