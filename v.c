@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "34e124d"
+#define V_COMMIT_HASH "9b583f5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "fe0ded9"
+	#define V_COMMIT_HASH "34e124d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "34e124d"
+	#define V_CURRENT_COMMIT_HASH "9b583f5"
 #endif
 
 // V comptime_defines:
@@ -2519,7 +2519,6 @@ struct v__ast__ArrayInit {
 	bool has_default;
 	array_v__table__Type expr_types;
 	bool is_interface;
-	array_v__table__Type interface_types;
 	v__table__Type interface_type;
 	v__table__Type elem_type;
 	v__table__Type typ;
@@ -20616,7 +20615,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("fe0ded9"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("34e124d"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -30862,7 +30861,6 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 		.has_default = has_default,
 		.expr_types = __new_array(0, 1, sizeof(v__table__Type)),
 		.is_interface = 0,
-		.interface_types = __new_array(0, 1, sizeof(v__table__Type)),
 		.interface_type = 0,
 		.elem_type = elem_type,
 		.typ = array_type,
