@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4f540e6"
+#define V_COMMIT_HASH "d3deaa1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "54e03f6"
+	#define V_COMMIT_HASH "4f540e6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4f540e6"
+	#define V_CURRENT_COMMIT_HASH "d3deaa1"
 #endif
 
 // V comptime_defines:
@@ -20592,7 +20592,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("54e03f6"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("4f540e6"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -37884,6 +37884,8 @@ VV_LOCAL_SYMBOL void v__gen__Gen_typeof_expr(v__gen__Gen* g, v__ast__TypeOf node
 			repr = /*f*/string_add(repr, _STR(" %.*s", 1, v__util__strip_main_name(v__table__Table_get_type_name(g->table, fn_info.return_type))));
 		}
 		v__gen__Gen_write(g, _STR("tos_lit(\"%.*s\000\")", 2, repr));
+	} else if (v__table__Type_has_flag(node.expr_type, v__table__TypeFlag_variadic)) {
+		v__gen__Gen_write(g, _STR("tos_lit(\"...%.*s\000\")", 2, v__util__strip_main_name(sym->name)));
 	} else {
 		v__gen__Gen_write(g, _STR("tos_lit(\"%.*s\000\")", 2, v__util__strip_main_name(sym->name)));
 	}
@@ -39609,9 +39611,9 @@ int _t1482_len = (*typ.info._v__table__Struct).fields.len;
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_133117 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_133117.arg0;
-						string base = mr_133117.arg1;
+						multi_return_string_string mr_133226 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_133226.arg0;
+						string base = mr_133226.arg1;
 						array_push(&g->optionals, _MOV((string[]){ string_clone(styp) }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -40028,11 +40030,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__as
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, tos_lit("main")) && string_eq(g->fn_decl->name, tos_lit("main.main"))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_146781 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_146781.arg0;
-				string pafile = mr_146781.arg1;
-				string pamod = mr_146781.arg2;
-				string pafn = mr_146781.arg3;
+				multi_return_int_string_string_string mr_146890 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_146890.arg0;
+				string pafile = mr_146890.arg1;
+				string pamod = mr_146890.arg2;
+				string pafn = mr_146890.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(_STR(\"optional not set (%%.*s\\000)\", 2, %.*s\000.v_error));", 2, cvar_name));
