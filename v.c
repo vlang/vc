@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "be7c88e"
+#define V_COMMIT_HASH "6af082e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0248e49"
+	#define V_COMMIT_HASH "be7c88e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "be7c88e"
+	#define V_CURRENT_COMMIT_HASH "6af082e"
 #endif
 
 // V comptime_defines:
@@ -5597,8 +5597,9 @@ v__table__Type v__parser__Parser_parse_enum_or_struct_type(v__parser__Parser* p,
 v__table__Type v__parser__Parser_parse_generic_template_type(v__parser__Parser* p, string name);
 v__table__Type v__parser__Parser_parse_generic_struct_inst_type(v__parser__Parser* p, string name);
 v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__Scope* scope);
-v__ast__File v__parser__parse_text(string text, v__table__Table* b_table, v__pref__Preferences* pref, v__ast__Scope* scope, v__ast__Scope* global_scope);
-v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, v__ast__Scope* global_scope);
+v__ast__File v__parser__parse_comptime(string text, v__table__Table* table, v__pref__Preferences* pref, v__ast__Scope* scope, v__ast__Scope* global_scope);
+v__ast__File v__parser__parse_text(string text, v__table__Table* table, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, v__ast__Scope* global_scope);
+v__ast__File v__parser__parse_file(string path, v__table__Table* table, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, v__ast__Scope* global_scope);
 multi_return_v__ast__File_array_string v__parser__parse_vet_file(string path, v__table__Table* table_, v__pref__Preferences* pref);
 v__ast__File v__parser__Parser_parse(v__parser__Parser* p);
 array_v__ast__File v__parser__parse_files(array_string paths, v__table__Table* table, v__pref__Preferences* pref, v__ast__Scope* global_scope);
@@ -20623,7 +20624,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("0248e49"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("be7c88e"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -20637,6 +20638,9 @@ VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Pre
 			return;
 		}
 		#endif
+		if (p->is_prod) {
+			return;
+		}
 		p->ccompiler = v__pref__default_tcc_compiler();
 		return;
 	}
@@ -30603,7 +30607,7 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p
 		println(tos_lit(">>> end of vweb template END"));
 		println(tos_lit("\n\n"));
 	}
-	v__ast__File file = v__parser__parse_text(v_code, p->table, p->pref, scope, p->global_scope);
+	v__ast__File file = v__parser__parse_comptime(v_code, p->table, p->pref, scope, p->global_scope);
 	file = // assoc
 	(v__ast__File){
 		.path = tmpl_path, 
@@ -32374,7 +32378,7 @@ v__ast__Stmt v__parser__parse_stmt(string text, v__table__Table* table, v__ast__
 	return v__parser__Parser_stmt(&p, false);
 }
 
-v__ast__File v__parser__parse_text(string text, v__table__Table* b_table, v__pref__Preferences* pref, v__ast__Scope* scope, v__ast__Scope* global_scope) {
+v__ast__File v__parser__parse_comptime(string text, v__table__Table* table, v__pref__Preferences* pref, v__ast__Scope* scope, v__ast__Scope* global_scope) {
 	v__scanner__Scanner* s = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments, pref);
 	v__parser__Parser p = (v__parser__Parser){
 		.file_base = (string){.str=(byteptr)""},
@@ -32388,7 +32392,7 @@ v__ast__File v__parser__parse_text(string text, v__table__Table* b_table, v__pre
 		.peek_tok = {0},
 		.peek_tok2 = {0},
 		.peek_tok3 = {0},
-		.table = b_table,
+		.table = table,
 		.language = 0,
 		.inside_if = 0,
 		.inside_if_expr = 0,
@@ -32424,7 +32428,57 @@ v__ast__File v__parser__parse_text(string text, v__table__Table* b_table, v__pre
 	return v__parser__Parser_parse(&p);
 }
 
-v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, v__ast__Scope* global_scope) {
+v__ast__File v__parser__parse_text(string text, v__table__Table* table, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, v__ast__Scope* global_scope) {
+	v__scanner__Scanner* s = v__scanner__new_scanner(text, comments_mode, pref);
+	v__parser__Parser p = (v__parser__Parser){
+		.file_base = (string){.str=(byteptr)""},
+		.file_name = (string){.str=(byteptr)""},
+		.file_name_dir = (string){.str=(byteptr)""},
+		.pref = pref,
+		.scanner = s,
+		.comments_mode = comments_mode,
+		.tok = {0},
+		.prev_tok = {0},
+		.peek_tok = {0},
+		.peek_tok2 = {0},
+		.peek_tok3 = {0},
+		.table = table,
+		.language = 0,
+		.inside_if = 0,
+		.inside_if_expr = 0,
+		.inside_ct_if_expr = 0,
+		.inside_or_expr = 0,
+		.inside_for = 0,
+		.inside_fn = 0,
+		.inside_str_interp = 0,
+		.builtin_mod = 0,
+		.mod = (string){.str=(byteptr)""},
+		.attrs = __new_array(0, 1, sizeof(v__table__Attr)),
+		.expr_mod = (string){.str=(byteptr)""},
+		.scope = (v__ast__Scope*)memdup(&(v__ast__Scope){.objects = new_map_1(sizeof(v__ast__ScopeObject)),.struct_fields = __new_array(0, 1, sizeof(v__ast__ScopeStructField)),.parent = global_scope,.children = __new_array(0, 1, sizeof(v__ast__Scope*)),.start_pos = 0,.end_pos = 0,}, sizeof(v__ast__Scope)),
+		.global_scope = global_scope,
+		.imports = new_map_1(sizeof(string)),
+		.ast_imports = __new_array(0, 1, sizeof(v__ast__Import)),
+		.used_imports = __new_array(0, 1, sizeof(string)),
+		.is_amp = 0,
+		.returns = 0,
+		.inside_match = 0,
+		.inside_select = 0,
+		.inside_match_case = 0,
+		.inside_match_body = 0,
+		.inside_unsafe = 0,
+		.is_stmt_ident = 0,
+		.expecting_type = 0,
+		.errors = __new_array_with_default(0, 0, sizeof(v__errors__Error), 0),
+		.warnings = __new_array_with_default(0, 0, sizeof(v__errors__Warning), 0),
+		.vet_errors = __new_array(0, 1, sizeof(string)),
+		.cur_fn_name = (string){.str=(byteptr)""},
+		.in_generic_params = 0,
+	};
+	return v__parser__Parser_parse(&p);
+}
+
+v__ast__File v__parser__parse_file(string path, v__table__Table* table, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref, v__ast__Scope* global_scope) {
 	v__parser__Parser p = (v__parser__Parser){
 		.file_base = os__base(path),
 		.file_name = path,
@@ -32437,7 +32491,7 @@ v__ast__File v__parser__parse_file(string path, v__table__Table* b_table, v__sca
 		.peek_tok = {0},
 		.peek_tok2 = {0},
 		.peek_tok3 = {0},
-		.table = b_table,
+		.table = table,
 		.language = 0,
 		.inside_if = 0,
 		.inside_if_expr = 0,
@@ -32874,7 +32928,7 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p, bool is_top_level) {
 							VAssertMetaInfo v_assert_meta_info__t1253;
 							memset(&v_assert_meta_info__t1253, 0, sizeof(VAssertMetaInfo));
 							v_assert_meta_info__t1253.fpath = tos_lit("/tmp/gen_vc/v/vlib/v/parser/parser.v");
-							v_assert_meta_info__t1253.line_nr = 618;
+							v_assert_meta_info__t1253.line_nr = 636;
 							v_assert_meta_info__t1253.fn_name = tos_lit("stmt");
 							v_assert_meta_info__t1253.src = tos_lit("false");
 							__print_assert_failure(&v_assert_meta_info__t1253);
@@ -33086,9 +33140,9 @@ void v__parser__Parser_vet_error(v__parser__Parser* p, string s, int line) {
 
 VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p, bool is_top_level) {
 	v__token__Token tok = p->tok;
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_20772 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr left = mr_20772.arg0;
-	array_v__ast__Comment left_comments = mr_20772.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_21234 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr left = mr_21234.arg0;
+	array_v__ast__Comment left_comments = mr_21234.arg1;
 	v__ast__Expr left0 = (*(v__ast__Expr*)/*ee elem_typ */array_get(left, 0));
 	if (tok.kind == v__token__Kind_key_mut && p->tok.kind != v__token__Kind_decl_assign) {
 		v__parser__Parser_error(p, tos_lit("expecting `:=` (e.g. `mut x :=`)"));
@@ -33756,9 +33810,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_42181 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_42181.arg0;
-	array_v__ast__Comment comments2 = mr_42181.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_42643 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_42643.arg0;
+	array_v__ast__Comment comments2 = mr_42643.arg1;
 	_PUSH_MANY(&comments, (comments2), _t1277, array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position(*(v__ast__Expr*)array_last(exprs));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
