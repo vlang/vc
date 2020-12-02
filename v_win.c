@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d8b8aca"
+#define V_COMMIT_HASH "ca7692c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ff26f05"
+	#define V_COMMIT_HASH "d8b8aca"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d8b8aca"
+	#define V_CURRENT_COMMIT_HASH "ca7692c"
 #endif
 
 // V comptime_defines:
@@ -20440,7 +20440,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("ff26f05"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("d8b8aca"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -46395,6 +46395,10 @@ void v__builder__Builder_generic_struct_insts_to_concrete(v__builder__Builder* b
 		if (typ->kind == v__table__Kind_generic_struct_inst) {
 			v__table__GenericStructInst info = /* as */ *(v__table__GenericStructInst*)__as_cast((typ->info)._v__table__GenericStructInst, (typ->info).typ, /*expected:*/154);
 			v__table__TypeSymbol parent = (*(v__table__TypeSymbol*)/*ee elem_typ */array_get(b->table->types, info.parent_idx));
+			if (parent.kind == v__table__Kind_placeholder) {
+				typ->kind = v__table__Kind_placeholder;
+				continue;
+			}
 			v__table__Struct parent_info = /* as */ *(v__table__Struct*)__as_cast((parent.info)._v__table__Struct, (parent.info).typ, /*expected:*/155);
 			array_v__table__Field fields = array_clone(&parent_info.fields);
 			// FOR IN array
