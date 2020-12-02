@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "cd46eb4"
+#define V_COMMIT_HASH "f8af866"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ca7692c"
+	#define V_COMMIT_HASH "cd46eb4"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "cd46eb4"
+	#define V_CURRENT_COMMIT_HASH "f8af866"
 #endif
 
 // V comptime_defines:
@@ -4319,7 +4319,7 @@ void println(string s);
 i64 total_m = 0; // global
 int nr_mallocs = 0; // global
 byteptr v_malloc(int n);
-byteptr v_realloc(byteptr b, u32 n);
+byteptr v_realloc(byteptr b, int n);
 byteptr v_calloc(int n);
 byteptr vcalloc(int n);
 void v_free(voidptr ptr);
@@ -10078,7 +10078,7 @@ inline VV_LOCAL_SYMBOL void array_ensure_cap(array* a, int required) {
 	if (a->cap == 0) {
 		a->data = vcalloc(cap * a->element_size);
 	} else {
-		a->data = v_realloc(a->data, ((u32)(cap * a->element_size)));
+		a->data = v_realloc(a->data, cap * a->element_size);
 	}
 	a->cap = cap;
 }
@@ -10705,7 +10705,7 @@ byteptr v_malloc(int n) {
 }
 
 // Attr: [unsafe]
-byteptr v_realloc(byteptr b, u32 n) {
+byteptr v_realloc(byteptr b, int n) {
 	#if defined(_VPREALLOC)
 	{
 	}
@@ -10713,7 +10713,7 @@ byteptr v_realloc(byteptr b, u32 n) {
 	{
 		byteptr ptr = realloc(b, n);
 		if (ptr == 0) {
-			v_panic(_STR("realloc(%"PRIu32"\000) failed", 2, n));
+			v_panic(_STR("realloc(%"PRId32"\000) failed", 2, n));
 		}
 		return ptr;
 	}
@@ -11408,9 +11408,9 @@ inline VV_LOCAL_SYMBOL u32 DenseArray_push(DenseArray* d, string key, voidptr va
 	if (d->cap == d->len) {
 		d->cap += d->cap >> 3;
 		{ // Unsafe block
-			byteptr x = v_realloc(((byteptr)(d->keys)), /*SizeOfType*/ sizeof(string) * d->cap);
+			byteptr x = v_realloc(((byteptr)(d->keys)), ((int)(/*SizeOfType*/ sizeof(string) * d->cap)));
 			d->keys = ((string*)(x));
-			d->values = v_realloc(((byteptr)(d->values)), ((u32)(d->value_bytes)) * d->cap);
+			d->values = v_realloc(((byteptr)(d->values)), d->value_bytes * ((int)(d->cap)));
 		}
 	}
 	u32 push_index = d->len;
@@ -11459,9 +11459,9 @@ VV_LOCAL_SYMBOL void DenseArray_zeros_to_end(DenseArray* d) {
 	d->len = count;
 	d->cap = (count < 8 ? (((u32)(8U))) : (count));
 	{ // Unsafe block
-		byteptr x = v_realloc(((byteptr)(d->keys)), /*SizeOfType*/ sizeof(string) * d->cap);
+		byteptr x = v_realloc(((byteptr)(d->keys)), ((int)(/*SizeOfType*/ sizeof(string) * d->cap)));
 		d->keys = ((string*)(x));
-		d->values = v_realloc(((byteptr)(d->values)), ((u32)(d->value_bytes)) * d->cap);
+		d->values = v_realloc(((byteptr)(d->values)), d->value_bytes * ((int)(d->cap)));
 	}
 }
 
@@ -11543,9 +11543,9 @@ inline VV_LOCAL_SYMBOL void map_ensure_extra_metas(map* m, u32 probe_count) {
 		m->extra_metas += _const_extra_metas_inc;
 		u32 mem_size = (m->cap + 2 + m->extra_metas);
 		{ // Unsafe block
-			byteptr x = v_realloc(((byteptr)(m->metas)), /*SizeOfType*/ sizeof(u32) * mem_size);
+			byteptr x = v_realloc(((byteptr)(m->metas)), ((int)(/*SizeOfType*/ sizeof(u32) * mem_size)));
 			m->metas = ((u32*)(x));
-			memset(m->metas + mem_size - _const_extra_metas_inc, 0, /*SizeOfType*/ sizeof(u32) * _const_extra_metas_inc);
+			memset(m->metas + mem_size - _const_extra_metas_inc, 0, ((int)(/*SizeOfType*/ sizeof(u32) * _const_extra_metas_inc)));
 		}
 		if (probe_count == 252) {
 			v_panic(tos_lit("Probe overflow"));
@@ -11559,12 +11559,12 @@ VV_LOCAL_SYMBOL void map_set(map* m, string k, voidptr value) {
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_9362 = map_key_to_index(m, key);
-	u32 index = mr_9362.arg0;
-	u32 meta = mr_9362.arg1;
-	multi_return_u32_u32 mr_9397 = map_meta_less(m, index, meta);
-	index = mr_9397.arg0;
-	meta = mr_9397.arg1;
+	multi_return_u32_u32 mr_9382 = map_key_to_index(m, key);
+	u32 index = mr_9382.arg0;
+	u32 meta = mr_9382.arg1;
+	multi_return_u32_u32 mr_9417 = map_meta_less(m, index, meta);
+	index = mr_9417.arg0;
+	meta = mr_9417.arg1;
 	for (;;) {
 		if (!(meta == m->metas[index])) break;
 		u32 kv_index = m->metas[index + 1];
@@ -11596,7 +11596,7 @@ VV_LOCAL_SYMBOL void map_expand(map* m) {
 VV_LOCAL_SYMBOL void map_rehash(map* m) {
 	u32 meta_bytes = /*SizeOfType*/ sizeof(u32) * (m->cap + 2 + m->extra_metas);
 	{ // Unsafe block
-		byteptr x = v_realloc(((byteptr)(m->metas)), meta_bytes);
+		byteptr x = v_realloc(((byteptr)(m->metas)), ((int)(meta_bytes)));
 		m->metas = ((u32*)(x));
 		memset(m->metas, 0, meta_bytes);
 	}
@@ -11604,12 +11604,12 @@ VV_LOCAL_SYMBOL void map_rehash(map* m) {
 		if (m->key_values.keys[i].str == 0) {
 			continue;
 		}
-		multi_return_u32_u32 mr_10794 = map_key_to_index(m, m->key_values.keys[i]);
-		u32 index = mr_10794.arg0;
-		u32 meta = mr_10794.arg1;
-		multi_return_u32_u32 mr_10856 = map_meta_less(m, index, meta);
-		index = mr_10856.arg0;
-		meta = mr_10856.arg1;
+		multi_return_u32_u32 mr_10819 = map_key_to_index(m, m->key_values.keys[i]);
+		u32 index = mr_10819.arg0;
+		u32 meta = mr_10819.arg1;
+		multi_return_u32_u32 mr_10881 = map_meta_less(m, index, meta);
+		index = mr_10881.arg0;
+		meta = mr_10881.arg1;
 		map_meta_greater(m, index, meta, i);
 	}
 }
@@ -11628,9 +11628,9 @@ VV_LOCAL_SYMBOL void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->cap >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->cap);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_11613 = map_meta_less(m, index, meta);
-		index = mr_11613.arg0;
-		meta = mr_11613.arg1;
+		multi_return_u32_u32 mr_11638 = map_meta_less(m, index, meta);
+		index = mr_11638.arg0;
+		meta = mr_11638.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -11639,9 +11639,9 @@ VV_LOCAL_SYMBOL void map_cached_rehash(map* m, u32 old_cap) {
 
 VV_LOCAL_SYMBOL voidptr map_get_and_set(map* m, string key, voidptr zero) {
 	for (;;) {
-		multi_return_u32_u32 mr_12059 = map_key_to_index(m, key);
-		u32 index = mr_12059.arg0;
-		u32 meta = mr_12059.arg1;
+		multi_return_u32_u32 mr_12084 = map_key_to_index(m, key);
+		u32 index = mr_12084.arg0;
+		u32 meta = mr_12084.arg1;
 		for (;;) {
 			if (meta == m->metas[index]) {
 				u32 kv_index = m->metas[index + 1];
@@ -11675,9 +11675,9 @@ VV_LOCAL_SYMBOL voidptr map_get_and_set(map* m, string key, voidptr zero) {
 }
 
 VV_LOCAL_SYMBOL voidptr map_get(map m, string key, voidptr zero) {
-	multi_return_u32_u32 mr_12777 = map_key_to_index(&m, key);
-	u32 index = mr_12777.arg0;
-	u32 meta = mr_12777.arg1;
+	multi_return_u32_u32 mr_12794 = map_key_to_index(&m, key);
+	u32 index = mr_12794.arg0;
+	u32 meta = mr_12794.arg1;
 	for (;;) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -11697,9 +11697,9 @@ VV_LOCAL_SYMBOL voidptr map_get(map m, string key, voidptr zero) {
 }
 
 VV_LOCAL_SYMBOL bool map_exists(map m, string key) {
-	multi_return_u32_u32 mr_13265 = map_key_to_index(&m, key);
-	u32 index = mr_13265.arg0;
-	u32 meta = mr_13265.arg1;
+	multi_return_u32_u32 mr_13282 = map_key_to_index(&m, key);
+	u32 index = mr_13282.arg0;
+	u32 meta = mr_13282.arg1;
 	for (;;) {
 		if (meta == m.metas[index]) {
 			u32 kv_index = m.metas[index + 1];
@@ -11717,12 +11717,12 @@ VV_LOCAL_SYMBOL bool map_exists(map m, string key) {
 }
 
 void map_delete(map* m, string key) {
-	multi_return_u32_u32 mr_13685 = map_key_to_index(m, key);
-	u32 index = mr_13685.arg0;
-	u32 meta = mr_13685.arg1;
-	multi_return_u32_u32 mr_13720 = map_meta_less(m, index, meta);
-	index = mr_13720.arg0;
-	meta = mr_13720.arg1;
+	multi_return_u32_u32 mr_13702 = map_key_to_index(m, key);
+	u32 index = mr_13702.arg0;
+	u32 meta = mr_13702.arg1;
+	multi_return_u32_u32 mr_13737 = map_meta_less(m, index, meta);
+	index = mr_13737.arg0;
+	meta = mr_13737.arg1;
 	for (;;) {
 		if (!(meta == m->metas[index])) break;
 		u32 kv_index = m->metas[index + 1];
@@ -14904,7 +14904,7 @@ array_byte os__get_raw_stdin() {
 				if (!res) {
 					break;
 				}
-				buf = v_realloc(buf, ((u32)(offset + block_bytes + (block_bytes - bytes_read))));
+				buf = v_realloc(buf, offset + block_bytes + (block_bytes - bytes_read));
 			}
 			CloseHandle(h_input);
 			return (array){.element_size = 1,.data = ((voidptr)(buf)),.len = offset,.cap = offset,};
@@ -20440,7 +20440,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("ca7692c"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("cd46eb4"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
