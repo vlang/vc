@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f8af866"
+#define V_COMMIT_HASH "93fe2ce"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "cd46eb4"
+	#define V_COMMIT_HASH "f8af866"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f8af866"
+	#define V_CURRENT_COMMIT_HASH "93fe2ce"
 #endif
 
 // V comptime_defines:
@@ -5639,7 +5639,7 @@ Option_v__ast__ConstField_ptr v__ast__Scope_find_const(v__ast__Scope* s, string 
 bool v__ast__Scope_known_var(v__ast__Scope* s, string name);
 void v__ast__Scope_update_var_type(v__ast__Scope* s, string name, v__table__Type typ);
 void v__ast__Scope_register_struct_field(v__ast__Scope* s, v__ast__ScopeStructField field);
-void v__ast__Scope_register(v__ast__Scope* s, string name, v__ast__ScopeObject obj);
+void v__ast__Scope_register(v__ast__Scope* s, v__ast__ScopeObject obj);
 v__ast__Scope* v__ast__Scope_outermost(v__ast__Scope* s);
 v__ast__Scope* v__ast__Scope_innermost(v__ast__Scope* s, int pos);
 VV_LOCAL_SYMBOL bool v__ast__Scope_contains(v__ast__Scope* s, int pos);
@@ -20440,7 +20440,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("cd46eb4"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("f8af866"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -24880,7 +24880,8 @@ void v__ast__Scope_register_struct_field(v__ast__Scope* s, v__ast__ScopeStructFi
 	array_push(&s->struct_fields, _MOV((v__ast__ScopeStructField[]){ field }));
 }
 
-void v__ast__Scope_register(v__ast__Scope* s, string name, v__ast__ScopeObject obj) {
+void v__ast__Scope_register(v__ast__Scope* s, v__ast__ScopeObject obj) {
+	string name = ((obj).typ == 275 /* v.ast.ConstField */ ? ((*obj._v__ast__ConstField).name) : (obj).typ == 276 /* v.ast.GlobalField */ ? ((*obj._v__ast__GlobalField).name) : ((/* as */ *(v__ast__Var*)__as_cast((obj)._v__ast__Var, (obj).typ, /*expected:*/277)).name));
 	if (string_eq(name, tos_lit("_"))) {
 		return;
 	}
@@ -27671,12 +27672,12 @@ c->expected_type = _const_v__table__void_type;
 }
 
 VV_LOCAL_SYMBOL void v__checker__scope_register_it(v__ast__Scope* s, v__token__Position pos, v__table__Type typ) {
-	v__ast__Scope_register(s, tos_lit("it"), /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("it"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = typ,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = pos,.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+	v__ast__Scope_register(s, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("it"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = typ,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = pos,.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
 }
 
 VV_LOCAL_SYMBOL void v__checker__scope_register_ab(v__ast__Scope* s, v__token__Position pos, v__table__Type typ) {
-	v__ast__Scope_register(s, tos_lit("a"), /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("a"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = typ,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = pos,.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
-	v__ast__Scope_register(s, tos_lit("b"), /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("b"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = typ,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = pos,.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+	v__ast__Scope_register(s, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("a"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = typ,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = pos,.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+	v__ast__Scope_register(s, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("b"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = typ,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = pos,.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
 }
 
 VV_LOCAL_SYMBOL void v__checker__Checker_check_array_init_para_type(v__checker__Checker* c, string para, v__ast__Expr expr, v__token__Position pos) {
@@ -28702,8 +28703,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 	} else if (_t1038 == v__token__AtKind_line_nr) {
 		node->val = int_str((node->pos.line_nr + 1));
 	} else if (_t1038 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_105477 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_105477.arg1;
+		multi_return_string_int mr_105461 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_105461.arg1;
 		node->val = int_str((column + 1));
 	} else if (_t1038 == v__token__AtKind_vhash) {
 		node->val = v__util__vhash();
@@ -29125,7 +29126,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_match_exprs(v__checker__Checker* c, v__
 					}}
 					if ((!is_mut || (*node->cond._v__ast__Ident).is_mut) && !is_already_casted) {
 						array_push(&sum_type_casts, _MOV((v__table__Type[]){ expr_type }));
-						v__ast__Scope_register(scope, (*node->cond._v__ast__Ident).name, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){
+						v__ast__Scope_register(scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){
 							.name = (*node->cond._v__ast__Ident).name,
 							.expr = {0},
 							.share = 0,
@@ -29366,7 +29367,7 @@ v__table__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExp
 								if (left_sym->kind == v__table__Kind_sum_type) {
 									if (!is_mut || (*infix.left._v__ast__Ident).is_mut) {
 										array_push(&sum_type_casts, _MOV((v__table__Type[]){ right_expr.typ }));
-										v__ast__Scope_register(scope, (*infix.left._v__ast__Ident).name, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){
+										v__ast__Scope_register(scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){
 											.name = (*infix.left._v__ast__Ident).name,
 											.expr = {0},
 											.share = 0,
@@ -29381,7 +29382,7 @@ v__table__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExp
 										}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
 									}
 								} else if (left_sym->kind == v__table__Kind_interface_) {
-									v__ast__Scope_register(scope, (*infix.left._v__ast__Ident).name, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){
+									v__ast__Scope_register(scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){
 										.name = (*infix.left._v__ast__Ident).name,
 										.expr = {0},
 										.share = 0,
@@ -29629,8 +29630,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->source_name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_135187 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_135187.arg0;
+		multi_return_string_v__token__Position mr_135121 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_135121.arg0;
 	}
 	if ((v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym)) && !c->inside_unsafe) {
 		v__checker__Checker_warn(c, tos_lit("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -30124,10 +30125,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1138 = 0; _t1138 < _t1137.len; ++_t1138) {
 			v__table__Fn m = ((v__table__Fn*)_t1137.data)[_t1138];
 			if (string_eq(m.return_type_source_name, tos_lit("vweb.Result"))) {
-				multi_return_bool_int_int mr_151119 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_151119.arg0;
-				int nroute_attributes = mr_151119.arg1;
-				int nargs = mr_151119.arg2;
+				multi_return_bool_int_int mr_151053 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_151053.arg0;
+				int nroute_attributes = mr_151053.arg1;
+				int nargs = mr_151053.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -30288,7 +30289,7 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Pa
 })),.share = share,.is_mut = (*lx._v__ast__Ident).is_mut || p->inside_for,.is_autofree_tmp = 0,.is_arg = 0,.typ = 0,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = (*lx._v__ast__Ident).pos,.is_used = 0,.is_changed = 0,};
 				v__ast__ScopeObject obj = /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){v}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */};
 				(*lx._v__ast__Ident).obj = obj;
-				v__ast__Scope_register(p->scope, (*lx._v__ast__Ident).name, obj);
+				v__ast__Scope_register(p->scope, obj);
 			}
 		} else if (_t1158.typ == 227 /* v.ast.IndexExpr */) {
 			if (op == v__token__Kind_decl_assign) {
@@ -30430,7 +30431,7 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p
 					if ((obj).typ == 277 /* v.ast.Var */) {
 						v__ast__Var v = (*obj._v__ast__Var);
 						v.pos = (*stmt._v__ast__FnDecl).body_pos;
-						v__ast__Scope_register(tmpl_scope, v.name, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){v}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+						v__ast__Scope_register(tmpl_scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){v}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
 						v.is_used = true;
 					}
 				}
@@ -30452,9 +30453,9 @@ VV_LOCAL_SYMBOL v__ast__CompFor v__parser__Parser_comp_for(v__parser__Parser* p)
 	string for_val = v__parser__Parser_check_name(p);
 	v__ast__CompForKind kind = v__ast__CompForKind_methods;
 	if (string_eq(for_val, tos_lit("methods"))) {
-		v__ast__Scope_register(p->scope, val_var, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = val_var,.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = v__table__Table_find_type_idx(p->table, tos_lit("FunctionData")),.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = {0},.is_used = 0,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+		v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = val_var,.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = v__table__Table_find_type_idx(p->table, tos_lit("FunctionData")),.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = {0},.is_used = 0,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
 	} else if (string_eq(for_val, tos_lit("fields"))) {
-		v__ast__Scope_register(p->scope, val_var, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = val_var,.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = v__table__Table_find_type_idx(p->table, tos_lit("FieldData")),.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = {0},.is_used = 0,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+		v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = val_var,.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = v__table__Table_find_type_idx(p->table, tos_lit("FieldData")),.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = {0},.is_used = 0,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
 		kind = v__ast__CompForKind_fields;
 	} else {
 		v__parser__Parser_error(p, _STR("unknown kind `%.*s\000`, available are: `methods` or `fields`", 2, for_val));
@@ -30723,8 +30724,8 @@ v__ast__CallExpr v__parser__Parser_call_expr(v__parser__Parser* p, v__table__Lan
 		p->inside_or_expr = true;
 		v__parser__Parser_next(p);
 		v__parser__Parser_open_scope(p);
-		v__ast__Scope_register(p->scope, tos_lit("err"), /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("err"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__string_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
-		v__ast__Scope_register(p->scope, tos_lit("errcode"), /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("errcode"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__int_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+		v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("err"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__string_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+		v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("errcode"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__int_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
 		or_kind = v__ast__OrKind_block;
 		or_stmts = v__parser__Parser_parse_block_no_scope(p, false);
 		or_pos = v__token__Position_extend(or_pos, v__token__Token_position(&p->prev_tok));
@@ -30878,10 +30879,10 @@ VV_LOCAL_SYMBOL v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Param_bool_bool mr_6551 = v__parser__Parser_fn_args(p);
-	array_v__table__Param args2 = mr_6551.arg0;
-	bool are_args_type_only = mr_6551.arg1;
-	bool is_variadic = mr_6551.arg2;
+	multi_return_array_v__table__Param_bool_bool mr_6533 = v__parser__Parser_fn_args(p);
+	array_v__table__Param args2 = mr_6533.arg0;
+	bool are_args_type_only = mr_6533.arg1;
+	bool is_variadic = mr_6533.arg2;
 	_PUSH_MANY(&params, (args2), _t1174, array_v__table__Param);
 	if (!are_args_type_only) {
 		// FOR IN array
@@ -30892,7 +30893,7 @@ VV_LOCAL_SYMBOL v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 				v__parser__Parser_error_with_pos(p, _STR("redefinition of parameter `%.*s\000`", 2, param.name), param.pos);
 				break;
 			}
-			v__ast__Scope_register(p->scope, param.name, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){
+			v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){
 				.name = param.name,
 				.expr = {0},
 				.share = 0,
@@ -31014,14 +31015,14 @@ VV_LOCAL_SYMBOL v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Param_bool_bool mr_9869 = v__parser__Parser_fn_args(p);
-	array_v__table__Param args = mr_9869.arg0;
-	bool is_variadic = mr_9869.arg2;
+	multi_return_array_v__table__Param_bool_bool mr_9839 = v__parser__Parser_fn_args(p);
+	array_v__table__Param args = mr_9839.arg0;
+	bool is_variadic = mr_9839.arg2;
 	// FOR IN array
 	array _t1178 = args;
 	for (int _t1179 = 0; _t1179 < _t1178.len; ++_t1179) {
 		v__table__Param arg = ((v__table__Param*)_t1178.data)[_t1179];
-		v__ast__Scope_register(p->scope, arg.name, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){
+		v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){
 			.name = arg.name,
 			.expr = {0},
 			.share = 0,
@@ -31343,7 +31344,7 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 			if (v__ast__Scope_known_var(p->scope, val_var_name)) {
 				v__parser__Parser_error(p, _STR("redefinition of value iteration variable `%.*s\000`", 2, val_var_name));
 			}
-			v__ast__Scope_register(p->scope, key_var_name, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = key_var_name,.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__int_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = key_var_pos,.is_used = 0,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+			v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = key_var_name,.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__int_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = key_var_pos,.is_used = 0,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
 		} else if (v__ast__Scope_known_var(p->scope, val_var_name)) {
 			v__parser__Parser_error(p, _STR("redefinition of value iteration variable `%.*s\000`", 2, val_var_name));
 		}
@@ -31362,12 +31363,12 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 			is_range = true;
 			v__parser__Parser_next(p);
 			high_expr = v__parser__Parser_expr(p, 0);
-			v__ast__Scope_register(p->scope, val_var_name, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = val_var_name,.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__int_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = val_var_pos,.is_used = 0,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+			v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = val_var_name,.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__int_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = val_var_pos,.is_used = 0,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
 			if (key_var_name.len > 0) {
 				v__parser__Parser_error_with_pos(p, tos_lit("cannot declare index variable with range `for`"), key_var_pos);
 			}
 		} else {
-			v__ast__Scope_register(p->scope, val_var_name, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = val_var_name,.expr = {0},.share = 0,.is_mut = val_is_mut,.is_autofree_tmp = 0,.is_arg = 0,.typ = 0,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = val_var_pos,.is_used = 0,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+			v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = val_var_name,.expr = {0},.share = 0,.is_mut = val_is_mut,.is_autofree_tmp = 0,.is_arg = 0,.typ = 0,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = val_var_pos,.is_used = 0,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
 		}
 		p->inside_for = false;
 		array_v__ast__Stmt stmts = v__parser__Parser_parse_block(p);
@@ -31422,8 +31423,8 @@ VV_LOCAL_SYMBOL v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p, b
 				v__token__Position body_pos = v__token__Token_position(&p->tok);
 				if (prev_guard) {
 					v__parser__Parser_open_scope(p);
-					v__ast__Scope_register(p->scope, tos_lit("errcode"), /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("errcode"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__int_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = body_pos,.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
-					v__ast__Scope_register(p->scope, tos_lit("err"), /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("err"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__string_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = body_pos,.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+					v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("errcode"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__int_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = body_pos,.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+					v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("err"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__string_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = body_pos,.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
 				}
 				array_push(&branches, _MOV((v__ast__IfBranch[]){ (v__ast__IfBranch){.cond = {0},.pos = v__token__Position_extend(start_pos, end_pos),.body_pos = v__token__Position_extend(body_pos, v__token__Token_position(&p->tok)),.comments = comments,.stmts = (prev_guard ? (v__parser__Parser_parse_block_no_scope(p, false)) : (v__parser__Parser_parse_block(p))),.smartcast = 0,} }));
 				if (prev_guard) {
@@ -31457,7 +31458,7 @@ VV_LOCAL_SYMBOL v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p, b
 			_PUSH_MANY(&comments, (v__parser__Parser_eat_comments(p)), _t1193, array_v__ast__Comment);
 			v__ast__Expr expr = v__parser__Parser_expr(p, 0);
 			cond = /* sum type cast 4 */ (v__ast__Expr){._v__ast__IfGuardExpr = memdup(&(v__ast__IfGuardExpr[]){(v__ast__IfGuardExpr){.var_name = var_name,.expr = expr,.pos = {0},.expr_type = 0,}}, sizeof(v__ast__IfGuardExpr)), .typ = 226 /* v.ast.IfGuardExpr */};
-			v__ast__Scope_register(p->scope, var_name, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = var_name,.expr = cond,.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = 0,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = var_pos,.is_used = 0,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+			v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = var_name,.expr = cond,.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = 0,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = var_pos,.is_used = 0,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
 			prev_guard = true;
 		} else {
 			prev_guard = false;
@@ -31624,9 +31625,9 @@ VV_LOCAL_SYMBOL v__ast__SelectExpr v__parser__Parser_select_expr(v__parser__Pars
 		} else {
 			p->inside_match = true;
 			p->inside_select = true;
-			multi_return_array_v__ast__Expr_array_v__ast__Comment mr_7746 = v__parser__Parser_expr_list(p);
-			array_v__ast__Expr exprs = mr_7746.arg0;
-			array_v__ast__Comment comments = mr_7746.arg1;
+			multi_return_array_v__ast__Expr_array_v__ast__Comment mr_7718 = v__parser__Parser_expr_list(p);
+			array_v__ast__Expr exprs = mr_7718.arg0;
+			array_v__ast__Comment comments = mr_7718.arg1;
 			if (exprs.len != 1) {
 				v__parser__Parser_error(p, tos_lit("only one expression allowed as `select` key"));
 			}
@@ -33198,12 +33199,12 @@ VV_LOCAL_SYMBOL v__ast__IndexExpr v__parser__Parser_index_expr(v__parser__Parser
 }
 
 VV_LOCAL_SYMBOL void v__parser__Parser_scope_register_it(v__parser__Parser* p) {
-	v__ast__Scope_register(p->scope, tos_lit("it"), /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("it"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = 0,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+	v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("it"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = 0,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
 }
 
 VV_LOCAL_SYMBOL void v__parser__Parser_scope_register_ab(v__parser__Parser* p) {
-	v__ast__Scope_register(p->scope, tos_lit("a"), /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("a"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = 0,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
-	v__ast__Scope_register(p->scope, tos_lit("b"), /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("b"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = 0,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+	v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("a"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = 0,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+	v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("b"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = 0,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
 }
 
 VV_LOCAL_SYMBOL v__ast__Expr v__parser__Parser_dot_expr(v__parser__Parser* p, v__ast__Expr left) {
@@ -33235,8 +33236,8 @@ VV_LOCAL_SYMBOL v__ast__Expr v__parser__Parser_dot_expr(v__parser__Parser* p, v_
 		if (p->tok.kind == v__token__Kind_key_orelse) {
 			v__parser__Parser_next(p);
 			v__parser__Parser_open_scope(p);
-			v__ast__Scope_register(p->scope, tos_lit("errcode"), /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("errcode"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__int_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
-			v__ast__Scope_register(p->scope, tos_lit("err"), /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("err"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__string_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+			v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("errcode"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__int_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+			v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("err"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__string_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
 			or_kind = v__ast__OrKind_block;
 			or_stmts = v__parser__Parser_parse_block_no_scope(p, false);
 			or_pos = v__token__Position_extend(or_pos, v__token__Token_position(&p->prev_tok));
@@ -33592,7 +33593,7 @@ VV_LOCAL_SYMBOL v__ast__ConstDecl v__parser__Parser_const_decl(v__parser__Parser
 		v__ast__Expr expr = v__parser__Parser_expr(p, 0);
 		v__ast__ConstField field = (v__ast__ConstField){.mod = p->mod,.name = full_name,.expr = expr,.is_pub = 0,.pos = pos,.typ = 0,.comments = comments,};
 		array_push(&fields, _MOV((v__ast__ConstField[]){ field }));
-		v__ast__Scope_register(p->global_scope, field.name, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__ConstField = memdup(&(v__ast__ConstField[]){field}, sizeof(v__ast__ConstField)), .typ = 275 /* v.ast.ConstField */});
+		v__ast__Scope_register(p->global_scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__ConstField = memdup(&(v__ast__ConstField[]){field}, sizeof(v__ast__ConstField)), .typ = 275 /* v.ast.ConstField */});
 		comments = __new_array_with_default(0, 0, sizeof(v__ast__Comment), 0);
 	}
 	v__parser__Parser_top_level_statement_end(p);
@@ -33607,9 +33608,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_42653 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_42653.arg0;
-	array_v__ast__Comment comments2 = mr_42653.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_42607 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_42607.arg0;
+	array_v__ast__Comment comments2 = mr_42607.arg1;
 	_PUSH_MANY(&comments, (comments2), _t1261, array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
@@ -33665,7 +33666,7 @@ VV_LOCAL_SYMBOL v__ast__GlobalDecl v__parser__Parser_global_decl(v__parser__Pars
 			.comments = comments,
 		};
 		array_push(&fields, _MOV((v__ast__GlobalField[]){ field }));
-		v__ast__Scope_register(p->global_scope, field.name, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__GlobalField = memdup(&(v__ast__GlobalField[]){field}, sizeof(v__ast__GlobalField)), .typ = 276 /* v.ast.GlobalField */});
+		v__ast__Scope_register(p->global_scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__GlobalField = memdup(&(v__ast__GlobalField[]){field}, sizeof(v__ast__GlobalField)), .typ = 276 /* v.ast.GlobalField */});
 		comments = __new_array_with_default(0, 0, sizeof(v__ast__Comment), 0);
 	}
 	v__parser__Parser_check(p, v__token__Kind_rpar);
@@ -34234,8 +34235,8 @@ VV_LOCAL_SYMBOL v__ast__PrefixExpr v__parser__Parser_prefix_expr(v__parser__Pars
 		if (p->tok.kind == v__token__Kind_key_orelse) {
 			v__parser__Parser_next(p);
 			v__parser__Parser_open_scope(p);
-			v__ast__Scope_register(p->scope, tos_lit("errcode"), /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("errcode"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__int_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
-			v__ast__Scope_register(p->scope, tos_lit("err"), /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("err"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__string_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+			v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("errcode"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__int_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+			v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = tos_lit("err"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__string_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = v__token__Token_position(&p->tok),.is_used = true,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
 			or_kind = v__ast__OrKind_block;
 			or_stmts = v__parser__Parser_parse_block_no_scope(p, false);
 			or_pos = v__token__Position_extend(or_pos, v__token__Token_position(&p->prev_tok));
@@ -41555,7 +41556,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_autofree_call_pregen(v__gen__Gen* g, v__ast__Ca
 			}}
 			s = _STR("%.*s\000 = ", 2, t);
 		} else {
-			v__ast__Scope_register(scope, t, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = t,.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = true,.is_arg = 0,.typ = _const_v__table__string_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = {0},.is_used = 0,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
+			v__ast__Scope_register(scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = t,.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = true,.is_arg = 0,.typ = _const_v__table__string_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = {0},.is_used = 0,.is_changed = 0,}}, sizeof(v__ast__Var)), .typ = 277 /* v.ast.Var */});
 			s = _STR("string %.*s\000 = ", 2, t);
 		}
 		s = /*f*/string_add(s, v__gen__Gen_write_expr_to_string(g, arg.expr));
