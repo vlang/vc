@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "97ed2bf"
+#define V_COMMIT_HASH "558a756"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c5a7c51"
+	#define V_COMMIT_HASH "97ed2bf"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "97ed2bf"
+	#define V_CURRENT_COMMIT_HASH "558a756"
 #endif
 
 // V comptime_defines:
@@ -20592,7 +20592,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("c5a7c51"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){tos_lit("97ed2bf"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -30895,7 +30895,7 @@ v__ast__CallExpr v__parser__Parser_call_expr(v__parser__Parser* p, v__table__Lan
 	if (p->tok.kind == v__token__Kind_not) {
 		v__parser__Parser_next(p);
 	}
-	v__token__Position pos = (v__token__Position){.len = last_pos.pos - first_pos.pos + last_pos.len,.line_nr = first_pos.line_nr,.pos = first_pos.pos,};
+	v__token__Position pos = v__token__Position_extend(first_pos, last_pos);
 	array_v__ast__Stmt or_stmts = __new_array_with_default(0, 0, sizeof(v__ast__Stmt), 0);
 	v__token__Position or_pos = v__token__Token_position(&p->tok);
 	if (p->tok.kind == v__token__Kind_key_orelse) {
@@ -31058,10 +31058,10 @@ VV_LOCAL_SYMBOL v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Param_bool_bool mr_6533 = v__parser__Parser_fn_args(p);
-	array_v__table__Param args2 = mr_6533.arg0;
-	bool are_args_type_only = mr_6533.arg1;
-	bool is_variadic = mr_6533.arg2;
+	multi_return_array_v__table__Param_bool_bool mr_6440 = v__parser__Parser_fn_args(p);
+	array_v__table__Param args2 = mr_6440.arg0;
+	bool are_args_type_only = mr_6440.arg1;
+	bool is_variadic = mr_6440.arg2;
 	_PUSH_MANY(&params, (args2), _t1190, array_v__table__Param);
 	if (!are_args_type_only) {
 		// FOR IN array
@@ -31194,9 +31194,9 @@ VV_LOCAL_SYMBOL v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Param_bool_bool mr_9839 = v__parser__Parser_fn_args(p);
-	array_v__table__Param args = mr_9839.arg0;
-	bool is_variadic = mr_9839.arg2;
+	multi_return_array_v__table__Param_bool_bool mr_9746 = v__parser__Parser_fn_args(p);
+	array_v__table__Param args = mr_9746.arg0;
+	bool is_variadic = mr_9746.arg2;
 	// FOR IN array
 	array _t1194 = args;
 	for (int _t1195 = 0; _t1195 < _t1194.len; ++_t1195) {
@@ -33430,8 +33430,8 @@ VV_LOCAL_SYMBOL v__ast__Expr v__parser__Parser_dot_expr(v__parser__Parser* p, v_
 			v__parser__Parser_next(p);
 			or_kind = v__ast__OrKind_propagate;
 		}
-		v__token__Position end_pos = v__token__Token_position(&p->tok);
-		v__token__Position pos = (v__token__Position){.len = end_pos.pos - name_pos.pos,.line_nr = name_pos.line_nr,.pos = name_pos.pos,};
+		v__token__Position end_pos = v__token__Token_position(&p->prev_tok);
+		v__token__Position pos = v__token__Position_extend(name_pos, end_pos);
 		v__ast__CallExpr mcall_expr = (v__ast__CallExpr){
 			.pos = pos,
 			.left = left,
@@ -33791,9 +33791,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_42642 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_42642.arg0;
-	array_v__ast__Comment comments2 = mr_42642.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_42567 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_42567.arg0;
+	array_v__ast__Comment comments2 = mr_42567.arg1;
 	_PUSH_MANY(&comments, (comments2), _t1277, array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
