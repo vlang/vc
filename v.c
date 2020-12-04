@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0c18b3b"
+#define V_COMMIT_HASH "cf7b45b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d12f5f7"
+	#define V_COMMIT_HASH "0c18b3b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0c18b3b"
+	#define V_CURRENT_COMMIT_HASH "cf7b45b"
 #endif
 
 // V comptime_defines:
@@ -20616,7 +20616,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d12f5f7"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0c18b3b"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -25518,11 +25518,20 @@ bool v__checker__Checker_check_basic(v__checker__Checker* c, v__table__Type got,
 			return true;
 		}
 	}
-	if (string_eq(exp_type_sym->name, _SLIT("array")) || string_eq(got_type_sym->name, _SLIT("array"))) {
+	if (got_idx == _const_v__table__array_type_idx || exp_idx == _const_v__table__array_type_idx) {
 		return true;
 	}
-	if (got_type_sym->kind == v__table__Kind_array && string_eq(got_type_sym->name, _SLIT("array_void")) && exp_type_sym->kind == v__table__Kind_array) {
-		return true;
+	if (got_type_sym->kind == v__table__Kind_array && exp_type_sym->kind == v__table__Kind_array) {
+		if (string_eq(got_type_sym->name, _SLIT("array_void"))) {
+			return true;
+		}
+		v__table__Array got_info = /* as */ *(v__table__Array*)__as_cast((got_type_sym->info)._v__table__Array, (got_type_sym->info).typ, /*expected:*/326);
+		v__table__Array exp_info = /* as */ *(v__table__Array*)__as_cast((exp_type_sym->info)._v__table__Array, (exp_type_sym->info).typ, /*expected:*/326);
+		v__table__TypeSymbol* got_elem_sym = v__table__Table_get_type_symbol(c->table, got_info.elem_type);
+		v__table__TypeSymbol* exp_elem_sym = v__table__Table_get_type_symbol(c->table, exp_info.elem_type);
+		if ((got_elem_sym->kind == v__table__Kind_alias || exp_elem_sym->kind == v__table__Kind_alias) && v__checker__Checker_check_basic(c, got_info.elem_type, exp_info.elem_type)) {
+			return true;
+		}
 	}
 	if ((got_type_sym->kind == v__table__Kind_alias && got_type_sym->parent_idx == exp_idx) || (exp_type_sym->kind == v__table__Kind_alias && exp_type_sym->parent_idx == got_idx)) {
 		return true;
@@ -25617,10 +25626,10 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_promote_num(v__checker__Check
 	v__table__Type type_hi = left_type;
 	v__table__Type type_lo = right_type;
 	if (v__table__Type_idx(type_hi) < v__table__Type_idx(type_lo)) {
-		v__table__Type _var_6493 = type_hi;
-		v__table__Type _var_6502 = type_lo;
-		type_hi = _var_6502;
-		type_lo = _var_6493;
+		v__table__Type _var_7059 = type_hi;
+		v__table__Type _var_7068 = type_lo;
+		type_hi = _var_7068;
+		type_lo = _var_7059;
 	}
 	int idx_hi = v__table__Type_idx(type_hi);
 	int idx_lo = v__table__Type_idx(type_lo);
