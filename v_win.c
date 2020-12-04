@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "02ba923"
+#define V_COMMIT_HASH "52ccdd7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "951d0ac"
+	#define V_COMMIT_HASH "02ba923"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "02ba923"
+	#define V_CURRENT_COMMIT_HASH "52ccdd7"
 #endif
 
 // V comptime_defines:
@@ -5911,6 +5911,7 @@ void v__gen__Gen_write_variadic_types(v__gen__Gen* g);
 void v__gen__Gen_write(v__gen__Gen* g, string s);
 void v__gen__Gen_writeln(v__gen__Gen* g, string s);
 string v__gen__Gen_new_tmp_var(v__gen__Gen* g);
+string v__gen__Gen_current_tmp_var(v__gen__Gen* g);
 void v__gen__Gen_reset_tmp_count(v__gen__Gen* g);
 VV_LOCAL_SYMBOL void v__gen__Gen_decrement_inside_ternary(v__gen__Gen* g);
 VV_LOCAL_SYMBOL void v__gen__Gen_stmts(v__gen__Gen* g, array_v__ast__Stmt stmts);
@@ -20463,7 +20464,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("951d0ac"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("02ba923"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -36032,6 +36033,10 @@ string v__gen__Gen_new_tmp_var(v__gen__Gen* g) {
 	return _STR("_t%"PRId32"", 1, g->tmp_count);
 }
 
+string v__gen__Gen_current_tmp_var(v__gen__Gen* g) {
+	return _STR("_t%"PRId32"", 1, g->tmp_count);
+}
+
 void v__gen__Gen_reset_tmp_count(v__gen__Gen* g) {
 	g->tmp_count = 0;
 }
@@ -37607,7 +37612,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 				VAssertMetaInfo v_assert_meta_info__t1385;
 				memset(&v_assert_meta_info__t1385, 0, sizeof(VAssertMetaInfo));
 				v_assert_meta_info__t1385.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/gen/cgen.v");
-				v_assert_meta_info__t1385.line_nr = 2558;
+				v_assert_meta_info__t1385.line_nr = 2562;
 				v_assert_meta_info__t1385.fn_name = _SLIT("expr");
 				v_assert_meta_info__t1385.src = _SLIT("node.field_name == 'len'");
 				v_assert_meta_info__t1385.op = _SLIT("==");
@@ -39017,6 +39022,13 @@ VV_LOCAL_SYMBOL void v__gen__Gen_const_decl(v__gen__Gen* g, v__ast__ConstDecl no
 			if (g->pref->build_mode != v__pref__BuildMode_build_module) {
 				strings__Builder_writeln(&g->stringliterals, _STR("\t_const_%.*s\000 = %.*s\000;", 3, name, val));
 			}
+		} else if (_t1436.typ == 215 /* v.ast.CallExpr */) {
+			if (string_starts_with(val, _SLIT("Option_"))) {
+				strings__Builder_writeln(&(*(strings__Builder*)map_get(g->inits, field.mod, &(strings__Builder[]){ {0} })), val);
+				v__gen__Gen_const_decl_init_later(g, field.mod, name, v__gen__Gen_current_tmp_var(g), field.typ);
+			} else {
+				v__gen__Gen_const_decl_init_later(g, field.mod, name, val, field.typ);
+			}
 		} else {
 			v__gen__Gen_const_decl_init_later(g, field.mod, name, val, field.typ);
 		};
@@ -39514,9 +39526,9 @@ int _t1467_len = (*typ.info._v__table__Struct).fields.len;
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_135420 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_135420.arg0;
-						string base = mr_135420.arg1;
+						multi_return_string_string mr_135749 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_135749.arg0;
+						string base = mr_135749.arg1;
 						array_push(&g->optionals, _MOV((string[]){ string_clone(styp) }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -39931,13 +39943,13 @@ VV_LOCAL_SYMBOL void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__as
 			v__gen__Gen_stmts(g, stmts);
 		}
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
-		if (string_eq(g->file.mod.name, _SLIT("main")) && string_eq(g->fn_decl->name, _SLIT("main.main"))) {
+		if (string_eq(g->file.mod.name, _SLIT("main")) && (isnil(g->fn_decl) || string_eq(g->fn_decl->name, _SLIT("main.main")))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_149070 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_149070.arg0;
-				string pafile = mr_149070.arg1;
-				string pamod = mr_149070.arg2;
-				string pafn = mr_149070.arg3;
+				multi_return_int_string_string_string mr_149421 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_149421.arg0;
+				string pafile = mr_149421.arg1;
+				string pamod = mr_149421.arg2;
+				string pafn = mr_149421.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(_STR(\"optional not set (%%.*s\\000)\", 2, %.*s\000.v_error));", 2, cvar_name));
@@ -40604,6 +40616,9 @@ VV_LOCAL_SYMBOL void v__gen__Gen_interface_call(v__gen__Gen* g, v__table__Type t
 
 VV_LOCAL_SYMBOL multi_return_int_string_string_string v__gen__Gen_panic_debug_info(v__gen__Gen* g, v__token__Position pos) {
 	int paline = pos.line_nr + 1;
+	if (isnil(g->fn_decl)) {
+		return (multi_return_int_string_string_string){.arg0=paline, .arg1=_SLIT(""), .arg2=_SLIT("main"), .arg3=_SLIT("C._vinit")};
+	}
 	string pafile = string_replace(g->fn_decl->file, _SLIT("\\"), _SLIT("/"));
 	string pafn = string_after(g->fn_decl->name, _SLIT("."));
 	string pamod = v__ast__FnDecl_modname(g->fn_decl);
