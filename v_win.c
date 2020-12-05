@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7d9d42b"
+#define V_COMMIT_HASH "fbf6910"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f786177"
+	#define V_COMMIT_HASH "7d9d42b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7d9d42b"
+	#define V_CURRENT_COMMIT_HASH "fbf6910"
 #endif
 
 // V comptime_defines:
@@ -5349,7 +5349,7 @@ string v__pref__OS_str(v__pref__OS o);
 v__pref__OS v__pref__get_host_os();
 array_string _const_v__pref__list_of_flags_with_param; // inited later
 multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args);
-VV_LOCAL_SYMBOL void v__pref__Preferences_vrun_elog(v__pref__Preferences* pref, string s);
+void v__pref__Preferences_vrun_elog(v__pref__Preferences* pref, string s);
 VV_LOCAL_SYMBOL void v__pref__must_exist(string path);
 Option_v__pref__Backend v__pref__backend_from_string(string s);
 v__pref__CompilerType v__pref__cc_from_string(string cc_str);
@@ -6263,6 +6263,7 @@ void v__builder__compile(string command, v__pref__Preferences* pref);
 VV_LOCAL_SYMBOL void v__builder__Builder_myfree(v__builder__Builder* b);
 VV_LOCAL_SYMBOL void v__builder__Builder_exit_on_invalid_syntax(v__builder__Builder* b);
 VV_LOCAL_SYMBOL void v__builder__Builder_run_compiled_executable_and_exit(v__builder__Builder* b);
+VV_LOCAL_SYMBOL void v__builder__Builder_cleanup_run_executable_after_exit(v__builder__Builder* v, string exefile);
 VV_LOCAL_SYMBOL void v__builder__Builder_set_module_lookup_paths(v__builder__Builder* v);
 array_string v__builder__Builder_get_builtin_files(v__builder__Builder v);
 array_string v__builder__Builder_get_user_files(v__builder__Builder* v);
@@ -20465,7 +20466,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f786177"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7d9d42b"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -20961,7 +20962,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 	return (multi_return_v__pref__Preferences_string){.arg0=res, .arg1=command};
 }
 
-VV_LOCAL_SYMBOL void v__pref__Preferences_vrun_elog(v__pref__Preferences* pref, string s) {
+void v__pref__Preferences_vrun_elog(v__pref__Preferences* pref, string s) {
 	if (pref->is_verbose) {
 		eprintln(_STR("> v run -, %.*s", 1, s));
 	}
@@ -46681,15 +46682,20 @@ VV_LOCAL_SYMBOL void v__builder__Builder_run_compiled_executable_and_exit(v__bui
 		if (b->pref->is_verbose) {
 			println(_STR("command to run executable: %.*s", 1, cmd));
 		}
-		if (b->pref->is_test) {
-			v_exit(os__system(cmd));
-		}
-		if (b->pref->is_run) {
+		if (b->pref->is_test || b->pref->is_run) {
 			int ret = os__system(cmd);
+			v__builder__Builder_cleanup_run_executable_after_exit(b, exefile);
 			v_exit(ret);
 		}
 	}
 	v_exit(0);
+}
+
+VV_LOCAL_SYMBOL void v__builder__Builder_cleanup_run_executable_after_exit(v__builder__Builder* v, string exefile) {
+	if (os__is_file(exefile)) {
+		v__pref__Preferences_vrun_elog(v->pref, _STR("remove run executable: %.*s", 1, exefile));
+		os__rm(exefile);
+	}
 }
 
 VV_LOCAL_SYMBOL void v__builder__Builder_set_module_lookup_paths(v__builder__Builder* v) {
