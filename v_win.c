@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "865c301"
+#define V_COMMIT_HASH "fafe30b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3172f32"
+	#define V_COMMIT_HASH "865c301"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "865c301"
+	#define V_CURRENT_COMMIT_HASH "fafe30b"
 #endif
 
 // V comptime_defines:
@@ -6044,6 +6044,7 @@ VV_LOCAL_SYMBOL bool v__gen__Gen_is_gui_app(v__gen__Gen* g);
 VV_LOCAL_SYMBOL bool v__gen__Gen_fileis(v__gen__Gen* g, string s);
 VV_LOCAL_SYMBOL string v__gen__Gen_write_fn_attrs(v__gen__Gen* g, array_v__table__Attr attrs);
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Type typ);
+VV_LOCAL_SYMBOL void v__gen__Gen_gen_struct_enc_dec(v__gen__Gen* g, v__table__TypeInfo type_info, string styp, strings__Builder* enc, strings__Builder* dec);
 VV_LOCAL_SYMBOL string v__gen__js_enc_name(string typ);
 VV_LOCAL_SYMBOL string v__gen__js_dec_name(string typ);
 VV_LOCAL_SYMBOL bool v__gen__is_js_prim(string typ);
@@ -20467,7 +20468,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3172f32"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("865c301"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -42238,7 +42239,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Typ
 	string dec_fn_name = v__gen__js_dec_name(styp);
 	v__gen__Gen_register_optional(g, utyp);
 	string dec_fn_dec = _STR("Option_%.*s\000 %.*s\000(cJSON* root)", 3, styp, dec_fn_name);
-	strings__Builder_writeln(&dec, _STR("\n//Option_%.*s\000 %.*s\000(cJSON* root, %.*s\000* res) {\n%.*s\000 {\n	%.*s\000 res;\n	if (!root) {\n		const char *error_ptr = cJSON_GetErrorPtr();\n		if (error_ptr != NULL)	{\n			// fprintf(stderr, \"Error in decode() for %.*s\000 error_ptr=: %%s\\n\", error_ptr);\n			// printf(\"\\nbad js=%%%%s\\n\", js.str);\n			Option err = v_error(tos2(error_ptr));\n			return *(Option_%.*s\000 *)&err;\n		}\n	}\n", 8, styp, dec_fn_name, styp, dec_fn_dec, styp, styp, styp));
+	strings__Builder_writeln(&dec, _STR("\n%.*s\000 {\n	%.*s\000 res;\n	if (!root) {\n		const char *error_ptr = cJSON_GetErrorPtr();\n		if (error_ptr != NULL)	{\n			// fprintf(stderr, \"Error in decode() for %.*s\000 error_ptr=: %%s\\n\", error_ptr);\n			// printf(\"\\nbad js=%%%%s\\n\", js.str);\n			Option err = v_error(tos2(error_ptr));\n			return *(Option_%.*s\000 *)&err;\n		}\n	}\n", 5, dec_fn_dec, styp, styp, styp));
 	strings__Builder_writeln(&g->json_forward_decls, _STR("%.*s\000;", 2, dec_fn_dec));
 	string enc_fn_name = v__gen__js_enc_name(styp);
 	string enc_fn_dec = _STR("cJSON* %.*s\000(%.*s\000 val)", 3, enc_fn_name, styp);
@@ -42255,55 +42256,25 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Typ
 		v__gen__Gen_gen_json_for_type(g, m.value_type);
 		strings__Builder_writeln(&dec, v__gen__Gen_decode_map(g, m.key_type, m.value_type));
 		strings__Builder_writeln(&enc, v__gen__Gen_encode_map(g, m.key_type, m.value_type));
+	} else if (sym->kind == v__table__Kind_alias) {
+		v__table__Alias a = /* as */ *(v__table__Alias*)__as_cast((sym->info)._v__table__Alias, (sym->info).typ, /*expected:*/348);
+		v__table__Type parent_typ = a.parent_type;
+		v__table__TypeSymbol* psym = v__table__Table_get_type_symbol(g->table, parent_typ);
+		if (v__gen__is_js_prim(v__gen__Gen_typ(g, parent_typ))) {
+			v__gen__Gen_gen_json_for_type(g, parent_typ);
+			return;
+		}
+		strings__Builder_writeln(&enc, _SLIT("\to = cJSON_CreateObject();"));
+		if ((psym->info).typ != 155 /* v.table.Struct */) {
+			v__gen__verror(_STR("json: %.*s\000 is not struct", 2, sym->name));
+		}
+		v__gen__Gen_gen_struct_enc_dec(g, psym->info, styp, (voidptr)&/*qq*/enc, (voidptr)&/*qq*/dec);
 	} else {
 		strings__Builder_writeln(&enc, _SLIT("\to = cJSON_CreateObject();"));
 		if ((sym->info).typ != 155 /* v.table.Struct */) {
 			v__gen__verror(_STR("json: %.*s\000 is not struct", 2, sym->name));
 		}
-		v__table__Struct info = /* as */ *(v__table__Struct*)__as_cast((sym->info)._v__table__Struct, (sym->info).typ, /*expected:*/155);
-		// FOR IN array
-		array _t1592 = info.fields;
-		for (int _t1593 = 0; _t1593 < _t1592.len; ++_t1593) {
-			v__table__Field field = ((v__table__Field*)_t1592.data)[_t1593];
-			if (array_v__table__Attr_contains(field.attrs, _SLIT("skip"))) {
-				continue;
-			}
-			string name = field.name;
-			// FOR IN array
-			array _t1594 = field.attrs;
-			for (int _t1595 = 0; _t1595 < _t1594.len; ++_t1595) {
-				v__table__Attr attr = ((v__table__Attr*)_t1594.data)[_t1595];
-				if (string_eq(attr.name, _SLIT("json"))) {
-					name = attr.arg;
-					break;
-				}
-			}
-			string field_type = v__gen__Gen_typ(g, field.typ);
-			if (array_v__table__Attr_contains(field.attrs, _SLIT("raw"))) {
-				strings__Builder_writeln(&dec, string_add(_STR("\tres.%.*s\000 = tos2(cJSON_PrintUnformatted(", 2, v__gen__c_name(field.name)), _STR("js_get(root, \"%.*s\000\")));", 2, name)));
-			} else {
-				v__gen__Gen_gen_json_for_type(g, field.typ);
-				string dec_name = v__gen__js_dec_name(field_type);
-				if (v__gen__is_js_prim(field_type)) {
-					strings__Builder_writeln(&dec, _STR("\tres.%.*s\000 = %.*s\000 (js_get(root, \"%.*s\000\"));", 4, v__gen__c_name(field.name), dec_name, name));
-				} else if (v__table__Table_get_type_symbol(g->table, field.typ)->kind == v__table__Kind_enum_) {
-					strings__Builder_writeln(&dec, _STR("\tres.%.*s\000 = json__decode_u64(js_get(root, \"%.*s\000\"));", 3, v__gen__c_name(field.name), name));
-				} else {
-					string tmp = v__gen__Gen_new_tmp_var(g);
-					strings__Builder_writeln(&dec, _STR("\tOption_%.*s\000 %.*s\000 = %.*s\000 (js_get(root,\"%.*s\000\"));", 5, field_type, tmp, dec_name, name));
-					strings__Builder_writeln(&dec, _STR("\tif(!%.*s\000.ok) {", 2, tmp));
-					strings__Builder_writeln(&dec, _STR("\t\treturn *(Option_%.*s\000*) &%.*s\000;", 3, styp, tmp));
-					strings__Builder_writeln(&dec, _SLIT("\t}"));
-					strings__Builder_writeln(&dec, _STR("\tres.%.*s\000 = *(%.*s\000*) %.*s\000.data;", 4, v__gen__c_name(field.name), field_type, tmp));
-				}
-			}
-			string enc_name = v__gen__js_enc_name(field_type);
-			if (v__table__Table_get_type_symbol(g->table, field.typ)->kind == v__table__Kind_enum_) {
-				strings__Builder_writeln(&enc, _STR("\tcJSON_AddItemToObject(o, \"%.*s\000\", json__encode_u64(val.%.*s\000));", 3, name, v__gen__c_name(field.name)));
-			} else {
-				strings__Builder_writeln(&enc, _STR("\tcJSON_AddItemToObject(o, \"%.*s\000\", %.*s\000(val.%.*s\000));", 4, name, enc_name, v__gen__c_name(field.name)));
-			}
-		}
+		v__gen__Gen_gen_struct_enc_dec(g, sym->info, styp, (voidptr)&/*qq*/enc, (voidptr)&/*qq*/dec);
 	}
 	strings__Builder_writeln(&dec, _STR("\tOption_%.*s\000 ret;", 2, styp));
 	strings__Builder_writeln(&dec, _SLIT("\topt_ok2(&res, (OptionBase*)&ret, sizeof(res));"));
@@ -42311,6 +42282,76 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_json_for_type(v__gen__Gen* g, v__table__Typ
 	strings__Builder_writeln(&enc, _SLIT("\treturn o;\n}"));
 	strings__Builder_writeln(&g->definitions, strings__Builder_str(&dec));
 	strings__Builder_writeln(&g->gowrappers, strings__Builder_str(&enc));
+}
+
+// Attr: [inline]
+inline VV_LOCAL_SYMBOL void v__gen__Gen_gen_struct_enc_dec(v__gen__Gen* g, v__table__TypeInfo type_info, string styp, strings__Builder* enc, strings__Builder* dec) {
+	v__table__Struct info = /* as */ *(v__table__Struct*)__as_cast((type_info)._v__table__Struct, (type_info).typ, /*expected:*/155);
+	// FOR IN array
+	array _t1592 = info.fields;
+	for (int _t1593 = 0; _t1593 < _t1592.len; ++_t1593) {
+		v__table__Field field = ((v__table__Field*)_t1592.data)[_t1593];
+		if (array_v__table__Attr_contains(field.attrs, _SLIT("skip"))) {
+			continue;
+		}
+		string name = field.name;
+		// FOR IN array
+		array _t1594 = field.attrs;
+		for (int _t1595 = 0; _t1595 < _t1594.len; ++_t1595) {
+			v__table__Attr attr = ((v__table__Attr*)_t1594.data)[_t1595];
+			if (string_eq(attr.name, _SLIT("json"))) {
+				name = attr.arg;
+				break;
+			}
+		}
+		string field_type = v__gen__Gen_typ(g, field.typ);
+		v__table__TypeSymbol* field_sym = v__table__Table_get_type_symbol(g->table, field.typ);
+		if (array_v__table__Attr_contains(field.attrs, _SLIT("raw"))) {
+			strings__Builder_writeln(dec, string_add(_STR("\tres.%.*s\000 = tos2(cJSON_PrintUnformatted(", 2, v__gen__c_name(field.name)), _STR("js_get(root, \"%.*s\000\")));", 2, name)));
+		} else {
+			v__gen__Gen_gen_json_for_type(g, field.typ);
+			string dec_name = v__gen__js_dec_name(field_type);
+			if (v__gen__is_js_prim(field_type)) {
+				strings__Builder_writeln(dec, _STR("\tres.%.*s\000 = %.*s\000 (js_get(root, \"%.*s\000\"));", 4, v__gen__c_name(field.name), dec_name, name));
+			} else if (field_sym->kind == v__table__Kind_enum_) {
+				strings__Builder_writeln(dec, _STR("\tres.%.*s\000 = json__decode_u64(js_get(root, \"%.*s\000\"));", 3, v__gen__c_name(field.name), name));
+			} else if (field_sym->kind == v__table__Kind_alias) {
+				v__table__Alias alias = /* as */ *(v__table__Alias*)__as_cast((field_sym->info)._v__table__Alias, (field_sym->info).typ, /*expected:*/348);
+				string parent_type = v__gen__Gen_typ(g, alias.parent_type);
+				string parent_dec_name = v__gen__js_dec_name(parent_type);
+				if (v__gen__is_js_prim(parent_type)) {
+					strings__Builder_writeln(dec, _STR("\tres.%.*s\000 = %.*s\000 (js_get(root, \"%.*s\000\"));", 4, v__gen__c_name(field.name), parent_dec_name, name));
+				} else {
+					v__gen__Gen_gen_json_for_type(g, field.typ);
+					string tmp = v__gen__Gen_new_tmp_var(g);
+					strings__Builder_writeln(dec, _STR("\tOption_%.*s\000 %.*s\000 = %.*s\000 (js_get(root,\"%.*s\000\"));", 5, field_type, tmp, dec_name, name));
+					strings__Builder_writeln(dec, _STR("\tif(!%.*s\000.ok) {", 2, tmp));
+					strings__Builder_writeln(dec, _STR("\t\treturn *(Option_%.*s\000*) &%.*s\000;", 3, styp, tmp));
+					strings__Builder_writeln(dec, _SLIT("\t}"));
+					strings__Builder_writeln(dec, _STR("\tres.%.*s\000 = *(%.*s\000*) %.*s\000.data;", 4, v__gen__c_name(field.name), field_type, tmp));
+				}
+			} else {
+				string tmp = v__gen__Gen_new_tmp_var(g);
+				strings__Builder_writeln(dec, _STR("\tOption_%.*s\000 %.*s\000 = %.*s\000 (js_get(root,\"%.*s\000\"));", 5, field_type, tmp, dec_name, name));
+				strings__Builder_writeln(dec, _STR("\tif(!%.*s\000.ok) {", 2, tmp));
+				strings__Builder_writeln(dec, _STR("\t\treturn *(Option_%.*s\000*) &%.*s\000;", 3, styp, tmp));
+				strings__Builder_writeln(dec, _SLIT("\t}"));
+				strings__Builder_writeln(dec, _STR("\tres.%.*s\000 = *(%.*s\000*) %.*s\000.data;", 4, v__gen__c_name(field.name), field_type, tmp));
+			}
+		}
+		string enc_name = v__gen__js_enc_name(field_type);
+		if (!v__gen__is_js_prim(field_type)) {
+			if (field_sym->kind == v__table__Kind_alias) {
+				v__table__Alias ainfo = /* as */ *(v__table__Alias*)__as_cast((field_sym->info)._v__table__Alias, (field_sym->info).typ, /*expected:*/348);
+				enc_name = v__gen__js_enc_name(v__gen__Gen_typ(g, ainfo.parent_type));
+			}
+		}
+		if (field_sym->kind == v__table__Kind_enum_) {
+			strings__Builder_writeln(enc, _STR("\tcJSON_AddItemToObject(o, \"%.*s\000\", json__encode_u64(val.%.*s\000));", 3, name, v__gen__c_name(field.name)));
+		} else {
+			strings__Builder_writeln(enc, _STR("\tcJSON_AddItemToObject(o, \"%.*s\000\", %.*s\000(val.%.*s\000));", 4, name, enc_name, v__gen__c_name(field.name)));
+		}
+	}
 }
 
 VV_LOCAL_SYMBOL string v__gen__js_enc_name(string typ) {
