@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "29857cb"
+#define V_COMMIT_HASH "b99ea33"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "005676f"
+	#define V_COMMIT_HASH "29857cb"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "29857cb"
+	#define V_CURRENT_COMMIT_HASH "b99ea33"
 #endif
 
 // V comptime_defines:
@@ -4294,6 +4294,8 @@ string array_byte_hex(array_byte b);
 int copy(array_byte dst, array_byte src);
 VV_LOCAL_SYMBOL int compare_ints(int* a, int* b);
 VV_LOCAL_SYMBOL int compare_ints_reverse(int* a, int* b);
+VV_LOCAL_SYMBOL int compare_u64s(u64* a, u64* b);
+VV_LOCAL_SYMBOL int compare_u64s_reverse(u64* a, u64* b);
 VV_LOCAL_SYMBOL int compare_floats(f64* a, f64* b);
 VV_LOCAL_SYMBOL int compare_floats_reverse(f64* a, f64* b);
 void array_int_sort(array_int* a);
@@ -10468,6 +10470,26 @@ VV_LOCAL_SYMBOL int compare_ints(int* a, int* b) {
 }
 
 VV_LOCAL_SYMBOL int compare_ints_reverse(int* a, int* b) {
+	if (*a > *b) {
+		return -1;
+	}
+	if (*a < *b) {
+		return 1;
+	}
+	return 0;
+}
+
+VV_LOCAL_SYMBOL int compare_u64s(u64* a, u64* b) {
+	if (*a < *b) {
+		return -1;
+	}
+	if (*a > *b) {
+		return 1;
+	}
+	return 0;
+}
+
+VV_LOCAL_SYMBOL int compare_u64s_reverse(u64* a, u64* b) {
 	if (*a > *b) {
 		return -1;
 	}
@@ -20471,7 +20493,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("005676f"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("29857cb"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -40091,6 +40113,8 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_array_sort(v__gen__Gen* g, v__ast__CallExpr
 	v__table__Type _t1501 = typ;
 	if (_t1501 == _const_v__table__int_type) {
 		compare_fn = _SLIT("compare_ints");
+	} else if (_t1501 == _const_v__table__u64_type) {
+		compare_fn = _SLIT("compare_u64s");
 	} else if (_t1501 == _const_v__table__string_type) {
 		compare_fn = _SLIT("compare_strings");
 	} else if (_t1501 == _const_v__table__f64_type) {
@@ -40329,11 +40353,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__as
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, _SLIT("main")) && (isnil(g->fn_decl) || string_eq(g->fn_decl->name, _SLIT("main.main")))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_150579 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_150579.arg0;
-				string pafile = mr_150579.arg1;
-				string pamod = mr_150579.arg2;
-				string pafn = mr_150579.arg3;
+				multi_return_int_string_string_string mr_150633 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_150633.arg0;
+				string pafile = mr_150633.arg1;
+				string pamod = mr_150633.arg2;
+				string pafn = mr_150633.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(_STR(\"optional not set (%%.*s\\000)\", 2, %.*s\000.v_error));", 2, cvar_name));
