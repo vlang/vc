@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6b7d7ce"
+#define V_COMMIT_HASH "8adb1ac"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b99ea33"
+	#define V_COMMIT_HASH "6b7d7ce"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6b7d7ce"
+	#define V_CURRENT_COMMIT_HASH "8adb1ac"
 #endif
 
 // V comptime_defines:
@@ -1281,12 +1281,13 @@ struct array {
 };
 
 struct DenseArray {
+	int key_bytes;
 	int value_bytes;
-	u32 cap;
-	u32 len;
+	int slot_bytes;
+	int cap;
+	int len;
 	u32 deletes;
-	string* keys;
-	byteptr values;
+	byteptr data;
 };
 
 struct map {
@@ -4417,12 +4418,11 @@ int _const_init_cap; // inited later
 u32 _const_hash_mask; // inited later
 u32 _const_probe_inc; // inited later
 VV_LOCAL_SYMBOL bool fast_string_eq(string a, string b);
-VV_LOCAL_SYMBOL DenseArray new_dense_array(int value_bytes);
+VV_LOCAL_SYMBOL DenseArray new_dense_array(int key_bytes, int value_bytes);
 VV_LOCAL_SYMBOL voidptr DenseArray_key(DenseArray* d, int i);
 VV_LOCAL_SYMBOL voidptr DenseArray_value(DenseArray* d, int i);
 VV_LOCAL_SYMBOL bool DenseArray_has_index(DenseArray* d, int i);
-VV_LOCAL_SYMBOL u32 DenseArray_push(DenseArray* d, string key, voidptr value);
-VV_LOCAL_SYMBOL voidptr DenseArray_get(DenseArray d, int i);
+VV_LOCAL_SYMBOL int DenseArray_push(DenseArray* d, voidptr key, voidptr value);
 VV_LOCAL_SYMBOL void DenseArray_zeros_to_end(DenseArray* d);
 VV_LOCAL_SYMBOL map new_map_1(int value_bytes);
 VV_LOCAL_SYMBOL map new_map_init(int n, int value_bytes, string* keys, voidptr values);
@@ -11427,93 +11427,73 @@ inline VV_LOCAL_SYMBOL bool fast_string_eq(string a, string b) {
 
 // Attr: [inline]
 // Attr: [unsafe]
-inline VV_LOCAL_SYMBOL DenseArray new_dense_array(int value_bytes) {
-	int s8size = ((int)(8 * /*SizeOfType*/ sizeof(string)));
+inline VV_LOCAL_SYMBOL DenseArray new_dense_array(int key_bytes, int value_bytes) {
+	int slot_bytes = key_bytes + value_bytes;
+	int cap = 8;
 	return (DenseArray){
+		.key_bytes = key_bytes,
 		.value_bytes = value_bytes,
-		.cap = 8,
+		.slot_bytes = slot_bytes,
+		.cap = cap,
 		.len = 0,
 		.deletes = 0,
-		.keys = ((string*)(v_malloc(s8size))),
-		.values = v_malloc(8 * value_bytes),
+		.data = v_malloc(cap * slot_bytes),
 	};
 }
 
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL voidptr DenseArray_key(DenseArray* d, int i) {
-	return ((voidptr)(d->keys + i));
+	return d->data + i * d->slot_bytes;
 }
 
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL voidptr DenseArray_value(DenseArray* d, int i) {
-	return ((voidptr)(d->values + i * d->value_bytes));
+	return d->data + i * d->slot_bytes + d->key_bytes;
 }
 
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL bool DenseArray_has_index(DenseArray* d, int i) {
-	string* pkey = d->keys + i;
+	string* pkey = ((string*)(DenseArray_key(d, i)));
 	return pkey->str != 0;
 }
 
 // Attr: [inline]
-inline VV_LOCAL_SYMBOL u32 DenseArray_push(DenseArray* d, string key, voidptr value) {
+inline VV_LOCAL_SYMBOL int DenseArray_push(DenseArray* d, voidptr key, voidptr value) {
 	if (d->cap == d->len) {
 		d->cap += d->cap >> 3;
 		{ // Unsafe block
-			byteptr x = v_realloc(((byteptr)(d->keys)), ((int)(/*SizeOfType*/ sizeof(string) * d->cap)));
-			d->keys = ((string*)(x));
-			d->values = v_realloc(((byteptr)(d->values)), d->value_bytes * ((int)(d->cap)));
+			d->data = v_realloc(d->data, d->slot_bytes * d->cap);
 		}
 	}
-	u32 push_index = d->len;
+	int push_index = d->len;
 	{ // Unsafe block
-		d->keys[push_index] = key;
-		memcpy(d->values + push_index * ((u32)(d->value_bytes)), value, d->value_bytes);
+		voidptr ptr = DenseArray_key(d, push_index);
+		memcpy(ptr, key, d->key_bytes);
+		memcpy(((byteptr)(ptr)) + d->key_bytes, value, d->value_bytes);
 	}
 	d->len++;
 	return push_index;
 }
 
-VV_LOCAL_SYMBOL voidptr DenseArray_get(DenseArray d, int i) {
-	#if !defined(CUSTOM_DEFINE_no_bounds_checking)
-	{
-		if (i < 0 || i >= ((int)(d.len))) {
-			v_panic(_STR("DenseArray.get: index out of range (i == %"PRId32"\000, d.len == %"PRIu32"\000)", 3, i, d.len));
-		}
-	}
-	#endif
-	{ // Unsafe block
-		return ((byteptr)(d.keys)) + i * ((int)(/*SizeOfType*/ sizeof(string)));
-	}
-	return 0;
-}
-
 VV_LOCAL_SYMBOL void DenseArray_zeros_to_end(DenseArray* d) {
-	byteptr tmp_value = v_malloc(d->value_bytes);
-	u32 count = ((u32)(0U));
-	for (int i = 0; i < ((int)(d->len)); ++i) {
-		if (d->keys[i].str != 0) {
+	byteptr tmp_buf = v_malloc(d->slot_bytes);
+	int count = 0;
+	for (int i = 0; i < d->len; ++i) {
+		if (DenseArray_has_index(d, i)) {
 			{ // Unsafe block
-				string tmp_key = d->keys[count];
-				d->keys[count] = d->keys[i];
-				d->keys[i] = tmp_key;
-			}
-			{ // Unsafe block
-				memcpy(tmp_value, d->values + count * ((u32)(d->value_bytes)), d->value_bytes);
-				memcpy(d->values + count * ((u32)(d->value_bytes)), d->values + i * d->value_bytes, d->value_bytes);
-				memcpy(d->values + i * d->value_bytes, tmp_value, d->value_bytes);
+				memcpy(tmp_buf, DenseArray_key(d, count), d->slot_bytes);
+				memcpy(DenseArray_key(d, count), DenseArray_key(d, i), d->slot_bytes);
+				memcpy(DenseArray_key(d, i), tmp_buf, d->slot_bytes);
 			}
 			count++;
 		}
 	}
-	v_free(tmp_value);
+	v_free(tmp_buf);
 	d->deletes = 0;
 	d->len = count;
-	d->cap = (count < 8 ? (((u32)(8U))) : (count));
+	d->cap = (count < 8 ? (8) : (count));
 	{ // Unsafe block
-		byteptr x = v_realloc(((byteptr)(d->keys)), ((int)(/*SizeOfType*/ sizeof(string) * d->cap)));
-		d->keys = ((string*)(x));
-		d->values = v_realloc(((byteptr)(d->values)), d->value_bytes * ((int)(d->cap)));
+		d->data = v_realloc(d->data, d->slot_bytes * d->cap);
 	}
 }
 
@@ -11524,7 +11504,7 @@ VV_LOCAL_SYMBOL map new_map_1(int value_bytes) {
 		.cap = _const_init_cap,
 		.cached_hashbits = _const_max_cached_hashbits,
 		.shift = _const_init_log_capicity,
-		.key_values = new_dense_array(value_bytes),
+		.key_values = new_dense_array(((int)(/*SizeOfType*/ sizeof(string))), value_bytes),
 		.metas = ((u32*)(vcalloc(metasize))),
 		.extra_metas = _const_extra_metas_inc,
 		.len = 0,
@@ -11611,24 +11591,28 @@ VV_LOCAL_SYMBOL void map_set(map* m, string k, voidptr value) {
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_9698 = map_key_to_index(m, key);
-	u32 index = mr_9698.arg0;
-	u32 meta = mr_9698.arg1;
-	multi_return_u32_u32 mr_9733 = map_meta_less(m, index, meta);
-	index = mr_9733.arg0;
-	meta = mr_9733.arg1;
+	multi_return_u32_u32 mr_9237 = map_key_to_index(m, key);
+	u32 index = mr_9237.arg0;
+	u32 meta = mr_9237.arg1;
+	multi_return_u32_u32 mr_9272 = map_meta_less(m, index, meta);
+	index = mr_9272.arg0;
+	meta = mr_9272.arg1;
 	for (;;) {
 		if (!(meta == m->metas[index])) break;
-		u32 kv_index = m->metas[index + 1];
-		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
-			memcpy(m->key_values.values + kv_index * ((u32)(m->value_bytes)), value, m->value_bytes);
+		int kv_index = ((int)(m->metas[index + 1]));
+		string* pkey = ((string*)(DenseArray_key(&m->key_values, kv_index)));
+		if (fast_string_eq(key, *pkey)) {
+			{ // Unsafe block
+				string* pval = pkey + 1;
+				memcpy(pval, value, m->value_bytes);
+			}
 			return;
 		}
 		index += 2;
 		meta += _const_probe_inc;
 	}
-	u32 kv_index = DenseArray_push(&m->key_values, key, value);
-	map_meta_greater(m, index, meta, kv_index);
+	int kv_index = DenseArray_push(&m->key_values, (voidptr)&/*qq*/key, value);
+	map_meta_greater(m, index, meta, ((u32)(kv_index)));
 	m->len++;
 }
 
@@ -11652,17 +11636,18 @@ VV_LOCAL_SYMBOL void map_rehash(map* m) {
 		m->metas = ((u32*)(x));
 		memset(m->metas, 0, meta_bytes);
 	}
-	for (u32 i = ((u32)(0U)); i < m->key_values.len; i++) {
-		if (m->key_values.keys[i].str == 0) {
+	for (int i = 0; i < m->key_values.len; i++) {
+		if (!DenseArray_has_index(&m->key_values, i)) {
 			continue;
 		}
-		multi_return_u32_u32 mr_11135 = map_key_to_index(m, m->key_values.keys[i]);
-		u32 index = mr_11135.arg0;
-		u32 meta = mr_11135.arg1;
-		multi_return_u32_u32 mr_11197 = map_meta_less(m, index, meta);
-		index = mr_11197.arg0;
-		meta = mr_11197.arg1;
-		map_meta_greater(m, index, meta, i);
+		string* pkey = ((string*)(DenseArray_key(&m->key_values, i)));
+		multi_return_u32_u32 mr_10728 = map_key_to_index(m, *pkey);
+		u32 index = mr_10728.arg0;
+		u32 meta = mr_10728.arg1;
+		multi_return_u32_u32 mr_10766 = map_meta_less(m, index, meta);
+		index = mr_10766.arg0;
+		meta = mr_10766.arg1;
+		map_meta_greater(m, index, meta, ((u32)(i)));
 	}
 }
 
@@ -11680,9 +11665,9 @@ VV_LOCAL_SYMBOL void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->cap >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->cap);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_11954 = map_meta_less(m, index, meta);
-		index = mr_11954.arg0;
-		meta = mr_11954.arg1;
+		multi_return_u32_u32 mr_11528 = map_meta_less(m, index, meta);
+		index = mr_11528.arg0;
+		meta = mr_11528.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -11691,16 +11676,15 @@ VV_LOCAL_SYMBOL void map_cached_rehash(map* m, u32 old_cap) {
 
 VV_LOCAL_SYMBOL voidptr map_get_and_set(map* m, string key, voidptr zero) {
 	for (;;) {
-		multi_return_u32_u32 mr_12400 = map_key_to_index(m, key);
-		u32 index = mr_12400.arg0;
-		u32 meta = mr_12400.arg1;
+		multi_return_u32_u32 mr_11974 = map_key_to_index(m, key);
+		u32 index = mr_11974.arg0;
+		u32 meta = mr_11974.arg1;
 		for (;;) {
 			if (meta == m->metas[index]) {
-				u32 kv_index = m->metas[index + 1];
-				if (fast_string_eq(key, m->key_values.keys[kv_index])) {
-					{ // Unsafe block
-						return ((voidptr)(m->key_values.values + kv_index * ((u32)(m->value_bytes))));
-					}
+				int kv_index = ((int)(m->metas[index + 1]));
+				string* pkey = ((string*)(DenseArray_key(&m->key_values, kv_index)));
+				if (fast_string_eq(key, *pkey)) {
+					return ((byteptr)(pkey)) + m->key_values.key_bytes;
 				}
 			}
 			index += 2;
@@ -11716,7 +11700,7 @@ VV_LOCAL_SYMBOL voidptr map_get_and_set(map* m, string key, voidptr zero) {
 		VAssertMetaInfo v_assert_meta_info__t32;
 		memset(&v_assert_meta_info__t32, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t32.fpath = _SLIT("/tmp/gen_vc/v/vlib/builtin/map.v");
-		v_assert_meta_info__t32.line_nr = 426;
+		v_assert_meta_info__t32.line_nr = 413;
 		v_assert_meta_info__t32.fn_name = _SLIT("get_and_set");
 		v_assert_meta_info__t32.src = _SLIT("false");
 		__print_assert_failure(&v_assert_meta_info__t32);
@@ -11727,16 +11711,15 @@ VV_LOCAL_SYMBOL voidptr map_get_and_set(map* m, string key, voidptr zero) {
 }
 
 VV_LOCAL_SYMBOL voidptr map_get(map m, string key, voidptr zero) {
-	multi_return_u32_u32 mr_13110 = map_key_to_index(&m, key);
-	u32 index = mr_13110.arg0;
-	u32 meta = mr_13110.arg1;
+	multi_return_u32_u32 mr_12680 = map_key_to_index(&m, key);
+	u32 index = mr_12680.arg0;
+	u32 meta = mr_12680.arg1;
 	for (;;) {
 		if (meta == m.metas[index]) {
-			u32 kv_index = m.metas[index + 1];
-			if (fast_string_eq(key, m.key_values.keys[kv_index])) {
-				{ // Unsafe block
-					return ((voidptr)(m.key_values.values + kv_index * ((u32)(m.value_bytes))));
-				}
+			int kv_index = ((int)(m.metas[index + 1]));
+			string* pkey = ((string*)(DenseArray_key(&m.key_values, kv_index)));
+			if (fast_string_eq(key, *pkey)) {
+				return ((byteptr)(pkey)) + m.key_values.key_bytes;
 			}
 		}
 		index += 2;
@@ -11749,13 +11732,14 @@ VV_LOCAL_SYMBOL voidptr map_get(map m, string key, voidptr zero) {
 }
 
 VV_LOCAL_SYMBOL bool map_exists(map m, string key) {
-	multi_return_u32_u32 mr_13598 = map_key_to_index(&m, key);
-	u32 index = mr_13598.arg0;
-	u32 meta = mr_13598.arg1;
+	multi_return_u32_u32 mr_13165 = map_key_to_index(&m, key);
+	u32 index = mr_13165.arg0;
+	u32 meta = mr_13165.arg1;
 	for (;;) {
 		if (meta == m.metas[index]) {
-			u32 kv_index = m.metas[index + 1];
-			if (fast_string_eq(key, m.key_values.keys[kv_index])) {
+			int kv_index = ((int)(m.metas[index + 1]));
+			string* pkey = ((string*)(DenseArray_key(&m.key_values, kv_index)));
+			if (fast_string_eq(key, *pkey)) {
 				return true;
 			}
 		}
@@ -11769,16 +11753,17 @@ VV_LOCAL_SYMBOL bool map_exists(map m, string key) {
 }
 
 void map_delete(map* m, string key) {
-	multi_return_u32_u32 mr_14018 = map_key_to_index(m, key);
-	u32 index = mr_14018.arg0;
-	u32 meta = mr_14018.arg1;
-	multi_return_u32_u32 mr_14053 = map_meta_less(m, index, meta);
-	index = mr_14053.arg0;
-	meta = mr_14053.arg1;
+	multi_return_u32_u32 mr_13614 = map_key_to_index(m, key);
+	u32 index = mr_13614.arg0;
+	u32 meta = mr_13614.arg1;
+	multi_return_u32_u32 mr_13649 = map_meta_less(m, index, meta);
+	index = mr_13649.arg0;
+	meta = mr_13649.arg1;
 	for (;;) {
 		if (!(meta == m->metas[index])) break;
-		u32 kv_index = m->metas[index + 1];
-		if (fast_string_eq(key, m->key_values.keys[kv_index])) {
+		int kv_index = ((int)(m->metas[index + 1]));
+		string* pkey = ((string*)(DenseArray_key(&m->key_values, kv_index)));
+		if (fast_string_eq(key, *pkey)) {
 			for (;;) {
 				if (!((m->metas[index + 2] >> _const_hashbits) > 1)) break;
 				{ // Unsafe block
@@ -11793,13 +11778,13 @@ void map_delete(map* m, string key) {
 			}
 			m->key_values.deletes++;
 			{ // Unsafe block
-				string_free(&m->key_values.keys[kv_index]);
-				memset(&m->key_values.keys[kv_index], 0, /*SizeOfType*/ sizeof(string));
+				string_free(&(*pkey));
+				memset(pkey, 0, /*SizeOfType*/ sizeof(string));
 			}
 			if (m->key_values.len <= 32) {
 				return;
 			}
-			if (m->key_values.deletes >= (m->key_values.len >> 1)) {
+			if (_us32_ge(m->key_values.deletes,(m->key_values.len >> 1))) {
 				DenseArray_zeros_to_end(&m->key_values);
 				map_rehash(m);
 				m->key_values.deletes = 0;
@@ -11814,11 +11799,12 @@ void map_delete(map* m, string key) {
 array_string map_keys(map* m) {
 	array_string keys = __new_array_with_default(m->len, 0, sizeof(string), &(string[]){_SLIT("")});
 	int j = 0;
-	for (u32 i = ((u32)(0U)); i < m->key_values.len; i++) {
-		if (m->key_values.keys[i].str == 0) {
+	for (int i = 0; i < m->key_values.len; i++) {
+		if (!DenseArray_has_index(&m->key_values, i)) {
 			continue;
 		}
-		array_set(&keys, j, &(string[]) { string_clone(m->key_values.keys[i]) });
+		string* pkey = ((string*)(DenseArray_key(&m->key_values, i)));
+		array_set(&keys, j, &(string[]) { string_clone(/*rec*/*pkey) });
 		j++;
 	}
 	return keys;
@@ -11826,20 +11812,15 @@ array_string map_keys(map* m) {
 
 // Attr: [unsafe]
 DenseArray DenseArray_clone(DenseArray d) {
-	int ksize = ((int)(d.cap * /*SizeOfType*/ sizeof(string)));
-	int vsize = ((int)(d.cap * ((u32)(d.value_bytes))));
 	DenseArray res = (DenseArray){
+		.key_bytes = d.key_bytes,
 		.value_bytes = d.value_bytes,
+		.slot_bytes = d.slot_bytes,
 		.cap = d.cap,
 		.len = d.len,
 		.deletes = d.deletes,
-		.keys = ((string*)(v_malloc(ksize))),
-		.values = ((byteptr)(v_malloc(vsize))),
+		.data = memdup(d.data, d.cap * d.slot_bytes),
 	};
-	{ // Unsafe block
-		memcpy(res.keys, d.keys, ksize);
-		memcpy(res.values, d.values, vsize);
-	}
 	return res;
 }
 
@@ -11863,16 +11844,16 @@ map map_clone(map m) {
 // Attr: [unsafe]
 void map_free(map* m) {
 	v_free(m->metas);
-	for (u32 i = ((u32)(0U)); i < m->key_values.len; i++) {
-		if (m->key_values.keys[i].str == 0) {
+	for (int i = 0; i < m->key_values.len; i++) {
+		if (!DenseArray_has_index(&m->key_values, i)) {
 			continue;
 		}
-		string_free(&m->key_values.keys[i]);
+		{ // Unsafe block
+			string* pkey = ((string*)(DenseArray_key(&m->key_values, i)));
+			string_free(&(*pkey));
+		}
 	}
-	{ // Unsafe block
-		v_free(m->key_values.keys);
-		v_free(m->key_values.values);
-	}
+	v_free(m->key_values.data);
 }
 
 VV_LOCAL_SYMBOL void opt_ok2(voidptr data, OptionBase* option, int size) {
@@ -15859,7 +15840,7 @@ os__Process* os__Process_set_environment(os__Process* p, map_string_string envs)
 	p->env = __new_array_with_default(0, 0, sizeof(string), 0);
 	// FOR IN map
 	map_string_string _t224 = envs;
-	for (int _t223 = 0; _t223 < (int)_t224.key_values.len; ++_t223) {
+	for (int _t223 = 0; _t223 < _t224.key_values.len; ++_t223) {
 		if (!DenseArray_has_index(&_t224.key_values, _t223)) {continue;}
 		string k = /*key*/ *(string*)DenseArray_key(&_t224.key_values, _t223);
 		k = string_clone(k);
@@ -15921,7 +15902,7 @@ VV_LOCAL_SYMBOL int os__Process__spawn(os__Process* p) {
 		map_string_string current_environment = os__environ();
 		// FOR IN map
 		map_string_string _t227 = current_environment;
-		for (int _t226 = 0; _t226 < (int)_t227.key_values.len; ++_t226) {
+		for (int _t226 = 0; _t226 < _t227.key_values.len; ++_t226) {
 			if (!DenseArray_has_index(&_t227.key_values, _t226)) {continue;}
 			string k = /*key*/ *(string*)DenseArray_key(&_t227.key_values, _t226);
 			k = string_clone(k);
@@ -19435,7 +19416,7 @@ Option_string v__pkgconfig__Main_run(v__pkgconfig__Main* m) {
 	if (opt->variables) {
 		// FOR IN map
 		map_string_string _t482 = pc->vars;
-		for (int _t481 = 0; _t481 < (int)_t482.key_values.len; ++_t481) {
+		for (int _t481 = 0; _t481 < _t482.key_values.len; ++_t481) {
 			if (!DenseArray_has_index(&_t482.key_values, _t481)) {continue;}
 			string k = /*key*/ *(string*)DenseArray_key(&_t482.key_values, _t481);
 			k = string_clone(k);
@@ -20493,7 +20474,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b99ea33"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6b7d7ce"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -21941,7 +21922,7 @@ Option_bool v__util__check_module_is_installed(string modulename, bool is_verbos
 void v__util__ensure_modules_for_all_tools_are_installed(bool is_verbose) {
 	// FOR IN map
 	map_string_array_string _t673 = _const_v__util__external_module_dependencies_for_tool;
-	for (int _t672 = 0; _t672 < (int)_t673.key_values.len; ++_t672) {
+	for (int _t672 = 0; _t672 < _t673.key_values.len; ++_t672) {
 		if (!DenseArray_has_index(&_t673.key_values, _t672)) {continue;}
 		string tool_name = /*key*/ *(string*)DenseArray_key(&_t673.key_values, _t672);
 		tool_name = string_clone(tool_name);
@@ -22873,7 +22854,7 @@ array_string v__table__Table_known_type_names(v__table__Table* table) {
 	array_string res = __new_array_with_default(0, 0, sizeof(string), 0);
 	// FOR IN map
 	map_string_int _t742 = table->type_idxs;
-	for (int _t741 = 0; _t741 < (int)_t742.key_values.len; ++_t741) {
+	for (int _t741 = 0; _t741 < _t742.key_values.len; ++_t741) {
 		if (!DenseArray_has_index(&_t742.key_values, _t741)) {continue;}
 		int idx = (*(int*)DenseArray_value(&_t742.key_values, _t741));
 		if (idx == 0) {
@@ -24997,7 +24978,7 @@ string v__ast__Scope_show(v__ast__Scope* sc, int depth, int max_depth) {
 	out = /*f*/string_add(out, _STR("%.*s\000# %"PRId32"\000 - %"PRId32"\000\n", 4, indent, sc->start_pos, sc->end_pos));
 	// FOR IN map
 	map_string_v__ast__ScopeObject _t837 = sc->objects;
-	for (int _t836 = 0; _t836 < (int)_t837.key_values.len; ++_t836) {
+	for (int _t836 = 0; _t836 < _t837.key_values.len; ++_t836) {
 		if (!DenseArray_has_index(&_t837.key_values, _t836)) {continue;}
 		v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)DenseArray_value(&_t837.key_values, _t836));
 		v__ast__ScopeObject _t838 = obj;
@@ -25726,7 +25707,7 @@ void v__checker__Checker_check(v__checker__Checker* c, v__ast__File* ast_file) {
 void v__checker__Checker_check_scope_vars(v__checker__Checker* c, v__ast__Scope* sc) {
 	// FOR IN map
 	map_string_v__ast__ScopeObject _t878 = sc->objects;
-	for (int _t877 = 0; _t877 < (int)_t878.key_values.len; ++_t877) {
+	for (int _t877 = 0; _t877 < _t878.key_values.len; ++_t877) {
 		if (!DenseArray_has_index(&_t878.key_values, _t877)) {continue;}
 		v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)DenseArray_value(&_t878.key_values, _t877));
 		v__ast__ScopeObject _t879 = obj;
@@ -30567,7 +30548,7 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p
 				v__ast__Scope* tmpl_scope = v__ast__Scope_innermost(file.scope, (*stmt._v__ast__FnDecl).body_pos.pos);
 				// FOR IN map
 				map_string_v__ast__ScopeObject _t1171 = p->scope->objects;
-				for (int _t1170 = 0; _t1170 < (int)_t1171.key_values.len; ++_t1170) {
+				for (int _t1170 = 0; _t1170 < _t1171.key_values.len; ++_t1170) {
 					if (!DenseArray_has_index(&_t1171.key_values, _t1170)) {continue;}
 					v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)DenseArray_value(&_t1171.key_values, _t1170));
 					if ((obj).typ == 277 /* v.ast.Var */) {
@@ -35535,7 +35516,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_map(v__gen__Gen* g, v__table__Map i
 	strings__Builder_writeln(&g->auto_str_funcs, _STR("static string indent_%.*s\000(%.*s\000 m, int indent_count) { /* gen_str_for_map */", 3, str_fn_name, styp));
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\tstrings__Builder sb = strings__new_builder(m.key_values.len*10);"));
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\tstrings__Builder_write(&sb, _SLIT(\"{\"));"));
-	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\tfor (unsigned int i = 0; i < m.key_values.len; ++i) {"));
+	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\tfor (int i = 0; i < m.key_values.len; ++i) {"));
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t\tif (!DenseArray_has_index(&m.key_values, i)) { continue; }"));
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t\tstring key = *(string*)DenseArray_key(&m.key_values, i);"));
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t\tstrings__Builder_write(&sb, _STR(\"\'%.*s\\000\'\", 2, key));"));
@@ -35596,9 +35577,9 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_multi_return(v__gen__Gen* g, v__tab
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 		string field_styp = v__gen__Gen_typ(g, typ);
 		bool is_arg_ptr = v__table__Type_is_ptr(typ);
-		multi_return_bool_bool_int mr_15240 = v__table__TypeSymbol_str_method_info(sym);
-		bool sym_has_str_method = mr_15240.arg0;
-		bool str_method_expects_ptr = mr_15240.arg1;
+		multi_return_bool_bool_int mr_15231 = v__table__TypeSymbol_str_method_info(sym);
+		bool sym_has_str_method = mr_15231.arg0;
+		bool str_method_expects_ptr = mr_15231.arg1;
 		string arg_str_fn_name = _SLIT("");
 		if (sym_has_str_method) {
 			arg_str_fn_name = (is_arg_ptr ? (string_add(string_replace(field_styp, _SLIT("*"), _SLIT("")), _SLIT("_str"))) : (string_add(field_styp, _SLIT("_str"))));
@@ -36355,7 +36336,7 @@ void v__gen__Gen_write_variadic_types(v__gen__Gen* g) {
 	strings__Builder_writeln(&g->type_definitions, _SLIT("\n//BEGIN_variadic_structs"));
 	// FOR IN map
 	map_string_int _t1351 = g->variadic_args;
-	for (int _t1350 = 0; _t1350 < (int)_t1351.key_values.len; ++_t1350) {
+	for (int _t1350 = 0; _t1350 < _t1351.key_values.len; ++_t1350) {
 		if (!DenseArray_has_index(&_t1351.key_values, _t1350)) {continue;}
 		string type_str = /*key*/ *(string*)DenseArray_key(&_t1351.key_values, _t1350);
 		type_str = string_clone(type_str);
@@ -36827,7 +36808,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_for_in(v__gen__Gen* g, v__ast__ForInStmt it) {
 		v__gen__Gen_write(g, _STR("%.*s\000 %.*s\000 = ", 3, atmp_styp, atmp));
 		v__gen__Gen_expr(g, it.cond);
 		v__gen__Gen_writeln(g, _SLIT(";"));
-		v__gen__Gen_writeln(g, _STR("for (int %.*s\000 = 0; %.*s\000 < (int)%.*s\000.key_values.len; ++%.*s\000) {", 5, idx, idx, atmp, idx));
+		v__gen__Gen_writeln(g, _STR("for (int %.*s\000 = 0; %.*s\000 < %.*s\000.key_values.len; ++%.*s\000) {", 5, idx, idx, atmp, idx));
 		v__gen__Gen_writeln(g, _STR("\tif (!DenseArray_has_index(&%.*s\000.key_values, %.*s\000)) {continue;}", 3, atmp, idx));
 		if (string_ne(it.key_var, _SLIT("_"))) {
 			string key_styp = v__gen__Gen_typ(g, it.key_type);
@@ -37639,7 +37620,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_autofree_scope_vars2(v__gen__Gen* g, v__ast__Sc
 	}
 	// FOR IN map
 	map_string_v__ast__ScopeObject _t1389 = scope->objects;
-	for (int _t1388 = 0; _t1388 < (int)_t1389.key_values.len; ++_t1388) {
+	for (int _t1388 = 0; _t1388 < _t1389.key_values.len; ++_t1388) {
 		if (!DenseArray_has_index(&_t1389.key_values, _t1388)) {continue;}
 		v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)DenseArray_value(&_t1389.key_values, _t1388));
 		v__ast__ScopeObject _t1390 = obj;
@@ -39935,9 +39916,9 @@ array_v__table__Field _t1480_orig = (*typ.info._v__table__Struct).fields;
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_136840 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_136840.arg0;
-						string base = mr_136840.arg1;
+						multi_return_string_string mr_136835 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_136835.arg0;
+						string base = mr_136835.arg1;
 						array_push(&g->optionals, _MOV((string[]){ string_clone(styp) }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -40353,11 +40334,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__as
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, _SLIT("main")) && (isnil(g->fn_decl) || string_eq(g->fn_decl->name, _SLIT("main.main")))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_150633 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_150633.arg0;
-				string pafile = mr_150633.arg1;
-				string pamod = mr_150633.arg2;
-				string pafn = mr_150633.arg3;
+				multi_return_int_string_string_string mr_150628 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_150628.arg0;
+				string pafile = mr_150628.arg1;
+				string pamod = mr_150628.arg2;
+				string pafn = mr_150628.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(_STR(\"optional not set (%%.*s\\000)\", 2, %.*s\000.v_error));", 2, cvar_name));
@@ -40556,7 +40537,7 @@ VV_LOCAL_SYMBOL array_string v__gen__Gen_get_all_test_function_names(v__gen__Gen
 	string tsuite_end = _SLIT("");
 	// FOR IN map
 	map_string_v__table__Fn _t1512 = g->table->fns;
-	for (int _t1511 = 0; _t1511 < (int)_t1512.key_values.len; ++_t1511) {
+	for (int _t1511 = 0; _t1511 < _t1512.key_values.len; ++_t1511) {
 		if (!DenseArray_has_index(&_t1512.key_values, _t1511)) {continue;}
 		v__table__Fn f = (*(v__table__Fn*)DenseArray_value(&_t1512.key_values, _t1511));
 		if (string_eq(f.name, _SLIT("testsuite_begin"))) {
@@ -41458,7 +41439,7 @@ array_v__table__Fn _t1550_orig = sym->methods;
 			v__gen__Gen_writeln(g, _SLIT(""));
 			// FOR IN map
 			map_string_v__table__Type _t1557 = g->comptime_var_type_map;
-			for (int _t1556 = 0; _t1556 < (int)_t1557.key_values.len; ++_t1556) {
+			for (int _t1556 = 0; _t1556 < _t1557.key_values.len; ++_t1556) {
 				if (!DenseArray_has_index(&_t1557.key_values, _t1556)) {continue;}
 				string key = /*key*/ *(string*)DenseArray_key(&_t1557.key_values, _t1556);
 				key = string_clone(key);
@@ -42070,7 +42051,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_autofree_call_postgen(v__gen__Gen* g, int node_
 	v__ast__Scope* scope = v__ast__Scope_innermost(g->file.scope, node_pos);
 	// FOR IN map
 	map_string_v__ast__ScopeObject _t1583 = scope->objects;
-	for (int _t1582 = 0; _t1582 < (int)_t1583.key_values.len; ++_t1582) {
+	for (int _t1582 = 0; _t1582 < _t1583.key_values.len; ++_t1582) {
 		if (!DenseArray_has_index(&_t1583.key_values, _t1582)) {continue;}
 		v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)DenseArray_value(&_t1583.key_values, _t1582));
 		v__ast__ScopeObject _t1584 = obj;
