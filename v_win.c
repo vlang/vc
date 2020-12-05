@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "005676f"
+#define V_COMMIT_HASH "29857cb"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "22ebbab"
+	#define V_COMMIT_HASH "005676f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "005676f"
+	#define V_CURRENT_COMMIT_HASH "29857cb"
 #endif
 
 // V comptime_defines:
@@ -20471,7 +20471,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("22ebbab"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("005676f"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -25632,6 +25632,9 @@ v__table__Type v__checker__Checker_string_inter_lit(v__checker__Checker* c, v__a
 				v__checker__Checker_error(c, _STR("illegal format specifier `%c\000` for type `%.*s\000`", 3, fmt, v__table__Table_get_type_name(c->table, ftyp)), (*(v__token__Position*)/*ee elem_typ */array_get(node->fmt_poss, i)));
 			}
 			(*(bool*)/*ee elem_typ */array_get(node->need_fmts, i)) = fmt != v__checker__Checker_get_default_fmt(c, ftyp, typ);
+		}
+		if (c->cur_fn->is_method && string_eq(c->cur_fn->name, _SLIT("str")) && string_eq(c->cur_fn->receiver.name, v__ast__Expr_str(expr))) {
+			v__checker__Checker_error(c, _SLIT("cannot call `str()` method recursively"), v__ast__Expr_position(expr));
 		}
 	}
 	return _const_v__table__string_type;
