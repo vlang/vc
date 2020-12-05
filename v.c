@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "fbf6910"
+#define V_COMMIT_HASH "daa659e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7d9d42b"
+	#define V_COMMIT_HASH "fbf6910"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "fbf6910"
+	#define V_CURRENT_COMMIT_HASH "daa659e"
 #endif
 
 // V comptime_defines:
@@ -20620,7 +20620,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7d9d42b"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fbf6910"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -45919,7 +45919,7 @@ void v__builder__Builder_build_c(v__builder__Builder* b, array_string v_files, s
 }
 
 void v__builder__Builder_compile_c(v__builder__Builder* b) {
-	if (string_ne(os__user_os(), _SLIT("windows")) && string_eq(b->pref->ccompiler, _SLIT("msvc"))) {
+	if (string_ne(os__user_os(), _SLIT("windows")) && string_eq(b->pref->ccompiler, _SLIT("msvc")) && !string_ends_with(b->pref->out_name, _SLIT(".c"))) {
 		v__builder__verror(_STR("Cannot build with msvc on %.*s", 1, os__user_os()));
 	}
 	if (b->pref->is_verbose) {
@@ -47326,8 +47326,9 @@ VV_LOCAL_SYMBOL Option_v__builder__MsvcResult v__builder__find_msvc() {
 	}
 	#else
 	{
-		Option _t1958 = v_error(_SLIT("msvc not found"));
-		return *(Option_v__builder__MsvcResult*)&_t1958;
+		Option_v__builder__MsvcResult _t1958;
+		opt_ok2(&(v__builder__MsvcResult[]) { (v__builder__MsvcResult){.full_cl_exe_path = _SLIT("/usr/bin/true"),.exe_path = (string){.str=(byteptr)""},.um_lib_path = (string){.str=(byteptr)""},.ucrt_lib_path = (string){.str=(byteptr)""},.vs_lib_path = (string){.str=(byteptr)""},.um_include_path = (string){.str=(byteptr)""},.ucrt_include_path = (string){.str=(byteptr)""},.vs_include_path = (string){.str=(byteptr)""},.shared_include_path = (string){.str=(byteptr)""},.valid = true,} }, (OptionBase*)(&_t1958), sizeof(v__builder__MsvcResult));
+		return _t1958;
 	}
 	#endif
 	Option _t1959 = opt_none();
