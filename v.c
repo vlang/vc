@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "aeb467e"
+#define V_COMMIT_HASH "d7c0578"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "cb5f75c"
+	#define V_COMMIT_HASH "aeb467e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "aeb467e"
+	#define V_CURRENT_COMMIT_HASH "d7c0578"
 #endif
 
 // V comptime_defines:
@@ -20634,7 +20634,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("cb5f75c"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("aeb467e"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -31479,11 +31479,15 @@ VV_LOCAL_SYMBOL bool v__parser__have_fn_main(array_v__ast__Stmt stmts) {
 VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 	v__parser__Parser_check(p, v__token__Kind_key_for);
 	v__token__Position pos = v__token__Token_position(&p->tok);
+	int prev_branch_parent_pos = p->branch_parent_pos;
 	p->branch_parent_pos = pos.pos;
 	v__parser__Parser_open_scope(p);
 	p->inside_for = true;
 	if (p->tok.kind == v__token__Kind_key_match) {
 		v__parser__Parser_error(p, _SLIT("cannot use `match` in `for` loop"));
+		// Defer begin
+		p->branch_parent_pos = prev_branch_parent_pos;
+		// Defer end
 		return (v__ast__Stmt){
 #ifndef __cplusplus
 0
@@ -31494,10 +31498,16 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 		p->inside_for = false;
 		array_v__ast__Stmt stmts = v__parser__Parser_parse_block(p);
 		v__parser__Parser_close_scope(p);
+		// Defer begin
+		p->branch_parent_pos = prev_branch_parent_pos;
+		// Defer end
 		return /* sum type cast 4 */ (v__ast__Stmt){._v__ast__ForStmt = memdup(&(v__ast__ForStmt[]){(v__ast__ForStmt){.cond = {0},.stmts = stmts,.is_inf = true,.pos = pos,.label = (string){.str=(byteptr)""},}}, sizeof(v__ast__ForStmt)), .typ = 235 /* v.ast.ForStmt */};
 	} else if ((p->peek_tok.kind == v__token__Kind_decl_assign || p->peek_tok.kind == v__token__Kind_assign || p->peek_tok.kind == v__token__Kind_semicolon) || p->tok.kind == v__token__Kind_semicolon) {
 		if (p->tok.kind == v__token__Kind_key_mut) {
 			v__parser__Parser_error(p, _SLIT("`mut` is not needed in `for ;;` loops: use `for i := 0; i < n; i ++ {`"));
+			// Defer begin
+			p->branch_parent_pos = prev_branch_parent_pos;
+			// Defer end
 			return (v__ast__Stmt){
 #ifndef __cplusplus
 0
@@ -31526,6 +31536,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 		if (p->tok.kind != v__token__Kind_semicolon) {
 			if (p->tok.kind == v__token__Kind_name && (p->peek_tok.kind == v__token__Kind_inc || p->peek_tok.kind == v__token__Kind_dec)) {
 				v__parser__Parser_error(p, _STR("cannot use %.*s\000%.*s\000 as value", 3, p->tok.lit, v__token__Kind_str(p->peek_tok.kind)));
+				// Defer begin
+				p->branch_parent_pos = prev_branch_parent_pos;
+				// Defer end
 				return (v__ast__Stmt){
 #ifndef __cplusplus
 0
@@ -31543,6 +31556,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 		p->inside_for = false;
 		array_v__ast__Stmt stmts = v__parser__Parser_parse_block(p);
 		v__parser__Parser_close_scope(p);
+		// Defer begin
+		p->branch_parent_pos = prev_branch_parent_pos;
+		// Defer end
 		return /* sum type cast 4 */ (v__ast__Stmt){._v__ast__ForCStmt = memdup(&(v__ast__ForCStmt[]){(v__ast__ForCStmt){
 			.init = init,
 			.has_init = has_init,
@@ -31570,6 +31586,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 			val_var_name = v__parser__Parser_check_name(p);
 			if (string_eq(key_var_name, val_var_name) && string_ne(key_var_name, _SLIT("_"))) {
 				v__parser__Parser_error_with_pos(p, _SLIT("key and value in a for loop cannot be the same"), val_var_pos);
+				// Defer begin
+				p->branch_parent_pos = prev_branch_parent_pos;
+				// Defer end
 				return (v__ast__Stmt){
 #ifndef __cplusplus
 0
@@ -31578,6 +31597,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 			}
 			if (v__ast__Scope_known_var(p->scope, key_var_name)) {
 				v__parser__Parser_error(p, _STR("redefinition of key iteration variable `%.*s\000`", 2, key_var_name));
+				// Defer begin
+				p->branch_parent_pos = prev_branch_parent_pos;
+				// Defer end
 				return (v__ast__Stmt){
 #ifndef __cplusplus
 0
@@ -31586,6 +31608,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 			}
 			if (v__ast__Scope_known_var(p->scope, val_var_name)) {
 				v__parser__Parser_error(p, _STR("redefinition of value iteration variable `%.*s\000`", 2, val_var_name));
+				// Defer begin
+				p->branch_parent_pos = prev_branch_parent_pos;
+				// Defer end
 				return (v__ast__Stmt){
 #ifndef __cplusplus
 0
@@ -31595,6 +31620,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 			v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = key_var_name,.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__int_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = key_var_pos,.is_used = 0,.is_changed = 0,.is_or = 0,}}, sizeof(v__ast__Var)), .typ = 250 /* v.ast.Var */});
 		} else if (v__ast__Scope_known_var(p->scope, val_var_name)) {
 			v__parser__Parser_error(p, _STR("redefinition of value iteration variable `%.*s\000`", 2, val_var_name));
+			// Defer begin
+			p->branch_parent_pos = prev_branch_parent_pos;
+			// Defer end
 			return (v__ast__Stmt){
 #ifndef __cplusplus
 0
@@ -31604,6 +31632,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 		v__parser__Parser_check(p, v__token__Kind_key_in);
 		if (p->tok.kind == v__token__Kind_name && (string_eq(p->tok.lit, key_var_name) || string_eq(p->tok.lit, val_var_name))) {
 			v__parser__Parser_error(p, _STR("in a `for x in array` loop, the key or value iteration variable `%.*s\000` can not be the same as the array variable", 2, p->tok.lit));
+			// Defer begin
+			p->branch_parent_pos = prev_branch_parent_pos;
+			// Defer end
 			return (v__ast__Stmt){
 #ifndef __cplusplus
 0
@@ -31624,6 +31655,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 			v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = val_var_name,.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.typ = _const_v__table__int_type,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = val_var_pos,.is_used = 0,.is_changed = 0,.is_or = 0,}}, sizeof(v__ast__Var)), .typ = 250 /* v.ast.Var */});
 			if (key_var_name.len > 0) {
 				v__parser__Parser_error_with_pos(p, _SLIT("cannot declare index variable with range `for`"), key_var_pos);
+				// Defer begin
+				p->branch_parent_pos = prev_branch_parent_pos;
+				// Defer end
 				return (v__ast__Stmt){
 #ifndef __cplusplus
 0
@@ -31636,6 +31670,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 		p->inside_for = false;
 		array_v__ast__Stmt stmts = v__parser__Parser_parse_block(p);
 		v__parser__Parser_close_scope(p);
+		// Defer begin
+		p->branch_parent_pos = prev_branch_parent_pos;
+		// Defer end
 		return /* sum type cast 4 */ (v__ast__Stmt){._v__ast__ForInStmt = memdup(&(v__ast__ForInStmt[]){(v__ast__ForInStmt){
 			.key_var = key_var_name,
 			.val_var = val_var_name,
@@ -31656,6 +31693,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_for_stmt(v__parser__Parser* p) {
 	p->inside_for = false;
 	array_v__ast__Stmt stmts = v__parser__Parser_parse_block(p);
 	v__parser__Parser_close_scope(p);
+	// Defer begin
+	p->branch_parent_pos = prev_branch_parent_pos;
+	// Defer end
 	return /* sum type cast 4 */ (v__ast__Stmt){._v__ast__ForStmt = memdup(&(v__ast__ForStmt[]){(v__ast__ForStmt){.cond = cond,.stmts = stmts,.is_inf = 0,.pos = pos,.label = (string){.str=(byteptr)""},}}, sizeof(v__ast__ForStmt)), .typ = 235 /* v.ast.ForStmt */};
 }
 
