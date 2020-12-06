@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "43ff93c"
+#define V_COMMIT_HASH "0c50f0c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5931b26"
+	#define V_COMMIT_HASH "43ff93c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "43ff93c"
+	#define V_CURRENT_COMMIT_HASH "0c50f0c"
 #endif
 
 // V comptime_defines:
@@ -16981,14 +16981,14 @@ time__Time time__unix(int abs) {
 	if (abs % _const_time__seconds_per_day < 0) {
 		day_offset--;
 	}
-	multi_return_int_int_int mr_470 = time__calculate_date_from_offset(day_offset);
-	int year = mr_470.arg0;
-	int month = mr_470.arg1;
-	int day = mr_470.arg2;
-	multi_return_int_int_int mr_524 = time__calculate_time_from_offset(abs % _const_time__seconds_per_day);
-	int hr = mr_524.arg0;
-	int min = mr_524.arg1;
-	int sec = mr_524.arg2;
+	multi_return_int_int_int mr_472 = time__calculate_date_from_offset(day_offset);
+	int year = mr_472.arg0;
+	int month = mr_472.arg1;
+	int day = mr_472.arg2;
+	multi_return_int_int_int mr_528 = time__calculate_time_from_offset(abs % _const_time__seconds_per_day);
+	int hr = mr_528.arg0;
+	int min = mr_528.arg1;
+	int sec = mr_528.arg2;
 	return (time__Time){
 		.year = year,
 		.month = month,
@@ -17006,14 +17006,14 @@ time__Time time__unix2(int abs, int microsecond) {
 	if (abs % _const_time__seconds_per_day < 0) {
 		day_offset--;
 	}
-	multi_return_int_int_int mr_1019 = time__calculate_date_from_offset(day_offset);
-	int year = mr_1019.arg0;
-	int month = mr_1019.arg1;
-	int day = mr_1019.arg2;
-	multi_return_int_int_int mr_1073 = time__calculate_time_from_offset(abs % _const_time__seconds_per_day);
-	int hr = mr_1073.arg0;
-	int min = mr_1073.arg1;
-	int sec = mr_1073.arg2;
+	multi_return_int_int_int mr_1025 = time__calculate_date_from_offset(day_offset);
+	int year = mr_1025.arg0;
+	int month = mr_1025.arg1;
+	int day = mr_1025.arg2;
+	multi_return_int_int_int mr_1081 = time__calculate_time_from_offset(abs % _const_time__seconds_per_day);
+	int hr = mr_1081.arg0;
+	int min = mr_1081.arg1;
+	int sec = mr_1081.arg2;
 	return (time__Time){
 		.year = year,
 		.month = month,
@@ -20539,7 +20539,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5931b26"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("43ff93c"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
