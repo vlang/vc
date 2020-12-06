@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "853dcc3"
+#define V_COMMIT_HASH "bac6be2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0c50f0c"
+	#define V_COMMIT_HASH "853dcc3"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "853dcc3"
+	#define V_CURRENT_COMMIT_HASH "bac6be2"
 #endif
 
 // V comptime_defines:
@@ -17206,7 +17206,7 @@ VV_LOCAL_SYMBOL map_string_v__token__Kind v__token__build_keys() {
 }
 
 VV_LOCAL_SYMBOL array_string v__token__build_token_str() {
-	array_string s = __new_array_with_default((_const_v__token__nr_tokens), 0, sizeof(string), &(string[]){_SLIT("")});
+	array_string s = __new_array_with_default(_const_v__token__nr_tokens, 0, sizeof(string), &(string[]){_SLIT("")});
 	array_set(&s, v__token__Kind_unknown, &(string[]) { _SLIT("unknown") });
 	array_set(&s, v__token__Kind_eof, &(string[]) { _SLIT("eof") });
 	array_set(&s, v__token__Kind_name, &(string[]) { _SLIT("name") });
@@ -17316,8 +17316,7 @@ VV_LOCAL_SYMBOL array_string v__token__build_token_str() {
 }
 
 v__token__Kind v__token__key_to_token(string key) {
-	v__token__Kind a = ((v__token__Kind)((*(v__token__Kind*)map_get(_const_v__token__keywords, key, &(v__token__Kind[]){ 0 }))));
-	return a;
+	return ((v__token__Kind)((*(v__token__Kind*)map_get(_const_v__token__keywords, key, &(v__token__Kind[]){ 0 }))));
 }
 
 bool v__token__is_key(string key) {
@@ -17353,7 +17352,7 @@ string v__token__Token_str(v__token__Token t) {
 }
 
 array_v__token__Precedence v__token__build_precedences() {
-	array_v__token__Precedence p = __new_array_with_default(((int)(v__token__Kind__end_)), ((int)(v__token__Kind__end_)), sizeof(v__token__Precedence), 0);
+	array_v__token__Precedence p = __new_array_with_default(((int)(v__token__Kind__end_)), 0, sizeof(v__token__Precedence), 0);
 	array_set(&p, v__token__Kind_lsbr, &(v__token__Precedence[]) { v__token__Precedence_index });
 	array_set(&p, v__token__Kind_dot, &(v__token__Precedence[]) { v__token__Precedence_call });
 	array_set(&p, v__token__Kind_inc, &(v__token__Precedence[]) { v__token__Precedence_postfix });
@@ -20695,7 +20694,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0c50f0c"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("853dcc3"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
