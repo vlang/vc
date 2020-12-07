@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a100b05"
+#define V_COMMIT_HASH "4b4733d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d38bca5"
+	#define V_COMMIT_HASH "a100b05"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a100b05"
+	#define V_CURRENT_COMMIT_HASH "4b4733d"
 #endif
 
 // V comptime_defines:
@@ -20543,7 +20543,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d38bca5"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a100b05"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -46379,6 +46379,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_windows_cross(v__builder__Builder* c
 			libs = /*f*/string_add(libs, _STR(" \"%.*s\000/vlib/%.*s\000.o\"", 3, _const_v__pref__default_module_path, imp));
 		}
 	}
+	args = /*f*/string_add(args, string_add(string_add(_SLIT(" "), array_v__cflag__CFlag_c_options_only_object_files(cflags)), _SLIT(" ")));
 	args = /*f*/string_add(args, _STR(" %.*s\000 ", 2, c->out_name_c));
 	args = /*f*/string_add(args, (string_eq(c->pref->ccompiler, _SLIT("msvc")) ? (array_v__cflag__CFlag_c_options_after_target_msvc(cflags)) : (array_v__cflag__CFlag_c_options_after_target(cflags))));
 	if (!(string_eq(os__user_os(), _SLIT("macos")) || string_eq(os__user_os(), _SLIT("linux")))) {
