@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "63557d0"
+#define V_COMMIT_HASH "3386526"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ed9aa87"
+	#define V_COMMIT_HASH "63557d0"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "63557d0"
+	#define V_CURRENT_COMMIT_HASH "3386526"
 #endif
 
 // V comptime_defines:
@@ -20699,7 +20699,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ed9aa87"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("63557d0"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -46566,16 +46566,22 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_windows_cross(v__builder__Builder* c
 	if (!string_ends_with(c->pref->out_name, _SLIT(".exe"))) {
 		c->pref->out_name = /*f*/string_add(c->pref->out_name, _SLIT(".exe"));
 	}
-	string args = _STR("-o %.*s\000 -w -L. ", 2, c->pref->out_name);
+	string args = _SLIT("");
+	args = /*f*/string_add(args, _STR(" %.*s\000 ", 2, c->pref->cflags));
+	args = /*f*/string_add(args, _STR(" -o %.*s\000 -w -L. ", 2, c->pref->out_name));
 	array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(c);
 	args = /*f*/string_add(args, (string_eq(c->pref->ccompiler, _SLIT("msvc")) ? (array_v__cflag__CFlag_c_options_before_target_msvc(cflags)) : (array_v__cflag__CFlag_c_options_before_target(cflags))));
 	string optimization_options = _SLIT("");
 	string debug_options = _SLIT("");
 	if (c->pref->is_prod) {
-		optimization_options = (string_eq(c->pref->ccompiler, _SLIT("msvc")) ? (_SLIT("")) : (_SLIT(" -O3 -fno-strict-aliasing -flto ")));
+		if (string_ne(c->pref->ccompiler, _SLIT("msvc"))) {
+			optimization_options = _SLIT(" -O3 -fno-strict-aliasing -flto ");
+		}
 	}
 	if (c->pref->is_debug) {
-		debug_options = (string_eq(c->pref->ccompiler, _SLIT("msvc")) ? (_SLIT("")) : (_SLIT(" -g3 -no-pie ")));
+		if (string_ne(c->pref->ccompiler, _SLIT("msvc"))) {
+			debug_options = _SLIT(" -O0 -g -gdwarf-2 ");
+		}
 	}
 	string libs = _SLIT("");
 	if (false && c->pref->build_mode == v__pref__BuildMode_default_mode) {
