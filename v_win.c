@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "032ea0f"
+#define V_COMMIT_HASH "4a35a75"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5fa1e40"
+	#define V_COMMIT_HASH "032ea0f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "032ea0f"
+	#define V_CURRENT_COMMIT_HASH "4a35a75"
 #endif
 
 // V comptime_defines:
@@ -4487,6 +4487,8 @@ string tos(byteptr s, int len);
 string tos_clone(byteptr s);
 string tos2(byteptr s);
 string tos3(charptr s);
+string tos4(byteptr s);
+string tos5(charptr s);
 string tos_lit(charptr s);
 string byteptr_vstring(byteptr bp);
 string byteptr_vstring_with_len(byteptr bp, int len);
@@ -12408,6 +12410,20 @@ string tos3(charptr s) {
 		v_panic(_SLIT("tos3: nil string"));
 	}
 	return (string){.str = ((byteptr)(s)), .len = strlen(s)};
+}
+
+string tos4(byteptr s) {
+	if (s == 0) {
+		return _SLIT("");
+	}
+	return tos2(s);
+}
+
+string tos5(charptr s) {
+	if (s == 0) {
+		return _SLIT("");
+	}
+	return tos3(s);
 }
 
 // Attr: [deprecated]
@@ -20620,7 +20636,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5fa1e40"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("032ea0f"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -42414,7 +42430,7 @@ inline VV_LOCAL_SYMBOL void v__gen__Gen_gen_struct_enc_dec(v__gen__Gen* g, v__ta
 		string field_type = v__gen__Gen_typ(g, field.typ);
 		v__table__TypeSymbol* field_sym = v__table__Table_get_type_symbol(g->table, field.typ);
 		if (array_v__table__Attr_contains(field.attrs, _SLIT("raw"))) {
-			strings__Builder_writeln(dec, string_add(_STR("\tres.%.*s\000 = tos2(cJSON_PrintUnformatted(", 2, v__gen__c_name(field.name)), _STR("js_get(root, \"%.*s\000\")));", 2, name)));
+			strings__Builder_writeln(dec, string_add(_STR("\tres.%.*s\000 = tos4(cJSON_PrintUnformatted(", 2, v__gen__c_name(field.name)), _STR("js_get(root, \"%.*s\000\")));", 2, name)));
 		} else {
 			v__gen__Gen_gen_json_for_type(g, field.typ);
 			string dec_name = v__gen__js_dec_name(field_type);
@@ -42485,7 +42501,7 @@ VV_LOCAL_SYMBOL string v__gen__Gen_decode_array(v__gen__Gen* g, v__table__Type v
 	} else {
 		s = _STR("\n		Option_%.*s\000 val2 = %.*s\000 (jsval);\n		if(!val2.ok) {\n			array_free(&res);\n			return *(Option_array_%.*s\000*)&val2;\n		}\n		%.*s\000 val = *(%.*s\000*)val2.data;\n", 6, styp, fn_name, styp, styp, styp);
 	}
-	return _STR("\n	if(!cJSON_IsArray(root)) {\n		Option err = v_error( string_add(_SLIT(\"Json element is not an array: \"), tos2(cJSON_PrintUnformatted(root))) );\n		return *(Option_array_%.*s\000 *)&err;\n	}\n	res = __new_array(0, 0, sizeof(%.*s\000));\n	const cJSON *jsval = NULL;\n	cJSON_ArrayForEach(jsval, root)\n	{\n	%.*s\000\n		array_push(&res, &val);\n	}\n", 4, styp, styp, s);
+	return _STR("\n	if(root && !cJSON_IsArray(root)) {\n		Option err = v_error( string_add(_SLIT(\"Json element is not an array: \"), tos2(cJSON_PrintUnformatted(root))) );\n		return *(Option_array_%.*s\000 *)&err;\n	}\n	res = __new_array(0, 0, sizeof(%.*s\000));\n	const cJSON *jsval = NULL;\n	cJSON_ArrayForEach(jsval, root)\n	{\n	%.*s\000\n		array_push(&res, &val);\n	}\n", 4, styp, styp, s);
 }
 
 VV_LOCAL_SYMBOL string v__gen__Gen_encode_array(v__gen__Gen* g, v__table__Type value_type) {
