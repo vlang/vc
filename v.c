@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "80d12f6"
+#define V_COMMIT_HASH "6115db4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8caf382"
+	#define V_COMMIT_HASH "80d12f6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "80d12f6"
+	#define V_CURRENT_COMMIT_HASH "6115db4"
 #endif
 
 // V comptime_defines:
@@ -20774,7 +20774,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8caf382"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("80d12f6"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -41036,7 +41036,11 @@ VV_LOCAL_SYMBOL string v__gen__Gen_interface_table(v__gen__Gen* g) {
 		}
 		strings__Builder_writeln(&methods_struct_def, _SLIT("};"));
 		strings__Builder methods_struct = strings__new_builder(100);
-		strings__Builder_writeln(&methods_struct, _STR("static %.*s\000 %.*s\000_name_table[%"PRId32"\000] = {", 4, methods_struct_name, interface_name, inter_info.types.len));
+		string staticprefix = _SLIT("static");
+		if (string_eq(g->pref->ccompiler, _SLIT("msvc"))) {
+			staticprefix = _SLIT("");
+		}
+		strings__Builder_writeln(&methods_struct, _STR("%.*s\000 %.*s\000 %.*s\000_name_table[%"PRId32"\000] = {", 5, staticprefix, methods_struct_name, interface_name, inter_info.types.len));
 		strings__Builder cast_functions = strings__new_builder(100);
 		strings__Builder_write(&cast_functions, _STR("// Casting functions for interface \"%.*s\000\"", 2, interface_name));
 		strings__Builder methods_wrapper = strings__new_builder(100);
