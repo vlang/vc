@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "23f5cec"
+#define V_COMMIT_HASH "aa0ddec"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c7bea03"
+	#define V_COMMIT_HASH "23f5cec"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "23f5cec"
+	#define V_CURRENT_COMMIT_HASH "aa0ddec"
 #endif
 
 // V comptime_defines:
@@ -6127,8 +6127,8 @@ struct _hash__Hasher_interface_methods {
 	_hash__Hasher_block_size_fn block_size;
 };
 
-static struct _hash__Hasher_interface_methods hash__Hasher_name_table[0] = {
-};
+static struct _hash__Hasher_interface_methods hash__Hasher_name_table[1];
+
 
 // Casting functions for interface "hash__Hasher"
 // ^^^ number of types for interface hash__Hash32er: 0
@@ -6141,8 +6141,8 @@ struct _hash__Hash32er_interface_methods {
 	_hash__Hash32er_sum32_fn sum32;
 };
 
-static struct _hash__Hash32er_interface_methods hash__Hash32er_name_table[0] = {
-};
+static struct _hash__Hash32er_interface_methods hash__Hash32er_name_table[1];
+
 
 // Casting functions for interface "hash__Hash32er"
 // ^^^ number of types for interface hash__Hash64er: 0
@@ -6155,8 +6155,8 @@ struct _hash__Hash64er_interface_methods {
 	_hash__Hash64er_sum64_fn sum64;
 };
 
-static struct _hash__Hash64er_interface_methods hash__Hash64er_name_table[0] = {
-};
+static struct _hash__Hash64er_interface_methods hash__Hash64er_name_table[1];
+
 
 // Casting functions for interface "hash__Hash64er"
 
@@ -20774,7 +20774,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c7bea03"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("23f5cec"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -41038,13 +41038,8 @@ VV_LOCAL_SYMBOL string v__gen__Gen_interface_table(v__gen__Gen* g) {
 		strings__Builder methods_struct = strings__new_builder(100);
 		string staticprefix = _SLIT("static");
 		int iname_table_length = inter_info.types.len;
-		if (string_eq(g->pref->ccompiler, _SLIT("msvc"))) {
-			staticprefix = _SLIT("");
-			if (iname_table_length == 0) {
-				strings__Builder_writeln(&methods_struct, _STR("%.*s\000 %.*s\000 %.*s\000_name_table[1];", 4, staticprefix, methods_struct_name, interface_name));
-			} else {
-				strings__Builder_writeln(&methods_struct, _STR("%.*s\000 %.*s\000 %.*s\000_name_table[%"PRId32"\000] = {", 5, staticprefix, methods_struct_name, interface_name, iname_table_length));
-			}
+		if (iname_table_length == 0) {
+			strings__Builder_writeln(&methods_struct, _STR("%.*s\000 %.*s\000 %.*s\000_name_table[1];", 4, staticprefix, methods_struct_name, interface_name));
 		} else {
 			strings__Builder_writeln(&methods_struct, _STR("%.*s\000 %.*s\000 %.*s\000_name_table[%"PRId32"\000] = {", 5, staticprefix, methods_struct_name, interface_name, iname_table_length));
 		}
@@ -41120,7 +41115,7 @@ VV_LOCAL_SYMBOL string v__gen__Gen_interface_table(v__gen__Gen* g) {
 			strings__Builder_writeln(&sb, _STR("int %.*s\000 = %"PRId32"\000;", 3, interface_index_name, iin_idx));
 		}
 		strings__Builder_writeln(&sb, _STR("// ^^^ number of types for interface %.*s\000: %"PRId32"", 2, interface_name, current_iinidx - iinidx_minimum_base));
-		if (string_eq(g->pref->ccompiler, _SLIT("msvc")) && iname_table_length == 0) {
+		if (iname_table_length == 0) {
 			strings__Builder_writeln(&methods_struct, _SLIT(""));
 		} else {
 			strings__Builder_writeln(&methods_struct, _SLIT("};"));
