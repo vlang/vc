@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "22d6504"
+#define V_COMMIT_HASH "5fa1e40"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "aa0ddec"
+	#define V_COMMIT_HASH "22d6504"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "22d6504"
+	#define V_CURRENT_COMMIT_HASH "5fa1e40"
 #endif
 
 // V comptime_defines:
@@ -2228,6 +2228,7 @@ struct v__scanner__Scanner {
 	bool is_inside_string;
 	bool is_inter_start;
 	bool is_inter_end;
+	bool is_enclosed_inter;
 	bool is_debug;
 	string line_comment;
 	bool is_started;
@@ -2235,6 +2236,7 @@ struct v__scanner__Scanner {
 	bool is_print_colored_error;
 	bool is_print_rel_paths_on_error;
 	byte quote;
+	byte inter_quote;
 	array_int line_ends;
 	int nr_lines;
 	bool is_vh;
@@ -20618,7 +20620,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("aa0ddec"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("22d6504"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -23588,6 +23590,7 @@ v__scanner__Scanner* v__scanner__new_vet_scanner(string text, v__scanner__Commen
 		.is_inside_string = 0,
 		.is_inter_start = 0,
 		.is_inter_end = 0,
+		.is_enclosed_inter = 0,
 		.is_debug = 0,
 		.line_comment = (string){.str=(byteptr)""},
 		.is_started = 0,
@@ -23595,6 +23598,7 @@ v__scanner__Scanner* v__scanner__new_vet_scanner(string text, v__scanner__Commen
 		.is_print_colored_error = true,
 		.is_print_rel_paths_on_error = true,
 		.quote = 0,
+		.inter_quote = 0,
 		.line_ends = __new_array(0, 1, sizeof(int)),
 		.nr_lines = 0,
 		.is_vh = 0,
@@ -24138,12 +24142,14 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 				return v__scanner__Scanner_new_token(s, v__token__Kind_dollar, _SLIT(""), 1);
 			}
 		} else if (_t807 == '}') {
-			if (s->is_inside_string) {
+			if (s->is_enclosed_inter) {
 				s->pos++;
 				if (string_at(s->text, s->pos) == s->quote) {
 					s->is_inside_string = false;
+					s->is_enclosed_inter = false;
 					return v__scanner__Scanner_new_token(s, v__token__Kind_string, _SLIT(""), 1);
 				}
+				s->is_enclosed_inter = false;
 				string ident_string = v__scanner__Scanner_ident_string(s);
 				return v__scanner__Scanner_new_token(s, v__token__Kind_string, ident_string, ident_string.len + 2);
 			} else {
@@ -24377,11 +24383,18 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 	bool is_quote = q == _const_v__scanner__single_quote || q == _const_v__scanner__double_quote;
 	bool is_raw = is_quote && s->pos > 0 && string_at(s->text, s->pos - 1) == 'r';
 	bool is_cstr = is_quote && s->pos > 0 && string_at(s->text, s->pos - 1) == 'c';
-	if (is_quote && !s->is_inside_string) {
-		s->quote = q;
+	if (is_quote) {
+		if (s->is_inside_string) {
+			s->inter_quote = q;
+		} else {
+			s->quote = q;
+		}
 	}
 	int n_cr_chars = 0;
 	int start = s->pos;
+	if (string_at(s->text, start) == s->quote || (string_at(s->text, start) == s->inter_quote && (s->is_inter_start || s->is_enclosed_inter))) {
+		start++;
+	}
 	s->is_inside_string = false;
 	rune slash = '\\';
 	for (;;) {
@@ -24392,6 +24405,9 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 		byte c = string_at(s->text, s->pos);
 		byte prevc = string_at(s->text, s->pos - 1);
 		if (c == s->quote && (prevc != slash || (prevc == slash && string_at(s->text, s->pos - 2) == slash))) {
+			break;
+		}
+		if (c == s->inter_quote && (s->is_inter_start || s->is_enclosed_inter)) {
 			break;
 		}
 		if (c == '\r') {
@@ -24422,6 +24438,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 		}
 		if (prevc == '$' && c == '{' && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
 			s->is_inside_string = true;
+			s->is_enclosed_inter = true;
 			s->pos -= 2;
 			break;
 		}
@@ -24433,9 +24450,6 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 		}
 	}
 	string lit = _SLIT("");
-	if (string_at(s->text, start) == s->quote) {
-		start++;
-	}
 	int end = s->pos;
 	if (s->is_inside_string) {
 		end++;
@@ -29768,13 +29782,13 @@ VV_LOCAL_SYMBOL Option_bool v__checker__Checker_has_return(v__checker__Checker* 
 v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__PostfixExpr* node) {
 	v__table__Type typ = v__checker__Checker_expr(c, node->expr);
 	v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, typ);
-	if (!v__table__TypeSymbol_is_number(typ_sym)) {
+	if (!v__table__TypeSymbol_is_number(typ_sym) && !(typ_sym->kind == v__table__Kind_byteptr || typ_sym->kind == v__table__Kind_charptr)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_135785 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_135785.arg0;
+		multi_return_string_v__token__Position mr_135800 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_135800.arg0;
 	}
-	if ((v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym)) && !c->inside_unsafe) {
+	if (!c->inside_unsafe && (v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym))) {
 		v__checker__Checker_warn(c, _SLIT("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
 	}
 	return typ;
@@ -30267,10 +30281,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1151 = 0; _t1151 < _t1150.len; ++_t1151) {
 			v__table__Fn m = ((v__table__Fn*)_t1150.data)[_t1151];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_151602 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_151602.arg0;
-				int nroute_attributes = mr_151602.arg1;
-				int nargs = mr_151602.arg2;
+				multi_return_bool_int_int mr_151617 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_151617.arg0;
+				int nroute_attributes = mr_151617.arg1;
+				int nargs = mr_151617.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
