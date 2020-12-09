@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1abb40d"
+#define V_COMMIT_HASH "05a217a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2bc1076"
+	#define V_COMMIT_HASH "1abb40d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1abb40d"
+	#define V_CURRENT_COMMIT_HASH "05a217a"
 #endif
 
 // V comptime_defines:
@@ -20719,7 +20719,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2bc1076"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1abb40d"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -23683,8 +23683,7 @@ v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMo
 }
 
 v__scanner__Scanner* v__scanner__new_vet_scanner(string text, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref) {
-	bool is_fmt = pref->is_fmt;
-	v__scanner__Scanner* s = (v__scanner__Scanner*)memdup(&(v__scanner__Scanner){.file_path = (string){.str=(byteptr)""},
+	return (v__scanner__Scanner*)memdup(&(v__scanner__Scanner){.file_path = _SLIT("internal_memory"),
 		.text = text,
 		.pos = 0,
 		.line_nr = 0,
@@ -23702,7 +23701,7 @@ v__scanner__Scanner* v__scanner__new_vet_scanner(string text, v__scanner__Commen
 		.line_ends = __new_array(0, 1, sizeof(int)),
 		.nr_lines = 0,
 		.is_vh = 0,
-		.is_fmt = is_fmt,
+		.is_fmt = pref->is_fmt,
 		.comments_mode = comments_mode,
 		.is_inside_toplvl_statement = 0,
 		.all_tokens = __new_array(0, 1, sizeof(v__token__Token)),
@@ -23713,14 +23712,11 @@ v__scanner__Scanner* v__scanner__new_vet_scanner(string text, v__scanner__Commen
 		.errors = __new_array(0, 1, sizeof(v__errors__Error)),
 		.warnings = __new_array(0, 1, sizeof(v__errors__Warning)),
 	}, sizeof(v__scanner__Scanner));
-	s->file_path = _SLIT("internal_memory");
-	return s;
 }
 
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL bool v__scanner__Scanner_should_parse_comment(v__scanner__Scanner* s) {
-	bool res = (s->comments_mode == v__scanner__CommentsMode_parse_comments) || (s->comments_mode == v__scanner__CommentsMode_toplevel_comments && !s->is_inside_toplvl_statement);
-	return res;
+	return (s->comments_mode == v__scanner__CommentsMode_parse_comments) || (s->comments_mode == v__scanner__CommentsMode_toplevel_comments && !s->is_inside_toplvl_statement);
 }
 
 void v__scanner__Scanner_set_is_inside_toplevel_statement(v__scanner__Scanner* s, bool newstate) {
@@ -24513,7 +24509,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 		if (c == '\n') {
 			v__scanner__Scanner_inc_line_number(s);
 		}
-		if (c == '0' && s->pos > 2 && string_at(s->text, s->pos - 1) == slash) {
+		if (c == '0' && s->pos > 2 && prevc == slash) {
 			if ((s->pos < s->text.len - 1 && byte_is_digit(string_at(s->text, s->pos + 1))) || v__scanner__Scanner_count_symbol_before(s, s->pos - 1, slash) % 2 == 0) {
 			} else if (!is_cstr && !is_raw) {
 				v__scanner__Scanner_error(s, _SLIT("cannot use `\\0` (NULL character) in the string literal"));
