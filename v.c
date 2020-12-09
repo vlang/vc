@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0e7192c"
+#define V_COMMIT_HASH "3b94a2b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ada02d4"
+	#define V_COMMIT_HASH "0e7192c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0e7192c"
+	#define V_CURRENT_COMMIT_HASH "3b94a2b"
 #endif
 
 // V comptime_defines:
@@ -6111,6 +6111,54 @@ array_string _const_main__simple_cmd; // inited later
 array_string _const_main__list_of_flags_that_allow_duplicates; // inited later
 VV_LOCAL_SYMBOL void main__main();
 VV_LOCAL_SYMBOL void main__invoke_help_and_exit(array_string remaining);
+
+// V interface table:
+// ^^^ number of types for interface hash__Hasher: 0
+
+// Methods wrapper for interface "hash__Hasher"
+
+typedef array_byte (*_hash__Hasher_sum_fn)(void* _, array_byte b);
+typedef int (*_hash__Hasher_size_fn)(void* _);
+typedef int (*_hash__Hasher_block_size_fn)(void* _);
+
+struct _hash__Hasher_interface_methods {
+	_hash__Hasher_sum_fn sum;
+	_hash__Hasher_size_fn size;
+	_hash__Hasher_block_size_fn block_size;
+};
+
+struct _hash__Hasher_interface_methods hash__Hasher_name_table[0] = {
+};
+
+// Casting functions for interface "hash__Hasher"
+// ^^^ number of types for interface hash__Hash32er: 0
+
+// Methods wrapper for interface "hash__Hash32er"
+
+typedef u32 (*_hash__Hash32er_sum32_fn)(void* _);
+
+struct _hash__Hash32er_interface_methods {
+	_hash__Hash32er_sum32_fn sum32;
+};
+
+struct _hash__Hash32er_interface_methods hash__Hash32er_name_table[0] = {
+};
+
+// Casting functions for interface "hash__Hash32er"
+// ^^^ number of types for interface hash__Hash64er: 0
+
+// Methods wrapper for interface "hash__Hash64er"
+
+typedef u64 (*_hash__Hash64er_sum64_fn)(void* _);
+
+struct _hash__Hash64er_interface_methods {
+	_hash__Hash64er_sum64_fn sum64;
+};
+
+struct _hash__Hash64er_interface_methods hash__Hash64er_name_table[0] = {
+};
+
+// Casting functions for interface "hash__Hash64er"
 
 // V option typedefs:
 typedef struct {
@@ -20726,7 +20774,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ada02d4"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0e7192c"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -40957,9 +41005,6 @@ VV_LOCAL_SYMBOL string v__gen__Gen_interface_table(v__gen__Gen* g) {
 			continue;
 		}
 		v__table__Interface inter_info = /* as */ *(v__table__Interface*)__as_cast((ityp.info)._v__table__Interface, (ityp.info).typ, /*expected:*/329);
-		if (inter_info.types.len == 0) {
-			continue;
-		}
 		string interface_name = v__gen__c_name(ityp.name);
 		string methods_struct_name = _STR("struct _%.*s\000_interface_methods", 2, interface_name);
 		strings__Builder methods_typ_def = strings__new_builder(100);
