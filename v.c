@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0bf679a"
+#define V_COMMIT_HASH "1f95233"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e6d162a"
+	#define V_COMMIT_HASH "0bf679a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0bf679a"
+	#define V_CURRENT_COMMIT_HASH "1f95233"
 #endif
 
 // V comptime_defines:
@@ -20794,7 +20794,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e6d162a"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0bf679a"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -31545,6 +31545,10 @@ VV_LOCAL_SYMBOL multi_return_array_v__table__Param_bool_bool v__parser__Parser_f
 		int arg_no = 1;
 		for (;;) {
 			if (!(p->tok.kind != v__token__Kind_rpar)) break;
+			if (p->tok.kind == v__token__Kind_eof) {
+				v__parser__Parser_error_with_pos(p, _SLIT("expecting `)`"), v__token__Token_position(&p->tok));
+				return (multi_return_array_v__table__Param_bool_bool){.arg0=__new_array_with_default(0, 0, sizeof(v__table__Param), 0), .arg1=false, .arg2=false};
+			}
 			bool is_shared = p->tok.kind == v__token__Kind_key_shared;
 			bool is_atomic = p->tok.kind == v__token__Kind_key_atomic;
 			bool is_mut = p->tok.kind == v__token__Kind_key_mut || is_shared || is_atomic;
@@ -31557,6 +31561,9 @@ VV_LOCAL_SYMBOL multi_return_array_v__table__Param_bool_bool v__parser__Parser_f
 			}
 			v__token__Position pos = v__token__Token_position(&p->tok);
 			v__table__Type arg_type = v__parser__Parser_parse_type(p);
+			if (arg_type == 0) {
+				return (multi_return_array_v__table__Param_bool_bool){.arg0=__new_array_with_default(0, 0, sizeof(v__table__Param), 0), .arg1=false, .arg2=false};
+			}
 			if (is_mut) {
 				if (!v__table__Type_has_flag(arg_type, v__table__TypeFlag_generic)) {
 					if (is_shared) {
@@ -31581,6 +31588,10 @@ VV_LOCAL_SYMBOL multi_return_array_v__table__Param_bool_bool v__parser__Parser_f
 			if (is_variadic) {
 				arg_type = v__table__Type_set_flag(arg_type, v__table__TypeFlag_variadic);
 			}
+			if (p->tok.kind == v__token__Kind_eof) {
+				v__parser__Parser_error_with_pos(p, _SLIT("expecting `)`"), v__token__Token_position(&p->prev_tok));
+				return (multi_return_array_v__table__Param_bool_bool){.arg0=__new_array_with_default(0, 0, sizeof(v__table__Param), 0), .arg1=false, .arg2=false};
+			}
 			if (p->tok.kind == v__token__Kind_comma) {
 				if (is_variadic) {
 					v__parser__Parser_error_with_pos(p, _STR("cannot use ...(variadic) with non-final parameter no %"PRId32"", 1, arg_no), pos);
@@ -31598,6 +31609,10 @@ VV_LOCAL_SYMBOL multi_return_array_v__table__Param_bool_bool v__parser__Parser_f
 	} else {
 		for (;;) {
 			if (!(p->tok.kind != v__token__Kind_rpar)) break;
+			if (p->tok.kind == v__token__Kind_eof) {
+				v__parser__Parser_error_with_pos(p, _SLIT("expecting `)`"), v__token__Token_position(&p->tok));
+				return (multi_return_array_v__table__Param_bool_bool){.arg0=__new_array_with_default(0, 0, sizeof(v__table__Param), 0), .arg1=false, .arg2=false};
+			}
 			bool is_shared = p->tok.kind == v__token__Kind_key_shared;
 			bool is_atomic = p->tok.kind == v__token__Kind_key_atomic;
 			bool is_mut = p->tok.kind == v__token__Kind_key_mut || is_shared || is_atomic;
@@ -31625,6 +31640,9 @@ VV_LOCAL_SYMBOL multi_return_array_v__table__Param_bool_bool v__parser__Parser_f
 			}
 			v__token__Position pos = v__token__Token_position(&p->tok);
 			v__table__Type typ = v__parser__Parser_parse_type(p);
+			if (typ == 0) {
+				return (multi_return_array_v__table__Param_bool_bool){.arg0=__new_array_with_default(0, 0, sizeof(v__table__Param), 0), .arg1=false, .arg2=false};
+			}
 			if (is_mut) {
 				if (!v__table__Type_has_flag(typ, v__table__TypeFlag_generic)) {
 					if (is_shared) {
@@ -31658,6 +31676,10 @@ VV_LOCAL_SYMBOL multi_return_array_v__table__Param_bool_bool v__parser__Parser_f
 					v__parser__Parser_error_with_pos(p, _STR("cannot use ...(variadic) with non-final parameter %.*s", 1, arg_name), (*(v__token__Position*)/*ee elem_typ */array_get(arg_pos, i)));
 					return (multi_return_array_v__table__Param_bool_bool){.arg0=__new_array_with_default(0, 0, sizeof(v__table__Param), 0), .arg1=false, .arg2=false};
 				}
+			}
+			if (p->tok.kind == v__token__Kind_eof) {
+				v__parser__Parser_error_with_pos(p, _SLIT("expecting `)`"), v__token__Token_position(&p->prev_tok));
+				return (multi_return_array_v__table__Param_bool_bool){.arg0=__new_array_with_default(0, 0, sizeof(v__table__Param), 0), .arg1=false, .arg2=false};
 			}
 			if (p->tok.kind != v__token__Kind_rpar) {
 				v__parser__Parser_check(p, v__token__Kind_comma);
@@ -32510,7 +32532,7 @@ v__table__Type v__parser__Parser_parse_any_type(v__parser__Parser* p, v__table__
 			return v__parser__Parser_parse_chan_type(p);
 		}
 		if ((name).len == 0) {
-			v__parser__Parser_error(p, _SLIT("bad type syntax"));
+			v__parser__Parser_error(p, _SLIT("expecting type declaration"));
 			// Defer begin
 			v__parser__Parser_next(p);
 			// Defer end
