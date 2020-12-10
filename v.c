@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f6a2dba"
+#define V_COMMIT_HASH "8b3ffb9"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1f95233"
+	#define V_COMMIT_HASH "f6a2dba"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f6a2dba"
+	#define V_CURRENT_COMMIT_HASH "8b3ffb9"
 #endif
 
 // V comptime_defines:
@@ -20794,7 +20794,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1f95233"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f6a2dba"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -24333,7 +24333,11 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 			}
 		} else if (_t822 == '}') {
 			if (s->is_enclosed_inter) {
-				s->pos++;
+				if (s->pos < s->text.len - 1) {
+					s->pos++;
+				} else {
+					v__scanner__Scanner_error(s, _SLIT("unfinished string literal"));
+				}
 				if (string_at(s->text, s->pos) == s->quote) {
 					s->is_inside_string = false;
 					s->is_enclosed_inter = false;
