@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1f95233"
+#define V_COMMIT_HASH "f6a2dba"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0bf679a"
+	#define V_COMMIT_HASH "1f95233"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1f95233"
+	#define V_CURRENT_COMMIT_HASH "f6a2dba"
 #endif
 
 // V comptime_defines:
@@ -20638,7 +20638,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0bf679a"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1f95233"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -26858,9 +26858,11 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 		int nr_args = (method.params.len == 0 ? (0) : (method.params.len - 1));
 		int min_required_args = method.params.len - (method.is_variadic && method.params.len > 1 ? (2) : (1));
 		if (call_expr->args.len < min_required_args) {
-			v__checker__Checker_error(c, _STR("too few arguments in call to `%.*s\000.%.*s\000` (%"PRId32"\000 instead of %"PRId32"\000)", 5, left_type_sym->name, method_name, call_expr->args.len, min_required_args), call_expr->pos);
+			v__checker__Checker_error(c, _STR("expected %"PRId32"\000 arguments, but got %"PRId32"", 2, min_required_args, call_expr->args.len), call_expr->pos);
 		} else if (!method.is_variadic && call_expr->args.len > nr_args) {
-			v__checker__Checker_error(c, _STR("too many arguments in call to `%.*s\000.%.*s\000` (%"PRId32"\000 instead of %"PRId32"\000)", 5, left_type_sym->name, method_name, call_expr->args.len, nr_args), call_expr->pos);
+			array_v__ast__CallArg unexpected_arguments = array_slice(call_expr->args, min_required_args, call_expr->args.len);
+			v__token__Position unexpected_arguments_pos = v__token__Position_extend((*(v__ast__CallArg*)/*ee elem_typ */array_get(unexpected_arguments, 0)).pos, (*(v__ast__CallArg*)array_last(unexpected_arguments)).pos);
+			v__checker__Checker_error(c, _STR("expected %"PRId32"\000 arguments, but got %"PRId32"", 2, nr_args, call_expr->args.len), unexpected_arguments_pos);
 			return method.return_type;
 		}
 		// FOR IN array
@@ -27117,9 +27119,11 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 	}
 	int min_required_args = (f.is_variadic ? (f.params.len - 1) : (f.params.len));
 	if (call_expr->args.len < min_required_args) {
-		v__checker__Checker_error(c, _STR("too few arguments in call to `%.*s\000` (%"PRId32"\000 instead of %"PRId32"\000)", 4, fn_name, call_expr->args.len, min_required_args), call_expr->pos);
+		v__checker__Checker_error(c, _STR("expected %"PRId32"\000 arguments, but got %"PRId32"", 2, min_required_args, call_expr->args.len), call_expr->pos);
 	} else if (!f.is_variadic && call_expr->args.len > f.params.len) {
-		v__checker__Checker_error(c, _STR("too many arguments in call to `%.*s\000` (%"PRId32"\000 instead of %"PRId32"\000)", 4, fn_name, call_expr->args.len, f.params.len), call_expr->pos);
+		array_v__ast__CallArg unexpected_arguments = array_slice(call_expr->args, min_required_args, call_expr->args.len);
+		v__token__Position unexpected_arguments_pos = v__token__Position_extend((*(v__ast__CallArg*)/*ee elem_typ */array_get(unexpected_arguments, 0)).pos, (*(v__ast__CallArg*)array_last(unexpected_arguments)).pos);
+		v__checker__Checker_error(c, _STR("expected %"PRId32"\000 arguments, but got %"PRId32"", 2, min_required_args, call_expr->args.len), unexpected_arguments_pos);
 		return f.return_type;
 	}
 	if ((string_eq(fn_name, _SLIT("println")) || string_eq(fn_name, _SLIT("print"))) && call_expr->args.len > 0) {
@@ -28036,7 +28040,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__St
 				VAssertMetaInfo v_assert_meta_info__t1024;
 				memset(&v_assert_meta_info__t1024, 0, sizeof(VAssertMetaInfo));
 				v_assert_meta_info__t1024.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-				v_assert_meta_info__t1024.line_nr = 2498;
+				v_assert_meta_info__t1024.line_nr = 2501;
 				v_assert_meta_info__t1024.fn_name = _SLIT("stmt");
 				v_assert_meta_info__t1024.src = _SLIT("!c.inside_unsafe");
 				__print_assert_failure(&v_assert_meta_info__t1024);
@@ -28890,8 +28894,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 	} else if (_t1051 == v__token__AtKind_line_nr) {
 		node->val = int_str((node->pos.line_nr + 1));
 	} else if (_t1051 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_105899 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_105899.arg1;
+		multi_return_string_int mr_106090 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_106090.arg1;
 		node->val = int_str((column + 1));
 	} else if (_t1051 == v__token__AtKind_vhash) {
 		node->val = v__util__vhash();
@@ -29488,7 +29492,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 		VAssertMetaInfo v_assert_meta_info__t1102;
 		memset(&v_assert_meta_info__t1102, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t1102.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t1102.line_nr = 3815;
+		v_assert_meta_info__t1102.line_nr = 3818;
 		v_assert_meta_info__t1102.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t1102.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t1102);
@@ -29830,8 +29834,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym) && !(typ_sym->kind == v__table__Kind_byteptr || typ_sym->kind == v__table__Kind_charptr)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_136216 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_136216.arg0;
+		multi_return_string_v__token__Position mr_136407 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_136407.arg0;
 	}
 	if (!c->inside_unsafe && (v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym))) {
 		v__checker__Checker_warn(c, _SLIT("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -30326,10 +30330,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1153 = 0; _t1153 < _t1152.len; ++_t1153) {
 			v__table__Fn m = ((v__table__Fn*)_t1152.data)[_t1153];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_152045 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_152045.arg0;
-				int nroute_attributes = mr_152045.arg1;
-				int nargs = mr_152045.arg2;
+				multi_return_bool_int_int mr_152236 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_152236.arg0;
+				int nroute_attributes = mr_152236.arg1;
+				int nargs = mr_152236.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -31043,9 +31047,11 @@ array_v__ast__CallArg v__parser__Parser_call_args(v__parser__Parser* p) {
 			v__parser__Parser_next(p);
 		}
 		array_v__ast__Comment comments = v__parser__Parser_eat_comments(p);
+		v__token__Position arg_start_pos = v__token__Token_position(&p->tok);
 		v__ast__Expr e = v__parser__Parser_expr(p, 0);
+		v__token__Position pos = v__token__Position_extend(arg_start_pos, v__token__Token_position(&p->prev_tok));
 		_PUSH_MANY(&comments, (v__parser__Parser_eat_comments(p)), _t1193, array_v__ast__Comment);
-		array_push(&args, _MOV((v__ast__CallArg[]){ (v__ast__CallArg){.is_mut = is_mut,.share = v__table__sharetype_from_flags(is_shared, is_atomic),.expr = e,.comments = comments,.typ = 0,.is_tmp_autofree = 0,.pos = v__token__Token_position(&p->tok),} }));
+		array_push(&args, _MOV((v__ast__CallArg[]){ (v__ast__CallArg){.is_mut = is_mut,.share = v__table__sharetype_from_flags(is_shared, is_atomic),.expr = e,.comments = comments,.typ = 0,.is_tmp_autofree = 0,.pos = pos,} }));
 		if (p->tok.kind != v__token__Kind_rpar) {
 			v__parser__Parser_check(p, v__token__Kind_comma);
 		}
@@ -31145,10 +31151,10 @@ VV_LOCAL_SYMBOL v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Param_bool_bool mr_6622 = v__parser__Parser_fn_args(p);
-	array_v__table__Param args2 = mr_6622.arg0;
-	bool are_args_type_only = mr_6622.arg1;
-	bool is_variadic = mr_6622.arg2;
+	multi_return_array_v__table__Param_bool_bool mr_6698 = v__parser__Parser_fn_args(p);
+	array_v__table__Param args2 = mr_6698.arg0;
+	bool are_args_type_only = mr_6698.arg1;
+	bool is_variadic = mr_6698.arg2;
 	_PUSH_MANY(&params, (args2), _t1196, array_v__table__Param);
 	if (!are_args_type_only) {
 		// FOR IN array
@@ -31282,9 +31288,9 @@ VV_LOCAL_SYMBOL v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Param_bool_bool mr_9830 = v__parser__Parser_fn_args(p);
-	array_v__table__Param args = mr_9830.arg0;
-	bool is_variadic = mr_9830.arg2;
+	multi_return_array_v__table__Param_bool_bool mr_9906 = v__parser__Parser_fn_args(p);
+	array_v__table__Param args = mr_9906.arg0;
+	bool is_variadic = mr_9906.arg2;
 	// FOR IN array
 	array _t1200 = args;
 	for (int _t1201 = 0; _t1201 < _t1200.len; ++_t1201) {
