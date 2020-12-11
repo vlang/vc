@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d7ff342"
+#define V_COMMIT_HASH "5c213de"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d1224ff"
+	#define V_COMMIT_HASH "d7ff342"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d7ff342"
+	#define V_CURRENT_COMMIT_HASH "5c213de"
 #endif
 
 // V comptime_defines:
@@ -5701,7 +5701,6 @@ Option_void v__checker__Checker_check_expected(v__checker__Checker* c, v__table_
 bool v__checker__Checker_symmetric_check(v__checker__Checker* c, v__table__Type left, v__table__Type right);
 byte v__checker__Checker_get_default_fmt(v__checker__Checker* c, v__table__Type ftyp, v__table__Type typ);
 v__table__Type v__checker__Checker_string_inter_lit(v__checker__Checker* c, v__ast__StringInterLiteral* node);
-bool v__checker__Checker_check_sumtype_compatibility(v__checker__Checker* c, v__table__Type a, v__table__Type b);
 void v__checker__Checker_infer_fn_types(v__checker__Checker* c, v__table__Fn f, v__ast__CallExpr* call_expr);
 #define _const_v__checker__max_nr_errors 300
 #define _const_v__checker__match_exhaustive_cutoff_limit 10
@@ -20670,7 +20669,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d1224ff"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d7ff342"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -25519,7 +25518,7 @@ bool v__checker__Checker_check_basic(v__checker__Checker* c, v__table__Type got,
 	if ((got_type_sym->kind == v__table__Kind_alias && got_type_sym->parent_idx == exp_idx) || (exp_type_sym->kind == v__table__Kind_alias && exp_type_sym->parent_idx == got_idx)) {
 		return true;
 	}
-	if (v__checker__Checker_check_sumtype_compatibility(c, got, expected)) {
+	if (v__table__Table_sumtype_has_variant(c->table, expected, got)) {
 		return true;
 	}
 	if (got_type_sym->kind == v__table__Kind_function && exp_type_sym->kind == v__table__Kind_function) {
@@ -25609,10 +25608,10 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_promote_num(v__checker__Check
 	v__table__Type type_hi = left_type;
 	v__table__Type type_lo = right_type;
 	if (v__table__Type_idx(type_hi) < v__table__Type_idx(type_lo)) {
-		v__table__Type _var_6569 = type_hi;
-		v__table__Type _var_6578 = type_lo;
-		type_hi = _var_6578;
-		type_lo = _var_6569;
+		v__table__Type _var_6567 = type_hi;
+		v__table__Type _var_6576 = type_lo;
+		type_hi = _var_6576;
+		type_lo = _var_6567;
 	}
 	int idx_hi = v__table__Type_idx(type_hi);
 	int idx_lo = v__table__Type_idx(type_lo);
@@ -25779,10 +25778,6 @@ v__table__Type v__checker__Checker_string_inter_lit(v__checker__Checker* c, v__a
 		}
 	}
 	return _const_v__table__string_type;
-}
-
-bool v__checker__Checker_check_sumtype_compatibility(v__checker__Checker* c, v__table__Type a, v__table__Type b) {
-	return v__table__Table_sumtype_has_variant(c->table, a, b) || v__table__Table_sumtype_has_variant(c->table, b, a);
 }
 
 void v__checker__Checker_infer_fn_types(v__checker__Checker* c, v__table__Fn f, v__ast__CallExpr* call_expr) {
@@ -29583,7 +29578,7 @@ v__table__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExp
 				v__table__Type expr_type = v__checker__Checker_expr(c, infix.left);
 				if (left_sym->kind == v__table__Kind_interface_) {
 					v__checker__Checker_type_implements(c, right_expr.typ, expr_type, branch.pos);
-				} else if (!v__checker__Checker_check_types(c, expr_type, right_expr.typ)) {
+				} else if (!v__checker__Checker_check_types(c, right_expr.typ, expr_type)) {
 					string expect_str = v__table__Table_type_to_str(c->table, right_expr.typ);
 					string expr_str = v__table__Table_type_to_str(c->table, expr_type);
 					v__checker__Checker_error(c, _STR("cannot use type `%.*s\000` as type `%.*s\000`", 3, expect_str, expr_str), branch.pos);
