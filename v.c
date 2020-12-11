@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d319fe1"
+#define V_COMMIT_HASH "a2f7e06"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a297cf8"
+	#define V_COMMIT_HASH "d319fe1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d319fe1"
+	#define V_CURRENT_COMMIT_HASH "a2f7e06"
 #endif
 
 // V comptime_defines:
@@ -4793,6 +4793,7 @@ void time__usleep(int microseconds);
 bool time__is_leap_year(int year);
 Option_int time__days_in_month(int month, int year);
 string time__Time_str(time__Time t);
+time__Duration time__Time__minus(time__Time lhs, time__Time rhs);
 VV_LOCAL_SYMBOL time__Time time__convert_ctime(struct tm t, int microsecond);
 time__Duration _const_time__nanosecond; // inited later
 i64 _const_time__microsecond; // inited later
@@ -17042,6 +17043,12 @@ string time__Time_str(time__Time t) {
 	return time__Time_format_ss(t);
 }
 
+time__Duration time__Time__minus(time__Time lhs, time__Time rhs) {
+	u64 lhs_micro = lhs.v_unix * 1000 * 1000 + ((u64)(lhs.microsecond));
+	u64 rhs_micro = rhs.v_unix * 1000 * 1000 + ((u64)(rhs.microsecond));
+	return (((i64)(lhs_micro)) - ((i64)(rhs_micro))) * _const_time__microsecond;
+}
+
 VV_LOCAL_SYMBOL time__Time time__convert_ctime(struct tm t, int microsecond) {
 	return (time__Time){
 		.year = t.tm_year + 1900,
@@ -20820,7 +20827,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a297cf8"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d319fe1"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
