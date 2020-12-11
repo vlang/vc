@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a0d10a6"
+#define V_COMMIT_HASH "d1224ff"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "14c4ba6"
+	#define V_COMMIT_HASH "a0d10a6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a0d10a6"
+	#define V_CURRENT_COMMIT_HASH "d1224ff"
 #endif
 
 // V comptime_defines:
@@ -20826,7 +20826,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("14c4ba6"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a0d10a6"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -31520,7 +31520,12 @@ VV_LOCAL_SYMBOL v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 	int type_sym_method_idx = 0;
 	if (is_method) {
 		v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(p->table, rec_type);
-		if (type_sym->mod.len > 0 && string_ne(type_sym->mod, p->mod) && type_sym->language == v__table__Language_v) {
+		bool is_non_local = type_sym->mod.len > 0 && string_ne(type_sym->mod, p->mod) && type_sym->language == v__table__Language_v;
+		if (!is_non_local && (type_sym->kind == v__table__Kind_array || type_sym->kind == v__table__Kind_map)) {
+			v__table__TypeSymbol* elem_type_sym = v__table__Table_get_type_symbol(p->table, v__table__Table_value_type(p->table, rec_type));
+			is_non_local = elem_type_sym->mod.len > 0 && string_ne(elem_type_sym->mod, p->mod) && elem_type_sym->language == v__table__Language_v;
+		}
+		if (is_non_local) {
 			v__parser__Parser_error_with_pos(p, _STR("cannot define new methods on non-local type %.*s", 1, type_sym->name), rec_type_pos);
 			return (v__ast__FnDecl){.name = (string){.str=(byteptr)""},.mod = (string){.str=(byteptr)""},.params = __new_array(0, 1, sizeof(v__table__Param)),.is_deprecated = 0,.is_pub = 0,.is_variadic = 0,.is_anon = 0,.receiver = {0},.receiver_pos = {0},.is_method = 0,.method_type_pos = {0},.method_idx = 0,.rec_mut = 0,.rec_share = 0,.language = 0,.no_body = 0,.is_builtin = 0,.pos = {0},.body_pos = {0},.file = (string){.str=(byteptr)""},.is_generic = 0,.is_direct_arr = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.stmts = __new_array(0, 1, sizeof(v__ast__Stmt)),.return_type = 0,.comments = __new_array(0, 1, sizeof(v__ast__Comment)),.source_file = 0,};
 		}
@@ -31618,9 +31623,9 @@ VV_LOCAL_SYMBOL v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Param_bool_bool mr_9993 = v__parser__Parser_fn_args(p);
-	array_v__table__Param args = mr_9993.arg0;
-	bool is_variadic = mr_9993.arg2;
+	multi_return_array_v__table__Param_bool_bool mr_10346 = v__parser__Parser_fn_args(p);
+	array_v__table__Param args = mr_10346.arg0;
+	bool is_variadic = mr_10346.arg2;
 	// FOR IN array
 	array _t1230 = args;
 	for (int _t1231 = 0; _t1231 < _t1230.len; ++_t1231) {
