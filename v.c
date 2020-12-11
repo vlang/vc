@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "22cbfdf"
+#define V_COMMIT_HASH "a26e1e6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2a731e1"
+	#define V_COMMIT_HASH "22cbfdf"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "22cbfdf"
+	#define V_CURRENT_COMMIT_HASH "a26e1e6"
 #endif
 
 // V comptime_defines:
@@ -20826,7 +20826,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2a731e1"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("22cbfdf"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -48469,7 +48469,7 @@ void _vinit() {
 	_const_time__days_per_4_years = 365 * 4 + 1;
 	_const_time__days_before = new_array_from_c_array(13, 13, sizeof(int), _MOV((int[13]){
 		0, 31, 31 + 28, 31 + 28 + 31, 31 + 28 + 31 + 30, 31 + 28 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31}));
-	_const_time__long_days = new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("Monday"), _SLIT("Tuesday"), _SLIT("Wednesday"), _SLIT("Thusday"), _SLIT("Friday"), _SLIT("Saturday"), _SLIT("Sunday")}));
+	_const_time__long_days = new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("Monday"), _SLIT("Tuesday"), _SLIT("Wednesday"), _SLIT("Thursday"), _SLIT("Friday"), _SLIT("Saturday"), _SLIT("Sunday")}));
 	_const_time__nanosecond = ((time__Duration)(1));
 	_const_time__microsecond = ((time__Duration)(1000)) * _const_time__nanosecond;
 	_const_time__millisecond = ((time__Duration)(1000)) * _const_time__microsecond;
