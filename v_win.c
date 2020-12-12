@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a26e1e6"
+#define V_COMMIT_HASH "11808f9"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "22cbfdf"
+	#define V_COMMIT_HASH "a26e1e6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a26e1e6"
+	#define V_CURRENT_COMMIT_HASH "11808f9"
 #endif
 
 // V comptime_defines:
@@ -20670,7 +20670,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("22cbfdf"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a26e1e6"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -24325,10 +24325,10 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 			if (nextc == '=') {
 				s->pos++;
 				return v__scanner__Scanner_new_token(s, v__token__Kind_ne, _SLIT(""), 2);
-			} else if (nextc == 'i' && string_at(s->text, s->pos + 2) == 'n' && byte_is_space(string_at(s->text, s->pos + 3))) {
+			} else if (s->text.len > s->pos + 3 && nextc == 'i' && string_at(s->text, s->pos + 2) == 'n' && byte_is_space(string_at(s->text, s->pos + 3))) {
 				s->pos += 2;
 				return v__scanner__Scanner_new_token(s, v__token__Kind_not_in, _SLIT(""), 3);
-			} else if (nextc == 'i' && string_at(s->text, s->pos + 2) == 's' && byte_is_space(string_at(s->text, s->pos + 3))) {
+			} else if (s->text.len > s->pos + 3 && nextc == 'i' && string_at(s->text, s->pos + 2) == 's' && byte_is_space(string_at(s->text, s->pos + 3))) {
 				s->pos += 2;
 				return v__scanner__Scanner_new_token(s, v__token__Kind_not_is, _SLIT(""), 3);
 			} else {
@@ -24371,7 +24371,7 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 				int start = s->pos + 2;
 				int nest_count = 1;
 				for (;;) {
-					if (!(nest_count > 0)) break;
+					if (!(nest_count > 0 && s->pos < s->text.len - 1)) break;
 					s->pos++;
 					if (s->pos >= s->text.len) {
 						s->line_nr--;
@@ -30969,7 +30969,7 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 			has_type = true;
 		}
 	} else {
-		for (int i = 0; p->tok.kind != v__token__Kind_rsbr; i++) {
+		for (int i = 0; !(p->tok.kind == v__token__Kind_rsbr || p->tok.kind == v__token__Kind_eof); i++) {
 			array_push(&exprs, _MOV((v__ast__Expr[]){ v__parser__Parser_expr(p, 0) }));
 			array_push(&ecmnts, _MOV((array_v__ast__Comment[]){ v__parser__Parser_eat_comments(p) }));
 			if (p->tok.kind == v__token__Kind_comma) {
@@ -32305,6 +32305,9 @@ v__table__Type v__parser__Parser_parse_array_type(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_rsbr);
 		v__table__Type elem_type = v__parser__Parser_parse_type(p);
+		if (v__table__Type_idx(elem_type) == 0) {
+			return 0;
+		}
 		int idx = v__table__Table_find_or_register_array_fixed(p->table, elem_type, size, 1);
 		return v__table__new_type(idx);
 	}
@@ -32359,6 +32362,7 @@ v__table__Type v__parser__Parser_parse_multi_return_type(v__parser__Parser* p) {
 	v__parser__Parser_check(p, v__token__Kind_lpar);
 	array_v__table__Type mr_types = __new_array_with_default(0, 0, sizeof(v__table__Type), 0);
 	for (;;) {
+		if (!(p->tok.kind != v__token__Kind_eof)) break;
 		v__table__Type mr_type = v__parser__Parser_parse_type(p);
 		array_push(&mr_types, _MOV((v__table__Type[]){ mr_type }));
 		if (p->tok.kind == v__token__Kind_comma) {
@@ -32375,9 +32379,9 @@ v__table__Type v__parser__Parser_parse_multi_return_type(v__parser__Parser* p) {
 v__table__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name) {
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	int line_nr = p->tok.line_nr;
-	multi_return_array_v__table__Param_bool_bool mr_2388 = v__parser__Parser_fn_args(p);
-	array_v__table__Param args = mr_2388.arg0;
-	bool is_variadic = mr_2388.arg2;
+	multi_return_array_v__table__Param_bool_bool mr_2488 = v__parser__Parser_fn_args(p);
+	array_v__table__Param args = mr_2488.arg0;
+	bool is_variadic = mr_2488.arg2;
 	v__table__Type return_type = _const_v__table__void_type;
 	if (p->tok.line_nr == line_nr && v__token__Kind_is_start_of_type(p->tok.kind)) {
 		return_type = v__parser__Parser_parse_type(p);
@@ -32486,7 +32490,7 @@ v__table__Type v__parser__Parser_parse_any_type(v__parser__Parser* p, v__table__
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_dot);
 		name = _STR("%.*s\000.%.*s", 2, (*(string*)map_get(p->imports, name, &(string[]){ (string){.str=(byteptr)""} })), p->tok.lit);
-		if (!byte_is_capital(string_at(p->tok.lit, 0))) {
+		if (p->tok.lit.len > 0 && !byte_is_capital(string_at(p->tok.lit, 0))) {
 			v__parser__Parser_error(p, _SLIT("imported types must start with a capital letter"));
 			return 0;
 		}
@@ -34485,6 +34489,7 @@ VV_LOCAL_SYMBOL v__ast__Assoc v__parser__Parser_assoc(v__parser__Parser* p) {
 	array_v__ast__Expr vals = __new_array_with_default(0, 0, sizeof(v__ast__Expr), 0);
 	v__parser__Parser_check(p, v__token__Kind_pipe);
 	for (;;) {
+		if (!(p->tok.kind != v__token__Kind_eof)) break;
 		array_push(&fields, _MOV((string[]){ string_clone(v__parser__Parser_check_name(p)) }));
 		v__parser__Parser_check(p, v__token__Kind_colon);
 		v__ast__Expr expr = v__parser__Parser_expr(p, 0);
