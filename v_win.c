@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9e3339e"
+#define V_COMMIT_HASH "ecfd124"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0aacc9a"
+	#define V_COMMIT_HASH "9e3339e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9e3339e"
+	#define V_CURRENT_COMMIT_HASH "ecfd124"
 #endif
 
 // V comptime_defines:
@@ -4348,7 +4348,6 @@ bool isnil(voidptr v);
 void print_backtrace();
 VV_LOCAL_SYMBOL void panic_debug(int line_no, string file, string mod, string fn_name, string s);
 void v_panic(string s);
-VV_LOCAL_SYMBOL bool should_use_native_backtraces();
 void eprintln(string s);
 void eprint(string s);
 void print(string s);
@@ -10791,9 +10790,20 @@ VV_LOCAL_SYMBOL void panic_debug(int line_no, string file, string mod, string fn
 	{
 	}
 	#endif
-	if (!should_use_native_backtraces()) {
-		print_backtrace_skipping_top_frames(1);
+	#if defined(__TINYC__)
+	{
+		#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
+		{
+		}
+		#else
+		{
+			tcc_backtrace("Backtrace");
+		}
+		#endif
+		exit(1);
 	}
+	#endif
+	print_backtrace_skipping_top_frames(1);
 	#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
 	{
 	}
@@ -10807,23 +10817,25 @@ void v_panic(string s) {
 	{
 	}
 	#endif
-	if (!should_use_native_backtraces()) {
-		print_backtrace_skipping_top_frames(1);
+	#if defined(__TINYC__)
+	{
+		#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
+		{
+		}
+		#else
+		{
+			tcc_backtrace("Backtrace");
+		}
+		#endif
+		exit(1);
 	}
+	#endif
+	print_backtrace_skipping_top_frames(1);
 	#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
 	{
 	}
 	#endif
 	exit(1);
-}
-
-VV_LOCAL_SYMBOL bool should_use_native_backtraces() {
-	bool res = false;
-	#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
-	{
-	}
-	#endif
-	return res;
 }
 
 void eprintln(string s) {
@@ -20782,7 +20794,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0aacc9a"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9e3339e"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
