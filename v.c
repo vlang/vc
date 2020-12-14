@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "069d77d"
+#define V_COMMIT_HASH "78fb84c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f57c703"
+	#define V_COMMIT_HASH "069d77d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "069d77d"
+	#define V_CURRENT_COMMIT_HASH "78fb84c"
 #endif
 
 // V comptime_defines:
@@ -20964,7 +20964,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f57c703"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("069d77d"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -49774,7 +49774,7 @@ void _vinit() {
 	_const_v__gen__c_reserved = new_array_from_c_array(37, 37, sizeof(string), _MOV((string[37]){
 		_SLIT("delete"), _SLIT("exit"), _SLIT("link"), _SLIT("unix"), _SLIT("error"), _SLIT("calloc"), _SLIT("malloc"), _SLIT("free"), _SLIT("panic"), _SLIT("auto"), _SLIT("char"), _SLIT("default"), _SLIT("do"), _SLIT("double"), _SLIT("extern"), _SLIT("float"), _SLIT("inline"), _SLIT("int"), _SLIT("long"), _SLIT("register"), _SLIT("restrict"), _SLIT("short"), _SLIT("signed"), _SLIT("sizeof"), _SLIT("static"), _SLIT("switch"), _SLIT("typedef"), _SLIT("union"), _SLIT("unsigned"), _SLIT("void"), _SLIT("volatile"), _SLIT("while"), _SLIT("new"), _SLIT("namespace"), _SLIT("class"), _SLIT("typename"), _SLIT("export")}));
 	_const_v__gen__cmp_str = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("eq"), _SLIT("ne"), _SLIT("gt"), _SLIT("lt"), _SLIT("ge"), _SLIT("le")}));
-	_const_v__gen__cmp_rev = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("eq"), _SLIT("ne"), _SLIT("le"), _SLIT("ge"), _SLIT("lt"), _SLIT("gt")}));
+	_const_v__gen__cmp_rev = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("eq"), _SLIT("ne"), _SLIT("lt"), _SLIT("gt"), _SLIT("le"), _SLIT("ge")}));
 	_const_v__gen__tabs = new_array_from_c_array(9, 9, sizeof(string), _MOV((string[9]){
 		_SLIT(""), _SLIT("\t"), _SLIT("\t\t"), _SLIT("\t\t\t"), _SLIT("\t\t\t\t"), _SLIT("\t\t\t\t\t"), _SLIT("\t\t\t\t\t\t"), _SLIT("\t\t\t\t\t\t\t"), _SLIT("\t\t\t\t\t\t\t\t")}));
 	_const_v__gen__skip_struct_init = new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("struct stat"), _SLIT("struct addrinfo")}));
