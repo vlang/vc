@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "78fb84c"
+#define V_COMMIT_HASH "999fe84"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "069d77d"
+	#define V_COMMIT_HASH "78fb84c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "78fb84c"
+	#define V_CURRENT_COMMIT_HASH "999fe84"
 #endif
 
 // V comptime_defines:
@@ -11757,12 +11757,12 @@ VV_LOCAL_SYMBOL void map_set(map* m, string k, voidptr value) {
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_9596 = map_key_to_index(m, key);
-	u32 index = mr_9596.arg0;
-	u32 meta = mr_9596.arg1;
-	multi_return_u32_u32 mr_9632 = map_meta_less(m, index, meta);
-	index = mr_9632.arg0;
-	meta = mr_9632.arg1;
+	multi_return_u32_u32 mr_9595 = map_key_to_index(m, key);
+	u32 index = mr_9595.arg0;
+	u32 meta = mr_9595.arg1;
+	multi_return_u32_u32 mr_9631 = map_meta_less(m, index, meta);
+	index = mr_9631.arg0;
+	meta = mr_9631.arg1;
 	for (;;) {
 		if (!(meta == m->metas[index])) break;
 		int kv_index = ((int)(m->metas[index + 1]));
@@ -11807,12 +11807,12 @@ VV_LOCAL_SYMBOL void map_rehash(map* m) {
 			continue;
 		}
 		string* pkey = ((string*)(DenseArray_key(&m->key_values, i)));
-		multi_return_u32_u32 mr_11088 = map_key_to_index(m, *pkey);
-		u32 index = mr_11088.arg0;
-		u32 meta = mr_11088.arg1;
-		multi_return_u32_u32 mr_11127 = map_meta_less(m, index, meta);
-		index = mr_11127.arg0;
-		meta = mr_11127.arg1;
+		multi_return_u32_u32 mr_11087 = map_key_to_index(m, *pkey);
+		u32 index = mr_11087.arg0;
+		u32 meta = mr_11087.arg1;
+		multi_return_u32_u32 mr_11126 = map_meta_less(m, index, meta);
+		index = mr_11126.arg0;
+		meta = mr_11126.arg1;
 		map_meta_greater(m, index, meta, ((u32)(i)));
 	}
 }
@@ -11831,9 +11831,9 @@ VV_LOCAL_SYMBOL void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->cap >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->cap);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_11890 = map_meta_less(m, index, meta);
-		index = mr_11890.arg0;
-		meta = mr_11890.arg1;
+		multi_return_u32_u32 mr_11889 = map_meta_less(m, index, meta);
+		index = mr_11889.arg0;
+		meta = mr_11889.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -11842,9 +11842,9 @@ VV_LOCAL_SYMBOL void map_cached_rehash(map* m, u32 old_cap) {
 
 VV_LOCAL_SYMBOL voidptr map_get_and_set(map* m, string key, voidptr zero) {
 	for (;;) {
-		multi_return_u32_u32 mr_12333 = map_key_to_index(m, key);
-		u32 index = mr_12333.arg0;
-		u32 meta = mr_12333.arg1;
+		multi_return_u32_u32 mr_12332 = map_key_to_index(m, key);
+		u32 index = mr_12332.arg0;
+		u32 meta = mr_12332.arg1;
 		for (;;) {
 			if (meta == m->metas[index]) {
 				int kv_index = ((int)(m->metas[index + 1]));
@@ -11877,9 +11877,9 @@ VV_LOCAL_SYMBOL voidptr map_get_and_set(map* m, string key, voidptr zero) {
 }
 
 VV_LOCAL_SYMBOL voidptr map_get(map m, string key, voidptr zero) {
-	multi_return_u32_u32 mr_13047 = map_key_to_index(&m, key);
-	u32 index = mr_13047.arg0;
-	u32 meta = mr_13047.arg1;
+	multi_return_u32_u32 mr_13046 = map_key_to_index(&m, key);
+	u32 index = mr_13046.arg0;
+	u32 meta = mr_13046.arg1;
 	for (;;) {
 		if (meta == m.metas[index]) {
 			int kv_index = ((int)(m.metas[index + 1]));
@@ -11898,9 +11898,9 @@ VV_LOCAL_SYMBOL voidptr map_get(map m, string key, voidptr zero) {
 }
 
 VV_LOCAL_SYMBOL bool map_exists(map m, string key) {
-	multi_return_u32_u32 mr_13538 = map_key_to_index(&m, key);
-	u32 index = mr_13538.arg0;
-	u32 meta = mr_13538.arg1;
+	multi_return_u32_u32 mr_13537 = map_key_to_index(&m, key);
+	u32 index = mr_13537.arg0;
+	u32 meta = mr_13537.arg1;
 	for (;;) {
 		if (meta == m.metas[index]) {
 			int kv_index = ((int)(m.metas[index + 1]));
@@ -11919,12 +11919,12 @@ VV_LOCAL_SYMBOL bool map_exists(map m, string key) {
 }
 
 void map_delete(map* m, string key) {
-	multi_return_u32_u32 mr_13993 = map_key_to_index(m, key);
-	u32 index = mr_13993.arg0;
-	u32 meta = mr_13993.arg1;
-	multi_return_u32_u32 mr_14029 = map_meta_less(m, index, meta);
-	index = mr_14029.arg0;
-	meta = mr_14029.arg1;
+	multi_return_u32_u32 mr_13992 = map_key_to_index(m, key);
+	u32 index = mr_13992.arg0;
+	u32 meta = mr_13992.arg1;
+	multi_return_u32_u32 mr_14028 = map_meta_less(m, index, meta);
+	index = mr_14028.arg0;
+	meta = mr_14028.arg1;
 	for (;;) {
 		if (!(meta == m->metas[index])) break;
 		int kv_index = ((int)(m->metas[index + 1]));
@@ -20798,7 +20798,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("069d77d"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("78fb84c"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
