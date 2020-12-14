@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9b139c5"
+#define V_COMMIT_HASH "f57c703"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b9bf7a6"
+	#define V_COMMIT_HASH "9b139c5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9b139c5"
+	#define V_CURRENT_COMMIT_HASH "f57c703"
 #endif
 
 // V comptime_defines:
@@ -7979,36 +7979,36 @@ VV_LOCAL_SYMBOL u64 strconv__converter(strconv__PrepNumber* pn) {
 	u32 r2 = ((u32)(0U));
 	u32 r1 = ((u32)(0U));
 	u32 r0 = ((u32)(0U));
-	u32 mask28 = ((u32)(0xF << 28));
+	u32 mask28 = ((u32)(((u64)(0xFU)) << 28));
 	u64 result = ((u64)(0U));
 	s0 = ((u32)((pn->mantissa & ((u64)(0x00000000FFFFFFFFU)))));
 	s1 = ((u32)(pn->mantissa >> 32));
 	s2 = ((u32)(0U));
 	for (;;) {
 		if (!(pn->exponent > 0)) break;
-		multi_return_u32_u32_u32 mr_6682 = strconv__lsl96(s2, s1, s0);
-		q2 = mr_6682.arg0;
-		q1 = mr_6682.arg1;
-		q0 = mr_6682.arg2;
-		multi_return_u32_u32_u32 mr_6726 = strconv__lsl96(q2, q1, q0);
-		r2 = mr_6726.arg0;
-		r1 = mr_6726.arg1;
-		r0 = mr_6726.arg2;
-		multi_return_u32_u32_u32 mr_6780 = strconv__lsl96(r2, r1, r0);
-		s2 = mr_6780.arg0;
-		s1 = mr_6780.arg1;
-		s0 = mr_6780.arg2;
-		multi_return_u32_u32_u32 mr_6834 = strconv__add96(s2, s1, s0, q2, q1, q0);
-		s2 = mr_6834.arg0;
-		s1 = mr_6834.arg1;
-		s0 = mr_6834.arg2;
+		multi_return_u32_u32_u32 mr_6687 = strconv__lsl96(s2, s1, s0);
+		q2 = mr_6687.arg0;
+		q1 = mr_6687.arg1;
+		q0 = mr_6687.arg2;
+		multi_return_u32_u32_u32 mr_6731 = strconv__lsl96(q2, q1, q0);
+		r2 = mr_6731.arg0;
+		r1 = mr_6731.arg1;
+		r0 = mr_6731.arg2;
+		multi_return_u32_u32_u32 mr_6785 = strconv__lsl96(r2, r1, r0);
+		s2 = mr_6785.arg0;
+		s1 = mr_6785.arg1;
+		s0 = mr_6785.arg2;
+		multi_return_u32_u32_u32 mr_6839 = strconv__add96(s2, s1, s0, q2, q1, q0);
+		s2 = mr_6839.arg0;
+		s1 = mr_6839.arg1;
+		s0 = mr_6839.arg2;
 		pn->exponent--;
 		for (;;) {
 			if (!(((s2 & mask28)) != 0)) break;
-			multi_return_u32_u32_u32 mr_6955 = strconv__lsr96(s2, s1, s0);
-			q2 = mr_6955.arg0;
-			q1 = mr_6955.arg1;
-			q0 = mr_6955.arg2;
+			multi_return_u32_u32_u32 mr_6960 = strconv__lsr96(s2, s1, s0);
+			q2 = mr_6960.arg0;
+			q1 = mr_6960.arg1;
+			q0 = mr_6960.arg2;
 			binexp++;
 			s2 = q2;
 			s1 = q1;
@@ -8019,10 +8019,10 @@ VV_LOCAL_SYMBOL u64 strconv__converter(strconv__PrepNumber* pn) {
 		if (!(pn->exponent < 0)) break;
 		for (;;) {
 			if (!(!(((s2 & (((u32)(1U)) << 31))) != 0))) break;
-			multi_return_u32_u32_u32 mr_7098 = strconv__lsl96(s2, s1, s0);
-			q2 = mr_7098.arg0;
-			q1 = mr_7098.arg1;
-			q0 = mr_7098.arg2;
+			multi_return_u32_u32_u32 mr_7103 = strconv__lsl96(s2, s1, s0);
+			q2 = mr_7103.arg0;
+			q1 = mr_7103.arg1;
+			q0 = mr_7103.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
@@ -8048,10 +8048,10 @@ VV_LOCAL_SYMBOL u64 strconv__converter(strconv__PrepNumber* pn) {
 	if (s2 != 0 || s1 != 0 || s0 != 0) {
 		for (;;) {
 			if (!(((s2 & mask28)) == 0)) break;
-			multi_return_u32_u32_u32 mr_7757 = strconv__lsl96(s2, s1, s0);
-			q2 = mr_7757.arg0;
-			q1 = mr_7757.arg1;
-			q0 = mr_7757.arg2;
+			multi_return_u32_u32_u32 mr_7762 = strconv__lsl96(s2, s1, s0);
+			q2 = mr_7762.arg0;
+			q1 = mr_7762.arg1;
+			q0 = mr_7762.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
@@ -8063,25 +8063,25 @@ VV_LOCAL_SYMBOL u64 strconv__converter(strconv__PrepNumber* pn) {
 	u32 check_round_mask = ((u32)(0xFFFFFFFFU)) << ((u32)(nbit));
 	if (((s1 & check_round_bit)) != 0) {
 		if (((s1 & ~check_round_mask)) != 0) {
-			multi_return_u32_u32_u32 mr_8830 = strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
-			s2 = mr_8830.arg0;
-			s1 = mr_8830.arg1;
-			s0 = mr_8830.arg2;
+			multi_return_u32_u32_u32 mr_8835 = strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
+			s2 = mr_8835.arg0;
+			s1 = mr_8835.arg1;
+			s0 = mr_8835.arg2;
 		} else {
 			if (((s1 & (check_round_bit << ((u32)(1U))))) != 0) {
-				multi_return_u32_u32_u32 mr_9020 = strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
-				s2 = mr_9020.arg0;
-				s1 = mr_9020.arg1;
-				s0 = mr_9020.arg2;
+				multi_return_u32_u32_u32 mr_9025 = strconv__add96(s2, s1, s0, 0, check_round_bit, 0);
+				s2 = mr_9025.arg0;
+				s1 = mr_9025.arg1;
+				s0 = mr_9025.arg2;
 			}
 		}
 		s1 = (s1 & check_round_mask);
 		s0 = ((u32)(0U));
 		if ((s2 & (mask28 << ((u32)(1U)))) != 0) {
-			multi_return_u32_u32_u32 mr_9220 = strconv__lsr96(s2, s1, s0);
-			q2 = mr_9220.arg0;
-			q1 = mr_9220.arg1;
-			q0 = mr_9220.arg2;
+			multi_return_u32_u32_u32 mr_9225 = strconv__lsr96(s2, s1, s0);
+			q2 = mr_9225.arg0;
+			q1 = mr_9225.arg1;
+			q0 = mr_9225.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
@@ -8121,9 +8121,9 @@ f64 strconv__atof64(string s) {
 0
 #endif
 };
-	multi_return_int_strconv__PrepNumber mr_10225 = strconv__parser(string_add(s, _SLIT(" ")));
-	res_parsing = mr_10225.arg0;
-	pn = mr_10225.arg1;
+	multi_return_int_strconv__PrepNumber mr_10230 = strconv__parser(string_add(s, _SLIT(" ")));
+	res_parsing = mr_10230.arg0;
+	pn = mr_10230.arg1;
 	int _t9 = res_parsing; 
 	if (_t9 == _const_strconv__parser_ok) {
 		res.u = strconv__converter((voidptr)&/*qq*/pn);
@@ -10228,7 +10228,9 @@ array array_clone(array* a) {
 			array_set_unsafe(&arr, i, &ar_clone);
 		}
 	} else {
-		memcpy(((byteptr)(arr.data)), a->data, a->cap * a->element_size);
+		if (!isnil(a->data)) {
+			memcpy(((byteptr)(arr.data)), a->data, a->cap * a->element_size);
+		}
 	}
 	return arr;
 }
@@ -10281,13 +10283,15 @@ VV_LOCAL_SYMBOL void array_push(array* a, voidptr val) {
 }
 
 void array_push_many(array* a3, voidptr val, int size) {
-	if (a3->data == val) {
+	if (a3->data == val && !isnil(a3->data)) {
 		array copy = array_clone(a3);
 		array_ensure_cap(a3, a3->len + size);
 		memcpy(array_get_unsafe(/*rec*/*a3, a3->len), copy.data, a3->element_size * size);
 	} else {
 		array_ensure_cap(a3, a3->len + size);
-		memcpy(array_get_unsafe(/*rec*/*a3, a3->len), val, a3->element_size * size);
+		if (!isnil(a3->data) && !isnil(val)) {
+			memcpy(array_get_unsafe(/*rec*/*a3, a3->len), val, a3->element_size * size);
+		}
 	}
 	a3->len += size;
 }
@@ -20960,7 +20964,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b9bf7a6"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9b139c5"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
