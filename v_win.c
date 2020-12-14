@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4f986cc"
+#define V_COMMIT_HASH "a3c3fd4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "89ef316"
+	#define V_COMMIT_HASH "4f986cc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4f986cc"
+	#define V_CURRENT_COMMIT_HASH "a3c3fd4"
 #endif
 
 // V comptime_defines:
@@ -20809,7 +20809,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("89ef316"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4f986cc"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -33297,7 +33297,7 @@ v__table__Type v__parser__Parser_parse_generic_struct_inst_type(v__parser__Parse
 		}
 		v__table__TypeSymbol* gts = v__table__Table_get_type_symbol(p->table, gt);
 		bs_name = /*f*/string_add(bs_name, gts->name);
-		bs_cname = /*f*/string_add(bs_cname, gts->name);
+		bs_cname = /*f*/string_add(bs_cname, gts->cname);
 		array_push(&generic_types, _MOV((v__table__Type[]){ gt }));
 		if (p->tok.kind != v__token__Kind_comma) {
 			break;
@@ -37295,7 +37295,7 @@ VV_LOCAL_SYMBOL string v__gen__Gen_cc_type2(v__gen__Gen* g, v__table__Type t) {
 			for (int _t1369 = 0; _t1369 < _t1368.len; ++_t1369) {
 				v__table__Type gt = ((v__table__Type*)_t1368.data)[_t1369];
 				v__table__TypeSymbol* gts = v__table__Table_get_type_symbol(g->table, (v__table__Type_has_flag(gt, v__table__TypeFlag_generic) ? (v__gen__Gen_unwrap_generic(g, gt)) : (gt)));
-				sgtyps = /*f*/string_add(sgtyps, _STR("_%.*s", 1, gts->name));
+				sgtyps = /*f*/string_add(sgtyps, _STR("_%.*s", 1, gts->cname));
 			}
 			styp = /*f*/string_add(styp, sgtyps);
 		}
@@ -41114,9 +41114,9 @@ array_v__table__Field _t1506_orig = (*typ.info._v__table__Struct).fields;
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_136742 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_136742.arg0;
-						string base = mr_136742.arg1;
+						multi_return_string_string mr_136743 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_136743.arg0;
+						string base = mr_136743.arg1;
 						array_push(&g->optionals, _MOV((string[]){ string_clone(styp) }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -41552,11 +41552,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__as
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, _SLIT("main")) && (isnil(g->fn_decl) || string_eq(g->fn_decl->name, _SLIT("main.main")))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_150701 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_150701.arg0;
-				string pafile = mr_150701.arg1;
-				string pamod = mr_150701.arg2;
-				string pafn = mr_150701.arg3;
+				multi_return_int_string_string_string mr_150702 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_150702.arg0;
+				string pafile = mr_150702.arg1;
+				string pamod = mr_150702.arg2;
+				string pafn = mr_150702.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(_STR(\"optional not set (%%.*s\\000)\", 2, %.*s\000.v_error));", 2, cvar_name));
