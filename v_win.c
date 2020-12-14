@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b9bf7a6"
+#define V_COMMIT_HASH "9b139c5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ecfd124"
+	#define V_COMMIT_HASH "b9bf7a6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b9bf7a6"
+	#define V_CURRENT_COMMIT_HASH "9b139c5"
 #endif
 
 // V comptime_defines:
@@ -5030,7 +5030,7 @@ VV_LOCAL_SYMBOL u64 time__init_win_time_start();
 u64 time__sys_mono_now();
 VV_LOCAL_SYMBOL u64 time__vpc_now();
 VV_LOCAL_SYMBOL int time__local_as_unix_time();
-VV_LOCAL_SYMBOL time__Time time__to_local_time(time__Time t);
+time__Time time__Time_to_local_time(time__Time t);
 VV_LOCAL_SYMBOL time__Time time__win_now();
 VV_LOCAL_SYMBOL time__Time time__win_utc();
 int time__SystemTime_unix_time(time__SystemTime st);
@@ -16701,7 +16701,7 @@ Option_time__Time time__parse_iso8601(string s) {
 		t = time__unix2(((int)(unix_time)), t.microsecond);
 	}
 	Option_time__Time _t267;
-	opt_ok2(&(time__Time[]) { time__to_local_time(t) }, (OptionBase*)(&_t267), sizeof(time__Time));
+	opt_ok2(&(time__Time[]) { time__Time_to_local_time(t) }, (OptionBase*)(&_t267), sizeof(time__Time));
 	return _t267;
 }
 
@@ -17094,7 +17094,7 @@ VV_LOCAL_SYMBOL int time__local_as_unix_time() {
 	return time__make_unix_time(*tm);
 }
 
-VV_LOCAL_SYMBOL time__Time time__to_local_time(time__Time t) {
+time__Time time__Time_to_local_time(time__Time t) {
 	time__SystemTime st_utc = (time__SystemTime){
 		.year = ((u16)(t.year)),
 		.month = ((u16)(t.month)),
@@ -20794,7 +20794,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ecfd124"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b9bf7a6"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
