@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ed50e22"
+#define V_COMMIT_HASH "3064fff"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0da1d75"
+	#define V_COMMIT_HASH "ed50e22"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ed50e22"
+	#define V_CURRENT_COMMIT_HASH "3064fff"
 #endif
 
 // V comptime_defines:
@@ -4100,12 +4100,12 @@ f32 strings__levenshtein_distance_percentage(string a, string b);
 f32 strings__dice_coefficient(string s1, string s2);
 string strings__repeat(byte c, int n);
 string strings__repeat_string(string s, int n);
+u64 hash__wyhash_c(byteptr key, u64 len, u64 seed);
 u64 _const_hash__wyp0; // inited later
 u64 _const_hash__wyp1; // inited later
 u64 _const_hash__wyp2; // inited later
 u64 _const_hash__wyp3; // inited later
 u64 _const_hash__wyp4; // inited later
-u64 hash__wyhash_c(byteptr key, u64 len, u64 seed);
 u64 hash__sum64_string(string key, u64 seed);
 u64 hash__sum64(array_byte key, u64 seed);
 VV_LOCAL_SYMBOL u64 hash__wyhash64(byteptr key, u64 len, u64 seed_);
@@ -20830,7 +20830,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0da1d75"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ed50e22"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
