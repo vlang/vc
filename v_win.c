@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "947ceb1"
+#define V_COMMIT_HASH "14d55d2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3064fff"
+	#define V_COMMIT_HASH "947ceb1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "947ceb1"
+	#define V_CURRENT_COMMIT_HASH "14d55d2"
 #endif
 
 // V comptime_defines:
@@ -4343,20 +4343,13 @@ int compare_f32(f32* a, f32* b);
 array_voidptr array_pointers(array a);
 array_byte voidptr_vbytes(voidptr data, int len);
 array_byte byteptr_vbytes(byteptr data, int len);
-byteptr g_m2_buf; // global
-byteptr g_m2_ptr; // global
 void v_exit(int code);
-bool isnil(voidptr v);
-void print_backtrace();
 VV_LOCAL_SYMBOL void panic_debug(int line_no, string file, string mod, string fn_name, string s);
 void v_panic(string s);
 void eprintln(string s);
 void eprint(string s);
 void print(string s);
-string _const_new_line_character; // a string literal, inited later
 void println(string s);
-i64 total_m = 0; // global
-int nr_mallocs = 0; // global
 byteptr v_malloc(int n);
 byteptr v_realloc(byteptr b, int n);
 byteptr v_calloc(int n);
@@ -4365,6 +4358,12 @@ void v_free(voidptr ptr);
 voidptr memdup(voidptr src, int sz);
 VV_LOCAL_SYMBOL void v_ptr_free(voidptr ptr);
 int is_atty(int fd);
+byteptr g_m2_buf; // global
+byteptr g_m2_ptr; // global
+bool isnil(voidptr v);
+void print_backtrace();
+i64 total_m = 0; // global
+int nr_mallocs = 0; // global
 VV_LOCAL_SYMBOL voidptr __as_cast(voidptr obj, int obj_type, int expected_type);
 VV_LOCAL_SYMBOL void __print_assert_failure(VAssertMetaInfo* i);
 #define _const_symopt_undname 0x00000002
@@ -6652,7 +6651,6 @@ typedef struct {
 void vinit_string_literals(){
 	_const_math__bits__overflow_error = _SLIT("Overflow Error");
 	_const_math__bits__divide_error = _SLIT("Divide Error");
-	_const_new_line_character = _SLIT("\n");
 	_const_digit_pairs = _SLIT("00102030405060708090011121314151617181910212223242526272829203132333435363738393041424344454647484940515253545556575859506162636465666768696071727374757677787970818283848586878889809192939495969798999");
 	_const_os__path_separator = _SLIT("\\");
 	_const_os__path_delimiter = _SLIT(";");
@@ -10777,14 +10775,6 @@ void v_exit(int code) {
 	exit(code);
 }
 
-bool isnil(voidptr v) {
-	return v == 0;
-}
-
-void print_backtrace() {
-	print_backtrace_skipping_top_frames(2);
-}
-
 VV_LOCAL_SYMBOL void panic_debug(int line_no, string file, string mod, string fn_name, string s) {
 	eprintln(_SLIT("================ V panic ================"));
 	eprintln(_STR("   module: %.*s", 1, mod));
@@ -10894,7 +10884,7 @@ void println(string s) {
 	#if defined(_WIN32)
 	{
 		print(s);
-		print(_const_new_line_character);
+		print(_SLIT("\n"));
 	}
 	#else
 	{
@@ -10995,6 +10985,14 @@ int is_atty(int fd) {
 	}
 	#endif
 	return 0;
+}
+
+bool isnil(voidptr v) {
+	return v == 0;
+}
+
+void print_backtrace() {
+	print_backtrace_skipping_top_frames(2);
 }
 
 VV_LOCAL_SYMBOL voidptr __as_cast(voidptr obj, int obj_type, int expected_type) {
@@ -20829,7 +20827,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3064fff"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("947ceb1"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
