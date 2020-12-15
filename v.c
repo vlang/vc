@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3064fff"
+#define V_COMMIT_HASH "947ceb1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ed50e22"
+	#define V_COMMIT_HASH "3064fff"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3064fff"
+	#define V_CURRENT_COMMIT_HASH "947ceb1"
 #endif
 
 // V comptime_defines:
@@ -4655,7 +4655,7 @@ VV_LOCAL_SYMBOL string os__normalize_drive_letter(string path);
 bool os__is_abs_path(string path);
 string os__join_path(string base, varg_string dirs);
 array_string os__walk_ext(string path, string ext);
-void os__walk(string path, void (*f)(string path));
+void os__walk(string path, void (*f)(string ));
 void os__signal(int signum, voidptr handler);
 int os__fork();
 int os__wait();
@@ -14848,8 +14848,8 @@ VV_LOCAL_SYMBOL int os__vpclose(voidptr f) {
 	}
 	#else
 	{
-		multi_return_int_bool mr_9205 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_9205.arg0;
+		multi_return_int_bool mr_9159 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_9159.arg0;
 		return ret;
 	}
 	#endif
@@ -14894,9 +14894,9 @@ int os__system(string cmd) {
 	}
 	#if !defined(_WIN32)
 	{
-		multi_return_int_bool mr_10305 = os__posix_wait4_to_exit_status(ret);
-		int pret = mr_10305.arg0;
-		bool is_signaled = mr_10305.arg1;
+		multi_return_int_bool mr_10258 = os__posix_wait4_to_exit_status(ret);
+		int pret = mr_10258.arg0;
+		bool is_signaled = mr_10258.arg1;
 		if (is_signaled) {
 			println(string_add(string_add(_STR("Terminated by signal %2"PRId32"\000 (", 2, ret), os__sigint_to_signal_name(pret)), _SLIT(")")));
 		}
@@ -15774,7 +15774,7 @@ array_string os__walk_ext(string path, string ext) {
 	return res;
 }
 
-void os__walk(string path, void (*f)(string path)) {
+void os__walk(string path, void (*f)(string )) {
 	if (!os__is_dir(path)) {
 		return;
 	}
@@ -15799,7 +15799,6 @@ void os__walk(string path, void (*f)(string path)) {
 	return;
 }
 
-// Attr: [unsafe]
 void os__signal(int signum, voidptr handler) {
 	signal(signum, handler);
 }
@@ -20998,7 +20997,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ed50e22"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3064fff"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
