@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e3a1756"
+#define V_COMMIT_HASH "3a9034a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "560c216"
+	#define V_COMMIT_HASH "e3a1756"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e3a1756"
+	#define V_CURRENT_COMMIT_HASH "3a9034a"
 #endif
 
 // V comptime_defines:
@@ -20997,7 +20997,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("560c216"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e3a1756"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -48243,21 +48243,21 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 		}
 		v__builder__Builder_log(/*rec*/*v, _STR("cc() isprod=%.*s\000 outname=%.*s", 2, v->pref->is_prod ? _SLIT("true") : _SLIT("false"), v->pref->out_name));
 		if (v->pref->is_shared) {
-			array_push(&linker_flags, _MOV((string[]){ string_clone(_SLIT("-shared")) }));
-			array_push(&args, _MOV((string[]){ string_clone(_SLIT("-fPIC")) }));
+			string shared_postfix = _SLIT(".so");
 			#if defined(__APPLE__)
 			{
-				v->pref->out_name = /*f*/string_add(v->pref->out_name, _SLIT(".dylib"));
+				shared_postfix = _SLIT(".dylib");
 			}
 			#elif defined(_WIN32)
 			{
-				v->pref->out_name = /*f*/string_add(v->pref->out_name, _SLIT(".dll"));
-			}
-			#else
-			{
-				v->pref->out_name = /*f*/string_add(v->pref->out_name, _SLIT(".so"));
+				shared_postfix = _SLIT(".dll");
 			}
 			#endif
+			if (!string_ends_with(v->pref->out_name, shared_postfix)) {
+				v->pref->out_name = /*f*/string_add(v->pref->out_name, shared_postfix);
+			}
+			array_push(&linker_flags, _MOV((string[]){ string_clone(_SLIT("-shared")) }));
+			array_push(&args, _MOV((string[]){ string_clone(_SLIT("-fPIC")) }));
 		}
 		if (v->pref->is_bare) {
 			array_push(&args, _MOV((string[]){ string_clone(_SLIT("-fno-stack-protector")) }));
