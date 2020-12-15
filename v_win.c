@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "50c09e0"
+#define V_COMMIT_HASH "52f9088"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3e85c75"
+	#define V_COMMIT_HASH "50c09e0"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "50c09e0"
+	#define V_CURRENT_COMMIT_HASH "52f9088"
 #endif
 
 // V comptime_defines:
@@ -20829,7 +20829,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3e85c75"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("50c09e0"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -35170,6 +35170,7 @@ VV_LOCAL_SYMBOL v__ast__TypeDecl v__parser__Parser_type_decl(v__parser__Parser* 
 		return /* sum type cast 4 */ (v__ast__TypeDecl){._v__ast__FnTypeDecl = memdup(&(v__ast__FnTypeDecl[]){(v__ast__FnTypeDecl){.name = fn_name,.is_pub = is_pub,.typ = fn_type,.pos = decl_pos,.comments = comments,}}, sizeof(v__ast__FnTypeDecl)), .typ = 203 /* v.ast.FnTypeDecl */};
 	}
 	v__table__Type first_type = v__parser__Parser_parse_type(p);
+	v__token__Position type_alias_pos = v__token__Token_position(&p->tok);
 	if (p->tok.kind == v__token__Kind_pipe) {
 		v__token__Position type_end_pos = v__token__Token_position(&p->prev_tok);
 		type_pos = v__token__Position_extend(type_pos, type_end_pos);
@@ -35235,6 +35236,10 @@ array_v__ast__SumTypeVariant _t1302_orig = sum_variants;
 		.language = 0,
 	});
 	comments = v__parser__Parser_eat_line_end_comments(p);
+	if (string_eq(prepend_mod_name, parent_name)) {
+		v__parser__Parser_error_with_pos(p, _STR("a type alias can not refer to itself: %.*s", 1, name), v__token__Position_extend(decl_pos, type_alias_pos));
+		return /* sum type cast 4 */ (v__ast__TypeDecl){._v__ast__AliasTypeDecl = memdup(&(v__ast__AliasTypeDecl[]){(v__ast__AliasTypeDecl){.name = (string){.str=(byteptr)""},.is_pub = 0,.parent_type = 0,.pos = {0},.comments = __new_array(0, 1, sizeof(v__ast__Comment)),}}, sizeof(v__ast__AliasTypeDecl)), .typ = 202 /* v.ast.AliasTypeDecl */};
+	}
 	return /* sum type cast 4 */ (v__ast__TypeDecl){._v__ast__AliasTypeDecl = memdup(&(v__ast__AliasTypeDecl[]){(v__ast__AliasTypeDecl){.name = name,.is_pub = is_pub,.parent_type = parent_type,.pos = decl_pos,.comments = comments,}}, sizeof(v__ast__AliasTypeDecl)), .typ = 202 /* v.ast.AliasTypeDecl */};
 }
 
