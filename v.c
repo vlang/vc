@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "bfa8e4b"
+#define V_COMMIT_HASH "0da1d75"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c922565"
+	#define V_COMMIT_HASH "bfa8e4b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "bfa8e4b"
+	#define V_CURRENT_COMMIT_HASH "0da1d75"
 #endif
 
 // V comptime_defines:
@@ -10594,28 +10594,39 @@ VV_LOCAL_SYMBOL void panic_debug(int line_no, string file, string mod, string fn
 	{
 		exit(1);
 	}
-	#endif
-	#if defined(__TINYC__)
+	#else
 	{
-		#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
+		#if defined(CUSTOM_DEFINE_no_backtrace)
 		{
-			break_if_debugger_attached();
+			exit(1);
 		}
 		#else
 		{
-			tcc_backtrace("Backtrace");
+			#if defined(__TINYC__)
+			{
+				#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
+				{
+					break_if_debugger_attached();
+				}
+				#else
+				{
+					tcc_backtrace("Backtrace");
+				}
+				#endif
+				exit(1);
+			}
+			#endif
+			print_backtrace_skipping_top_frames(1);
+			#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
+			{
+				break_if_debugger_attached();
+			}
+			#endif
+			exit(1);
 		}
 		#endif
-		exit(1);
 	}
 	#endif
-	print_backtrace_skipping_top_frames(1);
-	#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
-	{
-		break_if_debugger_attached();
-	}
-	#endif
-	exit(1);
 }
 
 void v_panic(string s) {
@@ -10624,28 +10635,39 @@ void v_panic(string s) {
 	{
 		exit(1);
 	}
-	#endif
-	#if defined(__TINYC__)
+	#else
 	{
-		#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
+		#if defined(CUSTOM_DEFINE_no_backtrace)
 		{
-			break_if_debugger_attached();
+			exit(1);
 		}
 		#else
 		{
-			tcc_backtrace("Backtrace");
+			#if defined(__TINYC__)
+			{
+				#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
+				{
+					break_if_debugger_attached();
+				}
+				#else
+				{
+					tcc_backtrace("Backtrace");
+				}
+				#endif
+				exit(1);
+			}
+			#endif
+			print_backtrace_skipping_top_frames(1);
+			#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
+			{
+				break_if_debugger_attached();
+			}
+			#endif
+			exit(1);
 		}
 		#endif
-		exit(1);
 	}
 	#endif
-	print_backtrace_skipping_top_frames(1);
-	#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
-	{
-		break_if_debugger_attached();
-	}
-	#endif
-	exit(1);
 }
 
 void eprintln(string s) {
@@ -20976,7 +20998,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c922565"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("bfa8e4b"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
