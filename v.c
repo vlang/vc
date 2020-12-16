@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1a2c7cd"
+#define V_COMMIT_HASH "75d7ed9"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1ee5764"
+	#define V_COMMIT_HASH "1a2c7cd"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1a2c7cd"
+	#define V_CURRENT_COMMIT_HASH "75d7ed9"
 #endif
 
 // V comptime_defines:
@@ -4271,7 +4271,8 @@ int array_byte_index(array_byte a, byte v);
 int array_rune_index(array_rune a, rune v);
 int array_char_index(array_char a, char v);
 int array_int_reduce(array_int a, int (*iter)(int , int ), int accum_start);
-void array_grow(array* a, int amount);
+void array_grow_cap(array* a, int amount);
+void array_grow_len(array* a, int amount);
 bool array_string_eq(array_string a1, array_string a2);
 int compare_i64(i64* a, i64* b);
 int compare_f64(f64* a, f64* b);
@@ -10551,8 +10552,13 @@ int array_int_reduce(array_int a, int (*iter)(int , int ), int accum_start) {
 	return accum_;
 }
 
-void array_grow(array* a, int amount) {
+void array_grow_cap(array* a, int amount) {
+	array_ensure_cap(a, a->cap + amount);
+}
+
+void array_grow_len(array* a, int amount) {
 	array_ensure_cap(a, a->len + amount);
+	a->len += amount;
 }
 
 bool array_string_eq(array_string a1, array_string a2) {
@@ -21112,7 +21118,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1ee5764"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1a2c7cd"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
