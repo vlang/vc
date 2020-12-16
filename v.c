@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6a74058"
+#define V_COMMIT_HASH "1ee5764"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "88a8507"
+	#define V_COMMIT_HASH "6a74058"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6a74058"
+	#define V_CURRENT_COMMIT_HASH "1ee5764"
 #endif
 
 // V comptime_defines:
@@ -4579,17 +4579,17 @@ array_string os__args_before(string cut_word);
 int _const_os__std_input_handle; // inited later
 int _const_os__std_output_handle; // inited later
 int _const_os__std_error_handle; // inited later
-#define _const_os__o_rdonly 0
-#define _const_os__o_wronly 1
-#define _const_os__o_rdwr 2
-#define _const_os__o_create 100
-#define _const_os__o_binary 8000
-#define _const_os__o_excl 200
-#define _const_os__o_noctty 400
-#define _const_os__o_trunc 1000
-#define _const_os__o_append 2000
-#define _const_os__o_nonblock 4000
-#define _const_os__o_sync 10000
+#define _const_os__o_rdonly 000000000
+#define _const_os__o_wronly 000000001
+#define _const_os__o_rdwr 000000002
+#define _const_os__o_binary 000000000
+#define _const_os__o_create 000000100
+#define _const_os__o_excl 000000200
+#define _const_os__o_noctty 000000400
+#define _const_os__o_trunc 000001000
+#define _const_os__o_append 000002000
+#define _const_os__o_nonblock 000004000
+#define _const_os__o_sync 004010000
 string os__getenv(string key);
 int os__setenv(string name, string value, bool overwrite);
 int os__unsetenv(string name);
@@ -21112,7 +21112,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("88a8507"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6a74058"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
