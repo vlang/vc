@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d96dcef"
+#define V_COMMIT_HASH "3976228"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a6baffc"
+	#define V_COMMIT_HASH "d96dcef"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d96dcef"
+	#define V_CURRENT_COMMIT_HASH "3976228"
 #endif
 
 // V comptime_defines:
@@ -4485,18 +4485,25 @@ VV_LOCAL_SYMBOL map new_map_1(int value_bytes);
 VV_LOCAL_SYMBOL map new_map_init(int n, int value_bytes, string* keys, voidptr values);
 VV_LOCAL_SYMBOL bool map_keys_eq(map* m, voidptr a, voidptr b);
 VV_LOCAL_SYMBOL multi_return_u32_u32 map_key_to_index(map* m, voidptr pkey);
+VV_LOCAL_SYMBOL void map_free_key(map* m, voidptr pkey);
 VV_LOCAL_SYMBOL multi_return_u32_u32 map_meta_less(map* m, u32 _index, u32 _metas);
 VV_LOCAL_SYMBOL void map_meta_greater(map* m, u32 _index, u32 _metas, u32 kvi);
 VV_LOCAL_SYMBOL void map_ensure_extra_metas(map* m, u32 probe_count);
 VV_LOCAL_SYMBOL void map_set(map* m, string key, voidptr value);
+VV_LOCAL_SYMBOL void map_set_1(map* m, voidptr key, voidptr value);
 VV_LOCAL_SYMBOL void map_expand(map* m);
 VV_LOCAL_SYMBOL void map_rehash(map* m);
 VV_LOCAL_SYMBOL void map_cached_rehash(map* m, u32 old_cap);
 VV_LOCAL_SYMBOL voidptr map_get_and_set(map* m, string key, voidptr zero);
+VV_LOCAL_SYMBOL voidptr map_get_and_set_1(map* m, voidptr key, voidptr zero);
 VV_LOCAL_SYMBOL voidptr map_get(map m, string key, voidptr zero);
+VV_LOCAL_SYMBOL voidptr map_get_1(map m, voidptr key, voidptr zero);
 VV_LOCAL_SYMBOL bool map_exists(map m, string key);
+VV_LOCAL_SYMBOL bool map_exists_1(map m, voidptr key);
 void map_delete(map* m, string key);
+void map_delete_1(map* m, voidptr key);
 array_string map_keys(map* m);
+array map_keys_1(map* m);
 DenseArray DenseArray_clone(DenseArray* d);
 map map_clone(map* m);
 void map_free(map* m);
@@ -11787,6 +11794,10 @@ inline VV_LOCAL_SYMBOL multi_return_u32_u32 map_key_to_index(map* m, voidptr pke
 	return (multi_return_u32_u32){.arg0=((u32)(index)), .arg1=((u32)(meta))};
 }
 
+VV_LOCAL_SYMBOL void map_free_key(map* m, voidptr pkey) {
+	string_free(&(*((string*)(pkey))));
+}
+
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL multi_return_u32_u32 map_meta_less(map* m, u32 _index, u32 _metas) {
 	u32 index = _index;
@@ -11844,21 +11855,25 @@ inline VV_LOCAL_SYMBOL void map_ensure_extra_metas(map* m, u32 probe_count) {
 }
 
 VV_LOCAL_SYMBOL void map_set(map* m, string key, voidptr value) {
+	map_set_1(m, &key, value);
+}
+
+VV_LOCAL_SYMBOL void map_set_1(map* m, voidptr key, voidptr value) {
 	f32 load_factor = ((f32)(m->len << 1)) / ((f32)(m->cap));
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_9977 = map_key_to_index(m, &key);
-	u32 index = mr_9977.arg0;
-	u32 meta = mr_9977.arg1;
-	multi_return_u32_u32 mr_10014 = map_meta_less(m, index, meta);
-	index = mr_10014.arg0;
-	meta = mr_10014.arg1;
+	multi_return_u32_u32 mr_10131 = map_key_to_index(m, key);
+	u32 index = mr_10131.arg0;
+	u32 meta = mr_10131.arg1;
+	multi_return_u32_u32 mr_10167 = map_meta_less(m, index, meta);
+	index = mr_10167.arg0;
+	meta = mr_10167.arg1;
 	for (;;) {
 		if (!(meta == m->metas[index])) break;
 		int kv_index = ((int)(m->metas[index + 1]));
 		voidptr pkey = DenseArray_key(&m->key_values, kv_index);
-		if (map_keys_eq(m, &key, pkey)) {
+		if (map_keys_eq(m, key, pkey)) {
 			{ // Unsafe block
 				byteptr pval = ((byteptr)(pkey)) + m->key_bytes;
 				memcpy(pval, value, m->value_bytes);
@@ -11868,7 +11883,7 @@ VV_LOCAL_SYMBOL void map_set(map* m, string key, voidptr value) {
 		index += 2;
 		meta += _const_probe_inc;
 	}
-	int kv_index = DenseArray_push(&m->key_values, &key, value);
+	int kv_index = DenseArray_push(&m->key_values, key, value);
 	map_meta_greater(m, index, meta, ((u32)(kv_index)));
 	m->len++;
 }
@@ -11898,12 +11913,12 @@ VV_LOCAL_SYMBOL void map_rehash(map* m) {
 			continue;
 		}
 		voidptr pkey = DenseArray_key(&m->key_values, i);
-		multi_return_u32_u32 mr_11452 = map_key_to_index(m, pkey);
-		u32 index = mr_11452.arg0;
-		u32 meta = mr_11452.arg1;
-		multi_return_u32_u32 mr_11490 = map_meta_less(m, index, meta);
-		index = mr_11490.arg0;
-		meta = mr_11490.arg1;
+		multi_return_u32_u32 mr_11603 = map_key_to_index(m, pkey);
+		u32 index = mr_11603.arg0;
+		u32 meta = mr_11603.arg1;
+		multi_return_u32_u32 mr_11641 = map_meta_less(m, index, meta);
+		index = mr_11641.arg0;
+		meta = mr_11641.arg1;
 		map_meta_greater(m, index, meta, ((u32)(i)));
 	}
 }
@@ -11922,9 +11937,9 @@ VV_LOCAL_SYMBOL void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->cap >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->cap);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_12253 = map_meta_less(m, index, meta);
-		index = mr_12253.arg0;
-		meta = mr_12253.arg1;
+		multi_return_u32_u32 mr_12404 = map_meta_less(m, index, meta);
+		index = mr_12404.arg0;
+		meta = mr_12404.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -11932,15 +11947,19 @@ VV_LOCAL_SYMBOL void map_cached_rehash(map* m, u32 old_cap) {
 }
 
 VV_LOCAL_SYMBOL voidptr map_get_and_set(map* m, string key, voidptr zero) {
+	return map_get_and_set_1(m, &key, zero);
+}
+
+VV_LOCAL_SYMBOL voidptr map_get_and_set_1(map* m, voidptr key, voidptr zero) {
 	for (;;) {
-		multi_return_u32_u32 mr_12696 = map_key_to_index(m, &key);
-		u32 index = mr_12696.arg0;
-		u32 meta = mr_12696.arg1;
+		multi_return_u32_u32 mr_12952 = map_key_to_index(m, key);
+		u32 index = mr_12952.arg0;
+		u32 meta = mr_12952.arg1;
 		for (;;) {
 			if (meta == m->metas[index]) {
 				int kv_index = ((int)(m->metas[index + 1]));
 				voidptr pkey = DenseArray_key(&m->key_values, kv_index);
-				if (map_keys_eq(m, &key, pkey)) {
+				if (map_keys_eq(m, key, pkey)) {
 					return ((byteptr)(pkey)) + m->key_values.key_bytes;
 				}
 			}
@@ -11950,15 +11969,15 @@ VV_LOCAL_SYMBOL voidptr map_get_and_set(map* m, string key, voidptr zero) {
 				break;
 			}
 		}
-		map_set(m, key, zero);
+		map_set_1(m, key, zero);
 	}
 	// assert
 	if (false) {} else {
 		VAssertMetaInfo v_assert_meta_info__t32;
 		memset(&v_assert_meta_info__t32, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t32.fpath = _SLIT("/tmp/gen_vc/v/vlib/builtin/map.v");
-		v_assert_meta_info__t32.line_nr = 436;
-		v_assert_meta_info__t32.fn_name = _SLIT("get_and_set");
+		v_assert_meta_info__t32.line_nr = 449;
+		v_assert_meta_info__t32.fn_name = _SLIT("get_and_set_1");
 		v_assert_meta_info__t32.src = _SLIT("false");
 		__print_assert_failure(&v_assert_meta_info__t32);
 		v_panic(_SLIT("Assertion failed..."));
@@ -11968,14 +11987,18 @@ VV_LOCAL_SYMBOL voidptr map_get_and_set(map* m, string key, voidptr zero) {
 }
 
 VV_LOCAL_SYMBOL voidptr map_get(map m, string key, voidptr zero) {
-	multi_return_u32_u32 mr_13397 = map_key_to_index(&m, &key);
-	u32 index = mr_13397.arg0;
-	u32 meta = mr_13397.arg1;
+	return map_get_1(m, &key, zero);
+}
+
+VV_LOCAL_SYMBOL voidptr map_get_1(map m, voidptr key, voidptr zero) {
+	multi_return_u32_u32 mr_13738 = map_key_to_index(&m, key);
+	u32 index = mr_13738.arg0;
+	u32 meta = mr_13738.arg1;
 	for (;;) {
 		if (meta == m.metas[index]) {
 			int kv_index = ((int)(m.metas[index + 1]));
 			voidptr pkey = DenseArray_key(&m.key_values, kv_index);
-			if (map_keys_eq(&m, &key, pkey)) {
+			if (map_keys_eq(&m, key, pkey)) {
 				return ((byteptr)(pkey)) + m.key_values.key_bytes;
 			}
 		}
@@ -11989,14 +12012,18 @@ VV_LOCAL_SYMBOL voidptr map_get(map m, string key, voidptr zero) {
 }
 
 VV_LOCAL_SYMBOL bool map_exists(map m, string key) {
-	multi_return_u32_u32 mr_13875 = map_key_to_index(&m, &key);
-	u32 index = mr_13875.arg0;
-	u32 meta = mr_13875.arg1;
+	return map_exists_1(m, &key);
+}
+
+VV_LOCAL_SYMBOL bool map_exists_1(map m, voidptr key) {
+	multi_return_u32_u32 mr_14282 = map_key_to_index(&m, key);
+	u32 index = mr_14282.arg0;
+	u32 meta = mr_14282.arg1;
 	for (;;) {
 		if (meta == m.metas[index]) {
 			int kv_index = ((int)(m.metas[index + 1]));
 			voidptr pkey = DenseArray_key(&m.key_values, kv_index);
-			if (map_keys_eq(&m, &key, pkey)) {
+			if (map_keys_eq(&m, key, pkey)) {
 				return true;
 			}
 		}
@@ -12010,17 +12037,21 @@ VV_LOCAL_SYMBOL bool map_exists(map m, string key) {
 }
 
 void map_delete(map* m, string key) {
-	multi_return_u32_u32 mr_14317 = map_key_to_index(m, &key);
-	u32 index = mr_14317.arg0;
-	u32 meta = mr_14317.arg1;
-	multi_return_u32_u32 mr_14354 = map_meta_less(m, index, meta);
-	index = mr_14354.arg0;
-	meta = mr_14354.arg1;
+	map_delete_1(m, &key);
+}
+
+void map_delete_1(map* m, voidptr key) {
+	multi_return_u32_u32 mr_14786 = map_key_to_index(m, key);
+	u32 index = mr_14786.arg0;
+	u32 meta = mr_14786.arg1;
+	multi_return_u32_u32 mr_14822 = map_meta_less(m, index, meta);
+	index = mr_14822.arg0;
+	meta = mr_14822.arg1;
 	for (;;) {
 		if (!(meta == m->metas[index])) break;
 		int kv_index = ((int)(m->metas[index + 1]));
-		string* pkey = ((string*)(DenseArray_key(&m->key_values, kv_index)));
-		if (map_keys_eq(m, &key, pkey)) {
+		voidptr pkey = DenseArray_key(&m->key_values, kv_index);
+		if (map_keys_eq(m, key, pkey)) {
 			for (;;) {
 				if (!((m->metas[index + 2] >> _const_hashbits) > 1)) break;
 				{ // Unsafe block
@@ -12037,8 +12068,8 @@ void map_delete(map* m, string key) {
 			{ // Unsafe block
 				m->key_values.all_deleted[kv_index] = 1;
 				m->metas[index] = 0;
-				string_free(&(*pkey));
-				memset(pkey, 0, /*SizeOfType*/ sizeof(string));
+				map_free_key(m, pkey);
+				memset(pkey, 0, m->key_bytes);
 			}
 			if (m->key_values.len <= 32) {
 				return;
@@ -12056,6 +12087,22 @@ void map_delete(map* m, string key) {
 
 array_string map_keys(map* m) {
 	array_string keys = __new_array_with_default(m->len, 0, sizeof(string), &(string[]){_SLIT("")});
+	byteptr item = ((byteptr)(keys.data));
+	for (int i = 0; i < m->key_values.len; i++) {
+		if (!DenseArray_has_index(&m->key_values, i)) {
+			continue;
+		}
+		{ // Unsafe block
+			voidptr pkey = DenseArray_key(&m->key_values, i);
+			DenseArray_clone_key(&m->key_values, item, pkey);
+			item += m->key_bytes;
+		}
+	}
+	return keys;
+}
+
+array map_keys_1(map* m) {
+	array keys = __new_array(m->len, 0, m->key_bytes);
 	byteptr item = ((byteptr)(keys.data));
 	if (m->key_values.deletes == 0) {
 		for (int i = 0; i < m->key_values.len; i++) {
@@ -12125,8 +12172,8 @@ void map_free(map* m) {
 	if (m->key_values.deletes == 0) {
 		for (int i = 0; i < m->key_values.len; i++) {
 			{ // Unsafe block
-				string* pkey = ((string*)(DenseArray_key(&m->key_values, i)));
-				string_free(&(*pkey));
+				voidptr pkey = DenseArray_key(&m->key_values, i);
+				map_free_key(m, pkey);
 			}
 		}
 	} else {
@@ -12135,8 +12182,8 @@ void map_free(map* m) {
 				continue;
 			}
 			{ // Unsafe block
-				string* pkey = ((string*)(DenseArray_key(&m->key_values, i)));
-				string_free(&(*pkey));
+				voidptr pkey = DenseArray_key(&m->key_values, i);
+				map_free_key(m, pkey);
 			}
 		}
 		v_free(m->key_values.all_deleted);
@@ -20950,7 +20997,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a6baffc"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d96dcef"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
