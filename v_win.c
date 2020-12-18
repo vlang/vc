@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "bcda0ee"
+#define V_COMMIT_HASH "6854ba2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5788d6d"
+	#define V_COMMIT_HASH "bcda0ee"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "bcda0ee"
+	#define V_CURRENT_COMMIT_HASH "6854ba2"
 #endif
 
 // V comptime_defines:
@@ -4518,8 +4518,8 @@ void map_free(map* m);
 VV_LOCAL_SYMBOL void opt_ok2(voidptr data, OptionBase* option, int size);
 string Option_str(Option o);
 VV_LOCAL_SYMBOL Option opt_none();
-Option v_error(string s);
-Option error_with_code(string s, int code);
+Option v_error(string message);
+Option error_with_code(string message, int code);
 string rune_str(rune c);
 bool byte_is_capital(byte c);
 array_byte array_byte_clone(array_byte b);
@@ -12228,12 +12228,12 @@ VV_LOCAL_SYMBOL Option opt_none() {
 	return (Option){.ok = false,.is_none = true,.v_error = (string){.str=(byteptr)""},.ecode = 0,};
 }
 
-Option v_error(string s) {
-	return (Option){.ok = false,.is_none = false,.v_error = s,.ecode = 0,};
+Option v_error(string message) {
+	return (Option){.ok = false,.is_none = false,.v_error = message,.ecode = 0,};
 }
 
-Option error_with_code(string s, int code) {
-	return (Option){.ok = false,.is_none = false,.v_error = s,.ecode = code,};
+Option error_with_code(string message, int code) {
+	return (Option){.ok = false,.is_none = false,.v_error = message,.ecode = code,};
 }
 
 string rune_str(rune c) {
@@ -21013,7 +21013,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5788d6d"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("bcda0ee"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
