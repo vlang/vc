@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7feb53b"
+#define V_COMMIT_HASH "04757a4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3976228"
+	#define V_COMMIT_HASH "7feb53b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7feb53b"
+	#define V_CURRENT_COMMIT_HASH "04757a4"
 #endif
 
 // V comptime_defines:
@@ -5413,6 +5413,7 @@ array_int _const_v__table__number_type_idxs; // inited later
 array_int _const_v__table__pointer_type_idxs; // inited later
 array_int _const_v__table__string_type_idxs; // inited later
 v__table__Type _const_v__table__void_type; // inited later
+v__table__Type _const_v__table__ovoid_type; // inited later
 v__table__Type _const_v__table__voidptr_type; // inited later
 v__table__Type _const_v__table__byteptr_type; // inited later
 v__table__Type _const_v__table__charptr_type; // inited later
@@ -21165,7 +21166,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3976228"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7feb53b"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -22984,7 +22985,9 @@ string v__table__Table_fn_type_source_signature(v__table__Table* t, v__table__Fn
 		}
 	}
 	sig = /*f*/string_add(sig, _SLIT(")"));
-	if (f->return_type != _const_v__table__void_type) {
+	if (f->return_type == _const_v__table__ovoid_type) {
+		sig = /*f*/string_add(sig, _SLIT(" ?"));
+	} else if (f->return_type != _const_v__table__void_type) {
 		v__table__TypeSymbol* return_type_sym = v__table__Table_get_type_symbol(t, f->return_type);
 		sig = /*f*/string_add(sig, _STR(" %.*s", 1, return_type_sym->name));
 	}
@@ -50082,6 +50085,7 @@ void _vinit() {
 	_const_v__table__pointer_type_idxs = new_array_from_c_array(3, 3, sizeof(int), _MOV((int[3]){_const_v__table__voidptr_type_idx, _const_v__table__byteptr_type_idx, _const_v__table__charptr_type_idx}));
 	_const_v__table__string_type_idxs = new_array_from_c_array(2, 2, sizeof(int), _MOV((int[2]){_const_v__table__string_type_idx, _const_v__table__ustring_type_idx}));
 	_const_v__table__void_type = v__table__new_type(_const_v__table__void_type_idx);
+	_const_v__table__ovoid_type = v__table__Type_set_flag(v__table__new_type(_const_v__table__void_type_idx), v__table__TypeFlag_optional);
 	_const_v__table__voidptr_type = v__table__new_type(_const_v__table__voidptr_type_idx);
 	_const_v__table__byteptr_type = v__table__new_type(_const_v__table__byteptr_type_idx);
 	_const_v__table__charptr_type = v__table__new_type(_const_v__table__charptr_type_idx);
