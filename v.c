@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b61a936"
+#define V_COMMIT_HASH "5788d6d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8e6d2df"
+	#define V_COMMIT_HASH "b61a936"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b61a936"
+	#define V_CURRENT_COMMIT_HASH "5788d6d"
 #endif
 
 // V comptime_defines:
@@ -21181,7 +21181,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8e6d2df"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b61a936"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -48546,8 +48546,8 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 			string isysroot = string_replace(ios_sdk_path_res.output, _SLIT("\n"), _SLIT(""));
 			ccompiler = _STR("xcrun --sdk iphoneos clang -isysroot %.*s", 1, isysroot);
 		}
-		array_string args = new_array_from_c_array(12, 12, sizeof(string), _MOV((string[12]){
-				v->pref->cflags, _SLIT("-std=gnu99"), _SLIT("-Wall"), _SLIT("-Wextra"), _SLIT("-Wno-unused-variable"), _SLIT("-Wno-unused-parameter"), _SLIT("-Wno-unused-result"), _SLIT("-Wno-unused-function"), _SLIT("-Wno-missing-braces"), _SLIT("-Wno-unused-label"), _SLIT("-Wshadow"), _SLIT("-Wno-unused")}));
+		array_string args = new_array_from_c_array(27, 27, sizeof(string), _MOV((string[27]){
+				v->pref->cflags, _SLIT("-std=gnu99"), _SLIT("-Wall"), _SLIT("-Wextra"), _SLIT("-Wno-unused"), _SLIT("-Wno-missing-braces"), _SLIT("-Walloc-zero"), _SLIT("-Wcast-qual"), _SLIT("-Wdate-time"), _SLIT("-Wduplicated-branches"), _SLIT("-Wduplicated-cond"), _SLIT("-Wformat=2"), _SLIT("-Winit-self"), _SLIT("-Winvalid-pch"), _SLIT("-Wjump-misses-init"), _SLIT("-Wlogical-op"), _SLIT("-Wmultichar"), _SLIT("-Wnested-externs"), _SLIT("-Wnull-dereference"), _SLIT("-Wpacked"), _SLIT("-Wpointer-arith"), _SLIT("-Wshadow"), _SLIT("-Wswitch-default"), _SLIT("-Wswitch-enum"), _SLIT("-Wno-unused-parameter"), _SLIT("-Wno-unknown-warning-option"), _SLIT("-Wno-format-nonliteral")}));
 		if (v->pref->os == v__pref__OS_ios) {
 			array_push(&args, _MOV((string[]){ string_clone(_SLIT("-framework Foundation")) }));
 			array_push(&args, _MOV((string[]){ string_clone(_SLIT("-framework UIKit")) }));
