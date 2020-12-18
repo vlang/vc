@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7e1e247"
+#define V_COMMIT_HASH "3915d13"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "04757a4"
+	#define V_COMMIT_HASH "7e1e247"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7e1e247"
+	#define V_CURRENT_COMMIT_HASH "3915d13"
 #endif
 
 // V comptime_defines:
@@ -21181,7 +21181,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("04757a4"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7e1e247"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -34095,6 +34095,12 @@ v__ast__File v__parser__Parser_parse(v__parser__Parser* p) {
 }
 
 array_v__ast__File v__parser__parse_files(array_string paths, v__table__Table* table, v__pref__Preferences* pref, v__ast__Scope* global_scope) {
+	v__util__Timers* timers = v__util__new_timers(false);
+	#if defined(CUSTOM_DEFINE_time_parsing)
+	{
+		timers->should_print = true;
+	}
+	#endif
 	#if defined(__APPLE__)
 	{
 	}
@@ -34108,7 +34114,9 @@ array_v__ast__File v__parser__parse_files(array_string paths, v__table__Table* t
 	array _t1284 = paths;
 	for (int _t1285 = 0; _t1285 < _t1284.len; ++_t1285) {
 		string path = ((string*)_t1284.data)[_t1285];
+		v__util__Timers_start(timers, _STR("parse_file %.*s", 1, path));
 		array_push(&files, _MOV((v__ast__File[]){ v__parser__parse_file(path, table, v__scanner__CommentsMode_skip_comments, pref, global_scope) }));
+		v__util__Timers_show(timers, _STR("parse_file %.*s", 1, path));
 	}
 	return files;
 }
@@ -34437,7 +34445,7 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p, bool is_top_level) {
 							VAssertMetaInfo v_assert_meta_info__t1296;
 							memset(&v_assert_meta_info__t1296, 0, sizeof(VAssertMetaInfo));
 							v_assert_meta_info__t1296.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/parser/parser.v");
-							v_assert_meta_info__t1296.line_nr = 641;
+							v_assert_meta_info__t1296.line_nr = 647;
 							v_assert_meta_info__t1296.fn_name = _SLIT("stmt");
 							v_assert_meta_info__t1296.src = _SLIT("false");
 							__print_assert_failure(&v_assert_meta_info__t1296);
@@ -34698,9 +34706,9 @@ void v__parser__Parser_vet_error(v__parser__Parser* p, string s, int line) {
 
 VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p, bool is_top_level) {
 	v__token__Token tok = p->tok;
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_22647 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr left = mr_22647.arg0;
-	array_v__ast__Comment left_comments = mr_22647.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_22808 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr left = mr_22808.arg0;
+	array_v__ast__Comment left_comments = mr_22808.arg1;
 	v__ast__Expr left0 = (*(v__ast__Expr*)/*ee elem_typ */array_get(left, 0));
 	if (tok.kind == v__token__Kind_key_mut && p->tok.kind != v__token__Kind_decl_assign) {
 		v__parser__Parser_error(p, _SLIT("expecting `:=` (e.g. `mut x :=`)"));
@@ -35439,9 +35447,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_44208 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_44208.arg0;
-	array_v__ast__Comment comments2 = mr_44208.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_44369 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_44369.arg0;
+	array_v__ast__Comment comments2 = mr_44369.arg1;
 	_PUSH_MANY(&comments, (comments2), _t1319, array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
