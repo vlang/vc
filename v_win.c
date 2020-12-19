@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1f74f83"
+#define V_COMMIT_HASH "a4aa9c0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3a86f27"
+	#define V_COMMIT_HASH "1f74f83"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1f74f83"
+	#define V_CURRENT_COMMIT_HASH "a4aa9c0"
 #endif
 
 // V comptime_defines:
@@ -21016,7 +21016,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3a86f27"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1f74f83"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -21503,7 +21503,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 				command_pos = i;
 				continue;
 			}
-			if (!(string_eq(command, _SLIT("")) || string_eq(command, _SLIT("build")) || string_eq(command, _SLIT("build-module")))) {
+			if (!(string_eq(command, _SLIT("")) || string_eq(command, _SLIT("build-module")))) {
 				continue;
 			}
 			eprint(_STR("Unknown argument `%.*s\000`", 2, arg));
@@ -21517,13 +21517,6 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 	}
 	if (string_ends_with(command, _SLIT(".v")) || os__exists(command)) {
 		res->path = command;
-	} else if (string_eq(command, _SLIT("build"))) {
-		if (command_pos + 2 != args.len) {
-			eprintln(_SLIT("`v build` requires exactly one argument - either a single .v file, or a single folder/ containing several .v files"));
-			v_exit(1);
-		}
-		res->path = (*(string*)/*ee elem_typ */array_get(args, command_pos + 1));
-		v__pref__must_exist(res->path);
 	} else if (string_eq(command, _SLIT("run"))) {
 		res->is_run = true;
 		if (command_pos + 2 > args.len) {
