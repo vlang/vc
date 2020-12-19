@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d782db8"
+#define V_COMMIT_HASH "cd30dcc"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "19bfd5f"
+	#define V_COMMIT_HASH "d782db8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d782db8"
+	#define V_CURRENT_COMMIT_HASH "cd30dcc"
 #endif
 
 // V comptime_defines:
@@ -10082,16 +10082,19 @@ inline VV_LOCAL_SYMBOL void array_ensure_cap(array* a, int required) {
 	if (required <= a->cap) {
 		return;
 	}
-	int cap = (a->cap == 0 ? (2) : (a->cap * 2));
+	int cap = (a->cap > 0 ? (a->cap) : (2));
 	for (;;) {
 		if (!(required > cap)) break;
 		cap *= 2;
 	}
-	if (a->cap == 0) {
-		a->data = vcalloc(cap * a->element_size);
+	int new_size = cap * a->element_size;
+	byteptr new_data = ((byteptr)(0));
+	if (a->cap > 0) {
+		new_data = v_realloc(a->data, new_size);
 	} else {
-		a->data = v_realloc(a->data, cap * a->element_size);
+		new_data = vcalloc(new_size);
 	}
+	a->data = new_data;
 	a->cap = cap;
 }
 
@@ -21186,7 +21189,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("19bfd5f"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d782db8"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
