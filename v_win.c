@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "19bfd5f"
+#define V_COMMIT_HASH "d782db8"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2f1cc2b"
+	#define V_COMMIT_HASH "19bfd5f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "19bfd5f"
+	#define V_CURRENT_COMMIT_HASH "d782db8"
 #endif
 
 // V comptime_defines:
@@ -21018,7 +21018,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2f1cc2b"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("19bfd5f"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -50016,7 +50016,7 @@ void _vinit() {
 	_const_v__util__emanager = v__util__new_error_manager();
 	_const_v__util__invalid_escapes = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){_SLIT("("), _SLIT("{"), _SLIT("$"), _SLIT("`"), _SLIT(".")}));
 	_const_v__util__builtin_module_parts = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("math.bits"), _SLIT("strconv"), _SLIT("strconv.ftoa"), _SLIT("hash"), _SLIT("strings"), _SLIT("builtin")}));
-	_const_v__util__bundle_modules = new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("sokol"), _SLIT("gx"), _SLIT("gg"), _SLIT("fontstash")}));
+	_const_v__util__bundle_modules = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("clipboard"), _SLIT("fontstash"), _SLIT("gg"), _SLIT("gx"), _SLIT("sokol"), _SLIT("ui")}));
 	_const_v__util__external_module_dependencies_for_tool = new_map_init(1, sizeof(array_string), _MOV((string[1]){_SLIT("vdoc"), }), _MOV((array_string[1]){new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("markdown")})), }));
 	// Initializations for module v.table :
 	_const_v__table__integer_type_idxs = new_array_from_c_array(10, 10, sizeof(int), _MOV((int[10]){
