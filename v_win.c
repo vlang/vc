@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b1f6ff8"
+#define V_COMMIT_HASH "4b45f2e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "742e5a9"
+	#define V_COMMIT_HASH "b1f6ff8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b1f6ff8"
+	#define V_CURRENT_COMMIT_HASH "4b45f2e"
 #endif
 
 // V comptime_defines:
@@ -21023,7 +21023,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("742e5a9"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b1f6ff8"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -48913,6 +48913,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_build_thirdparty_obj_file(v__builder__B
 	string current_folder = os__getwd();
 	os__chdir(os__dir(v__pref__vexe_path()));
 	string cmd = _STR("%.*s\000 %.*s\000 %.*s\000 %.*s\000 -o \"%.*s\000\" -c \"%.*s\000\" %.*s", 7, v->pref->ccompiler, cppoptions, v->pref->third_party_option, btarget, opath, cfile, atarget);
+	#if defined(CUSTOM_DEFINE_trace_thirdparty_obj_files)
+	{
+	}
+	#endif
 	Option_os__Result _t1974 = os__exec(cmd);
 	if (!_t1974.ok) {
 		string err = _t1974.v_error;
@@ -49141,6 +49145,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_run_compiled_executable_and_exit(v__bui
 }
 
 VV_LOCAL_SYMBOL void v__builder__Builder_cleanup_run_executable_after_exit(v__builder__Builder* v, string exefile) {
+	if (v->pref->reuse_tmpc) {
+		v__pref__Preferences_vrun_elog(v->pref, _STR("keeping executable: %.*s\000 , because -keepc was passed", 2, exefile));
+		return;
+	}
 	if (os__is_file(exefile)) {
 		v__pref__Preferences_vrun_elog(v->pref, _STR("remove run executable: %.*s", 1, exefile));
 		os__rm(exefile);
