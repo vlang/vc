@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8293348"
+#define V_COMMIT_HASH "bbcaaa1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8278af4"
+	#define V_COMMIT_HASH "8293348"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8293348"
+	#define V_CURRENT_COMMIT_HASH "bbcaaa1"
 #endif
 
 // V comptime_defines:
@@ -21190,7 +21190,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8278af4"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8293348"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -39207,10 +39207,12 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_assign_stmt(v__gen__Gen* g, v__ast__AssignS
 					if (is_fixed_array_init && !has_val) {
 						if ((val).typ == 185 /* v.ast.ArrayInit */) {
 							if ((*val._v__ast__ArrayInit).has_default) {
-								v__gen__Gen_write(g, _STR("{%.*s", 1, v__ast__Expr_str((*val._v__ast__ArrayInit).default_expr)));
+								v__gen__Gen_write(g, _SLIT("{"));
+								v__gen__Gen_expr(g, (*val._v__ast__ArrayInit).default_expr);
 								v__table__ArrayFixed info = /* as */ *(v__table__ArrayFixed*)__as_cast((right_sym->info)._v__table__ArrayFixed, (right_sym->info).typ, /*expected:*/327);
 								for (int _t1431 = 1; _t1431 < info.size; ++_t1431) {
-									v__gen__Gen_write(g, _STR(", %.*s", 1, v__ast__Expr_str((*val._v__ast__ArrayInit).default_expr)));
+									v__gen__Gen_write(g, _SLIT(", "));
+									v__gen__Gen_expr(g, (*val._v__ast__ArrayInit).default_expr);
 								}
 								v__gen__Gen_write(g, _SLIT("}"));
 							} else {
@@ -39824,7 +39826,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 				VAssertMetaInfo v_assert_meta_info__t1450;
 				memset(&v_assert_meta_info__t1450, 0, sizeof(VAssertMetaInfo));
 				v_assert_meta_info__t1450.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/gen/cgen.v");
-				v_assert_meta_info__t1450.line_nr = 2658;
+				v_assert_meta_info__t1450.line_nr = 2660;
 				v_assert_meta_info__t1450.fn_name = _SLIT("expr");
 				v_assert_meta_info__t1450.src = _SLIT("node.field_name == 'len'");
 				v_assert_meta_info__t1450.op = _SLIT("==");
@@ -41780,9 +41782,9 @@ array_v__table__Field _t1532_orig = (*typ.info._v__table__Struct).fields;
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_139601 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_139601.arg0;
-						string base = mr_139601.arg1;
+						multi_return_string_string mr_139634 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_139634.arg0;
+						string base = mr_139634.arg1;
 						array_push(&g->optionals, _MOV((string[]){ string_clone(styp) }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -42218,11 +42220,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__as
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, _SLIT("main")) && (isnil(g->fn_decl) || string_eq(g->fn_decl->name, _SLIT("main.main")))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_153636 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_153636.arg0;
-				string pafile = mr_153636.arg1;
-				string pamod = mr_153636.arg2;
-				string pafn = mr_153636.arg3;
+				multi_return_int_string_string_string mr_153669 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_153669.arg0;
+				string pafile = mr_153669.arg1;
+				string pamod = mr_153669.arg2;
+				string pafn = mr_153669.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(_STR(\"optional not set (%%.*s\\000)\", 2, %.*s\000.v_error));", 2, cvar_name));
