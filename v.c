@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "628021a"
+#define V_COMMIT_HASH "583c023"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3b20838"
+	#define V_COMMIT_HASH "628021a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "628021a"
+	#define V_CURRENT_COMMIT_HASH "583c023"
 #endif
 
 // V comptime_defines:
@@ -21191,7 +21191,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3b20838"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("628021a"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -28719,8 +28719,8 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 		if (c->pref->translated) {
 			continue;
 		}
-		if (left_sym->kind == v__table__Kind_array && assign_stmt->op == v__token__Kind_assign && right_sym->kind == v__table__Kind_array && (left).typ == 200 /* v.ast.Ident */ && (right).typ == 200 /* v.ast.Ident */) {
-			v__checker__Checker_warn(c, _SLIT("use `array2 = array1.clone()` instead of `array1 = array2`"), assign_stmt->pos);
+		if (left_sym->kind == v__table__Kind_array && (assign_stmt->op == v__token__Kind_assign || assign_stmt->op == v__token__Kind_decl_assign) && right_sym->kind == v__table__Kind_array && (left).typ == 200 /* v.ast.Ident */ && (right).typ == 200 /* v.ast.Ident */) {
+			v__checker__Checker_warn(c, _SLIT("use `array2 = array1.clone()` instead of `array2 = array1`"), assign_stmt->pos);
 		}
 		bool left_is_ptr = v__table__Type_is_ptr(left_type) || v__table__TypeSymbol_is_pointer(left_sym);
 		if (left_is_ptr) {
@@ -29023,7 +29023,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__St
 				VAssertMetaInfo v_assert_meta_info__t1051;
 				memset(&v_assert_meta_info__t1051, 0, sizeof(VAssertMetaInfo));
 				v_assert_meta_info__t1051.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-				v_assert_meta_info__t1051.line_nr = 2544;
+				v_assert_meta_info__t1051.line_nr = 2545;
 				v_assert_meta_info__t1051.fn_name = _SLIT("stmt");
 				v_assert_meta_info__t1051.src = _SLIT("!c.inside_unsafe");
 				__print_assert_failure(&v_assert_meta_info__t1051);
@@ -29885,8 +29885,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (_t1078 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_106052 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_106052.arg1;
+		multi_return_string_int mr_106071 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_106071.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (_t1078 == v__token__AtKind_vhash) {
@@ -30507,7 +30507,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 		VAssertMetaInfo v_assert_meta_info__t1127;
 		memset(&v_assert_meta_info__t1127, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t1127.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t1127.line_nr = 3823;
+		v_assert_meta_info__t1127.line_nr = 3824;
 		v_assert_meta_info__t1127.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t1127.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t1127);
@@ -30960,8 +30960,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym) && !(typ_sym->kind == v__table__Kind_byteptr || typ_sym->kind == v__table__Kind_charptr)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_138930 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_138930.arg0;
+		multi_return_string_v__token__Position mr_138949 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_138949.arg0;
 	}
 	if (!c->inside_unsafe && (v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym))) {
 		v__checker__Checker_warn(c, _SLIT("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -31513,10 +31513,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1190 = 0; _t1190 < _t1189.len; ++_t1190) {
 			v__table__Fn m = ((v__table__Fn*)_t1189.data)[_t1190];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_156711 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_156711.arg0;
-				int nroute_attributes = mr_156711.arg1;
-				int nargs = mr_156711.arg2;
+				multi_return_bool_int_int mr_156730 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_156730.arg0;
+				int nroute_attributes = mr_156730.arg1;
+				int nargs = mr_156730.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -48116,7 +48116,7 @@ void v__builder__Builder_resolve_deps(v__builder__Builder* b) {
 }
 
 v__depgraph__DepGraph* v__builder__Builder_import_graph(v__builder__Builder* b) {
-	array_string builtins = _const_v__util__builtin_module_parts;
+	array_string builtins = array_clone(&_const_v__util__builtin_module_parts);
 	v__depgraph__DepGraph* graph = v__depgraph__new_dep_graph();
 	// FOR IN array
 	array _t1884 = b->parsed_files;
