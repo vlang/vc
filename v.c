@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "bbcaaa1"
+#define V_COMMIT_HASH "60c936a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8293348"
+	#define V_COMMIT_HASH "bbcaaa1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "bbcaaa1"
+	#define V_CURRENT_COMMIT_HASH "60c936a"
 #endif
 
 // V comptime_defines:
@@ -5642,6 +5642,7 @@ VV_LOCAL_SYMBOL Option_v__ast__Expr v__checker__Checker_find_definition(v__check
 VV_LOCAL_SYMBOL Option_v__ast__Expr v__checker__Checker_find_obj_definition(v__checker__Checker* c, v__ast__ScopeObject obj);
 VV_LOCAL_SYMBOL Option_bool v__checker__Checker_has_return(v__checker__Checker* c, array_v__ast__Stmt stmts);
 v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__PostfixExpr* node);
+v__table__Type v__checker__Checker_prefix_expr(v__checker__Checker* c, v__ast__PrefixExpr* node);
 VV_LOCAL_SYMBOL void v__checker__Checker_check_index_type(v__checker__Checker* c, v__table__TypeSymbol* typ_sym, v__table__Type index_type, v__token__Position pos);
 v__table__Type v__checker__Checker_index_expr(v__checker__Checker* c, v__ast__IndexExpr* node);
 v__table__Type v__checker__Checker_enum_val(v__checker__Checker* c, v__ast__EnumVal* node);
@@ -21190,7 +21191,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8293348"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("bbcaaa1"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -29669,78 +29670,10 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 		return v__checker__Checker_postfix_expr(c, (voidptr)&/*qq*/(*node._v__ast__PostfixExpr));
 	}
 	else if (_t1073.typ == 214 /* v.ast.PrefixExpr */) {
-		v__table__Type right_type = v__checker__Checker_expr(c, (*node._v__ast__PrefixExpr).right);
-		(*node._v__ast__PrefixExpr).right_type = right_type;
-		if ((*node._v__ast__PrefixExpr).op == v__token__Kind_amp && !v__table__Type_is_ptr(right_type)) {
-			if (((*node._v__ast__PrefixExpr).right).typ == 205 /* v.ast.IntegerLiteral */) {
-				v__checker__Checker_error(c, _SLIT("cannot take the address of an int"), (*node._v__ast__PrefixExpr).pos);
-			}
-			if (((*node._v__ast__PrefixExpr).right).typ == 221 /* v.ast.StringLiteral */ || ((*node._v__ast__PrefixExpr).right).typ == 220 /* v.ast.StringInterLiteral */) {
-				v__checker__Checker_error(c, _SLIT("cannot take the address of a string"), (*node._v__ast__PrefixExpr).pos);
-			}
-			if (((*node._v__ast__PrefixExpr).right).typ == 203 /* v.ast.IndexExpr */) {
-				v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, (*(*node._v__ast__PrefixExpr).right._v__ast__IndexExpr).left_type);
-				bool is_mut = false;
-				if (((*(*node._v__ast__PrefixExpr).right._v__ast__IndexExpr).left).typ == 200 /* v.ast.Ident */) {
-					v__ast__Ident ident = (*(*(*node._v__ast__PrefixExpr).right._v__ast__IndexExpr).left._v__ast__Ident);
-					v__ast__ScopeObject ident_obj = ident.obj;
-					if ((ident_obj).typ == 253 /* v.ast.Var */) {
-						is_mut = (*ident_obj._v__ast__Var).is_mut;
-					}
-				}
-				if (!c->inside_unsafe && is_mut) {
-					if (typ_sym->kind == v__table__Kind_map) {
-						v__checker__Checker_error(c, _SLIT("cannot take the address of mutable map values outside unsafe blocks"), (*(*node._v__ast__PrefixExpr).right._v__ast__IndexExpr).pos);
-					}
-					if (typ_sym->kind == v__table__Kind_array) {
-						v__checker__Checker_error(c, _SLIT("cannot take the address of mutable array elements outside unsafe blocks"), (*(*node._v__ast__PrefixExpr).right._v__ast__IndexExpr).pos);
-					}
-				}
-			}
-			// Defer begin
-			c->expr_level--;
-			// Defer end
-			return v__table__Type_to_ptr(right_type);
-		} else if ((*node._v__ast__PrefixExpr).op == v__token__Kind_amp && ((*node._v__ast__PrefixExpr).right).typ != 192 /* v.ast.CastExpr */) {
-			// Defer begin
-			c->expr_level--;
-			// Defer end
-			return v__table__Type_to_ptr(right_type);
-		}
-		if ((*node._v__ast__PrefixExpr).op == v__token__Kind_mul) {
-			if (v__table__Type_is_ptr(right_type)) {
-				// Defer begin
-				c->expr_level--;
-				// Defer end
-				return v__table__Type_deref(right_type);
-			}
-			if (!v__table__Type_is_pointer(right_type)) {
-				string s = v__table__Table_type_to_str(c->table, right_type);
-				v__checker__Checker_error(c, _STR("invalid indirect of `%.*s\000`", 2, s), (*node._v__ast__PrefixExpr).pos);
-			}
-		}
-		if ((*node._v__ast__PrefixExpr).op == v__token__Kind_bit_not && !v__table__Type_is_int(right_type) && !c->pref->translated) {
-			v__checker__Checker_error(c, _SLIT("operator ~ only defined on int types"), (*node._v__ast__PrefixExpr).pos);
-		}
-		if ((*node._v__ast__PrefixExpr).op == v__token__Kind_not && right_type != _const_v__table__bool_type_idx && !c->pref->translated) {
-			v__checker__Checker_error(c, _SLIT("! operator can only be used with bool types"), (*node._v__ast__PrefixExpr).pos);
-		}
-		if ((*node._v__ast__PrefixExpr).op == v__token__Kind_arrow) {
-			v__table__TypeSymbol* right = v__table__Table_get_type_symbol(c->table, right_type);
-			if (right->kind == v__table__Kind_chan) {
-				v__checker__Checker_stmts(c, (*node._v__ast__PrefixExpr).or_block.stmts);
-				// Defer begin
-				c->expr_level--;
-				// Defer end
-				return v__table__TypeSymbol_chan_info(right).elem_type;
-			} else {
-				v__checker__Checker_error(c, _SLIT("<- operator can only be used with `chan` types"), (*node._v__ast__PrefixExpr).pos);
-			}
-		}
 		// Defer begin
 		c->expr_level--;
 		// Defer end
-		return right_type;
+		return v__checker__Checker_prefix_expr(c, (voidptr)&/*qq*/(*node._v__ast__PrefixExpr));
 	}
 	else if (_t1073.typ == 210 /* v.ast.None */) {
 		// Defer begin
@@ -29949,8 +29882,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (_t1078 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_107747 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_107747.arg1;
+		multi_return_string_int mr_105713 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_105713.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (_t1078 == v__token__AtKind_vhash) {
@@ -30571,7 +30504,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 		VAssertMetaInfo v_assert_meta_info__t1127;
 		memset(&v_assert_meta_info__t1127, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t1127.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t1127.line_nr = 3877;
+		v_assert_meta_info__t1127.line_nr = 3817;
 		v_assert_meta_info__t1127.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t1127.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t1127);
@@ -31024,13 +30957,73 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym) && !(typ_sym->kind == v__table__Kind_byteptr || typ_sym->kind == v__table__Kind_charptr)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_140625 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_140625.arg0;
+		multi_return_string_v__token__Position mr_138591 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_138591.arg0;
 	}
 	if (!c->inside_unsafe && (v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym))) {
 		v__checker__Checker_warn(c, _SLIT("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
 	}
 	return typ;
+}
+
+v__table__Type v__checker__Checker_prefix_expr(v__checker__Checker* c, v__ast__PrefixExpr* node) {
+	v__table__Type right_type = v__checker__Checker_expr(c, node->right);
+	node->right_type = right_type;
+	if (node->op == v__token__Kind_amp && !v__table__Type_is_ptr(right_type)) {
+		if ((node->right).typ == 205 /* v.ast.IntegerLiteral */) {
+			v__checker__Checker_error(c, _SLIT("cannot take the address of an int"), node->pos);
+		}
+		if ((node->right).typ == 221 /* v.ast.StringLiteral */ || (node->right).typ == 220 /* v.ast.StringInterLiteral */) {
+			v__checker__Checker_error(c, _SLIT("cannot take the address of a string"), node->pos);
+		}
+		if ((node->right).typ == 203 /* v.ast.IndexExpr */) {
+			v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, (*node->right._v__ast__IndexExpr).left_type);
+			bool is_mut = false;
+			if (((*node->right._v__ast__IndexExpr).left).typ == 200 /* v.ast.Ident */) {
+				v__ast__Ident ident = (*(*node->right._v__ast__IndexExpr).left._v__ast__Ident);
+				v__ast__ScopeObject ident_obj = ident.obj;
+				if ((ident_obj).typ == 253 /* v.ast.Var */) {
+					is_mut = (*ident_obj._v__ast__Var).is_mut;
+				}
+			}
+			if (typ_sym->kind == v__table__Kind_map) {
+				v__checker__Checker_error(c, _SLIT("cannot take the address of map values"), (*node->right._v__ast__IndexExpr).pos);
+			}
+			if (!c->inside_unsafe) {
+				if (typ_sym->kind == v__table__Kind_array && is_mut) {
+					v__checker__Checker_error(c, _SLIT("cannot take the address of mutable array elements outside unsafe blocks"), (*node->right._v__ast__IndexExpr).pos);
+				}
+			}
+		}
+		return v__table__Type_to_ptr(right_type);
+	} else if (node->op == v__token__Kind_amp && (node->right).typ != 192 /* v.ast.CastExpr */) {
+		return v__table__Type_to_ptr(right_type);
+	}
+	if (node->op == v__token__Kind_mul) {
+		if (v__table__Type_is_ptr(right_type)) {
+			return v__table__Type_deref(right_type);
+		}
+		if (!v__table__Type_is_pointer(right_type)) {
+			string s = v__table__Table_type_to_str(c->table, right_type);
+			v__checker__Checker_error(c, _STR("invalid indirect of `%.*s\000`", 2, s), node->pos);
+		}
+	}
+	if (node->op == v__token__Kind_bit_not && !v__table__Type_is_int(right_type) && !c->pref->translated) {
+		v__checker__Checker_error(c, _SLIT("operator ~ only defined on int types"), node->pos);
+	}
+	if (node->op == v__token__Kind_not && right_type != _const_v__table__bool_type_idx && !c->pref->translated) {
+		v__checker__Checker_error(c, _SLIT("! operator can only be used with bool types"), node->pos);
+	}
+	if (node->op == v__token__Kind_arrow) {
+		v__table__TypeSymbol* right = v__table__Table_get_type_symbol(c->table, right_type);
+		if (right->kind == v__table__Kind_chan) {
+			v__checker__Checker_stmts(c, node->or_block.stmts);
+			return v__table__TypeSymbol_chan_info(right).elem_type;
+		} else {
+			v__checker__Checker_error(c, _SLIT("<- operator can only be used with `chan` types"), node->pos);
+		}
+	}
+	return right_type;
 }
 
 VV_LOCAL_SYMBOL void v__checker__Checker_check_index_type(v__checker__Checker* c, v__table__TypeSymbol* typ_sym, v__table__Type index_type, v__token__Position pos) {
@@ -31517,10 +31510,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1190 = 0; _t1190 < _t1189.len; ++_t1190) {
 			v__table__Fn m = ((v__table__Fn*)_t1189.data)[_t1190];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_156423 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_156423.arg0;
-				int nroute_attributes = mr_156423.arg1;
-				int nargs = mr_156423.arg2;
+				multi_return_bool_int_int mr_156372 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_156372.arg0;
+				int nroute_attributes = mr_156372.arg1;
+				int nargs = mr_156372.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
