@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9f964c9"
+#define V_COMMIT_HASH "c639dd0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "fc965b7"
+	#define V_COMMIT_HASH "9f964c9"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9f964c9"
+	#define V_CURRENT_COMMIT_HASH "c639dd0"
 #endif
 
 // V comptime_defines:
@@ -4816,6 +4816,7 @@ bool time__Time_lt(time__Time t1, time__Time t2);
 bool time__Time_le(time__Time t1, time__Time t2);
 bool time__Time_gt(time__Time t1, time__Time t2);
 bool time__Time_ge(time__Time t1, time__Time t2);
+time__Duration time__Time__minus(time__Time lhs, time__Time rhs);
 Option_time__Time time__parse(string s);
 Option_time__Time time__parse_rfc2822(string s);
 Option _const_time__err_invalid_8601; // inited later
@@ -4864,14 +4865,13 @@ void time__usleep(int microseconds);
 bool time__is_leap_year(int year);
 Option_int time__days_in_month(int month, int year);
 string time__Time_str(time__Time t);
-time__Duration time__Time__minus(time__Time lhs, time__Time rhs);
 VV_LOCAL_SYMBOL time__Time time__convert_ctime(struct tm t, int microsecond);
 time__Duration _const_time__nanosecond; // inited later
-i64 _const_time__microsecond; // inited later
-i64 _const_time__millisecond; // inited later
-i64 _const_time__second; // inited later
-i64 _const_time__minute; // inited later
-i64 _const_time__hour; // inited later
+time__Duration _const_time__microsecond; // inited later
+time__Duration _const_time__millisecond; // inited later
+time__Duration _const_time__second; // inited later
+time__Duration _const_time__minute; // inited later
+time__Duration _const_time__hour; // inited later
 time__Duration _const_time__infinite; // inited later
 i64 time__Duration_nanoseconds(time__Duration d);
 i64 time__Duration_microseconds(time__Duration d);
@@ -16915,6 +16915,13 @@ inline bool time__Time_ge(time__Time t1, time__Time t2) {
 	return time__Time_gt(t1, t2) || time__Time_eq(t1, t2);
 }
 
+// Attr: [inline]
+inline time__Duration time__Time__minus(time__Time lhs, time__Time rhs) {
+	u64 lhs_micro = lhs.v_unix * 1000 * 1000 + ((u64)(lhs.microsecond));
+	u64 rhs_micro = rhs.v_unix * 1000 * 1000 + ((u64)(rhs.microsecond));
+	return (((i64)(lhs_micro)) - ((i64)(rhs_micro))) * _const_time__microsecond;
+}
+
 Option_time__Time time__parse(string s) {
 	Option_int _t270 = string_index(s, _SLIT(" "));
 	if (!_t270.ok) {
@@ -17416,12 +17423,6 @@ string time__Time_str(time__Time t) {
 	return time__Time_format_ss(t);
 }
 
-time__Duration time__Time__minus(time__Time lhs, time__Time rhs) {
-	u64 lhs_micro = lhs.v_unix * 1000 * 1000 + ((u64)(lhs.microsecond));
-	u64 rhs_micro = rhs.v_unix * 1000 * 1000 + ((u64)(rhs.microsecond));
-	return (((i64)(lhs_micro)) - ((i64)(rhs_micro))) * _const_time__microsecond;
-}
-
 VV_LOCAL_SYMBOL time__Time time__convert_ctime(struct tm t, int microsecond) {
 	return (time__Time){
 		.year = t.tm_year + 1900,
@@ -17548,8 +17549,8 @@ struct timespec time__Duration_timespec(time__Duration d) {
 	i64 d_nsec = d % _const_time__second;
 	ts.tv_sec += d_sec;
 	ts.tv_nsec += d_nsec;
-	if (ts.tv_nsec > _const_time__second) {
-		ts.tv_nsec -= _const_time__second;
+	if (ts.tv_nsec > ((i64)(_const_time__second))) {
+		ts.tv_nsec -= ((i64)(_const_time__second));
 		ts.tv_sec++;
 	}
 	return ts;
@@ -21224,7 +21225,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fc965b7"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9f964c9"), _STR("%.*s\000 | %.*s\000 | %.*s", 3, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -50266,11 +50267,11 @@ void _vinit() {
 		0, 31, 31 + 28, 31 + 28 + 31, 31 + 28 + 31 + 30, 31 + 28 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31}));
 	_const_time__long_days = new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("Monday"), _SLIT("Tuesday"), _SLIT("Wednesday"), _SLIT("Thursday"), _SLIT("Friday"), _SLIT("Saturday"), _SLIT("Sunday")}));
 	_const_time__nanosecond = ((time__Duration)(1));
-	_const_time__microsecond = ((time__Duration)(1000)) * _const_time__nanosecond;
-	_const_time__millisecond = ((time__Duration)(1000)) * _const_time__microsecond;
-	_const_time__second = ((time__Duration)(1000)) * _const_time__millisecond;
-	_const_time__minute = ((time__Duration)(60)) * _const_time__second;
-	_const_time__hour = ((time__Duration)(60)) * _const_time__minute;
+	_const_time__microsecond = ((1000 * _const_time__nanosecond));
+	_const_time__millisecond = ((1000 * _const_time__microsecond));
+	_const_time__second = ((1000 * _const_time__millisecond));
+	_const_time__minute = ((60 * _const_time__second));
+	_const_time__hour = ((60 * _const_time__minute));
 	_const_time__infinite = ((time__Duration)(-1));
 	// Initializations for module v.token :
 	_const_v__token__assign_tokens = new_array_from_c_array(11, 11, sizeof(v__token__Kind), _MOV((v__token__Kind[11]){
