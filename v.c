@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "dc3a6bb"
+#define V_COMMIT_HASH "c544cc5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "21cd765"
+	#define V_COMMIT_HASH "dc3a6bb"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "dc3a6bb"
+	#define V_CURRENT_COMMIT_HASH "c544cc5"
 #endif
 
 // V comptime_defines:
@@ -5241,6 +5241,7 @@ string _const_v__pref__default_module_path; // inited later
 v__pref__Preferences v__pref__new_preferences();
 VV_LOCAL_SYMBOL void v__pref__Preferences_expand_lookup_paths(v__pref__Preferences* p);
 void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p);
+VV_LOCAL_SYMBOL void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p);
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p);
 string v__pref__default_tcc_compiler();
 string v__pref__default_c_compiler();
@@ -5677,8 +5678,6 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_assign_stmt(v__parser__Parser* p)
 VV_LOCAL_SYMBOL Option_void v__parser__Parser_check_undefined_variables(v__parser__Parser* p, array_v__ast__Expr exprs, v__ast__Expr val);
 VV_LOCAL_SYMBOL bool v__parser__Parser_check_cross_variables(v__parser__Parser* p, array_v__ast__Expr exprs, v__ast__Expr val);
 VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Parser* p, array_v__ast__Expr left, array_v__ast__Comment left_comments);
-array_string _const_v__parser__supported_platforms; // inited later
-array_string _const_v__parser__supported_ccompilers; // inited later
 VV_LOCAL_SYMBOL v__ast__HashStmt v__parser__Parser_hash(v__parser__Parser* p);
 VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_vweb(v__parser__Parser* p);
 VV_LOCAL_SYMBOL v__ast__CompFor v__parser__Parser_comp_for(v__parser__Parser* p);
@@ -21268,6 +21267,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->ccompiler).len == 0) {
 		p->ccompiler = v__pref__default_c_compiler();
 	}
+	v__pref__Preferences_find_cc_if_cross_compiling(p);
 	p->ccompiler_type = v__pref__cc_from_string(p->ccompiler);
 	p->is_test = string_ends_with(p->path, _SLIT("_test.v"));
 	p->is_vsh = string_ends_with(p->path, _SLIT(".vsh"));
@@ -21282,7 +21282,24 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("21cd765"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("dc3a6bb"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+}
+
+VV_LOCAL_SYMBOL void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p) {
+	if (p->os == v__pref__OS_windows) {
+		#if !defined(_WIN32)
+		{
+			p->ccompiler = _SLIT("x86_64-w64-mingw32-gcc");
+		}
+		#endif
+	}
+	if (p->os == v__pref__OS_linux) {
+		#if !defined(__linux__)
+		{
+			p->ccompiler = _SLIT("clang");
+		}
+		#endif
+	}
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
@@ -49181,6 +49198,9 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 }
 
 VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) {
+	v__builder__Builder_setup_ccompiler_options(b, b->pref->ccompiler);
+	v__builder__Builder_build_thirdparty_obj_files(b);
+	v__builder__Builder_setup_output_name(b);
 	string parent_dir = os__vmodules_dir();
 	if (!os__exists(parent_dir)) {
 		os__mkdir(parent_dir);
@@ -49245,6 +49265,9 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 
 VV_LOCAL_SYMBOL void v__builder__Builder_cc_windows_cross(v__builder__Builder* c) {
 	println(_SLIT("Cross compiling for Windows..."));
+	v__builder__Builder_setup_ccompiler_options(c, c->pref->ccompiler);
+	v__builder__Builder_build_thirdparty_obj_files(c);
+	v__builder__Builder_setup_output_name(c);
 	if (!string_ends_with(c->pref->out_name, _SLIT(".exe"))) {
 		c->pref->out_name = /*f*/string_add(c->pref->out_name, _SLIT(".exe"));
 	}
@@ -49325,13 +49348,6 @@ VV_LOCAL_SYMBOL void v__builder__Builder_build_thirdparty_obj_files(v__builder__
 
 VV_LOCAL_SYMBOL void v__builder__Builder_build_thirdparty_obj_file(v__builder__Builder* v, string path, array_v__cflag__CFlag moduleflags) {
 	string obj_path = os__real_path(path);
-	if (v->pref->os == v__pref__OS_windows) {
-		#if !defined(_WIN32)
-		{
-			v->pref->ccompiler = _const_v__builder__mingw_cc;
-		}
-		#endif
-	}
 	string cfile = _STR("%.*s\000.c", 2, string_substr(obj_path, 0, obj_path.len - 2));
 	string btarget = array_v__cflag__CFlag_c_options_before_target(moduleflags);
 	string atarget = array_v__cflag__CFlag_c_options_after_target(moduleflags);
@@ -50543,9 +50559,6 @@ void _vinit() {
 	_const_v__checker__valid_comp_if_platforms = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("amd64"), _SLIT("aarch64"), _SLIT("x64"), _SLIT("x32"), _SLIT("little_endian"), _SLIT("big_endian")}));
 	_const_v__checker__valid_comp_if_other = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("js"), _SLIT("debug"), _SLIT("test"), _SLIT("glibc"), _SLIT("prealloc"), _SLIT("no_bounds_checking")}));
 	// Initializations for module v.parser :
-	_const_v__parser__supported_platforms = new_array_from_c_array(13, 13, sizeof(string), _MOV((string[13]){
-		_SLIT("windows"), _SLIT("macos"), _SLIT("darwin"), _SLIT("linux"), _SLIT("freebsd"), _SLIT("openbsd"), _SLIT("netbsd"), _SLIT("dragonfly"), _SLIT("android"), _SLIT("js"), _SLIT("solaris"), _SLIT("haiku"), _SLIT("linux_or_macos")}));
-	_const_v__parser__supported_ccompilers = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){_SLIT("tinyc"), _SLIT("clang"), _SLIT("mingw"), _SLIT("msvc"), _SLIT("gcc")}));
 	_const_v__parser__todo_delete_me = v__pref__OS_linux;
 	_const_v__parser__global_enabled_mods = new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("rand"), _SLIT("sokol.sapp")}));
 	// Initializations for module v.gen :
