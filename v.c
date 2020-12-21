@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "74f7a1a"
+#define V_COMMIT_HASH "304aafd"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c544cc5"
+	#define V_COMMIT_HASH "74f7a1a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "74f7a1a"
+	#define V_CURRENT_COMMIT_HASH "304aafd"
 #endif
 
 // V comptime_defines:
@@ -21282,7 +21282,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c544cc5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("74f7a1a"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p) {
@@ -26116,6 +26116,9 @@ string v__ast__FnDecl_stringify(v__ast__FnDecl* node, v__table__Table* t, string
 		name = _STR("JS.%.*s", 1, name);
 	}
 	strings__Builder_write(&f, _STR("fn %.*s\000%.*s", 2, receiver, name));
+	if ((string_eq(name, _SLIT("+")) || string_eq(name, _SLIT("-")) || string_eq(name, _SLIT("*")) || string_eq(name, _SLIT("/")) || string_eq(name, _SLIT("%")))) {
+		strings__Builder_write(&f, _SLIT(" "));
+	}
 	if (node->is_generic) {
 		strings__Builder_write(&f, _SLIT("<T>"));
 	}
@@ -26306,9 +26309,9 @@ string v__ast__Expr_str(v__ast__Expr x) {
 				break;
 			}
 			array_push(&res, _MOV((string[]){ string_clone(_SLIT("$")) }));
-			multi_return_string_bool mr_5777 = v__ast__StringInterLiteral_get_fspec_braces(&(*x._v__ast__StringInterLiteral), i);
-			string fspec_str = mr_5777.arg0;
-			bool needs_braces = mr_5777.arg1;
+			multi_return_string_bool mr_5835 = v__ast__StringInterLiteral_get_fspec_braces(&(*x._v__ast__StringInterLiteral), i);
+			string fspec_str = mr_5835.arg0;
+			bool needs_braces = mr_5835.arg1;
 			if (needs_braces) {
 				array_push(&res, _MOV((string[]){ string_clone(_SLIT("{")) }));
 				array_push(&res, _MOV((string[]){ string_clone(v__ast__Expr_str((*(v__ast__Expr*)/*ee elem_typ */array_get((*x._v__ast__StringInterLiteral).exprs, i)))) }));
