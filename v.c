@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9eb6c4e"
+#define V_COMMIT_HASH "b3e0926"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5cd2dff"
+	#define V_COMMIT_HASH "9eb6c4e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9eb6c4e"
+	#define V_CURRENT_COMMIT_HASH "b3e0926"
 #endif
 
 // V comptime_defines:
@@ -21282,7 +21282,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5cd2dff"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9eb6c4e"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p) {
@@ -44616,6 +44616,8 @@ inline VV_LOCAL_SYMBOL void v__gen__Gen_gen_struct_enc_dec(v__gen__Gen* g, v__ta
 				strings__Builder_writeln(dec, _STR("\tres.%.*s\000 = %.*s\000 (js_get(root, \"%.*s\000\"));", 4, v__gen__c_name(field.name), dec_name, name));
 			} else if (field_sym->kind == v__table__Kind_enum_) {
 				strings__Builder_writeln(dec, _STR("\tres.%.*s\000 = json__decode_u64(js_get(root, \"%.*s\000\"));", 3, v__gen__c_name(field.name), name));
+			} else if (string_eq(field_sym->name, _SLIT("time.Time"))) {
+				strings__Builder_writeln(dec, _STR("\tres.%.*s\000 = time__unix(json__decode_u64(js_get(root, \"%.*s\000\")));", 3, v__gen__c_name(field.name), name));
 			} else if (field_sym->kind == v__table__Kind_alias) {
 				v__table__Alias alias = /* as */ *(v__table__Alias*)__as_cast((field_sym->info)._v__table__Alias, (field_sym->info).typ, /*expected:*/324);
 				string parent_type = v__gen__Gen_typ(g, alias.parent_type);
@@ -44650,7 +44652,11 @@ inline VV_LOCAL_SYMBOL void v__gen__Gen_gen_struct_enc_dec(v__gen__Gen* g, v__ta
 		if (field_sym->kind == v__table__Kind_enum_) {
 			strings__Builder_writeln(enc, _STR("\tcJSON_AddItemToObject(o, \"%.*s\000\", json__encode_u64(val.%.*s\000));", 3, name, v__gen__c_name(field.name)));
 		} else {
-			strings__Builder_writeln(enc, _STR("\tcJSON_AddItemToObject(o, \"%.*s\000\", %.*s\000(val.%.*s\000));", 4, name, enc_name, v__gen__c_name(field.name)));
+			if (string_eq(field_sym->name, _SLIT("time.Time"))) {
+				strings__Builder_writeln(enc, _STR("\tcJSON_AddItemToObject(o, \"%.*s\000\", json__encode_u64(val.%.*s\000.v_unix));", 3, name, v__gen__c_name(field.name)));
+			} else {
+				strings__Builder_writeln(enc, _STR("\tcJSON_AddItemToObject(o, \"%.*s\000\", %.*s\000(val.%.*s\000));", 4, name, enc_name, v__gen__c_name(field.name)));
+			}
 		}
 	}
 }
@@ -44667,7 +44673,7 @@ VV_LOCAL_SYMBOL string v__gen__js_dec_name(string typ) {
 }
 
 VV_LOCAL_SYMBOL bool v__gen__is_js_prim(string typ) {
-	return string_eq(typ, _SLIT("int")) || string_eq(typ, _SLIT("string")) || string_eq(typ, _SLIT("bool")) || string_eq(typ, _SLIT("f32")) || string_eq(typ, _SLIT("f64")) || string_eq(typ, _SLIT("i8")) || string_eq(typ, _SLIT("i16")) || string_eq(typ, _SLIT("i64")) || string_eq(typ, _SLIT("u16")) || string_eq(typ, _SLIT("u32")) || string_eq(typ, _SLIT("u64")) || string_eq(typ, _SLIT("byte"));
+	return (string_eq(typ, _SLIT("int")) || string_eq(typ, _SLIT("string")) || string_eq(typ, _SLIT("bool")) || string_eq(typ, _SLIT("f32")) || string_eq(typ, _SLIT("f64")) || string_eq(typ, _SLIT("i8")) || string_eq(typ, _SLIT("i16")) || string_eq(typ, _SLIT("i64")) || string_eq(typ, _SLIT("u16")) || string_eq(typ, _SLIT("u32")) || string_eq(typ, _SLIT("u64")) || string_eq(typ, _SLIT("byte")));
 }
 
 VV_LOCAL_SYMBOL string v__gen__Gen_decode_array(v__gen__Gen* g, v__table__Type value_type) {
