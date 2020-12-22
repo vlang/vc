@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "93c0f50"
+#define V_COMMIT_HASH "28b1be3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b47daad"
+	#define V_COMMIT_HASH "93c0f50"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "93c0f50"
+	#define V_CURRENT_COMMIT_HASH "28b1be3"
 #endif
 
 // V comptime_defines:
@@ -5935,6 +5935,7 @@ string _const_v__gen__c_builtin_types; // a string literal, inited later
 string _const_v__gen__bare_c_headers; // inited later
 void v__gen__Gen_gen_c_main(v__gen__Gen* g);
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_vlines_reset(v__gen__Gen* g);
+VV_LOCAL_SYMBOL void v__gen__Gen_gen_c_main_function_header(v__gen__Gen* g);
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_c_main_header(v__gen__Gen* g);
 void v__gen__Gen_gen_c_main_footer(v__gen__Gen* g);
 void v__gen__Gen_gen_c_android_sokol_main(v__gen__Gen* g);
@@ -21247,7 +21248,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b47daad"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("93c0f50"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p) {
@@ -43217,7 +43218,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_vlines_reset(v__gen__Gen* g) {
 	}
 }
 
-VV_LOCAL_SYMBOL void v__gen__Gen_gen_c_main_header(v__gen__Gen* g) {
+VV_LOCAL_SYMBOL void v__gen__Gen_gen_c_main_function_header(v__gen__Gen* g) {
 	if (g->pref->os == v__pref__OS_windows) {
 		if (v__gen__Gen_is_gui_app(g)) {
 			v__gen__Gen_writeln(g, _SLIT("int WINAPI wWinMain(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line, int show_cmd){"));
@@ -43227,6 +43228,10 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_c_main_header(v__gen__Gen* g) {
 	} else {
 		v__gen__Gen_writeln(g, _SLIT("int main(int ___argc, char** ___argv){"));
 	}
+}
+
+VV_LOCAL_SYMBOL void v__gen__Gen_gen_c_main_header(v__gen__Gen* g) {
+	v__gen__Gen_gen_c_main_function_header(g);
 	if (g->pref->os == v__pref__OS_windows && v__gen__Gen_is_gui_app(g)) {
 		v__gen__Gen_writeln(g, _SLIT("\tLPWSTR full_cmd_line = GetCommandLineW(); // NB: do not use cmd_line"));
 		v__gen__Gen_writeln(g, _SLIT("\ttypedef LPWSTR*(WINAPI *cmd_line_to_argv)(LPCWSTR, int*);"));
@@ -43282,15 +43287,7 @@ void v__gen__Gen_write_tests_main(v__gen__Gen* g) {
 	strings__Builder_writeln(&g->definitions, _SLIT("int g_test_fails = 0;"));
 	strings__Builder_writeln(&g->definitions, _SLIT("jmp_buf g_jump_buffer;"));
 	int main_fn_start_pos = g->out.len;
-	#if defined(_WIN32)
-	{
-		v__gen__Gen_writeln(g, _SLIT("int wmain() {"));
-	}
-	#else
-	{
-		v__gen__Gen_writeln(g, _SLIT("int main() {"));
-	}
-	#endif
+	v__gen__Gen_gen_c_main_function_header(g);
 	v__gen__Gen_writeln(g, _SLIT("\t_vinit();"));
 	v__gen__Gen_writeln(g, _SLIT(""));
 	array_string all_tfuncs = v__gen__Gen_get_all_test_function_names(g);
