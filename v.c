@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a844739"
+#define V_COMMIT_HASH "c119282"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "dd27d0a"
+	#define V_COMMIT_HASH "a844739"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a844739"
+	#define V_CURRENT_COMMIT_HASH "c119282"
 #endif
 
 // V comptime_defines:
@@ -21248,7 +21248,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("dd27d0a"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a844739"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p) {
@@ -25362,10 +25362,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_char(v__scanner__Scanner* s) {
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL bool v__scanner__Scanner_expect(v__scanner__Scanner* s, string want, int start_pos) {
 	int end_pos = start_pos + want.len;
-	if (start_pos < 0 || start_pos >= s->text.len) {
-		return false;
-	}
-	if (end_pos < 0 || end_pos > s->text.len) {
+	if (start_pos < 0 || end_pos < 0 || start_pos >= s->text.len || end_pos > s->text.len) {
 		return false;
 	}
 	for (int pos = start_pos; pos < end_pos; ++pos) {
@@ -25450,8 +25447,7 @@ void v__scanner__Scanner_error(v__scanner__Scanner* s, string msg) {
 }
 
 VV_LOCAL_SYMBOL void v__scanner__Scanner_vet_error(v__scanner__Scanner* s, string msg) {
-	string eline = _STR("%.*s\000:%"PRId32"\000: %.*s", 3, s->file_path, s->line_nr, msg);
-	array_push(&s->vet_errors, _MOV((string[]){ string_clone(eline) }));
+	array_push(&s->vet_errors, _MOV((string[]){ string_clone(_STR("%.*s\000:%"PRId32"\000: %.*s", 3, s->file_path, s->line_nr, msg)) }));
 }
 
 void v__scanner__verror(string s) {
