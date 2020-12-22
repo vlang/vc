@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b16052d"
+#define V_COMMIT_HASH "e4f94b6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "97855ec"
+	#define V_COMMIT_HASH "b16052d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b16052d"
+	#define V_CURRENT_COMMIT_HASH "e4f94b6"
 #endif
 
 // V comptime_defines:
@@ -6562,7 +6562,7 @@ void vinit_string_literals(){
 	_const_rand__chars = _SLIT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 	_const_rand__ulid_encoding = _SLIT("0123456789ABCDEFGHJKMNPQRSTVWXYZ");
 	_const_help__unknown_topic = _SLIT("V Error: Unknown help topic provided. Use `v help` for usage information.");
-	_const_v__util__v_version = _SLIT("0.1.30");
+	_const_v__util__v_version = _SLIT("0.2");
 	_const_v__util__map_prefix = _SLIT("map[string]");
 	_const_v__checker__no_pub_in_main_warning = _SLIT("in module main cannot be declared public");
 	_const_v__gen__c_commit_hash_default = _SLIT("\n#ifndef V_COMMIT_HASH\n	#define V_COMMIT_HASH \"@@@\"\n#endif\n");
@@ -21256,7 +21256,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("97855ec"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b16052d"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p) {
