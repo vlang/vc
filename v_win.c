@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "bf8cf8b"
+#define V_COMMIT_HASH "a6e6c48"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2c4a51a"
+	#define V_COMMIT_HASH "bf8cf8b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "bf8cf8b"
+	#define V_CURRENT_COMMIT_HASH "a6e6c48"
 #endif
 
 // V comptime_defines:
@@ -5715,7 +5715,7 @@ void v__scanner__Scanner_set_is_inside_toplevel_statement(v__scanner__Scanner* s
 void v__scanner__Scanner_set_current_tidx(v__scanner__Scanner* s, int cidx);
 VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_new_token(v__scanner__Scanner* s, v__token__Kind tok_kind, string lit, int len);
 VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_name(v__scanner__Scanner* s);
-VV_LOCAL_SYMBOL string v__scanner__filter_num_sep(byteptr txt, int start, int end);
+VV_LOCAL_SYMBOL string v__scanner__Scanner_num_lit(v__scanner__Scanner s, int start, int end);
 VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner* s);
 VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner* s);
 VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_oct_number(v__scanner__Scanner* s);
@@ -21038,7 +21038,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2c4a51a"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("bf8cf8b"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p) {
@@ -24234,8 +24234,12 @@ inline VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_name(v__scanner__Scanner
 	return name;
 }
 
-VV_LOCAL_SYMBOL string v__scanner__filter_num_sep(byteptr txt, int start, int end) {
+VV_LOCAL_SYMBOL string v__scanner__Scanner_num_lit(v__scanner__Scanner s, int start, int end) {
+	if (s.is_fmt) {
+		return string_substr(s.text, start, end);
+	}
 	{ // Unsafe block
+		byteptr txt = s.text.str;
 		byteptr b = v_malloc(end - start + 1);
 		int i1 = 0;
 		for (int i = start; i < end; i++) {
@@ -24285,7 +24289,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner*
 		s->pos = first_wrong_digit_pos;
 		v__scanner__Scanner_error(s, _STR("this binary number has unsuitable digit `%.*s\000`", 2, rune_str(first_wrong_digit)));
 	}
-	string number = v__scanner__filter_num_sep(s->text.str, start_pos, s->pos);
+	string number = v__scanner__Scanner_num_lit(/*rec*/*s, start_pos, s->pos);
 	s->pos--;
 	return number;
 }
@@ -24328,7 +24332,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner*
 		s->pos = first_wrong_digit_pos;
 		v__scanner__Scanner_error(s, _STR("this hexadecimal number has unsuitable digit `%.*s\000`", 2, rune_str(first_wrong_digit)));
 	}
-	string number = v__scanner__filter_num_sep(s->text.str, start_pos, s->pos);
+	string number = v__scanner__Scanner_num_lit(/*rec*/*s, start_pos, s->pos);
 	s->pos--;
 	return number;
 }
@@ -24368,7 +24372,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_oct_number(v__scanner__Scanner*
 		s->pos = first_wrong_digit_pos;
 		v__scanner__Scanner_error(s, _STR("this octal number has unsuitable digit `%.*s\000`", 2, rune_str(first_wrong_digit)));
 	}
-	string number = v__scanner__filter_num_sep(s->text.str, start_pos, s->pos);
+	string number = v__scanner__Scanner_num_lit(/*rec*/*s, start_pos, s->pos);
 	s->pos--;
 	return number;
 }
@@ -24470,7 +24474,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner*
 			v__scanner__Scanner_error(s, _SLIT("too many decimal points in number"));
 		}
 	}
-	string number = v__scanner__filter_num_sep(s->text.str, start_pos, s->pos);
+	string number = v__scanner__Scanner_num_lit(/*rec*/*s, start_pos, s->pos);
 	s->pos--;
 	return number;
 }
