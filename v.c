@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "bba7919"
+#define V_COMMIT_HASH "2c4a51a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8f4281b"
+	#define V_COMMIT_HASH "bba7919"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "bba7919"
+	#define V_CURRENT_COMMIT_HASH "2c4a51a"
 #endif
 
 // V comptime_defines:
@@ -21264,7 +21264,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8f4281b"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("bba7919"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p) {
@@ -32784,7 +32784,7 @@ VV_LOCAL_SYMBOL multi_return_array_v__table__Param_bool_bool v__parser__Parser_f
 			for (;;) {
 				if (!(p->tok.kind == v__token__Kind_comma)) break;
 				if (!p->pref->is_fmt) {
-					v__parser__Parser_warn(p, string_add(_SLIT("`fn f(x, y Type)` syntax has been deprecated and will soon be removed. "), _SLIT("Use `fn f(x Type, y Type)` instead. You can run `v fmt -w file.v` to automatically fix your code.")));
+					v__parser__Parser_warn(p, string_add(_SLIT("`fn f(x, y Type)` syntax has been deprecated and will soon be removed. "), _STR("Use `fn f(x Type, y Type)` instead. You can run `v fmt -w \"%.*s\000\"` to automatically fix your code.", 2, p->scanner->file_path)));
 				}
 				v__parser__Parser_next(p);
 				array_push(&arg_pos, _MOV((v__token__Position[]){ v__token__Token_position(&p->tok) }));
