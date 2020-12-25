@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9b19388"
+#define V_COMMIT_HASH "333cd41"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "11519f3"
+	#define V_COMMIT_HASH "9b19388"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9b19388"
+	#define V_CURRENT_COMMIT_HASH "333cd41"
 #endif
 
 // V comptime_defines:
@@ -5789,8 +5789,8 @@ void v__ast__Scope_register(v__ast__Scope* s, v__ast__ScopeObject obj);
 v__ast__Scope* v__ast__Scope_outermost(v__ast__Scope* s);
 v__ast__Scope* v__ast__Scope_innermost(v__ast__Scope* s, int pos);
 VV_LOCAL_SYMBOL bool v__ast__Scope_contains(v__ast__Scope* s, int pos);
-string v__ast__Scope_show(v__ast__Scope* sc, int depth, int max_depth);
-string v__ast__Scope_str(v__ast__Scope* sc);
+string v__ast__Scope_show(v__ast__Scope sc, int depth, int max_depth);
+string v__ast__Scope_str(v__ast__Scope sc);
 string v__ast__FnDecl_modname(v__ast__FnDecl* node);
 string v__ast__FnDecl_stringify(v__ast__FnDecl* node, v__table__Table* t, string cur_mod, map_string_string m2a);
 string v__ast__InfixExpr_str(v__ast__InfixExpr* x);
@@ -21025,7 +21025,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("11519f3"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9b19388"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p) {
@@ -25801,15 +25801,15 @@ inline VV_LOCAL_SYMBOL bool v__ast__Scope_contains(v__ast__Scope* s, int pos) {
 	return pos >= s->start_pos && pos <= s->end_pos;
 }
 
-string v__ast__Scope_show(v__ast__Scope* sc, int depth, int max_depth) {
+string v__ast__Scope_show(v__ast__Scope sc, int depth, int max_depth) {
 	string out = _SLIT("");
 	string indent = _SLIT("");
 	for (int _t860 = 0; _t860 < depth * 4; ++_t860) {
 		indent = /*f*/string_add(indent, _SLIT(" "));
 	}
-	out = /*f*/string_add(out, _STR("%.*s\000# %"PRId32"\000 - %"PRId32"\000\n", 4, indent, sc->start_pos, sc->end_pos));
+	out = /*f*/string_add(out, _STR("%.*s\000# %"PRId32"\000 - %"PRId32"\000\n", 4, indent, sc.start_pos, sc.end_pos));
 	// FOR IN map
-	map_string_v__ast__ScopeObject _t862 = sc->objects;
+	map_string_v__ast__ScopeObject _t862 = sc.objects;
 	for (int _t861 = 0; _t861 < _t862.key_values.len; ++_t861) {
 		if (!DenseArray_has_index(&_t862.key_values, _t861)) {continue;}
 		v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)DenseArray_value(&_t862.key_values, _t861));
@@ -25824,22 +25824,22 @@ string v__ast__Scope_show(v__ast__Scope* sc, int depth, int max_depth) {
 		};
 	}
 	// FOR IN array
-	array _t864 = sc->struct_fields;
+	array _t864 = sc.struct_fields;
 	for (int _t865 = 0; _t865 < _t864.len; ++_t865) {
 		v__ast__ScopeStructField field = ((v__ast__ScopeStructField*)_t864.data)[_t865];
 		out = /*f*/string_add(out, _STR("%.*s\000  * struct_field: %"PRId32"\000 %.*s\000 - %"PRId32"\000\n", 5, indent, field.struct_type, field.name, field.typ));
 	}
 	if (max_depth == 0 || depth < max_depth - 1) {
 		// FOR IN array
-		array _t866 = sc->children;
+		array _t866 = sc.children;
 		for (int i = 0; i < _t866.len; ++i) {
-			out = /*f*/string_add(out, v__ast__Scope_show((*(v__ast__Scope**)/*ee elem_typ */array_get(sc->children, i)), depth + 1, max_depth));
+			out = /*f*/string_add(out, v__ast__Scope_show(/*rec*/*(*(v__ast__Scope**)/*ee elem_typ */array_get(sc.children, i)), depth + 1, max_depth));
 		}
 	}
 	return out;
 }
 
-string v__ast__Scope_str(v__ast__Scope* sc) {
+string v__ast__Scope_str(v__ast__Scope sc) {
 	return v__ast__Scope_show(sc, 0, 0);
 }
 
