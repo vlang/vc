@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c6b0ce2"
+#define V_COMMIT_HASH "8cd74df"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a631078"
+	#define V_COMMIT_HASH "c6b0ce2"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c6b0ce2"
+	#define V_CURRENT_COMMIT_HASH "8cd74df"
 #endif
 
 // V comptime_defines:
@@ -17122,10 +17122,10 @@ Option_time__Time time__parse_iso8601(string s) {
 	if (!_t275.ok) {
 		return *(Option_time__Time *)&_t275;
 	}
- 	Option_multi_return_int_int_int mr_3454 =  _t275;
-	int year = (*(multi_return_int_int_int*)mr_3454.data).arg0;
-	int month = (*(multi_return_int_int_int*)mr_3454.data).arg1;
-	int day = (*(multi_return_int_int_int*)mr_3454.data).arg2;
+ 	Option_multi_return_int_int_int mr_3468 =  _t275;
+	int year = (*(multi_return_int_int_int*)mr_3468.data).arg0;
+	int month = (*(multi_return_int_int_int*)mr_3468.data).arg1;
+	int day = (*(multi_return_int_int_int*)mr_3468.data).arg2;
 	int hour = 0;
 	int minute = 0;
 	int second = 0;
@@ -17137,13 +17137,13 @@ Option_time__Time time__parse_iso8601(string s) {
 		if (!_t276.ok) {
 			return *(Option_time__Time *)&_t276;
 		}
- 		Option_multi_return_int_int_int_int_i64_bool mr_3688 =  _t276;
-		hour = (*(multi_return_int_int_int_int_i64_bool*)mr_3688.data).arg0;
-		minute = (*(multi_return_int_int_int_int_i64_bool*)mr_3688.data).arg1;
-		second = (*(multi_return_int_int_int_int_i64_bool*)mr_3688.data).arg2;
-		microsecond = (*(multi_return_int_int_int_int_i64_bool*)mr_3688.data).arg3;
-		unix_offset = (*(multi_return_int_int_int_int_i64_bool*)mr_3688.data).arg4;
-		is_local_time = (*(multi_return_int_int_int_int_i64_bool*)mr_3688.data).arg5;
+ 		Option_multi_return_int_int_int_int_i64_bool mr_3702 =  _t276;
+		hour = (*(multi_return_int_int_int_int_i64_bool*)mr_3702.data).arg0;
+		minute = (*(multi_return_int_int_int_int_i64_bool*)mr_3702.data).arg1;
+		second = (*(multi_return_int_int_int_int_i64_bool*)mr_3702.data).arg2;
+		microsecond = (*(multi_return_int_int_int_int_i64_bool*)mr_3702.data).arg3;
+		unix_offset = (*(multi_return_int_int_int_int_i64_bool*)mr_3702.data).arg4;
+		is_local_time = (*(multi_return_int_int_int_int_i64_bool*)mr_3702.data).arg5;
 	}
 	time__Time t = time__new_time((time__Time){
 		.year = year,
@@ -21292,7 +21292,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a631078"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c6b0ce2"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p) {
@@ -35221,7 +35221,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 		} else {
 			if (_IN_MAP(p->tok.lit, p->imports)) {
 				v__parser__Parser_register_used_import(p, p->tok.lit);
-				if (p->peek_tok.kind == v__token__Kind_dot && p->peek_tok2.kind != v__token__Kind_eof && byte_is_capital(string_at(p->peek_tok2.lit, 0))) {
+				if (p->peek_tok.kind == v__token__Kind_dot && p->peek_tok2.kind != v__token__Kind_eof && p->peek_tok2.lit.len > 0 && byte_is_capital(string_at(p->peek_tok2.lit, 0))) {
 					is_mod_cast = true;
 				}
 			}
@@ -35790,9 +35790,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_45344 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_45344.arg0;
-	array_v__ast__Comment comments2 = mr_45344.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_45371 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_45371.arg0;
+	array_v__ast__Comment comments2 = mr_45371.arg1;
 	_PUSH_MANY(&comments, (comments2), _t1341, array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
@@ -36160,6 +36160,7 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_unsafe_stmt(v__parser__Parser* p)
 		if ((stmt).typ == 233 /* v.ast.ExprStmt */) {
 			if (v__ast__Expr_is_expr((*stmt._v__ast__ExprStmt).expr)) {
 				v__parser__Parser_next(p);
+				pos.last_line = p->prev_tok.line_nr - 1;
 				v__ast__UnsafeExpr ue = (v__ast__UnsafeExpr){.expr = (*stmt._v__ast__ExprStmt).expr,.pos = pos,};
 				v__ast__Expr expr = v__parser__Parser_expr_with_left(p, /* sum type cast 4 */ (v__ast__Expr){._v__ast__UnsafeExpr = memdup(&(v__ast__UnsafeExpr[]){ue}, sizeof(v__ast__UnsafeExpr)), .typ = 223 /* v.ast.UnsafeExpr */}, 0, p->is_stmt_ident);
 				// Defer begin
@@ -36175,7 +36176,6 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_unsafe_stmt(v__parser__Parser* p)
 		if (!(p->tok.kind != v__token__Kind_rcbr)) break;
 		array_push(&stmts, _MOV((v__ast__Stmt[]){ v__parser__Parser_stmt(p, false) }));
 	}
-	pos.last_line = p->tok.line_nr;
 	v__parser__Parser_next(p);
 	// Defer begin
 	p->inside_unsafe = false;
@@ -36293,8 +36293,10 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 		}
 		p->inside_unsafe = true;
 		v__parser__Parser_check(p, v__token__Kind_lcbr);
-		node = /* sum type cast 4 */ (v__ast__Expr){._v__ast__UnsafeExpr = memdup(&(v__ast__UnsafeExpr[]){(v__ast__UnsafeExpr){.expr = v__parser__Parser_expr(p, 0),.pos = pos,}}, sizeof(v__ast__UnsafeExpr)), .typ = 223 /* v.ast.UnsafeExpr */};
+		v__ast__Expr e = v__parser__Parser_expr(p, 0);
 		v__parser__Parser_check(p, v__token__Kind_rcbr);
+		pos.last_line = p->prev_tok.line_nr - 1;
+		node = /* sum type cast 4 */ (v__ast__Expr){._v__ast__UnsafeExpr = memdup(&(v__ast__UnsafeExpr[]){(v__ast__UnsafeExpr){.expr = e,.pos = pos,}}, sizeof(v__ast__UnsafeExpr)), .typ = 223 /* v.ast.UnsafeExpr */};
 		p->inside_unsafe = false;
 	}
 	else if (_t1357 == v__token__Kind_key_lock || _t1357 == v__token__Kind_key_rlock) {
