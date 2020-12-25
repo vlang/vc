@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0caf668"
+#define V_COMMIT_HASH "2c1e545"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e5d3aa9"
+	#define V_COMMIT_HASH "0caf668"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0caf668"
+	#define V_CURRENT_COMMIT_HASH "2c1e545"
 #endif
 
 // V comptime_defines:
@@ -21066,7 +21066,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e5d3aa9"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0caf668"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p) {
@@ -37702,6 +37702,10 @@ string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__P
 	strings__Builder_write(&b, strings__Builder_str(&g.typedefs2));
 	strings__Builder_writeln(&b, _SLIT("\n// V cheaders:"));
 	strings__Builder_write(&b, strings__Builder_str(&g.cheaders));
+	if (g.pcs_declarations.len > 0) {
+		strings__Builder_writeln(&b, _SLIT("\n// V profile counters:"));
+		strings__Builder_write(&b, strings__Builder_str(&g.pcs_declarations));
+	}
 	strings__Builder_writeln(&b, _SLIT("\n// V includes:"));
 	strings__Builder_write(&b, strings__Builder_str(&g.includes));
 	strings__Builder_writeln(&b, _SLIT("\n// Enum definitions:"));
@@ -37714,10 +37718,6 @@ string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__P
 	strings__Builder_write(&b, strings__Builder_str(&g.json_forward_decls));
 	strings__Builder_writeln(&b, _SLIT("\n// V definitions:"));
 	strings__Builder_write(&b, strings__Builder_str(&g.definitions));
-	if (g.pcs_declarations.len > 0) {
-		strings__Builder_writeln(&b, _SLIT("\n// V profile counters:"));
-		strings__Builder_write(&b, strings__Builder_str(&g.pcs_declarations));
-	}
 	string interface_table = v__gen__Gen_interface_table(&g);
 	if (interface_table.len > 0) {
 		strings__Builder_writeln(&b, _SLIT("\n// V interface table:"));
