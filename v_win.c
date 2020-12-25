@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "270ba07"
+#define V_COMMIT_HASH "e7ca5dd"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "17cccc7"
+	#define V_COMMIT_HASH "270ba07"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "270ba07"
+	#define V_CURRENT_COMMIT_HASH "e7ca5dd"
 #endif
 
 // V comptime_defines:
@@ -3281,6 +3281,7 @@ struct v__ast__EnumField {
 	string name;
 	v__token__Position pos;
 	array_v__ast__Comment comments;
+	array_v__ast__Comment next_comments;
 	v__ast__Expr expr;
 	bool has_expr;
 };
@@ -21028,7 +21029,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("17cccc7"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("270ba07"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p) {
@@ -35590,7 +35591,14 @@ VV_LOCAL_SYMBOL v__ast__EnumDecl v__parser__Parser_enum_decl(v__parser__Parser* 
 			expr = v__parser__Parser_expr(p, 0);
 			has_expr = true;
 		}
-		array_push(&fields, _MOV((v__ast__EnumField[]){ (v__ast__EnumField){.name = val,.pos = pos,.comments = v__parser__Parser_eat_comments(p),.expr = expr,.has_expr = has_expr,} }));
+		array_push(&fields, _MOV((v__ast__EnumField[]){ (v__ast__EnumField){
+			.name = val,
+			.pos = pos,
+			.comments = v__parser__Parser_eat_line_end_comments(p),
+			.next_comments = v__parser__Parser_eat_comments(p),
+			.expr = expr,
+			.has_expr = has_expr,
+		} }));
 	}
 	v__parser__Parser_top_level_statement_end(p);
 	v__parser__Parser_check(p, v__token__Kind_rcbr);
