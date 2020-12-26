@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "80a9d08"
+#define V_COMMIT_HASH "dfcbf31"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "6842c3c"
+	#define V_COMMIT_HASH "80a9d08"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "80a9d08"
+	#define V_CURRENT_COMMIT_HASH "dfcbf31"
 #endif
 
 // V comptime_defines:
@@ -21036,7 +21036,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6842c3c"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("80a9d08"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p) {
@@ -34932,6 +34932,9 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 				v__parser__Parser_register_used_import(p, p->tok.lit);
 				if (p->peek_tok.kind == v__token__Kind_dot && p->peek_tok2.kind != v__token__Kind_eof && p->peek_tok2.lit.len > 0 && byte_is_capital(string_at(p->peek_tok2.lit, 0))) {
 					is_mod_cast = true;
+				} else if (p->peek_tok.kind == v__token__Kind_dot && p->peek_tok2.kind != v__token__Kind_eof && p->peek_tok2.lit.len == 0) {
+					node = /* sum type cast 4 */ (v__ast__Expr){._v__ast__Ident = memdup(&(v__ast__Ident[]){v__parser__Parser_parse_ident(p, language)}, sizeof(v__ast__Ident)), .typ = 221 /* v.ast.Ident */};
+					return node;
 				}
 			}
 			mod = (*(string*)map_get_1(ADDR(map, p->imports), &(string[]){p->tok.lit}, &(string[]){ (string){.str=(byteptr)""} }));
@@ -35499,9 +35502,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_45239 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_45239.arg0;
-	array_v__ast__Comment comments2 = mr_45239.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_45464 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_45464.arg0;
+	array_v__ast__Comment comments2 = mr_45464.arg1;
 	_PUSH_MANY(&comments, (comments2), _t1326, array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
@@ -35921,7 +35924,7 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 	}
 	v__token__Kind _t1342 = p->tok.kind; 
 	if (_t1342 == v__token__Kind_key_mut || _t1342 == v__token__Kind_key_shared || _t1342 == v__token__Kind_key_atomic || _t1342 == v__token__Kind_key_static) {
-		node = v__parser__Parser_name_expr(p);
+		node = /* sum type cast 4 */ (v__ast__Expr){._v__ast__Ident = memdup(&(v__ast__Ident[]){v__parser__Parser_parse_ident(p, v__table__Language_v)}, sizeof(v__ast__Ident)), .typ = 221 /* v.ast.Ident */};
 		p->is_stmt_ident = is_stmt_ident;
 	}
 	else if (_t1342 == v__token__Kind_name) {
