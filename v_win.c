@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6969300"
+#define V_COMMIT_HASH "e26e0c3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "693e513"
+	#define V_COMMIT_HASH "6969300"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6969300"
+	#define V_CURRENT_COMMIT_HASH "e26e0c3"
 #endif
 
 // V comptime_defines:
@@ -14484,30 +14484,22 @@ Option_int os__File_write_to(os__File* f, int pos, array_byte buf) {
 	return _t90;
 }
 
-// Attr: [deprecated]
 int os__File_write_bytes(os__File* f, voidptr data, int size) {
-	eprintln(_SLIT("warning `File.write_bytes()` has been deprecated, use `File.write` instead"));
 	return fwrite(data, 1, size, f->cfile);
 }
 
-// Attr: [deprecated]
 int os__File_write_bytes_at(os__File* f, voidptr data, int size, int pos) {
-	eprintln(_SLIT("warning `File.write_bytes_at()` has been deprecated, use `File.write_at` instead"));
 	fseek(f->cfile, pos, SEEK_SET);
 	int res = fwrite(data, 1, size, f->cfile);
 	fseek(f->cfile, 0, SEEK_END);
 	return res;
 }
 
-// Attr: [deprecated]
 array_byte os__File_read_bytes(os__File* f, int size) {
-	eprintln(_SLIT("warning `File.read_bytes()` has been deprecated, use `File.read` instead"));
 	return os__File_read_bytes_at(f, size, 0);
 }
 
-// Attr: [deprecated]
 array_byte os__File_read_bytes_at(os__File* f, int size, int pos) {
-	eprintln(_SLIT("warning `File.read_bytes_at()` has been deprecated, use `File.read_at` instead"));
 	array_byte arr = __new_array_with_default(size, 0, sizeof(byte), 0);
 	Option_int _t91 = os__File_read_bytes_into(f, pos, &/*arr*/arr);
 	if (!_t91.ok) {
@@ -14519,9 +14511,7 @@ array_byte os__File_read_bytes_at(os__File* f, int size, int pos) {
 	return array_slice(arr, 0, nreadbytes);
 }
 
-// Attr: [deprecated]
 Option_int os__File_read_bytes_into(os__File* f, int pos, array_byte* buf) {
-	eprintln(_SLIT("warning `File.read_bytes_into()` has been deprecated, use `File.read_from_into` instead"));
 	if (buf->len == 0) {
 		v_panic(string_add(_SLIT("read_bytes_into"), _SLIT(": `buf.len` == 0")));
 	}
@@ -21036,7 +21026,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("693e513"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6969300"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p) {
