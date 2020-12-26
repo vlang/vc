@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7507403"
+#define V_COMMIT_HASH "13f16b4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "60086a0"
+	#define V_COMMIT_HASH "7507403"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7507403"
+	#define V_CURRENT_COMMIT_HASH "13f16b4"
 #endif
 
 // V comptime_defines:
@@ -4912,13 +4912,14 @@ i64 time__Duration_milliseconds(time__Duration d);
 f64 time__Duration_seconds(time__Duration d);
 f64 time__Duration_minutes(time__Duration d);
 f64 time__Duration_hours(time__Duration d);
+int time__offset();
 VV_LOCAL_SYMBOL u64 time__sys_mono_now_darwin();
 time__Time time__darwin_now();
 time__Time time__solaris_now();
 time__Time time__darwin_utc();
 time__Time time__solaris_utc();
 VV_LOCAL_SYMBOL int time__make_unix_time(struct tm t);
-time__Time time__Time_to_local_time(time__Time t);
+time__Time time__Time_local(time__Time t);
 u64 time__sys_mono_now();
 VV_LOCAL_SYMBOL u64 time__vpc_now();
 VV_LOCAL_SYMBOL time__Time time__linux_now();
@@ -17131,7 +17132,7 @@ Option_time__Time time__parse_iso8601(string s) {
 	}
 	t = time__unix2(((int)(unix_time)), t.microsecond);
 	Option_time__Time _t278;
-	opt_ok2(&(time__Time[]) { time__Time_to_local_time(t) }, (OptionBase*)(&_t278), sizeof(time__Time));
+	opt_ok2(&(time__Time[]) { time__Time_local(t) }, (OptionBase*)(&_t278), sizeof(time__Time));
 	return _t278;
 }
 
@@ -17498,6 +17499,12 @@ f64 time__Duration_hours(time__Duration d) {
 	return ((f64)(hr)) + ((f64)(nsec)) / (60 * 60 * 1e9);
 }
 
+int time__offset() {
+	time__Time t = time__now();
+	time__Time local = time__Time_local(t);
+	return ((int)(local.v_unix - t.v_unix));
+}
+
 VV_LOCAL_SYMBOL u64 time__sys_mono_now_darwin() {
 	return 0;
 }
@@ -17522,7 +17529,7 @@ VV_LOCAL_SYMBOL int time__make_unix_time(struct tm t) {
 	return ((int)(timegm(&t)));
 }
 
-time__Time time__Time_to_local_time(time__Time t) {
+time__Time time__Time_local(time__Time t) {
 	struct tm loc_tm = (struct tm){.tm_sec = 0,.tm_min = 0,.tm_hour = 0,.tm_mday = 0,.tm_mon = 0,.tm_year = 0,.tm_wday = 0,.tm_yday = 0,.tm_isdst = 0,};
 	localtime_r(((time__time_t)(&t.v_unix)), &loc_tm);
 	return time__convert_ctime(loc_tm, t.microsecond);
@@ -21255,7 +21262,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("60086a0"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7507403"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p) {
