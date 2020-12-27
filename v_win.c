@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1b9d514"
+#define V_COMMIT_HASH "d563261"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1383771"
+	#define V_COMMIT_HASH "1b9d514"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1b9d514"
+	#define V_CURRENT_COMMIT_HASH "d563261"
 #endif
 
 // V comptime_defines:
@@ -20391,8 +20391,9 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 		html = /*f*/string_add(html, footer);
 	}
 	array_string lines = string_split_into_lines(html);
+	int lstartlength = lines.len * 30;
 	strings__Builder s = strings__new_builder(1000);
-	strings__Builder_writeln(&s, _STR("\nimport strings\n// === vweb html template ===\nfn vweb_tmpl_%.*s\000() {\nmut sb := strings.new_builder(%"PRId32"\000)\n\nheader := \' \' // TODO remove\n_ = header\nfooter := \' \' // TODO remove\n_ = footer\n\n", 3, fn_name, lines.len * 30));
+	strings__Builder_writeln(&s, _STR("\nimport strings\n// === vweb html template ===\nfn vweb_tmpl_%.*s\000() {\nmut sb := strings.new_builder(%"PRId32"\000)\n\nheader := \' \' // TODO remove\n_ = header\nfooter := \' \' // TODO remove\n_ = footer\n\n", 3, fn_name, lstartlength));
 	strings__Builder_write(&s, _const_vweb__tmpl__str_start);
 	vweb__tmpl__State state = vweb__tmpl__State_html;
 	bool in_span = false;
@@ -21028,7 +21029,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1383771"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1b9d514"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 }
 
 VV_LOCAL_SYMBOL void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p) {
