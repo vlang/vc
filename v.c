@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "dea3d04"
+#define V_COMMIT_HASH "547df57"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "64c0645"
+	#define V_COMMIT_HASH "dea3d04"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "dea3d04"
+	#define V_CURRENT_COMMIT_HASH "547df57"
 #endif
 
 // V comptime_defines:
@@ -21345,7 +21345,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("64c0645"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("dea3d04"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -37896,14 +37896,12 @@ VV_LOCAL_SYMBOL string v__gen__Gen_gen_array_equality_fn(v__gen__Gen* g, v__tabl
 VV_LOCAL_SYMBOL string v__gen__Gen_gen_map_equality_fn(v__gen__Gen* g, v__table__Type left) {
 	v__table__TypeSymbol* left_sym = v__table__Table_get_type_symbol(g->table, left);
 	string ptr_typ = string_trim(v__gen__Gen_typ(g, left), _SLIT("*"));
-	v__table__TypeSymbol* value_sym = v__table__Table_get_type_symbol(g->table, v__table__TypeSymbol_map_info(left_sym).value_type);
-	string value_typ = v__gen__Gen_typ(g, v__table__TypeSymbol_map_info(left_sym).value_type);
-	if (value_sym->kind == v__table__Kind_map) {
-		v__gen__Gen_gen_map_equality_fn(g, v__table__TypeSymbol_map_info(left_sym).value_type);
-	}
 	if ((array_string_contains(g->map_fn_definitions, ptr_typ))) {
 		return ptr_typ;
 	}
+	v__table__Type value_typ = v__table__TypeSymbol_map_info(left_sym).value_type;
+	v__table__TypeSymbol* value_sym = v__table__Table_get_type_symbol(g->table, value_typ);
+	string ptr_value_typ = v__gen__Gen_typ(g, value_typ);
 	array_push(&g->map_fn_definitions, _MOV((string[]){ string_clone(ptr_typ) }));
 	strings__Builder_writeln(&g->type_definitions, _STR("static bool %.*s\000_map_eq(%.*s\000 a, %.*s\000 b); // auto", 4, ptr_typ, ptr_typ, ptr_typ));
 	strings__Builder fn_builder = strings__new_builder(512);
@@ -37912,9 +37910,8 @@ VV_LOCAL_SYMBOL string v__gen__Gen_gen_map_equality_fn(v__gen__Gen* g, v__table_
 	strings__Builder_writeln(&fn_builder, _SLIT("\t\treturn false;"));
 	strings__Builder_writeln(&fn_builder, _SLIT("\t}"));
 	strings__Builder_writeln(&fn_builder, _SLIT("\tarray_string _keys = map_keys(&a);"));
-	string i = v__gen__Gen_new_tmp_var(g);
-	strings__Builder_writeln(&fn_builder, _STR("\tfor (int %.*s\000 = 0; %.*s\000 < _keys.len; ++%.*s\000) {", 4, i, i, i));
-	strings__Builder_writeln(&fn_builder, _STR("\t\tstring k = string_clone( ((string*)_keys.data)[%.*s\000]);", 2, i));
+	strings__Builder_writeln(&fn_builder, _SLIT("\tfor (int i = 0; i < _keys.len; ++i) {"));
+	strings__Builder_writeln(&fn_builder, _SLIT("\t\tstring k = string_clone( ((string*)_keys.data)[i]);"));
 	if (value_sym->kind == v__table__Kind_function) {
 		v__table__FnType func = /* as */ *(v__table__FnType*)__as_cast((value_sym->info)._v__table__FnType, (value_sym->info).typ, /*expected:*/333);
 		string ret_styp = v__gen__Gen_typ(g, func.func.return_type);
@@ -37932,17 +37929,29 @@ VV_LOCAL_SYMBOL string v__gen__Gen_gen_map_equality_fn(v__gen__Gen* g, v__table_
 		}
 		strings__Builder_writeln(&fn_builder, _SLIT(") = (*(voidptr*)map_get_1(&a, &k, &(voidptr[]){ 0 }));"));
 	} else {
-		strings__Builder_writeln(&fn_builder, _STR("\t\t%.*s\000 v = (*(%.*s\000*)map_get_1(&a, &k, &(%.*s\000[]){ 0 }));", 4, value_typ, value_typ, value_typ));
+		strings__Builder_writeln(&fn_builder, _STR("\t\t%.*s\000 v = (*(%.*s\000*)map_get_1(&a, &k, &(%.*s\000[]){ 0 }));", 4, ptr_value_typ, ptr_value_typ, ptr_value_typ));
 	}
 	v__table__Kind _t1403 = value_sym->kind; 
 	if (_t1403 == v__table__Kind_string) {
 		strings__Builder_writeln(&fn_builder, _SLIT("\t\tif (!map_exists_1(&b, &k) || string_ne((*(string*)map_get_1(&b, &k, &(string[]){_SLIT(\"\")})), v)) {"));
 	}
+	else if (_t1403 == v__table__Kind_struct_) {
+		string eq_fn = v__gen__Gen_gen_struct_equality_fn(g, value_typ);
+		strings__Builder_writeln(&fn_builder, _STR("\t\tif (!map_exists_1(&b, &k) || !%.*s\000_struct_eq(*(%.*s\000*)map_get_1(&b, &k, &(%.*s\000[]){ 0 }), v)) {", 4, eq_fn, ptr_value_typ, ptr_value_typ));
+	}
+	else if (_t1403 == v__table__Kind_array) {
+		string eq_fn = v__gen__Gen_gen_array_equality_fn(g, value_typ);
+		strings__Builder_writeln(&fn_builder, _STR("\t\tif (!map_exists_1(&b, &k) || !%.*s\000_arr_eq(*(%.*s\000*)map_get_1(&b, &k, &(%.*s\000[]){ 0 }), v)) {", 4, eq_fn, ptr_value_typ, ptr_value_typ));
+	}
+	else if (_t1403 == v__table__Kind_map) {
+		string eq_fn = v__gen__Gen_gen_map_equality_fn(g, value_typ);
+		strings__Builder_writeln(&fn_builder, _STR("\t\tif (!map_exists_1(&b, &k) || !%.*s\000_map_eq(*(%.*s\000*)map_get_1(&b, &k, &(%.*s\000[]){ 0 }), v)) {", 4, eq_fn, ptr_value_typ, ptr_value_typ));
+	}
 	else if (_t1403 == v__table__Kind_function) {
 		strings__Builder_writeln(&fn_builder, _SLIT("\t\tif (!map_exists_1(&b, &k) || (*(voidptr*)map_get_1(&b, &k, &(voidptr[]){ 0 })) != v) {"));
 	}
 	else {
-		strings__Builder_writeln(&fn_builder, _STR("\t\tif (!map_exists_1(&b, &k) || (*(%.*s\000*)map_get_1(&b, &k, &(%.*s\000[]){ 0 })) != v) {", 3, value_typ, value_typ));
+		strings__Builder_writeln(&fn_builder, _STR("\t\tif (!map_exists_1(&b, &k) || (*(%.*s\000*)map_get_1(&b, &k, &(%.*s\000[]){ 0 })) != v) {", 3, ptr_value_typ, ptr_value_typ));
 	};
 	strings__Builder_writeln(&fn_builder, _SLIT("\t\t\treturn false;"));
 	strings__Builder_writeln(&fn_builder, _SLIT("\t\t}"));
