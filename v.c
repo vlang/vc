@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d094baf"
+#define V_COMMIT_HASH "34c8925"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9728abf"
+	#define V_COMMIT_HASH "d094baf"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d094baf"
+	#define V_CURRENT_COMMIT_HASH "34c8925"
 #endif
 
 // V comptime_defines:
@@ -21394,7 +21394,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9728abf"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d094baf"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -37453,6 +37453,10 @@ VV_LOCAL_SYMBOL void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it
 			v__gen__Gen_write(g, _STR("&(%.*s\000[]){", 2, elem_type_str));
 			v__gen__Gen_write(g, _SLIT("_SLIT(\"\")"));
 			v__gen__Gen_write(g, _SLIT("})"));
+		} else if (it.has_len && (elem_sym->kind == v__table__Kind_array || elem_sym->kind == v__table__Kind_map)) {
+			v__gen__Gen_write(g, _STR("(voidptr)&(%.*s\000[]){", 2, elem_type_str));
+			v__gen__Gen_write(g, v__gen__Gen_type_default(g, it.elem_type));
+			v__gen__Gen_write(g, _SLIT("}[0])"));
 		} else {
 			v__gen__Gen_write(g, _SLIT("0)"));
 		}
