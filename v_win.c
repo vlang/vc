@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e8cd056"
+#define V_COMMIT_HASH "2c65c5c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "81fd496"
+	#define V_COMMIT_HASH "e8cd056"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e8cd056"
+	#define V_CURRENT_COMMIT_HASH "2c65c5c"
 #endif
 
 // V comptime_defines:
@@ -1382,6 +1382,7 @@ typedef map map_string_array_v__table__Type;
 typedef array array_v__table__Fn;
 typedef array array_v__table__Kind;
 typedef array array_v__ast__File_ptr;
+typedef array array_i64;
 typedef array array_v__ast__Type;
 typedef array array_v__depgraph__DepGraphNode;
 typedef map map_string_v__depgraph__DepGraphNode;
@@ -1391,7 +1392,6 @@ typedef array array_v__gen__ProfileCounterMeta;
 typedef map map_string_v__table__Type;
 typedef map map_string_array_v__ast__FnDecl;
 typedef map map_string_v__gen__js__Namespace_ptr;
-typedef array array_i64;
 typedef map map_string_i64;
 typedef array array_v__token__Token;
 typedef array array_flag__Flag;
@@ -3854,6 +3854,7 @@ static string indent_v__table__SumType_str(v__table__SumType it, int indent_coun
 static string v__table__TypeInfo_str(v__table__TypeInfo x); // auto
 static string indent_v__table__TypeInfo_str(v__table__TypeInfo x, int indent_count); // auto
 static bool array_int_contains(array_int a, int v); // auto
+static bool array_i64_contains(array_i64 a, i64 v); // auto
 static string v__ast__IdentKind_str(v__ast__IdentKind it); // auto
 static string v__gen__x64__Register_str(v__gen__x64__Register it); // auto
 static string v__errors__Reporter_str(v__errors__Reporter it); // auto
@@ -7337,6 +7338,15 @@ static bool array_v__table__Type_contains(array_v__table__Type a, v__table__Type
 static bool array_int_contains(array_int a, int v) {
 	for (int i = 0; i < a.len; ++i) {
 		if ((*(int*)array_get(a, i)) == v) {
+			return true;
+		}
+	}
+	return false;
+}
+
+static bool array_i64_contains(array_i64 a, i64 v) {
+	for (int i = 0; i < a.len; ++i) {
+		if ((*(i64*)array_get(a, i)) == v) {
 			return true;
 		}
 	}
@@ -21156,7 +21166,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("81fd496"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e8cd056"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -28703,7 +28713,7 @@ void v__checker__Checker_const_decl(v__checker__Checker* c, v__ast__ConstDecl* n
 
 void v__checker__Checker_enum_decl(v__checker__Checker* c, v__ast__EnumDecl decl) {
 	v__checker__Checker_check_valid_pascal_case(c, decl.name, _SLIT("enum name"), decl.pos);
-	array_int seen = __new_array_with_default(0, 0, sizeof(int), 0);
+	array_i64 seen = __new_array_with_default(0, 0, sizeof(i64), 0);
 	// FOR IN array
 	array _t1043 = decl.fields;
 	for (int i = 0; i < _t1043.len; ++i) {
@@ -28722,10 +28732,10 @@ void v__checker__Checker_enum_decl(v__checker__Checker* c, v__ast__EnumDecl decl
 				i64 val = string_i64((*field.expr._v__ast__IntegerLiteral).val);
 				if (val < _const_v__checker__int_min || val > _const_v__checker__int_max) {
 					v__checker__Checker_error(c, _STR("enum value `%"PRId64"\000` overflows int", 2, val), (*field.expr._v__ast__IntegerLiteral).pos);
-				} else if (!decl.is_multi_allowed && (array_int_contains(seen, ((int)(val))))) {
+				} else if (!decl.is_multi_allowed && (array_i64_contains(seen, ((i64)(val))))) {
 					v__checker__Checker_error(c, _STR("enum value `%"PRId64"\000` already exists", 2, val), (*field.expr._v__ast__IntegerLiteral).pos);
 				}
-				array_push(&seen, _MOV((int[]){ ((int)(val)) }));
+				array_push(&seen, _MOV((i64[]){ ((i64)(val)) }));
 			}
 			else if (_t1044.typ == 242 /* v.ast.PrefixExpr */) {
 			}
@@ -28743,13 +28753,13 @@ void v__checker__Checker_enum_decl(v__checker__Checker* c, v__ast__EnumDecl decl
 			};
 		} else {
 			if (seen.len > 0) {
-				int last = (*(int*)/*ee elem_typ */array_get(seen, seen.len - 1));
+				i64 last = (*(i64*)/*ee elem_typ */array_get(seen, seen.len - 1));
 				if (last == _const_v__checker__int_max) {
 					v__checker__Checker_error(c, _SLIT("enum value overflows"), field.pos);
 				}
-				array_push(&seen, _MOV((int[]){ last + 1 }));
+				array_push(&seen, _MOV((i64[]){ last + 1 }));
 			} else {
-				array_push(&seen, _MOV((int[]){ 0 }));
+				array_push(&seen, _MOV((i64[]){ 0 }));
 			}
 		}
 	}
