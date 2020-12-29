@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "27db4b4"
+#define V_COMMIT_HASH "f6d64c7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2c65c5c"
+	#define V_COMMIT_HASH "27db4b4"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "27db4b4"
+	#define V_CURRENT_COMMIT_HASH "f6d64c7"
 #endif
 
 // V comptime_defines:
@@ -21390,7 +21390,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2c65c5c"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("27db4b4"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -40686,9 +40686,9 @@ VV_LOCAL_SYMBOL multi_return_string_string_string_string v__gen__Gen_map_fn_ptrs
 	string free_fn = _SLIT("&map_free_nop");
 	v__table__Kind _t1498 = key_typ.kind; 
 	if (_t1498 == v__table__Kind_byte || _t1498 == v__table__Kind_bool || _t1498 == v__table__Kind_i8 || _t1498 == v__table__Kind_char) {
-		hash_fn = _SLIT("&map_hash_int_2");
-		key_eq_fn = _SLIT("&map_eq_int_2");
-		clone_fn = _SLIT("&map_clone_int_2");
+		hash_fn = _SLIT("&map_hash_int_1");
+		key_eq_fn = _SLIT("&map_eq_int_1");
+		clone_fn = _SLIT("&map_clone_int_1");
 	}
 	else if (_t1498 == v__table__Kind_i16 || _t1498 == v__table__Kind_u16) {
 		hash_fn = _SLIT("&map_hash_int_2");
