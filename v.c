@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b1f1653"
+#define V_COMMIT_HASH "c943c8a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "eef73ed"
+	#define V_COMMIT_HASH "b1f1653"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b1f1653"
+	#define V_CURRENT_COMMIT_HASH "c943c8a"
 #endif
 
 // V comptime_defines:
@@ -18844,7 +18844,7 @@ VV_LOCAL_SYMBOL Option_semver__Range semver__parse_range(string input) {
 VV_LOCAL_SYMBOL Option_semver__ComparatorSet semver__parse_comparator_set(string input) {
 	array_string raw_comparators = string_split(input, _const_semver__comparator_sep);
 	if (raw_comparators.len > 2) {
-		Option _t393 = v_error(_SLIT("Invalid format of comparator set"));
+		Option _t393 = v_error(_STR("Invalid format of comparator set for input \"%.*s\000\"", 2, input));
 		return *(Option_semver__ComparatorSet*)&_t393;
 	}
 	array_semver__Comparator comparators = __new_array_with_default(0, 0, sizeof(semver__Comparator), 0);
@@ -18856,7 +18856,7 @@ VV_LOCAL_SYMBOL Option_semver__ComparatorSet semver__parse_comparator_set(string
 		if (!_t396.ok) {
 			string err = _t396.v_error;
 			int errcode = _t396.ecode;
-			Option _t397 = v_error(_STR("Invalid comparator: %.*s", 1, raw_comp));
+			Option _t397 = v_error(_STR("Invalid comparator \"%.*s\000\" in input \"%.*s\000\"", 3, raw_comp, input));
 			return *(Option_semver__ComparatorSet*)&_t397;
 		}
  		semver__Comparator c = *(semver__Comparator*) _t396.data;
@@ -19078,7 +19078,7 @@ Option_semver__Version semver__from(string input) {
 	if (!_t428.ok) {
 		string err = _t428.v_error;
 		int errcode = _t428.ecode;
-		Option _t429 = v_error(_SLIT("Invalid version format"));
+		Option _t429 = v_error(_STR("Invalid version format for input \"%.*s\000\"", 2, input));
 		return *(Option_semver__Version*)&_t429;
 	}
  	semver__Version version = *(semver__Version*) _t428.data;
@@ -19124,7 +19124,7 @@ Option_semver__Version semver__coerce(string input) {
 	if (!_t431.ok) {
 		string err = _t431.v_error;
 		int errcode = _t431.ecode;
-		Option _t432 = v_error(_STR("Invalid version: %.*s", 1, input));
+		Option _t432 = v_error(_STR("Invalid version for input \"%.*s\000\"", 2, input));
 		return *(Option_semver__Version*)&_t432;
 	}
  	semver__Version ver = *(semver__Version*) _t431.data;
@@ -19150,7 +19150,7 @@ inline VV_LOCAL_SYMBOL Option_semver__Version semver__coerce_version(string inpu
 	if (!_t434.ok) {
 		string err = _t434.v_error;
 		int errcode = _t434.ecode;
-		Option _t435 = v_error(_STR("Invalid version: %.*s", 1, input));
+		Option _t435 = v_error(_STR("Invalid version for input \"%.*s\000\"", 2, input));
 		return *(Option_semver__Version*)&_t435;
 	}
  	semver__Version ver = *(semver__Version*) _t434.data;
@@ -21391,7 +21391,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("eef73ed"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b1f1653"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
