@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "13cd7e8"
+#define V_COMMIT_HASH "b8af812"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b4f02ad"
+	#define V_COMMIT_HASH "13cd7e8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "13cd7e8"
+	#define V_CURRENT_COMMIT_HASH "b8af812"
 #endif
 
 // V comptime_defines:
@@ -21189,7 +21189,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b4f02ad"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("13cd7e8"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -44453,7 +44453,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr no
 	} else {
 		v__gen__Gen_write(g, _STR("%.*s\000(", 2, name));
 	}
-	if (v__table__Type_is_ptr(node.receiver_type) && !v__table__Type_is_ptr(node.left_type)) {
+	if (v__table__Type_is_ptr(node.receiver_type) && (!v__table__Type_is_ptr(node.left_type) || node.from_embed_type != 0)) {
 		if (!is_range_slice) {
 			v__gen__Gen_write(g, _SLIT("&"));
 		}
@@ -44468,7 +44468,12 @@ VV_LOCAL_SYMBOL void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr no
 		v__gen__Gen_expr(g, node.left);
 		if (node.from_embed_type != 0) {
 			string embed_name = v__table__TypeSymbol_embed_name(typ_sym);
-			v__gen__Gen_write(g, _STR(".%.*s", 1, embed_name));
+			if (v__table__Type_is_ptr(node.left_type)) {
+				v__gen__Gen_write(g, _SLIT("->"));
+			} else {
+				v__gen__Gen_write(g, _SLIT("."));
+			}
+			v__gen__Gen_write(g, embed_name);
 		}
 	}
 	if (has_cast) {
@@ -44574,11 +44579,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) 
 	}
 	if (!print_auto_str) {
 		if (g->pref->is_debug && string_eq(node.name, _SLIT("panic"))) {
-			multi_return_int_string_string_string mr_18374 = v__gen__Gen_panic_debug_info(g, node.pos);
-			int paline = mr_18374.arg0;
-			string pafile = mr_18374.arg1;
-			string pamod = mr_18374.arg2;
-			string pafn = mr_18374.arg3;
+			multi_return_int_string_string_string mr_18485 = v__gen__Gen_panic_debug_info(g, node.pos);
+			int paline = mr_18485.arg0;
+			string pafile = mr_18485.arg1;
+			string pamod = mr_18485.arg2;
+			string pafn = mr_18485.arg3;
 			v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 			v__gen__Gen_call_args(g, node);
 			v__gen__Gen_write(g, _SLIT(")"));
