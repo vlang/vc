@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9f3dd6e"
+#define V_COMMIT_HASH "64e7c54"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7ade1a9"
+	#define V_COMMIT_HASH "9f3dd6e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9f3dd6e"
+	#define V_CURRENT_COMMIT_HASH "64e7c54"
 #endif
 
 // V comptime_defines:
@@ -21189,7 +21189,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7ade1a9"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9f3dd6e"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -22662,14 +22662,20 @@ bool v__util__should_recompile_tool(string vexe, string tool_source) {
 	if (!os__exists(tool_exe)) {
 		should_compile = true;
 	} else {
-		if (os__file_last_mod_unix(tool_exe) <= os__file_last_mod_unix(vexe)) {
+		int mtime_vexe = os__file_last_mod_unix(vexe);
+		int mtime_tool_exe = os__file_last_mod_unix(tool_exe);
+		int mtime_tool_source = os__file_last_mod_unix(tool_source);
+		if (mtime_tool_exe <= mtime_vexe) {
 			should_compile = true;
 			if (string_eq(tool_name, _SLIT("vself")) || string_eq(tool_name, _SLIT("vup"))) {
 				should_compile = false;
 			}
 		}
-		if (os__file_last_mod_unix(tool_exe) <= os__file_last_mod_unix(tool_source)) {
+		if (mtime_tool_exe <= mtime_tool_source) {
 			should_compile = true;
+		}
+		if (mtime_vexe < 1024 && mtime_tool_exe < 1024) {
+			should_compile = false;
 		}
 	}
 	return should_compile;
