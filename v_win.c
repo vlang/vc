@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e9f9f27"
+#define V_COMMIT_HASH "8700080"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "63afd26"
+	#define V_COMMIT_HASH "e9f9f27"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e9f9f27"
+	#define V_CURRENT_COMMIT_HASH "8700080"
 #endif
 
 // V comptime_defines:
@@ -21223,7 +21223,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("63afd26"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e9f9f27"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -27998,35 +27998,35 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 	} else {
 		string err = _t988.v_error;
 		int errcode = _t988.ecode;
-		if ((left_type_sym->info).typ == 160 /* v.table.Struct */) {
-			array_v__table__Fn found_methods = __new_array_with_default(0, 0, sizeof(v__table__Fn), 0);
-			array_v__table__Type embed_of_found_methods = __new_array_with_default(0, 0, sizeof(v__table__Type), 0);
-			// FOR IN array
-			array _t989 = (*left_type_sym->info._v__table__Struct).embeds;
-			for (int _t990 = 0; _t990 < _t989.len; ++_t990) {
-				v__table__Type embed = ((v__table__Type*)_t989.data)[_t990];
-				v__table__TypeSymbol* embed_sym = v__table__Table_get_type_symbol(c->table, embed);
-				{ /* if guard */ 
-				Option_v__table__Fn _t991;
-				if (_t991 = v__table__Table_type_find_method(c->table, embed_sym, method_name), _t991.ok) {
-					v__table__Fn m = *(v__table__Fn*)_t991.data;
-					array_push(&found_methods, _MOV((v__table__Fn[]){ m }));
-					array_push(&embed_of_found_methods, _MOV((v__table__Type[]){ embed }));
-				}}
-			}
-			if (found_methods.len == 1) {
-				method = (*(v__table__Fn*)/*ee elem_typ */array_get(found_methods, 0));
-				has_method = true;
-				is_method_from_embed = true;
-				call_expr->from_embed_type = (*(v__table__Type*)/*ee elem_typ */array_get(embed_of_found_methods, 0));
-			} else if (found_methods.len > 1) {
-				v__checker__Checker_error(c, _STR("ambiguous method `%.*s\000`", 2, method_name), call_expr->pos);
-			}
-		}
 		if (left_type_sym->kind == v__table__Kind_aggregate) {
 			unknown_method_msg = err;
 		}
 	}}
+	if ((left_type_sym->info).typ == 160 /* v.table.Struct */) {
+		array_v__table__Fn found_methods = __new_array_with_default(0, 0, sizeof(v__table__Fn), 0);
+		array_v__table__Type embed_of_found_methods = __new_array_with_default(0, 0, sizeof(v__table__Type), 0);
+		// FOR IN array
+		array _t989 = (*left_type_sym->info._v__table__Struct).embeds;
+		for (int _t990 = 0; _t990 < _t989.len; ++_t990) {
+			v__table__Type embed = ((v__table__Type*)_t989.data)[_t990];
+			v__table__TypeSymbol* embed_sym = v__table__Table_get_type_symbol(c->table, embed);
+			{ /* if guard */ 
+			Option_v__table__Fn _t991;
+			if (_t991 = v__table__Table_type_find_method(c->table, embed_sym, method_name), _t991.ok) {
+				v__table__Fn m = *(v__table__Fn*)_t991.data;
+				array_push(&found_methods, _MOV((v__table__Fn[]){ m }));
+				array_push(&embed_of_found_methods, _MOV((v__table__Type[]){ embed }));
+			}}
+		}
+		if (found_methods.len == 1) {
+			method = (*(v__table__Fn*)/*ee elem_typ */array_get(found_methods, 0));
+			has_method = true;
+			is_method_from_embed = true;
+			call_expr->from_embed_type = (*(v__table__Type*)/*ee elem_typ */array_get(embed_of_found_methods, 0));
+		} else if (found_methods.len > 1) {
+			v__checker__Checker_error(c, _STR("ambiguous method `%.*s\000`", 2, method_name), call_expr->pos);
+		}
+	}
 	if (has_method) {
 		if (!method.is_pub && !c->is_builtin_mod && !c->pref->is_test && string_ne(left_type_sym->mod, c->mod) && (left_type_sym->mod).len != 0) {
 			v__checker__Checker_error(c, _STR("method `%.*s\000.%.*s\000` is private", 3, left_type_sym->name, method_name), call_expr->pos);
@@ -29338,7 +29338,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__St
 				VAssertMetaInfo v_assert_meta_info__t1078;
 				memset(&v_assert_meta_info__t1078, 0, sizeof(VAssertMetaInfo));
 				v_assert_meta_info__t1078.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-				v_assert_meta_info__t1078.line_nr = 2705;
+				v_assert_meta_info__t1078.line_nr = 2709;
 				v_assert_meta_info__t1078.fn_name = _SLIT("stmt");
 				v_assert_meta_info__t1078.src = _SLIT("!c.inside_unsafe");
 				__print_assert_failure(&v_assert_meta_info__t1078);
@@ -30215,8 +30215,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (_t1105 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_112114 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_112114.arg1;
+		multi_return_string_int mr_112445 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_112445.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (_t1105 == v__token__AtKind_vhash) {
@@ -30836,7 +30836,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 		VAssertMetaInfo v_assert_meta_info__t1154;
 		memset(&v_assert_meta_info__t1154, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t1154.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t1154.line_nr = 4008;
+		v_assert_meta_info__t1154.line_nr = 4012;
 		v_assert_meta_info__t1154.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t1154.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t1154);
@@ -31289,8 +31289,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym) && !(typ_sym->kind == v__table__Kind_byteptr || typ_sym->kind == v__table__Kind_charptr)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_145044 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_145044.arg0;
+		multi_return_string_v__token__Position mr_145375 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_145375.arg0;
 	}
 	if (!c->inside_unsafe && (v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym))) {
 		v__checker__Checker_warn(c, _SLIT("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -31875,10 +31875,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1218 = 0; _t1218 < _t1217.len; ++_t1218) {
 			v__table__Fn m = ((v__table__Fn*)_t1217.data)[_t1218];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_163943 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_163943.arg0;
-				int nroute_attributes = mr_163943.arg1;
-				int nargs = mr_163943.arg2;
+				multi_return_bool_int_int mr_164274 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_164274.arg0;
+				int nroute_attributes = mr_164274.arg1;
+				int nargs = mr_164274.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
