@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "45495c3"
+#define V_COMMIT_HASH "20f5076"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "64e7c54"
+	#define V_COMMIT_HASH "45495c3"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "45495c3"
+	#define V_CURRENT_COMMIT_HASH "20f5076"
 #endif
 
 // V comptime_defines:
@@ -3009,8 +3009,6 @@ struct v__ast__InterfaceDecl {
 
 struct v__ast__Module {
 	string name;
-	string path;
-	v__ast__Expr expr;
 	v__token__Position pos;
 	bool is_skipped;
 };
@@ -21416,7 +21414,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("64e7c54"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("45495c3"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -35872,16 +35870,16 @@ VV_LOCAL_SYMBOL v__ast__Module v__parser__Parser_module_decl(v__parser__Parser* 
 		name = v__parser__Parser_check_name(p);
 		if (module_pos.line_nr != pos.line_nr) {
 			v__parser__Parser_error_with_pos(p, _STR("`module` and `%.*s\000` must be at same line", 2, name), pos);
-			return (v__ast__Module){.name = (string){.str=(byteptr)""},.path = (string){.str=(byteptr)""},.expr = {0},.pos = {0},.is_skipped = 0,};
+			return (v__ast__Module){.name = (string){.str=(byteptr)""},.pos = {0},.is_skipped = 0,};
 		}
 		pos = v__token__Token_position(&p->tok);
 		if (module_pos.line_nr == pos.line_nr && p->tok.kind != v__token__Kind_comment) {
 			if (p->tok.kind != v__token__Kind_name) {
 				v__parser__Parser_error_with_pos(p, _SLIT("`module x` syntax error"), pos);
-				return (v__ast__Module){.name = (string){.str=(byteptr)""},.path = (string){.str=(byteptr)""},.expr = {0},.pos = {0},.is_skipped = 0,};
+				return (v__ast__Module){.name = (string){.str=(byteptr)""},.pos = {0},.is_skipped = 0,};
 			} else {
 				v__parser__Parser_error_with_pos(p, _SLIT("`module x` can only declare one module"), pos);
-				return (v__ast__Module){.name = (string){.str=(byteptr)""},.path = (string){.str=(byteptr)""},.expr = {0},.pos = {0},.is_skipped = 0,};
+				return (v__ast__Module){.name = (string){.str=(byteptr)""},.pos = {0},.is_skipped = 0,};
 			}
 		}
 		module_pos = v__token__Position_extend(module_pos, pos);
@@ -35895,7 +35893,7 @@ VV_LOCAL_SYMBOL v__ast__Module v__parser__Parser_module_decl(v__parser__Parser* 
 	}
 	p->mod = full_mod;
 	p->builtin_mod = string_eq(p->mod, _SLIT("builtin"));
-	return (v__ast__Module){.name = full_mod,.path = (string){.str=(byteptr)""},.expr = {0},.pos = module_pos,.is_skipped = is_skipped,};
+	return (v__ast__Module){.name = full_mod,.pos = module_pos,.is_skipped = is_skipped,};
 }
 
 VV_LOCAL_SYMBOL v__ast__Import v__parser__Parser_import_stmt(v__parser__Parser* p) {
