@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f7b3ed2"
+#define V_COMMIT_HASH "1fb6710"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "74ea5ac"
+	#define V_COMMIT_HASH "f7b3ed2"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f7b3ed2"
+	#define V_CURRENT_COMMIT_HASH "1fb6710"
 #endif
 
 // V comptime_defines:
@@ -21224,7 +21224,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("74ea5ac"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f7b3ed2"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -21726,6 +21726,10 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(array_string args) 
 			i++;
 		}
 		else {
+			if (string_eq(command, _SLIT("build")) && (string_ends_with(arg, _SLIT(".v")) || os__exists(command))) {
+				eprintln(_STR("Use `v %.*s\000` instead.", 2, arg));
+				v_exit(1);
+			}
 			if (string_at(arg, 0) == '-') {
 				if ((array_string_contains(_const_v__pref__list_of_flags_with_param, string_substr(arg, 1, arg.len)))) {
 					i++;
