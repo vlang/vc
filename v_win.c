@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "fc6d45b"
+#define V_COMMIT_HASH "dee3bbf"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "38c764f"
+	#define V_COMMIT_HASH "fc6d45b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "fc6d45b"
+	#define V_CURRENT_COMMIT_HASH "dee3bbf"
 #endif
 
 // V comptime_defines:
@@ -21238,7 +21238,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("38c764f"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fc6d45b"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -38293,6 +38293,8 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__tabl
 
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_map(v__gen__Gen* g, v__table__Map info, string styp, string str_fn_name) {
 	v__table__TypeSymbol* key_sym = v__table__Table_get_type_symbol(g->table, info.key_type);
+	string key_styp = v__gen__Gen_typ(g, info.key_type);
+	string key_str_fn_name = string_add(string_replace(key_styp, _SLIT("*"), _SLIT("")), _SLIT("_str"));
 	if (!v__table__TypeSymbol_has_method(key_sym, _SLIT("str"))) {
 		v__gen__Gen_gen_str_for_type(g, info.key_type);
 	}
@@ -38310,8 +38312,20 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_map(v__gen__Gen* g, v__table__Map i
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\tstrings__Builder_write(&sb, _SLIT(\"{\"));"));
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\tfor (int i = 0; i < m.key_values.len; ++i) {"));
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t\tif (!DenseArray_has_index(&m.key_values, i)) { continue; }"));
-	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t\tstring key = *(string*)DenseArray_key(&m.key_values, i);"));
-	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t\tstrings__Builder_write(&sb, _STR(\"\'%.*s\\000\'\", 2, key));"));
+	if (key_sym->kind == v__table__Kind_string) {
+		strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t\tstring key = *(string*)DenseArray_key(&m.key_values, i);"));
+	} else {
+		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\t%.*s\000 key = *(%.*s\000*)DenseArray_key(&m.key_values, i);", 3, key_styp, key_styp));
+	}
+	if (key_sym->kind == v__table__Kind_string) {
+		strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t\tstrings__Builder_write(&sb, _STR(\"\'%.*s\\000\'\", 2, key));"));
+	} else if (key_sym->kind == v__table__Kind_rune) {
+		strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t\tstrings__Builder_write(&sb, tos3(\"`\"));"));
+		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstrings__Builder_write(&sb, %.*s\000(key));", 2, key_str_fn_name));
+		strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t\tstrings__Builder_write(&sb, tos3(\"`\"));"));
+	} else {
+		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstrings__Builder_write(&sb, %.*s\000(key));", 2, key_str_fn_name));
+	}
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t\tstrings__Builder_write(&sb, _SLIT(\": \"));"));
 	if (val_sym->kind == v__table__Kind_function) {
 		strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstrings__Builder_write(&sb, %.*s\000());", 2, elem_str_fn_name));
@@ -38323,6 +38337,10 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_map(v__gen__Gen* g, v__table__Map i
 			strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstrings__Builder_write(&sb, indent_%.*s\000(it, indent_count));", 2, elem_str_fn_name));
 		} else if ((val_sym->kind == v__table__Kind_f32 || val_sym->kind == v__table__Kind_f64)) {
 			strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t\tstrings__Builder_write(&sb, _STR(\"%g\", 1, it));"));
+		} else if (val_sym->kind == v__table__Kind_rune) {
+			strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t\tstrings__Builder_write(&sb, tos3(\"`\"));"));
+			strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstrings__Builder_write(&sb, %.*s\000(it));", 2, elem_str_fn_name));
+			strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t\tstrings__Builder_write(&sb, tos3(\"`\"));"));
 		} else {
 			strings__Builder_writeln(&g->auto_str_funcs, _STR("\t\tstrings__Builder_write(&sb, %.*s\000(it));", 2, elem_str_fn_name));
 		}
@@ -38357,9 +38375,9 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_multi_return(v__gen__Gen* g, v__tab
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 		string field_styp = v__gen__Gen_typ(g, typ);
 		bool is_arg_ptr = v__table__Type_is_ptr(typ);
-		multi_return_bool_bool_int mr_16228 = v__table__TypeSymbol_str_method_info(sym);
-		bool sym_has_str_method = mr_16228.arg0;
-		bool str_method_expects_ptr = mr_16228.arg1;
+		multi_return_bool_bool_int mr_17136 = v__table__TypeSymbol_str_method_info(sym);
+		bool sym_has_str_method = mr_17136.arg0;
+		bool str_method_expects_ptr = mr_17136.arg1;
 		string arg_str_fn_name = _SLIT("");
 		if (sym_has_str_method) {
 			arg_str_fn_name = (is_arg_ptr ? (string_add(string_replace(field_styp, _SLIT("*"), _SLIT("")), _SLIT("_str"))) : (string_add(field_styp, _SLIT("_str"))));
