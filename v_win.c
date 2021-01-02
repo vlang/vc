@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7f776bf"
+#define V_COMMIT_HASH "6bd3550"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c1e0e01"
+	#define V_COMMIT_HASH "7f776bf"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7f776bf"
+	#define V_CURRENT_COMMIT_HASH "6bd3550"
 #endif
 
 // V comptime_defines:
@@ -21238,7 +21238,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c1e0e01"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7f776bf"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -33012,7 +33012,7 @@ VV_LOCAL_SYMBOL multi_return_array_v__table__Param_bool_bool v__parser__Parser_f
 	array_v__table__Param args = __new_array_with_default(0, 0, sizeof(v__table__Param), 0);
 	bool is_variadic = false;
 	string argname = (p->tok.kind == v__token__Kind_name && p->tok.lit.len > 0 && byte_is_capital(string_at(p->tok.lit, 0)) ? (v__parser__Parser_prepend_mod(p, p->tok.lit)) : (p->tok.lit));
-	bool types_only = (p->tok.kind == v__token__Kind_amp || p->tok.kind == v__token__Kind_ellipsis || p->tok.kind == v__token__Kind_key_fn) || (p->peek_tok.kind == v__token__Kind_comma && v__table__Table_known_type(p->table, argname)) || p->peek_tok.kind == v__token__Kind_rpar;
+	bool types_only = (p->tok.kind == v__token__Kind_amp || p->tok.kind == v__token__Kind_ellipsis || p->tok.kind == v__token__Kind_key_fn) || (p->peek_tok.kind == v__token__Kind_comma && v__table__Table_known_type(p->table, argname)) || p->peek_tok.kind == v__token__Kind_dot || p->peek_tok.kind == v__token__Kind_rpar;
 	if (types_only) {
 		int arg_no = 1;
 		for (;;) {
