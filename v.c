@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6bd3550"
+#define V_COMMIT_HASH "b3de003"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7f776bf"
+	#define V_COMMIT_HASH "6bd3550"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6bd3550"
+	#define V_CURRENT_COMMIT_HASH "b3de003"
 #endif
 
 // V comptime_defines:
@@ -21459,7 +21459,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7f776bf"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6bd3550"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -24460,11 +24460,15 @@ string v__table__Table_type_to_str_using_aliases(v__table__Table* table, v__tabl
 		}
 	}
 	else if (_t828 == v__table__Kind_function) {
+		v__table__FnType info = /* as */ *(v__table__FnType*)__as_cast((sym->info)._v__table__FnType, (sym->info).typ, /*expected:*/335);
 		if (!table->is_fmt) {
-			v__table__FnType info = /* as */ *(v__table__FnType*)__as_cast((sym->info)._v__table__FnType, (sym->info).typ, /*expected:*/335);
 			res = v__table__Table_fn_signature(table, (voidptr)&/*qq*/info.func, (v__table__FnSignatureOpts){.skip_receiver = 0,.type_only = true,});
 		} else {
-			res = v__table__Table_shorten_user_defined_typenames(/*rec*/*table, res, import_aliases);
+			if (string_starts_with(res, _SLIT("fn ("))) {
+				res = v__table__Table_fn_signature(table, (voidptr)&/*qq*/info.func, (v__table__FnSignatureOpts){.skip_receiver = 0,.type_only = true,});
+			} else {
+				res = v__table__Table_shorten_user_defined_typenames(/*rec*/*table, res, import_aliases);
+			}
 		}
 	}
 	else if (_t828 == v__table__Kind_map) {
