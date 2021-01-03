@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "dd51685"
+#define V_COMMIT_HASH "dce2019"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "095857d"
+	#define V_COMMIT_HASH "dd51685"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "dd51685"
+	#define V_CURRENT_COMMIT_HASH "dce2019"
 #endif
 
 // V comptime_defines:
@@ -21460,7 +21460,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("095857d"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("dd51685"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -24434,7 +24434,10 @@ string v__table__Table_type_to_str_using_aliases(v__table__Table* table, v__tabl
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(table, t);
 	string res = sym->name;
 	v__table__Kind _t829 = sym->kind; 
-	if (_t829 == v__table__Kind_any_int || _t829 == v__table__Kind_i8 || _t829 == v__table__Kind_i16 || _t829 == v__table__Kind_int || _t829 == v__table__Kind_i64 || _t829 == v__table__Kind_byte || _t829 == v__table__Kind_u16 || _t829 == v__table__Kind_u32 || _t829 == v__table__Kind_u64 || _t829 == v__table__Kind_any_float || _t829 == v__table__Kind_f32 || _t829 == v__table__Kind_f64 || _t829 == v__table__Kind_char || _t829 == v__table__Kind_rune || _t829 == v__table__Kind_string || _t829 == v__table__Kind_bool || _t829 == v__table__Kind_none_ || _t829 == v__table__Kind_byteptr || _t829 == v__table__Kind_voidptr || _t829 == v__table__Kind_charptr) {
+	if (_t829 == v__table__Kind_any_int || _t829 == v__table__Kind_any_float) {
+		res = sym->name;
+	}
+	else if (_t829 == v__table__Kind_i8 || _t829 == v__table__Kind_i16 || _t829 == v__table__Kind_int || _t829 == v__table__Kind_i64 || _t829 == v__table__Kind_byte || _t829 == v__table__Kind_u16 || _t829 == v__table__Kind_u32 || _t829 == v__table__Kind_u64 || _t829 == v__table__Kind_f32 || _t829 == v__table__Kind_f64 || _t829 == v__table__Kind_char || _t829 == v__table__Kind_rune || _t829 == v__table__Kind_string || _t829 == v__table__Kind_bool || _t829 == v__table__Kind_none_ || _t829 == v__table__Kind_byteptr || _t829 == v__table__Kind_voidptr || _t829 == v__table__Kind_charptr) {
 		res = v__table__Kind_str(sym->kind);
 	}
 	else if (_t829 == v__table__Kind_array) {
