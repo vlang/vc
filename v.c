@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a8a81a1"
+#define V_COMMIT_HASH "2208504"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3a357d9"
+	#define V_COMMIT_HASH "a8a81a1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a8a81a1"
+	#define V_CURRENT_COMMIT_HASH "2208504"
 #endif
 
 // V comptime_defines:
@@ -4278,6 +4278,9 @@ string strconv__ftoa_64(f64 f);
 string strconv__ftoa_long_64(f64 f);
 string strconv__ftoa_32(f32 f);
 string strconv__ftoa_long_32(f32 f);
+string _const_strconv__base_digits; // a string literal, inited later
+string strconv__format_int(i64 n, int radix);
+string strconv__format_uint(u64 n, int radix);
 #define _const_strconv__pow5_num_bits_32 61
 #define _const_strconv__pow5_inv_num_bits_32 59
 #define _const_strconv__pow5_num_bits_64 121
@@ -6625,6 +6628,7 @@ typedef struct {
 void vinit_string_literals(){
 	_const_math__bits__overflow_error = _SLIT("Overflow Error");
 	_const_math__bits__divide_error = _SLIT("Divide Error");
+	_const_strconv__base_digits = _SLIT("0123456789abcdefghijklmnopqrstuvwxyz");
 	_const_digit_pairs = _SLIT("00102030405060708090011121314151617181910212223242526272829203132333435363738393041424344454647484940515253545556575859506162636465666768696071727374757677787970818283848586878889809192939495969798999");
 	_const_os__path_separator = _SLIT("/");
 	_const_os__path_delimiter = _SLIT(":");
@@ -9969,6 +9973,46 @@ inline string strconv__ftoa_32(f32 f) {
 // Attr: [inline]
 inline string strconv__ftoa_long_32(f32 f) {
 	return strconv__f32_to_str_l(f);
+}
+
+string strconv__format_int(i64 n, int radix) {
+	if (radix < 2 || radix > 36) {
+		v_panic(_STR("invalid radix: %"PRId32"\000 . It should be => 2 and <= 36", 2, radix));
+	}
+	if (n == 0) {
+		return _SLIT("0");
+	}
+	i64 n_copy = n;
+	string sign = _SLIT("");
+	if (n < 0) {
+		sign = _SLIT("-");
+		n_copy = -n_copy;
+	}
+	string res = _SLIT("");
+	for (;;) {
+		if (!(n_copy != 0)) break;
+		res = string_add(byte_str(string_at(_const_strconv__base_digits, n_copy % radix)), res);
+		n_copy /= radix;
+	}
+	return _STR("%.*s\000%.*s", 2, sign, res);
+}
+
+string strconv__format_uint(u64 n, int radix) {
+	if (radix < 2 || radix > 36) {
+		v_panic(_STR("invalid radix: %"PRId32"\000 . It should be => 2 and <= 36", 2, radix));
+	}
+	if (n == 0) {
+		return _SLIT("0");
+	}
+	u64 n_copy = n;
+	string res = _SLIT("");
+	u64 uradix = ((u64)(radix));
+	for (;;) {
+		if (!(n_copy != 0)) break;
+		res = string_add(byte_str(string_at(_const_strconv__base_digits, n_copy % uradix)), res);
+		n_copy /= uradix;
+	}
+	return res;
 }
 
 VV_LOCAL_SYMBOL void strconv__assert1(bool t, string msg) {
@@ -21461,7 +21505,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3a357d9"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a8a81a1"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
