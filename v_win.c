@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b9c6011"
+#define V_COMMIT_HASH "5252155"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2208504"
+	#define V_COMMIT_HASH "b9c6011"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b9c6011"
+	#define V_CURRENT_COMMIT_HASH "5252155"
 #endif
 
 // V comptime_defines:
@@ -17182,7 +17182,7 @@ Option_time__Time time__parse_iso8601(string s) {
 	}
 	t = time__unix2(((int)(unix_time)), t.microsecond);
 	Option_time__Time _t287;
-	opt_ok2(&(time__Time[]) { time__Time_local(t) }, (OptionBase*)(&_t287), sizeof(time__Time));
+	opt_ok2(&(time__Time[]) { t }, (OptionBase*)(&_t287), sizeof(time__Time));
 	return _t287;
 }
 
@@ -21284,7 +21284,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2208504"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b9c6011"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
