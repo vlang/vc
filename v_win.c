@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7c9fb73"
+#define V_COMMIT_HASH "040b923"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "bf904c2"
+	#define V_COMMIT_HASH "7c9fb73"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7c9fb73"
+	#define V_CURRENT_COMMIT_HASH "040b923"
 #endif
 
 // V comptime_defines:
@@ -8565,25 +8565,28 @@ f64 strconv__atof64(string s) {
 	multi_return_int_strconv__PrepNumber mr_10230 = strconv__parser(string_add(s, _SLIT(" ")));
 	res_parsing = mr_10230.arg0;
 	pn = mr_10230.arg1;
-	int _t9 = res_parsing; 
-	if (_t9 == _const_strconv__parser_ok) {
-		res.u = strconv__converter((voidptr)&/*qq*/pn);
+	{ // Unsafe block
+		int _t9 = res_parsing; 
+		if (_t9 == _const_strconv__parser_ok) {
+			res.u = strconv__converter((voidptr)&/*qq*/pn);
+		}
+		else if (_t9 == _const_strconv__parser_pzero) {
+			res.u = _const_strconv__double_plus_zero;
+		}
+		else if (_t9 == _const_strconv__parser_mzero) {
+			res.u = _const_strconv__double_minus_zero;
+		}
+		else if (_t9 == _const_strconv__parser_pinf) {
+			res.u = _const_strconv__double_plus_infinity;
+		}
+		else if (_t9 == _const_strconv__parser_minf) {
+			res.u = _const_strconv__double_minus_infinity;
+		}
+		else {
+		};
+		return res.f;
 	}
-	else if (_t9 == _const_strconv__parser_pzero) {
-		res.u = _const_strconv__double_plus_zero;
-	}
-	else if (_t9 == _const_strconv__parser_mzero) {
-		res.u = _const_strconv__double_minus_zero;
-	}
-	else if (_t9 == _const_strconv__parser_pinf) {
-		res.u = _const_strconv__double_plus_infinity;
-	}
-	else if (_t9 == _const_strconv__parser_minf) {
-		res.u = _const_strconv__double_minus_infinity;
-	}
-	else {
-	};
-	return res.f;
+	return 0;
 }
 
 f64 strconv__atof_quick(string s) {
@@ -8606,90 +8609,93 @@ f64 strconv__atof_quick(string s) {
 			i++;
 		}
 	}
-	if (string_at(s, i) == L'i' && i + 2 < s.len && string_at(s, i + 1) == L'n' && string_at(s, i + 2) == L'f') {
-		if (sign > 0.0) {
-			f.u = _const_strconv__double_plus_infinity;
-		} else {
-			f.u = _const_strconv__double_minus_infinity;
-		}
-		return f.f;
-	}
-	for (;;) {
-		if (!(i < s.len && string_at(s, i) == L'0')) break;
-		i++;
-		if (i >= s.len) {
+	{ // Unsafe block
+		if (string_at(s, i) == L'i' && i + 2 < s.len && string_at(s, i + 1) == L'n' && string_at(s, i + 2) == L'f') {
 			if (sign > 0.0) {
-				f.u = _const_strconv__double_plus_zero;
+				f.u = _const_strconv__double_plus_infinity;
 			} else {
-				f.u = _const_strconv__double_minus_zero;
+				f.u = _const_strconv__double_minus_infinity;
 			}
 			return f.f;
-		}
-	}
-	for (;;) {
-		if (!(i < s.len && (string_at(s, i) >= L'0' && string_at(s, i) <= L'9'))) break;
-		f.f *= ((f64)(10.0));
-		f.f += ((f64)(string_at(s, i) - L'0'));
-		i++;
-	}
-	if (i < s.len && string_at(s, i) == L'.') {
-		i++;
-		f64 frac_mul = ((f64)(0.1));
-		for (;;) {
-			if (!(i < s.len && (string_at(s, i) >= L'0' && string_at(s, i) <= L'9'))) break;
-			f.f += ((f64)(string_at(s, i) - L'0')) * frac_mul;
-			frac_mul *= ((f64)(0.1));
-			i++;
-		}
-	}
-	if (i < s.len && (string_at(s, i) == L'e' || string_at(s, i) == L'E')) {
-		i++;
-		int exp = 0;
-		int exp_sign = 1;
-		if (i < s.len) {
-			if (string_at(s, i) == L'-') {
-				exp_sign = -1;
-				i++;
-			} else if (string_at(s, i) == L'+') {
-				i++;
-			}
 		}
 		for (;;) {
 			if (!(i < s.len && string_at(s, i) == L'0')) break;
 			i++;
-		}
-		for (;;) {
-			if (!(i < s.len && (string_at(s, i) >= L'0' && string_at(s, i) <= L'9'))) break;
-			exp *= 10;
-			exp += ((int)(string_at(s, i) - L'0'));
-			i++;
-		}
-		if (exp_sign == 1) {
-			if (exp > _const_strconv__pos_exp.len) {
-				if (sign > 0) {
-					f.u = _const_strconv__double_plus_infinity;
-				} else {
-					f.u = _const_strconv__double_minus_infinity;
-				}
-				return f.f;
-			}
-			strconv__Float64u tmp_mul = (strconv__Float64u){.u = (*(u64*)/*ee elem_typ */array_get(_const_strconv__pos_exp, exp)),};
-			f.f = f.f * tmp_mul.f;
-		} else {
-			if (exp > _const_strconv__neg_exp.len) {
-				if (sign > 0) {
+			if (i >= s.len) {
+				if (sign > 0.0) {
 					f.u = _const_strconv__double_plus_zero;
 				} else {
 					f.u = _const_strconv__double_minus_zero;
 				}
 				return f.f;
 			}
-			strconv__Float64u tmp_mul = (strconv__Float64u){.u = (*(u64*)/*ee elem_typ */array_get(_const_strconv__neg_exp, exp)),};
-			f.f = f.f * tmp_mul.f;
 		}
+		for (;;) {
+			if (!(i < s.len && (string_at(s, i) >= L'0' && string_at(s, i) <= L'9'))) break;
+			f.f *= ((f64)(10.0));
+			f.f += ((f64)(string_at(s, i) - L'0'));
+			i++;
+		}
+		if (i < s.len && string_at(s, i) == L'.') {
+			i++;
+			f64 frac_mul = ((f64)(0.1));
+			for (;;) {
+				if (!(i < s.len && (string_at(s, i) >= L'0' && string_at(s, i) <= L'9'))) break;
+				f.f += ((f64)(string_at(s, i) - L'0')) * frac_mul;
+				frac_mul *= ((f64)(0.1));
+				i++;
+			}
+		}
+		if (i < s.len && (string_at(s, i) == L'e' || string_at(s, i) == L'E')) {
+			i++;
+			int exp = 0;
+			int exp_sign = 1;
+			if (i < s.len) {
+				if (string_at(s, i) == L'-') {
+					exp_sign = -1;
+					i++;
+				} else if (string_at(s, i) == L'+') {
+					i++;
+				}
+			}
+			for (;;) {
+				if (!(i < s.len && string_at(s, i) == L'0')) break;
+				i++;
+			}
+			for (;;) {
+				if (!(i < s.len && (string_at(s, i) >= L'0' && string_at(s, i) <= L'9'))) break;
+				exp *= 10;
+				exp += ((int)(string_at(s, i) - L'0'));
+				i++;
+			}
+			if (exp_sign == 1) {
+				if (exp > _const_strconv__pos_exp.len) {
+					if (sign > 0) {
+						f.u = _const_strconv__double_plus_infinity;
+					} else {
+						f.u = _const_strconv__double_minus_infinity;
+					}
+					return f.f;
+				}
+				strconv__Float64u tmp_mul = (strconv__Float64u){.u = (*(u64*)/*ee elem_typ */array_get(_const_strconv__pos_exp, exp)),};
+				f.f = f.f * tmp_mul.f;
+			} else {
+				if (exp > _const_strconv__neg_exp.len) {
+					if (sign > 0) {
+						f.u = _const_strconv__double_plus_zero;
+					} else {
+						f.u = _const_strconv__double_minus_zero;
+					}
+					return f.f;
+				}
+				strconv__Float64u tmp_mul = (strconv__Float64u){.u = (*(u64*)/*ee elem_typ */array_get(_const_strconv__neg_exp, exp)),};
+				f.f = f.f * tmp_mul.f;
+			}
+		}
+		f.f = f.f * sign;
+		return f.f;
 	}
-	f.f = f.f * sign;
-	return f.f;
+	return 0;
 }
 
 byte strconv__byte_to_lower(byte c) {
@@ -9088,7 +9094,9 @@ string strconv__f32_to_str(f32 f, int n_digit) {
 0
 #endif
 };
-	u1.f = f;
+	{ // Unsafe block
+		u1.f = f;
+	}
 	u32 u = u1.u;
 	bool neg = (u >> (_const_strconv__mantbits32 + _const_strconv__expbits32)) != 0;
 	u32 mant = (u & ((((u32)(1U)) << _const_strconv__mantbits32) - ((u32)(1U))));
@@ -9096,9 +9104,9 @@ string strconv__f32_to_str(f32 f, int n_digit) {
 	if ((exp == _const_strconv__maxexp32) || (exp == 0 && mant == 0)) {
 		return strconv__get_string_special(neg, exp == 0, mant == 0);
 	}
-	multi_return_strconv__Dec32_bool mr_7979 = strconv__f32_to_decimal_exact_int(mant, exp);
-	strconv__Dec32 d = mr_7979.arg0;
-	bool ok = mr_7979.arg1;
+	multi_return_strconv__Dec32_bool mr_7999 = strconv__f32_to_decimal_exact_int(mant, exp);
+	strconv__Dec32 d = mr_7999.arg0;
+	bool ok = mr_7999.arg1;
 	if (!ok) {
 		d = strconv__f32_to_decimal(mant, exp);
 	}
@@ -9111,7 +9119,9 @@ string strconv__f32_to_str_pad(f32 f, int n_digit) {
 0
 #endif
 };
-	u1.f = f;
+	{ // Unsafe block
+		u1.f = f;
+	}
 	u32 u = u1.u;
 	bool neg = (u >> (_const_strconv__mantbits32 + _const_strconv__expbits32)) != 0;
 	u32 mant = (u & ((((u32)(1U)) << _const_strconv__mantbits32) - ((u32)(1U))));
@@ -9119,9 +9129,9 @@ string strconv__f32_to_str_pad(f32 f, int n_digit) {
 	if ((exp == _const_strconv__maxexp32) || (exp == 0 && mant == 0)) {
 		return strconv__get_string_special(neg, exp == 0, mant == 0);
 	}
-	multi_return_strconv__Dec32_bool mr_8687 = strconv__f32_to_decimal_exact_int(mant, exp);
-	strconv__Dec32 d = mr_8687.arg0;
-	bool ok = mr_8687.arg1;
+	multi_return_strconv__Dec32_bool mr_8727 = strconv__f32_to_decimal_exact_int(mant, exp);
+	strconv__Dec32 d = mr_8727.arg0;
+	bool ok = mr_8727.arg1;
 	if (!ok) {
 		d = strconv__f32_to_decimal(mant, exp);
 	}
@@ -9362,7 +9372,9 @@ string strconv__f64_to_str(f64 f, int n_digit) {
 0
 #endif
 };
-	u1.f = f;
+	{ // Unsafe block
+		u1.f = f;
+	}
 	u64 u = u1.u;
 	bool neg = (u >> (_const_strconv__mantbits64 + _const_strconv__expbits64)) != 0;
 	u64 mant = (u & ((((u64)(1U)) << _const_strconv__mantbits64) - ((u64)(1U))));
@@ -9370,9 +9382,9 @@ string strconv__f64_to_str(f64 f, int n_digit) {
 	if ((exp == _const_strconv__maxexp64) || (exp == 0 && mant == 0)) {
 		return strconv__get_string_special(neg, exp == 0, mant == 0);
 	}
-	multi_return_strconv__Dec64_bool mr_9686 = strconv__f64_to_decimal_exact_int(mant, exp);
-	strconv__Dec64 d = mr_9686.arg0;
-	bool ok = mr_9686.arg1;
+	multi_return_strconv__Dec64_bool mr_9706 = strconv__f64_to_decimal_exact_int(mant, exp);
+	strconv__Dec64 d = mr_9706.arg0;
+	bool ok = mr_9706.arg1;
 	if (!ok) {
 		d = strconv__f64_to_decimal(mant, exp);
 	}
@@ -9385,7 +9397,9 @@ string strconv__f64_to_str_pad(f64 f, int n_digit) {
 0
 #endif
 };
-	u1.f = f;
+	{ // Unsafe block
+		u1.f = f;
+	}
 	u64 u = u1.u;
 	bool neg = (u >> (_const_strconv__mantbits64 + _const_strconv__expbits64)) != 0;
 	u64 mant = (u & ((((u64)(1U)) << _const_strconv__mantbits64) - ((u64)(1U))));
@@ -9393,9 +9407,9 @@ string strconv__f64_to_str_pad(f64 f, int n_digit) {
 	if ((exp == _const_strconv__maxexp64) || (exp == 0 && mant == 0)) {
 		return strconv__get_string_special(neg, exp == 0, mant == 0);
 	}
-	multi_return_strconv__Dec64_bool mr_10422 = strconv__f64_to_decimal_exact_int(mant, exp);
-	strconv__Dec64 d = mr_10422.arg0;
-	bool ok = mr_10422.arg1;
+	multi_return_strconv__Dec64_bool mr_10462 = strconv__f64_to_decimal_exact_int(mant, exp);
+	strconv__Dec64 d = mr_10462.arg0;
+	bool ok = mr_10462.arg1;
 	if (!ok) {
 		d = strconv__f64_to_decimal(mant, exp);
 	}
@@ -21283,7 +21297,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("bf904c2"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7c9fb73"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -27890,6 +27904,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
 			}
+			if (struct_info.is_union && !c->inside_unsafe) {
+				v__checker__Checker_warn(c, _SLIT("accessing union fields requires `unsafe`"), (*expr._v__ast__SelectorExpr).pos);
+			}
 		}
 		else if (_t980 == v__table__Kind_array || _t980 == v__table__Kind_string) {
 			if (!(string_eq(c->file->mod.name, _SLIT("builtin")) || string_eq(c->file->mod.name, _SLIT("crypto.rand")))) {
@@ -27902,9 +27919,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 	}
 	else if (_t979.typ == 219 /* v.ast.CallExpr */) {
 		if (string_eq((*expr._v__ast__CallExpr).name, _SLIT("slice"))) {
-			multi_return_string_v__token__Position mr_36979 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
-			to_lock = mr_36979.arg0;
-			pos = mr_36979.arg1;
+			multi_return_string_v__token__Position mr_37104 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
+			to_lock = mr_37104.arg0;
+			pos = mr_37104.arg1;
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
 			}
@@ -29458,7 +29475,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__St
 				VAssertMetaInfo v_assert_meta_info__t1082;
 				memset(&v_assert_meta_info__t1082, 0, sizeof(VAssertMetaInfo));
 				v_assert_meta_info__t1082.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-				v_assert_meta_info__t1082.line_nr = 2744;
+				v_assert_meta_info__t1082.line_nr = 2747;
 				v_assert_meta_info__t1082.fn_name = _SLIT("stmt");
 				v_assert_meta_info__t1082.src = _SLIT("!c.inside_unsafe");
 				__print_assert_failure(&v_assert_meta_info__t1082);
@@ -30339,8 +30356,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (_t1109 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_113535 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_113535.arg1;
+		multi_return_string_int mr_113660 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_113660.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (_t1109 == v__token__AtKind_vhash) {
@@ -30972,7 +30989,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 		VAssertMetaInfo v_assert_meta_info__t1161;
 		memset(&v_assert_meta_info__t1161, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t1161.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t1161.line_nr = 4057;
+		v_assert_meta_info__t1161.line_nr = 4060;
 		v_assert_meta_info__t1161.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t1161.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t1161);
@@ -31425,8 +31442,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym) && !(typ_sym->kind == v__table__Kind_byteptr || typ_sym->kind == v__table__Kind_charptr)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_146643 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_146643.arg0;
+		multi_return_string_v__token__Position mr_146768 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_146768.arg0;
 	}
 	if (!c->inside_unsafe && (v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym))) {
 		v__checker__Checker_warn(c, _SLIT("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -32037,10 +32054,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1225 = 0; _t1225 < _t1224.len; ++_t1225) {
 			v__table__Fn m = ((v__table__Fn*)_t1224.data)[_t1225];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_166331 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_166331.arg0;
-				int nroute_attributes = mr_166331.arg1;
-				int nargs = mr_166331.arg2;
+				multi_return_bool_int_int mr_166456 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_166456.arg0;
+				int nroute_attributes = mr_166456.arg1;
+				int nargs = mr_166456.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
