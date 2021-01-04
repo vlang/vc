@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "46d311d"
+#define V_COMMIT_HASH "0ab6a8c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7533ffa"
+	#define V_COMMIT_HASH "46d311d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "46d311d"
+	#define V_CURRENT_COMMIT_HASH "0ab6a8c"
 #endif
 
 // V comptime_defines:
@@ -4775,15 +4775,6 @@ VV_LOCAL_SYMBOL int utf8_str_len(string s);
 VV_LOCAL_SYMBOL int utf8_str_visible_length(string s);
 array_string os__args_after(string cut_word);
 array_string os__args_before(string cut_word);
-#define _const_os__s_ifmt 0xF000
-#define _const_os__s_ifdir 0x4000
-#define _const_os__s_iflnk 0xa000
-#define _const_os__s_ixusr 0100
-#define _const_os__s_ixgrp 0010
-#define _const_os__s_ixoth 0001
-int _const_os__std_input_handle; // inited later
-int _const_os__std_output_handle; // inited later
-int _const_os__std_error_handle; // inited later
 #define _const_os__success 0x0000
 #define _const_os__error_insufficient_buffer 0x0082
 #define _const_os__handle_generic_read 0x80000000
@@ -5033,6 +5024,7 @@ bool os__debugger_present();
 os__Uname os__uname();
 Option_bool os__is_writable_folder(string folder);
 int os__getpid();
+void os__posix_set_permission_bit(string path_s, u32 mode, bool enable);
 os__Process* os__new_process(string filename);
 os__Process* os__Process_set_args(os__Process* p, array_string pargs);
 os__Process* os__Process_set_environment(os__Process* p, map_string_string envs);
@@ -15919,7 +15911,7 @@ string os__get_raw_line() {
 		{ // Unsafe block
 			int max_line_chars = 256;
 			byteptr buf = v_malloc(max_line_chars * 2);
-			voidptr h_input = GetStdHandle(_const_os__std_input_handle);
+			voidptr h_input = GetStdHandle(STD_INPUT_HANDLE);
 			int bytes_read = 0;
 			if (is_atty(0) > 0) {
 				ReadConsole(h_input, buf, max_line_chars * 2, ((LPDWORD)(&bytes_read)), 0);
@@ -15954,7 +15946,7 @@ array_byte os__get_raw_stdin() {
 		{ // Unsafe block
 			int block_bytes = 512;
 			byteptr buf = v_malloc(block_bytes);
-			voidptr h_input = GetStdHandle(_const_os__std_input_handle);
+			voidptr h_input = GetStdHandle(STD_INPUT_HANDLE);
 			int bytes_read = 0;
 			int offset = 0;
 			for (;;) {
@@ -16506,6 +16498,9 @@ Option_bool os__is_writable_folder(string folder) {
 // Attr: [inline]
 inline int os__getpid() {
 	return _getpid();
+}
+
+void os__posix_set_permission_bit(string path_s, u32 mode, bool enable) {
 }
 
 os__Process* os__new_process(string filename) {
@@ -21284,7 +21279,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7533ffa"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("46d311d"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -51169,9 +51164,6 @@ void _vinit() {
 	_const_max_len = 2 * _const_degree - 1;
 	_const_children_bytes = /*SizeOfType*/ sizeof(voidptr) * (_const_max_len + 1);
 	// Initializations for module os :
-	_const_os__std_input_handle = -10;
-	_const_os__std_output_handle = -11;
-	_const_os__std_error_handle = -12;
 	_const_os__file_invalid_file_id = (-1);
 	_const_os__invalid_handle_value = ((voidptr)(-1));
 	_const_os__hkey_local_machine = ((voidptr)(0x80000002));
