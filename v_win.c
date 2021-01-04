@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2208504"
+#define V_COMMIT_HASH "b9c6011"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a8a81a1"
+	#define V_COMMIT_HASH "2208504"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2208504"
+	#define V_CURRENT_COMMIT_HASH "b9c6011"
 #endif
 
 // V comptime_defines:
@@ -21284,7 +21284,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a8a81a1"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2208504"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -36558,6 +36558,13 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 	else if (_t1372 == v__token__Kind_lsbr) {
 		if (p->expecting_type) {
 			node = v__parser__Parser_name_expr(p);
+		} else if (p->is_amp && p->peek_tok.kind == v__token__Kind_rsbr) {
+			v__token__Position pos = v__token__Token_position(&p->tok);
+			v__table__Type typ = v__table__Type_to_ptr(v__parser__Parser_parse_type(p));
+			v__parser__Parser_check(p, v__token__Kind_lpar);
+			v__ast__Expr expr = v__parser__Parser_expr(p, 0);
+			v__parser__Parser_check(p, v__token__Kind_rpar);
+			node = /* sum type cast 4 */ (v__ast__Expr){._v__ast__CastExpr = memdup(&(v__ast__CastExpr[]){(v__ast__CastExpr){.expr = expr,.arg = {0},.typ = typ,.pos = pos,.typname = (string){.str=(byteptr)""},.expr_type = 0,.has_arg = 0,.in_prexpr = 0,}}, sizeof(v__ast__CastExpr)), .typ = 220 /* v.ast.CastExpr */};
 		} else {
 			node = /* sum type cast 4 */ (v__ast__Expr){._v__ast__ArrayInit = memdup(&(v__ast__ArrayInit[]){v__parser__Parser_array_init(p)}, sizeof(v__ast__ArrayInit)), .typ = 213 /* v.ast.ArrayInit */};
 		}
