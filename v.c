@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "fada097"
+#define V_COMMIT_HASH "3e04dfc"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "95431cf"
+	#define V_COMMIT_HASH "fada097"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "fada097"
+	#define V_CURRENT_COMMIT_HASH "3e04dfc"
 #endif
 
 // V comptime_defines:
@@ -4463,6 +4463,7 @@ string voidptr_str(voidptr nn);
 string byteptr_str(byteptr nn);
 string u64_hex_full(u64 nn);
 string byte_str(byte b);
+string byte_ascii_str(byte b);
 string byte_str_escaped(byte b);
 #define _const_hashbits 24
 #define _const_max_cached_hashbits 16
@@ -10035,7 +10036,7 @@ string strconv__format_int(i64 n, int radix) {
 	string res = _SLIT("");
 	for (;;) {
 		if (!(n_copy != 0)) break;
-		res = string_add(byte_str(string_at(_const_strconv__base_digits, n_copy % radix)), res);
+		res = string_add(byte_ascii_str(string_at(_const_strconv__base_digits, n_copy % radix)), res);
 		n_copy /= radix;
 	}
 	return _STR("%.*s\000%.*s", 2, sign, res);
@@ -10053,7 +10054,7 @@ string strconv__format_uint(u64 n, int radix) {
 	u64 uradix = ((u64)(radix));
 	for (;;) {
 		if (!(n_copy != 0)) break;
-		res = string_add(byte_str(string_at(_const_strconv__base_digits, n_copy % uradix)), res);
+		res = string_add(byte_ascii_str(string_at(_const_strconv__base_digits, n_copy % uradix)), res);
 		n_copy /= uradix;
 	}
 	return res;
@@ -11745,9 +11746,18 @@ string byte_str(byte b) {
 	return str;
 }
 
+string byte_ascii_str(byte b) {
+	string str = (string){.str = v_malloc(2), .len = 1};
+	{ // Unsafe block
+		str.str[0] = b;
+		str.str[1] = L'\0';
+	}
+	return str;
+}
+
 string byte_str_escaped(byte b) {
 	byte _t30 = b; 
-		string str = ((_t30 == 0) ? (_SLIT("`\\0`")) : (_t30 == 7) ? (_SLIT("`\\a`")) : (_t30 == 8) ? (_SLIT("`\\b`")) : (_t30 == 9) ? (_SLIT("`\\t`")) : (_t30 == 10) ? (_SLIT("`\\n`")) : (_t30 == 11) ? (_SLIT("`\\v`")) : (_t30 == 12) ? (_SLIT("`\\f`")) : (_t30 == 13) ? (_SLIT("`\\r`")) : ((_t30 >= 32 && _t30 <= 126)) ? (byte_str(b)) : (string_add(_SLIT("0x"), byte_hex(b))));
+		string str = ((_t30 == 0) ? (_SLIT("`\\0`")) : (_t30 == 7) ? (_SLIT("`\\a`")) : (_t30 == 8) ? (_SLIT("`\\b`")) : (_t30 == 9) ? (_SLIT("`\\t`")) : (_t30 == 10) ? (_SLIT("`\\n`")) : (_t30 == 11) ? (_SLIT("`\\v`")) : (_t30 == 12) ? (_SLIT("`\\f`")) : (_t30 == 13) ? (_SLIT("`\\r`")) : ((_t30 >= 32 && _t30 <= 126)) ? (byte_ascii_str(b)) : (string_add(_SLIT("0x"), byte_hex(b))));
 	return str;
 }
 
@@ -13153,7 +13163,7 @@ array_string string_split_nth(string s, string delim, int nth) {
 				array_push(&res, _MOV((string[]){ string_right(s, i) }));
 				break;
 			}
-			array_push(&res, _MOV((string[]){ byte_str(ch) }));
+			array_push(&res, _MOV((string[]){ byte_ascii_str(ch) }));
 			i++;
 		}
 		return res;
@@ -13329,7 +13339,7 @@ VV_LOCAL_SYMBOL int string_index_kmp(string s, string p) {
 int string_index_any(string s, string chars) {
 	for (int _t46 = 0; _t46 < chars.len; ++_t46) {
 		byte c = chars.str[_t46];
-		Option_int _t47 = string_index(s, byte_str(c));
+		Option_int _t47 = string_index(s, byte_ascii_str(c));
 		if (!_t47.ok) {
 			string err = _t47.v_error;
 			int errcode = _t47.ecode;
@@ -13448,7 +13458,7 @@ bool string_contains(string s, string substr) {
 bool string_contains_any(string s, string chars) {
 	for (int _t52 = 0; _t52 < chars.len; ++_t52) {
 		byte c = chars.str[_t52];
-		if (string_contains(s, byte_str(c))) {
+		if (string_contains(s, byte_ascii_str(c))) {
 			return true;
 		}
 	}
@@ -13538,7 +13548,7 @@ string string_capitalize(string s) {
 	if (s.len == 0) {
 		return _SLIT("");
 	}
-	return string_add(string_to_upper(byte_str(string_at(s, 0))), string_substr(s, 1, s.len));
+	return string_add(string_to_upper(byte_ascii_str(string_at(s, 0))), string_substr(s, 1, s.len));
 }
 
 bool string_is_capital(string s) {
@@ -18769,7 +18779,7 @@ string flag__FlagParser_usage(flag__FlagParser fs) {
 			flag__Flag f = ((flag__Flag*)_t367.data)[_t368];
 			array_string onames = __new_array_with_default(0, 0, sizeof(string), 0);
 			if (f.abbr != 0) {
-				array_push(&onames, _MOV((string[]){ string_clone(_STR("-%.*s", 1, byte_str(f.abbr))) }));
+				array_push(&onames, _MOV((string[]){ string_clone(_STR("-%.*s", 1, byte_ascii_str(f.abbr))) }));
 			}
 			if ((f.name).len != 0) {
 				if (!string_contains(f.val_desc, _SLIT("<bool>"))) {
@@ -19903,7 +19913,7 @@ VV_LOCAL_SYMBOL string v__vmod__Scanner_create_string(v__vmod__Scanner* s, byte 
 			str = /*f*/string_add(str, string_substr(s->text, s->pos, s->pos + 1));
 			s->pos += 2;
 		} else {
-			str = /*f*/string_add(str, byte_str(string_at(s->text, s->pos)));
+			str = /*f*/string_add(str, byte_ascii_str(string_at(s->text, s->pos)));
 			s->pos++;
 		}
 	}
@@ -19914,7 +19924,7 @@ VV_LOCAL_SYMBOL string v__vmod__Scanner_create_ident(v__vmod__Scanner* s) {
 	string text = _SLIT("");
 	for (;;) {
 		if (!(v__vmod__is_name_alpha(string_at(s->text, s->pos)))) break;
-		text = /*f*/string_add(text, byte_str(string_at(s->text, s->pos)));
+		text = /*f*/string_add(text, byte_ascii_str(string_at(s->text, s->pos)));
 		s->pos++;
 	}
 	return text;
@@ -19957,25 +19967,25 @@ VV_LOCAL_SYMBOL void v__vmod__Scanner_scan_all(v__vmod__Scanner* s) {
 		}
 		byte _t459 = c; 
 		if (_t459 == L'{') {
-			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_lcbr, byte_str(c));
+			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_lcbr, byte_ascii_str(c));
 		}
 		else if (_t459 == L'}') {
-			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_rcbr, byte_str(c));
+			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_rcbr, byte_ascii_str(c));
 		}
 		else if (_t459 == L'[') {
-			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_labr, byte_str(c));
+			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_labr, byte_ascii_str(c));
 		}
 		else if (_t459 == L']') {
-			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_rabr, byte_str(c));
+			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_rabr, byte_ascii_str(c));
 		}
 		else if (_t459 == L':') {
-			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_colon, byte_str(c));
+			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_colon, byte_ascii_str(c));
 		}
 		else if (_t459 == L',') {
-			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_comma, byte_str(c));
+			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_comma, byte_ascii_str(c));
 		}
 		else {
-			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_unknown, byte_str(c));
+			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_unknown, byte_ascii_str(c));
 		};
 		s->pos++;
 	}
@@ -20074,9 +20084,9 @@ VV_LOCAL_SYMBOL Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* 
 				if (!_t471.ok) {
 					return *(Option_v__vmod__Manifest *)&_t471;
 				}
- 				Option_multi_return_array_string_int mr_4437 =  _t471;
-				array_string deps = (*(multi_return_array_string_int*)mr_4437.data).arg0;
-				int idx = (*(multi_return_array_string_int*)mr_4437.data).arg1;
+ 				Option_multi_return_array_string_int mr_4491 =  _t471;
+				array_string deps = (*(multi_return_array_string_int*)mr_4491.data).arg0;
+				int idx = (*(multi_return_array_string_int*)mr_4491.data).arg1;
 				mn.dependencies = deps;
 				i = idx;
 				continue;
@@ -20087,9 +20097,9 @@ VV_LOCAL_SYMBOL Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* 
 					if (!_t472.ok) {
 						return *(Option_v__vmod__Manifest *)&_t472;
 					}
- 					Option_multi_return_array_string_int mr_4607 =  _t472;
-					array_string vals = (*(multi_return_array_string_int*)mr_4607.data).arg0;
-					int idx = (*(multi_return_array_string_int*)mr_4607.data).arg1;
+ 					Option_multi_return_array_string_int mr_4661 =  _t472;
+					array_string vals = (*(multi_return_array_string_int*)mr_4661.data).arg0;
+					int idx = (*(multi_return_array_string_int*)mr_4661.data).arg1;
 					map_set_1(&mn.unknown, &(string[]){field_name}, &(array_string[]) { vals });
 					i = idx;
 					continue;
@@ -21567,7 +21577,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("95431cf"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fada097"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -22616,7 +22626,7 @@ array_string v__util__source_context(string kind, string source, int column, v__
 			for (int _t689 = 0; _t689 < string_substr(sline, 0, start_column).len; ++_t689) {
 				byte bchar = string_substr(sline, 0, start_column).str[_t689];
 				byte x = (byte_is_space(bchar) ? (bchar) : (L' '));
-				pointerline = /*f*/string_add(pointerline, byte_str(x));
+				pointerline = /*f*/string_add(pointerline, byte_ascii_str(x));
 			}
 			string underline = (pos.len > 1 ? (string_repeat(_SLIT("~"), end_column - start_column)) : (_SLIT("^")));
 			pointerline = /*f*/string_add(pointerline, v__util__bold(v__util__color(kind, underline)));
@@ -22661,14 +22671,14 @@ string v__util__smart_quote(string str, bool raw) {
 		}
 		if (pos + 1 < len) {
 			{ // Unsafe block
-				next = byte_str(str.str[pos + 1]);
+				next = byte_ascii_str(str.str[pos + 1]);
 			}
 		}
 		string current = str;
 		string toadd = str;
 		if (len > 1) {
 			{ // Unsafe block
-				current = byte_str(str.str[pos]);
+				current = byte_ascii_str(str.str[pos]);
 			}
 			toadd = current;
 		}
@@ -25618,7 +25628,7 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 			}
 		}
 		#endif
-		v__scanner__Scanner_error(s, _STR("invalid character `%.*s\000`", 2, byte_str(c)));
+		v__scanner__Scanner_error(s, _STR("invalid character `%.*s\000`", 2, byte_ascii_str(c)));
 		break;
 	}
 	return v__scanner__Scanner_end_of_file(s);
@@ -29779,7 +29789,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__St
 				VAssertMetaInfo v_assert_meta_info__t1095;
 				memset(&v_assert_meta_info__t1095, 0, sizeof(VAssertMetaInfo));
 				v_assert_meta_info__t1095.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-				v_assert_meta_info__t1095.line_nr = 2754;
+				v_assert_meta_info__t1095.line_nr = 2759;
 				v_assert_meta_info__t1095.fn_name = _SLIT("stmt");
 				v_assert_meta_info__t1095.src = _SLIT("!c.inside_unsafe");
 				__print_assert_failure(&v_assert_meta_info__t1095);
@@ -30707,8 +30717,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (_t1123 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_115471 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_115471.arg1;
+		multi_return_string_int mr_115577 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_115577.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (_t1123 == v__token__AtKind_vhash) {
@@ -31341,7 +31351,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 		VAssertMetaInfo v_assert_meta_info__t1175;
 		memset(&v_assert_meta_info__t1175, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t1175.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t1175.line_nr = 4108;
+		v_assert_meta_info__t1175.line_nr = 4113;
 		v_assert_meta_info__t1175.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t1175.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t1175);
@@ -31803,8 +31813,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym) && !(typ_sym->kind == v__table__Kind_byteptr || typ_sym->kind == v__table__Kind_charptr)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_148881 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_148881.arg0;
+		multi_return_string_v__token__Position mr_148987 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_148987.arg0;
 	}
 	if (!c->inside_unsafe && (v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym))) {
 		v__checker__Checker_warn(c, _SLIT("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -32415,10 +32425,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1239 = 0; _t1239 < _t1238.len; ++_t1239) {
 			v__table__Fn m = ((v__table__Fn*)_t1238.data)[_t1239];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_168569 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_168569.arg0;
-				int nroute_attributes = mr_168569.arg1;
-				int nargs = mr_168569.arg2;
+				multi_return_bool_int_int mr_168675 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_168675.arg0;
+				int nroute_attributes = mr_168675.arg1;
+				int nargs = mr_168675.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
