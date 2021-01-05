@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a7a8e65"
+#define V_COMMIT_HASH "c0e56d1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "efb80bd"
+	#define V_COMMIT_HASH "a7a8e65"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a7a8e65"
+	#define V_CURRENT_COMMIT_HASH "c0e56d1"
 #endif
 
 // V comptime_defines:
@@ -18235,7 +18235,7 @@ bool v__token__Token_can_start_type(v__token__Token* tok, array_string builtin_t
 	if (_t296 == v__token__Kind_name) {
 		return byte_is_capital(string_at(tok->lit, 0)) || (array_string_contains(builtin_type_names, tok->lit));
 	}
-	else if (_t296 == v__token__Kind_amp || _t296 == v__token__Kind_lsbr || _t296 == v__token__Kind_question) {
+	else if (_t296 == v__token__Kind_amp || _t296 == v__token__Kind_key_fn || _t296 == v__token__Kind_lsbr || _t296 == v__token__Kind_question) {
 		return true;
 	}
 	else {
@@ -21548,7 +21548,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("efb80bd"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a7a8e65"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -33410,12 +33410,21 @@ VV_LOCAL_SYMBOL v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 			.is_tmp = 0,
 		}}, sizeof(v__ast__Var)), .typ = 255 /* v.ast.Var */});
 	}
+	bool same_line = p->tok.line_nr == p->prev_tok.line_nr;
 	v__table__Type return_type = _const_v__table__void_type;
-	if (v__token__Kind_is_start_of_type(p->tok.kind)) {
-		return_type = v__parser__Parser_parse_type(p);
+	if (same_line) {
+		if (v__token__Kind_is_start_of_type(p->tok.kind)) {
+			return_type = v__parser__Parser_parse_type(p);
+		} else if (p->tok.kind != v__token__Kind_lcbr) {
+			v__parser__Parser_error_with_pos(p, _STR("expected return type, not %.*s\000 for anonymous function", 2, v__token__Token_str(p->tok)), v__token__Token_position(&p->tok));
+		}
 	}
 	array_v__ast__Stmt stmts = __new_array_with_default(0, 0, sizeof(v__ast__Stmt), 0);
 	bool no_body = p->tok.kind != v__token__Kind_lcbr;
+	same_line = p->tok.line_nr == p->prev_tok.line_nr;
+	if (no_body && same_line) {
+		v__parser__Parser_error_with_pos(p, _STR("unexpected `%.*s\000` after anonymous function signature, expecting `{`", 2, v__token__Kind_str(p->tok.kind)), v__token__Token_position(&p->tok));
+	}
 	if (p->tok.kind == v__token__Kind_lcbr) {
 		stmts = v__parser__Parser_parse_block_no_scope(p, false);
 	}
