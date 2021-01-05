@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5c19813"
+#define V_COMMIT_HASH "7c290a7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3dae44d"
+	#define V_COMMIT_HASH "5c19813"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5c19813"
+	#define V_CURRENT_COMMIT_HASH "7c290a7"
 #endif
 
 // V comptime_defines:
@@ -4900,11 +4900,11 @@ string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time);
 string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatDate fmt_date);
 string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatTime fmt_time, time__FormatDate fmt_date);
 string time__Time_utc_string(time__Time t);
-bool time__Time_eq(time__Time t1, time__Time t2);
-bool time__Time_ne(time__Time t1, time__Time t2);
-bool time__Time_lt(time__Time t1, time__Time t2);
+bool time__Time__eq(time__Time t1, time__Time t2);
+bool time__Time__ne(time__Time t1, time__Time t2);
+bool time__Time__lt(time__Time t1, time__Time t2);
 bool time__Time_le(time__Time t1, time__Time t2);
-bool time__Time_gt(time__Time t1, time__Time t2);
+bool time__Time__gt(time__Time t1, time__Time t2);
 bool time__Time_ge(time__Time t1, time__Time t2);
 time__Duration time__Time__minus(time__Time lhs, time__Time rhs);
 Option_time__Time time__parse(string s);
@@ -17182,7 +17182,7 @@ string time__Time_utc_string(time__Time t) {
 }
 
 // Attr: [inline]
-inline bool time__Time_eq(time__Time t1, time__Time t2) {
+inline bool time__Time__eq(time__Time t1, time__Time t2) {
 	if (t1.v_unix == t2.v_unix && t1.microsecond == t2.microsecond) {
 		return true;
 	}
@@ -17190,12 +17190,12 @@ inline bool time__Time_eq(time__Time t1, time__Time t2) {
 }
 
 // Attr: [inline]
-inline bool time__Time_ne(time__Time t1, time__Time t2) {
-	return !time__Time_eq(t1, t2);
+inline bool time__Time__ne(time__Time t1, time__Time t2) {
+	return !(time__Time__eq(t1, t2));
 }
 
 // Attr: [inline]
-inline bool time__Time_lt(time__Time t1, time__Time t2) {
+inline bool time__Time__lt(time__Time t1, time__Time t2) {
 	if (t1.v_unix < t2.v_unix || (t1.v_unix == t2.v_unix && t1.microsecond < t2.microsecond)) {
 		return true;
 	}
@@ -17204,11 +17204,11 @@ inline bool time__Time_lt(time__Time t1, time__Time t2) {
 
 // Attr: [inline]
 inline bool time__Time_le(time__Time t1, time__Time t2) {
-	return time__Time_lt(t1, t2) || time__Time_eq(t1, t2);
+	return time__Time__lt(t1, t2) || time__Time__eq(t1, t2);
 }
 
 // Attr: [inline]
-inline bool time__Time_gt(time__Time t1, time__Time t2) {
+inline bool time__Time__gt(time__Time t1, time__Time t2) {
 	if (t1.v_unix > t2.v_unix || (t1.v_unix == t2.v_unix && t1.microsecond > t2.microsecond)) {
 		return true;
 	}
@@ -17217,7 +17217,7 @@ inline bool time__Time_gt(time__Time t1, time__Time t2) {
 
 // Attr: [inline]
 inline bool time__Time_ge(time__Time t1, time__Time t2) {
-	return time__Time_gt(t1, t2) || time__Time_eq(t1, t2);
+	return time__Time__gt(t1, t2) || time__Time__eq(t1, t2);
 }
 
 // Attr: [inline]
@@ -21549,7 +21549,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3dae44d"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5c19813"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
