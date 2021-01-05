@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3e04dfc"
+#define V_COMMIT_HASH "fdb6f1a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "fada097"
+	#define V_COMMIT_HASH "3e04dfc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3e04dfc"
+	#define V_CURRENT_COMMIT_HASH "fdb6f1a"
 #endif
 
 // V comptime_defines:
@@ -12104,12 +12104,12 @@ VV_LOCAL_SYMBOL void map_set_1(map* m, voidptr key, voidptr value) {
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_11819 = map_key_to_index(m, key);
-	u32 index = mr_11819.arg0;
-	u32 meta = mr_11819.arg1;
-	multi_return_u32_u32 mr_11855 = map_meta_less(m, index, meta);
-	index = mr_11855.arg0;
-	meta = mr_11855.arg1;
+	multi_return_u32_u32 mr_11951 = map_key_to_index(m, key);
+	u32 index = mr_11951.arg0;
+	u32 meta = mr_11951.arg1;
+	multi_return_u32_u32 mr_11987 = map_meta_less(m, index, meta);
+	index = mr_11987.arg0;
+	meta = mr_11987.arg1;
 	for (;;) {
 		if (!(meta == m->metas[index])) break;
 		int kv_index = ((int)(m->metas[index + 1]));
@@ -12159,12 +12159,12 @@ VV_LOCAL_SYMBOL void map_rehash(map* m) {
 			continue;
 		}
 		voidptr pkey = DenseArray_key(&m->key_values, i);
-		multi_return_u32_u32 mr_13457 = map_key_to_index(m, pkey);
-		u32 index = mr_13457.arg0;
-		u32 meta = mr_13457.arg1;
-		multi_return_u32_u32 mr_13495 = map_meta_less(m, index, meta);
-		index = mr_13495.arg0;
-		meta = mr_13495.arg1;
+		multi_return_u32_u32 mr_13589 = map_key_to_index(m, pkey);
+		u32 index = mr_13589.arg0;
+		u32 meta = mr_13589.arg1;
+		multi_return_u32_u32 mr_13627 = map_meta_less(m, index, meta);
+		index = mr_13627.arg0;
+		meta = mr_13627.arg1;
 		map_meta_greater(m, index, meta, ((u32)(i)));
 	}
 }
@@ -12183,9 +12183,9 @@ VV_LOCAL_SYMBOL void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->even_index >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->even_index);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_14283 = map_meta_less(m, index, meta);
-		index = mr_14283.arg0;
-		meta = mr_14283.arg1;
+		multi_return_u32_u32 mr_14415 = map_meta_less(m, index, meta);
+		index = mr_14415.arg0;
+		meta = mr_14415.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -12194,9 +12194,9 @@ VV_LOCAL_SYMBOL void map_cached_rehash(map* m, u32 old_cap) {
 
 VV_LOCAL_SYMBOL voidptr map_get_and_set_1(map* m, voidptr key, voidptr zero) {
 	for (;;) {
-		multi_return_u32_u32 mr_14733 = map_key_to_index(m, key);
-		u32 index = mr_14733.arg0;
-		u32 meta = mr_14733.arg1;
+		multi_return_u32_u32 mr_14865 = map_key_to_index(m, key);
+		u32 index = mr_14865.arg0;
+		u32 meta = mr_14865.arg1;
 		for (;;) {
 			if (meta == m->metas[index]) {
 				int kv_index = ((int)(m->metas[index + 1]));
@@ -12229,9 +12229,9 @@ VV_LOCAL_SYMBOL voidptr map_get_and_set_1(map* m, voidptr key, voidptr zero) {
 }
 
 VV_LOCAL_SYMBOL voidptr map_get_1(map* m, voidptr key, voidptr zero) {
-	multi_return_u32_u32 mr_15450 = map_key_to_index(m, key);
-	u32 index = mr_15450.arg0;
-	u32 meta = mr_15450.arg1;
+	multi_return_u32_u32 mr_15582 = map_key_to_index(m, key);
+	u32 index = mr_15582.arg0;
+	u32 meta = mr_15582.arg1;
 	for (;;) {
 		if (meta == m->metas[index]) {
 			int kv_index = ((int)(m->metas[index + 1]));
@@ -12250,9 +12250,9 @@ VV_LOCAL_SYMBOL voidptr map_get_1(map* m, voidptr key, voidptr zero) {
 }
 
 VV_LOCAL_SYMBOL bool map_exists_1(map* m, voidptr key) {
-	multi_return_u32_u32 mr_15942 = map_key_to_index(m, key);
-	u32 index = mr_15942.arg0;
-	u32 meta = mr_15942.arg1;
+	multi_return_u32_u32 mr_16074 = map_key_to_index(m, key);
+	u32 index = mr_16074.arg0;
+	u32 meta = mr_16074.arg1;
 	for (;;) {
 		if (meta == m->metas[index]) {
 			int kv_index = ((int)(m->metas[index + 1]));
@@ -12286,12 +12286,12 @@ void map_delete(map* m, string key) {
 }
 
 void map_delete_1(map* m, voidptr key) {
-	multi_return_u32_u32 mr_16640 = map_key_to_index(m, key);
-	u32 index = mr_16640.arg0;
-	u32 meta = mr_16640.arg1;
-	multi_return_u32_u32 mr_16676 = map_meta_less(m, index, meta);
-	index = mr_16676.arg0;
-	meta = mr_16676.arg1;
+	multi_return_u32_u32 mr_16772 = map_key_to_index(m, key);
+	u32 index = mr_16772.arg0;
+	u32 meta = mr_16772.arg1;
+	multi_return_u32_u32 mr_16808 = map_meta_less(m, index, meta);
+	index = mr_16808.arg0;
+	meta = mr_16808.arg1;
 	for (;;) {
 		if (!(meta == m->metas[index])) break;
 		int kv_index = ((int)(m->metas[index + 1]));
@@ -21326,7 +21326,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fada097"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3e04dfc"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -30407,10 +30407,10 @@ v__table__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast__Cas
 	} else if (v__table__Type_has_flag(node->expr_type, v__table__TypeFlag_optional) || v__table__Type_has_flag(node->expr_type, v__table__TypeFlag_variadic)) {
 		string msg = (v__table__Type_has_flag(node->expr_type, v__table__TypeFlag_optional) ? (_SLIT("an optional")) : (_SLIT("a variadic")));
 		v__checker__Checker_error(c, _STR("cannot type cast %.*s", 1, msg), node->pos);
-	} else if (!c->inside_unsafe && v__table__Type_is_ptr(node->typ) && v__table__Type_is_ptr(node->expr_type)) {
+	} else if (!c->inside_unsafe && v__table__Type_is_ptr(node->typ) && (v__table__Type_is_ptr(node->expr_type) || node->expr_type == _const_v__table__voidptr_type || (v__table__Type_is_number(node->expr_type) && (node->expr).typ != 234 /* v.ast.IntegerLiteral */))) {
 		string ft = v__table__Table_type_to_str(c->table, node->expr_type);
 		string tt = v__table__Table_type_to_str(c->table, node->typ);
-		v__checker__Checker_warn(c, _STR("casting `%.*s\000` to `%.*s\000` is only allowed in `unsafe` code", 3, ft, tt), node->pos);
+		v__checker__Checker_warn(c, _STR("casting a `%.*s\000` to `%.*s\000` is only allowed in `unsafe` code", 3, ft, tt), node->pos);
 	}
 	if (node->has_arg) {
 		v__checker__Checker_expr(c, node->arg);
@@ -30444,8 +30444,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (_t1110 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_115577 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_115577.arg1;
+		multi_return_string_int mr_115722 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_115722.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (_t1110 == v__token__AtKind_vhash) {
@@ -31077,7 +31077,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 		VAssertMetaInfo v_assert_meta_info__t1162;
 		memset(&v_assert_meta_info__t1162, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t1162.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t1162.line_nr = 4113;
+		v_assert_meta_info__t1162.line_nr = 4116;
 		v_assert_meta_info__t1162.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t1162.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t1162);
@@ -31539,8 +31539,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym) && !(typ_sym->kind == v__table__Kind_byteptr || typ_sym->kind == v__table__Kind_charptr)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_148987 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_148987.arg0;
+		multi_return_string_v__token__Position mr_149132 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_149132.arg0;
 	}
 	if (!c->inside_unsafe && (v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym))) {
 		v__checker__Checker_warn(c, _SLIT("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -32151,10 +32151,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1226 = 0; _t1226 < _t1225.len; ++_t1226) {
 			v__table__Fn m = ((v__table__Fn*)_t1225.data)[_t1226];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_168675 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_168675.arg0;
-				int nroute_attributes = mr_168675.arg1;
-				int nargs = mr_168675.arg2;
+				multi_return_bool_int_int mr_168820 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_168820.arg0;
+				int nroute_attributes = mr_168820.arg1;
+				int nargs = mr_168820.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
