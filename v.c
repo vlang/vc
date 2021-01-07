@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2820139"
+#define V_COMMIT_HASH "1ce9353"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5dbc194"
+	#define V_COMMIT_HASH "2820139"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2820139"
+	#define V_CURRENT_COMMIT_HASH "1ce9353"
 #endif
 
 // V comptime_defines:
@@ -21592,7 +21592,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5dbc194"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2820139"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -27233,6 +27233,9 @@ void v__checker__Checker_infer_fn_types(v__checker__Checker* c, v__table__Fn f, 
 	array _t938 = f.params;
 	for (int i = 0; i < _t938.len; ++i) {
 		v__table__Param param = ((v__table__Param*)_t938.data)[i];
+		if (call_expr->args.len == 0) {
+			break;
+		}
 		v__ast__CallArg arg = (i != 0 && call_expr->is_method ? ((*(v__ast__CallArg*)/*ee elem_typ */array_get(call_expr->args, i - 1))) : ((*(v__ast__CallArg*)/*ee elem_typ */array_get(call_expr->args, i))));
 		if (v__table__Type_has_flag(param.typ, v__table__TypeFlag_generic)) {
 			typ = arg.typ;
