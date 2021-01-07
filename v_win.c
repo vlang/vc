@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ad79d55"
+#define V_COMMIT_HASH "a2add15"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "6c01302"
+	#define V_COMMIT_HASH "ad79d55"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ad79d55"
+	#define V_CURRENT_COMMIT_HASH "a2add15"
 #endif
 
 // V comptime_defines:
@@ -21340,7 +21340,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6c01302"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ad79d55"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -26582,7 +26582,10 @@ string v__ast__Stmt_str(v__ast__Stmt node) {
 		return v__ast__Expr_str((*node._v__ast__ExprStmt).expr);
 	}
 	else if (_t914.typ == 157 /* v.ast.FnDecl */) {
-		return _STR("fn %.*s\000() { %"PRId32"\000 stmts }", 3, (*node._v__ast__FnDecl).name, (*node._v__ast__FnDecl).stmts.len);
+		return _STR("fn %.*s\000( %"PRId32"\000 params ) { %"PRId32"\000 stmts }", 4, (*node._v__ast__FnDecl).name, (*node._v__ast__FnDecl).params.len, (*node._v__ast__FnDecl).stmts.len);
+	}
+	else if (_t914.typ == 279 /* v.ast.StructDecl */) {
+		return _STR("struct %.*s\000 { %"PRId32"\000 fields }", 3, (*node._v__ast__StructDecl).name, (*node._v__ast__StructDecl).fields.len);
 	}
 	else {
 		return _STR("[unhandled stmt str type: %.*s\000 ]", 2, tos3( /* v.ast.Stmt */ v_typeof_sumtype_280( (node).typ )));
