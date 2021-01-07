@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6c01302"
+#define V_COMMIT_HASH "ad79d55"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "15ba53b"
+	#define V_COMMIT_HASH "6c01302"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6c01302"
+	#define V_CURRENT_COMMIT_HASH "ad79d55"
 #endif
 
 // V comptime_defines:
@@ -21591,7 +21591,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("15ba53b"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6c01302"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -46033,7 +46033,7 @@ VV_LOCAL_SYMBOL string v__gen__Gen_decode_array(v__gen__Gen* g, v__table__Type v
 	} else {
 		s = _STR("\n		Option_%.*s\000 val2 = %.*s\000 (jsval);\n		if(!val2.ok) {\n			array_free(&res);\n			return *(Option_array_%.*s\000*)&val2;\n		}\n		%.*s\000 val = *(%.*s\000*)val2.data;\n", 6, styp, fn_name, styp, styp, styp);
 	}
-	return _STR("\n	if(root && !cJSON_IsArray(root)) {\n		Option err = v_error( string_add(_SLIT(\"Json element is not an array: \"), tos2(cJSON_PrintUnformatted(root))) );\n		return *(Option_array_%.*s\000 *)&err;\n	}\n	res = __new_array(0, 0, sizeof(%.*s\000));\n	const cJSON *jsval = NULL;\n	cJSON_ArrayForEach(jsval, root)\n	{\n	%.*s\000\n		array_push(&res, &val);\n	}\n", 4, styp, styp, s);
+	return _STR("\n	if(root && !cJSON_IsArray(root) && !cJSON_IsNull(root)) {\n		Option err = v_error( string_add(_SLIT(\"Json element is not an array: \"), tos2(cJSON_PrintUnformatted(root))) );\n		return *(Option_array_%.*s\000 *)&err;\n	}\n	res = __new_array(0, 0, sizeof(%.*s\000));\n	const cJSON *jsval = NULL;\n	cJSON_ArrayForEach(jsval, root)\n	{\n	%.*s\000\n		array_push(&res, &val);\n	}\n", 4, styp, styp, s);
 }
 
 VV_LOCAL_SYMBOL string v__gen__Gen_encode_array(v__gen__Gen* g, v__table__Type value_type) {
@@ -46046,11 +46046,11 @@ VV_LOCAL_SYMBOL string v__gen__Gen_decode_map(v__gen__Gen* g, v__table__Type key
 	string styp = v__gen__Gen_typ(g, key_type);
 	string styp_v = v__gen__Gen_typ(g, value_type);
 	v__table__TypeSymbol* key_type_symbol = v__table__Table_get_type_symbol(g->table, key_type);
-	multi_return_string_string_string_string mr_8186 = v__gen__Gen_map_fn_ptrs(g, *key_type_symbol);
-	string hash_fn = mr_8186.arg0;
-	string key_eq_fn = mr_8186.arg1;
-	string clone_fn = mr_8186.arg2;
-	string free_fn = mr_8186.arg3;
+	multi_return_string_string_string_string mr_8209 = v__gen__Gen_map_fn_ptrs(g, *key_type_symbol);
+	string hash_fn = mr_8209.arg0;
+	string key_eq_fn = mr_8209.arg1;
+	string clone_fn = mr_8209.arg2;
+	string free_fn = mr_8209.arg3;
 	string fn_name_v = v__gen__js_dec_name(styp_v);
 	string s = _SLIT("");
 	if (v__gen__is_js_prim(styp_v)) {
@@ -46058,7 +46058,7 @@ VV_LOCAL_SYMBOL string v__gen__Gen_decode_map(v__gen__Gen* g, v__table__Type key
 	} else {
 		s = _STR("\n		Option_%.*s\000 val2 = %.*s\000 (js_get(root, jsval->string));\n		if(!val2.ok) {\n			map_free(&res);\n			return *(Option_map_%.*s\000_%.*s\000*)&val2;\n		}\n		%.*s\000 val = *(%.*s\000*)val2.data;\n", 7, styp_v, fn_name_v, styp, styp_v, styp_v, styp_v);
 	}
-	return _STR("\n	if(!cJSON_IsObject(root)) {\n		Option err = v_error( string_add(_SLIT(\"Json element is not an object: \"), tos2(cJSON_PrintUnformatted(root))) );\n		return *(Option_map_%.*s\000_%.*s\000 *)&err;\n	}\n	res = new_map_2(sizeof(%.*s\000), sizeof(%.*s\000), %.*s\000, %.*s\000, %.*s\000, %.*s\000);\n	cJSON *jsval = NULL;\n	cJSON_ArrayForEach(jsval, root)\n	{\n		%.*s\000\n		string key = tos2( (byteptr) jsval->string );\n		map_set_1(&res, &key, &val);\n	}\n", 10, styp, styp_v, styp, styp_v, hash_fn, key_eq_fn, clone_fn, free_fn, s);
+	return _STR("\n	if(!cJSON_IsObject(root) && !cJSON_IsNull(root)) {\n		Option err = v_error( string_add(_SLIT(\"Json element is not an object: \"), tos2(cJSON_PrintUnformatted(root))) );\n		return *(Option_map_%.*s\000_%.*s\000 *)&err;\n	}\n	res = new_map_2(sizeof(%.*s\000), sizeof(%.*s\000), %.*s\000, %.*s\000, %.*s\000, %.*s\000);\n	cJSON *jsval = NULL;\n	cJSON_ArrayForEach(jsval, root)\n	{\n		%.*s\000\n		string key = tos2( (byteptr) jsval->string );\n		map_set_1(&res, &key, &val);\n	}\n", 10, styp, styp_v, styp, styp_v, hash_fn, key_eq_fn, clone_fn, free_fn, s);
 }
 
 VV_LOCAL_SYMBOL string v__gen__Gen_encode_map(v__gen__Gen* g, v__table__Type key_type, v__table__Type value_type) {
