@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9593ad2"
+#define V_COMMIT_HASH "15ba53b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ffd753a"
+	#define V_COMMIT_HASH "9593ad2"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9593ad2"
+	#define V_CURRENT_COMMIT_HASH "15ba53b"
 #endif
 
 // V comptime_defines:
@@ -21340,7 +21340,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ffd753a"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9593ad2"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -26623,13 +26623,13 @@ bool v__checker__Checker_check_basic(v__checker__Checker* c, v__table__Type got,
 	v__table__Table* t = c->table;
 	int got_idx = v__table__Type_idx(v__table__Table_unalias_num_type(t, got));
 	int exp_idx = v__table__Type_idx(v__table__Table_unalias_num_type(t, expected));
-	bool exp_is_ptr = v__table__Type_is_ptr(expected);
 	if (got_idx == exp_idx) {
 		return true;
 	}
 	if (got_idx == _const_v__table__none_type_idx && v__table__Type_has_flag(expected, v__table__TypeFlag_optional)) {
 		return false;
 	}
+	bool exp_is_ptr = v__table__Type_is_ptr(expected);
 	if (exp_is_ptr && got_idx == _const_v__table__int_type_idx) {
 		return true;
 	}
@@ -26806,6 +26806,13 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_promote_num(v__checker__Check
 bool v__checker__Checker_check_types(v__checker__Checker* c, v__table__Type got, v__table__Type expected) {
 	if (got == expected) {
 		return true;
+	}
+	bool got_is_ptr = v__table__Type_is_ptr(got);
+	bool exp_is_ptr = v__table__Type_is_ptr(expected);
+	if (got_is_ptr && exp_is_ptr) {
+		if (v__table__Type_nr_muls(got) != v__table__Type_nr_muls(expected)) {
+			return false;
+		}
 	}
 	int exp_idx = v__table__Type_idx(expected);
 	int got_idx = v__table__Type_idx(got);
