@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "29c2240"
+#define V_COMMIT_HASH "dff36a9"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "687b152"
+	#define V_COMMIT_HASH "29c2240"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "29c2240"
+	#define V_CURRENT_COMMIT_HASH "dff36a9"
 #endif
 
 // V comptime_defines:
@@ -21349,7 +21349,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("687b152"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("29c2240"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -45240,7 +45240,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_method_call(v__gen__Gen* g, v__ast__CallExpr no
 	} else if (!v__table__Type_is_ptr(node.receiver_type) && v__table__Type_is_ptr(node.left_type) && string_ne(node.name, _SLIT("str")) && node.from_embed_type == 0) {
 		v__gen__Gen_write(g, _SLIT("/*rec*/*"));
 	}
-	if (node.free_receiver && !g->inside_lambda && !g->is_builtin_mod) {
+	if (g->is_autofree && node.free_receiver && !g->inside_lambda && !g->is_builtin_mod) {
 		string fn_name = string_replace(node.name, _SLIT("."), _SLIT("_"));
 		string arg_name = _STR("_arg_expr_%.*s\000_0_%"PRId32"", 2, fn_name, node.pos.pos);
 		v__gen__Gen_write(g, string_add(_SLIT("/*af receiver arg*/"), arg_name));
@@ -45359,11 +45359,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) 
 	}
 	if (!print_auto_str) {
 		if (g->pref->is_debug && string_eq(node.name, _SLIT("panic"))) {
-			multi_return_int_string_string_string mr_18967 = v__gen__Gen_panic_debug_info(g, node.pos);
-			int paline = mr_18967.arg0;
-			string pafile = mr_18967.arg1;
-			string pamod = mr_18967.arg2;
-			string pafn = mr_18967.arg3;
+			multi_return_int_string_string_string mr_18984 = v__gen__Gen_panic_debug_info(g, node.pos);
+			int paline = mr_18984.arg0;
+			string pafile = mr_18984.arg1;
+			string pamod = mr_18984.arg2;
+			string pafn = mr_18984.arg3;
 			v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 			v__gen__Gen_call_args(g, node);
 			v__gen__Gen_write(g, _SLIT(")"));
