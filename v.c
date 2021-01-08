@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "78376a0"
+#define V_COMMIT_HASH "687b152"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "46a5c48"
+	#define V_COMMIT_HASH "78376a0"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "78376a0"
+	#define V_CURRENT_COMMIT_HASH "687b152"
 #endif
 
 // V comptime_defines:
@@ -21600,7 +21600,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("46a5c48"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("78376a0"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -44856,6 +44856,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_comp_at(v__gen__Gen* g, v__ast__AtExpr node) {
 VV_LOCAL_SYMBOL void v__gen__Gen_comp_if(v__gen__Gen* g, v__ast__IfExpr node) {
 	string _t1709;
 	string line = (node.is_expr ? (		_t1709 = v__gen__Gen_go_before_stmt(g, 0),v__gen__Gen_write(g, (*(string*)/*ee elem_typ */array_get(_const_v__gen__tabs, g->indent))),string_trim_space(_t1709)) : (_SLIT("")));
+	bool comp_if_stmts_skip = false;
 	// FOR IN array
 	array _t1710 = node.branches;
 	for (int i = 0; i < _t1710.len; ++i) {
@@ -44900,7 +44901,22 @@ VV_LOCAL_SYMBOL void v__gen__Gen_comp_if(v__gen__Gen* g, v__ast__IfExpr node) {
 			if (should_create_scope) {
 				v__gen__Gen_writeln(g, _SLIT("{"));
 			}
-			v__gen__Gen_stmts(g, branch.stmts);
+			if ((branch.cond).typ == 208 /* v.ast.InfixExpr */) {
+				if ((*branch.cond._v__ast__InfixExpr).op == v__token__Kind_key_is) {
+					v__ast__Expr left = (*branch.cond._v__ast__InfixExpr).left;
+					v__table__Type got_type = (/* as */ *(v__ast__Type*)__as_cast(((*branch.cond._v__ast__InfixExpr).right)._v__ast__Type, ((*branch.cond._v__ast__InfixExpr).right).typ, /*expected:*/227)).typ;
+					if ((left).typ == 227 /* v.ast.Type */) {
+						v__table__Type left_type = v__gen__Gen_unwrap_generic(g, (*left._v__ast__Type).typ);
+						if (left_type != got_type) {
+							comp_if_stmts_skip = true;
+						}
+					}
+				}
+			}
+			bool is_else = node.has_else && i == node.branches.len - 1;
+			if (!comp_if_stmts_skip || (comp_if_stmts_skip && is_else)) {
+				v__gen__Gen_stmts(g, branch.stmts);
+			}
 			if (should_create_scope) {
 				v__gen__Gen_writeln(g, _SLIT("}"));
 			}
