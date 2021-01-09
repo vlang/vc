@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "fb7a5ee"
+#define V_COMMIT_HASH "407da09"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ca83746"
+	#define V_COMMIT_HASH "fb7a5ee"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "fb7a5ee"
+	#define V_CURRENT_COMMIT_HASH "407da09"
 #endif
 
 // V comptime_defines:
@@ -5695,6 +5695,7 @@ string _const_v__util__map_prefix; // a string literal, inited later
 string v__util__no_cur_mod(string v_typename, string cur_mod);
 void v__util__prepare_tool_when_needed(string source_name);
 void v__util__recompile_file(string vexe, string file);
+string v__util__get_vtmp_folder();
 bool v__util__should_bundle_module(string mod);
 string v__table__Attr_str(v__table__Attr attr);
 bool array_v__table__Attr_contains(array_v__table__Attr attrs, string str);
@@ -6577,7 +6578,6 @@ VV_LOCAL_SYMBOL string v__builder__missing_compiler_info();
 VV_LOCAL_SYMBOL array_string v__builder__error_context_lines(string text, string keyword, int before, int after);
 VV_LOCAL_SYMBOL array_v__cflag__CFlag v__builder__Builder_get_os_cflags(v__builder__Builder* v);
 VV_LOCAL_SYMBOL array_v__cflag__CFlag v__builder__Builder_get_rest_of_module_cflags(v__builder__Builder* v, v__cflag__CFlag* c);
-VV_LOCAL_SYMBOL string v__builder__get_vtmp_folder();
 VV_LOCAL_SYMBOL string v__builder__Builder_get_vtmp_filename(v__builder__Builder* b, string base_file_name, string postfix);
 void v__builder__compile(string command, v__pref__Preferences* pref);
 VV_LOCAL_SYMBOL void v__builder__Builder_myfree(v__builder__Builder* b);
@@ -21468,7 +21468,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ca83746"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fb7a5ee"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -23239,6 +23239,19 @@ void v__util__recompile_file(string vexe, string file) {
 		eprintln(_STR("could not recompile %.*s", 1, file));
 		v_exit(2);
 	}
+}
+
+string v__util__get_vtmp_folder() {
+	string vtmp = os__getenv(_SLIT("VTMP"));
+	if (vtmp.len > 0) {
+		return vtmp;
+	}
+	vtmp = os__join_path(os__temp_dir(), new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("v")})));
+	if (!os__exists(vtmp) || !os__is_dir(vtmp)) {
+		os__mkdir_all(vtmp);
+	}
+	os__setenv(_SLIT("VTMP"), vtmp, true);
+	return vtmp;
 }
 
 bool v__util__should_bundle_module(string mod) {
@@ -27212,6 +27225,9 @@ string v__ast__Stmt_str(v__ast__Stmt node) {
 	}
 	else if (_t1063.typ == 157 /* v.ast.FnDecl */) {
 		return _STR("fn %.*s\000( %"PRId32"\000 params ) { %"PRId32"\000 stmts }", 4, (*node._v__ast__FnDecl).name, (*node._v__ast__FnDecl).params.len, (*node._v__ast__FnDecl).stmts.len);
+	}
+	else if (_t1063.typ == 264 /* v.ast.EnumDecl */) {
+		return _STR("enum %.*s\000 { %"PRId32"\000 fields }", 3, (*node._v__ast__EnumDecl).name, (*node._v__ast__EnumDecl).fields.len);
 	}
 	else if (_t1063.typ == 279 /* v.ast.StructDecl */) {
 		return _STR("struct %.*s\000 { %"PRId32"\000 fields }", 3, (*node._v__ast__StructDecl).name, (*node._v__ast__StructDecl).fields.len);
@@ -51306,21 +51322,8 @@ VV_LOCAL_SYMBOL array_v__cflag__CFlag v__builder__Builder_get_rest_of_module_cfl
 	return flags;
 }
 
-VV_LOCAL_SYMBOL string v__builder__get_vtmp_folder() {
-	string vtmp = os__getenv(_SLIT("VTMP"));
-	if (vtmp.len > 0) {
-		return vtmp;
-	}
-	vtmp = os__join_path(os__temp_dir(), new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("v")})));
-	if (!os__exists(vtmp) || !os__is_dir(vtmp)) {
-		os__mkdir_all(vtmp);
-	}
-	os__setenv(_SLIT("VTMP"), vtmp, true);
-	return vtmp;
-}
-
 VV_LOCAL_SYMBOL string v__builder__Builder_get_vtmp_filename(v__builder__Builder* b, string base_file_name, string postfix) {
-	string vtmp = v__builder__get_vtmp_folder();
+	string vtmp = v__util__get_vtmp_folder();
 	string uniq = _SLIT("");
 	if (!b->pref->reuse_tmpc) {
 		uniq = _STR(".%"PRIu64"", 1, rand__u64());
