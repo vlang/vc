@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0e016ba"
+#define V_COMMIT_HASH "73bd63d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "704f38d"
+	#define V_COMMIT_HASH "0e016ba"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0e016ba"
+	#define V_CURRENT_COMMIT_HASH "73bd63d"
 #endif
 
 // V comptime_defines:
@@ -5942,7 +5942,6 @@ string v__ast__Scope_show(v__ast__Scope sc, int depth, int max_depth);
 string v__ast__Scope_str(v__ast__Scope sc);
 string v__ast__FnDecl_modname(v__ast__FnDecl* node);
 string v__ast__FnDecl_stringify(v__ast__FnDecl* node, v__table__Table* t, string cur_mod, map_string_string m2a);
-string v__ast__InfixExpr_str(v__ast__InfixExpr* x);
 multi_return_string_bool v__ast__StringInterLiteral_get_fspec_braces(v__ast__StringInterLiteral* lit, int i);
 string v__ast__Expr_str(v__ast__Expr x);
 string v__ast__CallArg_str(v__ast__CallArg a);
@@ -18071,7 +18070,7 @@ VV_LOCAL_SYMBOL array_string v__token__build_token_str() {
 	array_set(&s, v__token__Kind_question, &(string[]) { _SLIT("?") });
 	array_set(&s, v__token__Kind_left_shift, &(string[]) { _SLIT("<<") });
 	array_set(&s, v__token__Kind_right_shift, &(string[]) { _SLIT(">>") });
-	array_set(&s, v__token__Kind_comment, &(string[]) { _SLIT("// comment") });
+	array_set(&s, v__token__Kind_comment, &(string[]) { _SLIT("comment") });
 	array_set(&s, v__token__Kind_nl, &(string[]) { _SLIT("NLL") });
 	array_set(&s, v__token__Kind_dollar, &(string[]) { _SLIT("$") });
 	array_set(&s, v__token__Kind_at, &(string[]) { _SLIT("@") });
@@ -21484,7 +21483,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("704f38d"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0e016ba"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -26999,10 +26998,6 @@ string v__ast__FnDecl_stringify(v__ast__FnDecl* node, v__table__Table* t, string
 	return strings__Builder_str(&f);
 }
 
-string v__ast__InfixExpr_str(v__ast__InfixExpr* x) {
-	return _STR("%.*s\000 %.*s\000 %.*s", 3, v__ast__Expr_str(x->left), v__token__Kind_str(x->op), v__ast__Expr_str(x->right));
-}
-
 multi_return_string_bool v__ast__StringInterLiteral_get_fspec_braces(v__ast__StringInterLiteral* lit, int i) {
 	array_string res = __new_array_with_default(0, 0, sizeof(string), 0);
 	bool needs_fspec = (*(bool*)/*ee elem_typ */array_get(lit->need_fmts, i)) || (*(bool*)/*ee elem_typ */array_get(lit->pluss, i)) || ((*(bool*)/*ee elem_typ */array_get(lit->fills, i)) && (*(int*)/*ee elem_typ */array_get(lit->fwidths, i)) >= 0) || (*(int*)/*ee elem_typ */array_get(lit->fwidths, i)) != 0 || (*(int*)/*ee elem_typ */array_get(lit->precisions, i)) != 987698;
@@ -27144,9 +27139,9 @@ string v__ast__Expr_str(v__ast__Expr x) {
 				break;
 			}
 			array_push(&res, _MOV((string[]){ string_clone(_SLIT("$")) }));
-			multi_return_string_bool mr_6051 = v__ast__StringInterLiteral_get_fspec_braces(&(*x._v__ast__StringInterLiteral), i);
-			string fspec_str = mr_6051.arg0;
-			bool needs_braces = mr_6051.arg1;
+			multi_return_string_bool mr_5960 = v__ast__StringInterLiteral_get_fspec_braces(&(*x._v__ast__StringInterLiteral), i);
+			string fspec_str = mr_5960.arg0;
+			bool needs_braces = mr_5960.arg1;
 			if (needs_braces) {
 				array_push(&res, _MOV((string[]){ string_clone(_SLIT("{")) }));
 				array_push(&res, _MOV((string[]){ string_clone(v__ast__Expr_str((*(v__ast__Expr*)/*ee elem_typ */array_get((*x._v__ast__StringInterLiteral).exprs, i)))) }));
