@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5d6e9f7"
+#define V_COMMIT_HASH "77d2e82"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "cc17f14"
+	#define V_COMMIT_HASH "5d6e9f7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5d6e9f7"
+	#define V_CURRENT_COMMIT_HASH "77d2e82"
 #endif
 
 // V comptime_defines:
@@ -21736,7 +21736,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("cc17f14"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5d6e9f7"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -35474,13 +35474,13 @@ v__table__Type v__parser__Parser_parse_any_type(v__parser__Parser* p, v__table__
 			// Defer end
 			return _const_v__table__bool_type;
 		}
-		else if (string_eq(_t1480, _SLIT("any_float"))) {
+		else if (string_eq(_t1480, _SLIT("any_float")) || string_eq(_t1480, _SLIT("float_literal"))) {
 			// Defer begin
 			v__parser__Parser_next(p);
 			// Defer end
 			return _const_v__table__any_flt_type;
 		}
-		else if (string_eq(_t1480, _SLIT("any_int"))) {
+		else if (string_eq(_t1480, _SLIT("any_int")) || string_eq(_t1480, _SLIT("int_literal"))) {
 			// Defer begin
 			v__parser__Parser_next(p);
 			// Defer end
