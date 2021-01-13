@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1e853b0"
+#define V_COMMIT_HASH "3e3d45b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "03a0534"
+	#define V_COMMIT_HASH "1e853b0"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1e853b0"
+	#define V_CURRENT_COMMIT_HASH "3e3d45b"
 #endif
 
 // V comptime_defines:
@@ -21494,7 +21494,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("03a0534"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1e853b0"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -27396,6 +27396,9 @@ string v__ast__Stmt_str(v__ast__Stmt node) {
 	}
 	else if (_t1060.typ == 264 /* v.ast.EnumDecl */) {
 		return _STR("enum %.*s\000 { %"PRId32"\000 fields }", 3, (*node._v__ast__EnumDecl).name, (*node._v__ast__EnumDecl).fields.len);
+	}
+	else if (_t1060.typ == 276 /* v.ast.Module */) {
+		return _STR("module %.*s", 1, (*node._v__ast__Module).name);
 	}
 	else if (_t1060.typ == 279 /* v.ast.StructDecl */) {
 		return _STR("struct %.*s\000 { %"PRId32"\000 fields }", 3, (*node._v__ast__StructDecl).name, (*node._v__ast__StructDecl).fields.len);
@@ -33636,6 +33639,7 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 			array_type = v__table__new_type(idx);
 			has_type = true;
 		}
+		last_pos = v__token__Token_position(&p->tok);
 	} else {
 		for (int i = 0; !(p->tok.kind == v__token__Kind_rsbr || p->tok.kind == v__token__Kind_eof); i++) {
 			array_push(&exprs, _MOV((v__ast__Expr[]){ v__parser__Parser_expr(p, 0) }));
@@ -33653,6 +33657,7 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 		v__parser__Parser_check(p, v__token__Kind_rsbr);
 		if (exprs.len == 1 && (p->tok.kind == v__token__Kind_name || p->tok.kind == v__token__Kind_amp || p->tok.kind == v__token__Kind_lsbr) && p->tok.line_nr == line_nr) {
 			elem_type = v__parser__Parser_parse_type(p);
+			last_pos = v__token__Token_position(&p->tok);
 			is_fixed = true;
 			if (p->tok.kind == v__token__Kind_lcbr) {
 				v__parser__Parser_next(p);
@@ -33670,7 +33675,7 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 				last_pos = v__token__Token_position(&p->tok);
 				v__parser__Parser_check(p, v__token__Kind_rcbr);
 			} else {
-				v__parser__Parser_warn_with_pos(p, _SLIT("use e.g. `x := [1]Type{}` instead of `x := [1]Type`"), last_pos);
+				v__parser__Parser_warn_with_pos(p, _SLIT("use e.g. `x := [1]Type{}` instead of `x := [1]Type`"), v__token__Position_extend(first_pos, last_pos));
 			}
 		} else {
 			if (p->tok.kind == v__token__Kind_not && p->tok.line_nr == p->prev_tok.line_nr) {
@@ -33687,7 +33692,7 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 		}
 	}
 	if (exprs.len == 0 && p->tok.kind != v__token__Kind_lcbr && has_type) {
-		v__parser__Parser_warn_with_pos(p, _SLIT("use `x := []Type{}` instead of `x := []Type`"), last_pos);
+		v__parser__Parser_warn_with_pos(p, _SLIT("use `x := []Type{}` instead of `x := []Type`"), v__token__Position_extend(first_pos, last_pos));
 	}
 	bool has_len = false;
 	bool has_cap = false;
