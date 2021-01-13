@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4923048"
+#define V_COMMIT_HASH "204cc5f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "cf93be9"
+	#define V_COMMIT_HASH "4923048"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4923048"
+	#define V_CURRENT_COMMIT_HASH "204cc5f"
 #endif
 
 // V comptime_defines:
@@ -21749,7 +21749,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("cf93be9"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4923048"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -27662,6 +27662,13 @@ string v__ast__Stmt_str(v__ast__Stmt node) {
 	}
 	else if (_t1076.typ == 250 /* v.ast.Module */) {
 		return _STR("module %.*s", 1, (*node._v__ast__Module).name);
+	}
+	else if (_t1076.typ == 248 /* v.ast.Import */) {
+		string out = _STR("import %.*s", 1, (*node._v__ast__Import).mod);
+		if ((*node._v__ast__Import).alias.len > 0) {
+			out = /*f*/string_add(out, _STR(" as %.*s", 1, (*node._v__ast__Import).alias));
+		}
+		return out;
 	}
 	else if (_t1076.typ == 253 /* v.ast.StructDecl */) {
 		return _STR("struct %.*s\000 { %"PRId32"\000 fields }", 3, (*node._v__ast__StructDecl).name, (*node._v__ast__StructDecl).fields.len);
