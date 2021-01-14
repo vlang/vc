@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "aa87816"
+#define V_COMMIT_HASH "ca5f88e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "adf084e"
+	#define V_COMMIT_HASH "aa87816"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "aa87816"
+	#define V_CURRENT_COMMIT_HASH "ca5f88e"
 #endif
 
 // V comptime_defines:
@@ -11137,23 +11137,25 @@ void v_panic(string s) {
 }
 
 void eprintln(string s) {
-	if (s.str == 0) {
-		eprintln(_SLIT("eprintln(NIL)"));
-	}
 	fflush(stdout);
 	fflush(stderr);
-	write(2, s.str, s.len);
-	write(2, "\n", 1);
+	if (s.str == 0) {
+		write(2, "eprintln(NIL)\n", 14);
+	} else {
+		write(2, s.str, s.len);
+		write(2, "\n", 1);
+	}
 	fflush(stderr);
 }
 
 void eprint(string s) {
-	if (s.str == 0) {
-		eprint(_SLIT("eprint(NIL)"));
-	}
 	fflush(stdout);
 	fflush(stderr);
-	write(2, s.str, s.len);
+	if (s.str == 0) {
+		write(2, "eprint(NIL)\n", 12);
+	} else {
+		write(2, s.str, s.len);
+	}
 	fflush(stderr);
 }
 
@@ -11177,50 +11179,71 @@ void println(string s) {
 // Attr: [unsafe]
 byteptr v_malloc(int n) {
 	if (n <= 0) {
-		v_panic(_SLIT("malloc(<=0)"));
+		v_panic(_SLIT("> V malloc(<=0)"));
 	}
+	#if defined(CUSTOM_DEFINE_vplayground)
+	{
+		if (n > 10000) {
+			v_panic(_SLIT("allocating more than 10 KB is not allowed in the playground"));
+		}
+	}
+	#endif
+	#if defined(CUSTOM_DEFINE_trace_malloc)
+	{
+		total_m += n;
+		fprintf(stderr, "v_malloc %d total %d\n", n, total_m);
+	}
+	#endif
+	byteptr res = ((byteptr)(0));
 	#if defined(_VPREALLOC)
 	{
-		byteptr res = g_m2_ptr;
+		res = g_m2_ptr;
 		{ // Unsafe block
 			g_m2_ptr += n;
 		}
 		nr_mallocs++;
-		return res;
 	}
 	#else
 	{
-		byteptr ptr = malloc(n);
-		if (ptr == 0) {
+		res = malloc(n);
+		if (res == 0) {
 			v_panic(_STR("malloc(%"PRId32"\000) failed", 2, n));
 		}
-		return ptr;
 	}
 	#endif
-	return 0;
+	return res;
 }
 
 // Attr: [unsafe]
 byteptr v_realloc(byteptr b, int n) {
+	byteptr new_ptr = ((byteptr)(0));
 	#if defined(_VPREALLOC)
 	{
 		{ // Unsafe block
-			byteptr new_ptr = v_malloc(n);
-			int size = 0;
-			memcpy(new_ptr, b, size);
-			return new_ptr;
+			new_ptr = v_malloc(n);
+			memcpy(new_ptr, b, n);
 		}
 	}
 	#else
 	{
-		byteptr ptr = realloc(b, n);
-		if (ptr == 0) {
-			v_panic(_STR("realloc(%"PRId32"\000) failed", 2, n));
+		#if defined(CUSTOM_DEFINE_debug_realloc)
+		{
+			new_ptr = v_malloc(n);
+			memcpy(new_ptr, b, n);
+			memset(b, 0x57, n);
+			free(b);
 		}
-		return ptr;
+		#else
+		{
+			new_ptr = realloc(b, n);
+			if (new_ptr == 0) {
+				v_panic(_STR("realloc(%"PRId32"\000) failed", 2, n));
+			}
+		}
+		#endif
 	}
 	#endif
-	return 0;
+	return new_ptr;
 }
 
 // Attr: [unsafe]
@@ -22038,7 +22061,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("adf084e"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("aa87816"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
