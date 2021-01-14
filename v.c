@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "127503c"
+#define V_COMMIT_HASH "c39f0a7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7441889"
+	#define V_COMMIT_HASH "127503c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "127503c"
+	#define V_CURRENT_COMMIT_HASH "c39f0a7"
 #endif
 
 // V comptime_defines:
@@ -5773,7 +5773,7 @@ string v__ast__CallArg_str(v__ast__CallArg a);
 string v__ast__args2str(array_v__ast__CallArg args);
 string v__ast__BranchStmt_str(v__ast__BranchStmt* node);
 string v__ast__Stmt_str(v__ast__Stmt node);
-VV_LOCAL_SYMBOL string anon_7995_255_18(v__ast__ConstField f) {
+VV_LOCAL_SYMBOL string anon_8044_255_18(v__ast__ConstField f) {
 			return _STR("%.*s\000 = %.*s", 2, string_trim_prefix(f.name, string_add(f.mod, _SLIT("."))), v__ast__Expr_str(f.expr));
 		}
 		
@@ -22099,7 +22099,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7441889"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("127503c"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -28045,7 +28045,10 @@ string v__ast__BranchStmt_str(v__ast__BranchStmt* node) {
 
 string v__ast__Stmt_str(v__ast__Stmt node) {
 	v__ast__Stmt _t1229 = node; 
-	if (_t1229.typ == 232 /* v.ast.AssignStmt */) {
+	if (_t1229.typ == 231 /* v.ast.AssertStmt */) {
+		return _STR("assert %.*s", 1, v__ast__Expr_str((*node._v__ast__AssertStmt).expr));
+	}
+	else if (_t1229.typ == 232 /* v.ast.AssignStmt */) {
 		string out = _SLIT("");
 		// FOR IN array
 		array _t1230 = (*node._v__ast__AssignStmt).left;
@@ -28084,7 +28087,7 @@ string v__ast__Stmt_str(v__ast__Stmt node) {
 
 		for (int _t1233 = 0; _t1233 < _t1232_len; ++_t1233) {
 			v__ast__ConstField it = ((v__ast__ConstField*) _t1232_orig.data)[_t1233];
-			string ti = 		anon_7995_255_18(it);
+			string ti = 		anon_8044_255_18(it);
 			array_push(&_t1232, &ti);
 		}
 		
