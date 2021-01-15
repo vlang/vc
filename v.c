@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "80008a4"
+#define V_COMMIT_HASH "995f27a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0da40c4"
+	#define V_COMMIT_HASH "80008a4"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "80008a4"
+	#define V_CURRENT_COMMIT_HASH "995f27a"
 #endif
 
 // V comptime_defines:
@@ -14793,7 +14793,7 @@ Option_int os__File_write(os__File* f, array_byte buf) {
 		memcpy(&_t79, &_t78, sizeof(Option));
 		return _t79;
 	}
-	int written = fwrite(buf.data, buf.len, 1, f->cfile);
+	int written = ((int)(fwrite(buf.data, buf.len, 1, f->cfile)));
 	if (written == 0 && buf.len != 0) {
 		Option _t80 = v_error(_SLIT("0 bytes written"));
 		Option_int _t81;
@@ -14812,7 +14812,7 @@ Option_int os__File_writeln(os__File* f, string s) {
 		memcpy(&_t84, &_t83, sizeof(Option));
 		return _t84;
 	}
-	int written = fwrite(s.str, s.len, 1, f->cfile);
+	int written = ((int)(fwrite(s.str, s.len, 1, f->cfile)));
 	if (written == 0 && s.len != 0) {
 		Option _t85 = v_error(_SLIT("0 bytes written"));
 		Option_int _t86;
@@ -14838,7 +14838,7 @@ Option_int os__File_write_string(os__File* f, string s) {
 		memcpy(&_t91, &_t90, sizeof(Option));
 		return _t91;
 	}
-	int written = fwrite(s.str, s.len, 1, f->cfile);
+	int written = ((int)(fwrite(s.str, s.len, 1, f->cfile)));
 	if (written == 0 && s.len != 0) {
 		Option _t92 = v_error(_SLIT("0 bytes written"));
 		Option_int _t93;
@@ -14852,7 +14852,7 @@ Option_int os__File_write_string(os__File* f, string s) {
 
 Option_int os__File_write_to(os__File* f, int pos, array_byte buf) {
 	fseek(f->cfile, pos, SEEK_SET);
-	int res = fwrite(buf.data, 1, buf.len, f->cfile);
+	int res = ((int)(fwrite(buf.data, 1, buf.len, f->cfile)));
 	fseek(f->cfile, 0, SEEK_END);
 	Option_int _t95;
 	opt_ok2(&(int[]) { res }, (OptionBase*)(&_t95), sizeof(int));
@@ -14860,12 +14860,12 @@ Option_int os__File_write_to(os__File* f, int pos, array_byte buf) {
 }
 
 int os__File_write_bytes(os__File* f, voidptr data, int size) {
-	return fwrite(data, 1, size, f->cfile);
+	return ((int)(fwrite(data, 1, size, f->cfile)));
 }
 
 int os__File_write_bytes_at(os__File* f, voidptr data, int size, int pos) {
 	fseek(f->cfile, pos, SEEK_SET);
-	int res = fwrite(data, 1, size, f->cfile);
+	int res = ((int)(fwrite(data, 1, size, f->cfile)));
 	fseek(f->cfile, 0, SEEK_END);
 	return res;
 }
@@ -14892,7 +14892,7 @@ Option_int os__File_read_bytes_into(os__File* f, int pos, array_byte* buf) {
 	}
 	fseek(f->cfile, pos, SEEK_SET);
 	errno = 0;
-	int nbytes = fread(buf->data, 1, buf->len, f->cfile);
+	int nbytes = ((int)(fread(buf->data, 1, buf->len, f->cfile)));
 	if (errno != 0) {
 		Option _t97 = v_error(os__posix_get_error_msg(errno));
 		Option_int _t98;
@@ -14916,7 +14916,7 @@ Option_int os__File_read(os__File* f, array_byte* buf) {
 		return _t100;
 	}
 	errno = 0;
-	int nbytes = fread(buf->data, 1, buf->len, f->cfile);
+	int nbytes = ((int)(fread(buf->data, 1, buf->len, f->cfile)));
 	if (errno != 0) {
 		Option _t101 = v_error(os__posix_get_error_msg(errno));
 		Option_int _t102;
@@ -14936,7 +14936,7 @@ Option_int os__File_read_at(os__File* f, int pos, array_byte* buf) {
 	}
 	fseek(f->cfile, pos, SEEK_SET);
 	errno = 0;
-	int nbytes = fread(buf->data, 1, buf->len, f->cfile);
+	int nbytes = ((int)(fread(buf->data, 1, buf->len, f->cfile)));
 	if (errno != 0) {
 		Option _t105 = v_error(os__posix_get_error_msg(errno));
 		Option_int _t106;
@@ -15809,7 +15809,7 @@ Option_array_byte os__read_bytes(string path) {
 	}
 	rewind(fp);
 	array_byte res = __new_array_with_default(fsize, 0, sizeof(byte), 0);
-	int nr_read_elements = fread(res.data, fsize, 1, fp);
+	int nr_read_elements = ((int)(fread(res.data, fsize, 1, fp)));
 	if (nr_read_elements == 0 && fsize > 0) {
 		Option _t208 = v_error(_SLIT("fread failed"));
 		Option_array_byte _t209;
@@ -15856,7 +15856,7 @@ Option_string os__read_file(string path) {
 	rewind(fp);
 	{ // Unsafe block
 		byteptr str = v_malloc(fsize + 1);
-		int nelements = fread(str, fsize, 1, fp);
+		int nelements = ((int)(fread(str, fsize, 1, fp)));
 		if (nelements == 0 && fsize > 0) {
 			v_free(str);
 			// Defer begin
@@ -16188,8 +16188,8 @@ VV_LOCAL_SYMBOL int os__vpclose(voidptr f) {
 	}
 	#else
 	{
-		multi_return_int_bool mr_7882 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_7882.arg0;
+		multi_return_int_bool mr_7892 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_7892.arg0;
 		return ret;
 	}
 	#endif
@@ -16234,9 +16234,9 @@ int os__system(string cmd) {
 	}
 	#if !defined(_WIN32)
 	{
-		multi_return_int_bool mr_8894 = os__posix_wait4_to_exit_status(ret);
-		int pret = mr_8894.arg0;
-		bool is_signaled = mr_8894.arg1;
+		multi_return_int_bool mr_8904 = os__posix_wait4_to_exit_status(ret);
+		int pret = mr_8904.arg0;
+		bool is_signaled = mr_8904.arg1;
 		if (is_signaled) {
 			println(string_add(string_add(_STR("Terminated by signal %2"PRId32"\000 (", 2, ret), os__sigint_to_signal_name(pret)), _SLIT(")")));
 		}
@@ -22071,7 +22071,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0da40c4"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("80008a4"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
