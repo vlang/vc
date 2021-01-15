@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c39f0a7"
+#define V_COMMIT_HASH "c80cc91"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "127503c"
+	#define V_COMMIT_HASH "c39f0a7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c39f0a7"
+	#define V_CURRENT_COMMIT_HASH "c80cc91"
 #endif
 
 // V comptime_defines:
@@ -22099,7 +22099,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("127503c"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c39f0a7"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -32063,9 +32063,13 @@ v__table__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast__Cas
 	} else if (node->expr_type == _const_v__table__none_type) {
 		string type_name = v__table__Table_type_to_str(c->table, node->typ);
 		v__checker__Checker_error(c, _STR("cannot cast `none` to `%.*s\000`", 2, type_name), node->pos);
-	} else if (from_type_sym->kind == v__table__Kind_struct_ && !v__table__Type_is_ptr(node->expr_type) && !(to_type_sym->kind == v__table__Kind_sum_type || to_type_sym->kind == v__table__Kind_interface_) && !c->is_builtin_mod) {
-		string type_name = v__table__Table_type_to_str(c->table, node->typ);
-		v__checker__Checker_error(c, _STR("cannot cast `struct` to `%.*s\000`", 2, type_name), node->pos);
+	} else if (from_type_sym->kind == v__table__Kind_struct_ && !v__table__Type_is_ptr(node->expr_type)) {
+		if ((v__table__Type_is_ptr(node->typ) || !(to_type_sym->kind == v__table__Kind_sum_type || to_type_sym->kind == v__table__Kind_interface_)) && !c->is_builtin_mod) {
+			string type_name = v__table__Table_type_to_str(c->table, node->typ);
+			v__checker__Checker_error(c, _STR("cannot cast struct to `%.*s\000`", 2, type_name), node->pos);
+		} else if (to_type_sym->kind == v__table__Kind_interface_) {
+			v__checker__Checker_type_implements(c, node->expr_type, node->typ, node->pos);
+		}
 	} else if (v__table__Type_has_flag(node->expr_type, v__table__TypeFlag_optional) || v__table__Type_has_flag(node->expr_type, v__table__TypeFlag_variadic)) {
 		string msg = (v__table__Type_has_flag(node->expr_type, v__table__TypeFlag_optional) ? (_SLIT("an optional")) : (_SLIT("a variadic")));
 		v__checker__Checker_error(c, _STR("cannot type cast %.*s", 1, msg), node->pos);
@@ -32106,8 +32110,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (_t1436 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_117787 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_117787.arg1;
+		multi_return_string_int mr_117919 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_117919.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (_t1436 == v__token__AtKind_vhash) {
@@ -32748,7 +32752,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 		VAssertMetaInfo v_assert_meta_info__t1488;
 		memset(&v_assert_meta_info__t1488, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t1488.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t1488.line_nr = 4180;
+		v_assert_meta_info__t1488.line_nr = 4183;
 		v_assert_meta_info__t1488.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t1488.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t1488);
@@ -33218,8 +33222,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym) && !(typ_sym->kind == v__table__Kind_byteptr || typ_sym->kind == v__table__Kind_charptr)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_151070 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_151070.arg0;
+		multi_return_string_v__token__Position mr_151202 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_151202.arg0;
 	}
 	if (!c->inside_unsafe && (v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym))) {
 		v__checker__Checker_warn(c, _SLIT("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -33842,10 +33846,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1552 = 0; _t1552 < _t1551.len; ++_t1552) {
 			v__table__Fn m = ((v__table__Fn*)_t1551.data)[_t1552];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_170918 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_170918.arg0;
-				int nroute_attributes = mr_170918.arg1;
-				int nargs = mr_170918.arg2;
+				multi_return_bool_int_int mr_171050 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_171050.arg0;
+				int nroute_attributes = mr_171050.arg1;
+				int nargs = mr_171050.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
