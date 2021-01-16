@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d258733"
+#define V_COMMIT_HASH "5ae5573"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5c3ef58"
+	#define V_COMMIT_HASH "d258733"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d258733"
+	#define V_CURRENT_COMMIT_HASH "5ae5573"
 #endif
 
 // V comptime_defines:
@@ -6393,6 +6393,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_comp_for(v__gen__Gen* g, v__ast__CompFor node);
 VV_LOCAL_SYMBOL v__ast__CTempVar v__gen__Gen_new_ctemp_var(v__gen__Gen* g, v__ast__Expr expr, v__table__Type expr_type);
 VV_LOCAL_SYMBOL v__ast__CTempVar v__gen__Gen_new_ctemp_var_then_gen(v__gen__Gen* g, v__ast__Expr expr, v__table__Type expr_type);
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_ctemp_var(v__gen__Gen* g, v__ast__CTempVar tvar);
+VV_LOCAL_SYMBOL bool v__gen__Gen_embed_file_is_prod_mode(v__gen__Gen* g);
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_embed_file_init(v__gen__Gen* g, v__ast__ComptimeCall node);
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_embedded_data(v__gen__Gen* g);
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it, bool skip);
@@ -21887,7 +21888,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5c3ef58"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d258733"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -31519,7 +31520,7 @@ v__table__Type v__checker__Checker_expr(v__checker__Checker* c, v__ast__Expr nod
 			// Defer begin
 			c->expr_level--;
 			// Defer end
-			return v__table__Table_find_type_idx(c->table, _SLIT("embed.EmbeddedData"));
+			return v__table__Table_find_type_idx(c->table, _SLIT("v.embed_file.EmbedFileData"));
 		}
 		if ((*node._v__ast__ComptimeCall).is_vweb) {
 			v__pref__Preferences pref = *c->pref;
@@ -31946,8 +31947,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (_t1421 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_118683 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_118683.arg1;
+		multi_return_string_int mr_118691 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_118691.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (_t1421 == v__token__AtKind_vhash) {
@@ -33057,8 +33058,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym) && !(typ_sym->kind == v__table__Kind_byteptr || typ_sym->kind == v__table__Kind_charptr)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_151994 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_151994.arg0;
+		multi_return_string_v__token__Position mr_152002 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_152002.arg0;
 	}
 	if (!c->inside_unsafe && (v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym))) {
 		v__checker__Checker_warn(c, _SLIT("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -33684,10 +33685,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1537 = 0; _t1537 < _t1536.len; ++_t1537) {
 			v__table__Fn m = ((v__table__Fn*)_t1536.data)[_t1537];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_172063 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_172063.arg0;
-				int nroute_attributes = mr_172063.arg1;
-				int nargs = mr_172063.arg2;
+				multi_return_bool_int_int mr_172071 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_172071.arg0;
+				int nroute_attributes = mr_172071.arg1;
+				int nargs = mr_172071.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -34053,7 +34054,7 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 				epath = abs_path;
 			}
 		}
-		v__parser__Parser_register_auto_import(p, _SLIT("embed"));
+		v__parser__Parser_register_auto_import(p, _SLIT("v.embed_file"));
 		return (v__ast__ComptimeCall){.has_parens = 0,.method_name = (string){.str=(byteptr)""},.left = {0},.is_vweb = 0,.vweb_tmpl = (v__ast__File){.stmts=__new_array(0, 1, sizeof(v__ast__Stmt)),.imports=__new_array(0, 1, sizeof(v__ast__Import)),.auto_imports=__new_array(0, 1, sizeof(string)),.embedded_files=__new_array(0, 1, sizeof(v__ast__EmbeddedFile)),.imported_symbols=new_map_2(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.errors=__new_array(0, 1, sizeof(v__errors__Error)),.warnings=__new_array(0, 1, sizeof(v__errors__Warning)),.generic_fns=__new_array(0, 1, sizeof(v__ast__FnDecl*)),},.args_var = (string){.str=(byteptr)""},.is_embed = true,.embed_file = (v__ast__EmbeddedFile){.rpath = s,.apath = epath,},.sym = (v__table__TypeSymbol){.methods=__new_array(0, 1, sizeof(v__table__Fn)),},};
 	}
 	array_string fn_path = string_split(p->cur_fn_name, _SLIT("_"));
@@ -41106,7 +41107,7 @@ void v__gen__Gen_finish(v__gen__Gen* g) {
 	if (g->pref->is_livemain || g->pref->is_liveshared) {
 		v__gen__Gen_generate_hotcode_reloader_code(g);
 	}
-	if (g->pref->is_prod && g->embedded_files.len > 0) {
+	if (v__gen__Gen_embed_file_is_prod_mode(g) && g->embedded_files.len > 0) {
 		v__gen__Gen_gen_embedded_data(g);
 	}
 	if (g->pref->is_test) {
@@ -41183,9 +41184,9 @@ VV_LOCAL_SYMBOL string v__gen__Gen_optional_type_text(v__gen__Gen* g, string sty
 }
 
 VV_LOCAL_SYMBOL string v__gen__Gen_register_optional(v__gen__Gen* g, v__table__Type t) {
-	multi_return_string_string mr_19524 = v__gen__Gen_optional_type_name(g, t);
-	string styp = mr_19524.arg0;
-	string base = mr_19524.arg1;
+	multi_return_string_string mr_19537 = v__gen__Gen_optional_type_name(g, t);
+	string styp = mr_19537.arg0;
+	string base = mr_19537.arg1;
 	if (!(array_string_contains(g->optionals, styp))) {
 		string no_ptr = string_replace(base, _SLIT("*"), _SLIT("_ptr"));
 		string typ = (string_eq(base, _SLIT("void")) ? (_SLIT("void*")) : (base));
@@ -43042,11 +43043,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 		string value_typ_str = v__gen__Gen_typ(g, (*node._v__ast__MapInit).value_type);
 		v__table__TypeSymbol* value_typ = v__table__Table_get_type_symbol(g->table, (*node._v__ast__MapInit).value_type);
 		v__table__TypeSymbol* key_typ = v__table__Table_get_type_symbol(g->table, (*node._v__ast__MapInit).key_type);
-		multi_return_string_string_string_string mr_78141 = v__gen__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_78141.arg0;
-		string key_eq_fn = mr_78141.arg1;
-		string clone_fn = mr_78141.arg2;
-		string free_fn = mr_78141.arg3;
+		multi_return_string_string_string_string mr_78154 = v__gen__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_78154.arg0;
+		string key_eq_fn = mr_78154.arg1;
+		string clone_fn = mr_78154.arg2;
+		string free_fn = mr_78154.arg3;
 		int size = (*node._v__ast__MapInit).vals.len;
 		string shared_styp = _SLIT("");
 		string styp = _SLIT("");
@@ -45129,9 +45130,9 @@ VV_LOCAL_SYMBOL void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__Typ
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_141035 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_141035.arg0;
-						string base = mr_141035.arg1;
+						multi_return_string_string mr_141048 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_141048.arg0;
+						string base = mr_141048.arg1;
 						array_push(&g->optionals, _MOV((string[]){ string_clone(styp) }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -45348,11 +45349,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__as
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, _SLIT("main")) && (isnil(g->fn_decl) || string_eq(g->fn_decl->name, _SLIT("main.main")))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_148112 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_148112.arg0;
-				string pafile = mr_148112.arg1;
-				string pamod = mr_148112.arg2;
-				string pafn = mr_148112.arg3;
+				multi_return_int_string_string_string mr_148125 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_148125.arg0;
+				string pafile = mr_148125.arg1;
+				string pamod = mr_148125.arg2;
+				string pafn = mr_148125.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(_STR(\"optional not set (%%.*s\\000)\", 2, %.*s\000.v_error));", 2, cvar_name));
@@ -45635,11 +45636,11 @@ VV_LOCAL_SYMBOL string v__gen__Gen_type_default(v__gen__Gen* g, v__table__Type t
 	if (sym->kind == v__table__Kind_map) {
 		v__table__Map info = v__table__TypeSymbol_map_info(sym);
 		v__table__TypeSymbol* key_typ = v__table__Table_get_type_symbol(g->table, info.key_type);
-		multi_return_string_string_string_string mr_152485 = v__gen__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_152485.arg0;
-		string key_eq_fn = mr_152485.arg1;
-		string clone_fn = mr_152485.arg2;
-		string free_fn = mr_152485.arg3;
+		multi_return_string_string_string_string mr_152498 = v__gen__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_152498.arg0;
+		string key_eq_fn = mr_152498.arg1;
+		string clone_fn = mr_152498.arg2;
+		string free_fn = mr_152498.arg3;
 		return _STR("new_map_2(sizeof(%.*s\000), sizeof(%.*s\000), %.*s\000, %.*s\000, %.*s\000, %.*s\000)", 7, v__gen__Gen_typ(g, info.key_type), v__gen__Gen_typ(g, info.value_type), hash_fn, key_eq_fn, clone_fn, free_fn);
 	}
 	if (sym->kind == v__table__Kind_struct_) {
@@ -46692,18 +46693,28 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_ctemp_var(v__gen__Gen* g, v__ast__CTempVar 
 	v__gen__Gen_writeln(g, _SLIT(";"));
 }
 
+VV_LOCAL_SYMBOL bool v__gen__Gen_embed_file_is_prod_mode(v__gen__Gen* g) {
+	if (g->pref->is_prod || (array_string_contains(g->pref->compile_defines, _SLIT("debug_embed_file_in_prod")))) {
+		return true;
+	}
+	return false;
+}
+
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_embed_file_init(v__gen__Gen* g, v__ast__ComptimeCall node) {
-	v__gen__Gen_writeln(g, _SLIT("(embed__EmbeddedData){"));
-	v__gen__Gen_writeln(g, _STR("\t.path = %.*s\000,", 2, v__gen__ctoslit(node.embed_file.rpath)));
-	v__gen__Gen_writeln(g, _STR("\t.apath = %.*s\000,", 2, v__gen__ctoslit(node.embed_file.apath)));
+	v__gen__Gen_writeln(g, _SLIT("(v__embed_file__EmbedFileData){"));
+	v__gen__Gen_writeln(g, _STR("\t\t.path = %.*s\000,", 2, v__gen__ctoslit(node.embed_file.rpath)));
+	v__gen__Gen_writeln(g, _STR("\t\t.apath = %.*s\000,", 2, v__gen__ctoslit(node.embed_file.apath)));
 	int file_size = os__file_size(node.embed_file.apath);
 	if (file_size > 5242880) {
 		eprintln(_SLIT("Warning: embedding of files >= ~5MB is currently not supported"));
 	}
-	if (g->pref->is_prod) {
-		v__gen__Gen_writeln(g, _STR("\t.compressed = _v_embed_locate_data(%.*s\000),", 2, v__gen__ctoslit(node.embed_file.apath)));
+	if (v__gen__Gen_embed_file_is_prod_mode(g)) {
+		v__gen__Gen_writeln(g, _STR("\t\t.compressed = v__embed_file__find_index_entry_by_path((voidptr)_v_embed_file_index, %.*s\000)->data,", 2, v__gen__ctoslit(node.embed_file.rpath)));
 	}
-	v__gen__Gen_writeln(g, _STR("\t.len = %"PRId32"", 1, file_size));
+	v__gen__Gen_writeln(g, _SLIT("\t\t.uncompressed = NULL,"));
+	v__gen__Gen_writeln(g, _SLIT("\t\t.free_compressed = 0,"));
+	v__gen__Gen_writeln(g, _SLIT("\t\t.free_uncompressed = 0,"));
+	v__gen__Gen_writeln(g, _STR("\t\t.len = %"PRId32"", 1, file_size));
 	v__gen__Gen_writeln(g, string_add(_SLIT("} // $"), _STR("embed_file(\"%.*s\000\")", 2, node.embed_file.apath)));
 }
 
@@ -46734,20 +46745,15 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_embedded_data(v__gen__Gen* g) {
 		strings__Builder_writeln(&g->embedded_data, _SLIT("\n};"));
 	}
 	strings__Builder_writeln(&g->embedded_data, _SLIT(""));
-	strings__Builder_writeln(&g->embedded_data, _SLIT("const struct _v_embed {"));
-	strings__Builder_writeln(&g->embedded_data, _SLIT("\tstring id;"));
-	strings__Builder_writeln(&g->embedded_data, _SLIT("\tbyteptr data;"));
-	strings__Builder_writeln(&g->embedded_data, _SLIT("}"));
-	strings__Builder_writeln(&g->embedded_data, _SLIT("_v_embedded_data[] = {"));
+	strings__Builder_writeln(&g->embedded_data, _SLIT("const v__embed_file__EmbedFileIndexEntry _v_embed_file_index[] = {"));
 	// FOR IN array
 	array _t2061 = g->embedded_files;
 	for (int i = 0; i < _t2061.len; ++i) {
 		v__ast__EmbeddedFile emfile = ((v__ast__EmbeddedFile*)_t2061.data)[i];
-		strings__Builder_writeln(&g->embedded_data, _STR("\t{%.*s\000, _v_embed_blob_%"PRId32"\000},", 3, v__gen__ctoslit(emfile.rpath), i));
+		strings__Builder_writeln(&g->embedded_data, _STR("\t{%"PRId32"\000, %.*s\000, _v_embed_blob_%"PRId32"\000},", 4, i, v__gen__ctoslit(emfile.rpath), i));
 	}
-	strings__Builder_writeln(&g->embedded_data, _SLIT("\t{_SLIT(\"\"), NULL}"));
+	strings__Builder_writeln(&g->embedded_data, _SLIT("\t{-1, _SLIT(\"\"), NULL}"));
 	strings__Builder_writeln(&g->embedded_data, _SLIT("};"));
-	strings__Builder_writeln(&g->embedded_data, _SLIT("\n// function to locate embedded data by a vstring\nbyteptr _v_embed_locate_data(string id) {\n	const struct _v_embed *ve;\n	for (ve = _v_embedded_data; !string_eq(ve->id, _SLIT(\"\")) && ve->data != NULL; ve++) {\n		if (string_eq(ve->id, id)) {\n			return (byteptr) ve->data;\n		}\n	}\n	return NULL;\n}"));
 }
 
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_fn_decl(v__gen__Gen* g, v__ast__FnDecl it, bool skip) {
