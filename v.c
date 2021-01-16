@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5c3ef58"
+#define V_COMMIT_HASH "d258733"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8571d93"
+	#define V_COMMIT_HASH "5c3ef58"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5c3ef58"
+	#define V_CURRENT_COMMIT_HASH "d258733"
 #endif
 
 // V comptime_defines:
@@ -5379,6 +5379,7 @@ VV_LOCAL_SYMBOL string v__pkgconfig__filter(array_string libs, string prefix, st
 VV_LOCAL_SYMBOL v__pkgconfig__MainOptions* v__pkgconfig__parse_options(flag__FlagParser* fp);
 array_string _const_v__pkgconfig__default_paths; // inited later
 string _const_v__pkgconfig__version; // a string literal, inited later
+VV_LOCAL_SYMBOL array_string v__pkgconfig__PkgConfig_parse_list_no_comma(v__pkgconfig__PkgConfig* pc, string s);
 VV_LOCAL_SYMBOL array_string v__pkgconfig__PkgConfig_parse_list(v__pkgconfig__PkgConfig* pc, string s);
 VV_LOCAL_SYMBOL string v__pkgconfig__PkgConfig_parse_line(v__pkgconfig__PkgConfig* pc, string s);
 VV_LOCAL_SYMBOL void v__pkgconfig__PkgConfig_setvar(v__pkgconfig__PkgConfig* pc, string line);
@@ -21112,6 +21113,10 @@ VV_LOCAL_SYMBOL v__pkgconfig__MainOptions* v__pkgconfig__parse_options(flag__Fla
 	}, sizeof(v__pkgconfig__MainOptions));
 }
 
+VV_LOCAL_SYMBOL array_string v__pkgconfig__PkgConfig_parse_list_no_comma(v__pkgconfig__PkgConfig* pc, string s) {
+	return v__pkgconfig__PkgConfig_parse_list(pc, string_replace(s, _SLIT(","), _SLIT(" ")));
+}
+
 VV_LOCAL_SYMBOL array_string v__pkgconfig__PkgConfig_parse_list(v__pkgconfig__PkgConfig* pc, string s) {
 	array_string operators = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){_SLIT("="), _SLIT("<"), _SLIT(">"), _SLIT(">="), _SLIT("<=")}));
 	array_string r = string_split(v__pkgconfig__PkgConfig_parse_line(pc, string_replace(string_replace(s, _SLIT("  "), _SLIT(" ")), _SLIT(", "), _SLIT(" "))), _SLIT(" "));
@@ -21207,11 +21212,11 @@ VV_LOCAL_SYMBOL bool v__pkgconfig__PkgConfig_parse(v__pkgconfig__PkgConfig* pc, 
 			} else if (string_starts_with(line, _SLIT("Version:"))) {
 				pc->version = v__pkgconfig__PkgConfig_parse_line(pc, string_substr(line, 8, line.len));
 			} else if (string_starts_with(line, _SLIT("Requires:"))) {
-				pc->requires = v__pkgconfig__PkgConfig_parse_list(pc, string_substr(line, 9, line.len));
+				pc->requires = v__pkgconfig__PkgConfig_parse_list_no_comma(pc, string_substr(line, 9, line.len));
 			} else if (string_starts_with(line, _SLIT("Requires.private:"))) {
-				pc->requires_private = v__pkgconfig__PkgConfig_parse_list(pc, string_substr(line, 17, line.len));
+				pc->requires_private = v__pkgconfig__PkgConfig_parse_list_no_comma(pc, string_substr(line, 17, line.len));
 			} else if (string_starts_with(line, _SLIT("Conflicts:"))) {
-				pc->conflicts = v__pkgconfig__PkgConfig_parse_list(pc, string_substr(line, 10, line.len));
+				pc->conflicts = v__pkgconfig__PkgConfig_parse_list_no_comma(pc, string_substr(line, 10, line.len));
 			} else if (string_starts_with(line, _SLIT("Cflags:"))) {
 				pc->cflags = v__pkgconfig__PkgConfig_parse_list(pc, string_substr(line, 7, line.len));
 			} else if (string_starts_with(line, _SLIT("Libs:"))) {
@@ -22163,7 +22168,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8571d93"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5c3ef58"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
