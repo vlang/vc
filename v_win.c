@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "80d1aad"
+#define V_COMMIT_HASH "8571d93"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1a8a1ce"
+	#define V_COMMIT_HASH "80d1aad"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "80d1aad"
+	#define V_CURRENT_COMMIT_HASH "8571d93"
 #endif
 
 // V comptime_defines:
@@ -21882,7 +21882,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1a8a1ce"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("80d1aad"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -52745,7 +52745,7 @@ array_string v__builder__Builder_get_user_files(v__builder__Builder* v) {
 	v__builder__Builder_log(/*rec*/*v, _STR("get_v_files(%.*s\000)", 2, dir));
 	array_string user_files = __new_array_with_default(0, 0, sizeof(string), 0);
 	string vroot = os__dir(v__pref__vexe_path());
-	string preludes_path = os__join_path(vroot, new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("cmd"), _SLIT("tools"), _SLIT("preludes")})));
+	string preludes_path = os__join_path(vroot, new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("vlib"), _SLIT("v"), _SLIT("preludes")})));
 	if (v->pref->is_livemain || v->pref->is_liveshared) {
 		array_push(&user_files, _MOV((string[]){ string_clone(os__join_path(preludes_path, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("live.v")})))) }));
 	}
