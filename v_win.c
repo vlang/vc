@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2f7a663"
+#define V_COMMIT_HASH "53941c4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1d1fda9"
+	#define V_COMMIT_HASH "2f7a663"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2f7a663"
+	#define V_CURRENT_COMMIT_HASH "53941c4"
 #endif
 
 // V comptime_defines:
@@ -21834,7 +21834,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1d1fda9"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2f7a663"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -28065,10 +28065,10 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_promote_num(v__checker__Check
 	v__table__Type type_hi = left_type;
 	v__table__Type type_lo = right_type;
 	if (v__table__Type_idx(type_hi) < v__table__Type_idx(type_lo)) {
-		v__table__Type _var_7173 = type_hi;
-		v__table__Type _var_7182 = type_lo;
-		type_hi = _var_7182;
-		type_lo = _var_7173;
+		v__table__Type _var_7178 = type_hi;
+		v__table__Type _var_7187 = type_lo;
+		type_hi = _var_7187;
+		type_lo = _var_7178;
 	}
 	int idx_hi = v__table__Type_idx(type_hi);
 	int idx_lo = v__table__Type_idx(type_lo);
@@ -29086,8 +29086,8 @@ v__table__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__In
 	}
 	else if (_t1262 == v__token__Kind_left_shift) {
 		if (left->kind == v__table__Kind_array) {
-			multi_return_string_v__token__Position mr_29388 = v__checker__Checker_fail_if_immutable(c, infix_expr->left);
-			infix_expr->auto_locked = mr_29388.arg0;
+			multi_return_string_v__token__Position mr_29400 = v__checker__Checker_fail_if_immutable(c, infix_expr->left);
+			infix_expr->auto_locked = mr_29400.arg0;
 			v__table__Type left_value_type = v__table__Table_value_type(c->table, left_type);
 			v__table__TypeSymbol* left_value_sym = v__table__Table_get_type_symbol(c->table, left_value_type);
 			if (left_value_sym->kind == v__table__Kind_interface_) {
@@ -29247,19 +29247,19 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 		}
 	}
 	else if (_t1269.typ == 235 /* v.ast.IndexExpr */) {
-		multi_return_string_v__token__Position mr_35708 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__IndexExpr).left);
-		to_lock = mr_35708.arg0;
-		pos = mr_35708.arg1;
+		multi_return_string_v__token__Position mr_35725 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__IndexExpr).left);
+		to_lock = mr_35725.arg0;
+		pos = mr_35725.arg1;
 	}
 	else if (_t1269.typ == 244 /* v.ast.ParExpr */) {
-		multi_return_string_v__token__Position mr_35777 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__ParExpr).expr);
-		to_lock = mr_35777.arg0;
-		pos = mr_35777.arg1;
+		multi_return_string_v__token__Position mr_35794 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__ParExpr).expr);
+		to_lock = mr_35794.arg0;
+		pos = mr_35794.arg1;
 	}
 	else if (_t1269.typ == 246 /* v.ast.PrefixExpr */) {
-		multi_return_string_v__token__Position mr_35849 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__PrefixExpr).right);
-		to_lock = mr_35849.arg0;
-		pos = mr_35849.arg1;
+		multi_return_string_v__token__Position mr_35866 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__PrefixExpr).right);
+		to_lock = mr_35866.arg0;
+		pos = mr_35866.arg1;
 	}
 	else if (_t1269.typ == 249 /* v.ast.SelectorExpr */) {
 		if ((*expr._v__ast__SelectorExpr).expr_type == 0) {
@@ -29308,9 +29308,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 				string type_str = v__table__Table_type_to_str(c->table, (*expr._v__ast__SelectorExpr).expr_type);
 				v__checker__Checker_error(c, _STR("field `%.*s\000` of struct `%.*s\000` is immutable", 3, (*expr._v__ast__SelectorExpr).field_name, type_str), (*expr._v__ast__SelectorExpr).pos);
 			}
-			multi_return_string_v__token__Position mr_37203 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__SelectorExpr).expr);
-			to_lock = mr_37203.arg0;
-			pos = mr_37203.arg1;
+			multi_return_string_v__token__Position mr_37220 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__SelectorExpr).expr);
+			to_lock = mr_37220.arg0;
+			pos = mr_37220.arg1;
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
 			}
@@ -29326,9 +29326,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 	}
 	else if (_t1269.typ == 221 /* v.ast.CallExpr */) {
 		if (string_eq((*expr._v__ast__CallExpr).name, _SLIT("slice"))) {
-			multi_return_string_v__token__Position mr_37905 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
-			to_lock = mr_37905.arg0;
-			pos = mr_37905.arg1;
+			multi_return_string_v__token__Position mr_37922 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
+			to_lock = mr_37922.arg0;
+			pos = mr_37922.arg1;
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
 			}
@@ -30960,7 +30960,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__St
 				VAssertMetaInfo v_assert_meta_info__t1377;
 				memset(&v_assert_meta_info__t1377, 0, sizeof(VAssertMetaInfo));
 				v_assert_meta_info__t1377.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-				v_assert_meta_info__t1377.line_nr = 2844;
+				v_assert_meta_info__t1377.line_nr = 2870;
 				v_assert_meta_info__t1377.fn_name = _SLIT("stmt");
 				v_assert_meta_info__t1377.src = _SLIT("!c.inside_unsafe");
 				__print_assert_failure(&v_assert_meta_info__t1377);
@@ -31893,8 +31893,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (_t1406 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_118610 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_118610.arg1;
+		multi_return_string_int mr_118683 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_118683.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (_t1406 == v__token__AtKind_vhash) {
@@ -32534,7 +32534,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 		VAssertMetaInfo v_assert_meta_info__t1458;
 		memset(&v_assert_meta_info__t1458, 0, sizeof(VAssertMetaInfo));
 		v_assert_meta_info__t1458.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t1458.line_nr = 4199;
+		v_assert_meta_info__t1458.line_nr = 4230;
 		v_assert_meta_info__t1458.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t1458.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t1458);
@@ -33004,8 +33004,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!v__table__TypeSymbol_is_number(typ_sym) && !(typ_sym->kind == v__table__Kind_byteptr || typ_sym->kind == v__table__Kind_charptr)) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_151893 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_151893.arg0;
+		multi_return_string_v__token__Position mr_151994 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_151994.arg0;
 	}
 	if (!c->inside_unsafe && (v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym))) {
 		v__checker__Checker_warn(c, _SLIT("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
@@ -33631,10 +33631,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1522 = 0; _t1522 < _t1521.len; ++_t1522) {
 			v__table__Fn m = ((v__table__Fn*)_t1521.data)[_t1522];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_171950 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_171950.arg0;
-				int nroute_attributes = mr_171950.arg1;
-				int nargs = mr_171950.arg2;
+				multi_return_bool_int_int mr_172063 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_172063.arg0;
+				int nroute_attributes = mr_172063.arg1;
+				int nargs = mr_172063.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -34594,10 +34594,10 @@ VV_LOCAL_SYMBOL v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_gt);
 	}
-	multi_return_array_v__table__Param_bool_bool mr_7845 = v__parser__Parser_fn_args(p);
-	array_v__table__Param args2 = mr_7845.arg0;
-	bool are_args_type_only = mr_7845.arg1;
-	bool is_variadic = mr_7845.arg2;
+	multi_return_array_v__table__Param_bool_bool mr_7846 = v__parser__Parser_fn_args(p);
+	array_v__table__Param args2 = mr_7846.arg0;
+	bool are_args_type_only = mr_7846.arg1;
+	bool is_variadic = mr_7846.arg2;
 	_PUSH_MANY(&params, (args2), _t1575, array_v__table__Param);
 	if (!are_args_type_only) {
 		// FOR IN array
@@ -34744,9 +34744,9 @@ VV_LOCAL_SYMBOL v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 		return (v__ast__AnonFn){.decl = (v__ast__FnDecl){.params=__new_array(0, 1, sizeof(v__table__Param)),.attrs=__new_array(0, 1, sizeof(v__table__Attr)),.stmts=__new_array(0, 1, sizeof(v__ast__Stmt)),.comments=__new_array(0, 1, sizeof(v__ast__Comment)),.next_comments=__new_array(0, 1, sizeof(v__ast__Comment)),},.typ = 0,};
 	}
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Param_bool_bool mr_11750 = v__parser__Parser_fn_args(p);
-	array_v__table__Param args = mr_11750.arg0;
-	bool is_variadic = mr_11750.arg2;
+	multi_return_array_v__table__Param_bool_bool mr_11752 = v__parser__Parser_fn_args(p);
+	array_v__table__Param args = mr_11752.arg0;
+	bool is_variadic = mr_11752.arg2;
 	// FOR IN array
 	array _t1579 = args;
 	for (int _t1580 = 0; _t1580 < _t1579.len; ++_t1580) {
@@ -35480,9 +35480,9 @@ VV_LOCAL_SYMBOL v__ast__SelectExpr v__parser__Parser_select_expr(v__parser__Pars
 		} else {
 			p->inside_match = true;
 			p->inside_select = true;
-			multi_return_array_v__ast__Expr_array_v__ast__Comment mr_7943 = v__parser__Parser_expr_list(p);
-			array_v__ast__Expr exprs = mr_7943.arg0;
-			array_v__ast__Comment comments = mr_7943.arg1;
+			multi_return_array_v__ast__Expr_array_v__ast__Comment mr_7945 = v__parser__Parser_expr_list(p);
+			array_v__ast__Expr exprs = mr_7945.arg0;
+			array_v__ast__Comment comments = mr_7945.arg1;
 			if (exprs.len != 1) {
 				v__parser__Parser_error(p, _SLIT("only one expression allowed as `select` key"));
 				return (v__ast__SelectExpr){.branches = __new_array(0, 1, sizeof(v__ast__SelectBranch)),.pos = {0},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
@@ -35739,9 +35739,9 @@ v__table__Type v__parser__Parser_parse_multi_return_type(v__parser__Parser* p) {
 v__table__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name) {
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	int line_nr = p->tok.line_nr;
-	multi_return_array_v__table__Param_bool_bool mr_2896 = v__parser__Parser_fn_args(p);
-	array_v__table__Param args = mr_2896.arg0;
-	bool is_variadic = mr_2896.arg2;
+	multi_return_array_v__table__Param_bool_bool mr_2897 = v__parser__Parser_fn_args(p);
+	array_v__table__Param args = mr_2897.arg0;
+	bool is_variadic = mr_2897.arg2;
 	v__table__Type return_type = _const_v__table__void_type;
 	if (p->tok.line_nr == line_nr && v__token__Kind_is_start_of_type(p->tok.kind)) {
 		return_type = v__parser__Parser_parse_type(p);
@@ -36746,7 +36746,7 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p, bool is_top_level) {
 						VAssertMetaInfo v_assert_meta_info__t1639;
 						memset(&v_assert_meta_info__t1639, 0, sizeof(VAssertMetaInfo));
 						v_assert_meta_info__t1639.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/parser/parser.v");
-						v_assert_meta_info__t1639.line_nr = 663;
+						v_assert_meta_info__t1639.line_nr = 664;
 						v_assert_meta_info__t1639.fn_name = _SLIT("stmt");
 						v_assert_meta_info__t1639.src = _SLIT("false");
 						__print_assert_failure(&v_assert_meta_info__t1639);
@@ -37021,9 +37021,9 @@ void v__parser__Parser_vet_error(v__parser__Parser* p, string msg, int line, v__
 
 VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p, bool is_top_level) {
 	v__token__Token tok = p->tok;
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_23783 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr left = mr_23783.arg0;
-	array_v__ast__Comment left_comments = mr_23783.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_23787 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr left = mr_23787.arg0;
+	array_v__ast__Comment left_comments = mr_23787.arg1;
 	v__ast__Expr left0 = (*(v__ast__Expr*)/*ee elem_typ */array_get(left, 0));
 	if (tok.kind == v__token__Kind_key_mut && p->tok.kind != v__token__Kind_decl_assign) {
 		v__parser__Parser_error(p, _SLIT("expecting `:=` (e.g. `mut x :=`)"));
@@ -37826,9 +37826,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_48656 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_48656.arg0;
-	array_v__ast__Comment comments2 = mr_48656.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_48673 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_48673.arg0;
+	array_v__ast__Comment comments2 = mr_48673.arg1;
 	_PUSH_MANY(&comments, (comments2), _t1668, array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
@@ -39275,8 +39275,8 @@ VV_LOCAL_SYMBOL v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser
 			v__parser__Parser_error(p, _SLIT("interface methods cannot contain uppercase letters, use snake_case instead"));
 			return (v__ast__InterfaceDecl){.name = (string){.str=(byteptr)""},.field_names = __new_array(0, 1, sizeof(string)),.is_pub = 0,.methods = __new_array(0, 1, sizeof(v__ast__FnDecl)),.pos = {0},.pre_comments = __new_array(0, 1, sizeof(v__ast__Comment)),};
 		}
-		multi_return_array_v__table__Param_bool_bool mr_12317 = v__parser__Parser_fn_args(p);
-		array_v__table__Param args2 = mr_12317.arg0;
+		multi_return_array_v__table__Param_bool_bool mr_12318 = v__parser__Parser_fn_args(p);
+		array_v__table__Param args2 = mr_12318.arg0;
 		array_v__table__Param args = new_array_from_c_array(1, 1, sizeof(v__table__Param), _MOV((v__table__Param[1]){(v__table__Param){.pos = {0},.name = _SLIT("x"),.is_mut = 0,.typ = typ,.is_hidden = true,}}));
 		_PUSH_MANY(&args, (args2), _t1711, array_v__table__Param);
 		v__ast__FnDecl method = (v__ast__FnDecl){
@@ -40111,10 +40111,10 @@ VV_LOCAL_SYMBOL string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Ty
 			str_fn_name = v__gen__styp_to_str_fn_name(sym->name);
 		}
 	}
-	multi_return_bool_bool_int mr_2355 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_2355.arg0;
-	bool str_method_expects_ptr = mr_2355.arg1;
-	int str_nr_args = mr_2355.arg2;
+	multi_return_bool_bool_int mr_2356 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_2356.arg0;
+	bool str_method_expects_ptr = mr_2356.arg1;
+	int str_nr_args = mr_2356.arg2;
 	string already_generated_key = _STR("%.*s\000:%.*s", 2, styp, str_fn_name);
 	if (!sym_has_str_method && !(array_string_contains(g->str_types, already_generated_key)) && !v__table__Type_has_flag(typ, v__table__TypeFlag_optional)) {
 		#if defined(CUSTOM_DEFINE_debugautostr)
@@ -40175,8 +40175,8 @@ VV_LOCAL_SYMBOL string v__gen__Gen_gen_str_for_type(v__gen__Gen* g, v__table__Ty
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_option(v__gen__Gen* g, v__table__Type typ, string styp, string str_fn_name) {
 	v__table__Type parent_type = v__table__Type_clear_flag(typ, v__table__TypeFlag_optional);
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, parent_type);
-	multi_return_bool_bool_int mr_4282 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_4282.arg0;
+	multi_return_bool_bool_int mr_4283 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_4283.arg0;
 	string parent_str_fn_name = v__gen__styp_to_str_fn_name(sym->cname);
 	if (!sym_has_str_method) {
 		parent_str_fn_name = v__gen__Gen_gen_str_for_type(g, parent_type);
@@ -40205,8 +40205,8 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_option(v__gen__Gen* g, v__table__Ty
 
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_alias(v__gen__Gen* g, v__table__Alias info, string styp, string str_fn_name) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, info.parent_type);
-	multi_return_bool_bool_int mr_5828 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_5828.arg0;
+	multi_return_bool_bool_int mr_5829 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_5829.arg0;
 	string parent_str_fn_name = v__gen__styp_to_str_fn_name(string_replace(sym->name, _SLIT("."), _SLIT("__")));
 	if (!sym_has_str_method) {
 		parent_str_fn_name = v__gen__Gen_gen_str_for_type(g, info.parent_type);
@@ -40233,9 +40233,9 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_array(v__gen__Gen* g, v__table__Arr
 	}
 	string field_styp = v__gen__Gen_typ(g, typ);
 	bool is_elem_ptr = v__table__Type_is_ptr(typ);
-	multi_return_bool_bool_int mr_7261 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_7261.arg0;
-	bool str_method_expects_ptr = mr_7261.arg1;
+	multi_return_bool_bool_int mr_7262 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_7262.arg0;
+	bool str_method_expects_ptr = mr_7262.arg1;
 	string elem_str_fn_name = _SLIT("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, _SLIT("*"), _SLIT("")), _SLIT("_str"))) : (string_add(field_styp, _SLIT("_str"))));
@@ -40308,9 +40308,9 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_array_fixed(v__gen__Gen* g, v__tabl
 	}
 	string field_styp = v__gen__Gen_typ(g, typ);
 	bool is_elem_ptr = v__table__Type_is_ptr(typ);
-	multi_return_bool_bool_int mr_10923 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_10923.arg0;
-	bool str_method_expects_ptr = mr_10923.arg1;
+	multi_return_bool_bool_int mr_10924 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_10924.arg0;
+	bool str_method_expects_ptr = mr_10924.arg1;
 	string elem_str_fn_name = _SLIT("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, _SLIT("*"), _SLIT("")), _SLIT("_str"))) : (string_add(field_styp, _SLIT("_str"))));
@@ -40437,9 +40437,9 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_multi_return(v__gen__Gen* g, v__tab
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 		string field_styp = v__gen__Gen_typ(g, typ);
 		bool is_arg_ptr = v__table__Type_is_ptr(typ);
-		multi_return_bool_bool_int mr_17332 = v__table__TypeSymbol_str_method_info(sym);
-		bool sym_has_str_method = mr_17332.arg0;
-		bool str_method_expects_ptr = mr_17332.arg1;
+		multi_return_bool_bool_int mr_17333 = v__table__TypeSymbol_str_method_info(sym);
+		bool sym_has_str_method = mr_17333.arg0;
+		bool str_method_expects_ptr = mr_17333.arg1;
 		string arg_str_fn_name = _SLIT("");
 		if (sym_has_str_method) {
 			arg_str_fn_name = (is_arg_ptr ? (string_add(string_replace(field_styp, _SLIT("*"), _SLIT("")), _SLIT("_str"))) : (string_add(field_styp, _SLIT("_str"))));
@@ -42989,11 +42989,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_expr(v__gen__Gen* g, v__ast__Expr node) {
 		string value_typ_str = v__gen__Gen_typ(g, (*node._v__ast__MapInit).value_type);
 		v__table__TypeSymbol* value_typ = v__table__Table_get_type_symbol(g->table, (*node._v__ast__MapInit).value_type);
 		v__table__TypeSymbol* key_typ = v__table__Table_get_type_symbol(g->table, (*node._v__ast__MapInit).key_type);
-		multi_return_string_string_string_string mr_78116 = v__gen__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_78116.arg0;
-		string key_eq_fn = mr_78116.arg1;
-		string clone_fn = mr_78116.arg2;
-		string free_fn = mr_78116.arg3;
+		multi_return_string_string_string_string mr_78141 = v__gen__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_78141.arg0;
+		string key_eq_fn = mr_78141.arg1;
+		string clone_fn = mr_78141.arg2;
+		string free_fn = mr_78141.arg3;
 		int size = (*node._v__ast__MapInit).vals.len;
 		string shared_styp = _SLIT("");
 		string styp = _SLIT("");
@@ -43212,7 +43212,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_selector_expr(v__gen__Gen* g, v__ast__SelectorE
 			VAssertMetaInfo v_assert_meta_info__t1840;
 			memset(&v_assert_meta_info__t1840, 0, sizeof(VAssertMetaInfo));
 			v_assert_meta_info__t1840.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/gen/cgen.v");
-			v_assert_meta_info__t1840.line_nr = 2850;
+			v_assert_meta_info__t1840.line_nr = 2858;
 			v_assert_meta_info__t1840.fn_name = _SLIT("selector_expr");
 			v_assert_meta_info__t1840.src = _SLIT("node.field_name == 'len'");
 			v_assert_meta_info__t1840.op = _SLIT("==");
@@ -45076,9 +45076,9 @@ VV_LOCAL_SYMBOL void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__Typ
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_140969 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_140969.arg0;
-						string base = mr_140969.arg1;
+						multi_return_string_string mr_141035 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_141035.arg0;
+						string base = mr_141035.arg1;
 						array_push(&g->optionals, _MOV((string[]){ string_clone(styp) }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -45295,11 +45295,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__as
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, _SLIT("main")) && (isnil(g->fn_decl) || string_eq(g->fn_decl->name, _SLIT("main.main")))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_148044 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_148044.arg0;
-				string pafile = mr_148044.arg1;
-				string pamod = mr_148044.arg2;
-				string pafn = mr_148044.arg3;
+				multi_return_int_string_string_string mr_148112 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_148112.arg0;
+				string pafile = mr_148112.arg1;
+				string pamod = mr_148112.arg2;
+				string pafn = mr_148112.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(_STR(\"optional not set (%%.*s\\000)\", 2, %.*s\000.v_error));", 2, cvar_name));
@@ -45582,11 +45582,11 @@ VV_LOCAL_SYMBOL string v__gen__Gen_type_default(v__gen__Gen* g, v__table__Type t
 	if (sym->kind == v__table__Kind_map) {
 		v__table__Map info = v__table__TypeSymbol_map_info(sym);
 		v__table__TypeSymbol* key_typ = v__table__Table_get_type_symbol(g->table, info.key_type);
-		multi_return_string_string_string_string mr_152414 = v__gen__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_152414.arg0;
-		string key_eq_fn = mr_152414.arg1;
-		string clone_fn = mr_152414.arg2;
-		string free_fn = mr_152414.arg3;
+		multi_return_string_string_string_string mr_152485 = v__gen__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_152485.arg0;
+		string key_eq_fn = mr_152485.arg1;
+		string clone_fn = mr_152485.arg2;
+		string free_fn = mr_152485.arg3;
 		return _STR("new_map_2(sizeof(%.*s\000), sizeof(%.*s\000), %.*s\000, %.*s\000, %.*s\000, %.*s\000)", 7, v__gen__Gen_typ(g, info.key_type), v__gen__Gen_typ(g, info.value_type), hash_fn, key_eq_fn, clone_fn, free_fn);
 	}
 	if (sym->kind == v__table__Kind_struct_) {
@@ -47206,11 +47206,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_fn_call(v__gen__Gen* g, v__ast__CallExpr node) 
 	}
 	if (!print_auto_str) {
 		if (g->pref->is_debug && string_eq(node.name, _SLIT("panic"))) {
-			multi_return_int_string_string_string mr_19199 = v__gen__Gen_panic_debug_info(g, node.pos);
-			int paline = mr_19199.arg0;
-			string pafile = mr_19199.arg1;
-			string pamod = mr_19199.arg2;
-			string pafn = mr_19199.arg3;
+			multi_return_int_string_string_string mr_19204 = v__gen__Gen_panic_debug_info(g, node.pos);
+			int paline = mr_19204.arg0;
+			string pafile = mr_19204.arg1;
+			string pamod = mr_19204.arg2;
+			string pafn = mr_19204.arg3;
 			v__gen__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 			v__gen__Gen_call_args(g, node);
 			v__gen__Gen_write(g, _SLIT(")"));
