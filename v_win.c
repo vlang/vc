@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d16721e"
+#define V_COMMIT_HASH "df39e70"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4044abe"
+	#define V_COMMIT_HASH "d16721e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d16721e"
+	#define V_CURRENT_COMMIT_HASH "df39e70"
 #endif
 
 // V comptime_defines:
@@ -3226,6 +3226,7 @@ struct v__ast__StructDecl {
 	int mut_pos;
 	int pub_pos;
 	int pub_mut_pos;
+	int module_pos;
 	v__table__Language language;
 	bool is_union;
 	array_v__table__Attr attrs;
@@ -21893,7 +21894,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4044abe"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d16721e"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -38949,7 +38950,7 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 	string name = v__parser__Parser_check_name(p);
 	if (name.len == 1 && byte_is_capital(string_at(name, 0))) {
 		v__parser__Parser_error_with_pos(p, _SLIT("single letter capital names are reserved for generic template types."), name_pos);
-		return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
+		return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.module_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
 	}
 	array_v__table__Type generic_types = __new_array_with_default(0, 0, sizeof(v__table__Type), 0);
 	if (p->tok.kind == v__token__Kind_lt) {
@@ -38966,15 +38967,15 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 	bool no_body = p->tok.kind != v__token__Kind_lcbr;
 	if (language == v__table__Language_v && no_body) {
 		v__parser__Parser_error(p, _STR("`%.*s\000` lacks body", 2, p->tok.lit));
-		return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
+		return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.module_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
 	}
 	if (language == v__table__Language_v && !p->builtin_mod && name.len > 0 && !byte_is_capital(string_at(name, 0)) && !p->pref->translated) {
 		v__parser__Parser_error_with_pos(p, _STR("struct name `%.*s\000` must begin with capital letter", 2, name), name_pos);
-		return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
+		return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.module_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
 	}
 	if (name.len == 1) {
 		v__parser__Parser_error_with_pos(p, _SLIT("struct names must have more than one character"), name_pos);
-		return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
+		return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.module_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
 	}
 	string orig_name = name;
 	if (language == v__table__Language_c) {
@@ -38995,6 +38996,7 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 	int pub_pos = -1;
 	int pub_mut_pos = -1;
 	int global_pos = -1;
+	int module_pos = -1;
 	bool is_field_mut = false;
 	bool is_field_pub = false;
 	bool is_field_global = false;
@@ -39021,7 +39023,7 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 				if (p->tok.kind == v__token__Kind_key_mut) {
 					if (pub_mut_pos != -1) {
 						v__parser__Parser_error(p, _SLIT("redefinition of `pub mut` section"));
-						return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
+						return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.module_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
 					}
 					v__parser__Parser_next(p);
 					pub_mut_pos = fields.len;
@@ -39031,7 +39033,7 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 				} else {
 					if (pub_pos != -1) {
 						v__parser__Parser_error(p, _SLIT("redefinition of `pub` section"));
-						return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
+						return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.module_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
 					}
 					pub_pos = fields.len;
 					is_field_pub = true;
@@ -39042,7 +39044,7 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 			} else if (p->tok.kind == v__token__Kind_key_mut) {
 				if (mut_pos != -1) {
 					v__parser__Parser_error(p, _SLIT("redefinition of `mut` section"));
-					return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
+					return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.module_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
 				}
 				v__parser__Parser_next(p);
 				v__parser__Parser_check(p, v__token__Kind_colon);
@@ -39053,7 +39055,7 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 			} else if (p->tok.kind == v__token__Kind_key_global) {
 				if (global_pos != -1) {
 					v__parser__Parser_error(p, _SLIT("redefinition of `global` section"));
-					return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
+					return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.module_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
 				}
 				v__parser__Parser_next(p);
 				v__parser__Parser_check(p, v__token__Kind_colon);
@@ -39061,6 +39063,17 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 				is_field_pub = true;
 				is_field_mut = true;
 				is_field_global = true;
+			} else if (p->tok.kind == v__token__Kind_key_module) {
+				if (module_pos != -1) {
+					v__parser__Parser_error(p, _SLIT("redefinition of `module` section"));
+					return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.module_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
+				}
+				v__parser__Parser_next(p);
+				v__parser__Parser_check(p, v__token__Kind_colon);
+				module_pos = fields.len;
+				is_field_pub = false;
+				is_field_mut = false;
+				is_field_global = false;
 			}
 			for (;;) {
 				if (!(p->tok.kind == v__token__Kind_comment)) break;
@@ -39089,17 +39102,17 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 				type_pos = v__token__Position_extend(type_pos, v__token__Token_position(&p->prev_tok));
 				if (!is_on_top) {
 					v__parser__Parser_error_with_pos(p, _SLIT("struct embedding must be declared at the beginning of the struct body"), type_pos);
-					return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
+					return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.module_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
 				}
 				v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(p->table, typ);
 				if ((array_v__table__Type_contains(embed_types, typ))) {
 					v__parser__Parser_error_with_pos(p, _STR("cannot embed `%.*s\000` more than once", 2, sym->name), type_pos);
-					return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
+					return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.module_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
 				}
 				field_name = v__table__TypeSymbol_embed_name(sym);
 				if ((array_string_contains(embed_field_names, field_name))) {
 					v__parser__Parser_error_with_pos(p, _STR("duplicate field `%.*s\000`", 2, field_name), type_pos);
-					return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
+					return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.module_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
 				}
 				array_push(&embed_field_names, _MOV((string[]){ string_clone(field_name) }));
 				array_push(&embed_types, _MOV((v__table__Type[]){ typ }));
@@ -39115,7 +39128,7 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 				}
 				typ = v__parser__Parser_parse_type(p);
 				if (v__table__Type_idx(typ) == 0) {
-					return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
+					return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.module_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
 				}
 				type_pos = v__token__Token_position(&p->prev_tok);
 				field_pos = v__token__Position_extend(field_start_pos, type_pos);
@@ -39193,13 +39206,13 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 	};
 	if (v__table__Table_has_deep_child_no_ref(p->table, &t, name)) {
 		v__parser__Parser_error_with_pos(p, _STR("invalid recursive struct `%.*s\000`", 2, orig_name), name_pos);
-		return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
+		return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.module_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
 	}
 	int ret = 0;
 	ret = v__table__Table_register_type_symbol(p->table, t);
 	if (ret == -1 && language != v__table__Language_c) {
 		v__parser__Parser_error_with_pos(p, _STR("cannot register struct `%.*s\000`, another type with this name exists", 2, name), name_pos);
-		return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
+		return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.module_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
 	}
 	p->expr_mod = _SLIT("");
 	return (v__ast__StructDecl){
@@ -39210,6 +39223,7 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 		.mut_pos = mut_pos - embeds.len,
 		.pub_pos = pub_pos - embeds.len,
 		.pub_mut_pos = pub_mut_pos - embeds.len,
+		.module_pos = module_pos - embeds.len,
 		.language = language,
 		.is_union = is_union,
 		.attrs = attrs,
@@ -39345,8 +39359,8 @@ VV_LOCAL_SYMBOL v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser
 			v__parser__Parser_error(p, _SLIT("interface methods cannot contain uppercase letters, use snake_case instead"));
 			return (v__ast__InterfaceDecl){.name = (string){.str=(byteptr)""},.field_names = __new_array(0, 1, sizeof(string)),.is_pub = 0,.methods = __new_array(0, 1, sizeof(v__ast__FnDecl)),.pos = {0},.pre_comments = __new_array(0, 1, sizeof(v__ast__Comment)),};
 		}
-		multi_return_array_v__table__Param_bool_bool mr_12311 = v__parser__Parser_fn_args(p);
-		array_v__table__Param args2 = mr_12311.arg0;
+		multi_return_array_v__table__Param_bool_bool mr_12647 = v__parser__Parser_fn_args(p);
+		array_v__table__Param args2 = mr_12647.arg0;
 		array_v__table__Param args = new_array_from_c_array(1, 1, sizeof(v__table__Param), _MOV((v__table__Param[1]){(v__table__Param){.pos = {0},.name = _SLIT("x"),.is_mut = 0,.typ = typ,.type_pos = {0},.is_hidden = true,}}));
 		_PUSH_MANY(&args, (args2), _t1727, array_v__table__Param);
 		v__ast__FnDecl method = (v__ast__FnDecl){
