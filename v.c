@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "84de462"
+#define V_COMMIT_HASH "75af639"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "28ed4da"
+	#define V_COMMIT_HASH "84de462"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "84de462"
+	#define V_CURRENT_COMMIT_HASH "75af639"
 #endif
 
 // V comptime_defines:
@@ -22176,7 +22176,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("28ed4da"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("84de462"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -33378,14 +33378,15 @@ VV_LOCAL_SYMBOL Option_bool v__checker__Checker_has_return(v__checker__Checker* 
 v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__PostfixExpr* node) {
 	v__table__Type typ = v__checker__Checker_expr(c, node->expr);
 	v__table__TypeSymbol* typ_sym = v__table__Table_get_type_symbol(c->table, typ);
-	if (!v__table__TypeSymbol_is_number(typ_sym) && !(typ_sym->kind == v__table__Kind_byteptr || typ_sym->kind == v__table__Kind_charptr)) {
+	bool is_non_void_pointer = (v__table__Type_is_ptr(typ) || v__table__Type_is_pointer(typ)) && typ_sym->kind != v__table__Kind_voidptr;
+	if (!c->inside_unsafe && is_non_void_pointer) {
+		v__checker__Checker_warn(c, _SLIT("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
+	}
+	if (!(v__table__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_152385 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_152385.arg0;
-	}
-	if (!c->inside_unsafe && (v__table__Type_is_ptr(typ) || v__table__TypeSymbol_is_pointer(typ_sym))) {
-		v__checker__Checker_warn(c, _SLIT("pointer arithmetic is only allowed in `unsafe` blocks"), node->pos);
+		multi_return_string_v__token__Position mr_152602 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_152602.arg0;
 	}
 	return typ;
 }
@@ -34008,10 +34009,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1558 = 0; _t1558 < _t1557.len; ++_t1558) {
 			v__table__Fn m = ((v__table__Fn*)_t1557.data)[_t1558];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_172542 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_172542.arg0;
-				int nroute_attributes = mr_172542.arg1;
-				int nargs = mr_172542.arg2;
+				multi_return_bool_int_int mr_172615 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_172615.arg0;
+				int nroute_attributes = mr_172615.arg1;
+				int nargs = mr_172615.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
