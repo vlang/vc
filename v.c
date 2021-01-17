@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e4850cd"
+#define V_COMMIT_HASH "460f32b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a008c82"
+	#define V_COMMIT_HASH "e4850cd"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e4850cd"
+	#define V_CURRENT_COMMIT_HASH "460f32b"
 #endif
 
 // V comptime_defines:
@@ -22176,7 +22176,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a008c82"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e4850cd"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -53759,13 +53759,21 @@ VV_LOCAL_SYMBOL void main__main() {
 		return;
 	}
 	array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_1520 = v__pref__parse_args(args_and_flags);
-	v__pref__Preferences* prefs = mr_1520.arg0;
-	string command = mr_1520.arg1;
+	multi_return_v__pref__Preferences_string mr_1718 = v__pref__parse_args(args_and_flags);
+	v__pref__Preferences* prefs = mr_1718.arg0;
+	string command = mr_1718.arg1;
 	if (prefs->is_verbose) {
 	}
 	if (prefs->use_cache && string_eq(os__user_os(), _SLIT("windows"))) {
 		eprintln(_SLIT("-usecache is currently disabled on windows"));
+		v_exit(1);
+	}
+	if (string_eq(command, _SLIT("test-fixed"))) {
+		eprintln(_SLIT("Please use `v test-compiler-full` instead."));
+		v_exit(1);
+	}
+	if (string_eq(command, _SLIT("test-compiler"))) {
+		eprintln(_SLIT("Please use either `v test-all`, `v test-compiler-full`, `v build-examples`, `v build-tools` or `v build-vbinaries` instead."));
 		v_exit(1);
 	}
 	if (string_eq(command, _SLIT("test-vet"))) {
@@ -54080,8 +54088,8 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__builder__key_wow64_32key = (0x0200);
 	_const_v__builder__key_enumerate_sub_keys = (0x0008);
 	// Initializations for module main :
-	_const_main__simple_cmd = new_array_from_c_array(22, 22, sizeof(string), _MOV((string[22]){
-		_SLIT("fmt"), _SLIT("up"), _SLIT("vet"), _SLIT("self"), _SLIT("tracev"), _SLIT("symlink"), _SLIT("bin2v"), _SLIT("test"), _SLIT("test-fmt"), _SLIT("test-parser"), _SLIT("test-compiler"), _SLIT("test-fixed"), _SLIT("test-cleancode"), _SLIT("repl"), _SLIT("complete"), _SLIT("build-tools"), _SLIT("build-examples"), _SLIT("build-vbinaries"), _SLIT("setup-freetype"), _SLIT("wipe-cache"), _SLIT("doc"), _SLIT("doctor")}));
+	_const_main__simple_cmd = new_array_from_c_array(24, 24, sizeof(string), _MOV((string[24]){
+		_SLIT("fmt"), _SLIT("up"), _SLIT("vet"), _SLIT("self"), _SLIT("tracev"), _SLIT("symlink"), _SLIT("bin2v"), _SLIT("test"), _SLIT("test-all"), _SLIT("test-fmt"), _SLIT("test-parser"), _SLIT("test-fixed"), _SLIT("test-compiler"), _SLIT("test-compiler-full"), _SLIT("test-cleancode"), _SLIT("repl"), _SLIT("complete"), _SLIT("build-tools"), _SLIT("build-examples"), _SLIT("build-vbinaries"), _SLIT("setup-freetype"), _SLIT("wipe-cache"), _SLIT("doc"), _SLIT("doctor")}));
 	_const_main__list_of_flags_that_allow_duplicates = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){_SLIT("cc"), _SLIT("d"), _SLIT("define"), _SLIT("cf"), _SLIT("cflags")}));
 }
 
