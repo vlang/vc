@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f375418"
+#define V_COMMIT_HASH "6f1ae65"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ac2c384"
+	#define V_COMMIT_HASH "f375418"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f375418"
+	#define V_CURRENT_COMMIT_HASH "6f1ae65"
 #endif
 
 // V comptime_defines:
@@ -22204,7 +22204,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ac2c384"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f375418"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -35823,6 +35823,9 @@ VV_LOCAL_SYMBOL v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser
 			.post_comments = post_comments,
 			.scope = branch_scope,
 		} }));
+		if (is_else && branches.len == 1) {
+			v__parser__Parser_warn_with_pos(p, _SLIT("`match` must have at least one non `else` branch"), pos);
+		}
 		if (p->tok.kind == v__token__Kind_rcbr || (is_else && no_lcbr)) {
 			break;
 		}
@@ -35887,9 +35890,9 @@ VV_LOCAL_SYMBOL v__ast__SelectExpr v__parser__Parser_select_expr(v__parser__Pars
 		} else {
 			p->inside_match = true;
 			p->inside_select = true;
-			multi_return_array_v__ast__Expr_array_v__ast__Comment mr_7951 = v__parser__Parser_expr_list(p);
-			array_v__ast__Expr exprs = mr_7951.arg0;
-			array_v__ast__Comment comments = mr_7951.arg1;
+			multi_return_array_v__ast__Expr_array_v__ast__Comment mr_8067 = v__parser__Parser_expr_list(p);
+			array_v__ast__Expr exprs = mr_8067.arg0;
+			array_v__ast__Comment comments = mr_8067.arg1;
 			if (exprs.len != 1) {
 				v__parser__Parser_error(p, _SLIT("only one expression allowed as `select` key"));
 				return (v__ast__SelectExpr){.branches = __new_array(0, 1, sizeof(v__ast__SelectBranch)),.pos = {0},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
