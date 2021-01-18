@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "38881e4"
+#define V_COMMIT_HASH "ac2c384"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5ddb709"
+	#define V_COMMIT_HASH "38881e4"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "38881e4"
+	#define V_CURRENT_COMMIT_HASH "ac2c384"
 #endif
 
 // V comptime_defines:
@@ -9213,9 +9213,9 @@ string strconv__f32_to_str(f32 f, int n_digit) {
 	if ((exp == _const_strconv__maxexp32) || (exp == 0 && mant == 0)) {
 		return strconv__get_string_special(neg, exp == 0, mant == 0);
 	}
-	multi_return_strconv__Dec32_bool mr_7988 = strconv__f32_to_decimal_exact_int(mant, exp);
-	strconv__Dec32 d = mr_7988.arg0;
-	bool ok = mr_7988.arg1;
+	multi_return_strconv__Dec32_bool mr_7987 = strconv__f32_to_decimal_exact_int(mant, exp);
+	strconv__Dec32 d = mr_7987.arg0;
+	bool ok = mr_7987.arg1;
 	if (!ok) {
 		d = strconv__f32_to_decimal(mant, exp);
 	}
@@ -9236,9 +9236,9 @@ string strconv__f32_to_str_pad(f32 f, int n_digit) {
 	if ((exp == _const_strconv__maxexp32) || (exp == 0 && mant == 0)) {
 		return strconv__get_string_special(neg, exp == 0, mant == 0);
 	}
-	multi_return_strconv__Dec32_bool mr_8705 = strconv__f32_to_decimal_exact_int(mant, exp);
-	strconv__Dec32 d = mr_8705.arg0;
-	bool ok = mr_8705.arg1;
+	multi_return_strconv__Dec32_bool mr_8704 = strconv__f32_to_decimal_exact_int(mant, exp);
+	strconv__Dec32 d = mr_8704.arg0;
+	bool ok = mr_8704.arg1;
 	if (!ok) {
 		d = strconv__f32_to_decimal(mant, exp);
 	}
@@ -22204,7 +22204,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5ddb709"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("38881e4"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
